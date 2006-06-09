@@ -1,5 +1,0 @@
-Om.o Om.o: Om.cpp ../../config.h OmApp.h
-
-../../config.h:
-
-OmApp.h:
