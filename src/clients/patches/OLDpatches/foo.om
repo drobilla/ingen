@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<patch>
+  <name>foo</name>
+  <width>3200</width>
+  <height>2400</height>
+  <node>
+    <name>amp_mono0</name>
+    <x>1600.000000</x>
+    <y>1200.000000</y>
+    <type>LADSPA</type>
+    <plugin-label>amp_mono</plugin-label>
+    <library-name>amp.so</library-name>
+  </node>
+  <node>
+    <name>sine_fcac0</name>
+    <x>1488.000000</x>
+    <y>1179.000000</y>
+    <type>LADSPA</type>
+    <plugin-label>sine_fcac</plugin-label>
+    <library-name>sine.so</library-name>
+  </node>
+  <connection>
+    <source-node>sine_fcac0</source-node>
+    <source-port>-</source-port>
+    <destination-node>amp_mono0</destination-node>
+    <destination-port>-</destination-port>
+  </connection>
+  <control>
+    <node-name>amp_mono0</node-name>
+    <port-name>Gain</port-name>
+    <value>1.000000</value>
+  </control>
+  <control>
+    <node-name>sine_fcac0</node-name>
+    <port-name>Frequency (Hz)</port-name>
+    <value>21120000.000000</value>
+  </control>
+  <control>
+    <node-name>sine_fcac0</node-name>
+    <port-name>Amplitude</port-name>
+    <value>1.000000</value>
+  </control>
+</patch>

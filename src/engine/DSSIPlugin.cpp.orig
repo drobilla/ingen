@@ -1,0 +1,207 @@
+/* This file is part of Om.  Copyright (C) 2005 Dave Robillard.
+ * 
+ * Om is free software; you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ * 
+ * Om is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
+ * 
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+#include "DSSIPlugin.h"
+#include <map>
+#include "Om.h"
+#include "OmApp.h"
+#include "config.h"
+#include "Patch.h"
+#include "PortBase.h"
+#include "InputPort.h"
+#include "PortInfo.h"
+
+using std::map;
+
+namespace Om {
+
+
+DSSIPlugin::DSSIPlugin(const string& name, uint poly, Patch* parent, DSSI_Descriptor* descriptor, samplerate srate, size_t buffer_size)
+: LADSPAPlugin(name, 1, parent, descriptor->LADSPA_Plugin, srate, buffer_size),
+  m_ui_addr(NULL),
+  m_bank(-1),
+  m_program(-1),
+  m_dssi_descriptor(descriptor)
+{
+	m_num_ports = descriptor->LADSPA_Plugin->PortCount + 1;
+	m_ports.alloc(m_num_ports);
+
+	m_midi_in_port = new InputPort<MidiMessage>(this, "MIDI In", m_num_ports-1, 1,
+		new PortInfo("MIDI In", MIDI, INPUT), m_buffer_size);
+	
+	m_ports.at(m_num_ports-1) = m_midi_in_port;
+}
+
+
+DSSIPlugin::~DSSIPlugin()
+{
+	if (m_ui_addr != NULL)
+		lo_address_free(m_ui_addr);
+}
+
+
+void
+DSSIPlugin::activate()
+{
+	LADSPAPlugin::activate();
+}
+
+
+void
+DSSIPlugin::set_ui_url(const string& url)
+{
+	if (m_ui_addr != NULL)
+		lo_address_free(m_ui_addr);
+	
+	m_ui_url = url;
+	m_ui_addr = lo_address_new_from_url(url.c_str());
+	char* base_path = lo_url_get_path(url.c_str());
+	m_ui_base_path = base_path;
+	free(base_path);
+	cerr << "Set UI base path to " << m_ui_base_path << endl;
+}
+
+
+void
+DSSIPlugin::set_control(uint port_num, sample val)
+{
+	assert(port_num < m_descriptor->PortCount);
+	((PortBase<sample>*)m_ports.at(port_num))->set_value(0, val);
+}
+
+
+void
+DSSIPlugin::configure(const string& key, const string& val)
+{
+	m_dssi_descriptor->configure(m_instances[0], key.c_str(), val.c_str());
+	m_configures[key] = val;
+}
+
+
+void
+DSSIPlugin::program(int bank, int program)
+{
+	if (m_dssi_descriptor->select_program)
+		m_dssi_descriptor->select_program(m_instances[0], bank, program);
+
+	m_bank = bank;
+	m_program = program;
+}
+
+
+void
+DSSIPlugin::run(size_t nframes)
+{
+	NodeBase::run(nframes);
+
+	/*if (m_dssi_descriptor->run_synth) {
+		m_dssi_descriptor->run_synth(m_instances[0], nframes,
+			parent_patch()->dssi_events_array(), parent_patch()->dssi_events_size());
+	} else if (m_dssi_descriptor->run_multiple_synths) {  // I hate this stupid function
+		snd_seq_event_t* events[1] = { parent_patch()->dssi_events_array() };
+		long unsigned events_sizes[1] =  { parent_patch()->dssi_events_size() };
+		m_dssi_descriptor->run_multiple_synths(1, m_instances, nframes,
+			events, events_sizes);
+	} else {
+		LADSPAPlugin::run(nframes);
+	}
+	*/
+
+	if (m_dssi_descriptor->run_synth) {
+		m_dssi_descriptor->run_synth(m_instances[0], nframes,
+			(snd_seq_event_t*)m_midi_in_port->buffer(0), m_midi_in_port->get_valid_buffer_size());
+	/*} else if (m_dssi_descriptor->run_multiple_synths) {  // I hate this stupid function
+		snd_seq_event_t* events[1] = { parent_patch()->dssi_events_array() };
+		long unsigned events_sizes[1] =  { parent_patch()->dssi_events_size() };
+		m_dssi_descriptor->run_multiple_synths(1, m_instances, nframes,
+			events, events_sizes);*/
+	} else {
+		LADSPAPlugin::run(nframes);
+	}
+	
+		
+}
+
+
+void
+DSSIPlugin::send_control(int port_num, float value)
+{
+	string path = m_ui_base_path + "/control";
+	lo_send(m_ui_addr, path.c_str(), "if", port_num, value);
+}
+
+
+void
+DSSIPlugin::send_program(int bank, int value)
+{
+	string path = m_ui_base_path + "/program";
+	lo_send(m_ui_addr, path.c_str(), "ii", bank, value);
+}
+
+
+void
+DSSIPlugin::send_configure(const string& key, const string& val)
+{
+	string path = m_ui_base_path + "/configure";
+	lo_send(m_ui_addr, path.c_str(), "ss", key.c_str(), val.c_str());
+}
+
+	
+void
+DSSIPlugin::send_show()
+{
+	string path = m_ui_base_path + "/show";
+	lo_send(m_ui_addr, path.c_str(), NULL);
+}
+
+
+void
+DSSIPlugin::send_hide()
+{
+	string path = m_ui_base_path + "/hide";
+	lo_send(m_ui_addr, path.c_str(), NULL);
+}
+
+
+void
+DSSIPlugin::send_quit()
+{
+	string path = m_ui_base_path + "/quit";
+	lo_send(m_ui_addr, path.c_str(), NULL);
+}
+
+
+void
+DSSIPlugin::send_update()
+{
+	// send "configure"s
+	for (map<string, string>::iterator i = m_configures.begin(); i != m_configures.end(); ++i)
+		send_configure((*i).first, (*i).second);
+
+	// send "program"
+	send_program(m_bank, m_program);
+
+	// send "control"s
+	for (size_t i=0; i < m_ports.size(); ++i)
+		if (m_ports[i]->port_info()->is_control())
+			send_control(m_ports[i]->num(), ((PortBase<sample>*)m_ports[i])->get_value(0, 0));
+
+	// send "show" FIXME: not to spec
+	send_show();
+}
+
+
+} // namespace Om

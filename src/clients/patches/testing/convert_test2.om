@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<patch>
+  <name>converttest</name>
+  <polyphony>1</polyphony>
+  <node>
+    <name>audio_output_0</name>
+    <polyphonic>true</polyphonic>
+    <type>Internal</type>
+    <plugin-label>audio_output</plugin-label>
+    <module-x>1692.000000</module-x>
+    <module-y>1044.000000</module-y>
+  </node>
+  <node>
+    <name>hz_voct_ar_0</name>
+    <polyphonic>true</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>hz_voct_ar</plugin-label>
+    <library-name>hz_voct_4200.so</library-name>
+    <module-x>1587.000000</module-x>
+    <module-y>1016.000000</module-y>
+  </node>
+  <connection>
+    <source-node>hz_voct_ar_0</source-node>
+    <source-port>Output</source-port>
+    <destination-node>audio_output_0</destination-node>
+    <destination-port>out</destination-port>
+  </connection>
+  <preset>
+    <name>default</name>
+  </preset>
+</patch>

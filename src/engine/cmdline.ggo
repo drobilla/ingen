@@ -1,0 +1,7 @@
+# Process this file with gengetopt -u to generate the necessary code (in cmdline.h, cmdline.c)
+
+package "Om - An OSC controlled realtime modular synthesizer"
+
+option	"port"  	p	"OSC port to listen on"	string	default="16180"		no
+option	"in-jackd"	i	"Run engine as in-process JACK client"	flag	off
+

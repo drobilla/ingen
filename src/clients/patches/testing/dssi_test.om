@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<patch>
+  <name>foo</name>
+  <polyphony>1</polyphony>
+  <node>
+    <name>hexter_0</name>
+    <polyphonic>false</polyphonic>
+    <type>DSSI</type>
+    <plugin-label>hexter</plugin-label>
+    <library-name>hexter.so</library-name>
+    <dssi-program>0/65</dssi-program>
+    <module-x>1600.000000</module-x>
+    <module-y>1200.000000</module-y>
+  </node>
+  <node>
+    <name>output_0</name>
+    <polyphonic>false</polyphonic>
+    <type>Internal</type>
+    <plugin-label>output</plugin-label>
+    <module-x>1705.000000</module-x>
+    <module-y>1206.000000</module-y>
+  </node>
+  <connection>
+    <source-node>hexter_0</source-node>
+    <source-port>Output</source-port>
+    <destination-node>output_0</destination-node>
+    <destination-port>out</destination-port>
+  </connection>
+  <preset>
+    <name>default</name>
+    <control>
+      <node-name>hexter_0</node-name>
+      <port-name>Tuning</port-name>
+      <value>440.000000</value>
+    </control>
+    <control>
+      <node-name>hexter_0</node-name>
+      <port-name>Volume</port-name>
+      <value>0.000000</value>
+    </control>
+  </preset>
+</patch>

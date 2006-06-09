@@ -1,0 +1,23 @@
+patchesdir = $(pkgdatadir)/patches
+
+dist_patches_DATA = \
+	303.om \
+	broken_bass_synth.om \
+	broken_oscillator.om \
+	fm_operator.om \
+	house_ensemble.om \
+	karplus_strong_digeridoo.om \
+	kick.om \
+	organ.om \
+	pad.om \
+	saw_detuned.om \
+	quick_bass.om \
+	rhodes.om \
+	saw_lp.om \
+	sine.om \
+	trance.om \
+	wah_bass.om \
+	hugebass.om \
+	evildistbass.om \
+	slapbass.om \
+	meanbass.om

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<patch>
+  <name>osc</name>
+  <polyphony>4</polyphony>
+  <node>
+    <name>output_0</name>
+    <polyphonic>false</polyphonic>
+    <type>Internal</type>
+    <plugin-label>output</plugin-label>
+    <metadata>
+      <module-x>0</module-x>
+      <module-y>0</module-y>
+    </metadata>
+  </node>
+  <node>
+    <name>triangle_fcsc_oa_0</name>
+    <polyphonic>true</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>triangle_fcsc_oa</plugin-label>
+    <library-name>triangle_1649.so</library-name>
+    <metadata>
+      <module-x>1466</module-x>
+      <module-y>1178</module-y>
+    </metadata>
+  </node>
+  <connection>
+    <source-node>triangle_fcsc_oa_0</source-node>
+    <source-port>Output</source-port>
+    <destination-node>output_0</destination-node>
+    <destination-port>out</destination-port>
+  </connection>
+  <preset>
+    <name>default</name>
+    <control>
+      <node-name>triangle_fcsc_oa_0</node-name>
+      <port-name>Frequency</port-name>
+      <value>440.000000</value>
+    </control>
+    <control>
+      <node-name>triangle_fcsc_oa_0</node-name>
+      <port-name>Slope</port-name>
+      <value>0.500000</value>
+    </control>
+  </preset>
+</patch>

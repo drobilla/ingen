@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<patch>
+  <name>SMS</name>
+  <polyphony>1</polyphony>
+  <node>
+    <name>dahdsr_g+t_control_0</name>
+    <polyphonic>false</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>dahdsr_g+t_control</plugin-label>
+    <library-name>dahdsr_2021.so</library-name>
+    <module-x>0</module-x>
+    <module-y>0</module-y>
+  </node>
+  <node>
+    <name>midi_note_in_0</name>
+    <polyphonic>false</polyphonic>
+    <type>Internal</type>
+    <plugin-label>midi_note_in</plugin-label>
+    <module-x>0</module-x>
+    <module-y>0</module-y>
+  </node>
+  <node>
+    <name>output_0</name>
+    <polyphonic>false</polyphonic>
+    <type>Internal</type>
+    <plugin-label>output</plugin-label>
+    <module-x>0</module-x>
+    <module-y>0</module-y>
+  </node>
+  <node>
+    <name>product_iaia_oa_0</name>
+    <polyphonic>false</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>product_iaia_oa</plugin-label>
+    <library-name>product_1668.so</library-name>
+    <module-x>1611</module-x>
+    <module-y>1130</module-y>
+  </node>
+  <node>
+    <name>triangle_fasc_oa_0</name>
+    <polyphonic>false</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>triangle_fasc_oa</plugin-label>
+    <library-name>triangle_1649.so</library-name>
+    <module-x>0</module-x>
+    <module-y>0</module-y>
+  </node>
+  <connection>
+    <source-node>midi_note_in_0</source-node>
+    <source-port>Frequency</source-port>
+    <destination-node>triangle_fasc_oa_0</destination-node>
+    <destination-port>Frequency</destination-port>
+  </connection>
+  <connection>
+    <source-node>midi_note_in_0</source-node>
+    <source-port>Gate</source-port>
+    <destination-node>dahdsr_g+t_control_0</destination-node>
+    <destination-port>Gate</destination-port>
+  </connection>
+  <connection>
+    <source-node>triangle_fasc_oa_0</source-node>
+    <source-port>Output</source-port>
+    <destination-node>product_iaia_oa_0</destination-node>
+    <destination-port>First Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>dahdsr_g+t_control_0</source-node>
+    <source-port>Envelope Out</source-port>
+    <destination-node>product_iaia_oa_0</destination-node>
+    <destination-port>Second Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>product_iaia_oa_0</source-node>
+    <source-port>Product Output</source-port>
+    <destination-node>output_0</destination-node>
+    <destination-port>out</destination-port>
+  </connection>
+  <preset>
+    <name>default</name>
+    <control>
+      <node-name>dahdsr_g+t_control_0</node-name>
+      <port-name>Delay Time (s)</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>dahdsr_g+t_control_0</node-name>
+      <port-name>Attack Time (s)</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>dahdsr_g+t_control_0</node-name>
+      <port-name>Hold Time (s)</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>dahdsr_g+t_control_0</node-name>
+      <port-name>Decay Time (s)</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>dahdsr_g+t_control_0</node-name>
+      <port-name>Sustain Level</port-name>
+      <value>1.000000</value>
+    </control>
+    <control>
+      <node-name>dahdsr_g+t_control_0</node-name>
+      <port-name>Release Time (s)</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>triangle_fasc_oa_0</node-name>
+      <port-name>Slope</port-name>
+      <value>0.500000</value>
+    </control>
+  </preset>
+</patch>

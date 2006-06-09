@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<patch>
+  <name>brokenosc</name>
+  <polyphony>1</polyphony>
+  <node>
+    <name>lowpass</name>
+    <polyphonic>true</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>Mvclpf-4</plugin-label>
+    <library-name>mvclpf24.so</library-name>
+    <module-x>1603.000000</module-x>
+    <module-y>1077.000000</module-y>
+  </node>
+  <node>
+    <name>midi_control_in_0</name>
+    <polyphonic>true</polyphonic>
+    <type>Internal</type>
+    <plugin-label>midi_control_in</plugin-label>
+    <module-x>1384.000000</module-x>
+    <module-y>1092.000000</module-y>
+  </node>
+  <node>
+    <name>midi_control_in_1</name>
+    <polyphonic>true</polyphonic>
+    <type>Internal</type>
+    <plugin-label>midi_control_in</plugin-label>
+  </node>
+  <node>
+    <name>midi_input</name>
+    <polyphonic>true</polyphonic>
+    <type>Internal</type>
+    <plugin-label>midi_input</plugin-label>
+    <module-x>1228.000000</module-x>
+    <module-y>1087.000000</module-y>
+  </node>
+  <node>
+    <name>output</name>
+    <polyphonic>true</polyphonic>
+    <type>Internal</type>
+    <plugin-label>audio_output</plugin-label>
+    <module-x>1706.000000</module-x>
+    <module-y>1099.000000</module-y>
+  </node>
+  <node>
+    <name>saw</name>
+    <polyphonic>true</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>Saw-VCO</plugin-label>
+    <library-name>vco_sawpulse.so</library-name>
+    <module-x>1501.000000</module-x>
+    <module-y>1038.000000</module-y>
+  </node>
+  <node>
+    <name>volume</name>
+    <polyphonic>true</polyphonic>
+    <type>Internal</type>
+    <plugin-label>control_input</plugin-label>
+    <module-x>1486.000000</module-x>
+    <module-y>1194.000000</module-y>
+    <user-max>1.000000</user-max>
+    <user-min>-10.000000</user-min>
+  </node>
+  <connection>
+    <source-node>midi_control_in_0</source-node>
+    <source-port>Out (AR)</source-port>
+    <destination-node>saw</destination-node>
+    <destination-port>Frequency</destination-port>
+  </connection>
+  <connection>
+    <source-node>saw</source-node>
+    <source-port>Output</source-port>
+    <destination-node>lowpass</destination-node>
+    <destination-port>Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>lowpass</source-node>
+    <source-port>Output</source-port>
+    <destination-node>output</destination-node>
+    <destination-port>out</destination-port>
+  </connection>
+  <connection>
+    <source-node>midi_control_in_1</source-node>
+    <source-port>Out (AR)</source-port>
+    <destination-node>lowpass</destination-node>
+    <destination-port>Frequency (AR)</destination-port>
+  </connection>
+  <connection>
+    <source-node>saw</source-node>
+    <source-port>Output</source-port>
+    <destination-node>lowpass</destination-node>
+    <destination-port>Exp FM</destination-port>
+  </connection>
+  <connection>
+    <source-node>saw</source-node>
+    <source-port>Output</source-port>
+    <destination-node>lowpass</destination-node>
+    <destination-port>Resonance (AR)</destination-port>
+  </connection>
+  <connection>
+    <source-node>volume</source-node>
+    <source-port>in</source-port>
+    <destination-node>lowpass</destination-node>
+    <destination-port>Output gain (dB)</destination-port>
+  </connection>
+  <connection>
+    <source-node>midi_input</source-node>
+    <source-port>in</source-port>
+    <destination-node>midi_control_in_0</destination-node>
+    <destination-port>MIDI In</destination-port>
+  </connection>
+  <preset>
+    <name>default</name>
+    <control>
+      <node-name>lowpass</node-name>
+      <port-name>Input gain (dB)</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>lowpass</node-name>
+      <port-name>Frequency (CR)</port-name>
+      <value>-0.415141</value>
+    </control>
+    <control>
+      <node-name>lowpass</node-name>
+      <port-name>Exp FM gain</port-name>
+      <value>7.547094</value>
+    </control>
+    <control>
+      <node-name>lowpass</node-name>
+      <port-name>Resonance (CR)</port-name>
+      <value>0.786085</value>
+    </control>
+    <control>
+      <node-name>lowpass</node-name>
+      <port-name>Resonance gain</port-name>
+      <value>0.999900</value>
+    </control>
+    <control>
+      <node-name>lowpass</node-name>
+      <port-name>Filter poles</port-name>
+      <value>2.148148</value>
+    </control>
+    <control>
+      <node-name>lowpass</node-name>
+      <port-name>Output gain (dB)</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>midi_control_in_0</node-name>
+      <port-name>Controller Number</port-name>
+      <value>97.000000</value>
+    </control>
+    <control>
+      <node-name>midi_control_in_0</node-name>
+      <port-name>Logarithmic</port-name>
+      <value>0.224277</value>
+    </control>
+    <control>
+      <node-name>midi_control_in_0</node-name>
+      <port-name>Min</port-name>
+      <value>-2.000000</value>
+    </control>
+    <control>
+      <node-name>midi_control_in_0</node-name>
+      <port-name>Max</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>midi_control_in_1</node-name>
+      <port-name>Controller Number</port-name>
+      <value>60.000000</value>
+    </control>
+    <control>
+      <node-name>midi_control_in_1</node-name>
+      <port-name>Logarithmic</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>midi_control_in_1</node-name>
+      <port-name>Min</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>midi_control_in_1</node-name>
+      <port-name>Max</port-name>
+      <value>1.000000</value>
+    </control>
+    <control>
+      <node-name>saw</node-name>
+      <port-name>Octave</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>saw</node-name>
+      <port-name>Tune</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>saw</node-name>
+      <port-name>Exp FM gain</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>saw</node-name>
+      <port-name>Lin FM gain</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>saw</node-name>
+      <port-name>LP filter</port-name>
+      <value>1.000000</value>
+    </control>
+    <control>
+      <port-name>volume</port-name>
+      <value>-2.382057</value>
+    </control>
+  </preset>
+</patch>

@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<patch>
+  <name>foo</name>
+  <polyphony>1</polyphony>
+  <node>
+    <name>adsr_g+t_0</name>
+    <polyphonic>true</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>adsr_g+t</plugin-label>
+    <library-name>adsr_1680.so</library-name>
+    <module-x>1507.000000</module-x>
+    <module-y>1138.000000</module-y>
+    <port>
+      <name>Attack Time (s)</name>
+      <user-min>0.000000</user-min>
+      <user-max>1.000000</user-max>
+    </port>
+    <port>
+      <name>Decay Time (s)</name>
+      <user-min>0.000000</user-min>
+      <user-max>1.000000</user-max>
+    </port>
+    <port>
+      <name>Release Time (s)</name>
+      <user-min>0.000000</user-min>
+      <user-max>1.000000</user-max>
+    </port>
+  </node>
+  <node>
+    <name>amp_mono_0</name>
+    <polyphonic>true</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>amp_mono</plugin-label>
+    <library-name>cmt.so</library-name>
+    <module-x>1711.000000</module-x>
+    <module-y>1100.000000</module-y>
+    <port>
+      <name>Gain</name>
+      <user-min>0.000000</user-min>
+      <user-max>1.000000</user-max>
+    </port>
+  </node>
+  <node>
+    <name>audio_output_0</name>
+    <polyphonic>true</polyphonic>
+    <type>Internal</type>
+    <plugin-label>audio_output</plugin-label>
+    <module-x>1801.000000</module-x>
+    <module-y>1119.000000</module-y>
+  </node>
+  <node>
+    <name>note_in_0</name>
+    <polyphonic>true</polyphonic>
+    <type>Internal</type>
+    <plugin-label>note_in</plugin-label>
+    <module-x>1391.000000</module-x>
+    <module-y>1158.000000</module-y>
+  </node>
+  <node>
+    <name>pink_full_frequency_0</name>
+    <polyphonic>true</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>pink_full_frequency</plugin-label>
+    <library-name>cmt.so</library-name>
+    <module-x>1466.000000</module-x>
+    <module-y>1074.000000</module-y>
+  </node>
+  <node>
+    <name>vcf_reslp_0</name>
+    <polyphonic>true</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>vcf_reslp</plugin-label>
+    <library-name>vcf_cv_in.so</library-name>
+    <module-x>1608.000000</module-x>
+    <module-y>1100.000000</module-y>
+    <port>
+      <name>Frequency Offset</name>
+      <user-min>0.000000</user-min>
+      <user-max>20000.000000</user-max>
+    </port>
+  </node>
+  <connection>
+    <source-node>note_in_0</source-node>
+    <source-port>Gate</source-port>
+    <destination-node>adsr_g+t_0</destination-node>
+    <destination-port>Gate</destination-port>
+  </connection>
+  <connection>
+    <source-node>note_in_0</source-node>
+    <source-port>Trigger</source-port>
+    <destination-node>adsr_g+t_0</destination-node>
+    <destination-port>Trigger</destination-port>
+  </connection>
+  <connection>
+    <source-node>adsr_g+t_0</source-node>
+    <source-port>Envelope Out</source-port>
+    <destination-node>vcf_reslp_0</destination-node>
+    <destination-port>Frequency Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>vcf_reslp_0</source-node>
+    <source-port>Output</source-port>
+    <destination-node>amp_mono_0</destination-node>
+    <destination-port>Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>amp_mono_0</source-node>
+    <source-port>Output</source-port>
+    <destination-node>audio_output_0</destination-node>
+    <destination-port>out</destination-port>
+  </connection>
+  <connection>
+    <source-node>pink_full_frequency_0</source-node>
+    <source-port>Output</source-port>
+    <destination-node>vcf_reslp_0</destination-node>
+    <destination-port>Input</destination-port>
+  </connection>
+  <preset>
+    <name>default</name>
+    <control>
+      <node-name>adsr_g+t_0</node-name>
+      <port-name>Attack Time (s)</port-name>
+      <value>0.378113</value>
+    </control>
+    <control>
+      <node-name>adsr_g+t_0</node-name>
+      <port-name>Decay Time (s)</port-name>
+      <value>0.025208</value>
+    </control>
+    <control>
+      <node-name>adsr_g+t_0</node-name>
+      <port-name>Sustain Level</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>adsr_g+t_0</node-name>
+      <port-name>Release Time (s)</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>amp_mono_0</node-name>
+      <port-name>Gain</port-name>
+      <value>0.774923</value>
+    </control>
+    <control>
+      <node-name>vcf_reslp_0</node-name>
+      <port-name>Gain</port-name>
+      <value>0.999900</value>
+    </control>
+    <control>
+      <node-name>vcf_reslp_0</node-name>
+      <port-name>Frequency Offset</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>vcf_reslp_0</node-name>
+      <port-name>Frequency Pitch</port-name>
+      <value>-1.206916</value>
+    </control>
+    <control>
+      <node-name>vcf_reslp_0</node-name>
+      <port-name>Resonance Offset</port-name>
+      <value>0.982678</value>
+    </control>
+  </preset>
+</patch>

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<patch>
+  <name>master</name>
+  <polyphony>1</polyphony>
+  <node>
+    <name>audio_output_0</name>
+    <polyphonic>true</polyphonic>
+    <type>Internal</type>
+    <plugin-label>audio_output</plugin-label>
+    <module-x>1599.000000</module-x>
+    <module-y>1143.000000</module-y>
+  </node>
+  <node>
+    <name>audio_output_1</name>
+    <polyphonic>true</polyphonic>
+    <type>Internal</type>
+    <plugin-label>audio_output</plugin-label>
+    <module-x>1602.000000</module-x>
+    <module-y>1197.000000</module-y>
+  </node>
+  <node>
+    <name>gverb_0</name>
+    <polyphonic>true</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>gverb</plugin-label>
+    <library-name>gverb_1216.so</library-name>
+    <module-x>1445.000000</module-x>
+    <module-y>1053.000000</module-y>
+  </node>
+  <subpatch>
+    <name>quick_bass</name>
+    <filename>quick_bass.om</filename>
+    <polyphony>1</polyphony>
+    <module-x>1265.000000</module-x>
+    <module-y>1076.000000</module-y>
+  </subpatch>
+  <connection>
+    <source-node>gverb_0</source-node>
+    <source-port>Left output</source-port>
+    <destination-node>audio_output_0</destination-node>
+    <destination-port>out</destination-port>
+  </connection>
+  <connection>
+    <source-node>gverb_0</source-node>
+    <source-port>Right output</source-port>
+    <destination-node>audio_output_1</destination-node>
+    <destination-port>out</destination-port>
+  </connection>
+  <connection>
+    <source-node>quick_bass</source-node>
+    <source-port>output_0</source-port>
+    <destination-node>gverb_0</destination-node>
+    <destination-port>Input</destination-port>
+  </connection>
+  <preset>
+    <name>default</name>
+    <control>
+      <node-name>gverb_0</node-name>
+      <port-name>Roomsize (m)</port-name>
+      <value>191.272659</value>
+    </control>
+    <control>
+      <node-name>gverb_0</node-name>
+      <port-name>Reverb time (s)</port-name>
+      <value>7.575000</value>
+    </control>
+    <control>
+      <node-name>gverb_0</node-name>
+      <port-name>Damping</port-name>
+      <value>0.500000</value>
+    </control>
+    <control>
+      <node-name>gverb_0</node-name>
+      <port-name>Input bandwidth</port-name>
+      <value>0.750000</value>
+    </control>
+    <control>
+      <node-name>gverb_0</node-name>
+      <port-name>Dry signal level (dB)</port-name>
+      <value>-0.000100</value>
+    </control>
+    <control>
+      <node-name>gverb_0</node-name>
+      <port-name>Early reflection level (dB)</port-name>
+      <value>-28.636423</value>
+    </control>
+    <control>
+      <node-name>gverb_0</node-name>
+      <port-name>Tail level (dB)</port-name>
+      <value>-38.181862</value>
+    </control>
+    <control>
+      <node-name>quick_bass</node-name>
+      <port-name>volume</port-name>
+      <value>0.554124</value>
+    </control>
+  </preset>
+</patch>

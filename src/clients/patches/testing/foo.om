@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<patch>
+  <name>foo</name>
+  <polyphony>1</polyphony>
+  <node>
+    <name>audio_output_0</name>
+    <polyphonic>true</polyphonic>
+    <type>Internal</type>
+    <plugin-label>audio_output</plugin-label>
+    <module-x>1446.000000</module-x>
+    <module-y>1053.000000</module-y>
+  </node>
+  <subpatch>
+    <name>bar</name>
+    <filename>bar.om</filename>
+    <polyphony>1</polyphony>
+    <filename>/home/dave/code/om/om-synth/src/clients/patches/testing/bar.om</filename>
+    <module-x>1300.000000</module-x>
+    <module-y>980.000000</module-y>
+  </subpatch>
+  <node>
+    <name>slide_tc_0</name>
+    <polyphonic>true</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>slide_tc</plugin-label>
+    <library-name>slide_2741.so</library-name>
+    <module-x>1335.000000</module-x>
+    <module-y>1074.000000</module-y>
+  </node>
+  <preset>
+    <name>default</name>
+    <control>
+      <node-name>slide_tc_0</node-name>
+      <port-name>Rise time (s)</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>slide_tc_0</node-name>
+      <port-name>Fall time (s)</port-name>
+      <value>0.000000</value>
+    </control>
+  </preset>
+</patch>

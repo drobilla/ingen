@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<patch>
+  <name>quick-bass</name>
+  <polyphony>2</polyphony>
+  <node>
+    <name>Saw-VCO_0</name>
+    <polyphonic>false</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>Saw-VCO</plugin-label>
+    <library-name>vco_sawpulse.so</library-name>
+    <module-x>1585.000000</module-x>
+    <module-y>1139.000000</module-y>
+  </node>
+  <node>
+    <name>adenv_0</name>
+    <polyphonic>false</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>adenv</plugin-label>
+    <library-name>adenv.so</library-name>
+    <module-x>1389.000000</module-x>
+    <module-y>1028.000000</module-y>
+    <port>
+      <name>Attack Time (s)</name>
+      <user-min>0.000000</user-min>
+      <user-max>0.100000</user-max>
+    </port>
+    <port>
+      <name>Decay Time (s)</name>
+      <user-min>0.000000</user-min>
+      <user-max>1.000000</user-max>
+    </port>
+  </node>
+  <node>
+    <name>audio_output_0</name>
+    <polyphonic>false</polyphonic>
+    <type>Internal</type>
+    <plugin-label>audio_output</plugin-label>
+    <module-x>1955.000000</module-x>
+    <module-y>1149.000000</module-y>
+  </node>
+  <node>
+    <name>dahdsr_g+t_control_0</name>
+    <polyphonic>false</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>dahdsr_g+t_control</plugin-label>
+    <library-name>dahdsr_2021.so</library-name>
+    <module-x>1463.000000</module-x>
+    <module-y>1228.000000</module-y>
+    <port>
+      <name>Delay Time (s)</name>
+      <user-min>0.000000</user-min>
+      <user-max>1.000000</user-max>
+    </port>
+    <port>
+      <name>Attack Time (s)</name>
+      <user-min>0.000000</user-min>
+      <user-max>0.100000</user-max>
+    </port>
+    <port>
+      <name>Hold Time (s)</name>
+      <user-min>0.000000</user-min>
+      <user-max>1.000000</user-max>
+    </port>
+    <port>
+      <name>Decay Time (s)</name>
+      <user-min>0.000000</user-min>
+      <user-max>1.000000</user-max>
+    </port>
+    <port>
+      <name>Release Time (s)</name>
+      <user-min>0.000000</user-min>
+      <user-max>0.200000</user-max>
+    </port>
+  </node>
+  <node>
+    <name>hz_voct_ar_0</name>
+    <polyphonic>false</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>hz_voct_ar</plugin-label>
+    <library-name>hz_voct_4200.so</library-name>
+    <module-x>1447.000000</module-x>
+    <module-y>1136.000000</module-y>
+  </node>
+  <node>
+    <name>interpolator_0</name>
+    <polyphonic>false</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>interpolator</plugin-label>
+    <library-name>interpolator_1660.so</library-name>
+    <module-x>1583.000000</module-x>
+    <module-y>1085.000000</module-y>
+    <port>
+      <name>Control Input</name>
+      <user-min>0.000000</user-min>
+      <user-max>4.000000</user-max>
+    </port>
+  </node>
+  <node>
+    <name>lp4pole_faraia_oa_0</name>
+    <polyphonic>false</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>lp4pole_faraia_oa</plugin-label>
+    <library-name>lp4pole_1671.so</library-name>
+    <module-x>1708.000000</module-x>
+    <module-y>1086.000000</module-y>
+  </node>
+  <node>
+    <name>note_in_0</name>
+    <polyphonic>false</polyphonic>
+    <type>Internal</type>
+    <plugin-label>note_in</plugin-label>
+    <module-x>1293.000000</module-x>
+    <module-y>1128.000000</module-y>
+  </node>
+  <node>
+    <name>product_iaia_oa_0</name>
+    <polyphonic>false</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>product_iaia_oa</plugin-label>
+    <library-name>product_1668.so</library-name>
+    <module-x>1826.000000</module-x>
+    <module-y>1136.000000</module-y>
+  </node>
+  <node>
+    <name>product_iaic_oa_0</name>
+    <polyphonic>false</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>product_iaic_oa</plugin-label>
+    <library-name>product_1668.so</library-name>
+    <module-x>1484.000000</module-x>
+    <module-y>1019.000000</module-y>
+    <port>
+      <name>Second Input</name>
+      <user-min>0.000000</user-min>
+      <user-max>5000.000000</user-max>
+    </port>
+  </node>
+  <node>
+    <name>sum_iaic_oa_0</name>
+    <polyphonic>false</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>sum_iaic_oa</plugin-label>
+    <library-name>sum_1665.so</library-name>
+    <module-x>1598.000000</module-x>
+    <module-y>1026.000000</module-y>
+    <port>
+      <name>Second Input</name>
+      <user-min>0.000000</user-min>
+      <user-max>1000.000000</user-max>
+    </port>
+  </node>
+  <connection>
+    <source-node>note_in_0</source-node>
+    <source-port>Gate</source-port>
+    <destination-node>dahdsr_g+t_control_0</destination-node>
+    <destination-port>Gate</destination-port>
+  </connection>
+  <connection>
+    <source-node>note_in_0</source-node>
+    <source-port>Trigger</source-port>
+    <destination-node>dahdsr_g+t_control_0</destination-node>
+    <destination-port>Trigger</destination-port>
+  </connection>
+  <connection>
+    <source-node>Saw-VCO_0</source-node>
+    <source-port>Output</source-port>
+    <destination-node>lp4pole_faraia_oa_0</destination-node>
+    <destination-port>Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>lp4pole_faraia_oa_0</source-node>
+    <source-port>Output</source-port>
+    <destination-node>product_iaia_oa_0</destination-node>
+    <destination-port>First Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>dahdsr_g+t_control_0</source-node>
+    <source-port>Envelope Out</source-port>
+    <destination-node>product_iaia_oa_0</destination-node>
+    <destination-port>Second Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>product_iaia_oa_0</source-node>
+    <source-port>Product Output</source-port>
+    <destination-node>audio_output_0</destination-node>
+    <destination-port>out</destination-port>
+  </connection>
+  <connection>
+    <source-node>note_in_0</source-node>
+    <source-port>Gate</source-port>
+    <destination-node>adenv_0</destination-node>
+    <destination-port>Gate</destination-port>
+  </connection>
+  <connection>
+    <source-node>note_in_0</source-node>
+    <source-port>Trigger</source-port>
+    <destination-node>adenv_0</destination-node>
+    <destination-port>Trigger</destination-port>
+  </connection>
+  <connection>
+    <source-node>product_iaic_oa_0</source-node>
+    <source-port>Product Output</source-port>
+    <destination-node>sum_iaic_oa_0</destination-node>
+    <destination-port>First Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>note_in_0</source-node>
+    <source-port>Frequency</source-port>
+    <destination-node>hz_voct_ar_0</destination-node>
+    <destination-port>Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>hz_voct_ar_0</source-node>
+    <source-port>Output</source-port>
+    <destination-node>Saw-VCO_0</destination-node>
+    <destination-port>Frequency</destination-port>
+  </connection>
+  <connection>
+    <source-node>interpolator_0</source-node>
+    <source-port>Interpolated Output</source-port>
+    <destination-node>lp4pole_faraia_oa_0</destination-node>
+    <destination-port>Resonance</destination-port>
+  </connection>
+  <connection>
+    <source-node>adenv_0</source-node>
+    <source-port>Envelope Out</source-port>
+    <destination-node>product_iaic_oa_0</destination-node>
+    <destination-port>First Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>sum_iaic_oa_0</source-node>
+    <source-port>Summed Output</source-port>
+    <destination-node>lp4pole_faraia_oa_0</destination-node>
+    <destination-port>Cutoff Frequency</destination-port>
+  </connection>
+  <preset>
+    <name>default</name>
+    <control>
+      <node-name>Saw-VCO_0</node-name>
+      <port-name>Octave</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>Saw-VCO_0</node-name>
+      <port-name>Tune</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>Saw-VCO_0</node-name>
+      <port-name>Exp FM gain</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>Saw-VCO_0</node-name>
+      <port-name>Lin FM gain</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>Saw-VCO_0</node-name>
+      <port-name>LP filter</port-name>
+      <value>1.000000</value>
+    </control>
+    <control>
+      <node-name>adenv_0</node-name>
+      <port-name>Attack Time (s)</port-name>
+      <value>0.001514</value>
+    </control>
+    <control>
+      <node-name>adenv_0</node-name>
+      <port-name>Decay Time (s)</port-name>
+      <value>0.181800</value>
+    </control>
+    <control>
+      <node-name>dahdsr_g+t_control_0</node-name>
+      <port-name>Delay Time (s)</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>dahdsr_g+t_control_0</node-name>
+      <port-name>Attack Time (s)</port-name>
+      <value>0.004541</value>
+    </control>
+    <control>
+      <node-name>dahdsr_g+t_control_0</node-name>
+      <port-name>Hold Time (s)</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>dahdsr_g+t_control_0</node-name>
+      <port-name>Decay Time (s)</port-name>
+      <value>0.112665</value>
+    </control>
+    <control>
+      <node-name>dahdsr_g+t_control_0</node-name>
+      <port-name>Sustain Level</port-name>
+      <value>0.844986</value>
+    </control>
+    <control>
+      <node-name>dahdsr_g+t_control_0</node-name>
+      <port-name>Release Time (s)</port-name>
+      <value>0.199900</value>
+    </control>
+    <control>
+      <node-name>interpolator_0</node-name>
+      <port-name>Control Input</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>product_iaic_oa_0</node-name>
+      <port-name>Second Input</port-name>
+      <value>1000.000000</value>
+    </control>
+    <control>
+      <node-name>sum_iaic_oa_0</node-name>
+      <port-name>Second Input</port-name>
+      <value>349.999969</value>
+    </control>
+  </preset>
+</patch>

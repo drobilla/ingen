@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<patch>
+  <name>quuux2</name>
+  <polyphony>1</polyphony>
+  <preset>
+    <name>default</name>
+  </preset>
+</patch>

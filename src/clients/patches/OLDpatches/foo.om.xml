@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<patch>
+  <name>we</name>
+  <width>3200</width>
+  <height>2400</height>
+  <node>
+    <name>Accumulate0</name>
+    <x>1592.000000</x>
+    <y>1065.000000</y>
+    <type>LADSPA</type>
+    <plugin-label>Accumulate</plugin-label>
+    <library-name>pvoc.so</library-name>
+  </node>
+  <node>
+    <name>foverdrive0</name>
+    <x>1411.000000</x>
+    <y>1022.000000</y>
+    <type>LADSPA</type>
+    <plugin-label>foverdrive</plugin-label>
+    <library-name>foverdrive_1196.so</library-name>
+  </node>
+  <connection>
+    <source-node>foverdrive0</source-node>
+    <source-port>Output</source-port>
+    <destination-node>Accumulate0</destination-node>
+    <destination-port>in</destination-port>
+  </connection>
+  <control>
+    <node-name>Accumulate0</node-name>
+    <port-name>glissando</port-name>
+    <value>0.690000</value>
+  </control>
+  <control>
+    <node-name>Accumulate0</node-name>
+    <port-name>decay</port-name>
+    <value>0.690000</value>
+  </control>
+  <control>
+    <node-name>foverdrive0</node-name>
+    <port-name>Drive level</port-name>
+    <value>2.990000</value>
+  </control>
+</patch>

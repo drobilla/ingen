@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<patch>
+  <name>broken_bass_synth</name>
+  <polyphony>1</polyphony>
+  <module-x>1405</module-x>
+  <module-y>971</module-y>
+  <node>
+    <name>amp_env</name>
+    <polyphonic>true</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>dahdsr_g+t_control</plugin-label>
+    <library-name>dahdsr_2021.so</library-name>
+    <module-x>1592.000000</module-x>
+    <module-y>1341.000000</module-y>
+    <port>
+      <name>Delay Time (s)</name>
+      <user-min>0.000000</user-min>
+      <user-max>1.000000</user-max>
+    </port>
+    <port>
+      <name>Attack Time (s)</name>
+      <user-min>0.000000</user-min>
+      <user-max>0.100000</user-max>
+    </port>
+    <port>
+      <name>Hold Time (s)</name>
+      <user-min>0.000000</user-min>
+      <user-max>1.000000</user-max>
+    </port>
+    <port>
+      <name>Decay Time (s)</name>
+      <user-min>0.000000</user-min>
+      <user-max>1.000000</user-max>
+    </port>
+    <port>
+      <name>Release Time (s)</name>
+      <user-min>0.000000</user-min>
+      <user-max>1.000000</user-max>
+    </port>
+  </node>
+  <node>
+    <name>cutoff</name>
+    <polyphonic>true</polyphonic>
+    <type>Internal</type>
+    <plugin-label>control_input</plugin-label>
+    <module-x>1722.000000</module-x>
+    <module-y>1277.000000</module-y>
+    <user-max>3.000000</user-max>
+    <user-min>-3.000000</user-min>
+  </node>
+  <node>
+    <name>fm_osc</name>
+    <polyphonic>true</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>sine_faac</plugin-label>
+    <library-name>cmt.so</library-name>
+    <module-x>1516.000000</module-x>
+    <module-y>1215.000000</module-y>
+    <port>
+      <name>Amplitude</name>
+      <user-min>0.000000</user-min>
+      <user-max>1.000000</user-max>
+    </port>
+  </node>
+  <node>
+    <name>hz_to_voct</name>
+    <polyphonic>true</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>hz_voct_ar</plugin-label>
+    <library-name>hz_voct_4200.so</library-name>
+    <module-x>1397.000000</module-x>
+    <module-y>978.000000</module-y>
+  </node>
+  <node>
+    <name>lowpass</name>
+    <polyphonic>true</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>Mvclpf-4</plugin-label>
+    <library-name>mvclpf24.so</library-name>
+    <module-x>1792.000000</module-x>
+    <module-y>1143.000000</module-y>
+  </node>
+  <node>
+    <name>midi_input</name>
+    <polyphonic>true</polyphonic>
+    <type>Internal</type>
+    <plugin-label>midi_input</plugin-label>
+    <module-x>1223.000000</module-x>
+    <module-y>1151.000000</module-y>
+  </node>
+  <node>
+    <name>note_in</name>
+    <polyphonic>true</polyphonic>
+    <type>Internal</type>
+    <plugin-label>note_in</plugin-label>
+    <module-x>1323.000000</module-x>
+    <module-y>1151.000000</module-y>
+  </node>
+  <node>
+    <name>output</name>
+    <polyphonic>true</polyphonic>
+    <type>Internal</type>
+    <plugin-label>audio_output</plugin-label>
+    <module-x>2029.000000</module-x>
+    <module-y>1341.000000</module-y>
+  </node>
+  <node>
+    <name>saw1</name>
+    <polyphonic>true</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>Saw-VCO</plugin-label>
+    <library-name>vco_sawpulse.so</library-name>
+    <module-x>1678.000000</module-x>
+    <module-y>917.000000</module-y>
+  </node>
+  <node>
+    <name>saw2</name>
+    <polyphonic>true</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>Saw-VCO</plugin-label>
+    <library-name>vco_sawpulse.so</library-name>
+    <module-x>1507.000000</module-x>
+    <module-y>1030.000000</module-y>
+  </node>
+  <node>
+    <name>voice_amp</name>
+    <polyphonic>true</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>product_iaia_oa</plugin-label>
+    <library-name>product_1668.so</library-name>
+    <module-x>1931.000000</module-x>
+    <module-y>1311.000000</module-y>
+  </node>
+  <node>
+    <name>volume</name>
+    <polyphonic>true</polyphonic>
+    <type>Internal</type>
+    <plugin-label>control_input</plugin-label>
+    <module-x>1711.000000</module-x>
+    <module-y>1321.000000</module-y>
+    <user-max>3.000000</user-max>
+    <user-min>-10.000000</user-min>
+  </node>
+  <connection>
+    <source-node>note_in</source-node>
+    <source-port>Frequency</source-port>
+    <destination-node>fm_osc</destination-node>
+    <destination-port>Frequency</destination-port>
+  </connection>
+  <connection>
+    <source-node>saw1</source-node>
+    <source-port>Output</source-port>
+    <destination-node>lowpass</destination-node>
+    <destination-port>Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>note_in</source-node>
+    <source-port>Gate</source-port>
+    <destination-node>amp_env</destination-node>
+    <destination-port>Gate</destination-port>
+  </connection>
+  <connection>
+    <source-node>saw2</source-node>
+    <source-port>Output</source-port>
+    <destination-node>lowpass</destination-node>
+    <destination-port>Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>fm_osc</source-node>
+    <source-port>Output</source-port>
+    <destination-node>lowpass</destination-node>
+    <destination-port>Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>amp_env</source-node>
+    <source-port>Envelope Out</source-port>
+    <destination-node>voice_amp</destination-node>
+    <destination-port>Second Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>lowpass</source-node>
+    <source-port>Output</source-port>
+    <destination-node>voice_amp</destination-node>
+    <destination-port>First Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>voice_amp</source-node>
+    <source-port>Product Output</source-port>
+    <destination-node>output</destination-node>
+    <destination-port>out</destination-port>
+  </connection>
+  <connection>
+    <source-node>note_in</source-node>
+    <source-port>Frequency</source-port>
+    <destination-node>hz_to_voct</destination-node>
+    <destination-port>Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>hz_to_voct</source-node>
+    <source-port>Output</source-port>
+    <destination-node>saw1</destination-node>
+    <destination-port>Frequency</destination-port>
+  </connection>
+  <connection>
+    <source-node>fm_osc</source-node>
+    <source-port>Output</source-port>
+    <destination-node>lowpass</destination-node>
+    <destination-port>Resonance (AR)</destination-port>
+  </connection>
+  <connection>
+    <source-node>fm_osc</source-node>
+    <source-port>Output</source-port>
+    <destination-node>saw1</destination-node>
+    <destination-port>Lin FM</destination-port>
+  </connection>
+  <connection>
+    <source-node>fm_osc</source-node>
+    <source-port>Output</source-port>
+    <destination-node>saw1</destination-node>
+    <destination-port>Exp FM</destination-port>
+  </connection>
+  <connection>
+    <source-node>hz_to_voct</source-node>
+    <source-port>Output</source-port>
+    <destination-node>saw2</destination-node>
+    <destination-port>Frequency</destination-port>
+  </connection>
+  <connection>
+    <source-node>saw1</source-node>
+    <source-port>Output</source-port>
+    <destination-node>lowpass</destination-node>
+    <destination-port>Exp FM</destination-port>
+  </connection>
+  <connection>
+    <source-node>saw2</source-node>
+    <source-port>Output</source-port>
+    <destination-node>saw1</destination-node>
+    <destination-port>Exp FM</destination-port>
+  </connection>
+  <connection>
+    <source-node>note_in</source-node>
+    <source-port>Trigger</source-port>
+    <destination-node>amp_env</destination-node>
+    <destination-port>Trigger</destination-port>
+  </connection>
+  <connection>
+    <source-node>cutoff</source-node>
+    <source-port>in</source-port>
+    <destination-node>lowpass</destination-node>
+    <destination-port>Frequency (CR)</destination-port>
+  </connection>
+  <connection>
+    <source-node>volume</source-node>
+    <source-port>in</source-port>
+    <destination-node>lowpass</destination-node>
+    <destination-port>Output gain (dB)</destination-port>
+  </connection>
+  <connection>
+    <source-node>midi_input</source-node>
+    <source-port>in</source-port>
+    <destination-node>note_in</destination-node>
+    <destination-port>MIDI In</destination-port>
+  </connection>
+  <preset>
+    <name>default</name>
+    <control>
+      <node-name>amp_env</node-name>
+      <port-name>Delay Time (s)</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>amp_env</node-name>
+      <port-name>Attack Time (s)</port-name>
+      <value>0.003027</value>
+    </control>
+    <control>
+      <node-name>amp_env</node-name>
+      <port-name>Hold Time (s)</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>amp_env</node-name>
+      <port-name>Decay Time (s)</port-name>
+      <value>0.136350</value>
+    </control>
+    <control>
+      <node-name>amp_env</node-name>
+      <port-name>Sustain Level</port-name>
+      <value>0.999900</value>
+    </control>
+    <control>
+      <node-name>amp_env</node-name>
+      <port-name>Release Time (s)</port-name>
+      <value>0.040400</value>
+    </control>
+    <control>
+      <node-name>fm_osc</node-name>
+      <port-name>Amplitude</port-name>
+      <value>0.999900</value>
+    </control>
+    <control>
+      <node-name>lowpass</node-name>
+      <port-name>Input gain (dB)</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>lowpass</node-name>
+      <port-name>Frequency (CR)</port-name>
+      <value>-4.363650</value>
+    </control>
+    <control>
+      <node-name>lowpass</node-name>
+      <port-name>Exp FM gain</port-name>
+      <value>9.999900</value>
+    </control>
+    <control>
+      <node-name>lowpass</node-name>
+      <port-name>Resonance (CR)</port-name>
+      <value>0.363600</value>
+    </control>
+    <control>
+      <node-name>lowpass</node-name>
+      <port-name>Resonance gain</port-name>
+      <value>0.999900</value>
+    </control>
+    <control>
+      <node-name>lowpass</node-name>
+      <port-name>Filter poles</port-name>
+      <value>4.000000</value>
+    </control>
+    <control>
+      <node-name>lowpass</node-name>
+      <port-name>Output gain (dB)</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>saw1</node-name>
+      <port-name>Octave</port-name>
+      <value>-1.000000</value>
+    </control>
+    <control>
+      <node-name>saw1</node-name>
+      <port-name>Tune</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>saw1</node-name>
+      <port-name>Exp FM gain</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>saw1</node-name>
+      <port-name>Lin FM gain</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>saw1</node-name>
+      <port-name>LP filter</port-name>
+      <value>1.000000</value>
+    </control>
+    <control>
+      <node-name>saw2</node-name>
+      <port-name>Octave</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>saw2</node-name>
+      <port-name>Tune</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>saw2</node-name>
+      <port-name>Exp FM gain</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>saw2</node-name>
+      <port-name>Lin FM gain</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>saw2</node-name>
+      <port-name>LP filter</port-name>
+      <value>1.000000</value>
+    </control>
+    <control>
+      <port-name>cutoff</port-name>
+      <value>-2.158551</value>
+    </control>
+    <control>
+      <port-name>volume</port-name>
+      <value>-1.441060</value>
+    </control>
+  </preset>
+</patch>

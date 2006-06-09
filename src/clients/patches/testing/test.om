@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<patch>
+  <name>asd</name>
+  <polyphony>1</polyphony>
+  <node>
+    <name>mono_sampler_0</name>
+    <polyphonic>true</polyphonic>
+    <type>DSSI</type>
+    <plugin-label>mono_sampler</plugin-label>
+    <library-name>trivial_sampler.so</library-name>
+    <dssi-configure>load=/usr/share/sounds/gaim/leave.wav</dssi-configure>
+    <module-x>1300.000000</module-x>
+    <module-y>980.000000</module-y>
+  </node>
+  <preset>
+    <name>default</name>
+    <control>
+      <node-name>mono_sampler_0</node-name>
+      <port-name>Tuned (on-off)</port-name>
+      <value>1.000000</value>
+    </control>
+    <control>
+      <node-name>mono_sampler_0</node-name>
+      <port-name>Base pitch (MIDI)</port-name>
+      <value>60.000000</value>
+    </control>
+    <control>
+      <node-name>mono_sampler_0</node-name>
+      <port-name>Sustain (on-off)</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>mono_sampler_0</node-name>
+      <port-name>Release time (s)</port-name>
+      <value>0.001000</value>
+    </control>
+  </preset>
+</patch>

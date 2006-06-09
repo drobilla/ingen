@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<patch>
+  <name>SPS</name>
+  <polyphony>4</polyphony>
+  <node>
+    <name>canyon_delay_0</name>
+    <polyphonic>false</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>canyon_delay</plugin-label>
+    <library-name>cmt.so</library-name>
+    <module-x>2187</module-x>
+    <module-y>1089</module-y>
+  </node>
+  <node>
+    <name>dahdsr_g+t_control_0</name>
+    <polyphonic>true</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>dahdsr_g+t_control</plugin-label>
+    <library-name>dahdsr_2021.so</library-name>
+    <module-x>1465</module-x>
+    <module-y>999</module-y>
+  </node>
+  <node>
+    <name>dahdsr_g+t_control_1</name>
+    <polyphonic>false</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>dahdsr_g+t_control</plugin-label>
+    <library-name>dahdsr_2021.so</library-name>
+    <module-x>1504</module-x>
+    <module-y>1239</module-y>
+  </node>
+  <node>
+    <name>interpolator_0</name>
+    <polyphonic>false</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>interpolator</plugin-label>
+    <library-name>interpolator_1660.so</library-name>
+    <module-x>0</module-x>
+    <module-y>0</module-y>
+  </node>
+  <node>
+    <name>interpolator_1</name>
+    <polyphonic>false</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>interpolator</plugin-label>
+    <library-name>interpolator_1660.so</library-name>
+    <module-x>1653</module-x>
+    <module-y>1052</module-y>
+  </node>
+  <node>
+    <name>lp4pole_faraia_oa_0</name>
+    <polyphonic>false</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>lp4pole_faraia_oa</plugin-label>
+    <library-name>lp4pole_1671.so</library-name>
+    <module-x>0</module-x>
+    <module-y>0</module-y>
+  </node>
+  <node>
+    <name>midi_note_in_0</name>
+    <polyphonic>true</polyphonic>
+    <type>Internal</type>
+    <plugin-label>midi_note_in</plugin-label>
+    <module-x>0</module-x>
+    <module-y>0</module-y>
+  </node>
+  <node>
+    <name>output_0</name>
+    <polyphonic>false</polyphonic>
+    <type>Internal</type>
+    <plugin-label>output</plugin-label>
+    <module-x>0</module-x>
+    <module-y>0</module-y>
+  </node>
+  <node>
+    <name>output_1</name>
+    <polyphonic>false</polyphonic>
+    <type>Internal</type>
+    <plugin-label>output</plugin-label>
+    <module-x>0</module-x>
+    <module-y>0</module-y>
+  </node>
+  <node>
+    <name>product_iaia_oa_0</name>
+    <polyphonic>true</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>product_iaia_oa</plugin-label>
+    <library-name>product_1668.so</library-name>
+    <module-x>0</module-x>
+    <module-y>0</module-y>
+  </node>
+  <node>
+    <name>product_iaic_oa_0</name>
+    <polyphonic>false</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>product_iaic_oa</plugin-label>
+    <library-name>product_1668.so</library-name>
+    <module-x>1700</module-x>
+    <module-y>1248</module-y>
+  </node>
+  <node>
+    <name>tap_sigmoid_0</name>
+    <polyphonic>false</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>tap_sigmoid</plugin-label>
+    <library-name>tap_sigmoid.so</library-name>
+    <module-x>1763</module-x>
+    <module-y>1139</module-y>
+  </node>
+  <node>
+    <name>tap_tubewarmth_0</name>
+    <polyphonic>false</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>tap_tubewarmth</plugin-label>
+    <library-name>tap_tubewarmth.so</library-name>
+    <module-x>1882</module-x>
+    <module-y>1132</module-y>
+  </node>
+  <node>
+    <name>triangle_fasc_oa_0</name>
+    <polyphonic>true</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>triangle_fasc_oa</plugin-label>
+    <library-name>triangle_1649.so</library-name>
+    <module-x>1475</module-x>
+    <module-y>1128</module-y>
+  </node>
+  <connection>
+    <source-node>midi_note_in_0</source-node>
+    <source-port>Frequency</source-port>
+    <destination-node>triangle_fasc_oa_0</destination-node>
+    <destination-port>Frequency</destination-port>
+  </connection>
+  <connection>
+    <source-node>midi_note_in_0</source-node>
+    <source-port>Gate</source-port>
+    <destination-node>dahdsr_g+t_control_0</destination-node>
+    <destination-port>Gate</destination-port>
+  </connection>
+  <connection>
+    <source-node>triangle_fasc_oa_0</source-node>
+    <source-port>Output</source-port>
+    <destination-node>product_iaia_oa_0</destination-node>
+    <destination-port>First Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>dahdsr_g+t_control_0</source-node>
+    <source-port>Envelope Out</source-port>
+    <destination-node>product_iaia_oa_0</destination-node>
+    <destination-port>Second Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>interpolator_1</source-node>
+    <source-port>Interpolated Output</source-port>
+    <destination-node>lp4pole_faraia_oa_0</destination-node>
+    <destination-port>Resonance</destination-port>
+  </connection>
+  <connection>
+    <source-node>dahdsr_g+t_control_1</source-node>
+    <source-port>Envelope Out</source-port>
+    <destination-node>product_iaic_oa_0</destination-node>
+    <destination-port>First Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>midi_note_in_0</source-node>
+    <source-port>Gate</source-port>
+    <destination-node>dahdsr_g+t_control_1</destination-node>
+    <destination-port>Gate</destination-port>
+  </connection>
+  <connection>
+    <source-node>product_iaic_oa_0</source-node>
+    <source-port>Product Output</source-port>
+    <destination-node>lp4pole_faraia_oa_0</destination-node>
+    <destination-port>Cutoff Frequency</destination-port>
+  </connection>
+  <connection>
+    <source-node>canyon_delay_0</source-node>
+    <source-port>Out (Left)</source-port>
+    <destination-node>output_0</destination-node>
+    <destination-port>out</destination-port>
+  </connection>
+  <connection>
+    <source-node>canyon_delay_0</source-node>
+    <source-port>Out (Right)</source-port>
+    <destination-node>output_1</destination-node>
+    <destination-port>out</destination-port>
+  </connection>
+  <connection>
+    <source-node>tap_tubewarmth_0</source-node>
+    <source-port>Output</source-port>
+    <destination-node>lp4pole_faraia_oa_0</destination-node>
+    <destination-port>Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>lp4pole_faraia_oa_0</source-node>
+    <source-port>Output</source-port>
+    <destination-node>canyon_delay_0</destination-node>
+    <destination-port>In (Left)</destination-port>
+  </connection>
+  <connection>
+    <source-node>lp4pole_faraia_oa_0</source-node>
+    <source-port>Output</source-port>
+    <destination-node>canyon_delay_0</destination-node>
+    <destination-port>In (Right)</destination-port>
+  </connection>
+  <connection>
+    <source-node>product_iaia_oa_0</source-node>
+    <source-port>Product Output</source-port>
+    <destination-node>tap_sigmoid_0</destination-node>
+    <destination-port>Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>tap_sigmoid_0</source-node>
+    <source-port>Output</source-port>
+    <destination-node>tap_tubewarmth_0</destination-node>
+    <destination-port>Input</destination-port>
+  </connection>
+  <preset>
+    <name>default</name>
+    <control>
+      <node-name>canyon_delay_0</node-name>
+      <port-name>Left to Right Time (Seconds)</port-name>
+      <value>0.250000</value>
+    </control>
+    <control>
+      <node-name>canyon_delay_0</node-name>
+      <port-name>Left to Right Feedback (Percent)</port-name>
+      <value>0.348770</value>
+    </control>
+    <control>
+      <node-name>canyon_delay_0</node-name>
+      <port-name>Right to Left Time (Seconds)</port-name>
+      <value>0.500000</value>
+    </control>
+    <control>
+      <node-name>canyon_delay_0</node-name>
+      <port-name>Right to Left Feedback (Percent)</port-name>
+      <value>0.604571</value>
+    </control>
+    <control>
+      <node-name>canyon_delay_0</node-name>
+      <port-name>Low-Pass Cutoff (Hz)</port-name>
+      <value>5000.000000</value>
+    </control>
+    <control>
+      <node-name>dahdsr_g+t_control_0</node-name>
+      <port-name>Delay Time (s)</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>dahdsr_g+t_control_0</node-name>
+      <port-name>Attack Time (s)</port-name>
+      <value>0.000335</value>
+    </control>
+    <control>
+      <node-name>dahdsr_g+t_control_0</node-name>
+      <port-name>Hold Time (s)</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>dahdsr_g+t_control_0</node-name>
+      <port-name>Decay Time (s)</port-name>
+      <value>0.017092</value>
+    </control>
+    <control>
+      <node-name>dahdsr_g+t_control_0</node-name>
+      <port-name>Sustain Level</port-name>
+      <value>0.316208</value>
+    </control>
+    <control>
+      <node-name>dahdsr_g+t_control_0</node-name>
+      <port-name>Release Time (s)</port-name>
+      <value>0.123919</value>
+    </control>
+    <control>
+      <node-name>dahdsr_g+t_control_1</node-name>
+      <port-name>Delay Time (s)</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>dahdsr_g+t_control_1</node-name>
+      <port-name>Attack Time (s)</port-name>
+      <value>0.074993</value>
+    </control>
+    <control>
+      <node-name>dahdsr_g+t_control_1</node-name>
+      <port-name>Hold Time (s)</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>dahdsr_g+t_control_1</node-name>
+      <port-name>Decay Time (s)</port-name>
+      <value>0.099990</value>
+    </control>
+    <control>
+      <node-name>dahdsr_g+t_control_1</node-name>
+      <port-name>Sustain Level</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>dahdsr_g+t_control_1</node-name>
+      <port-name>Release Time (s)</port-name>
+      <value>0.299970</value>
+    </control>
+    <control>
+      <node-name>interpolator_0</node-name>
+      <port-name>Control Input</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>interpolator_1</node-name>
+      <port-name>Control Input</port-name>
+      <value>2.699933</value>
+    </control>
+    <control>
+      <node-name>product_iaic_oa_0</node-name>
+      <port-name>Second Input</port-name>
+      <value>1999.999878</value>
+    </control>
+    <control>
+      <node-name>tap_sigmoid_0</node-name>
+      <port-name>Pre Gain [dB]</port-name>
+      <value>7.568405</value>
+    </control>
+    <control>
+      <node-name>tap_sigmoid_0</node-name>
+      <port-name>Post Gain [dB]</port-name>
+      <value>0.034165</value>
+    </control>
+    <control>
+      <node-name>tap_tubewarmth_0</node-name>
+      <port-name>Drive</port-name>
+      <value>9.999900</value>
+    </control>
+    <control>
+      <node-name>tap_tubewarmth_0</node-name>
+      <port-name>Tape--Tube Blend</port-name>
+      <value>2.499938</value>
+    </control>
+    <control>
+      <node-name>triangle_fasc_oa_0</node-name>
+      <port-name>Slope</port-name>
+      <value>0.999900</value>
+    </control>
+  </preset>
+</patch>

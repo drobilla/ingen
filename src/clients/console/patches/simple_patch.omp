@@ -1,0 +1,54 @@
+/load_plugins
+/create_patch	si	patch1	1
+/patches/patch1/add_output	s	out_1
+/patches/patch1/add_output	s	out_2
+
+/patches/patch1/add_midi_input
+
+/patches/patch1/load_ladspa_plugin	isss	1	triangle_1649.so	triangle_fcsc_oa	osc
+/patches/patch1/load_ladspa_plugin	isss	1	dahdsr_2021.so	dahdsr_cg+t_control	aenv
+/patches/patch1/load_ladspa_plugin	isss	1	product_1668.so	product_iaia_oa	amp
+/patches/patch1/load_ladspa_plugin	isss	1	lp4pole_1671.so	lp4pole_fcrcia_oa filt
+/patches/patch1/load_ladspa_plugin	isss	1	dahdsr_2021.so	dahdsr_cg+t_control	fenv
+/patches/patch1/load_ladspa_plugin	isss	1	product_1668.so	product_iaic_oa	fscale
+/patches/patch1/load_ladspa_plugin	isss	1	product_1668.so	product_iaic_oa	endamp
+
+/patches/patch1/connect	ssss	midi_in	Frequency	osc	Frequency
+/patches/patch1/connect	ssss	midi_in	Gate	aenv	"Gate"
+/patches/patch1/connect	ssss	midi_in	Gate	fenv	"Gate"
+/patches/patch1/connect	ssss	osc	Output	filt	Input
+/patches/patch1/connect	ssss	fenv	"Envelope Out"	fscale	"First Input"
+/patches/patch1/connect	ssss	fscale	"Product Output"	filt	"Cutoff Frequency"
+/patches/patch1/connect	ssss	filt	Output	amp	"First Input"
+/patches/patch1/connect	ssss	aenv	"Envelope Out"	amp	"Second Input"
+/patches/patch1/connect	ssss	amp	"Product Output"	endamp	"First Input"
+/patches/patch1/connect	ssss	endamp	"Product Output"	output	out_1
+/patches/patch1/connect	ssss	endamp	"Product Output"	output	out_2
+
+
+/patches/patch1/set_control	ssf	midi_in	Frequency	200.0
+/patches/patch1/set_control	ssf	midi_in	Gate	0.0
+/patches/patch1/set_control ssf	filt	Resonance	2.0
+/patches/patch1/set_control	ssf	osc	Slope	1.0
+/patches/patch1/set_control	ssf	fscale	"Second Input"	900
+/patches/patch1/set_control	ssf	endamp	"Second Input"	0.5
+
+/patches/patch1/set_control	ssf aenv	"Trigger"	0
+/patches/patch1/set_control	ssf	aenv	"Delay Time (s)"	0.0
+/patches/patch1/set_control	ssf	aenv	"Attack Time (s)"	0.01
+/patches/patch1/set_control	ssf	aenv	"Hold Time (s)"	0.0
+/patches/patch1/set_control	ssf	aenv	"Decay Time (s)"	0.3
+/patches/patch1/set_control	ssf	aenv	"Sustain Level"	0.6
+/patches/patch1/set_control	ssf	aenv	"Release Time (s)"	0.6
+
+/patches/patch1/set_control	ssf fenv	"Trigger"	0
+/patches/patch1/set_control	ssf	fenv	"Delay Time (s)"	0.0
+/patches/patch1/set_control	ssf	fenv	"Attack Time (s)"	0.0
+/patches/patch1/set_control	ssf	fenv	"Hold Time (s)"	0.0
+/patches/patch1/set_control	ssf	fenv	"Decay Time (s)"	0.2
+/patches/patch1/set_control	ssf	fenv	"Sustain Level"	0.5
+/patches/patch1/set_control	ssf	fenv	"Release Time (s)"	0.5
+
+/patches/patch1/activate
+/engine/set_master_patch	s	patch1
+/engine/start

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<patch>
+  <name>exptest</name>
+  <polyphony>1</polyphony>
+  <node>
+    <name>Saw-VCO_0</name>
+    <polyphonic>false</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>Saw-VCO</plugin-label>
+    <library-name>vco_sawpulse.so</library-name>
+    <module-x>1503.000000</module-x>
+    <module-y>1075.000000</module-y>
+  </node>
+  <node>
+    <name>midi_control_in_0</name>
+    <polyphonic>false</polyphonic>
+    <type>Internal</type>
+    <plugin-label>midi_control_in</plugin-label>
+    <module-x>1384.000000</module-x>
+    <module-y>1092.000000</module-y>
+  </node>
+  <node>
+    <name>output_0</name>
+    <polyphonic>false</polyphonic>
+    <type>Internal</type>
+    <plugin-label>output</plugin-label>
+    <module-x>1616.000000</module-x>
+    <module-y>1167.000000</module-y>
+  </node>
+  <connection>
+    <source-node>Saw-VCO_0</source-node>
+    <source-port>Output</source-port>
+    <destination-node>output_0</destination-node>
+    <destination-port>out</destination-port>
+  </connection>
+  <connection>
+    <source-node>midi_control_in_0</source-node>
+    <source-port>Out (AR)</source-port>
+    <destination-node>Saw-VCO_0</destination-node>
+    <destination-port>Frequency</destination-port>
+  </connection>
+  <preset>
+    <name>default</name>
+    <control>
+      <node-name>Saw-VCO_0</node-name>
+      <port-name>Octave</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>Saw-VCO_0</node-name>
+      <port-name>Tune</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>Saw-VCO_0</node-name>
+      <port-name>Exp FM gain</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>Saw-VCO_0</node-name>
+      <port-name>Lin FM gain</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>Saw-VCO_0</node-name>
+      <port-name>LP filter</port-name>
+      <value>1.000000</value>
+    </control>
+    <control>
+      <node-name>midi_control_in_0</node-name>
+      <port-name>Controller Number</port-name>
+      <value>97.000000</value>
+    </control>
+    <control>
+      <node-name>midi_control_in_0</node-name>
+      <port-name>Logarithmic</port-name>
+      <value>0.172915</value>
+    </control>
+    <control>
+      <node-name>midi_control_in_0</node-name>
+      <port-name>Min</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>midi_control_in_0</node-name>
+      <port-name>Max</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>midi_control_in_0</node-name>
+      <port-name>Out (CR)</port-name>
+      <value>0.000000</value>
+    </control>
+  </preset>
+</patch>

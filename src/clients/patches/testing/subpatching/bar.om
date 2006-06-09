@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<patch>
+  <name>bar</name>
+  <polyphony>1</polyphony>
+  <subpatch>
+    <name>baz</name>
+    <filename>/home/dave/code/om/om-synth/src/clients/gtk/patches/subpatching/baz.om</filename>
+    <polyphony>1</polyphony>
+    <module-x>1300.000000</module-x>
+    <module-y>980.000000</module-y>
+  </subpatch>
+  <preset>
+    <name>default</name>
+  </preset>
+</patch>

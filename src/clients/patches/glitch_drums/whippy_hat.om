@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<patch>
+  <name>ch88_hh_01.om</name>
+  <polyphony>1</polyphony>
+  <node>
+    <name>Mvclpf-4_0</name>
+    <polyphonic>true</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>Mvclpf-4</plugin-label>
+    <library-name>mvclpf24.so</library-name>
+    <module-x>1453,000000</module-x>
+    <module-y>970,000000</module-y>
+  </node>
+  <node>
+    <name>adsr_g+t_0</name>
+    <polyphonic>true</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>adsr_g+t</plugin-label>
+    <library-name>adsr_1680.so</library-name>
+    <module-x>1455.000000</module-x>
+    <module-y>1149.000000</module-y>
+    <port>
+      <name>Attack Time (s)</name>
+      <user-min>0.000000</user-min>
+      <user-max>1.000000</user-max>
+    </port>
+    <port>
+      <name>Decay Time (s)</name>
+      <user-min>0.000000</user-min>
+      <user-max>1.000000</user-max>
+    </port>
+    <port>
+      <name>Release Time (s)</name>
+      <user-min>0.000000</user-min>
+      <user-max>1.000000</user-max>
+    </port>
+  </node>
+  <node>
+    <name>audio_output_0</name>
+    <polyphonic>true</polyphonic>
+    <type>Internal</type>
+    <plugin-label>audio_output</plugin-label>
+    <module-x>1746.000000</module-x>
+    <module-y>1091.000000</module-y>
+  </node>
+  <node>
+    <name>note_in_0</name>
+    <polyphonic>true</polyphonic>
+    <type>Internal</type>
+    <plugin-label>note_in</plugin-label>
+    <module-x>1294,000000</module-x>
+    <module-y>1064,000000</module-y>
+  </node>
+  <node>
+    <name>pink_full_frequency_0</name>
+    <polyphonic>true</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>pink_full_frequency</plugin-label>
+    <library-name>cmt.so</library-name>
+    <module-x>1292,000000</module-x>
+    <module-y>969,000000</module-y>
+  </node>
+  <node>
+    <name>product_iaia_oa_0</name>
+    <polyphonic>true</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>product_iaia_oa</plugin-label>
+    <library-name>product_1668.so</library-name>
+    <module-x>1597,000000</module-x>
+    <module-y>1066,000000</module-y>
+  </node>
+  <connection>
+    <source-node>pink_full_frequency_0</source-node>
+    <source-port>Output</source-port>
+    <destination-node>Mvclpf-4_0</destination-node>
+    <destination-port>Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>note_in_0</source-node>
+    <source-port>Trigger</source-port>
+    <destination-node>adsr_g+t_0</destination-node>
+    <destination-port>Trigger</destination-port>
+  </connection>
+  <connection>
+    <source-node>adsr_g+t_0</source-node>
+    <source-port>Envelope Out</source-port>
+    <destination-node>product_iaia_oa_0</destination-node>
+    <destination-port>Second Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>Mvclpf-4_0</source-node>
+    <source-port>Output</source-port>
+    <destination-node>product_iaia_oa_0</destination-node>
+    <destination-port>First Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>product_iaia_oa_0</source-node>
+    <source-port>Product Output</source-port>
+    <destination-node>audio_output_0</destination-node>
+    <destination-port>out</destination-port>
+  </connection>
+  <connection>
+    <source-node>note_in_0</source-node>
+    <source-port>Gate</source-port>
+    <destination-node>adsr_g+t_0</destination-node>
+    <destination-port>Gate</destination-port>
+  </connection>
+  <connection>
+    <source-node>pink_full_frequency_0</source-node>
+    <source-port>Output</source-port>
+    <destination-node>Mvclpf-4_0</destination-node>
+    <destination-port>Exp FM</destination-port>
+  </connection>
+  <preset>
+    <name>default</name>
+    <control>
+      <node-name>Mvclpf-4_0</node-name>
+      <port-name>Input gain (dB)</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>Mvclpf-4_0</node-name>
+      <port-name>Frequency (CR)</port-name>
+      <value>5.051291</value>
+    </control>
+    <control>
+      <node-name>Mvclpf-4_0</node-name>
+      <port-name>Exp FM gain</port-name>
+      <value>8.972242</value>
+    </control>
+    <control>
+      <node-name>Mvclpf-4_0</node-name>
+      <port-name>Resonance (CR)</port-name>
+      <value>0.829957</value>
+    </control>
+    <control>
+      <node-name>Mvclpf-4_0</node-name>
+      <port-name>Resonance gain</port-name>
+      <value>0.822052</value>
+    </control>
+    <control>
+      <node-name>Mvclpf-4_0</node-name>
+      <port-name>Filter poles</port-name>
+      <value>4.000000</value>
+    </control>
+    <control>
+      <node-name>Mvclpf-4_0</node-name>
+      <port-name>Output gain (dB)</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>adsr_g+t_0</node-name>
+      <port-name>Attack Time (s)</port-name>
+      <value>0.003952</value>
+    </control>
+    <control>
+      <node-name>adsr_g+t_0</node-name>
+      <port-name>Decay Time (s)</port-name>
+      <value>0.019761</value>
+    </control>
+    <control>
+      <node-name>adsr_g+t_0</node-name>
+      <port-name>Sustain Level</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>adsr_g+t_0</node-name>
+      <port-name>Release Time (s)</port-name>
+      <value>0.000000</value>
+    </control>
+  </preset>
+</patch>

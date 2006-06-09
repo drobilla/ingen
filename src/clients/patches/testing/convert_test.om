@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<patch>
+  <name>converttest</name>
+  <polyphony>1</polyphony>
+  <node>
+    <name>Saw-VCO_0</name>
+    <polyphonic>true</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>Saw-VCO</plugin-label>
+    <library-name>vco_sawpulse.so</library-name>
+    <module-x>1595.000000</module-x>
+    <module-y>1034.000000</module-y>
+  </node>
+  <node>
+    <name>audio_output_0</name>
+    <polyphonic>true</polyphonic>
+    <type>Internal</type>
+    <plugin-label>audio_output</plugin-label>
+    <module-x>1692.000000</module-x>
+    <module-y>1044.000000</module-y>
+  </node>
+  <node>
+    <name>hz_voct_ar_0</name>
+    <polyphonic>true</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>hz_voct_ar</plugin-label>
+    <library-name>hz_voct_4200.so</library-name>
+    <module-x>1489.000000</module-x>
+    <module-y>1045.000000</module-y>
+  </node>
+  <node>
+    <name>interpolator_0</name>
+    <polyphonic>true</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>interpolator</plugin-label>
+    <library-name>interpolator_1660.so</library-name>
+    <module-x>1320.000000</module-x>
+    <module-y>1069.000000</module-y>
+    <port>
+      <name>Control Input</name>
+      <user-min>0.000000</user-min>
+      <user-max>100.000000</user-max>
+    </port>
+  </node>
+  <connection>
+    <source-node>Saw-VCO_0</source-node>
+    <source-port>Output</source-port>
+    <destination-node>audio_output_0</destination-node>
+    <destination-port>out</destination-port>
+  </connection>
+  <connection>
+    <source-node>interpolator_0</source-node>
+    <source-port>Interpolated Output</source-port>
+    <destination-node>hz_voct_ar_0</destination-node>
+    <destination-port>Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>hz_voct_ar_0</source-node>
+    <source-port>Output</source-port>
+    <destination-node>Saw-VCO_0</destination-node>
+    <destination-port>Frequency</destination-port>
+  </connection>
+  <preset>
+    <name>default</name>
+    <control>
+      <node-name>Saw-VCO_0</node-name>
+      <port-name>Octave</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>Saw-VCO_0</node-name>
+      <port-name>Tune</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>Saw-VCO_0</node-name>
+      <port-name>Exp FM gain</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>Saw-VCO_0</node-name>
+      <port-name>Lin FM gain</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>Saw-VCO_0</node-name>
+      <port-name>LP filter</port-name>
+      <value>1.000000</value>
+    </control>
+    <control>
+      <node-name>interpolator_0</node-name>
+      <port-name>Control Input</port-name>
+      <value>0.000000</value>
+    </control>
+  </preset>
+</patch>

@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<patch>
+  <name>wah_bass</name>
+  <polyphony>1</polyphony>
+  <node>
+    <name>Mvclpf-4_0</name>
+    <polyphonic>true</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>Mvclpf-4</plugin-label>
+    <library-name>mvclpf24.so</library-name>
+    <module-x>1787.000000</module-x>
+    <module-y>1167.000000</module-y>
+  </node>
+  <node>
+    <name>dahdsr_g+t_control_0</name>
+    <polyphonic>true</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>dahdsr_g+t_control</plugin-label>
+    <library-name>dahdsr_2021.so</library-name>
+    <module-x>1322.000000</module-x>
+    <module-y>1208.000000</module-y>
+    <port>
+      <name>Delay Time (s)</name>
+      <user-min>0.000000</user-min>
+      <user-max>1.000000</user-max>
+    </port>
+    <port>
+      <name>Attack Time (s)</name>
+      <user-min>0.000000</user-min>
+      <user-max>1.000000</user-max>
+    </port>
+    <port>
+      <name>Hold Time (s)</name>
+      <user-min>0.000000</user-min>
+      <user-max>1.000000</user-max>
+    </port>
+    <port>
+      <name>Decay Time (s)</name>
+      <user-min>0.000000</user-min>
+      <user-max>1.000000</user-max>
+    </port>
+    <port>
+      <name>Release Time (s)</name>
+      <user-min>0.000000</user-min>
+      <user-max>1.000000</user-max>
+    </port>
+  </node>
+  <node>
+    <name>midi_input</name>
+    <polyphonic>true</polyphonic>
+    <type>Internal</type>
+    <plugin-label>midi_input</plugin-label>
+    <module-x>1196.000000</module-x>
+    <module-y>1154.000000</module-y>
+  </node>
+  <node>
+    <name>note_in_0</name>
+    <polyphonic>true</polyphonic>
+    <type>Internal</type>
+    <plugin-label>note_in</plugin-label>
+    <module-x>1302.000000</module-x>
+    <module-y>1155.000000</module-y>
+  </node>
+  <node>
+    <name>output_0</name>
+    <polyphonic>true</polyphonic>
+    <type>Internal</type>
+    <plugin-label>audio_output</plugin-label>
+    <module-x>1844.000000</module-x>
+    <module-y>1176.000000</module-y>
+  </node>
+  <node>
+    <name>product_iaia_oa_0</name>
+    <polyphonic>true</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>product_iaia_oa</plugin-label>
+    <library-name>product_1668.so</library-name>
+    <module-x>1507.000000</module-x>
+    <module-y>1148.000000</module-y>
+  </node>
+  <node>
+    <name>range_trans_cr_0</name>
+    <polyphonic>true</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>range_trans_cr</plugin-label>
+    <library-name>range_trans_4210.so</library-name>
+    <module-x>1569.000000</module-x>
+    <module-y>1231.000000</module-y>
+    <port>
+      <name>Input Min</name>
+      <user-min>0.000000</user-min>
+      <user-max>1.000000</user-max>
+    </port>
+    <port>
+      <name>Input Max</name>
+      <user-min>0.000000</user-min>
+      <user-max>1.000000</user-max>
+    </port>
+    <port>
+      <name>Output Min</name>
+      <user-min>0.000000</user-min>
+      <user-max>1.000000</user-max>
+    </port>
+    <port>
+      <name>Output Max</name>
+      <user-min>0.000000</user-min>
+      <user-max>4.000000</user-max>
+    </port>
+  </node>
+  <node>
+    <name>square_fa_oa_0</name>
+    <polyphonic>true</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>square_fa_oa</plugin-label>
+    <library-name>square_1643.so</library-name>
+    <module-x>1336.000000</module-x>
+    <module-y>1130.000000</module-y>
+  </node>
+  <node>
+    <name>tap_sigmoid_0</name>
+    <polyphonic>true</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>tap_sigmoid</plugin-label>
+    <library-name>tap_sigmoid.so</library-name>
+    <module-x>1651.000000</module-x>
+    <module-y>1140.000000</module-y>
+  </node>
+  <node>
+    <name>volume</name>
+    <polyphonic>true</polyphonic>
+    <type>Internal</type>
+    <plugin-label>control_input</plugin-label>
+    <module-x>1706.000000</module-x>
+    <module-y>1348.000000</module-y>
+    <user-max>1.000000</user-max>
+    <user-min>-10.000000</user-min>
+  </node>
+  <connection>
+    <source-node>note_in_0</source-node>
+    <source-port>Frequency</source-port>
+    <destination-node>square_fa_oa_0</destination-node>
+    <destination-port>Frequency</destination-port>
+  </connection>
+  <connection>
+    <source-node>note_in_0</source-node>
+    <source-port>Gate</source-port>
+    <destination-node>dahdsr_g+t_control_0</destination-node>
+    <destination-port>Gate</destination-port>
+  </connection>
+  <connection>
+    <source-node>square_fa_oa_0</source-node>
+    <source-port>Output</source-port>
+    <destination-node>product_iaia_oa_0</destination-node>
+    <destination-port>First Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>dahdsr_g+t_control_0</source-node>
+    <source-port>Envelope Out</source-port>
+    <destination-node>product_iaia_oa_0</destination-node>
+    <destination-port>Second Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>product_iaia_oa_0</source-node>
+    <source-port>Product Output</source-port>
+    <destination-node>tap_sigmoid_0</destination-node>
+    <destination-port>Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>Mvclpf-4_0</source-node>
+    <source-port>Output</source-port>
+    <destination-node>output_0</destination-node>
+    <destination-port>out</destination-port>
+  </connection>
+  <connection>
+    <source-node>tap_sigmoid_0</source-node>
+    <source-port>Output</source-port>
+    <destination-node>Mvclpf-4_0</destination-node>
+    <destination-port>Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>note_in_0</source-node>
+    <source-port>Trigger</source-port>
+    <destination-node>dahdsr_g+t_control_0</destination-node>
+    <destination-port>Trigger</destination-port>
+  </connection>
+  <connection>
+    <source-node>dahdsr_g+t_control_0</source-node>
+    <source-port>Envelope Out</source-port>
+    <destination-node>range_trans_cr_0</destination-node>
+    <destination-port>Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>range_trans_cr_0</source-node>
+    <source-port>Output</source-port>
+    <destination-node>Mvclpf-4_0</destination-node>
+    <destination-port>Frequency (AR)</destination-port>
+  </connection>
+  <connection>
+    <source-node>range_trans_cr_0</source-node>
+    <source-port>Output</source-port>
+    <destination-node>Mvclpf-4_0</destination-node>
+    <destination-port>Resonance (AR)</destination-port>
+  </connection>
+  <connection>
+    <source-node>volume</source-node>
+    <source-port>in</source-port>
+    <destination-node>Mvclpf-4_0</destination-node>
+    <destination-port>Output gain (dB)</destination-port>
+  </connection>
+  <connection>
+    <source-node>midi_input</source-node>
+    <source-port>in</source-port>
+    <destination-node>note_in_0</destination-node>
+    <destination-port>MIDI In</destination-port>
+  </connection>
+  <preset>
+    <name>default</name>
+    <control>
+      <node-name>Mvclpf-4_0</node-name>
+      <port-name>Input gain (dB)</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>Mvclpf-4_0</node-name>
+      <port-name>Frequency (CR)</port-name>
+      <value>-1.428609</value>
+    </control>
+    <control>
+      <node-name>Mvclpf-4_0</node-name>
+      <port-name>Exp FM gain</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>Mvclpf-4_0</node-name>
+      <port-name>Resonance (CR)</port-name>
+      <value>0.369139</value>
+    </control>
+    <control>
+      <node-name>Mvclpf-4_0</node-name>
+      <port-name>Resonance gain</port-name>
+      <value>0.232952</value>
+    </control>
+    <control>
+      <node-name>Mvclpf-4_0</node-name>
+      <port-name>Filter poles</port-name>
+      <value>4.000000</value>
+    </control>
+    <control>
+      <node-name>Mvclpf-4_0</node-name>
+      <port-name>Output gain (dB)</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>dahdsr_g+t_control_0</node-name>
+      <port-name>Delay Time (s)</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>dahdsr_g+t_control_0</node-name>
+      <port-name>Attack Time (s)</port-name>
+      <value>0.227250</value>
+    </control>
+    <control>
+      <node-name>dahdsr_g+t_control_0</node-name>
+      <port-name>Hold Time (s)</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>dahdsr_g+t_control_0</node-name>
+      <port-name>Decay Time (s)</port-name>
+      <value>0.409050</value>
+    </control>
+    <control>
+      <node-name>dahdsr_g+t_control_0</node-name>
+      <port-name>Sustain Level</port-name>
+      <value>0.636300</value>
+    </control>
+    <control>
+      <node-name>dahdsr_g+t_control_0</node-name>
+      <port-name>Release Time (s)</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>range_trans_cr_0</node-name>
+      <port-name>Input Min</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>range_trans_cr_0</node-name>
+      <port-name>Input Max</port-name>
+      <value>1.000000</value>
+    </control>
+    <control>
+      <node-name>range_trans_cr_0</node-name>
+      <port-name>Output Min</port-name>
+      <value>0.463368</value>
+    </control>
+    <control>
+      <node-name>range_trans_cr_0</node-name>
+      <port-name>Output Max</port-name>
+      <value>2.536522</value>
+    </control>
+    <control>
+      <node-name>tap_sigmoid_0</node-name>
+      <port-name>Pre Gain [dB]</port-name>
+      <value>19.999901</value>
+    </control>
+    <control>
+      <node-name>tap_sigmoid_0</node-name>
+      <port-name>Post Gain [dB]</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <port-name>volume</port-name>
+      <value>-5.319918</value>
+    </control>
+  </preset>
+</patch>

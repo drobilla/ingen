@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<patch>
+  <name>quick_bass</name>
+  <polyphony>1</polyphony>
+  <node>
+    <name>amp</name>
+    <polyphonic>true</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>product_iaia_oa</plugin-label>
+    <library-name>product_1668.so</library-name>
+    <module-x>1576.000000</module-x>
+    <module-y>1158.000000</module-y>
+  </node>
+  <node>
+    <name>env</name>
+    <polyphonic>true</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>dahdsr_g+t_control</plugin-label>
+    <library-name>dahdsr_2021.so</library-name>
+    <module-x>1409.000000</module-x>
+    <module-y>1203.000000</module-y>
+    <port>
+      <name>Delay Time (s)</name>
+      <user-min>0.000000</user-min>
+      <user-max>1.000000</user-max>
+    </port>
+    <port>
+      <name>Attack Time (s)</name>
+      <user-min>0.000000</user-min>
+      <user-max>1.000000</user-max>
+    </port>
+    <port>
+      <name>Hold Time (s)</name>
+      <user-min>0.000000</user-min>
+      <user-max>1.000000</user-max>
+    </port>
+    <port>
+      <name>Decay Time (s)</name>
+      <user-min>0.000000</user-min>
+      <user-max>1.000000</user-max>
+    </port>
+    <port>
+      <name>Release Time (s)</name>
+      <user-min>0.000000</user-min>
+      <user-max>1.000000</user-max>
+    </port>
+  </node>
+  <node>
+    <name>filter_influence</name>
+    <polyphonic>true</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>range_trans_cr</plugin-label>
+    <library-name>range_trans_4210.so</library-name>
+    <module-x>1572.000000</module-x>
+    <module-y>1256.000000</module-y>
+    <port>
+      <name>Input Min</name>
+      <user-min>0.000000</user-min>
+      <user-max>1.000000</user-max>
+    </port>
+    <port>
+      <name>Input Max</name>
+      <user-min>0.000000</user-min>
+      <user-max>1.000000</user-max>
+    </port>
+    <port>
+      <name>Output Min</name>
+      <user-min>-4.000000</user-min>
+      <user-max>1.000000</user-max>
+    </port>
+    <port>
+      <name>Output Max</name>
+      <user-min>0.000000</user-min>
+      <user-max>0.100000</user-max>
+    </port>
+  </node>
+  <node>
+    <name>lowpass</name>
+    <polyphonic>true</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>vcf_reslp</plugin-label>
+    <library-name>vcf_cv_in.so</library-name>
+    <module-x>1757.000000</module-x>
+    <module-y>1189.000000</module-y>
+    <port>
+      <name>Frequency Offset</name>
+      <user-min>-400.000000</user-min>
+      <user-max>20000.000000</user-max>
+    </port>
+  </node>
+  <node>
+    <name>midi_input</name>
+    <polyphonic>true</polyphonic>
+    <type>Internal</type>
+    <plugin-label>midi_input</plugin-label>
+    <module-x>1206.000000</module-x>
+    <module-y>1146.000000</module-y>
+  </node>
+  <node>
+    <name>note_in</name>
+    <polyphonic>true</polyphonic>
+    <type>Internal</type>
+    <plugin-label>note_in</plugin-label>
+    <module-x>1303.000000</module-x>
+    <module-y>1149.000000</module-y>
+  </node>
+  <node>
+    <name>output</name>
+    <polyphonic>true</polyphonic>
+    <type>Internal</type>
+    <plugin-label>audio_output</plugin-label>
+    <module-x>1859.000000</module-x>
+    <module-y>1201.000000</module-y>
+  </node>
+  <node>
+    <name>square</name>
+    <polyphonic>true</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>square_fa_oa</plugin-label>
+    <library-name>square_1643.so</library-name>
+    <module-x>1412.000000</module-x>
+    <module-y>1114.000000</module-y>
+  </node>
+  <node>
+    <name>volume</name>
+    <polyphonic>true</polyphonic>
+    <type>Internal</type>
+    <plugin-label>control_input</plugin-label>
+    <module-x>1681.000000</module-x>
+    <module-y>1228.000000</module-y>
+  </node>
+  <connection>
+    <source-node>note_in</source-node>
+    <source-port>Frequency</source-port>
+    <destination-node>square</destination-node>
+    <destination-port>Frequency</destination-port>
+  </connection>
+  <connection>
+    <source-node>note_in</source-node>
+    <source-port>Gate</source-port>
+    <destination-node>env</destination-node>
+    <destination-port>Gate</destination-port>
+  </connection>
+  <connection>
+    <source-node>square</source-node>
+    <source-port>Output</source-port>
+    <destination-node>amp</destination-node>
+    <destination-port>First Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>env</source-node>
+    <source-port>Envelope Out</source-port>
+    <destination-node>amp</destination-node>
+    <destination-port>Second Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>note_in</source-node>
+    <source-port>Trigger</source-port>
+    <destination-node>env</destination-node>
+    <destination-port>Trigger</destination-port>
+  </connection>
+  <connection>
+    <source-node>env</source-node>
+    <source-port>Envelope Out</source-port>
+    <destination-node>filter_influence</destination-node>
+    <destination-port>Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>lowpass</source-node>
+    <source-port>Output</source-port>
+    <destination-node>output</destination-node>
+    <destination-port>out</destination-port>
+  </connection>
+  <connection>
+    <source-node>filter_influence</source-node>
+    <source-port>Output</source-port>
+    <destination-node>lowpass</destination-node>
+    <destination-port>Frequency Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>amp</source-node>
+    <source-port>Product Output</source-port>
+    <destination-node>lowpass</destination-node>
+    <destination-port>Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>volume</source-node>
+    <source-port>in</source-port>
+    <destination-node>lowpass</destination-node>
+    <destination-port>Gain</destination-port>
+  </connection>
+  <connection>
+    <source-node>midi_input</source-node>
+    <source-port>in</source-port>
+    <destination-node>note_in</destination-node>
+    <destination-port>MIDI In</destination-port>
+  </connection>
+  <preset>
+    <name>default</name>
+    <control>
+      <node-name>env</node-name>
+      <port-name>Delay Time (s)</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>env</node-name>
+      <port-name>Attack Time (s)</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>env</node-name>
+      <port-name>Hold Time (s)</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>env</node-name>
+      <port-name>Decay Time (s)</port-name>
+      <value>0.081073</value>
+    </control>
+    <control>
+      <node-name>env</node-name>
+      <port-name>Sustain Level</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>env</node-name>
+      <port-name>Release Time (s)</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>filter_influence</node-name>
+      <port-name>Input Min</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>filter_influence</node-name>
+      <port-name>Input Max</port-name>
+      <value>1.000000</value>
+    </control>
+    <control>
+      <node-name>filter_influence</node-name>
+      <port-name>Output Min</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>filter_influence</node-name>
+      <port-name>Output Max</port-name>
+      <value>0.043200</value>
+    </control>
+    <control>
+      <node-name>lowpass</node-name>
+      <port-name>Gain</port-name>
+      <value>0.553999</value>
+    </control>
+    <control>
+      <node-name>lowpass</node-name>
+      <port-name>Frequency Offset</port-name>
+      <value>1254.054077</value>
+    </control>
+    <control>
+      <node-name>lowpass</node-name>
+      <port-name>Frequency Pitch</port-name>
+      <value>-2.000000</value>
+    </control>
+    <control>
+      <node-name>lowpass</node-name>
+      <port-name>Resonance Offset</port-name>
+      <value>0.405959</value>
+    </control>
+    <control>
+      <port-name>volume</port-name>
+      <value>0.446063</value>
+    </control>
+  </preset>
+</patch>

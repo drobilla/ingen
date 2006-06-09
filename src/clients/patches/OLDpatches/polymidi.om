@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<patch>
+  <name>polymidi</name>
+  <polyphony>2</polyphony>
+  <width>3200</width>
+  <height>2400</height>
+  <node>
+    <name>output_0</name>
+    <x>1602.000000</x>
+    <y>1187.000000</y>
+    <polyphonic>false</polyphonic>
+    <type>Internal</type>
+    <plugin-label>output</plugin-label>
+  </node>
+  <node>
+    <name>midi_note_in_0</name>
+    <x>1359.000000</x>
+    <y>1167.000000</y>
+    <polyphonic>false</polyphonic>
+    <type>Internal</type>
+    <plugin-label>midi_note_in</plugin-label>
+  </node>
+  <node>
+    <name>square_fa_oa_0</name>
+    <x>1480.000000</x>
+    <y>1175.000000</y>
+    <polyphonic>false</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>square_fa_oa</plugin-label>
+    <library-name>square_1643.so</library-name>
+  </node>
+  <connection>
+    <source-node>midi_note_in_0</source-node>
+    <source-port>Frequency</source-port>
+    <destination-node>square_fa_oa_0</destination-node>
+    <destination-port>Frequency</destination-port>
+  </connection>
+  <connection>
+    <source-node>square_fa_oa_0</source-node>
+    <source-port>Output</source-port>
+    <destination-node>output_0</destination-node>
+    <destination-port>out</destination-port>
+  </connection>
+</patch>

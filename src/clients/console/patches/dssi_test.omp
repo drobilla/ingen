@@ -1,0 +1,19 @@
+/create_patch	si	patch1	1
+/patches/patch1/add_output	s	out_1
+/patches/patch1/add_output	s	out_2
+
+/patches/patch1/add_midi_input
+
+/patches/patch1/load_dssi_plugin sss trivial_synth.so	trivial_synth	synth
+
+/patches/patch1/connect	ssss	midi_in	Frequency	synth	Frequency
+/patches/patch1/connect	ssss	synth	Output	output	out_1	
+/patches/patch1/connect	ssss	synth	Output	output	out_2	
+
+/patches/patch1/set_control	ssf	midi_in	Frequency	440
+
+/patches/patch1/set_control	ssf	osc	Slope	0.5
+
+/patches/patch1/activate
+/engine/set_master_patch	s	patch1
+/engine/start

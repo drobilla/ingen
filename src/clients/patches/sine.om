@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<patch>
+  <name>sine</name>
+  <polyphony>2</polyphony>
+  <node>
+    <name>amp_env</name>
+    <polyphonic>true</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>adsr_g+t</plugin-label>
+    <library-name>adsr_1680.so</library-name>
+    <module-x>1393.000000</module-x>
+    <module-y>1134.000000</module-y>
+    <port>
+      <name>Attack Time (s)</name>
+      <user-min>0.000000</user-min>
+      <user-max>0.100000</user-max>
+    </port>
+    <port>
+      <name>Decay Time (s)</name>
+      <user-min>0.000000</user-min>
+      <user-max>1.000000</user-max>
+    </port>
+    <port>
+      <name>Release Time (s)</name>
+      <user-min>0.000000</user-min>
+      <user-max>0.100000</user-max>
+    </port>
+  </node>
+  <node>
+    <name>midi_input</name>
+    <polyphonic>false</polyphonic>
+    <type>Internal</type>
+    <plugin-label>midi_input</plugin-label>
+    <module-x>1212.000000</module-x>
+    <module-y>1092.000000</module-y>
+  </node>
+  <node>
+    <name>note_in</name>
+    <polyphonic>true</polyphonic>
+    <type>Internal</type>
+    <plugin-label>note_in</plugin-label>
+    <module-x>1315.000000</module-x>
+    <module-y>1091.000000</module-y>
+  </node>
+  <node>
+    <name>output</name>
+    <polyphonic>false</polyphonic>
+    <type>Internal</type>
+    <plugin-label>audio_output</plugin-label>
+    <module-x>1700.000000</module-x>
+    <module-y>1120.000000</module-y>
+  </node>
+  <node>
+    <name>sine</name>
+    <polyphonic>true</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>sine_faaa</plugin-label>
+    <library-name>cmt.so</library-name>
+    <module-x>1627.000000</module-x>
+    <module-y>1096.000000</module-y>
+  </node>
+  <node>
+    <name>voice_amp</name>
+    <polyphonic>true</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>product_iaic_oa</plugin-label>
+    <library-name>product_1668.so</library-name>
+    <module-x>1507.000000</module-x>
+    <module-y>1191.000000</module-y>
+  </node>
+  <node>
+    <name>volume</name>
+    <polyphonic>false</polyphonic>
+    <type>Internal</type>
+    <plugin-label>control_input</plugin-label>
+    <module-x>1409.000000</module-x>
+    <module-y>1251.000000</module-y>
+  </node>
+  <connection>
+    <source-node>note_in</source-node>
+    <source-port>Gate</source-port>
+    <destination-node>amp_env</destination-node>
+    <destination-port>Gate</destination-port>
+  </connection>
+  <connection>
+    <source-node>note_in</source-node>
+    <source-port>Trigger</source-port>
+    <destination-node>amp_env</destination-node>
+    <destination-port>Trigger</destination-port>
+  </connection>
+  <connection>
+    <source-node>note_in</source-node>
+    <source-port>Frequency</source-port>
+    <destination-node>sine</destination-node>
+    <destination-port>Frequency</destination-port>
+  </connection>
+  <connection>
+    <source-node>sine</source-node>
+    <source-port>Output</source-port>
+    <destination-node>output</destination-node>
+    <destination-port>out</destination-port>
+  </connection>
+  <connection>
+    <source-node>amp_env</source-node>
+    <source-port>Envelope Out</source-port>
+    <destination-node>voice_amp</destination-node>
+    <destination-port>First Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>voice_amp</source-node>
+    <source-port>Product Output</source-port>
+    <destination-node>sine</destination-node>
+    <destination-port>Amplitude</destination-port>
+  </connection>
+  <connection>
+    <source-node>volume</source-node>
+    <source-port>in</source-port>
+    <destination-node>voice_amp</destination-node>
+    <destination-port>Second Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>midi_input</source-node>
+    <source-port>in</source-port>
+    <destination-node>note_in</destination-node>
+    <destination-port>MIDI In</destination-port>
+  </connection>
+  <preset>
+    <name>default</name>
+    <control>
+      <node-name>amp_env</node-name>
+      <port-name>Attack Time (s)</port-name>
+      <value>0.003200</value>
+    </control>
+    <control>
+      <node-name>amp_env</node-name>
+      <port-name>Decay Time (s)</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>amp_env</node-name>
+      <port-name>Sustain Level</port-name>
+      <value>1.000000</value>
+    </control>
+    <control>
+      <node-name>amp_env</node-name>
+      <port-name>Release Time (s)</port-name>
+      <value>0.003200</value>
+    </control>
+    <control>
+      <node-name>voice_amp</node-name>
+      <port-name>Second Input</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <port-name>volume</port-name>
+      <value>0.634667</value>
+    </control>
+  </preset>
+</patch>

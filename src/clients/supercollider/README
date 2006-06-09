@@ -1,0 +1,11 @@
+Om bindings for SuperCollider
+-----------------------------
+
+Installation:
+Copy the Om.sc file into some directory in your SC class path and
+reboot sclang.
+
+Usage:
+See example.sc for inspiration.
+
+ -- Mario Lang <mlang@delysid.org>

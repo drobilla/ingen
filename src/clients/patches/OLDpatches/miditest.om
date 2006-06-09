@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<patch>
+  <name>foo</name>
+  <width>3200</width>
+  <height>2400</height>
+  <node>
+    <name>output_0</name>
+    <x>1626.000000</x>
+    <y>1202.000000</y>
+    <type>Internal</type>
+    <plugin-label>output</plugin-label>
+  </node>
+  <node>
+    <name>midi_note_in_0</name>
+    <x>1436.000000</x>
+    <y>1194.000000</y>
+    <type>Internal</type>
+    <plugin-label>midi_note_in</plugin-label>
+  </node>
+  <node>
+    <name>sine_faaa_0</name>
+    <x>1533.000000</x>
+    <y>1190.000000</y>
+    <type>LADSPA</type>
+    <plugin-label>sine_faaa</plugin-label>
+    <library-name>sine.so</library-name>
+  </node>
+  <connection>
+    <source-node>midi_note_in_0</source-node>
+    <source-port>Frequency</source-port>
+    <destination-node>sine_faaa_0</destination-node>
+    <destination-port>Frequency (Hz)</destination-port>
+  </connection>
+  <connection>
+    <source-node>midi_note_in_0</source-node>
+    <source-port>Gate</source-port>
+    <destination-node>sine_faaa_0</destination-node>
+    <destination-port>Amplitude</destination-port>
+  </connection>
+  <connection>
+    <source-node>sine_faaa_0</source-node>
+    <source-port>Output</source-port>
+    <destination-node>output_0</destination-node>
+    <destination-port>out</destination-port>
+  </connection>
+</patch>

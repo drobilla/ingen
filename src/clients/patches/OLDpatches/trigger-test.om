@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<patch>
+  <name>drum</name>
+  <polyphony>1</polyphony>
+  <node>
+    <name>output_0</name>
+    <polyphonic>false</polyphonic>
+    <type>Internal</type>
+    <plugin-label>output</plugin-label>
+    <module-x>1801</module-x>
+    <module-y>1098</module-y>
+  </node>
+  <node>
+    <name>triangle_fcsc_oa_0</name>
+    <polyphonic>false</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>triangle_fcsc_oa</plugin-label>
+    <library-name>triangle_1649.so</library-name>
+    <module-x>1440</module-x>
+    <module-y>1036</module-y>
+  </node>
+  <node>
+    <name>product_iaia_oa_0</name>
+    <polyphonic>false</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>product_iaia_oa</plugin-label>
+    <library-name>product_1668.so</library-name>
+    <module-x>1633</module-x>
+    <module-y>1072</module-y>
+  </node>
+  <node>
+    <name>midi_trigger_in_0</name>
+    <polyphonic>false</polyphonic>
+    <type>Internal</type>
+    <plugin-label>midi_trigger_in</plugin-label>
+    <module-x>1411</module-x>
+    <module-y>1103</module-y>
+  </node>
+  <connection>
+    <source-node>midi_trigger_in_0</source-node>
+    <source-port>Gate</source-port>
+    <destination-node>product_iaia_oa_0</destination-node>
+    <destination-port>Second Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>triangle_fcsc_oa_0</source-node>
+    <source-port>Output</source-port>
+    <destination-node>product_iaia_oa_0</destination-node>
+    <destination-port>First Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>product_iaia_oa_0</source-node>
+    <source-port>Product Output</source-port>
+    <destination-node>output_0</destination-node>
+    <destination-port>out</destination-port>
+  </connection>
+  <preset>
+    <name>default</name>
+  </preset>
+</patch>

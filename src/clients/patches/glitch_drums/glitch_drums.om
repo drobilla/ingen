@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<patch>
+  <name>glitch_drums</name>
+  <polyphony>1</polyphony>
+  <node>
+    <name>audio_output_0</name>
+    <polyphonic>true</polyphonic>
+    <type>Internal</type>
+    <plugin-label>audio_output</plugin-label>
+    <module-x>1423.000000</module-x>
+    <module-y>1018.000000</module-y>
+  </node>
+  <subpatch>
+    <name>snare</name>
+    <filename>snare.om</filename>
+    <polyphony>1</polyphony>
+    <module-x>1300.000000</module-x>
+    <module-y>980.000000</module-y>
+  </subpatch>
+  <connection>
+    <source-node>snare</source-node>
+    <source-port>audio_output_0</source-port>
+    <destination-node>audio_output_0</destination-node>
+    <destination-port>out</destination-port>
+  </connection>
+  <preset>
+    <name>default</name>
+  </preset>
+</patch>

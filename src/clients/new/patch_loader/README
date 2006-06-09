@@ -1,0 +1,5 @@
+This is a stand-alone patch loader for Om.  It has no user interface, it
+just launches, loads the patch(es) passed as a parameter, and exits.
+
+Useful for loading patches from scripts, other apps, etc. or just using
+Om patches without loading the GUI.

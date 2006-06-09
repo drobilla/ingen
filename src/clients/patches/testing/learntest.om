@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<patch>
+  <name>foo</name>
+  <polyphony>1</polyphony>
+  <node>
+    <name>audio_output_0</name>
+    <polyphonic>false</polyphonic>
+    <type>Internal</type>
+    <plugin-label>audio_output</plugin-label>
+    <module-x>1680.000000</module-x>
+    <module-y>1181.000000</module-y>
+  </node>
+  <node>
+    <name>midi_control_in_0</name>
+    <polyphonic>false</polyphonic>
+    <type>Internal</type>
+    <plugin-label>midi_control_in</plugin-label>
+    <module-x>1418.000000</module-x>
+    <module-y>1133.000000</module-y>
+  </node>
+  <node>
+    <name>square_fa_oa_0</name>
+    <polyphonic>false</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>square_fa_oa</plugin-label>
+    <library-name>square_1643.so</library-name>
+    <module-x>1547.000000</module-x>
+    <module-y>1168.000000</module-y>
+  </node>
+  <connection>
+    <source-node>square_fa_oa_0</source-node>
+    <source-port>Output</source-port>
+    <destination-node>audio_output_0</destination-node>
+    <destination-port>out</destination-port>
+  </connection>
+  <connection>
+    <source-node>midi_control_in_0</source-node>
+    <source-port>Out (AR)</source-port>
+    <destination-node>square_fa_oa_0</destination-node>
+    <destination-port>Frequency</destination-port>
+  </connection>
+  <preset>
+    <name>default</name>
+    <control>
+      <node-name>midi_control_in_0</node-name>
+      <port-name>Controller Number</port-name>
+      <value>60.000000</value>
+    </control>
+    <control>
+      <node-name>midi_control_in_0</node-name>
+      <port-name>Logarithmic</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>midi_control_in_0</node-name>
+      <port-name>Min</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>midi_control_in_0</node-name>
+      <port-name>Max</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>midi_control_in_0</node-name>
+      <port-name>Out (CR)</port-name>
+      <value>0.000000</value>
+    </control>
+  </preset>
+</patch>
