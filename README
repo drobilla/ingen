@@ -1,44 +1,56 @@
-Om is a realtime modular synthesizer for Jack/Alsa/LADSPA/DSSI (ie GNU/Linux
-audio systems).  More information may be found at http://om-synth.nongnu.org
+Om is a realtime modular synthesizer and/or effects processor for
+Jack/Alsa/LADSPA/DSSI/LV2/etc (ie GNU/Linux audio systems).  More information
+may be found at http://om-synth.nongnu.org
 
-To build, do the typical "./configure; make; make install" routine - check
-"./configure --help" for options.
+To build, do the typical "./configure; make; make install" routine.
 
-You can build just the engine (and avoid all the gtk/libxml/etc dependancies)
-by doing the same in the src/engine directory.
+Check "./configure --help" for options, you can build this code in many
+different ways (standalone engine with seperate clients, build engine only,
+build clients only, build monolithic clients, etc. etc)
 
 
-*** Optimisation ***
+*** Optimization ***
 
 Om's configure script, by default, does not clobber your CFLAGS or CXXFLAGS
-environment variables (which is the proper behaviour), though it does add
-a few flags that should be turned on in any case.
+environment variables (which is the proper behaviour), though it does add a
+few flags that should be turned on in any case (as described in this file).
+If you want to submit usable bug reports (for segfaults and the like),
+build with --enable-debug.  This will also enable assertions, which also
+makes bug hunting easier (see below).
 
 SIMD (SSE/Altivec):
 
 If you have GCC4, it is HIGHLY recommended that you enable your SIMD
-instruction set (ie "-march=pentium4 -mfpmath=sse" in the case of a P4
-with SSE) through your CXXFLAGS environment variable.  The performance
-improvement (and denormal avoidance if you have a P4) is significant.
+instruction set (ie "-march=pentium4 -mfpmath=sse" in the case of a P4 with
+SSE) through your CXXFLAGS environment variable.  The performance improvement
+(and denormal avoidance if you have a P4) is drastic.
 
 
-Debugging:
+*** Debugging ***
 
 Om makes very heavy use of assertions to catch bugs.  Assertions have a
-performance hit unless the preprocessor symbol NDEBUG is defined.  By default
-the configure script will add this to the end of your flags, but it's worth
-noting.  You really don't want assertions turned on in a production build.
-However, if you encounter a bug (especially a segfault) it would be a good
-idea to rebuild with --enable-debug, chances are you'll hit an assertion and
-the console output will be a sufficient bug report so I can fix the problem.
+(minor) performance hit unless the preprocessor symbol NDEBUG is defined.
+By default the configure script will add this to the end of your flags,
+but it's worth noting.  You really don't want assertions turned on in a
+production build.  However, if you encounter a bug (especially a segfault)
+it would be a good idea to rebuild with --enable-debug, chances are you'll
+hit an assertion and the console output will be a sufficient bug report so
+I can fix the problem.
 
 
 *** Bugs ***
 
-If Om crashes, REPORT THE BUG.  Things can't get fixed if I don't know about
-them, and if you report it, it will get fixed - probably immediately.
+If Om crashes, PLEASE REPORT THE BUG.  This isn't software from some faceless
+corporation, I'm a real person, and I'm usually on IRC (#lad on freenode.net)
+if you want to talk to me.  Things can't get fixed if I don't know about them,
+and if you report it, it will get fixed - probably immediately.
 
-Please, report the bug.  There's a nice form on the Savannah page to do so,
-no mailing required.
+I write these tens of thousands of lines of code and give it to you completely
+Free, the least you could to is tell me how she goes :)
+
+Have fun...
+
+
+
 
 
