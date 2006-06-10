@@ -1,4 +1,4 @@
-AM_CXXFLAGS = @JACK_CFLAGS@ @LOSC_CFLAGS@ @ALSA_CFLAGS@ @LASH_CFLAGS@ @SLV2_CFLAGS@ -I$(top_srcdir)/src/common -I$(top_srcdir)/src/engine -I$(top_srcdir)/src/engine/events -fno-exceptions -fno-rtti
+AM_CXXFLAGS = @JACK_CFLAGS@ @LOSC_CFLAGS@ @ALSA_CFLAGS@ @LASH_CFLAGS@ @SLV2_CFLAGS@ -I$(top_srcdir)/src/common -I$(top_srcdir)/src/libs/engine -I$(top_srcdir)/src/libs/engine/events -fno-exceptions -fno-rtti
 
 MAINTAINERCLEANFILES = Makefile.in
 

@@ -43,7 +43,7 @@ public:
 	void bundle_begin() {}
 	void bundle_end()   {}
 
-	void num_plugins(size_t num) {}
+	void num_plugins(uint32_t num) {}
 
 	// OSC thread functions
 	void error(const string& msg);

@@ -1,13 +1,11 @@
 AM_CXXFLAGS = -I$(top_srcdir)/src/common -fno-exceptions -fno-rtti
 
-SUBDIRS = . python supercollider
+if BUILD_CLIENT_LIB
+noinst_LTLIBRARIES = libomclient.la
 
-if BUILD_CONSOLE_CLIENTS
-noinst_LIBRARIES = libomclient.a
+libomclient_la_CXXFLAGS = -I$(top_srcdir)/src/common -DPKGDATADIR=\"$(pkgdatadir)\" $(LIBGLADEMM_CFLAGS) $(GNOMECANVASMM_CFLAGS) $(JACK_CFLAGS) $(LXML2_CFLAGS)
 
-libomclient_a_CXXFLAGS = -I$(top_srcdir)/src/common -DPKGDATADIR=\"$(pkgdatadir)\" $(LIBGLADEMM_CFLAGS) $(GNOMECANVASMM_CFLAGS) $(JACK_CFLAGS) $(LXML2_CFLAGS)
-
-libomclient_a_SOURCES = \
+libomclient_la_SOURCES = \
 	ClientInterface.h \
 	OSCEngineInterface.h \
 	OSCEngineInterface.cpp \
@@ -41,11 +39,5 @@ libomclient_a_SOURCES = \
 	$(top_srcdir)/src/common/interface/ClientInterface.h \
 	$(top_srcdir)/src/common/interface/EngineInterface.h
 
-SUBDIRS += patch_loader patches demolition
-
-endif # BUILD_CONSOLE_CLIENTS
-
-if BUILD_GTK_CLIENT
-SUBDIRS += gtk
-endif
+endif # BUILD_CLIENT_LIB
 

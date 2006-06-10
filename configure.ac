@@ -1,11 +1,14 @@
 AC_PREREQ(2.59)
 AC_INIT([om],[0.3.0pre],[drobilla@connect.carleton.ca])
-AC_CONFIG_SRCDIR([src/engine/main.cpp])
-AC_CONFIG_SRCDIR([src/engine/tests/node_tree_test.cpp])
-AC_CONFIG_SRCDIR([src/clients/OSCController.cpp])
-AC_CONFIG_SRCDIR([src/clients/patch_loader/patch_loader.cpp])
-AC_CONFIG_SRCDIR([src/clients/demolition/demolition.cpp])
-AC_CONFIG_SRCDIR([src/clients/gtk/main.cpp])
+AC_CONFIG_SRCDIR([src/common/util/CountedPtr.h])
+AC_CONFIG_SRCDIR([src/common/interface/EngineInterface.h])
+AC_CONFIG_SRCDIR([src/libs/engine/JackAudioDriver.cpp])
+AC_CONFIG_SRCDIR([src/libs/engine/tests/node_tree_test.cpp])
+AC_CONFIG_SRCDIR([src/libs/client/OSCController.cpp])
+AC_CONFIG_SRCDIR([src/progs/engine/main.cpp])
+AC_CONFIG_SRCDIR([src/progs/patch_loader/patch_loader.cpp])
+AC_CONFIG_SRCDIR([src/progs/demolition/demolition.cpp])
+AC_CONFIG_SRCDIR([src/progs/gtk/main.cpp])
 AC_CONFIG_HEADER([config.h])
 AM_INIT_AUTOMAKE
 
@@ -317,23 +320,29 @@ else
 fi
 AM_CONDITIONAL(BUILD_GTK_CLIENT, [test "$build_gtk_client" = "yes"])
 
+# Build client lib if anything above that depends on it is to be built
+AM_CONDITIONAL(BUILD_CLIENT_LIB, [test "$build_console_clients" = "yes" -o "$build_gtk_client" = "yes"])
+
 
 # Write Makefiles
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([src/Makefile])
-AC_CONFIG_FILES([src/engine/Makefile])
-AC_CONFIG_FILES([src/engine/tests/Makefile])
 AC_CONFIG_FILES([src/common/Makefile])
 AC_CONFIG_FILES([src/common/util/Makefile])
 AC_CONFIG_FILES([src/common/interface/Makefile])
-AC_CONFIG_FILES([src/clients/Makefile])
-AC_CONFIG_FILES([src/clients/supercollider/Makefile])
-AC_CONFIG_FILES([src/clients/python/Makefile])
-AC_CONFIG_FILES([src/clients/python/scripts/Makefile])
-AC_CONFIG_FILES([src/clients/demolition/Makefile])
-AC_CONFIG_FILES([src/clients/patch_loader/Makefile])
-AC_CONFIG_FILES([src/clients/patches/Makefile])
-AC_CONFIG_FILES([src/clients/gtk/Makefile])
+AC_CONFIG_FILES([src/libs/Makefile])
+AC_CONFIG_FILES([src/libs/engine/Makefile])
+AC_CONFIG_FILES([src/libs/engine/tests/Makefile])
+AC_CONFIG_FILES([src/libs/client/Makefile])
+AC_CONFIG_FILES([src/progs/Makefile])
+AC_CONFIG_FILES([src/progs/om/Makefile])
+AC_CONFIG_FILES([src/progs/supercollider/Makefile])
+AC_CONFIG_FILES([src/progs/python/Makefile])
+AC_CONFIG_FILES([src/progs/python/scripts/Makefile])
+AC_CONFIG_FILES([src/progs/demolition/Makefile])
+AC_CONFIG_FILES([src/progs/patch_loader/Makefile])
+AC_CONFIG_FILES([src/progs/gtk/Makefile])
+AC_CONFIG_FILES([patches/Makefile])
 AC_OUTPUT
 
 # Display summary

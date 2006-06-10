@@ -1,6 +1,8 @@
 AM_CXXFLAGS = -I$(top_srcdir)/src/common -fno-exceptions -fno-rtti
 
-SUBDIRS = . python supercollider
+DIST_SUBDIRS = python supercollider
+
+SUBDIRS = om
 
 if BUILD_CONSOLE_CLIENTS
 SUBDIRS += patch_loader demolition
