@@ -1,4 +1,5 @@
-These are example patches, loadable by the gtk client.
+These are example patches, loadable by anything which uses the patch_loader
+code (including the GTK client)
 
 I consider patches to be a form of art, thus all files in this folder are
 released into the public domain.  If you modify any of them, I would
