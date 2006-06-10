@@ -440,7 +440,7 @@ OSCClient::new_plugin(const string& type, const string& uri, const string& name)
  * \arg \b poly (int) - Polyphony of new patch (\em not a boolean like new_node) </p> \n \n
  */
 void
-OSCClient::new_patch(const string& path, size_t poly)
+OSCClient::new_patch(const string& path, uint32_t poly)
 {
 	lo_send(_address, "/om/new_patch", "si", path.c_str(), poly);
 	

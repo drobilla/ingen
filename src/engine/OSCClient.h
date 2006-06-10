@@ -70,7 +70,7 @@ public:
 	                        const string& uri,
 	                        const string& name);
 	
-	virtual void new_patch(const string& path, size_t poly);
+	virtual void new_patch(const string& path, uint32_t poly);
 	
 	virtual void new_node(const string& plugin_type,
 	                      const string& plugin_uri,

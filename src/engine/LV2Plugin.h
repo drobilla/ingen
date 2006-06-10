@@ -35,12 +35,12 @@ class PortInfo;
 class LV2Plugin : public NodeBase
 {
 public:
-	LV2Plugin::LV2Plugin(const string&      name,
-	                     size_t             poly,
-	                     Patch*             parent,
-	                     const SLV2Plugin*  plugin,
-	                     samplerate         srate,
-	                     size_t             buffer_size);
+	LV2Plugin(const string&      name,
+	          size_t             poly,
+	          Patch*             parent,
+	          const SLV2Plugin*  plugin,
+	          samplerate         srate,
+	          size_t             buffer_size);
 	
 	virtual ~LV2Plugin();
 

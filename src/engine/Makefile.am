@@ -1,6 +1,7 @@
 SUBDIRS = tests
+DIST_SUBDIRS = events
 
-AM_CXXFLAGS = @JACK_CFLAGS@ @LOSC_CFLAGS@ @ALSA_CFLAGS@ @LASH_CFLAGS@ @SLV2_CFLAGS@ -I$(top_srcdir)/src/common -fno-exceptions -fno-rtti
+AM_CXXFLAGS = @JACK_CFLAGS@ @LOSC_CFLAGS@ @ALSA_CFLAGS@ @LASH_CFLAGS@ @SLV2_CFLAGS@ -I$(top_srcdir)/src/common -I$(top_srcdir)/src/engine/events -fno-exceptions -fno-rtti
 
 common_SOURCES = \
 	util.h \
@@ -48,10 +49,6 @@ common_SOURCES = \
 	MidiTriggerNode.cpp \
 	MidiControlNode.h \
 	MidiControlNode.cpp \
-	RegisterClientEvent.h \
-	RegisterClientEvent.cpp \
-	UnregisterClientEvent.h \
-	UnregisterClientEvent.cpp \
 	BridgeNode.h \
 	BridgeNode.cpp \
 	ControlInputNode.h \
@@ -69,31 +66,6 @@ common_SOURCES = \
 	Event.h \
 	Event.cpp \
 	QueuedEvent.h \
-	PingQueuedEvent.h \
-	ActivateEvent.h \
-	ActivateEvent.cpp \
-	DeactivateEvent.h \
-	DeactivateEvent.cpp \
-	SetPortValueEvent.h \
-	SetPortValueEvent.cpp \
-	SetPortValueQueuedEvent.h \
-	SetPortValueQueuedEvent.cpp \
-	NoteOnEvent.h \
-	NoteOnEvent.cpp \
-	NoteOffEvent.h \
-	NoteOffEvent.cpp \
-	AllNotesOffEvent.h \
-	AllNotesOffEvent.cpp \
-	ConnectionEvent.h \
-	ConnectionEvent.cpp \
-	DisconnectionEvent.h \
-	DisconnectionEvent.cpp \
-	DisconnectNodeEvent.h \
-	DisconnectNodeEvent.cpp \
-	DisconnectPortEvent.h \
-	DisconnectPortEvent.cpp \
-	DestroyEvent.h \
-	DestroyEvent.cpp \
 	EventSource.h \
 	QueuedEventSource.h \
 	QueuedEventSource.cpp \
@@ -104,20 +76,6 @@ common_SOURCES = \
 	Maid.cpp \
 	MaidObject.h \
 	Tree.h \
-	AddNodeEvent.h \
-	AddNodeEvent.cpp \
-	SetMetadataEvent.h \
-	SetMetadataEvent.cpp \
-	RequestMetadataEvent.h \
-	RequestMetadataEvent.cpp \
-	RequestPortValueEvent.h \
-	RequestPortValueEvent.cpp \
-	RequestAllObjectsEvent.h \
-	RequestAllObjectsEvent.cpp \
-	RequestPluginsEvent.h \
-	RequestPluginsEvent.cpp \
-	CreatePatchEvent.h \
-	CreatePatchEvent.cpp \
 	ClientRecord.h \
 	PortInfo.h \
 	PluginLibrary.h \
@@ -132,20 +90,8 @@ common_SOURCES = \
 	ConnectionBase.cpp \
 	ObjectStore.h \
 	ObjectStore.cpp \
-	LoadPluginsEvent.h \
-	LoadPluginsEvent.cpp \
-	EnablePatchEvent.h \
-	EnablePatchEvent.cpp \
-	DisablePatchEvent.h \
-	DisablePatchEvent.cpp \
-	ClearPatchEvent.h \
-	ClearPatchEvent.cpp \
 	TransportNode.h \
 	TransportNode.cpp \
-	RenameEvent.h \
-	RenameEvent.cpp \
-	MidiLearnEvent.h \
-	MidiLearnEvent.cpp \
 	Driver.h \
 	AudioDriver.h \
 	MidiDriver.h \
@@ -157,6 +103,64 @@ common_SOURCES = \
 	../common/interface/ClientInterface.h \
 	../common/interface/EngineInterface.h \
 	instantiations.cpp
+
+# Events
+common_SOURCES += \
+	events/RegisterClientEvent.h \
+	events/RegisterClientEvent.cpp \
+	events/UnregisterClientEvent.h \
+	events/UnregisterClientEvent.cpp \
+	events/PingQueuedEvent.h \
+	events/ActivateEvent.h \
+	events/ActivateEvent.cpp \
+	events/DeactivateEvent.h \
+	events/DeactivateEvent.cpp \
+	events/SetPortValueEvent.h \
+	events/SetPortValueEvent.cpp \
+	events/SetPortValueQueuedEvent.h \
+	events/SetPortValueQueuedEvent.cpp \
+	events/NoteOnEvent.h \
+	events/NoteOnEvent.cpp \
+	events/NoteOffEvent.h \
+	events/NoteOffEvent.cpp \
+	events/AllNotesOffEvent.h \
+	events/AllNotesOffEvent.cpp \
+	events/ConnectionEvent.h \
+	events/ConnectionEvent.cpp \
+	events/DisconnectionEvent.h \
+	events/DisconnectionEvent.cpp \
+	events/DisconnectNodeEvent.h \
+	events/DisconnectNodeEvent.cpp \
+	events/DisconnectPortEvent.h \
+	events/DisconnectPortEvent.cpp \
+	events/DestroyEvent.h \
+	events/DestroyEvent.cpp \
+	events/AddNodeEvent.h \
+	events/AddNodeEvent.cpp \
+	events/SetMetadataEvent.h \
+	events/SetMetadataEvent.cpp \
+	events/RequestMetadataEvent.h \
+	events/RequestMetadataEvent.cpp \
+	events/RequestPortValueEvent.h \
+	events/RequestPortValueEvent.cpp \
+	events/RequestAllObjectsEvent.h \
+	events/RequestAllObjectsEvent.cpp \
+	events/RequestPluginsEvent.h \
+	events/RequestPluginsEvent.cpp \
+	events/CreatePatchEvent.h \
+	events/CreatePatchEvent.cpp \
+	events/LoadPluginsEvent.h \
+	events/LoadPluginsEvent.cpp \
+	events/EnablePatchEvent.h \
+	events/EnablePatchEvent.cpp \
+	events/DisablePatchEvent.h \
+	events/DisablePatchEvent.cpp \
+	events/ClearPatchEvent.h \
+	events/ClearPatchEvent.cpp \
+	events/RenameEvent.h \
+	events/RenameEvent.cpp \
+	events/MidiLearnEvent.h \
+	events/MidiLearnEvent.cpp
 
 if WITH_JACK_MIDI
 common_SOURCES += \
@@ -180,14 +184,14 @@ if WITH_DSSI
 common_SOURCES += \
 	DSSIPlugin.h \
 	DSSIPlugin.cpp \
-	DSSIUpdateEvent.h \
-	DSSIUpdateEvent.cpp \
-	DSSIControlEvent.h \
-	DSSIControlEvent.cpp \
-	DSSIConfigureEvent.h \
-	DSSIConfigureEvent.cpp \
-	DSSIProgramEvent.h \
-	DSSIProgramEvent.cpp
+	events/DSSIConfigureEvent.cpp \
+	events/DSSIConfigureEvent.h \
+	events/DSSIControlEvent.cpp \
+	events/DSSIControlEvent.h \
+	events/DSSIProgramEvent.cpp \
+	events/DSSIProgramEvent.h \
+	events/DSSIUpdateEvent.cpp \
+	events/DSSIUpdateEvent.h
 endif
 
 if WITH_LV2
@@ -197,7 +201,10 @@ common_SOURCES += \
 endif
 
 if WITH_LASH
-common_SOURCES += LashDriver.h LashDriver.cpp LashRestoreDoneEvent.h
+common_SOURCES += \
+	LashDriver.h \
+	LashDriver.cpp \
+	LashRestoreDoneEvent.h
 endif
 
 
@@ -205,19 +212,19 @@ endif
 # Non-installed library to link stand-alone and in-process build against
 #
 
-noinst_LIBRARIES = libom.a
-libom_a_SOURCES = $(common_SOURCES)
+noinst_LTLIBRARIES = libom.la
+libom_la_SOURCES = $(common_SOURCES)
 
 
 
 #
-# Stand-alone engine
+# Statically linked stand-alone engine
 #
 if BUILD_ENGINE
 
 bin_PROGRAMS = om
-om_DEPENDENCIES = libom.a
-om_LDADD = @JACK_LIBS@ @LOSC_LIBS@ @ALSA_LIBS@ @LASH_LIBS@ @SLV2_LIBS@ -lrt libom.a 
+om_DEPENDENCIES = libom.la
+om_LDADD = @JACK_LIBS@ @LOSC_LIBS@ @ALSA_LIBS@ @LASH_LIBS@ @SLV2_LIBS@ -lrt libom.la
 
 om_SOURCES = \
 	main.cpp \
@@ -233,13 +240,15 @@ endif # BUILD_ENGINE
 #
 if BUILD_IN_PROCESS_ENGINE
 
+
+# FIXME: broken
+
+
 # FIXME: Figure out how to get this properly
 omdir = $(prefix)/lib/jack
 
 om_la_CFLAGS = -fPIC
 om_LTLIBRARIES = om.la
-om_la_DEPENDENCIES = libom.a
-om_la_LIBADD = libom.a
 om_la_LDFLAGS = -module -avoid-version @JACK_LIBS@ @LOSC_LIBS@ @ALSA_LIBS@ @LASH_LIBS@ @SLV2_LIBS@
 om_la_SOURCES = OmInProcess.cpp
 
