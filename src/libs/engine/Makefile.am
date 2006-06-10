@@ -1,11 +1,13 @@
 SUBDIRS = tests
 DIST_SUBDIRS = events
 
-AM_CXXFLAGS = @JACK_CFLAGS@ @LOSC_CFLAGS@ @ALSA_CFLAGS@ @LASH_CFLAGS@ @SLV2_CFLAGS@ -I$(top_srcdir)/src/common -I$(top_srcdir)/src/engine/events -fno-exceptions -fno-rtti
+AM_CXXFLAGS = @JACK_CFLAGS@ @LOSC_CFLAGS@ @ALSA_CFLAGS@ @LASH_CFLAGS@ @SLV2_CFLAGS@ -I$(top_srcdir)/src/libom_la -I$(top_srcdir)/src/engine/events -fno-exceptions -fno-rtti
 
 MAINTAINERCLEANFILES = Makefile.in
 
-common_SOURCES = \
+LTLIBRARIES = libom.la
+
+libom_la_SOURCES = \
 	util.h \
 	tuning.h \
 	Node.h \
@@ -98,16 +100,13 @@ common_SOURCES = \
 	AudioDriver.h \
 	MidiDriver.h \
 	midi.h \
-	../common/util/Semaphore.h \
-	../common/util/types.h \
-	../common/util/Path.h \
-	../common/util/Queue.h \
-	../common/interface/ClientInterface.h \
-	../common/interface/EngineInterface.h \
-	instantiations.cpp
-
-# Events
-common_SOURCES += \
+	../libom_la/util/Semaphore.h \
+	../libom_la/util/types.h \
+	../libom_la/util/Path.h \
+	../libom_la/util/Queue.h \
+	../libom_la/interface/ClientInterface.h \
+	../libom_la/interface/EngineInterface.h \
+	instantiations.cpp \
 	events/RegisterClientEvent.h \
 	events/RegisterClientEvent.cpp \
 	events/UnregisterClientEvent.h \
@@ -165,25 +164,25 @@ common_SOURCES += \
 	events/MidiLearnEvent.cpp
 
 if WITH_JACK_MIDI
-common_SOURCES += \
+libom_la_SOURCES += \
 	JackMidiDriver.h \
 	JackMidiDriver.cpp
 endif
 
 if WITH_ALSA_MIDI
-common_SOURCES += \
+libom_la_SOURCES += \
 	AlsaMidiDriver.h \
 	AlsaMidiDriver.cpp
 endif
 
 if WITH_LADSPA
-common_SOURCES += \
+libom_la_SOURCES += \
 	LADSPAPlugin.h \
 	LADSPAPlugin.cpp
 endif
 
 if WITH_DSSI
-common_SOURCES += \
+libom_la_SOURCES += \
 	DSSIPlugin.h \
 	DSSIPlugin.cpp \
 	events/DSSIConfigureEvent.cpp \
@@ -197,63 +196,15 @@ common_SOURCES += \
 endif
 
 if WITH_LV2
-common_SOURCES += \
+libom_la_SOURCES += \
 	LV2Plugin.h \
 	LV2Plugin.cpp
 endif
 
 if WITH_LASH
-common_SOURCES += \
+libom_la_SOURCES += \
 	LashDriver.h \
 	LashDriver.cpp \
 	LashRestoreDoneEvent.h
 endif
-
-
-#
-# Non-installed library to link stand-alone and in-process build against
-#
-
-noinst_LTLIBRARIES = libom.la
-libom_la_SOURCES = $(common_SOURCES)
-
-
-
-#
-# Stand-alone engine
-#
-if BUILD_ENGINE
-
-bin_PROGRAMS = om
-om_DEPENDENCIES = libom.la
-om_LDADD = @JACK_LIBS@ @LOSC_LIBS@ @ALSA_LIBS@ @LASH_LIBS@ @SLV2_LIBS@ -lrt libom.la
-
-om_SOURCES = \
-	main.cpp \
-	cmdline.h \
-	cmdline.c
-
-endif # BUILD_ENGINE
-
-
-
-#
-# Jack internal client
-#
-if BUILD_IN_PROCESS_ENGINE
-
-
-# FIXME: broken
-
-
-# FIXME: Figure out how to get this properly
-omdir = $(prefix)/lib/jack
-
-om_la_CFLAGS = -fPIC
-om_LTLIBRARIES = om.la
-om_la_LDFLAGS = -module -avoid-version @JACK_LIBS@ @LOSC_LIBS@ @ALSA_LIBS@ @LASH_LIBS@ @SLV2_LIBS@
-om_la_SOURCES = OmInProcess.cpp
-
-endif # BUILD_IN_PROCESS_ENGINE
-
 
