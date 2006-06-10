@@ -1,3 +1,5 @@
+MAINTAINERCLEANFILES = Makefile.in
+
 EXTRA_DIST = \
 	events/RegisterClientEvent.h \
 	events/RegisterClientEvent.cpp \

@@ -3,6 +3,8 @@ DIST_SUBDIRS = events
 
 AM_CXXFLAGS = @JACK_CFLAGS@ @LOSC_CFLAGS@ @ALSA_CFLAGS@ @LASH_CFLAGS@ @SLV2_CFLAGS@ -I$(top_srcdir)/src/common -I$(top_srcdir)/src/engine/events -fno-exceptions -fno-rtti
 
+MAINTAINERCLEANFILES = Makefile.in
+
 common_SOURCES = \
 	util.h \
 	tuning.h \
@@ -218,7 +220,7 @@ libom_la_SOURCES = $(common_SOURCES)
 
 
 #
-# Statically linked stand-alone engine
+# Stand-alone engine
 #
 if BUILD_ENGINE
 
