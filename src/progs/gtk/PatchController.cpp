@@ -70,6 +70,8 @@ PatchController::PatchController(CountedPtr<PatchModel> model)
 		else
 			cerr << "[PatchController] " << path() << " ERROR: Parent not found." << endl;
 	}*/
+
+	model->new_node_sig.connect(sigc::mem_fun(this, &PatchController::add_node));
 }
 
 
@@ -194,7 +196,7 @@ PatchController::set_path(const Path& new_path)
 	// Rename nodes
 	for (NodeModelMap::const_iterator i = patch_model()->nodes().begin();
 			i != patch_model()->nodes().end(); ++i) {
-		const NodeModel* const nm = (*i).second;
+		const NodeModel* const nm = (*i).second.get();
 		assert(nm != NULL);
 		NodeController* const nc = ((NodeController*)nm->controller());
 		assert(nc != NULL);
@@ -203,7 +205,7 @@ PatchController::set_path(const Path& new_path)
 	
 #ifdef DEBUG
 	// Be sure ports were renamed by their bridge nodes
-	for (list<PortModel*>::const_iterator i = node_model()->ports().begin();
+	for (PortModelList::const_iterator i = node_model()->ports().begin();
 			i != node_model()->ports().end(); ++i) {
 		GtkObjectController* const pc = (GtkObjectController*)((*i)->controller());
 		assert(pc != NULL);
@@ -308,7 +310,7 @@ PatchController::create_view()
 	for (NodeModelMap::const_iterator i = patch_model()->nodes().begin();
 			i != patch_model()->nodes().end(); ++i) {
 
-		NodeModel* const nm = (*i).second;
+		NodeModel* const nm = (*i).second.get();
 
 		string val = nm->get_metadata("module-x");
 		if (val != "")
@@ -326,7 +328,9 @@ PatchController::create_view()
 		}
 
 		NodeController* nc = ((NodeController*)nm->controller());
-		assert(nc != NULL);
+		if (!nc)
+			nc = new NodeController(nm); // this should set nm->controller()
+		
 		if (nc->module() == NULL);
 			nc->create_module(m_patch_view->canvas());
 		assert(nc->module() != NULL);
@@ -409,16 +413,19 @@ PatchController::add_subpatch(PatchController* patch)
 
 
 void
-PatchController::add_node(NodeModel* nm)
+PatchController::add_node(CountedPtr<NodeModel> nm)
 {
-	assert(nm != NULL);
-	assert(nm->parent() == NULL);
-	assert(nm->path().parent() == m_model->path());
+	cerr << "ADD NODE\n";
+
+	assert(nm);
+	assert(nm->parent() == m_patch_model.get());
+	assert(nm->path().parent() == m_patch_model->path());
 	
-	if (patch_model()->get_node(nm->name()) != NULL) {
+	/*if (patch_model()->get_node(nm->name()) != NULL) {
+		cerr << "Ignoring existing\n";
 		// Node already exists, ignore
-		delete nm;
-	} else {
+		//delete nm;
+	} else {*/
 		// FIXME: Should PatchController really be responsible for creating these?
 		NodeController* nc = NULL;
 		
@@ -431,8 +438,8 @@ PatchController::add_node(NodeModel* nm)
 		assert(nm->controller() == nc);
 		
 		// Check if this is a bridge node
-		PortModel* const pm = patch_model()->get_port(nm->path().name());
-		if (pm != NULL) {
+		CountedPtr<PortModel> pm = patch_model()->get_port(nm->path().name());
+		if (pm) {
 			cerr << "Bridge node." << endl;
 			PortController* pc = ((PortController*)pm->controller());
 			assert(pc != NULL);
@@ -440,10 +447,9 @@ PatchController::add_node(NodeModel* nm)
 		}
 		
 		//nc->add_to_store();
-		patch_model()->add_node(nm);
+		//patch_model()->add_node(nm);
 		
 		if (m_patch_view != NULL) {
-			
 			int x, y;
 			get_new_module_location(x, y);
 			nm->x(x);
@@ -465,7 +471,7 @@ PatchController::add_node(NodeModel* nm)
 				m_patch_view->canvas()->zoom(old_zoom);
 				nc->module()->zoom(old_zoom);
 			}
-		}
+	//	}
 	}
 }
 
@@ -496,17 +502,16 @@ PatchController::remove_node(const string& name)
  * exist.
  */
 void
-PatchController::add_port(PortModel* pm)
+PatchController::add_port(CountedPtr<PortModel> pm)
 {
-	assert(pm != NULL);
+	assert(pm);
 	assert(pm->parent() == NULL);
 
 	//cerr << "[PatchController] Adding port " << pm->path() << endl;
 
-	if (patch_model()->get_port(pm->name()) != NULL) {
+	if (patch_model()->get_port(pm->name())) {
 		cerr << "[PatchController] Ignoring duplicate port "
 			<< pm->path() << endl;
-		delete pm;
 		return;
 	}
 	
@@ -561,7 +566,7 @@ PatchController::remove_port(const Path& path, bool resize_module)
 	}
 	
 	patch_model()->remove_port(path);
-	assert(patch_model()->get_port(path.name()) == NULL);
+	assert(patch_model()->get_port(path.name()));
 	
 	// Disable "Controls" menuitem on module and patch window, if necessary
 	if (!has_control_inputs())

@@ -64,7 +64,6 @@ public:
 
 	void set_path(const Path& new_path);
 	
-	virtual void add_port(PortModel* pm);
 	virtual void remove_port(const Path& path, bool resize_module) {}
 
 	virtual void program_add(int bank, int program, const string& name) {}
@@ -75,7 +74,7 @@ public:
 	void bridge_port(PortController* port) { m_bridge_port = port; }
 	PortController* as_port()              { return m_bridge_port; }
 	
-	CountedPtr<NodeModel> node_model() { return CountedPtr<NodeModel>((NodeModel*)m_model.get()); }
+	CountedPtr<NodeModel> node_model() { return m_model; }
 	
 	NodeControlWindow* control_window()        { return m_control_window; }
 	void control_window(NodeControlWindow* cw) { m_control_window = cw; }
@@ -93,6 +92,8 @@ public:
 	virtual void disable_controls_menuitem();
 
 protected:
+	virtual void add_port(CountedPtr<PortModel> pm);
+
 	void create_all_ports();
 
 	void on_menu_destroy();

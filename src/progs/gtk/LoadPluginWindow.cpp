@@ -133,7 +133,7 @@ void
 LoadPluginWindow::on_show()
 {
 	if (!m_has_shown) {
-		set_plugin_model(Store::instance().plugins());
+		set_plugin_list(Store::instance().plugins());
 	
 		// Center on patch window
 		int m_w, m_h;
@@ -161,12 +161,12 @@ LoadPluginWindow::on_hide()
 
 
 void
-LoadPluginWindow::set_plugin_model(const std::map<string, const PluginModel*>& m)
+LoadPluginWindow::set_plugin_list(const std::map<string, CountedPtr<PluginModel> >& m)
 {
 	m_plugins_liststore->clear();
 
-	const PluginModel* plugin = NULL;
-	for (std::map<string, const PluginModel*>::const_iterator i = m.begin(); i != m.end(); ++i) {
+	CountedPtr<PluginModel> plugin = NULL;
+	for (std::map<string, CountedPtr<PluginModel> >::const_iterator i = m.begin(); i != m.end(); ++i) {
 		plugin = (*i).second;
 
 		Gtk::TreeModel::iterator iter = m_plugins_liststore->append();
@@ -186,7 +186,7 @@ LoadPluginWindow::set_plugin_model(const std::map<string, const PluginModel*>& m
 
 
 void
-LoadPluginWindow::add_plugin(const PluginModel* const plugin)
+LoadPluginWindow::add_plugin(CountedPtr<PluginModel> plugin)
 {
 	Gtk::TreeModel::iterator iter = m_plugins_liststore->append();
 	Gtk::TreeModel::Row row = *iter;
@@ -240,7 +240,7 @@ LoadPluginWindow::generate_module_name(int offset)
 	
 	if (iter) {
 		Gtk::TreeModel::Row row = *iter;
-		const PluginModel* const plugin = row.get_value(m_plugins_columns.m_col_plugin_model);
+		CountedPtr<PluginModel> plugin = row.get_value(m_plugins_columns.m_col_plugin_model);
 		char num_buf[3];
 		for (uint i=0; i < 99; ++i) {
 			name = plugin->plug_label();
@@ -270,7 +270,7 @@ LoadPluginWindow::add_clicked()
 	
 	if (iter) { // If anything is selected			
 		Gtk::TreeModel::Row row = *iter;
-		const PluginModel* const plugin = row.get_value(m_plugins_columns.m_col_plugin_model);
+		CountedPtr<PluginModel> plugin = row.get_value(m_plugins_columns.m_col_plugin_model);
 		string name = m_node_name_entry->get_text();
 		if (name == "") {
 			name = generate_module_name();
@@ -283,8 +283,7 @@ LoadPluginWindow::add_clicked()
 			dialog.run();
 		} else {
 			const string path = m_patch_controller->model()->base_path() + name;
-			NodeModel* nm = new NodeModel(path);
-			nm->plugin(plugin);
+			NodeModel* nm = new NodeModel(plugin, path);
 			nm->polyphonic(polyphonic);
 			
 			if (m_new_module_x == 0 && m_new_module_y == 0) {
@@ -340,10 +339,11 @@ LoadPluginWindow::filter_changed()
 	Gtk::TreeModel::iterator model_iter;
 	size_t                   num_visible = 0;
 	
-	const PluginModel* plugin = NULL;
-	for (std::map<string, const PluginModel*>::const_iterator i = Store::instance().plugins().begin();
+
+	for (std::map<string, CountedPtr<PluginModel> >::const_iterator i = Store::instance().plugins().begin();
 			i != Store::instance().plugins().end(); ++i) {
-		plugin = (*i).second;
+	
+		const CountedPtr<PluginModel> plugin = (*i).second;
 
 		switch (criteria) {
 		case CriteriaColumns::NAME:
@@ -389,7 +389,7 @@ void
 LoadPluginWindow::clear_clicked()
 {
 	m_search_entry->set_text("");
-	set_plugin_model(Store::instance().plugins());
+	set_plugin_list(Store::instance().plugins());
 }
 
 bool

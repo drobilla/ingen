@@ -24,12 +24,12 @@
 namespace OmGtk {
 
 
-PortController::PortController(PortModel* model)
+PortController::PortController(CountedPtr<PortModel> model)
 : GtkObjectController(model),
   m_port(NULL),
   m_control_panel(NULL)
 {
-	assert(model != NULL);
+	assert(model);
 	assert(model->parent() != NULL);
 	assert(model->controller() == NULL);
 

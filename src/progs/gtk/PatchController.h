@@ -71,10 +71,7 @@ public:
 
 	virtual void metadata_update(const string& key, const string& value);
 	
-	void add_node(NodeModel* nm);
-	void remove_node(const string& name);
-	
-	virtual void add_port(PortModel* pm);
+	virtual void add_port(CountedPtr<PortModel> pm);
 	virtual void remove_port(const Path& path, bool resize_module);
 
 	void connection(ConnectionModel* const cm);
@@ -111,6 +108,9 @@ public:
 	void disable_controls_menuitem();
 
 private:
+	void add_node(CountedPtr<NodeModel> nm);
+	void remove_node(const string& name);
+	
 	void create_connection(const ConnectionModel* cm);
 
 	PatchWindow* m_window;     ///< Window currently showing this patch

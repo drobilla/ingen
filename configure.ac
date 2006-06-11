@@ -259,6 +259,10 @@ if test "$build_console_clients" = "yes"; then
 	AC_SUBST(LXML2_LIBS)
 	AC_SUBST(LXML2_CFLAGS)
 	
+	# Check for sigc++ (FIXME: make this only necessary where.. uh.. necessary)
+	PKG_CHECK_MODULES(LSIGCPP, sigc++-2.0)
+	AC_SUBST(LSIGCPP_CFLAGS)
+	AC_SUBST(LSIGCPP_LIBS)
 else
  	AC_MSG_WARN([Console clients will be built!])
 fi

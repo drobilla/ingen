@@ -77,8 +77,8 @@ void
 ModelClientInterface::new_patch(const string& path, uint32_t poly)
 {
 	PatchModel* pm = new PatchModel(path, poly);
-	PluginModel* pi = new PluginModel(PluginModel::Patch);
-	pm->plugin(pi);
+	//PluginModel* pi = new PluginModel(PluginModel::Patch);
+	//pm->plugin(pi);
 	new_patch_model(pm);
 }
 
@@ -95,8 +95,7 @@ ModelClientInterface::new_node(const string& plugin_type,
 	
 	PluginModel* plugin = new PluginModel(plugin_type, plugin_uri);
 	
-	NodeModel* nm = new NodeModel(node_path);
-	nm->plugin(plugin);
+	NodeModel* nm = new NodeModel(plugin, node_path);
 
 	new_node_model(nm);
 }

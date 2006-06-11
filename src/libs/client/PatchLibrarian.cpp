@@ -167,10 +167,10 @@ PatchLibrarian::save_patch(PatchModel* patch_model, const string& filename, bool
 	
 	// Save nodes and subpatches
 	for (NodeModelMap::const_iterator i = patch_model->nodes().begin(); i != patch_model->nodes().end(); ++i) {
-		nm = i->second;
+		nm = i->second.get();
 		
 		if (nm->plugin()->type() == PluginModel::Patch) {  // Subpatch
-			spm = (PatchModel*)i->second;
+			spm = (PatchModel*)i->second.get();
 			xml_node = xmlNewChild(xml_root_node, NULL, (xmlChar*)"subpatch", NULL);
 			
 			xml_child_node = xmlNewChild(xml_node, NULL, (xmlChar*)"name", (xmlChar*)spm->name().c_str());
@@ -216,7 +216,7 @@ PatchLibrarian::save_patch(PatchModel* patch_model, const string& filename, bool
 			
 			xml_child_node = xmlNewChild(xml_node, NULL, (xmlChar*)"name", (xmlChar*)nm->name().c_str());
 			
-			if (nm->plugin() == NULL) break;
+			if (!nm->plugin()) break;
 	
 			xml_child_node = xmlNewChild(xml_node, NULL,  (xmlChar*)"polyphonic",
 				(xmlChar*)((nm->polyphonic()) ? "true" : "false"));
@@ -255,10 +255,9 @@ PatchLibrarian::save_patch(PatchModel* patch_model, const string& filename, bool
 				}
 			}
 	
-			PortModel* pm = NULL;
 			// Write port metadata, if necessary
-			for (list<PortModel*>::const_iterator i = nm->ports().begin(); i != nm->ports().end(); ++i) {
-				pm = (*i);
+			for (PortModelList::const_iterator i = nm->ports().begin(); i != nm->ports().end(); ++i) {
+				const PortModel* const pm = (*i).get();
 				if (pm->is_input() && pm->user_min() != pm->min_val() || pm->user_max() != pm->max_val()) {
 					xml_child_node = xmlNewChild(xml_node, NULL, (xmlChar*)"port", NULL);
 					xml_grandchild_node = xmlNewChild(xml_child_node, NULL, (xmlChar*)"name",
@@ -299,9 +298,9 @@ PatchLibrarian::save_patch(PatchModel* patch_model, const string& filename, bool
 
 	// Save node port controls
 	for (NodeModelMap::const_iterator n = patch_model->nodes().begin(); n != patch_model->nodes().end(); ++n) {
-		nm = n->second;
+		nm = n->second.get();
 		for (PortModelList::const_iterator p = nm->ports().begin(); p != nm->ports().end(); ++p) {
-			pm = *p;
+			pm = (*p).get();
 			if (pm->is_input() && pm->is_control()) {
 				float val = pm->value();
 				xml_node = xmlNewChild(xml_preset_node, NULL, (xmlChar*)"control",  NULL);
@@ -319,7 +318,7 @@ PatchLibrarian::save_patch(PatchModel* patch_model, const string& filename, bool
 	// Save patch port controls
 	for (PortModelList::const_iterator p = patch_model->ports().begin();
 			p != patch_model->ports().end(); ++p) {
-		pm = *p;
+		pm = (*p).get();
 		if (pm->is_input() && pm->is_control()) {
 			float val = pm->value();
 			xml_node = xmlNewChild(xml_preset_node, NULL, (xmlChar*)"control",  NULL);
@@ -480,8 +479,7 @@ PatchLibrarian::load_patch(PatchModel* pm, bool wait, bool existing)
 			if (nm != NULL) {
 				m_osc_model_engine_interface->create_node_from_model(nm);
 				m_osc_model_engine_interface->set_all_metadata(nm);
-				for (list<PortModel*>::const_iterator j = nm->ports().begin();
-						j != nm->ports().end(); ++j) {
+				for (PortModelList::const_iterator j = nm->ports().begin(); j != nm->ports().end(); ++j) {
 					// FIXME: ew
 					snprintf(temp_buf, temp_buf_length, "%f", (*j)->user_min());
 					m_osc_model_engine_interface->set_metadata((*j)->path(), "user-min", temp_buf);
@@ -550,8 +548,8 @@ PatchLibrarian::load_patch(PatchModel* pm, bool wait, bool existing)
 NodeModel*
 PatchLibrarian::parse_node(const PatchModel* parent, xmlDocPtr doc, const xmlNodePtr node)
 {
-	NodeModel* nm = new NodeModel("/UNINITIALIZED"); // FIXME: ew
 	PluginModel* plugin = new PluginModel();
+	NodeModel* nm = new NodeModel(plugin, "/UNINITIALIZED"); // FIXME: ew
 
 	xmlChar* key;
 	xmlNodePtr cur = node->xmlChildrenNode;
@@ -667,7 +665,7 @@ PatchLibrarian::parse_node(const PatchModel* parent, xmlDocPtr doc, const xmlNod
 		delete nm;
 		return NULL;
 	} else {
-		nm->plugin(plugin);
+		//nm->plugin(plugin);
 		return nm;
 	}
 }

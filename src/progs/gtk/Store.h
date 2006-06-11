@@ -17,6 +17,9 @@
 #ifndef STORE_H
 #define STORE_H
 
+// FIXME: for CountedPtr
+#define WITH_RTTI
+
 #include <cassert>
 #include <string>
 #include <map>
@@ -43,15 +46,16 @@ namespace OmGtk {
  */
 class Store {
 public:
-	CountedPtr<ObjectModel> object(const string& path) const;
-	CountedPtr<PatchModel>  patch(const string& path) const;
-	CountedPtr<NodeModel>   node(const string& path) const;
-	CountedPtr<PortModel>   port(const string& path) const;
+	CountedPtr<PluginModel>      plugin(const string& uri);
+	CountedPtr<ObjectModel> object(const string& path);
+	CountedPtr<PatchModel>  patch(const string& path);
+	CountedPtr<NodeModel>   node(const string& path);
+	CountedPtr<PortModel>   port(const string& path);
 
 	size_t num_objects() { return m_objects.size(); }
 	
-	void add_plugin(const PluginModel* pm);
-	const map<string, const PluginModel*>& plugins() const { return m_plugins; }
+
+	const map<string, CountedPtr<PluginModel> >& plugins() const { return m_plugins; }
 
 	static void instantiate(SigClientInterface& emitter)
 	{ if (!_instance) _instance = new Store(emitter); }
@@ -63,8 +67,10 @@ private:
 
 	static Store* _instance;
 
-	void add_object(ObjectModel* object);
-	void remove_object(ObjectModel* object);
+	void add_object(CountedPtr<ObjectModel> object);
+	CountedPtr<ObjectModel> remove_object(const string& path);
+	
+	void add_plugin(CountedPtr<PluginModel> plugin);
 
 	// Slots for SigClientInterface signals
 	void destruction_event(const string& path);
@@ -73,8 +79,8 @@ private:
 	void new_node_event(const string& plugin_type, const string& plugin_uri, const string& node_path, bool is_polyphonic, uint32_t num_ports);
 	void new_port_event(const string& path, const string& data_type, bool is_output);
 
-	map<string, ObjectModel*>       m_objects; ///< Keyed by Om path
-	map<string, const PluginModel*> m_plugins; ///< Keyed by URI
+	map<string, CountedPtr<ObjectModel> > m_objects; ///< Keyed by Om path
+	map<string, CountedPtr<PluginModel> > m_plugins; ///< Keyed by URI
 };
 
 

@@ -45,7 +45,7 @@ void
 ControlInterface::new_plugin_model(PluginModel* pm)
 {
 	cerr << "NEW PLUGIN\n";
-	Store::instance().add_plugin(pm);
+	//Store::instance().add_plugin(pm);
 }
 
 

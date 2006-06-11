@@ -51,7 +51,7 @@ NodePropertiesWindow::set_node(CountedPtr<NodeModel> node_model)
 	m_node_path_label->set_text(node_model->path());
 	m_node_polyphonic_toggle->set_active(node_model->polyphonic());
 
-	const PluginModel* const pm = node_model->plugin();
+	CountedPtr<PluginModel> pm = node_model->plugin();
 	
 	m_plugin_type_label->set_text(pm->type_string());
 	m_plugin_uri_label->set_text(pm->uri());

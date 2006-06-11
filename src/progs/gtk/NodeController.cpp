@@ -46,11 +46,11 @@ NodeController::NodeController(CountedPtr<NodeModel> model)
   m_properties_window(NULL),
   m_bridge_port(NULL)
 {
-	assert(model->controller() == NULL);
+	assert(!model->controller());
 	model->set_controller(this);
 
 	// Create port controllers
-	cerr << "FIXME: node" << endl;
+	cerr << "FIXME: NodeController()" << endl;
 	/*
 	for (list<PortModel*>::const_iterator i = node_model()->ports().begin();
 			i != node_model()->ports().end(); ++i) {
@@ -90,6 +90,8 @@ NodeController::NodeController(CountedPtr<NodeModel> model)
 			sigc::mem_fun(this, &NodeController::on_menu_learn)));
 	}
 	*/
+
+	model->new_port_sig.connect(sigc::mem_fun(this, &NodeController::add_port));
 }
 
 
@@ -104,10 +106,13 @@ NodeController::create_module(OmFlowCanvas* canvas)
 	//cerr << "Creating node module " << m_model->path() << endl;
 
 	// If this is a DSSI plugin, DSSIController should be doing this
+	/*assert(node_model()->plugin());
 	assert(node_model()->plugin()->type() != PluginModel::DSSI);
 	assert(canvas != NULL);
-	assert(m_module == NULL);
+	assert(m_module == NULL);*/
 	
+	assert(canvas);
+	assert(node_model());
 	m_module = new OmModule(canvas, this);
 	
 	create_all_ports();
@@ -184,7 +189,8 @@ NodeController::destroy()
 	assert(pc != NULL);
 
 	//remove_from_store();
-	pc->remove_node(m_model->path().name());
+	//pc->remove_node(m_model->path().name());
+	cerr << "FIXME: remove node\n";
 
 	if (m_bridge_port != NULL)
 		m_bridge_port->destroy();
@@ -219,7 +225,7 @@ NodeController::metadata_update(const string& key, const string& value)
 
 
 void
-NodeController::add_port(PortModel* pm)
+NodeController::add_port(CountedPtr<PortModel> pm)
 {
 	assert(pm->parent() == NULL);
 	
@@ -317,8 +323,7 @@ NodeController::on_menu_clone()
 	clone_name = clone_name + clone_postfix;
 	
 	const string path = node_model()->parent_patch()->base_path() + clone_name;
-	NodeModel* nm = new NodeModel(path);
-	nm->plugin(node_model()->plugin());
+	NodeModel* nm = new NodeModel(node_model()->plugin(), path);
 	nm->polyphonic(node_model()->polyphonic());
 	nm->x(node_model()->x() + 20);
 	nm->y(node_model()->y() + 20);
@@ -369,7 +374,9 @@ NodeController::create_all_ports()
 	for (PortModelList::const_iterator i = node_model()->ports().begin();
 			i != node_model()->ports().end(); ++i) {
 		pc = dynamic_cast<PortController*>((*i)->controller());
-		assert(pc != NULL);
+		// FIXME: leak
+		if (pc == NULL)
+			pc = new PortController(*i);
 		pc->create_port(m_module);
 	}
 

@@ -21,6 +21,15 @@
 namespace LibOmClient {
 
 
+NodeModel::NodeModel(CountedPtr<PluginModel> plugin, const Path& path)
+: ObjectModel(path),
+  m_polyphonic(false),
+  m_plugin(plugin),
+  m_x(0.0f),
+  m_y(0.0f)
+{
+}
+
 NodeModel::NodeModel(const Path& path)
 : ObjectModel(path),
   m_polyphonic(false),
@@ -30,10 +39,11 @@ NodeModel::NodeModel(const Path& path)
 {
 }
 
+
 NodeModel::~NodeModel()
 {
-	for (PortModelList::iterator i = m_ports.begin(); i != m_ports.end(); ++i)
-		delete(*i);
+	/*for (PortModelList::iterator i = m_ports.begin(); i != m_ports.end(); ++i)
+		delete(*i);*/
 }
 
 
@@ -52,8 +62,8 @@ NodeModel::remove_port(const string& port_path)
 void
 NodeModel::clear()
 {
-	for (PortModelList::iterator i = m_ports.begin(); i != m_ports.end(); ++i)
-		delete (*i);
+	/*for (PortModelList::iterator i = m_ports.begin(); i != m_ports.end(); ++i)
+		delete (*i);*/
 
 	m_ports.clear();
 
@@ -77,20 +87,22 @@ NodeModel::set_path(const Path& p)
 
 
 void
-NodeModel::add_port(PortModel* pm)
+NodeModel::add_port(CountedPtr<PortModel> pm)
 {
 	assert(pm->name() != "");
 	assert(pm->path().length() > m_path.length());
 	assert(pm->path().substr(0, m_path.length()) == m_path);
 	assert(pm->parent() == NULL);
-	assert(get_port(pm->name()) == NULL);
+	assert(!get_port(pm->name()));
 
 	m_ports.push_back(pm);
 	pm->set_parent(this);
+
+	new_port_sig.emit(pm);
 }
 
 
-PortModel*
+CountedPtr<PortModel>
 NodeModel::get_port(const string& port_name)
 {
 	assert(port_name.find("/") == string::npos);

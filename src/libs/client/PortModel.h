@@ -21,6 +21,7 @@
 #include <string>
 #include <list>
 #include "ObjectModel.h"
+#include "util/CountedPtr.h"
 using std::string; using std::list;
 
 namespace LibOmClient {
@@ -110,7 +111,7 @@ private:
 	bool      m_connected;
 };
 
-typedef list<PortModel*> PortModelList;
+typedef list<CountedPtr<PortModel> > PortModelList;
 
 
 } // namespace LibOmClient

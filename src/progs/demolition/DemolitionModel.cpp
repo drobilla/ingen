@@ -64,7 +64,7 @@ DemolitionModel::random_node()
 				if (i == pm->nodes().end())
 					return NULL;
 			}
-			return (*i).second;
+			return (*i).second.get();
 		}
 	}
 	//cout << "***************************** Not returning node *********" << endl;
@@ -89,7 +89,7 @@ DemolitionModel::random_node_in_patch(PatchModel* pm)
 		if (i == pm->nodes().end())
 			return NULL;
 	}
-	return (*i).second;
+	return (*i).second.get();
 }
 
 
@@ -108,7 +108,7 @@ DemolitionModel::random_port()
 	
 	for (PortModelList::iterator p = ports.begin(); p != ports.end(); ++p, ++i)
 		if (i == index)
-			return (*p);
+			return (*p).get();
 
 	return NULL; // shouldn't happen
 }
@@ -128,7 +128,7 @@ DemolitionModel::random_port_in_node(NodeModel* node)
 	
 	for (PortModelList::iterator p = ports.begin(); p != ports.end(); ++p, ++i)
 		if (i == index)
-			return (*p);
+			return (*p).get();
 
 	return NULL; // shouldn't happen
 }

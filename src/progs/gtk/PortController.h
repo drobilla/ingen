@@ -44,7 +44,7 @@ class OmModule;
 class PortController : public GtkObjectController
 {
 public:
-	PortController(PortModel* model);
+	PortController(CountedPtr<PortModel> model);
 	virtual ~PortController() {}
 	
 	virtual void destroy();

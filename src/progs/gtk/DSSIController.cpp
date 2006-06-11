@@ -27,7 +27,7 @@
 namespace OmGtk {
 
 
-DSSIController::DSSIController(NodeModel* model)
+DSSIController::DSSIController(CountedPtr<NodeModel> model)
 : NodeController(model),
   m_banks_dirty(true)
 {

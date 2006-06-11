@@ -54,19 +54,21 @@ PatchModel::get_node(const string& name)
 {
 	assert(name.find("/") == string::npos);
 	NodeModelMap::iterator i = m_nodes.find(name);
-	return ((i != m_nodes.end()) ? (*i).second : NULL);
+	return ((i != m_nodes.end()) ? (*i).second.get() : NULL);
 }
 
 
 void
-PatchModel::add_node(NodeModel* nm)
+PatchModel::add_node(CountedPtr<NodeModel> nm)
 {
-	assert(nm != NULL);
+	assert(nm);
 	assert(nm->name().find("/") == string::npos);
 	assert(nm->parent() == NULL);
 
-	m_nodes[nm->name()] = nm;
+	m_nodes[nm->name()] = CountedPtr<NodeModel>(nm);
 	nm->set_parent(this);
+
+	new_node_sig.emit(nm);
 }
 
 
@@ -76,7 +78,7 @@ PatchModel::remove_node(const string& name)
 	assert(name.find("/") == string::npos);
 	NodeModelMap::iterator i = m_nodes.find(name);
 	if (i != m_nodes.end()) {
-		delete i->second;
+		//delete i->second;
 		m_nodes.erase(i);
 		return;
 	}
@@ -93,7 +95,7 @@ PatchModel::clear()
 	
 	for (NodeModelMap::iterator i = m_nodes.begin(); i != m_nodes.end(); ++i) {
 		(*i).second->clear();
-		delete (*i).second;
+		//delete (*i).second;
 	}
 	
 	m_nodes.clear();
@@ -122,7 +124,7 @@ PatchModel::rename_node(const Path& old_path, const Path& new_path)
 	NodeModel* nm = NULL;
 	
 	if (i != m_nodes.end()) {
-		nm = (*i).second;
+		nm = (*i).second.get();
 		for (list<ConnectionModel*>::iterator j = m_connections.begin(); j != m_connections.end(); ++j) {
 			if ((*j)->src_port_path().parent() == old_path)
 				(*j)->src_port_path(new_path.base_path() + (*j)->src_port_path().name());
@@ -172,9 +174,9 @@ PatchModel::add_connection(ConnectionModel* cm)
 	}
 
 	NodeModel* src_node = get_node(cm->src_port_path().parent().name());
-	PortModel* src_port = (src_node == NULL) ? NULL : src_node->get_port(cm->src_port_path().name());
+	PortModel* src_port = (src_node == NULL) ? NULL : src_node->get_port(cm->src_port_path().name()).get();
 	NodeModel* dst_node = get_node(cm->dst_port_path().parent().name());
-	PortModel* dst_port = (dst_node == NULL) ? NULL : dst_node->get_port(cm->dst_port_path().name());
+	PortModel* dst_port = (dst_node == NULL) ? NULL : dst_node->get_port(cm->dst_port_path().name()).get();
 	
 	assert(src_port != NULL);
 	assert(dst_port != NULL);

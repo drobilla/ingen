@@ -21,9 +21,12 @@
 #include <map>
 #include <iostream>
 #include <string>
+#include <sigc++/sigc++.h>
 #include "ObjectModel.h"
 #include "PortModel.h"
 #include "util/Path.h"
+#include "util/CountedPtr.h"
+#include "PluginModel.h"
 
 using std::string; using std::map; using std::find;
 using std::cout; using std::cerr; using std::endl;
@@ -41,11 +44,11 @@ class PluginModel;
 class NodeModel : public ObjectModel
 {
 public:
-	NodeModel(const Path& node_path);
+	NodeModel(CountedPtr<PluginModel> plugin, const Path& path);
 	virtual ~NodeModel();
 	
-	PortModel* get_port(const string& port_name);
-	void       add_port(PortModel* pm);
+	CountedPtr<PortModel> get_port(const string& port_name);
+	void       add_port(CountedPtr<PortModel> pm);
 	void       remove_port(const string& port_path);
 	
 	virtual void clear();
@@ -54,8 +57,8 @@ public:
 	void add_program(int bank, int program, const string& name);
 	void remove_program(int bank, int program);
 
-	const PluginModel* plugin() const                      { return m_plugin; }
-	void               plugin(const PluginModel* const pi) { m_plugin = pi; }
+	CountedPtr<PluginModel> plugin() const { return m_plugin; }
+	//void               plugin(CountedPtr<PluginModel> p) { m_plugin = p; }
 	
 	virtual void set_path(const Path& p);
 	
@@ -70,10 +73,15 @@ public:
 	
 	PatchModel* parent_patch() const { return (PatchModel*)m_parent; }
 	
+	// Signals
+	sigc::signal<void, CountedPtr<PortModel> > new_port_sig; 
+	
 protected:
+	NodeModel(const Path& path);
+
 	bool                        m_polyphonic;
 	PortModelList               m_ports;  ///< List of ports (instead of map to preserve order)
-	const PluginModel*          m_plugin; ///< The plugin this node is an instance of
+	CountedPtr<PluginModel>     m_plugin; ///< The plugin this node is an instance of
 	float                       m_x;      ///< Just metadata, here as an optimization for OmGtk
 	float                       m_y;      ///< Just metadata, here as an optimization for OmGtk
 	map<int, map<int, string> > m_banks;  ///< DSSI banks
@@ -85,7 +93,7 @@ private:
 };
 
 
-typedef map<string, NodeModel*>   NodeModelMap;
+typedef map<string, CountedPtr<NodeModel> >   NodeModelMap;
 
 
 } // namespace LibOmClient

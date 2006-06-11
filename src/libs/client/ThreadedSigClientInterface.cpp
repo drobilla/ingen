@@ -26,8 +26,6 @@ namespace LibOmClient {
 void
 ThreadedSigClientInterface::push_sig(Closure ev)
 {
-	cerr << "-- pushing event\n";
-
 	bool success = false;
 	bool first   = true;
 	
@@ -58,7 +56,6 @@ ThreadedSigClientInterface::emit_signals()
 	// thread indefinitely while processing continually arriving events
 	size_t num_processed = 0;
 	while (!_sigs.is_empty() && num_processed++ < _sigs.capacity()/2) {
-		cerr << "-- emitting event\n";
 		Closure& ev = _sigs.pop();
 		ev();
 		ev.disconnect();

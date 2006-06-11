@@ -3,7 +3,7 @@ AM_CXXFLAGS = -I$(top_srcdir)/src/common -fno-exceptions -fno-rtti
 if BUILD_CLIENT_LIB
 noinst_LTLIBRARIES = libomclient.la
 
-libomclient_la_CXXFLAGS = -I$(top_srcdir)/src/common -DPKGDATADIR=\"$(pkgdatadir)\" $(LIBGLADEMM_CFLAGS) $(GNOMECANVASMM_CFLAGS) $(JACK_CFLAGS) $(LXML2_CFLAGS)
+libomclient_la_CXXFLAGS = -I$(top_srcdir)/src/common -DPKGDATADIR=\"$(pkgdatadir)\" $(LXML2_CFLAGS) $(LSIGCPP_CFLAGS)
 
 libomclient_la_SOURCES = \
 	ClientInterface.h \

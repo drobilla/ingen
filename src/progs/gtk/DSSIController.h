@@ -49,7 +49,7 @@ class DSSIModule;
 class DSSIController : public NodeController
 {
 public:
-	DSSIController(NodeModel* model);
+	DSSIController(CountedPtr<NodeModel> model);
 
 	virtual ~DSSIController() {}
 	

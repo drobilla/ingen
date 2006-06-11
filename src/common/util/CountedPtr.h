@@ -52,6 +52,14 @@ public:
 			_counter = new Counter(p);
 	}
 
+	/** Make a NULL CountedPtr.
+	 * It would be best if this didn't exist, but it makes these storable
+	 * in STL containers :/
+	 */
+	CountedPtr()
+	: _counter(NULL)
+	{}
+
 	~CountedPtr()
 	{
 		release();
@@ -61,9 +69,10 @@ public:
 	CountedPtr(const CountedPtr& copy) 
 	: _counter(NULL)
 	{
-		assert(copy);
 		assert(this != &copy);
-		retain(copy._counter);
+		
+		if (copy)
+			retain(copy._counter);
 	}
 	
 	/** Copy a CountedPtr to a valid base class.
@@ -76,7 +85,11 @@ public:
 
 		// Fail if this is not a valid cast
 		if (y) {
-			T* const unused_variable = static_cast<Y* const>(y._counter->ptr);
+#ifdef WITH_RTTI
+			T* const unused_variable = dynamic_cast<T* const>(y._counter->ptr);
+#else 
+			T* const unused_variable = static_cast<T* const>(y._counter->ptr);
+#endif
 			assert(unused_variable == y._counter->ptr); // shuts up gcc
 		}
 		

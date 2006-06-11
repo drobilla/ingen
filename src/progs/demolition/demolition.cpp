@@ -223,8 +223,7 @@ add_node()
 	PluginModel* plugin = model->random_plugin();
 	
 	if (parent != NULL && plugin != NULL) {
-		NodeModel* nm = new NodeModel(parent->path() +"/"+ random_name());
-		nm->plugin(plugin);
+		NodeModel* nm = new NodeModel(plugin, parent->path() +"/"+ random_name());
 		cout << "Adding node " << nm->path() << endl;
 		engine->create_node_from_model(nm);
 		// Spread them out a bit for easier monitoring with om_gtk

@@ -21,7 +21,9 @@
 #include <list>
 #include <string>
 #include <map>
+#include <sigc++/sigc++.h>
 #include "NodeModel.h"
+#include "util/CountedPtr.h"
 
 using std::list; using std::string; using std::map;
 
@@ -49,7 +51,7 @@ public:
 	virtual void set_path(const Path& path);
 	
 	NodeModel*       get_node(const string& node_name);
-	void             add_node(NodeModel* nm);
+	void             add_node(CountedPtr<NodeModel> nm);
 	void             remove_node(const string& name);
 
 	void             rename_node(const Path& old_path, const Path& new_path);
@@ -68,6 +70,9 @@ public:
 	void          enabled(bool b)            { m_enabled = b; }
 	bool          polyphonic() const;
 	
+	// Signals
+	sigc::signal<void, CountedPtr<NodeModel> > new_node_sig; 
+
 private:
 	// Prevent copies (undefined)
 	PatchModel(const PatchModel& copy);

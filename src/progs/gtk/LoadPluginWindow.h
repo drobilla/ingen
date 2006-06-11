@@ -23,7 +23,7 @@
 #include <libglademm/xml.h>
 #include <libglademm.h>
 #include <gtkmm.h>
-
+#include "util/CountedPtr.h"
 
 using LibOmClient::PluginModel;
 
@@ -55,8 +55,8 @@ public:
   Gtk::TreeModelColumn<Glib::ustring> m_col_uri;
 
   // Not displayed:
-  Gtk::TreeModelColumn<Glib::ustring>      m_col_label;
-  Gtk::TreeModelColumn<const PluginModel*> m_col_plugin_model;
+  Gtk::TreeModelColumn<Glib::ustring>            m_col_label;
+  Gtk::TreeModelColumn<CountedPtr<PluginModel> > m_col_plugin_model;
 };
 
 
@@ -88,12 +88,12 @@ public:
 	LoadPluginWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml);
 
 	void patch_controller(PatchController* pc);
-	void set_plugin_model(const std::map<string, const PluginModel*>& m);
+	void set_plugin_list(const std::map<string, CountedPtr<PluginModel> >& m);
 
 	void set_next_module_location(int x, int y)
 		{ m_new_module_x = x; m_new_module_y = y; }
 	
-	void add_plugin(const PluginModel* info);
+	void add_plugin(CountedPtr<PluginModel> plugin);
 	bool has_shown() const { return m_has_shown; }
 
 protected:
