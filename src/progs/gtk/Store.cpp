@@ -23,7 +23,7 @@
 #include "PatchModel.h"
 #include "SigClientInterface.h"
 
-namespace OmGtk {
+namespace LibOmClient {
 
 Store::Store(SigClientInterface& emitter)
 {
@@ -259,5 +259,5 @@ Store::new_port_event(const string& path, const string& type, bool is_output)
 }
 
 
-} // namespace OmGtk
+} // namespace LibOmClient
 

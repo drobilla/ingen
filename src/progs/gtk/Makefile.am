@@ -21,8 +21,6 @@ om_gtk_SOURCES = \
 	ConnectWindow.cpp \
 	App.h \
 	App.cpp \
-	Store.h \
-	Store.cpp \
 	Configuration.h \
 	Configuration.cpp \
 	GladeFactory.h \

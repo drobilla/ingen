@@ -27,18 +27,13 @@
 using std::string; using std::map;
 
 namespace LibOmClient {
-	class SigClientInterface;
-	class ObjectModel;
-	class PluginModel;
-	class PatchModel;
-	class NodeModel;
-	class PortModel;
-}
-using namespace LibOmClient;
 
-namespace OmGtk {
-
-
+class SigClientInterface;
+class ObjectModel;
+class PluginModel;
+class PatchModel;
+class NodeModel;
+class PortModel;
 
 /** Singeton which holds all "Om Objects" for easy/fast lookup
  *
@@ -84,6 +79,6 @@ private:
 };
 
 
-} // namespace OmGtk
+} // namespace LibOmClient
 
 #endif // STORE_H
