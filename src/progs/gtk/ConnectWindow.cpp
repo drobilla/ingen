@@ -24,6 +24,8 @@
 #include "Controller.h"
 #include "OSCListener.h"
 #include "Store.h"
+#include "PatchController.h"
+#include "PatchModel.h"
 
 namespace OmGtk {
 
@@ -149,8 +151,13 @@ ConnectWindow::gtk_callback()
 		Controller::instance().request_all_objects();
 		++stage;
 	} else if (stage == 7) {
-		if (Store::instance().num_objects() > 0)
+		if (Store::instance().num_objects() > 0) {
+			CountedPtr<PatchModel> root = Store::instance().patch("/");
+			assert(root);
+			PatchController* root_controller = new PatchController(root);
+			root_controller->show_patch_window();
 			++stage;
+		}
 	} else if (stage == 8) {
 		stage = -1;
 		hide(); // FIXME: actually destroy window to save mem?

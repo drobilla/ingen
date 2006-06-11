@@ -51,10 +51,11 @@ using namespace LibOmClient;
 namespace OmGtk {
 
 
-PatchController::PatchController(PatchModel* model)
+PatchController::PatchController(CountedPtr<PatchModel> model)
 : NodeController(model),
   m_window(NULL),
   m_patch_view(NULL),
+  m_patch_model(model),
   m_module_x(0),
   m_module_y(0)
 {
@@ -62,13 +63,13 @@ PatchController::PatchController(PatchModel* model)
 	assert(model->parent() == NULL);
 	assert(model->controller() == this); // NodeController() does this
 
-	if (model->path() != "/") {
+/* FIXME	if (model->path() != "/") {
 		PatchController* parent = Store::instance().patch(model->path().parent());
 		if (parent != NULL)
 			parent->add_subpatch(this);
 		else
 			cerr << "[PatchController] " << path() << " ERROR: Parent not found." << endl;
-	}
+	}*/
 }
 
 
@@ -94,7 +95,7 @@ PatchController::~PatchController()
 	}
 }
 
-
+/*
 void
 PatchController::add_to_store()
 {
@@ -107,7 +108,7 @@ PatchController::remove_from_store()
 {
 	Store::instance().remove_object(this);
 }
-
+*/
 
 void
 PatchController::clear()
@@ -161,7 +162,7 @@ PatchController::destroy()
 	//patch_model()->clear();
 
 	// Remove self from object store
-	Store::instance().remove_object(this);
+	//Store::instance().remove_object(this);
 	
 	// Delete self from parent (this will delete model)
 	if (patch_model()->parent() != NULL) {
@@ -169,7 +170,7 @@ PatchController::destroy()
 		assert(parent != NULL);
 		parent->remove_node(name());
 	} else {
-		delete m_model;
+		//delete m_model;
 	}
 }
 
@@ -187,7 +188,7 @@ PatchController::metadata_update(const string& key, const string& value)
 void
 PatchController::set_path(const Path& new_path)
 {
-	assert(m_model != NULL);
+	assert(m_model);
 	Path old_path = path();
 	
 	// Rename nodes
@@ -230,9 +231,9 @@ PatchController::set_path(const Path& new_path)
 	if (parent != NULL && parent->window() != NULL)
 		parent->window()->node_renamed(old_path, new_path);
 
-	remove_from_store();
+	//remove_from_store();
 	GtkObjectController::set_path(new_path);
-	add_to_store();
+	//add_to_store();
 	
 	if (old_path.name() != new_path.name())
 		parent->patch_model()->rename_node(old_path, new_path);
@@ -356,11 +357,13 @@ PatchController::create_connection(const ConnectionModel* cm)
 
 	// Disable control slider from destination node control window
 	
-	PortController* p = Store::instance().port(cm->dst_port_path());
+	cerr << "FIXME: create_connection\n";
+	/*PortController* p = Store::instance().port(cm->dst_port_path());
 	assert(p != NULL);
 
 	if (p->control_panel() != NULL)
-		p->control_panel()->disable_port(p->path());
+		p->control_panel()->disable_port(p->path());*/
+
 	// FIXME: don't use canvas as a model (search object store)
 	/*OmModule* m = (OmModule*)m_patch_view->canvas()->find_module(
 			cm->dst_port_path().parent().name());
@@ -385,8 +388,8 @@ void
 PatchController::add_subpatch(PatchController* patch)
 {
 	assert(patch != NULL);
-	assert(patch->patch_model() != NULL);
-	assert(patch->patch_model()->parent() == NULL);
+	assert(patch->patch_model());
+	assert(patch->patch_model()->parent());
 
 	/*if (pm->x() == 0 && pm->y() == 0) {
 		int x, y;
@@ -395,7 +398,7 @@ PatchController::add_subpatch(PatchController* patch)
 		pm->y(y);
 	}*/
 	
-	patch_model()->add_node(patch->patch_model());
+	//patch_model()->add_node(patch->patch_model());
 
 	if (m_patch_view != NULL) {
 		patch->create_module(m_patch_view->canvas());
@@ -436,7 +439,7 @@ PatchController::add_node(NodeModel* nm)
 			nc->bridge_port(pc);
 		}
 		
-		nc->add_to_store();
+		//nc->add_to_store();
 		patch_model()->add_node(nm);
 		
 		if (m_patch_view != NULL) {
@@ -511,7 +514,7 @@ PatchController::add_port(PortModel* pm)
 	PortController* pc = new PortController(pm);
 
 	// Handle bridge ports/nodes (this is uglier than it should be)
-	NodeController* nc = Store::instance().node(pm->path());
+	NodeController* nc = (NodeController*)Store::instance().node(pm->path())->controller();
 	if (nc != NULL)
 		nc->bridge_port(pc);
 	
@@ -593,12 +596,15 @@ PatchController::disconnection(const Path& src_port_path, const Path& dst_port_p
 
 	patch_model()->remove_connection(src_port_path, dst_port_path);
 	
+	cerr << "FIXME: disconnection\n";
+	/*
 	// Enable control slider in destination node control window
-	PortController* p = Store::instance().port(dst_port_path);
+	PortController* p = (PortController)Store::instance().port(dst_port_path)->controller();
 	assert(p != NULL);
 
 	if (p->control_panel() != NULL)
 		p->control_panel()->enable_port(p->path());
+		*/
 }
 
 
@@ -652,7 +658,7 @@ PatchController::claim_patch_view()
 void
 PatchController::show_control_window()
 {
-	assert(patch_model() != NULL);
+	assert(patch_model());
 
 	if (m_control_window == NULL)
 		m_control_window = new NodeControlWindow(this, patch_model()->poly());

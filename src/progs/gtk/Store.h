@@ -20,17 +20,22 @@
 #include <cassert>
 #include <string>
 #include <map>
+#include "util/CountedPtr.h"
 using std::string; using std::map;
 
-namespace LibOmClient { class PatchModel; class PluginModel; class SigClientInterface; }
+namespace LibOmClient {
+	class SigClientInterface;
+	class ObjectModel;
+	class PluginModel;
+	class PatchModel;
+	class NodeModel;
+	class PortModel;
+}
 using namespace LibOmClient;
 
 namespace OmGtk {
 
-class GtkObjectController;
-class PatchController;
-class NodeController;
-class PortController;
+
 
 /** Singeton which holds all "Om Objects" for easy/fast lookup
  *
@@ -38,14 +43,11 @@ class PortController;
  */
 class Store {
 public:
-	GtkObjectController* object(const string& path) const;
-	PatchController*     patch(const string& path) const;
-	NodeController*      node(const string& path) const;
-	PortController*      port(const string& path) const;
+	CountedPtr<ObjectModel> object(const string& path) const;
+	CountedPtr<PatchModel>  patch(const string& path) const;
+	CountedPtr<NodeModel>   node(const string& path) const;
+	CountedPtr<PortModel>   port(const string& path) const;
 
-	void add_object(GtkObjectController* object);
-	void remove_object(GtkObjectController* object);
-	
 	size_t num_objects() { return m_objects.size(); }
 	
 	void add_plugin(const PluginModel* pm);
@@ -61,12 +63,18 @@ private:
 
 	static Store* _instance;
 
+	void add_object(ObjectModel* object);
+	void remove_object(ObjectModel* object);
+
 	// Slots for SigClientInterface signals
 	void destruction_event(const string& path);
 	void new_plugin_event(const string& type, const string& uri, const string& name);
+	void new_patch_event(const string& path, uint32_t poly);
+	void new_node_event(const string& plugin_type, const string& plugin_uri, const string& node_path, bool is_polyphonic, uint32_t num_ports);
+	void new_port_event(const string& path, const string& data_type, bool is_output);
 
-	map<string, GtkObjectController*> m_objects; ///< Keyed by Om path
-	map<string, const PluginModel*>   m_plugins; ///< Keyed by URI
+	map<string, ObjectModel*>       m_objects; ///< Keyed by Om path
+	map<string, const PluginModel*> m_plugins; ///< Keyed by URI
 };
 
 

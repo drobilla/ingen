@@ -24,6 +24,7 @@ using std::string;
 
 PatchDescriptionWindow::PatchDescriptionWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml)
 : Gtk::Window(cobject)
+, m_patch_model(NULL)
 {
 	glade_xml->get_widget("description_author_entry", m_author_entry);
 	glade_xml->get_widget("description_description_textview", m_textview);
@@ -41,7 +42,7 @@ PatchDescriptionWindow::PatchDescriptionWindow(BaseObjectType* cobject, const Gl
  * the window in any way.
  */
 void
-PatchDescriptionWindow::patch_model(PatchModel* patch_model)
+PatchDescriptionWindow::patch_model(CountedPtr<PatchModel> patch_model)
 {
 	property_title() = patch_model->path() + " Properties";
 	m_patch_model = patch_model;

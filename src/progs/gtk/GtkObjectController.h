@@ -22,7 +22,7 @@
 
 #include "ObjectModel.h"
 #include "ObjectController.h"
-
+#include "util/CountedPtr.h"
 
 using std::string;
 
@@ -44,7 +44,7 @@ class Controller;
 class GtkObjectController : public LibOmClient::ObjectController
 {
 public:
-	GtkObjectController(ObjectModel* model);
+	GtkObjectController(CountedPtr<ObjectModel> model);
 	virtual ~GtkObjectController() {}
 
 	/** Destroy object.
@@ -54,9 +54,10 @@ public:
 	 */
 	virtual void destroy() = 0;
 
+/*
 	virtual void add_to_store() = 0;
 	virtual void remove_from_store() = 0;
-
+*/
 	virtual void metadata_update(const string& key, const string& value);
 
 	/** Rename object */
@@ -65,10 +66,10 @@ public:
 	
 	const Path& path() const { return m_model->path(); }
 
-	ObjectModel* model() const { return m_model; }
+	CountedPtr<ObjectModel> model() const { return m_model; }
 
 protected:
-	ObjectModel* m_model;      ///< Model for this object
+	CountedPtr<ObjectModel> m_model; ///< Model for this object
 };
 
 

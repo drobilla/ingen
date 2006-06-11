@@ -22,6 +22,7 @@
 #include <libglademm/xml.h>
 #include <libglademm.h>
 #include "PortModel.h"
+#include "util/CountedPtr.h"
 
 
 namespace LibOmClient { class PortModel; }
@@ -39,14 +40,14 @@ class ControlPanel;
 class ControlGroup : public Gtk::VBox
 {
 public:
-	ControlGroup(ControlPanel* panel, PortModel* pm, bool separator)
+	ControlGroup(ControlPanel* panel, CountedPtr<PortModel> pm, bool separator)
 	: Gtk::VBox(false, 0),
 	  m_control_panel(panel),
 	  m_port_model(pm),
 	  m_has_separator(separator)
 	{
-		assert(m_port_model != NULL);
-		assert(panel != NULL);
+		assert(m_port_model);
+		assert(panel);
 
 		if (separator) {
 			m_separator = new Gtk::HSeparator();
@@ -62,7 +63,7 @@ public:
 	
 	virtual void set_value(float val) = 0;
 	
-	inline const PortModel* const port_model() { return m_port_model; }
+	inline const CountedPtr<PortModel> port_model() const { return m_port_model; }
 
 	virtual void set_min(float val) {}
 	virtual void set_max(float val) {}
@@ -75,7 +76,7 @@ public:
 	
 protected:
 	ControlPanel*             m_control_panel;
-	PortModel*                m_port_model;
+	CountedPtr<PortModel>                m_port_model;
 	bool                      m_has_separator;
 	Gtk::HSeparator*          m_separator;
 };
@@ -88,7 +89,7 @@ protected:
 class SliderControlGroup : public ControlGroup
 {
 public:
-	SliderControlGroup(ControlPanel* panel, PortModel* pm, bool separator);
+	SliderControlGroup(ControlPanel* panel, CountedPtr<PortModel> pm, bool separator);
 	
 	void set_name(const string& name);
 
@@ -148,7 +149,7 @@ SliderControlGroup::set_value(const float val)
 class IntegerControlGroup : public ControlGroup
 {
 public:
-	IntegerControlGroup(ControlPanel* panel, PortModel* pm, bool separator);
+	IntegerControlGroup(ControlPanel* panel, CountedPtr<PortModel> pm, bool separator);
 	
 	void set_name(const string& name);
 	void set_value(float val);
@@ -173,7 +174,7 @@ private:
 class ToggleControlGroup : public ControlGroup
 {
 public:
-	ToggleControlGroup(ControlPanel* panel, PortModel* pm, bool separator);
+	ToggleControlGroup(ControlPanel* panel, CountedPtr<PortModel> pm, bool separator);
 	
 	void set_name(const string& name);
 	void set_value(float val);

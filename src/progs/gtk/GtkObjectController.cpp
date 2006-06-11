@@ -19,10 +19,10 @@
 namespace OmGtk {
 
 	
-GtkObjectController::GtkObjectController(ObjectModel* model)
+GtkObjectController::GtkObjectController(CountedPtr<ObjectModel> model)
 : m_model(model)
 {
-	assert(m_model != NULL);
+	assert(m_model);
 }
 
 

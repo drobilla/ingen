@@ -38,7 +38,7 @@ using std::cerr; using std::endl;
 namespace OmGtk {
 
 
-NodeController::NodeController(NodeModel* model)
+NodeController::NodeController(CountedPtr<NodeModel> model)
 : GtkObjectController(model),
   m_controls_menuitem(NULL),
   m_module(NULL),
@@ -50,14 +50,16 @@ NodeController::NodeController(NodeModel* model)
 	model->set_controller(this);
 
 	// Create port controllers
+	cerr << "FIXME: node" << endl;
+	/*
 	for (list<PortModel*>::const_iterator i = node_model()->ports().begin();
 			i != node_model()->ports().end(); ++i) {
 		assert((*i)->controller() == NULL);
-		assert((*i)->parent() == model);
+		assert((*i)->parent() == model.get());
 		PortController* const pc = new PortController(*i);
 		assert((*i)->controller() == pc); // PortController() does this
 	}
-
+	
 	// Build menu
 	
 	Gtk::Menu::MenuList& items = m_menu.items();
@@ -87,6 +89,7 @@ NodeController::NodeController(NodeModel* model)
 		items.push_back(Gtk::Menu_Helpers::MenuElem("Learn",
 			sigc::mem_fun(this, &NodeController::on_menu_learn)));
 	}
+	*/
 }
 
 
@@ -112,7 +115,7 @@ NodeController::create_module(OmFlowCanvas* canvas)
 	m_module->move_to(node_model()->x(), node_model()->y());
 }
 
-
+/*
 void
 NodeController::add_to_store()
 {
@@ -143,11 +146,13 @@ NodeController::remove_from_store()
 	// Remove self
 	Store::instance().remove_object(this);
 }
-
+*/
 
 void
 NodeController::set_path(const Path& new_path)
 {
+	cerr << "FIXME: rename\n";
+	/*
 	remove_from_store();
 	
 	// Rename ports
@@ -168,6 +173,7 @@ NodeController::set_path(const Path& new_path)
 	GtkObjectController::set_path(new_path);
 	
 	add_to_store();
+	*/
 }
 
 
@@ -177,7 +183,7 @@ NodeController::destroy()
 	PatchController* pc = ((PatchController*)m_model->parent()->controller());
 	assert(pc != NULL);
 
-	remove_from_store();
+	//remove_from_store();
 	pc->remove_node(m_model->path().name());
 
 	if (m_bridge_port != NULL)
@@ -222,7 +228,7 @@ NodeController::add_port(PortModel* pm)
 	node_model()->add_port(pm);
 	PortController* pc = new PortController(pm);
 	assert(pm->controller() == pc);
-	pc->add_to_store();
+	//pc->add_to_store();
 	
 	if (m_module != NULL) {
 		pc->create_port(m_module);
@@ -286,7 +292,7 @@ NodeController::show_rename_window()
 void
 NodeController::on_menu_clone()
 {
-	assert(node_model() != NULL);
+	assert(node_model());
 	//assert(m_parent != NULL);
 	//assert(m_parent->model() != NULL);
 	
@@ -377,11 +383,12 @@ NodeController::create_all_ports()
 bool
 NodeController::has_control_inputs()
 {
+/*
 	for (PortModelList::const_iterator i = node_model()->ports().begin();
 			i != node_model()->ports().end(); ++i)
 		if ((*i)->is_input() && (*i)->is_control())
 			return true;
-
+*/
 	return false;
 }
 

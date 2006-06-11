@@ -28,12 +28,12 @@ using namespace LibOmClient;
 
 namespace OmGtk {
 
-OmPort::OmPort(OmModule* module, PortModel* pm)
-: Port(module, pm->name(), pm->is_input(), App::instance().configuration()->get_port_color(pm)),
+OmPort::OmPort(OmModule* module, CountedPtr<PortModel> pm)
+: Port(module, pm->name(), pm->is_input(), App::instance().configuration()->get_port_color(pm.get())),
   m_port_model(pm)
 {
-	assert(module != NULL);
-	assert(m_port_model != NULL);
+	assert(module);
+	assert(m_port_model);
 }
 
 #if 0

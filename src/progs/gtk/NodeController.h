@@ -21,14 +21,16 @@
 #include <gtkmm.h>
 #include "util/Path.h"
 #include "GtkObjectController.h"
+#include "NodeModel.h"
 
 using std::string;
 using Om::Path;
 using namespace LibOmClient;
 
+template <class T> class CountedPtr;
+
 namespace LibOmClient {
 	class MetadataModel;
-	class NodeModel;
 	class PortModel;
 }
 
@@ -48,13 +50,13 @@ class OmFlowCanvas;
 class NodeController : public GtkObjectController
 {
 public:
-	NodeController(NodeModel* model);
+	NodeController(CountedPtr<NodeModel> model);
 	virtual ~NodeController();
 	
 	virtual void destroy();
 
-	virtual void add_to_store();
-	virtual void remove_from_store();
+	/*virtual void add_to_store();
+	virtual void remove_from_store();*/
 
 	virtual void metadata_update(const string& key, const string& value);
 	
@@ -73,7 +75,7 @@ public:
 	void bridge_port(PortController* port) { m_bridge_port = port; }
 	PortController* as_port()              { return m_bridge_port; }
 	
-	NodeModel* node_model() { return (NodeModel*)m_model; }
+	CountedPtr<NodeModel> node_model() { return CountedPtr<NodeModel>((NodeModel*)m_model.get()); }
 	
 	NodeControlWindow* control_window()        { return m_control_window; }
 	void control_window(NodeControlWindow* cw) { m_control_window = cw; }

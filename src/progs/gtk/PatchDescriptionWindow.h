@@ -20,6 +20,7 @@
 #include <string>
 #include <gtkmm.h>
 #include <libglademm/xml.h>
+#include "util/CountedPtr.h"
 using std::string;
 
 namespace LibOmClient { class PatchModel; }
@@ -39,13 +40,13 @@ class PatchDescriptionWindow : public Gtk::Window
 public:
 	PatchDescriptionWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& refGlade);
 
-	void patch_model(PatchModel* patch_model);
+	void patch_model(CountedPtr<PatchModel> patch_model);
 	
 	void cancel_clicked();
 	void ok_clicked();
 
 private:
-	PatchModel*    m_patch_model;
+	CountedPtr<PatchModel> m_patch_model;
 
 	Gtk::Entry*    m_author_entry;
 	Gtk::TextView* m_textview;

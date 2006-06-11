@@ -66,7 +66,7 @@ PatchTreeWindow::PatchTreeWindow(BaseObjectType* cobject,
 void
 PatchTreeWindow::add_patch(PatchController* pc)
 {
-	PatchModel* const pm = pc->patch_model();
+	const CountedPtr<PatchModel> pm = pc->patch_model();
 
 	if (pm->parent() == NULL) {
 		Gtk::TreeModel::iterator iter = m_patch_treestore->append();

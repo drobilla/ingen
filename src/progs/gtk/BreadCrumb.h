@@ -32,21 +32,20 @@ namespace OmGtk {
 class BreadCrumb : public Gtk::ToggleButton
 {
 public:
-	BreadCrumb(PatchWindow* window, PatchController* patch)
-		: m_window(window),
-		  m_patch(patch)
+	BreadCrumb(PatchWindow* window, const Path& path)
+		: m_window(window)
+		, m_path(path)
 	{
-		assert(patch != NULL);
 		set_border_width(0);
-		path(m_patch->path());
+		set_path(path);
 		signal_clicked().connect(sigc::bind(sigc::mem_fun(
 			m_window, &PatchWindow::breadcrumb_clicked), this));
 		show_all();
 	}
 
-	PatchController* patch() { return m_patch; }
+	//PatchController* patch() { return m_patch; }
 	
-	void path(const Path& path)
+	void set_path(const Path& path)
 	{
 		remove();
 		const string text = (path == "/") ? "/" : path.name();
@@ -55,10 +54,13 @@ public:
 		lab->show();
 		add(*lab);
 	}
+
+	Path& path() { return m_path; }
 	
 private:
 	PatchWindow*     m_window;
-	PatchController* m_patch;
+	Path             m_path;
+	//PatchController* m_patch;
 };
 
 } // namespace OmGtk

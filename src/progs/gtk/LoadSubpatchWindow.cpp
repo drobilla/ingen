@@ -128,7 +128,7 @@ void
 LoadSubpatchWindow::ok_clicked()
 {
 	assert(m_patch_controller != NULL);
-	assert(m_patch_controller->model() != NULL);
+	assert(m_patch_controller->model());
 	
 	// These values are interpreted by load_patch() as "not defined", ie load from file
 	string name = "";
@@ -149,7 +149,7 @@ LoadSubpatchWindow::ok_clicked()
 
 	PatchModel* pm = new PatchModel(m_patch_controller->model()->base_path() + name, poly);
 	pm->filename(get_filename());
-	pm->set_parent(m_patch_controller->model());
+	pm->set_parent(m_patch_controller->model().get());
 	pm->x(m_new_module_x);
 	pm->y(m_new_module_y);
 	if (name == "")

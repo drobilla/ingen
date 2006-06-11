@@ -79,6 +79,8 @@ NewSubpatchWindow::name_changed()
 void
 NewSubpatchWindow::ok_clicked()
 {
+	cerr << "FIXME new subpatch\n";
+	/*
 	PatchModel* pm = new PatchModel(
 		m_patch_controller->model()->base_path() + m_name_entry->get_text(),
 		m_poly_spinbutton->get_value_as_int());
@@ -87,6 +89,7 @@ NewSubpatchWindow::ok_clicked()
 		m_patch_controller->get_new_module_location(
 			m_new_module_x, m_new_module_y);
 	}
+
 	pm->set_parent(m_patch_controller->patch_model());
 	pm->x(m_new_module_x);
 	pm->y(m_new_module_y);
@@ -97,6 +100,7 @@ NewSubpatchWindow::ok_clicked()
 	pm->set_metadata("module-y", temp_buf);
 	Controller::instance().create_patch_from_model(pm);
 	hide();
+	*/
 }			
 
 

@@ -56,7 +56,7 @@ ControlInterface::new_patch_model(PatchModel* const pm)
 
 	//cout << "[ControlInterface] New patch." << endl;
 
-	if (Store::instance().patch(pm->path()) != NULL) {
+	if (Store::instance().patch(pm->path())) {
 		delete pm;
 	} else {
 
@@ -75,8 +75,8 @@ ControlInterface::new_patch_model(PatchModel* const pm)
 
 		assert(pm->parent() == NULL);
 		PatchController* patch = new PatchController(pm);
-		Store::instance().add_object(patch);
-		_app->patch_tree()->add_patch(patch);
+		//Store::instance().add_object(patch);
+		//_app->patch_tree()->add_patch(patch);
 
 		if (pm->path() == "/")
 			patch->show_patch_window();
@@ -91,8 +91,8 @@ ControlInterface::new_node_model(NodeModel* const nm)
 {
 	assert(nm);
 
-	//cerr << "[ControlInterface] New node: " << nm->name() << endl;
-
+	cerr << "[ControlInterface] FIXME: New node: " << nm->name() << endl;
+#if 0
 	PatchController* const pc = Store::instance().patch(nm->path().parent());
 
 	if (pc != NULL) {
@@ -119,6 +119,7 @@ ControlInterface::new_node_model(NodeModel* const nm)
 		cerr << "[NewNode] Can not find parent of " << nm->path()
 		<< ".  Module will not appear." << endl;
 	}
+	#endif
 }
 
 
@@ -127,14 +128,15 @@ ControlInterface::new_port_model(PortModel* const pm)
 {
 	assert(pm);
 
-	//cout << "[ControlInterface] New port." << endl;
-
+	cout << "[ControlInterface] FIXME: New port." << endl;
+/*
 	NodeController* node = Store::instance().node(pm->path().parent());
 	if (node != NULL)
 		node->add_port(pm);
 	else
 		cerr << "[NewPort] Could not find parent for "
 		<< pm->path() << endl;
+		*/
 }
 
 
@@ -142,12 +144,13 @@ void
 ControlInterface::patch_enabled(const string& path)
 {
 	//cout << "[ControlInterface] Patch enabled." << endl;
-
+/*
 	PatchController* patch = Store::instance().patch(path);
 	if (patch != NULL)
 		patch->enable();
 	else
 		cerr << "[PatchEnabled] Cannot find patch " << path << endl;
+		*/
 }
 
 
@@ -155,12 +158,13 @@ void
 ControlInterface::patch_disabled(const string& path)
 {
 	//cout << "[ControlInterface] Patch disabled." << endl;
-
+/*
 	PatchController* patch = Store::instance().patch(path);
 	if (patch != NULL)
 		patch->disable();
 	else
 		cerr << "[PatchDisabled] Cannot find patch " << path << endl;
+		*/
 }
 
 
@@ -168,12 +172,13 @@ void
 ControlInterface::patch_cleared(const string& path)
 {
 	//cout << "[ControlInterface] Patch cleared." << endl;
-
+/*
 	PatchController* patch = Store::instance().patch(path);
 	if (patch != NULL)
 		patch->clear();
 	else
 		cerr << "[PatchCleared] Cannot find patch " << path << endl;
+		*/
 }
 
 
@@ -181,7 +186,7 @@ void
 ControlInterface::object_destroyed(const string& path)
 {
 	//cout << "[ControlInterface] Destroying." << endl;
-
+/*
 	GtkObjectController* object = Store::instance().object(path);
 	if (object != NULL) {
 		object->destroy();
@@ -189,6 +194,7 @@ ControlInterface::object_destroyed(const string& path)
 	} else {
 		cerr << "[Destroy] Cannot find object " << path << endl;
 	}
+	*/
 }
 
 
@@ -196,13 +202,14 @@ void
 ControlInterface::object_renamed(const string& old_path, const string& new_path)
 {
 	//cout << "[ControlInterface] Renaming." << endl;
-
+/*
 	GtkObjectController* object = Store::instance().object(old_path);
 	if (object != NULL)
 		object->set_path(new_path);
 	else
 		cerr << "[ObjectRenamed] Can not find object " << old_path
 		<< " to rename." << endl;
+		*/
 }
 
 
@@ -212,7 +219,7 @@ ControlInterface::connection_model(ConnectionModel* connection)
 	assert(connection);
 
 	//cout << "[ControlInterface] Connection" << endl;
-
+/*
 	assert(connection->src_port_path().parent().parent()
 	       == connection->dst_port_path().parent().parent());
 
@@ -223,6 +230,7 @@ ControlInterface::connection_model(ConnectionModel* connection)
 	else
 		cerr << "[Connection] Can not find patch " << connection->patch_path()
 		<< ".  Connection will not be made." << endl;
+		*/
 }
 
 
@@ -230,7 +238,7 @@ void
 ControlInterface::disconnection(const string& src_port_path, const string& dst_port_path)
 {
 	//cerr << "[ControlInterface] Disconnection." << endl;
-	string patch_path = src_port_path;
+/*	string patch_path = src_port_path;
 	patch_path = patch_path.substr(0, patch_path.find_last_of("/"));
 	patch_path = patch_path.substr(0, patch_path.find_last_of("/"));
 
@@ -244,25 +252,25 @@ ControlInterface::disconnection(const string& src_port_path, const string& dst_p
 	else
 		cerr << "[Disconnection] Can not find window for patch " << patch_path
 		<< ".  Connection will not be removed." << endl;
+		*/
 }
 
 
 void
 ControlInterface::metadata_update(const string& path, const string& key, const string& value)
-{
+{ /*
 	//cerr << "[ControlInterface] Metadata." << endl;
-
 	GtkObjectController* object = Store::instance().object(path);
 	if (object != NULL)
 		object->metadata_update(key, value);
 	else
 		cerr << "[MetadataUpdate] Could not find object " << path << endl;
-}
+*/ }
 
 
 void
 ControlInterface::control_change(const string& port_path, float value)
-{
+{ /*
 	//cerr << "[ControlInterface] Control change." << endl;
 
 	PortController* port = Store::instance().port(port_path);
@@ -270,12 +278,12 @@ ControlInterface::control_change(const string& port_path, float value)
 		port->control_change(value);
 	else
 		cerr << "[ControlChange] Can not find port " << port_path << endl;
-}
+*/ }
 
 
 void
 ControlInterface::program_add(const string& path, uint32_t bank, uint32_t program, const string& name)
-{
+{ /*
 	NodeController* node = Store::instance().node(path);
 	if (node != NULL) {
 		node->program_add(bank, program, name);
@@ -283,12 +291,12 @@ ControlInterface::program_add(const string& path, uint32_t bank, uint32_t progra
 	} else {
 		cerr << "[ProgramAdd] Can not find node " << path << endl;
 	}
-}
+*/ }
 
 
 void
 ControlInterface::program_remove(const string& path, uint32_t bank, uint32_t program)
-{
+{ /*
 	NodeController* node = Store::instance().node(path);
 	if (node != NULL) {
 		node->program_remove(bank, program);
@@ -296,7 +304,7 @@ ControlInterface::program_remove(const string& path, uint32_t bank, uint32_t pro
 	} else {
 		cerr << "[ProgramRemove] Can not find node " << path << endl;
 	}
-}
+*/ }
 
 
 } // namespace OmGtk

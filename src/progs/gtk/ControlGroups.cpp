@@ -30,7 +30,7 @@ namespace OmGtk {
 //////////////////// SliderControlGroup ////////////////////////
 
 
-SliderControlGroup::SliderControlGroup(ControlPanel* panel, PortModel* pm, bool separator)
+SliderControlGroup::SliderControlGroup(ControlPanel* panel, CountedPtr<PortModel> pm, bool separator)
 : ControlGroup(panel, pm, separator),
   m_enabled(true),
   m_enable_signal(false),
@@ -272,7 +272,7 @@ SliderControlGroup::slider_pressed(GdkEvent* ev)
 /////////////// IntegerControlGroup ////////////////
 
 
-IntegerControlGroup::IntegerControlGroup(ControlPanel* panel, PortModel* pm, bool separator)
+IntegerControlGroup::IntegerControlGroup(ControlPanel* panel, CountedPtr<PortModel> pm, bool separator)
 : ControlGroup(panel, pm, separator),
   m_enable_signal(false),
   m_alignment(0.5, 0.5, 0.0, 0.0),
@@ -347,7 +347,7 @@ IntegerControlGroup::update_value()
 /////////////// ToggleControlGroup ////////////////
 
 
-ToggleControlGroup::ToggleControlGroup(ControlPanel* panel, PortModel* pm, bool separator)
+ToggleControlGroup::ToggleControlGroup(ControlPanel* panel, CountedPtr<PortModel> pm, bool separator)
 : ControlGroup(panel, pm, separator),
   m_enable_signal(false),
   m_alignment(0.5, 0.5, 0.0, 0.0),

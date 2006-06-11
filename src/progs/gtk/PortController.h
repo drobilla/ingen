@@ -49,9 +49,10 @@ public:
 	
 	virtual void destroy();
 
+/*
 	virtual void add_to_store();
 	virtual void remove_from_store();
-
+*/
 	virtual void metadata_update(const string& key, const string& value);
 	
 	void create_port(OmModule* module);
@@ -62,7 +63,7 @@ public:
 	ControlPanel* control_panel() const { return m_control_panel; }
 	void set_control_panel(ControlPanel* cp);
 
-	PortModel* port_model() const { return (PortModel*)m_model; }
+	CountedPtr<PortModel> port_model() const { return CountedPtr<PortModel>((PortModel*)m_model.get()); }
 
 private:
 	OmPort*       m_port;          ///< Canvas module port

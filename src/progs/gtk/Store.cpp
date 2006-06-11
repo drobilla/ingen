@@ -15,11 +15,12 @@
  */
 
 #include "Store.h"
-#include "GtkObjectController.h"
-#include "PatchController.h"
-#include "NodeController.h"
-#include "PortController.h"
+#include "ObjectModel.h"
+#include "PatchModel.h"
+#include "NodeModel.h"
+#include "PortModel.h"
 #include "PluginModel.h"
+#include "PatchModel.h"
 #include "SigClientInterface.h"
 
 namespace OmGtk {
@@ -29,10 +30,14 @@ Store::Store(SigClientInterface& emitter)
 	//emitter.new_plugin_sig.connect(sigc::mem_fun(this, &Store::add_plugin));
 	emitter.object_destroyed_sig.connect(sigc::mem_fun(this, &Store::destruction_event));
 	emitter.new_plugin_sig.connect(sigc::mem_fun(this, &Store::new_plugin_event));
+	emitter.new_patch_sig.connect(sigc::mem_fun(this, &Store::new_patch_event));
+	emitter.new_node_sig.connect(sigc::mem_fun(this, &Store::new_node_event));
+	emitter.new_port_sig.connect(sigc::mem_fun(this, &Store::new_port_event));
 }
 
+
 void
-Store::add_object(GtkObjectController* object)
+Store::add_object(ObjectModel* object)
 {
 	assert(object->path() != "");
 	assert(m_objects.find(object->path()) == m_objects.end());
@@ -44,19 +49,19 @@ Store::add_object(GtkObjectController* object)
 
 
 void
-Store::remove_object(GtkObjectController* object)
+Store::remove_object(ObjectModel* object)
 {
 	if (!object)
 		return;
 
-	map<string, GtkObjectController*>::iterator i
-		= m_objects.find(object->model()->path());
+	map<string, ObjectModel*>::iterator i
+		= m_objects.find(object->path());
 
 	if (i != m_objects.end()) {
 		assert((*i).second == object);
 		m_objects.erase(i);
 	} else {
-		cerr << "[App] Unable to find object " << object->model()->path()
+		cerr << "[App] Unable to find object " << object->path()
 			<< " to remove." << endl;
 	}
 	
@@ -64,11 +69,11 @@ Store::remove_object(GtkObjectController* object)
 }
 
 
-GtkObjectController*
+CountedPtr<ObjectModel>
 Store::object(const string& path) const
 {
 	assert(path.length() > 0);
-	map<string, GtkObjectController*>::const_iterator i = m_objects.find(path);
+	map<string, ObjectModel*>::const_iterator i = m_objects.find(path);
 	if (i == m_objects.end())
 		return NULL;
 	else
@@ -76,47 +81,51 @@ Store::object(const string& path) const
 }
 
 
-PatchController*
+CountedPtr<PatchModel>
 Store::patch(const string& path) const
 {
 	assert(path.length() > 0);
-	map<string, GtkObjectController*>::const_iterator i = m_objects.find(path);
+	map<string, ObjectModel*>::const_iterator i = m_objects.find(path);
 	if (i == m_objects.end())
 		return NULL;
 	else
-		return dynamic_cast<PatchController*>((*i).second);
+		return dynamic_cast<PatchModel*>((*i).second);
 }
 
 
-NodeController*
+CountedPtr<NodeModel>
 Store::node(const string& path) const
 {
 	assert(path.length() > 0);
-	map<string, GtkObjectController*>::const_iterator i = m_objects.find(path);
+	map<string, ObjectModel*>::const_iterator i = m_objects.find(path);
 	if (i == m_objects.end())
 		return NULL;
 	else
-		return dynamic_cast<NodeController*>((*i).second);
+		return dynamic_cast<NodeModel*>((*i).second);
 }
 
 
-PortController*
+CountedPtr<PortModel>
 Store::port(const string& path) const
 {
 	assert(path.length() > 0);
-	map<string, GtkObjectController*>::const_iterator i = m_objects.find(path);
+	map<string, ObjectModel*>::const_iterator i = m_objects.find(path);
 	if (i == m_objects.end()) {
 		return NULL;
 	} else {
 		// Normal port
-		PortController* const pc = dynamic_cast<PortController*>((*i).second);
-		if (pc != NULL)
+		PortModel* const pc = dynamic_cast<PortModel*>((*i).second);
+		if (pc)
 			return pc;
 		
 		// Patch port (corresponding Node is in store)
-		NodeController* const nc = dynamic_cast<NodeController*>((*i).second);
-		if (nc != NULL)
+		// FIXME
+		//
+		/*
+		NodeModel* const nc = dynamic_cast<NodeModel*>((*i).second);
+		if (nc)
 			return nc->as_port(); // Patch port (maybe)
+		*/
 	}
 
 	return NULL;
@@ -135,12 +144,14 @@ Store::add_plugin(const PluginModel* pm)
 }
 
 
-/* ****** Slots ******** */
+
+/* ****** Signal Handlers ******** */
+
 
 void
 Store::destruction_event(const string& path)
 {
-	remove_object(object(path));
+	remove_object(object(path).get());
 }
 
 void
@@ -150,6 +161,45 @@ Store::new_plugin_event(const string& type, const string& uri, const string& nam
 	p->name(name);
 	add_plugin(p);
 }
+
+
+void
+Store::new_patch_event(const string& path, uint32_t poly)
+{
+	PatchModel* const p = new PatchModel(path, poly);
+	add_object(p);
+}
+
+void
+Store::new_node_event(const string& plugin_type, const string& plugin_uri, const string& node_path, bool is_polyphonic, uint32_t num_ports)
+{
+	// FIXME: resolve plugin here
+	
+	NodeModel* const n = new NodeModel(node_path);
+	n->polyphonic(is_polyphonic);
+	// FIXME: num_ports unused
+	add_object(n);
+}
+
+
+void
+Store::new_port_event(const string& path, const string& type, bool is_output)
+{
+	// FIXME: this sucks
+	
+	PortModel::Type ptype = PortModel::CONTROL;
+	if (type == "AUDIO") ptype = PortModel::AUDIO;
+	else if (type == "CONTROL") ptype = PortModel::CONTROL;
+	else if (type== "MIDI") ptype = PortModel::MIDI;
+	else cerr << "[OSCListener] WARNING:  Unknown port type received (" << type << ")" << endl;
+	
+	PortModel::Direction pdir = is_output ? PortModel::OUTPUT : PortModel::INPUT;
+	
+	PortModel* const p = new PortModel(path, ptype, pdir);
+	add_object(p);
+	
+}
+
 
 } // namespace OmGtk
 

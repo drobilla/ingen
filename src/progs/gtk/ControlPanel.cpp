@@ -56,7 +56,7 @@ ControlPanel::init(NodeController* node, size_t poly)
 	assert(node != NULL);
 	assert(poly > 0);
 	
-	NodeModel* const node_model = node->node_model();
+	const CountedPtr<NodeModel> node_model = node->node_model();
 	
 	if (poly > 1) {
 		m_voice_spinbutton->set_range(0, poly - 1);
@@ -91,11 +91,11 @@ ControlPanel::find_port(const Path& path) const
 void
 ControlPanel::add_port(PortController* port)
 {
-	assert(port != NULL);
-	assert(port->model() != NULL);
+	assert(port);
+	assert(port->model());
 	assert(port->control_panel() == NULL);
 	
-	PortModel* const pm = port->port_model();
+	const CountedPtr<PortModel> pm = port->port_model();
 	
 	// Already have port, don't add another
 	if (find_port(pm->path()) != NULL)

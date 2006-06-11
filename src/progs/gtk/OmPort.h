@@ -20,6 +20,7 @@
 #include <cassert>
 #include <string>
 #include <flowcanvas/Port.h>
+#include "util/CountedPtr.h"
 
 namespace LibOmClient { class PortModel; }
 using namespace LibOmClient;
@@ -41,16 +42,16 @@ class OmModule;
 class OmPort : public LibFlowCanvas::Port
 {
 public:
-	OmPort(OmModule* module, PortModel* pm);
+	OmPort(OmModule* module, CountedPtr<PortModel> pm);
 
 	virtual ~OmPort() {}
 
 	//void set_name(const string& n);
 	
-	PortModel* model() const { return m_port_model; }
+	CountedPtr<PortModel> model() const { return m_port_model; }
 	
 private:
-	PortModel*          m_port_model;
+	CountedPtr<PortModel> m_port_model;
 };
 
 

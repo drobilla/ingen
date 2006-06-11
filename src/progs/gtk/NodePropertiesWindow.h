@@ -19,6 +19,7 @@
 
 #include <gtkmm.h>
 #include <libglademm.h>
+#include "util/CountedPtr.h"
 
 namespace LibOmClient { class NodeModel; }
 using namespace LibOmClient;
@@ -37,17 +38,16 @@ class NodePropertiesWindow : public Gtk::Window
 public:
 	NodePropertiesWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& refGlade);
 
-	void set_node(NodeModel* node_model);
+	void set_node(CountedPtr<NodeModel> node_model);
 
 private:
 	
-	NodeModel*        m_node_model;
-
-	Gtk::Label*       m_node_path_label;
-	Gtk::CheckButton* m_node_polyphonic_toggle;
-	Gtk::Label*       m_plugin_type_label;
-	Gtk::Label*       m_plugin_uri_label;
-	Gtk::Label*       m_plugin_name_label;
+	CountedPtr<NodeModel> m_node_model;
+	Gtk::Label*           m_node_path_label;
+	Gtk::CheckButton*     m_node_polyphonic_toggle;
+	Gtk::Label*           m_plugin_type_label;
+	Gtk::Label*           m_plugin_uri_label;
+	Gtk::Label*           m_plugin_name_label;
 };
 
 } // namespace OmGtk

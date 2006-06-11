@@ -59,17 +59,17 @@ RenameWindow::set_object(GtkObjectController* object)
 void
 RenameWindow::name_changed()
 {
-	assert(m_name_entry != NULL);
-	assert(m_message_label != NULL);
-	assert(m_object->model() != NULL);
-	assert(m_object->model()->parent() != NULL);
+	assert(m_name_entry);
+	assert(m_message_label);
+	assert(m_object->model());
+	assert(m_object->model()->parent());
 
 	string name = m_name_entry->get_text();
 	if (name.find("/") != string::npos) {
 		m_message_label->set_text("Name may not contain '/'");
 		m_ok_button->property_sensitive() = false;
 	//} else if (m_object->parent()->patch_model()->get_node(name) != NULL) {
-	} else if (Store::instance().object(m_object->model()->parent()->base_path() + name) != NULL) {
+	} else if (Store::instance().object(m_object->model()->parent()->base_path() + name)) {
 		m_message_label->set_text("An object already exists with that name.");
 		m_ok_button->property_sensitive() = false;
 	} else if (name.length() == 0) {

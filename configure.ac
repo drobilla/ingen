@@ -343,6 +343,7 @@ AC_CONFIG_FILES([src/progs/demolition/Makefile])
 AC_CONFIG_FILES([src/progs/patch_loader/Makefile])
 AC_CONFIG_FILES([src/progs/gtk/Makefile])
 AC_CONFIG_FILES([patches/Makefile])
+AC_CONFIG_FILES([doc/Doxyfile])
 AC_OUTPUT
 
 # Display summary

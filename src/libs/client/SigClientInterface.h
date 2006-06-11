@@ -28,30 +28,36 @@ namespace LibOmClient {
 
 /** A LibSigC++ signal emitting interface for clients to use.
  *
- * sed would have the copyright to this code if it was a legal person.
+ * This simply emits an sigc signal for every event (eg OSC message) coming from
+ * the engine.  Use Store (which extends this) if you want a nice client-side
+ * model of the engine.
  */
 class SigClientInterface : virtual public Om::Shared::ClientInterface, public sigc::trackable
 {
 public:
-	sigc::signal<void> bundle_begin_sig; 
-	sigc::signal<void> bundle_end_sig; 
-	sigc::signal<void, const string&> error_sig; 
-	sigc::signal<void, uint32_t> num_plugins_sig; 
-	sigc::signal<void, const string&, const string&, const string&> new_plugin_sig; 
-	sigc::signal<void, const string&, uint32_t> new_patch_sig; 
+
+	// See the corresponding emitting functions below for parameter meanings
+	
+	sigc::signal<void>                                                              bundle_begin_sig; 
+	sigc::signal<void>                                                              bundle_end_sig; 
+	sigc::signal<void, const string&>                                               error_sig; 
+	sigc::signal<void, uint32_t>                                                    num_plugins_sig; 
+	sigc::signal<void, const string&, const string&, const string&>                 new_plugin_sig; 
+	sigc::signal<void, const string&, uint32_t>                                     new_patch_sig; 
 	sigc::signal<void, const string&, const string&, const string&, bool, uint32_t> new_node_sig; 
-	sigc::signal<void, const string&, const string&, bool> new_port_sig; 
-	sigc::signal<void, const string&> patch_enabled_sig; 
-	sigc::signal<void, const string&> patch_disabled_sig; 
-	sigc::signal<void, const string&> patch_cleared_sig; 
-	sigc::signal<void, const string&, const string&> object_renamed_sig; 
-	sigc::signal<void, const string&> object_destroyed_sig; 
-	sigc::signal<void, const string&, const string&> connection_sig; 
-	sigc::signal<void, const string&, const string&> disconnection_sig; 
-	sigc::signal<void, const string&, const string&, const string&> metadata_update_sig; 
-	sigc::signal<void, const string&, float> control_change_sig; 
-	sigc::signal<void, const string&, uint32_t, uint32_t, const string&> program_add_sig; 
-	sigc::signal<void, const string&, uint32_t, uint32_t> program_remove_sig; 
+	sigc::signal<void, const string&, const string&, bool>                          new_port_sig; 
+	sigc::signal<void, const string&>                                               patch_enabled_sig; 
+	sigc::signal<void, const string&>                                               patch_disabled_sig; 
+	sigc::signal<void, const string&>                                               patch_cleared_sig; 
+	sigc::signal<void, const string&, const string&>                                object_renamed_sig; 
+	sigc::signal<void, const string&>                                               object_destroyed_sig; 
+	sigc::signal<void, const string&, const string&>                                connection_sig; 
+	sigc::signal<void, const string&, const string&>                                disconnection_sig; 
+	sigc::signal<void, const string&, const string&, const string&>                 metadata_update_sig; 
+	sigc::signal<void, const string&, float>                                        control_change_sig; 
+	sigc::signal<void, const string&, uint32_t, uint32_t, const string&>            program_add_sig; 
+	sigc::signal<void, const string&, uint32_t, uint32_t>                           program_remove_sig; 
+
 
 	inline void emit_bundle_begin()
 	{ bundle_begin_sig.emit(); }

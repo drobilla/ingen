@@ -20,6 +20,8 @@
 #include <string>
 #include <gtkmm.h>
 #include "NodeController.h"
+#include "PatchModel.h"
+template <class T> class CountedPtr;
 
 namespace LibOmClient {
 class PatchModel;
@@ -57,11 +59,13 @@ class NodeController;
 class PatchController : public NodeController
 {
 public:
-	PatchController(PatchModel* model);
+	PatchController(CountedPtr<PatchModel> model);
 	virtual ~PatchController();
 	
+	/*
 	virtual void add_to_store();
 	virtual void remove_from_store();
+	*/
 
 	virtual void destroy();
 
@@ -101,7 +105,7 @@ public:
 	void enable();
 	void disable();
 	
-	PatchModel* patch_model() const { return (PatchModel*)m_model; }
+	CountedPtr<PatchModel> patch_model() const { return m_patch_model; }
 	
 	void enable_controls_menuitem();
 	void disable_controls_menuitem();
@@ -111,6 +115,8 @@ private:
 
 	PatchWindow* m_window;     ///< Window currently showing this patch
 	PatchView*   m_patch_view; ///< View (canvas) of this patch
+
+	CountedPtr<PatchModel> m_patch_model;
 
 	/** Invisible bin used to store patch view when not shown by a patch window */
 	Gtk::Alignment m_patch_view_bin;

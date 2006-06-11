@@ -212,9 +212,9 @@ PatchWindow::patch_controller(PatchController* pc)
 			old_pc->model()->path().substr(0, pc->model()->path().length())
 			== pc->model()->path()) {
 		for (list<BreadCrumb*>::iterator i = m_breadcrumbs.begin(); i != m_breadcrumbs.end(); ++i) {
-			if ((*i)->patch() == pc)
+			if ((*i)->path() == pc->path())
 				(*i)->set_active(true);
-			else if ((*i)->patch() == old_pc)
+			else if ((*i)->path() == old_pc->path())
 				(*i)->set_active(false);
 		}
 	
@@ -255,7 +255,7 @@ PatchWindow::rebuild_breadcrumbs()
 
 		// Add root
 		assert(path[0] == '/');
-		BreadCrumb* but = manage(new BreadCrumb(this, Store::instance().patch("/")));
+		BreadCrumb* but = manage(new BreadCrumb(this, "/"));
 		m_breadcrumb_box->pack_start(*but, false, false, 1);
 		m_breadcrumbs.push_back(but);
 		path = path.substr(1); // hack off leading slash
@@ -271,7 +271,7 @@ PatchWindow::rebuild_breadcrumbs()
 				but_path += string("/") + path;
 				path = "";
 			}
-			BreadCrumb* but = manage(new BreadCrumb(this, Store::instance().patch(but_path)));
+			BreadCrumb* but = manage(new BreadCrumb(this, but_path));//Store::instance().patch(but_path)));
 			m_breadcrumb_box->pack_start(*but, false, false, 1);
 			m_breadcrumbs.push_back(but);
 		}
@@ -283,6 +283,8 @@ PatchWindow::rebuild_breadcrumbs()
 void
 PatchWindow::breadcrumb_clicked(BreadCrumb* crumb)
 {
+	cerr << "FIXME: crumb\n";
+	/*
 	if (m_enable_signal) {
 		PatchController* const pc = crumb->patch();
 		assert(pc != NULL);
@@ -296,6 +298,7 @@ PatchWindow::breadcrumb_clicked(BreadCrumb* crumb)
 			patch_controller(pc);
 		}
 	}
+	*/
 }
 
 
@@ -324,7 +327,7 @@ void
 PatchWindow::node_removed(const string& name)
 {
 	for (list<BreadCrumb*>::iterator i = m_breadcrumbs.begin(); i != m_breadcrumbs.end(); ++i) {
-		if ((*i)->patch()->path() == m_patch->model()->base_path() + name) {
+		if ((*i)->path() == m_patch->model()->base_path() + name) {
 			for (list<BreadCrumb*>::iterator j = i; j != m_breadcrumbs.end(); ) {
 				BreadCrumb* bc = *j;
 				j = m_breadcrumbs.erase(j);
@@ -342,8 +345,8 @@ void
 PatchWindow::node_renamed(const string& old_path, const string& new_path)
 {
 	for (list<BreadCrumb*>::iterator i = m_breadcrumbs.begin(); i != m_breadcrumbs.end(); ++i) {
-		if ((*i)->patch()->model()->path() == old_path)
-			(*i)->path(new_path);
+		if ((*i)->path() == old_path)
+			(*i)->set_path(new_path);
 	}
 }
 
@@ -355,8 +358,8 @@ PatchWindow::patch_renamed(const string& new_path)
 {
 	set_title(new_path);
 	for (list<BreadCrumb*>::iterator i = m_breadcrumbs.begin(); i != m_breadcrumbs.end(); ++i) {
-		if ((*i)->patch() == m_patch)
-			(*i)->path(new_path);
+		if ((*i)->path() == m_patch->path())
+			(*i)->set_path(new_path);
 	}
 }
 
@@ -379,7 +382,7 @@ PatchWindow::event_open_into()
 void
 PatchWindow::event_save()
 {
-	PatchModel* const model = m_patch->patch_model();
+	PatchModel* const model = m_patch->patch_model().get();
 	
 	if (model->filename() == "")
 		event_save_as();
@@ -439,7 +442,7 @@ PatchWindow::event_save_as()
 		fin.close();
 		
 		if (confirm) {
-			Controller::instance().save_patch(m_patch->patch_model(), filename, recursive);
+			Controller::instance().save_patch(m_patch->patch_model().get(), filename, recursive);
 			m_patch->patch_model()->filename(filename);
 		}
 	}
