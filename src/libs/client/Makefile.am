@@ -35,6 +35,8 @@ libomclient_la_SOURCES = \
 	PatchLibrarian.cpp \
 	ConnectionModel.h \
 	ConnectionModel.cpp \
+	Store.h \
+	Store.cpp \
 	$(top_srcdir)/src/common/util/Path.h \
 	$(top_srcdir)/src/common/interface/ClientInterface.h \
 	$(top_srcdir)/src/common/interface/EngineInterface.h
