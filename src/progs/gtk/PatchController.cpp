@@ -72,6 +72,7 @@ PatchController::PatchController(CountedPtr<PatchModel> model)
 
 	model->new_node_sig.connect(sigc::mem_fun(this, &PatchController::add_node));
 	model->new_connection_sig.connect(sigc::mem_fun(this, &PatchController::connection));
+	model->removed_connection_sig.connect(sigc::mem_fun(this, &PatchController::disconnection));
 }
 
 
@@ -599,7 +600,7 @@ PatchController::disconnection(const Path& src_port_path, const Path& dst_port_p
 		m_patch_view->canvas()->remove_connection(
 			src_node_name, src_port_name, dst_node_name, dst_port_name);
 
-	patch_model()->remove_connection(src_port_path, dst_port_path);
+	//patch_model()->remove_connection(src_port_path, dst_port_path);
 	
 	cerr << "FIXME: disconnection\n";
 	/*

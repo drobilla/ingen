@@ -34,6 +34,7 @@ Store::Store(SigClientInterface& emitter)
 	emitter.new_node_sig.connect(sigc::mem_fun(this, &Store::new_node_event));
 	emitter.new_port_sig.connect(sigc::mem_fun(this, &Store::new_port_event));
 	emitter.connection_sig.connect(sigc::mem_fun(this, &Store::connection_event));
+	emitter.disconnection_sig.connect(sigc::mem_fun(this, &Store::disconnection_event));
 	emitter.metadata_update_sig.connect(sigc::mem_fun(this, &Store::metadata_update_event));
 }
 
@@ -287,6 +288,23 @@ Store::connection_event(const string& src_port_path, const string& dst_port_path
 	CountedPtr<PatchModel> patch = this->patch(patch_path);
 	if (patch)
 		patch->add_connection(new ConnectionModel(src, dst));
+	else
+		cerr << "ERROR: connection in nonexistant patch" << endl;
+}
+
+
+void
+Store::disconnection_event(const string& src_port_path, const string& dst_port_path)
+{
+	const Path& src = src_port_path;
+	const Path& dst = dst_port_path;
+
+	assert(src.parent().parent() == dst.parent().parent());
+	const Path& patch_path = src.parent().parent();
+
+	CountedPtr<PatchModel> patch = this->patch(patch_path);
+	if (patch)
+		patch->remove_connection(src, dst);
 	else
 		cerr << "ERROR: connection in nonexistant patch" << endl;
 }
