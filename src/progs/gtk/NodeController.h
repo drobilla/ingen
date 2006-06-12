@@ -55,9 +55,6 @@ public:
 	
 	virtual void destroy();
 
-	/*virtual void add_to_store();
-	virtual void remove_from_store();*/
-
 	virtual void metadata_update(const string& key, const string& value);
 	
 	virtual void create_module(OmFlowCanvas* canvas);

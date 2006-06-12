@@ -118,38 +118,6 @@ NodeController::create_module(OmFlowCanvas* canvas)
 	m_module->move_to(node_model()->x(), node_model()->y());
 }
 
-/*
-void
-NodeController::add_to_store()
-{
-	// Add self
-	Store::instance().add_object(this);
-
-	// Add ports
-	for (list<PortModel*>::const_iterator i = node_model()->ports().begin();
-			i != node_model()->ports().end(); ++i) {
-		//GtkObjectController* const pc = (GtkObjectController*)((*i)->controller());
-		assert((*i)->controller() != NULL);
-		((GtkObjectController*)((*i)->controller()))->add_to_store();
-	}
-}
-
-
-void
-NodeController::remove_from_store()
-{
-	// Remove ports
-	for (list<PortModel*>::const_iterator i = node_model()->ports().begin();
-			i != node_model()->ports().end(); ++i) {
-		GtkObjectController* const pc = (GtkObjectController*)((*i)->controller());
-		assert(pc != NULL);
-		pc->remove_from_store();
-	}
-	
-	// Remove self
-	Store::instance().remove_object(this);
-}
-*/
 
 void
 NodeController::set_path(const Path& new_path)
@@ -389,12 +357,11 @@ NodeController::create_all_ports()
 bool
 NodeController::has_control_inputs()
 {
-/*
 	for (PortModelList::const_iterator i = node_model()->ports().begin();
 			i != node_model()->ports().end(); ++i)
 		if ((*i)->is_input() && (*i)->is_control())
 			return true;
-*/
+	
 	return false;
 }
 
