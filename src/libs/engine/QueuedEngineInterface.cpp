@@ -149,7 +149,7 @@ QueuedEngineInterface::rename(const string& old_path,
 void
 QueuedEngineInterface::destroy(const string& path)
 {
-	DestroyEvent* ev = new DestroyEvent(_responder, path);
+	DestroyEvent* ev = new DestroyEvent(_responder, this, path);
 	push(ev);
 }
 

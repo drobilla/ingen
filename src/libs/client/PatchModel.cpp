@@ -80,6 +80,7 @@ PatchModel::remove_node(const string& name)
 	if (i != m_nodes.end()) {
 		//delete i->second;
 		m_nodes.erase(i);
+		removed_node_sig.emit(name);
 		return;
 	}
 	

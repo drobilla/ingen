@@ -35,8 +35,8 @@
 namespace Om {
 
 
-DestroyEvent::DestroyEvent(CountedPtr<Responder> responder, const string& path, bool lock_mutex)
-: QueuedEvent(responder, true),
+DestroyEvent::DestroyEvent(CountedPtr<Responder> responder, QueuedEventSource* source, const string& path, bool lock_mutex)
+: QueuedEvent(responder, true, source),
   m_path(path),
   m_node(NULL),
   m_patch_listnode(NULL),
@@ -142,6 +142,7 @@ DestroyEvent::execute(samplecount offset)
 void
 DestroyEvent::post_process()
 {
+	assert(m_source);
 	m_source->unblock();
 	
 	if (m_node == NULL) {

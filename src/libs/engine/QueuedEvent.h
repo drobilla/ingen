@@ -70,7 +70,7 @@ protected:
 	: Event(responder), m_pre_processed(false), m_blocking(blocking), m_source(source)
 	{}
 	
-	// NULL event base (for internal events)
+	// NULL event base (for internal events only!)
 	QueuedEvent()
 	: Event(), m_pre_processed(false), m_blocking(false), m_source(NULL)
 	{}

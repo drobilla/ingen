@@ -71,6 +71,7 @@ PatchController::PatchController(CountedPtr<PatchModel> model)
 	}*/
 
 	model->new_node_sig.connect(sigc::mem_fun(this, &PatchController::add_node));
+	model->removed_node_sig.connect(sigc::mem_fun(this, &PatchController::remove_node));
 	model->new_connection_sig.connect(sigc::mem_fun(this, &PatchController::connection));
 	model->removed_connection_sig.connect(sigc::mem_fun(this, &PatchController::disconnection));
 }
@@ -483,6 +484,7 @@ void
 PatchController::remove_node(const string& name)
 {
 	assert(name.find("/") == string::npos);
+	assert(!m_patch_model->get_node(name));
 
 	// Update breadcrumbs if necessary
 	if (m_window != NULL)
@@ -492,8 +494,6 @@ PatchController::remove_node(const string& name)
 		assert(m_patch_view->canvas() != NULL);
 		m_patch_view->canvas()->remove_module(name);
 	}
-	
-	patch_model()->remove_node(name);
 }
 
 

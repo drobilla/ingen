@@ -71,6 +71,7 @@ public:
 	
 	// Signals
 	sigc::signal<void, CountedPtr<NodeModel> >        new_node_sig; 
+	sigc::signal<void, const string& >                removed_node_sig; 
 	sigc::signal<void, CountedPtr<ConnectionModel> >  new_connection_sig; 
 	sigc::signal<void, const string&, const string& > removed_connection_sig; 
 
