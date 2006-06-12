@@ -23,6 +23,7 @@
 #include <string>
 #include <algorithm>
 #include <cassert>
+#include <sigc++/sigc++.h>
 #include "util/Path.h"
 
 using std::string; using std::map; using std::find;
@@ -49,7 +50,7 @@ public:
 	const map<string, string>& metadata() const { return m_metadata; }
 	string get_metadata(const string& key) const;
 	void   set_metadata(const string& key, const string& value)
-		{ assert(value.length() > 0); m_metadata[key] = value; }
+		{ assert(value.length() > 0); m_metadata[key] = value; metadata_update_sig.emit(key, value); }
 	
 	inline const Path& path() const            { return m_path; }
 	virtual void       set_path(const Path& p) { m_path = p; }
@@ -65,6 +66,8 @@ public:
 	string        base_path() const;
 	const string  name() const { return m_path.name(); }
 	
+	// Signals
+	sigc::signal<void, const string&, const string&> metadata_update_sig; 
 protected:
 	Path              m_path;
 	ObjectModel*      m_parent;

@@ -58,7 +58,12 @@ public:
 	virtual void add_to_store() = 0;
 	virtual void remove_from_store() = 0;
 */
-	virtual void metadata_update(const string& key, const string& value);
+
+	/** Derived classes should override this to handle special metadata
+	 * keys, then call this to set the model's metadata key.
+	 */
+	virtual void metadata_update(const string& key, const string& value)
+	{ assert(m_model->get_metadata(key) != ""); }
 
 	/** Rename object */
 	virtual void set_path(const Path& new_path)

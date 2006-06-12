@@ -33,6 +33,7 @@ Store::Store(SigClientInterface& emitter)
 	emitter.new_patch_sig.connect(sigc::mem_fun(this, &Store::new_patch_event));
 	emitter.new_node_sig.connect(sigc::mem_fun(this, &Store::new_node_event));
 	emitter.new_port_sig.connect(sigc::mem_fun(this, &Store::new_port_event));
+	emitter.metadata_update_sig.connect(sigc::mem_fun(this, &Store::metadata_update_event));
 }
 
 
@@ -256,6 +257,17 @@ Store::new_port_event(const string& path, const string& type, bool is_output)
 				cerr << "ERROR: new port with no parent" << endl;
 		}
 	}
+}
+
+
+void
+Store::metadata_update_event(const string& subject_path, const string& predicate, const string& value)
+{
+	CountedPtr<ObjectModel> subject = object(subject_path);
+	if (subject)
+		subject->set_metadata(predicate, value);
+	else
+		cerr << "ERROR: metadata for nonexistant object." << endl;
 }
 
 

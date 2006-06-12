@@ -50,12 +50,11 @@ NodeController::NodeController(CountedPtr<NodeModel> model)
 	model->set_controller(this);
 
 	// Create port controllers
-	cerr << "FIXME: NodeController()" << endl;
-	/*
-	for (list<PortModel*>::const_iterator i = node_model()->ports().begin();
+	for (PortModelList::const_iterator i = node_model()->ports().begin();
 			i != node_model()->ports().end(); ++i) {
-		assert((*i)->controller() == NULL);
+		assert(!(*i)->controller());
 		assert((*i)->parent() == model.get());
+		// FIXME: leak
 		PortController* const pc = new PortController(*i);
 		assert((*i)->controller() == pc); // PortController() does this
 	}
@@ -83,13 +82,12 @@ NodeController::NodeController(CountedPtr<NodeModel> model)
 	
 	m_controls_menuitem->property_sensitive() = false;
 	
-	if (node_model()->plugin()->type() == PluginModel::Internal
+	if (node_model()->plugin() && node_model()->plugin()->type() == PluginModel::Internal
 			&& node_model()->plugin()->plug_label() == "midi_control_in") {
 		Gtk::Menu::MenuList& items = m_menu.items();
 		items.push_back(Gtk::Menu_Helpers::MenuElem("Learn",
 			sigc::mem_fun(this, &NodeController::on_menu_learn)));
 	}
-	*/
 
 	model->new_port_sig.connect(sigc::mem_fun(this, &NodeController::add_port));
 }
@@ -227,11 +225,12 @@ NodeController::metadata_update(const string& key, const string& value)
 void
 NodeController::add_port(CountedPtr<PortModel> pm)
 {
-	assert(pm->parent() == NULL);
+	assert(pm->parent() == node_model().get());
+	assert(node_model()->get_port(pm->name()) == pm);
 	
 	cout << "[NodeController] Adding port " << pm->path() << endl;
 	
-	node_model()->add_port(pm);
+	// FIXME: leak
 	PortController* pc = new PortController(pm);
 	assert(pm->controller() == pc);
 	//pc->add_to_store();

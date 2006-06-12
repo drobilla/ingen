@@ -133,6 +133,11 @@ ObjectSender::send_node(ClientInterface* client, const Node* node)
 	}
 
 	client->bundle_end();
+	
+	// Send metadata
+	const map<string, string>& data = node->metadata();
+	for (map<string, string>::const_iterator j = data.begin(); j != data.end(); ++j)
+		client->metadata_update(node->path(), (*j).first, (*j).second);
 }
 
 

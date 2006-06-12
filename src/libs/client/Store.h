@@ -41,7 +41,7 @@ class PortModel;
  */
 class Store {
 public:
-	CountedPtr<PluginModel>      plugin(const string& uri);
+	CountedPtr<PluginModel> plugin(const string& uri);
 	CountedPtr<ObjectModel> object(const string& path);
 	CountedPtr<PatchModel>  patch(const string& path);
 	CountedPtr<NodeModel>   node(const string& path);
@@ -73,7 +73,8 @@ private:
 	void new_patch_event(const string& path, uint32_t poly);
 	void new_node_event(const string& plugin_type, const string& plugin_uri, const string& node_path, bool is_polyphonic, uint32_t num_ports);
 	void new_port_event(const string& path, const string& data_type, bool is_output);
-
+	void metadata_update_event(const string& subject_path, const string& predicate, const string& value);
+	
 	map<string, CountedPtr<ObjectModel> > m_objects; ///< Keyed by Om path
 	map<string, CountedPtr<PluginModel> > m_plugins; ///< Keyed by URI
 };

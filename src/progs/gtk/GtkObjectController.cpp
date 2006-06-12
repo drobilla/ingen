@@ -23,16 +23,7 @@ GtkObjectController::GtkObjectController(CountedPtr<ObjectModel> model)
 : m_model(model)
 {
 	assert(m_model);
-}
-
-
-/** Derived classes should override this to handle special metadata
- * keys, then call this to set the model's metadata key.
- */
-void
-GtkObjectController::metadata_update(const string& key, const string& value)
-{
-	m_model->set_metadata(key, value);
+	model->metadata_update_sig.connect(sigc::mem_fun(this, &GtkObjectController::metadata_update));
 }
 
 
