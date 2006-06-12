@@ -56,7 +56,7 @@ ControlPanel::init(NodeController* node, size_t poly)
 	assert(node != NULL);
 	assert(poly > 0);
 	
-	const CountedPtr<NodeModel> node_model = node->node_model();
+	const CountedPtr<NodeModel> node_model(node->node_model());
 	
 	if (poly > 1) {
 		m_voice_spinbutton->set_range(0, poly - 1);
@@ -66,9 +66,14 @@ ControlPanel::init(NodeController* node, size_t poly)
 
 	for (PortModelList::const_iterator i = node_model->ports().begin();
 			i != node_model->ports().end(); ++i) {
-		PortController* pc = (PortController*)(*i)->controller();
-		assert(pc != NULL);
-		add_port(pc);
+		// FIXME:
+		if (*i) {
+			PortController* pc = (PortController*)((*i)->controller());
+			assert(pc != NULL);
+			add_port(pc);
+		} else {
+			cerr << "WTF?\n";
+		}
 	}
 	
 	m_callback_enabled = true;

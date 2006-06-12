@@ -73,7 +73,7 @@ ControlInterface::new_patch_model(PatchModel* const pm)
 			pm->plugin(plugin);
 		}*/
 
-		assert(pm->parent() == NULL);
+		assert(!pm->parent());
 		PatchController* patch = new PatchController(pm);
 		//Store::instance().add_object(patch);
 		//_app->patch_tree()->add_patch(patch);

@@ -82,14 +82,10 @@ LV2Plugin::instantiate()
 	Port* port = NULL;
 	
 	for (size_t j=0; j < m_num_ports; ++j) {
-		// LV2 shortnames are guaranteed to be unique
+		// LV2 shortnames are guaranteed to be unique, valid C identifiers
 		port_name = (char*)slv2_port_get_symbol(m_lv2_plugin, j);
 	
-		string::size_type slash_index;
-		
-		// Replace all slashes with "-" (so they don't screw up paths)
-		while ((slash_index = port_name.find("/")) != string::npos)
-			port_name[slash_index] = '-';
+		assert(port_name.find("/") == string::npos);
 
 		port_path = path() + "/" + port_name;
 		

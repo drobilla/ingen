@@ -6,7 +6,7 @@ MAINTAINERCLEANFILES = Makefile.in
 sharefilesdir = $(pkgdatadir)
 dist_sharefiles_DATA = om_gtk.glade om-icon.png
 
-AM_CXXFLAGS = -DGTK_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -I$(top_srcdir)/src/common -I$(top_srcdir)/src/libs/client -DPKGDATADIR=\"$(pkgdatadir)\" @GTKMM_CFLAGS@ @LIBGLADEMM_CFLAGS@ @GNOMECANVASMM_CFLAGS@ @LOSC_CFLAGS@ @LASH_CFLAGS@ @FLOWCANVAS_CFLAGS@
+AM_CXXFLAGS = -DGTK_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -I$(top_srcdir)/src/common -I$(top_srcdir)/src/libs/client -DPKGDATADIR=\"$(pkgdatadir)\" @GTKMM_CFLAGS@ @LIBGLADEMM_CFLAGS@ @GNOMECANVASMM_CFLAGS@ @LOSC_CFLAGS@ @LASH_CFLAGS@ @FLOWCANVAS_CFLAGS@ -DWITH_RTTI
 om_gtk_LDADD = @GTKMM_LIBS@ @LIBGLADEMM_LIBS@ @GNOMECANVASMM_LIBS@ @LOSC_LIBS@ @LASH_LIBS@ @FLOWCANVAS_LIBS@ ../../libs/client/libomclient.la
 om_gtk_DEPENDENCIES = ../../libs/client/libomclient.la
 

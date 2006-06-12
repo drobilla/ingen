@@ -101,6 +101,7 @@ public:
 	CountedPtr& operator=(const CountedPtr& copy)
 	{
 		if (this != &copy) {
+			assert(_counter != copy._counter);
 			release();
 			retain(copy._counter);
 		}
@@ -112,6 +113,7 @@ public:
 	CountedPtr& operator=(const CountedPtr<Y>& y)
 	{
 		if (this != (CountedPtr*)&y) {
+			assert(_counter != y._counter);
 			release();
 			retain(y._counter);
 		}

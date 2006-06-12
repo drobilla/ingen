@@ -207,11 +207,13 @@ Store::new_node_event(const string& plugin_type, const string& plugin_uri, const
 
 		std::map<string, CountedPtr<ObjectModel> >::iterator pi = m_objects.find(n->path().parent());
 		if (pi != m_objects.end()) {
-			PatchModel* parent = dynamic_cast<PatchModel*>((*pi).second.get());
-			if (parent)
+			CountedPtr<PatchModel> parent = (*pi).second;
+			if (parent) {
+				n->set_parent(parent);
 				parent->add_node(n);
-			else
+			} else {
 				cerr << "ERROR: new node with no parent" << endl;
+			}
 		}
 	}
 }
@@ -251,7 +253,8 @@ Store::new_port_event(const string& path, const string& type, bool is_output)
 
 		std::map<string, CountedPtr<ObjectModel> >::iterator pi = m_objects.find(p->path().parent());
 		if (pi != m_objects.end()) {
-			NodeModel* parent = dynamic_cast<NodeModel*>((*pi).second.get());
+			CountedPtr<NodeModel> parent = (*pi).second;
+			p->set_parent(parent);
 			if (parent)
 				parent->add_port(p);
 			else

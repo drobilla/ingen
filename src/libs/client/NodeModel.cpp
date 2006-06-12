@@ -81,22 +81,22 @@ NodeModel::set_path(const Path& p)
 	for (PortModelList::iterator i = m_ports.begin(); i != m_ports.end(); ++i)
 		(*i)->set_path(m_path + "/" + (*i)->name());
 
-	if (parent_patch() != NULL && old_path.length() > 0)
-		parent_patch()->rename_node(old_path, p);
+	//if (m_parent && old_path.length() > 0)
+	//	parent_patch()->rename_node(old_path, p);
 }
 
 
 void
 NodeModel::add_port(CountedPtr<PortModel> pm)
 {
+	assert(pm);
 	assert(pm->name() != "");
 	assert(pm->path().length() > m_path.length());
 	assert(pm->path().substr(0, m_path.length()) == m_path);
-	assert(pm->parent() == NULL);
+	assert(pm->parent().get() == this);
 	assert(!get_port(pm->name()));
 
 	m_ports.push_back(pm);
-	pm->set_parent(this);
 
 	new_port_sig.emit(pm);
 }

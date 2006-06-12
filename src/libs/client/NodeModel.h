@@ -33,7 +33,6 @@ using std::cout; using std::cerr; using std::endl;
 
 namespace LibOmClient {
 
-class PatchModel;
 class PluginModel;
 
 	
@@ -70,8 +69,6 @@ public:
 	void                  x(float a)         { m_x = a; }
 	float                 y() const          { return m_y; }
 	void                  y(float a)         { m_y = a; }
-	
-	PatchModel* parent_patch() const { return (PatchModel*)m_parent; }
 	
 	// Signals
 	sigc::signal<void, CountedPtr<PortModel> > new_port_sig; 

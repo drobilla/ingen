@@ -17,9 +17,6 @@
 #ifndef STORE_H
 #define STORE_H
 
-// FIXME: for CountedPtr
-#define WITH_RTTI
-
 #include <cassert>
 #include <string>
 #include <map>

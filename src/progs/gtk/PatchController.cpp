@@ -60,7 +60,6 @@ PatchController::PatchController(CountedPtr<PatchModel> model)
   m_module_y(0)
 {
 	assert(model->path().length() > 0);
-	assert(model->parent() == NULL);
 	assert(model->controller() == this); // NodeController() does this
 
 /* FIXME	if (model->path() != "/") {
@@ -168,13 +167,13 @@ PatchController::destroy()
 	//Store::instance().remove_object(this);
 	
 	// Delete self from parent (this will delete model)
-	if (patch_model()->parent() != NULL) {
+	/*if (patch_model()->parent() != NULL) {
 		PatchController* const parent = (PatchController*)patch_model()->parent()->controller();
 		assert(parent != NULL);
 		parent->remove_node(name());
 	} else {
 		//delete m_model;
-	}
+	}*/
 }
 
 
@@ -419,7 +418,7 @@ PatchController::add_node(CountedPtr<NodeModel> nm)
 	cerr << "ADD NODE\n";
 
 	assert(nm);
-	assert(nm->parent() == m_patch_model.get());
+	assert(nm->parent() == m_patch_model);
 	assert(nm->path().parent() == m_patch_model->path());
 	
 	/*if (patch_model()->get_node(nm->name()) != NULL) {
@@ -506,7 +505,7 @@ void
 PatchController::add_port(CountedPtr<PortModel> pm)
 {
 	assert(pm);
-	assert(pm->parent() == NULL);
+	assert(!pm->parent());
 
 	//cerr << "[PatchController] Adding port " << pm->path() << endl;
 

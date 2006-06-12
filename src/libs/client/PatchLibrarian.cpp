@@ -359,8 +359,8 @@ PatchLibrarian::load_patch(PatchModel* pm, bool wait, bool existing)
 {
 	string filename = pm->filename();
 
-	string additional_path = (pm->parent() == NULL)
-		? "" : ((PatchModel*)pm->parent())->filename();
+	string additional_path = (!pm->parent())
+		? "" : ((PatchModel*)pm->parent().get())->filename();
 	additional_path = additional_path.substr(0, additional_path.find_last_of("/"));
 
 	filename = find_file(pm->filename(), additional_path);
@@ -409,7 +409,7 @@ PatchLibrarian::load_patch(PatchModel* pm, bool wait, bool existing)
 		if ((!xmlStrcmp(cur->name, (const xmlChar*)"name"))) {
 			if (load_name) {
 				assert(key != NULL);
-				if (pm->parent() != NULL) {
+				if (pm->parent()) {
 					path = pm->parent()->base_path() + string((char*)key);
 				} else {
 					path = string("/") + string((char*)key);

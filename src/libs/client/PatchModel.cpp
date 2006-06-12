@@ -63,11 +63,10 @@ PatchModel::add_node(CountedPtr<NodeModel> nm)
 {
 	assert(nm);
 	assert(nm->name().find("/") == string::npos);
-	assert(nm->parent() == NULL);
+	assert(nm->parent().get() == this);
 	assert(m_nodes.find(nm->name()) == m_nodes.end());
 
-	m_nodes[nm->name()] = nm;//CountedPtr<NodeModel>(nm);
-	nm->set_parent(this);
+	m_nodes[nm->name()] = nm;
 
 	new_node_sig.emit(nm);
 }
@@ -222,9 +221,9 @@ PatchModel::remove_connection(const string& src_port_path, const string& dst_por
 bool
 PatchModel::polyphonic() const
 {
-	return (m_parent == NULL)
+	return (!m_parent)
 		? (m_poly > 1)
-		: (m_poly > 1) && m_poly == parent_patch()->poly() && m_poly > 1;
+		: (m_poly > 1) && m_poly == ((PatchModel*)m_parent.get())->poly() && m_poly > 1;
 }
 
 

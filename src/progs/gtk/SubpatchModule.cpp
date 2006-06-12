@@ -75,7 +75,7 @@ SubpatchModule::on_double_click(GdkEventButton* event)
 void
 SubpatchModule::browse_to_patch()
 {
-	assert(m_patch->model()->parent() != NULL);
+	assert(m_patch->model()->parent());
 	PatchController* pc = (PatchController*)m_patch->model()->parent()->controller();
 	assert(pc != NULL);
 	assert(pc->window() != NULL);

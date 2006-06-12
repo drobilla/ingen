@@ -91,7 +91,7 @@ Controller::create_patch_from_model(const PatchModel* pm)
 	//int id = get_next_request_id();
 	//set_wait_response_id(id);
 	create_patch_from_model(pm);
-	if (pm->parent() != NULL) {
+	if (pm->parent()) {
 	//	wait_for_response();
 		char temp_buf[16];
 		snprintf(temp_buf, 16, "%f", pm->x());

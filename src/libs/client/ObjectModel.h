@@ -25,7 +25,7 @@
 #include <cassert>
 #include <sigc++/sigc++.h>
 #include "util/Path.h"
-
+#include "util/CountedPtr.h"
 using std::string; using std::map; using std::find;
 using std::cout; using std::cerr; using std::endl;
 using Om::Path;
@@ -55,8 +55,8 @@ public:
 	inline const Path& path() const            { return m_path; }
 	virtual void       set_path(const Path& p) { m_path = p; }
 	
-	ObjectModel*  parent() const             { return m_parent; }
-	virtual void  set_parent(ObjectModel* p) { m_parent = p; }
+	CountedPtr<ObjectModel>  parent() const             { return m_parent; }
+	virtual void  set_parent(CountedPtr<ObjectModel> p) { m_parent = p; }
 	
 	ObjectController* controller() const { return m_controller; }
 	
@@ -69,9 +69,9 @@ public:
 	// Signals
 	sigc::signal<void, const string&, const string&> metadata_update_sig; 
 protected:
-	Path              m_path;
-	ObjectModel*      m_parent;
-	ObjectController* m_controller;
+	Path                     m_path;
+	CountedPtr<ObjectModel>  m_parent;
+	ObjectController*        m_controller; // FIXME: remove
 	
 	map<string,string> m_metadata;
 

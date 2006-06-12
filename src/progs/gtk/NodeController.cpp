@@ -53,7 +53,8 @@ NodeController::NodeController(CountedPtr<NodeModel> model)
 	for (PortModelList::const_iterator i = node_model()->ports().begin();
 			i != node_model()->ports().end(); ++i) {
 		assert(!(*i)->controller());
-		assert((*i)->parent() == model.get());
+		assert((*i)->parent());
+		assert((*i)->parent().get() == node_model().get());
 		// FIXME: leak
 		PortController* const pc = new PortController(*i);
 		assert((*i)->controller() == pc); // PortController() does this
@@ -193,7 +194,8 @@ NodeController::metadata_update(const string& key, const string& value)
 void
 NodeController::add_port(CountedPtr<PortModel> pm)
 {
-	assert(pm->parent() == node_model().get());
+	assert(pm->parent().get() == node_model().get());
+	assert(pm->parent() == node_model());
 	assert(node_model()->get_port(pm->name()) == pm);
 	
 	cout << "[NodeController] Adding port " << pm->path() << endl;
@@ -225,9 +227,9 @@ NodeController::show_control_window()
 {
 	size_t poly = 1;
 	if (node_model()->polyphonic())
-		poly = node_model()->parent_patch()->poly();
+		poly = ((PatchModel*)node_model()->parent().get())->poly();
 	
-	if (m_control_window == NULL)
+	if (!m_control_window)
 		m_control_window = new NodeControlWindow(this, poly);
 	
 	if (m_control_window->control_panel()->num_controls() > 0)
@@ -245,7 +247,7 @@ NodeController::on_menu_destroy()
 void
 NodeController::show_rename_window()
 {
-	assert(node_model()->parent() != NULL);
+	assert(node_model()->parent());
 
 	// FIXME: will this be magically cleaned up?
 	RenameWindow* win = NULL;
@@ -265,6 +267,8 @@ NodeController::show_rename_window()
 void
 NodeController::on_menu_clone()
 {
+	cerr << "FIXME: clone broken\n";
+	/*
 	assert(node_model());
 	//assert(m_parent != NULL);
 	//assert(m_parent->model() != NULL);
@@ -295,6 +299,7 @@ NodeController::on_menu_clone()
 	nm->x(node_model()->x() + 20);
 	nm->y(node_model()->y() + 20);
 	Controller::instance().create_node_from_model(nm);
+	*/
 }
 
 

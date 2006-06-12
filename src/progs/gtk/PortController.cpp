@@ -30,7 +30,7 @@ PortController::PortController(CountedPtr<PortModel> model)
   m_control_panel(NULL)
 {
 	assert(model);
-	assert(model->parent() != NULL);
+	assert(model->parent());
 	assert(model->controller() == NULL);
 
 	model->set_controller(this);
@@ -54,7 +54,7 @@ PortController::remove_from_store()
 void
 PortController::destroy()
 {
-	assert(m_model->parent() != NULL);
+	assert(m_model->parent());
 	NodeController* parent = (NodeController*)m_model->parent()->controller();
 	assert(parent != NULL);
 
