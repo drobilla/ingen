@@ -273,11 +273,11 @@ PatchLibrarian::save_patch(PatchModel* patch_model, const string& filename, bool
 
 	// Save connections
 	
-	const list<ConnectionModel*>& cl = patch_model->connections();
+	const list<CountedPtr<ConnectionModel> >& cl = patch_model->connections();
 	const ConnectionModel* c = NULL;
 	
-	for (list<ConnectionModel*>::const_iterator i = cl.begin(); i != cl.end(); ++i) {
-		c = (*i);
+	for (list<CountedPtr<ConnectionModel> >::const_iterator i = cl.begin(); i != cl.end(); ++i) {
+		c = (*i).get();
 		xml_node = xmlNewChild(xml_root_node, NULL, (xmlChar*)"connection", NULL);
 		xml_child_node = xmlNewChild(xml_node, NULL, (xmlChar*)"source-node",
 			(xmlChar*)c->src_port_path().parent().name().c_str());

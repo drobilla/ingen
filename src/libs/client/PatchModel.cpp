@@ -40,7 +40,7 @@ PatchModel::set_path(const Path& new_path)
 	
 #ifdef DEBUG
 	// Be sure connection paths are updated and sane
-	for (list<ConnectionModel*>::iterator j = m_connections.begin();
+	for (list<CountedPtr<ConnectionModel> >::iterator j = m_connections.begin();
 			j != m_connections.end(); ++j) {
 		assert((*j)->src_port_path().parent().parent() == new_path);
 		assert((*j)->src_port_path().parent().parent() == new_path);
@@ -64,8 +64,9 @@ PatchModel::add_node(CountedPtr<NodeModel> nm)
 	assert(nm);
 	assert(nm->name().find("/") == string::npos);
 	assert(nm->parent() == NULL);
+	assert(m_nodes.find(nm->name()) == m_nodes.end());
 
-	m_nodes[nm->name()] = CountedPtr<NodeModel>(nm);
+	m_nodes[nm->name()] = nm;//CountedPtr<NodeModel>(nm);
 	nm->set_parent(this);
 
 	new_node_sig.emit(nm);
@@ -90,8 +91,8 @@ PatchModel::remove_node(const string& name)
 void
 PatchModel::clear()
 {
-	for (list<ConnectionModel*>::iterator j = m_connections.begin(); j != m_connections.end(); ++j)
-		delete (*j);
+	//for (list<CountedPtr<ConnectionModel> >::iterator j = m_connections.begin(); j != m_connections.end(); ++j)
+	//	delete (*j);
 	
 	for (NodeModelMap::iterator i = m_nodes.begin(); i != m_nodes.end(); ++i) {
 		(*i).second->clear();
@@ -125,7 +126,7 @@ PatchModel::rename_node(const Path& old_path, const Path& new_path)
 	
 	if (i != m_nodes.end()) {
 		nm = (*i).second.get();
-		for (list<ConnectionModel*>::iterator j = m_connections.begin(); j != m_connections.end(); ++j) {
+		for (list<CountedPtr<ConnectionModel> >::iterator j = m_connections.begin(); j != m_connections.end(); ++j) {
 			if ((*j)->src_port_path().parent() == old_path)
 				(*j)->src_port_path(new_path.base_path() + (*j)->src_port_path().name());
 			if ((*j)->dst_port_path().parent() == old_path)
@@ -141,10 +142,10 @@ PatchModel::rename_node(const Path& old_path, const Path& new_path)
 }
 
 
-ConnectionModel*
+CountedPtr<ConnectionModel>
 PatchModel::get_connection(const string& src_port_path, const string& dst_port_path)
 {
-	for (list<ConnectionModel*>::iterator i = m_connections.begin(); i != m_connections.end(); ++i)
+	for (list<CountedPtr<ConnectionModel> >::iterator i = m_connections.begin(); i != m_connections.end(); ++i)
 		if ((*i)->src_port_path() == src_port_path && (*i)->dst_port_path() == dst_port_path)
 			return (*i);
 	return NULL;
@@ -159,17 +160,16 @@ PatchModel::get_connection(const string& src_port_path, const string& dst_port_p
  * this patch is a fatal error.
  */
 void
-PatchModel::add_connection(ConnectionModel* cm)
+PatchModel::add_connection(CountedPtr<ConnectionModel> cm)
 {
-	assert(cm != NULL);
+	assert(cm);
 	assert(cm->src_port_path().parent().parent() == m_path);
 	assert(cm->dst_port_path().parent().parent() == m_path);
 	assert(cm->patch_path() == path());
 	
-	ConnectionModel* existing = get_connection(cm->src_port_path(), cm->dst_port_path());
+	CountedPtr<ConnectionModel> existing = get_connection(cm->src_port_path(), cm->dst_port_path());
 
-	if (existing != NULL) {
-		delete cm;
+	if (existing) {
 		return;
 	}
 
@@ -197,19 +197,19 @@ PatchModel::add_connection(ConnectionModel* cm)
 	assert(cm->dst_port() != NULL);
 
 	m_connections.push_back(cm);
+
+	new_connection_sig.emit(cm);
 }
 
 
 void
 PatchModel::remove_connection(const string& src_port_path, const string& dst_port_path)
 {
-	ConnectionModel* cm = NULL;
-	for (list<ConnectionModel*>::iterator i = m_connections.begin(); i != m_connections.end(); ++i) {
-		cm = (*i);
+	for (list<CountedPtr<ConnectionModel> >::iterator i = m_connections.begin(); i != m_connections.end(); ++i) {
+		CountedPtr<ConnectionModel> cm = (*i);
 		if (cm->src_port_path() == src_port_path && cm->dst_port_path() == dst_port_path) {
-			delete cm;
-			m_connections.erase(i);
-			assert(get_connection(src_port_path, dst_port_path) == NULL); // no duplicates
+			m_connections.erase(i); // cuts our reference
+			assert(!get_connection(src_port_path, dst_port_path)); // no duplicates
 			return;
 		}
 	}

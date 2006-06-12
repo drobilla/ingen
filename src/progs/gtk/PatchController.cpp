@@ -72,6 +72,7 @@ PatchController::PatchController(CountedPtr<PatchModel> model)
 	}*/
 
 	model->new_node_sig.connect(sigc::mem_fun(this, &PatchController::add_node));
+	model->new_connection_sig.connect(sigc::mem_fun(this, &PatchController::connection));
 }
 
 
@@ -338,7 +339,7 @@ PatchController::create_view()
 	}
 
 	// Create connections
-	for (list<ConnectionModel*>::const_iterator i = patch_model()->connections().begin();
+	for (list<CountedPtr<ConnectionModel> >::const_iterator i = patch_model()->connections().begin();
 			i != patch_model()->connections().end(); ++i) {
 		create_connection(*i);
 	}
@@ -351,7 +352,7 @@ PatchController::create_view()
 /** Create a connection in the view (canvas).
  */
 void
-PatchController::create_connection(const ConnectionModel* cm)
+PatchController::create_connection(CountedPtr<ConnectionModel> cm)
 {
 	m_patch_view->canvas()->add_connection(
 			cm->src_port_path().parent().name(),
@@ -575,11 +576,11 @@ PatchController::remove_port(const Path& path, bool resize_module)
 
 
 void
-PatchController::connection(ConnectionModel* const cm)
+PatchController::connection(CountedPtr<ConnectionModel> cm)
 {
-	assert(cm != NULL);
+	assert(cm);
 
-	patch_model()->add_connection(cm);
+	//patch_model()->add_connection(cm);
 	
 	if (m_patch_view != NULL)
 		create_connection(cm);

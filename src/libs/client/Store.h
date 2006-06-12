@@ -74,6 +74,7 @@ private:
 	void new_node_event(const string& plugin_type, const string& plugin_uri, const string& node_path, bool is_polyphonic, uint32_t num_ports);
 	void new_port_event(const string& path, const string& data_type, bool is_output);
 	void metadata_update_event(const string& subject_path, const string& predicate, const string& value);
+	void connection_event(const string& src_port_path, const string& dst_port_path);
 	
 	map<string, CountedPtr<ObjectModel> > m_objects; ///< Keyed by Om path
 	map<string, CountedPtr<PluginModel> > m_plugins; ///< Keyed by URI

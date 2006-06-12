@@ -74,7 +74,7 @@ public:
 	virtual void add_port(CountedPtr<PortModel> pm);
 	virtual void remove_port(const Path& path, bool resize_module);
 
-	void connection(ConnectionModel* const cm);
+	void connection(CountedPtr<ConnectionModel> cm);
 	void disconnection(const Path& src_port_path, const Path& dst_port_path);
 	void clear();
 
@@ -111,7 +111,7 @@ private:
 	void add_node(CountedPtr<NodeModel> nm);
 	void remove_node(const string& name);
 	
-	void create_connection(const ConnectionModel* cm);
+	void create_connection(CountedPtr<ConnectionModel> cm);
 
 	PatchWindow* m_window;     ///< Window currently showing this patch
 	PatchView*   m_patch_view; ///< View (canvas) of this patch

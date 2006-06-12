@@ -24,13 +24,12 @@
 #include <sigc++/sigc++.h>
 #include "NodeModel.h"
 #include "util/CountedPtr.h"
+#include "ConnectionModel.h"
 
 using std::list; using std::string; using std::map;
 
 namespace LibOmClient {
 
-class ConnectionModel;
-	
 
 /** Client's model of a patch.
  *
@@ -46,7 +45,7 @@ public:
 	{}
 	
 	const NodeModelMap&           nodes()       const { return m_nodes; }
-	const list<ConnectionModel*>& connections() const { return m_connections; }
+	const list<CountedPtr<ConnectionModel> >& connections() const { return m_connections; }
 	
 	virtual void set_path(const Path& path);
 	
@@ -56,8 +55,8 @@ public:
 
 	void             rename_node(const Path& old_path, const Path& new_path);
 	void             rename_node_port(const Path& old_path, const Path& new_path);
-	ConnectionModel* get_connection(const string& src_port_path, const string& dst_port_path);
-	void             add_connection(ConnectionModel* cm);
+	CountedPtr<ConnectionModel> get_connection(const string& src_port_path, const string& dst_port_path);
+	void             add_connection(CountedPtr<ConnectionModel> cm);
 	void             remove_connection(const string& src_port_path, const string& dst_port_path);
 		
 	virtual void clear();
@@ -71,7 +70,8 @@ public:
 	bool          polyphonic() const;
 	
 	// Signals
-	sigc::signal<void, CountedPtr<NodeModel> > new_node_sig; 
+	sigc::signal<void, CountedPtr<NodeModel> >       new_node_sig; 
+	sigc::signal<void, CountedPtr<ConnectionModel> > new_connection_sig; 
 
 private:
 	// Prevent copies (undefined)
@@ -79,7 +79,7 @@ private:
 	PatchModel& operator=(const PatchModel& copy);
 	
 	NodeModelMap             m_nodes;
-	list<ConnectionModel*>   m_connections;
+	list<CountedPtr<ConnectionModel> >   m_connections;
 	string                   m_filename;
 	bool                     m_enabled;
 	size_t                   m_poly;
