@@ -49,12 +49,12 @@ PatchModel::set_path(const Path& new_path)
 }
 
 
-NodeModel*
+CountedPtr<NodeModel>
 PatchModel::get_node(const string& name)
 {
 	assert(name.find("/") == string::npos);
 	NodeModelMap::iterator i = m_nodes.find(name);
-	return ((i != m_nodes.end()) ? (*i).second.get() : NULL);
+	return ((i != m_nodes.end()) ? (*i).second : CountedPtr<NodeModel>(NULL));
 }
 
 
@@ -173,9 +173,9 @@ PatchModel::add_connection(CountedPtr<ConnectionModel> cm)
 		return;
 	}
 
-	NodeModel* src_node = get_node(cm->src_port_path().parent().name());
+	NodeModel* src_node = get_node(cm->src_port_path().parent().name()).get();
 	PortModel* src_port = (src_node == NULL) ? NULL : src_node->get_port(cm->src_port_path().name()).get();
-	NodeModel* dst_node = get_node(cm->dst_port_path().parent().name());
+	NodeModel* dst_node = get_node(cm->dst_port_path().parent().name()).get();
 	PortModel* dst_port = (dst_node == NULL) ? NULL : dst_node->get_port(cm->dst_port_path().name()).get();
 	
 	assert(src_port != NULL);

@@ -127,11 +127,13 @@ void
 DisconnectNodeEvent::post_process()
 {
 	if (m_succeeded) {
-		m_responder->respond_ok();
+		if (m_responder)
+			m_responder->respond_ok();
 		for (List<DisconnectionEvent*>::iterator i = m_disconnection_events.begin(); i != m_disconnection_events.end(); ++i)
 			(*i)->post_process();
 	} else {
-		m_responder->respond_error("Unable to disconnect all ports.");
+		if (m_responder)
+			m_responder->respond_error("Unable to disconnect all ports.");
 	}
 }
 

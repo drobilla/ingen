@@ -63,7 +63,7 @@ NewSubpatchWindow::name_changed()
 	if (name.find("/") != string::npos) {
 		m_message_label->set_text("Name may not contain '/'");
 		m_ok_button->property_sensitive() = false;
-	} else if (m_patch_controller->patch_model()->get_node(name) != NULL) {
+	} else if (m_patch_controller->patch_model()->get_node(name)) {
 		m_message_label->set_text("An object already exists with that name.");
 		m_ok_button->property_sensitive() = false;
 	} else if (name.length() == 0) {

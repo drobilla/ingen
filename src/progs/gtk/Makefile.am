@@ -45,8 +45,6 @@ om_gtk_SOURCES = \
 	MessagesWindow.cpp \
 	LoadSubpatchWindow.h \
 	LoadSubpatchWindow.cpp \
-	ControlInterface.h \
-	ControlInterface.cpp \
 	NodeControlWindow.h \
 	NodeControlWindow.cpp \
 	ControlPanel.h \
@@ -84,10 +82,6 @@ om_gtk_SOURCES = \
 	NodePropertiesWindow.cpp \
 	PatchTreeWindow.h \
 	PatchTreeWindow.cpp
-
-#GtkClientInterface.h
-#GtkClientInterface.cpp
-
 
 if WITH_LASH
 om_gtk_SOURCES += LashController.h LashController.cpp

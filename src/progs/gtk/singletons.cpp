@@ -17,13 +17,11 @@
 #include "App.h"
 #include "Store.h"
 #include "Controller.h"
-//#include "GtkClientInterface.h"
 
 namespace OmGtk
 {
 	App*                App::_instance                = 0;
 	Store*              Store::_instance              = 0;
 	Controller*         Controller::_instance         = 0;
-	//CountedPtr<GtkClientInterface> GtkClientInterface::_instance = 0;
 }
 

@@ -22,7 +22,6 @@
 #include <libgnomecanvasmm.h>
 #include <time.h>
 #include <sys/time.h>
-#include "ControlInterface.h"
 #include "PatchView.h"
 #include "OmModule.h"
 #include "ControlPanel.h"
@@ -57,8 +56,7 @@ namespace OmGtk {
 class OmPort;
 
 App::App()
-: m_control_interface(new ControlInterface(this)),
-  m_configuration(new Configuration()),
+: m_configuration(new Configuration()),
   m_about_dialog(NULL),
   m_enable_signal(true)
 {
@@ -80,7 +78,6 @@ App::App()
 
 App::~App()
 {
-	delete m_control_interface;
 }
 
 

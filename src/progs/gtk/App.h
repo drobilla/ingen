@@ -50,7 +50,6 @@ class OmPort;
 class OmFlowCanvas;
 class PatchTreeView;
 class PatchTreeWindow;
-class ControlInterface;
 class ConnectWindow;
 class Configuration;
 
@@ -84,8 +83,6 @@ public:
 	PatchTreeWindow* patch_tree()           const { return m_patch_tree_window; }
 	Configuration*   configuration()        const { return m_configuration; }
 
-	ControlInterface* control_interface() { return m_control_interface; }
-
 	static void        instantiate() { if (!_instance) _instance = new App(); }
 	static inline App& instance()    { assert(_instance); return *_instance; }
 
@@ -96,7 +93,6 @@ protected:
 	//bool connect_callback();
 	//bool idle_callback();
 
-	ControlInterface* m_control_interface;
 	Configuration*    m_configuration;
 
 	list<PatchWindow*> m_windows;

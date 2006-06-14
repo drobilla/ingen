@@ -21,11 +21,11 @@
 #include "Store.h"
 #include "Controller.h"
 #include "Configuration.h"
-#include "GtkClientInterface.h"
 #ifdef HAVE_LASH
 	#include "LashController.h"
 #endif
 #include "ThreadedSigClientInterface.h"
+#include "OSCListener.h"
 using Om::Shared::ClientInterface;
 
 using namespace OmGtk;
@@ -70,15 +70,10 @@ main(int argc, char** argv)
 	
 	OSCSigEmitter* emitter = new OSCSigEmitter(1024, 16181);
 
-	//CountedPtr<Om::Shared::ClientInterface> emitter(new OSCSigEmitter(1024, 16181));
-
 	/* Instantiate all singletons */
 	App::instantiate();
 	Store::instantiate(*(SigClientInterface*)emitter);
-	ControlInterface* gtk_interface = App::instance().control_interface();
-	assert(gtk_interface);
 
-	//GtkClientInterface::instantiate(App::instance().control_interface(), client_port);
 	Controller::instantiate(engine_url);
 
 	/* Load settings */

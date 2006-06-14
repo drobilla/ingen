@@ -209,6 +209,17 @@ Store::new_patch_event(const string& path, uint32_t poly)
 	if (m_objects.find(path) == m_objects.end()) {
 		PatchModel* const p = new PatchModel(path, poly);
 		add_object(p);
+		
+		std::map<string, CountedPtr<ObjectModel> >::iterator pi = m_objects.find(p->path().parent());
+		if (pi != m_objects.end()) {
+			CountedPtr<PatchModel> parent = (*pi).second;
+			if (parent) {
+				p->set_parent(parent);
+				parent->add_node(p);
+			} else {
+				cerr << "ERROR: new patch with no parent" << endl;
+			}
+		}
 	}
 }
 
@@ -217,8 +228,6 @@ void
 Store::new_node_event(const string& plugin_type, const string& plugin_uri, const string& node_path, bool is_polyphonic, uint32_t num_ports)
 {
 	// FIXME: What to do with a conflict?
-	// FIXME: resolve plugin here
-	
 
 	if (m_objects.find(node_path) == m_objects.end()) {
 

@@ -18,7 +18,6 @@
 #include "ControlPanel.h"
 #include "PortModel.h"
 #include "Controller.h"
-//#include "GtkClientInterface.h"
 #include <cmath>
 #include <iostream>
 using std::cerr; using std::cout; using std::endl;

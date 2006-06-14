@@ -251,7 +251,7 @@ LoadPluginWindow::generate_module_name(int offset)
 				name += "_";
 				name += num_buf;
 			}
-			if (m_patch_controller->patch_model()->get_node(name) == NULL)
+			if (!m_patch_controller->patch_model()->get_node(name))
 				break;
 			else
 				name = "";

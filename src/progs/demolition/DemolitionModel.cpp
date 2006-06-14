@@ -161,7 +161,7 @@ DemolitionModel::node(const Path& path)
 	NodeModel* ret = NULL;
 	
 	for (vector<PatchModel*>::iterator i = m_patches.begin(); i != m_patches.end(); ++i) {
-		ret = (*i)->get_node(path.name());
+		ret = (*i)->get_node(path.name()).get();
 		if (ret != NULL)
 			break;
 	}

@@ -431,7 +431,7 @@ PatchController::add_node(CountedPtr<NodeModel> nm)
 		// FIXME: Should PatchController really be responsible for creating these?
 		NodeController* nc = NULL;
 		
-		if (nm->plugin()->type() == PluginModel::DSSI)
+		if (nm->plugin() && nm->plugin()->type() == PluginModel::DSSI)
 			nc = new DSSIController(nm);
 		else
 			nc = new NodeController(nm);
@@ -439,7 +439,7 @@ PatchController::add_node(CountedPtr<NodeModel> nm)
 		assert(nc != NULL);
 		assert(nm->controller() == nc);
 		
-		// Check if this is a bridge node
+		// Check if this is a bridge node - FIXME: remove this
 		CountedPtr<PortModel> pm = patch_model()->get_port(nm->path().name());
 		if (pm) {
 			cerr << "Bridge node." << endl;

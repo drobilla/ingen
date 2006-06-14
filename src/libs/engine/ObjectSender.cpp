@@ -90,8 +90,12 @@ ObjectSender::send_node(ClientInterface* client, const Node* node)
 		&& node->poly() == node->parent_patch()->internal_poly()
 		? 1 : 0);
 
-	assert(node->plugin()->uri().length() > 0);
 	assert(node->path().length() > 0);
+	if (node->plugin()->uri().length() == 0) {
+		cerr << "Node " << node->path() << " plugin has no URI!  Not sending." << endl;
+		return;
+	}
+
 	
 	client->bundle_begin();
 

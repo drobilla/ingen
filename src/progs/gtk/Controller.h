@@ -36,7 +36,6 @@ using namespace LibOmClient;
 namespace OmGtk {
 
 class PatchController;
-//class GtkClientInterface;
 class Loader;
 
 	
@@ -79,7 +78,6 @@ public:
 	void push_added_patch(PatchModel* pm) { m_added_patches.push_back(pm); }
 	PatchModel* yank_added_patch(const string& path);
 	*/
-	//GtkClientInterface*   client_hooks()      { return (GtkClientInterface*)m_client_hooks; }
 
 	static void instantiate(const string& engine_url)
 	{ if (!_instance) _instance = new Controller(engine_url); }

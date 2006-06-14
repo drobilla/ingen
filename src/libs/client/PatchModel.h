@@ -44,20 +44,21 @@ public:
 	  m_poly(poly)
 	{}
 	
-	const NodeModelMap&           nodes()       const { return m_nodes; }
+	const NodeModelMap&                       nodes()       const { return m_nodes; }
 	const list<CountedPtr<ConnectionModel> >& connections() const { return m_connections; }
 	
 	virtual void set_path(const Path& path);
 	
-	NodeModel*       get_node(const string& node_name);
-	void             add_node(CountedPtr<NodeModel> nm);
-	void             remove_node(const string& name);
+	CountedPtr<NodeModel> get_node(const string& node_name);
+	void                  add_node(CountedPtr<NodeModel> nm);
+	void                  remove_node(const string& name);
 
-	void             rename_node(const Path& old_path, const Path& new_path);
-	void             rename_node_port(const Path& old_path, const Path& new_path);
+	void rename_node(const Path& old_path, const Path& new_path);
+	void rename_node_port(const Path& old_path, const Path& new_path);
+	
 	CountedPtr<ConnectionModel> get_connection(const string& src_port_path, const string& dst_port_path);
-	void             add_connection(CountedPtr<ConnectionModel> cm);
-	void             remove_connection(const string& src_port_path, const string& dst_port_path);
+	void                        add_connection(CountedPtr<ConnectionModel> cm);
+	void                        remove_connection(const string& src_port_path, const string& dst_port_path);
 		
 	virtual void clear();
 	
@@ -80,11 +81,11 @@ private:
 	PatchModel(const PatchModel& copy);
 	PatchModel& operator=(const PatchModel& copy);
 	
-	NodeModelMap             m_nodes;
-	list<CountedPtr<ConnectionModel> >   m_connections;
-	string                   m_filename;
-	bool                     m_enabled;
-	size_t                   m_poly;
+	NodeModelMap                       m_nodes;
+	list<CountedPtr<ConnectionModel> > m_connections;
+	string                             m_filename;
+	bool                               m_enabled;
+	size_t                             m_poly;
 };
 
 typedef map<string, PatchModel*> PatchModelMap;
