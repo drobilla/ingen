@@ -41,6 +41,7 @@ class SubpatchModule;
 class Controller;
 class OmFlowCanvas;
 class NodeControlWindow;
+class PatchPropertiesWindow;
 class ControlPanel;
 class PatchView;
 class NodeController;
@@ -81,6 +82,7 @@ public:
 	void get_new_module_location(int& x, int& y);
 
 	void show_control_window();
+	void show_properties_window();
 	void show_patch_window();
 	
 	void claim_patch_view();
@@ -111,7 +113,9 @@ private:
 	
 	void create_connection(CountedPtr<ConnectionModel> cm);
 
-	PatchWindow* m_window;     ///< Window currently showing this patch
+	PatchPropertiesWindow* m_properties_window;
+
+	PatchWindow* m_window;     ///< Patch Window currently showing m_patch_view
 	PatchView*   m_patch_view; ///< View (canvas) of this patch
 
 	CountedPtr<PatchModel> m_patch_model;

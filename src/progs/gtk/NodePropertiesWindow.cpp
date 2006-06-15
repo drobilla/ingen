@@ -53,9 +53,11 @@ NodePropertiesWindow::set_node(CountedPtr<NodeModel> node_model)
 
 	CountedPtr<PluginModel> pm = node_model->plugin();
 	
-	m_plugin_type_label->set_text(pm->type_string());
-	m_plugin_uri_label->set_text(pm->uri());
-	m_plugin_name_label->set_text(pm->name());
+	if (pm) {
+		m_plugin_type_label->set_text(pm->type_string());
+		m_plugin_uri_label->set_text(pm->uri());
+		m_plugin_name_label->set_text(pm->name());
+	}
 }
 
 

@@ -1252,7 +1252,7 @@
     <widget class="GtkVBox" id="dialog-vbox1">
       <property name="visible">True</property>
       <property name="homogeneous">False</property>
-      <property name="spacing">10</property>
+      <property name="spacing">24</property>
 
       <child internal-child="action_area">
 	<widget class="GtkHButtonBox" id="dialog-action_area1">
@@ -1606,7 +1606,7 @@
   <child internal-child="vbox">
     <widget class="GtkVBox" id="vbox11">
       <property name="homogeneous">False</property>
-      <property name="spacing">8</property>
+      <property name="spacing">24</property>
 
       <child internal-child="action_area">
 	<widget class="GtkHButtonBox" id="hbuttonbox1">
@@ -2476,7 +2476,7 @@
   </child>
 </widget>
 
-<widget class="GtkWindow" id="patch_description_win">
+<widget class="GtkWindow" id="patch_properties_win">
   <property name="border_width">8</property>
   <property name="width_request">400</property>
   <property name="height_request">200</property>
@@ -2533,7 +2533,7 @@
 	  </child>
 
 	  <child>
-	    <widget class="GtkEntry" id="description_author_entry">
+	    <widget class="GtkEntry" id="properties_author_entry">
 	      <property name="visible">True</property>
 	      <property name="can_focus">True</property>
 	      <property name="editable">True</property>
@@ -2568,7 +2568,7 @@
 	  <property name="window_placement">GTK_CORNER_TOP_LEFT</property>
 
 	  <child>
-	    <widget class="GtkTextView" id="description_description_textview">
+	    <widget class="GtkTextView" id="properties_description_textview">
 	      <property name="visible">True</property>
 	      <property name="tooltip" translatable="yes">A short description of the patch to be included in the patch file</property>
 	      <property name="can_focus">True</property>
@@ -2602,7 +2602,7 @@
 	  <property name="spacing">5</property>
 
 	  <child>
-	    <widget class="GtkButton" id="description_cancel_button">
+	    <widget class="GtkButton" id="properties_cancel_button">
 	      <property name="visible">True</property>
 	      <property name="can_default">True</property>
 	      <property name="can_focus">True</property>
@@ -2614,7 +2614,7 @@
 	  </child>
 
 	  <child>
-	    <widget class="GtkButton" id="description_ok_button">
+	    <widget class="GtkButton" id="properties_ok_button">
 	      <property name="visible">True</property>
 	      <property name="tooltip" translatable="yes">Apply these changes to be saved the next time the patch is saved</property>
 	      <property name="can_default">True</property>

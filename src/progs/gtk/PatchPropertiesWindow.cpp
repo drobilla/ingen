@@ -14,7 +14,7 @@
  * 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include "PatchDescriptionWindow.h"
+#include "PatchPropertiesWindow.h"
 #include <string>
 #include "PatchModel.h"
 
@@ -22,17 +22,17 @@ namespace OmGtk {
 using std::string;
 
 
-PatchDescriptionWindow::PatchDescriptionWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml)
+PatchPropertiesWindow::PatchPropertiesWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml)
 : Gtk::Window(cobject)
 , m_patch_model(NULL)
 {
-	glade_xml->get_widget("description_author_entry", m_author_entry);
-	glade_xml->get_widget("description_description_textview", m_textview);
-	glade_xml->get_widget("description_cancel_button", m_cancel_button);
-	glade_xml->get_widget("description_ok_button", m_ok_button);
+	glade_xml->get_widget("properties_author_entry", m_author_entry);
+	glade_xml->get_widget("properties_description_textview", m_textview);
+	glade_xml->get_widget("properties_cancel_button", m_cancel_button);
+	glade_xml->get_widget("properties_ok_button", m_ok_button);
 
-	m_cancel_button->signal_clicked().connect(sigc::mem_fun(this, &PatchDescriptionWindow::cancel_clicked));
-	m_ok_button->signal_clicked().connect(sigc::mem_fun(this, &PatchDescriptionWindow::ok_clicked));
+	m_cancel_button->signal_clicked().connect(sigc::mem_fun(this, &PatchPropertiesWindow::cancel_clicked));
+	m_ok_button->signal_clicked().connect(sigc::mem_fun(this, &PatchPropertiesWindow::ok_clicked));
 }
 
 
@@ -42,7 +42,7 @@ PatchDescriptionWindow::PatchDescriptionWindow(BaseObjectType* cobject, const Gl
  * the window in any way.
  */
 void
-PatchDescriptionWindow::patch_model(CountedPtr<PatchModel> patch_model)
+PatchPropertiesWindow::patch_model(CountedPtr<PatchModel> patch_model)
 {
 	property_title() = patch_model->path() + " Properties";
 	m_patch_model = patch_model;
@@ -52,7 +52,7 @@ PatchDescriptionWindow::patch_model(CountedPtr<PatchModel> patch_model)
 
 
 void
-PatchDescriptionWindow::cancel_clicked()
+PatchPropertiesWindow::cancel_clicked()
 {
 	m_author_entry->set_text(m_patch_model->get_metadata("author"));
 	m_textview->get_buffer()->set_text(m_patch_model->get_metadata("description"));
@@ -61,7 +61,7 @@ PatchDescriptionWindow::cancel_clicked()
 
 
 void
-PatchDescriptionWindow::ok_clicked()
+PatchPropertiesWindow::ok_clicked()
 {
 	m_patch_model->set_metadata("author", m_author_entry->get_text());
 	m_patch_model->set_metadata("description", m_textview->get_buffer()->get_text());

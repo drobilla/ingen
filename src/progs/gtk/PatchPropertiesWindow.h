@@ -14,8 +14,8 @@
  * 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef PATCHDESCRIPTIONWINDOW_H
-#define PATCHDESCRIPTIONWINDOW_H
+#ifndef PATCHPROPERTIESWINDOW_H
+#define PATCHPROPERTIESWINDOW_H
 
 #include <string>
 #include <gtkmm.h>
@@ -29,16 +29,16 @@ using LibOmClient::PatchModel;
 namespace OmGtk {
 	
 
-/** Patch Description Window.
+/** Patch Properties Window.
  *
  * Loaded by libglade as a derived object.
  *
  * \ingroup OmGtk
  */
-class PatchDescriptionWindow : public Gtk::Window
+class PatchPropertiesWindow : public Gtk::Window
 {
 public:
-	PatchDescriptionWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& refGlade);
+	PatchPropertiesWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& refGlade);
 
 	void patch_model(CountedPtr<PatchModel> patch_model);
 	
@@ -57,4 +57,4 @@ private:
 
 } // namespace OmGtk
 
-#endif // PATCHDESCRIPTIONWINDOW_H
+#endif // PATCHPROPERTIESWINDOW_H

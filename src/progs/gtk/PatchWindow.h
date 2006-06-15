@@ -69,9 +69,6 @@ public:
 	LoadSubpatchWindow* load_subpatch_window() const { return m_load_subpatch_window; }
 	NewSubpatchWindow*  new_subpatch_window() const  { return m_new_subpatch_window; }
 
-	void show_control_window();
-	void show_description_window();
-
 	// Breadcrumb management
 	void node_removed(const string& name);
 	void node_renamed(const string& old_path, const string& new_path);
@@ -96,13 +93,15 @@ private:
 	void event_destroy();
 	void event_clear();
 	void event_fullscreen_toggled();
+	void event_show_properties();
+	void event_show_controls();
+	
 
 	PatchController*        m_patch;
 	LoadPluginWindow*       m_load_plugin_window;
 	LoadPatchWindow*        m_load_patch_window;
 	NewSubpatchWindow*      m_new_subpatch_window;
 	LoadSubpatchWindow*     m_load_subpatch_window;
-	PatchDescriptionWindow* m_description_window;
 	
 	bool m_enable_signal;
 	bool m_position_stored;

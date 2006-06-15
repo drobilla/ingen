@@ -26,7 +26,7 @@
 #include "NewSubpatchWindow.h"
 #include "LoadSubpatchWindow.h"
 #include "NodeControlWindow.h"
-#include "PatchDescriptionWindow.h"
+#include "PatchPropertiesWindow.h"
 #include "PatchTreeWindow.h"
 #include "Controller.h"
 

@@ -72,8 +72,8 @@ om_gtk_SOURCES = \
 	NewSubpatchWindow.cpp \
 	ConfigWindow.h \
 	ConfigWindow.cpp \
-	PatchDescriptionWindow.h \
-	PatchDescriptionWindow.cpp \
+	PatchPropertiesWindow.h \
+	PatchPropertiesWindow.cpp \
 	Loader.h \
 	Loader.cpp \
 	RenameWindow.h \

@@ -40,6 +40,7 @@
 #include "PortController.h"
 #include "App.h"
 #include "PatchTreeWindow.h"
+#include "PatchPropertiesWindow.h"
 #include "DSSIController.h"
 #include "PatchModel.h"
 #include "Store.h"
@@ -53,6 +54,7 @@ namespace OmGtk {
 
 PatchController::PatchController(CountedPtr<PatchModel> model)
 : NodeController(model),
+  m_properties_window(NULL),
   m_window(NULL),
   m_patch_view(NULL),
   m_patch_model(model),
@@ -349,6 +351,20 @@ PatchController::create_view()
 }
 
 
+void
+PatchController::show_properties_window()
+{
+	if (!m_properties_window) {
+		Glib::RefPtr<Gnome::Glade::Xml> glade_xml = GladeFactory::new_glade_reference();
+		glade_xml->get_widget_derived("patch_properties_win", m_properties_window);
+		m_properties_window->patch_model(patch_model());
+	}
+	
+	m_properties_window->show();
+
+}
+
+
 /** Create a connection in the view (canvas).
  */
 void
@@ -387,11 +403,14 @@ PatchController::create_connection(CountedPtr<ConnectionModel> cm)
 }
 
 
+/** Add a child node to this patch.
+ *
+ * This is for plugin nodes and patches, and is responsible for creating the 
+ * GtkObjectController for @a object (and through that the View if necessary)
+ */
 void
 PatchController::add_node(CountedPtr<NodeModel> object)
 {
-	cerr << "ADD NODE\n";
-
 	assert(object);
 	assert(object->parent() == m_patch_model);
 	assert(object->path().parent() == m_patch_model->path());
@@ -405,19 +424,15 @@ PatchController::add_node(CountedPtr<NodeModel> object)
 
 	CountedPtr<NodeModel> node(object);
 	if (node) {
-		cerr << "\tNode Child\n";
 		assert(node->parent() == m_patch_model);
 
 		NodeController* nc = NULL;
 
 		CountedPtr<PatchModel> patch(node);
 		if (patch) {
-			cerr << "\t.. is a Patch Child\n";
 			assert(patch->parent() == m_patch_model);
-			
 			nc = new PatchController(patch);
 		} else {
-			cerr << "\t... is a Plugin Node Child\n";
 			assert(node->plugin());
 			if (node->plugin()->type() == PluginModel::DSSI)
 				nc = new DSSIController(node);
@@ -465,13 +480,6 @@ PatchController::add_node(CountedPtr<NodeModel> object)
 		}
 
 	}
-
-
-	/*CountedPtr<PortModel> port(object);
-	if (port) {
-		cerr << "\tPort Child??\n";
-		//assert(port->parent() == m_patch_model);
-	}*/
 }
 
 

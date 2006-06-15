@@ -28,7 +28,7 @@
 #include "LoadPatchWindow.h"
 #include "LoadSubpatchWindow.h"
 #include "NodeControlWindow.h"
-#include "PatchDescriptionWindow.h"
+#include "PatchPropertiesWindow.h"
 #include "ConfigWindow.h"
 #include "MessagesWindow.h"
 #include "PatchTreeWindow.h"
@@ -79,13 +79,11 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 	xml->get_widget_derived("new_subpatch_win", m_new_subpatch_window);
 	xml->get_widget_derived("load_patch_win", m_load_patch_window);
 	xml->get_widget_derived("load_subpatch_win", m_load_subpatch_window);
-	xml->get_widget_derived("patch_description_win", m_description_window);
 
 	//m_load_plugin_window->set_transient_for(*this);
 	m_new_subpatch_window->set_transient_for(*this);
 	m_load_patch_window->set_transient_for(*this);
 	m_load_subpatch_window->set_transient_for(*this);
-	m_description_window->set_transient_for(*this);
 	
 	m_menu_view_control_window->property_sensitive() = false;
 	//m_status_bar->push(Controller::instance().engine_url());
@@ -110,9 +108,9 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 	m_menu_fullscreen->signal_toggled().connect(
 		sigc::mem_fun(this, &PatchWindow::event_fullscreen_toggled));
 	m_menu_view_control_window->signal_activate().connect(
-		sigc::mem_fun(this, &PatchWindow::show_control_window));
+		sigc::mem_fun(this, &PatchWindow::event_show_controls));
 	m_menu_view_patch_description->signal_activate().connect(
-		sigc::mem_fun(this, &PatchWindow::show_description_window));
+		sigc::mem_fun(this, &PatchWindow::event_show_properties));
 	m_menu_destroy_patch->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_destroy));
 	m_menu_clear->signal_activate().connect(
@@ -201,7 +199,7 @@ PatchWindow::patch_controller(PatchController* pc)
 
 	set_title(m_patch->model()->path());
 
-	m_description_window->patch_model(pc->patch_model());
+	//m_properties_window->patch_model(pc->patch_model());
 
 
 	// Setup breadcrumbs box
@@ -283,10 +281,11 @@ PatchWindow::rebuild_breadcrumbs()
 void
 PatchWindow::breadcrumb_clicked(BreadCrumb* crumb)
 {
-	cerr << "FIXME: crumb\n";
-	/*
 	if (m_enable_signal) {
-		PatchController* const pc = crumb->patch();
+		// FIXME: check to be sure PatchModel exists, then controller - maybe
+		// even make a controller if there isn't one?
+		PatchController* const pc = dynamic_cast<PatchController*>(
+			Store::instance().patch(crumb->path())->controller());
 		assert(pc != NULL);
 	
 		if (pc == m_patch) {
@@ -298,22 +297,22 @@ PatchWindow::breadcrumb_clicked(BreadCrumb* crumb)
 			patch_controller(pc);
 		}
 	}
-	*/
 }
 
 
 void
-PatchWindow::show_control_window()
+PatchWindow::event_show_controls()
 {
-	if (m_patch != NULL)
+	if (m_patch)
 		m_patch->show_control_window();
 }
 
 
 void
-PatchWindow::show_description_window()
+PatchWindow::event_show_properties()
 {
-	m_description_window->show();
+	if (m_patch)
+		m_patch->show_properties_window();
 }
 
 

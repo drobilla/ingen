@@ -77,8 +77,8 @@ public:
 	void control_window(NodeControlWindow* cw) { m_control_window = cw; }
 	
 	virtual void show_control_window();
+	virtual void show_properties_window();
 	void         show_rename_window();
-	void         show_properties_window();
 	
 	bool has_control_inputs();
 	
