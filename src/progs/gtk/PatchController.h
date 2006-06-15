@@ -78,8 +78,6 @@ public:
 	void disconnection(const Path& src_port_path, const Path& dst_port_path);
 	void clear();
 
-	void add_subpatch(PatchController* patch);
-
 	void get_new_module_location(int& x, int& y);
 
 	void show_control_window();
@@ -108,7 +106,7 @@ public:
 	void disable_controls_menuitem();
 
 private:
-	void add_node(CountedPtr<NodeModel> nm);
+	void add_node(CountedPtr<NodeModel> object);
 	void remove_node(const string& name);
 	
 	void create_connection(CountedPtr<ConnectionModel> cm);

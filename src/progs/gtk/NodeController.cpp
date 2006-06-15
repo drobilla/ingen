@@ -187,6 +187,7 @@ NodeController::metadata_update(const string& key, const string& value)
 
 	if (m_bridge_port != NULL)
 		m_bridge_port->metadata_update(key, value);
+
 	GtkObjectController::metadata_update(key, value);
 }
 

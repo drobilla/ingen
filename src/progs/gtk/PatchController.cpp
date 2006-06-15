@@ -292,7 +292,6 @@ PatchController::create_module(OmFlowCanvas* canvas)
 	create_all_ports();
 
 	m_module->move_to(node_model()->x(), node_model()->y());
-	m_module->store_location();
 }
 
 
@@ -388,93 +387,91 @@ PatchController::create_connection(CountedPtr<ConnectionModel> cm)
 }
 
 
-/** Add a subpatch to this patch.
- */
 void
-PatchController::add_subpatch(PatchController* patch)
-{
-	assert(patch != NULL);
-	assert(patch->patch_model());
-	assert(patch->patch_model()->parent());
-
-	/*if (pm->x() == 0 && pm->y() == 0) {
-		int x, y;
-		parent_pc->get_new_module_location(x, y);
-		pm->x(x);
-		pm->y(y);
-	}*/
-	
-	//patch_model()->add_node(patch->patch_model());
-
-	if (m_patch_view != NULL) {
-		patch->create_module(m_patch_view->canvas());
-		m_patch_view->canvas()->add_module(patch->module());
-		patch->module()->resize(); 
-	}
-}
-
-
-void
-PatchController::add_node(CountedPtr<NodeModel> nm)
+PatchController::add_node(CountedPtr<NodeModel> object)
 {
 	cerr << "ADD NODE\n";
 
-	assert(nm);
-	assert(nm->parent() == m_patch_model);
-	assert(nm->path().parent() == m_patch_model->path());
+	assert(object);
+	assert(object->parent() == m_patch_model);
+	assert(object->path().parent() == m_patch_model->path());
 	
 	/*if (patch_model()->get_node(nm->name()) != NULL) {
 		cerr << "Ignoring existing\n";
 		// Node already exists, ignore
 		//delete nm;
-	} else {*/
-		// FIXME: Should PatchController really be responsible for creating these?
+		} else {*/
+
+
+	CountedPtr<NodeModel> node(object);
+	if (node) {
+		cerr << "\tNode Child\n";
+		assert(node->parent() == m_patch_model);
+
 		NodeController* nc = NULL;
-		
-		if (nm->plugin() && nm->plugin()->type() == PluginModel::DSSI)
-			nc = new DSSIController(nm);
-		else
-			nc = new NodeController(nm);
+
+		CountedPtr<PatchModel> patch(node);
+		if (patch) {
+			cerr << "\t.. is a Patch Child\n";
+			assert(patch->parent() == m_patch_model);
+			
+			nc = new PatchController(patch);
+		} else {
+			cerr << "\t... is a Plugin Node Child\n";
+			assert(node->plugin());
+			if (node->plugin()->type() == PluginModel::DSSI)
+				nc = new DSSIController(node);
+			else
+				nc = new NodeController(node);
+		}
 
 		assert(nc != NULL);
-		assert(nm->controller() == nc);
-		
+		assert(node->controller() == nc);
+
 		// Check if this is a bridge node - FIXME: remove this
-		CountedPtr<PortModel> pm = patch_model()->get_port(nm->path().name());
+		CountedPtr<PortModel> pm = patch_model()->get_port(node->path().name());
 		if (pm) {
 			cerr << "Bridge node." << endl;
 			PortController* pc = ((PortController*)pm->controller());
 			assert(pc != NULL);
 			nc->bridge_port(pc);
 		}
-		
+
 		//nc->add_to_store();
-		//patch_model()->add_node(nm);
-		
+		//patch_model()->add_node(node);
+
 		if (m_patch_view != NULL) {
 			int x, y;
 			get_new_module_location(x, y);
-			nm->x(x);
-			nm->y(y);
+			node->x(x);
+			node->y(y);
 
 			// Set zoom to 1.0 so module isn't messed up (Death to GnomeCanvas)
 			float old_zoom = m_patch_view->canvas()->zoom();
 			if (old_zoom != 1.0)
 				m_patch_view->canvas()->zoom(1.0);
-			
+
 			if (nc->module() == NULL)
 				nc->create_module(m_patch_view->canvas());
 			assert(nc->module() != NULL);
 			m_patch_view->canvas()->add_module(nc->module());
 			nc->module()->resize();
-	
+
 			// Reset zoom
 			if (old_zoom != 1.0) {
 				m_patch_view->canvas()->zoom(old_zoom);
 				nc->module()->zoom(old_zoom);
 			}
-	//	}
+		}
+
 	}
+
+
+	/*CountedPtr<PortModel> port(object);
+	if (port) {
+		cerr << "\tPort Child??\n";
+		//assert(port->parent() == m_patch_model);
+	}*/
 }
 
 

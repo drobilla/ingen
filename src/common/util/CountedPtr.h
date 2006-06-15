@@ -86,15 +86,16 @@ public:
 		// Fail if this is not a valid cast
 		if (y) {
 #ifdef WITH_RTTI
-			T* const unused_variable = dynamic_cast<T* const>(y._counter->ptr);
+			T* const casted_y = dynamic_cast<T* const>(y._counter->ptr);
 #else 
-			T* const unused_variable = static_cast<T* const>(y._counter->ptr);
+			T* const casted_y = static_cast<T* const>(y._counter->ptr);
 #endif
-			assert(unused_variable == y._counter->ptr); // shuts up gcc
+			if (casted_y != NULL) {
+				assert(casted_y == y._counter->ptr);
+				//release(); // FIXME: leak?
+				retain((Counter*)y._counter);
+			}
 		}
-		
-		//release();
-		retain((Counter*)y._counter);
 	}
 
 	/** Assign to the value of a CountedPtr of the same type. */
