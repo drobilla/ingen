@@ -35,6 +35,7 @@
 #include "Controller.h"
 #include "BreadCrumb.h"
 #include "Store.h"
+#include "ConnectWindow.h"
 
 namespace OmGtk {
 
@@ -55,16 +56,17 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 	xml->get_widget("patch_win_viewport", m_viewport);
 	xml->get_widget("patch_win_breadcrumb_box", m_breadcrumb_box);
 	//xml->get_widget("patch_win_status_bar", m_status_bar);
-	xml->get_widget("patch_open_menuitem", m_menu_open);
-	xml->get_widget("patch_open_into_menuitem", m_menu_open_into);
+	//xml->get_widget("patch_open_menuitem", m_menu_open);
+	xml->get_widget("patch_import_menuitem", m_menu_import);
+	//xml->get_widget("patch_open_into_menuitem", m_menu_open_into);
 	xml->get_widget("patch_save_menuitem", m_menu_save);
 	xml->get_widget("patch_save_as_menuitem", m_menu_save_as);
 	xml->get_widget("patch_close_menuitem", m_menu_close);
 	xml->get_widget("patch_configuration_menuitem", m_menu_configuration);
 	xml->get_widget("patch_quit_menuitem", m_menu_quit);
-	xml->get_widget("patch_quit_and_kill_menuitem", m_menu_quit_and_kill);
 	xml->get_widget("patch_view_control_window_menuitem", m_menu_view_control_window);
-	xml->get_widget("patch_description_menuitem", m_menu_view_patch_description);
+	xml->get_widget("patch_view_engine_window_menuitem", m_menu_view_engine_window);
+	xml->get_widget("patch_properties_menuitem", m_menu_view_patch_properties);
 	xml->get_widget("patch_fullscreen_menuitem", m_menu_fullscreen);
 	xml->get_widget("patch_clear_menuitem", m_menu_clear);
 	xml->get_widget("patch_destroy_menuitem", m_menu_destroy_patch);
@@ -89,10 +91,10 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 	//m_status_bar->push(Controller::instance().engine_url());
 	//m_status_bar->pack_start(*Gtk::manage(new Gtk::Image(Gtk::Stock::CONNECT, Gtk::ICON_SIZE_MENU)), false, false);
 	
-	m_menu_open->signal_activate().connect(
-		sigc::mem_fun(this, &PatchWindow::event_open));
-	m_menu_open_into->signal_activate().connect(
-		sigc::mem_fun(this, &PatchWindow::event_open_into));
+	/*m_menu_open->signal_activate().connect(
+		sigc::mem_fun(this, &PatchWindow::event_open));*/
+	m_menu_import->signal_activate().connect(
+		sigc::mem_fun(this, &PatchWindow::event_import));
 	m_menu_save->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_save));
 	m_menu_save_as->signal_activate().connect(
@@ -100,16 +102,16 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 	m_menu_close->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_close));
 	m_menu_quit->signal_activate().connect(
-		sigc::mem_fun(App::instance(), &App::quit));
-	m_menu_quit_and_kill->signal_activate().connect(
-		sigc::mem_fun(App::instance(), &App::quit_and_kill));
+		sigc::mem_fun(this, &PatchWindow::event_quit));
 	m_menu_configuration->signal_activate().connect(
 		sigc::mem_fun(App::instance().configuration_dialog(), &ConfigWindow::show));
 	m_menu_fullscreen->signal_toggled().connect(
 		sigc::mem_fun(this, &PatchWindow::event_fullscreen_toggled));
+	m_menu_view_engine_window->signal_activate().connect(
+		sigc::mem_fun(this, &PatchWindow::event_show_engine));
 	m_menu_view_control_window->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_show_controls));
-	m_menu_view_patch_description->signal_activate().connect(
+	m_menu_view_patch_properties->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_show_properties));
 	m_menu_destroy_patch->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_destroy));
@@ -301,6 +303,14 @@ PatchWindow::breadcrumb_clicked(BreadCrumb* crumb)
 
 
 void
+PatchWindow::event_show_engine()
+{
+	if (m_patch)
+		App::instance().connect_window()->show();
+}
+
+
+void
 PatchWindow::event_show_controls()
 {
 	if (m_patch)
@@ -362,16 +372,17 @@ PatchWindow::patch_renamed(const string& new_path)
 	}
 }
 
-
+/*
 void
 PatchWindow::event_open()
 {
 	m_load_patch_window->set_replace();
 	m_load_patch_window->present();
 }
+*/
 
 void
-PatchWindow::event_open_into()
+PatchWindow::event_import()
 {
 	m_load_patch_window->set_merge();
 	m_load_patch_window->present();
@@ -497,14 +508,46 @@ PatchWindow::event_close()
 	if (App::instance().num_open_patch_windows() > 1) {
 		hide();
 	} else {
-		Gtk::MessageDialog d(*this, "This is the last remaining open Om patch\
-window.  Closing this window will exit OmGtk (the engine will remain running).\n\n\
-Are you sure you want to quit?",
-			true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_OK_CANCEL, true);
+		Gtk::MessageDialog d(*this, "This is the last remaining open patch "
+			"window.  Closing this window will exit OmGtk (the engine will "
+			"remain running).\n\nAre you sure you want to quit?",
+			true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_NONE, true);
+			d.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
+			d.add_button(Gtk::Stock::QUIT, Gtk::RESPONSE_CLOSE);
 		int ret = d.run();
-		if (ret == Gtk::RESPONSE_OK)
+		if (ret == Gtk::RESPONSE_CLOSE)
 			App::instance().quit();
+		else
+			d.hide();
 	}
+}
+
+
+void
+PatchWindow::event_quit()
+{
+	Gtk::MessageDialog d(*this, "Would you like to quit just OmGtk\nor kill the engine as well?",
+			true, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE, true);
+	d.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
+	
+	Gtk::Button* b = d.add_button(Gtk::Stock::REMOVE, 2); // kill
+	b->set_label("_Kill Engine");
+	Gtk::Widget* kill_img = Gtk::manage(new Gtk::Image(Gtk::Stock::CLOSE, Gtk::ICON_SIZE_BUTTON));
+	b->set_image(*kill_img);
+
+	b = d.add_button(Gtk::Stock::QUIT, 1); // just exit
+	b->set_label("_Quit");
+	Gtk::Widget* close_img = Gtk::manage(new Gtk::Image(Gtk::Stock::QUIT, Gtk::ICON_SIZE_BUTTON));
+	b->set_image(*close_img);
+	
+	int ret = d.run();
+	if (ret == 1) {
+		App::instance().quit();
+	} else if (ret == 2) {
+		Controller::instance().quit();
+		App::instance().quit();
+	}
+	// Otherwise cancelled, do nothing
 }
 
 

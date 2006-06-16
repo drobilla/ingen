@@ -69,7 +69,6 @@ public:
 	void error_message(const string& msg);
 
 	void quit();
-	void quit_and_kill();
 
 	void add_patch_window(PatchWindow* pw);
 	void remove_patch_window(PatchWindow* pw);

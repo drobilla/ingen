@@ -85,17 +85,18 @@ protected:
 	bool on_key_press_event(GdkEventKey* event);
 	
 private:
-	void event_open();
-	void event_open_into();
+	//void event_open();
+	void event_import();
 	void event_save();
 	void event_save_as();
 	void event_close();
+	void event_quit();
 	void event_destroy();
 	void event_clear();
 	void event_fullscreen_toggled();
 	void event_show_properties();
 	void event_show_controls();
-	
+	void event_show_engine();
 
 	PatchController*        m_patch;
 	LoadPluginWindow*       m_load_plugin_window;
@@ -108,19 +109,19 @@ private:
 	int  m_x;
 	int  m_y;
 	
-	Gtk::MenuItem*      m_menu_open;
-	Gtk::MenuItem*      m_menu_open_into;
+	//Gtk::MenuItem*      m_menu_open;
+	Gtk::MenuItem*      m_menu_import;
 	Gtk::MenuItem*      m_menu_save;
 	Gtk::MenuItem*      m_menu_save_as;
 	Gtk::MenuItem*      m_menu_configuration;
 	Gtk::MenuItem*      m_menu_close;
 	Gtk::MenuItem*      m_menu_quit;
-	Gtk::MenuItem*      m_menu_quit_and_kill;
 	Gtk::CheckMenuItem* m_menu_fullscreen;
 	Gtk::MenuItem*      m_menu_clear;
 	Gtk::MenuItem*      m_menu_destroy_patch;
+	Gtk::MenuItem*      m_menu_view_engine_window;
 	Gtk::MenuItem*      m_menu_view_control_window;
-	Gtk::MenuItem*      m_menu_view_patch_description;
+	Gtk::MenuItem*      m_menu_view_patch_properties;
 	Gtk::MenuItem*      m_menu_add_plugin;
 	Gtk::MenuItem*      m_menu_new_subpatch;
 	Gtk::MenuItem*      m_menu_load_subpatch;

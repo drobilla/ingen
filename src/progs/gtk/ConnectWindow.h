@@ -42,7 +42,6 @@ public:
 	ConnectWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml);
 	
 	void start(CountedPtr<Om::Shared::ClientInterface> client);
-	
 private:
 	void launch_engine();
 

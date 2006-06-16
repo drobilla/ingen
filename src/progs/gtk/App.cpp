@@ -215,13 +215,6 @@ App::quit()
 	Gtk::Main::quit();
 }
 
-void
-App::quit_and_kill()
-{
-	Controller::instance().quit();
-	Gtk::Main::quit();
-}
-
 
 } // namespace OmGtk
 

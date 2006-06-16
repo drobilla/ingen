@@ -159,6 +159,8 @@ ConnectWindow::gtk_callback()
 			++stage;
 		}
 	} else if (stage == 8) {
+		_label->set_text(string("Connected to engine at ").append(
+			Controller::instance().engine_url()));
 		stage = -1;
 		hide(); // FIXME: actually destroy window to save mem?
 	}
@@ -167,6 +169,8 @@ ConnectWindow::gtk_callback()
 		_progress_bar->pulse();
 	
 	if (stage == -1) { // finished connecting
+		_progress_bar->set_fraction(1.0);
+		_launch_button->set_sensitive(false);
 		return false; // deregister this callback
 	} else {
 		return true;
