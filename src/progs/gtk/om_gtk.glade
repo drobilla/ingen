@@ -52,7 +52,7 @@
 		      <signal name="activate" handler="on_patch_import_menuitem_activate" last_modification_time="Mon, 06 Feb 2006 06:20:27 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1834">
+			<widget class="GtkImage" id="image1911">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-open</property>
 			  <property name="icon_size">1</property>
@@ -107,7 +107,7 @@
 		      <accelerator key="G" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1835">
+			<widget class="GtkImage" id="image1912">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-preferences</property>
 			  <property name="icon_size">1</property>
@@ -166,13 +166,11 @@
 		<widget class="GtkMenu" id="patch_patch_menu_menu">
 
 		  <child>
-		    <widget class="GtkCheckMenuItem" id="patch_fullscreen_menuitem">
+		    <widget class="GtkImageMenuItem" id="patch_fullscreen_menuitem">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">Fullscreen</property>
-		      <property name="use_underline">True</property>
-		      <property name="active">True</property>
+		      <property name="label">gtk-fullscreen</property>
+		      <property name="use_stock">True</property>
 		      <signal name="activate" handler="patch_fullscreen_menuitem" last_modification_time="Sat, 11 Mar 2006 05:24:13 GMT"/>
-		      <accelerator key="F11" modifiers="0" signal="activate"/>
 		    </widget>
 		  </child>
 
@@ -192,7 +190,7 @@
 		      <accelerator key="C" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1836">
+			<widget class="GtkImage" id="image1913">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-preferences</property>
 			  <property name="icon_size">1</property>
@@ -234,7 +232,7 @@
 		      <signal name="activate" handler="on_patch_destroy_menuitem_activate" last_modification_time="Wed, 25 May 2005 00:22:00 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1837">
+			<widget class="GtkImage" id="image1914">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-delete</property>
 			  <property name="icon_size">1</property>
@@ -252,113 +250,8 @@
 	  </child>
 
 	  <child>
-	    <widget class="GtkMenuItem" id="add_menu">
+	    <widget class="GtkSeparatorMenuItem" id="separator7">
 	      <property name="visible">True</property>
-	      <property name="label" translatable="yes">_Add</property>
-	      <property name="use_underline">True</property>
-	      <signal name="activate" handler="on_add_menu_activate" last_modification_time="Sun, 26 Dec 2004 04:33:10 GMT"/>
-
-	      <child>
-		<widget class="GtkMenu" id="add_menu_menu">
-
-		  <child>
-		    <widget class="GtkImageMenuItem" id="patch_add_plugin_menuitem">
-		      <property name="visible">True</property>
-		      <property name="tooltip" translatable="yes">Load a plugin as a child of this patch</property>
-		      <property name="label" translatable="yes">_Plugin...</property>
-		      <property name="use_underline">True</property>
-		      <accelerator key="P" modifiers="GDK_CONTROL_MASK" signal="activate"/>
-
-		      <child internal-child="image">
-			<widget class="GtkImage" id="image1838">
-			  <property name="visible">True</property>
-			  <property name="stock">gtk-execute</property>
-			  <property name="icon_size">1</property>
-			  <property name="xalign">0.5</property>
-			  <property name="yalign">0.5</property>
-			  <property name="xpad">0</property>
-			  <property name="ypad">0</property>
-			</widget>
-		      </child>
-		    </widget>
-		  </child>
-
-		  <child>
-		    <widget class="GtkImageMenuItem" id="patch_add_subpatch_from_file_menuitem">
-		      <property name="visible">True</property>
-		      <property name="tooltip" translatable="yes">Load a patch as a child of this patch</property>
-		      <property name="label" translatable="yes">_Patch From File...</property>
-		      <property name="use_underline">True</property>
-		      <signal name="activate" handler="on_subpatch_from_file1_activate" last_modification_time="Sun, 27 Feb 2005 00:37:03 GMT"/>
-		      <accelerator key="L" modifiers="GDK_CONTROL_MASK" signal="activate"/>
-
-		      <child internal-child="image">
-			<widget class="GtkImage" id="image1839">
-			  <property name="visible">True</property>
-			  <property name="stock">gtk-open</property>
-			  <property name="icon_size">1</property>
-			  <property name="xalign">0.5</property>
-			  <property name="yalign">0.5</property>
-			  <property name="xpad">0</property>
-			  <property name="ypad">0</property>
-			</widget>
-		      </child>
-		    </widget>
-		  </child>
-
-		  <child>
-		    <widget class="GtkImageMenuItem" id="patch_add_new_subpatch_menuitem">
-		      <property name="visible">True</property>
-		      <property name="tooltip" translatable="yes">Create a new (empty) patch as a child of this patch</property>
-		      <property name="label" translatable="yes">_New Patch...</property>
-		      <property name="use_underline">True</property>
-		      <signal name="activate" handler="on_add_new_subpatch_menuitem_activate" last_modification_time="Sun, 26 Dec 2004 04:33:10 GMT"/>
-		      <accelerator key="N" modifiers="GDK_CONTROL_MASK" signal="activate"/>
-
-		      <child internal-child="image">
-			<widget class="GtkImage" id="image1840">
-			  <property name="visible">True</property>
-			  <property name="stock">gtk-new</property>
-			  <property name="icon_size">1</property>
-			  <property name="xalign">0.5</property>
-			  <property name="yalign">0.5</property>
-			  <property name="xpad">0</property>
-			  <property name="ypad">0</property>
-			</widget>
-		      </child>
-		    </widget>
-		  </child>
-
-		  <child>
-		    <widget class="GtkSeparatorMenuItem" id="separator7">
-		      <property name="visible">True</property>
-		    </widget>
-		  </child>
-
-		  <child>
-		    <widget class="GtkImageMenuItem" id="right_click_on_canvas_to_place_a_new_object1">
-		      <property name="visible">True</property>
-		      <property name="sensitive">False</property>
-		      <property name="tooltip" translatable="yes">Using this menu will place items randomly - right click!</property>
-		      <property name="label" translatable="yes">Right click on canvas to manually place an object</property>
-		      <property name="use_underline">True</property>
-		      <signal name="activate" handler="on_right_click_on_canvas_to_place_a_new_object1_activate" last_modification_time="Sun, 29 Jan 2006 21:22:13 GMT"/>
-
-		      <child internal-child="image">
-			<widget class="GtkImage" id="image1841">
-			  <property name="visible">True</property>
-			  <property name="stock">gtk-info</property>
-			  <property name="icon_size">1</property>
-			  <property name="xalign">0.5</property>
-			  <property name="yalign">0.5</property>
-			  <property name="xpad">0</property>
-			  <property name="ypad">0</property>
-			</widget>
-		      </child>
-		    </widget>
-		  </child>
-		</widget>
-	      </child>
 	    </widget>
 	  </child>
 
@@ -382,7 +275,7 @@
 		      <accelerator key="E" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1842">
+			<widget class="GtkImage" id="image1915">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-connect</property>
 			  <property name="icon_size">1</property>
@@ -405,7 +298,7 @@
 		      <accelerator key="T" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1843">
+			<widget class="GtkImage" id="image1916">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-index</property>
 			  <property name="icon_size">1</property>
@@ -428,7 +321,7 @@
 		      <accelerator key="M" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1844">
+			<widget class="GtkImage" id="image1917">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-dialog-error</property>
 			  <property name="icon_size">1</property>
@@ -454,6 +347,33 @@
 
 	      <child>
 		<widget class="GtkMenu" id="help_menu_menu">
+
+		  <child>
+		    <widget class="GtkImageMenuItem" id="right-click_the_canvas_to_add_objects1">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">Right-click the canvas to add objects</property>
+		      <property name="use_underline">True</property>
+		      <signal name="activate" handler="on_right-click_the_canvas_to_add_objects1_activate" last_modification_time="Fri, 16 Jun 2006 17:51:05 GMT"/>
+
+		      <child internal-child="image">
+			<widget class="GtkImage" id="image1918">
+			  <property name="visible">True</property>
+			  <property name="stock">gtk-info</property>
+			  <property name="icon_size">1</property>
+			  <property name="xalign">0.5</property>
+			  <property name="yalign">0.5</property>
+			  <property name="xpad">0</property>
+			  <property name="ypad">0</property>
+			</widget>
+		      </child>
+		    </widget>
+		  </child>
+
+		  <child>
+		    <widget class="GtkSeparatorMenuItem" id="separator13">
+		      <property name="visible">True</property>
+		    </widget>
+		  </child>
 
 		  <child>
 		    <widget class="GtkImageMenuItem" id="patch_help_about_menuitem">
@@ -3762,6 +3682,186 @@ Contributors:
 	  <property name="expand">True</property>
 	  <property name="fill">True</property>
 	</packing>
+      </child>
+    </widget>
+  </child>
+</widget>
+
+<widget class="GtkMenu" id="canvas_menu">
+  <property name="visible">True</property>
+
+  <child>
+    <widget class="GtkImageMenuItem" id="input1">
+      <property name="visible">True</property>
+      <property name="label" translatable="yes">Input</property>
+      <property name="use_underline">True</property>
+
+      <child internal-child="image">
+	<widget class="GtkImage" id="image1886">
+	  <property name="visible">True</property>
+	  <property name="stock">gtk-connect</property>
+	  <property name="icon_size">1</property>
+	  <property name="xalign">0.5</property>
+	  <property name="yalign">0.5</property>
+	  <property name="xpad">0</property>
+	  <property name="ypad">0</property>
+	</widget>
+      </child>
+
+      <child>
+	<widget class="GtkMenu" id="input1_menu">
+
+	  <child>
+	    <widget class="GtkMenuItem" id="canvas_menu_add_audio_input">
+	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">Add an audio input to this patch</property>
+	      <property name="label" translatable="yes">Audio</property>
+	      <property name="use_underline">True</property>
+	      <signal name="activate" handler="on_canvas_menu_add_audio_input_activate" last_modification_time="Fri, 16 Jun 2006 16:32:59 GMT"/>
+	    </widget>
+	  </child>
+
+	  <child>
+	    <widget class="GtkMenuItem" id="canvas_menu_add_control_input">
+	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">Add a control input (and a control slider for it) to this patch</property>
+	      <property name="label" translatable="yes">Control</property>
+	      <property name="use_underline">True</property>
+	      <signal name="activate" handler="on_canvas_menu_add_control_input_activate" last_modification_time="Fri, 16 Jun 2006 16:32:59 GMT"/>
+	    </widget>
+	  </child>
+
+	  <child>
+	    <widget class="GtkMenuItem" id="canvas_menu_add_midi_input">
+	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">Add a MIDI input to this patch</property>
+	      <property name="label" translatable="yes">MIDI</property>
+	      <property name="use_underline">True</property>
+	      <signal name="activate" handler="on_canvas_menu_add_midi_input_activate" last_modification_time="Fri, 16 Jun 2006 16:32:59 GMT"/>
+	    </widget>
+	  </child>
+	</widget>
+      </child>
+    </widget>
+  </child>
+
+  <child>
+    <widget class="GtkImageMenuItem" id="output1">
+      <property name="visible">True</property>
+      <property name="label" translatable="yes">Output</property>
+      <property name="use_underline">True</property>
+
+      <child internal-child="image">
+	<widget class="GtkImage" id="image1887">
+	  <property name="visible">True</property>
+	  <property name="stock">gtk-connect</property>
+	  <property name="icon_size">1</property>
+	  <property name="xalign">0.5</property>
+	  <property name="yalign">0.5</property>
+	  <property name="xpad">0</property>
+	  <property name="ypad">0</property>
+	</widget>
+      </child>
+
+      <child>
+	<widget class="GtkMenu" id="output1_menu">
+
+	  <child>
+	    <widget class="GtkMenuItem" id="canvas_menu_add_audio_output">
+	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">Add an audio output to this patch</property>
+	      <property name="label" translatable="yes">Audio</property>
+	      <property name="use_underline">True</property>
+	      <signal name="activate" handler="on_canvas_menu_add_audio_output_activate" last_modification_time="Fri, 16 Jun 2006 16:32:59 GMT"/>
+	    </widget>
+	  </child>
+
+	  <child>
+	    <widget class="GtkMenuItem" id="canvas_menu_add_control_output">
+	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">Add a control output to this patch</property>
+	      <property name="label" translatable="yes">Control</property>
+	      <property name="use_underline">True</property>
+	      <signal name="activate" handler="on_canvas_menu_add_control_output_activate" last_modification_time="Fri, 16 Jun 2006 16:32:59 GMT"/>
+	    </widget>
+	  </child>
+
+	  <child>
+	    <widget class="GtkMenuItem" id="canvas_menu_add_midi_output">
+	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">Add a MIDI output to this patch</property>
+	      <property name="label" translatable="yes">MIDI</property>
+	      <property name="use_underline">True</property>
+	      <signal name="activate" handler="on_canvas_menu_add_midi_output_activate" last_modification_time="Fri, 16 Jun 2006 16:32:59 GMT"/>
+	    </widget>
+	  </child>
+	</widget>
+      </child>
+    </widget>
+  </child>
+
+  <child>
+    <widget class="GtkImageMenuItem" id="canvas_menu_load_plugin">
+      <property name="visible">True</property>
+      <property name="tooltip" translatable="yes">Load a plugin as a child of this patch</property>
+      <property name="label" translatable="yes">_Plugin...</property>
+      <property name="use_underline">True</property>
+      <signal name="activate" handler="on_canvas_menu_add_plugin_activate" last_modification_time="Fri, 16 Jun 2006 16:41:40 GMT"/>
+
+      <child internal-child="image">
+	<widget class="GtkImage" id="image1888">
+	  <property name="visible">True</property>
+	  <property name="stock">gtk-execute</property>
+	  <property name="icon_size">1</property>
+	  <property name="xalign">0.5</property>
+	  <property name="yalign">0.5</property>
+	  <property name="xpad">0</property>
+	  <property name="ypad">0</property>
+	</widget>
+      </child>
+    </widget>
+  </child>
+
+  <child>
+    <widget class="GtkImageMenuItem" id="canvas_menu_load_patch">
+      <property name="visible">True</property>
+      <property name="tooltip" translatable="yes">Load a patch as a child of this patch</property>
+      <property name="label" translatable="yes">Patch From _File...</property>
+      <property name="use_underline">True</property>
+      <signal name="activate" handler="on_canvas_menu_load_patch_activate" last_modification_time="Fri, 16 Jun 2006 16:41:40 GMT"/>
+
+      <child internal-child="image">
+	<widget class="GtkImage" id="image1889">
+	  <property name="visible">True</property>
+	  <property name="stock">gtk-open</property>
+	  <property name="icon_size">1</property>
+	  <property name="xalign">0.5</property>
+	  <property name="yalign">0.5</property>
+	  <property name="xpad">0</property>
+	  <property name="ypad">0</property>
+	</widget>
+      </child>
+    </widget>
+  </child>
+
+  <child>
+    <widget class="GtkImageMenuItem" id="canvas_menu_new_patch">
+      <property name="visible">True</property>
+      <property name="tooltip" translatable="yes">Create a new (empty) patch as a child of this patch</property>
+      <property name="label" translatable="yes">_New Patch...</property>
+      <property name="use_underline">True</property>
+      <signal name="activate" handler="on_canvas_menu_new_patch_activate" last_modification_time="Fri, 16 Jun 2006 16:41:40 GMT"/>
+
+      <child internal-child="image">
+	<widget class="GtkImage" id="image1890">
+	  <property name="visible">True</property>
+	  <property name="stock">gtk-new</property>
+	  <property name="icon_size">1</property>
+	  <property name="xalign">0.5</property>
+	  <property name="yalign">0.5</property>
+	  <property name="xpad">0</property>
+	  <property name="ypad">0</property>
+	</widget>
       </child>
     </widget>
   </child>

@@ -116,15 +116,15 @@ private:
 	Gtk::MenuItem*      m_menu_configuration;
 	Gtk::MenuItem*      m_menu_close;
 	Gtk::MenuItem*      m_menu_quit;
-	Gtk::CheckMenuItem* m_menu_fullscreen;
+	Gtk::MenuItem*      m_menu_fullscreen;
 	Gtk::MenuItem*      m_menu_clear;
 	Gtk::MenuItem*      m_menu_destroy_patch;
 	Gtk::MenuItem*      m_menu_view_engine_window;
 	Gtk::MenuItem*      m_menu_view_control_window;
 	Gtk::MenuItem*      m_menu_view_patch_properties;
-	Gtk::MenuItem*      m_menu_add_plugin;
+	/*Gtk::MenuItem*      m_menu_add_plugin;
 	Gtk::MenuItem*      m_menu_new_subpatch;
-	Gtk::MenuItem*      m_menu_load_subpatch;
+	Gtk::MenuItem*      m_menu_load_subpatch;*/
 	Gtk::MenuItem*      m_menu_view_messages_window;
 	Gtk::MenuItem*      m_menu_view_patch_tree_window;
 	Gtk::MenuItem*      m_menu_help_about;

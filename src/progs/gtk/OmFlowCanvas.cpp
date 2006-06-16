@@ -27,7 +27,7 @@
 #include "OmPort.h"
 #include "NodeModel.h"
 #include "OmModule.h"
-
+#include "GladeFactory.h"
 
 namespace OmGtk {
 
@@ -40,13 +40,27 @@ OmFlowCanvas::OmFlowCanvas(PatchController* controller, int width, int height)
 {
 	assert(controller != NULL);
 	
-	Gtk::Menu::MenuList& items = m_menu.items();
+	/*Gtk::Menu::MenuList& items = m_menu.items();
 	items.push_back(Gtk::Menu_Helpers::MenuElem("Load Plugin...",
 		sigc::mem_fun(this, &OmFlowCanvas::menu_load_plugin)));
 	items.push_back(Gtk::Menu_Helpers::MenuElem("Load Subpatch...",
 		sigc::mem_fun(this, &OmFlowCanvas::menu_load_subpatch)));
 	items.push_back(Gtk::Menu_Helpers::MenuElem("New Subpatch...",
-		sigc::mem_fun(this, &OmFlowCanvas::menu_create_subpatch)));
+		sigc::mem_fun(this, &OmFlowCanvas::menu_create_subpatch)));*/
+
+	Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference();
+	xml->get_widget("canvas_menu", m_menu);
+	
+	xml->get_widget("canvas_menu_load_plugin", m_menu_load_plugin);
+	xml->get_widget("canvas_menu_load_patch", m_menu_load_patch);
+	xml->get_widget("canvas_menu_new_patch", m_menu_new_patch);
+	
+	m_menu_load_plugin->signal_activate().connect(
+		sigc::mem_fun<void>(this, &OmFlowCanvas::menu_load_plugin));
+	m_menu_load_patch->signal_activate().connect(
+		sigc::mem_fun<void>(this, &OmFlowCanvas::menu_load_patch));
+	m_menu_new_patch->signal_activate().connect(
+		sigc::mem_fun<void>(this, &OmFlowCanvas::menu_new_patch));
 }
 
 
@@ -145,7 +159,7 @@ OmFlowCanvas::menu_load_plugin()
 
 
 void
-OmFlowCanvas::menu_load_subpatch()
+OmFlowCanvas::menu_load_patch()
 {
 	m_patch_controller->window()->load_subpatch_window()->set_next_module_location(
 		m_last_click_x, m_last_click_y);
@@ -154,7 +168,7 @@ OmFlowCanvas::menu_load_subpatch()
 
 
 void
-OmFlowCanvas::menu_create_subpatch()
+OmFlowCanvas::menu_new_patch()
 {
 	m_patch_controller->window()->new_subpatch_window()->set_next_module_location(
 		m_last_click_x, m_last_click_y);

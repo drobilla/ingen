@@ -50,18 +50,21 @@ public:
 	void destroy_selected();
 
 	void show_menu(GdkEvent* event)
-	{ m_menu.popup(event->button.button, event->button.time); }
+	{ m_menu->popup(event->button.button, event->button.time); }
 	
 	void menu_load_plugin();
-	void menu_load_subpatch();
-	void menu_create_subpatch();
+	void menu_new_patch();
+	void menu_load_patch();
 
 private:
 	PatchController* m_patch_controller;
 	int              m_last_click_x;
 	int              m_last_click_y;
 	
-	Gtk::Menu m_menu;
+	Gtk::Menu*      m_menu;
+	Gtk::MenuItem*  m_menu_load_plugin;
+	Gtk::MenuItem*  m_menu_load_patch;
+	Gtk::MenuItem*  m_menu_new_patch;
 };
 
 

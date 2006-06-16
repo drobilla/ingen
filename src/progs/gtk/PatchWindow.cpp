@@ -70,9 +70,9 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 	xml->get_widget("patch_fullscreen_menuitem", m_menu_fullscreen);
 	xml->get_widget("patch_clear_menuitem", m_menu_clear);
 	xml->get_widget("patch_destroy_menuitem", m_menu_destroy_patch);
-	xml->get_widget("patch_add_plugin_menuitem", m_menu_add_plugin);
+	/*xml->get_widget("patch_add_plugin_menuitem", m_menu_add_plugin);
 	xml->get_widget("patch_add_new_subpatch_menuitem", m_menu_new_subpatch);
-	xml->get_widget("patch_add_subpatch_from_file_menuitem", m_menu_load_subpatch);
+	xml->get_widget("patch_add_subpatch_from_file_menuitem", m_menu_load_subpatch);*/
 	xml->get_widget("patch_view_messages_window_menuitem", m_menu_view_messages_window);
 	xml->get_widget("patch_view_patch_tree_window_menuitem", m_menu_view_patch_tree_window);
 	xml->get_widget("patch_help_about_menuitem", m_menu_help_about);
@@ -105,7 +105,7 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 		sigc::mem_fun(this, &PatchWindow::event_quit));
 	m_menu_configuration->signal_activate().connect(
 		sigc::mem_fun(App::instance().configuration_dialog(), &ConfigWindow::show));
-	m_menu_fullscreen->signal_toggled().connect(
+	m_menu_fullscreen->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_fullscreen_toggled));
 	m_menu_view_engine_window->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_show_engine));
@@ -117,12 +117,12 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 		sigc::mem_fun(this, &PatchWindow::event_destroy));
 	m_menu_clear->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_clear));
-	m_menu_add_plugin->signal_activate().connect(
+	/*m_menu_add_plugin->signal_activate().connect(
 		sigc::mem_fun<void>(m_load_plugin_window, &LoadPluginWindow::present));
 	m_menu_new_subpatch->signal_activate().connect(
 		sigc::mem_fun<void>(m_new_subpatch_window, &NewSubpatchWindow::present));
 	m_menu_load_subpatch->signal_activate().connect(
-		sigc::mem_fun<void>(m_load_subpatch_window, &LoadSubpatchWindow::present));
+		sigc::mem_fun<void>(m_load_subpatch_window, &LoadSubpatchWindow::present));*/
 	m_menu_view_messages_window->signal_activate().connect(
 		sigc::mem_fun<void>(App::instance().messages_dialog(), &MessagesWindow::present));
 	m_menu_view_patch_tree_window->signal_activate().connect(
@@ -567,10 +567,16 @@ PatchWindow::event_clear()
 void
 PatchWindow::event_fullscreen_toggled()
 {
-	if (m_menu_fullscreen->get_active())
+	// FIXME: ugh, use GTK signals to track state and now for sure
+	static bool is_fullscreen = false;
+
+	if (!is_fullscreen) {
 		fullscreen();
-	else
+		is_fullscreen = true;
+	} else {
 		unfullscreen();
+		is_fullscreen = false;
+	}
 }
 
 
