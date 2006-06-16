@@ -34,18 +34,22 @@ ConnectWindow::ConnectWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::
 : Gtk::Dialog(cobject)
 , _client(NULL)
 {
-	xml->get_widget("connect_progress_bar",  _progress_bar);
-	xml->get_widget("connect_label",         _label);
-	xml->get_widget("connect_launch_button", _launch_button);
-	xml->get_widget("connect_cancel_button", _cancel_button);
+	xml->get_widget("connect_icon",                  _icon);
+	xml->get_widget("connect_progress_bar",          _progress_bar);
+	xml->get_widget("connect_label",                 _label);
+	xml->get_widget("connect_url_entry",             _url_entry);
+	xml->get_widget("connect_connect_button",        _connect_button);
+	xml->get_widget("connect_port_spinbutton",       _port_spinbutton);
+	xml->get_widget("connect_launch_button",         _launch_button);
+	xml->get_widget("connect_spawn_internal_button", _spawn_internal_button);
+	xml->get_widget("connect_disconnect_button",     _disconnect_button);
+	xml->get_widget("connect_quit_button",           _quit_button);
 	
-	assert(_progress_bar);
-	assert(_label);
-	assert(_launch_button);
-	assert(_cancel_button);
-
-	_launch_button->signal_clicked().connect(sigc::mem_fun(this, &ConnectWindow::launch_engine));
-	_cancel_button->signal_clicked().connect(sigc::ptr_fun(&Gtk::Main::quit));
+	_connect_button->signal_clicked().connect(sigc::mem_fun(this, &ConnectWindow::connect));
+	_launch_button->signal_clicked().connect(sigc::mem_fun(this, &ConnectWindow::launch));
+	_spawn_internal_button->signal_clicked().connect(sigc::mem_fun(this, &ConnectWindow::spawn_internal));
+	_disconnect_button->signal_clicked().connect(sigc::mem_fun(this, &ConnectWindow::disconnect));
+	_quit_button->signal_clicked().connect(sigc::mem_fun(this, &ConnectWindow::quit));
 }
 
 
@@ -53,21 +57,62 @@ void
 ConnectWindow::start(CountedPtr<Om::Shared::ClientInterface> client)
 {
 	_client = client;
-
-	Glib::signal_timeout().connect(
-		sigc::mem_fun(this, &ConnectWindow::gtk_callback), 100);
-	
 	resize(100, 100);
+	show();
 }
 
 
 void
-ConnectWindow::launch_engine()
+ConnectWindow::connect()
+{
+	Controller::instance().set_engine_url(_url_entry->get_text());
+	Glib::signal_timeout().connect(
+		sigc::mem_fun(this, &ConnectWindow::gtk_callback), 100);
+}
+
+
+void
+ConnectWindow::disconnect()
+{
+	// Nope
+}
+
+
+void
+ConnectWindow::quit()
+{
+	if (Controller::instance().is_attached()) {
+		Gtk::MessageDialog d(*this, "This will exit OmGtk, but the engine will "
+			"remain running (if it is remote).\n\nAre you sure you want to quit?",
+			true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_NONE, true);
+			d.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
+			d.add_button(Gtk::Stock::QUIT, Gtk::RESPONSE_CLOSE);
+		int ret = d.run();
+		if (ret == Gtk::RESPONSE_CLOSE)
+			Gtk::Main::quit();
+	} else {
+		Gtk::Main::quit();
+	}
+}
+
+
+void
+ConnectWindow::launch()
 {
 	if (fork() == 0) {
 		//cerr << "Launching engine..";
 		execlp("om", NULL);
+	
+		Glib::signal_timeout().connect(
+			sigc::mem_fun(this, &ConnectWindow::gtk_callback), 100);
 	}
+}
+
+
+void
+ConnectWindow::spawn_internal()
+{
+	// Not quite yet...
 }
 
 
@@ -169,8 +214,13 @@ ConnectWindow::gtk_callback()
 		_progress_bar->pulse();
 	
 	if (stage == -1) { // finished connecting
+		_icon->set(Gtk::Stock::CONNECT, Gtk::ICON_SIZE_LARGE_TOOLBAR);
 		_progress_bar->set_fraction(1.0);
+		_url_entry->set_sensitive(false);
+		_connect_button->set_sensitive(false);
+		_port_spinbutton->set_sensitive(false);
 		_launch_button->set_sensitive(false);
+		_spawn_internal_button->set_sensitive(false);
 		return false; // deregister this callback
 	} else {
 		return true;
