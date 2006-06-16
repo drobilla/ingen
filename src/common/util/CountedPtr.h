@@ -73,6 +73,8 @@ public:
 		
 		if (copy)
 			retain(copy._counter);
+
+		assert(_counter == copy._counter);
 	}
 	
 	/** Copy a CountedPtr to a valid base class.
@@ -90,12 +92,15 @@ public:
 #else 
 			T* const casted_y = static_cast<T* const>(y._counter->ptr);
 #endif
-			if (casted_y != NULL) {
+			if (casted_y) {
 				assert(casted_y == y._counter->ptr);
 				//release(); // FIXME: leak?
 				retain((Counter*)y._counter);
+				assert(_counter == (Counter*)y._counter);
 			}
 		}
+
+		assert(_counter == NULL || _counter == (Counter*)y._counter);
 	}
 
 	/** Assign to the value of a CountedPtr of the same type. */
@@ -106,6 +111,7 @@ public:
 			release();
 			retain(copy._counter);
 		}
+		assert(_counter == copy._counter);
 		return *this;
 	}
 
@@ -118,6 +124,7 @@ public:
 			release();
 			retain(y._counter);
 		}
+		assert(_counter == y._counter);
 		return *this;
 	}
 
@@ -179,7 +186,7 @@ private:
 		assert(_counter == NULL || _counter == c);
 		_counter = c;
 		if (_counter)
-			++c->count;
+			++(c->count);
 	}
 	
 	/** Decrement the count, delete if we're the last reference */

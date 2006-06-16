@@ -21,6 +21,7 @@
 #include <string>
 #include <map>
 #include "util/CountedPtr.h"
+#include <sigc++/sigc++.h>
 using std::string; using std::map;
 
 namespace LibOmClient {
@@ -36,7 +37,7 @@ class PortModel;
  *
  * \ingroup OmGtk
  */
-class Store {
+class Store : public sigc::trackable { // FIXME: is trackable necessary?
 public:
 	CountedPtr<PluginModel> plugin(const string& uri);
 	CountedPtr<ObjectModel> object(const string& path);
@@ -46,7 +47,6 @@ public:
 
 	size_t num_objects() { return m_objects.size(); }
 	
-
 	const map<string, CountedPtr<PluginModel> >& plugins() const { return m_plugins; }
 
 	static void instantiate(SigClientInterface& emitter)

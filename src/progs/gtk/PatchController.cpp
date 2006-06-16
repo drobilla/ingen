@@ -63,6 +63,7 @@ PatchController::PatchController(CountedPtr<PatchModel> model)
 {
 	assert(model->path().length() > 0);
 	assert(model->controller() == this); // NodeController() does this
+	assert(m_patch_model == model);
 
 /* FIXME	if (model->path() != "/") {
 		PatchController* parent = Store::instance().patch(model->path().parent());
@@ -412,8 +413,8 @@ void
 PatchController::add_node(CountedPtr<NodeModel> object)
 {
 	assert(object);
-	assert(object->parent() == m_patch_model);
 	assert(object->path().parent() == m_patch_model->path());
+	assert(object->parent() == m_patch_model);
 	
 	/*if (patch_model()->get_node(nm->name()) != NULL) {
 		cerr << "Ignoring existing\n";
@@ -423,6 +424,7 @@ PatchController::add_node(CountedPtr<NodeModel> object)
 
 
 	CountedPtr<NodeModel> node(object);
+	assert(node == object);
 	if (node) {
 		assert(node->parent() == m_patch_model);
 
@@ -430,6 +432,7 @@ PatchController::add_node(CountedPtr<NodeModel> object)
 
 		CountedPtr<PatchModel> patch(node);
 		if (patch) {
+			assert(patch == node == object);
 			assert(patch->parent() == m_patch_model);
 			nc = new PatchController(patch);
 		} else {

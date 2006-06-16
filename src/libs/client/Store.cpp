@@ -101,7 +101,6 @@ Store::patch(const string& path)
 	if (i == m_objects.end())
 		return NULL;
 	else
-		//return dynamic_cast<PatchModel*>((*i).second.get());
 		return (CountedPtr<PatchModel>)(*i).second; // FIXME
 }
 
@@ -207,18 +206,16 @@ Store::new_patch_event(const string& path, uint32_t poly)
 	// FIXME: What to do with a conflict?
 	
 	if (m_objects.find(path) == m_objects.end()) {
-		PatchModel* const p = new PatchModel(path, poly);
+		CountedPtr<PatchModel> p(new PatchModel(path, poly));
 		add_object(p);
 		
-		std::map<string, CountedPtr<ObjectModel> >::iterator pi = m_objects.find(p->path().parent());
-		if (pi != m_objects.end()) {
-			CountedPtr<PatchModel> parent = (*pi).second;
-			if (parent) {
-				p->set_parent(parent);
-				parent->add_node(p);
-			} else {
-				cerr << "ERROR: new patch with no parent" << endl;
-			}
+		CountedPtr<PatchModel> parent = object(p->path().parent());
+		if (parent) {
+			p->set_parent(parent);
+			parent->add_node(p);
+			assert(p->parent() == parent);
+		} else {
+			cerr << "ERROR: new patch with no parent" << endl;
 		}
 	}
 }
@@ -239,15 +236,16 @@ Store::new_node_event(const string& plugin_type, const string& plugin_uri, const
 		// FIXME: num_ports unused
 		add_object(n);
 
-		std::map<string, CountedPtr<ObjectModel> >::iterator pi = m_objects.find(n->path().parent());
-		if (pi != m_objects.end()) {
-			CountedPtr<PatchModel> parent = (*pi).second;
-			if (parent) {
-				n->set_parent(parent);
-				parent->add_node(n);
-			} else {
-				cerr << "ERROR: new node with no parent" << endl;
-			}
+		//std::map<string, CountedPtr<ObjectModel> >::iterator pi = m_objects.find(n->path().parent());
+		//if (pi != m_objects.end()) {
+		CountedPtr<PatchModel> parent = object(n->path().parent());
+		if (parent) {
+			n->set_parent(parent);
+			assert(n->parent() == parent);
+			parent->add_node(n);
+			assert(n->parent() == parent);
+		} else {
+			cerr << "ERROR: new node with no parent" << endl;
 		}
 	}
 }
@@ -289,10 +287,12 @@ Store::new_port_event(const string& path, const string& type, bool is_output)
 		if (pi != m_objects.end()) {
 			CountedPtr<NodeModel> parent = (*pi).second;
 			p->set_parent(parent);
-			if (parent)
+			if (parent) {
 				parent->add_port(p);
-			else
+				assert(p->parent() == parent);
+			} else {
 				cerr << "ERROR: new port with no parent" << endl;
+			}
 		}
 	}
 }
