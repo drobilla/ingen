@@ -34,21 +34,23 @@ ConnectWindow::ConnectWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::
 : Gtk::Dialog(cobject)
 , _client(NULL)
 {
-	xml->get_widget("connect_icon",                  _icon);
-	xml->get_widget("connect_progress_bar",          _progress_bar);
-	xml->get_widget("connect_label",                 _label);
-	xml->get_widget("connect_url_entry",             _url_entry);
-	xml->get_widget("connect_connect_button",        _connect_button);
-	xml->get_widget("connect_port_spinbutton",       _port_spinbutton);
-	xml->get_widget("connect_launch_button",         _launch_button);
-	xml->get_widget("connect_spawn_internal_button", _spawn_internal_button);
-	xml->get_widget("connect_disconnect_button",     _disconnect_button);
-	xml->get_widget("connect_quit_button",           _quit_button);
+	xml->get_widget("connect_icon",                 _icon);
+	xml->get_widget("connect_progress_bar",         _progress_bar);
+	xml->get_widget("connect_progress_label",       _progress_label);
+	xml->get_widget("connect_server_radiobutton",   _server_radio);
+	xml->get_widget("connect_url_entry",            _url_entry);
+	xml->get_widget("connect_launch_radiobutton",   _launch_radio);
+	xml->get_widget("connect_port_spinbutton",      _port_spinbutton);
+	xml->get_widget("connect_internal_radiobutton", _internal_radio);
+	xml->get_widget("connect_disconnect_button",    _disconnect_button);
+	xml->get_widget("connect_connect_button",       _connect_button);
+	xml->get_widget("connect_quit_button",          _quit_button);
 	
-	_connect_button->signal_clicked().connect(sigc::mem_fun(this, &ConnectWindow::connect));
-	_launch_button->signal_clicked().connect(sigc::mem_fun(this, &ConnectWindow::launch));
-	_spawn_internal_button->signal_clicked().connect(sigc::mem_fun(this, &ConnectWindow::spawn_internal));
+	_server_radio->signal_toggled().connect(sigc::mem_fun(this, &ConnectWindow::server_toggled));
+	_launch_radio->signal_toggled().connect(sigc::mem_fun(this, &ConnectWindow::launch_toggled));
+	_internal_radio->signal_clicked().connect(sigc::mem_fun(this, &ConnectWindow::internal_toggled));
 	_disconnect_button->signal_clicked().connect(sigc::mem_fun(this, &ConnectWindow::disconnect));
+	_connect_button->signal_clicked().connect(sigc::mem_fun(this, &ConnectWindow::connect));
 	_quit_button->signal_clicked().connect(sigc::mem_fun(this, &ConnectWindow::quit));
 }
 
@@ -65,9 +67,29 @@ ConnectWindow::start(CountedPtr<Om::Shared::ClientInterface> client)
 void
 ConnectWindow::connect()
 {
-	Controller::instance().set_engine_url(_url_entry->get_text());
-	Glib::signal_timeout().connect(
-		sigc::mem_fun(this, &ConnectWindow::gtk_callback), 100);
+	if (_server_radio->get_active()) {
+		Controller::instance().set_engine_url(_url_entry->get_text());
+		Glib::signal_timeout().connect(
+			sigc::mem_fun(this, &ConnectWindow::gtk_callback), 100);
+
+	} else if (_launch_radio->get_active()) {
+		int port = _port_spinbutton->get_value_as_int();
+		char port_str[6];
+		snprintf(port_str, 6, "%u", port);
+		const string port_arg = string("--port=").append(port_str);
+		Controller::instance().set_engine_url(
+			string("osc.udp://localhost:").append(port_str));
+		
+		if (fork() == 0) { // child
+			cerr << "Executing 'om " << port_arg << "' ..." << endl; 
+			execlp("om", port_arg.c_str(), 0);
+		} else {
+			Glib::signal_timeout().connect(
+				sigc::mem_fun(this, &ConnectWindow::gtk_callback), 100);
+		}
+	}
+
+	_connect_button->set_sensitive(false);
 }
 
 
@@ -97,22 +119,27 @@ ConnectWindow::quit()
 
 
 void
-ConnectWindow::launch()
+ConnectWindow::server_toggled()
 {
-	if (fork() == 0) {
-		//cerr << "Launching engine..";
-		execlp("om", NULL);
-	
-		Glib::signal_timeout().connect(
-			sigc::mem_fun(this, &ConnectWindow::gtk_callback), 100);
-	}
+	_url_entry->set_sensitive(true);
+	_port_spinbutton->set_sensitive(false);
 }
 
 
 void
-ConnectWindow::spawn_internal()
+ConnectWindow::launch_toggled()
+{
+	_url_entry->set_sensitive(false);
+	_port_spinbutton->set_sensitive(true);
+}
+
+
+void
+ConnectWindow::internal_toggled()
 {
 	// Not quite yet...
+	_url_entry->set_sensitive(false);
+	_port_spinbutton->set_sensitive(false);
 }
 
 
@@ -134,7 +161,7 @@ ConnectWindow::gtk_callback()
 	if (stage == 0) {
 		// FIXME
 		//assert(!Controller::instance().is_attached());
-		_label->set_text(string("Connecting to engine at ").append(
+		_progress_label->set_text(string("Connecting to engine at ").append(
 			Controller::instance().engine_url()).append("..."));
 		present();
 		Controller::instance().attach();
@@ -152,7 +179,7 @@ ConnectWindow::gtk_callback()
 			}
 		}
 	} else if (stage == 2) {
-		_label->set_text(string("Registering as client..."));
+		_progress_label->set_text(string("Registering as client..."));
 		//Controller::instance().register_client(Controller::instance().client_hooks());
 		// FIXME
 		//auto_ptr<ClientInterface> client(new ThreadedSigClientInterface();
@@ -169,13 +196,13 @@ ConnectWindow::gtk_callback()
 			sigc::mem_fun((ThreadedSigClientInterface*)_client, &ThreadedSigClientInterface::emit_signals),
 			5, G_PRIORITY_DEFAULT_IDLE);*/
 		
-		_label->set_text(string("Requesting plugins..."));
+		_progress_label->set_text(string("Requesting plugins..."));
 		Controller::instance().request_plugins();
 		++stage;
 	} else if (stage == 4) {
 		// Wait for first plugins message
 		if (Store::instance().plugins().size() > 0) {
-			_label->set_text(string("Receiving plugins..."));
+			_progress_label->set_text(string("Receiving plugins..."));
 			++stage;
 		}
 	} else if (stage == 5) {
@@ -192,7 +219,7 @@ ConnectWindow::gtk_callback()
 			++stage;
 		//}
 	} else if (stage == 6) {
-		_label->set_text(string("Waiting for root patch..."));
+		_progress_label->set_text(string("Waiting for root patch..."));
 		Controller::instance().request_all_objects();
 		++stage;
 	} else if (stage == 7) {
@@ -204,10 +231,12 @@ ConnectWindow::gtk_callback()
 			++stage;
 		}
 	} else if (stage == 8) {
-		_label->set_text(string("Connected to engine at ").append(
+		_progress_label->set_text(string("Connected to engine at ").append(
 			Controller::instance().engine_url()));
+		++stage;
+	} else if (stage == 9) {
 		stage = -1;
-		hide(); // FIXME: actually destroy window to save mem?
+		hide();
 	}
 	
 	if (stage != 5) // yeah, ew
@@ -219,8 +248,8 @@ ConnectWindow::gtk_callback()
 		_url_entry->set_sensitive(false);
 		_connect_button->set_sensitive(false);
 		_port_spinbutton->set_sensitive(false);
-		_launch_button->set_sensitive(false);
-		_spawn_internal_button->set_sensitive(false);
+		_launch_radio->set_sensitive(false);
+		_internal_radio->set_sensitive(false);
 		return false; // deregister this callback
 	} else {
 		return true;

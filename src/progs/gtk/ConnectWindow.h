@@ -43,24 +43,27 @@ public:
 	
 	void start(CountedPtr<Om::Shared::ClientInterface> client);
 private:
-	void connect();
+	void server_toggled();
+	void launch_toggled();
+	void internal_toggled();
+	
 	void disconnect();
+	void connect();
 	void quit();
-	void launch();
-	void spawn_internal();
 
 	bool gtk_callback();
 
 	CountedPtr<Om::Shared::ClientInterface> _client;
 	Gtk::Image*                             _icon;
 	Gtk::ProgressBar*                       _progress_bar;
-	Gtk::Label*                             _label;
+	Gtk::Label*                             _progress_label;
 	Gtk::Entry*                             _url_entry;
-	Gtk::Button*                            _connect_button;
+	Gtk::RadioButton*                       _server_radio;
 	Gtk::SpinButton*                        _port_spinbutton;
-	Gtk::Button*                            _launch_button;
-	Gtk::Button*                            _spawn_internal_button;
+	Gtk::RadioButton*                       _launch_radio;
+	Gtk::RadioButton*                       _internal_radio;
 	Gtk::Button*                            _disconnect_button;
+	Gtk::Button*                            _connect_button;
 	Gtk::Button*                            _quit_button;
 };
 
