@@ -19,6 +19,7 @@
 #include "PortModel.h"
 #include "ControlPanel.h"
 #include "OmPort.h"
+#include "OmPatchPort.h"
 #include "Store.h"
 
 namespace OmGtk {
@@ -26,6 +27,7 @@ namespace OmGtk {
 
 PortController::PortController(CountedPtr<PortModel> model)
 : GtkObjectController(model),
+  m_module(NULL),
   m_port(NULL),
   m_control_panel(NULL)
 {
@@ -62,6 +64,23 @@ PortController::destroy()
 		m_control_panel->remove_port(path());
 
 	parent->remove_port(path(), false);
+}
+
+
+void
+PortController::create_module(OmFlowCanvas* canvas, double x, double y)
+{
+	cerr << "Creating port module " << m_model->path() << endl;
+
+	assert(canvas);
+	assert(port_model());
+	m_module = new OmPortModule(canvas, this, x, y);
+	
+	// FIXME: leak
+	m_patch_port = new OmPatchPort(m_module, port_model());
+	m_module->add_port(m_patch_port, false);
+
+	m_module->move_to(x, y);
 }
 
 

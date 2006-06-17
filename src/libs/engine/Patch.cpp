@@ -45,7 +45,7 @@ Patch::Patch(const string& path, size_t poly, Patch* parent, samplerate srate, s
 	assert(internal_poly >= 1);
 
 	m_plugin.type(Plugin::Patch);
-	m_plugin.lib_path("");
+	m_plugin.uri("http://codeson.net/grauph/patch");
 	m_plugin.plug_label("om_patch");
 	m_plugin.name("Om patch");
 

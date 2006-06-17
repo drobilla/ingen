@@ -33,6 +33,7 @@
 #include "PatchWindow.h"
 #include "NodeModel.h"
 #include "OmModule.h"
+#include "OmPortModule.h"
 #include "OmPort.h"
 #include "ControlModel.h"
 #include "NodeControlWindow.h"
@@ -73,6 +74,7 @@ PatchController::PatchController(CountedPtr<PatchModel> model)
 			cerr << "[PatchController] " << path() << " ERROR: Parent not found." << endl;
 	}*/
 
+	//model->new_port_sig.connect(sigc::mem_fun(this, &PatchController::add_port));
 	model->new_node_sig.connect(sigc::mem_fun(this, &PatchController::add_node));
 	model->removed_node_sig.connect(sigc::mem_fun(this, &PatchController::remove_node));
 	model->new_connection_sig.connect(sigc::mem_fun(this, &PatchController::connection));
@@ -278,6 +280,7 @@ PatchController::create_module(OmFlowCanvas* canvas)
 
 	assert(canvas != NULL);
 	assert(m_module == NULL);
+	assert(!m_patch_view || canvas != m_patch_view->canvas());
 	
 	m_module = new SubpatchModule(canvas, this);
 
@@ -333,13 +336,29 @@ PatchController::create_view()
 
 		NodeController* nc = ((NodeController*)nm->controller());
 		if (!nc)
-			nc = new NodeController(nm); // this should set nm->controller()
+			nc = create_controller_for_node(nm);
+
+		assert(nc);
+		assert(nm->controller() == nc);
 		
 		if (nc->module() == NULL);
 			nc->create_module(m_patch_view->canvas());
 		assert(nc->module() != NULL);
 		m_patch_view->canvas()->add_module(nc->module());
 	}
+
+	// Create pseudo modules for ports (ports on this canvas, not on our module)
+	for (PortModelList::const_iterator i = patch_model()->ports().begin();
+			i != patch_model()->ports().end(); ++i) {
+		PortController* const pc = dynamic_cast<PortController*>((*i)->controller());
+		assert(pc);
+		if (pc->module() == NULL)
+			pc->create_module(m_patch_view->canvas(), 1600, 1200);
+		assert(pc->module() != NULL);
+		m_patch_view->canvas()->add_module(pc->module());
+		pc->module()->resize();
+	}
+
 
 	// Create connections
 	for (list<CountedPtr<ConnectionModel> >::const_iterator i = patch_model()->connections().begin();
@@ -404,6 +423,30 @@ PatchController::create_connection(CountedPtr<ConnectionModel> cm)
 }
 
 
+NodeController*
+PatchController::create_controller_for_node(CountedPtr<NodeModel> node)
+{
+	assert(!node->controller());
+	NodeController* nc = NULL;
+
+	CountedPtr<PatchModel> patch(node);
+	if (patch) {
+		assert(patch == node);
+		assert(patch->parent() == m_patch_model);
+		nc = new PatchController(patch);
+	} else {
+		assert(node->plugin());
+		if (node->plugin()->type() == PluginModel::DSSI)
+			nc = new DSSIController(node);
+		else
+			nc = new NodeController(node);
+	}
+
+	assert(node->controller() == nc);
+	return nc;
+}
+
+
 /** Add a child node to this patch.
  *
  * This is for plugin nodes and patches, and is responsible for creating the 
@@ -413,8 +456,8 @@ void
 PatchController::add_node(CountedPtr<NodeModel> object)
 {
 	assert(object);
-	assert(object->path().parent() == m_patch_model->path());
 	assert(object->parent() == m_patch_model);
+	assert(patch_model()->get_node(object->name()));
 	
 	/*if (patch_model()->get_node(nm->name()) != NULL) {
 		cerr << "Ignoring existing\n";
@@ -428,35 +471,9 @@ PatchController::add_node(CountedPtr<NodeModel> object)
 	if (node) {
 		assert(node->parent() == m_patch_model);
 
-		NodeController* nc = NULL;
-
-		CountedPtr<PatchModel> patch(node);
-		if (patch) {
-			assert(patch == node == object);
-			assert(patch->parent() == m_patch_model);
-			nc = new PatchController(patch);
-		} else {
-			assert(node->plugin());
-			if (node->plugin()->type() == PluginModel::DSSI)
-				nc = new DSSIController(node);
-			else
-				nc = new NodeController(node);
-		}
-
-		assert(nc != NULL);
+		NodeController* nc = create_controller_for_node(node);
+		assert(nc);
 		assert(node->controller() == nc);
-
-		// Check if this is a bridge node - FIXME: remove this
-		CountedPtr<PortModel> pm = patch_model()->get_port(node->path().name());
-		if (pm) {
-			cerr << "Bridge node." << endl;
-			PortController* pc = ((PortController*)pm->controller());
-			assert(pc != NULL);
-			nc->bridge_port(pc);
-		}
-
-		//nc->add_to_store();
-		//patch_model()->add_node(node);
 
 		if (m_patch_view != NULL) {
 			int x, y;
@@ -514,29 +531,58 @@ void
 PatchController::add_port(CountedPtr<PortModel> pm)
 {
 	assert(pm);
-	assert(!pm->parent());
+	assert(pm->parent() == m_patch_model);
+	assert(patch_model()->get_port(pm->name()));
+	
+	cerr << "ADDING PORT " << pm->name() << "TO PATCH: " << patch_model()->path() << endl;
 
 	//cerr << "[PatchController] Adding port " << pm->path() << endl;
 
-	if (patch_model()->get_port(pm->name())) {
-		cerr << "[PatchController] Ignoring duplicate port "
-			<< pm->path() << endl;
-		return;
-	}
-	
-	node_model()->add_port(pm);
+	/*if (patch_model()->get_port(pm->name())) {
+	  cerr << "[PatchController] Ignoring duplicate port "
+	  << pm->path() << endl;
+	  return;
+	  }*/
+
+	//node_model()->add_port(pm);
+	// FIXME: leak
 	PortController* pc = new PortController(pm);
 
 	// Handle bridge ports/nodes (this is uglier than it should be)
-	NodeController* nc = (NodeController*)Store::instance().node(pm->path())->controller();
-	if (nc != NULL)
-		nc->bridge_port(pc);
-	
+	/*NodeController* nc = (NodeController*)Store::instance().node(pm->path())->controller();
+	  if (nc != NULL)
+	  nc->bridge_port(pc);
+	  */
+
+	// Create port on this patch's module (if there is one)
 	if (m_module != NULL) {
 		pc->create_port(m_module);
 		m_module->resize();
+	}	
+
+	// Create port's (pseudo) module on this patch's canvas (if there is one)
+	if (m_patch_view != NULL) {
+		int x, y;
+		get_new_module_location(x, y);
+
+		// Set zoom to 1.0 so module isn't messed up (Death to GnomeCanvas)
+		float old_zoom = m_patch_view->canvas()->zoom();
+		if (old_zoom != 1.0)
+			m_patch_view->canvas()->zoom(1.0);
+
+		if (pc->module() == NULL)
+			pc->create_module(m_patch_view->canvas(), x, y);
+		assert(pc->module() != NULL);
+		m_patch_view->canvas()->add_module(pc->module());
+		pc->module()->resize();
+
+		// Reset zoom
+		if (old_zoom != 1.0) {
+			m_patch_view->canvas()->zoom(old_zoom);
+			pc->module()->zoom(old_zoom);
+		}
 	}
-		
+
 	if (m_control_window != NULL) {
 		assert(m_control_window->control_panel() != NULL);
 		m_control_window->control_panel()->add_port(pc);

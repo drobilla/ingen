@@ -50,16 +50,17 @@ ObjectSender::send_patch(ClientInterface* client, const Patch* patch)
 	
 	for (List<Node*>::const_iterator j = patch->nodes().begin();
 			j != patch->nodes().end(); ++j) {
-		Node* const node = (*j);
-		Port* const port = node->as_port(); // NULL unless a bridge node
+		const Node* const node = (*j);
+		//const Port* const port = node->as_port(); // NULL unless a bridge node
+
 		send_node(client, node);
 		
 		usleep(100);
 
 		// If this is a bridge (input/output) node, send the patch control value as well
-		if (port && port->port_info()->is_control())
-			client->control_change(port->path(),
-				((PortBase<sample>*)port)->buffer(0)->value_at(0));
+		//if (port && port->port_info()->is_control())
+		//	client->control_change(port->path(),
+		//		((PortBase<sample>*)port)->buffer(0)->value_at(0));
 	}
 	
 	for (List<Connection*>::const_iterator j = patch->connections().begin();
@@ -67,31 +68,54 @@ ObjectSender::send_patch(ClientInterface* client, const Patch* patch)
 		client->connection((*j)->src_port()->path(), (*j)->dst_port()->path());
 	
 	// Send port information
-	/*for (size_t i=0; i < m_ports.size(); ++i) {
-		Port* const port = m_ports.at(i);
+	for (size_t i=0; i < patch->ports().size(); ++i) {
+		Port* const port = patch->ports().at(i);
 
 		// Send metadata
 		const map<string, string>& data = port->metadata();
 		for (map<string, string>::const_iterator i = data.begin(); i != data.end(); ++i)
-			om->client_broadcaster()->send_metadata_update_to(client, port->path(), (*i).first, (*i).second);
+			client->metadata_update(port->path(), (*i).first, (*i).second);
 		
 		if (port->port_info()->is_control())
-			om->client_broadcaster()->send_control_change_to(client, port->path(),
-				((PortBase<sample>*)port)->buffer(0)->value_at(0));
-	}*/
+			client->control_change(port->path(), ((PortBase<sample>*)port)->buffer(0)->value_at(0));
+	}
+	
+	// Send metadata
+	const map<string, string>& data = patch->metadata();
+	for (map<string, string>::const_iterator j = data.begin(); j != data.end(); ++j)
+		client->metadata_update(patch->path(), (*j).first, (*j).second);
+
 }
 
 
+/** Sends a node or a patch */
 void
 ObjectSender::send_node(ClientInterface* client, const Node* node)
 {
+	// Don't send node notification for bridge nodes, from the client's
+	// perspective they don't even exist (just the ports they represent)
+	// FIXME: hack, these nodes probably shouldn't even exist in the
+	// engine anymore
+	if (const_cast<Node*>(node)->as_port()) { // bridge node if as_port() returns non-NULL
+		send_port(client, const_cast<Node*>(node)->as_port());
+		return;
+	}
+
+	const Plugin* const plugin = node->plugin();
+
 	int polyphonic = 
 		(node->poly() > 1
 		&& node->poly() == node->parent_patch()->internal_poly()
 		? 1 : 0);
 
 	assert(node->path().length() > 0);
-	if (node->plugin()->uri().length() == 0) {
+	
+	if (plugin->type() == Plugin::Patch) {
+		send_patch(client, (Patch*)node);
+		return;
+	}
+
+	if (plugin->uri().length() == 0) {
 		cerr << "Node " << node->path() << " plugin has no URI!  Not sending." << endl;
 		return;
 	}
@@ -102,10 +126,10 @@ ObjectSender::send_node(ClientInterface* client, const Node* node)
 	// FIXME: bundleify
 	
 	const Array<Port*>& ports = node->ports();
-	
+
 	client->new_node(node->plugin()->type_string(), node->plugin()->uri(),
 	                 node->path(), polyphonic, ports.size());
-
+	
 	// Send ports
 	for (size_t j=0; j < ports.size(); ++j) {
 		Port* const     port = ports.at(j);
@@ -115,25 +139,6 @@ ObjectSender::send_node(ClientInterface* client, const Node* node)
 		assert(info);
 		
 		client->new_port(port->path(), info->type_string(), info->is_output());
-
-		/*m = lo_message_new();
-		lo_message_add_string(m, port->path().c_str());
-		lo_message_add_string(m, info->type_string().c_str());
-		lo_message_add_string(m, info->direction_string().c_str());
-		lo_message_add_string(m, info->hint_string().c_str());
-		lo_message_add_float(m, info->default_val());
-		lo_message_add_float(m, info->min_val());
-		lo_message_add_float(m, info->max_val());
-		lo_bundle_add_message(b, "/om/new_port", m);
-		msgs.push_back(m);*/
-		
-		// If the bundle is getting very large, send it and start
-		// a new one
-		/*if (lo_bundle_length(b) > 1024) {
-		  lo_send_bundle(_address, b);
-		  lo_bundle_free(b);
-		  b = lo_bundle_new(tt);
-		}*/
 	}
 
 	client->bundle_end();

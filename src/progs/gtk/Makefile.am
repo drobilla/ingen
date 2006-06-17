@@ -62,12 +62,16 @@ om_gtk_SOURCES = \
 	../../common/Path.h \
 	OmModule.h \
 	OmModule.cpp \
+	OmPortModule.h \
+	OmPortModule.cpp \
 	DSSIModule.h \
 	DSSIModule.cpp \
 	SubpatchModule.h \
 	SubpatchModule.cpp \
 	OmPort.h \
 	OmPort.cpp \
+	OmPatchPort.h \
+	OmPatchPort.cpp \
 	NewSubpatchWindow.h \
 	NewSubpatchWindow.cpp \
 	ConfigWindow.h \

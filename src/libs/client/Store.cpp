@@ -209,13 +209,16 @@ Store::new_patch_event(const string& path, uint32_t poly)
 		CountedPtr<PatchModel> p(new PatchModel(path, poly));
 		add_object(p);
 		
-		CountedPtr<PatchModel> parent = object(p->path().parent());
-		if (parent) {
-			p->set_parent(parent);
-			parent->add_node(p);
-			assert(p->parent() == parent);
-		} else {
-			cerr << "ERROR: new patch with no parent" << endl;
+		if (path != "/") {
+			CountedPtr<PatchModel> parent = object(p->path().parent());
+			if (parent) {
+				assert(path.substr(0, parent->path().length()) == parent->path());
+				p->set_parent(parent);
+				parent->add_node(p);
+				assert(p->parent() == parent);
+			} else {
+				cerr << "ERROR: new patch with no parent" << endl;
+			}
 		}
 	}
 }
@@ -283,16 +286,14 @@ Store::new_port_event(const string& path, const string& type, bool is_output)
 		CountedPtr<PortModel> p(new PortModel(path, ptype, pdir));
 		add_object(p);
 
-		std::map<string, CountedPtr<ObjectModel> >::iterator pi = m_objects.find(p->path().parent());
-		if (pi != m_objects.end()) {
-			CountedPtr<NodeModel> parent = (*pi).second;
+		CountedPtr<NodeModel> parent = object(p->path().parent());
+		if (parent) {
 			p->set_parent(parent);
-			if (parent) {
-				parent->add_port(p);
-				assert(p->parent() == parent);
-			} else {
-				cerr << "ERROR: new port with no parent" << endl;
-			}
+			assert(p->parent() == parent);
+			parent->add_port(p);
+			assert(p->parent() == parent);
+		} else {
+			cerr << "ERROR: new port with no parent" << endl;
 		}
 	}
 }

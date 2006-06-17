@@ -20,6 +20,7 @@
 #include <string>
 #include <gtkmm.h>
 #include "GtkObjectController.h"
+#include "OmPortModule.h"
 
 using std::string;
 using namespace LibOmClient;
@@ -33,8 +34,11 @@ namespace OmGtk {
 
 class Controller;
 class OmPort;
+class OmPatchPort;
 class ControlPanel;
 class OmModule;
+class OmPortModule;
+class OmFlowCanvas;
 
 
 /** Controller for a port on a (non-patch) node.
@@ -49,6 +53,8 @@ public:
 	
 	virtual void destroy();
 
+	virtual void create_module(OmFlowCanvas* canvas, double x, double y);
+	OmPortModule* module() { return m_module; }
 /*
 	virtual void add_to_store();
 	virtual void remove_from_store();
@@ -63,10 +69,12 @@ public:
 	ControlPanel* control_panel() const { return m_control_panel; }
 	void set_control_panel(ControlPanel* cp);
 
-	CountedPtr<PortModel> port_model() const { return CountedPtr<PortModel>((PortModel*)m_model.get()); }
+	CountedPtr<PortModel> port_model() const { return m_model; }
 
 private:
-	OmPort*       m_port;          ///< Canvas module port
+	OmPatchPort*  m_patch_port;    ///< Port on m_module
+	OmPortModule* m_module;        ///< Port pseudo-module (for patch ports only)
+	OmPort*       m_port;          ///< Port on some other canvas module
 	ControlPanel* m_control_panel; ///< Control panel that contains this port
 };
 
