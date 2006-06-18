@@ -17,7 +17,7 @@
 #ifndef CONNECTIONBASE_H
 #define CONNECTIONBASE_H
 
-#include "util/types.h"
+#include "types.h"
 #include "OutputPort.h"
 #include "Connection.h"
 

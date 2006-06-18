@@ -20,7 +20,7 @@
 #include <string>
 #include "util/Path.h"
 #include "QueuedEvent.h"
-#include "util/types.h"
+#include "types.h"
 using std::string;
 
 template <typename T> class ListNode;

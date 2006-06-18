@@ -19,7 +19,7 @@
 
 #include "QueuedEvent.h"
 #include "LashDriver.h"
-#include "util/types.h"
+#include "types.h"
 
 #include <iostream>
 using std::cerr;

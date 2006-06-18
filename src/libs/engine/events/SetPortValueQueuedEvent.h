@@ -18,7 +18,7 @@
 #define SETPORTVALUEQUEUEDEVENT_H
 
 #include "QueuedEvent.h"
-#include "util/types.h"
+#include "types.h"
 #include <string>
 using std::string;
 

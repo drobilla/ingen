@@ -18,7 +18,7 @@
 #define POSTPROCESSOR_H
 
 #include <pthread.h>
-#include "util/types.h"
+#include "types.h"
 #include "util/Queue.h"
 #include "util/Semaphore.h"
 

@@ -19,7 +19,7 @@
 
 #include "QueuedEvent.h"
 #include "MidiControlNode.h"
-#include "util/types.h"
+#include "types.h"
 #include <string>
 using std::string;
 

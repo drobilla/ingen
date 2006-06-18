@@ -19,7 +19,7 @@
 
 #include <string>
 #include "QueuedEvent.h"
-#include "util/types.h"
+#include "types.h"
 
 using std::string;
 

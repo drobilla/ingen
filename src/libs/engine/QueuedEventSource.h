@@ -19,7 +19,7 @@
 
 #include <cstdlib>
 #include <pthread.h>
-#include "util/types.h"
+#include "types.h"
 #include "util/Semaphore.h"
 #include "EventSource.h"
 

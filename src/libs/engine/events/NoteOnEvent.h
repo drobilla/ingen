@@ -18,7 +18,7 @@
 #define NOTEONEVENT_H
 
 #include "Event.h"
-#include "util/types.h"
+#include "types.h"
 #include <string>
 using std::string;
 

@@ -22,7 +22,7 @@
 #include <list>
 #include <lo/lo.h>
 #include <pthread.h>
-#include "util/types.h"
+#include "types.h"
 #include "interface/ClientInterface.h"
 
 using std::list; using std::string;

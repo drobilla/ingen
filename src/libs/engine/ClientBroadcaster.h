@@ -23,7 +23,7 @@
 #include <list>
 #include <lo/lo.h>
 #include <pthread.h>
-#include "util/types.h"
+#include "types.h"
 #include "interface/ClientInterface.h"
 #include "util/CountedPtr.h"
 

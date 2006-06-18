@@ -19,7 +19,7 @@
 
 #include <string>
 #include "Event.h"
-#include "util/types.h"
+#include "types.h"
 using std::string;
 
 namespace Om {

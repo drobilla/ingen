@@ -19,7 +19,7 @@
 #include <cstdlib>
 #include <string>
 #include <lo/lo.h>
-#include "util/types.h"
+#include "types.h"
 #include "Om.h"
 #include "OmApp.h"
 #include "util/Queue.h"

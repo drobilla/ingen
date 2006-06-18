@@ -18,7 +18,7 @@
 #define AUDIODRIVER_H
 
 #include "Driver.h"
-#include "util/types.h"
+#include "types.h"
 #include "List.h"
 
 namespace Om {

@@ -19,7 +19,7 @@
 
 #include <cstdlib>
 #include <string>
-#include "util/types.h"
+#include "types.h"
 #include "OmObject.h"
 #include "DataType.h"
 

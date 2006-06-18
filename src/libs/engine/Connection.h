@@ -19,7 +19,7 @@
 
 #include <cstdlib>
 #include "MaidObject.h"
-#include "util/types.h"
+#include "types.h"
 
 namespace Om {
 

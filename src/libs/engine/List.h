@@ -18,7 +18,7 @@
 #define LIST_H
 
 #include <cassert>
-#include "util/types.h"
+#include "types.h"
 #include "MaidObject.h"
 
 

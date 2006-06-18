@@ -19,7 +19,7 @@
 
 #include <cstddef>
 #include <cassert>
-#include "util/types.h"
+#include "types.h"
 
 namespace Om {
 

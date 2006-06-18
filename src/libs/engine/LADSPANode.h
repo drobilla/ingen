@@ -19,7 +19,7 @@
 
 #include <string>
 #include <ladspa.h>
-#include "util/types.h"
+#include "types.h"
 #include "NodeBase.h"
 #include "Plugin.h"
 

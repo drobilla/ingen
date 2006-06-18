@@ -20,7 +20,7 @@
 #include <string>
 #include <cstdlib>
 #include "PortBase.h"
-#include "util/types.h"
+#include "types.h"
 
 namespace Om {
 

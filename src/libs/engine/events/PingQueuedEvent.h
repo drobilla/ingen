@@ -18,7 +18,7 @@
 #define PINGQUEUEDEVENT_H
 
 #include "QueuedEvent.h"
-#include "util/types.h"
+#include "types.h"
 #include "Responder.h"
 
 namespace Om {

@@ -19,7 +19,7 @@
 
 #include <cassert>
 #include "util/CountedPtr.h"
-#include "util/types.h"
+#include "types.h"
 #include "MaidObject.h"
 #include "Responder.h"
 

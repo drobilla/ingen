@@ -20,7 +20,7 @@
 #include <pthread.h>
 #include "Om.h"
 #include "OmApp.h"
-#include "util/types.h"
+#include "types.h"
 #include "midi.h"
 #include "OmApp.h"
 #include "Maid.h"

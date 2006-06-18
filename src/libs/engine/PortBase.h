@@ -18,7 +18,7 @@
 #define PORTBASE_H
 
 #include <string>
-#include "util/types.h"
+#include "types.h"
 #include "Array.h"
 #include "Port.h"
 #include "Buffer.h"

@@ -20,7 +20,7 @@
 #include "MaidObject.h"
 #include <cassert>
 #include <cstdlib>
-#include "util/types.h"
+#include "types.h"
 
 
 /** An array.
