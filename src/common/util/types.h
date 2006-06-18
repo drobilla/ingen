@@ -29,4 +29,8 @@ typedef jack_default_audio_sample_t sample;
 typedef jack_nframes_t samplecount;
 typedef jack_nframes_t samplerate;
 
+/** A type that Om can patch (eg can be stored in a port) */
+enum DataType { FLOAT, MIDI, UNKNOWN };
+
+
 #endif // TYPES_H
