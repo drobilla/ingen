@@ -51,16 +51,8 @@ ObjectSender::send_patch(ClientInterface* client, const Patch* patch)
 	for (List<Node*>::const_iterator j = patch->nodes().begin();
 			j != patch->nodes().end(); ++j) {
 		const Node* const node = (*j);
-		//const Port* const port = node->as_port(); // NULL unless a bridge node
 
 		send_node(client, node);
-		
-		usleep(100);
-
-		// If this is a bridge (input/output) node, send the patch control value as well
-		//if (port && port->port_info()->is_control())
-		//	client->control_change(port->path(),
-		//		((PortBase<sample>*)port)->buffer(0)->value_at(0));
 	}
 	
 	for (List<Connection*>::const_iterator j = patch->connections().begin();
