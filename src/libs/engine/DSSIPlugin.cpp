@@ -38,9 +38,6 @@ DSSIPlugin::DSSIPlugin(const string& name, size_t poly, Patch* parent, DSSI_Desc
   _alsa_events(new snd_seq_event_t[_buffer_size]),
   _alsa_encoder(NULL)
 {
-	if (has_midi_input())
-		_num_ports = descriptor->LADSPA_Plugin->PortCount + 1;
-	
 	snd_midi_event_new(3, &_alsa_encoder);
 }
 
@@ -62,16 +59,19 @@ DSSIPlugin::~DSSIPlugin()
 bool
 DSSIPlugin::instantiate()
 {
-	if (!LADSPAPlugin::instantiate())
-		return false;
+	assert(!_ports);
 	
 	if (has_midi_input()) {
-		assert(_num_ports == _descriptor->PortCount + 1);
-		assert(_ports->size() == _descriptor->PortCount + 1);
-
-		_midi_in_port = new InputPort<MidiMessage>(this, "MIDI In", _num_ports-1, 1, DataType::MIDI, _buffer_size);
-		_ports->at(_num_ports-1) = _midi_in_port;
+		_ports = new Array<Port*>(_descriptor->PortCount + 1);
+		_midi_in_port = new InputPort<MidiMessage>(this, "MIDI In", _ports->size()-1, 1, DataType::MIDI, _buffer_size);
+		_ports->at(_ports->size()-1) = _midi_in_port;
 	}	
+
+	// LADSPAPlugin::instantiate checks if _ports is already allocated
+	if (!LADSPAPlugin::instantiate()) {
+		delete _ports;
+		return false;
+	}
 	
 	return true;
 }
