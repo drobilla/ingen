@@ -34,18 +34,19 @@ using std::cout; using std::cerr; using std::endl;
 namespace Om {
 
 
-NodeBase::NodeBase(const string& name, size_t poly, Patch* parent, samplerate srate, size_t buffer_size)
+NodeBase::NodeBase(const Plugin* plugin, const string& name, size_t poly, Patch* parent, samplerate srate, size_t buffer_size)
 : Node(parent, name),
+  _plugin(plugin),
   _poly(poly),
   _srate(srate),
   _buffer_size(buffer_size),
   _activated(false),
-  _num_ports(0),
   _ports(NULL),
   _traversed(false),
   _providers(new List<Node*>()),
   _dependants(new List<Node*>())
 {
+	assert(_plugin);
 	assert(_poly > 0);
 	assert(_parent == NULL || (_poly == parent->internal_poly() || _poly == 1));
 }
@@ -58,7 +59,7 @@ NodeBase::~NodeBase()
 	delete _providers;
 	delete _dependants;
 	
-	for (size_t i=0; i < _num_ports; ++i)
+	for (size_t i=0; i < num_ports(); ++i)
 		delete _ports->at(i);
 }
 
@@ -108,7 +109,7 @@ NodeBase::remove_from_store()
 	}
 	
 	// Remove ports
-	for (size_t i=0; i < _num_ports; ++i) {
+	for (size_t i=0; i < num_ports(); ++i) {
 		node = om->object_store()->remove(_ports->at(i)->path());
 		if (node != NULL) {
 			assert(om->object_store()->find(_ports->at(i)->path()) == NULL);
@@ -125,11 +126,8 @@ NodeBase::run(size_t nframes)
 {
 	assert(_activated);
 	// Mix down any ports with multiple inputs
-	Port* p;
-	for (size_t i=0; i < _ports->size(); ++i) {
-		p = _ports->at(i);
-		p->prepare_buffers(nframes);
-	}
+	for (size_t i=0; i < _ports->size(); ++i)
+		_ports->at(i)->prepare_buffers(nframes);
 }
 
 
@@ -147,7 +145,7 @@ NodeBase::set_path(const Path& new_path)
 	TreeNode<OmObject*>* treenode = NULL;
 	
 	// Reinsert ports
-	for (size_t i=0; i < _num_ports; ++i) {
+	for (size_t i=0; i < num_ports(); ++i) {
 		treenode = om->object_store()->remove(old_path +"/"+ _ports->at(i)->name());
 		assert(treenode != NULL);
 		assert(treenode->node() == _ports->at(i));

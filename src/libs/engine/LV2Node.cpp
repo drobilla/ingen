@@ -14,7 +14,7 @@
  * 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include "LV2Plugin.h"
+#include "LV2Node.h"
 #include <iostream>
 #include <cassert>
 #include "float.h"
@@ -27,19 +27,19 @@
 namespace Om {
 
 
-/** Partially construct a LV2Plugin.
+/** Partially construct a LV2Node.
  *
  * Object is not usable until instantiate() is called with success.
  * (It _will_ crash!)
  */
-LV2Plugin::LV2Plugin(const string&      name,
-                     size_t             poly,
-                     Patch*             parent,
-                     const SLV2Plugin*  plugin,
-                     samplerate         srate,
-                     size_t             buffer_size)
-: NodeBase(name, poly, parent, srate, buffer_size),
-  _lv2_plugin(plugin),
+LV2Node::LV2Node(const Plugin*      plugin,
+                 const string&      name,
+                 size_t             poly,
+                 Patch*             parent,
+                 samplerate         srate,
+                 size_t             buffer_size)
+: NodeBase(plugin, name, poly, parent, srate, buffer_size),
+  _lv2_plugin(plugin->slv2_plugin()),
   _instances(NULL)
 {
 	assert(_lv2_plugin);
@@ -55,7 +55,7 @@ LV2Plugin::LV2Plugin(const string&      name,
  * value is false, this object may not be used.
  */
 bool
-LV2Plugin::instantiate()
+LV2Node::instantiate()
 {
 	size_t num_ports = slv2_plugin_get_num_ports(_lv2_plugin);
 	assert(num_ports > 0);
@@ -122,7 +122,7 @@ LV2Plugin::instantiate()
 }
 
 
-LV2Plugin::~LV2Plugin()
+LV2Node::~LV2Node()
 {
 	for (size_t i=0; i < _poly; ++i)
 		slv2_instance_free(_instances[i]);
@@ -132,7 +132,7 @@ LV2Plugin::~LV2Plugin()
 
 
 void
-LV2Plugin::activate()
+LV2Node::activate()
 {
 	NodeBase::activate();
 
@@ -153,7 +153,7 @@ LV2Plugin::activate()
 
 
 void
-LV2Plugin::deactivate()
+LV2Node::deactivate()
 {
 	NodeBase::deactivate();
 	
@@ -163,7 +163,7 @@ LV2Plugin::deactivate()
 
 
 void
-LV2Plugin::run(size_t nframes)
+LV2Node::run(size_t nframes)
 {
 	NodeBase::run(nframes); // mixes down input ports
 	for (size_t i=0; i < _poly; ++i) 
@@ -172,7 +172,7 @@ LV2Plugin::run(size_t nframes)
 
 
 void
-LV2Plugin::set_port_buffer(size_t voice, size_t port_num, void* buf)
+LV2Node::set_port_buffer(size_t voice, size_t port_num, void* buf)
 {
 	assert(voice < _poly);
 	
@@ -186,7 +186,7 @@ LV2Plugin::set_port_buffer(size_t voice, size_t port_num, void* buf)
 #if 0
 // Based on code stolen from jack-rack
 void
-LV2Plugin::get_port_vals(ulong port_index, PortInfo* info)
+LV2Node::get_port_vals(ulong port_index, PortInfo* info)
 {
 	LV2_Data upper = 0.0f;
 	LV2_Data lower = 0.0f;

@@ -42,7 +42,7 @@ DSSIControlEvent::pre_process()
 	if (node->plugin()->type() != Plugin::DSSI)
 		m_node = NULL;
 	else
-		m_node = (DSSIPlugin*)node;
+		m_node = (DSSINode*)node;
 
 	QueuedEvent::pre_process();
 }

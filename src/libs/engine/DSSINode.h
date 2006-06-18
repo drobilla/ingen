@@ -14,13 +14,13 @@
  * 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef DSSIPLUGIN_H
-#define DSSIPLUGIN_H
+#ifndef DSSINODE_H
+#define DSSINODE_H
 
 #include <asoundlib.h>
 #include <dssi.h>
 #include <lo/lo.h>
-#include "LADSPAPlugin.h"
+#include "LADSPANode.h"
 
 namespace Om {
 
@@ -33,14 +33,14 @@ namespace Shared {
 
 /** An instance of a DSSI plugin.
  */
-class DSSIPlugin : public LADSPAPlugin
+class DSSINode : public LADSPANode
 {
 public:
 
 	typedef map<int, string> Bank;
 	
-	DSSIPlugin(const string& name, size_t poly, Patch* parent, DSSI_Descriptor* descriptor, samplerate srate, size_t buffer_size);
-	~DSSIPlugin();
+	DSSINode(const Plugin* plugin, const string& name, size_t poly, Patch* parent, DSSI_Descriptor* descriptor, samplerate srate, size_t buffer_size);
+	~DSSINode();
 	
 	bool instantiate();
 
@@ -66,8 +66,8 @@ public:
 
 private:
 	// Prevent copies (undefined)
-	DSSIPlugin(const DSSIPlugin& copy);
-	DSSIPlugin& operator=(const DSSIPlugin& copy);
+	DSSINode(const DSSINode& copy);
+	DSSINode& operator=(const DSSINode& copy);
 	
 	bool has_midi_input() const;
 	
@@ -105,5 +105,5 @@ private:
 } // namespace Om
 
 
-#endif // DSSIPLUGIN_H
+#endif // DSSINODE_H
 

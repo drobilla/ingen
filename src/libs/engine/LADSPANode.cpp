@@ -15,7 +15,7 @@
  */
 
 
-#include "LADSPAPlugin.h"
+#include "LADSPANode.h"
 #include <iostream>
 #include <cassert>
 #include "float.h"
@@ -28,13 +28,13 @@
 namespace Om {
 
 
-/** Partially construct a LADSPAPlugin.
+/** Partially construct a LADSPANode.
  *
  * Object is not usable until instantiate() is called with success.
  * (It _will_ crash!)
  */
-LADSPAPlugin::LADSPAPlugin(const string& path, size_t poly, Patch* parent, const LADSPA_Descriptor* descriptor, samplerate srate, size_t buffer_size)
-: NodeBase(path, poly, parent, srate, buffer_size),
+LADSPANode::LADSPANode(const Plugin* plugin, const string& path, size_t poly, Patch* parent, const LADSPA_Descriptor* descriptor, samplerate srate, size_t buffer_size)
+: NodeBase(plugin, path, poly, parent, srate, buffer_size),
   _descriptor(descriptor),
   _instances(NULL)
 {
@@ -51,7 +51,7 @@ LADSPAPlugin::LADSPAPlugin(const string& path, size_t poly, Patch* parent, const
  * value is false, this object may not be used.
  */
 bool
-LADSPAPlugin::instantiate()
+LADSPANode::instantiate()
 {
 	// Note that a DSSI plugin might tack more on to the end of this
 	if (!_ports)
@@ -128,7 +128,7 @@ LADSPAPlugin::instantiate()
 }
 
 
-LADSPAPlugin::~LADSPAPlugin()
+LADSPANode::~LADSPANode()
 {
 	for (size_t i=0; i < _poly; ++i)
 		_descriptor->cleanup(_instances[i]);
@@ -138,7 +138,7 @@ LADSPAPlugin::~LADSPAPlugin()
 
 
 void
-LADSPAPlugin::activate()
+LADSPANode::activate()
 {
 	NodeBase::activate();
 
@@ -160,7 +160,7 @@ LADSPAPlugin::activate()
 
 
 void
-LADSPAPlugin::deactivate()
+LADSPANode::deactivate()
 {
 	NodeBase::deactivate();
 	
@@ -171,7 +171,7 @@ LADSPAPlugin::deactivate()
 
 
 void
-LADSPAPlugin::run(size_t nframes)
+LADSPANode::run(size_t nframes)
 {
 	NodeBase::run(nframes); // mixes down input ports
 	for (size_t i=0; i < _poly; ++i) 
@@ -180,7 +180,7 @@ LADSPAPlugin::run(size_t nframes)
 
 
 void
-LADSPAPlugin::set_port_buffer(size_t voice, size_t port_num, void* buf)
+LADSPANode::set_port_buffer(size_t voice, size_t port_num, void* buf)
 {
 	assert(voice < _poly);
 	
@@ -193,7 +193,7 @@ LADSPAPlugin::set_port_buffer(size_t voice, size_t port_num, void* buf)
 #if 0
 // Based on code stolen from jack-rack
 void
-LADSPAPlugin::get_port_vals(ulong port_index, PortInfo* info)
+LADSPANode::get_port_vals(ulong port_index, PortInfo* info)
 {
 	LADSPA_Data upper = 0.0f;
 	LADSPA_Data lower = 0.0f;

@@ -40,7 +40,7 @@ namespace Shared {
 class NodeBase : public Node
 {
 public:
-	NodeBase(const string& name, size_t poly, Patch* parent, samplerate srate, size_t buffer_size);
+	NodeBase(const Plugin* plugin, const string& name, size_t poly, Patch* parent, samplerate srate, size_t buffer_size);
 
 	virtual ~NodeBase();
 
@@ -60,7 +60,7 @@ public:
 	
 	//void send_creation_messages(ClientInterface* client) const;
 	
-	size_t num_ports() const { return _num_ports; }
+	size_t num_ports() const { return _ports ? _ports->size() : 0; }
 	size_t poly() const      { return _poly; }
 	bool   traversed() const { return _traversed; }
 	void   traversed(bool b) { _traversed = b; }
@@ -75,8 +75,7 @@ public:
 	
 	Patch* parent_patch() const { return (_parent == NULL) ? NULL : _parent->as_patch(); }
 
-	virtual const Plugin* plugin() const                 { exit(EXIT_FAILURE); }
-	virtual void          plugin(const Plugin* const pi) { exit(EXIT_FAILURE); }
+	virtual const Plugin* plugin() const { return _plugin; }
 	
 	void set_path(const Path& new_path);
 	
@@ -85,13 +84,14 @@ protected:
 	NodeBase(const NodeBase&);
 	NodeBase& operator=(const NodeBase&);
 	
+	const Plugin* _plugin;
+
 	size_t      _poly;
 
 	samplerate  _srate;
 	size_t      _buffer_size;
 	bool        _activated;
 
-	size_t        _num_ports; ///< number of ports PER VOICE
 	Array<Port*>* _ports;     ///< Access in audio thread only
 
 	bool         _traversed;  ///< Flag for process order algorithm

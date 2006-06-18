@@ -29,9 +29,8 @@ namespace Om {
 
 
 TransportNode::TransportNode(const string& path, size_t poly, Patch* parent, samplerate srate, size_t buffer_size)
-: InternalNode(path, 1, parent, srate, buffer_size)
+: InternalNode(new Plugin(Plugin::Internal, "Om:TransportNode"), path, 1, parent, srate, buffer_size)
 {
-	_num_ports = 0;
 #if 0
 	_num_ports = 10;
 	_ports.alloc(_num_ports);
@@ -76,7 +75,6 @@ TransportNode::TransportNode(const string& path, size_t poly, Patch* parent, sam
 	//	new PortInfo("Bar Tick", AUDIO, OUTPUT, 0, 0, 1), buffer_size);
 	_ports.at(9) = bar_trig_port;
 #endif
-	_plugin.type(Plugin::Internal);
 	_plugin.plug_label("transport");
 	_plugin.name("Om Transport Node (BROKEN)");
 }

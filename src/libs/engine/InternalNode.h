@@ -33,8 +33,8 @@ class Patch;
 class InternalNode : public NodeBase
 {
 public:
-	InternalNode(const string& path, size_t poly, Patch* parent, samplerate srate, size_t buffer_size)
-	: NodeBase(path, poly, parent, srate, buffer_size),
+	InternalNode(const Plugin* plugin, const string& path, size_t poly, Patch* parent, samplerate srate, size_t buffer_size)
+	: NodeBase(plugin, path, poly, parent, srate, buffer_size),
 	  _is_added(false)
 	{
 		_plugin.lib_path("/Om");
@@ -53,7 +53,6 @@ public:
 	//{ NodeBase::send_creation_messages(client); }
 	
 	virtual const Plugin* plugin() const              { return &_plugin; }
-	virtual void          plugin(const Plugin* const) { exit(EXIT_FAILURE); }
 
 protected:
 	// Disallow copies (undefined)

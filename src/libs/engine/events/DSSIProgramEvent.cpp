@@ -45,7 +45,7 @@ DSSIProgramEvent::pre_process()
 	Node* node = om->object_store()->find_node(m_node_path);
 
 	if (node != NULL && node->plugin()->type() == Plugin::DSSI)
-		m_node = (DSSIPlugin*)node;
+		m_node = (DSSINode*)node;
 
 	QueuedEvent::pre_process();
 }

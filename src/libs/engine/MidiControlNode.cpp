@@ -31,11 +31,10 @@ namespace Om {
 
 	
 MidiControlNode::MidiControlNode(const string& path, size_t poly, Patch* parent, samplerate srate, size_t buffer_size)
-: InternalNode(path, 1, parent, srate, buffer_size),
+: InternalNode(new Plugin(Plugin::Internal, "Om:ControlNode"), path, 1, parent, srate, buffer_size),
   _learning(false)
 {
-	_num_ports = 7;
-	_ports = new Array<Port*>(_num_ports);
+	_ports = new Array<Port*>(7);
 
 	_midi_in_port = new InputPort<MidiMessage>(this, "MIDI In", 0, 1, DataType::MIDI, _buffer_size);
 	_ports->at(0) = _midi_in_port;
@@ -58,7 +57,6 @@ MidiControlNode::MidiControlNode(const string& path, size_t poly, Patch* parent,
 	_control_port = new OutputPort<sample>(this, "Out (CR)", 6, 1, DataType::FLOAT, 1);
 	_ports->at(6) = _control_port;
 	
-	_plugin.type(Plugin::Internal);
 	_plugin.plug_label("midi_control_in");
 	_plugin.name("Om Control Node (MIDI)");
 }

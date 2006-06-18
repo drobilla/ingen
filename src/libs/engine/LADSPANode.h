@@ -14,8 +14,8 @@
  * 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef LADSPAPLUGIN_H
-#define LADSPAPLUGIN_H
+#ifndef LADSPANODE_H
+#define LADSPANODE_H
 
 #include <string>
 #include <ladspa.h>
@@ -30,11 +30,11 @@ namespace Om {
  *
  * \ingroup engine
  */
-class LADSPAPlugin : public NodeBase
+class LADSPANode : public NodeBase
 {
 public:
-	LADSPAPlugin(const string& name, size_t poly, Patch* parent, const LADSPA_Descriptor* descriptor, samplerate srate, size_t buffer_size);
-	virtual ~LADSPAPlugin();
+	LADSPANode(const Plugin* plugin, const string& name, size_t poly, Patch* parent, const LADSPA_Descriptor* descriptor, samplerate srate, size_t buffer_size);
+	virtual ~LADSPANode();
 
 	virtual bool instantiate();
 
@@ -50,18 +50,16 @@ public:
 	
 protected:
 	// Prevent copies (undefined)
-	LADSPAPlugin(const LADSPAPlugin& copy);
-	LADSPAPlugin& operator=(const LADSPAPlugin&);
+	LADSPANode(const LADSPANode& copy);
+	LADSPANode& operator=(const LADSPANode&);
 
 	//void get_port_vals(ulong port_index, PortInfo* info);
 	
 	const LADSPA_Descriptor* _descriptor;
 	LADSPA_Handle*           _instances;	
-
-	const Plugin* _plugin;
 };
 
 
 } // namespace Om
 
-#endif // LADSPAPLUGIN_H
+#endif // LADSPANODE_H

@@ -14,8 +14,8 @@
  * 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef LV2PLUGIN_H
-#define LV2PLUGIN_H
+#ifndef LV2NODE_H
+#define LV2NODE_H
 
 #include <string>
 #include <slv2/slv2.h>
@@ -30,17 +30,17 @@ namespace Om {
  *
  * \ingroup engine
  */
-class LV2Plugin : public NodeBase
+class LV2Node : public NodeBase
 {
 public:
-	LV2Plugin(const string&      name,
-	          size_t             poly,
-	          Patch*             parent,
-	          const SLV2Plugin*  plugin,
-	          samplerate         srate,
-	          size_t             buffer_size);
+	LV2Node(const Plugin*      plugin,
+	        const string&      name,
+	        size_t             poly,
+	        Patch*             parent,
+	        samplerate         srate,
+	        size_t             buffer_size);
 	
-	virtual ~LV2Plugin();
+	virtual ~LV2Node();
 
 	virtual bool instantiate();
 
@@ -51,24 +51,19 @@ public:
 	
 	void set_port_buffer(size_t voice, size_t port_num, void* buf);
 
-	const Plugin* plugin() const       { return _om_plugin; }
-	void plugin(const Plugin* const p) { _om_plugin = p; }
-	
 protected:
 	// Prevent copies (undefined)
-	LV2Plugin(const LV2Plugin& copy);
-	LV2Plugin& operator=(const LV2Plugin&);
+	LV2Node(const LV2Node& copy);
+	LV2Node& operator=(const LV2Node&);
 
 	//void get_port_vals(ulong port_index, PortInfo* info);
 	
 	const SLV2Plugin* _lv2_plugin;
 	SLV2Instance**    _instances;
-
-	const Plugin* _om_plugin;
 };
 
 
 } // namespace Om
 
-#endif // LV2PLUGIN_H
+#endif // LV2NODE_H
 

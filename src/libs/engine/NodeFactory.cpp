@@ -41,14 +41,14 @@
 #include "Om.h"
 #include "OmApp.h"
 #ifdef HAVE_SLV2
-#include "LV2Plugin.h"
+#include "LV2Node.h"
 #include <slv2/slv2.h>
 #endif
 #ifdef HAVE_LADSPA
-#include "LADSPAPlugin.h"
+#include "LADSPANode.h"
 #endif
 #ifdef HAVE_DSSI
-#include "DSSIPlugin.h"
+#include "DSSINode.h"
 #endif
 
 using std::string;
@@ -352,14 +352,13 @@ NodeFactory::load_lv2_plugin(const string& plug_uri,
 	Node* n = NULL;
 
 	if (plugin) {
-		n = new Om::LV2Plugin(node_name, poly, parent, plugin->slv2_plugin(),
+		n = new Om::LV2Node(plugin, node_name, poly, parent,
 			om->audio_driver()->sample_rate(), om->audio_driver()->buffer_size());
-		bool success = ((LV2Plugin*)n)->instantiate();
+		bool success = ((LV2Node*)n)->instantiate();
 		if (!success) {
 			delete n;
 			n = NULL;
 		}
-		n->plugin(plugin);
 	}
 	
 	return n;
@@ -528,15 +527,13 @@ NodeFactory::load_dssi_plugin(const string& uri,
 		return NULL;
 	}
 
-	n = new DSSIPlugin(name, poly, parent, descriptor,
+	n = new DSSINode(plugin, name, poly, parent, descriptor,
 		om->audio_driver()->sample_rate(), om->audio_driver()->buffer_size());
-	bool success = ((DSSIPlugin*)n)->instantiate();
+	bool success = ((DSSINode*)n)->instantiate();
 	if (!success) {
 		delete n;
 		n = NULL;
 	}
-	
-	n->plugin(plugin);
 
 	return n;
 }
@@ -693,16 +690,14 @@ NodeFactory::load_ladspa_plugin(const string& uri,
 		return NULL;
 	}
 
-	n = new LADSPAPlugin(name, poly, parent, descriptor,
+	n = new LADSPANode(plugin, name, poly, parent, descriptor,
 		om->audio_driver()->sample_rate(), om->audio_driver()->buffer_size());
-	bool success = ((LADSPAPlugin*)n)->instantiate();
+	bool success = ((LADSPANode*)n)->instantiate();
 	if (!success) {
 		delete n;
 		n = NULL;
 	}
 	
-	n->plugin(plugin);
-
 	return n;
 }
 

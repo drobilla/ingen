@@ -20,7 +20,7 @@
 #include "ObjectStore.h"
 #include "Om.h"
 #include "OmApp.h"
-#include "DSSIPlugin.h"
+#include "DSSINode.h"
 #include "Plugin.h"
 
 using std::cerr; using std::endl;
@@ -47,7 +47,7 @@ DSSIUpdateEvent::pre_process()
 		QueuedEvent::pre_process();
 		return;
 	} else {
-		m_node = (DSSIPlugin*)node;
+		m_node = (DSSINode*)node;
 	}
 	
 	QueuedEvent::pre_process();

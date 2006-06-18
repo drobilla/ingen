@@ -14,7 +14,7 @@
  * 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include "DSSIPlugin.h"
+#include "DSSINode.h"
 #include <map>
 #include <set>
 #include "Om.h"
@@ -28,8 +28,8 @@ using namespace std;
 namespace Om {
 
 
-DSSIPlugin::DSSIPlugin(const string& name, size_t poly, Patch* parent, DSSI_Descriptor* descriptor, samplerate srate, size_t buffer_size)
-: LADSPAPlugin(name, 1, parent, descriptor->LADSPA_Plugin, srate, buffer_size),
+DSSINode::DSSINode(const Plugin* plugin, const string& name, size_t poly, Patch* parent, DSSI_Descriptor* descriptor, samplerate srate, size_t buffer_size)
+: LADSPANode(plugin, name, 1, parent, descriptor->LADSPA_Plugin, srate, buffer_size),
   _dssi_descriptor(descriptor),
   _ui_addr(NULL),
   _bank(-1),
@@ -42,7 +42,7 @@ DSSIPlugin::DSSIPlugin(const string& name, size_t poly, Patch* parent, DSSI_Desc
 }
 
 
-DSSIPlugin::~DSSIPlugin()
+DSSINode::~DSSINode()
 {
 	if (_ui_addr != NULL)
 		lo_address_free(_ui_addr);
@@ -52,12 +52,12 @@ DSSIPlugin::~DSSIPlugin()
 }
 
 
-/** This needs to be overridden here because LADSPAPlugin::instantiate()
+/** This needs to be overridden here because LADSPANode::instantiate()
  *  allocates the port array, and we want to add the MIDI input port to that
  *  array.
  */
 bool
-DSSIPlugin::instantiate()
+DSSINode::instantiate()
 {
 	assert(!_ports);
 	
@@ -67,8 +67,8 @@ DSSIPlugin::instantiate()
 		_ports->at(_ports->size()-1) = _midi_in_port;
 	}	
 
-	// LADSPAPlugin::instantiate checks if _ports is already allocated
-	if (!LADSPAPlugin::instantiate()) {
+	// LADSPANode::instantiate checks if _ports is already allocated
+	if (!LADSPANode::instantiate()) {
 		delete _ports;
 		return false;
 	}
@@ -78,9 +78,9 @@ DSSIPlugin::instantiate()
 
 
 void
-DSSIPlugin::activate()
+DSSINode::activate()
 {
-	LADSPAPlugin::activate();
+	LADSPANode::activate();
 	
 	update_programs(false);
 	set_default_program();
@@ -90,7 +90,7 @@ DSSIPlugin::activate()
 
 
 void
-DSSIPlugin::set_ui_url(const string& url)
+DSSINode::set_ui_url(const string& url)
 {
 	if (_ui_addr != NULL)
 		lo_address_free(_ui_addr);
@@ -105,7 +105,7 @@ DSSIPlugin::set_ui_url(const string& url)
 
 
 void
-DSSIPlugin::set_control(size_t port_num, sample val)
+DSSINode::set_control(size_t port_num, sample val)
 {
 	assert(port_num < _descriptor->PortCount);
 	((PortBase<sample>*)_ports->at(port_num))->set_value(val, 0);
@@ -113,7 +113,7 @@ DSSIPlugin::set_control(size_t port_num, sample val)
 
 
 void
-DSSIPlugin::configure(const string& key, const string& val)
+DSSINode::configure(const string& key, const string& val)
 {
 	_dssi_descriptor->configure(_instances[0], key.c_str(), val.c_str());
 	_configures[key] = val;
@@ -122,7 +122,7 @@ DSSIPlugin::configure(const string& key, const string& val)
 
 
 void
-DSSIPlugin::program(int bank, int program)
+DSSINode::program(int bank, int program)
 {
 	if (_dssi_descriptor->select_program)
 		_dssi_descriptor->select_program(_instances[0], bank, program);
@@ -133,7 +133,7 @@ DSSIPlugin::program(int bank, int program)
 
 
 void
-DSSIPlugin::convert_events()
+DSSINode::convert_events()
 {
 	assert(has_midi_input());
 	assert(_midi_in_port != NULL);
@@ -153,14 +153,14 @@ DSSIPlugin::convert_events()
 
 
 bool
-DSSIPlugin::has_midi_input() const
+DSSINode::has_midi_input() const
 {
 	return (_dssi_descriptor->run_synth || _dssi_descriptor->run_multiple_synths);
 }
 
 
 void
-DSSIPlugin::run(size_t nframes)
+DSSINode::run(size_t nframes)
 {
 	NodeBase::run(nframes);
 
@@ -176,13 +176,13 @@ DSSIPlugin::run(size_t nframes)
 		_dssi_descriptor->run_multiple_synths(1, _instances, nframes,
 			events, events_sizes);
 	} else {
-		LADSPAPlugin::run(nframes);
+		LADSPANode::run(nframes);
 	}
 }
 
 
 void
-DSSIPlugin::send_control(int port_num, float value)
+DSSINode::send_control(int port_num, float value)
 {
 	string path = _ui_base_path + "/control";
 	lo_send(_ui_addr, path.c_str(), "if", port_num, value);
@@ -190,7 +190,7 @@ DSSIPlugin::send_control(int port_num, float value)
 
 
 void
-DSSIPlugin::send_program(int bank, int value)
+DSSINode::send_program(int bank, int value)
 {
 	string path = _ui_base_path + "/program";
 	lo_send(_ui_addr, path.c_str(), "ii", bank, value);
@@ -198,7 +198,7 @@ DSSIPlugin::send_program(int bank, int value)
 
 
 void
-DSSIPlugin::send_configure(const string& key, const string& val)
+DSSINode::send_configure(const string& key, const string& val)
 {
 	string path = _ui_base_path + "/configure";
 	lo_send(_ui_addr, path.c_str(), "ss", key.c_str(), val.c_str());
@@ -206,7 +206,7 @@ DSSIPlugin::send_configure(const string& key, const string& val)
 
 	
 void
-DSSIPlugin::send_show()
+DSSINode::send_show()
 {
 	string path = _ui_base_path + "/show";
 	lo_send(_ui_addr, path.c_str(), NULL);
@@ -214,7 +214,7 @@ DSSIPlugin::send_show()
 
 
 void
-DSSIPlugin::send_hide()
+DSSINode::send_hide()
 {
 	string path = _ui_base_path + "/hide";
 	lo_send(_ui_addr, path.c_str(), NULL);
@@ -222,7 +222,7 @@ DSSIPlugin::send_hide()
 
 
 void
-DSSIPlugin::send_quit()
+DSSINode::send_quit()
 {
 	string path = _ui_base_path + "/quit";
 	lo_send(_ui_addr, path.c_str(), NULL);
@@ -230,7 +230,7 @@ DSSIPlugin::send_quit()
 
 
 void
-DSSIPlugin::send_update()
+DSSINode::send_update()
 {
 	// send "configure"s
 	for (map<string, string>::iterator i = _configures.begin(); i != _configures.end(); ++i)
@@ -250,7 +250,7 @@ DSSIPlugin::send_update()
 
 
 bool
-DSSIPlugin::update_programs(bool send_events)
+DSSINode::update_programs(bool send_events)
 {
 	// remember all old banks and programs
 	set<pair<int, int> > to_be_deleted;
@@ -301,7 +301,7 @@ DSSIPlugin::update_programs(bool send_events)
 
 
 void
-DSSIPlugin::set_default_program()
+DSSINode::set_default_program()
 {
 	map<int, Bank>::const_iterator iter = _banks.begin();
 	if (iter != _banks.end()) {
@@ -312,8 +312,8 @@ DSSIPlugin::set_default_program()
 }
 
 
-const map<int, DSSIPlugin::Bank>&
-DSSIPlugin::get_programs() const
+const map<int, DSSINode::Bank>&
+DSSINode::get_programs() const
 {
 	return _banks;
 }
@@ -321,9 +321,9 @@ DSSIPlugin::get_programs() const
 
 /*
 void
-DSSIPlugin::send_creation_messages(ClientInterface* client) const
+DSSINode::send_creation_messages(ClientInterface* client) const
 {
-	LADSPAPlugin::send_creation_messages(client);
+	LADSPANode::send_creation_messages(client);
 	
 	for (map<int, Bank>::const_iterator i = get_programs().begin();
 			i != get_programs().end(); ++i) {

@@ -26,9 +26,8 @@ namespace Om {
 
 
 MidiTriggerNode::MidiTriggerNode(const string& path, size_t poly, Patch* parent, samplerate srate, size_t buffer_size)
-: InternalNode(path, 1, parent, srate, buffer_size)
+: InternalNode(new Plugin(Plugin::Internal, "Om:TriggerNode"), path, 1, parent, srate, buffer_size)
 {
-	_num_ports = 5;
 	_ports = new Array<Port*>(5);
 
 	_midi_in_port = new InputPort<MidiMessage>(this, "DataType::MIDI In", 0, 1, DataType::MIDI, _buffer_size);
@@ -50,7 +49,6 @@ MidiTriggerNode::MidiTriggerNode(const string& path, size_t poly, Patch* parent,
 	//	new PortInfo("Velocity", AUDIO, OUTPUT, 0, 0, 1), _buffer_size);
 	_ports->at(4) = _vel_port;
 	
-	_plugin.type(Plugin::Internal);
 	_plugin.plug_label("trigger_in");
 	_plugin.name("Om Trigger Node (MIDI, OSC)");
 }

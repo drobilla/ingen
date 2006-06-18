@@ -58,8 +58,6 @@ public:
 
 	void run(size_t nframes);
 	
-	size_t num_ports() const;
-
 	//void send_creation_messages(ClientInterface* client) const;
 	
 	void add_to_store();
@@ -94,21 +92,21 @@ public:
 	void          external_ports(Array<Port*>* pa) { _ports = pa; }
 
 	Array<Node*>* build_process_order() const;
-	inline void   build_process_order_recursive(Node* n, Array<Node*>* order) const;
 	
-	/** Whether to run this patch's DSP in the audio thread */
+	/** Whether to run this patch's DSP bits in the audio thread */
 	bool process() const { return _process; }
 	void process(bool p);
 
 	size_t internal_poly() const { return _internal_poly; }
 	
 	const Plugin* plugin() const              { return &_plugin; }
-	void          plugin(const Plugin* const) { exit(EXIT_FAILURE); }
 
 private:
 	// Prevent copies (undefined)
 	Patch(const Patch&);
 	Patch& operator=(const Patch&);
+	
+	inline void   build_process_order_recursive(Node* n, Array<Node*>* order) const;
 
 	size_t             _internal_poly;
 	Array<Node*>*      _process_order; ///< Accessed in audio thread only

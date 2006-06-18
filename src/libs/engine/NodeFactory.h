@@ -39,7 +39,7 @@ class Plugin;
  * NodeFactory's responsibility is to get enough information to allow the 
  * loading of a plugin possible (ie finding/opening shared libraries etc)
  *
- * The constructor of various Node types (ie LADSPAPlugin) are responsible
+ * The constructor of various Node types (ie LADSPANode) are responsible
  * for actually creating a Node instance of the plugin.
  *
  * \ingroup engine

@@ -18,7 +18,7 @@
 #define DSSICONFIGUREEVENT_H
 
 #include "QueuedEvent.h"
-#include "DSSIPlugin.h"
+#include "DSSINode.h"
 
 namespace Om {
 
@@ -37,10 +37,10 @@ public:
 	void post_process();
 
 private:
-	string      m_node_path;
-	string      m_key;
-	string      m_val;
-	DSSIPlugin* m_node;
+	string    m_node_path;
+	string    m_key;
+	string    m_val;
+	DSSINode* m_node;
 };
 
 

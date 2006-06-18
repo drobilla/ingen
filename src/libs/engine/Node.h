@@ -99,7 +99,6 @@ public:
 	 * Not the best name - not all nodes come from plugins (ie Patch)
 	 */
 	virtual const Plugin* plugin() const = 0;
-	virtual void          plugin(const Plugin* const pi) = 0;
 
 	/** Add self to a Patch.
 	 *

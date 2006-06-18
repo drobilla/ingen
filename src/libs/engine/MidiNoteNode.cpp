@@ -35,12 +35,11 @@ namespace Om {
 
 
 MidiNoteNode::MidiNoteNode(const string& path, size_t poly, Patch* parent, samplerate srate, size_t buffer_size)
-: InternalNode(path, poly, parent, srate, buffer_size),
+: InternalNode(new Plugin(Plugin::Internal, "Om:NoteNode"), path, poly, parent, srate, buffer_size),
   _voices(new Voice[poly]),
   _sustain(false)
 {
-	_num_ports = 5;
-	_ports = new Array<Port*>(_num_ports);
+	_ports = new Array<Port*>(5);
 	
 	_midi_in_port = new InputPort<MidiMessage>(this, "DataType::MIDI In", 0, 1, DataType::MIDI, _buffer_size);
 	_ports->at(0) = _midi_in_port;
@@ -61,7 +60,6 @@ MidiNoteNode::MidiNoteNode(const string& path, size_t poly, Patch* parent, sampl
 	//	new PortInfo("Trigger", AUDIO, OUTPUT, 0, 0, 1), _buffer_size);
 	_ports->at(4) = _trig_port;
 	
-	_plugin.type(Plugin::Internal);
 	_plugin.plug_label("note_in");
 	_plugin.name("Om Note Node (MIDI, OSC)");
 }

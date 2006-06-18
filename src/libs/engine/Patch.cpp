@@ -38,17 +38,15 @@ namespace Om {
 
 
 Patch::Patch(const string& path, size_t poly, Patch* parent, samplerate srate, size_t buffer_size, size_t internal_poly) 
-: NodeBase(path, poly, parent, srate, buffer_size),
+: NodeBase(new Plugin(Plugin::Patch, "Om:Patch"), path, poly, parent, srate, buffer_size),
   _internal_poly(internal_poly),
   _process_order(NULL),
   _process(false)
 {
 	assert(internal_poly >= 1);
 
-	_plugin.type(Plugin::Patch);
-	_plugin.uri("http://codeson.net/grauph/patch");
 	_plugin.plug_label("om_patch");
-	_plugin.name("Om patch");
+	_plugin.name("Om Patch");
 
 	//std::cerr << "Creating patch " << _name << ", poly = " << poly
 	//	<< ", internal poly = " << internal_poly << std::endl;
@@ -150,18 +148,6 @@ Patch::run(size_t nframes)
 	for (List<Port*>::iterator i = _patch_ports.begin(); i != _patch_ports.end(); ++i)
 		if ((*i)->is_output())
 			(*i)->prepare_buffers(nframes);
-}
-
-
-/** Returns the number of ports.
- *
- * Needs to override the NodeBase implementation since a Patch's ports are really
- * just it's input and output nodes' ports.
- */
-size_t
-Patch::num_ports() const
-{
-	return _patch_ports.size();
 }
 
 

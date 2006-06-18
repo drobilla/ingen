@@ -46,6 +46,12 @@ class Plugin
 public:
 	enum Type { LV2, LADSPA, DSSI, Internal, Patch };
 	
+	Plugin(Type type, const string& uri)
+	: m_type(type)
+	, m_uri(uri)
+	{}
+
+	// FIXME: remove
 	Plugin() : m_type(Internal), m_lib_path("/Om"),
 	           m_id(0), m_library(NULL)
 	{
@@ -119,7 +125,7 @@ public:
 	
 	// FIXME: ew
 #ifdef HAVE_SLV2
-	SLV2Plugin* slv2_plugin() { return m_slv2_plugin; }
+	SLV2Plugin* slv2_plugin() const              { return m_slv2_plugin; }
 	void        slv2_plugin(const SLV2Plugin* p) { m_slv2_plugin = p; }
 	
 #endif

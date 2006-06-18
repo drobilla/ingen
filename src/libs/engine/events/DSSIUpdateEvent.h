@@ -24,7 +24,7 @@ using std::string;
 
 namespace Om {
 	
-class DSSIPlugin;
+class DSSINode;
 
 
 /** A DSSI "update" responder for a DSSI plugin/node.
@@ -43,9 +43,9 @@ public:
 	void post_process();
 
 private:
-	string       m_path;
-	string       m_url;
-	DSSIPlugin*  m_node;
+	string     m_path;
+	string     m_url;
+	DSSINode*  m_node;
 };
 
 

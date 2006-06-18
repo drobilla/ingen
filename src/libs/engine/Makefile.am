@@ -180,14 +180,14 @@ endif
 
 if WITH_LADSPA
 libom_la_SOURCES += \
-	LADSPAPlugin.h \
-	LADSPAPlugin.cpp
+	LADSPANode.h \
+	LADSPANode.cpp
 endif
 
 if WITH_DSSI
 libom_la_SOURCES += \
-	DSSIPlugin.h \
-	DSSIPlugin.cpp \
+	DSSINode.h \
+	DSSINode.cpp \
 	events/DSSIConfigureEvent.cpp \
 	events/DSSIConfigureEvent.h \
 	events/DSSIControlEvent.cpp \
@@ -200,8 +200,8 @@ endif
 
 if WITH_LV2
 libom_la_SOURCES += \
-	LV2Plugin.h \
-	LV2Plugin.cpp
+	LV2Node.h \
+	LV2Node.cpp
 endif
 
 if WITH_LASH
