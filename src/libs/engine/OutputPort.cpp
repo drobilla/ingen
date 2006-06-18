@@ -16,19 +16,17 @@
 
 #include "OutputPort.h"
 #include "InputPort.h"
-#include "PortInfo.h"
 #include <cassert>
 
 namespace Om {
 		
 template<typename T>
-OutputPort<T>::OutputPort(Node* node, const string& name, size_t index, size_t poly, PortInfo* port_info, size_t buffer_size)
-: PortBase<T>(node, name, index, poly, port_info, buffer_size)
+OutputPort<T>::OutputPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size)
+: PortBase<T>(parent, name, index, poly, type, buffer_size)
 {
-	assert(port_info->is_output() && !port_info->is_input());
 }
-template OutputPort<sample>::OutputPort(Node* node, const string& name, size_t index, size_t poly, PortInfo* port_info, size_t buffer_size);
-template OutputPort<MidiMessage>::OutputPort(Node* node, const string& name, size_t index, size_t poly, PortInfo* port_info, size_t buffer_size);
+template OutputPort<sample>::OutputPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size);
+template OutputPort<MidiMessage>::OutputPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size);
 
 
 template<typename T>

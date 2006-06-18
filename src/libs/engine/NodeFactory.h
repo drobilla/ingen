@@ -29,7 +29,6 @@ using std::string; using std::list;
 namespace Om {
 
 class Node;
-class PortInfo;
 class Patch;
 class PluginLibrary;
 class Plugin;

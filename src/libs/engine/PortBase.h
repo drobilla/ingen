@@ -54,15 +54,13 @@ public:
 	
 	PortBase* tied_port() const { return m_tied_port; }
 	void      untie()           { m_is_tied = false; m_tied_port = NULL; } 
-
-	size_t buffer_size() const { return m_buffer_size; }
 	
 	/** Used by drivers to prevent port from changing buffers */
 	void fixed_buffers(bool b) { m_fixed_buffers = b; }
 	bool fixed_buffers()       { return m_fixed_buffers; }
 
 protected:
-	PortBase(Node* const node, const string& name, size_t index, size_t poly, PortInfo* port_info, size_t buffer_size);
+	PortBase(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size);
 	
 	// Prevent copies (undefined)
 	PortBase(const PortBase<T>& copy);
@@ -70,7 +68,6 @@ protected:
 
 	void allocate_buffers();
 
-	size_t      m_buffer_size;
 	bool        m_fixed_buffers;
 	bool        m_is_tied;
 	PortBase*   m_tied_port;

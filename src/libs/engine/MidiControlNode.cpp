@@ -22,7 +22,6 @@
 #include "MidiLearnEvent.h"
 #include "InputPort.h"
 #include "OutputPort.h"
-#include "PortInfo.h"
 #include "Plugin.h"
 #include "util.h"
 #include "midi.h"
@@ -33,41 +32,35 @@ namespace Om {
 	
 MidiControlNode::MidiControlNode(const string& path, size_t poly, Patch* parent, samplerate srate, size_t buffer_size)
 : InternalNode(path, 1, parent, srate, buffer_size),
-  m_learning(false)
+  _learning(false)
 {
-	m_num_ports = 7;
-	m_ports.alloc(m_num_ports);
+	_num_ports = 7;
+	_ports = new Array<Port*>(_num_ports);
 
-	m_midi_in_port = new InputPort<MidiMessage>(this, "MIDI In", 0, 1,
-		new PortInfo("MIDI In", MIDI, INPUT), m_buffer_size);
-	m_ports.at(0) = m_midi_in_port;
+	_midi_in_port = new InputPort<MidiMessage>(this, "MIDI In", 0, 1, DataType::MIDI, _buffer_size);
+	_ports->at(0) = _midi_in_port;
 	
-	m_param_port = new InputPort<sample>(this, "Controller Number", 1, 1, 
-		new PortInfo("Controller Number", CONTROL, INPUT, INTEGER, 60, 0, 127), 1);
-	m_ports.at(1) = m_param_port;
-	m_log_port = new InputPort<sample>(this, "Logarithmic", 2, 1,
-		new PortInfo("Logarithmic", CONTROL, INPUT, TOGGLE, 0, 0, 1), 1);
-	m_ports.at(2) = m_log_port;
-	
-	m_min_port = new InputPort<sample>(this, "Min", 3, 1, 
-		new PortInfo("Min", CONTROL, INPUT, NONE, 0, 0, 65535), 1);
-	m_ports.at(3) = m_min_port;
-	
-	m_max_port = new InputPort<sample>(this, "Max", 4, 1, 
-		new PortInfo("Max", CONTROL, INPUT, NONE, 1, 0, 65535), 1);
-	m_ports.at(4) = m_max_port;
-	
-	m_audio_port = new OutputPort<sample>(this, "Out (AR)", 5, 1, 
-		new PortInfo("Out (AR)", AUDIO, OUTPUT, 0, 0, 1), m_buffer_size);
-	m_ports.at(5) = m_audio_port;
+	_param_port = new InputPort<sample>(this, "Controller Number", 1, 1, DataType::FLOAT, 1);
+	_ports->at(1) = _param_port;
 
-	m_control_port = new OutputPort<sample>(this, "Out (CR)", 6, 1, 
-		new PortInfo("Out (CR)", CONTROL, OUTPUT, 0, 0, 1), 1);
-	m_ports.at(6) = m_control_port;
+	_log_port = new InputPort<sample>(this, "Logarithmic", 2, 1, DataType::FLOAT, 1);
+	_ports->at(2) = _log_port;
 	
-	m_plugin.type(Plugin::Internal);
-	m_plugin.plug_label("midi_control_in");
-	m_plugin.name("Om Control Node (MIDI)");
+	_min_port = new InputPort<sample>(this, "Min", 3, 1, DataType::FLOAT, 1);
+	_ports->at(3) = _min_port;
+	
+	_max_port = new InputPort<sample>(this, "Max", 4, 1, DataType::FLOAT, 1);
+	_ports->at(4) = _max_port;
+	
+	_audio_port = new OutputPort<sample>(this, "Out (AR)", 5, 1, DataType::FLOAT, _buffer_size);
+	_ports->at(5) = _audio_port;
+
+	_control_port = new OutputPort<sample>(this, "Out (CR)", 6, 1, DataType::FLOAT, 1);
+	_ports->at(6) = _control_port;
+	
+	_plugin.type(Plugin::Internal);
+	_plugin.plug_label("midi_control_in");
+	_plugin.name("Om Control Node (MIDI)");
 }
 
 
@@ -78,8 +71,8 @@ MidiControlNode::run(size_t nframes)
 
 	MidiMessage ev;
 	
-	for (size_t i=0; i < m_midi_in_port->buffer(0)->filled_size(); ++i) {
-		ev = m_midi_in_port->buffer(0)->value_at(i);
+	for (size_t i=0; i < _midi_in_port->buffer(0)->filled_size(); ++i) {
+		ev = _midi_in_port->buffer(0)->value_at(i);
 
 		if ((ev.buffer[0] & 0xF0) == MIDI_CMD_CONTROL)
 			control(ev.buffer[1], ev.buffer[2], ev.time);
@@ -90,41 +83,41 @@ MidiControlNode::run(size_t nframes)
 void
 MidiControlNode::control(uchar control_num, uchar val, samplecount offset)
 {
-	assert(offset < m_buffer_size);
+	assert(offset < _buffer_size);
 
 	sample scaled_value;
 	
 	const sample nval = (val / 127.0f); // normalized [0, 1]
 	
-	if (m_learning) {
-		assert(m_learn_event != NULL);
-		m_param_port->set_value(control_num, offset);
-		assert(m_param_port->buffer(0)->value_at(0) == control_num);
-		m_learn_event->set_value(control_num);
-		m_learn_event->execute(offset);
-		om->post_processor()->push(m_learn_event);
+	if (_learning) {
+		assert(_learn_event != NULL);
+		_param_port->set_value(control_num, offset);
+		assert(_param_port->buffer(0)->value_at(0) == control_num);
+		_learn_event->set_value(control_num);
+		_learn_event->execute(offset);
+		om->post_processor()->push(_learn_event);
 		om->post_processor()->signal();
-		m_learning = false;
-		m_learn_event = NULL;
+		_learning = false;
+		_learn_event = NULL;
 	}
 
-	if (m_log_port->buffer(0)->value_at(0) > 0.0f) {
+	if (_log_port->buffer(0)->value_at(0) > 0.0f) {
 		// haaaaack, stupid negatives and logarithms
 		sample log_offset = 0;
-		if (m_min_port->buffer(0)->value_at(0) < 0)
-			log_offset = fabs(m_min_port->buffer(0)->value_at(0));
-		const sample min = log(m_min_port->buffer(0)->value_at(0)+1+log_offset);
-		const sample max = log(m_max_port->buffer(0)->value_at(0)+1+log_offset);
+		if (_min_port->buffer(0)->value_at(0) < 0)
+			log_offset = fabs(_min_port->buffer(0)->value_at(0));
+		const sample min = log(_min_port->buffer(0)->value_at(0)+1+log_offset);
+		const sample max = log(_max_port->buffer(0)->value_at(0)+1+log_offset);
 		scaled_value = expf(nval * (max - min) + min) - 1 - log_offset;
 	} else {
-		const sample min = m_min_port->buffer(0)->value_at(0);
-		const sample max = m_max_port->buffer(0)->value_at(0);
+		const sample min = _min_port->buffer(0)->value_at(0);
+		const sample max = _max_port->buffer(0)->value_at(0);
 		scaled_value = ((nval) * (max - min)) + min;
 	}
 
-	if (control_num == m_param_port->buffer(0)->value_at(0)) {
-		m_control_port->set_value(scaled_value, offset);
-		m_audio_port->set_value(scaled_value, offset);
+	if (control_num == _param_port->buffer(0)->value_at(0)) {
+		_control_port->set_value(scaled_value, offset);
+		_audio_port->set_value(scaled_value, offset);
 	}
 }
 

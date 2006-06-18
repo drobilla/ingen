@@ -36,45 +36,46 @@ namespace Om {
 
 NodeBase::NodeBase(const string& name, size_t poly, Patch* parent, samplerate srate, size_t buffer_size)
 : Node(parent, name),
-  m_poly(poly),
-  m_srate(srate),
-  m_buffer_size(buffer_size),
-  m_activated(false),
-  m_num_ports(0),
-  m_traversed(false),
-  m_providers(new List<Node*>()),
-  m_dependants(new List<Node*>())
+  _poly(poly),
+  _srate(srate),
+  _buffer_size(buffer_size),
+  _activated(false),
+  _num_ports(0),
+  _ports(NULL),
+  _traversed(false),
+  _providers(new List<Node*>()),
+  _dependants(new List<Node*>())
 {
-	assert(m_poly > 0);
-	assert(m_parent == NULL || (m_poly == parent->internal_poly() || m_poly == 1));
+	assert(_poly > 0);
+	assert(_parent == NULL || (_poly == parent->internal_poly() || _poly == 1));
 }
 
 
 NodeBase::~NodeBase()
 {
-	assert(!m_activated);
+	assert(!_activated);
 
-	delete m_providers;
-	delete m_dependants;
+	delete _providers;
+	delete _dependants;
 	
-	for (size_t i=0; i < m_ports.size(); ++i)
-		delete m_ports.at(i);
+	for (size_t i=0; i < _num_ports; ++i)
+		delete _ports->at(i);
 }
 
 
 void
 NodeBase::activate()
 {
-	assert(!m_activated);
-	m_activated = true;
+	assert(!_activated);
+	_activated = true;
 }
 
 
 void
 NodeBase::deactivate()
 {
-	assert(m_activated);
-	m_activated = false;
+	assert(_activated);
+	_activated = false;
 }
 
 
@@ -92,7 +93,7 @@ NodeBase::add_to_store()
 {
 	om->object_store()->add(this);
 	for (size_t i=0; i < num_ports(); ++i)
-		om->object_store()->add(m_ports.at(i));
+		om->object_store()->add(_ports->at(i));
 }
 
 
@@ -107,10 +108,10 @@ NodeBase::remove_from_store()
 	}
 	
 	// Remove ports
-	for (size_t i=0; i < m_num_ports; ++i) {
-		node = om->object_store()->remove(m_ports.at(i)->path());
+	for (size_t i=0; i < _num_ports; ++i) {
+		node = om->object_store()->remove(_ports->at(i)->path());
 		if (node != NULL) {
-			assert(om->object_store()->find(m_ports.at(i)->path()) == NULL);
+			assert(om->object_store()->find(_ports->at(i)->path()) == NULL);
 			delete node;
 		}
 	}
@@ -122,11 +123,11 @@ NodeBase::remove_from_store()
 void
 NodeBase::run(size_t nframes)
 {
-	assert(m_activated);
+	assert(_activated);
 	// Mix down any ports with multiple inputs
 	Port* p;
-	for (size_t i=0; i < m_ports.size(); ++i) {
-		p = m_ports.at(i);
+	for (size_t i=0; i < _ports->size(); ++i) {
+		p = _ports->at(i);
 		p->prepare_buffers(nframes);
 	}
 }
@@ -146,11 +147,11 @@ NodeBase::set_path(const Path& new_path)
 	TreeNode<OmObject*>* treenode = NULL;
 	
 	// Reinsert ports
-	for (size_t i=0; i < m_num_ports; ++i) {
-		treenode = om->object_store()->remove(old_path +"/"+ m_ports.at(i)->name());
+	for (size_t i=0; i < _num_ports; ++i) {
+		treenode = om->object_store()->remove(old_path +"/"+ _ports->at(i)->name());
 		assert(treenode != NULL);
-		assert(treenode->node() == m_ports.at(i));
-		treenode->key(new_path +"/" + m_ports.at(i)->name());
+		assert(treenode->node() == _ports->at(i));
+		treenode->key(new_path +"/" + _ports->at(i)->name());
 		om->object_store()->add(treenode);
 	}
 	

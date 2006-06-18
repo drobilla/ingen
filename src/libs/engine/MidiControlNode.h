@@ -46,24 +46,24 @@ public:
 	
 	void control(uchar control_num, uchar val, samplecount offset);
 
-	void learn(MidiLearnResponseEvent* ev) { m_learning = true; m_learn_event = ev; }
+	void learn(MidiLearnResponseEvent* ev) { _learning = true; _learn_event = ev; }
 
 private:
 	// Disallow copies (undefined)
 	MidiControlNode(const MidiControlNode& copy);
 	MidiControlNode& operator=(const MidiControlNode&);
 	
-	bool m_learning;
+	bool _learning;
 
-	InputPort<MidiMessage>* m_midi_in_port;
-	InputPort<sample>*      m_param_port;
-	InputPort<sample>*      m_log_port;
-	InputPort<sample>*      m_min_port;
-	InputPort<sample>*      m_max_port;
-	OutputPort<sample>*     m_control_port;
-	OutputPort<sample>*     m_audio_port;
+	InputPort<MidiMessage>* _midi_in_port;
+	InputPort<sample>*      _param_port;
+	InputPort<sample>*      _log_port;
+	InputPort<sample>*      _min_port;
+	InputPort<sample>*      _max_port;
+	OutputPort<sample>*     _control_port;
+	OutputPort<sample>*     _audio_port;
 
-	MidiLearnResponseEvent* m_learn_event;
+	MidiLearnResponseEvent* _learn_event;
 };
 
 

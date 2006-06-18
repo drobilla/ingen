@@ -25,7 +25,6 @@
 #include "util.h"
 #include "Patch.h"
 #include "Node.h"
-#include "PortInfo.h"
 #include "Plugin.h"
 #include "PortBase.h"
 #include "Connection.h"

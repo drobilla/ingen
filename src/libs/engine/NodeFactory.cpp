@@ -26,12 +26,14 @@
 #include "MidiNoteNode.h"
 #include "MidiTriggerNode.h"
 #include "MidiControlNode.h"
+#if 0
 #include "AudioInputNode.h"
 #include "AudioOutputNode.h"
 #include "ControlInputNode.h"
 #include "ControlOutputNode.h"
 #include "MidiInputNode.h"
 #include "MidiOutputNode.h"
+#endif
 #include "TransportNode.h"
 #include "PluginLibrary.h"
 #include "Plugin.h"
@@ -74,6 +76,7 @@ NodeFactory::NodeFactory()
 	Patch* parent = new Patch("dummy", 1, NULL, 1, 1, 1);
 
 	Node* n = NULL;
+#if 0
 	n = new AudioInputNode("foo", 1, parent, 1, 1);
 	m_internal_plugins.push_back(new Plugin(n->plugin()));
 	delete n;
@@ -92,6 +95,7 @@ NodeFactory::NodeFactory()
 	n = new MidiOutputNode("foo", 1, parent, 1, 1);
 	m_internal_plugins.push_back(new Plugin(n->plugin()));
 	delete n;
+#endif
 	n = new MidiNoteNode("foo", 1, parent, 1, 1);
 	m_internal_plugins.push_back(new Plugin(n->plugin()));
 	delete n;
@@ -230,7 +234,7 @@ NodeFactory::load_internal_plugin(const string& uri, const string& name, size_t 
 	assert(uri.substr(0, 3) == "om:");
 
 	string plug_label = uri.substr(3);
-
+#if 0
 	if (plug_label == "midi_input") {
 		MidiInputNode* tn = new MidiInputNode(name, 1, parent, om->audio_driver()->sample_rate(), om->audio_driver()->buffer_size());
 		return tn;
@@ -253,7 +257,9 @@ NodeFactory::load_internal_plugin(const string& uri, const string& name, size_t 
 		ControlOutputNode* on = new ControlOutputNode(name, poly, parent,
 			om->audio_driver()->sample_rate(), om->audio_driver()->buffer_size());
 		return on;
-	} else if (plug_label == "note_in" || plug_label == "midi_note_in") {
+	} else
+#endif
+	if (plug_label == "note_in" || plug_label == "midi_note_in") {
 		MidiNoteNode* mn = new MidiNoteNode(name, poly, parent, om->audio_driver()->sample_rate(), om->audio_driver()->buffer_size());
 		return mn;
 	} else if (plug_label == "trigger_in" || plug_label == "midi_trigger_in") {

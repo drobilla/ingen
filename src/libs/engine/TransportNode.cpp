@@ -24,7 +24,6 @@
 #include "util.h"
 #include "Om.h"
 #include "OmApp.h"
-#include "PortInfo.h"
 
 namespace Om {
 
@@ -32,52 +31,54 @@ namespace Om {
 TransportNode::TransportNode(const string& path, size_t poly, Patch* parent, samplerate srate, size_t buffer_size)
 : InternalNode(path, 1, parent, srate, buffer_size)
 {
-	m_num_ports = 10;
-	m_ports.alloc(m_num_ports);
+	_num_ports = 0;
+#if 0
+	_num_ports = 10;
+	_ports.alloc(_num_ports);
 
 	OutputPort<sample>* spb_port = new OutputPort<sample>(this, "Seconds per Beat", 0, 1,
-		new PortInfo("Seconds per Beat", CONTROL, OUTPUT, 0, 0, 1), 1);
-	m_ports.at(0) = spb_port;
+	//	new PortInfo("Seconds per Beat", CONTROL, OUTPUT, 0, 0, 1), 1);
+	_ports.at(0) = spb_port;
 
 	OutputPort<sample>* bpb_port = new OutputPort<sample>(this, "Beats per Bar", 1, 1,
-		new PortInfo("Beats per Bar", CONTROL, OUTPUT, 0, 0, 1), 1);
-	m_ports.at(1) = bpb_port;
+	//	new PortInfo("Beats per Bar", CONTROL, OUTPUT, 0, 0, 1), 1);
+	_ports.at(1) = bpb_port;
 	
 	OutputPort<sample>* bar_port = new OutputPort<sample>(this, "Bar", 3, 1,
-		new PortInfo("Bar", CONTROL, OUTPUT, 0, 0, 1), buffer_size);
-	m_ports.at(2) = bar_port;
+//		new PortInfo("Bar", CONTROL, OUTPUT, 0, 0, 1), buffer_size);
+	_ports.at(2) = bar_port;
 	
 	OutputPort<sample>* beat_port = new OutputPort<sample>(this, "Beat", 3, 1,
-		new PortInfo("Beat", CONTROL, OUTPUT, 0, 0, 1), buffer_size);
-	m_ports.at(3) = beat_port;
+	//	new PortInfo("Beat", CONTROL, OUTPUT, 0, 0, 1), buffer_size);
+	_ports.at(3) = beat_port;
 	
 	OutputPort<sample>* frame_port = new OutputPort<sample>(this, "Frame", 3, 1,
-		new PortInfo("Frame", CONTROL, OUTPUT, 0, 0, 1), buffer_size);
-	m_ports.at(4) = frame_port;
+	//	new PortInfo("Frame", CONTROL, OUTPUT, 0, 0, 1), buffer_size);
+	_ports.at(4) = frame_port;
 
 	OutputPort<sample>* hour_port = new OutputPort<sample>(this, "Hour", 3, 1,
-		new PortInfo("Hour", CONTROL, OUTPUT, 0, 0, 1), buffer_size);
-	m_ports.at(5) = hour_port;
+	//	new PortInfo("Hour", CONTROL, OUTPUT, 0, 0, 1), buffer_size);
+	_ports.at(5) = hour_port;
 	
 	OutputPort<sample>* minute_port = new OutputPort<sample>(this, "Minute", 3, 1,
-		new PortInfo("Minute", CONTROL, OUTPUT, 0, 0, 1), buffer_size);
-	m_ports.at(6) = minute_port;
+	//	new PortInfo("Minute", CONTROL, OUTPUT, 0, 0, 1), buffer_size);
+	_ports.at(6) = minute_port;
 
 	OutputPort<sample>* second_port = new OutputPort<sample>(this, "Second", 3, 1,
-		new PortInfo("Second", CONTROL, OUTPUT, 0, 0, 1), buffer_size);
-	m_ports.at(7) = second_port;
+	//	new PortInfo("Second", CONTROL, OUTPUT, 0, 0, 1), buffer_size);
+	_ports.at(7) = second_port;
 	
 	OutputPort<sample>* trg_port = new OutputPort<sample>(this, "Beat Tick", 2, 1,
-		new PortInfo("Beat Tick", AUDIO, OUTPUT, 0, 0, 1), buffer_size);
-	m_ports.at(8) = trg_port;
+	//	new PortInfo("Beat Tick", AUDIO, OUTPUT, 0, 0, 1), buffer_size);
+	_ports.at(8) = trg_port;
 
 	OutputPort<sample>* bar_trig_port = new OutputPort<sample>(this, "Bar Tick", 3, 1,
-		new PortInfo("Bar Tick", AUDIO, OUTPUT, 0, 0, 1), buffer_size);
-	m_ports.at(9) = bar_trig_port;
-
-	m_plugin.type(Plugin::Internal);
-	m_plugin.plug_label("transport");
-	m_plugin.name("Om Transport Node (BROKEN)");
+	//	new PortInfo("Bar Tick", AUDIO, OUTPUT, 0, 0, 1), buffer_size);
+	_ports.at(9) = bar_trig_port;
+#endif
+	_plugin.type(Plugin::Internal);
+	_plugin.plug_label("transport");
+	_plugin.name("Om Transport Node (BROKEN)");
 }
 
 

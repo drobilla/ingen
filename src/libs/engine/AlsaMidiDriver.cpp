@@ -24,7 +24,6 @@
 #include "OmApp.h"
 #include "Maid.h"
 #include "AudioDriver.h"
-#include "PortInfo.h"
 #include "MidiMessage.h"
 #include "PortBase.h"
 #ifdef HAVE_LASH

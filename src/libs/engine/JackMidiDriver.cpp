@@ -25,8 +25,6 @@
 #include "OmApp.h"
 #include "Maid.h"
 #include "AudioDriver.h"
-#include "MidiInputNode.h"
-#include "PortInfo.h"
 #include "MidiMessage.h"
 #include "PortBase.h"
 #ifdef HAVE_LASH
@@ -50,7 +48,7 @@ JackMidiPort::JackMidiPort(JackMidiDriver* driver, PortBase<MidiMessage>* patch_
 
 	m_jack_port = jack_port_register(m_driver->jack_client(),
 		patch_port->path().c_str(), JACK_DEFAULT_MIDI_TYPE,
-		(patch_port->port_info()->is_input()) ? JackPortIsInput : JackPortIsOutput,
+		(patch_port->is_input()) ? JackPortIsInput : JackPortIsOutput,
 		0);
 
 	patch_port->buffer(0)->clear();
@@ -180,7 +178,7 @@ JackMidiDriver::prepare_block(const samplecount block_start, const samplecount b
 void
 JackMidiDriver::add_port(JackMidiPort* port)
 {
-	if (port->patch_port()->port_info()->is_input())
+	if (port->patch_port()->is_input())
 		m_in_ports.push_back(port);
 	else
 		m_out_ports.push_back(port);
@@ -198,7 +196,7 @@ JackMidiDriver::add_port(JackMidiPort* port)
 JackMidiPort*
 JackMidiDriver::remove_port(JackMidiPort* port)
 {
-	if (port->patch_port()->port_info()->is_input()) {
+	if (port->patch_port()->is_input()) {
 		for (List<JackMidiPort*>::iterator i = m_in_ports.begin(); i != m_in_ports.end(); ++i)
 			if ((*i) == (JackMidiPort*)port)
 				return m_in_ports.remove(i)->elem();

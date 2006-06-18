@@ -71,6 +71,10 @@ public:
 	void create_patch(const string& path,
 	                  uint32_t      poly);
 
+	void create_port(const string& path,
+	                 const string& data_type,
+	                 bool          direction);
+
 	void create_node(const string& path,
 	                 const string& plugin_type,
 	                 const string& plugin_uri,

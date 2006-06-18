@@ -55,6 +55,10 @@ public:
 	virtual void create_patch(const string& path,
 	                          uint32_t      poly) = 0;
 
+	virtual void create_port(const string& path,
+	                         const string& data_type,
+	                         bool          direction) = 0;
+	
 	virtual void create_node(const string& path,
 	                         const string& plugin_type,
 	                         const string& plugin_uri,

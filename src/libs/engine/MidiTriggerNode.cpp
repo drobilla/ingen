@@ -18,7 +18,6 @@
 #include <cmath>
 #include "InputPort.h"
 #include "OutputPort.h"
-#include "PortInfo.h"
 #include "Plugin.h"
 #include "util.h"
 #include "midi.h"
@@ -29,32 +28,31 @@ namespace Om {
 MidiTriggerNode::MidiTriggerNode(const string& path, size_t poly, Patch* parent, samplerate srate, size_t buffer_size)
 : InternalNode(path, 1, parent, srate, buffer_size)
 {
-	m_num_ports = 5;
-	m_ports.alloc(m_num_ports);
+	_num_ports = 5;
+	_ports = new Array<Port*>(5);
 
-	m_midi_in_port = new InputPort<MidiMessage>(this, "MIDI In", 0, 1,
-		new PortInfo("MIDI In", MIDI, INPUT), m_buffer_size);
-	m_ports.at(0) = m_midi_in_port;
+	_midi_in_port = new InputPort<MidiMessage>(this, "DataType::MIDI In", 0, 1, DataType::MIDI, _buffer_size);
+	_ports->at(0) = _midi_in_port;
 	
-	m_note_port = new InputPort<sample>(this, "Note Number", 1, 1,
-		new PortInfo("Note Number", CONTROL, INPUT, INTEGER, 60, 0, 127), 1);
-	m_ports.at(1) = m_note_port;
+	_note_port = new InputPort<sample>(this, "Note Number", 1, 1, DataType::FLOAT, 1);
+	//	new PortInfo("Note Number", CONTROL, INPUT, INTEGER, 60, 0, 127), 1);
+	_ports->at(1) = _note_port;
 	
-	m_gate_port = new OutputPort<sample>(this, "Gate", 2, 1,
-		new PortInfo("Gate", AUDIO, OUTPUT, 0, 0, 1), m_buffer_size);
-	m_ports.at(2) = m_gate_port;
+	_gate_port = new OutputPort<sample>(this, "Gate", 2, 1, DataType::FLOAT, _buffer_size);
+	//	new PortInfo("Gate", AUDIO, OUTPUT, 0, 0, 1), _buffer_size);
+	_ports->at(2) = _gate_port;
 
-	m_trig_port = new OutputPort<sample>(this, "Trigger", 3, 1,
-		new PortInfo("Trigger", AUDIO, OUTPUT, 0, 0, 1), m_buffer_size);
-	m_ports.at(3) = m_trig_port;
+	_trig_port = new OutputPort<sample>(this, "Trigger", 3, 1, DataType::FLOAT, _buffer_size);
+	//	new PortInfo("Trigger", AUDIO, OUTPUT, 0, 0, 1), _buffer_size);
+	_ports->at(3) = _trig_port;
 	
-	m_vel_port = new OutputPort<sample>(this, "Velocity", 4, poly,
-		new PortInfo("Velocity", AUDIO, OUTPUT, 0, 0, 1), m_buffer_size);
-	m_ports.at(4) = m_vel_port;
+	_vel_port = new OutputPort<sample>(this, "Velocity", 4, poly, DataType::FLOAT, _buffer_size);
+	//	new PortInfo("Velocity", AUDIO, OUTPUT, 0, 0, 1), _buffer_size);
+	_ports->at(4) = _vel_port;
 	
-	m_plugin.type(Plugin::Internal);
-	m_plugin.plug_label("trigger_in");
-	m_plugin.name("Om Trigger Node (MIDI, OSC)");
+	_plugin.type(Plugin::Internal);
+	_plugin.plug_label("trigger_in");
+	_plugin.name("Om Trigger Node (MIDI, OSC)");
 }
 
 
@@ -65,8 +63,8 @@ MidiTriggerNode::run(size_t nframes)
 	
 	MidiMessage ev;
 	
-	for (size_t i=0; i < m_midi_in_port->buffer(0)->filled_size(); ++i) {
-		ev = m_midi_in_port->buffer(0)->value_at(i);
+	for (size_t i=0; i < _midi_in_port->buffer(0)->filled_size(); ++i) {
+		ev = _midi_in_port->buffer(0)->value_at(i);
 
 		switch (ev.buffer[0] & 0xF0) {
 		case MIDI_CMD_NOTE_ON:
@@ -81,7 +79,7 @@ MidiTriggerNode::run(size_t nframes)
 		case MIDI_CMD_CONTROL:
 			if (ev.buffer[1] == MIDI_CTL_ALL_NOTES_OFF
 					|| ev.buffer[1] == MIDI_CTL_ALL_SOUNDS_OFF)
-				m_gate_port->buffer(0)->set(0.0f, ev.time);
+				_gate_port->buffer(0)->set(0.0f, ev.time);
 		default:
 			break;
 		}
@@ -93,19 +91,19 @@ void
 MidiTriggerNode::note_on(uchar note_num, uchar velocity, samplecount offset)
 {
 	//std::cerr << "Note on starting at sample " << offset << std::endl;
-	assert(offset < m_buffer_size);
+	assert(offset < _buffer_size);
 
-	const sample filter_note = m_note_port->buffer(0)->value_at(0);
+	const sample filter_note = _note_port->buffer(0)->value_at(0);
 	if (filter_note >= 0.0 && filter_note < 127.0 && (note_num == (uchar)filter_note)){
 				
 		// See comments in MidiNoteNode::note_on (FIXME)
-		if (offset == (samplecount)(m_buffer_size-1))
+		if (offset == (samplecount)(_buffer_size-1))
 			--offset;
 		
-		m_gate_port->buffer(0)->set(1.0f, offset);
-		m_trig_port->buffer(0)->set(1.0f, offset, offset);
-		m_trig_port->buffer(0)->set(0.0f, offset+1);
-		m_vel_port->buffer(0)->set(velocity/127.0f, offset);
+		_gate_port->buffer(0)->set(1.0f, offset);
+		_trig_port->buffer(0)->set(1.0f, offset, offset);
+		_trig_port->buffer(0)->set(0.0f, offset+1);
+		_vel_port->buffer(0)->set(velocity/127.0f, offset);
 	}
 }
 
@@ -113,10 +111,10 @@ MidiTriggerNode::note_on(uchar note_num, uchar velocity, samplecount offset)
 void
 MidiTriggerNode::note_off(uchar note_num, samplecount offset)
 {
-	assert(offset < m_buffer_size);
+	assert(offset < _buffer_size);
 
-	if (note_num == lrintf(m_note_port->buffer(0)->value_at(0)))
-		m_gate_port->buffer(0)->set(0.0f, offset);
+	if (note_num == lrintf(_note_port->buffer(0)->value_at(0)))
+		_gate_port->buffer(0)->set(0.0f, offset);
 }
 
 

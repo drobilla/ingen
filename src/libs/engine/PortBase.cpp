@@ -22,7 +22,6 @@
 #include <sys/mman.h>
 #include "util.h"
 #include "Node.h"
-#include "PortInfo.h"
 #include "MidiMessage.h"
 
 namespace Om {
@@ -31,9 +30,8 @@ namespace Om {
 /** Constructor for a Port.
  */
 template <typename T>
-PortBase<T>::PortBase(Node* node, const string& name, size_t index, size_t poly, PortInfo* port_info, size_t buffer_size)
-: Port(node, name, index, poly, port_info),
-  m_buffer_size(buffer_size),
+PortBase<T>::PortBase(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size)
+: Port(parent, name, index, poly, type, buffer_size),
   m_fixed_buffers(false),
   m_is_tied(false),
   m_tied_port(NULL)
@@ -44,18 +42,16 @@ PortBase<T>::PortBase(Node* node, const string& name, size_t index, size_t poly,
 	assert(m_buffers.size() > 0);
 }
 template
-PortBase<sample>::PortBase(Node* node, const string& name, size_t index, size_t poly, PortInfo* port_info, size_t buffer_size);
+PortBase<sample>::PortBase(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size);
 template
-PortBase<MidiMessage>::PortBase(Node* node, const string& name, size_t index, size_t poly, PortInfo* port_info, size_t buffer_size);
+PortBase<MidiMessage>::PortBase(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size);
 
 
 template <typename T>
 PortBase<T>::~PortBase()
 {
-	for (size_t i=0; i < m_poly; ++i)
+	for (size_t i=0; i < _poly; ++i)
 		delete m_buffers.at(i);
-
-	delete m_port_info;
 }
 template PortBase<sample>::~PortBase();
 template PortBase<MidiMessage>::~PortBase();
@@ -67,11 +63,11 @@ template<>
 void
 PortBase<sample>::set_value(sample val, size_t offset)
 {
-	if (m_port_info->is_control())
+	if (offset >= _buffer_size)
 		offset = 0;
-	assert(offset < m_buffer_size);
+	assert(offset < _buffer_size);
 
-	for (size_t v=0; v < m_poly; ++v)
+	for (size_t v=0; v < _poly; ++v)
 		m_buffers.at(v)->set(val, offset);
 }
 
@@ -81,9 +77,9 @@ template<>
 void
 PortBase<sample>::set_value(size_t voice, sample val, size_t offset)
 {
-	if (m_port_info->is_control())
+	if (offset >= _buffer_size)
 		offset = 0;
-	assert(offset < m_buffer_size);
+	assert(offset < _buffer_size);
 
 	m_buffers.at(voice)->set(val, offset);
 }
@@ -93,10 +89,10 @@ template <typename T>
 void
 PortBase<T>::allocate_buffers()
 {
-	m_buffers.alloc(m_poly);
+	m_buffers.alloc(_poly);
 
-	for (size_t i=0; i < m_poly; ++i)
-		m_buffers.at(i) = new Buffer<T>(m_buffer_size);
+	for (size_t i=0; i < _poly; ++i)
+		m_buffers.at(i) = new Buffer<T>(_buffer_size);
 }
 template void PortBase<sample>::allocate_buffers();
 template void PortBase<MidiMessage>::allocate_buffers();
@@ -106,7 +102,7 @@ template<>
 void
 PortBase<sample>::prepare_buffers(size_t nframes)
 {
-	for (size_t i=0; i < m_poly; ++i)
+	for (size_t i=0; i < _poly; ++i)
 		m_buffers.at(i)->prepare(nframes);
 }
 
@@ -122,7 +118,7 @@ template<typename T>
 void
 PortBase<T>::clear_buffers()
 {
-	for (size_t i=0; i < m_poly; ++i)
+	for (size_t i=0; i < _poly; ++i)
 		m_buffers.at(i)->clear();
 }
 template void PortBase<sample>::clear_buffers();

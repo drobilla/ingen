@@ -89,6 +89,7 @@ OSCReceiver::OSCReceiver(size_t queue_size, const char* const port)
 	lo_server_thread_add_method(_st, "/om/synth/enable_patch", "is", enable_patch_cb, this);
 	lo_server_thread_add_method(_st, "/om/synth/disable_patch", "is", disable_patch_cb, this);
 	lo_server_thread_add_method(_st, "/om/synth/clear_patch", "is", clear_patch_cb, this);
+	lo_server_thread_add_method(_st, "/om/synth/create_port", "issi", create_port_cb, this);
 	lo_server_thread_add_method(_st, "/om/synth/create_node", "issssi", create_node_cb, this);
 	lo_server_thread_add_method(_st, "/om/synth/create_node", "isssi", create_node_by_uri_cb, this);
 	lo_server_thread_add_method(_st, "/om/synth/destroy", "is", destroy_cb, this);
@@ -461,6 +462,25 @@ OSCReceiver::m_clear_patch_cb(const char* path, const char* types, lo_arg** argv
 
 
 /** \page engine_osc_namespace
+ * <p> \b /om/synth/create_port - Add a port into a given patch (load a plugin by URI)
+ * \arg \b response-id (integer)
+ * \arg \b path (string) - Full path of the new port (ie. /patch2/subpatch/newport)
+ * \arg \b data-type (string) - Data type for port to contain ("AUDIO", "CONTROL", or "MIDI")
+ * \arg \b direction ("is-output") (integer) - Direction of data flow (Input = 0, Output = 1) </p> \n \n
+ */
+int
+OSCReceiver::m_create_port_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+{
+	const char* port_path   = &argv[1]->s;
+	const char* data_type   = &argv[2]->s;
+	const int   direction   =  argv[3]->i;
+	
+	create_port(port_path, data_type, (direction == 1));
+	
+	return 0;
+}
+
+/** \page engine_osc_namespace
  * <p> \b /om/synth/create_node - Add a node into a given patch (load a plugin by URI)
  * \arg \b response-id (integer)
  * \arg \b node-path (string) - Full path of the new node (ie. /patch2/subpatch/newnode)
@@ -485,7 +505,7 @@ OSCReceiver::m_create_node_by_uri_cb(const char* path, const char* types, lo_arg
 
 
 /** \page engine_osc_namespace
- * <p> \b /om/synth/create_node - Add a node into a given patch (load a plugin by libname, label)
+ * <p> \b /om/synth/create_node - Add a node into a given patch (load a plugin by libname, label) \b DEPRECATED
  * \arg \b response-id (integer)
  * \arg \b node-path (string) - Full path of the new node (ie. /patch2/subpatch/newnode)
  * \arg \b type (string) - Plugin type ("LADSPA" or "Internal")
@@ -493,8 +513,8 @@ OSCReceiver::m_create_node_by_uri_cb(const char* path, const char* types, lo_arg
  * \arg \b plug-label (string) - Label (ID) of plugin (eg "sine_fcaa")
  * \arg \b poly (integer-boolean) - Whether node is polyphonic (0 = false, 1 = true)
  *
- * \li This is only here to provide backwards compatibility for old patches that store plugin
- * references (particularly LADSPA) as libname, label.
+ * \li This is only here to provide backwards compatibility for old patches that store LADSPA plugin
+ * references as libname, label.  It is to be removed, don't use it.
  * </p> \n \n
  */
 int

@@ -25,7 +25,6 @@
 #include "Patch.h"
 #include "ClientBroadcaster.h"
 #include "Port.h"
-#include "PortInfo.h"
 #include "Maid.h"
 #include "ObjectStore.h"
 #include "util/Path.h"
@@ -82,16 +81,16 @@ ConnectionEvent::pre_process()
 		return;
 	}
 
-	if (port1->port_info()->type() != port2->port_info()->type()) {
+	if (port1->type() != port2->type()) {
 		m_error = TYPE_MISMATCH;
 		QueuedEvent::pre_process();
 		return;
 	}
 	
-	if (port1->port_info()->is_output() && port2->port_info()->is_input()) {
+	if (port1->is_output() && port2->is_input()) {
 		m_src_port = port1;
 		m_dst_port = port2;
-	} else if (port2->port_info()->is_output() && port1->port_info()->is_input()) {
+	} else if (port2->is_output() && port1->is_input()) {
 		m_src_port = port2;
 		m_dst_port = port1;
 	} else {
@@ -101,11 +100,11 @@ ConnectionEvent::pre_process()
 	}
 	
 	// Create the typed event to actually do the work
-	const PortType type = port1->port_info()->type();
-	if (type == AUDIO || type == CONTROL) {
+	const DataType type = port1->type();
+	if (type == DataType::FLOAT) {
 		m_typed_event = new TypedConnectionEvent<sample>(m_responder,
 			(OutputPort<sample>*)m_src_port, (InputPort<sample>*)m_dst_port);
-	} else if (type == MIDI) {
+	} else if (type == DataType::MIDI) {
 		m_typed_event = new TypedConnectionEvent<MidiMessage>(m_responder,
 			(OutputPort<MidiMessage>*)m_src_port, (InputPort<MidiMessage>*)m_dst_port);
 	} else {

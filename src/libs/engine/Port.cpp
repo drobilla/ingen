@@ -16,22 +16,27 @@
 
 #include "Port.h"
 #include "Node.h"
-#include "PortInfo.h"
 #include "Om.h"
 #include "OmApp.h"
 #include "ObjectStore.h"
+#include "DataType.h"
 
 namespace Om {
 
-Port::Port(Node* const node, const string& name, size_t index, size_t poly, PortInfo* port_info)
+
+// Yeah, this shouldn't be here.
+const char* const DataType::type_uris[3] = { "UNKNOWN", "FLOAT", "MIDI" };
+
+
+Port::Port(Node* const node, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size)
 : OmObject(node, name),
-  m_index(index),
-  m_poly(poly),
-  m_port_info(port_info)
+  _index(index),
+  _poly(poly),
+  _type(type),
+  _buffer_size(buffer_size)
 {
 	assert(node != NULL);
-	assert(port_info != NULL);
-	assert(m_poly > 0);
+	assert(_poly > 0);
 }
 
 

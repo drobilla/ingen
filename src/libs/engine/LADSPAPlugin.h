@@ -25,8 +25,6 @@
 
 namespace Om {
 
-class PortInfo;
-
 
 /** An instance of a LADSPA plugin.
  *
@@ -47,20 +45,20 @@ public:
 	
 	void set_port_buffer(size_t voice, size_t port_num, void* buf);
 
-	const Plugin* plugin() const  { return m_plugin; }
-	void plugin(const Plugin* const pi) { m_plugin = pi; }
+	const Plugin* plugin() const  { return _plugin; }
+	void plugin(const Plugin* const pi) { _plugin = pi; }
 	
 protected:
 	// Prevent copies (undefined)
 	LADSPAPlugin(const LADSPAPlugin& copy);
 	LADSPAPlugin& operator=(const LADSPAPlugin&);
 
-	void get_port_vals(ulong port_index, PortInfo* info);
+	//void get_port_vals(ulong port_index, PortInfo* info);
 	
-	const LADSPA_Descriptor* m_descriptor;
-	LADSPA_Handle*           m_instances;	
+	const LADSPA_Descriptor* _descriptor;
+	LADSPA_Handle*           _instances;	
 
-	const Plugin* m_plugin;
+	const Plugin* _plugin;
 };
 
 

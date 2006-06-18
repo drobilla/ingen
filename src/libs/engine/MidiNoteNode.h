@@ -70,15 +70,15 @@ private:
 	float note_to_freq(int num);
 	void free_voice(size_t voice, samplecount offset);
 
-	Voice* m_voices;
-	Key    m_keys[128];
-	bool   m_sustain;   ///< Whether or not hold pedal is depressed
+	Voice* _voices;
+	Key    _keys[128];
+	bool   _sustain;   ///< Whether or not hold pedal is depressed
 	
-	InputPort<MidiMessage>* m_midi_in_port;
-	OutputPort<sample>*     m_freq_port;
-	OutputPort<sample>*     m_vel_port;
-	OutputPort<sample>*     m_gate_port;
-	OutputPort<sample>*     m_trig_port;
+	InputPort<MidiMessage>* _midi_in_port;
+	OutputPort<sample>*     _freq_port;
+	OutputPort<sample>*     _vel_port;
+	OutputPort<sample>*     _gate_port;
+	OutputPort<sample>*     _trig_port;
 };
 
 

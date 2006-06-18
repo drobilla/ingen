@@ -22,7 +22,6 @@
 #include <cmath>
 #include "InputPort.h"
 #include "OutputPort.h"
-#include "PortInfo.h"
 #include "Plugin.h"
 
 namespace Om {
@@ -40,14 +39,14 @@ LV2Plugin::LV2Plugin(const string&      name,
                      samplerate         srate,
                      size_t             buffer_size)
 : NodeBase(name, poly, parent, srate, buffer_size),
-  m_lv2_plugin(plugin),
-  m_instances(NULL)
+  _lv2_plugin(plugin),
+  _instances(NULL)
 {
-	assert(m_lv2_plugin);
+	assert(_lv2_plugin);
 	
 	// Note that this may be changed by an overriding DSSIPlugin
-	// ie do not assume m_ports is all LV2 plugin ports
-	m_num_ports = slv2_plugin_get_num_ports(m_lv2_plugin);
+	// ie do not assume _ports is all LV2 plugin ports
+	_num_ports = slv2_plugin_get_num_ports(_lv2_plugin);
 }
 
 
@@ -62,15 +61,15 @@ LV2Plugin::LV2Plugin(const string&      name,
 bool
 LV2Plugin::instantiate()
 {
-	m_ports.alloc(m_num_ports);
+	_ports->alloc(_num_ports);
 	
-	m_instances = new SLV2Instance*[m_poly];
+	_instances = new SLV2Instance*[_poly];
 	
 	size_t port_buffer_size = 0;
 	
-	for (size_t i=0; i < m_poly; ++i) {
-		m_instances[i] = slv2_plugin_instantiate(m_lv2_plugin, m_srate, NULL);
-		if (m_instances[i] == NULL) {
+	for (size_t i=0; i < _poly; ++i) {
+		_instances[i] = slv2_plugin_instantiate(_lv2_plugin, _srate, NULL);
+		if (_instances[i] == NULL) {
 			cerr << "Failed to instantiate plugin!" << endl;
 			return false;
 		}
@@ -81,9 +80,9 @@ LV2Plugin::instantiate()
 	
 	Port* port = NULL;
 	
-	for (size_t j=0; j < m_num_ports; ++j) {
+	for (size_t j=0; j < _num_ports; ++j) {
 		// LV2 shortnames are guaranteed to be unique, valid C identifiers
-		port_name = (char*)slv2_port_get_symbol(m_lv2_plugin, j);
+		port_name = (char*)slv2_port_get_symbol(_lv2_plugin, j);
 	
 		assert(port_name.find("/") == string::npos);
 
@@ -91,7 +90,7 @@ LV2Plugin::instantiate()
 		
 		// Assumes there is only the 4 classes
 
-		SLV2PortClass port_class = slv2_port_get_class(m_lv2_plugin, j);
+		SLV2PortClass port_class = slv2_port_get_class(_lv2_plugin, j);
 		const bool is_control = (port_class == SLV2_CONTROL_RATE_INPUT
 			|| port_class == SLV2_CONTROL_RATE_OUTPUT);
 		const bool is_input = (port_class == SLV2_CONTROL_RATE_INPUT
@@ -100,31 +99,26 @@ LV2Plugin::instantiate()
 		if (is_control)
 			port_buffer_size = 1;
 		else
-			port_buffer_size = m_buffer_size;
-		
-		PortType type = is_control ? CONTROL : AUDIO;
-		PortDirection direction = is_input ? INPUT : OUTPUT;
+			port_buffer_size = _buffer_size;
 		
 		if (is_input) {
-			port = new InputPort<sample>(this, port_name, j, m_poly,
-				new PortInfo(port_path, type, direction), port_buffer_size);
-			m_ports.at(j) = port;
+			port = new InputPort<sample>(this, port_name, j, _poly, DataType::FLOAT, port_buffer_size);
+			_ports->at(j) = port;
 		} else /* output */ {
-			port = new OutputPort<sample>(this, port_name, j, m_poly,
-				new PortInfo(port_path, type, direction), port_buffer_size);
-			m_ports.at(j) = port;
+			port = new OutputPort<sample>(this, port_name, j, _poly, DataType::FLOAT, port_buffer_size);
+			_ports->at(j) = port;
 		}
 
-		assert(m_ports.at(j) != NULL);
+		assert(_ports->at(j) != NULL);
 
-		PortInfo* pi = port->port_info();
-		get_port_vals(j, pi);
+		//PortInfo* pi = port->port_info();
+		//get_port_vals(j, pi);
 
 		// Set default control val
-		if (pi->is_control())
+		/*if (pi->is_control())
 			((PortBase<sample>*)port)->set_value(pi->default_val(), 0);
 		else
-			((PortBase<sample>*)port)->set_value(0.0f, 0);
+			((PortBase<sample>*)port)->set_value(0.0f, 0);*/
 	}
 	return true;
 }
@@ -132,10 +126,10 @@ LV2Plugin::instantiate()
 
 LV2Plugin::~LV2Plugin()
 {
-	for (size_t i=0; i < m_poly; ++i)
-		slv2_instance_free(m_instances[i]);
+	for (size_t i=0; i < _poly; ++i)
+		slv2_instance_free(_instances[i]);
 
-	delete[] m_instances;
+	delete[] _instances;
 }
 
 
@@ -146,16 +140,16 @@ LV2Plugin::activate()
 
 	PortBase<sample>* port = NULL;
 	
-	for (size_t i=0; i < m_poly; ++i) {
-		for (unsigned long j=0; j < m_num_ports; ++j) {
-			port = static_cast<PortBase<sample>*>(m_ports.at(j));
-			set_port_buffer(i, j, ((PortBase<sample>*)m_ports.at(j))->buffer(i)->data());
-				if (port->port_info()->is_control())
-					port->set_value(port->port_info()->default_val(), 0);
-				else if (port->port_info()->is_audio())
-					port->set_value(0.0f, 0);
+	for (size_t i=0; i < _poly; ++i) {
+		for (unsigned long j=0; j < _num_ports; ++j) {
+			port = static_cast<PortBase<sample>*>(_ports->at(j));
+			set_port_buffer(i, j, ((PortBase<sample>*)_ports->at(j))->buffer(i)->data());
+			if (port->type() == DataType::FLOAT && port->buffer_size() == 1)
+				port->set_value(0.0f, 0); // FIXME
+			else if (port->type() == DataType::FLOAT && port->buffer_size() > 1)
+				port->set_value(0.0f, 0);
 		}
-		slv2_instance_activate(m_instances[i]);
+		slv2_instance_activate(_instances[i]);
 	}
 }
 
@@ -165,8 +159,8 @@ LV2Plugin::deactivate()
 {
 	NodeBase::deactivate();
 	
-	for (size_t i=0; i < m_poly; ++i)
-		slv2_instance_deactivate(m_instances[i]);
+	for (size_t i=0; i < _poly; ++i)
+		slv2_instance_deactivate(_instances[i]);
 }
 
 
@@ -174,40 +168,40 @@ void
 LV2Plugin::run(size_t nframes)
 {
 	NodeBase::run(nframes); // mixes down input ports
-	for (size_t i=0; i < m_poly; ++i) 
-		slv2_instance_run(m_instances[i], nframes);
+	for (size_t i=0; i < _poly; ++i) 
+		slv2_instance_run(_instances[i], nframes);
 }
 
 
 void
 LV2Plugin::set_port_buffer(size_t voice, size_t port_num, void* buf)
 {
-	assert(voice < m_poly);
+	assert(voice < _poly);
 	
 	// Could be a MIDI port after this
-	if (port_num < m_num_ports) {
-		slv2_instance_connect_port(m_instances[voice], port_num, buf);
+	if (port_num < _num_ports) {
+		slv2_instance_connect_port(_instances[voice], port_num, buf);
 	}
 }
 
 
+#if 0
 // Based on code stolen from jack-rack
 void
 LV2Plugin::get_port_vals(ulong port_index, PortInfo* info)
 {
-#if 0
 	LV2_Data upper = 0.0f;
 	LV2_Data lower = 0.0f;
 	LV2_Data normal = 0.0f;
-	LV2_PortRangeHintDescriptor hint_descriptor = m_descriptor->PortRangeHints[port_index].HintDescriptor;
+	LV2_PortRangeHintDescriptor hint_descriptor = _descriptor->PortRangeHints[port_index].HintDescriptor;
 
 	/* set upper and lower, possibly adjusted to the sample rate */
 	if (LV2_IS_HINT_SAMPLE_RATE(hint_descriptor)) {
-		upper = m_descriptor->PortRangeHints[port_index].UpperBound * m_srate;
-		lower = m_descriptor->PortRangeHints[port_index].LowerBound * m_srate;
+		upper = _descriptor->PortRangeHints[port_index].UpperBound * _srate;
+		lower = _descriptor->PortRangeHints[port_index].LowerBound * _srate;
 	} else {
-		upper = m_descriptor->PortRangeHints[port_index].UpperBound;
-		lower = m_descriptor->PortRangeHints[port_index].LowerBound;
+		upper = _descriptor->PortRangeHints[port_index].UpperBound;
+		lower = _descriptor->PortRangeHints[port_index].LowerBound;
 	}
 
 	if (LV2_IS_HINT_LOGARITHMIC(hint_descriptor)) {
@@ -263,8 +257,8 @@ LV2Plugin::get_port_vals(ulong port_index, PortInfo* info)
 	info->min_val(lower);
 	info->default_val(normal);
 	info->max_val(upper);
-#endif
 }
+#endif
 
 
 } // namespace Om

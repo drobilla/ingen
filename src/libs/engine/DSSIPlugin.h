@@ -61,8 +61,8 @@ public:
 
 	//void send_creation_messages(ClientInterface* client) const;
 
-	const Plugin* plugin() const  { return m_plugin; }
-	void plugin(const Plugin* const pi) { m_plugin = pi; }
+	const Plugin* plugin() const  { return _plugin; }
+	void plugin(const Plugin* const pi) { _plugin = pi; }
 
 private:
 	// Prevent copies (undefined)
@@ -83,22 +83,22 @@ private:
 	void convert_events();
 	
 	
-	DSSI_Descriptor* m_dssi_descriptor;
+	DSSI_Descriptor* _dssi_descriptor;
 	
-	string     m_ui_url;
-	string     m_ui_base_path;
-	lo_address m_ui_addr;
+	string     _ui_url;
+	string     _ui_base_path;
+	lo_address _ui_addr;
 
 	// Current values
-	int                 m_bank;
-	int                 m_program;
-	map<string, string> m_configures;
-	map<int, Bank>      m_banks;
+	int                 _bank;
+	int                 _program;
+	map<string, string> _configures;
+	map<int, Bank>      _banks;
 
-	InputPort<MidiMessage>* m_midi_in_port;
- 	snd_seq_event_t*        m_alsa_events;
- 	unsigned long           m_encoded_events;
- 	snd_midi_event_t*       m_alsa_encoder;
+	InputPort<MidiMessage>* _midi_in_port;
+ 	snd_seq_event_t*        _alsa_events;
+ 	unsigned long           _encoded_events;
+ 	snd_midi_event_t*       _alsa_encoder;
 };
 
 

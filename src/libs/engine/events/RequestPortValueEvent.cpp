@@ -21,7 +21,6 @@
 #include "OmApp.h"
 #include "interface/ClientInterface.h"
 #include "PortBase.h"
-#include "PortInfo.h"
 #include "ObjectStore.h"
 #include "ClientBroadcaster.h"
 
@@ -53,7 +52,7 @@ RequestPortValueEvent::pre_process()
 void
 RequestPortValueEvent::execute(samplecount offset)
 {
-	if (m_port != NULL && m_port->port_info()->is_audio() || m_port->port_info()->is_control())
+	if (m_port != NULL && m_port->type() == DataType::FLOAT)
 		m_value = ((PortBase<sample>*)m_port)->buffer(0)->value_at(offset);
 	else 
 		m_port = NULL; // triggers error response

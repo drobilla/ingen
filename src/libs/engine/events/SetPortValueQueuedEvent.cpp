@@ -19,7 +19,6 @@
 #include "Om.h"
 #include "OmApp.h"
 #include "PortBase.h"
-#include "PortInfo.h"
 #include "ClientBroadcaster.h"
 #include "Plugin.h"
 #include "Node.h"
@@ -60,7 +59,7 @@ SetPortValueQueuedEvent::pre_process()
 
 	if (m_port == NULL) {
 		m_error = PORT_NOT_FOUND;
-	} else if (!m_port->port_info()->is_audio() && !m_port->port_info()->is_control()) {
+	} else if ( !(m_port->type() == DataType::FLOAT) ) {
 		m_error = TYPE_MISMATCH;
 	}
 	
@@ -95,7 +94,7 @@ SetPortValueQueuedEvent::post_process()
 		// Send patch port control change, if this is a bridge port
 		Port* parent_port = m_port->parent_node()->as_port();
 		if (parent_port != NULL) {
-			assert(parent_port->port_info()->is_control() || parent_port->port_info()->is_audio());
+			assert(parent_port->type() == DataType::FLOAT);
 			om->client_broadcaster()->send_control_change(parent_port->path(), m_val);
 		}
 

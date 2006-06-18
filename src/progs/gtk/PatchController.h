@@ -94,8 +94,8 @@ public:
 	PatchWindow*       window() const          { return m_window; }
 	void               window(PatchWindow* pw) { m_window = pw; }
 	
-	inline string        name() const { return m_model->name(); }
-	inline const string& path() const { return m_model->path(); }
+	inline string      name() const { return m_model->name(); }
+	inline const Path& path() const { return m_model->path(); }
 	
 	void set_path(const Path& new_path);
 

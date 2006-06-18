@@ -20,7 +20,6 @@
 #include <cassert>
 #include "ConnectionBase.h"
 #include "OutputPort.h"
-#include "PortInfo.h"
 #include "Node.h"
 #include "Om.h"
 #include "util.h"
@@ -32,13 +31,12 @@ namespace Om {
 
 
 template <typename T>
-InputPort<T>::InputPort(Node* node, const string& name, size_t index, size_t poly, PortInfo* port_info, size_t buffer_size)
-: PortBase<T>(node, name, index, poly, port_info, buffer_size)
+InputPort<T>::InputPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size)
+: PortBase<T>(parent, name, index, poly, type, buffer_size)
 {
-	assert(port_info->is_input() && !port_info->is_output());
 }
-template InputPort<sample>::InputPort(Node* node, const string& name, size_t index, size_t poly, PortInfo* port_info, size_t buffer_size);
-template InputPort<MidiMessage>::InputPort(Node* node, const string& name, size_t index, size_t poly, PortInfo* port_info, size_t buffer_size);
+template InputPort<sample>::InputPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size);
+template InputPort<MidiMessage>::InputPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size);
 
 
 /** Add a connection.  Realtime safe.
@@ -59,7 +57,7 @@ InputPort<T>::add_connection(ListNode<ConnectionBase<T>*>* const c)
 	if (modify_buffers) {
 		if (m_connections.size() == 1) {
 			// Use buffer directly to avoid copying
-			for (size_t i=0; i < m_poly; ++i) {
+			for (size_t i=0; i < _poly; ++i) {
 				m_buffers.at(i)->join(c->elem()->buffer(i));
 				if (m_is_tied)
 					m_tied_port->buffer(i)->join(m_buffers.at(i));
@@ -68,7 +66,7 @@ InputPort<T>::add_connection(ListNode<ConnectionBase<T>*>* const c)
 		} else if (m_connections.size() == 2) {
 			// Used to directly use single connection buffer, now there's two
 			// so have to use local ones again and mix down
-			for (size_t i=0; i < m_poly; ++i) {
+			for (size_t i=0; i < _poly; ++i) {
 				m_buffers.at(i)->unjoin();
 				if (m_is_tied)
 					m_tied_port->buffer(i)->join(m_buffers.at(i));
@@ -109,7 +107,7 @@ InputPort<T>::remove_connection(const OutputPort<T>* const src_port)
 		exit(EXIT_FAILURE);
 	} else {
 		if (m_connections.size() == 0) {
-			for (size_t i=0; i < m_poly; ++i) {
+			for (size_t i=0; i < _poly; ++i) {
 				// Use a local buffer
 				if (modify_buffers && m_buffers.at(i)->is_joined())
 					m_buffers.at(i)->unjoin();
@@ -119,7 +117,7 @@ InputPort<T>::remove_connection(const OutputPort<T>* const src_port)
 			}
 		} else if (modify_buffers && m_connections.size() == 1) {
 			// Share a buffer
-			for (size_t i=0; i < m_poly; ++i) {
+			for (size_t i=0; i < _poly; ++i) {
 				m_buffers.at(i)->join((*m_connections.begin())->buffer(i));
 				if (m_is_tied)
 					m_tied_port->buffer(i)->join(m_buffers.at(i));
@@ -150,8 +148,8 @@ template <typename T>
 void
 InputPort<T>::update_buffers()
 {
-	for (size_t i=0; i < m_poly; ++i)
-		InputPort<T>::parent_node()->set_port_buffer(i, m_index, m_buffers.at(i)->data());
+	for (size_t i=0; i < _poly; ++i)
+		InputPort<T>::parent_node()->set_port_buffer(i, _index, m_buffers.at(i)->data());
 }
 template void InputPort<sample>::update_buffers();
 template void InputPort<MidiMessage>::update_buffers();
@@ -189,9 +187,9 @@ InputPort<T>::tie(OutputPort<T>* const port)
 	assert(m_tied_port == NULL);
 
 	if (Port::parent_node() != NULL) {
-		assert(m_poly == port->poly());
+		assert(_poly == port->poly());
 	
-		for (size_t i=0; i < m_poly; ++i)
+		for (size_t i=0; i < _poly; ++i)
 			port->buffer(i)->join(m_buffers.at(i));
 	}
 	m_is_tied = true;
@@ -250,8 +248,8 @@ InputPort<sample>::prepare_buffers(size_t nframes)
 	assert(!m_is_tied || m_tied_port != NULL);
 	assert(!m_is_tied || m_buffers.at(0)->data() == m_tied_port->buffer(0)->data());
 
-	for (size_t voice=0; voice < m_poly; ++voice) {
-		m_buffers.at(voice)->copy((*m_connections.begin())->buffer(voice), 0, m_buffer_size-1);
+	for (size_t voice=0; voice < _poly; ++voice) {
+		m_buffers.at(voice)->copy((*m_connections.begin())->buffer(voice), 0, _buffer_size-1);
 		
 		if (m_connections.size() > 1) {
 			// Copy first connection
@@ -259,7 +257,7 @@ InputPort<sample>::prepare_buffers(size_t nframes)
 			
 			// Add all other connections
 			for (++c; c != m_connections.end(); ++c)
-				m_buffers.at(voice)->accumulate((*c)->buffer(voice), 0, m_buffer_size-1);
+				m_buffers.at(voice)->accumulate((*c)->buffer(voice), 0, _buffer_size-1);
 		}
 	}
 }
@@ -281,7 +279,7 @@ InputPort<MidiMessage>::prepare_buffers(size_t nframes)
 	assert(num_ins == 0 || num_ins == 1);
 	
 	typedef List<ConnectionBase<MidiMessage>*>::iterator ConnectionBaseListIterator;
-	assert(m_poly == 1);
+	assert(_poly == 1);
 	
 	for (ConnectionBaseListIterator c = m_connections.begin(); c != m_connections.end(); ++c)
 		(*c)->prepare_buffers();
@@ -315,7 +313,7 @@ InputPort<MidiMessage>::prepare_buffers(size_t nframes)
 	
 	// Get valid buffer size from inbound connections, unless a port on a top-level
 	// patch (which will be fed by the MidiDriver)
-	if (m_parent->parent() != NULL) {
+	if (_parent->parent() != NULL) {
 		if (num_ins == 1) {
 			m_buffers.at(0)->filled_size(
 				(*m_connections.begin())->src_port()->buffer(0)->filled_size());

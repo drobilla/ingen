@@ -21,7 +21,6 @@
 #include "Patch.h"
 #include "Plugin.h"
 #include "Port.h"
-#include "PortInfo.h"
 #include "ClientBroadcaster.h"
 #include "InternalNode.h"
 #include "Connection.h"
@@ -29,6 +28,8 @@
 #include "OmApp.h"
 #include "PortBase.h"
 #include "ObjectStore.h"
+#include "InputPort.h"
+#include "OutputPort.h"
 #include "interface/ClientInterface.h"
 
 using std::cerr; using std::cout; using std::endl;
@@ -38,38 +39,38 @@ namespace Om {
 
 Patch::Patch(const string& path, size_t poly, Patch* parent, samplerate srate, size_t buffer_size, size_t internal_poly) 
 : NodeBase(path, poly, parent, srate, buffer_size),
-  m_internal_poly(internal_poly),
-  m_process_order(NULL),
-  m_process(false)
+  _internal_poly(internal_poly),
+  _process_order(NULL),
+  _process(false)
 {
 	assert(internal_poly >= 1);
 
-	m_plugin.type(Plugin::Patch);
-	m_plugin.uri("http://codeson.net/grauph/patch");
-	m_plugin.plug_label("om_patch");
-	m_plugin.name("Om patch");
+	_plugin.type(Plugin::Patch);
+	_plugin.uri("http://codeson.net/grauph/patch");
+	_plugin.plug_label("om_patch");
+	_plugin.name("Om patch");
 
-	//std::cerr << "Creating patch " << m_name << ", poly = " << poly
+	//std::cerr << "Creating patch " << _name << ", poly = " << poly
 	//	<< ", internal poly = " << internal_poly << std::endl;
 }
 
 
 Patch::~Patch()
 {
-	assert(!m_activated);
+	assert(!_activated);
 	
-	for (List<Connection*>::iterator i = m_connections.begin(); i != m_connections.end(); ++i) {
+	for (List<Connection*>::iterator i = _connections.begin(); i != _connections.end(); ++i) {
 		delete (*i);
-		delete m_connections.remove(i);
+		delete _connections.remove(i);
 	}
 
-	for (List<Node*>::iterator i = m_nodes.begin(); i != m_nodes.end(); ++i) {
+	for (List<Node*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
 		assert(!(*i)->activated());
 		delete (*i);
-		delete m_nodes.remove(i);
+		delete _nodes.remove(i);
 	}
 
-	delete m_process_order;
+	delete _process_order;
 }
 
 
@@ -78,66 +79,77 @@ Patch::activate()
 {
 	NodeBase::activate();
 
-	for (List<Node*>::iterator i = m_nodes.begin(); i != m_nodes.end(); ++i)
+	for (List<Node*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		(*i)->activate();
 	
-	assert(m_activated);
+	assert(_activated);
 }
 
 
 void
 Patch::deactivate()
 {
-	if (m_activated) {
+	if (_activated) {
 	
 		NodeBase::deactivate();
 	
-		for (List<Node*>::iterator i = m_nodes.begin(); i != m_nodes.end(); ++i) {
+		for (List<Node*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
 			if ((*i)->activated())
 				(*i)->deactivate();
 			assert(!(*i)->activated());
 		}
 	}
-	assert(!m_activated);
+	assert(!_activated);
 }
 
 
 void
-Patch::process(bool b)
+Patch::process(bool p)
 {
-	if (!b) {
+	if (!p) {
 		// Write output buffers to 0
-		for (List<InternalNode*>::iterator i = m_bridge_nodes.begin(); i != m_bridge_nodes.end(); ++i) {
+		/*for (List<InternalNode*>::iterator i = _bridge_nodes.begin(); i != _bridge_nodes.end(); ++i) {
 			assert((*i)->as_port() != NULL);
 			if ((*i)->as_port()->port_info()->is_output())
-				(*i)->as_port()->clear_buffers();
+				(*i)->as_port()->clear_buffers();*/
+		for (List<Port*>::iterator i = _patch_ports.begin(); i != _patch_ports.end(); ++i) {
+			if ((*i)->is_output())
+				(*i)->clear_buffers();
 		}
 	}
-	m_process = b;
+	_process = p;
 }
 
 
 /** Run the patch for the specified number of frames.
  * 
- * Calls all Nodes in the order m_process_order specifies.
+ * Calls all Nodes in the order _process_order specifies.
  */
 inline void
 Patch::run(size_t nframes)
 {
-	if (m_process_order == NULL || !m_process)
+	if (_process_order == NULL || !_process)
 		return;
 
-	// Prepare all ports
-	for (List<InternalNode*>::iterator i = m_bridge_nodes.begin(); i != m_bridge_nodes.end(); ++i)
-		(*i)->as_port()->prepare_buffers(nframes);
+	// FIXME: This is far too slow, too much checking every cycle
+	
+	// Prepare input ports for nodes to consume
+	for (List<Port*>::iterator i = _patch_ports.begin(); i != _patch_ports.end(); ++i)
+		if ((*i)->is_input())
+			(*i)->prepare_buffers(nframes);
 
-	// Run all nodes
-	for (size_t i=0; i < m_process_order->size(); ++i) {
+	// Run all nodes (consume input ports)
+	for (size_t i=0; i < _process_order->size(); ++i) {
 		// Could be a gap due to a node removal event (see RemoveNodeEvent.cpp)
-		// If you're thinking this isn't very nice, you're right.
-		if (m_process_order->at(i) != NULL)
-			m_process_order->at(i)->run(nframes);
+		// Yes, this is ugly
+		if (_process_order->at(i) != NULL)
+			_process_order->at(i)->run(nframes);
 	}
+	
+	// Prepare output ports (for caller to consume)
+	for (List<Port*>::iterator i = _patch_ports.begin(); i != _patch_ports.end(); ++i)
+		if ((*i)->is_output())
+			(*i)->prepare_buffers(nframes);
 }
 
 
@@ -149,7 +161,7 @@ Patch::run(size_t nframes)
 size_t
 Patch::num_ports() const
 {
-	return m_bridge_nodes.size();
+	return _patch_ports.size();
 }
 
 
@@ -161,7 +173,7 @@ Patch::send_creation_messages(ClientInterface* client) const
 
 	om->client_broadcaster()->send_patch_to(client, this);
 	
-	for (List<Node*>::const_iterator j = m_nodes.begin(); j != m_nodes.end(); ++j) {
+	for (List<Node*>::const_iterator j = _nodes.begin(); j != _nodes.end(); ++j) {
 		Node* node = (*j);
 		Port* port = node->as_port(); // NULL unless a bridge node
 		node->send_creation_messages(client);
@@ -174,13 +186,13 @@ Patch::send_creation_messages(ClientInterface* client) const
 				((PortBase<sample>*)port)->buffer(0)->value_at(0));
 	}
 	
-	for (List<Connection*>::const_iterator j = m_connections.begin(); j != m_connections.end(); ++j) {
+	for (List<Connection*>::const_iterator j = _connections.begin(); j != _connections.end(); ++j) {
 		om->client_broadcaster()->send_connection_to(client, *j);
 	}
 	
 	// Send port information
-	/*for (size_t i=0; i < m_ports.size(); ++i) {
-		Port* const port = m_ports.at(i);
+	/*for (size_t i=0; i < _ports.size(); ++i) {
+		Port* const port = _ports.at(i);
 
 		// Send metadata
 		const map<string, string>& data = port->metadata();
@@ -202,7 +214,7 @@ Patch::add_to_store()
 	NodeBase::add_to_store();
 
 	// Add nodes
-	for (List<Node*>::iterator j = m_nodes.begin(); j != m_nodes.end(); ++j)
+	for (List<Node*>::iterator j = _nodes.begin(); j != _nodes.end(); ++j)
 		(*j)->add_to_store();
 }
 
@@ -214,7 +226,7 @@ Patch::remove_from_store()
 	NodeBase::remove_from_store();
 
 	// Remove nodes
-	for (List<Node*>::iterator j = m_nodes.begin(); j != m_nodes.end(); ++j) {
+	for (List<Node*>::iterator j = _nodes.begin(); j != _nodes.end(); ++j) {
 		(*j)->remove_from_store();
 		assert(om->object_store()->find((*j)->path()) == NULL);
 	}
@@ -230,18 +242,18 @@ Patch::add_node(ListNode<Node*>* ln)
 	assert(ln != NULL);
 	assert(ln->elem() != NULL);
 	assert(ln->elem()->parent_patch() == this);
-	assert(ln->elem()->poly() == m_internal_poly || ln->elem()->poly() == 1);
+	assert(ln->elem()->poly() == _internal_poly || ln->elem()->poly() == 1);
 	
-	m_nodes.push_back(ln);
+	_nodes.push_back(ln);
 }
 
 
 ListNode<Node*>*
 Patch::remove_node(const string& name)
 {
-	for (List<Node*>::iterator i = m_nodes.begin(); i != m_nodes.end(); ++i)
+	for (List<Node*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		if ((*i)->name() == name)
-			return m_nodes.remove(i);
+			return _nodes.remove(i);
 	
 	return NULL;
 }
@@ -254,9 +266,9 @@ Patch::remove_connection(const Port* src_port, const Port* dst_port)
 {
 	bool found = false;
 	ListNode<Connection*>* connection = NULL;
-	for (List<Connection*>::iterator i = m_connections.begin(); i != m_connections.end(); ++i) {
+	for (List<Connection*>::iterator i = _connections.begin(); i != _connections.end(); ++i) {
 		if ((*i)->src_port() == src_port && (*i)->dst_port() == dst_port) {
-			connection = m_connections.remove(i);
+			connection = _connections.remove(i);
 			found = true;
 		}
 	}
@@ -267,7 +279,7 @@ Patch::remove_connection(const Port* src_port, const Port* dst_port)
 	return connection;
 }
 
-
+#if 0
 /** Remove a bridge_node.  Realtime safe.
  */
 ListNode<InternalNode*>*
@@ -275,9 +287,9 @@ Patch::remove_bridge_node(const InternalNode* node)
 {
 	bool found = false;
 	ListNode<InternalNode*>* bridge_node = NULL;
-	for (List<InternalNode*>::iterator i = m_bridge_nodes.begin(); i != m_bridge_nodes.end(); ++i) {
+	for (List<InternalNode*>::iterator i = _bridge_nodes.begin(); i != _bridge_nodes.end(); ++i) {
 		if ((*i) == node) {
-			bridge_node = m_bridge_nodes.remove(i);
+			bridge_node = _bridge_nodes.remove(i);
 			found = true;
 		}
 	}
@@ -286,6 +298,46 @@ Patch::remove_bridge_node(const InternalNode* node)
 		cerr << "WARNING:  [Patch::remove_bridge_node] InternalNode not found !" << endl;
 
 	return bridge_node;
+}
+#endif
+
+/** Create a port.  Not realtime safe.
+ */
+Port*
+Patch::create_port(const string& name, DataType type, size_t buffer_size, bool is_output)
+{
+	if (type == DataType::UNKNOWN) {
+		cerr << "[Patch::create_port] Unknown port type " << type.uri() << endl;
+		return NULL;
+	}
+
+	assert( !(type == DataType::UNKNOWN) );
+
+	if (is_output)
+		return new OutputPort<MidiMessage>(this, name, 0, _poly, type, buffer_size);
+	else
+		return new InputPort<MidiMessage>(this, name, 0, _poly, type, buffer_size);
+}
+
+
+/** Remove a port.  Realtime safe.
+ */
+ListNode<Port*>*
+Patch::remove_port(const Port* port)
+{
+	bool found = false;
+	ListNode<Port*>* ret = NULL;
+	for (List<Port*>::iterator i = _patch_ports.begin(); i != _patch_ports.end(); ++i) {
+		if ((*i) == port) {
+			ret = _patch_ports.remove(i);
+			found = true;
+		}
+	}
+
+	if ( ! found)
+		cerr << "WARNING:  [Patch::remove_port] Port not found !" << endl;
+
+	return ret;
 }
 
 
@@ -297,30 +349,34 @@ Patch::remove_bridge_node(const InternalNode* node)
  * NOT actually set the process order, it is returned so it can be inserted
  * at the beginning of an audio cycle (by various Events).
  *
- * This function is not realtime safe, due to the use of the List<Node*> iterator
+ * Not realtime safe.
  */
 Array<Node*>*
 Patch::build_process_order() const
 {
 	Node*               node          = NULL;
-	Array<Node*>* const process_order = new Array<Node*>(m_nodes.size());
+	Array<Node*>* const process_order = new Array<Node*>(_nodes.size());
 	
-	for (List<Node*>::const_iterator i = m_nodes.begin(); i != m_nodes.end(); ++i)
+	for (List<Node*>::const_iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		(*i)->traversed(false);
 		
 	// Traverse backwards starting at outputs
-	for (List<InternalNode*>::const_iterator i = m_bridge_nodes.begin(); i != m_bridge_nodes.end(); ++i) {
-		node = (*i);
-		assert(node->as_port() != NULL);
-		
-		// If the output node has been disconnected and has no connections left, don't traverse
-		// into it so it's not in the process order (and can be removed w/o flaming segfault death)
-		if (node->as_port()->port_info()->is_output() && node->providers()->size() > 0)
-			build_process_order_recursive(node, process_order);
+	for (List<Port*>::const_iterator p = _patch_ports.begin(); p != _patch_ports.end(); ++p) {
+		/*const Port* const port = (*p);
+		if (port->port_info()->is_output()) {
+			for (List<Connection*>::const_iterator c = port->connections().begin();
+					c != port->connections().end(); ++c) {
+				const Connection* const connection = (*c);
+				assert(connection->dst_port() == port);
+				assert(connection->src_port());
+				assert(connection->src_port()->parent_node());
+				build_process_order_recursive(connection->src_port()->parent_node(), process_order);
+			}
+		}*/
 	}
 
-	// Add any nodes that weren't hit by the traversal (disjoint nodes)
-	for (List<Node*>::const_iterator i = m_nodes.begin(); i != m_nodes.end(); ++i) {
+	// Add any (disjoint) nodes that weren't hit by the traversal
+	for (List<Node*>::const_iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
 		node = (*i);
 		if ( ! node->traversed()) {
 			process_order->push_back(*i);
@@ -328,7 +384,7 @@ Patch::build_process_order() const
 		}
 	}
 
-	assert(process_order->size() == m_nodes.size());
+	assert(process_order->size() == _nodes.size());
 
 	return process_order;
 }
@@ -345,7 +401,7 @@ Patch::set_path(const Path& new_path)
 	const Path old_path = path();
 
 	// Update nodes
-	for (List<Node*>::iterator i = m_nodes.begin(); i != m_nodes.end(); ++i)
+	for (List<Node*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		(*i)->set_path(new_path.base_path() + (*i)->name());
 	
 	// Update self

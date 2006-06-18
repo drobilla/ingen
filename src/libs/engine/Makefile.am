@@ -10,6 +10,7 @@ noinst_LTLIBRARIES = libom.la
 libom_la_SOURCES = \
 	util.h \
 	tuning.h \
+	DataType.h \
 	Node.h \
 	NodeBase.h \
 	NodeBase.cpp \
@@ -53,20 +54,6 @@ libom_la_SOURCES = \
 	MidiTriggerNode.cpp \
 	MidiControlNode.h \
 	MidiControlNode.cpp \
-	BridgeNode.h \
-	BridgeNode.cpp \
-	ControlInputNode.h \
-	ControlInputNode.cpp \
-	ControlOutputNode.h \
-	ControlOutputNode.cpp \
-	AudioInputNode.h \
-	AudioInputNode.cpp \
-	AudioOutputNode.h \
-	AudioOutputNode.cpp \
-	MidiInputNode.h \
-	MidiInputNode.cpp \
-	MidiOutputNode.h \
-	MidiOutputNode.cpp \
 	Event.h \
 	Event.cpp \
 	QueuedEvent.h \
@@ -81,7 +68,6 @@ libom_la_SOURCES = \
 	MaidObject.h \
 	Tree.h \
 	ClientRecord.h \
-	PortInfo.h \
 	PluginLibrary.h \
 	Plugin.h \
 	Array.h \
@@ -136,6 +122,8 @@ libom_la_SOURCES = \
 	events/DisconnectPortEvent.cpp \
 	events/DestroyEvent.h \
 	events/DestroyEvent.cpp \
+	events/AddPortEvent.h \
+	events/AddPortEvent.cpp \
 	events/AddNodeEvent.h \
 	events/AddNodeEvent.cpp \
 	events/SetMetadataEvent.h \
@@ -161,7 +149,22 @@ libom_la_SOURCES = \
 	events/RenameEvent.h \
 	events/RenameEvent.cpp \
 	events/MidiLearnEvent.h \
-	events/MidiLearnEvent.cpp
+	events/MidiLearnEvent.cpp \
+	types.h
+# 	BridgeNode.h 
+# 	BridgeNode.cpp 
+# 	ControlInputNode.h 
+# 	ControlInputNode.cpp 
+# 	ControlOutputNode.h 
+# 	ControlOutputNode.cpp 
+# 	AudioInputNode.h 
+# 	AudioInputNode.cpp 
+# 	AudioOutputNode.h 
+# 	AudioOutputNode.cpp 
+# 	MidiInputNode.h 
+# 	MidiInputNode.cpp 
+# 	MidiOutputNode.h 
+# 	MidiOutputNode.cpp 
 
 if WITH_JACK_MIDI
 libom_la_SOURCES += \

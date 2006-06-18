@@ -46,7 +46,7 @@ public:
 
 	virtual void activate();
 	virtual void deactivate();
-	bool activated() { return m_activated; }
+	bool activated() { return _activated; }
 
 	virtual void run(size_t nframes);
 		
@@ -60,20 +60,20 @@ public:
 	
 	//void send_creation_messages(ClientInterface* client) const;
 	
-	size_t num_ports() const { return m_num_ports; }
-	size_t poly() const      { return m_poly; }
-	bool   traversed() const { return m_traversed; }
-	void   traversed(bool b) { m_traversed = b; }
+	size_t num_ports() const { return _num_ports; }
+	size_t poly() const      { return _poly; }
+	bool   traversed() const { return _traversed; }
+	void   traversed(bool b) { _traversed = b; }
 	
-	const Array<Port*>& ports() const { return m_ports; }
-
-	virtual List<Node*>* providers()               { return m_providers; }
-	virtual void         providers(List<Node*>* l) { m_providers = l; }
+	const Array<Port*>& ports() const { return *_ports; }
 	
-	virtual List<Node*>* dependants()               { return m_dependants; }
-	virtual void         dependants(List<Node*>* l) { m_dependants = l; }
+	virtual List<Node*>* providers()               { return _providers; }
+	virtual void         providers(List<Node*>* l) { _providers = l; }
 	
-	Patch* parent_patch() const { return (m_parent == NULL) ? NULL : m_parent->as_patch(); }
+	virtual List<Node*>* dependants()               { return _dependants; }
+	virtual void         dependants(List<Node*>* l) { _dependants = l; }
+	
+	Patch* parent_patch() const { return (_parent == NULL) ? NULL : _parent->as_patch(); }
 
 	virtual const Plugin* plugin() const                 { exit(EXIT_FAILURE); }
 	virtual void          plugin(const Plugin* const pi) { exit(EXIT_FAILURE); }
@@ -85,18 +85,18 @@ protected:
 	NodeBase(const NodeBase&);
 	NodeBase& operator=(const NodeBase&);
 	
-	size_t      m_poly;
+	size_t      _poly;
 
-	samplerate  m_srate;
-	size_t      m_buffer_size;
-	bool        m_activated;
+	samplerate  _srate;
+	size_t      _buffer_size;
+	bool        _activated;
 
-	size_t       m_num_ports; // number of ports PER VOICE
-	Array<Port*> m_ports;
+	size_t        _num_ports; ///< number of ports PER VOICE
+	Array<Port*>* _ports;     ///< Access in audio thread only
 
-	bool         m_traversed;
-	List<Node*>* m_providers;     // Nodes connected to this one's input ports
-	List<Node*>* m_dependants;    // Nodes this one's output ports are connected to
+	bool         _traversed;  ///< Flag for process order algorithm
+	List<Node*>* _providers;  ///< Nodes connected to this one's input ports
+	List<Node*>* _dependants; ///< Nodes this one's output ports are connected to
 };
 
 

@@ -25,7 +25,6 @@
 #include "Patch.h"
 #include "ClientBroadcaster.h"
 #include "Port.h"
-#include "PortInfo.h"
 #include "Maid.h"
 #include "ObjectStore.h"
 #include "util/Path.h"
@@ -62,9 +61,9 @@ DisconnectionEvent::DisconnectionEvent(CountedPtr<Responder> responder, Port* co
   m_typed_event(NULL),
   m_error(NO_ERROR)
 {
-	assert(src_port->port_info()->is_output());
-	assert(dst_port->port_info()->is_input());
-	assert(src_port->port_info()->type() == dst_port->port_info()->type());
+	assert(src_port->is_output());
+	assert(dst_port->is_input());
+	assert(src_port->type() == dst_port->type());
 	assert(src_port->parent_node()->parent_patch()
 			== dst_port->parent_node()->parent_patch());
 }
@@ -102,16 +101,16 @@ DisconnectionEvent::pre_process()
 			return;
 		}
 	
-		if (port1->port_info()->type() != port2->port_info()->type()) {
+		if (port1->type() != port2->type()) {
 			m_error = TYPE_MISMATCH;
 			QueuedEvent::pre_process();
 			return;
 		}
 		
-		if (port1->port_info()->is_output() && port2->port_info()->is_input()) {
+		if (port1->is_output() && port2->is_input()) {
 			m_src_port = port1;
 			m_dst_port = port2;
-		} else if (port2->port_info()->is_output() && port1->port_info()->is_input()) {
+		} else if (port2->is_output() && port1->is_input()) {
 			m_src_port = port2;
 			m_dst_port = port1;
 		} else {
@@ -122,11 +121,11 @@ DisconnectionEvent::pre_process()
 	}
 	
 	// Create the typed event to actually do the work
-	const PortType type = m_src_port->port_info()->type();
-	if (type == AUDIO || type == CONTROL) {
+	const DataType type = m_src_port->type();
+	if (type == DataType::FLOAT) {
 		m_typed_event = new TypedDisconnectionEvent<sample>(m_responder,
 			(OutputPort<sample>*)m_src_port, (InputPort<sample>*)m_dst_port);
-	} else if (type == MIDI) {
+	} else if (type == DataType::MIDI) {
 		m_typed_event = new TypedDisconnectionEvent<MidiMessage>(m_responder,
 			(OutputPort<MidiMessage>*)m_src_port, (InputPort<MidiMessage>*)m_dst_port);
 	} else {

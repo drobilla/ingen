@@ -33,7 +33,6 @@ namespace Om {
 
 class Node;
 class Port;
-class PortInfo;
 class Plugin;
 class Patch;
 class Connection;

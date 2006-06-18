@@ -51,16 +51,39 @@ OmFlowCanvas::OmFlowCanvas(PatchController* controller, int width, int height)
 	Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference();
 	xml->get_widget("canvas_menu", m_menu);
 	
+	xml->get_widget("canvas_menu_add_audio_input", m_menu_add_audio_input);
+	xml->get_widget("canvas_menu_add_audio_output", m_menu_add_audio_output);
+	xml->get_widget("canvas_menu_add_control_input", m_menu_add_control_input);
+	xml->get_widget("canvas_menu_add_control_output", m_menu_add_control_output);
+	xml->get_widget("canvas_menu_add_midi_input", m_menu_add_midi_input);
+	xml->get_widget("canvas_menu_add_midi_output", m_menu_add_midi_output);
 	xml->get_widget("canvas_menu_load_plugin", m_menu_load_plugin);
 	xml->get_widget("canvas_menu_load_patch", m_menu_load_patch);
 	xml->get_widget("canvas_menu_new_patch", m_menu_new_patch);
 	
-	m_menu_load_plugin->signal_activate().connect(
-		sigc::mem_fun<void>(this, &OmFlowCanvas::menu_load_plugin));
-	m_menu_load_patch->signal_activate().connect(
-		sigc::mem_fun<void>(this, &OmFlowCanvas::menu_load_patch));
-	m_menu_new_patch->signal_activate().connect(
-		sigc::mem_fun<void>(this, &OmFlowCanvas::menu_new_patch));
+	// Add port menu items
+	m_menu_add_audio_input->signal_activate().connect(
+		sigc::bind(sigc::mem_fun(this, &OmFlowCanvas::menu_add_port),
+			"audio_input", "AUDIO", false));
+	m_menu_add_audio_output->signal_activate().connect(
+		sigc::bind(sigc::mem_fun(this, &OmFlowCanvas::menu_add_port),
+			"audio_output", "AUDIO", true));
+	m_menu_add_control_input->signal_activate().connect(
+		sigc::bind(sigc::mem_fun(this, &OmFlowCanvas::menu_add_port),
+			"control_input", "CONTROL", false));
+	m_menu_add_control_output->signal_activate().connect(
+		sigc::bind(sigc::mem_fun(this, &OmFlowCanvas::menu_add_port),
+			"control_output", "CONTROL", true));
+	m_menu_add_midi_input->signal_activate().connect(
+		sigc::bind(sigc::mem_fun(this, &OmFlowCanvas::menu_add_port),
+			"midi_input", "MIDI", false));
+	m_menu_add_midi_output->signal_activate().connect(
+		sigc::bind(sigc::mem_fun(this, &OmFlowCanvas::menu_add_port),
+			"midi_output", "MIDI", true));
+
+	m_menu_load_plugin->signal_activate().connect(sigc::mem_fun(this, &OmFlowCanvas::menu_load_plugin));
+	m_menu_load_patch->signal_activate().connect(sigc::mem_fun(this, &OmFlowCanvas::menu_load_patch));
+	m_menu_new_patch->signal_activate().connect(sigc::mem_fun(this, &OmFlowCanvas::menu_new_patch));
 }
 
 
@@ -148,6 +171,67 @@ OmFlowCanvas::destroy_selected()
 		Controller::instance().destroy(((OmModule*)(*m))->node()->path());
 }
 
+
+void
+OmFlowCanvas::menu_add_port(const string& name, const string& type, bool is_output)
+{
+	const Path& path = m_patch_controller->path().base_path() + name;
+	Controller::instance().create_port(path, type, is_output);
+	
+	char temp_buf[16];
+	snprintf(temp_buf, 16, "%d", m_last_click_x);
+	Controller::instance().set_metadata(path, "module-x", temp_buf);
+	snprintf(temp_buf, 16, "%d", m_last_click_y);
+	Controller::instance().set_metadata(path, "module-y", temp_buf);
+}
+/*
+void
+OmFlowCanvas::menu_add_audio_input()
+{
+	string name = "audio_in";
+	Controller::instance().create_port(m_patch_controller->path().base_path() + name, "AUDIO", false);
+}
+
+
+void
+OmFlowCanvas::menu_add_audio_output()
+{
+	string name = "audio_out";
+	Controller::instance().create_port(m_patch_controller->path().base_path() + name, "AUDIO", true);
+}
+
+
+void
+OmFlowCanvas::menu_add_control_input()
+{
+	string name = "control_in";
+	Controller::instance().create_port(m_patch_controller->path().base_path() + name, "CONTROL", false);
+}
+
+
+void
+OmFlowCanvas::menu_add_control_output()
+{
+	string name = "control_out";
+	Controller::instance().create_port(m_patch_controller->path().base_path() + name, "CONTROL", true);
+}
+
+
+void
+OmFlowCanvas::menu_add_midi_input()
+{
+	string name = "midi_in";
+	Controller::instance().create_port(m_patch_controller->path().base_path() + name, "MIDI", false);
+}
+
+
+void
+OmFlowCanvas::menu_add_midi_output()
+{
+	string name = "midi_out";
+	Controller::instance().create_port(m_patch_controller->path().base_path() + name, "MIDI", true);
+}
+*/
 
 void
 OmFlowCanvas::menu_load_plugin()

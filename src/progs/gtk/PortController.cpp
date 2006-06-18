@@ -101,6 +101,18 @@ PortController::metadata_update(const string& key, const string& value)
 			m_control_panel->set_range_max(m_model->path(), atof(value.c_str()));
 	}
 
+	if (m_module != NULL) {
+		if (key == "module-x") {
+			float x = atof(value.c_str());
+			//if (x > 0 && x < m_canvas->width())
+				m_module->move_to(x, m_module->property_y().get_value());
+		} else if (key == "module-y") {
+			float y = atof(value.c_str());
+			//if (y > 0 && y < m_canvas->height())
+				m_module->move_to(m_module->property_x().get_value(), y);
+		}
+	}
+
 	GtkObjectController::metadata_update(key, value);
 }
 

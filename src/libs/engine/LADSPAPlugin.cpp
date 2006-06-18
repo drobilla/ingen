@@ -23,7 +23,6 @@
 #include <cmath>
 #include "InputPort.h"
 #include "OutputPort.h"
-#include "PortInfo.h"
 #include "Plugin.h"
 
 namespace Om {
@@ -36,14 +35,14 @@ namespace Om {
  */
 LADSPAPlugin::LADSPAPlugin(const string& path, size_t poly, Patch* parent, const LADSPA_Descriptor* descriptor, samplerate srate, size_t buffer_size)
 : NodeBase(path, poly, parent, srate, buffer_size),
-  m_descriptor(descriptor),
-  m_instances(NULL)
+  _descriptor(descriptor),
+  _instances(NULL)
 {
-	assert(m_descriptor != NULL);
+	assert(_descriptor != NULL);
 	
 	// Note that this may be changed by an overriding DSSIPlugin
-	// ie do not assume m_ports is all LADSPA plugin ports
-	m_num_ports = m_descriptor->PortCount;	
+	// ie do not assume _ports is all LADSPA plugin ports
+	_num_ports = _descriptor->PortCount;	
 }
 
 
@@ -58,15 +57,15 @@ LADSPAPlugin::LADSPAPlugin(const string& path, size_t poly, Patch* parent, const
 bool
 LADSPAPlugin::instantiate()
 {
-	m_ports.alloc(m_num_ports);
+	_ports = new Array<Port*>(_num_ports);
 	
-	m_instances = new LADSPA_Handle[m_poly];
+	_instances = new LADSPA_Handle[_poly];
 	
 	size_t port_buffer_size = 0;
 	
-	for (size_t i=0; i < m_poly; ++i) {
-		m_instances[i] = m_descriptor->instantiate(m_descriptor, m_srate);
-		if (m_instances[i] == NULL) {
+	for (size_t i=0; i < _poly; ++i) {
+		_instances[i] = _descriptor->instantiate(_descriptor, _srate);
+		if (_instances[i] == NULL) {
 			cerr << "Failed to instantiate plugin!" << endl;
 			return false;
 		}
@@ -77,15 +76,15 @@ LADSPAPlugin::instantiate()
 	
 	Port* port = NULL;
 	
-	for (size_t j=0; j < m_descriptor->PortCount; ++j) {
-		port_name = m_descriptor->PortNames[j];
+	for (size_t j=0; j < _descriptor->PortCount; ++j) {
+		port_name = _descriptor->PortNames[j];
 		string::size_type slash_index;
 		
 		// Name mangling, to guarantee port names are unique
-		for (size_t k=0; k < m_descriptor->PortCount; ++k) {
-			assert(m_descriptor->PortNames[k] != NULL);
-			if (k != j && port_name == m_descriptor->PortNames[k]) { // clash
-				if (LADSPA_IS_PORT_CONTROL(m_descriptor->PortDescriptors[j]))
+		for (size_t k=0; k < _descriptor->PortCount; ++k) {
+			assert(_descriptor->PortNames[k] != NULL);
+			if (k != j && port_name == _descriptor->PortNames[k]) { // clash
+				if (LADSPA_IS_PORT_CONTROL(_descriptor->PortDescriptors[j]))
 					port_name += " (CR)";
 				else
 					port_name += " (AR)";
@@ -97,34 +96,32 @@ LADSPAPlugin::instantiate()
 
 		port_path = path() + "/" + port_name;
 
-		if (LADSPA_IS_PORT_CONTROL(m_descriptor->PortDescriptors[j]))
+		if (LADSPA_IS_PORT_CONTROL(_descriptor->PortDescriptors[j]))
 			port_buffer_size = 1;
-		else if (LADSPA_IS_PORT_AUDIO(m_descriptor->PortDescriptors[j]))
-			port_buffer_size = m_buffer_size;
+		else if (LADSPA_IS_PORT_AUDIO(_descriptor->PortDescriptors[j]))
+			port_buffer_size = _buffer_size;
 		
-		assert (LADSPA_IS_PORT_INPUT(m_descriptor->PortDescriptors[j])
-			|| LADSPA_IS_PORT_OUTPUT(m_descriptor->PortDescriptors[j]));
+		assert (LADSPA_IS_PORT_INPUT(_descriptor->PortDescriptors[j])
+			|| LADSPA_IS_PORT_OUTPUT(_descriptor->PortDescriptors[j]));
 
-		if (LADSPA_IS_PORT_INPUT(m_descriptor->PortDescriptors[j])) {
-			port = new InputPort<sample>(this, port_name, j, m_poly,
-				new PortInfo(port_path, m_descriptor->PortDescriptors[j],
-					m_descriptor->PortRangeHints[j].HintDescriptor), port_buffer_size);
-			m_ports.at(j) = port;
-		} else if (LADSPA_IS_PORT_OUTPUT(m_descriptor->PortDescriptors[j])) {
-			port = new OutputPort<sample>(this, port_name, j, m_poly,
-				new PortInfo(port_path, m_descriptor->PortDescriptors[j],
-					m_descriptor->PortRangeHints[j].HintDescriptor), port_buffer_size);
-			m_ports.at(j) = port;
+		if (LADSPA_IS_PORT_INPUT(_descriptor->PortDescriptors[j])) {
+			port = new InputPort<sample>(this, port_name, j, _poly, DataType::FLOAT, port_buffer_size);
+			_ports->at(j) = port;
+		} else if (LADSPA_IS_PORT_OUTPUT(_descriptor->PortDescriptors[j])) {
+			port = new OutputPort<sample>(this, port_name, j, _poly, DataType::FLOAT, port_buffer_size);
+			_ports->at(j) = port;
 		}
 
-		assert(m_ports.at(j) != NULL);
+		assert(_ports->at(j) != NULL);
 
-		PortInfo* pi = port->port_info();
+		/*PortInfo* pi = port->port_info();
 		get_port_vals(j, pi);
+		*/
+		float default_val = 0.; // FIXME
 
 		// Set default control val
-		if (pi->is_control())
-			((PortBase<sample>*)port)->set_value(pi->default_val(), 0);
+		if (port->buffer_size() == 1)
+			((PortBase<sample>*)port)->set_value(default_val, 0);
 		else
 			((PortBase<sample>*)port)->set_value(0.0f, 0);
 	}
@@ -135,10 +132,10 @@ LADSPAPlugin::instantiate()
 
 LADSPAPlugin::~LADSPAPlugin()
 {
-	for (size_t i=0; i < m_poly; ++i)
-		m_descriptor->cleanup(m_instances[i]);
+	for (size_t i=0; i < _poly; ++i)
+		_descriptor->cleanup(_instances[i]);
 
-	delete[] m_instances;
+	delete[] _instances;
 }
 
 
@@ -149,17 +146,17 @@ LADSPAPlugin::activate()
 
 	PortBase<sample>* port = NULL;
 	
-	for (size_t i=0; i < m_poly; ++i) {
-		for (unsigned long j=0; j < m_descriptor->PortCount; ++j) {
-			port = static_cast<PortBase<sample>*>(m_ports.at(j));
-			set_port_buffer(i, j, ((PortBase<sample>*)m_ports.at(j))->buffer(i)->data());
-				if (port->port_info()->is_control())
-					port->set_value(port->port_info()->default_val(), 0);
-				else if (port->port_info()->is_audio())
+	for (size_t i=0; i < _poly; ++i) {
+		for (unsigned long j=0; j < _descriptor->PortCount; ++j) {
+			port = static_cast<PortBase<sample>*>(_ports->at(j));
+			set_port_buffer(i, j, ((PortBase<sample>*)_ports->at(j))->buffer(i)->data());
+				if (port->type() == DataType::FLOAT && port->buffer_size() == 1)
+					port->set_value(0.0f, 0); // FIXME
+				else if (port->type() == DataType::FLOAT && port->buffer_size() > 1)
 					port->set_value(0.0f, 0);
 		}
-		if (m_descriptor->activate != NULL)
-			m_descriptor->activate(m_instances[i]);
+		if (_descriptor->activate != NULL)
+			_descriptor->activate(_instances[i]);
 	}
 }
 
@@ -169,9 +166,9 @@ LADSPAPlugin::deactivate()
 {
 	NodeBase::deactivate();
 	
-	for (size_t i=0; i < m_poly; ++i)
-		if (m_descriptor->deactivate != NULL)
-			m_descriptor->deactivate(m_instances[i]);
+	for (size_t i=0; i < _poly; ++i)
+		if (_descriptor->deactivate != NULL)
+			_descriptor->deactivate(_instances[i]);
 }
 
 
@@ -179,23 +176,23 @@ void
 LADSPAPlugin::run(size_t nframes)
 {
 	NodeBase::run(nframes); // mixes down input ports
-	for (size_t i=0; i < m_poly; ++i) 
-		m_descriptor->run(m_instances[i], nframes);
+	for (size_t i=0; i < _poly; ++i) 
+		_descriptor->run(_instances[i], nframes);
 }
 
 
 void
 LADSPAPlugin::set_port_buffer(size_t voice, size_t port_num, void* buf)
 {
-	assert(voice < m_poly);
+	assert(voice < _poly);
 	
 	// Could be a MIDI port after this
-	if (port_num < m_descriptor->PortCount) {
-		m_descriptor->connect_port(m_instances[voice], port_num, (sample*)buf);
+	if (port_num < _descriptor->PortCount) {
+		_descriptor->connect_port(_instances[voice], port_num, (sample*)buf);
 	}
 }
 
-
+#if 0
 // Based on code stolen from jack-rack
 void
 LADSPAPlugin::get_port_vals(ulong port_index, PortInfo* info)
@@ -203,15 +200,15 @@ LADSPAPlugin::get_port_vals(ulong port_index, PortInfo* info)
 	LADSPA_Data upper = 0.0f;
 	LADSPA_Data lower = 0.0f;
 	LADSPA_Data normal = 0.0f;
-	LADSPA_PortRangeHintDescriptor hint_descriptor = m_descriptor->PortRangeHints[port_index].HintDescriptor;
+	LADSPA_PortRangeHintDescriptor hint_descriptor = _descriptor->PortRangeHints[port_index].HintDescriptor;
 
 	/* set upper and lower, possibly adjusted to the sample rate */
 	if (LADSPA_IS_HINT_SAMPLE_RATE(hint_descriptor)) {
-		upper = m_descriptor->PortRangeHints[port_index].UpperBound * m_srate;
-		lower = m_descriptor->PortRangeHints[port_index].LowerBound * m_srate;
+		upper = _descriptor->PortRangeHints[port_index].UpperBound * _srate;
+		lower = _descriptor->PortRangeHints[port_index].LowerBound * _srate;
 	} else {
-		upper = m_descriptor->PortRangeHints[port_index].UpperBound;
-		lower = m_descriptor->PortRangeHints[port_index].LowerBound;
+		upper = _descriptor->PortRangeHints[port_index].UpperBound;
+		lower = _descriptor->PortRangeHints[port_index].LowerBound;
 	}
 
 	if (LADSPA_IS_HINT_LOGARITHMIC(hint_descriptor)) {
@@ -268,7 +265,7 @@ LADSPAPlugin::get_port_vals(ulong port_index, PortInfo* info)
 	info->default_val(normal);
 	info->max_val(upper);
 }
-
+#endif
 
 } // namespace Om
 

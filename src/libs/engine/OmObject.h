@@ -45,10 +45,10 @@ class OmObject : public MaidObject
 {
 public:
 	OmObject(OmObject* parent, const string& name)
-	: m_parent(parent), m_name(name)
+	: _parent(parent), _name(name)
 	{
-		assert(parent == NULL || m_name.length() > 0);
-		assert(parent == NULL || m_name.find("/") == string::npos);
+		assert(parent == NULL || _name.length() > 0);
+		assert(parent == NULL || _name.find("/") == string::npos);
 		//assert(((string)path()).find("//") == string::npos);
 	}
 	
@@ -59,34 +59,34 @@ public:
 	virtual Node*  as_node()  { return NULL; }
 	virtual Port*  as_port()  { return NULL; }
 	
-	OmObject* parent() const { return m_parent; }
+	OmObject* parent() const { return _parent; }
 
-	inline const string& name() const { return m_name; }
+	inline const string& name() const { return _name; }
 	
 	virtual void set_path(const Path& new_path) {
-		m_name = new_path.name();
-		assert(m_name.find("/") == string::npos);
+		_name = new_path.name();
+		assert(_name.find("/") == string::npos);
 	}
 	
-	void          set_metadata(const string& key, const string& value) { m_metadata[key] = value; }
+	void          set_metadata(const string& key, const string& value) { _metadata[key] = value; }
 	const string& get_metadata(const string& key) {
 		static const string empty_string = "";
-		map<string, string>::iterator i = m_metadata.find(key);
-		if (i != m_metadata.end())
+		map<string, string>::iterator i = _metadata.find(key);
+		if (i != _metadata.end())
 			return (*i).second;
 		else
 			return empty_string;
 	}
 
-	const map<string, string>& metadata() const { return m_metadata; }
+	const map<string, string>& metadata() const { return _metadata; }
 
 	inline const Path path() const {
-		if (m_parent == NULL)
-			return Path(string("/").append(m_name));
-		else if (m_parent->path() == "/")
-			return Path(string("/").append(m_name));
+		if (_parent == NULL)
+			return Path(string("/").append(_name));
+		else if (_parent->path() == "/")
+			return Path(string("/").append(_name));
 		else
-			return Path(m_parent->path() +"/"+ m_name);
+			return Path(_parent->path() +"/"+ _name);
 	}
 
 	/** Patch and Node override this to recursively add their children. */
@@ -98,15 +98,15 @@ public:
 protected:
 	OmObject() {}
 	
-	OmObject* m_parent;
-	string    m_name;
+	OmObject* _parent;
+	string    _name;
 
 private:	
 	// Prevent copies (undefined)
 	OmObject(const OmObject&);
 	OmObject& operator=(const OmObject& copy);
 
-	map<string, string> m_metadata;
+	map<string, string> _metadata;
 };
 
 

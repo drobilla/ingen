@@ -51,11 +51,11 @@ public:
 	void note_off(uchar note_num, samplecount offset);
 
 private:
-	InputPort<MidiMessage>* m_midi_in_port;
-	InputPort<sample>*      m_note_port;
-	OutputPort<sample>*     m_gate_port;
-	OutputPort<sample>*     m_trig_port;
-	OutputPort<sample>*     m_vel_port;
+	InputPort<MidiMessage>* _midi_in_port;
+	InputPort<sample>*      _note_port;
+	OutputPort<sample>*     _gate_port;
+	OutputPort<sample>*     _trig_port;
+	OutputPort<sample>*     _vel_port;
 };
 
 

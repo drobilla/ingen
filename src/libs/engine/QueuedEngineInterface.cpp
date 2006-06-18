@@ -119,6 +119,15 @@ QueuedEngineInterface::create_patch(const string& path,
 }
 
 
+void QueuedEngineInterface::create_port(const string& path,
+                                        const string& data_type,
+                                        bool          direction)
+{
+	AddPortEvent* ev = new AddPortEvent(_responder, path, data_type, direction);
+	push(ev);
+}
+
+
 void
 QueuedEngineInterface::create_node(const string& path,
                                    const string& plugin_type,

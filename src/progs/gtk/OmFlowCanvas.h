@@ -52,16 +52,29 @@ public:
 	void show_menu(GdkEvent* event)
 	{ m_menu->popup(event->button.button, event->button.time); }
 	
+private:
+	void menu_add_port(const string& name, const string& type, bool is_output);
+	/*void menu_add_audio_input();
+	void menu_add_audio_output();
+	void menu_add_control_input();
+	void menu_add_control_output();
+	void menu_add_midi_input();
+	void menu_add_midi_output();*/
 	void menu_load_plugin();
 	void menu_new_patch();
 	void menu_load_patch();
 
-private:
 	PatchController* m_patch_controller;
 	int              m_last_click_x;
 	int              m_last_click_y;
 	
 	Gtk::Menu*      m_menu;
+	Gtk::MenuItem*  m_menu_add_audio_input;
+	Gtk::MenuItem*  m_menu_add_audio_output;
+	Gtk::MenuItem*  m_menu_add_control_input;
+	Gtk::MenuItem*  m_menu_add_control_output;
+	Gtk::MenuItem*  m_menu_add_midi_input;
+	Gtk::MenuItem*  m_menu_add_midi_output;
 	Gtk::MenuItem*  m_menu_load_plugin;
 	Gtk::MenuItem*  m_menu_load_patch;
 	Gtk::MenuItem*  m_menu_new_patch;

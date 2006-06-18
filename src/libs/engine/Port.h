@@ -21,13 +21,13 @@
 #include <string>
 #include "util/types.h"
 #include "OmObject.h"
+#include "DataType.h"
 
 using std::string;
 
 namespace Om {
 
 class Node;
-class PortInfo;
 
 
 /** A port on a Node.
@@ -45,9 +45,6 @@ public:
 
 	Port* as_port() { return this; }
 	
-	PortInfo* port_info() const       { return m_port_info; }
-	void      port_info(PortInfo* pi) { m_port_info = pi; }
-	
 	void add_to_store();
 	void remove_from_store();
 
@@ -57,21 +54,27 @@ public:
 	/** Empty buffer contents completely (ie silence) */
 	virtual void clear_buffers() = 0;
 	
-	Node*  parent_node() const { return m_parent->as_node(); }
-	bool   is_sample()   const { return false; }
-	size_t num()         const { return m_index; }
-	size_t poly()        const { return m_poly; }
+	virtual bool is_input()  const = 0;
+	virtual bool is_output() const = 0;
+
+	Node*    parent_node() const { return _parent->as_node(); }
+	bool     is_sample()   const { return false; }
+	size_t   num()         const { return _index; }
+	size_t   poly()        const { return _poly; }
+	DataType type()        const { return _type; }
+	size_t   buffer_size() const { return _buffer_size; }
 
 protected:
-	Port(Node* const node, const string& name, size_t index, size_t poly, PortInfo* port_info);
+	Port(Node* const node, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size);
 	
 	// Prevent copies (undefined)
 	Port(const Port&);
 	Port& operator=(const Port&);
 
-	size_t    m_index;
-	size_t    m_poly;
-	PortInfo* m_port_info;
+	size_t    _index;
+	size_t    _poly;
+	DataType  _type;
+	size_t    _buffer_size;
 };
 
 

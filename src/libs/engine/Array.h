@@ -46,10 +46,12 @@ public:
 	
 	Array(size_t size, const Array<T>* contents) : m_size(size), m_top(size+1) {
 		m_elems = new T[size];
-		if (size <= contents->size())
-			memcpy(m_elems, contents->m_elems, size * sizeof(T));
-		else
-			memcpy(m_elems, contents->m_elems, contents->size() * sizeof(T));
+		if (contents) {
+			if (size <= contents->size())
+				memcpy(m_elems, contents->m_elems, size * sizeof(T));
+			else
+				memcpy(m_elems, contents->m_elems, contents->size() * sizeof(T));
+		}
 	}
 
 	~Array() {

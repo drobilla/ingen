@@ -22,7 +22,6 @@
 #include "ClientBroadcaster.h"
 #include "interface/ClientInterface.h"
 #include "InputPort.h"
-#include "PortInfo.h"
 
 using namespace std;
 
@@ -31,28 +30,28 @@ namespace Om {
 
 DSSIPlugin::DSSIPlugin(const string& name, size_t poly, Patch* parent, DSSI_Descriptor* descriptor, samplerate srate, size_t buffer_size)
 : LADSPAPlugin(name, 1, parent, descriptor->LADSPA_Plugin, srate, buffer_size),
-  m_dssi_descriptor(descriptor),
-  m_ui_addr(NULL),
-  m_bank(-1),
-  m_program(-1),
-  m_midi_in_port(NULL),
-  m_alsa_events(new snd_seq_event_t[m_buffer_size]),
-  m_alsa_encoder(NULL)
+  _dssi_descriptor(descriptor),
+  _ui_addr(NULL),
+  _bank(-1),
+  _program(-1),
+  _midi_in_port(NULL),
+  _alsa_events(new snd_seq_event_t[_buffer_size]),
+  _alsa_encoder(NULL)
 {
 	if (has_midi_input())
-		m_num_ports = descriptor->LADSPA_Plugin->PortCount + 1;
+		_num_ports = descriptor->LADSPA_Plugin->PortCount + 1;
 	
-	snd_midi_event_new(3, &m_alsa_encoder);
+	snd_midi_event_new(3, &_alsa_encoder);
 }
 
 
 DSSIPlugin::~DSSIPlugin()
 {
-	if (m_ui_addr != NULL)
-		lo_address_free(m_ui_addr);
+	if (_ui_addr != NULL)
+		lo_address_free(_ui_addr);
 
-	snd_midi_event_free(m_alsa_encoder);
-	delete [] m_alsa_events;
+	snd_midi_event_free(_alsa_encoder);
+	delete [] _alsa_events;
 }
 
 
@@ -67,12 +66,11 @@ DSSIPlugin::instantiate()
 		return false;
 	
 	if (has_midi_input()) {
-		assert(m_num_ports == m_descriptor->PortCount + 1);
-		assert(m_ports.size() == m_descriptor->PortCount + 1);
+		assert(_num_ports == _descriptor->PortCount + 1);
+		assert(_ports->size() == _descriptor->PortCount + 1);
 
-		m_midi_in_port = new InputPort<MidiMessage>(this, "MIDI In", m_num_ports-1, 1,
-				new PortInfo("MIDI In", MIDI, INPUT), m_buffer_size);
-		m_ports.at(m_num_ports-1) = m_midi_in_port;
+		_midi_in_port = new InputPort<MidiMessage>(this, "MIDI In", _num_ports-1, 1, DataType::MIDI, _buffer_size);
+		_ports->at(_num_ports-1) = _midi_in_port;
 	}	
 	
 	return true;
@@ -87,38 +85,38 @@ DSSIPlugin::activate()
 	update_programs(false);
 	set_default_program();
 	
-	snd_midi_event_reset_encode(m_alsa_encoder);
+	snd_midi_event_reset_encode(_alsa_encoder);
 }
 
 
 void
 DSSIPlugin::set_ui_url(const string& url)
 {
-	if (m_ui_addr != NULL)
-		lo_address_free(m_ui_addr);
+	if (_ui_addr != NULL)
+		lo_address_free(_ui_addr);
 	
-	m_ui_url = url;
-	m_ui_addr = lo_address_new_from_url(url.c_str());
+	_ui_url = url;
+	_ui_addr = lo_address_new_from_url(url.c_str());
 	char* base_path = lo_url_get_path(url.c_str());
-	m_ui_base_path = base_path;
+	_ui_base_path = base_path;
 	free(base_path);
-	cerr << "Set UI base path to " << m_ui_base_path << endl;
+	cerr << "Set UI base path to " << _ui_base_path << endl;
 }
 
 
 void
 DSSIPlugin::set_control(size_t port_num, sample val)
 {
-	assert(port_num < m_descriptor->PortCount);
-	((PortBase<sample>*)m_ports.at(port_num))->set_value(val, 0);
+	assert(port_num < _descriptor->PortCount);
+	((PortBase<sample>*)_ports->at(port_num))->set_value(val, 0);
 }
 
 
 void
 DSSIPlugin::configure(const string& key, const string& val)
 {
-	m_dssi_descriptor->configure(m_instances[0], key.c_str(), val.c_str());
-	m_configures[key] = val;
+	_dssi_descriptor->configure(_instances[0], key.c_str(), val.c_str());
+	_configures[key] = val;
 	update_programs(true);
 }
 
@@ -126,11 +124,11 @@ DSSIPlugin::configure(const string& key, const string& val)
 void
 DSSIPlugin::program(int bank, int program)
 {
-	if (m_dssi_descriptor->select_program)
-		m_dssi_descriptor->select_program(m_instances[0], bank, program);
+	if (_dssi_descriptor->select_program)
+		_dssi_descriptor->select_program(_instances[0], bank, program);
 
-	m_bank = bank;
-	m_program = program;
+	_bank = bank;
+	_program = program;
 }
 
 
@@ -138,18 +136,18 @@ void
 DSSIPlugin::convert_events()
 {
 	assert(has_midi_input());
-	assert(m_midi_in_port != NULL);
+	assert(_midi_in_port != NULL);
 	
-	Buffer<MidiMessage>& buffer = *m_midi_in_port->buffer(0);
-	m_encoded_events = 0;
+	Buffer<MidiMessage>& buffer = *_midi_in_port->buffer(0);
+	_encoded_events = 0;
 
 	for (size_t i = 0; i < buffer.filled_size(); ++i) {
-		snd_midi_event_encode(m_alsa_encoder, buffer.value_at(i).buffer,
+		snd_midi_event_encode(_alsa_encoder, buffer.value_at(i).buffer,
 			buffer.value_at(i).size, 
-			&m_alsa_events[m_encoded_events]);
-		m_alsa_events[m_encoded_events].time.tick = buffer.value_at(i).time;
-		if (m_alsa_events[m_encoded_events].type != SND_SEQ_EVENT_NONE)
-			++m_encoded_events;
+			&_alsa_events[_encoded_events]);
+		_alsa_events[_encoded_events].time.tick = buffer.value_at(i).time;
+		if (_alsa_events[_encoded_events].type != SND_SEQ_EVENT_NONE)
+			++_encoded_events;
 	}
 }
 
@@ -157,7 +155,7 @@ DSSIPlugin::convert_events()
 bool
 DSSIPlugin::has_midi_input() const
 {
-	return (m_dssi_descriptor->run_synth || m_dssi_descriptor->run_multiple_synths);
+	return (_dssi_descriptor->run_synth || _dssi_descriptor->run_multiple_synths);
 }
 
 
@@ -166,16 +164,16 @@ DSSIPlugin::run(size_t nframes)
 {
 	NodeBase::run(nframes);
 
-	if (m_dssi_descriptor->run_synth) {
+	if (_dssi_descriptor->run_synth) {
 		convert_events();
-		m_dssi_descriptor->run_synth(m_instances[0], nframes,
-					     m_alsa_events, m_encoded_events);
-	} else if (m_dssi_descriptor->run_multiple_synths) {
+		_dssi_descriptor->run_synth(_instances[0], nframes,
+					     _alsa_events, _encoded_events);
+	} else if (_dssi_descriptor->run_multiple_synths) {
 		convert_events();
 		// I hate this stupid function
-		snd_seq_event_t* events[1]       = { m_alsa_events };
-		long unsigned    events_sizes[1] = { m_encoded_events };
-		m_dssi_descriptor->run_multiple_synths(1, m_instances, nframes,
+		snd_seq_event_t* events[1]       = { _alsa_events };
+		long unsigned    events_sizes[1] = { _encoded_events };
+		_dssi_descriptor->run_multiple_synths(1, _instances, nframes,
 			events, events_sizes);
 	} else {
 		LADSPAPlugin::run(nframes);
@@ -186,48 +184,48 @@ DSSIPlugin::run(size_t nframes)
 void
 DSSIPlugin::send_control(int port_num, float value)
 {
-	string path = m_ui_base_path + "/control";
-	lo_send(m_ui_addr, path.c_str(), "if", port_num, value);
+	string path = _ui_base_path + "/control";
+	lo_send(_ui_addr, path.c_str(), "if", port_num, value);
 }
 
 
 void
 DSSIPlugin::send_program(int bank, int value)
 {
-	string path = m_ui_base_path + "/program";
-	lo_send(m_ui_addr, path.c_str(), "ii", bank, value);
+	string path = _ui_base_path + "/program";
+	lo_send(_ui_addr, path.c_str(), "ii", bank, value);
 }
 
 
 void
 DSSIPlugin::send_configure(const string& key, const string& val)
 {
-	string path = m_ui_base_path + "/configure";
-	lo_send(m_ui_addr, path.c_str(), "ss", key.c_str(), val.c_str());
+	string path = _ui_base_path + "/configure";
+	lo_send(_ui_addr, path.c_str(), "ss", key.c_str(), val.c_str());
 }
 
 	
 void
 DSSIPlugin::send_show()
 {
-	string path = m_ui_base_path + "/show";
-	lo_send(m_ui_addr, path.c_str(), NULL);
+	string path = _ui_base_path + "/show";
+	lo_send(_ui_addr, path.c_str(), NULL);
 }
 
 
 void
 DSSIPlugin::send_hide()
 {
-	string path = m_ui_base_path + "/hide";
-	lo_send(m_ui_addr, path.c_str(), NULL);
+	string path = _ui_base_path + "/hide";
+	lo_send(_ui_addr, path.c_str(), NULL);
 }
 
 
 void
 DSSIPlugin::send_quit()
 {
-	string path = m_ui_base_path + "/quit";
-	lo_send(m_ui_addr, path.c_str(), NULL);
+	string path = _ui_base_path + "/quit";
+	lo_send(_ui_addr, path.c_str(), NULL);
 }
 
 
@@ -235,16 +233,16 @@ void
 DSSIPlugin::send_update()
 {
 	// send "configure"s
-	for (map<string, string>::iterator i = m_configures.begin(); i != m_configures.end(); ++i)
+	for (map<string, string>::iterator i = _configures.begin(); i != _configures.end(); ++i)
 		send_configure((*i).first, (*i).second);
 
 	// send "program"
-	send_program(m_bank, m_program);
+	send_program(_bank, _program);
 
 	// send "control"s
-	for (size_t i=0; i < m_ports.size(); ++i)
-		if (m_ports[i]->port_info()->is_control())
-			send_control(m_ports[i]->num(), ((PortBase<sample>*)m_ports[i])->buffer(0)->value_at(0));
+	for (size_t i=0; i < _ports->size(); ++i)
+		if (_ports->at(i)->type() == DataType::FLOAT && _ports->at(i)->buffer_size() == 1)
+			send_control(_ports->at(i)->num(), ((PortBase<sample>*)_ports->at(i))->buffer(0)->value_at(0));
 
 	// send "show" FIXME: not to spec
 	send_show();
@@ -258,25 +256,25 @@ DSSIPlugin::update_programs(bool send_events)
 	set<pair<int, int> > to_be_deleted;
 	map<int, Bank>::const_iterator iter;
 	Bank::const_iterator iter2;
-	for (iter = m_banks.begin(); iter != m_banks.end(); ++iter) {
+	for (iter = _banks.begin(); iter != _banks.end(); ++iter) {
 	  for (iter2 = iter->second.begin(); iter2 != iter->second.end(); ++iter2) {
 	  	to_be_deleted.insert(make_pair(iter->first, iter2->first));
 	  }
 	}
   
 	// iterate over all programs
-	if (m_dssi_descriptor->get_program) {
+	if (_dssi_descriptor->get_program) {
 		for (int i = 0; true; ++i) {
 			const DSSI_Program_Descriptor* descriptor =
-			  m_dssi_descriptor->get_program(m_instances[0], i);
+			  _dssi_descriptor->get_program(_instances[0], i);
 			if (!descriptor)
 			  break;
 			
-			iter = m_banks.find(descriptor->Bank);
-			if (iter == m_banks.end() || 
+			iter = _banks.find(descriptor->Bank);
+			if (iter == _banks.end() || 
 			    iter->second.find(descriptor->Program) == iter->second.end() ||
 			    iter->second.find(descriptor->Program)->second != descriptor->Name) {
-				m_banks[descriptor->Bank][descriptor->Program] = descriptor->Name;
+				_banks[descriptor->Bank][descriptor->Program] = descriptor->Name;
 				if (send_events) {
 					om->client_broadcaster()->send_program_add(path(), descriptor->Bank,
 									   descriptor->Program, 
@@ -291,11 +289,11 @@ DSSIPlugin::update_programs(bool send_events)
 	set<pair<int, int> >::const_iterator set_iter;
 	for (set_iter = to_be_deleted.begin(); 
 	     set_iter != to_be_deleted.end(); ++set_iter) {
-		m_banks[set_iter->first].erase(set_iter->second);
+		_banks[set_iter->first].erase(set_iter->second);
 		if (send_events)
 			om->client_broadcaster()->send_program_remove(path(), set_iter->first, set_iter->second);
-		if (m_banks[set_iter->first].size() == 0)
-			m_banks.erase(set_iter->first);
+		if (_banks[set_iter->first].size() == 0)
+			_banks.erase(set_iter->first);
 	}
 	
 	return true;
@@ -305,8 +303,8 @@ DSSIPlugin::update_programs(bool send_events)
 void
 DSSIPlugin::set_default_program()
 {
-	map<int, Bank>::const_iterator iter = m_banks.begin();
-	if (iter != m_banks.end()) {
+	map<int, Bank>::const_iterator iter = _banks.begin();
+	if (iter != _banks.end()) {
 		Bank::const_iterator iter2 = iter->second.begin();
 		if (iter2 != iter->second.end())
 			program(iter->first, iter2->first);
@@ -317,7 +315,7 @@ DSSIPlugin::set_default_program()
 const map<int, DSSIPlugin::Bank>&
 DSSIPlugin::get_programs() const
 {
-	return m_banks;
+	return _banks;
 }
 
 

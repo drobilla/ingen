@@ -28,6 +28,7 @@
 #include "SetPortValueQueuedEvent.h"
 #include "ConnectionEvent.h"
 #include "DisconnectionEvent.h"
+#include "AddPortEvent.h"
 #include "AddNodeEvent.h"
 #include "CreatePatchEvent.h"
 #include "DestroyEvent.h"

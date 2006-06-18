@@ -42,10 +42,13 @@ template <typename T>
 class OutputPort : public PortBase<T>
 {
 public:
-	OutputPort(Node* node, const string& name, size_t index, size_t poly, PortInfo* port_info, size_t buffer_size);
+	OutputPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size);
 	virtual ~OutputPort() {}
 
 	void set_tied_port(InputPort<T>* port);
+	
+	bool is_input()  const { return false; }
+	bool is_output() const { return true; }
 
 private:
 	// Prevent copies (undefined)

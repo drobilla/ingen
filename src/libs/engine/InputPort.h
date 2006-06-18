@@ -47,11 +47,13 @@ template <typename T>
 class InputPort : public PortBase<T>
 {
 public:
-	InputPort(Node* node, const string& name, size_t index, size_t poly, PortInfo* port_info, size_t buffer_size);
+	InputPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size);
 	virtual ~InputPort() {}
 	
 	void                          add_connection(ListNode<ConnectionBase<T>*>* const c);
 	ListNode<ConnectionBase<T>*>* remove_connection(const OutputPort<T>* const src_port);
+
+	const List<ConnectionBase<T>*>& connections() { return m_connections; }
 
 	void prepare_buffers(size_t nframes);
 	
@@ -59,6 +61,9 @@ public:
 
 	bool is_connected() const { return (m_connections.size() > 0); }
 	bool is_connected_to(const OutputPort<T>* const port) const;
+	
+	bool is_input()  const { return true; }
+	bool is_output() const { return false; }
 	
 private:
 	// Prevent copies (Undefined)
@@ -73,9 +78,9 @@ private:
 	using PortBase<T>::m_is_tied;
 	using PortBase<T>::m_tied_port;
 	using PortBase<T>::m_buffers;
-	using PortBase<T>::m_poly;
-	using PortBase<T>::m_index;
-	using PortBase<T>::m_buffer_size;
+	using PortBase<T>::_poly;
+	using PortBase<T>::_index;
+	using PortBase<T>::_buffer_size;
 	using PortBase<T>::m_fixed_buffers;
 };
 

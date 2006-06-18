@@ -22,6 +22,7 @@
 #include "NodeBase.h"
 #include "Plugin.h"
 #include "List.h"
+#include "DataType.h"
 
 using std::string;
 
@@ -71,31 +72,37 @@ public:
 	void             add_node(ListNode<Node*>* tn);
 	ListNode<Node*>* remove_node(const string& name);
 
-	List<Node*>&       nodes()       { return m_nodes; }
-	List<Connection*>& connections() { return m_connections; }
+	List<Node*>&       nodes()       { return _nodes; }
+	List<Connection*>& connections() { return _connections; }
 	
-	const List<Node*>&       nodes()       const { return m_nodes; }
-	const List<Connection*>& connections() const { return m_connections; }
+	const List<Node*>&       nodes()       const { return _nodes; }
+	const List<Connection*>& connections() const { return _connections; }
 	
-	void                     add_bridge_node(ListNode<InternalNode*>* n) { m_bridge_nodes.push_back(n); }
-	ListNode<InternalNode*>* remove_bridge_node(const InternalNode* n);
+	//void                     add_bridge_node(ListNode<InternalNode*>* n) { _bridge_nodes.push_back(n); }
+	//ListNode<InternalNode*>* remove_bridge_node(const InternalNode* n);
+	Port*            create_port(const string& name, DataType type, size_t buffer_size, bool is_output);
+	void             add_port(ListNode<Port*>* port) { _patch_ports.push_back(port); }
+	ListNode<Port*>* remove_port(const Port* p);
 	
-	void                   add_connection(ListNode<Connection*>* c) { m_connections.push_back(c); }
+	void                   add_connection(ListNode<Connection*>* c) { _connections.push_back(c); }
 	ListNode<Connection*>* remove_connection(const Port* src_port, const Port* dst_port);
 	
-	Array<Node*>* process_order()                 { return m_process_order; }
-	void          process_order(Array<Node*>* po) { m_process_order = po; }
+	Array<Node*>* process_order()                 { return _process_order; }
+	void          process_order(Array<Node*>* po) { _process_order = po; }
+	
+	Array<Port*>* external_ports()                 { return _ports; }
+	void          external_ports(Array<Port*>* pa) { _ports = pa; }
 
 	Array<Node*>* build_process_order() const;
 	inline void   build_process_order_recursive(Node* n, Array<Node*>* order) const;
 	
 	/** Whether to run this patch's DSP in the audio thread */
-	bool process() const { return m_process; }
-	void process(bool b);
+	bool process() const { return _process; }
+	void process(bool p);
 
-	size_t internal_poly() const { return m_internal_poly; }
+	size_t internal_poly() const { return _internal_poly; }
 	
-	const Plugin* plugin() const              { return &m_plugin; }
+	const Plugin* plugin() const              { return &_plugin; }
 	void          plugin(const Plugin* const) { exit(EXIT_FAILURE); }
 
 private:
@@ -103,14 +110,14 @@ private:
 	Patch(const Patch&);
 	Patch& operator=(const Patch&);
 
-	size_t              m_internal_poly;
-	Array<Node*>*       m_process_order;
-	List<Connection*>   m_connections;
-	List<InternalNode*> m_bridge_nodes;  ///< Inputs and outputs
-	List<Node*>         m_nodes;
-	bool                m_process;
+	size_t             _internal_poly;
+	Array<Node*>*      _process_order; ///< Accessed in audio thread only
+	List<Connection*>  _connections;   ///< Accessed in audio thread only
+	List<Port*>        _patch_ports;   ///< Accessed in preprocessing thread only
+	List<Node*>        _nodes;         ///< Accessed in preprocessing thread only
+	bool               _process;
 
-	Plugin m_plugin;
+	Plugin _plugin;
 };
 
 

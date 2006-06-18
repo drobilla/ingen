@@ -25,8 +25,6 @@
 
 namespace Om {
 
-class PortInfo;
-
 
 /** An instance of a LV2 plugin.
  *
@@ -53,20 +51,20 @@ public:
 	
 	void set_port_buffer(size_t voice, size_t port_num, void* buf);
 
-	const Plugin* plugin() const       { return m_om_plugin; }
-	void plugin(const Plugin* const p) { m_om_plugin = p; }
+	const Plugin* plugin() const       { return _om_plugin; }
+	void plugin(const Plugin* const p) { _om_plugin = p; }
 	
 protected:
 	// Prevent copies (undefined)
 	LV2Plugin(const LV2Plugin& copy);
 	LV2Plugin& operator=(const LV2Plugin&);
 
-	void get_port_vals(ulong port_index, PortInfo* info);
+	//void get_port_vals(ulong port_index, PortInfo* info);
 	
-	const SLV2Plugin* m_lv2_plugin;
-	SLV2Instance**    m_instances;
+	const SLV2Plugin* _lv2_plugin;
+	SLV2Instance**    _instances;
 
-	const Plugin* m_om_plugin;
+	const Plugin* _om_plugin;
 };
 
 

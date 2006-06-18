@@ -35,24 +35,24 @@ class InternalNode : public NodeBase
 public:
 	InternalNode(const string& path, size_t poly, Patch* parent, samplerate srate, size_t buffer_size)
 	: NodeBase(path, poly, parent, srate, buffer_size),
-	  m_is_added(false)
+	  _is_added(false)
 	{
-		m_plugin.lib_path("/Om");
+		_plugin.lib_path("/Om");
 	}
 	
 	virtual ~InternalNode() {}
 
-	virtual void deactivate() { if (m_is_added) remove_from_patch(); NodeBase::deactivate(); }
+	virtual void deactivate() { if (_is_added) remove_from_patch(); NodeBase::deactivate(); }
 	
 	virtual void run(size_t nframes) { NodeBase::run(nframes); }
 
-	virtual void add_to_patch()      { assert(!m_is_added); m_is_added = true; }
-	virtual void remove_from_patch() { assert(m_is_added); m_is_added = false; }
+	virtual void add_to_patch()      { assert(!_is_added); _is_added = true; }
+	virtual void remove_from_patch() { assert(_is_added); _is_added = false; }
 
 	//virtual void send_creation_messages(ClientInterface* client) const
 	//{ NodeBase::send_creation_messages(client); }
 	
-	virtual const Plugin* plugin() const              { return &m_plugin; }
+	virtual const Plugin* plugin() const              { return &_plugin; }
 	virtual void          plugin(const Plugin* const) { exit(EXIT_FAILURE); }
 
 protected:
@@ -60,8 +60,8 @@ protected:
 	InternalNode(const InternalNode&);
 	InternalNode& operator=(const InternalNode&);
 	
-	Plugin m_plugin;
-	bool   m_is_added;
+	Plugin _plugin;
+	bool   _is_added;
 };
 
 

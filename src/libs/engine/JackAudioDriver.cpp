@@ -30,7 +30,6 @@
 #include "Node.h"
 #include "Patch.h"
 #include "Port.h"
-#include "PortInfo.h"
 #include "MidiDriver.h"
 #include "List.h"
 #include "PortBase.h"
@@ -59,7 +58,7 @@ JackAudioPort::JackAudioPort(JackAudioDriver* driver, PortBase<sample>* patch_po
 
 	m_jack_port = jack_port_register(m_driver->jack_client(),
 		patch_port->path().c_str(), JACK_DEFAULT_AUDIO_TYPE,
-		(patch_port->port_info()->is_input()) ? JackPortIsInput : JackPortIsOutput,
+		(patch_port->is_input()) ? JackPortIsInput : JackPortIsOutput,
 		0);
 
 	m_jack_buffer = new DriverBuffer<jack_sample_t>(driver->buffer_size());

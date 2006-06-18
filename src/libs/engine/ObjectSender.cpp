@@ -22,7 +22,6 @@
 #include "Patch.h"
 #include "Node.h"
 #include "Port.h"
-#include "PortInfo.h"
 #include "PortBase.h"
 #include "Connection.h"
 #include "NodeFactory.h"
@@ -60,7 +59,7 @@ ObjectSender::send_patch(ClientInterface* client, const Patch* patch)
 		client->connection((*j)->src_port()->path(), (*j)->dst_port()->path());
 	
 	// Send port information
-	for (size_t i=0; i < patch->ports().size(); ++i) {
+	for (size_t i=0; i < patch->num_ports(); ++i) {
 		Port* const port = patch->ports().at(i);
 
 		// Send metadata
@@ -68,7 +67,8 @@ ObjectSender::send_patch(ClientInterface* client, const Patch* patch)
 		for (map<string, string>::const_iterator i = data.begin(); i != data.end(); ++i)
 			client->metadata_update(port->path(), (*i).first, (*i).second);
 		
-		if (port->port_info()->is_control())
+		// Control port, send value
+		if (port->type() == DataType::FLOAT && port->buffer_size() == 1)
 			client->control_change(port->path(), ((PortBase<sample>*)port)->buffer(0)->value_at(0));
 	}
 	
@@ -89,6 +89,8 @@ ObjectSender::send_node(ClientInterface* client, const Node* node)
 	// FIXME: hack, these nodes probably shouldn't even exist in the
 	// engine anymore
 	if (const_cast<Node*>(node)->as_port()) { // bridge node if as_port() returns non-NULL
+		// FIXME: remove this whole thing.  shouldn't be any bridge nodes anymore
+		assert(false);
 		send_port(client, const_cast<Node*>(node)->as_port());
 		return;
 	}
@@ -124,13 +126,11 @@ ObjectSender::send_node(ClientInterface* client, const Node* node)
 	
 	// Send ports
 	for (size_t j=0; j < ports.size(); ++j) {
-		Port* const     port = ports.at(j);
-		PortInfo* const info = port->port_info();
-
+		Port* const port = ports.at(j);
 		assert(port);
-		assert(info);
 		
-		client->new_port(port->path(), info->type_string(), info->is_output());
+		send_port(client, port);
+		//client->new_port(port->path(), port->type().uri(), port->is_output());
 	}
 
 	client->bundle_end();
@@ -145,9 +145,18 @@ ObjectSender::send_node(ClientInterface* client, const Node* node)
 void
 ObjectSender::send_port(ClientInterface* client, const Port* port)
 {
-	PortInfo* info = port->port_info();
-	
-	client->new_port(port->path(), info->type_string(), info->is_output());
+	assert(port);
+
+	// FIXME: temporary compatibility hack
+	string type = port->type().uri();
+	if (port->type() == DataType::FLOAT) {
+		if (port->buffer_size() == 1) 
+			type = "CONTROL";
+		else
+			type = "AUDIO";
+	}
+		
+	client->new_port(port->path(), type, port->is_output());
 	
 	// Send metadata
 	const map<string, string>& data = port->metadata();
