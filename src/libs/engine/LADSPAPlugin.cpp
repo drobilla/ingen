@@ -39,10 +39,6 @@ LADSPAPlugin::LADSPAPlugin(const string& path, size_t poly, Patch* parent, const
   _instances(NULL)
 {
 	assert(_descriptor != NULL);
-	
-	// Note that this may be changed by an overriding DSSIPlugin
-	// ie do not assume _ports is all LADSPA plugin ports
-	_num_ports = _descriptor->PortCount;	
 }
 
 
@@ -57,7 +53,9 @@ LADSPAPlugin::LADSPAPlugin(const string& path, size_t poly, Patch* parent, const
 bool
 LADSPAPlugin::instantiate()
 {
-	_ports = new Array<Port*>(_num_ports);
+	// Note that a DSSI plugin might tack more on to the end of this
+	if (!_ports)
+		_ports = new Array<Port*>(_descriptor->PortCount);
 	
 	_instances = new LADSPA_Handle[_poly];
 	
