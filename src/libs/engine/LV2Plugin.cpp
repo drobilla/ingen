@@ -43,10 +43,6 @@ LV2Plugin::LV2Plugin(const string&      name,
   _instances(NULL)
 {
 	assert(_lv2_plugin);
-	
-	// Note that this may be changed by an overriding DSSIPlugin
-	// ie do not assume _ports is all LV2 plugin ports
-	_num_ports = slv2_plugin_get_num_ports(_lv2_plugin);
 }
 
 
@@ -61,7 +57,9 @@ LV2Plugin::LV2Plugin(const string&      name,
 bool
 LV2Plugin::instantiate()
 {
-	_ports->alloc(_num_ports);
+	size_t num_ports = slv2_plugin_get_num_ports(_lv2_plugin);
+	assert(num_ports > 0);
+	_ports->alloc(num_ports);
 	
 	_instances = new SLV2Instance*[_poly];
 	
@@ -80,7 +78,7 @@ LV2Plugin::instantiate()
 	
 	Port* port = NULL;
 	
-	for (size_t j=0; j < _num_ports; ++j) {
+	for (size_t j=0; j < num_ports; ++j) {
 		// LV2 shortnames are guaranteed to be unique, valid C identifiers
 		port_name = (char*)slv2_port_get_symbol(_lv2_plugin, j);
 	
@@ -141,7 +139,7 @@ LV2Plugin::activate()
 	PortBase<sample>* port = NULL;
 	
 	for (size_t i=0; i < _poly; ++i) {
-		for (unsigned long j=0; j < _num_ports; ++j) {
+		for (unsigned long j=0; j < num_ports(); ++j) {
 			port = static_cast<PortBase<sample>*>(_ports->at(j));
 			set_port_buffer(i, j, ((PortBase<sample>*)_ports->at(j))->buffer(i)->data());
 			if (port->type() == DataType::FLOAT && port->buffer_size() == 1)
@@ -179,7 +177,7 @@ LV2Plugin::set_port_buffer(size_t voice, size_t port_num, void* buf)
 	assert(voice < _poly);
 	
 	// Could be a MIDI port after this
-	if (port_num < _num_ports) {
+	if (port_num < num_ports()) {
 		slv2_instance_connect_port(_instances[voice], port_num, buf);
 	}
 }
