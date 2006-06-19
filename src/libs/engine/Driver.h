@@ -22,7 +22,7 @@ using std::string;
 
 namespace Om {
 
-template <typename T> class TypedPort;
+template <typename T> class DuplexPort;
 
 
 /** Representation of a system (outside Om, ie hardware) audio port.
@@ -77,7 +77,7 @@ public:
 	 *
 	 * May return NULL if the Driver can not drive the port for some reason.
 	 */
-	virtual DriverPort* create_port(TypedPort<T>* patch_port) = 0;
+	virtual DriverPort* create_port(DuplexPort<T>* patch_port) = 0;
 };
 
 

@@ -19,7 +19,7 @@
 #include "Responder.h"
 #include "Om.h"
 #include "OmApp.h"
-#include "ConnectionBase.h"
+#include "TypedConnection.h"
 #include "InputPort.h"
 #include "OutputPort.h"
 #include "Patch.h"
@@ -58,7 +58,9 @@ ConnectionEvent::~ConnectionEvent()
 void
 ConnectionEvent::pre_process()
 {
-	if (m_src_port_path.parent().parent() != m_dst_port_path.parent().parent()) {
+	if (m_src_port_path.parent().parent() != m_dst_port_path.parent().parent()
+			&& m_src_port_path.parent() != m_dst_port_path.parent().parent()
+			&& m_src_port_path.parent().parent() != m_dst_port_path.parent()) {
 		m_error = PARENT_PATCH_DIFFERENT;
 		QueuedEvent::pre_process();
 		return;
@@ -72,22 +74,22 @@ ConnectionEvent::pre_process()
 		return;
 	}*/
 	
-	Port* port1 = om->object_store()->find_port(m_src_port_path);
-	Port* port2 = om->object_store()->find_port(m_dst_port_path);
+	m_src_port = om->object_store()->find_port(m_src_port_path);
+	m_dst_port = om->object_store()->find_port(m_dst_port_path);
 	
-	if (port1 == NULL || port2 == NULL) {
+	if (m_src_port == NULL || m_dst_port == NULL) {
 		m_error = PORT_NOT_FOUND;
 		QueuedEvent::pre_process();
 		return;
 	}
 
-	if (port1->type() != port2->type()) {
+	if (m_src_port->type() != m_dst_port->type() || m_src_port->buffer_size() != m_dst_port->buffer_size()) {
 		m_error = TYPE_MISMATCH;
 		QueuedEvent::pre_process();
 		return;
 	}
 	
-	if (port1->is_output() && port2->is_input()) {
+	/*if (port1->is_output() && port2->is_input()) {
 		m_src_port = port1;
 		m_dst_port = port2;
 	} else if (port2->is_output() && port1->is_input()) {
@@ -97,16 +99,16 @@ ConnectionEvent::pre_process()
 		m_error = TYPE_MISMATCH;
 		QueuedEvent::pre_process();
 		return;
-	}
+	}*/
 	
 	// Create the typed event to actually do the work
-	const DataType type = port1->type();
+	const DataType type = m_src_port->type();
 	if (type == DataType::FLOAT) {
 		m_typed_event = new TypedConnectionEvent<sample>(m_responder,
-			(OutputPort<sample>*)m_src_port, (InputPort<sample>*)m_dst_port);
+			dynamic_cast<OutputPort<sample>*>(m_src_port), dynamic_cast<InputPort<sample>*>(m_dst_port));
 	} else if (type == DataType::MIDI) {
 		m_typed_event = new TypedConnectionEvent<MidiMessage>(m_responder,
-			(OutputPort<MidiMessage>*)m_src_port, (InputPort<MidiMessage>*)m_dst_port);
+			dynamic_cast<OutputPort<MidiMessage>*>(m_src_port), dynamic_cast<InputPort<MidiMessage>*>(m_dst_port));
 	} else {
 		m_error = TYPE_MISMATCH;
 		QueuedEvent::pre_process();
@@ -177,23 +179,37 @@ TypedConnectionEvent<T>::pre_process()
 {
 	Node* const src_node = m_src_port->parent_node();
 	Node* const dst_node = m_dst_port->parent_node();
-	
-	m_patch = src_node->parent_patch();
+
+	if (src_node->parent_patch() != dst_node->parent_patch()) {
+		// Connection to a patch port from inside the patch
+		assert(src_node->parent() == dst_node || dst_node->parent() == src_node);
+		if (src_node->parent() == dst_node)
+			m_patch = dynamic_cast<Patch*>(dst_node);
+		else
+			m_patch = dynamic_cast<Patch*>(src_node);
+	} else {
+		// Normal connection between nodes with the same parent
+		m_patch = src_node->parent_patch();
+	}
+
+	assert(m_patch);
 
 	if (src_node == NULL || dst_node == NULL) {
+		cerr << "ERR 1\n";
 		m_succeeded = false;
 		QueuedEvent::pre_process();
 		return;
 	}
 	
-	if (src_node->parent() != m_patch || dst_node->parent() != m_patch) {
+	if (src_node->parent() != m_patch && dst_node->parent() != m_patch) {
+		cerr << "ERR 2\n";
 		m_succeeded = false;
 		QueuedEvent::pre_process();
 		return;
 	}
 
-	m_connection = new ConnectionBase<T>(m_src_port, m_dst_port);
-	m_port_listnode = new ListNode<ConnectionBase<T>*>(m_connection);
+	m_connection = new TypedConnection<T>(m_src_port, m_dst_port);
+	m_port_listnode = new ListNode<TypedConnection<T>*>(m_connection);
 	m_patch_listnode = new ListNode<Connection*>(m_connection);
 	
 	dst_node->providers()->push_back(new ListNode<Node*>(src_node));

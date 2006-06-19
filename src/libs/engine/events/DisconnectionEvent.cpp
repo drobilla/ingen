@@ -19,7 +19,7 @@
 #include "Responder.h"
 #include "Om.h"
 #include "OmApp.h"
-#include "ConnectionBase.h"
+#include "TypedConnection.h"
 #include "InputPort.h"
 #include "OutputPort.h"
 #include "Patch.h"
@@ -124,10 +124,10 @@ DisconnectionEvent::pre_process()
 	const DataType type = m_src_port->type();
 	if (type == DataType::FLOAT) {
 		m_typed_event = new TypedDisconnectionEvent<sample>(m_responder,
-			(OutputPort<sample>*)m_src_port, (InputPort<sample>*)m_dst_port);
+			dynamic_cast<OutputPort<sample>*>(m_src_port), dynamic_cast<InputPort<sample>*>(m_dst_port));
 	} else if (type == DataType::MIDI) {
 		m_typed_event = new TypedDisconnectionEvent<MidiMessage>(m_responder,
-			(OutputPort<MidiMessage>*)m_src_port, (InputPort<MidiMessage>*)m_dst_port);
+			dynamic_cast<OutputPort<MidiMessage>*>(m_src_port), dynamic_cast<InputPort<MidiMessage>*>(m_dst_port));
 	} else {
 		m_error = TYPE_MISMATCH;
 		QueuedEvent::pre_process();
@@ -250,7 +250,7 @@ TypedDisconnectionEvent<T>::execute(samplecount offset)
 {
 	if (m_succeeded) {
 
-		ListNode<ConnectionBase<T>*>* const port_connection
+		ListNode<TypedConnection<T>*>* const port_connection
 			= m_dst_port->remove_connection(m_src_port);
 		
 		if (port_connection != NULL) {

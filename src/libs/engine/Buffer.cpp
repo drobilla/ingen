@@ -39,6 +39,7 @@ Buffer<T>::Buffer(size_t size)
 {
 	assert(m_size > 0);
 	allocate();
+	assert(m_data);
 }
 template Buffer<sample>::Buffer(size_t size);
 template Buffer<MidiMessage>::Buffer(size_t size);

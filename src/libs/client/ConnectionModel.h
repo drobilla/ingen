@@ -55,7 +55,7 @@ public:
 	
 	const Path& src_port_path() const;
 	const Path& dst_port_path() const;
-	const Path  patch_path()    const { return src_port_path().parent().parent(); }
+	const Path  patch_path()    const;
 	
 private:
 	Path m_src_port_path;  ///< Only used if m_src_port == NULL

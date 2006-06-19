@@ -311,24 +311,22 @@ Store::metadata_update_event(const string& subject_path, const string& predicate
 
 
 void
-Store::connection_event(const string& src_port_path, const string& dst_port_path)
+Store::connection_event(const Path& src_port_path, const Path& dst_port_path)
 {
-	const Path& src = src_port_path;
-	const Path& dst = dst_port_path;
+	// ConnectionModel has the clever patch-path-figuring-out stuff in it, so
+	// just make one right away to get at that
+	ConnectionModel* cm = new ConnectionModel(src_port_path, dst_port_path);
 
-	assert(src.parent().parent() == dst.parent().parent());
-	const Path& patch_path = src.parent().parent();
-
-	CountedPtr<PatchModel> patch = this->patch(patch_path);
+	CountedPtr<PatchModel> patch = this->patch(cm->patch_path());
 	if (patch)
-		patch->add_connection(new ConnectionModel(src, dst));
+		patch->add_connection(cm);
 	else
 		cerr << "ERROR: connection in nonexistant patch" << endl;
 }
 
 
 void
-Store::disconnection_event(const string& src_port_path, const string& dst_port_path)
+Store::disconnection_event(const Path& src_port_path, const Path& dst_port_path)
 {
 	const Path& src = src_port_path;
 	const Path& dst = dst_port_path;

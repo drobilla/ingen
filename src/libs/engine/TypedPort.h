@@ -14,8 +14,8 @@
  * 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef PORTBASE_H
-#define PORTBASE_H
+#ifndef TYPEDPORT_H
+#define TYPEDPORT_H
 
 #include <string>
 #include "types.h"
@@ -52,8 +52,8 @@ public:
 	virtual void prepare_buffers(size_t nframes);
 	virtual void clear_buffers();
 	
-	TypedPort* tied_port() const { return m_tied_port; }
-	void      untie()           { m_is_tied = false; m_tied_port = NULL; } 
+	//TypedPort* tied_port() const { return m_tied_port; }
+	//void      untie()           { m_is_tied = false; m_tied_port = NULL; } 
 	
 	/** Used by drivers to prevent port from changing buffers */
 	void fixed_buffers(bool b) { m_fixed_buffers = b; }
@@ -68,9 +68,9 @@ protected:
 
 	void allocate_buffers();
 
-	bool        m_fixed_buffers;
-	bool        m_is_tied;
-	TypedPort*   m_tied_port;
+	bool         m_fixed_buffers;
+	//bool         m_is_tied;
+	//TypedPort*   m_tied_port;
 	
 	Array<Buffer<T>*> m_buffers;
 };
@@ -81,4 +81,4 @@ template class TypedPort<MidiMessage>;
 
 } // namespace Om
 
-#endif // PORTBASE_H
+#endif // TYPEDPORT_H

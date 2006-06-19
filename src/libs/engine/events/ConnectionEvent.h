@@ -33,7 +33,7 @@ class Node;
 class Connection;
 class MidiMessage;
 class Port;
-template <typename T> class ConnectionBase;
+template <typename T> class TypedConnection;
 template <typename T> class InputPort;
 template <typename T> class OutputPort;
 template <typename T> class TypedConnectionEvent; // helper, defined below
@@ -93,9 +93,9 @@ private:
 
 	Patch*                         m_patch;
 	Array<Node*>*                  m_process_order; ///< New process order for Patch
-	ConnectionBase<T>*             m_connection;
+	TypedConnection<T>*            m_connection;
 	ListNode<Connection*>*         m_patch_listnode;
-	ListNode<ConnectionBase<T>*>*  m_port_listnode;
+	ListNode<TypedConnection<T>*>* m_port_listnode;
 	
 	bool m_succeeded;
 };

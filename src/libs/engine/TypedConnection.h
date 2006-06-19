@@ -14,8 +14,8 @@
  * 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef CONNECTIONBASE_H
-#define CONNECTIONBASE_H
+#ifndef TYPEDCONNECTION_H
+#define TYPEDCONNECTION_H
 
 #include "types.h"
 #include "OutputPort.h"
@@ -33,23 +33,23 @@ template <typename T> class InputPort;
  * \ingroup engine
  */
 template <typename T>
-class ConnectionBase : public Connection
+class TypedConnection : public Connection
 {
 public:
-	ConnectionBase(OutputPort<T>* const src_port, InputPort<T>* const dst_port);
-	virtual ~ConnectionBase();
+	TypedConnection(OutputPort<T>* const src_port, InputPort<T>* const dst_port);
+	virtual ~TypedConnection();
 
 	void prepare_buffers();
 
-	inline OutputPort<T>* src_port() const { return (OutputPort<T>*)m_src_port; }
-	inline InputPort<T>*  dst_port() const { return (InputPort<T>*)m_dst_port; }
+	inline OutputPort<T>* src_port() const { return dynamic_cast<OutputPort<T>*>(m_src_port); }
+	inline InputPort<T>*  dst_port() const { return dynamic_cast<InputPort<T>*>(m_dst_port); }
 
 	/** Used by some (recursive) events to prevent double disconnections */
 	bool pending_disconnection()       { return m_pending_disconnection; }
 	void pending_disconnection(bool b) { m_pending_disconnection = b; }
 	
 	/** Get the buffer for a particular voice.
-	 * A ConnectionBase is smart - it knows the destination port respondering the
+	 * A TypedConnection is smart - it knows the destination port respondering the
 	 * buffer, and will return accordingly (ie the same buffer for every voice
 	 * in a mono->poly connection).
 	 */
@@ -57,8 +57,8 @@ public:
 	
 private:
 	// Disallow copies (undefined)
-	ConnectionBase(const ConnectionBase& copy);
-	ConnectionBase& operator=(const ConnectionBase&);
+	TypedConnection(const TypedConnection& copy);
+	TypedConnection& operator=(const TypedConnection&);
 
 	Buffer<T>* m_local_buffer;  ///< Only used for poly->mono connections
 	bool       m_is_poly_to_mono;
@@ -69,7 +69,7 @@ private:
 
 template <>
 inline Buffer<sample>* 
-ConnectionBase<sample>::buffer(size_t voice) const
+TypedConnection<sample>::buffer(size_t voice) const
 {
 	TypedPort<sample>* const src_port = (TypedPort<sample>*)m_src_port;
 	
@@ -86,7 +86,7 @@ ConnectionBase<sample>::buffer(size_t voice) const
 
 template <>
 inline Buffer<MidiMessage>*
-ConnectionBase<MidiMessage>::buffer(size_t voice) const
+TypedConnection<MidiMessage>::buffer(size_t voice) const
 {
 	// No such thing as polyphonic MIDI ports
 	assert(m_src_port->poly() == 1);
@@ -97,9 +97,9 @@ ConnectionBase<MidiMessage>::buffer(size_t voice) const
 }
 
 
-template class ConnectionBase<sample>;
-template class ConnectionBase<MidiMessage>;
+template class TypedConnection<sample>;
+template class TypedConnection<MidiMessage>;
 
 } // namespace Om
 
-#endif // CONNECTIONBASE_H
+#endif // TYPEDCONNECTION_H

@@ -66,7 +66,7 @@ public:
 	void enable()  {}
 	void disable() {}
 	
-	DriverPort* create_port(TypedPort<MidiMessage>* patch_port) { return NULL; }
+	DriverPort* create_port(DuplexPort<MidiMessage>* patch_port) { return NULL; }
 	
 	void prepare_block(const samplecount block_start, const samplecount block_end) {}
 };

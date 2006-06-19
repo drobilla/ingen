@@ -29,7 +29,7 @@ class DisconnectionEvent;
 class Patch;
 class Node;
 class Connection;
-template <typename T> class ConnectionBase;
+template <typename T> class TypedConnection;
 class Port;
 template <typename T> class InputPort;
 template <typename T> class OutputPort;

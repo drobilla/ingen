@@ -27,7 +27,7 @@ namespace Om {
 
 class Patch;
 class Port;
-template <typename T> class TypedPort;
+template <typename T> class DuplexPort;
 class JackAudioDriver;
 typedef jack_default_audio_sample_t jack_sample_t;
 
@@ -39,7 +39,7 @@ typedef jack_default_audio_sample_t jack_sample_t;
 class JackAudioPort : public DriverPort, public ListNode<JackAudioPort*>
 {
 public:
-	JackAudioPort(JackAudioDriver* driver, TypedPort<sample>* patch_port);
+	JackAudioPort(JackAudioDriver* driver, DuplexPort<sample>* patch_port);
 	~JackAudioPort();
 	
 	void add_to_driver();
@@ -51,7 +51,7 @@ public:
 	jack_port_t*          jack_port() const             { return m_jack_port; }
 	DriverBuffer<sample>* buffer() const                { return m_jack_buffer; }
 	void                  jack_buffer(jack_sample_t* s) { m_jack_buffer->set_data(s); }
-	TypedPort<sample>*     patch_port() const            { return m_patch_port; }
+	DuplexPort<sample>*   patch_port() const            { return m_patch_port; }
 
 private:
 	// Prevent copies (undefined)
@@ -61,7 +61,7 @@ private:
 	JackAudioDriver*      m_driver;
 	jack_port_t*          m_jack_port;
 	DriverBuffer<sample>* m_jack_buffer;
-	TypedPort<sample>*     m_patch_port;
+	DuplexPort<sample>*   m_patch_port;
 };
 
 
@@ -88,7 +88,7 @@ public:
 
 	void process_events(jack_nframes_t block_start, jack_nframes_t block_end);
 	
-	DriverPort* create_port(TypedPort<sample>* patch_port);
+	DriverPort* create_port(DuplexPort<sample>* patch_port);
 	
 	Patch* root_patch()                 { return m_root_patch; }
 	void   set_root_patch(Patch* patch) { m_root_patch = patch; }

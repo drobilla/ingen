@@ -30,6 +30,7 @@
 #include "ObjectStore.h"
 #include "InputPort.h"
 #include "OutputPort.h"
+#include "DuplexPort.h"
 #include "interface/ClientInterface.h"
 
 using std::cerr; using std::cout; using std::endl;
@@ -45,8 +46,8 @@ Patch::Patch(const string& path, size_t poly, Patch* parent, samplerate srate, s
 {
 	assert(internal_poly >= 1);
 
-	_plugin.plug_label("om_patch");
-	_plugin.name("Om Patch");
+	//_plugin->plug_label("om_patch");
+	//_plugin->name("Om Patch");
 
 	//std::cerr << "Creating patch " << _name << ", poly = " << poly
 	//	<< ", internal poly = " << internal_poly << std::endl;
@@ -110,10 +111,8 @@ Patch::process(bool p)
 			assert((*i)->as_port() != NULL);
 			if ((*i)->as_port()->port_info()->is_output())
 				(*i)->as_port()->clear_buffers();*/
-		for (List<Port*>::iterator i = _patch_ports.begin(); i != _patch_ports.end(); ++i) {
-			if ((*i)->is_output())
-				(*i)->clear_buffers();
-		}
+		for (List<Port*>::iterator i = _output_ports.begin(); i != _output_ports.end(); ++i)
+			(*i)->clear_buffers();
 	}
 	_process = p;
 }
@@ -132,9 +131,8 @@ Patch::run(size_t nframes)
 	// FIXME: This is far too slow, too much checking every cycle
 	
 	// Prepare input ports for nodes to consume
-	for (List<Port*>::iterator i = _patch_ports.begin(); i != _patch_ports.end(); ++i)
-		if ((*i)->is_input())
-			(*i)->prepare_buffers(nframes);
+	for (List<Port*>::iterator i = _input_ports.begin(); i != _input_ports.end(); ++i)
+		(*i)->prepare_buffers(nframes);
 
 	// Run all nodes (consume input ports)
 	for (size_t i=0; i < _process_order->size(); ++i) {
@@ -145,7 +143,7 @@ Patch::run(size_t nframes)
 	}
 	
 	// Prepare output ports (for caller to consume)
-	for (List<Port*>::iterator i = _patch_ports.begin(); i != _patch_ports.end(); ++i)
+	for (List<Port*>::iterator i = _output_ports.begin(); i != _output_ports.end(); ++i)
 		if ((*i)->is_output())
 			(*i)->prepare_buffers(nframes);
 }
@@ -299,10 +297,11 @@ Patch::create_port(const string& name, DataType type, size_t buffer_size, bool i
 
 	assert( !(type == DataType::UNKNOWN) );
 
-	if (is_output)
-		return new OutputPort<MidiMessage>(this, name, 0, _poly, type, buffer_size);
-	else
-		return new InputPort<MidiMessage>(this, name, 0, _poly, type, buffer_size);
+	// FIXME: is it possible to just "pass" the type directly as the template parameter somehow?
+	if (type == DataType::FLOAT)
+		return new DuplexPort<sample>(this, name, 0, _poly, type, buffer_size, is_output);
+	else if (type == DataType::MIDI)
+		return new DuplexPort<MidiMessage>(this, name, 0, _poly, type, buffer_size, is_output);
 }
 
 
@@ -313,9 +312,17 @@ Patch::remove_port(const Port* port)
 {
 	bool found = false;
 	ListNode<Port*>* ret = NULL;
-	for (List<Port*>::iterator i = _patch_ports.begin(); i != _patch_ports.end(); ++i) {
+	for (List<Port*>::iterator i = _input_ports.begin(); i != _input_ports.end(); ++i) {
 		if ((*i) == port) {
-			ret = _patch_ports.remove(i);
+			ret = _input_ports.remove(i);
+			found = true;
+		}
+	}
+
+	if (!found)
+	for (List<Port*>::iterator i = _output_ports.begin(); i != _output_ports.end(); ++i) {
+		if ((*i) == port) {
+			ret = _output_ports.remove(i);
 			found = true;
 		}
 	}
@@ -347,7 +354,7 @@ Patch::build_process_order() const
 		(*i)->traversed(false);
 		
 	// Traverse backwards starting at outputs
-	for (List<Port*>::const_iterator p = _patch_ports.begin(); p != _patch_ports.end(); ++p) {
+	for (List<Port*>::const_iterator p = _output_ports.begin(); p != _output_ports.end(); ++p) {
 		/*const Port* const port = (*p);
 		if (port->port_info()->is_output()) {
 			for (List<Connection*>::const_iterator c = port->connections().begin();

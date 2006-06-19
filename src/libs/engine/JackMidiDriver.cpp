@@ -26,7 +26,7 @@
 #include "Maid.h"
 #include "AudioDriver.h"
 #include "MidiMessage.h"
-#include "TypedPort.h"
+#include "DuplexPort.h"
 #ifdef HAVE_LASH
 #include "LashDriver.h"
 #endif
@@ -37,7 +37,7 @@ namespace Om {
 	
 //// JackMidiPort ////
 
-JackMidiPort::JackMidiPort(JackMidiDriver* driver, TypedPort<MidiMessage>* patch_port)
+JackMidiPort::JackMidiPort(JackMidiDriver* driver, DuplexPort<MidiMessage>* patch_port)
 : DriverPort(),
   ListNode<JackMidiPort*>(this),
   m_driver(driver),
@@ -115,7 +115,7 @@ JackMidiPort::prepare_block(const samplecount block_start, const samplecount blo
 	//cerr << "Jack MIDI got " << event_count << " events." << endl;
 
 	m_patch_port->buffer(0)->filled_size(event_count);
-	m_patch_port->tied_port()->buffer(0)->filled_size(event_count);
+	//m_patch_port->tied_port()->buffer(0)->filled_size(event_count);
 }
 
 

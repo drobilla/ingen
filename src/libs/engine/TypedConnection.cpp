@@ -14,7 +14,7 @@
  * 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include "ConnectionBase.h"
+#include "TypedConnection.h"
 #include "util.h"
 #include "InputPort.h"
 #include "OutputPort.h"
@@ -31,7 +31,7 @@ namespace Om {
  * user (InputPort).
  */
 template <typename T>
-ConnectionBase<T>::ConnectionBase(OutputPort<T>* const src_port, InputPort<T>* const dst_port)
+TypedConnection<T>::TypedConnection(OutputPort<T>* const src_port, InputPort<T>* const dst_port)
 : Connection(src_port, dst_port),
   m_local_buffer(NULL),
   m_is_poly_to_mono( (src_port->parent_node()->poly() > dst_port->parent_node()->poly()) ),
@@ -44,22 +44,22 @@ ConnectionBase<T>::ConnectionBase(OutputPort<T>* const src_port, InputPort<T>* c
 	if (m_is_poly_to_mono) // Poly -> Mono connection, need a buffer to mix in to
 		m_local_buffer = new Buffer<T>(m_buffer_size);
 }
-template ConnectionBase<sample>::ConnectionBase(OutputPort<sample>* const src_port, InputPort<sample>* const dst_port);
-template ConnectionBase<MidiMessage>::ConnectionBase(OutputPort<MidiMessage>* const src_port, InputPort<MidiMessage>* const dst_port);
+template TypedConnection<sample>::TypedConnection(OutputPort<sample>* const src_port, InputPort<sample>* const dst_port);
+template TypedConnection<MidiMessage>::TypedConnection(OutputPort<MidiMessage>* const src_port, InputPort<MidiMessage>* const dst_port);
 
 
 template <typename T>
-ConnectionBase<T>::~ConnectionBase()
+TypedConnection<T>::~TypedConnection()
 {
 	delete m_local_buffer;
 }
-template ConnectionBase<sample>::~ConnectionBase();
-template ConnectionBase<MidiMessage>::~ConnectionBase();
+template TypedConnection<sample>::~TypedConnection();
+template TypedConnection<MidiMessage>::~TypedConnection();
 
 
 template <typename sample>
 void
-ConnectionBase<sample>::prepare_buffers()
+TypedConnection<sample>::prepare_buffers()
 {
 	/* Thought:  A poly output port can be connected to multiple mono input
 	 * ports, which means this mix down would have to happen many times.
@@ -81,13 +81,13 @@ ConnectionBase<sample>::prepare_buffers()
 			m_local_buffer->scale(1.0f/(float)src_port()->poly(), 0, m_buffer_size-1);
 	}
 }
-template void ConnectionBase<sample>::prepare_buffers();
+template void TypedConnection<sample>::prepare_buffers();
 
 
 // FIXME: MIDI mixing not implemented
 template <>
 void
-ConnectionBase<MidiMessage>::prepare_buffers()
+TypedConnection<MidiMessage>::prepare_buffers()
 {
 }
 

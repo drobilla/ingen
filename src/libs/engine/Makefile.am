@@ -47,6 +47,8 @@ libom_la_SOURCES = \
 	InputPort.cpp \
 	OutputPort.h \
 	OutputPort.cpp \
+	DuplexPort.h \
+	DuplexPort.cpp \
 	MidiMessage.h \
 	MidiNoteNode.h \
 	MidiNoteNode.cpp \
@@ -76,8 +78,8 @@ libom_la_SOURCES = \
 	PostProcessor.cpp \
 	Connection.h \
 	Connection.cpp \
-	ConnectionBase.h \
-	ConnectionBase.cpp \
+	TypedConnection.h \
+	TypedConnection.cpp \
 	ObjectStore.h \
 	ObjectStore.cpp \
 	TransportNode.h \

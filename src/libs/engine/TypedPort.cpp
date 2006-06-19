@@ -31,10 +31,10 @@ namespace Om {
  */
 template <typename T>
 TypedPort<T>::TypedPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size)
-: Port(parent, name, index, poly, type, buffer_size),
-  m_fixed_buffers(false),
-  m_is_tied(false),
-  m_tied_port(NULL)
+: Port(parent, name, index, poly, type, buffer_size)
+, m_fixed_buffers(false)
+/*, m_is_tied(false)
+, m_tied_port(NULL)*/
 {
 	allocate_buffers();
 	clear_buffers();

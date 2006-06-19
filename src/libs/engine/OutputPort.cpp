@@ -28,22 +28,22 @@ OutputPort<T>::OutputPort(Node* parent, const string& name, size_t index, size_t
 template OutputPort<sample>::OutputPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size);
 template OutputPort<MidiMessage>::OutputPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size);
 
-
+#if 0
 template<typename T>
 void
 OutputPort<T>::set_tied_port(InputPort<T>* port)
 {
-	assert(!m_is_tied);
-	assert(m_tied_port == NULL);
+	//assert(!m_is_tied);
+	//assert(m_tied_port == NULL);
 	assert(static_cast<TypedPort<T>*>(port) != static_cast<TypedPort<T>*>(this));
 	assert(port != NULL);
 
-	m_is_tied = true;
-	m_tied_port = (TypedPort<T>*)port;
+	//m_is_tied = true;
+	//m_tied_port = (TypedPort<T>*)port;
 }
 template void OutputPort<sample>::set_tied_port(InputPort<sample>* port);
 template void OutputPort<MidiMessage>::set_tied_port(InputPort<MidiMessage>* port);
-
+#endif
 
 } // namespace Om
 

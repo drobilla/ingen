@@ -32,7 +32,7 @@
 #include "Port.h"
 #include "MidiDriver.h"
 #include "List.h"
-#include "TypedPort.h"
+#include "DuplexPort.h"
 #ifdef HAVE_LASH
 #include "LashDriver.h"
 #endif
@@ -45,7 +45,7 @@ namespace Om {
 	
 //// JackAudioPort ////
 
-JackAudioPort::JackAudioPort(JackAudioDriver* driver, TypedPort<sample>* patch_port)
+JackAudioPort::JackAudioPort(JackAudioDriver* driver, DuplexPort<sample>* patch_port)
 : DriverPort(),
   ListNode<JackAudioPort*>(this),
   m_driver(driver),
@@ -53,7 +53,7 @@ JackAudioPort::JackAudioPort(JackAudioDriver* driver, TypedPort<sample>* patch_p
   m_jack_buffer(NULL),
   m_patch_port(patch_port)
 {
-	assert(patch_port->tied_port() != NULL);
+	//assert(patch_port->tied_port() != NULL);
 	assert(patch_port->poly() == 1);
 
 	m_jack_port = jack_port_register(m_driver->jack_client(),
@@ -93,17 +93,17 @@ JackAudioPort::prepare_buffer(jack_nframes_t nframes)
 	m_jack_buffer->set_data((jack_default_audio_sample_t*)
 		jack_port_get_buffer(m_jack_port, nframes));
 	
-	assert(m_patch_port->tied_port() != NULL);
+	//assert(m_patch_port->tied_port() != NULL);
 	
 	// FIXME: fixed_buffers switch on/off thing can be removed once this shit
 	// gets figured out and assertions can go away
 	m_patch_port->fixed_buffers(false);
 	m_patch_port->buffer(0)->join(m_jack_buffer);
-	m_patch_port->tied_port()->buffer(0)->join(m_jack_buffer);
+	//m_patch_port->tied_port()->buffer(0)->join(m_jack_buffer);
 
 	m_patch_port->fixed_buffers(true);
 	
-	assert(m_patch_port->buffer(0)->data() == m_patch_port->tied_port()->buffer(0)->data());
+	//assert(m_patch_port->buffer(0)->data() == m_patch_port->tied_port()->buffer(0)->data());
 	assert(m_patch_port->buffer(0)->data() == m_jack_buffer->data());
 }
 
@@ -241,7 +241,7 @@ JackAudioDriver::remove_port(JackAudioPort* port)
 
 
 DriverPort*
-JackAudioDriver::create_port(TypedPort<sample>* patch_port)
+JackAudioDriver::create_port(DuplexPort<sample>* patch_port)
 {
 	if (patch_port->buffer_size() == m_buffer_size)
 		return new JackAudioPort(this, patch_port);

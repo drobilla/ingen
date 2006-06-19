@@ -33,7 +33,7 @@ class Node;
 class Connection;
 class MidiMessage;
 class Port;
-template <typename T> class ConnectionBase;
+template <typename T> class TypedConnection;
 template <typename T> class InputPort;
 template <typename T> class OutputPort;
 template <typename T> class TypedDisconnectionEvent; // helper, defined below

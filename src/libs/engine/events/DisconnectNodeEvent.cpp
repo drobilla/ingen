@@ -22,7 +22,7 @@
 #include "Maid.h"
 #include "List.h"
 #include "Node.h"
-#include "ConnectionBase.h"
+#include "TypedConnection.h"
 #include "DisconnectionEvent.h"
 #include "Port.h"
 #include "Array.h"

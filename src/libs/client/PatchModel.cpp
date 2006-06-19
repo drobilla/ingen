@@ -163,19 +163,23 @@ void
 PatchModel::add_connection(CountedPtr<ConnectionModel> cm)
 {
 	assert(cm);
-	assert(cm->src_port_path().parent().parent() == m_path);
-	assert(cm->dst_port_path().parent().parent() == m_path);
+	//assert(cm->src_port_path().parent().parent() == m_path);
+	//assert(cm->dst_port_path().parent().parent() == m_path);
 	assert(cm->patch_path() == path());
 	
+	cerr << "PatchModel::add_connection: " << cm->src_port_path() << " -> " << cm->dst_port_path() << endl;
+
 	CountedPtr<ConnectionModel> existing = get_connection(cm->src_port_path(), cm->dst_port_path());
 
 	if (existing) {
 		return;
 	}
 
-	NodeModel* src_node = get_node(cm->src_port_path().parent().name()).get();
+	NodeModel* src_node = (cm->src_port_path().parent() == path())
+		? this : get_node(cm->src_port_path().parent().name()).get();
 	PortModel* src_port = (src_node == NULL) ? NULL : src_node->get_port(cm->src_port_path().name()).get();
-	NodeModel* dst_node = get_node(cm->dst_port_path().parent().name()).get();
+	NodeModel* dst_node = (cm->dst_port_path().parent() == path())
+		? this : get_node(cm->dst_port_path().parent().name()).get();
 	PortModel* dst_port = (dst_node == NULL) ? NULL : dst_node->get_port(cm->dst_port_path().name()).get();
 	
 	assert(src_port != NULL);

@@ -390,10 +390,19 @@ PatchController::show_properties_window()
 void
 PatchController::create_connection(CountedPtr<ConnectionModel> cm)
 {
+	// Deal with messy anonymous nodes for this patch's own ports...
+	const Path& src_parent_path = cm->src_port_path().parent();
+	const Path& dst_parent_path = cm->dst_port_path().parent();
+
+	const string& src_parent_name =
+		(src_parent_path == path()) ? "" : src_parent_path.name();
+	const string& dst_parent_name =
+		(dst_parent_path == path()) ? "" : dst_parent_path.name();
+
 	m_patch_view->canvas()->add_connection(
-			cm->src_port_path().parent().name(),
+			src_parent_name,
 			cm->src_port_path().name(),
-			cm->dst_port_path().parent().name(),
+			dst_parent_name,
 			cm->dst_port_path().name());
 
 	// Disable control slider from destination node control window

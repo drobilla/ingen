@@ -74,10 +74,9 @@ public:
 	const List<Node*>&       nodes()       const { return _nodes; }
 	const List<Connection*>& connections() const { return _connections; }
 	
-	//void                     add_bridge_node(ListNode<InternalNode*>* n) { _bridge_nodes.push_back(n); }
-	//ListNode<InternalNode*>* remove_bridge_node(const InternalNode* n);
 	Port*            create_port(const string& name, DataType type, size_t buffer_size, bool is_output);
-	void             add_port(ListNode<Port*>* port) { _patch_ports.push_back(port); }
+	void             add_input(ListNode<Port*>* port)  { _input_ports.push_back(port); } ///< Preprocesser thread
+	void             add_output(ListNode<Port*>* port) { _output_ports.push_back(port); } ///< Preprocessor thread
 	ListNode<Port*>* remove_port(const Port* p);
 	
 	void                   add_connection(ListNode<Connection*>* c) { _connections.push_back(c); }
@@ -96,8 +95,6 @@ public:
 	void process(bool p);
 
 	size_t internal_poly() const { return _internal_poly; }
-	
-	const Plugin* plugin() const              { return &_plugin; }
 
 private:
 	// Prevent copies (undefined)
@@ -109,11 +106,10 @@ private:
 	size_t             _internal_poly;
 	Array<Node*>*      _process_order; ///< Accessed in audio thread only
 	List<Connection*>  _connections;   ///< Accessed in audio thread only
-	List<Port*>        _patch_ports;   ///< Accessed in preprocessing thread only
+	List<Port*>        _input_ports;   ///< Accessed in preprocessing thread only
+	List<Port*>        _output_ports;  ///< Accessed in preprocessing thread only
 	List<Node*>        _nodes;         ///< Accessed in preprocessing thread only
 	bool               _process;
-
-	Plugin _plugin;
 };
 
 

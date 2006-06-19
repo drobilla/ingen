@@ -27,7 +27,7 @@ using std::string;
 
 namespace Om {
 
-template <typename T> class ConnectionBase;
+template <typename T> class TypedConnection;
 template <typename T> class OutputPort;
 class Node;
 
@@ -44,16 +44,16 @@ class Node;
  * \ingroup engine
  */
 template <typename T>
-class InputPort : public TypedPort<T>
+class InputPort : virtual public TypedPort<T>
 {
 public:
 	InputPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size);
 	virtual ~InputPort() {}
 	
-	void                          add_connection(ListNode<ConnectionBase<T>*>* const c);
-	ListNode<ConnectionBase<T>*>* remove_connection(const OutputPort<T>* const src_port);
+	void                          add_connection(ListNode<TypedConnection<T>*>* const c);
+	ListNode<TypedConnection<T>*>* remove_connection(const OutputPort<T>* const src_port);
 
-	const List<ConnectionBase<T>*>& connections() { return m_connections; }
+	const List<TypedConnection<T>*>& connections() { return m_connections; }
 
 	void prepare_buffers(size_t nframes);
 	
@@ -72,11 +72,11 @@ private:
 
 	void update_buffers();
 
-	List<ConnectionBase<T>*> m_connections;
+	List<TypedConnection<T>*> m_connections;
 
 	// This is just stupid...
-	using TypedPort<T>::m_is_tied;
-	using TypedPort<T>::m_tied_port;
+	//using TypedPort<T>::m_is_tied;
+	//using TypedPort<T>::m_tied_port;
 	using TypedPort<T>::m_buffers;
 	using TypedPort<T>::_poly;
 	using TypedPort<T>::_index;

@@ -29,7 +29,7 @@ namespace Om {
 class Node;
 class SetPortValueEvent;
 class JackMidiDriver;
-template <typename T> class TypedPort;
+template <typename T> class DuplexPort;
 
 
 /** Representation of an JACK MIDI port.
@@ -39,7 +39,7 @@ template <typename T> class TypedPort;
 class JackMidiPort : public DriverPort, public ListNode<JackMidiPort*>
 {
 public:
-	JackMidiPort(JackMidiDriver* driver, TypedPort<MidiMessage>* port);
+	JackMidiPort(JackMidiDriver* driver, DuplexPort<MidiMessage>* port);
 	virtual ~JackMidiPort();
 
 	void prepare_block(const samplecount block_start, const samplecount block_end);
@@ -48,16 +48,16 @@ public:
 	void remove_from_driver();
 	void set_name(const string& name) { jack_port_set_name(m_jack_port, name.c_str()); };
 	
-	TypedPort<MidiMessage>* patch_port() const { return m_patch_port; }
+	DuplexPort<MidiMessage>* patch_port() const { return m_patch_port; }
 
 private:
 	// Prevent copies (undefined)
 	JackMidiPort(const JackMidiPort&);
 	JackMidiPort& operator=(const JackMidiPort&);
  
-	JackMidiDriver*        m_driver;
-	jack_port_t*           m_jack_port;
-	TypedPort<MidiMessage>* m_patch_port;
+	JackMidiDriver*          m_driver;
+	jack_port_t*             m_jack_port;
+	DuplexPort<MidiMessage>* m_patch_port;
 };
 
 
@@ -84,7 +84,7 @@ public:
 	
 	void prepare_block(const samplecount block_start, const samplecount block_end);
 
-	JackMidiPort* create_port(TypedPort<MidiMessage>* patch_port)
+	JackMidiPort* create_port(DuplexPort<MidiMessage>* patch_port)
 	{ return new JackMidiPort(this, patch_port); }
 
 	jack_client_t* jack_client()        { return m_client; }

@@ -18,7 +18,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <cassert>
-#include "ConnectionBase.h"
+#include "TypedConnection.h"
 #include "OutputPort.h"
 #include "Node.h"
 #include "Om.h"
@@ -46,21 +46,21 @@ template InputPort<MidiMessage>::InputPort(Node* parent, const string& name, siz
  */
 template<typename T>
 void
-InputPort<T>::add_connection(ListNode<ConnectionBase<T>*>* const c)
+InputPort<T>::add_connection(ListNode<TypedConnection<T>*>* const c)
 {
 	m_connections.push_back(c);
 
 	bool modify_buffers = !m_fixed_buffers;
-	if (modify_buffers && m_is_tied)
-		modify_buffers = !m_tied_port->fixed_buffers();
+	//if (modify_buffers && m_is_tied)
+	//	modify_buffers = !m_tied_port->fixed_buffers();
 	
 	if (modify_buffers) {
 		if (m_connections.size() == 1) {
 			// Use buffer directly to avoid copying
 			for (size_t i=0; i < _poly; ++i) {
 				m_buffers.at(i)->join(c->elem()->buffer(i));
-				if (m_is_tied)
-					m_tied_port->buffer(i)->join(m_buffers.at(i));
+				//if (m_is_tied)
+				//	m_tied_port->buffer(i)->join(m_buffers.at(i));
 				assert(m_buffers.at(i)->data() == c->elem()->buffer(i)->data());
 			}
 		} else if (m_connections.size() == 2) {
@@ -68,34 +68,34 @@ InputPort<T>::add_connection(ListNode<ConnectionBase<T>*>* const c)
 			// so have to use local ones again and mix down
 			for (size_t i=0; i < _poly; ++i) {
 				m_buffers.at(i)->unjoin();
-				if (m_is_tied)
-					m_tied_port->buffer(i)->join(m_buffers.at(i));
+				//if (m_is_tied)
+				//	m_tied_port->buffer(i)->join(m_buffers.at(i));
 			}
 		}
 		update_buffers();
 	}
 		
-	assert( ! m_is_tied || m_tied_port != NULL);
-	assert( ! m_is_tied || m_buffers.at(0)->data() == m_tied_port->buffer(0)->data());
+	//assert( ! m_is_tied || m_tied_port != NULL);
+	//assert( ! m_is_tied || m_buffers.at(0)->data() == m_tied_port->buffer(0)->data());
 }
-template void InputPort<sample>::add_connection(ListNode<ConnectionBase<sample>*>* const c);
-template void InputPort<MidiMessage>::add_connection(ListNode<ConnectionBase<MidiMessage>*>* const c);
+template void InputPort<sample>::add_connection(ListNode<TypedConnection<sample>*>* const c);
+template void InputPort<MidiMessage>::add_connection(ListNode<TypedConnection<MidiMessage>*>* const c);
 
 
 /** Remove a connection.  Realtime safe.
  */
 template <typename T>
-ListNode<ConnectionBase<T>*>*
+ListNode<TypedConnection<T>*>*
 InputPort<T>::remove_connection(const OutputPort<T>* const src_port)
 {
 	bool modify_buffers = !m_fixed_buffers;
-	if (modify_buffers && m_is_tied)
-		modify_buffers = !m_tied_port->fixed_buffers();
+	//if (modify_buffers && m_is_tied)
+	//	modify_buffers = !m_tied_port->fixed_buffers();
 	
-	typedef typename List<ConnectionBase<T>*>::iterator ConnectionBaseListIterator;
+	typedef typename List<TypedConnection<T>*>::iterator TypedConnectionListIterator;
 	bool found = false;
-	ListNode<ConnectionBase<T>*>* connection = NULL;
-	for (ConnectionBaseListIterator i = m_connections.begin(); i != m_connections.end(); ++i) {
+	ListNode<TypedConnection<T>*>* connection = NULL;
+	for (TypedConnectionListIterator i = m_connections.begin(); i != m_connections.end(); ++i) {
 		if ((*i)->src_port()->path() == src_port->path()) {
 			connection = m_connections.remove(i);
 			found = true;
@@ -112,15 +112,15 @@ InputPort<T>::remove_connection(const OutputPort<T>* const src_port)
 				if (modify_buffers && m_buffers.at(i)->is_joined())
 					m_buffers.at(i)->unjoin();
 				m_buffers.at(i)->clear(); // Write silence
-				if (m_is_tied)
-					m_tied_port->buffer(i)->join(m_buffers.at(i));
+				//if (m_is_tied)
+					//m_tied_port->buffer(i)->join(m_buffers.at(i));
 			}
 		} else if (modify_buffers && m_connections.size() == 1) {
 			// Share a buffer
 			for (size_t i=0; i < _poly; ++i) {
 				m_buffers.at(i)->join((*m_connections.begin())->buffer(i));
-				if (m_is_tied)
-					m_tied_port->buffer(i)->join(m_buffers.at(i));
+				//if (m_is_tied)
+				//	m_tied_port->buffer(i)->join(m_buffers.at(i));
 			}
 		}	
 	}
@@ -128,14 +128,14 @@ InputPort<T>::remove_connection(const OutputPort<T>* const src_port)
 	if (modify_buffers)
 		update_buffers();
 
-	assert( ! m_is_tied || m_tied_port != NULL);
-	assert( ! m_is_tied || m_buffers.at(0)->data() == m_tied_port->buffer(0)->data());
+	//assert( ! m_is_tied || m_tied_port != NULL);
+	//assert( ! m_is_tied || m_buffers.at(0)->data() == m_tied_port->buffer(0)->data());
 
 	return connection;
 }
-template ListNode<ConnectionBase<sample>*>*
+template ListNode<TypedConnection<sample>*>*
 InputPort<sample>::remove_connection(const OutputPort<sample>* const src_port);
-template ListNode<ConnectionBase<MidiMessage>*>*
+template ListNode<TypedConnection<MidiMessage>*>*
 InputPort<MidiMessage>::remove_connection(const OutputPort<MidiMessage>* const src_port);
 
 
@@ -161,8 +161,8 @@ template <typename T>
 bool
 InputPort<T>::is_connected_to(const OutputPort<T>* const port) const
 {
-	typedef typename List<ConnectionBase<T>*>::const_iterator ConnectionBaseListIterator;
-	for (ConnectionBaseListIterator i = m_connections.begin(); i != m_connections.end(); ++i)
+	typedef typename List<TypedConnection<T>*>::const_iterator TypedConnectionListIterator;
+	for (TypedConnectionListIterator i = m_connections.begin(); i != m_connections.end(); ++i)
 		if ((*i)->src_port() == port)
 			return true;
 	
@@ -177,6 +177,7 @@ template bool InputPort<MidiMessage>::is_connected_to(const OutputPort<MidiMessa
  * This is used by OutputNode and InputNode to provide two different ports
  * (internal and external) that share a buffer.
  */
+/*
 template <typename T>
 void
 InputPort<T>::tie(OutputPort<T>* const port)
@@ -202,7 +203,7 @@ InputPort<T>::tie(OutputPort<T>* const port)
 }
 template void InputPort<sample>::tie(OutputPort<sample>* const port);
 template void InputPort<MidiMessage>::tie(OutputPort<MidiMessage>* const port);
-
+*/
 
 /** Prepare buffer for access, mixing if necessary.  Realtime safe.
  *  FIXME: nframes parameter not used,
@@ -211,21 +212,21 @@ template<>
 void
 InputPort<sample>::prepare_buffers(size_t nframes)
 {
-	assert(!m_is_tied || m_tied_port != NULL);
+	//assert(!m_is_tied || m_tied_port != NULL);
 
-	typedef List<ConnectionBase<sample>*>::iterator ConnectionBaseListIterator;
+	typedef List<TypedConnection<sample>*>::iterator TypedConnectionListIterator;
 	bool do_mixdown = true;
 	
 	if (m_connections.size() == 0) return;
 
-	for (ConnectionBaseListIterator c = m_connections.begin(); c != m_connections.end(); ++c)
+	for (TypedConnectionListIterator c = m_connections.begin(); c != m_connections.end(); ++c)
 		(*c)->prepare_buffers();
 
 	// If only one connection, buffer is (maybe) used directly (no copying)
 	if (m_connections.size() == 1) {
 		// Buffer changed since connection
 		if (m_buffers.at(0)->data() != (*m_connections.begin())->buffer(0)->data()) {
-			if (m_fixed_buffers || (m_is_tied && m_tied_port->fixed_buffers())) {
+			if (m_fixed_buffers) { // || (m_is_tied && m_tied_port->fixed_buffers())) {
 				// can't change buffer, must copy
 				do_mixdown = true;
 			} else {
@@ -245,15 +246,15 @@ InputPort<sample>::prepare_buffers(size_t nframes)
 		return;
 	}
 
-	assert(!m_is_tied || m_tied_port != NULL);
-	assert(!m_is_tied || m_buffers.at(0)->data() == m_tied_port->buffer(0)->data());
+	/*assert(!m_is_tied || m_tied_port != NULL);
+	assert(!m_is_tied || m_buffers.at(0)->data() == m_tied_port->buffer(0)->data());*/
 
 	for (size_t voice=0; voice < _poly; ++voice) {
 		m_buffers.at(voice)->copy((*m_connections.begin())->buffer(voice), 0, _buffer_size-1);
 		
 		if (m_connections.size() > 1) {
 			// Copy first connection
-			ConnectionBaseListIterator c = m_connections.begin();
+			TypedConnectionListIterator c = m_connections.begin();
 			
 			// Add all other connections
 			for (++c; c != m_connections.end(); ++c)
@@ -271,17 +272,17 @@ template <>
 void
 InputPort<MidiMessage>::prepare_buffers(size_t nframes)
 {
-	assert(!m_is_tied || m_tied_port != NULL);
+	//assert(!m_is_tied || m_tied_port != NULL);
 	
 	const size_t num_ins = m_connections.size();
 	bool         do_mixdown = true;
 	
 	assert(num_ins == 0 || num_ins == 1);
 	
-	typedef List<ConnectionBase<MidiMessage>*>::iterator ConnectionBaseListIterator;
+	typedef List<TypedConnection<MidiMessage>*>::iterator TypedConnectionListIterator;
 	assert(_poly == 1);
 	
-	for (ConnectionBaseListIterator c = m_connections.begin(); c != m_connections.end(); ++c)
+	for (TypedConnectionListIterator c = m_connections.begin(); c != m_connections.end(); ++c)
 		(*c)->prepare_buffers();
 	
 
@@ -289,24 +290,24 @@ InputPort<MidiMessage>::prepare_buffers(size_t nframes)
 	if (num_ins == 1) {
 		// Buffer changed since connection
 		if (m_buffers.at(0) != (*m_connections.begin())->buffer(0)) {
-			if (m_fixed_buffers || (m_is_tied && m_tied_port->fixed_buffers())) {
+			if (m_fixed_buffers) { // || (m_is_tied && m_tied_port->fixed_buffers())) {
 				// can't change buffer, must copy
 				do_mixdown = true;
 			} else {
 				// zero-copy
 				assert(m_buffers.at(0)->is_joined());
 				m_buffers.at(0)->join((*m_connections.begin())->buffer(0));
-				if (m_is_tied)
-					m_tied_port->buffer(0)->join(m_buffers.at(0));
+				//if (m_is_tied)
+				//	m_tied_port->buffer(0)->join(m_buffers.at(0));
 				do_mixdown = false;
 			}
 			update_buffers();
 		} else {
 			do_mixdown = false;
 		}
-		assert(!m_is_tied || m_tied_port != NULL);
-		assert(!m_is_tied || m_buffers.at(0)->data() == m_tied_port->buffer(0)->data());
-		assert(!m_is_tied || m_buffers.at(0)->filled_size() == m_tied_port->buffer(0)->filled_size());
+		//assert(!m_is_tied || m_tied_port != NULL);
+		//assert(!m_is_tied || m_buffers.at(0)->data() == m_tied_port->buffer(0)->data());
+		//assert(!m_is_tied || m_buffers.at(0)->filled_size() == m_tied_port->buffer(0)->filled_size());
 		assert(do_mixdown || m_buffers.at(0)->filled_size() ==
 				(*m_connections.begin())->src_port()->buffer(0)->filled_size());
 	}
@@ -318,8 +319,8 @@ InputPort<MidiMessage>::prepare_buffers(size_t nframes)
 			m_buffers.at(0)->filled_size(
 				(*m_connections.begin())->src_port()->buffer(0)->filled_size());
 			
-			if (m_is_tied)
-				m_tied_port->buffer(0)->filled_size(m_buffers.at(0)->filled_size());
+			//if (m_is_tied)
+			//	m_tied_port->buffer(0)->filled_size(m_buffers.at(0)->filled_size());
 			
 			assert(m_buffers.at(0)->filled_size() ==
 				(*m_connections.begin())->src_port()->buffer(0)->filled_size());
@@ -329,7 +330,7 @@ InputPort<MidiMessage>::prepare_buffers(size_t nframes)
 		}
 	}
 
-	assert(!m_is_tied || m_buffers.at(0)->data() == m_tied_port->buffer(0)->data());
+	//assert(!m_is_tied || m_buffers.at(0)->data() == m_tied_port->buffer(0)->data());
 
 	if (!do_mixdown || m_buffers.at(0)->filled_size() == 0 || num_ins == 0)
 		return;
@@ -337,8 +338,8 @@ InputPort<MidiMessage>::prepare_buffers(size_t nframes)
 	//cerr << path() << " - Copying MIDI buffer" << endl;
 	
 	// Be sure buffers are the same as tied port's, if joined
-	assert(!m_is_tied || m_tied_port != NULL);
-	assert(!m_is_tied || m_buffers.at(0)->data() == m_tied_port->buffer(0)->data());
+	//assert(!m_is_tied || m_tied_port != NULL);
+	//assert(!m_is_tied || m_buffers.at(0)->data() == m_tied_port->buffer(0)->data());
 
 	if (num_ins > 0)
 		for (size_t i=0; i < m_buffers.at(0)->filled_size(); ++i)
