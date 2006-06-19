@@ -22,7 +22,7 @@ using std::string;
 
 namespace Om {
 
-template <typename T> class PortBase;
+template <typename T> class TypedPort;
 
 
 /** Representation of a system (outside Om, ie hardware) audio port.
@@ -77,7 +77,7 @@ public:
 	 *
 	 * May return NULL if the Driver can not drive the port for some reason.
 	 */
-	virtual DriverPort* create_port(PortBase<T>* patch_port) = 0;
+	virtual DriverPort* create_port(TypedPort<T>* patch_port) = 0;
 };
 
 
@@ -102,7 +102,7 @@ public:
 	void enable()  {}
 	void disable() {}
 	
-	DriverPort* create_port(PortBase<sample>* patch_port) { return NULL; }
+	DriverPort* create_port(TypedPort<sample>* patch_port) { return NULL; }
 };
 #endif
 

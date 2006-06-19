@@ -25,7 +25,7 @@ namespace Om {
 
 class Patch;
 class AudioDriver;
-template <typename T> class PortBase;
+template <typename T> class TypedPort;
 
 
 /** Audio driver abstract base class.

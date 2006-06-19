@@ -71,7 +71,7 @@ template <>
 inline Buffer<sample>* 
 ConnectionBase<sample>::buffer(size_t voice) const
 {
-	PortBase<sample>* const src_port = (PortBase<sample>*)m_src_port;
+	TypedPort<sample>* const src_port = (TypedPort<sample>*)m_src_port;
 	
 	if (m_is_poly_to_mono) {
 		return m_local_buffer;
@@ -92,7 +92,7 @@ ConnectionBase<MidiMessage>::buffer(size_t voice) const
 	assert(m_src_port->poly() == 1);
 	assert(m_dst_port->poly() == 1);
 
-	PortBase<MidiMessage>* const src_port = (PortBase<MidiMessage>*)m_src_port;
+	TypedPort<MidiMessage>* const src_port = (TypedPort<MidiMessage>*)m_src_port;
 	return src_port->buffer(0);
 }
 

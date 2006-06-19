@@ -27,7 +27,7 @@ namespace Om {
 class Node;
 class SetPortValueEvent;
 class AlsaMidiDriver;
-template <typename T> class PortBase;
+template <typename T> class TypedPort;
 
 static const int MAX_MIDI_EVENT_SIZE = 3;
 
@@ -39,7 +39,7 @@ static const int MAX_MIDI_EVENT_SIZE = 3;
 class AlsaMidiPort : public DriverPort, public ListNode<AlsaMidiPort*>
 {
 public:
-	AlsaMidiPort(AlsaMidiDriver* driver, PortBase<MidiMessage>* port);
+	AlsaMidiPort(AlsaMidiDriver* driver, TypedPort<MidiMessage>* port);
 	virtual ~AlsaMidiPort();
 
 	void event(snd_seq_event_t* const ev);
@@ -51,7 +51,7 @@ public:
 	void set_name(const string& name);
 	
 	int                    port_id()    const { return m_port_id; }
-	PortBase<MidiMessage>* patch_port() const { return m_patch_port; }
+	TypedPort<MidiMessage>* patch_port() const { return m_patch_port; }
 
 private:
 	// Prevent copies (undefined)
@@ -59,7 +59,7 @@ private:
 	AlsaMidiPort& operator=(const AlsaMidiPort&);
  
 	AlsaMidiDriver*        m_driver;
-	PortBase<MidiMessage>* m_patch_port;
+	TypedPort<MidiMessage>* m_patch_port;
 	int                    m_port_id;
 	unsigned char**        m_midi_pool; ///< Pool of raw MIDI events for MidiMessage::buffer
 	Queue<snd_seq_event_t> m_events;
@@ -86,7 +86,7 @@ public:
 	
 	void prepare_block(const samplecount block_start, const samplecount block_end);
 
-	DriverPort* create_port(PortBase<MidiMessage>* patch_port)
+	DriverPort* create_port(TypedPort<MidiMessage>* patch_port)
 	{ return new AlsaMidiPort(this, patch_port); }
 
 	snd_seq_t*        seq_handle()  const { return m_seq_handle; }

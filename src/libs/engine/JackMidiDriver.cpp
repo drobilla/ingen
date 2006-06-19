@@ -26,7 +26,7 @@
 #include "Maid.h"
 #include "AudioDriver.h"
 #include "MidiMessage.h"
-#include "PortBase.h"
+#include "TypedPort.h"
 #ifdef HAVE_LASH
 #include "LashDriver.h"
 #endif
@@ -37,7 +37,7 @@ namespace Om {
 	
 //// JackMidiPort ////
 
-JackMidiPort::JackMidiPort(JackMidiDriver* driver, PortBase<MidiMessage>* patch_port)
+JackMidiPort::JackMidiPort(JackMidiDriver* driver, TypedPort<MidiMessage>* patch_port)
 : DriverPort(),
   ListNode<JackMidiPort*>(this),
   m_driver(driver),

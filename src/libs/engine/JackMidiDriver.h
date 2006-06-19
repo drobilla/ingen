@@ -29,7 +29,7 @@ namespace Om {
 class Node;
 class SetPortValueEvent;
 class JackMidiDriver;
-template <typename T> class PortBase;
+template <typename T> class TypedPort;
 
 
 /** Representation of an JACK MIDI port.
@@ -39,7 +39,7 @@ template <typename T> class PortBase;
 class JackMidiPort : public DriverPort, public ListNode<JackMidiPort*>
 {
 public:
-	JackMidiPort(JackMidiDriver* driver, PortBase<MidiMessage>* port);
+	JackMidiPort(JackMidiDriver* driver, TypedPort<MidiMessage>* port);
 	virtual ~JackMidiPort();
 
 	void prepare_block(const samplecount block_start, const samplecount block_end);
@@ -48,7 +48,7 @@ public:
 	void remove_from_driver();
 	void set_name(const string& name) { jack_port_set_name(m_jack_port, name.c_str()); };
 	
-	PortBase<MidiMessage>* patch_port() const { return m_patch_port; }
+	TypedPort<MidiMessage>* patch_port() const { return m_patch_port; }
 
 private:
 	// Prevent copies (undefined)
@@ -57,7 +57,7 @@ private:
  
 	JackMidiDriver*        m_driver;
 	jack_port_t*           m_jack_port;
-	PortBase<MidiMessage>* m_patch_port;
+	TypedPort<MidiMessage>* m_patch_port;
 };
 
 
@@ -84,7 +84,7 @@ public:
 	
 	void prepare_block(const samplecount block_start, const samplecount block_end);
 
-	JackMidiPort* create_port(PortBase<MidiMessage>* patch_port)
+	JackMidiPort* create_port(TypedPort<MidiMessage>* patch_port)
 	{ return new JackMidiPort(this, patch_port); }
 
 	jack_client_t* jack_client()        { return m_client; }

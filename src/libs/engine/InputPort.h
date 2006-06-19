@@ -20,7 +20,7 @@
 #include <string>
 #include <cstdlib>
 #include <cassert>
-#include "PortBase.h"
+#include "TypedPort.h"
 #include "List.h"
 #include "MidiMessage.h"
 using std::string;
@@ -44,7 +44,7 @@ class Node;
  * \ingroup engine
  */
 template <typename T>
-class InputPort : public PortBase<T>
+class InputPort : public TypedPort<T>
 {
 public:
 	InputPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size);
@@ -75,13 +75,13 @@ private:
 	List<ConnectionBase<T>*> m_connections;
 
 	// This is just stupid...
-	using PortBase<T>::m_is_tied;
-	using PortBase<T>::m_tied_port;
-	using PortBase<T>::m_buffers;
-	using PortBase<T>::_poly;
-	using PortBase<T>::_index;
-	using PortBase<T>::_buffer_size;
-	using PortBase<T>::m_fixed_buffers;
+	using TypedPort<T>::m_is_tied;
+	using TypedPort<T>::m_tied_port;
+	using TypedPort<T>::m_buffers;
+	using TypedPort<T>::_poly;
+	using TypedPort<T>::_index;
+	using TypedPort<T>::_buffer_size;
+	using TypedPort<T>::m_fixed_buffers;
 };
 
 

@@ -41,8 +41,8 @@ libom_la_SOURCES = \
 	Buffer.cpp \
 	Port.h \
 	Port.cpp \
-	PortBase.h \
-	PortBase.cpp \
+	TypedPort.h \
+	TypedPort.cpp \
 	InputPort.h \
 	InputPort.cpp \
 	OutputPort.h \

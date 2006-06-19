@@ -19,7 +19,7 @@
 
 #include <string>
 #include <cstdlib>
-#include "PortBase.h"
+#include "TypedPort.h"
 #include "types.h"
 
 namespace Om {
@@ -39,7 +39,7 @@ template <typename T> class InputPort;
  * \ingroup engine
  */
 template <typename T>
-class OutputPort : public PortBase<T>
+class OutputPort : public TypedPort<T>
 {
 public:
 	OutputPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size);
@@ -55,8 +55,8 @@ private:
 	OutputPort(const OutputPort& copy);
 	OutputPort<T>& operator=(const OutputPort<T>&);
 	
-	using PortBase<T>::m_is_tied;
-	using PortBase<T>::m_tied_port;
+	using TypedPort<T>::m_is_tied;
+	using TypedPort<T>::m_tied_port;
 };
 
 

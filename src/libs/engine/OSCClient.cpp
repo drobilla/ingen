@@ -26,7 +26,7 @@
 #include "Patch.h"
 #include "Node.h"
 #include "Plugin.h"
-#include "PortBase.h"
+#include "TypedPort.h"
 #include "Connection.h"
 #include "AudioDriver.h"
 #include "interface/ClientInterface.h"
@@ -278,7 +278,7 @@ void OSCClient::new_node(const string& plugin_type,
 
 	// Send control values
 	for (size_t i=0; i < node->ports().size(); ++i) {
-		PortBase<sample>* port = (PortBase<sample>*)node->ports().at(i);
+		TypedPort<sample>* port = (TypedPort<sample>*)node->ports().at(i);
 		if (port->port_info()->is_input() && port->port_info()->is_control())
 			control_change(port->path(), port->buffer(0)->value_at(0));
 	}

@@ -32,7 +32,7 @@ namespace Om {
 
 template <typename T>
 InputPort<T>::InputPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size)
-: PortBase<T>(parent, name, index, poly, type, buffer_size)
+: TypedPort<T>(parent, name, index, poly, type, buffer_size)
 {
 }
 template InputPort<sample>::InputPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size);

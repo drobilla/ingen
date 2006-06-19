@@ -108,7 +108,7 @@ void
 DSSINode::set_control(size_t port_num, sample val)
 {
 	assert(port_num < _descriptor->PortCount);
-	((PortBase<sample>*)_ports->at(port_num))->set_value(val, 0);
+	((TypedPort<sample>*)_ports->at(port_num))->set_value(val, 0);
 }
 
 
@@ -242,7 +242,7 @@ DSSINode::send_update()
 	// send "control"s
 	for (size_t i=0; i < _ports->size(); ++i)
 		if (_ports->at(i)->type() == DataType::FLOAT && _ports->at(i)->buffer_size() == 1)
-			send_control(_ports->at(i)->num(), ((PortBase<sample>*)_ports->at(i))->buffer(0)->value_at(0));
+			send_control(_ports->at(i)->num(), ((TypedPort<sample>*)_ports->at(i))->buffer(0)->value_at(0));
 
 	// send "show" FIXME: not to spec
 	send_show();

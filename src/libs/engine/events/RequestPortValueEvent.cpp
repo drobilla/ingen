@@ -20,7 +20,7 @@
 #include "Om.h"
 #include "OmApp.h"
 #include "interface/ClientInterface.h"
-#include "PortBase.h"
+#include "TypedPort.h"
 #include "ObjectStore.h"
 #include "ClientBroadcaster.h"
 
@@ -53,7 +53,7 @@ void
 RequestPortValueEvent::execute(samplecount offset)
 {
 	if (m_port != NULL && m_port->type() == DataType::FLOAT)
-		m_value = ((PortBase<sample>*)m_port)->buffer(0)->value_at(offset);
+		m_value = ((TypedPort<sample>*)m_port)->buffer(0)->value_at(offset);
 	else 
 		m_port = NULL; // triggers error response
 

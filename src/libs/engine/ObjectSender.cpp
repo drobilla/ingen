@@ -22,7 +22,7 @@
 #include "Patch.h"
 #include "Node.h"
 #include "Port.h"
-#include "PortBase.h"
+#include "TypedPort.h"
 #include "Connection.h"
 #include "NodeFactory.h"
 
@@ -72,7 +72,7 @@ ObjectSender::send_patch(ClientInterface* client, const Patch* patch)
 		
 		// Control port, send value
 		if (port->type() == DataType::FLOAT && port->buffer_size() == 1)
-			client->control_change(port->path(), ((PortBase<sample>*)port)->buffer(0)->value_at(0));
+			client->control_change(port->path(), ((TypedPort<sample>*)port)->buffer(0)->value_at(0));
 	}
 	
 	// Send metadata

@@ -114,9 +114,9 @@ LV2Node::instantiate()
 
 		// Set default control val
 		/*if (pi->is_control())
-			((PortBase<sample>*)port)->set_value(pi->default_val(), 0);
+			((TypedPort<sample>*)port)->set_value(pi->default_val(), 0);
 		else
-			((PortBase<sample>*)port)->set_value(0.0f, 0);*/
+			((TypedPort<sample>*)port)->set_value(0.0f, 0);*/
 	}
 	return true;
 }
@@ -136,12 +136,12 @@ LV2Node::activate()
 {
 	NodeBase::activate();
 
-	PortBase<sample>* port = NULL;
+	TypedPort<sample>* port = NULL;
 	
 	for (size_t i=0; i < _poly; ++i) {
 		for (unsigned long j=0; j < num_ports(); ++j) {
-			port = static_cast<PortBase<sample>*>(_ports->at(j));
-			set_port_buffer(i, j, ((PortBase<sample>*)_ports->at(j))->buffer(i)->data());
+			port = static_cast<TypedPort<sample>*>(_ports->at(j));
+			set_port_buffer(i, j, ((TypedPort<sample>*)_ports->at(j))->buffer(i)->data());
 			if (port->type() == DataType::FLOAT && port->buffer_size() == 1)
 				port->set_value(0.0f, 0); // FIXME
 			else if (port->type() == DataType::FLOAT && port->buffer_size() > 1)

@@ -25,7 +25,7 @@
 #include "Maid.h"
 #include "AudioDriver.h"
 #include "MidiMessage.h"
-#include "PortBase.h"
+#include "TypedPort.h"
 #ifdef HAVE_LASH
 #include "LashDriver.h"
 #endif
@@ -36,7 +36,7 @@ namespace Om {
 	
 //// AlsaMidiPort ////
 
-AlsaMidiPort::AlsaMidiPort(AlsaMidiDriver* driver, PortBase<MidiMessage>* port)
+AlsaMidiPort::AlsaMidiPort(AlsaMidiDriver* driver, TypedPort<MidiMessage>* port)
 : DriverPort(),
   ListNode<AlsaMidiPort*>(this),
   m_driver(driver),

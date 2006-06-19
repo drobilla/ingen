@@ -18,7 +18,7 @@
 #include "Responder.h"
 #include "Om.h"
 #include "OmApp.h"
-#include "PortBase.h"
+#include "TypedPort.h"
 #include "ClientBroadcaster.h"
 #include "Plugin.h"
 #include "Node.h"
@@ -75,9 +75,9 @@ SetPortValueQueuedEvent::execute(samplecount offset)
 	if (m_error == NO_ERROR) {
 		assert(m_port != NULL);
 		if (m_voice_num == -1) 
-			((PortBase<sample>*)m_port)->set_value(m_val, offset);
+			((TypedPort<sample>*)m_port)->set_value(m_val, offset);
 		else
-			((PortBase<sample>*)m_port)->buffer(m_voice_num)->set(m_val, offset); // FIXME: check range
+			((TypedPort<sample>*)m_port)->buffer(m_voice_num)->set(m_val, offset); // FIXME: check range
 	}
 }
 

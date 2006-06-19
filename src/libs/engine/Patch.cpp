@@ -26,7 +26,7 @@
 #include "Connection.h"
 #include "Om.h"
 #include "OmApp.h"
-#include "PortBase.h"
+#include "TypedPort.h"
 #include "ObjectStore.h"
 #include "InputPort.h"
 #include "OutputPort.h"
@@ -169,7 +169,7 @@ Patch::send_creation_messages(ClientInterface* client) const
 		// If this is a bridge (input/output) node, send the patch control value as well
 		if (port != NULL && port->port_info()->is_control())
 			om->client_broadcaster()->send_control_change_to(client, port->path(),
-				((PortBase<sample>*)port)->buffer(0)->value_at(0));
+				((TypedPort<sample>*)port)->buffer(0)->value_at(0));
 	}
 	
 	for (List<Connection*>::const_iterator j = _connections.begin(); j != _connections.end(); ++j) {
@@ -187,7 +187,7 @@ Patch::send_creation_messages(ClientInterface* client) const
 		
 		if (port->port_info()->is_control())
 			om->client_broadcaster()->send_control_change_to(client, port->path(),
-				((PortBase<sample>*)port)->buffer(0)->value_at(0));
+				((TypedPort<sample>*)port)->buffer(0)->value_at(0));
 	}*/
 }
 #endif

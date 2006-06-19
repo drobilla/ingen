@@ -32,7 +32,7 @@
 #include "Port.h"
 #include "MidiDriver.h"
 #include "List.h"
-#include "PortBase.h"
+#include "TypedPort.h"
 #ifdef HAVE_LASH
 #include "LashDriver.h"
 #endif
@@ -45,7 +45,7 @@ namespace Om {
 	
 //// JackAudioPort ////
 
-JackAudioPort::JackAudioPort(JackAudioDriver* driver, PortBase<sample>* patch_port)
+JackAudioPort::JackAudioPort(JackAudioDriver* driver, TypedPort<sample>* patch_port)
 : DriverPort(),
   ListNode<JackAudioPort*>(this),
   m_driver(driver),
@@ -241,7 +241,7 @@ JackAudioDriver::remove_port(JackAudioPort* port)
 
 
 DriverPort*
-JackAudioDriver::create_port(PortBase<sample>* patch_port)
+JackAudioDriver::create_port(TypedPort<sample>* patch_port)
 {
 	if (patch_port->buffer_size() == m_buffer_size)
 		return new JackAudioPort(this, patch_port);
