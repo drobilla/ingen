@@ -39,10 +39,10 @@ class Node;
  * \ingroup engine
  */
 template <typename T>
-class PortBase : public Port
+class TypedPort : public Port
 {
 public:
-	virtual ~PortBase();
+	virtual ~TypedPort();
 
 	void set_value(size_t voice, T val, size_t offset);
 	void set_value(T val, size_t offset);
@@ -52,7 +52,7 @@ public:
 	virtual void prepare_buffers(size_t nframes);
 	virtual void clear_buffers();
 	
-	PortBase* tied_port() const { return m_tied_port; }
+	TypedPort* tied_port() const { return m_tied_port; }
 	void      untie()           { m_is_tied = false; m_tied_port = NULL; } 
 	
 	/** Used by drivers to prevent port from changing buffers */
@@ -60,24 +60,24 @@ public:
 	bool fixed_buffers()       { return m_fixed_buffers; }
 
 protected:
-	PortBase(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size);
+	TypedPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size);
 	
 	// Prevent copies (undefined)
-	PortBase(const PortBase<T>& copy);
-	PortBase& operator=(const Port&);
+	TypedPort(const TypedPort<T>& copy);
+	TypedPort& operator=(const Port&);
 
 	void allocate_buffers();
 
 	bool        m_fixed_buffers;
 	bool        m_is_tied;
-	PortBase*   m_tied_port;
+	TypedPort*   m_tied_port;
 	
 	Array<Buffer<T>*> m_buffers;
 };
 
 
-template class PortBase<sample>;
-template class PortBase<MidiMessage>;
+template class TypedPort<sample>;
+template class TypedPort<MidiMessage>;
 
 } // namespace Om
 
