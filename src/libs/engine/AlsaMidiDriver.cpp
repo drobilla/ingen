@@ -48,7 +48,7 @@ AlsaMidiPort::AlsaMidiPort(AlsaMidiDriver* driver, DuplexPort<MidiMessage>* port
 	assert(port->parent() != NULL);
 	assert(port->poly() == 1);
 
-	if (port->port_info()->is_input()) {
+	if (port->is_input()) {
 		if ((m_port_id = snd_seq_create_simple_port(driver->seq_handle(), port->path().c_str(),
    	 		SND_SEQ_PORT_CAP_WRITE | SND_SEQ_PORT_CAP_SUBS_WRITE,
 			SND_SEQ_PORT_TYPE_APPLICATION)) < 0)
@@ -178,7 +178,7 @@ AlsaMidiPort::prepare_block(const samplecount block_start, const samplecount blo
 	}
 
 	m_patch_port->buffer(0)->filled_size(num_events);
-	m_patch_port->tied_port()->buffer(0)->filled_size(num_events);
+	//m_patch_port->tied_port()->buffer(0)->filled_size(num_events);
 }
 
 
@@ -309,7 +309,7 @@ AlsaMidiDriver::prepare_block(const samplecount block_start, const samplecount b
 void
 AlsaMidiDriver::add_port(AlsaMidiPort* port)
 {
-	if (port->patch_port()->port_info()->is_input())
+	if (port->patch_port()->is_input())
 		m_in_ports.push_back(port);
 	else
 		m_out_ports.push_back(port);
@@ -327,7 +327,7 @@ AlsaMidiDriver::add_port(AlsaMidiPort* port)
 AlsaMidiPort*
 AlsaMidiDriver::remove_port(AlsaMidiPort* port)
 {
-	if (port->patch_port()->port_info()->is_input()) {
+	if (port->patch_port()->is_input()) {
 		for (List<AlsaMidiPort*>::iterator i = m_in_ports.begin(); i != m_in_ports.end(); ++i)
 			if ((*i) == (AlsaMidiPort*)port)
 				return m_in_ports.remove(i)->elem();
