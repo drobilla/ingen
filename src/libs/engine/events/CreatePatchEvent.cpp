@@ -74,7 +74,7 @@ CreatePatchEvent::pre_process()
 	m_patch = new Patch(m_path.name(), poly, m_parent, om->audio_driver()->sample_rate(), om->audio_driver()->buffer_size(), m_poly);
 		
 	if (m_parent != NULL) {
-		m_parent->add_node(new ListNode<Node*>(m_patch->as_node()));
+		m_parent->add_node(new ListNode<Node*>(m_patch));
 
 		if (m_parent->process())
 			m_process_order = m_parent->build_process_order();

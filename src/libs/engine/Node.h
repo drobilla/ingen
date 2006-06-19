@@ -54,8 +54,6 @@ public:
 	Node(OmObject* parent, const string& name) : OmObject(parent, name) {}
 	virtual ~Node() {}
 
-	Node* as_node() { return static_cast<Node*>(this); }
-
 	/** Activate this Node.
 	 *
 	 * This function will be called in a non-realtime thread before it is
@@ -93,7 +91,7 @@ public:
 	virtual void         dependants(List<Node*>* l) = 0;
 	
 	/** The Patch this Node belongs to. */
-	virtual Patch* parent_patch() const   = 0;
+	virtual Patch* parent_patch() const = 0;
 
 	/** Information about what 'plugin' this Node is an instance of.
 	 * Not the best name - not all nodes come from plugins (ie Patch)

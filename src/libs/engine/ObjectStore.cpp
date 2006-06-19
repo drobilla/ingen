@@ -33,7 +33,7 @@ Patch*
 ObjectStore::find_patch(const Path& path) 
 {
 	OmObject* const object = find(path);
-	return (object == NULL) ? NULL : object->as_patch();
+	return dynamic_cast<Patch*>(object);
 }
 
 
@@ -43,7 +43,7 @@ Node*
 ObjectStore::find_node(const Path& path) 
 {
 	OmObject* const object = find(path);
-	return (object == NULL) ? NULL : object->as_node();
+	return dynamic_cast<Node*>(object);
 }
 
 
@@ -53,7 +53,7 @@ Port*
 ObjectStore::find_port(const Path& path) 
 {
 	OmObject* const object = find(path);
-	return (object == NULL) ? NULL : object->as_port();
+	return dynamic_cast<Port*>(object);
 }
 
 

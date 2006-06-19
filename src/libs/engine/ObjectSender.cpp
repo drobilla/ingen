@@ -33,10 +33,13 @@ namespace Om {
 void
 ObjectSender::send_all(ClientInterface* client)
 {
-	for (Tree<OmObject*>::iterator i = om->object_store()->objects().begin();
+	Patch* root = om->object_store()->find_patch("/");
+	assert(root);
+	send_patch(client, root);
+	/*for (Tree<OmObject*>::iterator i = om->object_store()->objects().begin();
 			i != om->object_store()->objects().end(); ++i)
 		if ((*i)->as_patch() != NULL && (*i)->parent() == NULL)
-			send_patch(client, (*i)->as_patch());
+			send_patch(client, (*i)->as_patch());*/
 			//(*i)->as_node()->send_creation_messages(client);
 
 }
@@ -88,12 +91,12 @@ ObjectSender::send_node(ClientInterface* client, const Node* node)
 	// perspective they don't even exist (just the ports they represent)
 	// FIXME: hack, these nodes probably shouldn't even exist in the
 	// engine anymore
-	if (const_cast<Node*>(node)->as_port()) { // bridge node if as_port() returns non-NULL
+	/*if (const_cast<Node*>(node)->as_port()) { // bridge node if as_port() returns non-NULL
 		// FIXME: remove this whole thing.  shouldn't be any bridge nodes anymore
 		assert(false);
 		send_port(client, const_cast<Node*>(node)->as_port());
 		return;
-	}
+	}*/
 
 	const Plugin* const plugin = node->plugin();
 

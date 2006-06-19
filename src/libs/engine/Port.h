@@ -43,10 +43,11 @@ class Port : public OmObject
 public:
 	virtual ~Port() {}
 
-	Port* as_port() { return this; }
-	
 	void add_to_store();
 	void remove_from_store();
+	
+	/** A port's parent is always a node, so static cast should be safe */
+	Node* parent_node() const { return (Node*)_parent; }
 
 	/** Called once per process cycle */
 	virtual void prepare_buffers(size_t nframes) = 0;
@@ -57,7 +58,6 @@ public:
 	virtual bool is_input()  const = 0;
 	virtual bool is_output() const = 0;
 
-	Node*    parent_node() const { return _parent->as_node(); }
 	bool     is_sample()   const { return false; }
 	size_t   num()         const { return _index; }
 	size_t   poly()        const { return _poly; }

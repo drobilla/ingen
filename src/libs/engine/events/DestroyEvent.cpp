@@ -71,12 +71,8 @@ DestroyEvent::~DestroyEvent()
 void
 DestroyEvent::pre_process()
 {
-	if (m_node == NULL) {
-		OmObject* const obj = om->object_store()->find_node(m_path);
-	
-		if (obj != NULL && obj->as_node() != NULL)
-			m_node = obj->as_node();
-	}
+	if (m_node == NULL)
+		m_node = om->object_store()->find_node(m_path);
 
 	if (m_node != NULL && m_path != "/") {
 		assert(m_node->parent_patch() != NULL);
@@ -92,11 +88,12 @@ DestroyEvent::pre_process()
 			}
 			
 			// Create a recursive disconnect event for the parent port, if a bridge node
-			Port* parent_port = m_patch_listnode->elem()->as_port();
+			cerr << "FIXME: Destroy bridge\n";
+			/*Port* parent_port = m_patch_listnode->elem()->as_port();
 			if (parent_port != NULL) {  // Bridge node
 				m_parent_disconnect_event = new DisconnectPortEvent(parent_port);
 				m_parent_disconnect_event->pre_process();
-			}
+			}*/
 				
 			if (m_node->parent_patch()->process()) {
 				m_process_order = m_node->parent_patch()->build_process_order();

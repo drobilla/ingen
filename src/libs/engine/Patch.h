@@ -51,8 +51,6 @@ public:
 	Patch(const string& name, size_t poly, Patch* parent, samplerate srate, size_t buffer_size, size_t local_poly);
 	virtual ~Patch();
 
-	Patch* as_patch() { return static_cast<Patch*>(this); }
-
 	void activate();
 	void deactivate();
 

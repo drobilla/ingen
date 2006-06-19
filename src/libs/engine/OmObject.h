@@ -54,11 +54,6 @@ public:
 	
 	virtual ~OmObject() {}
 	
-	// Ghetto home-brew RTTI
-	virtual Patch* as_patch() { return NULL; }
-	virtual Node*  as_node()  { return NULL; }
-	virtual Port*  as_port()  { return NULL; }
-	
 	OmObject* parent() const { return _parent; }
 
 	inline const string& name() const { return _name; }

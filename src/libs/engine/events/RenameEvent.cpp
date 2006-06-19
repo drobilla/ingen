@@ -74,11 +74,11 @@ RenameEvent::pre_process()
 	}
 	
 	// Renaming only works for Nodes and Patches (which are Nodes)
-	if (obj->as_node() == NULL) {
+	/*if (obj->as_node() == NULL) {
 		m_error = OBJECT_NOT_RENAMABLE;
 		QueuedEvent::pre_process();
 		return;
-	}
+	}*/
 	
 	if (obj != NULL) {
 		obj->set_path(m_new_path);

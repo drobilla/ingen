@@ -73,11 +73,12 @@ public:
 	virtual List<Node*>* dependants()               { return _dependants; }
 	virtual void         dependants(List<Node*>* l) { _dependants = l; }
 	
-	Patch* parent_patch() const { return (_parent == NULL) ? NULL : _parent->as_patch(); }
-
 	virtual const Plugin* plugin() const { return _plugin; }
 	
 	void set_path(const Path& new_path);
+	
+	/** A node's parent is always a patch, so static cast should be safe */
+	Patch* parent_patch() const { return (Patch*)_parent; }
 	
 protected:	
 	// Disallow copies (undefined)
