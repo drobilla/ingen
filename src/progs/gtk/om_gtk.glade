@@ -52,7 +52,7 @@
 		      <signal name="activate" handler="on_patch_import_menuitem_activate" last_modification_time="Mon, 06 Feb 2006 06:20:27 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1911">
+			<widget class="GtkImage" id="image1925">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-open</property>
 			  <property name="icon_size">1</property>
@@ -107,7 +107,7 @@
 		      <accelerator key="G" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1912">
+			<widget class="GtkImage" id="image1926">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-preferences</property>
 			  <property name="icon_size">1</property>
@@ -190,7 +190,7 @@
 		      <accelerator key="C" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1913">
+			<widget class="GtkImage" id="image1927">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-preferences</property>
 			  <property name="icon_size">1</property>
@@ -232,7 +232,7 @@
 		      <signal name="activate" handler="on_patch_destroy_menuitem_activate" last_modification_time="Wed, 25 May 2005 00:22:00 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1914">
+			<widget class="GtkImage" id="image1928">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-delete</property>
 			  <property name="icon_size">1</property>
@@ -246,12 +246,6 @@
 		  </child>
 		</widget>
 	      </child>
-	    </widget>
-	  </child>
-
-	  <child>
-	    <widget class="GtkSeparatorMenuItem" id="separator7">
-	      <property name="visible">True</property>
 	    </widget>
 	  </child>
 
@@ -275,7 +269,7 @@
 		      <accelerator key="E" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1915">
+			<widget class="GtkImage" id="image1929">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-connect</property>
 			  <property name="icon_size">1</property>
@@ -298,7 +292,7 @@
 		      <accelerator key="T" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1916">
+			<widget class="GtkImage" id="image1930">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-index</property>
 			  <property name="icon_size">1</property>
@@ -321,7 +315,7 @@
 		      <accelerator key="M" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1917">
+			<widget class="GtkImage" id="image1931">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-dialog-error</property>
 			  <property name="icon_size">1</property>
@@ -356,7 +350,7 @@
 		      <signal name="activate" handler="on_right-click_the_canvas_to_add_objects1_activate" last_modification_time="Fri, 16 Jun 2006 17:51:05 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1918">
+			<widget class="GtkImage" id="image1932">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-info</property>
 			  <property name="icon_size">1</property>

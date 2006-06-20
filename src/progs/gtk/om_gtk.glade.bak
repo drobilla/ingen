@@ -3128,6 +3128,19 @@ Contributors:
 	  <property name="layout_style">GTK_BUTTONBOX_END</property>
 
 	  <child>
+	    <widget class="GtkButton" id="connect_quit_button">
+	      <property name="visible">True</property>
+	      <property name="can_default">True</property>
+	      <property name="can_focus">True</property>
+	      <property name="label">gtk-quit</property>
+	      <property name="use_stock">True</property>
+	      <property name="relief">GTK_RELIEF_NORMAL</property>
+	      <property name="focus_on_click">True</property>
+	      <property name="response_id">0</property>
+	    </widget>
+	  </child>
+
+	  <child>
 	    <widget class="GtkButton" id="connect_disconnect_button">
 	      <property name="visible">True</property>
 	      <property name="sensitive">False</property>
@@ -3152,19 +3165,6 @@ Contributors:
 	      <property name="relief">GTK_RELIEF_NORMAL</property>
 	      <property name="focus_on_click">True</property>
 	      <property name="response_id">-6</property>
-	    </widget>
-	  </child>
-
-	  <child>
-	    <widget class="GtkButton" id="connect_quit_button">
-	      <property name="visible">True</property>
-	      <property name="can_default">True</property>
-	      <property name="can_focus">True</property>
-	      <property name="label">gtk-quit</property>
-	      <property name="use_stock">True</property>
-	      <property name="relief">GTK_RELIEF_NORMAL</property>
-	      <property name="focus_on_click">True</property>
-	      <property name="response_id">0</property>
 	    </widget>
 	  </child>
 	</widget>
