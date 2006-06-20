@@ -122,8 +122,8 @@ Patch::process(bool p)
  * 
  * Calls all Nodes in the order _process_order specifies.
  */
-inline void
-Patch::run(size_t nframes)
+void
+Patch::process(samplecount nframes)
 {
 	if (_process_order == NULL || !_process)
 		return;
@@ -132,20 +132,19 @@ Patch::run(size_t nframes)
 	
 	// Prepare input ports for nodes to consume
 	for (List<Port*>::iterator i = _input_ports.begin(); i != _input_ports.end(); ++i)
-		(*i)->prepare_buffers(nframes);
+		(*i)->process(nframes);
 
 	// Run all nodes (consume input ports)
 	for (size_t i=0; i < _process_order->size(); ++i) {
 		// Could be a gap due to a node removal event (see RemoveNodeEvent.cpp)
 		// Yes, this is ugly
 		if (_process_order->at(i) != NULL)
-			_process_order->at(i)->run(nframes);
+			_process_order->at(i)->process(nframes);
 	}
 	
 	// Prepare output ports (for caller to consume)
 	for (List<Port*>::iterator i = _output_ports.begin(); i != _output_ports.end(); ++i)
-		if ((*i)->is_output())
-			(*i)->prepare_buffers(nframes);
+		(*i)->process(nframes);
 }
 
 
@@ -302,6 +301,8 @@ Patch::create_port(const string& name, DataType type, size_t buffer_size, bool i
 		return new DuplexPort<sample>(this, name, 0, _poly, type, buffer_size, is_output);
 	else if (type == DataType::MIDI)
 		return new DuplexPort<MidiMessage>(this, name, 0, _poly, type, buffer_size, is_output);
+	else
+		return NULL;
 }
 
 
@@ -355,16 +356,15 @@ Patch::build_process_order() const
 		
 	// Traverse backwards starting at outputs
 	for (List<Port*>::const_iterator p = _output_ports.begin(); p != _output_ports.end(); ++p) {
+
 		/*const Port* const port = (*p);
-		if (port->port_info()->is_output()) {
-			for (List<Connection*>::const_iterator c = port->connections().begin();
-					c != port->connections().end(); ++c) {
-				const Connection* const connection = (*c);
-				assert(connection->dst_port() == port);
-				assert(connection->src_port());
-				assert(connection->src_port()->parent_node());
-				build_process_order_recursive(connection->src_port()->parent_node(), process_order);
-			}
+		for (List<Connection*>::const_iterator c = port->connections().begin();
+				c != port->connections().end(); ++c) {
+			const Connection* const connection = (*c);
+			assert(connection->dst_port() == port);
+			assert(connection->src_port());
+			assert(connection->src_port()->parent_node());
+			build_process_order_recursive(connection->src_port()->parent_node(), process_order);
 		}*/
 	}
 

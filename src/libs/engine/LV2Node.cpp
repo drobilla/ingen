@@ -163,9 +163,9 @@ LV2Node::deactivate()
 
 
 void
-LV2Node::run(size_t nframes)
+LV2Node::process(samplecount nframes)
 {
-	NodeBase::run(nframes); // mixes down input ports
+	NodeBase::process(nframes); // mixes down input ports
 	for (size_t i=0; i < _poly; ++i) 
 		slv2_instance_run(_instances[i], nframes);
 }

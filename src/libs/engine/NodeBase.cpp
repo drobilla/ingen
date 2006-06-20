@@ -102,7 +102,7 @@ void
 NodeBase::remove_from_store()
 {
 	// Remove self
-	TreeNode<OmObject*>* node = om->object_store()->remove(path());
+	TreeNode<GraphObject*>* node = om->object_store()->remove(path());
 	if (node != NULL) {
 		assert(om->object_store()->find(path()) == NULL);
 		delete node;
@@ -122,12 +122,12 @@ NodeBase::remove_from_store()
 /** Runs the Node for the specified number of frames (block size)
  */
 void
-NodeBase::run(size_t nframes)
+NodeBase::process(samplecount nframes)
 {
 	assert(_activated);
 	// Mix down any ports with multiple inputs
 	for (size_t i=0; i < _ports->size(); ++i)
-		_ports->at(i)->prepare_buffers(nframes);
+		_ports->at(i)->process(nframes);
 }
 
 
@@ -142,7 +142,7 @@ NodeBase::set_path(const Path& new_path)
 	const Path old_path = path();
 	//cerr << "Renaming " << old_path << " -> " << new_path << endl;
 	
-	TreeNode<OmObject*>* treenode = NULL;
+	TreeNode<GraphObject*>* treenode = NULL;
 	
 	// Reinsert ports
 	for (size_t i=0; i < num_ports(); ++i) {
@@ -157,7 +157,7 @@ NodeBase::set_path(const Path& new_path)
 	treenode = om->object_store()->remove(old_path);
 	assert(treenode != NULL);
 	assert(treenode->node() == this);
-	OmObject::set_path(new_path);
+	GraphObject::set_path(new_path);
 	treenode->key(new_path);
 	om->object_store()->add(treenode);
 	

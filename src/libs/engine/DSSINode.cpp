@@ -160,9 +160,9 @@ DSSINode::has_midi_input() const
 
 
 void
-DSSINode::run(size_t nframes)
+DSSINode::process(samplecount nframes)
 {
-	NodeBase::run(nframes);
+	NodeBase::process(nframes);
 
 	if (_dssi_descriptor->run_synth) {
 		convert_events();
@@ -176,7 +176,7 @@ DSSINode::run(size_t nframes)
 		_dssi_descriptor->run_multiple_synths(1, _instances, nframes,
 			events, events_sizes);
 	} else {
-		LADSPANode::run(nframes);
+		LADSPANode::process(nframes);
 	}
 }
 

@@ -296,7 +296,7 @@ ClientBroadcaster::send_patch(const Patch* const p)
 }
 
 
-/** Sends notification of an OmObject's renaming
+/** Sends notification of an GraphObject's renaming
  */
 void
 ClientBroadcaster::send_rename(const string& old_path, const string& new_path)
@@ -306,7 +306,7 @@ ClientBroadcaster::send_rename(const string& old_path, const string& new_path)
 }
 
 
-/** Sends all OmObjects known to the engine.
+/** Sends all GraphObjects known to the engine.
  */
 void
 ClientBroadcaster::send_all_objects()

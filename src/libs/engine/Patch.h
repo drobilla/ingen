@@ -54,7 +54,7 @@ public:
 	void activate();
 	void deactivate();
 
-	void run(size_t nframes);
+	void process(samplecount nframes);
 	
 	//void send_creation_messages(ClientInterface* client) const;
 	

@@ -97,22 +97,22 @@ TypedPort<T>::allocate_buffers()
 template void TypedPort<sample>::allocate_buffers();
 template void TypedPort<MidiMessage>::allocate_buffers();
 
-	
+
+/*
 template<>
 void
-TypedPort<sample>::prepare_buffers(size_t nframes)
+TypedPort<sample>::process(samplecount nframes)
 {
 	for (size_t i=0; i < _poly; ++i)
 		m_buffers.at(i)->prepare(nframes);
 }
 
-
 template<>
 void
-TypedPort<MidiMessage>::prepare_buffers(size_t nframes)
+TypedPort<MidiMessage>::process(samplecount nframes)
 {
 }
-
+*/
 
 template<typename T>
 void

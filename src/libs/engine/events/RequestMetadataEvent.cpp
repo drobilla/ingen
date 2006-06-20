@@ -19,7 +19,7 @@
 #include "Responder.h"
 #include "Om.h"
 #include "OmApp.h"
-#include "OmObject.h"
+#include "GraphObject.h"
 #include "ObjectStore.h"
 #include "interface/ClientInterface.h"
 #include "ClientBroadcaster.h"

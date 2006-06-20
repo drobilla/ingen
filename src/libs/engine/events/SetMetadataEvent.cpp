@@ -20,7 +20,7 @@
 #include "Om.h"
 #include "OmApp.h"
 #include "ClientBroadcaster.h"
-#include "OmObject.h"
+#include "GraphObject.h"
 #include "ObjectStore.h"
 
 using std::string;

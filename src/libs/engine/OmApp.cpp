@@ -122,7 +122,7 @@ OmApp::~OmApp()
 {
 	deactivate();
 
-	for (Tree<OmObject*>::iterator i = m_object_store->objects().begin();
+	for (Tree<GraphObject*>::iterator i = m_object_store->objects().begin();
 			i != m_object_store->objects().end(); ++i) {
 		if ((*i)->parent() == NULL)
 			delete (*i);
@@ -214,7 +214,7 @@ OmApp::deactivate()
 	m_audio_driver->root_patch()->process(false);
 	m_audio_driver->root_patch()->deactivate();
 
-	/*for (Tree<OmObject*>::iterator i = m_object_store->objects().begin();
+	/*for (Tree<GraphObject*>::iterator i = m_object_store->objects().begin();
 			i != m_object_store->objects().end(); ++i)
 		if ((*i)->as_node() != NULL && (*i)->as_node()->parent() == NULL)
 			(*i)->as_node()->deactivate();*/

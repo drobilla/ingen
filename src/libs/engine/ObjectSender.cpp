@@ -36,7 +36,7 @@ ObjectSender::send_all(ClientInterface* client)
 	Patch* root = om->object_store()->find_patch("/");
 	assert(root);
 	send_patch(client, root);
-	/*for (Tree<OmObject*>::iterator i = om->object_store()->objects().begin();
+	/*for (Tree<GraphObject*>::iterator i = om->object_store()->objects().begin();
 			i != om->object_store()->objects().end(); ++i)
 		if ((*i)->as_patch() != NULL && (*i)->parent() == NULL)
 			send_patch(client, (*i)->as_patch());*/

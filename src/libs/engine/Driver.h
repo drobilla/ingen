@@ -53,7 +53,7 @@ protected:
 
 /** Driver abstract base class.
  *
- * A Driver is, from the perspective of OmObjects (nodes, patches, ports) an
+ * A Driver is, from the perspective of GraphObjects (nodes, patches, ports) an
  * interface for managing system ports.  An implementation of Driver basically
  * needs to manage DriverPorts, and handle writing/reading data to/from them.
  *

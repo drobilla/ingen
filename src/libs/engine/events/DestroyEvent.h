@@ -29,7 +29,7 @@ template<typename T> class TreeNode;
 
 namespace Om {
 
-class OmObject;
+class GraphObject;
 class Patch;
 class Node;
 class Plugin;
@@ -56,7 +56,7 @@ private:
 	Path                 m_path;
 	Node*                m_node; 
 	ListNode<Node*>*     m_patch_listnode;
-	TreeNode<OmObject*>* m_store_treenode;
+	TreeNode<GraphObject*>* m_store_treenode;
 	Array<Node*>*        m_process_order; // Patch's new process order
 	DisconnectNodeEvent* m_disconnect_event;
 	DisconnectPortEvent* m_parent_disconnect_event; // used for input/output nodes

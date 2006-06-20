@@ -49,7 +49,7 @@ public:
 	
 	Buffer<T>* buffer(size_t voice) const { return m_buffers.at(voice); }
 	
-	virtual void prepare_buffers(size_t nframes);
+	virtual void process(samplecount nframes) {}
 	virtual void clear_buffers();
 	
 	//TypedPort* tied_port() const { return m_tied_port; }

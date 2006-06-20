@@ -19,7 +19,7 @@
 
 #include <string>
 #include "types.h"
-#include "OmObject.h"
+#include "GraphObject.h"
 #include "Array.h"
 
 using std::string;
@@ -39,7 +39,7 @@ namespace Shared {
 
 /** A Node (or "module") in a Patch (which is also a Node).
  * 
- * A Node is a unit with input/output ports, a run() method, and some other
+ * A Node is a unit with input/output ports, a process() method, and some other
  * things.
  * 
  * This is a pure abstract base class for any Node, it contains no
@@ -48,10 +48,10 @@ namespace Shared {
  *
  * \ingroup engine
  */
-class Node : public OmObject
+class Node : public GraphObject
 {
 public:
-	Node(OmObject* parent, const string& name) : OmObject(parent, name) {}
+	Node(GraphObject* parent, const string& name) : GraphObject(parent, name) {}
 	virtual ~Node() {}
 
 	/** Activate this Node.
@@ -64,8 +64,6 @@ public:
 	virtual void deactivate() = 0;
 	virtual bool activated()  = 0;
 
-	virtual void run(size_t nframes) = 0;
-		
 	virtual void set_port_buffer(size_t voice, size_t port_num, void* buf) = 0;
 
 	// FIXME: Only used by client senders.  Remove?

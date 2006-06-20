@@ -23,7 +23,7 @@
 #include <cassert>
 #include "MaidObject.h"
 #include "util/Path.h"
-
+#include "types.h"
 using std::string; using std::map;
 
 namespace Om {
@@ -33,7 +33,7 @@ class Node;
 class Port;
 
 
-/** An object in the "synth space" of Om - Patch, Node, Port, etc.
+/** An object on the audio graph - Patch, Node, Port, etc.
  *
  * Each of these is a MaidObject and so can be deleted in a realtime safe
  * way from anywhere, and they all have a map of metadata for clients to store
@@ -41,40 +41,50 @@ class Port;
  *
  * \ingroup engine
  */
-class OmObject : public MaidObject
+class GraphObject : public MaidObject
 {
 public:
-	OmObject(OmObject* parent, const string& name)
+	GraphObject(GraphObject* parent, const string& name)
 	: _parent(parent), _name(name)
 	{
 		assert(parent == NULL || _name.length() > 0);
 		assert(parent == NULL || _name.find("/") == string::npos);
-		//assert(((string)path()).find("//") == string::npos);
+		assert(((string)path()).find("//") == string::npos);
 	}
 	
-	virtual ~OmObject() {}
+	virtual ~GraphObject() {}
 	
-	OmObject* parent() const { return _parent; }
+	inline GraphObject*  parent() const { return _parent; }
+	inline const string& name()   const { return _name; }
+	
+	virtual void process(samplecount nframes) = 0;
 
-	inline const string& name() const { return _name; }
-	
+	/** Rename */
 	virtual void set_path(const Path& new_path) {
+		assert(new_path.parent() == path().parent());
 		_name = new_path.name();
 		assert(_name.find("/") == string::npos);
 	}
 	
-	void          set_metadata(const string& key, const string& value) { _metadata[key] = value; }
+	void set_metadata(const string& key, const string& value)
+	{ _metadata[key] = value; }
+
 	const string& get_metadata(const string& key) {
 		static const string empty_string = "";
 		map<string, string>::iterator i = _metadata.find(key);
-		if (i != _metadata.end())
-			return (*i).second;
-		else
-			return empty_string;
+		return (i != _metadata.end()) ? (*i).second : empty_string;
 	}
 
 	const map<string, string>& metadata() const { return _metadata; }
 
+
+	/** Patch and Node override this to recursively add their children. */
+	virtual void add_to_store() = 0;
+	
+	/** Patch and Node override this to recursively remove their children. */
+	virtual void remove_from_store() = 0;
+	
+	/** Path is dynamically generated from parent to ease renaming */
 	inline const Path path() const {
 		if (_parent == NULL)
 			return Path(string("/").append(_name));
@@ -84,22 +94,14 @@ public:
 			return Path(_parent->path() +"/"+ _name);
 	}
 
-	/** Patch and Node override this to recursively add their children. */
-	virtual void add_to_store() = 0;
-	
-	/** Patch and Node override this to recursively remove their children. */
-	virtual void remove_from_store() = 0;
-
 protected:
-	OmObject() {}
-	
-	OmObject* _parent;
-	string    _name;
+	GraphObject* _parent;
+	string       _name;
 
 private:	
 	// Prevent copies (undefined)
-	OmObject(const OmObject&);
-	OmObject& operator=(const OmObject& copy);
+	GraphObject(const GraphObject&);
+	GraphObject& operator=(const GraphObject& copy);
 
 	map<string, string> _metadata;
 };

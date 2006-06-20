@@ -45,7 +45,7 @@ public:
 	OutputPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size);
 	virtual ~OutputPort() {}
 
-	void set_tied_port(InputPort<T>* port);
+	//void set_tied_port(InputPort<T>* port);
 	
 	bool is_input()  const { return false; }
 	bool is_output() const { return true; }

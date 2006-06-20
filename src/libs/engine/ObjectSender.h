@@ -28,7 +28,7 @@ class Node;
 class Port;
 
 
-/** Utility class for sending OmObjects to clients through ClientInterface.
+/** Utility class for sending GraphObjects to clients through ClientInterface.
  *
  * While ClientInterface is the direct low level message-based interface
  * (protocol), this is used from the engine to easily send proper Objects

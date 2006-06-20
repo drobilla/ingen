@@ -63,9 +63,9 @@ MidiControlNode::MidiControlNode(const string& path, size_t poly, Patch* parent,
 
 
 void
-MidiControlNode::run(size_t nframes)
+MidiControlNode::process(samplecount nframes)
 {
-	InternalNode::run(nframes);
+	InternalNode::process(nframes);
 
 	MidiMessage ev;
 	

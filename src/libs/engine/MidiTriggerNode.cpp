@@ -55,9 +55,9 @@ MidiTriggerNode::MidiTriggerNode(const string& path, size_t poly, Patch* parent,
 
 
 void
-MidiTriggerNode::run(size_t nframes)
+MidiTriggerNode::process(samplecount nframes)
 {
-	InternalNode::run(nframes);
+	InternalNode::process(nframes);
 	
 	MidiMessage ev;
 	

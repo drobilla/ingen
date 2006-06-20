@@ -328,7 +328,7 @@ JackAudioDriver::m_process_cb(jack_nframes_t nframes)
 	
 	// Run root patch
 	assert(m_root_patch != NULL);
-	m_root_patch->run(nframes);
+	m_root_patch->process(nframes);
 
 	return 0;
 }

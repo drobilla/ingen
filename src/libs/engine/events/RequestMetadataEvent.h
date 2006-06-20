@@ -24,7 +24,7 @@ using std::string;
 
 namespace Om {
 	
-class OmObject;
+class GraphObject;
 namespace Shared {
 	class ClientInterface;
 } using Shared::ClientInterface;
@@ -46,7 +46,7 @@ private:
 	string                      m_path;
 	string                      m_key;
 	string                      m_value; 
-	OmObject*                   m_object;
+	GraphObject*                   m_object;
 	CountedPtr<ClientInterface> m_client;
 };
 

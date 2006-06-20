@@ -24,7 +24,7 @@
 
 #include "Tree.h"
 #include "TreeImplementation.h"
-#include "OmObject.h"
+#include "GraphObject.h"
 #include "Node.h"
 
 
@@ -32,18 +32,18 @@
 template class Tree<Om::Node*>;
 template class TreeNode<Om::Node*>;
 
-template                          Tree<Om::OmObject*>::Tree();
-template                          Tree<Om::OmObject*>::~Tree();
-template void                     Tree<Om::OmObject*>::insert(TreeNode<Om::OmObject*>* const n);
-template TreeNode<Om::OmObject*>* Tree<Om::OmObject*>::remove(const string& key);
-template Om::OmObject*            Tree<Om::OmObject*>::find(const string& key) const;
-template TreeNode<Om::OmObject*>* Tree<Om::OmObject*>::find_treenode(const string& key) const;
+template                          Tree<Om::GraphObject*>::Tree();
+template                          Tree<Om::GraphObject*>::~Tree();
+template void                     Tree<Om::GraphObject*>::insert(TreeNode<Om::GraphObject*>* const n);
+template TreeNode<Om::GraphObject*>* Tree<Om::GraphObject*>::remove(const string& key);
+template Om::GraphObject*            Tree<Om::GraphObject*>::find(const string& key) const;
+template TreeNode<Om::GraphObject*>* Tree<Om::GraphObject*>::find_treenode(const string& key) const;
 
-template Tree<Om::OmObject*>::iterator Tree<Om::OmObject*>::begin() const;
-template Tree<Om::OmObject*>::iterator Tree<Om::OmObject*>::end() const;
+template Tree<Om::GraphObject*>::iterator Tree<Om::GraphObject*>::begin() const;
+template Tree<Om::GraphObject*>::iterator Tree<Om::GraphObject*>::end() const;
 
-template Tree<Om::OmObject*>::iterator::~iterator();
-template Om::OmObject* Tree<Om::OmObject*>::iterator::operator*() const;
-template Tree<Om::OmObject*>::iterator&     Tree<Om::OmObject*>::iterator::operator++();
-template bool          Tree<Om::OmObject*>::iterator::operator!=(const iterator& iter) const;
+template Tree<Om::GraphObject*>::iterator::~iterator();
+template Om::GraphObject* Tree<Om::GraphObject*>::iterator::operator*() const;
+template Tree<Om::GraphObject*>::iterator&     Tree<Om::GraphObject*>::iterator::operator++();
+template bool          Tree<Om::GraphObject*>::iterator::operator!=(const iterator& iter) const;
 

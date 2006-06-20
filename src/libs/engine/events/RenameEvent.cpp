@@ -65,7 +65,7 @@ RenameEvent::pre_process()
 		return;
 	}
 	
-	OmObject* obj = om->object_store()->find(m_old_path);
+	GraphObject* obj = om->object_store()->find(m_old_path);
 
 	if (obj == NULL) {
 		m_error = OBJECT_NOT_FOUND;

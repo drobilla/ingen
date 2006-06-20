@@ -171,9 +171,9 @@ LADSPANode::deactivate()
 
 
 void
-LADSPANode::run(size_t nframes)
+LADSPANode::process(samplecount nframes)
 {
-	NodeBase::run(nframes); // mixes down input ports
+	NodeBase::process(nframes); // mixes down input ports
 	for (size_t i=0; i < _poly; ++i) 
 		_descriptor->run(_instances[i], nframes);
 }

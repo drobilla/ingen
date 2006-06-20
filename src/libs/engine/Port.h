@@ -20,7 +20,7 @@
 #include <cstdlib>
 #include <string>
 #include "types.h"
-#include "OmObject.h"
+#include "GraphObject.h"
 #include "DataType.h"
 
 using std::string;
@@ -38,7 +38,7 @@ class Node;
  *
  * \ingroup engine
  */
-class Port : public OmObject
+class Port : public GraphObject
 {
 public:
 	virtual ~Port() {}
@@ -50,7 +50,7 @@ public:
 	Node* parent_node() const { return (Node*)_parent; }
 
 	/** Called once per process cycle */
-	virtual void prepare_buffers(size_t nframes) = 0;
+	virtual void process(samplecount nframes) = 0;
 	
 	/** Empty buffer contents completely (ie silence) */
 	virtual void clear_buffers() = 0;

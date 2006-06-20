@@ -39,7 +39,7 @@ public:
 	TypedConnection(OutputPort<T>* const src_port, InputPort<T>* const dst_port);
 	virtual ~TypedConnection();
 
-	void prepare_buffers();
+	void process(samplecount nframes);
 
 	inline OutputPort<T>* src_port() const { return dynamic_cast<OutputPort<T>*>(m_src_port); }
 	inline InputPort<T>*  dst_port() const { return dynamic_cast<InputPort<T>*>(m_dst_port); }

@@ -32,7 +32,7 @@ namespace Om {
 Patch*
 ObjectStore::find_patch(const Path& path) 
 {
-	OmObject* const object = find(path);
+	GraphObject* const object = find(path);
 	return dynamic_cast<Patch*>(object);
 }
 
@@ -42,7 +42,7 @@ ObjectStore::find_patch(const Path& path)
 Node*
 ObjectStore::find_node(const Path& path) 
 {
-	OmObject* const object = find(path);
+	GraphObject* const object = find(path);
 	return dynamic_cast<Node*>(object);
 }
 
@@ -52,14 +52,14 @@ ObjectStore::find_node(const Path& path)
 Port*
 ObjectStore::find_port(const Path& path) 
 {
-	OmObject* const object = find(path);
+	GraphObject* const object = find(path);
 	return dynamic_cast<Port*>(object);
 }
 
 
 /** Find the Object at the given path.
  */
-OmObject*
+GraphObject*
 ObjectStore::find(const Path& path)
 {
 	return m_objects.find(path);
@@ -69,17 +69,17 @@ ObjectStore::find(const Path& path)
 /** Add an object to the store. Not realtime safe.
  */
 void
-ObjectStore::add(OmObject* o)
+ObjectStore::add(GraphObject* o)
 {
 	//cerr << "[ObjectStore] Adding " << o->path() << endl;
-	m_objects.insert(new TreeNode<OmObject*>(o->path(), o));
+	m_objects.insert(new TreeNode<GraphObject*>(o->path(), o));
 }
 
 
 /** Add an object to the store. Not realtime safe.
  */
 void
-ObjectStore::add(TreeNode<OmObject*>* tn)
+ObjectStore::add(TreeNode<GraphObject*>* tn)
 {
 	//cerr << "[ObjectStore] Adding " << tn->key() << endl;
 	m_objects.insert(tn);
@@ -92,10 +92,10 @@ ObjectStore::add(TreeNode<OmObject*>* tn)
  * 
  * @returns TreeNode containing object removed on success, NULL if not found.
  */
-TreeNode<OmObject*>*
+TreeNode<GraphObject*>*
 ObjectStore::remove(const string& path)
 {
-	TreeNode<OmObject*>* const removed = m_objects.remove(path);
+	TreeNode<GraphObject*>* const removed = m_objects.remove(path);
 
 	if (removed == NULL)
 		cerr << "[ObjectStore] WARNING: Removing " << path << " failed." << endl;

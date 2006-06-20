@@ -64,7 +64,7 @@ libom_la_SOURCES = \
 	QueuedEventSource.cpp \
 	QueuedEngineInterface.h \
 	QueuedEngineInterface.cpp \
-	OmObject.h \
+	GraphObject.h \
 	Maid.h \
 	Maid.cpp \
 	MaidObject.h \

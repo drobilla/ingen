@@ -42,7 +42,7 @@ public:
 	MidiNoteNode(const string& path, size_t poly, Patch* parent, samplerate srate, size_t buffer_size);
 	~MidiNoteNode();
 
-	void run(size_t nframes);
+	void process(samplecount nframes);
 	
 	void note_on(uchar note_num, uchar velocity, samplecount offset);
 	void note_off(uchar note_num, samplecount offset);

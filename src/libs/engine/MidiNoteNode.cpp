@@ -72,9 +72,9 @@ MidiNoteNode::~MidiNoteNode()
 
 
 void
-MidiNoteNode::run(size_t nframes)
+MidiNoteNode::process(samplecount nframes)
 {
-	InternalNode::run(nframes);
+	InternalNode::process(nframes);
 	
 	MidiMessage ev;
 	

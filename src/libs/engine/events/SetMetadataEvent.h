@@ -24,10 +24,10 @@ using std::string;
 
 namespace Om {
 
-class OmObject;
+class GraphObject;
 
 
-/** An event to set a piece of metadata for an OmObject.
+/** An event to set a piece of metadata for an GraphObject.
  *
  * \ingroup engine
  */
@@ -44,7 +44,7 @@ private:
 	string    m_path;
 	string    m_key;
 	string    m_value;
-	OmObject* m_object;
+	GraphObject* m_object;
 };
 
 

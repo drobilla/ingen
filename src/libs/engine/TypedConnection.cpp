@@ -59,8 +59,11 @@ template TypedConnection<MidiMessage>::~TypedConnection();
 
 template <typename sample>
 void
-TypedConnection<sample>::prepare_buffers()
+TypedConnection<sample>::process(samplecount nframes)
 {
+	// FIXME: nframes parameter not used
+	assert(nframes == m_buffer_size);
+
 	/* Thought:  A poly output port can be connected to multiple mono input
 	 * ports, which means this mix down would have to happen many times.
 	 * Adding a method to OutputPort that mixes down all it's outputs into
@@ -81,13 +84,13 @@ TypedConnection<sample>::prepare_buffers()
 			m_local_buffer->scale(1.0f/(float)src_port()->poly(), 0, m_buffer_size-1);
 	}
 }
-template void TypedConnection<sample>::prepare_buffers();
+template void TypedConnection<sample>::process(samplecount nframes);
 
 
 // FIXME: MIDI mixing not implemented
 template <>
 void
-TypedConnection<MidiMessage>::prepare_buffers()
+TypedConnection<MidiMessage>::process(samplecount nframes)
 {
 }
 

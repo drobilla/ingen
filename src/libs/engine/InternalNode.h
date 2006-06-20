@@ -44,7 +44,7 @@ public:
 
 	virtual void deactivate() { if (_is_added) remove_from_patch(); NodeBase::deactivate(); }
 	
-	virtual void run(size_t nframes) { NodeBase::run(nframes); }
+	virtual void process(samplecount nframes) { NodeBase::process(nframes); }
 
 	virtual void add_to_patch()      { assert(!_is_added); _is_added = true; }
 	virtual void remove_from_patch() { assert(_is_added); _is_added = false; }

@@ -468,13 +468,13 @@ OSCClient::object_renamed(const string& old_path, const string& new_path)
 }
 
 
-/** Sends all OmObjects known to the engine.
+/** Sends all GraphObjects known to the engine.
  */
 /*
 void
 OSCClient::all_objects()
 {
-	for (Tree<OmObject*>::iterator i = om->object_store()->objects().begin();
+	for (Tree<GraphObject*>::iterator i = om->object_store()->objects().begin();
 			i != om->object_store()->objects().end(); ++i)
 		if ((*i)->as_node() != NULL && (*i)->parent() == NULL)
 			(*i)->as_node()->send_creation_messages(this);

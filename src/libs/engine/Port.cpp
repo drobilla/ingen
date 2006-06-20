@@ -29,7 +29,7 @@ const char* const DataType::type_uris[3] = { "UNKNOWN", "FLOAT", "MIDI" };
 
 
 Port::Port(Node* const node, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size)
-: OmObject(node, name),
+: GraphObject(node, name),
   _index(index),
   _poly(poly),
   _type(type),
@@ -51,7 +51,7 @@ void
 Port::remove_from_store()
 {
 	// Remove self
-	TreeNode<OmObject*>* node = om->object_store()->remove(path());
+	TreeNode<GraphObject*>* node = om->object_store()->remove(path());
 	assert(node != NULL);
 	assert(om->object_store()->find(path()) == NULL);
 	delete node;

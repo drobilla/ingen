@@ -48,7 +48,7 @@ public:
 	virtual void deactivate();
 	bool activated() { return _activated; }
 
-	virtual void run(size_t nframes);
+	virtual void process(samplecount nframes);
 		
 	virtual void set_port_buffer(size_t voice, size_t port_num, void* buf) {}
 	

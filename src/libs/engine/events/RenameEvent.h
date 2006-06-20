@@ -27,7 +27,7 @@ template<typename T> class ListNode;
 
 namespace Om {
 
-class OmObject;
+class GraphObject;
 class Patch;
 class Node;
 class Plugin;
@@ -35,7 +35,7 @@ class DisconnectNodeEvent;
 class DisconnectPortEvent;
 
 
-/** An event to change the name of an OmObject.
+/** An event to change the name of an GraphObject.
  *
  * \ingroup engine
  */
@@ -56,7 +56,7 @@ private:
 	string               m_name;
 	Path                 m_new_path;
 	Patch*               m_parent_patch;
-	TreeNode<OmObject*>* m_store_treenode;
+	TreeNode<GraphObject*>* m_store_treenode;
 	ErrorType            m_error;
 };
 

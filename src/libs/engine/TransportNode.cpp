@@ -83,7 +83,7 @@ TransportNode::TransportNode(const string& path, size_t poly, Patch* parent, sam
 void
 TransportNode::run(size_t nframes)
 {
-	NodeBase::run(nframes);
+	NodeBase::process(nframes);
 #if 0
 
 	// FIXME: this will die horribly with any driver other than jack (in theory)
