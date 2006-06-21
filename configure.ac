@@ -1,5 +1,5 @@
 AC_PREREQ(2.59)
-AC_INIT([om],[0.3.0pre],[drobilla@connect.carleton.ca])
+AC_INIT([ingen],[0.4.0pre],[drobilla@connect.carleton.ca])
 AC_CONFIG_SRCDIR([src/common/util/CountedPtr.h])
 AC_CONFIG_SRCDIR([src/common/interface/EngineInterface.h])
 AC_CONFIG_SRCDIR([src/libs/engine/JackAudioDriver.cpp])
@@ -39,7 +39,7 @@ AC_SUBST(LOSC_CFLAGS)
 
 # Check for pthreads
 AC_CHECK_LIB(pthread, pthread_create, [],
-	AC_MSG_ERROR([*** Om requires POSIX threads support]))
+	AC_MSG_ERROR([*** Ingen requires POSIX threads support]))
 AC_CHECK_HEADER(pthread.h)
 
 # Check for POSIX semaphores in rt library
@@ -188,7 +188,7 @@ if test "$build_engine" = "yes" -o "$build_in_process_engine" = "yes"; then
 	if test "$build_ladspa" = "yes"; then
 		build_ladspa="no"
 		AC_CHECK_HEADER(ladspa.h, [build_ladspa="yes"],
-			[AC_MSG_WARN([You don't seem to build ladspa.h, Om will not be very useful!])])
+			[AC_MSG_WARN([You don't seem to build ladspa.h, Ingen will not be very useful!])])
 	fi
 	if test "$build_ladspa" = "yes"; then
 		AC_DEFINE(HAVE_LADSPA, 1, [Has ladspa.h])
@@ -217,7 +217,7 @@ if test "$build_engine" = "yes" -o "$build_in_process_engine" = "yes"; then
 	if test "$build_dssi" = "yes"; then
 		build_dssi="no"
 		AC_CHECK_HEADER(dssi.h, [build_dssi="yes"],
-			[AC_MSG_WARN([You do not seem to have dssi.h, Om will be built without DSSI support])])
+			[AC_MSG_WARN([You do not seem to have dssi.h, Ingen will be built without DSSI support])])
 		if test "$build_dssi" = "yes"; then
 			AC_DEFINE(HAVE_DSSI, 1, [Has dssi.h])
 		fi
@@ -352,7 +352,7 @@ AC_OUTPUT
 
 # Display summary
 AC_MSG_NOTICE([])
-AC_MSG_NOTICE([Om build configuration:])
+AC_MSG_NOTICE([Ingen build configuration:])
 AC_MSG_NOTICE([])
 AC_MSG_NOTICE([Building engine:            $build_engine])
 AC_MSG_NOTICE([   Jack MIDI support:       $build_jack_midi])

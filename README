@@ -1,6 +1,6 @@
-Om is a realtime modular synthesizer and/or effects processor for
+Ingen is a realtime modular synthesizer and/or effects processor for
 Jack/Alsa/LADSPA/DSSI/LV2/etc (ie GNU/Linux audio systems).  More information
-may be found at http://om-synth.nongnu.org
+may be found at http://codeson.net/ingen
 
 To build, do the typical "./configure; make; make install" routine.
 
@@ -11,7 +11,7 @@ build clients only, build monolithic clients, etc. etc)
 
 *** Optimization ***
 
-Om's configure script, by default, does not clobber your CFLAGS or CXXFLAGS
+Ingen's configure script, by default, does not clobber your CFLAGS or CXXFLAGS
 environment variables (which is the proper behaviour), though it does add a
 few flags that should be turned on in any case (as described in this file).
 If you want to submit usable bug reports (for segfaults and the like),
@@ -28,7 +28,7 @@ SSE) through your CXXFLAGS environment variable.  The performance improvement
 
 *** Debugging ***
 
-Om makes very heavy use of assertions to catch bugs.  Assertions have a
+Ingen makes very heavy use of assertions to catch bugs.  Assertions have a
 (minor) performance hit unless the preprocessor symbol NDEBUG is defined.
 By default the configure script will add this to the end of your flags,
 but it's worth noting.  You really don't want assertions turned on in a
@@ -40,7 +40,7 @@ I can fix the problem.
 
 *** Bugs ***
 
-If Om crashes, PLEASE REPORT THE BUG.  This isn't software from some faceless
+If Ingen crashes, PLEASE REPORT THE BUG.  This isn't software from some faceless
 corporation, I'm a real person, and I'm usually on IRC (#lad on freenode.net)
 if you want to talk to me.  Things can't get fixed if I don't know about them,
 and if you report it, it will get fixed - probably immediately.
