@@ -1,17 +1,17 @@
-/* This file is part of Om.  Copyright (C) 2005 Dave Robillard.
+/* This file is part of Ingen.  Copyright (C) 2006 Dave Robillard.
  * 
- * Om is free software; you can redistribute it and/or modify it under the
+ * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
  * 
- * Om is distributed in the hope that it will be useful, but WITHOUT ANY
+ * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
  * 
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
- * 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
 #include "DemolitionModel.h"
@@ -221,15 +221,15 @@ void
 DemolitionModel::object_renamed(const Path& old_path, const Path& new_path)
 {
 	/* FIXME: broken, does not rename children
-	assert(OmPath::parent(old_path) == OmPath::parent(new_path));
+	assert(Path::parent(old_path) == Path::parent(new_path));
 	
 	// Rename node
 	NodeModel* nm = get_node(old_path);
 	if (nm != NULL) {
 		if (nm->parent() != NULL) {
-			nm->parent()->remove_node(OmPath::name(old_path));
+			nm->parent()->remove_node(Path::name(old_path));
 			nm->path(new_path);
-			nm->parent()->add_node(OmPath::name(new_path));
+			nm->parent()->add_node(Path::name(new_path));
 		}
 	}
 

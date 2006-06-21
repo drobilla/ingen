@@ -1,6 +1,6 @@
-// Boot Om (inside SC) and the scsynth server
+// Boot Ingen (inside SC) and the scsynth server
 (
-o=Om.boot {
+o=Ingen.boot {
 	o.loadPatch("/home/mlang/src/om-synth/src/clients/patches/303.om");
 	s.boot;
 }

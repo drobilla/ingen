@@ -2,7 +2,7 @@
 
 ###############################################################################
 #
-#    flatten.py - a python script that merges all subpatches in an Om patch
+#    flatten.py - a python script that merges all subpatches in an Ingen patch
 #                 into the parent patch
 #
 #    Copyright (C) 2005 Lars Luthman
@@ -19,11 +19,11 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 #
 ###############################################################################
 
-import omsynth
+import ingen
 import os,time,sys
 
 
@@ -200,7 +200,7 @@ def flatten(om, patch):
 
 
 def main(om):
-    om.setEnvironment(omsynth.Environment())
+    om.setEnvironment(ingen.Environment())
     om.engine.activate.async()
     om.engine.load_plugins.async()
     om.request.all_objects(om.getAddressAsString())
@@ -225,7 +225,7 @@ if len(sys.argv) > 1:
         print "%p";
         os._exit(0)
     else:
-        omsynth.startClient(main)
+        ingen.startClient(main)
     
 else:
     print "Which patch do you want to flatten?"
