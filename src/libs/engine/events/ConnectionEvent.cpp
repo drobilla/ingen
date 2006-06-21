@@ -212,8 +212,12 @@ TypedConnectionEvent<T>::pre_process()
 	m_port_listnode = new ListNode<TypedConnection<T>*>(m_connection);
 	m_patch_listnode = new ListNode<Connection*>(m_connection);
 	
-	dst_node->providers()->push_back(new ListNode<Node*>(src_node));
-	src_node->dependants()->push_back(new ListNode<Node*>(dst_node));
+	// Need to be careful about patch port connections here and adding a node's
+	// parent as a dependant/provider...
+	if (src_node->parent() == dst_node->parent()) {
+		dst_node->providers()->push_back(new ListNode<Node*>(src_node));
+		src_node->dependants()->push_back(new ListNode<Node*>(dst_node));
+	}
 
 	if (m_patch->process())
 		m_process_order = m_patch->build_process_order();

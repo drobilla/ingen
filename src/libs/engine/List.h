@@ -136,10 +136,10 @@ private:
 	List(const List& copy);
 	List& operator=(const List& copy);
 
-	ListNode<T>* m_head;
-	ListNode<T>* m_tail;
+	ListNode<T>*   m_head;
+	ListNode<T>*   m_tail;
 	size_t         m_size;
-	iterator     m_end_iter;
+	iterator       m_end_iter;
 	const_iterator m_const_end_iter;
 };
 

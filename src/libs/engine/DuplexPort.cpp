@@ -37,6 +37,7 @@ DuplexPort<T>::DuplexPort(Node* parent, const string& name, size_t index, size_t
 , OutputPort<T>(parent, name, index, poly, type, buffer_size)
 , _is_output(is_output)
 {
+	assert(TypedPort<T>::_parent == parent);
 }
 template DuplexPort<sample>::DuplexPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size, bool is_output);
 template DuplexPort<MidiMessage>::DuplexPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size, bool is_output);

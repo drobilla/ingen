@@ -40,6 +40,9 @@ public:
 	void join(Buffer* buf);
 	void unjoin();
 	
+	/** For driver use only!! */
+	void set_data(T* data);
+	
 	inline T& value_at(size_t offset) { assert(offset < m_size); return m_data[offset]; }
 	
 	void prepare(samplecount nframes);
@@ -78,7 +81,7 @@ class DriverBuffer : public Buffer<T>
 public:
 	DriverBuffer(size_t size);
 	
-	void set_data(T* data);
+
 	
 private:
 	using Buffer<T>::m_data;

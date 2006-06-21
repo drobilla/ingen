@@ -348,14 +348,14 @@ Patch::remove_port(const Port* port)
 Array<Node*>*
 Patch::build_process_order() const
 {
-	Node*               node          = NULL;
 	Array<Node*>* const process_order = new Array<Node*>(_nodes.size());
 	
+	// FIXME: tweak algorithm so it just ends up like this and save the iteration?
 	for (List<Node*>::const_iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		(*i)->traversed(false);
 		
 	// Traverse backwards starting at outputs
-	for (List<Port*>::const_iterator p = _output_ports.begin(); p != _output_ports.end(); ++p) {
+	//for (List<Port*>::const_iterator p = _output_ports.begin(); p != _output_ports.end(); ++p) {
 
 		/*const Port* const port = (*p);
 		for (List<Connection*>::const_iterator c = port->connections().begin();
@@ -366,16 +366,31 @@ Patch::build_process_order() const
 			assert(connection->src_port()->parent_node());
 			build_process_order_recursive(connection->src_port()->parent_node(), process_order);
 		}*/
-	}
+	//}
+	
 
 	// Add any (disjoint) nodes that weren't hit by the traversal
-	for (List<Node*>::const_iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
+	/*for (List<Node*>::const_iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
 		node = (*i);
 		if ( ! node->traversed()) {
 			process_order->push_back(*i);
 			node->traversed(true);
 		}
+	}*/
+
+	for (List<Node*>::const_iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
+		Node* const node = (*i);
+		// Either a sink or connected to our output ports:
+		if ( (!node->traversed()) && node->dependants()->size() == 0)
+			build_process_order_recursive(node, process_order);
 	}
+
+	cerr << "----------------------------------------\n";
+	for (size_t i=0; i < process_order->size(); ++i) {
+		assert(process_order->at(i));
+		cerr << process_order->at(i)->path() << endl;
+	}
+	cerr << "----------------------------------------\n";
 
 	assert(process_order->size() == _nodes.size());
 

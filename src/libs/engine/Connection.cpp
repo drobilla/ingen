@@ -31,7 +31,6 @@ namespace Om {
 Connection::Connection(Port* const src_port, Port* const dst_port)
 : m_src_port(src_port),
   m_dst_port(dst_port),
-  m_is_poly_to_mono( (src_port->parent_node()->poly() > dst_port->parent_node()->poly()) ),
   m_pending_disconnection(false)
 {
 	assert(src_port != NULL);

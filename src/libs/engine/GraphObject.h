@@ -48,8 +48,8 @@ public:
 	: _parent(parent), _name(name)
 	{
 		assert(parent == NULL || _name.length() > 0);
-		assert(parent == NULL || _name.find("/") == string::npos);
-		assert(((string)path()).find("//") == string::npos);
+		assert(_name.find("/") == string::npos);
+		assert(path().find("//") == string::npos);
 	}
 	
 	virtual ~GraphObject() {}

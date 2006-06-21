@@ -185,9 +185,8 @@ LADSPANode::set_port_buffer(size_t voice, size_t port_num, void* buf)
 	assert(voice < _poly);
 	
 	// Could be a MIDI port after this
-	if (port_num < _descriptor->PortCount) {
+	if (port_num < _descriptor->PortCount)
 		_descriptor->connect_port(_instances[voice], port_num, (sample*)buf);
-	}
 }
 
 #if 0

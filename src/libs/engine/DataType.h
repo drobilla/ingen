@@ -49,7 +49,8 @@ public:
 	: _symbol(symbol)
 	{}
 
-	const char* const uri() const { return type_uris[_symbol]; }
+	const char* const uri()    const { return type_uris[_symbol]; }
+	const Symbol&     symbol() const { return _symbol; }
 
 	inline bool operator==(const Symbol& symbol) const { return (_symbol == symbol); }
 	inline bool operator!=(const Symbol& symbol) const { return (_symbol != symbol); }

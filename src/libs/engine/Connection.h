@@ -56,7 +56,6 @@ protected:
 	
 	Port* const m_src_port;
 	Port* const m_dst_port;
-	bool        m_is_poly_to_mono;
 	bool        m_pending_disconnection;
 };
 

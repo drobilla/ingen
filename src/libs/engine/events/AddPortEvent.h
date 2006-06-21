@@ -31,6 +31,7 @@ namespace Om {
 class Patch;
 class Port;
 class Plugin;
+class DriverPort;
 
 
 /** An event to add a Port to a Patch.
@@ -41,7 +42,6 @@ class AddPortEvent : public QueuedEvent
 {
 public:
 	AddPortEvent(CountedPtr<Responder> responder, const string& path, const string& type, bool is_output);
-	~AddPortEvent();
 
 	void pre_process();
 	void execute(samplecount offset);
@@ -53,18 +53,10 @@ private:
 	bool          _is_output;
 	DataType      _data_type;
 	Patch*        _patch;
-	Port*         _port;
-	Array<Port*>* _ports_array; // New (external) ports array for Patch
+	Port*         _patch_port;
+	Array<Port*>* _ports_array; ///< New (external) ports array for Patch
+	DriverPort*   _driver_port; ///< Driver (eg Jack) port if this is a toplevel port
 	bool          _succeeded;
-	/*
-	string           m_patch_name;
-	Path             m_path;
-	Plugin*          m_plugin;
-	bool             m_poly;
-	Patch*           m_patch;
-	Node*            m_node;
-	Array<Node*>*    m_process_order; // Patch's new process order
-	bool             m_node_already_exists;*/
 };
 
 

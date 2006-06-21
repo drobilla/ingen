@@ -61,7 +61,7 @@ private:
 	TypedConnection& operator=(const TypedConnection&);
 
 	Buffer<T>* m_local_buffer;  ///< Only used for poly->mono connections
-	bool       m_is_poly_to_mono;
+	bool       m_must_mix;
 	size_t     m_buffer_size;
 	bool       m_pending_disconnection;
 };
@@ -73,7 +73,7 @@ TypedConnection<sample>::buffer(size_t voice) const
 {
 	TypedPort<sample>* const src_port = (TypedPort<sample>*)m_src_port;
 	
-	if (m_is_poly_to_mono) {
+	if (m_must_mix) {
 		return m_local_buffer;
 	} else {
 		if (src_port->poly() == 1)

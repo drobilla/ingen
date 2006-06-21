@@ -235,11 +235,13 @@ InputPort<sample>::process(samplecount nframes)
 				m_buffers.at(0)->join((*m_connections.begin())->buffer(0));
 				do_mixdown = false;
 			}
+			update_buffers();
 		} else {
 			do_mixdown = false;
 		}
-		update_buffers();
 	}
+
+	//cerr << path() << " mixing: " << do_mixdown << endl;
 
 	if (!do_mixdown) {
 		assert(m_buffers.at(0)->data() == (*m_connections.begin())->buffer(0)->data());
@@ -250,13 +252,14 @@ InputPort<sample>::process(samplecount nframes)
 	assert(!m_is_tied || m_buffers.at(0)->data() == m_tied_port->buffer(0)->data());*/
 
 	for (size_t voice=0; voice < _poly; ++voice) {
+		// Copy first connection
 		m_buffers.at(voice)->copy((*m_connections.begin())->buffer(voice), 0, _buffer_size-1);
 		
+		// Accumulate the rest
 		if (m_connections.size() > 1) {
-			// Copy first connection
+
 			TypedConnectionListIterator c = m_connections.begin();
-			
-			// Add all other connections
+
 			for (++c; c != m_connections.end(); ++c)
 				m_buffers.at(voice)->accumulate((*c)->buffer(voice), 0, _buffer_size-1);
 		}
@@ -271,7 +274,7 @@ InputPort<sample>::process(samplecount nframes)
 template <>
 void
 InputPort<MidiMessage>::process(samplecount nframes)
-{
+{	
 	//assert(!m_is_tied || m_tied_port != NULL);
 	
 	const size_t num_ins = m_connections.size();

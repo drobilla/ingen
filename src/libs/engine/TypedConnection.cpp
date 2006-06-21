@@ -34,15 +34,20 @@ template <typename T>
 TypedConnection<T>::TypedConnection(OutputPort<T>* const src_port, InputPort<T>* const dst_port)
 : Connection(src_port, dst_port),
   m_local_buffer(NULL),
-  m_is_poly_to_mono( (src_port->parent_node()->poly() > dst_port->parent_node()->poly()) ),
+  m_must_mix(true),
   m_buffer_size(src_port->buffer_size()),
   m_pending_disconnection(false)
 {
 	assert((src_port->parent_node()->poly() == dst_port->parent_node()->poly())
 		|| (src_port->parent_node()->poly() == 1 || dst_port->parent_node()->poly() == 1));
 
-	if (m_is_poly_to_mono) // Poly -> Mono connection, need a buffer to mix in to
+	if (src_port->poly() == dst_port->poly())
+		m_must_mix = false;
+	else // Poly -> Mono connection, need a buffer to mix into
 		m_local_buffer = new Buffer<T>(m_buffer_size);
+
+	//cerr << "Connection " << src_port->path() << " -> " << dst_port->path()
+	//	<< "\t mixing: " << m_must_mix << endl;
 }
 template TypedConnection<sample>::TypedConnection(OutputPort<sample>* const src_port, InputPort<sample>* const dst_port);
 template TypedConnection<MidiMessage>::TypedConnection(OutputPort<MidiMessage>* const src_port, InputPort<MidiMessage>* const dst_port);
@@ -71,7 +76,10 @@ TypedConnection<sample>::process(samplecount nframes)
 	 * would avoid having to mix multiple times.  Probably not a very common
 	 * case, but it would be faster anyway. */
 	
-	if (m_is_poly_to_mono) {
+	if (m_must_mix) {
+		//cerr << "Mixing " << src_port()->buffer(0)->data()
+		//	<< " -> " << m_local_buffer->data() << endl;
+
 		m_local_buffer->copy(src_port()->buffer(0), 0, m_buffer_size-1);
 	
 		// Mix all the source's voices down into local buffer starting at the second

@@ -180,7 +180,7 @@ Buffer<T>::copy(const Buffer<T>* src, size_t start_sample, size_t end_sample)
 	assert(src->data() != NULL);
 	assert(m_data != NULL);
 	
-	const T* const src_data = src->data();
+	register const T* const src_data = src->data();
 
 	for (size_t i=start_sample; i <= end_sample; ++i)
 		m_data[i] = src_data[i];
@@ -205,7 +205,7 @@ Buffer<T>::accumulate(const Buffer<T>* const src, size_t start_sample, size_t en
 	assert(src->data() != NULL);
 	assert(m_data != NULL);
 
-	const T* const src_data = src->data();
+	register const T* const src_data = src->data();
 	
 	for (size_t i=start_sample; i <= end_sample; ++i)
 		m_data[i] += src_data[i];
@@ -267,8 +267,30 @@ Buffer<sample>::prepare(samplecount nframes)
 }
 
 
-////// DriverBuffer ////////
+template<>
+void
+Buffer<MidiMessage>::prepare(samplecount nframes)
+{
+}
 
+
+/** Set the buffer (data) used.
+ *
+ * This is only to be used by Drivers (to provide zero-copy processing).
+ */
+template<typename T>
+void
+Buffer<T>::set_data(T* data)
+{
+	assert(!m_is_joined);
+	m_data = data;
+}
+template void Buffer<sample>::set_data(sample* data);
+template void Buffer<MidiMessage>::set_data(MidiMessage* data);
+
+
+////// DriverBuffer ////////
+#if 0
 template <typename T>
 DriverBuffer<T>::DriverBuffer(size_t size)
 : Buffer<T>(size)
@@ -293,6 +315,6 @@ DriverBuffer<T>::set_data(T* data)
 }
 template void DriverBuffer<sample>::set_data(sample* data);
 template void DriverBuffer<MidiMessage>::set_data(MidiMessage* data);
-
+#endif
 
 } // namespace Om

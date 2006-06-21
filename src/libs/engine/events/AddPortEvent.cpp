@@ -29,7 +29,10 @@
 #include "util/Path.h"
 #include "Port.h"
 #include "AudioDriver.h"
+#include "MidiDriver.h"
 #include "List.h"
+#include "Driver.h"
+#include "DuplexPort.h"
 
 namespace Om {
 
@@ -41,7 +44,8 @@ AddPortEvent::AddPortEvent(CountedPtr<Responder> responder, const string& path, 
   _is_output(is_output),
   _data_type(DataType::UNKNOWN),
   _patch(NULL),
-  _port(NULL),
+  _patch_port(NULL),
+  _driver_port(NULL),
   _succeeded(true)
 {
 	string type_str;
@@ -49,11 +53,6 @@ AddPortEvent::AddPortEvent(CountedPtr<Responder> responder, const string& path, 
 		_data_type = DataType::FLOAT;
 	else if (type == "MIDI")
 		_data_type = DataType::MIDI;
-}
-
-
-AddPortEvent::~AddPortEvent()
-{
 }
 
 
@@ -65,6 +64,8 @@ AddPortEvent::pre_process()
 		return;
 	}
 
+	// FIXME: this is just a mess :/
+	
 	_patch = om->object_store()->find_patch(_path.parent());
 
 	if (_patch != NULL) {
@@ -74,15 +75,24 @@ AddPortEvent::pre_process()
 		if (_type == "AUDIO" || _type == "MIDI")
 			buffer_size = om->audio_driver()->buffer_size();
 	
-		_port = _patch->create_port(_path.name(), _data_type, buffer_size, _is_output);
-		if (_port) {
+		_patch_port = _patch->create_port(_path.name(), _data_type, buffer_size, _is_output);
+		if (_patch_port) {
 			if (_is_output)
-				_patch->add_output(new ListNode<Port*>(_port));
+				_patch->add_output(new ListNode<Port*>(_patch_port));
 			else
-				_patch->add_input(new ListNode<Port*>(_port));
+				_patch->add_input(new ListNode<Port*>(_patch_port));
 			_ports_array = new Array<Port*>(_patch->num_ports() + 1, _patch->external_ports());
-			_ports_array->at(_patch->num_ports()) = _port;
-			om->object_store()->add(_port);
+			_ports_array->at(_patch->num_ports()) = _patch_port;
+			om->object_store()->add(_patch_port);
+
+			if (!_patch->parent()) {
+				if (_type == "AUDIO")
+					_driver_port = om->audio_driver()->create_port(
+						dynamic_cast<DuplexPort<sample>*>(_patch_port));
+				else if (_type == "MIDI")
+					_driver_port = om->midi_driver()->create_port(
+						dynamic_cast<DuplexPort<MidiMessage>*>(_patch_port));
+			}
 		}
 	}
 	QueuedEvent::pre_process();
@@ -94,11 +104,14 @@ AddPortEvent::execute(samplecount offset)
 {
 	QueuedEvent::execute(offset);
 
-	if (_port) {
+	if (_patch_port) {
 		om->maid()->push(_patch->external_ports());
 		//_patch->add_port(_port);
 		_patch->external_ports(_ports_array);
 	}
+
+	if (_driver_port)
+		_driver_port->add_to_driver();
 }
 
 
@@ -110,7 +123,7 @@ AddPortEvent::post_process()
 		m_responder->respond_error(msg);
 	} else {
 		m_responder->respond_ok();
-		om->client_broadcaster()->send_port(_port);
+		om->client_broadcaster()->send_port(_patch_port);
 	}
 }
 
