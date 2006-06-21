@@ -15,7 +15,7 @@ extern "C" {
 #endif /* __cplusplus */
 
 #ifndef CMDLINE_PARSER_PACKAGE
-#define CMDLINE_PARSER_PACKAGE "om_gtk - A GUI client for the Om realtime modular synthesizer"
+#define CMDLINE_PARSER_PACKAGE "ingenuity - A GUI client for the Ingen realtime audio processor"
 #endif
 
 #ifndef CMDLINE_PARSER_VERSION
@@ -24,7 +24,7 @@ extern "C" {
 
 struct gengetopt_args_info
 {
-  char * engine_url_arg;	/* Om engine URL to connect to.  */
+  char * engine_url_arg;	/* Ingen OSC URL to connect to.  */
   int client_port_arg;	/* Client port to listen on.  */
 
   int help_given ;	/* Whether help was given.  */

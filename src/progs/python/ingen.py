@@ -410,7 +410,7 @@ class Environment:
 	#~ * min-value (float) - Suggested maximum value
 
 	#~ * Note that in the event of loading a patch, this message could be followed immediately by a control change, meaning the default-value is not actually the current value of the port (ahem, Lachlan).
-	#~ * The minimum and maximum values are suggestions only, they are not enforced in any way, and going outside them is perfectly fine. Also note that the port ranges in om_gtk are not these ones! Those ranges are set as metadata.
+	#~ * The minimum and maximum values are suggestions only, they are not enforced in any way, and going outside them is perfectly fine. Also note that the port ranges in ingenuity are not these ones! Those ranges are set as metadata.
 	def __ingen__new_port(self,path,porttype,direction,hint,defaultvalue,minvalue,maxvalue):
 		port = self.getPort(path)
 		port.setPortType(porttype)

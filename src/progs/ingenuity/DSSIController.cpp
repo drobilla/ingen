@@ -154,7 +154,7 @@ DSSIController::attempt_to_show_gui()
 	
 	const char*   dllName   = node_model()->plugin()->lib_name().c_str();
 	const char*   label     = node_model()->plugin()->plug_label().c_str();
-	const char*   myName    = "om_gtk";
+	const char*   myName    = "ingenuity";
 	const string& oscUrl    = engine_url + "/dssi" + node_model()->path();
 
 	struct dirent* entry = NULL;

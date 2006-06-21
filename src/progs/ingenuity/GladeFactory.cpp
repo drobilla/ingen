@@ -30,16 +30,16 @@ void
 GladeFactory::find_glade_file()
 {
 	// Check for the .glade file in current directory
-	glade_filename = "./om_gtk.glade";
+	glade_filename = "./ingenuity.glade";
 	ifstream fs(glade_filename.c_str());
 	if (fs.fail()) { // didn't find it, check PKGDATADIR
 		fs.clear();
 		glade_filename = PKGDATADIR;
-		glade_filename += "/om_gtk.glade";
+		glade_filename += "/ingenuity.glade";
 	
 		fs.open(glade_filename.c_str());
 		if (fs.fail()) {
-			cerr << "[GladeFactory] Unable to find om_gtk.glade in current directory or " << PKGDATADIR << "." << endl;
+			cerr << "[GladeFactory] Unable to find ingenuity.glade in current directory or " << PKGDATADIR << "." << endl;
 			throw;
 		}
 		fs.close();

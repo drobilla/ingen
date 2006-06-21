@@ -81,7 +81,6 @@ class TypedConnectionEvent : public QueuedEvent
 {
 public:
 	TypedConnectionEvent(CountedPtr<Responder> responder, OutputPort<T>* src_port, InputPort<T>* dst_port);
-	~TypedConnectionEvent();
 	
 	void pre_process();
 	void execute(samplecount offset);

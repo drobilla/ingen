@@ -164,19 +164,17 @@ TypedConnectionEvent<T>::TypedConnectionEvent(CountedPtr<Responder> responder, O
 	assert(dst_port != NULL);
 }
 
-template <typename T>
-TypedConnectionEvent<T>::~TypedConnectionEvent()
-{
-	// FIXME: haaaack, prevent a double delete
-	// this class is unusable by anything other than ConnectionEvent because of this
-	//m_responder = NULL;
-}
-
 
 template <typename T>
 void
 TypedConnectionEvent<T>::pre_process()
-{
+{	
+	if (m_dst_port->is_connected_to(m_src_port)) {
+		m_succeeded = false;
+		QueuedEvent::pre_process();
+		return;
+	}
+
 	Node* const src_node = m_src_port->parent_node();
 	Node* const dst_node = m_dst_port->parent_node();
 

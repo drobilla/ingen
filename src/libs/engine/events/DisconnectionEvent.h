@@ -83,7 +83,6 @@ class TypedDisconnectionEvent : public QueuedEvent
 {
 public:
 	TypedDisconnectionEvent(CountedPtr<Responder> responder, OutputPort<T>* src_port, InputPort<T>* dst_port);
-	~TypedDisconnectionEvent();
 	
 	void pre_process();
 	void execute(samplecount offset);

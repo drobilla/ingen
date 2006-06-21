@@ -183,7 +183,7 @@ create_patch()
 
 	engine->create_patch_from_model(pm);
 	
-	// Spread them out a bit for easier monitoring with om_gtk
+	// Spread them out a bit for easier monitoring with ingenuity
 	char tmp_buf[8];
 	snprintf(tmp_buf, 8, "%d", 1600 + rand()%800 - 400);
 	engine->set_metadata(pm->path(), "module-x", string(tmp_buf));
@@ -226,7 +226,7 @@ add_node()
 		NodeModel* nm = new NodeModel(plugin, parent->path() +"/"+ random_name());
 		cout << "Adding node " << nm->path() << endl;
 		engine->create_node_from_model(nm);
-		// Spread them out a bit for easier monitoring with om_gtk
+		// Spread them out a bit for easier monitoring with ingenuity
 		char tmp_buf[8];
 		snprintf(tmp_buf, 8, "%d", 1600 + rand()%800 - 400);
 		engine->set_metadata(nm->path(), "module-x", tmp_buf);

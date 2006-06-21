@@ -36,7 +36,7 @@ cmdline_parser_print_help (void)
   "Usage: %s [OPTIONS]...\n", CMDLINE_PARSER_PACKAGE);
   printf("   -h         --help               Print help and exit\n");
   printf("   -V         --version            Print version and exit\n");
-  printf("   -uSTRING   --engine-url=STRING  Om engine URL to connect to\n");
+  printf("   -uSTRING   --engine-url=STRING  Ingen OSC URL to connect to\n");
   printf("   -pINT      --client-port=INT    Client port to listen on\n");
 }
 
@@ -106,7 +106,7 @@ cmdline_parser (int argc, char * const *argv, struct gengetopt_args_info *args_i
           cmdline_parser_print_version ();
           exit (EXIT_SUCCESS);
 
-        case 'u':	/* Om engine URL to connect to.  */
+        case 'u':	/* Ingen OSC URL to connect to.  */
           if (args_info->engine_url_given)
             {
               fprintf (stderr, "%s: `--engine-url' (`-u') option given more than once\n", CMDLINE_PARSER_PACKAGE);

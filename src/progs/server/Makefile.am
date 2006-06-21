@@ -8,10 +8,10 @@ MAINTAINERCLEANFILES = Makefile.in
 if BUILD_ENGINE
 
 bin_PROGRAMS = ingen
-om_DEPENDENCIES = ../../libs/engine/libingen.la
-om_LDADD = @JACK_LIBS@ @LOSC_LIBS@ @ALSA_LIBS@ @LASH_LIBS@ @SLV2_LIBS@ -lrt ../../libs/engine/libingen.la
+ingen_DEPENDENCIES = ../../libs/engine/libingen.la
+ingen_LDADD = @JACK_LIBS@ @LOSC_LIBS@ @ALSA_LIBS@ @LASH_LIBS@ @SLV2_LIBS@ -lrt ../../libs/engine/libingen.la
 
-om_SOURCES = \
+ingen_SOURCES = \
 	main.cpp \
 	cmdline.h \
 	cmdline.c

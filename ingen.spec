@@ -33,12 +33,12 @@ rm -rf %{buildroot}
 %files
 %defattr(-,root,root,-)
 %{_bindir}/om
-%{_bindir}/om_gtk
+%{_bindir}/ingenuity
 %{_bindir}/om_patch_loader
 %dir %{_datadir}/om
 %{_datadir}/om/patches/*.om
 %dir %{_datadir}/om-gtk
-%{_datadir}/om-gtk/om_gtk.glade
+%{_datadir}/om-gtk/ingenuity.glade
 %{_datadir}/om-gtk/om-icon.png
 
 

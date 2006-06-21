@@ -5,9 +5,9 @@ AM_CXXFLAGS = @JACK_CFLAGS@ @LOSC_CFLAGS@ @ALSA_CFLAGS@ @LASH_CFLAGS@ @SLV2_CFLA
 
 MAINTAINERCLEANFILES = Makefile.in
 
-noinst_LTLIBRARIES = libom.la
+noinst_LTLIBRARIES = libingen.la
 
-libom_la_SOURCES = \
+libingen_la_SOURCES = \
 	util.h \
 	tuning.h \
 	DataType.h \
@@ -88,12 +88,12 @@ libom_la_SOURCES = \
 	AudioDriver.h \
 	MidiDriver.h \
 	midi.h \
-	../libom_la/util/Semaphore.h \
-	../libom_la/util/types.h \
-	../libom_la/util/Path.h \
-	../libom_la/util/Queue.h \
-	../libom_la/interface/ClientInterface.h \
-	../libom_la/interface/EngineInterface.h \
+	../libingen_la/util/Semaphore.h \
+	../libingen_la/util/types.h \
+	../libingen_la/util/Path.h \
+	../libingen_la/util/Queue.h \
+	../libingen_la/interface/ClientInterface.h \
+	../libingen_la/interface/EngineInterface.h \
 	instantiations.cpp \
 	events/RegisterClientEvent.h \
 	events/RegisterClientEvent.cpp \
@@ -169,25 +169,25 @@ libom_la_SOURCES = \
 # 	MidiOutputNode.cpp 
 
 if WITH_JACK_MIDI
-libom_la_SOURCES += \
+libingen_la_SOURCES += \
 	JackMidiDriver.h \
 	JackMidiDriver.cpp
 endif
 
 if WITH_ALSA_MIDI
-libom_la_SOURCES += \
+libingen_la_SOURCES += \
 	AlsaMidiDriver.h \
 	AlsaMidiDriver.cpp
 endif
 
 if WITH_LADSPA
-libom_la_SOURCES += \
+libingen_la_SOURCES += \
 	LADSPANode.h \
 	LADSPANode.cpp
 endif
 
 if WITH_DSSI
-libom_la_SOURCES += \
+libingen_la_SOURCES += \
 	DSSINode.h \
 	DSSINode.cpp \
 	events/DSSIConfigureEvent.cpp \
@@ -201,13 +201,13 @@ libom_la_SOURCES += \
 endif
 
 if WITH_LV2
-libom_la_SOURCES += \
+libingen_la_SOURCES += \
 	LV2Node.h \
 	LV2Node.cpp
 endif
 
 if WITH_LASH
-libom_la_SOURCES += \
+libingen_la_SOURCES += \
 	LashDriver.h \
 	LashDriver.cpp \
 	LashRestoreDoneEvent.h

@@ -1,18 +1,18 @@
 if BUILD_GTK_CLIENT
 
-EXTRA_DIST = om_gtk.gladep
+EXTRA_DIST = ingenuity.gladep
 MAINTAINERCLEANFILES = Makefile.in
 
 sharefilesdir = $(pkgdatadir)
-dist_sharefiles_DATA = om_gtk.glade om-icon.png
+dist_sharefiles_DATA = ingenuity.glade om-icon.png
 
 AM_CXXFLAGS = -DGTK_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -I$(top_srcdir)/src/common -I$(top_srcdir)/src/libs/client -DPKGDATADIR=\"$(pkgdatadir)\" @GTKMM_CFLAGS@ @LIBGLADEMM_CFLAGS@ @GNOMECANVASMM_CFLAGS@ @LOSC_CFLAGS@ @LASH_CFLAGS@ @FLOWCANVAS_CFLAGS@ -DWITH_RTTI
-om_gtk_LDADD = @GTKMM_LIBS@ @LIBGLADEMM_LIBS@ @GNOMECANVASMM_LIBS@ @LOSC_LIBS@ @LASH_LIBS@ @FLOWCANVAS_LIBS@ ../../libs/client/libomclient.la
-om_gtk_DEPENDENCIES = ../../libs/client/libomclient.la
+ingenuity_LDADD = @GTKMM_LIBS@ @LIBGLADEMM_LIBS@ @GNOMECANVASMM_LIBS@ @LOSC_LIBS@ @LASH_LIBS@ @FLOWCANVAS_LIBS@ ../../libs/client/libomclient.la
+ingenuity_DEPENDENCIES = ../../libs/client/libomclient.la
 
 
-bin_PROGRAMS = om_gtk
-om_gtk_SOURCES = \
+bin_PROGRAMS = ingenuity
+ingenuity_SOURCES = \
 	cmdline.h \
 	cmdline.c \
 	main.cpp \
@@ -88,7 +88,7 @@ om_gtk_SOURCES = \
 	PatchTreeWindow.cpp
 
 if WITH_LASH
-om_gtk_SOURCES += LashController.h LashController.cpp
+ingenuity_SOURCES += LashController.h LashController.cpp
 endif
 
 
