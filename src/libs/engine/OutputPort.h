@@ -42,11 +42,14 @@ template <typename T>
 class OutputPort : virtual public TypedPort<T>
 {
 public:
-	OutputPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size);
+	OutputPort(Node* parent, const string& name,
+	           size_t index, size_t poly,
+	           DataType type, size_t buffer_size)
+	: TypedPort<T>(parent, name, index, poly, type, buffer_size)
+	{}
+
 	virtual ~OutputPort() {}
 
-	//void set_tied_port(InputPort<T>* port);
-	
 	bool is_input()  const { return false; }
 	bool is_output() const { return true; }
 
@@ -54,9 +57,6 @@ private:
 	// Prevent copies (undefined)
 	OutputPort(const OutputPort& copy);
 	OutputPort<T>& operator=(const OutputPort<T>&);
-	
-	//using TypedPort<T>::m_is_tied;
-	//using TypedPort<T>::m_tied_port;
 };
 
 

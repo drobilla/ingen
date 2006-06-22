@@ -114,10 +114,11 @@ LADSPANode::instantiate()
 		sample default_val = default_port_value(j);
 
 		// Set default control val
-		if (port->buffer_size() == 1)
+		if (port->buffer_size() == 1) {
 			((TypedPort<sample>*)port)->set_value(default_val, 0);
-		else
+		} else {
 			((TypedPort<sample>*)port)->set_value(0.0f, 0);
+		}
 	}
 
 	return true;
@@ -144,10 +145,10 @@ LADSPANode::activate()
 		for (unsigned long j=0; j < _descriptor->PortCount; ++j) {
 			port = static_cast<TypedPort<sample>*>(_ports->at(j));
 			set_port_buffer(i, j, ((TypedPort<sample>*)_ports->at(j))->buffer(i)->data());
-				if (port->type() == DataType::FLOAT && port->buffer_size() == 1)
+			/*	if (port->type() == DataType::FLOAT && port->buffer_size() == 1)
 					port->set_value(0.0f, 0); // FIXME
 				else if (port->type() == DataType::FLOAT && port->buffer_size() > 1)
-					port->set_value(0.0f, 0);
+					port->set_value(0.0f, 0);*/
 		}
 		if (_descriptor->activate != NULL)
 			_descriptor->activate(_instances[i]);
@@ -328,6 +329,7 @@ LADSPANode::default_port_value(ulong port_index)
 		}
 	}
 
+	cerr << path() << " Port " << port_index << " LADSPA Default value: " << normal << endl;
 	// FIXME: set min/max as metadata
 	return normal;
 }

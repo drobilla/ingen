@@ -33,8 +33,6 @@ template <typename T>
 TypedPort<T>::TypedPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size)
 : Port(parent, name, index, poly, type, buffer_size)
 , m_fixed_buffers(false)
-/*, m_is_tied(false)
-, m_tied_port(NULL)*/
 {
 	allocate_buffers();
 	clear_buffers();
@@ -66,6 +64,8 @@ TypedPort<sample>::set_value(sample val, size_t offset)
 	if (offset >= _buffer_size)
 		offset = 0;
 	assert(offset < _buffer_size);
+	
+	cerr << path() << " setting value " << val << endl;
 
 	for (size_t v=0; v < _poly; ++v)
 		m_buffers.at(v)->set(val, offset);
@@ -80,6 +80,8 @@ TypedPort<sample>::set_value(size_t voice, sample val, size_t offset)
 	if (offset >= _buffer_size)
 		offset = 0;
 	assert(offset < _buffer_size);
+	
+	cerr << path() << " setting voice value " << val << endl;
 
 	m_buffers.at(voice)->set(val, offset);
 }

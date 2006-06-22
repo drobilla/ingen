@@ -57,8 +57,6 @@ public:
 
 	void process(samplecount nframes);
 	
-	//void tie(OutputPort<T>* const port);
-
 	bool is_connected() const { return (m_connections.size() > 0); }
 	bool is_connected_to(const OutputPort<T>* const port) const;
 	
@@ -75,8 +73,6 @@ private:
 	List<TypedConnection<T>*> m_connections;
 
 	// This is just stupid...
-	//using TypedPort<T>::m_is_tied;
-	//using TypedPort<T>::m_tied_port;
 	using TypedPort<T>::m_buffers;
 	using TypedPort<T>::_poly;
 	using TypedPort<T>::_index;

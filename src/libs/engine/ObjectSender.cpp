@@ -88,17 +88,6 @@ ObjectSender::send_patch(ClientInterface* client, const Patch* patch)
 void
 ObjectSender::send_node(ClientInterface* client, const Node* node)
 {
-	// Don't send node notification for bridge nodes, from the client's
-	// perspective they don't even exist (just the ports they represent)
-	// FIXME: hack, these nodes probably shouldn't even exist in the
-	// engine anymore
-	/*if (const_cast<Node*>(node)->as_port()) { // bridge node if as_port() returns non-NULL
-		// FIXME: remove this whole thing.  shouldn't be any bridge nodes anymore
-		assert(false);
-		send_port(client, const_cast<Node*>(node)->as_port());
-		return;
-	}*/
-
 	const Plugin* const plugin = node->plugin();
 
 	int polyphonic = 
@@ -163,9 +152,12 @@ ObjectSender::send_port(ClientInterface* client, const Port* port)
 	client->new_port(port->path(), type, port->is_output());
 	
 	// Send control value
-	if (port->type() == DataType::FLOAT && port->buffer_size() == 1)
-		client->control_change(port->path(),
-			dynamic_cast<const TypedPort<sample>*>(port)->buffer(0)->value_at(0));
+	if (port->type() == DataType::FLOAT && port->buffer_size() == 1) {
+		sample default_value = dynamic_cast<const TypedPort<sample>*>(
+				port)->buffer(0)->value_at(0);
+		cerr << port->path() << " sending default value " << default_value << endl;
+		client->control_change(port->path(), default_value);
+	}
 	
 	// Send metadata
 	const map<string, string>& data = port->metadata();

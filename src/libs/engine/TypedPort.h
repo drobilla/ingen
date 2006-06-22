@@ -52,9 +52,6 @@ public:
 	virtual void process(samplecount nframes);
 	virtual void clear_buffers();
 	
-	//TypedPort* tied_port() const { return m_tied_port; }
-	//void      untie()           { m_is_tied = false; m_tied_port = NULL; } 
-	
 	/** Used by drivers to prevent port from changing buffers */
 	void fixed_buffers(bool b) { m_fixed_buffers = b; }
 	bool fixed_buffers()       { return m_fixed_buffers; }
@@ -68,9 +65,7 @@ protected:
 
 	void allocate_buffers();
 
-	bool         m_fixed_buffers;
-	//bool         m_is_tied;
-	//TypedPort*   m_tied_port;
+	bool m_fixed_buffers;
 	
 	Array<Buffer<T>*> m_buffers;
 };
