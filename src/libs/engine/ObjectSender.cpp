@@ -72,7 +72,8 @@ ObjectSender::send_patch(ClientInterface* client, const Patch* patch)
 		
 		// Control port, send value
 		if (port->type() == DataType::FLOAT && port->buffer_size() == 1)
-			client->control_change(port->path(), dynamic_cast<TypedPort<sample>*>(port)->buffer(0)->value_at(0));
+			client->control_change(port->path(),
+				dynamic_cast<TypedPort<sample>*>(port)->buffer(0)->value_at(0));
 	}
 	
 	// Send metadata
@@ -160,6 +161,11 @@ ObjectSender::send_port(ClientInterface* client, const Port* port)
 	}
 		
 	client->new_port(port->path(), type, port->is_output());
+	
+	// Send control value
+	if (port->type() == DataType::FLOAT && port->buffer_size() == 1)
+		client->control_change(port->path(),
+			dynamic_cast<const TypedPort<sample>*>(port)->buffer(0)->value_at(0));
 	
 	// Send metadata
 	const map<string, string>& data = port->metadata();

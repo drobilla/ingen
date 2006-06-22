@@ -96,48 +96,49 @@ DisconnectionEvent::pre_process()
 
 		m_src_port = om->object_store()->find_port(m_src_port_path);
 		m_dst_port = om->object_store()->find_port(m_dst_port_path);
-
-		if (m_src_port == NULL || m_dst_port == NULL) {
-			m_error = PORT_NOT_FOUND;
-			QueuedEvent::pre_process();
-			return;
-		}
-
-		if (m_src_port->type() != m_dst_port->type() || m_src_port->buffer_size() != m_dst_port->buffer_size()) {
-			m_error = TYPE_MISMATCH;
-			QueuedEvent::pre_process();
-			return;
-		}
-
-		/*if (port1->is_output() && port2->is_input()) {
-		  m_src_port = port1;
-		  m_dst_port = port2;
-		  } else if (port2->is_output() && port1->is_input()) {
-		  m_src_port = port2;
-		  m_dst_port = port1;
-		  } else {
-		  m_error = TYPE_MISMATCH;
-		  QueuedEvent::pre_process();
-		  return;
-		  }*/
-
-		// Create the typed event to actually do the work
-		const DataType type = m_src_port->type();
-		if (type == DataType::FLOAT) {
-			m_typed_event = new TypedDisconnectionEvent<sample>(m_responder,
-					dynamic_cast<OutputPort<sample>*>(m_src_port), dynamic_cast<InputPort<sample>*>(m_dst_port));
-		} else if (type == DataType::MIDI) {
-			m_typed_event = new TypedDisconnectionEvent<MidiMessage>(m_responder,
-					dynamic_cast<OutputPort<MidiMessage>*>(m_src_port), dynamic_cast<InputPort<MidiMessage>*>(m_dst_port));
-		} else {
-			m_error = TYPE_MISMATCH;
-			QueuedEvent::pre_process();
-			return;
-		}
+	}
+	
+	if (m_src_port == NULL || m_dst_port == NULL) {
+		m_error = PORT_NOT_FOUND;
+		QueuedEvent::pre_process();
+		return;
 	}
 
+	if (m_src_port->type() != m_dst_port->type() || m_src_port->buffer_size() != m_dst_port->buffer_size()) {
+		m_error = TYPE_MISMATCH;
+		QueuedEvent::pre_process();
+		return;
+	}
+
+	/*if (port1->is_output() && port2->is_input()) {
+	  m_src_port = port1;
+	  m_dst_port = port2;
+	  } else if (port2->is_output() && port1->is_input()) {
+	  m_src_port = port2;
+	  m_dst_port = port1;
+	  } else {
+	  m_error = TYPE_MISMATCH;
+	  QueuedEvent::pre_process();
+	  return;
+	  }*/
+
+	// Create the typed event to actually do the work
+	const DataType type = m_src_port->type();
+	if (type == DataType::FLOAT) {
+		m_typed_event = new TypedDisconnectionEvent<sample>(m_responder,
+				dynamic_cast<OutputPort<sample>*>(m_src_port), dynamic_cast<InputPort<sample>*>(m_dst_port));
+	} else if (type == DataType::MIDI) {
+		m_typed_event = new TypedDisconnectionEvent<MidiMessage>(m_responder,
+				dynamic_cast<OutputPort<MidiMessage>*>(m_src_port), dynamic_cast<InputPort<MidiMessage>*>(m_dst_port));
+	} else {
+		m_error = TYPE_MISMATCH;
+		QueuedEvent::pre_process();
+		return;
+	}
+
+	assert(m_typed_event);
 	m_typed_event->pre_process();
-	
+
 	QueuedEvent::pre_process();
 }
 

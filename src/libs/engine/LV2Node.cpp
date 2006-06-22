@@ -59,7 +59,8 @@ LV2Node::instantiate()
 {
 	size_t num_ports = slv2_plugin_get_num_ports(_lv2_plugin);
 	assert(num_ports > 0);
-	_ports->alloc(num_ports);
+
+	_ports = new Array<Port*>(num_ports);
 	
 	_instances = new SLV2Instance*[_poly];
 	

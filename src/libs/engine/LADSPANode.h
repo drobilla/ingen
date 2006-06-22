@@ -54,6 +54,7 @@ protected:
 	LADSPANode& operator=(const LADSPANode&);
 
 	//void get_port_vals(ulong port_index, PortInfo* info);
+	sample default_port_value(ulong port_index);
 	
 	const LADSPA_Descriptor* _descriptor;
 	LADSPA_Handle*           _instances;	

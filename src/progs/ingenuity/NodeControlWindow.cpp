@@ -50,7 +50,7 @@ NodeControlWindow::NodeControlWindow(NodeController* node, size_t poly)
 	resize();
 	
 	// FIXME: not working
-	set_icon_from_file(string(PKGDATADIR) + "/om-icon.png");
+	//set_icon_from_file(string(PKGDATADIR) + "/om-icon.png");
 
 	m_callback_enabled = true;
 }

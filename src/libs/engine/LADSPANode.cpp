@@ -111,11 +111,7 @@ LADSPANode::instantiate()
 		}
 
 		assert(_ports->at(j) != NULL);
-
-		/*PortInfo* pi = port->port_info();
-		get_port_vals(j, pi);
-		*/
-		float default_val = 0.; // FIXME
+		sample default_val = default_port_value(j);
 
 		// Set default control val
 		if (port->buffer_size() == 1)
@@ -263,6 +259,79 @@ LADSPANode::get_port_vals(ulong port_index, PortInfo* info)
 	info->max_val(upper);
 }
 #endif
+
+
+sample
+LADSPANode::default_port_value(ulong port_index)
+{
+	LADSPA_Data normal = 0.0f;
+	LADSPA_Data upper = 0.0f;
+	LADSPA_Data lower = 0.0f;
+	LADSPA_PortRangeHintDescriptor hint_descriptor = _descriptor->PortRangeHints[port_index].HintDescriptor;
+
+	/* set upper and lower, possibly adjusted to the sample rate */
+	if (LADSPA_IS_HINT_SAMPLE_RATE(hint_descriptor)) {
+		upper = _descriptor->PortRangeHints[port_index].UpperBound * _srate;
+		lower = _descriptor->PortRangeHints[port_index].LowerBound * _srate;
+	} else {
+		upper = _descriptor->PortRangeHints[port_index].UpperBound;
+		lower = _descriptor->PortRangeHints[port_index].LowerBound;
+	}
+
+	if (LADSPA_IS_HINT_LOGARITHMIC(hint_descriptor)) {
+		/* FLT_EPSILON is defined as the different between 1.0 and the minimum
+		 * float greater than 1.0.  So, if lower is < FLT_EPSILON, it will be 1.0
+		 * and the logarithmic control will have a base of 1 and thus not change
+		 */
+		if (lower < FLT_EPSILON) lower = FLT_EPSILON;
+	}
+
+
+	if (LADSPA_IS_HINT_HAS_DEFAULT(hint_descriptor)) {
+
+		if (LADSPA_IS_HINT_DEFAULT_MINIMUM(hint_descriptor)) {
+			normal = lower;
+		} else if (LADSPA_IS_HINT_DEFAULT_LOW(hint_descriptor)) {
+			if (LADSPA_IS_HINT_LOGARITHMIC(hint_descriptor)) {
+				normal = exp(log(lower) * 0.75 + log(upper) * 0.25);
+			} else {
+				normal = lower * 0.75 + upper * 0.25;
+			}
+		} else if (LADSPA_IS_HINT_DEFAULT_MIDDLE(hint_descriptor)) {
+			if (LADSPA_IS_HINT_LOGARITHMIC(hint_descriptor)) {
+				normal = exp(log(lower) * 0.5 + log(upper) * 0.5);
+			} else {
+				normal = lower * 0.5 + upper * 0.5;
+			}
+		} else if (LADSPA_IS_HINT_DEFAULT_HIGH(hint_descriptor)) {
+			if (LADSPA_IS_HINT_LOGARITHMIC(hint_descriptor)) {
+				normal = exp(log(lower) * 0.25 + log(upper) * 0.75);
+			} else {
+				normal = lower * 0.25 + upper * 0.75;
+			}
+		} else if (LADSPA_IS_HINT_DEFAULT_MAXIMUM(hint_descriptor)) {
+			normal = upper;
+		} else if (LADSPA_IS_HINT_DEFAULT_0(hint_descriptor)) {
+			normal = 0.0;
+		} else if (LADSPA_IS_HINT_DEFAULT_1(hint_descriptor)) {
+			normal = 1.0;
+		} else if (LADSPA_IS_HINT_DEFAULT_100(hint_descriptor)) {
+			normal = 100.0;
+		} else if (LADSPA_IS_HINT_DEFAULT_440(hint_descriptor)) {
+			normal = 440.0;
+		}
+	} else {  // No default hint
+		if (LADSPA_IS_HINT_BOUNDED_BELOW(hint_descriptor)) {
+			normal = lower;
+		} else if (LADSPA_IS_HINT_BOUNDED_ABOVE(hint_descriptor)) {
+			normal = upper;
+		}
+	}
+
+	// FIXME: set min/max as metadata
+	return normal;
+}
+
 
 } // namespace Om
 
