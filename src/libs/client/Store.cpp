@@ -36,6 +36,7 @@ Store::Store(SigClientInterface& emitter)
 	emitter.connection_sig.connect(sigc::mem_fun(this, &Store::connection_event));
 	emitter.disconnection_sig.connect(sigc::mem_fun(this, &Store::disconnection_event));
 	emitter.metadata_update_sig.connect(sigc::mem_fun(this, &Store::metadata_update_event));
+	emitter.control_change_sig.connect(sigc::mem_fun(this, &Store::control_change_event));
 }
 
 
@@ -305,6 +306,17 @@ Store::metadata_update_event(const string& subject_path, const string& predicate
 	CountedPtr<ObjectModel> subject = object(subject_path);
 	if (subject)
 		subject->set_metadata(predicate, value);
+	else
+		cerr << "ERROR: metadata for nonexistant object." << endl;
+}
+
+
+void
+Store::control_change_event(const string& port_path, float value)
+{
+	CountedPtr<PortModel> port = object(port_path);
+	if (port)
+		port->value(value);
 	else
 		cerr << "ERROR: metadata for nonexistant object." << endl;
 }

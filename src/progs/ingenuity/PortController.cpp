@@ -28,8 +28,8 @@ namespace OmGtk {
 PortController::PortController(CountedPtr<PortModel> model)
 : GtkObjectController(model),
   m_module(NULL),
-  m_port(NULL),
-  m_control_panel(NULL)
+  m_port(NULL)
+  //m_control_panel(NULL)
 {
 	assert(model);
 	assert(model->parent());
@@ -60,8 +60,8 @@ PortController::destroy()
 	NodeController* parent = (NodeController*)m_model->parent()->controller();
 	assert(parent != NULL);
 
-	if (m_control_panel != NULL)
-		m_control_panel->remove_port(path());
+	//if (m_control_panel != NULL)
+	//	m_control_panel->remove_port(path());
 
 	parent->remove_port(path(), false);
 }
@@ -91,6 +91,8 @@ PortController::metadata_update(const string& key, const string& value)
 	
 	//cerr << path() << ": " << key << " = " << value << endl;
 
+/* Panel now listens to model signals..
+
 	if (key == "user-min") {
 		port_model()->user_min(atof(value.c_str()));
 		if (m_control_panel != NULL)
@@ -100,6 +102,8 @@ PortController::metadata_update(const string& key, const string& value)
 		if (m_control_panel != NULL)
 			m_control_panel->set_range_max(m_model->path(), atof(value.c_str()));
 	}
+*/
+	cerr << "FIXME: PortController::metadata_update" << endl;
 
 	if (m_module != NULL) {
 		if (key == "module-x") {
@@ -117,30 +121,19 @@ PortController::metadata_update(const string& key, const string& value)
 }
 
 
-void
-PortController::control_change(float value)
-{
-	// FIXME: double lookups
-	
-	port_model()->value(value);
-	
-	if (m_control_panel != NULL)
-		m_control_panel->set_control(port_model()->path(), value);
-}
-
-
 /** "Register" a control panel that is monitoring this port.
  *
  * The OmPort will handle notifying the ControlPanel when state
  * changes occur, etc.
  */
+/*
 void
 PortController::set_control_panel(ControlPanel* cp)
 {
 	assert(m_control_panel == NULL);
 	m_control_panel = cp;
 }
-
+*/
 
 void
 PortController::set_path(const Path& new_path)
@@ -149,8 +142,8 @@ PortController::set_path(const Path& new_path)
 	if (m_port != NULL)
 		m_port->set_name(new_path.name());
 
-	if (m_control_panel != NULL)
-		m_control_panel->rename_port(m_model->path(), new_path);
+	//if (m_control_panel != NULL)
+	//	m_control_panel->rename_port(m_model->path(), new_path);
 
 	m_model->set_path(new_path);
 }

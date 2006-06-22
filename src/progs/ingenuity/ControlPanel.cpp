@@ -98,7 +98,7 @@ ControlPanel::add_port(PortController* port)
 {
 	assert(port);
 	assert(port->model());
-	assert(port->control_panel() == NULL);
+	//assert(port->control_panel() == NULL);
 	
 	const CountedPtr<PortModel> pm = port->port_model();
 	
@@ -117,6 +117,8 @@ ControlPanel::add_port(PortController* port)
 		else
 			cg = new SliderControlGroup(this, pm, separator);
 	
+		// FIXME: ControlGroup constructor should do this
+		pm->control_change_sig.connect(sigc::mem_fun(cg, &ControlGroup::set_value));
 		m_controls.push_back(cg);
 		m_control_box->pack_start(*cg, false, false, 0);
 
@@ -126,7 +128,7 @@ ControlPanel::add_port(PortController* port)
 			cg->enable();
 	}
 
-	port->set_control_panel(this);
+	//port->set_control_panel(this);
 
 	Gtk::Requisition controls_size;
 	m_control_box->size_request(controls_size);
@@ -230,7 +232,7 @@ ControlPanel::value_changed(const Path& port_path, float val)
 	}
 }
 
-
+/*
 void
 ControlPanel::set_range_min(const Path& port_path, float val)
 {
@@ -259,7 +261,7 @@ ControlPanel::set_range_max(const Path& port_path, float val)
 	if (found == false)
 		cerr << "[ControlPanel::set_range_max] Unable to find control " << port_path << endl;
 }
-
+*/
 
 void
 ControlPanel::all_voices_selected()

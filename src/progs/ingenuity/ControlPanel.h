@@ -71,19 +71,19 @@ public:
 	size_t        num_controls() const { return m_controls.size(); }
 	pair<int,int> ideal_size()   const { return m_ideal_size; }
 	
-	// Callback for ControlGroup
+	// Callback for ControlGroup (FIXME: ugly)
 	void value_changed(const Path& port_path, float val);
 
-	inline void set_control(const Path& port_path, float value);
-	void set_range_min(const Path& port_path, float value);
-	void set_range_max(const Path& port_path, float value);
+	//inline void set_control(const Path& port_path, float value);
+	//void set_range_min(const Path& port_path, float value);
+	//void set_range_max(const Path& port_path, float value);
 
 private:
 	void all_voices_selected();
 	void specific_voice_selected();
 	void voice_selected();
 
-	bool       m_callback_enabled;
+	bool m_callback_enabled;
 	
 	pair<int,int> m_ideal_size;
 
@@ -101,6 +101,7 @@ private:
  * Profiling has shown this is performance critical.  Needs to be made
  * faster.
  */
+/*
 inline void
 ControlPanel::set_control(const Path& port_path, const float val)
 {
@@ -122,7 +123,7 @@ ControlPanel::set_control(const Path& port_path, const float val)
 	cerr << "[ControlPanel::set_control] Unable to find control " << port_path << endl;
 	m_callback_enabled = true;
 }
-
+*/
 
 } // namespace OmGtk
 

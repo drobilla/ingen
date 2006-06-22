@@ -20,6 +20,7 @@
 #include <cstdlib>
 #include <string>
 #include <list>
+#include <sigc++/sigc++.h>
 #include "ObjectModel.h"
 #include "util/CountedPtr.h"
 using std::string; using std::list;
@@ -77,7 +78,7 @@ public:
 	inline float user_max() const     { return m_user_max; }
 	inline void  user_max(float f)    { m_user_max = f; }
 	inline float value() const        { return m_current_val; }
-	inline void  value(float f)       { m_current_val = f; }
+	inline void  value(float f)       { m_current_val = f; control_change_sig.emit(f); }
 	inline bool  connected()          { return m_connected; }
 	inline void  connected(bool b)    { m_connected = b; }
 	inline Type  type()               { return m_type; }
@@ -93,6 +94,9 @@ public:
 	
 	inline bool operator==(const PortModel& pm)
 		{ return (m_path == pm.m_path); }
+
+	// Signals
+	sigc::signal<void, float> control_change_sig; ///< "Control" ports only
 
 private:
 	// Prevent copies (undefined)
