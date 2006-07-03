@@ -3022,14 +3022,14 @@
 
 <widget class="GtkAboutDialog" id="about_win">
   <property name="destroy_with_parent">True</property>
-  <property name="name" translatable="yes">OmGtk</property>
+  <property name="name" translatable="yes">Ingenuity</property>
   <property name="copyright" translatable="yes">Copyright (C) 2005-2006 Dave Robillard</property>
-  <property name="comments" translatable="yes">A client for the Om modular synthesizer</property>
+  <property name="comments" translatable="yes">A graphical client for the Ingen audio processor</property>
   <property name="license" translatable="yes">Licensed under the GNU GPL, Version 2.
 
-See COPYING file included with Om, or http://www.gnu.org/licenses/gpl.txt for more information</property>
-  <property name="wrap_license">False</property>
-  <property name="website">http://om-synth.nongnu.org</property>
+See COPYING file included with this distribution, or http://www.gnu.org/licenses/gpl.txt for more information</property>
+  <property name="wrap_license">True</property>
+  <property name="website">http://codeson.net/software/ingen</property>
   <property name="website_label" translatable="yes"></property>
   <property name="authors">Author:
 	Dave Robillard &lt;drobilla@connect.carelton.ca&gt;

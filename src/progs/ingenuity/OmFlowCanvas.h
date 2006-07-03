@@ -53,6 +53,7 @@ public:
 	{ m_menu->popup(event->button.button, event->button.time); }
 	
 private:
+	string generate_port_name(const string& base);
 	void menu_add_port(const string& name, const string& type, bool is_output);
 	/*void menu_add_audio_input();
 	void menu_add_audio_output();

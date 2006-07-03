@@ -172,10 +172,27 @@ OmFlowCanvas::destroy_selected()
 }
 
 
+string
+OmFlowCanvas::generate_port_name(const string& base) {
+	string name = base;
+
+	char num_buf[5];
+	for (uint i=1; i < 9999; ++i) {
+		snprintf(num_buf, 5, "%d", i);
+		name = base + "_";
+		name += num_buf;
+		if (!m_patch_controller->patch_model()->get_port(name))
+			break;
+	}
+
+	return name;
+}
+
+
 void
 OmFlowCanvas::menu_add_port(const string& name, const string& type, bool is_output)
 {
-	const Path& path = m_patch_controller->path().base_path() + name;
+	const Path& path = m_patch_controller->path().base_path() + generate_port_name(name);
 	Controller::instance().create_port(path, type, is_output);
 	
 	char temp_buf[16];
@@ -184,6 +201,8 @@ OmFlowCanvas::menu_add_port(const string& name, const string& type, bool is_outp
 	snprintf(temp_buf, 16, "%d", m_last_click_y);
 	Controller::instance().set_metadata(path, "module-y", temp_buf);
 }
+
+
 /*
 void
 OmFlowCanvas::menu_add_audio_input()

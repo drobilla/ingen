@@ -45,8 +45,7 @@ AddPortEvent::AddPortEvent(CountedPtr<Responder> responder, const string& path, 
   _data_type(DataType::UNKNOWN),
   _patch(NULL),
   _patch_port(NULL),
-  _driver_port(NULL),
-  _succeeded(true)
+  _driver_port(NULL)
 {
 	string type_str;
 	if (type == "CONTROL" || type == "AUDIO")
@@ -118,8 +117,8 @@ AddPortEvent::execute(samplecount offset)
 void
 AddPortEvent::post_process()
 {
-	if (!_succeeded) {
-		const string msg = string("Could not create port - ").append(_path);// + " already exists.";
+	if (!_patch_port) {
+		const string msg = string("Could not create port - ").append(_path);
 		m_responder->respond_error(msg);
 	} else {
 		m_responder->respond_ok();
