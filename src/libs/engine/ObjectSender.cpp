@@ -80,7 +80,9 @@ ObjectSender::send_patch(ClientInterface* client, const Patch* patch)
 	const map<string, string>& data = patch->metadata();
 	for (map<string, string>::const_iterator j = data.begin(); j != data.end(); ++j)
 		client->metadata_update(patch->path(), (*j).first, (*j).second);
-
+	
+	if (patch->process())
+		client->patch_enabled(patch->path());
 }
 
 

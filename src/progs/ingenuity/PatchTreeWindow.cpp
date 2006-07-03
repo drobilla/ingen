@@ -181,12 +181,12 @@ PatchTreeWindow::event_patch_enabled_toggled(const Glib::ustring& path_str)
 	if ( ! pc->patch_model()->enabled()) {
 		if (m_enable_signal)
 			Controller::instance().enable_patch(patch_path);
-		pc->enable();
+		//pc->enable();
 		row[m_patch_tree_columns.enabled_col] = true;
 	} else {
 		if (m_enable_signal)
 			Controller::instance().disable_patch(patch_path);
-		pc->disable();
+		//pc->disable();
 		row[m_patch_tree_columns.enabled_col] = false;
 	}
 }

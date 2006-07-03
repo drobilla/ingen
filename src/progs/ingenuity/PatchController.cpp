@@ -248,7 +248,7 @@ PatchController::set_path(const Path& new_path)
 		parent->patch_model()->rename_node(old_path, new_path);
 }
 
-
+#if 0
 void
 PatchController::enable()
 {
@@ -271,7 +271,7 @@ PatchController::disable()
 	
 	App::instance().patch_tree()->patch_disabled(m_model->path());
 }
-
+#endif
 
 void
 PatchController::create_module(OmFlowCanvas* canvas)
@@ -367,7 +367,8 @@ PatchController::create_view()
 	}
 
 	// Set run checkbox
-	m_patch_view->enabled(patch_model()->enabled());
+	if (patch_model()->enabled())
+		m_patch_view->enable();
 }
 
 

@@ -72,6 +72,9 @@ PatchView::patch_controller(PatchController* pc)
 	m_polyphony_label->set_text(txt);
 
 	//m_description_window->patch_model(pc->model());
+	
+	pc->patch_model()->enabled_sig.connect(sigc::mem_fun(this, &PatchView::enable));
+	pc->patch_model()->disabled_sig.connect(sigc::mem_fun(this, &PatchView::disable));
 }
 
 
@@ -108,10 +111,19 @@ PatchView::process_toggled()
 
 
 void
-PatchView::enabled(bool e)
+PatchView::enable()
 {
 	m_enable_signal = false;
-	m_process_checkbutton->set_active(e);
+	m_process_checkbutton->set_active(true);
+	m_enable_signal = true;
+}
+
+
+void
+PatchView::disable()
+{
+	m_enable_signal = false;
+	m_process_checkbutton->set_active(false);
 	m_enable_signal = true;
 }
 

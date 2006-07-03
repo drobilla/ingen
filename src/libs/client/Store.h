@@ -72,6 +72,8 @@ private:
 	void new_patch_event(const string& path, uint32_t poly);
 	void new_node_event(const string& plugin_type, const string& plugin_uri, const string& node_path, bool is_polyphonic, uint32_t num_ports);
 	void new_port_event(const string& path, const string& data_type, bool is_output);
+	void patch_enabled_event(const string& path);
+	void patch_disabled_event(const string& path);
 	void metadata_update_event(const string& subject_path, const string& predicate, const string& value);
 	void control_change_event(const string& port_path, float value);
 	void connection_event(const Path& src_port_path, const Path& dst_port_path);

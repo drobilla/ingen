@@ -33,6 +33,8 @@ Store::Store(SigClientInterface& emitter)
 	emitter.new_patch_sig.connect(sigc::mem_fun(this, &Store::new_patch_event));
 	emitter.new_node_sig.connect(sigc::mem_fun(this, &Store::new_node_event));
 	emitter.new_port_sig.connect(sigc::mem_fun(this, &Store::new_port_event));
+	emitter.patch_enabled_sig.connect(sigc::mem_fun(this, &Store::patch_enabled_event));
+	emitter.patch_disabled_sig.connect(sigc::mem_fun(this, &Store::patch_disabled_event));
 	emitter.connection_sig.connect(sigc::mem_fun(this, &Store::connection_event));
 	emitter.disconnection_sig.connect(sigc::mem_fun(this, &Store::disconnection_event));
 	emitter.metadata_update_sig.connect(sigc::mem_fun(this, &Store::metadata_update_event));
@@ -297,6 +299,24 @@ Store::new_port_event(const string& path, const string& type, bool is_output)
 			cerr << "ERROR: new port with no parent" << endl;
 		}
 	}
+}
+
+
+void
+Store::patch_enabled_event(const string& path)
+{
+	CountedPtr<PatchModel> patch = object(path);
+	if (patch)
+		patch->enable();
+}
+
+
+void
+Store::patch_disabled_event(const string& path)
+{
+	CountedPtr<PatchModel> patch = object(path);
+	if (patch)
+		patch->disable();
 }
 
 

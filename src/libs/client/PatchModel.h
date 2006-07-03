@@ -67,14 +67,17 @@ public:
 	const string& filename() const           { return m_filename; }
 	void          filename(const string& f)  { m_filename = f; }
 	bool          enabled() const            { return m_enabled; }
-	void          enabled(bool b)            { m_enabled = b; }
+	void          enable();
+	void          disable();
 	bool          polyphonic() const;
 	
 	// Signals
 	sigc::signal<void, CountedPtr<NodeModel> >        new_node_sig; 
 	sigc::signal<void, const string& >                removed_node_sig; 
 	sigc::signal<void, CountedPtr<ConnectionModel> >  new_connection_sig; 
-	sigc::signal<void, const string&, const string& > removed_connection_sig; 
+	sigc::signal<void, const string&, const string& > removed_connection_sig;
+	sigc::signal<void>                                enabled_sig;
+	sigc::signal<void>                                disabled_sig;
 
 private:
 	// Prevent copies (undefined)

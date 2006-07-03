@@ -99,8 +99,8 @@ public:
 	
 	void set_path(const Path& new_path);
 
-	void enable();
-	void disable();
+	//void enable();
+	//void disable();
 	
 	CountedPtr<PatchModel> patch_model() const { return m_patch_model; }
 	

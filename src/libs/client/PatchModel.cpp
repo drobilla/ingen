@@ -223,6 +223,26 @@ PatchModel::remove_connection(const string& src_port_path, const string& dst_por
 }
 
 
+void
+PatchModel::enable()
+{
+	if (!m_enabled) {
+		m_enabled = true;
+		enabled_sig.emit();
+	}
+}
+
+
+void
+PatchModel::disable()
+{
+	if (m_enabled) {
+		m_enabled = false;
+		disabled_sig.emit();
+	}
+}
+
+
 bool
 PatchModel::polyphonic() const
 {

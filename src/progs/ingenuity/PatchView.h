@@ -66,7 +66,8 @@ public:
 	void zoom_changed();
 	void process_toggled();
 
-	void enabled(bool e);
+	void enable();
+	void disable();
 
 private:
 	PatchController*     m_patch;
