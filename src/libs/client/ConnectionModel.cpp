@@ -16,46 +16,72 @@
 
 #include "ConnectionModel.h"
 #include "PortModel.h"
+#include "PatchModel.h"
 
 namespace LibOmClient {
 
 
 ConnectionModel::ConnectionModel(const Path& src_port, const Path& dst_port)
-: m_src_port_path(src_port),
-  m_dst_port_path(dst_port),
-  m_src_port(NULL),
-  m_dst_port(NULL)
+: _src_port_path(src_port),
+  _dst_port_path(dst_port),
+  _src_port(NULL),
+  _dst_port(NULL)
 {
 	// Be sure connection is within one patch
-	//assert(m_src_port_path.parent().parent()
-	//	== m_dst_port_path.parent().parent());
+	//assert(_src_port_path.parent().parent()
+	//	== _dst_port_path.parent().parent());
+}
+
+
+ConnectionModel::ConnectionModel(CountedPtr<PortModel> src, CountedPtr<PortModel> dst)
+: _src_port_path(src->path()),
+  _dst_port_path(dst->path()),
+  _src_port(src),
+  _dst_port(dst)
+{
+	// Be sure connection is within one patch
+	//assert(_src_port_path.parent().parent()
+	//	== _dst_port_path.parent().parent());
 }
 
 
 const Path&
 ConnectionModel::src_port_path() const
 {
-	if (m_src_port == NULL)
-		return m_src_port_path;
+	if (!_src_port)
+		return _src_port_path;
 	else
-		return m_src_port->path();
+		return _src_port->path();
 }
 
 
 const Path&
 ConnectionModel::dst_port_path() const
 {
-	if (m_dst_port == NULL)
-		return m_dst_port_path;
+	if (!_dst_port)
+		return _dst_port_path;
 	else
-		return m_dst_port->path();
+		return _dst_port->path();
 }
 
 const Path
 ConnectionModel::patch_path() const
 {
-	const Path& src_node = m_src_port_path.parent();
-	const Path& dst_node = m_dst_port_path.parent();
+	// Resolved
+	if (_src_port && _dst_port) {
+		// Direct connection from patch input to patch output (pass through)
+		// (parent patch is parent of ports)
+		if (_src_port->parent() == _dst_port->parent()) {
+			CountedPtr<PatchModel> parent_patch = _src_port->parent();
+			if (parent_patch)
+				return parent_patch->path();
+		}
+	}
+
+	// Aside from the above special case, parent patch is parent of parent of ports
+		
+	const Path& src_node = _src_port_path.parent();
+	const Path& dst_node = _dst_port_path.parent();
 	Path patch_path = src_node.parent();
 
 	if (src_node.parent() != dst_node.parent()) {

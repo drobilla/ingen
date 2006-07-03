@@ -348,9 +348,11 @@ Patch::remove_port(const Port* port)
 Array<Node*>*
 Patch::build_process_order() const
 {
+	cerr << "*********** BUILDING PROCESS ORDER FOR " << path() << endl;
+
 	Array<Node*>* const process_order = new Array<Node*>(_nodes.size());
 	
-	// FIXME: tweak algorithm so it just ends up like this and save the iteration?
+	// FIXME: tweak algorithm so it just ends up like this and save the cost of iteration?
 	for (List<Node*>::const_iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		(*i)->traversed(false);
 		

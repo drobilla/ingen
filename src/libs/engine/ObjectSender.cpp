@@ -57,14 +57,11 @@ ObjectSender::send_patch(ClientInterface* client, const Patch* patch)
 		send_node(client, node);
 	}
 	
-	for (List<Connection*>::const_iterator j = patch->connections().begin();
-			j != patch->connections().end(); ++j)
-		client->connection((*j)->src_port()->path(), (*j)->dst_port()->path());
-	
 	// Send port information
 	for (size_t i=0; i < patch->num_ports(); ++i) {
 		Port* const port = patch->ports().at(i);
-
+		send_port(client, port);
+/*
 		// Send metadata
 		const map<string, string>& data = port->metadata();
 		for (map<string, string>::const_iterator i = data.begin(); i != data.end(); ++i)
@@ -74,7 +71,15 @@ ObjectSender::send_patch(ClientInterface* client, const Patch* patch)
 		if (port->type() == DataType::FLOAT && port->buffer_size() == 1)
 			client->control_change(port->path(),
 				dynamic_cast<TypedPort<sample>*>(port)->buffer(0)->value_at(0));
+*/
 	}
+
+
+	// Send connections
+	for (List<Connection*>::const_iterator j = patch->connections().begin();
+			j != patch->connections().end(); ++j)
+		client->connection((*j)->src_port()->path(), (*j)->dst_port()->path());
+	
 	
 	// Send metadata
 	const map<string, string>& data = patch->metadata();

@@ -178,29 +178,33 @@ TypedConnectionEvent<T>::pre_process()
 	Node* const src_node = m_src_port->parent_node();
 	Node* const dst_node = m_dst_port->parent_node();
 
+	// Connection to a patch port from inside the patch
 	if (src_node->parent_patch() != dst_node->parent_patch()) {
-		// Connection to a patch port from inside the patch
+
 		assert(src_node->parent() == dst_node || dst_node->parent() == src_node);
 		if (src_node->parent() == dst_node)
 			m_patch = dynamic_cast<Patch*>(dst_node);
 		else
 			m_patch = dynamic_cast<Patch*>(src_node);
+	
+	// Connection from a patch input to a patch output (pass through)
+	} else if (src_node == dst_node && dynamic_cast<Patch*>(src_node)) {
+		m_patch = dynamic_cast<Patch*>(src_node);
+	
+	// Normal connection between nodes with the same parent
 	} else {
-		// Normal connection between nodes with the same parent
 		m_patch = src_node->parent_patch();
 	}
 
 	assert(m_patch);
 
 	if (src_node == NULL || dst_node == NULL) {
-		cerr << "ERR 1\n";
 		m_succeeded = false;
 		QueuedEvent::pre_process();
 		return;
 	}
 	
-	if (src_node->parent() != m_patch && dst_node->parent() != m_patch) {
-		cerr << "ERR 2\n";
+	if (m_patch != src_node && src_node->parent() != m_patch && dst_node->parent() != m_patch) {
 		m_succeeded = false;
 		QueuedEvent::pre_process();
 		return;

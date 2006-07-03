@@ -224,7 +224,7 @@ ConnectWindow::gtk_callback()
 		++stage;
 	} else if (stage == 7) {
 		if (Store::instance().num_objects() > 0) {
-			CountedPtr<PatchModel> root = Store::instance().patch("/");
+			CountedPtr<PatchModel> root = Store::instance().object("/");
 			assert(root);
 			PatchController* root_controller = new PatchController(root);
 			root_controller->show_patch_window();

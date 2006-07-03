@@ -95,7 +95,7 @@ Store::object(const string& path)
 		return (*i).second;
 }
 
-
+#if 0
 CountedPtr<PatchModel>
 Store::patch(const string& path)
 {
@@ -146,7 +146,7 @@ Store::port(const string& path)
 
 	return NULL;
 }
-
+#endif
 
 void
 Store::add_plugin(CountedPtr<PluginModel> pm)
@@ -345,11 +345,16 @@ Store::control_change_event(const string& port_path, float value)
 void
 Store::connection_event(const Path& src_port_path, const Path& dst_port_path)
 {
-	// ConnectionModel has the clever patch-path-figuring-out stuff in it, so
-	// just make one right away to get at that
-	ConnectionModel* cm = new ConnectionModel(src_port_path, dst_port_path);
+	CountedPtr<PortModel> src_port = object(src_port_path);
+	CountedPtr<PortModel> dst_port = object(dst_port_path);
 
-	CountedPtr<PatchModel> patch = this->patch(cm->patch_path());
+	assert(src_port);
+	assert(dst_port);
+
+	CountedPtr<ConnectionModel> cm = new ConnectionModel(src_port, dst_port);
+
+	CountedPtr<PatchModel> patch = this->object(cm->patch_path());
+	
 	if (patch)
 		patch->add_connection(cm);
 	else
@@ -366,7 +371,7 @@ Store::disconnection_event(const Path& src_port_path, const Path& dst_port_path)
 	assert(src.parent().parent() == dst.parent().parent());
 	const Path& patch_path = src.parent().parent();
 
-	CountedPtr<PatchModel> patch = this->patch(patch_path);
+	CountedPtr<PatchModel> patch = this->object(patch_path);
 	if (patch)
 		patch->remove_connection(src, dst);
 	else

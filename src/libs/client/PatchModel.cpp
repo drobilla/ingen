@@ -154,7 +154,7 @@ PatchModel::get_connection(const string& src_port_path, const string& dst_port_p
 
 /** Add a connection to this patch.
  *
- * Ownership of @a cm is taken, it will be deleted along with this PatchModel.
+ * A reference to  @a cm is taken, released on deletion or removal.
  * If @a cm only contains paths (not pointers to the actual ports), the ports
  * will be found and set.  The ports referred to not existing as children of
  * this patch is a fatal error.
@@ -177,28 +177,28 @@ PatchModel::add_connection(CountedPtr<ConnectionModel> cm)
 
 	NodeModel* src_node = (cm->src_port_path().parent() == path())
 		? this : get_node(cm->src_port_path().parent().name()).get();
-	PortModel* src_port = (src_node == NULL) ? NULL : src_node->get_port(cm->src_port_path().name()).get();
+	CountedPtr<PortModel> src_port = src_node->get_port(cm->src_port_path().name());
 	NodeModel* dst_node = (cm->dst_port_path().parent() == path())
 		? this : get_node(cm->dst_port_path().parent().name()).get();
-	PortModel* dst_port = (dst_node == NULL) ? NULL : dst_node->get_port(cm->dst_port_path().name()).get();
+	CountedPtr<PortModel> dst_port = dst_node->get_port(cm->dst_port_path().name());
 	
-	assert(src_port != NULL);
-	assert(dst_port != NULL);
+	assert(src_port);
+	assert(dst_port);
 	
 	// Find source port pointer to 'resolve' connection if necessary
-	if (cm->src_port() != NULL)
+	if (cm->src_port())
 		assert(cm->src_port() == src_port);
 	else
 		cm->set_src_port(src_port);
 	
 	// Find dest port pointer to 'resolve' connection if necessary
-	if (cm->dst_port() != NULL)
+	if (cm->dst_port())
 		assert(cm->dst_port() == dst_port);
 	else
 		cm->set_dst_port(dst_port);
 	
-	assert(cm->src_port() != NULL);
-	assert(cm->dst_port() != NULL);
+	assert(cm->src_port());
+	assert(cm->dst_port());
 
 	m_connections.push_back(cm);
 

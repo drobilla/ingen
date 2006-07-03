@@ -43,9 +43,9 @@ class Store : public sigc::trackable { // FIXME: is trackable necessary?
 public:
 	CountedPtr<PluginModel> plugin(const string& uri);
 	CountedPtr<ObjectModel> object(const string& path);
-	CountedPtr<PatchModel>  patch(const string& path);
+	/*CountedPtr<PatchModel>  patch(const string& path);
 	CountedPtr<NodeModel>   node(const string& path);
-	CountedPtr<PortModel>   port(const string& path);
+	CountedPtr<PortModel>   port(const string& path);*/
 
 	size_t num_objects() { return m_objects.size(); }
 	

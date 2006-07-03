@@ -91,7 +91,7 @@ private:
 	size_t                             m_poly;
 };
 
-typedef map<string, PatchModel*> PatchModelMap;
+typedef map<string, CountedPtr<PatchModel> > PatchModelMap;
 
 
 } // namespace LibOmClient
