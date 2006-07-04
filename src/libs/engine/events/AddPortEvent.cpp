@@ -80,7 +80,12 @@ AddPortEvent::pre_process()
 				_patch->add_output(new ListNode<Port*>(_patch_port));
 			else
 				_patch->add_input(new ListNode<Port*>(_patch_port));
-			_ports_array = new Array<Port*>(_patch->num_ports() + 1, _patch->external_ports());
+			
+			if (_patch->external_ports())
+				_ports_array = new Array<Port*>(_patch->num_ports() + 1, *_patch->external_ports());
+			else
+				_ports_array = new Array<Port*>(_patch->num_ports() + 1, NULL);
+
 			_ports_array->at(_patch->num_ports()) = _patch_port;
 			om->object_store()->add(_patch_port);
 

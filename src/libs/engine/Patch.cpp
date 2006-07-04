@@ -350,7 +350,7 @@ Patch::build_process_order() const
 {
 	cerr << "*********** BUILDING PROCESS ORDER FOR " << path() << endl;
 
-	Array<Node*>* const process_order = new Array<Node*>(_nodes.size());
+	Array<Node*>* const process_order = new Array<Node*>(_nodes.size(), NULL);
 	
 	// FIXME: tweak algorithm so it just ends up like this and save the cost of iteration?
 	for (List<Node*>::const_iterator i = _nodes.begin(); i != _nodes.end(); ++i)
@@ -370,22 +370,23 @@ Patch::build_process_order() const
 		}*/
 	//}
 	
-
-	// Add any (disjoint) nodes that weren't hit by the traversal
-	/*for (List<Node*>::const_iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
-		node = (*i);
-		if ( ! node->traversed()) {
-			process_order->push_back(*i);
-			node->traversed(true);
-		}
-	}*/
-
 	for (List<Node*>::const_iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
 		Node* const node = (*i);
 		// Either a sink or connected to our output ports:
-		if ( (!node->traversed()) && node->dependants()->size() == 0)
+		if ( ( ! node->traversed()) && node->dependants()->size() == 0)
 			build_process_order_recursive(node, process_order);
 	}
+
+	// Add any (disjoint) nodes that weren't hit by the traversal
+	// FIXME: this shouldn't be necessary
+	/*for (List<Node*>::const_iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
+		Node* const node = (*i);
+		if ( ! node->traversed()) {
+			process_order->push_back(*i);
+			node->traversed(true);
+			cerr << "********** APPENDED DISJOINT NODE " << node->path() << endl;
+		}
+	}*/
 
 	cerr << "----------------------------------------\n";
 	for (size_t i=0; i < process_order->size(); ++i) {

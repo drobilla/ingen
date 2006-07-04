@@ -135,7 +135,6 @@ SliderControlGroup::set_value(const float val)
 		m_slider.set_value(val);
 		m_value_spinner.set_value(val);
 	}
-	m_port_model->value(val);
 	m_enable_signal = true;
 }
 

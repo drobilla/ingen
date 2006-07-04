@@ -215,8 +215,8 @@ TypedConnectionEvent<T>::pre_process()
 	m_patch_listnode = new ListNode<Connection*>(m_connection);
 	
 	// Need to be careful about patch port connections here and adding a node's
-	// parent as a dependant/provider...
-	if (src_node->parent() == dst_node->parent()) {
+	// parent as a dependant/provider, or adding a patch as it's own provider...
+	if (src_node != dst_node && src_node->parent() == dst_node->parent()) {
 		dst_node->providers()->push_back(new ListNode<Node*>(src_node));
 		src_node->dependants()->push_back(new ListNode<Node*>(dst_node));
 	}
