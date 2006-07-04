@@ -365,17 +365,23 @@ Store::connection_event(const Path& src_port_path, const Path& dst_port_path)
 void
 Store::disconnection_event(const Path& src_port_path, const Path& dst_port_path)
 {
-	const Path& src = src_port_path;
-	const Path& dst = dst_port_path;
+	// Find the ports and create a ConnectionModel just to get at the parent path
+	// finding logic in ConnectionModel.  So I'm lazy.
+	
+	CountedPtr<PortModel> src_port = object(src_port_path);
+	CountedPtr<PortModel> dst_port = object(dst_port_path);
 
-	assert(src.parent().parent() == dst.parent().parent());
-	const Path& patch_path = src.parent().parent();
+	assert(src_port);
+	assert(dst_port);
 
-	CountedPtr<PatchModel> patch = this->object(patch_path);
+	CountedPtr<ConnectionModel> cm = new ConnectionModel(src_port, dst_port);
+
+	CountedPtr<PatchModel> patch = this->object(cm->patch_path());
+	
 	if (patch)
-		patch->remove_connection(src, dst);
+		patch->remove_connection(src_port_path, dst_port_path);
 	else
-		cerr << "ERROR: connection in nonexistant patch" << endl;
+		cerr << "ERROR: disconnection in nonexistant patch" << endl;
 }
 
 

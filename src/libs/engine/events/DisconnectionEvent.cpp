@@ -110,18 +110,6 @@ DisconnectionEvent::pre_process()
 		return;
 	}
 
-	/*if (port1->is_output() && port2->is_input()) {
-	  m_src_port = port1;
-	  m_dst_port = port2;
-	  } else if (port2->is_output() && port1->is_input()) {
-	  m_src_port = port2;
-	  m_dst_port = port1;
-	  } else {
-	  m_error = TYPE_MISMATCH;
-	  QueuedEvent::pre_process();
-	  return;
-	  }*/
-
 	// Create the typed event to actually do the work
 	const DataType type = m_src_port->type();
 	if (type == DataType::FLOAT) {
@@ -197,20 +185,26 @@ TypedDisconnectionEvent<T>::pre_process()
 	
 	Node* const src_node = m_src_port->parent_node();
 	Node* const dst_node = m_dst_port->parent_node();
+
+	// Connection to a patch port from inside the patch
 	if (src_node->parent_patch() != dst_node->parent_patch()) {
-		// Connection to a patch port from inside the patch
+
 		assert(src_node->parent() == dst_node || dst_node->parent() == src_node);
 		if (src_node->parent() == dst_node)
 			m_patch = dynamic_cast<Patch*>(dst_node);
 		else
 			m_patch = dynamic_cast<Patch*>(src_node);
+	
+	// Connection from a patch input to a patch output (pass through)
+	} else if (src_node == dst_node && dynamic_cast<Patch*>(src_node)) {
+		m_patch = dynamic_cast<Patch*>(src_node);
+	
+	// Normal connection between nodes with the same parent
 	} else {
-		// Normal connection between nodes with the same parent
 		m_patch = src_node->parent_patch();
 	}
 
 	assert(m_patch);
-	assert(m_patch == src_node->parent() || m_patch == dst_node->parent());
 
 	if (src_node == NULL || dst_node == NULL) {
 		m_succeeded = false;
@@ -250,7 +244,8 @@ TypedDisconnectionEvent<T>::execute(samplecount offset)
 		if (port_connection != NULL) {
 			ListNode<Connection*>* const patch_connection
 				= m_patch->remove_connection(m_src_port, m_dst_port);
-	
+			
+			assert(patch_connection);
 			assert((Connection*)port_connection->elem() == patch_connection->elem());
 			
 			// Clean up both the list node and the connection itself...
