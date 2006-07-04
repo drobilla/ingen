@@ -76,8 +76,9 @@ public:
 	Type          type() const                { return m_type; }
 	void          type(Type t)                { m_type = t; }
 	const string& lib_path() const            { return m_lib_path; }
-	void          lib_path(const string& s)   { m_lib_path = s; }
-	string        lib_name() const            { return m_lib_path.substr(m_lib_path.find_last_of("/")); }
+	void          lib_path(const string& s)   { m_lib_path = s; m_lib_name = m_lib_path.substr(m_lib_path.find_last_of("/")+1); }
+	string        lib_name() const            { return m_lib_name; }
+	void          lib_name(const string& s)   { m_lib_name = s; }
 	const string& plug_label() const          { return m_plug_label; }
 	void          plug_label(const string& s) { m_plug_label = s; }
 	const string& name() const                { return m_name; }
@@ -87,7 +88,7 @@ public:
 	void          uri(const string& s)        { m_uri = s; }
 	const string  uri() const
 	{
-		char id_str[11];
+	/*	char id_str[11];
 		snprintf(id_str, 11, "%lu", m_id);
 
 		if (m_uri.length() > 0) {
@@ -100,7 +101,8 @@ public:
 			return string("dssi:") + lib_name() +":"+ m_plug_label;
 		} else {
 			return "";
-		}
+		}*/
+		return m_uri;
 	}
 	
 	PluginLibrary* library() const             { return m_library; }
@@ -137,6 +139,7 @@ private:
 	Type   m_type;
 	string m_uri;        ///< LV2 only
 	string m_lib_path;   ///< LADSPA/DSSI only
+	string m_lib_name;   ///< LADSPA/DSSI only
 	string m_plug_label; ///< LADSPA/DSSI only
 	string m_name;       ///< LADSPA/DSSI only
 	unsigned long m_id;  ///< LADSPA/DSSI only

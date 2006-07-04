@@ -86,6 +86,13 @@ public:
 	                         const string& plugin_type,
 	                         const string& plugin_uri,
 				        	 bool          polyphonic);
+	
+	/** FIXME: DEPRECATED, REMOVE */
+	virtual void create_node(const string& path,
+	                         const string& plugin_type,
+	                         const string& lib_path,
+	                         const string& plug_label,
+				        	 bool          polyphonic);
 
 	virtual void rename(const string& old_path,
 	                    const string& new_name);

@@ -209,7 +209,7 @@ PatchModel::add_connection(CountedPtr<ConnectionModel> cm)
 void
 PatchModel::remove_connection(const string& src_port_path, const string& dst_port_path)
 {
-	cerr << path() << " PatchModel::remove_connection: " << cm->src_port_path() << " -> " << cm->dst_port_path() << endl;
+	cerr << path() << " PatchModel::remove_connection: " << src_port_path << " -> " << dst_port_path << endl;
 	for (list<CountedPtr<ConnectionModel> >::iterator i = m_connections.begin(); i != m_connections.end(); ++i) {
 		CountedPtr<ConnectionModel> cm = (*i);
 		if (cm->src_port_path() == src_port_path && cm->dst_port_path() == dst_port_path) {

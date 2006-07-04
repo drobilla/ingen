@@ -65,48 +65,27 @@ namespace Om {
 
 
 NodeFactory::NodeFactory()
-: m_has_loaded(false)
+: _has_loaded(false)
 {
-	pthread_mutex_init(&m_plugin_list_mutex, NULL);
+	pthread_mutex_init(&_plugin_list_mutex, NULL);
 	
-	// Add builtin plugin types to m_internal_plugins list
+	// Add builtin plugin types to _internal_plugins list
 	// FIXME: ewwww, definitely a better way to do this!
-	//Plugin* pi = NULL;
 
 	Patch* parent = new Patch("dummy", 1, NULL, 1, 1, 1);
 
 	Node* n = NULL;
-#if 0
-	n = new AudioInputNode("foo", 1, parent, 1, 1);
-	m_internal_plugins.push_back(new Plugin(n->plugin()));
-	delete n;
-	n = new AudioOutputNode("foo", 1, parent, 1, 1);
-	m_internal_plugins.push_back(new Plugin(n->plugin()));
-	delete n;
-	n = new ControlInputNode("foo", 1, parent, 1, 1);
-	m_internal_plugins.push_back(new Plugin(n->plugin()));
-	delete n;
-	n = new ControlOutputNode("foo", 1, parent, 1, 1);
-	m_internal_plugins.push_back(new Plugin(n->plugin()));
-	delete n;
-	n = new MidiInputNode("foo", 1, parent, 1, 1);
-	m_internal_plugins.push_back(new Plugin(n->plugin()));
-	delete n;
-	n = new MidiOutputNode("foo", 1, parent, 1, 1);
-	m_internal_plugins.push_back(new Plugin(n->plugin()));
-	delete n;
-#endif
 	n = new MidiNoteNode("foo", 1, parent, 1, 1);
-	m_internal_plugins.push_back(new Plugin(n->plugin()));
+	_internal_plugins.push_back(new Plugin(n->plugin()));
 	delete n;
 	n = new MidiTriggerNode("foo", 1, parent, 1, 1);
-	m_internal_plugins.push_back(new Plugin(n->plugin()));
+	_internal_plugins.push_back(new Plugin(n->plugin()));
 	delete n;
 	n = new MidiControlNode("foo", 1, parent, 1, 1);
-	m_internal_plugins.push_back(new Plugin(n->plugin()));
+	_internal_plugins.push_back(new Plugin(n->plugin()));
 	delete n;
 	n = new TransportNode("foo", 1, parent, 1, 1);
-	m_internal_plugins.push_back(new Plugin(n->plugin()));
+	_internal_plugins.push_back(new Plugin(n->plugin()));
 	delete n;
 	
 
@@ -116,10 +95,10 @@ NodeFactory::NodeFactory()
 
 NodeFactory::~NodeFactory()
 {
-	for (list<Plugin*>::iterator i = m_plugins.begin(); i != m_plugins.end(); ++i)
+	for (list<Plugin*>::iterator i = _plugins.begin(); i != _plugins.end(); ++i)
 		delete (*i);
 	
-	for (list<PluginLibrary*>::iterator i = m_libraries.begin(); i != m_libraries.end(); ++i) {
+	for (list<PluginLibrary*>::iterator i = _libraries.begin(); i != _libraries.end(); ++i) {
 		(*i)->close();
 		delete (*i);
 	}
@@ -132,11 +111,11 @@ NodeFactory::load_plugins()
 	// Only load if we havn't already, so every client connecting doesn't cause
 	// this (expensive!) stuff to happen.  Not the best solution - would be nice
 	// if clients could refresh plugins list for whatever reason :/
-	if (!m_has_loaded) {
-		pthread_mutex_lock(&m_plugin_list_mutex);
+	if (!_has_loaded) {
+		pthread_mutex_lock(&_plugin_list_mutex);
 		
-		m_plugins.clear();
-		m_plugins = m_internal_plugins;
+		_plugins.clear();
+		_plugins = _internal_plugins;
 	
 #if HAVE_SLV2
 		load_lv2_plugins();
@@ -148,9 +127,9 @@ NodeFactory::load_plugins()
 		load_ladspa_plugins();
 #endif
 		
-		m_has_loaded = true;
+		_has_loaded = true;
 		
-		pthread_mutex_unlock(&m_plugin_list_mutex);
+		pthread_mutex_unlock(&_plugin_list_mutex);
 	}
 }
 
@@ -166,23 +145,31 @@ NodeFactory::load_plugin(const Plugin* a_plugin, const string& name, size_t poly
 	assert(poly == 1 || poly == parent->internal_poly());
 	assert(a_plugin);
 
-	pthread_mutex_lock(&m_plugin_list_mutex);
+	pthread_mutex_lock(&_plugin_list_mutex);
 	
 	Node* r = NULL;
 	Plugin* plugin = NULL;
 
+	// FIXME FIXME FIXME: double lookup
+	
 	// Attempt to find the plugin in loaded DB
 	if (a_plugin->type() != Plugin::Internal) {
-		list<Plugin*>::iterator i;
-		if (a_plugin->plug_label().length() == 0) {
-			for (i = m_plugins.begin(); i != m_plugins.end(); ++i) {
-				if (a_plugin->uri() == (*i)->uri()) {
+
+		// DEPRECATED: Search by lib name / plug label
+		if (a_plugin->uri().length() == 0) {
+			assert(a_plugin->lib_name().length() > 0 && a_plugin->plug_label().length() > 0);
+			cerr << "Searching for: " << a_plugin->lib_name() << " : " << a_plugin->plug_label() << endl;
+			for (list<Plugin*>::iterator i = _plugins.begin(); i != _plugins.end(); ++i) {
+				cerr << (*i)->lib_name() << " : " << (*i)->plug_label() << endl;
+				if (a_plugin->lib_name() == (*i)->lib_name() && a_plugin->plug_label() == (*i)->plug_label()) {
 					plugin = *i;
 					break;
 				}
 			}
 		} else {
-			for (i = m_plugins.begin(); i != m_plugins.end(); ++i) {
+			// Search by URI
+			cerr << "Searching for " << name << " by URI" << endl;
+			for (list<Plugin*>::iterator i = _plugins.begin(); i != _plugins.end(); ++i) {
 				if (a_plugin->uri() == (*i)->uri()) {
 					plugin = *i;
 					break;
@@ -190,8 +177,10 @@ NodeFactory::load_plugin(const Plugin* a_plugin, const string& name, size_t poly
 			}
 		}
 
-		if (plugin == NULL)
+		if (plugin == NULL) {
+			cerr << "DID NOT FIND PLUGIN " << name << endl;
 			return NULL;
+		}
 	}
 
 	switch (a_plugin->type()) {
@@ -217,7 +206,7 @@ NodeFactory::load_plugin(const Plugin* a_plugin, const string& name, size_t poly
 		cerr << "[NodeFactory] WARNING: Unknown plugin type." << endl;
 	}
 
-	pthread_mutex_unlock(&m_plugin_list_mutex);
+	pthread_mutex_unlock(&_plugin_list_mutex);
 
 	return r;
 }
@@ -228,14 +217,16 @@ NodeFactory::load_plugin(const Plugin* a_plugin, const string& name, size_t poly
 Node*
 NodeFactory::load_internal_plugin(const string& uri, const string& name, size_t poly, Patch* parent)
 {
+	return NULL;
+	cerr << "FIXME: Internal plugin" << endl;
+#if 0
 	assert(parent != NULL);
 	assert(poly == 1 || poly == parent->internal_poly());
 	assert(uri.length() > 3);
 	assert(uri.substr(0, 3) == "om:");
 
 	string plug_label = uri.substr(3);
-#if 0
-	if (plug_label == "midi_input") {
+	/*if (plug_label == "midi_input") {
 		MidiInputNode* tn = new MidiInputNode(name, 1, parent, om->audio_driver()->sample_rate(), om->audio_driver()->buffer_size());
 		return tn;
 	} else if (plug_label == "midi_output") {
@@ -258,7 +249,7 @@ NodeFactory::load_internal_plugin(const string& uri, const string& name, size_t 
 			om->audio_driver()->sample_rate(), om->audio_driver()->buffer_size());
 		return on;
 	} else
-#endif
+	*/
 	if (plug_label == "note_in" || plug_label == "midi_note_in") {
 		MidiNoteNode* mn = new MidiNoteNode(name, poly, parent, om->audio_driver()->sample_rate(), om->audio_driver()->buffer_size());
 		return mn;
@@ -276,6 +267,7 @@ NodeFactory::load_internal_plugin(const string& uri, const string& name, size_t 
 	}
 
 	return NULL;
+#endif
 }
 
 
@@ -302,7 +294,7 @@ NodeFactory::load_lv2_plugins()
 		//cerr << "LV2 plugin: " << uri << endl;
 
 		bool found = false;
-		for (list<Plugin*>::const_iterator i = m_plugins.begin(); i != m_plugins.end(); ++i) {
+		for (list<Plugin*>::const_iterator i = _plugins.begin(); i != _plugins.end(); ++i) {
 			if (!strcmp((*i)->uri().c_str(), uri)) {
 				cerr << "Warning: Duplicate LV2 plugin (" << uri << ").\nUsing "
 					<< (*i)->lib_path() << " version." << endl;
@@ -312,19 +304,17 @@ NodeFactory::load_lv2_plugins()
 		}
 		if (!found) {
 			//printf("[NodeFactory] Found LV2 plugin %s\n", uri);
-			Plugin* om_plug = new Plugin();
-			om_plug->type(Plugin::LV2);
+			Plugin* om_plug = new Plugin(Plugin::LV2, uri);
 			om_plug->slv2_plugin(lv2_plug);
-			om_plug->uri(uri);
 			// FIXME FIXME FIXME temporary hack
 			om_plug->library(NULL);
-			om_plug->lib_path("FIXMEpath");
+			om_plug->lib_path("FIXME/Some/path");
 			om_plug->plug_label("FIXMElabel");
 			unsigned char* name = slv2_plugin_get_name(lv2_plug);
 			om_plug->name((char*)name);
 			free(name);
 			om_plug->type(Plugin::LV2);
-			m_plugins.push_back(om_plug);
+			_plugins.push_back(om_plug);
 		}
 	}
 	
@@ -344,7 +334,7 @@ NodeFactory::load_lv2_plugin(const string& plug_uri,
 	// Find (Om) Plugin
 	Plugin* plugin = NULL;
 	list<Plugin*>::iterator i;
-	for (i = m_plugins.begin(); i != m_plugins.end(); ++i) {
+	for (i = _plugins.begin(); i != _plugins.end(); ++i) {
 		plugin = (*i);
 		if ((*i)->uri() == plug_uri) break;
 	}
@@ -428,14 +418,15 @@ NodeFactory::load_dssi_plugins()
 			}
 
 			PluginLibrary* plugin_library = new PluginLibrary(full_lib_name);
-			m_libraries.push_back(plugin_library);
+			_libraries.push_back(plugin_library);
 
 			const LADSPA_Descriptor* ld = NULL;
 			
 			for (unsigned long i=0; (descriptor = (DSSI_Descriptor*)df(i)) != NULL; ++i) {
 				ld = descriptor->LADSPA_Plugin;
 				assert(ld != NULL);
-				Plugin* plugin = new Plugin();
+				string uri = string("dssi:") + pfile->d_name +":"+ ld->Label;
+				Plugin* plugin = new Plugin(Plugin::DSSI, uri);
 				assert(plugin_library != NULL);
 				plugin->library(plugin_library);
 				plugin->lib_path(dir + "/" + pfile->d_name);
@@ -445,7 +436,7 @@ NodeFactory::load_dssi_plugins()
 				plugin->id(ld->UniqueID);
 
 				bool found = false;
-				for (list<Plugin*>::const_iterator i = m_plugins.begin(); i != m_plugins.end(); ++i) {
+				for (list<Plugin*>::const_iterator i = _plugins.begin(); i != _plugins.end(); ++i) {
 					if ((*i)->uri() == plugin->uri()) {
 						cerr << "Warning: Duplicate DSSI plugin (" << plugin->lib_name() << ":"
 							<< plugin->plug_label() << ")" << " found.\nUsing " << (*i)->lib_path()
@@ -455,7 +446,7 @@ NodeFactory::load_dssi_plugins()
 					}
 				}
 				if (!found)
-					m_plugins.push_back(plugin);
+					_plugins.push_back(plugin);
 				else
 					delete plugin;
 			}
@@ -488,14 +479,14 @@ NodeFactory::load_dssi_plugin(const string& uri,
 	
 	// Attempt to find the lib
 	list<Plugin*>::iterator i;
-	for (i = m_plugins.begin(); i != m_plugins.end(); ++i) {
+	for (i = _plugins.begin(); i != _plugins.end(); ++i) {
 		plugin = (*i);
 		if (plugin->uri() == uri) break;
 	}
 
 	assert(plugin->id() != 0);
 
-	if (i == m_plugins.end()) {
+	if (i == _plugins.end()) {
 		cerr << "Did not find DSSI plugin " << uri << " in database." << endl;
 		return NULL;
 	} else {
@@ -597,10 +588,14 @@ NodeFactory::load_ladspa_plugins()
 			}	
 
 			PluginLibrary* plugin_library = new PluginLibrary(full_lib_name);
-			m_libraries.push_back(plugin_library);
+			_libraries.push_back(plugin_library);
 
 			for (unsigned long i=0; (descriptor = (LADSPA_Descriptor*)df(i)) != NULL; ++i) {
-				Plugin* plugin = new Plugin();
+				char id_str[11];
+				snprintf(id_str, 11, "%lu", descriptor->UniqueID);
+				string uri = string("ladspa:").append(id_str);
+				Plugin* plugin = new Plugin(Plugin::LADSPA, uri);
+				
 				assert(plugin_library != NULL);
 				plugin->library(plugin_library);
 				plugin->lib_path(dir + "/" + pfile->d_name);
@@ -610,7 +605,7 @@ NodeFactory::load_ladspa_plugins()
 				plugin->id(descriptor->UniqueID);
 				
 				bool found = false;
-				for (list<Plugin*>::const_iterator i = m_plugins.begin(); i != m_plugins.end(); ++i) {
+				for (list<Plugin*>::const_iterator i = _plugins.begin(); i != _plugins.end(); ++i) {
 					if ((*i)->uri() == plugin->uri()) {
 						cerr << "Warning: Duplicate LADSPA plugin " << plugin->uri()
 							<< " found.\nChoosing " << (*i)->lib_path()
@@ -620,7 +615,7 @@ NodeFactory::load_ladspa_plugins()
 					}
 				}
 				if (!found)
-					m_plugins.push_back(plugin);
+					_plugins.push_back(plugin);
 				else
 					delete plugin;
 			}
@@ -652,14 +647,14 @@ NodeFactory::load_ladspa_plugin(const string& uri,
 	
 	// Attempt to find the lib
 	list<Plugin*>::iterator i;
-	for (i = m_plugins.begin(); i != m_plugins.end(); ++i) {
+	for (i = _plugins.begin(); i != _plugins.end(); ++i) {
 		plugin = (*i);
 		if (plugin->uri() == uri) break;
 	}
 
 	assert(plugin->id() != 0);
 
-	if (i == m_plugins.end()) {
+	if (i == _plugins.end()) {
 		cerr << "Did not find LADSPA plugin " << uri << " in database." << endl;
 		return NULL;
 	} else {

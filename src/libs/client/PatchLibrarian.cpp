@@ -600,6 +600,7 @@ PatchLibrarian::parse_node(const PatchModel* parent, xmlDocPtr doc, const xmlNod
 			PortModel* pm = new PortModel(path,
 					PortModel::CONTROL, PortModel::INPUT, PortModel::NONE,
 					0.0, user_min, user_max);
+			pm->set_parent(nm);
 			nm->add_port(pm);
 
 		// DSSI hacks.  Stored in the patch files as special elements, but sent to

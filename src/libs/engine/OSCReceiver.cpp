@@ -30,7 +30,6 @@
 #include "OSCClient.h"
 #include "OSCResponder.h"
 #include "ClientBroadcaster.h"
-#include "Plugin.h"
 
 using std::cerr; using std::cout; using std::endl;
 
@@ -514,39 +513,21 @@ OSCReceiver::m_create_node_by_uri_cb(const char* path, const char* types, lo_arg
  * \arg \b poly (integer-boolean) - Whether node is polyphonic (0 = false, 1 = true)
  *
  * \li This is only here to provide backwards compatibility for old patches that store LADSPA plugin
- * references as libname, label.  It is to be removed, don't use it.
+ * references as libname, label.  It is to be removed ASAP, don't use it.
  * </p> \n \n
  */
 int
 OSCReceiver::m_create_node_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	/*
-
 	const char* node_path   = &argv[1]->s;
 	const char* type        = &argv[2]->s;
 	const char* lib_name    = &argv[3]->s;
 	const char* plug_label  = &argv[4]->s;
 	const int   poly        =  argv[5]->i;
-	*/
-	cerr << "LOAD NODE BY LIB LABEL\n";
-	return 0;
-	#if 0
-	// FIXME Event-ize
 	
-	Plugin* plugin = new Plugin();
-	plugin->set_type(type);
-	plugin->lib_name(lib_name);
-	plugin->plug_label(plug_label);
-
-	if (poly != 0 && poly != 1) {
-		OSCResponder(addr).respond_error("Invalid poly parameter in create_node");
-		return 0;
-	}
-
-	add_node(node_path, plugin, (poly == 1));
+	create_node(node_path, type, lib_name, plug_label, (poly == 1));
 	
 	return 0;
-	#endif
 }
 
 

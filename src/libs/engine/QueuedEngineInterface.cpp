@@ -140,11 +140,28 @@ QueuedEngineInterface::create_node(const string& path,
 	plugin->set_type(plugin_type);
 	plugin->uri(plugin_uri);
 
-	AddNodeEvent* ev = new AddNodeEvent(_responder,
-		path, plugin, polyphonic);
+	AddNodeEvent* ev = new AddNodeEvent(_responder, path, plugin, polyphonic);
 	push(ev);
 }
 
+
+void
+QueuedEngineInterface::create_node(const string& path,
+                                   const string& plugin_type,
+                                   const string& plugin_lib,
+                                   const string& plugin_label,
+                                   bool          polyphonic)
+{
+	// FIXME: ew
+	
+	Plugin* plugin = new Plugin();
+	plugin->set_type(plugin_type);
+	plugin->lib_name(plugin_lib);
+	plugin->plug_label(plugin_label);
+
+	AddNodeEvent* ev = new AddNodeEvent(_responder, path, plugin, polyphonic);
+	push(ev);
+}
 
 void
 QueuedEngineInterface::rename(const string& old_path,

@@ -107,7 +107,7 @@ public:
 	CountedPtr& operator=(const CountedPtr& copy)
 	{
 		if (this != &copy) {
-			assert(_counter != copy._counter);
+			assert(_counter == NULL || _counter != copy._counter);
 			release();
 			retain(copy._counter);
 		}
