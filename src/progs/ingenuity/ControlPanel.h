@@ -63,7 +63,7 @@ public:
 	void add_port(PortController* port);
 	void remove_port(const Path& path);
 
-	void rename_port(const Path& old_path, const Path& new_path);
+	//void rename_port(const Path& old_path, const Path& new_path);
 
 	void enable_port(const Path& path);
 	void disable_port(const Path& path);

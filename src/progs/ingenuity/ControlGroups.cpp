@@ -26,8 +26,41 @@ using namespace LibOmClient;
 
 namespace OmGtk {
 
-//////////////////// SliderControlGroup ////////////////////////
 
+// ////////////////////// ControlGroup ///////////////////////////////// //
+
+ControlGroup::ControlGroup(ControlPanel* panel, CountedPtr<PortModel> pm, bool separator)
+: Gtk::VBox(false, 0),
+  m_control_panel(panel),
+  m_port_model(pm),
+  m_has_separator(separator)
+{
+	assert(m_port_model);
+	assert(panel);
+
+	if (separator) {
+		m_separator = new Gtk::HSeparator();
+		pack_start(*m_separator, false, false, 4);
+	} else {
+		m_separator = NULL;
+	}
+	
+	pm->metadata_update_sig.connect(sigc::mem_fun(this, &ControlGroup::metadata_update));
+	pm->control_change_sig.connect(sigc::mem_fun(this, &ControlGroup::set_value));
+}
+
+
+void
+ControlGroup::metadata_update(const string& key, const string& value)
+{
+	if (key == "user-min")
+		set_min(atof(value.c_str()));
+	else if (key == "user-max")
+		set_max(atof(value.c_str()));
+}
+
+
+// ////////////////// SliderControlGroup ////////////////////// //
 
 SliderControlGroup::SliderControlGroup(ControlPanel* panel, CountedPtr<PortModel> pm, bool separator)
 : ControlGroup(panel, pm, separator),
@@ -97,7 +130,7 @@ SliderControlGroup::SliderControlGroup(ControlPanel* panel, CountedPtr<PortModel
 	pack_start(m_header_box, false, false, 0);
 	pack_start(m_slider_box, false, false, 0);
 	
-	update_range();
+	m_slider.set_range(m_port_model->user_min(), m_port_model->user_max());
 
 	m_enable_signal = true;
 
@@ -167,7 +200,13 @@ SliderControlGroup::min_changed()
 		m_min_spinner.set_value(min);
 	}
 
-	update_range();
+	m_slider.set_range(min, max);
+
+	if (m_enable_signal) {
+		char temp_buf[16];
+		snprintf(temp_buf, 16, "%f", min);
+		Controller::instance().set_metadata(m_port_model->path(), "user-min", temp_buf);
+	}
 }
 
 
@@ -182,27 +221,11 @@ SliderControlGroup::max_changed()
 		m_max_spinner.set_value(max);
 	}
 
-	update_range();
-}
-
-
-void
-SliderControlGroup::update_range()
-{
-	const double min = m_min_spinner.get_value();
-	const double max = m_max_spinner.get_value();
-	
-	assert(min < max);
 	m_slider.set_range(min, max);
-	
-	m_port_model->user_min(min);
-	m_port_model->user_max(max);
-	
+
 	if (m_enable_signal) {
 		char temp_buf[16];
-		snprintf(temp_buf, 16, "%f", m_port_model->user_min());
-		Controller::instance().set_metadata(m_port_model->path(), "user-min", temp_buf);
-		snprintf(temp_buf, 16, "%f", m_port_model->user_max());
+		snprintf(temp_buf, 16, "%f", max);
 		Controller::instance().set_metadata(m_port_model->path(), "user-max", temp_buf);
 	}
 }
@@ -229,15 +252,17 @@ SliderControlGroup::update_value_from_spinner()
 	if (m_enable_signal) {
 		m_enable_signal = false;
 		const float value = m_value_spinner.get_value();
-		if (value < m_min_spinner.get_value())
+		
+		if (value < m_min_spinner.get_value()) {
 			m_min_spinner.set_value(value);
-		if (value > m_max_spinner.get_value())
+			m_slider.set_range(m_min_spinner.get_value(), m_max_spinner.get_value());
+		}
+		if (value > m_max_spinner.get_value()) {
 			m_max_spinner.set_value(value);
+			m_slider.set_range(m_min_spinner.get_value(), m_max_spinner.get_value());
+		}
 
-		m_enable_signal = false;
-		update_range();
 		m_slider.set_value(m_value_spinner.get_value());
-		m_enable_signal = true;
 
 		m_control_panel->value_changed(m_port_model->path(), value);
 		
@@ -268,7 +293,7 @@ SliderControlGroup::slider_pressed(GdkEvent* ev)
 }
 
 
-/////////////// IntegerControlGroup ////////////////
+// ///////////// IntegerControlGroup ////////////// //
 
 
 IntegerControlGroup::IntegerControlGroup(ControlPanel* panel, CountedPtr<PortModel> pm, bool separator)
@@ -311,7 +336,6 @@ IntegerControlGroup::set_value(float val)
 	//cerr << "[IntegerControlGroup] Setting value to " << val << endl;
 	m_enable_signal = false;
 	m_spinner.set_value(val);
-	m_port_model->value(val);
 	m_enable_signal = true;
 }
 
@@ -343,7 +367,7 @@ IntegerControlGroup::update_value()
 }
 
 
-/////////////// ToggleControlGroup ////////////////
+// ///////////// ToggleControlGroup ////////////// //
 
 
 ToggleControlGroup::ToggleControlGroup(ControlPanel* panel, CountedPtr<PortModel> pm, bool separator)
@@ -383,7 +407,6 @@ ToggleControlGroup::set_value(float val)
 	//cerr << "[ToggleControlGroup] Setting value to " << val << endl;
 	m_enable_signal = false;
 	m_checkbutton.set_active( (val > 0.0f) );
-	m_port_model->value(val);
 	m_enable_signal = true;
 }
 

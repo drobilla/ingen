@@ -33,52 +33,38 @@ namespace OmGtk {
 class ControlPanel;
 
 
-/** A group of controls in a NodeControlWindow.
+/** A group of controls (for a single Port) in a NodeControlWindow.
  *
  * \ingroup OmGtk
  */
 class ControlGroup : public Gtk::VBox
 {
 public:
-	ControlGroup(ControlPanel* panel, CountedPtr<PortModel> pm, bool separator)
-	: Gtk::VBox(false, 0),
-	  m_control_panel(panel),
-	  m_port_model(pm),
-	  m_has_separator(separator)
-	{
-		assert(m_port_model);
-		assert(panel);
-
-		if (separator) {
-			m_separator = new Gtk::HSeparator();
-			pack_start(*m_separator, false, false, 4);
-		} else {
-			m_separator = NULL;
-		}
-	}
+	ControlGroup(ControlPanel* panel, CountedPtr<PortModel> pm, bool separator);
 
 	~ControlGroup() { delete m_separator; }
 	
-	virtual void set_name(const string& name) {}
-	
-	virtual void set_value(float val) = 0;
-	
 	inline const CountedPtr<PortModel> port_model() const { return m_port_model; }
 
-	virtual void set_min(float val) {}
-	virtual void set_max(float val) {}
-
-	void remove_separator() { assert(m_has_separator);
-		remove(*m_separator); delete m_separator; }
+	void remove_separator() {
+		assert(m_has_separator); remove(*m_separator); delete m_separator;
+	}
 
 	virtual void enable() {}
 	virtual void disable() {}
 	
 protected:
-	ControlPanel*             m_control_panel;
-	CountedPtr<PortModel>                m_port_model;
-	bool                      m_has_separator;
-	Gtk::HSeparator*          m_separator;
+	virtual void set_name(const string& name) {}
+	virtual void set_value(float val) = 0;
+	virtual void set_min(float val) {}
+	virtual void set_max(float val) {}
+
+	virtual void metadata_update(const string& key, const string& value);
+
+	ControlPanel*          m_control_panel;
+	CountedPtr<PortModel>  m_port_model;
+	bool                   m_has_separator;
+	Gtk::HSeparator*       m_separator;
 };
 
 
@@ -90,17 +76,17 @@ class SliderControlGroup : public ControlGroup
 {
 public:
 	SliderControlGroup(ControlPanel* panel, CountedPtr<PortModel> pm, bool separator);
-	
+
+	void enable();
+	void disable();
+
+private:
 	void set_name(const string& name);
 
 	inline void set_value(const float val);
 	void set_min(float val);
 	void set_max(float val);
 
-	void enable();
-	void disable();
-
-private:
 	void min_changed();
 	void max_changed();
 	void update_range();
@@ -150,13 +136,13 @@ class IntegerControlGroup : public ControlGroup
 public:
 	IntegerControlGroup(ControlPanel* panel, CountedPtr<PortModel> pm, bool separator);
 	
-	void set_name(const string& name);
-	void set_value(float val);
-
 	void enable();
 	void disable();
 	
 private:
+	void set_name(const string& name);
+	void set_value(float val);
+
 	void update_value();
 	
 	bool            m_enable_signal;
@@ -175,13 +161,13 @@ class ToggleControlGroup : public ControlGroup
 public:
 	ToggleControlGroup(ControlPanel* panel, CountedPtr<PortModel> pm, bool separator);
 	
-	void set_name(const string& name);
-	void set_value(float val);
-
 	void enable();
 	void disable();
 	
 private:
+	void set_name(const string& name);
+	void set_value(float val);
+
 	void update_value();
 	
 	bool             m_enable_signal;

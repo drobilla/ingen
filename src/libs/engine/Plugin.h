@@ -85,25 +85,8 @@ public:
 	void          name(const string& s)       { m_name = s; }
 	unsigned long id() const                  { return m_id; }
 	void          id(unsigned long i)         { m_id = i; }
+	const string  uri() const                 { return m_uri; }
 	void          uri(const string& s)        { m_uri = s; }
-	const string  uri() const
-	{
-	/*	char id_str[11];
-		snprintf(id_str, 11, "%lu", m_id);
-
-		if (m_uri.length() > 0) {
-			return m_uri;
-		} else if (m_type == Internal) {
-			return string("om:") + m_plug_label;
-		} else if (m_type == LADSPA) {
-			return string("ladspa:").append(id_str);
-		} else if (m_type == DSSI) {
-			return string("dssi:") + lib_name() +":"+ m_plug_label;
-		} else {
-			return "";
-		}*/
-		return m_uri;
-	}
 	
 	PluginLibrary* library() const             { return m_library; }
 	void library(PluginLibrary* const library) { m_library = library; }

@@ -117,8 +117,6 @@ ControlPanel::add_port(PortController* port)
 		else
 			cg = new SliderControlGroup(this, pm, separator);
 	
-		// FIXME: ControlGroup constructor should do this
-		pm->control_change_sig.connect(sigc::mem_fun(cg, &ControlGroup::set_value));
 		m_controls.push_back(cg);
 		m_control_box->pack_start(*cg, false, false, 0);
 
@@ -168,6 +166,7 @@ ControlPanel::remove_port(const Path& path)
 
 /** Rename the control for the given port.
  */
+/*
 void
 ControlPanel::rename_port(const Path& old_path, const Path& new_path)
 {
@@ -178,7 +177,7 @@ ControlPanel::rename_port(const Path& old_path, const Path& new_path)
 		}
 	}
 }
-
+*/
 
 /** Enable the control for the given port.
  *
