@@ -27,7 +27,7 @@
  * work in GDB.  Turns out sem_wait can fail when run in GDB, and Debian
  * really needs to update it's man pages.
  *
- * This class remains as a pretty wrapper/abstraction that does nothing.
+ * This class remains as a trivial (yet pretty) wrapper/abstraction.
  */
 class Semaphore {
 public:

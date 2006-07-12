@@ -162,7 +162,7 @@ ObjectSender::send_port(ClientInterface* client, const Port* port)
 	if (port->type() == DataType::FLOAT && port->buffer_size() == 1) {
 		sample default_value = dynamic_cast<const TypedPort<sample>*>(
 				port)->buffer(0)->value_at(0);
-		cerr << port->path() << " sending default value " << default_value << endl;
+		//cerr << port->path() << " sending default value " << default_value << endl;
 		client->control_change(port->path(), default_value);
 	}
 	

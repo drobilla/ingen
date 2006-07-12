@@ -14,39 +14,50 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef EVENTSOURCE_H
-#define EVENTSOURCE_H
+#ifndef THREAD_H
+#define THREAD_H
+
+#include <string>
+#include <pthread.h>
 
 namespace Om {
 
-class Event;
-class QueuedEvent;
+
+/* FIXME: This isn't Ingen specific at all.  Move it to util. */
 
 
-/** Source for events to run in the audio thread.
+/** Abstract base class for all threads.
  *
- * The AudioDriver gets events from an EventSource in the process callback
- * (realtime audio thread) and executes them, then they are sent to the
- * PostProcessor and finalised (post-processing thread).
+ * \ingroup engine
  */
-class EventSource
+class Thread
 {
 public:
+	Thread();
+	virtual ~Thread();
 
-	virtual ~EventSource() {}
+	virtual void start();
+	virtual void stop();
 
-	virtual Event* pop_earliest_before(const samplecount time) = 0;
-
-	virtual void start() = 0;
-	
-	virtual void stop() = 0;
+	void set_name(const std::string& name) { _name = name; }
+	void set_scheduling(int policy, unsigned int priority);
 
 protected:
-	EventSource() {}
+	virtual void _run() = 0;
+
+	std::string _name;
+	pthread_t   _pthread;
+	bool        _pthread_exists;
+
+private:
+	// Prevent copies
+	Thread(const Thread&);
+	Thread& operator=(const Thread&);
+
+	static void*  _static_run(void* me);
 };
 
 
 } // namespace Om
 
-#endif // EVENTSOURCE_H
-
+#endif // THREAD_H

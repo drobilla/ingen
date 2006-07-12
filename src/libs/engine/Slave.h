@@ -14,39 +14,47 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef EVENTSOURCE_H
-#define EVENTSOURCE_H
+#ifndef SLAVE_H
+#define SLAVE_H
+
+#include <pthread.h>
+#include "util/Semaphore.h"
+#include "Thread.h"
 
 namespace Om {
 
-class Event;
-class QueuedEvent;
 
-
-/** Source for events to run in the audio thread.
+/** Thread driven by (realtime safe) signals.
  *
- * The AudioDriver gets events from an EventSource in the process callback
- * (realtime audio thread) and executes them, then they are sent to the
- * PostProcessor and finalised (post-processing thread).
+ * \ingroup engine
  */
-class EventSource
+class Slave : public Thread
 {
 public:
+	Slave() : _semaphore(0) {}
 
-	virtual ~EventSource() {}
-
-	virtual Event* pop_earliest_before(const samplecount time) = 0;
-
-	virtual void start() = 0;
-	
-	virtual void stop() = 0;
+	inline void signal() { _semaphore.post(); }
 
 protected:
-	EventSource() {}
+	virtual void _signalled() = 0;
+
+	Semaphore   _semaphore;
+
+private:
+	// Prevent copies
+	Slave(const Slave&);
+	Slave& operator=(const Slave&);
+
+	void _run()
+	{
+		while (true) {
+			_semaphore.wait();
+			_signalled();
+		}
+	}
 };
 
 
 } // namespace Om
 
-#endif // EVENTSOURCE_H
-
+#endif // SLAVE_H

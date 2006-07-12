@@ -73,6 +73,9 @@ libingen_la_SOURCES = \
 	Plugin.h \
 	Array.h \
 	List.h \
+	Slave.h \
+	Thread.h \
+	Thread.cpp \
 	PostProcessor.h \
 	PostProcessor.cpp \
 	Connection.h \

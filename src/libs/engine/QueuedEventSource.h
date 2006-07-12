@@ -21,6 +21,7 @@
 #include <pthread.h>
 #include "types.h"
 #include "util/Semaphore.h"
+#include "Slave.h"
 #include "EventSource.h"
 
 namespace Om {
@@ -35,22 +36,27 @@ class QueuedEvent;
  * popping are threadsafe, as long as a single thread pushes and a single
  * thread pops (ie this data structure is threadsafe, but the push and pop
  * methods themselves are not).
+ *
+ * This class is it's own slave. :)
  */
-class QueuedEventSource : public EventSource
+class QueuedEventSource : public EventSource, protected Slave
 {
 public:
 	QueuedEventSource(size_t size);
 	~QueuedEventSource();
 
-	Event* pop_earliest_event_before(const samplecount time);
+	void start() { Thread::start(); }
+	void stop()  { Thread::stop(); }
+
+	Event* pop_earliest_before(const samplecount time);
 
 	void unblock();
 
-	void start();
-	void stop();
-
 protected:
 	void push(QueuedEvent* const ev);
+	bool unprepared_events() { return (_prepared_back != _back); }
+	
+	virtual void _signalled(); ///< Prepare 1 event
 
 private:
 	// Prevent copies (undefined)
@@ -60,21 +66,12 @@ private:
 	// Note that it's crucially important which functions access which of these
 	// variables, to maintain threadsafeness.
 	
-	size_t      m_front;         ///< Front of queue
-	size_t      m_back;          ///< Back of entire queue (1 past index of back element)
-	size_t      m_prepared_back; ///< Back of prepared section (1 past index of back prepared element)
-	const size_t m_size;
-	QueuedEvent**  m_events;
-	
-	bool            m_thread_exists;
-	bool            m_prepare_thread_exit_flag;
-	pthread_t       m_prepare_thread;
-	Semaphore       m_semaphore; ///< Counting semaphor for driving prepare thread
-	pthread_mutex_t m_blocking_mutex;
-	pthread_cond_t  m_blocking_cond;
-
-	static void* prepare_loop(void* q) { return ((QueuedEventSource*)q)->m_prepare_loop(); }
-	void* m_prepare_loop();
+	size_t         _front;         ///< Front of queue
+	size_t         _back;          ///< Back of entire queue (1 past index of back element)
+	size_t         _prepared_back; ///< Back of prepared section (1 past index of back prepared element)
+	const size_t   _size;
+	QueuedEvent**  _events;
+	Semaphore      _blocking_semaphore;
 };
 
 

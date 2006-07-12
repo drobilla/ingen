@@ -281,7 +281,7 @@ JackAudioDriver::process_events(jack_nframes_t block_start, jack_nframes_t block
 	
 	// FIXME
 	while ((ev = reinterpret_cast<EventSource*>(om->osc_receiver())
-			->pop_earliest_event_before(block_end)) != NULL) {
+			->pop_earliest_before(block_end)) != NULL) {
 		ev->execute(0);  // QueuedEvents are not sample accurate
 		om->post_processor()->push(ev);
 		if (++num_events_processed > MAX_SLOW_EVENTS)

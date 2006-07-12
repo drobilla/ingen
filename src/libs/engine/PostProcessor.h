@@ -21,6 +21,7 @@
 #include "types.h"
 #include "util/Queue.h"
 #include "util/Semaphore.h"
+#include "Slave.h"
 
 namespace Om {
 
@@ -35,42 +36,22 @@ class Event;
  *
  * \ingroup engine
  */
-class PostProcessor
+class PostProcessor : public Slave
 {
 public:
 	PostProcessor(size_t queue_size);
-	~PostProcessor();
 
-	void start();
-	void stop();
-
-	inline void push(Event* const ev);
-	void        signal();
+	/** Push an event on to the process queue, realtime-safe, not thread-safe. */
+	inline void push(Event* const ev) { _events.push(ev); }
 
 private:
 	// Prevent copies
 	PostProcessor(const PostProcessor&);
 	PostProcessor& operator=(const PostProcessor&);
 
-	Queue<Event*> m_events;
-
-	static void* process_events(void* me);
-	void*        m_process_events();
-
-	pthread_t   m_process_thread;
-	bool        m_thread_exists;
-	static bool m_process_thread_exit_flag;
-	Semaphore   m_semaphore;
+	Queue<Event*> _events;
+	virtual void  _signalled();
 };
-
-
-/** Push an event on to the process queue, realtime-safe, not thread-safe.
- */
-inline void
-PostProcessor::push(Event* const ev)
-{
-	m_events.push(ev);
-}
 
 
 } // namespace Om

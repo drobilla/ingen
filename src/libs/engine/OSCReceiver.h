@@ -43,6 +43,8 @@ inline static int name##_cb(LO_HANDLER_ARGS, void* osc_receiver)\
 { return ((OSCReceiver*)osc_receiver)->m_##name##_cb(path, types, argv, argc, msg); }
 
 
+/* FIXME: Make this receive and preprocess in the same thread? */
+
 
 /** Receives OSC messages from liblo.
  *
@@ -66,7 +68,9 @@ private:
 	// Prevent copies (undefined)
 	OSCReceiver(const OSCReceiver&);
 	OSCReceiver& operator=(const OSCReceiver&);
-	
+
+	virtual void _run();
+
 	static void error_cb(int num, const char* msg, const char* path);	
 	static int  set_response_address_cb(LO_HANDLER_ARGS, void* osc_receiver);
 	static int  generic_cb(LO_HANDLER_ARGS, void* osc_receiver);
@@ -112,8 +116,7 @@ private:
 #endif	
 
 	const char* const _port;
-	bool              _is_activated;
-	lo_server_thread  _st;
+	lo_server         _server;
 
 	/** Cached OSC responder (for most recent incoming message) */
 	CountedPtr<OSCResponder> _osc_responder;

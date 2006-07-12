@@ -52,76 +52,75 @@ using Shared::ClientKey;
 OSCReceiver::OSCReceiver(size_t queue_size, const char* const port)
 : QueuedEngineInterface(queue_size),
   _port(port),
-  _is_activated(false),
-  _st(NULL),
+  _server(NULL),
   _osc_responder(NULL)
 {
-	_st = lo_server_thread_new(port, error_cb);
+	_server = lo_server_new(port, error_cb);
 	
-	if (_st == NULL) {
+	if (_server == NULL) {
 		cerr << "[OSC] Could not start OSC server.  Aborting." << endl;
 		exit(EXIT_FAILURE);
 	} else {
-		char* lo_url = lo_server_thread_get_url(_st);
+		char* lo_url = lo_server_get_url(_server);
 		cout << "[OSC] Started OSC server at " << lo_url << endl;
 		free(lo_url);
 	}
 
 	// For debugging, print all incoming OSC messages
-	lo_server_thread_add_method(_st, NULL, NULL, generic_cb, NULL);
+	lo_server_add_method(_server, NULL, NULL, generic_cb, NULL);
 
 	// Set response address for this message.
 	// It's important this is first and returns nonzero.
-	lo_server_thread_add_method(_st, NULL, NULL, set_response_address_cb, this);
+	lo_server_add_method(_server, NULL, NULL, set_response_address_cb, this);
 	
 	// Commands
-	lo_server_thread_add_method(_st, "/om/ping", "i", ping_cb, this);
-	lo_server_thread_add_method(_st, "/om/ping_slow", "i", ping_slow_cb, this);
-	lo_server_thread_add_method(_st, "/om/engine/quit", "i", quit_cb, this);
-	//lo_server_thread_add_method(_st, "/om/engine/register_client", "is", register_client_cb, this);
-	lo_server_thread_add_method(_st, "/om/engine/register_client", "i", register_client_cb, this);
-	lo_server_thread_add_method(_st, "/om/engine/unregister_client", "i", unregister_client_cb, this);
-	lo_server_thread_add_method(_st, "/om/engine/load_plugins", "i", load_plugins_cb, this);
-	lo_server_thread_add_method(_st, "/om/engine/activate", "i", engine_activate_cb, this);
-	lo_server_thread_add_method(_st, "/om/engine/deactivate", "i", engine_deactivate_cb, this);
-	lo_server_thread_add_method(_st, "/om/synth/create_patch", "isi", create_patch_cb, this);
-	lo_server_thread_add_method(_st, "/om/synth/enable_patch", "is", enable_patch_cb, this);
-	lo_server_thread_add_method(_st, "/om/synth/disable_patch", "is", disable_patch_cb, this);
-	lo_server_thread_add_method(_st, "/om/synth/clear_patch", "is", clear_patch_cb, this);
-	lo_server_thread_add_method(_st, "/om/synth/create_port", "issi", create_port_cb, this);
-	lo_server_thread_add_method(_st, "/om/synth/create_node", "issssi", create_node_cb, this);
-	lo_server_thread_add_method(_st, "/om/synth/create_node", "isssi", create_node_by_uri_cb, this);
-	lo_server_thread_add_method(_st, "/om/synth/destroy", "is", destroy_cb, this);
-	lo_server_thread_add_method(_st, "/om/synth/rename", "iss", rename_cb, this);
-	lo_server_thread_add_method(_st, "/om/synth/connect", "iss", connect_cb, this);
-	lo_server_thread_add_method(_st, "/om/synth/disconnect", "iss", disconnect_cb, this);
-	lo_server_thread_add_method(_st, "/om/synth/disconnect_all", "is", disconnect_all_cb, this);
-	lo_server_thread_add_method(_st, "/om/synth/set_port_value", "isf", set_port_value_cb, this);
-	lo_server_thread_add_method(_st, "/om/synth/set_port_value", "isif", set_port_value_voice_cb, this);
-	lo_server_thread_add_method(_st, "/om/synth/set_port_value_slow", "isf", set_port_value_slow_cb, this);
-	lo_server_thread_add_method(_st, "/om/synth/note_on", "isii", note_on_cb, this);
-	lo_server_thread_add_method(_st, "/om/synth/note_off", "isi", note_off_cb, this);
-	lo_server_thread_add_method(_st, "/om/synth/all_notes_off", "isi", all_notes_off_cb, this);
-	lo_server_thread_add_method(_st, "/om/synth/midi_learn", "is", midi_learn_cb, this);
+	lo_server_add_method(_server, "/om/ping", "i", ping_cb, this);
+	lo_server_add_method(_server, "/om/ping_slow", "i", ping_slow_cb, this);
+	lo_server_add_method(_server, "/om/engine/quit", "i", quit_cb, this);
+	//lo_server_add_method(_server, "/om/engine/register_client", "is", register_client_cb, this);
+	lo_server_add_method(_server, "/om/engine/register_client", "i", register_client_cb, this);
+	lo_server_add_method(_server, "/om/engine/unregister_client", "i", unregister_client_cb, this);
+	lo_server_add_method(_server, "/om/engine/load_plugins", "i", load_plugins_cb, this);
+	lo_server_add_method(_server, "/om/engine/activate", "i", engine_activate_cb, this);
+	lo_server_add_method(_server, "/om/engine/deactivate", "i", engine_deactivate_cb, this);
+	lo_server_add_method(_server, "/om/synth/create_patch", "isi", create_patch_cb, this);
+	lo_server_add_method(_server, "/om/synth/enable_patch", "is", enable_patch_cb, this);
+	lo_server_add_method(_server, "/om/synth/disable_patch", "is", disable_patch_cb, this);
+	lo_server_add_method(_server, "/om/synth/clear_patch", "is", clear_patch_cb, this);
+	lo_server_add_method(_server, "/om/synth/create_port", "issi", create_port_cb, this);
+	lo_server_add_method(_server, "/om/synth/create_node", "issssi", create_node_cb, this);
+	lo_server_add_method(_server, "/om/synth/create_node", "isssi", create_node_by_uri_cb, this);
+	lo_server_add_method(_server, "/om/synth/destroy", "is", destroy_cb, this);
+	lo_server_add_method(_server, "/om/synth/rename", "iss", rename_cb, this);
+	lo_server_add_method(_server, "/om/synth/connect", "iss", connect_cb, this);
+	lo_server_add_method(_server, "/om/synth/disconnect", "iss", disconnect_cb, this);
+	lo_server_add_method(_server, "/om/synth/disconnect_all", "is", disconnect_all_cb, this);
+	lo_server_add_method(_server, "/om/synth/set_port_value", "isf", set_port_value_cb, this);
+	lo_server_add_method(_server, "/om/synth/set_port_value", "isif", set_port_value_voice_cb, this);
+	lo_server_add_method(_server, "/om/synth/set_port_value_slow", "isf", set_port_value_slow_cb, this);
+	lo_server_add_method(_server, "/om/synth/note_on", "isii", note_on_cb, this);
+	lo_server_add_method(_server, "/om/synth/note_off", "isi", note_off_cb, this);
+	lo_server_add_method(_server, "/om/synth/all_notes_off", "isi", all_notes_off_cb, this);
+	lo_server_add_method(_server, "/om/synth/midi_learn", "is", midi_learn_cb, this);
 #ifdef HAVE_LASH
-	lo_server_thread_add_method(_st, "/om/lash/restore_finished", "i", lash_restore_done_cb, this);
+	lo_server_add_method(_server, "/om/lash/restore_finished", "i", lash_restore_done_cb, this);
 #endif
 	
-	lo_server_thread_add_method(_st, "/om/metadata/request", "isss", metadata_get_cb, this);
-	lo_server_thread_add_method(_st, "/om/metadata/set", "isss", metadata_set_cb, this);
+	lo_server_add_method(_server, "/om/metadata/request", "isss", metadata_get_cb, this);
+	lo_server_add_method(_server, "/om/metadata/set", "isss", metadata_set_cb, this);
 	
 	// Queries
-	lo_server_thread_add_method(_st, "/om/request/plugins", "i", request_plugins_cb, this);
-	lo_server_thread_add_method(_st, "/om/request/all_objects", "i", request_all_objects_cb, this);
-	lo_server_thread_add_method(_st, "/om/request/port_value", "is", request_port_value_cb, this);
+	lo_server_add_method(_server, "/om/request/plugins", "i", request_plugins_cb, this);
+	lo_server_add_method(_server, "/om/request/all_objects", "i", request_all_objects_cb, this);
+	lo_server_add_method(_server, "/om/request/port_value", "is", request_port_value_cb, this);
 	
 	// DSSI support
 #ifdef HAVE_DSSI
 	// XXX WARNING: notice this is a catch-all
-	lo_server_thread_add_method(_st, NULL, NULL, dssi_cb, this);
+	lo_server_add_method(_server, NULL, NULL, dssi_cb, this);
 #endif
 
-	lo_server_thread_add_method(_st, NULL, NULL, unknown_cb, NULL);
+	lo_server_add_method(_server, NULL, NULL, unknown_cb, NULL);
 }
 
 
@@ -129,9 +128,9 @@ OSCReceiver::~OSCReceiver()
 {
 	deactivate();
 
-	if (_st != NULL)  {
-		lo_server_thread_free(_st);
-		_st = NULL;
+	if (_server != NULL)  {
+		lo_server_free(_server);
+		_server = NULL;
 	}
 }
 
@@ -139,38 +138,46 @@ OSCReceiver::~OSCReceiver()
 void
 OSCReceiver::start()
 {
+	set_name("OSCReceiver");
 	QueuedEventSource::start();
-
-	if (!_is_activated) {
-		lo_server_thread_start(_st);
-		_is_activated = true;
-	}
-	
-	/* Waiting on the next liblo release
-	pthread_t lo_thread = lo_server_thread_get_thread(_st);
-	
-	sched_param sp;
-	sp.sched_priority = 20;
-	int result = pthread_setschedparam(lo_thread, SCHED_FIFO, &sp);
-	if (!result)
-		cout << "[OSC] Set OSC thread to realtime scheduling (SCHED_FIFO, priority "
-			<< sp.sched_priority << ")" << endl;
-	else
-		cout << "[OSC] Unable to set OSC thread to realtime scheduling ("
-			<< strerror(result) << endl;
-	*/
+	set_scheduling(SCHED_FIFO, 10);
 }
 
 
 void
 OSCReceiver::stop()
 {
-	if (_is_activated) {
-		lo_server_thread_stop(_st);
-		cout << "[OSCReceiver] Stopped OSC server thread" << endl;
-		_is_activated = false;
-	}
+	cout << "[OSCReceiver] Stopped OSC listening thread" << endl;
 	QueuedEventSource::stop();
+}
+
+
+/** Override the semaphore driven _run method of QueuedEngineInterface
+ * to wait on OSC messages and prepare them right away in the same thread.
+ */
+void
+OSCReceiver::_run()
+{
+	/* FIXME: Make Event() take a timestamp as a parameter, get a timestamp
+	 * here and stamp all the events with the same time so they all get
+	 * executed in the same cycle */
+
+	while (true) {
+		assert( ! unprepared_events());
+		
+		// Wait on a message and enqueue it
+		lo_server_recv(_server);
+
+		// Enqueue every other message that is here "now"
+		// (would this provide truly atomic bundles?)
+		while (lo_server_recv_noblock(_server, 0) > 0) ;
+
+		// Process them all
+		while (unprepared_events())
+			_signalled();
+
+		// No more unprepared events
+	}	
 }
 
 
