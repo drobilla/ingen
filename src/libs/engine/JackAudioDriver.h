@@ -49,8 +49,6 @@ public:
 	void prepare_buffer(jack_nframes_t nframes);
 
 	jack_port_t*          jack_port() const             { return m_jack_port; }
-	//DriverBuffer<sample>* buffer() const                { return m_jack_buffer; }
-	//void                  jack_buffer(jack_sample_t* s) { m_jack_buffer->set_data(s); }
 	DuplexPort<sample>*   patch_port() const            { return m_patch_port; }
 
 private:
@@ -61,7 +59,6 @@ private:
 	JackAudioDriver*      m_driver;
 	jack_port_t*          m_jack_port;
 	jack_sample_t*        m_jack_buffer; ///< Cached for output ports
-	//DriverBuffer<sample>* m_jack_buffer;
 	DuplexPort<sample>*   m_patch_port;
 };
 

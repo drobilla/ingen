@@ -55,6 +55,11 @@ namespace OmGtk {
 
 class OmPort;
 
+
+/// Singleton instance
+App* App::_instance = 0;
+
+
 App::App()
 : m_configuration(new Configuration()),
   m_about_dialog(NULL),

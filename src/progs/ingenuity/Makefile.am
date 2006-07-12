@@ -16,7 +16,6 @@ ingenuity_SOURCES = \
 	cmdline.h \
 	cmdline.c \
 	main.cpp \
-	singletons.cpp \
 	ConnectWindow.h \
 	ConnectWindow.cpp \
 	App.h \

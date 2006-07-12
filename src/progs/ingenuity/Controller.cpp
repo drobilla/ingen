@@ -26,6 +26,10 @@
 namespace OmGtk {
 
 
+/// Singleton instance	
+Controller* Controller::_instance = 0;
+
+
 Controller::Controller(const string& engine_url)
 : OSCModelEngineInterface(engine_url),
   m_patch_librarian(new PatchLibrarian(this)),

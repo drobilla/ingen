@@ -25,6 +25,11 @@
 
 namespace LibOmClient {
 
+
+/// Singleton instance
+Store* Store::_instance = 0;
+
+
 Store::Store(SigClientInterface& emitter)
 {
 	//emitter.new_plugin_sig.connect(sigc::mem_fun(this, &Store::add_plugin));
