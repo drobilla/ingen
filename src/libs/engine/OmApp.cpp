@@ -50,43 +50,9 @@ using std::cout; using std::cerr; using std::endl;
 namespace Om {
 
 
-OmApp::OmApp(const char* port)
-: m_maid(new Maid(maid_queue_size)),
-  m_audio_driver(new JackAudioDriver()),
-#ifdef HAVE_JACK_MIDI
-  m_midi_driver(new JackMidiDriver(((JackAudioDriver*)m_audio_driver)->jack_client())),
-#elif HAVE_ALSA_MIDI
-  m_midi_driver(new AlsaMidiDriver()),
-#else
-  m_midi_driver(new DummyMidiDriver()),
-#endif
-  m_osc_receiver(new OSCReceiver(pre_processor_queue_size, port)),
-  m_client_broadcaster(new ClientBroadcaster()),
-  m_object_store(new ObjectStore()),
-  m_node_factory(new NodeFactory()),
-  m_event_queue(new Queue<Event*>(event_queue_size)),
-//  m_pre_processor(new QueuedEventSource(pre_processor_queue_size)),
-  m_post_processor(new PostProcessor(post_processor_queue_size)),
-  m_quit_flag(false),
-  m_activated(false)
-{
-	mlock(m_audio_driver, sizeof(JackAudioDriver));
-	mlock(m_object_store, sizeof(ObjectStore));
-	mlock(m_osc_receiver, sizeof(OSCReceiver));
-#ifdef HAVE_ALSA_MIDI
-	mlock(m_midi_driver, sizeof(AlsaMidiDriver));
-#else
-	mlock(m_midi_driver, sizeof(DummyMidiDriver));
-#endif
-	
-	m_osc_receiver->start();
-	m_post_processor->start();
-}
-
-
 OmApp::OmApp(const char* port, AudioDriver* audio_driver)
-: m_maid(new Maid(maid_queue_size)),
-  m_audio_driver(audio_driver),
+: m_audio_driver( (audio_driver) ? audio_driver : new JackAudioDriver() ),
+  m_osc_receiver(new OSCReceiver(pre_processor_queue_size, port)),
 #ifdef HAVE_JACK_MIDI
   m_midi_driver(new JackMidiDriver(((JackAudioDriver*)m_audio_driver)->jack_client())),
 #elif HAVE_ALSA_MIDI
@@ -94,27 +60,20 @@ OmApp::OmApp(const char* port, AudioDriver* audio_driver)
 #else
   m_midi_driver(new DummyMidiDriver()),
 #endif
-  m_osc_receiver(new OSCReceiver(pre_processor_queue_size, port)),
+  m_post_processor(new PostProcessor(post_processor_queue_size)),
+  m_maid(new Maid(maid_queue_size)),
   m_client_broadcaster(new ClientBroadcaster()),
   m_object_store(new ObjectStore()),
   m_node_factory(new NodeFactory()),
-  m_event_queue(new Queue<Event*>(event_queue_size)),
-  //m_pre_processor(new QueuedEventSource(pre_processor_queue_size)),
-  m_post_processor(new PostProcessor(post_processor_queue_size)),
+#ifdef HAVE_LASH
+  m_lash_driver(new LashDriver()),
+#else 
+  m_lash_driver(NULL),
+#endif
   m_quit_flag(false),
   m_activated(false)
 {
-	mlock(m_audio_driver, sizeof(JackAudioDriver));
-	mlock(m_object_store, sizeof(ObjectStore));
-	mlock(m_osc_receiver, sizeof(OSCReceiver));
-#ifdef HAVE_ALSA_MIDI
-	mlock(m_midi_driver, sizeof(AlsaMidiDriver));
-#else
-	mlock(m_midi_driver, sizeof(DummyMidiDriver));
-#endif
-	
-	m_osc_receiver->start();
-	m_post_processor->start();
+	m_osc_receiver->activate();
 }
 
 
@@ -186,11 +145,11 @@ OmApp::activate()
 		return;
 	
 	// Create root patch
-	CreatePatchEvent create_ev(CountedPtr<Responder>(new Responder()), "/", 1);
+	CreatePatchEvent create_ev(CountedPtr<Responder>(new Responder()), 0, "/", 1);
 	create_ev.pre_process();
 	create_ev.execute(0);
 	create_ev.post_process();
-	EnablePatchEvent enable_ev(CountedPtr<Responder>(new Responder()), "/");
+	EnablePatchEvent enable_ev(CountedPtr<Responder>(new Responder()), 0, "/");
 	enable_ev.pre_process();
 	enable_ev.execute(0);
 	enable_ev.post_process();
@@ -201,6 +160,9 @@ OmApp::activate()
 #ifdef HAVE_ALSA_MIDI
 	m_midi_driver->activate();
 #endif
+	
+	m_post_processor->start();
+
 	m_activated = true;
 }
 
@@ -222,8 +184,12 @@ OmApp::deactivate()
 	if (m_midi_driver != NULL)
 		m_midi_driver->deactivate();
 	
-	m_osc_receiver->stop();
+	m_osc_receiver->deactivate();
 	m_audio_driver->deactivate();
+
+	// Finalize any lingering events (unlikely)
+	m_post_processor->whip();
+	m_post_processor->stop();
 
 	m_activated = false;
 }

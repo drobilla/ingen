@@ -30,10 +30,6 @@
  */
 namespace Om
 {
-#ifdef HAVE_LASH
-	class LashDriver;
-	extern LashDriver* lash_driver;
-#endif
 	class OmApp;
 	extern OmApp* om;
 }

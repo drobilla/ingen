@@ -42,7 +42,7 @@ class DisconnectPortEvent;
 class RenameEvent : public QueuedEvent
 {
 public:
-	RenameEvent(CountedPtr<Responder> responder, const string& path, const string& name);
+	RenameEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& path, const string& name);
 	~RenameEvent();
 
 	void pre_process();

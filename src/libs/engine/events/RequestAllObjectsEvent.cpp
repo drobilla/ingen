@@ -23,8 +23,8 @@
 namespace Om {
 
 
-RequestAllObjectsEvent::RequestAllObjectsEvent(CountedPtr<Responder> responder)
-: QueuedEvent(responder),
+RequestAllObjectsEvent::RequestAllObjectsEvent(CountedPtr<Responder> responder, samplecount timestamp)
+: QueuedEvent(responder, timestamp),
   m_client(CountedPtr<ClientInterface>(NULL))
 {
 }
@@ -33,7 +33,7 @@ RequestAllObjectsEvent::RequestAllObjectsEvent(CountedPtr<Responder> responder)
 void
 RequestAllObjectsEvent::pre_process()
 {
-	m_client = m_responder->find_client();
+	m_client = _responder->find_client();
 	
 	QueuedEvent::pre_process();
 }
@@ -43,10 +43,10 @@ void
 RequestAllObjectsEvent::post_process()
 {
 	if (m_client) {
-		m_responder->respond_ok();
+		_responder->respond_ok();
 		ObjectSender::send_all(m_client.get());
 	} else {
-		m_responder->respond_error("Invalid URL");
+		_responder->respond_error("Invalid URL");
 	}
 }
 

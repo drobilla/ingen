@@ -22,8 +22,8 @@
 namespace Om {
 
 
-DeactivateEvent::DeactivateEvent(CountedPtr<Responder> responder)
-: QueuedEvent(responder)
+DeactivateEvent::DeactivateEvent(CountedPtr<Responder> responder, samplecount timestamp)
+: QueuedEvent(responder, timestamp)
 {
 }
 
@@ -45,7 +45,7 @@ DeactivateEvent::execute(samplecount offset)
 void
 DeactivateEvent::post_process()
 {
-	m_responder->respond_ok();
+	_responder->respond_ok();
 	om->deactivate();
 }
 

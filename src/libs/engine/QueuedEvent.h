@@ -45,39 +45,44 @@ public:
 	/** Process this event into a realtime-suitable event.
 	 */
 	virtual void pre_process() {
-		assert(m_pre_processed == false);
-		m_pre_processed = true;
+		assert(_pre_processed == false);
+		_pre_processed = true;
 	}
 
 	virtual void execute(samplecount offset) {
-		assert(m_pre_processed);
+		assert(_pre_processed);
 		Event::execute(offset);
 	}
 
 	virtual void post_process() {}
 
 	/** If this event blocks the prepare phase of other slow events */
-	bool is_blocking() { return m_blocking; }
+	bool is_blocking() { return _blocking; }
 
-	bool is_prepared() { return m_pre_processed; }
+	bool is_prepared() { return _pre_processed; }
 	
 protected:
 	// Prevent copies
 	QueuedEvent(const QueuedEvent& copy);
 	QueuedEvent& operator=(const QueuedEvent&);
 	
-	QueuedEvent(CountedPtr<Responder> responder, bool blocking = false, QueuedEventSource* source=NULL)
-	: Event(responder), m_pre_processed(false), m_blocking(blocking), m_source(source)
+	QueuedEvent(CountedPtr<Responder> responder,
+	            samplecount           timestamp, 
+	            bool                  blocking = false,
+	            QueuedEventSource*    source = NULL)
+	: Event(responder, timestamp)
+	, _pre_processed(false), _blocking(blocking), _source(source)
 	{}
 	
 	// NULL event base (for internal events only!)
 	QueuedEvent()
-	: Event(), m_pre_processed(false), m_blocking(false), m_source(NULL)
+	: Event(NULL, 0)
+	, _pre_processed(false), _blocking(false), _source(NULL)
 	{}
 
-	bool               m_pre_processed;
-	bool               m_blocking;
-	QueuedEventSource* m_source;
+	bool               _pre_processed;
+	bool               _blocking;
+	QueuedEventSource* _source;
 };
 
 

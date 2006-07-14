@@ -22,8 +22,8 @@
 namespace Om {
 
 
-ActivateEvent::ActivateEvent(CountedPtr<Responder> responder)
-: QueuedEvent(responder)
+ActivateEvent::ActivateEvent(CountedPtr<Responder> responder, samplecount timestamp)
+: QueuedEvent(responder, timestamp)
 {
 }
 
@@ -42,9 +42,9 @@ void
 ActivateEvent::post_process()
 {
 	if (om != NULL)
-		m_responder->respond_ok();
+		_responder->respond_ok();
 	else
-		m_responder->respond_error("Not ready to activate yet.");
+		_responder->respond_error("Not ready to activate yet.");
 }
 
 

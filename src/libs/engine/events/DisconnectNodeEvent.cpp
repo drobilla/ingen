@@ -39,8 +39,8 @@ using std::cerr; using std::endl;
 namespace Om {
 
 
-DisconnectNodeEvent::DisconnectNodeEvent(CountedPtr<Responder> responder, const string& node_path)
-: QueuedEvent(responder),
+DisconnectNodeEvent::DisconnectNodeEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& node_path)
+: QueuedEvent(responder, timestamp),
   m_node_path(node_path),
   m_patch(NULL),
   m_node(NULL),
@@ -99,7 +99,8 @@ DisconnectNodeEvent::pre_process()
 	for (ConnectionListIterator i = m_patch->connections().begin(); i != m_patch->connections().end(); ++i) {
 		c = (*i);
 		if ((c->src_port()->parent_node() == m_node || c->dst_port()->parent_node() == m_node) && !c->pending_disconnection()) {
-			DisconnectionEvent* ev = new DisconnectionEvent(CountedPtr<Responder>(new Responder()), c->src_port(), c->dst_port());
+			DisconnectionEvent* ev = new DisconnectionEvent(CountedPtr<Responder>(new Responder()), _time_stamp,
+				c->src_port(), c->dst_port());
 			ev->pre_process();
 			m_disconnection_events.push_back(new ListNode<DisconnectionEvent*>(ev));
 			c->pending_disconnection(true);
@@ -127,13 +128,13 @@ void
 DisconnectNodeEvent::post_process()
 {
 	if (m_succeeded) {
-		if (m_responder)
-			m_responder->respond_ok();
+		if (_responder)
+			_responder->respond_ok();
 		for (List<DisconnectionEvent*>::iterator i = m_disconnection_events.begin(); i != m_disconnection_events.end(); ++i)
 			(*i)->post_process();
 	} else {
-		if (m_responder)
-			m_responder->respond_error("Unable to disconnect all ports.");
+		if (_responder)
+			_responder->respond_error("Unable to disconnect all ports.");
 	}
 }
 

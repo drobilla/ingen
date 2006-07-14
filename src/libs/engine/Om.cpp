@@ -30,7 +30,4 @@
 namespace Om
 {
 	OmApp* om = 0;
-#ifdef HAVE_LASH
-	LashDriver* lash_driver = 0;
-#endif
 }

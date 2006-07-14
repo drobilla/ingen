@@ -28,8 +28,8 @@ using std::string;
 namespace Om {
 
 
-SetMetadataEvent::SetMetadataEvent(CountedPtr<Responder> responder, const string& path, const string& key, const string& value)
-: QueuedEvent(responder),
+SetMetadataEvent::SetMetadataEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& path, const string& key, const string& value)
+: QueuedEvent(responder, timestamp),
   m_path(path),
   m_key(key),
   m_value(value),
@@ -68,9 +68,9 @@ SetMetadataEvent::post_process()
 	if (m_object == NULL) {
 		string msg = "Unable to find object ";
 		msg += m_path;
-		m_responder->respond_error(msg);
+		_responder->respond_error(msg);
 	} else {
-		m_responder->respond_ok();
+		_responder->respond_ok();
 		om->client_broadcaster()->send_metadata_update(m_path, m_key, m_value);
 	}
 }

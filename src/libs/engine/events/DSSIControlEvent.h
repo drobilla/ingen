@@ -32,7 +32,7 @@ namespace Om {
 class DSSIControlEvent : public QueuedEvent
 {
 public:
-	DSSIControlEvent(CountedPtr<Responder> responder, const string& node_path, int port_num, sample val);
+	DSSIControlEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& node_path, int port_num, sample val);
 
 	void pre_process();
 	void execute(samplecount offset);

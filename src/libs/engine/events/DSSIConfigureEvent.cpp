@@ -25,8 +25,8 @@
 namespace Om {
 
 
-DSSIConfigureEvent::DSSIConfigureEvent(CountedPtr<Responder> responder, const string& node_path, const string& key, const string& val)
-: QueuedEvent(responder),
+DSSIConfigureEvent::DSSIConfigureEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& node_path, const string& key, const string& val)
+: QueuedEvent(responder, timestamp),
   m_node_path(node_path),
   m_key(key),
   m_val(val),

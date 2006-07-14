@@ -26,16 +26,17 @@ namespace Om {
 class Port;
 
 
-/** A "blocking" ping that travels through the event queue before responding.
+/** A ping that travels through the pre-processed event queue before responding
+ * (useful for the order guarantee).
  *
  * \ingroup engine
  */
 class PingQueuedEvent : public QueuedEvent
 {
 public:
-	PingQueuedEvent(CountedPtr<Responder> responder) : QueuedEvent(responder) {}
+	PingQueuedEvent(CountedPtr<Responder> responder, samplecount timestamp) : QueuedEvent(responder, timestamp) {}
 
-	void post_process() { m_responder->respond_ok(); }
+	void post_process() { _responder->respond_ok(); }
 };
 
 

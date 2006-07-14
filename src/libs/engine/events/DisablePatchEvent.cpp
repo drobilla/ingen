@@ -27,8 +27,8 @@
 namespace Om {
 
 
-DisablePatchEvent::DisablePatchEvent(CountedPtr<Responder> responder, const string& patch_path)
-: QueuedEvent(responder),
+DisablePatchEvent::DisablePatchEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& patch_path)
+: QueuedEvent(responder, timestamp),
   m_patch_path(patch_path),
   m_patch(NULL)
 {
@@ -58,10 +58,10 @@ void
 DisablePatchEvent::post_process()
 {	
 	if (m_patch != NULL) {
-		m_responder->respond_ok();
+		_responder->respond_ok();
 		om->client_broadcaster()->send_patch_disable(m_patch_path);
 	} else {
-		m_responder->respond_error(string("Patch ") + m_patch_path + " not found");
+		_responder->respond_error(string("Patch ") + m_patch_path + " not found");
 	}
 }
 

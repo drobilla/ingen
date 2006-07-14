@@ -33,6 +33,7 @@ class EventSource;
 class PostProcessor;
 class Event;
 class QueuedEvent;
+class LashDriver;
 template <typename T> class Driver;
 
 
@@ -45,8 +46,7 @@ template <typename T> class Driver;
 class OmApp
 {
 public:
-	OmApp(const char* const port);
-	OmApp(const char* const port, AudioDriver* audio_driver);
+	OmApp(const char* const port, AudioDriver* audio_driver = 0);
 	~OmApp();
 	
 	int main();
@@ -58,16 +58,17 @@ public:
 	void activate();
 	void deactivate();
 
-	Maid*              maid()               const { return m_maid; }
+
 	AudioDriver*       audio_driver()       const { return m_audio_driver; }
-	MidiDriver*        midi_driver()        const { return m_midi_driver; }
 	OSCReceiver*       osc_receiver()       const { return m_osc_receiver; }
+	MidiDriver*        midi_driver()        const { return m_midi_driver; }
+	PostProcessor*     post_processor()     const { return m_post_processor; }
+	Maid*              maid()               const { return m_maid; }
 	ClientBroadcaster* client_broadcaster() const { return m_client_broadcaster; }
 	ObjectStore*       object_store()       const { return m_object_store; }
 	NodeFactory*       node_factory()       const { return m_node_factory; }
-	Queue<Event*>*     event_queue()        const { return m_event_queue; }
-	//EventSource*       pre_processor()      const { return m_pre_processor; }
-	PostProcessor*     post_processor()     const { return m_post_processor; }
+	LashDriver*        lash_driver()        const { return m_lash_driver; }
+
 
 	/** Return the active driver for the given (template parameter) type.
 	 * This is a hook for BridgeNode.  See OmApp.cpp for specializations. */
@@ -78,16 +79,16 @@ private:
 	OmApp(const OmApp&);
 	OmApp& operator=(const OmApp&);
 	
-	Maid*              m_maid;
+
 	AudioDriver*       m_audio_driver;
-	MidiDriver*        m_midi_driver;
 	OSCReceiver*       m_osc_receiver;
+	MidiDriver*        m_midi_driver;
+	PostProcessor*     m_post_processor;
+	Maid*              m_maid;
 	ClientBroadcaster* m_client_broadcaster;
 	ObjectStore*       m_object_store;
 	NodeFactory*       m_node_factory;
-	Queue<Event*>*     m_event_queue;
-	//EventSource*       m_pre_processor;
-	PostProcessor*     m_post_processor;
+	LashDriver*        m_lash_driver;
 	
 	bool m_quit_flag;
 	bool m_activated;

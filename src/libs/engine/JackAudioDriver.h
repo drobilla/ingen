@@ -140,9 +140,6 @@ private:
 	List<JackAudioPort*> m_ports;
 
 	Patch* m_root_patch;
-
-	jack_nframes_t m_start_of_current_cycle;
-	jack_nframes_t m_start_of_last_cycle;
 };
 
 

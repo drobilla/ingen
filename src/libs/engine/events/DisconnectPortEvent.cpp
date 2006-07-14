@@ -39,8 +39,8 @@ using std::cerr; using std::endl;
 namespace Om {
 
 
-DisconnectPortEvent::DisconnectPortEvent(CountedPtr<Responder> responder, const string& port_path)
-: QueuedEvent(responder),
+DisconnectPortEvent::DisconnectPortEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& port_path)
+: QueuedEvent(responder, timestamp),
   m_port_path(port_path),
   m_patch(NULL),
   m_port(NULL),
@@ -104,7 +104,8 @@ DisconnectPortEvent::pre_process()
 	for (List<Connection*>::const_iterator i = m_patch->connections().begin(); i != m_patch->connections().end(); ++i) {
 		c = (*i);
 		if ((c->src_port() == m_port || c->dst_port() == m_port) && !c->pending_disconnection()) {
-			DisconnectionEvent* ev = new DisconnectionEvent(CountedPtr<Responder>(new Responder()), c->src_port(), c->dst_port());
+			DisconnectionEvent* ev = new DisconnectionEvent(CountedPtr<Responder>(new Responder()), _time_stamp,
+					c->src_port(), c->dst_port());
 			ev->pre_process();
 			m_disconnection_events.push_back(new ListNode<DisconnectionEvent*>(ev));
 			c->pending_disconnection(true);
@@ -132,11 +133,11 @@ void
 DisconnectPortEvent::post_process()
 {
 	if (m_succeeded) {
-		m_responder->respond_ok();
+		_responder->respond_ok();
 		for (List<DisconnectionEvent*>::iterator i = m_disconnection_events.begin(); i != m_disconnection_events.end(); ++i)
 			(*i)->post_process();
 	} else {
-		m_responder->respond_error("Unable to disconnect port.");
+		_responder->respond_error("Unable to disconnect port.");
 	}
 }
 

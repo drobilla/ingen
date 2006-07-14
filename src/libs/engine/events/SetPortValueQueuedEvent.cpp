@@ -29,8 +29,8 @@ namespace Om {
 
 /** Voice-specific control setting
  */
-SetPortValueQueuedEvent::SetPortValueQueuedEvent(CountedPtr<Responder> responder, size_t voice_num, const string& port_path, sample val)
-: QueuedEvent(responder),
+SetPortValueQueuedEvent::SetPortValueQueuedEvent(CountedPtr<Responder> responder, samplecount timestamp, size_t voice_num, const string& port_path, sample val)
+: QueuedEvent(responder, timestamp),
   m_voice_num(voice_num),
   m_port_path(port_path),
   m_val(val),
@@ -40,8 +40,8 @@ SetPortValueQueuedEvent::SetPortValueQueuedEvent(CountedPtr<Responder> responder
 }
 
 
-SetPortValueQueuedEvent::SetPortValueQueuedEvent(CountedPtr<Responder> responder, const string& port_path, sample val)
-: QueuedEvent(responder),
+SetPortValueQueuedEvent::SetPortValueQueuedEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& port_path, sample val)
+: QueuedEvent(responder, timestamp),
   m_voice_num(-1),
   m_port_path(port_path),
   m_val(val),
@@ -88,7 +88,7 @@ SetPortValueQueuedEvent::post_process()
 	if (m_error == NO_ERROR) {
 		assert(m_port != NULL);
 		
-		m_responder->respond_ok();
+		_responder->respond_ok();
 		om->client_broadcaster()->send_control_change(m_port_path, m_val);
 		
 		// Send patch port control change, if this is a bridge port
@@ -101,12 +101,12 @@ SetPortValueQueuedEvent::post_process()
 	} else if (m_error == PORT_NOT_FOUND) {
 		string msg = "Unable to find port ";
 		msg.append(m_port_path).append(" for set_port_value_slow");
-		m_responder->respond_error(msg);
+		_responder->respond_error(msg);
 	
 	} else if (m_error == TYPE_MISMATCH) {
 		string msg = "Attempt to set ";
 		msg.append(m_port_path).append(" to incompatible type");
-		m_responder->respond_error(msg);
+		_responder->respond_error(msg);
 	}
 }
 

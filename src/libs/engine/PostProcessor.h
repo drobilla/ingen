@@ -50,7 +50,7 @@ private:
 	PostProcessor& operator=(const PostProcessor&);
 
 	Queue<Event*> _events;
-	virtual void  _signalled();
+	virtual void  _whipped();
 };
 
 

@@ -36,8 +36,8 @@ namespace Om {
 //// DisconnectionEvent ////
 
 
-DisconnectionEvent::DisconnectionEvent(CountedPtr<Responder> responder, const string& src_port_path, const string& dst_port_path)
-: QueuedEvent(responder),
+DisconnectionEvent::DisconnectionEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& src_port_path, const string& dst_port_path)
+: QueuedEvent(responder, timestamp),
   m_src_port_path(src_port_path),
   m_dst_port_path(dst_port_path),
   m_patch(NULL),
@@ -50,8 +50,8 @@ DisconnectionEvent::DisconnectionEvent(CountedPtr<Responder> responder, const st
 }
 
 
-DisconnectionEvent::DisconnectionEvent(CountedPtr<Responder> responder, Port* const src_port, Port* const dst_port)
-: QueuedEvent(responder),
+DisconnectionEvent::DisconnectionEvent(CountedPtr<Responder> responder, samplecount timestamp, Port* const src_port, Port* const dst_port)
+: QueuedEvent(responder, timestamp),
   m_src_port_path(src_port->path()),
   m_dst_port_path(dst_port->path()),
   m_patch(src_port->parent_node()->parent_patch()),
@@ -113,10 +113,10 @@ DisconnectionEvent::pre_process()
 	// Create the typed event to actually do the work
 	const DataType type = m_src_port->type();
 	if (type == DataType::FLOAT) {
-		m_typed_event = new TypedDisconnectionEvent<sample>(m_responder,
+		m_typed_event = new TypedDisconnectionEvent<sample>(_responder, _time_stamp,
 				dynamic_cast<OutputPort<sample>*>(m_src_port), dynamic_cast<InputPort<sample>*>(m_dst_port));
 	} else if (type == DataType::MIDI) {
-		m_typed_event = new TypedDisconnectionEvent<MidiMessage>(m_responder,
+		m_typed_event = new TypedDisconnectionEvent<MidiMessage>(_responder, _time_stamp,
 				dynamic_cast<OutputPort<MidiMessage>*>(m_src_port), dynamic_cast<InputPort<MidiMessage>*>(m_dst_port));
 	} else {
 		m_error = TYPE_MISMATCH;
@@ -150,7 +150,7 @@ DisconnectionEvent::post_process()
 		// FIXME: better error messages
 		string msg = "Unable to disconnect ";
 		msg.append(m_src_port_path + " -> " + m_dst_port_path);
-		m_responder->respond_error(msg);
+		_responder->respond_error(msg);
 	}
 }
 
@@ -160,8 +160,8 @@ DisconnectionEvent::post_process()
 
 
 template <typename T>
-TypedDisconnectionEvent<T>::TypedDisconnectionEvent(CountedPtr<Responder> responder, OutputPort<T>* src_port, InputPort<T>* dst_port)
-: QueuedEvent(responder),
+TypedDisconnectionEvent<T>::TypedDisconnectionEvent(CountedPtr<Responder> responder, samplecount timestamp, OutputPort<T>* src_port, InputPort<T>* dst_port)
+: QueuedEvent(responder, timestamp),
   m_src_port(src_port),
   m_dst_port(dst_port),
   m_patch(NULL),
@@ -270,11 +270,11 @@ TypedDisconnectionEvent<T>::post_process()
 {
 	if (m_succeeded) {
 	
-		m_responder->respond_ok();
+		_responder->respond_ok();
 	
 		om->client_broadcaster()->send_disconnection(m_src_port->path(), m_dst_port->path());
 	} else {
-		m_responder->respond_error("Unable to disconnect ports.");
+		_responder->respond_error("Unable to disconnect ports.");
 	}
 }
 

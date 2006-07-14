@@ -30,10 +30,10 @@ MidiTriggerNode::MidiTriggerNode(const string& path, size_t poly, Patch* parent,
 {
 	_ports = new Array<Port*>(5);
 
-	_midi_in_port = new InputPort<MidiMessage>(this, "DataType::MIDI In", 0, 1, DataType::MIDI, _buffer_size);
+	_midi_in_port = new InputPort<MidiMessage>(this, "MIDI_In", 0, 1, DataType::MIDI, _buffer_size);
 	_ports->at(0) = _midi_in_port;
 	
-	_note_port = new InputPort<sample>(this, "Note Number", 1, 1, DataType::FLOAT, 1);
+	_note_port = new InputPort<sample>(this, "Note_Number", 1, 1, DataType::FLOAT, 1);
 	//	new PortInfo("Note Number", CONTROL, INPUT, INTEGER, 60, 0, 127), 1);
 	_ports->at(1) = _note_port;
 	

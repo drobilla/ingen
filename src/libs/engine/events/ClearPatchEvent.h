@@ -35,7 +35,7 @@ class Patch;
 class ClearPatchEvent : public QueuedEvent
 {
 public:
-	ClearPatchEvent(CountedPtr<Responder> responder, const string& patch_path);
+	ClearPatchEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& patch_path);
 	
 	void pre_process();
 	void execute(samplecount offset);

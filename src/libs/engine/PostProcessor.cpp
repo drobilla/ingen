@@ -37,13 +37,12 @@ PostProcessor::PostProcessor(size_t queue_size)
 }
 
 
-/** Post processing thread.
+/** Post-Process every pending event.
  *
- * Infinite loop that waits on the semaphore and processes every enqueued
- * event (to be signalled at the end of every process cycle).
+ * The PostProcessor should be whipped by the audio thread once every cycle
  */
 void
-PostProcessor::_signalled()
+PostProcessor::_whipped()
 {
 	while ( ! _events.is_empty()) {
 		Event* const ev = _events.pop();

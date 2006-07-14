@@ -38,8 +38,8 @@ MidiLearnResponseEvent::post_process()
 
 // MidiLearnEvent
 
-MidiLearnEvent::MidiLearnEvent(CountedPtr<Responder> responder, const string& node_path)
-: QueuedEvent(responder),
+MidiLearnEvent::MidiLearnEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& node_path)
+: QueuedEvent(responder, timestamp),
   m_node_path(node_path),
   m_node(NULL),
   m_response_event(NULL)
@@ -51,7 +51,7 @@ void
 MidiLearnEvent::pre_process()
 {
 	m_node = om->object_store()->find_node(m_node_path);
-	m_response_event = new MidiLearnResponseEvent(m_node_path + "/Controller Number");
+	m_response_event = new MidiLearnResponseEvent(m_node_path + "/Controller_Number", _time_stamp);
 	
 	QueuedEvent::pre_process();
 }
@@ -74,11 +74,11 @@ void
 MidiLearnEvent::post_process()
 {
 	if (m_node != NULL) {
-		m_responder->respond_ok();
+		_responder->respond_ok();
 	} else {
 		string msg = "Did not find node '";
 		msg.append(m_node_path).append("' for MIDI learn.");
-		m_responder->respond_error(msg);
+		_responder->respond_error(msg);
 	}
 }
 

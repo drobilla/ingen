@@ -24,9 +24,10 @@ namespace Om {
 
 
 RegisterClientEvent::RegisterClientEvent(CountedPtr<Responder>       responder,
+                                         samplecount                 timestamp,
                                          ClientKey                   key,
                                          CountedPtr<ClientInterface> client)
-: QueuedEvent(responder)
+: QueuedEvent(responder, timestamp)
 , _key(key)
 , _client(client)
 {
@@ -45,7 +46,7 @@ RegisterClientEvent::pre_process()
 void
 RegisterClientEvent::post_process()
 {
-	m_responder->respond_ok();
+	_responder->respond_ok();
 }
 
 

@@ -37,7 +37,7 @@ namespace Shared {
 class RequestMetadataEvent : public QueuedEvent
 {
 public:
-	RequestMetadataEvent(CountedPtr<Responder> responder, const string& path, const string& key);
+	RequestMetadataEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& path, const string& key);
 
 	void pre_process();
 	void post_process();

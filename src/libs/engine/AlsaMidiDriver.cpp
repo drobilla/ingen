@@ -268,7 +268,7 @@ AlsaMidiDriver::activate()
 	}
 	
 #ifdef HAVE_LASH
-	lash_driver->set_alsa_client_id(snd_seq_client_id(m_seq_handle));
+	om->lash_driver()->set_alsa_client_id(snd_seq_client_id(m_seq_handle));
 #endif
 
 	m_is_activated = true;

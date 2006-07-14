@@ -31,8 +31,8 @@ namespace Om {
  *
  * Used to be triggered by MIDI.  Not used anymore.
  */
-NoteOnEvent::NoteOnEvent(CountedPtr<Responder> responder, Node* patch, uchar note_num, uchar velocity)
-: Event(responder),
+NoteOnEvent::NoteOnEvent(CountedPtr<Responder> responder, samplecount timestamp, Node* patch, uchar note_num, uchar velocity)
+: Event(responder, timestamp),
   m_node(patch),
   m_note_num(note_num),
   m_velocity(velocity),
@@ -45,8 +45,8 @@ NoteOnEvent::NoteOnEvent(CountedPtr<Responder> responder, Node* patch, uchar not
  *
  * Triggered by OSC.
  */
-NoteOnEvent::NoteOnEvent(CountedPtr<Responder> responder, const string& node_path, uchar note_num, uchar velocity)
-: Event(responder),
+NoteOnEvent::NoteOnEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& node_path, uchar note_num, uchar velocity)
+: Event(responder, timestamp),
   m_node(NULL),
   m_node_path(node_path),
   m_note_num(note_num),
@@ -78,9 +78,9 @@ NoteOnEvent::post_process()
 {
 	if (m_is_osc_triggered) {
 		if (m_node != NULL)
-			m_responder->respond_ok();
+			_responder->respond_ok();
 		else
-			m_responder->respond_error("Did not find node for note_on");
+			_responder->respond_error("Did not find node for note_on");
 	}
 }
 

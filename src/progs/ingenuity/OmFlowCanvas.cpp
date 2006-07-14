@@ -107,8 +107,8 @@ OmFlowCanvas::connect(const Port* src_port, const Port* dst_port)
 		nm->x(dst->module()->property_x() - dst->module()->width() - 20);
 		nm->y(dst->module()->property_y());
 		Controller::instance().create_node_from_model(nm);
-		Controller::instance().connect(src->model()->path(), nm->path() + "/MIDI In");
-		Controller::instance().connect(nm->path() + "/Out (CR)", dst->model()->path());
+		Controller::instance().connect(src->model()->path(), nm->path() + "/MIDI_In");
+		Controller::instance().connect(nm->path() + "/Out_(CR)", dst->model()->path());
 		Controller::instance().midi_learn(nm->path());
 		
 		// Set control node range to port's user range

@@ -20,11 +20,12 @@
 #include "Om.h"
 #include "util/Queue.h"
 #include "OmApp.h"
+#include "AudioDriver.h"
 
 namespace Om {
 
-QueuedEngineInterface::QueuedEngineInterface(size_t queue_size)
-: QueuedEventSource(queue_size)
+QueuedEngineInterface::QueuedEngineInterface(size_t queued_size, size_t stamped_size)
+: QueuedEventSource(queued_size, stamped_size)
 , _responder(CountedPtr<Responder>(new Responder())) // NULL responder
 {
 }
@@ -38,7 +39,6 @@ QueuedEngineInterface::QueuedEngineInterface(size_t queue_size)
 void
 QueuedEngineInterface::set_responder(CountedPtr<Responder> responder)
 {
-	//cerr << "SET\n";
 	_responder = responder;
 }
 
@@ -58,16 +58,16 @@ QueuedEngineInterface::disable_responses()
 void
 QueuedEngineInterface::register_client(ClientKey key, CountedPtr<ClientInterface> client)
 {
-	RegisterClientEvent* ev = new RegisterClientEvent(_responder, key, client);
-	push(ev);
+	const samplecount timestamp = om->audio_driver()->time_stamp();
+	push_queued(new RegisterClientEvent(_responder, timestamp, key, client));
 }
 
 
 void
 QueuedEngineInterface::unregister_client(ClientKey key)
 {
-	UnregisterClientEvent* ev = new UnregisterClientEvent(_responder, key);
-	push(ev);
+	const samplecount timestamp = om->audio_driver()->time_stamp();
+	push_queued(new UnregisterClientEvent(_responder, timestamp, key));
 }
 
 
@@ -76,8 +76,8 @@ QueuedEngineInterface::unregister_client(ClientKey key)
 void
 QueuedEngineInterface::load_plugins()
 {
-	LoadPluginsEvent* ev = new LoadPluginsEvent(_responder);
-	push(ev);
+	const samplecount timestamp = om->audio_driver()->time_stamp();
+	push_queued(new LoadPluginsEvent(_responder, timestamp));
 
 }
 
@@ -85,16 +85,16 @@ QueuedEngineInterface::load_plugins()
 void
 QueuedEngineInterface::activate()    
 {
-	ActivateEvent* ev = new ActivateEvent(_responder);
-	push(ev);
+	const samplecount timestamp = om->audio_driver()->time_stamp();
+	push_queued(new ActivateEvent(_responder, timestamp));
 }
 
 
 void
 QueuedEngineInterface::deactivate()  
 {
-	DeactivateEvent* ev = new DeactivateEvent(_responder);
-	push(ev);
+	const samplecount timestamp = om->audio_driver()->time_stamp();
+	push_queued(new DeactivateEvent(_responder, timestamp));
 }
 
 
@@ -113,8 +113,8 @@ void
 QueuedEngineInterface::create_patch(const string& path,
                                     uint32_t      poly)
 {
-	CreatePatchEvent* ev = new CreatePatchEvent(_responder, path, poly);
-	push(ev);
+	const samplecount timestamp = om->audio_driver()->time_stamp();
+	push_queued(new CreatePatchEvent(_responder, timestamp, path, poly));
 
 }
 
@@ -123,8 +123,8 @@ void QueuedEngineInterface::create_port(const string& path,
                                         const string& data_type,
                                         bool          direction)
 {
-	AddPortEvent* ev = new AddPortEvent(_responder, path, data_type, direction);
-	push(ev);
+	const samplecount timestamp = om->audio_driver()->time_stamp();
+	push_queued(new AddPortEvent(_responder, timestamp, path, data_type, direction));
 }
 
 
@@ -134,14 +134,14 @@ QueuedEngineInterface::create_node(const string& path,
                                    const string& plugin_uri,
                                    bool          polyphonic)
 {
+	const samplecount timestamp = om->audio_driver()->time_stamp();
 	// FIXME: ew
 	
 	Plugin* plugin = new Plugin();
 	plugin->set_type(plugin_type);
 	plugin->uri(plugin_uri);
 
-	AddNodeEvent* ev = new AddNodeEvent(_responder, path, plugin, polyphonic);
-	push(ev);
+	push_queued(new AddNodeEvent(_responder, timestamp, path, plugin, polyphonic));
 }
 
 
@@ -152,6 +152,7 @@ QueuedEngineInterface::create_node(const string& path,
                                    const string& plugin_label,
                                    bool          polyphonic)
 {
+	const samplecount timestamp = om->audio_driver()->time_stamp();
 	// FIXME: ew
 	
 	Plugin* plugin = new Plugin();
@@ -159,46 +160,47 @@ QueuedEngineInterface::create_node(const string& path,
 	plugin->lib_name(plugin_lib);
 	plugin->plug_label(plugin_label);
 
-	AddNodeEvent* ev = new AddNodeEvent(_responder, path, plugin, polyphonic);
-	push(ev);
+	push_queued(new AddNodeEvent(_responder, timestamp, path, plugin, polyphonic));
 }
 
 void
 QueuedEngineInterface::rename(const string& old_path,
                               const string& new_name)
 {
-	RenameEvent* ev = new RenameEvent(_responder, old_path, new_name);
-	push(ev);
+	const samplecount timestamp = om->audio_driver()->time_stamp();
+	push_queued(new RenameEvent(_responder, timestamp, old_path, new_name));
 }
 
 
 void
 QueuedEngineInterface::destroy(const string& path)
 {
-	DestroyEvent* ev = new DestroyEvent(_responder, this, path);
-	push(ev);
+	const samplecount timestamp = om->audio_driver()->time_stamp();
+	push_queued(new DestroyEvent(_responder, timestamp, this, path));
 }
 
 
 void
 QueuedEngineInterface::clear_patch(const string& patch_path)
 {
+	const samplecount timestamp = om->audio_driver()->time_stamp();
+	push_queued(new ClearPatchEvent(_responder, timestamp, patch_path));
 }
 
 
 void
 QueuedEngineInterface::enable_patch(const string& patch_path)
 {
-	EnablePatchEvent* ev = new EnablePatchEvent(_responder, patch_path);
-	push(ev);
+	const samplecount timestamp = om->audio_driver()->time_stamp();
+	push_queued(new EnablePatchEvent(_responder, timestamp, patch_path));
 }
 
 
 void
 QueuedEngineInterface::disable_patch(const string& patch_path)
 {
-	DisablePatchEvent* ev = new DisablePatchEvent(_responder, patch_path);
-	push(ev);
+	const samplecount timestamp = om->audio_driver()->time_stamp();
+	push_queued(new DisablePatchEvent(_responder, timestamp, patch_path));
 }
 
 
@@ -206,8 +208,8 @@ void
 QueuedEngineInterface::connect(const string& src_port_path,
                                const string& dst_port_path)
 {
-	ConnectionEvent* ev = new ConnectionEvent(_responder, src_port_path, dst_port_path);
-	push(ev);
+	const samplecount timestamp = om->audio_driver()->time_stamp();
+	push_queued(new ConnectionEvent(_responder, timestamp, src_port_path, dst_port_path));
 
 }
 
@@ -216,16 +218,16 @@ void
 QueuedEngineInterface::disconnect(const string& src_port_path,
                                   const string& dst_port_path)
 {
-	DisconnectionEvent* ev = new DisconnectionEvent(_responder, src_port_path, dst_port_path);
-	push(ev);
+	const samplecount timestamp = om->audio_driver()->time_stamp();
+	push_queued(new DisconnectionEvent(_responder, timestamp, src_port_path, dst_port_path));
 }
 
 
 void
 QueuedEngineInterface::disconnect_all(const string& node_path)
 {
-	DisconnectNodeEvent* ev = new DisconnectNodeEvent(_responder, node_path);
-	push(ev);
+	const samplecount timestamp = om->audio_driver()->time_stamp();
+	push_queued(new DisconnectNodeEvent(_responder, timestamp, node_path));
 }
 
 
@@ -233,8 +235,8 @@ void
 QueuedEngineInterface::set_port_value(const string& port_path,
                                       float         value)
 {
-	SetPortValueEvent* ev = new SetPortValueEvent(_responder, port_path, value);
-	om->event_queue()->push(ev);
+	const samplecount timestamp = om->audio_driver()->time_stamp();
+	push_stamped(new SetPortValueEvent(_responder, timestamp, port_path, value));
 }
 
 
@@ -243,8 +245,8 @@ QueuedEngineInterface::set_port_value(const string& port_path,
                                       uint32_t      voice,
                                       float         value)
 {
-	SetPortValueEvent* ev = new SetPortValueEvent(_responder, voice, port_path, value);
-	om->event_queue()->push(ev);
+	const samplecount timestamp = om->audio_driver()->time_stamp();
+	push_stamped(new SetPortValueEvent(_responder, timestamp, voice, port_path, value));
 }
 
 
@@ -252,8 +254,8 @@ void
 QueuedEngineInterface::set_port_value_queued(const string& port_path,
                                              float         value)
 {
-	SetPortValueQueuedEvent* ev = new SetPortValueQueuedEvent(_responder, port_path, value);
-	push(ev);
+	const samplecount timestamp = om->audio_driver()->time_stamp();
+	push_queued(new SetPortValueQueuedEvent(_responder, timestamp, port_path, value));
 }
 
 
@@ -262,15 +264,16 @@ QueuedEngineInterface::set_program(const string& node_path,
                                    uint32_t      bank,
                                    uint32_t      program)
 {
-	push(new DSSIProgramEvent(_responder, node_path, bank, program));
+	const samplecount timestamp = om->audio_driver()->time_stamp();
+	push_queued(new DSSIProgramEvent(_responder, timestamp, node_path, bank, program));
 }
 
 
 void
 QueuedEngineInterface::midi_learn(const string& node_path)
 {
-	MidiLearnEvent* ev = new MidiLearnEvent(_responder, node_path);
-	push(ev);
+	const samplecount timestamp = om->audio_driver()->time_stamp();
+	push_queued(new MidiLearnEvent(_responder, timestamp, node_path));
 }
 
 
@@ -279,10 +282,8 @@ QueuedEngineInterface::set_metadata(const string& path,
                                     const string& predicate,
                                     const string& value)
 {
-	SetMetadataEvent* ev = new SetMetadataEvent(_responder,
-		path, predicate, value);
-	
-	push(ev);
+	const samplecount timestamp = om->audio_driver()->time_stamp();
+	push_queued(new SetMetadataEvent(_responder, timestamp, path, predicate, value));
 }
 
 
@@ -291,32 +292,32 @@ QueuedEngineInterface::set_metadata(const string& path,
 void
 QueuedEngineInterface::ping()
 {
-	PingQueuedEvent* ev = new PingQueuedEvent(_responder);
-	push(ev);
+	const samplecount timestamp = om->audio_driver()->time_stamp();
+	push_queued(new PingQueuedEvent(_responder, timestamp));
 }
 
 
 void
 QueuedEngineInterface::request_port_value(const string& port_path)
 {
-	RequestPortValueEvent* ev = new RequestPortValueEvent(_responder, port_path);
-	push(ev);
+	const samplecount timestamp = om->audio_driver()->time_stamp();
+	push_queued(new RequestPortValueEvent(_responder, timestamp, port_path));
 }
 
 
 void
 QueuedEngineInterface::request_plugins()
 {
-	RequestPluginsEvent* ev = new RequestPluginsEvent(_responder);
-	push(ev);
+	const samplecount timestamp = om->audio_driver()->time_stamp();
+	push_queued(new RequestPluginsEvent(_responder, timestamp));
 }
 
 
 void
 QueuedEngineInterface::request_all_objects()
 {
-	RequestAllObjectsEvent* ev = new RequestAllObjectsEvent(_responder);
-	push(ev);
+	const samplecount timestamp = om->audio_driver()->time_stamp();
+	push_queued(new RequestAllObjectsEvent(_responder, timestamp));
 }
 
 

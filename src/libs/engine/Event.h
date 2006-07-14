@@ -43,26 +43,29 @@ class Event : public MaidObject
 public:
 	virtual ~Event() {}
 
-	/** Execute event, MUST be realtime safe */
-	virtual void execute(samplecount offset) { assert(!m_executed); m_executed = true; }
+	/** Execute this event in the audio thread (MUST be realtime safe). */
+	virtual void execute(samplecount offset) { assert(!_executed); _executed = true; }
 	
-	/** Perform any actions after execution (ie send OSC response to client).
-	 * No realtime requirement. */
+	/** Perform any actions after execution (ie send replies to commands)
+	 * (no realtime requirements). */
 	virtual void post_process() {}
 	
-	inline samplecount time_stamp() { return m_time_stamp; }
+	inline samplecount time_stamp() { return _time_stamp; }
 		
 protected:
-	Event(CountedPtr<Responder> responder);
-	Event();
-
 	// Prevent copies
 	Event(const Event&);
 	Event& operator=(const Event&);
+
+	Event(CountedPtr<Responder> responder, samplecount timestamp)
+	: _responder(responder)
+	, _time_stamp(timestamp)
+	, _executed(false)
+	{}
 	
-	CountedPtr<Responder>  m_responder;
-	samplecount            m_time_stamp;
-	bool                   m_executed;
+	CountedPtr<Responder>  _responder;
+	samplecount            _time_stamp;
+	bool                   _executed;
 };
 
 

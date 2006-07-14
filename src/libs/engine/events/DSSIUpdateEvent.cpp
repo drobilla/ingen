@@ -28,8 +28,8 @@ using std::cerr; using std::endl;
 namespace Om {
 
 
-DSSIUpdateEvent::DSSIUpdateEvent(CountedPtr<Responder> responder, const string& path, const string& url)
-: QueuedEvent(responder),
+DSSIUpdateEvent::DSSIUpdateEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& path, const string& url)
+: QueuedEvent(responder, timestamp),
   m_path(path),
   m_url(url),
   m_node(NULL)

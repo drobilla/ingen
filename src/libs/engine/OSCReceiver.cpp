@@ -50,7 +50,7 @@ using Shared::ClientKey;
 
 
 OSCReceiver::OSCReceiver(size_t queue_size, const char* const port)
-: QueuedEngineInterface(queue_size),
+: QueuedEngineInterface(queue_size, queue_size), // FIXME
   _port(port),
   _server(NULL),
   _osc_responder(NULL)
@@ -136,19 +136,19 @@ OSCReceiver::~OSCReceiver()
 
 
 void
-OSCReceiver::start()
+OSCReceiver::activate()
 {
 	set_name("OSCReceiver");
-	QueuedEventSource::start();
+	QueuedEventSource::activate();
 	set_scheduling(SCHED_FIFO, 10);
 }
 
 
 void
-OSCReceiver::stop()
+OSCReceiver::deactivate()
 {
 	cout << "[OSCReceiver] Stopped OSC listening thread" << endl;
-	QueuedEventSource::stop();
+	QueuedEventSource::deactivate();
 }
 
 
@@ -158,9 +158,8 @@ OSCReceiver::stop()
 void
 OSCReceiver::_run()
 {
-	/* FIXME: Make Event() take a timestamp as a parameter, get a timestamp
-	 * here and stamp all the events with the same time so they all get
-	 * executed in the same cycle */
+	/* get a timestamp here and stamp all the events with the same time so
+	 * they all get executed in the same cycle */
 
 	while (true) {
 		assert( ! unprepared_events());
@@ -174,7 +173,7 @@ OSCReceiver::_run()
 
 		// Process them all
 		while (unprepared_events())
-			_signalled();
+			_whipped(); // Whip our slave self
 
 		// No more unprepared events
 	}	
@@ -266,7 +265,6 @@ int
 OSCReceiver::m_ping_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	_responder->respond_ok();
-
 	return 0;
 }
 
@@ -284,7 +282,6 @@ int
 OSCReceiver::m_ping_slow_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	ping();
-	
 	return 0;
 }
 
@@ -302,7 +299,6 @@ OSCReceiver::m_quit_cb(const char* path, const char* types, lo_arg** argv, int a
 {
 
 	quit();
-
 	return 0;
 }
 
@@ -366,7 +362,7 @@ OSCReceiver::m_load_plugins_cb(const char* path, const char* types, lo_arg** arg
 int
 OSCReceiver::m_engine_activate_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	activate();
+	QueuedEngineInterface::activate();
 	return 0;
 }
 
@@ -378,7 +374,7 @@ OSCReceiver::m_engine_activate_cb(const char* path, const char* types, lo_arg** 
 int
 OSCReceiver::m_engine_deactivate_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	deactivate();
+	QueuedEngineInterface::deactivate();
 	return 0;
 }
 
@@ -396,7 +392,6 @@ OSCReceiver::m_create_patch_cb(const char* path, const char* types, lo_arg** arg
 	const int   poly        =  argv[2]->i;
 
 	create_patch(patch_path, poly);
-		
 	return 0;
 }
 
@@ -414,7 +409,6 @@ OSCReceiver::m_rename_cb(const char* path, const char* types, lo_arg** argv, int
 	const char* name         = &argv[2]->s;
 	
 	rename(object_path, name);
-		
 	return 0;
 }
 
@@ -430,7 +424,6 @@ OSCReceiver::m_enable_patch_cb(const char* path, const char* types, lo_arg** arg
 	const char* patch_path  = &argv[1]->s;
 	
 	enable_patch(patch_path);
-		
 	return 0;
 }
 
@@ -446,7 +439,6 @@ OSCReceiver::m_disable_patch_cb(const char* path, const char* types, lo_arg** ar
 	const char* patch_path  = &argv[1]->s;
 	
 	disable_patch(patch_path);
-		
 	return 0;
 }
 
@@ -462,7 +454,6 @@ OSCReceiver::m_clear_patch_cb(const char* path, const char* types, lo_arg** argv
 	const char* patch_path  = &argv[1]->s;
 	
 	clear_patch(patch_path);
-		
 	return 0;
 }
 
@@ -482,7 +473,6 @@ OSCReceiver::m_create_port_cb(const char* path, const char* types, lo_arg** argv
 	const int   direction   =  argv[3]->i;
 	
 	create_port(port_path, data_type, (direction == 1));
-	
 	return 0;
 }
 
@@ -505,7 +495,6 @@ OSCReceiver::m_create_node_by_uri_cb(const char* path, const char* types, lo_arg
 	// FIXME: make sure poly is valid
 	
 	create_node(node_path, type, plug_uri, (poly == 1));
-	
 	return 0;
 }
 
@@ -533,7 +522,6 @@ OSCReceiver::m_create_node_cb(const char* path, const char* types, lo_arg** argv
 	const int   poly        =  argv[5]->i;
 	
 	create_node(node_path, type, lib_name, plug_label, (poly == 1));
-	
 	return 0;
 }
 
@@ -549,7 +537,6 @@ OSCReceiver::m_destroy_cb(const char* path, const char* types, lo_arg** argv, in
 	const char* node_path   = &argv[1]->s;
 	
 	destroy(node_path);
-			
 	return 0;
 }
 
@@ -567,7 +554,6 @@ OSCReceiver::m_connect_cb(const char* path, const char* types, lo_arg** argv, in
 	const char* dst_port_path = &argv[2]->s;
 
 	connect(src_port_path, dst_port_path);
-		
 	return 0;
 }
 
@@ -585,7 +571,6 @@ OSCReceiver::m_disconnect_cb(const char* path, const char* types, lo_arg** argv,
 	const char* dst_port_path = &argv[2]->s;
 
 	disconnect(src_port_path, dst_port_path);
-		
 	return 0;
 }
 
@@ -601,7 +586,6 @@ OSCReceiver::m_disconnect_all_cb(const char* path, const char* types, lo_arg** a
 	const char* node_path   = &argv[1]->s;
 
 	disconnect_all(node_path);
-		
 	return 0;
 }
 
@@ -619,7 +603,6 @@ OSCReceiver::m_set_port_value_cb(const char* path, const char* types, lo_arg** a
 	const float value       =  argv[2]->f;
 
 	set_port_value(port_path, value);
-	
 	return 0;
 }
 
@@ -639,7 +622,6 @@ OSCReceiver::m_set_port_value_voice_cb(const char* path, const char* types, lo_a
 	const float value       =  argv[3]->f;
 
 	set_port_value(port_path, voice, value);
-	
 	return 0;
 }
 
@@ -661,7 +643,6 @@ OSCReceiver::m_set_port_value_slow_cb(const char* path, const char* types, lo_ar
 	const float value       =  argv[2]->f;
 
 	set_port_value_queued(port_path, value);
-		
 	return 0;
 }
 
@@ -755,8 +736,7 @@ OSCReceiver::m_midi_learn_cb(const char* path, const char* types, lo_arg** argv,
 int
 OSCReceiver::m_lash_restore_done_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	lash_retore_done();
-	
+	lash_restore_done();
 	return 0;
 }
 #endif // HAVE_LASH
@@ -818,11 +798,7 @@ OSCReceiver::m_metadata_get_cb(const char* path, const char* types, lo_arg** arg
 int
 OSCReceiver::m_request_plugins_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	cerr << "REQUEST PLUGINS\n";
-
-	// FIXME
 	request_plugins();
-		
 	return 0;
 }
 
@@ -837,7 +813,6 @@ int
 OSCReceiver::m_request_all_objects_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	request_all_objects();
-		
 	return 0;
 }
 
@@ -852,10 +827,9 @@ OSCReceiver::m_request_all_objects_cb(const char* path, const char* types, lo_ar
 int
 OSCReceiver::m_request_port_value_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	const char* port_path   = &argv[1]->s;
+	const char* port_path = &argv[1]->s;
 
 	request_port_value(port_path);
-	
 	return 0;
 }
 

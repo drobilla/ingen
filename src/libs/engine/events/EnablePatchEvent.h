@@ -37,7 +37,7 @@ class Node;
 class EnablePatchEvent : public QueuedEvent
 {
 public:
-	EnablePatchEvent(CountedPtr<Responder> responder, const string& patch_path);
+	EnablePatchEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& patch_path);
 	
 	void pre_process();
 	void execute(samplecount offset);

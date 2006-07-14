@@ -24,8 +24,8 @@
 namespace Om {
 
 
-DSSIControlEvent::DSSIControlEvent(CountedPtr<Responder> responder, const string& node_path, int port_num, sample val)
-: QueuedEvent(responder),
+DSSIControlEvent::DSSIControlEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& node_path, int port_num, sample val)
+: QueuedEvent(responder, timestamp),
   m_node_path(node_path),
   m_port_num(port_num),
   m_val(val),

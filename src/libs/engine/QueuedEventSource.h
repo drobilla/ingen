@@ -21,12 +21,13 @@
 #include <pthread.h>
 #include "types.h"
 #include "util/Semaphore.h"
+#include "util/Queue.h"
 #include "Slave.h"
+#include "Event.h"
 #include "EventSource.h"
 
 namespace Om {
 
-class Event;
 class QueuedEvent;
 
 
@@ -35,28 +36,32 @@ class QueuedEvent;
  * Implemented as a deque (ringbuffer) in a circular array.  Pushing and
  * popping are threadsafe, as long as a single thread pushes and a single
  * thread pops (ie this data structure is threadsafe, but the push and pop
- * methods themselves are not).
+ * methods themselves are not).  Creating an instance of this class spawns
+ * a pre-processing thread to prepare queued events.
  *
  * This class is it's own slave. :)
  */
 class QueuedEventSource : public EventSource, protected Slave
 {
 public:
-	QueuedEventSource(size_t size);
+	QueuedEventSource(size_t queued_size, size_t stamped_size);
 	~QueuedEventSource();
 
-	void start() { Thread::start(); }
-	void stop()  { Thread::stop(); }
+	void activate()   { Slave::start(); }
+	void deactivate() { Slave::stop(); }
 
-	Event* pop_earliest_before(const samplecount time);
+	Event*        pop_earliest_queued_before(const samplecount time);
+	inline Event* pop_earliest_stamped_before(const samplecount time);
 
 	void unblock();
 
 protected:
-	void push(QueuedEvent* const ev);
+	void push_queued(QueuedEvent* const ev);
+	void push_stamped(Event* const ev);
+
 	bool unprepared_events() { return (_prepared_back != _back); }
 	
-	virtual void _signalled(); ///< Prepare 1 event
+	virtual void _whipped(); ///< Prepare 1 event
 
 private:
 	// Prevent copies (undefined)
@@ -66,13 +71,33 @@ private:
 	// Note that it's crucially important which functions access which of these
 	// variables, to maintain threadsafeness.
 	
+	//(FIXME: make this a separate class?)
+	// 2-part queue for events that require pre-processing: 
 	size_t         _front;         ///< Front of queue
 	size_t         _back;          ///< Back of entire queue (1 past index of back element)
 	size_t         _prepared_back; ///< Back of prepared section (1 past index of back prepared element)
 	const size_t   _size;
 	QueuedEvent**  _events;
 	Semaphore      _blocking_semaphore;
+
+	/** Queue for timestamped events (no pre-processing). */
+	Queue<Event*> _stamped_queue;
 };
+
+
+/** Pops the realtime (timestamped, not preprocessed) event off the realtime queue.
+ *
+ * Engine will use the sample timestamps of returned events directly and execute the
+ * event with sample accuracy.  Timestamps in the past will be bumped forward to
+ * the beginning of the cycle (offset 0), when eg. skipped cycles occur.
+ */
+inline Event*
+QueuedEventSource::pop_earliest_stamped_before(const samplecount time)
+{
+	if (!_stamped_queue.is_empty() && _stamped_queue.front()->time_stamp() < time)
+		return _stamped_queue.pop();
+	return NULL;
+}
 
 
 } // namespace Om

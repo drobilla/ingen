@@ -29,8 +29,8 @@ using std::cout; using std::cerr; using std::endl;
 namespace Om {
 
 
-DSSIProgramEvent::DSSIProgramEvent(CountedPtr<Responder> responder, const string& node_path, int bank, int program)
-: QueuedEvent(responder),
+DSSIProgramEvent::DSSIProgramEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& node_path, int bank, int program)
+: QueuedEvent(responder, timestamp),
   m_node_path(node_path),
   m_bank(bank),
   m_program(program),

@@ -35,7 +35,7 @@
 namespace Om {
 
 
-DestroyEvent::DestroyEvent(CountedPtr<Responder> responder, QueuedEventSource* source, const string& path, bool lock_mutex)
+DestroyEvent::DestroyEvent(CountedPtr<Responder> responder, samplecount timestamp, QueuedEventSource* source, const string& path, bool lock_mutex)
 : QueuedEvent(responder, true, source),
   m_path(path),
   m_node(NULL),
@@ -48,7 +48,7 @@ DestroyEvent::DestroyEvent(CountedPtr<Responder> responder, QueuedEventSource* s
 }
 
 
-DestroyEvent::DestroyEvent(CountedPtr<Responder> responder, Node* node, bool lock_mutex)
+DestroyEvent::DestroyEvent(CountedPtr<Responder> responder, samplecount timestamp, Node* node, bool lock_mutex)
 : QueuedEvent(responder, true),
   m_path(node->path()),
   m_node(node),
@@ -139,17 +139,17 @@ DestroyEvent::execute(samplecount offset)
 void
 DestroyEvent::post_process()
 {
-	assert(m_source);
-	m_source->unblock();
+	assert(_source);
+	_source->unblock();
 	
 	if (m_node == NULL) {
 		if (m_path == "/")
-			m_responder->respond_error("You can not destroy the root patch (/)");
+			_responder->respond_error("You can not destroy the root patch (/)");
 		else
-			m_responder->respond_error("Could not find node to destroy");
+			_responder->respond_error("Could not find node to destroy");
 	} else if (m_patch_listnode != NULL) {	
 		m_node->deactivate();
-		m_responder->respond_ok();
+		_responder->respond_ok();
 		if (m_disconnect_event != NULL)
 			m_disconnect_event->post_process();
 		if (m_parent_disconnect_event != NULL)
@@ -158,7 +158,7 @@ DestroyEvent::post_process()
 		om->maid()->push(m_patch_listnode);
 		om->maid()->push(m_node);
 	} else {
-		m_responder->respond_error("Unable to destroy object");
+		_responder->respond_error("Unable to destroy object");
 	}
 }
 

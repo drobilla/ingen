@@ -34,8 +34,8 @@ class Port;
 class SetPortValueEvent : public Event
 {
 public:
-	SetPortValueEvent(CountedPtr<Responder> responder, const string& port_path, sample val);
-	SetPortValueEvent(CountedPtr<Responder> responder, size_t voice_num, const string& port_path, sample val);
+	SetPortValueEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& port_path, sample val);
+	SetPortValueEvent(CountedPtr<Responder> responder, samplecount timestamp, size_t voice_num, const string& port_path, sample val);
 
 	void execute(samplecount offset);
 	void post_process();

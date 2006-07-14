@@ -50,19 +50,20 @@ inline static int name##_cb(LO_HANDLER_ARGS, void* osc_receiver)\
  *
  * This inherits from QueuedEngineInterface and calls it's own functions
  * via OSC.  It's not actually a directly callable EngineInterface (it's
- * callable via OSC...) so it is-implemented-as-a (privately inherits)
- * QueuedEngineInterface.
+ * callable via OSC...) so it should be implemented-as-a (privately inherit)
+ * QueuedEngineInterface, but it needs to be public so it's an EventSource
+ * the Driver can use.  This probably should be fixed somehow..
  *
  * \ingroup engine
  */
-class OSCReceiver : private QueuedEngineInterface
+class OSCReceiver : public QueuedEngineInterface
 {
 public:
 	OSCReceiver(size_t queue_size, const char* const port);
 	~OSCReceiver();
 
-	void start();
-	void stop();
+	void activate();
+	void deactivate();
 
 private:
 	// Prevent copies (undefined)

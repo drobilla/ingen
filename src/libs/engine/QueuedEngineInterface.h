@@ -21,6 +21,7 @@
 #include <string>
 #include <memory>
 #include "util/CountedPtr.h"
+#include "interface/EngineInterface.h"
 #include "interface/ClientInterface.h"
 #include "interface/ClientKey.h"
 #include "QueuedEventSource.h"
@@ -31,6 +32,7 @@ namespace Om {
 
 using Shared::ClientKey;
 using Shared::ClientInterface;
+using Shared::EngineInterface;
 
 
 /** A queued (preprocessed) event source / interface.
@@ -53,10 +55,10 @@ using Shared::ClientInterface;
  * events and get pushed directly into the realtime event queue.  Should that
  * be separated into a different interface/client?
  */
-class QueuedEngineInterface : public Om::QueuedEventSource
+class QueuedEngineInterface : public Om::QueuedEventSource, public EngineInterface
 {
 public:
-	QueuedEngineInterface(size_t queue_size);
+	QueuedEngineInterface(size_t queued_size, size_t stamped_size);
 	virtual ~QueuedEngineInterface() {}
 	
 	virtual void set_responder(CountedPtr<Responder> responder);

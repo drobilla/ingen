@@ -31,25 +31,26 @@ namespace Om {
 class Slave : public Thread
 {
 public:
-	Slave() : _semaphore(0) {}
+	Slave() : _whip(0) {}
 
-	inline void signal() { _semaphore.post(); }
+	/** Tell the slave to do whatever work it does.  Realtime safe. */
+	inline void whip() { _whip.post(); }
 
 protected:
-	virtual void _signalled() = 0;
+	virtual void _whipped() = 0;
 
-	Semaphore   _semaphore;
+	Semaphore _whip;
 
 private:
 	// Prevent copies
 	Slave(const Slave&);
 	Slave& operator=(const Slave&);
 
-	void _run()
+	inline void _run()
 	{
 		while (true) {
-			_semaphore.wait();
-			_signalled();
+			_whip.wait();
+			_whipped();
 		}
 	}
 };

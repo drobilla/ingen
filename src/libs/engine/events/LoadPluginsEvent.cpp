@@ -20,23 +20,24 @@
 #include "OmApp.h"
 #include "NodeFactory.h"
 
+#include <iostream>
+using std::cerr;
+
 namespace Om {
 
 
-LoadPluginsEvent::LoadPluginsEvent(CountedPtr<Responder> responder)
-: QueuedEvent(responder)
+LoadPluginsEvent::LoadPluginsEvent(CountedPtr<Responder> responder, samplecount timestamp)
+: QueuedEvent(responder, timestamp)
 {
+	cerr << "LOADING PLUGINS\n";
+	om->node_factory()->load_plugins();
 }
 
 
 void
 LoadPluginsEvent::post_process()
 {
-	// Why is this done here and not in pre_process()???
-	om->node_factory()->load_plugins();
-	m_responder->respond_ok();
-
-	//cerr << "Load plugins post finished\n";
+	_responder->respond_ok();
 }
 
 

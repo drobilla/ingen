@@ -25,8 +25,8 @@ namespace Om {
 
 /** Note off with patch explicitly passed - triggered by MIDI.
  */
-AllNotesOffEvent::AllNotesOffEvent(CountedPtr<Responder> responder, Patch* patch)
-: Event(responder),
+AllNotesOffEvent::AllNotesOffEvent(CountedPtr<Responder> responder, samplecount timestamp, Patch* patch)
+: Event(responder, timestamp),
   m_patch(patch)
 {
 }
@@ -34,8 +34,8 @@ AllNotesOffEvent::AllNotesOffEvent(CountedPtr<Responder> responder, Patch* patch
 
 /** Note off event with lookup - triggered by OSC.
  */
-AllNotesOffEvent::AllNotesOffEvent(CountedPtr<Responder> responder, const string& patch_path)
-: Event(responder),
+AllNotesOffEvent::AllNotesOffEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& patch_path)
+: Event(responder, timestamp),
   m_patch(NULL),
   m_patch_path(patch_path)
 {
@@ -58,7 +58,7 @@ void
 AllNotesOffEvent::post_process()
 {
 	if (m_patch != NULL)
-		m_responder->respond_ok();
+		_responder->respond_ok();
 }
 
 

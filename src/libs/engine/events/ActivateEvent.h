@@ -29,7 +29,7 @@ namespace Om {
 class ActivateEvent : public QueuedEvent
 {
 public:
-	ActivateEvent(CountedPtr<Responder> responder);
+	ActivateEvent(CountedPtr<Responder> responder, samplecount timestamp);
 	
 	void pre_process();
 	void post_process();

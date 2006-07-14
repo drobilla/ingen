@@ -36,7 +36,7 @@ class DSSINode;
 class DSSIUpdateEvent : public QueuedEvent
 {
 public:
-	DSSIUpdateEvent(CountedPtr<Responder> responder, const string& path, const string& url);
+	DSSIUpdateEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& path, const string& url);
 	
 	void pre_process();
 	void execute(samplecount offset);

@@ -37,8 +37,8 @@
 namespace Om {
 
 
-AddPortEvent::AddPortEvent(CountedPtr<Responder> responder, const string& path, const string& type, bool is_output)
-: QueuedEvent(responder),
+AddPortEvent::AddPortEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& path, const string& type, bool is_output)
+: QueuedEvent(responder, timestamp),
   _path(path),
   _type(type),
   _is_output(is_output),
@@ -124,9 +124,9 @@ AddPortEvent::post_process()
 {
 	if (!_patch_port) {
 		const string msg = string("Could not create port - ").append(_path);
-		m_responder->respond_error(msg);
+		_responder->respond_error(msg);
 	} else {
-		m_responder->respond_ok();
+		_responder->respond_ok();
 		om->client_broadcaster()->send_port(_patch_port);
 	}
 }

@@ -39,11 +39,11 @@ class Port;
 class LashRestoreDoneEvent : public QueuedEvent
 {
 public:
-	LashRestoreDoneEvent(CountedPtr<Responder> responder) : QueuedEvent(responder) {}
+	LashRestoreDoneEvent(CountedPtr<Responder> responder, samplecount timestamp) : QueuedEvent(responder, timestamp) {}
 
 	void post_process()
 	{
-		m_responder->respond_ok();
+		_responder->respond_ok();
 		lash_driver->restore_finished();
 	}
 };

@@ -30,7 +30,7 @@ namespace Om {
 class DSSIConfigureEvent : public QueuedEvent
 {
 public:
-	DSSIConfigureEvent(CountedPtr<Responder> responder, const string& node_path, const string& key, const string& val);
+	DSSIConfigureEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& node_path, const string& key, const string& val);
 
 	void pre_process();
 	void execute(samplecount offset);

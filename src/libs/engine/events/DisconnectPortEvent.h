@@ -43,7 +43,7 @@ using std::string;
 class DisconnectPortEvent : public QueuedEvent
 {
 public:
-	DisconnectPortEvent(CountedPtr<Responder> responder, const string& port_path);
+	DisconnectPortEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& port_path);
 	DisconnectPortEvent(Port* port);
 	~DisconnectPortEvent();
 

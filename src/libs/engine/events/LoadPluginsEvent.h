@@ -29,7 +29,7 @@ namespace Om {
 class LoadPluginsEvent : public QueuedEvent
 {
 public:
-	LoadPluginsEvent(CountedPtr<Responder> responder);
+	LoadPluginsEvent(CountedPtr<Responder> responder, samplecount timestamp);
 	
 	void post_process();
 };

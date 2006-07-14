@@ -23,8 +23,8 @@
 namespace Om {
 
 
-RequestPluginsEvent::RequestPluginsEvent(CountedPtr<Responder> responder)
-: QueuedEvent(responder),
+RequestPluginsEvent::RequestPluginsEvent(CountedPtr<Responder> responder, samplecount timestamp)
+: QueuedEvent(responder, timestamp),
   m_client(CountedPtr<ClientInterface>(NULL))
 {
 }
@@ -33,7 +33,7 @@ RequestPluginsEvent::RequestPluginsEvent(CountedPtr<Responder> responder)
 void
 RequestPluginsEvent::pre_process()
 {
-	m_client = m_responder->find_client();
+	m_client = _responder->find_client();
 	
 	QueuedEvent::pre_process();
 }
@@ -44,9 +44,9 @@ RequestPluginsEvent::post_process()
 {
 	if (m_client) {
 		om->client_broadcaster()->send_plugins_to(m_client.get());
-		m_responder->respond_ok();
+		_responder->respond_ok();
 	} else {
-		m_responder->respond_error("Invalid URL");
+		_responder->respond_error("Invalid URL");
 	}
 }
 

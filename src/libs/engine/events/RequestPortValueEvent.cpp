@@ -29,8 +29,8 @@ using std::string;
 namespace Om {
 
 
-RequestPortValueEvent::RequestPortValueEvent(CountedPtr<Responder> responder, const string& port_path)
-: QueuedEvent(responder),
+RequestPortValueEvent::RequestPortValueEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& port_path)
+: QueuedEvent(responder, timestamp),
   m_port_path(port_path),
   m_port(NULL),
   m_value(0.0),
@@ -42,7 +42,7 @@ RequestPortValueEvent::RequestPortValueEvent(CountedPtr<Responder> responder, co
 void
 RequestPortValueEvent::pre_process()
 {
-	m_client = m_responder->find_client();
+	m_client = _responder->find_client();
 	m_port = om->object_store()->find_port(m_port_path);
 
 	QueuedEvent::pre_process();
@@ -66,12 +66,12 @@ RequestPortValueEvent::post_process()
 {
 	string msg;
 	if (m_port) {
-		m_responder->respond_error("Unable to find port for get_value responder.");
+		_responder->respond_error("Unable to find port for get_value responder.");
 	} else if (m_client) {
-		m_responder->respond_ok();
+		_responder->respond_ok();
 		m_client->control_change(m_port_path, m_value);
 	} else {
-		m_responder->respond_error("Invalid URL");
+		_responder->respond_error("Invalid URL");
 	}
 }
 

@@ -31,8 +31,8 @@
 namespace Om {
 
 
-CreatePatchEvent::CreatePatchEvent(CountedPtr<Responder> responder, const string& path, int poly)
-: QueuedEvent(responder),
+CreatePatchEvent::CreatePatchEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& path, int poly)
+: QueuedEvent(responder, timestamp),
   m_path(path),
   m_patch(NULL),
   m_parent(NULL),
@@ -116,10 +116,10 @@ CreatePatchEvent::execute(samplecount offset)
 void
 CreatePatchEvent::post_process()
 {
-	if (m_responder.get()) {
+	if (_responder.get()) {
 		if (m_error == NO_ERROR) {
 			
-			m_responder->respond_ok();
+			_responder->respond_ok();
 			
 			// Don't want to send nodes that have been added since prepare()
 			//om->client_broadcaster()->send_node_creation_messages(m_patch);
@@ -130,17 +130,17 @@ CreatePatchEvent::post_process()
 		} else if (m_error == OBJECT_EXISTS) {
 			string msg = "Unable to create patch: ";
 			msg += m_path += " already exists.";
-			m_responder->respond_error(msg);
+			_responder->respond_error(msg);
 		} else if (m_error == PARENT_NOT_FOUND) {
 			string msg = "Unable to create patch: Parent ";
 			msg += m_path.parent() += " not found.";
-			m_responder->respond_error(msg);
+			_responder->respond_error(msg);
 		} else if (m_error == INVALID_POLY) {
 			string msg = "Unable to create patch ";
 			msg.append(m_path).append(": ").append("Invalid polyphony respondered.");
-			m_responder->respond_error(msg);
+			_responder->respond_error(msg);
 		} else {
-			m_responder->respond_error("Unable to load patch.");
+			_responder->respond_error("Unable to load patch.");
 		}
 	}
 }

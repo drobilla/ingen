@@ -25,27 +25,82 @@ namespace Om {
 
 	
 /** Simple wrapper around standard string with useful path-specific methods.
+ *
+ * This enforces that a Path is a valid OSC path (though it is used for
+ * GraphObject paths, which aren't directly OSC paths but a portion of one).
+ *
+ * A path is divided by slashes (/).  The first character MUST be a slash, and
+ * the last character MUST NOT be a slash (except in the special case of the 
+ * root path "/", which is the only valid single-character path).
+ *
+ * Valid characters are the 95 printable ASCII characters (32-126), excluding:
+ * space # * , ? [ ] { }
  */
 class Path : public std::basic_string<char> {
 public:
+
+	/** Construct a Path from an std::string.
+	 *
+	 * It is a fatal error to construct a Path from an invalid string,
+	 * use @ref is_valid first to check.
+	 */
 	Path(const std::basic_string<char>& path)
 	: std::basic_string<char>(path)
 	{
-		assert(path.length() > 0);
+		assert(is_valid(path));
 	}
 	
-	
-	inline bool is_valid() const
+	/** Construct a Path from a C string.
+	 *
+	 * It is a fatal error to construct a Path from an invalid string,
+	 * use @ref is_valid first to check.
+	 */
+	Path(const char* cpath)
+	: std::basic_string<char>(cpath)
 	{
-		return (find_last_of("/") != string::npos);
+		assert(is_valid(cpath));
+	}
+	
+	static bool is_valid(const std::basic_string<char>& path)
+	{
+		if (path.length() == 0)
+			return false;
+
+		// Must start with a /
+		if (path.at(0) != '/')
+			return false;
+		
+		// Must not end with a slash unless "/"
+		if (path.length() > 1 && path.at(path.length()-1) == '/')
+			return false;
+	
+		assert(path.find_last_of("/") != string::npos);
+		
+		// All characters must be printable ASCII
+		for (size_t i=0; i < path.length(); ++i)
+			if (path.at(i) < 32 || path.at(i) > 126)
+				return false;
+
+		// Disallowed characters
+		if (       path.find(" ") != string::npos 
+				|| path.find("#") != string::npos
+				|| path.find("*") != string::npos
+				|| path.find(",") != string::npos
+				|| path.find("?") != string::npos
+				|| path.find("[") != string::npos
+				|| path.find("]") != string::npos
+				|| path.find("{") != string::npos
+				|| path.find("}") != string::npos)
+			return false;
+
+		return true;
 	}
 	
 	/** Return the name of this object (everything after the last '/').
+	 * This is the "method name" for OSC paths.
 	 */
 	inline std::basic_string<char> name() const
 	{
-		assert(is_valid());
-
 		if ((*this) == "/")
 			return "";
 		else
@@ -56,26 +111,26 @@ public:
 	/** Return the parent's path.
 	 *
 	 * Calling this on the path "/" will return "/".
+	 * This is the (deepest) "container path" for OSC paths.
 	 */
 	inline Path parent() const
 	{
-		assert(is_valid());
-		
 		std::basic_string<char> parent = substr(0, find_last_of("/"));
 		return (parent == "") ? "/" : parent;
 	}
 	
+	/** Parent path with a "/" appended.
+	 *
+	 * Because of the "/" special case, append a child name to base_path()
+	 * to construct a path.
+	 */
 	inline Path base_path() const
 	{
-		assert(is_valid());
-		
 		if ((*this) == "/")
 			return *this;
 		else
 			return (*this) + "/";
 	}
-
-	Path(const char* s) : std::basic_string<char>(s) {}
 };
 	
 

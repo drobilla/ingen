@@ -46,8 +46,8 @@ template <typename T> class TypedDisconnectionEvent; // helper, defined below
 class DisconnectionEvent : public QueuedEvent
 {
 public:
-	DisconnectionEvent(CountedPtr<Responder> responder, const string& src_port_path, const string& dst_port_path);
-	DisconnectionEvent(CountedPtr<Responder> responder, Port* const src_port, Port* const dst_port);
+	DisconnectionEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& src_port_path, const string& dst_port_path);
+	DisconnectionEvent(CountedPtr<Responder> responder, samplecount timestamp, Port* const src_port, Port* const dst_port);
 	~DisconnectionEvent();
 
 	void pre_process();
@@ -82,7 +82,7 @@ template <typename T>
 class TypedDisconnectionEvent : public QueuedEvent
 {
 public:
-	TypedDisconnectionEvent(CountedPtr<Responder> responder, OutputPort<T>* src_port, InputPort<T>* dst_port);
+	TypedDisconnectionEvent(CountedPtr<Responder> responder, samplecount timestamp, OutputPort<T>* src_port, InputPort<T>* dst_port);
 	
 	void pre_process();
 	void execute(samplecount offset);

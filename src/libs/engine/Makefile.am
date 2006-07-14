@@ -56,7 +56,6 @@ libingen_la_SOURCES = \
 	MidiControlNode.h \
 	MidiControlNode.cpp \
 	Event.h \
-	Event.cpp \
 	QueuedEvent.h \
 	EventSource.h \
 	QueuedEventSource.h \

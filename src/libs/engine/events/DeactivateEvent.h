@@ -29,7 +29,7 @@ namespace Om {
 class DeactivateEvent : public QueuedEvent
 {
 public:
-	DeactivateEvent(CountedPtr<Responder> responder);
+	DeactivateEvent(CountedPtr<Responder> responder, samplecount timestamp);
 	
 	void pre_process();
 	void execute(samplecount offset);

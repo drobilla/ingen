@@ -28,8 +28,8 @@
 namespace Om {
 
 
-RenameEvent::RenameEvent(CountedPtr<Responder> responder, const string& path, const string& name)
-: QueuedEvent(responder),
+RenameEvent::RenameEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& path, const string& name)
+: QueuedEvent(responder, timestamp),
   m_old_path(path),
   m_name(name),
   m_new_path(m_old_path.parent().base_path() + name),
@@ -103,7 +103,7 @@ RenameEvent::post_process()
 	string msg = "Unable to rename object - ";
 	
 	if (m_error == NO_ERROR) {
-		m_responder->respond_ok();
+		_responder->respond_ok();
 		om->client_broadcaster()->send_rename(m_old_path, m_new_path);
 	} else {
 		if (m_error == OBJECT_EXISTS)
@@ -115,7 +115,7 @@ RenameEvent::post_process()
 		else if (m_error == INVALID_NAME)
 			msg.append(m_name).append(" is not a valid name");
 
-		m_responder->respond_error(msg);
+		_responder->respond_error(msg);
 	}
 }
 

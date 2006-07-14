@@ -17,6 +17,7 @@
 #include "ConnectionEvent.h"
 #include <string>
 #include "Responder.h"
+#include "types.h"
 #include "Om.h"
 #include "OmApp.h"
 #include "TypedConnection.h"
@@ -36,8 +37,8 @@ namespace Om {
 //// ConnectionEvent ////
 
 
-ConnectionEvent::ConnectionEvent(CountedPtr<Responder> responder, const string& src_port_path, const string& dst_port_path)
-: QueuedEvent(responder),
+ConnectionEvent::ConnectionEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& src_port_path, const string& dst_port_path)
+: QueuedEvent(responder, timestamp),
   m_src_port_path(src_port_path),
   m_dst_port_path(dst_port_path),
   m_patch(NULL),
@@ -104,10 +105,10 @@ ConnectionEvent::pre_process()
 	// Create the typed event to actually do the work
 	const DataType type = m_src_port->type();
 	if (type == DataType::FLOAT) {
-		m_typed_event = new TypedConnectionEvent<sample>(m_responder,
+		m_typed_event = new TypedConnectionEvent<sample>(_responder, _time_stamp,
 			dynamic_cast<OutputPort<sample>*>(m_src_port), dynamic_cast<InputPort<sample>*>(m_dst_port));
 	} else if (type == DataType::MIDI) {
-		m_typed_event = new TypedConnectionEvent<MidiMessage>(m_responder,
+		m_typed_event = new TypedConnectionEvent<MidiMessage>(_responder, _time_stamp,
 			dynamic_cast<OutputPort<MidiMessage>*>(m_src_port), dynamic_cast<InputPort<MidiMessage>*>(m_dst_port));
 	} else {
 		m_error = TYPE_MISMATCH;
@@ -140,7 +141,7 @@ ConnectionEvent::post_process()
 		// FIXME: better error messages
 		string msg = "Unable to make connection ";
 		msg.append(m_src_port_path + " -> " + m_dst_port_path);
-		m_responder->respond_error(msg);
+		_responder->respond_error(msg);
 	}
 }
 
@@ -150,8 +151,8 @@ ConnectionEvent::post_process()
 
 
 template <typename T>
-TypedConnectionEvent<T>::TypedConnectionEvent(CountedPtr<Responder> responder, OutputPort<T>* src_port, InputPort<T>* dst_port)
-: QueuedEvent(responder),
+TypedConnectionEvent<T>::TypedConnectionEvent(CountedPtr<Responder> responder, samplecount timestamp, OutputPort<T>* src_port, InputPort<T>* dst_port)
+: QueuedEvent(responder, timestamp),
   m_src_port(src_port),
   m_dst_port(dst_port),
   m_patch(NULL),
@@ -248,11 +249,11 @@ TypedConnectionEvent<T>::post_process()
 	if (m_succeeded) {
 		assert(m_connection != NULL);
 	
-		m_responder->respond_ok();
+		_responder->respond_ok();
 	
 		om->client_broadcaster()->send_connection(m_connection);
 	} else {
-		m_responder->respond_error("Unable to make connection.");
+		_responder->respond_error("Unable to make connection.");
 	}
 }
 

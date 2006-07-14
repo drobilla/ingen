@@ -31,7 +31,7 @@
 namespace Om {
 
 
-ClearPatchEvent::ClearPatchEvent(CountedPtr<Responder> responder, const string& patch_path)
+ClearPatchEvent::ClearPatchEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& patch_path)
 : QueuedEvent(responder, true),
   m_patch_path(patch_path),
   m_patch(NULL),
@@ -100,13 +100,13 @@ ClearPatchEvent::post_process()
 		assert(m_patch->connections().size() == 0);
 		
 		// Reply
-		m_responder->respond_ok();
+		_responder->respond_ok();
 		om->client_broadcaster()->send_patch_cleared(m_patch_path);
 	} else {
-		m_responder->respond_error(string("Patch ") + m_patch_path + " not found");
+		_responder->respond_error(string("Patch ") + m_patch_path + " not found");
 	}
 	
-	m_source->unblock();
+	_source->unblock();
 }
 
 

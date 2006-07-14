@@ -34,8 +34,8 @@
 namespace Om {
 
 
-AddNodeEvent::AddNodeEvent(CountedPtr<Responder> responder, const string& path, Plugin* plugin, bool poly)
-: QueuedEvent(responder),
+AddNodeEvent::AddNodeEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& path, Plugin* plugin, bool poly)
+: QueuedEvent(responder, timestamp),
   m_path(path),
   m_plugin(plugin),
   m_poly(poly),
@@ -107,17 +107,17 @@ AddNodeEvent::post_process()
 	string msg;
 	if (m_node_already_exists) {
 		msg = string("Could not create node - ").append(m_path);// + " already exists.";
-		m_responder->respond_error(msg);
+		_responder->respond_error(msg);
 	} else if (m_patch == NULL) {
 		msg = "Could not find patch '" + m_path.parent() +"' for add_node.";
-		m_responder->respond_error(msg);
+		_responder->respond_error(msg);
 	} else if (m_node == NULL) {
 		msg = "Unable to load node ";
 		msg.append(m_path).append(" (you're missing the plugin \"").append(
 			m_plugin->lib_name()).append(":").append(m_plugin->plug_label()).append("\")");;
-		m_responder->respond_error(msg);
+		_responder->respond_error(msg);
 	} else {
-		m_responder->respond_ok();
+		_responder->respond_ok();
 		//om->client_broadcaster()->send_node_creation_messages(m_node);
 		om->client_broadcaster()->send_node(m_node);
 	}

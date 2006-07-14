@@ -28,6 +28,12 @@ class QueuedEvent;
  * The AudioDriver gets events from an EventSource in the process callback
  * (realtime audio thread) and executes them, then they are sent to the
  * PostProcessor and finalised (post-processing thread).
+ *
+ * There are two distinct classes of events - "queued" and "stamped".  Queued
+ * events are events that require non-realtime pre-processing before being
+ * executed in the process thread.  Stamped events are timestamped realtime
+ * events that require no pre-processing and can be executed immediately
+ * (with sample accuracy).
  */
 class EventSource
 {
@@ -35,11 +41,9 @@ public:
 
 	virtual ~EventSource() {}
 
-	virtual Event* pop_earliest_before(const samplecount time) = 0;
-
-	virtual void start() = 0;
+	virtual Event* pop_earliest_queued_before(const samplecount time) = 0;
 	
-	virtual void stop() = 0;
+	virtual Event* pop_earliest_stamped_before(const samplecount time) = 0;
 
 protected:
 	EventSource() {}

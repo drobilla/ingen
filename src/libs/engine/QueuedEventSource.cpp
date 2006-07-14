@@ -24,12 +24,13 @@ using std::cout; using std::cerr; using std::endl;
 namespace Om {
 
 
-QueuedEventSource::QueuedEventSource(size_t size)
+QueuedEventSource::QueuedEventSource(size_t queued_size, size_t stamped_size)
 : _front(0),
   _back(0),
   _prepared_back(0),
-  _size(size+1),
-  _blocking_semaphore(0)
+  _size(queued_size+1),
+  _blocking_semaphore(0),
+  _stamped_queue(stamped_size)
 {
 	_events = (QueuedEvent**)calloc(_size, sizeof(QueuedEvent*));
 
@@ -39,7 +40,7 @@ QueuedEventSource::QueuedEventSource(size_t size)
 
 QueuedEventSource::~QueuedEventSource()
 {
-	stop();
+	Thread::stop();
 	
 	free(_events);
 }
@@ -48,7 +49,7 @@ QueuedEventSource::~QueuedEventSource()
 /** Push an unprepared event onto the queue.
  */
 void
-QueuedEventSource::push(QueuedEvent* const ev)
+QueuedEventSource::push_queued(QueuedEvent* const ev)
 {
 	assert(!ev->is_prepared());
 
@@ -58,21 +59,30 @@ QueuedEventSource::push(QueuedEvent* const ev)
 	} else {
 		_events[_back] = ev;
 		_back = (_back + 1) % _size;
-		signal();
+		whip();
 	}
 }
 
 
-/** Pops the prepared event at the front of the queue, if it exists.
+void
+QueuedEventSource::push_stamped(Event* const ev)
+{
+	_stamped_queue.push(ev);
+}
+
+/** Pops the prepared event at the front of the prepare queue, if it exists.
  *
  * This method will only pop events that have been prepared, and are
  * stamped before the time passed.  In other words, it may return NULL
  * even if there are events pending in the queue.  The events returned are
  * actually QueuedEvents, but after this they are "normal" events and the
- * engine deals with them just like a realtime in-band event.
+ * engine deals with them just like a realtime in-band event.  The engine will
+ * not use the timestamps of the returned events in any way, since it is free
+ * to execute these non-time-stamped events whenever it wants (at whatever rate
+ * it wants).
  */
 Event*
-QueuedEventSource::pop_earliest_before(const samplecount time)
+QueuedEventSource::pop_earliest_queued_before(const samplecount time)
 {
 	QueuedEvent* const front_event = _events[_front];
 	
@@ -102,18 +112,19 @@ QueuedEventSource::unblock()
 }
 
 
+/** Pre-process a single event */
 void
-QueuedEventSource::_signalled()
+QueuedEventSource::_whipped()
 {
 	QueuedEvent* const ev = _events[_prepared_back];
-	assert(ev != NULL);
-
+	
+	assert(ev);
 	if (ev == NULL) {
 		cerr << "[QueuedEventSource] ERROR: Signalled, but event is NULL." << endl;
 		return;
 	}
 
-	assert(ev != NULL);
+	assert(ev);
 	assert(!ev->is_prepared());
 
 	ev->pre_process();

@@ -25,6 +25,7 @@
 #include "Event.h"
 #include "QueuedEvent.h"
 #include "EventSource.h"
+#include "OSCReceiver.h"
 #include "PostProcessor.h"
 #include "util/Queue.h"
 #include "Node.h"
@@ -124,9 +125,7 @@ JackAudioDriver::JackAudioDriver()
   m_sample_rate(0),
   m_is_activated(false),
   m_local_client(true),
-  m_root_patch(NULL),
-  m_start_of_current_cycle(0),
-  m_start_of_last_cycle(0)
+  m_root_patch(NULL)
 {
 	m_client = jack_client_new("Om");
 	if (m_client == NULL) {
@@ -148,9 +147,7 @@ JackAudioDriver::JackAudioDriver(jack_client_t* jack_client)
   m_buffer_size(jack_get_buffer_size(jack_client)),
   m_sample_rate(jack_get_sample_rate(jack_client)),
   m_is_activated(false),
-  m_local_client(false),
-  m_start_of_current_cycle(0),
-  m_start_of_last_cycle(0)
+  m_local_client(false)
 {
 	jack_on_shutdown(m_client, shutdown_cb, this);
 
@@ -186,7 +183,7 @@ JackAudioDriver::activate()
 	} else {
 		cout << "[JackAudioDriver] Activated Jack client." << endl;
 #ifdef HAVE_LASH
-	lash_driver->set_jack_client_name("Om"); // FIXME: unique name
+	om->lash_driver()->set_jack_client_name("Om"); // FIXME: unique name
 #endif
 	}
 }
@@ -196,8 +193,7 @@ void
 JackAudioDriver::deactivate()
 {
 	if (m_is_activated) {
-		// FIXME
-		reinterpret_cast<EventSource*>(om->osc_receiver())->stop();
+		om->osc_receiver()->deactivate();
 	
 		jack_deactivate(m_client);
 		m_is_activated = false;
@@ -268,38 +264,40 @@ JackAudioDriver::process_events(jack_nframes_t block_start, jack_nframes_t block
 	Event* ev = NULL;
 
 	/* Limit the maximum number of queued events to process per cycle.  This
-	 * makes the process callback truly realtime-safe by preventing being
+	 * makes the process callback (more) realtime-safe by preventing being
 	 * choked by events coming in faster than they can be processed.
 	 * FIXME: run the math on this and figure out a good value */
-	const int MAX_SLOW_EVENTS = m_buffer_size / 100;
+	const unsigned int MAX_QUEUED_EVENTS = m_buffer_size / 100;
 
-	int num_events_processed = 0;
-	int offset = 0;
+	unsigned int num_events_processed = 0;
+	unsigned int offset = 0;
 	
 	// Process the "slow" events first, because it's possible some of the
 	// RT events depend on them
 	
+	/* FIXME: Merge these next two loops into one */
+
 	// FIXME
-	while ((ev = reinterpret_cast<EventSource*>(om->osc_receiver())
-			->pop_earliest_before(block_end)) != NULL) {
+	while ((ev = om->osc_receiver()->pop_earliest_queued_before(block_end))) {
 		ev->execute(0);  // QueuedEvents are not sample accurate
 		om->post_processor()->push(ev);
-		if (++num_events_processed > MAX_SLOW_EVENTS)
+		if (++num_events_processed > MAX_QUEUED_EVENTS)
 			break;
 	}
 	
-	while (!om->event_queue()->is_empty()
-			&& om->event_queue()->front()->time_stamp() < block_end) {
-		ev = om->event_queue()->pop();
-		offset = ev->time_stamp() - block_start;
-		if (offset < 0) offset = 0; // this can happen if we miss a cycle
+	while ((ev = om->osc_receiver()->pop_earliest_stamped_before(block_end))) {
+		if (ev->time_stamp() >= block_start)
+			offset = ev->time_stamp() - block_start;
+		else
+			offset = 0;
+
 		ev->execute(offset);
 		om->post_processor()->push(ev);
 		++num_events_processed;
 	}
 	
 	if (num_events_processed > 0)
-		om->post_processor()->signal();
+		om->post_processor()->whip();
 }
 
 
@@ -315,20 +313,24 @@ JackAudioDriver::process_events(jack_nframes_t block_start, jack_nframes_t block
 int
 JackAudioDriver::m_process_cb(jack_nframes_t nframes) 
 {
+	static jack_nframes_t start_of_current_cycle = 0;
+	static jack_nframes_t start_of_last_cycle    = 0;
+
 	// FIXME: support nframes != buffer_size, even though that never damn well happens
 	assert(nframes == m_buffer_size);
 
-	// Note that jack can elect to not call this function for a cycle, if things aren't
-	// keeping up
-	m_start_of_current_cycle = jack_last_frame_time(m_client);
-	m_start_of_last_cycle = m_start_of_current_cycle - nframes;
+	// Jack can elect to not call this function for a cycle, if overloaded
+	// FIXME: this doesn't make sense, and the start time isn't used anyway
+	start_of_current_cycle = jack_last_frame_time(m_client);
+	start_of_last_cycle = start_of_current_cycle - nframes;
 
-	assert(m_start_of_current_cycle - m_start_of_last_cycle == nframes);
+	// FIXME: ditto
+	assert(start_of_current_cycle - start_of_last_cycle == nframes);
 
 	m_transport_state = jack_transport_query(m_client, &m_position);
 	
-	process_events(m_start_of_last_cycle, m_start_of_current_cycle);
-	om->midi_driver()->prepare_block(m_start_of_last_cycle, m_start_of_current_cycle);
+	process_events(start_of_last_cycle, start_of_current_cycle);
+	om->midi_driver()->prepare_block(start_of_last_cycle, start_of_current_cycle);
 	
 	// Set buffers of patch ports to Jack port buffers (zero-copy processing)
 	for (List<JackAudioPort*>::iterator i = m_ports.begin(); i != m_ports.end(); ++i)

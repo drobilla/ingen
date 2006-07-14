@@ -24,8 +24,8 @@
 namespace Om {
 
 
-UnregisterClientEvent::UnregisterClientEvent(CountedPtr<Responder> responder, ClientKey key)
-: QueuedEvent(responder)
+UnregisterClientEvent::UnregisterClientEvent(CountedPtr<Responder> responder, samplecount timestamp, ClientKey key)
+: QueuedEvent(responder, timestamp)
 , _key(key)
 {
 }
@@ -35,9 +35,9 @@ void
 UnregisterClientEvent::post_process()
 {
 	if (om->client_broadcaster()->unregister_client(_key))
-		m_responder->respond_ok();
+		_responder->respond_ok();
 	else
-		m_responder->respond_error("Unable to unregister client");
+		_responder->respond_error("Unable to unregister client");
 }
 
 

@@ -28,8 +28,8 @@ namespace Om {
 
 /** Note off with patch explicitly passed - triggered by MIDI.
  */
-NoteOffEvent::NoteOffEvent(CountedPtr<Responder> responder, Node* node, uchar note_num)
-: Event(responder),
+NoteOffEvent::NoteOffEvent(CountedPtr<Responder> responder, samplecount timestamp, Node* node, uchar note_num)
+: Event(responder, timestamp),
   m_node(node),
   m_note_num(note_num)
 {
@@ -38,8 +38,8 @@ NoteOffEvent::NoteOffEvent(CountedPtr<Responder> responder, Node* node, uchar no
 
 /** Note off event with lookup - triggered by OSC.
  */
-NoteOffEvent::NoteOffEvent(CountedPtr<Responder> responder, const string& node_path, uchar note_num)
-: Event(responder),
+NoteOffEvent::NoteOffEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& node_path, uchar note_num)
+: Event(responder, timestamp),
   m_node(NULL),
   m_node_path(node_path),
   m_note_num(note_num)
@@ -67,9 +67,9 @@ void
 NoteOffEvent::post_process()
 {
 	if (m_node != NULL) 
-		m_responder->respond_ok();
+		_responder->respond_ok();
 	else
-		m_responder->respond_error("Did not find node for note_off");
+		_responder->respond_error("Did not find node for note_off");
 }
 
 
