@@ -83,8 +83,8 @@ AC_ARG_ENABLE(strict,
 	[strict="$enableval"])
 if test "$strict" = "yes"; then
   # Stupid Gtkmm won't build with -pedantic
-  CFLAGS="$CFLAGS -ansi -Wall -Wconversion -Winit-self"
-  CXXFLAGS="$CXXFLAGS -ansi -Wall -Wconversion -Winit-self -Woverloaded-virtual -Wsign-promo"
+  CFLAGS="$CFLAGS -ansi -Wall -Wextra -Wno-unused-parameter -Wconversion -Winit-self"
+  CXXFLAGS="$CXXFLAGS -ansi -Wall -Wextra -Wno-unused-parameter -Wconversion -Winit-self -Woverloaded-virtual -Wsign-promo"
 fi
 
 # Bolt on a few specific flags to CFLAGS that should always be used

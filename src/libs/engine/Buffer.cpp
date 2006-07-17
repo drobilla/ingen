@@ -133,7 +133,6 @@ template <typename T>
 void
 Buffer<T>::set(T val, size_t start_sample, size_t end_sample)
 {
-	assert(start_sample >= 0);
 	assert(end_sample >= start_sample);
 	assert(end_sample < m_size);
 	assert(m_data != NULL);
@@ -153,7 +152,6 @@ template <typename T>
 void
 Buffer<T>::scale(T val, size_t start_sample, size_t end_sample)
 {
-	assert(start_sample >= 0);
 	assert(end_sample >= start_sample);
 	assert(end_sample < m_size);
 	assert(m_data != NULL);
@@ -173,7 +171,6 @@ template <typename T>
 void
 Buffer<T>::copy(const Buffer<T>* src, size_t start_sample, size_t end_sample)
 {
-	assert(start_sample >= 0);
 	assert(end_sample >= start_sample);
 	assert(end_sample < m_size);
 	assert(src != NULL);
@@ -198,7 +195,6 @@ template <typename T>
 void
 Buffer<T>::accumulate(const Buffer<T>* const src, size_t start_sample, size_t end_sample)
 {
-	assert(start_sample >= 0);
 	assert(end_sample >= start_sample);
 	assert(end_sample < m_size);
 	assert(src != NULL);
