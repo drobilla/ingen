@@ -17,8 +17,7 @@
 #include "DSSINode.h"
 #include <map>
 #include <set>
-#include "Om.h"
-#include "OmApp.h"
+#include "Ingen.h"
 #include "ClientBroadcaster.h"
 #include "interface/ClientInterface.h"
 #include "InputPort.h"
@@ -28,7 +27,7 @@ using namespace std;
 namespace Om {
 
 
-DSSINode::DSSINode(const Plugin* plugin, const string& name, size_t poly, Patch* parent, DSSI_Descriptor* descriptor, samplerate srate, size_t buffer_size)
+DSSINode::DSSINode(const Plugin* plugin, const string& name, size_t poly, Patch* parent, DSSI_Descriptor* descriptor, SampleRate srate, size_t buffer_size)
 : LADSPANode(plugin, name, 1, parent, descriptor->LADSPA_Plugin, srate, buffer_size),
   _dssi_descriptor(descriptor),
   _ui_addr(NULL),
@@ -105,10 +104,10 @@ DSSINode::set_ui_url(const string& url)
 
 
 void
-DSSINode::set_control(size_t port_num, sample val)
+DSSINode::set_control(size_t port_num, Sample val)
 {
 	assert(port_num < _descriptor->PortCount);
-	((TypedPort<sample>*)_ports->at(port_num))->set_value(val, 0);
+	((TypedPort<Sample>*)_ports->at(port_num))->set_value(val, 0);
 }
 
 
@@ -160,7 +159,7 @@ DSSINode::has_midi_input() const
 
 
 void
-DSSINode::process(samplecount nframes)
+DSSINode::process(SampleCount nframes)
 {
 	NodeBase::process(nframes);
 
@@ -242,7 +241,7 @@ DSSINode::send_update()
 	// send "control"s
 	for (size_t i=0; i < _ports->size(); ++i)
 		if (_ports->at(i)->type() == DataType::FLOAT && _ports->at(i)->buffer_size() == 1)
-			send_control(_ports->at(i)->num(), ((TypedPort<sample>*)_ports->at(i))->buffer(0)->value_at(0));
+			send_control(_ports->at(i)->num(), ((TypedPort<Sample>*)_ports->at(i))->buffer(0)->value_at(0));
 
 	// send "show" FIXME: not to spec
 	send_show();
@@ -276,7 +275,7 @@ DSSINode::update_programs(bool send_events)
 			    iter->second.find(descriptor->Program)->second != descriptor->Name) {
 				_banks[descriptor->Bank][descriptor->Program] = descriptor->Name;
 				if (send_events) {
-					om->client_broadcaster()->send_program_add(path(), descriptor->Bank,
+					Ingen::instance().client_broadcaster()->send_program_add(path(), descriptor->Bank,
 									   descriptor->Program, 
 									   descriptor->Name);
 				}
@@ -291,7 +290,7 @@ DSSINode::update_programs(bool send_events)
 	     set_iter != to_be_deleted.end(); ++set_iter) {
 		_banks[set_iter->first].erase(set_iter->second);
 		if (send_events)
-			om->client_broadcaster()->send_program_remove(path(), set_iter->first, set_iter->second);
+			Ingen::instance().client_broadcaster()->send_program_remove(path(), set_iter->first, set_iter->second);
 		if (_banks[set_iter->first].size() == 0)
 			_banks.erase(set_iter->first);
 	}

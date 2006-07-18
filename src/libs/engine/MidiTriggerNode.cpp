@@ -25,7 +25,7 @@
 namespace Om {
 
 
-MidiTriggerNode::MidiTriggerNode(const string& path, size_t poly, Patch* parent, samplerate srate, size_t buffer_size)
+MidiTriggerNode::MidiTriggerNode(const string& path, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size)
 : InternalNode(new Plugin(Plugin::Internal, "Om:TriggerNode"), path, 1, parent, srate, buffer_size)
 {
 	_ports = new Array<Port*>(5);
@@ -33,19 +33,19 @@ MidiTriggerNode::MidiTriggerNode(const string& path, size_t poly, Patch* parent,
 	_midi_in_port = new InputPort<MidiMessage>(this, "MIDI_In", 0, 1, DataType::MIDI, _buffer_size);
 	_ports->at(0) = _midi_in_port;
 	
-	_note_port = new InputPort<sample>(this, "Note_Number", 1, 1, DataType::FLOAT, 1);
+	_note_port = new InputPort<Sample>(this, "Note_Number", 1, 1, DataType::FLOAT, 1);
 	//	new PortInfo("Note Number", CONTROL, INPUT, INTEGER, 60, 0, 127), 1);
 	_ports->at(1) = _note_port;
 	
-	_gate_port = new OutputPort<sample>(this, "Gate", 2, 1, DataType::FLOAT, _buffer_size);
+	_gate_port = new OutputPort<Sample>(this, "Gate", 2, 1, DataType::FLOAT, _buffer_size);
 	//	new PortInfo("Gate", AUDIO, OUTPUT, 0, 0, 1), _buffer_size);
 	_ports->at(2) = _gate_port;
 
-	_trig_port = new OutputPort<sample>(this, "Trigger", 3, 1, DataType::FLOAT, _buffer_size);
+	_trig_port = new OutputPort<Sample>(this, "Trigger", 3, 1, DataType::FLOAT, _buffer_size);
 	//	new PortInfo("Trigger", AUDIO, OUTPUT, 0, 0, 1), _buffer_size);
 	_ports->at(3) = _trig_port;
 	
-	_vel_port = new OutputPort<sample>(this, "Velocity", 4, poly, DataType::FLOAT, _buffer_size);
+	_vel_port = new OutputPort<Sample>(this, "Velocity", 4, poly, DataType::FLOAT, _buffer_size);
 	//	new PortInfo("Velocity", AUDIO, OUTPUT, 0, 0, 1), _buffer_size);
 	_ports->at(4) = _vel_port;
 	
@@ -55,7 +55,7 @@ MidiTriggerNode::MidiTriggerNode(const string& path, size_t poly, Patch* parent,
 
 
 void
-MidiTriggerNode::process(samplecount nframes)
+MidiTriggerNode::process(SampleCount nframes)
 {
 	InternalNode::process(nframes);
 	
@@ -86,16 +86,16 @@ MidiTriggerNode::process(samplecount nframes)
 
 
 void
-MidiTriggerNode::note_on(uchar note_num, uchar velocity, samplecount offset)
+MidiTriggerNode::note_on(uchar note_num, uchar velocity, SampleCount offset)
 {
 	//std::cerr << "Note on starting at sample " << offset << std::endl;
 	assert(offset < _buffer_size);
 
-	const sample filter_note = _note_port->buffer(0)->value_at(0);
+	const Sample filter_note = _note_port->buffer(0)->value_at(0);
 	if (filter_note >= 0.0 && filter_note < 127.0 && (note_num == (uchar)filter_note)){
 				
 		// See comments in MidiNoteNode::note_on (FIXME)
-		if (offset == (samplecount)(_buffer_size-1))
+		if (offset == (SampleCount)(_buffer_size-1))
 			--offset;
 		
 		_gate_port->buffer(0)->set(1.0f, offset);
@@ -107,7 +107,7 @@ MidiTriggerNode::note_on(uchar note_num, uchar velocity, samplecount offset)
 
 
 void
-MidiTriggerNode::note_off(uchar note_num, samplecount offset)
+MidiTriggerNode::note_off(uchar note_num, SampleCount offset)
 {
 	assert(offset < _buffer_size);
 

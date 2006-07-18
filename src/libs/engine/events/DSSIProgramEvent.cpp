@@ -17,8 +17,7 @@
 #include "DSSIProgramEvent.h"
 #include <cstdio>
 #include <iostream>
-#include "Om.h"
-#include "OmApp.h"
+#include "Ingen.h"
 #include "Node.h"
 #include "ClientBroadcaster.h"
 #include "Plugin.h"
@@ -29,7 +28,7 @@ using std::cout; using std::cerr; using std::endl;
 namespace Om {
 
 
-DSSIProgramEvent::DSSIProgramEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& node_path, int bank, int program)
+DSSIProgramEvent::DSSIProgramEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& node_path, int bank, int program)
 : QueuedEvent(responder, timestamp),
   m_node_path(node_path),
   m_bank(bank),
@@ -42,7 +41,7 @@ DSSIProgramEvent::DSSIProgramEvent(CountedPtr<Responder> responder, samplecount 
 void
 DSSIProgramEvent::pre_process()
 {
-	Node* node = om->object_store()->find_node(m_node_path);
+	Node* node = Ingen::instance().object_store()->find_node(m_node_path);
 
 	if (node != NULL && node->plugin()->type() == Plugin::DSSI)
 		m_node = (DSSINode*)node;
@@ -52,7 +51,7 @@ DSSIProgramEvent::pre_process()
 
 	
 void
-DSSIProgramEvent::execute(samplecount offset)
+DSSIProgramEvent::execute(SampleCount offset)
 {
 	if (m_node != NULL)
 		m_node->program(m_bank, m_program);
@@ -68,7 +67,7 @@ DSSIProgramEvent::post_process()
 		// sends program as metadata in the form bank/program
 		char* temp_buf = new char[16];
 		snprintf(temp_buf, 16, "%d/%d", m_bank, m_program);
-		om->client_broadcaster()->send_metadata_update(m_node_path, "dssi-program", temp_buf);
+		Ingen::instance().client_broadcaster()->send_metadata_update(m_node_path, "dssi-program", temp_buf);
 	}
 }
 

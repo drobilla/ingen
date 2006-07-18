@@ -16,8 +16,7 @@
 
 #include "DisablePatchEvent.h"
 #include "Responder.h"
-#include "Om.h"
-#include "OmApp.h"
+#include "Ingen.h"
 #include "Patch.h"
 #include "ClientBroadcaster.h"
 #include "util.h"
@@ -27,7 +26,7 @@
 namespace Om {
 
 
-DisablePatchEvent::DisablePatchEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& patch_path)
+DisablePatchEvent::DisablePatchEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& patch_path)
 : QueuedEvent(responder, timestamp),
   m_patch_path(patch_path),
   m_patch(NULL)
@@ -38,14 +37,14 @@ DisablePatchEvent::DisablePatchEvent(CountedPtr<Responder> responder, samplecoun
 void
 DisablePatchEvent::pre_process()
 {
-	m_patch = om->object_store()->find_patch(m_patch_path);
+	m_patch = Ingen::instance().object_store()->find_patch(m_patch_path);
 	
 	QueuedEvent::pre_process();
 }
 
 
 void
-DisablePatchEvent::execute(samplecount offset)
+DisablePatchEvent::execute(SampleCount offset)
 {
 	if (m_patch != NULL)
 		m_patch->process(false);
@@ -59,7 +58,7 @@ DisablePatchEvent::post_process()
 {	
 	if (m_patch != NULL) {
 		_responder->respond_ok();
-		om->client_broadcaster()->send_patch_disable(m_patch_path);
+		Ingen::instance().client_broadcaster()->send_patch_disable(m_patch_path);
 	} else {
 		_responder->respond_error(string("Patch ") + m_patch_path + " not found");
 	}

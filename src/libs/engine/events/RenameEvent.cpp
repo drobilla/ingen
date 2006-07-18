@@ -19,8 +19,7 @@
 #include "Patch.h"
 #include "Node.h"
 #include "Tree.h"
-#include "Om.h"
-#include "OmApp.h"
+#include "Ingen.h"
 #include "ClientBroadcaster.h"
 #include "util/Path.h"
 #include "ObjectStore.h"
@@ -28,7 +27,7 @@
 namespace Om {
 
 
-RenameEvent::RenameEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& path, const string& name)
+RenameEvent::RenameEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& name)
 : QueuedEvent(responder, timestamp),
   m_old_path(path),
   m_name(name),
@@ -59,13 +58,13 @@ RenameEvent::pre_process()
 		return;
 	}
 
-	if (om->object_store()->find(m_new_path)) {
+	if (Ingen::instance().object_store()->find(m_new_path)) {
 		m_error = OBJECT_EXISTS;
 		QueuedEvent::pre_process();
 		return;
 	}
 	
-	GraphObject* obj = om->object_store()->find(m_old_path);
+	GraphObject* obj = Ingen::instance().object_store()->find(m_old_path);
 
 	if (obj == NULL) {
 		m_error = OBJECT_NOT_FOUND;
@@ -90,7 +89,7 @@ RenameEvent::pre_process()
 
 
 void
-RenameEvent::execute(samplecount offset)
+RenameEvent::execute(SampleCount offset)
 {
 	//cout << "Executing rename event...";
 	QueuedEvent::execute(offset);
@@ -104,7 +103,7 @@ RenameEvent::post_process()
 	
 	if (m_error == NO_ERROR) {
 		_responder->respond_ok();
-		om->client_broadcaster()->send_rename(m_old_path, m_new_path);
+		Ingen::instance().client_broadcaster()->send_rename(m_old_path, m_new_path);
 	} else {
 		if (m_error == OBJECT_EXISTS)
 			msg.append("Object already exists at ").append(m_new_path);

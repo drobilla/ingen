@@ -34,7 +34,7 @@ class MidiDriver : public Driver<MidiMessage>
 {
 public:
 	/** Prepare events (however neccessary) for the specified block (realtime safe) */
-	virtual void prepare_block(const samplecount block_start, const samplecount block_end) = 0;
+	virtual void prepare_block(const SampleCount block_start, const SampleCount block_end) = 0;
 };
 
 
@@ -68,7 +68,7 @@ public:
 	
 	DriverPort* create_port(DuplexPort<MidiMessage>* patch_port) { return NULL; }
 	
-	void prepare_block(const samplecount block_start, const samplecount block_end) {}
+	void prepare_block(const SampleCount block_start, const SampleCount block_end) {}
 };
 
 

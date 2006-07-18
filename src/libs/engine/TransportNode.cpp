@@ -22,56 +22,55 @@
 #include "JackAudioDriver.h"
 #include "Port.h"
 #include "util.h"
-#include "Om.h"
-#include "OmApp.h"
+//#include "Ingen.h"
 
 namespace Om {
 
 
-TransportNode::TransportNode(const string& path, size_t poly, Patch* parent, samplerate srate, size_t buffer_size)
+TransportNode::TransportNode(const string& path, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size)
 : InternalNode(new Plugin(Plugin::Internal, "Om:TransportNode"), path, 1, parent, srate, buffer_size)
 {
 #if 0
 	_num_ports = 10;
 	_ports.alloc(_num_ports);
 
-	OutputPort<sample>* spb_port = new OutputPort<sample>(this, "Seconds per Beat", 0, 1,
+	OutputPort<Sample>* spb_port = new OutputPort<Sample>(this, "Seconds per Beat", 0, 1,
 	//	new PortInfo("Seconds per Beat", CONTROL, OUTPUT, 0, 0, 1), 1);
 	_ports.at(0) = spb_port;
 
-	OutputPort<sample>* bpb_port = new OutputPort<sample>(this, "Beats per Bar", 1, 1,
+	OutputPort<Sample>* bpb_port = new OutputPort<Sample>(this, "Beats per Bar", 1, 1,
 	//	new PortInfo("Beats per Bar", CONTROL, OUTPUT, 0, 0, 1), 1);
 	_ports.at(1) = bpb_port;
 	
-	OutputPort<sample>* bar_port = new OutputPort<sample>(this, "Bar", 3, 1,
+	OutputPort<Sample>* bar_port = new OutputPort<Sample>(this, "Bar", 3, 1,
 //		new PortInfo("Bar", CONTROL, OUTPUT, 0, 0, 1), buffer_size);
 	_ports.at(2) = bar_port;
 	
-	OutputPort<sample>* beat_port = new OutputPort<sample>(this, "Beat", 3, 1,
+	OutputPort<Sample>* beat_port = new OutputPort<Sample>(this, "Beat", 3, 1,
 	//	new PortInfo("Beat", CONTROL, OUTPUT, 0, 0, 1), buffer_size);
 	_ports.at(3) = beat_port;
 	
-	OutputPort<sample>* frame_port = new OutputPort<sample>(this, "Frame", 3, 1,
+	OutputPort<Sample>* frame_port = new OutputPort<Sample>(this, "Frame", 3, 1,
 	//	new PortInfo("Frame", CONTROL, OUTPUT, 0, 0, 1), buffer_size);
 	_ports.at(4) = frame_port;
 
-	OutputPort<sample>* hour_port = new OutputPort<sample>(this, "Hour", 3, 1,
+	OutputPort<Sample>* hour_port = new OutputPort<Sample>(this, "Hour", 3, 1,
 	//	new PortInfo("Hour", CONTROL, OUTPUT, 0, 0, 1), buffer_size);
 	_ports.at(5) = hour_port;
 	
-	OutputPort<sample>* minute_port = new OutputPort<sample>(this, "Minute", 3, 1,
+	OutputPort<Sample>* minute_port = new OutputPort<Sample>(this, "Minute", 3, 1,
 	//	new PortInfo("Minute", CONTROL, OUTPUT, 0, 0, 1), buffer_size);
 	_ports.at(6) = minute_port;
 
-	OutputPort<sample>* second_port = new OutputPort<sample>(this, "Second", 3, 1,
+	OutputPort<Sample>* second_port = new OutputPort<Sample>(this, "Second", 3, 1,
 	//	new PortInfo("Second", CONTROL, OUTPUT, 0, 0, 1), buffer_size);
 	_ports.at(7) = second_port;
 	
-	OutputPort<sample>* trg_port = new OutputPort<sample>(this, "Beat Tick", 2, 1,
+	OutputPort<Sample>* trg_port = new OutputPort<Sample>(this, "Beat Tick", 2, 1,
 	//	new PortInfo("Beat Tick", AUDIO, OUTPUT, 0, 0, 1), buffer_size);
 	_ports.at(8) = trg_port;
 
-	OutputPort<sample>* bar_trig_port = new OutputPort<sample>(this, "Bar Tick", 3, 1,
+	OutputPort<Sample>* bar_trig_port = new OutputPort<Sample>(this, "Bar Tick", 3, 1,
 	//	new PortInfo("Bar Tick", AUDIO, OUTPUT, 0, 0, 1), buffer_size);
 	_ports.at(9) = bar_trig_port;
 #endif
@@ -87,8 +86,8 @@ TransportNode::run(size_t nframes)
 #if 0
 
 	// FIXME: this will die horribly with any driver other than jack (in theory)
-	const jack_position_t* const position = ((JackAudioDriver*)om->audio_driver())->position();
-	jack_transport_state_t state = ((JackAudioDriver*)om->audio_driver())->transport_state();
+	const jack_position_t* const position = ((JackAudioDriver*)Ingen::instance().audio_driver())->position();
+	jack_transport_state_t state = ((JackAudioDriver*)Ingen::instance().audio_driver())->transport_state();
 	double bpm = position->beats_per_minute;
 	float bpb = position->beats_per_bar;
 	float spb = 60.0 / bpm;
@@ -122,12 +121,12 @@ TransportNode::run(size_t nframes)
 	}
 
 	
-	((OutputPort<sample>*)m_ports.at(0))->buffer(0)->set(spb, 0, 0);
-	((OutputPort<sample>*)m_ports.at(1))->buffer(0)->set(bpb, 0, 0);
+	((OutputPort<Sample>*)m_ports.at(0))->buffer(0)->set(spb, 0, 0);
+	((OutputPort<Sample>*)m_ports.at(1))->buffer(0)->set(bpb, 0, 0);
 	
 	// fill the trigger buffers with zeros
-	((OutputPort<sample>*)m_ports.at(2))->buffer(0)->set(0.0f, 0, nframes - 1);
-	((OutputPort<sample>*)m_ports.at(3))->buffer(0)->set(0.0f, 0, nframes - 1);
+	((OutputPort<Sample>*)m_ports.at(2))->buffer(0)->set(0.0f, 0, nframes - 1);
+	((OutputPort<Sample>*)m_ports.at(3))->buffer(0)->set(0.0f, 0, nframes - 1);
 	
 	// if the transport is rolling, add triggers at the right frame positions
 	if ((position->valid & JackTransportBBT) && (state == JackTransportRolling)) {
@@ -139,9 +138,9 @@ TransportNode::run(size_t nframes)
 			--first_beat_no;
 		}
 		for ( ; first_beat < nframes; first_beat += frames_per_beat) {
-			((OutputPort<sample>*)m_ports.at(2))->buffer(0)->set(1.0f, size_t(first_beat));
+			((OutputPort<Sample>*)m_ports.at(2))->buffer(0)->set(1.0f, size_t(first_beat));
 			if (first_beat_no % int(bpb) == 0) {
-				((OutputPort<sample>*)m_ports.at(3))->buffer(0)->set(1.0f, size_t(first_beat));
+				((OutputPort<Sample>*)m_ports.at(3))->buffer(0)->set(1.0f, size_t(first_beat));
 				++first_beat_no;
 			}
 		}

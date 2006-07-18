@@ -104,20 +104,6 @@ PatchController::~PatchController()
 	}
 }
 
-/*
-void
-PatchController::add_to_store()
-{
-	Store::instance().add_object(this);
-}
-
-
-void
-PatchController::remove_from_store()
-{
-	Store::instance().remove_object(this);
-}
-*/
 
 void
 PatchController::clear()

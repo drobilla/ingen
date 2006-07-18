@@ -45,7 +45,7 @@ public:
 	
 	inline T& value_at(size_t offset) { assert(offset < m_size); return m_data[offset]; }
 	
-	void prepare(samplecount nframes);
+	void prepare(SampleCount nframes);
 	
 	void     filled_size(size_t size) { m_filled_size = size; }
 	size_t   filled_size() const { return m_filled_size; }

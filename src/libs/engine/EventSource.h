@@ -41,9 +41,9 @@ public:
 
 	virtual ~EventSource() {}
 
-	virtual Event* pop_earliest_queued_before(const samplecount time) = 0;
+	virtual Event* pop_earliest_queued_before(const SampleCount time) = 0;
 	
-	virtual Event* pop_earliest_stamped_before(const samplecount time) = 0;
+	virtual Event* pop_earliest_stamped_before(const SampleCount time) = 0;
 
 protected:
 	EventSource() {}

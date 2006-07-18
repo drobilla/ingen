@@ -17,8 +17,7 @@
 #include "RequestMetadataEvent.h"
 #include <string>
 #include "Responder.h"
-#include "Om.h"
-#include "OmApp.h"
+#include "Ingen.h"
 #include "GraphObject.h"
 #include "ObjectStore.h"
 #include "interface/ClientInterface.h"
@@ -28,7 +27,7 @@ using std::string;
 namespace Om {
 
 
-RequestMetadataEvent::RequestMetadataEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& node_path, const string& key)
+RequestMetadataEvent::RequestMetadataEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& node_path, const string& key)
 : QueuedEvent(responder, timestamp),
   m_path(node_path),
   m_key(key),
@@ -45,7 +44,7 @@ RequestMetadataEvent::pre_process()
 	m_client = _responder->find_client();
 	
 	if (m_client) {
-		m_object = om->object_store()->find(m_path);
+		m_object = Ingen::instance().object_store()->find(m_path);
 		if (m_object == NULL) {
 			QueuedEvent::pre_process();
 			return;

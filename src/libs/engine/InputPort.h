@@ -55,7 +55,7 @@ public:
 
 	const List<TypedConnection<T>*>& connections() { return m_connections; }
 
-	void process(samplecount nframes);
+	void process(SampleCount nframes);
 	
 	bool is_connected() const { return (m_connections.size() > 0); }
 	bool is_connected_to(const OutputPort<T>* const port) const;
@@ -81,7 +81,7 @@ private:
 };
 
 
-template class InputPort<sample>;
+template class InputPort<Sample>;
 template class InputPort<MidiMessage>;
 
 } // namespace Om

@@ -20,8 +20,7 @@
 #include "config.h"
 #include "util.h"
 #include "cmdline.h"
-#include "Om.h"
-#include "OmApp.h"
+#include "Ingen.h"
 #ifdef HAVE_LASH
 #include "LashDriver.h"
 #endif
@@ -40,7 +39,7 @@ catch_int(int)
 	signal(SIGTERM, catch_int);
 
 	std::cout << "[Main] Om interrupted." << std::endl;
-	Om::om->quit();
+	Om::Ingen::instance().quit();
 }
 
 
@@ -133,19 +132,20 @@ main(int argc, char** argv)
 
 		Om::set_denormal_flags();
 
-		Om::om = new Om::OmApp(args_info.port_arg);
+		Om::Ingen::instantiate(args_info.port_arg);
 
 #ifdef HAVE_LASH
 		Om::lash_driver = new Om::LashDriver(Om::om, lash_args);
 #endif
 
-		Om::om->main();
+		Om::Ingen::instance().main();
 
 #ifdef HAVE_LASH
 		delete Om::lash_driver;
 #endif
 
-		delete Om::om;
+		// FIXME: leak
+		//delete Om::om;
 	}
 	
 	return ret;

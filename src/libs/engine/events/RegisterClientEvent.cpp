@@ -16,15 +16,14 @@
 
 #include "RegisterClientEvent.h"
 #include "Responder.h"
-#include "Om.h"
-#include "OmApp.h"
+#include "Ingen.h"
 #include "ClientBroadcaster.h"
 
 namespace Om {
 
 
 RegisterClientEvent::RegisterClientEvent(CountedPtr<Responder>       responder,
-                                         samplecount                 timestamp,
+                                         SampleCount                 timestamp,
                                          ClientKey                   key,
                                          CountedPtr<ClientInterface> client)
 : QueuedEvent(responder, timestamp)
@@ -37,7 +36,7 @@ RegisterClientEvent::RegisterClientEvent(CountedPtr<Responder>       responder,
 void
 RegisterClientEvent::pre_process()
 {  
-	om->client_broadcaster()->register_client(_key, _client);
+	Ingen::instance().client_broadcaster()->register_client(_key, _client);
 
 	QueuedEvent::pre_process();
 }

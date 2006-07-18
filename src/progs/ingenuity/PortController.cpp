@@ -38,20 +38,6 @@ PortController::PortController(CountedPtr<PortModel> model)
 	model->set_controller(this);
 }
 
-/*
-void
-PortController::add_to_store()
-{
-	Store::instance().add_object(this);
-}
-
-
-void
-PortController::remove_from_store()
-{
-	Store::instance().remove_object(this);
-}
-*/
 
 void
 PortController::destroy()

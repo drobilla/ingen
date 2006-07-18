@@ -16,8 +16,7 @@
 
 #include "MidiControlNode.h"
 #include <math.h>
-#include "Om.h"
-#include "OmApp.h"
+#include "Ingen.h"
 #include "PostProcessor.h"
 #include "MidiLearnEvent.h"
 #include "InputPort.h"
@@ -30,7 +29,7 @@
 namespace Om {
 
 	
-MidiControlNode::MidiControlNode(const string& path, size_t poly, Patch* parent, samplerate srate, size_t buffer_size)
+MidiControlNode::MidiControlNode(const string& path, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size)
 : InternalNode(new Plugin(Plugin::Internal, "Om:ControlNode"), path, 1, parent, srate, buffer_size),
   _learning(false)
 {
@@ -39,22 +38,22 @@ MidiControlNode::MidiControlNode(const string& path, size_t poly, Patch* parent,
 	_midi_in_port = new InputPort<MidiMessage>(this, "MIDI_In", 0, 1, DataType::MIDI, _buffer_size);
 	_ports->at(0) = _midi_in_port;
 	
-	_param_port = new InputPort<sample>(this, "Controller_Number", 1, 1, DataType::FLOAT, 1);
+	_param_port = new InputPort<Sample>(this, "Controller_Number", 1, 1, DataType::FLOAT, 1);
 	_ports->at(1) = _param_port;
 
-	_log_port = new InputPort<sample>(this, "Logarithmic", 2, 1, DataType::FLOAT, 1);
+	_log_port = new InputPort<Sample>(this, "Logarithmic", 2, 1, DataType::FLOAT, 1);
 	_ports->at(2) = _log_port;
 	
-	_min_port = new InputPort<sample>(this, "Min", 3, 1, DataType::FLOAT, 1);
+	_min_port = new InputPort<Sample>(this, "Min", 3, 1, DataType::FLOAT, 1);
 	_ports->at(3) = _min_port;
 	
-	_max_port = new InputPort<sample>(this, "Max", 4, 1, DataType::FLOAT, 1);
+	_max_port = new InputPort<Sample>(this, "Max", 4, 1, DataType::FLOAT, 1);
 	_ports->at(4) = _max_port;
 	
-	_audio_port = new OutputPort<sample>(this, "Out_(AR)", 5, 1, DataType::FLOAT, _buffer_size);
+	_audio_port = new OutputPort<Sample>(this, "Out_(AR)", 5, 1, DataType::FLOAT, _buffer_size);
 	_ports->at(5) = _audio_port;
 
-	_control_port = new OutputPort<sample>(this, "Out_(CR)", 6, 1, DataType::FLOAT, 1);
+	_control_port = new OutputPort<Sample>(this, "Out_(CR)", 6, 1, DataType::FLOAT, 1);
 	_ports->at(6) = _control_port;
 	
 	_plugin.plug_label("midi_control_in");
@@ -63,7 +62,7 @@ MidiControlNode::MidiControlNode(const string& path, size_t poly, Patch* parent,
 
 
 void
-MidiControlNode::process(samplecount nframes)
+MidiControlNode::process(SampleCount nframes)
 {
 	InternalNode::process(nframes);
 
@@ -79,13 +78,13 @@ MidiControlNode::process(samplecount nframes)
 
 
 void
-MidiControlNode::control(uchar control_num, uchar val, samplecount offset)
+MidiControlNode::control(uchar control_num, uchar val, SampleCount offset)
 {
 	assert(offset < _buffer_size);
 
-	sample scaled_value;
+	Sample scaled_value;
 	
-	const sample nval = (val / 127.0f); // normalized [0, 1]
+	const Sample nval = (val / 127.0f); // normalized [0, 1]
 	
 	if (_learning) {
 		assert(_learn_event != NULL);
@@ -93,23 +92,23 @@ MidiControlNode::control(uchar control_num, uchar val, samplecount offset)
 		assert(_param_port->buffer(0)->value_at(0) == control_num);
 		_learn_event->set_value(control_num);
 		_learn_event->execute(offset);
-		om->post_processor()->push(_learn_event);
-		om->post_processor()->whip();
+		Ingen::instance().post_processor()->push(_learn_event);
+		Ingen::instance().post_processor()->whip();
 		_learning = false;
 		_learn_event = NULL;
 	}
 
 	if (_log_port->buffer(0)->value_at(0) > 0.0f) {
 		// haaaaack, stupid negatives and logarithms
-		sample log_offset = 0;
+		Sample log_offset = 0;
 		if (_min_port->buffer(0)->value_at(0) < 0)
 			log_offset = fabs(_min_port->buffer(0)->value_at(0));
-		const sample min = log(_min_port->buffer(0)->value_at(0)+1+log_offset);
-		const sample max = log(_max_port->buffer(0)->value_at(0)+1+log_offset);
+		const Sample min = log(_min_port->buffer(0)->value_at(0)+1+log_offset);
+		const Sample max = log(_max_port->buffer(0)->value_at(0)+1+log_offset);
 		scaled_value = expf(nval * (max - min) + min) - 1 - log_offset;
 	} else {
-		const sample min = _min_port->buffer(0)->value_at(0);
-		const sample max = _max_port->buffer(0)->value_at(0);
+		const Sample min = _min_port->buffer(0)->value_at(0);
+		const Sample max = _max_port->buffer(0)->value_at(0);
 		scaled_value = ((nval) * (max - min)) + min;
 	}
 

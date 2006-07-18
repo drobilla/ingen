@@ -16,13 +16,12 @@
 
 #include "DeactivateEvent.h"
 #include "Responder.h"
-#include "Om.h"
-#include "OmApp.h"
+#include "Ingen.h"
 
 namespace Om {
 
 
-DeactivateEvent::DeactivateEvent(CountedPtr<Responder> responder, samplecount timestamp)
+DeactivateEvent::DeactivateEvent(CountedPtr<Responder> responder, SampleCount timestamp)
 : QueuedEvent(responder, timestamp)
 {
 }
@@ -36,7 +35,7 @@ DeactivateEvent::pre_process()
 
 
 void
-DeactivateEvent::execute(samplecount offset)
+DeactivateEvent::execute(SampleCount offset)
 {
 	QueuedEvent::execute(offset);
 }
@@ -46,7 +45,7 @@ void
 DeactivateEvent::post_process()
 {
 	_responder->respond_ok();
-	om->deactivate();
+	Ingen::instance().deactivate();
 }
 
 

@@ -100,7 +100,7 @@ main(int argc, char** argv)
 	
 	while (true) {
 		do_something();
-		usleep(100000);
+		usleep(10000);
 	}
 	
 	sleep(2);

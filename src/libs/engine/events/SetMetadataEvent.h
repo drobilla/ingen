@@ -34,10 +34,10 @@ class GraphObject;
 class SetMetadataEvent : public QueuedEvent
 {
 public:
-	SetMetadataEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& path, const string& key, const string& value);
+	SetMetadataEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& key, const string& value);
 	
 	void pre_process();
-	void execute(samplecount offset);
+	void execute(SampleCount offset);
 	void post_process();
 
 private:

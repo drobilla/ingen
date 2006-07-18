@@ -17,8 +17,7 @@
 #include "DisconnectNodeEvent.h"
 #include <iostream>
 #include "Responder.h"
-#include "Om.h"
-#include "OmApp.h"
+#include "Ingen.h"
 #include "Maid.h"
 #include "List.h"
 #include "Node.h"
@@ -39,7 +38,7 @@ using std::cerr; using std::endl;
 namespace Om {
 
 
-DisconnectNodeEvent::DisconnectNodeEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& node_path)
+DisconnectNodeEvent::DisconnectNodeEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& node_path)
 : QueuedEvent(responder, timestamp),
   m_node_path(node_path),
   m_patch(NULL),
@@ -78,7 +77,7 @@ DisconnectNodeEvent::pre_process()
 	// cerr << "Preparing disconnection event...\n";
 	
 	if (m_lookup) {
-		m_patch = om->object_store()->find_patch(m_node_path.parent());
+		m_patch = Ingen::instance().object_store()->find_patch(m_node_path.parent());
 	
 		if (m_patch == NULL) {
 			m_succeeded = false;
@@ -86,7 +85,7 @@ DisconnectNodeEvent::pre_process()
 			return;
 		}
 		
-		m_node = om->object_store()->find_node(m_node_path);
+		m_node = Ingen::instance().object_store()->find_node(m_node_path);
 		
 		if (m_node == NULL) {
 			m_succeeded = false;
@@ -113,7 +112,7 @@ DisconnectNodeEvent::pre_process()
 
 
 void
-DisconnectNodeEvent::execute(samplecount offset)
+DisconnectNodeEvent::execute(SampleCount offset)
 {
 	if (m_succeeded) {
 		for (List<DisconnectionEvent*>::iterator i = m_disconnection_events.begin(); i != m_disconnection_events.end(); ++i)

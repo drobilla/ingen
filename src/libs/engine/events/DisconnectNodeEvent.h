@@ -42,12 +42,12 @@ template <typename T> class OutputPort;
 class DisconnectNodeEvent : public QueuedEvent
 {
 public:
-	DisconnectNodeEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& node_path);
+	DisconnectNodeEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& node_path);
 	DisconnectNodeEvent(Node* node);
 	~DisconnectNodeEvent();
 
 	void pre_process();
-	void execute(samplecount offset);
+	void execute(SampleCount offset);
 	void post_process();
 
 private:

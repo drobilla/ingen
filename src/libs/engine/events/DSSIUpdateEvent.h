@@ -36,10 +36,10 @@ class DSSINode;
 class DSSIUpdateEvent : public QueuedEvent
 {
 public:
-	DSSIUpdateEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& path, const string& url);
+	DSSIUpdateEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& url);
 	
 	void pre_process();
-	void execute(samplecount offset);
+	void execute(SampleCount offset);
 	void post_process();
 
 private:

@@ -33,7 +33,7 @@ namespace Om {
  * Object is not usable until instantiate() is called with success.
  * (It _will_ crash!)
  */
-LADSPANode::LADSPANode(const Plugin* plugin, const string& path, size_t poly, Patch* parent, const LADSPA_Descriptor* descriptor, samplerate srate, size_t buffer_size)
+LADSPANode::LADSPANode(const Plugin* plugin, const string& path, size_t poly, Patch* parent, const LADSPA_Descriptor* descriptor, SampleRate srate, size_t buffer_size)
 : NodeBase(plugin, path, poly, parent, srate, buffer_size),
   _descriptor(descriptor),
   _instances(NULL)
@@ -103,21 +103,21 @@ LADSPANode::instantiate()
 			|| LADSPA_IS_PORT_OUTPUT(_descriptor->PortDescriptors[j]));
 
 		if (LADSPA_IS_PORT_INPUT(_descriptor->PortDescriptors[j])) {
-			port = new InputPort<sample>(this, port_name, j, _poly, DataType::FLOAT, port_buffer_size);
+			port = new InputPort<Sample>(this, port_name, j, _poly, DataType::FLOAT, port_buffer_size);
 			_ports->at(j) = port;
 		} else if (LADSPA_IS_PORT_OUTPUT(_descriptor->PortDescriptors[j])) {
-			port = new OutputPort<sample>(this, port_name, j, _poly, DataType::FLOAT, port_buffer_size);
+			port = new OutputPort<Sample>(this, port_name, j, _poly, DataType::FLOAT, port_buffer_size);
 			_ports->at(j) = port;
 		}
 
 		assert(_ports->at(j) != NULL);
-		sample default_val = default_port_value(j);
+		Sample default_val = default_port_value(j);
 
 		// Set default control val
 		if (port->buffer_size() == 1) {
-			((TypedPort<sample>*)port)->set_value(default_val, 0);
+			((TypedPort<Sample>*)port)->set_value(default_val, 0);
 		} else {
-			((TypedPort<sample>*)port)->set_value(0.0f, 0);
+			((TypedPort<Sample>*)port)->set_value(0.0f, 0);
 		}
 	}
 
@@ -139,12 +139,12 @@ LADSPANode::activate()
 {
 	NodeBase::activate();
 
-	TypedPort<sample>* port = NULL;
+	TypedPort<Sample>* port = NULL;
 	
 	for (size_t i=0; i < _poly; ++i) {
 		for (unsigned long j=0; j < _descriptor->PortCount; ++j) {
-			port = static_cast<TypedPort<sample>*>(_ports->at(j));
-			set_port_buffer(i, j, ((TypedPort<sample>*)_ports->at(j))->buffer(i)->data());
+			port = static_cast<TypedPort<Sample>*>(_ports->at(j));
+			set_port_buffer(i, j, ((TypedPort<Sample>*)_ports->at(j))->buffer(i)->data());
 			/*	if (port->type() == DataType::FLOAT && port->buffer_size() == 1)
 					port->set_value(0.0f, 0); // FIXME
 				else if (port->type() == DataType::FLOAT && port->buffer_size() > 1)
@@ -168,7 +168,7 @@ LADSPANode::deactivate()
 
 
 void
-LADSPANode::process(samplecount nframes)
+LADSPANode::process(SampleCount nframes)
 {
 	NodeBase::process(nframes); // mixes down input ports
 	for (size_t i=0; i < _poly; ++i) 
@@ -183,7 +183,7 @@ LADSPANode::set_port_buffer(size_t voice, size_t port_num, void* buf)
 	
 	// Could be a MIDI port after this
 	if (port_num < _descriptor->PortCount)
-		_descriptor->connect_port(_instances[voice], port_num, (sample*)buf);
+		_descriptor->connect_port(_instances[voice], port_num, (Sample*)buf);
 }
 
 #if 0
@@ -262,7 +262,7 @@ LADSPANode::get_port_vals(ulong port_index, PortInfo* info)
 #endif
 
 
-sample
+Sample
 LADSPANode::default_port_value(ulong port_index)
 {
 	LADSPA_Data normal = 0.0f;

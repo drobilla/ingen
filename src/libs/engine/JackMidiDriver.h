@@ -42,7 +42,7 @@ public:
 	JackMidiPort(JackMidiDriver* driver, DuplexPort<MidiMessage>* port);
 	virtual ~JackMidiPort();
 
-	void prepare_block(const samplecount block_start, const samplecount block_end);
+	void prepare_block(const SampleCount block_start, const SampleCount block_end);
 	
 	void add_to_driver();
 	void remove_from_driver();
@@ -82,7 +82,7 @@ public:
 	bool is_activated() const { return m_is_activated; }
 	bool is_enabled() const   { return m_is_enabled; }
 	
-	void prepare_block(const samplecount block_start, const samplecount block_end);
+	void prepare_block(const SampleCount block_start, const SampleCount block_end);
 
 	JackMidiPort* create_port(DuplexPort<MidiMessage>* patch_port)
 	{ return new JackMidiPort(this, patch_port); }

@@ -33,7 +33,7 @@ class Patch;
 class InternalNode : public NodeBase
 {
 public:
-	InternalNode(const Plugin* plugin, const string& path, size_t poly, Patch* parent, samplerate srate, size_t buffer_size)
+	InternalNode(const Plugin* plugin, const string& path, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size)
 	: NodeBase(plugin, path, poly, parent, srate, buffer_size),
 	  _is_added(false)
 	{
@@ -44,7 +44,7 @@ public:
 
 	virtual void deactivate() { if (_is_added) remove_from_patch(); NodeBase::deactivate(); }
 	
-	virtual void process(samplecount nframes) { NodeBase::process(nframes); }
+	virtual void process(SampleCount nframes) { NodeBase::process(nframes); }
 
 	virtual void add_to_patch()      { assert(!_is_added); _is_added = true; }
 	virtual void remove_from_patch() { assert(_is_added); _is_added = false; }

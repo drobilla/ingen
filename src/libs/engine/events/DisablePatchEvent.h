@@ -34,10 +34,10 @@ class Patch;
 class DisablePatchEvent : public QueuedEvent
 {
 public:
-	DisablePatchEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& patch_path);
+	DisablePatchEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& patch_path);
 	
 	void pre_process();
-	void execute(samplecount offset);
+	void execute(SampleCount offset);
 	void post_process();
 
 private:

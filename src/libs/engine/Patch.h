@@ -48,13 +48,13 @@ namespace Shared {
 class Patch : public NodeBase
 {
 public:
-	Patch(const string& name, size_t poly, Patch* parent, samplerate srate, size_t buffer_size, size_t local_poly);
+	Patch(const string& name, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size, size_t local_poly);
 	virtual ~Patch();
 
 	void activate();
 	void deactivate();
 
-	void process(samplecount nframes);
+	void process(SampleCount nframes);
 	
 	//void send_creation_messages(ClientInterface* client) const;
 	

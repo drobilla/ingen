@@ -19,8 +19,7 @@
 #include "Patch.h"
 #include "Tree.h"
 #include "Plugin.h"
-#include "Om.h"
-#include "OmApp.h"
+#include "Ingen.h"
 #include "Patch.h"
 #include "Maid.h"
 #include "util/Path.h"
@@ -37,7 +36,7 @@
 namespace Om {
 
 
-AddPortEvent::AddPortEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& path, const string& type, bool is_output)
+AddPortEvent::AddPortEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& type, bool is_output)
 : QueuedEvent(responder, timestamp),
   _path(path),
   _type(type),
@@ -58,21 +57,21 @@ AddPortEvent::AddPortEvent(CountedPtr<Responder> responder, samplecount timestam
 void
 AddPortEvent::pre_process()
 {
-	if (om->object_store()->find(_path) != NULL) {
+	if (Ingen::instance().object_store()->find(_path) != NULL) {
 		QueuedEvent::pre_process();
 		return;
 	}
 
 	// FIXME: this is just a mess :/
 	
-	_patch = om->object_store()->find_patch(_path.parent());
+	_patch = Ingen::instance().object_store()->find_patch(_path.parent());
 
 	if (_patch != NULL) {
 		assert(_patch->path() == _path.parent());
 		
 		size_t buffer_size = 1;
 		if (_type == "AUDIO" || _type == "MIDI")
-			buffer_size = om->audio_driver()->buffer_size();
+			buffer_size = Ingen::instance().audio_driver()->buffer_size();
 	
 		_patch_port = _patch->create_port(_path.name(), _data_type, buffer_size, _is_output);
 		if (_patch_port) {
@@ -87,14 +86,14 @@ AddPortEvent::pre_process()
 				_ports_array = new Array<Port*>(_patch->num_ports() + 1, NULL);
 
 			_ports_array->at(_patch->num_ports()) = _patch_port;
-			om->object_store()->add(_patch_port);
+			Ingen::instance().object_store()->add(_patch_port);
 
 			if (!_patch->parent()) {
 				if (_type == "AUDIO")
-					_driver_port = om->audio_driver()->create_port(
-						dynamic_cast<DuplexPort<sample>*>(_patch_port));
+					_driver_port = Ingen::instance().audio_driver()->create_port(
+						dynamic_cast<DuplexPort<Sample>*>(_patch_port));
 				else if (_type == "MIDI")
-					_driver_port = om->midi_driver()->create_port(
+					_driver_port = Ingen::instance().midi_driver()->create_port(
 						dynamic_cast<DuplexPort<MidiMessage>*>(_patch_port));
 			}
 		}
@@ -104,12 +103,12 @@ AddPortEvent::pre_process()
 
 
 void
-AddPortEvent::execute(samplecount offset)
+AddPortEvent::execute(SampleCount offset)
 {
 	QueuedEvent::execute(offset);
 
 	if (_patch_port) {
-		om->maid()->push(_patch->external_ports());
+		Ingen::instance().maid()->push(_patch->external_ports());
 		//_patch->add_port(_port);
 		_patch->external_ports(_ports_array);
 	}
@@ -127,7 +126,7 @@ AddPortEvent::post_process()
 		_responder->respond_error(msg);
 	} else {
 		_responder->respond_ok();
-		om->client_broadcaster()->send_port(_patch_port);
+		Ingen::instance().client_broadcaster()->send_port(_patch_port);
 	}
 }
 

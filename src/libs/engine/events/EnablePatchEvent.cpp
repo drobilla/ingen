@@ -16,8 +16,7 @@
 
 #include "EnablePatchEvent.h"
 #include "Responder.h"
-#include "Om.h"
-#include "OmApp.h"
+#include "Ingen.h"
 #include "Patch.h"
 #include "util.h"
 #include "ClientBroadcaster.h"
@@ -26,7 +25,7 @@
 namespace Om {
 
 
-EnablePatchEvent::EnablePatchEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& patch_path)
+EnablePatchEvent::EnablePatchEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& patch_path)
 : QueuedEvent(responder, timestamp),
   m_patch_path(patch_path),
   m_patch(NULL),
@@ -38,7 +37,7 @@ EnablePatchEvent::EnablePatchEvent(CountedPtr<Responder> responder, samplecount 
 void
 EnablePatchEvent::pre_process()
 {
-	m_patch = om->object_store()->find_patch(m_patch_path);
+	m_patch = Ingen::instance().object_store()->find_patch(m_patch_path);
 	
 	if (m_patch != NULL) {
 		/* Any event that requires a new process order will set the patch's
@@ -53,7 +52,7 @@ EnablePatchEvent::pre_process()
 
 
 void
-EnablePatchEvent::execute(samplecount offset)
+EnablePatchEvent::execute(SampleCount offset)
 {
 	if (m_patch != NULL) {
 		m_patch->process(true);
@@ -71,7 +70,7 @@ EnablePatchEvent::post_process()
 {
 	if (m_patch != NULL) {
 		_responder->respond_ok();
-		om->client_broadcaster()->send_patch_enable(m_patch_path);
+		Ingen::instance().client_broadcaster()->send_patch_enable(m_patch_path);
 	} else {
 		_responder->respond_error(string("Patch ") + m_patch_path + " not found");
 	}

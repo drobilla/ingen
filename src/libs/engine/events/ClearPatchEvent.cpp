@@ -16,8 +16,7 @@
 
 #include "ClearPatchEvent.h"
 #include "Responder.h"
-#include "Om.h"
-#include "OmApp.h"
+#include "Ingen.h"
 #include "Patch.h"
 #include "ClientBroadcaster.h"
 #include "util.h"
@@ -31,7 +30,7 @@
 namespace Om {
 
 
-ClearPatchEvent::ClearPatchEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& patch_path)
+ClearPatchEvent::ClearPatchEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& patch_path)
 : QueuedEvent(responder, true),
   m_patch_path(patch_path),
   m_patch(NULL),
@@ -43,7 +42,7 @@ ClearPatchEvent::ClearPatchEvent(CountedPtr<Responder> responder, samplecount ti
 void
 ClearPatchEvent::pre_process()
 {
-	m_patch = om->object_store()->find_patch(m_patch_path);
+	m_patch = Ingen::instance().object_store()->find_patch(m_patch_path);
 	
 	if (m_patch != NULL) {
 	
@@ -58,7 +57,7 @@ ClearPatchEvent::pre_process()
 
 
 void
-ClearPatchEvent::execute(samplecount offset)
+ClearPatchEvent::execute(SampleCount offset)
 {
 	if (m_patch != NULL) {
 		m_patch->process(false);
@@ -67,7 +66,7 @@ ClearPatchEvent::execute(samplecount offset)
 			(*i)->remove_from_patch();
 
 		if (m_patch->process_order() != NULL) {
-			om->maid()->push(m_patch->process_order());
+			Ingen::instance().maid()->push(m_patch->process_order());
 			m_patch->process_order(NULL);
 		}
 	}
@@ -101,7 +100,7 @@ ClearPatchEvent::post_process()
 		
 		// Reply
 		_responder->respond_ok();
-		om->client_broadcaster()->send_patch_cleared(m_patch_path);
+		Ingen::instance().client_broadcaster()->send_patch_cleared(m_patch_path);
 	} else {
 		_responder->respond_error(string("Patch ") + m_patch_path + " not found");
 	}

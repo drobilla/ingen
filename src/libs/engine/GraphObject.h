@@ -57,7 +57,7 @@ public:
 	inline GraphObject*  parent() const { return _parent; }
 	inline const string& name()   const { return _name; }
 	
-	virtual void process(samplecount nframes) = 0;
+	virtual void process(SampleCount nframes) = 0;
 
 	/** Rename */
 	virtual void set_path(const Path& new_path) {

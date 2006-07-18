@@ -149,6 +149,9 @@ protected:
 
 	/** Where responses to current messages will go. */
 	CountedPtr<Responder> _responder;
+
+private:
+	SampleCount now() const;
 };
 
 

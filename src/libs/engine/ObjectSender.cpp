@@ -16,8 +16,7 @@
 
 #include "ObjectSender.h"
 #include "interface/ClientInterface.h"
-#include "Om.h"
-#include "OmApp.h"
+#include "Ingen.h"
 #include "ObjectStore.h"
 #include "Patch.h"
 #include "Node.h"
@@ -33,11 +32,11 @@ namespace Om {
 void
 ObjectSender::send_all(ClientInterface* client)
 {
-	Patch* root = om->object_store()->find_patch("/");
+	Patch* root = Ingen::instance().object_store()->find_patch("/");
 	assert(root);
 	send_patch(client, root);
-	/*for (Tree<GraphObject*>::iterator i = om->object_store()->objects().begin();
-			i != om->object_store()->objects().end(); ++i)
+	/*for (Tree<GraphObject*>::iterator i = Ingen::instance().object_store()->objects().begin();
+			i != Ingen::instance().object_store()->objects().end(); ++i)
 		if ((*i)->as_patch() != NULL && (*i)->parent() == NULL)
 			send_patch(client, (*i)->as_patch());*/
 			//(*i)->as_node()->send_creation_messages(client);
@@ -70,7 +69,7 @@ ObjectSender::send_patch(ClientInterface* client, const Patch* patch)
 		// Control port, send value
 		if (port->type() == DataType::FLOAT && port->buffer_size() == 1)
 			client->control_change(port->path(),
-				dynamic_cast<TypedPort<sample>*>(port)->buffer(0)->value_at(0));
+				dynamic_cast<TypedPort<Sample>*>(port)->buffer(0)->value_at(0));
 */
 	}
 
@@ -160,7 +159,7 @@ ObjectSender::send_port(ClientInterface* client, const Port* port)
 	
 	// Send control value
 	if (port->type() == DataType::FLOAT && port->buffer_size() == 1) {
-		sample default_value = dynamic_cast<const TypedPort<sample>*>(
+		Sample default_value = dynamic_cast<const TypedPort<Sample>*>(
 				port)->buffer(0)->value_at(0);
 		//cerr << port->path() << " sending default value " << default_value << endl;
 		client->control_change(port->path(), default_value);
@@ -176,9 +175,9 @@ ObjectSender::send_port(ClientInterface* client, const Port* port)
 void
 ObjectSender::send_plugins(ClientInterface* client)
 {
-	om->node_factory()->lock_plugin_list();
+	Ingen::instance().node_factory()->lock_plugin_list();
 	
-	const list<Plugin*>& plugs = om->node_factory()->plugins();
+	const list<Plugin*>& plugs = Ingen::instance().node_factory()->plugins();
 
 /*
 	lo_timetag tt;
@@ -222,7 +221,7 @@ ObjectSender::send_plugins(ClientInterface* client)
 	for (list<lo_bundle>::const_iterator i = msgs.begin(); i != msgs.end(); ++i)
 		lo_message_free(*i);
 */
-	om->node_factory()->unlock_plugin_list();
+	Ingen::instance().node_factory()->unlock_plugin_list();
 }
 
 

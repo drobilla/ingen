@@ -16,14 +16,13 @@
 
 #include "RequestPluginsEvent.h"
 #include "Responder.h"
-#include "Om.h"
-#include "OmApp.h"
+#include "Ingen.h"
 #include "ClientBroadcaster.h"
 
 namespace Om {
 
 
-RequestPluginsEvent::RequestPluginsEvent(CountedPtr<Responder> responder, samplecount timestamp)
+RequestPluginsEvent::RequestPluginsEvent(CountedPtr<Responder> responder, SampleCount timestamp)
 : QueuedEvent(responder, timestamp),
   m_client(CountedPtr<ClientInterface>(NULL))
 {
@@ -43,7 +42,7 @@ void
 RequestPluginsEvent::post_process()
 {
 	if (m_client) {
-		om->client_broadcaster()->send_plugins_to(m_client.get());
+		Ingen::instance().client_broadcaster()->send_plugins_to(m_client.get());
 		_responder->respond_ok();
 	} else {
 		_responder->respond_error("Invalid URL");

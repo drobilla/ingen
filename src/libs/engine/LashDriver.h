@@ -24,7 +24,7 @@ using std::string;
 
 namespace Om {
 
-class OmApp;
+class Ingen;
 
 
 /** Handles all support for LASH session management.
@@ -32,7 +32,7 @@ class OmApp;
 class LashDriver
 {
 public:
-	LashDriver(OmApp* app, lash_args_t* args);
+	LashDriver(Ingen* app, lash_args_t* args);
 
 	bool enabled() { return (m_client != NULL && lash_enabled(m_client)); }
 	void process_events();
@@ -41,7 +41,7 @@ public:
 	void restore_finished();
 
 private:
-	OmApp*      m_app;
+	Ingen*      m_app;
 	lash_client_t* m_client;
 	
 	int    m_alsa_client_id;

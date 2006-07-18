@@ -18,9 +18,8 @@
 #include <cassert>
 #include <iostream>
 #include <stdint.h>
-#include "Om.h"
-#include "OmApp.h"
 #include "util.h"
+#include "Ingen.h"
 #include "Array.h"
 #include "Plugin.h"
 #include "ClientBroadcaster.h"
@@ -34,7 +33,7 @@ using std::cout; using std::cerr; using std::endl;
 namespace Om {
 
 
-NodeBase::NodeBase(const Plugin* plugin, const string& name, size_t poly, Patch* parent, samplerate srate, size_t buffer_size)
+NodeBase::NodeBase(const Plugin* plugin, const string& name, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size)
 : Node(parent, name),
   _plugin(plugin),
   _poly(poly),
@@ -85,16 +84,16 @@ void
 NodeBase::send_creation_messages(ClientInterface* client) const
 {
 	cerr << "FIXME: send_creation\n";
-	//om->client_broadcaster()->send_node_to(client, this);
+	//Ingen::instance().client_broadcaster()->send_node_to(client, this);
 }
 */
 
 void
 NodeBase::add_to_store()
 {
-	om->object_store()->add(this);
+	Ingen::instance().object_store()->add(this);
 	for (size_t i=0; i < num_ports(); ++i)
-		om->object_store()->add(_ports->at(i));
+		Ingen::instance().object_store()->add(_ports->at(i));
 }
 
 
@@ -102,17 +101,17 @@ void
 NodeBase::remove_from_store()
 {
 	// Remove self
-	TreeNode<GraphObject*>* node = om->object_store()->remove(path());
+	TreeNode<GraphObject*>* node = Ingen::instance().object_store()->remove(path());
 	if (node != NULL) {
-		assert(om->object_store()->find(path()) == NULL);
+		assert(Ingen::instance().object_store()->find(path()) == NULL);
 		delete node;
 	}
 	
 	// Remove ports
 	for (size_t i=0; i < num_ports(); ++i) {
-		node = om->object_store()->remove(_ports->at(i)->path());
+		node = Ingen::instance().object_store()->remove(_ports->at(i)->path());
 		if (node != NULL) {
-			assert(om->object_store()->find(_ports->at(i)->path()) == NULL);
+			assert(Ingen::instance().object_store()->find(_ports->at(i)->path()) == NULL);
 			delete node;
 		}
 	}
@@ -122,7 +121,7 @@ NodeBase::remove_from_store()
 /** Runs the Node for the specified number of frames (block size)
  */
 void
-NodeBase::process(samplecount nframes)
+NodeBase::process(SampleCount nframes)
 {
 	assert(_activated);
 	// Mix down any ports with multiple inputs
@@ -146,23 +145,23 @@ NodeBase::set_path(const Path& new_path)
 	
 	// Reinsert ports
 	for (size_t i=0; i < num_ports(); ++i) {
-		treenode = om->object_store()->remove(old_path +"/"+ _ports->at(i)->name());
+		treenode = Ingen::instance().object_store()->remove(old_path +"/"+ _ports->at(i)->name());
 		assert(treenode != NULL);
 		assert(treenode->node() == _ports->at(i));
 		treenode->key(new_path +"/" + _ports->at(i)->name());
-		om->object_store()->add(treenode);
+		Ingen::instance().object_store()->add(treenode);
 	}
 	
 	// Rename and reinsert self
-	treenode = om->object_store()->remove(old_path);
+	treenode = Ingen::instance().object_store()->remove(old_path);
 	assert(treenode != NULL);
 	assert(treenode->node() == this);
 	GraphObject::set_path(new_path);
 	treenode->key(new_path);
-	om->object_store()->add(treenode);
+	Ingen::instance().object_store()->add(treenode);
 	
 
-	assert(om->object_store()->find(new_path) == this);
+	assert(Ingen::instance().object_store()->find(new_path) == this);
 }
 
 

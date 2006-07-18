@@ -17,8 +17,7 @@
 #include "DisconnectionEvent.h"
 #include <string>
 #include "Responder.h"
-#include "Om.h"
-#include "OmApp.h"
+#include "Ingen.h"
 #include "TypedConnection.h"
 #include "InputPort.h"
 #include "OutputPort.h"
@@ -36,7 +35,7 @@ namespace Om {
 //// DisconnectionEvent ////
 
 
-DisconnectionEvent::DisconnectionEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& src_port_path, const string& dst_port_path)
+DisconnectionEvent::DisconnectionEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& src_port_path, const string& dst_port_path)
 : QueuedEvent(responder, timestamp),
   m_src_port_path(src_port_path),
   m_dst_port_path(dst_port_path),
@@ -50,7 +49,7 @@ DisconnectionEvent::DisconnectionEvent(CountedPtr<Responder> responder, sampleco
 }
 
 
-DisconnectionEvent::DisconnectionEvent(CountedPtr<Responder> responder, samplecount timestamp, Port* const src_port, Port* const dst_port)
+DisconnectionEvent::DisconnectionEvent(CountedPtr<Responder> responder, SampleCount timestamp, Port* const src_port, Port* const dst_port)
 : QueuedEvent(responder, timestamp),
   m_src_port_path(src_port->path()),
   m_dst_port_path(dst_port->path()),
@@ -86,7 +85,7 @@ DisconnectionEvent::pre_process()
 			return;
 		}
 
-		/*m_patch = om->object_store()->find_patch(m_src_port_path.parent().parent());
+		/*m_patch = Ingen::instance().object_store()->find_patch(m_src_port_path.parent().parent());
 
 		  if (m_patch == NULL) {
 		  m_error = PORT_NOT_FOUND;
@@ -94,8 +93,8 @@ DisconnectionEvent::pre_process()
 		  return;
 		  }*/
 
-		m_src_port = om->object_store()->find_port(m_src_port_path);
-		m_dst_port = om->object_store()->find_port(m_dst_port_path);
+		m_src_port = Ingen::instance().object_store()->find_port(m_src_port_path);
+		m_dst_port = Ingen::instance().object_store()->find_port(m_dst_port_path);
 	}
 	
 	if (m_src_port == NULL || m_dst_port == NULL) {
@@ -113,8 +112,8 @@ DisconnectionEvent::pre_process()
 	// Create the typed event to actually do the work
 	const DataType type = m_src_port->type();
 	if (type == DataType::FLOAT) {
-		m_typed_event = new TypedDisconnectionEvent<sample>(_responder, _time_stamp,
-				dynamic_cast<OutputPort<sample>*>(m_src_port), dynamic_cast<InputPort<sample>*>(m_dst_port));
+		m_typed_event = new TypedDisconnectionEvent<Sample>(_responder, _time_stamp,
+				dynamic_cast<OutputPort<Sample>*>(m_src_port), dynamic_cast<InputPort<Sample>*>(m_dst_port));
 	} else if (type == DataType::MIDI) {
 		m_typed_event = new TypedDisconnectionEvent<MidiMessage>(_responder, _time_stamp,
 				dynamic_cast<OutputPort<MidiMessage>*>(m_src_port), dynamic_cast<InputPort<MidiMessage>*>(m_dst_port));
@@ -132,7 +131,7 @@ DisconnectionEvent::pre_process()
 
 
 void
-DisconnectionEvent::execute(samplecount offset)
+DisconnectionEvent::execute(SampleCount offset)
 {
 	QueuedEvent::execute(offset);
 
@@ -160,7 +159,7 @@ DisconnectionEvent::post_process()
 
 
 template <typename T>
-TypedDisconnectionEvent<T>::TypedDisconnectionEvent(CountedPtr<Responder> responder, samplecount timestamp, OutputPort<T>* src_port, InputPort<T>* dst_port)
+TypedDisconnectionEvent<T>::TypedDisconnectionEvent(CountedPtr<Responder> responder, SampleCount timestamp, OutputPort<T>* src_port, InputPort<T>* dst_port)
 : QueuedEvent(responder, timestamp),
   m_src_port(src_port),
   m_dst_port(dst_port),
@@ -234,7 +233,7 @@ TypedDisconnectionEvent<T>::pre_process()
 
 template <typename T>
 void
-TypedDisconnectionEvent<T>::execute(samplecount offset)
+TypedDisconnectionEvent<T>::execute(SampleCount offset)
 {
 	if (m_succeeded) {
 
@@ -249,12 +248,12 @@ TypedDisconnectionEvent<T>::execute(samplecount offset)
 			assert((Connection*)port_connection->elem() == patch_connection->elem());
 			
 			// Clean up both the list node and the connection itself...
-			om->maid()->push(port_connection);
-			om->maid()->push(patch_connection);
-			om->maid()->push(port_connection->elem());
+			Ingen::instance().maid()->push(port_connection);
+			Ingen::instance().maid()->push(patch_connection);
+			Ingen::instance().maid()->push(port_connection->elem());
 	
 			if (m_patch->process_order() != NULL)
-				om->maid()->push(m_patch->process_order());
+				Ingen::instance().maid()->push(m_patch->process_order());
 			m_patch->process_order(m_process_order);
 		} else {
 			m_succeeded = false;  // Ports weren't connected
@@ -272,7 +271,7 @@ TypedDisconnectionEvent<T>::post_process()
 	
 		_responder->respond_ok();
 	
-		om->client_broadcaster()->send_disconnection(m_src_port->path(), m_dst_port->path());
+		Ingen::instance().client_broadcaster()->send_disconnection(m_src_port->path(), m_dst_port->path());
 	} else {
 		_responder->respond_error("Unable to disconnect ports.");
 	}

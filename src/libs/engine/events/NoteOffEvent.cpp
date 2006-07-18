@@ -16,8 +16,7 @@
 
 #include "NoteOffEvent.h"
 #include "Responder.h"
-#include "Om.h"
-#include "OmApp.h"
+#include "Ingen.h"
 #include "ObjectStore.h"
 #include "Node.h"
 #include "MidiNoteNode.h"
@@ -28,7 +27,7 @@ namespace Om {
 
 /** Note off with patch explicitly passed - triggered by MIDI.
  */
-NoteOffEvent::NoteOffEvent(CountedPtr<Responder> responder, samplecount timestamp, Node* node, uchar note_num)
+NoteOffEvent::NoteOffEvent(CountedPtr<Responder> responder, SampleCount timestamp, Node* node, uchar note_num)
 : Event(responder, timestamp),
   m_node(node),
   m_note_num(note_num)
@@ -38,7 +37,7 @@ NoteOffEvent::NoteOffEvent(CountedPtr<Responder> responder, samplecount timestam
 
 /** Note off event with lookup - triggered by OSC.
  */
-NoteOffEvent::NoteOffEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& node_path, uchar note_num)
+NoteOffEvent::NoteOffEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& node_path, uchar note_num)
 : Event(responder, timestamp),
   m_node(NULL),
   m_node_path(node_path),
@@ -48,10 +47,10 @@ NoteOffEvent::NoteOffEvent(CountedPtr<Responder> responder, samplecount timestam
 
 
 void
-NoteOffEvent::execute(samplecount offset)
+NoteOffEvent::execute(SampleCount offset)
 {	
 	if (m_node == NULL && m_node_path != "")
-		m_node = om->object_store()->find_node(m_node_path);
+		m_node = Ingen::instance().object_store()->find_node(m_node_path);
 		
 	// FIXME: this isn't very good at all.
 	if (m_node != NULL && m_node->plugin()->type() == Plugin::Internal) {

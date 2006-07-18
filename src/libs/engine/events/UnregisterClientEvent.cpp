@@ -16,15 +16,14 @@
 
 #include "UnregisterClientEvent.h"
 #include "Responder.h"
-#include "Om.h"
-#include "OmApp.h"
+#include "Ingen.h"
 #include "ClientBroadcaster.h"
 #include "interface/ClientInterface.h"
 
 namespace Om {
 
 
-UnregisterClientEvent::UnregisterClientEvent(CountedPtr<Responder> responder, samplecount timestamp, ClientKey key)
+UnregisterClientEvent::UnregisterClientEvent(CountedPtr<Responder> responder, SampleCount timestamp, ClientKey key)
 : QueuedEvent(responder, timestamp)
 , _key(key)
 {
@@ -34,7 +33,7 @@ UnregisterClientEvent::UnregisterClientEvent(CountedPtr<Responder> responder, sa
 void
 UnregisterClientEvent::post_process()
 {
-	if (om->client_broadcaster()->unregister_client(_key))
+	if (Ingen::instance().client_broadcaster()->unregister_client(_key))
 		_responder->respond_ok();
 	else
 		_responder->respond_error("Unable to unregister client");

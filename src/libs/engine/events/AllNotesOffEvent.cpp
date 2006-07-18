@@ -16,8 +16,7 @@
 
 #include "AllNotesOffEvent.h"
 #include "Responder.h"
-#include "Om.h"
-#include "OmApp.h"
+#include "Ingen.h"
 #include "ObjectStore.h"
 
 namespace Om {
@@ -25,7 +24,7 @@ namespace Om {
 
 /** Note off with patch explicitly passed - triggered by MIDI.
  */
-AllNotesOffEvent::AllNotesOffEvent(CountedPtr<Responder> responder, samplecount timestamp, Patch* patch)
+AllNotesOffEvent::AllNotesOffEvent(CountedPtr<Responder> responder, SampleCount timestamp, Patch* patch)
 : Event(responder, timestamp),
   m_patch(patch)
 {
@@ -34,7 +33,7 @@ AllNotesOffEvent::AllNotesOffEvent(CountedPtr<Responder> responder, samplecount 
 
 /** Note off event with lookup - triggered by OSC.
  */
-AllNotesOffEvent::AllNotesOffEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& patch_path)
+AllNotesOffEvent::AllNotesOffEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& patch_path)
 : Event(responder, timestamp),
   m_patch(NULL),
   m_patch_path(patch_path)
@@ -43,10 +42,10 @@ AllNotesOffEvent::AllNotesOffEvent(CountedPtr<Responder> responder, samplecount 
 
 
 void
-AllNotesOffEvent::execute(samplecount offset)
+AllNotesOffEvent::execute(SampleCount offset)
 {	
 	if (m_patch == NULL && m_patch_path != "")
-		m_patch = om->object_store()->find_patch(m_patch_path);
+		m_patch = Ingen::instance().object_store()->find_patch(m_patch_path);
 		
 	//if (m_patch != NULL)
 	//	for (List<MidiInNode*>::iterator j = m_patch->midi_in_nodes().begin(); j != m_patch->midi_in_nodes().end(); ++j)

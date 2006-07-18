@@ -16,14 +16,13 @@
 
 #include "RequestAllObjectsEvent.h"
 #include "Responder.h"
-#include "Om.h"
-#include "OmApp.h"
+#include "Ingen.h"
 #include "ObjectSender.h"
 
 namespace Om {
 
 
-RequestAllObjectsEvent::RequestAllObjectsEvent(CountedPtr<Responder> responder, samplecount timestamp)
+RequestAllObjectsEvent::RequestAllObjectsEvent(CountedPtr<Responder> responder, SampleCount timestamp)
 : QueuedEvent(responder, timestamp),
   m_client(CountedPtr<ClientInterface>(NULL))
 {

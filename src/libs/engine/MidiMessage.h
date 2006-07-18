@@ -39,7 +39,7 @@ public:
 	// Really just to allow setting to zero for generic algos
 	MidiMessage(const int& i) : time(0), size(0), buffer(NULL) {}
 
-	samplecount    time;
+	SampleCount    time;
     size_t         size;
     unsigned char* buffer;
 };

@@ -30,10 +30,10 @@ namespace Om {
 class DSSIProgramEvent : public QueuedEvent
 {
 public:
-	DSSIProgramEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& node_path, int bank, int program);
+	DSSIProgramEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& node_path, int bank, int program);
 
 	void pre_process();
-	void execute(samplecount offset);
+	void execute(SampleCount offset);
 	void post_process();
 
 private:

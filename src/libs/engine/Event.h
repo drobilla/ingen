@@ -44,27 +44,27 @@ public:
 	virtual ~Event() {}
 
 	/** Execute this event in the audio thread (MUST be realtime safe). */
-	virtual void execute(samplecount offset) { assert(!_executed); _executed = true; }
+	virtual void execute(SampleCount offset) { assert(!_executed); _executed = true; }
 	
 	/** Perform any actions after execution (ie send replies to commands)
 	 * (no realtime requirements). */
 	virtual void post_process() {}
 	
-	inline samplecount time_stamp() { return _time_stamp; }
+	inline SampleCount time_stamp() { return _time_stamp; }
 		
 protected:
 	// Prevent copies
 	Event(const Event&);
 	Event& operator=(const Event&);
 
-	Event(CountedPtr<Responder> responder, samplecount timestamp)
+	Event(CountedPtr<Responder> responder, SampleCount timestamp)
 	: _responder(responder)
 	, _time_stamp(timestamp)
 	, _executed(false)
 	{}
 	
 	CountedPtr<Responder>  _responder;
-	samplecount            _time_stamp;
+	SampleCount            _time_stamp;
 	bool                   _executed;
 };
 

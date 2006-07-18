@@ -60,7 +60,7 @@ protected:
 };
 
 
-template class DuplexPort<sample>;
+template class DuplexPort<Sample>;
 template class DuplexPort<MidiMessage>;
 
 } // namespace Om

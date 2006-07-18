@@ -50,8 +50,8 @@ public:
 	void activate()   { Slave::start(); }
 	void deactivate() { Slave::stop(); }
 
-	Event*        pop_earliest_queued_before(const samplecount time);
-	inline Event* pop_earliest_stamped_before(const samplecount time);
+	Event*        pop_earliest_queued_before(const SampleCount time);
+	inline Event* pop_earliest_stamped_before(const SampleCount time);
 
 	void unblock();
 
@@ -92,7 +92,7 @@ private:
  * the beginning of the cycle (offset 0), when eg. skipped cycles occur.
  */
 inline Event*
-QueuedEventSource::pop_earliest_stamped_before(const samplecount time)
+QueuedEventSource::pop_earliest_stamped_before(const SampleCount time)
 {
 	if (!_stamped_queue.is_empty() && _stamped_queue.front()->time_stamp() < time)
 		return _stamped_queue.pop();

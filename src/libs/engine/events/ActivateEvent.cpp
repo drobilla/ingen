@@ -16,13 +16,12 @@
 
 #include "ActivateEvent.h"
 #include "Responder.h"
-#include "Om.h"
-#include "OmApp.h"
+#include "Ingen.h"
 
 namespace Om {
 
 
-ActivateEvent::ActivateEvent(CountedPtr<Responder> responder, samplecount timestamp)
+ActivateEvent::ActivateEvent(CountedPtr<Responder> responder, SampleCount timestamp)
 : QueuedEvent(responder, timestamp)
 {
 }
@@ -33,18 +32,14 @@ ActivateEvent::pre_process()
 {
 	QueuedEvent::pre_process();
 
-	if (om != NULL)
-		om->activate();
+	Ingen::instance().activate();
 }
 
 
 void
 ActivateEvent::post_process()
 {
-	if (om != NULL)
-		_responder->respond_ok();
-	else
-		_responder->respond_error("Not ready to activate yet.");
+	_responder->respond_ok();
 }
 
 

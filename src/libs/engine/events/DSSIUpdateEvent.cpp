@@ -18,8 +18,7 @@
 #include <iostream>
 #include "Node.h"
 #include "ObjectStore.h"
-#include "Om.h"
-#include "OmApp.h"
+#include "Ingen.h"
 #include "DSSINode.h"
 #include "Plugin.h"
 
@@ -28,7 +27,7 @@ using std::cerr; using std::endl;
 namespace Om {
 
 
-DSSIUpdateEvent::DSSIUpdateEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& path, const string& url)
+DSSIUpdateEvent::DSSIUpdateEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& url)
 : QueuedEvent(responder, timestamp),
   m_path(path),
   m_url(url),
@@ -40,7 +39,7 @@ DSSIUpdateEvent::DSSIUpdateEvent(CountedPtr<Responder> responder, samplecount ti
 void
 DSSIUpdateEvent::pre_process()
 {
-	Node* node = om->object_store()->find_node(m_path);
+	Node* node = Ingen::instance().object_store()->find_node(m_path);
 
 	if (node == NULL || node->plugin()->type() != Plugin::DSSI) {
 		m_node = NULL;
@@ -55,7 +54,7 @@ DSSIUpdateEvent::pre_process()
 
 
 void
-DSSIUpdateEvent::execute(samplecount offset)
+DSSIUpdateEvent::execute(SampleCount offset)
 {
 	if (m_node != NULL) {
 		m_node->set_ui_url(m_url);

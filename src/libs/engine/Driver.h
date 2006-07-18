@@ -102,7 +102,7 @@ public:
 	void enable()  {}
 	void disable() {}
 	
-	DriverPort* create_port(TypedPort<sample>* patch_port) { return NULL; }
+	DriverPort* create_port(TypedPort<Sample>* patch_port) { return NULL; }
 };
 #endif
 

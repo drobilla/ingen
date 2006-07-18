@@ -20,8 +20,7 @@
 #include "Node.h"
 #include "Tree.h"
 #include "Plugin.h"
-#include "Om.h"
-#include "OmApp.h"
+#include "Ingen.h"
 #include "Patch.h"
 #include "NodeFactory.h"
 #include "ClientBroadcaster.h"
@@ -34,7 +33,7 @@
 namespace Om {
 
 
-AddNodeEvent::AddNodeEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& path, Plugin* plugin, bool poly)
+AddNodeEvent::AddNodeEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& path, Plugin* plugin, bool poly)
 : QueuedEvent(responder, timestamp),
   m_path(path),
   m_plugin(plugin),
@@ -56,19 +55,19 @@ AddNodeEvent::~AddNodeEvent()
 void
 AddNodeEvent::pre_process()
 {
-	if (om->object_store()->find(m_path) != NULL) {
+	if (Ingen::instance().object_store()->find(m_path) != NULL) {
 		m_node_already_exists = true;
 		QueuedEvent::pre_process();
 		return;
 	}
 
-	m_patch = om->object_store()->find_patch(m_path.parent());
+	m_patch = Ingen::instance().object_store()->find_patch(m_path.parent());
 
 	if (m_patch != NULL) {
 		if (m_poly)
-			m_node = om->node_factory()->load_plugin(m_plugin, m_path.name(), m_patch->internal_poly(), m_patch);
+			m_node = Ingen::instance().node_factory()->load_plugin(m_plugin, m_path.name(), m_patch->internal_poly(), m_patch);
 		else
-			m_node = om->node_factory()->load_plugin(m_plugin, m_path.name(), 1, m_patch);
+			m_node = Ingen::instance().node_factory()->load_plugin(m_plugin, m_path.name(), 1, m_patch);
 		
 		if (m_node != NULL) {
 			m_node->activate();
@@ -77,7 +76,7 @@ AddNodeEvent::pre_process()
 			// node tree - just the process order array
 			m_patch->add_node(new ListNode<Node*>(m_node));
 			m_node->add_to_store();
-				
+			
 			if (m_patch->process())
 				m_process_order = m_patch->build_process_order();
 		}
@@ -87,7 +86,7 @@ AddNodeEvent::pre_process()
 
 
 void
-AddNodeEvent::execute(samplecount offset)
+AddNodeEvent::execute(SampleCount offset)
 {
 	QueuedEvent::execute(offset);
 
@@ -95,7 +94,7 @@ AddNodeEvent::execute(samplecount offset)
 		m_node->add_to_patch();
 		
 		if (m_patch->process_order() != NULL)
-			om->maid()->push(m_patch->process_order());
+			Ingen::instance().maid()->push(m_patch->process_order());
 		m_patch->process_order(m_process_order);
 	}
 }
@@ -118,8 +117,8 @@ AddNodeEvent::post_process()
 		_responder->respond_error(msg);
 	} else {
 		_responder->respond_ok();
-		//om->client_broadcaster()->send_node_creation_messages(m_node);
-		om->client_broadcaster()->send_node(m_node);
+		//Ingen::instance().client_broadcaster()->send_node_creation_messages(m_node);
+		Ingen::instance().client_broadcaster()->send_node(m_node);
 	}
 }
 

@@ -32,16 +32,16 @@ template <typename T> class TypedPort;
  *
  * \ingroup engine
  */
-class AudioDriver : public Driver<sample>
+class AudioDriver : public Driver<Sample>
 {
 public:
 	
 	virtual void   set_root_patch(Patch* patch) = 0;
 	virtual Patch* root_patch()                 = 0;
 	
-	virtual samplecount buffer_size()  const = 0;
-	virtual samplecount sample_rate()  const = 0;
-	virtual samplecount time_stamp()   const = 0;
+	virtual SampleCount buffer_size()  const = 0;
+	virtual SampleCount sample_rate()  const = 0;
+	virtual SampleCount time_stamp()   const = 0;
 };
 
 

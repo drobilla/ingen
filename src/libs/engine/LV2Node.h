@@ -37,7 +37,7 @@ public:
 	        const string&      name,
 	        size_t             poly,
 	        Patch*             parent,
-	        samplerate         srate,
+	        SampleRate         srate,
 	        size_t             buffer_size);
 	
 	virtual ~LV2Node();
@@ -47,7 +47,7 @@ public:
 	void activate();
 	void deactivate();
 	
-	void process(samplecount nframes);
+	void process(SampleCount nframes);
 	
 	void set_port_buffer(size_t voice, size_t port_num, void* buf);
 

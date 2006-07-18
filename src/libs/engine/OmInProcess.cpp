@@ -19,9 +19,7 @@
 #include <stdio.h>
 #include <memory.h>
 #include <jack/jack.h>
-
-#include "Om.h"
-#include "OmApp.h"
+#include "Ingen.h"
 #include "OSCReceiver.h"
 #include "JackAudioDriver.h"
 #ifdef HAVE_LASH
@@ -38,7 +36,7 @@ extern "C"
 void*
 run_main(void* arg)
 {
-	Om::om->main();
+	Om::Ingen::instance().main();
 #ifdef HAVE_LASH
 
 	delete Om::lash_driver;
@@ -55,7 +53,7 @@ pthread_t main_thread;
 int
 jack_initialize(jack_client_t* client, const char* load_init)
 {
-	if ((Om::om = new Om::OmApp(load_init, new Om::JackAudioDriver(client))) != NULL) {
+	if ((Om::om = new Om::Ingen(load_init, new Om::JackAudioDriver(client))) != NULL) {
 		pthread_create(&main_thread, NULL, run_main, NULL);
 		return 0; // Success
 	} else {
@@ -68,7 +66,7 @@ void
 jack_finish(void* arg)
 {
 	void* ret;
-	Om::om->quit();
+	Om::Ingen::instance().quit();
 	pthread_join(main_thread, &ret);
 }
 

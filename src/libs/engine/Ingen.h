@@ -17,6 +17,8 @@
 #ifndef OMAPP_H
 #define OMAPP_H
 
+#include <cassert>
+
 template<typename T> class Queue;
 class Maid;
 
@@ -44,13 +46,13 @@ template <typename T> class Driver;
  *
  * \ingroup engine
  */
-class OmApp
+class Ingen
 {
 public:
-	~OmApp();
+	~Ingen();
 
-	static void instantiate(const char* port, AudioDriver* audio_driver = 0);
-	OmApp&      instance() { assert(m_instance); return *m_instance; }
+	static void   instantiate(const char* port, AudioDriver* audio_driver = 0);
+	static Ingen& instance() { assert(m_instance); return *m_instance; }
 	
 	int main();
 	
@@ -73,17 +75,17 @@ public:
 
 
 	/** Return the active driver for the given (template parameter) type.
-	 * This is a hook for BridgeNode.  See OmApp.cpp for specializations. */
+	 * This is a hook for BridgeNode.  See Ingen.cpp for specializations. */
 	template<typename T> Driver<T>* driver();
 	
 private:
-	OmApp(const char* port, AudioDriver* audio_driver = 0);
+	Ingen(const char* port, AudioDriver* audio_driver = 0);
 
 	// Prevent copies
-	OmApp(const OmApp&);
-	OmApp& operator=(const OmApp&);
+	Ingen(const Ingen&);
+	Ingen& operator=(const Ingen&);
 
-	static OmApp*      m_instance;
+	static Ingen*      m_instance;
 
 	AudioDriver*       m_audio_driver;
 	OSCReceiver*       m_osc_receiver;

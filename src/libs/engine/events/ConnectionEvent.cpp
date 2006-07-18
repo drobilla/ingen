@@ -18,8 +18,7 @@
 #include <string>
 #include "Responder.h"
 #include "types.h"
-#include "Om.h"
-#include "OmApp.h"
+#include "Ingen.h"
 #include "TypedConnection.h"
 #include "InputPort.h"
 #include "OutputPort.h"
@@ -37,7 +36,7 @@ namespace Om {
 //// ConnectionEvent ////
 
 
-ConnectionEvent::ConnectionEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& src_port_path, const string& dst_port_path)
+ConnectionEvent::ConnectionEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& src_port_path, const string& dst_port_path)
 : QueuedEvent(responder, timestamp),
   m_src_port_path(src_port_path),
   m_dst_port_path(dst_port_path),
@@ -67,7 +66,7 @@ ConnectionEvent::pre_process()
 		return;
 	}
 	
-	/*m_patch = om->object_store()->find_patch(m_src_port_path.parent().parent());
+	/*m_patch = Ingen::instance().object_store()->find_patch(m_src_port_path.parent().parent());
 
 	if (m_patch == NULL) {
 		m_error = PORT_NOT_FOUND;
@@ -75,8 +74,8 @@ ConnectionEvent::pre_process()
 		return;
 	}*/
 	
-	m_src_port = om->object_store()->find_port(m_src_port_path);
-	m_dst_port = om->object_store()->find_port(m_dst_port_path);
+	m_src_port = Ingen::instance().object_store()->find_port(m_src_port_path);
+	m_dst_port = Ingen::instance().object_store()->find_port(m_dst_port_path);
 	
 	if (m_src_port == NULL || m_dst_port == NULL) {
 		m_error = PORT_NOT_FOUND;
@@ -105,8 +104,8 @@ ConnectionEvent::pre_process()
 	// Create the typed event to actually do the work
 	const DataType type = m_src_port->type();
 	if (type == DataType::FLOAT) {
-		m_typed_event = new TypedConnectionEvent<sample>(_responder, _time_stamp,
-			dynamic_cast<OutputPort<sample>*>(m_src_port), dynamic_cast<InputPort<sample>*>(m_dst_port));
+		m_typed_event = new TypedConnectionEvent<Sample>(_responder, _time_stamp,
+			dynamic_cast<OutputPort<Sample>*>(m_src_port), dynamic_cast<InputPort<Sample>*>(m_dst_port));
 	} else if (type == DataType::MIDI) {
 		m_typed_event = new TypedConnectionEvent<MidiMessage>(_responder, _time_stamp,
 			dynamic_cast<OutputPort<MidiMessage>*>(m_src_port), dynamic_cast<InputPort<MidiMessage>*>(m_dst_port));
@@ -123,7 +122,7 @@ ConnectionEvent::pre_process()
 
 
 void
-ConnectionEvent::execute(samplecount offset)
+ConnectionEvent::execute(SampleCount offset)
 {
 	QueuedEvent::execute(offset);
 
@@ -151,7 +150,7 @@ ConnectionEvent::post_process()
 
 
 template <typename T>
-TypedConnectionEvent<T>::TypedConnectionEvent(CountedPtr<Responder> responder, samplecount timestamp, OutputPort<T>* src_port, InputPort<T>* dst_port)
+TypedConnectionEvent<T>::TypedConnectionEvent(CountedPtr<Responder> responder, SampleCount timestamp, OutputPort<T>* src_port, InputPort<T>* dst_port)
 : QueuedEvent(responder, timestamp),
   m_src_port(src_port),
   m_dst_port(dst_port),
@@ -229,14 +228,14 @@ TypedConnectionEvent<T>::pre_process()
 
 template <typename T>
 void
-TypedConnectionEvent<T>::execute(samplecount offset)
+TypedConnectionEvent<T>::execute(SampleCount offset)
 {
 	if (m_succeeded) {
 		// These must be inserted here, since they're actually used by the audio thread
 		m_dst_port->add_connection(m_port_listnode);
 		m_patch->add_connection(m_patch_listnode);
 		if (m_patch->process_order() != NULL)
-			om->maid()->push(m_patch->process_order());
+			Ingen::instance().maid()->push(m_patch->process_order());
 		m_patch->process_order(m_process_order);
 	}
 }
@@ -251,7 +250,7 @@ TypedConnectionEvent<T>::post_process()
 	
 		_responder->respond_ok();
 	
-		om->client_broadcaster()->send_connection(m_connection);
+		Ingen::instance().client_broadcaster()->send_connection(m_connection);
 	} else {
 		_responder->respond_error("Unable to make connection.");
 	}

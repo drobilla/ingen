@@ -40,11 +40,11 @@ template <typename T> class OutputPort;
 class MidiControlNode : public InternalNode
 {
 public:
-	MidiControlNode(const string& path, size_t poly, Patch* parent, samplerate srate, size_t buffer_size);
+	MidiControlNode(const string& path, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size);
 	
-	void process(samplecount nframes);
+	void process(SampleCount nframes);
 	
-	void control(uchar control_num, uchar val, samplecount offset);
+	void control(uchar control_num, uchar val, SampleCount offset);
 
 	void learn(MidiLearnResponseEvent* ev) { _learning = true; _learn_event = ev; }
 
@@ -56,12 +56,12 @@ private:
 	bool _learning;
 
 	InputPort<MidiMessage>* _midi_in_port;
-	InputPort<sample>*      _param_port;
-	InputPort<sample>*      _log_port;
-	InputPort<sample>*      _min_port;
-	InputPort<sample>*      _max_port;
-	OutputPort<sample>*     _control_port;
-	OutputPort<sample>*     _audio_port;
+	InputPort<Sample>*      _param_port;
+	InputPort<Sample>*      _log_port;
+	InputPort<Sample>*      _min_port;
+	InputPort<Sample>*      _max_port;
+	OutputPort<Sample>*     _control_port;
+	OutputPort<Sample>*     _audio_port;
 
 	MidiLearnResponseEvent* _learn_event;
 };

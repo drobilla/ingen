@@ -17,8 +17,7 @@
 #include "DisconnectPortEvent.h"
 #include <iostream>
 #include "Responder.h"
-#include "Om.h"
-#include "OmApp.h"
+#include "Ingen.h"
 #include "Maid.h"
 #include "List.h"
 #include "Node.h"
@@ -39,7 +38,7 @@ using std::cerr; using std::endl;
 namespace Om {
 
 
-DisconnectPortEvent::DisconnectPortEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& port_path)
+DisconnectPortEvent::DisconnectPortEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& port_path)
 : QueuedEvent(responder, timestamp),
   m_port_path(port_path),
   m_patch(NULL),
@@ -77,7 +76,7 @@ DisconnectPortEvent::pre_process()
 	// cerr << "Preparing disconnection event...\n";
 	
 	if (m_lookup) {
-		m_patch = om->object_store()->find_patch(m_port_path.parent().parent());
+		m_patch = Ingen::instance().object_store()->find_patch(m_port_path.parent().parent());
 	
 		if (m_patch == NULL) {
 			m_succeeded = false;
@@ -85,7 +84,7 @@ DisconnectPortEvent::pre_process()
 			return;
 		}
 		
-		m_port = om->object_store()->find_port(m_port_path);
+		m_port = Ingen::instance().object_store()->find_port(m_port_path);
 		
 		if (m_port == NULL) {
 			m_succeeded = false;
@@ -118,7 +117,7 @@ DisconnectPortEvent::pre_process()
 
 
 void
-DisconnectPortEvent::execute(samplecount offset)
+DisconnectPortEvent::execute(SampleCount offset)
 {
 	if (m_succeeded) {
 		for (List<DisconnectionEvent*>::iterator i = m_disconnection_events.begin(); i != m_disconnection_events.end(); ++i)

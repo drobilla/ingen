@@ -17,13 +17,12 @@
 #include "MidiNoteNode.h"
 #include <cmath>
 #include <iostream>
+#include "Ingen.h"
 #include "MidiMessage.h"
 #include "InputPort.h"
 #include "OutputPort.h"
 #include "Plugin.h"
 #include "Array.h"
-#include "Om.h"
-#include "OmApp.h"
 #include "AudioDriver.h"
 #include "util.h"
 #include "midi.h"
@@ -34,7 +33,7 @@ using std::cerr; using std::cout; using std::endl;
 namespace Om {
 
 
-MidiNoteNode::MidiNoteNode(const string& path, size_t poly, Patch* parent, samplerate srate, size_t buffer_size)
+MidiNoteNode::MidiNoteNode(const string& path, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size)
 : InternalNode(new Plugin(Plugin::Internal, "Om:NoteNode"), path, poly, parent, srate, buffer_size),
   _voices(new Voice[poly]),
   _sustain(false)
@@ -44,19 +43,19 @@ MidiNoteNode::MidiNoteNode(const string& path, size_t poly, Patch* parent, sampl
 	_midi_in_port = new InputPort<MidiMessage>(this, "MIDI_In", 0, 1, DataType::MIDI, _buffer_size);
 	_ports->at(0) = _midi_in_port;
 
-	_freq_port = new OutputPort<sample>(this, "Frequency", 1, poly, DataType::FLOAT, _buffer_size);
+	_freq_port = new OutputPort<Sample>(this, "Frequency", 1, poly, DataType::FLOAT, _buffer_size);
 	//	new PortInfo("Frequency", AUDIO, OUTPUT, 440, 0, 99999), _buffer_size);
 	_ports->at(1) = _freq_port;
 	
-	_vel_port = new OutputPort<sample>(this, "Velocity", 2, poly, DataType::FLOAT, _buffer_size);
+	_vel_port = new OutputPort<Sample>(this, "Velocity", 2, poly, DataType::FLOAT, _buffer_size);
 	//	new PortInfo("Velocity", AUDIO, OUTPUT, 0, 0, 1), _buffer_size);
 	_ports->at(2) = _vel_port;
 	
-	_gate_port = new OutputPort<sample>(this, "Gate", 3, poly, DataType::FLOAT, _buffer_size);
+	_gate_port = new OutputPort<Sample>(this, "Gate", 3, poly, DataType::FLOAT, _buffer_size);
 	//	new PortInfo("Gate", AUDIO, OUTPUT, 0, 0, 1), _buffer_size);
 	_ports->at(3) = _gate_port;
 	
-	_trig_port = new OutputPort<sample>(this, "Trigger", 4, poly, DataType::FLOAT, _buffer_size);
+	_trig_port = new OutputPort<Sample>(this, "Trigger", 4, poly, DataType::FLOAT, _buffer_size);
 	//	new PortInfo("Trigger", AUDIO, OUTPUT, 0, 0, 1), _buffer_size);
 	_ports->at(4) = _trig_port;
 	
@@ -72,7 +71,7 @@ MidiNoteNode::~MidiNoteNode()
 
 
 void
-MidiNoteNode::process(samplecount nframes)
+MidiNoteNode::process(SampleCount nframes)
 {
 	InternalNode::process(nframes);
 	
@@ -115,9 +114,10 @@ MidiNoteNode::process(samplecount nframes)
 
 
 void
-MidiNoteNode::note_on(uchar note_num, uchar velocity, samplecount offset)
+MidiNoteNode::note_on(uchar note_num, uchar velocity, SampleCount offset)
 {
-	const jack_nframes_t time_stamp = om->audio_driver()->time_stamp();
+	// FIXME: this is stupid..
+	const jack_nframes_t time_stamp = Ingen::instance().audio_driver()->time_stamp();
 
 	assert(offset < _buffer_size);
 	assert(note_num <= 127);
@@ -175,7 +175,7 @@ MidiNoteNode::note_on(uchar note_num, uchar velocity, samplecount offset)
 	assert(_keys[voice->note].voice == voice_num);
 	
 	// one-sample jitter hack to avoid having to deal with trigger sample "next time"
-	if (offset == (samplecount)(_buffer_size-1))
+	if (offset == (SampleCount)(_buffer_size-1))
 		--offset;
 	
 	_freq_port->buffer(voice_num)->set(note_to_freq(note_num), offset);
@@ -194,7 +194,7 @@ MidiNoteNode::note_on(uchar note_num, uchar velocity, samplecount offset)
 
 
 void
-MidiNoteNode::note_off(uchar note_num, samplecount offset)
+MidiNoteNode::note_off(uchar note_num, SampleCount offset)
 {
 	assert(offset < _buffer_size);
 
@@ -217,7 +217,7 @@ MidiNoteNode::note_off(uchar note_num, samplecount offset)
 
 	
 void
-MidiNoteNode::free_voice(size_t voice, samplecount offset)
+MidiNoteNode::free_voice(size_t voice, SampleCount offset)
 {
 	// Find a key to reassign to the freed voice (the newest, if there is one)
 	Key*  replace_key     = NULL;
@@ -254,7 +254,7 @@ MidiNoteNode::free_voice(size_t voice, samplecount offset)
 
 
 void
-MidiNoteNode::all_notes_off(samplecount offset)
+MidiNoteNode::all_notes_off(SampleCount offset)
 {
 	//cerr << "Note off starting at sample " << offset << endl;
 	assert(offset < _buffer_size);
@@ -286,7 +286,7 @@ MidiNoteNode::sustain_on()
 
 
 void
-MidiNoteNode::sustain_off(samplecount offset)
+MidiNoteNode::sustain_off(SampleCount offset)
 {
 	_sustain = false;
 	

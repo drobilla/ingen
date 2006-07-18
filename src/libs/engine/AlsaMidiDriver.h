@@ -44,7 +44,7 @@ public:
 
 	void event(snd_seq_event_t* const ev);
 	
-	void prepare_block(const samplecount block_start, const samplecount block_end);
+	void prepare_block(const SampleCount block_start, const SampleCount block_end);
 	
 	void add_to_driver();
 	void remove_from_driver();
@@ -84,7 +84,7 @@ public:
 	
 	bool is_activated() const { return m_is_activated; }
 	
-	void prepare_block(const samplecount block_start, const samplecount block_end);
+	void prepare_block(const SampleCount block_start, const SampleCount block_end);
 
 	DriverPort* create_port(DuplexPort<MidiMessage>* patch_port)
 	{ return new AlsaMidiPort(this, patch_port); }

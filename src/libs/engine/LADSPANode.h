@@ -33,7 +33,7 @@ namespace Om {
 class LADSPANode : public NodeBase
 {
 public:
-	LADSPANode(const Plugin* plugin, const string& name, size_t poly, Patch* parent, const LADSPA_Descriptor* descriptor, samplerate srate, size_t buffer_size);
+	LADSPANode(const Plugin* plugin, const string& name, size_t poly, Patch* parent, const LADSPA_Descriptor* descriptor, SampleRate srate, size_t buffer_size);
 	virtual ~LADSPANode();
 
 	virtual bool instantiate();
@@ -41,7 +41,7 @@ public:
 	void activate();
 	void deactivate();
 	
-	void process(samplecount nframes);
+	void process(SampleCount nframes);
 	
 	void set_port_buffer(size_t voice, size_t port_num, void* buf);
 
@@ -54,7 +54,7 @@ protected:
 	LADSPANode& operator=(const LADSPANode&);
 
 	//void get_port_vals(ulong port_index, PortInfo* info);
-	sample default_port_value(ulong port_index);
+	Sample default_port_value(ulong port_index);
 	
 	const LADSPA_Descriptor* _descriptor;
 	LADSPA_Handle*           _instances;	

@@ -16,8 +16,7 @@
 
 #include "LoadPluginsEvent.h"
 #include "Responder.h"
-#include "Om.h"
-#include "OmApp.h"
+#include "Ingen.h"
 #include "NodeFactory.h"
 
 #include <iostream>
@@ -26,11 +25,11 @@ using std::cerr;
 namespace Om {
 
 
-LoadPluginsEvent::LoadPluginsEvent(CountedPtr<Responder> responder, samplecount timestamp)
+LoadPluginsEvent::LoadPluginsEvent(CountedPtr<Responder> responder, SampleCount timestamp)
 : QueuedEvent(responder, timestamp)
 {
 	cerr << "LOADING PLUGINS\n";
-	om->node_factory()->load_plugins();
+	Ingen::instance().node_factory()->load_plugins();
 }
 
 

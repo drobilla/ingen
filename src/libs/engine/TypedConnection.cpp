@@ -19,7 +19,6 @@
 #include "InputPort.h"
 #include "OutputPort.h"
 #include "Node.h"
-#include "Om.h"
 #include "Port.h"
 
 namespace Om {
@@ -49,7 +48,7 @@ TypedConnection<T>::TypedConnection(OutputPort<T>* const src_port, InputPort<T>*
 	//cerr << "Connection " << src_port->path() << " -> " << dst_port->path()
 	//	<< "\t mixing: " << m_must_mix << endl;
 }
-template TypedConnection<sample>::TypedConnection(OutputPort<sample>* const src_port, InputPort<sample>* const dst_port);
+template TypedConnection<Sample>::TypedConnection(OutputPort<Sample>* const src_port, InputPort<Sample>* const dst_port);
 template TypedConnection<MidiMessage>::TypedConnection(OutputPort<MidiMessage>* const src_port, InputPort<MidiMessage>* const dst_port);
 
 
@@ -58,13 +57,13 @@ TypedConnection<T>::~TypedConnection()
 {
 	delete m_local_buffer;
 }
-template TypedConnection<sample>::~TypedConnection();
+template TypedConnection<Sample>::~TypedConnection();
 template TypedConnection<MidiMessage>::~TypedConnection();
 
 
-template <typename sample>
+template <typename Sample>
 void
-TypedConnection<sample>::process(samplecount nframes)
+TypedConnection<Sample>::process(SampleCount nframes)
 {
 	// FIXME: nframes parameter not used
 	assert(nframes == m_buffer_size);
@@ -92,13 +91,13 @@ TypedConnection<sample>::process(samplecount nframes)
 			m_local_buffer->scale(1.0f/(float)src_port()->poly(), 0, m_buffer_size-1);
 	}
 }
-template void TypedConnection<sample>::process(samplecount nframes);
+template void TypedConnection<Sample>::process(SampleCount nframes);
 
 
 // FIXME: MIDI mixing not implemented
 template <>
 void
-TypedConnection<MidiMessage>::process(samplecount nframes)
+TypedConnection<MidiMessage>::process(SampleCount nframes)
 {
 }
 

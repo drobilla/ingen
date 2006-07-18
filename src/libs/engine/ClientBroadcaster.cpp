@@ -18,8 +18,7 @@
 #include <cassert>
 #include <iostream>
 #include <unistd.h>
-#include "Om.h"
-#include "OmApp.h"
+#include "Ingen.h"
 #include "ObjectStore.h"
 #include "NodeFactory.h"
 #include "util.h"
@@ -129,13 +128,14 @@ ClientBroadcaster::send_error(const string& msg)
 }
 
 
-
+/* FIXME: Make a copy method for list and just make a copy and pass it here
+ * instead of this global+locking mess */
 void
 ClientBroadcaster::send_plugins_to(ClientInterface* client)
 {
-	om->node_factory()->lock_plugin_list();
+	Ingen::instance().node_factory()->lock_plugin_list();
 	
-	const list<Plugin*>& plugs = om->node_factory()->plugins();
+	const list<Plugin*>& plugs = Ingen::instance().node_factory()->plugins();
 	const Plugin* plugin;
 
 	lo_timetag tt;
@@ -175,7 +175,7 @@ ClientBroadcaster::send_plugins_to(ClientInterface* client)
 	for (list<lo_bundle>::const_iterator i = msgs.begin(); i != msgs.end(); ++i)
 		lo_message_free(*i);
 
-	om->node_factory()->unlock_plugin_list();
+	Ingen::instance().node_factory()->unlock_plugin_list();
 }
 
 

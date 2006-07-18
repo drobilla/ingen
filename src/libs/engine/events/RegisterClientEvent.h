@@ -36,7 +36,7 @@ class RegisterClientEvent : public QueuedEvent
 {
 public:
 	RegisterClientEvent(CountedPtr<Responder>       responder,
-	                    samplecount                 timestamp,
+	                    SampleCount                 timestamp,
 	                    ClientKey                   key,
 	                    CountedPtr<ClientInterface> client);
 

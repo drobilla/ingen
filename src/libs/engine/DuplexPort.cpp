@@ -21,7 +21,6 @@
 #include "TypedConnection.h"
 #include "OutputPort.h"
 #include "Node.h"
-#include "Om.h"
 #include "util.h"
 
 using std::cerr; using std::cout; using std::endl;
@@ -39,7 +38,7 @@ DuplexPort<T>::DuplexPort(Node* parent, const string& name, size_t index, size_t
 {
 	assert(TypedPort<T>::_parent == parent);
 }
-template DuplexPort<sample>::DuplexPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size, bool is_output);
+template DuplexPort<Sample>::DuplexPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size, bool is_output);
 template DuplexPort<MidiMessage>::DuplexPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size, bool is_output);
 
 

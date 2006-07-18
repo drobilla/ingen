@@ -15,8 +15,7 @@
  */
 
 #include "OSCResponder.h"
-#include "Om.h"
-#include "OmApp.h"
+#include "Ingen.h"
 #include "ClientBroadcaster.h"
 #include "interface/ClientKey.h"
 #include <cstdlib>
@@ -55,7 +54,7 @@ OSCResponder::~OSCResponder()
 CountedPtr<Shared::ClientInterface>
 OSCResponder::find_client()
 {
-	return om->client_broadcaster()->client(ClientKey(ClientKey::OSC_URL, _url));
+	return Ingen::instance().client_broadcaster()->client(ClientKey(ClientKey::OSC_URL, _url));
 }
 
 

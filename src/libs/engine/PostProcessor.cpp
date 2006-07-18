@@ -18,8 +18,7 @@
 #include <cassert>
 #include <iostream>
 #include <pthread.h>
-#include "Om.h"
-#include "OmApp.h"
+#include "Ingen.h"
 #include "Event.h"
 #include "util/Queue.h"
 #include "Maid.h"
@@ -48,7 +47,7 @@ PostProcessor::_whipped()
 		Event* const ev = _events.pop();
 		assert(ev);
 		ev->post_process();
-		om->maid()->push(ev);
+		Ingen::instance().maid()->push(ev);
 	}
 }
 

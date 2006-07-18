@@ -37,18 +37,18 @@ class ControlChangeEvent;
 class MidiLearnResponseEvent : public Event
 {
 public:
-	MidiLearnResponseEvent(const string& port_path, samplecount timestamp)
+	MidiLearnResponseEvent(const string& port_path, SampleCount timestamp)
 	: Event(NULL, timestamp),
 	  m_port_path(port_path),
 	  m_value(0.0f)
 	{}
 	
-	void set_value(sample val) { m_value = val; }
+	void set_value(Sample val) { m_value = val; }
 	void post_process();
 	
 private:
 	string m_port_path;
-	sample m_value;
+	Sample m_value;
 };
 
 
@@ -64,10 +64,10 @@ private:
 class MidiLearnEvent : public QueuedEvent
 {
 public:
-	MidiLearnEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& node_path);
+	MidiLearnEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& node_path);
 	
 	void pre_process();
-	void execute(samplecount offset);
+	void execute(SampleCount offset);
 	void post_process();
 
 private:

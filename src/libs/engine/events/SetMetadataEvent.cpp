@@ -17,8 +17,7 @@
 #include "SetMetadataEvent.h"
 #include <string>
 #include "Responder.h"
-#include "Om.h"
-#include "OmApp.h"
+#include "Ingen.h"
 #include "ClientBroadcaster.h"
 #include "GraphObject.h"
 #include "ObjectStore.h"
@@ -28,7 +27,7 @@ using std::string;
 namespace Om {
 
 
-SetMetadataEvent::SetMetadataEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& path, const string& key, const string& value)
+SetMetadataEvent::SetMetadataEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& key, const string& value)
 : QueuedEvent(responder, timestamp),
   m_path(path),
   m_key(key),
@@ -41,7 +40,7 @@ SetMetadataEvent::SetMetadataEvent(CountedPtr<Responder> responder, samplecount 
 void
 SetMetadataEvent::pre_process()
 {
-	m_object = om->object_store()->find(m_path);
+	m_object = Ingen::instance().object_store()->find(m_path);
 	if (m_object == NULL) {
 		QueuedEvent::pre_process();
 		return;
@@ -54,7 +53,7 @@ SetMetadataEvent::pre_process()
 
 
 void
-SetMetadataEvent::execute(samplecount offset)
+SetMetadataEvent::execute(SampleCount offset)
 {
 	// Do nothing
 	
@@ -71,7 +70,7 @@ SetMetadataEvent::post_process()
 		_responder->respond_error(msg);
 	} else {
 		_responder->respond_ok();
-		om->client_broadcaster()->send_metadata_update(m_path, m_key, m_value);
+		Ingen::instance().client_broadcaster()->send_metadata_update(m_path, m_key, m_value);
 	}
 }
 

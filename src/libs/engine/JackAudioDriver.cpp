@@ -19,8 +19,7 @@
 #include "tuning.h"
 #include <iostream>
 #include <cstdlib>
-#include "Om.h"
-#include "OmApp.h"
+#include "Ingen.h"
 #include "util.h"
 #include "Event.h"
 #include "QueuedEvent.h"
@@ -46,7 +45,7 @@ namespace Om {
 	
 //// JackAudioPort ////
 
-JackAudioPort::JackAudioPort(JackAudioDriver* driver, DuplexPort<sample>* patch_port)
+JackAudioPort::JackAudioPort(JackAudioDriver* driver, DuplexPort<Sample>* patch_port)
 : DriverPort(),
   ListNode<JackAudioPort*>(this),
   m_driver(driver),
@@ -183,7 +182,7 @@ JackAudioDriver::activate()
 	} else {
 		cout << "[JackAudioDriver] Activated Jack client." << endl;
 #ifdef HAVE_LASH
-	om->lash_driver()->set_jack_client_name("Om"); // FIXME: unique name
+	Ingen::instance().lash_driver()->set_jack_client_name("Om"); // FIXME: unique name
 #endif
 	}
 }
@@ -193,7 +192,7 @@ void
 JackAudioDriver::deactivate()
 {
 	if (m_is_activated) {
-		om->osc_receiver()->deactivate();
+		Ingen::instance().osc_receiver()->deactivate();
 	
 		jack_deactivate(m_client);
 		m_is_activated = false;
@@ -205,7 +204,7 @@ JackAudioDriver::deactivate()
 	
 		cout << "[JackAudioDriver] Deactivated Jack client." << endl;
 		
-		om->post_processor()->stop();
+		Ingen::instance().post_processor()->stop();
 	}
 }
 
@@ -245,7 +244,7 @@ JackAudioDriver::remove_port(JackAudioPort* port)
 
 
 DriverPort*
-JackAudioDriver::create_port(DuplexPort<sample>* patch_port)
+JackAudioDriver::create_port(DuplexPort<Sample>* patch_port)
 {
 	if (patch_port->buffer_size() == m_buffer_size)
 		return new JackAudioPort(this, patch_port);
@@ -278,26 +277,26 @@ JackAudioDriver::process_events(jack_nframes_t block_start, jack_nframes_t block
 	/* FIXME: Merge these next two loops into one */
 
 	// FIXME
-	while ((ev = om->osc_receiver()->pop_earliest_queued_before(block_end))) {
+	while ((ev = Ingen::instance().osc_receiver()->pop_earliest_queued_before(block_end))) {
 		ev->execute(0);  // QueuedEvents are not sample accurate
-		om->post_processor()->push(ev);
+		Ingen::instance().post_processor()->push(ev);
 		if (++num_events_processed > MAX_QUEUED_EVENTS)
 			break;
 	}
 	
-	while ((ev = om->osc_receiver()->pop_earliest_stamped_before(block_end))) {
+	while ((ev = Ingen::instance().osc_receiver()->pop_earliest_stamped_before(block_end))) {
 		if (ev->time_stamp() >= block_start)
 			offset = ev->time_stamp() - block_start;
 		else
 			offset = 0;
 
 		ev->execute(offset);
-		om->post_processor()->push(ev);
+		Ingen::instance().post_processor()->push(ev);
 		++num_events_processed;
 	}
 	
 	if (num_events_processed > 0)
-		om->post_processor()->whip();
+		Ingen::instance().post_processor()->whip();
 }
 
 
@@ -330,7 +329,7 @@ JackAudioDriver::m_process_cb(jack_nframes_t nframes)
 	m_transport_state = jack_transport_query(m_client, &m_position);
 	
 	process_events(start_of_last_cycle, start_of_current_cycle);
-	om->midi_driver()->prepare_block(start_of_last_cycle, start_of_current_cycle);
+	Ingen::instance().midi_driver()->prepare_block(start_of_last_cycle, start_of_current_cycle);
 	
 	// Set buffers of patch ports to Jack port buffers (zero-copy processing)
 	for (List<JackAudioPort*>::iterator i = m_ports.begin(); i != m_ports.end(); ++i)
@@ -348,7 +347,7 @@ void
 JackAudioDriver::m_shutdown_cb() 
 {
 	cout << "[JackAudioDriver] Jack shutdown.  Exiting." << endl;
-	om->quit();
+	Ingen::instance().quit();
 }
 
 

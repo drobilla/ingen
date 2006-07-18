@@ -16,8 +16,7 @@
 
 #include "MidiLearnEvent.h"
 #include "Responder.h"
-#include "Om.h"
-#include "OmApp.h"
+#include "Ingen.h"
 #include "ObjectStore.h"
 #include "Node.h"
 #include "MidiControlNode.h"
@@ -31,14 +30,14 @@ namespace Om {
 void
 MidiLearnResponseEvent::post_process()
 {
-	om->client_broadcaster()->send_control_change(m_port_path, m_value);
+	Ingen::instance().client_broadcaster()->send_control_change(m_port_path, m_value);
 }
 
 
 
 // MidiLearnEvent
 
-MidiLearnEvent::MidiLearnEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& node_path)
+MidiLearnEvent::MidiLearnEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& node_path)
 : QueuedEvent(responder, timestamp),
   m_node_path(node_path),
   m_node(NULL),
@@ -50,7 +49,7 @@ MidiLearnEvent::MidiLearnEvent(CountedPtr<Responder> responder, samplecount time
 void
 MidiLearnEvent::pre_process()
 {
-	m_node = om->object_store()->find_node(m_node_path);
+	m_node = Ingen::instance().object_store()->find_node(m_node_path);
 	m_response_event = new MidiLearnResponseEvent(m_node_path + "/Controller_Number", _time_stamp);
 	
 	QueuedEvent::pre_process();
@@ -58,7 +57,7 @@ MidiLearnEvent::pre_process()
 
 
 void
-MidiLearnEvent::execute(samplecount offset)
+MidiLearnEvent::execute(SampleCount offset)
 {	
 	QueuedEvent::execute(offset);
 	

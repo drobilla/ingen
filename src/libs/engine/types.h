@@ -22,12 +22,12 @@
 #include <jack/jack.h>
 
 typedef unsigned char uchar;
-typedef unsigned int uint;
+typedef unsigned int  uint;
 typedef unsigned long ulong;
 
-typedef jack_default_audio_sample_t sample;
-typedef jack_nframes_t samplecount;
-typedef jack_nframes_t samplerate;
+typedef jack_default_audio_sample_t Sample;
+typedef jack_nframes_t              SampleCount;
+typedef jack_nframes_t              SampleRate;
 
 /** A type that Om can patch (eg can be stored in a port) */
 enum DataType { FLOAT, MIDI, UNKNOWN };

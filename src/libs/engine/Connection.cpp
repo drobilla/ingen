@@ -17,7 +17,6 @@
 #include "Connection.h"
 #include "util.h"
 #include "Node.h"
-#include "Om.h"
 #include "Port.h"
 
 namespace Om {

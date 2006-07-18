@@ -34,10 +34,10 @@ class Node;
 class NoteOffEvent : public Event
 {
 public:
-	NoteOffEvent(CountedPtr<Responder> responder, samplecount timestamp, Node* node, uchar note_num);
-	NoteOffEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& node_path, uchar note_num);
+	NoteOffEvent(CountedPtr<Responder> responder, SampleCount timestamp, Node* node, uchar note_num);
+	NoteOffEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& node_path, uchar note_num);
 	
-	void execute(samplecount offset);
+	void execute(SampleCount offset);
 	void post_process();
 
 private:

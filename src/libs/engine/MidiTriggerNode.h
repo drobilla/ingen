@@ -43,19 +43,19 @@ template <typename T> class OutputPort;
 class MidiTriggerNode : public InternalNode
 {
 public:
-	MidiTriggerNode(const string& path, size_t poly, Patch* parent, samplerate srate, size_t buffer_size);
+	MidiTriggerNode(const string& path, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size);
 
-	void process(samplecount nframes);
+	void process(SampleCount nframes);
 	
-	void note_on(uchar note_num, uchar velocity, samplecount offset);
-	void note_off(uchar note_num, samplecount offset);
+	void note_on(uchar note_num, uchar velocity, SampleCount offset);
+	void note_off(uchar note_num, SampleCount offset);
 
 private:
 	InputPort<MidiMessage>* _midi_in_port;
-	InputPort<sample>*      _note_port;
-	OutputPort<sample>*     _gate_port;
-	OutputPort<sample>*     _trig_port;
-	OutputPort<sample>*     _vel_port;
+	InputPort<Sample>*      _note_port;
+	OutputPort<Sample>*     _gate_port;
+	OutputPort<Sample>*     _trig_port;
+	OutputPort<Sample>*     _vel_port;
 };
 
 

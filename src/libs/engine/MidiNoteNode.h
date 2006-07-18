@@ -39,17 +39,17 @@ template <typename T> class OutputPort;
 class MidiNoteNode : public InternalNode
 {
 public:
-	MidiNoteNode(const string& path, size_t poly, Patch* parent, samplerate srate, size_t buffer_size);
+	MidiNoteNode(const string& path, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size);
 	~MidiNoteNode();
 
-	void process(samplecount nframes);
+	void process(SampleCount nframes);
 	
-	void note_on(uchar note_num, uchar velocity, samplecount offset);
-	void note_off(uchar note_num, samplecount offset);
-	void all_notes_off(samplecount offset);
+	void note_on(uchar note_num, uchar velocity, SampleCount offset);
+	void note_off(uchar note_num, SampleCount offset);
+	void all_notes_off(SampleCount offset);
 
 	void sustain_on();
-	void sustain_off(samplecount offset);
+	void sustain_off(SampleCount offset);
 
 private:
 	
@@ -57,28 +57,28 @@ private:
 	struct Key {
 		enum State { OFF, ON_ASSIGNED, ON_UNASSIGNED };
 		Key() : state(OFF), voice(0), time(0) {}
-		State state; size_t voice; samplecount time;
+		State state; size_t voice; SampleCount time;
 	};
 
 	/** Voice, one of these always exists for each voice */
 	struct Voice {
 		enum State { FREE, ACTIVE, HOLDING };
 		Voice() : state(FREE), note(0) {}
-		State state; uchar note; samplecount time;
+		State state; uchar note; SampleCount time;
 	};
 
 	float note_to_freq(int num);
-	void free_voice(size_t voice, samplecount offset);
+	void free_voice(size_t voice, SampleCount offset);
 
 	Voice* _voices;
 	Key    _keys[128];
 	bool   _sustain;   ///< Whether or not hold pedal is depressed
 	
 	InputPort<MidiMessage>* _midi_in_port;
-	OutputPort<sample>*     _freq_port;
-	OutputPort<sample>*     _vel_port;
-	OutputPort<sample>*     _gate_port;
-	OutputPort<sample>*     _trig_port;
+	OutputPort<Sample>*     _freq_port;
+	OutputPort<Sample>*     _vel_port;
+	OutputPort<Sample>*     _gate_port;
+	OutputPort<Sample>*     _trig_port;
 };
 
 

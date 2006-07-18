@@ -49,11 +49,11 @@ using std::cout; using std::cerr; using std::endl;
 namespace Om {
 
 
-Ingen::m_instance = NULL;
+Ingen* Ingen::m_instance = NULL;
 
 
-static void
-Ingen::instantiate(const char* port, AudioDriver* audio_driver = 0)
+void
+Ingen::instantiate(const char* port, AudioDriver* audio_driver)
 {
 	assert(!m_instance);
 	m_instance = new Ingen(port, audio_driver);

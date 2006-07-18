@@ -20,8 +20,6 @@
 #include <string>
 #include <lo/lo.h>
 #include "types.h"
-#include "Om.h"
-#include "OmApp.h"
 #include "util/Queue.h"
 #include "util/CountedPtr.h"
 #include "QueuedEventSource.h"
@@ -894,12 +892,15 @@ OSCReceiver::generic_cb(const char* path, const char* types, lo_arg** argv, int 
 int
 OSCReceiver::unknown_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg, void* user_data)
 {
+	const lo_address addr = lo_message_get_source(msg);
+	char* const      url  = lo_address_get_url(addr);
+
 	cerr << "Unknown command " << path << " (" << types << "), sending error.\n";
 
 	string error_msg = "Unknown command: ";
 	error_msg.append(path).append(" ").append(types);
 
-	om->client_broadcaster()->send_error(error_msg);
+	OSCResponder(0, url).respond_error(error_msg);
 
 	return 0;
 }

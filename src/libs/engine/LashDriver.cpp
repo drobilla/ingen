@@ -19,7 +19,6 @@
 #include <iostream>
 #include <string>
 #include <cassert>
-#include "OmApp.h"
 
 using std::cerr; using std::cout; using std::endl;
 using std::string;
@@ -27,7 +26,7 @@ using std::string;
 namespace Om {
 	
 
-LashDriver::LashDriver(OmApp* app, lash_args_t* args)
+LashDriver::LashDriver(Ingen* app, lash_args_t* args)
 : m_app(app),
   m_client(NULL),
   m_alsa_client_id(0) // FIXME: appropriate sentinel?

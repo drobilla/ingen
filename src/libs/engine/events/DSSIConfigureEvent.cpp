@@ -15,8 +15,7 @@
  */
 
 #include "DSSIConfigureEvent.h"
-#include "Om.h"
-#include "OmApp.h"
+#include "Ingen.h"
 #include "Node.h"
 #include "ClientBroadcaster.h"
 #include "Plugin.h"
@@ -25,7 +24,7 @@
 namespace Om {
 
 
-DSSIConfigureEvent::DSSIConfigureEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& node_path, const string& key, const string& val)
+DSSIConfigureEvent::DSSIConfigureEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& node_path, const string& key, const string& val)
 : QueuedEvent(responder, timestamp),
   m_node_path(node_path),
   m_key(key),
@@ -38,7 +37,7 @@ DSSIConfigureEvent::DSSIConfigureEvent(CountedPtr<Responder> responder, sampleco
 void
 DSSIConfigureEvent::pre_process()
 {
-	Node* node = om->object_store()->find_node(m_node_path);
+	Node* node = Ingen::instance().object_store()->find_node(m_node_path);
 
 	if (node != NULL && node->plugin()->type() == Plugin::DSSI) {
 		m_node = (DSSINode*)node;
@@ -50,7 +49,7 @@ DSSIConfigureEvent::pre_process()
 
 	
 void
-DSSIConfigureEvent::execute(samplecount offset)
+DSSIConfigureEvent::execute(SampleCount offset)
 {
 	// Nothing.
 }
@@ -64,7 +63,7 @@ DSSIConfigureEvent::post_process()
 	} else {
 		string key = "dssi-configure--";
 		key += m_key;
-		om->client_broadcaster()->send_metadata_update(m_node_path, key, m_val);
+		Ingen::instance().client_broadcaster()->send_metadata_update(m_node_path, key, m_val);
 	}
 }
 

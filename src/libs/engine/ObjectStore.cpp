@@ -15,8 +15,6 @@
  */
 
 #include "ObjectStore.h"
-#include "Om.h"
-#include "OmApp.h"
 #include "Patch.h"
 #include "Node.h"
 #include "Port.h"

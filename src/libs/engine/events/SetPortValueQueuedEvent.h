@@ -34,11 +34,11 @@ class Port;
 class SetPortValueQueuedEvent : public QueuedEvent
 {
 public:
-	SetPortValueQueuedEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& port_path, sample val);
-	SetPortValueQueuedEvent(CountedPtr<Responder> responder, samplecount timestamp, size_t voice_num, const string& port_path, sample val);
+	SetPortValueQueuedEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& port_path, Sample val);
+	SetPortValueQueuedEvent(CountedPtr<Responder> responder, SampleCount timestamp, size_t voice_num, const string& port_path, Sample val);
 
 	void pre_process();
-	void execute(samplecount offset);
+	void execute(SampleCount offset);
 	void post_process();
 
 private:

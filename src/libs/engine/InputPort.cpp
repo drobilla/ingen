@@ -21,7 +21,6 @@
 #include "TypedConnection.h"
 #include "OutputPort.h"
 #include "Node.h"
-#include "Om.h"
 #include "util.h"
 
 using std::cerr; using std::cout; using std::endl;
@@ -35,7 +34,7 @@ InputPort<T>::InputPort(Node* parent, const string& name, size_t index, size_t p
 : TypedPort<T>(parent, name, index, poly, type, buffer_size)
 {
 }
-template InputPort<sample>::InputPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size);
+template InputPort<Sample>::InputPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size);
 template InputPort<MidiMessage>::InputPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size);
 
 
@@ -78,7 +77,7 @@ InputPort<T>::add_connection(ListNode<TypedConnection<T>*>* const c)
 	//assert( ! m_is_tied || m_tied_port != NULL);
 	//assert( ! m_is_tied || m_buffers.at(0)->data() == m_tied_port->buffer(0)->data());
 }
-template void InputPort<sample>::add_connection(ListNode<TypedConnection<sample>*>* const c);
+template void InputPort<Sample>::add_connection(ListNode<TypedConnection<Sample>*>* const c);
 template void InputPort<MidiMessage>::add_connection(ListNode<TypedConnection<MidiMessage>*>* const c);
 
 
@@ -133,8 +132,8 @@ InputPort<T>::remove_connection(const OutputPort<T>* const src_port)
 
 	return connection;
 }
-template ListNode<TypedConnection<sample>*>*
-InputPort<sample>::remove_connection(const OutputPort<sample>* const src_port);
+template ListNode<TypedConnection<Sample>*>*
+InputPort<Sample>::remove_connection(const OutputPort<Sample>* const src_port);
 template ListNode<TypedConnection<MidiMessage>*>*
 InputPort<MidiMessage>::remove_connection(const OutputPort<MidiMessage>* const src_port);
 
@@ -151,7 +150,7 @@ InputPort<T>::update_buffers()
 	for (size_t i=0; i < _poly; ++i)
 		InputPort<T>::parent_node()->set_port_buffer(i, _index, m_buffers.at(i)->data());
 }
-template void InputPort<sample>::update_buffers();
+template void InputPort<Sample>::update_buffers();
 template void InputPort<MidiMessage>::update_buffers();
 
 
@@ -168,7 +167,7 @@ InputPort<T>::is_connected_to(const OutputPort<T>* const port) const
 	
 	return false;
 }
-template bool InputPort<sample>::is_connected_to(const OutputPort<sample>* const port) const;
+template bool InputPort<Sample>::is_connected_to(const OutputPort<Sample>* const port) const;
 template bool InputPort<MidiMessage>::is_connected_to(const OutputPort<MidiMessage>* const port) const;
 
 
@@ -201,7 +200,7 @@ InputPort<T>::tie(OutputPort<T>* const port)
 
 	//cerr << "*** Tied " << this->path() << " <-> " << port->path() << endl;
 }
-template void InputPort<sample>::tie(OutputPort<sample>* const port);
+template void InputPort<Sample>::tie(OutputPort<Sample>* const port);
 template void InputPort<MidiMessage>::tie(OutputPort<MidiMessage>* const port);
 */
 
@@ -210,11 +209,11 @@ template void InputPort<MidiMessage>::tie(OutputPort<MidiMessage>* const port);
  */
 template<>
 void
-InputPort<sample>::process(samplecount nframes)
+InputPort<Sample>::process(SampleCount nframes)
 {
 	//assert(!m_is_tied || m_tied_port != NULL);
 
-	typedef List<TypedConnection<sample>*>::iterator TypedConnectionListIterator;
+	typedef List<TypedConnection<Sample>*>::iterator TypedConnectionListIterator;
 	bool do_mixdown = true;
 	
 	if (m_connections.size() == 0) return;
@@ -273,7 +272,7 @@ InputPort<sample>::process(samplecount nframes)
  */
 template <>
 void
-InputPort<MidiMessage>::process(samplecount nframes)
+InputPort<MidiMessage>::process(SampleCount nframes)
 {	
 	//assert(!m_is_tied || m_tied_port != NULL);
 	

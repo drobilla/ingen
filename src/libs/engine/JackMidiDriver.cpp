@@ -18,11 +18,8 @@
 #include <iostream>
 #include <cstdlib>
 #include <pthread.h>
-#include "Om.h"
-#include "OmApp.h"
 #include "types.h"
 #include "midi.h"
-#include "OmApp.h"
 #include "Maid.h"
 #include "AudioDriver.h"
 #include "MidiMessage.h"
@@ -86,11 +83,11 @@ JackMidiPort::remove_from_driver()
  * 1 cycle delay).
  */
 void
-JackMidiPort::prepare_block(const samplecount block_start, const samplecount block_end)
+JackMidiPort::prepare_block(const SampleCount block_start, const SampleCount block_end)
 {
 	assert(block_end >= block_start);
 	
-	const samplecount    nframes     = block_end - block_start;
+	const SampleCount    nframes     = block_end - block_start;
 	void*                jack_buffer = jack_port_get_buffer(m_jack_port, nframes);
 	const jack_nframes_t event_count = jack_midi_port_get_info(jack_buffer, nframes)->event_count;
 	
@@ -161,7 +158,7 @@ JackMidiDriver::deactivate()
 /** Build flat arrays of events for DSSI plugins for each Port.
  */
 void
-JackMidiDriver::prepare_block(const samplecount block_start, const samplecount block_end)
+JackMidiDriver::prepare_block(const SampleCount block_start, const SampleCount block_end)
 {
 	for (List<JackMidiPort*>::iterator i = m_in_ports.begin(); i != m_in_ports.end(); ++i)
 		(*i)->prepare_block(block_start, block_end);

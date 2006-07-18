@@ -39,7 +39,7 @@ typedef jack_default_audio_sample_t jack_sample_t;
 class JackAudioPort : public DriverPort, public ListNode<JackAudioPort*>
 {
 public:
-	JackAudioPort(JackAudioDriver* driver, DuplexPort<sample>* patch_port);
+	JackAudioPort(JackAudioDriver* driver, DuplexPort<Sample>* patch_port);
 	~JackAudioPort();
 	
 	void add_to_driver();
@@ -49,7 +49,7 @@ public:
 	void prepare_buffer(jack_nframes_t nframes);
 
 	jack_port_t*          jack_port() const             { return m_jack_port; }
-	DuplexPort<sample>*   patch_port() const            { return m_patch_port; }
+	DuplexPort<Sample>*   patch_port() const            { return m_patch_port; }
 
 private:
 	// Prevent copies (undefined)
@@ -59,7 +59,7 @@ private:
 	JackAudioDriver*      m_driver;
 	jack_port_t*          m_jack_port;
 	jack_sample_t*        m_jack_buffer; ///< Cached for output ports
-	DuplexPort<sample>*   m_patch_port;
+	DuplexPort<Sample>*   m_patch_port;
 };
 
 
@@ -86,7 +86,7 @@ public:
 
 	void process_events(jack_nframes_t block_start, jack_nframes_t block_end);
 	
-	DriverPort* create_port(DuplexPort<sample>* patch_port);
+	DriverPort* create_port(DuplexPort<Sample>* patch_port);
 	
 	Patch* root_patch()                 { return m_root_patch; }
 	void   set_root_patch(Patch* patch) { m_root_patch = patch; }
@@ -99,11 +99,11 @@ public:
 	bool is_realtime() { return jack_is_realtime(m_client); }
 	
 	jack_client_t* jack_client() const  { return m_client; }
-	samplecount    buffer_size() const  { return m_buffer_size; }
-	samplecount    sample_rate() const  { return m_sample_rate; }
+	SampleCount    buffer_size() const  { return m_buffer_size; }
+	SampleCount    sample_rate() const  { return m_sample_rate; }
 	bool           is_activated() const { return m_is_activated; }
 	
-	samplecount time_stamp() const { return jack_frame_time(m_client); }
+	SampleCount time_stamp() const { return jack_frame_time(m_client); }
 
 private:
 	// Prevent copies (undefined)

@@ -33,10 +33,10 @@ class Patch;
 class AllNotesOffEvent : public Event
 {
 public:
-	AllNotesOffEvent(CountedPtr<Responder> responder, samplecount timestamp, Patch* patch);
-	AllNotesOffEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& patch_path);
+	AllNotesOffEvent(CountedPtr<Responder> responder, SampleCount timestamp, Patch* patch);
+	AllNotesOffEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& patch_path);
 	
-	void execute(samplecount offset);
+	void execute(SampleCount offset);
 	void post_process();
 
 private:

@@ -34,7 +34,7 @@ class Port;
 class PingQueuedEvent : public QueuedEvent
 {
 public:
-	PingQueuedEvent(CountedPtr<Responder> responder, samplecount timestamp) : QueuedEvent(responder, timestamp) {}
+	PingQueuedEvent(CountedPtr<Responder> responder, SampleCount timestamp) : QueuedEvent(responder, timestamp) {}
 
 	void post_process() { _responder->respond_ok(); }
 };

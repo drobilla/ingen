@@ -49,7 +49,7 @@ public:
 		_pre_processed = true;
 	}
 
-	virtual void execute(samplecount offset) {
+	virtual void execute(SampleCount offset) {
 		assert(_pre_processed);
 		Event::execute(offset);
 	}
@@ -67,7 +67,7 @@ protected:
 	QueuedEvent& operator=(const QueuedEvent&);
 	
 	QueuedEvent(CountedPtr<Responder> responder,
-	            samplecount           timestamp, 
+	            SampleCount           timestamp, 
 	            bool                  blocking = false,
 	            QueuedEventSource*    source = NULL)
 	: Event(responder, timestamp)

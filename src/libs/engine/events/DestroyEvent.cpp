@@ -16,8 +16,7 @@
 
 #include "DestroyEvent.h"
 #include "Responder.h"
-#include "Om.h"
-#include "OmApp.h"
+#include "Ingen.h"
 #include "Patch.h"
 #include "Tree.h"
 #include "Node.h"
@@ -35,7 +34,7 @@
 namespace Om {
 
 
-DestroyEvent::DestroyEvent(CountedPtr<Responder> responder, samplecount timestamp, QueuedEventSource* source, const string& path, bool lock_mutex)
+DestroyEvent::DestroyEvent(CountedPtr<Responder> responder, SampleCount timestamp, QueuedEventSource* source, const string& path, bool lock_mutex)
 : QueuedEvent(responder, true, source),
   m_path(path),
   m_node(NULL),
@@ -48,7 +47,7 @@ DestroyEvent::DestroyEvent(CountedPtr<Responder> responder, samplecount timestam
 }
 
 
-DestroyEvent::DestroyEvent(CountedPtr<Responder> responder, samplecount timestamp, Node* node, bool lock_mutex)
+DestroyEvent::DestroyEvent(CountedPtr<Responder> responder, SampleCount timestamp, Node* node, bool lock_mutex)
 : QueuedEvent(responder, true),
   m_path(node->path()),
   m_node(node),
@@ -72,7 +71,7 @@ void
 DestroyEvent::pre_process()
 {
 	if (m_node == NULL)
-		m_node = om->object_store()->find_node(m_path);
+		m_node = Ingen::instance().object_store()->find_node(m_path);
 
 	if (m_node != NULL && m_path != "/") {
 		assert(m_node->parent_patch() != NULL);
@@ -117,7 +116,7 @@ DestroyEvent::pre_process()
 
 
 void
-DestroyEvent::execute(samplecount offset)
+DestroyEvent::execute(SampleCount offset)
 {
 	QueuedEvent::execute(offset);
 
@@ -130,7 +129,7 @@ DestroyEvent::execute(samplecount offset)
 			m_parent_disconnect_event->execute(offset);
 		
 		if (m_node->parent_patch()->process_order() != NULL)
-			om->maid()->push(m_node->parent_patch()->process_order());
+			Ingen::instance().maid()->push(m_node->parent_patch()->process_order());
 		m_node->parent_patch()->process_order(m_process_order);
 	}
 }
@@ -154,9 +153,9 @@ DestroyEvent::post_process()
 			m_disconnect_event->post_process();
 		if (m_parent_disconnect_event != NULL)
 			m_parent_disconnect_event->post_process();
-		om->client_broadcaster()->send_destroyed(m_path);
-		om->maid()->push(m_patch_listnode);
-		om->maid()->push(m_node);
+		Ingen::instance().client_broadcaster()->send_destroyed(m_path);
+		Ingen::instance().maid()->push(m_patch_listnode);
+		Ingen::instance().maid()->push(m_node);
 	} else {
 		_responder->respond_error("Unable to destroy object");
 	}

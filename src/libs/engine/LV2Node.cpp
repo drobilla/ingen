@@ -36,7 +36,7 @@ LV2Node::LV2Node(const Plugin*      plugin,
                  const string&      name,
                  size_t             poly,
                  Patch*             parent,
-                 samplerate         srate,
+                 SampleRate         srate,
                  size_t             buffer_size)
 : NodeBase(plugin, name, poly, parent, srate, buffer_size),
   _lv2_plugin(plugin->slv2_plugin()),
@@ -101,10 +101,10 @@ LV2Node::instantiate()
 			port_buffer_size = _buffer_size;
 		
 		if (is_input) {
-			port = new InputPort<sample>(this, port_name, j, _poly, DataType::FLOAT, port_buffer_size);
+			port = new InputPort<Sample>(this, port_name, j, _poly, DataType::FLOAT, port_buffer_size);
 			_ports->at(j) = port;
 		} else /* output */ {
-			port = new OutputPort<sample>(this, port_name, j, _poly, DataType::FLOAT, port_buffer_size);
+			port = new OutputPort<Sample>(this, port_name, j, _poly, DataType::FLOAT, port_buffer_size);
 			_ports->at(j) = port;
 		}
 
@@ -115,9 +115,9 @@ LV2Node::instantiate()
 
 		// Set default control val
 		/*if (pi->is_control())
-			((TypedPort<sample>*)port)->set_value(pi->default_val(), 0);
+			((TypedPort<Sample>*)port)->set_value(pi->default_val(), 0);
 		else
-			((TypedPort<sample>*)port)->set_value(0.0f, 0);*/
+			((TypedPort<Sample>*)port)->set_value(0.0f, 0);*/
 	}
 	return true;
 }
@@ -137,12 +137,12 @@ LV2Node::activate()
 {
 	NodeBase::activate();
 
-	TypedPort<sample>* port = NULL;
+	TypedPort<Sample>* port = NULL;
 	
 	for (size_t i=0; i < _poly; ++i) {
 		for (unsigned long j=0; j < num_ports(); ++j) {
-			port = static_cast<TypedPort<sample>*>(_ports->at(j));
-			set_port_buffer(i, j, ((TypedPort<sample>*)_ports->at(j))->buffer(i)->data());
+			port = static_cast<TypedPort<Sample>*>(_ports->at(j));
+			set_port_buffer(i, j, ((TypedPort<Sample>*)_ports->at(j))->buffer(i)->data());
 			if (port->type() == DataType::FLOAT && port->buffer_size() == 1)
 				port->set_value(0.0f, 0); // FIXME
 			else if (port->type() == DataType::FLOAT && port->buffer_size() > 1)
@@ -164,7 +164,7 @@ LV2Node::deactivate()
 
 
 void
-LV2Node::process(samplecount nframes)
+LV2Node::process(SampleCount nframes)
 {
 	NodeBase::process(nframes); // mixes down input ports
 	for (size_t i=0; i < _poly; ++i) 

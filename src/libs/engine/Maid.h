@@ -28,7 +28,7 @@
  *
  * cleanup() is meant to be called periodically to free memory, often
  * enough to prevent the queue from overdflowing.  This is done by the
- * main thread (in OmApp.cpp) since it has nothing better to do.
+ * main thread (in Ingen.cpp) since it has nothing better to do.
  *
  * \ingroup engine
  */

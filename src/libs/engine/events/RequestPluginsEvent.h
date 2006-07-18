@@ -36,7 +36,7 @@ namespace Shared {
 class RequestPluginsEvent : public QueuedEvent
 {
 public:
-	RequestPluginsEvent(CountedPtr<Responder> responder, samplecount timestamp);
+	RequestPluginsEvent(CountedPtr<Responder> responder, SampleCount timestamp);
 
 	void pre_process();
 	void post_process();

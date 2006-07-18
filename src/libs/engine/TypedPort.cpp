@@ -40,7 +40,7 @@ TypedPort<T>::TypedPort(Node* parent, const string& name, size_t index, size_t p
 	assert(m_buffers.size() > 0);
 }
 template
-TypedPort<sample>::TypedPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size);
+TypedPort<Sample>::TypedPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size);
 template
 TypedPort<MidiMessage>::TypedPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size);
 
@@ -51,7 +51,7 @@ TypedPort<T>::~TypedPort()
 	for (size_t i=0; i < _poly; ++i)
 		delete m_buffers.at(i);
 }
-template TypedPort<sample>::~TypedPort();
+template TypedPort<Sample>::~TypedPort();
 template TypedPort<MidiMessage>::~TypedPort();
 
 
@@ -59,7 +59,7 @@ template TypedPort<MidiMessage>::~TypedPort();
  */
 template<>
 void
-TypedPort<sample>::set_value(sample val, size_t offset)
+TypedPort<Sample>::set_value(Sample val, size_t offset)
 {
 	if (offset >= _buffer_size)
 		offset = 0;
@@ -75,7 +75,7 @@ TypedPort<sample>::set_value(sample val, size_t offset)
  */
 template<>
 void
-TypedPort<sample>::set_value(size_t voice, sample val, size_t offset)
+TypedPort<Sample>::set_value(size_t voice, Sample val, size_t offset)
 {
 	if (offset >= _buffer_size)
 		offset = 0;
@@ -96,13 +96,13 @@ TypedPort<T>::allocate_buffers()
 	for (size_t i=0; i < _poly; ++i)
 		m_buffers.at(i) = new Buffer<T>(_buffer_size);
 }
-template void TypedPort<sample>::allocate_buffers();
+template void TypedPort<Sample>::allocate_buffers();
 template void TypedPort<MidiMessage>::allocate_buffers();
 
 
 template <typename T>
 void
-TypedPort<T>::process(samplecount nframes)
+TypedPort<T>::process(SampleCount nframes)
 {
 	for (size_t i=0; i < _poly; ++i)
 		m_buffers.at(i)->prepare(nframes);
@@ -116,7 +116,7 @@ TypedPort<T>::clear_buffers()
 	for (size_t i=0; i < _poly; ++i)
 		m_buffers.at(i)->clear();
 }
-template void TypedPort<sample>::clear_buffers();
+template void TypedPort<Sample>::clear_buffers();
 template void TypedPort<MidiMessage>::clear_buffers();
 
 

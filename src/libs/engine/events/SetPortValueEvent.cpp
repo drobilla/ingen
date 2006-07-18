@@ -16,8 +16,7 @@
 
 #include "SetPortValueEvent.h"
 #include "Responder.h"
-#include "Om.h"
-#include "OmApp.h"
+#include "Ingen.h"
 #include "TypedPort.h"
 #include "ClientBroadcaster.h"
 #include "Node.h"
@@ -28,7 +27,7 @@ namespace Om {
 
 /** Voice-specific control setting
  */
-SetPortValueEvent::SetPortValueEvent(CountedPtr<Responder> responder, samplecount timestamp, size_t voice_num, const string& port_path, sample val)
+SetPortValueEvent::SetPortValueEvent(CountedPtr<Responder> responder, SampleCount timestamp, size_t voice_num, const string& port_path, Sample val)
 : Event(responder, timestamp),
   m_voice_num(voice_num),
   m_port_path(port_path),
@@ -39,7 +38,7 @@ SetPortValueEvent::SetPortValueEvent(CountedPtr<Responder> responder, samplecoun
 }
 
 
-SetPortValueEvent::SetPortValueEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& port_path, sample val)
+SetPortValueEvent::SetPortValueEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& port_path, Sample val)
 : Event(responder, timestamp),
   m_voice_num(-1),
   m_port_path(port_path),
@@ -51,10 +50,10 @@ SetPortValueEvent::SetPortValueEvent(CountedPtr<Responder> responder, samplecoun
 
 
 void
-SetPortValueEvent::execute(samplecount offset)
+SetPortValueEvent::execute(SampleCount offset)
 {
 	if (m_port == NULL)
-		m_port = om->object_store()->find_port(m_port_path);
+		m_port = Ingen::instance().object_store()->find_port(m_port_path);
 
 	if (m_port == NULL) {
 		m_error = PORT_NOT_FOUND;
@@ -62,10 +61,10 @@ SetPortValueEvent::execute(samplecount offset)
 		m_error = TYPE_MISMATCH;
 	} else {
 		if (m_voice_num == -1) 
-			((TypedPort<sample>*)m_port)->set_value(m_val, offset);
+			((TypedPort<Sample>*)m_port)->set_value(m_val, offset);
 		else
-			((TypedPort<sample>*)m_port)->set_value(m_voice_num, m_val, offset);
-			//((TypedPort<sample>*)m_port)->buffer(m_voice_num)->set(m_val, offset); // FIXME: check range
+			((TypedPort<Sample>*)m_port)->set_value(m_voice_num, m_val, offset);
+			//((TypedPort<Sample>*)m_port)->buffer(m_voice_num)->set(m_val, offset); // FIXME: check range
 	}
 }
 
@@ -77,13 +76,13 @@ SetPortValueEvent::post_process()
 		assert(m_port != NULL);
 		
 		_responder->respond_ok();
-		om->client_broadcaster()->send_control_change(m_port_path, m_val);
+		Ingen::instance().client_broadcaster()->send_control_change(m_port_path, m_val);
 		
 		// Send patch port control change, if this is a bridge port
 		/*Port* parent_port = m_port->parent_node()->as_port();
 		if (parent_port != NULL) {
 			assert(parent_port->type() == DataType::FLOAT);
-			om->client_broadcaster()->send_control_change(parent_port->path(), m_val);
+			Ingen::instance().client_broadcaster()->send_control_change(parent_port->path(), m_val);
 		}*/
 
 	} else if (m_error == PORT_NOT_FOUND) {

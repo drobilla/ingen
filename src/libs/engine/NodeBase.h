@@ -40,7 +40,7 @@ namespace Shared {
 class NodeBase : public Node
 {
 public:
-	NodeBase(const Plugin* plugin, const string& name, size_t poly, Patch* parent, samplerate srate, size_t buffer_size);
+	NodeBase(const Plugin* plugin, const string& name, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size);
 
 	virtual ~NodeBase();
 
@@ -48,7 +48,7 @@ public:
 	virtual void deactivate();
 	bool activated() { return _activated; }
 
-	virtual void process(samplecount nframes);
+	virtual void process(SampleCount nframes);
 		
 	virtual void set_port_buffer(size_t voice, size_t port_num, void* buf) {}
 	
@@ -89,7 +89,7 @@ protected:
 
 	size_t      _poly;
 
-	samplerate  _srate;
+	SampleRate  _srate;
 	size_t      _buffer_size;
 	bool        _activated;
 

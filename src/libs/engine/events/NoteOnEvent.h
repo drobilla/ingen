@@ -34,10 +34,10 @@ class Node;
 class NoteOnEvent : public Event
 {
 public:
-	NoteOnEvent(CountedPtr<Responder> responder, samplecount timestamp, Node* patch, uchar note_num, uchar velocity);
-	NoteOnEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& node_path, uchar note_num, uchar velocity);
+	NoteOnEvent(CountedPtr<Responder> responder, SampleCount timestamp, Node* patch, uchar note_num, uchar velocity);
+	NoteOnEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& node_path, uchar note_num, uchar velocity);
 	
-	void execute(samplecount offset);
+	void execute(SampleCount offset);
 	void post_process();
 
 private:

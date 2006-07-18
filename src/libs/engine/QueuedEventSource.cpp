@@ -82,7 +82,7 @@ QueuedEventSource::push_stamped(Event* const ev)
  * it wants).
  */
 Event*
-QueuedEventSource::pop_earliest_queued_before(const samplecount time)
+QueuedEventSource::pop_earliest_queued_before(const SampleCount time)
 {
 	QueuedEvent* const front_event = _events[_front];
 	

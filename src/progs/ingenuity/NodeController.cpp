@@ -204,7 +204,6 @@ NodeController::add_port(CountedPtr<PortModel> pm)
 	// FIXME: leak
 	PortController* pc = new PortController(pm);
 	assert(pm->controller() == pc);
-	//pc->add_to_store();
 	
 	if (m_module != NULL) {
 		pc->create_port(m_module);

@@ -15,8 +15,7 @@
  */
 
 #include "DSSIControlEvent.h"
-#include "Om.h"
-#include "OmApp.h"
+#include "Ingen.h"
 #include "Node.h"
 #include "Plugin.h"
 #include "ObjectStore.h"
@@ -24,7 +23,7 @@
 namespace Om {
 
 
-DSSIControlEvent::DSSIControlEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& node_path, int port_num, sample val)
+DSSIControlEvent::DSSIControlEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& node_path, int port_num, Sample val)
 : QueuedEvent(responder, timestamp),
   m_node_path(node_path),
   m_port_num(port_num),
@@ -37,7 +36,7 @@ DSSIControlEvent::DSSIControlEvent(CountedPtr<Responder> responder, samplecount 
 void
 DSSIControlEvent::pre_process()
 {
-	Node* node = om->object_store()->find_node(m_node_path);
+	Node* node = Ingen::instance().object_store()->find_node(m_node_path);
 
 	if (node->plugin()->type() != Plugin::DSSI)
 		m_node = NULL;
@@ -49,7 +48,7 @@ DSSIControlEvent::pre_process()
 
 	
 void
-DSSIControlEvent::execute(samplecount offset)
+DSSIControlEvent::execute(SampleCount offset)
 {
 	if (m_node != NULL)
 		m_node->set_control(m_port_num, m_val);

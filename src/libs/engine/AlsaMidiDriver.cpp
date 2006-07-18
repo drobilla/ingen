@@ -18,10 +18,9 @@
 #include <iostream>
 #include <cstdlib>
 #include <pthread.h>
-#include "Om.h"
-#include "OmApp.h"
+#include "Ingen.h"
 #include "types.h"
-#include "OmApp.h"
+#include "Ingen.h"
 #include "Maid.h"
 #include "AudioDriver.h"
 #include "MidiMessage.h"
@@ -120,7 +119,7 @@ void
 AlsaMidiPort::event(snd_seq_event_t* const ev)
 {
 	// Abuse the tick field to hold the timestamp
-	ev->time.tick = om->audio_driver()->time_stamp();
+	ev->time.tick = Ingen::instance().audio_driver()->time_stamp();
 	
 	// Fix noteons with velocity 0 (required for DSSI spec)
 	if (ev->type == SND_SEQ_EVENT_NOTEON && ev->data.note.velocity == 0)
@@ -137,7 +136,7 @@ AlsaMidiPort::event(snd_seq_event_t* const ev)
  * 1 cycle delay) and creates a flat port buffer for this cycle.
  */
 void
-AlsaMidiPort::prepare_block(const samplecount block_start, const samplecount block_end)
+AlsaMidiPort::prepare_block(const SampleCount block_start, const SampleCount block_end)
 {
 	assert(block_end >= block_start);
 	
@@ -233,7 +232,7 @@ AlsaMidiDriver::activate()
 	bool success = false;
 	m_midi_thread_exit_flag = false;
 
-	//if (om->audio_driver()->is_realtime()) {
+	//if (Ingen::instance().audio_driver()->is_realtime()) {
 		pthread_attr_t attr;
 		pthread_attr_init(&attr);
 
@@ -268,7 +267,7 @@ AlsaMidiDriver::activate()
 	}
 	
 #ifdef HAVE_LASH
-	om->lash_driver()->set_alsa_client_id(snd_seq_client_id(m_seq_handle));
+	Ingen::instance().lash_driver()->set_alsa_client_id(snd_seq_client_id(m_seq_handle));
 #endif
 
 	m_is_activated = true;
@@ -292,7 +291,7 @@ AlsaMidiDriver::deactivate()
 /** Build flat arrays of events for DSSI plugins for each Port.
  */
 void
-AlsaMidiDriver::prepare_block(const samplecount block_start, const samplecount block_end)
+AlsaMidiDriver::prepare_block(const SampleCount block_start, const SampleCount block_end)
 {
 	for (List<AlsaMidiPort*>::iterator i = m_in_ports.begin(); i != m_in_ports.end(); ++i)
 		(*i)->prepare_block(block_start, block_end);

@@ -17,8 +17,7 @@
 #include "RequestPortValueEvent.h"
 #include <string>
 #include "Responder.h"
-#include "Om.h"
-#include "OmApp.h"
+#include "Ingen.h"
 #include "interface/ClientInterface.h"
 #include "TypedPort.h"
 #include "ObjectStore.h"
@@ -29,7 +28,7 @@ using std::string;
 namespace Om {
 
 
-RequestPortValueEvent::RequestPortValueEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& port_path)
+RequestPortValueEvent::RequestPortValueEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& port_path)
 : QueuedEvent(responder, timestamp),
   m_port_path(port_path),
   m_port(NULL),
@@ -43,17 +42,17 @@ void
 RequestPortValueEvent::pre_process()
 {
 	m_client = _responder->find_client();
-	m_port = om->object_store()->find_port(m_port_path);
+	m_port = Ingen::instance().object_store()->find_port(m_port_path);
 
 	QueuedEvent::pre_process();
 }
 
 
 void
-RequestPortValueEvent::execute(samplecount offset)
+RequestPortValueEvent::execute(SampleCount offset)
 {
 	if (m_port != NULL && m_port->type() == DataType::FLOAT)
-		m_value = ((TypedPort<sample>*)m_port)->buffer(0)->value_at(offset);
+		m_value = ((TypedPort<Sample>*)m_port)->buffer(0)->value_at(offset);
 	else 
 		m_port = NULL; // triggers error response
 

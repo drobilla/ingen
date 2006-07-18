@@ -21,24 +21,15 @@
 #include "Patch.h"
 #include "Plugin.h"
 #include "Port.h"
-#include "ClientBroadcaster.h"
-#include "InternalNode.h"
 #include "Connection.h"
-#include "Om.h"
-#include "OmApp.h"
-#include "TypedPort.h"
-#include "ObjectStore.h"
-#include "InputPort.h"
-#include "OutputPort.h"
 #include "DuplexPort.h"
-#include "interface/ClientInterface.h"
 
 using std::cerr; using std::cout; using std::endl;
 
 namespace Om {
 
 
-Patch::Patch(const string& path, size_t poly, Patch* parent, samplerate srate, size_t buffer_size, size_t internal_poly) 
+Patch::Patch(const string& path, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size, size_t internal_poly) 
 : NodeBase(new Plugin(Plugin::Patch, "Om:Patch"), path, poly, parent, srate, buffer_size),
   _internal_poly(internal_poly),
   _process_order(NULL),
@@ -123,7 +114,7 @@ Patch::process(bool p)
  * Calls all Nodes in the order _process_order specifies.
  */
 void
-Patch::process(samplecount nframes)
+Patch::process(SampleCount nframes)
 {
 	if (_process_order == NULL || !_process)
 		return;
@@ -148,48 +139,6 @@ Patch::process(samplecount nframes)
 }
 
 
-#if 0
-void
-Patch::send_creation_messages(ClientInterface* client) const
-{
-	cerr << "FIXME: creation\n";
-
-	om->client_broadcaster()->send_patch_to(client, this);
-	
-	for (List<Node*>::const_iterator j = _nodes.begin(); j != _nodes.end(); ++j) {
-		Node* node = (*j);
-		Port* port = node->as_port(); // NULL unless a bridge node
-		node->send_creation_messages(client);
-		
-		usleep(100);
-
-		// If this is a bridge (input/output) node, send the patch control value as well
-		if (port != NULL && port->port_info()->is_control())
-			om->client_broadcaster()->send_control_change_to(client, port->path(),
-				((TypedPort<sample>*)port)->buffer(0)->value_at(0));
-	}
-	
-	for (List<Connection*>::const_iterator j = _connections.begin(); j != _connections.end(); ++j) {
-		om->client_broadcaster()->send_connection_to(client, *j);
-	}
-	
-	// Send port information
-	/*for (size_t i=0; i < _ports.size(); ++i) {
-		Port* const port = _ports.at(i);
-
-		// Send metadata
-		const map<string, string>& data = port->metadata();
-		for (map<string, string>::const_iterator i = data.begin(); i != data.end(); ++i)
-			om->client_broadcaster()->send_metadata_update_to(client, port->path(), (*i).first, (*i).second);
-		
-		if (port->port_info()->is_control())
-			om->client_broadcaster()->send_control_change_to(client, port->path(),
-				((TypedPort<sample>*)port)->buffer(0)->value_at(0));
-	}*/
-}
-#endif
-
-
 void
 Patch::add_to_store()
 {
@@ -209,10 +158,8 @@ Patch::remove_from_store()
 	NodeBase::remove_from_store();
 
 	// Remove nodes
-	for (List<Node*>::iterator j = _nodes.begin(); j != _nodes.end(); ++j) {
+	for (List<Node*>::iterator j = _nodes.begin(); j != _nodes.end(); ++j)
 		(*j)->remove_from_store();
-		assert(om->object_store()->find((*j)->path()) == NULL);
-	}
 }
 
 
@@ -298,7 +245,7 @@ Patch::create_port(const string& name, DataType type, size_t buffer_size, bool i
 
 	// FIXME: is it possible to just "pass" the type directly as the template parameter somehow?
 	if (type == DataType::FLOAT)
-		return new DuplexPort<sample>(this, name, 0, _poly, type, buffer_size, is_output);
+		return new DuplexPort<Sample>(this, name, 0, _poly, type, buffer_size, is_output);
 	else if (type == DataType::MIDI)
 		return new DuplexPort<MidiMessage>(this, name, 0, _poly, type, buffer_size, is_output);
 	else

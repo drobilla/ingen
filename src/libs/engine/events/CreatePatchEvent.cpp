@@ -20,8 +20,7 @@
 #include "Node.h"
 #include "Tree.h"
 #include "Plugin.h"
-#include "Om.h"
-#include "OmApp.h"
+#include "Ingen.h"
 #include "Maid.h"
 #include "ClientBroadcaster.h"
 #include "AudioDriver.h"
@@ -31,7 +30,7 @@
 namespace Om {
 
 
-CreatePatchEvent::CreatePatchEvent(CountedPtr<Responder> responder, samplecount timestamp, const string& path, int poly)
+CreatePatchEvent::CreatePatchEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& path, int poly)
 : QueuedEvent(responder, timestamp),
   m_path(path),
   m_patch(NULL),
@@ -46,7 +45,7 @@ CreatePatchEvent::CreatePatchEvent(CountedPtr<Responder> responder, samplecount 
 void
 CreatePatchEvent::pre_process()
 {
-	if (om->object_store()->find(m_path) != NULL) {
+	if (Ingen::instance().object_store()->find(m_path) != NULL) {
 		m_error = OBJECT_EXISTS;
 		QueuedEvent::pre_process();
 		return;
@@ -59,7 +58,7 @@ CreatePatchEvent::pre_process()
 	}
 	
 	if (m_path != "/") {
-		m_parent = om->object_store()->find_patch(m_path.parent());
+		m_parent = Ingen::instance().object_store()->find_patch(m_path.parent());
 		if (m_parent == NULL) {
 			m_error = PARENT_NOT_FOUND;
 			QueuedEvent::pre_process();
@@ -71,7 +70,7 @@ CreatePatchEvent::pre_process()
 	if (m_parent != NULL && m_poly > 1 && m_poly == static_cast<int>(m_parent->internal_poly()))
 		poly = m_poly;
 	
-	m_patch = new Patch(m_path.name(), poly, m_parent, om->audio_driver()->sample_rate(), om->audio_driver()->buffer_size(), m_poly);
+	m_patch = new Patch(m_path.name(), poly, m_parent, Ingen::instance().audio_driver()->sample_rate(), Ingen::instance().audio_driver()->buffer_size(), m_poly);
 		
 	if (m_parent != NULL) {
 		m_parent->add_node(new ListNode<Node*>(m_patch));
@@ -90,7 +89,7 @@ CreatePatchEvent::pre_process()
 
 
 void
-CreatePatchEvent::execute(samplecount offset)
+CreatePatchEvent::execute(SampleCount offset)
 {
 	QueuedEvent::execute(offset);
 
@@ -98,7 +97,7 @@ CreatePatchEvent::execute(samplecount offset)
 		if (m_parent == NULL) {
 			assert(m_path == "/");
 			assert(m_patch->parent_patch() == NULL);
-			om->audio_driver()->set_root_patch(m_patch);
+			Ingen::instance().audio_driver()->set_root_patch(m_patch);
 		} else {
 			assert(m_parent != NULL);
 			assert(m_path != "/");
@@ -106,7 +105,7 @@ CreatePatchEvent::execute(samplecount offset)
 			m_patch->add_to_patch();
 			
 			if (m_parent->process_order() != NULL)
-				om->maid()->push(m_parent->process_order());
+				Ingen::instance().maid()->push(m_parent->process_order());
 			m_parent->process_order(m_process_order);
 		}
 	}
@@ -122,10 +121,10 @@ CreatePatchEvent::post_process()
 			_responder->respond_ok();
 			
 			// Don't want to send nodes that have been added since prepare()
-			//om->client_broadcaster()->send_node_creation_messages(m_patch);
+			//Ingen::instance().client_broadcaster()->send_node_creation_messages(m_patch);
 
 			// Patches are always empty on creation, so this is fine
-			om->client_broadcaster()->send_patch(m_patch);
+			Ingen::instance().client_broadcaster()->send_patch(m_patch);
 			
 		} else if (m_error == OBJECT_EXISTS) {
 			string msg = "Unable to create patch: ";

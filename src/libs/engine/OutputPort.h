@@ -60,7 +60,7 @@ private:
 };
 
 
-template class OutputPort<sample>;
+template class OutputPort<Sample>;
 
 } // namespace Om
 

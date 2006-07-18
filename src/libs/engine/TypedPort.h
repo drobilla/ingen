@@ -49,7 +49,7 @@ public:
 	
 	Buffer<T>* buffer(size_t voice) const { return m_buffers.at(voice); }
 	
-	virtual void process(samplecount nframes);
+	virtual void process(SampleCount nframes);
 	virtual void clear_buffers();
 	
 	/** Used by drivers to prevent port from changing buffers */
@@ -71,7 +71,7 @@ protected:
 };
 
 
-template class TypedPort<sample>;
+template class TypedPort<Sample>;
 template class TypedPort<MidiMessage>;
 
 } // namespace Om

@@ -41,7 +41,7 @@ Buffer<T>::Buffer(size_t size)
 	allocate();
 	assert(m_data);
 }
-template Buffer<sample>::Buffer(size_t size);
+template Buffer<Sample>::Buffer(size_t size);
 template Buffer<MidiMessage>::Buffer(size_t size);
 
 
@@ -68,7 +68,7 @@ Buffer<T>::allocate()
 
 	set(0, 0, m_size-1);
 }
-template void Buffer<sample>::allocate();
+template void Buffer<Sample>::allocate();
 template void Buffer<MidiMessage>::allocate();
 
 
@@ -84,7 +84,7 @@ Buffer<T>::deallocate()
 		m_data = NULL;
 	m_local_data = NULL;
 }
-template void Buffer<sample>::deallocate();
+template void Buffer<Sample>::deallocate();
 template void Buffer<MidiMessage>::deallocate();
 
 
@@ -98,7 +98,7 @@ Buffer<T>::clear()
 	m_state = OK;
 	m_filled_size = 0;
 }
-template void Buffer<sample>::clear();
+template void Buffer<Sample>::clear();
 template void Buffer<MidiMessage>::clear();
 
 
@@ -121,7 +121,7 @@ Buffer<T>::set(T val, size_t start_sample)
 
 	m_set_value = val;
 }
-template void Buffer<sample>::set(sample val, size_t start_sample);
+template void Buffer<Sample>::set(Sample val, size_t start_sample);
 template void Buffer<MidiMessage>::set(MidiMessage val, size_t start_sample);
 
 
@@ -140,7 +140,7 @@ Buffer<T>::set(T val, size_t start_sample, size_t end_sample)
 	for (size_t i=start_sample; i <= end_sample; ++i)
 		m_data[i] = val;
 }
-template void Buffer<sample>::set(sample val, size_t start_sample, size_t end_sample);
+template void Buffer<Sample>::set(Sample val, size_t start_sample, size_t end_sample);
 template void Buffer<MidiMessage>::set(MidiMessage val, size_t start_sample, size_t end_sample);
 
 
@@ -159,7 +159,7 @@ Buffer<T>::scale(T val, size_t start_sample, size_t end_sample)
 	for (size_t i=start_sample; i <= end_sample; ++i)
 		m_data[i] *= val;
 }
-template void Buffer<sample>::scale(sample val, size_t start_sample, size_t end_sample);
+template void Buffer<Sample>::scale(Sample val, size_t start_sample, size_t end_sample);
 
 
 /** Copy a block of @a src into buffer.
@@ -182,7 +182,7 @@ Buffer<T>::copy(const Buffer<T>* src, size_t start_sample, size_t end_sample)
 	for (size_t i=start_sample; i <= end_sample; ++i)
 		m_data[i] = src_data[i];
 }
-template void Buffer<sample>::copy(const Buffer<sample>* const src, size_t start_sample, size_t end_sample);
+template void Buffer<Sample>::copy(const Buffer<Sample>* const src, size_t start_sample, size_t end_sample);
 template void Buffer<MidiMessage>::copy(const Buffer<MidiMessage>* const src, size_t start_sample, size_t end_sample);
 
 
@@ -207,7 +207,7 @@ Buffer<T>::accumulate(const Buffer<T>* const src, size_t start_sample, size_t en
 		m_data[i] += src_data[i];
 	
 }
-template void Buffer<sample>::accumulate(const Buffer<sample>* const src, size_t start_sample, size_t end_sample);
+template void Buffer<Sample>::accumulate(const Buffer<Sample>* const src, size_t start_sample, size_t end_sample);
 
 
 /** Use another buffer's data instead of the local one.
@@ -226,7 +226,7 @@ Buffer<T>::join(Buffer<T>* buf)
 
 	assert(m_filled_size <= m_size);
 }
-template void Buffer<sample>::join(Buffer<sample>* buf);
+template void Buffer<Sample>::join(Buffer<Sample>* buf);
 template void Buffer<MidiMessage>::join(Buffer<MidiMessage>* buf);
 
 	
@@ -237,13 +237,13 @@ Buffer<T>::unjoin()
 	m_is_joined = false;
 	m_data = m_local_data;
 }
-template void Buffer<sample>::unjoin();
+template void Buffer<Sample>::unjoin();
 template void Buffer<MidiMessage>::unjoin();
 
 
 template<>
 void
-Buffer<sample>::prepare(samplecount nframes)
+Buffer<Sample>::prepare(SampleCount nframes)
 {
 	// FIXME: nframes parameter doesn't actually work,
 	// writing starts from 0 every time
@@ -265,7 +265,7 @@ Buffer<sample>::prepare(samplecount nframes)
 
 template<>
 void
-Buffer<MidiMessage>::prepare(samplecount nframes)
+Buffer<MidiMessage>::prepare(SampleCount nframes)
 {
 }
 
@@ -281,7 +281,7 @@ Buffer<T>::set_data(T* data)
 	assert(!m_is_joined);
 	m_data = data;
 }
-template void Buffer<sample>::set_data(sample* data);
+template void Buffer<Sample>::set_data(Sample* data);
 template void Buffer<MidiMessage>::set_data(MidiMessage* data);
 
 
@@ -294,7 +294,7 @@ DriverBuffer<T>::DriverBuffer(size_t size)
 	Buffer<T>::deallocate(); // FIXME: allocate then immediately deallocate, dirty
 	Buffer<T>::m_data = NULL;
 }
-template DriverBuffer<sample>::DriverBuffer(size_t size);
+template DriverBuffer<Sample>::DriverBuffer(size_t size);
 template DriverBuffer<MidiMessage>::DriverBuffer(size_t size);
 
 
@@ -309,7 +309,7 @@ DriverBuffer<T>::set_data(T* data)
 	assert(!m_is_joined);
 	m_data = data;
 }
-template void DriverBuffer<sample>::set_data(sample* data);
+template void DriverBuffer<Sample>::set_data(sample* data);
 template void DriverBuffer<MidiMessage>::set_data(MidiMessage* data);
 #endif
 

@@ -16,9 +16,6 @@
 
 #include "Port.h"
 #include "Node.h"
-#include "Om.h"
-#include "OmApp.h"
-#include "ObjectStore.h"
 #include "DataType.h"
 
 namespace Om {
@@ -37,24 +34,6 @@ Port::Port(Node* const node, const string& name, size_t index, size_t poly, Data
 {
 	assert(node != NULL);
 	assert(_poly > 0);
-}
-
-
-void
-Port::add_to_store()
-{
-	om->object_store()->add(this);
-}
-
-
-void
-Port::remove_from_store()
-{
-	// Remove self
-	TreeNode<GraphObject*>* node = om->object_store()->remove(path());
-	assert(node != NULL);
-	assert(om->object_store()->find(path()) == NULL);
-	delete node;
 }
 
 

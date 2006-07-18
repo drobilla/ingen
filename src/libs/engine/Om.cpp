@@ -15,7 +15,7 @@
  */
 
 #include "config.h"
-#include "OmApp.h"
+#include "Ingen.h"
 #ifdef HAVE_LASH
 #include "LashDriver.h"
 #endif
@@ -29,5 +29,5 @@
  */
 namespace Om
 {
-	OmApp* om = 0;
+	Ingen* om = 0;
 }

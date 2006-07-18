@@ -39,7 +39,7 @@ public:
 	TypedConnection(OutputPort<T>* const src_port, InputPort<T>* const dst_port);
 	virtual ~TypedConnection();
 
-	void process(samplecount nframes);
+	void process(SampleCount nframes);
 
 	inline OutputPort<T>* src_port() const { return dynamic_cast<OutputPort<T>*>(m_src_port); }
 	inline InputPort<T>*  dst_port() const { return dynamic_cast<InputPort<T>*>(m_dst_port); }
@@ -68,10 +68,10 @@ private:
 
 
 template <>
-inline Buffer<sample>* 
-TypedConnection<sample>::buffer(size_t voice) const
+inline Buffer<Sample>* 
+TypedConnection<Sample>::buffer(size_t voice) const
 {
-	TypedPort<sample>* const src_port = (TypedPort<sample>*)m_src_port;
+	TypedPort<Sample>* const src_port = (TypedPort<Sample>*)m_src_port;
 	
 	if (m_must_mix) {
 		return m_local_buffer;
@@ -97,7 +97,7 @@ TypedConnection<MidiMessage>::buffer(size_t voice) const
 }
 
 
-template class TypedConnection<sample>;
+template class TypedConnection<Sample>;
 template class TypedConnection<MidiMessage>;
 
 } // namespace Om
