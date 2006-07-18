@@ -39,15 +39,18 @@ template <typename T> class Driver;
 
 /** The main class for Om, the whole app lives in here
  *
- * This class should not exist.
+ * A singleton, but shouldn't be (FIXME).  Explicitly instantiated singleton
+ * to be exact - call instantiate before instance or suffer horrible death.
  *
  * \ingroup engine
  */
 class OmApp
 {
 public:
-	OmApp(const char* const port, AudioDriver* audio_driver = 0);
 	~OmApp();
+
+	static void instantiate(const char* port, AudioDriver* audio_driver = 0);
+	OmApp&      instance() { assert(m_instance); return *m_instance; }
 	
 	int main();
 	
@@ -57,7 +60,6 @@ public:
 	
 	void activate();
 	void deactivate();
-
 
 	AudioDriver*       audio_driver()       const { return m_audio_driver; }
 	OSCReceiver*       osc_receiver()       const { return m_osc_receiver; }
@@ -75,10 +77,13 @@ public:
 	template<typename T> Driver<T>* driver();
 	
 private:
+	OmApp(const char* port, AudioDriver* audio_driver = 0);
+
 	// Prevent copies
 	OmApp(const OmApp&);
 	OmApp& operator=(const OmApp&);
-	
+
+	static OmApp*      m_instance;
 
 	AudioDriver*       m_audio_driver;
 	OSCReceiver*       m_osc_receiver;
