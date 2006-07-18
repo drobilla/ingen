@@ -14,8 +14,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "Om.h"
-#include "OmApp.h"	
+#include "Ingen.h"	
 #include "config.h"
 #include "tuning.h"
 #include <sys/mman.h>
@@ -50,7 +49,18 @@ using std::cout; using std::cerr; using std::endl;
 namespace Om {
 
 
-OmApp::OmApp(const char* port, AudioDriver* audio_driver)
+Ingen::m_instance = NULL;
+
+
+static void
+Ingen::instantiate(const char* port, AudioDriver* audio_driver = 0)
+{
+	assert(!m_instance);
+	m_instance = new Ingen(port, audio_driver);
+}
+
+
+Ingen::Ingen(const char* port, AudioDriver* audio_driver)
 : m_audio_driver( (audio_driver) ? audio_driver : new JackAudioDriver() ),
   m_osc_receiver(new OSCReceiver(pre_processor_queue_size, port)),
 #ifdef HAVE_JACK_MIDI
@@ -77,7 +87,7 @@ OmApp::OmApp(const char* port, AudioDriver* audio_driver)
 }
 
 
-OmApp::~OmApp()
+Ingen::~Ingen()
 {
 	deactivate();
 
@@ -107,13 +117,13 @@ OmApp::~OmApp()
  * more elegant and extensible, but this is faster and simpler - for now.
  */
 template<>
-Driver<MidiMessage>* OmApp::driver<MidiMessage>() { return m_midi_driver; }
+Driver<MidiMessage>* Ingen::driver<MidiMessage>() { return m_midi_driver; }
 template<>
-Driver<sample>* OmApp::driver<sample>() { return m_audio_driver; }
+Driver<Sample>* Ingen::driver<Sample>() { return m_audio_driver; }
 
 
 int
-OmApp::main()
+Ingen::main()
 {
 	// Loop until quit flag is set (by OSCReceiver)
 	while ( ! m_quit_flag) {
@@ -139,7 +149,7 @@ OmApp::main()
 
 
 void
-OmApp::activate()
+Ingen::activate()
 {
 	if (m_activated)
 		return;
@@ -168,7 +178,7 @@ OmApp::activate()
 
 
 void
-OmApp::deactivate()
+Ingen::deactivate()
 {
 	if (!m_activated)
 		return;
