@@ -25,7 +25,7 @@
 #include "PatchModel.h"
 #include "Configuration.h"
 
-namespace OmGtk {
+namespace Ingenuity {
 
 
 LoadSubpatchWindow::LoadSubpatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
@@ -174,4 +174,4 @@ LoadSubpatchWindow::cancel_clicked()
 }
 
 
-} // namespace OmGtk
+} // namespace Ingenuity

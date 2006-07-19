@@ -24,7 +24,7 @@
 
 using std::cerr; using std::endl;
 
-namespace Om {
+namespace Ingen {
 
 
 DSSIUpdateEvent::DSSIUpdateEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& url)
@@ -75,5 +75,5 @@ DSSIUpdateEvent::post_process()
 }
 
 
-} // namespace Om
+} // namespace Ingen
 

@@ -23,7 +23,7 @@
 #include <gtkmm.h>
 
 
-namespace OmGtk {
+namespace Ingenuity {
 	
 class PatchController;
 
@@ -32,7 +32,7 @@ class PatchController;
  *
  * Loaded by glade as a derived object.
  *
- * \ingroup OmGtk
+ * \ingroup Ingenuity
  */
 class LoadSubpatchWindow : public Gtk::FileChooserDialog
 {
@@ -73,6 +73,6 @@ private:
 };
  
 
-} // namespace OmGtk
+} // namespace Ingenuity
 
 #endif // LOADSUBPATCHWINDOW_H

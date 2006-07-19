@@ -20,12 +20,12 @@
 #include <string>
 using std::string;
 
-namespace Om {
+namespace Ingen {
 
 template <typename T> class DuplexPort;
 
 
-/** Representation of a system (outside Om, ie hardware) audio port.
+/** Representation of a "system" (eg outside Ingen) port.
  *
  * This is the class through which the rest of the engine manages everything 
  * related to driver ports.  Derived classes are expected to have a pointer to
@@ -107,6 +107,6 @@ public:
 #endif
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // DRIVER_H

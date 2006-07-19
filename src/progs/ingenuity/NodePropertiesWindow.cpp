@@ -20,7 +20,7 @@
 #include "NodeModel.h"
 #include "PluginModel.h"
 
-namespace OmGtk {
+namespace Ingenuity {
 using std::string;
 
 
@@ -61,5 +61,5 @@ NodePropertiesWindow::set_node(CountedPtr<NodeModel> node_model)
 }
 
 
-} // namespace OmGtk
+} // namespace Ingenuity
 

@@ -16,7 +16,7 @@
 
 #include "GtkObjectController.h"
 
-namespace OmGtk {
+namespace Ingenuity {
 
 	
 GtkObjectController::GtkObjectController(CountedPtr<ObjectModel> model)
@@ -27,5 +27,5 @@ GtkObjectController::GtkObjectController(CountedPtr<ObjectModel> model)
 }
 
 
-} // namespace OmGtk
+} // namespace Ingenuity
 

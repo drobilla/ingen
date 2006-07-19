@@ -24,7 +24,7 @@
 
 using namespace std;
 
-namespace Om {
+namespace Ingen {
 
 
 DSSINode::DSSINode(const Plugin* plugin, const string& name, size_t poly, Patch* parent, DSSI_Descriptor* descriptor, SampleRate srate, size_t buffer_size)
@@ -334,4 +334,4 @@ DSSINode::send_creation_messages(ClientInterface* client) const
 }
 */
 
-} // namespace Om
+} // namespace Ingen

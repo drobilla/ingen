@@ -30,7 +30,7 @@
 
 using std::cout; using std::cerr; using std::endl;
 
-namespace Om {
+namespace Ingen {
 
 
 NodeBase::NodeBase(const Plugin* plugin, const string& name, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size)
@@ -165,5 +165,5 @@ NodeBase::set_path(const Path& new_path)
 }
 
 
-} // namespace Om
+} // namespace Ingen
 

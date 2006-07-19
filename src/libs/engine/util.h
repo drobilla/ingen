@@ -27,7 +27,7 @@
 
 using std::cerr; using std::endl;
 
-namespace Om {
+namespace Ingen {
 
 /** Set flags to disable denormal processing.
  */
@@ -68,6 +68,6 @@ set_denormal_flags()
 	fesetround(FE_TOWARDZERO);
 }
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // UTIL_H

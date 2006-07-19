@@ -25,7 +25,7 @@
 using std::cout; using std::cerr; using std::endl;
 
 
-namespace Om {
+namespace Ingen {
 
 
 DSSIProgramEvent::DSSIProgramEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& node_path, int bank, int program)
@@ -72,5 +72,5 @@ DSSIProgramEvent::post_process()
 }
 
 
-} // namespace Om
+} // namespace Ingen
 

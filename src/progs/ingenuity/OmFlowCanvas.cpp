@@ -29,7 +29,7 @@
 #include "OmModule.h"
 #include "GladeFactory.h"
 
-namespace OmGtk {
+namespace Ingenuity {
 
 
 OmFlowCanvas::OmFlowCanvas(PatchController* controller, int width, int height)
@@ -279,4 +279,4 @@ OmFlowCanvas::menu_new_patch()
 }
 
 
-} // namespace OmGtk
+} // namespace Ingenuity

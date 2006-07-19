@@ -27,7 +27,7 @@
 #include "util/Path.h"
 #include "ObjectStore.h"
 
-namespace Om {
+namespace Ingen {
 
 
 CreatePatchEvent::CreatePatchEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& path, int poly)
@@ -145,5 +145,5 @@ CreatePatchEvent::post_process()
 }
 
 
-} // namespace Om
+} // namespace Ingen
 

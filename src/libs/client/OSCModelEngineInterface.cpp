@@ -31,7 +31,8 @@
 
 using std::cerr; using std::cout; using std::endl;
 
-namespace LibOmClient {
+namespace Ingen {
+namespace Client {
 
 	
 /** Construct a OSCModelEngineInterface with a user-provided ModelClientInterface object for notification
@@ -58,7 +59,7 @@ OSCModelEngineInterface::~OSCModelEngineInterface()
 }
 
 
-/** Attempt to connect to the Om engine and notify it of our existance.
+/** Attempt to connect to the engine and notify it of our existance.
  *
  * Passing a client_port of 0 will automatically choose a free port.  If the
  * @a block parameter is true, this function will not return until a connection
@@ -361,4 +362,5 @@ OSCModelEngineInterface::m_om_response_error_cb(const char* path, const char* ty
 }
 */
 
-} // namespace LibOmClient
+} // namespace Client
+} // namespace Ingen

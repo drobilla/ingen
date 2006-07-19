@@ -21,11 +21,7 @@
 #include <libglademm.h>
 #include "util/Path.h"
 
-
-using namespace Om;
-using Om::Path;
-
-namespace OmGtk {
+namespace Ingenuity {
 
 class PatchWindow;
 class PatchController;
@@ -34,7 +30,7 @@ class PatchTreeView;
 
 /** Window with a TreeView of all loaded patches.
  *
- * \ingroup OmGtk
+ * \ingroup Ingenuity
  */
 class PatchTreeWindow : public Gtk::Window
 {
@@ -100,6 +96,6 @@ private:
 }; // struct PatchTreeView
 
 	
-} // namespace OmGtk
+} // namespace Ingenuity
 
 #endif // PATCHTREEWINDOW_H

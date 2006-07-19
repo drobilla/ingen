@@ -17,7 +17,7 @@
 #ifndef MIDIMESSAGE_H
 #define MIDIMESSAGE_H
 
-namespace Om {
+namespace Ingen {
 
 
 /** Midi Message (the type a MIDI port connects to).
@@ -45,7 +45,7 @@ public:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 
 #endif // MIDIMESSAGE_H

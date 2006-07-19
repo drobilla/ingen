@@ -23,7 +23,7 @@
 #include "MidiTriggerNode.h"
 #include "Plugin.h"
 
-namespace Om {
+namespace Ingen {
 
 
 /** Note on with Patch explicitly passed.
@@ -84,5 +84,5 @@ NoteOnEvent::post_process()
 }
 
 
-} // namespace Om
+} // namespace Ingen
 

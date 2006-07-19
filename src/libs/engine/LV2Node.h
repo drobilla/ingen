@@ -23,7 +23,7 @@
 #include "NodeBase.h"
 #include "Plugin.h"
 
-namespace Om {
+namespace Ingen {
 
 
 /** An instance of a LV2 plugin.
@@ -63,7 +63,7 @@ protected:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // LV2NODE_H
 

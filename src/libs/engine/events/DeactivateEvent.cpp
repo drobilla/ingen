@@ -18,7 +18,7 @@
 #include "Responder.h"
 #include "Ingen.h"
 
-namespace Om {
+namespace Ingen {
 
 
 DeactivateEvent::DeactivateEvent(CountedPtr<Responder> responder, SampleCount timestamp)
@@ -49,5 +49,5 @@ DeactivateEvent::post_process()
 }
 
 
-} // namespace Om
+} // namespace Ingen
 

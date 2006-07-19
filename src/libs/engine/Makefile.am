@@ -19,7 +19,6 @@ libingen_la_SOURCES = \
 	Patch.cpp \
 	NodeFactory.h \
 	NodeFactory.cpp \
-	Om.cpp \
 	Ingen.h \
 	Ingen.cpp \
 	JackAudioDriver.h \

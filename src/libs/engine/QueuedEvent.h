@@ -19,7 +19,7 @@
 
 #include "Event.h"
 
-namespace Om {
+namespace Ingen {
 
 class Responder;
 class QueuedEventSource;
@@ -86,6 +86,6 @@ protected:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // QUEUEDEVENT_H

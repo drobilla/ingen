@@ -23,7 +23,7 @@
 #include <jack/transport.h>
 #include "InternalNode.h"
 
-namespace Om {
+namespace Ingen {
 
 using std::string;
 
@@ -43,6 +43,6 @@ public:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // TRANSPORTNODE_H

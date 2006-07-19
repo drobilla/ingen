@@ -48,10 +48,10 @@
 #endif
 using std::cerr; using std::cout; using std::endl;
 using std::string;
-namespace LibOmClient { class PluginModel; }
-using namespace LibOmClient;
+namespace Ingen { namespace Client { class PluginModel; } }
+using namespace Ingen::Client;
 
-namespace OmGtk {
+namespace Ingenuity {
 
 class OmPort;
 
@@ -221,5 +221,5 @@ App::quit()
 }
 
 
-} // namespace OmGtk
+} // namespace Ingenuity
 

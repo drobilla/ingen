@@ -22,7 +22,7 @@
 #include <libglademm/xml.h>
 #include <gtkmm.h>
 
-namespace OmGtk {
+namespace Ingenuity {
 	
 class PatchController;
 
@@ -35,7 +35,7 @@ class PatchController;
  *
  * This is not for loading subpatches.  See @a LoadSubpatchWindow for that.
  *
- * \ingroup OmGtk
+ * \ingroup Ingenuity
  */
 class LoadPatchWindow : public Gtk::FileChooserDialog
 {
@@ -68,6 +68,6 @@ private:
 };
  
 
-} // namespace OmGtk
+} // namespace Ingenuity
 
 #endif // LOADPATCHWINDOW_H

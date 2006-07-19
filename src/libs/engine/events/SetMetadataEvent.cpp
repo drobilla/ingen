@@ -24,7 +24,7 @@
 
 using std::string;
 
-namespace Om {
+namespace Ingen {
 
 
 SetMetadataEvent::SetMetadataEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& key, const string& value)
@@ -75,4 +75,4 @@ SetMetadataEvent::post_process()
 }
 
 
-} // namespace Om
+} // namespace Ingen

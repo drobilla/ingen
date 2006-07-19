@@ -21,7 +21,7 @@
 #include "types.h"
 #include "List.h"
 
-namespace Om {
+namespace Ingen {
 
 class Patch;
 class AudioDriver;
@@ -45,6 +45,6 @@ public:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // AUDIODRIVER_H

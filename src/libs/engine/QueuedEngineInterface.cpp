@@ -21,7 +21,7 @@
 #include "Ingen.h"
 #include "AudioDriver.h"
 
-namespace Om {
+namespace Ingen {
 
 QueuedEngineInterface::QueuedEngineInterface(size_t queued_size, size_t stamped_size)
 : QueuedEventSource(queued_size, stamped_size)
@@ -299,6 +299,6 @@ QueuedEngineInterface::request_all_objects()
 }
 
 
-} // namespace Om
+} // namespace Ingen
 
 

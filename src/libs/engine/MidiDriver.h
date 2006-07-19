@@ -21,7 +21,7 @@
 #include <iostream>
 using std::cout; using std::endl;
 
-namespace Om {
+namespace Ingen {
 
 class MidiMessage;
 
@@ -73,6 +73,6 @@ public:
 
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // MIDIDRIVER_H

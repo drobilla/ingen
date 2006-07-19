@@ -28,7 +28,7 @@ using std::string;
 
 template <typename T> class Array;
 
-namespace Om {
+namespace Ingen {
 
 class Connection;
 class InternalNode;
@@ -130,6 +130,6 @@ Patch::build_process_order_recursive(Node* n, Array<Node*>* order) const
 }
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // PATCH_H

@@ -29,7 +29,7 @@
 
 using std::list; using std::string; using std::pair;
 
-namespace Om {
+namespace Ingen {
 
 class Node;
 class Port;
@@ -94,7 +94,7 @@ private:
 
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // CLIENTBROADCASTER_H
 

@@ -22,7 +22,7 @@
 template<typename T> class Queue;
 class Maid;
 
-namespace Om {
+namespace Ingen {
 
 class AudioDriver;
 class MidiDriver;
@@ -39,7 +39,7 @@ class LashDriver;
 template <typename T> class Driver;
 
 
-/** The main class for Om, the whole app lives in here
+/** The main class for Ingen, the whole engine basically lives in here
  *
  * A singleton, but shouldn't be (FIXME).  Explicitly instantiated singleton
  * to be exact - call instantiate before instance or suffer horrible death.
@@ -102,6 +102,6 @@ private:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // OMAPP_H

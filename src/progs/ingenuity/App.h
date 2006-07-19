@@ -28,13 +28,14 @@
 using std::string; using std::map; using std::list;
 using std::cerr; using std::endl;
 
-namespace LibOmClient { class PatchModel; class PluginModel; }
-using namespace LibOmClient;
+namespace Ingen { namespace Client { class PatchModel; class PluginModel; } }
+using namespace Ingen::Client;
 
-/** \defgroup OmGtk GTK Client
+/** \defgroup Ingenuity GTK Client
  */
 
-namespace OmGtk {
+/** GTK Graphical client */
+namespace Ingenuity {
 
 class PatchWindow;
 class GtkObjectController;
@@ -44,7 +45,7 @@ class PortController;
 class LoadPatchWindow;
 class MessagesWindow;
 class ConfigWindow;
-class OmGtkObject;
+class IngenuityObject;
 class OmModule;
 class OmPort;
 class OmFlowCanvas;
@@ -59,7 +60,7 @@ class Configuration;
  * This is a horrible god-object, but it's shrinking in size as things are
  * moved out.  Hopefully it will go away entirely some day..
  *
- * \ingroup OmGtk
+ * \ingroup Ingenuity
  */
 class App
 {
@@ -112,7 +113,7 @@ protected:
 };
 
 
-} // namespace OmGtk
+} // namespace Ingenuity
 
 #endif // OMGTKAPP_H
 

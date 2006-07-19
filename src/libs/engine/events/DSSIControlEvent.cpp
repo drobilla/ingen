@@ -20,7 +20,7 @@
 #include "Plugin.h"
 #include "ObjectStore.h"
 
-namespace Om {
+namespace Ingen {
 
 
 DSSIControlEvent::DSSIControlEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& node_path, int port_num, Sample val)
@@ -63,5 +63,5 @@ DSSIControlEvent::post_process()
 }
 
 
-} // namespace Om
+} // namespace Ingen
 

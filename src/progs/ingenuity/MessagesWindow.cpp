@@ -17,7 +17,7 @@
 #include "MessagesWindow.h"
 #include <string>
 
-namespace OmGtk {
+namespace Ingenuity {
 using std::string;
 
 
@@ -61,4 +61,4 @@ MessagesWindow::clear_clicked()
 }
 
 
-} // namespace OmGtk
+} // namespace Ingenuity

@@ -23,12 +23,13 @@
 
 using std::string; using std::list;
 
-namespace LibOmClient {
+namespace Ingen {
+namespace Client {
 
 
 /** Model of a preset (a collection of control settings).
  *
- * \ingroup libomclient
+ * \ingroup IngenClient
  */
 class PresetModel
 {
@@ -61,6 +62,7 @@ private:
 };
 
 
-} // namespace LibOmClient
+} // namespace Client
+} // namespace Ingen
 
 #endif // PRESETMODEL

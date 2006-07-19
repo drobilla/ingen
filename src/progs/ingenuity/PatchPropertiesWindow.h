@@ -23,17 +23,17 @@
 #include "util/CountedPtr.h"
 using std::string;
 
-namespace LibOmClient { class PatchModel; }
-using LibOmClient::PatchModel;
+namespace Ingen { namespace Client { class PatchModel; } }
+using Ingen::Client::PatchModel;
 
-namespace OmGtk {
+namespace Ingenuity {
 	
 
 /** Patch Properties Window.
  *
  * Loaded by libglade as a derived object.
  *
- * \ingroup OmGtk
+ * \ingroup Ingenuity
  */
 class PatchPropertiesWindow : public Gtk::Window
 {
@@ -55,6 +55,6 @@ private:
 };
 
 
-} // namespace OmGtk
+} // namespace Ingenuity
 
 #endif // PATCHPROPERTIESWINDOW_H

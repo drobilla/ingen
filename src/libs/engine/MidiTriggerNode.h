@@ -23,7 +23,7 @@
 
 using std::string;
 
-namespace Om {
+namespace Ingen {
 
 class MidiMessage;
 template <typename T> class InputPort;
@@ -59,6 +59,6 @@ private:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // MIDITRIGGERNODE_H

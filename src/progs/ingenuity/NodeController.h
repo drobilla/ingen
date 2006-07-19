@@ -24,17 +24,16 @@
 #include "NodeModel.h"
 
 using std::string;
-using Om::Path;
-using namespace LibOmClient;
+using namespace Ingen::Client;
 
 template <class T> class CountedPtr;
 
-namespace LibOmClient {
+namespace Ingen { namespace Client {
 	class MetadataModel;
 	class PortModel;
-}
+} }
 
-namespace OmGtk {
+namespace Ingenuity {
 
 class Controller;
 class OmModule;
@@ -45,7 +44,7 @@ class OmFlowCanvas;
 
 /** Controller for a Node.
  *
- * \ingroup OmGtk
+ * \ingroup Ingenuity
  */
 class NodeController : public GtkObjectController
 {
@@ -109,6 +108,6 @@ protected:
 };
 
 
-} // namespace OmGtk
+} // namespace Ingenuity
 
 #endif // NODECONTROLLER_H

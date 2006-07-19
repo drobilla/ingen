@@ -22,9 +22,9 @@
 #include <iostream>
 using std::cerr; using std::cout; using std::endl;
 
-using namespace LibOmClient;
+using namespace Ingen::Client;
 
-namespace OmGtk {
+namespace Ingenuity {
 
 
 // ////////////////////// ControlGroup ///////////////////////////////// //
@@ -438,4 +438,4 @@ ToggleControlGroup::update_value()
 }
 
 
-} // namespace OmGtk
+} // namespace Ingenuity

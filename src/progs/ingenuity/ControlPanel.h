@@ -32,14 +32,13 @@
 using std::vector; using std::string; using std::pair;
 using std::cerr; using std::cout; using std::endl;
 
-namespace LibOmClient {
-class PortModel;
-class NodeModel;
-}
-using namespace LibOmClient;
-using Om::Path;
+namespace Ingen { namespace Client {
+	class PortModel;
+	class NodeModel;
+} }
+using namespace Ingen::Client;
 
-namespace OmGtk {
+namespace Ingenuity {
 
 class NodeController;
 class PortController;
@@ -49,7 +48,7 @@ class PortController;
  *
  * Used by both NodeControlWindow and the main window (for patch controls).
  *
- * \ingroup OmGtk
+ * \ingroup Ingenuity
  */
 class ControlPanel : public Gtk::VBox {
 public:
@@ -125,6 +124,6 @@ ControlPanel::set_control(const Path& port_path, const float val)
 }
 */
 
-} // namespace OmGtk
+} // namespace Ingenuity
 
 #endif // CONTROLPANEL_H

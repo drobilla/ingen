@@ -25,7 +25,7 @@
 
 using std::cout; using std::cerr; using std::endl;
 
-namespace Om {
+namespace Ingen {
 
 
 /** Construct an OSCResponder from \a addr.

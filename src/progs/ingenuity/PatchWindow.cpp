@@ -37,7 +37,7 @@
 #include "Store.h"
 #include "ConnectWindow.h"
 
-namespace OmGtk {
+namespace Ingenuity {
 
 
 PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
@@ -509,7 +509,7 @@ PatchWindow::event_close()
 		hide();
 	} else {
 		Gtk::MessageDialog d(*this, "This is the last remaining open patch "
-			"window.  Closing this window will exit OmGtk (the engine will "
+			"window.  Closing this window will exit Ingenuity (the engine will "
 			"remain running).\n\nAre you sure you want to quit?",
 			true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_NONE, true);
 			d.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
@@ -526,7 +526,7 @@ PatchWindow::event_close()
 void
 PatchWindow::event_quit()
 {
-	Gtk::MessageDialog d(*this, "Would you like to quit just OmGtk\nor kill the engine as well?",
+	Gtk::MessageDialog d(*this, "Would you like to quit just Ingenuity\nor kill the engine as well?",
 			true, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE, true);
 	d.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
 	
@@ -580,4 +580,4 @@ PatchWindow::event_fullscreen_toggled()
 }
 
 
-} // namespace OmGtk
+} // namespace Ingenuity

@@ -25,7 +25,7 @@
 
 using std::string;
 
-namespace Om {
+namespace Ingen {
 
 class Node;
 
@@ -78,6 +78,6 @@ protected:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // PORT_H

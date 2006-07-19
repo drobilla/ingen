@@ -24,7 +24,7 @@
 #include "OutputPort.h"
 #include "Plugin.h"
 
-namespace Om {
+namespace Ingen {
 
 
 /** Partially construct a LV2Node.
@@ -260,5 +260,5 @@ LV2Node::get_port_vals(ulong port_index, PortInfo* info)
 #endif
 
 
-} // namespace Om
+} // namespace Ingen
 

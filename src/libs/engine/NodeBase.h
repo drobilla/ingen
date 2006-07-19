@@ -22,7 +22,7 @@
 #include "Node.h"
 using std::string;
 
-namespace Om {
+namespace Ingen {
 
 class Plugin;
 class Patch;
@@ -101,6 +101,6 @@ protected:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // NODEBASE_H

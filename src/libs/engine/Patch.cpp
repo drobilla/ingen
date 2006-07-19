@@ -26,11 +26,11 @@
 
 using std::cerr; using std::cout; using std::endl;
 
-namespace Om {
+namespace Ingen {
 
 
 Patch::Patch(const string& path, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size, size_t internal_poly) 
-: NodeBase(new Plugin(Plugin::Patch, "Om:Patch"), path, poly, parent, srate, buffer_size),
+: NodeBase(new Plugin(Plugin::Patch, "Ingen:Patch"), path, poly, parent, srate, buffer_size),
   _internal_poly(internal_poly),
   _process_order(NULL),
   _process(false)
@@ -38,7 +38,7 @@ Patch::Patch(const string& path, size_t poly, Patch* parent, SampleRate srate, s
 	assert(internal_poly >= 1);
 
 	//_plugin->plug_label("om_patch");
-	//_plugin->name("Om Patch");
+	//_plugin->name("Ingen Patch");
 
 	//std::cerr << "Creating patch " << _name << ", poly = " << poly
 	//	<< ", internal poly = " << internal_poly << std::endl;
@@ -367,4 +367,4 @@ Patch::set_path(const Path& new_path)
 }
 
 
-} // namespace Om
+} // namespace Ingen

@@ -25,7 +25,7 @@
 #include "PluginModel.h"
 using std::string;
 
-using namespace LibOmClient;
+using namespace Ingen::Client;
 
 
 /** ModelClientInterface implementation for the Gtk client.

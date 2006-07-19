@@ -22,7 +22,7 @@
 #include "MidiControlNode.h"
 #include "ClientBroadcaster.h"
 
-namespace Om {
+namespace Ingen {
 
 
 // MidiLearnResponseEvent
@@ -82,6 +82,6 @@ MidiLearnEvent::post_process()
 }
 
 
-} // namespace Om
+} // namespace Ingen
 
 

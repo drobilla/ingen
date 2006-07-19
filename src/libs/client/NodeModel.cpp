@@ -18,7 +18,8 @@
 #include "PatchModel.h"
 #include <cassert>
 
-namespace LibOmClient {
+namespace Ingen {
+namespace Client {
 
 
 NodeModel::NodeModel(CountedPtr<PluginModel> plugin, const Path& path)
@@ -126,4 +127,5 @@ NodeModel::remove_program(int bank, int program)
 		m_banks.erase(bank);
 }
 
-}
+} // namespace Client
+} // namespace Ingen

@@ -31,7 +31,7 @@
 #include "QueuedEventSource.h"
 #include "Port.h"
 
-namespace Om {
+namespace Ingen {
 
 
 DestroyEvent::DestroyEvent(CountedPtr<Responder> responder, SampleCount timestamp, QueuedEventSource* source, const string& path, bool lock_mutex)
@@ -162,4 +162,4 @@ DestroyEvent::post_process()
 }
 
 
-} // namespace Om
+} // namespace Ingen

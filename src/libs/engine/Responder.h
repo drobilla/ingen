@@ -23,7 +23,7 @@
 #include "interface/ClientInterface.h"
 using std::string;
 
-namespace Om {
+namespace Ingen {
 
 using Shared::ClientInterface;
 
@@ -57,7 +57,7 @@ public:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // RESPONDER_H
 

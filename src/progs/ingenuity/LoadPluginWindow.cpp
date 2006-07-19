@@ -30,7 +30,7 @@
 using std::cout; using std::cerr; using std::endl;
 
 
-namespace OmGtk {
+namespace Ingenuity {
 
 LoadPluginWindow::LoadPluginWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 : Gtk::Window(cobject),
@@ -404,4 +404,4 @@ LoadPluginWindow::on_key_press_event(GdkEventKey* event)
 }
 
 
-} // namespace OmGtk
+} // namespace Ingenuity

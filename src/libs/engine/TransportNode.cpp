@@ -24,11 +24,11 @@
 #include "util.h"
 //#include "Ingen.h"
 
-namespace Om {
+namespace Ingen {
 
 
 TransportNode::TransportNode(const string& path, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size)
-: InternalNode(new Plugin(Plugin::Internal, "Om:TransportNode"), path, 1, parent, srate, buffer_size)
+: InternalNode(new Plugin(Plugin::Internal, "Ingen:TransportNode"), path, 1, parent, srate, buffer_size)
 {
 #if 0
 	_num_ports = 10;
@@ -75,7 +75,7 @@ TransportNode::TransportNode(const string& path, size_t poly, Patch* parent, Sam
 	_ports.at(9) = bar_trig_port;
 #endif
 	_plugin.plug_label("transport");
-	_plugin.name("Om Transport Node (BROKEN)");
+	_plugin.name("Ingen Transport Node (BROKEN)");
 }
 
 
@@ -149,5 +149,5 @@ TransportNode::run(size_t nframes)
 }
 
 
-} // namespace Om
+} // namespace Ingen
 

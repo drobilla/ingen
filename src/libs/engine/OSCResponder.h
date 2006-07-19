@@ -22,7 +22,7 @@
 #include <lo/lo.h>
 #include "Responder.h"
 
-namespace Om {
+namespace Ingen {
 
 
 /** Responder for (liblo) OSC clients.
@@ -55,7 +55,7 @@ private:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // OSCRESPONDER_H
 

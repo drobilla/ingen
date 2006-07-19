@@ -20,7 +20,7 @@
 #include "ClientBroadcaster.h"
 #include "interface/ClientInterface.h"
 
-namespace Om {
+namespace Ingen {
 
 
 UnregisterClientEvent::UnregisterClientEvent(CountedPtr<Responder> responder, SampleCount timestamp, ClientKey key)
@@ -40,5 +40,5 @@ UnregisterClientEvent::post_process()
 }
 
 
-} // namespace Om
+} // namespace Ingen
 

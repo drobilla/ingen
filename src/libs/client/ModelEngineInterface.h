@@ -22,10 +22,11 @@
 #include "interface/EngineInterface.h"
 using std::string;
 
-/** \defgroup libomclient Client Library
+/** \defgroup IngenClient Client Library
  */
 
-namespace LibOmClient {
+namespace Ingen {
+namespace Client {
 
 class NodeModel;
 class PresetModel;
@@ -36,7 +37,7 @@ class ModelClientInterface;
 
 /** Model-based engine command interface.
  *
- * \ingroup libomclient
+ * \ingroup IngenClient
  */
 class ModelEngineInterface
 {
@@ -53,6 +54,7 @@ protected:
 	ModelEngineInterface() {}
 };
 
-} // namespace LibOmClient
+} // namespace Client
+} // namespace Ingen
 
 #endif // MODELENGINEINTERFACE_H

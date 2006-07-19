@@ -23,7 +23,7 @@
 #include "Node.h"
 #include "ObjectStore.h"
 
-namespace Om {
+namespace Ingen {
 
 
 /** Voice-specific control setting
@@ -110,5 +110,5 @@ SetPortValueQueuedEvent::post_process()
 }
 
 
-} // namespace Om
+} // namespace Ingen
 

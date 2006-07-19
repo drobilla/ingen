@@ -18,7 +18,7 @@
 #include <string>
 #include "PatchModel.h"
 
-namespace OmGtk {
+namespace Ingenuity {
 using std::string;
 
 
@@ -70,4 +70,4 @@ PatchPropertiesWindow::ok_clicked()
 
 
 
-} // namespace OmGtk
+} // namespace Ingenuity

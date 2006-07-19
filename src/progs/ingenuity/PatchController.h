@@ -23,18 +23,18 @@
 #include "PatchModel.h"
 template <class T> class CountedPtr;
 
-namespace LibOmClient {
-class PatchModel;
-class NodeModel;
-class PortModel;
-class ControlModel;
-class ConnectionModel;
-}
+namespace Ingen { namespace Client {
+	class PatchModel;
+	class NodeModel;
+	class PortModel;
+	class ControlModel;
+	class ConnectionModel;
+} }
 
 using std::string;
-using namespace LibOmClient;
+using namespace Ingen::Client;
 
-namespace OmGtk {
+namespace Ingenuity {
 	
 class PatchWindow;
 class SubpatchModule;
@@ -55,7 +55,7 @@ class NodeController;
  * those representations, and acts as the recipient of all patch related
  * events (being the controller).
  * 
- * \ingroup OmGtk
+ * \ingroup Ingenuity
  */
 class PatchController : public NodeController
 {
@@ -132,6 +132,6 @@ private:
 };
 
 
-} // namespace OmGtk
+} // namespace Ingenuity
 
 #endif // PATCHCONTROLLER_H

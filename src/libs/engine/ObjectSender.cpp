@@ -25,7 +25,7 @@
 #include "Connection.h"
 #include "NodeFactory.h"
 
-namespace Om {
+namespace Ingen {
 
 /** Send all currently existing objects to client.
  */
@@ -225,5 +225,5 @@ ObjectSender::send_plugins(ClientInterface* client)
 }
 
 
-} // namespace Om
+} // namespace Ingen
 

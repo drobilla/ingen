@@ -23,7 +23,7 @@
 
 using std::string;
 
-namespace Om {
+namespace Ingen {
 
 class Patch;
 
@@ -48,7 +48,7 @@ private:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 
 #endif // CLEARPATCHEVENT_H

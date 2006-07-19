@@ -30,7 +30,7 @@
 #include "util/Path.h"
 #include "Port.h"
 
-namespace Om {
+namespace Ingen {
 
 
 AddNodeEvent::AddNodeEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& path, Plugin* plugin, bool poly)
@@ -123,5 +123,5 @@ AddNodeEvent::post_process()
 }
 
 
-} // namespace Om
+} // namespace Ingen
 

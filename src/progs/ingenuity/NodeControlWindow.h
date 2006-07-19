@@ -26,9 +26,9 @@
 #include "ControlPanel.h"
 using std::string; using std::vector;
 
-using namespace LibOmClient;
+using namespace Ingen::Client;
 
-namespace OmGtk {
+namespace Ingenuity {
 	
 class ControlGroup;
 class NodeController;
@@ -36,7 +36,7 @@ class NodeController;
 
 /** Window with controls (sliders) for all control-rate ports on a Node.
  *
- * \ingroup OmGtk
+ * \ingroup Ingenuity
  */
 class NodeControlWindow : public Gtk::Window
 {
@@ -64,6 +64,6 @@ private:
 };
 
 
-} // namespace OmGtk
+} // namespace Ingenuity
 
 #endif // NODECONTROLWINDOW_H

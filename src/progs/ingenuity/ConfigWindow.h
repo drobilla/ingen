@@ -26,16 +26,16 @@
 #include <gtkmm.h>
 
 using std::list;
-using LibOmClient::PluginModel;
+using Ingen::Client::PluginModel;
 
-namespace OmGtk {
+namespace Ingenuity {
 	
 
 /** 'Configuration' window.
  *
  * Loaded by glade as a derived object.
  *
- * \ingroup OmGtk
+ * \ingroup Ingenuity
  */
 class ConfigWindow : public Gtk::Window
 {
@@ -58,6 +58,6 @@ private:
 };
 
 
-} // namespace OmGtk
+} // namespace Ingenuity
 
 #endif // CONFIGWINDOW_H

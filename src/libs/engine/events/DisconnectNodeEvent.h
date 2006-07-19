@@ -23,7 +23,7 @@
 #include "List.h"
 using std::string;
 
-namespace Om {
+namespace Ingen {
 
 class DisconnectionEvent;
 class Patch;
@@ -62,7 +62,7 @@ private:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 
 #endif // DISCONNECTNODEEVENT_H

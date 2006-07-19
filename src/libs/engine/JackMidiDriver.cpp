@@ -29,7 +29,7 @@
 #endif
 using std::cout; using std::cerr; using std::endl;
 
-namespace Om {
+namespace Ingen {
 
 	
 //// JackMidiPort ////
@@ -208,5 +208,5 @@ JackMidiDriver::remove_port(JackMidiPort* port)
 }
 
 
-} // namespace Om
+} // namespace Ingen
 

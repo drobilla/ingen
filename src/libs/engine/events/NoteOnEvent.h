@@ -22,7 +22,7 @@
 #include <string>
 using std::string;
 
-namespace Om {
+namespace Ingen {
 
 class Node;
 
@@ -49,6 +49,6 @@ private:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // NOTEONEVENT_H

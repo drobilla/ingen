@@ -23,7 +23,7 @@
 using std::string;
 
 
-namespace OmGtk {
+namespace Ingenuity {
 	
 
 /** Messages Window.
@@ -31,7 +31,7 @@ namespace OmGtk {
  * Loaded by libglade as a derived object.
  * This is shown when errors occur (ie during patch loading).
  *
- * \ingroup OmGtk
+ * \ingroup Ingenuity
  */
 class MessagesWindow : public Gtk::Window
 {
@@ -50,6 +50,6 @@ private:
 };
 
 
-} // namespace OmGtk
+} // namespace Ingenuity
 
 #endif // MESSAGESWINDOW_H

@@ -23,7 +23,7 @@
 #include <cmath>
 using std::cerr; using std::cout; using std::endl;
 
-namespace OmGtk {
+namespace Ingenuity {
 
 
 /** Create a node control window and load a new ControlPanel for it.
@@ -124,4 +124,4 @@ NodeControlWindow::on_hide()
 }
 
 
-} // namespace OmGtk
+} // namespace Ingenuity

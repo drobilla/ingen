@@ -19,7 +19,7 @@
 #include "Ingen.h"
 #include "ObjectStore.h"
 
-namespace Om {
+namespace Ingen {
 
 
 /** Note off with patch explicitly passed - triggered by MIDI.
@@ -61,6 +61,6 @@ AllNotesOffEvent::post_process()
 }
 
 
-} // namespace Om
+} // namespace Ingen
 
 

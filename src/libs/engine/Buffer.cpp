@@ -24,7 +24,7 @@ using std::cerr; using std::endl;
 /* TODO: Be sure these functions are vectorized by GCC when it's vectorizer
  * stops sucking.  Probably a good idea to inline them as well */
 
-namespace Om {
+namespace Ingen {
 
 
 template <typename T>
@@ -313,4 +313,4 @@ template void DriverBuffer<Sample>::set_data(sample* data);
 template void DriverBuffer<MidiMessage>::set_data(MidiMessage* data);
 #endif
 
-} // namespace Om
+} // namespace Ingen

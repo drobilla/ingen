@@ -24,7 +24,8 @@
 
 using std::string;
 
-namespace LibOmClient {
+namespace Ingen {
+namespace Client {
 
 class PatchModel;
 class NodeModel;
@@ -36,7 +37,7 @@ class ModelClientInterface;
 	
 /** Handles all patch saving and loading.
  *
- * \ingroup libomclient
+ * \ingroup IngenClient
  */
 class PatchLibrarian
 {
@@ -73,6 +74,7 @@ private:
 };
 
 
-} // namespace LibOmClient
+} // namespace Client
+} // namespace Ingen
 
 #endif // PATCHLIBRARIAN_H

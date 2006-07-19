@@ -20,12 +20,13 @@
 #include <string>
 #include "util/Path.h"
 
-namespace LibOmClient {
+namespace Ingen {
+namespace Client {
 
 	
 /** A single port's control setting (in a preset).
  *
- * \ingroup libomclient
+ * \ingroup IngenClient
  */
 class ControlModel
 {
@@ -48,6 +49,7 @@ private:
 };
 
 
-} // namespace LibOmClient
+} // namespace Client
+} // namespace Ingen
 
 #endif // CONTROLMODEL

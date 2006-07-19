@@ -23,7 +23,8 @@
 #include "PatchModel.h"
 #include "SigClientInterface.h"
 
-namespace LibOmClient {
+namespace Ingen {
+namespace Client {
 
 
 /// Singleton instance
@@ -390,5 +391,6 @@ Store::disconnection_event(const Path& src_port_path, const Path& dst_port_path)
 }
 
 
-} // namespace LibOmClient
+} // namespace Client
+} // namespace Ingen
 

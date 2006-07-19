@@ -19,7 +19,7 @@
 
 #include <string>
 
-namespace Om {
+namespace Ingen {
 namespace Shared {
 
 
@@ -78,7 +78,7 @@ protected:
 
 
 } // namespace Shared
-} // namespace Om
+} // namespace Ingen
 
 #endif // CLIENTKEY_H
 

@@ -26,7 +26,7 @@
 #include "types.h"
 using std::string; using std::map;
 
-namespace Om {
+namespace Ingen {
 
 class Patch;
 class Node;
@@ -107,6 +107,6 @@ private:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // OMOBJECT_H

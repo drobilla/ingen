@@ -27,7 +27,7 @@
 #include "Connection.h"
 #include "QueuedEventSource.h"
 
-namespace Om {
+namespace Ingen {
 
 
 ClearPatchEvent::ClearPatchEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& patch_path)
@@ -109,5 +109,5 @@ ClearPatchEvent::post_process()
 }
 
 
-} // namespace Om
+} // namespace Ingen
 

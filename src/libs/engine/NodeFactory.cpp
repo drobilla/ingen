@@ -46,7 +46,7 @@ using std::string;
 using std::cerr; using std::cout; using std::endl;
 
 
-namespace Om {
+namespace Ingen {
 
 
 /* I am perfectly aware that the vast majority of this class is a 
@@ -322,7 +322,7 @@ NodeFactory::load_lv2_plugin(const string& plug_uri,
                              size_t        poly,
                              Patch*        parent)
 {
-	// Find (Om) Plugin
+	// Find (internal) Plugin
 	Plugin* plugin = NULL;
 	list<Plugin*>::iterator i;
 	for (i = _plugins.begin(); i != _plugins.end(); ++i) {
@@ -333,8 +333,8 @@ NodeFactory::load_lv2_plugin(const string& plug_uri,
 	Node* n = NULL;
 
 	if (plugin) {
-		n = new Om::LV2Node(plugin, node_name, poly, parent,
-			Ingen::instance().audio_driver()->sample_rate(), Ingen::instance().audio_driver()->buffer_size());
+		n = new LV2Node(plugin, node_name, poly, parent,
+			Ingen::Ingen::instance().audio_driver()->sample_rate(), Ingen::Ingen::instance().audio_driver()->buffer_size());
 		bool success = ((LV2Node*)n)->instantiate();
 		if (!success) {
 			delete n;
@@ -691,4 +691,4 @@ NodeFactory::load_ladspa_plugin(const string& uri,
 #endif // HAVE_LADSPA
 
 
-} // namespace Om
+} // namespace Ingen

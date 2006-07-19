@@ -40,7 +40,7 @@
 using std::cout; using std::cerr; using std::endl;
 
 
-namespace Om {
+namespace Ingen {
 
 	
 //// JackAudioPort ////
@@ -126,7 +126,7 @@ JackAudioDriver::JackAudioDriver()
   m_local_client(true),
   m_root_patch(NULL)
 {
-	m_client = jack_client_new("Om");
+	m_client = jack_client_new("Ingen");
 	if (m_client == NULL) {
 		cerr << "[JackAudioDriver] Unable to connect to Jack.  Exiting." << endl;
 		exit(EXIT_FAILURE);
@@ -182,7 +182,7 @@ JackAudioDriver::activate()
 	} else {
 		cout << "[JackAudioDriver] Activated Jack client." << endl;
 #ifdef HAVE_LASH
-	Ingen::instance().lash_driver()->set_jack_client_name("Om"); // FIXME: unique name
+	Ingen::instance().lash_driver()->set_jack_client_name(jack_client_get_name(m_client));
 #endif
 	}
 }
@@ -355,7 +355,7 @@ int
 JackAudioDriver::m_sample_rate_cb(jack_nframes_t nframes) 
 {
 	if (m_is_activated) {
-		cerr << "[JackAudioDriver] Om does not support changing sample rate on the fly (yet).  Aborting." << endl;
+		cerr << "[JackAudioDriver] On-the-fly sample rate changing not supported (yet).  Aborting." << endl;
 		exit(EXIT_FAILURE);
 	} else {
 		m_sample_rate = nframes;
@@ -368,7 +368,7 @@ int
 JackAudioDriver::m_buffer_size_cb(jack_nframes_t nframes) 
 {
 	if (m_is_activated) {
-		cerr << "[JackAudioDriver] Om does not support chanding buffer size on the fly (yet).  Aborting." << endl;
+		cerr << "[JackAudioDriver] On-the-fly buffer size changing not supported (yet).  Aborting." << endl;
 		exit(EXIT_FAILURE);
 	} else {
 		m_buffer_size = nframes;
@@ -377,5 +377,5 @@ JackAudioDriver::m_buffer_size_cb(jack_nframes_t nframes)
 }
 
 
-} // namespace Om
+} // namespace Ingen
 

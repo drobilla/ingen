@@ -19,7 +19,7 @@
 #include "Node.h"
 #include "Port.h"
 
-namespace Om {
+namespace Ingen {
 
 
 /** Constructor for a connection from a node's output port.
@@ -39,5 +39,5 @@ Connection::Connection(Port* const src_port, Port* const dst_port)
 		|| (src_port->parent_node()->poly() == 1 || dst_port->parent_node()->poly() == 1));
 }
 
-} // namespace Om
+} // namespace Ingen
 

@@ -28,7 +28,7 @@
 using std::list; using std::string;
 using std::cerr;
 
-namespace Om {
+namespace Ingen {
 
 
 /** Implements ClientInterface for OSC clients (sends OSC messages).
@@ -125,7 +125,7 @@ private:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // OSCCLIENT_H
 

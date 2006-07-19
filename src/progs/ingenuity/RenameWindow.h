@@ -21,7 +21,7 @@
 #include <libglademm.h>
 
 
-namespace OmGtk {
+namespace Ingenuity {
 
 class GtkObjectController;
 
@@ -30,7 +30,7 @@ class GtkObjectController;
  *
  * Loaded by libglade as a derived object.
  *
- * \ingroup OmGtk
+ * \ingroup Ingenuity
  */
 class RenameWindow : public Gtk::Window
 {
@@ -52,6 +52,6 @@ private:
 	Gtk::Button*     m_ok_button;
 };
 
-} // namespace OmGtk
+} // namespace Ingenuity
 
 #endif // RENAMEWINDOW_H

@@ -24,7 +24,7 @@ using std::string;
 
 template <typename T> class Array;
 
-namespace Om {
+namespace Ingen {
 
 class Patch;
 class Node;
@@ -50,7 +50,7 @@ private:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 
 #endif // ENABLEPATCHEVENT_H

@@ -26,15 +26,15 @@
 #endif
 #include "ThreadedSigClientInterface.h"
 #include "OSCListener.h"
-using Om::Shared::ClientInterface;
+using Ingen::Shared::ClientInterface;
 
-using namespace OmGtk;
+using namespace Ingenuity;
 
 
 class OSCSigEmitter : public OSCListener, public ThreadedSigClientInterface {
 public:
 	OSCSigEmitter(size_t queue_size, int listen_port)
-	: Om::Shared::ClientInterface()
+	: Ingen::Shared::ClientInterface()
 	, OSCListener(listen_port)
 	, ThreadedSigClientInterface(queue_size)
 	{

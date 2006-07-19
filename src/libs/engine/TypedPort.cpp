@@ -24,7 +24,7 @@
 #include "Node.h"
 #include "MidiMessage.h"
 
-namespace Om {
+namespace Ingen {
 
 
 /** Constructor for a Port.
@@ -120,5 +120,5 @@ template void TypedPort<Sample>::clear_buffers();
 template void TypedPort<MidiMessage>::clear_buffers();
 
 
-} // namespace Om
+} // namespace Ingen
 

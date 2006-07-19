@@ -27,7 +27,7 @@
 #include "PatchController.h"
 #include "PatchModel.h"
 
-namespace OmGtk {
+namespace Ingenuity {
 
 
 ConnectWindow::ConnectWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
@@ -56,7 +56,7 @@ ConnectWindow::ConnectWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::
 
 
 void
-ConnectWindow::start(CountedPtr<Om::Shared::ClientInterface> client)
+ConnectWindow::start(CountedPtr<Ingen::Shared::ClientInterface> client)
 {
 	_client = client;
 	resize(100, 100);
@@ -104,7 +104,7 @@ void
 ConnectWindow::quit()
 {
 	if (Controller::instance().is_attached()) {
-		Gtk::MessageDialog d(*this, "This will exit OmGtk, but the engine will "
+		Gtk::MessageDialog d(*this, "This will exit Ingenuity, but the engine will "
 			"remain running (if it is remote).\n\nAre you sure you want to quit?",
 			true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_NONE, true);
 			d.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
@@ -257,4 +257,4 @@ ConnectWindow::gtk_callback()
 }
 
 
-} // namespace OmGtk
+} // namespace Ingenuity

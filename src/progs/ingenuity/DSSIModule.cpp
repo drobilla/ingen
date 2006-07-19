@@ -17,7 +17,7 @@
 #include "DSSIModule.h"
 #include "DSSIController.h"
 
-namespace OmGtk {
+namespace Ingenuity {
 
 
 DSSIModule::DSSIModule(OmFlowCanvas* canvas, DSSIController* node)
@@ -35,4 +35,4 @@ DSSIModule::on_double_click(GdkEventButton* ev)
 }
 
 
-} // namespace OmGtk
+} // namespace Ingenuity

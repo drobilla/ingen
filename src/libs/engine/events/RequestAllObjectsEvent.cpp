@@ -19,7 +19,7 @@
 #include "Ingen.h"
 #include "ObjectSender.h"
 
-namespace Om {
+namespace Ingen {
 
 
 RequestAllObjectsEvent::RequestAllObjectsEvent(CountedPtr<Responder> responder, SampleCount timestamp)
@@ -50,5 +50,5 @@ RequestAllObjectsEvent::post_process()
 }
 
 
-} // namespace Om
+} // namespace Ingen
 

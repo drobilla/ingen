@@ -25,7 +25,7 @@ using std::string;
 template <typename T> class Array;
 template<typename T> class TreeNode;
 
-namespace Om {
+namespace Ingen {
 
 class Patch;
 class Node;
@@ -58,6 +58,6 @@ private:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // ADDNODEEVENT_H

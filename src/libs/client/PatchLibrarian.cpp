@@ -41,7 +41,8 @@
 using std::string; using std::vector; using std::pair;
 using std::cerr; using std::cout; using std::endl;
 
-namespace LibOmClient {
+namespace Ingen {
+namespace Client {
 
 	
 /** Searches for the filename passed in the path, returning the full
@@ -101,7 +102,7 @@ PatchLibrarian::find_file(const string& filename, const string& additional_path)
  *
  * This will break if:
  * - The filename does not have an extension (ie contain a ".")
- * - The patch_model has no (Om) path
+ * - The patch_model has no (Ingen) path
  */
 void
 PatchLibrarian::save_patch(PatchModel* patch_model, const string& filename, bool recursive)
@@ -391,7 +392,7 @@ PatchLibrarian::load_patch(PatchModel* pm, bool wait, bool existing)
 	}
 
 	if (xmlStrcmp(cur->name, (const xmlChar*) "patch")) {
-		cerr << "File is not an Om patch file, root node != patch" << endl;
+		cerr << "File is not an Ingen patch file (root node != <patch>)" << endl;
 		xmlFreeDoc(doc);
 		return "";
 	}
@@ -830,4 +831,5 @@ PatchLibrarian::parse_preset(const PatchModel* patch, xmlDocPtr doc, const xmlNo
 	return pm;
 }
 
-} // namespace LibOmClient
+} // namespace Client
+} // namespace Ingen

@@ -23,7 +23,7 @@
 #include <string>
 using std::string;
 
-namespace Om {
+namespace Ingen {
 
 class Node;
 class ControlChangeEvent;
@@ -79,6 +79,6 @@ private:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // MIDILEARNEVENT_H

@@ -22,7 +22,7 @@
 #include <string>
 using std::string;
 
-namespace Om {
+namespace Ingen {
 
 namespace Shared {
 	class ClientInterface;
@@ -48,6 +48,6 @@ private:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // UNREGISTERCLIENTEVENT_H

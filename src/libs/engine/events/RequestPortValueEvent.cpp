@@ -25,7 +25,7 @@
 
 using std::string;
 
-namespace Om {
+namespace Ingen {
 
 
 RequestPortValueEvent::RequestPortValueEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& port_path)
@@ -75,5 +75,5 @@ RequestPortValueEvent::post_process()
 }
 
 
-} // namespace Om
+} // namespace Ingen
 

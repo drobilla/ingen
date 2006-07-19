@@ -24,14 +24,14 @@
 #include "PortController.h"
 using std::string;
 
-namespace LibOmClient {
-class PortModel;
-class NodeModel;
-class ControlModel;
-}
-using namespace LibOmClient;
+namespace Ingen { namespace Client {
+	class PortModel;
+	class NodeModel;
+	class ControlModel;
+} }
+using namespace Ingen::Client;
 
-namespace OmGtk {
+namespace Ingenuity {
 	
 class PatchController;
 class PortController;
@@ -44,7 +44,7 @@ class OmPort;
  * This base class is extended for various types of modules - SubpatchModule,
  * DSSIModule, etc.
  *
- * \ingroup OmGtk
+ * \ingroup Ingenuity
  */
 class OmPortModule : public LibFlowCanvas::Module
 {
@@ -71,6 +71,6 @@ protected:
 };
 
 
-} // namespace OmGtk
+} // namespace Ingenuity
 
 #endif // OMPORTMODULE_H

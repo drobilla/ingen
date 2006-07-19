@@ -18,7 +18,7 @@
 #include "Node.h"
 #include "DataType.h"
 
-namespace Om {
+namespace Ingen {
 
 
 // Yeah, this shouldn't be here.
@@ -37,4 +37,4 @@ Port::Port(Node* const node, const string& name, size_t index, size_t poly, Data
 }
 
 
-} // namespace Om
+} // namespace Ingen

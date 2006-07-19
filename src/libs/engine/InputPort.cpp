@@ -26,7 +26,7 @@
 using std::cerr; using std::cout; using std::endl;
 
 
-namespace Om {
+namespace Ingen {
 
 
 template <typename T>
@@ -349,5 +349,5 @@ InputPort<MidiMessage>::process(SampleCount nframes)
 }
 
 
-} // namespace Om
+} // namespace Ingen
 

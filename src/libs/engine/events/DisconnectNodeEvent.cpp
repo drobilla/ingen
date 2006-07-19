@@ -35,7 +35,7 @@
 
 using std::cerr; using std::endl;
 
-namespace Om {
+namespace Ingen {
 
 
 DisconnectNodeEvent::DisconnectNodeEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& node_path)
@@ -138,5 +138,5 @@ DisconnectNodeEvent::post_process()
 }
 
 
-} // namespace Om
+} // namespace Ingen
 

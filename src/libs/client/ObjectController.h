@@ -17,7 +17,8 @@
 #ifndef OBJECTCONTROLLER_H
 #define OBJECTCONTROLLER_H
 
-namespace LibOmClient {
+namespace Ingen {
+namespace Client {
 
 	
 /** A trivial base class for controllers of an ObjectModel.
@@ -28,7 +29,7 @@ namespace LibOmClient {
  * Models, rather than having a parallel structure of pointers in the
  * app's controllers.
  *
- * \ingroup libomclient
+ * \ingroup IngenClient
  */
 class ObjectController
 {
@@ -37,7 +38,8 @@ public:
 };
 
 
-} // namespace LibOmClient
+} // namespace Client
+} // namespace Ingen
 
 
 #endif // OBJECTCONTROLLER_H

@@ -26,9 +26,9 @@
 
 using std::string;
 
-using namespace LibOmClient;
+using namespace Ingen::Client;
 
-namespace OmGtk {
+namespace Ingenuity {
 
 class Controller;
 
@@ -39,9 +39,9 @@ class Controller;
  * The view may not be created (ie in the case of patches which have never
  * been shown and all their children).
  *
- * \ingroup OmGtk
+ * \ingroup Ingenuity
  */
-class GtkObjectController : public LibOmClient::ObjectController
+class GtkObjectController : public ObjectController
 {
 public:
 	GtkObjectController(CountedPtr<ObjectModel> model);
@@ -78,6 +78,6 @@ protected:
 };
 
 
-} // namespace OmGtk
+} // namespace Ingenuity
 
 #endif // GTKOBJECTCONTROLLER_H

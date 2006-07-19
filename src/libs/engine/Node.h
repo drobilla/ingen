@@ -26,7 +26,7 @@ using std::string;
 
 template <typename T> class List;
 
-namespace Om {
+namespace Ingen {
 
 class Port;
 template <typename T> class OutputPort;
@@ -44,7 +44,7 @@ namespace Shared {
  * 
  * This is a pure abstract base class for any Node, it contains no
  * implementation details/data whatsoever.  This is the interface you need to
- * implement to add a new Node type to Om.
+ * implement to add a new Node type.
  *
  * \ingroup engine
  */
@@ -110,6 +110,6 @@ public:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // NODE_H

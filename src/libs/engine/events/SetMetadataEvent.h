@@ -22,7 +22,7 @@
 
 using std::string;
 
-namespace Om {
+namespace Ingen {
 
 class GraphObject;
 
@@ -48,6 +48,6 @@ private:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // SETMETADATAEVENT_H

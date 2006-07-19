@@ -19,7 +19,7 @@
 #include "Ingen.h"
 #include "ClientBroadcaster.h"
 
-namespace Om {
+namespace Ingen {
 
 
 RegisterClientEvent::RegisterClientEvent(CountedPtr<Responder>       responder,
@@ -49,5 +49,5 @@ RegisterClientEvent::post_process()
 }
 
 
-} // namespace Om
+} // namespace Ingen
 

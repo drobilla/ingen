@@ -21,7 +21,7 @@
 #include "Node.h"
 #include "Port.h"
 
-namespace Om {
+namespace Ingen {
 
 
 /** Constructor for a connection from a node's output port.
@@ -102,5 +102,5 @@ TypedConnection<MidiMessage>::process(SampleCount nframes)
 }
 
 
-} // namespace Om
+} // namespace Ingen
 

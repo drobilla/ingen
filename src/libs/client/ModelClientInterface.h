@@ -22,7 +22,8 @@
 using std::string; using std::auto_ptr;
 #include "interface/ClientInterface.h"
 
-namespace LibOmClient {
+namespace Ingen {
+namespace Client {
 
 class PatchModel;
 class NodeModel;
@@ -37,13 +38,13 @@ class PluginModel;
  * this and implement a class with a similar interface to ClientInterface except
  * with model classes passed where appropriate instead of primitives.
  *
- * \ingroup libomclient
+ * \ingroup IngenClient
  */
-class ModelClientInterface : virtual public Om::Shared::ClientInterface
+class ModelClientInterface : virtual public Ingen::Shared::ClientInterface
 {
 public:
-	ModelClientInterface(Om::Shared::ClientInterface& extend)
-	: Om::Shared::ClientInterface(extend)
+	ModelClientInterface(Ingen::Shared::ClientInterface& extend)
+	: Ingen::Shared::ClientInterface(extend)
 	{}
 	
 	virtual ~ModelClientInterface() {}
@@ -82,6 +83,7 @@ protected:
 };
 
 
-} // namespace LibOmClient
+} // namespace Client
+} // namespace Ingen
 
 #endif // MODELCLIENTINTERFACE_H

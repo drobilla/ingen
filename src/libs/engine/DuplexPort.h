@@ -25,7 +25,7 @@
 #include "OutputPort.h"
 using std::string;
 
-namespace Om {
+namespace Ingen {
 	
 class MidiMessage;
 class Node;
@@ -63,6 +63,6 @@ protected:
 template class DuplexPort<Sample>;
 template class DuplexPort<MidiMessage>;
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // DUPLEXPORT_H

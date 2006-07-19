@@ -21,7 +21,7 @@
 #include "Plugin.h"
 #include "ObjectStore.h"
 
-namespace Om {
+namespace Ingen {
 
 
 DSSIConfigureEvent::DSSIConfigureEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& node_path, const string& key, const string& val)
@@ -68,5 +68,5 @@ DSSIConfigureEvent::post_process()
 }
 
 
-} // namespace Om
+} // namespace Ingen
 

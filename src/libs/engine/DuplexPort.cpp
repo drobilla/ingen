@@ -26,7 +26,7 @@
 using std::cerr; using std::cout; using std::endl;
 
 
-namespace Om {
+namespace Ingen {
 
 
 template <typename T>
@@ -42,5 +42,5 @@ template DuplexPort<Sample>::DuplexPort(Node* parent, const string& name, size_t
 template DuplexPort<MidiMessage>::DuplexPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size, bool is_output);
 
 
-} // namespace Om
+} // namespace Ingen
 

@@ -27,7 +27,7 @@
 #include "Controller.h"
 using std::cerr; using std::cout; using std::endl;
 
-namespace OmGtk {
+namespace Ingenuity {
 
 
 SubpatchModule::SubpatchModule(OmFlowCanvas* canvas, PatchController* patch)
@@ -99,4 +99,4 @@ SubpatchModule::menu_remove()
 	Controller::instance().destroy(m_patch->model()->path());
 }
 
-} // namespace OmGtk
+} // namespace Ingenuity

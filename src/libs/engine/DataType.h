@@ -17,14 +17,14 @@
 #ifndef DATATYPE_H
 #define DATATYPE_H
 
-namespace Om
+namespace Ingen
 {
 
 
 /** A data type that can be stored in a Port.
  *
  * Eventually the goal is to be able to just have to create a new one of these
- * to have Om support a new data type.
+ * to support a new data type.
  */
 class DataType {
 public:
@@ -65,6 +65,6 @@ private:
 
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // DATATYPE_H

@@ -20,7 +20,7 @@
 #include <string>
 #include <pthread.h>
 
-namespace Om {
+namespace Ingen {
 
 
 /* FIXME: This isn't Ingen specific at all.  Move it to util. */
@@ -58,6 +58,6 @@ private:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // THREAD_H

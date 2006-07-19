@@ -24,7 +24,7 @@
 #include "ClientBroadcaster.h"
 using std::string;
 
-namespace Om {
+namespace Ingen {
 
 
 RequestMetadataEvent::RequestMetadataEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& node_path, const string& key)
@@ -75,5 +75,5 @@ RequestMetadataEvent::post_process()
 }
 
 
-} // namespace Om
+} // namespace Ingen
 

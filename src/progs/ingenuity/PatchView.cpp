@@ -30,7 +30,7 @@
 #include "PatchTreeWindow.h"
 #include "Controller.h"
 
-namespace OmGtk {
+namespace Ingenuity {
 
 
 PatchView::PatchView(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
@@ -128,4 +128,4 @@ PatchView::disable()
 }
 
 
-} // namespace OmGtk
+} // namespace Ingenuity

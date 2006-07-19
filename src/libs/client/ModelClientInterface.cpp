@@ -21,7 +21,8 @@
 #include "NodeModel.h"
 #include "PluginModel.h"
 
-namespace LibOmClient {
+namespace Ingen {
+namespace Client {
 
 
 void
@@ -131,4 +132,5 @@ ModelClientInterface::connection(const string& src_port_path,
 
 
 
-} // namespace LibOmClient
+} // namespace Client
+} // namespace Ingen

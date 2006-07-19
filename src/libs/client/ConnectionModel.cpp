@@ -18,7 +18,8 @@
 #include "PortModel.h"
 #include "PatchModel.h"
 
-namespace LibOmClient {
+namespace Ingen {
+namespace Client {
 
 
 ConnectionModel::ConnectionModel(const Path& src_port, const Path& dst_port)
@@ -97,4 +98,5 @@ ConnectionModel::patch_path() const
 }
 
 
-} // namespace LibOmClient
+} // namespace Client
+} // namespace Ingen

@@ -23,7 +23,7 @@
 #include "util/CountedPtr.h"
 #include "interface/ClientInterface.h"
 
-namespace OmGtk {
+namespace Ingenuity {
 
 class App;
 class Controller;
@@ -34,14 +34,14 @@ class Controller;
  * This handles actually connecting to the engine and making sure everything
  * is ready before really launching the app (eg wait for the root patch).
  *
- * \ingroup OmGtk
+ * \ingroup Ingenuity
  */
 class ConnectWindow : public Gtk::Dialog
 {
 public:
 	ConnectWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml);
 	
-	void start(CountedPtr<Om::Shared::ClientInterface> client);
+	void start(CountedPtr<Ingen::Shared::ClientInterface> client);
 private:
 	void server_toggled();
 	void launch_toggled();
@@ -53,7 +53,7 @@ private:
 
 	bool gtk_callback();
 
-	CountedPtr<Om::Shared::ClientInterface> _client;
+	CountedPtr<Ingen::Shared::ClientInterface> _client;
 	Gtk::Image*                             _icon;
 	Gtk::ProgressBar*                       _progress_bar;
 	Gtk::Label*                             _progress_label;
@@ -68,6 +68,6 @@ private:
 };
 
 
-} // namespace OmGtk
+} // namespace Ingenuity
 
 #endif // CONNECT_WINDOW_H

@@ -21,7 +21,7 @@
 #include "util/Semaphore.h"
 #include "Thread.h"
 
-namespace Om {
+namespace Ingen {
 
 
 /** Thread driven by (realtime safe) signals.
@@ -56,6 +56,6 @@ private:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // SLAVE_H

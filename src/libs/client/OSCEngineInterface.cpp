@@ -17,7 +17,8 @@
 #include "OSCEngineInterface.h"
 #include "interface/ClientKey.h"
 
-namespace LibOmClient {
+namespace Ingen {
+namespace Client {
 
 /** Note the sending port is implicitly set by liblo, lo_send by default sends
  * from the most recently created server, so create the OSC listener before
@@ -341,6 +342,7 @@ OSCEngineInterface::request_all_objects()
 
 
 
-} // namespace LibOmClient
+} // namespace Client
+} // namespace Ingen
 
 

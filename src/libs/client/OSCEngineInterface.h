@@ -22,19 +22,20 @@
 #include <lo/lo.h>
 #include "interface/EngineInterface.h"
 using std::string;
-using Om::Shared::EngineInterface;
-using Om::Shared::ClientInterface;
-using Om::Shared::ClientKey;
+using Ingen::Shared::EngineInterface;
+using Ingen::Shared::ClientInterface;
+using Ingen::Shared::ClientKey;
 
 
-namespace LibOmClient {
+namespace Ingen {
+namespace Client {
 
 /* OSC (via liblo) interface to the engine.
  *
  * Clients can use this opaquely as an EngineInterface* to control the engine
  * over OSC (whether over a network or not, etc).
  *
- * \ingroup libomclient
+ * \ingroup IngenClient
  */
 class OSCEngineInterface : public EngineInterface
 {
@@ -137,7 +138,8 @@ protected:
 };
 
 
-} // namespace LibOmClient
+} // namespace Client
+} // namespace Ingen
 
 #endif // OSCENGINEINTERFACE_H
 

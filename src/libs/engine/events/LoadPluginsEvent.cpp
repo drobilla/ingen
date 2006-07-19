@@ -22,7 +22,7 @@
 #include <iostream>
 using std::cerr;
 
-namespace Om {
+namespace Ingen {
 
 
 LoadPluginsEvent::LoadPluginsEvent(CountedPtr<Responder> responder, SampleCount timestamp)
@@ -40,5 +40,5 @@ LoadPluginsEvent::post_process()
 }
 
 
-} // namespace Om
+} // namespace Ingen
 

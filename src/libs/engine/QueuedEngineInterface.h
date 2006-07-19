@@ -28,7 +28,7 @@
 #include "Responder.h"
 using std::string;
 
-namespace Om {
+namespace Ingen {
 
 using Shared::ClientKey;
 using Shared::ClientInterface;
@@ -55,7 +55,7 @@ using Shared::EngineInterface;
  * events and get pushed directly into the realtime event queue.  Should that
  * be separated into a different interface/client?
  */
-class QueuedEngineInterface : public Om::QueuedEventSource, public EngineInterface
+class QueuedEngineInterface : public QueuedEventSource, public EngineInterface
 {
 public:
 	QueuedEngineInterface(size_t queued_size, size_t stamped_size);
@@ -155,7 +155,7 @@ private:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // QUEUEDENGINEINTERFACE_H
 

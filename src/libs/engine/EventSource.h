@@ -17,7 +17,7 @@
 #ifndef EVENTSOURCE_H
 #define EVENTSOURCE_H
 
-namespace Om {
+namespace Ingen {
 
 class Event;
 class QueuedEvent;
@@ -50,7 +50,7 @@ protected:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // EVENTSOURCE_H
 

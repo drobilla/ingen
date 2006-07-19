@@ -22,7 +22,7 @@
 #include "TypedPort.h"
 #include "types.h"
 
-namespace Om {
+namespace Ingen {
 
 template <typename T> class InputPort;
 
@@ -62,6 +62,6 @@ private:
 
 template class OutputPort<Sample>;
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // OUTPUTPORT_H

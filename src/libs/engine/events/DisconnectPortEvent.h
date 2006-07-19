@@ -24,7 +24,7 @@
 
 template <typename T> class Array;
 
-namespace Om {
+namespace Ingen {
 
 	
 class Patch;
@@ -64,7 +64,7 @@ private:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 
 #endif // DISCONNECTPORTEVENT_H

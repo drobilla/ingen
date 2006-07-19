@@ -22,7 +22,7 @@
 #include "types.h"
 using std::string;
 
-namespace Om {
+namespace Ingen {
 
 class Port;
 
@@ -51,6 +51,6 @@ private:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // SETPORTVALUEEVENT_H

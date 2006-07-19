@@ -26,7 +26,7 @@
 #include "Event.h"
 #include "EventSource.h"
 
-namespace Om {
+namespace Ingen {
 
 class QueuedEvent;
 
@@ -100,6 +100,6 @@ QueuedEventSource::pop_earliest_stamped_before(const SampleCount time)
 }
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // QUEUEDEVENTSOURCE_H

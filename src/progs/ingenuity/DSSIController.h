@@ -23,16 +23,15 @@
 #include "NodeController.h"
 
 using std::string;
-using Om::Path;
-using namespace LibOmClient;
+using namespace Ingen::Client;
 
-namespace LibOmClient {
+namespace Ingen { namespace Client {
 	class MetadataModel;
 	class NodeModel;
 	class PortModel;
-}
+} }
 
-namespace OmGtk {
+namespace Ingenuity {
 
 class Controller;
 class OmModule;
@@ -44,7 +43,7 @@ class DSSIModule;
 
 /* Controller for a DSSI node.
  *
- * \ingroup OmGtk
+ * \ingroup Ingenuity
  */
 class DSSIController : public NodeController
 {
@@ -74,6 +73,6 @@ private:
 };
 
 
-} // namespace OmGtk
+} // namespace Ingenuity
 
 #endif // DSSICONTROLLER_H

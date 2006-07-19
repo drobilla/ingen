@@ -28,7 +28,7 @@
 using std::cerr; using std::cout; using std::endl;
 using std::string;
 
-namespace OmGtk {
+namespace Ingenuity {
 	
 
 LashController::LashController(lash_args_t* args)
@@ -43,7 +43,7 @@ LashController::LashController(lash_args_t* args)
 	}
 	
 	lash_event_t* event = lash_event_new_with_type(LASH_Client_Name);
-	lash_event_set_string(event, "OmGtk");
+	lash_event_set_string(event, "Ingenuity");
 	lash_send_event(m_client, event);			
 }
 
@@ -165,4 +165,4 @@ LashController::save(const string& dir)
 	*/
 }
 
-} // namespace OmGtk
+} // namespace Ingenuity

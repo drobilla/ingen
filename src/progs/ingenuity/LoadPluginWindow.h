@@ -25,9 +25,9 @@
 #include <gtkmm.h>
 #include "util/CountedPtr.h"
 
-using LibOmClient::PluginModel;
+using Ingen::Client::PluginModel;
 
-namespace OmGtk {
+namespace Ingenuity {
 	
 class PatchController;
 
@@ -35,7 +35,7 @@ class PatchController;
 
 /** Columns for the plugin list in the load plugin window.
  *
- * \ingroup OmGtk
+ * \ingroup Ingenuity
  */
 class ModelColumns : public Gtk::TreeModel::ColumnRecord
 {
@@ -62,7 +62,7 @@ public:
 
 /** Column for the criteria combo box in the load plugin window.
  *
- * \ingroup OmGtk
+ * \ingroup Ingenuity
  */
 class CriteriaColumns : public Gtk::TreeModel::ColumnRecord
 {
@@ -80,7 +80,7 @@ public:
  *
  * Loaded by glade as a derived object.
  *
- * \ingroup OmGtk
+ * \ingroup Ingenuity
  */
 class LoadPluginWindow : public Gtk::Window
 {
@@ -140,6 +140,6 @@ private:
 };
 
 
-} // namespace OmGtk
+} // namespace Ingenuity
 
 #endif // LOADPLUGINWINDOW_H

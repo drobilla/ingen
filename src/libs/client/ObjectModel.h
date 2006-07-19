@@ -28,16 +28,16 @@
 #include "util/CountedPtr.h"
 using std::string; using std::map; using std::find;
 using std::cout; using std::cerr; using std::endl;
-using Om::Path;
 
-namespace LibOmClient {
+namespace Ingen {
+namespace Client {
 
 class ObjectController;
 
 	
-/** Base class for all OmObject models (NodeModel, PatchModel, PortModel).
+/** Base class for all GraphObject models (NodeModel, PatchModel, PortModel).
  *
- * \ingroup libomclient
+ * \ingroup IngenClient
  */
 class ObjectModel
 {
@@ -82,6 +82,7 @@ private:
 };
 
 
-} // namespace LibOmClient
+} // namespace Client
+} // namespace Ingen
 
 #endif // OBJECTMODEL_H

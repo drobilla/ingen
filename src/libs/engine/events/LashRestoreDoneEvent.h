@@ -24,7 +24,7 @@
 #include <iostream>
 using std::cerr;
 
-namespace Om {
+namespace Ingen {
 
 class Port;
 
@@ -49,6 +49,6 @@ public:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // LASHRESTOREDONEEVENT_H

@@ -21,7 +21,7 @@
 #include "types.h"
 #include "Responder.h"
 
-namespace Om {
+namespace Ingen {
 
 class Port;
 
@@ -40,6 +40,6 @@ public:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // PINGQUEUEDEVENT_H

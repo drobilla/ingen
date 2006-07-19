@@ -26,7 +26,7 @@ using std::string;
 template <typename T> class ListNode;
 template <typename T> class Array;
 
-namespace Om {
+namespace Ingen {
 	
 class Patch;
 class Node;
@@ -100,6 +100,6 @@ private:
 
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // DISCONNECTIONEVENT_H

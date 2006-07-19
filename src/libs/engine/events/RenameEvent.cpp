@@ -24,7 +24,7 @@
 #include "util/Path.h"
 #include "ObjectStore.h"
 
-namespace Om {
+namespace Ingen {
 
 
 RenameEvent::RenameEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& name)
@@ -119,4 +119,4 @@ RenameEvent::post_process()
 }
 
 
-} // namespace Om
+} // namespace Ingen

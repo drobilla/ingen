@@ -31,7 +31,7 @@
 
 using std::cerr; using std::cout; using std::endl;
 
-namespace Om {
+namespace Ingen {
 
 using Shared::ClientKey;
 
@@ -200,7 +200,7 @@ OSCReceiver::set_response_address_cb(const char* path, const char* types, lo_arg
 
 	//cerr << "SET RESPONSE\n";
 
-	if (argc < 1 || types[0] != 'i') // Not a valid Om message
+	if (argc < 1 || types[0] != 'i') // Not a valid Ingen message
 		return 0; // Save liblo the trouble
 
 	//cerr << "** valid msg\n";
@@ -906,4 +906,4 @@ OSCReceiver::unknown_cb(const char* path, const char* types, lo_arg** argv, int 
 }
 
 
-} // namespace Om
+} // namespace Ingen

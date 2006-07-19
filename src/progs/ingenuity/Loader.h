@@ -21,19 +21,19 @@
 #include <cassert>
 using std::string;
 
-namespace LibOmClient {
+namespace Ingen { namespace Client {
 	class PatchLibrarian;
 	class PatchModel;
-}
-using LibOmClient::PatchLibrarian;
-using LibOmClient::PatchModel;
+} }
+using Ingen::Client::PatchLibrarian;
+using Ingen::Client::PatchModel;
 
 
-namespace OmGtk {
+namespace Ingenuity {
 	
 /** Event to run in the Loader thread.
  *
- * \ingroup OmGtk
+ * \ingroup Ingenuity
  */
 class LoaderEvent
 {
@@ -47,7 +47,7 @@ protected:
 
 /** Loader thread patch loading event.
  *
- * \ingroup OmGtk
+ * \ingroup Ingenuity
  */
 class LoadPatchEvent : public LoaderEvent
 {
@@ -66,7 +66,7 @@ private:
 
 /** Loader thread patch loading event.
  *
- * \ingroup OmGtk
+ * \ingroup Ingenuity
  */
 class SavePatchEvent : public LoaderEvent
 {
@@ -115,7 +115,7 @@ private:
  * blocking everything else, so the app can respond to the incoming events
  * caused as a result of the patch loading.
  *
- * \ingroup OmGtk
+ * \ingroup Ingenuity
  */
 class Loader
 {
@@ -149,6 +149,6 @@ private:
 };
 
 
-} // namespace OmGtk
+} // namespace Ingenuity
 
 #endif // LOADERRTHREAD_H

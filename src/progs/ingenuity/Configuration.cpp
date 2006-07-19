@@ -29,11 +29,11 @@
 
 using std::cerr; using std::cout; using std::endl;
 using std::map; using std::string;
-using LibOmClient::PatchModel;
+using Ingen::Client::PatchModel;
 
-namespace OmGtk {
+namespace Ingenuity {
 
-using namespace LibOmClient;
+using namespace Ingen::Client;
 
 
 Configuration::Configuration()
@@ -181,4 +181,4 @@ Configuration::set_window_size(const string& id, Coord size)
 }*/
 
 
-} // namespace OmGtk
+} // namespace Ingenuity

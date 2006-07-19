@@ -23,7 +23,7 @@
 #include "Store.h"
 using std::string;
 
-namespace OmGtk {
+namespace Ingenuity {
 
 
 RenameWindow::RenameWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml)
@@ -110,4 +110,4 @@ RenameWindow::ok_clicked()
 }
 
 
-} // namespace OmGtk
+} // namespace Ingenuity

@@ -23,7 +23,7 @@
 #include "ObjectStore.h"
 #include "Port.h"
 
-namespace Om {
+namespace Ingen {
 
 
 DisablePatchEvent::DisablePatchEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& patch_path)
@@ -65,5 +65,5 @@ DisablePatchEvent::post_process()
 }
 
 
-} // namespace Om
+} // namespace Ingen
 

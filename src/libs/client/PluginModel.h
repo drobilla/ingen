@@ -20,12 +20,13 @@
 #include <string>
 using std::string;
 
-namespace LibOmClient {
+namespace Ingen {
+namespace Client {
 
 
 /** Model for a plugin available for loading.
  *
- * \ingroup libomclient
+ * \ingroup IngenClient
  */
 class PluginModel
 {
@@ -99,7 +100,8 @@ private:
 };
 
 
-} // namespace Om
+} // namespace Client
+} // namespace Ingen
 
 #endif // PLUGINMODEL_H
 

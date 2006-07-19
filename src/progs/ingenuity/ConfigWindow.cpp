@@ -25,7 +25,7 @@
 using std::cout; using std::cerr; using std::endl;
 
 
-namespace OmGtk {
+namespace Ingenuity {
 
 ConfigWindow::ConfigWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 : Gtk::Window(cobject),
@@ -83,4 +83,4 @@ ConfigWindow::ok_clicked()
 }
 
 
-} // namespace OmGtk
+} // namespace Ingenuity

@@ -31,14 +31,15 @@
 using std::string; using std::map; using std::find;
 using std::cout; using std::cerr; using std::endl;
 
-namespace LibOmClient {
+namespace Ingen {
+namespace Client {
 
 class PluginModel;
 
 	
 /** Node model class, used by the client to store engine's state.
  *
- * \ingroup libomclient
+ * \ingroup IngenClient
  */
 class NodeModel : public ObjectModel
 {
@@ -79,8 +80,8 @@ protected:
 	bool                        m_polyphonic;
 	PortModelList               m_ports;  ///< List of ports (instead of map to preserve order)
 	CountedPtr<PluginModel>     m_plugin; ///< The plugin this node is an instance of
-	float                       m_x;      ///< Just metadata, here as an optimization for OmGtk
-	float                       m_y;      ///< Just metadata, here as an optimization for OmGtk
+	float                       m_x;      ///< Just metadata, here as an optimization for GUI
+	float                       m_y;      ///< Just metadata, here as an optimization for GUI
 	map<int, map<int, string> > m_banks;  ///< DSSI banks
 
 private:
@@ -93,6 +94,7 @@ private:
 typedef map<string, CountedPtr<NodeModel> >   NodeModelMap;
 
 
-} // namespace LibOmClient
+} // namespace Client
+} // namespace Ingen
 
 #endif // NODEMODEL_H

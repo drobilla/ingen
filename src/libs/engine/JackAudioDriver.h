@@ -23,7 +23,7 @@
 #include "AudioDriver.h"
 #include "Buffer.h"
 
-namespace Om {
+namespace Ingen {
 
 class Patch;
 class Port;
@@ -166,6 +166,6 @@ inline int JackAudioDriver::sample_rate_cb(jack_nframes_t nframes, void* jack_dr
 }
 	
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // JACKAUDIODRIVER_H

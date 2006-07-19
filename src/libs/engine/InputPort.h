@@ -25,7 +25,7 @@
 #include "MidiMessage.h"
 using std::string;
 
-namespace Om {
+namespace Ingen {
 
 template <typename T> class TypedConnection;
 template <typename T> class OutputPort;
@@ -84,6 +84,6 @@ private:
 template class InputPort<Sample>;
 template class InputPort<MidiMessage>;
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // INPUTPORT_H

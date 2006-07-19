@@ -24,16 +24,16 @@
 #include "PluginModel.h"
 #include "OSCModelEngineInterface.h"
 
-namespace LibOmClient {
+namespace Ingen { namespace Client {
 class PatchModel;
 class NodeModel;
 class PatchLibrarian;
-}
+} }
 
 using std::string; using std::list;
-using namespace LibOmClient;
+using namespace Ingen::Client;
 
-namespace OmGtk {
+namespace Ingenuity {
 
 class PatchController;
 class Loader;
@@ -47,7 +47,7 @@ class Loader;
  * This needs to be either eliminated or the name changed to OmController.  Probably
  * best to keep around in case multiple engine control support comes around?
  *
- * \ingroup OmGtk
+ * \ingroup Ingenuity
  */
 class Controller : public OSCModelEngineInterface
 {
@@ -105,6 +105,6 @@ private:
 };
 
 
-} // namespace OmGtk
+} // namespace Ingenuity
 
 #endif // CONTROLLER_H

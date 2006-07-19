@@ -26,7 +26,7 @@
 
 using std::string; using std::list;
 
-namespace Om {
+namespace Ingen {
 
 class Node;
 class Patch;
@@ -87,6 +87,6 @@ private:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // NODEFACTORY_H

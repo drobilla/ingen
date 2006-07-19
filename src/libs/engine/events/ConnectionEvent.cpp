@@ -30,7 +30,7 @@
 #include "util/Path.h"
 
 using std::string;
-namespace Om {
+namespace Ingen {
 
 
 //// ConnectionEvent ////
@@ -257,5 +257,5 @@ TypedConnectionEvent<T>::post_process()
 }
 
 
-} // namespace Om
+} // namespace Ingen
 

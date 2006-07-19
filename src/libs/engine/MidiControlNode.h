@@ -22,7 +22,7 @@
 #include "InternalNode.h"
 using std::string;
 
-namespace Om {
+namespace Ingen {
 	
 class MidiLearnResponseEvent;
 class MidiMessage;
@@ -67,6 +67,6 @@ private:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // MIDICONTROLNODE_H

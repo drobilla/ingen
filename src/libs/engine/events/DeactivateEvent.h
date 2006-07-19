@@ -19,7 +19,7 @@
 
 #include "QueuedEvent.h"
 
-namespace Om {
+namespace Ingen {
 
 
 /** Deactivates the engine.
@@ -37,6 +37,6 @@ public:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // DEACTIVATEEVENT_H

@@ -22,7 +22,7 @@
 #include <string>
 using std::string;
 
-namespace Om {
+namespace Ingen {
 
 class Ingen;
 
@@ -52,6 +52,6 @@ private:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // LASHDRIVER_H

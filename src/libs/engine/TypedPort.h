@@ -25,7 +25,7 @@
 
 using std::string;
 
-namespace Om {
+namespace Ingen {
 	
 class MidiMessage;
 class Node;
@@ -74,6 +74,6 @@ protected:
 template class TypedPort<Sample>;
 template class TypedPort<MidiMessage>;
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // TYPEDPORT_H

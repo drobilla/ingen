@@ -25,7 +25,7 @@
 #include "OutputPort.h"
 #include "Plugin.h"
 
-namespace Om {
+namespace Ingen {
 
 
 /** Partially construct a LADSPANode.
@@ -335,5 +335,5 @@ LADSPANode::default_port_value(ulong port_index)
 }
 
 
-} // namespace Om
+} // namespace Ingen
 

@@ -21,7 +21,7 @@
 #include "NodeBase.h"
 #include "Plugin.h"
 
-namespace Om {
+namespace Ingen {
 
 class Patch;
 
@@ -37,7 +37,7 @@ public:
 	: NodeBase(plugin, path, poly, parent, srate, buffer_size),
 	  _is_added(false)
 	{
-		_plugin.lib_path("/Om");
+		_plugin.lib_path("/Ingen");
 	}
 	
 	virtual ~InternalNode() {}
@@ -64,6 +64,6 @@ protected:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // INTERNALNODE_H

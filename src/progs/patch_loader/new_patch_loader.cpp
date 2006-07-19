@@ -22,9 +22,8 @@
 #include "PatchLibrarian.h"
 
 using std::cout; using std::cerr; using std::endl; 
-using Om::Path;
 
-using namespace LibOmClient;
+using namespace Ingen::Client;
 
 
 int

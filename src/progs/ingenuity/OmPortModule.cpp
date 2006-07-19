@@ -26,7 +26,7 @@
 #include "PatchController.h"
 #include "PatchWindow.h"
 
-namespace OmGtk {
+namespace Ingenuity {
 
 
 OmPortModule::OmPortModule(OmFlowCanvas* canvas, PortController* port, double x, double y)
@@ -68,4 +68,4 @@ OmPortModule::move_to(double x, double y)
 	//store_location();
 }
 
-} // namespace OmGtk
+} // namespace Ingenuity

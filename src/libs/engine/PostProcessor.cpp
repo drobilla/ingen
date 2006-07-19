@@ -26,7 +26,7 @@
 
 using std::cerr; using std::cout; using std::endl;
 
-namespace Om {
+namespace Ingen {
 
 
 PostProcessor::PostProcessor(size_t queue_size)
@@ -51,4 +51,4 @@ PostProcessor::_whipped()
 	}
 }
 
-} // namespace Om
+} // namespace Ingen

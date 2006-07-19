@@ -23,14 +23,14 @@
 #include "OmPortModule.h"
 
 using std::string;
-using namespace LibOmClient;
+using namespace Ingen::Client;
 
-namespace LibOmClient {
+namespace Ingen { namespace Client {
 	class MetadataModel;
 	class PortModel;
-}
+} }
 
-namespace OmGtk {
+namespace Ingenuity {
 
 class Controller;
 class OmPort;
@@ -43,7 +43,7 @@ class OmFlowCanvas;
 
 /** Controller for a port on a (non-patch) node.
  *
- * \ingroup OmGtk
+ * \ingroup Ingenuity
  */
 class PortController : public GtkObjectController
 {
@@ -77,6 +77,6 @@ private:
 };
 
 
-} // namespace OmGtk
+} // namespace Ingenuity
 
 #endif // PORTCONTROLLER_H

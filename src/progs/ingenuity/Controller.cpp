@@ -23,7 +23,7 @@
 #include "Loader.h"
 #include "interface/ClientKey.h"
 
-namespace OmGtk {
+namespace Ingenuity {
 
 
 /// Singleton instance	
@@ -171,5 +171,5 @@ Controller::yank_added_patch(const string& path)
 }
 #endif
 
-} // namespace OmGtk
+} // namespace Ingenuity
 

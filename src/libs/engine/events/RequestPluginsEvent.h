@@ -21,7 +21,7 @@
 #include "QueuedEvent.h"
 using std::string;
 
-namespace Om {
+namespace Ingen {
 
 class Responder;
 namespace Shared {
@@ -46,6 +46,6 @@ private:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // REQUESTPLUGINSEVENT_H

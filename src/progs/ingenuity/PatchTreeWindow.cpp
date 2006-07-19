@@ -22,9 +22,7 @@
 #include "PatchModel.h"
 #include "util/Path.h"
 
-using Om::Path;
-
-namespace OmGtk {
+namespace Ingenuity {
 	
 
 PatchTreeWindow::PatchTreeWindow(BaseObjectType* cobject,
@@ -249,4 +247,4 @@ PatchTreeWindow::patch_renamed(const Path& old_path, const Path& new_path)
 }
 
 	
-} // namespace OmGtk
+} // namespace Ingenuity

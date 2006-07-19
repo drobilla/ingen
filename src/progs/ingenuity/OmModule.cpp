@@ -26,7 +26,7 @@
 #include "PatchController.h"
 #include "PatchWindow.h"
 
-namespace OmGtk {
+namespace Ingenuity {
 
 
 OmModule::OmModule(OmFlowCanvas* canvas, NodeController* node)
@@ -82,4 +82,4 @@ OmModule::move_to(double x, double y)
 	//store_location();
 }
 
-} // namespace OmGtk
+} // namespace Ingenuity

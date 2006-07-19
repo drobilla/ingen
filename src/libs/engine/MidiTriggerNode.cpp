@@ -22,11 +22,11 @@
 #include "util.h"
 #include "midi.h"
 
-namespace Om {
+namespace Ingen {
 
 
 MidiTriggerNode::MidiTriggerNode(const string& path, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size)
-: InternalNode(new Plugin(Plugin::Internal, "Om:TriggerNode"), path, 1, parent, srate, buffer_size)
+: InternalNode(new Plugin(Plugin::Internal, "Ingen:TriggerNode"), path, 1, parent, srate, buffer_size)
 {
 	_ports = new Array<Port*>(5);
 
@@ -50,7 +50,7 @@ MidiTriggerNode::MidiTriggerNode(const string& path, size_t poly, Patch* parent,
 	_ports->at(4) = _vel_port;
 	
 	_plugin.plug_label("trigger_in");
-	_plugin.name("Om Trigger Node (MIDI, OSC)");
+	_plugin.name("Ingen Trigger Node (MIDI, OSC)");
 }
 
 
@@ -116,5 +116,5 @@ MidiTriggerNode::note_off(uchar note_num, SampleCount offset)
 }
 
 
-} // namespace Om
+} // namespace Ingen
 

@@ -22,7 +22,7 @@
 #include "PatchController.h"
 #include "Controller.h"
 
-namespace OmGtk {
+namespace Ingenuity {
 
 	
 ControlPanel::ControlPanel(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
@@ -282,4 +282,4 @@ ControlPanel::voice_selected()
 }
 
 	
-} // namespace OmGtk
+} // namespace Ingenuity

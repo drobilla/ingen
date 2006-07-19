@@ -22,7 +22,8 @@
 
 using std::cerr; using std::cout; using std::endl;
 
-namespace LibOmClient {
+namespace Ingen {
+namespace Client {
 
 
 void
@@ -254,4 +255,5 @@ PatchModel::polyphonic() const
 }
 
 
-} // namespace LibOmClient
+} // namespace Client
+} // namespace Ingen

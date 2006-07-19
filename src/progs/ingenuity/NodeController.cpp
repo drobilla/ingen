@@ -35,7 +35,7 @@
 #include "Store.h"
 using std::cerr; using std::endl;
 
-namespace OmGtk {
+namespace Ingenuity {
 
 
 NodeController::NodeController(CountedPtr<NodeModel> model)
@@ -389,5 +389,5 @@ NodeController::disable_controls_menuitem()
 
 
 
-} // namespace OmGtk
+} // namespace Ingenuity
 

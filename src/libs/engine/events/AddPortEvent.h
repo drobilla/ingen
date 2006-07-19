@@ -26,7 +26,7 @@ using std::string;
 
 template <typename T> class Array;
 
-namespace Om {
+namespace Ingen {
 
 class Patch;
 class Port;
@@ -60,6 +60,6 @@ private:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // ADDPORTEVENT_H

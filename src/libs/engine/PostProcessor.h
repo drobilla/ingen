@@ -23,7 +23,7 @@
 #include "util/Semaphore.h"
 #include "Slave.h"
 
-namespace Om {
+namespace Ingen {
 
 class Event;
 
@@ -54,6 +54,6 @@ private:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // POSTPROCESSOR_H

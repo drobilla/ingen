@@ -24,18 +24,17 @@
 #include "PortModel.h"
 #include "util/CountedPtr.h"
 
+namespace Ingen { namespace Client { class PortModel; } }
+using namespace Ingen::Client;
 
-namespace LibOmClient { class PortModel; }
-using namespace LibOmClient;
-
-namespace OmGtk {
+namespace Ingenuity {
 
 class ControlPanel;
 
 
 /** A group of controls (for a single Port) in a NodeControlWindow.
  *
- * \ingroup OmGtk
+ * \ingroup Ingenuity
  */
 class ControlGroup : public Gtk::VBox
 {
@@ -70,7 +69,7 @@ protected:
 
 /** A slider for a continuous control.
  *
- * \ingroup OmGtk
+ * \ingroup Ingenuity
  */
 class SliderControlGroup : public ControlGroup
 {
@@ -129,7 +128,7 @@ SliderControlGroup::set_value(const float val)
 
 /** A spinbutton for integer controls.
  * 
- * \ingroup OmGtk
+ * \ingroup Ingenuity
  */
 class IntegerControlGroup : public ControlGroup
 {
@@ -154,7 +153,7 @@ private:
 
 /** A radio button for toggle controls.
  * 
- * \ingroup OmGtk
+ * \ingroup Ingenuity
  */
 class ToggleControlGroup : public ControlGroup
 {
@@ -177,6 +176,6 @@ private:
 };
 
 
-} // namespace OmGtk
+} // namespace Ingenuity
 
 #endif // CONTROLGROUPS_H

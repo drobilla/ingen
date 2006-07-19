@@ -20,7 +20,7 @@
 using std::cout; using std::cerr; using std::endl;
 using std::ifstream;
 
-namespace OmGtk {
+namespace Ingenuity {
 
 
 Glib::ustring GladeFactory::glade_filename = "";
@@ -66,4 +66,4 @@ GladeFactory::new_glade_reference(const string& toplevel_widget)
 }
 
 
-} // namespace OmGtk
+} // namespace Ingenuity

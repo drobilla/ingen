@@ -16,7 +16,8 @@
 
 #include "ObjectModel.h"
 
-namespace LibOmClient {
+namespace Ingen {
+namespace Client {
 
 
 ObjectModel::ObjectModel(const string& path)
@@ -60,5 +61,6 @@ ObjectModel::set_controller(ObjectController* c)
 	m_controller = c;
 }
 
-} // namespace LibOmClient
+} // namespace Client
+} // namespace Ingen
 

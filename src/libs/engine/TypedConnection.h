@@ -21,7 +21,7 @@
 #include "OutputPort.h"
 #include "Connection.h"
 
-namespace Om {
+namespace Ingen {
 
 class MidiMessage;
 class Port;
@@ -100,6 +100,6 @@ TypedConnection<MidiMessage>::buffer(size_t voice) const
 template class TypedConnection<Sample>;
 template class TypedConnection<MidiMessage>;
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // TYPEDCONNECTION_H

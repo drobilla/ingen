@@ -20,7 +20,7 @@
 #include "Controller.h"
 #include "PatchModel.h"
 
-namespace OmGtk {
+namespace Ingenuity {
 
 
 NewSubpatchWindow::NewSubpatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
@@ -108,4 +108,4 @@ NewSubpatchWindow::cancel_clicked()
 }
 
 
-} // namespace OmGtk
+} // namespace Ingenuity

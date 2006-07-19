@@ -18,7 +18,8 @@
 #include <iostream>
 using std::cerr; using std::endl;
 
-namespace LibOmClient {
+namespace Ingen {
+namespace Client {
 
 
 /** Push an event (from the engine, ie 'new patch') on to the queue.
@@ -65,4 +66,5 @@ ThreadedSigClientInterface::emit_signals()
 }
 
 
-} // namespace LibOmClient
+} // namespace Client
+} // namespace Ingen

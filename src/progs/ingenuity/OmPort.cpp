@@ -24,9 +24,9 @@
 #include "App.h"
 using std::cerr; using std::endl;
 
-using namespace LibOmClient;
+using namespace Ingen::Client;
 
-namespace OmGtk {
+namespace Ingenuity {
 
 OmPort::OmPort(OmModule* module, CountedPtr<PortModel> pm)
 : Port(module, pm->name(), pm->is_input(), App::instance().configuration()->get_port_color(pm.get())),
@@ -54,4 +54,4 @@ OmPort::set_name(const string& n)
 }
 #endif
 
-} // namespace OmGtk
+} // namespace Ingenuity

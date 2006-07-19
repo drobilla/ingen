@@ -25,7 +25,7 @@ using std::string;
 using std::cerr; using std::endl;
 
 
-namespace Om {
+namespace Ingen {
 
 
 /** Representation of a shared library containing at least one Plugin.
@@ -94,7 +94,7 @@ private:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // PLUGINLIBRARY_H
 

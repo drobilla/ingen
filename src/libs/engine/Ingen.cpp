@@ -46,7 +46,7 @@
 #endif
 using std::cout; using std::cerr; using std::endl;
 
-namespace Om {
+namespace Ingen {
 
 
 Ingen* Ingen::m_instance = NULL;
@@ -142,7 +142,7 @@ Ingen::main()
 		deactivate();
 
 	sleep(1);
-	cout << "[Main] Om exiting..." << endl;
+	cout << "[Main] Exiting..." << endl;
 	
 	return 0;
 }
@@ -205,4 +205,4 @@ Ingen::deactivate()
 }
 
 
-} // namespace Om
+} // namespace Ingen

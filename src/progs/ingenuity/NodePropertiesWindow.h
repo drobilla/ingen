@@ -21,17 +21,17 @@
 #include <libglademm.h>
 #include "util/CountedPtr.h"
 
-namespace LibOmClient { class NodeModel; }
-using namespace LibOmClient;
+namespace Ingen { namespace Client { class NodeModel; } }
+using namespace Ingen::Client;
 
-namespace OmGtk {
+namespace Ingenuity {
 
 
 /** 'New Patch' Window.
  *
  * Loaded by libglade as a derived object.
  *
- * \ingroup OmGtk
+ * \ingroup Ingenuity
  */
 class NodePropertiesWindow : public Gtk::Window
 {
@@ -50,6 +50,6 @@ private:
 	Gtk::Label*           m_plugin_name_label;
 };
 
-} // namespace OmGtk
+} // namespace Ingenuity
 
 #endif // NODEPROPERTIESWINDOW_H

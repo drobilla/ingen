@@ -27,7 +27,7 @@ template<typename T> class Array;
 template<typename T> class ListNode;
 template<typename T> class TreeNode;
 
-namespace Om {
+namespace Ingen {
 
 class GraphObject;
 class Patch;
@@ -63,6 +63,6 @@ private:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // DESTROYEVENT_H

@@ -26,14 +26,14 @@ using namespace LibFlowCanvas;
 
 using LibFlowCanvas::Port;
 
-namespace OmGtk {
+namespace Ingenuity {
 	
 class OmModule;
 class PatchController;
 
 /** Patch canvas widget.
  *
- * \ingroup OmGtk
+ * \ingroup Ingenuity
  */
 class OmFlowCanvas : public LibFlowCanvas::FlowCanvas
 {
@@ -82,6 +82,6 @@ private:
 };
 
 
-} // namespace OmGtk
+} // namespace Ingenuity
 
 #endif // OMPATCHBAYAREA_H

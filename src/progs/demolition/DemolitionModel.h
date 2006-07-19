@@ -20,10 +20,9 @@
 #include <vector>
 #include "PatchModel.h"
 #include "util/Path.h"
-using Om::Path;
 using std::vector;
 
-using namespace LibOmClient;
+using namespace Ingen::Client;
 
 class DemolitionModel {
 public:

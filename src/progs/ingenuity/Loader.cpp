@@ -23,7 +23,7 @@
 #include "PatchController.h"
 using std::cout; using std::endl;
 
-namespace OmGtk {
+namespace Ingenuity {
 
 
 // LoadPatchEvent //
@@ -230,4 +230,4 @@ Loader::save_session(const string& filename)
 }
 */
 
-} // namespace OmGtk
+} // namespace Ingenuity

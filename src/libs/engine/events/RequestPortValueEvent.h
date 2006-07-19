@@ -23,7 +23,7 @@
 
 using std::string;
 
-namespace Om {
+namespace Ingen {
 	
 class Port;
 namespace Shared { class ClientInterface; }
@@ -51,6 +51,6 @@ private:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // REQUESTPORTVALUEEVENT_H

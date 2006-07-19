@@ -22,7 +22,7 @@
 #include "util/Path.h"
 #include "Tree.h"
 
-namespace Om {
+namespace Ingen {
 
 
 /** Find the Patch at the given path.
@@ -104,4 +104,4 @@ ObjectStore::remove(const string& path)
 }
 
 
-} // namespace Om
+} // namespace Ingen

@@ -23,7 +23,7 @@
 #include "MaidObject.h"
 #include "Responder.h"
 
-namespace Om {	
+namespace Ingen {	
 
 
 
@@ -69,6 +69,6 @@ protected:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // EVENT_H

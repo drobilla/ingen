@@ -22,7 +22,7 @@
 #include "util/Queue.h"
 #include "MidiDriver.h"
 
-namespace Om {
+namespace Ingen {
 
 class Node;
 class SetPortValueEvent;
@@ -121,7 +121,7 @@ private:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 
 #endif // ALSAMIDIDRIVER_H

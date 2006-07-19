@@ -17,10 +17,10 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
-namespace Om {
+namespace Ingen {
 
 
-/** Public interface to Om engine shared library.
+/** Public interface to engine library.
  *
  * This is an interface to all the audio-processing related functionality
  * only.  OSC communication, LASH session management, etc, are not part of 
@@ -76,7 +76,7 @@ public:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // CONTROLLER_H
 

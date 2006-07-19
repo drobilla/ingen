@@ -25,17 +25,17 @@
 
 using std::string; using std::list;
 
-namespace LibOmClient {
-class PatchModel;
-class NodeModel;
-class PortModel;
-class ControlModel;
-class MetadataModel;
-}
-using namespace LibOmClient;
+namespace Ingen { namespace Client {
+	class PatchModel;
+	class NodeModel;
+	class PortModel;
+	class ControlModel;
+	class MetadataModel;
+} }
+using namespace Ingen::Client;
 
 
-namespace OmGtk {
+namespace Ingenuity {
 	
 class PatchController;
 class OmFlowCanvas;
@@ -54,7 +54,7 @@ class BreadCrumb;
 
 /** A window for a patch.
  *
- * \ingroup OmGtk
+ * \ingroup Ingenuity
  */
 class PatchWindow : public Gtk::Window
 {
@@ -137,6 +137,6 @@ private:
 };
 
 
-} // namespace OmGtk
+} // namespace Ingenuity
 
 #endif // PATCHWINDOW_H

@@ -22,10 +22,10 @@
 #include "interface/ClientInterface.h"
 #include <string>
 using std::string;
-using Om::Shared::ClientInterface;
-using Om::Shared::ClientKey;
+using Ingen::Shared::ClientInterface;
+using Ingen::Shared::ClientKey;
 
-namespace Om {
+namespace Ingen {
 
 
 /** Registers a new client with the OSC system, so it can receive updates.
@@ -49,6 +49,6 @@ private:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // REGISTERCLIENTEVENT_H

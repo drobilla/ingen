@@ -22,7 +22,7 @@
 #include <lo/lo.h>
 #include "LADSPANode.h"
 
-namespace Om {
+namespace Ingen {
 
 class MidiMessage;
 template <typename T> class InputPort;
@@ -102,7 +102,7 @@ private:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 
 #endif // DSSINODE_H

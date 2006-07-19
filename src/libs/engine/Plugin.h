@@ -30,7 +30,7 @@ using std::string;
 using std::cerr; using std::endl;
 
 
-namespace Om {
+namespace Ingen {
 
 class PluginLibrary;
 
@@ -52,7 +52,7 @@ public:
 	{}
 
 	// FIXME: remove
-	Plugin() : m_type(Internal), m_lib_path("/Om"),
+	Plugin() : m_type(Internal), m_lib_path("/Ingen"),
 	           m_id(0), m_library(NULL)
 	{
 #ifdef HAVE_SLV2
@@ -135,7 +135,7 @@ private:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // PLUGIN_H
 

@@ -21,13 +21,13 @@
 #include <lash/lash.h>
 using std::string;
 
-namespace OmGtk {
+namespace Ingenuity {
 
 class App;
 
 /* Old and unused LASH controller.
  *
- * \ingroup OmGtk
+ * \ingroup Ingenuity
  */
 class LashController
 {
@@ -48,6 +48,6 @@ private:
 };
 
 
-} // namespace OmGtk
+} // namespace Ingenuity
 
 #endif // LASHCONTROLLER_H

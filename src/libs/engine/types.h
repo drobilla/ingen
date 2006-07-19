@@ -29,7 +29,7 @@ typedef jack_default_audio_sample_t Sample;
 typedef jack_nframes_t              SampleCount;
 typedef jack_nframes_t              SampleRate;
 
-/** A type that Om can patch (eg can be stored in a port) */
+/** A type that Ingen can process/patch (eg can be stored in a port) */
 enum DataType { FLOAT, MIDI, UNKNOWN };
 
 

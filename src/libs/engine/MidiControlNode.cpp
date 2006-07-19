@@ -26,11 +26,11 @@
 #include "midi.h"
 
 
-namespace Om {
+namespace Ingen {
 
 	
 MidiControlNode::MidiControlNode(const string& path, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size)
-: InternalNode(new Plugin(Plugin::Internal, "Om:ControlNode"), path, 1, parent, srate, buffer_size),
+: InternalNode(new Plugin(Plugin::Internal, "Ingen:ControlNode"), path, 1, parent, srate, buffer_size),
   _learning(false)
 {
 	_ports = new Array<Port*>(7);
@@ -57,7 +57,7 @@ MidiControlNode::MidiControlNode(const string& path, size_t poly, Patch* parent,
 	_ports->at(6) = _control_port;
 	
 	_plugin.plug_label("midi_control_in");
-	_plugin.name("Om Control Node (MIDI)");
+	_plugin.name("Ingen Control Node (MIDI)");
 }
 
 
@@ -119,5 +119,5 @@ MidiControlNode::control(uchar control_num, uchar val, SampleCount offset)
 }
 
 
-} // namespace Om
+} // namespace Ingen
 

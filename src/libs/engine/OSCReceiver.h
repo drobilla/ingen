@@ -24,7 +24,7 @@
 #include "OSCResponder.h"
 using std::string;
 
-namespace Om {
+namespace Ingen {
 
 class JackDriver;
 class NodeFactory;
@@ -124,6 +124,6 @@ private:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // OSCRECEIVER_H

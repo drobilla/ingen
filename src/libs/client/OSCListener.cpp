@@ -23,7 +23,8 @@
 #include <iostream>
 using std::cerr; using std::cout; using std::endl;
 
-namespace LibOmClient {
+namespace Ingen {
+namespace Client {
 
 	
 /** Construct a OSCListener with a user-provided ModelClientInterface object for notification
@@ -410,4 +411,5 @@ OSCListener::m_program_remove_cb(const char* path, const char* types, lo_arg** a
 }
 
 
-} // namespace LibOmClient
+} // namespace Client
+} // namespace Ingen

@@ -33,7 +33,7 @@
 #include "Driver.h"
 #include "DuplexPort.h"
 
-namespace Om {
+namespace Ingen {
 
 
 AddPortEvent::AddPortEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& type, bool is_output)
@@ -131,5 +131,5 @@ AddPortEvent::post_process()
 }
 
 
-} // namespace Om
+} // namespace Ingen
 

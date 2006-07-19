@@ -22,7 +22,7 @@
 
 using std::string;
 
-namespace Om {
+namespace Ingen {
 	
 class DSSINode;
 
@@ -49,6 +49,6 @@ private:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // DSSIUPDATEEVENT_H

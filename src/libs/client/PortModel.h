@@ -25,11 +25,12 @@
 #include "util/CountedPtr.h"
 using std::string; using std::list;
 
-namespace LibOmClient {
+namespace Ingen {
+namespace Client {
 
 /* Model of a port.
  *
- * \ingroup libomclient.
+ * \ingroup IngenClient.
  */
 class PortModel : public ObjectModel
 {
@@ -118,6 +119,7 @@ private:
 typedef list<CountedPtr<PortModel> > PortModelList;
 
 
-} // namespace LibOmClient
+} // namespace Client
+} // namespace Ingen
 
 #endif // PORTMODEL_H

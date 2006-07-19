@@ -21,7 +21,7 @@
 #include "QueuedEvent.h"
 using std::string;
 
-namespace Om {
+namespace Ingen {
 
 namespace Shared {
 	class ClientInterface;
@@ -45,6 +45,6 @@ private:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // REQUESTALLOBJECTSEVENT_H

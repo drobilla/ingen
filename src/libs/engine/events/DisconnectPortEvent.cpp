@@ -35,7 +35,7 @@
 
 using std::cerr; using std::endl;
 
-namespace Om {
+namespace Ingen {
 
 
 DisconnectPortEvent::DisconnectPortEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& port_path)
@@ -141,5 +141,5 @@ DisconnectPortEvent::post_process()
 }
 
 
-} // namespace Om
+} // namespace Ingen
 

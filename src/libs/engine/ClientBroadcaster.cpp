@@ -33,9 +33,9 @@
 #include "interface/ClientInterface.h"
 #include "OSCClient.h"
 using std::cout; using std::cerr; using std::endl;
-using Om::Shared::ClientInterface;
+using Ingen::Shared::ClientInterface;
 
-namespace Om {
+namespace Ingen {
 
 	
 /** Register a client to receive messages over the notification band.
@@ -327,4 +327,4 @@ ClientBroadcaster::send_node_creation_messages(const Node* const node)
 }
 */	
 
-} // namespace Om
+} // namespace Ingen

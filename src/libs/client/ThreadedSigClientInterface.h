@@ -28,7 +28,8 @@ using std::string;
 /** Returns nothing and takes no parameters (because they have all been bound) */
 typedef sigc::slot<void> Closure;
 
-namespace LibOmClient {
+namespace Ingen {
+namespace Client {
 
 
 /** A LibSigC++ signal emitting interface for clients to use.
@@ -172,6 +173,7 @@ private:
 };
 
 
-} // namespace LibOmClient
+} // namespace Client
+} // namespace Ingen
 
 #endif

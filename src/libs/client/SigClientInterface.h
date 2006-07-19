@@ -23,7 +23,8 @@
 #include "interface/ClientInterface.h"
 using std::string;
 
-namespace LibOmClient {
+namespace Ingen {
+namespace Client {
 
 
 /** A LibSigC++ signal emitting interface for clients to use.
@@ -32,7 +33,7 @@ namespace LibOmClient {
  * the engine.  Use Store (which extends this) if you want a nice client-side
  * model of the engine.
  */
-class SigClientInterface : virtual public Om::Shared::ClientInterface, public sigc::trackable
+class SigClientInterface : virtual public Ingen::Shared::ClientInterface, public sigc::trackable
 {
 public:
 
@@ -121,6 +122,7 @@ protected:
 };
 
 
-} // namespace LibOmClient
+} // namespace Client
+} // namespace Ingen
 
 #endif

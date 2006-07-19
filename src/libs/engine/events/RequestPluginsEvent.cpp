@@ -19,7 +19,7 @@
 #include "Ingen.h"
 #include "ClientBroadcaster.h"
 
-namespace Om {
+namespace Ingen {
 
 
 RequestPluginsEvent::RequestPluginsEvent(CountedPtr<Responder> responder, SampleCount timestamp)
@@ -50,5 +50,5 @@ RequestPluginsEvent::post_process()
 }
 
 
-} // namespace Om
+} // namespace Ingen
 

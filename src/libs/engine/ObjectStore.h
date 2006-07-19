@@ -23,7 +23,7 @@
 #include "Tree.h"
 using std::string;
 
-namespace Om {
+namespace Ingen {
 
 class Patch;
 class Node;
@@ -56,6 +56,6 @@ private:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // OBJECTSTORE

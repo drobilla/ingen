@@ -25,7 +25,7 @@ using std::string;
 template<typename T> class TreeNode;
 template<typename T> class ListNode;
 
-namespace Om {
+namespace Ingen {
 
 class GraphObject;
 class Patch;
@@ -61,6 +61,6 @@ private:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // RENAMEEVENT_H

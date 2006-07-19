@@ -21,7 +21,7 @@
 using std::cout; using std::cerr; using std::endl;
 
 
-namespace Om {
+namespace Ingen {
 
 
 QueuedEventSource::QueuedEventSource(size_t queued_size, size_t stamped_size)
@@ -138,5 +138,5 @@ QueuedEventSource::_whipped()
 }
 
 
-} // namespace Om
+} // namespace Ingen
 

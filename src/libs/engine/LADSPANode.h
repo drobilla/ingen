@@ -23,7 +23,7 @@
 #include "NodeBase.h"
 #include "Plugin.h"
 
-namespace Om {
+namespace Ingen {
 
 
 /** An instance of a LADSPA plugin.
@@ -61,6 +61,6 @@ protected:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // LADSPANODE_H

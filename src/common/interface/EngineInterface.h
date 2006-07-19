@@ -23,7 +23,7 @@
 #include "interface/ClientInterface.h"
 using std::string;
 
-namespace Om {
+namespace Ingen {
 /** Shared code used on both client side and engine side (abstract interfaces). */
 namespace Shared {
 
@@ -119,7 +119,7 @@ protected:
 
 
 } // namespace Shared
-} // namespace Om
+} // namespace Ingen
 
 #endif // ENGINEINTERFACE_H
 

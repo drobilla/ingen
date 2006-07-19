@@ -23,7 +23,7 @@
 #include "PatchModel.h"
 #include "Controller.h"
 
-namespace OmGtk {
+namespace Ingenuity {
 
 
 LoadPatchWindow::LoadPatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
@@ -128,4 +128,4 @@ LoadPatchWindow::cancel_clicked()
 }
 
 
-} // namespace OmGtk
+} // namespace Ingenuity

@@ -19,7 +19,7 @@
 
 #include "QueuedEvent.h"
 
-namespace Om {
+namespace Ingen {
 
 
 /** Activates the engine.
@@ -36,6 +36,6 @@ public:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // ACTIVATEEVENT_H

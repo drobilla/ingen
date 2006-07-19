@@ -36,13 +36,10 @@ extern "C"
 void*
 run_main(void* arg)
 {
-	Om::Ingen::instance().main();
-#ifdef HAVE_LASH
-
-	delete Om::lash_driver;
-#endif
-
-	delete Om::om;
+	Ingen::Ingen::instance().main();
+	
+	// FIXME: cleanup
+	
 	return 0;
 }
 
@@ -53,7 +50,7 @@ pthread_t main_thread;
 int
 jack_initialize(jack_client_t* client, const char* load_init)
 {
-	if ((Om::om = new Om::Ingen(load_init, new Om::JackAudioDriver(client))) != NULL) {
+	if ((Ingen::om = new Ingen::Ingen(load_init, new Ingen::JackAudioDriver(client))) != NULL) {
 		pthread_create(&main_thread, NULL, run_main, NULL);
 		return 0; // Success
 	} else {
@@ -66,7 +63,7 @@ void
 jack_finish(void* arg)
 {
 	void* ret;
-	Om::Ingen::instance().quit();
+	Ingen::Ingen::instance().quit();
 	pthread_join(main_thread, &ret);
 }
 

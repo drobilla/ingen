@@ -47,10 +47,9 @@
 #include "Store.h"
 
 using std::cerr; using std::cout; using std::endl;
-using Om::Path;
-using namespace LibOmClient;
+using namespace Ingen::Client;
 
-namespace OmGtk {
+namespace Ingenuity {
 
 
 PatchController::PatchController(CountedPtr<PatchModel> model)
@@ -744,4 +743,4 @@ PatchController::disable_controls_menuitem()
 }
 
 
-} // namespace OmGtk
+} // namespace Ingenuity

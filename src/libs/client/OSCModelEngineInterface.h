@@ -25,10 +25,11 @@
 #include "ModelEngineInterface.h"
 using std::string;
 
-/** \defgroup libomclient Client Library
+/** \defgroup IngenClient Client Library
  */
 
-namespace LibOmClient {
+namespace Ingen {
+namespace Client {
 
 class NodeModel;
 class PresetModel;
@@ -53,7 +54,7 @@ class ModelClientInterface;
  * will change in the future (for complete separation).  See OSC namespace
  * documentation for more details.
  *
- * \ingroup libomclient
+ * \ingroup IngenClient
  */
 class OSCModelEngineInterface : public OSCEngineInterface, public ModelEngineInterface
 {
@@ -112,6 +113,7 @@ OSCModelEngineInterface::om_response_error_cb(const char* path, const char* type
 	return ((OSCModelEngineInterface*)comm)->m_om_response_error_cb(path, types, argv, argc, data);
 }
 */
-} // namespace LibOmClient
+} // namespace Client
+} // namespace Ingen
 
 #endif // OSCCONTROLLER_H

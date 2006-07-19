@@ -22,12 +22,12 @@
 #include <flowcanvas/Port.h>
 #include "util/CountedPtr.h"
 
-namespace LibOmClient { class PortModel; }
-using namespace LibOmClient;
+namespace Ingen { namespace Client { class PortModel; } }
+using namespace Ingen::Client;
 using namespace LibFlowCanvas;
 using std::string; using std::list;
 
-namespace OmGtk {
+namespace Ingenuity {
 	
 class FlowCanvas;
 class PatchController;
@@ -37,7 +37,7 @@ class OmPortModule;
 
 /** A Port (on a pseudo node) in a patch canvas, to represent a port on that patch.
  * 
- * \ingroup OmGtk
+ * \ingroup Ingenuity
  */
 class OmPatchPort : public LibFlowCanvas::Port
 {
@@ -55,6 +55,6 @@ private:
 };
 
 
-} // namespace OmGtk
+} // namespace Ingenuity
 
 #endif // OMPATCHPORT_H

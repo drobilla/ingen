@@ -22,7 +22,7 @@
 #include "ClientBroadcaster.h"
 #include "ObjectStore.h"
 
-namespace Om {
+namespace Ingen {
 
 
 EnablePatchEvent::EnablePatchEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& patch_path)
@@ -77,5 +77,5 @@ EnablePatchEvent::post_process()
 }
 
 
-} // namespace Om
+} // namespace Ingen
 

@@ -22,7 +22,7 @@
 #include "OmPatchPort.h"
 #include "Store.h"
 
-namespace OmGtk {
+namespace Ingenuity {
 
 
 PortController::PortController(CountedPtr<PortModel> model)
@@ -149,5 +149,5 @@ PortController::create_port(OmModule* module)
 }
 
 
-} // namespace OmGtk
+} // namespace Ingenuity
 

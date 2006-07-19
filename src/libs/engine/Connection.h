@@ -21,7 +21,7 @@
 #include "MaidObject.h"
 #include "types.h"
 
-namespace Om {
+namespace Ingen {
 
 class Port;
 
@@ -60,6 +60,6 @@ protected:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // CONNECTION_H

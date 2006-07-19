@@ -30,7 +30,7 @@
 #endif
 using std::cout; using std::cerr; using std::endl;
 
-namespace Om {
+namespace Ingen {
 
 	
 //// AlsaMidiPort ////
@@ -208,7 +208,7 @@ AlsaMidiDriver::AlsaMidiDriver()
 		snd_midi_event_reset_decode(m_event_coder);
 	}
 
-	snd_seq_set_client_name(m_seq_handle, "Om");
+	snd_seq_set_client_name(m_seq_handle, "Ingen");
 }
 
 
@@ -367,5 +367,5 @@ AlsaMidiDriver::process_midi_in(void* alsa_driver)
 }
 
 
-} // namespace Om
+} // namespace Ingen
 

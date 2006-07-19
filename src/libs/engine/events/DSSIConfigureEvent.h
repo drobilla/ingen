@@ -20,7 +20,7 @@
 #include "QueuedEvent.h"
 #include "DSSINode.h"
 
-namespace Om {
+namespace Ingen {
 
 
 /** Change of a 'configure' key/value pair for a DSSI plugin.
@@ -44,6 +44,6 @@ private:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // DSSICONFIGUREEVENT_H

@@ -22,7 +22,7 @@
 #include "MidiNoteNode.h"
 #include "MidiTriggerNode.h"
 
-namespace Om {
+namespace Ingen {
 
 
 /** Note off with patch explicitly passed - triggered by MIDI.
@@ -72,6 +72,6 @@ NoteOffEvent::post_process()
 }
 
 
-} // namespace Om
+} // namespace Ingen
 
 

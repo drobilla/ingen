@@ -30,11 +30,11 @@
 using std::cerr; using std::cout; using std::endl;
 
 
-namespace Om {
+namespace Ingen {
 
 
 MidiNoteNode::MidiNoteNode(const string& path, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size)
-: InternalNode(new Plugin(Plugin::Internal, "Om:NoteNode"), path, poly, parent, srate, buffer_size),
+: InternalNode(new Plugin(Plugin::Internal, "Ingen:NoteNode"), path, poly, parent, srate, buffer_size),
   _voices(new Voice[poly]),
   _sustain(false)
 {
@@ -60,7 +60,7 @@ MidiNoteNode::MidiNoteNode(const string& path, size_t poly, Patch* parent, Sampl
 	_ports->at(4) = _trig_port;
 	
 	_plugin.plug_label("note_in");
-	_plugin.name("Om Note Node (MIDI, OSC)");
+	_plugin.name("Ingen Note Node (MIDI, OSC)");
 }
 
 
@@ -296,5 +296,5 @@ MidiNoteNode::sustain_off(SampleCount offset)
 }
 
 
-} // namespace Om
+} // namespace Ingen
 

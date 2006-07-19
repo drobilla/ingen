@@ -20,7 +20,7 @@
 #include "QueuedEvent.h"
 #include "DSSINode.h"
 
-namespace Om {
+namespace Ingen {
 	
 
 /** A control change event for a DSSI plugin.
@@ -46,6 +46,6 @@ private:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // DSSICONTROLEVENT_H

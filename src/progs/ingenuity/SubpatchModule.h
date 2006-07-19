@@ -24,15 +24,15 @@
 #include "PatchController.h"
 using std::string; using std::list;
 
-namespace LibOmClient {
-class PatchModel;
-class NodeModel;
-class PortModel;
-class PatchWindow;
-}
-using namespace LibOmClient;
+namespace Ingen { namespace Client {
+	class PatchModel;
+	class NodeModel;
+	class PortModel;
+	class PatchWindow;
+} }
+using namespace Ingen::Client;
 
-namespace OmGtk {
+namespace Ingenuity {
 	
 class OmFlowCanvas;
 class NodeControlWindow;
@@ -41,7 +41,7 @@ class PatchController;
 
 /** A module to represent a subpatch
  *
- * \ingroup OmGtk
+ * \ingroup Ingenuity
  */
 class SubpatchModule : public OmModule
 {
@@ -64,6 +64,6 @@ protected:
 };
 
 
-} // namespace OmGtk
+} // namespace Ingenuity
 
 #endif // SUBPATCHMODULE_H

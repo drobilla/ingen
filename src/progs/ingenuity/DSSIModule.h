@@ -19,13 +19,13 @@
 
 #include "OmModule.h"
 
-namespace OmGtk {
+namespace Ingenuity {
 
 class DSSIController;
 
 /* Module for a DSSI node.
  *
- * \ingroup OmGtk
+ * \ingroup Ingenuity
  */
 class DSSIModule : public OmModule
 {
@@ -37,7 +37,7 @@ public:
 };
 
 
-} // namespace OmGtk
+} // namespace Ingenuity
 
 #endif // DSSIMODULE_H
 

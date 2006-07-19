@@ -19,13 +19,13 @@
 
 #include <string>
 
-namespace LibOmClient { class PortModel; }
-using LibOmClient::PortModel;
+namespace Ingen { namespace Client { class PortModel; } }
+using Ingen::Client::PortModel;
 using std::string;
 
 struct Coord { double x; double y; };
 
-namespace OmGtk {
+namespace Ingenuity {
 
 class Controller;
 
@@ -35,7 +35,7 @@ class Controller;
  * Stores settings like color preferences, search paths, etc. 
  * (ie any user-defined preferences to be stoed in the rc file).
  *
- * \ingroup OmGtk
+ * \ingroup Ingenuity
  */
 class Configuration
 {
@@ -69,7 +69,7 @@ private:
 };
 
 
-} // namespace OmGtk
+} // namespace Ingenuity
 
 #endif // CONFIG_H
 

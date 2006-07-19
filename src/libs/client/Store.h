@@ -24,9 +24,9 @@
 #include <sigc++/sigc++.h>
 #include "util/Path.h"
 using std::string; using std::map;
-using Om::Path;
 
-namespace LibOmClient {
+namespace Ingen {
+namespace Client {
 
 class SigClientInterface;
 class ObjectModel;
@@ -35,9 +35,9 @@ class PatchModel;
 class NodeModel;
 class PortModel;
 
-/** Singeton which holds all "Om Objects" for easy/fast lookup
+/** Singeton which holds all "Ingen Objects" for easy/fast lookup
  *
- * \ingroup OmGtk
+ * \ingroup IngenClient
  */
 class Store : public sigc::trackable { // FIXME: is trackable necessary?
 public:
@@ -79,11 +79,12 @@ private:
 	void connection_event(const Path& src_port_path, const Path& dst_port_path);
 	void disconnection_event(const Path& src_port_path, const Path& dst_port_path);
 	
-	map<string, CountedPtr<ObjectModel> > m_objects; ///< Keyed by Om path
+	map<string, CountedPtr<ObjectModel> > m_objects; ///< Keyed by Ingen path
 	map<string, CountedPtr<PluginModel> > m_plugins; ///< Keyed by URI
 };
 
 
-} // namespace LibOmClient
+} // namespace Client
+} // namespace Ingen
 
 #endif // STORE_H

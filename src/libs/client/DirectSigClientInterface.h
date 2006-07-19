@@ -23,7 +23,8 @@
 #include "SigClientInterface.h"
 using std::string;
 
-namespace LibOmClient {
+namespace Ingen {
+namespace Client {
 
 
 /** A direct (nonthreaded) LibSigC++ signal emitting interface for clients to use.
@@ -107,6 +108,7 @@ private:
 };
 
 
-} // namespace LibOmClient
+} // namespace Client
+} // namespace Ingen
 
 #endif

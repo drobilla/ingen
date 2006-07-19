@@ -38,8 +38,8 @@ catch_int(int)
 	signal(SIGINT, catch_int);
 	signal(SIGTERM, catch_int);
 
-	std::cout << "[Main] Om interrupted." << std::endl;
-	Om::Ingen::instance().quit();
+	std::cout << "[Main] Ingen interrupted." << std::endl;
+	Ingen::Ingen::instance().quit();
 }
 
 
@@ -78,7 +78,7 @@ load_in_process_engine(const char* port)
 	if ((jack_client = jack_client_open("om_load", JackNoStartServer,
 	                                    &status)) != NULL) {
 		jack_intclient =
-		    jack_internal_client_load(jack_client, "Om",
+		    jack_internal_client_load(jack_client, "Ingen",
 		                               (jack_options_t)(JackLoadName|JackLoadInit),
 		                               &status, "om", port);
 		if (status == 0) {
@@ -125,27 +125,27 @@ main(int argc, char** argv)
 #else
 		cerr << "In-process Jack client support not enabled in this build." << endl;
 		ret = EXIT_FAILURE;
-#endif // JACK_IN_PROCESS_ENGINE
+#endif
 	} else {
 		signal(SIGINT, catch_int);
 		signal(SIGTERM, catch_int);
 
-		Om::set_denormal_flags();
+		Ingen::set_denormal_flags();
 
-		Om::Ingen::instantiate(args_info.port_arg);
+		Ingen::Ingen::instantiate(args_info.port_arg);
 
 #ifdef HAVE_LASH
-		Om::lash_driver = new Om::LashDriver(Om::om, lash_args);
+		Ingen::lash_driver = new Ingen::LashDriver(Ingen::om, lash_args);
 #endif
 
-		Om::Ingen::instance().main();
+		Ingen::Ingen::instance().main();
 
 #ifdef HAVE_LASH
-		delete Om::lash_driver;
+		delete Ingen::lash_driver;
 #endif
 
 		// FIXME: leak
-		//delete Om::om;
+		//delete Ingen::om;
 	}
 	
 	return ret;

@@ -24,7 +24,7 @@
 #include "DSSIModule.h"
 #include "Controller.h"
 
-namespace OmGtk {
+namespace Ingenuity {
 
 
 DSSIController::DSSIController(CountedPtr<NodeModel> model)
@@ -276,5 +276,5 @@ DSSIController::show_menu(GdkEventButton* event)
 }
 
 
-} // namespace OmGtk
+} // namespace Ingenuity
 

@@ -19,7 +19,7 @@
 
 #include "QueuedEvent.h"
 
-namespace Om {
+namespace Ingen {
 
 
 /** Loads all plugins into the internal plugin database (in NodeFactory).
@@ -35,6 +35,6 @@ public:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // LOADPLUGINSEVENT_H

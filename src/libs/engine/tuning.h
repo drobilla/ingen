@@ -20,7 +20,7 @@
 #include <stddef.h>
 #include <time.h>
 
-namespace Om {
+namespace Ingen {
 	
 // FIXME: put this in a Config class
 	
@@ -34,6 +34,6 @@ static const size_t maid_queue_size            = 1024;
 static const timespec main_rate       = { 0, 500000000 }; // 1/2 second
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // TUNING_H

@@ -22,7 +22,10 @@
 #include <lo/lo.h>
 #include "interface/ClientInterface.h"
 
-namespace LibOmClient {
+namespace Ingen {
+
+/** Client library */
+namespace Client {
 
 //class NodeModel;
 //class PresetModel;
@@ -50,9 +53,9 @@ inline static int name##_cb(LO_HANDLER_ARGS, void* osc_listener)\
  * things like listening to the notification band over TCP while sending commands
  * on the control band over UDP.
  *
- * \ingroup libomclient
+ * \ingroup IngenClient
  */
-class OSCListener : virtual public Om::Shared::ClientInterface
+class OSCListener : virtual public Ingen::Shared::ClientInterface
 {
 public:
 	OSCListener(int listen_port);
@@ -111,6 +114,8 @@ private:
 };
 
 
-} // namespace LibOmClient
+} // namespace Client
+
+} // namespace Ingen
 
 #endif // OSCLISTENER_H

@@ -32,13 +32,13 @@
 
 using std::cout; using std::cerr; using std::endl;
 
-namespace Om {
+namespace Ingen {
 
 	
 /*! \page client_osc_namespace Client OSC Namespace Documentation
  *
- * <p>These are all the messages sent from the engine to the client.  Om
- * communication takes place over two distinct bands: control band and
+ * <p>These are all the messages sent from the engine to the client.
+ * Communication takes place over two distinct bands: control band and
  * notification band.</p>
  * <p>The control band is where clients send commands, and receive a simple
  * response, either OK or an error.</p>
@@ -497,4 +497,4 @@ OSCClient::program_remove(const string& node_path, uint32_t bank, uint32_t progr
 }
 
 
-} // namespace Om
+} // namespace Ingen

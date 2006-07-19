@@ -22,12 +22,12 @@
 #include "PatchController.h"
 #include "PatchModel.h"
 
-namespace OmGtk {
+namespace Ingenuity {
 
 
 /** Breadcrumb button in a PatchWindow.
  *
- * \ingroup OmGtk
+ * \ingroup Ingenuity
  */
 class BreadCrumb : public Gtk::ToggleButton
 {
@@ -63,6 +63,6 @@ private:
 	//PatchController* m_patch;
 };
 
-} // namespace OmGtk
+} // namespace Ingenuity
 
 #endif // BREADCRUMB_H

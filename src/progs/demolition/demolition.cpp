@@ -14,12 +14,11 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "OSCModelEngineInterface.h"
-#include "OSCModelEngineInterface.h" // FIXME: make conditional
-#include "PatchLibrarian.h"
-#include "DemolitionClientInterface.h"
 #include "interface/ClientInterface.h"
 #include "interface/ClientKey.h"
+#include "OSCModelEngineInterface.h"
+#include "PatchLibrarian.h"
+#include "DemolitionClientInterface.h"
 #include "util/CountedPtr.h"
 #include <iostream>
 #include <unistd.h>
@@ -29,7 +28,7 @@
 using std::cout;
 using std::endl;
 
-using namespace LibOmClient;
+using namespace Ingen::Client;
 
 void do_something();
 

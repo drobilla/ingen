@@ -22,13 +22,13 @@
 
 using std::string;
 
-namespace OmGtk {
+namespace Ingenuity {
 
 
 /** Creates glade references, so various objects can create widgets.
  * Purely static.
  *
- * \ingroup OmGtk
+ * \ingroup Ingenuity
  */
 class GladeFactory {
 public:
@@ -43,6 +43,6 @@ private:
 };
 
 
-} // namespace OmGtk
+} // namespace Ingenuity
 
 #endif // GLADEFACTORY_H

@@ -23,7 +23,7 @@
 using std::cerr; using std::cout; using std::endl;
 using std::string;
 
-namespace Om {
+namespace Ingen {
 	
 
 LashDriver::LashDriver(Ingen* app, lash_args_t* args)
@@ -38,7 +38,7 @@ LashDriver::LashDriver(Ingen* app, lash_args_t* args)
 	} else {
 		cout << "[LashDriver] Lash initialised" << endl;
 		lash_event_t* event = lash_event_new_with_type(LASH_Client_Name);
-		lash_event_set_string(event, "Om");
+		lash_event_set_string(event, "Ingen");
 		lash_send_event(m_client, event);			
 	}
 }
@@ -155,4 +155,4 @@ LashDriver::handle_config(lash_config_t* conf)
 }
 
 
-} // namespace Om
+} // namespace Ingen

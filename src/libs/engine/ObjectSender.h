@@ -17,7 +17,7 @@
 #ifndef OBJECTSENDER_H
 #define OBJECTSENDER_H
 
-namespace Om {
+namespace Ingen {
 
 namespace Shared {
 	class ClientInterface;
@@ -49,7 +49,7 @@ public:
 	static void send_plugins(ClientInterface* client);
 };
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // OBJECTSENDER_H
 

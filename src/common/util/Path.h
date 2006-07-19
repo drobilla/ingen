@@ -21,8 +21,6 @@
 #include <cassert>
 using std::string;
 
-namespace Om {
-
 	
 /** Simple wrapper around standard string with useful path-specific methods.
  *
@@ -133,7 +131,5 @@ public:
 	}
 };
 	
-
-} // namespace Om
 
 #endif // PATH_H

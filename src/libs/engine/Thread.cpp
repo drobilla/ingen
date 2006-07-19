@@ -21,7 +21,7 @@
 
 using std::cerr; using std::cout; using std::endl;
 
-namespace Om {
+namespace Ingen {
 
 
 Thread::Thread()
@@ -100,5 +100,5 @@ Thread::_static_run(void* me)
 	return NULL;
 }
 
-} // namespace Om
+} // namespace Ingen
 

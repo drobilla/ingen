@@ -28,12 +28,13 @@
 
 using std::list; using std::string; using std::map;
 
-namespace LibOmClient {
+namespace Ingen {
+namespace Client {
 
 
 /** Client's model of a patch.
  *
- * \ingroup libomclient
+ * \ingroup IngenClient
  */
 class PatchModel : public NodeModel
 {
@@ -94,6 +95,7 @@ private:
 typedef map<string, CountedPtr<PatchModel> > PatchModelMap;
 
 
-} // namespace LibOmClient
+} // namespace Client
+} // namespace Ingen
 
 #endif // PATCHMODEL_H

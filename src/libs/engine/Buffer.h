@@ -21,7 +21,7 @@
 #include <cassert>
 #include "types.h"
 
-namespace Om {
+namespace Ingen {
 
 	
 template <typename T>
@@ -89,6 +89,6 @@ private:
 };
 
 
-} // namespace Om
+} // namespace Ingen
 
 #endif // BUFFER_H
