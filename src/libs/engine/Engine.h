@@ -14,8 +14,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef OMAPP_H
-#define OMAPP_H
+#ifndef ENGINE_H
+#define ENGINE_H
 
 #include <cassert>
 
@@ -46,13 +46,13 @@ template <typename T> class Driver;
  *
  * \ingroup engine
  */
-class Ingen
+class Engine
 {
 public:
-	~Ingen();
+	~Engine();
 
 	static void   instantiate(const char* port, AudioDriver* audio_driver = 0);
-	static Ingen& instance() { assert(m_instance); return *m_instance; }
+	static Engine& instance() { assert(m_instance); return *m_instance; }
 	
 	int main();
 	
@@ -73,19 +73,17 @@ public:
 	NodeFactory*       node_factory()       const { return m_node_factory; }
 	LashDriver*        lash_driver()        const { return m_lash_driver; }
 
-
-	/** Return the active driver for the given (template parameter) type.
-	 * This is a hook for BridgeNode.  See Ingen.cpp for specializations. */
+	/** Return the active driver for the given (template parameter) type */
 	template<typename T> Driver<T>* driver();
 	
 private:
-	Ingen(const char* port, AudioDriver* audio_driver = 0);
+	Engine(const char* port, AudioDriver* audio_driver = 0);
 
-	// Prevent copies
-	Ingen(const Ingen&);
-	Ingen& operator=(const Ingen&);
+	// Prevent copies (undefined)
+	Engine(const Engine&);
+	Engine& operator=(const Engine&);
 
-	static Ingen*      m_instance;
+	static Engine*      m_instance;
 
 	AudioDriver*       m_audio_driver;
 	OSCReceiver*       m_osc_receiver;
@@ -104,4 +102,4 @@ private:
 
 } // namespace Ingen
 
-#endif // OMAPP_H
+#endif // ENGINE_H

@@ -18,7 +18,7 @@
 #include <string>
 #include "Responder.h"
 #include "types.h"
-#include "Ingen.h"
+#include "Engine.h"
 #include "TypedConnection.h"
 #include "InputPort.h"
 #include "OutputPort.h"
@@ -66,7 +66,7 @@ ConnectionEvent::pre_process()
 		return;
 	}
 	
-	/*m_patch = Ingen::instance().object_store()->find_patch(m_src_port_path.parent().parent());
+	/*m_patch = Engine::instance().object_store()->find_patch(m_src_port_path.parent().parent());
 
 	if (m_patch == NULL) {
 		m_error = PORT_NOT_FOUND;
@@ -74,8 +74,8 @@ ConnectionEvent::pre_process()
 		return;
 	}*/
 	
-	m_src_port = Ingen::instance().object_store()->find_port(m_src_port_path);
-	m_dst_port = Ingen::instance().object_store()->find_port(m_dst_port_path);
+	m_src_port = Engine::instance().object_store()->find_port(m_src_port_path);
+	m_dst_port = Engine::instance().object_store()->find_port(m_dst_port_path);
 	
 	if (m_src_port == NULL || m_dst_port == NULL) {
 		m_error = PORT_NOT_FOUND;
@@ -235,7 +235,7 @@ TypedConnectionEvent<T>::execute(SampleCount offset)
 		m_dst_port->add_connection(m_port_listnode);
 		m_patch->add_connection(m_patch_listnode);
 		if (m_patch->process_order() != NULL)
-			Ingen::instance().maid()->push(m_patch->process_order());
+			Engine::instance().maid()->push(m_patch->process_order());
 		m_patch->process_order(m_process_order);
 	}
 }
@@ -250,7 +250,7 @@ TypedConnectionEvent<T>::post_process()
 	
 		_responder->respond_ok();
 	
-		Ingen::instance().client_broadcaster()->send_connection(m_connection);
+		Engine::instance().client_broadcaster()->send_connection(m_connection);
 	} else {
 		_responder->respond_error("Unable to make connection.");
 	}

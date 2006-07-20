@@ -17,7 +17,7 @@
 #include "RequestPortValueEvent.h"
 #include <string>
 #include "Responder.h"
-#include "Ingen.h"
+#include "Engine.h"
 #include "interface/ClientInterface.h"
 #include "TypedPort.h"
 #include "ObjectStore.h"
@@ -42,7 +42,7 @@ void
 RequestPortValueEvent::pre_process()
 {
 	m_client = _responder->find_client();
-	m_port = Ingen::instance().object_store()->find_port(m_port_path);
+	m_port = Engine::instance().object_store()->find_port(m_port_path);
 
 	QueuedEvent::pre_process();
 }

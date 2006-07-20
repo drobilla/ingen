@@ -19,7 +19,7 @@
 #include <iostream>
 #include <stdint.h>
 #include "util.h"
-#include "Ingen.h"
+#include "Engine.h"
 #include "Array.h"
 #include "Plugin.h"
 #include "ClientBroadcaster.h"
@@ -84,16 +84,16 @@ void
 NodeBase::send_creation_messages(ClientInterface* client) const
 {
 	cerr << "FIXME: send_creation\n";
-	//Ingen::instance().client_broadcaster()->send_node_to(client, this);
+	//Engine::instance().client_broadcaster()->send_node_to(client, this);
 }
 */
 
 void
 NodeBase::add_to_store()
 {
-	Ingen::instance().object_store()->add(this);
+	Engine::instance().object_store()->add(this);
 	for (size_t i=0; i < num_ports(); ++i)
-		Ingen::instance().object_store()->add(_ports->at(i));
+		Engine::instance().object_store()->add(_ports->at(i));
 }
 
 
@@ -101,17 +101,17 @@ void
 NodeBase::remove_from_store()
 {
 	// Remove self
-	TreeNode<GraphObject*>* node = Ingen::instance().object_store()->remove(path());
+	TreeNode<GraphObject*>* node = Engine::instance().object_store()->remove(path());
 	if (node != NULL) {
-		assert(Ingen::instance().object_store()->find(path()) == NULL);
+		assert(Engine::instance().object_store()->find(path()) == NULL);
 		delete node;
 	}
 	
 	// Remove ports
 	for (size_t i=0; i < num_ports(); ++i) {
-		node = Ingen::instance().object_store()->remove(_ports->at(i)->path());
+		node = Engine::instance().object_store()->remove(_ports->at(i)->path());
 		if (node != NULL) {
-			assert(Ingen::instance().object_store()->find(_ports->at(i)->path()) == NULL);
+			assert(Engine::instance().object_store()->find(_ports->at(i)->path()) == NULL);
 			delete node;
 		}
 	}
@@ -145,23 +145,23 @@ NodeBase::set_path(const Path& new_path)
 	
 	// Reinsert ports
 	for (size_t i=0; i < num_ports(); ++i) {
-		treenode = Ingen::instance().object_store()->remove(old_path +"/"+ _ports->at(i)->name());
+		treenode = Engine::instance().object_store()->remove(old_path +"/"+ _ports->at(i)->name());
 		assert(treenode != NULL);
 		assert(treenode->node() == _ports->at(i));
 		treenode->key(new_path +"/" + _ports->at(i)->name());
-		Ingen::instance().object_store()->add(treenode);
+		Engine::instance().object_store()->add(treenode);
 	}
 	
 	// Rename and reinsert self
-	treenode = Ingen::instance().object_store()->remove(old_path);
+	treenode = Engine::instance().object_store()->remove(old_path);
 	assert(treenode != NULL);
 	assert(treenode->node() == this);
 	GraphObject::set_path(new_path);
 	treenode->key(new_path);
-	Ingen::instance().object_store()->add(treenode);
+	Engine::instance().object_store()->add(treenode);
 	
 
-	assert(Ingen::instance().object_store()->find(new_path) == this);
+	assert(Engine::instance().object_store()->find(new_path) == this);
 }
 
 

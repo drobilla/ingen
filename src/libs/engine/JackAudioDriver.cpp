@@ -19,7 +19,7 @@
 #include "tuning.h"
 #include <iostream>
 #include <cstdlib>
-#include "Ingen.h"
+#include "Engine.h"
 #include "util.h"
 #include "Event.h"
 #include "QueuedEvent.h"
@@ -182,7 +182,7 @@ JackAudioDriver::activate()
 	} else {
 		cout << "[JackAudioDriver] Activated Jack client." << endl;
 #ifdef HAVE_LASH
-	Ingen::instance().lash_driver()->set_jack_client_name(jack_client_get_name(m_client));
+	Engine::instance().lash_driver()->set_jack_client_name(jack_client_get_name(m_client));
 #endif
 	}
 }
@@ -192,7 +192,7 @@ void
 JackAudioDriver::deactivate()
 {
 	if (m_is_activated) {
-		Ingen::instance().osc_receiver()->deactivate();
+		Engine::instance().osc_receiver()->deactivate();
 	
 		jack_deactivate(m_client);
 		m_is_activated = false;
@@ -204,7 +204,7 @@ JackAudioDriver::deactivate()
 	
 		cout << "[JackAudioDriver] Deactivated Jack client." << endl;
 		
-		Ingen::instance().post_processor()->stop();
+		Engine::instance().post_processor()->stop();
 	}
 }
 
@@ -277,26 +277,26 @@ JackAudioDriver::process_events(jack_nframes_t block_start, jack_nframes_t block
 	/* FIXME: Merge these next two loops into one */
 
 	// FIXME
-	while ((ev = Ingen::instance().osc_receiver()->pop_earliest_queued_before(block_end))) {
+	while ((ev = Engine::instance().osc_receiver()->pop_earliest_queued_before(block_end))) {
 		ev->execute(0);  // QueuedEvents are not sample accurate
-		Ingen::instance().post_processor()->push(ev);
+		Engine::instance().post_processor()->push(ev);
 		if (++num_events_processed > MAX_QUEUED_EVENTS)
 			break;
 	}
 	
-	while ((ev = Ingen::instance().osc_receiver()->pop_earliest_stamped_before(block_end))) {
+	while ((ev = Engine::instance().osc_receiver()->pop_earliest_stamped_before(block_end))) {
 		if (ev->time_stamp() >= block_start)
 			offset = ev->time_stamp() - block_start;
 		else
 			offset = 0;
 
 		ev->execute(offset);
-		Ingen::instance().post_processor()->push(ev);
+		Engine::instance().post_processor()->push(ev);
 		++num_events_processed;
 	}
 	
 	if (num_events_processed > 0)
-		Ingen::instance().post_processor()->whip();
+		Engine::instance().post_processor()->whip();
 }
 
 
@@ -329,7 +329,7 @@ JackAudioDriver::m_process_cb(jack_nframes_t nframes)
 	m_transport_state = jack_transport_query(m_client, &m_position);
 	
 	process_events(start_of_last_cycle, start_of_current_cycle);
-	Ingen::instance().midi_driver()->prepare_block(start_of_last_cycle, start_of_current_cycle);
+	Engine::instance().midi_driver()->prepare_block(start_of_last_cycle, start_of_current_cycle);
 	
 	// Set buffers of patch ports to Jack port buffers (zero-copy processing)
 	for (List<JackAudioPort*>::iterator i = m_ports.begin(); i != m_ports.end(); ++i)
@@ -347,7 +347,7 @@ void
 JackAudioDriver::m_shutdown_cb() 
 {
 	cout << "[JackAudioDriver] Jack shutdown.  Exiting." << endl;
-	Ingen::instance().quit();
+	Engine::instance().quit();
 }
 
 

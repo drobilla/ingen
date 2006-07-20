@@ -18,7 +18,7 @@
 #include "QueuedEventSource.h"
 #include "events.h"
 #include "util/Queue.h"
-#include "Ingen.h"
+#include "Engine.h"
 #include "AudioDriver.h"
 
 namespace Ingen {
@@ -33,7 +33,7 @@ QueuedEngineInterface::QueuedEngineInterface(size_t queued_size, size_t stamped_
 SampleCount
 QueuedEngineInterface::now() const
 {
-	return Ingen::instance().audio_driver()->time_stamp();
+	return Engine::instance().audio_driver()->time_stamp();
 }
 
 /** Set the Responder to send responses to commands with, once the commands
@@ -102,7 +102,7 @@ void
 QueuedEngineInterface::quit()        
 {
 	_responder->respond_ok();
-	Ingen::instance().quit();
+	Engine::instance().quit();
 }
 
 

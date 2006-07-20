@@ -16,7 +16,7 @@
 
 #include "NoteOffEvent.h"
 #include "Responder.h"
-#include "Ingen.h"
+#include "Engine.h"
 #include "ObjectStore.h"
 #include "Node.h"
 #include "MidiNoteNode.h"
@@ -50,7 +50,7 @@ void
 NoteOffEvent::execute(SampleCount offset)
 {	
 	if (m_node == NULL && m_node_path != "")
-		m_node = Ingen::instance().object_store()->find_node(m_node_path);
+		m_node = Engine::instance().object_store()->find_node(m_node_path);
 		
 	// FIXME: this isn't very good at all.
 	if (m_node != NULL && m_node->plugin()->type() == Plugin::Internal) {

@@ -17,7 +17,7 @@
 #include "DSSINode.h"
 #include <map>
 #include <set>
-#include "Ingen.h"
+#include "Engine.h"
 #include "ClientBroadcaster.h"
 #include "interface/ClientInterface.h"
 #include "InputPort.h"
@@ -275,7 +275,7 @@ DSSINode::update_programs(bool send_events)
 			    iter->second.find(descriptor->Program)->second != descriptor->Name) {
 				_banks[descriptor->Bank][descriptor->Program] = descriptor->Name;
 				if (send_events) {
-					Ingen::instance().client_broadcaster()->send_program_add(path(), descriptor->Bank,
+					Engine::instance().client_broadcaster()->send_program_add(path(), descriptor->Bank,
 									   descriptor->Program, 
 									   descriptor->Name);
 				}
@@ -290,7 +290,7 @@ DSSINode::update_programs(bool send_events)
 	     set_iter != to_be_deleted.end(); ++set_iter) {
 		_banks[set_iter->first].erase(set_iter->second);
 		if (send_events)
-			Ingen::instance().client_broadcaster()->send_program_remove(path(), set_iter->first, set_iter->second);
+			Engine::instance().client_broadcaster()->send_program_remove(path(), set_iter->first, set_iter->second);
 		if (_banks[set_iter->first].size() == 0)
 			_banks.erase(set_iter->first);
 	}

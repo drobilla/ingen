@@ -16,7 +16,7 @@
 
 #include "ObjectSender.h"
 #include "interface/ClientInterface.h"
-#include "Ingen.h"
+#include "Engine.h"
 #include "ObjectStore.h"
 #include "Patch.h"
 #include "Node.h"
@@ -32,11 +32,11 @@ namespace Ingen {
 void
 ObjectSender::send_all(ClientInterface* client)
 {
-	Patch* root = Ingen::instance().object_store()->find_patch("/");
+	Patch* root = Engine::instance().object_store()->find_patch("/");
 	assert(root);
 	send_patch(client, root);
-	/*for (Tree<GraphObject*>::iterator i = Ingen::instance().object_store()->objects().begin();
-			i != Ingen::instance().object_store()->objects().end(); ++i)
+	/*for (Tree<GraphObject*>::iterator i = Engine::instance().object_store()->objects().begin();
+			i != Engine::instance().object_store()->objects().end(); ++i)
 		if ((*i)->as_patch() != NULL && (*i)->parent() == NULL)
 			send_patch(client, (*i)->as_patch());*/
 			//(*i)->as_node()->send_creation_messages(client);
@@ -175,9 +175,9 @@ ObjectSender::send_port(ClientInterface* client, const Port* port)
 void
 ObjectSender::send_plugins(ClientInterface* client)
 {
-	Ingen::instance().node_factory()->lock_plugin_list();
+	Engine::instance().node_factory()->lock_plugin_list();
 	
-	const list<Plugin*>& plugs = Ingen::instance().node_factory()->plugins();
+	const list<Plugin*>& plugs = Engine::instance().node_factory()->plugins();
 
 /*
 	lo_timetag tt;
@@ -221,7 +221,7 @@ ObjectSender::send_plugins(ClientInterface* client)
 	for (list<lo_bundle>::const_iterator i = msgs.begin(); i != msgs.end(); ++i)
 		lo_message_free(*i);
 */
-	Ingen::instance().node_factory()->unlock_plugin_list();
+	Engine::instance().node_factory()->unlock_plugin_list();
 }
 
 

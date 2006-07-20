@@ -134,9 +134,9 @@ OSCClient::num_plugins(uint32_t num)
 void
 OSCClient::plugins()
 {
-	Ingen::instance().node_factory()->lock_plugin_list();
+	Engine::instance().node_factory()->lock_plugin_list();
 	
-	const list<Plugin*>& plugs = Ingen::instance().node_factory()->plugins();
+	const list<Plugin*>& plugs = Engine::instance().node_factory()->plugins();
 	const Plugin* plugin;
 
 	lo_timetag tt;
@@ -175,7 +175,7 @@ OSCClient::plugins()
 	for (list<lo_bundle>::const_iterator i = msgs.begin(); i != msgs.end(); ++i)
 		lo_message_free(*i);
 
-	Ingen::instance().node_factory()->unlock_plugin_list();
+	Engine::instance().node_factory()->unlock_plugin_list();
 }
 */
 
@@ -472,8 +472,8 @@ OSCClient::object_renamed(const string& old_path, const string& new_path)
 void
 OSCClient::all_objects()
 {
-	for (Tree<GraphObject*>::iterator i = Ingen::instance().object_store()->objects().begin();
-			i != Ingen::instance().object_store()->objects().end(); ++i)
+	for (Tree<GraphObject*>::iterator i = Engine::instance().object_store()->objects().begin();
+			i != Engine::instance().object_store()->objects().end(); ++i)
 		if ((*i)->as_node() != NULL && (*i)->parent() == NULL)
 			(*i)->as_node()->send_creation_messages(this);
 }

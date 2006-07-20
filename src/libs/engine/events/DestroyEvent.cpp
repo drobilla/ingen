@@ -16,7 +16,7 @@
 
 #include "DestroyEvent.h"
 #include "Responder.h"
-#include "Ingen.h"
+#include "Engine.h"
 #include "Patch.h"
 #include "Tree.h"
 #include "Node.h"
@@ -71,7 +71,7 @@ void
 DestroyEvent::pre_process()
 {
 	if (m_node == NULL)
-		m_node = Ingen::instance().object_store()->find_node(m_path);
+		m_node = Engine::instance().object_store()->find_node(m_path);
 
 	if (m_node != NULL && m_path != "/") {
 		assert(m_node->parent_patch() != NULL);
@@ -129,7 +129,7 @@ DestroyEvent::execute(SampleCount offset)
 			m_parent_disconnect_event->execute(offset);
 		
 		if (m_node->parent_patch()->process_order() != NULL)
-			Ingen::instance().maid()->push(m_node->parent_patch()->process_order());
+			Engine::instance().maid()->push(m_node->parent_patch()->process_order());
 		m_node->parent_patch()->process_order(m_process_order);
 	}
 }
@@ -153,9 +153,9 @@ DestroyEvent::post_process()
 			m_disconnect_event->post_process();
 		if (m_parent_disconnect_event != NULL)
 			m_parent_disconnect_event->post_process();
-		Ingen::instance().client_broadcaster()->send_destroyed(m_path);
-		Ingen::instance().maid()->push(m_patch_listnode);
-		Ingen::instance().maid()->push(m_node);
+		Engine::instance().client_broadcaster()->send_destroyed(m_path);
+		Engine::instance().maid()->push(m_patch_listnode);
+		Engine::instance().maid()->push(m_node);
 	} else {
 		_responder->respond_error("Unable to destroy object");
 	}

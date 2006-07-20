@@ -17,7 +17,7 @@
 #include "DisconnectNodeEvent.h"
 #include <iostream>
 #include "Responder.h"
-#include "Ingen.h"
+#include "Engine.h"
 #include "Maid.h"
 #include "List.h"
 #include "Node.h"
@@ -77,7 +77,7 @@ DisconnectNodeEvent::pre_process()
 	// cerr << "Preparing disconnection event...\n";
 	
 	if (m_lookup) {
-		m_patch = Ingen::instance().object_store()->find_patch(m_node_path.parent());
+		m_patch = Engine::instance().object_store()->find_patch(m_node_path.parent());
 	
 		if (m_patch == NULL) {
 			m_succeeded = false;
@@ -85,7 +85,7 @@ DisconnectNodeEvent::pre_process()
 			return;
 		}
 		
-		m_node = Ingen::instance().object_store()->find_node(m_node_path);
+		m_node = Engine::instance().object_store()->find_node(m_node_path);
 		
 		if (m_node == NULL) {
 			m_succeeded = false;

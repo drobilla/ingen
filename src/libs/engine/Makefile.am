@@ -19,8 +19,8 @@ libingen_la_SOURCES = \
 	Patch.cpp \
 	NodeFactory.h \
 	NodeFactory.cpp \
-	Ingen.h \
-	Ingen.cpp \
+	Engine.h \
+	Engine.cpp \
 	JackAudioDriver.h \
 	JackAudioDriver.cpp \
 	OSCReceiver.h \

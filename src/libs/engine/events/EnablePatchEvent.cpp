@@ -16,7 +16,7 @@
 
 #include "EnablePatchEvent.h"
 #include "Responder.h"
-#include "Ingen.h"
+#include "Engine.h"
 #include "Patch.h"
 #include "util.h"
 #include "ClientBroadcaster.h"
@@ -37,7 +37,7 @@ EnablePatchEvent::EnablePatchEvent(CountedPtr<Responder> responder, SampleCount 
 void
 EnablePatchEvent::pre_process()
 {
-	m_patch = Ingen::instance().object_store()->find_patch(m_patch_path);
+	m_patch = Engine::instance().object_store()->find_patch(m_patch_path);
 	
 	if (m_patch != NULL) {
 		/* Any event that requires a new process order will set the patch's
@@ -70,7 +70,7 @@ EnablePatchEvent::post_process()
 {
 	if (m_patch != NULL) {
 		_responder->respond_ok();
-		Ingen::instance().client_broadcaster()->send_patch_enable(m_patch_path);
+		Engine::instance().client_broadcaster()->send_patch_enable(m_patch_path);
 	} else {
 		_responder->respond_error(string("Patch ") + m_patch_path + " not found");
 	}

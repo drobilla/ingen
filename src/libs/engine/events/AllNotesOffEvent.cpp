@@ -16,7 +16,7 @@
 
 #include "AllNotesOffEvent.h"
 #include "Responder.h"
-#include "Ingen.h"
+#include "Engine.h"
 #include "ObjectStore.h"
 
 namespace Ingen {
@@ -45,7 +45,7 @@ void
 AllNotesOffEvent::execute(SampleCount offset)
 {	
 	if (m_patch == NULL && m_patch_path != "")
-		m_patch = Ingen::instance().object_store()->find_patch(m_patch_path);
+		m_patch = Engine::instance().object_store()->find_patch(m_patch_path);
 		
 	//if (m_patch != NULL)
 	//	for (List<MidiInNode*>::iterator j = m_patch->midi_in_nodes().begin(); j != m_patch->midi_in_nodes().end(); ++j)

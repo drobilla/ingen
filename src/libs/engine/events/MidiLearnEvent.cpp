@@ -16,7 +16,7 @@
 
 #include "MidiLearnEvent.h"
 #include "Responder.h"
-#include "Ingen.h"
+#include "Engine.h"
 #include "ObjectStore.h"
 #include "Node.h"
 #include "MidiControlNode.h"
@@ -30,7 +30,7 @@ namespace Ingen {
 void
 MidiLearnResponseEvent::post_process()
 {
-	Ingen::instance().client_broadcaster()->send_control_change(m_port_path, m_value);
+	Engine::instance().client_broadcaster()->send_control_change(m_port_path, m_value);
 }
 
 
@@ -49,7 +49,7 @@ MidiLearnEvent::MidiLearnEvent(CountedPtr<Responder> responder, SampleCount time
 void
 MidiLearnEvent::pre_process()
 {
-	m_node = Ingen::instance().object_store()->find_node(m_node_path);
+	m_node = Engine::instance().object_store()->find_node(m_node_path);
 	m_response_event = new MidiLearnResponseEvent(m_node_path + "/Controller_Number", _time_stamp);
 	
 	QueuedEvent::pre_process();

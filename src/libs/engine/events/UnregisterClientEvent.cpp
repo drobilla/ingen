@@ -16,7 +16,7 @@
 
 #include "UnregisterClientEvent.h"
 #include "Responder.h"
-#include "Ingen.h"
+#include "Engine.h"
 #include "ClientBroadcaster.h"
 #include "interface/ClientInterface.h"
 
@@ -33,7 +33,7 @@ UnregisterClientEvent::UnregisterClientEvent(CountedPtr<Responder> responder, Sa
 void
 UnregisterClientEvent::post_process()
 {
-	if (Ingen::instance().client_broadcaster()->unregister_client(_key))
+	if (Engine::instance().client_broadcaster()->unregister_client(_key))
 		_responder->respond_ok();
 	else
 		_responder->respond_error("Unable to unregister client");

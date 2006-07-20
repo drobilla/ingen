@@ -19,7 +19,7 @@
 #include <stdio.h>
 #include <memory.h>
 #include <jack/jack.h>
-#include "Ingen.h"
+#include "Engine.h"
 #include "OSCReceiver.h"
 #include "JackAudioDriver.h"
 #ifdef HAVE_LASH
@@ -36,7 +36,7 @@ extern "C"
 void*
 run_main(void* arg)
 {
-	Ingen::Ingen::instance().main();
+	Engine::instance().main();
 	
 	// FIXME: cleanup
 	
@@ -50,7 +50,7 @@ pthread_t main_thread;
 int
 jack_initialize(jack_client_t* client, const char* load_init)
 {
-	if ((Ingen::om = new Ingen::Ingen(load_init, new Ingen::JackAudioDriver(client))) != NULL) {
+	if ((Ingen::om = new Engine(load_init, new Ingen::JackAudioDriver(client))) != NULL) {
 		pthread_create(&main_thread, NULL, run_main, NULL);
 		return 0; // Success
 	} else {
@@ -63,7 +63,7 @@ void
 jack_finish(void* arg)
 {
 	void* ret;
-	Ingen::Ingen::instance().quit();
+	Engine::instance().quit();
 	pthread_join(main_thread, &ret);
 }
 

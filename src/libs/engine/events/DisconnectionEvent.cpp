@@ -17,7 +17,7 @@
 #include "DisconnectionEvent.h"
 #include <string>
 #include "Responder.h"
-#include "Ingen.h"
+#include "Engine.h"
 #include "TypedConnection.h"
 #include "InputPort.h"
 #include "OutputPort.h"
@@ -85,7 +85,7 @@ DisconnectionEvent::pre_process()
 			return;
 		}
 
-		/*m_patch = Ingen::instance().object_store()->find_patch(m_src_port_path.parent().parent());
+		/*m_patch = Engine::instance().object_store()->find_patch(m_src_port_path.parent().parent());
 
 		  if (m_patch == NULL) {
 		  m_error = PORT_NOT_FOUND;
@@ -93,8 +93,8 @@ DisconnectionEvent::pre_process()
 		  return;
 		  }*/
 
-		m_src_port = Ingen::instance().object_store()->find_port(m_src_port_path);
-		m_dst_port = Ingen::instance().object_store()->find_port(m_dst_port_path);
+		m_src_port = Engine::instance().object_store()->find_port(m_src_port_path);
+		m_dst_port = Engine::instance().object_store()->find_port(m_dst_port_path);
 	}
 	
 	if (m_src_port == NULL || m_dst_port == NULL) {
@@ -248,12 +248,12 @@ TypedDisconnectionEvent<T>::execute(SampleCount offset)
 			assert((Connection*)port_connection->elem() == patch_connection->elem());
 			
 			// Clean up both the list node and the connection itself...
-			Ingen::instance().maid()->push(port_connection);
-			Ingen::instance().maid()->push(patch_connection);
-			Ingen::instance().maid()->push(port_connection->elem());
+			Engine::instance().maid()->push(port_connection);
+			Engine::instance().maid()->push(patch_connection);
+			Engine::instance().maid()->push(port_connection->elem());
 	
 			if (m_patch->process_order() != NULL)
-				Ingen::instance().maid()->push(m_patch->process_order());
+				Engine::instance().maid()->push(m_patch->process_order());
 			m_patch->process_order(m_process_order);
 		} else {
 			m_succeeded = false;  // Ports weren't connected
@@ -271,7 +271,7 @@ TypedDisconnectionEvent<T>::post_process()
 	
 		_responder->respond_ok();
 	
-		Ingen::instance().client_broadcaster()->send_disconnection(m_src_port->path(), m_dst_port->path());
+		Engine::instance().client_broadcaster()->send_disconnection(m_src_port->path(), m_dst_port->path());
 	} else {
 		_responder->respond_error("Unable to disconnect ports.");
 	}

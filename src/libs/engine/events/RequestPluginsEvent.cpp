@@ -16,7 +16,7 @@
 
 #include "RequestPluginsEvent.h"
 #include "Responder.h"
-#include "Ingen.h"
+#include "Engine.h"
 #include "ClientBroadcaster.h"
 
 namespace Ingen {
@@ -42,7 +42,7 @@ void
 RequestPluginsEvent::post_process()
 {
 	if (m_client) {
-		Ingen::instance().client_broadcaster()->send_plugins_to(m_client.get());
+		Engine::instance().client_broadcaster()->send_plugins_to(m_client.get());
 		_responder->respond_ok();
 	} else {
 		_responder->respond_error("Invalid URL");

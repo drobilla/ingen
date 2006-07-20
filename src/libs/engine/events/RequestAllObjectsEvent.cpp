@@ -16,7 +16,7 @@
 
 #include "RequestAllObjectsEvent.h"
 #include "Responder.h"
-#include "Ingen.h"
+#include "Engine.h"
 #include "ObjectSender.h"
 
 namespace Ingen {

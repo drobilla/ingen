@@ -22,7 +22,7 @@
 #include <float.h>
 #include <cmath>
 #include <dlfcn.h>
-#include "Ingen.h"
+#include "Engine.h"
 #include "AudioDriver.h"
 #include "MidiNoteNode.h"
 #include "MidiTriggerNode.h"
@@ -218,40 +218,40 @@ NodeFactory::load_internal_plugin(const string& uri, const string& name, size_t 
 
 	string plug_label = uri.substr(3);
 	/*if (plug_label == "midi_input") {
-		MidiInputNode* tn = new MidiInputNode(name, 1, parent, Ingen::instance().audio_driver()->sample_rate(), Ingen::instance().audio_driver()->buffer_size());
+		MidiInputNode* tn = new MidiInputNode(name, 1, parent, Engine::instance().audio_driver()->sample_rate(), Engine::instance().audio_driver()->buffer_size());
 		return tn;
 	} else if (plug_label == "midi_output") {
-		MidiOutputNode* tn = new MidiOutputNode(name, 1, parent, Ingen::instance().audio_driver()->sample_rate(), Ingen::instance().audio_driver()->buffer_size());
+		MidiOutputNode* tn = new MidiOutputNode(name, 1, parent, Engine::instance().audio_driver()->sample_rate(), Engine::instance().audio_driver()->buffer_size());
 		return tn;
 	} else if (plug_label == "audio_input") {
 		AudioInputNode* in = new AudioInputNode(name, poly, parent,
-			Ingen::instance().audio_driver()->sample_rate(), Ingen::instance().audio_driver()->buffer_size());
+			Engine::instance().audio_driver()->sample_rate(), Engine::instance().audio_driver()->buffer_size());
 		return in;
 	} else if (plug_label == "control_input") {
 		ControlInputNode* in = new ControlInputNode(name, poly, parent,
-			Ingen::instance().audio_driver()->sample_rate(), Ingen::instance().audio_driver()->buffer_size());
+			Engine::instance().audio_driver()->sample_rate(), Engine::instance().audio_driver()->buffer_size());
 		return in;
 	} else if (plug_label == "audio_output") {
 		AudioOutputNode* on = new AudioOutputNode(name, poly, parent,
-			Ingen::instance().audio_driver()->sample_rate(), Ingen::instance().audio_driver()->buffer_size());
+			Engine::instance().audio_driver()->sample_rate(), Engine::instance().audio_driver()->buffer_size());
 		return on;
 	} else if (plug_label == "control_output") {
 		ControlOutputNode* on = new ControlOutputNode(name, poly, parent,
-			Ingen::instance().audio_driver()->sample_rate(), Ingen::instance().audio_driver()->buffer_size());
+			Engine::instance().audio_driver()->sample_rate(), Engine::instance().audio_driver()->buffer_size());
 		return on;
 	} else
 	*/
 	if (plug_label == "note_in" || plug_label == "midi_note_in") {
-		MidiNoteNode* mn = new MidiNoteNode(name, poly, parent, Ingen::instance().audio_driver()->sample_rate(), Ingen::instance().audio_driver()->buffer_size());
+		MidiNoteNode* mn = new MidiNoteNode(name, poly, parent, Engine::instance().audio_driver()->sample_rate(), Engine::instance().audio_driver()->buffer_size());
 		return mn;
 	} else if (plug_label == "trigger_in" || plug_label == "midi_trigger_in") {
-		MidiTriggerNode* mn = new MidiTriggerNode(name, 1, parent, Ingen::instance().audio_driver()->sample_rate(), Ingen::instance().audio_driver()->buffer_size());
+		MidiTriggerNode* mn = new MidiTriggerNode(name, 1, parent, Engine::instance().audio_driver()->sample_rate(), Engine::instance().audio_driver()->buffer_size());
 		return mn;
 	} else if (plug_label == "midi_control_in") {
-		MidiControlNode* mn = new MidiControlNode(name, 1, parent, Ingen::instance().audio_driver()->sample_rate(), Ingen::instance().audio_driver()->buffer_size());
+		MidiControlNode* mn = new MidiControlNode(name, 1, parent, Engine::instance().audio_driver()->sample_rate(), Engine::instance().audio_driver()->buffer_size());
 		return mn;
 	} else if (plug_label == "transport") {
-		TransportNode* tn = new TransportNode(name, 1, parent, Ingen::instance().audio_driver()->sample_rate(), Ingen::instance().audio_driver()->buffer_size());
+		TransportNode* tn = new TransportNode(name, 1, parent, Engine::instance().audio_driver()->sample_rate(), Engine::instance().audio_driver()->buffer_size());
 		return tn;
 	} else {
 		cerr << "Unknown internal plugin type '" << plug_label << "'" << endl;
@@ -334,7 +334,7 @@ NodeFactory::load_lv2_plugin(const string& plug_uri,
 
 	if (plugin) {
 		n = new LV2Node(plugin, node_name, poly, parent,
-			Ingen::Ingen::instance().audio_driver()->sample_rate(), Ingen::Ingen::instance().audio_driver()->buffer_size());
+			Engine::instance().audio_driver()->sample_rate(), Engine::instance().audio_driver()->buffer_size());
 		bool success = ((LV2Node*)n)->instantiate();
 		if (!success) {
 			delete n;
@@ -510,7 +510,7 @@ NodeFactory::load_dssi_plugin(const string& uri,
 	}
 
 	n = new DSSINode(plugin, name, poly, parent, descriptor,
-		Ingen::instance().audio_driver()->sample_rate(), Ingen::instance().audio_driver()->buffer_size());
+		Engine::instance().audio_driver()->sample_rate(), Engine::instance().audio_driver()->buffer_size());
 	bool success = ((DSSINode*)n)->instantiate();
 	if (!success) {
 		delete n;
@@ -677,7 +677,7 @@ NodeFactory::load_ladspa_plugin(const string& uri,
 	}
 
 	n = new LADSPANode(plugin, name, poly, parent, descriptor,
-		Ingen::instance().audio_driver()->sample_rate(), Ingen::instance().audio_driver()->buffer_size());
+		Engine::instance().audio_driver()->sample_rate(), Engine::instance().audio_driver()->buffer_size());
 	bool success = ((LADSPANode*)n)->instantiate();
 	if (!success) {
 		delete n;

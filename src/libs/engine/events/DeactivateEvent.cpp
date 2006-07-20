@@ -16,7 +16,7 @@
 
 #include "DeactivateEvent.h"
 #include "Responder.h"
-#include "Ingen.h"
+#include "Engine.h"
 
 namespace Ingen {
 
@@ -45,7 +45,7 @@ void
 DeactivateEvent::post_process()
 {
 	_responder->respond_ok();
-	Ingen::instance().deactivate();
+	Engine::instance().deactivate();
 }
 
 

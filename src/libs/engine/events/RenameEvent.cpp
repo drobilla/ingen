@@ -19,7 +19,7 @@
 #include "Patch.h"
 #include "Node.h"
 #include "Tree.h"
-#include "Ingen.h"
+#include "Engine.h"
 #include "ClientBroadcaster.h"
 #include "util/Path.h"
 #include "ObjectStore.h"
@@ -58,13 +58,13 @@ RenameEvent::pre_process()
 		return;
 	}
 
-	if (Ingen::instance().object_store()->find(m_new_path)) {
+	if (Engine::instance().object_store()->find(m_new_path)) {
 		m_error = OBJECT_EXISTS;
 		QueuedEvent::pre_process();
 		return;
 	}
 	
-	GraphObject* obj = Ingen::instance().object_store()->find(m_old_path);
+	GraphObject* obj = Engine::instance().object_store()->find(m_old_path);
 
 	if (obj == NULL) {
 		m_error = OBJECT_NOT_FOUND;
@@ -103,7 +103,7 @@ RenameEvent::post_process()
 	
 	if (m_error == NO_ERROR) {
 		_responder->respond_ok();
-		Ingen::instance().client_broadcaster()->send_rename(m_old_path, m_new_path);
+		Engine::instance().client_broadcaster()->send_rename(m_old_path, m_new_path);
 	} else {
 		if (m_error == OBJECT_EXISTS)
 			msg.append("Object already exists at ").append(m_new_path);

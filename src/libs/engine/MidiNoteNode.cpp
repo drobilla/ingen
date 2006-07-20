@@ -17,7 +17,7 @@
 #include "MidiNoteNode.h"
 #include <cmath>
 #include <iostream>
-#include "Ingen.h"
+#include "Engine.h"
 #include "MidiMessage.h"
 #include "InputPort.h"
 #include "OutputPort.h"
@@ -117,7 +117,7 @@ void
 MidiNoteNode::note_on(uchar note_num, uchar velocity, SampleCount offset)
 {
 	// FIXME: this is stupid..
-	const jack_nframes_t time_stamp = Ingen::instance().audio_driver()->time_stamp();
+	const jack_nframes_t time_stamp = Engine::instance().audio_driver()->time_stamp();
 
 	assert(offset < _buffer_size);
 	assert(note_num <= 127);

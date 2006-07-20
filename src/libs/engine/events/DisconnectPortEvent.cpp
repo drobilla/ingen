@@ -17,7 +17,7 @@
 #include "DisconnectPortEvent.h"
 #include <iostream>
 #include "Responder.h"
-#include "Ingen.h"
+#include "Engine.h"
 #include "Maid.h"
 #include "List.h"
 #include "Node.h"
@@ -76,7 +76,7 @@ DisconnectPortEvent::pre_process()
 	// cerr << "Preparing disconnection event...\n";
 	
 	if (m_lookup) {
-		m_patch = Ingen::instance().object_store()->find_patch(m_port_path.parent().parent());
+		m_patch = Engine::instance().object_store()->find_patch(m_port_path.parent().parent());
 	
 		if (m_patch == NULL) {
 			m_succeeded = false;
@@ -84,7 +84,7 @@ DisconnectPortEvent::pre_process()
 			return;
 		}
 		
-		m_port = Ingen::instance().object_store()->find_port(m_port_path);
+		m_port = Engine::instance().object_store()->find_port(m_port_path);
 		
 		if (m_port == NULL) {
 			m_succeeded = false;

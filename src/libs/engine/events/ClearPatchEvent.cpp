@@ -16,7 +16,7 @@
 
 #include "ClearPatchEvent.h"
 #include "Responder.h"
-#include "Ingen.h"
+#include "Engine.h"
 #include "Patch.h"
 #include "ClientBroadcaster.h"
 #include "util.h"
@@ -42,7 +42,7 @@ ClearPatchEvent::ClearPatchEvent(CountedPtr<Responder> responder, SampleCount ti
 void
 ClearPatchEvent::pre_process()
 {
-	m_patch = Ingen::instance().object_store()->find_patch(m_patch_path);
+	m_patch = Engine::instance().object_store()->find_patch(m_patch_path);
 	
 	if (m_patch != NULL) {
 	
@@ -66,7 +66,7 @@ ClearPatchEvent::execute(SampleCount offset)
 			(*i)->remove_from_patch();
 
 		if (m_patch->process_order() != NULL) {
-			Ingen::instance().maid()->push(m_patch->process_order());
+			Engine::instance().maid()->push(m_patch->process_order());
 			m_patch->process_order(NULL);
 		}
 	}
@@ -100,7 +100,7 @@ ClearPatchEvent::post_process()
 		
 		// Reply
 		_responder->respond_ok();
-		Ingen::instance().client_broadcaster()->send_patch_cleared(m_patch_path);
+		Engine::instance().client_broadcaster()->send_patch_cleared(m_patch_path);
 	} else {
 		_responder->respond_error(string("Patch ") + m_patch_path + " not found");
 	}

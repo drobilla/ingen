@@ -22,7 +22,7 @@
 #include "JackAudioDriver.h"
 #include "Port.h"
 #include "util.h"
-//#include "Ingen.h"
+//#include "Engine.h"
 
 namespace Ingen {
 
@@ -86,8 +86,8 @@ TransportNode::run(size_t nframes)
 #if 0
 
 	// FIXME: this will die horribly with any driver other than jack (in theory)
-	const jack_position_t* const position = ((JackAudioDriver*)Ingen::instance().audio_driver())->position();
-	jack_transport_state_t state = ((JackAudioDriver*)Ingen::instance().audio_driver())->transport_state();
+	const jack_position_t* const position = ((JackAudioDriver*)Engine::instance().audio_driver())->position();
+	jack_transport_state_t state = ((JackAudioDriver*)Engine::instance().audio_driver())->transport_state();
 	double bpm = position->beats_per_minute;
 	float bpb = position->beats_per_bar;
 	float spb = 60.0 / bpm;

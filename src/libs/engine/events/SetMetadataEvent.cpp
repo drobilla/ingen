@@ -17,7 +17,7 @@
 #include "SetMetadataEvent.h"
 #include <string>
 #include "Responder.h"
-#include "Ingen.h"
+#include "Engine.h"
 #include "ClientBroadcaster.h"
 #include "GraphObject.h"
 #include "ObjectStore.h"
@@ -40,7 +40,7 @@ SetMetadataEvent::SetMetadataEvent(CountedPtr<Responder> responder, SampleCount 
 void
 SetMetadataEvent::pre_process()
 {
-	m_object = Ingen::instance().object_store()->find(m_path);
+	m_object = Engine::instance().object_store()->find(m_path);
 	if (m_object == NULL) {
 		QueuedEvent::pre_process();
 		return;
@@ -70,7 +70,7 @@ SetMetadataEvent::post_process()
 		_responder->respond_error(msg);
 	} else {
 		_responder->respond_ok();
-		Ingen::instance().client_broadcaster()->send_metadata_update(m_path, m_key, m_value);
+		Engine::instance().client_broadcaster()->send_metadata_update(m_path, m_key, m_value);
 	}
 }
 

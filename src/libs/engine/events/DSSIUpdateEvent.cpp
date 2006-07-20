@@ -18,7 +18,7 @@
 #include <iostream>
 #include "Node.h"
 #include "ObjectStore.h"
-#include "Ingen.h"
+#include "Engine.h"
 #include "DSSINode.h"
 #include "Plugin.h"
 
@@ -39,7 +39,7 @@ DSSIUpdateEvent::DSSIUpdateEvent(CountedPtr<Responder> responder, SampleCount ti
 void
 DSSIUpdateEvent::pre_process()
 {
-	Node* node = Ingen::instance().object_store()->find_node(m_path);
+	Node* node = Engine::instance().object_store()->find_node(m_path);
 
 	if (node == NULL || node->plugin()->type() != Plugin::DSSI) {
 		m_node = NULL;

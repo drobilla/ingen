@@ -16,7 +16,7 @@
 
 #include "DisablePatchEvent.h"
 #include "Responder.h"
-#include "Ingen.h"
+#include "Engine.h"
 #include "Patch.h"
 #include "ClientBroadcaster.h"
 #include "util.h"
@@ -37,7 +37,7 @@ DisablePatchEvent::DisablePatchEvent(CountedPtr<Responder> responder, SampleCoun
 void
 DisablePatchEvent::pre_process()
 {
-	m_patch = Ingen::instance().object_store()->find_patch(m_patch_path);
+	m_patch = Engine::instance().object_store()->find_patch(m_patch_path);
 	
 	QueuedEvent::pre_process();
 }
@@ -58,7 +58,7 @@ DisablePatchEvent::post_process()
 {	
 	if (m_patch != NULL) {
 		_responder->respond_ok();
-		Ingen::instance().client_broadcaster()->send_patch_disable(m_patch_path);
+		Engine::instance().client_broadcaster()->send_patch_disable(m_patch_path);
 	} else {
 		_responder->respond_error(string("Patch ") + m_patch_path + " not found");
 	}

@@ -18,9 +18,9 @@
 #include <iostream>
 #include <cstdlib>
 #include <pthread.h>
-#include "Ingen.h"
+#include "Engine.h"
 #include "types.h"
-#include "Ingen.h"
+#include "Engine.h"
 #include "Maid.h"
 #include "AudioDriver.h"
 #include "MidiMessage.h"
@@ -119,7 +119,7 @@ void
 AlsaMidiPort::event(snd_seq_event_t* const ev)
 {
 	// Abuse the tick field to hold the timestamp
-	ev->time.tick = Ingen::instance().audio_driver()->time_stamp();
+	ev->time.tick = Engine::instance().audio_driver()->time_stamp();
 	
 	// Fix noteons with velocity 0 (required for DSSI spec)
 	if (ev->type == SND_SEQ_EVENT_NOTEON && ev->data.note.velocity == 0)
@@ -232,7 +232,7 @@ AlsaMidiDriver::activate()
 	bool success = false;
 	m_midi_thread_exit_flag = false;
 
-	//if (Ingen::instance().audio_driver()->is_realtime()) {
+	//if (Engine::instance().audio_driver()->is_realtime()) {
 		pthread_attr_t attr;
 		pthread_attr_init(&attr);
 
@@ -267,7 +267,7 @@ AlsaMidiDriver::activate()
 	}
 	
 #ifdef HAVE_LASH
-	Ingen::instance().lash_driver()->set_alsa_client_id(snd_seq_client_id(m_seq_handle));
+	Engine::instance().lash_driver()->set_alsa_client_id(snd_seq_client_id(m_seq_handle));
 #endif
 
 	m_is_activated = true;

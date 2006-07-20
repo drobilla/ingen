@@ -14,7 +14,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "Ingen.h"	
+#include "Engine.h"	
 #include "config.h"
 #include "tuning.h"
 #include <sys/mman.h>
@@ -49,18 +49,18 @@ using std::cout; using std::cerr; using std::endl;
 namespace Ingen {
 
 
-Ingen* Ingen::m_instance = NULL;
+Engine* Engine::m_instance = NULL;
 
 
 void
-Ingen::instantiate(const char* port, AudioDriver* audio_driver)
+Engine::instantiate(const char* port, AudioDriver* audio_driver)
 {
 	assert(!m_instance);
-	m_instance = new Ingen(port, audio_driver);
+	m_instance = new Engine(port, audio_driver);
 }
 
 
-Ingen::Ingen(const char* port, AudioDriver* audio_driver)
+Engine::Engine(const char* port, AudioDriver* audio_driver)
 : m_audio_driver( (audio_driver) ? audio_driver : new JackAudioDriver() ),
   m_osc_receiver(new OSCReceiver(pre_processor_queue_size, port)),
 #ifdef HAVE_JACK_MIDI
@@ -87,7 +87,7 @@ Ingen::Ingen(const char* port, AudioDriver* audio_driver)
 }
 
 
-Ingen::~Ingen()
+Engine::~Engine()
 {
 	deactivate();
 
@@ -117,13 +117,13 @@ Ingen::~Ingen()
  * more elegant and extensible, but this is faster and simpler - for now.
  */
 template<>
-Driver<MidiMessage>* Ingen::driver<MidiMessage>() { return m_midi_driver; }
+Driver<MidiMessage>* Engine::driver<MidiMessage>() { return m_midi_driver; }
 template<>
-Driver<Sample>* Ingen::driver<Sample>() { return m_audio_driver; }
+Driver<Sample>* Engine::driver<Sample>() { return m_audio_driver; }
 
 
 int
-Ingen::main()
+Engine::main()
 {
 	// Loop until quit flag is set (by OSCReceiver)
 	while ( ! m_quit_flag) {
@@ -149,7 +149,7 @@ Ingen::main()
 
 
 void
-Ingen::activate()
+Engine::activate()
 {
 	if (m_activated)
 		return;
@@ -178,7 +178,7 @@ Ingen::activate()
 
 
 void
-Ingen::deactivate()
+Engine::deactivate()
 {
 	if (!m_activated)
 		return;

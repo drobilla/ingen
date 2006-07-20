@@ -17,7 +17,7 @@
 #include "DSSIProgramEvent.h"
 #include <cstdio>
 #include <iostream>
-#include "Ingen.h"
+#include "Engine.h"
 #include "Node.h"
 #include "ClientBroadcaster.h"
 #include "Plugin.h"
@@ -41,7 +41,7 @@ DSSIProgramEvent::DSSIProgramEvent(CountedPtr<Responder> responder, SampleCount 
 void
 DSSIProgramEvent::pre_process()
 {
-	Node* node = Ingen::instance().object_store()->find_node(m_node_path);
+	Node* node = Engine::instance().object_store()->find_node(m_node_path);
 
 	if (node != NULL && node->plugin()->type() == Plugin::DSSI)
 		m_node = (DSSINode*)node;
@@ -67,7 +67,7 @@ DSSIProgramEvent::post_process()
 		// sends program as metadata in the form bank/program
 		char* temp_buf = new char[16];
 		snprintf(temp_buf, 16, "%d/%d", m_bank, m_program);
-		Ingen::instance().client_broadcaster()->send_metadata_update(m_node_path, "dssi-program", temp_buf);
+		Engine::instance().client_broadcaster()->send_metadata_update(m_node_path, "dssi-program", temp_buf);
 	}
 }
 

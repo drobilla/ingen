@@ -20,7 +20,7 @@
 #include "config.h"
 #include "util.h"
 #include "cmdline.h"
-#include "Ingen.h"
+#include "Engine.h"
 #ifdef HAVE_LASH
 #include "LashDriver.h"
 #endif
@@ -39,7 +39,7 @@ catch_int(int)
 	signal(SIGTERM, catch_int);
 
 	std::cout << "[Main] Ingen interrupted." << std::endl;
-	Ingen::Ingen::instance().quit();
+	Ingen::Engine::instance().quit();
 }
 
 
@@ -132,13 +132,13 @@ main(int argc, char** argv)
 
 		Ingen::set_denormal_flags();
 
-		Ingen::Ingen::instantiate(args_info.port_arg);
+		Ingen::Engine::instantiate(args_info.port_arg);
 
 #ifdef HAVE_LASH
 		Ingen::lash_driver = new Ingen::LashDriver(Ingen::om, lash_args);
 #endif
 
-		Ingen::Ingen::instance().main();
+		Ingen::Engine::instance().main();
 
 #ifdef HAVE_LASH
 		delete Ingen::lash_driver;

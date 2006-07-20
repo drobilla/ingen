@@ -16,7 +16,7 @@
 
 #include "MidiControlNode.h"
 #include <math.h>
-#include "Ingen.h"
+#include "Engine.h"
 #include "PostProcessor.h"
 #include "MidiLearnEvent.h"
 #include "InputPort.h"
@@ -92,8 +92,8 @@ MidiControlNode::control(uchar control_num, uchar val, SampleCount offset)
 		assert(_param_port->buffer(0)->value_at(0) == control_num);
 		_learn_event->set_value(control_num);
 		_learn_event->execute(offset);
-		Ingen::instance().post_processor()->push(_learn_event);
-		Ingen::instance().post_processor()->whip();
+		Engine::instance().post_processor()->push(_learn_event);
+		Engine::instance().post_processor()->whip();
 		_learning = false;
 		_learn_event = NULL;
 	}

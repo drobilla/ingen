@@ -16,7 +16,7 @@
 
 #include "ActivateEvent.h"
 #include "Responder.h"
-#include "Ingen.h"
+#include "Engine.h"
 
 namespace Ingen {
 
@@ -32,7 +32,7 @@ ActivateEvent::pre_process()
 {
 	QueuedEvent::pre_process();
 
-	Ingen::instance().activate();
+	Engine::instance().activate();
 }
 
 

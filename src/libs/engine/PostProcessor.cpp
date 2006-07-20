@@ -18,7 +18,7 @@
 #include <cassert>
 #include <iostream>
 #include <pthread.h>
-#include "Ingen.h"
+#include "Engine.h"
 #include "Event.h"
 #include "util/Queue.h"
 #include "Maid.h"
@@ -47,7 +47,7 @@ PostProcessor::_whipped()
 		Event* const ev = _events.pop();
 		assert(ev);
 		ev->post_process();
-		Ingen::instance().maid()->push(ev);
+		Engine::instance().maid()->push(ev);
 	}
 }
 

@@ -17,7 +17,7 @@
 #include "RequestMetadataEvent.h"
 #include <string>
 #include "Responder.h"
-#include "Ingen.h"
+#include "Engine.h"
 #include "GraphObject.h"
 #include "ObjectStore.h"
 #include "interface/ClientInterface.h"
@@ -44,7 +44,7 @@ RequestMetadataEvent::pre_process()
 	m_client = _responder->find_client();
 	
 	if (m_client) {
-		m_object = Ingen::instance().object_store()->find(m_path);
+		m_object = Engine::instance().object_store()->find(m_path);
 		if (m_object == NULL) {
 			QueuedEvent::pre_process();
 			return;

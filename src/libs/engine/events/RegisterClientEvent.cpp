@@ -16,7 +16,7 @@
 
 #include "RegisterClientEvent.h"
 #include "Responder.h"
-#include "Ingen.h"
+#include "Engine.h"
 #include "ClientBroadcaster.h"
 
 namespace Ingen {
@@ -36,7 +36,7 @@ RegisterClientEvent::RegisterClientEvent(CountedPtr<Responder>       responder,
 void
 RegisterClientEvent::pre_process()
 {  
-	Ingen::instance().client_broadcaster()->register_client(_key, _client);
+	Engine::instance().client_broadcaster()->register_client(_key, _client);
 
 	QueuedEvent::pre_process();
 }

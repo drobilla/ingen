@@ -15,7 +15,7 @@
  */
 
 #include "DSSIControlEvent.h"
-#include "Ingen.h"
+#include "Engine.h"
 #include "Node.h"
 #include "Plugin.h"
 #include "ObjectStore.h"
@@ -36,7 +36,7 @@ DSSIControlEvent::DSSIControlEvent(CountedPtr<Responder> responder, SampleCount 
 void
 DSSIControlEvent::pre_process()
 {
-	Node* node = Ingen::instance().object_store()->find_node(m_node_path);
+	Node* node = Engine::instance().object_store()->find_node(m_node_path);
 
 	if (node->plugin()->type() != Plugin::DSSI)
 		m_node = NULL;

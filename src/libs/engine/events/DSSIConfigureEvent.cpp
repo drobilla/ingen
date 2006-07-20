@@ -15,7 +15,7 @@
  */
 
 #include "DSSIConfigureEvent.h"
-#include "Ingen.h"
+#include "Engine.h"
 #include "Node.h"
 #include "ClientBroadcaster.h"
 #include "Plugin.h"
@@ -37,7 +37,7 @@ DSSIConfigureEvent::DSSIConfigureEvent(CountedPtr<Responder> responder, SampleCo
 void
 DSSIConfigureEvent::pre_process()
 {
-	Node* node = Ingen::instance().object_store()->find_node(m_node_path);
+	Node* node = Engine::instance().object_store()->find_node(m_node_path);
 
 	if (node != NULL && node->plugin()->type() == Plugin::DSSI) {
 		m_node = (DSSINode*)node;
@@ -63,7 +63,7 @@ DSSIConfigureEvent::post_process()
 	} else {
 		string key = "dssi-configure--";
 		key += m_key;
-		Ingen::instance().client_broadcaster()->send_metadata_update(m_node_path, key, m_val);
+		Engine::instance().client_broadcaster()->send_metadata_update(m_node_path, key, m_val);
 	}
 }
 

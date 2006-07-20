@@ -20,7 +20,7 @@
 #include "Node.h"
 #include "Tree.h"
 #include "Plugin.h"
-#include "Ingen.h"
+#include "Engine.h"
 #include "Patch.h"
 #include "NodeFactory.h"
 #include "ClientBroadcaster.h"
@@ -55,19 +55,19 @@ AddNodeEvent::~AddNodeEvent()
 void
 AddNodeEvent::pre_process()
 {
-	if (Ingen::instance().object_store()->find(m_path) != NULL) {
+	if (Engine::instance().object_store()->find(m_path) != NULL) {
 		m_node_already_exists = true;
 		QueuedEvent::pre_process();
 		return;
 	}
 
-	m_patch = Ingen::instance().object_store()->find_patch(m_path.parent());
+	m_patch = Engine::instance().object_store()->find_patch(m_path.parent());
 
 	if (m_patch != NULL) {
 		if (m_poly)
-			m_node = Ingen::instance().node_factory()->load_plugin(m_plugin, m_path.name(), m_patch->internal_poly(), m_patch);
+			m_node = Engine::instance().node_factory()->load_plugin(m_plugin, m_path.name(), m_patch->internal_poly(), m_patch);
 		else
-			m_node = Ingen::instance().node_factory()->load_plugin(m_plugin, m_path.name(), 1, m_patch);
+			m_node = Engine::instance().node_factory()->load_plugin(m_plugin, m_path.name(), 1, m_patch);
 		
 		if (m_node != NULL) {
 			m_node->activate();
@@ -94,7 +94,7 @@ AddNodeEvent::execute(SampleCount offset)
 		m_node->add_to_patch();
 		
 		if (m_patch->process_order() != NULL)
-			Ingen::instance().maid()->push(m_patch->process_order());
+			Engine::instance().maid()->push(m_patch->process_order());
 		m_patch->process_order(m_process_order);
 	}
 }
@@ -117,8 +117,8 @@ AddNodeEvent::post_process()
 		_responder->respond_error(msg);
 	} else {
 		_responder->respond_ok();
-		//Ingen::instance().client_broadcaster()->send_node_creation_messages(m_node);
-		Ingen::instance().client_broadcaster()->send_node(m_node);
+		//Engine::instance().client_broadcaster()->send_node_creation_messages(m_node);
+		Engine::instance().client_broadcaster()->send_node(m_node);
 	}
 }
 

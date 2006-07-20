@@ -16,7 +16,7 @@
 
 #include "LoadPluginsEvent.h"
 #include "Responder.h"
-#include "Ingen.h"
+#include "Engine.h"
 #include "NodeFactory.h"
 
 #include <iostream>
@@ -29,7 +29,7 @@ LoadPluginsEvent::LoadPluginsEvent(CountedPtr<Responder> responder, SampleCount 
 : QueuedEvent(responder, timestamp)
 {
 	cerr << "LOADING PLUGINS\n";
-	Ingen::instance().node_factory()->load_plugins();
+	Engine::instance().node_factory()->load_plugins();
 }
 
 
