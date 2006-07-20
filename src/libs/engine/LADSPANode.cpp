@@ -113,7 +113,7 @@ LADSPANode::instantiate()
 		assert(_ports->at(j) != NULL);
 		Sample default_val = default_port_value(j);
 
-		// Set default control val
+		// Set default value
 		if (port->buffer_size() == 1) {
 			((TypedPort<Sample>*)port)->set_value(default_val, 0);
 		} else {
