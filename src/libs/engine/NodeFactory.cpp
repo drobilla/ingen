@@ -301,8 +301,8 @@ NodeFactory::load_lv2_plugins()
 			om_plug->library(NULL);
 			om_plug->lib_path("FIXME/Some/path");
 			om_plug->plug_label("FIXMElabel");
-			unsigned char* name = slv2_plugin_get_name(lv2_plug);
-			om_plug->name((char*)name);
+			char* name = slv2_plugin_get_name(lv2_plug);
+			om_plug->name(name);
 			free(name);
 			om_plug->type(Plugin::LV2);
 			_plugins.push_back(om_plug);
