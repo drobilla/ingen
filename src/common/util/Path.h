@@ -48,6 +48,7 @@ public:
 		assert(is_valid(path));
 	}
 	
+
 	/** Construct a Path from a C string.
 	 *
 	 * It is a fatal error to construct a Path from an invalid string,
@@ -59,6 +60,7 @@ public:
 		assert(is_valid(cpath));
 	}
 	
+
 	static bool is_valid(const std::basic_string<char>& path)
 	{
 		if (path.length() == 0)
@@ -94,7 +96,8 @@ public:
 		return true;
 	}
 	
-	/** Convert a string in to a valid full path.
+
+	/** Convert a string to a valid full path.
 	 *
 	 * This will make a best effort at turning @a str into a complete, valid
 	 * Path, and will always return one.
@@ -116,28 +119,14 @@ public:
 	
 		assert(path.find_last_of("/") != string::npos);
 		
-		// Replace any invalid characters with "." (for lack of a better idea)
-		for (size_t i=0; i < path.length(); ++i) {
-			if (path.at(i) < 32 || path.at(i) > 126
-			        || path.at(i) ==  ' '  
-					|| path.at(i) ==  '#' 
-					|| path.at(i) ==  '*' 
-					|| path.at(i) ==  ',' 
-					|| path.at(i) ==  '?' 
-					|| path.at(i) ==  '[' 
-					|| path.at(i) ==  ']' 
-					|| path.at(i) ==  '{' 
-					|| path.at(i) ==  '}') {
-				path[i] = '.';
-			}
-		}
+		replace_invalid_chars(path, false);
 
 		assert(is_valid(path));
 		
 		return path;
 	}
 	
-	/** Convert a string into a valid name (or "method" - tokens between slashes)
+	/** Convert a string to a valid name (or "method" - tokens between slashes)
 	 *
 	 * This will strip all slashes and always return a valid name/method.
 	 */
@@ -148,24 +137,35 @@ public:
 		if (name.length() == 0)
 			return "."; // this might not be wise
 
-		// Replace any invalid characters with "." (for lack of a better idea)
-		for (size_t i=0; i < name.length(); ++i) {
-			if (name.at(i) < 32 || name.at(i) > 126
-			        || name.at(i) ==  ' '  
-					|| name.at(i) ==  '#' 
-					|| name.at(i) ==  '*' 
-					|| name.at(i) ==  ',' 
-					|| name.at(i) ==  '?' 
-					|| name.at(i) ==  '[' 
-					|| name.at(i) ==  ']' 
-					|| name.at(i) ==  '{' 
-					|| name.at(i) ==  '}' 
-					|| name.at(i) ==  '/') {
-				name[i] = '.';
-			}
-		}
+		replace_invalid_chars(name, true);
+
+		assert(is_valid(string("/") + name));
 
 		return name;
+	}
+
+
+	/** Replace any invalid characters in @a str with a suitable replacement.
+	 */
+	static void replace_invalid_chars(string& str, bool replace_slash = false)
+	{
+		for (size_t i=0; i < str.length(); ++i) {
+			if (str[i] == ' ') {
+				str[i] = '_';
+			} else if (str[i] ==  '[' || str[i] ==  '{') {
+				str[i] = '(';
+			} else if (str[i] ==  ']' || str[i] ==  '}') {
+				str[i] = ')';
+			} else if (str[i] < 32 || str.at(i) > 126
+			        || str[i] ==  ' '  
+					|| str[i] ==  '#' 
+					|| str[i] ==  '*' 
+					|| str[i] ==  ',' 
+					|| str[i] ==  '?' 
+					|| (replace_slash && str[i] ==  '/')) {
+				str[i] = '.';
+			}
+		}
 	}
 
 	

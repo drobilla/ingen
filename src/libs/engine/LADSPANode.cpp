@@ -83,9 +83,9 @@ LADSPANode::instantiate()
 			assert(_descriptor->PortNames[k] != NULL);
 			if (k != j && port_name == _descriptor->PortNames[k]) { // clash
 				if (LADSPA_IS_PORT_CONTROL(_descriptor->PortDescriptors[j]))
-					port_name += " (CR)";
+					port_name += "_(CR)";
 				else
-					port_name += " (AR)";
+					port_name += "_(AR)";
 			}
 			// Replace all slashes with "-" (so they don't screw up paths)
 			while ((slash_index = port_name.find("/")) != string::npos)
