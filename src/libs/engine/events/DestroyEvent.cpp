@@ -138,8 +138,8 @@ DestroyEvent::execute(SampleCount offset)
 void
 DestroyEvent::post_process()
 {
-	assert(_source);
-	_source->unblock();
+	if (_source)
+		_source->unblock();
 	
 	if (m_node == NULL) {
 		if (m_path == "/")

@@ -75,7 +75,7 @@ LADSPANode::instantiate()
 	Port* port = NULL;
 	
 	for (size_t j=0; j < _descriptor->PortCount; ++j) {
-		port_name = _descriptor->PortNames[j];
+		port_name = Path::nameify(_descriptor->PortNames[j]);
 		string::size_type slash_index;
 		
 		// Name mangling, to guarantee port names are unique

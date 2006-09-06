@@ -94,6 +94,81 @@ public:
 		return true;
 	}
 	
+	/** Convert a string in to a valid full path.
+	 *
+	 * This will make a best effort at turning @a str into a complete, valid
+	 * Path, and will always return one.
+	 */
+	static string pathify(const std::basic_string<char>& str)
+	{
+		string path = str;
+
+		if (path.length() == 0)
+			return "/"; // this might not be wise
+
+		// Must start with a /
+		if (path.at(0) != '/')
+			path = string("/").append(path);
+		
+		// Must not end with a slash unless "/"
+		if (path.length() > 1 && path.at(path.length()-1) == '/')
+			path = path.substr(0, path.length()-1); // chop trailing slash
+	
+		assert(path.find_last_of("/") != string::npos);
+		
+		// Replace any invalid characters with "." (for lack of a better idea)
+		for (size_t i=0; i < path.length(); ++i) {
+			if (path.at(i) < 32 || path.at(i) > 126
+			        || path.at(i) ==  ' '  
+					|| path.at(i) ==  '#' 
+					|| path.at(i) ==  '*' 
+					|| path.at(i) ==  ',' 
+					|| path.at(i) ==  '?' 
+					|| path.at(i) ==  '[' 
+					|| path.at(i) ==  ']' 
+					|| path.at(i) ==  '{' 
+					|| path.at(i) ==  '}') {
+				path[i] = '.';
+			}
+		}
+
+		assert(is_valid(path));
+		
+		return path;
+	}
+	
+	/** Convert a string into a valid name (or "method" - tokens between slashes)
+	 *
+	 * This will strip all slashes and always return a valid name/method.
+	 */
+	static string nameify(const std::basic_string<char>& str)
+	{
+		string name = str;
+
+		if (name.length() == 0)
+			return "."; // this might not be wise
+
+		// Replace any invalid characters with "." (for lack of a better idea)
+		for (size_t i=0; i < name.length(); ++i) {
+			if (name.at(i) < 32 || name.at(i) > 126
+			        || name.at(i) ==  ' '  
+					|| name.at(i) ==  '#' 
+					|| name.at(i) ==  '*' 
+					|| name.at(i) ==  ',' 
+					|| name.at(i) ==  '?' 
+					|| name.at(i) ==  '[' 
+					|| name.at(i) ==  ']' 
+					|| name.at(i) ==  '{' 
+					|| name.at(i) ==  '}' 
+					|| name.at(i) ==  '/') {
+				name[i] = '.';
+			}
+		}
+
+		return name;
+	}
+
+	
 	/** Return the name of this object (everything after the last '/').
 	 * This is the "method name" for OSC paths.
 	 */
