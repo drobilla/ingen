@@ -47,6 +47,7 @@ private:
 	void launch_toggled();
 	void internal_toggled();
 	
+	void init();
 	void disconnect();
 	void connect();
 	void quit();

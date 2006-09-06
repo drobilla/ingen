@@ -45,7 +45,7 @@ class GtkObjectController : public ObjectController
 {
 public:
 	GtkObjectController(CountedPtr<ObjectModel> model);
-	virtual ~GtkObjectController() {}
+	virtual ~GtkObjectController();
 
 	/** Destroy object.
 	 *

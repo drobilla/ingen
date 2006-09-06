@@ -26,6 +26,11 @@ GtkObjectController::GtkObjectController(CountedPtr<ObjectModel> model)
 	model->metadata_update_sig.connect(sigc::mem_fun(this, &GtkObjectController::metadata_update));
 }
 
+GtkObjectController::~GtkObjectController()
+{
+	assert(m_model->controller() == this);
+	m_model->set_controller(NULL);
+}
 
 } // namespace Ingenuity
 

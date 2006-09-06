@@ -47,6 +47,8 @@ public:
 	CountedPtr<NodeModel>   node(const string& path);
 	CountedPtr<PortModel>   port(const string& path);*/
 
+	void clear();
+
 	size_t num_objects() { return m_objects.size(); }
 	
 	const map<string, CountedPtr<PluginModel> >& plugins() const { return m_plugins; }

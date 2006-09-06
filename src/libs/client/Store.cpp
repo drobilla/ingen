@@ -49,6 +49,15 @@ Store::Store(SigClientInterface& emitter)
 
 
 void
+Store::clear()
+{
+	m_objects.clear();
+	m_plugins.clear();
+
+}
+
+
+void
 Store::add_object(CountedPtr<ObjectModel> object)
 {
 	assert(object->path() != "");

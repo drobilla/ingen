@@ -26,6 +26,7 @@
 #include "Store.h"
 #include "PatchController.h"
 #include "PatchModel.h"
+#include "App.h"
 
 namespace Ingenuity {
 
@@ -63,10 +64,27 @@ ConnectWindow::start(CountedPtr<Ingen::Shared::ClientInterface> client)
 	show();
 }
 
+void
+ConnectWindow::init()
+{
+	_icon->set(Gtk::Stock::DISCONNECT, Gtk::ICON_SIZE_LARGE_TOOLBAR);
+	_progress_bar->set_fraction(0.0);
+	_url_entry->set_sensitive(true);
+	_connect_button->set_sensitive(true);
+	_disconnect_button->set_sensitive(false);
+	_port_spinbutton->set_sensitive(false);
+	_launch_radio->set_sensitive(true);
+	_internal_radio->set_sensitive(false);
+	server_toggled();
+		
+	_progress_label->set_text(string("Disconnected"));
+}
 
 void
 ConnectWindow::connect()
 {
+	_connect_button->set_sensitive(false);
+
 	if (_server_radio->get_active()) {
 		Controller::instance().set_engine_url(_url_entry->get_text());
 		Glib::signal_timeout().connect(
@@ -88,15 +106,19 @@ ConnectWindow::connect()
 				sigc::mem_fun(this, &ConnectWindow::gtk_callback), 100);
 		}
 	}
-
-	_connect_button->set_sensitive(false);
 }
 
 
 void
 ConnectWindow::disconnect()
 {
-	// Nope
+	_progress_bar->set_fraction(0.0);
+	_connect_button->set_sensitive(false);
+	_disconnect_button->set_sensitive(false);
+
+	App::instance().disconnect();
+
+	init();
 }
 
 
@@ -247,9 +269,11 @@ ConnectWindow::gtk_callback()
 		_progress_bar->set_fraction(1.0);
 		_url_entry->set_sensitive(false);
 		_connect_button->set_sensitive(false);
+		_disconnect_button->set_sensitive(true);
 		_port_spinbutton->set_sensitive(false);
 		_launch_radio->set_sensitive(false);
 		_internal_radio->set_sensitive(false);
+		stage = 0; // set ourselves up for next time (if there is one)
 		return false; // deregister this callback
 	} else {
 		return true;

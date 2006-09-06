@@ -43,6 +43,7 @@
 #include "PatchTreeWindow.h"
 #include "Configuration.h"
 #include "ConnectWindow.h"
+#include "Store.h"
 #ifdef HAVE_LASH
 #include "LashController.h"
 #endif
@@ -213,6 +214,24 @@ App::num_open_patch_windows()
 
 	return ret;
 }
+
+
+void
+App::disconnect()
+{
+	// FIXME: this is pretty gross.. figure out the death situation better
+	
+	list<PatchWindow*> windows = m_windows; // make a copy
+
+	for (list<PatchWindow*>::iterator i = windows.begin(); i != windows.end(); ++i)
+		delete (*i);
+
+	Store::instance().clear();
+
+	// PatchWindow destructor removes them from the list
+	assert(m_windows.size() == 0);
+}
+
 
 void
 App::quit()

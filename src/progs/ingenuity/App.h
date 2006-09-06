@@ -69,6 +69,7 @@ public:
 
 	void error_message(const string& msg);
 
+	void disconnect();
 	void quit();
 
 	void add_patch_window(PatchWindow* pw);
