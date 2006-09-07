@@ -79,8 +79,6 @@ public:
 	void disconnection(const Path& src_port_path, const Path& dst_port_path);
 	void clear();
 
-	void get_new_module_location(int& x, int& y);
-
 	void show_control_window();
 	void show_properties_window();
 	void show_patch_window();

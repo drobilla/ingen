@@ -203,6 +203,19 @@ OmFlowCanvas::menu_add_port(const string& name, const string& type, bool is_outp
 }
 
 
+/** Try to guess a suitable location for a new module.
+ */
+void
+OmFlowCanvas::get_new_module_location(double& x, double& y)
+{
+	int scroll_x;
+	int scroll_y;
+	get_scroll_offsets(scroll_x, scroll_y);
+	x = scroll_x + 20;
+	y = scroll_y + 20;
+}
+
+
 /*
 void
 OmFlowCanvas::menu_add_audio_input()

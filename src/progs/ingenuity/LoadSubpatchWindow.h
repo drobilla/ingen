@@ -41,7 +41,7 @@ public:
 
 	void patch_controller(PatchController* pc);
 	
-	void set_next_module_location(int x, int y)
+	void set_next_module_location(double x, double y)
 		{ m_new_module_x = x; m_new_module_y = y; }
 
 protected:
@@ -58,8 +58,8 @@ private:
 
 	PatchController* m_patch_controller;
 	
-	int m_new_module_x;
-	int m_new_module_y;
+	double m_new_module_x;
+	double m_new_module_y;
 	
 	Gtk::RadioButton* m_name_from_file_radio;
 	Gtk::RadioButton* m_name_from_user_radio;

@@ -20,6 +20,8 @@
 #include <cassert>
 #include "App.h"
 #include "PatchController.h"
+#include "PatchView.h"
+#include "OmFlowCanvas.h"
 #include "NodeModel.h"
 #include "Controller.h"
 #include "PatchModel.h"
@@ -130,9 +132,11 @@ LoadSubpatchWindow::ok_clicked()
 	assert(m_patch_controller != NULL);
 	assert(m_patch_controller->model());
 	
-	// These values are interpreted by load_patch() as "not defined", ie load from file
-	string name = "";
-	int    poly = 0;
+	const string filename = get_filename();
+
+	// FIXME
+	string name = filename.substr(filename.find_last_of("/")+1);
+	int    poly = 1;
 	
 	if (m_name_from_user_radio->get_active())
 		name = m_name_entry->get_text();
@@ -143,21 +147,21 @@ LoadSubpatchWindow::ok_clicked()
 		poly = m_patch_controller->patch_model()->poly();
 
 	if (m_new_module_x == 0 && m_new_module_y == 0) {
-		m_patch_controller->get_new_module_location(
+		m_patch_controller->view()->canvas()->get_new_module_location(
 			m_new_module_x, m_new_module_y);
 	}
 
 	PatchModel* pm = new PatchModel(m_patch_controller->model()->base_path() + name, poly);
-	pm->filename(get_filename());
+	pm->filename(filename);
 	pm->set_parent(m_patch_controller->model().get());
 	pm->x(m_new_module_x);
 	pm->y(m_new_module_y);
-	if (name == "")
-		pm->set_path("");
+	//if (name == "")
+	//	pm->set_path("");
 	char temp_buf[16];
-	snprintf(temp_buf, 16, "%d", m_new_module_x);
+	snprintf(temp_buf, 16, "%16f", m_new_module_x);
 	pm->set_metadata("module-x", temp_buf);
-	snprintf(temp_buf, 16, "%d", m_new_module_y);
+	snprintf(temp_buf, 16, "%16f", m_new_module_y);
 	pm->set_metadata("module-y", temp_buf);
 	Controller::instance().load_patch(pm);
 

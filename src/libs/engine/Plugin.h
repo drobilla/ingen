@@ -26,13 +26,17 @@
 #ifdef HAVE_SLV2
 #include <slv2/slv2.h>
 #endif
+#include "types.h"
 using std::string;
 using std::cerr; using std::endl;
 
+class Path;
 
 namespace Ingen {
 
 class PluginLibrary;
+class Patch;
+class Node;
 
 
 /** Representation of a plugin (of various types).
@@ -47,16 +51,16 @@ public:
 	enum Type { LV2, LADSPA, DSSI, Internal, Patch };
 	
 	Plugin(Type type, const string& uri)
-	: m_type(type)
-	, m_uri(uri)
+	: _type(type)
+	, _uri(uri)
 	{}
 
 	// FIXME: remove
-	Plugin() : m_type(Internal), m_lib_path("/Ingen"),
-	           m_id(0), m_library(NULL)
+	Plugin() : _type(Internal), _lib_path("/Ingen"),
+	           _id(0), _library(NULL)
 	{
 #ifdef HAVE_SLV2
-		m_slv2_plugin = NULL;
+		_slv2_plugin = NULL;
 #endif
 	}
 
@@ -64,73 +68,77 @@ public:
 		// Copying only allowed for Internal plugins.  Bit of a hack, but
 		// allows the PluginInfo to be defined in the Node class which keeps
 		// things localized and convenient (FIXME?)
-		if (copy->m_type != Internal)
+		if (copy->_type != Internal)
 			exit(EXIT_FAILURE);
-		m_type = copy->m_type;
-		m_lib_path = copy->m_lib_path;
-		m_plug_label = copy->m_plug_label;
-		m_name = copy->m_name;
-		m_library = copy->m_library;
+		_type = copy->_type;
+		_lib_path = copy->_lib_path;
+		_uri = copy->_uri;
+		_plug_label = copy->_plug_label;
+		_name = copy->_name;
+		_library = copy->_library;
 	}
 	
-	Type          type() const                { return m_type; }
-	void          type(Type t)                { m_type = t; }
-	const string& lib_path() const            { return m_lib_path; }
-	void          lib_path(const string& s)   { m_lib_path = s; m_lib_name = m_lib_path.substr(m_lib_path.find_last_of("/")+1); }
-	string        lib_name() const            { return m_lib_name; }
-	void          lib_name(const string& s)   { m_lib_name = s; }
-	const string& plug_label() const          { return m_plug_label; }
-	void          plug_label(const string& s) { m_plug_label = s; }
-	const string& name() const                { return m_name; }
-	void          name(const string& s)       { m_name = s; }
-	unsigned long id() const                  { return m_id; }
-	void          id(unsigned long i)         { m_id = i; }
-	const string  uri() const                 { return m_uri; }
-	void          uri(const string& s)        { m_uri = s; }
+	Type          type() const                { return _type; }
+	void          type(Type t)                { _type = t; }
+	const string& lib_path() const            { return _lib_path; }
+	void          lib_path(const string& s)   { _lib_path = s; _lib_name = _lib_path.substr(_lib_path.find_last_of("/")+1); }
+	string        lib_name() const            { return _lib_name; }
+	void          lib_name(const string& s)   { _lib_name = s; }
+	const string& plug_label() const          { return _plug_label; }
+	void          plug_label(const string& s) { _plug_label = s; }
+	const string& name() const                { return _name; }
+	void          name(const string& s)       { _name = s; }
+	unsigned long id() const                  { return _id; }
+	void          id(unsigned long i)         { _id = i; }
+	const string  uri() const                 { return _uri; }
+	void          uri(const string& s)        { _uri = s; }
 	
-	PluginLibrary* library() const             { return m_library; }
-	void library(PluginLibrary* const library) { m_library = library; }
+	PluginLibrary* library() const             { return _library; }
+	void library(PluginLibrary* const library) { _library = library; }
 	
 	const char* type_string() const {
-		if (m_type == LADSPA) return "LADSPA";
-		else if (m_type == LV2) return "LV2";
-		else if (m_type == DSSI) return "DSSI";
-		else if (m_type == Internal) return "Internal";
-		else if (m_type == Patch) return "Patch";
+		if (_type == LADSPA) return "LADSPA";
+		else if (_type == LV2) return "LV2";
+		else if (_type == DSSI) return "DSSI";
+		else if (_type == Internal) return "Internal";
+		else if (_type == Patch) return "Patch";
 		else return "";
 	}
 
 	void set_type(const string& type_string) {
-		if (type_string == "LADSPA") m_type = LADSPA;
-		else if (type_string == "LV2") m_type = LV2;
-		else if (type_string == "DSSI") m_type = DSSI;
-		else if (type_string == "Internal") m_type = Internal;
-		else if (type_string == "Patch") m_type = Patch;
+		if (type_string == "LADSPA") _type = LADSPA;
+		else if (type_string == "LV2") _type = LV2;
+		else if (type_string == "DSSI") _type = DSSI;
+		else if (type_string == "Internal") _type = Internal;
+		else if (type_string == "Patch") _type = Patch;
 	}
 	
 	// FIXME: ew
 #ifdef HAVE_SLV2
-	SLV2Plugin* slv2_plugin() const              { return m_slv2_plugin; }
-	void        slv2_plugin(const SLV2Plugin* p) { m_slv2_plugin = p; }
+	SLV2Plugin* slv2_plugin() const              { return _slv2_plugin; }
+	void        slv2_plugin(const SLV2Plugin* p) { _slv2_plugin = p; }
 	
 #endif
+
+	Node* instantiate(const string& name, size_t poly, Ingen::Patch* parent, SampleRate srate, size_t buffer_size);
+
 private:
 	// Disallow copies (undefined)
 	Plugin(const Plugin&);
 	Plugin& operator=(const Plugin&);
 	
-	Type   m_type;
-	string m_uri;        ///< LV2 only
-	string m_lib_path;   ///< LADSPA/DSSI only
-	string m_lib_name;   ///< LADSPA/DSSI only
-	string m_plug_label; ///< LADSPA/DSSI only
-	string m_name;       ///< LADSPA/DSSI only
-	unsigned long m_id;  ///< LADSPA/DSSI only
+	Type   _type;
+	string _uri;        ///< LV2 only
+	string _lib_path;   ///< LADSPA/DSSI only
+	string _lib_name;   ///< LADSPA/DSSI only
+	string _plug_label; ///< LADSPA/DSSI only
+	string _name;       ///< LADSPA/DSSI only
+	unsigned long _id;  ///< LADSPA/DSSI only
 	
-	PluginLibrary* m_library;
+	PluginLibrary* _library;
 
 #ifdef HAVE_SLV2
-	SLV2Plugin* m_slv2_plugin;
+	SLV2Plugin* _slv2_plugin;
 #endif
 };
 

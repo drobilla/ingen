@@ -66,7 +66,7 @@ void
 TypedConnection<Sample>::process(SampleCount nframes)
 {
 	// FIXME: nframes parameter not used
-	assert(nframes == m_buffer_size);
+	assert(m_buffer_size == 1 || m_buffer_size == nframes);
 
 	/* Thought:  A poly output port can be connected to multiple mono input
 	 * ports, which means this mix down would have to happen many times.

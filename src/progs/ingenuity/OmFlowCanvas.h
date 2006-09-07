@@ -46,6 +46,7 @@ public:
 	void connect(const Port* src_port, const Port* dst_port);
 	void disconnect(const Port* src_port, const Port* dst_port);
 	
+	void get_new_module_location(double& x, double& y);
 	bool canvas_event(GdkEvent* event);
 	void destroy_selected();
 

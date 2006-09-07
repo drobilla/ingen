@@ -22,8 +22,6 @@
 #include <float.h>
 #include <cmath>
 #include <dlfcn.h>
-#include "Engine.h"
-#include "AudioDriver.h"
 #include "MidiNoteNode.h"
 #include "MidiTriggerNode.h"
 #include "MidiControlNode.h"
@@ -130,7 +128,10 @@ NodeFactory::load_plugins()
  * Calls the load_*_plugin functions to actually do things, just a wrapper.
  */
 Node*
-NodeFactory::load_plugin(const Plugin* a_plugin, const string& name, size_t poly, Patch* parent)
+NodeFactory::load_plugin(const Plugin* a_plugin,
+                         const string& name,
+                         size_t        poly,
+                         Patch*        parent)
 {
 	assert(parent != NULL);
 	assert(poly == 1 || poly == parent->internal_poly());
@@ -140,6 +141,9 @@ NodeFactory::load_plugin(const Plugin* a_plugin, const string& name, size_t poly
 	
 	Node* r = NULL;
 	Plugin* plugin = NULL;
+
+	const SampleRate srate       = parent->sample_rate();
+	const size_t     buffer_size = parent->buffer_size();
 
 	// FIXME FIXME FIXME: double lookup
 	
@@ -177,21 +181,21 @@ NodeFactory::load_plugin(const Plugin* a_plugin, const string& name, size_t poly
 	switch (a_plugin->type()) {
 #if HAVE_SLV2
 	case Plugin::LV2:
-		r = load_lv2_plugin(plugin->uri(), name, poly, parent);
+		r = load_lv2_plugin(plugin->uri(), name, poly, parent, srate, buffer_size);
 		break;
 #endif
 #if HAVE_DSSI
 	case Plugin::DSSI:
-		r = load_dssi_plugin(plugin->uri(), name, poly, parent);
+		r = load_dssi_plugin(plugin->uri(), name, poly, parent, srate, buffer_size);
 		break;
 #endif
 #if HAVE_LADSPA
 	case Plugin::LADSPA:
-		r = load_ladspa_plugin(plugin->uri(), name, poly, parent);
+		r = load_ladspa_plugin(plugin->uri(), name, poly, parent, srate, buffer_size);
 		break;
 #endif
 	case Plugin::Internal:
-		r = load_internal_plugin(a_plugin->uri(), name, poly, parent);
+		r = load_internal_plugin(a_plugin->uri(), name, poly, parent, srate, buffer_size);
 		break;
 	default:
 		cerr << "[NodeFactory] WARNING: Unknown plugin type." << endl;
@@ -206,59 +210,23 @@ NodeFactory::load_plugin(const Plugin* a_plugin, const string& name, size_t poly
 /** Loads an internal plugin.
  */
 Node*
-NodeFactory::load_internal_plugin(const string& uri, const string& name, size_t poly, Patch* parent)
+NodeFactory::load_internal_plugin(const string& uri,
+                                  const string& name,
+                                  size_t        poly,
+                                  Patch*        parent,
+                                  SampleRate    srate,
+                                  size_t        buffer_size)
 {
-	return NULL;
-	cerr << "FIXME: Internal plugin" << endl;
-#if 0
 	assert(parent != NULL);
 	assert(poly == 1 || poly == parent->internal_poly());
-	assert(uri.length() > 3);
-	assert(uri.substr(0, 3) == "om:");
+	assert(uri.length() > 6);
+	assert(uri.substr(0, 6) == "ingen:");
 
-	string plug_label = uri.substr(3);
-	/*if (plug_label == "midi_input") {
-		MidiInputNode* tn = new MidiInputNode(name, 1, parent, Engine::instance().audio_driver()->sample_rate(), Engine::instance().audio_driver()->buffer_size());
-		return tn;
-	} else if (plug_label == "midi_output") {
-		MidiOutputNode* tn = new MidiOutputNode(name, 1, parent, Engine::instance().audio_driver()->sample_rate(), Engine::instance().audio_driver()->buffer_size());
-		return tn;
-	} else if (plug_label == "audio_input") {
-		AudioInputNode* in = new AudioInputNode(name, poly, parent,
-			Engine::instance().audio_driver()->sample_rate(), Engine::instance().audio_driver()->buffer_size());
-		return in;
-	} else if (plug_label == "control_input") {
-		ControlInputNode* in = new ControlInputNode(name, poly, parent,
-			Engine::instance().audio_driver()->sample_rate(), Engine::instance().audio_driver()->buffer_size());
-		return in;
-	} else if (plug_label == "audio_output") {
-		AudioOutputNode* on = new AudioOutputNode(name, poly, parent,
-			Engine::instance().audio_driver()->sample_rate(), Engine::instance().audio_driver()->buffer_size());
-		return on;
-	} else if (plug_label == "control_output") {
-		ControlOutputNode* on = new ControlOutputNode(name, poly, parent,
-			Engine::instance().audio_driver()->sample_rate(), Engine::instance().audio_driver()->buffer_size());
-		return on;
-	} else
-	*/
-	if (plug_label == "note_in" || plug_label == "midi_note_in") {
-		MidiNoteNode* mn = new MidiNoteNode(name, poly, parent, Engine::instance().audio_driver()->sample_rate(), Engine::instance().audio_driver()->buffer_size());
-		return mn;
-	} else if (plug_label == "trigger_in" || plug_label == "midi_trigger_in") {
-		MidiTriggerNode* mn = new MidiTriggerNode(name, 1, parent, Engine::instance().audio_driver()->sample_rate(), Engine::instance().audio_driver()->buffer_size());
-		return mn;
-	} else if (plug_label == "midi_control_in") {
-		MidiControlNode* mn = new MidiControlNode(name, 1, parent, Engine::instance().audio_driver()->sample_rate(), Engine::instance().audio_driver()->buffer_size());
-		return mn;
-	} else if (plug_label == "transport") {
-		TransportNode* tn = new TransportNode(name, 1, parent, Engine::instance().audio_driver()->sample_rate(), Engine::instance().audio_driver()->buffer_size());
-		return tn;
-	} else {
-		cerr << "Unknown internal plugin type '" << plug_label << "'" << endl;
-	}
-
+	for (list<Plugin*>::iterator i = _internal_plugins.begin(); i != _internal_plugins.end(); ++i)
+		if ((*i)->uri() == uri)
+			return (*i)->instantiate(name, poly, parent, srate, buffer_size);
+	
 	return NULL;
-#endif
 }
 
 
@@ -320,7 +288,9 @@ Node*
 NodeFactory::load_lv2_plugin(const string& plug_uri,
                              const string& node_name,
                              size_t        poly,
-                             Patch*        parent)
+                             Patch*        parent,
+                             SampleRate    srate,
+                             size_t        buffer_size)
 {
 	// Find (internal) Plugin
 	Plugin* plugin = NULL;
@@ -333,8 +303,7 @@ NodeFactory::load_lv2_plugin(const string& plug_uri,
 	Node* n = NULL;
 
 	if (plugin) {
-		n = new LV2Node(plugin, node_name, poly, parent,
-			Engine::instance().audio_driver()->sample_rate(), Engine::instance().audio_driver()->buffer_size());
+		n = new LV2Node(plugin, node_name, poly, parent, srate, buffer_size);
 		bool success = ((LV2Node*)n)->instantiate();
 		if (!success) {
 			delete n;
@@ -455,7 +424,7 @@ NodeFactory::load_dssi_plugins()
  */
 Node*
 NodeFactory::load_dssi_plugin(const string& uri,
-                              const string& name, size_t poly, Patch* parent)
+                              const string& name, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size)
 {
 	// FIXME: awful code duplication here
 	
@@ -509,8 +478,8 @@ NodeFactory::load_dssi_plugin(const string& uri,
 		return NULL;
 	}
 
-	n = new DSSINode(plugin, name, poly, parent, descriptor,
-		Engine::instance().audio_driver()->sample_rate(), Engine::instance().audio_driver()->buffer_size());
+	n = new DSSINode(plugin, name, poly, parent, descriptor, srate, buffer_size);
+
 	bool success = ((DSSINode*)n)->instantiate();
 	if (!success) {
 		delete n;
@@ -625,7 +594,11 @@ NodeFactory::load_ladspa_plugins()
  */
 Node*
 NodeFactory::load_ladspa_plugin(const string& uri,
-                                const string& name, size_t poly, Patch* parent)
+                                const string& name,
+                                size_t        poly,
+                                Patch*        parent,
+                                SampleRate    srate,
+                                size_t        buffer_size)
 {
 	assert(uri != "");
 	assert(name != "");
@@ -676,8 +649,8 @@ NodeFactory::load_ladspa_plugin(const string& uri,
 		return NULL;
 	}
 
-	n = new LADSPANode(plugin, name, poly, parent, descriptor,
-		Engine::instance().audio_driver()->sample_rate(), Engine::instance().audio_driver()->buffer_size());
+	n = new LADSPANode(plugin, name, poly, parent, descriptor, srate, buffer_size);
+
 	bool success = ((LADSPANode*)n)->instantiate();
 	if (!success) {
 		delete n;

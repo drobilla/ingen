@@ -34,7 +34,7 @@ namespace Ingen {
 
 
 MidiNoteNode::MidiNoteNode(const string& path, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size)
-: InternalNode(new Plugin(Plugin::Internal, "Ingen:NoteNode"), path, poly, parent, srate, buffer_size),
+: InternalNode(new Plugin(Plugin::Internal, "ingen:note_node"), path, poly, parent, srate, buffer_size),
   _voices(new Voice[poly]),
   _sustain(false)
 {
@@ -59,8 +59,9 @@ MidiNoteNode::MidiNoteNode(const string& path, size_t poly, Patch* parent, Sampl
 	//	new PortInfo("Trigger", AUDIO, OUTPUT, 0, 0, 1), _buffer_size);
 	_ports->at(4) = _trig_port;
 	
-	_plugin.plug_label("note_in");
-	_plugin.name("Ingen Note Node (MIDI, OSC)");
+	plugin()->plug_label("note_in");
+	assert(plugin()->uri() == "ingen:note_node");
+	plugin()->name("Ingen Note Node (MIDI, OSC)");
 }
 
 

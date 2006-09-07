@@ -16,6 +16,8 @@
 
 #include "NewSubpatchWindow.h"
 #include "PatchController.h"
+#include "PatchView.h"
+#include "OmFlowCanvas.h"
 #include "NodeModel.h"
 #include "Controller.h"
 #include "PatchModel.h"
@@ -84,7 +86,7 @@ NewSubpatchWindow::ok_clicked()
 		m_poly_spinbutton->get_value_as_int());
 
 	if (m_new_module_x == 0 && m_new_module_y == 0) {
-		m_patch_controller->get_new_module_location(
+		m_patch_controller->view()->canvas()->get_new_module_location(
 			m_new_module_x, m_new_module_y);
 	}
 
@@ -92,9 +94,9 @@ NewSubpatchWindow::ok_clicked()
 	pm->x(m_new_module_x);
 	pm->y(m_new_module_y);
 	char temp_buf[16];
-	snprintf(temp_buf, 16, "%d", m_new_module_x);
+	snprintf(temp_buf, 16, "%16f", m_new_module_x);
 	pm->set_metadata("module-x", temp_buf);
-	snprintf(temp_buf, 16, "%d", m_new_module_y);
+	snprintf(temp_buf, 16, "%16f", m_new_module_y);
 	pm->set_metadata("module-y", temp_buf);
 	Controller::instance().create_patch_from_model(pm);
 	hide();

@@ -113,7 +113,7 @@ AddNodeEvent::post_process()
 	} else if (m_node == NULL) {
 		msg = "Unable to load node ";
 		msg.append(m_path).append(" (you're missing the plugin \"").append(
-			m_plugin->lib_name()).append(":").append(m_plugin->plug_label()).append("\")");;
+			m_plugin->uri());
 		_responder->respond_error(msg);
 	} else {
 		_responder->respond_ok();

@@ -21,6 +21,7 @@
 #include "ClientBroadcaster.h"
 #include "interface/ClientInterface.h"
 #include "InputPort.h"
+#include "types.h"
 
 using namespace std;
 

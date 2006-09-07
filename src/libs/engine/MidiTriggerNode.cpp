@@ -26,7 +26,7 @@ namespace Ingen {
 
 
 MidiTriggerNode::MidiTriggerNode(const string& path, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size)
-: InternalNode(new Plugin(Plugin::Internal, "Ingen:TriggerNode"), path, 1, parent, srate, buffer_size)
+: InternalNode(new Plugin(Plugin::Internal, "ingen:trigger_node"), path, 1, parent, srate, buffer_size)
 {
 	_ports = new Array<Port*>(5);
 
@@ -49,8 +49,9 @@ MidiTriggerNode::MidiTriggerNode(const string& path, size_t poly, Patch* parent,
 	//	new PortInfo("Velocity", AUDIO, OUTPUT, 0, 0, 1), _buffer_size);
 	_ports->at(4) = _vel_port;
 	
-	_plugin.plug_label("trigger_in");
-	_plugin.name("Ingen Trigger Node (MIDI, OSC)");
+	plugin()->plug_label("trigger_in");
+	assert(plugin()->uri() == "ingen:trigger_node");
+	plugin()->name("Ingen Trigger Node (MIDI, OSC)");
 }
 
 

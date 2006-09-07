@@ -116,14 +116,14 @@ OSCEngineInterface::create_patch(const string& path,
 void
 OSCEngineInterface::create_port(const string& path,
                                 const string& data_type,
-                                bool          direction)
+                                bool          is_output)
 {
 	assert(_engine_addr);
 	lo_send(_engine_addr, "/om/synth/create_port",  "issi",
 		next_id(),
 		path.c_str(),
 		data_type.c_str(),
-		(direction ? 1 : 0));
+		(is_output ? 1 : 0));
 }
 
 

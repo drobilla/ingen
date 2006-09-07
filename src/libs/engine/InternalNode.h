@@ -20,6 +20,7 @@
 #include <cstdlib>
 #include "NodeBase.h"
 #include "Plugin.h"
+#include "types.h"
 
 namespace Ingen {
 
@@ -37,7 +38,6 @@ public:
 	: NodeBase(plugin, path, poly, parent, srate, buffer_size),
 	  _is_added(false)
 	{
-		_plugin.lib_path("/Ingen");
 	}
 	
 	virtual ~InternalNode() {}
@@ -52,14 +52,13 @@ public:
 	//virtual void send_creation_messages(ClientInterface* client) const
 	//{ NodeBase::send_creation_messages(client); }
 	
-	virtual const Plugin* plugin() const              { return &_plugin; }
-
 protected:
+	Plugin* plugin() const { return const_cast<Plugin*>(_plugin); }
+
 	// Disallow copies (undefined)
 	InternalNode(const InternalNode&);
 	InternalNode& operator=(const InternalNode&);
 	
-	Plugin _plugin;
 	bool   _is_added;
 };
 

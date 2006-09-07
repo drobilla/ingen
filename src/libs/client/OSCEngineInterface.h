@@ -74,7 +74,7 @@ public:
 
 	void create_port(const string& path,
 	                 const string& data_type,
-	                 bool          direction);
+	                 bool          is_output);
 
 	void create_node(const string& path,
 	                 const string& plugin_type,

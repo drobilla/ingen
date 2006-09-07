@@ -19,6 +19,7 @@
 #define NODEFACTORY_H
 
 #include "config.h"
+#include "types.h"
 #include <list>
 #include <string>
 #include <ladspa.h>
@@ -61,20 +62,20 @@ public:
 private:
 #ifdef HAVE_LADSPA
 	void load_ladspa_plugins();
-	Node* load_ladspa_plugin(const string& plugin_uri, const string& name, size_t poly, Patch* parent);
+	Node* load_ladspa_plugin(const string& plugin_uri, const string& name, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size);
 #endif
 
 #ifdef HAVE_SLV2
 	void load_lv2_plugins();
-	Node* load_lv2_plugin(const string& plugin_uri, const string& name, size_t poly, Patch* parent);
+	Node* load_lv2_plugin(const string& plugin_uri, const string& name, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size);
 #endif
 
 #ifdef HAVE_DSSI
 	void load_dssi_plugins();
-	Node* load_dssi_plugin(const string& plugin_uri, const string& name, size_t poly, Patch* parent);
+	Node* load_dssi_plugin(const string& plugin_uri, const string& name, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size);
 #endif
 	
-	Node* load_internal_plugin(const string& plug_label, const string& name, size_t poly, Patch* parent);
+	Node* load_internal_plugin(const string& plug_label, const string& name, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size);
 	
 	list<PluginLibrary*> _libraries;
 	list<Plugin*>        _internal_plugins;

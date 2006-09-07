@@ -18,6 +18,7 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 #include <libxml/xpath.h>
+#include <algorithm>
 #include "PatchModel.h"
 #include "NodeModel.h"
 #include "ModelClientInterface.h"
@@ -59,7 +60,7 @@ namespace Client {
 string
 PatchLibrarian::find_file(const string& filename, const string& additional_path)
 {
-	string search_path = additional_path + ":" + m_patch_path;
+	string search_path = additional_path + ":" + _patch_search_path;
 	
 	// Try to open the raw filename first
 	std::ifstream is(filename.c_str(), std::ios::in);
@@ -92,6 +93,20 @@ PatchLibrarian::find_file(const string& filename, const string& additional_path)
 	}
 
 	return "";
+}
+
+
+string
+PatchLibrarian::translate_load_path(const string& path)
+{
+	std::map<string,string>::iterator t = _load_path_translations.find(path);
+	
+	if (t != _load_path_translations.end()) {
+		return (*t).second;
+	} else {
+		assert(Path::is_valid(path));
+		return path;
+	}
 }
 
 
@@ -447,10 +462,10 @@ PatchLibrarian::load_patch(PatchModel* pm, bool wait, bool existing)
 	if (!existing) {
 		// Wait until the patch is created or the node creations may fail
 		if (wait) {
-			//int id = m_osc_model_engine_interface->get_next_request_id();
-			//m_osc_model_engine_interface->set_wait_response_id(id);
-			m_osc_model_engine_interface->create_patch_from_model(pm);
-			//bool succeeded = m_osc_model_engine_interface->wait_for_response();
+			//int id = _engine->get_next_request_id();
+			//_engine->set_wait_response_id(id);
+			_engine->create_patch_from_model(pm);
+			//bool succeeded = _engine->wait_for_response();
 	
 			// If creating the patch failed, bail out so we don't load all these nodes
 			// into an already existing patch
@@ -459,7 +474,7 @@ PatchLibrarian::load_patch(PatchModel* pm, bool wait, bool existing)
 				return "";
 			}*/ // FIXME
 		} else {
-			m_osc_model_engine_interface->create_patch_from_model(pm);
+			_engine->create_patch_from_model(pm);
 		}
 	}
 	
@@ -468,7 +483,7 @@ PatchLibrarian::load_patch(PatchModel* pm, bool wait, bool existing)
 	// This isn't so good, considering multiple clients on multiple machines, and
 	// absolute filesystem paths obviously aren't going to be correct.  But for now
 	// this is all I can figure out to have Save/Save As work properly for subpatches
-	m_osc_model_engine_interface->set_metadata(pm->path(), "filename", pm->filename());
+	_engine->set_metadata(pm->path(), "filename", pm->filename());
 
 	// Load nodes
 	NodeModel* nm = NULL;
@@ -478,14 +493,14 @@ PatchLibrarian::load_patch(PatchModel* pm, bool wait, bool existing)
 		if ((!xmlStrcmp(cur->name, (const xmlChar*)"node"))) {
 			nm = parse_node(pm, doc, cur);
 			if (nm != NULL) {
-				m_osc_model_engine_interface->create_node_from_model(nm);
-				m_osc_model_engine_interface->set_all_metadata(nm);
+				_engine->create_node_from_model(nm);
+				_engine->set_all_metadata(nm);
 				for (PortModelList::const_iterator j = nm->ports().begin(); j != nm->ports().end(); ++j) {
 					// FIXME: ew
 					snprintf(temp_buf, temp_buf_length, "%f", (*j)->user_min());
-					m_osc_model_engine_interface->set_metadata((*j)->path(), "user-min", temp_buf);
+					_engine->set_metadata((*j)->path(), "user-min", temp_buf);
 					snprintf(temp_buf, temp_buf_length, "%f", (*j)->user_max());
-					m_osc_model_engine_interface->set_metadata((*j)->path(), "user-max", temp_buf);
+					_engine->set_metadata((*j)->path(), "user-max", temp_buf);
 				}
 				nm = NULL;
 				usleep(10000);
@@ -503,14 +518,14 @@ PatchLibrarian::load_patch(PatchModel* pm, bool wait, bool existing)
 		cur = cur->next;
 	}
 	
-	// Load connections
 	ConnectionModel* cm = NULL;
+	// Load connections
 	cur = xmlDocGetRootElement(doc)->xmlChildrenNode;
 	while (cur != NULL) {
 		if ((!xmlStrcmp(cur->name, (const xmlChar*)"connection"))) {
 			cm = parse_connection(pm, doc, cur);
 			if (cm != NULL) {
-				m_osc_model_engine_interface->connect(cm->src_port_path(), cm->dst_port_path());
+				_engine->connect(cm->src_port_path(), cm->dst_port_path());
 				usleep(1000);
 			}
 		}
@@ -526,7 +541,7 @@ PatchLibrarian::load_patch(PatchModel* pm, bool wait, bool existing)
 			preset_model = parse_preset(pm, doc, cur);
 			assert(preset_model != NULL);
 			if (preset_model->name() == "default")
-				m_osc_model_engine_interface->set_preset(pm->path(), preset_model);
+				_engine->set_preset(pm->path(), preset_model);
 		}
 		cur = cur->next;
 	}
@@ -534,10 +549,12 @@ PatchLibrarian::load_patch(PatchModel* pm, bool wait, bool existing)
 	xmlFreeDoc(doc);
 	xmlCleanupParser();
 
-	m_osc_model_engine_interface->set_all_metadata(pm);
+	_engine->set_all_metadata(pm);
 
 	if (!existing)
-		m_osc_model_engine_interface->enable_patch(pm->path());
+		_engine->enable_patch(pm->path());
+
+	_load_path_translations.clear();
 
 	string ret = pm->path();
 	return ret;
@@ -555,14 +572,11 @@ PatchLibrarian::parse_node(const PatchModel* parent, xmlDocPtr doc, const xmlNod
 	xmlChar* key;
 	xmlNodePtr cur = node->xmlChildrenNode;
 	
-	bool found_name = false;
-	
 	while (cur != NULL) {
 		key = xmlNodeListGetString(doc, cur->xmlChildrenNode, 1);
 		
 		if ((!xmlStrcmp(cur->name, (const xmlChar*)"name"))) {
-			nm->set_path(parent->base_path() + (char*)key);
-			found_name = true;
+			nm->set_path(parent->base_path() + Path::nameify((char*)key));
 		} else if ((!xmlStrcmp(cur->name, (const xmlChar*)"polyphonic"))) {
 			nm->polyphonic(!strcmp((char*)key, "true"));
 		} else if ((!xmlStrcmp(cur->name, (const xmlChar*)"type"))) {
@@ -584,7 +598,7 @@ PatchLibrarian::parse_node(const PatchModel* parent, xmlDocPtr doc, const xmlNod
 				key = xmlNodeListGetString(doc, child->xmlChildrenNode, 1);
 				
 				if ((!xmlStrcmp(child->name, (const xmlChar*)"name"))) {
-					path = nm->base_path() + (char*)key;
+					path = nm->base_path() + Path::nameify((char*)key);
 				} else if ((!xmlStrcmp(child->name, (const xmlChar*)"user-min"))) {
 					user_min = atof((char*)key);
 				} else if ((!xmlStrcmp(child->name, (const xmlChar*)"user-max"))) {
@@ -666,10 +680,62 @@ PatchLibrarian::parse_node(const PatchModel* parent, xmlDocPtr doc, const xmlNod
 		cerr << "[PatchLibrarian] Node ignored." << endl;
 		delete nm;
 		return NULL;
-	} else {
-		//nm->plugin(plugin);
-		return nm;
+
+	// Compatibility hacks for old patches
+	} else if (plugin->type() == PluginModel::Internal) {
+		bool is_port = false;
+		const string path = Path::pathify(nm->path());
+		if (plugin->plug_label() == "audio_input") {
+			_engine->create_port(path, "AUDIO", false);
+			is_port = true;
+ 		} else if ( plugin->plug_label() == "audio_output") {
+			_engine->create_port(path, "AUDIO", true);
+			is_port = true;
+ 		} else if ( plugin->plug_label() == "control_input") {
+			_engine->create_port(path, "CONTROL", false);
+			is_port = true;
+ 		} else if ( plugin->plug_label() == "control_output" ) {
+			_engine->create_port(path, "CONTROL", true);
+			is_port = true;
+ 		} else if ( plugin->plug_label() == "midi_input") {
+			_engine->create_port(path, "MIDI", false);
+			is_port = true;
+ 		} else if ( plugin->plug_label() == "midi_output" ) {
+			_engine->create_port(path, "MIDI", true);
+			is_port = true;
+		}
+
+		if (is_port) {
+			const string old_path = nm->path();
+			const string new_path = Path::pathify(old_path);
+
+			// Set up translations (for connections etc) to alias both the old
+			// module path and the old module/port path to the new port path
+			_load_path_translations[old_path] = new_path;
+			_load_path_translations[old_path + "/in"] = new_path;
+			_load_path_translations[old_path + "/out"] = new_path;
+
+			nm->set_path(new_path);
+			_engine->set_all_metadata(nm);
+			delete nm;
+			return NULL;
+		} else {
+			if (plugin->uri() == "") {
+				if (plugin->plug_label() == "note_in") {
+					plugin->uri("ingen:note_node");
+				} else if (plugin->plug_label() == "control_input") {
+					plugin->uri("ingen:control_node");
+				} else if (plugin->plug_label() == "transport") {
+					plugin->uri("ingen:transport_node");
+				} else if (plugin->plug_label() == "trigger_in") {
+					plugin->uri("ingen:trigger_node");
+				}
+			}
+		}
 	}
+
+	//nm->plugin(plugin);
+	return nm;
 }
 
 
@@ -749,17 +815,15 @@ PatchLibrarian::parse_connection(const PatchModel* parent, xmlDocPtr doc, const 
 		return NULL;
 	}
 
-	// FIXME: temporary compatibility, remove any slashes from port names
-	// remove this soon once patches have migrated
-	string::size_type slash_index;
-	while ((slash_index = source_port.find("/")) != string::npos)
-		source_port[slash_index] = '-';
+	// Compatibility fixes for old (fundamentally broken) patches
+	source_node = Path::nameify(source_node);
+	source_port = Path::nameify(source_port);
+	dest_node = Path::nameify(dest_node);
+	dest_port = Path::nameify(dest_port);
 
-	while ((slash_index = dest_port.find("/")) != string::npos)
-		dest_port[slash_index] = '-';
-	
-	ConnectionModel* cm = new ConnectionModel(parent->base_path() + source_node +"/"+ source_port,
-		parent->base_path() + dest_node +"/"+ dest_port);
+	ConnectionModel* cm = new ConnectionModel(
+			translate_load_path(parent->base_path() + source_node +"/"+ source_port),
+			translate_load_path(parent->base_path() + dest_node +"/"+ dest_port));
 	
 	return cm;
 }
@@ -803,6 +867,10 @@ PatchLibrarian::parse_preset(const PatchModel* patch, xmlDocPtr doc, const xmlNo
 		
 				child = child->next;
 			}
+
+			// Compatibility fixes for old patch files
+			node_name = Path::nameify(node_name);
+			port_name = Path::nameify(port_name);
 			
 			if (port_name == "") {
 				string msg = "Unable to parse control in patch file ( node = ";

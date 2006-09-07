@@ -313,8 +313,8 @@ PatchController::create_view()
 
 		/* Set sane default coordinates if not set already yet */
 		if (nm->x() == 0.0f && nm->y() == 0.0f) {
-			int x, y;
-			get_new_module_location(x, y);
+			double x, y;
+			m_patch_view->canvas()->get_new_module_location(x, y);
 			nm->x(x);
 			nm->y(y);
 		}
@@ -338,7 +338,7 @@ PatchController::create_view()
 		PortController* const pc = dynamic_cast<PortController*>((*i)->controller());
 		assert(pc);
 		if (pc->module() == NULL)
-			pc->create_module(m_patch_view->canvas(), 1600, 1200);
+			pc->create_module(m_patch_view->canvas());
 		assert(pc->module() != NULL);
 		m_patch_view->canvas()->add_module(pc->module());
 		pc->module()->resize();
@@ -471,8 +471,8 @@ PatchController::add_node(CountedPtr<NodeModel> object)
 		assert(node->controller() == nc);
 
 		if (m_patch_view != NULL) {
-			int x, y;
-			get_new_module_location(x, y);
+			double x, y;
+			m_patch_view->canvas()->get_new_module_location(x, y);
 			node->x(x);
 			node->y(y);
 
@@ -557,8 +557,6 @@ PatchController::add_port(CountedPtr<PortModel> pm)
 
 	// Create port's (pseudo) module on this patch's canvas (if there is one)
 	if (m_patch_view != NULL) {
-		int x, y;
-		get_new_module_location(x, y);
 
 		// Set zoom to 1.0 so module isn't messed up (Death to GnomeCanvas)
 		float old_zoom = m_patch_view->canvas()->zoom();
@@ -566,7 +564,7 @@ PatchController::add_port(CountedPtr<PortModel> pm)
 			m_patch_view->canvas()->zoom(1.0);
 
 		if (pc->module() == NULL)
-			pc->create_module(m_patch_view->canvas(), x, y);
+			pc->create_module(m_patch_view->canvas());
 		assert(pc->module() != NULL);
 		m_patch_view->canvas()->add_module(pc->module());
 		pc->module()->resize();
@@ -661,20 +659,6 @@ PatchController::disconnection(const Path& src_port_path, const Path& dst_port_p
 		p->control_panel()->enable_port(p->path());
 		*/
 }
-
-
-/** Try to guess a suitable location for a new module.
- */
-void
-PatchController::get_new_module_location(int& x, int& y)
-{
-	assert(m_patch_view != NULL);
-	assert(m_patch_view->canvas() != NULL);
-	m_patch_view->canvas()->get_scroll_offsets(x, y);
-	x += 20;
-	y += 20;
-}
-
 
 void
 PatchController::show_patch_window()

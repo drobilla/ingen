@@ -68,6 +68,7 @@ libingen_la_SOURCES = \
 	ClientRecord.h \
 	PluginLibrary.h \
 	Plugin.h \
+	Plugin.cpp \
 	Array.h \
 	List.h \
 	Slave.h \

@@ -17,9 +17,11 @@
 #ifndef NODEBASE_H
 #define NODEBASE_H
 
+#include "types.h"
 #include <string>
 #include <cstdlib>
 #include "Node.h"
+
 using std::string;
 
 namespace Ingen {
@@ -60,10 +62,12 @@ public:
 	
 	//void send_creation_messages(ClientInterface* client) const;
 	
-	size_t num_ports() const { return _ports ? _ports->size() : 0; }
-	size_t poly() const      { return _poly; }
-	bool   traversed() const { return _traversed; }
-	void   traversed(bool b) { _traversed = b; }
+	SampleRate sample_rate() const { return _srate; }
+	size_t     buffer_size() const { return _buffer_size; }
+	size_t     num_ports()   const { return _ports ? _ports->size() : 0; }
+	size_t     poly()        const { return _poly; }
+	bool       traversed()   const { return _traversed; }
+	void       traversed(bool b)   { _traversed = b; }
 	
 	const Array<Port*>& ports() const { return *_ports; }
 	
@@ -75,7 +79,7 @@ public:
 	
 	virtual const Plugin* plugin() const { return _plugin; }
 	
-	void set_path(const Path& new_path);
+	virtual void set_path(const Path& new_path);
 	
 	/** A node's parent is always a patch, so static cast should be safe */
 	Patch* parent_patch() const { return (Patch*)_parent; }

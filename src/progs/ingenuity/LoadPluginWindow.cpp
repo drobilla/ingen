@@ -20,6 +20,7 @@
 #include <algorithm>
 #include <cctype>
 #include "PatchController.h"
+#include "PatchView.h"
 #include "NodeModel.h"
 #include "Controller.h"
 #include "App.h"
@@ -287,7 +288,7 @@ LoadPluginWindow::add_clicked()
 			nm->polyphonic(polyphonic);
 			
 			if (m_new_module_x == 0 && m_new_module_y == 0) {
-				m_patch_controller->get_new_module_location(
+				m_patch_controller->view()->canvas()->get_new_module_location(
 					m_new_module_x, m_new_module_y);
 			}
 			nm->x(m_new_module_x);

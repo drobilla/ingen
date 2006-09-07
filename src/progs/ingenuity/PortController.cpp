@@ -15,6 +15,7 @@
  */
 
 #include "PortController.h"
+#include "OmFlowCanvas.h"
 #include "OmModule.h"
 #include "PortModel.h"
 #include "ControlPanel.h"
@@ -54,9 +55,18 @@ PortController::destroy()
 
 
 void
-PortController::create_module(OmFlowCanvas* canvas, double x, double y)
+PortController::create_module(OmFlowCanvas* canvas)
 {
 	cerr << "Creating port module " << m_model->path() << endl;
+
+	const string x_str = m_model->get_metadata("module-x");
+	const string y_str = m_model->get_metadata("module-y");
+
+	double default_x;
+	double default_y;
+	canvas->get_new_module_location(default_x, default_y);
+	const double x = (x_str == "") ? default_x : atof(x_str.c_str());
+	const double y = (y_str == "") ? default_y : atof(y_str.c_str());
 
 	assert(canvas);
 	assert(port_model());
@@ -65,8 +75,8 @@ PortController::create_module(OmFlowCanvas* canvas, double x, double y)
 	// FIXME: leak
 	m_patch_port = new OmPatchPort(m_module, port_model());
 	m_module->add_port(m_patch_port, false);
-
-	m_module->move_to(x, y);
+	
+	m_module->move_to(x, y); // FIXME: redundant (?)
 }
 
 

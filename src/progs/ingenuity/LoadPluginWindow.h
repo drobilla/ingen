@@ -90,7 +90,7 @@ public:
 	void patch_controller(PatchController* pc);
 	void set_plugin_list(const std::map<string, CountedPtr<PluginModel> >& m);
 
-	void set_next_module_location(int x, int y)
+	void set_next_module_location(double x, double y)
 		{ m_new_module_x = x; m_new_module_y = y; }
 	
 	void add_plugin(CountedPtr<PluginModel> plugin);
@@ -125,8 +125,8 @@ private:
 	
 	int m_plugin_name_offset; // see comments for generate_plugin_name
 	
-	int m_new_module_x;
-	int m_new_module_y;
+	double m_new_module_x;
+	double m_new_module_y;
 
 	Gtk::TreeView*    m_plugins_treeview;
 	Gtk::CheckButton* m_polyphonic_checkbutton;

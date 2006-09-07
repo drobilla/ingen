@@ -30,7 +30,7 @@ namespace Ingen {
 
 
 Patch::Patch(const string& path, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size, size_t internal_poly) 
-: NodeBase(new Plugin(Plugin::Patch, "Ingen:Patch"), path, poly, parent, srate, buffer_size),
+: NodeBase(new Plugin(Plugin::Patch, "ingen:patch"), path, poly, parent, srate, buffer_size),
   _internal_poly(internal_poly),
   _process_order(NULL),
   _process(false)

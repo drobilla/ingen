@@ -30,7 +30,7 @@ namespace Ingen {
 
 	
 MidiControlNode::MidiControlNode(const string& path, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size)
-: InternalNode(new Plugin(Plugin::Internal, "Ingen:ControlNode"), path, 1, parent, srate, buffer_size),
+: InternalNode(new Plugin(Plugin::Internal, "ingen:control_node"), path, 1, parent, srate, buffer_size),
   _learning(false)
 {
 	_ports = new Array<Port*>(7);
@@ -56,8 +56,9 @@ MidiControlNode::MidiControlNode(const string& path, size_t poly, Patch* parent,
 	_control_port = new OutputPort<Sample>(this, "Out_(CR)", 6, 1, DataType::FLOAT, 1);
 	_ports->at(6) = _control_port;
 	
-	_plugin.plug_label("midi_control_in");
-	_plugin.name("Ingen Control Node (MIDI)");
+	plugin()->plug_label("midi_control_in");
+	assert(plugin()->uri() == "ingen:control_node");
+	plugin()->name("Ingen Control Node (MIDI)");
 }
 
 

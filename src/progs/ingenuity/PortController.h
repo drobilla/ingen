@@ -53,7 +53,7 @@ public:
 	
 	virtual void destroy();
 
-	virtual void create_module(OmFlowCanvas* canvas, double x, double y);
+	virtual void create_module(OmFlowCanvas* canvas);
 	OmPortModule* module() { return m_module; }
 /*
 	virtual void add_to_store();

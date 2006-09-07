@@ -41,7 +41,7 @@ public:
 
 	void patch_controller(PatchController* pc);
 
-	void set_next_module_location(int x, int y)
+	void set_next_module_location(double x, double y)
 		{ m_new_module_x = x; m_new_module_y = y; }
 	
 private:
@@ -51,8 +51,8 @@ private:
 
 	PatchController* m_patch_controller;
 	
-	int m_new_module_x;
-	int m_new_module_y;
+	double m_new_module_x;
+	double m_new_module_y;
 	
 	Gtk::Entry*      m_name_entry;
 	Gtk::Label*      m_message_label;

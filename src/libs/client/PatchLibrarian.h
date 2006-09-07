@@ -17,6 +17,8 @@
 #ifndef PATCHLIBRARIAN_H
 #define PATCHLIBRARIAN_H
 
+#include <map>
+#include <utility>
 #include <string>
 #include <libxml/tree.h>
 #include <cassert>
@@ -42,21 +44,16 @@ class ModelClientInterface;
 class PatchLibrarian
 {
 public:
-	// FIXME: return booleans and set an errstr that can be checked?
+	// FIXME: return booleans and set an errstr that can be checked or something?
 	
-	PatchLibrarian(OSCModelEngineInterface* const osc_model_engine_interface/*,ModelClientInterface* const client_hooks*/)
-	: m_patch_path("."), m_osc_model_engine_interface(osc_model_engine_interface)//, m_client_hooks(client_hooks)
+	PatchLibrarian(OSCModelEngineInterface* osc_model_engine_interface)
+	: _patch_search_path("."), _engine(osc_model_engine_interface)
 	{
-		assert(m_osc_model_engine_interface);
-		//assert(m_client_hooks != NULL);
+		assert(_engine);
 	}
 
-//	PatchLibrarian(OSCModelEngineInterface* osc_model_engine_interface)
-//	: m_osc_model_engine_interface(osc_model_engine_interface), m_client_hooks(new DummyModelClientInterface())
-//	{}
-
-	void          path(const string& path) { m_patch_path = path; }
-	const string& path()                   { return m_patch_path; }
+	void          path(const string& path) { _patch_search_path = path; }
+	const string& path()                   { return _patch_search_path; }
 	
 	string find_file(const string& filename, const string& additional_path = "");
 	
@@ -64,8 +61,13 @@ public:
 	string load_patch(PatchModel* pm, bool wait = true, bool existing = false);
 
 private:
-	string                      m_patch_path;
-	OSCModelEngineInterface* const        m_osc_model_engine_interface;
+	string translate_load_path(const string& path);
+
+	string                         _patch_search_path;
+	OSCModelEngineInterface* const _engine;
+
+	/// Translations of paths from the loading file to actual paths (for deprecated patches)
+	std::map<string, string> _load_path_translations;
 
 	NodeModel*       parse_node(const PatchModel* parent, xmlDocPtr doc, const xmlNodePtr cur);
 	ConnectionModel* parse_connection(const PatchModel* parent, xmlDocPtr doc, const xmlNodePtr cur);
