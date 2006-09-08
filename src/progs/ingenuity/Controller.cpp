@@ -40,10 +40,11 @@ Controller::Controller(const string& engine_url)
 
 Controller::~Controller()
 {
-	if (is_attached()) {
+	// FIXME
+	//if (is_attached()) {
 		unregister_client(ClientKey()); // FIXME
-		detach();
-	}
+		//detach();
+	//}
 
 	delete m_loader;
 	delete m_patch_librarian;
@@ -54,9 +55,9 @@ Controller::~Controller()
  * See documentation OSCModelEngineInterface::attach.
  */
 void
-Controller::attach()
+Controller::attach(int32_t ping_id)
 {
-	OSCModelEngineInterface::attach(false);
+	OSCModelEngineInterface::attach(ping_id, false);
 }
 
 /*

@@ -25,10 +25,16 @@
 #include <libgnomecanvasmm.h>
 #include <gtkmm.h>
 #include <libglademm.h>
+#include <util/CountedPtr.h>
 using std::string; using std::map; using std::list;
 using std::cerr; using std::endl;
 
-namespace Ingen { namespace Client { class PatchModel; class PluginModel; } }
+namespace Ingen { namespace Client {
+	class PatchModel;
+	class PluginModel;
+	class Store;
+	class SigClientInterface;
+} }
 using namespace Ingen::Client;
 
 /** \defgroup Ingenuity GTK Client
@@ -77,40 +83,47 @@ public:
 
 	int  num_open_patch_windows();
 
-	ConnectWindow*   connect_window()       const { return m_connect_window; }
-	Gtk::Dialog*     about_dialog()         const { return m_about_dialog; }
-	ConfigWindow*    configuration_dialog() const { return m_config_window; }
-	MessagesWindow*  messages_dialog()      const { return m_messages_window; }
-	PatchTreeWindow* patch_tree()           const { return m_patch_tree_window; }
-	Configuration*   configuration()        const { return m_configuration; }
+	ConnectWindow*   connect_window()       const { return _connect_window; }
+	Gtk::Dialog*     about_dialog()         const { return _about_dialog; }
+	ConfigWindow*    configuration_dialog() const { return _config_window; }
+	MessagesWindow*  messages_dialog()      const { return _messages_window; }
+	PatchTreeWindow* patch_tree()           const { return _patch_tree_window; }
+	Configuration*   configuration()        const { return _configuration; }
+	Store*           store()                const { return _store; }
+	
+	const CountedPtr<SigClientInterface>& client() const { return _listener; }
 
-	static void        instantiate() { if (!_instance) _instance = new App(); }
-	static inline App& instance()    { assert(_instance); return *_instance; }
+	static void instantiate(CountedPtr<SigClientInterface>& listener);
+
+	static inline App& instance() { assert(_instance); return *_instance; }
 
 protected:
-	App();
+	App(CountedPtr<SigClientInterface> listener);
 	static App* _instance;
 
 	//bool connect_callback();
 	//bool idle_callback();
 
-	Configuration*    m_configuration;
+	CountedPtr<SigClientInterface> _listener;
+	Store*                         _store;
 
-	list<PatchWindow*> m_windows;
+	Configuration*    _configuration;
+
+	list<PatchWindow*> _windows;
 	
-	ConnectWindow*    m_connect_window;
-	MessagesWindow*   m_messages_window;
-	PatchTreeWindow*  m_patch_tree_window;
-	ConfigWindow*     m_config_window;
-	Gtk::Dialog*      m_about_dialog;
-	Gtk::Button*      m_engine_error_close_button;
+	ConnectWindow*    _connect_window;
+	MessagesWindow*   _messages_window;
+	PatchTreeWindow*  _patch_tree_window;
+	ConfigWindow*     _config_window;
+	Gtk::Dialog*      _about_dialog;
+	Gtk::Button*      _engine_error_close_button;
 
 	/** Used to avoid feedback loops with (eg) process checkbutton
 	 * FIXME: Maybe this should be globally implemented at the Controller level,
 	 * disable all command sending while handling events to avoid feedback
 	 * issues with widget event callbacks?  This same pattern is duplicated
 	 * too much... */
-	bool m_enable_signal;
+	bool _enable_signal;
 };
 
 

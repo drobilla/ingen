@@ -50,61 +50,61 @@ private:
 	// ClientInterface function implementations to drive SigClientInterface signals
 	
 	virtual void bundle_begin()
-	{ emit_bundle_begin(); }
+	{ bundle_begin_sig.emit(); }
 
 	virtual void bundle_end()
-	{ emit_bundle_end(); }
+	{ bundle_end_sig.emit(); }
 
 	virtual void error(const string& msg)
-	{ emit_error(msg); }
+	{ error_sig.emit(msg); }
 	
 	virtual void num_plugins(uint32_t num)
-	{ emit_num_plugins(num); }
+	{ num_plugins_sig.emit(num); }
 
 	virtual void new_plugin(const string& type, const string& uri, const string& name)
-	{ emit_new_plugin(type, uri, name); }
+	{ new_plugin_sig.emit(type, uri, name); }
 	
 	virtual void new_patch(const string& path, uint32_t poly)
-	{ emit_new_patch(path, poly); }
+	{ new_patch_sig.emit(path, poly); }
 	
 	virtual void new_node(const string& plugin_type, const string& plugin_uri, const string& node_path, bool is_polyphonic, uint32_t num_ports)
-	{ emit_new_node(plugin_type, plugin_uri, node_path, is_polyphonic, num_ports); }
+	{ new_node_sig.emit(plugin_type, plugin_uri, node_path, is_polyphonic, num_ports); }
 	
 	virtual void new_port(const string& path, const string& data_type, bool is_output)
-	{ emit_new_port(path, data_type, is_output); }
+	{ new_port_sig.emit(path, data_type, is_output); }
 	
 	virtual void patch_enabled(const string& path)
-	{ emit_patch_enabled(path); }
+	{ patch_enabled_sig.emit(path); }
 	
 	virtual void patch_disabled(const string& path)
-	{ emit_patch_disabled(path); }
+	{ patch_disabled_sig.emit(path); }
 	
 	virtual void patch_cleared(const string& path)
-	{ emit_patch_cleared(path); }
+	{ patch_cleared_sig.emit(path); }
 	
 	virtual void object_renamed(const string& old_path, const string& new_path)
-	{ emit_object_renamed(old_path, new_path); }
+	{ object_renamed_sig.emit(old_path, new_path); }
 	
 	virtual void object_destroyed(const string& path)
-	{ emit_object_destroyed(path); }
+	{ object_destroyed_sig.emit(path); }
 	
 	virtual void connection(const string& src_port_path, const string& dst_port_path)
-	{ emit_connection(src_port_path, dst_port_path); }
+	{ connection_sig.emit(src_port_path, dst_port_path); }
 	
 	virtual void disconnection(const string& src_port_path, const string& dst_port_path)
-	{ emit_disconnection(src_port_path, dst_port_path); }
+	{ disconnection_sig.emit(src_port_path, dst_port_path); }
 	
 	virtual void metadata_update(const string& subject_path, const string& predicate, const string& value)
-	{ emit_metadata_update(subject_path, predicate, value); }
+	{ metadata_update_sig.emit(subject_path, predicate, value); }
 	
 	virtual void control_change(const string& port_path, float value)
-	{ emit_control_change(port_path, value); }
+	{ control_change_sig.emit(port_path, value); }
 	
 	virtual void program_add(const string& node_path, uint32_t bank, uint32_t program, const string& program_name)
-	{ emit_program_add(node_path, bank, program, program_name); }
+	{ program_add_sig.emit(node_path, bank, program, program_name); }
 	
 	virtual void program_remove(const string& node_path, uint32_t bank, uint32_t program)
-	{ emit_program_remove(node_path, bank, program); }
+	{ program_remove_sig.emit(node_path, bank, program); }
 };
 
 

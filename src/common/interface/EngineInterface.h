@@ -63,6 +63,13 @@ public:
 	                         const string& plugin_type,
 	                         const string& plugin_uri,
 				        	 bool          polyphonic) = 0;
+	
+	/** DEPRECATED */
+	virtual void create_node(const string& path,
+	                         const string& plugin_type,
+	                         const string& library_name,
+	                         const string& plugin_label,
+				        	 bool          polyphonic) = 0;
 
 	virtual void rename(const string& old_path,
 	                    const string& new_name) = 0;

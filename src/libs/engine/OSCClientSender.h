@@ -62,6 +62,8 @@ public:
 	void bundle_begin() {}
 	void bundle_end()   {}
 
+	void response(int32_t id, bool success, const string& msg);
+
 	void num_plugins(uint32_t num);
 
 	void error(const string& msg);

@@ -35,12 +35,14 @@ class PatchModel;
 class NodeModel;
 class PortModel;
 
-/** Singeton which holds all "Ingen Objects" for easy/fast lookup
+/** Automatically manages models of objects in the engine.
  *
  * \ingroup IngenClient
  */
 class Store : public sigc::trackable { // FIXME: is trackable necessary?
 public:
+	Store(CountedPtr<SigClientInterface> emitter);
+
 	CountedPtr<PluginModel> plugin(const string& uri);
 	CountedPtr<ObjectModel> object(const string& path);
 	/*CountedPtr<PatchModel>  patch(const string& path);
@@ -53,15 +55,7 @@ public:
 	
 	const map<string, CountedPtr<PluginModel> >& plugins() const { return m_plugins; }
 
-	static void instantiate(SigClientInterface& emitter)
-	{ if (!_instance) _instance = new Store(emitter); }
-
-	inline static Store& instance() { assert(_instance); return *_instance; }
-
 private:
-	Store(SigClientInterface& emitter);
-
-	static Store* _instance;
 
 	void add_object(CountedPtr<ObjectModel> object);
 	CountedPtr<ObjectModel> remove_object(const string& path);

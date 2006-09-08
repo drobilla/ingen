@@ -27,24 +27,21 @@ namespace Ingen {
 namespace Client {
 
 
-/// Singleton instance
-Store* Store::_instance = 0;
 
-
-Store::Store(SigClientInterface& emitter)
+Store::Store(CountedPtr<SigClientInterface> emitter)
 {
 	//emitter.new_plugin_sig.connect(sigc::mem_fun(this, &Store::add_plugin));
-	emitter.object_destroyed_sig.connect(sigc::mem_fun(this, &Store::destruction_event));
-	emitter.new_plugin_sig.connect(sigc::mem_fun(this, &Store::new_plugin_event));
-	emitter.new_patch_sig.connect(sigc::mem_fun(this, &Store::new_patch_event));
-	emitter.new_node_sig.connect(sigc::mem_fun(this, &Store::new_node_event));
-	emitter.new_port_sig.connect(sigc::mem_fun(this, &Store::new_port_event));
-	emitter.patch_enabled_sig.connect(sigc::mem_fun(this, &Store::patch_enabled_event));
-	emitter.patch_disabled_sig.connect(sigc::mem_fun(this, &Store::patch_disabled_event));
-	emitter.connection_sig.connect(sigc::mem_fun(this, &Store::connection_event));
-	emitter.disconnection_sig.connect(sigc::mem_fun(this, &Store::disconnection_event));
-	emitter.metadata_update_sig.connect(sigc::mem_fun(this, &Store::metadata_update_event));
-	emitter.control_change_sig.connect(sigc::mem_fun(this, &Store::control_change_event));
+	emitter->object_destroyed_sig.connect(sigc::mem_fun(this, &Store::destruction_event));
+	emitter->new_plugin_sig.connect(sigc::mem_fun(this, &Store::new_plugin_event));
+	emitter->new_patch_sig.connect(sigc::mem_fun(this, &Store::new_patch_event));
+	emitter->new_node_sig.connect(sigc::mem_fun(this, &Store::new_node_event));
+	emitter->new_port_sig.connect(sigc::mem_fun(this, &Store::new_port_event));
+	emitter->patch_enabled_sig.connect(sigc::mem_fun(this, &Store::patch_enabled_event));
+	emitter->patch_disabled_sig.connect(sigc::mem_fun(this, &Store::patch_disabled_event));
+	emitter->connection_sig.connect(sigc::mem_fun(this, &Store::connection_event));
+	emitter->disconnection_sig.connect(sigc::mem_fun(this, &Store::disconnection_event));
+	emitter->metadata_update_sig.connect(sigc::mem_fun(this, &Store::metadata_update_event));
+	emitter->control_change_sig.connect(sigc::mem_fun(this, &Store::control_change_event));
 }
 
 

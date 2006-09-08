@@ -35,6 +35,8 @@ public:
 	
 	virtual ~ClientInterface() {}
 	
+	virtual void response(int32_t id, bool success, const string& msg) = 0;
+
 	virtual void bundle_begin() = 0;
 	virtual void bundle_end()   = 0;
 

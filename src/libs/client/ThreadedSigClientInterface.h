@@ -44,27 +44,23 @@ class ThreadedSigClientInterface : virtual public SigClientInterface
 public:
 	ThreadedSigClientInterface(uint32_t queue_size)
 	: _sigs(queue_size)
-	, error_slot(sigc::mem_fun((SigClientInterface*)this, &SigClientInterface::emit_error))
-	//, new_plugin_slot(sigc::mem_fun((SigClientInterface*)this, &SigClientInterface::emit_new_plugin_model))
-	//, new_patch_slot(sigc::mem_fun((SigClientInterface*)this, &SigClientInterface::emit_new_patch_model))
-	//, new_node_slot(sigc::mem_fun((SigClientInterface*)this, &SigClientInterface::emit_new_node_model))
-	//, new_port_slot(sigc::mem_fun((SigClientInterface*)this, &SigClientInterface::emit_new_port_model))
-	//, connection_slot(sigc::mem_fun((SigClientInterface*)this, &SigClientInterface::emit_connection_model))
-	, new_plugin_slot(sigc::mem_fun((SigClientInterface*)this, &SigClientInterface::emit_new_plugin))
-	, new_patch_slot(sigc::mem_fun((SigClientInterface*)this, &SigClientInterface::emit_new_patch))
-	, new_node_slot(sigc::mem_fun((SigClientInterface*)this, &SigClientInterface::emit_new_node))
-	, new_port_slot(sigc::mem_fun((SigClientInterface*)this, &SigClientInterface::emit_new_port))
-	, connection_slot(sigc::mem_fun((SigClientInterface*)this, &SigClientInterface::emit_connection))
-	, patch_enabled_slot(sigc::mem_fun((SigClientInterface*)this, &SigClientInterface::emit_patch_enabled))
-	, patch_disabled_slot(sigc::mem_fun((SigClientInterface*)this, &SigClientInterface::emit_patch_disabled))
-	, patch_cleared_slot(sigc::mem_fun((SigClientInterface*)this, &SigClientInterface::emit_patch_cleared))
-	, object_destroyed_slot(sigc::mem_fun((SigClientInterface*)this, &SigClientInterface::emit_object_destroyed))
-	, object_renamed_slot(sigc::mem_fun((SigClientInterface*)this, &SigClientInterface::emit_object_renamed))
-	, disconnection_slot(sigc::mem_fun((SigClientInterface*)this, &SigClientInterface::emit_disconnection))
-	, metadata_update_slot(sigc::mem_fun((SigClientInterface*)this, &SigClientInterface::emit_metadata_update))
-	, control_change_slot(sigc::mem_fun((SigClientInterface*)this, &SigClientInterface::emit_control_change))
-	, program_add_slot(sigc::mem_fun((SigClientInterface*)this, &SigClientInterface::emit_program_add))
-	, program_remove_slot(sigc::mem_fun((SigClientInterface*)this, &SigClientInterface::emit_program_remove))
+	, response_slot(response_sig.make_slot())
+	, error_slot(error_sig.make_slot())
+	, new_plugin_slot(new_plugin_sig.make_slot())
+	, new_patch_slot(new_patch_sig.make_slot())
+	, new_node_slot(new_node_sig.make_slot())
+	, new_port_slot(new_port_sig.make_slot())
+	, connection_slot(connection_sig.make_slot())
+	, patch_enabled_slot(patch_enabled_sig.make_slot())
+	, patch_disabled_slot(patch_disabled_sig.make_slot())
+	, patch_cleared_slot(patch_cleared_sig.make_slot())
+	, object_destroyed_slot(object_destroyed_sig.make_slot())
+	, object_renamed_slot(object_renamed_sig.make_slot())
+	, disconnection_slot(disconnection_sig.make_slot())
+	, metadata_update_slot(metadata_update_sig.make_slot())
+	, control_change_slot(control_change_sig.make_slot())
+	, program_add_slot(program_add_sig.make_slot())
+	, program_remove_slot(program_remove_sig.make_slot())
 	{}
 
 
@@ -74,24 +70,12 @@ public:
 
 	void num_plugins(uint32_t num) { _num_plugins = num; }
 
+	void response(int32_t id, bool success, const string& msg)
+		{ push_sig(sigc::bind(response_slot, id, success, msg)); }
+
 	void error(const string& msg)
 		{ push_sig(sigc::bind(error_slot, msg)); }
-	/*
-	void new_plugin_model(PluginModel* const pm)
-		{ push_sig(sigc::bind(new_plugin_slot, pm)); }
 	
-	void new_patch_model(PatchModel* const pm)
-		{ push_sig(sigc::bind(new_patch_slot, pm)); }
-
-	void new_node_model(NodeModel* const nm)
-		{ assert(nm); push_sig(sigc::bind(new_node_slot, nm)); }
-
-	void new_port_model(PortModel* const pm)
-		{ push_sig(sigc::bind(new_port_slot, pm)); }
-	
-	void connection_model(ConnectionModel* const cm)
-		{ push_sig(sigc::bind(connection_slot, cm)); }
-	*/
 	void new_plugin(const string& type, const string& uri, const string& name)
 		{ push_sig(sigc::bind(new_plugin_slot, type, uri, name)); }
 	
@@ -146,30 +130,26 @@ private:
 	Queue<Closure> _sigs;
 	uint32_t       _num_plugins;
 
-	sigc::slot<void>                                            bundle_begin_slot; 
-	sigc::slot<void>                                            bundle_end_slot; 
-	sigc::slot<void, uint32_t>                                    num_plugins_slot; 
-	sigc::slot<void, string>                                    error_slot; 
-	/*sigc::slot<void, PluginModel*>                              new_plugin_slot; 
-	sigc::slot<void, PatchModel*>                               new_patch_slot; 
-	sigc::slot<void, NodeModel*>                                new_node_slot; 
-	sigc::slot<void, PortModel*>                                new_port_slot;
-	sigc::slot<void, ConnectionModel*>                          connection_slot; */
-	sigc::slot<void, string, string, string>                    new_plugin_slot; 
-	sigc::slot<void, string, uint32_t>                          new_patch_slot; 
-	sigc::slot<void, string, string, string, bool, int>         new_node_slot; 
-	sigc::slot<void, string, string, bool>                      new_port_slot;
-	sigc::slot<void, string, string>                            connection_slot;
-	sigc::slot<void, string>                                    patch_enabled_slot; 
-	sigc::slot<void, string>                                    patch_disabled_slot; 
-	sigc::slot<void, string>                                    patch_cleared_slot; 
-	sigc::slot<void, string>                                    object_destroyed_slot; 
-	sigc::slot<void, string, string>                            object_renamed_slot; 
-	sigc::slot<void, string, string>                            disconnection_slot; 
-	sigc::slot<void, string, string, string>                    metadata_update_slot; 
-	sigc::slot<void, string, float>                             control_change_slot; 
-	sigc::slot<void, string, uint32_t, uint32_t, const string&> program_add_slot; 
-	sigc::slot<void, string, uint32_t, uint32_t>                program_remove_slot; 
+	sigc::slot<void>                                     bundle_begin_slot; 
+	sigc::slot<void>                                     bundle_end_slot; 
+	sigc::slot<void, uint32_t>                           num_plugins_slot; 
+	sigc::slot<void, int32_t, bool, string>              response_slot; 
+	sigc::slot<void, string>                             error_slot; 
+	sigc::slot<void, string, string, string>             new_plugin_slot; 
+	sigc::slot<void, string, uint32_t>                   new_patch_slot; 
+	sigc::slot<void, string, string, string, bool, int>  new_node_slot; 
+	sigc::slot<void, string, string, bool>               new_port_slot;
+	sigc::slot<void, string, string>                     connection_slot;
+	sigc::slot<void, string>                             patch_enabled_slot; 
+	sigc::slot<void, string>                             patch_disabled_slot; 
+	sigc::slot<void, string>                             patch_cleared_slot; 
+	sigc::slot<void, string>                             object_destroyed_slot; 
+	sigc::slot<void, string, string>                     object_renamed_slot; 
+	sigc::slot<void, string, string>                     disconnection_slot; 
+	sigc::slot<void, string, string, string>             metadata_update_slot; 
+	sigc::slot<void, string, float>                      control_change_slot; 
+	sigc::slot<void, string, uint32_t, uint32_t, string> program_add_slot; 
+	sigc::slot<void, string, uint32_t, uint32_t>         program_remove_slot; 
 };
 
 

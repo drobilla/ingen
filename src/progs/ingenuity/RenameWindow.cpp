@@ -21,6 +21,7 @@
 #include "ObjectModel.h"
 #include "GtkObjectController.h"
 #include "Store.h"
+#include "App.h"
 using std::string;
 
 namespace Ingenuity {
@@ -69,7 +70,7 @@ RenameWindow::name_changed()
 		m_message_label->set_text("Name may not contain '/'");
 		m_ok_button->property_sensitive() = false;
 	//} else if (m_object->parent()->patch_model()->get_node(name) != NULL) {
-	} else if (Store::instance().object(m_object->model()->parent()->base_path() + name)) {
+	} else if (App::instance().store()->object(m_object->model()->parent()->base_path() + name)) {
 		m_message_label->set_text("An object already exists with that name.");
 		m_ok_button->property_sensitive() = false;
 	} else if (name.length() == 0) {

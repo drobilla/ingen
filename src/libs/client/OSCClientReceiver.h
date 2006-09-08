@@ -93,6 +93,7 @@ private:
 	//int32_t    _num_received_ports;
 
 	LO_HANDLER(error);
+	LO_HANDLER(response);
 	LO_HANDLER(num_plugins);
 	LO_HANDLER(plugin);
 	LO_HANDLER(plugin_list_end);

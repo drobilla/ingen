@@ -54,7 +54,7 @@ class Controller : public OSCModelEngineInterface
 public:
 	~Controller();
 
-	void attach();
+	void attach(int32_t ping_id);
 	
 	//void register_client_and_wait();
 

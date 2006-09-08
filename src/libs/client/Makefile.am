@@ -10,7 +10,6 @@ libomclient_la_SOURCES = \
 	OSCEngineSender.h \
 	OSCEngineSender.cpp \
 	OSCModelEngineInterface.h \
-	OSCModelEngineInterface.cpp \
 	OSCClientReceiver.h \
 	OSCClientReceiver.cpp \
 	SigClientInterface.h \
@@ -18,6 +17,7 @@ libomclient_la_SOURCES = \
 	ThreadedSigClientInterface.h \
 	ThreadedSigClientInterface.cpp \
 	ModelEngineInterface.h \
+	ModelEngineInterface.cpp \
 	ModelClientInterface.h \
 	ModelClientInterface.cpp \
 	PresetModel.h \

@@ -52,21 +52,21 @@ int main(int argc, char** argv)
 	/* **** Mr. Spock.. Engage **** */
 
 
-	OSCModelEngineInterface osc_controller(engine_url);
-	PatchLibrarian librarian(&osc_controller);
+	OSCModelEngineInterface engine(engine_url);
+	PatchLibrarian librarian(&engine);
 	
 	/* Connect to engine */
-	osc_controller.attach(client_port);
-	osc_controller.activate();
-	//osc_controller.register_client(NULL); // FIXME
+	engine.attach(-1, client_port);
+	engine.activate();
+	//engine.register_client(NULL); // FIXME
 
-	//int id = osc_controller.get_next_request_id();
-	//osc_controller.set_wait_response_id(id);
-	//osc_controller.load_plugins(id);
-	//osc_controller.wait_for_response();
+	//int id = engine.get_next_request_id();
+	//engine.set_wait_response_id(id);
+	//engine.load_plugins(id);
+	//engine.wait_for_response();
 	/* FIXME: Make this work like this:
-	 * osc_controller.load_plugins();
-	 * osc_controller.wait_for_response();
+	 * engine.load_plugins();
+	 * engine.wait_for_response();
 	 */
 
 	// Load patches

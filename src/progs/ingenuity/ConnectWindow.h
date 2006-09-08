@@ -21,7 +21,8 @@
 #include <libglademm/xml.h>
 #include <libglademm.h>
 #include "util/CountedPtr.h"
-#include "interface/ClientInterface.h"
+#include "ThreadedSigClientInterface.h"
+using Ingen::Client::SigClientInterface;
 
 namespace Ingenuity {
 
@@ -41,7 +42,9 @@ class ConnectWindow : public Gtk::Dialog
 public:
 	ConnectWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml);
 	
-	void start(CountedPtr<Ingen::Shared::ClientInterface> client);
+	void start();
+	void response_received(int32_t id, bool, string) { if ((id) == _ping_id) _attached = true; }
+
 private:
 	void server_toggled();
 	void launch_toggled();
@@ -54,18 +57,22 @@ private:
 
 	bool gtk_callback();
 
-	CountedPtr<Ingen::Shared::ClientInterface> _client;
-	Gtk::Image*                             _icon;
-	Gtk::ProgressBar*                       _progress_bar;
-	Gtk::Label*                             _progress_label;
-	Gtk::Entry*                             _url_entry;
-	Gtk::RadioButton*                       _server_radio;
-	Gtk::SpinButton*                        _port_spinbutton;
-	Gtk::RadioButton*                       _launch_radio;
-	Gtk::RadioButton*                       _internal_radio;
-	Gtk::Button*                            _disconnect_button;
-	Gtk::Button*                            _connect_button;
-	Gtk::Button*                            _quit_button;
+	CountedPtr<SigClientInterface> _client;
+	
+	int32_t _ping_id;
+	bool    _attached;
+
+	Gtk::Image*        _icon;
+	Gtk::ProgressBar*  _progress_bar;
+	Gtk::Label*        _progress_label;
+	Gtk::Entry*        _url_entry;
+	Gtk::RadioButton*  _server_radio;
+	Gtk::SpinButton*   _port_spinbutton;
+	Gtk::RadioButton*  _launch_radio;
+	Gtk::RadioButton*  _internal_radio;
+	Gtk::Button*       _disconnect_button;
+	Gtk::Button*       _connect_button;
+	Gtk::Button*       _quit_button;
 };
 
 

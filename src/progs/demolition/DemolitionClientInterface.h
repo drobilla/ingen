@@ -45,6 +45,8 @@ public:
 
 	void num_plugins(uint32_t num) {}
 
+	void response(int32_t id, bool success, const string& msg) {}
+
 	// OSC thread functions
 	void error(const string& msg);
 	

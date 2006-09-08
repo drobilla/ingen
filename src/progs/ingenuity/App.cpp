@@ -61,24 +61,26 @@ class OmPort;
 App* App::_instance = 0;
 
 
-App::App()
-: m_configuration(new Configuration()),
-  m_about_dialog(NULL),
-  m_enable_signal(true)
+App::App(CountedPtr<SigClientInterface> listener)
+: _listener(listener),
+  _store(new Store(listener)),
+  _configuration(new Configuration()),
+  _about_dialog(NULL),
+  _enable_signal(true)
 {
 	Glib::RefPtr<Gnome::Glade::Xml> glade_xml = GladeFactory::new_glade_reference();
 
-	glade_xml->get_widget_derived("connect_win", m_connect_window);
-	//glade_xml->get_widget_derived("new_patch_win", m_new_patch_window);
-	//glade_xml->get_widget_derived("load_patch_win", m_load_patch_window);
-	glade_xml->get_widget_derived("config_win", m_config_window);
-	glade_xml->get_widget_derived("patch_tree_win", m_patch_tree_window);
-//	glade_xml->get_widget_derived("main_patches_treeview", m_objects_treeview);
-	glade_xml->get_widget("about_win", m_about_dialog);
+	glade_xml->get_widget_derived("connect_win", _connect_window);
+	//glade_xml->get_widget_derived("new_patch_win", _new_patch_window);
+	//glade_xml->get_widget_derived("load_patch_win", _load_patch_window);
+	glade_xml->get_widget_derived("config_win", _config_window);
+	glade_xml->get_widget_derived("patch_tree_win", _patch_tree_window);
+//	glade_xml->get_widget_derived("main_patches_treeview", _objects_treeview);
+	glade_xml->get_widget("about_win", _about_dialog);
 	
-	m_config_window->configuration(m_configuration);
+	_config_window->configuration(_configuration);
 
-	glade_xml->get_widget_derived("messages_win", m_messages_window);
+	glade_xml->get_widget_derived("messages_win", _messages_window);
 }
 
 
@@ -86,13 +88,19 @@ App::~App()
 {
 }
 
+void
+App::instantiate(CountedPtr<SigClientInterface>& listener)
+{
+	if (!_instance)
+		_instance = new App(listener);
+}
 
 void
 App::error_message(const string& str)
 {
-	m_messages_window->post(str);
-	m_messages_window->show();
-	m_messages_window->raise();
+	_messages_window->post(str);
+	_messages_window->show();
+	_messages_window->raise();
 }
 
 
@@ -100,7 +108,7 @@ App::error_message(const string& str)
 bool
 App::idle_callback()
 {	
-	m_client_hooks->process_events();
+	_client_hooks->process_events();
 
 #ifdef HAVE_LASH
 	//if (lash_controller->enabled())
@@ -119,7 +127,7 @@ App::idle_callback()
 App::event_load_session()
 {
 	Gtk::FileChooserDialog* dialog
-		= new Gtk::FileChooserDialog(*m_main_window, "Load Session", Gtk::FILE_CHOOSER_ACTION_OPEN);
+		= new Gtk::FileChooserDialog(*_main_window, "Load Session", Gtk::FILE_CHOOSER_ACTION_OPEN);
 	
 	dialog->add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
 	dialog->add_button(Gtk::Stock::OPEN, Gtk::RESPONSE_OK);	
@@ -140,7 +148,7 @@ App::event_load_session()
 void
 App::event_save_session_as()
 {
-	Gtk::FileChooserDialog dialog(*m_main_window, "Save Session", Gtk::FILE_CHOOSER_ACTION_SAVE);
+	Gtk::FileChooserDialog dialog(*_main_window, "Save Session", Gtk::FILE_CHOOSER_ACTION_SAVE);
 	
 	/*
 	Gtk::VBox* box = dialog.get_vbox();
@@ -170,9 +178,9 @@ App::event_save_session_as()
 		if (fin.is_open()) {  // File exists
 			string msg = "File already exists!  Are you sure you want to overwrite ";
 			msg += filename + "?";
-			Gtk::MessageDialog confirm_dialog(*m_main_window,
+			Gtk::MessageDialog confir_dialog(*m_main_window,
 				msg, false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO, true);
-			if (confirm_dialog.run() == Gtk::RESPONSE_YES)
+			if (confir_dialog.run() == Gtk::RESPONSE_YES)
 				confirm = true;
 			else
 				confirm = false;
@@ -191,14 +199,14 @@ App::event_save_session_as()
 void
 App::add_patch_window(PatchWindow* pw)
 {
-	m_windows.push_back(pw);
+	_windows.push_back(pw);
 }
 
 
 void
 App::remove_patch_window(PatchWindow* pw)
 {
-	m_windows.erase(find(m_windows.begin(), m_windows.end(), pw));
+	_windows.erase(find(_windows.begin(), _windows.end(), pw));
 }
 
 
@@ -208,7 +216,7 @@ int
 App::num_open_patch_windows()
 {
 	int ret = 0;
-	for (list<PatchWindow*>::iterator i = m_windows.begin(); i != m_windows.end(); ++i)
+	for (list<PatchWindow*>::iterator i = _windows.begin(); i != _windows.end(); ++i)
 		if ((*i)->is_visible())
 			++ret;
 
@@ -221,15 +229,15 @@ App::disconnect()
 {
 	// FIXME: this is pretty gross.. figure out the death situation better
 	
-	list<PatchWindow*> windows = m_windows; // make a copy
+	list<PatchWindow*> windows = _windows; // make a copy
 
 	for (list<PatchWindow*>::iterator i = windows.begin(); i != windows.end(); ++i)
 		delete (*i);
 
-	Store::instance().clear();
+	_store->clear();
 
 	// PatchWindow destructor removes them from the list
-	assert(m_windows.size() == 0);
+	assert(_windows.size() == 0);
 }
 
 

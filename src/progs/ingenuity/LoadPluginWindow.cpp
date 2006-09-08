@@ -134,7 +134,7 @@ void
 LoadPluginWindow::on_show()
 {
 	if (!m_has_shown) {
-		set_plugin_list(Store::instance().plugins());
+		set_plugin_list(App::instance().store()->plugins());
 	
 		// Center on patch window
 		int m_w, m_h;
@@ -341,8 +341,8 @@ LoadPluginWindow::filter_changed()
 	size_t                   num_visible = 0;
 	
 
-	for (std::map<string, CountedPtr<PluginModel> >::const_iterator i = Store::instance().plugins().begin();
-			i != Store::instance().plugins().end(); ++i) {
+	for (std::map<string, CountedPtr<PluginModel> >::const_iterator i = App::instance().store()->plugins().begin();
+			i != App::instance().store()->plugins().end(); ++i) {
 	
 		const CountedPtr<PluginModel> plugin = (*i).second;
 
@@ -390,7 +390,7 @@ void
 LoadPluginWindow::clear_clicked()
 {
 	m_search_entry->set_text("");
-	set_plugin_list(Store::instance().plugins());
+	set_plugin_list(App::instance().store()->plugins());
 }
 
 bool

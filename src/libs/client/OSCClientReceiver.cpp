@@ -141,6 +141,7 @@ OSCClientReceiver::unknown_cb(const char* path, const char* types, lo_arg** argv
 void
 OSCClientReceiver::setup_callbacks()
 {
+	lo_server_thread_add_method(_st, "/om/response", "iis", response_cb, this);
 	lo_server_thread_add_method(_st, "/om/num_plugins", "i", num_plugins_cb, this);
 	lo_server_thread_add_method(_st, "/om/plugin", "sss", plugin_cb, this);
 	lo_server_thread_add_method(_st, "/om/new_patch", "si", new_patch_cb, this);
@@ -355,6 +356,16 @@ OSCClientReceiver::m_control_change_cb(const char* path, const char* types, lo_a
 	control_change(port_path, value);
 
 	return 0;	
+}
+
+
+int
+OSCClientReceiver::m_response_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+{
+	assert(!strcmp(types, "iis"));
+	response(argv[0]->i, argv[1]->i, &argv[2]->s);
+
+	return 0;
 }
 
 

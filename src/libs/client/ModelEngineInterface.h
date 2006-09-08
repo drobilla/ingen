@@ -22,12 +22,13 @@
 #include "interface/EngineInterface.h"
 using std::string;
 
-/** \defgroup IngenClient Client Library
- */
+class Path;
 
+/** \defgroup IngenClient Client Library */
 namespace Ingen {
 namespace Client {
 
+class ObjectModel;
 class NodeModel;
 class PresetModel;
 class PatchModel;
@@ -42,11 +43,11 @@ class ModelEngineInterface : public virtual Shared::EngineInterface
 public:
 	virtual ~ModelEngineInterface() {}
 	
-	virtual void create_patch_from_model(const PatchModel* pm) = 0;
-	virtual void create_node_from_model(const NodeModel* nm) = 0;
+	virtual void create_patch_from_model(const PatchModel* pm);
+	virtual void create_node_from_model(const NodeModel* nm);
 
-	virtual void set_all_metadata(const NodeModel* nm) = 0;
-	virtual void set_preset(const string& patch_path, const PresetModel* pm) = 0;
+	virtual void set_all_metadata(const ObjectModel* nm);
+	virtual void set_preset(const Path& patch_path, const PresetModel* pm);
 
 protected:
 	ModelEngineInterface() {}

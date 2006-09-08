@@ -287,7 +287,7 @@ PatchWindow::breadcrumb_clicked(BreadCrumb* crumb)
 		// FIXME: check to be sure PatchModel exists, then controller - maybe
 		// even make a controller if there isn't one?
 		PatchController* const pc = dynamic_cast<PatchController*>(
-			Store::instance().object(crumb->path())->controller());
+			App::instance().store()->object(crumb->path())->controller());
 		assert(pc != NULL);
 	
 		if (pc == m_patch) {

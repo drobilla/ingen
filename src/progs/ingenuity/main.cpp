@@ -68,11 +68,10 @@ main(int argc, char** argv)
 	Gnome::Canvas::init();
 	Gtk::Main gtk_main(argc, argv);
 	
-	OSCSigEmitter* emitter = new OSCSigEmitter(1024, 16181);
+	CountedPtr<SigClientInterface> emitter(new OSCSigEmitter(1024, 16181));
 
 	/* Instantiate all singletons */
-	App::instantiate();
-	Store::instantiate(*(SigClientInterface*)emitter);
+	App::instantiate(emitter);
 
 	Controller::instantiate(engine_url);
 
@@ -90,7 +89,7 @@ main(int argc, char** argv)
 	LashController* lash_controller = new LashController(lash_args);
 	#endif
 	
-	App::instance().connect_window()->start(CountedPtr<ClientInterface>(emitter));
+	App::instance().connect_window()->start();
 	gtk_main.run();
 
 	return 0;

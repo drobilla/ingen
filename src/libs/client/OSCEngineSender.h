@@ -47,10 +47,12 @@ public:
 	string engine_url() { return _engine_url; }
 	
 	inline size_t next_id()
-	{ if (_id != -1) { _id = (_id == -2) ? 0 : _id+1; } return _id; }
+	{ int32_t ret = (_id == -1) ? -1 : _id++; return ret; }
 
 	void enable_responses()  { _id = 0; }
 	void disable_responses() { _id = -1; }
+
+	void attach(int32_t ping_id, bool block);
 
 
 	/* *** EngineInterface implementation below here *** */
@@ -79,6 +81,12 @@ public:
 	void create_node(const string& path,
 	                 const string& plugin_type,
 	                 const string& plugin_uri,
+	                 bool          polyphonic);
+	
+	void create_node(const string& path,
+	                 const string& plugin_type,
+	                 const string& library_name,
+	                 const string& plugin_label,
 	                 bool          polyphonic);
 
 	void rename(const string& old_path,

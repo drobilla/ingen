@@ -78,6 +78,15 @@ namespace Ingen {
  */
 
 
+void
+OSCClientSender::response(int32_t id, bool success, const string& msg)
+{
+	if (lo_send(_address, "/om/response", "iis", id, success ? 1 : 0, msg.c_str()) < 0) {
+		cerr << "Unable to send response " << id << "! ("
+			<< lo_address_errstr(_address) << ")" << endl;
+	}
+}
+
 
 /** \page client_osc_namespace
  * \n

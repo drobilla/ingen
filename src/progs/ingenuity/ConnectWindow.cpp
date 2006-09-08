@@ -18,14 +18,15 @@
 #include <string>
 #include <time.h>
 #include <sys/time.h>
+#include <stdlib.h>
 #include "interface/ClientKey.h"
-#include "interface/ClientInterface.h"
 #include "ThreadedSigClientInterface.h"
 #include "Controller.h"
 #include "Store.h"
 #include "PatchController.h"
 #include "PatchModel.h"
 #include "App.h"
+using Ingen::Client::ThreadedSigClientInterface;
 
 namespace Ingenuity {
 
@@ -33,6 +34,8 @@ namespace Ingenuity {
 ConnectWindow::ConnectWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 : Gtk::Dialog(cobject)
 , _client(NULL)
+, _ping_id(-1)
+, _attached(false)
 {
 	xml->get_widget("connect_icon",                 _icon);
 	xml->get_widget("connect_progress_bar",         _progress_bar);
@@ -56,12 +59,14 @@ ConnectWindow::ConnectWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::
 
 
 void
-ConnectWindow::start(CountedPtr<Ingen::Shared::ClientInterface> client)
+ConnectWindow::start()
 {
-	_client = client;
+	_client = App::instance().client();
+	assert(_client);
 	resize(100, 100);
 	show();
 }
+
 
 void
 ConnectWindow::init()
@@ -78,6 +83,7 @@ ConnectWindow::init()
 		
 	_progress_label->set_text(string("Disconnected"));
 }
+
 
 void
 ConnectWindow::connect()
@@ -111,6 +117,8 @@ ConnectWindow::connect()
 void
 ConnectWindow::disconnect()
 {
+	_attached = false;
+
 	_progress_bar->set_fraction(0.0);
 	_connect_button->set_sensitive(false);
 	_disconnect_button->set_sensitive(false);
@@ -124,7 +132,7 @@ ConnectWindow::disconnect()
 void
 ConnectWindow::quit()
 {
-	if (Controller::instance().is_attached()) {
+	if (_attached) {
 		Gtk::MessageDialog d(*this, "This will exit Ingenuity, but the engine will "
 			"remain running (if it is remote).\n\nAre you sure you want to quit?",
 			true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_NONE, true);
@@ -180,22 +188,34 @@ ConnectWindow::gtk_callback()
 	
 	/* Connecting to engine */
 	if (stage == 0) {
+		assert(!_attached);
+		assert(_client);
+
 		// FIXME
 		//assert(!Controller::instance().is_attached());
 		_progress_label->set_text(string("Connecting to engine at ").append(
 			Controller::instance().engine_url()).append("..."));
 		present();
-		Controller::instance().attach();
+
+		_client->response_sig.connect(sigc::mem_fun(this, &ConnectWindow::response_received));
+
+		_ping_id = rand();
+		while (_ping_id == -1)
+			_ping_id = rand();
+
+		Controller::instance().attach(_ping_id);
 		++stage;
+
+
 	} else if (stage == 1) {
-		if (Controller::instance().is_attached()) {
+		if (_attached) {
 			Controller::instance().activate();
 			++stage;
 		} else {
 			const float ms_since_last = (now.tv_sec - last.tv_sec) * 1000.0f +
 				(now.tv_usec - last.tv_usec) * 0.001f;
 			if (ms_since_last > 1000) {
-				Controller::instance().attach();
+				Controller::instance().attach(_ping_id);
 				last = now;
 			}
 		}
@@ -222,19 +242,19 @@ ConnectWindow::gtk_callback()
 		++stage;
 	} else if (stage == 4) {
 		// Wait for first plugins message
-		if (Store::instance().plugins().size() > 0) {
+		if (App::instance().store()->plugins().size() > 0) {
 			_progress_label->set_text(string("Receiving plugins..."));
 			++stage;
 		}
 	} else if (stage == 5) {
 		// FIXME
-		/*if (Store::instance().plugins().size() < _client->num_plugins()) {
+		/*if (App::instance().store().plugins().size() < _client->num_plugins()) {
 			static char buf[32];
-			snprintf(buf, 32, "%zu/%zu", Store::instance().plugins().size(),
+			snprintf(buf, 32, "%zu/%zu", App::instance().store().plugins().size(),
 				ThreadedSigClientInterface::instance()->num_plugins());
 			_progress_bar->set_text(Glib::ustring(buf));
 			_progress_bar->set_fraction(
-				Store::instance().plugins().size() / (double)_client->num_plugins());
+				App::instance().store().plugins().size() / (double)_client->num_plugins());
 		} else {*/
 			_progress_bar->set_text("");
 			++stage;
@@ -244,8 +264,8 @@ ConnectWindow::gtk_callback()
 		Controller::instance().request_all_objects();
 		++stage;
 	} else if (stage == 7) {
-		if (Store::instance().num_objects() > 0) {
-			CountedPtr<PatchModel> root = Store::instance().object("/");
+		if (App::instance().store()->num_objects() > 0) {
+			CountedPtr<PatchModel> root = App::instance().store()->object("/");
 			assert(root);
 			PatchController* root_controller = new PatchController(root);
 			root_controller->show_patch_window();
