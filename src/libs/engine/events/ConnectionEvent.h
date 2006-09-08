@@ -46,11 +46,11 @@ template <typename T> class TypedConnectionEvent; // helper, defined below
 class ConnectionEvent : public QueuedEvent
 {
 public:
-	ConnectionEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& src_port_path, const string& dst_port_path);
+	ConnectionEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& src_port_path, const string& dst_port_path);
 	~ConnectionEvent();
 
 	void pre_process();
-	void execute(SampleCount offset);
+	void execute(SampleCount nframes, FrameTime start, FrameTime end);
 	void post_process();
 
 private:
@@ -80,10 +80,10 @@ template <typename T>
 class TypedConnectionEvent : public QueuedEvent
 {
 public:
-	TypedConnectionEvent(CountedPtr<Responder> responder, SampleCount timestamp, OutputPort<T>* src_port, InputPort<T>* dst_port);
+	TypedConnectionEvent(Engine& engine, CountedPtr<Responder> responder, FrameTime time, OutputPort<T>* src_port, InputPort<T>* dst_port);
 	
 	void pre_process();
-	void execute(SampleCount offset);
+	void execute(SampleCount nframes, FrameTime start, FrameTime end);
 	void post_process();
 
 private:

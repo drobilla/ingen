@@ -24,8 +24,8 @@
 namespace Ingen {
 
 
-DSSIConfigureEvent::DSSIConfigureEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& node_path, const string& key, const string& val)
-: QueuedEvent(responder, timestamp),
+DSSIConfigureEvent::DSSIConfigureEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& node_path, const string& key, const string& val)
+: QueuedEvent(engine, responder, timestamp),
   m_node_path(node_path),
   m_key(key),
   m_val(val),
@@ -37,7 +37,7 @@ DSSIConfigureEvent::DSSIConfigureEvent(CountedPtr<Responder> responder, SampleCo
 void
 DSSIConfigureEvent::pre_process()
 {
-	Node* node = Engine::instance().object_store()->find_node(m_node_path);
+	Node* node = _engine.object_store()->find_node(m_node_path);
 
 	if (node != NULL && node->plugin()->type() == Plugin::DSSI) {
 		m_node = (DSSINode*)node;
@@ -49,7 +49,7 @@ DSSIConfigureEvent::pre_process()
 
 	
 void
-DSSIConfigureEvent::execute(SampleCount offset)
+DSSIConfigureEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {
 	// Nothing.
 }
@@ -63,7 +63,7 @@ DSSIConfigureEvent::post_process()
 	} else {
 		string key = "dssi-configure--";
 		key += m_key;
-		Engine::instance().client_broadcaster()->send_metadata_update(m_node_path, key, m_val);
+		_engine.client_broadcaster()->send_metadata_update(m_node_path, key, m_val);
 	}
 }
 

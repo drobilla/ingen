@@ -56,9 +56,9 @@ MidiTriggerNode::MidiTriggerNode(const string& path, size_t poly, Patch* parent,
 
 
 void
-MidiTriggerNode::process(SampleCount nframes)
+MidiTriggerNode::process(SampleCount nframes, FrameTime start, FrameTime end)
 {
-	InternalNode::process(nframes);
+	InternalNode::process(nframes, start, end);
 	
 	MidiMessage ev;
 	
@@ -68,12 +68,12 @@ MidiTriggerNode::process(SampleCount nframes)
 		switch (ev.buffer[0] & 0xF0) {
 		case MIDI_CMD_NOTE_ON:
 			if (ev.buffer[2] == 0)
-				note_off(ev.buffer[1], ev.time);
+				note_off(ev.buffer[1], ev.time, nframes, start, end);
 			else
-				note_on(ev.buffer[1], ev.buffer[2], ev.time);
+				note_on(ev.buffer[1], ev.buffer[2], ev.time, nframes, start, end);
 			break;
 		case MIDI_CMD_NOTE_OFF:
-			note_off(ev.buffer[1], ev.time);
+			note_off(ev.buffer[1], ev.time, nframes, start, end);
 			break;
 		case MIDI_CMD_CONTROL:
 			if (ev.buffer[1] == MIDI_CTL_ALL_NOTES_OFF
@@ -87,14 +87,19 @@ MidiTriggerNode::process(SampleCount nframes)
 
 
 void
-MidiTriggerNode::note_on(uchar note_num, uchar velocity, SampleCount offset)
+MidiTriggerNode::note_on(uchar note_num, uchar velocity, FrameTime time, SampleCount nframes, FrameTime start, FrameTime end)
 {
+	assert(time >= start && time <= end);
+	assert(time - start < _buffer_size);
+
 	//std::cerr << "Note on starting at sample " << offset << std::endl;
-	assert(offset < _buffer_size);
 
 	const Sample filter_note = _note_port->buffer(0)->value_at(0);
 	if (filter_note >= 0.0 && filter_note < 127.0 && (note_num == (uchar)filter_note)){
-				
+			
+		// FIXME FIXME FIXME
+		SampleCount offset = time - start;
+
 		// See comments in MidiNoteNode::note_on (FIXME)
 		if (offset == (SampleCount)(_buffer_size-1))
 			--offset;
@@ -108,12 +113,13 @@ MidiTriggerNode::note_on(uchar note_num, uchar velocity, SampleCount offset)
 
 
 void
-MidiTriggerNode::note_off(uchar note_num, SampleCount offset)
+MidiTriggerNode::note_off(uchar note_num, FrameTime time, SampleCount nframes, FrameTime start, FrameTime end)
 {
-	assert(offset < _buffer_size);
+	assert(time >= start && time <= end);
+	assert(time - start < _buffer_size);
 
 	if (note_num == lrintf(_note_port->buffer(0)->value_at(0)))
-		_gate_port->buffer(0)->set(0.0f, offset);
+		_gate_port->buffer(0)->set(0.0f, time - start);
 }
 
 

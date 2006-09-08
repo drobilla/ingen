@@ -41,7 +41,7 @@ public:
 	
 	virtual SampleCount buffer_size()  const = 0;
 	virtual SampleCount sample_rate()  const = 0;
-	virtual SampleCount time_stamp()   const = 0;
+	virtual SampleCount frame_time()   const = 0;
 };
 
 

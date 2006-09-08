@@ -38,8 +38,8 @@ using std::cerr; using std::endl;
 namespace Ingen {
 
 
-DisconnectNodeEvent::DisconnectNodeEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& node_path)
-: QueuedEvent(responder, timestamp),
+DisconnectNodeEvent::DisconnectNodeEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& node_path)
+: QueuedEvent(engine, responder, timestamp),
   m_node_path(node_path),
   m_patch(NULL),
   m_node(NULL),
@@ -51,8 +51,8 @@ DisconnectNodeEvent::DisconnectNodeEvent(CountedPtr<Responder> responder, Sample
 
 /** Internal version, disconnects parent port as well (in the case of InputNode, etc).
  */
-DisconnectNodeEvent::DisconnectNodeEvent(Node* node)
-: QueuedEvent(),
+DisconnectNodeEvent::DisconnectNodeEvent(Engine& engine, Node* node)
+: QueuedEvent(engine),
   m_node_path(""),
   m_patch(node->parent_patch()),
   m_node(node),
@@ -77,7 +77,7 @@ DisconnectNodeEvent::pre_process()
 	// cerr << "Preparing disconnection event...\n";
 	
 	if (m_lookup) {
-		m_patch = Engine::instance().object_store()->find_patch(m_node_path.parent());
+		m_patch = _engine.object_store()->find_patch(m_node_path.parent());
 	
 		if (m_patch == NULL) {
 			m_succeeded = false;
@@ -85,7 +85,7 @@ DisconnectNodeEvent::pre_process()
 			return;
 		}
 		
-		m_node = Engine::instance().object_store()->find_node(m_node_path);
+		m_node = _engine.object_store()->find_node(m_node_path);
 		
 		if (m_node == NULL) {
 			m_succeeded = false;
@@ -98,7 +98,7 @@ DisconnectNodeEvent::pre_process()
 	for (ConnectionListIterator i = m_patch->connections().begin(); i != m_patch->connections().end(); ++i) {
 		c = (*i);
 		if ((c->src_port()->parent_node() == m_node || c->dst_port()->parent_node() == m_node) && !c->pending_disconnection()) {
-			DisconnectionEvent* ev = new DisconnectionEvent(CountedPtr<Responder>(new Responder()), _time_stamp,
+			DisconnectionEvent* ev = new DisconnectionEvent(_engine, CountedPtr<Responder>(new Responder()), _time,
 				c->src_port(), c->dst_port());
 			ev->pre_process();
 			m_disconnection_events.push_back(new ListNode<DisconnectionEvent*>(ev));
@@ -112,14 +112,14 @@ DisconnectNodeEvent::pre_process()
 
 
 void
-DisconnectNodeEvent::execute(SampleCount offset)
+DisconnectNodeEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {
 	if (m_succeeded) {
 		for (List<DisconnectionEvent*>::iterator i = m_disconnection_events.begin(); i != m_disconnection_events.end(); ++i)
-			(*i)->execute(offset);
+			(*i)->execute(nframes, start, end);
 	}
 	
-	QueuedEvent::execute(offset);
+	QueuedEvent::execute(nframes, start, end);
 }
 
 

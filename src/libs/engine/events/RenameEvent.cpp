@@ -27,8 +27,8 @@
 namespace Ingen {
 
 
-RenameEvent::RenameEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& name)
-: QueuedEvent(responder, timestamp),
+RenameEvent::RenameEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& name)
+: QueuedEvent(engine, responder, timestamp),
   m_old_path(path),
   m_name(name),
   m_new_path(m_old_path.parent().base_path() + name),
@@ -58,13 +58,13 @@ RenameEvent::pre_process()
 		return;
 	}
 
-	if (Engine::instance().object_store()->find(m_new_path)) {
+	if (_engine.object_store()->find(m_new_path)) {
 		m_error = OBJECT_EXISTS;
 		QueuedEvent::pre_process();
 		return;
 	}
 	
-	GraphObject* obj = Engine::instance().object_store()->find(m_old_path);
+	GraphObject* obj = _engine.object_store()->find(m_old_path);
 
 	if (obj == NULL) {
 		m_error = OBJECT_NOT_FOUND;
@@ -89,10 +89,10 @@ RenameEvent::pre_process()
 
 
 void
-RenameEvent::execute(SampleCount offset)
+RenameEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {
 	//cout << "Executing rename event...";
-	QueuedEvent::execute(offset);
+	QueuedEvent::execute(nframes, start, end);
 }
 
 
@@ -103,7 +103,7 @@ RenameEvent::post_process()
 	
 	if (m_error == NO_ERROR) {
 		_responder->respond_ok();
-		Engine::instance().client_broadcaster()->send_rename(m_old_path, m_new_path);
+		_engine.client_broadcaster()->send_rename(m_old_path, m_new_path);
 	} else {
 		if (m_error == OBJECT_EXISTS)
 			msg.append("Object already exists at ").append(m_new_path);

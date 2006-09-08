@@ -33,6 +33,7 @@ namespace Ingen {
 using Shared::ClientKey;
 using Shared::ClientInterface;
 using Shared::EngineInterface;
+class Engine;
 
 
 /** A queued (preprocessed) event source / interface.
@@ -58,7 +59,7 @@ using Shared::EngineInterface;
 class QueuedEngineInterface : public QueuedEventSource, public EngineInterface
 {
 public:
-	QueuedEngineInterface(size_t queued_size, size_t stamped_size);
+	QueuedEngineInterface(Engine& engine, size_t queued_size, size_t stamped_size);
 	virtual ~QueuedEngineInterface() {}
 	
 	virtual void set_responder(CountedPtr<Responder> responder);
@@ -152,6 +153,8 @@ protected:
 
 private:
 	SampleCount now() const;
+
+	Engine& _engine;
 };
 
 

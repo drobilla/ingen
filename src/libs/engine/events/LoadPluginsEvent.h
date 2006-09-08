@@ -29,7 +29,7 @@ namespace Ingen {
 class LoadPluginsEvent : public QueuedEvent
 {
 public:
-	LoadPluginsEvent(CountedPtr<Responder> responder, SampleCount timestamp);
+	LoadPluginsEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp);
 	
 	void post_process();
 };

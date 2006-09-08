@@ -18,11 +18,13 @@
 #define REQUESTPLUGINSEVENT_H
 
 #include <string>
+#include <list>
 #include "QueuedEvent.h"
 using std::string;
 
 namespace Ingen {
 
+class Plugin;
 class Responder;
 namespace Shared {
 	class ClientInterface;
@@ -36,13 +38,14 @@ namespace Shared {
 class RequestPluginsEvent : public QueuedEvent
 {
 public:
-	RequestPluginsEvent(CountedPtr<Responder> responder, SampleCount timestamp);
+	RequestPluginsEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp);
 
 	void pre_process();
 	void post_process();
 
 private:
 	CountedPtr<ClientInterface> m_client;
+	std::list<Plugin*>          m_plugins;
 };
 
 

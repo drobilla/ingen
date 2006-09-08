@@ -63,7 +63,7 @@ template TypedConnection<MidiMessage>::~TypedConnection();
 
 template <typename Sample>
 void
-TypedConnection<Sample>::process(SampleCount nframes)
+TypedConnection<Sample>::process(SampleCount nframes, FrameTime start, FrameTime end)
 {
 	// FIXME: nframes parameter not used
 	assert(m_buffer_size == 1 || m_buffer_size == nframes);
@@ -91,13 +91,13 @@ TypedConnection<Sample>::process(SampleCount nframes)
 			m_local_buffer->scale(1.0f/(float)src_port()->poly(), 0, m_buffer_size-1);
 	}
 }
-template void TypedConnection<Sample>::process(SampleCount nframes);
+template void TypedConnection<Sample>::process(SampleCount nframes, FrameTime start, FrameTime end);
 
 
 // FIXME: MIDI mixing not implemented
 template <>
 void
-TypedConnection<MidiMessage>::process(SampleCount nframes)
+TypedConnection<MidiMessage>::process(SampleCount nframes, FrameTime start, FrameTime end)
 {
 }
 

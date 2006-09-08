@@ -29,7 +29,7 @@ namespace Ingen {
 class ActivateEvent : public QueuedEvent
 {
 public:
-	ActivateEvent(CountedPtr<Responder> responder, SampleCount timestamp);
+	ActivateEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp);
 	
 	void pre_process();
 	void post_process();

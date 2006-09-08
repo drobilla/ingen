@@ -43,12 +43,12 @@ using std::string;
 class DisconnectPortEvent : public QueuedEvent
 {
 public:
-	DisconnectPortEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& port_path);
-	DisconnectPortEvent(Port* port);
+	DisconnectPortEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& port_path);
+	DisconnectPortEvent(Engine& engine, Port* port);
 	~DisconnectPortEvent();
 
 	void pre_process();
-	void execute(SampleCount offset);
+	void execute(SampleCount nframes, FrameTime start, FrameTime end);
 	void post_process();
 
 private:

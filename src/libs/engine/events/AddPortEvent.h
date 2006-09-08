@@ -41,10 +41,10 @@ class DriverPort;
 class AddPortEvent : public QueuedEvent
 {
 public:
-	AddPortEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& type, bool is_output);
+	AddPortEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& type, bool is_output);
 
 	void pre_process();
-	void execute(SampleCount offset);
+	void execute(SampleCount nframes, FrameTime start, FrameTime end);
 	void post_process();
 
 private:

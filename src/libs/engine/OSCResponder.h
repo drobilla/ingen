@@ -41,12 +41,12 @@ public:
 	OSCResponder(int32_t id, char* url);
 	~OSCResponder();
 	
-	CountedPtr<Shared::ClientInterface> find_client();
-	
 	void respond_ok();
 	void respond_error(const string& msg);
 
 	const char* url() const { return _url; }
+
+	ClientKey client_key() { return ClientKey(ClientKey::OSC_URL, _url); }
 
 private:
 	int32_t     _id;

@@ -14,39 +14,31 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef DISABLEPATCHEVENT_H
-#define DISABLEPATCHEVENT_H
-
-#include <string>
-#include "QueuedEvent.h"
-
-using std::string;
+#include "Plugin.h"
+#include "MidiNoteNode.h"
+#include "MidiTriggerNode.h"
+#include "MidiControlNode.h"
+#include "TransportNode.h"
 
 namespace Ingen {
 
-class Patch;
-
-
-/** Disables a Patch's DSP processing.
- *
- * \ingroup engine
- */
-class DisablePatchEvent : public QueuedEvent
+Node*
+Plugin::instantiate(const string& name, size_t poly, Ingen::Patch* parent, SampleRate srate, size_t buffer_size)
 {
-public:
-	DisablePatchEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& patch_path);
-	
-	void pre_process();
-	void execute(SampleCount nframes, FrameTime start, FrameTime end);
-	void post_process();
+	assert(_type == Internal);
 
-private:
-	string m_patch_path;
-	Patch* m_patch;
-};
+	if (_uri == "ingen:note_node") {
+		return new MidiNoteNode(name, poly, parent, srate, buffer_size);
+	} else if (_uri == "ingen:trigger_node") {
+		return new MidiTriggerNode(name, poly, parent, srate, buffer_size);
+	} else if (_uri == "ingen:control_node") {
+		return new MidiControlNode(name, poly, parent, srate, buffer_size);
+	} else if (_uri == "ingen:transport_node") {
+		return new TransportNode(name, poly, parent, srate, buffer_size);
+	} else {
+		return NULL;
+	}
+}
 
 
 } // namespace Ingen
-
-
-#endif // DISABLEPATCHEVENT_H

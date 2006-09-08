@@ -55,7 +55,7 @@ public:
 
 	const List<TypedConnection<T>*>& connections() { return m_connections; }
 
-	void process(SampleCount nframes);
+	void process(SampleCount nframes, FrameTime start, FrameTime end);
 	
 	bool is_connected() const { return (m_connections.size() > 0); }
 	bool is_connected_to(const OutputPort<T>* const port) const;

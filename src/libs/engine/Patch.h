@@ -54,11 +54,11 @@ public:
 	void activate();
 	void deactivate();
 
-	void process(SampleCount nframes);
+	void process(SampleCount nframes, FrameTime start, FrameTime end);
 	
 	//void send_creation_messages(ClientInterface* client) const;
 	
-	void add_to_store();
+	void add_to_store(ObjectStore* store);
 	void remove_from_store();
 	
 	void set_path(const Path& new_path);
@@ -91,8 +91,9 @@ public:
 	Array<Node*>* build_process_order() const;
 	
 	/** Whether to run this patch's DSP bits in the audio thread */
-	bool process() const { return _process; }
-	void process(bool p);
+	bool enabled() const { return _process; }
+	void enable()        { _process = true; }
+	void disable();
 
 	size_t internal_poly() const { return _internal_poly; }
 

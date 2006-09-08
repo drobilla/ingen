@@ -22,11 +22,11 @@
 namespace Ingen {
 
 
-RegisterClientEvent::RegisterClientEvent(CountedPtr<Responder>       responder,
+RegisterClientEvent::RegisterClientEvent(Engine& engine, CountedPtr<Responder>       responder,
                                          SampleCount                 timestamp,
                                          ClientKey                   key,
                                          CountedPtr<ClientInterface> client)
-: QueuedEvent(responder, timestamp)
+: QueuedEvent(engine, responder, timestamp)
 , _key(key)
 , _client(client)
 {
@@ -36,7 +36,7 @@ RegisterClientEvent::RegisterClientEvent(CountedPtr<Responder>       responder,
 void
 RegisterClientEvent::pre_process()
 {  
-	Engine::instance().client_broadcaster()->register_client(_key, _client);
+	_engine.client_broadcaster()->register_client(_key, _client);
 
 	QueuedEvent::pre_process();
 }

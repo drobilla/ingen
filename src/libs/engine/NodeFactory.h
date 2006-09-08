@@ -56,9 +56,6 @@ public:
 	
 	const list<Plugin*>& plugins() { return _plugins; }
 	
-	void lock_plugin_list()   { pthread_mutex_lock(&_plugin_list_mutex); }
-	void unlock_plugin_list() { pthread_mutex_unlock(&_plugin_list_mutex); }
-	
 private:
 #ifdef HAVE_LADSPA
 	void load_ladspa_plugins();
@@ -80,9 +77,6 @@ private:
 	list<PluginLibrary*> _libraries;
 	list<Plugin*>        _internal_plugins;
 	list<Plugin*>        _plugins;
-
-	/** Used to protect the list while load_plugins is building it. */
-	pthread_mutex_t _plugin_list_mutex;
 
 	bool _has_loaded;
 };

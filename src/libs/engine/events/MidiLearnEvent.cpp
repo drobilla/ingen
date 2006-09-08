@@ -30,15 +30,15 @@ namespace Ingen {
 void
 MidiLearnResponseEvent::post_process()
 {
-	Engine::instance().client_broadcaster()->send_control_change(m_port_path, m_value);
+	_engine.client_broadcaster()->send_control_change(m_port_path, m_value);
 }
 
 
 
 // MidiLearnEvent
 
-MidiLearnEvent::MidiLearnEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& node_path)
-: QueuedEvent(responder, timestamp),
+MidiLearnEvent::MidiLearnEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& node_path)
+: QueuedEvent(engine, responder, timestamp),
   m_node_path(node_path),
   m_node(NULL),
   m_response_event(NULL)
@@ -49,17 +49,17 @@ MidiLearnEvent::MidiLearnEvent(CountedPtr<Responder> responder, SampleCount time
 void
 MidiLearnEvent::pre_process()
 {
-	m_node = Engine::instance().object_store()->find_node(m_node_path);
-	m_response_event = new MidiLearnResponseEvent(m_node_path + "/Controller_Number", _time_stamp);
+	m_node = _engine.object_store()->find_node(m_node_path);
+	m_response_event = new MidiLearnResponseEvent(_engine, m_node_path + "/Controller_Number", _time);
 	
 	QueuedEvent::pre_process();
 }
 
 
 void
-MidiLearnEvent::execute(SampleCount offset)
+MidiLearnEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {	
-	QueuedEvent::execute(offset);
+	QueuedEvent::execute(nframes, start, end);
 	
 	// FIXME: this isn't very good at all.
 	if (m_node != NULL && m_node->plugin()->type() == Plugin::Internal

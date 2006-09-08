@@ -42,11 +42,11 @@ class DisconnectPortEvent;
 class RenameEvent : public QueuedEvent
 {
 public:
-	RenameEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& name);
+	RenameEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& name);
 	~RenameEvent();
 
 	void pre_process();
-	void execute(SampleCount offset);
+	void execute(SampleCount nframes, FrameTime start, FrameTime end);
 	void post_process();
 
 private:

@@ -39,10 +39,10 @@ class Plugin;
 class CreatePatchEvent : public QueuedEvent
 {
 public:
-	CreatePatchEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& path, int poly);
+	CreatePatchEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& path, int poly);
 
 	void pre_process();
-	void execute(SampleCount offset);
+	void execute(SampleCount nframes, FrameTime start, FrameTime end);
 	void post_process();
 
 private:

@@ -25,11 +25,11 @@ using std::cerr;
 namespace Ingen {
 
 
-LoadPluginsEvent::LoadPluginsEvent(CountedPtr<Responder> responder, SampleCount timestamp)
-: QueuedEvent(responder, timestamp)
+LoadPluginsEvent::LoadPluginsEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp)
+: QueuedEvent(engine, responder, timestamp)
 {
 	cerr << "LOADING PLUGINS\n";
-	Engine::instance().node_factory()->load_plugins();
+	_engine.node_factory()->load_plugins();
 }
 
 

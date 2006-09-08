@@ -94,7 +94,7 @@ private:
 inline Event*
 QueuedEventSource::pop_earliest_stamped_before(const SampleCount time)
 {
-	if (!_stamped_queue.is_empty() && _stamped_queue.front()->time_stamp() < time)
+	if (!_stamped_queue.is_empty() && _stamped_queue.front()->time() < time)
 		return _stamped_queue.pop();
 	return NULL;
 }

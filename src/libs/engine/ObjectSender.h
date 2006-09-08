@@ -17,6 +17,8 @@
 #ifndef OBJECTSENDER_H
 #define OBJECTSENDER_H
 
+#include <list>
+
 namespace Ingen {
 
 namespace Shared {
@@ -26,6 +28,7 @@ namespace Shared {
 class Patch;
 class Node;
 class Port;
+class Plugin;
 
 
 /** Utility class for sending GraphObjects to clients through ClientInterface.
@@ -42,11 +45,10 @@ public:
 	
 	// FIXME: Make all object parameters const
 	
-	static void send_all(ClientInterface* client);
 	static void send_patch(ClientInterface* client, const Patch* patch);
 	static void send_node(ClientInterface* client, const Node* node);
 	static void send_port(ClientInterface* client, const Port* port);
-	static void send_plugins(ClientInterface* client);
+	static void send_plugins(ClientInterface* client, const std::list<Plugin*>& plugs);
 };
 
 } // namespace Ingen

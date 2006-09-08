@@ -27,6 +27,7 @@ typedef unsigned long ulong;
 typedef jack_default_audio_sample_t Sample;
 typedef jack_nframes_t              SampleCount;
 typedef jack_nframes_t              SampleRate;
+typedef jack_nframes_t              FrameTime;
 
 /** A type that Ingen can process/patch (eg can be stored in a port) */
 enum DataType { FLOAT, MIDI, UNKNOWN };

@@ -87,7 +87,7 @@ QueuedEventSource::pop_earliest_queued_before(const SampleCount time)
 	QueuedEvent* const front_event = _events[_front];
 	
 	// Pop
-	if (front_event && front_event->is_prepared() && front_event->time_stamp() < time) {
+	if (front_event && front_event->is_prepared() && front_event->time() < time) {
 		_events[_front] = NULL;
 		_front = (_front + 1) % _size;
 		return front_event;

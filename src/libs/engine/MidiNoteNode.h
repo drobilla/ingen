@@ -42,17 +42,16 @@ public:
 	MidiNoteNode(const string& path, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size);
 	~MidiNoteNode();
 
-	void process(SampleCount nframes);
+	void process(SampleCount nframes, FrameTime start, FrameTime end);
 	
-	void note_on(uchar note_num, uchar velocity, SampleCount offset);
-	void note_off(uchar note_num, SampleCount offset);
-	void all_notes_off(SampleCount offset);
+	void note_on(uchar note_num, uchar velocity, SampleCount nframes, FrameTime time, FrameTime start, FrameTime end);
+	void note_off(uchar note_num, FrameTime time, SampleCount nframes, FrameTime start, FrameTime end);
+	void all_notes_off(SampleCount nframes, FrameTime time, FrameTime start, FrameTime end);
 
-	void sustain_on();
-	void sustain_off(SampleCount offset);
+	void sustain_on(FrameTime time, SampleCount nframes, FrameTime start, FrameTime end);
+	void sustain_off(FrameTime time, SampleCount nframes, FrameTime start, FrameTime end);
 
 private:
-	
 	/** Key, one for each key on the keyboard */
 	struct Key {
 		enum State { OFF, ON_ASSIGNED, ON_UNASSIGNED };
@@ -68,7 +67,7 @@ private:
 	};
 
 	float note_to_freq(int num);
-	void free_voice(size_t voice, SampleCount offset);
+	void free_voice(size_t voice, FrameTime time, SampleCount nframes, FrameTime start, FrameTime end);
 
 	Voice* _voices;
 	Key    _keys[128];

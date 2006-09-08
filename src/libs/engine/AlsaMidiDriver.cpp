@@ -18,9 +18,8 @@
 #include <iostream>
 #include <cstdlib>
 #include <pthread.h>
-#include "Engine.h"
 #include "types.h"
-#include "Engine.h"
+//#include "Engine.h"
 #include "Maid.h"
 #include "AudioDriver.h"
 #include "MidiMessage.h"
@@ -38,17 +37,17 @@ namespace Ingen {
 AlsaMidiPort::AlsaMidiPort(AlsaMidiDriver* driver, DuplexPort<MidiMessage>* port)
 : DriverPort(),
   ListNode<AlsaMidiPort*>(this),
-  m_driver(driver),
-  m_patch_port(port),
-  m_port_id(0),
-  m_midi_pool(new unsigned char*[port->buffer_size()]),
-  m_events(1024)
+  _driver(driver),
+  _patch_port(port),
+  _port_id(0),
+  _midi_pool(new unsigned char*[port->buffer_size()]),
+  _events(1024)
 {
 	assert(port->parent() != NULL);
 	assert(port->poly() == 1);
 
 	if (port->is_input()) {
-		if ((m_port_id = snd_seq_create_simple_port(driver->seq_handle(), port->path().c_str(),
+		if ((_port_id = snd_seq_create_simple_port(driver->seq_handle(), port->path().c_str(),
    	 		SND_SEQ_PORT_CAP_WRITE | SND_SEQ_PORT_CAP_SUBS_WRITE,
 			SND_SEQ_PORT_TYPE_APPLICATION)) < 0)
 		{
@@ -56,7 +55,7 @@ AlsaMidiPort::AlsaMidiPort(AlsaMidiDriver* driver, DuplexPort<MidiMessage>* port
 			exit(EXIT_FAILURE);
 		}
 	} else {
-		if ((m_port_id = snd_seq_create_simple_port(driver->seq_handle(), port->path().c_str(),
+		if ((_port_id = snd_seq_create_simple_port(driver->seq_handle(), port->path().c_str(),
    	 		SND_SEQ_PORT_CAP_READ | SND_SEQ_PORT_CAP_SUBS_READ,
 			SND_SEQ_PORT_TYPE_APPLICATION)) < 0)
 		{
@@ -70,7 +69,7 @@ AlsaMidiPort::AlsaMidiPort(AlsaMidiDriver* driver, DuplexPort<MidiMessage>* port
 	 * buffer will be set directly to an element in this pool, then next cycle they
 	 * will be overwritten (eliminating the need for any allocation/freeing). */
 	for (size_t i=0; i < port->buffer_size(); ++i)
-		m_midi_pool[i] = new unsigned char[MAX_MIDI_EVENT_SIZE];
+		_midi_pool[i] = new unsigned char[MAX_MIDI_EVENT_SIZE];
 
 	port->buffer(0)->clear();
 	port->fixed_buffers(true);
@@ -79,27 +78,27 @@ AlsaMidiPort::AlsaMidiPort(AlsaMidiDriver* driver, DuplexPort<MidiMessage>* port
 
 AlsaMidiPort::~AlsaMidiPort()
 {
-	snd_seq_delete_simple_port(m_driver->seq_handle(), m_port_id);
+	snd_seq_delete_simple_port(_driver->seq_handle(), _port_id);
 
 	// Free event pool
-	for (size_t i=0; i < m_patch_port->buffer_size(); ++i)
-		delete[] m_midi_pool[i];
+	for (size_t i=0; i < _patch_port->buffer_size(); ++i)
+		delete[] _midi_pool[i];
 	
-	delete[] m_midi_pool;
+	delete[] _midi_pool;
 }
 
 
 void
 AlsaMidiPort::add_to_driver()
 {
-	m_driver->add_port(this);
+	_driver->add_port(this);
 }
 
 
 void
 AlsaMidiPort::remove_from_driver()
 {
-	m_driver->remove_port(this);
+	_driver->remove_port(this);
 }
 
 
@@ -108,9 +107,9 @@ AlsaMidiPort::set_name(const string& name)
 {
 	snd_seq_port_info_t* info = NULL;
 	snd_seq_port_info_malloc(&info);
-	snd_seq_get_port_info(m_driver->seq_handle(), m_port_id, info);
+	snd_seq_get_port_info(_driver->seq_handle(), _port_id, info);
 	snd_seq_port_info_set_name(info, name.c_str());
-	snd_seq_set_port_info(m_driver->seq_handle(), m_port_id, info);
+	snd_seq_set_port_info(_driver->seq_handle(), _port_id, info);
 	snd_seq_port_info_free(info);
 }
 
@@ -119,13 +118,13 @@ void
 AlsaMidiPort::event(snd_seq_event_t* const ev)
 {
 	// Abuse the tick field to hold the timestamp
-	ev->time.tick = Engine::instance().audio_driver()->time_stamp();
+	ev->time.tick = _driver->clock()->time_stamp();
 	
 	// Fix noteons with velocity 0 (required for DSSI spec)
 	if (ev->type == SND_SEQ_EVENT_NOTEON && ev->data.note.velocity == 0)
 		ev->type = SND_SEQ_EVENT_NOTEOFF;
 
-	m_events.push(*ev);
+	_events.push(*ev);
 }
 
 
@@ -142,14 +141,14 @@ AlsaMidiPort::prepare_block(const SampleCount block_start, const SampleCount blo
 	
 	snd_seq_event_t* ev         = NULL;
 	MidiMessage*     message    = NULL;
-	size_t           num_events = 0;
+	size_t           nu_events = 0;
 	size_t           event_size = 0; // decoded length of Alsa event in bytes
 	int              timestamp  = 0;
 	
-	while (!m_events.is_empty() && m_events.front().time.tick < block_end) {
-		assert(num_events < m_patch_port->buffer_size());
-		ev = &m_events.front();
-		message = &m_patch_port->buffer(0)->data()[num_events];
+	while (!_events.is_empty() && _events.front().time.tick < block_end) {
+		assert(nu_events < _patch_port->buffer_size());
+		ev = &_events.front();
+		message = &_patch_port->buffer(0)->data()[nu_events];
 		
 		timestamp = ev->time.tick - block_start;
 		if (timestamp < 0) {
@@ -160,24 +159,24 @@ AlsaMidiPort::prepare_block(const SampleCount block_start, const SampleCount blo
 		assert(timestamp < (int)(block_end - block_start));
 		
 		// Reset decoder so we don't get running status
-		snd_midi_event_reset_decode(m_driver->event_coder());
+		snd_midi_event_reset_decode(_driver->event_coder());
 
 		// FIXME: is this realtime safe?
-		if ((event_size = snd_midi_event_decode(m_driver->event_coder(),
-				m_midi_pool[num_events], MAX_MIDI_EVENT_SIZE, ev)) > 0) {
+		if ((event_size = snd_midi_event_decode(_driver->event_coder(),
+				_midi_pool[nu_events], MAX_MIDI_EVENT_SIZE, ev)) > 0) {
 			message->size = event_size;
 			message->time = timestamp;
-			message->buffer = m_midi_pool[num_events];
-			++num_events;
+			message->buffer = _midi_pool[nu_events];
+			++nu_events;
 		} else {
 			cerr << "[AlsaMidiPort] Unable to decode MIDI event" << endl;
 		}
 		
-		m_events.pop();
+		_events.pop();
 	}
 
-	m_patch_port->buffer(0)->filled_size(num_events);
-	//m_patch_port->tied_port()->buffer(0)->filled_size(num_events);
+	_patch_port->buffer(0)->filled_size(nu_events);
+	//_patch_port->tied_port()->buffer(0)->filled_size(nu_events);
 }
 
 
@@ -185,38 +184,38 @@ AlsaMidiPort::prepare_block(const SampleCount block_start, const SampleCount blo
 //// AlsaMidiDriver ////
 
 
-bool AlsaMidiDriver::m_midi_thread_exit_flag = true;
+bool AlsaMidiDriver::_midi_thread_exit_flag = true;
 
 
 AlsaMidiDriver::AlsaMidiDriver()
-: m_seq_handle(NULL),
-  m_event_coder(NULL),
-  m_is_activated(false)
+: _seq_handle(NULL),
+  _event_coder(NULL),
+  _is_activated(false)
 {
-	if (snd_seq_open(&m_seq_handle, "hw", SND_SEQ_OPEN_INPUT, 0) < 0) {
+	if (snd_seq_open(&_seq_handle, "hw", SND_SEQ_OPEN_INPUT, 0) < 0) {
 		cerr << "[AlsaMidiDriver] Error opening ALSA sequencer." << endl;
 		exit(EXIT_FAILURE);
 	} else {
 		cout << "[AlsaMidiDriver] Successfully opened ALSA sequencer." << endl;
 	}
 
-	if (snd_midi_event_new(3, &m_event_coder)) {
+	if (snd_midi_event_new(3, &_event_coder)) {
 		cerr << "[AlsaMidiDriver] Failed to initialize ALSA MIDI event coder!";
 		exit(EXIT_FAILURE);
 	} else {
-		snd_midi_event_reset_encode(m_event_coder);
-		snd_midi_event_reset_decode(m_event_coder);
+		snd_midi_event_reset_encode(_event_coder);
+		snd_midi_event_reset_decode(_event_coder);
 	}
 
-	snd_seq_set_client_name(m_seq_handle, "Ingen");
+	snd_seq_set_client_name(_seq_handle, "Ingen");
 }
 
 
 AlsaMidiDriver::~AlsaMidiDriver()
 {
 	deactivate();
-	snd_midi_event_free(m_event_coder);
-	snd_seq_close(m_seq_handle);
+	snd_midi_event_free(_event_coder);
+	snd_seq_close(_seq_handle);
 }
 
 
@@ -226,11 +225,11 @@ void
 AlsaMidiDriver::activate() 
 {
 	// Just exit if already running
-	if (m_midi_thread_exit_flag == false)
+	if (_midi_thread_exit_flag == false)
 		return;
 	
 	bool success = false;
-	m_midi_thread_exit_flag = false;
+	_midi_thread_exit_flag = false;
 
 	//if (Engine::instance().audio_driver()->is_realtime()) {
 		pthread_attr_t attr;
@@ -250,7 +249,7 @@ AlsaMidiDriver::activate()
 			cout << "[AlsaMidiDriver] Unable to set SCHED_FIFO priority "
 				<< param.sched_priority << endl;
 	 
-		if (!pthread_create(&m_process_thread, &attr, process_midi_in, this)) {
+		if (!pthread_create(&_process_thread, &attr, process_midi_in, this)) {
 			cout << "[AlsaMidiDriver] Started realtime MIDI thread (SCHED_FIFO, priority "
 				<< param.sched_priority << ")" << endl;
 			success = true;
@@ -262,15 +261,16 @@ AlsaMidiDriver::activate()
 	
 	if (!success) {
 		// FIXME: check for success
-		pthread_create(&m_process_thread, NULL, process_midi_in, this);
+		pthread_create(&_process_thread, NULL, process_midi_in, this);
 		cout << "[AlsaMidiDriver] Started non-realtime MIDI thread." << endl;
 	}
 	
 #ifdef HAVE_LASH
-	Engine::instance().lash_driver()->set_alsa_client_id(snd_seq_client_id(m_seq_handle));
+	cerr << "FIXME: LASH + ALSA" << endl;
+	//Engine::instance().lash_driver()->set_alsa_client_id(snd_seq_client_id(_seq_handle));
 #endif
 
-	m_is_activated = true;
+	_is_activated = true;
 }
 
 
@@ -279,11 +279,11 @@ AlsaMidiDriver::activate()
 void
 AlsaMidiDriver::deactivate() 
 {
-	if (m_is_activated) {
-		m_midi_thread_exit_flag = true;
-		pthread_cancel(m_process_thread);
-		pthread_join(m_process_thread, NULL);
-		m_is_activated = false;
+	if (_is_activated) {
+		_midi_thread_exit_flag = true;
+		pthread_cancel(_process_thread);
+		pthread_join(_process_thread, NULL);
+		_is_activated = false;
 	}
 }
 
@@ -293,7 +293,7 @@ AlsaMidiDriver::deactivate()
 void
 AlsaMidiDriver::prepare_block(const SampleCount block_start, const SampleCount block_end)
 {
-	for (List<AlsaMidiPort*>::iterator i = m_in_ports.begin(); i != m_in_ports.end(); ++i)
+	for (List<AlsaMidiPort*>::iterator i = _in_ports.begin(); i != _in_ports.end(); ++i)
 		(*i)->prepare_block(block_start, block_end);
 }
 
@@ -309,9 +309,9 @@ void
 AlsaMidiDriver::add_port(AlsaMidiPort* port)
 {
 	if (port->patch_port()->is_input())
-		m_in_ports.push_back(port);
+		_in_ports.push_back(port);
 	else
-		m_out_ports.push_back(port);
+		_out_ports.push_back(port);
 }
 
 
@@ -327,13 +327,13 @@ AlsaMidiPort*
 AlsaMidiDriver::remove_port(AlsaMidiPort* port)
 {
 	if (port->patch_port()->is_input()) {
-		for (List<AlsaMidiPort*>::iterator i = m_in_ports.begin(); i != m_in_ports.end(); ++i)
+		for (List<AlsaMidiPort*>::iterator i = _in_ports.begin(); i != _in_ports.end(); ++i)
 			if ((*i) == (AlsaMidiPort*)port)
-				return m_in_ports.remove(i)->elem();
+				return _in_ports.remove(i)->elem();
 	} else {
-		for (List<AlsaMidiPort*>::iterator i = m_out_ports.begin(); i != m_out_ports.end(); ++i)
+		for (List<AlsaMidiPort*>::iterator i = _out_ports.begin(); i != _out_ports.end(); ++i)
 			if ((*i) == port)
-				return m_out_ports.remove(i)->elem();
+				return _out_ports.remove(i)->elem();
 	}
 	
 	cerr << "[AlsaMidiDriver::remove_input] WARNING: Failed to find Jack port to remove!" << endl;
@@ -350,14 +350,14 @@ AlsaMidiDriver::process_midi_in(void* alsa_driver)
 
 	snd_seq_event_t* ev;
 
-	int npfd = snd_seq_poll_descriptors_count(ad->m_seq_handle, POLLIN);
+	int npfd = snd_seq_poll_descriptors_count(ad->_seq_handle, POLLIN);
 	struct pollfd pfd;
-	snd_seq_poll_descriptors(ad->m_seq_handle, &pfd, npfd, POLLIN);
+	snd_seq_poll_descriptors(ad->_seq_handle, &pfd, npfd, POLLIN);
 	
-	while ( ! m_midi_thread_exit_flag)
+	while ( ! _midi_thread_exit_flag)
 		if (poll(&pfd, npfd, 100000) > 0)
-			while (snd_seq_event_input(ad->m_seq_handle, &ev) > 0)
-				for (List<AlsaMidiPort*>::iterator i = ad->m_in_ports.begin(); i != ad->m_in_ports.end(); ++i)
+			while (snd_seq_event_input(ad->_seq_handle, &ev) > 0)
+				for (List<AlsaMidiPort*>::iterator i = ad->_in_ports.begin(); i != ad->_in_ports.end(); ++i)
 					if ((*i)->port_id() == ev->dest.port)
 						(*i)->event(ev);
 	

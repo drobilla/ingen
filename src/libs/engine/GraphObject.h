@@ -31,6 +31,7 @@ namespace Ingen {
 class Patch;
 class Node;
 class Port;
+class ObjectStore;
 
 
 /** An object on the audio graph - Patch, Node, Port, etc.
@@ -57,7 +58,7 @@ public:
 	inline GraphObject*  parent() const { return _parent; }
 	inline const string& name()   const { return _name; }
 	
-	virtual void process(SampleCount nframes) = 0;
+	virtual void process(SampleCount nframes, FrameTime start, FrameTime end) = 0;
 
 	/** Rename */
 	virtual void set_path(const Path& new_path) {
@@ -79,7 +80,7 @@ public:
 
 
 	/** Patch and Node override this to recursively add their children. */
-	virtual void add_to_store() = 0;
+	virtual void add_to_store(ObjectStore* store) = 0;
 	
 	/** Patch and Node override this to recursively remove their children. */
 	virtual void remove_from_store() = 0;

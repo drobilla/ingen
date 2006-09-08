@@ -27,8 +27,8 @@ using std::cerr; using std::endl;
 namespace Ingen {
 
 
-DSSIUpdateEvent::DSSIUpdateEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& url)
-: QueuedEvent(responder, timestamp),
+DSSIUpdateEvent::DSSIUpdateEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& url)
+: QueuedEvent(engine, responder, timestamp),
   m_path(path),
   m_url(url),
   m_node(NULL)
@@ -39,7 +39,7 @@ DSSIUpdateEvent::DSSIUpdateEvent(CountedPtr<Responder> responder, SampleCount ti
 void
 DSSIUpdateEvent::pre_process()
 {
-	Node* node = Engine::instance().object_store()->find_node(m_path);
+	Node* node = _engine.object_store()->find_node(m_path);
 
 	if (node == NULL || node->plugin()->type() != Plugin::DSSI) {
 		m_node = NULL;
@@ -54,13 +54,13 @@ DSSIUpdateEvent::pre_process()
 
 
 void
-DSSIUpdateEvent::execute(SampleCount offset)
+DSSIUpdateEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {
 	if (m_node != NULL) {
 		m_node->set_ui_url(m_url);
 	}
 	
-	QueuedEvent::execute(offset);
+	QueuedEvent::execute(nframes, start, end);
 }
 
 

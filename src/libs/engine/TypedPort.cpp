@@ -102,7 +102,7 @@ template void TypedPort<MidiMessage>::allocate_buffers();
 
 template <typename T>
 void
-TypedPort<T>::process(SampleCount nframes)
+TypedPort<T>::process(SampleCount nframes, FrameTime start, FrameTime end)
 {
 	for (size_t i=0; i < _poly; ++i)
 		m_buffers.at(i)->prepare(nframes);

@@ -49,20 +49,9 @@ using std::cout; using std::cerr; using std::endl;
 namespace Ingen {
 
 
-Engine* Engine::m_instance = NULL;
-
-
-void
-Engine::instantiate(const char* port, AudioDriver* audio_driver)
-{
-	assert(!m_instance);
-	m_instance = new Engine(port, audio_driver);
-}
-
-
-Engine::Engine(const char* port, AudioDriver* audio_driver)
-: m_audio_driver( (audio_driver) ? audio_driver : new JackAudioDriver() ),
-  m_osc_receiver(new OSCReceiver(pre_processor_queue_size, port)),
+Engine::Engine(const char* listen_port, AudioDriver* audio_driver)
+: m_audio_driver( (audio_driver) ? audio_driver : new JackAudioDriver(*this) ),
+  m_osc_receiver(new OSCReceiver(*this, pre_processor_queue_size, listen_port)),
 #ifdef HAVE_JACK_MIDI
   m_midi_driver(new JackMidiDriver(((JackAudioDriver*)m_audio_driver)->jack_client())),
 #elif HAVE_ALSA_MIDI
@@ -70,8 +59,8 @@ Engine::Engine(const char* port, AudioDriver* audio_driver)
 #else
   m_midi_driver(new DummyMidiDriver()),
 #endif
-  m_post_processor(new PostProcessor(post_processor_queue_size)),
   m_maid(new Maid(maid_queue_size)),
+  m_post_processor(new PostProcessor(*m_maid, post_processor_queue_size)),
   m_client_broadcaster(new ClientBroadcaster()),
   m_object_store(new ObjectStore()),
   m_node_factory(new NodeFactory()),
@@ -155,13 +144,13 @@ Engine::activate()
 		return;
 	
 	// Create root patch
-	CreatePatchEvent create_ev(CountedPtr<Responder>(new Responder()), 0, "/", 1);
+	CreatePatchEvent create_ev(*this, CountedPtr<Responder>(new Responder()), 0, "/", 1);
 	create_ev.pre_process();
-	create_ev.execute(0);
+	create_ev.execute(1, 0, 1);
 	create_ev.post_process();
-	EnablePatchEvent enable_ev(CountedPtr<Responder>(new Responder()), 0, "/");
+	EnablePatchEvent enable_ev(*this, CountedPtr<Responder>(new Responder()), 0, "/");
 	enable_ev.pre_process();
-	enable_ev.execute(0);
+	enable_ev.execute(1, 0, 1);
 	enable_ev.post_process();
 
 	assert(m_audio_driver->root_patch() != NULL);
@@ -183,7 +172,7 @@ Engine::deactivate()
 	if (!m_activated)
 		return;
 	
-	m_audio_driver->root_patch()->process(false);
+	m_audio_driver->root_patch()->disable();
 	m_audio_driver->root_patch()->deactivate();
 
 	/*for (Tree<GraphObject*>::iterator i = m_object_store->objects().begin();

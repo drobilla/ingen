@@ -27,8 +27,8 @@ using std::string;
 namespace Ingen {
 
 
-RequestMetadataEvent::RequestMetadataEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& node_path, const string& key)
-: QueuedEvent(responder, timestamp),
+RequestMetadataEvent::RequestMetadataEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& node_path, const string& key)
+: QueuedEvent(engine, responder, timestamp),
   m_path(node_path),
   m_key(key),
   m_value(""),
@@ -41,10 +41,10 @@ RequestMetadataEvent::RequestMetadataEvent(CountedPtr<Responder> responder, Samp
 void
 RequestMetadataEvent::pre_process()
 {
-	m_client = _responder->find_client();
+	m_client = _engine.client_broadcaster()->client(_responder->client_key());
 	
 	if (m_client) {
-		m_object = Engine::instance().object_store()->find(m_path);
+		m_object = _engine.object_store()->find(m_path);
 		if (m_object == NULL) {
 			QueuedEvent::pre_process();
 			return;

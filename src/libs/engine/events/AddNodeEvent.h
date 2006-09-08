@@ -39,11 +39,11 @@ class Plugin;
 class AddNodeEvent : public QueuedEvent
 {
 public:
-	AddNodeEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& path, Plugin* plugin, bool poly);
+	AddNodeEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& path, Plugin* plugin, bool poly);
 	~AddNodeEvent();
 
 	void pre_process();
-	void execute(SampleCount offset);
+	void execute(SampleCount nframes, FrameTime start, FrameTime end);
 	void post_process();
 
 private:

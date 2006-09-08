@@ -50,19 +50,19 @@ public:
 	void remove_from_driver();
 	void set_name(const string& name);
 	
-	int                      port_id()    const { return m_port_id; }
-	DuplexPort<MidiMessage>* patch_port() const { return m_patch_port; }
+	int                      port_id()    const { return _port_id; }
+	DuplexPort<MidiMessage>* patch_port() const { return _patch_port; }
 
 private:
 	// Prevent copies (undefined)
 	AlsaMidiPort(const AlsaMidiPort&);
 	AlsaMidiPort& operator=(const AlsaMidiPort&);
  
-	AlsaMidiDriver*          m_driver;
-	DuplexPort<MidiMessage>* m_patch_port;
-	int                      m_port_id;
-	unsigned char**          m_midi_pool; ///< Pool of raw MIDI events for MidiMessage::buffer
-	Queue<snd_seq_event_t>   m_events;
+	AlsaMidiDriver*          _driver;
+	DuplexPort<MidiMessage>* _patch_port;
+	int                      _port_id;
+	unsigned char**          _midi_pool; ///< Pool of raw MIDI events for MidiMessage::buffer
+	Queue<snd_seq_event_t>   _events;
 };
 
 
@@ -82,15 +82,15 @@ public:
 	void activate();
 	void deactivate();
 	
-	bool is_activated() const { return m_is_activated; }
+	bool is_activated() const { return _is_activated; }
 	
 	void prepare_block(const SampleCount block_start, const SampleCount block_end);
 
 	DriverPort* create_port(DuplexPort<MidiMessage>* patch_port)
 	{ return new AlsaMidiPort(this, patch_port); }
 
-	snd_seq_t*        seq_handle()  const { return m_seq_handle; }
-	snd_midi_event_t* event_coder() const { return m_event_coder; }
+	snd_seq_t*        seq_handle()  const { return _seq_handle; }
+	snd_midi_event_t* event_coder() const { return _event_coder; }
 
 private:
 
@@ -98,8 +98,8 @@ private:
 	AlsaMidiDriver(const AlsaMidiDriver&);
 	AlsaMidiDriver& operator=(const AlsaMidiDriver&);
 	
-	List<AlsaMidiPort*> m_in_ports;
-	List<AlsaMidiPort*> m_out_ports;
+	List<AlsaMidiPort*> _in_ports;
+	List<AlsaMidiPort*> _out_ports;
 	
 	friend class AlsaMidiPort;
 	
@@ -113,11 +113,11 @@ private:
 	// MIDI thread
 	static void* process_midi_in(void* me);
 
-	snd_seq_t*        m_seq_handle;
-	snd_midi_event_t* m_event_coder;
-	pthread_t         m_process_thread;
-	bool              m_is_activated;
-	static bool       m_midi_thread_exit_flag;
+	snd_seq_t*        _seq_handle;
+	snd_midi_event_t* _event_coder;
+	pthread_t         _process_thread;
+	bool              _is_activated;
+	static bool       _midi_thread_exit_flag;
 };
 
 

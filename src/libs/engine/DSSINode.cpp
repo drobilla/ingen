@@ -17,7 +17,6 @@
 #include "DSSINode.h"
 #include <map>
 #include <set>
-#include "Engine.h"
 #include "ClientBroadcaster.h"
 #include "interface/ClientInterface.h"
 #include "InputPort.h"
@@ -160,9 +159,9 @@ DSSINode::has_midi_input() const
 
 
 void
-DSSINode::process(SampleCount nframes)
+DSSINode::process(SampleCount nframes, FrameTime start, FrameTime end)
 {
-	NodeBase::process(nframes);
+	NodeBase::process(nframes, start, end);
 
 	if (_dssi_descriptor->run_synth) {
 		convert_events();
@@ -176,7 +175,7 @@ DSSINode::process(SampleCount nframes)
 		_dssi_descriptor->run_multiple_synths(1, _instances, nframes,
 			events, events_sizes);
 	} else {
-		LADSPANode::process(nframes);
+		LADSPANode::process(nframes, start, end);
 	}
 }
 
@@ -252,6 +251,7 @@ DSSINode::send_update()
 bool
 DSSINode::update_programs(bool send_events)
 {
+#if 0
 	// remember all old banks and programs
 	set<pair<int, int> > to_be_deleted;
 	map<int, Bank>::const_iterator iter;
@@ -276,7 +276,7 @@ DSSINode::update_programs(bool send_events)
 			    iter->second.find(descriptor->Program)->second != descriptor->Name) {
 				_banks[descriptor->Bank][descriptor->Program] = descriptor->Name;
 				if (send_events) {
-					Engine::instance().client_broadcaster()->send_program_add(path(), descriptor->Bank,
+					_engine.client_broadcaster()->send_program_add(path(), descriptor->Bank,
 									   descriptor->Program, 
 									   descriptor->Name);
 				}
@@ -291,11 +291,13 @@ DSSINode::update_programs(bool send_events)
 	     set_iter != to_be_deleted.end(); ++set_iter) {
 		_banks[set_iter->first].erase(set_iter->second);
 		if (send_events)
-			Engine::instance().client_broadcaster()->send_program_remove(path(), set_iter->first, set_iter->second);
+			_engine.client_broadcaster()->send_program_remove(path(), set_iter->first, set_iter->second);
 		if (_banks[set_iter->first].size() == 0)
 			_banks.erase(set_iter->first);
 	}
-	
+#endif
+	cerr << "FIXME: DSSI programs broken!" << endl;
+
 	return true;
 }
 

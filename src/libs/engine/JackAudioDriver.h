@@ -25,6 +25,7 @@
 
 namespace Ingen {
 
+class Engine;
 class Patch;
 class Port;
 template <typename T> class DuplexPort;
@@ -44,22 +45,22 @@ public:
 	
 	void add_to_driver();
 	void remove_from_driver();
-	void set_name(const string& name) { jack_port_set_name(m_jack_port, name.c_str()); };
+	void set_name(const string& name) { jack_port_set_name(_jack_port, name.c_str()); };
 	
 	void prepare_buffer(jack_nframes_t nframes);
 
-	jack_port_t*          jack_port() const             { return m_jack_port; }
-	DuplexPort<Sample>*   patch_port() const            { return m_patch_port; }
+	jack_port_t*          jack_port() const  { return _jack_port; }
+	DuplexPort<Sample>*   patch_port() const { return _patch_port; }
 
 private:
 	// Prevent copies (undefined)
 	JackAudioPort(const JackAudioPort&);
 	JackAudioPort& operator=(const JackAudioPort&);
 	
-	JackAudioDriver*      m_driver;
-	jack_port_t*          m_jack_port;
-	jack_sample_t*        m_jack_buffer; ///< Cached for output ports
-	DuplexPort<Sample>*   m_patch_port;
+	JackAudioDriver*      _driver;
+	jack_port_t*          _jack_port;
+	jack_sample_t*        _jack_buffer; ///< Cached for output ports
+	DuplexPort<Sample>*   _patch_port;
 };
 
 
@@ -75,8 +76,7 @@ private:
 class JackAudioDriver : public AudioDriver
 {
 public:	
-	JackAudioDriver();
-	JackAudioDriver(jack_client_t *jack_client);
+	JackAudioDriver(Engine& engine, jack_client_t *jack_client = 0);
 	~JackAudioDriver();
 
 	void activate();
@@ -84,26 +84,26 @@ public:
 	void enable();
 	void disable();
 
-	void process_events(jack_nframes_t block_start, jack_nframes_t block_end);
+	void process_events(SampleCount nframes, FrameTime cycle_start, FrameTime cycle_end);
 	
 	DriverPort* create_port(DuplexPort<Sample>* patch_port);
 	
-	Patch* root_patch()                 { return m_root_patch; }
-	void   set_root_patch(Patch* patch) { m_root_patch = patch; }
+	Patch* root_patch()                 { return _root_patch; }
+	void   set_root_patch(Patch* patch) { _root_patch = patch; }
 	
 	/** Transport state for this frame.
 	 * Intended to only be called from the audio thread. */
-	inline const jack_position_t* position() { return &m_position; }
-	inline const jack_transport_state_t transport_state() { return m_transport_state; }
+	inline const jack_position_t* position() { return &_position; }
+	inline const jack_transport_state_t transport_state() { return _transport_state; }
 	
-	bool is_realtime() { return jack_is_realtime(m_client); }
+	bool is_realtime() { return jack_is_realtime(_client); }
 	
-	jack_client_t* jack_client() const  { return m_client; }
-	SampleCount    buffer_size() const  { return m_buffer_size; }
-	SampleCount    sample_rate() const  { return m_sample_rate; }
-	bool           is_activated() const { return m_is_activated; }
+	jack_client_t* jack_client() const  { return _client; }
+	SampleCount    buffer_size() const  { return _buffer_size; }
+	SampleCount    sample_rate() const  { return _sample_rate; }
+	bool           is_activated() const { return _is_activated; }
 	
-	SampleCount time_stamp() const { return jack_frame_time(m_client); }
+	inline SampleCount frame_time() const { return jack_frame_time(_client); }
 
 private:
 	// Prevent copies (undefined)
@@ -124,45 +124,46 @@ private:
 	inline static int  sample_rate_cb(jack_nframes_t nframes, void* const jack_driver);
 
 	// Non static callbacks
-	int  m_process_cb(jack_nframes_t nframes);
-	void m_shutdown_cb();
-	int  m_buffer_size_cb(jack_nframes_t nframes);
-	int  m_sample_rate_cb(jack_nframes_t nframes);
+	int  _process_cb(jack_nframes_t nframes);
+	void _shutdown_cb();
+	int  _buffer_size_cb(jack_nframes_t nframes);
+	int  _sample_rate_cb(jack_nframes_t nframes);
 
-	jack_client_t*         m_client;
-	jack_nframes_t         m_buffer_size;
-	jack_nframes_t         m_sample_rate;
-	bool                   m_is_activated;
-	bool                   m_local_client; ///< Whether m_client should be closed on destruction
-	jack_position_t        m_position;
-	jack_transport_state_t m_transport_state;
+	Engine&                _engine;
+	jack_client_t*         _client;
+	jack_nframes_t         _buffer_size;
+	jack_nframes_t         _sample_rate;
+	bool                   _is_activated;
+	bool                   _local_client; ///< Whether _client should be closed on destruction
+	jack_position_t        _position;
+	jack_transport_state_t _transport_state;
 	
-	List<JackAudioPort*> m_ports;
+	List<JackAudioPort*> _ports;
 
-	Patch* m_root_patch;
+	Patch* _root_patch;
 };
 
 
 inline int JackAudioDriver::process_cb(jack_nframes_t nframes, void* jack_driver)
 {
-	return ((JackAudioDriver*)jack_driver)->m_process_cb(nframes);
+	return ((JackAudioDriver*)jack_driver)->_process_cb(nframes);
 }
 
 inline void JackAudioDriver::shutdown_cb(void* jack_driver)
 {
-	return ((JackAudioDriver*)jack_driver)->m_shutdown_cb();
+	return ((JackAudioDriver*)jack_driver)->_shutdown_cb();
 }
 
 
 inline int JackAudioDriver::buffer_size_cb(jack_nframes_t nframes, void* jack_driver)
 {
-	return ((JackAudioDriver*)jack_driver)->m_buffer_size_cb(nframes);
+	return ((JackAudioDriver*)jack_driver)->_buffer_size_cb(nframes);
 }
 
 
 inline int JackAudioDriver::sample_rate_cb(jack_nframes_t nframes, void* jack_driver)
 {
-	return ((JackAudioDriver*)jack_driver)->m_sample_rate_cb(nframes);
+	return ((JackAudioDriver*)jack_driver)->_sample_rate_cb(nframes);
 }
 	
 

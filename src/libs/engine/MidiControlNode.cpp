@@ -16,7 +16,6 @@
 
 #include "MidiControlNode.h"
 #include <math.h>
-#include "Engine.h"
 #include "PostProcessor.h"
 #include "MidiLearnEvent.h"
 #include "InputPort.h"
@@ -63,9 +62,9 @@ MidiControlNode::MidiControlNode(const string& path, size_t poly, Patch* parent,
 
 
 void
-MidiControlNode::process(SampleCount nframes)
+MidiControlNode::process(SampleCount nframes, FrameTime start, FrameTime end)
 {
-	InternalNode::process(nframes);
+	InternalNode::process(nframes, start, end);
 
 	MidiMessage ev;
 	
@@ -88,15 +87,18 @@ MidiControlNode::control(uchar control_num, uchar val, SampleCount offset)
 	const Sample nval = (val / 127.0f); // normalized [0, 1]
 	
 	if (_learning) {
+		assert(false); // FIXME FIXME FIXME
+#if 0
 		assert(_learn_event != NULL);
 		_param_port->set_value(control_num, offset);
 		assert(_param_port->buffer(0)->value_at(0) == control_num);
 		_learn_event->set_value(control_num);
 		_learn_event->execute(offset);
-		Engine::instance().post_processor()->push(_learn_event);
-		Engine::instance().post_processor()->whip();
+		//Engine::instance().post_processor()->push(_learn_event);
+		//Engine::instance().post_processor()->whip();
 		_learning = false;
 		_learn_event = NULL;
+#endif
 	}
 
 	if (_log_port->buffer(0)->value_at(0) > 0.0f) {

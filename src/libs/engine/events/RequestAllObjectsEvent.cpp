@@ -18,12 +18,14 @@
 #include "Responder.h"
 #include "Engine.h"
 #include "ObjectSender.h"
+#include "ClientBroadcaster.h"
+#include "ObjectStore.h"
 
 namespace Ingen {
 
 
-RequestAllObjectsEvent::RequestAllObjectsEvent(CountedPtr<Responder> responder, SampleCount timestamp)
-: QueuedEvent(responder, timestamp),
+RequestAllObjectsEvent::RequestAllObjectsEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp)
+: QueuedEvent(engine, responder, timestamp),
   m_client(CountedPtr<ClientInterface>(NULL))
 {
 }
@@ -32,7 +34,7 @@ RequestAllObjectsEvent::RequestAllObjectsEvent(CountedPtr<Responder> responder, 
 void
 RequestAllObjectsEvent::pre_process()
 {
-	m_client = _responder->find_client();
+	m_client = _engine.client_broadcaster()->client(_responder->client_key());
 	
 	QueuedEvent::pre_process();
 }
@@ -43,9 +45,14 @@ RequestAllObjectsEvent::post_process()
 {
 	if (m_client) {
 		_responder->respond_ok();
-		ObjectSender::send_all(m_client.get());
+
+		// Everything is a child of the root patch, so this sends it all
+		Patch* root = _engine.object_store()->find_patch("/");
+		if (root)
+			ObjectSender::send_patch(m_client.get(), root);
+
 	} else {
-		_responder->respond_error("Invalid URL");
+		_responder->respond_error("Unable to find client to send all objects");
 	}
 }
 

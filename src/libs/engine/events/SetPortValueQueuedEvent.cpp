@@ -28,8 +28,8 @@ namespace Ingen {
 
 /** Voice-specific control setting
  */
-SetPortValueQueuedEvent::SetPortValueQueuedEvent(CountedPtr<Responder> responder, SampleCount timestamp, size_t voice_num, const string& port_path, Sample val)
-: QueuedEvent(responder, timestamp),
+SetPortValueQueuedEvent::SetPortValueQueuedEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, size_t voice_num, const string& port_path, Sample val)
+: QueuedEvent(engine, responder, timestamp),
   m_voice_num(voice_num),
   m_port_path(port_path),
   m_val(val),
@@ -39,8 +39,8 @@ SetPortValueQueuedEvent::SetPortValueQueuedEvent(CountedPtr<Responder> responder
 }
 
 
-SetPortValueQueuedEvent::SetPortValueQueuedEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& port_path, Sample val)
-: QueuedEvent(responder, timestamp),
+SetPortValueQueuedEvent::SetPortValueQueuedEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& port_path, Sample val)
+: QueuedEvent(engine, responder, timestamp),
   m_voice_num(-1),
   m_port_path(port_path),
   m_val(val),
@@ -54,7 +54,7 @@ void
 SetPortValueQueuedEvent::pre_process()
 {
 	if (m_port == NULL)
-		m_port = Engine::instance().object_store()->find_port(m_port_path);
+		m_port = _engine.object_store()->find_port(m_port_path);
 
 	if (m_port == NULL) {
 		m_error = PORT_NOT_FOUND;
@@ -67,16 +67,18 @@ SetPortValueQueuedEvent::pre_process()
 
 
 void
-SetPortValueQueuedEvent::execute(SampleCount offset)
+SetPortValueQueuedEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {
-	QueuedEvent::execute(offset);
+	assert(_time >= start && _time <= end);
+
+	QueuedEvent::execute(nframes, start, end);
 
 	if (m_error == NO_ERROR) {
 		assert(m_port != NULL);
 		if (m_voice_num == -1) 
-			((TypedPort<Sample>*)m_port)->set_value(m_val, offset);
+			((TypedPort<Sample>*)m_port)->set_value(m_val, _time - start);
 		else
-			((TypedPort<Sample>*)m_port)->buffer(m_voice_num)->set(m_val, offset); // FIXME: check range
+			((TypedPort<Sample>*)m_port)->buffer(m_voice_num)->set(m_val, _time - start); // FIXME: check range
 	}
 }
 
@@ -88,13 +90,13 @@ SetPortValueQueuedEvent::post_process()
 		assert(m_port != NULL);
 		
 		_responder->respond_ok();
-		Engine::instance().client_broadcaster()->send_control_change(m_port_path, m_val);
+		_engine.client_broadcaster()->send_control_change(m_port_path, m_val);
 		
 		// Send patch port control change, if this is a bridge port
 		/*Port* parent_port = m_port->parent_node()->as_port();
 		if (parent_port != NULL) {
 			assert(parent_port->type() == DataType::FLOAT);
-			Engine::instance().client_broadcaster()->send_control_change(parent_port->path(), m_val);
+			_engine.client_broadcaster()->send_control_change(parent_port->path(), m_val);
 		}*/
 
 	} else if (m_error == PORT_NOT_FOUND) {

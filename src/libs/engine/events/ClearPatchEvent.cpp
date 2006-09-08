@@ -30,8 +30,8 @@
 namespace Ingen {
 
 
-ClearPatchEvent::ClearPatchEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& patch_path)
-: QueuedEvent(responder, true),
+ClearPatchEvent::ClearPatchEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& patch_path)
+: QueuedEvent(engine, responder, true),
   m_patch_path(patch_path),
   m_patch(NULL),
   m_process(false)
@@ -42,11 +42,11 @@ ClearPatchEvent::ClearPatchEvent(CountedPtr<Responder> responder, SampleCount ti
 void
 ClearPatchEvent::pre_process()
 {
-	m_patch = Engine::instance().object_store()->find_patch(m_patch_path);
+	m_patch = _engine.object_store()->find_patch(m_patch_path);
 	
 	if (m_patch != NULL) {
 	
-		m_process = m_patch->process();
+		m_process = m_patch->enabled();
 
 		for (List<Node*>::const_iterator i = m_patch->nodes().begin(); i != m_patch->nodes().end(); ++i)
 			(*i)->remove_from_store();
@@ -57,21 +57,21 @@ ClearPatchEvent::pre_process()
 
 
 void
-ClearPatchEvent::execute(SampleCount offset)
+ClearPatchEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {
 	if (m_patch != NULL) {
-		m_patch->process(false);
+		m_patch->disable();
 		
 		for (List<Node*>::const_iterator i = m_patch->nodes().begin(); i != m_patch->nodes().end(); ++i)
 			(*i)->remove_from_patch();
 
 		if (m_patch->process_order() != NULL) {
-			Engine::instance().maid()->push(m_patch->process_order());
+			_engine.maid()->push(m_patch->process_order());
 			m_patch->process_order(NULL);
 		}
 	}
 	
-	QueuedEvent::execute(offset);
+	QueuedEvent::execute(nframes, start, end);
 }
 
 
@@ -92,7 +92,10 @@ ClearPatchEvent::post_process()
 		m_patch->connections().clear();
 		
 		// Restore patch's run state
-		m_patch->process(m_process);
+		if (m_process)
+			m_patch->enable();
+		else
+			m_patch->disable();
 
 		// Make sure everything's sane
 		assert(m_patch->nodes().size() == 0);
@@ -100,7 +103,7 @@ ClearPatchEvent::post_process()
 		
 		// Reply
 		_responder->respond_ok();
-		Engine::instance().client_broadcaster()->send_patch_cleared(m_patch_path);
+		_engine.client_broadcaster()->send_patch_cleared(m_patch_path);
 	} else {
 		_responder->respond_error(string("Patch ") + m_patch_path + " not found");
 	}

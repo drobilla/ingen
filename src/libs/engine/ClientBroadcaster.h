@@ -66,7 +66,7 @@ public:
 	// Error that isn't the direct result of a request
 	void send_error(const string& msg);
 
-	void send_plugins_to(ClientInterface* client);
+	void send_plugins_to(ClientInterface* client, const list<Plugin*>& plugin_list);
 	
 	//void send_node_creation_messages(const Node* const node);
 	

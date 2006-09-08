@@ -41,7 +41,7 @@ public:
 	void activate();
 	void deactivate();
 	
-	void process(SampleCount nframes);
+	void process(SampleCount nframes, FrameTime start, FrameTime end);
 	
 	void set_port_buffer(size_t voice, size_t port_num, void* buf);
 

@@ -35,7 +35,7 @@ namespace Ingen {
 class RegisterClientEvent : public QueuedEvent
 {
 public:
-	RegisterClientEvent(CountedPtr<Responder>       responder,
+	RegisterClientEvent(Engine& engine, CountedPtr<Responder>       responder,
 	                    SampleCount                 timestamp,
 	                    ClientKey                   key,
 	                    CountedPtr<ClientInterface> client);

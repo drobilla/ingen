@@ -18,7 +18,6 @@
 #include <cassert>
 #include <iostream>
 #include <pthread.h>
-#include "Engine.h"
 #include "Event.h"
 #include "util/Queue.h"
 #include "Maid.h"
@@ -29,8 +28,9 @@ using std::cerr; using std::cout; using std::endl;
 namespace Ingen {
 
 
-PostProcessor::PostProcessor(size_t queue_size)
-: _events(queue_size)
+PostProcessor::PostProcessor(Maid& maid, size_t queue_size)
+: _maid(maid),
+  _events(queue_size)
 {
 	set_name("PostProcessor");
 }
@@ -47,7 +47,7 @@ PostProcessor::_whipped()
 		Event* const ev = _events.pop();
 		assert(ev);
 		ev->post_process();
-		Engine::instance().maid()->push(ev);
+		_maid.push(ev);
 	}
 }
 

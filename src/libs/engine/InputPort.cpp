@@ -209,7 +209,7 @@ template void InputPort<MidiMessage>::tie(OutputPort<MidiMessage>* const port);
  */
 template<>
 void
-InputPort<Sample>::process(SampleCount nframes)
+InputPort<Sample>::process(SampleCount nframes, FrameTime start, FrameTime end)
 {
 	//assert(!m_is_tied || m_tied_port != NULL);
 
@@ -219,7 +219,7 @@ InputPort<Sample>::process(SampleCount nframes)
 	if (m_connections.size() == 0) return;
 
 	for (TypedConnectionListIterator c = m_connections.begin(); c != m_connections.end(); ++c)
-		(*c)->process(nframes);
+		(*c)->process(nframes, start, end);
 
 	// If only one connection, buffer is (maybe) used directly (no copying)
 	if (m_connections.size() == 1) {
@@ -272,7 +272,7 @@ InputPort<Sample>::process(SampleCount nframes)
  */
 template <>
 void
-InputPort<MidiMessage>::process(SampleCount nframes)
+InputPort<MidiMessage>::process(SampleCount nframes, FrameTime start, FrameTime end)
 {	
 	//assert(!m_is_tied || m_tied_port != NULL);
 	
@@ -285,7 +285,7 @@ InputPort<MidiMessage>::process(SampleCount nframes)
 	assert(_poly == 1);
 	
 	for (TypedConnectionListIterator c = m_connections.begin(); c != m_connections.end(); ++c)
-		(*c)->process(nframes);
+		(*c)->process(nframes, start, end);
 	
 
 	// If only one connection, buffer is used directly (no copying)

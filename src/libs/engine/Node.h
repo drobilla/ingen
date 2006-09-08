@@ -63,6 +63,13 @@ public:
 	virtual void activate()   = 0;
 	virtual void deactivate() = 0;
 	virtual bool activated()  = 0;
+	
+	/** Run the node for @a nframes input/output.
+	 *
+	 * @a start and @a end are transport times: end is not redundant in the case
+	 * of varispeed, where end-start != nframes.
+	 */
+	virtual void process(SampleCount nframes, FrameTime start, FrameTime end) = 0;
 
 	virtual void set_port_buffer(size_t voice, size_t port_num, void* buf) = 0;
 
@@ -91,7 +98,7 @@ public:
 	/** The Patch this Node belongs to. */
 	virtual Patch* parent_patch() const = 0;
 
-	/** Information about what 'plugin' this Node is an instance of.
+	/** Information about the Plugin this Node is an instance of.
 	 * Not the best name - not all nodes come from plugins (ie Patch)
 	 */
 	virtual const Plugin* plugin() const = 0;

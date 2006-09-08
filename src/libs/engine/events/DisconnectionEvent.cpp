@@ -35,8 +35,8 @@ namespace Ingen {
 //// DisconnectionEvent ////
 
 
-DisconnectionEvent::DisconnectionEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& src_port_path, const string& dst_port_path)
-: QueuedEvent(responder, timestamp),
+DisconnectionEvent::DisconnectionEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& src_port_path, const string& dst_port_path)
+: QueuedEvent(engine, responder, timestamp),
   m_src_port_path(src_port_path),
   m_dst_port_path(dst_port_path),
   m_patch(NULL),
@@ -49,8 +49,8 @@ DisconnectionEvent::DisconnectionEvent(CountedPtr<Responder> responder, SampleCo
 }
 
 
-DisconnectionEvent::DisconnectionEvent(CountedPtr<Responder> responder, SampleCount timestamp, Port* const src_port, Port* const dst_port)
-: QueuedEvent(responder, timestamp),
+DisconnectionEvent::DisconnectionEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, Port* const src_port, Port* const dst_port)
+: QueuedEvent(engine, responder, timestamp),
   m_src_port_path(src_port->path()),
   m_dst_port_path(dst_port->path()),
   m_patch(src_port->parent_node()->parent_patch()),
@@ -85,7 +85,7 @@ DisconnectionEvent::pre_process()
 			return;
 		}
 
-		/*m_patch = Engine::instance().object_store()->find_patch(m_src_port_path.parent().parent());
+		/*m_patch = _engine.object_store()->find_patch(m_src_port_path.parent().parent());
 
 		  if (m_patch == NULL) {
 		  m_error = PORT_NOT_FOUND;
@@ -93,8 +93,8 @@ DisconnectionEvent::pre_process()
 		  return;
 		  }*/
 
-		m_src_port = Engine::instance().object_store()->find_port(m_src_port_path);
-		m_dst_port = Engine::instance().object_store()->find_port(m_dst_port_path);
+		m_src_port = _engine.object_store()->find_port(m_src_port_path);
+		m_dst_port = _engine.object_store()->find_port(m_dst_port_path);
 	}
 	
 	if (m_src_port == NULL || m_dst_port == NULL) {
@@ -112,10 +112,10 @@ DisconnectionEvent::pre_process()
 	// Create the typed event to actually do the work
 	const DataType type = m_src_port->type();
 	if (type == DataType::FLOAT) {
-		m_typed_event = new TypedDisconnectionEvent<Sample>(_responder, _time_stamp,
+		m_typed_event = new TypedDisconnectionEvent<Sample>(_engine, _responder, _time,
 				dynamic_cast<OutputPort<Sample>*>(m_src_port), dynamic_cast<InputPort<Sample>*>(m_dst_port));
 	} else if (type == DataType::MIDI) {
-		m_typed_event = new TypedDisconnectionEvent<MidiMessage>(_responder, _time_stamp,
+		m_typed_event = new TypedDisconnectionEvent<MidiMessage>(_engine, _responder, _time,
 				dynamic_cast<OutputPort<MidiMessage>*>(m_src_port), dynamic_cast<InputPort<MidiMessage>*>(m_dst_port));
 	} else {
 		m_error = TYPE_MISMATCH;
@@ -131,12 +131,12 @@ DisconnectionEvent::pre_process()
 
 
 void
-DisconnectionEvent::execute(SampleCount offset)
+DisconnectionEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {
-	QueuedEvent::execute(offset);
+	QueuedEvent::execute(nframes, start, end);
 
 	if (m_error == NO_ERROR)
-		m_typed_event->execute(offset);
+		m_typed_event->execute(nframes, start, end);
 }
 
 
@@ -159,8 +159,8 @@ DisconnectionEvent::post_process()
 
 
 template <typename T>
-TypedDisconnectionEvent<T>::TypedDisconnectionEvent(CountedPtr<Responder> responder, SampleCount timestamp, OutputPort<T>* src_port, InputPort<T>* dst_port)
-: QueuedEvent(responder, timestamp),
+TypedDisconnectionEvent<T>::TypedDisconnectionEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, OutputPort<T>* src_port, InputPort<T>* dst_port)
+: QueuedEvent(engine, responder, timestamp),
   m_src_port(src_port),
   m_dst_port(dst_port),
   m_patch(NULL),
@@ -223,7 +223,7 @@ TypedDisconnectionEvent<T>::pre_process()
 			break;
 		}
 	
-	if (m_patch->process())
+	if (m_patch->enabled())
 		m_process_order = m_patch->build_process_order();
 	
 	m_succeeded = true;
@@ -233,7 +233,7 @@ TypedDisconnectionEvent<T>::pre_process()
 
 template <typename T>
 void
-TypedDisconnectionEvent<T>::execute(SampleCount offset)
+TypedDisconnectionEvent<T>::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {
 	if (m_succeeded) {
 
@@ -248,18 +248,18 @@ TypedDisconnectionEvent<T>::execute(SampleCount offset)
 			assert((Connection*)port_connection->elem() == patch_connection->elem());
 			
 			// Clean up both the list node and the connection itself...
-			Engine::instance().maid()->push(port_connection);
-			Engine::instance().maid()->push(patch_connection);
-			Engine::instance().maid()->push(port_connection->elem());
+			_engine.maid()->push(port_connection);
+			_engine.maid()->push(patch_connection);
+			_engine.maid()->push(port_connection->elem());
 	
 			if (m_patch->process_order() != NULL)
-				Engine::instance().maid()->push(m_patch->process_order());
+				_engine.maid()->push(m_patch->process_order());
 			m_patch->process_order(m_process_order);
 		} else {
 			m_succeeded = false;  // Ports weren't connected
 		}
 	}
-	QueuedEvent::execute(offset);
+	QueuedEvent::execute(nframes, start, end);
 }
 
 
@@ -271,7 +271,7 @@ TypedDisconnectionEvent<T>::post_process()
 	
 		_responder->respond_ok();
 	
-		Engine::instance().client_broadcaster()->send_disconnection(m_src_port->path(), m_dst_port->path());
+		_engine.client_broadcaster()->send_disconnection(m_src_port->path(), m_dst_port->path());
 	} else {
 		_responder->respond_error("Unable to disconnect ports.");
 	}

@@ -56,8 +56,6 @@ namespace Ingen {
 NodeFactory::NodeFactory()
 : _has_loaded(false)
 {
-	pthread_mutex_init(&_plugin_list_mutex, NULL);
-	
 	// Add builtin plugin types to _internal_plugins list
 	// FIXME: ewwww, definitely a better way to do this!
 
@@ -101,8 +99,6 @@ NodeFactory::load_plugins()
 	// this (expensive!) stuff to happen.  Not the best solution - would be nice
 	// if clients could refresh plugins list for whatever reason :/
 	if (!_has_loaded) {
-		pthread_mutex_lock(&_plugin_list_mutex);
-		
 		_plugins.clear();
 		_plugins = _internal_plugins;
 	
@@ -117,8 +113,6 @@ NodeFactory::load_plugins()
 #endif
 		
 		_has_loaded = true;
-		
-		pthread_mutex_unlock(&_plugin_list_mutex);
 	}
 }
 
@@ -137,8 +131,6 @@ NodeFactory::load_plugin(const Plugin* a_plugin,
 	assert(poly == 1 || poly == parent->internal_poly());
 	assert(a_plugin);
 
-	pthread_mutex_lock(&_plugin_list_mutex);
-	
 	Node* r = NULL;
 	Plugin* plugin = NULL;
 
@@ -200,8 +192,6 @@ NodeFactory::load_plugin(const Plugin* a_plugin,
 	default:
 		cerr << "[NodeFactory] WARNING: Unknown plugin type." << endl;
 	}
-
-	pthread_mutex_unlock(&_plugin_list_mutex);
 
 	return r;
 }

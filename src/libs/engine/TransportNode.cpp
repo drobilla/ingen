@@ -14,7 +14,6 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-
 #include "TransportNode.h"
 #include <jack/transport.h>
 #include "OutputPort.h"
@@ -81,9 +80,9 @@ TransportNode::TransportNode(const string& path, size_t poly, Patch* parent, Sam
 
 
 void
-TransportNode::run(size_t nframes)
+TransportNode::process(SampleCount nframes, FrameTime start, FrameTime end)
 {
-	NodeBase::process(nframes);
+	NodeBase::process(nframes, start, end);
 #if 0
 
 	// FIXME: this will die horribly with any driver other than jack (in theory)

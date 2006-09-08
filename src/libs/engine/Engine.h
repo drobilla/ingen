@@ -39,21 +39,21 @@ class LashDriver;
 template <typename T> class Driver;
 
 
-/** The main class for Ingen, the whole engine basically lives in here
+/** The main class for the Engine.
  *
- * A singleton, but shouldn't be (FIXME).  Explicitly instantiated singleton
- * to be exact - call instantiate before instance or suffer horrible death.
+ * With access to this you can find any object that's a part of the engine.
+ * Access to this should be limited as possible, it basically exists so
+ * there's something to pass Event constructors so they can access what
+ * they need to perform their function.
  *
  * \ingroup engine
  */
 class Engine
 {
 public:
+	Engine(const char* listen_port, AudioDriver* audio_driver = 0);
 	~Engine();
 
-	static void   instantiate(const char* port, AudioDriver* audio_driver = 0);
-	static Engine& instance() { assert(m_instance); return *m_instance; }
-	
 	int main();
 	
 	/** Set the quit flag that should kill all threads and exit cleanly.
@@ -66,8 +66,8 @@ public:
 	AudioDriver*       audio_driver()       const { return m_audio_driver; }
 	OSCReceiver*       osc_receiver()       const { return m_osc_receiver; }
 	MidiDriver*        midi_driver()        const { return m_midi_driver; }
-	PostProcessor*     post_processor()     const { return m_post_processor; }
 	Maid*              maid()               const { return m_maid; }
+	PostProcessor*     post_processor()     const { return m_post_processor; }
 	ClientBroadcaster* client_broadcaster() const { return m_client_broadcaster; }
 	ObjectStore*       object_store()       const { return m_object_store; }
 	NodeFactory*       node_factory()       const { return m_node_factory; }
@@ -77,19 +77,15 @@ public:
 	template<typename T> Driver<T>* driver();
 	
 private:
-	Engine(const char* port, AudioDriver* audio_driver = 0);
-
 	// Prevent copies (undefined)
 	Engine(const Engine&);
 	Engine& operator=(const Engine&);
 
-	static Engine*      m_instance;
-
 	AudioDriver*       m_audio_driver;
 	OSCReceiver*       m_osc_receiver;
 	MidiDriver*        m_midi_driver;
-	PostProcessor*     m_post_processor;
 	Maid*              m_maid;
+	PostProcessor*     m_post_processor;
 	ClientBroadcaster* m_client_broadcaster;
 	ObjectStore*       m_object_store;
 	NodeFactory*       m_node_factory;

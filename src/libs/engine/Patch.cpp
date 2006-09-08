@@ -94,18 +94,17 @@ Patch::deactivate()
 
 
 void
-Patch::process(bool p)
+Patch::disable()
 {
-	if (!p) {
-		// Write output buffers to 0
-		/*for (List<InternalNode*>::iterator i = _bridge_nodes.begin(); i != _bridge_nodes.end(); ++i) {
-			assert((*i)->as_port() != NULL);
-			if ((*i)->as_port()->port_info()->is_output())
-				(*i)->as_port()->clear_buffers();*/
-		for (List<Port*>::iterator i = _output_ports.begin(); i != _output_ports.end(); ++i)
-			(*i)->clear_buffers();
-	}
-	_process = p;
+	// Write output buffers to 0
+	/*for (List<InternalNode*>::iterator i = _bridge_nodes.begin(); i != _bridge_nodes.end(); ++i) {
+	  assert((*i)->as_port() != NULL);
+	  if ((*i)->as_port()->port_info()->is_output())
+	  (*i)->as_port()->clear_buffers();*/
+	for (List<Port*>::iterator i = _output_ports.begin(); i != _output_ports.end(); ++i)
+		(*i)->clear_buffers();
+
+	_process = false;
 }
 
 
@@ -114,7 +113,7 @@ Patch::process(bool p)
  * Calls all Nodes in the order _process_order specifies.
  */
 void
-Patch::process(SampleCount nframes)
+Patch::process(SampleCount nframes, FrameTime start, FrameTime end)
 {
 	if (_process_order == NULL || !_process)
 		return;
@@ -123,31 +122,31 @@ Patch::process(SampleCount nframes)
 	
 	// Prepare input ports for nodes to consume
 	for (List<Port*>::iterator i = _input_ports.begin(); i != _input_ports.end(); ++i)
-		(*i)->process(nframes);
+		(*i)->process(nframes, start, end);
 
 	// Run all nodes (consume input ports)
 	for (size_t i=0; i < _process_order->size(); ++i) {
 		// Could be a gap due to a node removal event (see RemoveNodeEvent.cpp)
 		// Yes, this is ugly
 		if (_process_order->at(i) != NULL)
-			_process_order->at(i)->process(nframes);
+			_process_order->at(i)->process(nframes, start, end);
 	}
 	
 	// Prepare output ports (for caller to consume)
 	for (List<Port*>::iterator i = _output_ports.begin(); i != _output_ports.end(); ++i)
-		(*i)->process(nframes);
+		(*i)->process(nframes, start, end);
 }
 
 
 void
-Patch::add_to_store()
+Patch::add_to_store(ObjectStore* store)
 {
 	// Add self and ports
-	NodeBase::add_to_store();
+	NodeBase::add_to_store(store);
 
 	// Add nodes
 	for (List<Node*>::iterator j = _nodes.begin(); j != _nodes.end(); ++j)
-		(*j)->add_to_store();
+		(*j)->add_to_store(store);
 }
 
 

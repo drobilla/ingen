@@ -36,8 +36,8 @@ namespace Ingen {
 //// ConnectionEvent ////
 
 
-ConnectionEvent::ConnectionEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& src_port_path, const string& dst_port_path)
-: QueuedEvent(responder, timestamp),
+ConnectionEvent::ConnectionEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& src_port_path, const string& dst_port_path)
+: QueuedEvent(engine, responder, timestamp),
   m_src_port_path(src_port_path),
   m_dst_port_path(dst_port_path),
   m_patch(NULL),
@@ -66,7 +66,7 @@ ConnectionEvent::pre_process()
 		return;
 	}
 	
-	/*m_patch = Engine::instance().object_store()->find_patch(m_src_port_path.parent().parent());
+	/*m_patch = _engine.object_store()->find_patch(m_src_port_path.parent().parent());
 
 	if (m_patch == NULL) {
 		m_error = PORT_NOT_FOUND;
@@ -74,8 +74,8 @@ ConnectionEvent::pre_process()
 		return;
 	}*/
 	
-	m_src_port = Engine::instance().object_store()->find_port(m_src_port_path);
-	m_dst_port = Engine::instance().object_store()->find_port(m_dst_port_path);
+	m_src_port = _engine.object_store()->find_port(m_src_port_path);
+	m_dst_port = _engine.object_store()->find_port(m_dst_port_path);
 	
 	if (m_src_port == NULL || m_dst_port == NULL) {
 		m_error = PORT_NOT_FOUND;
@@ -104,10 +104,10 @@ ConnectionEvent::pre_process()
 	// Create the typed event to actually do the work
 	const DataType type = m_src_port->type();
 	if (type == DataType::FLOAT) {
-		m_typed_event = new TypedConnectionEvent<Sample>(_responder, _time_stamp,
+		m_typed_event = new TypedConnectionEvent<Sample>(_engine, _responder, _time,
 			dynamic_cast<OutputPort<Sample>*>(m_src_port), dynamic_cast<InputPort<Sample>*>(m_dst_port));
 	} else if (type == DataType::MIDI) {
-		m_typed_event = new TypedConnectionEvent<MidiMessage>(_responder, _time_stamp,
+		m_typed_event = new TypedConnectionEvent<MidiMessage>(_engine, _responder, _time,
 			dynamic_cast<OutputPort<MidiMessage>*>(m_src_port), dynamic_cast<InputPort<MidiMessage>*>(m_dst_port));
 	} else {
 		m_error = TYPE_MISMATCH;
@@ -122,12 +122,12 @@ ConnectionEvent::pre_process()
 
 
 void
-ConnectionEvent::execute(SampleCount offset)
+ConnectionEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {
-	QueuedEvent::execute(offset);
+	QueuedEvent::execute(nframes, start, end);
 
 	if (m_error == NO_ERROR)
-		m_typed_event->execute(offset);
+		m_typed_event->execute(nframes, start, end);
 }
 
 
@@ -150,8 +150,8 @@ ConnectionEvent::post_process()
 
 
 template <typename T>
-TypedConnectionEvent<T>::TypedConnectionEvent(CountedPtr<Responder> responder, SampleCount timestamp, OutputPort<T>* src_port, InputPort<T>* dst_port)
-: QueuedEvent(responder, timestamp),
+TypedConnectionEvent<T>::TypedConnectionEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, OutputPort<T>* src_port, InputPort<T>* dst_port)
+: QueuedEvent(engine, responder, timestamp),
   m_src_port(src_port),
   m_dst_port(dst_port),
   m_patch(NULL),
@@ -221,21 +221,21 @@ TypedConnectionEvent<T>::pre_process()
 		src_node->dependants()->push_back(new ListNode<Node*>(dst_node));
 	}
 
-	if (m_patch->process())
+	if (m_patch->enabled())
 		m_process_order = m_patch->build_process_order();
 }
 
 
 template <typename T>
 void
-TypedConnectionEvent<T>::execute(SampleCount offset)
+TypedConnectionEvent<T>::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {
 	if (m_succeeded) {
 		// These must be inserted here, since they're actually used by the audio thread
 		m_dst_port->add_connection(m_port_listnode);
 		m_patch->add_connection(m_patch_listnode);
 		if (m_patch->process_order() != NULL)
-			Engine::instance().maid()->push(m_patch->process_order());
+			_engine.maid()->push(m_patch->process_order());
 		m_patch->process_order(m_process_order);
 	}
 }
@@ -250,7 +250,7 @@ TypedConnectionEvent<T>::post_process()
 	
 		_responder->respond_ok();
 	
-		Engine::instance().client_broadcaster()->send_connection(m_connection);
+		_engine.client_broadcaster()->send_connection(m_connection);
 	} else {
 		_responder->respond_error("Unable to make connection.");
 	}

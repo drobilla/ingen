@@ -44,12 +44,12 @@ class DisconnectPortEvent;
 class DestroyEvent : public QueuedEvent
 {
 public:
-	DestroyEvent(CountedPtr<Responder> responder, SampleCount timestamp, QueuedEventSource* source, const string& path, bool lock_mutex = true);
-	DestroyEvent(CountedPtr<Responder> responder, SampleCount timestamp, Node* node, bool lock_mutex = true);
+	DestroyEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, QueuedEventSource* source, const string& path, bool lock_mutex = true);
+	DestroyEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, Node* node, bool lock_mutex = true);
 	~DestroyEvent();
 
 	void pre_process();
-	void execute(SampleCount offset);
+	void execute(SampleCount nframes, FrameTime start, FrameTime end);
 	void post_process();
 
 private:

@@ -20,12 +20,12 @@
 #include <inttypes.h>
 #include <string>
 #include "util/CountedPtr.h"
-#include "interface/ClientInterface.h"
+#include "interface/ClientKey.h"
 using std::string;
 
 namespace Ingen {
 
-using Shared::ClientInterface;
+using Shared::ClientKey;
 
 
 /** Class to handle responding to clients.
@@ -36,8 +36,8 @@ using Shared::ClientInterface;
  * Note that this class only handles sending responses to commands from
  * clients, (ie OK or an error), <b>not</b> notifications (ie new node,
  * disconnection) - that's what ClientInterface is for.  If a command is
- * a request, \ref find_client can find the corresponding ClientInterface
- * for this client to send the reply to.
+ * a request, the ClientKey of the Responder can be used to find the
+ * ClientInterface which should receive the response.
  *
  * ClientInterface and Responder are seperate because responding might not
  * actually get exposed to the client interface (eg in simulated blocking
@@ -49,8 +49,7 @@ public:
 	Responder() {}
 	virtual ~Responder() {}
 
-	virtual CountedPtr<Shared::ClientInterface> find_client()
-	{ return CountedPtr<Shared::ClientInterface>(NULL); }
+	virtual ClientKey client_key() { return ClientKey(); }
 
 	virtual void respond_ok() {}
 	virtual void respond_error(const string& msg) {}

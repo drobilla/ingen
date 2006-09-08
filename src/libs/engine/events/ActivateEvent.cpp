@@ -21,8 +21,8 @@
 namespace Ingen {
 
 
-ActivateEvent::ActivateEvent(CountedPtr<Responder> responder, SampleCount timestamp)
-: QueuedEvent(responder, timestamp)
+ActivateEvent::ActivateEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp)
+: QueuedEvent(engine, responder, timestamp)
 {
 }
 
@@ -32,7 +32,7 @@ ActivateEvent::pre_process()
 {
 	QueuedEvent::pre_process();
 
-	Engine::instance().activate();
+	_engine.activate();
 }
 
 

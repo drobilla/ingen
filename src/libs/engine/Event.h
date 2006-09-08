@@ -25,6 +25,7 @@
 
 namespace Ingen {	
 
+class Engine;
 
 
 /** Base class for all events (both realtime and QueuedEvent).
@@ -44,27 +45,34 @@ public:
 	virtual ~Event() {}
 
 	/** Execute this event in the audio thread (MUST be realtime safe). */
-	virtual void execute(SampleCount offset) { assert(!_executed); _executed = true; }
+	virtual void execute(SampleCount nframes, FrameTime start, FrameTime end)
+	{
+		assert(!_executed);
+		assert(_time >= start && _time <= end);
+		_executed = true;
+	}
 	
 	/** Perform any actions after execution (ie send replies to commands)
 	 * (no realtime requirements). */
 	virtual void post_process() {}
 	
-	inline SampleCount time_stamp() { return _time_stamp; }
+	inline SampleCount time() { return _time; }
 		
 protected:
 	// Prevent copies
 	Event(const Event&);
 	Event& operator=(const Event&);
 
-	Event(CountedPtr<Responder> responder, SampleCount timestamp)
-	: _responder(responder)
-	, _time_stamp(timestamp)
+	Event(Engine& engine, CountedPtr<Responder> responder, FrameTime time)
+	: _engine(engine)
+	, _responder(responder)
+	, _time(time)
 	, _executed(false)
 	{}
 	
+	Engine&                _engine;
 	CountedPtr<Responder>  _responder;
-	SampleCount            _time_stamp;
+	FrameTime              _time;
 	bool                   _executed;
 };
 

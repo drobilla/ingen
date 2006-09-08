@@ -27,8 +27,8 @@ namespace Ingen {
 
 /** Note off with patch explicitly passed - triggered by MIDI.
  */
-NoteOffEvent::NoteOffEvent(CountedPtr<Responder> responder, SampleCount timestamp, Node* node, uchar note_num)
-: Event(responder, timestamp),
+NoteOffEvent::NoteOffEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, Node* node, uchar note_num)
+: Event(engine, responder, timestamp),
   m_node(node),
   m_note_num(note_num)
 {
@@ -37,8 +37,8 @@ NoteOffEvent::NoteOffEvent(CountedPtr<Responder> responder, SampleCount timestam
 
 /** Note off event with lookup - triggered by OSC.
  */
-NoteOffEvent::NoteOffEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& node_path, uchar note_num)
-: Event(responder, timestamp),
+NoteOffEvent::NoteOffEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& node_path, uchar note_num)
+: Event(engine, responder, timestamp),
   m_node(NULL),
   m_node_path(node_path),
   m_note_num(note_num)
@@ -47,17 +47,19 @@ NoteOffEvent::NoteOffEvent(CountedPtr<Responder> responder, SampleCount timestam
 
 
 void
-NoteOffEvent::execute(SampleCount offset)
+NoteOffEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {	
+	assert(_time >= start && _time <= end);
+
 	if (m_node == NULL && m_node_path != "")
-		m_node = Engine::instance().object_store()->find_node(m_node_path);
+		m_node = _engine.object_store()->find_node(m_node_path);
 		
 	// FIXME: this isn't very good at all.
 	if (m_node != NULL && m_node->plugin()->type() == Plugin::Internal) {
 		if (m_node->plugin()->plug_label() == "note_in")
-			((MidiNoteNode*)m_node)->note_off(m_note_num, offset);
+			((MidiNoteNode*)m_node)->note_off(m_note_num, _time, nframes, start, end);
 		else if (m_node->plugin()->plug_label() == "trigger_in")
-			((MidiTriggerNode*)m_node)->note_off(m_note_num, offset);
+			((MidiTriggerNode*)m_node)->note_off(m_note_num, _time, nframes, start, end);
 	}
 }
 

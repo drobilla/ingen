@@ -30,8 +30,8 @@ namespace Ingen {
  *
  * Used to be triggered by MIDI.  Not used anymore.
  */
-NoteOnEvent::NoteOnEvent(CountedPtr<Responder> responder, SampleCount timestamp, Node* patch, uchar note_num, uchar velocity)
-: Event(responder, timestamp),
+NoteOnEvent::NoteOnEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, Node* patch, uchar note_num, uchar velocity)
+: Event(engine, responder, timestamp),
   m_node(patch),
   m_note_num(note_num),
   m_velocity(velocity),
@@ -44,8 +44,8 @@ NoteOnEvent::NoteOnEvent(CountedPtr<Responder> responder, SampleCount timestamp,
  *
  * Triggered by OSC.
  */
-NoteOnEvent::NoteOnEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& node_path, uchar note_num, uchar velocity)
-: Event(responder, timestamp),
+NoteOnEvent::NoteOnEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& node_path, uchar note_num, uchar velocity)
+: Event(engine, responder, timestamp),
   m_node(NULL),
   m_node_path(node_path),
   m_note_num(note_num),
@@ -56,18 +56,20 @@ NoteOnEvent::NoteOnEvent(CountedPtr<Responder> responder, SampleCount timestamp,
 
 
 void
-NoteOnEvent::execute(SampleCount offset)
+NoteOnEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {
+	assert(_time >= start && _time <= end);
+
 	// Lookup if neccessary
 	if (m_is_osc_triggered)
-		m_node = Engine::instance().object_store()->find_node(m_node_path);
+		m_node = _engine.object_store()->find_node(m_node_path);
 		
 	// FIXME: this isn't very good at all.
 	if (m_node != NULL && m_node->plugin()->type() == Plugin::Internal) {
 		if (m_node->plugin()->plug_label() == "note_in")
-			((MidiNoteNode*)m_node)->note_on(m_note_num, m_velocity, offset);
+			((MidiNoteNode*)m_node)->note_on(m_note_num, m_velocity, _time, nframes, start, end);
 		else if (m_node->plugin()->plug_label() == "trigger_in")
-			((MidiTriggerNode*)m_node)->note_on(m_note_num, m_velocity, offset);
+			((MidiTriggerNode*)m_node)->note_on(m_note_num, m_velocity, _time, nframes, start, end);
 	}
 }
 

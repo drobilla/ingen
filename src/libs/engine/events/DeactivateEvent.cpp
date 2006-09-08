@@ -21,8 +21,8 @@
 namespace Ingen {
 
 
-DeactivateEvent::DeactivateEvent(CountedPtr<Responder> responder, SampleCount timestamp)
-: QueuedEvent(responder, timestamp)
+DeactivateEvent::DeactivateEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp)
+: QueuedEvent(engine, responder, timestamp)
 {
 }
 
@@ -35,9 +35,9 @@ DeactivateEvent::pre_process()
 
 
 void
-DeactivateEvent::execute(SampleCount offset)
+DeactivateEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {
-	QueuedEvent::execute(offset);
+	QueuedEvent::execute(nframes, start, end);
 }
 
 
@@ -45,7 +45,7 @@ void
 DeactivateEvent::post_process()
 {
 	_responder->respond_ok();
-	Engine::instance().deactivate();
+	_engine.deactivate();
 }
 
 

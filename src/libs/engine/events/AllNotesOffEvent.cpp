@@ -24,8 +24,8 @@ namespace Ingen {
 
 /** Note off with patch explicitly passed - triggered by MIDI.
  */
-AllNotesOffEvent::AllNotesOffEvent(CountedPtr<Responder> responder, SampleCount timestamp, Patch* patch)
-: Event(responder, timestamp),
+AllNotesOffEvent::AllNotesOffEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, Patch* patch)
+: Event(engine, responder, timestamp),
   m_patch(patch)
 {
 }
@@ -33,8 +33,8 @@ AllNotesOffEvent::AllNotesOffEvent(CountedPtr<Responder> responder, SampleCount 
 
 /** Note off event with lookup - triggered by OSC.
  */
-AllNotesOffEvent::AllNotesOffEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& patch_path)
-: Event(responder, timestamp),
+AllNotesOffEvent::AllNotesOffEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& patch_path)
+: Event(engine, responder, timestamp),
   m_patch(NULL),
   m_patch_path(patch_path)
 {
@@ -42,10 +42,10 @@ AllNotesOffEvent::AllNotesOffEvent(CountedPtr<Responder> responder, SampleCount 
 
 
 void
-AllNotesOffEvent::execute(SampleCount offset)
+AllNotesOffEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {	
 	if (m_patch == NULL && m_patch_path != "")
-		m_patch = Engine::instance().object_store()->find_patch(m_patch_path);
+		m_patch = _engine.object_store()->find_patch(m_patch_path);
 		
 	//if (m_patch != NULL)
 	//	for (List<MidiInNode*>::iterator j = m_patch->midi_in_nodes().begin(); j != m_patch->midi_in_nodes().end(); ++j)

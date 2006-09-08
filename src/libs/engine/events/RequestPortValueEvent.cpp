@@ -28,8 +28,8 @@ using std::string;
 namespace Ingen {
 
 
-RequestPortValueEvent::RequestPortValueEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& port_path)
-: QueuedEvent(responder, timestamp),
+RequestPortValueEvent::RequestPortValueEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& port_path)
+: QueuedEvent(engine, responder, timestamp),
   m_port_path(port_path),
   m_port(NULL),
   m_value(0.0),
@@ -41,22 +41,24 @@ RequestPortValueEvent::RequestPortValueEvent(CountedPtr<Responder> responder, Sa
 void
 RequestPortValueEvent::pre_process()
 {
-	m_client = _responder->find_client();
-	m_port = Engine::instance().object_store()->find_port(m_port_path);
+	m_client = _engine.client_broadcaster()->client(_responder->client_key());
+	m_port = _engine.object_store()->find_port(m_port_path);
 
 	QueuedEvent::pre_process();
 }
 
 
 void
-RequestPortValueEvent::execute(SampleCount offset)
+RequestPortValueEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {
+	assert(_time >= start && _time <= end);
+
 	if (m_port != NULL && m_port->type() == DataType::FLOAT)
-		m_value = ((TypedPort<Sample>*)m_port)->buffer(0)->value_at(offset);
+		m_value = ((TypedPort<Sample>*)m_port)->buffer(0)->value_at(_time - start);
 	else 
 		m_port = NULL; // triggers error response
 
-	QueuedEvent::execute(offset);
+	QueuedEvent::execute(nframes, start, end);
 }
 
 
@@ -70,7 +72,7 @@ RequestPortValueEvent::post_process()
 		_responder->respond_ok();
 		m_client->control_change(m_port_path, m_value);
 	} else {
-		_responder->respond_error("Invalid URL");
+		_responder->respond_error("Unable to find client to send port value");
 	}
 }
 

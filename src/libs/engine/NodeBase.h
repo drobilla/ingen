@@ -28,6 +28,8 @@ namespace Ingen {
 
 class Plugin;
 class Patch;
+class ObjectStore;
+
 namespace Shared {
 	class ClientInterface;
 } using Shared::ClientInterface;
@@ -50,14 +52,14 @@ public:
 	virtual void deactivate();
 	bool activated() { return _activated; }
 
-	virtual void process(SampleCount nframes);
+	virtual void process(SampleCount nframes, FrameTime start, FrameTime end);
 		
 	virtual void set_port_buffer(size_t voice, size_t port_num, void* buf) {}
 	
 	virtual void add_to_patch() {}
 	virtual void remove_from_patch() {}
 	
-	void add_to_store();
+	void add_to_store(ObjectStore* store);
 	void remove_from_store();
 	
 	//void send_creation_messages(ClientInterface* client) const;
@@ -89,6 +91,8 @@ protected:
 	NodeBase(const NodeBase&);
 	NodeBase& operator=(const NodeBase&);
 	
+	ObjectStore* _store;
+
 	const Plugin* _plugin;
 
 	size_t      _poly;

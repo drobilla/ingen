@@ -20,8 +20,9 @@
 #include <pthread.h>
 #include "types.h"
 #include "util/Queue.h"
-#include "util/Semaphore.h"
 #include "Slave.h"
+
+class Maid;
 
 namespace Ingen {
 
@@ -39,7 +40,7 @@ class Event;
 class PostProcessor : public Slave
 {
 public:
-	PostProcessor(size_t queue_size);
+	PostProcessor(Maid& maid, size_t queue_size);
 
 	/** Push an event on to the process queue, realtime-safe, not thread-safe. */
 	inline void push(Event* const ev) { _events.push(ev); }
@@ -49,6 +50,7 @@ private:
 	PostProcessor(const PostProcessor&);
 	PostProcessor& operator=(const PostProcessor&);
 
+	Maid&         _maid;
 	Queue<Event*> _events;
 	virtual void  _whipped();
 };

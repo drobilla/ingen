@@ -27,8 +27,8 @@ using std::string;
 namespace Ingen {
 
 
-SetMetadataEvent::SetMetadataEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& key, const string& value)
-: QueuedEvent(responder, timestamp),
+SetMetadataEvent::SetMetadataEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& key, const string& value)
+: QueuedEvent(engine, responder, timestamp),
   m_path(path),
   m_key(key),
   m_value(value),
@@ -40,7 +40,7 @@ SetMetadataEvent::SetMetadataEvent(CountedPtr<Responder> responder, SampleCount 
 void
 SetMetadataEvent::pre_process()
 {
-	m_object = Engine::instance().object_store()->find(m_path);
+	m_object = _engine.object_store()->find(m_path);
 	if (m_object == NULL) {
 		QueuedEvent::pre_process();
 		return;
@@ -53,11 +53,11 @@ SetMetadataEvent::pre_process()
 
 
 void
-SetMetadataEvent::execute(SampleCount offset)
+SetMetadataEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {
 	// Do nothing
 	
-	QueuedEvent::execute(offset);
+	QueuedEvent::execute(nframes, start, end);
 }
 
 
@@ -70,7 +70,7 @@ SetMetadataEvent::post_process()
 		_responder->respond_error(msg);
 	} else {
 		_responder->respond_ok();
-		Engine::instance().client_broadcaster()->send_metadata_update(m_path, m_key, m_value);
+		_engine.client_broadcaster()->send_metadata_update(m_path, m_key, m_value);
 	}
 }
 

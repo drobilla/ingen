@@ -28,8 +28,8 @@ using std::cout; using std::cerr; using std::endl;
 namespace Ingen {
 
 
-DSSIProgramEvent::DSSIProgramEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& node_path, int bank, int program)
-: QueuedEvent(responder, timestamp),
+DSSIProgramEvent::DSSIProgramEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& node_path, int bank, int program)
+: QueuedEvent(engine, responder, timestamp),
   m_node_path(node_path),
   m_bank(bank),
   m_program(program),
@@ -41,7 +41,7 @@ DSSIProgramEvent::DSSIProgramEvent(CountedPtr<Responder> responder, SampleCount 
 void
 DSSIProgramEvent::pre_process()
 {
-	Node* node = Engine::instance().object_store()->find_node(m_node_path);
+	Node* node = _engine.object_store()->find_node(m_node_path);
 
 	if (node != NULL && node->plugin()->type() == Plugin::DSSI)
 		m_node = (DSSINode*)node;
@@ -51,7 +51,7 @@ DSSIProgramEvent::pre_process()
 
 	
 void
-DSSIProgramEvent::execute(SampleCount offset)
+DSSIProgramEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {
 	if (m_node != NULL)
 		m_node->program(m_bank, m_program);
@@ -67,7 +67,7 @@ DSSIProgramEvent::post_process()
 		// sends program as metadata in the form bank/program
 		char* temp_buf = new char[16];
 		snprintf(temp_buf, 16, "%d/%d", m_bank, m_program);
-		Engine::instance().client_broadcaster()->send_metadata_update(m_node_path, "dssi-program", temp_buf);
+		_engine.client_broadcaster()->send_metadata_update(m_node_path, "dssi-program", temp_buf);
 	}
 }
 

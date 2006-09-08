@@ -32,6 +32,9 @@
 using std::cout; using std::endl; using std::cerr;
 
 
+Ingen::Engine* engine;
+
+
 void
 catch_int(int)
 {
@@ -39,7 +42,7 @@ catch_int(int)
 	signal(SIGTERM, catch_int);
 
 	std::cout << "[Main] Ingen interrupted." << std::endl;
-	Ingen::Engine::instance().quit();
+	engine->quit();
 }
 
 
@@ -132,20 +135,19 @@ main(int argc, char** argv)
 
 		Ingen::set_denormal_flags();
 
-		Ingen::Engine::instantiate(args_info.port_arg);
+		engine = new Ingen::Engine(args_info.port_arg);
 
 #ifdef HAVE_LASH
 		Ingen::lash_driver = new Ingen::LashDriver(Ingen::om, lash_args);
 #endif
 
-		Ingen::Engine::instance().main();
+		engine->main();
 
 #ifdef HAVE_LASH
 		delete Ingen::lash_driver;
 #endif
 
-		// FIXME: leak
-		//delete Ingen::om;
+		delete engine;
 	}
 	
 	return ret;

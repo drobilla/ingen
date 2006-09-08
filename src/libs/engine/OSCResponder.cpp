@@ -15,7 +15,6 @@
  */
 
 #include "OSCResponder.h"
-#include "Engine.h"
 #include "ClientBroadcaster.h"
 #include "interface/ClientKey.h"
 #include <cstdlib>
@@ -48,13 +47,6 @@ OSCResponder::~OSCResponder()
 
 	if (_addr)
 		lo_address_free(_addr);
-}
-
-
-CountedPtr<Shared::ClientInterface>
-OSCResponder::find_client()
-{
-	return Engine::instance().client_broadcaster()->client(ClientKey(ClientKey::OSC_URL, _url));
 }
 
 

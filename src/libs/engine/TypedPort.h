@@ -49,7 +49,7 @@ public:
 	
 	Buffer<T>* buffer(size_t voice) const { return m_buffers.at(voice); }
 	
-	virtual void process(SampleCount nframes);
+	virtual void process(SampleCount nframes, FrameTime start, FrameTime end);
 	virtual void clear_buffers();
 	
 	/** Used by drivers to prevent port from changing buffers */

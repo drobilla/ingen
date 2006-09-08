@@ -35,10 +35,10 @@ class Patch;
 class ClearPatchEvent : public QueuedEvent
 {
 public:
-	ClearPatchEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& patch_path);
+	ClearPatchEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& patch_path);
 	
 	void pre_process();
-	void execute(SampleCount offset);
+	void execute(SampleCount nframes, FrameTime start, FrameTime end);
 	void post_process();
 
 private:

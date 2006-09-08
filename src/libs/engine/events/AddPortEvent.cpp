@@ -36,8 +36,8 @@
 namespace Ingen {
 
 
-AddPortEvent::AddPortEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& type, bool is_output)
-: QueuedEvent(responder, timestamp),
+AddPortEvent::AddPortEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& type, bool is_output)
+: QueuedEvent(engine, responder, timestamp),
   _path(path),
   _type(type),
   _is_output(is_output),
@@ -57,21 +57,21 @@ AddPortEvent::AddPortEvent(CountedPtr<Responder> responder, SampleCount timestam
 void
 AddPortEvent::pre_process()
 {
-	if (Engine::instance().object_store()->find(_path) != NULL) {
+	if (_engine.object_store()->find(_path) != NULL) {
 		QueuedEvent::pre_process();
 		return;
 	}
 
 	// FIXME: this is just a mess :/
 	
-	_patch = Engine::instance().object_store()->find_patch(_path.parent());
+	_patch = _engine.object_store()->find_patch(_path.parent());
 
 	if (_patch != NULL) {
 		assert(_patch->path() == _path.parent());
 		
 		size_t buffer_size = 1;
 		if (_type == "AUDIO" || _type == "MIDI")
-			buffer_size = Engine::instance().audio_driver()->buffer_size();
+			buffer_size = _engine.audio_driver()->buffer_size();
 	
 		_patch_port = _patch->create_port(_path.name(), _data_type, buffer_size, _is_output);
 		if (_patch_port) {
@@ -86,14 +86,14 @@ AddPortEvent::pre_process()
 				_ports_array = new Array<Port*>(_patch->num_ports() + 1, NULL);
 
 			_ports_array->at(_patch->num_ports()) = _patch_port;
-			Engine::instance().object_store()->add(_patch_port);
+			_engine.object_store()->add(_patch_port);
 
 			if (!_patch->parent()) {
 				if (_type == "AUDIO")
-					_driver_port = Engine::instance().audio_driver()->create_port(
+					_driver_port = _engine.audio_driver()->create_port(
 						dynamic_cast<DuplexPort<Sample>*>(_patch_port));
 				else if (_type == "MIDI")
-					_driver_port = Engine::instance().midi_driver()->create_port(
+					_driver_port = _engine.midi_driver()->create_port(
 						dynamic_cast<DuplexPort<MidiMessage>*>(_patch_port));
 			}
 		}
@@ -103,12 +103,12 @@ AddPortEvent::pre_process()
 
 
 void
-AddPortEvent::execute(SampleCount offset)
+AddPortEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {
-	QueuedEvent::execute(offset);
+	QueuedEvent::execute(nframes, start, end);
 
 	if (_patch_port) {
-		Engine::instance().maid()->push(_patch->external_ports());
+		_engine.maid()->push(_patch->external_ports());
 		//_patch->add_port(_port);
 		_patch->external_ports(_ports_array);
 	}
@@ -126,7 +126,7 @@ AddPortEvent::post_process()
 		_responder->respond_error(msg);
 	} else {
 		_responder->respond_ok();
-		Engine::instance().client_broadcaster()->send_port(_patch_port);
+		_engine.client_broadcaster()->send_port(_patch_port);
 	}
 }
 

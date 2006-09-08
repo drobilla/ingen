@@ -45,10 +45,10 @@ class MidiTriggerNode : public InternalNode
 public:
 	MidiTriggerNode(const string& path, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size);
 
-	void process(SampleCount nframes);
+	void process(SampleCount nframes, FrameTime start, FrameTime end);
 	
-	void note_on(uchar note_num, uchar velocity, SampleCount offset);
-	void note_off(uchar note_num, SampleCount offset);
+	void note_on(uchar note_num, uchar velocity, FrameTime time, SampleCount nframes, FrameTime start, FrameTime end);
+	void note_off(uchar note_num, FrameTime time, SampleCount nframes, FrameTime start, FrameTime end);
 
 private:
 	InputPort<MidiMessage>* _midi_in_port;

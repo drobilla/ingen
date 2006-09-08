@@ -39,7 +39,7 @@ class TransportNode : public InternalNode
 public:
 	TransportNode(const string& path, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size);
 
-	void run(size_t nframes);
+	virtual void process(SampleCount nframes, FrameTime start, FrameTime end);
 };
 
 

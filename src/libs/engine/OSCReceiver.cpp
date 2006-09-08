@@ -47,8 +47,8 @@ using Shared::ClientKey;
  */
 
 
-OSCReceiver::OSCReceiver(size_t queue_size, const char* const port)
-: QueuedEngineInterface(queue_size, queue_size), // FIXME
+OSCReceiver::OSCReceiver(Engine& engine, size_t queue_size, const char* const port)
+: QueuedEngineInterface(engine, queue_size, queue_size), // FIXME
   _port(port),
   _server(NULL),
   _osc_responder(NULL)

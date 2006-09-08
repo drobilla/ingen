@@ -18,12 +18,13 @@
 #include "Responder.h"
 #include "Engine.h"
 #include "ClientBroadcaster.h"
+#include "NodeFactory.h"
 
 namespace Ingen {
 
 
-RequestPluginsEvent::RequestPluginsEvent(CountedPtr<Responder> responder, SampleCount timestamp)
-: QueuedEvent(responder, timestamp),
+RequestPluginsEvent::RequestPluginsEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp)
+: QueuedEvent(engine, responder, timestamp),
   m_client(CountedPtr<ClientInterface>(NULL))
 {
 }
@@ -32,8 +33,12 @@ RequestPluginsEvent::RequestPluginsEvent(CountedPtr<Responder> responder, Sample
 void
 RequestPluginsEvent::pre_process()
 {
-	m_client = _responder->find_client();
+	m_client = _engine.client_broadcaster()->client(_responder->client_key());
 	
+	// Take a copy to send in the post processing thread (to avoid problems
+	// because std::list isn't thread safe)
+	m_plugins = _engine.node_factory()->plugins();
+
 	QueuedEvent::pre_process();
 }
 
@@ -42,10 +47,10 @@ void
 RequestPluginsEvent::post_process()
 {
 	if (m_client) {
-		Engine::instance().client_broadcaster()->send_plugins_to(m_client.get());
+		_engine.client_broadcaster()->send_plugins_to(m_client.get(), m_plugins);
 		_responder->respond_ok();
 	} else {
-		_responder->respond_error("Invalid URL");
+		_responder->respond_error("Unable to find client to send plugins");
 	}
 }
 

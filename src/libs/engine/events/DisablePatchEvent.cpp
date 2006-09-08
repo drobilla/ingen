@@ -26,8 +26,8 @@
 namespace Ingen {
 
 
-DisablePatchEvent::DisablePatchEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& patch_path)
-: QueuedEvent(responder, timestamp),
+DisablePatchEvent::DisablePatchEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& patch_path)
+: QueuedEvent(engine, responder, timestamp),
   m_patch_path(patch_path),
   m_patch(NULL)
 {
@@ -37,19 +37,19 @@ DisablePatchEvent::DisablePatchEvent(CountedPtr<Responder> responder, SampleCoun
 void
 DisablePatchEvent::pre_process()
 {
-	m_patch = Engine::instance().object_store()->find_patch(m_patch_path);
+	m_patch = _engine.object_store()->find_patch(m_patch_path);
 	
 	QueuedEvent::pre_process();
 }
 
 
 void
-DisablePatchEvent::execute(SampleCount offset)
+DisablePatchEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {
 	if (m_patch != NULL)
-		m_patch->process(false);
+		m_patch->disable();
 
-	QueuedEvent::execute(offset);
+	QueuedEvent::execute(nframes, start, end);
 }
 
 
@@ -58,7 +58,7 @@ DisablePatchEvent::post_process()
 {	
 	if (m_patch != NULL) {
 		_responder->respond_ok();
-		Engine::instance().client_broadcaster()->send_patch_disable(m_patch_path);
+		_engine.client_broadcaster()->send_patch_disable(m_patch_path);
 	} else {
 		_responder->respond_error(string("Patch ") + m_patch_path + " not found");
 	}

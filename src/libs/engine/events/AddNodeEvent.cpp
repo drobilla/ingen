@@ -33,8 +33,8 @@
 namespace Ingen {
 
 
-AddNodeEvent::AddNodeEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& path, Plugin* plugin, bool poly)
-: QueuedEvent(responder, timestamp),
+AddNodeEvent::AddNodeEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& path, Plugin* plugin, bool poly)
+: QueuedEvent(engine, responder, timestamp),
   m_path(path),
   m_plugin(plugin),
   m_poly(poly),
@@ -55,19 +55,19 @@ AddNodeEvent::~AddNodeEvent()
 void
 AddNodeEvent::pre_process()
 {
-	if (Engine::instance().object_store()->find(m_path) != NULL) {
+	if (_engine.object_store()->find(m_path) != NULL) {
 		m_node_already_exists = true;
 		QueuedEvent::pre_process();
 		return;
 	}
 
-	m_patch = Engine::instance().object_store()->find_patch(m_path.parent());
+	m_patch = _engine.object_store()->find_patch(m_path.parent());
 
 	if (m_patch != NULL) {
 		if (m_poly)
-			m_node = Engine::instance().node_factory()->load_plugin(m_plugin, m_path.name(), m_patch->internal_poly(), m_patch);
+			m_node = _engine.node_factory()->load_plugin(m_plugin, m_path.name(), m_patch->internal_poly(), m_patch);
 		else
-			m_node = Engine::instance().node_factory()->load_plugin(m_plugin, m_path.name(), 1, m_patch);
+			m_node = _engine.node_factory()->load_plugin(m_plugin, m_path.name(), 1, m_patch);
 		
 		if (m_node != NULL) {
 			m_node->activate();
@@ -75,9 +75,9 @@ AddNodeEvent::pre_process()
 			// This can be done here because the audio thread doesn't touch the
 			// node tree - just the process order array
 			m_patch->add_node(new ListNode<Node*>(m_node));
-			m_node->add_to_store();
+			m_node->add_to_store(_engine.object_store());
 			
-			if (m_patch->process())
+			if (m_patch->enabled())
 				m_process_order = m_patch->build_process_order();
 		}
 	}
@@ -86,15 +86,15 @@ AddNodeEvent::pre_process()
 
 
 void
-AddNodeEvent::execute(SampleCount offset)
+AddNodeEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {
-	QueuedEvent::execute(offset);
+	QueuedEvent::execute(nframes, start, end);
 
 	if (m_node != NULL) {
 		m_node->add_to_patch();
 		
 		if (m_patch->process_order() != NULL)
-			Engine::instance().maid()->push(m_patch->process_order());
+			_engine.maid()->push(m_patch->process_order());
 		m_patch->process_order(m_process_order);
 	}
 }
@@ -117,8 +117,8 @@ AddNodeEvent::post_process()
 		_responder->respond_error(msg);
 	} else {
 		_responder->respond_ok();
-		//Engine::instance().client_broadcaster()->send_node_creation_messages(m_node);
-		Engine::instance().client_broadcaster()->send_node(m_node);
+		//_engine.client_broadcaster()->send_node_creation_messages(m_node);
+		_engine.client_broadcaster()->send_node(m_node);
 	}
 }
 

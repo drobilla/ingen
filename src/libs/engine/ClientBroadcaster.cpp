@@ -18,7 +18,6 @@
 #include <cassert>
 #include <iostream>
 #include <unistd.h>
-#include "Engine.h"
 #include "ObjectStore.h"
 #include "NodeFactory.h"
 #include "util.h"
@@ -131,11 +130,11 @@ ClientBroadcaster::send_error(const string& msg)
 /* FIXME: Make a copy method for list and just make a copy and pass it here
  * instead of this global+locking mess */
 void
-ClientBroadcaster::send_plugins_to(ClientInterface* client)
+ClientBroadcaster::send_plugins_to(ClientInterface* client, const list<Plugin*>& plugin_list)
 {
-	Engine::instance().node_factory()->lock_plugin_list();
-	
-	const list<Plugin*>& plugs = Engine::instance().node_factory()->plugins();
+	// FIXME: This probably isn't actually thread safe
+	const list<Plugin*> plugs = plugin_list; // make a copy
+
 	const Plugin* plugin;
 
 	lo_timetag tt;
@@ -174,8 +173,6 @@ ClientBroadcaster::send_plugins_to(ClientInterface* client)
 	}
 	for (list<lo_bundle>::const_iterator i = msgs.begin(); i != msgs.end(); ++i)
 		lo_message_free(*i);
-
-	Engine::instance().node_factory()->unlock_plugin_list();
 }
 
 

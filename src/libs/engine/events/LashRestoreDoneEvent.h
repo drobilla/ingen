@@ -39,7 +39,7 @@ class Port;
 class LashRestoreDoneEvent : public QueuedEvent
 {
 public:
-	LashRestoreDoneEvent(CountedPtr<Responder> responder, SampleCount timestamp) : QueuedEvent(responder, timestamp) {}
+	LashRestoreDoneEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp) : QueuedEvent(engine, responder, timestamp) {}
 
 	void post_process()
 	{

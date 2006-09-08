@@ -42,7 +42,7 @@ class MidiControlNode : public InternalNode
 public:
 	MidiControlNode(const string& path, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size);
 	
-	void process(SampleCount nframes);
+	void process(SampleCount nframes, FrameTime start, FrameTime end);
 	
 	void control(uchar control_num, uchar val, SampleCount offset);
 

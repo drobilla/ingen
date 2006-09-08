@@ -34,8 +34,8 @@
 namespace Ingen {
 
 
-DestroyEvent::DestroyEvent(CountedPtr<Responder> responder, SampleCount timestamp, QueuedEventSource* source, const string& path, bool lock_mutex)
-: QueuedEvent(responder, true, source),
+DestroyEvent::DestroyEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, QueuedEventSource* source, const string& path, bool lock_mutex)
+: QueuedEvent(engine, responder, true, source),
   m_path(path),
   m_node(NULL),
   m_patch_listnode(NULL),
@@ -47,8 +47,8 @@ DestroyEvent::DestroyEvent(CountedPtr<Responder> responder, SampleCount timestam
 }
 
 
-DestroyEvent::DestroyEvent(CountedPtr<Responder> responder, SampleCount timestamp, Node* node, bool lock_mutex)
-: QueuedEvent(responder, true),
+DestroyEvent::DestroyEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, Node* node, bool lock_mutex)
+: QueuedEvent(engine, responder, true),
   m_path(node->path()),
   m_node(node),
   m_patch_listnode(NULL),
@@ -71,7 +71,7 @@ void
 DestroyEvent::pre_process()
 {
 	if (m_node == NULL)
-		m_node = Engine::instance().object_store()->find_node(m_path);
+		m_node = _engine.object_store()->find_node(m_path);
 
 	if (m_node != NULL && m_path != "/") {
 		assert(m_node->parent_patch() != NULL);
@@ -82,7 +82,7 @@ DestroyEvent::pre_process()
 			m_node->remove_from_store();
 
 			if (m_node->providers()->size() != 0 || m_node->dependants()->size() != 0) {
-				m_disconnect_event = new DisconnectNodeEvent(m_node);
+				m_disconnect_event = new DisconnectNodeEvent(_engine, m_node);
 				m_disconnect_event->pre_process();
 			}
 			
@@ -90,11 +90,11 @@ DestroyEvent::pre_process()
 			cerr << "FIXME: Destroy bridge\n";
 			/*Port* parent_port = m_patch_listnode->elem()->as_port();
 			if (parent_port != NULL) {  // Bridge node
-				m_parent_disconnect_event = new DisconnectPortEvent(parent_port);
+				m_parent_disconnect_event = new DisconnectPortEvent(Engine& engine, parent_port);
 				m_parent_disconnect_event->pre_process();
 			}*/
 				
-			if (m_node->parent_patch()->process()) {
+			if (m_node->parent_patch()->enabled()) {
 				m_process_order = m_node->parent_patch()->build_process_order();
 				// Remove node to be removed from the process order so it isn't executed by
 				// Patch::run and can safely be destroyed
@@ -116,20 +116,20 @@ DestroyEvent::pre_process()
 
 
 void
-DestroyEvent::execute(SampleCount offset)
+DestroyEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {
-	QueuedEvent::execute(offset);
+	QueuedEvent::execute(nframes, start, end);
 
 	if (m_patch_listnode != NULL) {
 		m_node->remove_from_patch();
 		
 		if (m_disconnect_event != NULL)
-			m_disconnect_event->execute(offset);
+			m_disconnect_event->execute(nframes, start, end);
 		if (m_parent_disconnect_event != NULL)
-			m_parent_disconnect_event->execute(offset);
+			m_parent_disconnect_event->execute(nframes, start, end);
 		
 		if (m_node->parent_patch()->process_order() != NULL)
-			Engine::instance().maid()->push(m_node->parent_patch()->process_order());
+			_engine.maid()->push(m_node->parent_patch()->process_order());
 		m_node->parent_patch()->process_order(m_process_order);
 	}
 }
@@ -153,9 +153,9 @@ DestroyEvent::post_process()
 			m_disconnect_event->post_process();
 		if (m_parent_disconnect_event != NULL)
 			m_parent_disconnect_event->post_process();
-		Engine::instance().client_broadcaster()->send_destroyed(m_path);
-		Engine::instance().maid()->push(m_patch_listnode);
-		Engine::instance().maid()->push(m_node);
+		_engine.client_broadcaster()->send_destroyed(m_path);
+		_engine.maid()->push(m_patch_listnode);
+		_engine.maid()->push(m_node);
 	} else {
 		_responder->respond_error("Unable to destroy object");
 	}

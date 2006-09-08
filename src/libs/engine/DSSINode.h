@@ -53,7 +53,7 @@ public:
 	void configure(const string& key, const string& val);
 	void program(int bank, int program);
 
-	void process(SampleCount nframes);
+	void process(SampleCount nframes, FrameTime start, FrameTime end);
 
 	bool update_programs(bool send_events);
 	void set_default_program();

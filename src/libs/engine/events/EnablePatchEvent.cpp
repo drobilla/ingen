@@ -25,8 +25,8 @@
 namespace Ingen {
 
 
-EnablePatchEvent::EnablePatchEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& patch_path)
-: QueuedEvent(responder, timestamp),
+EnablePatchEvent::EnablePatchEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& patch_path)
+: QueuedEvent(engine, responder, timestamp),
   m_patch_path(patch_path),
   m_patch(NULL),
   m_process_order(NULL)
@@ -37,7 +37,7 @@ EnablePatchEvent::EnablePatchEvent(CountedPtr<Responder> responder, SampleCount 
 void
 EnablePatchEvent::pre_process()
 {
-	m_patch = Engine::instance().object_store()->find_patch(m_patch_path);
+	m_patch = _engine.object_store()->find_patch(m_patch_path);
 	
 	if (m_patch != NULL) {
 		/* Any event that requires a new process order will set the patch's
@@ -52,16 +52,16 @@ EnablePatchEvent::pre_process()
 
 
 void
-EnablePatchEvent::execute(SampleCount offset)
+EnablePatchEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {
 	if (m_patch != NULL) {
-		m_patch->process(true);
+		m_patch->enable();
 
 		if (m_patch->process_order() == NULL)
 			m_patch->process_order(m_process_order);
 	}
 	
-	QueuedEvent::execute(offset);
+	QueuedEvent::execute(nframes, start, end);
 }
 
 
@@ -70,7 +70,7 @@ EnablePatchEvent::post_process()
 {
 	if (m_patch != NULL) {
 		_responder->respond_ok();
-		Engine::instance().client_broadcaster()->send_patch_enable(m_patch_path);
+		_engine.client_broadcaster()->send_patch_enable(m_patch_path);
 	} else {
 		_responder->respond_error(string("Patch ") + m_patch_path + " not found");
 	}

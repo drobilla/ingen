@@ -43,14 +43,14 @@ class Port : public GraphObject
 public:
 	virtual ~Port() {}
 
-	void add_to_store()      { assert(false); }
-	void remove_from_store() { assert(false); }
+	void add_to_store(ObjectStore* store) { assert(false); }
+	void remove_from_store()        { assert(false); }
 	
 	/** A port's parent is always a node, so static cast should be safe */
 	Node* parent_node() const { return (Node*)_parent; }
 
 	/** Called once per process cycle */
-	virtual void process(SampleCount nframes) = 0;
+	virtual void process(SampleCount nframes, FrameTime start, FrameTime end) = 0;
 	
 	/** Empty buffer contents completely (ie silence) */
 	virtual void clear_buffers() = 0;

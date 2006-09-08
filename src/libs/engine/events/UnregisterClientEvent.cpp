@@ -23,8 +23,8 @@
 namespace Ingen {
 
 
-UnregisterClientEvent::UnregisterClientEvent(CountedPtr<Responder> responder, SampleCount timestamp, ClientKey key)
-: QueuedEvent(responder, timestamp)
+UnregisterClientEvent::UnregisterClientEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, ClientKey key)
+: QueuedEvent(engine, responder, timestamp)
 , _key(key)
 {
 }
@@ -33,7 +33,7 @@ UnregisterClientEvent::UnregisterClientEvent(CountedPtr<Responder> responder, Sa
 void
 UnregisterClientEvent::post_process()
 {
-	if (Engine::instance().client_broadcaster()->unregister_client(_key))
+	if (_engine.client_broadcaster()->unregister_client(_key))
 		_responder->respond_ok();
 	else
 		_responder->respond_error("Unable to unregister client");

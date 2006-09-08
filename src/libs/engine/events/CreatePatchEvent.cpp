@@ -30,8 +30,8 @@
 namespace Ingen {
 
 
-CreatePatchEvent::CreatePatchEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& path, int poly)
-: QueuedEvent(responder, timestamp),
+CreatePatchEvent::CreatePatchEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& path, int poly)
+: QueuedEvent(engine, responder, timestamp),
   m_path(path),
   m_patch(NULL),
   m_parent(NULL),
@@ -45,7 +45,7 @@ CreatePatchEvent::CreatePatchEvent(CountedPtr<Responder> responder, SampleCount 
 void
 CreatePatchEvent::pre_process()
 {
-	if (Engine::instance().object_store()->find(m_path) != NULL) {
+	if (_engine.object_store()->find(m_path) != NULL) {
 		m_error = OBJECT_EXISTS;
 		QueuedEvent::pre_process();
 		return;
@@ -58,7 +58,7 @@ CreatePatchEvent::pre_process()
 	}
 	
 	if (m_path != "/") {
-		m_parent = Engine::instance().object_store()->find_patch(m_path.parent());
+		m_parent = _engine.object_store()->find_patch(m_path.parent());
 		if (m_parent == NULL) {
 			m_error = PARENT_NOT_FOUND;
 			QueuedEvent::pre_process();
@@ -70,34 +70,34 @@ CreatePatchEvent::pre_process()
 	if (m_parent != NULL && m_poly > 1 && m_poly == static_cast<int>(m_parent->internal_poly()))
 		poly = m_poly;
 	
-	m_patch = new Patch(m_path.name(), poly, m_parent, Engine::instance().audio_driver()->sample_rate(), Engine::instance().audio_driver()->buffer_size(), m_poly);
+	m_patch = new Patch(m_path.name(), poly, m_parent, _engine.audio_driver()->sample_rate(), _engine.audio_driver()->buffer_size(), m_poly);
 		
 	if (m_parent != NULL) {
 		m_parent->add_node(new ListNode<Node*>(m_patch));
 
-		if (m_parent->process())
+		if (m_parent->enabled())
 			m_process_order = m_parent->build_process_order();
 	}
 	
 	m_patch->activate();
 	
 	// Insert into ObjectStore
-	m_patch->add_to_store();
+	m_patch->add_to_store(_engine.object_store());
 	
 	QueuedEvent::pre_process();
 }
 
 
 void
-CreatePatchEvent::execute(SampleCount offset)
+CreatePatchEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {
-	QueuedEvent::execute(offset);
+	QueuedEvent::execute(nframes, start, end);
 
 	if (m_patch != NULL) {
 		if (m_parent == NULL) {
 			assert(m_path == "/");
 			assert(m_patch->parent_patch() == NULL);
-			Engine::instance().audio_driver()->set_root_patch(m_patch);
+			_engine.audio_driver()->set_root_patch(m_patch);
 		} else {
 			assert(m_parent != NULL);
 			assert(m_path != "/");
@@ -105,7 +105,7 @@ CreatePatchEvent::execute(SampleCount offset)
 			m_patch->add_to_patch();
 			
 			if (m_parent->process_order() != NULL)
-				Engine::instance().maid()->push(m_parent->process_order());
+				_engine.maid()->push(m_parent->process_order());
 			m_parent->process_order(m_process_order);
 		}
 	}
@@ -121,10 +121,10 @@ CreatePatchEvent::post_process()
 			_responder->respond_ok();
 			
 			// Don't want to send nodes that have been added since prepare()
-			//Engine::instance().client_broadcaster()->send_node_creation_messages(m_patch);
+			//_engine.client_broadcaster()->send_node_creation_messages(m_patch);
 
 			// Patches are always empty on creation, so this is fine
-			Engine::instance().client_broadcaster()->send_patch(m_patch);
+			_engine.client_broadcaster()->send_patch(m_patch);
 			
 		} else if (m_error == OBJECT_EXISTS) {
 			string msg = "Unable to create patch: ";

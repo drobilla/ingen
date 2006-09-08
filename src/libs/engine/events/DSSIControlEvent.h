@@ -32,10 +32,10 @@ namespace Ingen {
 class DSSIControlEvent : public QueuedEvent
 {
 public:
-	DSSIControlEvent(CountedPtr<Responder> responder, SampleCount timestamp, const string& node_path, int port_num, Sample val);
+	DSSIControlEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& node_path, int port_num, Sample val);
 
 	void pre_process();
-	void execute(SampleCount offset);
+	void execute(SampleCount nframes, FrameTime start, FrameTime end);
 	void post_process();
 
 private:

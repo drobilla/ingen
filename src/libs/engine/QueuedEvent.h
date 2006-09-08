@@ -49,9 +49,16 @@ public:
 		_pre_processed = true;
 	}
 
-	virtual void execute(SampleCount offset) {
+	virtual void execute(SampleCount nframes, FrameTime start, FrameTime end) {
 		assert(_pre_processed);
-		Event::execute(offset);
+		assert(_time <= end);
+
+		// Didn't prepare in time.  QueuedEvents aren't (necessarily) sample accurate
+		// so just run at the beginning of this cycle
+		if (_time <= start)
+			_time = start;
+			
+		Event::execute(nframes, start, end);
 	}
 
 	virtual void post_process() {}
@@ -66,17 +73,18 @@ protected:
 	QueuedEvent(const QueuedEvent& copy);
 	QueuedEvent& operator=(const QueuedEvent&);
 	
-	QueuedEvent(CountedPtr<Responder> responder,
-	            SampleCount           timestamp, 
+	QueuedEvent(Engine&               engine,
+	            CountedPtr<Responder> responder,
+	            FrameTime             time, 
 	            bool                  blocking = false,
 	            QueuedEventSource*    source = NULL)
-	: Event(responder, timestamp)
+	: Event(engine, responder, time)
 	, _pre_processed(false), _blocking(blocking), _source(source)
 	{}
 	
 	// NULL event base (for internal events only!)
-	QueuedEvent()
-	: Event(NULL, 0)
+	QueuedEvent(Engine& engine)
+	: Event(engine, NULL, 0)
 	, _pre_processed(false), _blocking(false), _source(NULL)
 	{}
 

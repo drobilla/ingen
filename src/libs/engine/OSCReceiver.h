@@ -59,7 +59,7 @@ inline static int name##_cb(LO_HANDLER_ARGS, void* osc_receiver)\
 class OSCReceiver : public QueuedEngineInterface
 {
 public:
-	OSCReceiver(size_t queue_size, const char* const port);
+	OSCReceiver(Engine& engine, size_t queue_size, const char* const port);
 	~OSCReceiver();
 
 	void activate();

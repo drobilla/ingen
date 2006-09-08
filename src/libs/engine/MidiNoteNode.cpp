@@ -17,7 +17,6 @@
 #include "MidiNoteNode.h"
 #include <cmath>
 #include <iostream>
-#include "Engine.h"
 #include "MidiMessage.h"
 #include "InputPort.h"
 #include "OutputPort.h"
@@ -72,9 +71,9 @@ MidiNoteNode::~MidiNoteNode()
 
 
 void
-MidiNoteNode::process(SampleCount nframes)
+MidiNoteNode::process(SampleCount nframes, FrameTime start, FrameTime end)
 {
-	InternalNode::process(nframes);
+	InternalNode::process(nframes, start, end);
 	
 	MidiMessage ev;
 	
@@ -84,24 +83,24 @@ MidiNoteNode::process(SampleCount nframes)
 		switch (ev.buffer[0] & 0xF0) {
 		case MIDI_CMD_NOTE_ON:
 			if (ev.buffer[2] == 0)
-				note_off(ev.buffer[1], ev.time);
+				note_off(ev.buffer[1], ev.time, nframes, start, end);
 			else
-				note_on(ev.buffer[1], ev.buffer[2], ev.time);
+				note_on(ev.buffer[1], ev.buffer[2], ev.time, nframes, start, end);
 			break;
 		case MIDI_CMD_NOTE_OFF:
-			note_off(ev.buffer[1], ev.time);
+			note_off(ev.buffer[1], ev.time, nframes, start, end);
 			break;
 		case MIDI_CMD_CONTROL:
 			switch (ev.buffer[1]) {
 			case MIDI_CTL_ALL_NOTES_OFF:
 			case MIDI_CTL_ALL_SOUNDS_OFF:
-				all_notes_off(ev.time);
+				all_notes_off(ev.time, nframes, start, end);
 				break;
 			case MIDI_CTL_SUSTAIN:
 				if (ev.buffer[2] > 63)
-					sustain_on();
+					sustain_on(ev.time, nframes, start, end);
 				else
-					sustain_off(ev.time);
+					sustain_off(ev.time, nframes, start, end);
 				break;
 			case MIDI_CMD_BENDER:
 
@@ -115,12 +114,10 @@ MidiNoteNode::process(SampleCount nframes)
 
 
 void
-MidiNoteNode::note_on(uchar note_num, uchar velocity, SampleCount offset)
+MidiNoteNode::note_on(uchar note_num, uchar velocity, SampleCount nframes, FrameTime time, FrameTime start, FrameTime end)
 {
-	// FIXME: this is stupid..
-	const jack_nframes_t time_stamp = Engine::instance().audio_driver()->time_stamp();
-
-	assert(offset < _buffer_size);
+	assert(time >= start && time <= end);
+	assert(time - start < _buffer_size);
 	assert(note_num <= 127);
 
 	Key*   key        = &_keys[note_num];
@@ -165,16 +162,20 @@ MidiNoteNode::note_on(uchar note_num, uchar velocity, SampleCount offset)
 	// Store key information for later reallocation on note off
 	key->state = Key::Key::ON_ASSIGNED;
 	key->voice = voice_num;
-	key->time  = time_stamp;
+	key->time  = time;
 
 	// Trigger voice
 	voice->state = Voice::Voice::ACTIVE;
 	voice->note  = note_num;
-	voice->time  = time_stamp;
+	voice->time  = time;
 	
 	assert(_keys[voice->note].state == Key::Key::ON_ASSIGNED);
 	assert(_keys[voice->note].voice == voice_num);
 	
+	// FIXME FIXME FIXME
+	
+	SampleCount offset = time - start;
+
 	// one-sample jitter hack to avoid having to deal with trigger sample "next time"
 	if (offset == (SampleCount)(_buffer_size-1))
 		--offset;
@@ -195,9 +196,10 @@ MidiNoteNode::note_on(uchar note_num, uchar velocity, SampleCount offset)
 
 
 void
-MidiNoteNode::note_off(uchar note_num, SampleCount offset)
+MidiNoteNode::note_off(uchar note_num, FrameTime time, SampleCount nframes, FrameTime start, FrameTime end)
 {
-	assert(offset < _buffer_size);
+	assert(time >= start && time <= end);
+	assert(time - start < _buffer_size);
 
 	Key* key = &_keys[note_num];
 
@@ -208,7 +210,7 @@ MidiNoteNode::note_off(uchar note_num, SampleCount offset)
 		key->state = Key::OFF;
 
 		if ( ! _sustain)
-			free_voice(key->voice, offset);
+			free_voice(key->voice, time - start, nframes, start, end);
 		else
 			_voices[key->voice].state = Voice::HOLDING;
 	}
@@ -218,8 +220,11 @@ MidiNoteNode::note_off(uchar note_num, SampleCount offset)
 
 	
 void
-MidiNoteNode::free_voice(size_t voice, SampleCount offset)
+MidiNoteNode::free_voice(size_t voice, FrameTime time, SampleCount nframes, FrameTime start, FrameTime end)
 {
+	assert(time >= start && time <= end);
+	assert(time - start < _buffer_size);
+
 	// Find a key to reassign to the freed voice (the newest, if there is one)
 	Key*  replace_key     = NULL;
 	uchar replace_key_num = 0;
@@ -238,7 +243,7 @@ MidiNoteNode::free_voice(size_t voice, SampleCount offset)
 		assert(replace_key->state == Key::ON_UNASSIGNED);
 		
 		// Change the freq but leave the gate high and don't retrigger
-		_freq_port->buffer(voice)->set(note_to_freq(replace_key_num), offset);
+		_freq_port->buffer(voice)->set(note_to_freq(replace_key_num), time - start);
 
 		replace_key->state = Key::ON_ASSIGNED;
 		replace_key->voice = voice;
@@ -248,22 +253,24 @@ MidiNoteNode::free_voice(size_t voice, SampleCount offset)
 	} else {
 		// No new note for voice, deactivate (set gate low)
 		//cerr << "[MidiNoteNode] Note off. Key " << (int)note_num << ", Voice " << voice << " Killed" << endl;
-		_gate_port->buffer(voice)->set(0.0f, offset);
+		_gate_port->buffer(voice)->set(0.0f, time - start);
 		_voices[voice].state = Voice::FREE;
 	}
 }
 
 
 void
-MidiNoteNode::all_notes_off(SampleCount offset)
+MidiNoteNode::all_notes_off(SampleCount nframes, FrameTime time, FrameTime start, FrameTime end)
 {
+	assert(time >= start && time <= end);
+	assert(time - start < _buffer_size);
+
 	//cerr << "Note off starting at sample " << offset << endl;
-	assert(offset < _buffer_size);
 
 	// FIXME: set all keys to Key::OFF?
 	
 	for (size_t i=0; i < _poly; ++i) {
-		_gate_port->buffer(i)->set(0.0f, offset);
+		_gate_port->buffer(i)->set(0.0f, time - start);
 		_voices[i].state = Voice::FREE;
 	}
 }
@@ -280,20 +287,23 @@ MidiNoteNode::note_to_freq(int num)
 
 
 void
-MidiNoteNode::sustain_on()
+MidiNoteNode::sustain_on(FrameTime time, SampleCount nframes, FrameTime start, FrameTime end)
 {
 	_sustain = true;
 }
 
 
 void
-MidiNoteNode::sustain_off(SampleCount offset)
+MidiNoteNode::sustain_off(FrameTime time, SampleCount nframes, FrameTime start, FrameTime end)
 {
+	assert(time >= start && time <= end);
+	assert(time - start < _buffer_size);
+
 	_sustain = false;
 	
 	for (size_t i=0; i < _poly; ++i)
 		if (_voices[i].state == Voice::HOLDING)
-			free_voice(i, offset);
+			free_voice(i, time, nframes, start, end);
 }
 
 

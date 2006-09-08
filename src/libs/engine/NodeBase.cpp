@@ -19,7 +19,6 @@
 #include <iostream>
 #include <stdint.h>
 #include "util.h"
-#include "Engine.h"
 #include "Array.h"
 #include "Plugin.h"
 #include "ClientBroadcaster.h"
@@ -35,6 +34,7 @@ namespace Ingen {
 
 NodeBase::NodeBase(const Plugin* plugin, const string& name, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size)
 : Node(parent, name),
+  _store(NULL),
   _plugin(plugin),
   _poly(poly),
   _srate(srate),
@@ -84,16 +84,21 @@ void
 NodeBase::send_creation_messages(ClientInterface* client) const
 {
 	cerr << "FIXME: send_creation\n";
-	//Engine::instance().client_broadcaster()->send_node_to(client, this);
+	//_engine.client_broadcaster()->send_node_to(client, this);
 }
 */
 
 void
-NodeBase::add_to_store()
+NodeBase::add_to_store(ObjectStore* store)
 {
-	Engine::instance().object_store()->add(this);
+	assert(!_store);
+
+	store->add(this);
+	
 	for (size_t i=0; i < num_ports(); ++i)
-		Engine::instance().object_store()->add(_ports->at(i));
+		store->add(_ports->at(i));
+
+	_store = store;
 }
 
 
@@ -101,32 +106,34 @@ void
 NodeBase::remove_from_store()
 {
 	// Remove self
-	TreeNode<GraphObject*>* node = Engine::instance().object_store()->remove(path());
+	TreeNode<GraphObject*>* node = _store->remove(path());
 	if (node != NULL) {
-		assert(Engine::instance().object_store()->find(path()) == NULL);
+		assert(_store->find(path()) == NULL);
 		delete node;
 	}
 	
 	// Remove ports
 	for (size_t i=0; i < num_ports(); ++i) {
-		node = Engine::instance().object_store()->remove(_ports->at(i)->path());
+		node = _store->remove(_ports->at(i)->path());
 		if (node != NULL) {
-			assert(Engine::instance().object_store()->find(_ports->at(i)->path()) == NULL);
+			assert(_store->find(_ports->at(i)->path()) == NULL);
 			delete node;
 		}
 	}
+
+	_store = NULL;
 }
 
 
 /** Runs the Node for the specified number of frames (block size)
  */
 void
-NodeBase::process(SampleCount nframes)
+NodeBase::process(SampleCount nframes, FrameTime start, FrameTime end)
 {
 	assert(_activated);
 	// Mix down any ports with multiple inputs
 	for (size_t i=0; i < _ports->size(); ++i)
-		_ports->at(i)->process(nframes);
+		_ports->at(i)->process(nframes, start, end);
 }
 
 
@@ -145,23 +152,23 @@ NodeBase::set_path(const Path& new_path)
 	
 	// Reinsert ports
 	for (size_t i=0; i < num_ports(); ++i) {
-		treenode = Engine::instance().object_store()->remove(old_path +"/"+ _ports->at(i)->name());
+		treenode = _store->remove(old_path +"/"+ _ports->at(i)->name());
 		assert(treenode != NULL);
 		assert(treenode->node() == _ports->at(i));
 		treenode->key(new_path +"/" + _ports->at(i)->name());
-		Engine::instance().object_store()->add(treenode);
+		_store->add(treenode);
 	}
 	
 	// Rename and reinsert self
-	treenode = Engine::instance().object_store()->remove(old_path);
+	treenode = _store->remove(old_path);
 	assert(treenode != NULL);
 	assert(treenode->node() == this);
 	GraphObject::set_path(new_path);
 	treenode->key(new_path);
-	Engine::instance().object_store()->add(treenode);
+	_store->add(treenode);
 	
 
-	assert(Engine::instance().object_store()->find(new_path) == this);
+	assert(_store->find(new_path) == this);
 }
 
 
