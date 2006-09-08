@@ -31,14 +31,13 @@ namespace Client {
 class NodeModel;
 class PresetModel;
 class PatchModel;
-class ModelClientInterface;
 
 
 /** Model-based engine command interface.
  *
  * \ingroup IngenClient
  */
-class ModelEngineInterface
+class ModelEngineInterface : public virtual Shared::EngineInterface
 {
 public:
 	virtual ~ModelEngineInterface() {}

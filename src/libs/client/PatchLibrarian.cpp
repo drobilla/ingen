@@ -25,7 +25,7 @@
 #include "ConnectionModel.h"
 #include "PortModel.h"
 #include "PresetModel.h"
-#include "OSCModelEngineInterface.h"
+#include "ModelEngineInterface.h"
 #include "PluginModel.h"
 #include "util/Path.h"
 #include <iostream>

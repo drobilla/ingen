@@ -33,7 +33,7 @@ class PatchModel;
 class NodeModel;
 class ConnectionModel;
 class PresetModel;
-class OSCModelEngineInterface;
+class ModelEngineInterface;
 class ModelClientInterface;
 
 	
@@ -46,8 +46,8 @@ class PatchLibrarian
 public:
 	// FIXME: return booleans and set an errstr that can be checked or something?
 	
-	PatchLibrarian(OSCModelEngineInterface* osc_model_engine_interface)
-	: _patch_search_path("."), _engine(osc_model_engine_interface)
+	PatchLibrarian(ModelEngineInterface* _engine)
+	: _patch_search_path("."), _engine(_engine)
 	{
 		assert(_engine);
 	}
@@ -63,8 +63,8 @@ public:
 private:
 	string translate_load_path(const string& path);
 
-	string                         _patch_search_path;
-	OSCModelEngineInterface* const _engine;
+	string                      _patch_search_path;
+	ModelEngineInterface* const _engine;
 
 	/// Translations of paths from the loading file to actual paths (for deprecated patches)
 	std::map<string, string> _load_path_translations;

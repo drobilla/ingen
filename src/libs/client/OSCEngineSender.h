@@ -37,7 +37,7 @@ namespace Client {
  *
  * \ingroup IngenClient
  */
-class OSCEngineSender : public EngineInterface
+class OSCEngineSender : virtual public EngineInterface
 {
 public:
 	OSCEngineSender(const string& engine_url);
