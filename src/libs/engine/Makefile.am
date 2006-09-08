@@ -23,8 +23,8 @@ libingen_la_SOURCES = \
 	Engine.cpp \
 	JackAudioDriver.h \
 	JackAudioDriver.cpp \
-	OSCReceiver.h \
-	OSCReceiver.cpp \
+	OSCEngineReceiver.h \
+	OSCEngineReceiver.cpp \
 	Responder.h \
 	OSCResponder.h \
 	OSCResponder.cpp \
@@ -33,8 +33,8 @@ libingen_la_SOURCES = \
 	ClientBroadcaster.cpp \
 	ObjectSender.h \
 	ObjectSender.cpp \
-	OSCClient.h \
-	OSCClient.cpp \
+	OSCClientSender.h \
+	OSCClientSender.cpp \
 	Buffer.h \
 	Buffer.cpp \
 	Port.h \

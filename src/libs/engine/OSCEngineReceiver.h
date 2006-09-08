@@ -14,8 +14,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef OSCRECEIVER_H
-#define OSCRECEIVER_H
+#ifndef OSCENGINERECEIVER_H
+#define OSCENGINERECEIVER_H
 
 #include "config.h"
 #include <string>
@@ -39,8 +39,8 @@ class Patch;
  * lot of ugly boiler plate go away */
 #define LO_HANDLER(name) \
 int m_##name##_cb (LO_HANDLER_ARGS);\
-inline static int name##_cb(LO_HANDLER_ARGS, void* osc_receiver)\
-{ return ((OSCReceiver*)osc_receiver)->m_##name##_cb(path, types, argv, argc, msg); }
+inline static int name##_cb(LO_HANDLER_ARGS, void* myself)\
+{ return ((OSCEngineReceiver*)myself)->m_##name##_cb(path, types, argv, argc, msg); }
 
 
 /* FIXME: Make this receive and preprocess in the same thread? */
@@ -56,26 +56,26 @@ inline static int name##_cb(LO_HANDLER_ARGS, void* osc_receiver)\
  *
  * \ingroup engine
  */
-class OSCReceiver : public QueuedEngineInterface
+class OSCEngineReceiver : public QueuedEngineInterface
 {
 public:
-	OSCReceiver(Engine& engine, size_t queue_size, const char* const port);
-	~OSCReceiver();
+	OSCEngineReceiver(Engine& engine, size_t queue_size, const char* const port);
+	~OSCEngineReceiver();
 
 	void activate();
 	void deactivate();
 
 private:
 	// Prevent copies (undefined)
-	OSCReceiver(const OSCReceiver&);
-	OSCReceiver& operator=(const OSCReceiver&);
+	OSCEngineReceiver(const OSCEngineReceiver&);
+	OSCEngineReceiver& operator=(const OSCEngineReceiver&);
 
 	virtual void _run();
 
 	static void error_cb(int num, const char* msg, const char* path);	
-	static int  set_response_address_cb(LO_HANDLER_ARGS, void* osc_receiver);
-	static int  generic_cb(LO_HANDLER_ARGS, void* osc_receiver);
-	static int  unknown_cb(LO_HANDLER_ARGS, void* osc_receiver);
+	static int  set_response_address_cb(LO_HANDLER_ARGS, void* myself);
+	static int  generic_cb(LO_HANDLER_ARGS, void* myself);
+	static int  unknown_cb(LO_HANDLER_ARGS, void* myself);
 
 	LO_HANDLER(quit);
 	LO_HANDLER(ping);
@@ -126,4 +126,4 @@ private:
 
 } // namespace Ingen
 
-#endif // OSCRECEIVER_H
+#endif // OSCENGINERECEIVER_H

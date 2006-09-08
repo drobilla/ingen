@@ -17,10 +17,13 @@
 #ifndef EVENTSOURCE_H
 #define EVENTSOURCE_H
 
+#include "types.h"
+
 namespace Ingen {
 
 class Event;
 class QueuedEvent;
+class PostProcessor;
 
 
 /** Source for events to run in the audio thread.
@@ -41,9 +44,7 @@ public:
 
 	virtual ~EventSource() {}
 
-	virtual Event* pop_earliest_queued_before(const SampleCount time) = 0;
-	
-	virtual Event* pop_earliest_stamped_before(const SampleCount time) = 0;
+	virtual void process(PostProcessor& dest, SampleCount nframes, FrameTime cycle_start, FrameTime cycle_end) = 0;
 
 protected:
 	EventSource() {}

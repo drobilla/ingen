@@ -297,7 +297,7 @@ Store::new_port_event(const string& path, const string& type, bool is_output)
 		if (type == "AUDIO") ptype = PortModel::AUDIO;
 		else if (type == "CONTROL") ptype = PortModel::CONTROL;
 		else if (type== "MIDI") ptype = PortModel::MIDI;
-		else cerr << "[OSCListener] WARNING:  Unknown port type received (" << type << ")" << endl;
+		else cerr << "[Store] WARNING:  Unknown port type received (" << type << ")" << endl;
 		
 		PortModel::Direction pdir = is_output ? PortModel::OUTPUT : PortModel::INPUT;
 

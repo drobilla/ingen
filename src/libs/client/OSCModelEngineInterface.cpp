@@ -21,7 +21,7 @@
 #include <cstring>
 #include <iostream>
 #include <unistd.h>
-#include "OSCListener.h"
+#include "OSCClientReceiver.h"
 #include "PatchModel.h"
 #include "ConnectionModel.h"
 #include "PresetModel.h"
@@ -39,7 +39,7 @@ namespace Client {
  *  of engine events.
  */
 OSCModelEngineInterface::OSCModelEngineInterface(const string& engine_url)
-: OSCEngineInterface(engine_url),
+: OSCEngineSender(engine_url),
   m_request_id(0),
   m_is_attached(false),
   m_is_registered(false)

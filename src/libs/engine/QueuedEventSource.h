@@ -29,6 +29,7 @@
 namespace Ingen {
 
 class QueuedEvent;
+class PostProcessor;
 
 
 /** Queue of events that need processing before reaching the audio thread.
@@ -50,14 +51,16 @@ public:
 	void activate()   { Slave::start(); }
 	void deactivate() { Slave::stop(); }
 
-	Event*        pop_earliest_queued_before(const SampleCount time);
-	inline Event* pop_earliest_stamped_before(const SampleCount time);
+	void process(PostProcessor& dest, SampleCount nframes, FrameTime cycle_start, FrameTime cycle_end);
 
 	void unblock();
 
 protected:
 	void push_queued(QueuedEvent* const ev);
-	void push_stamped(Event* const ev);
+	inline void push_stamped(Event* const ev) { _stamped_queue.push(ev); }
+	
+	Event*        pop_earliest_queued_before(const SampleCount time);
+	inline Event* pop_earliest_stamped_before(const SampleCount time);
 
 	bool unprepared_events() { return (_prepared_back != _back); }
 	

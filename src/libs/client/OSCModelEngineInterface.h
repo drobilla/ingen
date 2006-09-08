@@ -21,7 +21,7 @@
 #include <lo/lo.h>
 #include "util/Semaphore.h"
 #include "interface/EngineInterface.h"
-#include "OSCEngineInterface.h"
+#include "OSCEngineSender.h"
 #include "ModelEngineInterface.h"
 using std::string;
 
@@ -34,29 +34,22 @@ namespace Client {
 class NodeModel;
 class PresetModel;
 class PatchModel;
-class OSCListener;
 class ModelClientInterface;
 
 
 /** Old model-based OSC engine command interface.
  *
  * This is an old class from before when the well-defined interfaces between
- * engine and client were defined.  I've wrapped it around OSCEngineInterface
+ * engine and client were defined.  I've wrapped it around OSCEngineSender
  * so all the common functions are implemented there, and implemented the
  * remaining functions using those, for compatibility.  Hopefully something
  * better gets figured out and this can go away completely, but for now this
  * gets the existing clients working through EngineInterface in the easiest
  * way possible.  This class needs to die.
  *
- * Old comment:
- * Handles all OSC communication on the "control band".  For the time being,
- * manages the OSCListener which handles the "notification band", but this
- * will change in the future (for complete separation).  See OSC namespace
- * documentation for more details.
- *
  * \ingroup IngenClient
  */
-class OSCModelEngineInterface : public OSCEngineInterface, public ModelEngineInterface
+class OSCModelEngineInterface : public OSCEngineSender, public ModelEngineInterface
 {
 public:
 	//OSCModelEngineInterface(ModelClientInterface* const client_hooks, const string& engine_url);

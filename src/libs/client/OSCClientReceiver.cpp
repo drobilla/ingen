@@ -14,7 +14,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "OSCListener.h"
+#include "OSCClientReceiver.h"
 //#include "NodeModel.h"
 //#include "PluginModel.h"
 #include <list>
@@ -27,10 +27,10 @@ namespace Ingen {
 namespace Client {
 
 	
-/** Construct a OSCListener with a user-provided ModelClientInterface object for notification
+/** Construct a OSCClientReceiver with a user-provided ModelClientInterface object for notification
  *  of engine events.
  */
-OSCListener::OSCListener(int listen_port)
+OSCClientReceiver::OSCClientReceiver(int listen_port)
 : _listen_port(listen_port),
   _st(NULL)//,
 //  _receiving_node(false),
@@ -42,14 +42,14 @@ OSCListener::OSCListener(int listen_port)
 }
 
 
-OSCListener::~OSCListener()
+OSCClientReceiver::~OSCClientReceiver()
 {
 	stop();
 }
 
 
 void
-OSCListener::start()
+OSCClientReceiver::start()
 {
 	if (_st != NULL)
 		return;
@@ -64,10 +64,10 @@ OSCListener::start()
 	}
 
 	if (_st == NULL) {
-		cerr << "[OSCListener] Could not start OSC listener.  Aborting." << endl;
+		cerr << "[OSCClientReceiver] Could not start OSC listener.  Aborting." << endl;
 		exit(EXIT_FAILURE);
 	} else {
-		cout << "[OSCListener] Started OSC listener on port " << lo_server_thread_get_port(_st) << endl;
+		cout << "[OSCClientReceiver] Started OSC listener on port " << lo_server_thread_get_port(_st) << endl;
 	}
 
 	// FIXME
@@ -86,7 +86,7 @@ OSCListener::start()
 
 
 void
-OSCListener::stop()
+OSCClientReceiver::stop()
 {
 	if (_st != NULL) {
 		//unregister_client();
@@ -97,7 +97,7 @@ OSCListener::stop()
 
 
 int
-OSCListener::generic_cb(const char* path, const char* types, lo_arg** argv, int argc, void* data, void* user_data)
+OSCClientReceiver::generic_cb(const char* path, const char* types, lo_arg** argv, int argc, void* data, void* user_data)
 {
 	printf("[OSCMsg] %s (%s)\t", path, types);
 	
@@ -119,7 +119,7 @@ OSCListener::generic_cb(const char* path, const char* types, lo_arg** argv, int 
 
 
 void
-OSCListener::error_cb(int num, const char* msg, const char* path)
+OSCClientReceiver::error_cb(int num, const char* msg, const char* path)
 {
 	cerr << "Got error from server: " << msg << endl;
 }
@@ -127,7 +127,7 @@ OSCListener::error_cb(int num, const char* msg, const char* path)
 
 
 int
-OSCListener::unknown_cb(const char* path, const char* types, lo_arg** argv, int argc, void* data, void* user_data)
+OSCClientReceiver::unknown_cb(const char* path, const char* types, lo_arg** argv, int argc, void* data, void* user_data)
 {
 	string msg = "Received unknown OSC message: ";
 	msg += path;
@@ -139,7 +139,7 @@ OSCListener::unknown_cb(const char* path, const char* types, lo_arg** argv, int 
 
 
 void
-OSCListener::setup_callbacks()
+OSCClientReceiver::setup_callbacks()
 {
 	lo_server_thread_add_method(_st, "/om/num_plugins", "i", num_plugins_cb, this);
 	lo_server_thread_add_method(_st, "/om/plugin", "sss", plugin_cb, this);
@@ -163,7 +163,7 @@ OSCListener::setup_callbacks()
 /** Catches errors that aren't a direct result of a client request.
  */
 int
-OSCListener::m_error_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCClientReceiver::m_error_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	cerr << "ERROR: " << argv[0]->s << endl;
 	// FIXME
@@ -173,7 +173,7 @@ OSCListener::m_error_cb(const char* path, const char* types, lo_arg** argv, int 
  
 
 int
-OSCListener::m_new_patch_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCClientReceiver::m_new_patch_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	new_patch(&argv[0]->s, argv[1]->i); // path, poly
 	return 0;
@@ -181,7 +181,7 @@ OSCListener::m_new_patch_cb(const char* path, const char* types, lo_arg** argv, 
 
 
 int
-OSCListener::m_destroyed_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCClientReceiver::m_destroyed_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	object_destroyed((const char*)&argv[0]->s);
 	return 0;
@@ -189,7 +189,7 @@ OSCListener::m_destroyed_cb(const char* path, const char* types, lo_arg** argv, 
 
 
 int
-OSCListener::m_patch_enabled_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCClientReceiver::m_patch_enabled_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	patch_enabled((const char*)&argv[0]->s);
 	return 0;
@@ -197,7 +197,7 @@ OSCListener::m_patch_enabled_cb(const char* path, const char* types, lo_arg** ar
 
 
 int
-OSCListener::m_patch_disabled_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCClientReceiver::m_patch_disabled_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	patch_disabled((const char*)&argv[0]->s);
 	return 0;
@@ -205,7 +205,7 @@ OSCListener::m_patch_disabled_cb(const char* path, const char* types, lo_arg** a
 
 
 int
-OSCListener::m_patch_cleared_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCClientReceiver::m_patch_cleared_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	patch_cleared((const char*)&argv[0]->s);
 	return 0;
@@ -213,7 +213,7 @@ OSCListener::m_patch_cleared_cb(const char* path, const char* types, lo_arg** ar
 
 
 int
-OSCListener::m_object_renamed_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCClientReceiver::m_object_renamed_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	object_renamed((const char*)&argv[0]->s, (const char*)&argv[1]->s);
 	return 0;
@@ -221,7 +221,7 @@ OSCListener::m_object_renamed_cb(const char* path, const char* types, lo_arg** a
 
 
 int
-OSCListener::m_connection_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCClientReceiver::m_connection_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	const char* const src_port_path = &argv[0]->s;
 	const char* const dst_port_path = &argv[1]->s;
@@ -233,7 +233,7 @@ OSCListener::m_connection_cb(const char* path, const char* types, lo_arg** argv,
 
 
 int
-OSCListener::m_disconnection_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCClientReceiver::m_disconnection_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	const char* src_port_path = &argv[0]->s;
 	const char* dst_port_path = &argv[1]->s;
@@ -247,7 +247,7 @@ OSCListener::m_disconnection_cb(const char* path, const char* types, lo_arg** ar
 /** Notification of a new node creation.
  */
 int
-OSCListener::m_new_node_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCClientReceiver::m_new_node_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	const char*   type       = &argv[0]->s;
 	const char*   uri        = &argv[1]->s;
@@ -274,7 +274,7 @@ OSCListener::m_new_node_cb(const char* path, const char* types, lo_arg** argv, i
 /** Notification of a new port creation.
  */
 int
-OSCListener::m_new_port_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCClientReceiver::m_new_port_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	const char* port_path   = &argv[0]->s;
 	const char* type        = &argv[1]->s;
@@ -291,13 +291,13 @@ OSCListener::m_new_port_cb(const char* path, const char* types, lo_arg** argv, i
 	if (!strcmp(type, "AUDIO")) ptype = PortModel::AUDIO;
 	else if (!strcmp(type, "CONTROL")) ptype = PortModel::CONTROL;
 	else if (!strcmp(type, "MIDI")) ptype = PortModel::MIDI;
-	else cerr << "[OSCListener] WARNING:  Unknown port type received (" << type << ")" << endl;
+	else cerr << "[OSCClientReceiver] WARNING:  Unknown port type received (" << type << ")" << endl;
 
 #if 0
 	PortModel::Direction pdir = PortModel::INPUT;
 	if (!strcmp(direction, "INPUT")) pdir = PortModel::INPUT;
 	else if (!strcmp(direction, "OUTPUT")) pdir = PortModel::OUTPUT;
-	else cerr << "[OSCListener] WARNING:  Unknown port direction received (" << direction << ")" << endl;
+	else cerr << "[OSCClientReceiver] WARNING:  Unknown port direction received (" << direction << ")" << endl;
 #endif
 	PortModel::Direction pdir = is_output ? PortModel::OUTPUT : PortModel::INPUT;
 
@@ -334,7 +334,7 @@ OSCListener::m_new_port_cb(const char* path, const char* types, lo_arg** argv, i
 /** Notification of a new or updated piece of metadata.
  */
 int
-OSCListener::m_metadata_update_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCClientReceiver::m_metadata_update_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	const char* obj_path  = &argv[0]->s;
 	const char* key       = &argv[1]->s;
@@ -347,7 +347,7 @@ OSCListener::m_metadata_update_cb(const char* path, const char* types, lo_arg** 
 
 
 int
-OSCListener::m_control_change_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCClientReceiver::m_control_change_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	const char* const port_path  = &argv[0]->s;
 	const float       value      =  argv[1]->f;
@@ -362,7 +362,7 @@ OSCListener::m_control_change_cb(const char* path, const char* types, lo_arg** a
  * to a /om/send_plugins
  */
 int
-OSCListener::m_num_plugins_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCClientReceiver::m_num_plugins_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	/** Not worth it implementing a ModelClientInterface callback for this (?)
 	 * Or I'm just lazy.  FIXME? */
@@ -375,7 +375,7 @@ OSCListener::m_num_plugins_cb(const char* path, const char* types, lo_arg** argv
 /** A plugin info response from the server, in response to a /send_plugins
  */
 int
-OSCListener::m_plugin_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCClientReceiver::m_plugin_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	assert(argc == 3 && !strcmp(types, "sss"));
 	new_plugin(&argv[0]->s, &argv[1]->s, &argv[2]->s); // type, uri
@@ -385,7 +385,7 @@ OSCListener::m_plugin_cb(const char* path, const char* types, lo_arg** argv, int
 
 
 int
-OSCListener::m_program_add_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCClientReceiver::m_program_add_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	const char* node_path  = &argv[0]->s;
 	int32_t     bank       =  argv[1]->i;
@@ -399,7 +399,7 @@ OSCListener::m_program_add_cb(const char* path, const char* types, lo_arg** argv
 
 
 int
-OSCListener::m_program_remove_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCClientReceiver::m_program_remove_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	const char* node_path  = &argv[0]->s;
 	int32_t     bank       =  argv[1]->i;

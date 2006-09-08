@@ -27,7 +27,6 @@ namespace Ingen {
 class AudioDriver;
 class MidiDriver;
 class NodeFactory;
-class OSCReceiver;
 class ClientBroadcaster;
 class Patch;
 class ObjectStore;
@@ -51,7 +50,7 @@ template <typename T> class Driver;
 class Engine
 {
 public:
-	Engine(const char* listen_port, AudioDriver* audio_driver = 0);
+	Engine(AudioDriver* audio_driver = 0);
 	~Engine();
 
 	int main();
@@ -63,8 +62,10 @@ public:
 	void activate();
 	void deactivate();
 
+	void set_event_source(EventSource* es) { m_event_source = es; }
+
+	EventSource*       event_source()       const { return m_event_source; }
 	AudioDriver*       audio_driver()       const { return m_audio_driver; }
-	OSCReceiver*       osc_receiver()       const { return m_osc_receiver; }
 	MidiDriver*        midi_driver()        const { return m_midi_driver; }
 	Maid*              maid()               const { return m_maid; }
 	PostProcessor*     post_processor()     const { return m_post_processor; }
@@ -81,8 +82,8 @@ private:
 	Engine(const Engine&);
 	Engine& operator=(const Engine&);
 
+	EventSource*       m_event_source;
 	AudioDriver*       m_audio_driver;
-	OSCReceiver*       m_osc_receiver;
 	MidiDriver*        m_midi_driver;
 	Maid*              m_maid;
 	PostProcessor*     m_post_processor;

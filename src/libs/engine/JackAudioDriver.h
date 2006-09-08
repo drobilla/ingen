@@ -84,8 +84,6 @@ public:
 	void enable();
 	void disable();
 
-	void process_events(SampleCount nframes, FrameTime cycle_start, FrameTime cycle_end);
-	
 	DriverPort* create_port(DuplexPort<Sample>* patch_port);
 	
 	Patch* root_patch()                 { return _root_patch; }

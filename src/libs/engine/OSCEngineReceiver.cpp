@@ -14,7 +14,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "OSCReceiver.h"
+#include "OSCEngineReceiver.h"
 #include <iostream>
 #include <cstdlib>
 #include <string>
@@ -25,7 +25,7 @@
 #include "QueuedEventSource.h"
 #include "interface/ClientKey.h"
 #include "interface/ClientInterface.h"
-#include "OSCClient.h"
+#include "OSCClientSender.h"
 #include "OSCResponder.h"
 #include "ClientBroadcaster.h"
 
@@ -47,7 +47,7 @@ using Shared::ClientKey;
  */
 
 
-OSCReceiver::OSCReceiver(Engine& engine, size_t queue_size, const char* const port)
+OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, const char* const port)
 : QueuedEngineInterface(engine, queue_size, queue_size), // FIXME
   _port(port),
   _server(NULL),
@@ -122,7 +122,7 @@ OSCReceiver::OSCReceiver(Engine& engine, size_t queue_size, const char* const po
 }
 
 
-OSCReceiver::~OSCReceiver()
+OSCEngineReceiver::~OSCEngineReceiver()
 {
 	deactivate();
 
@@ -134,18 +134,18 @@ OSCReceiver::~OSCReceiver()
 
 
 void
-OSCReceiver::activate()
+OSCEngineReceiver::activate()
 {
-	set_name("OSCReceiver");
+	set_name("OSCEngineReceiver");
 	QueuedEventSource::activate();
 	set_scheduling(SCHED_FIFO, 10);
 }
 
 
 void
-OSCReceiver::deactivate()
+OSCEngineReceiver::deactivate()
 {
-	cout << "[OSCReceiver] Stopped OSC listening thread" << endl;
+	cout << "[OSCEngineReceiver] Stopped OSC listening thread" << endl;
 	QueuedEventSource::deactivate();
 }
 
@@ -154,7 +154,7 @@ OSCReceiver::deactivate()
  * to wait on OSC messages and prepare them right away in the same thread.
  */
 void
-OSCReceiver::_run()
+OSCEngineReceiver::_run()
 {
 	/* get a timestamp here and stamp all the events with the same time so
 	 * they all get executed in the same cycle */
@@ -194,9 +194,9 @@ OSCReceiver::_run()
  * working around the fact that liblo addresses really suck.  Oh well.
  */
 int
-OSCReceiver::set_response_address_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg, void* user_data)
+OSCEngineReceiver::set_response_address_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg, void* user_data)
 {
-	OSCReceiver* const me = reinterpret_cast<OSCReceiver*>(user_data);
+	OSCEngineReceiver* const me = reinterpret_cast<OSCEngineReceiver*>(user_data);
 
 	//cerr << "SET RESPONSE\n";
 
@@ -249,7 +249,7 @@ OSCReceiver::set_response_address_cb(const char* path, const char* types, lo_arg
 
 
 void
-OSCReceiver::error_cb(int num, const char* msg, const char* path)
+OSCEngineReceiver::error_cb(int num, const char* msg, const char* path)
 {
 	cerr << "liblo server error " << num << " in path \"" << "\" - " << msg << endl;
 }
@@ -260,7 +260,7 @@ OSCReceiver::error_cb(int num, const char* msg, const char* path)
  * \arg \b response-id (integer) </p> \n \n
  */
 int
-OSCReceiver::m_ping_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCEngineReceiver::m_ping_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	_responder->respond_ok();
 	return 0;
@@ -277,7 +277,7 @@ OSCReceiver::m_ping_cb(const char* path, const char* types, lo_arg** argv, int a
  * finished processing.</p> \n \n
  */
 int
-OSCReceiver::m_ping_slow_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCEngineReceiver::m_ping_slow_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	ping();
 	return 0;
@@ -293,7 +293,7 @@ OSCReceiver::m_ping_slow_cb(const char* path, const char* types, lo_arg** argv, 
  * 10 messages would never get executed. </p> \n \n
  */
 int
-OSCReceiver::m_quit_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCEngineReceiver::m_quit_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 
 	quit();
@@ -308,12 +308,12 @@ OSCReceiver::m_quit_cb(const char* path, const char* types, lo_arg** argv, int a
  * want to register a different specific address, use the URL version.
  */
 int
-OSCReceiver::m_register_client_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCEngineReceiver::m_register_client_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	lo_address        addr         = lo_message_get_source(msg);
 
 	char* const url = lo_address_get_url(addr);
-	CountedPtr<ClientInterface> client(new OSCClient((const char*)url));
+	CountedPtr<ClientInterface> client(new OSCClientSender((const char*)url));
 	register_client(ClientKey(ClientKey::OSC_URL, (const char*)url), client);
 	free(url);
 
@@ -326,7 +326,7 @@ OSCReceiver::m_register_client_cb(const char* path, const char* types, lo_arg** 
  * \arg \b response-id (integer) </p> \n \n
  */
 int
-OSCReceiver::m_unregister_client_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCEngineReceiver::m_unregister_client_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	lo_address        addr         = lo_message_get_source(msg);
 
@@ -343,7 +343,7 @@ OSCReceiver::m_unregister_client_cb(const char* path, const char* types, lo_arg*
  * \arg \b response-id (integer) </p> \n \n
  */
 int
-OSCReceiver::m_load_plugins_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCEngineReceiver::m_load_plugins_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	load_plugins();
 	return 0;
@@ -358,7 +358,7 @@ OSCReceiver::m_load_plugins_cb(const char* path, const char* types, lo_arg** arg
  * anything at all - <em>including respond to your messages!</em> \n \n
  */
 int
-OSCReceiver::m_engine_activate_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCEngineReceiver::m_engine_activate_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	QueuedEngineInterface::activate();
 	return 0;
@@ -370,7 +370,7 @@ OSCReceiver::m_engine_activate_cb(const char* path, const char* types, lo_arg** 
  * \arg \b response-id (integer) </p> \n \n
  */
 int
-OSCReceiver::m_engine_deactivate_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCEngineReceiver::m_engine_deactivate_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	QueuedEngineInterface::deactivate();
 	return 0;
@@ -384,7 +384,7 @@ OSCReceiver::m_engine_deactivate_cb(const char* path, const char* types, lo_arg*
  * \arg \b poly        (integer) - Patch's (internal) polyphony </p> \n \n
  */
 int
-OSCReceiver::m_create_patch_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCEngineReceiver::m_create_patch_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	const char* patch_path  = &argv[1]->s;
 	const int   poly        =  argv[2]->i;
@@ -401,7 +401,7 @@ OSCReceiver::m_create_patch_cb(const char* path, const char* types, lo_arg** arg
  * \arg \b name - New name for object </p> \n \n
  */
 int
-OSCReceiver::m_rename_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCEngineReceiver::m_rename_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	const char* object_path  = &argv[1]->s;
 	const char* name         = &argv[2]->s;
@@ -417,7 +417,7 @@ OSCReceiver::m_rename_cb(const char* path, const char* types, lo_arg** argv, int
  * \arg \b patch-path - Patch's path
  */
 int
-OSCReceiver::m_enable_patch_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCEngineReceiver::m_enable_patch_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	const char* patch_path  = &argv[1]->s;
 	
@@ -432,7 +432,7 @@ OSCReceiver::m_enable_patch_cb(const char* path, const char* types, lo_arg** arg
  * \arg \b patch-path - Patch's path
  */
 int
-OSCReceiver::m_disable_patch_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCEngineReceiver::m_disable_patch_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	const char* patch_path  = &argv[1]->s;
 	
@@ -447,7 +447,7 @@ OSCReceiver::m_disable_patch_cb(const char* path, const char* types, lo_arg** ar
  * \arg \b patch-path - Patch's path
  */
 int
-OSCReceiver::m_clear_patch_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCEngineReceiver::m_clear_patch_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	const char* patch_path  = &argv[1]->s;
 	
@@ -464,7 +464,7 @@ OSCReceiver::m_clear_patch_cb(const char* path, const char* types, lo_arg** argv
  * \arg \b direction ("is-output") (integer) - Direction of data flow (Input = 0, Output = 1) </p> \n \n
  */
 int
-OSCReceiver::m_create_port_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCEngineReceiver::m_create_port_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	const char* port_path   = &argv[1]->s;
 	const char* data_type   = &argv[2]->s;
@@ -483,7 +483,7 @@ OSCReceiver::m_create_port_cb(const char* path, const char* types, lo_arg** argv
  * \arg \b poly (integer-boolean) - Whether node is polyphonic (0 = false, 1 = true) </p> \n \n
  */
 int
-OSCReceiver::m_create_node_by_uri_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCEngineReceiver::m_create_node_by_uri_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	const char* node_path   = &argv[1]->s;
 	const char* type        = &argv[2]->s;
@@ -511,7 +511,7 @@ OSCReceiver::m_create_node_by_uri_cb(const char* path, const char* types, lo_arg
  * </p> \n \n
  */
 int
-OSCReceiver::m_create_node_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCEngineReceiver::m_create_node_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	const char* node_path   = &argv[1]->s;
 	const char* type        = &argv[2]->s;
@@ -530,7 +530,7 @@ OSCReceiver::m_create_node_cb(const char* path, const char* types, lo_arg** argv
  * \arg \b node-path (string) - Full path of the object </p> \n \n
  */
 int
-OSCReceiver::m_destroy_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCEngineReceiver::m_destroy_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	const char* node_path   = &argv[1]->s;
 	
@@ -546,7 +546,7 @@ OSCReceiver::m_destroy_cb(const char* path, const char* types, lo_arg** argv, in
  * \arg \b dst-port-path (string) - Full path of destination port </p> \n \n
  */
 int
-OSCReceiver::m_connect_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCEngineReceiver::m_connect_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	const char* src_port_path = &argv[1]->s;
 	const char* dst_port_path = &argv[2]->s;
@@ -563,7 +563,7 @@ OSCReceiver::m_connect_cb(const char* path, const char* types, lo_arg** argv, in
  * \arg \b dst-port-path (string) - Full path of destination port </p> \n \n
  */
 int
-OSCReceiver::m_disconnect_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCEngineReceiver::m_disconnect_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	const char* src_port_path = &argv[1]->s;
 	const char* dst_port_path = &argv[2]->s;
@@ -579,7 +579,7 @@ OSCReceiver::m_disconnect_cb(const char* path, const char* types, lo_arg** argv,
  * \arg \b node-path (string) - Full path of node. </p> \n \n
  */
 int
-OSCReceiver::m_disconnect_all_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCEngineReceiver::m_disconnect_all_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	const char* node_path   = &argv[1]->s;
 
@@ -595,7 +595,7 @@ OSCReceiver::m_disconnect_all_cb(const char* path, const char* types, lo_arg** a
  * \arg \b value (float) - Value to set port to
  */
 int
-OSCReceiver::m_set_port_value_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCEngineReceiver::m_set_port_value_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	const char* port_path   = &argv[1]->s;
 	const float value       =  argv[2]->f;
@@ -613,7 +613,7 @@ OSCReceiver::m_set_port_value_cb(const char* path, const char* types, lo_arg** a
  * \arg \b value (float) - Value to set port to
  */
 int
-OSCReceiver::m_set_port_value_voice_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCEngineReceiver::m_set_port_value_voice_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	const char* port_path   = &argv[1]->s;
 	const int   voice       =  argv[2]->i;
@@ -635,7 +635,7 @@ OSCReceiver::m_set_port_value_voice_cb(const char* path, const char* types, lo_a
  * slow event and arrive out of order). </p> \n \n
  */
 int
-OSCReceiver::m_set_port_value_slow_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCEngineReceiver::m_set_port_value_slow_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	const char* port_path   = &argv[1]->s;
 	const float value       =  argv[2]->f;
@@ -653,7 +653,7 @@ OSCReceiver::m_set_port_value_slow_cb(const char* path, const char* types, lo_ar
  * \arg \b velocity (int) - MIDI style velocity (0-127)</p> \n \n
  */
 int
-OSCReceiver::m_note_on_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCEngineReceiver::m_note_on_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	/*
 
@@ -674,7 +674,7 @@ OSCReceiver::m_note_on_cb(const char* path, const char* types, lo_arg** argv, in
  * \arg \b note-num (int) - MIDI style note number (0-127)</p> \n \n
  */
 int
-OSCReceiver::m_note_off_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCEngineReceiver::m_note_off_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	/*
 
@@ -693,7 +693,7 @@ OSCReceiver::m_note_off_cb(const char* path, const char* types, lo_arg** argv, i
  * \arg \b patch-path (string) - Patch of patch to send event to </p> \n \n
  */
 int
-OSCReceiver::m_all_notes_off_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCEngineReceiver::m_all_notes_off_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	/*
 
@@ -716,7 +716,7 @@ OSCReceiver::m_all_notes_off_cb(const char* path, const char* types, lo_arg** ar
  * method will go away completely. </p> \n \n
  */
 int
-OSCReceiver::m_midi_learn_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCEngineReceiver::m_midi_learn_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	const char* patch_path  = &argv[1]->s;
 	
@@ -732,7 +732,7 @@ OSCReceiver::m_midi_learn_cb(const char* path, const char* types, lo_arg** argv,
  * \arg \b response-id (integer)
  */
 int
-OSCReceiver::m_lash_restore_done_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCEngineReceiver::m_lash_restore_done_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	lash_restore_done();
 	return 0;
@@ -748,7 +748,7 @@ OSCReceiver::m_lash_restore_done_cb(const char* path, const char* types, lo_arg*
  * \arg \b value (string) - Value of new piece of metadata
  */
 int
-OSCReceiver::m_metadata_set_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCEngineReceiver::m_metadata_set_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	const char* node_path   = &argv[1]->s;
 	const char* key         = &argv[2]->s;
@@ -769,7 +769,7 @@ OSCReceiver::m_metadata_set_cb(const char* path, const char* types, lo_arg** arg
  * \li Reply will be sent to client registered with the source address of this message.</p> \n \n
  */
 int
-OSCReceiver::m_metadata_get_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCEngineReceiver::m_metadata_get_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	/*
 	const char* node_path   = &argv[1]->s;
@@ -794,7 +794,7 @@ OSCReceiver::m_metadata_get_cb(const char* path, const char* types, lo_arg** arg
  * \li Reply will be sent to client registered with the source address of this message.</p> \n \n
  */
 int
-OSCReceiver::m_request_plugins_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCEngineReceiver::m_request_plugins_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	request_plugins();
 	return 0;
@@ -808,7 +808,7 @@ OSCReceiver::m_request_plugins_cb(const char* path, const char* types, lo_arg** 
  * \li Reply will be sent to client registered with the source address of this message.</p> \n \n
  */
 int
-OSCReceiver::m_request_all_objects_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCEngineReceiver::m_request_all_objects_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	request_all_objects();
 	return 0;
@@ -823,7 +823,7 @@ OSCReceiver::m_request_all_objects_cb(const char* path, const char* types, lo_ar
  * \li Reply will be sent to client registered with the source address of this message.</p> \n \n
  */
 int
-OSCReceiver::m_request_port_value_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCEngineReceiver::m_request_port_value_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	const char* port_path = &argv[1]->s;
 
@@ -834,7 +834,7 @@ OSCReceiver::m_request_port_value_cb(const char* path, const char* types, lo_arg
 
 #ifdef HAVE_DSSI
 int
-OSCReceiver::m_dssi_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCEngineReceiver::m_dssi_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 #if 0
 	string node_path(path);
@@ -862,7 +862,7 @@ OSCReceiver::m_dssi_cb(const char* path, const char* types, lo_arg** argv, int a
 	if (ev != NULL)
 		push(ev);
 	else
-		cerr << "[OSCReceiver] Unknown DSSI command received: " << path << endl;
+		cerr << "[OSCEngineReceiver] Unknown DSSI command received: " << path << endl;
 #endif
 	return 0;
 }
@@ -874,7 +874,7 @@ OSCReceiver::m_dssi_cb(const char* path, const char* types, lo_arg** argv, int a
 
 // Display incoming OSC messages (for debugging purposes)
 int
-OSCReceiver::generic_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg, void* user_data)
+OSCEngineReceiver::generic_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg, void* user_data)
 {
     printf("[OSCMsg] %s\n", path);
     
@@ -890,7 +890,7 @@ OSCReceiver::generic_cb(const char* path, const char* types, lo_arg** argv, int 
 
 
 int
-OSCReceiver::unknown_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg, void* user_data)
+OSCEngineReceiver::unknown_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg, void* user_data)
 {
 	const lo_address addr = lo_message_get_source(msg);
 	char* const      url  = lo_address_get_url(addr);

@@ -25,17 +25,17 @@
 	#include "LashController.h"
 #endif
 #include "ThreadedSigClientInterface.h"
-#include "OSCListener.h"
+#include "OSCClientReceiver.h"
 using Ingen::Shared::ClientInterface;
 
 using namespace Ingenuity;
 
 
-class OSCSigEmitter : public OSCListener, public ThreadedSigClientInterface {
+class OSCSigEmitter : public OSCClientReceiver, public ThreadedSigClientInterface {
 public:
 	OSCSigEmitter(size_t queue_size, int listen_port)
 	: Ingen::Shared::ClientInterface()
-	, OSCListener(listen_port)
+	, OSCClientReceiver(listen_port)
 	, ThreadedSigClientInterface(queue_size)
 	{
 		Glib::signal_timeout().connect(

@@ -16,6 +16,7 @@
 
 #include "QueuedEventSource.h"
 #include "QueuedEvent.h"
+#include "PostProcessor.h"
 #include <sys/mman.h>
 #include <iostream>
 using std::cout; using std::cerr; using std::endl;
@@ -64,11 +65,42 @@ QueuedEventSource::push_queued(QueuedEvent* const ev)
 }
 
 
+/** Process all events for a cycle.
+ *
+ * Executed events will be pushed to @a dest.
+ */
 void
-QueuedEventSource::push_stamped(Event* const ev)
+QueuedEventSource::process(PostProcessor& dest, SampleCount nframes, FrameTime cycle_start, FrameTime cycle_end)
 {
-	_stamped_queue.push(ev);
+	Event* ev = NULL;
+
+	/* Limit the maximum number of queued events to process per cycle.  This
+	 * makes the process callback (more) realtime-safe by preventing being
+	 * choked by events coming in faster than they can be processed.
+	 * FIXME: test this and figure out a good value */
+	const unsigned int MAX_QUEUED_EVENTS = nframes / 100;
+
+	unsigned int num_events_processed = 0;
+	
+	/* FIXME: Merge these next two loops into one */
+
+	while ((ev = pop_earliest_queued_before(cycle_end))) {
+		ev->execute(nframes, cycle_start, cycle_end);
+		dest.push(ev);
+		if (++num_events_processed > MAX_QUEUED_EVENTS)
+			break;
+	}
+	
+	while ((ev = pop_earliest_stamped_before(cycle_end))) {
+		ev->execute(nframes, cycle_start, cycle_end);
+		dest.push(ev);
+		++num_events_processed;
+	}
+
+	if (num_events_processed > 0)
+		dest.whip();
 }
+
 
 /** Pops the prepared event at the front of the prepare queue, if it exists.
  *

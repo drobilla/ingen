@@ -7,12 +7,12 @@ libomclient_la_CXXFLAGS = -I$(top_srcdir)/src/common -DPKGDATADIR=\"$(pkgdatadir
 
 libomclient_la_SOURCES = \
 	ClientInterface.h \
-	OSCEngineInterface.h \
-	OSCEngineInterface.cpp \
+	OSCEngineSender.h \
+	OSCEngineSender.cpp \
 	OSCModelEngineInterface.h \
 	OSCModelEngineInterface.cpp \
-	OSCListener.h \
-	OSCListener.cpp \
+	OSCClientReceiver.h \
+	OSCClientReceiver.cpp \
 	SigClientInterface.h \
 	DirectSigClientInterface.h \
 	ThreadedSigClientInterface.h \

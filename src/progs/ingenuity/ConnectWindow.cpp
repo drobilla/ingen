@@ -22,7 +22,6 @@
 #include "interface/ClientInterface.h"
 #include "ThreadedSigClientInterface.h"
 #include "Controller.h"
-#include "OSCListener.h"
 #include "Store.h"
 #include "PatchController.h"
 #include "PatchModel.h"

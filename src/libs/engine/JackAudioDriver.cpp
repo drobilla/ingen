@@ -24,7 +24,6 @@
 #include "Event.h"
 #include "QueuedEvent.h"
 #include "EventSource.h"
-#include "OSCReceiver.h"
 #include "PostProcessor.h"
 #include "util/Queue.h"
 #include "Node.h"
@@ -33,6 +32,7 @@
 #include "MidiDriver.h"
 #include "List.h"
 #include "DuplexPort.h"
+#include "EventSource.h"
 #ifdef HAVE_LASH
 #include "LashDriver.h"
 #endif
@@ -181,8 +181,6 @@ void
 JackAudioDriver::deactivate()
 {
 	if (_is_activated) {
-		_engine.osc_receiver()->deactivate();
-	
 		jack_deactivate(_client);
 		_is_activated = false;
 	
@@ -242,48 +240,6 @@ JackAudioDriver::create_port(DuplexPort<Sample>* patch_port)
 }
 
 
-/** Process all the pending events for this cycle.
- *
- * Called from the realtime thread once every process cycle.
- */
-void
-JackAudioDriver::process_events(SampleCount nframes, FrameTime cycle_start, FrameTime cycle_end)
-{
-	Event* ev = NULL;
-
-	/* Limit the maximum number of queued events to process per cycle.  This
-	 * makes the process callback (more) realtime-safe by preventing being
-	 * choked by events coming in faster than they can be processed.
-	 * FIXME: run the math on this and figure out a good value */
-	const unsigned int MAX_QUEUED_EVENTS = _buffer_size / 100;
-
-	unsigned int num_events_processed = 0;
-	
-	// Process the "slow" events first, because it's possible some of the
-	// RT events depend on them
-	
-	/* FIXME: Merge these next two loops into one */
-
-	// FIXME
-	while ((ev = _engine.osc_receiver()->pop_earliest_queued_before(cycle_end))) {
-		ev->execute(nframes, cycle_start, cycle_end);
-		_engine.post_processor()->push(ev);
-		if (++num_events_processed > MAX_QUEUED_EVENTS)
-			break;
-	}
-	
-	while ((ev = _engine.osc_receiver()->pop_earliest_stamped_before(cycle_end))) {
-		ev->execute(nframes, cycle_start, cycle_end);
-		_engine.post_processor()->push(ev);
-		++num_events_processed;
-	}
-	
-	if (num_events_processed > 0)
-		_engine.post_processor()->whip();
-}
-
-
-
 /**** Jack Callbacks ****/
 
 
@@ -313,7 +269,9 @@ JackAudioDriver::_process_cb(jack_nframes_t nframes)
 
 	_transport_state = jack_transport_query(_client, &_position);
 	
-	process_events(nframes, start_of_last_cycle, start_of_current_cycle);
+	if (_engine.event_source())
+		_engine.event_source()->process(*_engine.post_processor(), nframes, start_of_last_cycle, start_of_current_cycle);
+	
 	_engine.midi_driver()->prepare_block(start_of_last_cycle, start_of_current_cycle);
 	
 	// Set buffers of patch ports to Jack port buffers (zero-copy processing)

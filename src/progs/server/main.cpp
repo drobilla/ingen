@@ -20,7 +20,9 @@
 #include "config.h"
 #include "util.h"
 #include "cmdline.h"
+#include "tuning.h"
 #include "Engine.h"
+#include "OSCEngineReceiver.h"
 #ifdef HAVE_LASH
 #include "LashDriver.h"
 #endif
@@ -30,9 +32,9 @@
 #endif
 
 using std::cout; using std::endl; using std::cerr;
+using namespace Ingen;
 
-
-Ingen::Engine* engine;
+Engine* engine;
 
 
 void
@@ -133,21 +135,30 @@ main(int argc, char** argv)
 		signal(SIGINT, catch_int);
 		signal(SIGTERM, catch_int);
 
-		Ingen::set_denormal_flags();
+		set_denormal_flags();
 
-		engine = new Ingen::Engine(args_info.port_arg);
+		engine = new Engine();
+
+		OSCEngineReceiver* receiver = new OSCEngineReceiver(
+				*engine, pre_processor_queue_size, args_info.port_arg);
+
+		receiver->activate();
+		engine->set_event_source(receiver);
 
 #ifdef HAVE_LASH
-		Ingen::lash_driver = new Ingen::LashDriver(Ingen::om, lash_args);
+		lash_driver = new LashDriver(engine, lash_args);
 #endif
 
 		engine->main();
 
+		receiver->deactivate();
+
 #ifdef HAVE_LASH
-		delete Ingen::lash_driver;
+		delete lash_driver;
 #endif
 
 		delete engine;
+		delete receiver;
 	}
 	
 	return ret;

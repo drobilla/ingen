@@ -17,7 +17,6 @@
 #include "PatchModel.h"
 #include "PatchController.h"
 #include "OSCModelEngineInterface.h"
-#include "OSCListener.h"
 #include "PatchLibrarian.h"
 #include "Controller.h"
 #include "Loader.h"

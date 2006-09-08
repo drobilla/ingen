@@ -31,7 +31,6 @@ namespace Client {
 class NodeModel;
 class PresetModel;
 class PatchModel;
-class OSCListener;
 class ModelClientInterface;
 
 

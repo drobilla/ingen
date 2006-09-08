@@ -24,7 +24,6 @@
 #include "util/Queue.h"
 #include "JackAudioDriver.h"
 #include "NodeFactory.h"
-#include "OSCReceiver.h"
 #include "ClientBroadcaster.h"
 #include "Patch.h"
 #include "ObjectStore.h"
@@ -49,9 +48,9 @@ using std::cout; using std::cerr; using std::endl;
 namespace Ingen {
 
 
-Engine::Engine(const char* listen_port, AudioDriver* audio_driver)
-: m_audio_driver( (audio_driver) ? audio_driver : new JackAudioDriver(*this) ),
-  m_osc_receiver(new OSCReceiver(*this, pre_processor_queue_size, listen_port)),
+Engine::Engine(AudioDriver* audio_driver)
+: m_event_source(NULL),
+  m_audio_driver( (audio_driver) ? audio_driver : new JackAudioDriver(*this) ),
 #ifdef HAVE_JACK_MIDI
   m_midi_driver(new JackMidiDriver(((JackAudioDriver*)m_audio_driver)->jack_client())),
 #elif HAVE_ALSA_MIDI
@@ -72,7 +71,6 @@ Engine::Engine(const char* listen_port, AudioDriver* audio_driver)
   m_quit_flag(false),
   m_activated(false)
 {
-	m_osc_receiver->activate();
 }
 
 
@@ -88,7 +86,6 @@ Engine::~Engine()
 	
 	delete m_object_store;
 	delete m_client_broadcaster;
-	delete m_osc_receiver;
 	delete m_node_factory;
 	delete m_midi_driver;
 	delete m_audio_driver;
@@ -183,7 +180,6 @@ Engine::deactivate()
 	if (m_midi_driver != NULL)
 		m_midi_driver->deactivate();
 	
-	m_osc_receiver->deactivate();
 	m_audio_driver->deactivate();
 
 	// Finalize any lingering events (unlikely)

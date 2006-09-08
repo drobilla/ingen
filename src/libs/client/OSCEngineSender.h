@@ -14,8 +14,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef OSCENGINEINTERFACE_H
-#define OSCENGINEINTERFACE_H
+#ifndef OSCENGINESENDER_H
+#define OSCENGINESENDER_H
 
 #include <inttypes.h>
 #include <string>
@@ -37,12 +37,12 @@ namespace Client {
  *
  * \ingroup IngenClient
  */
-class OSCEngineInterface : public EngineInterface
+class OSCEngineSender : public EngineInterface
 {
 public:
-	OSCEngineInterface(const string& engine_url);
+	OSCEngineSender(const string& engine_url);
 
-	~OSCEngineInterface();
+	~OSCEngineSender();
 	
 	string engine_url() { return _engine_url; }
 	
@@ -141,5 +141,5 @@ protected:
 } // namespace Client
 } // namespace Ingen
 
-#endif // OSCENGINEINTERFACE_H
+#endif // OSCENGINESENDER_H
 

@@ -14,8 +14,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef OSCCLIENT_H
-#define OSCCLIENT_H
+#ifndef OSCCLIENTSENDER_H
+#define OSCCLIENTSENDER_H
 
 #include <string>
 #include <iostream>
@@ -35,15 +35,15 @@ namespace Ingen {
  *
  * \ingroup engine
  */
-class OSCClient : public Shared::ClientInterface
+class OSCClientSender : public Shared::ClientInterface
 {
 public:
-	OSCClient(const string& url)
+	OSCClientSender(const string& url)
 	: _url(url),
 	  _address(lo_address_new_from_url(url.c_str()))
 	{}
 
-	virtual ~OSCClient()
+	virtual ~OSCClientSender()
 	{ lo_address_free(_address); }
 
 	const string&     url()     const  { return _url; }
@@ -117,8 +117,8 @@ public:
 
 private:
 	// Prevent copies (undefined)
-	OSCClient(const OSCClient&);
-	OSCClient& operator=(const OSCClient&);
+	OSCClientSender(const OSCClientSender&);
+	OSCClientSender& operator=(const OSCClientSender&);
 	
 	string      _url;
 	lo_address  _address;
@@ -127,5 +127,5 @@ private:
 
 } // namespace Ingen
 
-#endif // OSCCLIENT_H
+#endif // OSCCLIENTSENDER_H
 

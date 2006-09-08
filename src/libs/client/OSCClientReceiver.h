@@ -14,9 +14,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-
-#ifndef OSCLISTENER_H
-#define OSCLISTENER_H
+#ifndef OSCCLIENTRECEIVER_H
+#define OSCCLIENTRECEIVER_H
 
 #include <cstdlib>
 #include <lo/lo.h>
@@ -39,7 +38,7 @@ namespace Client {
 #define LO_HANDLER(name) \
 int m_##name##_cb (LO_HANDLER_ARGS);\
 inline static int name##_cb(LO_HANDLER_ARGS, void* osc_listener)\
-{ return ((OSCListener*)osc_listener)->m_##name##_cb(path, types, argv, argc, msg); }
+{ return ((OSCClientReceiver*)osc_listener)->m_##name##_cb(path, types, argv, argc, msg); }
 
 
 /** Callbacks for "notification band" OSC messages.
@@ -55,11 +54,11 @@ inline static int name##_cb(LO_HANDLER_ARGS, void* osc_listener)\
  *
  * \ingroup IngenClient
  */
-class OSCListener : virtual public Ingen::Shared::ClientInterface
+class OSCClientReceiver : virtual public Ingen::Shared::ClientInterface
 {
 public:
-	OSCListener(int listen_port);
-	~OSCListener();
+	OSCClientReceiver(int listen_port);
+	~OSCClientReceiver();
 
 	void start();
 	void stop();
@@ -69,8 +68,8 @@ public:
 	
 private:
 	// Prevent copies
-	OSCListener(const OSCListener& copy);          
-	OSCListener& operator=(const OSCListener& copy);
+	OSCClientReceiver(const OSCClientReceiver& copy);          
+	OSCClientReceiver& operator=(const OSCClientReceiver& copy);
 	
 	void setup_callbacks();
 	
@@ -118,4 +117,4 @@ private:
 
 } // namespace Ingen
 
-#endif // OSCLISTENER_H
+#endif // OSCCLIENTRECEIVER_H

@@ -14,7 +14,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "OSCClient.h"
+#include "OSCClientSender.h"
 #include <cassert>
 #include <iostream>
 #include <unistd.h>
@@ -92,7 +92,7 @@ namespace Ingen {
  * user command, ie "unexpected" errors.</p> \n \n
  */
 void
-OSCClient::error(const string& msg)
+OSCClientSender::error(const string& msg)
 {
 	lo_send(_address, "/om/error", "s", msg.c_str());
 }
@@ -113,7 +113,7 @@ OSCClient::error(const string& msg)
  * of how many plugins (/om/plugin messages) to expect.</p> \n \n
  */
 void
-OSCClient::num_plugins(uint32_t num)
+OSCClientSender::num_plugins(uint32_t num)
 {
 	lo_message m = lo_message_new();
 	lo_message_add_int32(m, num);
@@ -132,7 +132,7 @@ OSCClient::num_plugins(uint32_t num)
  */
 /*
 void
-OSCClient::plugins()
+OSCClientSender::plugins()
 {
 	Engine::instance().node_factory()->lock_plugin_list();
 	
@@ -189,7 +189,7 @@ OSCClient::plugins()
  * this one (/om/new_node), followed by a series of /om/new_port commands,
  * followed by /om/new_node_end. </p> \n \n
  */
-void OSCClient::new_node(const string& plugin_type,
+void OSCClientSender::new_node(const string& plugin_type,
                          const string& plugin_uri,
                          const string& node_path,
                          bool          is_polyphonic,
@@ -301,7 +301,7 @@ void OSCClient::new_node(const string& plugin_type,
  * as metadata.</p> \n \n
  */
 void
-OSCClient::new_port(const string& path,
+OSCClientSender::new_port(const string& path,
 	                const string& data_type,
 	                bool          is_output)
 {
@@ -321,7 +321,7 @@ OSCClient::new_port(const string& path,
  * \arg \b path (string) - Path of object (which no longer exists) </p> \n \n
  */
 void
-OSCClient::object_destroyed(const string& path)
+OSCClientSender::object_destroyed(const string& path)
 {
 	assert(path != "/");
 	
@@ -334,7 +334,7 @@ OSCClient::object_destroyed(const string& path)
  * \arg \b path (string) - Path of patch (which is now empty)</p> \n \n
  */
 void
-OSCClient::patch_cleared(const string& patch_path)
+OSCClientSender::patch_cleared(const string& patch_path)
 {
 	lo_send(_address, "/om/patch_cleared", "s", patch_path.c_str());
 }
@@ -345,7 +345,7 @@ OSCClient::patch_cleared(const string& patch_path)
  * \arg \b path (string) - Path of enabled patch</p> \n \n
  */
 void
-OSCClient::patch_enabled(const string& patch_path)
+OSCClientSender::patch_enabled(const string& patch_path)
 {
 	lo_send(_address, "/om/patch_enabled", "s", patch_path.c_str());
 }
@@ -356,7 +356,7 @@ OSCClient::patch_enabled(const string& patch_path)
  * \arg \b path (string) - Path of disabled patch</p> \n \n
  */
 void
-OSCClient::patch_disabled(const string& patch_path)
+OSCClientSender::patch_disabled(const string& patch_path)
 {
 	lo_send(_address, "/om/patch_disabled", "s", patch_path.c_str());
 }
@@ -368,7 +368,7 @@ OSCClient::patch_disabled(const string& patch_path)
  * \arg \b dst-path (string) - Path of the destination port</p> \n \n
  */
 void
-OSCClient::connection(const string& src_port_path, const string& dst_port_path)
+OSCClientSender::connection(const string& src_port_path, const string& dst_port_path)
 {
 	lo_send(_address, "/om/new_connection", "ss", src_port_path.c_str(), dst_port_path.c_str());
 }
@@ -380,7 +380,7 @@ OSCClient::connection(const string& src_port_path, const string& dst_port_path)
  * \arg \b dst-path (string) - Path of the destination port</p> \n \n
  */
 void
-OSCClient::disconnection(const string& src_port_path, const string& dst_port_path)
+OSCClientSender::disconnection(const string& src_port_path, const string& dst_port_path)
 {
 	lo_send(_address, "/om/disconnection", "ss", src_port_path.c_str(), dst_port_path.c_str());
 }
@@ -393,7 +393,7 @@ OSCClient::disconnection(const string& src_port_path, const string& dst_port_pat
  * \arg \b value (string)</p> \n \n
  */
 void
-OSCClient::metadata_update(const string& path, const string& key, const string& value)
+OSCClientSender::metadata_update(const string& path, const string& key, const string& value)
 {
 	lo_send(_address, "/om/metadata/update", "sss", path.c_str(), key.c_str(), value.c_str());
 }
@@ -408,7 +408,7 @@ OSCClient::metadata_update(const string& path, const string& key, const string& 
  * changing because of connections to other ports!</p> \n \n
  */
 void
-OSCClient::control_change(const string& port_path, float value)
+OSCClientSender::control_change(const string& port_path, float value)
 {
 	lo_send(_address, "/om/control_change", "sf", port_path.c_str(), value);
 }
@@ -421,7 +421,7 @@ OSCClient::control_change(const string& port_path, float value)
  * \arg \b name (string) - Descriptive human-readable name of plugin (ie "ADSR Envelope")
  */
 void
-OSCClient::new_plugin(const string& type, const string& uri, const string& name)
+OSCClientSender::new_plugin(const string& type, const string& uri, const string& name)
 {
 	lo_message m = lo_message_new();
 	lo_message_add_string(m, type.c_str());
@@ -437,7 +437,7 @@ OSCClient::new_plugin(const string& type, const string& uri, const string& name)
  * \arg \b poly (int) - Polyphony of new patch (\em not a boolean like new_node) </p> \n \n
  */
 void
-OSCClient::new_patch(const string& path, uint32_t poly)
+OSCClientSender::new_patch(const string& path, uint32_t poly)
 {
 	lo_send(_address, "/om/new_patch", "si", path.c_str(), poly);
 	
@@ -460,29 +460,16 @@ OSCClient::new_patch(const string& path, uint32_t poly)
  * \arg \b new-path (string) - New path of object </p> \n \n
  */
 void
-OSCClient::object_renamed(const string& old_path, const string& new_path)
+OSCClientSender::object_renamed(const string& old_path, const string& new_path)
 {
 	lo_send(_address, "/om/object_renamed", "ss", old_path.c_str(), new_path.c_str());
 }
 
 
-/** Sends all GraphObjects known to the engine.
- */
-/*
-void
-OSCClient::all_objects()
-{
-	for (Tree<GraphObject*>::iterator i = Engine::instance().object_store()->objects().begin();
-			i != Engine::instance().object_store()->objects().end(); ++i)
-		if ((*i)->as_node() != NULL && (*i)->parent() == NULL)
-			(*i)->as_node()->send_creation_messages(this);
-}
-*/
-
 /** Sends information about a program associated with a DSSI plugin node.
  */
 void
-OSCClient::program_add(const string& node_path, uint32_t bank, uint32_t program, const string& name)
+OSCClientSender::program_add(const string& node_path, uint32_t bank, uint32_t program, const string& name)
 {
 	lo_send(_address, "/om/program_add", "siis", 
 		node_path.c_str(), bank, program, name.c_str());
@@ -490,7 +477,7 @@ OSCClient::program_add(const string& node_path, uint32_t bank, uint32_t program,
 
 
 void
-OSCClient::program_remove(const string& node_path, uint32_t bank, uint32_t program)
+OSCClientSender::program_remove(const string& node_path, uint32_t bank, uint32_t program)
 {
 	lo_send(_address, "/om/program_remove", "sii", 
 		node_path.c_str(), bank, program);

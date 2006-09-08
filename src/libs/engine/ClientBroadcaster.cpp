@@ -30,7 +30,7 @@
 #include "ObjectSender.h"
 #include "interface/ClientKey.h"
 #include "interface/ClientInterface.h"
-#include "OSCClient.h"
+#include "OSCClientSender.h"
 using std::cout; using std::cerr; using std::endl;
 using Ingen::Shared::ClientInterface;
 
@@ -137,6 +137,10 @@ ClientBroadcaster::send_plugins_to(ClientInterface* client, const list<Plugin*>&
 
 	const Plugin* plugin;
 
+	// FIXME FIXME FIXME
+	OSCClientSender* osc_client = dynamic_cast<OSCClientSender*>(client);
+	assert(osc_client);
+
 	lo_timetag tt;
 	lo_timetag_now(&tt);
 	lo_bundle b = lo_bundle_new(tt);
@@ -157,16 +161,14 @@ ClientBroadcaster::send_plugins_to(ClientInterface* client, const list<Plugin*>&
 		lo_bundle_add_message(b, "/om/plugin", m);
 		msgs.push_back(m);
 		if (lo_bundle_length(b) > 1024) {
-			// FIXME FIXME FIXME dirty, dirty cast
-			lo_send_bundle(((OSCClient*)client)->address(), b);
+			lo_send_bundle(osc_client->address(), b);
 			lo_bundle_free(b);
 			b = lo_bundle_new(tt);
 		}
 	}
 	
 	if (lo_bundle_length(b) > 0) {
-		// FIXME FIXME FIXME dirty, dirty cast
-		lo_send_bundle(((OSCClient*)client)->address(), b);
+		lo_send_bundle(osc_client->address(), b);
 		lo_bundle_free(b);
 	} else {
 		lo_bundle_free(b);
