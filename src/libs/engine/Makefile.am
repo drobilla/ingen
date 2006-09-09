@@ -26,6 +26,7 @@ libingen_la_SOURCES = \
 	OSCEngineReceiver.h \
 	OSCEngineReceiver.cpp \
 	Responder.h \
+	DirectResponder.h \
 	OSCResponder.h \
 	OSCResponder.cpp \
 	ClientKey.h \

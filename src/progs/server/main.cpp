@@ -34,7 +34,7 @@
 using std::cout; using std::endl; using std::cerr;
 using namespace Ingen;
 
-Engine* engine;
+CountedPtr<Engine> engine;
 
 
 void
@@ -140,7 +140,7 @@ main(int argc, char** argv)
 		engine = new Engine();
 
 		OSCEngineReceiver* receiver = new OSCEngineReceiver(
-				*engine, pre_processor_queue_size, args_info.port_arg);
+				engine, pre_processor_queue_size, args_info.port_arg);
 
 		receiver->activate();
 		engine->set_event_source(receiver);
@@ -157,7 +157,6 @@ main(int argc, char** argv)
 		delete lash_driver;
 #endif
 
-		delete engine;
 		delete receiver;
 	}
 	

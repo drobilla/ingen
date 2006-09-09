@@ -119,6 +119,8 @@ NodeModel::add_program(int bank, int program, const string& name)
 {
         m_banks[bank][program] = name; 
 }
+
+
 void
 NodeModel::remove_program(int bank, int program)
 {
@@ -126,6 +128,31 @@ NodeModel::remove_program(int bank, int program)
 	if (m_banks[bank].size() == 0)
 		m_banks.erase(bank);
 }
+
+
+void
+NodeModel::x(float a)
+{
+	if (m_x != a) {
+		m_x = a;
+		char temp_buf[16];
+		snprintf(temp_buf, 16, "%f", a);
+		set_metadata("module-x", temp_buf);
+	}
+}
+
+
+void
+NodeModel::y(float a)
+{
+	if (m_y != a) {
+		m_y = a;
+		char temp_buf[16];
+		snprintf(temp_buf, 16, "%f", a);
+		set_metadata("module-y", temp_buf);
+	}
+}
+
 
 } // namespace Client
 } // namespace Ingen

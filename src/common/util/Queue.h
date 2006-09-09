@@ -66,6 +66,7 @@ Queue<T>::Queue(size_t size)
   m_size(size+1),
   m_objects((T*)calloc(m_size, sizeof(T)))
 {
+	assert(size > 1);
 }
 
 
@@ -147,6 +148,7 @@ inline T&
 Queue<T>::pop()
 {
 	assert(!is_empty());
+	assert(m_size > 0);
 
 	T& r = m_objects[m_front];
 	m_front = (m_front + 1) % (m_size);

@@ -42,32 +42,35 @@ public:
 	
 	void bundle_begin() {}
 	void bundle_end()   {}
+	
+	void transfer_begin() {}
+	void transfer_end()   {}
 
 	void num_plugins(uint32_t num) {}
 
-	void response(int32_t id, bool success, const string& msg) {}
+	void response(int32_t id, bool success, string msg) {}
 
 	// OSC thread functions
-	void error(const string& msg);
+	void error(string msg);
 	
-	void new_plugin(const string& type,
-	                const string& uri,
-	                const string& name) {}
+	void new_plugin(string type,
+	                string uri,
+	                string name) {}
 	void new_patch_model(PatchModel* const pm);
 	void new_port_model(PortModel* const port_model);
-	void object_destroyed(const string& path);
-	void patch_enabled(const string& path);
-	void patch_disabled(const string& path);
-	void patch_cleared(const string& path) { throw; }
+	void object_destroyed(string path);
+	void patch_enabled(string path);
+	void patch_disabled(string path);
+	void patch_cleared(string path) { throw; }
 	void new_node_model(NodeModel* const nm);
-	void object_renamed(const string& old_path, const string& new_path);
+	void object_renamed(string old_path, string new_path);
 	void connection_model(ConnectionModel* const cm);
-	void disconnection(const string& src_port_path, const string& dst_port_path);
-	void metadata_update(const string& path, const string& key, const string& value) {}
-	void control_change(const string& port_path, float value);
+	void disconnection(string src_port_path, string dst_port_path);
+	void metadata_update(string path, string key, string value) {}
+	void control_change(string port_path, float value);
 	void new_plugin_model(PluginModel* const pi);
-	void program_add(const string& path, uint32_t bank, uint32_t program, const string& name) {};
-	void program_remove(const string& path, uint32_t bank, uint32_t program) {};
+	void program_add(string path, uint32_t bank, uint32_t program, string name) {};
+	void program_remove(string path, uint32_t bank, uint32_t program) {};
 
 private:
 	DemolitionModel* m_model;

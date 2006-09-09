@@ -14,12 +14,13 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include "App.h"
+#include "ModelEngineInterface.h"
 #include "NewSubpatchWindow.h"
 #include "PatchController.h"
 #include "PatchView.h"
 #include "OmFlowCanvas.h"
 #include "NodeModel.h"
-#include "Controller.h"
 #include "PatchModel.h"
 
 namespace Ingenuity {
@@ -98,7 +99,7 @@ NewSubpatchWindow::ok_clicked()
 	pm->set_metadata("module-x", temp_buf);
 	snprintf(temp_buf, 16, "%16f", m_new_module_y);
 	pm->set_metadata("module-y", temp_buf);
-	Controller::instance().create_patch_from_model(pm);
+	App::instance().engine()->create_patch_from_model(pm);
 	hide();
 }			
 

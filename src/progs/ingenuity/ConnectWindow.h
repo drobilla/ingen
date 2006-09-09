@@ -46,6 +46,8 @@ public:
 	void response_received(int32_t id, bool, string) { if ((id) == _ping_id) _attached = true; }
 
 private:
+	enum Mode { CONNECT_REMOTE, LAUNCH_REMOTE, INTERNAL };
+
 	void server_toggled();
 	void launch_toggled();
 	void internal_toggled();
@@ -57,8 +59,7 @@ private:
 
 	bool gtk_callback();
 
-	CountedPtr<SigClientInterface> _client;
-	
+	Mode    _mode;
 	int32_t _ping_id;
 	bool    _attached;
 

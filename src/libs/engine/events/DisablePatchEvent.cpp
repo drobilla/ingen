@@ -58,7 +58,7 @@ DisablePatchEvent::post_process()
 {	
 	if (m_patch != NULL) {
 		_responder->respond_ok();
-		_engine.client_broadcaster()->send_patch_disable(m_patch_path);
+		_engine.broadcaster()->send_patch_disable(m_patch_path);
 	} else {
 		_responder->respond_error(string("Patch ") + m_patch_path + " not found");
 	}

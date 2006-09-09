@@ -30,7 +30,7 @@ namespace Ingen {
 void
 MidiLearnResponseEvent::post_process()
 {
-	_engine.client_broadcaster()->send_control_change(m_port_path, m_value);
+	_engine.broadcaster()->send_control_change(m_port_path, m_value);
 }
 
 

@@ -18,32 +18,12 @@
 #include "cmdline.h"
 #include "ConnectWindow.h"
 #include "App.h"
-#include "Store.h"
-#include "Controller.h"
 #include "Configuration.h"
 #ifdef HAVE_LASH
 	#include "LashController.h"
 #endif
-#include "ThreadedSigClientInterface.h"
-#include "OSCClientReceiver.h"
-using Ingen::Shared::ClientInterface;
 
 using namespace Ingenuity;
-
-
-class OSCSigEmitter : public OSCClientReceiver, public ThreadedSigClientInterface {
-public:
-	OSCSigEmitter(size_t queue_size, int listen_port)
-	: Ingen::Shared::ClientInterface()
-	, OSCClientReceiver(listen_port)
-	, ThreadedSigClientInterface(queue_size)
-	{
-		Glib::signal_timeout().connect(
-			sigc::mem_fun((ThreadedSigClientInterface*)this,
-				&ThreadedSigClientInterface::emit_signals),
-			5, G_PRIORITY_DEFAULT_IDLE);
-	}
-};
 
 
 int
@@ -68,26 +48,22 @@ main(int argc, char** argv)
 	Gnome::Canvas::init();
 	Gtk::Main gtk_main(argc, argv);
 	
-	CountedPtr<SigClientInterface> emitter(new OSCSigEmitter(1024, 16181));
-
 	/* Instantiate all singletons */
-	App::instantiate(emitter);
-
-	Controller::instantiate(engine_url);
+	App::instantiate();
 
 	/* Load settings */
 	App::instance().configuration()->load_settings();
 	App::instance().configuration()->apply_settings();
 
-	#ifdef HAVE_LASH
+#ifdef HAVE_LASH
 	lash_args_t* lash_args = lash_extract_args(&argc, &argv);
-	#endif
+#endif
 	
 	//gtk_main.signal_quit().connect(sigc::ptr_fun(cleanup));		
 
-	#ifdef HAVE_LASH
+#ifdef HAVE_LASH
 	LashController* lash_controller = new LashController(lash_args);
-	#endif
+#endif
 	
 	App::instance().connect_window()->start();
 	gtk_main.run();

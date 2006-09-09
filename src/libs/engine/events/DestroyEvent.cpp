@@ -34,16 +34,16 @@
 namespace Ingen {
 
 
-DestroyEvent::DestroyEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, QueuedEventSource* source, const string& path, bool lock_mutex)
-: QueuedEvent(engine, responder, true, source),
+DestroyEvent::DestroyEvent(Engine& engine, CountedPtr<Responder> responder, FrameTime time, QueuedEventSource* source, const string& path, bool lock_mutex)
+: QueuedEvent(engine, responder, time, true, source),
   m_path(path),
   m_node(NULL),
   m_patch_listnode(NULL),
   m_store_treenode(NULL),
   m_process_order(NULL),
-  m_disconnect_event(NULL),
-  m_parent_disconnect_event(NULL)
+  m_disconnect_event(NULL)
 {
+	assert(_source);
 }
 
 
@@ -54,8 +54,7 @@ DestroyEvent::DestroyEvent(Engine& engine, CountedPtr<Responder> responder, Samp
   m_patch_listnode(NULL),
   m_store_treenode(NULL),
   m_process_order(NULL),
-  m_disconnect_event(NULL),
-  m_parent_disconnect_event(NULL)
+  m_disconnect_event(NULL)
 {
 }
 
@@ -63,7 +62,6 @@ DestroyEvent::DestroyEvent(Engine& engine, CountedPtr<Responder> responder, Samp
 DestroyEvent::~DestroyEvent()
 {
 	delete m_disconnect_event;
-	delete m_parent_disconnect_event;
 }
 
 
@@ -86,14 +84,6 @@ DestroyEvent::pre_process()
 				m_disconnect_event->pre_process();
 			}
 			
-			// Create a recursive disconnect event for the parent port, if a bridge node
-			cerr << "FIXME: Destroy bridge\n";
-			/*Port* parent_port = m_patch_listnode->elem()->as_port();
-			if (parent_port != NULL) {  // Bridge node
-				m_parent_disconnect_event = new DisconnectPortEvent(Engine& engine, parent_port);
-				m_parent_disconnect_event->pre_process();
-			}*/
-				
 			if (m_node->parent_patch()->enabled()) {
 				m_process_order = m_node->parent_patch()->build_process_order();
 				// Remove node to be removed from the process order so it isn't executed by
@@ -125,8 +115,6 @@ DestroyEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 		
 		if (m_disconnect_event != NULL)
 			m_disconnect_event->execute(nframes, start, end);
-		if (m_parent_disconnect_event != NULL)
-			m_parent_disconnect_event->execute(nframes, start, end);
 		
 		if (m_node->parent_patch()->process_order() != NULL)
 			_engine.maid()->push(m_node->parent_patch()->process_order());
@@ -151,9 +139,7 @@ DestroyEvent::post_process()
 		_responder->respond_ok();
 		if (m_disconnect_event != NULL)
 			m_disconnect_event->post_process();
-		if (m_parent_disconnect_event != NULL)
-			m_parent_disconnect_event->post_process();
-		_engine.client_broadcaster()->send_destroyed(m_path);
+		_engine.broadcaster()->send_destroyed(m_path);
 		_engine.maid()->push(m_patch_listnode);
 		_engine.maid()->push(m_node);
 	} else {

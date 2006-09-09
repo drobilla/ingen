@@ -67,7 +67,7 @@ DSSIProgramEvent::post_process()
 		// sends program as metadata in the form bank/program
 		char* temp_buf = new char[16];
 		snprintf(temp_buf, 16, "%d/%d", m_bank, m_program);
-		_engine.client_broadcaster()->send_metadata_update(m_node_path, "dssi-program", temp_buf);
+		_engine.broadcaster()->send_metadata_update(m_node_path, "dssi-program", temp_buf);
 	}
 }
 

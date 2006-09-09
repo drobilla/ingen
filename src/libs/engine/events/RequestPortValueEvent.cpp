@@ -41,7 +41,7 @@ RequestPortValueEvent::RequestPortValueEvent(Engine& engine, CountedPtr<Responde
 void
 RequestPortValueEvent::pre_process()
 {
-	m_client = _engine.client_broadcaster()->client(_responder->client_key());
+	m_client = _engine.broadcaster()->client(_responder->client_key());
 	m_port = _engine.object_store()->find_port(m_port_path);
 
 	QueuedEvent::pre_process();

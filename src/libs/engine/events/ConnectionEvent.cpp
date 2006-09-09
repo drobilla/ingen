@@ -250,7 +250,7 @@ TypedConnectionEvent<T>::post_process()
 	
 		_responder->respond_ok();
 	
-		_engine.client_broadcaster()->send_connection(m_connection);
+		_engine.broadcaster()->send_connection(m_connection);
 	} else {
 		_responder->respond_error("Unable to make connection.");
 	}

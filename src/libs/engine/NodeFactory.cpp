@@ -145,9 +145,9 @@ NodeFactory::load_plugin(const Plugin* a_plugin,
 		// DEPRECATED: Search by lib name / plug label
 		if (a_plugin->uri().length() == 0) {
 			assert(a_plugin->lib_name().length() > 0 && a_plugin->plug_label().length() > 0);
-			cerr << "Searching for: " << a_plugin->lib_name() << " : " << a_plugin->plug_label() << endl;
+			//cerr << "Searching for: " << a_plugin->lib_name() << " : " << a_plugin->plug_label() << endl;
 			for (list<Plugin*>::iterator i = _plugins.begin(); i != _plugins.end(); ++i) {
-				cerr << (*i)->lib_name() << " : " << (*i)->plug_label() << endl;
+				//cerr << (*i)->lib_name() << " : " << (*i)->plug_label() << endl;
 				if (a_plugin->lib_name() == (*i)->lib_name() && a_plugin->plug_label() == (*i)->plug_label()) {
 					plugin = *i;
 					break;
@@ -155,7 +155,6 @@ NodeFactory::load_plugin(const Plugin* a_plugin,
 			}
 		} else {
 			// Search by URI
-			cerr << "Searching for " << name << " by URI" << endl;
 			for (list<Plugin*>::iterator i = _plugins.begin(); i != _plugins.end(); ++i) {
 				if (a_plugin->uri() == (*i)->uri()) {
 					plugin = *i;

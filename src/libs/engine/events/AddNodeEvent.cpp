@@ -117,8 +117,8 @@ AddNodeEvent::post_process()
 		_responder->respond_error(msg);
 	} else {
 		_responder->respond_ok();
-		//_engine.client_broadcaster()->send_node_creation_messages(m_node);
-		_engine.client_broadcaster()->send_node(m_node);
+		//_engine.broadcaster()->send_node_creation_messages(m_node);
+		_engine.broadcaster()->send_node(m_node);
 	}
 }
 

@@ -33,7 +33,7 @@ UnregisterClientEvent::UnregisterClientEvent(Engine& engine, CountedPtr<Responde
 void
 UnregisterClientEvent::post_process()
 {
-	if (_engine.client_broadcaster()->unregister_client(_key))
+	if (_engine.broadcaster()->unregister_client(_key))
 		_responder->respond_ok();
 	else
 		_responder->respond_error("Unable to unregister client");

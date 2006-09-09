@@ -49,7 +49,7 @@ public:
 	inline size_t next_id()
 	{ int32_t ret = (_id == -1) ? -1 : _id++; return ret; }
 
-	void enable_responses()  { _id = 0; }
+	void set_next_response_id(int32_t id) { _id = id; }
 	void disable_responses() { _id = -1; }
 
 	void attach(int32_t ping_id, bool block);

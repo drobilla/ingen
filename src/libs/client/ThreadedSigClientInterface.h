@@ -39,7 +39,7 @@ namespace Client {
  * function, which fires all enqueued signals up until the present.  You can
  * use this in a GTK idle callback for receiving thread safe engine signals.
  */
-class ThreadedSigClientInterface : virtual public SigClientInterface
+class ThreadedSigClientInterface : public SigClientInterface
 {
 public:
 	ThreadedSigClientInterface(uint32_t queue_size)
@@ -64,61 +64,66 @@ public:
 	{}
 
 
-	// FIXME
+	// FIXME: make this insert bundle-boundary-events, where the GTK thread
+	// process all events between start and finish in one cycle, guaranteed
+	// (no more node jumping)
 	void bundle_begin() {}
 	void bundle_end()   {}
+	
+	void transfer_begin() {}
+	void transfer_end()   {}
 
 	void num_plugins(uint32_t num) { _num_plugins = num; }
 
-	void response(int32_t id, bool success, const string& msg)
+	void response(int32_t id, bool success, string msg)
 		{ push_sig(sigc::bind(response_slot, id, success, msg)); }
 
-	void error(const string& msg)
+	void error(string msg)
 		{ push_sig(sigc::bind(error_slot, msg)); }
 	
-	void new_plugin(const string& type, const string& uri, const string& name)
+	void new_plugin(string type, string uri, string name)
 		{ push_sig(sigc::bind(new_plugin_slot, type, uri, name)); }
 	
-	void new_patch(const string& path, uint32_t poly)
+	void new_patch(string path, uint32_t poly)
 		{ push_sig(sigc::bind(new_patch_slot, path, poly)); }
 	
-	void new_node(const string& plugin_type, const string& plugin_uri, const string& node_path, bool is_polyphonic, uint32_t num_ports)
+	void new_node(string plugin_type, string plugin_uri, string node_path, bool is_polyphonic, uint32_t num_ports)
 		{ push_sig(sigc::bind(new_node_slot, plugin_type, plugin_uri, node_path, is_polyphonic, num_ports)); }
 	
-	void new_port(const string& path, const string& data_type, bool is_output)
+	void new_port(string path, string data_type, bool is_output)
 		{ push_sig(sigc::bind(new_port_slot, path, data_type, is_output)); }
 
-	void connection(const string& src_port_path, const string& dst_port_path)
+	void connection(string src_port_path, string dst_port_path)
 		{ push_sig(sigc::bind(connection_slot, src_port_path, dst_port_path)); }
 
-	void object_destroyed(const string& path)
+	void object_destroyed(string path)
 		{ push_sig(sigc::bind(object_destroyed_slot, path)); }
 	
-	void patch_enabled(const string& path)
+	void patch_enabled(string path)
 		{ push_sig(sigc::bind(patch_enabled_slot, path)); }
 	
-	void patch_disabled(const string& path)
+	void patch_disabled(string path)
 		{ push_sig(sigc::bind(patch_disabled_slot, path)); }
 
-	void patch_cleared(const string& path)
+	void patch_cleared(string path)
 		{ push_sig(sigc::bind(patch_cleared_slot, path)); }
 
-	void object_renamed(const string& old_path, const string& new_path)
+	void object_renamed(string old_path, string new_path)
 		{ push_sig(sigc::bind(object_renamed_slot, old_path, new_path)); }
 	
-	void disconnection(const string& src_port_path, const string& dst_port_path)
+	void disconnection(string src_port_path, string dst_port_path)
 		{ push_sig(sigc::bind(disconnection_slot, src_port_path, dst_port_path)); }
 	
-	void metadata_update(const string& path, const string& key, const string& value)
+	void metadata_update(string path, string key, string value)
 		{ push_sig(sigc::bind(metadata_update_slot, path, key, value)); }
 
-	void control_change(const string& port_path, float value)
+	void control_change(string port_path, float value)
 		{ push_sig(sigc::bind(control_change_slot, port_path, value)); }
 
-	void program_add(const string& path, uint32_t bank, uint32_t program, const string& name)
+	void program_add(string path, uint32_t bank, uint32_t program, string name)
 		{ push_sig(sigc::bind(program_add_slot, path, bank, program, name)); }
 	
-	void program_remove(const string& path, uint32_t bank, uint32_t program)
+	void program_remove(string path, uint32_t bank, uint32_t program)
 		{ push_sig(sigc::bind(program_remove_slot, path, bank, program)); }
 
 	/** Process all queued events - Called from GTK thread to emit signals. */

@@ -65,8 +65,6 @@ TypedPort<Sample>::set_value(Sample val, size_t offset)
 		offset = 0;
 	assert(offset < _buffer_size);
 	
-	cerr << path() << " setting value " << val << endl;
-
 	for (size_t v=0; v < _poly; ++v)
 		m_buffers.at(v)->set(val, offset);
 }

@@ -27,7 +27,6 @@
 #include "PatchView.h"
 #include "flowcanvas/Module.h"
 #include "PluginModel.h"
-#include "Controller.h"
 #include "SubpatchModule.h"
 #include "DSSIModule.h"
 #include "PatchWindow.h"
@@ -390,33 +389,7 @@ PatchController::create_connection(CountedPtr<ConnectionModel> cm)
 			cm->src_port_path().name(),
 			dst_parent_name,
 			cm->dst_port_path().name());
-
-	// Disable control slider from destination node control window
-	
-	cerr << "FIXME: create_connection\n";
-	/*PortController* p = Store::instance().port(cm->dst_port_path());
-	assert(p != NULL);
-
-	if (p->control_panel() != NULL)
-		p->control_panel()->disable_port(p->path());*/
-
-	// FIXME: don't use canvas as a model (search object store)
-	/*OmModule* m = (OmModule*)m_patch_view->canvas()->find_module(
-			cm->dst_port_path().parent().name());
-
-	if (m != NULL) {
-		OmPort* p = m->port(cm->dst_port_path().name());
-		if (p != NULL && p->connections().size() == 1) {
-			p->model()->connected(true);
-			assert(m->node_model()->controller() != NULL);
-			NodeControlWindow* cw = (((NodeController*)
-				m->node_model()->controller())->control_window());
-			if (cw != NULL)
-				cw->control_panel()->disable_port(cm->dst_port_path());
-		}
-	}*/
 }
-
 
 NodeController*
 PatchController::create_controller_for_node(CountedPtr<NodeModel> node)
@@ -529,8 +502,6 @@ PatchController::add_port(CountedPtr<PortModel> pm)
 	assert(pm->parent() == m_patch_model);
 	assert(patch_model()->get_port(pm->name()));
 	
-	cerr << "ADDING PORT " << pm->name() << "TO PATCH: " << patch_model()->path() << endl;
-
 	//cerr << "[PatchController] Adding port " << pm->path() << endl;
 
 	/*if (patch_model()->get_port(pm->name())) {

@@ -44,8 +44,8 @@ class DisconnectPortEvent;
 class DestroyEvent : public QueuedEvent
 {
 public:
-	DestroyEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, QueuedEventSource* source, const string& path, bool lock_mutex = true);
-	DestroyEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, Node* node, bool lock_mutex = true);
+	DestroyEvent(Engine& engine, CountedPtr<Responder> responder, FrameTime timestamp, QueuedEventSource* source, const string& path, bool lock_mutex = true);
+	DestroyEvent(Engine& engine, CountedPtr<Responder> responder, FrameTime timestamp, Node* node, bool lock_mutex = true);
 	~DestroyEvent();
 
 	void pre_process();
@@ -53,13 +53,12 @@ public:
 	void post_process();
 
 private:
-	Path                 m_path;
-	Node*                m_node; 
-	ListNode<Node*>*     m_patch_listnode;
+	Path                    m_path;
+	Node*                   m_node; 
+	ListNode<Node*>*        m_patch_listnode;
 	TreeNode<GraphObject*>* m_store_treenode;
-	Array<Node*>*        m_process_order; // Patch's new process order
-	DisconnectNodeEvent* m_disconnect_event;
-	DisconnectPortEvent* m_parent_disconnect_event; // used for input/output nodes
+	Array<Node*>*           m_process_order; // Patch's new process order
+	DisconnectNodeEvent*    m_disconnect_event;
 };
 
 

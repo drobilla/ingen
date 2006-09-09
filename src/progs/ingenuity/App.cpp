@@ -35,7 +35,6 @@
 #include "PatchWindow.h"
 #include "MessagesWindow.h"
 #include "ConfigWindow.h"
-#include "Controller.h"
 #include "GladeFactory.h"
 #include "util/Path.h"
 #include "ObjectModel.h"
@@ -44,6 +43,7 @@
 #include "Configuration.h"
 #include "ConnectWindow.h"
 #include "Store.h"
+#include "Loader.h"
 #ifdef HAVE_LASH
 #include "LashController.h"
 #endif
@@ -61,9 +61,9 @@ class OmPort;
 App* App::_instance = 0;
 
 
-App::App(CountedPtr<SigClientInterface> listener)
-: _listener(listener),
-  _store(new Store(listener)),
+App::App()
+: _store(NULL),
+  _loader(NULL),
   _configuration(new Configuration()),
   _about_dialog(NULL),
   _enable_signal(true)
@@ -71,16 +71,13 @@ App::App(CountedPtr<SigClientInterface> listener)
 	Glib::RefPtr<Gnome::Glade::Xml> glade_xml = GladeFactory::new_glade_reference();
 
 	glade_xml->get_widget_derived("connect_win", _connect_window);
-	//glade_xml->get_widget_derived("new_patch_win", _new_patch_window);
-	//glade_xml->get_widget_derived("load_patch_win", _load_patch_window);
-	glade_xml->get_widget_derived("config_win", _config_window);
+	glade_xml->get_widget_derived("messages_win", _messages_window);
 	glade_xml->get_widget_derived("patch_tree_win", _patch_tree_window);
-//	glade_xml->get_widget_derived("main_patches_treeview", _objects_treeview);
+	glade_xml->get_widget_derived("config_win", _config_window);
 	glade_xml->get_widget("about_win", _about_dialog);
+
 	
 	_config_window->configuration(_configuration);
-
-	glade_xml->get_widget_derived("messages_win", _messages_window);
 }
 
 
@@ -89,11 +86,27 @@ App::~App()
 }
 
 void
-App::instantiate(CountedPtr<SigClientInterface>& listener)
+App::instantiate()
 {
 	if (!_instance)
-		_instance = new App(listener);
+		_instance = new App();
 }
+
+
+void
+App::attach(CountedPtr<ModelEngineInterface>& engine, CountedPtr<SigClientInterface>& client)
+{
+	assert( ! _engine);
+	assert( ! _client);
+	assert( ! _store);
+	assert( ! _loader);
+	
+	_engine = engine;
+	_client = client;
+	_store = new Store(client);
+	_loader = new Loader(engine);
+}
+
 
 void
 App::error_message(const string& str)

@@ -17,6 +17,7 @@
 #ifndef OSCCLIENTSENDER_H
 #define OSCCLIENTSENDER_H
 
+#include <cassert>
 #include <string>
 #include <iostream>
 #include <list>
@@ -40,7 +41,8 @@ class OSCClientSender : public Shared::ClientInterface
 public:
 	OSCClientSender(const string& url)
 	: _url(url),
-	  _address(lo_address_new_from_url(url.c_str()))
+	  _address(lo_address_new_from_url(url.c_str())),
+	  _transfer(NULL)
 	{}
 
 	virtual ~OSCClientSender()
@@ -56,66 +58,68 @@ public:
 	/* *** ClientInterface Implementation Below *** */
 
 
-	//void client_registration(const string& url, int client_id);
+	//void client_registration(string url, int client_id);
 	
-	// need a liblo feature to make this possible :/
-	void bundle_begin() {}
-	void bundle_end()   {}
+	void bundle_begin();
+	void bundle_end();
+	
+	void transfer_begin();
+	void transfer_end();
 
-	void response(int32_t id, bool success, const string& msg);
+	void response(int32_t id, bool success, string msg);
 
 	void num_plugins(uint32_t num);
 
-	void error(const string& msg);
+	void error(string msg);
 
-	virtual void new_plugin(const string& type,
-	                        const string& uri,
-	                        const string& name);
+	virtual void new_plugin(string type,
+	                        string uri,
+	                        string name);
 	
-	virtual void new_patch(const string& path, uint32_t poly);
+	virtual void new_patch(string path, uint32_t poly);
 	
-	virtual void new_node(const string& plugin_type,
-	                      const string& plugin_uri,
-	                      const string& node_path,
-	                      bool          is_polyphonic,
-	                      uint32_t      num_ports);
+	virtual void new_node(string   plugin_type,
+	                      string   plugin_uri,
+	                      string   node_path,
+	                      bool     is_polyphonic,
+	                      uint32_t num_ports);
 	
-	virtual void new_port(const string& path,
-	                      const string& data_type,
-	                      bool          is_output);
+	virtual void new_port(string path,
+	                      string data_type,
+	                      bool   is_output);
 	
-	virtual void patch_enabled(const string& path);
+	virtual void patch_enabled(string path);
 	
-	virtual void patch_disabled(const string& path);
+	virtual void patch_disabled(string path);
 	
-	virtual void patch_cleared(const string& path);
+	virtual void patch_cleared(string path);
 	
-	virtual void object_destroyed(const string& path);
+	virtual void object_destroyed(string path);
 	
-	virtual void object_renamed(const string& old_path,
-	                            const string& new_path);
+	virtual void object_renamed(string old_path,
+	                            string new_path);
 	
-	virtual void connection(const string& src_port_path,
-	                        const string& dst_port_path);
+	virtual void connection(string src_port_path,
+	                        string dst_port_path);
 	
-	virtual void disconnection(const string& src_port_path,
-	                           const string& dst_port_path);
+	virtual void disconnection(string src_port_path,
+	                           string dst_port_path);
 	
-	virtual void metadata_update(const string& subject_path,
-	                             const string& predicate,
-	                             const string& value);
+	virtual void metadata_update(string subject_path,
+	                             string predicate,
+	                             string value);
 	
-	virtual void control_change(const string& port_path,
-	                            float         value);
+	virtual void control_change(string port_path,
+	                            float  value);
 	
-	virtual void program_add(const string& node_path,
-	                         uint32_t      bank,
-	                         uint32_t      program,
-	                         const string& program_name);
+	virtual void program_add(string   node_path,
+	                         uint32_t bank,
+	                         uint32_t program,
+	                         string   program_name);
 	
-	virtual void program_remove(const string& node_path,
-	                            uint32_t      bank,
-	                            uint32_t      program);
+	virtual void program_remove(string   node_path,
+	                            uint32_t bank,
+	                            uint32_t program);
 
 private:
 	// Prevent copies (undefined)
@@ -124,6 +128,8 @@ private:
 	
 	string      _url;
 	lo_address  _address;
+
+	lo_bundle _transfer;
 };
 
 

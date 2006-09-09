@@ -168,7 +168,7 @@ PatchModel::add_connection(CountedPtr<ConnectionModel> cm)
 	//assert(cm->dst_port_path().parent().parent() == m_path);
 	assert(cm->patch_path() == path());
 	
-	cerr << "PatchModel::add_connection: " << cm->src_port_path() << " -> " << cm->dst_port_path() << endl;
+	//cerr << "PatchModel::add_connection: " << cm->src_port_path() << " -> " << cm->dst_port_path() << endl;
 
 	CountedPtr<ConnectionModel> existing = get_connection(cm->src_port_path(), cm->dst_port_path());
 

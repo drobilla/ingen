@@ -22,6 +22,7 @@
 #include <string>
 #include <libxml/tree.h>
 #include <cassert>
+#include "util/CountedPtr.h"
 //#include "DummyModelClientInterface.h"
 
 using std::string;
@@ -46,7 +47,7 @@ class PatchLibrarian
 public:
 	// FIXME: return booleans and set an errstr that can be checked or something?
 	
-	PatchLibrarian(ModelEngineInterface* _engine)
+	PatchLibrarian(CountedPtr<ModelEngineInterface> _engine)
 	: _patch_search_path("."), _engine(_engine)
 	{
 		assert(_engine);
@@ -63,8 +64,8 @@ public:
 private:
 	string translate_load_path(const string& path);
 
-	string                      _patch_search_path;
-	ModelEngineInterface* const _engine;
+	string                           _patch_search_path;
+	CountedPtr<ModelEngineInterface> _engine;
 
 	/// Translations of paths from the loading file to actual paths (for deprecated patches)
 	std::map<string, string> _load_path_translations;

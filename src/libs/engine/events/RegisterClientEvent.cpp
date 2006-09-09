@@ -36,7 +36,7 @@ RegisterClientEvent::RegisterClientEvent(Engine& engine, CountedPtr<Responder>  
 void
 RegisterClientEvent::pre_process()
 {  
-	_engine.client_broadcaster()->register_client(_key, _client);
+	_engine.broadcaster()->register_client(_key, _client);
 
 	QueuedEvent::pre_process();
 }

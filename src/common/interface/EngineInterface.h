@@ -39,6 +39,10 @@ class EngineInterface
 public:
 	virtual ~EngineInterface() {}
 	
+	// Responses
+	virtual void set_next_response_id(int32_t id) = 0;
+	virtual void disable_responses() = 0;
+
 	// Client registration
 	virtual void register_client(ClientKey key, CountedPtr<ClientInterface> client) = 0;
 	virtual void unregister_client(ClientKey key) = 0;

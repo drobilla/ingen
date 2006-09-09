@@ -36,6 +36,8 @@ QueuedEventSource::QueuedEventSource(size_t queued_size, size_t stamped_size)
 	_events = (QueuedEvent**)calloc(_size, sizeof(QueuedEvent*));
 
 	mlock(_events, _size * sizeof(QueuedEvent*));
+
+	Thread::set_name("PreProcessor");
 }
 
 
@@ -151,15 +153,10 @@ QueuedEventSource::_whipped()
 	QueuedEvent* const ev = _events[_prepared_back];
 	
 	assert(ev);
-	if (ev == NULL) {
-		cerr << "[QueuedEventSource] ERROR: Signalled, but event is NULL." << endl;
-		return;
-	}
-
-	assert(ev);
+	
 	assert(!ev->is_prepared());
-
 	ev->pre_process();
+	assert(ev->is_prepared());
 
 	_prepared_back = (_prepared_back+1) % _size;
 

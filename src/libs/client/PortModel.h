@@ -47,11 +47,11 @@ public:
 	  m_hint(hint),
 	  m_default_val(default_val),
 	  m_min_val(min),
-	  m_user_min(min),
+	  //m_user_min(min),
 	  m_max_val(max),
-	  m_user_max(max),
+	  //m_user_max(max),
 	  m_current_val(default_val),
-	  m_connected(false)
+	  m_connections(0)
 	{
 	}
 	
@@ -62,26 +62,25 @@ public:
 	  m_hint(NONE),
 	  m_default_val(0.0f),
 	  m_min_val(0.0f),
-	  m_user_min(0.0f),
+	  //m_user_min(0.0f),
 	  m_max_val(0.0f),
-	  m_user_max(0.0f),
+	  //m_user_max(0.0f),
 	  m_current_val(0.0f),
-	  m_connected(false)
+	  m_connections(0)
 	{
 	}
 	
 	inline float min_val() const      { return m_min_val; }
-	inline float user_min() const     { return m_user_min; }
-	inline void  user_min(float f)    { m_user_min = f; }
+	inline float user_min() const     { return atof(get_metadata("min").c_str()); } // FIXME: haaack
+	//inline void  user_min(float f)    { m_user_min = f; }
 	inline float default_val() const  { return m_default_val; }
 	inline void  default_val(float f) { m_default_val = f; }
 	inline float max_val() const      { return m_max_val; }
-	inline float user_max() const     { return m_user_max; }
-	inline void  user_max(float f)    { m_user_max = f; }
+	inline float user_max() const     { return atof(get_metadata("max").c_str()); }
+	//inline void  user_max(float f)    { m_user_max = f; }
 	inline float value() const        { return m_current_val; }
 	inline void  value(float f)       { m_current_val = f; control_change_sig.emit(f); }
-	inline bool  connected()          { return m_connected; }
-	inline void  connected(bool b)    { m_connected = b; }
+	inline bool  connected()          { return (m_connections > 0); }
 	inline Type  type()               { return m_type; }
 
 	inline bool is_input()       const { return (m_direction == INPUT); }
@@ -96,8 +95,13 @@ public:
 	inline bool operator==(const PortModel& pm)
 		{ return (m_path == pm.m_path); }
 
+	void connected_to(CountedPtr<PortModel> p)      { ++m_connections; connection_sig.emit(p); }
+	void disconnected_from(CountedPtr<PortModel> p) { --m_connections; disconnection_sig.emit(p); }
+	
 	// Signals
-	sigc::signal<void, float> control_change_sig; ///< "Control" ports only
+	sigc::signal<void, float>                  control_change_sig; ///< "Control" ports only
+	sigc::signal<void, CountedPtr<PortModel> > connection_sig;
+	sigc::signal<void, CountedPtr<PortModel> > disconnection_sig;
 
 private:
 	// Prevent copies (undefined)
@@ -109,11 +113,11 @@ private:
 	Hint      m_hint;
 	float     m_default_val;
 	float     m_min_val;
-	float     m_user_min;
+	//float     m_user_min;
 	float     m_max_val;
-	float     m_user_max;
+	//float     m_user_max;
 	float     m_current_val;
-	bool      m_connected;
+	size_t    m_connections;
 };
 
 typedef list<CountedPtr<PortModel> > PortModelList;

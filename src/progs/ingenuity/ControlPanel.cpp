@@ -14,13 +14,14 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include "App.h"
+#include "ModelEngineInterface.h"
 #include "ControlPanel.h"
 #include "PatchModel.h"
 #include "NodeModel.h"
 #include "PortModel.h"
 #include "ControlGroups.h"
 #include "PatchController.h"
-#include "Controller.h"
 
 namespace Ingenuity {
 
@@ -124,6 +125,10 @@ ControlPanel::add_port(PortController* port)
 			cg->disable();
 		else
 			cg->enable();
+
+		cerr << "FIXME: Control panel add port\n";
+		//	pm->connection_sig.connect(bind(sigc::mem_fun(this, &ControlPanel::connection), pm))
+		//	pm->disconnection_sig.connect(bind(sigc::mem_fun(this, &ControlPanel::disconnection), pm))
 	}
 
 	//port->set_control_panel(this);
@@ -223,10 +228,10 @@ ControlPanel::value_changed(const Path& port_path, float val)
 		//	m_mirror->set_port_value(port_path, val);
 
 		if (m_all_voices_radio->get_active()) {
-			Controller::instance().set_port_value(port_path, val);
+			App::instance().engine()->set_port_value(port_path, val);
 		} else {
 			int voice = m_voice_spinbutton->get_value_as_int();
-			Controller::instance().set_port_value(port_path, voice, val);
+			App::instance().engine()->set_port_value(port_path, voice, val);
 		}
 	}
 }

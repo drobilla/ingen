@@ -25,6 +25,7 @@
 #include "interface/ClientInterface.h"
 #include "interface/ClientKey.h"
 #include "QueuedEventSource.h"
+#include "Engine.h"
 #include "Responder.h"
 using std::string;
 
@@ -56,12 +57,14 @@ class Engine;
  * events and get pushed directly into the realtime event queue.  Should that
  * be separated into a different interface/client?
  */
-class QueuedEngineInterface : public QueuedEventSource, public EngineInterface
+class QueuedEngineInterface : public QueuedEventSource, public virtual EngineInterface
 {
 public:
-	QueuedEngineInterface(Engine& engine, size_t queued_size, size_t stamped_size);
+	QueuedEngineInterface(CountedPtr<Engine> engine, size_t queued_size, size_t stamped_size);
 	virtual ~QueuedEngineInterface() {}
 	
+	void set_next_response_id(int32_t id);
+
 	virtual void set_responder(CountedPtr<Responder> responder);
 	virtual void disable_responses();
 
@@ -151,10 +154,10 @@ protected:
 	/** Where responses to current messages will go. */
 	CountedPtr<Responder> _responder;
 
+	CountedPtr<Engine> _engine;
+
 private:
 	SampleCount now() const;
-
-	Engine& _engine;
 };
 
 

@@ -66,10 +66,11 @@ public:
 	// Error that isn't the direct result of a request
 	void send_error(const string& msg);
 
-	void send_plugins_to(ClientInterface* client, const list<Plugin*>& plugin_list);
+
 	
 	//void send_node_creation_messages(const Node* const node);
 	
+	void send_plugins(const list<Plugin*>& plugin_list);
 	void send_patch(const Patch* const p);
 	void send_node(const Node* const node);
 	void send_port(const Port* port);
@@ -85,6 +86,8 @@ public:
 	void send_control_change(const string& port_path, float value);
 	void send_program_add(const string& node_path, int bank, int program, const string& name);
 	void send_program_remove(const string& node_path, int bank, int program);
+	
+	void send_plugins_to(CountedPtr<ClientInterface>, const list<Plugin*>& plugin_list);
 
 private:
 	typedef list<pair<ClientKey, CountedPtr<ClientInterface> > > ClientList;

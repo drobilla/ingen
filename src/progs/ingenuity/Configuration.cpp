@@ -25,7 +25,8 @@
 #include "PatchController.h"
 #include "PatchModel.h"
 #include "OmFlowCanvas.h"
-#include "Controller.h"
+#include "Loader.h"
+#include "App.h"
 
 using std::cerr; using std::cout; using std::endl;
 using std::map; using std::string;
@@ -131,7 +132,8 @@ Configuration::save_settings(string filename)
 void
 Configuration::apply_settings()
 {
-	Controller::instance().set_patch_path(m_patch_path);
+	cerr << "FIXME: patch path" << endl;
+	//App::instance().loader()->set_patch_path(m_patch_path);
 }
 
 

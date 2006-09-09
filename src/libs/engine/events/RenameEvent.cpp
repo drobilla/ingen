@@ -103,7 +103,7 @@ RenameEvent::post_process()
 	
 	if (m_error == NO_ERROR) {
 		_responder->respond_ok();
-		_engine.client_broadcaster()->send_rename(m_old_path, m_new_path);
+		_engine.broadcaster()->send_rename(m_old_path, m_new_path);
 	} else {
 		if (m_error == OBJECT_EXISTS)
 			msg.append("Object already exists at ").append(m_new_path);

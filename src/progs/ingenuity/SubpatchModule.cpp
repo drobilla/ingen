@@ -17,6 +17,8 @@
 #include "SubpatchModule.h"
 #include <cassert>
 #include <iostream>
+#include "App.h"
+#include "ModelEngineInterface.h"
 #include "OmModule.h"
 #include "NodeControlWindow.h"
 #include "PatchModel.h"
@@ -24,7 +26,6 @@
 #include "OmFlowCanvas.h"
 #include "PatchController.h"
 #include "OmPort.h"
-#include "Controller.h"
 using std::cerr; using std::cout; using std::endl;
 
 namespace Ingenuity {
@@ -96,7 +97,7 @@ SubpatchModule::show_dialog()
 void
 SubpatchModule::menu_remove()
 {
-	Controller::instance().destroy(m_patch->model()->path());
+	App::instance().engine()->destroy(m_patch->model()->path());
 }
 
 } // namespace Ingenuity

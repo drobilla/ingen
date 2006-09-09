@@ -14,8 +14,10 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include "App.h"
+#include "ModelEngineInterface.h"
+#include "OSCEngineSender.h"
 #include "PatchTreeWindow.h"
-#include "Controller.h"
 #include "PatchController.h"
 #include "PatchWindow.h"
 #include "SubpatchModule.h"
@@ -70,7 +72,8 @@ PatchTreeWindow::add_patch(PatchController* pc)
 		Gtk::TreeModel::iterator iter = m_patch_treestore->append();
 		Gtk::TreeModel::Row row = *iter;
 		if (pm->path() == "/") {
-			string root_name = Controller::instance().engine_url();
+			CountedPtr<OSCEngineSender> osc_sender = App::instance().engine();
+			string root_name = osc_sender ? osc_sender->engine_url() : "Internal";
 			// Hack off trailing '/' if it's there (ugly)
 			//if (root_name.substr(root_name.length()-1,1) == "/")
 			//	root_name = root_name.substr(0, root_name.length()-1);
@@ -178,12 +181,12 @@ PatchTreeWindow::event_patch_enabled_toggled(const Glib::ustring& path_str)
 	
 	if ( ! pc->patch_model()->enabled()) {
 		if (m_enable_signal)
-			Controller::instance().enable_patch(patch_path);
+			App::instance().engine()->enable_patch(patch_path);
 		//pc->enable();
 		row[m_patch_tree_columns.enabled_col] = true;
 	} else {
 		if (m_enable_signal)
-			Controller::instance().disable_patch(patch_path);
+			App::instance().engine()->disable_patch(patch_path);
 		//pc->disable();
 		row[m_patch_tree_columns.enabled_col] = false;
 	}

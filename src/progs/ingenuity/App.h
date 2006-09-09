@@ -34,6 +34,7 @@ namespace Ingen { namespace Client {
 	class PluginModel;
 	class Store;
 	class SigClientInterface;
+	class ModelEngineInterface;
 } }
 using namespace Ingen::Client;
 
@@ -59,6 +60,7 @@ class PatchTreeView;
 class PatchTreeWindow;
 class ConnectWindow;
 class Configuration;
+class Loader;
 
 
 /** Singleton master class most everything is contained within.
@@ -81,7 +83,9 @@ public:
 	void add_patch_window(PatchWindow* pw);
 	void remove_patch_window(PatchWindow* pw);
 
-	int  num_open_patch_windows();
+	int num_open_patch_windows();
+
+	void attach(CountedPtr<ModelEngineInterface>& engine, CountedPtr<SigClientInterface>& client);
 
 	ConnectWindow*   connect_window()       const { return _connect_window; }
 	Gtk::Dialog*     about_dialog()         const { return _about_dialog; }
@@ -90,22 +94,23 @@ public:
 	PatchTreeWindow* patch_tree()           const { return _patch_tree_window; }
 	Configuration*   configuration()        const { return _configuration; }
 	Store*           store()                const { return _store; }
+	Loader*          loader()               const { return _loader; }
 	
-	const CountedPtr<SigClientInterface>& client() const { return _listener; }
-
-	static void instantiate(CountedPtr<SigClientInterface>& listener);
+	const CountedPtr<ModelEngineInterface>& engine() const { return _engine; }
+	const CountedPtr<SigClientInterface>&   client() const { return _client; }
 
 	static inline App& instance() { assert(_instance); return *_instance; }
+	static void        instantiate();
 
 protected:
-	App(CountedPtr<SigClientInterface> listener);
+	App();
 	static App* _instance;
 
-	//bool connect_callback();
-	//bool idle_callback();
-
-	CountedPtr<SigClientInterface> _listener;
-	Store*                         _store;
+	CountedPtr<ModelEngineInterface> _engine;
+	CountedPtr<SigClientInterface>   _client;
+	
+	Store*  _store;
+	Loader* _loader;
 
 	Configuration*    _configuration;
 
@@ -116,7 +121,6 @@ protected:
 	PatchTreeWindow*  _patch_tree_window;
 	ConfigWindow*     _config_window;
 	Gtk::Dialog*      _about_dialog;
-	Gtk::Button*      _engine_error_close_button;
 
 	/** Used to avoid feedback loops with (eg) process checkbutton
 	 * FIXME: Maybe this should be globally implemented at the Controller level,

@@ -25,8 +25,7 @@ namespace Ingen {
 
 
 RequestAllObjectsEvent::RequestAllObjectsEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp)
-: QueuedEvent(engine, responder, timestamp),
-  m_client(CountedPtr<ClientInterface>(NULL))
+: QueuedEvent(engine, responder, timestamp)
 {
 }
 
@@ -34,7 +33,7 @@ RequestAllObjectsEvent::RequestAllObjectsEvent(Engine& engine, CountedPtr<Respon
 void
 RequestAllObjectsEvent::pre_process()
 {
-	m_client = _engine.client_broadcaster()->client(_responder->client_key());
+	m_client = _engine.broadcaster()->client(_responder->client_key());
 	
 	QueuedEvent::pre_process();
 }

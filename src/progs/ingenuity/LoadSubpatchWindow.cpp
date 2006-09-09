@@ -23,9 +23,10 @@
 #include "PatchView.h"
 #include "OmFlowCanvas.h"
 #include "NodeModel.h"
-#include "Controller.h"
 #include "PatchModel.h"
 #include "Configuration.h"
+#include "ModelEngineInterface.h"
+#include "Loader.h"
 
 namespace Ingenuity {
 
@@ -163,7 +164,7 @@ LoadSubpatchWindow::ok_clicked()
 	pm->set_metadata("module-x", temp_buf);
 	snprintf(temp_buf, 16, "%16f", m_new_module_y);
 	pm->set_metadata("module-y", temp_buf);
-	Controller::instance().load_patch(pm);
+	App::instance().loader()->load_patch(pm, true, false);
 
 	App::instance().configuration()->set_patch_folder(pm->filename().substr(0, pm->filename().find_last_of("/")));
 	

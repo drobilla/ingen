@@ -67,9 +67,9 @@ public:
 	virtual bool          polyphonic() const { return m_polyphonic; }
 	void                  polyphonic(bool b) { m_polyphonic = b; }
 	float                 x() const          { return m_x; }
-	void                  x(float a)         { m_x = a; }
 	float                 y() const          { return m_y; }
-	void                  y(float a)         { m_y = a; }
+	void                  x(float a);
+	void                  y(float a);
 	
 	// Signals
 	sigc::signal<void, CountedPtr<PortModel> > new_port_sig; 

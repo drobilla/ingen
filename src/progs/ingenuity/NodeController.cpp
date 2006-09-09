@@ -17,6 +17,7 @@
 #include "NodeController.h"
 #include <iostream>
 #include <gtkmm.h>
+#include "App.h"
 #include "OmModule.h"
 #include "NodeModel.h"
 #include "PortModel.h"
@@ -28,11 +29,11 @@
 #include "OmFlowCanvas.h"
 #include "RenameWindow.h"
 #include "GladeFactory.h"
-#include "Controller.h"
 #include "PatchWindow.h"
 #include "PatchModel.h"
 #include "NodePropertiesWindow.h"
 #include "Store.h"
+#include "ModelEngineInterface.h"
 using std::cerr; using std::endl;
 
 namespace Ingenuity {
@@ -199,7 +200,7 @@ NodeController::add_port(CountedPtr<PortModel> pm)
 	assert(pm->parent() == node_model());
 	assert(node_model()->get_port(pm->name()) == pm);
 	
-	cout << "[NodeController] Adding port " << pm->path() << endl;
+	//cout << "[NodeController] Adding port " << pm->path() << endl;
 	
 	// FIXME: leak
 	PortController* pc = new PortController(pm);
@@ -240,7 +241,7 @@ NodeController::show_control_window()
 void
 NodeController::on_menu_destroy()
 {
-	Controller::instance().destroy(node_model()->path());
+	App::instance().engine()->destroy(node_model()->path());
 }
 
 
@@ -298,7 +299,7 @@ NodeController::on_menu_clone()
 	nm->polyphonic(node_model()->polyphonic());
 	nm->x(node_model()->x() + 20);
 	nm->y(node_model()->y() + 20);
-	Controller::instance().create_node_from_model(nm);
+	App::instance().engine()->create_node_from_model(nm);
 	*/
 }
 
@@ -306,13 +307,13 @@ NodeController::on_menu_clone()
 void
 NodeController::on_menu_learn()
 {
-	Controller::instance().midi_learn(node_model()->path());
+	App::instance().engine()->midi_learn(node_model()->path());
 }
 
 void
 NodeController::on_menu_disconnect_all()
 {
-	Controller::instance().disconnect_all(node_model()->path());
+	App::instance().engine()->disconnect_all(node_model()->path());
 }
 
 

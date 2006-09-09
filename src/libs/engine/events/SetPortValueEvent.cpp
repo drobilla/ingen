@@ -78,13 +78,13 @@ SetPortValueEvent::post_process()
 		assert(m_port != NULL);
 		
 		_responder->respond_ok();
-		_engine.client_broadcaster()->send_control_change(m_port_path, m_val);
+		_engine.broadcaster()->send_control_change(m_port_path, m_val);
 		
 		// Send patch port control change, if this is a bridge port
 		/*Port* parent_port = m_port->parent_node()->as_port();
 		if (parent_port != NULL) {
 			assert(parent_port->type() == DataType::FLOAT);
-			_engine.client_broadcaster()->send_control_change(parent_port->path(), m_val);
+			_engine.broadcaster()->send_control_change(parent_port->path(), m_val);
 		}*/
 
 	} else if (m_error == PORT_NOT_FOUND) {

@@ -62,7 +62,7 @@ Store::add_object(CountedPtr<ObjectModel> object)
 
 	m_objects[object->path()] = object;
 
-	cout << "[Store] Added " << object->path() << endl;
+	//cout << "[Store] Added " << object->path() << endl;
 }
 
 
@@ -75,7 +75,7 @@ Store::remove_object(const string& path)
 		assert((*i).second->path() == path);
 		CountedPtr<ObjectModel> result = (*i).second;
 		m_objects.erase(i);
-		cout << "[Store] Removed " << path << endl;
+		//cout << "[Store] Removed " << path << endl;
 		return result;
 	} else {
 		cerr << "[Store] Unable to find object " << path << " to remove." << endl;
@@ -163,11 +163,11 @@ Store::port(const string& path)
 void
 Store::add_plugin(CountedPtr<PluginModel> pm)
 {
-	if (m_plugins.find(pm->uri()) != m_plugins.end()) {
-		cerr << "DUPE PLUGIN: " << pm->uri() << endl;
-	} else {
+	//if (m_plugins.find(pm->uri()) != m_plugins.end()) {
+	//	cerr << "DUPE PLUGIN: " << pm->uri() << endl;
+	//} else {
 		m_plugins[pm->uri()] = pm;
-	}
+	//}
 }
 
 
@@ -363,6 +363,9 @@ Store::connection_event(const Path& src_port_path, const Path& dst_port_path)
 	assert(src_port);
 	assert(dst_port);
 
+	src_port->connected_to(dst_port);
+	dst_port->connected_to(src_port);
+
 	CountedPtr<ConnectionModel> cm = new ConnectionModel(src_port, dst_port);
 
 	CountedPtr<PatchModel> patch = this->object(cm->patch_path());
@@ -385,6 +388,9 @@ Store::disconnection_event(const Path& src_port_path, const Path& dst_port_path)
 
 	assert(src_port);
 	assert(dst_port);
+	
+	src_port->disconnected_from(dst_port);
+	dst_port->disconnected_from(src_port);
 
 	CountedPtr<ConnectionModel> cm = new ConnectionModel(src_port, dst_port);
 

@@ -22,12 +22,12 @@
 #include "PatchController.h"
 #include "PatchView.h"
 #include "NodeModel.h"
-#include "Controller.h"
 #include "App.h"
 #include "PatchWindow.h"
 #include "OmFlowCanvas.h"
 #include "PatchModel.h"
 #include "Store.h"
+#include "ModelEngineInterface.h"
 using std::cout; using std::cerr; using std::endl;
 
 
@@ -294,7 +294,7 @@ LoadPluginWindow::add_clicked()
 			nm->x(m_new_module_x);
 			nm->y(m_new_module_y);
 
-			Controller::instance().create_node_from_model(nm);
+			App::instance().engine()->create_node_from_model(nm);
 			++m_plugin_name_offset;
 			m_node_name_entry->set_text(generate_module_name(m_plugin_name_offset));
 			

@@ -60,7 +60,7 @@ Engine::Engine(AudioDriver* audio_driver)
 #endif
   m_maid(new Maid(maid_queue_size)),
   m_post_processor(new PostProcessor(*m_maid, post_processor_queue_size)),
-  m_client_broadcaster(new ClientBroadcaster()),
+  m_broadcaster(new ClientBroadcaster()),
   m_object_store(new ObjectStore()),
   m_node_factory(new NodeFactory()),
 #ifdef HAVE_LASH
@@ -85,7 +85,7 @@ Engine::~Engine()
 	}
 	
 	delete m_object_store;
-	delete m_client_broadcaster;
+	delete m_broadcaster;
 	delete m_node_factory;
 	delete m_midi_driver;
 	delete m_audio_driver;
@@ -114,13 +114,7 @@ Engine::main()
 	// Loop until quit flag is set (by OSCReceiver)
 	while ( ! m_quit_flag) {
 		nanosleep(&main_rate, NULL);
-#ifdef HAVE_LASH
-		// Process any pending LASH events
-		if (lash_driver->enabled())
-			lash_driver->process_events();
-#endif
-		// Run the maid (garbage collector)
-		m_maid->cleanup();
+		main_iteration();
 	}
 	cout << "[Main] Done main loop." << endl;
 	
@@ -131,6 +125,25 @@ Engine::main()
 	cout << "[Main] Exiting..." << endl;
 	
 	return 0;
+}
+
+
+/** Run one iteration of the main loop.
+ *
+ * NOT realtime safe (this is where deletion actually occurs)
+ */
+bool
+Engine::main_iteration()
+{
+#ifdef HAVE_LASH
+	// Process any pending LASH events
+	if (lash_driver->enabled())
+		lash_driver->process_events();
+#endif
+	// Run the maid (garbage collector)
+	m_maid->cleanup();
+	
+	return !m_quit_flag;
 }
 
 

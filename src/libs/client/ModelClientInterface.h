@@ -59,24 +59,24 @@ public:
 
 	// ClientInterface functions to drive the above:
 	
-	virtual void new_plugin(const string& type,
-	                        const string& uri,
-	                        const string& name);
+	virtual void new_plugin(string type,
+	                        string uri,
+	                        string name);
 	
-	virtual void new_patch(const string& path, uint32_t poly);
+	virtual void new_patch(string path, uint32_t poly);
 	
-	virtual void new_node(const string& plugin_type,
-	                      const string& plugin_uri,
-	                      const string& node_path,
-	                      bool          is_polyphonic,
-	                      uint32_t      num_ports);
+	virtual void new_node(string   plugin_type,
+	                      string   plugin_uri,
+	                      string   node_path,
+	                      bool     is_polyphonic,
+	                      uint32_t num_ports);
 	
-	virtual void new_port(const string& path,
-	                      const string& data_type,
-	                      bool          is_output);
+	virtual void new_port(string path,
+	                      string data_type,
+	                      bool   is_output);
 	
-	virtual void connection(const string& src_port_path,
-	                        const string& dst_port_path);
+	virtual void connection(string src_port_path,
+	                        string dst_port_path);
 
 protected:
 	ModelClientInterface() {}

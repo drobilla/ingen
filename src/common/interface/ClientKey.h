@@ -42,9 +42,10 @@ public:
 	 * full incoming URL.
 	 */
 	enum Type {
-		NIL,     ///< A NULL key (represents no client)
-		OSC_URL, ///< An OSC URL (remote host/client)
-		OSC_PORT ///< A local OSC port
+		NIL,      ///< A NULL key (represents no client)
+		OSC_URL,  ///< An OSC URL (remote host/client)
+		OSC_PORT, ///< A local OSC port
+		DIRECT    ///< A direct in-process function call client
 	};
 	
 	ClientKey()
@@ -53,7 +54,7 @@ public:
 	{}
 
 	ClientKey(Type type, const std::string& uri)
-	: _type(OSC_URL)
+	: _type(type)
 	, _uri(uri)
 	{}
 	

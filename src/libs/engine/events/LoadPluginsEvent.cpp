@@ -18,6 +18,7 @@
 #include "Responder.h"
 #include "Engine.h"
 #include "NodeFactory.h"
+#include "ClientBroadcaster.h"
 
 #include <iostream>
 using std::cerr;
@@ -28,10 +29,22 @@ namespace Ingen {
 LoadPluginsEvent::LoadPluginsEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp)
 : QueuedEvent(engine, responder, timestamp)
 {
-	cerr << "LOADING PLUGINS\n";
-	_engine.node_factory()->load_plugins();
 }
 
+void
+LoadPluginsEvent::pre_process()
+{
+	_engine.node_factory()->load_plugins();
+	
+	// FIXME: send the changes (added and removed plugins) instead of the entire list each time
+	
+	// Take a copy to send in the post processing thread (to avoid problems
+	// because std::list isn't thread safe)
+	_plugins = _engine.node_factory()->plugins();
+	cerr << "loaded " << _plugins.size() << "plugins.\n";
+	
+	QueuedEvent::pre_process();
+}
 
 void
 LoadPluginsEvent::post_process()

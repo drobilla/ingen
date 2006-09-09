@@ -19,18 +19,19 @@
 
 #include <string>
 #include <cassert>
+#include "ModelEngineInterface.h"
 using std::string;
 
 namespace Ingen { namespace Client {
 	class PatchLibrarian;
 	class PatchModel;
+	class ModelEngineInterface;
 } }
-using Ingen::Client::PatchLibrarian;
-using Ingen::Client::PatchModel;
-
+using namespace Ingen::Client;
 
 namespace Ingenuity {
-	
+
+
 /** Event to run in the Loader thread.
  *
  * \ingroup Ingenuity
@@ -113,15 +114,17 @@ private:
  *
  * This is a seperate thread so it can send all the loading message without
  * blocking everything else, so the app can respond to the incoming events
- * caused as a result of the patch loading.
+ * caused as a result of the patch loading, while the patch loads.
  *
  * \ingroup Ingenuity
  */
 class Loader
 {
 public:
-	Loader(PatchLibrarian* const patch_librarian);
-	~Loader() { m_thread_exit_flag = true; }
+	Loader(CountedPtr<ModelEngineInterface> engine);
+	~Loader();
+
+	PatchLibrarian& librarian() { return *m_patch_librarian; }
 
 	void launch();
 	void exit() { m_thread_exit_flag = true; }

@@ -57,7 +57,7 @@ PortController::destroy()
 void
 PortController::create_module(OmFlowCanvas* canvas)
 {
-	cerr << "Creating port module " << m_model->path() << endl;
+	//cerr << "Creating port module " << m_model->path() << endl;
 
 	const string x_str = m_model->get_metadata("module-x");
 	const string y_str = m_model->get_metadata("module-y");
@@ -99,8 +99,6 @@ PortController::metadata_update(const string& key, const string& value)
 			m_control_panel->set_range_max(m_model->path(), atof(value.c_str()));
 	}
 */
-	cerr << "FIXME: PortController::metadata_update" << endl;
-
 	if (m_module != NULL) {
 		if (key == "module-x") {
 			float x = atof(value.c_str());

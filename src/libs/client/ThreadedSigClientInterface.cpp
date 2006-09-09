@@ -33,6 +33,7 @@ ThreadedSigClientInterface::push_sig(Closure ev)
 	// (Very) slow busy-wait if the queue is full
 	// FIXME: Make this wait on a signal from process_sigs iff this happens
 	while (!success) {
+		//printf("push %zu\n", _sigs.fill());
 		success = _sigs.push(ev);
 		if (!success) {
 			if (first) {
@@ -55,8 +56,10 @@ ThreadedSigClientInterface::emit_signals()
 {
 	// Process a maximum of queue-size events, to prevent locking the GTK
 	// thread indefinitely while processing continually arriving events
+	const size_t limit = _sigs.capacity();
 	size_t num_processed = 0;
-	while (!_sigs.is_empty() && num_processed++ < _sigs.capacity()/2) {
+	while (!_sigs.is_empty() && num_processed++ < limit) {
+		//printf("emit %zu\n", _sigs.fill());
 		Closure& ev = _sigs.pop();
 		ev();
 		ev.disconnect();

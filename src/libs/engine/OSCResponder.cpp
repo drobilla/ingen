@@ -30,8 +30,9 @@ namespace Ingen {
 /** Construct an OSCResponder from \a addr.
  * Takes ownership of @a url.
  */
-OSCResponder::OSCResponder(int32_t id, char* url)
+OSCResponder::OSCResponder(ClientBroadcaster* broadcaster, int32_t id, char* url)
 : Responder()
+, _broadcaster(broadcaster)
 , _id(id)
 , _url(url)
 , _addr(NULL)
@@ -73,6 +74,16 @@ OSCResponder::respond_error(const string& msg)
 		cerr << "Unable to send response " << _id << "! ("
 			<< lo_address_errstr(_addr) << endl;
 	}
+}
+
+
+CountedPtr<ClientInterface>
+OSCResponder::client()
+{
+	if (_broadcaster)
+		return _broadcaster->client(client_key());
+	else
+		return NULL;
 }
 
 } // namespace OM

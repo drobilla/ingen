@@ -1,11 +1,11 @@
-AM_CXXFLAGS = @JACK_CFLAGS@ @LOSC_CFLAGS@ @ALSA_CFLAGS@ @LASH_CFLAGS@ @SLV2_CFLAGS@ -I$(top_srcdir)/src/common -I$(top_srcdir)/src/libs/engine -I$(top_srcdir)/src/libs/engine/events -fno-exceptions -fno-rtti
+AM_CXXFLAGS = @JACK_CFLAGS@ @LOSC_CFLAGS@ @ALSA_CFLAGS@ @LASH_CFLAGS@ @SLV2_CFLAGS@ -I$(top_srcdir)/src/common -I$(top_srcdir)/src/libs/engine -I$(top_srcdir)/src/libs/engine/events -fno-exceptions
 
 MAINTAINERCLEANFILES = Makefile.in
 
 #
 # Stand-alone engine
 #
-if BUILD_ENGINE
+if BUILD_SERVER
 
 bin_PROGRAMS = ingen
 ingen_DEPENDENCIES = ../../libs/engine/libingen.la
@@ -16,7 +16,7 @@ ingen_SOURCES = \
 	cmdline.h \
 	cmdline.c
 
-endif # BUILD_ENGINE
+endif # BUILD_SERVER
 
 
 ##

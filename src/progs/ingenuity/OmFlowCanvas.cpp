@@ -17,7 +17,8 @@
 #include "OmFlowCanvas.h"
 #include <cassert>
 #include <flowcanvas/FlowCanvas.h>
-#include "Controller.h"
+#include "App.h"
+#include "ModelEngineInterface.h"
 #include "PatchController.h"
 #include "PatchModel.h"
 #include "PatchWindow.h"
@@ -106,19 +107,19 @@ OmFlowCanvas::connect(const Port* src_port, const Port* dst_port)
 			+ src->name() + "-" + dst->name());
 		nm->x(dst->module()->property_x() - dst->module()->width() - 20);
 		nm->y(dst->module()->property_y());
-		Controller::instance().create_node_from_model(nm);
-		Controller::instance().connect(src->model()->path(), nm->path() + "/MIDI_In");
-		Controller::instance().connect(nm->path() + "/Out_(CR)", dst->model()->path());
-		Controller::instance().midi_learn(nm->path());
+		App::instance().engine()->create_node_from_model(nm);
+		App::instance().engine()->connect(src->model()->path(), nm->path() + "/MIDI_In");
+		App::instance().engine()->connect(nm->path() + "/Out_(CR)", dst->model()->path());
+		App::instance().engine()->midi_learn(nm->path());
 		
 		// Set control node range to port's user range
 		
-		Controller::instance().set_port_value_queued(nm->path().base_path() + "Min",
+		App::instance().engine()->set_port_value_queued(nm->path().base_path() + "Min",
 			atof(dst->model()->get_metadata("user-min").c_str()));
-		Controller::instance().set_port_value_queued(nm->path().base_path() + "Max",
+		App::instance().engine()->set_port_value_queued(nm->path().base_path() + "Max",
 			atof(dst->model()->get_metadata("user-max").c_str()));
 	} else {
-		Controller::instance().connect(src->model()->path(),
+		App::instance().engine()->connect(src->model()->path(),
 		                    dst->model()->path());
 	}
 }
@@ -130,7 +131,7 @@ OmFlowCanvas::disconnect(const Port* src_port, const Port* dst_port)
 	assert(src_port != NULL);
 	assert(dst_port != NULL);
 	
-	Controller::instance().disconnect(((OmPort*)src_port)->model()->path(),
+	App::instance().engine()->disconnect(((OmPort*)src_port)->model()->path(),
 	                       ((OmPort*)dst_port)->model()->path());
 }
 
@@ -168,7 +169,7 @@ void
 OmFlowCanvas::destroy_selected()
 {
 	for (list<Module*>::iterator m = m_selected_modules.begin(); m != m_selected_modules.end(); ++m)
-		Controller::instance().destroy(((OmModule*)(*m))->node()->path());
+		App::instance().engine()->destroy(((OmModule*)(*m))->node()->path());
 }
 
 
@@ -193,13 +194,13 @@ void
 OmFlowCanvas::menu_add_port(const string& name, const string& type, bool is_output)
 {
 	const Path& path = m_patch_controller->path().base_path() + generate_port_name(name);
-	Controller::instance().create_port(path, type, is_output);
+	App::instance().engine()->create_port(path, type, is_output);
 	
 	char temp_buf[16];
 	snprintf(temp_buf, 16, "%d", m_last_click_x);
-	Controller::instance().set_metadata(path, "module-x", temp_buf);
+	App::instance().engine()->set_metadata(path, "module-x", temp_buf);
 	snprintf(temp_buf, 16, "%d", m_last_click_y);
-	Controller::instance().set_metadata(path, "module-y", temp_buf);
+	App::instance().engine()->set_metadata(path, "module-y", temp_buf);
 }
 
 
@@ -221,7 +222,7 @@ void
 OmFlowCanvas::menu_add_audio_input()
 {
 	string name = "audio_in";
-	Controller::instance().create_port(m_patch_controller->path().base_path() + name, "AUDIO", false);
+	App::instance().engine()->create_port(m_patch_controller->path().base_path() + name, "AUDIO", false);
 }
 
 
@@ -229,7 +230,7 @@ void
 OmFlowCanvas::menu_add_audio_output()
 {
 	string name = "audio_out";
-	Controller::instance().create_port(m_patch_controller->path().base_path() + name, "AUDIO", true);
+	App::instance().engine()->create_port(m_patch_controller->path().base_path() + name, "AUDIO", true);
 }
 
 
@@ -237,7 +238,7 @@ void
 OmFlowCanvas::menu_add_control_input()
 {
 	string name = "control_in";
-	Controller::instance().create_port(m_patch_controller->path().base_path() + name, "CONTROL", false);
+	App::instance().engine()->create_port(m_patch_controller->path().base_path() + name, "CONTROL", false);
 }
 
 
@@ -245,7 +246,7 @@ void
 OmFlowCanvas::menu_add_control_output()
 {
 	string name = "control_out";
-	Controller::instance().create_port(m_patch_controller->path().base_path() + name, "CONTROL", true);
+	App::instance().engine()->create_port(m_patch_controller->path().base_path() + name, "CONTROL", true);
 }
 
 
@@ -253,7 +254,7 @@ void
 OmFlowCanvas::menu_add_midi_input()
 {
 	string name = "midi_in";
-	Controller::instance().create_port(m_patch_controller->path().base_path() + name, "MIDI", false);
+	App::instance().engine()->create_port(m_patch_controller->path().base_path() + name, "MIDI", false);
 }
 
 
@@ -261,7 +262,7 @@ void
 OmFlowCanvas::menu_add_midi_output()
 {
 	string name = "midi_out";
-	Controller::instance().create_port(m_patch_controller->path().base_path() + name, "MIDI", true);
+	App::instance().engine()->create_port(m_patch_controller->path().base_path() + name, "MIDI", true);
 }
 */
 

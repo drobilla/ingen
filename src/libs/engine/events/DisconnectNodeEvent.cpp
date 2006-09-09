@@ -53,7 +53,7 @@ DisconnectNodeEvent::DisconnectNodeEvent(Engine& engine, CountedPtr<Responder> r
  */
 DisconnectNodeEvent::DisconnectNodeEvent(Engine& engine, Node* node)
 : QueuedEvent(engine),
-  m_node_path(""),
+  m_node_path(node->path()),
   m_patch(node->parent_patch()),
   m_node(node),
   m_succeeded(true),

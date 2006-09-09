@@ -17,9 +17,12 @@
 #ifndef LOADPLUGINSEVENT_H
 #define LOADPLUGINSEVENT_H
 
+#include <list>
 #include "QueuedEvent.h"
 
 namespace Ingen {
+
+class Plugin;
 
 
 /** Loads all plugins into the internal plugin database (in NodeFactory).
@@ -31,7 +34,11 @@ class LoadPluginsEvent : public QueuedEvent
 public:
 	LoadPluginsEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp);
 	
+	void pre_process();
 	void post_process();
+
+private:
+	std::list<Plugin*> _plugins;
 };
 
 

@@ -140,14 +140,25 @@ SaveSessionEvent::execute()
 //////// Loader //////////
 
 
-Loader::Loader(PatchLibrarian* const patch_librarian)
-: m_patch_librarian(patch_librarian),	
+Loader::Loader(CountedPtr<ModelEngineInterface> engine)
+: m_patch_librarian(new PatchLibrarian(engine)),
   m_event(NULL),
   m_thread_exit_flag(false)
 {
 	assert(m_patch_librarian != NULL);
 	pthread_mutex_init(&m_mutex, NULL);
 	pthread_cond_init(&m_cond, NULL);
+
+	// FIXME: rework this so the thread is only present when it's doing something (save mem)
+	launch();
+}
+
+
+Loader::~Loader()
+{
+	m_thread_exit_flag = true;
+	pthread_join(m_thread, NULL);
+	delete m_patch_librarian;
 }
 
 

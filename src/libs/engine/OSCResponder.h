@@ -24,6 +24,8 @@
 
 namespace Ingen {
 
+class ClientBroadcaster;
+
 
 /** Responder for (liblo) OSC clients.
  *
@@ -38,20 +40,26 @@ namespace Ingen {
 class OSCResponder : public Responder
 {
 public:
-	OSCResponder(int32_t id, char* url);
+	OSCResponder(ClientBroadcaster* broadcaster, int32_t id, char* url);
 	~OSCResponder();
 	
+	void set_id(int32_t id) { _id = id; }
+
 	void respond_ok();
 	void respond_error(const string& msg);
 
 	const char* url() const { return _url; }
 
 	ClientKey client_key() { return ClientKey(ClientKey::OSC_URL, _url); }
+	
+	CountedPtr<ClientInterface> client();
+
 
 private:
-	int32_t     _id;
-	char* const _url;
-	lo_address  _addr;
+	ClientBroadcaster* _broadcaster;
+	int32_t            _id;
+	char* const        _url;
+	lo_address         _addr;
 };
 
 

@@ -14,12 +14,14 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <cmath>
+#include <iostream>
+#include "ModelEngineInterface.h"
 #include "ControlGroups.h"
 #include "ControlPanel.h"
 #include "PortModel.h"
-#include "Controller.h"
-#include <cmath>
-#include <iostream>
+#include "App.h"
+
 using std::cerr; using std::cout; using std::endl;
 
 using namespace Ingen::Client;
@@ -53,9 +55,10 @@ ControlGroup::ControlGroup(ControlPanel* panel, CountedPtr<PortModel> pm, bool s
 void
 ControlGroup::metadata_update(const string& key, const string& value)
 {
-	if (key == "user-min")
+	// FIXME: this isn't right
+	if (key == "user-min" || key == "min")
 		set_min(atof(value.c_str()));
-	else if (key == "user-max")
+	else if (key == "user-max" || key == "max")
 		set_max(atof(value.c_str()));
 }
 
@@ -79,10 +82,12 @@ SliderControlGroup::SliderControlGroup(ControlPanel* panel, CountedPtr<PortModel
 	m_slider.set_increments(1.0, 10.0);
 
 	// Compensate for crazy plugins
+	// FIXME
+	/*
 	if (m_port_model->user_max() <= m_port_model->user_min()) {
 		m_port_model->user_max(m_port_model->user_min() + 1.0);
 		m_slider.set_range(m_port_model->user_min(), m_port_model->user_max());
-	}
+	}*/
 	m_slider.property_draw_value() = false;
 	
 	set_name(pm->name());
@@ -205,7 +210,7 @@ SliderControlGroup::min_changed()
 	if (m_enable_signal) {
 		char temp_buf[16];
 		snprintf(temp_buf, 16, "%f", min);
-		Controller::instance().set_metadata(m_port_model->path(), "user-min", temp_buf);
+		App::instance().engine()->set_metadata(m_port_model->path(), "user-min", temp_buf);
 	}
 }
 
@@ -226,7 +231,7 @@ SliderControlGroup::max_changed()
 	if (m_enable_signal) {
 		char temp_buf[16];
 		snprintf(temp_buf, 16, "%f", max);
-		Controller::instance().set_metadata(m_port_model->path(), "user-max", temp_buf);
+		App::instance().engine()->set_metadata(m_port_model->path(), "user-max", temp_buf);
 	}
 }
 
@@ -281,11 +286,11 @@ SliderControlGroup::slider_pressed(GdkEvent* ev)
 	//cerr << "Pressed: " << ev->type << endl;
 	if (ev->type == GDK_BUTTON_PRESS) {
 		m_enabled = false;
-		cerr << "SLIDER FIXME\n";
+		//cerr << "SLIDER FIXME\n";
 		//GtkClientInterface::instance()->set_ignore_port(m_port_model->path());
 	} else if (ev->type == GDK_BUTTON_RELEASE) {
 		m_enabled = true;
-		cerr << "SLIDER FIXME\n";
+		//cerr << "SLIDER FIXME\n";
 		//GtkClientInterface::instance()->clear_ignore_port();
 	}
 	

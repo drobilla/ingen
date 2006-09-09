@@ -16,7 +16,8 @@
 
 #include "OmModule.h"
 #include <cassert>
-#include "Controller.h"
+#include "App.h"
+#include "ModelEngineInterface.h"
 #include "OmFlowCanvas.h"
 #include "PatchModel.h"
 #include "NodeModel.h"
@@ -64,12 +65,12 @@ OmModule::store_location()
 	m_node->node_model()->x(property_x());
 	snprintf(temp_buf, 16, "%f", m_node->node_model()->x());
 	m_node->node_model()->set_metadata("module-x", temp_buf); // just in case?
-	Controller::instance().set_metadata(m_node->node_model()->path(), "module-x", temp_buf);
+	App::instance().engine()->set_metadata(m_node->node_model()->path(), "module-x", temp_buf);
 	
 	m_node->node_model()->y(property_y());
 	snprintf(temp_buf, 16, "%f", m_node->node_model()->y());
 	m_node->node_model()->set_metadata("module-y", temp_buf); // just in case?
-	Controller::instance().set_metadata(m_node->node_model()->path(), "module-y", temp_buf);
+	App::instance().engine()->set_metadata(m_node->node_model()->path(), "module-y", temp_buf);
 }
 
 

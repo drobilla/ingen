@@ -16,7 +16,8 @@
 
 #include "OmPortModule.h"
 #include <cassert>
-#include "Controller.h"
+#include "App.h"
+#include "ModelEngineInterface.h"
 #include "OmFlowCanvas.h"
 #include "PatchModel.h"
 #include "NodeModel.h"
@@ -50,12 +51,12 @@ OmPortModule::store_location()
 	//m_port->port_model()->x(property_x());
 	snprintf(temp_buf, 16, "%f", property_x().get_value());
 	//m_port->port_model()->set_metadata("module-x", temp_buf); // just in case?
-	Controller::instance().set_metadata(m_port->port_model()->path(), "module-x", temp_buf);
+	App::instance().engine()->set_metadata(m_port->port_model()->path(), "module-x", temp_buf);
 	
 	//m_port->port_model()->y(property_y());
 	snprintf(temp_buf, 16, "%f", property_y().get_value());
 	//m_port->port_model()->set_metadata("module-y", temp_buf); // just in case?
-	Controller::instance().set_metadata(m_port->port_model()->path(), "module-y", temp_buf);
+	App::instance().engine()->set_metadata(m_port->port_model()->path(), "module-y", temp_buf);
 }
 
 

@@ -21,11 +21,13 @@
 #include <string>
 #include "util/CountedPtr.h"
 #include "interface/ClientKey.h"
+#include "interface/ClientInterface.h"
 using std::string;
 
 namespace Ingen {
 
 using Shared::ClientKey;
+using Shared::ClientInterface;
 
 
 /** Class to handle responding to clients.
@@ -49,7 +51,10 @@ public:
 	Responder() {}
 	virtual ~Responder() {}
 
-	virtual ClientKey client_key() { return ClientKey(); }
+	virtual ClientKey                   client_key() { return ClientKey(); }
+	virtual CountedPtr<ClientInterface> client()     { return NULL; }
+
+	virtual void set_id(int32_t id) {}
 
 	virtual void respond_ok() {}
 	virtual void respond_error(const string& msg) {}

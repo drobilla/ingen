@@ -70,7 +70,7 @@ OSCClientReceiver::start()
 		cout << "[OSCClientReceiver] Started OSC listener on port " << lo_server_thread_get_port(_st) << endl;
 	}
 
-	// FIXME
+	// Print all incoming messages
 	lo_server_thread_add_method(_st, NULL, NULL, generic_cb, NULL);
 
 	//lo_server_thread_add_method(_st, "/om/response/ok", "i", om_response_ok_cb, this);

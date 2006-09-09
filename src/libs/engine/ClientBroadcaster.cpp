@@ -42,9 +42,6 @@ namespace Ingen {
 void
 ClientBroadcaster::register_client(const ClientKey key, CountedPtr<ClientInterface> client)
 {
-	assert(key.type() == ClientKey::OSC_URL);
-	assert(key.uri() != "");
-
 	bool found = false;
 	for (ClientList::iterator i = _clients.begin(); i != _clients.end(); ++i)
 		if ((*i).first == key)
@@ -126,12 +123,10 @@ ClientBroadcaster::send_error(const string& msg)
 		(*i).second->error(msg);
 }
 
-
-/* FIXME: Make a copy method for list and just make a copy and pass it here
- * instead of this global+locking mess */
 void
-ClientBroadcaster::send_plugins_to(ClientInterface* client, const list<Plugin*>& plugin_list)
+ClientBroadcaster::send_plugins_to(CountedPtr<ClientInterface> client, const list<Plugin*>& plugin_list)
 {
+#if 0
 	// FIXME: This probably isn't actually thread safe
 	const list<Plugin*> plugs = plugin_list; // make a copy
 
@@ -175,6 +170,23 @@ ClientBroadcaster::send_plugins_to(ClientInterface* client, const list<Plugin*>&
 	}
 	for (list<lo_bundle>::const_iterator i = msgs.begin(); i != msgs.end(); ++i)
 		lo_message_free(*i);
+#endif
+	client->transfer_begin();
+
+	for (list<Plugin*>::const_iterator i = plugin_list.begin(); i != plugin_list.end(); ++i) {
+		const Plugin* const plugin = *i;
+		client->new_plugin(plugin->type_string(), plugin->uri(), plugin->name());
+	}
+
+	client->transfer_end();
+}
+
+
+void
+ClientBroadcaster::send_plugins(const list<Plugin*>& plugin_list)
+{
+	for (ClientList::const_iterator c = _clients.begin(); c != _clients.end(); ++c)
+		send_plugins_to((*c).second, plugin_list);
 }
 
 

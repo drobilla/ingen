@@ -20,9 +20,10 @@
 #include <dirent.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include "App.h"
 #include "NodeModel.h"
 #include "DSSIModule.h"
-#include "Controller.h"
+#include "ModelEngineInterface.h"
 
 namespace Ingenuity {
 
@@ -115,7 +116,7 @@ DSSIController::update_program_menu()
 void
 DSSIController::send_program_change(int bank, int program)
 {
-	Controller::instance().set_program(node_model()->path(), bank, program);
+	App::instance().engine()->set_program(node_model()->path(), bank, program);
 }
 
 
@@ -142,12 +143,14 @@ DSSIController::create_module(OmFlowCanvas* canvas)
 bool
 DSSIController::attempt_to_show_gui()
 {
+	cerr << "FIXME: DSSI GUI" << endl;
+#if 0
 	// Shamelessley "inspired by" jack-dssi-host
 	// Copyright 2004 Chris Cannam, Steve Harris and Sean Bolton.
 
 	const bool verbose = false;
 
-	string engine_url = Controller::instance().engine_url();
+	string engine_url = App::instance().engine()->engine_url();
 	// Hack off last character if it's a /
 	if (engine_url[engine_url.length()-1] == '/')
 		engine_url = engine_url.substr(0, engine_url.length()-1);
@@ -263,6 +266,7 @@ DSSIController::attempt_to_show_gui()
 	
 	free(subpath);
 	free(dllBase);
+#endif
 	return false;
 }
 

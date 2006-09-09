@@ -19,6 +19,7 @@
 #include <cassert>
 #include <fstream>
 #include "App.h"
+#include "ModelEngineInterface.h"
 #include "PatchView.h"
 #include "OmFlowCanvas.h"
 #include "PatchController.h"
@@ -32,10 +33,10 @@
 #include "ConfigWindow.h"
 #include "MessagesWindow.h"
 #include "PatchTreeWindow.h"
-#include "Controller.h"
 #include "BreadCrumb.h"
 #include "Store.h"
 #include "ConnectWindow.h"
+#include "Loader.h"
 
 namespace Ingenuity {
 
@@ -88,7 +89,7 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 	m_load_subpatch_window->set_transient_for(*this);
 	
 	m_menu_view_control_window->property_sensitive() = false;
-	//m_status_bar->push(Controller::instance().engine_url());
+	//m_status_bar->push(App::instance().engine()->engine_url());
 	//m_status_bar->pack_start(*Gtk::manage(new Gtk::Image(Gtk::Stock::CONNECT, Gtk::ICON_SIZE_MENU)), false, false);
 	
 	/*m_menu_open->signal_activate().connect(
@@ -397,7 +398,7 @@ PatchWindow::event_save()
 	if (model->filename() == "")
 		event_save_as();
 	else
-		Controller::instance().save_patch(model, model->filename(), false);
+		App::instance().loader()->save_patch(model, model->filename(), false);
 }
 
 
@@ -452,7 +453,7 @@ PatchWindow::event_save_as()
 		fin.close();
 		
 		if (confirm) {
-			Controller::instance().save_patch(m_patch->patch_model().get(), filename, recursive);
+			App::instance().loader()->save_patch(m_patch->patch_model().get(), filename, recursive);
 			m_patch->patch_model()->filename(filename);
 		}
 	}
@@ -544,7 +545,7 @@ PatchWindow::event_quit()
 	if (ret == 1) {
 		App::instance().quit();
 	} else if (ret == 2) {
-		Controller::instance().quit();
+		App::instance().engine()->quit();
 		App::instance().quit();
 	}
 	// Otherwise cancelled, do nothing
@@ -554,14 +555,14 @@ PatchWindow::event_quit()
 void
 PatchWindow::event_destroy()
 {
-	Controller::instance().destroy(m_patch->model()->path());
+	App::instance().engine()->destroy(m_patch->model()->path());
 }
 
 
 void
 PatchWindow::event_clear()
 {
-	Controller::instance().clear_patch(m_patch->model()->path());
+	App::instance().engine()->clear_patch(m_patch->model()->path());
 }
 
 void

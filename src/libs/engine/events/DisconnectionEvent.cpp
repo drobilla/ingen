@@ -271,7 +271,7 @@ TypedDisconnectionEvent<T>::post_process()
 	
 		_responder->respond_ok();
 	
-		_engine.client_broadcaster()->send_disconnection(m_src_port->path(), m_dst_port->path());
+		_engine.broadcaster()->send_disconnection(m_src_port->path(), m_dst_port->path());
 	} else {
 		_responder->respond_error("Unable to disconnect ports.");
 	}

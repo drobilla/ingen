@@ -70,7 +70,7 @@ SetMetadataEvent::post_process()
 		_responder->respond_error(msg);
 	} else {
 		_responder->respond_ok();
-		_engine.client_broadcaster()->send_metadata_update(m_path, m_key, m_value);
+		_engine.broadcaster()->send_metadata_update(m_path, m_key, m_value);
 	}
 }
 

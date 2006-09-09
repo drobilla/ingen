@@ -87,13 +87,9 @@ public:
 
 		// Fail if this is not a valid cast
 		if (y) {
-#ifdef WITH_RTTI
 			T* const casted_y = dynamic_cast<T* const>(y._counter->ptr);
-#else 
-			T* const casted_y = static_cast<T* const>(y._counter->ptr);
-#endif
+
 			if (casted_y) {
-				assert(casted_y == y._counter->ptr);
 				//release(); // FIXME: leak?
 				retain((Counter*)y._counter);
 				assert(_counter == (Counter*)y._counter);

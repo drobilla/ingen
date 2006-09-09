@@ -110,8 +110,11 @@ LADSPANode::instantiate()
 			_ports->at(j) = port;
 		}
 
-		assert(_ports->at(j) != NULL);
-		Sample default_val = default_port_value(j);
+		assert(port);
+		assert(_ports->at(j) == port);
+		
+		Sample default_val, min, max;
+		get_port_limits(j, default_val, min, max);
 
 		// Set default value
 		if (port->buffer_size() == 1) {
@@ -119,6 +122,12 @@ LADSPANode::instantiate()
 		} else {
 			((TypedPort<Sample>*)port)->set_value(0.0f, 0);
 		}
+
+		char tmp_buf[16];
+		snprintf(tmp_buf, 16, "%f", min);
+		port->set_metadata("min", tmp_buf);
+		snprintf(tmp_buf, 16, "%f", max);
+		port->set_metadata("max", tmp_buf);
 	}
 
 	return true;
@@ -262,12 +271,9 @@ LADSPANode::get_port_vals(ulong port_index, PortInfo* info)
 #endif
 
 
-Sample
-LADSPANode::default_port_value(ulong port_index)
+void
+LADSPANode::get_port_limits(unsigned long port_index, Sample& normal, Sample& lower, Sample& upper)
 {
-	LADSPA_Data normal = 0.0f;
-	LADSPA_Data upper = 0.0f;
-	LADSPA_Data lower = 0.0f;
 	LADSPA_PortRangeHintDescriptor hint_descriptor = _descriptor->PortRangeHints[port_index].HintDescriptor;
 
 	/* set upper and lower, possibly adjusted to the sample rate */
@@ -328,10 +334,6 @@ LADSPANode::default_port_value(ulong port_index)
 			normal = upper;
 		}
 	}
-
-	cerr << path() << " Port " << port_index << " LADSPA Default value: " << normal << endl;
-	// FIXME: set min/max as metadata
-	return normal;
 }
 
 

@@ -35,63 +35,75 @@ public:
 	
 	virtual ~ClientInterface() {}
 	
-	virtual void response(int32_t id, bool success, const string& msg) = 0;
+	virtual void response(int32_t id, bool success, string msg) = 0;
 
+	/** Bundles are a group of messages that are guaranteed to be in an
+	 * atomic unit with guaranteed order (eg a packet).  For datagram
+	 * protocols (like UDP) there is likely an upper limit on bundle size.
+	 */
 	virtual void bundle_begin() = 0;
 	virtual void bundle_end()   = 0;
 
-	virtual void error(const string& msg) = 0;
+	/** Transfers are 'weak' bundles.  These are used to break a large group
+	 * of similar/related messages into larger chunks (solely for communication
+	 * efficiency).  A bunch of messages in a transfer will arrive as 1 or more
+	 * bundles (so a transfer can exceep the maximum bundle (packet) size).
+	 */
+	virtual void transfer_begin() = 0;
+	virtual void transfer_end()   = 0;
+
+	virtual void error(string msg) = 0;
 	
 	virtual void num_plugins(uint32_t num_plugins) = 0;
 
-	virtual void new_plugin(const string& type,
-	                        const string& uri,
-	                        const string& name) = 0;
+	virtual void new_plugin(string type,
+	                        string uri,
+	                        string name) = 0;
 	
-	virtual void new_patch(const string& path, uint32_t poly) = 0;
+	virtual void new_patch(string path, uint32_t poly) = 0;
 	
-	virtual void new_node(const string& plugin_type,
-	                      const string& plugin_uri,
-	                      const string& node_path,
-	                      bool          is_polyphonic,
-	                      uint32_t      num_ports) = 0;
+	virtual void new_node(string   plugin_type,
+	                      string   plugin_uri,
+	                      string   node_path,
+	                      bool     is_polyphonic,
+	                      uint32_t num_ports) = 0;
 	
-	virtual void new_port(const string& path,
-	                      const string& data_type,
-	                      bool          is_output) = 0;
+	virtual void new_port(string path,
+	                      string data_type,
+	                      bool   is_output) = 0;
 	
-	virtual void patch_enabled(const string& path) = 0;
+	virtual void patch_enabled(string path) = 0;
 	
-	virtual void patch_disabled(const string& path) = 0;
+	virtual void patch_disabled(string path) = 0;
 	
-	virtual void patch_cleared(const string& path) = 0;
+	virtual void patch_cleared(string path) = 0;
 	
-	virtual void object_renamed(const string& old_path,
-	                            const string& new_path) = 0;
+	virtual void object_renamed(string old_path,
+	                            string new_path) = 0;
 	
-	virtual void object_destroyed(const string& path) = 0;
+	virtual void object_destroyed(string path) = 0;
 	
-	virtual void connection(const string& src_port_path,
-	                        const string& dst_port_path) = 0;
+	virtual void connection(string src_port_path,
+	                        string dst_port_path) = 0;
 	
-	virtual void disconnection(const string& src_port_path,
-	                           const string& dst_port_path) = 0;
+	virtual void disconnection(string src_port_path,
+	                           string dst_port_path) = 0;
 	
-	virtual void metadata_update(const string& subject_path,
-	                             const string& predicate,
-	                             const string& value) = 0;
+	virtual void metadata_update(string subject_path,
+	                             string predicate,
+	                             string value) = 0;
 	
-	virtual void control_change(const string& port_path,
-	                            float         value) = 0;
+	virtual void control_change(string port_path,
+	                            float  value) = 0;
 	
-	virtual void program_add(const string& node_path,
-	                         uint32_t      bank,
-	                         uint32_t      program,
-	                         const string& program_name) = 0;
+	virtual void program_add(string   node_path,
+	                         uint32_t bank,
+	                         uint32_t program,
+	                         string   program_name) = 0;
 	
-	virtual void program_remove(const string& node_path,
-	                            uint32_t      bank,
-	                            uint32_t      program) = 0;
+	virtual void program_remove(string          node_path,
+	                            uint32_t bank,
+	                            uint32_t program) = 0;
 	
 protected:
 	ClientInterface() {}

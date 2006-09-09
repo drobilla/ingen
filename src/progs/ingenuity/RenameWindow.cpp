@@ -17,11 +17,11 @@
 #include "RenameWindow.h"
 #include <cassert>
 #include <string>
-#include "Controller.h"
 #include "ObjectModel.h"
 #include "GtkObjectController.h"
 #include "Store.h"
 #include "App.h"
+#include "ModelEngineInterface.h"
 using std::string;
 
 namespace Ingenuity {
@@ -105,7 +105,7 @@ RenameWindow::ok_clicked()
 	assert(name.length() > 0);
 	assert(name.find("/") == string::npos);
 
-	Controller::instance().rename(m_object->model()->path(), name);
+	App::instance().engine()->rename(m_object->model()->path(), name);
 
 	hide();
 }

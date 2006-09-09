@@ -19,6 +19,7 @@
 #include <cassert>
 #include <fstream>
 #include "App.h"
+#include "ModelEngineInterface.h"
 #include "OmFlowCanvas.h"
 #include "PatchController.h"
 #include "LoadPluginWindow.h"
@@ -28,7 +29,6 @@
 #include "NodeControlWindow.h"
 #include "PatchPropertiesWindow.h"
 #include "PatchTreeWindow.h"
-#include "Controller.h"
 
 namespace Ingenuity {
 
@@ -101,10 +101,10 @@ PatchView::process_toggled()
 		return;
 
 	if (m_process_checkbutton->get_active()) {
-		Controller::instance().enable_patch(m_patch->model()->path());
+		App::instance().engine()->enable_patch(m_patch->model()->path());
 		App::instance().patch_tree()->patch_enabled(m_patch->model()->path());
 	} else {
-		Controller::instance().disable_patch(m_patch->model()->path());
+		App::instance().engine()->disable_patch(m_patch->model()->path());
 		App::instance().patch_tree()->patch_disabled(m_patch->model()->path());
 	}
 }

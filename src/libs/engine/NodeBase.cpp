@@ -84,7 +84,7 @@ void
 NodeBase::send_creation_messages(ClientInterface* client) const
 {
 	cerr << "FIXME: send_creation\n";
-	//_engine.client_broadcaster()->send_node_to(client, this);
+	//_engine.broadcaster()->send_node_to(client, this);
 }
 */
 

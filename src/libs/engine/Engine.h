@@ -53,7 +53,8 @@ public:
 	Engine(AudioDriver* audio_driver = 0);
 	~Engine();
 
-	int main();
+	int  main();
+	bool main_iteration();
 	
 	/** Set the quit flag that should kill all threads and exit cleanly.
 	 * Note that it will take some time. */
@@ -62,6 +63,8 @@ public:
 	void activate();
 	void deactivate();
 
+	bool activated() { return m_activated; }
+
 	void set_event_source(EventSource* es) { m_event_source = es; }
 
 	EventSource*       event_source()       const { return m_event_source; }
@@ -69,7 +72,7 @@ public:
 	MidiDriver*        midi_driver()        const { return m_midi_driver; }
 	Maid*              maid()               const { return m_maid; }
 	PostProcessor*     post_processor()     const { return m_post_processor; }
-	ClientBroadcaster* client_broadcaster() const { return m_client_broadcaster; }
+	ClientBroadcaster* broadcaster() const { return m_broadcaster; }
 	ObjectStore*       object_store()       const { return m_object_store; }
 	NodeFactory*       node_factory()       const { return m_node_factory; }
 	LashDriver*        lash_driver()        const { return m_lash_driver; }
@@ -87,7 +90,7 @@ private:
 	MidiDriver*        m_midi_driver;
 	Maid*              m_maid;
 	PostProcessor*     m_post_processor;
-	ClientBroadcaster* m_client_broadcaster;
+	ClientBroadcaster* m_broadcaster;
 	ObjectStore*       m_object_store;
 	NodeFactory*       m_node_factory;
 	LashDriver*        m_lash_driver;

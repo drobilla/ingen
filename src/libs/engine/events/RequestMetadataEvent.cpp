@@ -41,7 +41,7 @@ RequestMetadataEvent::RequestMetadataEvent(Engine& engine, CountedPtr<Responder>
 void
 RequestMetadataEvent::pre_process()
 {
-	m_client = _engine.client_broadcaster()->client(_responder->client_key());
+	m_client = _engine.broadcaster()->client(_responder->client_key());
 	
 	if (m_client) {
 		m_object = _engine.object_store()->find(m_path);

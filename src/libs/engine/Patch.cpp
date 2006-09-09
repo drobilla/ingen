@@ -294,7 +294,7 @@ Patch::remove_port(const Port* port)
 Array<Node*>*
 Patch::build_process_order() const
 {
-	cerr << "*********** BUILDING PROCESS ORDER FOR " << path() << endl;
+	//cerr << "*********** BUILDING PROCESS ORDER FOR " << path() << endl;
 
 	Array<Node*>* const process_order = new Array<Node*>(_nodes.size(), NULL);
 	
@@ -334,12 +334,14 @@ Patch::build_process_order() const
 		}
 	}*/
 
+	/*
 	cerr << "----------------------------------------\n";
 	for (size_t i=0; i < process_order->size(); ++i) {
 		assert(process_order->at(i));
 		cerr << process_order->at(i)->path() << endl;
 	}
 	cerr << "----------------------------------------\n";
+	*/
 
 	assert(process_order->size() == _nodes.size());
 

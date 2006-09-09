@@ -14,26 +14,62 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "ConnectWindow.h"
 #include <string>
 #include <time.h>
 #include <sys/time.h>
 #include <stdlib.h>
+#include "config.h"
+#include "ConnectWindow.h"
 #include "interface/ClientKey.h"
+#include "OSCModelEngineInterface.h"
+#include "OSCClientReceiver.h"
 #include "ThreadedSigClientInterface.h"
-#include "Controller.h"
 #include "Store.h"
 #include "PatchController.h"
 #include "PatchModel.h"
 #include "App.h"
+#ifdef MONOLITHIC_INGENUITY
+	#include "engine/QueuedEngineInterface.h"
+	#include "engine/Engine.h"
+	#include "engine/DirectResponder.h"
+	#include "engine/tuning.h"
+#endif
 using Ingen::Client::ThreadedSigClientInterface;
+using Ingen::QueuedEngineInterface;
 
 namespace Ingenuity {
 
 
+// Paste together some interfaces to get the combination we want
+
+
+struct OSCSigEmitter : public OSCClientReceiver, public ThreadedSigClientInterface {
+public:
+	OSCSigEmitter(size_t queue_size, int listen_port)
+	: Ingen::Shared::ClientInterface()
+	, OSCClientReceiver(listen_port)
+	, ThreadedSigClientInterface(queue_size)
+	{
+	}
+};
+
+
+struct QueuedModelEngineInterface : public QueuedEngineInterface, public ModelEngineInterface {
+	QueuedModelEngineInterface(CountedPtr<Ingen::Engine> engine)
+	: Ingen::Shared::EngineInterface()
+	, Ingen::QueuedEngineInterface(engine, Ingen::event_queue_size, Ingen::event_queue_size)
+	{
+		QueuedEventSource::start();
+	}
+};
+
+
+// ConnectWindow
+
+
 ConnectWindow::ConnectWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 : Gtk::Dialog(cobject)
-, _client(NULL)
+, _mode(CONNECT_REMOTE)
 , _ping_id(-1)
 , _attached(false)
 {
@@ -61,9 +97,8 @@ ConnectWindow::ConnectWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::
 void
 ConnectWindow::start()
 {
-	_client = App::instance().client();
-	assert(_client);
 	resize(100, 100);
+	init();
 	show();
 }
 
@@ -78,38 +113,82 @@ ConnectWindow::init()
 	_disconnect_button->set_sensitive(false);
 	_port_spinbutton->set_sensitive(false);
 	_launch_radio->set_sensitive(true);
+#ifdef MONOLITHIC_INGENUITY
+	_internal_radio->set_sensitive(true);
+#else
 	_internal_radio->set_sensitive(false);
+#endif
 	server_toggled();
 		
 	_progress_label->set_text(string("Disconnected"));
 }
 
 
+/** Launch (if applicable) and connect to the Engine.
+ *
+ * This will create the EngineInterface and ClientInterface and initialize
+ * the App with them.
+ */
 void
 ConnectWindow::connect()
 {
+	assert(!_attached);
+	assert(!App::instance().engine());
+	assert(!App::instance().client());
+
 	_connect_button->set_sensitive(false);
 
-	if (_server_radio->get_active()) {
-		Controller::instance().set_engine_url(_url_entry->get_text());
+	if (_mode == CONNECT_REMOTE) {
+		CountedPtr<ModelEngineInterface> engine(new OSCModelEngineInterface(_url_entry->get_text()));
+		OSCSigEmitter* ose = new OSCSigEmitter(1024, 16181); // FIXME: args
+		CountedPtr<SigClientInterface> client(ose);
+		App::instance().attach(engine, client);
+
 		Glib::signal_timeout().connect(
 			sigc::mem_fun(this, &ConnectWindow::gtk_callback), 100);
+		
+		Glib::signal_timeout().connect(
+			sigc::mem_fun(ose, &ThreadedSigClientInterface::emit_signals), 2, G_PRIORITY_HIGH_IDLE);
 
-	} else if (_launch_radio->get_active()) {
+	} else if (_mode == LAUNCH_REMOTE) {
+		/*
 		int port = _port_spinbutton->get_value_as_int();
 		char port_str[6];
 		snprintf(port_str, 6, "%u", port);
 		const string port_arg = string("--port=").append(port_str);
-		Controller::instance().set_engine_url(
+		App::instance().engine()->set_engine_url(
 			string("osc.udp://localhost:").append(port_str));
 		
 		if (fork() == 0) { // child
-			cerr << "Executing 'om " << port_arg << "' ..." << endl; 
-			execlp("om", port_arg.c_str(), 0);
+			cerr << "Executing 'ingen " << port_arg << "' ..." << endl; 
+			execlp("ingen", port_arg.c_str(), (char*)NULL);
 		} else {
 			Glib::signal_timeout().connect(
 				sigc::mem_fun(this, &ConnectWindow::gtk_callback), 100);
-		}
+		}*/
+		throw;
+#ifdef MONOLITHIC_INGENUITY
+	} else if (_mode == INTERNAL) {
+		CountedPtr<Ingen::Engine> engine(new Ingen::Engine());
+		QueuedModelEngineInterface* qmei = new QueuedModelEngineInterface(engine);
+		CountedPtr<ModelEngineInterface> engine_interface(qmei);
+		ThreadedSigClientInterface* tsci = new ThreadedSigClientInterface(Ingen::event_queue_size);
+		CountedPtr<SigClientInterface> client(tsci);
+		
+		App::instance().attach(engine_interface, client);
+
+		qmei->set_responder(CountedPtr<Ingen::Responder>(new Ingen::DirectResponder(client, 1)));
+		engine->set_event_source(qmei);
+		
+		Glib::signal_timeout().connect(
+			sigc::mem_fun(engine.get(), &Ingen::Engine::main_iteration), 1000);
+		
+		Glib::signal_timeout().connect(
+			sigc::mem_fun(this, &ConnectWindow::gtk_callback), 100);
+		
+		Glib::signal_timeout().connect(
+			sigc::mem_fun(tsci, &ThreadedSigClientInterface::emit_signals), 2, G_PRIORITY_HIGH_IDLE);
+#endif
 	}
 }
 
@@ -152,6 +231,7 @@ ConnectWindow::server_toggled()
 {
 	_url_entry->set_sensitive(true);
 	_port_spinbutton->set_sensitive(false);
+	_mode = CONNECT_REMOTE;
 }
 
 
@@ -160,15 +240,16 @@ ConnectWindow::launch_toggled()
 {
 	_url_entry->set_sensitive(false);
 	_port_spinbutton->set_sensitive(true);
+	_mode = LAUNCH_REMOTE;
 }
 
 
 void
 ConnectWindow::internal_toggled()
 {
-	// Not quite yet...
 	_url_entry->set_sensitive(false);
 	_port_spinbutton->set_sensitive(false);
+	_mode = INTERNAL;
 }
 
 
@@ -188,44 +269,47 @@ ConnectWindow::gtk_callback()
 	
 	/* Connecting to engine */
 	if (stage == 0) {
+
 		assert(!_attached);
-		assert(_client);
+		assert(App::instance().engine());
+		assert(App::instance().client());
 
 		// FIXME
-		//assert(!Controller::instance().is_attached());
-		_progress_label->set_text(string("Connecting to engine at ").append(
-			Controller::instance().engine_url()).append("..."));
+		//assert(!App::instance().engine()->is_attached());
+		_progress_label->set_text("Connecting to engine...");
 		present();
 
-		_client->response_sig.connect(sigc::mem_fun(this, &ConnectWindow::response_received));
+		App::instance().client()->response_sig.connect(sigc::mem_fun(this, &ConnectWindow::response_received));
 
 		_ping_id = rand();
 		while (_ping_id == -1)
 			_ping_id = rand();
 
-		Controller::instance().attach(_ping_id);
+		App::instance().engine()->set_next_response_id(_ping_id);
+		App::instance().engine()->ping();
 		++stage;
 
 
 	} else if (stage == 1) {
 		if (_attached) {
-			Controller::instance().activate();
+			App::instance().engine()->activate();
 			++stage;
 		} else {
 			const float ms_since_last = (now.tv_sec - last.tv_sec) * 1000.0f +
 				(now.tv_usec - last.tv_usec) * 0.001f;
 			if (ms_since_last > 1000) {
-				Controller::instance().attach(_ping_id);
+				App::instance().engine()->set_next_response_id(_ping_id);
+				App::instance().engine()->ping();
 				last = now;
 			}
 		}
 	} else if (stage == 2) {
 		_progress_label->set_text(string("Registering as client..."));
-		//Controller::instance().register_client(Controller::instance().client_hooks());
+		//App::instance().engine()->register_client(App::instance().engine()->client_hooks());
 		// FIXME
 		//auto_ptr<ClientInterface> client(new ThreadedSigClientInterface();
-		Controller::instance().register_client(ClientKey(), _client);
-		Controller::instance().load_plugins();
+		App::instance().engine()->register_client(ClientKey(), App::instance().client());
+		App::instance().engine()->load_plugins();
 		++stage;
 	} else if (stage == 3) {
 		// Register idle callback to process events and whatnot
@@ -238,7 +322,7 @@ ConnectWindow::gtk_callback()
 			5, G_PRIORITY_DEFAULT_IDLE);*/
 		
 		_progress_label->set_text(string("Requesting plugins..."));
-		Controller::instance().request_plugins();
+		App::instance().engine()->request_plugins();
 		++stage;
 	} else if (stage == 4) {
 		// Wait for first plugins message
@@ -261,7 +345,7 @@ ConnectWindow::gtk_callback()
 		//}
 	} else if (stage == 6) {
 		_progress_label->set_text(string("Waiting for root patch..."));
-		Controller::instance().request_all_objects();
+		App::instance().engine()->request_all_objects();
 		++stage;
 	} else if (stage == 7) {
 		if (App::instance().store()->num_objects() > 0) {
@@ -272,8 +356,7 @@ ConnectWindow::gtk_callback()
 			++stage;
 		}
 	} else if (stage == 8) {
-		_progress_label->set_text(string("Connected to engine at ").append(
-			Controller::instance().engine_url()));
+		_progress_label->set_text("Connected to engine");
 		++stage;
 	} else if (stage == 9) {
 		stage = -1;

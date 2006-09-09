@@ -63,9 +63,9 @@ ModelClientInterface::connection_model(ConnectionModel* cm)
 
 
 void
-ModelClientInterface::new_plugin(const string& type,
-           const string& uri,
-           const string& name)
+ModelClientInterface::new_plugin(string type,
+           string uri,
+           string name)
 {
 	PluginModel* plugin = new PluginModel(type, uri);
 	plugin->name(name);
@@ -75,7 +75,7 @@ ModelClientInterface::new_plugin(const string& type,
 
 
 void
-ModelClientInterface::new_patch(const string& path, uint32_t poly)
+ModelClientInterface::new_patch(string path, uint32_t poly)
 {
 	PatchModel* pm = new PatchModel(path, poly);
 	//PluginModel* pi = new PluginModel(PluginModel::Patch);
@@ -86,9 +86,9 @@ ModelClientInterface::new_patch(const string& path, uint32_t poly)
 
 
 void
-ModelClientInterface::new_node(const string& plugin_type,
-                               const string& plugin_uri,
-                               const string& node_path,
+ModelClientInterface::new_node(string plugin_type,
+                               string plugin_uri,
+                               string node_path,
                                bool          is_polyphonic,
                                uint32_t      num_ports)
 {
@@ -104,8 +104,8 @@ ModelClientInterface::new_node(const string& plugin_type,
 
 
 void
-ModelClientInterface::new_port(const string& path,
-                               const string& type,
+ModelClientInterface::new_port(string path,
+                               string type,
                                bool          is_output)
 {
 	PortModel::Type ptype = PortModel::CONTROL;
@@ -123,8 +123,8 @@ ModelClientInterface::new_port(const string& path,
 
 
 void
-ModelClientInterface::connection(const string& src_port_path,
-                                 const string& dst_port_path)
+ModelClientInterface::connection(string src_port_path,
+                                 string dst_port_path)
 {
 	connection_model(new ConnectionModel(src_port_path, dst_port_path));
 }

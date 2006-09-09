@@ -21,7 +21,8 @@
 #include "Configuration.h"
 #include "PatchController.h"
 #include "PatchModel.h"
-#include "Controller.h"
+#include "ModelEngineInterface.h"
+#include "Loader.h"
 
 namespace Ingenuity {
 
@@ -108,14 +109,14 @@ LoadPatchWindow::ok_clicked()
 		poly = m_poly_spinbutton->get_value_as_int();
 	
 	if (m_replace)
-		Controller::instance().clear_patch(m_patch_controller->model()->path());
+		App::instance().engine()->clear_patch(m_patch_controller->model()->path());
 
 	PatchModel* pm = new PatchModel(m_patch_controller->model()->path(), poly);
 	pm->filename(get_filename());
 	pm->set_metadata("filename", get_filename());
 	pm->set_parent(m_patch_controller->patch_model()->parent());
-	//Controller::instance().push_added_patch(pm);
-	Controller::instance().load_patch(pm, true, true);
+	//App::instance().engine()->push_added_patch(pm);
+	App::instance().loader()->load_patch(pm, true, true);
 	
 	hide();
 }			

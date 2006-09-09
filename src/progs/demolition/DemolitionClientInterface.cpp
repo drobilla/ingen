@@ -30,7 +30,7 @@ DemolitionClientInterface::~DemolitionClientInterface()
 
 
 void
-DemolitionClientInterface::error(const string& msg)
+DemolitionClientInterface::error(string msg)
 {
 }
 
@@ -50,19 +50,19 @@ DemolitionClientInterface::new_port_model(PortModel* port_model)
 
 
 void
-DemolitionClientInterface::object_destroyed(const string& path)
+DemolitionClientInterface::object_destroyed(string path)
 {
 	m_model->remove_object(path);
 }
 
 void
-DemolitionClientInterface::patch_enabled(const string& path)
+DemolitionClientInterface::patch_enabled(string path)
 {
 }
 
 
 void
-DemolitionClientInterface::patch_disabled(const string& path)
+DemolitionClientInterface::patch_disabled(string path)
 {
 }
 
@@ -75,7 +75,7 @@ DemolitionClientInterface::new_node_model(NodeModel* nm)
 
 
 void
-DemolitionClientInterface::object_renamed(const string& old_path, const string& new_path)
+DemolitionClientInterface::object_renamed(string old_path, string new_path)
 {
 	m_model->object_renamed(old_path, new_path);
 }
@@ -89,14 +89,14 @@ DemolitionClientInterface::connection_model(ConnectionModel* cm)
 
 
 void
-DemolitionClientInterface::disconnection(const string& src_port_path, const string& dst_port_path)
+DemolitionClientInterface::disconnection(string src_port_path, string dst_port_path)
 {
 	m_model->remove_connection(src_port_path, dst_port_path);
 }
 
 
 void
-DemolitionClientInterface::control_change(const string& port_path, float value)
+DemolitionClientInterface::control_change(string port_path, float value)
 {
 }
 
