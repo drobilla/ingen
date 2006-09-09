@@ -52,6 +52,7 @@ SetPortValueEvent::SetPortValueEvent(Engine& engine, CountedPtr<Responder> respo
 void
 SetPortValueEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {
+	Event::execute(nframes, start, end);
 	assert(_time >= start && _time <= end);
 
 	if (m_port == NULL)

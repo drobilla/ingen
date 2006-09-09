@@ -51,14 +51,13 @@ RequestPortValueEvent::pre_process()
 void
 RequestPortValueEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {
+	QueuedEvent::execute(nframes, start, end);
 	assert(_time >= start && _time <= end);
 
 	if (m_port != NULL && m_port->type() == DataType::FLOAT)
 		m_value = ((TypedPort<Sample>*)m_port)->buffer(0)->value_at(_time - start);
 	else 
 		m_port = NULL; // triggers error response
-
-	QueuedEvent::execute(nframes, start, end);
 }
 
 

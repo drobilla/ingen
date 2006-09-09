@@ -54,14 +54,14 @@ EnablePatchEvent::pre_process()
 void
 EnablePatchEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {
+	QueuedEvent::execute(nframes, start, end);
+
 	if (m_patch != NULL) {
 		m_patch->enable();
 
 		if (m_patch->process_order() == NULL)
 			m_patch->process_order(m_process_order);
 	}
-	
-	QueuedEvent::execute(nframes, start, end);
 }
 
 

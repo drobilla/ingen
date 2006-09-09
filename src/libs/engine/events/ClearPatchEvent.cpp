@@ -59,6 +59,8 @@ ClearPatchEvent::pre_process()
 void
 ClearPatchEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {
+	QueuedEvent::execute(nframes, start, end);
+
 	if (m_patch != NULL) {
 		m_patch->disable();
 		
@@ -70,8 +72,6 @@ ClearPatchEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 			m_patch->process_order(NULL);
 		}
 	}
-	
-	QueuedEvent::execute(nframes, start, end);
 }
 
 

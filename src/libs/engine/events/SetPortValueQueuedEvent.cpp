@@ -70,7 +70,6 @@ void
 SetPortValueQueuedEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {
 	QueuedEvent::execute(nframes, start, end);
-	
 	assert(_time >= start && _time <= end);
 
 	if (m_error == NO_ERROR) {

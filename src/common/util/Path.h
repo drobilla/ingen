@@ -195,9 +195,10 @@ public:
 	/** Parent path with a "/" appended.
 	 *
 	 * Because of the "/" special case, append a child name to base_path()
-	 * to construct a path.
+	 * to construct a path.  This return value followed by a valid name is
+	 * guaranteed to be a valid path.
 	 */
-	inline Path base_path() const
+	inline string base_path() const
 	{
 		if ((*this) == "/")
 			return *this;

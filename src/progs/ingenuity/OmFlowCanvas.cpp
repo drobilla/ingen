@@ -179,12 +179,14 @@ OmFlowCanvas::generate_port_name(const string& base) {
 
 	char num_buf[5];
 	for (uint i=1; i < 9999; ++i) {
-		snprintf(num_buf, 5, "%d", i);
+		snprintf(num_buf, 5, "%u", i);
 		name = base + "_";
 		name += num_buf;
 		if (!m_patch_controller->patch_model()->get_port(name))
 			break;
 	}
+
+	assert(Path::is_valid(string("/") + name));
 
 	return name;
 }

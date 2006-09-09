@@ -50,6 +50,8 @@ DSSIControlEvent::pre_process()
 void
 DSSIControlEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {
+	QueuedEvent::execute(nframes, start, end);
+
 	if (m_node != NULL)
 		m_node->set_control(m_port_num, m_val);
 }

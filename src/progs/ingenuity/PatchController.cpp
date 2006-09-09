@@ -188,9 +188,9 @@ PatchController::set_path(const Path& new_path)
 	for (NodeModelMap::const_iterator i = patch_model()->nodes().begin();
 			i != patch_model()->nodes().end(); ++i) {
 		const NodeModel* const nm = (*i).second.get();
-		assert(nm != NULL);
+		assert(nm );
 		NodeController* const nc = ((NodeController*)nm->controller());
-		assert(nc != NULL);
+		assert(nc );
 		nc->set_path(new_path.base_path() + nc->node_model()->name());
 	}
 	
@@ -199,29 +199,26 @@ PatchController::set_path(const Path& new_path)
 	for (PortModelList::const_iterator i = node_model()->ports().begin();
 			i != node_model()->ports().end(); ++i) {
 		GtkObjectController* const pc = (GtkObjectController*)((*i)->controller());
-		assert(pc != NULL);
+		assert(pc );
 		assert(pc->path().parent()== new_path);
 	}
 #endif
 	
 	App::instance().patch_tree()->patch_renamed(old_path, new_path);
 	
-	if (m_window != NULL)
+	if (m_window)
 		m_window->patch_renamed(new_path);
 
-	if (m_control_window != NULL)
+	if (m_control_window)
 		m_control_window->set_title(new_path + " Controls");
 
-	if (m_module != NULL) {
-		assert(m_module->canvas() != NULL);
-		m_module->canvas()->rename_module(old_path.name(), new_path.name());
-		assert(m_module->name() == new_path.name());
-	}
+	if (m_module)
+		m_module->name(new_path.name());
 	
 	PatchController* parent = dynamic_cast<PatchController*>(
 		patch_model()->parent()->controller());
 	
-	if (parent != NULL && parent->window() != NULL)
+	if (parent && parent->window())
 		parent->window()->node_renamed(old_path, new_path);
 
 	//remove_from_store();
@@ -232,54 +229,33 @@ PatchController::set_path(const Path& new_path)
 		parent->patch_model()->rename_node(old_path, new_path);
 }
 
-#if 0
-void
-PatchController::enable()
-{
-	if (m_patch_view != NULL)
-		m_patch_view->enabled(true);
-	
-	patch_model()->enabled(true);
-	
-	App::instance().patch_tree()->patch_enabled(m_model->path());
-}
-
-
-void
-PatchController::disable()
-{
-	if (m_patch_view != NULL)
-		m_patch_view->enabled(false);
-	
-	patch_model()->enabled(false);
-	
-	App::instance().patch_tree()->patch_disabled(m_model->path());
-}
-#endif
 
 void
 PatchController::create_module(OmFlowCanvas* canvas)
 {
-	//cerr << "Creating patch module " << m_model->path() << endl;
+	// Update menu if we didn't used to have a module
+	if (!m_module) {
+		/*Gtk::Menu::MenuList& items = m_menu.items();
+		m_menu.remove(items[4]);
 
-	assert(canvas != NULL);
-	assert(m_module == NULL);
-	assert(!m_patch_view || canvas != m_patch_view->canvas());
-	
-	m_module = new SubpatchModule(canvas, this);
+		items.push_front(Gtk::Menu_Helpers::SeparatorElem());
+		items.push_front(Gtk::Menu_Helpers::MenuElem("Browse to Patch",
+					sigc::mem_fun((SubpatchModule*)m_module, &SubpatchModule::browse_to_patch)));
+		items.push_front(Gtk::Menu_Helpers::MenuElem("Open Patch in New Window",
+					sigc::mem_fun(this, &PatchController::show_patch_window)));*/
+	}
 
+	if (!m_module || m_module->canvas() != canvas) {
 
-	m_menu.remove(m_menu.items()[4]);
+		//cerr << "Creating patch module " << m_model->path() << endl;
 
-	// Add navigation menu items
-	Gtk::Menu::MenuList& items = m_menu.items();
-	items.push_front(Gtk::Menu_Helpers::SeparatorElem());
-	items.push_front(Gtk::Menu_Helpers::MenuElem("Browse to Patch",
-		sigc::mem_fun((SubpatchModule*)m_module, &SubpatchModule::browse_to_patch)));
-	items.push_front(Gtk::Menu_Helpers::MenuElem("Open Patch in New Window",
-		sigc::mem_fun(this, &PatchController::show_patch_window)));
-	
-	create_all_ports();
+		assert(canvas != NULL);
+		assert(m_module == NULL);
+		assert(!m_patch_view || canvas != m_patch_view->canvas());
+
+		m_module = new SubpatchModule(canvas, this);
+		create_all_ports();
+	}
 
 	m_module->move_to(node_model()->x(), node_model()->y());
 }
@@ -325,10 +301,8 @@ PatchController::create_view()
 		assert(nc);
 		assert(nm->controller() == nc);
 		
-		if (nc->module() == NULL);
-			nc->create_module(m_patch_view->canvas());
-		assert(nc->module() != NULL);
-		m_patch_view->canvas()->add_module(nc->module());
+		nc->create_module(m_patch_view->canvas());
+		assert(nc->module());
 	}
 
 	// Create pseudo modules for ports (ports on this canvas, not on our module)
@@ -336,18 +310,14 @@ PatchController::create_view()
 			i != patch_model()->ports().end(); ++i) {
 		PortController* const pc = dynamic_cast<PortController*>((*i)->controller());
 		assert(pc);
-		if (pc->module() == NULL)
-			pc->create_module(m_patch_view->canvas());
-		assert(pc->module() != NULL);
-		m_patch_view->canvas()->add_module(pc->module());
-		pc->module()->resize();
+		pc->create_module(m_patch_view->canvas());
 	}
 
 
 	// Create connections
 	for (list<CountedPtr<ConnectionModel> >::const_iterator i = patch_model()->connections().begin();
 			i != patch_model()->connections().end(); ++i) {
-		create_connection(*i);
+		connection(*i);
 	}
 
 	// Set run checkbox
@@ -373,23 +343,27 @@ PatchController::show_properties_window()
 /** Create a connection in the view (canvas).
  */
 void
-PatchController::create_connection(CountedPtr<ConnectionModel> cm)
+PatchController::connection(CountedPtr<ConnectionModel> cm)
 {
-	// Deal with messy anonymous nodes for this patch's own ports...
-	const Path& src_parent_path = cm->src_port_path().parent();
-	const Path& dst_parent_path = cm->dst_port_path().parent();
+	if (m_patch_view != NULL) {
 
-	const string& src_parent_name =
-		(src_parent_path == path()) ? "" : src_parent_path.name();
-	const string& dst_parent_name =
-		(dst_parent_path == path()) ? "" : dst_parent_path.name();
+		// Deal with port "anonymous nodes" for this patch's own ports...
+		const Path& src_parent_path = cm->src_port_path().parent();
+		const Path& dst_parent_path = cm->dst_port_path().parent();
 
-	m_patch_view->canvas()->add_connection(
-			src_parent_name,
-			cm->src_port_path().name(),
-			dst_parent_name,
-			cm->dst_port_path().name());
+		const string& src_parent_name =
+			(src_parent_path == path()) ? "" : src_parent_path.name();
+		const string& dst_parent_name =
+			(dst_parent_path == path()) ? "" : dst_parent_path.name();
+
+		Port* src_port = m_patch_view->canvas()->get_port(src_parent_name, cm->src_port_path().name());
+		Port* dst_port = m_patch_view->canvas()->get_port(dst_parent_name, cm->dst_port_path().name());
+		assert(src_port && dst_port);
+
+		m_patch_view->canvas()->add_connection(src_port, dst_port);
+	}
 }
+
 
 NodeController*
 PatchController::create_controller_for_node(CountedPtr<NodeModel> node)
@@ -435,7 +409,6 @@ PatchController::add_node(CountedPtr<NodeModel> object)
 
 
 	CountedPtr<NodeModel> node(object);
-	assert(node == object);
 	if (node) {
 		assert(node->parent() == m_patch_model);
 
@@ -454,10 +427,8 @@ PatchController::add_node(CountedPtr<NodeModel> object)
 			if (old_zoom != 1.0)
 				m_patch_view->canvas()->zoom(1.0);
 
-			if (nc->module() == NULL)
-				nc->create_module(m_patch_view->canvas());
-			assert(nc->module() != NULL);
-			m_patch_view->canvas()->add_module(nc->module());
+			nc->create_module(m_patch_view->canvas());
+			assert(nc->module());
 			nc->module()->resize();
 
 			// Reset zoom
@@ -480,13 +451,8 @@ PatchController::remove_node(const string& name)
 	assert(!m_patch_model->get_node(name));
 
 	// Update breadcrumbs if necessary
-	if (m_window != NULL)
+	if (m_window)
 		m_window->node_removed(name);
-	
-	if (m_patch_view != NULL) {
-		assert(m_patch_view->canvas() != NULL);
-		m_patch_view->canvas()->remove_module(name);
-	}
 }
 
 
@@ -534,11 +500,7 @@ PatchController::add_port(CountedPtr<PortModel> pm)
 		if (old_zoom != 1.0)
 			m_patch_view->canvas()->zoom(1.0);
 
-		if (pc->module() == NULL)
-			pc->create_module(m_patch_view->canvas());
-		assert(pc->module() != NULL);
-		m_patch_view->canvas()->add_module(pc->module());
-		pc->module()->resize();
+		pc->create_module(m_patch_view->canvas());
 
 		// Reset zoom
 		if (old_zoom != 1.0) {
@@ -565,6 +527,7 @@ void
 PatchController::remove_port(const Path& path, bool resize_module)
 {
 	assert(path.parent() == m_model->path());
+	assert( ! patch_model()->get_port(path.name()));
 
 	//cerr << "[PatchController] Removing port " << path << endl;
 
@@ -577,33 +540,16 @@ PatchController::remove_port(const Path& path, bool resize_module)
 		}
 	}*/
 		
-	// Remove port on module
-	if (m_module != NULL) {
-		assert(m_module->port(path.name()) != NULL);
-		m_module->remove_port(path.name(), resize_module);
-		assert(m_module->port(path.name()) == NULL);
+	if (m_module) {
+		delete m_module->port(path.name());
+		if (resize_module)
+			m_module->resize();
 	}
-	
-	patch_model()->remove_port(path);
-	assert(patch_model()->get_port(path.name()));
 	
 	// Disable "Controls" menuitem on module and patch window, if necessary
 	if (!has_control_inputs())
 		disable_controls_menuitem();
 }
-
-
-void
-PatchController::connection(CountedPtr<ConnectionModel> cm)
-{
-	assert(cm);
-
-	//patch_model()->add_connection(cm);
-	
-	if (m_patch_view != NULL)
-		create_connection(cm);
-}
-
 
 
 void
@@ -614,9 +560,14 @@ PatchController::disconnection(const Path& src_port_path, const Path& dst_port_p
 	const string& dst_node_name = dst_port_path.parent().name();
 	const string& dst_port_name = dst_port_path.name();
 	
-	if (m_patch_view != NULL)
-		m_patch_view->canvas()->remove_connection(
-			src_node_name, src_port_name, dst_node_name, dst_port_name);
+	if (m_patch_view) {
+		Port* src_port = m_patch_view->canvas()->get_port(src_node_name, src_port_name);
+		Port* dst_port = m_patch_view->canvas()->get_port(dst_node_name, dst_port_name);
+		
+		if (src_port && dst_port) {
+			m_patch_view->canvas()->remove_connection(src_port, dst_port);
+		}
+	}
 
 	//patch_model()->remove_connection(src_port_path, dst_port_path);
 	

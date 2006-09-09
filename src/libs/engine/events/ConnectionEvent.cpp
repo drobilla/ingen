@@ -115,8 +115,10 @@ ConnectionEvent::pre_process()
 		return;
 	}
 
+	assert(m_typed_event);
 	m_typed_event->pre_process();
-	
+	assert(m_typed_event->is_prepared());
+
 	QueuedEvent::pre_process();
 }
 
@@ -223,6 +225,9 @@ TypedConnectionEvent<T>::pre_process()
 
 	if (m_patch->enabled())
 		m_process_order = m_patch->build_process_order();
+
+	m_succeeded = true;
+	QueuedEvent::pre_process();
 }
 
 
@@ -230,6 +235,8 @@ template <typename T>
 void
 TypedConnectionEvent<T>::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {
+	QueuedEvent::execute(nframes, start, end);
+
 	if (m_succeeded) {
 		// These must be inserted here, since they're actually used by the audio thread
 		m_dst_port->add_connection(m_port_listnode);

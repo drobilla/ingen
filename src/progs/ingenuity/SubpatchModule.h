@@ -49,8 +49,6 @@ public:
 	SubpatchModule(OmFlowCanvas* canvas, PatchController* controller);
 	virtual ~SubpatchModule() {}
 
-	void add_om_port(PortModel* pm, bool resize=true);
-	
 	void on_double_click(GdkEventButton* ev);
 
 	void show_dialog();

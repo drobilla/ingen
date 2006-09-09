@@ -109,8 +109,6 @@ private:
 	void add_node(CountedPtr<NodeModel> object);
 	void remove_node(const string& name);
 	
-	void create_connection(CountedPtr<ConnectionModel> cm);
-
 	NodeController* create_controller_for_node(CountedPtr<NodeModel> node);
 
 	PatchPropertiesWindow* m_properties_window;

@@ -34,8 +34,11 @@ QueuedEngineInterface::QueuedEngineInterface(CountedPtr<Engine> engine, size_t q
 SampleCount
 QueuedEngineInterface::now() const
 {
-	return _engine->audio_driver()->frame_time();
+	// Exactly one cycle latency (some could run ASAP if we get lucky, but not always, and a slight
+	// constant latency is far better than jittery lower (average) latency
+	return _engine->audio_driver()->frame_time() + _engine->audio_driver()->buffer_size();
 }
+
 
 /** Set the Responder to send responses to commands with, once the commands
  * are preprocessed and ready to be executed (or not).

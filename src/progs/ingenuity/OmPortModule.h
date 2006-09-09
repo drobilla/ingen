@@ -39,10 +39,9 @@ class OmFlowCanvas;
 class OmPort;
 
 
-/** A module in a patch.
+/** A "module" to represent a patch's port on it's own canvas.
  *
- * This base class is extended for various types of modules - SubpatchModule,
- * DSSIModule, etc.
+ * Translation: This is the nameless single port pseudo module thingy.
  *
  * \ingroup Ingenuity
  */

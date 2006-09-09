@@ -49,6 +49,7 @@ NoteOffEvent::NoteOffEvent(Engine& engine, CountedPtr<Responder> responder, Samp
 void
 NoteOffEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {	
+	Event::execute(nframes, start, end);
 	assert(_time >= start && _time <= end);
 
 	if (m_node == NULL && m_node_path != "")

@@ -48,7 +48,12 @@ public:
 	virtual void execute(SampleCount nframes, FrameTime start, FrameTime end)
 	{
 		assert(!_executed);
-		assert(_time >= start && _time <= end);
+		assert(_time <= end);
+
+		// Missed the event, jitter, damnit.
+		if (_time < start)
+			_time = start;
+
 		_executed = true;
 	}
 	

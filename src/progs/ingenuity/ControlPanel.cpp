@@ -222,11 +222,6 @@ void
 ControlPanel::value_changed(const Path& port_path, float val)
 {
 	if (m_callback_enabled) {
-		// Update patch control slider, if this is a control panel for a patch
-		// (or vice versa)
-		//if (m_mirror != NULL)
-		//	m_mirror->set_port_value(port_path, val);
-
 		if (m_all_voices_radio->get_active()) {
 			App::instance().engine()->set_port_value(port_path, val);
 		} else {

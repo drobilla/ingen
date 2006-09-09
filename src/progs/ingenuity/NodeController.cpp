@@ -97,27 +97,38 @@ NodeController::NodeController(CountedPtr<NodeModel> model)
 
 NodeController::~NodeController()
 {
+	destroy_module();
 }
 
 
 void
 NodeController::create_module(OmFlowCanvas* canvas)
 {
-	//cerr << "Creating node module " << m_model->path() << endl;
+	if (!m_module || m_module->canvas() != canvas) {
+		delete m_module;
+		//cerr << "Creating node module " << m_model->path() << endl;
 
-	// If this is a DSSI plugin, DSSIController should be doing this
-	/*assert(node_model()->plugin());
-	assert(node_model()->plugin()->type() != PluginModel::DSSI);
-	assert(canvas != NULL);
-	assert(m_module == NULL);*/
-	
-	assert(canvas);
-	assert(node_model());
-	m_module = new OmModule(canvas, this);
-	
-	create_all_ports();
+		// If this is a DSSI plugin, DSSIController should be doing this
+		/*assert(node_model()->plugin());
+		  assert(node_model()->plugin()->type() != PluginModel::DSSI);
+		  assert(canvas != NULL);
+		  assert(m_module == NULL);*/
+
+		assert(canvas);
+		assert(node_model());
+		m_module = new OmModule(canvas, this);
+		create_all_ports();
+	}
 
 	m_module->move_to(node_model()->x(), node_model()->y());
+}
+
+
+void
+NodeController::destroy_module()
+{
+	delete m_module;
+	m_module = NULL;
 }
 
 
@@ -214,12 +225,6 @@ NodeController::add_port(CountedPtr<PortModel> pm)
 		if (has_control_inputs())
 			enable_controls_menuitem();
 	}
-		
-	if (m_control_window != NULL) {
-		assert(m_control_window->control_panel() != NULL);
-		m_control_window->control_panel()->add_port(pc);
-		m_control_window->resize();
-	}
 }
 
 
@@ -233,8 +238,7 @@ NodeController::show_control_window()
 	if (!m_control_window)
 		m_control_window = new NodeControlWindow(this, poly);
 	
-	if (m_control_window->control_panel()->num_controls() > 0)
-		m_control_window->present();
+	m_control_window->present();
 }
 
 

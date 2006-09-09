@@ -20,6 +20,7 @@
 #include "PatchTreeWindow.h"
 #include "PatchController.h"
 #include "PatchWindow.h"
+#include "Store.h"
 #include "SubpatchModule.h"
 #include "PatchModel.h"
 #include "util/Path.h"
@@ -60,6 +61,22 @@ PatchTreeWindow::PatchTreeWindow(BaseObjectType* cobject,
 		sigc::mem_fun(this, &PatchTreeWindow::event_patch_enabled_toggled));
 	
 	m_patches_treeview->columns_autosize();
+}
+
+
+void
+PatchTreeWindow::init(Store& store)
+{
+	store.new_object_sig.connect(sigc::mem_fun(this, &PatchTreeWindow::new_object));
+}
+
+
+void
+PatchTreeWindow::new_object(CountedPtr<ObjectModel> object)
+{
+	CountedPtr<PatchModel> patch = object;
+	if (patch && dynamic_cast<PatchController*>(patch->controller()))
+		add_patch(dynamic_cast<PatchController*>(patch->controller()));
 }
 
 

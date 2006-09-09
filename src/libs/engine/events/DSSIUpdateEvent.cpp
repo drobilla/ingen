@@ -56,11 +56,11 @@ DSSIUpdateEvent::pre_process()
 void
 DSSIUpdateEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {
+	QueuedEvent::execute(nframes, start, end);
+
 	if (m_node != NULL) {
 		m_node->set_ui_url(m_url);
 	}
-	
-	QueuedEvent::execute(nframes, start, end);
 }
 
 

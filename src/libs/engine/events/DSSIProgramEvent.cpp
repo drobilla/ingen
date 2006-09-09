@@ -53,6 +53,8 @@ DSSIProgramEvent::pre_process()
 void
 DSSIProgramEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {
+	QueuedEvent::execute(nframes, start, end);
+
 	if (m_node != NULL)
 		m_node->program(m_bank, m_program);
 }

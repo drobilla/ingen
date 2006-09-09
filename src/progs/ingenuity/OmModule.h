@@ -52,7 +52,7 @@ public:
 	virtual ~OmModule() {}
 	
 	virtual OmPort* port(const string& port_name) {
-		return (OmPort*)Module::port(port_name);
+		return (OmPort*)Module::get_port(port_name);
 	}
 
 	virtual void store_location();

@@ -28,7 +28,7 @@ using namespace Ingen::Client;
 
 namespace Ingenuity {
 
-OmPort::OmPort(OmModule* module, CountedPtr<PortModel> pm)
+OmPort::OmPort(Module* module, CountedPtr<PortModel> pm)
 : Port(module, pm->name(), pm->is_input(), App::instance().configuration()->get_port_color(pm.get())),
   m_port_model(pm)
 {

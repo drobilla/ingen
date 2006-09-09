@@ -125,6 +125,7 @@ DisconnectionEvent::pre_process()
 
 	assert(m_typed_event);
 	m_typed_event->pre_process();
+	assert(m_typed_event->is_prepared());
 
 	QueuedEvent::pre_process();
 }
@@ -235,6 +236,8 @@ template <typename T>
 void
 TypedDisconnectionEvent<T>::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {
+	QueuedEvent::execute(nframes, start, end);
+
 	if (m_succeeded) {
 
 		ListNode<TypedConnection<T>*>* const port_connection
@@ -259,7 +262,6 @@ TypedDisconnectionEvent<T>::execute(SampleCount nframes, FrameTime start, FrameT
 			m_succeeded = false;  // Ports weren't connected
 		}
 	}
-	QueuedEvent::execute(nframes, start, end);
 }
 
 

@@ -35,7 +35,6 @@ namespace Ingenuity {
 class Controller;
 class OmPort;
 class OmPatchPort;
-//class ControlPanel;
 class OmModule;
 class OmPortModule;
 class OmFlowCanvas;
@@ -54,26 +53,22 @@ public:
 	virtual void destroy();
 
 	virtual void create_module(OmFlowCanvas* canvas);
+	virtual void destroy_module();
 	OmPortModule* module() { return m_module; }
-/*
-	virtual void add_to_store();
-	virtual void remove_from_store();
-*/
+	
 	virtual void metadata_update(const string& key, const string& value);
 	
 	void create_port(OmModule* module);
+	void destroy_port();
+
 	void set_path(const Path& new_path);
 	
-	//ControlPanel* control_panel() const { return m_control_panel; }
-	//void set_control_panel(ControlPanel* cp);
-
 	CountedPtr<PortModel> port_model() const { return m_model; }
 
 private:
 	OmPatchPort*  m_patch_port;    ///< Port on m_module
 	OmPortModule* m_module;        ///< Port pseudo-module (for patch ports only)
 	OmPort*       m_port;          ///< Port on some other canvas module
-	//ControlPanel* m_control_panel; ///< Control panel that contains this port
 };
 
 

@@ -18,6 +18,7 @@
 #include "GladeFactory.h"
 #include "NodeController.h"
 #include "ControlGroups.h"
+#include "ControlPanel.h"
 #include "PatchWindow.h"
 #include <iostream>
 #include <cmath>

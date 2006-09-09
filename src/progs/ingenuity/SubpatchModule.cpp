@@ -41,18 +41,6 @@ SubpatchModule::SubpatchModule(OmFlowCanvas* canvas, PatchController* patch)
 
 
 void
-SubpatchModule::add_om_port(PortModel* pm, bool resize_to_fit)
-{
-	OmPort* port = new OmPort(this, pm);
-
-	port->signal_event().connect(
-		sigc::bind<Port*>(sigc::mem_fun(m_canvas, &OmFlowCanvas::port_event), port));
-	
-	Module::add_port(port, resize_to_fit);
-}
-
-
-void
 SubpatchModule::on_double_click(GdkEventButton* event)
 {
 	assert(m_patch != NULL);

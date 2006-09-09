@@ -51,6 +51,7 @@ DSSIConfigureEvent::pre_process()
 void
 DSSIConfigureEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {
+	QueuedEvent::execute(nframes, start, end);
 	// Nothing.
 }
 

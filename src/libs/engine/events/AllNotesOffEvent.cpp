@@ -43,7 +43,9 @@ AllNotesOffEvent::AllNotesOffEvent(Engine& engine, CountedPtr<Responder> respond
 
 void
 AllNotesOffEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
-{	
+{
+	Event::execute(nframes, start, end);
+
 	if (m_patch == NULL && m_patch_path != "")
 		m_patch = _engine.object_store()->find_patch(m_patch_path);
 		

@@ -114,12 +114,12 @@ DisconnectNodeEvent::pre_process()
 void
 DisconnectNodeEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {
+	QueuedEvent::execute(nframes, start, end);
+
 	if (m_succeeded) {
 		for (List<DisconnectionEvent*>::iterator i = m_disconnection_events.begin(); i != m_disconnection_events.end(); ++i)
 			(*i)->execute(nframes, start, end);
 	}
-	
-	QueuedEvent::execute(nframes, start, end);
 }
 
 

@@ -62,6 +62,7 @@ Store::add_object(CountedPtr<ObjectModel> object)
 
 	m_objects[object->path()] = object;
 
+	new_object_sig.emit(object);
 	//cout << "[Store] Added " << object->path() << endl;
 }
 

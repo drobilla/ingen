@@ -23,15 +23,13 @@
 #include <gtkmm.h>
 #include <libglademm.h>
 #include <sigc++/sigc++.h>
-#include "ControlPanel.h"
 using std::string; using std::vector;
-
-using namespace Ingen::Client;
 
 namespace Ingenuity {
 	
 class ControlGroup;
 class NodeController;
+class ControlPanel;
 
 
 /** Window with controls (sliders) for all control-rate ports on a Node.

@@ -55,6 +55,7 @@ public:
 	
 	const map<string, CountedPtr<PluginModel> >& plugins() const { return m_plugins; }
 
+	sigc::signal<void, CountedPtr<ObjectModel> > new_object_sig; 
 private:
 
 	void add_object(CountedPtr<ObjectModel> object);

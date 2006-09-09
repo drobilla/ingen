@@ -46,10 +46,10 @@ DisablePatchEvent::pre_process()
 void
 DisablePatchEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {
+	QueuedEvent::execute(nframes, start, end);
+	
 	if (m_patch != NULL)
 		m_patch->disable();
-
-	QueuedEvent::execute(nframes, start, end);
 }
 
 

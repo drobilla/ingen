@@ -42,7 +42,7 @@ class OmModule;
 class OmPort : public LibFlowCanvas::Port
 {
 public:
-	OmPort(OmModule* module, CountedPtr<PortModel> pm);
+	OmPort(Module* module, CountedPtr<PortModel> pm);
 
 	virtual ~OmPort() {}
 

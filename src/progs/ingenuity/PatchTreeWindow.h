@@ -21,6 +21,11 @@
 #include <libglademm.h>
 #include "util/Path.h"
 
+namespace Ingen { namespace Client {
+	class Store;
+} }
+using Ingen::Client::Store;
+
 namespace Ingenuity {
 
 class PatchWindow;
@@ -36,6 +41,10 @@ class PatchTreeWindow : public Gtk::Window
 {
 public:
 	PatchTreeWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& refGlade);
+
+	void init(Store& store);
+
+	void new_object(CountedPtr<ObjectModel> object);
 
 	void patch_enabled(const Path& path);
 	void patch_disabled(const Path& path);

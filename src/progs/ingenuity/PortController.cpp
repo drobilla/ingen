@@ -18,7 +18,7 @@
 #include "OmFlowCanvas.h"
 #include "OmModule.h"
 #include "PortModel.h"
-#include "ControlPanel.h"
+#include "PatchModel.h"
 #include "OmPort.h"
 #include "OmPatchPort.h"
 #include "Store.h"
@@ -28,9 +28,9 @@ namespace Ingenuity {
 
 PortController::PortController(CountedPtr<PortModel> model)
 : GtkObjectController(model),
+  m_patch_port(NULL),
   m_module(NULL),
   m_port(NULL)
-  //m_control_panel(NULL)
 {
 	assert(model);
 	assert(model->parent());
@@ -46,9 +46,6 @@ PortController::destroy()
 	assert(m_model->parent());
 	NodeController* parent = (NodeController*)m_model->parent()->controller();
 	assert(parent != NULL);
-
-	//if (m_control_panel != NULL)
-	//	m_control_panel->remove_port(path());
 
 	parent->remove_port(path(), false);
 }
@@ -70,35 +67,38 @@ PortController::create_module(OmFlowCanvas* canvas)
 
 	assert(canvas);
 	assert(port_model());
+
+	if (m_module)
+		delete m_module;
+
 	m_module = new OmPortModule(canvas, this, x, y);
 	
-	// FIXME: leak
-	m_patch_port = new OmPatchPort(m_module, port_model());
-	m_module->add_port(m_patch_port, false);
+	if (CountedPtr<PatchModel>(port_model()->parent())) {
+		if (m_patch_port)
+			delete m_patch_port;
+
+		m_patch_port = new OmPatchPort(m_module, port_model());
+	}
 	
+	m_module->resize();
+
 	m_module->move_to(x, y); // FIXME: redundant (?)
+}
+
+
+void
+PortController::destroy_module()
+{
+	delete m_module;
+	m_module = NULL;
 }
 
 
 void
 PortController::metadata_update(const string& key, const string& value)
 {
-	// FIXME: double lookups
-	
-	//cerr << path() << ": " << key << " = " << value << endl;
+	//cerr << "Metadata " << path() << ": " << key << " = " << value << endl;
 
-/* Panel now listens to model signals..
-
-	if (key == "user-min") {
-		port_model()->user_min(atof(value.c_str()));
-		if (m_control_panel != NULL)
-			m_control_panel->set_range_min(m_model->path(), atof(value.c_str()));
-	} else if (key == "user-max") {
-		port_model()->user_max(atof(value.c_str()));
-		if (m_control_panel != NULL)
-			m_control_panel->set_range_max(m_model->path(), atof(value.c_str()));
-	}
-*/
 	if (m_module != NULL) {
 		if (key == "module-x") {
 			float x = atof(value.c_str());
@@ -114,30 +114,12 @@ PortController::metadata_update(const string& key, const string& value)
 	GtkObjectController::metadata_update(key, value);
 }
 
-
-/** "Register" a control panel that is monitoring this port.
- *
- * The OmPort will handle notifying the ControlPanel when state
- * changes occur, etc.
- */
-/*
-void
-PortController::set_control_panel(ControlPanel* cp)
-{
-	assert(m_control_panel == NULL);
-	m_control_panel = cp;
-}
-*/
-
 void
 PortController::set_path(const Path& new_path)
 {
 	// Change port name on module, if view exists
 	if (m_port != NULL)
 		m_port->set_name(new_path.name());
-
-	//if (m_control_panel != NULL)
-	//	m_control_panel->rename_port(m_model->path(), new_path);
 
 	m_model->set_path(new_path);
 }
@@ -152,8 +134,7 @@ PortController::create_port(OmModule* module)
 {
 	assert(module != NULL);
 
-	m_port = new OmPort(module, port_model());
-	module->add_port(m_port, false);
+	new OmPort(module, port_model());
 }
 
 

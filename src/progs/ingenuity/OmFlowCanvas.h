@@ -41,7 +41,7 @@ public:
 	OmFlowCanvas(PatchController* controller, int width, int height);
 	
 	OmModule* find_module(const string& name)
-		{ return (OmModule*)FlowCanvas::find_module(name); }
+		{ return (OmModule*)FlowCanvas::get_module(name); }
 
 	void connect(const Port* src_port, const Port* dst_port);
 	void disconnect(const Port* src_port, const Port* dst_port);

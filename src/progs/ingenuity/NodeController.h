@@ -57,6 +57,7 @@ public:
 	virtual void metadata_update(const string& key, const string& value);
 	
 	virtual void create_module(OmFlowCanvas* canvas);
+	virtual void destroy_module();
 
 	void set_path(const Path& new_path);
 	
