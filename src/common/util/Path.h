@@ -96,6 +96,11 @@ public:
 		return true;
 	}
 	
+	static bool is_valid_name(const std::basic_string<char>& path)
+	{
+		return is_valid(string("/").append(path));
+	}
+
 
 	/** Convert a string to a valid full path.
 	 *

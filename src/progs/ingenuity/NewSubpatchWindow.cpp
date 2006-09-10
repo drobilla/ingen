@@ -63,8 +63,8 @@ void
 NewSubpatchWindow::name_changed()
 {
 	string name = m_name_entry->get_text();
-	if (name.find("/") != string::npos) {
-		m_message_label->set_text("Name may not contain '/'");
+	if (!Path::is_valid_name(name)) {
+		m_message_label->set_text("Name contains invalid characters.");
 		m_ok_button->property_sensitive() = false;
 	} else if (m_patch_controller->patch_model()->get_node(name)) {
 		m_message_label->set_text("An object already exists with that name.");

@@ -59,26 +59,32 @@ public:
 	
 	void patch_controller(PatchController* pc);
 
-	OmFlowCanvas*    canvas() const           { return m_canvas; }
-	PatchController* patch_controller() const { return m_patch; }
-
+	OmFlowCanvas*    canvas() const           { return _canvas; }
+	PatchController* patch_controller() const { return _patch; }
+	Gtk::Viewport*   breadcrumb_container() const { return _breadcrumb_container; }
 	void show_control_window();
-	void zoom_changed();
 	void process_toggled();
 
 	void enable();
 	void disable();
 
 private:
-	PatchController*     m_patch;
-	OmFlowCanvas*        m_canvas;
+	PatchController*     _patch;
+	OmFlowCanvas*        _canvas;
 	
-	Gtk::ScrolledWindow* m_canvas_scrolledwindow;
-	Gtk::HScale*         m_zoom_slider;	
-	Gtk::Label*          m_polyphony_label;
-	Gtk::CheckButton*    m_process_checkbutton;
-	
-	bool m_enable_signal;
+	Gtk::ScrolledWindow*   _canvas_scrolledwindow;
+
+	Gtk::ToggleToolButton*  _process_but;
+	Gtk::SpinButton*        _poly_spin;
+	Gtk::ToolButton*        _clear_but;
+	Gtk::ToolButton*        _destroy_but;
+	Gtk::ToolButton*        _refresh_but;
+	Gtk::ToolButton*        _save_but;
+	Gtk::ToolButton*        _zoom_normal_but;
+	Gtk::ToolButton*        _zoom_full_but;
+	Gtk::Viewport*          _breadcrumb_container;
+
+	bool _enable_signal;
 };
 
 

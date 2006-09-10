@@ -35,19 +35,21 @@ namespace Ingenuity {
 
 PatchView::PatchView(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 : Gtk::Box(cobject),
-  m_patch(NULL),
-  m_canvas(NULL),
-  m_enable_signal(true)
+  _patch(NULL),
+  _canvas(NULL),
+  _breadcrumb_container(NULL),
+  _enable_signal(true)
 {
 	property_visible() = false;
 
-	xml->get_widget("patch_canvas_scrolledwindow", m_canvas_scrolledwindow);
-	xml->get_widget("patch_zoom_scale", m_zoom_slider);
-	xml->get_widget("patch_polyphony_label", m_polyphony_label);
-	xml->get_widget("patch_process_checkbutton", m_process_checkbutton);
+	xml->get_widget("patch_view_scrolledwindow", _canvas_scrolledwindow);
+	xml->get_widget("patch_view_zoom_full_but", _zoom_full_but);
+	xml->get_widget("patch_view_zoom_normal_but", _zoom_normal_but);
+	xml->get_widget("patch_view_poly_spin", _poly_spin);
+	xml->get_widget("patch_view_process_but", _process_but);
+	xml->get_widget("patch_view_breadcrumb_container", _breadcrumb_container);
 	
-	m_zoom_slider->signal_value_changed().connect(  sigc::mem_fun(this, &PatchView::zoom_changed));
-	m_process_checkbutton->signal_toggled().connect(sigc::mem_fun(this, &PatchView::process_toggled));
+	_process_but->signal_toggled().connect(sigc::mem_fun(this, &PatchView::process_toggled));
 }
 
 
@@ -59,19 +61,17 @@ void
 PatchView::patch_controller(PatchController* pc)
 {
 	//m_patch = new PatchController(pm, controller);
-	m_patch = pc;
+	_patch = pc;
 	
-	m_canvas = new OmFlowCanvas(pc, 1600*2, 1200*2);
+	_canvas = new OmFlowCanvas(pc, 1600*2, 1200*2);
 	
-	m_canvas_scrolledwindow->add(*m_canvas);
-	//m_canvas->show();
-	//m_canvas_scrolledwindow->show();
+	_canvas_scrolledwindow->add(*_canvas);
+	//_canvas->show();
+	//_canvas_scrolledwindow->show();
 
-	char txt[4];
-	snprintf(txt, 8, "%zd", pc->patch_model()->poly());
-	m_polyphony_label->set_text(txt);
+	_poly_spin->set_value(pc->patch_model()->poly());
 
-	//m_description_window->patch_model(pc->model());
+	//_description_window->patch_model(pc->model());
 	
 	pc->patch_model()->enabled_sig.connect(sigc::mem_fun(this, &PatchView::enable));
 	pc->patch_model()->disabled_sig.connect(sigc::mem_fun(this, &PatchView::disable));
@@ -81,31 +81,23 @@ PatchView::patch_controller(PatchController* pc)
 void
 PatchView::show_control_window()
 {
-	if (m_patch != NULL)
-		m_patch->show_control_window();
-}
-
-
-void
-PatchView::zoom_changed()
-{
-	float z = m_zoom_slider->get_value();
-	m_canvas->zoom(z);
+	if (_patch != NULL)
+		_patch->show_control_window();
 }
 
 
 void
 PatchView::process_toggled()
 {
-	if (!m_enable_signal)
+	if (!_enable_signal)
 		return;
 
-	if (m_process_checkbutton->get_active()) {
-		App::instance().engine()->enable_patch(m_patch->model()->path());
-		App::instance().patch_tree()->patch_enabled(m_patch->model()->path());
+	if (_process_but->get_active()) {
+		App::instance().engine()->enable_patch(_patch->model()->path());
+		App::instance().patch_tree()->patch_enabled(_patch->model()->path());
 	} else {
-		App::instance().engine()->disable_patch(m_patch->model()->path());
-		App::instance().patch_tree()->patch_disabled(m_patch->model()->path());
+		App::instance().engine()->disable_patch(_patch->model()->path());
+		App::instance().patch_tree()->patch_disabled(_patch->model()->path());
 	}
 }
 
@@ -113,18 +105,18 @@ PatchView::process_toggled()
 void
 PatchView::enable()
 {
-	m_enable_signal = false;
-	m_process_checkbutton->set_active(true);
-	m_enable_signal = true;
+	_enable_signal = false;
+	_process_but->set_active(true);
+	_enable_signal = true;
 }
 
 
 void
 PatchView::disable()
 {
-	m_enable_signal = false;
-	m_process_checkbutton->set_active(false);
-	m_enable_signal = true;
+	_enable_signal = false;
+	_process_but->set_active(false);
+	_enable_signal = true;
 }
 
 

@@ -17,10 +17,12 @@
 #ifndef BREADCRUMB_H
 #define BREADCRUMB_H
 
+// FIXME: remove
+#include <iostream>
+using std::cerr; using std::endl;
+
 #include <gtkmm.h>
-#include "PatchWindow.h"
-#include "PatchController.h"
-#include "PatchModel.h"
+#include "util/Path.h"
 
 namespace Ingenuity {
 
@@ -32,19 +34,14 @@ namespace Ingenuity {
 class BreadCrumb : public Gtk::ToggleButton
 {
 public:
-	BreadCrumb(PatchWindow* window, const Path& path)
-		: m_window(window)
-		, m_path(path)
+	BreadCrumb(const Path& path)
+		: m_path(path)
 	{
 		set_border_width(0);
 		set_path(path);
-		signal_clicked().connect(sigc::bind(sigc::mem_fun(
-			m_window, &PatchWindow::breadcrumb_clicked), this));
 		show_all();
 	}
 
-	//PatchController* patch() { return m_patch; }
-	
 	void set_path(const Path& path)
 	{
 		remove();
@@ -55,12 +52,10 @@ public:
 		add(*lab);
 	}
 
-	Path& path() { return m_path; }
+	const Path& path() { return m_path; }
 	
 private:
-	PatchWindow*     m_window;
-	Path             m_path;
-	//PatchController* m_patch;
+	Path m_path;
 };
 
 } // namespace Ingenuity

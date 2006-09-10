@@ -22,6 +22,9 @@ ingenuity_SOURCES = \
 	cmdline.h \
 	cmdline.c \
 	main.cpp \
+	BreadCrumb.h \
+	BreadCrumbBox.h \
+	BreadCrumbBox.cpp \
 	ConnectWindow.h \
 	ConnectWindow.cpp \
 	App.h \
@@ -58,7 +61,6 @@ ingenuity_SOURCES = \
 	PatchView.cpp \
 	PatchWindow.h \
 	PatchWindow.cpp \
-	BreadCrumb.h \
 	OmFlowCanvas.h \
 	OmFlowCanvas.cpp \
 	../../common/types.h \

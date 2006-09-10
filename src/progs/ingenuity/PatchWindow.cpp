@@ -33,7 +33,7 @@
 #include "ConfigWindow.h"
 #include "MessagesWindow.h"
 #include "PatchTreeWindow.h"
-#include "BreadCrumb.h"
+#include "BreadCrumbBox.h"
 #include "Store.h"
 #include "ConnectWindow.h"
 #include "Loader.h"
@@ -49,13 +49,13 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
   m_enable_signal(true),
   m_position_stored(false),
   m_x(0),
-  m_y(0)
+  m_y(0),
+  m_breadcrumb_box(NULL)
 {
 	property_visible() = false;
 
 	xml->get_widget("patch_win_vbox", m_vbox);
 	xml->get_widget("patch_win_viewport", m_viewport);
-	xml->get_widget("patch_win_breadcrumb_box", m_breadcrumb_box);
 	//xml->get_widget("patch_win_status_bar", m_status_bar);
 	//xml->get_widget("patch_open_menuitem", m_menu_open);
 	xml->get_widget("patch_import_menuitem", m_menu_import);
@@ -71,9 +71,6 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 	xml->get_widget("patch_fullscreen_menuitem", m_menu_fullscreen);
 	xml->get_widget("patch_clear_menuitem", m_menu_clear);
 	xml->get_widget("patch_destroy_menuitem", m_menu_destroy_patch);
-	/*xml->get_widget("patch_add_plugin_menuitem", m_menu_add_plugin);
-	xml->get_widget("patch_add_new_subpatch_menuitem", m_menu_new_subpatch);
-	xml->get_widget("patch_add_subpatch_from_file_menuitem", m_menu_load_subpatch);*/
 	xml->get_widget("patch_view_messages_window_menuitem", m_menu_view_messages_window);
 	xml->get_widget("patch_view_patch_tree_window_menuitem", m_menu_view_patch_tree_window);
 	xml->get_widget("patch_help_about_menuitem", m_menu_help_about);
@@ -83,7 +80,6 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 	xml->get_widget_derived("load_patch_win", m_load_patch_window);
 	xml->get_widget_derived("load_subpatch_win", m_load_subpatch_window);
 
-	//m_load_plugin_window->set_transient_for(*this);
 	m_new_subpatch_window->set_transient_for(*this);
 	m_load_patch_window->set_transient_for(*this);
 	m_load_subpatch_window->set_transient_for(*this);
@@ -118,12 +114,6 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 		sigc::mem_fun(this, &PatchWindow::event_destroy));
 	m_menu_clear->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_clear));
-	/*m_menu_add_plugin->signal_activate().connect(
-		sigc::mem_fun<void>(m_load_plugin_window, &LoadPluginWindow::present));
-	m_menu_new_subpatch->signal_activate().connect(
-		sigc::mem_fun<void>(m_new_subpatch_window, &NewSubpatchWindow::present));
-	m_menu_load_subpatch->signal_activate().connect(
-		sigc::mem_fun<void>(m_load_subpatch_window, &LoadSubpatchWindow::present));*/
 	m_menu_view_messages_window->signal_activate().connect(
 		sigc::mem_fun<void>(App::instance().messages_dialog(), &MessagesWindow::present));
 	m_menu_view_patch_tree_window->signal_activate().connect(
@@ -133,6 +123,9 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 	if (App::instance().about_dialog() != NULL) 
 		m_menu_help_about->signal_activate().connect(
 			sigc::mem_fun<void>(App::instance().about_dialog(), &Gtk::Dialog::present));
+	
+	m_breadcrumb_box = new BreadCrumbBox();
+	m_breadcrumb_box->signal_patch_selected.connect(sigc::mem_fun(this, &PatchWindow::patch));
 
 	App::instance().add_patch_window(this);
 }
@@ -149,6 +142,32 @@ PatchWindow::~PatchWindow()
 }
 
 
+/** Set the patch controller from a Path (for BreadCrumbs)
+ */
+void 
+PatchWindow::patch(const Path& path)
+{	
+	CountedPtr<PatchModel> model = App::instance().store()->object(path);
+	if (!model)
+		return; // can't really do anything useful..
+	
+	PatchController* pc = dynamic_cast<PatchController*>(model->controller());
+	
+	if (!pc) {
+		pc = new PatchController(model);
+		model->set_controller(pc);
+	}
+
+	assert(pc);
+
+	if (pc->window() != NULL && pc->window()->is_visible()) {
+		pc->show_patch_window();
+	} else {
+		patch_controller(pc);
+	}
+}
+
+
 /** Sets the patch controller for this window and initializes everything.
  *
  * This function MUST be called before using the window in any way!
@@ -156,9 +175,12 @@ PatchWindow::~PatchWindow()
 void
 PatchWindow::patch_controller(PatchController* pc)
 {
+	if (!pc || pc == m_patch)
+		return;
+
 	m_enable_signal = false;
 
-	assert(pc != NULL);
+	assert(pc);
 	assert(m_patch != pc);
 	assert(m_patch == NULL ||
 			pc->model()->path() != m_patch->model()->path());
@@ -174,11 +196,19 @@ PatchWindow::patch_controller(PatchController* pc)
 
 	if (pc->view() == NULL)
 		pc->create_view();
-	assert(pc->view() != NULL);
+	assert(pc->view());
 
 	PatchView* const patch_view = pc->view();
 	assert(patch_view != NULL);
 	patch_view->reparent(*m_viewport);
+
+	if (m_breadcrumb_box->get_parent())
+		m_breadcrumb_box->reparent(*patch_view->breadcrumb_container());
+	else
+		patch_view->breadcrumb_container()->add(*m_breadcrumb_box);
+
+	m_breadcrumb_box->build(pc->model()->path());
+	m_breadcrumb_box->show();
 	pc->window(this);
 	show_all();
 
@@ -204,26 +234,6 @@ PatchWindow::patch_controller(PatchController* pc)
 
 	//m_properties_window->patch_model(pc->patch_model());
 
-
-	// Setup breadcrumbs box
-	// FIXME: this is filthy
-
-	// Moving to a parent patch, depress correct button
-	if (old_pc != NULL &&
-			old_pc->model()->path().substr(0, pc->model()->path().length())
-			== pc->model()->path()) {
-		for (list<BreadCrumb*>::iterator i = m_breadcrumbs.begin(); i != m_breadcrumbs.end(); ++i) {
-			if ((*i)->path() == pc->path())
-				(*i)->set_active(true);
-			else if ((*i)->path() == old_pc->path())
-				(*i)->set_active(false);
-		}
-	
-	// Rebuild breadcrumbs from scratch (yeah, laziness..)
-	} else {
-		rebuild_breadcrumbs();
-	}
-	
 	if (pc->model()->path() == "/")
 		m_menu_destroy_patch->set_sensitive(false);
 	else
@@ -236,71 +246,6 @@ PatchWindow::patch_controller(PatchController* pc)
 	m_enable_signal = true;
 }
 
-
-/** Destroys current breadcrumbs and rebuilds from scratch.
- * 
- * (Needs to be called when a patch is cleared to eliminate children crumbs)
- */
-void
-PatchWindow::rebuild_breadcrumbs()
-{
-		// Empty existing breadcrumbs
-		for (list<BreadCrumb*>::iterator i = m_breadcrumbs.begin(); i != m_breadcrumbs.end(); ++i)
-			m_breadcrumb_box->remove(**i);
-		m_breadcrumbs.clear();
-
-		// Add new ones
-		string path = m_patch->path(); // To be chopped up, starting at the left
-		string but_name;               // Name on breadcrumb button
-		string but_path;               // Full path breadcrumb represents
-
-		// Add root
-		assert(path[0] == '/');
-		BreadCrumb* but = manage(new BreadCrumb(this, "/"));
-		m_breadcrumb_box->pack_start(*but, false, false, 1);
-		m_breadcrumbs.push_back(but);
-		path = path.substr(1); // hack off leading slash
-
-		// Add the rest
-		while (path.length() > 0) {
-			if (path.find("/") != string::npos) {
-				but_name = path.substr(0, path.find("/"));
-				but_path += string("/") + path.substr(0, path.find("/"));
-				path = path.substr(path.find("/")+1);
-			} else {
-				but_name = path;
-				but_path += string("/") + path;
-				path = "";
-			}
-			BreadCrumb* but = manage(new BreadCrumb(this, but_path));//Store::instance().patch(but_path)));
-			m_breadcrumb_box->pack_start(*but, false, false, 1);
-			m_breadcrumbs.push_back(but);
-		}
-		(*m_breadcrumbs.back()).set_active(true);
-
-}
-
-
-void
-PatchWindow::breadcrumb_clicked(BreadCrumb* crumb)
-{
-	if (m_enable_signal) {
-		// FIXME: check to be sure PatchModel exists, then controller - maybe
-		// even make a controller if there isn't one?
-		PatchController* const pc = dynamic_cast<PatchController*>(
-			App::instance().store()->object(crumb->path())->controller());
-		assert(pc != NULL);
-	
-		if (pc == m_patch) {
-			crumb->set_active(true);
-		} else if (pc->window() != NULL && pc->window()->is_visible()) {
-			pc->show_patch_window();
-			crumb->set_active(false);
-		} else {
-			patch_controller(pc);
-		}
-	}
-}
 
 
 void
@@ -336,6 +281,8 @@ PatchWindow::event_show_properties()
 void
 PatchWindow::node_removed(const string& name)
 {
+	throw; // FIXME
+/*
 	for (list<BreadCrumb*>::iterator i = m_breadcrumbs.begin(); i != m_breadcrumbs.end(); ++i) {
 		if ((*i)->path() == m_patch->model()->base_path() + name) {
 			for (list<BreadCrumb*>::iterator j = i; j != m_breadcrumbs.end(); ) {
@@ -345,7 +292,7 @@ PatchWindow::node_removed(const string& name)
 			}
 			break;
 		}
-	}
+	}*/
 }
 
 
@@ -354,10 +301,12 @@ PatchWindow::node_removed(const string& name)
 void
 PatchWindow::node_renamed(const string& old_path, const string& new_path)
 {
+	throw; // FIXME
+	/*
 	for (list<BreadCrumb*>::iterator i = m_breadcrumbs.begin(); i != m_breadcrumbs.end(); ++i) {
 		if ((*i)->path() == old_path)
 			(*i)->set_path(new_path);
-	}
+	}*/
 }
 
 
@@ -366,11 +315,13 @@ PatchWindow::node_renamed(const string& old_path, const string& new_path)
 void
 PatchWindow::patch_renamed(const string& new_path)
 {
+	throw; // FIXME
+	/*
 	set_title(new_path);
 	for (list<BreadCrumb*>::iterator i = m_breadcrumbs.begin(); i != m_breadcrumbs.end(); ++i) {
 		if ((*i)->path() == m_patch->path())
 			(*i)->set_path(new_path);
-	}
+	}*/
 }
 
 /*
@@ -474,6 +425,7 @@ PatchWindow::on_show()
 void
 PatchWindow::on_hide()
 {
+	claim_breadcrumbs();
 	m_position_stored = true;
 	get_position(m_x, m_y);
 	Gtk::Window::on_hide();
@@ -568,7 +520,7 @@ PatchWindow::event_clear()
 void
 PatchWindow::event_fullscreen_toggled()
 {
-	// FIXME: ugh, use GTK signals to track state and now for sure
+	// FIXME: ugh, use GTK signals to track state and know for sure
 	static bool is_fullscreen = false;
 
 	if (!is_fullscreen) {
@@ -578,6 +530,12 @@ PatchWindow::event_fullscreen_toggled()
 		unfullscreen();
 		is_fullscreen = false;
 	}
+}
+
+void
+PatchWindow::claim_breadcrumbs()
+{
+	m_breadcrumb_box->reparent(m_breadcrumb_bin);
 }
 
 

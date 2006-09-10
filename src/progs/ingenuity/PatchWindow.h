@@ -22,6 +22,7 @@
 #include <gtkmm.h>
 #include <libglademm/xml.h>
 #include <libglademm.h>
+#include "util/Path.h"
 
 using std::string; using std::list;
 
@@ -49,7 +50,7 @@ class NodeControlWindow;
 class PatchDescriptionWindow;
 class SubpatchModule;
 class OmPort;
-class BreadCrumb;
+class BreadCrumbBox;
 
 
 /** A window for a patch.
@@ -62,6 +63,7 @@ public:
 	PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml);
 	~PatchWindow();
 	
+	void patch(const Path& path);
 	void patch_controller(PatchController* pc);
 
 	PatchController*    patch_controller() const     { return m_patch; }
@@ -73,10 +75,10 @@ public:
 	void node_removed(const string& name);
 	void node_renamed(const string& old_path, const string& new_path);
 	void patch_renamed(const string& new_path);
-	void rebuild_breadcrumbs();
-	void breadcrumb_clicked(BreadCrumb* crumb);
-	
+
 	Gtk::MenuItem* menu_view_control_window() { return m_menu_view_control_window; }
+
+	void claim_breadcrumbs();
 
 protected:
 	void on_show();
@@ -85,7 +87,6 @@ protected:
 	bool on_key_press_event(GdkEventKey* event);
 	
 private:
-	//void event_open();
 	void event_import();
 	void event_save();
 	void event_save_as();
@@ -109,7 +110,6 @@ private:
 	int  m_x;
 	int  m_y;
 	
-	//Gtk::MenuItem*      m_menu_open;
 	Gtk::MenuItem*      m_menu_import;
 	Gtk::MenuItem*      m_menu_save;
 	Gtk::MenuItem*      m_menu_save_as;
@@ -122,18 +122,18 @@ private:
 	Gtk::MenuItem*      m_menu_view_engine_window;
 	Gtk::MenuItem*      m_menu_view_control_window;
 	Gtk::MenuItem*      m_menu_view_patch_properties;
-	/*Gtk::MenuItem*      m_menu_add_plugin;
-	Gtk::MenuItem*      m_menu_new_subpatch;
-	Gtk::MenuItem*      m_menu_load_subpatch;*/
 	Gtk::MenuItem*      m_menu_view_messages_window;
 	Gtk::MenuItem*      m_menu_view_patch_tree_window;
 	Gtk::MenuItem*      m_menu_help_about;
 	
 	Gtk::VBox*          m_vbox;
 	Gtk::Viewport*      m_viewport;
-	Gtk::HBox*          m_breadcrumb_box;
-	list<BreadCrumb*>   m_breadcrumbs;
+	BreadCrumbBox*      m_breadcrumb_box;
+	
 	//Gtk::Statusbar*   m_status_bar;
+	
+	/** Invisible bin used to store breadcrumbs when not shown by a view */
+	Gtk::Alignment m_breadcrumb_bin;
 };
 
 
