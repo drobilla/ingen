@@ -423,9 +423,9 @@ PatchController::add_node(CountedPtr<NodeModel> object)
 			node->y(y);
 
 			// Set zoom to 1.0 so module isn't messed up (Death to GnomeCanvas)
-			float old_zoom = m_patch_view->canvas()->zoom();
+			float old_zoom = m_patch_view->canvas()->get_zoom();
 			if (old_zoom != 1.0)
-				m_patch_view->canvas()->zoom(1.0);
+				m_patch_view->canvas()->set_zoom(1.0);
 
 			nc->create_module(m_patch_view->canvas());
 			assert(nc->module());
@@ -433,7 +433,7 @@ PatchController::add_node(CountedPtr<NodeModel> object)
 
 			// Reset zoom
 			if (old_zoom != 1.0) {
-				m_patch_view->canvas()->zoom(old_zoom);
+				m_patch_view->canvas()->set_zoom(old_zoom);
 				nc->module()->zoom(old_zoom);
 			}
 		}
@@ -496,17 +496,13 @@ PatchController::add_port(CountedPtr<PortModel> pm)
 	if (m_patch_view != NULL) {
 
 		// Set zoom to 1.0 so module isn't messed up (Death to GnomeCanvas)
-		float old_zoom = m_patch_view->canvas()->zoom();
-		if (old_zoom != 1.0)
-			m_patch_view->canvas()->zoom(1.0);
+		float old_zoom = m_patch_view->canvas()->get_zoom();
+		m_patch_view->canvas()->set_zoom(1.0);
 
 		pc->create_module(m_patch_view->canvas());
 
 		// Reset zoom
-		if (old_zoom != 1.0) {
-			m_patch_view->canvas()->zoom(old_zoom);
-			pc->module()->zoom(old_zoom);
-		}
+		pc->module()->zoom(old_zoom);
 	}
 
 	if (m_control_window != NULL) {

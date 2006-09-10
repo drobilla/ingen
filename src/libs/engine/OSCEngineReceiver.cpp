@@ -66,7 +66,7 @@ OSCEngineReceiver::OSCEngineReceiver(CountedPtr<Engine> engine, size_t queue_siz
 	}
 
 	// For debugging, print all incoming OSC messages
-	//lo_server_add_method(_server, NULL, NULL, generic_cb, NULL);
+	lo_server_add_method(_server, NULL, NULL, generic_cb, NULL);
 
 	// Set response address for this message.
 	// It's important this is first and returns nonzero.
@@ -222,7 +222,7 @@ OSCEngineReceiver::set_response_address_cb(const char* path, const char* types, 
 			//cerr << "** osc responder\n";
 		
 			if (!strcmp(url, me->_osc_responder->url())) {
-				// Nice one, same address
+				// Nice one, same address, do nothing (just set the ID below)
 				//cerr << "** Using cached response address, hooray" << endl;
 			} else {
 				// Shitty deal, make a new one
@@ -231,6 +231,7 @@ OSCEngineReceiver::set_response_address_cb(const char* path, const char* types, 
 					new OSCResponder(me->_engine->broadcaster(), id, url));
 
 				me->set_responder(me->_osc_responder);
+
 				// (responder takes ownership of url, no leak)
 			}
 		
@@ -241,6 +242,8 @@ OSCEngineReceiver::set_response_address_cb(const char* path, const char* types, 
 			me->set_responder(me->_osc_responder);
 			//cerr << "** Setting response address to " << url << "(2)" << endl;
 		}
+		
+		me->set_next_response_id(id);
 	
 	// Don't respond
 	} else {

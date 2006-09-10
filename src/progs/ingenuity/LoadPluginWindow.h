@@ -107,6 +107,7 @@ private:
 	//void ok_clicked();
 	void filter_changed();
 	void clear_clicked();
+	void name_changed();
 
 	void plugin_activated(const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* col);
 	void plugin_selection_changed();

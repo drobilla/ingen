@@ -34,8 +34,8 @@
 namespace Ingen {
 
 
-DestroyEvent::DestroyEvent(Engine& engine, CountedPtr<Responder> responder, FrameTime time, QueuedEventSource* source, const string& path, bool lock_mutex)
-: QueuedEvent(engine, responder, time, true, source),
+DestroyEvent::DestroyEvent(Engine& engine, CountedPtr<Responder> responder, FrameTime time, QueuedEventSource* source, const string& path, bool block)
+: QueuedEvent(engine, responder, time, source, source),
   m_path(path),
   m_node(NULL),
   m_patch_listnode(NULL),
@@ -47,8 +47,8 @@ DestroyEvent::DestroyEvent(Engine& engine, CountedPtr<Responder> responder, Fram
 }
 
 
-DestroyEvent::DestroyEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, Node* node, bool lock_mutex)
-: QueuedEvent(engine, responder, true),
+DestroyEvent::DestroyEvent(Engine& engine, CountedPtr<Responder> responder, FrameTime time, QueuedEventSource* source, Node* node, bool block)
+: QueuedEvent(engine, responder, block, source),
   m_path(node->path()),
   m_node(node),
   m_patch_listnode(NULL),

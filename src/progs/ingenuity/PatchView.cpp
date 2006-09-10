@@ -42,12 +42,16 @@ PatchView::PatchView(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::X
 {
 	property_visible() = false;
 
-	xml->get_widget("patch_view_scrolledwindow", _canvas_scrolledwindow);
+	xml->get_widget("patch_view_breadcrumb_container", _breadcrumb_container);
+	xml->get_widget("patch_view_process_but", _process_but);
+	xml->get_widget("patch_view_poly_spin", _poly_spin);
+	xml->get_widget("patch_view_clear_but", _clear_but);
+	xml->get_widget("patch_view_destroy_but", _destroy_but);
+	xml->get_widget("patch_view_refresh_but", _refresh_but);
+	xml->get_widget("patch_view_save_but", _save_but);
 	xml->get_widget("patch_view_zoom_full_but", _zoom_full_but);
 	xml->get_widget("patch_view_zoom_normal_but", _zoom_normal_but);
-	xml->get_widget("patch_view_poly_spin", _poly_spin);
-	xml->get_widget("patch_view_process_but", _process_but);
-	xml->get_widget("patch_view_breadcrumb_container", _breadcrumb_container);
+	xml->get_widget("patch_view_scrolledwindow", _canvas_scrolledwindow);
 	
 	_process_but->signal_toggled().connect(sigc::mem_fun(this, &PatchView::process_toggled));
 }
@@ -64,7 +68,7 @@ PatchView::patch_controller(PatchController* pc)
 	_patch = pc;
 	
 	_canvas = new OmFlowCanvas(pc, 1600*2, 1200*2);
-	
+
 	_canvas_scrolledwindow->add(*_canvas);
 	//_canvas->show();
 	//_canvas_scrolledwindow->show();
@@ -75,6 +79,9 @@ PatchView::patch_controller(PatchController* pc)
 	
 	pc->patch_model()->enabled_sig.connect(sigc::mem_fun(this, &PatchView::enable));
 	pc->patch_model()->disabled_sig.connect(sigc::mem_fun(this, &PatchView::disable));
+
+	_zoom_normal_but->signal_clicked().connect(sigc::bind(sigc::mem_fun(static_cast<FlowCanvas*>(_canvas), &FlowCanvas::set_zoom), 1.0));
+	_zoom_full_but->signal_clicked().connect(sigc::mem_fun(static_cast<FlowCanvas*>(_canvas), &FlowCanvas::zoom_full));
 }
 
 

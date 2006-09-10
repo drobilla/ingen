@@ -189,7 +189,7 @@ QueuedEngineInterface::destroy(const string& path)
 void
 QueuedEngineInterface::clear_patch(const string& patch_path)
 {
-	push_queued(new ClearPatchEvent(*_engine.get(), _responder, now(), patch_path));
+	push_queued(new ClearPatchEvent(*_engine.get(), _responder, now(), this, patch_path));
 }
 
 

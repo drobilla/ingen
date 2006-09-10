@@ -47,7 +47,7 @@ LoadPluginWindow::LoadPluginWindow(BaseObjectType* cobject, const Glib::RefPtr<G
 	xml->get_widget("load_plugin_clear_button", m_clear_button);
 	xml->get_widget("load_plugin_add_button", m_add_button);
 	xml->get_widget("load_plugin_close_button", m_close_button);
-	//xml->get_widget("load_plugin_ok_button", m_ok_button);
+	//xml->get_widget("load_plugin_ok_button", m_add_button);
 	
 	xml->get_widget("load_plugin_filter_combo", m_filter_combo);
 	xml->get_widget("load_plugin_search_entry", m_search_entry);
@@ -94,15 +94,39 @@ LoadPluginWindow::LoadPluginWindow(BaseObjectType* cobject, const Glib::RefPtr<G
 	m_clear_button->signal_clicked().connect(          sigc::mem_fun(this, &LoadPluginWindow::clear_clicked));
 	m_add_button->signal_clicked().connect(            sigc::mem_fun(this, &LoadPluginWindow::add_clicked));
 	m_close_button->signal_clicked().connect(          sigc::mem_fun(this, &LoadPluginWindow::close_clicked));
-	//m_ok_button->signal_clicked().connect(             sigc::mem_fun(this, &LoadPluginWindow::ok_clicked));
+	//m_add_button->signal_clicked().connect(             sigc::mem_fun(this, &LoadPluginWindow::ok_clicked));
 	m_plugins_treeview->signal_row_activated().connect(sigc::mem_fun(this, &LoadPluginWindow::plugin_activated));
 	m_search_entry->signal_activate().connect(         sigc::mem_fun(this, &LoadPluginWindow::add_clicked));
 	m_search_entry->signal_changed().connect(          sigc::mem_fun(this, &LoadPluginWindow::filter_changed));
+	m_node_name_entry->signal_changed().connect(       sigc::mem_fun(this, &LoadPluginWindow::name_changed));
 
 	m_selection = m_plugins_treeview->get_selection();
 	m_selection->signal_changed().connect(sigc::mem_fun(this, &LoadPluginWindow::plugin_selection_changed));
 
 	//m_add_button->grab_default();
+}
+
+
+/** Called every time the user types into the name input box.
+ * Used to display warning messages, and enable/disable the OK button.
+ */
+void
+LoadPluginWindow::name_changed()
+{
+	string name = m_node_name_entry->get_text();
+	if (!Path::is_valid_name(name)) {
+		//m_message_label->set_text("Name contains invalid characters.");
+		m_add_button->property_sensitive() = false;
+	} else if (m_patch_controller->patch_model()->get_node(name)) {
+		//m_message_label->set_text("An object already exists with that name.");
+		m_add_button->property_sensitive() = false;
+	} else if (name.length() == 0) {
+		//m_message_label->set_text("");
+		m_add_button->property_sensitive() = false;
+	} else {
+		//m_message_label->set_text("");
+		m_add_button->property_sensitive() = true;
+	}	
 }
 
 

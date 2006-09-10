@@ -44,8 +44,8 @@ class DisconnectPortEvent;
 class DestroyEvent : public QueuedEvent
 {
 public:
-	DestroyEvent(Engine& engine, CountedPtr<Responder> responder, FrameTime timestamp, QueuedEventSource* source, const string& path, bool lock_mutex = true);
-	DestroyEvent(Engine& engine, CountedPtr<Responder> responder, FrameTime timestamp, Node* node, bool lock_mutex = true);
+	DestroyEvent(Engine& engine, CountedPtr<Responder> responder, FrameTime timestamp, QueuedEventSource* source, const string& path, bool block = true);
+	DestroyEvent(Engine& engine, CountedPtr<Responder> responder, FrameTime timestamp, QueuedEventSource* source, Node* node, bool block = true);
 	~DestroyEvent();
 
 	void pre_process();

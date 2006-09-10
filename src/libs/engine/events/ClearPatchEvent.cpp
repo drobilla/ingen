@@ -30,8 +30,8 @@
 namespace Ingen {
 
 
-ClearPatchEvent::ClearPatchEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& patch_path)
-: QueuedEvent(engine, responder, true),
+ClearPatchEvent::ClearPatchEvent(Engine& engine, CountedPtr<Responder> responder, FrameTime time, QueuedEventSource* source, const string& patch_path)
+: QueuedEvent(engine, responder, time, true, source),
   m_patch_path(patch_path),
   m_patch(NULL),
   m_process(false)

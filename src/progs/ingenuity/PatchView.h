@@ -68,6 +68,8 @@ public:
 	void enable();
 	void disable();
 
+	void zoom_full();
+
 private:
 	PatchController*     _patch;
 	OmFlowCanvas*        _canvas;

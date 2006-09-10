@@ -80,7 +80,10 @@ protected:
 	            QueuedEventSource*    source = NULL)
 	: Event(engine, responder, time)
 	, _pre_processed(false), _blocking(blocking), _source(source)
-	{}
+	{
+		if (blocking)
+			assert(_source);
+	}
 	
 	// NULL event base (for internal events only!)
 	QueuedEvent(Engine& engine)
