@@ -95,6 +95,7 @@ NodeController::NodeController(CountedPtr<NodeModel> model)
 
 NodeController::~NodeController()
 {
+	cerr << "~NodeController()\n";
 	destroy_module();
 }
 
@@ -102,7 +103,9 @@ NodeController::~NodeController()
 void
 NodeController::destroy()
 {
-	delete this;
+	cerr << "FIXME: NODE DESTROYED\n";
+	destroy_module(); // cuts reference
+	//delete this;
 }
 
 

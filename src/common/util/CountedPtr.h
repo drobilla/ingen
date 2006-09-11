@@ -21,219 +21,39 @@
 #include <cassert>
 #include <cstddef>
 
-// honestly, WTF?
+#ifdef DEBUG
+#define BOOST_SP_ENABLE_DEBUG_HOOKS 1
+#include <iostream>
+#include <list>
+#include <algorithm>
+
+static std::list<void*> counted_ptr_counters;
+
+// Use debug hooks to ensure 2 shared_ptrs never point to the same thing
+namespace boost {
+	
+	static void sp_scalar_constructor_hook(void* object, unsigned long cnt, void* ptr) {
+		assert(std::find(counted_ptr_counters.begin(), counted_ptr_counters.end(),
+				(void*)object) == counted_ptr_counters.end());
+		counted_ptr_counters.push_back(object);
+		//std::cerr << "Creating " << typeid(object).name() << " Pointer to "
+			//<< object << std::endl;
+	}
+	
+	static void sp_scalar_destructor_hook(void* object, unsigned long cnt, void* ptr) {
+		counted_ptr_counters.remove(object);
+		//std::cerr << "Destroying " << typeid(object).name() << " Pointer to "
+			//<< object << std::endl;
+	}
+
+}
+#endif // DEBUG
+
+
 #include <boost/shared_ptr.hpp>
 
 #define CountedPtr boost::shared_ptr
 #define PtrCast    boost::dynamic_pointer_cast
-#if 0
-// FIXME
-#ifndef NDEBUG
-#define COUNTED_PTR_DEBUG
-#include <iostream>
-#include <list>
-#include <algorithm>
-static std::list<void*> counted_ptr_counters;
-#endif
-
-
-/** Simple reference counted pointer.
- *
- * Allocates one counter on the heap on initial construction.  You can safely
- * cast a CountedPtr<X> to a CountedPtr<Y> iff Y is a base of X (eg the cast
- * will only compile if it is a valid up-cast).
- *
- * It is possible for this to be a NULL pointer, and a boolean conversion
- * operator is provided so you can test for this with "if (someCountedPtr)".
- * Dereferencing a NULL CountedPtr will result in a failed assertion if
- * debugging is enabled.
- *
- * FIXME: test this more thoroughly
- */
-template <class T>
-class CountedPtr
-{
-public:
-	
-	// Declare some other type of CountedPtr as a friend (for casting)
-	template <class Y> friend class CountedPtr;
-
-
-	/** Allocate a new Counter (if p is non-NULL) */
-	CountedPtr(T* p)
-	: _counter(0)
-	{
-		if (p)
-			_counter = new Counter(p);
-	}
-
-	/** Make a NULL CountedPtr.
-	 * It would be best if this didn't exist, but it makes these storable
-	 * in STL containers :/
-	 */
-	CountedPtr()
-	: _counter(0)
-	{}
-
-	~CountedPtr()
-	{
-		release();
-	}
-
-	/** Copy a CountedPtr with the same type. */
-	CountedPtr(const CountedPtr& copy) 
-	: _counter(0)
-	{
-		assert(this != &copy);
-		
-		if (copy)
-			retain(copy._counter);
-
-		assert(_counter == copy._counter);
-	}
-	
-	/** Copy a CountedPtr to a valid base class.
-	 */
-	template <class Y>
-	CountedPtr(const CountedPtr<Y>& y)
-	: _counter(0)
-	{
-		assert(this != (CountedPtr*)&y);
-
-		// Fail if this is not a valid cast
-		if (y) {
-			T* const casted_y = dynamic_cast<T* const>(y._counter->ptr);
-
-			if (casted_y) {
-				//release(); // FIXME: leak?
-				retain((Counter*)y._counter);
-				assert(_counter == (Counter*)y._counter);
-			}
-		}
-
-		assert( ! _counter || _counter == (Counter*)y._counter);
-	}
-
-	/** Assign to the value of a CountedPtr of the same type. */
-	CountedPtr& operator=(const CountedPtr& copy)
-	{
-		if (this != &copy) {
-			assert( ! _counter || _counter != copy._counter);
-			release();
-			retain(copy._counter);
-		}
-		assert(_counter == copy._counter);
-		return *this;
-	}
-
-	/** Assign to the value of a CountedPtr of a different type. */
-	template <class Y>
-	CountedPtr& operator=(const CountedPtr<Y>& y)
-	{
-		if (this != (CountedPtr*)&y) {
-			assert(_counter != y._counter);
-			release();
-			retain(y._counter);
-		}
-		assert(_counter == y._counter);
-		return *this;
-	}
-
-	inline bool operator==(const CountedPtr& p) const
-	{
-		return (_counter == p._counter);
-	}
-
-	inline bool operator!=(const CountedPtr& p) const
-	{
-		return (_counter != p._counter);
-	}
-
-	/** Allow testing for NULL nicely like a real pointer */
-	operator bool() const
-	{
-		return (_counter && _counter->ptr);
-	}
-
-	inline T& operator*() const
-	{
-		assert(_counter);
-		assert(_counter->count > 0);
-		assert(_counter->ptr);
-		return *_counter->ptr;
-	}
-
-	inline T* operator->() const
-	{
-		assert(_counter);
-		assert(_counter->count > 0);
-		assert(_counter->ptr);
-		return _counter->ptr;
-	}
-
-	inline T* get() const { return _counter ? _counter->ptr : 0; }
-
-	bool unique() const { return (_counter ? _counter->count == 1 : true); }
-
-private:
-	/** Stored on the heap and referred to by all existing CountedPtr's to
-	 * the object */
-	class Counter
-	{
-	public:
-		Counter(T* p)
-		: ptr(p)
-		, count(1)
-		{
-			assert(p);
-#ifdef COUNTED_PTR_DEBUG
-			assert(std::find(counted_ptr_counters.begin(), counted_ptr_counters.end(), (void*)p)
-					== counted_ptr_counters.end());
-			counted_ptr_counters.push_back(p);
-			std::cerr << "Creating " << typeid(T).name() << " Counter " << this << std::endl;
-#endif
-		}
-		
-		~Counter()
-		{
-			// for debugging
-			assert(count == 0);
-			count = 0;
-		}
-
-		T* const        ptr;
-		volatile size_t count;
-
-	private:
-		// Prevent copies (undefined)
-		Counter(const Counter& copy);
-		Counter& operator=(const Counter& copy);
-	};
-
-	/** Increment the count */
-	void retain(Counter* c) 
-	{	
-		assert( ! _counter || _counter == c);
-		_counter = c;
-		if (_counter)
-			++(c->count);
-	}
-	
-	/** Decrement the count, delete if we're the last reference */
-	void release()
-	{	
-		if (_counter) {
-			if (--(_counter->count) == 0) {
-				delete _counter->ptr;
-				delete _counter;
-			}
-			_counter = 0;
-		}
-	}
-	
-
-	Counter* _counter;
-};
-#endif
 
 #endif // COUNTED_PTR_H
+

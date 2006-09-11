@@ -69,6 +69,26 @@ PatchModel::add_child(CountedPtr<ObjectModel> c)
 }
 
 
+void
+PatchModel::remove_child(CountedPtr<ObjectModel> c)
+{
+	assert(c->path().is_child_of(m_path));
+	assert(c->parent().get() == this);
+
+	CountedPtr<PortModel> pm = PtrCast<PortModel>(c);
+	if (pm) {
+		remove_port(pm);
+		return;
+	}
+	
+	CountedPtr<NodeModel> nm = PtrCast<NodeModel>(c);
+	if (nm) {
+		remove_node(nm);
+		return;
+	}
+}
+
+
 CountedPtr<NodeModel>
 PatchModel::get_node(const string& name)
 {
@@ -95,6 +115,25 @@ PatchModel::add_node(CountedPtr<NodeModel> nm)
 		m_nodes[nm->path().name()] = nm;
 		new_node_sig.emit(nm);
 	}
+}
+
+
+void
+PatchModel::remove_node(CountedPtr<NodeModel> nm)
+{
+	assert(nm->path().is_child_of(m_path));
+	assert(nm->parent().get() == this);
+
+	NodeModelMap::iterator i = m_nodes.find(nm->path().name());
+	if (i != m_nodes.end()) {
+		assert(i->second == nm);
+		m_nodes.erase(i);
+		removed_node_sig.emit(nm->path().name());
+		return;
+	}
+	
+	cerr << "[PatchModel::remove_node] " << m_path
+		<< ": failed to find node " << nm->path().name() << endl;
 }
 
 

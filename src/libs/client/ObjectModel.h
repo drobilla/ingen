@@ -60,6 +60,7 @@ public:
 	virtual void  set_parent(CountedPtr<ObjectModel> p) { m_parent = p; }
 	
 	virtual void add_child(CountedPtr<ObjectModel> c) = 0;
+	virtual void remove_child(CountedPtr<ObjectModel> c) = 0;
 
 	CountedPtr<ObjectController> controller() const { return m_controller; }
 	

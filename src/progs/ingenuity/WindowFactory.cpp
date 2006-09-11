@@ -69,8 +69,6 @@ WindowFactory::create_new(CountedPtr<PatchController> patch)
 	win->signal_delete_event().connect(sigc::bind<0>(
 		sigc::mem_fun(this, &WindowFactory::remove), win));
 
-	cerr << "Created window - count: " << _windows.size() << endl;
-
 	return win;
 }
 
@@ -99,8 +97,6 @@ WindowFactory::remove(PatchWindow* win, GdkEventAny* ignored)
 	_windows.erase(w);
 
 	delete win;
-	
-	cerr << "Removed window " << win << "- count: " << _windows.size() << endl;
 	
 	return true;
 }

@@ -44,8 +44,15 @@ NodeModel::NodeModel(const string& plugin_uri, const Path& path)
 
 NodeModel::~NodeModel()
 {
-	/*for (PortModelList::iterator i = m_ports.begin(); i != m_ports.end(); ++i)
-		delete(*i);*/
+	clear();
+	m_controller.reset();
+}
+
+
+void
+NodeModel::remove_port(CountedPtr<PortModel> port)
+{
+	m_ports.remove(port);
 }
 
 
@@ -64,11 +71,7 @@ NodeModel::remove_port(const string& port_path)
 void
 NodeModel::clear()
 {
-	/*for (PortModelList::iterator i = m_ports.begin(); i != m_ports.end(); ++i)
-		delete (*i);*/
-
 	m_ports.clear();
-
 	assert(m_ports.empty());
 }
 
@@ -96,6 +99,18 @@ NodeModel::add_child(CountedPtr<ObjectModel> c)
 	CountedPtr<PortModel> pm = PtrCast<PortModel>(c);
 	assert(pm);
 	add_port(pm);
+}
+
+
+void
+NodeModel::remove_child(CountedPtr<ObjectModel> c)
+{
+	assert(c->path().is_child_of(m_path));
+	assert(c->parent().get() == this);
+
+	CountedPtr<PortModel> pm = PtrCast<PortModel>(c);
+	assert(pm);
+	remove_port(pm);
 }
 
 

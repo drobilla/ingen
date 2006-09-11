@@ -153,13 +153,6 @@ PatchController::destroy()
 
 
 void
-PatchController::destroy()
-{
-	delete this;
-}
-
-
-void
 PatchController::metadata_update(const string& key, const string& value)
 {
 	NodeController::metadata_update(key, value);
@@ -179,9 +172,9 @@ PatchController::set_path(const Path& new_path)
 	for (NodeModelMap::const_iterator i = patch_model()->nodes().begin();
 			i != patch_model()->nodes().end(); ++i) {
 		const NodeModel* const nm = (*i).second.get();
-		assert(nm );
+		assert(nm);
 		CountedPtr<NodeController> nc = PtrCast<NodeController>(nm->controller());
-		assert(nc );
+		assert(nc);
 		nc->set_path(new_path.base() + nc->node_model()->path().name());
 	}
 	
@@ -376,7 +369,7 @@ PatchController::add_node(CountedPtr<NodeModel> node)
 
 	CountedPtr<NodeController> nc = PtrCast<NodeController>(ControllerFactory::get_controller(node));
 	assert(nc);
-	assert(node->controller() == nc);
+	assert(node->controller() == nc); // lifeline reference
 
 	if (m_patch_view) {
 		double x, y;

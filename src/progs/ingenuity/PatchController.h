@@ -99,8 +99,6 @@ private:
 	friend class ControllerFactory;
 	PatchController(CountedPtr<PatchModel> model);
 	
-	void destroy();
-
 	void add_node(CountedPtr<NodeModel> object);
 	
 	PatchPropertiesWindow* m_properties_window;

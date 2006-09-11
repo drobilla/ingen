@@ -48,7 +48,7 @@ public:
 	// FIXME: return booleans and set an errstr that can be checked or something?
 	
 	PatchLibrarian(CountedPtr<ModelEngineInterface> engine)
-	: _patch_search_path("."), _engine(_engine)
+	: _patch_search_path("."), _engine(engine)
 	{
 		assert(_engine);
 	}

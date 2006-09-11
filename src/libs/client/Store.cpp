@@ -153,7 +153,18 @@ Store::remove_object(const Path& path)
 		CountedPtr<ObjectModel> result = (*i).second;
 		m_objects.erase(i);
 		//cout << "[Store] Removed " << path << endl;
+
+		if (result)
+			result->destroyed_sig.emit();
+
+		if (result->path() != "/") {
+			CountedPtr<ObjectModel> parent = this->object(result->path().parent());
+			if (parent) {
+				parent->remove_child(result);
+			}
+		}
 		return result;
+
 	} else {
 		cerr << "[Store] Unable to find object " << path << " to remove." << endl;
 		return CountedPtr<ObjectModel>();
@@ -200,32 +211,7 @@ Store::add_plugin(CountedPtr<PluginModel> pm)
 void
 Store::destruction_event(const Path& path)
 {
-	// Hopefully the compiler will optimize all these const pointers into one...
-	
-	CountedPtr<ObjectModel> obj_ptr = remove_object(path);
-	ObjectModel* const object = obj_ptr.get();
-
-	// FIXME: Why does this need to be specific?  Just make a remove_child
-	// for everything
-	
-	// Succeeds for (Plugin) Nodes and Patches
-	NodeModel* const node = dynamic_cast<NodeModel*>(object);
-	if (node) {
-		cerr << "Node\n";
-		PatchModel* const parent = dynamic_cast<PatchModel* const>(object->parent().get());
-		if (parent)
-			parent->remove_node(node->path().name());
-	}
-
-	PortModel* const port = dynamic_cast<PortModel*>(object);
-	if (port) {
-		NodeModel* const parent = dynamic_cast<NodeModel* const>(object->parent().get());
-		assert(parent);
-		parent->remove_port(port->path().name());
-	}
-
-	if (object)
-		object->destroyed_sig.emit();
+	remove_object(path);
 }
 
 void

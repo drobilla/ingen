@@ -70,7 +70,8 @@ public:
 	{
 	}
 	
-	void add_child(CountedPtr<ObjectModel> c) { throw; }
+	void add_child(CountedPtr<ObjectModel> c)    { throw; }
+	void remove_child(CountedPtr<ObjectModel> c) { throw; }
 	
 	inline float min_val() const      { return m_min_val; }
 	inline float user_min() const     { return atof(get_metadata("min").c_str()); } // FIXME: haaack

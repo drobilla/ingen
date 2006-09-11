@@ -49,9 +49,11 @@ public:
 	virtual ~NodeModel();
 	
 	void add_child(CountedPtr<ObjectModel> c);
+	void remove_child(CountedPtr<ObjectModel> c);
 
 	CountedPtr<PortModel> get_port(const string& port_name);
 	void       add_port(CountedPtr<PortModel> pm);
+	void       remove_port(CountedPtr<PortModel> pm);
 	void       remove_port(const string& port_path);
 	
 	virtual void clear();

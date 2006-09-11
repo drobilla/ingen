@@ -51,10 +51,12 @@ public:
 	virtual void set_path(const Path& path);
 	
 	void add_child(CountedPtr<ObjectModel> c);
+	void remove_child(CountedPtr<ObjectModel> c);
 
 	CountedPtr<NodeModel> get_node(const string& node_name);
 	void                  add_node(CountedPtr<NodeModel> nm);
 	void                  remove_node(const string& name);
+	void                  remove_node(CountedPtr<NodeModel> nm);
 
 	void rename_node(const Path& old_path, const Path& new_path);
 	void rename_node_port(const Path& old_path, const Path& new_path);
