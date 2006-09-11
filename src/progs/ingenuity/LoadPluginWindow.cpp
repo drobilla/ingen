@@ -20,7 +20,6 @@
 #include <algorithm>
 #include <cctype>
 #include "PatchController.h"
-#include "PatchView.h"
 #include "NodeModel.h"
 #include "App.h"
 #include "PatchWindow.h"
@@ -28,6 +27,8 @@
 #include "PatchModel.h"
 #include "Store.h"
 #include "ModelEngineInterface.h"
+#include "PatchView.h"
+#include "OmFlowCanvas.h"
 using std::cout; using std::cerr; using std::endl;
 
 
@@ -35,7 +36,6 @@ namespace Ingenuity {
 
 LoadPluginWindow::LoadPluginWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 : Gtk::Window(cobject),
-  m_patch_controller(NULL),
   m_has_shown(false),
   m_plugin_name_offset(0),
   m_new_module_x(0),
@@ -135,7 +135,7 @@ LoadPluginWindow::name_changed()
  * This function MUST be called before using the window in any way!
  */
 void
-LoadPluginWindow::patch_controller(PatchController* pc)
+LoadPluginWindow::set_patch(CountedPtr<PatchController> pc)
 {
 	m_patch_controller = pc;
 
@@ -190,9 +190,8 @@ LoadPluginWindow::set_plugin_list(const std::map<string, CountedPtr<PluginModel>
 {
 	m_plugins_liststore->clear();
 
-	CountedPtr<PluginModel> plugin = NULL;
 	for (std::map<string, CountedPtr<PluginModel> >::const_iterator i = m.begin(); i != m.end(); ++i) {
-		plugin = (*i).second;
+		CountedPtr<PluginModel> plugin = (*i).second;
 
 		Gtk::TreeModel::iterator iter = m_plugins_liststore->append();
 		Gtk::TreeModel::Row row = *iter;
@@ -307,12 +306,12 @@ LoadPluginWindow::add_clicked()
 
 			dialog.run();
 		} else {
-			const string path = m_patch_controller->model()->base_path() + name;
+			const string path = m_patch_controller->model()->path().base() + name;
 			NodeModel* nm = new NodeModel(plugin, path);
 			nm->polyphonic(polyphonic);
 			
 			if (m_new_module_x == 0 && m_new_module_y == 0) {
-				m_patch_controller->view()->canvas()->get_new_module_location(
+				m_patch_controller->get_view()->canvas()->get_new_module_location(
 					m_new_module_x, m_new_module_y);
 			}
 			nm->x(m_new_module_x);

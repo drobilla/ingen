@@ -63,7 +63,7 @@ public:
 	PatchController* patch_controller() const { return _patch; }
 	Gtk::Viewport*   breadcrumb_container() const { return _breadcrumb_container; }
 	void show_control_window();
-	void process_toggled();
+
 
 	void enable();
 	void disable();
@@ -71,6 +71,9 @@ public:
 	void zoom_full();
 
 private:
+	void process_toggled();
+	void clear_clicked();
+
 	PatchController*     _patch;
 	OmFlowCanvas*        _canvas;
 	

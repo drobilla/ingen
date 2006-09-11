@@ -33,7 +33,7 @@ RequestMetadataEvent::RequestMetadataEvent(Engine& engine, CountedPtr<Responder>
   m_key(key),
   m_value(""),
   m_object(NULL),
-  m_client(CountedPtr<ClientInterface>(NULL))
+  m_client(CountedPtr<ClientInterface>())
 {
 }
 

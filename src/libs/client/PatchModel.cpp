@@ -37,7 +37,7 @@ PatchModel::set_path(const Path& new_path)
 
 	NodeModel::set_path(new_path);
 	for (NodeModelMap::iterator i = m_nodes.begin(); i != m_nodes.end(); ++i)
-		(*i).second->set_path(m_path +"/"+ (*i).second->name());
+		(*i).second->set_path(m_path +"/"+ (*i).second->path().name());
 	
 #ifdef DEBUG
 	// Be sure connection paths are updated and sane
@@ -50,12 +50,31 @@ PatchModel::set_path(const Path& new_path)
 }
 
 
+void
+PatchModel::add_child(CountedPtr<ObjectModel> c)
+{
+	assert(c->parent().get() == this);
+
+	CountedPtr<PortModel> pm = PtrCast<PortModel>(c);
+	if (pm) {
+		add_port(pm);
+		return;
+	}
+	
+	CountedPtr<NodeModel> nm = PtrCast<NodeModel>(c);
+	if (nm) {
+		add_node(nm);
+		return;
+	}
+}
+
+
 CountedPtr<NodeModel>
 PatchModel::get_node(const string& name)
 {
 	assert(name.find("/") == string::npos);
 	NodeModelMap::iterator i = m_nodes.find(name);
-	return ((i != m_nodes.end()) ? (*i).second : CountedPtr<NodeModel>(NULL));
+	return ((i != m_nodes.end()) ? (*i).second : CountedPtr<NodeModel>());
 }
 
 
@@ -63,13 +82,19 @@ void
 PatchModel::add_node(CountedPtr<NodeModel> nm)
 {
 	assert(nm);
-	assert(nm->name().find("/") == string::npos);
+	assert(nm->path().is_child_of(m_path));
 	assert(nm->parent().get() == this);
-	assert(m_nodes.find(nm->name()) == m_nodes.end());
+	
+	NodeModelMap::iterator existing = m_nodes.find(nm->path().name());
 
-	m_nodes[nm->name()] = nm;
-
-	new_node_sig.emit(nm);
+	if (existing != m_nodes.end()) {
+		cerr << "Warning: node clash, assimilating old node " << m_path << endl;
+		nm->assimilate((*existing).second);
+		(*existing).second = nm;
+	} else {
+		m_nodes[nm->path().name()] = nm;
+		new_node_sig.emit(nm);
+	}
 }
 
 
@@ -123,15 +148,14 @@ PatchModel::rename_node(const Path& old_path, const Path& new_path)
 	assert(new_path.parent() == path());
 	
 	NodeModelMap::iterator i = m_nodes.find(old_path.name());
-	NodeModel* nm = NULL;
 	
 	if (i != m_nodes.end()) {
-		nm = (*i).second.get();
+		CountedPtr<NodeModel> nm = (*i).second;
 		for (list<CountedPtr<ConnectionModel> >::iterator j = m_connections.begin(); j != m_connections.end(); ++j) {
 			if ((*j)->src_port_path().parent() == old_path)
-				(*j)->src_port_path(new_path.base_path() + (*j)->src_port_path().name());
+				(*j)->src_port_path(new_path.base() + (*j)->src_port_path().name());
 			if ((*j)->dst_port_path().parent() == old_path)
-				(*j)->dst_port_path(new_path.base_path() + (*j)->dst_port_path().name());
+				(*j)->dst_port_path(new_path.base() + (*j)->dst_port_path().name());
 		}
 		m_nodes.erase(i);
 		assert(nm->path() == new_path);
@@ -149,7 +173,7 @@ PatchModel::get_connection(const string& src_port_path, const string& dst_port_p
 	for (list<CountedPtr<ConnectionModel> >::iterator i = m_connections.begin(); i != m_connections.end(); ++i)
 		if ((*i)->src_port_path() == src_port_path && (*i)->dst_port_path() == dst_port_path)
 			return (*i);
-	return NULL;
+	return CountedPtr<ConnectionModel>();
 }
 
 

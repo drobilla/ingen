@@ -35,7 +35,6 @@
 #include <cassert>
 #include <cstring>
 #include <string>
-#include <unistd.h> // for usleep
 #include <cstdlib>  // for atof
 #include <cmath>
 
@@ -120,7 +119,7 @@ PatchLibrarian::translate_load_path(const string& path)
  * - The patch_model has no (Ingen) path
  */
 void
-PatchLibrarian::save_patch(PatchModel* patch_model, const string& filename, bool recursive)
+PatchLibrarian::save_patch(CountedPtr<PatchModel> patch_model, const string& filename, bool recursive)
 {
 	assert(filename != "");
 	assert(patch_model->path() != "");
@@ -132,7 +131,6 @@ PatchLibrarian::save_patch(PatchModel* patch_model, const string& filename, bool
 	string dir = filename.substr(0, filename.find_last_of("/"));
 	
 	NodeModel* nm = NULL;
-	PatchModel* spm = NULL; // subpatch model
 	
 	xmlDocPtr  xml_doc = NULL;
     xmlNodePtr xml_root_node = NULL;
@@ -149,7 +147,7 @@ PatchLibrarian::save_patch(PatchModel* patch_model, const string& filename, bool
 	
 	string patch_name;
 	if (patch_model->path() != "/") {
-	  patch_name = patch_model->name();
+	  patch_name = patch_model->path().name();
 	} else {
 	  patch_name = filename;
 	  if (patch_name.find("/") != string::npos)
@@ -186,15 +184,17 @@ PatchLibrarian::save_patch(PatchModel* patch_model, const string& filename, bool
 		nm = i->second.get();
 		
 		if (nm->plugin()->type() == PluginModel::Patch) {  // Subpatch
-			spm = (PatchModel*)i->second.get();
+			CountedPtr<PatchModel> spm = PtrCast<PatchModel>(i->second);
+			assert(spm);
+
 			xml_node = xmlNewChild(xml_root_node, NULL, (xmlChar*)"subpatch", NULL);
 			
-			xml_child_node = xmlNewChild(xml_node, NULL, (xmlChar*)"name", (xmlChar*)spm->name().c_str());
+			xml_child_node = xmlNewChild(xml_node, NULL, (xmlChar*)"name", (xmlChar*)spm->path().name().c_str());
 			
 			string ref_filename;
 			// No path
 			if (spm->filename() == "") {
-				ref_filename = spm->name() + ".om";
+				ref_filename = spm->path().name() + ".om";
 				spm->filename(dir +"/"+ ref_filename);
 			// Absolute path
 			} else if (spm->filename().substr(0, 1) == "/") {
@@ -230,7 +230,7 @@ PatchLibrarian::save_patch(PatchModel* patch_model, const string& filename, bool
 		} else {  // Normal node
 			xml_node = xmlNewChild(xml_root_node, NULL, (xmlChar*)"node", NULL);
 			
-			xml_child_node = xmlNewChild(xml_node, NULL, (xmlChar*)"name", (xmlChar*)nm->name().c_str());
+			xml_child_node = xmlNewChild(xml_node, NULL, (xmlChar*)"name", (xmlChar*)nm->path().name().c_str());
 			
 			if (!nm->plugin()) break;
 	
@@ -321,7 +321,7 @@ PatchLibrarian::save_patch(PatchModel* patch_model, const string& filename, bool
 				float val = pm->value();
 				xml_node = xmlNewChild(xml_preset_node, NULL, (xmlChar*)"control",  NULL);
 				xml_child_node = xmlNewChild(xml_node, NULL, (xmlChar*)"node-name",
-					(xmlChar*)nm->name().c_str());
+					(xmlChar*)nm->path().name().c_str());
 				xml_child_node = xmlNewChild(xml_node, NULL, (xmlChar*)"port-name",
 					(xmlChar*)pm->path().name().c_str());
 				snprintf(temp_buf, temp_buf_length, "%f", val);
@@ -371,7 +371,7 @@ PatchLibrarian::save_patch(PatchModel* patch_model, const string& filename, bool
  * Returns the path of the newly created patch.
  */
 string
-PatchLibrarian::load_patch(PatchModel* pm, bool wait, bool existing)
+PatchLibrarian::load_patch(CountedPtr<PatchModel> pm, bool wait, bool existing)
 {
 	string filename = pm->filename();
 
@@ -426,7 +426,7 @@ PatchLibrarian::load_patch(PatchModel* pm, bool wait, bool existing)
 			if (load_name) {
 				assert(key != NULL);
 				if (pm->parent()) {
-					path = pm->parent()->base_path() + string((char*)key);
+					path = pm->parent()->path().base() + string((char*)key);
 				} else {
 					path = string("/") + string((char*)key);
 				}
@@ -464,7 +464,7 @@ PatchLibrarian::load_patch(PatchModel* pm, bool wait, bool existing)
 		if (wait) {
 			//int id = _engine->get_next_request_id();
 			//_engine->set_wait_response_id(id);
-			_engine->create_patch_from_model(pm);
+			_engine->create_patch_from_model(pm.get());
 			//bool succeeded = _engine->wait_for_response();
 	
 			// If creating the patch failed, bail out so we don't load all these nodes
@@ -474,7 +474,7 @@ PatchLibrarian::load_patch(PatchModel* pm, bool wait, bool existing)
 				return "";
 			}*/ // FIXME
 		} else {
-			_engine->create_patch_from_model(pm);
+			_engine->create_patch_from_model(pm.get());
 		}
 	}
 	
@@ -486,15 +486,14 @@ PatchLibrarian::load_patch(PatchModel* pm, bool wait, bool existing)
 	_engine->set_metadata(pm->path(), "filename", pm->filename());
 
 	// Load nodes
-	NodeModel* nm = NULL;
 	cur = xmlDocGetRootElement(doc)->xmlChildrenNode;
 	
 	while (cur != NULL) {
 		if ((!xmlStrcmp(cur->name, (const xmlChar*)"node"))) {
-			nm = parse_node(pm, doc, cur);
-			if (nm != NULL) {
-				_engine->create_node_from_model(nm);
-				_engine->set_all_metadata(nm);
+			CountedPtr<NodeModel> nm = parse_node(pm, doc, cur);
+			if (nm) {
+				_engine->create_node_from_model(nm.get());
+				_engine->set_all_metadata(nm.get());
 				for (PortModelList::const_iterator j = nm->ports().begin(); j != nm->ports().end(); ++j) {
 					// FIXME: ew
 					snprintf(temp_buf, temp_buf_length, "%f", (*j)->user_min());
@@ -502,8 +501,6 @@ PatchLibrarian::load_patch(PatchModel* pm, bool wait, bool existing)
 					snprintf(temp_buf, temp_buf_length, "%f", (*j)->user_max());
 					_engine->set_metadata((*j)->path(), "user-max", temp_buf);
 				}
-				nm = NULL;
-				usleep(10000);
 			}
 		}
 		cur = cur->next;
@@ -526,7 +523,6 @@ PatchLibrarian::load_patch(PatchModel* pm, bool wait, bool existing)
 			cm = parse_connection(pm, doc, cur);
 			if (cm != NULL) {
 				_engine->connect(cm->src_port_path(), cm->dst_port_path());
-				usleep(1000);
 			}
 		}
 		cur = cur->next;
@@ -549,7 +545,7 @@ PatchLibrarian::load_patch(PatchModel* pm, bool wait, bool existing)
 	xmlFreeDoc(doc);
 	xmlCleanupParser();
 
-	_engine->set_all_metadata(pm);
+	_engine->set_all_metadata(pm.get());
 
 	if (!existing)
 		_engine->enable_patch(pm->path());
@@ -563,11 +559,11 @@ PatchLibrarian::load_patch(PatchModel* pm, bool wait, bool existing)
 
 /** Build a NodeModel given a pointer to a Node in a patch file.
  */
-NodeModel*
-PatchLibrarian::parse_node(const PatchModel* parent, xmlDocPtr doc, const xmlNodePtr node)
+CountedPtr<NodeModel>
+PatchLibrarian::parse_node(const CountedPtr<const PatchModel> parent, xmlDocPtr doc, const xmlNodePtr node)
 {
-	PluginModel* plugin = new PluginModel();
-	NodeModel* nm = new NodeModel(plugin, "/UNINITIALIZED"); // FIXME: ew
+	CountedPtr<PluginModel> plugin(new PluginModel());
+	CountedPtr<NodeModel> nm(new NodeModel(plugin, "/UNINITIALIZED")); // FIXME: ew
 
 	xmlChar* key;
 	xmlNodePtr cur = node->xmlChildrenNode;
@@ -576,7 +572,7 @@ PatchLibrarian::parse_node(const PatchModel* parent, xmlDocPtr doc, const xmlNod
 		key = xmlNodeListGetString(doc, cur->xmlChildrenNode, 1);
 		
 		if ((!xmlStrcmp(cur->name, (const xmlChar*)"name"))) {
-			nm->set_path(parent->base_path() + Path::nameify((char*)key));
+			nm->set_path(parent->path().base() + Path::nameify((char*)key));
 		} else if ((!xmlStrcmp(cur->name, (const xmlChar*)"polyphonic"))) {
 			nm->polyphonic(!strcmp((char*)key, "true"));
 		} else if ((!xmlStrcmp(cur->name, (const xmlChar*)"type"))) {
@@ -598,7 +594,7 @@ PatchLibrarian::parse_node(const PatchModel* parent, xmlDocPtr doc, const xmlNod
 				key = xmlNodeListGetString(doc, child->xmlChildrenNode, 1);
 				
 				if ((!xmlStrcmp(child->name, (const xmlChar*)"name"))) {
-					path = nm->base_path() + Path::nameify((char*)key);
+					path = nm->path().base() + Path::nameify((char*)key);
 				} else if ((!xmlStrcmp(child->name, (const xmlChar*)"user-min"))) {
 					user_min = atof((char*)key);
 				} else if ((!xmlStrcmp(child->name, (const xmlChar*)"user-max"))) {
@@ -612,9 +608,9 @@ PatchLibrarian::parse_node(const PatchModel* parent, xmlDocPtr doc, const xmlNod
 			}
 
 			// FIXME: nasty assumptions
-			PortModel* pm = new PortModel(path,
+			CountedPtr<PortModel> pm(new PortModel(path,
 					PortModel::CONTROL, PortModel::INPUT, PortModel::NONE,
-					0.0, user_min, user_max);
+					0.0, user_min, user_max));
 			pm->set_parent(nm);
 			nm->add_port(pm);
 
@@ -678,8 +674,7 @@ PatchLibrarian::parse_node(const PatchModel* parent, xmlDocPtr doc, const xmlNod
 	if (nm->path() == "") {
 		cerr << "[PatchLibrarian] Malformed patch file (node tag has empty children)" << endl;
 		cerr << "[PatchLibrarian] Node ignored." << endl;
-		delete nm;
-		return NULL;
+		return CountedPtr<NodeModel>();
 
 	// Compatibility hacks for old patches
 	} else if (plugin->type() == PluginModel::Internal) {
@@ -716,9 +711,8 @@ PatchLibrarian::parse_node(const PatchModel* parent, xmlDocPtr doc, const xmlNod
 			_load_path_translations[old_path + "/out"] = new_path;
 
 			nm->set_path(new_path);
-			_engine->set_all_metadata(nm);
-			delete nm;
-			return NULL;
+			_engine->set_all_metadata(nm.get());
+			return CountedPtr<NodeModel>();
 		} else {
 			if (plugin->uri() == "") {
 				if (plugin->plug_label() == "note_in") {
@@ -740,12 +734,12 @@ PatchLibrarian::parse_node(const PatchModel* parent, xmlDocPtr doc, const xmlNod
 
 
 void
-PatchLibrarian::load_subpatch(PatchModel* parent, xmlDocPtr doc, const xmlNodePtr subpatch)
+PatchLibrarian::load_subpatch(const CountedPtr<PatchModel> parent, xmlDocPtr doc, const xmlNodePtr subpatch)
 {
 	xmlChar *key;
 	xmlNodePtr cur = subpatch->xmlChildrenNode;
 	
-	PatchModel* pm = new PatchModel("/UNINITIALIZED", 1); // FIXME: ew
+	CountedPtr<PatchModel> pm(new PatchModel("/UNINITIALIZED", 1)); // FIXME: ew
 	
 	while (cur != NULL) {
 		key = xmlNodeListGetString(doc, cur->xmlChildrenNode, 1);
@@ -754,7 +748,7 @@ PatchLibrarian::load_subpatch(PatchModel* parent, xmlDocPtr doc, const xmlNodePt
 			if (parent == NULL)
 				pm->set_path(string("/") + (const char*)key);
 			else
-				pm->set_path(parent->base_path() + (const char*)key);
+				pm->set_path(parent->path().base() + (const char*)key);
 		} else if ((!xmlStrcmp(cur->name, (const xmlChar*)"polyphony"))) {
 			pm->poly(atoi((const char*)key));
 		} else if ((!xmlStrcmp(cur->name, (const xmlChar*)"filename"))) {
@@ -781,7 +775,7 @@ PatchLibrarian::load_subpatch(PatchModel* parent, xmlDocPtr doc, const xmlNodePt
 /** Build a ConnectionModel given a pointer to a connection in a patch file.
  */
 ConnectionModel*
-PatchLibrarian::parse_connection(const PatchModel* parent, xmlDocPtr doc, const xmlNodePtr node)
+PatchLibrarian::parse_connection(const CountedPtr<const PatchModel> parent, xmlDocPtr doc, const xmlNodePtr node)
 {
 	//cerr << "[PatchLibrarian] Parsing connection..." << endl;
 
@@ -822,8 +816,8 @@ PatchLibrarian::parse_connection(const PatchModel* parent, xmlDocPtr doc, const 
 	dest_port = Path::nameify(dest_port);
 
 	ConnectionModel* cm = new ConnectionModel(
-			translate_load_path(parent->base_path() + source_node +"/"+ source_port),
-			translate_load_path(parent->base_path() + dest_node +"/"+ dest_port));
+			translate_load_path(parent->path().base() + source_node +"/"+ source_port),
+			translate_load_path(parent->path().base() + dest_node +"/"+ dest_port));
 	
 	return cm;
 }
@@ -832,12 +826,12 @@ PatchLibrarian::parse_connection(const PatchModel* parent, xmlDocPtr doc, const 
 /** Build a PresetModel given a pointer to a preset in a patch file.
  */
 PresetModel*
-PatchLibrarian::parse_preset(const PatchModel* patch, xmlDocPtr doc, const xmlNodePtr node)
+PatchLibrarian::parse_preset(const CountedPtr<const PatchModel> patch, xmlDocPtr doc, const xmlNodePtr node)
 {
 	xmlNodePtr cur = node->xmlChildrenNode;
 	xmlChar* key;
 
-	PresetModel* pm = new PresetModel(patch->base_path());
+	PresetModel* pm = new PresetModel(patch->path().base());
 	
 	while (cur != NULL) {
 		key = xmlNodeListGetString(doc, cur->xmlChildrenNode, 1);

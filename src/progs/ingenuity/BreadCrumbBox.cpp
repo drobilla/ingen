@@ -28,9 +28,10 @@ BreadCrumbBox::BreadCrumbBox()
 }
 
 
-/** Destroys current breadcrumbs and rebuilds from scratch.
- * 
- * (Needs to be called when a patch is cleared to eliminate children crumbs)
+/** Sets up the crumbs to display a @a path.
+ *
+ * If @a path is already part of the shown path, it will be selected and the 
+ * children preserved.
  */
 void
 BreadCrumbBox::build(Path path)
@@ -38,8 +39,8 @@ BreadCrumbBox::build(Path path)
 	bool old_enable_signal = _enable_signal;
 	_enable_signal = false;
 
-	// Moving to a parent path, just switch the active button
-	if (path.length() < _full_path.length() && _full_path.substr(0, path.length()) == path) {
+	// Moving to a path we already contain, just switch the active button
+	if (_breadcrumbs.size() > 0 && (path.is_parent_of(_full_path) || path == _full_path)) {
 		
 		for (std::list<BreadCrumb*>::iterator i = _breadcrumbs.begin(); i != _breadcrumbs.end(); ++i)
 			(*i)->set_active( ((*i)->path() == path) );
@@ -101,6 +102,34 @@ BreadCrumbBox::breadcrumb_clicked(BreadCrumb* crumb)
 		_enable_signal = true;
 	}
 }
+
+
+void
+BreadCrumbBox::object_removed(const Path& path)
+{
+	for (std::list<BreadCrumb*>::iterator i = _breadcrumbs.begin(); i != _breadcrumbs.end(); ++i) {
+		if ((*i)->path() == path) {
+			// Remove all crumbs after the removed one (inclusive)
+			for (std::list<BreadCrumb*>::iterator j = i; j != _breadcrumbs.end(); ) {
+				BreadCrumb* bc = *j;
+				j = _breadcrumbs.erase(j);
+				remove(*bc);
+			}
+			break;
+		}
+	}
+}
+
+
+void
+BreadCrumbBox::object_renamed(const Path& old_path, const Path& new_path)
+{
+	for (std::list<BreadCrumb*>::iterator i = _breadcrumbs.begin(); i != _breadcrumbs.end(); ++i) {
+		if ((*i)->path() == old_path)
+			(*i)->set_path(new_path);
+	}
+}
+
 
 } // namespace Ingenuity
 

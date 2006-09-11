@@ -33,7 +33,6 @@ namespace Ingenuity {
 
 LoadSubpatchWindow::LoadSubpatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 : Gtk::FileChooserDialog(cobject),
-  m_patch_controller(NULL),
   m_new_module_x(0),
   m_new_module_y(0)
 {
@@ -74,7 +73,7 @@ LoadSubpatchWindow::LoadSubpatchWindow(BaseObjectType* cobject, const Glib::RefP
  * This function MUST be called before using the window in any way!
  */
 void
-LoadSubpatchWindow::patch_controller(PatchController* pc)
+LoadSubpatchWindow::set_patch(CountedPtr<PatchController> pc)
 {
 	m_patch_controller = pc;
 
@@ -130,7 +129,7 @@ LoadSubpatchWindow::enable_poly_spinner()
 void
 LoadSubpatchWindow::ok_clicked()
 {
-	assert(m_patch_controller != NULL);
+	assert(m_patch_controller);
 	assert(m_patch_controller->model());
 	
 	const string filename = get_filename();
@@ -148,13 +147,13 @@ LoadSubpatchWindow::ok_clicked()
 		poly = m_patch_controller->patch_model()->poly();
 
 	if (m_new_module_x == 0 && m_new_module_y == 0) {
-		m_patch_controller->view()->canvas()->get_new_module_location(
+		m_patch_controller->get_view()->canvas()->get_new_module_location(
 			m_new_module_x, m_new_module_y);
 	}
 
-	PatchModel* pm = new PatchModel(m_patch_controller->model()->base_path() + name, poly);
+	CountedPtr<PatchModel> pm(new PatchModel(m_patch_controller->model()->path().base() + name, poly));
 	pm->filename(filename);
-	pm->set_parent(m_patch_controller->model().get());
+	pm->set_parent(m_patch_controller->model());
 	pm->x(m_new_module_x);
 	pm->y(m_new_module_y);
 	//if (name == "")

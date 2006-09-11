@@ -24,9 +24,7 @@ namespace Client {
 
 ConnectionModel::ConnectionModel(const Path& src_port, const Path& dst_port)
 : _src_port_path(src_port),
-  _dst_port_path(dst_port),
-  _src_port(NULL),
-  _dst_port(NULL)
+  _dst_port_path(dst_port)
 {
 	// Be sure connection is within one patch
 	//assert(_src_port_path.parent().parent()
@@ -73,7 +71,7 @@ ConnectionModel::patch_path() const
 		// Direct connection from patch input to patch output (pass through)
 		// (parent patch is parent of ports)
 		if (_src_port->parent() == _dst_port->parent()) {
-			CountedPtr<PatchModel> parent_patch = _src_port->parent();
+			CountedPtr<PatchModel> parent_patch = PtrCast<PatchModel>(_src_port->parent());
 			if (parent_patch)
 				return parent_patch->path();
 		}

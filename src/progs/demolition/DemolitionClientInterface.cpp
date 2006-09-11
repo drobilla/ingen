@@ -36,7 +36,7 @@ DemolitionClientInterface::error(string msg)
 
 
 void
-DemolitionClientInterface::new_patch_model(PatchModel* pm)
+DemolitionClientInterface::new_patch_model(CountedPtr<PatchModel> pm)
 {
 	m_model->add_patch(pm);
 }
@@ -68,7 +68,7 @@ DemolitionClientInterface::patch_disabled(string path)
 
 
 void
-DemolitionClientInterface::new_node_model(NodeModel* nm)
+DemolitionClientInterface::new_node_model(CountedPtr<NodeModel> nm)
 {
 	m_model->add_node(nm);
 }

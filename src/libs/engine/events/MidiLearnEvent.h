@@ -38,7 +38,7 @@ class MidiLearnResponseEvent : public Event
 {
 public:
 	MidiLearnResponseEvent(Engine& engine, const string& port_path, SampleCount timestamp)
-	: Event(engine, NULL, timestamp),
+	: Event(engine, CountedPtr<Responder>(), timestamp),
 	  m_port_path(port_path),
 	  m_value(0.0f)
 	{}

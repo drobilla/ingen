@@ -1770,7 +1770,7 @@
 	      <property name="spacing">0</property>
 
 	      <child>
-		<widget class="GtkToolbar" id="toolbar4">
+		<widget class="GtkToolbar" id="patch_view_crumb_toolbar">
 		  <property name="visible">True</property>
 		  <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
 		  <property name="toolbar_style">GTK_TOOLBAR_BOTH</property>
@@ -1822,7 +1822,7 @@
 	      </child>
 
 	      <child>
-		<widget class="GtkToolbar" id="toolbar2">
+		<widget class="GtkToolbar" id="patch_view_toolbar">
 		  <property name="visible">True</property>
 		  <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
 		  <property name="toolbar_style">GTK_TOOLBAR_ICONS</property>
@@ -1942,7 +1942,8 @@
 		  <child>
 		    <widget class="GtkToolButton" id="patch_view_clear_but">
 		      <property name="visible">True</property>
-		      <property name="tooltip" translatable="yes">Destroy all children nodes (twice to clear ports as well)</property>
+		      <property name="tooltip" translatable="yes">Destroy all children nodes
+(Click twice to clear ports as well)</property>
 		      <property name="label" translatable="yes"></property>
 		      <property name="use_underline">True</property>
 		      <property name="stock_id">gtk-clear</property>

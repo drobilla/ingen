@@ -52,36 +52,34 @@ PatchView::PatchView(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::X
 	xml->get_widget("patch_view_zoom_full_but", _zoom_full_but);
 	xml->get_widget("patch_view_zoom_normal_but", _zoom_normal_but);
 	xml->get_widget("patch_view_scrolledwindow", _canvas_scrolledwindow);
-	
-	_process_but->signal_toggled().connect(sigc::mem_fun(this, &PatchView::process_toggled));
 }
 
 
-/** Sets the patch controller for this window and initializes everything.
- *
- * This function MUST be called before using the window in any way!
- */
 void
 PatchView::patch_controller(PatchController* pc)
 {
-	//m_patch = new PatchController(pm, controller);
 	_patch = pc;
-	
 	_canvas = new OmFlowCanvas(pc, 1600*2, 1200*2);
 
 	_canvas_scrolledwindow->add(*_canvas);
-	//_canvas->show();
-	//_canvas_scrolledwindow->show();
 
 	_poly_spin->set_value(pc->patch_model()->poly());
-
+	_destroy_but->set_sensitive(pc->path() != "/");
 	//_description_window->patch_model(pc->model());
 	
+
 	pc->patch_model()->enabled_sig.connect(sigc::mem_fun(this, &PatchView::enable));
 	pc->patch_model()->disabled_sig.connect(sigc::mem_fun(this, &PatchView::disable));
+	
+	_process_but->signal_toggled().connect(sigc::mem_fun(this, &PatchView::process_toggled));
+	
+	_clear_but->signal_clicked().connect(sigc::mem_fun(this, &PatchView::clear_clicked));
 
-	_zoom_normal_but->signal_clicked().connect(sigc::bind(sigc::mem_fun(static_cast<FlowCanvas*>(_canvas), &FlowCanvas::set_zoom), 1.0));
-	_zoom_full_but->signal_clicked().connect(sigc::mem_fun(static_cast<FlowCanvas*>(_canvas), &FlowCanvas::zoom_full));
+	_zoom_normal_but->signal_clicked().connect(sigc::bind(sigc::mem_fun(
+		static_cast<FlowCanvas*>(_canvas), &FlowCanvas::set_zoom), 1.0));
+
+	_zoom_full_but->signal_clicked().connect(
+		sigc::mem_fun(static_cast<FlowCanvas*>(_canvas), &FlowCanvas::zoom_full));
 }
 
 
@@ -108,6 +106,11 @@ PatchView::process_toggled()
 	}
 }
 
+void
+PatchView::clear_clicked()
+{
+	App::instance().engine()->clear_patch(_patch->path());
+}
 
 void
 PatchView::enable()

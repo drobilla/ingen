@@ -31,11 +31,11 @@ namespace Ingenuity {
 
 
 OmModule::OmModule(OmFlowCanvas* canvas, NodeController* node)
-: LibFlowCanvas::Module(canvas, node->node_model()->name(),
+: LibFlowCanvas::Module(canvas, node->node_model()->path().name(),
                         node->node_model()->x(), node->node_model()->y()),
   m_node(node)
 {
-	assert(m_node != NULL);
+	assert(m_node);
 
 	/*if (node_model()->polyphonic() && node_model()->parent() != NULL
 			&& node_model()->parent_patch()->poly() > 1) {

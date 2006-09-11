@@ -52,7 +52,7 @@ OSCEngineReceiver::OSCEngineReceiver(CountedPtr<Engine> engine, size_t queue_siz
   QueuedEngineInterface(engine, queue_size, queue_size), // FIXME
   _port(port),
   _server(NULL),
-  _osc_responder(NULL)
+  _osc_responder(CountedPtr<OSCResponder>())
 {
 	_server = lo_server_new(port, error_cb);
 	

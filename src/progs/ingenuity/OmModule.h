@@ -21,6 +21,7 @@
 #include <string>
 #include <libgnomecanvasmm.h>
 #include <flowcanvas/Module.h>
+#include "util/CountedPtr.h"
 #include "NodeController.h"
 using std::string;
 

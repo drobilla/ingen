@@ -189,7 +189,7 @@ DemolitionModel::remove_object(const Path& path)
 
 
 void
-DemolitionModel::add_node(NodeModel* nm)
+DemolitionModel::add_node(CountedPtr<NodeModel> nm)
 {
 	PatchModel* parent = patch(nm->path().parent());
 	if (parent == NULL) {

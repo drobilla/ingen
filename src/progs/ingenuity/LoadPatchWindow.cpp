@@ -29,7 +29,6 @@ namespace Ingenuity {
 
 LoadPatchWindow::LoadPatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 : Gtk::FileChooserDialog(cobject),
-  m_patch_controller(NULL),
   m_replace(true)
 {
 	xml->get_widget("load_patch_poly_from_current_radio", m_poly_from_current_radio);
@@ -66,7 +65,7 @@ LoadPatchWindow::LoadPatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gno
  * This function MUST be called before using the window in any way!
  */
 void
-LoadPatchWindow::patch_controller(PatchController* pc)
+LoadPatchWindow::set_patch(CountedPtr<PatchController> pc)
 {
 	m_patch_controller = pc;
 }
@@ -111,7 +110,7 @@ LoadPatchWindow::ok_clicked()
 	if (m_replace)
 		App::instance().engine()->clear_patch(m_patch_controller->model()->path());
 
-	PatchModel* pm = new PatchModel(m_patch_controller->model()->path(), poly);
+	CountedPtr<PatchModel> pm(new PatchModel(m_patch_controller->model()->path(), poly));
 	pm->filename(get_filename());
 	pm->set_metadata("filename", get_filename());
 	pm->set_parent(m_patch_controller->patch_model()->parent());

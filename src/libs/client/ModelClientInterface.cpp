@@ -26,31 +26,31 @@ namespace Client {
 
 
 void
-ModelClientInterface::new_plugin_model(PluginModel* pi)
+ModelClientInterface::new_plugin_model(CountedPtr<PluginModel> pi)
 {
 }
 
 
 void
-ModelClientInterface::new_patch_model(PatchModel* pm)
+ModelClientInterface::new_patch_model(CountedPtr<PatchModel> pm)
 {
 }
 
 
 void
-ModelClientInterface::new_node_model(NodeModel* nm)
+ModelClientInterface::new_node_model(CountedPtr<NodeModel> nm)
 {
 }
 
 
 void
-ModelClientInterface::new_port_model(PortModel* port_info)
+ModelClientInterface::new_port_model(CountedPtr<PortModel> port_info)
 {
 }
 
 
 void
-ModelClientInterface::connection_model(ConnectionModel* cm)
+ModelClientInterface::connection_model(CountedPtr<ConnectionModel> cm)
 {
 }
 
@@ -67,7 +67,7 @@ ModelClientInterface::new_plugin(string type,
            string uri,
            string name)
 {
-	PluginModel* plugin = new PluginModel(type, uri);
+	CountedPtr<PluginModel> plugin(new PluginModel(type, uri));
 	plugin->name(name);
 	new_plugin_model(plugin);
 }
@@ -77,7 +77,7 @@ ModelClientInterface::new_plugin(string type,
 void
 ModelClientInterface::new_patch(string path, uint32_t poly)
 {
-	PatchModel* pm = new PatchModel(path, poly);
+	CountedPtr<PatchModel> pm(new PatchModel(path, poly));
 	//PluginModel* pi = new PluginModel(PluginModel::Patch);
 	//pm->plugin(pi);
 	new_patch_model(pm);
@@ -94,9 +94,9 @@ ModelClientInterface::new_node(string plugin_type,
 {
 	cerr << "FIXME: NEW NODE\n";
 	
-	PluginModel* plugin = new PluginModel(plugin_type, plugin_uri);
+	CountedPtr<PluginModel> plugin(new PluginModel(plugin_type, plugin_uri));
 	
-	NodeModel* nm = new NodeModel(plugin, node_path);
+	CountedPtr<NodeModel> nm(new NodeModel(plugin, node_path));
 
 	new_node_model(nm);
 }
@@ -116,7 +116,7 @@ ModelClientInterface::new_port(string path,
 
 	PortModel::Direction pdir = is_output ? PortModel::OUTPUT : PortModel::INPUT;
 	
-	PortModel* port_model = new PortModel(path, ptype, pdir);
+	CountedPtr<PortModel> port_model(new PortModel(path, ptype, pdir));
 	new_port_model(port_model);
 }
 
@@ -126,7 +126,7 @@ void
 ModelClientInterface::connection(string src_port_path,
                                  string dst_port_path)
 {
-	connection_model(new ConnectionModel(src_port_path, dst_port_path));
+	connection_model(CountedPtr<ConnectionModel>(new ConnectionModel(src_port_path, dst_port_path)));
 }
 
 

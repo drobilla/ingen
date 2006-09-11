@@ -28,8 +28,6 @@ GtkObjectController::GtkObjectController(CountedPtr<ObjectModel> model)
 
 GtkObjectController::~GtkObjectController()
 {
-	assert(m_model->controller() == this);
-	m_model->set_controller(NULL);
 }
 
 } // namespace Ingenuity

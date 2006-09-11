@@ -40,7 +40,7 @@ class PatchModel : public NodeModel
 {
 public:
 	PatchModel(const string& patch_path, uint poly)
-	: NodeModel(patch_path),
+	: NodeModel("ingen:patch", patch_path),
 	  m_enabled(false),
 	  m_poly(poly)
 	{}
@@ -50,6 +50,8 @@ public:
 	
 	virtual void set_path(const Path& path);
 	
+	void add_child(CountedPtr<ObjectModel> c);
+
 	CountedPtr<NodeModel> get_node(const string& node_name);
 	void                  add_node(CountedPtr<NodeModel> nm);
 	void                  remove_node(const string& name);

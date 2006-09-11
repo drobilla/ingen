@@ -22,7 +22,6 @@
 #include <libgnomecanvasmm.h>
 #include <time.h>
 #include <sys/time.h>
-#include "PatchView.h"
 #include "OmModule.h"
 #include "ControlPanel.h"
 #include "SubpatchModule.h"
@@ -44,6 +43,7 @@
 #include "ConnectWindow.h"
 #include "Store.h"
 #include "Loader.h"
+#include "WindowFactory.h"
 #ifdef HAVE_LASH
 #include "LashController.h"
 #endif
@@ -66,6 +66,7 @@ App::App()
   _loader(NULL),
   _configuration(new Configuration()),
   _about_dialog(NULL),
+  _window_factory(new WindowFactory()),
   _enable_signal(true)
 {
 	Glib::RefPtr<Gnome::Glade::Xml> glade_xml = GladeFactory::new_glade_reference();
@@ -94,7 +95,7 @@ App::instantiate()
 
 
 void
-App::attach(CountedPtr<ModelEngineInterface>& engine, CountedPtr<SigClientInterface>& client)
+App::attach(const CountedPtr<ModelEngineInterface>& engine, const CountedPtr<SigClientInterface>& client)
 {
 	assert( ! _engine);
 	assert( ! _client);

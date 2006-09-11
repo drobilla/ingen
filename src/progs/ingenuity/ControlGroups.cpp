@@ -69,7 +69,7 @@ SliderControlGroup::SliderControlGroup(ControlPanel* panel, CountedPtr<PortModel
 : ControlGroup(panel, pm, separator),
   m_enabled(true),
   m_enable_signal(false),
-  m_name_label(pm->name(), 0.0, 0.0),
+  m_name_label(pm->path().name(), 0.0, 0.0),
   m_range_box(false, 0),
   m_range_label("<small>Range: </small>"),
   m_min_spinner(1.0, (pm->is_integer() ? 0 : 4)), // climb rate, digits
@@ -90,7 +90,7 @@ SliderControlGroup::SliderControlGroup(ControlPanel* panel, CountedPtr<PortModel
 	}*/
 	m_slider.property_draw_value() = false;
 	
-	set_name(pm->name());
+	set_name(pm->path().name());
 	
 	m_name_label.property_use_markup() = true;
 	m_range_label.property_use_markup() = true;
@@ -305,10 +305,10 @@ IntegerControlGroup::IntegerControlGroup(ControlPanel* panel, CountedPtr<PortMod
 : ControlGroup(panel, pm, separator),
   m_enable_signal(false),
   m_alignment(0.5, 0.5, 0.0, 0.0),
-  m_name_label(pm->name()),
+  m_name_label(pm->path().name()),
   m_spinner(1.0, 0)
 {
-	set_name(pm->name());
+	set_name(pm->path().name());
 
 	m_spinner.set_range(-99999, 99999);
 	m_spinner.set_value(m_port_model->value());
@@ -379,9 +379,9 @@ ToggleControlGroup::ToggleControlGroup(ControlPanel* panel, CountedPtr<PortModel
 : ControlGroup(panel, pm, separator),
   m_enable_signal(false),
   m_alignment(0.5, 0.5, 0.0, 0.0),
-  m_name_label(pm->name())
+  m_name_label(pm->path().name())
 {
-	set_name(pm->name());
+	set_name(pm->path().name());
 
 	set_value(m_port_model->value());
 	m_checkbutton.signal_toggled().connect(

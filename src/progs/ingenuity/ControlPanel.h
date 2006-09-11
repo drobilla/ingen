@@ -59,7 +59,7 @@ public:
 
 	ControlGroup* find_port(const Path& path) const;
 
-	void add_port(PortController* port);
+	void add_port(CountedPtr<PortModel> port);
 	void remove_port(const Path& path);
 
 	//void rename_port(const Path& old_path, const Path& new_path);

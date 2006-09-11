@@ -20,10 +20,11 @@
 #include <cassert>
 #include <string>
 #include <map>
+#include <list>
 #include "util/CountedPtr.h"
 #include <sigc++/sigc++.h>
 #include "util/Path.h"
-using std::string; using std::map;
+using std::string; using std::map; using std::list;
 
 namespace Ingen {
 namespace Client {
@@ -44,10 +45,7 @@ public:
 	Store(CountedPtr<SigClientInterface> emitter);
 
 	CountedPtr<PluginModel> plugin(const string& uri);
-	CountedPtr<ObjectModel> object(const string& path);
-	/*CountedPtr<PatchModel>  patch(const string& path);
-	CountedPtr<NodeModel>   node(const string& path);
-	CountedPtr<PortModel>   port(const string& path);*/
+	CountedPtr<ObjectModel> object(const Path& path);
 
 	void clear();
 
@@ -59,25 +57,39 @@ public:
 private:
 
 	void add_object(CountedPtr<ObjectModel> object);
-	CountedPtr<ObjectModel> remove_object(const string& path);
+	CountedPtr<ObjectModel> remove_object(const Path& path);
 	
 	void add_plugin(CountedPtr<PluginModel> plugin);
 
+	void add_orphan(CountedPtr<ObjectModel> orphan);
+	void resolve_orphans(CountedPtr<ObjectModel> parent);
+	
+	void add_plugin_orphan(CountedPtr<NodeModel> orphan);
+	void resolve_plugin_orphans(CountedPtr<PluginModel> plugin);
+
 	// Slots for SigClientInterface signals
-	void destruction_event(const string& path);
+	void destruction_event(const Path& path);
 	void new_plugin_event(const string& type, const string& uri, const string& name);
-	void new_patch_event(const string& path, uint32_t poly);
-	void new_node_event(const string& plugin_type, const string& plugin_uri, const string& node_path, bool is_polyphonic, uint32_t num_ports);
-	void new_port_event(const string& path, const string& data_type, bool is_output);
-	void patch_enabled_event(const string& path);
-	void patch_disabled_event(const string& path);
-	void metadata_update_event(const string& subject_path, const string& predicate, const string& value);
-	void control_change_event(const string& port_path, float value);
+	void new_patch_event(const Path& path, uint32_t poly);
+	void new_node_event(const string& plugin_type, const string& plugin_uri, const Path& node_path, bool is_polyphonic, uint32_t num_ports);
+	void new_port_event(const Path& path, const string& data_type, bool is_output);
+	void patch_enabled_event(const Path& path);
+	void patch_disabled_event(const Path& path);
+	void metadata_update_event(const Path& subject_path, const string& predicate, const string& value);
+	void control_change_event(const Path& port_path, float value);
 	void connection_event(const Path& src_port_path, const Path& dst_port_path);
 	void disconnection_event(const Path& src_port_path, const Path& dst_port_path);
 	
-	map<string, CountedPtr<ObjectModel> > m_objects; ///< Keyed by Ingen path
+	map<Path, CountedPtr<ObjectModel> > m_objects; ///< Keyed by Ingen path
 	map<string, CountedPtr<PluginModel> > m_plugins; ///< Keyed by URI
+
+	/** Objects we've received, but depend on the existance of another unknown object.
+	 * Keyed by the path of the depended-on object (for tolerance of orderless comms) */
+	map<Path, list<CountedPtr<ObjectModel> > > m_orphans;
+	
+	/** Same idea, except with plugins instead of parents.
+	 * It's unfortunate everything doesn't just have a URI and this was the same.. ahem.. */
+	map<string, list<CountedPtr<NodeModel> > > m_plugin_orphans;
 };
 
 

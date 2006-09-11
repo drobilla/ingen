@@ -61,6 +61,7 @@ class PatchTreeWindow;
 class ConnectWindow;
 class Configuration;
 class Loader;
+class WindowFactory;
 
 
 /** Singleton master class most everything is contained within.
@@ -85,7 +86,8 @@ public:
 
 	int num_open_patch_windows();
 
-	void attach(CountedPtr<ModelEngineInterface>& engine, CountedPtr<SigClientInterface>& client);
+	void attach(const CountedPtr<ModelEngineInterface>& engine,
+	            const CountedPtr<SigClientInterface>&   client);
 
 	ConnectWindow*   connect_window()       const { return _connect_window; }
 	Gtk::Dialog*     about_dialog()         const { return _about_dialog; }
@@ -95,7 +97,8 @@ public:
 	Configuration*   configuration()        const { return _configuration; }
 	Store*           store()                const { return _store; }
 	Loader*          loader()               const { return _loader; }
-	
+	WindowFactory*   window_factory()       const { return _window_factory; }
+
 	const CountedPtr<ModelEngineInterface>& engine() const { return _engine; }
 	const CountedPtr<SigClientInterface>&   client() const { return _client; }
 
@@ -121,6 +124,7 @@ protected:
 	PatchTreeWindow*  _patch_tree_window;
 	ConfigWindow*     _config_window;
 	Gtk::Dialog*      _about_dialog;
+	WindowFactory*    _window_factory;
 
 	/** Used to avoid feedback loops with (eg) process checkbutton
 	 * FIXME: Maybe this should be globally implemented at the Controller level,

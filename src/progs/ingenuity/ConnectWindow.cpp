@@ -25,9 +25,11 @@
 #include "OSCClientReceiver.h"
 #include "ThreadedSigClientInterface.h"
 #include "Store.h"
+#include "ControllerFactory.h"
 #include "PatchController.h"
 #include "PatchModel.h"
 #include "App.h"
+#include "WindowFactory.h"
 #ifdef MONOLITHIC_INGENUITY
 	#include "engine/QueuedEngineInterface.h"
 	#include "engine/Engine.h"
@@ -349,10 +351,10 @@ ConnectWindow::gtk_callback()
 		++stage;
 	} else if (stage == 7) {
 		if (App::instance().store()->num_objects() > 0) {
-			CountedPtr<PatchModel> root = App::instance().store()->object("/");
+			CountedPtr<PatchModel> root = PtrCast<PatchModel>(App::instance().store()->object("/"));
 			assert(root);
-			PatchController* root_controller = new PatchController(root);
-			root_controller->show_patch_window();
+			CountedPtr<PatchController> root_c = PtrCast<PatchController>(ControllerFactory::get_controller(root));
+			App::instance().window_factory()->present(root_c);
 			++stage;
 		}
 	} else if (stage == 8) {

@@ -39,7 +39,7 @@ public:
 	NodeModel*  node(const Path& path);
 
 	void add_patch(PatchModel* pm) { m_patches.push_back(pm); }
-	void add_node(NodeModel* nm);
+	void add_node(CountedPtr<NodeModel> nm);
 	void add_port(PortModel* pm);
 	void remove_object(const Path& path);
 	void add_connection(ConnectionModel* cm);

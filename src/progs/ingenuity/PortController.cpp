@@ -34,9 +34,6 @@ PortController::PortController(CountedPtr<PortModel> model)
 {
 	assert(model);
 	assert(model->parent());
-	assert(model->controller() == NULL);
-
-	model->set_controller(this);
 }
 
 
@@ -44,8 +41,8 @@ void
 PortController::destroy()
 {
 	assert(m_model->parent());
-	NodeController* parent = (NodeController*)m_model->parent()->controller();
-	assert(parent != NULL);
+	CountedPtr<NodeController> parent = PtrCast<NodeController>(m_model->parent()->controller());
+	assert(parent);
 
 	parent->remove_port(path(), false);
 }
@@ -73,7 +70,7 @@ PortController::create_module(OmFlowCanvas* canvas)
 
 	m_module = new OmPortModule(canvas, this, x, y);
 	
-	if (CountedPtr<PatchModel>(port_model()->parent())) {
+	if (PtrCast<PatchModel>(port_model()->parent())) {
 		if (m_patch_port)
 			delete m_patch_port;
 

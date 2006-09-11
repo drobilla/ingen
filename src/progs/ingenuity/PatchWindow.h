@@ -23,8 +23,10 @@
 #include <libglademm/xml.h>
 #include <libglademm.h>
 #include "util/Path.h"
-
+#include "util/CountedPtr.h"
+#include "PatchController.h"
 using std::string; using std::list;
+
 
 namespace Ingen { namespace Client {
 	class PatchModel;
@@ -40,7 +42,6 @@ namespace Ingenuity {
 	
 class PatchController;
 class OmFlowCanvas;
-class PatchView;
 class LoadPluginWindow;
 class LoadPatchWindow;
 class NewSubpatchWindow;
@@ -63,18 +64,13 @@ public:
 	PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml);
 	~PatchWindow();
 	
-	void patch(const Path& path);
-	void patch_controller(PatchController* pc);
+	void set_patch_from_path(const Path& path);
+	void set_patch(CountedPtr<PatchController> pc);
 
-	PatchController*    patch_controller() const     { return m_patch; }
-	LoadPluginWindow*   load_plugin_window() const   { return m_load_plugin_window; }
-	LoadSubpatchWindow* load_subpatch_window() const { return m_load_subpatch_window; }
-	NewSubpatchWindow*  new_subpatch_window() const  { return m_new_subpatch_window; }
-
-	// Breadcrumb management
-	void node_removed(const string& name);
-	void node_renamed(const string& old_path, const string& new_path);
-	void patch_renamed(const string& new_path);
+	CountedPtr<PatchController> patch_controller()     const { return m_patch; }
+	LoadPluginWindow*           load_plugin_window()   const { return m_load_plugin_window; }
+	LoadSubpatchWindow*         load_subpatch_window() const { return m_load_subpatch_window; }
+	NewSubpatchWindow*          new_subpatch_window()  const { return m_new_subpatch_window; }
 
 	Gtk::MenuItem* menu_view_control_window() { return m_menu_view_control_window; }
 
@@ -83,14 +79,12 @@ public:
 protected:
 	void on_show();
 	void on_hide();
-	bool on_delete_event(GdkEventAny* ev);
 	bool on_key_press_event(GdkEventKey* event);
 	
 private:
 	void event_import();
 	void event_save();
 	void event_save_as();
-	void event_close();
 	void event_quit();
 	void event_destroy();
 	void event_clear();
@@ -99,7 +93,8 @@ private:
 	void event_show_controls();
 	void event_show_engine();
 
-	PatchController*        m_patch;
+	CountedPtr<PatchController> m_patch;
+
 	LoadPluginWindow*       m_load_plugin_window;
 	LoadPatchWindow*        m_load_patch_window;
 	NewSubpatchWindow*      m_new_subpatch_window;

@@ -1,4 +1,4 @@
-AM_CXXFLAGS = -I$(top_srcdir)/src/common -fno-exceptions
+AM_CXXFLAGS = -I$(top_srcdir)/src/common
 
 if BUILD_CLIENT_LIB
 noinst_LTLIBRARIES = libomclient.la

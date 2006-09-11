@@ -20,7 +20,6 @@
 #include <fstream>
 #include "App.h"
 #include "ModelEngineInterface.h"
-#include "PatchView.h"
 #include "OmFlowCanvas.h"
 #include "PatchController.h"
 #include "LoadPluginWindow.h"
@@ -37,13 +36,15 @@
 #include "Store.h"
 #include "ConnectWindow.h"
 #include "Loader.h"
+#include "ControllerFactory.h"
+#include "WindowFactory.h"
+#include "PatchView.h"
 
 namespace Ingenuity {
 
 
 PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 : Gtk::Window(cobject),
-  m_patch(NULL),
   m_load_plugin_window(NULL),
   m_new_subpatch_window(NULL),
   m_enable_signal(true),
@@ -75,6 +76,7 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 	xml->get_widget("patch_view_patch_tree_window_menuitem", m_menu_view_patch_tree_window);
 	xml->get_widget("patch_help_about_menuitem", m_menu_help_about);
 	
+	// FIXME: these shouldn't be loaded here
 	xml->get_widget_derived("load_plugin_win", m_load_plugin_window);
 	xml->get_widget_derived("new_subpatch_win", m_new_subpatch_window);
 	xml->get_widget_derived("load_patch_win", m_load_patch_window);
@@ -96,8 +98,6 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 		sigc::mem_fun(this, &PatchWindow::event_save));
 	m_menu_save_as->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_save_as));
-	m_menu_close->signal_activate().connect(
-		sigc::mem_fun(this, &PatchWindow::event_close));
 	m_menu_quit->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_quit));
 	m_menu_configuration->signal_activate().connect(
@@ -125,7 +125,7 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 			sigc::mem_fun<void>(App::instance().about_dialog(), &Gtk::Dialog::present));
 	
 	m_breadcrumb_box = new BreadCrumbBox();
-	m_breadcrumb_box->signal_patch_selected.connect(sigc::mem_fun(this, &PatchWindow::patch));
+	m_breadcrumb_box->signal_patch_selected.connect(sigc::mem_fun(this, &PatchWindow::set_patch_from_path));
 
 	App::instance().add_patch_window(this);
 }
@@ -133,38 +133,32 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 
 PatchWindow::~PatchWindow()
 {
+	// Prevents deletion
+	m_patch->claim_patch_view();
+
 	App::instance().remove_patch_window(this);
 
 	hide();
 	
 	delete m_new_subpatch_window;
 	delete m_load_subpatch_window;
+	delete m_breadcrumb_box;
 }
 
 
-/** Set the patch controller from a Path (for BreadCrumbs)
+/** Set the patch controller from a Path (for use by eg. BreadCrumbBox)
  */
 void 
-PatchWindow::patch(const Path& path)
+PatchWindow::set_patch_from_path(const Path& path)
 {	
-	CountedPtr<PatchModel> model = App::instance().store()->object(path);
+	CountedPtr<PatchModel> model = PtrCast<PatchModel>(App::instance().store()->object(path));
 	if (!model)
 		return; // can't really do anything useful..
 	
-	PatchController* pc = dynamic_cast<PatchController*>(model->controller());
-	
-	if (!pc) {
-		pc = new PatchController(model);
-		model->set_controller(pc);
-	}
-
+	CountedPtr<PatchController> pc = PtrCast<PatchController>(ControllerFactory::get_controller(model));
 	assert(pc);
 
-	if (pc->window() != NULL && pc->window()->is_visible()) {
-		pc->show_patch_window();
-	} else {
-		patch_controller(pc);
-	}
+	App::instance().window_factory()->present(pc, this);
 }
 
 
@@ -173,20 +167,15 @@ PatchWindow::patch(const Path& path)
  * This function MUST be called before using the window in any way!
  */
 void
-PatchWindow::patch_controller(PatchController* pc)
+PatchWindow::set_patch(CountedPtr<PatchController> pc)
 {
 	if (!pc || pc == m_patch)
 		return;
 
 	m_enable_signal = false;
 
-	assert(pc);
-	assert(m_patch != pc);
-	assert(m_patch == NULL ||
-			pc->model()->path() != m_patch->model()->path());
-
-	PatchController* old_pc = m_patch;
-	if (old_pc != NULL) {
+	if (m_patch) {
+		CountedPtr<PatchController> old_pc = m_patch;
 		assert(old_pc->window() == NULL || old_pc->window() == this);
 		old_pc->claim_patch_view();
 		old_pc->window(NULL);
@@ -194,12 +183,8 @@ PatchWindow::patch_controller(PatchController* pc)
 
 	m_patch = pc;
 
-	if (pc->view() == NULL)
-		pc->create_view();
-	assert(pc->view());
-
-	PatchView* const patch_view = pc->view();
-	assert(patch_view != NULL);
+	CountedPtr<PatchView> patch_view = pc->get_view();
+	assert(patch_view);
 	patch_view->reparent(*m_viewport);
 
 	if (m_breadcrumb_box->get_parent())
@@ -217,10 +202,10 @@ PatchWindow::patch_controller(PatchController* pc)
 	assert(m_load_patch_window != NULL);
 	assert(m_load_subpatch_window != NULL);
 
-	m_load_patch_window->patch_controller(m_patch);
-	m_load_plugin_window->patch_controller(m_patch);
-	m_new_subpatch_window->patch_controller(m_patch);
-	m_load_subpatch_window->patch_controller(m_patch);
+	m_load_patch_window->set_patch(m_patch);
+	m_load_plugin_window->set_patch(m_patch);
+	m_new_subpatch_window->set_patch(m_patch);
+	m_load_subpatch_window->set_patch(m_patch);
 	
 	m_menu_view_control_window->property_sensitive() = pc->has_control_inputs();
 
@@ -239,13 +224,11 @@ PatchWindow::patch_controller(PatchController* pc)
 	else
 		m_menu_destroy_patch->set_sensitive(true);
 	
-	assert(old_pc == NULL || old_pc->window() != this);
 	assert(m_patch == pc);
 	assert(m_patch->window() == this);
 
 	m_enable_signal = true;
 }
-
 
 
 void
@@ -272,58 +255,6 @@ PatchWindow::event_show_properties()
 }
 
 
-/** Notification a node has been removed from the PatchView this window
- * currently contains.
- *
- * This is used to update the breadcrumbs in case the Node is a patch which has
- * a button present in the breadcrumbs that needs to be removed.
- */
-void
-PatchWindow::node_removed(const string& name)
-{
-	throw; // FIXME
-/*
-	for (list<BreadCrumb*>::iterator i = m_breadcrumbs.begin(); i != m_breadcrumbs.end(); ++i) {
-		if ((*i)->path() == m_patch->model()->base_path() + name) {
-			for (list<BreadCrumb*>::iterator j = i; j != m_breadcrumbs.end(); ) {
-				BreadCrumb* bc = *j;
-				j = m_breadcrumbs.erase(j);
-				m_breadcrumb_box->remove(*bc);
-			}
-			break;
-		}
-	}*/
-}
-
-
-/** Same as @a node_removed, but for renaming.
- */
-void
-PatchWindow::node_renamed(const string& old_path, const string& new_path)
-{
-	throw; // FIXME
-	/*
-	for (list<BreadCrumb*>::iterator i = m_breadcrumbs.begin(); i != m_breadcrumbs.end(); ++i) {
-		if ((*i)->path() == old_path)
-			(*i)->set_path(new_path);
-	}*/
-}
-
-
-/** Notification the patch this window is currently showing was renamed.
- */
-void
-PatchWindow::patch_renamed(const string& new_path)
-{
-	throw; // FIXME
-	/*
-	set_title(new_path);
-	for (list<BreadCrumb*>::iterator i = m_breadcrumbs.begin(); i != m_breadcrumbs.end(); ++i) {
-		if ((*i)->path() == m_patch->path())
-			(*i)->set_path(new_path);
-	}*/
-}
-
 /*
 void
 PatchWindow::event_open()
@@ -344,7 +275,7 @@ PatchWindow::event_import()
 void
 PatchWindow::event_save()
 {
-	PatchModel* const model = m_patch->patch_model().get();
+	CountedPtr<PatchModel> model(m_patch->patch_model().get());
 	
 	if (model->filename() == "")
 		event_save_as();
@@ -404,7 +335,7 @@ PatchWindow::event_save_as()
 		fin.close();
 		
 		if (confirm) {
-			App::instance().loader()->save_patch(m_patch->patch_model().get(), filename, recursive);
+			App::instance().loader()->save_patch(m_patch->patch_model(), filename, recursive);
 			m_patch->patch_model()->filename(filename);
 		}
 	}
@@ -433,45 +364,16 @@ PatchWindow::on_hide()
 
 
 bool
-PatchWindow::on_delete_event(GdkEventAny* ev)
-{
-	event_close();
-	return true; // destroy window
-}
-
-
-bool
 PatchWindow::on_key_press_event(GdkEventKey* event)
 {
 	if (event->keyval == GDK_Delete) {
-		if (m_patch != NULL && m_patch->view() != NULL) {
-			assert(m_patch->view()->canvas() != NULL);
-			m_patch->view()->canvas()->destroy_selected();
+		if (m_patch && m_patch->get_view()) {
+			assert(m_patch->get_view()->canvas());
+			m_patch->get_view()->canvas()->destroy_selected();
 		}
 		return true;
 	} else {
 		return Gtk::Window::on_key_press_event(event);
-	}
-}
-
-
-void
-PatchWindow::event_close()
-{
-	if (App::instance().num_open_patch_windows() > 1) {
-		hide();
-	} else {
-		Gtk::MessageDialog d(*this, "This is the last remaining open patch "
-			"window.  Closing this window will exit Ingenuity (the engine will "
-			"remain running).\n\nAre you sure you want to quit?",
-			true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_NONE, true);
-			d.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
-			d.add_button(Gtk::Stock::QUIT, Gtk::RESPONSE_CLOSE);
-		int ret = d.run();
-		if (ret == Gtk::RESPONSE_CLOSE)
-			App::instance().quit();
-		else
-			d.hide();
 	}
 }
 

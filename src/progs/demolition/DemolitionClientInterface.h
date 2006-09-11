@@ -56,19 +56,19 @@ public:
 	void new_plugin(string type,
 	                string uri,
 	                string name) {}
-	void new_patch_model(PatchModel* const pm);
-	void new_port_model(PortModel* const port_model);
+	void new_patch_model(CountedPtr<PatchModel> pm);
+	void new_port_model(CountedPtr<PortModel> port_model);
 	void object_destroyed(string path);
 	void patch_enabled(string path);
 	void patch_disabled(string path);
 	void patch_cleared(string path) { throw; }
-	void new_node_model(NodeModel* const nm);
+	void new_node_model(CountedPtr<NodeModel> nm);
 	void object_renamed(string old_path, string new_path);
-	void connection_model(ConnectionModel* const cm);
+	void connection_model(CountedPtr<ConnectionModel> cm);
 	void disconnection(string src_port_path, string dst_port_path);
 	void metadata_update(string path, string key, string value) {}
 	void control_change(string port_path, float value);
-	void new_plugin_model(PluginModel* const pi);
+	void new_plugin_model(CountedPtr<PluginModel> pi);
 	void program_add(string path, uint32_t bank, uint32_t program, string name) {};
 	void program_remove(string path, uint32_t bank, uint32_t program) {};
 

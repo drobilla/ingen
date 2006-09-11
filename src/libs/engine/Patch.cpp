@@ -361,7 +361,7 @@ Patch::set_path(const Path& new_path)
 
 	// Update nodes
 	for (List<Node*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
-		(*i)->set_path(new_path.base_path() + (*i)->name());
+		(*i)->set_path(new_path.base() + (*i)->name());
 	
 	// Update self
 	NodeBase::set_path(new_path);

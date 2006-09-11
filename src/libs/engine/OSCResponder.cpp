@@ -83,7 +83,7 @@ OSCResponder::client()
 	if (_broadcaster)
 		return _broadcaster->client(client_key());
 	else
-		return NULL;
+		return CountedPtr<ClientInterface>();
 }
 
 } // namespace OM

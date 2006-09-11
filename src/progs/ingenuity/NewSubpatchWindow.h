@@ -14,13 +14,14 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-
 #ifndef NEWSUBPATCHWINDOW_H
 #define NEWSUBPATCHWINDOW_H
 
 #include "PluginModel.h"
 #include <libglademm/xml.h>
 #include <gtkmm.h>
+#include "util/CountedPtr.h"
+#include "PatchController.h"
 
 
 namespace Ingenuity {
@@ -39,7 +40,7 @@ class NewSubpatchWindow : public Gtk::Window
 public:
 	NewSubpatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml);
 
-	void patch_controller(PatchController* pc);
+	void set_patch(CountedPtr<PatchController> pc);
 
 	void set_next_module_location(double x, double y)
 		{ m_new_module_x = x; m_new_module_y = y; }
@@ -49,7 +50,7 @@ private:
 	void ok_clicked();
 	void cancel_clicked();
 
-	PatchController* m_patch_controller;
+	CountedPtr<PatchController> m_patch_controller;
 	
 	double m_new_module_x;
 	double m_new_module_y;

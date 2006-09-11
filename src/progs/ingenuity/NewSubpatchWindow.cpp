@@ -18,10 +18,10 @@
 #include "ModelEngineInterface.h"
 #include "NewSubpatchWindow.h"
 #include "PatchController.h"
-#include "PatchView.h"
-#include "OmFlowCanvas.h"
 #include "NodeModel.h"
 #include "PatchModel.h"
+#include "PatchView.h"
+#include "OmFlowCanvas.h"
 
 namespace Ingenuity {
 
@@ -50,7 +50,7 @@ NewSubpatchWindow::NewSubpatchWindow(BaseObjectType* cobject, const Glib::RefPtr
  * This function MUST be called before using the window in any way!
  */
 void
-NewSubpatchWindow::patch_controller(PatchController* pc)
+NewSubpatchWindow::set_patch(CountedPtr<PatchController> pc)
 {
 	m_patch_controller = pc;
 }
@@ -83,11 +83,11 @@ void
 NewSubpatchWindow::ok_clicked()
 {
 	PatchModel* pm = new PatchModel(
-		m_patch_controller->model()->base_path() + m_name_entry->get_text(),
+		m_patch_controller->model()->path().base() + m_name_entry->get_text(),
 		m_poly_spinbutton->get_value_as_int());
 
 	if (m_new_module_x == 0 && m_new_module_y == 0) {
-		m_patch_controller->view()->canvas()->get_new_module_location(
+		m_patch_controller->get_view()->canvas()->get_new_module_location(
 			m_new_module_x, m_new_module_y);
 	}
 

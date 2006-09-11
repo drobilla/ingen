@@ -53,15 +53,15 @@ protected:
 class LoadPatchEvent : public LoaderEvent
 {
 public:
-	LoadPatchEvent(PatchLibrarian* pl, PatchModel* model, bool wait, bool merge)
+	LoadPatchEvent(PatchLibrarian* pl, CountedPtr<PatchModel> model, bool wait, bool merge)
 	: m_patch_librarian(pl), m_patch_model(model), m_wait(wait), m_merge(merge) {}
 	virtual ~LoadPatchEvent() {}
 	void execute();
 private:
-	PatchLibrarian* m_patch_librarian;
-	PatchModel*     m_patch_model;
-	bool            m_wait;
-	bool            m_merge;
+	PatchLibrarian*        m_patch_librarian;
+	CountedPtr<PatchModel> m_patch_model;
+	bool                   m_wait;
+	bool                   m_merge;
 };
 
 
@@ -72,15 +72,15 @@ private:
 class SavePatchEvent : public LoaderEvent
 {
 public:
-	SavePatchEvent(PatchLibrarian* pl, PatchModel* pm, const string& filename, bool recursive)
+	SavePatchEvent(PatchLibrarian* pl, CountedPtr<PatchModel> pm, const string& filename, bool recursive)
 	: m_patch_librarian(pl), m_patch_model(pm), m_filename(filename), m_recursive(recursive) {}
 	virtual ~SavePatchEvent() {}
 	void execute();
 private:
-	PatchLibrarian* m_patch_librarian;
-	PatchModel*     m_patch_model;
-	string          m_filename;
-	bool            m_recursive;
+	PatchLibrarian*        m_patch_librarian;
+	CountedPtr<PatchModel> m_patch_model;
+	string                 m_filename;
+	bool                   m_recursive;
 };
 
 /*
@@ -129,8 +129,8 @@ public:
 	void launch();
 	void exit() { m_thread_exit_flag = true; }
 	
-	void load_patch(PatchModel* model, bool wait, bool merge);
-	void save_patch(PatchModel* model, const string& filename, bool recursive);
+	void load_patch(CountedPtr<PatchModel> model, bool wait, bool merge);
+	void save_patch(CountedPtr<PatchModel> model, const string& filename, bool recursive);
 	
 	//void load_session(const string& filename);
 	//void save_session(const string& filename);

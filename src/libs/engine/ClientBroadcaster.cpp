@@ -112,7 +112,7 @@ ClientBroadcaster::client(const ClientKey& key)
 
 	cerr << "[ClientBroadcaster] Failed to find client." << endl;
 
-	return NULL;
+	return CountedPtr<ClientInterface>();
 }
 
 

@@ -20,13 +20,12 @@
 #include <string>
 #include <gtkmm.h>
 #include "util/Path.h"
+#include "util/CountedPtr.h"
 #include "GtkObjectController.h"
 #include "NodeModel.h"
 
 using std::string;
 using namespace Ingen::Client;
-
-template <class T> class CountedPtr;
 
 namespace Ingen { namespace Client {
 	class MetadataModel;
@@ -49,10 +48,7 @@ class OmFlowCanvas;
 class NodeController : public GtkObjectController
 {
 public:
-	NodeController(CountedPtr<NodeModel> model);
 	virtual ~NodeController();
-	
-	virtual void destroy();
 
 	virtual void metadata_update(const string& key, const string& value);
 	
@@ -68,10 +64,10 @@ public:
 
 	OmModule* module()                { return m_module; }
 	
-	void bridge_port(PortController* port) { m_bridge_port = port; }
-	PortController* as_port()              { return m_bridge_port; }
+	//void bridge_port(PortController* port) { m_bridge_port = port; }
+	//PortController* as_port()              { return m_bridge_port; }
 	
-	CountedPtr<NodeModel> node_model() { return m_model; }
+	CountedPtr<NodeModel> node_model() { return PtrCast<NodeModel>(m_model); }
 	
 	NodeControlWindow* control_window()        { return m_control_window; }
 	void control_window(NodeControlWindow* cw) { m_control_window = cw; }
@@ -89,6 +85,12 @@ public:
 	virtual void disable_controls_menuitem();
 
 protected:
+	friend class ControllerFactory;
+
+	NodeController(CountedPtr<NodeModel> model);
+	
+	virtual void destroy();
+
 	virtual void add_port(CountedPtr<PortModel> pm);
 
 	void create_all_ports();

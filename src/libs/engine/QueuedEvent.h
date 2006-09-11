@@ -87,7 +87,7 @@ protected:
 	
 	// NULL event base (for internal events only!)
 	QueuedEvent(Engine& engine)
-	: Event(engine, NULL, 0)
+	: Event(engine, CountedPtr<Ingen::Responder>(), 0)
 	, _pre_processed(false), _blocking(false), _source(NULL)
 	{}
 

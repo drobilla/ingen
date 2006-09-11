@@ -25,6 +25,7 @@
 #include "GtkObjectController.h"
 #include "NodeControlWindow.h"
 #include "OmModule.h"
+#include "ControllerFactory.h"
 #include "PatchController.h"
 #include "OmFlowCanvas.h"
 #include "RenameWindow.h"
@@ -47,17 +48,13 @@ NodeController::NodeController(CountedPtr<NodeModel> model)
   m_properties_window(NULL),
   m_bridge_port(NULL)
 {
-	assert(!model->controller());
-	model->set_controller(this);
-
 	// Create port controllers
 	for (PortModelList::const_iterator i = node_model()->ports().begin();
 			i != node_model()->ports().end(); ++i) {
 		assert(!(*i)->controller());
 		assert((*i)->parent());
 		assert((*i)->parent().get() == node_model().get());
-		// FIXME: leak
-		PortController* const pc = new PortController(*i);
+		CountedPtr<PortController> pc = PtrCast<PortController>(ControllerFactory::get_controller(*i));
 		assert((*i)->controller() == pc); // PortController() does this
 	}
 	
@@ -92,12 +89,20 @@ NodeController::NodeController(CountedPtr<NodeModel> model)
 	}
 
 	model->new_port_sig.connect(sigc::mem_fun(this, &NodeController::add_port));
+	model->destroyed_sig.connect(sigc::mem_fun(this, &NodeController::destroy));
 }
 
 
 NodeController::~NodeController()
 {
 	destroy_module();
+}
+
+
+void
+NodeController::destroy()
+{
+	delete this;
 }
 
 
@@ -144,7 +149,7 @@ NodeController::set_path(const Path& new_path)
 			i != node_model()->ports().end(); ++i) {
 		GtkObjectController* const pc = (GtkObjectController*)((*i)->controller());
 		assert(pc != NULL);
-		pc->set_path(m_model->path().base_path() + pc->model()->name());
+		pc->set_path(m_model->path().base() + pc->model()->name());
 	}
 
 	// Handle bridge port, if this node represents one
@@ -160,7 +165,7 @@ NodeController::set_path(const Path& new_path)
 	*/
 }
 
-
+#if 0
 void
 NodeController::destroy()
 {
@@ -178,7 +183,7 @@ NodeController::destroy()
 	//if (m_module != NULL)
 	//	delete m_module;
 }
-
+#endif
 
 void
 NodeController::metadata_update(const string& key, const string& value)
@@ -197,8 +202,8 @@ NodeController::metadata_update(const string& key, const string& value)
 		}
 	}
 
-	if (m_bridge_port != NULL)
-		m_bridge_port->metadata_update(key, value);
+	//if (m_bridge_port != NULL)
+	//	m_bridge_port->metadata_update(key, value);
 
 	GtkObjectController::metadata_update(key, value);
 }
@@ -209,12 +214,11 @@ NodeController::add_port(CountedPtr<PortModel> pm)
 {
 	assert(pm->parent().get() == node_model().get());
 	assert(pm->parent() == node_model());
-	assert(node_model()->get_port(pm->name()) == pm);
+	assert(node_model()->get_port(pm->path().name()) == pm);
 	
 	//cout << "[NodeController] Adding port " << pm->path() << endl;
 	
-	// FIXME: leak
-	PortController* pc = new PortController(pm);
+	CountedPtr<PortController> pc = PtrCast<PortController>(ControllerFactory::get_controller(pm));
 	assert(pm->controller() == pc);
 	
 	if (m_module != NULL) {
@@ -259,10 +263,10 @@ NodeController::show_rename_window()
 	Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference("rename_win");
 	xml->get_widget_derived("rename_win", win);
 	
-	PatchController* parent = ((PatchController*)node_model()->parent()->controller());
-	assert(parent != NULL);
+	CountedPtr<PatchController> parent = PtrCast<PatchController>(node_model()->parent()->controller());
+	assert(parent);
 	
-	if (parent->window() != NULL)
+	if (parent->window())
 		win->set_transient_for(*parent->window());
 
 	win->set_object(this);
@@ -298,7 +302,7 @@ NodeController::on_menu_clone()
 	
 	clone_name = clone_name + clone_postfix;
 	
-	const string path = node_model()->parent_patch()->base_path() + clone_name;
+	const string path = node_model()->parent_patch()->base() + clone_name;
 	NodeModel* nm = new NodeModel(node_model()->plugin(), path);
 	nm->polyphonic(node_model()->polyphonic());
 	nm->x(node_model()->x() + 20);
@@ -324,36 +328,33 @@ NodeController::on_menu_disconnect_all()
 void
 NodeController::show_properties_window()
 {
-	PatchController* parent = ((PatchController*)node_model()->parent()->controller());
-	assert(parent != NULL);
+	CountedPtr<PatchController> parent = PtrCast<PatchController>(node_model()->parent()->controller());
+	assert(parent);
 	
-	if (m_properties_window == NULL) {
+	if (m_properties_window) {
 		Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference("node_properties_win");
 		xml->get_widget_derived("node_properties_win", m_properties_window);
 	}
-	assert(m_properties_window != NULL);
-	assert(parent != NULL);
+	assert(m_properties_window);
+	assert(parent);
 	m_properties_window->set_node(node_model());
-	if (parent->window() != NULL)
+	if (parent->window())
 		m_properties_window->set_transient_for(*parent->window());
 	m_properties_window->show();
 }
 
 
 /** Create all (visual) ports and add them to module (and resize it).
+ * FIXME: this doesn't belong here
  */
 void
 NodeController::create_all_ports()
 {
-	assert(m_module != NULL);
+	assert(m_module);
 
-	PortController* pc = NULL;
 	for (PortModelList::const_iterator i = node_model()->ports().begin();
 			i != node_model()->ports().end(); ++i) {
-		pc = dynamic_cast<PortController*>((*i)->controller());
-		// FIXME: leak
-		if (pc == NULL)
-			pc = new PortController(*i);
+		CountedPtr<PortController> pc = PtrCast<PortController>(ControllerFactory::get_controller(*i));
 		pc->create_port(m_module);
 	}
 

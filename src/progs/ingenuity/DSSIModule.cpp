@@ -29,8 +29,8 @@ DSSIModule::DSSIModule(OmFlowCanvas* canvas, DSSIController* node)
 void
 DSSIModule::on_double_click(GdkEventButton* ev)
 {
-	DSSIController* const dc = static_cast<DSSIController*>(m_node);
-	if (!dc->attempt_to_show_gui())
+	DSSIController* dc = dynamic_cast<DSSIController*>(m_node);
+	if (!dc || ! dc->attempt_to_show_gui())
 		show_control_window();
 }
 

@@ -52,29 +52,28 @@ int main(int argc, char** argv)
 	/* **** Mr. Spock.. Engage **** */
 
 
-	OSCModelEngineInterface engine(engine_url);
-	PatchLibrarian librarian(&engine);
+	CountedPtr<OSCModelEngineInterface> engine(new OSCModelEngineInterface(engine_url));
+	PatchLibrarian librarian(engine);
 	
 	/* Connect to engine */
-	engine.attach(-1, client_port);
-	engine.activate();
-	//engine.register_client(NULL); // FIXME
+	engine->attach(-1, client_port);
+	engine->activate();
+	//engine->register_client(NULL); // FIXME
 
-	//int id = engine.get_next_request_id();
-	//engine.set_wait_response_id(id);
-	//engine.load_plugins(id);
-	//engine.wait_for_response();
+	//int id = engine->get_next_request_id();
+	//engine->set_wait_response_id(id);
+	//engine->load_plugins(id);
+	//engine->wait_for_response();
 	/* FIXME: Make this work like this:
-	 * engine.load_plugins();
-	 * engine.wait_for_response();
+	 * engine->load_plugins();
+	 * engine->wait_for_response();
 	 */
 
 	// Load patches
 	for (uint i=0; i < args_info.inputs_num; ++i) {
-		PatchModel* pm = new PatchModel("", 0);
+		CountedPtr<PatchModel> pm(new PatchModel("", 0));
 		pm->filename(args_info.inputs[i]);
 		librarian.load_patch(pm, true);
-		delete pm;
 	}
 	
 	return 0;

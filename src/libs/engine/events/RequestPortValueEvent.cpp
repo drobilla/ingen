@@ -32,8 +32,7 @@ RequestPortValueEvent::RequestPortValueEvent(Engine& engine, CountedPtr<Responde
 : QueuedEvent(engine, responder, timestamp),
   m_port_path(port_path),
   m_port(NULL),
-  m_value(0.0),
-  m_client(CountedPtr<ClientInterface>(NULL))
+  m_value(0.0)
 {
 }
 

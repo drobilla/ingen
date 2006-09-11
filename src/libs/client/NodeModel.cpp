@@ -25,16 +25,17 @@ namespace Client {
 NodeModel::NodeModel(CountedPtr<PluginModel> plugin, const Path& path)
 : ObjectModel(path),
   m_polyphonic(false),
+  m_plugin_uri(plugin->uri()),
   m_plugin(plugin),
   m_x(0.0f),
   m_y(0.0f)
 {
 }
 
-NodeModel::NodeModel(const Path& path)
+NodeModel::NodeModel(const string& plugin_uri, const Path& path)
 : ObjectModel(path),
   m_polyphonic(false),
-  m_plugin(NULL),
+  m_plugin_uri(plugin_uri),
   m_x(0.0f),
   m_y(0.0f)
 {
@@ -80,7 +81,7 @@ NodeModel::set_path(const Path& p)
 	ObjectModel::set_path(p);
 	
 	for (PortModelList::iterator i = m_ports.begin(); i != m_ports.end(); ++i)
-		(*i)->set_path(m_path + "/" + (*i)->name());
+		(*i)->set_path(m_path + "/" + (*i)->path().name());
 
 	//if (m_parent && old_path.length() > 0)
 	//	parent_patch()->rename_node(old_path, p);
@@ -88,18 +89,39 @@ NodeModel::set_path(const Path& p)
 
 
 void
+NodeModel::add_child(CountedPtr<ObjectModel> c)
+{
+	assert(c->parent().get() == this);
+
+	CountedPtr<PortModel> pm = PtrCast<PortModel>(c);
+	assert(pm);
+	add_port(pm);
+}
+
+
+void
 NodeModel::add_port(CountedPtr<PortModel> pm)
 {
 	assert(pm);
-	assert(pm->name() != "");
-	assert(pm->path().length() > m_path.length());
-	assert(pm->path().substr(0, m_path.length()) == m_path);
+	assert(pm->path().is_child_of(m_path));
 	assert(pm->parent().get() == this);
-	assert(!get_port(pm->name()));
 
-	m_ports.push_back(pm);
+	PortModelList::iterator existing = m_ports.end();
+	for (PortModelList::iterator i = m_ports.begin(); i != m_ports.end(); ++i) {
+		if ((*i)->path() == pm->path()) {
+			existing = i;
+			break;
+		}
+	}
 
-	new_port_sig.emit(pm);
+	if (existing != m_ports.end()) {
+		cerr << "Warning: port clash, assimilating old port " << m_path << endl;
+		pm->assimilate(*existing);
+		*existing = pm;
+	} else {
+		m_ports.push_back(pm);
+		new_port_sig.emit(pm);
+	}
 }
 
 
@@ -108,9 +130,9 @@ NodeModel::get_port(const string& port_name)
 {
 	assert(port_name.find("/") == string::npos);
 	for (PortModelList::iterator i = m_ports.begin(); i != m_ports.end(); ++i)
-		if ((*i)->name() == port_name)
+		if ((*i)->path().name() == port_name)
 			return (*i);
-	return NULL;
+	return CountedPtr<PortModel>();
 }
 
 

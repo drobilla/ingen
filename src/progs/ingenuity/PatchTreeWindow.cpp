@@ -23,6 +23,7 @@
 #include "Store.h"
 #include "SubpatchModule.h"
 #include "PatchModel.h"
+#include "WindowFactory.h"
 #include "util/Path.h"
 
 namespace Ingenuity {
@@ -74,14 +75,14 @@ PatchTreeWindow::init(Store& store)
 void
 PatchTreeWindow::new_object(CountedPtr<ObjectModel> object)
 {
-	CountedPtr<PatchModel> patch = object;
-	if (patch && dynamic_cast<PatchController*>(patch->controller()))
-		add_patch(dynamic_cast<PatchController*>(patch->controller()));
+	CountedPtr<PatchModel> patch = PtrCast<PatchModel>(object);
+	if (patch)
+		add_patch(PtrCast<PatchController>(patch->controller()));
 }
 
 
 void
-PatchTreeWindow::add_patch(PatchController* pc)
+PatchTreeWindow::add_patch(CountedPtr<PatchController> pc)
 {
 	const CountedPtr<PatchModel> pm = pc->patch_model();
 
@@ -89,7 +90,7 @@ PatchTreeWindow::add_patch(PatchController* pc)
 		Gtk::TreeModel::iterator iter = m_patch_treestore->append();
 		Gtk::TreeModel::Row row = *iter;
 		if (pm->path() == "/") {
-			CountedPtr<OSCEngineSender> osc_sender = App::instance().engine();
+			CountedPtr<OSCEngineSender> osc_sender = PtrCast<OSCEngineSender>(App::instance().engine());
 			string root_name = osc_sender ? osc_sender->engine_url() : "Internal";
 			// Hack off trailing '/' if it's there (ugly)
 			//if (root_name.substr(root_name.length()-1,1) == "/")
@@ -130,10 +131,8 @@ PatchTreeWindow::remove_patch(const Path& path)
 Gtk::TreeModel::iterator
 PatchTreeWindow::find_patch(Gtk::TreeModel::Children root, const Path& path)
 {
-	PatchController* pc = NULL;
-	
 	for (Gtk::TreeModel::iterator c = root.begin(); c != root.end(); ++c) {
-		pc = (*c)[m_patch_tree_columns.patch_controller_col];
+		CountedPtr<PatchController> pc = (*c)[m_patch_tree_columns.patch_controller_col];
 		if (pc->model()->path() == path) {
 			return c;
 		} else if ((*c)->children().size() > 0) {
@@ -152,7 +151,7 @@ PatchTreeWindow::event_patch_selected()
 	Gtk::TreeModel::iterator active = m_patch_tree_selection->get_selected();
 	if (active) {
 		Gtk::TreeModel::Row row = *active;
-		PatchController* pc = row[m_patch_tree_columns.patch_controller_col];
+		CountedPtr<PatchController> pc = row[m_patch_tree_columns.patch_controller_col];
 	}
 }
 */
@@ -166,8 +165,8 @@ PatchTreeWindow::show_patch_menu(GdkEventButton* ev)
 	Gtk::TreeModel::iterator active = m_patch_tree_selection->get_selected();
 	if (active) {
 		Gtk::TreeModel::Row row = *active;
-		PatchController* pc = row[m_patch_tree_columns.patch_controller_col];
-		if (pc != NULL)
+		CountedPtr<PatchController> pc = row[m_patch_tree_columns.patch_controller_col];
+		if (pc)
 			pc->show_menu(ev);
 	}
 }
@@ -178,9 +177,9 @@ PatchTreeWindow::event_patch_activated(const Gtk::TreeModel::Path& path, Gtk::Tr
 {
 	Gtk::TreeModel::iterator active = m_patch_treestore->get_iter(path);
 	Gtk::TreeModel::Row row = *active;
-	PatchController* pc = row[m_patch_tree_columns.patch_controller_col];
+	CountedPtr<PatchController> pc = row[m_patch_tree_columns.patch_controller_col];
 	
-	pc->show_patch_window();
+	App::instance().window_factory()->present(pc);
 }
 
 
@@ -191,10 +190,10 @@ PatchTreeWindow::event_patch_enabled_toggled(const Glib::ustring& path_str)
 	Gtk::TreeModel::iterator active = m_patch_treestore->get_iter(path);
 	Gtk::TreeModel::Row row = *active;
 	
-	PatchController* pc = row[m_patch_tree_columns.patch_controller_col];
+	CountedPtr<PatchController> pc = row[m_patch_tree_columns.patch_controller_col];
 	Glib::ustring patch_path = pc->model()->path();
 	
-	assert(pc != NULL);
+	assert(pc);
 	
 	if ( ! pc->patch_model()->enabled()) {
 		if (m_enable_signal)

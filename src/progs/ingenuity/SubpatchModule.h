@@ -21,6 +21,7 @@
 #include <string>
 #include <libgnomecanvasmm.h>
 #include "OmModule.h"
+#include "util/CountedPtr.h"
 #include "PatchController.h"
 using std::string; using std::list;
 
@@ -36,7 +37,6 @@ namespace Ingenuity {
 	
 class OmFlowCanvas;
 class NodeControlWindow;
-class PatchController;
 
 
 /** A module to represent a subpatch
@@ -46,7 +46,7 @@ class PatchController;
 class SubpatchModule : public OmModule
 {
 public:
-	SubpatchModule(OmFlowCanvas* canvas, PatchController* controller);
+	SubpatchModule(OmFlowCanvas* canvas, CountedPtr<PatchController> controller);
 	virtual ~SubpatchModule() {}
 
 	void on_double_click(GdkEventButton* ev);
@@ -55,10 +55,10 @@ public:
 	void browse_to_patch();
 	void menu_remove();
 
-	PatchController* patch() { return m_patch; }
+	CountedPtr<PatchController> patch() { return m_patch; }
 
 protected:
-	PatchController* m_patch;
+	CountedPtr<PatchController> m_patch;
 };
 
 

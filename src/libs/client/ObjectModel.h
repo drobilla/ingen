@@ -26,6 +26,7 @@
 #include <sigc++/sigc++.h>
 #include "util/Path.h"
 #include "util/CountedPtr.h"
+#include "ObjectController.h"
 using std::string; using std::map; using std::find;
 using std::cout; using std::cerr; using std::endl;
 
@@ -42,8 +43,8 @@ class ObjectController;
 class ObjectModel
 {
 public:
-	ObjectModel(const string& path);
-	ObjectModel() : m_path("/UNINITIALIZED"), m_parent(NULL) {} // FIXME: remove
+	ObjectModel(const Path& path);
+	ObjectModel() : m_path("/UNINITIALIZED") {} // FIXME: remove
 
 	virtual ~ObjectModel() {}
 	
@@ -55,23 +56,24 @@ public:
 	inline const Path& path() const            { return m_path; }
 	virtual void       set_path(const Path& p) { m_path = p; }
 	
-	CountedPtr<ObjectModel>  parent() const             { return m_parent; }
+	CountedPtr<ObjectModel> parent() const             { return m_parent; }
 	virtual void  set_parent(CountedPtr<ObjectModel> p) { m_parent = p; }
 	
-	ObjectController* controller() const { return m_controller; }
-	
-	void set_controller(ObjectController* c);
+	virtual void add_child(CountedPtr<ObjectModel> c) = 0;
 
-	// Convenience functions
-	string        base_path() const;
-	const string  name() const { return m_path.name(); }
+	CountedPtr<ObjectController> controller() const { return m_controller; }
 	
+	void set_controller(CountedPtr<ObjectController> c);
+
+	void assimilate(CountedPtr<ObjectModel> model);
+
 	// Signals
 	sigc::signal<void, const string&, const string&> metadata_update_sig; 
+	sigc::signal<void>                               destroyed_sig; 
 protected:
-	Path                     m_path;
-	CountedPtr<ObjectModel>  m_parent;
-	ObjectController*        m_controller; // FIXME: remove
+	Path                         m_path;
+	CountedPtr<ObjectModel>      m_parent;
+	CountedPtr<ObjectController> m_controller;
 	
 	map<string,string> m_metadata;
 

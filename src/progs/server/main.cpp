@@ -137,7 +137,7 @@ main(int argc, char** argv)
 
 		set_denormal_flags();
 
-		engine = new Engine();
+		engine = CountedPtr<Engine>(new Engine());
 
 		OSCEngineReceiver* receiver = new OSCEngineReceiver(
 				engine, pre_processor_queue_size, args_info.port_arg);

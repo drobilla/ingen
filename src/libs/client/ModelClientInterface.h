@@ -21,6 +21,7 @@
 #include <memory>
 using std::string; using std::auto_ptr;
 #include "interface/ClientInterface.h"
+#include "util/CountedPtr.h"
 
 namespace Ingen {
 namespace Client {
@@ -49,13 +50,11 @@ public:
 	
 	virtual ~ModelClientInterface() {}
 
-	// FIXME: make these auto_ptr's
-	
-	virtual void new_plugin_model(PluginModel* pi);
-	virtual void new_patch_model(PatchModel* pm);
-	virtual void new_node_model(NodeModel* nm);
-	virtual void new_port_model(PortModel* port_info);
-	virtual void connection_model(ConnectionModel* cm);
+	virtual void new_plugin_model(CountedPtr<PluginModel> pi);
+	virtual void new_patch_model(CountedPtr<PatchModel> pm);
+	virtual void new_node_model(CountedPtr<NodeModel> nm);
+	virtual void new_port_model(CountedPtr<PortModel> port_info);
+	virtual void connection_model(CountedPtr<ConnectionModel> cm);
 
 	// ClientInterface functions to drive the above:
 	

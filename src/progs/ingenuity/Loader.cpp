@@ -211,14 +211,14 @@ Loader::m_thread_function(void *)
 
 
 void
-Loader::load_patch(PatchModel* model, bool wait, bool merge)
+Loader::load_patch(CountedPtr<PatchModel> model, bool wait, bool merge)
 {
 	set_event(new LoadPatchEvent(m_patch_librarian, model, wait, merge));
 }
 
 
 void
-Loader::save_patch(PatchModel* model, const string& filename, bool recursive)
+Loader::save_patch(CountedPtr<PatchModel> model, const string& filename, bool recursive)
 {
 	cout << "[Loader] Saving patch " << filename << endl;
 	set_event(new SavePatchEvent(m_patch_librarian, model, filename, recursive));

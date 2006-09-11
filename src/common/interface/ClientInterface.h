@@ -36,14 +36,14 @@ public:
 	virtual ~ClientInterface() {}
 	
 	virtual void response(int32_t id, bool success, string msg) = 0;
-
+	
 	/** Bundles are a group of messages that are guaranteed to be in an
 	 * atomic unit with guaranteed order (eg a packet).  For datagram
 	 * protocols (like UDP) there is likely an upper limit on bundle size.
 	 */
 	virtual void bundle_begin() = 0;
 	virtual void bundle_end()   = 0;
-
+	
 	/** Transfers are 'weak' bundles.  These are used to break a large group
 	 * of similar/related messages into larger chunks (solely for communication
 	 * efficiency).  A bunch of messages in a transfer will arrive as 1 or more
@@ -51,11 +51,11 @@ public:
 	 */
 	virtual void transfer_begin() = 0;
 	virtual void transfer_end()   = 0;
-
+	
 	virtual void error(string msg) = 0;
 	
 	virtual void num_plugins(uint32_t num_plugins) = 0;
-
+	
 	virtual void new_plugin(string type,
 	                        string uri,
 	                        string name) = 0;
@@ -101,7 +101,7 @@ public:
 	                         uint32_t program,
 	                         string   program_name) = 0;
 	
-	virtual void program_remove(string          node_path,
+	virtual void program_remove(string   node_path,
 	                            uint32_t bank,
 	                            uint32_t program) = 0;
 	

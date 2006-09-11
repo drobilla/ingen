@@ -199,16 +199,27 @@ public:
 	
 	/** Parent path with a "/" appended.
 	 *
-	 * Because of the "/" special case, append a child name to base_path()
-	 * to construct a path.  This return value followed by a valid name is
-	 * guaranteed to be a valid path.
+	 * This exists to avoid needing to be careful about the special case of "/".
+	 * To create a child of a path, use parent.base() + child_name.
+	 * Returned value is always a valid path, with the single exception that
+	 * the last character is "/".
 	 */
-	inline string base_path() const
+	inline string base() const
 	{
 		if ((*this) == "/")
 			return *this;
 		else
 			return (*this) + "/";
+	}
+
+	inline bool is_child_of(const Path& parent) const
+	{
+		return (length() > parent.length() && substr(0, parent.length()) == parent);
+	}
+	
+	inline bool is_parent_of(const Path& child) const
+	{
+		return child.is_child_of(*this);
 	}
 };
 	

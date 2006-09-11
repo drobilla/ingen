@@ -31,7 +31,7 @@ RenameEvent::RenameEvent(Engine& engine, CountedPtr<Responder> responder, Sample
 : QueuedEvent(engine, responder, timestamp),
   m_old_path(path),
   m_name(name),
-  m_new_path(m_old_path.parent().base_path() + name),
+  m_new_path(m_old_path.parent().base() + name),
   m_parent_patch(NULL),
   m_store_treenode(NULL),
   m_error(NO_ERROR)

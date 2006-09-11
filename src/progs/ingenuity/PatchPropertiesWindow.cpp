@@ -24,7 +24,6 @@ using std::string;
 
 PatchPropertiesWindow::PatchPropertiesWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml)
 : Gtk::Window(cobject)
-, m_patch_model(NULL)
 {
 	glade_xml->get_widget("properties_author_entry", m_author_entry);
 	glade_xml->get_widget("properties_description_textview", m_textview);

@@ -21,6 +21,8 @@
 #include "PluginModel.h"
 #include <libglademm/xml.h>
 #include <gtkmm.h>
+#include "util/CountedPtr.h"
+#include "PatchController.h"
 
 
 namespace Ingenuity {
@@ -39,7 +41,7 @@ class LoadSubpatchWindow : public Gtk::FileChooserDialog
 public:
 	LoadSubpatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml);
 
-	void patch_controller(PatchController* pc);
+	void set_patch(CountedPtr<PatchController> pc);
 	
 	void set_next_module_location(double x, double y)
 		{ m_new_module_x = x; m_new_module_y = y; }
@@ -56,7 +58,7 @@ private:
 	void ok_clicked();
 	void cancel_clicked();
 
-	PatchController* m_patch_controller;
+	CountedPtr<PatchController> m_patch_controller;
 	
 	double m_new_module_x;
 	double m_new_module_y;

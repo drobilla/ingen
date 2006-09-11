@@ -42,23 +42,23 @@ public:
 	// Responses
 	virtual void set_next_response_id(int32_t id) = 0;
 	virtual void disable_responses() = 0;
-
+	
 	// Client registration
 	virtual void register_client(ClientKey key, CountedPtr<ClientInterface> client) = 0;
 	virtual void unregister_client(ClientKey key) = 0;
 	
-
+	
 	// Engine commands
 	virtual void load_plugins() = 0;
 	virtual void activate() = 0;
 	virtual void deactivate() = 0;
 	virtual void quit() = 0;
-			
+	
 	// Object commands
 	
 	virtual void create_patch(const string& path,
 	                          uint32_t      poly) = 0;
-
+	
 	virtual void create_port(const string& path,
 	                         const string& data_type,
 	                         bool          direction) = 0;
@@ -66,50 +66,50 @@ public:
 	virtual void create_node(const string& path,
 	                         const string& plugin_type,
 	                         const string& plugin_uri,
-				        	 bool          polyphonic) = 0;
+	                         bool          polyphonic) = 0;
 	
 	/** DEPRECATED */
 	virtual void create_node(const string& path,
 	                         const string& plugin_type,
 	                         const string& library_name,
 	                         const string& plugin_label,
-				        	 bool          polyphonic) = 0;
-
+	                         bool          polyphonic) = 0;
+	
 	virtual void rename(const string& old_path,
 	                    const string& new_name) = 0;
-
+	
 	virtual void destroy(const string& path) = 0;
-
+	
 	virtual void clear_patch(const string& patch_path) = 0;
-
+	
 	virtual void enable_patch(const string& patch_path) = 0;
-
+	
 	virtual void disable_patch(const string& patch_path) = 0;
-
+	
 	virtual void connect(const string& src_port_path,
 	                     const string& dst_port_path) = 0;
-
+	
 	virtual void disconnect(const string& src_port_path,
 	                        const string& dst_port_path) = 0;
-
+	
 	virtual void disconnect_all(const string& node_path) = 0;
-
+	
 	virtual void set_port_value(const string& port_path,
 	                            float         val) = 0;
-
+	
 	virtual void set_port_value(const string& port_path,
 	                            uint32_t      voice,
 	                            float         val) = 0;
-
+	
 	virtual void set_port_value_queued(const string& port_path,
 	                                   float         val) = 0;
-
+	
 	virtual void set_program(const string& node_path,
 	                         uint32_t      bank,
 	                         uint32_t      program) = 0;
-
+	
 	virtual void midi_learn(const string& node_path) = 0;
-
+	
 	virtual void set_metadata(const string& path,
 	                          const string& predicate,
 	                          const string& value) = 0;
@@ -117,13 +117,13 @@ public:
 	// Requests //
 	
 	virtual void ping() = 0;
-
+	
 	virtual void request_port_value(const string& port_path) = 0;
-
+	
 	virtual void request_plugins() = 0;
-
+	
 	virtual void request_all_objects() = 0;
-
+	
 protected:
 	EngineInterface() {}
 };

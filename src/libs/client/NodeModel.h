@@ -44,9 +44,12 @@ class PluginModel;
 class NodeModel : public ObjectModel
 {
 public:
+	NodeModel(const string& plugin_uri, const Path& path);
 	NodeModel(CountedPtr<PluginModel> plugin, const Path& path);
 	virtual ~NodeModel();
 	
+	void add_child(CountedPtr<ObjectModel> c);
+
 	CountedPtr<PortModel> get_port(const string& port_name);
 	void       add_port(CountedPtr<PortModel> pm);
 	void       remove_port(const string& port_path);
@@ -56,6 +59,8 @@ public:
 	const map<int, map<int, string> >& get_programs() const     { return m_banks; }
 	void add_program(int bank, int program, const string& name);
 	void remove_program(int bank, int program);
+
+	string plugin_uri() { return m_plugin_uri; }
 
 	CountedPtr<PluginModel> plugin() const { return m_plugin; }
 	//void               plugin(CountedPtr<PluginModel> p) { m_plugin = p; }
@@ -79,6 +84,7 @@ protected:
 
 	bool                        m_polyphonic;
 	PortModelList               m_ports;  ///< List of ports (instead of map to preserve order)
+	string                      m_plugin_uri; ///< Plugin URI (not redundant if PluginModel unknown
 	CountedPtr<PluginModel>     m_plugin; ///< The plugin this node is an instance of
 	float                       m_x;      ///< Just metadata, here as an optimization for GUI
 	float                       m_y;      ///< Just metadata, here as an optimization for GUI
@@ -91,7 +97,7 @@ private:
 };
 
 
-typedef map<string, CountedPtr<NodeModel> >   NodeModelMap;
+typedef map<string, CountedPtr<NodeModel> > NodeModelMap;
 
 
 } // namespace Client

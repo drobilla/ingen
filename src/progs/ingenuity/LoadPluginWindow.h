@@ -87,7 +87,7 @@ class LoadPluginWindow : public Gtk::Window
 public:
 	LoadPluginWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml);
 
-	void patch_controller(PatchController* pc);
+	void set_patch(CountedPtr<PatchController> pc);
 	void set_plugin_list(const std::map<string, CountedPtr<PluginModel> >& m);
 
 	void set_next_module_location(double x, double y)
@@ -113,7 +113,7 @@ private:
 	void plugin_selection_changed();
 	string generate_module_name(int offset = 0);
 
-	PatchController* m_patch_controller;
+	CountedPtr<PatchController> m_patch_controller;
 	bool m_has_shown; // plugin list only populated on show to speed patch window creation
 
 	Glib::RefPtr<Gtk::ListStore> m_plugins_liststore;

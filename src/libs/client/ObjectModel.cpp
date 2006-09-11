@@ -20,10 +20,8 @@ namespace Ingen {
 namespace Client {
 
 
-ObjectModel::ObjectModel(const string& path)
-: m_path(path),
-  m_parent(NULL),
-  m_controller(NULL)
+ObjectModel::ObjectModel(const Path& path)
+: m_path(path)
 {
 }
 
@@ -37,29 +35,37 @@ ObjectModel::get_metadata(const string& key) const
 {
 	map<string,string>::const_iterator i = m_metadata.find(key);
 	if (i != m_metadata.end())
-		return (*i).second;
+		return i->second;
 	else
 		return "";
 }
 
 
-/** The base path for children of this Object.
- * 
- * (This is here to avoid needing special cases for the root patch everywhere).
- */
-string
-ObjectModel::base_path() const
-{
-	return (path() == "/") ? "/" : path() + "/";
-}
-
-
 void
-ObjectModel::set_controller(ObjectController* c)
+ObjectModel::set_controller(CountedPtr<ObjectController> c)
 {
-	assert(m_controller == NULL);
 	m_controller = c;
 }
+
+
+/** Merge the data of @a model with self, as much as possible.
+ *
+ * This will merge the two models, but with any conflict take the version in 
+ * this as correct.  The paths of the two models must be equal.
+ */
+void
+ObjectModel::assimilate(CountedPtr<ObjectModel> model)
+{
+	assert(m_path == model->path());
+
+	for (map<string,string>::const_iterator i = model->metadata().begin();
+			i != model->metadata().end(); ++i) {
+		map<string,string>::const_iterator i = m_metadata.find(i->first);
+		if (i == m_metadata.end())
+			m_metadata[i->first] = i->second;
+	}
+}
+
 
 } // namespace Client
 } // namespace Ingen

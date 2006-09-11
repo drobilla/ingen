@@ -21,6 +21,21 @@
 #include <cassert>
 #include <cstddef>
 
+// honestly, WTF?
+#include <boost/shared_ptr.hpp>
+
+#define CountedPtr boost::shared_ptr
+#define PtrCast    boost::dynamic_pointer_cast
+#if 0
+// FIXME
+#ifndef NDEBUG
+#define COUNTED_PTR_DEBUG
+#include <iostream>
+#include <list>
+#include <algorithm>
+static std::list<void*> counted_ptr_counters;
+#endif
+
 
 /** Simple reference counted pointer.
  *
@@ -46,7 +61,7 @@ public:
 
 	/** Allocate a new Counter (if p is non-NULL) */
 	CountedPtr(T* p)
-	: _counter(NULL)
+	: _counter(0)
 	{
 		if (p)
 			_counter = new Counter(p);
@@ -57,7 +72,7 @@ public:
 	 * in STL containers :/
 	 */
 	CountedPtr()
-	: _counter(NULL)
+	: _counter(0)
 	{}
 
 	~CountedPtr()
@@ -67,7 +82,7 @@ public:
 
 	/** Copy a CountedPtr with the same type. */
 	CountedPtr(const CountedPtr& copy) 
-	: _counter(NULL)
+	: _counter(0)
 	{
 		assert(this != &copy);
 		
@@ -81,7 +96,7 @@ public:
 	 */
 	template <class Y>
 	CountedPtr(const CountedPtr<Y>& y)
-	: _counter(NULL)
+	: _counter(0)
 	{
 		assert(this != (CountedPtr*)&y);
 
@@ -96,14 +111,14 @@ public:
 			}
 		}
 
-		assert(_counter == NULL || _counter == (Counter*)y._counter);
+		assert( ! _counter || _counter == (Counter*)y._counter);
 	}
 
 	/** Assign to the value of a CountedPtr of the same type. */
 	CountedPtr& operator=(const CountedPtr& copy)
 	{
 		if (this != &copy) {
-			assert(_counter == NULL || _counter != copy._counter);
+			assert( ! _counter || _counter != copy._counter);
 			release();
 			retain(copy._counter);
 		}
@@ -163,23 +178,42 @@ public:
 private:
 	/** Stored on the heap and referred to by all existing CountedPtr's to
 	 * the object */
-	struct Counter
+	class Counter
 	{
+	public:
 		Counter(T* p)
 		: ptr(p)
 		, count(1)
 		{
 			assert(p);
+#ifdef COUNTED_PTR_DEBUG
+			assert(std::find(counted_ptr_counters.begin(), counted_ptr_counters.end(), (void*)p)
+					== counted_ptr_counters.end());
+			counted_ptr_counters.push_back(p);
+			std::cerr << "Creating " << typeid(T).name() << " Counter " << this << std::endl;
+#endif
 		}
 		
+		~Counter()
+		{
+			// for debugging
+			assert(count == 0);
+			count = 0;
+		}
+
 		T* const        ptr;
 		volatile size_t count;
+
+	private:
+		// Prevent copies (undefined)
+		Counter(const Counter& copy);
+		Counter& operator=(const Counter& copy);
 	};
 
 	/** Increment the count */
 	void retain(Counter* c) 
 	{	
-		assert(_counter == NULL || _counter == c);
+		assert( ! _counter || _counter == c);
 		_counter = c;
 		if (_counter)
 			++(c->count);
@@ -193,12 +227,13 @@ private:
 				delete _counter->ptr;
 				delete _counter;
 			}
-			_counter = NULL;
+			_counter = 0;
 		}
 	}
 	
 
 	Counter* _counter;
 };
+#endif
 
 #endif // COUNTED_PTR_H

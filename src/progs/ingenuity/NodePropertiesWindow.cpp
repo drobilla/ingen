@@ -26,7 +26,6 @@ using std::string;
 
 NodePropertiesWindow::NodePropertiesWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml)
 : Gtk::Window(cobject)
-, m_node_model(NULL)
 {
 	glade_xml->get_widget("node_properties_path_label", m_node_path_label);
 	glade_xml->get_widget("node_properties_polyphonic_checkbutton", m_node_polyphonic_toggle);

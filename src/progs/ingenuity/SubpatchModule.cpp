@@ -26,51 +26,46 @@
 #include "OmFlowCanvas.h"
 #include "PatchController.h"
 #include "OmPort.h"
+#include "WindowFactory.h"
 using std::cerr; using std::cout; using std::endl;
 
 namespace Ingenuity {
 
 
-SubpatchModule::SubpatchModule(OmFlowCanvas* canvas, PatchController* patch)
-: OmModule(canvas, patch),
+SubpatchModule::SubpatchModule(OmFlowCanvas* canvas, CountedPtr<PatchController> patch)
+: OmModule(canvas, patch.get()),
   m_patch(patch)
 {
-	assert(canvas != NULL);
-	assert(patch != NULL);
+	assert(canvas);
+	assert(patch);
 }
 
 
 void
 SubpatchModule::on_double_click(GdkEventButton* event)
 {
-	assert(m_patch != NULL);
+	assert(m_patch);
 
-	// If window is visible
-	if (m_patch->window() != NULL
-			&& m_patch->window()->is_visible()) {
-		m_patch->show_patch_window(); // just raise it
-	// No window visible
-	} else {
-		if (event->state & GDK_SHIFT_MASK)
-			m_patch->show_patch_window(); // open a new window
-		else
-			browse_to_patch();
-	}
+	CountedPtr<PatchController> parent = PtrCast<PatchController>(m_patch->model()->parent()->controller());
+
+	PatchWindow* const preferred
+		= (event->state & GDK_SHIFT_MASK) ? NULL : parent->window();
+
+	App::instance().window_factory()->present(m_patch, preferred);
 }
 
 
 
-/** Browse to this patch in current (parent's) window. */
+/** Browse to this patch in current (parent's) window
+ * (unless an existing window is displaying it)
+ */
 void
 SubpatchModule::browse_to_patch()
 {
 	assert(m_patch->model()->parent());
-	PatchController* pc = (PatchController*)m_patch->model()->parent()->controller();
-	assert(pc != NULL);
-	assert(pc->window() != NULL);
+	CountedPtr<PatchController> pc = PtrCast<PatchController>(m_patch->model()->parent()->controller());
 	
-	assert(pc->window() != NULL);
-	pc->window()->patch_controller(m_patch);
+	App::instance().window_factory()->present(m_patch, pc->window());
 }
 
 

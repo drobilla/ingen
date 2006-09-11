@@ -19,9 +19,9 @@
 
 #include <string>
 #include <gtkmm.h>
+#include "util/CountedPtr.h"
 #include "NodeController.h"
 #include "PatchModel.h"
-template <class T> class CountedPtr;
 
 namespace Ingen { namespace Client {
 	class PatchModel;
@@ -60,7 +60,6 @@ class NodeController;
 class PatchController : public NodeController
 {
 public:
-	PatchController(CountedPtr<PatchModel> model);
 	virtual ~PatchController();
 	
 	/*
@@ -68,16 +67,14 @@ public:
 	virtual void remove_from_store();
 	*/
 
-	virtual void destroy();
-
 	virtual void metadata_update(const string& key, const string& value);
 	
-	virtual void add_port(CountedPtr<PortModel> pm);
-	virtual void remove_port(const Path& path, bool resize_module);
+	//virtual void add_port(CountedPtr<PortModel> pm);
+	//virtual void remove_port(const Path& path, bool resize_module);
 
 	void connection(CountedPtr<ConnectionModel> cm);
 	void disconnection(const Path& src_port_path, const Path& dst_port_path);
-	void clear();
+	//void clear();
 
 	void show_control_window();
 	void show_properties_window();
@@ -86,35 +83,31 @@ public:
 	void claim_patch_view();
 	
 	void create_module(OmFlowCanvas* canvas);
-	void create_view();
 
-	PatchView*         view() const            { return m_patch_view; }
+	CountedPtr<PatchView> get_view();
 	PatchWindow*       window() const          { return m_window; }
 	void               window(PatchWindow* pw) { m_window = pw; }
-	
-	inline string      name() const { return m_model->name(); }
-	inline const Path& path() const { return m_model->path(); }
 	
 	void set_path(const Path& new_path);
 
 	//void enable();
 	//void disable();
 	
-	CountedPtr<PatchModel> patch_model() const { return m_patch_model; }
+	const CountedPtr<PatchModel> patch_model() const { return m_patch_model; }
 	
-	void enable_controls_menuitem();
-	void disable_controls_menuitem();
-
 private:
-	void add_node(CountedPtr<NodeModel> object);
-	void remove_node(const string& name);
+	friend class ControllerFactory;
+	PatchController(CountedPtr<PatchModel> model);
 	
-	NodeController* create_controller_for_node(CountedPtr<NodeModel> node);
+	void destroy();
 
+	void add_node(CountedPtr<NodeModel> object);
+	
 	PatchPropertiesWindow* m_properties_window;
 
-	PatchWindow* m_window;     ///< Patch Window currently showing m_patch_view
-	PatchView*   m_patch_view; ///< View (canvas) of this patch
+	// FIXME: remove these
+	PatchWindow*          m_window;     ///< Patch Window currently showing m_patch_view
+	CountedPtr<PatchView> m_patch_view; ///< View (canvas) of this patch
 
 	CountedPtr<PatchModel> m_patch_model;
 

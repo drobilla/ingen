@@ -14,46 +14,29 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef BREADCRUMBBOX_H
-#define BREADCRUMBBOX_H
+#ifndef WINDOW_FACTORY_H
+#define WINDOW_FACTORY_H
 
-#include <list>
-#include <gtkmm.h>
-#include <libglademm/xml.h>
-#include <libglademm.h>
-#include "util/Path.h"
+#include <map>
+#include "util/CountedPtr.h"
+#include "PatchController.h"
 
 namespace Ingenuity {
 
-class PatchController;
-class BreadCrumb;
+class PatchWindow;
 
 
-/** Collection of breadcrumb buttons forming a path.
- *
- * \ingroup Ingenuity
- */
-class BreadCrumbBox : public Gtk::HBox
-{
+class WindowFactory {
 public:
-	BreadCrumbBox();
-	
-	void build(Path path);
-
-	sigc::signal<void, const Path&> signal_patch_selected;
+	void present(CountedPtr<PatchController> patch, PatchWindow* preferred = NULL);
 
 private:
-	void breadcrumb_clicked(BreadCrumb* crumb);
-	
-	void object_removed(const Path& path);
-	void object_renamed(const Path& old_path, const Path& new_path);
+	PatchWindow* create_new(CountedPtr<PatchController> patch);
+	bool remove(PatchWindow* win, GdkEventAny* ignored);
 
-	Path                   _active_path;
-	Path                   _full_path;
-	bool                   _enable_signal;
-	std::list<BreadCrumb*> _breadcrumbs;
+	std::map<Path, PatchWindow*> _windows;
 };
 
-} // namespace Ingenuity
+}
 
-#endif // BREADCRUMBBOX_H
+#endif // WINDOW_FACTORY_H

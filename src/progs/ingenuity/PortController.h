@@ -47,7 +47,6 @@ class OmFlowCanvas;
 class PortController : public GtkObjectController
 {
 public:
-	PortController(CountedPtr<PortModel> model);
 	virtual ~PortController() {}
 	
 	virtual void destroy();
@@ -63,9 +62,12 @@ public:
 
 	void set_path(const Path& new_path);
 	
-	CountedPtr<PortModel> port_model() const { return m_model; }
+	CountedPtr<PortModel> port_model() const { return PtrCast<PortModel>(m_model); }
 
 private:
+	friend class ControllerFactory;
+	PortController(CountedPtr<PortModel> model);
+
 	OmPatchPort*  m_patch_port;    ///< Port on m_module
 	OmPortModule* m_module;        ///< Port pseudo-module (for patch ports only)
 	OmPort*       m_port;          ///< Port on some other canvas module

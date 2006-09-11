@@ -67,14 +67,7 @@ ControlPanel::init(NodeController* node, size_t poly)
 
 	for (PortModelList::const_iterator i = node_model->ports().begin();
 			i != node_model->ports().end(); ++i) {
-		// FIXME:
-		if (*i) {
-			PortController* pc = (PortController*)((*i)->controller());
-			assert(pc != NULL);
-			add_port(pc);
-		} else {
-			cerr << "WTF?\n";
-		}
+		add_port(*i);
 	}
 	
 	m_callback_enabled = true;
@@ -95,13 +88,9 @@ ControlPanel::find_port(const Path& path) const
 /** Add a control to the panel for the given port.
  */
 void
-ControlPanel::add_port(PortController* port)
+ControlPanel::add_port(CountedPtr<PortModel> pm)
 {
-	assert(port);
-	assert(port->model());
-	//assert(port->control_panel() == NULL);
-	
-	const CountedPtr<PortModel> pm = port->port_model();
+	assert(pm);
 	
 	// Already have port, don't add another
 	if (find_port(pm->path()) != NULL)
@@ -130,8 +119,6 @@ ControlPanel::add_port(PortController* port)
 		//	pm->connection_sig.connect(bind(sigc::mem_fun(this, &ControlPanel::connection), pm))
 		//	pm->disconnection_sig.connect(bind(sigc::mem_fun(this, &ControlPanel::disconnection), pm))
 	}
-
-	//port->set_control_panel(this);
 
 	Gtk::Requisition controls_size;
 	m_control_box->size_request(controls_size);

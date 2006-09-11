@@ -43,6 +43,8 @@ ingenuity_SOURCES = \
 	PortController.cpp \
 	DSSIController.h \
 	DSSIController.cpp \
+	ControllerFactory.h \
+	ControllerFactory.cpp \
 	LoadPluginWindow.h \
 	LoadPluginWindow.cpp \
 	LoadPatchWindow.h \
@@ -61,6 +63,8 @@ ingenuity_SOURCES = \
 	PatchView.cpp \
 	PatchWindow.h \
 	PatchWindow.cpp \
+	WindowFactory.h \
+	WindowFactory.cpp \
 	OmFlowCanvas.h \
 	OmFlowCanvas.cpp \
 	../../common/types.h \

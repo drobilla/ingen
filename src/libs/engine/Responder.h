@@ -52,7 +52,7 @@ public:
 	virtual ~Responder() {}
 
 	virtual ClientKey                   client_key() { return ClientKey(); }
-	virtual CountedPtr<ClientInterface> client()     { return NULL; }
+	virtual CountedPtr<ClientInterface> client()     { return CountedPtr<ClientInterface>(); }
 
 	virtual void set_id(int32_t id) {}
 
