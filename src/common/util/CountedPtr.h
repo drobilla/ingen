@@ -36,14 +36,14 @@ namespace boost {
 		assert(std::find(counted_ptr_counters.begin(), counted_ptr_counters.end(),
 				(void*)object) == counted_ptr_counters.end());
 		counted_ptr_counters.push_back(object);
-		//std::cerr << "Creating " << typeid(object).name() << " Pointer to "
-			//<< object << std::endl;
+		//std::cerr << "Creating CountedPtr to "
+		//	<< object << ", count = " << cnt << std::endl;
 	}
 	
 	static void sp_scalar_destructor_hook(void* object, unsigned long cnt, void* ptr) {
 		counted_ptr_counters.remove(object);
-		//std::cerr << "Destroying " << typeid(object).name() << " Pointer to "
-			//<< object << std::endl;
+		//std::cerr << "Destroying CountedPtr to "
+		//	<< object << ", count = " << cnt << std::endl;
 	}
 
 }

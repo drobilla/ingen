@@ -45,7 +45,6 @@ NodeModel::NodeModel(const string& plugin_uri, const Path& path)
 NodeModel::~NodeModel()
 {
 	clear();
-	m_controller.reset();
 }
 
 

@@ -211,7 +211,12 @@ Store::add_plugin(CountedPtr<PluginModel> pm)
 void
 Store::destruction_event(const Path& path)
 {
-	remove_object(path);
+	CountedPtr<ObjectModel> removed = remove_object(path);
+	removed->controller().reset();
+	cerr << "Store removed object " << path
+		<< " controller count: " << removed->controller().use_count();
+	removed.reset();
+	cerr << ", model count: " << removed.use_count() << endl;
 }
 
 void

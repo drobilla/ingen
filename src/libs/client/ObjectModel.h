@@ -46,7 +46,7 @@ public:
 	ObjectModel(const Path& path);
 	ObjectModel() : m_path("/UNINITIALIZED") {} // FIXME: remove
 
-	virtual ~ObjectModel() {}
+	virtual ~ObjectModel();
 	
 	const map<string, string>& metadata() const { return m_metadata; }
 	string get_metadata(const string& key) const;

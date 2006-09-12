@@ -104,8 +104,10 @@ void
 NodeController::destroy()
 {
 	cerr << "FIXME: NODE DESTROYED\n";
-	destroy_module(); // cuts reference
-	//delete this;
+	destroy_module();
+	CountedPtr<ObjectModel> model = m_model;
+	m_model->controller().reset();
+	m_model.reset();
 }
 
 

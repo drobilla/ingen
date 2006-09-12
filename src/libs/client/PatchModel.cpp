@@ -129,6 +129,7 @@ PatchModel::remove_node(CountedPtr<NodeModel> nm)
 		assert(i->second == nm);
 		m_nodes.erase(i);
 		removed_node_sig.emit(nm->path().name());
+		i->second->parent().reset();
 		return;
 	}
 	
@@ -146,6 +147,7 @@ PatchModel::remove_node(const string& name)
 		//delete i->second;
 		m_nodes.erase(i);
 		removed_node_sig.emit(name);
+		i->second->parent().reset();
 		return;
 	}
 	

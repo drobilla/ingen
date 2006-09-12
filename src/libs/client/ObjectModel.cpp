@@ -25,6 +25,10 @@ ObjectModel::ObjectModel(const Path& path)
 {
 }
 
+ObjectModel::~ObjectModel()
+{
+	m_controller.reset();
+}
 
 /** Get a piece of metadata for this objeect.
  *
