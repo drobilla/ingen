@@ -31,7 +31,6 @@ RequestMetadataEvent::RequestMetadataEvent(Engine& engine, CountedPtr<Responder>
 : QueuedEvent(engine, responder, timestamp),
   m_path(node_path),
   m_key(key),
-  m_value(""),
   m_object(NULL),
   m_client(CountedPtr<ClientInterface>())
 {
@@ -61,8 +60,8 @@ void
 RequestMetadataEvent::post_process()
 {
 	if (m_client) {
-		if (m_value == "") {
-			string msg = "Unable to find object ";
+		if (!m_object) {
+			string msg = "Unable to find metadata subject ";
 			msg += m_path;
 			_responder->respond_error(msg);
 		} else {

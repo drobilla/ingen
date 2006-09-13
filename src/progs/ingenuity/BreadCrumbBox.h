@@ -22,10 +22,11 @@
 #include <libglademm/xml.h>
 #include <libglademm.h>
 #include "util/Path.h"
+#include "util/CountedPtr.h"
+#include "PatchView.h"
 
 namespace Ingenuity {
 
-class PatchController;
 class BreadCrumb;
 
 
@@ -38,11 +39,14 @@ class BreadCrumbBox : public Gtk::HBox
 public:
 	BreadCrumbBox();
 	
-	void build(Path path);
+	void build(Path path, CountedPtr<PatchView> view);
 
-	sigc::signal<void, const Path&> signal_patch_selected;
+	sigc::signal<void, const Path&, CountedPtr<PatchView> > signal_patch_selected;
 
 private:
+	BreadCrumb* create_crumb(const Path&           path,
+                             CountedPtr<PatchView> view = CountedPtr<PatchView>());
+
 	void breadcrumb_clicked(BreadCrumb* crumb);
 	
 	void object_removed(const Path& path);

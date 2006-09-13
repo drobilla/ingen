@@ -58,7 +58,7 @@ protected:
 	virtual void set_min(float val) {}
 	virtual void set_max(float val) {}
 
-	virtual void metadata_update(const string& key, const string& value);
+	virtual void metadata_update(const string& key, const Atom& value);
 
 	ControlPanel*          m_control_panel;
 	CountedPtr<PortModel>  m_port_model;

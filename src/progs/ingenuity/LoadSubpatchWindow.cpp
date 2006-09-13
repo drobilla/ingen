@@ -19,9 +19,7 @@
 #include <dirent.h>
 #include <cassert>
 #include "App.h"
-#include "PatchController.h"
 #include "PatchView.h"
-#include "OmFlowCanvas.h"
 #include "NodeModel.h"
 #include "PatchModel.h"
 #include "Configuration.h"
@@ -68,17 +66,26 @@ LoadSubpatchWindow::LoadSubpatchWindow(BaseObjectType* cobject, const Glib::RefP
 }
 
 
+void
+LoadSubpatchWindow::present(CountedPtr<PatchModel> patch, MetadataMap data)
+{
+	set_patch(patch);
+	m_initial_data = data;
+	Gtk::Window::present();
+}
+
+
 /** Sets the patch controller for this window and initializes everything.
  *
  * This function MUST be called before using the window in any way!
  */
 void
-LoadSubpatchWindow::set_patch(CountedPtr<PatchController> pc)
+LoadSubpatchWindow::set_patch(CountedPtr<PatchModel> patch)
 {
-	m_patch_controller = pc;
+	m_patch = patch;
 
 	char temp_buf[4];
-	snprintf(temp_buf, 4, "%zd", pc->patch_model()->poly());
+	snprintf(temp_buf, 4, "%zd", patch->poly());
 	Glib::ustring txt = "Same as parent (";
 	txt.append(temp_buf).append(")");
 	m_poly_from_parent_radio->set_label(txt);
@@ -129,8 +136,7 @@ LoadSubpatchWindow::enable_poly_spinner()
 void
 LoadSubpatchWindow::ok_clicked()
 {
-	assert(m_patch_controller);
-	assert(m_patch_controller->model());
+	assert(m_patch);
 	
 	const string filename = get_filename();
 
@@ -144,25 +150,22 @@ LoadSubpatchWindow::ok_clicked()
 	if (m_poly_from_user_radio->get_active())
 		poly = m_poly_spinbutton->get_value_as_int();
 	else if (m_poly_from_parent_radio->get_active())
-		poly = m_patch_controller->patch_model()->poly();
+		poly = m_patch->poly();
 
 	if (m_new_module_x == 0 && m_new_module_y == 0) {
-		m_patch_controller->get_view()->canvas()->get_new_module_location(
-			m_new_module_x, m_new_module_y);
+		throw; // FIXME
+		//m_patch_controller->get_view()->canvas()->get_new_module_location(
+		//	m_new_module_x, m_new_module_y);
 	}
 
-	CountedPtr<PatchModel> pm(new PatchModel(m_patch_controller->model()->path().base() + name, poly));
+	CountedPtr<PatchModel> pm(new PatchModel(m_patch->path().base() + name, poly));
 	pm->filename(filename);
-	pm->set_parent(m_patch_controller->model());
-	pm->x(m_new_module_x);
-	pm->y(m_new_module_y);
-	//if (name == "")
-	//	pm->set_path("");
-	char temp_buf[16];
-	snprintf(temp_buf, 16, "%16f", m_new_module_x);
-	pm->set_metadata("module-x", temp_buf);
-	snprintf(temp_buf, 16, "%16f", m_new_module_y);
-	pm->set_metadata("module-y", temp_buf);
+	// FIXME: necessary?
+	//pm->set_parent(m_patch);
+	
+	pm->set_metadata("module-x", Atom((float)m_new_module_x));
+	pm->set_metadata("module-y", Atom((float)m_new_module_y));
+	
 	App::instance().loader()->load_patch(pm, true, false);
 
 	App::instance().configuration()->set_patch_folder(pm->filename().substr(0, pm->filename().find_last_of("/")));

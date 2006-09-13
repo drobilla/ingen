@@ -21,7 +21,6 @@
 #include "NodeModel.h"
 #include "PortModel.h"
 #include "ControlGroups.h"
-#include "PatchController.h"
 
 namespace Ingenuity {
 
@@ -52,12 +51,10 @@ ControlPanel::~ControlPanel()
 
 
 void
-ControlPanel::init(NodeController* node, size_t poly)
+ControlPanel::init(CountedPtr<NodeModel> node, size_t poly)
 {
 	assert(node != NULL);
 	assert(poly > 0);
-	
-	const CountedPtr<NodeModel> node_model(node->node_model());
 	
 	if (poly > 1) {
 		m_voice_spinbutton->set_range(0, poly - 1);
@@ -65,8 +62,7 @@ ControlPanel::init(NodeController* node, size_t poly)
 		remove(*m_voice_control_box);
 	}
 
-	for (PortModelList::const_iterator i = node_model->ports().begin();
-			i != node_model->ports().end(); ++i) {
+	for (PortModelList::const_iterator i = node->ports().begin(); i != node->ports().end(); ++i) {
 		add_port(*i);
 	}
 	

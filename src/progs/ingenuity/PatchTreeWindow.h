@@ -29,7 +29,6 @@ using Ingen::Client::Store;
 namespace Ingenuity {
 
 class PatchWindow;
-class PatchController;
 class PatchTreeView;
 
 
@@ -50,7 +49,7 @@ public:
 	void patch_disabled(const Path& path);
 	void patch_renamed(const Path& old_path, const Path& new_path);
 
-	void add_patch(CountedPtr<PatchController> pc);
+	void add_patch(CountedPtr<PatchModel> pm);
 	void remove_patch(const Path& path);
 	void show_patch_menu(GdkEventButton* ev);
 
@@ -66,11 +65,11 @@ protected:
 	struct PatchTreeModelColumns : public Gtk::TreeModel::ColumnRecord
 	{
 		PatchTreeModelColumns()
-		{ add(name_col); add(enabled_col); add(patch_controller_col); }
+		{ add(name_col); add(enabled_col); add(patch_model_col); }
 		
 		Gtk::TreeModelColumn<Glib::ustring>                name_col;
 		Gtk::TreeModelColumn<bool>                         enabled_col;
-		Gtk::TreeModelColumn<CountedPtr<PatchController> > patch_controller_col;
+		Gtk::TreeModelColumn<CountedPtr<PatchModel> > patch_model_col;
 	};
 
 	bool                             m_enable_signal;

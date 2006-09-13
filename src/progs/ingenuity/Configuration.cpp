@@ -22,9 +22,7 @@
 #include <map>
 #include "PortModel.h"
 #include "PluginModel.h"
-#include "PatchController.h"
 #include "PatchModel.h"
-#include "OmFlowCanvas.h"
 #include "Loader.h"
 #include "App.h"
 

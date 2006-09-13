@@ -37,7 +37,7 @@ class DSSINode : public LADSPANode
 {
 public:
 
-	typedef map<int, string> Bank;
+	typedef std::map<int, string> Bank;
 	
 	DSSINode(const Plugin* plugin, const string& name, size_t poly, Patch* parent, DSSI_Descriptor* descriptor, SampleRate srate, size_t buffer_size);
 	~DSSINode();
@@ -57,7 +57,7 @@ public:
 
 	bool update_programs(bool send_events);
 	void set_default_program();
-	const map<int, Bank>& get_programs() const;
+	const std::map<int, Bank>& get_programs() const;
 
 	//void send_creation_messages(ClientInterface* client) const;
 
@@ -90,10 +90,10 @@ private:
 	lo_address _ui_addr;
 
 	// Current values
-	int                 _bank;
-	int                 _program;
-	map<string, string> _configures;
-	map<int, Bank>      _banks;
+	int                      _bank;
+	int                      _program;
+	std::map<string, string> _configures;
+	std::map<int, Bank>      _banks;
 
 	InputPort<MidiMessage>* _midi_in_port;
  	snd_seq_event_t*        _alsa_events;

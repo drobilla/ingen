@@ -112,7 +112,7 @@ public:
 	
 	virtual void set_metadata(const string& path,
 	                          const string& predicate,
-	                          const string& value) = 0;
+	                          const Atom&   value) = 0;
 	
 	// Requests //
 	

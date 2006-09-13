@@ -19,6 +19,7 @@
 
 #include <string>
 #include "QueuedEvent.h"
+#include "util/Atom.h"
 
 using std::string;
 
@@ -34,16 +35,16 @@ class GraphObject;
 class SetMetadataEvent : public QueuedEvent
 {
 public:
-	SetMetadataEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& key, const string& value);
+	SetMetadataEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& key, const Atom& value);
 	
 	void pre_process();
 	void execute(SampleCount nframes, FrameTime start, FrameTime end);
 	void post_process();
 
 private:
-	string    m_path;
-	string    m_key;
-	string    m_value;
+	string       m_path;
+	string       m_key;
+	Atom         m_value;
 	GraphObject* m_object;
 };
 

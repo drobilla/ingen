@@ -45,10 +45,6 @@ using namespace Ingen::Client;
 namespace Ingenuity {
 
 class PatchWindow;
-class GtkObjectController;
-class PatchController;
-class NodeController;
-class PortController;
 class LoadPatchWindow;
 class MessagesWindow;
 class ConfigWindow;

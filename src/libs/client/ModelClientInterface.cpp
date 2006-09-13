@@ -86,17 +86,17 @@ ModelClientInterface::new_patch(string path, uint32_t poly)
 
 
 void
-ModelClientInterface::new_node(string plugin_type,
-                               string plugin_uri,
-                               string node_path,
-                               bool          is_polyphonic,
-                               uint32_t      num_ports)
+ModelClientInterface::new_node(string   plugin_type,
+                               string   plugin_uri,
+                               string   node_path,
+                               bool     is_polyphonic,
+                               uint32_t num_ports)
 {
 	cerr << "FIXME: NEW NODE\n";
 	
 	CountedPtr<PluginModel> plugin(new PluginModel(plugin_type, plugin_uri));
 	
-	CountedPtr<NodeModel> nm(new NodeModel(plugin, node_path));
+	CountedPtr<NodeModel> nm(new NodeModel(plugin, node_path, is_polyphonic));
 
 	new_node_model(nm);
 }

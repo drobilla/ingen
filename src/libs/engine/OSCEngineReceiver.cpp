@@ -22,6 +22,7 @@
 #include "types.h"
 #include "util/Queue.h"
 #include "util/CountedPtr.h"
+#include "util/LibloAtom.h"
 #include "QueuedEventSource.h"
 #include "interface/ClientKey.h"
 #include "interface/ClientInterface.h"
@@ -106,7 +107,7 @@ OSCEngineReceiver::OSCEngineReceiver(CountedPtr<Engine> engine, size_t queue_siz
 #endif
 	
 	lo_server_add_method(_server, "/om/metadata/request", "isss", metadata_get_cb, this);
-	lo_server_add_method(_server, "/om/metadata/set", "isss", metadata_set_cb, this);
+	lo_server_add_method(_server, "/om/metadata/set", NULL, metadata_set_cb, this);
 	
 	// Queries
 	lo_server_add_method(_server, "/om/request/plugins", "i", request_plugins_cb, this);
@@ -758,9 +759,13 @@ OSCEngineReceiver::m_lash_restore_done_cb(const char* path, const char* types, l
 int
 OSCEngineReceiver::m_metadata_set_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
+	if (argc != 4 || types[0] != 'i' || types[1] != 's' || types[2] != 's')
+		return 1;
+
 	const char* node_path   = &argv[1]->s;
 	const char* key         = &argv[2]->s;
-	const char* value       = &argv[3]->s;
+	
+	Atom value = LibloAtom::lo_arg_to_atom(types[3], argv[3]);
 	
 	set_metadata(node_path, key, value);
 	

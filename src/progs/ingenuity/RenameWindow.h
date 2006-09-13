@@ -19,16 +19,14 @@
 
 #include <gtkmm.h>
 #include <libglademm.h>
-
+#include "util/CountedPtr.h"
+#include "ObjectModel.h"
+using Ingen::Client::ObjectModel;
 
 namespace Ingenuity {
 
-class GtkObjectController;
 
-
-/** 'New Patch' Window.
- *
- * Loaded by libglade as a derived object.
+/** Rename window.  Handles renaming of any (Ingen) object. 
  *
  * \ingroup Ingenuity
  */
@@ -37,14 +35,16 @@ class RenameWindow : public Gtk::Window
 public:
 	RenameWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& refGlade);
 
-	void set_object(GtkObjectController* object);
+	void present(CountedPtr<ObjectModel> object) { set_object(object); Gtk::Window::present(); }
 
 private:
+	void set_object(CountedPtr<ObjectModel> object);
+
 	void name_changed();
 	void cancel_clicked();
 	void ok_clicked();
 	
-	GtkObjectController* m_object;
+	CountedPtr<ObjectModel> m_object;
 
 	Gtk::Entry*      m_name_entry;
 	Gtk::Label*      m_message_label;

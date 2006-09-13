@@ -25,8 +25,6 @@
 #include "OSCClientReceiver.h"
 #include "ThreadedSigClientInterface.h"
 #include "Store.h"
-#include "ControllerFactory.h"
-#include "PatchController.h"
 #include "PatchModel.h"
 #include "App.h"
 #include "WindowFactory.h"
@@ -353,8 +351,7 @@ ConnectWindow::gtk_callback()
 		if (App::instance().store()->num_objects() > 0) {
 			CountedPtr<PatchModel> root = PtrCast<PatchModel>(App::instance().store()->object("/"));
 			assert(root);
-			CountedPtr<PatchController> root_c = PtrCast<PatchController>(ControllerFactory::get_controller(root));
-			App::instance().window_factory()->present(root_c);
+			App::instance().window_factory()->present_patch(root);
 			++stage;
 		}
 	} else if (stage == 8) {

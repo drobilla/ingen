@@ -24,19 +24,26 @@
 #include <algorithm>
 #include <cassert>
 #include <sigc++/sigc++.h>
+#include "util/Atom.h"
 #include "util/Path.h"
 #include "util/CountedPtr.h"
-#include "ObjectController.h"
 using std::string; using std::map; using std::find;
 using std::cout; using std::cerr; using std::endl;
 
 namespace Ingen {
 namespace Client {
 
-class ObjectController;
+typedef map<string, Atom> MetadataMap;
 
-	
+
 /** Base class for all GraphObject models (NodeModel, PatchModel, PortModel).
+ *
+ * There are no non-const public methods intentionally, models are not allowed
+ * to be manipulated directly by anything (but the Store) because of the
+ * asynchronous nature of engine control.  To change something, use the
+ * controller (which the model probably shouldn't have a reference to but oh
+ * well, it reduces Collection Hell) and wait for the result (as a signal
+ * from this Model).
  *
  * \ingroup IngenClient
  */
@@ -44,39 +51,39 @@ class ObjectModel
 {
 public:
 	ObjectModel(const Path& path);
-	ObjectModel() : m_path("/UNINITIALIZED") {} // FIXME: remove
 
 	virtual ~ObjectModel();
-	
-	const map<string, string>& metadata() const { return m_metadata; }
-	string get_metadata(const string& key) const;
-	void   set_metadata(const string& key, const string& value)
-		{ assert(value.length() > 0); m_metadata[key] = value; metadata_update_sig.emit(key, value); }
-	
-	inline const Path& path() const            { return m_path; }
-	virtual void       set_path(const Path& p) { m_path = p; }
-	
-	CountedPtr<ObjectModel> parent() const             { return m_parent; }
-	virtual void  set_parent(CountedPtr<ObjectModel> p) { m_parent = p; }
-	
-	virtual void add_child(CountedPtr<ObjectModel> c) = 0;
-	virtual void remove_child(CountedPtr<ObjectModel> c) = 0;
 
-	CountedPtr<ObjectController> controller() const { return m_controller; }
-	
-	void set_controller(CountedPtr<ObjectController> c);
+	const Atom& get_metadata(const string& key) const;
+	void        add_metadata(const MetadataMap& data);
+
+	const MetadataMap&      metadata() const { return _metadata; }
+	inline const Path&      path()     const { return _path; }
+	CountedPtr<ObjectModel> parent()   const { return _parent; }
 
 	void assimilate(CountedPtr<ObjectModel> model);
 
 	// Signals
-	sigc::signal<void, const string&, const string&> metadata_update_sig; 
-	sigc::signal<void>                               destroyed_sig; 
-protected:
-	Path                         m_path;
-	CountedPtr<ObjectModel>      m_parent;
-	CountedPtr<ObjectController> m_controller;
+	sigc::signal<void, const string&, const Atom&> metadata_update_sig; 
+	sigc::signal<void>                             destroyed_sig; 
 	
-	map<string,string> m_metadata;
+	// FIXME: make private
+	void set_metadata(const string& key, const Atom& value)
+		{ _metadata[key] = value; metadata_update_sig.emit(key, value); }
+
+
+protected:
+	friend class Store;
+	friend class PatchLibrarian; // FIXME: remove
+	virtual void set_path(const Path& p)               { _path = p; }
+	virtual void set_parent(CountedPtr<ObjectModel> p) { _parent = p; }
+	virtual void add_child(CountedPtr<ObjectModel> c) = 0;
+	virtual void remove_child(CountedPtr<ObjectModel> c) = 0;
+
+	Path                         _path;
+	CountedPtr<ObjectModel>      _parent;
+	
+	MetadataMap _metadata;
 
 private:
 	// Prevent copies (undefined)

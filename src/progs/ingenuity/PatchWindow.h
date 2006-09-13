@@ -24,13 +24,15 @@
 #include <libglademm.h>
 #include "util/Path.h"
 #include "util/CountedPtr.h"
-#include "PatchController.h"
+#include "PatchModel.h"
+#include "PatchView.h"
+using Ingen::Client::PatchModel;
+
 using std::string; using std::list;
 
 
 namespace Ingen { namespace Client {
 	class PatchModel;
-	class NodeModel;
 	class PortModel;
 	class ControlModel;
 	class MetadataModel;
@@ -40,7 +42,6 @@ using namespace Ingen::Client;
 
 namespace Ingenuity {
 	
-class PatchController;
 class OmFlowCanvas;
 class LoadPluginWindow;
 class LoadPatchWindow;
@@ -64,13 +65,10 @@ public:
 	PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml);
 	~PatchWindow();
 	
-	void set_patch_from_path(const Path& path);
-	void set_patch(CountedPtr<PatchController> pc);
+	void set_patch_from_path(const Path& path, CountedPtr<PatchView> view);
+	void set_patch(CountedPtr<PatchModel> pc, CountedPtr<PatchView> view);
 
-	CountedPtr<PatchController> patch_controller()     const { return m_patch; }
-	LoadPluginWindow*           load_plugin_window()   const { return m_load_plugin_window; }
-	LoadSubpatchWindow*         load_subpatch_window() const { return m_load_subpatch_window; }
-	NewSubpatchWindow*          new_subpatch_window()  const { return m_new_subpatch_window; }
+	CountedPtr<PatchModel> patch()     const { return m_patch; }
 
 	Gtk::MenuItem* menu_view_control_window() { return m_menu_view_control_window; }
 
@@ -93,12 +91,8 @@ private:
 	void event_show_controls();
 	void event_show_engine();
 
-	CountedPtr<PatchController> m_patch;
-
-	LoadPluginWindow*       m_load_plugin_window;
-	LoadPatchWindow*        m_load_patch_window;
-	NewSubpatchWindow*      m_new_subpatch_window;
-	LoadSubpatchWindow*     m_load_subpatch_window;
+	CountedPtr<PatchModel> m_patch;
+	CountedPtr<PatchView>  m_view;
 	
 	bool m_enable_signal;
 	bool m_position_stored;

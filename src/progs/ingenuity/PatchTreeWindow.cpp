@@ -18,7 +18,6 @@
 #include "ModelEngineInterface.h"
 #include "OSCEngineSender.h"
 #include "PatchTreeWindow.h"
-#include "PatchController.h"
 #include "PatchWindow.h"
 #include "Store.h"
 #include "SubpatchModule.h"
@@ -77,15 +76,13 @@ PatchTreeWindow::new_object(CountedPtr<ObjectModel> object)
 {
 	CountedPtr<PatchModel> patch = PtrCast<PatchModel>(object);
 	if (patch)
-		add_patch(PtrCast<PatchController>(patch->controller()));
+		add_patch(patch);
 }
 
 
 void
-PatchTreeWindow::add_patch(CountedPtr<PatchController> pc)
+PatchTreeWindow::add_patch(CountedPtr<PatchModel> pm)
 {
-	const CountedPtr<PatchModel> pm = pc->patch_model();
-
 	if (!pm->parent()) {
 		Gtk::TreeModel::iterator iter = m_patch_treestore->append();
 		Gtk::TreeModel::Row row = *iter;
@@ -101,7 +98,7 @@ PatchTreeWindow::add_patch(CountedPtr<PatchController> pc)
 			row[m_patch_tree_columns.name_col] = pm->path().name();
 		}
 		row[m_patch_tree_columns.enabled_col] = false;
-		row[m_patch_tree_columns.patch_controller_col] = pc;
+		row[m_patch_tree_columns.patch_model_col] = pm;
 		m_patches_treeview->expand_row(m_patch_treestore->get_path(iter), true);
 	} else {
 		Gtk::TreeModel::Children children = m_patch_treestore->children();
@@ -112,7 +109,7 @@ PatchTreeWindow::add_patch(CountedPtr<PatchController> pc)
 			Gtk::TreeModel::Row row = *iter;
 			row[m_patch_tree_columns.name_col] = pm->path().name();
 			row[m_patch_tree_columns.enabled_col] = false;
-			row[m_patch_tree_columns.patch_controller_col] = pc;
+			row[m_patch_tree_columns.patch_model_col] = pm;
 			m_patches_treeview->expand_row(m_patch_treestore->get_path(iter), true);
 		}
 	}
@@ -132,8 +129,8 @@ Gtk::TreeModel::iterator
 PatchTreeWindow::find_patch(Gtk::TreeModel::Children root, const Path& path)
 {
 	for (Gtk::TreeModel::iterator c = root.begin(); c != root.end(); ++c) {
-		CountedPtr<PatchController> pc = (*c)[m_patch_tree_columns.patch_controller_col];
-		if (pc->model()->path() == path) {
+		CountedPtr<PatchModel> pm = (*c)[m_patch_tree_columns.patch_model_col];
+		if (pm->path() == path) {
 			return c;
 		} else if ((*c)->children().size() > 0) {
 			Gtk::TreeModel::iterator ret = find_patch(c->children(), path);
@@ -151,7 +148,7 @@ PatchTreeWindow::event_patch_selected()
 	Gtk::TreeModel::iterator active = m_patch_tree_selection->get_selected();
 	if (active) {
 		Gtk::TreeModel::Row row = *active;
-		CountedPtr<PatchController> pc = row[m_patch_tree_columns.patch_controller_col];
+		CountedPtr<PatchModel> pm = row[m_patch_tree_columns.patch_model_col];
 	}
 }
 */
@@ -165,9 +162,10 @@ PatchTreeWindow::show_patch_menu(GdkEventButton* ev)
 	Gtk::TreeModel::iterator active = m_patch_tree_selection->get_selected();
 	if (active) {
 		Gtk::TreeModel::Row row = *active;
-		CountedPtr<PatchController> pc = row[m_patch_tree_columns.patch_controller_col];
-		if (pc)
-			pc->show_menu(ev);
+		CountedPtr<PatchModel> pm = row[m_patch_tree_columns.patch_model_col];
+		if (pm)
+			cerr << "FIXME: patch menu\n";
+			//pm->show_menu(ev);
 	}
 }
 
@@ -177,9 +175,10 @@ PatchTreeWindow::event_patch_activated(const Gtk::TreeModel::Path& path, Gtk::Tr
 {
 	Gtk::TreeModel::iterator active = m_patch_treestore->get_iter(path);
 	Gtk::TreeModel::Row row = *active;
-	CountedPtr<PatchController> pc = row[m_patch_tree_columns.patch_controller_col];
+	CountedPtr<PatchModel> pm = row[m_patch_tree_columns.patch_model_col];
 	
-	App::instance().window_factory()->present(pc);
+	cerr << "FIXME: tree win show\n";
+	//App::instance().window_factory()->present(pc);
 }
 
 
@@ -190,12 +189,12 @@ PatchTreeWindow::event_patch_enabled_toggled(const Glib::ustring& path_str)
 	Gtk::TreeModel::iterator active = m_patch_treestore->get_iter(path);
 	Gtk::TreeModel::Row row = *active;
 	
-	CountedPtr<PatchController> pc = row[m_patch_tree_columns.patch_controller_col];
-	Glib::ustring patch_path = pc->model()->path();
+	CountedPtr<PatchModel> pm = row[m_patch_tree_columns.patch_model_col];
+	Glib::ustring patch_path = pm->path();
 	
-	assert(pc);
+	assert(pm);
 	
-	if ( ! pc->patch_model()->enabled()) {
+	if ( ! pm->enabled()) {
 		if (m_enable_signal)
 			App::instance().engine()->enable_patch(patch_path);
 		//pc->enable();

@@ -18,6 +18,7 @@
 #define CLIENTINTERFACE_H
 
 #include <inttypes.h>
+#include "util/Atom.h"
 #include <string>
 using std::string;
 
@@ -91,7 +92,7 @@ public:
 	
 	virtual void metadata_update(string subject_path,
 	                             string predicate,
-	                             string value) = 0;
+	                             Atom   value) = 0;
 	
 	virtual void control_change(string port_path,
 	                            float  value) = 0;

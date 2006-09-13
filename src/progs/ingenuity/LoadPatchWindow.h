@@ -22,12 +22,12 @@
 #include <libglademm/xml.h>
 #include <gtkmm.h>
 #include "util/CountedPtr.h"
-#include "PatchController.h"
+#include "PatchModel.h"
+using Ingen::Client::PatchModel;
+using Ingen::Client::MetadataMap;
 
 namespace Ingenuity {
 	
-class PatchController;
-
 
 /** 'Load Patch' window.
  *
@@ -44,10 +44,12 @@ class LoadPatchWindow : public Gtk::FileChooserDialog
 public:
 	LoadPatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml);
 
-	void set_patch(CountedPtr<PatchController> pc);
+	void set_patch(CountedPtr<PatchModel> patch);
 
 	void set_replace() { m_replace = true; }
 	void set_merge()   { m_replace = false; }
+
+	void present(CountedPtr<PatchModel> patch, MetadataMap data);
 
 protected:
 	void on_show();
@@ -58,8 +60,10 @@ private:
 	void ok_clicked();
 	void cancel_clicked();
 
-	CountedPtr<PatchController> m_patch_controller;
-	bool                        m_replace;
+	MetadataMap m_initial_data;
+
+	CountedPtr<PatchModel> m_patch;
+	bool                   m_replace;
 
 	Gtk::RadioButton* m_poly_from_current_radio;
 	Gtk::RadioButton* m_poly_from_file_radio;

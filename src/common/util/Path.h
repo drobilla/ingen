@@ -76,6 +76,10 @@ public:
 	
 		assert(path.find_last_of("/") != string::npos);
 		
+		// Double slash not allowed
+		if (path.find("//") != string::npos)
+			return false;
+
 		// All characters must be printable ASCII
 		for (size_t i=0; i < path.length(); ++i)
 			if (path.at(i) < 32 || path.at(i) > 126)

@@ -21,7 +21,6 @@
 #include "App.h"
 #include "ModelEngineInterface.h"
 #include "OmFlowCanvas.h"
-#include "PatchController.h"
 #include "LoadPluginWindow.h"
 #include "PatchModel.h"
 #include "NewSubpatchWindow.h"
@@ -36,7 +35,6 @@
 #include "Store.h"
 #include "ConnectWindow.h"
 #include "Loader.h"
-#include "ControllerFactory.h"
 #include "WindowFactory.h"
 #include "PatchView.h"
 
@@ -45,8 +43,6 @@ namespace Ingenuity {
 
 PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 : Gtk::Window(cobject),
-  m_load_plugin_window(NULL),
-  m_new_subpatch_window(NULL),
   m_enable_signal(true),
   m_position_stored(false),
   m_x(0),
@@ -75,17 +71,7 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 	xml->get_widget("patch_view_messages_window_menuitem", m_menu_view_messages_window);
 	xml->get_widget("patch_view_patch_tree_window_menuitem", m_menu_view_patch_tree_window);
 	xml->get_widget("patch_help_about_menuitem", m_menu_help_about);
-	
-	// FIXME: these shouldn't be loaded here
-	xml->get_widget_derived("load_plugin_win", m_load_plugin_window);
-	xml->get_widget_derived("new_subpatch_win", m_new_subpatch_window);
-	xml->get_widget_derived("load_patch_win", m_load_patch_window);
-	xml->get_widget_derived("load_subpatch_win", m_load_subpatch_window);
 
-	m_new_subpatch_window->set_transient_for(*this);
-	m_load_patch_window->set_transient_for(*this);
-	m_load_subpatch_window->set_transient_for(*this);
-	
 	m_menu_view_control_window->property_sensitive() = false;
 	//m_status_bar->push(App::instance().engine()->engine_url());
 	//m_status_bar->pack_start(*Gtk::manage(new Gtk::Image(Gtk::Stock::CONNECT, Gtk::ICON_SIZE_MENU)), false, false);
@@ -134,14 +120,10 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 PatchWindow::~PatchWindow()
 {
 	// Prevents deletion
-	m_patch->claim_patch_view();
+	//m_patch->claim_patch_view();
 
 	App::instance().remove_patch_window(this);
 
-	hide();
-	
-	delete m_new_subpatch_window;
-	delete m_load_subpatch_window;
 	delete m_breadcrumb_box;
 }
 
@@ -149,84 +131,63 @@ PatchWindow::~PatchWindow()
 /** Set the patch controller from a Path (for use by eg. BreadCrumbBox)
  */
 void 
-PatchWindow::set_patch_from_path(const Path& path)
+PatchWindow::set_patch_from_path(const Path& path, CountedPtr<PatchView> view)
 {	
-	CountedPtr<PatchModel> model = PtrCast<PatchModel>(App::instance().store()->object(path));
-	if (!model)
-		return; // can't really do anything useful..
-	
-	CountedPtr<PatchController> pc = PtrCast<PatchController>(ControllerFactory::get_controller(model));
-	assert(pc);
-
-	App::instance().window_factory()->present(pc, this);
+	if (view) {
+		assert(view->patch()->path() == path);
+		App::instance().window_factory()->present_patch(view->patch(), this, view);
+	} else {
+		CountedPtr<PatchModel> model = PtrCast<PatchModel>(App::instance().store()->object(path));
+		if (model)
+			App::instance().window_factory()->present_patch(model, this);
+	}
 }
 
 
 /** Sets the patch controller for this window and initializes everything.
  *
- * This function MUST be called before using the window in any way!
+ * If @a view is NULL, a new view will be created.
  */
 void
-PatchWindow::set_patch(CountedPtr<PatchController> pc)
+PatchWindow::set_patch(CountedPtr<PatchModel> patch, CountedPtr<PatchView> view)
 {
-	if (!pc || pc == m_patch)
+	if (!patch || patch == m_patch)
 		return;
 
 	m_enable_signal = false;
 
-	if (m_patch) {
-		CountedPtr<PatchController> old_pc = m_patch;
-		assert(old_pc->window() == NULL || old_pc->window() == this);
-		old_pc->claim_patch_view();
-		old_pc->window(NULL);
-	}
+	m_patch = patch;
 
-	m_patch = pc;
-
-	CountedPtr<PatchView> patch_view = pc->get_view();
-	assert(patch_view);
-	patch_view->reparent(*m_viewport);
-
-	if (m_breadcrumb_box->get_parent())
-		m_breadcrumb_box->reparent(*patch_view->breadcrumb_container());
-	else
-		patch_view->breadcrumb_container()->add(*m_breadcrumb_box);
-
-	m_breadcrumb_box->build(pc->model()->path());
-	m_breadcrumb_box->show();
-	pc->window(this);
-	show_all();
-
-	assert(m_load_plugin_window != NULL);
-	assert(m_new_subpatch_window != NULL);
-	assert(m_load_patch_window != NULL);
-	assert(m_load_subpatch_window != NULL);
-
-	m_load_patch_window->set_patch(m_patch);
-	m_load_plugin_window->set_patch(m_patch);
-	m_new_subpatch_window->set_patch(m_patch);
-	m_load_subpatch_window->set_patch(m_patch);
+	m_view = view ? view : PatchView::create(patch);
+	assert(m_view);
 	
-	m_menu_view_control_window->property_sensitive() = pc->has_control_inputs();
+	m_viewport->remove();
+	m_viewport->add(*m_view.get());
+
+	m_view->breadcrumb_container()->remove();
+	m_view->breadcrumb_container()->add(*m_breadcrumb_box);
+
+	m_breadcrumb_box->build(patch->path(), m_view);
+	m_breadcrumb_box->show();
+	show_all();	
+
+	//m_menu_view_control_window->property_sensitive() = patch->has_control_inputs();
 
 	int width, height;
 	get_size(width, height);
-	patch_view->canvas()->scroll_to(
-			((int)patch_view->canvas()->width() - width)/2,
-			((int)patch_view->canvas()->height() - height)/2);
+	m_view->canvas()->scroll_to(
+			((int)m_view->canvas()->width() - width)/2,
+			((int)m_view->canvas()->height() - height)/2);
 
-	set_title(m_patch->model()->path());
+	set_title(m_patch->path());
 
 	//m_properties_window->patch_model(pc->patch_model());
 
-	if (pc->model()->path() == "/")
+	if (patch->path() == "/")
 		m_menu_destroy_patch->set_sensitive(false);
 	else
 		m_menu_destroy_patch->set_sensitive(true);
 	
-	assert(m_patch == pc);
-	assert(m_patch->window() == this);
-
 	m_enable_signal = true;
 }
 
@@ -242,45 +203,31 @@ PatchWindow::event_show_engine()
 void
 PatchWindow::event_show_controls()
 {
-	if (m_patch)
-		m_patch->show_control_window();
+	App::instance().window_factory()->present_controls(m_patch);
 }
 
 
 void
 PatchWindow::event_show_properties()
 {
-	if (m_patch)
-		m_patch->show_properties_window();
+	App::instance().window_factory()->present_properties(m_patch);
 }
 
-
-/*
-void
-PatchWindow::event_open()
-{
-	m_load_patch_window->set_replace();
-	m_load_patch_window->present();
-}
-*/
 
 void
 PatchWindow::event_import()
 {
-	m_load_patch_window->set_merge();
-	m_load_patch_window->present();
+	App::instance().window_factory()->present_load_patch(m_patch);
 }
 
 
 void
 PatchWindow::event_save()
 {
-	CountedPtr<PatchModel> model(m_patch->patch_model().get());
-	
-	if (model->filename() == "")
+	if (m_patch->filename() == "")
 		event_save_as();
 	else
-		App::instance().loader()->save_patch(model, model->filename(), false);
+		App::instance().loader()->save_patch(m_patch, m_patch->filename(), false);
 }
 
 
@@ -301,7 +248,7 @@ PatchWindow::event_save_as()
 	dialog.add_button(Gtk::Stock::SAVE, Gtk::RESPONSE_OK);	
 	
 	// Set current folder to most sensible default
-	const string& current_filename = m_patch->patch_model()->filename();
+	const string& current_filename = m_patch->filename();
 	if (current_filename.length() > 0)
 		dialog.set_filename(current_filename);
 	else if (App::instance().configuration()->patch_folder().length() > 0)
@@ -335,8 +282,8 @@ PatchWindow::event_save_as()
 		fin.close();
 		
 		if (confirm) {
-			App::instance().loader()->save_patch(m_patch->patch_model(), filename, recursive);
-			m_patch->patch_model()->filename(filename);
+			App::instance().loader()->save_patch(m_patch, filename, recursive);
+			m_patch->filename(filename);
 		}
 	}
 	App::instance().configuration()->set_patch_folder(dialog.get_current_folder());
@@ -367,10 +314,12 @@ bool
 PatchWindow::on_key_press_event(GdkEventKey* event)
 {
 	if (event->keyval == GDK_Delete) {
+		cerr << "FIXME: delete key\n";
+		/*
 		if (m_patch && m_patch->get_view()) {
 			assert(m_patch->get_view()->canvas());
 			m_patch->get_view()->canvas()->destroy_selected();
-		}
+		}*/
 		return true;
 	} else {
 		return Gtk::Window::on_key_press_event(event);
@@ -409,14 +358,14 @@ PatchWindow::event_quit()
 void
 PatchWindow::event_destroy()
 {
-	App::instance().engine()->destroy(m_patch->model()->path());
+	App::instance().engine()->destroy(m_patch->path());
 }
 
 
 void
 PatchWindow::event_clear()
 {
-	App::instance().engine()->clear_patch(m_patch->model()->path());
+	App::instance().engine()->clear_patch(m_patch->path());
 }
 
 void

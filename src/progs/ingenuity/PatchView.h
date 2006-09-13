@@ -21,12 +21,12 @@
 #include <gtkmm.h>
 #include <libglademm/xml.h>
 #include <libglademm.h>
+#include "util/CountedPtr.h"
+#include "PatchModel.h"
 
 using std::string;
 
 namespace Ingen { namespace Client {
-	class PatchModel;
-	class NodeModel;
 	class PortModel;
 	class ControlModel;
 	class MetadataModel;
@@ -36,7 +36,6 @@ using namespace Ingen::Client;
 
 namespace Ingenuity {
 	
-class PatchController;
 class OmFlowCanvas;
 class LoadPluginWindow;
 class NewSubpatchWindow;
@@ -56,28 +55,29 @@ class PatchView : public Gtk::Box
 {
 public:
 	PatchView(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml);
+	~PatchView();
+
+	OmFlowCanvas*          canvas()               const { return _canvas; }
+	CountedPtr<PatchModel> patch()                const { return _patch; }
+	Gtk::Viewport*         breadcrumb_container() const { return _breadcrumb_container; }
+
+	static CountedPtr<PatchView> create(CountedPtr<PatchModel> patch);
+
+private:
+	void set_patch(CountedPtr<PatchModel> patch);
+
+	void process_toggled();
+	void clear_clicked();
 	
-	void patch_controller(PatchController* pc);
-
-	OmFlowCanvas*    canvas() const           { return _canvas; }
-	PatchController* patch_controller() const { return _patch; }
-	Gtk::Viewport*   breadcrumb_container() const { return _breadcrumb_container; }
-	void show_control_window();
-
-
 	void enable();
 	void disable();
 
 	void zoom_full();
 
-private:
-	void process_toggled();
-	void clear_clicked();
-
-	PatchController*     _patch;
-	OmFlowCanvas*        _canvas;
+	CountedPtr<PatchModel> _patch;
+	OmFlowCanvas*          _canvas;
 	
-	Gtk::ScrolledWindow*   _canvas_scrolledwindow;
+	Gtk::ScrolledWindow* _canvas_scrolledwindow;
 
 	Gtk::ToggleToolButton*  _process_but;
 	Gtk::SpinButton*        _poly_spin;

@@ -258,7 +258,7 @@ ClientBroadcaster::send_patch_disable(const string& patch_path)
  * Like control changes, does not send update to client that set the metadata, if applicable.
  */
 void
-ClientBroadcaster::send_metadata_update(const string& node_path, const string& key, const string& value)
+ClientBroadcaster::send_metadata_update(const string& node_path, const string& key, const Atom& value)
 {
 	for (ClientList::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
 		(*i).second->metadata_update(node_path, key, value);

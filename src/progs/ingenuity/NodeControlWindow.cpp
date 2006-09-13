@@ -16,7 +16,7 @@
 
 #include "NodeControlWindow.h"
 #include "GladeFactory.h"
-#include "NodeController.h"
+#include "NodeModel.h"
 #include "ControlGroups.h"
 #include "ControlPanel.h"
 #include "PatchWindow.h"
@@ -29,7 +29,7 @@ namespace Ingenuity {
 
 /** Create a node control window and load a new ControlPanel for it.
  */
-NodeControlWindow::NodeControlWindow(NodeController* node, size_t poly)
+NodeControlWindow::NodeControlWindow(CountedPtr<NodeModel> node, size_t poly)
 : m_node(node),
   m_position_stored(false),
   m_x(0), m_y(0)
@@ -59,11 +59,11 @@ NodeControlWindow::NodeControlWindow(NodeController* node, size_t poly)
 
 /** Create a node control window and with an existing ControlPanel.
  */
-NodeControlWindow::NodeControlWindow(NodeController* node, ControlPanel* panel)
+NodeControlWindow::NodeControlWindow(CountedPtr<NodeModel> node, ControlPanel* panel)
 : m_node(node),
   m_control_panel(panel)
 {
-	assert(m_node != NULL);
+	assert(m_node);
 	
 	property_resizable() = true;
 	set_border_width(5);

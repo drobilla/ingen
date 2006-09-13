@@ -39,11 +39,13 @@ namespace Client {
 class PatchModel : public NodeModel
 {
 public:
-	PatchModel(const string& patch_path, uint poly)
-	: NodeModel("ingen:patch", patch_path),
+	PatchModel(const string& patch_path, size_t internal_poly)
+	: NodeModel("ingen:patch", patch_path, false ), // FIXME
 	  m_enabled(false),
-	  m_poly(poly)
-	{}
+	  m_poly(internal_poly)
+	{
+		cerr << "FIXME: patch poly\n";
+	}
 	
 	const NodeModelMap&                       nodes()       const { return m_nodes; }
 	const list<CountedPtr<ConnectionModel> >& connections() const { return m_connections; }
@@ -55,7 +57,7 @@ public:
 
 	CountedPtr<NodeModel> get_node(const string& node_name);
 	void                  add_node(CountedPtr<NodeModel> nm);
-	void                  remove_node(const string& name);
+	//void                  remove_node(const string& name);
 	void                  remove_node(CountedPtr<NodeModel> nm);
 
 	void rename_node(const Path& old_path, const Path& new_path);
@@ -77,12 +79,12 @@ public:
 	bool          polyphonic() const;
 	
 	// Signals
-	sigc::signal<void, CountedPtr<NodeModel> >        new_node_sig; 
-	sigc::signal<void, const string& >                removed_node_sig; 
-	sigc::signal<void, CountedPtr<ConnectionModel> >  new_connection_sig; 
-	sigc::signal<void, const string&, const string& > removed_connection_sig;
-	sigc::signal<void>                                enabled_sig;
-	sigc::signal<void>                                disabled_sig;
+	sigc::signal<void, CountedPtr<NodeModel> >       new_node_sig; 
+	sigc::signal<void, CountedPtr<NodeModel> >       removed_node_sig; 
+	sigc::signal<void, CountedPtr<ConnectionModel> > new_connection_sig; 
+	sigc::signal<void, const Path&, const Path& >    removed_connection_sig;
+	sigc::signal<void>                               enabled_sig;
+	sigc::signal<void>                               disabled_sig;
 
 private:
 	// Prevent copies (undefined)

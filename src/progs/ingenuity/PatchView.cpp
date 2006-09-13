@@ -21,7 +21,6 @@
 #include "App.h"
 #include "ModelEngineInterface.h"
 #include "OmFlowCanvas.h"
-#include "PatchController.h"
 #include "LoadPluginWindow.h"
 #include "PatchModel.h"
 #include "NewSubpatchWindow.h"
@@ -29,13 +28,13 @@
 #include "NodeControlWindow.h"
 #include "PatchPropertiesWindow.h"
 #include "PatchTreeWindow.h"
+#include "GladeFactory.h"
 
 namespace Ingenuity {
 
 
 PatchView::PatchView(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 : Gtk::Box(cobject),
-  _patch(NULL),
   _canvas(NULL),
   _breadcrumb_container(NULL),
   _enable_signal(true)
@@ -56,23 +55,27 @@ PatchView::PatchView(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::X
 
 
 void
-PatchView::patch_controller(PatchController* pc)
+PatchView::set_patch(CountedPtr<PatchModel> patch)
 {
-	_patch = pc;
-	_canvas = new OmFlowCanvas(pc, 1600*2, 1200*2);
+	cerr << "Creating view for " << patch->path() << endl;
+
+	assert(_breadcrumb_container); // ensure created
+
+	_patch = patch;
+	_canvas = new OmFlowCanvas(patch, 1600*2, 1200*2);
 
 	_canvas_scrolledwindow->add(*_canvas);
 
-	_poly_spin->set_value(pc->patch_model()->poly());
-	_destroy_but->set_sensitive(pc->path() != "/");
-	//_description_window->patch_model(pc->model());
-	
+	_poly_spin->set_value(patch->poly());
+	_destroy_but->set_sensitive(patch->path() != "/");
+	patch->enabled() ? enable() : disable();
 
-	pc->patch_model()->enabled_sig.connect(sigc::mem_fun(this, &PatchView::enable));
-	pc->patch_model()->disabled_sig.connect(sigc::mem_fun(this, &PatchView::disable));
-	
+	// Connect model signals to track state
+	patch->enabled_sig.connect(sigc::mem_fun(this, &PatchView::enable));
+	patch->disabled_sig.connect(sigc::mem_fun(this, &PatchView::disable));
+
+	// Connect widget signals to do things
 	_process_but->signal_toggled().connect(sigc::mem_fun(this, &PatchView::process_toggled));
-	
 	_clear_but->signal_clicked().connect(sigc::mem_fun(this, &PatchView::clear_clicked));
 
 	_zoom_normal_but->signal_clicked().connect(sigc::bind(sigc::mem_fun(
@@ -83,11 +86,22 @@ PatchView::patch_controller(PatchController* pc)
 }
 
 
-void
-PatchView::show_control_window()
+PatchView::~PatchView()
 {
-	if (_patch != NULL)
-		_patch->show_control_window();
+	cerr << "Destroying view for " << _patch->path() << endl;
+}
+
+
+CountedPtr<PatchView>
+PatchView::create(CountedPtr<PatchModel> patch)
+
+{
+	const Glib::RefPtr<Gnome::Glade::Xml>& xml = GladeFactory::new_glade_reference("patch_view_box");
+	PatchView* result = NULL;
+	xml->get_widget_derived("patch_view_box", result);
+	assert(result);
+	result->set_patch(patch);
+	return CountedPtr<PatchView>(result);
 }
 
 
@@ -98,11 +112,11 @@ PatchView::process_toggled()
 		return;
 
 	if (_process_but->get_active()) {
-		App::instance().engine()->enable_patch(_patch->model()->path());
-		App::instance().patch_tree()->patch_enabled(_patch->model()->path());
+		App::instance().engine()->enable_patch(_patch->path());
+		App::instance().patch_tree()->patch_enabled(_patch->path());
 	} else {
-		App::instance().engine()->disable_patch(_patch->model()->path());
-		App::instance().patch_tree()->patch_disabled(_patch->model()->path());
+		App::instance().engine()->disable_patch(_patch->path());
+		App::instance().patch_tree()->patch_disabled(_patch->path());
 	}
 }
 

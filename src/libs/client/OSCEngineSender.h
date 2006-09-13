@@ -126,7 +126,7 @@ public:
 
 	void set_metadata(const string& obj_path,
 	                  const string& predicate,
-	                  const string& value);
+	                  const Atom&   value);
 	
 	// Requests //
 	

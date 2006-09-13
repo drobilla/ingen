@@ -123,11 +123,10 @@ LADSPANode::instantiate()
 			((TypedPort<Sample>*)port)->set_value(0.0f, 0);
 		}
 
-		char tmp_buf[16];
-		snprintf(tmp_buf, 16, "%f", min);
-		port->set_metadata("min", tmp_buf);
-		snprintf(tmp_buf, 16, "%f", max);
-		port->set_metadata("max", tmp_buf);
+		if (port->is_input() && port->buffer_size() == 1) {
+			port->set_metadata("min", min);
+			port->set_metadata("max", max);
+		}
 	}
 
 	return true;

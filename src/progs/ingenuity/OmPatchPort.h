@@ -30,7 +30,6 @@ using std::string; using std::list;
 namespace Ingenuity {
 	
 class FlowCanvas;
-class PatchController;
 class PatchWindow;
 class OmPortModule;
 

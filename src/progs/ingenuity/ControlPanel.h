@@ -27,7 +27,6 @@
 #include <utility> // for pair<>
 #include "ControlGroups.h"
 #include "util/Path.h"
-#include "PortController.h"
 
 using std::vector; using std::string; using std::pair;
 using std::cerr; using std::cout; using std::endl;
@@ -39,9 +38,6 @@ namespace Ingen { namespace Client {
 using namespace Ingen::Client;
 
 namespace Ingenuity {
-
-class NodeController;
-class PortController;
 
 
 /** A group of controls for a node (or patch).
@@ -55,7 +51,7 @@ public:
 	ControlPanel(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml);
 	virtual ~ControlPanel();
 	
-	void init(NodeController* node, size_t poly);
+	void init(CountedPtr<NodeModel> node, size_t poly);
 
 	ControlGroup* find_port(const Path& path) const;
 

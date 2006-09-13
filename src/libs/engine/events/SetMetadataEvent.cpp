@@ -27,7 +27,7 @@ using std::string;
 namespace Ingen {
 
 
-SetMetadataEvent::SetMetadataEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& key, const string& value)
+SetMetadataEvent::SetMetadataEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& key, const Atom& value)
 : QueuedEvent(engine, responder, timestamp),
   m_path(path),
   m_key(key),

@@ -31,13 +31,13 @@ PatchModel::set_path(const Path& new_path)
 {
 	// FIXME: haack
 	if (new_path == "") {
-		m_path = "";
+		_path = "";
 		return;
 	}
 
 	NodeModel::set_path(new_path);
 	for (NodeModelMap::iterator i = m_nodes.begin(); i != m_nodes.end(); ++i)
-		(*i).second->set_path(m_path +"/"+ (*i).second->path().name());
+		(*i).second->set_path(_path +"/"+ (*i).second->path().name());
 	
 #ifdef DEBUG
 	// Be sure connection paths are updated and sane
@@ -72,7 +72,7 @@ PatchModel::add_child(CountedPtr<ObjectModel> c)
 void
 PatchModel::remove_child(CountedPtr<ObjectModel> c)
 {
-	assert(c->path().is_child_of(m_path));
+	assert(c->path().is_child_of(_path));
 	assert(c->parent().get() == this);
 
 	CountedPtr<PortModel> pm = PtrCast<PortModel>(c);
@@ -102,13 +102,13 @@ void
 PatchModel::add_node(CountedPtr<NodeModel> nm)
 {
 	assert(nm);
-	assert(nm->path().is_child_of(m_path));
+	assert(nm->path().is_child_of(_path));
 	assert(nm->parent().get() == this);
 	
 	NodeModelMap::iterator existing = m_nodes.find(nm->path().name());
 
 	if (existing != m_nodes.end()) {
-		cerr << "Warning: node clash, assimilating old node " << m_path << endl;
+		cerr << "Warning: node clash, assimilating old node " << _path << endl;
 		nm->assimilate((*existing).second);
 		(*existing).second = nm;
 	} else {
@@ -121,23 +121,23 @@ PatchModel::add_node(CountedPtr<NodeModel> nm)
 void
 PatchModel::remove_node(CountedPtr<NodeModel> nm)
 {
-	assert(nm->path().is_child_of(m_path));
+	assert(nm->path().is_child_of(_path));
 	assert(nm->parent().get() == this);
 
 	NodeModelMap::iterator i = m_nodes.find(nm->path().name());
 	if (i != m_nodes.end()) {
 		assert(i->second == nm);
 		m_nodes.erase(i);
-		removed_node_sig.emit(nm->path().name());
+		removed_node_sig.emit(nm);
 		i->second->parent().reset();
 		return;
 	}
 	
-	cerr << "[PatchModel::remove_node] " << m_path
+	cerr << "[PatchModel::remove_node] " << _path
 		<< ": failed to find node " << nm->path().name() << endl;
 }
 
-
+#if 0
 void
 PatchModel::remove_node(const string& name)
 {
@@ -151,9 +151,9 @@ PatchModel::remove_node(const string& name)
 		return;
 	}
 	
-	cerr << "[PatchModel::remove_node] " << m_path << ": failed to find node " << name << endl;
+	cerr << "[PatchModel::remove_node] " << _path << ": failed to find node " << name << endl;
 }
-
+#endif
 
 void
 PatchModel::clear()
@@ -204,7 +204,7 @@ PatchModel::rename_node(const Path& old_path, const Path& new_path)
 		return;
 	}
 	
-	cerr << "[PatchModel::rename_node] " << m_path << ": failed to find node " << old_path << endl;
+	cerr << "[PatchModel::rename_node] " << _path << ": failed to find node " << old_path << endl;
 }
 
 
@@ -229,8 +229,8 @@ void
 PatchModel::add_connection(CountedPtr<ConnectionModel> cm)
 {
 	assert(cm);
-	//assert(cm->src_port_path().parent().parent() == m_path);
-	//assert(cm->dst_port_path().parent().parent() == m_path);
+	//assert(cm->src_port_path().parent().parent() == _path);
+	//assert(cm->dst_port_path().parent().parent() == _path);
 	assert(cm->patch_path() == path());
 	
 	//cerr << "PatchModel::add_connection: " << cm->src_port_path() << " -> " << cm->dst_port_path() << endl;
@@ -314,9 +314,9 @@ PatchModel::disable()
 bool
 PatchModel::polyphonic() const
 {
-	return (!m_parent)
+	return (!_parent)
 		? (m_poly > 1)
-		: (m_poly > 1) && m_poly == ((PatchModel*)m_parent.get())->poly() && m_poly > 1;
+		: (m_poly > 1) && m_poly == ((PatchModel*)_parent.get())->poly() && m_poly > 1;
 }
 
 

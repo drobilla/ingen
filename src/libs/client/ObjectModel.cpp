@@ -21,34 +21,38 @@ namespace Client {
 
 
 ObjectModel::ObjectModel(const Path& path)
-: m_path(path)
+: _path(path)
 {
 }
+
 
 ObjectModel::~ObjectModel()
 {
-	m_controller.reset();
 }
 
-/** Get a piece of metadata for this objeect.
+/** Get a piece of metadata for this object.
  *
  * @return Metadata value with key @a key, empty string otherwise.
  */
-string
+const Atom&
 ObjectModel::get_metadata(const string& key) const
 {
-	map<string,string>::const_iterator i = m_metadata.find(key);
-	if (i != m_metadata.end())
+	static const Atom null_atom;
+
+	MetadataMap::const_iterator i = _metadata.find(key);
+	if (i != _metadata.end())
 		return i->second;
 	else
-		return "";
+		return null_atom;
 }
 
 
 void
-ObjectModel::set_controller(CountedPtr<ObjectController> c)
+ObjectModel::add_metadata(const MetadataMap& data)
 {
-	m_controller = c;
+	for (MetadataMap::const_iterator i = data.begin(); i != data.end(); ++i) {
+		_metadata[i->first] = i->second;
+	}
 }
 
 
@@ -60,13 +64,13 @@ ObjectModel::set_controller(CountedPtr<ObjectController> c)
 void
 ObjectModel::assimilate(CountedPtr<ObjectModel> model)
 {
-	assert(m_path == model->path());
+	assert(_path == model->path());
 
-	for (map<string,string>::const_iterator i = model->metadata().begin();
+	for (MetadataMap::const_iterator i = model->metadata().begin();
 			i != model->metadata().end(); ++i) {
-		map<string,string>::const_iterator i = m_metadata.find(i->first);
-		if (i == m_metadata.end())
-			m_metadata[i->first] = i->second;
+		MetadataMap::const_iterator i = _metadata.find(i->first);
+		if (i == _metadata.end())
+			_metadata[i->first] = i->second;
 	}
 }
 

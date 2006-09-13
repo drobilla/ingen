@@ -20,8 +20,7 @@
 #include <gtkmm.h>
 #include <libglademm.h>
 #include "util/CountedPtr.h"
-
-namespace Ingen { namespace Client { class NodeModel; } }
+#include "NodeModel.h"
 using namespace Ingen::Client;
 
 namespace Ingenuity {
@@ -38,6 +37,7 @@ class NodePropertiesWindow : public Gtk::Window
 public:
 	NodePropertiesWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& refGlade);
 
+	void present(CountedPtr<NodeModel> node_model) { set_node(node_model); Gtk::Window::present(); }
 	void set_node(CountedPtr<NodeModel> node_model);
 
 private:

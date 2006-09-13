@@ -14,14 +14,13 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-
 #ifndef OMPORTMODULE_H
 #define OMPORTMODULE_H
 
 #include <string>
 #include <libgnomecanvasmm.h>
 #include <flowcanvas/Module.h>
-#include "PortController.h"
+#include "OmPatchPort.h"
 using std::string;
 
 namespace Ingen { namespace Client {
@@ -33,8 +32,6 @@ using namespace Ingen::Client;
 
 namespace Ingenuity {
 	
-class PatchController;
-class PortController;
 class OmFlowCanvas;
 class OmPort;
 
@@ -48,7 +45,7 @@ class OmPort;
 class OmPortModule : public LibFlowCanvas::Module
 {
 public:
-	OmPortModule(OmFlowCanvas* canvas, PortController* port, double x, double y);
+	OmPortModule(OmFlowCanvas* canvas, CountedPtr<PortModel> port);
 	virtual ~OmPortModule() {}
 	
 	//virtual OmPort* port(const string& port_name) {
@@ -60,13 +57,14 @@ public:
 
 	//void on_right_click(GdkEventButton* event) { m_port->show_menu(event); }
 	
-	PortController* port() const { return m_port; }
+	CountedPtr<PortModel> port() const { return m_port; }
 
 protected:
 	//virtual void on_double_click(GdkEventButton* ev) { show_control_window(); }
 	//virtual void on_middle_click(GdkEventButton* ev) { show_control_window(); }
 	
-	PortController* m_port;
+	CountedPtr<PortModel> m_port;
+	OmPatchPort*          m_patch_port; ///< Port on this 'anonymous' module
 };
 
 

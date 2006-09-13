@@ -275,7 +275,7 @@ QueuedEngineInterface::midi_learn(const string& node_path)
 void
 QueuedEngineInterface::set_metadata(const string& path,
                                     const string& predicate,
-                                    const string& value)
+                                    const Atom&   value)
 {
 	push_queued(new SetMetadataEvent(*_engine.get(), _responder, now(), path, predicate, value));
 }

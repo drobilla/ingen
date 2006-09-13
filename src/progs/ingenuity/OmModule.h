@@ -14,16 +14,17 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-
 #ifndef OMMODULE_H
 #define OMMODULE_H
 
 #include <string>
 #include <libgnomecanvasmm.h>
 #include <flowcanvas/Module.h>
+#include "NodeMenu.h"
 #include "util/CountedPtr.h"
-#include "NodeController.h"
 using std::string;
+
+class Atom;
 
 namespace Ingen { namespace Client {
 	class PortModel;
@@ -34,7 +35,6 @@ using namespace Ingen::Client;
 
 namespace Ingenuity {
 	
-class PatchController;
 class OmFlowCanvas;
 class OmPort;
 
@@ -49,7 +49,7 @@ class OmPort;
 class OmModule : public LibFlowCanvas::Module
 {
 public:
-	OmModule(OmFlowCanvas* canvas, NodeController* node);
+	OmModule(OmFlowCanvas* canvas, CountedPtr<NodeModel> node);
 	virtual ~OmModule() {}
 	
 	virtual OmPort* port(const string& port_name) {
@@ -59,17 +59,24 @@ public:
 	virtual void store_location();
 	void move_to(double x, double y);
 
-	void on_right_click(GdkEventButton* event) { m_node->show_menu(event); }
+	void on_right_click(GdkEventButton* event);
 	
 	void show_control_window();
 
-	NodeController* node() const { return m_node; }
+	CountedPtr<NodeModel> node() const { return m_node; }
 
 protected:
 	virtual void on_double_click(GdkEventButton* ev) { show_control_window(); }
 	virtual void on_middle_click(GdkEventButton* ev) { show_control_window(); }
 	
-	NodeController* m_node;
+	void metadata_update(const string& key, const Atom& value);
+
+	void create_all_ports();
+	void add_port(CountedPtr<PortModel> port);
+	void remove_port(CountedPtr<PortModel> port);
+
+	CountedPtr<NodeModel> m_node;
+	NodeMenu              m_menu;
 };
 
 

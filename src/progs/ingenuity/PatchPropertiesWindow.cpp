@@ -41,20 +41,32 @@ PatchPropertiesWindow::PatchPropertiesWindow(BaseObjectType* cobject, const Glib
  * the window in any way.
  */
 void
-PatchPropertiesWindow::patch_model(CountedPtr<PatchModel> patch_model)
+PatchPropertiesWindow::set_patch(CountedPtr<PatchModel> patch_model)
 {
 	property_title() = patch_model->path() + " Properties";
 	m_patch_model = patch_model;
-	m_author_entry->set_text(m_patch_model->get_metadata("author"));
-	m_textview->get_buffer()->set_text(m_patch_model->get_metadata("description"));
+	
+	const Atom& author_atom = m_patch_model->get_metadata("author");
+	m_author_entry->set_text(
+		(author_atom.type() == Atom::STRING) ? author_atom.get_string() : "" );
+
+	const Atom& desc_atom = m_patch_model->get_metadata("description");
+	m_textview->get_buffer()->set_text(
+		(desc_atom.type() == Atom::STRING) ? desc_atom.get_string() : "" );
 }
 
 
 void
 PatchPropertiesWindow::cancel_clicked()
 {
-	m_author_entry->set_text(m_patch_model->get_metadata("author"));
-	m_textview->get_buffer()->set_text(m_patch_model->get_metadata("description"));
+	const Atom& author_atom = m_patch_model->get_metadata("author");
+	m_author_entry->set_text(
+		(author_atom.type() == Atom::STRING) ? author_atom.get_string() : "" );
+
+	const Atom& desc_atom = m_patch_model->get_metadata("description");
+	m_textview->get_buffer()->set_text(
+		(desc_atom.type() == Atom::STRING) ? desc_atom.get_string() : "" );
+	
 	hide();
 }
 
@@ -62,8 +74,8 @@ PatchPropertiesWindow::cancel_clicked()
 void
 PatchPropertiesWindow::ok_clicked()
 {
-	m_patch_model->set_metadata("author", m_author_entry->get_text());
-	m_patch_model->set_metadata("description", m_textview->get_buffer()->get_text());
+	m_patch_model->set_metadata("author", Atom(m_author_entry->get_text().c_str()));
+	m_patch_model->set_metadata("description", Atom(m_textview->get_buffer()->get_text().c_str()));
 	hide();
 }
 

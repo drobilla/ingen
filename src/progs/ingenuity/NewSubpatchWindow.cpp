@@ -17,11 +17,9 @@
 #include "App.h"
 #include "ModelEngineInterface.h"
 #include "NewSubpatchWindow.h"
-#include "PatchController.h"
 #include "NodeModel.h"
 #include "PatchModel.h"
 #include "PatchView.h"
-#include "OmFlowCanvas.h"
 
 namespace Ingenuity {
 
@@ -44,15 +42,22 @@ NewSubpatchWindow::NewSubpatchWindow(BaseObjectType* cobject, const Glib::RefPtr
 	m_ok_button->property_sensitive() = false;
 }
 
+void
+NewSubpatchWindow::present(CountedPtr<PatchModel> patch, MetadataMap data)
+{
+	set_patch(patch);
+	m_initial_data = data;
+	Gtk::Window::present();
+}
 
 /** Sets the patch controller for this window and initializes everything.
  *
  * This function MUST be called before using the window in any way!
  */
 void
-NewSubpatchWindow::set_patch(CountedPtr<PatchController> pc)
+NewSubpatchWindow::set_patch(CountedPtr<PatchModel> patch)
 {
-	m_patch_controller = pc;
+	m_patch = patch;
 }
 
 
@@ -66,7 +71,7 @@ NewSubpatchWindow::name_changed()
 	if (!Path::is_valid_name(name)) {
 		m_message_label->set_text("Name contains invalid characters.");
 		m_ok_button->property_sensitive() = false;
-	} else if (m_patch_controller->patch_model()->get_node(name)) {
+	} else if (m_patch->get_node(name)) {
 		m_message_label->set_text("An object already exists with that name.");
 		m_ok_button->property_sensitive() = false;
 	} else if (name.length() == 0) {
@@ -83,22 +88,19 @@ void
 NewSubpatchWindow::ok_clicked()
 {
 	PatchModel* pm = new PatchModel(
-		m_patch_controller->model()->path().base() + m_name_entry->get_text(),
+		m_patch->path().base() + m_name_entry->get_text(),
 		m_poly_spinbutton->get_value_as_int());
 
 	if (m_new_module_x == 0 && m_new_module_y == 0) {
-		m_patch_controller->get_view()->canvas()->get_new_module_location(
-			m_new_module_x, m_new_module_y);
+		throw; // FIXME
+		//m_patch_controller->get_view()->canvas()->get_new_module_location(
+		//	m_new_module_x, m_new_module_y);
 	}
 
-	pm->set_parent(m_patch_controller->patch_model());
-	pm->x(m_new_module_x);
-	pm->y(m_new_module_y);
-	char temp_buf[16];
-	snprintf(temp_buf, 16, "%16f", m_new_module_x);
-	pm->set_metadata("module-x", temp_buf);
-	snprintf(temp_buf, 16, "%16f", m_new_module_y);
-	pm->set_metadata("module-y", temp_buf);
+	// FIXME: necessary?
+	//pm->set_parent(m_patch);
+	pm->set_metadata("module-x", (float)m_new_module_x);
+	pm->set_metadata("module-y", (float)m_new_module_y);
 	App::instance().engine()->create_patch_from_model(pm);
 	hide();
 }			

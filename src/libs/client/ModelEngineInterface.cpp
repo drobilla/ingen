@@ -65,8 +65,8 @@ ModelEngineInterface::create_patch_from_model(const PatchModel* pm)
 void
 ModelEngineInterface::set_all_metadata(const ObjectModel* m)
 {
-	for (map<string, string>::const_iterator i = m->metadata().begin(); i != m->metadata().end(); ++i)
-		set_metadata(m->path(), (*i).first, (*i).second.c_str());
+	for (MetadataMap::const_iterator i = m->metadata().begin(); i != m->metadata().end(); ++i)
+		set_metadata(m->path(), i->first, i->second);
 }
 
 

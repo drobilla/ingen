@@ -17,6 +17,7 @@
 #include <iostream>
 #include "OSCEngineSender.h"
 #include "interface/ClientKey.h"
+#include "util/LibloAtom.h"
 using std::cout; using std::cerr; using std::endl;
 
 namespace Ingen {
@@ -374,14 +375,16 @@ OSCEngineSender::midi_learn(const string& node_path)
 void
 OSCEngineSender::set_metadata(const string& obj_path,
                               const string& predicate,
-                              const string& value)
+                              const Atom&   value)
 {
+	
 	assert(_engine_addr);
-	lo_send(_engine_addr, "/om/metadata/set", "isss",
-		next_id(),
-		obj_path.c_str(),
-		predicate.c_str(),
-		value.c_str());
+	lo_message m = lo_message_new();
+	lo_message_add_int32(m, next_id());
+	lo_message_add_string(m, obj_path.c_str());
+	lo_message_add_string(m, predicate.c_str());
+	LibloAtom::lo_message_add_atom(m, value);
+	lo_send_message(_engine_addr, "/om/metadata/set", m);
 }
 
 

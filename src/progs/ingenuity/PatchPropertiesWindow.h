@@ -40,7 +40,8 @@ class PatchPropertiesWindow : public Gtk::Window
 public:
 	PatchPropertiesWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& refGlade);
 
-	void patch_model(CountedPtr<PatchModel> patch_model);
+	void present(CountedPtr<PatchModel> patch_model) { set_patch(patch_model); Gtk::Window::present(); }
+	void set_patch(CountedPtr<PatchModel> patch_model);
 	
 	void cancel_clicked();
 	void ok_clicked();

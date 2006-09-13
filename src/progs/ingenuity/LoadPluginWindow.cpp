@@ -19,11 +19,9 @@
 #include <cassert>
 #include <algorithm>
 #include <cctype>
-#include "PatchController.h"
 #include "NodeModel.h"
 #include "App.h"
 #include "PatchWindow.h"
-#include "OmFlowCanvas.h"
 #include "PatchModel.h"
 #include "Store.h"
 #include "ModelEngineInterface.h"
@@ -107,6 +105,15 @@ LoadPluginWindow::LoadPluginWindow(BaseObjectType* cobject, const Glib::RefPtr<G
 }
 
 
+void
+LoadPluginWindow::present(CountedPtr<PatchModel> patch, MetadataMap data)
+{
+	set_patch(patch);
+	m_initial_data = data;
+	Gtk::Window::present();
+}
+
+
 /** Called every time the user types into the name input box.
  * Used to display warning messages, and enable/disable the OK button.
  */
@@ -117,7 +124,7 @@ LoadPluginWindow::name_changed()
 	if (!Path::is_valid_name(name)) {
 		//m_message_label->set_text("Name contains invalid characters.");
 		m_add_button->property_sensitive() = false;
-	} else if (m_patch_controller->patch_model()->get_node(name)) {
+	} else if (m_patch->get_node(name)) {
 		//m_message_label->set_text("An object already exists with that name.");
 		m_add_button->property_sensitive() = false;
 	} else if (name.length() == 0) {
@@ -135,11 +142,11 @@ LoadPluginWindow::name_changed()
  * This function MUST be called before using the window in any way!
  */
 void
-LoadPluginWindow::set_patch(CountedPtr<PatchController> pc)
+LoadPluginWindow::set_patch(CountedPtr<PatchModel> patch)
 {
-	m_patch_controller = pc;
+	m_patch = patch;
 
-	if (pc->patch_model()->poly() <= 1)
+	if (patch->poly() <= 1)
 		m_polyphonic_checkbutton->property_sensitive() = false;
 	else
 		m_polyphonic_checkbutton->property_sensitive() = true;
@@ -161,7 +168,7 @@ LoadPluginWindow::on_show()
 		set_plugin_list(App::instance().store()->plugins());
 	
 		// Center on patch window
-		int m_w, m_h;
+		/*int m_w, m_h;
 		get_size(m_w, m_h);
 		
 		int parent_x, parent_y, parent_w, parent_h;
@@ -169,7 +176,7 @@ LoadPluginWindow::on_show()
 		m_patch_controller->window()->get_size(parent_w, parent_h);
 		
 		move(parent_x + parent_w/2 - m_w/2, parent_y + parent_h/2 - m_h/2);
-		
+		*/
 		m_has_shown = true;
 	}
 	Gtk::Window::on_show();
@@ -275,7 +282,7 @@ LoadPluginWindow::generate_module_name(int offset)
 				name += "_";
 				name += num_buf;
 			}
-			if (!m_patch_controller->patch_model()->get_node(name))
+			if (!m_patch->get_node(name))
 				break;
 			else
 				name = "";
@@ -306,17 +313,10 @@ LoadPluginWindow::add_clicked()
 
 			dialog.run();
 		} else {
-			const string path = m_patch_controller->model()->path().base() + name;
-			NodeModel* nm = new NodeModel(plugin, path);
-			nm->polyphonic(polyphonic);
+			const string path = m_patch->path().base() + name;
+			NodeModel* nm = new NodeModel(plugin, path, polyphonic);
+			nm->add_metadata(m_initial_data);
 			
-			if (m_new_module_x == 0 && m_new_module_y == 0) {
-				m_patch_controller->get_view()->canvas()->get_new_module_location(
-					m_new_module_x, m_new_module_y);
-			}
-			nm->x(m_new_module_x);
-			nm->y(m_new_module_y);
-
 			App::instance().engine()->create_node_from_model(nm);
 			++m_plugin_name_offset;
 			m_node_name_entry->set_text(generate_module_name(m_plugin_name_offset));

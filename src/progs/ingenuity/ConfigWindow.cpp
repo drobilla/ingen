@@ -19,9 +19,7 @@
 #include <cassert>
 #include <algorithm>
 #include <cctype>
-#include "PatchController.h"
 #include "NodeModel.h"
-#include "OmFlowCanvas.h"
 using std::cout; using std::cerr; using std::endl;
 
 

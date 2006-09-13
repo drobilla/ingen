@@ -23,8 +23,9 @@
 #include <cassert>
 #include "MaidObject.h"
 #include "util/Path.h"
+#include "util/Atom.h"
 #include "types.h"
-using std::string; using std::map;
+using std::string;
 
 namespace Ingen {
 
@@ -45,6 +46,8 @@ class ObjectStore;
 class GraphObject : public MaidObject
 {
 public:
+	typedef std::map<string, Atom> MetadataMap;
+
 	GraphObject(GraphObject* parent, const string& name)
 	: _parent(parent), _name(name)
 	{
@@ -67,16 +70,16 @@ public:
 		assert(_name.find("/") == string::npos);
 	}
 	
-	void set_metadata(const string& key, const string& value)
+	void set_metadata(const string& key, const Atom& value)
 	{ _metadata[key] = value; }
 
-	const string& get_metadata(const string& key) {
-		static const string empty_string = "";
-		map<string, string>::iterator i = _metadata.find(key);
-		return (i != _metadata.end()) ? (*i).second : empty_string;
+	const Atom& get_metadata(const string& key) {
+		static Atom null_atom;
+		MetadataMap::iterator i = _metadata.find(key);
+		return (i != _metadata.end()) ? (*i).second : null_atom;
 	}
 
-	const map<string, string>& metadata() const { return _metadata; }
+	const MetadataMap& metadata() const { return _metadata; }
 
 
 	/** Patch and Node override this to recursively add their children. */
@@ -104,7 +107,7 @@ private:
 	GraphObject(const GraphObject&);
 	GraphObject& operator=(const GraphObject& copy);
 
-	map<string, string> _metadata;
+	MetadataMap _metadata;
 };
 
 

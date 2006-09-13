@@ -24,7 +24,6 @@
 #include "PatchModel.h"
 #include "PatchWindow.h"
 #include "OmFlowCanvas.h"
-#include "PatchController.h"
 #include "OmPort.h"
 #include "WindowFactory.h"
 using std::cerr; using std::cout; using std::endl;
@@ -32,8 +31,8 @@ using std::cerr; using std::cout; using std::endl;
 namespace Ingenuity {
 
 
-SubpatchModule::SubpatchModule(OmFlowCanvas* canvas, CountedPtr<PatchController> patch)
-: OmModule(canvas, patch.get()),
+SubpatchModule::SubpatchModule(OmFlowCanvas* canvas, CountedPtr<PatchModel> patch)
+: OmModule(canvas, patch),
   m_patch(patch)
 {
 	assert(canvas);
@@ -46,12 +45,13 @@ SubpatchModule::on_double_click(GdkEventButton* event)
 {
 	assert(m_patch);
 
-	CountedPtr<PatchController> parent = PtrCast<PatchController>(m_patch->model()->parent()->controller());
+	CountedPtr<PatchModel> parent = PtrCast<PatchModel>(m_patch->parent());
 
-	PatchWindow* const preferred
-		= (event->state & GDK_SHIFT_MASK) ? NULL : parent->window();
+	PatchWindow* const preferred = ( (parent && (event->state & GDK_SHIFT_MASK))
+		? NULL
+		: App::instance().window_factory()->patch_window(parent) );
 
-	App::instance().window_factory()->present(m_patch, preferred);
+	App::instance().window_factory()->present_patch(m_patch, preferred);
 }
 
 
@@ -62,10 +62,15 @@ SubpatchModule::on_double_click(GdkEventButton* event)
 void
 SubpatchModule::browse_to_patch()
 {
-	assert(m_patch->model()->parent());
-	CountedPtr<PatchController> pc = PtrCast<PatchController>(m_patch->model()->parent()->controller());
+	assert(m_patch->parent());
 	
-	App::instance().window_factory()->present(m_patch, pc->window());
+	CountedPtr<PatchModel> parent = PtrCast<PatchModel>(m_patch->parent());
+
+	PatchWindow* const preferred = ( (parent)
+		? App::instance().window_factory()->patch_window(parent)
+		: NULL );
+	
+	App::instance().window_factory()->present_patch(m_patch, preferred);
 }
 
 
@@ -73,14 +78,15 @@ SubpatchModule::browse_to_patch()
 void
 SubpatchModule::show_dialog()
 {
-	m_patch->show_control_window();
+	cerr << "FIXME: dialog\n";
+	//m_patch->show_control_window();
 }
 
 
 void
 SubpatchModule::menu_remove()
 {
-	App::instance().engine()->destroy(m_patch->model()->path());
+	App::instance().engine()->destroy(m_patch->path());
 }
 
 } // namespace Ingenuity

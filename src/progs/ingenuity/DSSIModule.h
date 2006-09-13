@@ -30,7 +30,7 @@ class DSSIController;
 class DSSIModule : public OmModule
 {
 public:
-	DSSIModule(OmFlowCanvas* canvas, DSSIController* node);
+	DSSIModule(OmFlowCanvas* canvas, CountedPtr<NodeModel> node);
 	virtual ~DSSIModule() {}
 
 	void on_double_click(GdkEventButton* ev);

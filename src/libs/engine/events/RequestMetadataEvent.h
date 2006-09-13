@@ -19,7 +19,7 @@
 
 #include <string>
 #include "QueuedEvent.h"
-
+#include "util/Atom.h"
 using std::string;
 
 namespace Ingen {
@@ -45,8 +45,8 @@ public:
 private:
 	string                      m_path;
 	string                      m_key;
-	string                      m_value; 
-	GraphObject*                   m_object;
+	Atom                        m_value; 
+	GraphObject*                m_object;
 	CountedPtr<ClientInterface> m_client;
 };
 

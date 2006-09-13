@@ -20,7 +20,6 @@
 #include <string>
 #include "PatchLibrarian.h"
 #include "PatchModel.h"
-#include "PatchController.h"
 using std::cout; using std::endl;
 
 namespace Ingenuity {

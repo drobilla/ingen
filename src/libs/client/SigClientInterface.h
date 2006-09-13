@@ -55,7 +55,7 @@ public:
 	sigc::signal<void, string>                                 object_destroyed_sig; 
 	sigc::signal<void, string, string>                         connection_sig; 
 	sigc::signal<void, string, string>                         disconnection_sig; 
-	sigc::signal<void, string, string, string>                 metadata_update_sig; 
+	sigc::signal<void, string, string, Atom>                   metadata_update_sig; 
 	sigc::signal<void, string, float>                          control_change_sig; 
 	sigc::signal<void, string, uint32_t, uint32_t, string>     program_add_sig; 
 	sigc::signal<void, string, uint32_t, uint32_t>             program_remove_sig; 

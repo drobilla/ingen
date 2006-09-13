@@ -22,7 +22,6 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include "App.h"
-#include "PatchController.h"
 #include "PatchModel.h"
 
 using std::cerr; using std::cout; using std::endl;

@@ -45,8 +45,8 @@ ObjectSender::send_patch(ClientInterface* client, const Patch* patch)
 		send_port(client, port);
 /*
 		// Send metadata
-		const map<string, string>& data = port->metadata();
-		for (map<string, string>::const_iterator i = data.begin(); i != data.end(); ++i)
+		const GraphObject::MetadataMap& data = port->metadata();
+		for (GraphObject::MetadataMap::const_iterator i = data.begin(); i != data.end(); ++i)
 			client->metadata_update(port->path(), (*i).first, (*i).second);
 		
 		// Control port, send value
@@ -64,8 +64,8 @@ ObjectSender::send_patch(ClientInterface* client, const Patch* patch)
 	
 	
 	// Send metadata
-	const map<string, string>& data = patch->metadata();
-	for (map<string, string>::const_iterator j = data.begin(); j != data.end(); ++j)
+	const GraphObject::MetadataMap& data = patch->metadata();
+	for (GraphObject::MetadataMap::const_iterator j = data.begin(); j != data.end(); ++j)
 		client->metadata_update(patch->path(), (*j).first, (*j).second);
 	
 	if (patch->enabled())
@@ -118,8 +118,8 @@ ObjectSender::send_node(ClientInterface* client, const Node* node)
 	client->bundle_end();
 	
 	// Send metadata
-	const map<string, string>& data = node->metadata();
-	for (map<string, string>::const_iterator j = data.begin(); j != data.end(); ++j)
+	const GraphObject::MetadataMap& data = node->metadata();
+	for (GraphObject::MetadataMap::const_iterator j = data.begin(); j != data.end(); ++j)
 		client->metadata_update(node->path(), (*j).first, (*j).second);
 }
 
@@ -149,8 +149,8 @@ ObjectSender::send_port(ClientInterface* client, const Port* port)
 	}
 	
 	// Send metadata
-	const map<string, string>& data = port->metadata();
-	for (map<string, string>::const_iterator j = data.begin(); j != data.end(); ++j)
+	const GraphObject::MetadataMap& data = port->metadata();
+	for (GraphObject::MetadataMap::const_iterator j = data.begin(); j != data.end(); ++j)
 		client->metadata_update(port->path(), (*j).first, (*j).second);
 }
 

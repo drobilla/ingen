@@ -24,12 +24,13 @@
 #include <libglademm.h>
 #include <gtkmm.h>
 #include "util/CountedPtr.h"
-
+#include "PatchModel.h"
 using Ingen::Client::PluginModel;
+using Ingen::Client::PatchModel;
+using Ingen::Client::MetadataMap;
 
 namespace Ingenuity {
 	
-class PatchController;
 
 // Gtkmm _really_ needs to add some helper to abstract away this stupid nonsense
 
@@ -87,14 +88,13 @@ class LoadPluginWindow : public Gtk::Window
 public:
 	LoadPluginWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml);
 
-	void set_patch(CountedPtr<PatchController> pc);
+	void set_patch(CountedPtr<PatchModel> patch);
 	void set_plugin_list(const std::map<string, CountedPtr<PluginModel> >& m);
 
-	void set_next_module_location(double x, double y)
-		{ m_new_module_x = x; m_new_module_y = y; }
-	
 	void add_plugin(CountedPtr<PluginModel> plugin);
 	bool has_shown() const { return m_has_shown; }
+
+	void present(CountedPtr<PatchModel> patch, MetadataMap data);
 
 protected:
 	void on_show();
@@ -113,7 +113,10 @@ private:
 	void plugin_selection_changed();
 	string generate_module_name(int offset = 0);
 
-	CountedPtr<PatchController> m_patch_controller;
+	MetadataMap m_initial_data;
+
+	CountedPtr<PatchModel> m_patch;
+
 	bool m_has_shown; // plugin list only populated on show to speed patch window creation
 
 	Glib::RefPtr<Gtk::ListStore> m_plugins_liststore;

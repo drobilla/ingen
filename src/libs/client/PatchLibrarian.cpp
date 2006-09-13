@@ -136,7 +136,7 @@ PatchLibrarian::save_patch(CountedPtr<PatchModel> patch_model, const string& fil
     xmlNodePtr xml_root_node = NULL;
 	xmlNodePtr xml_node = NULL;
 	xmlNodePtr xml_child_node = NULL;
-	xmlNodePtr xml_grandchild_node = NULL;
+	//xmlNodePtr xml_grandchild_node = NULL;
 	
     xml_doc = xmlNewDoc((xmlChar*)"1.0");
     xml_root_node = xmlNewNode(NULL, (xmlChar*)"patch");
@@ -164,13 +164,14 @@ PatchLibrarian::save_patch(CountedPtr<PatchModel> patch_model, const string& fil
 	xml_node = xmlNewChild(xml_root_node, NULL, (xmlChar*)"polyphony", (xmlChar*)temp_buf);
 	
 	// Write metadata
-	for (map<string, string>::const_iterator i = patch_model->metadata().begin();
+	for (MetadataMap::const_iterator i = patch_model->metadata().begin();
 			i != patch_model->metadata().end(); ++i) {
+		cerr << "FIXME: metadata save" << endl;
 		// Dirty hack, don't save coordinates in patch file
-		if ((*i).first != "module-x" && (*i).first != "module-y"
-				&& (*i).first != "filename")
-			xml_node = xmlNewChild(xml_root_node, NULL,
-				(xmlChar*)(*i).first.c_str(), (xmlChar*)(*i).second.c_str());
+		//if (i->first != "module-x" && i->first != "module-y"
+		//		&& i->first != "filename")
+		//	xml_node = xmlNewChild(xml_root_node, NULL,
+		//		(xmlChar*)(*i).first.c_str(), (xmlChar*)(*i).second.c_str());
 
 		assert((*i).first != "node");
 		assert((*i).first != "subpatch");
@@ -215,13 +216,14 @@ PatchLibrarian::save_patch(CountedPtr<PatchModel> patch_model, const string& fil
 			xml_child_node = xmlNewChild(xml_node, NULL,  (xmlChar*)"polyphony", (xmlChar*)temp_buf);
 			
 			// Write metadata
-			for (map<string, string>::const_iterator i = nm->metadata().begin();
+			for (MetadataMap::const_iterator i = nm->metadata().begin();
 					i != nm->metadata().end(); ++i) {	
+				cerr << "FIXME: save metadata\n";
 				// Dirty hack, don't save metadata that would be in patch file
-				if ((*i).first != "polyphony" && (*i).first != "filename"
+				/*if ((*i).first != "polyphony" && (*i).first != "filename"
 					&& (*i).first != "author" && (*i).first != "description")
 					xml_child_node = xmlNewChild(xml_node, NULL,
-						(xmlChar*)(*i).first.c_str(), (xmlChar*)(*i).second.c_str());
+						(xmlChar*)(*i).first.c_str(), (xmlChar*)(*i).second.c_str());*/
 			}
 	
 			if (recursive)
@@ -251,7 +253,9 @@ PatchLibrarian::save_patch(CountedPtr<PatchModel> patch_model, const string& fil
 				(xmlChar*)(nm->plugin()->uri().c_str()));
 		
 			// Write metadata
-			for (map<string, string>::const_iterator i = nm->metadata().begin(); i != nm->metadata().end(); ++i) {
+			for (MetadataMap::const_iterator i = nm->metadata().begin(); i != nm->metadata().end(); ++i) {
+				cerr << "FIXME: Save metadata\n";
+				/*
 				// DSSI _hack_ (FIXME: fix OSC to be more like this and not smash DSSI into metadata?)
 				if ((*i).first.substr(0, 16) == "dssi-configure--") {
 					xml_child_node = xmlNewChild(xml_node, NULL, (xmlChar*)"dssi-configure", NULL);
@@ -269,11 +273,14 @@ PatchLibrarian::save_patch(CountedPtr<PatchModel> patch_model, const string& fil
 					xml_child_node = xmlNewChild(xml_node, NULL,
 						(xmlChar*)(*i).first.c_str(), (xmlChar*)(*i).second.c_str());
 				}
+				*/
 			}
 	
 			// Write port metadata, if necessary
 			for (PortModelList::const_iterator i = nm->ports().begin(); i != nm->ports().end(); ++i) {
-				const PortModel* const pm = (*i).get();
+				cerr << "FIXME: save metadata\n";
+				/*
+				const PortModel* const pm = i->get();
 				if (pm->is_input() && pm->user_min() != pm->min_val() || pm->user_max() != pm->max_val()) {
 					xml_child_node = xmlNewChild(xml_node, NULL, (xmlChar*)"port", NULL);
 					xml_grandchild_node = xmlNewChild(xml_child_node, NULL, (xmlChar*)"name",
@@ -282,7 +289,7 @@ PatchLibrarian::save_patch(CountedPtr<PatchModel> patch_model, const string& fil
 					xml_grandchild_node = xmlNewChild(xml_child_node, NULL, (xmlChar*)"user-min", (xmlChar*)temp_buf);
 					snprintf(temp_buf, temp_buf_length, "%f", pm->user_max());
 					xml_grandchild_node = xmlNewChild(xml_child_node, NULL, (xmlChar*)"user-max", (xmlChar*)temp_buf);
-				}	
+				}*/	
 			}
 		}
 	}
@@ -385,8 +392,8 @@ PatchLibrarian::load_patch(CountedPtr<PatchModel> pm, bool wait, bool existing)
 
 	//cerr << "[PatchLibrarian] Loading patch " << filename << "" << endl;
 
-	const size_t temp_buf_length = 255;
-	char temp_buf[temp_buf_length];
+	//const size_t temp_buf_length = 255;
+	//char temp_buf[temp_buf_length];
 	
 	bool load_name = (pm->path() == "");
 	bool load_poly = (poly == 0);
@@ -447,8 +454,11 @@ PatchLibrarian::load_patch(CountedPtr<PatchModel> pm, bool wait, bool existing)
 			// Don't know what this tag is, add it as metadata without overwriting
 			// (so caller can set arbitrary parameters which will be preserved)
 			if (key != NULL)
+				cerr << "FIXME: save metadata\n";
+			/*
 				if (pm->get_metadata((const char*)cur->name) == "")
 					pm->set_metadata((const char*)cur->name, (const char*)key);
+			*/
 		}
 		
 		xmlFree(key);
@@ -483,7 +493,7 @@ PatchLibrarian::load_patch(CountedPtr<PatchModel> pm, bool wait, bool existing)
 	// This isn't so good, considering multiple clients on multiple machines, and
 	// absolute filesystem paths obviously aren't going to be correct.  But for now
 	// this is all I can figure out to have Save/Save As work properly for subpatches
-	_engine->set_metadata(pm->path(), "filename", pm->filename());
+	_engine->set_metadata(pm->path(), "filename", Atom(pm->filename().c_str()));
 
 	// Load nodes
 	cur = xmlDocGetRootElement(doc)->xmlChildrenNode;
@@ -494,13 +504,15 @@ PatchLibrarian::load_patch(CountedPtr<PatchModel> pm, bool wait, bool existing)
 			if (nm) {
 				_engine->create_node_from_model(nm.get());
 				_engine->set_all_metadata(nm.get());
-				for (PortModelList::const_iterator j = nm->ports().begin(); j != nm->ports().end(); ++j) {
+				cerr << "FIXME: max min\n";
+				/*
+				//for (PortModelList::const_iterator j = nm->ports().begin(); j != nm->ports().end(); ++j) {
 					// FIXME: ew
 					snprintf(temp_buf, temp_buf_length, "%f", (*j)->user_min());
 					_engine->set_metadata((*j)->path(), "user-min", temp_buf);
 					snprintf(temp_buf, temp_buf_length, "%f", (*j)->user_max());
 					_engine->set_metadata((*j)->path(), "user-max", temp_buf);
-				}
+				}*/
 			}
 		}
 		cur = cur->next;
@@ -562,19 +574,23 @@ PatchLibrarian::load_patch(CountedPtr<PatchModel> pm, bool wait, bool existing)
 CountedPtr<NodeModel>
 PatchLibrarian::parse_node(const CountedPtr<const PatchModel> parent, xmlDocPtr doc, const xmlNodePtr node)
 {
+cerr << "FIXME: load node\n";
+#if 0
 	CountedPtr<PluginModel> plugin(new PluginModel());
-	CountedPtr<NodeModel> nm(new NodeModel(plugin, "/UNINITIALIZED")); // FIXME: ew
 
 	xmlChar* key;
 	xmlNodePtr cur = node->xmlChildrenNode;
 	
+	string path = ""'
+	bool   polyphonic = false;
+
 	while (cur != NULL) {
 		key = xmlNodeListGetString(doc, cur->xmlChildrenNode, 1);
 		
 		if ((!xmlStrcmp(cur->name, (const xmlChar*)"name"))) {
-			nm->set_path(parent->path().base() + Path::nameify((char*)key));
+			path = parent->path().base() + Path::nameify((char*)key));
 		} else if ((!xmlStrcmp(cur->name, (const xmlChar*)"polyphonic"))) {
-			nm->polyphonic(!strcmp((char*)key, "true"));
+			polyphonic = !strcmp((char*)key, "true");
 		} else if ((!xmlStrcmp(cur->name, (const xmlChar*)"type"))) {
 			plugin->set_type((const char*)key);
 		} else if ((!xmlStrcmp(cur->name, (const xmlChar*)"library-name"))) {
@@ -586,7 +602,7 @@ PatchLibrarian::parse_node(const CountedPtr<const PatchModel> parent, xmlDocPtr 
 		} else if ((!xmlStrcmp(cur->name, (const xmlChar*)"port"))) {
 			xmlNodePtr child = cur->xmlChildrenNode;
 			
-			string path;
+			string port_name;
 			float user_min = 0.0;
 			float user_max = 0.0;
 			
@@ -594,7 +610,7 @@ PatchLibrarian::parse_node(const CountedPtr<const PatchModel> parent, xmlDocPtr 
 				key = xmlNodeListGetString(doc, child->xmlChildrenNode, 1);
 				
 				if ((!xmlStrcmp(child->name, (const xmlChar*)"name"))) {
-					path = nm->path().base() + Path::nameify((char*)key);
+					port_name = Path::nameify((char*)key);
 				} else if ((!xmlStrcmp(child->name, (const xmlChar*)"user-min"))) {
 					user_min = atof((char*)key);
 				} else if ((!xmlStrcmp(child->name, (const xmlChar*)"user-max"))) {
@@ -607,11 +623,14 @@ PatchLibrarian::parse_node(const CountedPtr<const PatchModel> parent, xmlDocPtr 
 				child = child->next;
 			}
 
-			// FIXME: nasty assumptions
-			CountedPtr<PortModel> pm(new PortModel(path,
+			assert(path.length() > 0);
+			assert(Path::is_valid(path));
+
+			// FIXME: /nasty/ assumptions
+			CountedPtr<PortModel> pm(new PortModel(Path(path).base() + port_name,
 					PortModel::CONTROL, PortModel::INPUT, PortModel::NONE,
 					0.0, user_min, user_max));
-			pm->set_parent(nm);
+			//pm->set_parent(nm);
 			nm->add_port(pm);
 
 		// DSSI hacks.  Stored in the patch files as special elements, but sent to
@@ -637,7 +656,7 @@ PatchLibrarian::parse_node(const CountedPtr<const PatchModel> parent, xmlDocPtr 
 				key = NULL; // Avoid a (possible?) double free
 				child = child->next;
 			}
-			nm->set_metadata("dssi-program", bank +"/"+ program);
+			nm->set_metadata("dssi-program", Atom(bank.append("/").append(program).c_str()));
 			
 		} else if ((!xmlStrcmp(cur->name, (const xmlChar*)"dssi-configure"))) {
 			xmlNodePtr child = cur->xmlChildrenNode;
@@ -659,7 +678,7 @@ PatchLibrarian::parse_node(const CountedPtr<const PatchModel> parent, xmlDocPtr 
 		
 				child = child->next;
 			}
-			nm->set_metadata(string("dssi-configure--").append(dssi_key), dssi_value);
+			nm->set_metadata(string("dssi-configure--").append(dssi_key), Atom(dssi_value.c_str()));
 			
 		} else {  // Don't know what this tag is, add it as metadata
 			if (key != NULL)
@@ -729,7 +748,10 @@ PatchLibrarian::parse_node(const CountedPtr<const PatchModel> parent, xmlDocPtr 
 	}
 
 	//nm->plugin(plugin);
+	
 	return nm;
+#endif
+	return CountedPtr<NodeModel>();
 }
 
 

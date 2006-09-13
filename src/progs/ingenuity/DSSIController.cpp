@@ -29,9 +29,9 @@ namespace Ingenuity {
 
 
 DSSIController::DSSIController(CountedPtr<NodeModel> model)
-: NodeController(model),
-  m_banks_dirty(true)
+: m_banks_dirty(true)
 {
+#if 0
 	assert(model->plugin()->type() == PluginModel::DSSI);
 	Gtk::Menu::MenuList& items = m_menu.items();
 	items[0].property_sensitive() = true; // "Show Control Window" item
@@ -43,21 +43,24 @@ DSSIController::DSSIController(CountedPtr<NodeModel> model)
 	
 	items.push_front(Gtk::Menu_Helpers::MenuElem("Show Plugin GUI",
 		sigc::mem_fun(this, &DSSIController::show_gui)));
+#endif
 }
 
 void
 DSSIController::program_add(int bank, int program, const string& name)
 {
-	node_model()->add_program(bank, program, name);
-	m_banks_dirty = true;
+	cerr << "FIXME: DSSI add program\n";
+	//node_model()->add_program(bank, program, name);
+	//m_banks_dirty = true;
 }
 
 
 void
 DSSIController::program_remove(int bank, int program)
 {
-	node_model()->remove_program(bank, program);
-	m_banks_dirty = true;
+	cerr << "FIXME: DSSI add program\n";
+	//node_model()->remove_program(bank, program);
+	//m_banks_dirty = true;
 }
 
 /** Trivial wrapper of attempt_to_show_gui for libsigc
@@ -118,22 +121,6 @@ DSSIController::send_program_change(int bank, int program)
 {
 	App::instance().engine()->set_program(node_model()->path(), bank, program);
 }
-
-
-void
-DSSIController::create_module(OmFlowCanvas* canvas)
-{
-	//cerr << "Creating DSSI module " << m_model->path() << endl;
-
-	assert(canvas != NULL);
-	assert(m_module == NULL);
-	
-	m_module = new DSSIModule(canvas, this);
-	create_all_ports();
-
-	m_module->move_to(node_model()->x(), node_model()->y());
-}
-
 
 
 /** Attempt to show the DSSI GUI for this plugin.
@@ -274,9 +261,11 @@ DSSIController::attempt_to_show_gui()
 void
 DSSIController::show_menu(GdkEventButton* event)
 {
+#if 0
         if (m_banks_dirty)
 	        update_program_menu();
 	NodeController::show_menu(event);
+#endif
 }
 
 

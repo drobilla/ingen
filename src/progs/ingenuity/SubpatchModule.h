@@ -22,7 +22,7 @@
 #include <libgnomecanvasmm.h>
 #include "OmModule.h"
 #include "util/CountedPtr.h"
-#include "PatchController.h"
+#include "PatchModel.h"
 using std::string; using std::list;
 
 namespace Ingen { namespace Client {
@@ -46,7 +46,7 @@ class NodeControlWindow;
 class SubpatchModule : public OmModule
 {
 public:
-	SubpatchModule(OmFlowCanvas* canvas, CountedPtr<PatchController> controller);
+	SubpatchModule(OmFlowCanvas* canvas, CountedPtr<PatchModel> controller);
 	virtual ~SubpatchModule() {}
 
 	void on_double_click(GdkEventButton* ev);
@@ -55,10 +55,10 @@ public:
 	void browse_to_patch();
 	void menu_remove();
 
-	CountedPtr<PatchController> patch() { return m_patch; }
+	CountedPtr<PatchModel> patch() { return m_patch; }
 
 protected:
-	CountedPtr<PatchController> m_patch;
+	CountedPtr<PatchModel> m_patch;
 };
 
 

@@ -53,13 +53,12 @@ ControlGroup::ControlGroup(ControlPanel* panel, CountedPtr<PortModel> pm, bool s
 
 
 void
-ControlGroup::metadata_update(const string& key, const string& value)
+ControlGroup::metadata_update(const string& key, const Atom& value)
 {
-	// FIXME: this isn't right
-	if (key == "user-min" || key == "min")
-		set_min(atof(value.c_str()));
-	else if (key == "user-max" || key == "max")
-		set_max(atof(value.c_str()));
+	if ( (key == "min") && value.type() == Atom::FLOAT)
+		set_min(value.get_float());
+	else if ( (key == "max") && value.type() == Atom::FLOAT)
+		set_max(value.get_float());
 }
 
 
@@ -77,17 +76,20 @@ SliderControlGroup::SliderControlGroup(ControlPanel* panel, CountedPtr<PortModel
   m_max_spinner(1.0, (pm->is_integer() ? 0 : 4)),
   m_slider_box(false, 0),
   m_value_spinner(1.0, (pm->is_integer() ? 0 : 4)),
-  m_slider(pm->user_min(), pm->user_max(), (pm->is_integer() ? 1.0 : 0.0001))
+  m_slider(0, 1, (pm->is_integer() ? 1.0 : 0.0001))
 {
 	m_slider.set_increments(1.0, 10.0);
 
-	// Compensate for crazy plugins
-	// FIXME
-	/*
-	if (m_port_model->user_max() <= m_port_model->user_min()) {
-		m_port_model->user_max(m_port_model->user_min() + 1.0);
-		m_slider.set_range(m_port_model->user_min(), m_port_model->user_max());
-	}*/
+	float min = 0.0f;
+	float max = 1.0f;
+
+	const Atom& min_atom = pm->get_metadata("min");
+	const Atom& max_atom = pm->get_metadata("max");
+	if (min_atom.type() == Atom::FLOAT && max_atom.type() == Atom::FLOAT) {
+		min = min_atom.get_float();
+		max = max_atom.get_float();
+	}
+
 	m_slider.property_draw_value() = false;
 	
 	set_name(pm->path().name());
@@ -103,12 +105,12 @@ SliderControlGroup::SliderControlGroup(ControlPanel* panel, CountedPtr<PortModel
 	m_value_spinner.signal_value_changed().connect(
 		sigc::mem_fun(*this, &SliderControlGroup::update_value_from_spinner));
 	m_min_spinner.set_range(-99999, 99999);
-	m_min_spinner.set_value(m_port_model->user_min());
+	m_min_spinner.set_value(min);
 	m_min_spinner.set_increments(1.0, 10.0);
 	m_min_spinner.set_digits(5);
 	m_min_spinner.signal_value_changed().connect(sigc::mem_fun(*this, &SliderControlGroup::min_changed));
 	m_max_spinner.set_range(-99999, 99999);
-	m_max_spinner.set_value(m_port_model->user_max());
+	m_max_spinner.set_value(max);
 	m_max_spinner.set_increments(1.0, 10.0);
 	m_max_spinner.set_digits(5);
 	m_max_spinner.signal_value_changed().connect(sigc::mem_fun(*this, &SliderControlGroup::max_changed));
@@ -135,7 +137,7 @@ SliderControlGroup::SliderControlGroup(ControlPanel* panel, CountedPtr<PortModel
 	pack_start(m_header_box, false, false, 0);
 	pack_start(m_slider_box, false, false, 0);
 	
-	m_slider.set_range(m_port_model->user_min(), m_port_model->user_max());
+	m_slider.set_range(min, max);
 
 	m_enable_signal = true;
 
@@ -210,7 +212,7 @@ SliderControlGroup::min_changed()
 	if (m_enable_signal) {
 		char temp_buf[16];
 		snprintf(temp_buf, 16, "%f", min);
-		App::instance().engine()->set_metadata(m_port_model->path(), "user-min", temp_buf);
+		App::instance().engine()->set_metadata(m_port_model->path(), "min", temp_buf);
 	}
 }
 
@@ -231,7 +233,7 @@ SliderControlGroup::max_changed()
 	if (m_enable_signal) {
 		char temp_buf[16];
 		snprintf(temp_buf, 16, "%f", max);
-		App::instance().engine()->set_metadata(m_port_model->path(), "user-max", temp_buf);
+		App::instance().engine()->set_metadata(m_port_model->path(), "max", temp_buf);
 	}
 }
 

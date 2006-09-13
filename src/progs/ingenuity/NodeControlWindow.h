@@ -14,7 +14,6 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-
 #ifndef NODECONTROLWINDOW_H
 #define NODECONTROLWINDOW_H
 
@@ -23,12 +22,17 @@
 #include <gtkmm.h>
 #include <libglademm.h>
 #include <sigc++/sigc++.h>
+#include "util/CountedPtr.h"
 using std::string; using std::vector;
+
+namespace Ingen { namespace Client {
+	class NodeModel;
+} }
+using Ingen::Client::NodeModel;
 
 namespace Ingenuity {
 	
 class ControlGroup;
-class NodeController;
 class ControlPanel;
 
 
@@ -39,9 +43,11 @@ class ControlPanel;
 class NodeControlWindow : public Gtk::Window
 {
 public:
-	NodeControlWindow(NodeController* node, size_t poly);
-	NodeControlWindow(NodeController* node, ControlPanel* panel);
+	NodeControlWindow(CountedPtr<NodeModel> node, size_t poly);
+	NodeControlWindow(CountedPtr<NodeModel> node, ControlPanel* panel);
 	virtual ~NodeControlWindow();
+
+	CountedPtr<NodeModel> node() { return m_node; }
 
 	ControlPanel* control_panel() const { return m_control_panel; }
 	
@@ -52,9 +58,9 @@ protected:
 	void on_hide();
 
 private:
-	NodeController*  m_node;
-	ControlPanel*    m_control_panel;
-	bool             m_callback_enabled;
+	CountedPtr<NodeModel>    m_node;
+	ControlPanel* m_control_panel;
+	bool          m_callback_enabled;
 	
 	bool m_position_stored;
 	int  m_x;

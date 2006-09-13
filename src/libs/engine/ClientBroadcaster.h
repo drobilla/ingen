@@ -82,7 +82,7 @@ public:
 	void send_all_objects();
 	void send_patch_enable(const string& patch_path);
 	void send_patch_disable(const string& patch_path);
-	void send_metadata_update(const string& node_path, const string& key, const string& value);
+	void send_metadata_update(const string& node_path, const string& key, const Atom& value);
 	void send_control_change(const string& port_path, float value);
 	void send_program_add(const string& node_path, int bank, int program, const string& name);
 	void send_program_remove(const string& node_path, int bank, int program);

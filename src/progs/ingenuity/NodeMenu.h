@@ -14,60 +14,62 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef DSSICONTROLLER_H
-#define DSSICONTROLLER_H
+#ifndef NODEMENU_H
+#define NODEMENU_H
 
 #include <string>
 #include <gtkmm.h>
 #include "util/Path.h"
+#include "util/CountedPtr.h"
+#include "NodeModel.h"
+using Ingen::Client::NodeModel;
 
 using std::string;
-using namespace Ingen::Client;
-
-namespace Ingen { namespace Client {
-	class MetadataModel;
-	class NodeModel;
-	class PortModel;
-} }
 
 namespace Ingenuity {
 
+class Controller;
 class NodeControlWindow;
 class NodePropertiesWindow;
+class OmFlowCanvas;
 
-/* Controller for a DSSI node.
- *
- * FIXME: legacy cruft.  move this code to the appropriate places and nuke
- * this class.
+/** Controller for a Node.
  *
  * \ingroup Ingenuity
  */
-class DSSIController
+class NodeMenu : public Gtk::Menu
 {
 public:
-	DSSIController(CountedPtr<NodeModel> model);
+	NodeMenu(CountedPtr<NodeModel> node);
 
-	virtual ~DSSIController() {}
+	void set_path(const Path& new_path);
 	
-	void show_gui();
-	bool attempt_to_show_gui();
-	void program_add(int bank, int program, const string& name);
-	void program_remove(int bank, int program);
-	
-	void send_program_change(int bank, int program);
-	
-	void show_menu(GdkEventButton* event);
+	virtual void program_add(int bank, int program, const string& name) {}
+	virtual void program_remove(int bank, int program) {}
 
-private:
-	void update_program_menu();
+	bool has_control_inputs();
 	
-	Gtk::Menu                   m_program_menu;
-	Glib::RefPtr<Gtk::MenuItem> m_program_menu_item;
+	//virtual void show_menu(GdkEventButton* event)
+	//{ m_menu.popup(event->button, event->time); }
+
+protected:
 	
-	bool m_banks_dirty;
+	virtual void enable_controls_menuitem();
+	virtual void disable_controls_menuitem();
+
+	//virtual void add_port(CountedPtr<PortModel> pm);
+
+	void on_menu_destroy();
+	void on_menu_clone();
+	void on_menu_learn();
+	void on_menu_disconnect_all();
+
+	//Gtk::Menu                   m_menu;
+	CountedPtr<NodeModel>       _node;
+	Glib::RefPtr<Gtk::MenuItem> _controls_menuitem;
 };
 
 
 } // namespace Ingenuity
 
-#endif // DSSICONTROLLER_H
+#endif // NODEMENU_H

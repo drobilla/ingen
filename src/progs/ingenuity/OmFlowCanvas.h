@@ -19,17 +19,24 @@
 
 #include <string>
 #include <flowcanvas/FlowCanvas.h>
-
+#include "util/CountedPtr.h"
+#include "util/Path.h"
+#include "ConnectionModel.h"
+#include "PatchModel.h"
 
 using std::string;
 using namespace LibFlowCanvas;
 
 using LibFlowCanvas::Port;
+using Ingen::Client::ConnectionModel;
+using Ingen::Client::PatchModel;
+using Ingen::Client::NodeModel;
+using Ingen::Client::MetadataMap;
 
 namespace Ingenuity {
 	
 class OmModule;
-class PatchController;
+
 
 /** Patch canvas widget.
  *
@@ -38,16 +45,18 @@ class PatchController;
 class OmFlowCanvas : public LibFlowCanvas::FlowCanvas
 {
 public:
-	OmFlowCanvas(PatchController* controller, int width, int height);
+	OmFlowCanvas(CountedPtr<PatchModel> patch, int width, int height);
 	
 	OmModule* find_module(const string& name)
 		{ return (OmModule*)FlowCanvas::get_module(name); }
 
-	void connect(const Port* src_port, const Port* dst_port);
-	void disconnect(const Port* src_port, const Port* dst_port);
-	
+	void add_node(CountedPtr<NodeModel> nm);
+	void remove_node(CountedPtr<NodeModel> nm);
+	void connection(CountedPtr<ConnectionModel> cm);
+	void disconnection(const Path& src_port_path, const Path& dst_port_path);
+
 	void get_new_module_location(double& x, double& y);
-	bool canvas_event(GdkEvent* event);
+
 	void destroy_selected();
 
 	void show_menu(GdkEvent* event)
@@ -65,10 +74,20 @@ private:
 	void menu_load_plugin();
 	void menu_new_patch();
 	void menu_load_patch();
+	
+	MetadataMap get_initial_data();
 
-	PatchController* m_patch_controller;
-	int              m_last_click_x;
-	int              m_last_click_y;
+	void build_canvas();
+
+	bool canvas_event(GdkEvent* event);
+	
+	void connect(const Port* src_port, const Port* dst_port);
+	void disconnect(const Port* src_port, const Port* dst_port);
+
+	CountedPtr<PatchModel> m_patch;
+
+	int m_last_click_x;
+	int m_last_click_y;
 	
 	Gtk::Menu*      m_menu;
 	Gtk::MenuItem*  m_menu_add_audio_input;

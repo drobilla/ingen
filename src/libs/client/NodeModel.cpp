@@ -22,22 +22,18 @@ namespace Ingen {
 namespace Client {
 
 
-NodeModel::NodeModel(CountedPtr<PluginModel> plugin, const Path& path)
+NodeModel::NodeModel(CountedPtr<PluginModel> plugin, const Path& path, bool polyphonic)
 : ObjectModel(path),
-  m_polyphonic(false),
+  m_polyphonic(polyphonic),
   m_plugin_uri(plugin->uri()),
-  m_plugin(plugin),
-  m_x(0.0f),
-  m_y(0.0f)
+  m_plugin(plugin)
 {
 }
 
-NodeModel::NodeModel(const string& plugin_uri, const Path& path)
+NodeModel::NodeModel(const string& plugin_uri, const Path& path, bool polyphonic)
 : ObjectModel(path),
-  m_polyphonic(false),
-  m_plugin_uri(plugin_uri),
-  m_x(0.0f),
-  m_y(0.0f)
+  m_polyphonic(polyphonic),
+  m_plugin_uri(plugin_uri)
 {
 }
 
@@ -52,6 +48,7 @@ void
 NodeModel::remove_port(CountedPtr<PortModel> port)
 {
 	m_ports.remove(port);
+	removed_port_sig.emit(port);
 }
 
 
@@ -78,12 +75,13 @@ NodeModel::clear()
 void
 NodeModel::set_path(const Path& p)
 {
-	const string old_path = m_path;
+	const string old_path = _path;
 	
 	ObjectModel::set_path(p);
 	
-	for (PortModelList::iterator i = m_ports.begin(); i != m_ports.end(); ++i)
-		(*i)->set_path(m_path + "/" + (*i)->path().name());
+	// FIXME: rename
+//	for (PortModelList::iterator i = m_ports.begin(); i != m_ports.end(); ++i)
+//		(*i)->set_path(_path + "/" + (*i)->path().name());
 
 	//if (m_parent && old_path.length() > 0)
 	//	parent_patch()->rename_node(old_path, p);
@@ -104,7 +102,7 @@ NodeModel::add_child(CountedPtr<ObjectModel> c)
 void
 NodeModel::remove_child(CountedPtr<ObjectModel> c)
 {
-	assert(c->path().is_child_of(m_path));
+	assert(c->path().is_child_of(_path));
 	assert(c->parent().get() == this);
 
 	CountedPtr<PortModel> pm = PtrCast<PortModel>(c);
@@ -117,7 +115,7 @@ void
 NodeModel::add_port(CountedPtr<PortModel> pm)
 {
 	assert(pm);
-	assert(pm->path().is_child_of(m_path));
+	assert(pm->path().is_child_of(_path));
 	assert(pm->parent().get() == this);
 
 	PortModelList::iterator existing = m_ports.end();
@@ -129,7 +127,7 @@ NodeModel::add_port(CountedPtr<PortModel> pm)
 	}
 
 	if (existing != m_ports.end()) {
-		cerr << "Warning: port clash, assimilating old port " << m_path << endl;
+		cerr << "Warning: port clash, assimilating old port " << _path << endl;
 		pm->assimilate(*existing);
 		*existing = pm;
 	} else {
@@ -140,10 +138,10 @@ NodeModel::add_port(CountedPtr<PortModel> pm)
 
 
 CountedPtr<PortModel>
-NodeModel::get_port(const string& port_name)
+NodeModel::get_port(const string& port_name) const
 {
 	assert(port_name.find("/") == string::npos);
-	for (PortModelList::iterator i = m_ports.begin(); i != m_ports.end(); ++i)
+	for (PortModelList::const_iterator i = m_ports.begin(); i != m_ports.end(); ++i)
 		if ((*i)->path().name() == port_name)
 			return (*i);
 	return CountedPtr<PortModel>();
@@ -163,30 +161,6 @@ NodeModel::remove_program(int bank, int program)
 	m_banks[bank].erase(program);
 	if (m_banks[bank].size() == 0)
 		m_banks.erase(bank);
-}
-
-
-void
-NodeModel::x(float a)
-{
-	if (m_x != a) {
-		m_x = a;
-		char temp_buf[16];
-		snprintf(temp_buf, 16, "%f", a);
-		set_metadata("module-x", temp_buf);
-	}
-}
-
-
-void
-NodeModel::y(float a)
-{
-	if (m_y != a) {
-		m_y = a;
-		char temp_buf[16];
-		snprintf(temp_buf, 16, "%f", a);
-		set_metadata("module-y", temp_buf);
-	}
 }
 
 

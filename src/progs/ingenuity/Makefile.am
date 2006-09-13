@@ -22,6 +22,10 @@ ingenuity_SOURCES = \
 	cmdline.h \
 	cmdline.c \
 	main.cpp \
+	NodeMenu.h \
+	NodeMenu.cpp \
+	OmFlowCanvas.h \
+	OmFlowCanvas.cpp \
 	BreadCrumb.h \
 	BreadCrumbBox.h \
 	BreadCrumbBox.cpp \
@@ -33,18 +37,6 @@ ingenuity_SOURCES = \
 	Configuration.cpp \
 	GladeFactory.h \
 	GladeFactory.cpp \
-	GtkObjectController.h \
-	GtkObjectController.cpp \
-	PatchController.h \
-	PatchController.cpp \
-	NodeController.h \
-	NodeController.cpp \
-	PortController.h \
-	PortController.cpp \
-	DSSIController.h \
-	DSSIController.cpp \
-	ControllerFactory.h \
-	ControllerFactory.cpp \
 	LoadPluginWindow.h \
 	LoadPluginWindow.cpp \
 	LoadPatchWindow.h \
@@ -65,8 +57,6 @@ ingenuity_SOURCES = \
 	PatchWindow.cpp \
 	WindowFactory.h \
 	WindowFactory.cpp \
-	OmFlowCanvas.h \
-	OmFlowCanvas.cpp \
 	../../common/types.h \
 	../../common/Path.h \
 	OmModule.h \

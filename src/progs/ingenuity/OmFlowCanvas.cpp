@@ -19,7 +19,6 @@
 #include <flowcanvas/FlowCanvas.h>
 #include "App.h"
 #include "ModelEngineInterface.h"
-#include "PatchController.h"
 #include "PatchModel.h"
 #include "PatchWindow.h"
 #include "LoadPluginWindow.h"
@@ -28,27 +27,20 @@
 #include "OmPort.h"
 #include "NodeModel.h"
 #include "OmModule.h"
+#include "OmPortModule.h"
+#include "SubpatchModule.h"
 #include "GladeFactory.h"
+#include "WindowFactory.h"
 
 namespace Ingenuity {
 
 
-OmFlowCanvas::OmFlowCanvas(PatchController* controller, int width, int height)
+OmFlowCanvas::OmFlowCanvas(CountedPtr<PatchModel> patch, int width, int height)
 : FlowCanvas(width, height),
-  m_patch_controller(controller),
+  m_patch(patch),
   m_last_click_x(0),
   m_last_click_y(0)
 {
-	assert(controller != NULL);
-	
-	/*Gtk::Menu::MenuList& items = m_menu.items();
-	items.push_back(Gtk::Menu_Helpers::MenuElem("Load Plugin...",
-		sigc::mem_fun(this, &OmFlowCanvas::menu_load_plugin)));
-	items.push_back(Gtk::Menu_Helpers::MenuElem("Load Subpatch...",
-		sigc::mem_fun(this, &OmFlowCanvas::menu_load_subpatch)));
-	items.push_back(Gtk::Menu_Helpers::MenuElem("New Subpatch...",
-		sigc::mem_fun(this, &OmFlowCanvas::menu_create_subpatch)));*/
-
 	Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference();
 	xml->get_widget("canvas_menu", m_menu);
 	
@@ -62,6 +54,8 @@ OmFlowCanvas::OmFlowCanvas(PatchController* controller, int width, int height)
 	xml->get_widget("canvas_menu_load_patch", m_menu_load_patch);
 	xml->get_widget("canvas_menu_new_patch", m_menu_new_patch);
 	
+	build_canvas();
+
 	// Add port menu items
 	m_menu_add_audio_input->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &OmFlowCanvas::menu_add_port),
@@ -82,9 +76,110 @@ OmFlowCanvas::OmFlowCanvas(PatchController* controller, int width, int height)
 		sigc::bind(sigc::mem_fun(this, &OmFlowCanvas::menu_add_port),
 			"midi_output", "MIDI", true));
 
+	// Connect to model signals to track state
+	m_patch->new_node_sig.connect(sigc::mem_fun(this, &OmFlowCanvas::add_node));
+	m_patch->removed_node_sig.connect(sigc::mem_fun(this, &OmFlowCanvas::remove_node));
+	m_patch->new_connection_sig.connect(sigc::mem_fun(this, &OmFlowCanvas::connection));
+	m_patch->removed_connection_sig.connect(sigc::mem_fun(this, &OmFlowCanvas::disconnection));
+	
+	// Connect widget signals to do things
 	m_menu_load_plugin->signal_activate().connect(sigc::mem_fun(this, &OmFlowCanvas::menu_load_plugin));
 	m_menu_load_patch->signal_activate().connect(sigc::mem_fun(this, &OmFlowCanvas::menu_load_patch));
 	m_menu_new_patch->signal_activate().connect(sigc::mem_fun(this, &OmFlowCanvas::menu_new_patch));
+}
+
+
+void
+OmFlowCanvas::build_canvas() {
+	
+	// Create modules for nodes
+	for (NodeModelMap::const_iterator i = m_patch->nodes().begin();
+			i != m_patch->nodes().end(); ++i) {
+		add_node((*i).second);
+	}
+
+	// Create pseudo modules for ports (ports on this canvas, not on our module)
+	for (PortModelList::const_iterator i = m_patch->ports().begin();
+			i != m_patch->ports().end(); ++i) {
+		cerr << "FIXME: PORT MODULE LEAK!" << endl;
+		new OmPortModule(this, *i);
+	}
+
+	// Create connections
+	for (list<CountedPtr<ConnectionModel> >::const_iterator i = m_patch->connections().begin();
+			i != m_patch->connections().end(); ++i) {
+		connection(*i);
+	}
+}
+
+
+void
+OmFlowCanvas::add_node(CountedPtr<NodeModel> nm)
+{
+	cerr << "FIXME: MODULE LEAK!" << endl;
+	
+	CountedPtr<PatchModel> pm = PtrCast<PatchModel>(nm);
+	if (pm)
+		new SubpatchModule(this, pm);
+	else
+		new OmModule(this, nm);
+}
+
+
+void
+OmFlowCanvas::remove_node(CountedPtr<NodeModel> nm)
+{
+	LibFlowCanvas::Module* module = get_module(nm->path().name());
+	delete module;
+}
+
+
+void
+OmFlowCanvas::connection(CountedPtr<ConnectionModel> cm)
+{
+	// Deal with port "anonymous nodes" for this patch's own ports...
+	const Path& src_parent_path = cm->src_port_path().parent();
+	const Path& dst_parent_path = cm->dst_port_path().parent();
+
+	const string& src_parent_name =
+		(src_parent_path == m_patch->path()) ? "" : src_parent_path.name();
+	const string& dst_parent_name =
+		(dst_parent_path == m_patch->path()) ? "" : dst_parent_path.name();
+
+	Port* src_port = get_port(src_parent_name, cm->src_port_path().name());
+	Port* dst_port = get_port(dst_parent_name, cm->dst_port_path().name());
+	assert(src_port && dst_port);
+
+	add_connection(src_port, dst_port);
+}
+
+
+void
+OmFlowCanvas::disconnection(const Path& src_port_path, const Path& dst_port_path)
+{
+	const string& src_node_name = src_port_path.parent().name();
+	const string& src_port_name = src_port_path.name();
+	const string& dst_node_name = dst_port_path.parent().name();
+	const string& dst_port_name = dst_port_path.name();
+
+	Port* src_port = get_port(src_node_name, src_port_name);
+	Port* dst_port = get_port(dst_node_name, dst_port_name);
+
+	if (src_port && dst_port) {
+		remove_connection(src_port, dst_port);
+	}
+
+	//patch_model()->remove_connection(src_port_path, dst_port_path);
+
+	cerr << "FIXME: disconnection\n";
+	/*
+	// Enable control slider in destination node control window
+	PortController* p = (PortController)Store::instance().port(dst_port_path)->controller();
+	assert(p);
+
+	if (p->control_panel())
+	p->control_panel()->enable_port(p->path());
+	*/
 }
 
 
@@ -102,10 +197,12 @@ OmFlowCanvas::connect(const Port* src_port, const Port* dst_port)
 			dst->model()->type() == PortModel::CONTROL)
 	{
 		CountedPtr<PluginModel> pm(new PluginModel(PluginModel::Internal, "", "midi_control_in", ""));
-		CountedPtr<NodeModel> nm(new NodeModel(pm, m_patch_controller->model()->path().base()
-			+ src->name() + "-" + dst->name()));
-		nm->x(dst->module()->property_x() - dst->module()->width() - 20);
-		nm->y(dst->module()->property_y());
+		CountedPtr<NodeModel> nm(new NodeModel(pm, m_patch->path().base()
+			+ src->name() + "-" + dst->name(), false));
+		nm->set_metadata("module-x", Atom((float)
+			(dst->module()->property_x() - dst->module()->width() - 20)));
+		nm->set_metadata("module-y", Atom((float)
+			(dst->module()->property_y())));
 		App::instance().engine()->create_node_from_model(nm.get());
 		App::instance().engine()->connect(src->model()->path(), nm->path() + "/MIDI_In");
 		App::instance().engine()->connect(nm->path() + "/Out_(CR)", dst->model()->path());
@@ -114,9 +211,9 @@ OmFlowCanvas::connect(const Port* src_port, const Port* dst_port)
 		// Set control node range to port's user range
 		
 		App::instance().engine()->set_port_value_queued(nm->path().base() + "Min",
-			atof(dst->model()->get_metadata("user-min").c_str()));
+			dst->model()->get_metadata("user-min").get_float());
 		App::instance().engine()->set_port_value_queued(nm->path().base() + "Max",
-			atof(dst->model()->get_metadata("user-max").c_str()));
+			dst->model()->get_metadata("user-max").get_float());
 	} else {
 		App::instance().engine()->connect(src->model()->path(),
 		                    dst->model()->path());
@@ -181,7 +278,7 @@ OmFlowCanvas::generate_port_name(const string& base) {
 		snprintf(num_buf, 5, "%u", i);
 		name = base + "_";
 		name += num_buf;
-		if (!m_patch_controller->patch_model()->get_port(name))
+		if (!m_patch->get_port(name))
 			break;
 	}
 
@@ -194,7 +291,7 @@ OmFlowCanvas::generate_port_name(const string& base) {
 void
 OmFlowCanvas::menu_add_port(const string& name, const string& type, bool is_output)
 {
-	const Path& path = m_patch_controller->path().base() + generate_port_name(name);
+	const Path& path = m_patch->path().base() + generate_port_name(name);
 	App::instance().engine()->create_port(path, type, is_output);
 	
 	char temp_buf[16];
@@ -267,30 +364,35 @@ OmFlowCanvas::menu_add_midi_output()
 }
 */
 
+MetadataMap
+OmFlowCanvas::get_initial_data()
+{
+	MetadataMap result;
+	
+	result["module-x"] = Atom((float)m_last_click_x);
+	result["module-y"] = Atom((float)m_last_click_y);
+	
+	return result;
+}
+
 void
 OmFlowCanvas::menu_load_plugin()
 {
-	m_patch_controller->window()->load_plugin_window()->set_next_module_location(
-		m_last_click_x, m_last_click_y);
-	m_patch_controller->window()->load_plugin_window()->show();
+	App::instance().window_factory()->present_load_plugin(m_patch, get_initial_data());
 }
 
 
 void
 OmFlowCanvas::menu_load_patch()
 {
-	m_patch_controller->window()->load_subpatch_window()->set_next_module_location(
-		m_last_click_x, m_last_click_y);
-	m_patch_controller->window()->load_subpatch_window()->show();
+	App::instance().window_factory()->present_load_subpatch(m_patch, get_initial_data());
 }
 
 
 void
 OmFlowCanvas::menu_new_patch()
 {
-	m_patch_controller->window()->new_subpatch_window()->set_next_module_location(
-		m_last_click_x, m_last_click_y);
-	m_patch_controller->window()->new_subpatch_window()->show();
+	App::instance().window_factory()->present_new_subpatch(m_patch, get_initial_data());
 }
 
 

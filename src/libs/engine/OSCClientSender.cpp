@@ -29,7 +29,7 @@
 #include "AudioDriver.h"
 #include "interface/ClientInterface.h"
 #include "Responder.h"
-
+#include "util/LibloAtom.h"
 using std::cout; using std::cerr; using std::endl;
 
 namespace Ingen {
@@ -421,9 +421,13 @@ OSCClientSender::disconnection(string src_port_path, string dst_port_path)
  * \arg \b value (string)</p> \n \n
  */
 void
-OSCClientSender::metadata_update(string path, string key, string value)
+OSCClientSender::metadata_update(string path, string key, Atom value)
 {
-	lo_send(_address, "/om/metadata/update", "sss", path.c_str(), key.c_str(), value.c_str());
+	lo_message m = lo_message_new();
+	lo_message_add_string(m, path.c_str());
+	lo_message_add_string(m, key.c_str());
+	LibloAtom::lo_message_add_atom(m, value);
+	lo_send_message(_address, "/om/metadata/update", m);
 }
 
 

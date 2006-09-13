@@ -14,7 +14,6 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-
 #ifndef LOADSUBPATCHWINDOW_H
 #define LOADSUBPATCHWINDOW_H
 
@@ -22,13 +21,12 @@
 #include <libglademm/xml.h>
 #include <gtkmm.h>
 #include "util/CountedPtr.h"
-#include "PatchController.h"
-
+#include "PatchModel.h"
+using Ingen::Client::PatchModel;
+using Ingen::Client::MetadataMap;
 
 namespace Ingenuity {
 	
-class PatchController;
-
 
 /** 'Add Subpatch' window.
  *
@@ -41,10 +39,9 @@ class LoadSubpatchWindow : public Gtk::FileChooserDialog
 public:
 	LoadSubpatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml);
 
-	void set_patch(CountedPtr<PatchController> pc);
+	void set_patch(CountedPtr<PatchModel> patch);
 	
-	void set_next_module_location(double x, double y)
-		{ m_new_module_x = x; m_new_module_y = y; }
+	void present(CountedPtr<PatchModel> patch, MetadataMap data);
 
 protected:
 	void on_show();
@@ -58,7 +55,9 @@ private:
 	void ok_clicked();
 	void cancel_clicked();
 
-	CountedPtr<PatchController> m_patch_controller;
+	MetadataMap m_initial_data;
+
+	CountedPtr<PatchModel> m_patch;
 	
 	double m_new_module_x;
 	double m_new_module_y;

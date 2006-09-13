@@ -19,7 +19,6 @@
 #include <dirent.h>
 #include "App.h"
 #include "Configuration.h"
-#include "PatchController.h"
 #include "PatchModel.h"
 #include "ModelEngineInterface.h"
 #include "Loader.h"
@@ -60,14 +59,23 @@ LoadPatchWindow::LoadPatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gno
 }
 
 
+void
+LoadPatchWindow::present(CountedPtr<PatchModel> patch, MetadataMap data)
+{
+	set_patch(patch);
+	m_initial_data = data;
+	Gtk::Window::present();
+}
+
+
 /** Sets the patch controller for this window and initializes everything.
  *
  * This function MUST be called before using the window in any way!
  */
 void
-LoadPatchWindow::set_patch(CountedPtr<PatchController> pc)
+LoadPatchWindow::set_patch(CountedPtr<PatchModel> patch)
 {
-	m_patch_controller = pc;
+	m_patch = patch;
 }
 
 
@@ -108,12 +116,13 @@ LoadPatchWindow::ok_clicked()
 		poly = m_poly_spinbutton->get_value_as_int();
 	
 	if (m_replace)
-		App::instance().engine()->clear_patch(m_patch_controller->model()->path());
+		App::instance().engine()->clear_patch(m_patch->path());
 
-	CountedPtr<PatchModel> pm(new PatchModel(m_patch_controller->model()->path(), poly));
+	CountedPtr<PatchModel> pm(new PatchModel(m_patch->path(), poly));
 	pm->filename(get_filename());
-	pm->set_metadata("filename", get_filename());
-	pm->set_parent(m_patch_controller->patch_model()->parent());
+	pm->set_metadata("filename", Atom(get_filename().c_str()));
+	// FIXME: necessary?
+	//pm->set_parent(m_patch->parent());
 	//App::instance().engine()->push_added_patch(pm);
 	App::instance().loader()->load_patch(pm, true, true);
 	

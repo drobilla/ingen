@@ -212,11 +212,11 @@ void
 Store::destruction_event(const Path& path)
 {
 	CountedPtr<ObjectModel> removed = remove_object(path);
-	removed->controller().reset();
-	cerr << "Store removed object " << path
-		<< " controller count: " << removed->controller().use_count();
+
 	removed.reset();
-	cerr << ", model count: " << removed.use_count() << endl;
+
+	cerr << "Store removed object " << path
+		<< ", count: " << removed.use_count();
 }
 
 void
@@ -244,12 +244,10 @@ Store::new_node_event(const string& plugin_type, const string& plugin_uri, const
 	
 	CountedPtr<PluginModel> plug = plugin(plugin_uri);
 	if (!plug) {
-		CountedPtr<NodeModel> n(new NodeModel(plugin_uri, node_path));
-		n->polyphonic(is_polyphonic);
+		CountedPtr<NodeModel> n(new NodeModel(plugin_uri, node_path, is_polyphonic));
 		add_plugin_orphan(n);
 	} else {
-		CountedPtr<NodeModel> n(new NodeModel(plug, node_path));
-		n->polyphonic(is_polyphonic);
+		CountedPtr<NodeModel> n(new NodeModel(plug, node_path, is_polyphonic));
 		add_object(n);
 	}
 }
@@ -292,7 +290,7 @@ Store::patch_disabled_event(const Path& path)
 
 
 void
-Store::metadata_update_event(const Path& subject_path, const string& predicate, const string& value)
+Store::metadata_update_event(const Path& subject_path, const string& predicate, const Atom& value)
 {
 	CountedPtr<ObjectModel> subject = object(subject_path);
 	if (subject)

@@ -20,8 +20,8 @@
 namespace Ingenuity {
 
 
-DSSIModule::DSSIModule(OmFlowCanvas* canvas, DSSIController* node)
-: OmModule(canvas, static_cast<NodeController*>(node))
+DSSIModule::DSSIModule(OmFlowCanvas* canvas, CountedPtr<NodeModel> node)
+: OmModule(canvas, node)
 {
 }
 
@@ -29,9 +29,11 @@ DSSIModule::DSSIModule(OmFlowCanvas* canvas, DSSIController* node)
 void
 DSSIModule::on_double_click(GdkEventButton* ev)
 {
+	/*
 	DSSIController* dc = dynamic_cast<DSSIController*>(m_node);
 	if (!dc || ! dc->attempt_to_show_gui())
 		show_control_window();
+	*/
 }
 
 

@@ -107,7 +107,7 @@ public:
 	
 	virtual void metadata_update(string subject_path,
 	                             string predicate,
-	                             string value);
+	                             Atom   value);
 	
 	virtual void control_change(string port_path,
 	                            float  value);

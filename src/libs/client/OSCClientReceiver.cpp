@@ -15,8 +15,7 @@
  */
 
 #include "OSCClientReceiver.h"
-//#include "NodeModel.h"
-//#include "PluginModel.h"
+#include "util/LibloAtom.h"
 #include <list>
 #include <cassert>
 #include <cstring>
@@ -154,7 +153,7 @@ OSCClientReceiver::setup_callbacks()
 	lo_server_thread_add_method(_st, "/om/disconnection", "ss", disconnection_cb, this);
 	lo_server_thread_add_method(_st, "/om/new_node", "sssii", new_node_cb, this);
 	lo_server_thread_add_method(_st, "/om/new_port", "ssi", new_port_cb, this);
-	lo_server_thread_add_method(_st, "/om/metadata/update", "sss", metadata_update_cb, this);
+	lo_server_thread_add_method(_st, "/om/metadata/update", NULL, metadata_update_cb, this);
 	lo_server_thread_add_method(_st, "/om/control_change", "sf", control_change_cb, this);
 	lo_server_thread_add_method(_st, "/om/program_add", "siis", program_add_cb, this);
 	lo_server_thread_add_method(_st, "/om/program_remove", "sii", program_remove_cb, this);
@@ -337,9 +336,13 @@ OSCClientReceiver::m_new_port_cb(const char* path, const char* types, lo_arg** a
 int
 OSCClientReceiver::m_metadata_update_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
+	if (argc != 3 || types[0] != 's' || types[1] != 's')
+		return 1;
+
 	const char* obj_path  = &argv[0]->s;
 	const char* key       = &argv[1]->s;
-	const char* value     = &argv[2]->s;
+
+	Atom value = LibloAtom::lo_arg_to_atom(types[2], argv[2]);
 
 	metadata_update(obj_path, key, value);
 

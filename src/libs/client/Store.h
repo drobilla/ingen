@@ -24,6 +24,7 @@
 #include "util/CountedPtr.h"
 #include <sigc++/sigc++.h>
 #include "util/Path.h"
+#include "util/Atom.h"
 using std::string; using std::map; using std::list;
 
 namespace Ingen {
@@ -75,7 +76,7 @@ private:
 	void new_port_event(const Path& path, const string& data_type, bool is_output);
 	void patch_enabled_event(const Path& path);
 	void patch_disabled_event(const Path& path);
-	void metadata_update_event(const Path& subject_path, const string& predicate, const string& value);
+	void metadata_update_event(const Path& subject_path, const string& predicate, const Atom& value);
 	void control_change_event(const Path& port_path, float value);
 	void connection_event(const Path& src_port_path, const Path& dst_port_path);
 	void disconnection_event(const Path& src_port_path, const Path& dst_port_path);

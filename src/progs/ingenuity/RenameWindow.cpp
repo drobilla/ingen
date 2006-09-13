@@ -18,7 +18,6 @@
 #include <cassert>
 #include <string>
 #include "ObjectModel.h"
-#include "GtkObjectController.h"
 #include "Store.h"
 #include "App.h"
 #include "ModelEngineInterface.h"
@@ -47,7 +46,7 @@ RenameWindow::RenameWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Gl
  * This function MUST be called before using this object in any way.
  */
 void
-RenameWindow::set_object(GtkObjectController* object)
+RenameWindow::set_object(CountedPtr<ObjectModel> object)
 {
 	m_object = object;
 	m_name_entry->set_text(object->path().name());
@@ -62,15 +61,15 @@ RenameWindow::name_changed()
 {
 	assert(m_name_entry);
 	assert(m_message_label);
-	assert(m_object->model());
-	assert(m_object->model()->parent());
+	assert(m_object);
+	assert(m_object->parent());
 
 	string name = m_name_entry->get_text();
 	if (name.find("/") != string::npos) {
 		m_message_label->set_text("Name may not contain '/'");
 		m_ok_button->property_sensitive() = false;
 	//} else if (m_object->parent()->patch_model()->get_node(name) != NULL) {
-	} else if (App::instance().store()->object(m_object->model()->parent()->path().base() + name)) {
+	} else if (App::instance().store()->object(m_object->parent()->path().base() + name)) {
 		m_message_label->set_text("An object already exists with that name.");
 		m_ok_button->property_sensitive() = false;
 	} else if (name.length() == 0) {
@@ -105,7 +104,7 @@ RenameWindow::ok_clicked()
 	assert(name.length() > 0);
 	assert(name.find("/") == string::npos);
 
-	App::instance().engine()->rename(m_object->model()->path(), name);
+	App::instance().engine()->rename(m_object->path(), name);
 
 	hide();
 }

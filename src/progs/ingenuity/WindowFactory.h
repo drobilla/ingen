@@ -18,23 +18,69 @@
 #define WINDOW_FACTORY_H
 
 #include <map>
+#include <gtkmm.h>
 #include "util/CountedPtr.h"
-#include "PatchController.h"
+#include "PatchView.h"
+#include "PatchModel.h"
+using Ingen::Client::PatchModel;
 
 namespace Ingenuity {
 
 class PatchWindow;
+class NodeControlWindow;
+class NodePropertiesWindow;
+class PatchPropertiesWindow;
+class LoadPatchWindow;
+class RenameWindow;
 
 
+/** Manager/Factory for all windows.
+ *
+ * This serves as a nice centralized spot for all window management issues,
+ * as well as an enumeration of all the windows in Ingenuity (the goal being
+ * to reduce that number as much as possible).
+ */
 class WindowFactory {
 public:
-	void present(CountedPtr<PatchController> patch, PatchWindow* preferred = NULL);
+	WindowFactory();
+	~WindowFactory();
+
+	PatchWindow*       patch_window(CountedPtr<PatchModel> patch);
+	NodeControlWindow* control_window(CountedPtr<NodeModel> node);
+
+	void present_patch(CountedPtr<PatchModel> patch,
+	                   PatchWindow*           preferred = NULL,
+	                   CountedPtr<PatchView>  patch     = CountedPtr<PatchView>());
+
+	void present_controls(CountedPtr<NodeModel> node);
+
+	void present_load_plugin(CountedPtr<PatchModel> patch, MetadataMap data = MetadataMap());
+	void present_load_patch(CountedPtr<PatchModel> patch, MetadataMap data = MetadataMap());
+	void present_new_subpatch(CountedPtr<PatchModel> patch, MetadataMap data = MetadataMap());
+	void present_load_subpatch(CountedPtr<PatchModel> patch, MetadataMap data = MetadataMap());
+	void present_rename(CountedPtr<ObjectModel> object);
+	void present_properties(CountedPtr<NodeModel> node);
 
 private:
-	PatchWindow* create_new(CountedPtr<PatchController> patch);
-	bool remove(PatchWindow* win, GdkEventAny* ignored);
+	typedef std::map<Path, PatchWindow*>       PatchWindowMap;
+	typedef std::map<Path, NodeControlWindow*> ControlWindowMap;
 
-	std::map<Path, PatchWindow*> _windows;
+	PatchWindow* new_patch_window(CountedPtr<PatchModel> patch, CountedPtr<PatchView> view);
+	bool         remove_patch_window(PatchWindow* win, GdkEventAny* ignored);
+
+	NodeControlWindow* new_control_window(CountedPtr<NodeModel> node);
+	bool               remove_control_window(NodeControlWindow* win, GdkEventAny* ignored);
+
+	PatchWindowMap   _patch_windows;
+	ControlWindowMap _control_windows;
+
+	LoadPluginWindow*      _load_plugin_win;
+	LoadPatchWindow*       _load_patch_win;
+	NewSubpatchWindow*     _new_subpatch_win;
+	LoadSubpatchWindow*    _load_subpatch_win;
+	NodePropertiesWindow*  _node_properties_win;
+	PatchPropertiesWindow* _patch_properties_win;
+	RenameWindow*          _rename_win;
 };
 
 }

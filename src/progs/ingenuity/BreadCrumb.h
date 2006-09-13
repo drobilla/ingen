@@ -17,31 +17,44 @@
 #ifndef BREADCRUMB_H
 #define BREADCRUMB_H
 
-// FIXME: remove
-#include <iostream>
-using std::cerr; using std::endl;
-
 #include <gtkmm.h>
 #include "util/Path.h"
+#include "util/CountedPtr.h"
+#include "PatchView.h"
 
 namespace Ingenuity {
 
 
 /** Breadcrumb button in a PatchWindow.
  *
+ * Each Breadcrumb stores a reference to a PatchView for quick switching.
+ * So, the amount of allocated PatchViews at a given time is equal to the
+ * number of visible breadcrumbs (which is the perfect cache for GUI
+ * responsiveness balanced with mem consumption).
+ *
  * \ingroup Ingenuity
  */
 class BreadCrumb : public Gtk::ToggleButton
 {
 public:
-	BreadCrumb(const Path& path)
-		: m_path(path)
+	BreadCrumb(const Path& path, CountedPtr<PatchView> view = CountedPtr<PatchView>())
+		: _path(path)
+		, _view(view)
 	{
+		assert( !view || view->patch()->path() == path);
 		set_border_width(0);
 		set_path(path);
 		show_all();
 	}
 
+	void set_view(CountedPtr<PatchView> view) {
+		assert( !view || view->patch()->path() == _path);
+		_view = view;
+	}
+
+	const Path&           path() const { return _path; }
+	CountedPtr<PatchView> view() const { return _view; }
+	
 	void set_path(const Path& path)
 	{
 		remove();
@@ -50,12 +63,14 @@ public:
 		lab->set_padding(0, 0);
 		lab->show();
 		add(*lab);
+
+		if (_view && _view->patch()->path() != path)
+			_view.reset();
 	}
 
-	const Path& path() { return m_path; }
-	
 private:
-	Path m_path;
+	Path                  _path;
+	CountedPtr<PatchView> _view;
 };
 
 } // namespace Ingenuity

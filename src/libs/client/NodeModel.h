@@ -44,55 +44,50 @@ class PluginModel;
 class NodeModel : public ObjectModel
 {
 public:
-	NodeModel(const string& plugin_uri, const Path& path);
-	NodeModel(CountedPtr<PluginModel> plugin, const Path& path);
+	NodeModel(const string& plugin_uri, const Path& path, bool polyphonic);
+	NodeModel(CountedPtr<PluginModel> plugin, const Path& path, bool polyphonic);
 	virtual ~NodeModel();
-	
-	void add_child(CountedPtr<ObjectModel> c);
-	void remove_child(CountedPtr<ObjectModel> c);
 
-	CountedPtr<PortModel> get_port(const string& port_name);
-	void       add_port(CountedPtr<PortModel> pm);
-	void       remove_port(CountedPtr<PortModel> pm);
-	void       remove_port(const string& port_path);
+	CountedPtr<PortModel> get_port(const string& port_name) const;
 	
-	virtual void clear();
-
-	const map<int, map<int, string> >& get_programs() const     { return m_banks; }
-	void add_program(int bank, int program, const string& name);
-	void remove_program(int bank, int program);
-
-	string plugin_uri() { return m_plugin_uri; }
-
-	CountedPtr<PluginModel> plugin() const { return m_plugin; }
-	//void               plugin(CountedPtr<PluginModel> p) { m_plugin = p; }
-	
-	virtual void set_path(const Path& p);
-	
-	int                   num_ports() const  { return m_ports.size(); }
-	const PortModelList&  ports() const      { return m_ports; }
-	virtual bool          polyphonic() const { return m_polyphonic; }
-	void                  polyphonic(bool b) { m_polyphonic = b; }
-	float                 x() const          { return m_x; }
-	float                 y() const          { return m_y; }
-	void                  x(float a);
-	void                  y(float a);
+	const map<int, map<int, string> >& get_programs() const { return m_banks; }
+	const string&                      plugin_uri() const   { return m_plugin_uri; }
+	CountedPtr<PluginModel>            plugin() const       { return m_plugin; }
+	int                                num_ports() const    { return m_ports.size(); }
+	const PortModelList&               ports() const        { return m_ports; }
+	virtual bool                       polyphonic() const   { return m_polyphonic; }
 	
 	// Signals
 	sigc::signal<void, CountedPtr<PortModel> > new_port_sig; 
+	sigc::signal<void, CountedPtr<PortModel> > removed_port_sig; 
 	
 protected:
+	friend class Store;
 	NodeModel(const Path& path);
+	void add_child(CountedPtr<ObjectModel> c);
+	void remove_child(CountedPtr<ObjectModel> c);
+	void add_port(CountedPtr<PortModel> pm);
+	void remove_port(CountedPtr<PortModel> pm);
+	void remove_port(const string& port_path);
+	void add_program(int bank, int program, const string& name);
+	void remove_program(int bank, int program);
+
+
+	//void plugin(CountedPtr<PluginModel> p) { m_plugin = p; }
+	virtual void clear();
+	
+	friend class PatchModel;
+	void set_path(const Path& p);
 
 	bool                        m_polyphonic;
-	PortModelList               m_ports;  ///< List of ports (instead of map to preserve order)
-	string                      m_plugin_uri; ///< Plugin URI (not redundant if PluginModel unknown
-	CountedPtr<PluginModel>     m_plugin; ///< The plugin this node is an instance of
-	float                       m_x;      ///< Just metadata, here as an optimization for GUI
-	float                       m_y;      ///< Just metadata, here as an optimization for GUI
-	map<int, map<int, string> > m_banks;  ///< DSSI banks
+	PortModelList               m_ports;      ///< List of ports (not a map to preserve order)
+	string                      m_plugin_uri; ///< Plugin URI (if PluginModel is unknown)
+	CountedPtr<PluginModel>     m_plugin;     ///< The plugin this node is an instance of
+	map<int, map<int, string> > m_banks;      ///< DSSI banks
 
 private:
+	friend class PatchLibrarian; // FIXME: remove
+
 	// Prevent copies (undefined)
 	NodeModel(const NodeModel& copy);
 	NodeModel& operator=(const NodeModel& copy);	

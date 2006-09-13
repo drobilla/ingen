@@ -24,22 +24,44 @@
 #include "OmPort.h"
 #include "GladeFactory.h"
 #include "RenameWindow.h"
-#include "PatchController.h"
 #include "PatchWindow.h"
+#include "OmPatchPort.h"
 
 namespace Ingenuity {
 
 
-OmPortModule::OmPortModule(OmFlowCanvas* canvas, PortController* port, double x, double y)
-: LibFlowCanvas::Module(canvas, "", x, y),
+OmPortModule::OmPortModule(OmFlowCanvas* canvas, CountedPtr<PortModel> port)
+: LibFlowCanvas::Module(canvas, "", 0, 0), // FIXME: coords?
   m_port(port)
 {
-	assert(m_port != NULL);
-
 	/*if (port_model()->polyphonic() && port_model()->parent() != NULL
 			&& port_model()->parent_patch()->poly() > 1) {
 		border_width(2.0);
 	}*/
+	
+	assert(canvas);
+	assert(port);
+
+	if (PtrCast<PatchModel>(port->parent())) {
+		if (m_patch_port)
+			delete m_patch_port;
+
+		m_patch_port = new OmPatchPort(this, port);
+	}
+	
+	resize();
+
+	const Atom& x_atom = port->get_metadata("module-x");
+	const Atom& y_atom = port->get_metadata("module-y");
+
+	if (x_atom && y_atom && x_atom.type() == Atom::FLOAT && y_atom.type() == Atom::FLOAT) {
+		move_to(x_atom.get_float(), y_atom.get_float());
+	} else {
+		double default_x;
+		double default_y;
+		canvas->get_new_module_location(default_x, default_y);
+		move_to(default_x, default_y);
+	}
 }
 
 
@@ -48,15 +70,15 @@ OmPortModule::store_location()
 {
 	char temp_buf[16];
 	
-	//m_port->port_model()->x(property_x());
+	//m_port->x(property_x());
 	snprintf(temp_buf, 16, "%f", property_x().get_value());
-	//m_port->port_model()->set_metadata("module-x", temp_buf); // just in case?
-	App::instance().engine()->set_metadata(m_port->port_model()->path(), "module-x", temp_buf);
+	//m_port->set_metadata("module-x", temp_buf); // just in case?
+	App::instance().engine()->set_metadata(m_port->path(), "module-x", temp_buf);
 	
-	//m_port->port_model()->y(property_y());
+	//m_port->y(property_y());
 	snprintf(temp_buf, 16, "%f", property_y().get_value());
-	//m_port->port_model()->set_metadata("module-y", temp_buf); // just in case?
-	App::instance().engine()->set_metadata(m_port->port_model()->path(), "module-y", temp_buf);
+	//m_port->set_metadata("module-y", temp_buf); // just in case?
+	App::instance().engine()->set_metadata(m_port->path(), "module-y", temp_buf);
 }
 
 
@@ -64,8 +86,8 @@ void
 OmPortModule::move_to(double x, double y)
 {
 	Module::move_to(x, y);
-	//m_port->port_model()->x(x);
-	//m_port->port_model()->y(y);
+	//m_port->x(x);
+	//m_port->y(y);
 	//store_location();
 }
 

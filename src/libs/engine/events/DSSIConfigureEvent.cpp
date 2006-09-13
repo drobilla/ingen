@@ -64,7 +64,7 @@ DSSIConfigureEvent::post_process()
 	} else {
 		string key = "dssi-configure--";
 		key += m_key;
-		_engine.broadcaster()->send_metadata_update(m_node_path, key, m_val);
+		_engine.broadcaster()->send_metadata_update(m_node_path, key, Atom(m_val.c_str()));
 	}
 }
 
