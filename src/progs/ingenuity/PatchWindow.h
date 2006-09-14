@@ -72,8 +72,6 @@ public:
 
 	Gtk::MenuItem* menu_view_control_window() { return m_menu_view_control_window; }
 
-	void claim_breadcrumbs();
-
 protected:
 	void on_show();
 	void on_hide();
@@ -90,6 +88,8 @@ private:
 	void event_show_properties();
 	void event_show_controls();
 	void event_show_engine();
+
+	void patch_destroyed();
 
 	CountedPtr<PatchModel> m_patch;
 	CountedPtr<PatchView>  m_view;

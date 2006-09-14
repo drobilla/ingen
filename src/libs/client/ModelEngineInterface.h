@@ -44,7 +44,9 @@ class ModelEngineInterface : public virtual Shared::EngineInterface
 public:
 	virtual ~ModelEngineInterface() {}
 	
-	virtual void create_patch_from_model(const PatchModel* pm);
+	virtual void create_patch_with_data(const Path&        path,
+	                                    size_t             poly,
+	                                    const MetadataMap& initial_data);
 
 	virtual void create_node_with_data(const string&      plugin_uri,
 	                                   const Path&        path,

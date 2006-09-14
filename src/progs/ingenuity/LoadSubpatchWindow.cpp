@@ -30,9 +30,7 @@ namespace Ingenuity {
 
 
 LoadSubpatchWindow::LoadSubpatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
-: Gtk::FileChooserDialog(cobject),
-  m_new_module_x(0),
-  m_new_module_y(0)
+: Gtk::FileChooserDialog(cobject)
 {
 	xml->get_widget("load_subpatch_name_from_file_radio", m_name_from_file_radio);
 	xml->get_widget("load_subpatch_name_from_user_radio", m_name_from_user_radio);
@@ -151,12 +149,6 @@ LoadSubpatchWindow::ok_clicked()
 		poly = m_poly_spinbutton->get_value_as_int();
 	else if (m_poly_from_parent_radio->get_active())
 		poly = m_patch->poly();
-
-	if (m_new_module_x == 0 && m_new_module_y == 0) {
-		throw; // FIXME
-		//m_patch_controller->get_view()->canvas()->get_new_module_location(
-		//	m_new_module_x, m_new_module_y);
-	}
 
 	/*CountedPtr<PatchModel> pm(new PatchModel(m_patch->path().base() + name, poly));
 	pm->filename(filename);

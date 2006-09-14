@@ -122,6 +122,9 @@ NodeModel::add_port(CountedPtr<PortModel> pm)
 	
 	// Store should have handled this by merging the two
 	assert(existing == m_ports.end());
+
+	m_ports.push_back(pm);
+	new_port_sig.emit(pm);
 }
 
 

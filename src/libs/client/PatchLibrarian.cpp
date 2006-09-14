@@ -479,7 +479,8 @@ PatchLibrarian::load_patch(CountedPtr<PatchModel> pm, bool wait, bool existing)
 		if (wait) {
 			//int id = _engine->get_next_request_id();
 			//_engine->set_wait_response_id(id);
-			_engine->create_patch_from_model(pm.get());
+			cerr << "FIXME: create patch\n";
+			//_engine->create_patch_from_model(pm.get());
 			//bool succeeded = _engine->wait_for_response();
 	
 			// If creating the patch failed, bail out so we don't load all these nodes
@@ -489,7 +490,8 @@ PatchLibrarian::load_patch(CountedPtr<PatchModel> pm, bool wait, bool existing)
 				return "";
 			}*/ // FIXME
 		} else {
-			_engine->create_patch_from_model(pm.get());
+			cerr << "FIXME: create patch (2)\n";
+			//_engine->create_patch_from_model(pm.get());
 		}
 	}
 	

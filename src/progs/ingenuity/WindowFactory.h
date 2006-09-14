@@ -60,13 +60,15 @@ public:
 	void present_load_subpatch(CountedPtr<PatchModel> patch, MetadataMap data = MetadataMap());
 	void present_rename(CountedPtr<ObjectModel> object);
 	void present_properties(CountedPtr<NodeModel> node);
+	
+	bool remove_patch_window(PatchWindow* win, GdkEventAny* ignored = NULL);
 
 private:
 	typedef std::map<Path, PatchWindow*>       PatchWindowMap;
 	typedef std::map<Path, NodeControlWindow*> ControlWindowMap;
 
 	PatchWindow* new_patch_window(CountedPtr<PatchModel> patch, CountedPtr<PatchView> view);
-	bool         remove_patch_window(PatchWindow* win, GdkEventAny* ignored);
+
 
 	NodeControlWindow* new_control_window(CountedPtr<NodeModel> node);
 	bool               remove_control_window(NodeControlWindow* win, GdkEventAny* ignored);

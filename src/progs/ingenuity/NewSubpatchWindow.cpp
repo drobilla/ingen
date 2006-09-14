@@ -25,9 +25,7 @@ namespace Ingenuity {
 
 
 NewSubpatchWindow::NewSubpatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
-: Gtk::Window(cobject),
-  m_new_module_x(0),
-  m_new_module_y(0)
+: Gtk::Window(cobject)
 {
 	xml->get_widget("new_subpatch_name_entry", m_name_entry);
 	xml->get_widget("new_subpatch_message_label", m_message_label);
@@ -87,24 +85,11 @@ NewSubpatchWindow::name_changed()
 void
 NewSubpatchWindow::ok_clicked()
 {
-	cerr << "FIXME: new subpatch\n";
-#if 0
-	PatchModel* pm = new PatchModel(
-		m_patch->path().base() + m_name_entry->get_text(),
-		m_poly_spinbutton->get_value_as_int());
+	const Path path = m_patch->path().base() + Path::nameify(m_name_entry->get_text());
+	const size_t poly = m_poly_spinbutton->get_value_as_int();
 
-	if (m_new_module_x == 0 && m_new_module_y == 0) {
-		throw; // FIXME
-		//m_patch_controller->get_view()->canvas()->get_new_module_location(
-		//	m_new_module_x, m_new_module_y);
-	}
-
-	// FIXME: necessary?
-	//pm->set_parent(m_patch);
-	pm->set_metadata("module-x", (float)m_new_module_x);
-	pm->set_metadata("module-y", (float)m_new_module_y);
-	App::instance().engine()->create_patch_from_model(pm);
-#endif
+	App::instance().engine()->create_patch_with_data(path, poly, m_initial_data);
+	
 	hide();
 }			
 

@@ -98,7 +98,6 @@ public:
 
 protected:
 	void on_show();
-	void on_hide();
 	bool on_key_press_event(GdkEventKey* event);
 	
 private:
@@ -129,9 +128,6 @@ private:
 	
 	int m_plugin_name_offset; // see comments for generate_plugin_name
 	
-	double m_new_module_x;
-	double m_new_module_y;
-
 	Gtk::TreeView*    m_plugins_treeview;
 	Gtk::CheckButton* m_polyphonic_checkbutton;
 	Gtk::Entry*       m_node_name_entry;

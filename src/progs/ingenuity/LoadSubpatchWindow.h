@@ -59,9 +59,6 @@ private:
 
 	CountedPtr<PatchModel> m_patch;
 	
-	double m_new_module_x;
-	double m_new_module_y;
-	
 	Gtk::RadioButton* m_name_from_file_radio;
 	Gtk::RadioButton* m_name_from_user_radio;
 	Gtk::Entry*       m_name_entry;

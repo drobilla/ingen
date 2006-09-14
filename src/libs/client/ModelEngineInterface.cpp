@@ -56,14 +56,14 @@ ModelEngineInterface::create_node_with_data(const string&      plugin_uri,
 /** Create a patch.
  */
 void
-ModelEngineInterface::create_patch_from_model(const PatchModel* pm)
+ModelEngineInterface::create_patch_with_data(const Path& path, size_t poly, const MetadataMap& data)
 {
-	create_patch(pm->path().c_str(), pm->poly());
-	set_metadata_map(pm->path(), pm->metadata());
+	create_patch(path, poly);
+	set_metadata_map(path, data);
 }
 
 
-/** Set all pieces of metadata in a model.
+/** Set all pieces of metadata in a map.
  */
 void
 ModelEngineInterface::set_metadata_map(const Path& subject, const MetadataMap& data)

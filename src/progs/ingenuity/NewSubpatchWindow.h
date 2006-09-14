@@ -51,9 +51,6 @@ private:
 	MetadataMap            m_initial_data;
 	CountedPtr<PatchModel> m_patch;
 	
-	double m_new_module_x;
-	double m_new_module_y;
-	
 	Gtk::Entry*      m_name_entry;
 	Gtk::Label*      m_message_label;
 	Gtk::SpinButton* m_poly_spinbutton;

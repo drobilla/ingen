@@ -35,9 +35,7 @@ namespace Ingenuity {
 LoadPluginWindow::LoadPluginWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 : Gtk::Window(cobject),
   m_has_shown(false),
-  m_plugin_name_offset(0),
-  m_new_module_x(0),
-  m_new_module_y(0)
+  m_plugin_name_offset(0)
 {
 	xml->get_widget("load_plugin_plugins_treeview", m_plugins_treeview);
 	xml->get_widget("load_plugin_polyphonic_checkbutton", m_polyphonic_checkbutton);
@@ -184,15 +182,6 @@ LoadPluginWindow::on_show()
 
 
 void
-LoadPluginWindow::on_hide()
-{
-	m_new_module_x = 0;
-	m_new_module_y = 0;
-	Gtk::Window::on_hide();
-}
-
-
-void
 LoadPluginWindow::set_plugin_list(const std::map<string, CountedPtr<PluginModel> >& m)
 {
 	m_plugins_liststore->clear();
@@ -319,8 +308,9 @@ LoadPluginWindow::add_clicked()
 			m_node_name_entry->set_text(generate_module_name(m_plugin_name_offset));
 			
 			// Set the next module location 20 over, for a cascade effect
-			m_new_module_x += 20;
-			m_new_module_y += 20;
+			cerr << "FIXME: cascade\n";
+			//m_new_module_x += 20;
+			//m_new_module_y += 20;
 		}
 	}
 }

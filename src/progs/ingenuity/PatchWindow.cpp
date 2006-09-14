@@ -122,7 +122,7 @@ PatchWindow::~PatchWindow()
 	// Prevents deletion
 	//m_patch->claim_patch_view();
 
-	App::instance().remove_patch_window(this);
+	//App::instance().remove_patch_window(this);
 
 	delete m_breadcrumb_box;
 }
@@ -188,7 +188,16 @@ PatchWindow::set_patch(CountedPtr<PatchModel> patch, CountedPtr<PatchView> view)
 	else
 		m_menu_destroy_patch->set_sensitive(true);
 	
+	m_patch->destroyed_sig.connect(sigc::mem_fun(this, &PatchWindow::patch_destroyed));
+	
 	m_enable_signal = true;
+}
+
+
+void
+PatchWindow::patch_destroyed()
+{
+	App::instance().window_factory()->remove_patch_window(this);
 }
 
 
@@ -303,7 +312,6 @@ PatchWindow::on_show()
 void
 PatchWindow::on_hide()
 {
-	claim_breadcrumbs();
 	m_position_stored = true;
 	get_position(m_x, m_y);
 	Gtk::Window::on_hide();
@@ -381,12 +389,6 @@ PatchWindow::event_fullscreen_toggled()
 		unfullscreen();
 		is_fullscreen = false;
 	}
-}
-
-void
-PatchWindow::claim_breadcrumbs()
-{
-	m_breadcrumb_box->reparent(m_breadcrumb_bin);
 }
 
 
