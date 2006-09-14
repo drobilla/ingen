@@ -90,10 +90,10 @@ PatchModel::remove_child(CountedPtr<ObjectModel> c)
 
 
 CountedPtr<NodeModel>
-PatchModel::get_node(const string& name)
+PatchModel::get_node(const string& name) const
 {
 	assert(name.find("/") == string::npos);
-	NodeModelMap::iterator i = m_nodes.find(name);
+	NodeModelMap::const_iterator i = m_nodes.find(name);
 	return ((i != m_nodes.end()) ? (*i).second : CountedPtr<NodeModel>());
 }
 
@@ -185,6 +185,8 @@ PatchModel::clear()
 void
 PatchModel::rename_node(const Path& old_path, const Path& new_path)
 {
+	cerr << "FIXME: node rename" << endl;
+#if 0
 	assert(old_path.parent() == path());
 	assert(new_path.parent() == path());
 	
@@ -205,13 +207,14 @@ PatchModel::rename_node(const Path& old_path, const Path& new_path)
 	}
 	
 	cerr << "[PatchModel::rename_node] " << _path << ": failed to find node " << old_path << endl;
+#endif
 }
 
 
 CountedPtr<ConnectionModel>
-PatchModel::get_connection(const string& src_port_path, const string& dst_port_path)
+PatchModel::get_connection(const string& src_port_path, const string& dst_port_path) const
 {
-	for (list<CountedPtr<ConnectionModel> >::iterator i = m_connections.begin(); i != m_connections.end(); ++i)
+	for (list<CountedPtr<ConnectionModel> >::const_iterator i = m_connections.begin(); i != m_connections.end(); ++i)
 		if ((*i)->src_port_path() == src_port_path && (*i)->dst_port_path() == dst_port_path)
 			return (*i);
 	return CountedPtr<ConnectionModel>();
@@ -228,44 +231,15 @@ PatchModel::get_connection(const string& src_port_path, const string& dst_port_p
 void
 PatchModel::add_connection(CountedPtr<ConnectionModel> cm)
 {
+	// Store should have 'resolved' the connection already
 	assert(cm);
-	//assert(cm->src_port_path().parent().parent() == _path);
-	//assert(cm->dst_port_path().parent().parent() == _path);
 	assert(cm->patch_path() == path());
+	assert(cm->src_port() && cm->src_port()->parent()->parent().get() == this);
+	assert(cm->dst_port() && cm->dst_port()->parent()->parent().get() == this);
 	
-	//cerr << "PatchModel::add_connection: " << cm->src_port_path() << " -> " << cm->dst_port_path() << endl;
-
 	CountedPtr<ConnectionModel> existing = get_connection(cm->src_port_path(), cm->dst_port_path());
-
-	if (existing) {
-		return;
-	}
-
-	NodeModel* src_node = (cm->src_port_path().parent() == path())
-		? this : get_node(cm->src_port_path().parent().name()).get();
-	CountedPtr<PortModel> src_port = src_node->get_port(cm->src_port_path().name());
-	NodeModel* dst_node = (cm->dst_port_path().parent() == path())
-		? this : get_node(cm->dst_port_path().parent().name()).get();
-	CountedPtr<PortModel> dst_port = dst_node->get_port(cm->dst_port_path().name());
+	assert(!existing); // Store should have handled this
 	
-	assert(src_port);
-	assert(dst_port);
-	
-	// Find source port pointer to 'resolve' connection if necessary
-	if (cm->src_port())
-		assert(cm->src_port() == src_port);
-	else
-		cm->set_src_port(src_port);
-	
-	// Find dest port pointer to 'resolve' connection if necessary
-	if (cm->dst_port())
-		assert(cm->dst_port() == dst_port);
-	else
-		cm->set_dst_port(dst_port);
-	
-	assert(cm->src_port());
-	assert(cm->dst_port());
-
 	m_connections.push_back(cm);
 
 	new_connection_sig.emit(cm);

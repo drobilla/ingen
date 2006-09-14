@@ -50,35 +50,36 @@ typedef map<string, Atom> MetadataMap;
 class ObjectModel
 {
 public:
-	ObjectModel(const Path& path);
-
 	virtual ~ObjectModel();
 
 	const Atom& get_metadata(const string& key) const;
-	void        add_metadata(const MetadataMap& data);
 
 	const MetadataMap&      metadata() const { return _metadata; }
 	inline const Path&      path()     const { return _path; }
 	CountedPtr<ObjectModel> parent()   const { return _parent; }
 
-	void assimilate(CountedPtr<ObjectModel> model);
-
 	// Signals
 	sigc::signal<void, const string&, const Atom&> metadata_update_sig; 
 	sigc::signal<void>                             destroyed_sig; 
-	
-	// FIXME: make private
-	void set_metadata(const string& key, const Atom& value)
-		{ _metadata[key] = value; metadata_update_sig.emit(key, value); }
-
 
 protected:
 	friend class Store;
 	friend class PatchLibrarian; // FIXME: remove
+	
+	ObjectModel(const Path& path);
+	
 	virtual void set_path(const Path& p)               { _path = p; }
 	virtual void set_parent(CountedPtr<ObjectModel> p) { _parent = p; }
 	virtual void add_child(CountedPtr<ObjectModel> c) = 0;
 	virtual void remove_child(CountedPtr<ObjectModel> c) = 0;
+	
+	void add_metadata(const MetadataMap& data);
+	
+	void assimilate(CountedPtr<ObjectModel> model);
+	
+	void set_metadata(const string& key, const Atom& value)
+		{ _metadata[key] = value; metadata_update_sig.emit(key, value); }
+
 
 	Path                         _path;
 	CountedPtr<ObjectModel>      _parent;

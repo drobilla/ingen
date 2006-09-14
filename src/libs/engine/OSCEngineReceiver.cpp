@@ -88,8 +88,8 @@ OSCEngineReceiver::OSCEngineReceiver(CountedPtr<Engine> engine, size_t queue_siz
 	lo_server_add_method(_server, "/om/synth/disable_patch", "is", disable_patch_cb, this);
 	lo_server_add_method(_server, "/om/synth/clear_patch", "is", clear_patch_cb, this);
 	lo_server_add_method(_server, "/om/synth/create_port", "issi", create_port_cb, this);
-	lo_server_add_method(_server, "/om/synth/create_node", "issssi", create_node_cb, this);
-	lo_server_add_method(_server, "/om/synth/create_node", "isssi", create_node_by_uri_cb, this);
+	lo_server_add_method(_server, "/om/synth/create_node", "isssi", create_node_cb, this);
+	lo_server_add_method(_server, "/om/synth/create_node", "issi", create_node_by_uri_cb, this);
 	lo_server_add_method(_server, "/om/synth/destroy", "is", destroy_cb, this);
 	lo_server_add_method(_server, "/om/synth/rename", "iss", rename_cb, this);
 	lo_server_add_method(_server, "/om/synth/connect", "iss", connect_cb, this);
@@ -487,7 +487,6 @@ OSCEngineReceiver::m_create_port_cb(const char* path, const char* types, lo_arg*
  * <p> \b /om/synth/create_node - Add a node into a given patch (load a plugin by URI)
  * \arg \b response-id (integer)
  * \arg \b node-path (string) - Full path of the new node (ie. /patch2/subpatch/newnode)
- * \arg \b type (string) - Plugin type ("Internal", "LV2", "DSSI", "LADSPA")
  * \arg \b plug-uri (string) - URI of the plugin to load
  * \arg \b poly (integer-boolean) - Whether node is polyphonic (0 = false, 1 = true) </p> \n \n
  */
@@ -495,13 +494,12 @@ int
 OSCEngineReceiver::m_create_node_by_uri_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	const char* node_path   = &argv[1]->s;
-	const char* type        = &argv[2]->s;
-	const char* plug_uri    = &argv[3]->s;
-	const int   poly        =  argv[4]->i;
+	const char* plug_uri    = &argv[2]->s;
+	const int   poly        =  argv[3]->i;
 	
 	// FIXME: make sure poly is valid
 	
-	create_node(node_path, type, plug_uri, (poly == 1));
+	create_node(node_path, plug_uri, (poly == 1));
 	return 0;
 }
 

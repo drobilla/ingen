@@ -21,7 +21,6 @@
 #include <algorithm>
 #include "PatchModel.h"
 #include "NodeModel.h"
-#include "ModelClientInterface.h"
 #include "ConnectionModel.h"
 #include "PortModel.h"
 #include "PresetModel.h"
@@ -126,8 +125,9 @@ PatchLibrarian::save_patch(CountedPtr<PatchModel> patch_model, const string& fil
 	
 	cout << "Saving patch " << patch_model->path() << " to " << filename << endl;
 
-	patch_model->filename(filename);
-	
+	if (patch_model->filename() != filename)
+		cerr << "Warning: Saving patch to file other than filename stored in model." << endl;
+
 	string dir = filename.substr(0, filename.find_last_of("/"));
 	
 	NodeModel* nm = NULL;
@@ -196,7 +196,8 @@ PatchLibrarian::save_patch(CountedPtr<PatchModel> patch_model, const string& fil
 			// No path
 			if (spm->filename() == "") {
 				ref_filename = spm->path().name() + ".om";
-				spm->filename(dir +"/"+ ref_filename);
+				cerr << "FIXME: subpatch filename" << endl;
+				//spm->filename(dir +"/"+ ref_filename);
 			// Absolute path
 			} else if (spm->filename().substr(0, 1) == "/") {
 				// Attempt to make it a relative path, if it's undernath this patch's dir
@@ -204,7 +205,8 @@ PatchLibrarian::save_patch(CountedPtr<PatchModel> patch_model, const string& fil
 					ref_filename = spm->filename().substr(dir.length()+1);
 				} else { // FIXME: not good
 					ref_filename = spm->filename().substr(spm->filename().find_last_of("/")+1);
-					spm->filename(dir +"/"+ ref_filename);
+					cerr << "FIXME: subpatch filename (2)" << endl;
+					//spm->filename(dir +"/"+ ref_filename);
 				}
 			} else {
 				ref_filename = spm->filename();
@@ -423,7 +425,8 @@ PatchLibrarian::load_patch(CountedPtr<PatchModel> pm, bool wait, bool existing)
 	cur = cur->xmlChildrenNode;
 	string path;
 
-	pm->filename(filename);
+	cerr << "FIXME: patch filename" << endl;
+	//pm->filename(filename);
 
 	// Load Patch attributes
 	while (cur != NULL) {
@@ -439,12 +442,14 @@ PatchLibrarian::load_patch(CountedPtr<PatchModel> pm, bool wait, bool existing)
 				}
 				assert(path.find("//") == string::npos);
 				assert(path.length() > 0);
-				pm->set_path(path);
+				cerr << "FIXME: patch path (2)" << endl;
+				//pm->set_path(path);
 			}
 		} else if ((!xmlStrcmp(cur->name, (const xmlChar*)"polyphony"))) {
 			if (load_poly) {
 				poly = atoi((char*)key);
-				pm->poly(poly);
+				cerr << "FIXME: patch poly" << endl;
+				//pm->poly(poly);
 			}
 		} else if (xmlStrcmp(cur->name, (const xmlChar*)"connection")
 				&& xmlStrcmp(cur->name, (const xmlChar*)"node")
@@ -502,9 +507,10 @@ PatchLibrarian::load_patch(CountedPtr<PatchModel> pm, bool wait, bool existing)
 		if ((!xmlStrcmp(cur->name, (const xmlChar*)"node"))) {
 			CountedPtr<NodeModel> nm = parse_node(pm, doc, cur);
 			if (nm) {
-				_engine->create_node_from_model(nm.get());
-				_engine->set_all_metadata(nm.get());
-				cerr << "FIXME: max min\n";
+				cerr << "FIXME: load node\n";
+				//_engine->create_node_from_model(nm.get());
+				//_engine->set_all_metadata(nm.get());
+
 				/*
 				//for (PortModelList::const_iterator j = nm->ports().begin(); j != nm->ports().end(); ++j) {
 					// FIXME: ew
@@ -557,7 +563,7 @@ PatchLibrarian::load_patch(CountedPtr<PatchModel> pm, bool wait, bool existing)
 	xmlFreeDoc(doc);
 	xmlCleanupParser();
 
-	_engine->set_all_metadata(pm.get());
+	_engine->set_metadata_map(pm->path(), pm->metadata());
 
 	if (!existing)
 		_engine->enable_patch(pm->path());
@@ -758,10 +764,13 @@ cerr << "FIXME: load node\n";
 void
 PatchLibrarian::load_subpatch(const CountedPtr<PatchModel> parent, xmlDocPtr doc, const xmlNodePtr subpatch)
 {
-	xmlChar *key;
-	xmlNodePtr cur = subpatch->xmlChildrenNode;
+	//xmlChar *key;
+	//xmlNodePtr cur = subpatch->xmlChildrenNode;
 	
-	CountedPtr<PatchModel> pm(new PatchModel("/UNINITIALIZED", 1)); // FIXME: ew
+	cerr << "FIXME: load subpatch" << endl;
+
+#if 0
+	//CountedPtr<PatchModel> pm(new PatchModel("/UNINITIALIZED", 1)); // FIXME: ew
 	
 	while (cur != NULL) {
 		key = xmlNodeListGetString(doc, cur->xmlChildrenNode, 1);
@@ -789,8 +798,9 @@ PatchLibrarian::load_subpatch(const CountedPtr<PatchModel> parent, xmlDocPtr doc
 	// NodeModel::set_path from calling it's parent's rename_node with
 	// an invalid (nonexistant) name
 	pm->set_parent(parent);
-	
+
 	load_patch(pm, false);
+#endif
 }
 
 
@@ -801,6 +811,8 @@ PatchLibrarian::parse_connection(const CountedPtr<const PatchModel> parent, xmlD
 {
 	//cerr << "[PatchLibrarian] Parsing connection..." << endl;
 
+	cerr << "FIXME: load connection" << endl;
+#if 0
 	xmlChar *key;
 	xmlNodePtr cur = node->xmlChildrenNode;
 	
@@ -842,6 +854,8 @@ PatchLibrarian::parse_connection(const CountedPtr<const PatchModel> parent, xmlD
 			translate_load_path(parent->path().base() + dest_node +"/"+ dest_port));
 	
 	return cm;
+#endif
+	return 0;
 }
 
 

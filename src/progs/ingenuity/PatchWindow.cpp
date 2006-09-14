@@ -283,7 +283,7 @@ PatchWindow::event_save_as()
 		
 		if (confirm) {
 			App::instance().loader()->save_patch(m_patch, filename, recursive);
-			m_patch->filename(filename);
+			//m_patch->set_metadata("filename", Atom(filename.c_str()));
 		}
 	}
 	App::instance().configuration()->set_patch_folder(dialog.get_current_folder());

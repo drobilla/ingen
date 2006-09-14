@@ -313,11 +313,8 @@ LoadPluginWindow::add_clicked()
 
 			dialog.run();
 		} else {
-			const string path = m_patch->path().base() + name;
-			NodeModel* nm = new NodeModel(plugin, path, polyphonic);
-			nm->add_metadata(m_initial_data);
-			
-			App::instance().engine()->create_node_from_model(nm);
+			Path path = m_patch->path().base() + Path::nameify(name);
+			App::instance().engine()->create_node_with_data(plugin->uri(), path, polyphonic, m_initial_data);
 			++m_plugin_name_offset;
 			m_node_name_entry->set_text(generate_module_name(m_plugin_name_offset));
 			

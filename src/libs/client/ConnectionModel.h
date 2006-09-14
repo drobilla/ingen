@@ -14,7 +14,6 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-
 #ifndef CONNECTIONMODEL_H
 #define CONNECTIONMODEL_H
 
@@ -27,6 +26,8 @@ using std::string;
 
 namespace Ingen {
 namespace Client {
+
+class Store;
 
 
 /** Class to represent a port->port connection in the engine.
@@ -42,23 +43,25 @@ namespace Client {
 class ConnectionModel
 {
 public:
-	ConnectionModel(const Path& src_port, const Path& dst_port);
-	ConnectionModel(CountedPtr<PortModel> src, CountedPtr<PortModel> dst);
-
 	CountedPtr<PortModel> src_port() const { return _src_port; }
 	CountedPtr<PortModel> dst_port() const { return _dst_port; }
 
-	void set_src_port(CountedPtr<PortModel> port) { _src_port = port; _src_port_path = port->path(); }
-	void set_dst_port(CountedPtr<PortModel> port) { _dst_port = port; _dst_port_path = port->path(); }
-
-	void src_port_path(const string& s) { _src_port_path = s; }
-	void dst_port_path(const string& s) { _dst_port_path = s; }
-	
 	const Path& src_port_path() const;
 	const Path& dst_port_path() const;
 	const Path  patch_path()    const;
 	
 private:
+	friend class Store;
+
+	ConnectionModel(const Path& src_port, const Path& dst_port);
+	ConnectionModel(CountedPtr<PortModel> src, CountedPtr<PortModel> dst);
+	
+	void set_src_port(CountedPtr<PortModel> port) { _src_port = port; _src_port_path = port->path(); }
+	void set_dst_port(CountedPtr<PortModel> port) { _dst_port = port; _dst_port_path = port->path(); }
+
+	void src_port_path(const string& s) { _src_port_path = s; }
+	void dst_port_path(const string& s) { _dst_port_path = s; }
+
 	Path                  _src_port_path; ///< Only used if _src_port == NULL
 	Path                  _dst_port_path; ///< Only used if _dst_port == NULL
 	CountedPtr<PortModel> _src_port;

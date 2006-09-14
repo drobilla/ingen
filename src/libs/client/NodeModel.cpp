@@ -53,7 +53,7 @@ NodeModel::remove_port(CountedPtr<PortModel> port)
 
 
 void
-NodeModel::remove_port(const string& port_path)
+NodeModel::remove_port(const Path& port_path)
 {
 	for (PortModelList::iterator i = m_ports.begin(); i != m_ports.end(); ++i) {
 		if ((*i)->path() == port_path) {
@@ -118,22 +118,10 @@ NodeModel::add_port(CountedPtr<PortModel> pm)
 	assert(pm->path().is_child_of(_path));
 	assert(pm->parent().get() == this);
 
-	PortModelList::iterator existing = m_ports.end();
-	for (PortModelList::iterator i = m_ports.begin(); i != m_ports.end(); ++i) {
-		if ((*i)->path() == pm->path()) {
-			existing = i;
-			break;
-		}
-	}
-
-	if (existing != m_ports.end()) {
-		cerr << "Warning: port clash, assimilating old port " << _path << endl;
-		pm->assimilate(*existing);
-		*existing = pm;
-	} else {
-		m_ports.push_back(pm);
-		new_port_sig.emit(pm);
-	}
+	PortModelList::iterator existing = find(m_ports.begin(), m_ports.end(), pm);
+	
+	// Store should have handled this by merging the two
+	assert(existing == m_ports.end());
 }
 
 

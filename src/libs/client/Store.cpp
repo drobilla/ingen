@@ -86,6 +86,45 @@ Store::resolve_plugin_orphans(CountedPtr<PluginModel> plugin)
 
 
 void
+Store::add_connection_orphan(CountedPtr<ConnectionModel> connection)
+{
+	cerr << "WARNING: Orphan connection received." << endl;
+	
+	cerr << "FIXME (add_connection_orphan)" << endl;
+
+	throw; // FIXME: (lazy)
+#if 0
+	map<string, list<CountedPtr<ConnectionModel> > >::iterator spawn
+		= m_connection_orphans.find(node->connection_uri());
+
+	if (spawn != m_connection_orphans.end()) {
+		spawn->second.push_back(node);
+	} else {
+		list<CountedPtr<ConnectionModel> > l;
+		l.push_back(node);
+		m_connection_orphans[node->connection_uri()] = l;
+	}
+#endif
+}
+
+
+void
+Store::resolve_connection_orphans(CountedPtr<PortModel> port)
+{
+	cerr << "FIXME (add_connection_orphan)" << endl;
+	throw; // FIXME: (lazy)
+#if 0
+	map<string, list<CountedPtr<ConnectionModel> > >::iterator spawn
+		= m_connection_orphans.find(connection->uri());
+
+	if (spawn != m_connection_orphans.end()) {
+		cerr << "XXXXXXXXXX PLUGIN-ORPHAN PLUGIN FOUND!! XXXXXXXXXXXXXXXXX" << endl;
+	}
+#endif
+}
+
+
+void
 Store::add_orphan(CountedPtr<ObjectModel> child)
 {
 	cerr << "WARNING: Orphan object " << child->path() << " received." << endl;
@@ -133,8 +172,18 @@ Store::add_object(CountedPtr<ObjectModel> object)
 		}
 	}
 
+	// If we already have "this" object, merge the existing one into the new
+	// one (with precedence to the new values).
+	ObjectMap::iterator existing = m_objects.find(object->path());
+	if (existing != m_objects.end()) {
+		cerr << "[Store] Warning:  Assimilating " << object->path() << endl;
+		object->assimilate(existing->second);
+		existing->second = object;
+	}
+
 	m_objects[object->path()] = object;
 
+	// FIXME: emit this when we already had one?
 	new_object_sig.emit(object);
 
 	resolve_orphans(object);
@@ -327,10 +376,21 @@ Store::connection_event(const Path& src_port_path, const Path& dst_port_path)
 
 	CountedPtr<PatchModel> patch = PtrCast<PatchModel>(this->object(cm->patch_path()));
 	
-	if (patch)
+	CountedPtr<ObjectModel> src_obj = this->object(src_port_path);
+	CountedPtr<ObjectModel> dst_obj = this->object(dst_port_path);
+
+	if (!src_obj || !dst_obj || !patch) {
+		add_connection_orphan(cm);
+	} else {
+		CountedPtr<PortModel> src_port = PtrCast<PortModel>(src_obj);
+		CountedPtr<PortModel> dst_port = PtrCast<PortModel>(dst_obj);
+		assert(src_port && dst_port);
+
+		cm->set_src_port(src_port);
+		cm->set_dst_port(dst_port);
+
 		patch->add_connection(cm);
-	else
-		cerr << "ERROR: connection in nonexistant patch" << endl;
+	}
 }
 
 

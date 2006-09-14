@@ -64,7 +64,6 @@ public:
 	                         bool          direction) = 0;
 	
 	virtual void create_node(const string& path,
-	                         const string& plugin_type,
 	                         const string& plugin_uri,
 	                         bool          polyphonic) = 0;
 	

@@ -56,6 +56,8 @@ public:
 	
 	const list<Plugin*>& plugins() { return _plugins; }
 	
+	const Plugin* plugin(const string& uri);
+
 private:
 #ifdef HAVE_LADSPA
 	void load_ladspa_plugins();
@@ -76,7 +78,7 @@ private:
 	
 	list<PluginLibrary*> _libraries;
 	list<Plugin*>        _internal_plugins;
-	list<Plugin*>        _plugins;
+	list<Plugin*>        _plugins; // FIXME: make a map
 
 	bool _has_loaded;
 };

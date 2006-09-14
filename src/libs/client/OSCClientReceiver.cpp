@@ -26,9 +26,6 @@ namespace Ingen {
 namespace Client {
 
 	
-/** Construct a OSCClientReceiver with a user-provided ModelClientInterface object for notification
- *  of engine events.
- */
 OSCClientReceiver::OSCClientReceiver(int listen_port)
 : _listen_port(listen_port),
   _st(NULL)//,
@@ -378,8 +375,6 @@ OSCClientReceiver::m_response_cb(const char* path, const char* types, lo_arg** a
 int
 OSCClientReceiver::m_num_plugins_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	/** Not worth it implementing a ModelClientInterface callback for this (?)
-	 * Or I'm just lazy.  FIXME? */
 	num_plugins(argv[0]->i);
 
 	return 0;

@@ -50,7 +50,7 @@ public:
 			m_controls.push_back(ControlModel(m_base_path + port_name, value));
 	}
 
-	const string& name()                { return m_name; }
+	const string& name() const          { return m_name; }
 	void          name(const string& n) { m_name = n; }
 
 	const list<ControlModel>& controls() const { return m_controls; }

@@ -188,15 +188,13 @@ OSCEngineSender::create_port(const string& path,
 
 void
 OSCEngineSender::create_node(const string& path,
-                             const string& plugin_type,
                              const string& plugin_uri,
                              bool          polyphonic)
 {
 	assert(_engine_addr);
-	lo_send(_engine_addr, "/om/synth/create_node",  "isssi",
+	lo_send(_engine_addr, "/om/synth/create_node",  "issi",
 		next_id(),
 		path.c_str(),
-		plugin_type.c_str(),
 		plugin_uri.c_str(),
 		(polyphonic ? 1 : 0));
 }

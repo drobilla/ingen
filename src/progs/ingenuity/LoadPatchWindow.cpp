@@ -118,13 +118,14 @@ LoadPatchWindow::ok_clicked()
 	if (m_replace)
 		App::instance().engine()->clear_patch(m_patch->path());
 
-	CountedPtr<PatchModel> pm(new PatchModel(m_patch->path(), poly));
-	pm->filename(get_filename());
-	pm->set_metadata("filename", Atom(get_filename().c_str()));
+	cerr << "FIXME: load patch" << endl;
+	//CountedPtr<PatchModel> pm(new PatchModel(m_patch->path(), poly));
+	//pm->filename(get_filename());
+	//pm->set_metadata("filename", Atom(get_filename().c_str()));
 	// FIXME: necessary?
 	//pm->set_parent(m_patch->parent());
 	//App::instance().engine()->push_added_patch(pm);
-	App::instance().loader()->load_patch(pm, true, true);
+	//App::instance().loader()->load_patch(pm, true, true);
 	
 	hide();
 }			

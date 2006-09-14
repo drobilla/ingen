@@ -36,6 +36,8 @@ class PluginModel;
 class PatchModel;
 class NodeModel;
 class PortModel;
+class ConnectionModel;
+
 
 /** Automatically manages models of objects in the engine.
  *
@@ -62,8 +64,13 @@ private:
 	
 	void add_plugin(CountedPtr<PluginModel> plugin);
 
+	// It would be nice to integrate these somehow..
+	
 	void add_orphan(CountedPtr<ObjectModel> orphan);
 	void resolve_orphans(CountedPtr<ObjectModel> parent);
+	
+	void add_connection_orphan(CountedPtr<ConnectionModel> orphan);
+	void resolve_connection_orphans(CountedPtr<PortModel> port);
 	
 	void add_plugin_orphan(CountedPtr<NodeModel> orphan);
 	void resolve_plugin_orphans(CountedPtr<PluginModel> plugin);
@@ -81,7 +88,9 @@ private:
 	void connection_event(const Path& src_port_path, const Path& dst_port_path);
 	void disconnection_event(const Path& src_port_path, const Path& dst_port_path);
 	
-	map<Path, CountedPtr<ObjectModel> > m_objects; ///< Keyed by Ingen path
+	typedef map<Path, CountedPtr<ObjectModel> > ObjectMap;
+	ObjectMap m_objects; ///< Keyed by Ingen path
+
 	map<string, CountedPtr<PluginModel> > m_plugins; ///< Keyed by URI
 
 	/** Objects we've received, but depend on the existance of another unknown object.

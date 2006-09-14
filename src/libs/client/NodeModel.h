@@ -35,6 +35,7 @@ namespace Ingen {
 namespace Client {
 
 class PluginModel;
+class Store;
 
 	
 /** Node model class, used by the client to store engine's state.
@@ -44,18 +45,16 @@ class PluginModel;
 class NodeModel : public ObjectModel
 {
 public:
-	NodeModel(const string& plugin_uri, const Path& path, bool polyphonic);
-	NodeModel(CountedPtr<PluginModel> plugin, const Path& path, bool polyphonic);
 	virtual ~NodeModel();
 
 	CountedPtr<PortModel> get_port(const string& port_name) const;
 	
 	const map<int, map<int, string> >& get_programs() const { return m_banks; }
-	const string&                      plugin_uri() const   { return m_plugin_uri; }
-	CountedPtr<PluginModel>            plugin() const       { return m_plugin; }
-	int                                num_ports() const    { return m_ports.size(); }
-	const PortModelList&               ports() const        { return m_ports; }
-	virtual bool                       polyphonic() const   { return m_polyphonic; }
+	const string&                      plugin_uri()   const { return m_plugin_uri; }
+	CountedPtr<PluginModel>            plugin()       const { return m_plugin; }
+	int                                num_ports()    const { return m_ports.size(); }
+	const PortModelList&               ports()        const { return m_ports; }
+	virtual bool                       polyphonic()   const { return m_polyphonic; }
 	
 	// Signals
 	sigc::signal<void, CountedPtr<PortModel> > new_port_sig; 
@@ -63,15 +62,18 @@ public:
 	
 protected:
 	friend class Store;
+	
+	NodeModel(const string& plugin_uri, const Path& path, bool polyphonic);
+	NodeModel(CountedPtr<PluginModel> plugin, const Path& path, bool polyphonic);
+
 	NodeModel(const Path& path);
 	void add_child(CountedPtr<ObjectModel> c);
 	void remove_child(CountedPtr<ObjectModel> c);
 	void add_port(CountedPtr<PortModel> pm);
 	void remove_port(CountedPtr<PortModel> pm);
-	void remove_port(const string& port_path);
+	void remove_port(const Path& port_path);
 	void add_program(int bank, int program, const string& name);
 	void remove_program(int bank, int program);
-
 
 	//void plugin(CountedPtr<PluginModel> p) { m_plugin = p; }
 	virtual void clear();
@@ -86,8 +88,6 @@ protected:
 	map<int, map<int, string> > m_banks;      ///< DSSI banks
 
 private:
-	friend class PatchLibrarian; // FIXME: remove
-
 	// Prevent copies (undefined)
 	NodeModel(const NodeModel& copy);
 	NodeModel& operator=(const NodeModel& copy);	

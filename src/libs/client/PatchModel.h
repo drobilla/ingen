@@ -31,6 +31,8 @@ using std::list; using std::string; using std::map;
 namespace Ingen {
 namespace Client {
 
+class Store;
+
 
 /** Client's model of a patch.
  *
@@ -39,43 +41,15 @@ namespace Client {
 class PatchModel : public NodeModel
 {
 public:
-	PatchModel(const string& patch_path, size_t internal_poly)
-	: NodeModel("ingen:patch", patch_path, false ), // FIXME
-	  m_enabled(false),
-	  m_poly(internal_poly)
-	{
-		cerr << "FIXME: patch poly\n";
-	}
-	
 	const NodeModelMap&                       nodes()       const { return m_nodes; }
 	const list<CountedPtr<ConnectionModel> >& connections() const { return m_connections; }
 	
-	virtual void set_path(const Path& path);
+	CountedPtr<ConnectionModel> get_connection(const string& src_port_path, const string& dst_port_path) const;
+	CountedPtr<NodeModel>       get_node(const string& node_name) const;
 	
-	void add_child(CountedPtr<ObjectModel> c);
-	void remove_child(CountedPtr<ObjectModel> c);
-
-	CountedPtr<NodeModel> get_node(const string& node_name);
-	void                  add_node(CountedPtr<NodeModel> nm);
-	//void                  remove_node(const string& name);
-	void                  remove_node(CountedPtr<NodeModel> nm);
-
-	void rename_node(const Path& old_path, const Path& new_path);
-	void rename_node_port(const Path& old_path, const Path& new_path);
-	
-	CountedPtr<ConnectionModel> get_connection(const string& src_port_path, const string& dst_port_path);
-	void                        add_connection(CountedPtr<ConnectionModel> cm);
-	void                        remove_connection(const string& src_port_path, const string& dst_port_path);
-		
-	virtual void clear();
-	
-	size_t        poly() const               { return m_poly; }
-	void          poly(size_t p)             { m_poly = p; }
-	const string& filename() const           { return m_filename; }
-	void          filename(const string& f)  { m_filename = f; }
-	bool          enabled() const            { return m_enabled; }
-	void          enable();
-	void          disable();
+	size_t        poly()       const { return m_poly; }
+	const string& filename()   const { return m_filename; }
+	bool          enabled()    const { return m_enabled; }
 	bool          polyphonic() const;
 	
 	// Signals
@@ -87,6 +61,33 @@ public:
 	sigc::signal<void>                               disabled_sig;
 
 private:
+	friend class Store;
+
+	PatchModel(const Path& patch_path, size_t internal_poly)
+	: NodeModel("ingen:patch", patch_path, false ), // FIXME
+	  m_enabled(false),
+	  m_poly(internal_poly)
+	{
+		cerr << "FIXME: patch poly\n";
+	}
+	
+	void filename(const string& f) { m_filename = f; }
+	void poly(size_t p)            { m_poly = p; }
+	void enable();
+	void disable();
+	void clear();
+	void set_path(const Path& path);
+	void add_node(CountedPtr<NodeModel> nm);
+	void remove_node(CountedPtr<NodeModel> nm);
+	void add_child(CountedPtr<ObjectModel> c);
+	void remove_child(CountedPtr<ObjectModel> c);
+	
+	void add_connection(CountedPtr<ConnectionModel> cm);
+	void remove_connection(const string& src_port_path, const string& dst_port_path);
+	
+	void rename_node(const Path& old_path, const Path& new_path);
+	void rename_node_port(const Path& old_path, const Path& new_path);
+
 	// Prevent copies (undefined)
 	PatchModel(const PatchModel& copy);
 	PatchModel& operator=(const PatchModel& copy);

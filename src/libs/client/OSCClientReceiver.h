@@ -85,13 +85,6 @@ private:
 	int              _listen_port;
 	lo_server_thread _st;
 
-	// Used for receiving nodes - multiple messages are received before
-	// sending an event to the client (via ModelClientInterface)
-	//bool       _receiving_node;
-	//NodeModel* _receiving_node_model;
-	//int32_t    _receiving_node_num_ports;
-	//int32_t    _num_received_ports;
-
 	LO_HANDLER(error);
 	LO_HANDLER(response);
 	LO_HANDLER(num_plugins);

@@ -18,8 +18,6 @@ libomclient_la_SOURCES = \
 	ThreadedSigClientInterface.cpp \
 	ModelEngineInterface.h \
 	ModelEngineInterface.cpp \
-	ModelClientInterface.h \
-	ModelClientInterface.cpp \
 	PresetModel.h \
 	ControlModel.h \
 	ObjectController.h \

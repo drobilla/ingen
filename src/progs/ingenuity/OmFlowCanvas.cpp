@@ -196,6 +196,8 @@ OmFlowCanvas::connect(const Port* src_port, const Port* dst_port)
 	if (src->model()->type() == PortModel::MIDI &&
 			dst->model()->type() == PortModel::CONTROL)
 	{
+		cerr << "FIXME: MIDI binding" << endl;
+#if 0
 		CountedPtr<PluginModel> pm(new PluginModel(PluginModel::Internal, "", "midi_control_in", ""));
 		CountedPtr<NodeModel> nm(new NodeModel(pm, m_patch->path().base()
 			+ src->name() + "-" + dst->name(), false));
@@ -214,9 +216,9 @@ OmFlowCanvas::connect(const Port* src_port, const Port* dst_port)
 			dst->model()->get_metadata("user-min").get_float());
 		App::instance().engine()->set_port_value_queued(nm->path().base() + "Max",
 			dst->model()->get_metadata("user-max").get_float());
+#endif
 	} else {
-		App::instance().engine()->connect(src->model()->path(),
-		                    dst->model()->path());
+		App::instance().engine()->connect(src->model()->path(), dst->model()->path());
 	}
 }
 

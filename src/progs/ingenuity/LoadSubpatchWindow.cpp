@@ -158,10 +158,8 @@ LoadSubpatchWindow::ok_clicked()
 		//	m_new_module_x, m_new_module_y);
 	}
 
-	CountedPtr<PatchModel> pm(new PatchModel(m_patch->path().base() + name, poly));
+	/*CountedPtr<PatchModel> pm(new PatchModel(m_patch->path().base() + name, poly));
 	pm->filename(filename);
-	// FIXME: necessary?
-	//pm->set_parent(m_patch);
 	
 	pm->set_metadata("module-x", Atom((float)m_new_module_x));
 	pm->set_metadata("module-y", Atom((float)m_new_module_y));
@@ -169,7 +167,9 @@ LoadSubpatchWindow::ok_clicked()
 	App::instance().loader()->load_patch(pm, true, false);
 
 	App::instance().configuration()->set_patch_folder(pm->filename().substr(0, pm->filename().find_last_of("/")));
-	
+	*/
+	cerr << "FIXME: load subpatch" << endl;
+
 	hide();
 }			
 

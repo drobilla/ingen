@@ -25,17 +25,19 @@ namespace Client {
 /** Load a node.
  */
 void
-ModelEngineInterface::create_node_from_model(const NodeModel* nm)
+ModelEngineInterface::create_node_with_data(const string&      plugin_uri,
+                                            const Path&        path,
+                                            bool               is_polyphonic,
+                                            const MetadataMap& initial_data)
 {
 	// Load by URI
-	if (nm->plugin()->uri().length() > 0) {
-		create_node(nm->path().c_str(),
-		            nm->plugin()->type_string(),
-	    	        nm->plugin()->uri().c_str(),
-		    		nm->polyphonic());
+	if (plugin_uri.length() > 0) {
+		create_node(path, plugin_uri, is_polyphonic);
 	
 	// Load by libname, label
 	} else {
+		cerr << "FIXME: non-uri" << endl;
+		#if 0
 		//assert(nm->plugin()->lib_name().length() > 0);
 		assert(nm->plugin()->plug_label().length() > 0);
 
@@ -44,9 +46,10 @@ ModelEngineInterface::create_node_from_model(const NodeModel* nm)
 		            nm->plugin()->lib_name().c_str(),
 		            nm->plugin()->plug_label().c_str(),
 				    nm->polyphonic());
+		#endif
 	}
 
-	set_all_metadata(nm);
+	set_metadata_map(path, initial_data);
 }
 
 
@@ -56,17 +59,17 @@ void
 ModelEngineInterface::create_patch_from_model(const PatchModel* pm)
 {
 	create_patch(pm->path().c_str(), pm->poly());
-	set_all_metadata(pm);
+	set_metadata_map(pm->path(), pm->metadata());
 }
 
 
 /** Set all pieces of metadata in a model.
  */
 void
-ModelEngineInterface::set_all_metadata(const ObjectModel* m)
+ModelEngineInterface::set_metadata_map(const Path& subject, const MetadataMap& data)
 {
-	for (MetadataMap::const_iterator i = m->metadata().begin(); i != m->metadata().end(); ++i)
-		set_metadata(m->path(), i->first, i->second);
+	for (MetadataMap::const_iterator i = data.begin(); i != data.end(); ++i)
+		set_metadata(subject, i->first, i->second);
 }
 
 

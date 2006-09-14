@@ -23,12 +23,14 @@
 #include <sigc++/sigc++.h>
 #include "ObjectModel.h"
 #include "util/CountedPtr.h"
+#include "util/Path.h"
 using std::string; using std::list;
 
 namespace Ingen {
 namespace Client {
 
-/* Model of a port.
+
+/** Model of a port.
  *
  * \ingroup IngenClient.
  */
@@ -40,7 +42,29 @@ public:
 	enum Direction { INPUT, OUTPUT };
 	enum Hint      { NONE, INTEGER, TOGGLE, LOGARITHMIC };
 	
-	PortModel(const string& path, Type type, Direction dir, Hint hint)
+	inline float value()          const { return m_current_val; }
+	inline bool  connected()      const { return (m_connections > 0); }
+	inline Type  type()           const { return m_type; }
+	inline bool  is_input()       const { return (m_direction == INPUT); }
+	inline bool  is_output()      const { return (m_direction == OUTPUT); }
+	inline bool  is_audio()       const { return (m_type == AUDIO); }
+	inline bool  is_control()     const { return (m_type == CONTROL); }
+	inline bool  is_midi()        const { return (m_type == MIDI); }
+	inline bool  is_logarithmic() const { return (m_hint == LOGARITHMIC); }
+	inline bool  is_integer()     const { return (m_hint == INTEGER); }
+	inline bool  is_toggle()      const { return (m_hint == TOGGLE); }
+	
+	inline bool operator==(const PortModel& pm) const { return (_path == pm._path); }
+
+	// Signals
+	sigc::signal<void, float>                  control_change_sig; ///< "Control" ports only
+	sigc::signal<void, CountedPtr<PortModel> > connection_sig;
+	sigc::signal<void, CountedPtr<PortModel> > disconnection_sig;
+
+private:
+	friend class Store;
+	
+	PortModel(const Path& path, Type type, Direction dir, Hint hint)
 	: ObjectModel(path),
 	  m_type(type),
 	  m_direction(dir),
@@ -50,7 +74,7 @@ public:
 	{
 	}
 	
-	PortModel(const string& path, Type type, Direction dir)
+	PortModel(const Path& path, Type type, Direction dir)
 	: ObjectModel(path),
 	  m_type(type),
 	  m_direction(dir),
@@ -60,38 +84,18 @@ public:
 	{
 	}
 	
+	inline void value(float f) { m_current_val = f; control_change_sig.emit(f); }
+
 	void add_child(CountedPtr<ObjectModel> c)    { throw; }
 	void remove_child(CountedPtr<ObjectModel> c) { throw; }
 	
-	inline float value() const        { return m_current_val; }
-	inline void  value(float f)       { m_current_val = f; control_change_sig.emit(f); }
-	inline bool  connected()          { return (m_connections > 0); }
-	inline Type  type()               { return m_type; }
-
-	inline bool is_input()       const { return (m_direction == INPUT); }
-	inline bool is_output()      const { return (m_direction == OUTPUT); }
-	inline bool is_audio()       const { return (m_type == AUDIO); }
-	inline bool is_control()     const { return (m_type == CONTROL); }
-	inline bool is_midi()        const { return (m_type == MIDI); }
-	inline bool is_logarithmic() const { return (m_hint == LOGARITHMIC); }
-	inline bool is_integer()     const { return (m_hint == INTEGER); }
-	inline bool is_toggle()      const { return (m_hint == TOGGLE); }
-	
-	inline bool operator==(const PortModel& pm)
-		{ return (_path == pm._path); }
-
-	void connected_to(CountedPtr<PortModel> p)      { ++m_connections; connection_sig.emit(p); }
-	void disconnected_from(CountedPtr<PortModel> p) { --m_connections; disconnection_sig.emit(p); }
-	
-	// Signals
-	sigc::signal<void, float>                  control_change_sig; ///< "Control" ports only
-	sigc::signal<void, CountedPtr<PortModel> > connection_sig;
-	sigc::signal<void, CountedPtr<PortModel> > disconnection_sig;
-
-private:
 	// Prevent copies (undefined)
 	PortModel(const PortModel& copy);
 	PortModel& operator=(const PortModel& copy);
+	
+	void connected_to(CountedPtr<PortModel> p)      { ++m_connections; connection_sig.emit(p); }
+	void disconnected_from(CountedPtr<PortModel> p) { --m_connections; disconnection_sig.emit(p); }
+	
 	
 	Type      m_type;
 	Direction m_direction;

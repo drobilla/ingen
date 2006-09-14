@@ -23,7 +23,6 @@
 #include <libxml/tree.h>
 #include <cassert>
 #include "util/CountedPtr.h"
-//#include "DummyModelClientInterface.h"
 
 using std::string;
 
@@ -35,7 +34,6 @@ class NodeModel;
 class ConnectionModel;
 class PresetModel;
 class ModelEngineInterface;
-class ModelClientInterface;
 
 	
 /** Handles all patch saving and loading.

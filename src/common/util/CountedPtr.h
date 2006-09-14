@@ -21,8 +21,7 @@
 #include <cassert>
 #include <cstddef>
 
-#ifdef DEBUG
-#define BOOST_SP_ENABLE_DEBUG_HOOKS 1
+#ifdef BOOST_SP_ENABLE_DEBUG_HOOKS
 #include <iostream>
 #include <list>
 #include <algorithm>
@@ -47,7 +46,7 @@ namespace boost {
 	}
 
 }
-#endif // DEBUG
+#endif // BOOST_SP_ENABLE_DEBUG_HOOKS
 
 
 #include <boost/shared_ptr.hpp>

@@ -39,7 +39,14 @@ class Plugin;
 class AddNodeEvent : public QueuedEvent
 {
 public:
-	AddNodeEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& path, Plugin* plugin, bool poly);
+	//AddNodeEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& path, Plugin* plugin, bool poly);
+	AddNodeEvent(Engine&               engine,
+	             CountedPtr<Responder> responder,
+	             SampleCount           timestamp,
+	             const string&         node_path,
+	             const string&         plugin_uri,
+	             bool                  poly);
+
 	~AddNodeEvent();
 
 	void pre_process();
@@ -49,11 +56,11 @@ public:
 private:
 	string           m_patch_name;
 	Path             m_path;
-	Plugin*          m_plugin;
+	string           m_plugin_uri;
 	bool             m_poly;
 	Patch*           m_patch;
 	Node*            m_node;
-	Array<Node*>*    m_process_order; // Patch's new process order
+	Array<Node*>*    m_process_order; ///< Patch's new process order
 	bool             m_node_already_exists;
 };
 

@@ -92,6 +92,18 @@ NodeFactory::~NodeFactory()
 }
 
 
+const Plugin*
+NodeFactory::plugin(const string& uri)
+{
+	// FIXME: this needs.. well, fixing
+	for (list<Plugin*>::iterator i = _plugins.begin(); i != _plugins.end(); ++i)
+		if ((*i)->uri() == uri)
+			return (*i);
+
+	return NULL;
+}
+
+
 void
 NodeFactory::load_plugins()
 {

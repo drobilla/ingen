@@ -71,9 +71,10 @@ int main(int argc, char** argv)
 
 	// Load patches
 	for (uint i=0; i < args_info.inputs_num; ++i) {
-		CountedPtr<PatchModel> pm(new PatchModel("", 0));
-		pm->filename(args_info.inputs[i]);
-		librarian.load_patch(pm, true);
+		cerr << "FIXME: load patch" << endl;
+		//CountedPtr<PatchModel> pm(new PatchModel("", 0));
+		//pm->filename(args_info.inputs[i]);
+		//librarian.load_patch(pm, true);
 	}
 	
 	return 0;

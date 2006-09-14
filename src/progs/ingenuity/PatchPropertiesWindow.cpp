@@ -74,8 +74,10 @@ PatchPropertiesWindow::cancel_clicked()
 void
 PatchPropertiesWindow::ok_clicked()
 {
-	m_patch_model->set_metadata("author", Atom(m_author_entry->get_text().c_str()));
-	m_patch_model->set_metadata("description", Atom(m_textview->get_buffer()->get_text().c_str()));
+	cerr << "FIXME: properties\n";
+
+	//m_patch_model->set_metadata("author", Atom(m_author_entry->get_text().c_str()));
+	//m_patch_model->set_metadata("description", Atom(m_textview->get_buffer()->get_text().c_str()));
 	hide();
 }
 

@@ -140,17 +140,10 @@ void QueuedEngineInterface::create_port(const string& path,
 
 void
 QueuedEngineInterface::create_node(const string& path,
-                                   const string& plugin_type,
                                    const string& plugin_uri,
                                    bool          polyphonic)
 {
-	// FIXME: ew
-	
-	Plugin* plugin = new Plugin();
-	plugin->set_type(plugin_type);
-	plugin->uri(plugin_uri);
-
-	push_queued(new AddNodeEvent(*_engine.get(), _responder, now(), path, plugin, polyphonic));
+	push_queued(new AddNodeEvent(*_engine.get(), _responder, now(), path, plugin_uri, polyphonic));
 }
 
 
@@ -161,6 +154,9 @@ QueuedEngineInterface::create_node(const string& path,
                                    const string& plugin_label,
                                    bool          polyphonic)
 {
+	cerr << "FIXME: deprecated create_node\n";
+	throw;
+#if 0
 	// FIXME: ew
 	
 	Plugin* plugin = new Plugin();
@@ -169,6 +165,7 @@ QueuedEngineInterface::create_node(const string& path,
 	plugin->plug_label(plugin_label);
 
 	push_queued(new AddNodeEvent(*_engine.get(), _responder, now(), path, plugin, polyphonic));
+#endif
 }
 
 void

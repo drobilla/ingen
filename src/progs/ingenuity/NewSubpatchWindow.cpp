@@ -87,6 +87,8 @@ NewSubpatchWindow::name_changed()
 void
 NewSubpatchWindow::ok_clicked()
 {
+	cerr << "FIXME: new subpatch\n";
+#if 0
 	PatchModel* pm = new PatchModel(
 		m_patch->path().base() + m_name_entry->get_text(),
 		m_poly_spinbutton->get_value_as_int());
@@ -102,6 +104,7 @@ NewSubpatchWindow::ok_clicked()
 	pm->set_metadata("module-x", (float)m_new_module_x);
 	pm->set_metadata("module-y", (float)m_new_module_y);
 	App::instance().engine()->create_patch_from_model(pm);
+#endif
 	hide();
 }			
 

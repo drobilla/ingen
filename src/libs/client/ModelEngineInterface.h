@@ -20,6 +20,7 @@
 #include <string>
 #include <lo/lo.h>
 #include "interface/EngineInterface.h"
+#include "ObjectModel.h"
 using std::string;
 
 class Path;
@@ -44,9 +45,13 @@ public:
 	virtual ~ModelEngineInterface() {}
 	
 	virtual void create_patch_from_model(const PatchModel* pm);
-	virtual void create_node_from_model(const NodeModel* nm);
 
-	virtual void set_all_metadata(const ObjectModel* nm);
+	virtual void create_node_with_data(const string&      plugin_uri,
+	                                   const Path&        path,
+	                                   bool               is_polyphonicc,
+	                                   const MetadataMap& initial_data);
+
+	virtual void set_metadata_map(const Path& subject, const MetadataMap& data);
 	virtual void set_preset(const Path& patch_path, const PresetModel* pm);
 
 protected:

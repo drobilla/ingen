@@ -33,10 +33,23 @@
 namespace Ingen {
 
 
-AddNodeEvent::AddNodeEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& path, Plugin* plugin, bool poly)
+/*AddNodeEvent::AddNodeEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& path, Plugin* plugin, bool poly)
 : QueuedEvent(engine, responder, timestamp),
   m_path(path),
   m_plugin(plugin),
+  m_poly(poly),
+  m_patch(NULL),
+  m_node(NULL),
+  m_process_order(NULL),
+  m_node_already_exists(false)
+{
+}*/
+
+AddNodeEvent::AddNodeEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& path,
+		const string& plugin_uri, bool poly)
+: QueuedEvent(engine, responder, timestamp),
+  m_path(path),
+  m_plugin_uri(plugin_uri),
   m_poly(poly),
   m_patch(NULL),
   m_node(NULL),
@@ -48,7 +61,6 @@ AddNodeEvent::AddNodeEvent(Engine& engine, CountedPtr<Responder> responder, Samp
 
 AddNodeEvent::~AddNodeEvent()
 {
-	delete m_plugin;
 }
 
 
@@ -62,12 +74,13 @@ AddNodeEvent::pre_process()
 	}
 
 	m_patch = _engine.object_store()->find_patch(m_path.parent());
+	const Plugin* plugin = _engine.node_factory()->plugin(m_plugin_uri);
 
-	if (m_patch != NULL) {
+	if (m_patch && plugin) {
 		if (m_poly)
-			m_node = _engine.node_factory()->load_plugin(m_plugin, m_path.name(), m_patch->internal_poly(), m_patch);
+			m_node = _engine.node_factory()->load_plugin(plugin, m_path.name(), m_patch->internal_poly(), m_patch);
 		else
-			m_node = _engine.node_factory()->load_plugin(m_plugin, m_path.name(), 1, m_patch);
+			m_node = _engine.node_factory()->load_plugin(plugin, m_path.name(), 1, m_patch);
 		
 		if (m_node != NULL) {
 			m_node->activate();
@@ -113,7 +126,7 @@ AddNodeEvent::post_process()
 	} else if (m_node == NULL) {
 		msg = "Unable to load node ";
 		msg.append(m_path).append(" (you're missing the plugin \"").append(
-			m_plugin->uri());
+			m_plugin_uri);
 		_responder->respond_error(msg);
 	} else {
 		_responder->respond_ok();
