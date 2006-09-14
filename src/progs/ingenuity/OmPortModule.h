@@ -20,6 +20,7 @@
 #include <string>
 #include <libgnomecanvasmm.h>
 #include <flowcanvas/Module.h>
+#include "util/Atom.h"
 #include "OmPatchPort.h"
 using std::string;
 
@@ -53,7 +54,6 @@ public:
 	//}
 
 	virtual void store_location();
-	void move_to(double x, double y);
 
 	//void on_right_click(GdkEventButton* event) { m_port->show_menu(event); }
 	
@@ -63,6 +63,8 @@ protected:
 	//virtual void on_double_click(GdkEventButton* ev) { show_control_window(); }
 	//virtual void on_middle_click(GdkEventButton* ev) { show_control_window(); }
 	
+	void metadata_update(const string& key, const Atom& value);
+
 	CountedPtr<PortModel> m_port;
 	OmPatchPort*          m_patch_port; ///< Port on this 'anonymous' module
 };

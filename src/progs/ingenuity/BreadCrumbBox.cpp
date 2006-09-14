@@ -53,11 +53,10 @@ BreadCrumbBox::build(Path path, CountedPtr<PatchView> view)
 	
 		_active_path = path;
 		_enable_signal = old_enable_signal;
-		return;
-	}
+
 
 	// Moving to a child of the full path, just append crumbs (preserve view cache)
-	if (_breadcrumbs.size() > 0 && (path.is_child_of(_full_path))) {
+	} else if (_breadcrumbs.size() > 0 && (path.is_child_of(_full_path))) {
 		string postfix = path.substr(_full_path.length());
 		while (postfix.length() > 0) {
 			const string name = postfix.substr(0, postfix.find("/"));
@@ -66,40 +65,45 @@ BreadCrumbBox::build(Path path, CountedPtr<PatchView> view)
 			BreadCrumb* but = create_crumb(_full_path, view);
 			pack_end(*but, false, false, 1);
 			_breadcrumbs.push_back(but);
+			but->show();
 			if (postfix.find("/") == string::npos)
 				break;
 			else
 				postfix = postfix.substr(postfix.find("/")+1);
 		}
-	}
+		
+		for (std::list<BreadCrumb*>::iterator i = _breadcrumbs.begin(); i != _breadcrumbs.end(); ++i)
+			(*i)->set_active(false);
+		_breadcrumbs.back()->set_active(true);
 
+
+	// Rebuild from scratch
 	// Getting here is bad unless absolutely necessary, since the PatchView cache is lost
-	
-	// Otherwise rebuild from scratch
-	_full_path = path;
-	_active_path = path;
+	} else {
 
-	// Empty existing breadcrumbs
-	for (std::list<BreadCrumb*>::iterator i = _breadcrumbs.begin(); i != _breadcrumbs.end(); ++i)
-		remove(**i);
-	_breadcrumbs.clear();
+		_full_path = path;
+		_active_path = path;
 
-	// Add root
-	BreadCrumb* but = create_crumb("/", view);
-	pack_start(*but, false, false, 1);
-	_breadcrumbs.push_front(but);
-	but->set_active(but->path() == _active_path);
+		// Empty existing breadcrumbs
+		for (std::list<BreadCrumb*>::iterator i = _breadcrumbs.begin(); i != _breadcrumbs.end(); ++i)
+			remove(**i);
+		_breadcrumbs.clear();
 
-	// Add the others
-	while (path != "/") {
-		BreadCrumb* but = create_crumb(path, view);
+		// Add root
+		BreadCrumb* but = create_crumb("/", view);
 		pack_start(*but, false, false, 1);
 		_breadcrumbs.push_front(but);
 		but->set_active(but->path() == _active_path);
-		path = path.parent();
-	}
 
-	show_all_children();
+		// Add the others
+		while (path != "/") {
+			BreadCrumb* but = create_crumb(path, view);
+			pack_start(*but, false, false, 1);
+			_breadcrumbs.push_front(but);
+			but->set_active(but->path() == _active_path);
+			path = path.parent();
+		}
+	}
 
 	_enable_signal = old_enable_signal;
 }

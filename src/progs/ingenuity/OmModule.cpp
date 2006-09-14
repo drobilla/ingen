@@ -118,14 +118,6 @@ OmModule::store_location()
 
 
 void
-OmModule::move_to(double x, double y)
-{
-	Module::move_to(x, y);
-	//store_location();
-}
-
-
-void
 OmModule::on_right_click(GdkEventButton* event)
 {
 	m_menu.popup(event->button, event->time);

@@ -161,15 +161,23 @@ PatchWindow::set_patch(CountedPtr<PatchModel> patch, CountedPtr<PatchView> view)
 	m_view = view ? view : PatchView::create(patch);
 	assert(m_view);
 	
+	// Add view to ourself
+	if (m_view->get_parent())
+		m_view->get_parent()->remove(*m_view);
+
 	m_viewport->remove();
 	m_viewport->add(*m_view.get());
+
+
+	// Add our breadcrumbs to the view
+	if (m_breadcrumb_box->get_parent())
+		m_breadcrumb_box->get_parent()->remove(*m_breadcrumb_box);
 
 	m_view->breadcrumb_container()->remove();
 	m_view->breadcrumb_container()->add(*m_breadcrumb_box);
 
 	m_breadcrumb_box->build(patch->path(), m_view);
 	m_breadcrumb_box->show();
-	show_all();	
 
 	//m_menu_view_control_window->property_sensitive() = patch->has_control_inputs();
 
@@ -190,6 +198,8 @@ PatchWindow::set_patch(CountedPtr<PatchModel> patch, CountedPtr<PatchView> view)
 	
 	m_patch->destroyed_sig.connect(sigc::mem_fun(this, &PatchWindow::patch_destroyed));
 	
+	show_all();
+
 	m_enable_signal = true;
 }
 

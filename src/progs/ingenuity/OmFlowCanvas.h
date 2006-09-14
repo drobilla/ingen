@@ -31,6 +31,7 @@ using LibFlowCanvas::Port;
 using Ingen::Client::ConnectionModel;
 using Ingen::Client::PatchModel;
 using Ingen::Client::NodeModel;
+using Ingen::Client::PortModel;
 using Ingen::Client::MetadataMap;
 
 namespace Ingenuity {
@@ -52,6 +53,8 @@ public:
 
 	void add_node(CountedPtr<NodeModel> nm);
 	void remove_node(CountedPtr<NodeModel> nm);
+	void add_port(CountedPtr<PortModel> pm);
+	void remove_port(CountedPtr<PortModel> pm);
 	void connection(CountedPtr<ConnectionModel> cm);
 	void disconnection(const Path& src_port_path, const Path& dst_port_path);
 

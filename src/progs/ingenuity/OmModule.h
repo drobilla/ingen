@@ -57,7 +57,6 @@ public:
 	}
 
 	virtual void store_location();
-	void move_to(double x, double y);
 
 	void on_right_click(GdkEventButton* event);
 	

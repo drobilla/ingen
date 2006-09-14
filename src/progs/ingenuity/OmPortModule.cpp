@@ -32,7 +32,8 @@ namespace Ingenuity {
 
 OmPortModule::OmPortModule(OmFlowCanvas* canvas, CountedPtr<PortModel> port)
 : LibFlowCanvas::Module(canvas, "", 0, 0), // FIXME: coords?
-  m_port(port)
+  m_port(port),
+  m_patch_port(NULL)
 {
 	/*if (port_model()->polyphonic() && port_model()->parent() != NULL
 			&& port_model()->parent_patch()->poly() > 1) {
@@ -62,33 +63,36 @@ OmPortModule::OmPortModule(OmFlowCanvas* canvas, CountedPtr<PortModel> port)
 		canvas->get_new_module_location(default_x, default_y);
 		move_to(default_x, default_y);
 	}
+
+	port->metadata_update_sig.connect(sigc::mem_fun(this, &OmPortModule::metadata_update));
 }
 
 
 void
 OmPortModule::store_location()
-{
-	char temp_buf[16];
+{	
+	const float x = static_cast<float>(property_x());
+	const float y = static_cast<float>(property_y());
 	
-	//m_port->x(property_x());
-	snprintf(temp_buf, 16, "%f", property_x().get_value());
-	//m_port->set_metadata("module-x", temp_buf); // just in case?
-	App::instance().engine()->set_metadata(m_port->path(), "module-x", temp_buf);
+	const Atom& existing_x = m_port->get_metadata("module-x");
+	const Atom& existing_y = m_port->get_metadata("module-y");
 	
-	//m_port->y(property_y());
-	snprintf(temp_buf, 16, "%f", property_y().get_value());
-	//m_port->set_metadata("module-y", temp_buf); // just in case?
-	App::instance().engine()->set_metadata(m_port->path(), "module-y", temp_buf);
+	if (existing_x.type() != Atom::FLOAT || existing_y.type() != Atom::FLOAT
+			|| existing_x.get_float() != x || existing_y.get_float() != y) {
+		App::instance().engine()->set_metadata(m_port->path(), "module-x", Atom(x));
+		App::instance().engine()->set_metadata(m_port->path(), "module-y", Atom(y));
+	}
 }
 
 
 void
-OmPortModule::move_to(double x, double y)
+OmPortModule::metadata_update(const string& key, const Atom& value)
 {
-	Module::move_to(x, y);
-	//m_port->x(x);
-	//m_port->y(y);
-	//store_location();
+	if (key == "module-x" && value.type() == Atom::FLOAT)
+		move_to(value.get_float(), property_y());
+	else if (key == "module-y" && value.type() == Atom::FLOAT)
+		move_to(property_x(), value.get_float());
 }
+
 
 } // namespace Ingenuity

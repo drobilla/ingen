@@ -79,6 +79,8 @@ OmFlowCanvas::OmFlowCanvas(CountedPtr<PatchModel> patch, int width, int height)
 	// Connect to model signals to track state
 	m_patch->new_node_sig.connect(sigc::mem_fun(this, &OmFlowCanvas::add_node));
 	m_patch->removed_node_sig.connect(sigc::mem_fun(this, &OmFlowCanvas::remove_node));
+	m_patch->new_port_sig.connect(sigc::mem_fun(this, &OmFlowCanvas::add_port));
+	m_patch->removed_port_sig.connect(sigc::mem_fun(this, &OmFlowCanvas::remove_port));
 	m_patch->new_connection_sig.connect(sigc::mem_fun(this, &OmFlowCanvas::connection));
 	m_patch->removed_connection_sig.connect(sigc::mem_fun(this, &OmFlowCanvas::disconnection));
 	
@@ -131,6 +133,24 @@ OmFlowCanvas::remove_node(CountedPtr<NodeModel> nm)
 {
 	LibFlowCanvas::Module* module = get_module(nm->path().name());
 	delete module;
+}
+
+
+void
+OmFlowCanvas::add_port(CountedPtr<PortModel> pm)
+{
+	cerr << "FIXME: PORT MODULE LEAK!" << endl;
+	
+	new OmPortModule(this, pm);
+}
+
+
+void
+OmFlowCanvas::remove_port(CountedPtr<PortModel> pm)
+{
+	cerr << "FIXME: PORT REMOVE" << endl;
+	//LibFlowCanvas::Module* module = get_module(pm->path().name());
+	//delete module;
 }
 
 
