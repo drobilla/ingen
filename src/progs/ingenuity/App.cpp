@@ -22,7 +22,7 @@
 #include <libgnomecanvasmm.h>
 #include <time.h>
 #include <sys/time.h>
-#include "OmModule.h"
+#include "NodeModule.h"
 #include "ControlPanel.h"
 #include "SubpatchModule.h"
 #include "LoadPluginWindow.h"
@@ -49,7 +49,7 @@ using namespace Ingen::Client;
 
 namespace Ingenuity {
 
-class OmPort;
+class Port;
 
 
 /// Singleton instance

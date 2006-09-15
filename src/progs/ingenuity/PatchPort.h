@@ -14,44 +14,46 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "OmPort.h"
-#include <cassert>
-#include <iostream>
-#include "PortModel.h"
-#include "OmModule.h"
-#include "ControlModel.h"
-#include "Configuration.h"
-#include "App.h"
-using std::cerr; using std::endl;
+#ifndef PATCHPORT_H
+#define PATCHPORT_H
 
+#include <cassert>
+#include <string>
+#include <flowcanvas/Port.h>
+#include "util/CountedPtr.h"
+
+namespace Ingen { namespace Client { class PortModel; } }
 using namespace Ingen::Client;
+using namespace LibFlowCanvas;
+using std::string; using std::list;
 
 namespace Ingenuity {
-
-OmPort::OmPort(Module* module, CountedPtr<PortModel> pm)
-: Port(module, pm->path().name(), pm->is_input(), App::instance().configuration()->get_port_color(pm.get())),
-  m_port_model(pm)
-{
-	assert(module);
-	assert(m_port_model);
-}
-
-#if 0
-void
-OmPort::set_name(const string& n)
-{
-	cerr << "********** OmPort::set_name broken **********************" << endl;
 	
-	/* FIXME: move to PortController
-	string new_path = Path::parent(m_port_model->path()) +"/"+ n;
+class FlowCanvas;
+class PatchWindow;
+class PatchPortModule;
 
-	for (list<ControlPanel*>::iterator i = m_control_panels.begin(); i != m_control_panels.end(); ++i)
-		(*i)->rename_port(m_port_model->path(), new_path);
+
+/** A Port (on a pseudo node) in a patch canvas, to represent a port on that patch.
+ * 
+ * \ingroup Ingenuity
+ */
+class PatchPort : public LibFlowCanvas::Port
+{
+public:
+	PatchPort(PatchPortModule* module, CountedPtr<PortModel> pm);
+
+	virtual ~PatchPort() {}
+
+	//void set_name(const string& n);
 	
-	Port::set_name(n);
-	m_port_model->path(new_path);
-	*/
-}
-#endif
+	CountedPtr<PortModel> model() const { return m_port_model; }
+	
+private:
+	CountedPtr<PortModel> m_port_model;
+};
+
 
 } // namespace Ingenuity
+
+#endif // PATCHPORT_H

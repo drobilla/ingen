@@ -17,7 +17,7 @@
 #ifndef DSSIMODULE_H
 #define DSSIMODULE_H
 
-#include "OmModule.h"
+#include "NodeModule.h"
 
 namespace Ingenuity {
 
@@ -27,10 +27,10 @@ class DSSIController;
  *
  * \ingroup Ingenuity
  */
-class DSSIModule : public OmModule
+class DSSIModule : public Ingenuity::NodeModule
 {
 public:
-	DSSIModule(OmFlowCanvas* canvas, CountedPtr<NodeModel> node);
+	DSSIModule(PatchCanvas* canvas, CountedPtr<NodeModel> node);
 	virtual ~DSSIModule() {}
 
 	void on_double_click(GdkEventButton* ev);

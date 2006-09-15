@@ -21,7 +21,7 @@
 #include <libgnomecanvasmm.h>
 #include <flowcanvas/Module.h>
 #include "util/Atom.h"
-#include "OmPatchPort.h"
+#include "PatchPort.h"
 using std::string;
 
 namespace Ingen { namespace Client {
@@ -33,8 +33,8 @@ using namespace Ingen::Client;
 
 namespace Ingenuity {
 	
-class OmFlowCanvas;
-class OmPort;
+class PatchCanvas;
+class Port;
 
 
 /** A "module" to represent a patch's port on it's own canvas.
@@ -43,16 +43,12 @@ class OmPort;
  *
  * \ingroup Ingenuity
  */
-class OmPortModule : public LibFlowCanvas::Module
+class PatchPortModule : public LibFlowCanvas::Module
 {
 public:
-	OmPortModule(OmFlowCanvas* canvas, CountedPtr<PortModel> port);
-	virtual ~OmPortModule() {}
+	PatchPortModule(PatchCanvas* canvas, CountedPtr<PortModel> port);
+	virtual ~PatchPortModule() {}
 	
-	//virtual OmPort* port(const string& port_name) {
-	//	return (OmPort*)Module::port(port_name);
-	//}
-
 	virtual void store_location();
 
 	//void on_right_click(GdkEventButton* event) { m_port->show_menu(event); }
@@ -66,7 +62,7 @@ protected:
 	void metadata_update(const string& key, const Atom& value);
 
 	CountedPtr<PortModel> m_port;
-	OmPatchPort*          m_patch_port; ///< Port on this 'anonymous' module
+	PatchPort*            m_patch_port; ///< Port on this 'anonymous' module
 };
 
 

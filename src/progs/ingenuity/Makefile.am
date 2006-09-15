@@ -24,8 +24,8 @@ ingenuity_SOURCES = \
 	main.cpp \
 	NodeMenu.h \
 	NodeMenu.cpp \
-	OmFlowCanvas.h \
-	OmFlowCanvas.cpp \
+	PatchCanvas.h \
+	PatchCanvas.cpp \
 	BreadCrumb.h \
 	BreadCrumbBox.h \
 	BreadCrumbBox.cpp \
@@ -59,18 +59,18 @@ ingenuity_SOURCES = \
 	WindowFactory.cpp \
 	../../common/types.h \
 	../../common/Path.h \
-	OmModule.h \
-	OmModule.cpp \
-	OmPortModule.h \
-	OmPortModule.cpp \
+	NodeModule.h \
+	NodeModule.cpp \
+	PatchPortModule.h \
+	PatchPortModule.cpp \
 	DSSIModule.h \
 	DSSIModule.cpp \
 	SubpatchModule.h \
 	SubpatchModule.cpp \
-	OmPort.h \
-	OmPort.cpp \
-	OmPatchPort.h \
-	OmPatchPort.cpp \
+	Port.h \
+	Port.cpp \
+	PatchPort.h \
+	PatchPort.cpp \
 	NewSubpatchWindow.h \
 	NewSubpatchWindow.cpp \
 	ConfigWindow.h \

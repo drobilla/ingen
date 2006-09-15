@@ -14,8 +14,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef OMPORT_H
-#define OMPORT_H
+#ifndef PORT_H
+#define PORT_H
 
 #include <cassert>
 #include <string>
@@ -23,30 +23,24 @@
 #include "util/CountedPtr.h"
 
 namespace Ingen { namespace Client { class PortModel; } }
-using namespace Ingen::Client;
-using namespace LibFlowCanvas;
-using std::string; using std::list;
+using Ingen::Client::PortModel;
 
 namespace Ingenuity {
-	
-class FlowCanvas;
-class PatchWindow;
-class OmModule;
+
+class NodeModule;
 
 
-/** A Port on an OmModule.
+/** A Port on an Module.
  * 
  * \ingroup Ingenuity
  */
-class OmPort : public LibFlowCanvas::Port
+class Port : public LibFlowCanvas::Port
 {
 public:
-	OmPort(Module* module, CountedPtr<PortModel> pm);
+	Port(NodeModule* module, CountedPtr<PortModel> pm);
 
-	virtual ~OmPort() {}
+	virtual ~Port() {}
 
-	//void set_name(const string& n);
-	
 	CountedPtr<PortModel> model() const { return m_port_model; }
 	
 private:
@@ -56,4 +50,4 @@ private:
 
 } // namespace Ingenuity
 
-#endif // OMPORT_H
+#endif // PORT_H

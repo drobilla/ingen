@@ -31,7 +31,7 @@ namespace Ingenuity {
 class Controller;
 class NodeControlWindow;
 class NodePropertiesWindow;
-class OmFlowCanvas;
+class PatchCanvas;
 
 /** Controller for a Node.
  *

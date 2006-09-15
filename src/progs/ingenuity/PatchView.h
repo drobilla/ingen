@@ -36,7 +36,7 @@ using namespace Ingen::Client;
 
 namespace Ingenuity {
 	
-class OmFlowCanvas;
+class PatchCanvas;
 class LoadPluginWindow;
 class NewSubpatchWindow;
 class LoadSubpatchWindow;
@@ -57,7 +57,7 @@ public:
 	PatchView(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml);
 	~PatchView();
 
-	OmFlowCanvas*          canvas()               const { return _canvas; }
+	PatchCanvas*          canvas()               const { return _canvas; }
 	CountedPtr<PatchModel> patch()                const { return _patch; }
 	Gtk::Viewport*         breadcrumb_container() const { return _breadcrumb_container; }
 
@@ -75,7 +75,7 @@ private:
 	void zoom_full();
 
 	CountedPtr<PatchModel> _patch;
-	OmFlowCanvas*          _canvas;
+	PatchCanvas*          _canvas;
 	
 	Gtk::ScrolledWindow* _canvas_scrolledwindow;
 

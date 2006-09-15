@@ -63,6 +63,16 @@ ModelEngineInterface::create_patch_with_data(const Path& path, size_t poly, cons
 }
 
 
+void
+ModelEngineInterface::create_port_with_data(const Path&        path,
+                                            const string&      data_type,
+                                            bool               direction,
+                                            const MetadataMap& data)
+{
+	create_port(path, data_type, direction);
+	set_metadata_map(path, data);
+}
+
 /** Set all pieces of metadata in a map.
  */
 void

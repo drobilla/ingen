@@ -20,7 +20,7 @@
 #include <fstream>
 #include "App.h"
 #include "ModelEngineInterface.h"
-#include "OmFlowCanvas.h"
+#include "PatchCanvas.h"
 #include "LoadPluginWindow.h"
 #include "PatchModel.h"
 #include "NewSubpatchWindow.h"
@@ -62,7 +62,7 @@ PatchView::set_patch(CountedPtr<PatchModel> patch)
 	assert(_breadcrumb_container); // ensure created
 
 	_patch = patch;
-	_canvas = new OmFlowCanvas(patch, 1600*2, 1200*2);
+	_canvas = new PatchCanvas(patch, 1600*2, 1200*2);
 
 	_canvas_scrolledwindow->add(*_canvas);
 

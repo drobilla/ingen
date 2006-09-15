@@ -36,20 +36,20 @@ using Ingen::Client::MetadataMap;
 
 namespace Ingenuity {
 	
-class OmModule;
+class NodeModule;
 
 
 /** Patch canvas widget.
  *
  * \ingroup Ingenuity
  */
-class OmFlowCanvas : public LibFlowCanvas::FlowCanvas
+class PatchCanvas : public LibFlowCanvas::FlowCanvas
 {
 public:
-	OmFlowCanvas(CountedPtr<PatchModel> patch, int width, int height);
+	PatchCanvas(CountedPtr<PatchModel> patch, int width, int height);
 	
-	OmModule* find_module(const string& name)
-		{ return (OmModule*)FlowCanvas::get_module(name); }
+	NodeModule* find_module(const string& name)
+		{ return (NodeModule*)FlowCanvas::get_module(name); }
 
 	void add_node(CountedPtr<NodeModel> nm);
 	void remove_node(CountedPtr<NodeModel> nm);
@@ -68,12 +68,6 @@ public:
 private:
 	string generate_port_name(const string& base);
 	void menu_add_port(const string& name, const string& type, bool is_output);
-	/*void menu_add_audio_input();
-	void menu_add_audio_output();
-	void menu_add_control_input();
-	void menu_add_control_output();
-	void menu_add_midi_input();
-	void menu_add_midi_output();*/
 	void menu_load_plugin();
 	void menu_new_patch();
 	void menu_load_patch();
@@ -84,8 +78,8 @@ private:
 
 	bool canvas_event(GdkEvent* event);
 	
-	void connect(const Port* src_port, const Port* dst_port);
-	void disconnect(const Port* src_port, const Port* dst_port);
+	void connect(const LibFlowCanvas::Port* src_port, const LibFlowCanvas::Port* dst_port);
+	void disconnect(const LibFlowCanvas::Port* src_port, const LibFlowCanvas::Port* dst_port);
 
 	CountedPtr<PatchModel> m_patch;
 

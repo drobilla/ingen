@@ -14,20 +14,21 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "OmFlowCanvas.h"
+#include "PatchCanvas.h"
 #include <cassert>
 #include <flowcanvas/FlowCanvas.h>
 #include "App.h"
 #include "ModelEngineInterface.h"
 #include "PatchModel.h"
 #include "PatchWindow.h"
+#include "PatchPortModule.h"
 #include "LoadPluginWindow.h"
 #include "LoadSubpatchWindow.h"
 #include "NewSubpatchWindow.h"
-#include "OmPort.h"
+#include "Port.h"
 #include "NodeModel.h"
-#include "OmModule.h"
-#include "OmPortModule.h"
+#include "NodeModule.h"
+#include "PatchPortModule.h"
 #include "SubpatchModule.h"
 #include "GladeFactory.h"
 #include "WindowFactory.h"
@@ -35,7 +36,7 @@
 namespace Ingenuity {
 
 
-OmFlowCanvas::OmFlowCanvas(CountedPtr<PatchModel> patch, int width, int height)
+PatchCanvas::PatchCanvas(CountedPtr<PatchModel> patch, int width, int height)
 : FlowCanvas(width, height),
   m_patch(patch),
   m_last_click_x(0),
@@ -58,41 +59,41 @@ OmFlowCanvas::OmFlowCanvas(CountedPtr<PatchModel> patch, int width, int height)
 
 	// Add port menu items
 	m_menu_add_audio_input->signal_activate().connect(
-		sigc::bind(sigc::mem_fun(this, &OmFlowCanvas::menu_add_port),
+		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
 			"audio_input", "AUDIO", false));
 	m_menu_add_audio_output->signal_activate().connect(
-		sigc::bind(sigc::mem_fun(this, &OmFlowCanvas::menu_add_port),
+		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
 			"audio_output", "AUDIO", true));
 	m_menu_add_control_input->signal_activate().connect(
-		sigc::bind(sigc::mem_fun(this, &OmFlowCanvas::menu_add_port),
+		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
 			"control_input", "CONTROL", false));
 	m_menu_add_control_output->signal_activate().connect(
-		sigc::bind(sigc::mem_fun(this, &OmFlowCanvas::menu_add_port),
+		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
 			"control_output", "CONTROL", true));
 	m_menu_add_midi_input->signal_activate().connect(
-		sigc::bind(sigc::mem_fun(this, &OmFlowCanvas::menu_add_port),
+		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
 			"midi_input", "MIDI", false));
 	m_menu_add_midi_output->signal_activate().connect(
-		sigc::bind(sigc::mem_fun(this, &OmFlowCanvas::menu_add_port),
+		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
 			"midi_output", "MIDI", true));
 
 	// Connect to model signals to track state
-	m_patch->new_node_sig.connect(sigc::mem_fun(this, &OmFlowCanvas::add_node));
-	m_patch->removed_node_sig.connect(sigc::mem_fun(this, &OmFlowCanvas::remove_node));
-	m_patch->new_port_sig.connect(sigc::mem_fun(this, &OmFlowCanvas::add_port));
-	m_patch->removed_port_sig.connect(sigc::mem_fun(this, &OmFlowCanvas::remove_port));
-	m_patch->new_connection_sig.connect(sigc::mem_fun(this, &OmFlowCanvas::connection));
-	m_patch->removed_connection_sig.connect(sigc::mem_fun(this, &OmFlowCanvas::disconnection));
+	m_patch->new_node_sig.connect(sigc::mem_fun(this, &PatchCanvas::add_node));
+	m_patch->removed_node_sig.connect(sigc::mem_fun(this, &PatchCanvas::remove_node));
+	m_patch->new_port_sig.connect(sigc::mem_fun(this, &PatchCanvas::add_port));
+	m_patch->removed_port_sig.connect(sigc::mem_fun(this, &PatchCanvas::remove_port));
+	m_patch->new_connection_sig.connect(sigc::mem_fun(this, &PatchCanvas::connection));
+	m_patch->removed_connection_sig.connect(sigc::mem_fun(this, &PatchCanvas::disconnection));
 	
 	// Connect widget signals to do things
-	m_menu_load_plugin->signal_activate().connect(sigc::mem_fun(this, &OmFlowCanvas::menu_load_plugin));
-	m_menu_load_patch->signal_activate().connect(sigc::mem_fun(this, &OmFlowCanvas::menu_load_patch));
-	m_menu_new_patch->signal_activate().connect(sigc::mem_fun(this, &OmFlowCanvas::menu_new_patch));
+	m_menu_load_plugin->signal_activate().connect(sigc::mem_fun(this, &PatchCanvas::menu_load_plugin));
+	m_menu_load_patch->signal_activate().connect(sigc::mem_fun(this, &PatchCanvas::menu_load_patch));
+	m_menu_new_patch->signal_activate().connect(sigc::mem_fun(this, &PatchCanvas::menu_new_patch));
 }
 
 
 void
-OmFlowCanvas::build_canvas() {
+PatchCanvas::build_canvas() {
 	
 	// Create modules for nodes
 	for (NodeModelMap::const_iterator i = m_patch->nodes().begin();
@@ -104,7 +105,7 @@ OmFlowCanvas::build_canvas() {
 	for (PortModelList::const_iterator i = m_patch->ports().begin();
 			i != m_patch->ports().end(); ++i) {
 		cerr << "FIXME: PORT MODULE LEAK!" << endl;
-		new OmPortModule(this, *i);
+		new PatchPortModule(this, *i);
 	}
 
 	// Create connections
@@ -116,7 +117,7 @@ OmFlowCanvas::build_canvas() {
 
 
 void
-OmFlowCanvas::add_node(CountedPtr<NodeModel> nm)
+PatchCanvas::add_node(CountedPtr<NodeModel> nm)
 {
 	cerr << "FIXME: MODULE LEAK!" << endl;
 	
@@ -124,12 +125,12 @@ OmFlowCanvas::add_node(CountedPtr<NodeModel> nm)
 	if (pm)
 		new SubpatchModule(this, pm);
 	else
-		new OmModule(this, nm);
+		new NodeModule(this, nm);
 }
 
 
 void
-OmFlowCanvas::remove_node(CountedPtr<NodeModel> nm)
+PatchCanvas::remove_node(CountedPtr<NodeModel> nm)
 {
 	LibFlowCanvas::Module* module = get_module(nm->path().name());
 	delete module;
@@ -137,16 +138,16 @@ OmFlowCanvas::remove_node(CountedPtr<NodeModel> nm)
 
 
 void
-OmFlowCanvas::add_port(CountedPtr<PortModel> pm)
+PatchCanvas::add_port(CountedPtr<PortModel> pm)
 {
 	cerr << "FIXME: PORT MODULE LEAK!" << endl;
 	
-	new OmPortModule(this, pm);
+	new PatchPortModule(this, pm);
 }
 
 
 void
-OmFlowCanvas::remove_port(CountedPtr<PortModel> pm)
+PatchCanvas::remove_port(CountedPtr<PortModel> pm)
 {
 	cerr << "FIXME: PORT REMOVE" << endl;
 	//LibFlowCanvas::Module* module = get_module(pm->path().name());
@@ -155,7 +156,7 @@ OmFlowCanvas::remove_port(CountedPtr<PortModel> pm)
 
 
 void
-OmFlowCanvas::connection(CountedPtr<ConnectionModel> cm)
+PatchCanvas::connection(CountedPtr<ConnectionModel> cm)
 {
 	// Deal with port "anonymous nodes" for this patch's own ports...
 	const Path& src_parent_path = cm->src_port_path().parent();
@@ -166,8 +167,8 @@ OmFlowCanvas::connection(CountedPtr<ConnectionModel> cm)
 	const string& dst_parent_name =
 		(dst_parent_path == m_patch->path()) ? "" : dst_parent_path.name();
 
-	Port* src_port = get_port(src_parent_name, cm->src_port_path().name());
-	Port* dst_port = get_port(dst_parent_name, cm->dst_port_path().name());
+	LibFlowCanvas::Port* src_port = get_port(src_parent_name, cm->src_port_path().name());
+	LibFlowCanvas::Port* dst_port = get_port(dst_parent_name, cm->dst_port_path().name());
 	assert(src_port && dst_port);
 
 	add_connection(src_port, dst_port);
@@ -175,15 +176,15 @@ OmFlowCanvas::connection(CountedPtr<ConnectionModel> cm)
 
 
 void
-OmFlowCanvas::disconnection(const Path& src_port_path, const Path& dst_port_path)
+PatchCanvas::disconnection(const Path& src_port_path, const Path& dst_port_path)
 {
 	const string& src_node_name = src_port_path.parent().name();
 	const string& src_port_name = src_port_path.name();
 	const string& dst_node_name = dst_port_path.parent().name();
 	const string& dst_port_name = dst_port_path.name();
 
-	Port* src_port = get_port(src_node_name, src_port_name);
-	Port* dst_port = get_port(dst_node_name, dst_port_name);
+	LibFlowCanvas::Port* src_port = get_port(src_node_name, src_port_name);
+	LibFlowCanvas::Port* dst_port = get_port(dst_node_name, dst_port_name);
 
 	if (src_port && dst_port) {
 		remove_connection(src_port, dst_port);
@@ -204,14 +205,15 @@ OmFlowCanvas::disconnection(const Path& src_port_path, const Path& dst_port_path
 
 
 void
-OmFlowCanvas::connect(const Port* src_port, const Port* dst_port)
+PatchCanvas::connect(const LibFlowCanvas::Port* src_port, const LibFlowCanvas::Port* dst_port)
 {
 	assert(src_port != NULL);
 	assert(dst_port != NULL);
 	
-	const OmPort* const src = static_cast<const OmPort* const>(src_port);
-	const OmPort* const dst = static_cast<const OmPort* const>(dst_port);
-	
+	const Ingenuity::Port* const src = dynamic_cast<const Ingenuity::Port* const>(src_port);
+	const Ingenuity::Port* const dst = dynamic_cast<const Ingenuity::Port* const>(dst_port);
+	assert(src && dst);
+
 	// Midi binding/learn shortcut
 	if (src->model()->type() == PortModel::MIDI &&
 			dst->model()->type() == PortModel::CONTROL)
@@ -244,18 +246,18 @@ OmFlowCanvas::connect(const Port* src_port, const Port* dst_port)
 
 
 void
-OmFlowCanvas::disconnect(const Port* src_port, const Port* dst_port)
+PatchCanvas::disconnect(const LibFlowCanvas::Port* src_port, const LibFlowCanvas::Port* dst_port)
 {
 	assert(src_port != NULL);
 	assert(dst_port != NULL);
 	
-	App::instance().engine()->disconnect(((OmPort*)src_port)->model()->path(),
-	                       ((OmPort*)dst_port)->model()->path());
+	App::instance().engine()->disconnect(((Ingenuity::Port*)src_port)->model()->path(),
+	                       ((Ingenuity::Port*)dst_port)->model()->path());
 }
 
 
 bool
-OmFlowCanvas::canvas_event(GdkEvent* event)
+PatchCanvas::canvas_event(GdkEvent* event)
 {
 	assert(event != NULL);
 	
@@ -284,15 +286,15 @@ OmFlowCanvas::canvas_event(GdkEvent* event)
 
 
 void
-OmFlowCanvas::destroy_selected()
+PatchCanvas::destroy_selected()
 {
 	for (list<Module*>::iterator m = m_selected_modules.begin(); m != m_selected_modules.end(); ++m)
-		App::instance().engine()->destroy(((OmModule*)(*m))->node()->path());
+		App::instance().engine()->destroy(((NodeModule*)(*m))->node()->path());
 }
 
 
 string
-OmFlowCanvas::generate_port_name(const string& base) {
+PatchCanvas::generate_port_name(const string& base) {
 	string name = base;
 
 	char num_buf[5];
@@ -311,23 +313,17 @@ OmFlowCanvas::generate_port_name(const string& base) {
 
 
 void
-OmFlowCanvas::menu_add_port(const string& name, const string& type, bool is_output)
+PatchCanvas::menu_add_port(const string& name, const string& type, bool is_output)
 {
 	const Path& path = m_patch->path().base() + generate_port_name(name);
-	App::instance().engine()->create_port(path, type, is_output);
-	
-	char temp_buf[16];
-	snprintf(temp_buf, 16, "%d", m_last_click_x);
-	App::instance().engine()->set_metadata(path, "module-x", temp_buf);
-	snprintf(temp_buf, 16, "%d", m_last_click_y);
-	App::instance().engine()->set_metadata(path, "module-y", temp_buf);
+	App::instance().engine()->create_port_with_data(path, type, is_output, get_initial_data());
 }
 
 
 /** Try to guess a suitable location for a new module.
  */
 void
-OmFlowCanvas::get_new_module_location(double& x, double& y)
+PatchCanvas::get_new_module_location(double& x, double& y)
 {
 	int scroll_x;
 	int scroll_y;
@@ -337,57 +333,8 @@ OmFlowCanvas::get_new_module_location(double& x, double& y)
 }
 
 
-/*
-void
-OmFlowCanvas::menu_add_audio_input()
-{
-	string name = "audio_in";
-	App::instance().engine()->create_port(m_patch_controller->path().base() + name, "AUDIO", false);
-}
-
-
-void
-OmFlowCanvas::menu_add_audio_output()
-{
-	string name = "audio_out";
-	App::instance().engine()->create_port(m_patch_controller->path().base() + name, "AUDIO", true);
-}
-
-
-void
-OmFlowCanvas::menu_add_control_input()
-{
-	string name = "control_in";
-	App::instance().engine()->create_port(m_patch_controller->path().base() + name, "CONTROL", false);
-}
-
-
-void
-OmFlowCanvas::menu_add_control_output()
-{
-	string name = "control_out";
-	App::instance().engine()->create_port(m_patch_controller->path().base() + name, "CONTROL", true);
-}
-
-
-void
-OmFlowCanvas::menu_add_midi_input()
-{
-	string name = "midi_in";
-	App::instance().engine()->create_port(m_patch_controller->path().base() + name, "MIDI", false);
-}
-
-
-void
-OmFlowCanvas::menu_add_midi_output()
-{
-	string name = "midi_out";
-	App::instance().engine()->create_port(m_patch_controller->path().base() + name, "MIDI", true);
-}
-*/
-
 MetadataMap
-OmFlowCanvas::get_initial_data()
+PatchCanvas::get_initial_data()
 {
 	MetadataMap result;
 	
@@ -398,21 +345,21 @@ OmFlowCanvas::get_initial_data()
 }
 
 void
-OmFlowCanvas::menu_load_plugin()
+PatchCanvas::menu_load_plugin()
 {
 	App::instance().window_factory()->present_load_plugin(m_patch, get_initial_data());
 }
 
 
 void
-OmFlowCanvas::menu_load_patch()
+PatchCanvas::menu_load_patch()
 {
 	App::instance().window_factory()->present_load_subpatch(m_patch, get_initial_data());
 }
 
 
 void
-OmFlowCanvas::menu_new_patch()
+PatchCanvas::menu_new_patch()
 {
 	App::instance().window_factory()->present_new_subpatch(m_patch, get_initial_data());
 }

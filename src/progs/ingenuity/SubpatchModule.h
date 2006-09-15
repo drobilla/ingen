@@ -20,9 +20,10 @@
 
 #include <string>
 #include <libgnomecanvasmm.h>
-#include "OmModule.h"
+#include "NodeModule.h"
 #include "util/CountedPtr.h"
 #include "PatchModel.h"
+#include "PatchPortModule.h"
 using std::string; using std::list;
 
 namespace Ingen { namespace Client {
@@ -35,7 +36,7 @@ using namespace Ingen::Client;
 
 namespace Ingenuity {
 	
-class OmFlowCanvas;
+class PatchCanvas;
 class NodeControlWindow;
 
 
@@ -43,10 +44,10 @@ class NodeControlWindow;
  *
  * \ingroup Ingenuity
  */
-class SubpatchModule : public OmModule
+class SubpatchModule : public NodeModule
 {
 public:
-	SubpatchModule(OmFlowCanvas* canvas, CountedPtr<PatchModel> controller);
+	SubpatchModule(PatchCanvas* canvas, CountedPtr<PatchModel> controller);
 	virtual ~SubpatchModule() {}
 
 	void on_double_click(GdkEventButton* ev);

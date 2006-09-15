@@ -52,6 +52,11 @@ public:
 	                                   const Path&        path,
 	                                   bool               is_polyphonicc,
 	                                   const MetadataMap& initial_data);
+	
+	virtual void create_port_with_data(const Path&        path,
+	                                   const string&      data_type,
+	                                   bool               direction,
+	                                   const MetadataMap& data);
 
 	virtual void set_metadata_map(const Path& subject, const MetadataMap& data);
 	virtual void set_preset(const Path& patch_path, const PresetModel* pm);

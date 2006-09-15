@@ -26,7 +26,7 @@
 #include "Store.h"
 #include "ModelEngineInterface.h"
 #include "PatchView.h"
-#include "OmFlowCanvas.h"
+#include "PatchCanvas.h"
 using std::cout; using std::cerr; using std::endl;
 
 

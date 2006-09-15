@@ -14,46 +14,27 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef OMPATCHPORT_H
-#define OMPATCHPORT_H
-
+#include "Port.h"
 #include <cassert>
-#include <string>
-#include <flowcanvas/Port.h>
-#include "util/CountedPtr.h"
+#include <iostream>
+#include "PortModel.h"
+#include "NodeModule.h"
+#include "ControlModel.h"
+#include "Configuration.h"
+#include "App.h"
+using std::cerr; using std::endl;
 
-namespace Ingen { namespace Client { class PortModel; } }
 using namespace Ingen::Client;
-using namespace LibFlowCanvas;
-using std::string; using std::list;
 
 namespace Ingenuity {
-	
-class FlowCanvas;
-class PatchWindow;
-class OmPortModule;
 
-
-/** A Port (on a pseudo node) in a patch canvas, to represent a port on that patch.
- * 
- * \ingroup Ingenuity
- */
-class OmPatchPort : public LibFlowCanvas::Port
+Port::Port(NodeModule* module, CountedPtr<PortModel> pm)
+: LibFlowCanvas::Port(module, pm->path().name(), pm->is_input(), App::instance().configuration()->get_port_color(pm.get())),
+  m_port_model(pm)
 {
-public:
-	OmPatchPort(OmPortModule* module, CountedPtr<PortModel> pm);
-
-	virtual ~OmPatchPort() {}
-
-	//void set_name(const string& n);
-	
-	CountedPtr<PortModel> model() const { return m_port_model; }
-	
-private:
-	CountedPtr<PortModel> m_port_model;
-};
+	assert(module);
+	assert(m_port_model);
+}
 
 
 } // namespace Ingenuity
-
-#endif // OMPATCHPORT_H

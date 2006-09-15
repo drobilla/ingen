@@ -78,6 +78,17 @@ else
   CXXFLAGS="$CFLAGS -DNDEBUG"
 fi
 
+
+# Boost shared_ptr debugging
+pointer_debug="no"
+AC_ARG_ENABLE(debug,
+	[AS_HELP_STRING(--enable-pointer-debug, [Enable smart pointer debugging (no)])],
+	[pointer-debug="$enableval"])
+if test "$pointer_debug" = "yes"; then
+  CFLAGS+="-DBOOST_SP_ENABLE_DEBUG_HOOKS"
+  CXXFLAGS+="-DBOOST_SP_ENABLE_DEBUG_HOOKS"
+fi
+
 # Use strict flags?
 strict="no"
 AC_ARG_ENABLE(strict,

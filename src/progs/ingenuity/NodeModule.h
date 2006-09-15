@@ -35,8 +35,8 @@ using namespace Ingen::Client;
 
 namespace Ingenuity {
 	
-class OmFlowCanvas;
-class OmPort;
+class PatchCanvas;
+class Port;
 
 
 /** A module in a patch.
@@ -46,14 +46,14 @@ class OmPort;
  *
  * \ingroup Ingenuity
  */
-class OmModule : public LibFlowCanvas::Module
+class NodeModule : public LibFlowCanvas::Module
 {
 public:
-	OmModule(OmFlowCanvas* canvas, CountedPtr<NodeModel> node);
-	virtual ~OmModule() {}
+	NodeModule(PatchCanvas* canvas, CountedPtr<NodeModel> node);
+	virtual ~NodeModule() {}
 	
-	virtual OmPort* port(const string& port_name) {
-		return (OmPort*)Module::get_port(port_name);
+	virtual Ingenuity::Port* port(const string& port_name) {
+		return (Ingenuity::Port*)Module::get_port(port_name);
 	}
 
 	virtual void store_location();

@@ -19,20 +19,20 @@
 #include <iostream>
 #include "App.h"
 #include "ModelEngineInterface.h"
-#include "OmModule.h"
+#include "NodeModule.h"
 #include "NodeControlWindow.h"
 #include "PatchModel.h"
 #include "PatchWindow.h"
-#include "OmFlowCanvas.h"
-#include "OmPort.h"
+#include "PatchCanvas.h"
+#include "Port.h"
 #include "WindowFactory.h"
 using std::cerr; using std::cout; using std::endl;
 
 namespace Ingenuity {
 
 
-SubpatchModule::SubpatchModule(OmFlowCanvas* canvas, CountedPtr<PatchModel> patch)
-: OmModule(canvas, patch),
+SubpatchModule::SubpatchModule(PatchCanvas* canvas, CountedPtr<PatchModel> patch)
+: NodeModule(canvas, patch),
   m_patch(patch)
 {
 	assert(canvas);

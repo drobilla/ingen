@@ -20,8 +20,8 @@
 namespace Ingenuity {
 
 
-DSSIModule::DSSIModule(OmFlowCanvas* canvas, CountedPtr<NodeModel> node)
-: OmModule(canvas, node)
+DSSIModule::DSSIModule(PatchCanvas* canvas, CountedPtr<NodeModel> node)
+: NodeModule(canvas, node)
 {
 }
 

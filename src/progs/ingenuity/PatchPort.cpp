@@ -14,11 +14,11 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "OmPatchPort.h"
+#include "PatchPort.h"
 #include <cassert>
 #include <iostream>
 #include "PortModel.h"
-#include "OmPortModule.h"
+#include "PatchPortModule.h"
 #include "ControlModel.h"
 #include "Configuration.h"
 #include "App.h"
@@ -28,7 +28,7 @@ using namespace Ingen::Client;
 
 namespace Ingenuity {
 
-OmPatchPort::OmPatchPort(OmPortModule* module, CountedPtr<PortModel> pm)
+PatchPort::PatchPort(PatchPortModule* module, CountedPtr<PortModel> pm)
 : Port(module, pm->path().name(), !pm->is_input(), App::instance().configuration()->get_port_color(pm.get())),
   m_port_model(pm)
 {
@@ -38,9 +38,9 @@ OmPatchPort::OmPatchPort(OmPortModule* module, CountedPtr<PortModel> pm)
 
 #if 0
 void
-OmPatchPort::set_name(const string& n)
+PatchPort::set_name(const string& n)
 {
-	cerr << "********** OmPatchPort::set_name broken **********************" << endl;
+	cerr << "********** PatchPort::set_name broken **********************" << endl;
 	
 	/* FIXME: move to PortController
 	string new_path = Path::parent(m_port_model->path()) +"/"+ n;

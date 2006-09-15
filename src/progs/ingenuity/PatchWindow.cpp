@@ -20,7 +20,7 @@
 #include <fstream>
 #include "App.h"
 #include "ModelEngineInterface.h"
-#include "OmFlowCanvas.h"
+#include "PatchCanvas.h"
 #include "LoadPluginWindow.h"
 #include "PatchModel.h"
 #include "NewSubpatchWindow.h"

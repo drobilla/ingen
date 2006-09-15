@@ -42,7 +42,7 @@ using namespace Ingen::Client;
 
 namespace Ingenuity {
 	
-class OmFlowCanvas;
+class PatchCanvas;
 class LoadPluginWindow;
 class LoadPatchWindow;
 class NewSubpatchWindow;

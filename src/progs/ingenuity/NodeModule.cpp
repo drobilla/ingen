@@ -14,15 +14,15 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "OmModule.h"
+#include "NodeModule.h"
 #include <cassert>
 #include "util/Atom.h"
 #include "App.h"
 #include "ModelEngineInterface.h"
-#include "OmFlowCanvas.h"
+#include "PatchCanvas.h"
 #include "PatchModel.h"
 #include "NodeModel.h"
-#include "OmPort.h"
+#include "Port.h"
 #include "GladeFactory.h"
 #include "RenameWindow.h"
 #include "PatchWindow.h"
@@ -31,7 +31,7 @@
 namespace Ingenuity {
 
 
-OmModule::OmModule(OmFlowCanvas* canvas, CountedPtr<NodeModel> node)
+NodeModule::NodeModule(PatchCanvas* canvas, CountedPtr<NodeModel> node)
 : LibFlowCanvas::Module(canvas, node->path().name()),
   m_node(node),
   m_menu(node)
@@ -51,17 +51,17 @@ OmModule::OmModule(OmFlowCanvas* canvas, CountedPtr<NodeModel> node)
 		move_to(x.get_float(), y.get_float());
 	} else {
 		double x, y;
-		((OmFlowCanvas*)m_canvas)->get_new_module_location(x, y);
+		((PatchCanvas*)m_canvas)->get_new_module_location(x, y);
 	}
 
-	node->new_port_sig.connect(sigc::mem_fun(this, &OmModule::add_port));
-	node->removed_port_sig.connect(sigc::mem_fun(this, &OmModule::remove_port));
-	node->metadata_update_sig.connect(sigc::mem_fun(this, &OmModule::metadata_update));
+	node->new_port_sig.connect(sigc::mem_fun(this, &NodeModule::add_port));
+	node->removed_port_sig.connect(sigc::mem_fun(this, &NodeModule::remove_port));
+	node->metadata_update_sig.connect(sigc::mem_fun(this, &NodeModule::metadata_update));
 }
 
 
 void
-OmModule::create_all_ports()
+NodeModule::create_all_ports()
 {
 	for (PortModelList::const_iterator i = m_node->ports().begin();
 			i != m_node->ports().end(); ++i) {
@@ -77,15 +77,16 @@ OmModule::create_all_ports()
 
 
 void
-OmModule::add_port(CountedPtr<PortModel> port)
+NodeModule::add_port(CountedPtr<PortModel> port)
 {
-	new OmPort(this, port);
+	cerr << "FIXME: port leak\n";
+	new Port(this, port);
 	resize();
 }
 
 
 void
-OmModule::remove_port(CountedPtr<PortModel> port)
+NodeModule::remove_port(CountedPtr<PortModel> port)
 {
 	LibFlowCanvas::Port* canvas_port = get_port(port->path().name());
 	delete canvas_port;
@@ -93,14 +94,14 @@ OmModule::remove_port(CountedPtr<PortModel> port)
 
 
 void
-OmModule::show_control_window()
+NodeModule::show_control_window()
 {
 	App::instance().window_factory()->present_controls(m_node);
 }
 
 
 void
-OmModule::store_location()
+NodeModule::store_location()
 {
 	const float x = static_cast<float>(property_x());
 	const float y = static_cast<float>(property_y());
@@ -118,14 +119,14 @@ OmModule::store_location()
 
 
 void
-OmModule::on_right_click(GdkEventButton* event)
+NodeModule::on_right_click(GdkEventButton* event)
 {
 	m_menu.popup(event->button, event->time);
 }
 
 
 void
-OmModule::metadata_update(const string& key, const Atom& value)
+NodeModule::metadata_update(const string& key, const Atom& value)
 {
 	if (key == "module-x" && value.type() == Atom::FLOAT)
 		move_to(value.get_float(), property_y());

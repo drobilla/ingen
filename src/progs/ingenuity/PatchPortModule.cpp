@@ -14,23 +14,23 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "OmPortModule.h"
+#include "PatchPortModule.h"
 #include <cassert>
 #include "App.h"
 #include "ModelEngineInterface.h"
-#include "OmFlowCanvas.h"
+#include "PatchCanvas.h"
 #include "PatchModel.h"
 #include "NodeModel.h"
-#include "OmPort.h"
+#include "Port.h"
 #include "GladeFactory.h"
 #include "RenameWindow.h"
 #include "PatchWindow.h"
-#include "OmPatchPort.h"
+#include "PatchPort.h"
 
 namespace Ingenuity {
 
 
-OmPortModule::OmPortModule(OmFlowCanvas* canvas, CountedPtr<PortModel> port)
+PatchPortModule::PatchPortModule(PatchCanvas* canvas, CountedPtr<PortModel> port)
 : LibFlowCanvas::Module(canvas, "", 0, 0), // FIXME: coords?
   m_port(port),
   m_patch_port(NULL)
@@ -47,7 +47,7 @@ OmPortModule::OmPortModule(OmFlowCanvas* canvas, CountedPtr<PortModel> port)
 		if (m_patch_port)
 			delete m_patch_port;
 
-		m_patch_port = new OmPatchPort(this, port);
+		m_patch_port = new PatchPort(this, port);
 	}
 	
 	resize();
@@ -64,12 +64,12 @@ OmPortModule::OmPortModule(OmFlowCanvas* canvas, CountedPtr<PortModel> port)
 		move_to(default_x, default_y);
 	}
 
-	port->metadata_update_sig.connect(sigc::mem_fun(this, &OmPortModule::metadata_update));
+	port->metadata_update_sig.connect(sigc::mem_fun(this, &PatchPortModule::metadata_update));
 }
 
 
 void
-OmPortModule::store_location()
+PatchPortModule::store_location()
 {	
 	const float x = static_cast<float>(property_x());
 	const float y = static_cast<float>(property_y());
@@ -86,7 +86,7 @@ OmPortModule::store_location()
 
 
 void
-OmPortModule::metadata_update(const string& key, const Atom& value)
+PatchPortModule::metadata_update(const string& key, const Atom& value)
 {
 	if (key == "module-x" && value.type() == Atom::FLOAT)
 		move_to(value.get_float(), property_y());
