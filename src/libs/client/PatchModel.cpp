@@ -234,8 +234,11 @@ PatchModel::add_connection(CountedPtr<ConnectionModel> cm)
 	// Store should have 'resolved' the connection already
 	assert(cm);
 	assert(cm->patch_path() == path());
-	assert(cm->src_port() && cm->src_port()->parent()->parent().get() == this);
-	assert(cm->dst_port() && cm->dst_port()->parent()->parent().get() == this);
+	assert(cm->src_port());
+	assert(cm->src_port()->parent()->parent().get() == this
+	       || cm->src_port()->parent().get() == this);
+	assert(cm->dst_port()->parent()->parent().get() == this
+	       || cm->dst_port()->parent().get() == this);
 	
 	CountedPtr<ConnectionModel> existing = get_connection(cm->src_port_path(), cm->dst_port_path());
 	assert(!existing); // Store should have handled this
