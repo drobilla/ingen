@@ -17,8 +17,8 @@
 #include "Port.h"
 #include <cassert>
 #include <iostream>
+#include "PatchModel.h"
 #include "PortModel.h"
-#include "NodeModule.h"
 #include "ControlModel.h"
 #include "Configuration.h"
 #include "App.h"
@@ -28,8 +28,14 @@ using namespace Ingen::Client;
 
 namespace Ingenuity {
 
-Port::Port(NodeModule* module, CountedPtr<PortModel> pm)
-: LibFlowCanvas::Port(module, pm->path().name(), pm->is_input(), App::instance().configuration()->get_port_color(pm.get())),
+
+/** @param flip Make an input port appear as an output port, and vice versa.
+ */
+Port::Port(LibFlowCanvas::Module* module, CountedPtr<PortModel> pm, bool flip)
+: LibFlowCanvas::Port(module,
+		pm->path().name(),
+		flip ? (!pm->is_input()) : pm->is_input(),
+		App::instance().configuration()->get_port_color(pm.get())),
   m_port_model(pm)
 {
 	assert(module);

@@ -28,7 +28,6 @@
 #include "Port.h"
 #include "NodeModel.h"
 #include "NodeModule.h"
-#include "PatchPortModule.h"
 #include "SubpatchModule.h"
 #include "GladeFactory.h"
 #include "WindowFactory.h"

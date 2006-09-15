@@ -25,7 +25,6 @@
 #include "GladeFactory.h"
 #include "RenameWindow.h"
 #include "PatchWindow.h"
-#include "PatchPort.h"
 
 namespace Ingenuity {
 
@@ -47,7 +46,7 @@ PatchPortModule::PatchPortModule(PatchCanvas* canvas, CountedPtr<PortModel> port
 		if (m_patch_port)
 			delete m_patch_port;
 
-		m_patch_port = new PatchPort(this, port);
+		m_patch_port = new Port(this, port, true);
 	}
 	
 	resize();

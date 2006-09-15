@@ -27,8 +27,6 @@ using Ingen::Client::PortModel;
 
 namespace Ingenuity {
 
-class NodeModule;
-
 
 /** A Port on an Module.
  * 
@@ -37,7 +35,7 @@ class NodeModule;
 class Port : public LibFlowCanvas::Port
 {
 public:
-	Port(NodeModule* module, CountedPtr<PortModel> pm);
+	Port(LibFlowCanvas::Module* module, CountedPtr<PortModel> pm, bool flip = false);
 
 	virtual ~Port() {}
 

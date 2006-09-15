@@ -21,7 +21,7 @@
 #include <libgnomecanvasmm.h>
 #include <flowcanvas/Module.h>
 #include "util/Atom.h"
-#include "PatchPort.h"
+#include "Port.h"
 using std::string;
 
 namespace Ingen { namespace Client {
@@ -62,7 +62,7 @@ protected:
 	void metadata_update(const string& key, const Atom& value);
 
 	CountedPtr<PortModel> m_port;
-	PatchPort*            m_patch_port; ///< Port on this 'anonymous' module
+	Port*                 m_patch_port; ///< Port on this 'anonymous' module
 };
 
 
