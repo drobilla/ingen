@@ -75,7 +75,6 @@ protected:
 	void add_program(int bank, int program, const string& name);
 	void remove_program(int bank, int program);
 
-	//void plugin(CountedPtr<PluginModel> p) { m_plugin = p; }
 	virtual void clear();
 	
 	friend class PatchModel;

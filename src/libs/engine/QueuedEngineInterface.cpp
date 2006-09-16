@@ -15,6 +15,7 @@
  */
 
 #include "QueuedEngineInterface.h"
+#include "config.h"
 #include "QueuedEventSource.h"
 #include "events.h"
 #include "util/Queue.h"
@@ -258,7 +259,9 @@ QueuedEngineInterface::set_program(const string& node_path,
                                    uint32_t      bank,
                                    uint32_t      program)
 {
+#ifdef HAVE_DSSI
 	push_queued(new DSSIProgramEvent(*_engine.get(), _responder, now(), node_path, bank, program));
+#endif
 }
 
 

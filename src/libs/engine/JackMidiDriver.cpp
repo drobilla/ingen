@@ -155,7 +155,7 @@ JackMidiDriver::deactivate()
 }
 
 
-/** Build flat arrays of events for DSSI plugins for each Port.
+/** Build flat arrays of events to be used as input for the given cycle.
  */
 void
 JackMidiDriver::prepare_block(const SampleCount block_start, const SampleCount block_end)

@@ -114,13 +114,13 @@ NodeFactory::load_plugins()
 		_plugins.clear();
 		_plugins = _internal_plugins;
 	
-#if HAVE_SLV2
+#ifdef HAVE_SLV2
 		load_lv2_plugins();
 #endif
-#if HAVE_DSSI
+#ifdef HAVE_DSSI
 		load_dssi_plugins();
 #endif
-#if HAVE_LADSPA
+#ifdef HAVE_LADSPA
 		load_ladspa_plugins();
 #endif
 		
@@ -182,17 +182,17 @@ NodeFactory::load_plugin(const Plugin* a_plugin,
 	}
 
 	switch (a_plugin->type()) {
-#if HAVE_SLV2
+#ifdef HAVE_SLV2
 	case Plugin::LV2:
 		r = load_lv2_plugin(plugin->uri(), name, poly, parent, srate, buffer_size);
 		break;
 #endif
-#if HAVE_DSSI
+#ifdef HAVE_DSSI
 	case Plugin::DSSI:
 		r = load_dssi_plugin(plugin->uri(), name, poly, parent, srate, buffer_size);
 		break;
 #endif
-#if HAVE_LADSPA
+#ifdef HAVE_LADSPA
 	case Plugin::LADSPA:
 		r = load_ladspa_plugin(plugin->uri(), name, poly, parent, srate, buffer_size);
 		break;
@@ -318,7 +318,7 @@ NodeFactory::load_lv2_plugin(const string& plug_uri,
 #endif // HAVE_SLV2
 
 
-#if HAVE_DSSI
+#ifdef HAVE_DSSI
 
 /** Loads information about all DSSI plugins into internal plugin database.
  */
