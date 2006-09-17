@@ -32,12 +32,15 @@ namespace Client {
  * This simply emits an sigc signal for every event (eg OSC message) coming from
  * the engine.  Use Store (which extends this) if you want a nice client-side
  * model of the engine.
+ *
+ * The signals here match the calls to ClientInterface exactly.  See the
+ * documentation for ClientInterface for meanings of signal parameters.
  */
 class SigClientInterface : virtual public Ingen::Shared::ClientInterface, public sigc::trackable
 {
 public:
 
-	// See the corresponding emitting functions below for parameter meanings
+	// Signal parameters math up directly with ClientInterface calls
 	
 	sigc::signal<void, int32_t, bool, string>                  response_sig;
 	sigc::signal<void>                                         bundle_begin_sig; 

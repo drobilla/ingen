@@ -38,6 +38,7 @@ Store::Store(CountedPtr<SigClientInterface> emitter)
 	emitter->new_port_sig.connect(sigc::mem_fun(this, &Store::new_port_event));
 	emitter->patch_enabled_sig.connect(sigc::mem_fun(this, &Store::patch_enabled_event));
 	emitter->patch_disabled_sig.connect(sigc::mem_fun(this, &Store::patch_disabled_event));
+	emitter->patch_cleared_sig.connect(sigc::mem_fun(this, &Store::patch_cleared_event));
 	emitter->connection_sig.connect(sigc::mem_fun(this, &Store::connection_event));
 	emitter->disconnection_sig.connect(sigc::mem_fun(this, &Store::disconnection_event));
 	emitter->metadata_update_sig.connect(sigc::mem_fun(this, &Store::metadata_update_event));
@@ -264,8 +265,8 @@ Store::destruction_event(const Path& path)
 
 	removed.reset();
 
-	cerr << "Store removed object " << path
-		<< ", count: " << removed.use_count();
+	//cerr << "Store removed object " << path
+	//	<< ", count: " << removed.use_count();
 }
 
 void
@@ -335,6 +336,19 @@ Store::patch_disabled_event(const Path& path)
 	CountedPtr<PatchModel> patch = PtrCast<PatchModel>(object(path));
 	if (patch)
 		patch->disable();
+}
+
+
+void
+Store::patch_cleared_event(const Path& path)
+{
+	CountedPtr<PatchModel> patch = PtrCast<PatchModel>(object(path));
+	if (patch) {
+		NodeModelMap children = patch->nodes(); // take a copy
+		for (NodeModelMap::iterator i = children.begin(); i != children.end(); ++i) {
+			destruction_event(i->second->path());
+		}
+	}
 }
 
 
