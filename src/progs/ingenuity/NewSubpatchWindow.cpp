@@ -89,6 +89,7 @@ NewSubpatchWindow::ok_clicked()
 	const size_t poly = m_poly_spinbutton->get_value_as_int();
 
 	App::instance().engine()->create_patch_with_data(path, poly, m_initial_data);
+	App::instance().engine()->enable_patch(path);
 	
 	hide();
 }			

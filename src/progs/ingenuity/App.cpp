@@ -101,6 +101,8 @@ App::attach(const CountedPtr<ModelEngineInterface>& engine, const CountedPtr<Sig
 	_client = client;
 	_store = new Store(client);
 	_loader = new Loader(engine);
+
+	_patch_tree_window->init(*_store);
 }
 
 

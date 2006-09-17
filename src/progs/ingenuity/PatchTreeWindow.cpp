@@ -113,6 +113,9 @@ PatchTreeWindow::add_patch(CountedPtr<PatchModel> pm)
 			m_patches_treeview->expand_row(m_patch_treestore->get_path(iter), true);
 		}
 	}
+
+	pm->enabled_sig.connect(sigc::bind(sigc::mem_fun(this, &PatchTreeWindow::patch_enabled), pm->path()));
+	pm->disabled_sig.connect(sigc::bind(sigc::mem_fun(this, &PatchTreeWindow::patch_disabled), pm->path()));
 }
 
 
@@ -177,8 +180,7 @@ PatchTreeWindow::event_patch_activated(const Gtk::TreeModel::Path& path, Gtk::Tr
 	Gtk::TreeModel::Row row = *active;
 	CountedPtr<PatchModel> pm = row[m_patch_tree_columns.patch_model_col];
 	
-	cerr << "FIXME: tree win show\n";
-	//App::instance().window_factory()->present(pc);
+	App::instance().window_factory()->present_patch(pm);
 }
 
 
@@ -197,13 +199,11 @@ PatchTreeWindow::event_patch_enabled_toggled(const Glib::ustring& path_str)
 	if ( ! pm->enabled()) {
 		if (m_enable_signal)
 			App::instance().engine()->enable_patch(patch_path);
-		//pc->enable();
-		row[m_patch_tree_columns.enabled_col] = true;
+		//row[m_patch_tree_columns.enabled_col] = true;
 	} else {
 		if (m_enable_signal)
 			App::instance().engine()->disable_patch(patch_path);
-		//pc->disable();
-		row[m_patch_tree_columns.enabled_col] = false;
+		//row[m_patch_tree_columns.enabled_col] = false;
 	}
 }
 
