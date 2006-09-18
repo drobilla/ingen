@@ -126,7 +126,7 @@ PatchModel::remove_node(CountedPtr<NodeModel> nm)
 		assert(i->second == nm);
 		m_nodes.erase(i);
 		removed_node_sig.emit(nm);
-		i->second->parent().reset();
+		//i->second->parent().reset();
 		return;
 	}
 	
@@ -241,11 +241,14 @@ PatchModel::add_connection(CountedPtr<ConnectionModel> cm)
 	       || cm->dst_port()->parent()->parent().get() == this);
 	
 	CountedPtr<ConnectionModel> existing = get_connection(cm->src_port_path(), cm->dst_port_path());
-	assert(!existing); // Store should have handled this
 	
-	m_connections.push_back(cm);
-
-	new_connection_sig.emit(cm);
+	if (existing) {
+		assert(cm->src_port() == existing->src_port());
+		assert(cm->dst_port() == existing->dst_port());
+	} else {
+		m_connections.push_back(cm);
+		new_connection_sig.emit(cm);
+	}
 }
 
 
@@ -291,9 +294,9 @@ PatchModel::disable()
 bool
 PatchModel::polyphonic() const
 {
-	return (!_parent)
-		? (m_poly > 1)
-		: (m_poly > 1) && m_poly == ((PatchModel*)_parent.get())->poly() && m_poly > 1;
+	return (_parent)
+		? (m_poly > 1) && m_poly == PtrCast<PatchModel>(_parent)->poly() && m_poly > 1
+		: (m_poly > 1);
 }
 
 

@@ -69,13 +69,13 @@ protected:
 	ObjectModel(const Path& path);
 	
 	virtual void set_path(const Path& p)               { _path = p; }
-	virtual void set_parent(CountedPtr<ObjectModel> p) { _parent = p; }
+	virtual void set_parent(CountedPtr<ObjectModel> p) { assert(p); _parent = p; }
 	virtual void add_child(CountedPtr<ObjectModel> c) = 0;
 	virtual void remove_child(CountedPtr<ObjectModel> c) = 0;
 	
 	void add_metadata(const MetadataMap& data);
 	
-	void assimilate(CountedPtr<ObjectModel> model);
+	void set(CountedPtr<ObjectModel> model);
 	
 	void set_metadata(const string& key, const Atom& value)
 		{ _metadata[key] = value; metadata_update_sig.emit(key, value); }

@@ -64,11 +64,10 @@ private:
 	friend class Store;
 
 	PatchModel(const Path& patch_path, size_t internal_poly)
-	: NodeModel("ingen:patch", patch_path, false ), // FIXME
+	: NodeModel("ingen:patch", patch_path, false), // FIXME
 	  m_enabled(false),
 	  m_poly(internal_poly)
 	{
-		cerr << "FIXME: patch poly\n";
 	}
 	
 	void filename(const string& f) { m_filename = f; }

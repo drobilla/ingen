@@ -52,17 +52,18 @@ ObjectModel::add_metadata(const MetadataMap& data)
 {
 	for (MetadataMap::const_iterator i = data.begin(); i != data.end(); ++i) {
 		_metadata[i->first] = i->second;
+		metadata_update_sig.emit(i->first, i->second);
 	}
 }
 
 
 /** Merge the data of @a model with self, as much as possible.
  *
- * This will merge the two models, but with any conflict take the version in 
- * this as correct.  The paths of the two models must be equal.
+ * This will merge the two models, but with any conflict take the value in
+ * @a model as correct.  The paths of the two models MUST be equal.
  */
 void
-ObjectModel::assimilate(CountedPtr<ObjectModel> model)
+ObjectModel::set(CountedPtr<ObjectModel> model)
 {
 	assert(_path == model->path());
 
@@ -71,8 +72,13 @@ ObjectModel::assimilate(CountedPtr<ObjectModel> model)
 		
 		MetadataMap::const_iterator mine = _metadata.find(other->first);
 		
-		if (mine == _metadata.end())
-			_metadata[other->first] = other->second;
+		if (mine != _metadata.end()) {
+			cerr << "WARNING:  " << _path << "Client/Server data mismatch: " << other->first << endl;
+			cerr << "Setting server value " << other->second;
+		}
+
+		_metadata[other->first] = other->second;
+		metadata_update_sig.emit(other->first, other->second);
 	}
 }
 

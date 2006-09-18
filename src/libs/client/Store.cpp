@@ -224,9 +224,7 @@ Store::add_object(CountedPtr<ObjectModel> object)
 	// one (with precedence to the new values).
 	ObjectMap::iterator existing = m_objects.find(object->path());
 	if (existing != m_objects.end()) {
-		cerr << "[Store] Warning:  Assimilating " << object->path() << endl;
-		object->assimilate(existing->second);
-		existing->second = object;
+		existing->second->set(object);
 	} else {
 
 		if (object->path() != "/") {
@@ -242,6 +240,10 @@ Store::add_object(CountedPtr<ObjectModel> object)
 				
 				resolve_metadata_orphans(parent);
 				resolve_orphans(parent);
+
+				CountedPtr<PortModel> port = PtrCast<PortModel>(object);
+				if (port)
+					resolve_connection_orphans(port);
 
 			} else {
 				add_orphan(object);
@@ -279,6 +281,9 @@ Store::remove_object(const Path& path)
 				parent->remove_child(result);
 			}
 		}
+
+		assert(!object(path));
+
 		return result;
 
 	} else {
@@ -305,16 +310,18 @@ Store::object(const Path& path)
 {
 	assert(path.length() > 0);
 	map<Path, CountedPtr<ObjectModel> >::iterator i = m_objects.find(path);
-	if (i == m_objects.end())
+	if (i == m_objects.end()) {
 		return CountedPtr<ObjectModel>();
-	else
-		return (*i).second;
+	} else {
+		assert(i->second->path() == "/" || i->second->parent());
+		return i->second;
+	}
 }
 
 void
 Store::add_plugin(CountedPtr<PluginModel> pm)
 {
-	// FIXME: dupes?  assimilate?
+	// FIXME: dupes?  merge, like with objects?
 	
 	m_plugins[pm->uri()] = pm;
 }
@@ -452,8 +459,11 @@ Store::connection_event(const Path& src_port_path, const Path& dst_port_path)
 
 	CountedPtr<ConnectionModel> dangling_cm(new ConnectionModel(src_port_path, dst_port_path));
 
-	if (src_port && src_port->parent() && dst_port && dst_port->parent()) { 
+	if (src_port && dst_port) { 
 	
+		assert(src_port->parent());
+		assert(dst_port->parent());
+
 		CountedPtr<PatchModel> patch = PtrCast<PatchModel>(this->object(dangling_cm->patch_path()));
 		assert(patch);
 
