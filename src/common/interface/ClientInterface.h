@@ -57,14 +57,12 @@ public:
 	
 	virtual void num_plugins(uint32_t num_plugins) = 0;
 	
-	virtual void new_plugin(string type,
-	                        string uri,
+	virtual void new_plugin(string uri,
 	                        string name) = 0;
 	
 	virtual void new_patch(string path, uint32_t poly) = 0;
 	
-	virtual void new_node(string   plugin_type,
-	                      string   plugin_uri,
+	virtual void new_node(string   plugin_uri,
 	                      string   node_path,
 	                      bool     is_polyphonic,
 	                      uint32_t num_ports) = 0;

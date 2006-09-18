@@ -42,26 +42,26 @@ public:
 
 	// Signal parameters math up directly with ClientInterface calls
 	
-	sigc::signal<void, int32_t, bool, string>                  response_sig;
-	sigc::signal<void>                                         bundle_begin_sig; 
-	sigc::signal<void>                                         bundle_end_sig; 
-	sigc::signal<void, string>                                 error_sig; 
-	sigc::signal<void, uint32_t>                               num_plugins_sig; 
-	sigc::signal<void, string, string, string>                 new_plugin_sig; 
-	sigc::signal<void, string, uint32_t>                       new_patch_sig; 
-	sigc::signal<void, string, string, string, bool, uint32_t> new_node_sig; 
-	sigc::signal<void, string, string, bool>                   new_port_sig; 
-	sigc::signal<void, string>                                 patch_enabled_sig; 
-	sigc::signal<void, string>                                 patch_disabled_sig; 
-	sigc::signal<void, string>                                 patch_cleared_sig; 
-	sigc::signal<void, string, string>                         object_renamed_sig; 
-	sigc::signal<void, string>                                 object_destroyed_sig; 
-	sigc::signal<void, string, string>                         connection_sig; 
-	sigc::signal<void, string, string>                         disconnection_sig; 
-	sigc::signal<void, string, string, Atom>                   metadata_update_sig; 
-	sigc::signal<void, string, float>                          control_change_sig; 
-	sigc::signal<void, string, uint32_t, uint32_t, string>     program_add_sig; 
-	sigc::signal<void, string, uint32_t, uint32_t>             program_remove_sig; 
+	sigc::signal<void, int32_t, bool, string>              response_sig;
+	sigc::signal<void>                                     bundle_begin_sig; 
+	sigc::signal<void>                                     bundle_end_sig; 
+	sigc::signal<void, string>                             error_sig; 
+	sigc::signal<void, uint32_t>                           num_plugins_sig; 
+	sigc::signal<void, string, string>                     new_plugin_sig; 
+	sigc::signal<void, string, uint32_t>                   new_patch_sig; 
+	sigc::signal<void, string, string, bool, uint32_t>     new_node_sig; 
+	sigc::signal<void, string, string, bool>               new_port_sig; 
+	sigc::signal<void, string>                             patch_enabled_sig; 
+	sigc::signal<void, string>                             patch_disabled_sig; 
+	sigc::signal<void, string>                             patch_cleared_sig; 
+	sigc::signal<void, string, string>                     object_renamed_sig; 
+	sigc::signal<void, string>                             object_destroyed_sig; 
+	sigc::signal<void, string, string>                     connection_sig; 
+	sigc::signal<void, string, string>                     disconnection_sig; 
+	sigc::signal<void, string, string, Atom>               metadata_update_sig; 
+	sigc::signal<void, string, float>                      control_change_sig; 
+	sigc::signal<void, string, uint32_t, uint32_t, string> program_add_sig; 
+	sigc::signal<void, string, uint32_t, uint32_t>         program_remove_sig; 
 
 protected:
 	SigClientInterface() {}

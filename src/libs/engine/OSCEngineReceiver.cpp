@@ -88,7 +88,7 @@ OSCEngineReceiver::OSCEngineReceiver(CountedPtr<Engine> engine, size_t queue_siz
 	lo_server_add_method(_server, "/om/synth/disable_patch", "is", disable_patch_cb, this);
 	lo_server_add_method(_server, "/om/synth/clear_patch", "is", clear_patch_cb, this);
 	lo_server_add_method(_server, "/om/synth/create_port", "issi", create_port_cb, this);
-	lo_server_add_method(_server, "/om/synth/create_node", "isssi", create_node_cb, this);
+	lo_server_add_method(_server, "/om/synth/create_node", "issssi", create_node_cb, this);
 	lo_server_add_method(_server, "/om/synth/create_node", "issi", create_node_by_uri_cb, this);
 	lo_server_add_method(_server, "/om/synth/destroy", "is", destroy_cb, this);
 	lo_server_add_method(_server, "/om/synth/rename", "iss", rename_cb, this);
@@ -110,9 +110,12 @@ OSCEngineReceiver::OSCEngineReceiver(CountedPtr<Engine> engine, size_t queue_siz
 	lo_server_add_method(_server, "/om/metadata/set", NULL, metadata_set_cb, this);
 	
 	// Queries
+	lo_server_add_method(_server, "/om/request/plugin", "is", request_plugin_cb, this);
+	lo_server_add_method(_server, "/om/request/object", "is", request_object_cb, this);
+	lo_server_add_method(_server, "/om/request/port_value", "is", request_port_value_cb, this);
 	lo_server_add_method(_server, "/om/request/plugins", "i", request_plugins_cb, this);
 	lo_server_add_method(_server, "/om/request/all_objects", "i", request_all_objects_cb, this);
-	lo_server_add_method(_server, "/om/request/port_value", "is", request_port_value_cb, this);
+
 	
 	// DSSI support
 #ifdef HAVE_DSSI
@@ -799,6 +802,59 @@ OSCEngineReceiver::m_metadata_get_cb(const char* path, const char* types, lo_arg
 
 
 /** \page engine_osc_namespace
+ * <p> \b /om/responder/plugin - Requests the engine send the value of a port.
+ * \arg \b response-id (integer)
+ * \arg \b port-path (string) - Full path of port to send the value of </p> \n \n
+ *
+ * \li Reply will be sent to client registered with the source address of this message.</p> \n \n
+ */
+int
+OSCEngineReceiver::m_request_plugin_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+{
+	const char* uri = &argv[1]->s;
+
+	request_plugin(uri);
+
+	return 0;
+}
+
+
+/** \page engine_osc_namespace
+ * <p> \b /om/responder/object - Requests the engine send the value of a port.
+ * \arg \b response-id (integer)
+ * \arg \b port-path (string) - Full path of port to send the value of </p> \n \n
+ *
+ * \li Reply will be sent to client registered with the source address of this message.</p> \n \n
+ */
+int
+OSCEngineReceiver::m_request_object_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+{
+	const char* object_path = &argv[1]->s;
+
+	request_object(object_path);
+
+	return 0;
+}
+
+
+/** \page engine_osc_namespace
+ * <p> \b /om/responder/port_value - Requests the engine send the value of a port.
+ * \arg \b response-id (integer)
+ * \arg \b port-path (string) - Full path of port to send the value of </p> \n \n
+ *
+ * \li Reply will be sent to client registered with the source address of this message.</p> \n \n
+ */
+int
+OSCEngineReceiver::m_request_port_value_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+{
+	const char* port_path = &argv[1]->s;
+
+	request_port_value(port_path);
+	return 0;
+}
+
+
+/** \page engine_osc_namespace
  * <p> \b /om/responder/plugins - Requests the engine send a list of all known plugins.
  * \arg \b response-id (integer)
  *
@@ -822,23 +878,6 @@ int
 OSCEngineReceiver::m_request_all_objects_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	request_all_objects();
-	return 0;
-}
-
-
-/** \page engine_osc_namespace
- * <p> \b /om/responder/port_value - Requests the engine send the value of a port.
- * \arg \b response-id (integer)
- * \arg \b port-path (string) - Full path of port to send the value of </p> \n \n
- *
- * \li Reply will be sent to client registered with the source address of this message.</p> \n \n
- */
-int
-OSCEngineReceiver::m_request_port_value_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
-{
-	const char* port_path = &argv[1]->s;
-
-	request_port_value(port_path);
 	return 0;
 }
 

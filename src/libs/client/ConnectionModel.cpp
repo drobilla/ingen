@@ -14,6 +14,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <cassert>
 #include "ConnectionModel.h"
 #include "PortModel.h"
 #include "PatchModel.h"
@@ -38,6 +39,11 @@ ConnectionModel::ConnectionModel(CountedPtr<PortModel> src, CountedPtr<PortModel
   _src_port(src),
   _dst_port(dst)
 {
+	assert(_src_port);
+	assert(_dst_port);
+	assert(_src_port->parent());
+	assert(_dst_port->parent());
+
 	// Be sure connection is within one patch
 	//assert(_src_port_path.parent().parent()
 	//	== _dst_port_path.parent().parent());

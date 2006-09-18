@@ -41,6 +41,7 @@ namespace Shared { class ClientKey; }
 using Shared::ClientKey;
 using Shared::ClientInterface;
 
+
 /** Broadcaster for all clients.
  *
  * This sends messages to all client simultaneously through the opaque
@@ -71,8 +72,8 @@ public:
 	//void send_node_creation_messages(const Node* const node);
 	
 	void send_plugins(const list<Plugin*>& plugin_list);
-	void send_patch(const Patch* const p);
-	void send_node(const Node* const node);
+	void send_patch(const Patch* const p, bool recursive);
+	void send_node(const Node* const node, bool recursive);
 	void send_port(const Port* port);
 	void send_destroyed(const string& path);
 	void send_patch_cleared(const string& patch_path);

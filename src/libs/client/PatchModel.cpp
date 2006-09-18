@@ -107,14 +107,11 @@ PatchModel::add_node(CountedPtr<NodeModel> nm)
 	
 	NodeModelMap::iterator existing = m_nodes.find(nm->path().name());
 
-	if (existing != m_nodes.end()) {
-		cerr << "Warning: node clash, assimilating old node " << _path << endl;
-		nm->assimilate((*existing).second);
-		(*existing).second = nm;
-	} else {
-		m_nodes[nm->path().name()] = nm;
-		new_node_sig.emit(nm);
-	}
+	// Store should have handled this by merging the two
+	assert(existing == m_nodes.end());
+
+	m_nodes[nm->path().name()] = nm;
+	new_node_sig.emit(nm);
 }
 
 
@@ -235,10 +232,13 @@ PatchModel::add_connection(CountedPtr<ConnectionModel> cm)
 	assert(cm);
 	assert(cm->patch_path() == path());
 	assert(cm->src_port());
-	assert(cm->src_port()->parent()->parent().get() == this
-	       || cm->src_port()->parent().get() == this);
-	assert(cm->dst_port()->parent()->parent().get() == this
-	       || cm->dst_port()->parent().get() == this);
+	assert(cm->dst_port());
+	assert(cm->src_port()->parent());
+	assert(cm->dst_port()->parent());
+	assert(cm->src_port()->parent().get() == this
+	       || cm->src_port()->parent()->parent().get() == this);
+	assert(cm->dst_port()->parent().get() == this
+	       || cm->dst_port()->parent()->parent().get() == this);
 	
 	CountedPtr<ConnectionModel> existing = get_connection(cm->src_port_path(), cm->dst_port_path());
 	assert(!existing); // Store should have handled this

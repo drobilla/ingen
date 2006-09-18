@@ -43,16 +43,7 @@ NodeModule::NodeModule(PatchCanvas* canvas, CountedPtr<NodeModel> node)
 	}
 
 	create_all_ports();
-	
-	const Atom& x = node->get_metadata("module-x");
-	const Atom& y = node->get_metadata("module-y");
-
-	if (x.type() == Atom::FLOAT && y.type() == Atom::FLOAT) {
-		move_to(x.get_float(), y.get_float());
-	} else {
-		double x, y;
-		((PatchCanvas*)m_canvas)->get_new_module_location(x, y);
-	}
+	set_all_metadata();
 
 	node->new_port_sig.connect(sigc::mem_fun(this, &NodeModule::add_port));
 	node->removed_port_sig.connect(sigc::mem_fun(this, &NodeModule::remove_port));
@@ -77,10 +68,17 @@ NodeModule::create_all_ports()
 
 
 void
+NodeModule::set_all_metadata()
+{
+	for (MetadataMap::const_iterator i = m_node->metadata().begin(); i != m_node->metadata().end(); ++i)
+		metadata_update(i->first, i->second);
+}
+
+
+void
 NodeModule::add_port(CountedPtr<PortModel> port)
 {
-	cerr << "FIXME: port leak\n";
-	new Port(this, port);
+	manage(new Port(this, port));
 	resize();
 }
 

@@ -107,9 +107,12 @@ private:
 	LO_HANDLER(midi_learn);
 	LO_HANDLER(metadata_get);
 	LO_HANDLER(metadata_set);
+	LO_HANDLER(request_plugin);
+	LO_HANDLER(request_object);
+	LO_HANDLER(request_port_value);
 	LO_HANDLER(request_plugins);
 	LO_HANDLER(request_all_objects);
-	LO_HANDLER(request_port_value);
+
 #ifdef HAVE_DSSI
 	LO_HANDLER(dssi);
 #endif

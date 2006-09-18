@@ -45,8 +45,8 @@ public:
 	
 	// FIXME: Make all object parameters const
 	
-	static void send_patch(ClientInterface* client, const Patch* patch);
-	static void send_node(ClientInterface* client, const Node* node);
+	static void send_patch(ClientInterface* client, const Patch* patch, bool recursive);
+	static void send_node(ClientInterface* client, const Node* node, bool recursive);
 	static void send_port(ClientInterface* client, const Port* port);
 	static void send_plugins(ClientInterface* client, const std::list<Plugin*>& plugs);
 };

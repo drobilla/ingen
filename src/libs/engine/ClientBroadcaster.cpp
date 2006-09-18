@@ -175,7 +175,7 @@ ClientBroadcaster::send_plugins_to(CountedPtr<ClientInterface> client, const lis
 
 	for (list<Plugin*>::const_iterator i = plugin_list.begin(); i != plugin_list.end(); ++i) {
 		const Plugin* const plugin = *i;
-		client->new_plugin(plugin->type_string(), plugin->uri(), plugin->name());
+		client->new_plugin(plugin->uri(), plugin->name());
 	}
 
 	client->transfer_end();
@@ -191,10 +191,10 @@ ClientBroadcaster::send_plugins(const list<Plugin*>& plugin_list)
 
 
 void
-ClientBroadcaster::send_node(const Node* node)
+ClientBroadcaster::send_node(const Node* node, bool recursive)
 {
 	for (ClientList::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
-		ObjectSender::send_node((*i).second.get(), node);
+		ObjectSender::send_node((*i).second.get(), node, recursive);
 }
 
 
@@ -300,10 +300,10 @@ ClientBroadcaster::send_program_remove(const string& node_path, int bank, int pr
  * Sends all objects underneath Patch - contained Nodes, etc.
  */
 void
-ClientBroadcaster::send_patch(const Patch* const p)
+ClientBroadcaster::send_patch(const Patch* const p, bool recursive)
 {
 	for (ClientList::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
-		ObjectSender::send_patch((*i).second.get(), p);
+		ObjectSender::send_patch((*i).second.get(), p, recursive);
 }
 
 

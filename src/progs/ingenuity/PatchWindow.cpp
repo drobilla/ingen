@@ -158,9 +158,15 @@ PatchWindow::set_patch(CountedPtr<PatchModel> patch, CountedPtr<PatchView> view)
 
 	m_patch = patch;
 
-	m_view = view ? view : PatchView::create(patch);
-	assert(m_view);
+	m_view = m_breadcrumb_box->view(patch->path());
 	
+	if (!m_view)
+		m_view = PatchView::create(patch);
+	else
+		assert(!view || m_view == view);
+	
+	assert(m_view);
+
 	// Add view to ourself
 	if (m_view->get_parent())
 		m_view->get_parent()->remove(*m_view);
@@ -196,18 +202,9 @@ PatchWindow::set_patch(CountedPtr<PatchModel> patch, CountedPtr<PatchView> view)
 	else
 		m_menu_destroy_patch->set_sensitive(true);
 	
-	m_patch->destroyed_sig.connect(sigc::mem_fun(this, &PatchWindow::patch_destroyed));
-	
 	show_all();
 
 	m_enable_signal = true;
-}
-
-
-void
-PatchWindow::patch_destroyed()
-{
-	App::instance().window_factory()->remove_patch_window(this);
 }
 
 

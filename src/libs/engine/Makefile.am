@@ -72,9 +72,6 @@ libingen_la_SOURCES = \
 	Plugin.cpp \
 	Array.h \
 	List.h \
-	Slave.h \
-	Thread.h \
-	Thread.cpp \
 	PostProcessor.h \
 	PostProcessor.cpp \
 	Connection.h \
@@ -133,6 +130,10 @@ libingen_la_SOURCES = \
 	events/SetMetadataEvent.cpp \
 	events/RequestMetadataEvent.h \
 	events/RequestMetadataEvent.cpp \
+	events/RequestPluginEvent.h \
+	events/RequestPluginEvent.cpp \
+	events/RequestObjectEvent.h \
+	events/RequestObjectEvent.cpp \
 	events/RequestPortValueEvent.h \
 	events/RequestPortValueEvent.cpp \
 	events/RequestAllObjectsEvent.h \

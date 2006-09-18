@@ -82,14 +82,14 @@ public:
 	void error(string msg)
 		{ push_sig(sigc::bind(error_slot, msg)); }
 	
-	void new_plugin(string type, string uri, string name)
-		{ push_sig(sigc::bind(new_plugin_slot, type, uri, name)); }
+	void new_plugin(string uri, string name)
+		{ push_sig(sigc::bind(new_plugin_slot, uri, name)); }
 	
 	void new_patch(string path, uint32_t poly)
 		{ push_sig(sigc::bind(new_patch_slot, path, poly)); }
 	
-	void new_node(string plugin_type, string plugin_uri, string node_path, bool is_polyphonic, uint32_t num_ports)
-		{ push_sig(sigc::bind(new_node_slot, plugin_type, plugin_uri, node_path, is_polyphonic, num_ports)); }
+	void new_node(string plugin_uri, string node_path, bool is_polyphonic, uint32_t num_ports)
+		{ push_sig(sigc::bind(new_node_slot, plugin_uri, node_path, is_polyphonic, num_ports)); }
 	
 	void new_port(string path, string data_type, bool is_output)
 		{ push_sig(sigc::bind(new_port_slot, path, data_type, is_output)); }
@@ -141,9 +141,9 @@ private:
 	sigc::slot<void, uint32_t>                           num_plugins_slot; 
 	sigc::slot<void, int32_t, bool, string>              response_slot; 
 	sigc::slot<void, string>                             error_slot; 
-	sigc::slot<void, string, string, string>             new_plugin_slot; 
+	sigc::slot<void, string, string>                     new_plugin_slot; 
 	sigc::slot<void, string, uint32_t>                   new_patch_slot; 
-	sigc::slot<void, string, string, string, bool, int>  new_node_slot; 
+	sigc::slot<void, string, string, bool, int>          new_node_slot; 
 	sigc::slot<void, string, string, bool>               new_port_slot;
 	sigc::slot<void, string, string>                     connection_slot;
 	sigc::slot<void, string>                             patch_enabled_slot; 

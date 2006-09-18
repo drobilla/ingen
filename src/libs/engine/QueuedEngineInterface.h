@@ -142,6 +142,10 @@ public:
 	
 	virtual void ping();
 
+	virtual void request_plugin(const string& uri);
+
+	virtual void request_object(const string& path);
+	
 	virtual void request_port_value(const string& port_path);
 
 	virtual void request_plugins();

@@ -20,7 +20,7 @@
 #include <pthread.h>
 #include "types.h"
 #include "util/Queue.h"
-#include "Slave.h"
+#include "util/Slave.h"
 
 class Maid;
 

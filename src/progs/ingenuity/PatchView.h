@@ -68,6 +68,7 @@ private:
 
 	void process_toggled();
 	void clear_clicked();
+	void refresh_clicked();
 	
 	void enable();
 	void disable();

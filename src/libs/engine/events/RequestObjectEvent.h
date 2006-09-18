@@ -14,52 +14,42 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef ADDPORTEVENT_H
-#define ADDPORTEVENT_H
+#ifndef REQUESTOBJECTEVENT_H
+#define REQUESTOBJECTEVENT_H
 
-#include "QueuedEvent.h"
-#include "util/Path.h"
-#include "DataType.h"
-#include "Array.h"
 #include <string>
+#include "QueuedEvent.h"
+#include "types.h"
+
 using std::string;
 
-template <typename T> class Array;
-
 namespace Ingen {
+	
+class GraphObject;
+namespace Shared { class ClientInterface; }
+using Shared::ClientInterface;
 
-class Patch;
-class Port;
-class Plugin;
-class DriverPort;
 
-
-/** An event to add a Port to a Patch.
+/** A request from a client to send the value of a port.
  *
  * \ingroup engine
  */
-class AddPortEvent : public QueuedEvent
+class RequestObjectEvent : public QueuedEvent
 {
 public:
-	AddPortEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& type, bool is_output, QueuedEventSource* source);
+	RequestObjectEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& port_path);
 
 	void pre_process();
 	void execute(SampleCount nframes, FrameTime start, FrameTime end);
 	void post_process();
 
 private:
-	Path          _path;
-	string        _type;
-	bool          _is_output;
-	DataType      _data_type;
-	Patch*        _patch;
-	Port*         _patch_port;
-	Array<Port*>* _ports_array; ///< New (external) ports array for Patch
-	DriverPort*   _driver_port; ///< Driver (eg Jack) port if this is a toplevel port
-	bool          _succeeded;
+	string                      m_path;
+	GraphObject*                m_object;
+	CountedPtr<ClientInterface> m_client;
 };
 
 
 } // namespace Ingen
 
-#endif // ADDPORTEVENT_H
+#endif // REQUESTOBJECTEVENT_H

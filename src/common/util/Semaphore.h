@@ -20,7 +20,7 @@
 #include <semaphore.h>
 
 
-/** Trivial wrapper around POSIX semaphores.
+/** Trivial wrapper around POSIX semaphores (zero memory overhead).
  *
  * This was created to provide an alternative debuggable implementation of
  * semaphores based on a cond/mutex pair because semaphore's appeared not to

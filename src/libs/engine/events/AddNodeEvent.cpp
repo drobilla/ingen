@@ -33,18 +33,6 @@
 namespace Ingen {
 
 
-/*AddNodeEvent::AddNodeEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& path, Plugin* plugin, bool poly)
-: QueuedEvent(engine, responder, timestamp),
-  m_path(path),
-  m_plugin(plugin),
-  m_poly(poly),
-  m_patch(NULL),
-  m_node(NULL),
-  m_process_order(NULL),
-  m_node_already_exists(false)
-{
-}*/
-
 AddNodeEvent::AddNodeEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& path,
 		const string& plugin_uri, bool poly)
 : QueuedEvent(engine, responder, timestamp),
@@ -59,7 +47,22 @@ AddNodeEvent::AddNodeEvent(Engine& engine, CountedPtr<Responder> responder, Samp
 }
 
 
-AddNodeEvent::~AddNodeEvent()
+/** DEPRECATED: Construct from type, library name, and plugin label.
+ *
+ * Do not use.
+ */
+AddNodeEvent::AddNodeEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& path,
+		const string& plugin_type, const string& plugin_lib, const string& plugin_label, bool poly)
+: QueuedEvent(engine, responder, timestamp),
+  m_path(path),
+  m_plugin_type(plugin_type),
+  m_plugin_lib(plugin_lib),
+  m_plugin_label(plugin_label),
+  m_poly(poly),
+  m_patch(NULL),
+  m_node(NULL),
+  m_process_order(NULL),
+  m_node_already_exists(false)
 {
 }
 
@@ -74,7 +77,10 @@ AddNodeEvent::pre_process()
 	}
 
 	m_patch = _engine.object_store()->find_patch(m_path.parent());
-	const Plugin* plugin = _engine.node_factory()->plugin(m_plugin_uri);
+
+	const Plugin* plugin = (m_plugin_uri != "")
+		? _engine.node_factory()->plugin(m_plugin_uri)
+		: _engine.node_factory()->plugin(m_plugin_type, m_plugin_lib, m_plugin_label);
 
 	if (m_patch && plugin) {
 		if (m_poly)
@@ -130,8 +136,7 @@ AddNodeEvent::post_process()
 		_responder->respond_error(msg);
 	} else {
 		_responder->respond_ok();
-		//_engine.broadcaster()->send_node_creation_messages(m_node);
-		_engine.broadcaster()->send_node(m_node);
+		_engine.broadcaster()->send_node(m_node, true); // yes, send ports
 	}
 }
 

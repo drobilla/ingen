@@ -14,48 +14,42 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef SLAVE_H
-#define SLAVE_H
+#ifndef REQUESTPLUGINEVENT_H
+#define REQUESTPLUGINEVENT_H
 
-#include <pthread.h>
-#include "util/Semaphore.h"
-#include "Thread.h"
+#include <string>
+#include "QueuedEvent.h"
+#include "types.h"
+
+using std::string;
 
 namespace Ingen {
+	
+class Plugin;
+namespace Shared { class ClientInterface; }
+using Shared::ClientInterface;
 
 
-/** Thread driven by (realtime safe) signals.
+/** A request from a client to send the value of a port.
  *
  * \ingroup engine
  */
-class Slave : public Thread
+class RequestPluginEvent : public QueuedEvent
 {
 public:
-	Slave() : _whip(0) {}
+	RequestPluginEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& uri);
 
-	/** Tell the slave to do whatever work it does.  Realtime safe. */
-	inline void whip() { _whip.post(); }
-
-protected:
-	virtual void _whipped() = 0;
-
-	Semaphore _whip;
+	void pre_process();
+	void execute(SampleCount nframes, FrameTime start, FrameTime end);
+	void post_process();
 
 private:
-	// Prevent copies
-	Slave(const Slave&);
-	Slave& operator=(const Slave&);
-
-	inline void _run()
-	{
-		while (true) {
-			_whip.wait();
-			_whipped();
-		}
-	}
+	string                      m_uri;
+	const Plugin*               m_plugin;
+	CountedPtr<ClientInterface> m_client;
 };
 
 
 } // namespace Ingen
 
-#endif // SLAVE_H
+#endif // REQUESTPLUGINEVENT_H

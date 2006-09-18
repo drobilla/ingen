@@ -138,8 +138,7 @@ LoadSubpatchWindow::ok_clicked()
 	
 	const string filename = get_filename();
 
-	// FIXME
-	string name = filename.substr(filename.find_last_of("/")+1);
+	string name = "";
 	int    poly = 1;
 	
 	if (m_name_from_user_radio->get_active())
@@ -150,17 +149,7 @@ LoadSubpatchWindow::ok_clicked()
 	else if (m_poly_from_parent_radio->get_active())
 		poly = m_patch->poly();
 
-	/*CountedPtr<PatchModel> pm(new PatchModel(m_patch->path().base() + name, poly));
-	pm->filename(filename);
-	
-	pm->set_metadata("module-x", Atom((float)m_new_module_x));
-	pm->set_metadata("module-y", Atom((float)m_new_module_y));
-	
-	App::instance().loader()->load_patch(pm, true, false);
-
-	App::instance().configuration()->set_patch_folder(pm->filename().substr(0, pm->filename().find_last_of("/")));
-	*/
-	cerr << "FIXME: load subpatch" << endl;
+	App::instance().loader()->load_patch(filename, m_patch->path(), name, poly, m_initial_data);
 
 	hide();
 }			

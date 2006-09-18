@@ -28,6 +28,17 @@ BreadCrumbBox::BreadCrumbBox()
 }
 
 
+CountedPtr<PatchView>
+BreadCrumbBox::view(const Path& path)
+{
+	for (std::list<BreadCrumb*>::const_iterator i = _breadcrumbs.begin(); i != _breadcrumbs.end(); ++i)
+		if ((*i)->path() == path)
+			return (*i)->view();
+
+	return CountedPtr<PatchView>();
+}
+
+
 /** Sets up the crumbs to display a @a path.
  *
  * If @a path is already part of the shown path, it will be selected and the 
@@ -45,7 +56,12 @@ BreadCrumbBox::build(Path path, CountedPtr<PatchView> view)
 		for (std::list<BreadCrumb*>::iterator i = _breadcrumbs.begin(); i != _breadcrumbs.end(); ++i) {
 			if ((*i)->path() == path) {
 				(*i)->set_active(true);
-				(*i)->set_view(view);
+				if (!(*i)->view())
+					(*i)->set_view(view);
+
+				// views are expensive, having two around for the same patch is a bug
+				assert((*i)->view() == view);
+
 			} else {
 				(*i)->set_active(false);
 			}

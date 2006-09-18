@@ -34,6 +34,8 @@
 #include "DestroyEvent.h"
 #include "SetMetadataEvent.h"
 #include "RequestMetadataEvent.h"
+#include "RequestObjectEvent.h"
+#include "RequestPluginEvent.h"
 #include "RequestPortValueEvent.h"
 #include "RequestAllObjectsEvent.h"
 #include "RequestPluginsEvent.h"

@@ -72,14 +72,12 @@ public:
 
 	void error(string msg);
 
-	virtual void new_plugin(string type,
-	                        string uri,
+	virtual void new_plugin(string uri,
 	                        string name);
 	
 	virtual void new_patch(string path, uint32_t poly);
 	
-	virtual void new_node(string   plugin_type,
-	                      string   plugin_uri,
+	virtual void new_node(string   plugin_uri,
 	                      string   node_path,
 	                      bool     is_polyphonic,
 	                      uint32_t num_ports);

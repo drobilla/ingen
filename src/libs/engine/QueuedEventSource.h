@@ -22,7 +22,7 @@
 #include "types.h"
 #include "util/Semaphore.h"
 #include "util/Queue.h"
-#include "Slave.h"
+#include "util/Slave.h"
 #include "Event.h"
 #include "EventSource.h"
 

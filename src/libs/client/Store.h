@@ -25,7 +25,9 @@
 #include <sigc++/sigc++.h>
 #include "util/Path.h"
 #include "util/Atom.h"
+#include "interface/EngineInterface.h"
 using std::string; using std::map; using std::list;
+using Ingen::Shared::EngineInterface;
 
 namespace Ingen {
 namespace Client {
@@ -45,7 +47,7 @@ class ConnectionModel;
  */
 class Store : public sigc::trackable { // FIXME: is trackable necessary?
 public:
-	Store(CountedPtr<SigClientInterface> emitter);
+	Store(CountedPtr<EngineInterface> engine, CountedPtr<SigClientInterface> emitter);
 
 	CountedPtr<PluginModel> plugin(const string& uri);
 	CountedPtr<ObjectModel> object(const Path& path);
@@ -74,12 +76,15 @@ private:
 	
 	void add_plugin_orphan(CountedPtr<NodeModel> orphan);
 	void resolve_plugin_orphans(CountedPtr<PluginModel> plugin);
+	
+	void add_metadata_orphan(const Path& subject, const string& predicate, const Atom& value);
+	void resolve_metadata_orphans(CountedPtr<ObjectModel> subject);
 
 	// Slots for SigClientInterface signals
 	void destruction_event(const Path& path);
-	void new_plugin_event(const string& type, const string& uri, const string& name);
+	void new_plugin_event(const string& uri, const string& name);
 	void new_patch_event(const Path& path, uint32_t poly);
-	void new_node_event(const string& plugin_type, const string& plugin_uri, const Path& node_path, bool is_polyphonic, uint32_t num_ports);
+	void new_node_event(const string& plugin_uri, const Path& node_path, bool is_polyphonic, uint32_t num_ports);
 	void new_port_event(const Path& path, const string& data_type, bool is_output);
 	void patch_enabled_event(const Path& path);
 	void patch_disabled_event(const Path& path);
@@ -89,6 +94,9 @@ private:
 	void connection_event(const Path& src_port_path, const Path& dst_port_path);
 	void disconnection_event(const Path& src_port_path, const Path& dst_port_path);
 	
+	CountedPtr<EngineInterface>    _engine;
+	CountedPtr<SigClientInterface> _emitter;
+
 	typedef map<Path, CountedPtr<ObjectModel> > ObjectMap;
 	ObjectMap m_objects; ///< Keyed by Ingen path
 
@@ -101,6 +109,12 @@ private:
 	/** Same idea, except with plugins instead of parents.
 	 * It's unfortunate everything doesn't just have a URI and this was the same.. ahem.. */
 	map<string, list<CountedPtr<NodeModel> > > m_plugin_orphans;
+	
+	/** Not orphans OF metadata like the above, but orphans which are metadata */
+	map<Path, list<std::pair<string, Atom> > > m_metadata_orphans;
+	
+	/** Ditto */
+	list<CountedPtr<ConnectionModel> > m_connection_orphans;
 };
 
 

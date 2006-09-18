@@ -77,6 +77,7 @@ PatchView::set_patch(CountedPtr<PatchModel> patch)
 	// Connect widget signals to do things
 	_process_but->signal_toggled().connect(sigc::mem_fun(this, &PatchView::process_toggled));
 	_clear_but->signal_clicked().connect(sigc::mem_fun(this, &PatchView::clear_clicked));
+	_refresh_but->signal_clicked().connect(sigc::mem_fun(this, &PatchView::refresh_clicked));
 
 	_zoom_normal_but->signal_clicked().connect(sigc::bind(sigc::mem_fun(
 		static_cast<FlowCanvas*>(_canvas), &FlowCanvas::set_zoom), 1.0));
@@ -120,11 +121,20 @@ PatchView::process_toggled()
 	}
 }
 
+
 void
 PatchView::clear_clicked()
 {
 	App::instance().engine()->clear_patch(_patch->path());
 }
+
+
+void
+PatchView::refresh_clicked()
+{
+	App::instance().engine()->request_object(_patch->path());
+}
+
 
 void
 PatchView::enable()

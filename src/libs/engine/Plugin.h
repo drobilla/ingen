@@ -53,6 +53,11 @@ public:
 	Plugin(Type type, const string& uri)
 	: _type(type)
 	, _uri(uri)
+	, _id(0)
+	, _library(NULL)
+#ifdef HAVE_SLV2
+	, _slv2_plugin(NULL)
+#endif
 	{}
 
 	// FIXME: remove
@@ -71,10 +76,12 @@ public:
 		if (copy->_type != Internal)
 			exit(EXIT_FAILURE);
 		_type = copy->_type;
-		_lib_path = copy->_lib_path;
 		_uri = copy->_uri;
+		_lib_path = copy->_lib_path;
+		_lib_name = copy->_lib_name;
 		_plug_label = copy->_plug_label;
 		_name = copy->_name;
+		_id = _id;
 		_library = copy->_library;
 	}
 	

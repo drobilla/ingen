@@ -397,6 +397,26 @@ OSCEngineSender::ping()
 
 
 void
+OSCEngineSender::request_plugin(const string& uri)
+{
+	assert(_engine_addr);
+	lo_send(_engine_addr, "/om/request/plugin", "is",
+		next_id(),
+		uri.c_str());
+}
+
+
+void
+OSCEngineSender::request_object(const string& path)
+{
+	assert(_engine_addr);
+	lo_send(_engine_addr, "/om/request/object", "is",
+		next_id(),
+		path.c_str());
+}
+
+
+void
 OSCEngineSender::request_port_value(const string& port_path)
 {
 	assert(_engine_addr);

@@ -23,6 +23,8 @@
 #include <libxml/tree.h>
 #include <cassert>
 #include "util/CountedPtr.h"
+#include "util/Path.h"
+#include "ObjectModel.h"
 
 using std::string;
 
@@ -43,8 +45,6 @@ class ModelEngineInterface;
 class PatchLibrarian
 {
 public:
-	// FIXME: return booleans and set an errstr that can be checked or something?
-	
 	PatchLibrarian(CountedPtr<ModelEngineInterface> engine)
 	: _patch_search_path("."), _engine(engine)
 	{
@@ -56,8 +56,14 @@ public:
 	
 	string find_file(const string& filename, const string& additional_path = "");
 	
-	void save_patch(CountedPtr<PatchModel> patch_model, const string& filename, bool recursive);
-	string load_patch(CountedPtr<PatchModel> pm, bool wait = true, bool existing = false);
+	//void save_patch(CountedPtr<PatchModel> patch_model, const string& filename, bool recursive);
+	
+	string load_patch(const string& filename,
+	                  const string& parent_path,
+	                  const string& name,
+	                  size_t        poly,
+	                  MetadataMap   initial_data,
+	                  bool          existing = false);
 
 private:
 	string translate_load_path(const string& path);
@@ -68,10 +74,10 @@ private:
 	/// Translations of paths from the loading file to actual paths (for deprecated patches)
 	std::map<string, string> _load_path_translations;
 
-	CountedPtr<NodeModel> parse_node(const CountedPtr<const PatchModel> parent, xmlDocPtr doc, const xmlNodePtr cur);
-	ConnectionModel* parse_connection(const CountedPtr<const PatchModel> parent, xmlDocPtr doc, const xmlNodePtr cur);
-	PresetModel*     parse_preset(const CountedPtr<const PatchModel> parent, xmlDocPtr doc, const xmlNodePtr cur);
-	void             load_subpatch(const CountedPtr<PatchModel> parent, xmlDocPtr doc, const xmlNodePtr cur);
+	bool load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr cur);
+	bool load_connection(const Path& parent, xmlDocPtr doc, const xmlNodePtr cur);
+	bool load_preset(const Path& parent, xmlDocPtr doc, const xmlNodePtr cur);
+	bool load_subpatch(const Path& parent, xmlDocPtr doc, const xmlNodePtr cur);
 };
 
 

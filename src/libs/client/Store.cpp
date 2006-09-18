@@ -28,9 +28,10 @@ namespace Client {
 
 
 
-Store::Store(CountedPtr<SigClientInterface> emitter)
+Store::Store(CountedPtr<EngineInterface> engine, CountedPtr<SigClientInterface> emitter)
+: _engine(engine)
+, _emitter(emitter)
 {
-	//emitter.new_plugin_sig.connect(sigc::mem_fun(this, &Store::add_plugin));
 	emitter->object_destroyed_sig.connect(sigc::mem_fun(this, &Store::destruction_event));
 	emitter->new_plugin_sig.connect(sigc::mem_fun(this, &Store::new_plugin_event));
 	emitter->new_patch_sig.connect(sigc::mem_fun(this, &Store::new_patch_event));
@@ -64,6 +65,8 @@ Store::add_plugin_orphan(CountedPtr<NodeModel> node)
 	map<string, list<CountedPtr<NodeModel> > >::iterator spawn
 		= m_plugin_orphans.find(node->plugin_uri());
 
+	_engine->request_plugin(node->plugin_uri());
+
 	if (spawn != m_plugin_orphans.end()) {
 		spawn->second.push_back(node);
 	} else {
@@ -77,11 +80,19 @@ Store::add_plugin_orphan(CountedPtr<NodeModel> node)
 void
 Store::resolve_plugin_orphans(CountedPtr<PluginModel> plugin)
 {
-	map<string, list<CountedPtr<NodeModel> > >::iterator spawn
+	map<string, list<CountedPtr<NodeModel> > >::iterator n
 		= m_plugin_orphans.find(plugin->uri());
 
-	if (spawn != m_plugin_orphans.end()) {
-		cerr << "XXXXXXXXXX PLUGIN-ORPHAN PLUGIN FOUND!! XXXXXXXXXXXXXXXXX" << endl;
+	if (n != m_plugin_orphans.end()) {
+	
+		list<CountedPtr<NodeModel> > spawn = n->second; // take a copy
+
+		m_plugin_orphans.erase(plugin->uri()); // prevent infinite recursion
+		
+		for (list<CountedPtr<NodeModel> >::iterator i = spawn.begin();
+				i != spawn.end(); ++i) {
+			add_object(*i);
+		}
 	}
 }
 
@@ -89,39 +100,42 @@ Store::resolve_plugin_orphans(CountedPtr<PluginModel> plugin)
 void
 Store::add_connection_orphan(CountedPtr<ConnectionModel> connection)
 {
-	cerr << "WARNING: Orphan connection received." << endl;
+	cerr << "WARNING: Orphan connection " << connection->src_port_path()
+		<< " -> " << connection->dst_port_path() << " received." << endl;
 	
-	cerr << "FIXME (add_connection_orphan)" << endl;
-
-	throw; // FIXME: (lazy)
-#if 0
-	map<string, list<CountedPtr<ConnectionModel> > >::iterator spawn
-		= m_connection_orphans.find(node->connection_uri());
-
-	if (spawn != m_connection_orphans.end()) {
-		spawn->second.push_back(node);
-	} else {
-		list<CountedPtr<ConnectionModel> > l;
-		l.push_back(node);
-		m_connection_orphans[node->connection_uri()] = l;
-	}
-#endif
+	m_connection_orphans.push_back(connection);
 }
 
 
 void
 Store::resolve_connection_orphans(CountedPtr<PortModel> port)
 {
-	cerr << "FIXME (add_connection_orphan)" << endl;
-	throw; // FIXME: (lazy)
-#if 0
-	map<string, list<CountedPtr<ConnectionModel> > >::iterator spawn
-		= m_connection_orphans.find(connection->uri());
+	assert(port->parent());
 
-	if (spawn != m_connection_orphans.end()) {
-		cerr << "XXXXXXXXXX PLUGIN-ORPHAN PLUGIN FOUND!! XXXXXXXXXXXXXXXXX" << endl;
+	for (list<CountedPtr<ConnectionModel> >::iterator c = m_connection_orphans.begin();
+			c != m_connection_orphans.end(); ) {
+		
+		if ((*c)->src_port_path() == port->path())
+			(*c)->set_src_port(port);
+		
+		if ((*c)->dst_port_path() == port->path())
+			(*c)->set_dst_port(port);
+
+		list<CountedPtr<ConnectionModel> >::iterator next = c;
+		++next;
+		
+		if ((*c)->src_port() && (*c)->dst_port()) {
+			CountedPtr<PatchModel> patch = PtrCast<PatchModel>(this->object((*c)->patch_path()));
+			if (patch) {
+				cerr << "Resolved orphan connection " << (*c)->src_port_path() <<
+					(*c)->dst_port_path() << endl;
+				patch->add_connection(*c);
+				m_connection_orphans.erase(c);
+			}
+		}
+
+		c = next;
 	}
-#endif
 }
 
 
@@ -132,6 +146,8 @@ Store::add_orphan(CountedPtr<ObjectModel> child)
 
 	map<Path, list<CountedPtr<ObjectModel> > >::iterator children
 		= m_orphans.find(child->path().parent());
+
+	_engine->request_object(child->path().parent());
 
 	if (children != m_orphans.end()) {
 		children->second.push_back(child);
@@ -144,13 +160,59 @@ Store::add_orphan(CountedPtr<ObjectModel> child)
 
 
 void
+Store::add_metadata_orphan(const Path& subject_path, const string& predicate, const Atom& value)
+{
+	map<Path, list<std::pair<string, Atom> > >::iterator orphans
+		= m_metadata_orphans.find(subject_path);
+
+	_engine->request_object(subject_path);
+
+	if (orphans != m_metadata_orphans.end()) {
+		orphans->second.push_back(std::pair<string, Atom>(predicate, value));
+	} else {
+		list<std::pair<string, Atom> > l;
+		l.push_back(std::pair<string, Atom>(predicate, value));
+		m_metadata_orphans[subject_path] = l;
+	}
+}
+
+
+void
+Store::resolve_metadata_orphans(CountedPtr<ObjectModel> subject)
+{
+	map<Path, list<std::pair<string, Atom> > >::iterator v
+		= m_metadata_orphans.find(subject->path());
+
+	if (v != m_metadata_orphans.end()) {
+	
+		list<std::pair<string, Atom> > values = v->second; // take a copy
+
+		m_metadata_orphans.erase(subject->path());
+		
+		for (list<std::pair<string, Atom> >::iterator i = values.begin();
+				i != values.end(); ++i) {
+			subject->set_metadata(i->first, i->second);
+		}
+	}
+}
+
+
+void
 Store::resolve_orphans(CountedPtr<ObjectModel> parent)
 {
-	map<Path, list<CountedPtr<ObjectModel> > >::iterator children
+	map<Path, list<CountedPtr<ObjectModel> > >::iterator c
 		= m_orphans.find(parent->path());
 
-	if (children != m_orphans.end()) {
-		cerr << "XXXXXXXXXXXXX ORPHAN PARENT FOUND!! XXXXXXXXXXXXXXXXX" << endl;
+	if (c != m_orphans.end()) {
+	
+		list<CountedPtr<ObjectModel> > children = c->second; // take a copy
+
+		m_orphans.erase(parent->path()); // prevent infinite recursion
+		
+		for (list<CountedPtr<ObjectModel> >::iterator i = children.begin();
+				i != children.end(); ++i) {
+			add_object(*i);
+		}
 	}
 }
 
@@ -158,21 +220,6 @@ Store::resolve_orphans(CountedPtr<ObjectModel> parent)
 void
 Store::add_object(CountedPtr<ObjectModel> object)
 {
-	assert(object->path() != "");
-	assert(m_objects.find(object->path()) == m_objects.end());
-
-	if (object->path() != "/") {
-		CountedPtr<ObjectModel> parent = this->object(object->path().parent());
-		if (parent) {
-			assert(object->path().is_child_of(parent->path()));
-			object->set_parent(parent);
-			parent->add_child(object);
-			assert(object->parent() == parent);
-		} else {
-			add_orphan(object);
-		}
-	}
-
 	// If we already have "this" object, merge the existing one into the new
 	// one (with precedence to the new values).
 	ObjectMap::iterator existing = m_objects.find(object->path());
@@ -180,14 +227,31 @@ Store::add_object(CountedPtr<ObjectModel> object)
 		cerr << "[Store] Warning:  Assimilating " << object->path() << endl;
 		object->assimilate(existing->second);
 		existing->second = object;
+	} else {
+
+		if (object->path() != "/") {
+			CountedPtr<ObjectModel> parent = this->object(object->path().parent());
+			if (parent) {
+				assert(object->path().is_child_of(parent->path()));
+				object->set_parent(parent);
+				parent->add_child(object);
+				assert(parent && (object->parent() == parent));
+				
+				m_objects[object->path()] = object;
+				new_object_sig.emit(object);
+				
+				resolve_metadata_orphans(parent);
+				resolve_orphans(parent);
+
+			} else {
+				add_orphan(object);
+			}
+		} else {
+			m_objects[object->path()] = object;
+			new_object_sig.emit(object);
+		}
+
 	}
-
-	m_objects[object->path()] = object;
-
-	// FIXME: emit this when we already had one?
-	new_object_sig.emit(object);
-
-	resolve_orphans(object);
 
 	//cout << "[Store] Added " << object->path() << endl;
 }
@@ -208,6 +272,8 @@ Store::remove_object(const Path& path)
 			result->destroyed_sig.emit();
 
 		if (result->path() != "/") {
+			assert(result->parent());
+
 			CountedPtr<ObjectModel> parent = this->object(result->path().parent());
 			if (parent) {
 				parent->remove_child(result);
@@ -248,7 +314,7 @@ Store::object(const Path& path)
 void
 Store::add_plugin(CountedPtr<PluginModel> pm)
 {
-	// FIXME: dupes?
+	// FIXME: dupes?  assimilate?
 	
 	m_plugins[pm->uri()] = pm;
 }
@@ -270,10 +336,9 @@ Store::destruction_event(const Path& path)
 }
 
 void
-Store::new_plugin_event(const string& type, const string& uri, const string& name)
+Store::new_plugin_event(const string& uri, const string& name)
 {
-	CountedPtr<PluginModel> p(new PluginModel(type, uri));
-	p->name(name);
+	CountedPtr<PluginModel> p(new PluginModel(uri, name));
 	add_plugin(p);
 	resolve_plugin_orphans(p);
 }
@@ -288,7 +353,7 @@ Store::new_patch_event(const Path& path, uint32_t poly)
 
 
 void
-Store::new_node_event(const string& plugin_type, const string& plugin_uri, const Path& node_path, bool is_polyphonic, uint32_t num_ports)
+Store::new_node_event(const string& plugin_uri, const Path& node_path, bool is_polyphonic, uint32_t num_ports)
 {
 	// FIXME: num_ports unused
 	
@@ -318,6 +383,8 @@ Store::new_port_event(const Path& path, const string& type, bool is_output)
 
 	CountedPtr<PortModel> p(new PortModel(path, ptype, pdir));
 	add_object(p);
+	if (p->parent())
+		resolve_connection_orphans(p);
 }
 
 
@@ -356,10 +423,13 @@ void
 Store::metadata_update_event(const Path& subject_path, const string& predicate, const Atom& value)
 {
 	CountedPtr<ObjectModel> subject = object(subject_path);
-	if (subject)
+	
+	if (subject) {
 		subject->set_metadata(predicate, value);
-	else
-		cerr << "ERROR: metadata for nonexistant object." << endl;
+	} else {
+		add_metadata_orphan(subject_path, predicate, value);
+		cerr << "WARNING: metadata for unknown object." << endl;
+	}
 }
 
 
@@ -380,30 +450,24 @@ Store::connection_event(const Path& src_port_path, const Path& dst_port_path)
 	CountedPtr<PortModel> src_port = PtrCast<PortModel>(object(src_port_path));
 	CountedPtr<PortModel> dst_port = PtrCast<PortModel>(object(dst_port_path));
 
-	assert(src_port);
-	assert(dst_port);
+	CountedPtr<ConnectionModel> dangling_cm(new ConnectionModel(src_port_path, dst_port_path));
 
-	src_port->connected_to(dst_port);
-	dst_port->connected_to(src_port);
-
-	CountedPtr<ConnectionModel> cm(new ConnectionModel(src_port, dst_port));
-
-	CountedPtr<PatchModel> patch = PtrCast<PatchModel>(this->object(cm->patch_path()));
+	if (src_port && src_port->parent() && dst_port && dst_port->parent()) { 
 	
-	CountedPtr<ObjectModel> src_obj = this->object(src_port_path);
-	CountedPtr<ObjectModel> dst_obj = this->object(dst_port_path);
+		CountedPtr<PatchModel> patch = PtrCast<PatchModel>(this->object(dangling_cm->patch_path()));
+		assert(patch);
 
-	if (!src_obj || !dst_obj || !patch) {
-		add_connection_orphan(cm);
-	} else {
-		CountedPtr<PortModel> src_port = PtrCast<PortModel>(src_obj);
-		CountedPtr<PortModel> dst_port = PtrCast<PortModel>(dst_obj);
-		assert(src_port && dst_port);
-
-		cm->set_src_port(src_port);
-		cm->set_dst_port(dst_port);
+		CountedPtr<ConnectionModel> cm(new ConnectionModel(src_port, dst_port));
+		
+		src_port->connected_to(dst_port);
+		dst_port->connected_to(src_port);
 
 		patch->add_connection(cm);
+	
+	} else {
+
+		add_connection_orphan(dangling_cm);
+
 	}
 }
 

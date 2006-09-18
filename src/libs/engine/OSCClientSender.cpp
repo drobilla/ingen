@@ -217,13 +217,14 @@ OSCClientSender::plugins()
  * this one (/om/new_node), followed by a series of /om/new_port commands,
  * followed by /om/new_node_end. </p> \n \n
  */
-void OSCClientSender::new_node(string plugin_type,
-                         string plugin_uri,
-                         string node_path,
-                         bool          is_polyphonic,
-                         uint32_t      num_ports)
+void OSCClientSender::new_node(string   plugin_uri,
+                               string   node_path,
+                               bool     is_polyphonic,
+                               uint32_t num_ports)
 {
-	lo_send(_address, "/om/new_node", "sssii", plugin_type.c_str(), plugin_uri.c_str(),
+	//cerr << "Sending node " << node_path << endl;
+
+	lo_send(_address, "/om/new_node", "ssii", plugin_uri.c_str(),
 	        node_path.c_str(), is_polyphonic ? 1 : 0, num_ports);
 #if 0
 	/*
@@ -453,10 +454,9 @@ OSCClientSender::control_change(string port_path, float value)
  * \arg \b name (string) - Descriptive human-readable name of plugin (ie "ADSR Envelope")
  */
 void
-OSCClientSender::new_plugin(string type, string uri, string name)
+OSCClientSender::new_plugin(string uri, string name)
 {
 	lo_message m = lo_message_new();
-	lo_message_add_string(m, type.c_str());
 	lo_message_add_string(m, uri.c_str());
 	lo_message_add_string(m, name.c_str());
 

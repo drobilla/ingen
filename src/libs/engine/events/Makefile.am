@@ -36,6 +36,10 @@ EXTRA_DIST = \
 	events/SetMetadataEvent.cpp \
 	events/RequestMetadataEvent.h \
 	events/RequestMetadataEvent.cpp \
+	events/RequestPluginEvent.h \
+	events/RequestPluginEvent.cpp \
+	events/RequestObjectEvent.h \
+	events/RequestObjectEvent.cpp \
 	events/RequestPortValueEvent.h \
 	events/RequestPortValueEvent.cpp \
 	events/RequestAllObjectsEvent.h \

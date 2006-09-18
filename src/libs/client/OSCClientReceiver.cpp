@@ -67,7 +67,7 @@ OSCClientReceiver::start()
 	}
 
 	// Print all incoming messages
-	lo_server_thread_add_method(_st, NULL, NULL, generic_cb, NULL);
+	//lo_server_thread_add_method(_st, NULL, NULL, generic_cb, NULL);
 
 	//lo_server_thread_add_method(_st, "/om/response/ok", "i", om_response_ok_cb, this);
 	//lo_server_thread_add_method(_st, "/om/response/error", "is", om_responseerror_cb, this);
@@ -139,7 +139,7 @@ OSCClientReceiver::setup_callbacks()
 {
 	lo_server_thread_add_method(_st, "/om/response", "iis", response_cb, this);
 	lo_server_thread_add_method(_st, "/om/num_plugins", "i", num_plugins_cb, this);
-	lo_server_thread_add_method(_st, "/om/plugin", "sss", plugin_cb, this);
+	lo_server_thread_add_method(_st, "/om/plugin", "ss", plugin_cb, this);
 	lo_server_thread_add_method(_st, "/om/new_patch", "si", new_patch_cb, this);
 	lo_server_thread_add_method(_st, "/om/destroyed", "s", destroyed_cb, this);
 	lo_server_thread_add_method(_st, "/om/patch_enabled", "s", patch_enabled_cb, this);
@@ -148,7 +148,7 @@ OSCClientReceiver::setup_callbacks()
 	lo_server_thread_add_method(_st, "/om/object_renamed", "ss", object_renamed_cb, this);
 	lo_server_thread_add_method(_st, "/om/new_connection", "ss", connection_cb, this);
 	lo_server_thread_add_method(_st, "/om/disconnection", "ss", disconnection_cb, this);
-	lo_server_thread_add_method(_st, "/om/new_node", "sssii", new_node_cb, this);
+	lo_server_thread_add_method(_st, "/om/new_node", "ssii", new_node_cb, this);
 	lo_server_thread_add_method(_st, "/om/new_port", "ssi", new_port_cb, this);
 	lo_server_thread_add_method(_st, "/om/metadata/update", NULL, metadata_update_cb, this);
 	lo_server_thread_add_method(_st, "/om/control_change", "sf", control_change_cb, this);
@@ -246,13 +246,12 @@ OSCClientReceiver::m_disconnection_cb(const char* path, const char* types, lo_ar
 int
 OSCClientReceiver::m_new_node_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	const char*   type       = &argv[0]->s;
-	const char*   uri        = &argv[1]->s;
-	const char*   node_path  = &argv[2]->s;
-	const int32_t poly       =  argv[3]->i;
-	const int32_t num_ports  =  argv[4]->i;
+	const char*   uri        = &argv[0]->s;
+	const char*   node_path  = &argv[1]->s;
+	const int32_t poly       =  argv[2]->i;
+	const int32_t num_ports  =  argv[3]->i;
 
-	new_node(type, uri, node_path, poly, num_ports);
+	new_node(uri, node_path, poly, num_ports);
 
 	/*_receiving_node_model = new NodeModel(node_path);
 	_receiving_node_model->polyphonic((poly == 1));
@@ -386,8 +385,8 @@ OSCClientReceiver::m_num_plugins_cb(const char* path, const char* types, lo_arg*
 int
 OSCClientReceiver::m_plugin_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	assert(argc == 3 && !strcmp(types, "sss"));
-	new_plugin(&argv[0]->s, &argv[1]->s, &argv[2]->s); // type, uri
+	assert(argc == 2 && !strcmp(types, "ss"));
+	new_plugin(&argv[0]->s, &argv[1]->s); // type, uri
 
 	return 0;	
 }

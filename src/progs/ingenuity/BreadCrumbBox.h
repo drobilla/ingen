@@ -32,6 +32,8 @@ class BreadCrumb;
 
 /** Collection of breadcrumb buttons forming a path.
  *
+ * This doubles as a cache for PatchViews.
+ *
  * \ingroup Ingenuity
  */
 class BreadCrumbBox : public Gtk::HBox
@@ -39,6 +41,8 @@ class BreadCrumbBox : public Gtk::HBox
 public:
 	BreadCrumbBox();
 	
+	CountedPtr<PatchView> view(const Path& path);
+
 	void build(Path path, CountedPtr<PatchView> view);
 
 	sigc::signal<void, const Path&, CountedPtr<PatchView> > signal_patch_selected;

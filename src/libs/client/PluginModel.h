@@ -18,7 +18,9 @@
 #define PLUGINMODEL_H
 
 #include <string>
-using std::string;
+#include <iostream>
+#include "util/Path.h"
+using std::string; using std::cerr; using std::endl;
 
 namespace Ingen {
 namespace Client {
@@ -33,40 +35,17 @@ class PluginModel
 public:
 	enum Type { LV2, LADSPA, DSSI, Internal, Patch };
 
-	// FIXME: remove
-	PluginModel() {}
-
-	PluginModel(const string& type_string, const string& uri)
-	: m_uri(uri)
-	{ set_type(type_string); }
-
-	PluginModel(Type type)
-	: m_type(type)
-	{}
-
-	PluginModel(Type type, const string& uri, const string& name)
-	: m_type(type),
-	  m_uri(uri),
+	PluginModel(const string& uri, const string& name)
+	: m_uri(uri),
 	  m_name(name)
-	{}
+	{
+		cerr << "FIXME: plugin type" << endl;
+	}
 	
-	PluginModel(Type type, const string& lib_name, const string& plug_label, const string& name)
-	: m_type(type),
-	  m_lib_name(lib_name),
-	  m_plug_label(plug_label),
-	  m_name(name)
-	{}
-
-	//PluginModel() {}
-
 	Type          type() const                { return m_type; }
 	void          type(Type t)                { m_type = t; }
 	const string& uri() const                 { return m_uri; }
 	void          uri(const string& s)        { m_uri = s; }
-	const string& lib_name() const            { return m_lib_name; }
-	void          lib_name(const string& s)   { m_lib_name = s; }
-	const string& plug_label() const          { return m_plug_label; }
-	void          plug_label(const string& s) { m_plug_label = s; }
 	const string& name() const                { return m_name; }
 	void          name(const string& s)       { m_name = s; }
 	
@@ -87,6 +66,8 @@ public:
 		else if (type_string == "Patch") m_type = Patch;
 	}
 
+	string default_node_name() { return Path::nameify(m_name); }
+
 private:
 	// Prevent copies
 	PluginModel(const PluginModel& copy);
@@ -94,8 +75,6 @@ private:
 	
 	Type   m_type;
 	string m_uri;
-	string m_lib_name;
-	string m_plug_label;
 	string m_name;
 };
 

@@ -95,9 +95,26 @@ NodeFactory::~NodeFactory()
 const Plugin*
 NodeFactory::plugin(const string& uri)
 {
-	// FIXME: this needs.. well, fixing
 	for (list<Plugin*>::iterator i = _plugins.begin(); i != _plugins.end(); ++i)
 		if ((*i)->uri() == uri)
+			return (*i);
+
+	return NULL;
+}
+
+
+/** DEPRECATED: Find a plugin by type, lib, label.
+ *
+ * Do not use.
+ */
+const Plugin*
+NodeFactory::plugin(const string& type, const string& lib, const string& label)
+{
+	if (type == "" || lib == "" || label == "")
+		return NULL;
+
+	for (list<Plugin*>::iterator i = _plugins.begin(); i != _plugins.end(); ++i)
+		if ((*i)->type_string() == type && (*i)->lib_name() == lib && (*i)->plug_label() == label)
 			return (*i);
 
 	return NULL;

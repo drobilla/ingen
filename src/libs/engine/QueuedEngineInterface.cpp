@@ -135,7 +135,7 @@ void QueuedEngineInterface::create_port(const string& path,
                                         const string& data_type,
                                         bool          direction)
 {
-	push_queued(new AddPortEvent(*_engine.get(), _responder, now(), path, data_type, direction));
+	push_queued(new AddPortEvent(*_engine.get(), _responder, now(), path, data_type, direction, this));
 }
 
 
@@ -144,7 +144,8 @@ QueuedEngineInterface::create_node(const string& path,
                                    const string& plugin_uri,
                                    bool          polyphonic)
 {
-	push_queued(new AddNodeEvent(*_engine.get(), _responder, now(), path, plugin_uri, polyphonic));
+	push_queued(new AddNodeEvent(*_engine.get(), _responder, now(),
+		path, plugin_uri, polyphonic));
 }
 
 
@@ -155,18 +156,8 @@ QueuedEngineInterface::create_node(const string& path,
                                    const string& plugin_label,
                                    bool          polyphonic)
 {
-	cerr << "FIXME: deprecated create_node\n";
-	throw;
-#if 0
-	// FIXME: ew
-	
-	Plugin* plugin = new Plugin();
-	plugin->set_type(plugin_type);
-	plugin->lib_name(plugin_lib);
-	plugin->plug_label(plugin_label);
-
-	push_queued(new AddNodeEvent(*_engine.get(), _responder, now(), path, plugin, polyphonic));
-#endif
+	push_queued(new AddNodeEvent(*_engine.get(), _responder, now(),
+		path, plugin_type, plugin_lib, plugin_label, polyphonic));
 }
 
 void
@@ -291,6 +282,20 @@ QueuedEngineInterface::ping()
 	} else if (_responder) {
 		_responder->respond_ok();
 	}
+}
+
+
+void
+QueuedEngineInterface::request_plugin(const string& uri)
+{
+	push_queued(new RequestPluginEvent(*_engine.get(), _responder, now(), uri));
+}
+
+
+void
+QueuedEngineInterface::request_object(const string& path)
+{
+	push_queued(new RequestObjectEvent(*_engine.get(), _responder, now(), path));
 }
 
 

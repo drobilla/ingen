@@ -19,96 +19,22 @@
 
 #include <string>
 #include <cassert>
+#include "util/Thread.h"
+#include "util/Slave.h"
+#include "util/Mutex.h"
+#include "util/Condition.h"
 #include "ModelEngineInterface.h"
+#include "ObjectModel.h"
 using std::string;
 
 namespace Ingen { namespace Client {
 	class PatchLibrarian;
 	class PatchModel;
-	class ModelEngineInterface;
 } }
 using namespace Ingen::Client;
 
 namespace Ingenuity {
 
-
-/** Event to run in the Loader thread.
- *
- * \ingroup Ingenuity
- */
-class LoaderEvent
-{
-public:
-	virtual void execute() = 0;
-	virtual ~LoaderEvent() {}
-protected:
-	LoaderEvent() {}
-};
-
-
-/** Loader thread patch loading event.
- *
- * \ingroup Ingenuity
- */
-class LoadPatchEvent : public LoaderEvent
-{
-public:
-	LoadPatchEvent(PatchLibrarian* pl, CountedPtr<PatchModel> model, bool wait, bool merge)
-	: m_patch_librarian(pl), m_patch_model(model), m_wait(wait), m_merge(merge) {}
-	virtual ~LoadPatchEvent() {}
-	void execute();
-private:
-	PatchLibrarian*        m_patch_librarian;
-	CountedPtr<PatchModel> m_patch_model;
-	bool                   m_wait;
-	bool                   m_merge;
-};
-
-
-/** Loader thread patch loading event.
- *
- * \ingroup Ingenuity
- */
-class SavePatchEvent : public LoaderEvent
-{
-public:
-	SavePatchEvent(PatchLibrarian* pl, CountedPtr<PatchModel> pm, const string& filename, bool recursive)
-	: m_patch_librarian(pl), m_patch_model(pm), m_filename(filename), m_recursive(recursive) {}
-	virtual ~SavePatchEvent() {}
-	void execute();
-private:
-	PatchLibrarian*        m_patch_librarian;
-	CountedPtr<PatchModel> m_patch_model;
-	string                 m_filename;
-	bool                   m_recursive;
-};
-
-/*
-class LoadSessionEvent : public LoaderEvent
-{
-public:
-	LoadSessionEvent(PatchLibrarian* pl, const string& filename)
-	: m_patch_librarian(pl), m_filename(filename) {}
-	virtual ~LoadSessionEvent() {}
-	void execute();
-private:
-	PatchLibrarian* m_patch_librarian;
-	string          m_filename;
-};
-
-
-class SaveSessionEvent : public LoaderEvent
-{
-public:
-	SaveSessionEvent(PatchLibrarian* pl, const string& filename)
-	: m_patch_librarian(pl), m_filename(filename) {}
-	virtual ~SaveSessionEvent() {}
-	void execute();
-private:
-	PatchLibrarian* m_patch_librarian;
-	string          m_filename;
-};
-*/
 
 /** Thread for loading patch files.
  *
@@ -118,37 +44,35 @@ private:
  *
  * \ingroup Ingenuity
  */
-class Loader
+class Loader : public Slave
 {
 public:
 	Loader(CountedPtr<ModelEngineInterface> engine);
 	~Loader();
 
-	PatchLibrarian& librarian() { return *m_patch_librarian; }
+	PatchLibrarian& librarian() { return *_patch_librarian; }
 
-	void launch();
-	void exit() { m_thread_exit_flag = true; }
+	void load_patch(const string&      filename,
+	                const string&      parent_path,
+	                const string&      name,
+	                size_t             poly,
+	                const MetadataMap& initial_data,
+	                bool               merge = false);
 	
-	void load_patch(CountedPtr<PatchModel> model, bool wait, bool merge);
 	void save_patch(CountedPtr<PatchModel> model, const string& filename, bool recursive);
-	
-	//void load_session(const string& filename);
-	//void save_session(const string& filename);
-	
-	static void* thread_function(void* me);
+
 
 private:	
-	void* m_thread_function(void*);
-	
-	void set_event(LoaderEvent* ev);
 
-	PatchLibrarian* const m_patch_librarian;
-	LoaderEvent*          m_event;
-	bool                  m_thread_exit_flag;
-	pthread_t             m_thread;
-	pthread_mutex_t       m_mutex;
-	pthread_cond_t        m_cond;
+	/** Returns nothing and takes no parameters (because they have all been bound) */
+	typedef sigc::slot<void> Closure;
 
+	void _whipped();
+
+	PatchLibrarian* const _patch_librarian;
+	Mutex                 _mutex;
+	Condition             _cond;
+	Closure               _event;
 };
 
 

@@ -103,8 +103,7 @@ PatchCanvas::build_canvas() {
 	// Create pseudo modules for ports (ports on this canvas, not on our module)
 	for (PortModelList::const_iterator i = m_patch->ports().begin();
 			i != m_patch->ports().end(); ++i) {
-		cerr << "FIXME: PORT MODULE LEAK!" << endl;
-		new PatchPortModule(this, *i);
+		manage(new PatchPortModule(this, *i));
 	}
 
 	// Create connections
@@ -118,13 +117,11 @@ PatchCanvas::build_canvas() {
 void
 PatchCanvas::add_node(CountedPtr<NodeModel> nm)
 {
-	cerr << "FIXME: MODULE LEAK!" << endl;
-	
 	CountedPtr<PatchModel> pm = PtrCast<PatchModel>(nm);
 	if (pm)
-		new SubpatchModule(this, pm);
+		manage(new SubpatchModule(this, pm));
 	else
-		new NodeModule(this, nm);
+		manage(new NodeModule(this, nm));
 }
 
 
@@ -139,9 +136,7 @@ PatchCanvas::remove_node(CountedPtr<NodeModel> nm)
 void
 PatchCanvas::add_port(CountedPtr<PortModel> pm)
 {
-	cerr << "FIXME: PORT MODULE LEAK!" << endl;
-	
-	new PatchPortModule(this, pm);
+	manage(new PatchPortModule(this, pm));
 }
 
 

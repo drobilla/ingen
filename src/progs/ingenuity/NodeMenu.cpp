@@ -65,11 +65,14 @@ NodeMenu::NodeMenu(CountedPtr<NodeModel> node)
 	
 	//m_controls_menuitem->property_sensitive() = false;
 	
+	cerr << "FIXME: MIDI learn menu\n";
+	/*
 	if (_node->plugin() && _node->plugin()->type() == PluginModel::Internal
 			&& _node->plugin()->plug_label() == "midi_control_in") {
 		items().push_back(Gtk::Menu_Helpers::MenuElem("Learn",
 			sigc::mem_fun(this, &NodeMenu::on_menu_learn)));
 	}
+	*/
 
 	//model->new_port_sig.connect(sigc::mem_fun(this, &NodeMenu::add_port));
 	//model->destroyed_sig.connect(sigc::mem_fun(this, &NodeMenu::destroy));

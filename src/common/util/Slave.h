@@ -14,50 +14,44 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef THREAD_H
-#define THREAD_H
+#ifndef SLAVE_H
+#define SLAVE_H
 
-#include <string>
 #include <pthread.h>
-
-namespace Ingen {
-
-
-/* FIXME: This isn't Ingen specific at all.  Move it to util. */
+#include "util/Semaphore.h"
+#include "util/Thread.h"
 
 
-/** Abstract base class for all threads.
+/** Thread driven by (realtime safe) signals.
  *
  * \ingroup engine
  */
-class Thread
+class Slave : public Thread
 {
 public:
-	Thread();
-	virtual ~Thread();
+	Slave() : _whip(0) {}
 
-	virtual void start();
-	virtual void stop();
-
-	void set_name(const std::string& name) { _name = name; }
-	void set_scheduling(int policy, unsigned int priority);
+	/** Tell the slave to do whatever work it does.  Realtime safe. */
+	inline void whip() { _whip.post(); }
 
 protected:
-	virtual void _run() = 0;
+	virtual void _whipped() = 0;
 
-	std::string _name;
-	pthread_t   _pthread;
-	bool        _pthread_exists;
+	Semaphore _whip;
 
 private:
-	// Prevent copies
-	Thread(const Thread&);
-	Thread& operator=(const Thread&);
+	// Prevent copies (undefined)
+	Slave(const Slave&);
+	Slave& operator=(const Slave&);
 
-	static void*  _static_run(void* me);
+	inline void _run()
+	{
+		while (true) {
+			_whip.wait();
+			_whipped();
+		}
+	}
 };
 
 
-} // namespace Ingen
-
-#endif // THREAD_H
+#endif // SLAVE_H

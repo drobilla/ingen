@@ -117,8 +117,12 @@ public:
 	
 	virtual void ping() = 0;
 	
+	virtual void request_plugin(const string& uri) = 0;
+
+	virtual void request_object(const string& path) = 0;
+
 	virtual void request_port_value(const string& port_path) = 0;
-	
+
 	virtual void request_plugins() = 0;
 	
 	virtual void request_all_objects() = 0;

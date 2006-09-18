@@ -68,7 +68,7 @@ public:
 	void set_patch_from_path(const Path& path, CountedPtr<PatchView> view);
 	void set_patch(CountedPtr<PatchModel> pc, CountedPtr<PatchView> view);
 
-	CountedPtr<PatchModel> patch()     const { return m_patch; }
+	CountedPtr<PatchModel> patch() const { return m_patch; }
 
 	Gtk::MenuItem* menu_view_control_window() { return m_menu_view_control_window; }
 
@@ -88,8 +88,6 @@ private:
 	void event_show_properties();
 	void event_show_controls();
 	void event_show_engine();
-
-	void patch_destroyed();
 
 	CountedPtr<PatchModel> m_patch;
 	CountedPtr<PatchView>  m_view;

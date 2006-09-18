@@ -68,6 +68,7 @@ protected:
 	virtual void on_double_click(GdkEventButton* ev) { show_control_window(); }
 	virtual void on_middle_click(GdkEventButton* ev) { show_control_window(); }
 	
+	void set_all_metadata();
 	void metadata_update(const string& key, const Atom& value);
 
 	void create_all_ports();

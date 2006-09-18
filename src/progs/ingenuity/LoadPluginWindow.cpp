@@ -263,7 +263,7 @@ LoadPluginWindow::generate_module_name(int offset)
 		CountedPtr<PluginModel> plugin = row.get_value(m_plugins_columns.m_col_plugin_model);
 		char num_buf[3];
 		for (uint i=0; i < 99; ++i) {
-			name = plugin->plug_label();
+			name = plugin->default_node_name();
 			if (name == "")
 				name = plugin->name().substr(0, plugin->name().find(' '));
 			if (i+offset != 0) {
@@ -381,8 +381,6 @@ LoadPluginWindow::filter_changed()
 			//model_row[m_plugins_columns.m_col_label] = plugin->plug_label();
 			model_row[m_plugins_columns.m_col_type] = plugin->type_string();
 			model_row[m_plugins_columns.m_col_uri] = plugin->uri();
-			model_row[m_plugins_columns.m_col_label] = plugin->plug_label();
-			//model_row[m_plugins_columns.m_col_library] = plugin->lib_name();
 			model_row[m_plugins_columns.m_col_plugin_model] = plugin;
 
 			++num_visible;

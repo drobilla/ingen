@@ -39,15 +39,22 @@ class Plugin;
 class AddNodeEvent : public QueuedEvent
 {
 public:
-	//AddNodeEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& path, Plugin* plugin, bool poly);
 	AddNodeEvent(Engine&               engine,
 	             CountedPtr<Responder> responder,
 	             SampleCount           timestamp,
 	             const string&         node_path,
 	             const string&         plugin_uri,
 	             bool                  poly);
-
-	~AddNodeEvent();
+	
+	// DEPRECATED
+	AddNodeEvent(Engine&               engine,
+	             CountedPtr<Responder> responder,
+	             SampleCount           timestamp,
+	             const string&         node_path,
+				 const string&         plugin_type,
+				 const string&         lib_name,
+	             const string&         plugin_label,
+	             bool                  poly);
 
 	void pre_process();
 	void execute(SampleCount nframes, FrameTime start, FrameTime end);
@@ -56,7 +63,10 @@ public:
 private:
 	string           m_patch_name;
 	Path             m_path;
-	string           m_plugin_uri;
+	string           m_plugin_uri; ///< If nonempty then type, library, label, are ignored
+	string           m_plugin_type;
+	string           m_plugin_lib;
+	string           m_plugin_label;
 	bool             m_poly;
 	Patch*           m_patch;
 	Node*            m_node;

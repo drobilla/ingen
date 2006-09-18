@@ -131,6 +131,10 @@ public:
 	
 	void ping();
 
+	void request_plugin(const string& uri);
+
+	void request_object(const string& path);
+
 	void request_port_value(const string& port_path);
 
 	void request_plugins();

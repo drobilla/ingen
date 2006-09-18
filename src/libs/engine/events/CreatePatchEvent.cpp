@@ -120,11 +120,9 @@ CreatePatchEvent::post_process()
 			
 			_responder->respond_ok();
 			
-			// Don't want to send nodes that have been added since prepare()
-			//_engine.broadcaster()->send_node_creation_messages(m_patch);
-
-			// Patches are always empty on creation, so this is fine
-			_engine.broadcaster()->send_patch(m_patch);
+			// Don't send ports/nodes that have been added since prepare()
+			// (otherwise they would be sent twice)
+			_engine.broadcaster()->send_patch(m_patch, false);
 			
 		} else if (m_error == OBJECT_EXISTS) {
 			string msg = "Unable to create patch: ";

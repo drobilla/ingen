@@ -72,7 +72,7 @@ public:
 	MidiDriver*        midi_driver()        const { return m_midi_driver; }
 	Maid*              maid()               const { return m_maid; }
 	PostProcessor*     post_processor()     const { return m_post_processor; }
-	ClientBroadcaster* broadcaster() const { return m_broadcaster; }
+	ClientBroadcaster* broadcaster()        const { return m_broadcaster; }
 	ObjectStore*       object_store()       const { return m_object_store; }
 	NodeFactory*       node_factory()       const { return m_node_factory; }
 	LashDriver*        lash_driver()        const { return m_lash_driver; }

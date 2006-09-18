@@ -57,6 +57,7 @@ public:
 	const list<Plugin*>& plugins() { return _plugins; }
 	
 	const Plugin* plugin(const string& uri);
+	const Plugin* plugin(const string& type, const string& lib, const string& label); // DEPRECATED
 
 private:
 #ifdef HAVE_LADSPA

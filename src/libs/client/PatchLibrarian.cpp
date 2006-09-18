@@ -117,6 +117,7 @@ PatchLibrarian::translate_load_path(const string& path)
  * - The filename does not have an extension (ie contain a ".")
  * - The patch_model has no (Ingen) path
  */
+#if 0
 void
 PatchLibrarian::save_patch(CountedPtr<PatchModel> patch_model, const string& filename, bool recursive)
 {
@@ -360,6 +361,7 @@ PatchLibrarian::save_patch(CountedPtr<PatchModel> patch_model, const string& fil
     xmlFreeDoc(xml_doc);
     xmlCleanupParser();
 }
+#endif
 
 
 /** Load a patch in to the engine (and client) from a patch file.
@@ -369,47 +371,52 @@ PatchLibrarian::save_patch(CountedPtr<PatchModel> patch_model, const string& fil
  * is 0, it will be loaded from file.  Otherwise the given values will
  * be used.
  *
- * If @a wait is set, the patch will be checked for existence before
+ * @param wait If true the patch will be checked for existence before
  * loading everything in to it (to prevent messing up existing patches
  * that exist at the path this one should load as).
  *
- * If the @a existing parameter is true, the patch will be loaded into a
- * currently existing patch (ie a merging will take place).  Errors will
- * result if Nodes of conflicting names exist.
+ * @param existing If true, the patch will be loaded into a currently
+ * existing patch (ie a merging will take place).  Errors will result
+ * if Nodes of conflicting names exist.
+ *
+ * @param parent_path Patch to load this patch as a child of (empty string to load
+ * to the root patch)
+ *
+ * @param name Name of this patch (loaded/generated if the empty string)
+ *
+ * @param initial_data will be set last, so values passed there will override
+ * any values loaded from the patch file.
  *
  * Returns the path of the newly created patch.
  */
 string
-PatchLibrarian::load_patch(CountedPtr<PatchModel> pm, bool wait, bool existing)
+PatchLibrarian::load_patch(const string& filename,
+	                       const string& parent_path,
+	                       const string& name,
+	                       size_t        poly,
+	                       MetadataMap   initial_data,
+	                       bool          existing)
 {
-	string filename = pm->filename();
+	cerr << "[PatchLibrarian] Loading patch " << filename << "" << endl;
 
-	string additional_path = (!pm->parent())
-		? "" : ((PatchModel*)pm->parent().get())->filename();
-	additional_path = additional_path.substr(0, additional_path.find_last_of("/"));
+	Path path = "/"; // path of the new patch
 
-	filename = find_file(pm->filename(), additional_path);
-
-	size_t poly = pm->poly();
-
-	//cerr << "[PatchLibrarian] Loading patch " << filename << "" << endl;
-
-	//const size_t temp_buf_length = 255;
-	//char temp_buf[temp_buf_length];
+	const bool load_name = (name == "");
+	const bool load_poly = (poly == 0);
 	
-	bool load_name = (pm->path() == "");
-	bool load_poly = (poly == 0);
-	
+	if (initial_data.find("filename") == initial_data.end())
+		initial_data["filename"] = Atom(filename.c_str()); // FIXME: URL?
+
 	xmlDocPtr doc = xmlParseFile(filename.c_str());
 
-	if (doc == NULL ) {
+	if (!doc) {
 		cerr << "Unable to parse patch file." << endl;
 		return "";
 	}
 
 	xmlNodePtr cur = xmlDocGetRootElement(doc);
 
-	if (cur == NULL) {
+	if (!cur) {
 		cerr << "Empty document." << endl;
 		xmlFreeDoc(doc);
 		return "";
@@ -423,10 +430,6 @@ PatchLibrarian::load_patch(CountedPtr<PatchModel> pm, bool wait, bool existing)
 
 	xmlChar* key = NULL;
 	cur = cur->xmlChildrenNode;
-	string path;
-
-	cerr << "FIXME: patch filename" << endl;
-	//pm->filename(filename);
 
 	// Load Patch attributes
 	while (cur != NULL) {
@@ -435,21 +438,12 @@ PatchLibrarian::load_patch(CountedPtr<PatchModel> pm, bool wait, bool existing)
 		if ((!xmlStrcmp(cur->name, (const xmlChar*)"name"))) {
 			if (load_name) {
 				assert(key != NULL);
-				if (pm->parent()) {
-					path = pm->parent()->path().base() + string((char*)key);
-				} else {
-					path = string("/") + string((char*)key);
-				}
-				assert(path.find("//") == string::npos);
-				assert(path.length() > 0);
-				cerr << "FIXME: patch path (2)" << endl;
-				//pm->set_path(path);
+				if (parent_path != "")
+					path = Path(parent_path).base() + Path::nameify((char*)key);
 			}
 		} else if ((!xmlStrcmp(cur->name, (const xmlChar*)"polyphony"))) {
 			if (load_poly) {
 				poly = atoi((char*)key);
-				cerr << "FIXME: patch poly" << endl;
-				//pm->poly(poly);
 			}
 		} else if (xmlStrcmp(cur->name, (const xmlChar*)"connection")
 				&& xmlStrcmp(cur->name, (const xmlChar*)"node")
@@ -458,12 +452,9 @@ PatchLibrarian::load_patch(CountedPtr<PatchModel> pm, bool wait, bool existing)
 				&& xmlStrcmp(cur->name, (const xmlChar*)"preset")) {
 			// Don't know what this tag is, add it as metadata without overwriting
 			// (so caller can set arbitrary parameters which will be preserved)
-			if (key != NULL)
-				cerr << "FIXME: save metadata\n";
-			/*
-				if (pm->get_metadata((const char*)cur->name) == "")
-					pm->set_metadata((const char*)cur->name, (const char*)key);
-			*/
+			if (key)
+				if (initial_data.find((const char*)cur->name) == initial_data.end())
+					initial_data[(const char*)cur->name] = (const char*)key;
 		}
 		
 		xmlFree(key);
@@ -472,57 +463,19 @@ PatchLibrarian::load_patch(CountedPtr<PatchModel> pm, bool wait, bool existing)
 		cur = cur->next;
 	}
 	
-	if (poly == 0) poly = 1;
+	if (poly == 0)
+		poly = 1;
 
-	if (!existing) {
-		// Wait until the patch is created or the node creations may fail
-		if (wait) {
-			//int id = _engine->get_next_request_id();
-			//_engine->set_wait_response_id(id);
-			cerr << "FIXME: create patch\n";
-			//_engine->create_patch_from_model(pm.get());
-			//bool succeeded = _engine->wait_for_response();
-	
-			// If creating the patch failed, bail out so we don't load all these nodes
-			// into an already existing patch
-			/*if (!succeeded) {
-				cerr << "[PatchLibrarian] Patch load failed (patch already exists)" << endl;
-				return "";
-			}*/ // FIXME
-		} else {
-			cerr << "FIXME: create patch (2)\n";
-			//_engine->create_patch_from_model(pm.get());
-		}
-	}
-	
-
-	// Set the filename metadata.  (FIXME)
-	// This isn't so good, considering multiple clients on multiple machines, and
-	// absolute filesystem paths obviously aren't going to be correct.  But for now
-	// this is all I can figure out to have Save/Save As work properly for subpatches
-	_engine->set_metadata(pm->path(), "filename", Atom(pm->filename().c_str()));
+	// Create it, if we're not merging
+	if (!existing)
+		_engine->create_patch_with_data(path, poly, initial_data);
 
 	// Load nodes
 	cur = xmlDocGetRootElement(doc)->xmlChildrenNode;
-	
 	while (cur != NULL) {
-		if ((!xmlStrcmp(cur->name, (const xmlChar*)"node"))) {
-			CountedPtr<NodeModel> nm = parse_node(pm, doc, cur);
-			if (nm) {
-				cerr << "FIXME: load node\n";
-				//_engine->create_node_from_model(nm.get());
-				//_engine->set_all_metadata(nm.get());
-
-				/*
-				//for (PortModelList::const_iterator j = nm->ports().begin(); j != nm->ports().end(); ++j) {
-					// FIXME: ew
-					snprintf(temp_buf, temp_buf_length, "%f", (*j)->user_min());
-					_engine->set_metadata((*j)->path(), "user-min", temp_buf);
-					snprintf(temp_buf, temp_buf_length, "%f", (*j)->user_max());
-					_engine->set_metadata((*j)->path(), "user-max", temp_buf);
-				}*/
-			}
-		}
+		if ((!xmlStrcmp(cur->name, (const xmlChar*)"node")))
+			load_node(path, doc, cur);
+			
 		cur = cur->next;
 	}
 
@@ -530,84 +483,87 @@ PatchLibrarian::load_patch(CountedPtr<PatchModel> pm, bool wait, bool existing)
 	cur = xmlDocGetRootElement(doc)->xmlChildrenNode;
 	while (cur != NULL) {
 		if ((!xmlStrcmp(cur->name, (const xmlChar*)"subpatch"))) {
-			load_subpatch(pm, doc, cur);
+			load_subpatch(path, doc, cur);
 		}
 		cur = cur->next;
 	}
 	
-	ConnectionModel* cm = NULL;
 	// Load connections
 	cur = xmlDocGetRootElement(doc)->xmlChildrenNode;
 	while (cur != NULL) {
 		if ((!xmlStrcmp(cur->name, (const xmlChar*)"connection"))) {
-			cm = parse_connection(pm, doc, cur);
-			if (cm != NULL) {
-				_engine->connect(cm->src_port_path(), cm->dst_port_path());
-			}
+			load_connection(path, doc, cur);
 		}
 		cur = cur->next;
 	}
 	
 	
 	// Load presets (control values)
-	PresetModel* preset_model = NULL;
-	cur = xmlDocGetRootElement(doc)->xmlChildrenNode;
+	cerr << "FIXME: load preset\n";
+	/*cur = xmlDocGetRootElement(doc)->xmlChildrenNode;
 	while (cur != NULL) {
 		if ((!xmlStrcmp(cur->name, (const xmlChar*)"preset"))) {
-			preset_model = parse_preset(pm, doc, cur);
+			load_preset(pm, doc, cur);
 			assert(preset_model != NULL);
 			if (preset_model->name() == "default")
 				_engine->set_preset(pm->path(), preset_model);
 		}
 		cur = cur->next;
 	}
+	*/
 	
 	xmlFreeDoc(doc);
 	xmlCleanupParser();
 
-	_engine->set_metadata_map(pm->path(), pm->metadata());
+	// Done above.. late enough?
+	//_engine->set_metadata_map(path, initial_data);
 
 	if (!existing)
-		_engine->enable_patch(pm->path());
+		_engine->enable_patch(path);
 
 	_load_path_translations.clear();
 
-	string ret = pm->path();
-	return ret;
+	return path;
 }
 
 
 /** Build a NodeModel given a pointer to a Node in a patch file.
  */
-CountedPtr<NodeModel>
-PatchLibrarian::parse_node(const CountedPtr<const PatchModel> parent, xmlDocPtr doc, const xmlNodePtr node)
+bool
+PatchLibrarian::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr node)
 {
-cerr << "FIXME: load node\n";
-#if 0
-	CountedPtr<PluginModel> plugin(new PluginModel());
-
 	xmlChar* key;
 	xmlNodePtr cur = node->xmlChildrenNode;
 	
-	string path = ""'
+	string path = "";
 	bool   polyphonic = false;
+
+	string plugin_uri;
+	
+	string plugin_type;  // deprecated
+	string library_name; // deprecated
+	string plugin_label; // deprecated
+
+	MetadataMap initial_data;
 
 	while (cur != NULL) {
 		key = xmlNodeListGetString(doc, cur->xmlChildrenNode, 1);
 		
 		if ((!xmlStrcmp(cur->name, (const xmlChar*)"name"))) {
-			path = parent->path().base() + Path::nameify((char*)key));
+			path = parent.base() + Path::nameify((char*)key);
 		} else if ((!xmlStrcmp(cur->name, (const xmlChar*)"polyphonic"))) {
 			polyphonic = !strcmp((char*)key, "true");
 		} else if ((!xmlStrcmp(cur->name, (const xmlChar*)"type"))) {
-			plugin->set_type((const char*)key);
+			plugin_type = (const char*)key;
 		} else if ((!xmlStrcmp(cur->name, (const xmlChar*)"library-name"))) {
-			plugin->lib_name((char*)key);
+			library_name = (char*)key;
 		} else if ((!xmlStrcmp(cur->name, (const xmlChar*)"plugin-label"))) {
-			plugin->plug_label((char*)key);
+			plugin_label = (char*)key;
 		} else if ((!xmlStrcmp(cur->name, (const xmlChar*)"plugin-uri"))) {
-			plugin->uri((char*)key);
+			plugin_uri = (char*)key;
 		} else if ((!xmlStrcmp(cur->name, (const xmlChar*)"port"))) {
+			cerr << "FIXME: load port\n";
+#if 0
 			xmlNodePtr child = cur->xmlChildrenNode;
 			
 			string port_name;
@@ -640,12 +596,15 @@ cerr << "FIXME: load node\n";
 					0.0, user_min, user_max));
 			//pm->set_parent(nm);
 			nm->add_port(pm);
+#endif
 
 		// DSSI hacks.  Stored in the patch files as special elements, but sent to
 		// the engine as normal metadata with specially formatted key/values.  Not
 		// sure if this is the best way to go about this, but it's the least damaging
 		// right now
 		} else if ((!xmlStrcmp(cur->name, (const xmlChar*)"dssi-program"))) {
+			cerr << "FIXME: load dssi program\n";
+#if 0
 			xmlNodePtr child = cur->xmlChildrenNode;
 			
 			string bank;
@@ -665,8 +624,11 @@ cerr << "FIXME: load node\n";
 				child = child->next;
 			}
 			nm->set_metadata("dssi-program", Atom(bank.append("/").append(program).c_str()));
+#endif
 			
 		} else if ((!xmlStrcmp(cur->name, (const xmlChar*)"dssi-configure"))) {
+			cerr << "FIXME: load dssi configure\n";
+#if 0
 			xmlNodePtr child = cur->xmlChildrenNode;
 			
 			string dssi_key;
@@ -687,10 +649,18 @@ cerr << "FIXME: load node\n";
 				child = child->next;
 			}
 			nm->set_metadata(string("dssi-configure--").append(dssi_key), Atom(dssi_value.c_str()));
-			
+#endif		
 		} else {  // Don't know what this tag is, add it as metadata
-			if (key != NULL)
-				nm->set_metadata((const char*)cur->name, (const char*)key);
+			if (key) {
+
+				// Hack to make module-x and module-y set as floats
+				char* endptr = NULL;
+				float fval = strtof((const char*)key, &endptr);
+				if (endptr != (char*)key && *endptr == '\0')
+					initial_data[(const char*)cur->name] = Atom(fval);
+				else
+					initial_data[(const char*)cur->name] = Atom((const char*)key);
+			}
 		}
 		xmlFree(key);
 		key = NULL;
@@ -698,37 +668,41 @@ cerr << "FIXME: load node\n";
 		cur = cur->next;
 	}
 	
-	if (nm->path() == "") {
+	if (path == "") {
 		cerr << "[PatchLibrarian] Malformed patch file (node tag has empty children)" << endl;
 		cerr << "[PatchLibrarian] Node ignored." << endl;
-		return CountedPtr<NodeModel>();
+		return false;
+	}
 
-	// Compatibility hacks for old patches
-	} else if (plugin->type() == PluginModel::Internal) {
+	// Compatibility hacks for old patches that represent patch ports as nodes
+	if (plugin_uri == "") {
+		cerr << "WARNING: Loading deprecated Node.  Resave! " << path << endl;
 		bool is_port = false;
-		const string path = Path::pathify(nm->path());
-		if (plugin->plug_label() == "audio_input") {
-			_engine->create_port(path, "AUDIO", false);
-			is_port = true;
- 		} else if ( plugin->plug_label() == "audio_output") {
-			_engine->create_port(path, "AUDIO", true);
-			is_port = true;
- 		} else if ( plugin->plug_label() == "control_input") {
-			_engine->create_port(path, "CONTROL", false);
-			is_port = true;
- 		} else if ( plugin->plug_label() == "control_output" ) {
-			_engine->create_port(path, "CONTROL", true);
-			is_port = true;
- 		} else if ( plugin->plug_label() == "midi_input") {
-			_engine->create_port(path, "MIDI", false);
-			is_port = true;
- 		} else if ( plugin->plug_label() == "midi_output" ) {
-			_engine->create_port(path, "MIDI", true);
-			is_port = true;
+
+		if (plugin_type == "Internal") {
+			if (plugin_label == "audio_input") {
+				_engine->create_port(path, "AUDIO", false);
+				is_port = true;
+			} else if (plugin_label == "audio_output") {
+				_engine->create_port(path, "AUDIO", true);
+				is_port = true;
+			} else if (plugin_label == "control_input") {
+				_engine->create_port(path, "CONTROL", false);
+				is_port = true;
+			} else if (plugin_label == "control_output" ) {
+				_engine->create_port(path, "CONTROL", true);
+				is_port = true;
+			} else if (plugin_label == "midi_input") {
+				_engine->create_port(path, "MIDI", false);
+				is_port = true;
+			} else if (plugin_label == "midi_output" ) {
+				_engine->create_port(path, "MIDI", true);
+				is_port = true;
+			}
 		}
 
 		if (is_port) {
-			const string old_path = nm->path();
+			const string old_path = path;
 			const string new_path = Path::pathify(old_path);
 
 			// Set up translations (for connections etc) to alias both the old
@@ -737,58 +711,71 @@ cerr << "FIXME: load node\n";
 			_load_path_translations[old_path + "/in"] = new_path;
 			_load_path_translations[old_path + "/out"] = new_path;
 
-			nm->set_path(new_path);
-			_engine->set_all_metadata(nm.get());
+			path = new_path;
+
+			_engine->set_metadata_map(path, initial_data);
+
 			return CountedPtr<NodeModel>();
+
 		} else {
-			if (plugin->uri() == "") {
-				if (plugin->plug_label() == "note_in") {
-					plugin->uri("ingen:note_node");
-				} else if (plugin->plug_label() == "control_input") {
-					plugin->uri("ingen:control_node");
-				} else if (plugin->plug_label() == "transport") {
-					plugin->uri("ingen:transport_node");
-				} else if (plugin->plug_label() == "trigger_in") {
-					plugin->uri("ingen:trigger_node");
-				}
+			if (plugin_label  == "note_in") {
+				plugin_uri = "ingen:note_node";
+			} else if (plugin_label == "control_input") {
+				plugin_uri = "ingen:control_node";
+			} else if (plugin_label == "transport") {
+				plugin_uri = "ingen:transport_node";
+			} else if (plugin_label == "trigger_in") {
+				plugin_uri = "ingen:trigger_node";
+			} else {
+				cerr << "WARNING: Unknown deprecated node (label " << plugin_label
+					<< ")." << endl;
 			}
+
+			if (plugin_uri != "")
+				_engine->create_node(path, plugin_uri, polyphonic);
+			else
+				_engine->create_node(path, plugin_type, library_name, plugin_label, polyphonic);
+		
+			_engine->set_metadata_map(path, initial_data);
+
+			return true;
 		}
+
+	// Not deprecated
+	} else {
+		_engine->create_node(path, plugin_uri, polyphonic);
+		_engine->set_metadata_map(path, initial_data);
+		return true;
 	}
 
-	//nm->plugin(plugin);
-	
-	return nm;
-#endif
-	return CountedPtr<NodeModel>();
+	// (shouldn't get here)
 }
 
 
-void
-PatchLibrarian::load_subpatch(const CountedPtr<PatchModel> parent, xmlDocPtr doc, const xmlNodePtr subpatch)
+bool
+PatchLibrarian::load_subpatch(const Path& parent, xmlDocPtr doc, const xmlNodePtr subpatch)
 {
-	//xmlChar *key;
-	//xmlNodePtr cur = subpatch->xmlChildrenNode;
+	xmlChar *key;
+	xmlNodePtr cur = subpatch->xmlChildrenNode;
 	
-	cerr << "FIXME: load subpatch" << endl;
+	string name     = "";
+	string filename = "";
+	size_t poly     = 0;
+	
+	MetadataMap initial_data;
 
-#if 0
-	//CountedPtr<PatchModel> pm(new PatchModel("/UNINITIALIZED", 1)); // FIXME: ew
-	
 	while (cur != NULL) {
 		key = xmlNodeListGetString(doc, cur->xmlChildrenNode, 1);
 		
 		if ((!xmlStrcmp(cur->name, (const xmlChar*)"name"))) {
-			if (parent == NULL)
-				pm->set_path(string("/") + (const char*)key);
-			else
-				pm->set_path(parent->path().base() + (const char*)key);
+			name = (const char*)key;
 		} else if ((!xmlStrcmp(cur->name, (const xmlChar*)"polyphony"))) {
-			pm->poly(atoi((const char*)key));
+			poly = atoi((const char*)key);
 		} else if ((!xmlStrcmp(cur->name, (const xmlChar*)"filename"))) {
-			pm->filename((const char*)key);
+			filename = (const char*)key;
 		} else {  // Don't know what this tag is, add it as metadata
 			if (key != NULL && strlen((const char*)key) > 0)
-				pm->set_metadata((const char*)cur->name, (const char*)key);
+				initial_data[(const char*)cur->name] = Atom((const char*)key);
 		}
 		xmlFree(key);
 		key = NULL;
@@ -796,25 +783,19 @@ PatchLibrarian::load_subpatch(const CountedPtr<PatchModel> parent, xmlDocPtr doc
 		cur = cur->next;
 	}
 
-	// This needs to be done after setting the path above, to prevent
-	// NodeModel::set_path from calling it's parent's rename_node with
-	// an invalid (nonexistant) name
-	pm->set_parent(parent);
-
-	load_patch(pm, false);
-#endif
+	// load_patch sets the passed metadata last, so values stored in the parent
+	// will override values stored in the child patch file
+	string path = load_patch(filename, parent, name, poly, initial_data, false);
+	
+	return false;
 }
 
 
 /** Build a ConnectionModel given a pointer to a connection in a patch file.
  */
-ConnectionModel*
-PatchLibrarian::parse_connection(const CountedPtr<const PatchModel> parent, xmlDocPtr doc, const xmlNodePtr node)
+bool
+PatchLibrarian::load_connection(const Path& parent, xmlDocPtr doc, const xmlNodePtr node)
 {
-	//cerr << "[PatchLibrarian] Parsing connection..." << endl;
-
-	cerr << "FIXME: load connection" << endl;
-#if 0
 	xmlChar *key;
 	xmlNodePtr cur = node->xmlChildrenNode;
 	
@@ -840,9 +821,9 @@ PatchLibrarian::parse_connection(const CountedPtr<const PatchModel> parent, xmlD
 	}
 
 	if (source_node == "" || source_port == "" || dest_node == "" || dest_port == "") {
-		cerr << "[PatchLibrarian] Malformed patch file (connection tag has empty children)" << endl;
-		cerr << "[PatchLibrarian] Connection ignored." << endl;
-		return NULL;
+		cerr << "ERROR: Malformed patch file (connection tag has empty children)" << endl;
+		cerr << "ERROR: Connection ignored." << endl;
+		return false;
 	}
 
 	// Compatibility fixes for old (fundamentally broken) patches
@@ -851,21 +832,21 @@ PatchLibrarian::parse_connection(const CountedPtr<const PatchModel> parent, xmlD
 	dest_node = Path::nameify(dest_node);
 	dest_port = Path::nameify(dest_port);
 
-	ConnectionModel* cm = new ConnectionModel(
-			translate_load_path(parent->path().base() + source_node +"/"+ source_port),
-			translate_load_path(parent->path().base() + dest_node +"/"+ dest_port));
+	_engine->connect(
+		translate_load_path(parent.base() + source_node +"/"+ source_port),
+		translate_load_path(parent.base() + dest_node +"/"+ dest_port));
 	
-	return cm;
-#endif
-	return 0;
+	return true;
 }
 
 
 /** Build a PresetModel given a pointer to a preset in a patch file.
  */
-PresetModel*
-PatchLibrarian::parse_preset(const CountedPtr<const PatchModel> patch, xmlDocPtr doc, const xmlNodePtr node)
+bool
+PatchLibrarian::load_preset(const Path& parent, xmlDocPtr doc, const xmlNodePtr node)
 {
+	cerr << "FIXME: load preset\n";
+#if 0
 	xmlNodePtr cur = node->xmlChildrenNode;
 	xmlChar* key;
 
@@ -929,6 +910,8 @@ PatchLibrarian::parse_preset(const CountedPtr<const PatchModel> patch, xmlDocPtr
 	}
 
 	return pm;
+#endif
+	return false;
 }
 
 } // namespace Client

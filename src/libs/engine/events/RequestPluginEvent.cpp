@@ -14,44 +14,62 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "RequestAllObjectsEvent.h"
+#include "RequestPluginEvent.h"
+#include <string>
 #include "Responder.h"
 #include "Engine.h"
-#include "ObjectSender.h"
-#include "ClientBroadcaster.h"
+#include "interface/ClientInterface.h"
+#include "TypedPort.h"
 #include "ObjectStore.h"
+#include "ClientBroadcaster.h"
+#include "NodeFactory.h"
+#include "Plugin.h"
+
+using std::string;
 
 namespace Ingen {
 
 
-RequestAllObjectsEvent::RequestAllObjectsEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp)
-: QueuedEvent(engine, responder, timestamp)
+RequestPluginEvent::RequestPluginEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& uri)
+: QueuedEvent(engine, responder, timestamp),
+  m_uri(uri),
+  m_plugin(NULL)
 {
 }
 
 
 void
-RequestAllObjectsEvent::pre_process()
+RequestPluginEvent::pre_process()
 {
 	m_client = _engine.broadcaster()->client(_responder->client_key());
-	
+	m_plugin = _engine.node_factory()->plugin(m_uri);
+
 	QueuedEvent::pre_process();
 }
 
 
 void
-RequestAllObjectsEvent::post_process()
+RequestPluginEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {
-	if (m_client) {
-		_responder->respond_ok();
+	QueuedEvent::execute(nframes, start, end);
+	assert(_time >= start && _time <= end);
+}
 
-		// Everything is a child of the root patch, so this sends it all
-		Patch* root = _engine.object_store()->find_patch("/");
-		if (root)
-			ObjectSender::send_patch(m_client.get(), root, true);
+
+void
+RequestPluginEvent::post_process()
+{
+	if (!m_plugin) {
+		_responder->respond_error("Unable to find plugin requested.");
+	
+	} else if (m_client) {
+
+		_responder->respond_ok();
+		assert(m_plugin->uri() == m_uri);
+		m_client->new_plugin(m_uri, m_plugin->name());
 
 	} else {
-		_responder->respond_error("Unable to find client to send all objects");
+		_responder->respond_error("Unable to find client to send plugin.");
 	}
 }
 

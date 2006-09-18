@@ -66,11 +66,13 @@ ObjectModel::assimilate(CountedPtr<ObjectModel> model)
 {
 	assert(_path == model->path());
 
-	for (MetadataMap::const_iterator i = model->metadata().begin();
-			i != model->metadata().end(); ++i) {
-		MetadataMap::const_iterator i = _metadata.find(i->first);
-		if (i == _metadata.end())
-			_metadata[i->first] = i->second;
+	for (MetadataMap::const_iterator other = model->metadata().begin();
+			other != model->metadata().end(); ++other) {
+		
+		MetadataMap::const_iterator mine = _metadata.find(other->first);
+		
+		if (mine == _metadata.end())
+			_metadata[other->first] = other->second;
 	}
 }
 

@@ -28,41 +28,35 @@ namespace Ingen {
 
 
 void
-ObjectSender::send_patch(ClientInterface* client, const Patch* patch)
+ObjectSender::send_patch(ClientInterface* client, const Patch* patch, bool recursive)
 {
 	client->new_patch(patch->path(), patch->internal_poly());
 	
-	for (List<Node*>::const_iterator j = patch->nodes().begin();
-			j != patch->nodes().end(); ++j) {
-		const Node* const node = (*j);
+	if (recursive) {
 
-		send_node(client, node);
+		// Send nodes
+		for (List<Node*>::const_iterator j = patch->nodes().begin();
+				j != patch->nodes().end(); ++j) {
+
+			const Node* const node = (*j); 
+			send_node(client, node, true);
+		}
+
+		// Send ports
+		for (size_t i=0; i < patch->num_ports(); ++i) {
+
+			Port* const port = patch->ports().at(i);
+			send_port(client, port);
+
+		}
+
+		// Send connections
+		for (List<Connection*>::const_iterator j = patch->connections().begin();
+				j != patch->connections().end(); ++j)
+			client->connection((*j)->src_port()->path(), (*j)->dst_port()->path());
+
 	}
-	
-	// Send port information
-	for (size_t i=0; i < patch->num_ports(); ++i) {
-		Port* const port = patch->ports().at(i);
-		send_port(client, port);
-/*
-		// Send metadata
-		const GraphObject::MetadataMap& data = port->metadata();
-		for (GraphObject::MetadataMap::const_iterator i = data.begin(); i != data.end(); ++i)
-			client->metadata_update(port->path(), (*i).first, (*i).second);
-		
-		// Control port, send value
-		if (port->type() == DataType::FLOAT && port->buffer_size() == 1)
-			client->control_change(port->path(),
-				dynamic_cast<TypedPort<Sample>*>(port)->buffer(0)->value_at(0));
-*/
-	}
 
-
-	// Send connections
-	for (List<Connection*>::const_iterator j = patch->connections().begin();
-			j != patch->connections().end(); ++j)
-		client->connection((*j)->src_port()->path(), (*j)->dst_port()->path());
-	
-	
 	// Send metadata
 	const GraphObject::MetadataMap& data = patch->metadata();
 	for (GraphObject::MetadataMap::const_iterator j = data.begin(); j != data.end(); ++j)
@@ -75,7 +69,7 @@ ObjectSender::send_patch(ClientInterface* client, const Patch* patch)
 
 /** Sends a node or a patch */
 void
-ObjectSender::send_node(ClientInterface* client, const Node* node)
+ObjectSender::send_node(ClientInterface* client, const Node* node, bool recursive)
 {
 	const Plugin* const plugin = node->plugin();
 
@@ -87,7 +81,7 @@ ObjectSender::send_node(ClientInterface* client, const Node* node)
 	assert(node->path().length() > 0);
 	
 	if (plugin->type() == Plugin::Patch) {
-		send_patch(client, (Patch*)node);
+		send_patch(client, (Patch*)node, recursive);
 		return;
 	}
 
@@ -95,32 +89,30 @@ ObjectSender::send_node(ClientInterface* client, const Node* node)
 		cerr << "Node " << node->path() << " plugin has no URI!  Not sending." << endl;
 		return;
 	}
-
 	
-	client->bundle_begin();
-
 	// FIXME: bundleify
+	//client->bundle_begin();
 	
 	const Array<Port*>& ports = node->ports();
 
-	client->new_node(node->plugin()->type_string(), node->plugin()->uri(),
-	                 node->path(), polyphonic, ports.size());
+	client->new_node(node->plugin()->uri(), node->path(), polyphonic, ports.size());
 	
-	// Send ports
-	for (size_t j=0; j < ports.size(); ++j) {
-		Port* const port = ports.at(j);
-		assert(port);
-		
-		send_port(client, port);
-		//client->new_port(port->path(), port->type().uri(), port->is_output());
+	if (recursive) {
+		// Send ports
+		for (size_t j=0; j < ports.size(); ++j) {
+			Port* const port = ports.at(j);
+			assert(port);
+
+			send_port(client, port);
+		}
 	}
 
-	client->bundle_end();
-	
 	// Send metadata
 	const GraphObject::MetadataMap& data = node->metadata();
 	for (GraphObject::MetadataMap::const_iterator j = data.begin(); j != data.end(); ++j)
 		client->metadata_update(node->path(), (*j).first, (*j).second);
+	
+	//client->bundle_end();
 }
 
 
@@ -128,6 +120,8 @@ void
 ObjectSender::send_port(ClientInterface* client, const Port* port)
 {
 	assert(port);
+	
+	//cerr << "Sending port " << port->path();
 
 	// FIXME: temporary compatibility hack
 	string type = port->type().uri();
@@ -137,7 +131,9 @@ ObjectSender::send_port(ClientInterface* client, const Port* port)
 		else
 			type = "AUDIO";
 	}
-		
+	
+	//cerr << ", type = " << type << endl;
+
 	client->new_port(port->path(), type, port->is_output());
 	
 	// Send control value
@@ -171,7 +167,7 @@ ObjectSender::send_plugins(ClientInterface* client, const list<Plugin*>& plugs)
 */
 	for (list<Plugin*>::const_iterator j = plugs.begin(); j != plugs.end(); ++j) {
 		const Plugin* const p = *j;
-		client->new_plugin(p->type_string(), p->uri(), p->name());
+		client->new_plugin(p->uri(), p->name());
 	}
 /*
 		plugin = (*j);
