@@ -118,7 +118,7 @@ void
 AlsaMidiPort::event(snd_seq_event_t* const ev)
 {
 	// Abuse the tick field to hold the timestamp
-	ev->time.tick = _driver->clock()->time_stamp();
+	ev->time.tick = _driver->audio_driver()->frame_time();
 	
 	// Fix noteons with velocity 0 (required for DSSI spec)
 	if (ev->type == SND_SEQ_EVENT_NOTEON && ev->data.note.velocity == 0)
@@ -187,8 +187,9 @@ AlsaMidiPort::prepare_block(const SampleCount block_start, const SampleCount blo
 bool AlsaMidiDriver::_midi_thread_exit_flag = true;
 
 
-AlsaMidiDriver::AlsaMidiDriver()
-: _seq_handle(NULL),
+AlsaMidiDriver::AlsaMidiDriver(AudioDriver* audio_driver)
+: _audio_driver(audio_driver),
+  _seq_handle(NULL),
   _event_coder(NULL),
   _is_activated(false)
 {

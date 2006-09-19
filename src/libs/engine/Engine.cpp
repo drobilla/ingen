@@ -54,7 +54,7 @@ Engine::Engine(AudioDriver* audio_driver)
 #ifdef HAVE_JACK_MIDI
   m_midi_driver(new JackMidiDriver(((JackAudioDriver*)m_audio_driver)->jack_client())),
 #elif HAVE_ALSA_MIDI
-  m_midi_driver(new AlsaMidiDriver()),
+  m_midi_driver(new AlsaMidiDriver(m_audio_driver)),
 #else
   m_midi_driver(new DummyMidiDriver()),
 #endif

@@ -17,9 +17,9 @@
 #ifndef ATOM_H
 #define ATOM_H
 
+#include <cstdlib>
 #include <cassert>
 #include <cstring>
-#include <lo/lo.h>
 
 
 /** An OSC atom (fundamental data types OSC messages are composed of).

@@ -8,10 +8,6 @@ bin_PROGRAMS = om_demolition
 om_demolition_DEPENDENCIES = ../../libs/client/libomclient.la
 
 om_demolition_SOURCES = \
-	DemolitionClientInterface.h \
-	DemolitionClientInterface.cpp \
-	DemolitionModel.h \
-	DemolitionModel.cpp \
 	demolition.cpp \
 	cmdline.h \
 	cmdline.c

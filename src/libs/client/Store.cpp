@@ -50,8 +50,8 @@ Store::Store(CountedPtr<EngineInterface> engine, CountedPtr<SigClientInterface> 
 void
 Store::clear()
 {
-	m_objects.clear();
-	m_plugins.clear();
+	_objects.clear();
+	_plugins.clear();
 
 }
 
@@ -63,16 +63,16 @@ Store::add_plugin_orphan(CountedPtr<NodeModel> node)
 		<< node->plugin_uri() << " unknown." << endl;
 
 	map<string, list<CountedPtr<NodeModel> > >::iterator spawn
-		= m_plugin_orphans.find(node->plugin_uri());
+		= _plugin_orphans.find(node->plugin_uri());
 
 	_engine->request_plugin(node->plugin_uri());
 
-	if (spawn != m_plugin_orphans.end()) {
+	if (spawn != _plugin_orphans.end()) {
 		spawn->second.push_back(node);
 	} else {
 		list<CountedPtr<NodeModel> > l;
 		l.push_back(node);
-		m_plugin_orphans[node->plugin_uri()] = l;
+		_plugin_orphans[node->plugin_uri()] = l;
 	}
 }
 
@@ -81,13 +81,13 @@ void
 Store::resolve_plugin_orphans(CountedPtr<PluginModel> plugin)
 {
 	map<string, list<CountedPtr<NodeModel> > >::iterator n
-		= m_plugin_orphans.find(plugin->uri());
+		= _plugin_orphans.find(plugin->uri());
 
-	if (n != m_plugin_orphans.end()) {
+	if (n != _plugin_orphans.end()) {
 	
 		list<CountedPtr<NodeModel> > spawn = n->second; // take a copy
 
-		m_plugin_orphans.erase(plugin->uri()); // prevent infinite recursion
+		_plugin_orphans.erase(plugin->uri()); // prevent infinite recursion
 		
 		for (list<CountedPtr<NodeModel> >::iterator i = spawn.begin();
 				i != spawn.end(); ++i) {
@@ -103,7 +103,7 @@ Store::add_connection_orphan(CountedPtr<ConnectionModel> connection)
 	cerr << "WARNING: Orphan connection " << connection->src_port_path()
 		<< " -> " << connection->dst_port_path() << " received." << endl;
 	
-	m_connection_orphans.push_back(connection);
+	_connection_orphans.push_back(connection);
 }
 
 
@@ -112,8 +112,8 @@ Store::resolve_connection_orphans(CountedPtr<PortModel> port)
 {
 	assert(port->parent());
 
-	for (list<CountedPtr<ConnectionModel> >::iterator c = m_connection_orphans.begin();
-			c != m_connection_orphans.end(); ) {
+	for (list<CountedPtr<ConnectionModel> >::iterator c = _connection_orphans.begin();
+			c != _connection_orphans.end(); ) {
 		
 		if ((*c)->src_port_path() == port->path())
 			(*c)->set_src_port(port);
@@ -130,7 +130,7 @@ Store::resolve_connection_orphans(CountedPtr<PortModel> port)
 				cerr << "Resolved orphan connection " << (*c)->src_port_path() <<
 					(*c)->dst_port_path() << endl;
 				patch->add_connection(*c);
-				m_connection_orphans.erase(c);
+				_connection_orphans.erase(c);
 			}
 		}
 
@@ -145,16 +145,16 @@ Store::add_orphan(CountedPtr<ObjectModel> child)
 	cerr << "WARNING: Orphan object " << child->path() << " received." << endl;
 
 	map<Path, list<CountedPtr<ObjectModel> > >::iterator children
-		= m_orphans.find(child->path().parent());
+		= _orphans.find(child->path().parent());
 
 	_engine->request_object(child->path().parent());
 
-	if (children != m_orphans.end()) {
+	if (children != _orphans.end()) {
 		children->second.push_back(child);
 	} else {
 		list<CountedPtr<ObjectModel> > l;
 		l.push_back(child);
-		m_orphans[child->path().parent()] = l;
+		_orphans[child->path().parent()] = l;
 	}
 }
 
@@ -163,16 +163,16 @@ void
 Store::add_metadata_orphan(const Path& subject_path, const string& predicate, const Atom& value)
 {
 	map<Path, list<std::pair<string, Atom> > >::iterator orphans
-		= m_metadata_orphans.find(subject_path);
+		= _metadata_orphans.find(subject_path);
 
 	_engine->request_object(subject_path);
 
-	if (orphans != m_metadata_orphans.end()) {
+	if (orphans != _metadata_orphans.end()) {
 		orphans->second.push_back(std::pair<string, Atom>(predicate, value));
 	} else {
 		list<std::pair<string, Atom> > l;
 		l.push_back(std::pair<string, Atom>(predicate, value));
-		m_metadata_orphans[subject_path] = l;
+		_metadata_orphans[subject_path] = l;
 	}
 }
 
@@ -181,13 +181,13 @@ void
 Store::resolve_metadata_orphans(CountedPtr<ObjectModel> subject)
 {
 	map<Path, list<std::pair<string, Atom> > >::iterator v
-		= m_metadata_orphans.find(subject->path());
+		= _metadata_orphans.find(subject->path());
 
-	if (v != m_metadata_orphans.end()) {
+	if (v != _metadata_orphans.end()) {
 	
 		list<std::pair<string, Atom> > values = v->second; // take a copy
 
-		m_metadata_orphans.erase(subject->path());
+		_metadata_orphans.erase(subject->path());
 		
 		for (list<std::pair<string, Atom> >::iterator i = values.begin();
 				i != values.end(); ++i) {
@@ -201,13 +201,13 @@ void
 Store::resolve_orphans(CountedPtr<ObjectModel> parent)
 {
 	map<Path, list<CountedPtr<ObjectModel> > >::iterator c
-		= m_orphans.find(parent->path());
+		= _orphans.find(parent->path());
 
-	if (c != m_orphans.end()) {
+	if (c != _orphans.end()) {
 	
 		list<CountedPtr<ObjectModel> > children = c->second; // take a copy
 
-		m_orphans.erase(parent->path()); // prevent infinite recursion
+		_orphans.erase(parent->path()); // prevent infinite recursion
 		
 		for (list<CountedPtr<ObjectModel> >::iterator i = children.begin();
 				i != children.end(); ++i) {
@@ -222,8 +222,8 @@ Store::add_object(CountedPtr<ObjectModel> object)
 {
 	// If we already have "this" object, merge the existing one into the new
 	// one (with precedence to the new values).
-	ObjectMap::iterator existing = m_objects.find(object->path());
-	if (existing != m_objects.end()) {
+	ObjectMap::iterator existing = _objects.find(object->path());
+	if (existing != _objects.end()) {
 		existing->second->set(object);
 	} else {
 
@@ -235,7 +235,7 @@ Store::add_object(CountedPtr<ObjectModel> object)
 				parent->add_child(object);
 				assert(parent && (object->parent() == parent));
 				
-				m_objects[object->path()] = object;
+				_objects[object->path()] = object;
 				new_object_sig.emit(object);
 				
 				resolve_metadata_orphans(parent);
@@ -249,7 +249,7 @@ Store::add_object(CountedPtr<ObjectModel> object)
 				add_orphan(object);
 			}
 		} else {
-			m_objects[object->path()] = object;
+			_objects[object->path()] = object;
 			new_object_sig.emit(object);
 		}
 
@@ -262,12 +262,12 @@ Store::add_object(CountedPtr<ObjectModel> object)
 CountedPtr<ObjectModel>
 Store::remove_object(const Path& path)
 {
-	map<Path, CountedPtr<ObjectModel> >::iterator i = m_objects.find(path);
+	map<Path, CountedPtr<ObjectModel> >::iterator i = _objects.find(path);
 
-	if (i != m_objects.end()) {
+	if (i != _objects.end()) {
 		assert((*i).second->path() == path);
 		CountedPtr<ObjectModel> result = (*i).second;
-		m_objects.erase(i);
+		_objects.erase(i);
 		//cout << "[Store] Removed " << path << endl;
 
 		if (result)
@@ -297,8 +297,8 @@ CountedPtr<PluginModel>
 Store::plugin(const string& uri)
 {
 	assert(uri.length() > 0);
-	map<string, CountedPtr<PluginModel> >::iterator i = m_plugins.find(uri);
-	if (i == m_plugins.end())
+	map<string, CountedPtr<PluginModel> >::iterator i = _plugins.find(uri);
+	if (i == _plugins.end())
 		return CountedPtr<PluginModel>();
 	else
 		return (*i).second;
@@ -309,8 +309,8 @@ CountedPtr<ObjectModel>
 Store::object(const Path& path)
 {
 	assert(path.length() > 0);
-	map<Path, CountedPtr<ObjectModel> >::iterator i = m_objects.find(path);
-	if (i == m_objects.end()) {
+	map<Path, CountedPtr<ObjectModel> >::iterator i = _objects.find(path);
+	if (i == _objects.end()) {
 		return CountedPtr<ObjectModel>();
 	} else {
 		assert(i->second->path() == "/" || i->second->parent());
@@ -323,7 +323,7 @@ Store::add_plugin(CountedPtr<PluginModel> pm)
 {
 	// FIXME: dupes?  merge, like with objects?
 	
-	m_plugins[pm->uri()] = pm;
+	_plugins[pm->uri()] = pm;
 }
 
 

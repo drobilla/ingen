@@ -17,8 +17,11 @@
 #include "interface/ClientInterface.h"
 #include "interface/ClientKey.h"
 #include "OSCModelEngineInterface.h"
+#include "OSCClientReceiver.h"
+#include "SigClientInterface.h"
+#include "Store.h"
 #include "PatchLibrarian.h"
-#include "DemolitionClientInterface.h"
+#include "PluginModel.h"
 #include "util/CountedPtr.h"
 #include <iostream>
 #include <unistd.h>
@@ -46,9 +49,21 @@ void rename_object();
 
 
 // Yay globals!
-DemolitionModel* model;
-OSCModelEngineInterface*   engine;
-	
+CountedPtr<OSCModelEngineInterface> engine;
+CountedPtr<Store> store;
+
+
+// OSC listening non-threaded signal emitter
+struct OSCSigEmitter : public OSCClientReceiver, public SigClientInterface {
+public:
+	OSCSigEmitter(int listen_port)
+	: Ingen::Shared::ClientInterface()
+	, OSCClientReceiver(listen_port)
+	, SigClientInterface()
+	{
+	}
+};
+
 
 int
 main(int argc, char** argv)
@@ -73,18 +88,16 @@ main(int argc, char** argv)
 	else
 		client_port = 0; // will choose a free port automatically
 	
-	model   = new DemolitionModel();
+	engine = CountedPtr<ModelEngineInterface>(new OSCModelEngineInterface(engine_url));
+	CountedPtr<SigClientInterface> emitter(new OSCSigEmitter(16182));
 	
-	// Create this first so engine interface (liblo) uses the port
-	CountedPtr<DemolitionClientInterface> client
-		= CountedPtr<DemolitionClientInterface>(new DemolitionClientInterface(model));
-	
-	engine = new OSCModelEngineInterface(engine_url);
+	store = CountedPtr<Store>(new Store(engine, emitter));
+
 	engine->activate();
 	
 	/* Connect to engine */
 	//engine->attach(engine_url);
-	engine->register_client(ClientKey(), (CountedPtr<ClientInterface>)client);
+	engine->register_client(ClientKey(), emitter);
 	
 	engine->load_plugins();
 	engine->request_plugins();
@@ -106,9 +119,6 @@ main(int argc, char** argv)
 	engine->unregister_client(ClientKey());
 	//engine->detach();
 
-	delete engine;
-	delete model;
-	
 	return 0;
 }
 
@@ -157,36 +167,70 @@ random_name()
 }
 
 
+Path
+random_object()
+{
+	typedef map<Path, CountedPtr<ObjectModel> > ObjectMap;
+	
+	const ObjectMap& objects = store->objects();
+
+	// Return a crap path every once in a while
+	if (rand() % 30)
+		return "/DEAD/BEEF";
+
+	// "random" is a bit of a generous label...
+	for (ObjectMap::const_iterator i = objects.begin(); i != objects.end(); ++i)
+		if (rand() % objects.size())
+			return i->second->path();
+
+	return "/";
+}
+
+
+string
+random_plugin()
+{
+	typedef map<string, CountedPtr<PluginModel> > PluginMap;
+	
+	const PluginMap& plugins = store->plugins();
+
+	// Return a crap path every once in a while
+	if (rand() % 30)
+		return "DEAD:BEEF";
+
+	// "random" is a bit of a generous label...
+	for (PluginMap::const_iterator i = plugins.begin(); i != plugins.end(); ++i)
+		if (rand() % plugins.size())
+			return i->second->uri();
+
+	return "DEAD:BEEF2";
+}
+
+
 void
 create_patch()
 {
 	// Make the probability of this happening inversely proportionate to the number
-	// of patches to keep the # in a sane range
-	//if (model->num_patches() > 0 && (rand() % model->num_patches()))
-	//	return;
+	// of objects to keep the # in a sane range
+	if (store->objects().size() > 0 && (rand() % store->objects().size()))
+		return;
 
 	bool subpatch = rand()%2;
-	PatchModel* parent = NULL;
+	Path parent = "/";
 	string name = random_name();
-	PatchModel* pm = NULL;
 	
 	if (subpatch)
-		parent = model->random_patch();
+		parent = random_object();  // very likely invalid parent error
 
-	if (parent != NULL)
-		pm = new PatchModel(parent->path() +"/"+ name, (rand()%8)+1);
-	else
-		pm = new PatchModel(string("/") + name, (rand()%8)+1);
+	const Path path = parent.base() + name;
 
-	cout << "Creating patch " << pm->path() << endl;
+	cout << "Creating patch " << path << endl;
 
-	engine->create_patch_from_model(pm);
+	engine->create_patch(path, (rand()%8)+1);
 	
 	// Spread them out a bit for easier monitoring with ingenuity
-	engine->set_metadata(pm->path(), "module-x", 1600 + rand()%800 - 400);
-	engine->set_metadata(pm->path(), "module-y", 1200 + rand()%700 - 350);
-	
-	delete pm;
+	engine->set_metadata(path, "module-x", 1600 + rand()%800 - 400);
+	engine->set_metadata(path, "module-y", 1200 + rand()%700 - 350);
 }
 
  
@@ -195,38 +239,24 @@ destroy()
 {
 	// Make the probability of this happening proportionate to the number
 	// of patches to keep the # in a sane range
-	if (model->num_patches() == 0 || !(rand() % model->num_patches()))
+	if (store->objects().size() > 0 && !(rand() % store->objects().size()))
 		return;
 
-	NodeModel* nm = NULL;
-	
-	if (rand()%2)
-		nm = model->random_patch();
-	else
-		nm = model->random_node();
-		
-	if (nm != NULL) {
-		cout << "Destroying " << nm->path() << endl;
-		engine->destroy(nm->path());
-	}
+	engine->destroy(random_object());
 }
 
  
 void
 add_node()
 {
-	PatchModel*  parent = model->random_patch();
-	PluginModel* plugin = model->random_plugin();
-	
-	if (parent != NULL && plugin != NULL) {
-		NodeModel* nm = new NodeModel(plugin, parent->path() +"/"+ random_name());
-		cout << "Adding node " << nm->path() << endl;
-		engine->create_node_from_model(nm);
-	
-		// Spread them out a bit for easier monitoring with ingenuity
-		engine->set_metadata(pm->path(), "module-x", 1600 + rand()%800 - 400);
-		engine->set_metadata(pm->path(), "module-y", 1200 + rand()%700 - 350);
-	}
+	const Path path = random_object().base() + random_name();
+
+	cout << "Adding node " << path << endl;
+	engine->create_node(path, random_plugin(), rand()%2);
+
+	// Spread them out a bit for easier monitoring with ingenuity
+	engine->set_metadata(path, "module-x", 1600 + rand()%800 - 400);
+	engine->set_metadata(path, "module-y", 1200 + rand()%700 - 350);
 }
 
  
@@ -234,11 +264,11 @@ void
 connect()
 {
 	if (!(rand() % 10)) {  // Attempt a connection between two nodes in the same patch
-		PatchModel* parent = model->random_patch();
-		NodeModel* n1 = model->random_node_in_patch(parent);
-		NodeModel* n2 = model->random_node_in_patch(parent);
-		PortModel* p1 = model->random_port_in_node(n1);
-		PortModel* p2 = model->random_port_in_node(n2);
+		PatchModel* parent = store->random_patch();
+		NodeModel* n1 = store->random_node_in_patch(parent);
+		NodeModel* n2 = store->random_node_in_patch(parent);
+		PortModel* p1 = store->random_port_in_node(n1);
+		PortModel* p2 = store->random_port_in_node(n2);
 		
 		if (p1 != NULL && p2 != NULL) {
 			cout << "Connecting " << p1->path() << " -> " << p2->path() << endl;
@@ -246,8 +276,8 @@ connect()
 		}
 
 	} else {  // Attempt a connection between two truly random nodes
-		PortModel* p1 = model->random_port();
-		PortModel* p2 = model->random_port();
+		PortModel* p1 = store->random_port();
+		PortModel* p2 = store->random_port();
 	
 		if (p1 != NULL && p2 != NULL) {
 			cout << "Connecting " << p1->path() << " -> " << p2->path() << endl;
@@ -260,8 +290,8 @@ connect()
 void
 disconnect()
 {
-	PortModel* p1 = model->random_port();
-	PortModel* p2 = model->random_port();
+	PortModel* p1 = store->random_port();
+	PortModel* p2 = store->random_port();
 
 	if (p1 != NULL && p2 != NULL) {
 		cout << "Disconnecting " << p1->path() << " -> " << p2->path() << endl;
@@ -273,7 +303,7 @@ disconnect()
 void
 disconnect_all()
 {
-	PortModel* p = model->random_port();
+	PortModel* p = store->random_port();
 
 	if (p != NULL) {
 		cout << "Disconnecting all from" << p->path() << endl;
@@ -285,7 +315,7 @@ disconnect_all()
 void
 set_port_value()
 {
-	PortModel* pm = model->random_port();
+	PortModel* pm = store->random_port();
 	float val = (float)rand() / (float)RAND_MAX;
 	
 	if (pm != NULL) {
@@ -298,7 +328,7 @@ set_port_value()
 void
 set_port_value_queued()
 {
-	PortModel* pm = model->random_port();
+	PortModel* pm = store->random_port();
 	float val = (float)rand() / (float)RAND_MAX;
 	
 	if (pm != NULL) {
@@ -315,11 +345,11 @@ rename_object()
 	/*int type = rand()%6;
 
 	if (type == 0) {
-		NodeModel* n = model->random_node();
+		NodeModel* n = store->random_node();
 		if (n != NULL)
 			engine->rename(n->path(), random_name());
 	} else {
-		PatchModel* p = model->random_patch();
+		PatchModel* p = store->random_patch();
 		if (p != NULL)
 			engine->rename(p->path(), random_name());
 	}*/

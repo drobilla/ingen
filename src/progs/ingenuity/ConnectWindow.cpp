@@ -44,11 +44,10 @@ namespace Ingenuity {
 
 
 struct OSCSigEmitter : public OSCClientReceiver, public ThreadedSigClientInterface {
-public:
 	OSCSigEmitter(size_t queue_size, int listen_port)
-	: Ingen::Shared::ClientInterface()
-	, OSCClientReceiver(listen_port)
-	, ThreadedSigClientInterface(queue_size)
+		: Ingen::Shared::ClientInterface()
+		, OSCClientReceiver(listen_port)
+		, ThreadedSigClientInterface(queue_size)
 	{
 	}
 };
@@ -56,8 +55,8 @@ public:
 
 struct QueuedModelEngineInterface : public QueuedEngineInterface, public ModelEngineInterface {
 	QueuedModelEngineInterface(CountedPtr<Ingen::Engine> engine)
-	: Ingen::Shared::EngineInterface()
-	, Ingen::QueuedEngineInterface(engine, Ingen::event_queue_size, Ingen::event_queue_size)
+		: Ingen::Shared::EngineInterface()
+		, Ingen::QueuedEngineInterface(engine, Ingen::event_queue_size, Ingen::event_queue_size)
 	{
 		QueuedEventSource::start();
 	}
@@ -348,7 +347,7 @@ ConnectWindow::gtk_callback()
 		App::instance().engine()->request_all_objects();
 		++stage;
 	} else if (stage == 7) {
-		if (App::instance().store()->num_objects() > 0) {
+		if (App::instance().store()->objects().size() > 0) {
 			CountedPtr<PatchModel> root = PtrCast<PatchModel>(App::instance().store()->object("/"));
 			assert(root);
 			App::instance().window_factory()->present_patch(root);

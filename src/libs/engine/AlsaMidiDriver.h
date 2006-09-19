@@ -27,6 +27,7 @@ namespace Ingen {
 class Node;
 class SetPortValueEvent;
 class AlsaMidiDriver;
+class AudioDriver;
 template <typename T> class DuplexPort;
 
 static const int MAX_MIDI_EVENT_SIZE = 3;
@@ -76,7 +77,7 @@ private:
 class AlsaMidiDriver : public MidiDriver
 {
 public:
-	AlsaMidiDriver();
+	AlsaMidiDriver(AudioDriver* audio_driver);
 	~AlsaMidiDriver();
 
 	void activate();
@@ -85,6 +86,8 @@ public:
 	bool is_activated() const { return _is_activated; }
 	
 	void prepare_block(const SampleCount block_start, const SampleCount block_end);
+
+	AudioDriver* audio_driver() { return _audio_driver; }
 
 	DriverPort* create_port(DuplexPort<MidiMessage>* patch_port)
 	{ return new AlsaMidiPort(this, patch_port); }
@@ -113,6 +116,7 @@ private:
 	// MIDI thread
 	static void* process_midi_in(void* me);
 
+	AudioDriver*      _audio_driver;
 	snd_seq_t*        _seq_handle;
 	snd_midi_event_t* _event_coder;
 	pthread_t         _process_thread;

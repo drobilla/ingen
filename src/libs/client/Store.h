@@ -54,9 +54,10 @@ public:
 
 	void clear();
 
-	size_t num_objects() { return m_objects.size(); }
+	size_t num_object() { return _objects.size(); }
 	
-	const map<string, CountedPtr<PluginModel> >& plugins() const { return m_plugins; }
+	const map<string, CountedPtr<PluginModel> >& plugins() const { return _plugins; }
+	const map<Path, CountedPtr<ObjectModel> >&   objects() const { return _objects; }
 
 	sigc::signal<void, CountedPtr<ObjectModel> > new_object_sig; 
 private:
@@ -98,23 +99,23 @@ private:
 	CountedPtr<SigClientInterface> _emitter;
 
 	typedef map<Path, CountedPtr<ObjectModel> > ObjectMap;
-	ObjectMap m_objects; ///< Keyed by Ingen path
+	ObjectMap _objects; ///< Keyed by Ingen path
 
-	map<string, CountedPtr<PluginModel> > m_plugins; ///< Keyed by URI
+	map<string, CountedPtr<PluginModel> > _plugins; ///< Keyed by URI
 
 	/** Objects we've received, but depend on the existance of another unknown object.
 	 * Keyed by the path of the depended-on object (for tolerance of orderless comms) */
-	map<Path, list<CountedPtr<ObjectModel> > > m_orphans;
+	map<Path, list<CountedPtr<ObjectModel> > > _orphans;
 	
 	/** Same idea, except with plugins instead of parents.
 	 * It's unfortunate everything doesn't just have a URI and this was the same.. ahem.. */
-	map<string, list<CountedPtr<NodeModel> > > m_plugin_orphans;
+	map<string, list<CountedPtr<NodeModel> > > _plugin_orphans;
 	
 	/** Not orphans OF metadata like the above, but orphans which are metadata */
-	map<Path, list<std::pair<string, Atom> > > m_metadata_orphans;
+	map<Path, list<std::pair<string, Atom> > > _metadata_orphans;
 	
 	/** Ditto */
-	list<CountedPtr<ConnectionModel> > m_connection_orphans;
+	list<CountedPtr<ConnectionModel> > _connection_orphans;
 };
 
 

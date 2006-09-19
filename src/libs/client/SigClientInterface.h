@@ -64,6 +64,69 @@ public:
 	sigc::signal<void, string, uint32_t, uint32_t>         program_remove_sig; 
 
 protected:
+
+	// ClientInterface hooks that fire the above signals
+	
+	void bundle_begin() {}
+	void bundle_end()   {}
+	
+	void transfer_begin() {}
+	void transfer_end()   {}
+
+	void num_plugins(uint32_t num) { num_plugins_sig.emit(num); }
+
+	void response(int32_t id, bool success, string msg)
+		{ response_sig.emit(id, success, msg); }
+
+	void error(string msg)
+		{ error_sig.emit(msg); }
+	
+	void new_plugin(string uri, string name)
+		{ new_plugin_sig.emit(uri, name); }
+	
+	void new_patch(string path, uint32_t poly)
+		{ new_patch_sig.emit(path, poly); }
+	
+	void new_node(string plugin_uri, string node_path, bool is_polyphonic, uint32_t num_ports)
+		{ new_node_sig.emit(plugin_uri, node_path, is_polyphonic, num_ports); }
+	
+	void new_port(string path, string data_type, bool is_output)
+		{ new_port_sig.emit(path, data_type, is_output); }
+
+	void connection(string src_port_path, string dst_port_path)
+		{ connection_sig.emit(src_port_path, dst_port_path); }
+
+	void object_destroyed(string path)
+		{ object_destroyed_sig.emit(path); }
+	
+	void patch_enabled(string path)
+		{ patch_enabled_sig.emit(path); }
+	
+	void patch_disabled(string path)
+		{ patch_disabled_sig.emit(path); }
+
+	void patch_cleared(string path)
+		{ patch_cleared_sig.emit(path); }
+
+	void object_renamed(string old_path, string new_path)
+		{ object_renamed_sig.emit(old_path, new_path); }
+	
+	void disconnection(string src_port_path, string dst_port_path)
+		{ disconnection_sig.emit(src_port_path, dst_port_path); }
+	
+	void metadata_update(string path, string key, Atom value)
+		{ metadata_update_sig.emit(path, key, value); }
+
+	void control_change(string port_path, float value)
+		{ control_change_sig.emit(port_path, value); }
+
+	void program_add(string path, uint32_t bank, uint32_t program, string name)
+		{ program_add_sig.emit(path, bank, program, name); }
+	
+	void program_remove(string path, uint32_t bank, uint32_t program)
+		{ program_remove_sig.emit(path, bank, program); }
+
+protected:
 	SigClientInterface() {}
 };
 
