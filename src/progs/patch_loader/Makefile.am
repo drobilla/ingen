@@ -1,13 +1,13 @@
 EXTRA_DIST = README
 
-om_patch_loader_CXXFLAGS = -I$(top_srcdir)/src/libs/client -I$(top_srcdir)/src/common -DPKGDATADIR=\"$(pkgdatadir)\" $(LXML2_CFLAGS) $(LOSC_CFLAGS) $(LSIGCPP_CFLAGS)
-om_patch_loader_LDADD = ../../libs/client/libomclient.la $(LOSC_LIBS) $(LXML2_LIBS) $(LSIGCPP_LIBS)
+ingen_load_CXXFLAGS = -I$(top_srcdir)/src/libs/client -I$(top_srcdir)/src/common @LSIGCPP_CFLAGS@
+ingen_load_LDADD = ../../libs/client/libingenclient.la 
 
-bin_PROGRAMS = om_patch_loader
+bin_PROGRAMS = ingen_load
 
-om_patch_loader_DEPENDENCIES = ../../libs/client/libomclient.la
+ingen_load_DEPENDENCIES = ../../libs/client/libingenclient.la
 
-om_patch_loader_SOURCES = \
+ingen_load_SOURCES = \
 	patch_loader.cpp \
 	cmdline.h \
 	cmdline.c

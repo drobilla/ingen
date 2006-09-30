@@ -101,6 +101,8 @@ ConnectionModel::patch_path() const
 	return patch_path;
 }
 
+typedef list<CountedPtr<ConnectionModel> > ConnectionList;
+
 
 } // namespace Client
 } // namespace Ingen

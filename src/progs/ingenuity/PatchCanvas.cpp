@@ -217,9 +217,9 @@ PatchCanvas::connect(const LibFlowCanvas::Port* src_port, const LibFlowCanvas::P
 		CountedPtr<PluginModel> pm(new PluginModel(PluginModel::Internal, "", "midi_control_in", ""));
 		CountedPtr<NodeModel> nm(new NodeModel(pm, m_patch->path().base()
 			+ src->name() + "-" + dst->name(), false));
-		nm->set_metadata("module-x", Atom((float)
+		nm->set_metadata("canvas-x", Atom((float)
 			(dst->module()->property_x() - dst->module()->width() - 20)));
-		nm->set_metadata("module-y", Atom((float)
+		nm->set_metadata("canvas-y", Atom((float)
 			(dst->module()->property_y())));
 		App::instance().engine()->create_node_from_model(nm.get());
 		App::instance().engine()->connect(src->model()->path(), nm->path() + "/MIDI_In");
@@ -332,8 +332,8 @@ PatchCanvas::get_initial_data()
 {
 	MetadataMap result;
 	
-	result["module-x"] = Atom((float)m_last_click_x);
-	result["module-y"] = Atom((float)m_last_click_y);
+	result["ingenuity:canvas-x"] = Atom((float)m_last_click_x);
+	result["ingenuity:canvas-y"] = Atom((float)m_last_click_y);
 	
 	return result;
 }

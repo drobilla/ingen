@@ -20,6 +20,9 @@
 #include <cstdlib>
 #include <cassert>
 #include <cstring>
+#include <string>
+
+using std::string;
 
 
 /** An OSC atom (fundamental data types OSC messages are composed of).
@@ -34,10 +37,11 @@ public:
 		BLOB
 	};
 
-	Atom()                : _type(NIL),    _blob_val(0)             {}
-	Atom(int32_t val)     : _type(INT),    _int_val(val)            {}
-	Atom(float val)       : _type(FLOAT),  _float_val(val)          {}
-	Atom(const char* val) : _type(STRING), _string_val(strdup(val)) {}
+	Atom()                  : _type(NIL),    _blob_val(0)                     {}
+	Atom(int32_t val)       : _type(INT),    _int_val(val)                    {}
+	Atom(float val)         : _type(FLOAT),  _float_val(val)                  {}
+	Atom(const char* val)   : _type(STRING), _string_val(strdup(val))         {}
+	Atom(const string& val) : _type(STRING), _string_val(strdup(val.c_str())) {}
 
 	Atom(void* val) : _type(BLOB), _blob_size(sizeof(val)), _blob_val(malloc(_blob_size))
 	{ memcpy(_blob_val, val, sizeof(_blob_size)); }

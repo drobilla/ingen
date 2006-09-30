@@ -104,13 +104,13 @@ NodeModule::store_location()
 	const float x = static_cast<float>(property_x());
 	const float y = static_cast<float>(property_y());
 	
-	const Atom& existing_x = m_node->get_metadata("module-x");
-	const Atom& existing_y = m_node->get_metadata("module-y");
+	const Atom& existing_x = m_node->get_metadata("ingenuity:canvas-x");
+	const Atom& existing_y = m_node->get_metadata("ingenuity:canvas-y");
 	
 	if (existing_x.type() != Atom::FLOAT || existing_y.type() != Atom::FLOAT
 			|| existing_x.get_float() != x || existing_y.get_float() != y) {
-		App::instance().engine()->set_metadata(m_node->path(), "module-x", Atom(x));
-		App::instance().engine()->set_metadata(m_node->path(), "module-y", Atom(y));
+		App::instance().engine()->set_metadata(m_node->path(), "ingenuity:canvas-x", Atom(x));
+		App::instance().engine()->set_metadata(m_node->path(), "ingenuity:canvas-y", Atom(y));
 	}
 
 }
@@ -126,9 +126,9 @@ NodeModule::on_right_click(GdkEventButton* event)
 void
 NodeModule::metadata_update(const string& key, const Atom& value)
 {
-	if (key == "module-x" && value.type() == Atom::FLOAT)
+	if (key == "ingenuity:canvas-x" && value.type() == Atom::FLOAT)
 		move_to(value.get_float(), property_y());
-	else if (key == "module-y" && value.type() == Atom::FLOAT)
+	else if (key == "ingenuity:canvas-y" && value.type() == Atom::FLOAT)
 		move_to(property_x(), value.get_float());
 }
 

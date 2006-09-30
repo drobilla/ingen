@@ -41,8 +41,8 @@ class Store;
 class PatchModel : public NodeModel
 {
 public:
-	const NodeModelMap&                       nodes()       const { return m_nodes; }
-	const list<CountedPtr<ConnectionModel> >& connections() const { return m_connections; }
+	const NodeModelMap&   nodes()       const { return m_nodes; }
+	const ConnectionList& connections() const { return m_connections; }
 	
 	CountedPtr<ConnectionModel> get_connection(const string& src_port_path, const string& dst_port_path) const;
 	CountedPtr<NodeModel>       get_node(const string& node_name) const;
@@ -91,11 +91,11 @@ private:
 	PatchModel(const PatchModel& copy);
 	PatchModel& operator=(const PatchModel& copy);
 	
-	NodeModelMap                       m_nodes;
-	list<CountedPtr<ConnectionModel> > m_connections;
-	string                             m_filename;
-	bool                               m_enabled;
-	size_t                             m_poly;
+	NodeModelMap   m_nodes;
+	ConnectionList m_connections;
+	string         m_filename;
+	bool           m_enabled;
+	size_t         m_poly;
 };
 
 typedef map<string, CountedPtr<PatchModel> > PatchModelMap;

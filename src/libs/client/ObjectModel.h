@@ -64,7 +64,6 @@ public:
 
 protected:
 	friend class Store;
-	friend class PatchLibrarian; // FIXME: remove
 	
 	ObjectModel(const Path& path);
 	
@@ -81,8 +80,8 @@ protected:
 		{ _metadata[key] = value; metadata_update_sig.emit(key, value); }
 
 
-	Path                         _path;
-	CountedPtr<ObjectModel>      _parent;
+	Path                    _path;
+	CountedPtr<ObjectModel> _parent;
 	
 	MetadataMap _metadata;
 

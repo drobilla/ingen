@@ -16,7 +16,7 @@
 
 
 #include "OSCModelEngineInterface.h"
-#include "PatchLibrarian.h"
+#include "Serializer.h"
 #include "PatchModel.h"
 #include "util/Path.h"
 #include <iostream>
@@ -53,7 +53,7 @@ int main(int argc, char** argv)
 
 
 	CountedPtr<OSCModelEngineInterface> engine(new OSCModelEngineInterface(engine_url));
-	PatchLibrarian librarian(engine);
+	Serializer serializer(engine);
 	
 	/* Connect to engine */
 	engine->attach(-1, client_port);
@@ -74,7 +74,7 @@ int main(int argc, char** argv)
 		cerr << "FIXME: load patch" << endl;
 		//CountedPtr<PatchModel> pm(new PatchModel("", 0));
 		//pm->filename(args_info.inputs[i]);
-		//librarian.load_patch(pm, true);
+		//serializer.load_patch(pm, true);
 	}
 	
 	return 0;

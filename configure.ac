@@ -1,4 +1,4 @@
-AC_PREREQ(2.59)
+C_PREREQ(2.59)
 AC_INIT([ingen],[0.4.0pre],[drobilla@connect.carleton.ca])
 AC_CONFIG_SRCDIR([src/common/util/CountedPtr.h])
 AC_CONFIG_SRCDIR([src/common/interface/EngineInterface.h])
@@ -40,10 +40,10 @@ AC_SUBST(LOSC_CFLAGS)
 # Check for pthreads
 AC_CHECK_LIB(pthread, pthread_create, [],
 	AC_MSG_ERROR([*** Ingen requires POSIX threads support]))
-AC_CHECK_HEADER(pthread.h)
+AC_CHECK_HEADER([pthread.h])
 
 # Check for POSIX semaphores in rt library
-AC_CHECK_HEADERS([semaphore.h])
+AC_CHECK_HEADER([semaphore.h])
 AC_CHECK_LIB([rt], [sem_post])
 
 # Check for LASH
@@ -83,10 +83,10 @@ fi
 pointer_debug="no"
 AC_ARG_ENABLE(debug,
 	[AS_HELP_STRING(--enable-pointer-debug, [Enable smart pointer debugging (no)])],
-	[pointer-debug="$enableval"])
+	[pointer_debug="$enableval"])
 if test "$pointer_debug" = "yes"; then
-  CFLAGS+="-DBOOST_SP_ENABLE_DEBUG_HOOKS"
-  CXXFLAGS+="-DBOOST_SP_ENABLE_DEBUG_HOOKS"
+  CFLAGS+=" -DBOOST_SP_ENABLE_DEBUG_HOOKS"
+  CXXFLAGS+=" -DBOOST_SP_ENABLE_DEBUG_HOOKS"
 fi
 
 # Use strict flags?
@@ -172,7 +172,7 @@ AC_ARG_ENABLE([server],
 # Command-line clients
 build_console_clients="yes"
 AC_ARG_ENABLE([console-clients],
-	AS_HELP_STRING(--enable-console-clients, [Build command-line clients (yes) - Requires: libxml2, libsigc++]),
+	AS_HELP_STRING(--enable-console-clients, [Build command-line clients (yes) - Requires: libxml2, librdf, libsigc++]),
 	[ if test x$enable_console_clients = xno ; then build_console_clients=no ; fi ])
 
 # Gtk client (Ingenuity)
@@ -235,7 +235,7 @@ if test "$build_server" = "yes" -o "$monolothic_ingenuity"; then
 	# Check for LADSPA
 	if test "$build_ladspa" = "yes"; then
 		build_ladspa="no"
-		AC_CHECK_HEADER(ladspa.h, [build_ladspa="yes"],
+		AC_CHECK_HEADER([ladspa.h], [build_ladspa="yes"],
 			[AC_MSG_WARN([You don't seem to build ladspa.h, Ingen will not be very useful!])])
 	fi
 	if test "$build_ladspa" = "yes"; then
@@ -264,7 +264,7 @@ if test "$build_server" = "yes" -o "$monolothic_ingenuity"; then
 	fi
 	if test "$build_dssi" = "yes"; then
 		build_dssi="no"
-		AC_CHECK_HEADER(dssi.h, [build_dssi="yes"],
+		AC_CHECK_HEADER([dssi.h], [build_dssi="yes"],
 			[AC_MSG_WARN([You do not seem to have dssi.h, Ingen will be built without DSSI support])])
 		if test "$build_dssi" = "yes"; then
 			AC_DEFINE(HAVE_DSSI, 1, [Has dssi.h])
@@ -291,10 +291,19 @@ AM_CONDITIONAL(WITH_DSSI, [test "$build_dssi" = "yes"])
 
 if test "$build_console_clients" = "yes"; then
 	
-	# Check for libxml2
+	# Check for libxml2 # FIXME: deprecated, make optional
 	PKG_CHECK_MODULES(LXML2, libxml-2.0 >= 2.6.0)
 	AC_SUBST(LXML2_LIBS)
 	AC_SUBST(LXML2_CFLAGS)
+	
+	# Check for redland (for RDF serialization)
+	# FIXME: WTF?
+	# PKG_CHECK_MODULES(REDLAND, redland >= 0.4.0)
+	AC_SUBST(REDLAND_LIBS, "-lrdf")
+	AC_SUBST(REDLAND_CFLAGS, "")
+	AC_CHECK_LIB(rdf, librdf_new_world, [],
+		AC_MSG_ERROR([*** Console clients require Redland (librdf)]))
+	AC_CHECK_HEADER([redland.h])
 	
 	# Check for sigc++ (FIXME: make this only necessary where.. uh.. necessary)
 	PKG_CHECK_MODULES(LSIGCPP, sigc++-2.0)

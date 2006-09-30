@@ -38,14 +38,14 @@ class PresetModel;
 class ModelEngineInterface;
 
 	
-/** Handles all patch saving and loading.
+/** Loads deprecated (XML) patch files (from the Om days).
  *
  * \ingroup IngenClient
  */
-class PatchLibrarian
+class DeprecatedSerializer
 {
 public:
-	PatchLibrarian(CountedPtr<ModelEngineInterface> engine)
+	DeprecatedSerializer(CountedPtr<ModelEngineInterface> engine)
 	: _patch_search_path("."), _engine(engine)
 	{
 		assert(_engine);
@@ -55,8 +55,6 @@ public:
 	const string& path()                   { return _patch_search_path; }
 	
 	string find_file(const string& filename, const string& additional_path = "");
-	
-	//void save_patch(CountedPtr<PatchModel> patch_model, const string& filename, bool recursive);
 	
 	string load_patch(const string& filename,
 	                  const string& parent_path,

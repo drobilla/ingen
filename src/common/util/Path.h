@@ -17,6 +17,7 @@
 #ifndef PATH_H
 #define PATH_H
 
+#include <cctype>
 #include <string>
 #include <cassert>
 using std::string;
@@ -137,7 +138,7 @@ public:
 	
 	/** Convert a string to a valid name (or "method" - tokens between slashes)
 	 *
-	 * This will strip all slashes and always return a valid name/method.
+	 * This will strip all slashes, etc, and always return a valid name/method.
 	 */
 	static string nameify(const std::basic_string<char>& str)
 	{
@@ -155,18 +156,22 @@ public:
 
 
 	/** Replace any invalid characters in @a str with a suitable replacement.
+	 *
+	 * Makes a pretty name - underscores are a valid character, but this chops
+	 * both spaces and underscores, uppercasing the next letter, to create
+	 * uniform CamelCase names that look nice
 	 */
 	static void replace_invalid_chars(string& str, bool replace_slash = false)
 	{
 		for (size_t i=0; i < str.length(); ++i) {
-			if (str[i] == ' ') {
-				str[i] = '_';
+			if (str[i] == ' ' || str[i] == '_') {
+				str[i+1] = std::toupper(str[i+1]); // capitalize next char
+				str = str.substr(0, i) + str.substr(i+1); // chop space/underscore
 			} else if (str[i] ==  '[' || str[i] ==  '{') {
 				str[i] = '(';
 			} else if (str[i] ==  ']' || str[i] ==  '}') {
 				str[i] = ')';
 			} else if (str[i] < 32 || str.at(i) > 126
-			        || str[i] ==  ' '  
 					|| str[i] ==  '#' 
 					|| str[i] ==  '*' 
 					|| str[i] ==  ',' 
@@ -174,6 +179,21 @@ public:
 					|| (replace_slash && str[i] ==  '/')) {
 				str[i] = '.';
 			}
+		}
+
+		// Chop brackets
+		while (true) {
+
+			const string::size_type open  = str.find("(");
+			const string::size_type close = str.find(")");
+
+			if (open != string::npos) {
+				if (close != string::npos)
+					str.erase(open, (close - open) + 1);
+			} else {
+				break;
+			}
+
 		}
 	}
 

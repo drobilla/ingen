@@ -18,6 +18,7 @@
 #define LOADERTHREAD_H
 
 #include <string>
+#include <list>
 #include <cassert>
 #include "util/Thread.h"
 #include "util/Slave.h"
@@ -26,9 +27,10 @@
 #include "ModelEngineInterface.h"
 #include "ObjectModel.h"
 using std::string;
+using std::list;
 
 namespace Ingen { namespace Client {
-	class PatchLibrarian;
+	class Serializer;
 	class PatchModel;
 } }
 using namespace Ingen::Client;
@@ -42,6 +44,9 @@ namespace Ingenuity {
  * blocking everything else, so the app can respond to the incoming events
  * caused as a result of the patch loading, while the patch loads.
  *
+ * Implemented as a slave with a list of closures (events) which processes
+ * all events in the (mutex protected) list each time it's whipped.
+ *
  * \ingroup Ingenuity
  */
 class Loader : public Slave
@@ -50,7 +55,7 @@ public:
 	Loader(CountedPtr<ModelEngineInterface> engine);
 	~Loader();
 
-	PatchLibrarian& librarian() { return *_patch_librarian; }
+	Serializer& serializer() const { return *_serializer; }
 
 	void load_patch(const string&      filename,
 	                const string&      parent_path,
@@ -69,10 +74,9 @@ private:
 
 	void _whipped();
 
-	PatchLibrarian* const _patch_librarian;
-	Mutex                 _mutex;
-	Condition             _cond;
-	Closure               _event;
+	Serializer* const _serializer;
+	Mutex             _mutex;
+	list<Closure>     _events;
 };
 
 

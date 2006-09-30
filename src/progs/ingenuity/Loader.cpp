@@ -18,7 +18,7 @@
 #include <fstream>
 #include <cassert>
 #include <string>
-#include "PatchLibrarian.h"
+#include "Serializer.h"
 #include "PatchModel.h"
 using std::cout; using std::endl;
 
@@ -26,9 +26,9 @@ namespace Ingenuity {
 
 
 Loader::Loader(CountedPtr<ModelEngineInterface> engine)
-: _patch_librarian(new PatchLibrarian(engine))
+: _serializer(new Serializer(engine))
 {
-	assert(_patch_librarian != NULL);
+	assert(_serializer != NULL);
 	
 	// FIXME: rework this so the thread is only present when it's doing something (save mem)
 	start();
@@ -37,7 +37,7 @@ Loader::Loader(CountedPtr<ModelEngineInterface> engine)
 
 Loader::~Loader()
 {
-	delete _patch_librarian;
+	delete _serializer;
 }
 
 
@@ -45,12 +45,12 @@ void
 Loader::_whipped()
 {
 	_mutex.lock();
+	
+	while ( ! _events.empty() ) {
+		_events.front()();
+		_events.pop_front();
+	}
 
-	Closure& ev = _event;
-	ev();
-	ev.disconnect();
-
-	_cond.signal();
 	_mutex.unlock();
 }
 
@@ -65,23 +65,29 @@ Loader::load_patch(const string&      filename,
 {
 	_mutex.lock();
 
-	_event = sigc::hide_return(sigc::bind(
-		sigc::mem_fun(_patch_librarian, &PatchLibrarian::load_patch),
-		filename, parent_path, name, poly, initial_data, existing));
+	_events.push_back(sigc::hide_return(sigc::bind(
+		sigc::mem_fun(_serializer, &Serializer::load_patch),
+		filename, parent_path, name, poly, initial_data, existing)));
 	
-	whip();
-
-	_cond.wait(_mutex);
 	_mutex.unlock();
+
+	whip();
 }
 
 
 void
 Loader::save_patch(CountedPtr<PatchModel> model, const string& filename, bool recursive)
 {
-	cerr << "FIXME: (loader) save patch\n";
-	//cout << "[Loader] Saving patch " << filename << endl;
-	//set_event(new SavePatchEvent(m_patch_librarian, model, filename, recursive));
+	_mutex.lock();
+
+	_events.push_back(sigc::hide_return(sigc::bind(
+		sigc::mem_fun(_serializer, &Serializer::save_patch),
+		model, filename, recursive)));
+
+	_mutex.unlock();
+	
+	whip();
 }
+
 
 } // namespace Ingenuity

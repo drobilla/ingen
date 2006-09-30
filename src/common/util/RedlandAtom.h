@@ -14,45 +14,47 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef LIBLO_ATOM_H
-#define LIBLO_ATOM_H
+#ifndef REDLAND_ATOM_H
+#define REDLAND_ATOM_H
 
-#include <lo/lo.h>
+#include <redland.h>
 #include "util/Atom.h"
 
+#define U(x) ((const unsigned char*)(x))
 
-/** Support for serializing an Atom to/from liblo messages.
+/** Support for serializing an Atom to/from RDF (via redland aka librdf).
  *
- * (Here to prevent a unnecessary liblo dependency for Atom).
+ * (Here to prevent a unnecessary redland dependency for Atom).
  */
-class LibloAtom {
+class RedlandAtom {
 public:
-	static void lo_message_add_atom(lo_message m, const Atom& atom) {
+	static librdf_node* atom_to_node(librdf_world* world, const Atom& atom) {
+		char tmp_buf[32];
+
 		switch (atom.type()) {
 		//case NIL:
 			// (see below)
 			//break;
 		case Atom::INT:
-			lo_message_add_int32(m, atom.get_int32());
-			break;
+			snprintf(tmp_buf, 32, "%d", atom.get_int32());
+			return librdf_new_node_from_typed_literal(world, U(tmp_buf), NULL, librdf_new_uri(world, U("http://www.w3.org/2001/XMLSchema#integer")));
+				break;
 		case Atom::FLOAT:
-			lo_message_add_float(m, atom.get_float());
+			snprintf(tmp_buf, 32, "%f", atom.get_float());
+			return librdf_new_node_from_typed_literal(world, U(tmp_buf), NULL, librdf_new_uri(world, U("http://www.w3.org/2001/XMLSchema#float")));
 			break;
 		case Atom::STRING:
-			lo_message_add_string(m, atom.get_string());
-			break;
+			return librdf_new_node_from_literal(world, U(atom.get_string()), NULL, 0);
 		case Atom::BLOB:
-			// FIXME: is this okay?  what does liblo do?
-			lo_message_add_blob(m, const_cast<void*>(atom.get_blob()));
-			break;
+			cerr << "WARNING: Unserializable atom!" << endl;
+			return NULL;
 		default: // This catches Atom::Type::NIL too
-			lo_message_add_nil(m);
-			break;
+			return librdf_new_node(world); // blank node
 		}
 	}
 
-	static Atom lo_arg_to_atom(char type, lo_arg* arg) {
-		switch (type) {
+	static Atom node_to_atom(librdf_node* node) {
+		/*switch (type) {
 		case 'i':
 			return Atom(arg->i);
 		case 'f':
@@ -64,10 +66,12 @@ public:
 			//return Atom(arg->b);
 		default:
 			return Atom();
-		}
+		}*/
+		cerr << "FIXME: node_to_atom\n";
+		return Atom();
 	}
 
 };
 
 
-#endif // LIBLO_ATOM_H
+#endif // REDLAND_ATOM_H

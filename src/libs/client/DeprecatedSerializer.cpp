@@ -14,7 +14,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "PatchLibrarian.h"
+#include "DeprecatedSerializer.h"
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 #include <libxml/xpath.h>
@@ -56,7 +56,7 @@ namespace Client {
  * be a good idea to pass as additional_path, in the case of a subpatch.
  */
 string
-PatchLibrarian::find_file(const string& filename, const string& additional_path)
+DeprecatedSerializer::find_file(const string& filename, const string& additional_path)
 {
 	string search_path = additional_path + ":" + _patch_search_path;
 	
@@ -86,7 +86,7 @@ PatchLibrarian::find_file(const string& filename, const string& additional_path)
 			is.close();
 			return full_patch_path;
 		} else {
-			cerr << "[PatchLibrarian] Could not find patch file " << full_patch_path << endl;
+			cerr << "[DeprecatedSerializer] Could not find patch file " << full_patch_path << endl;
 		}
 	}
 
@@ -95,7 +95,7 @@ PatchLibrarian::find_file(const string& filename, const string& additional_path)
 
 
 string
-PatchLibrarian::translate_load_path(const string& path)
+DeprecatedSerializer::translate_load_path(const string& path)
 {
 	std::map<string,string>::iterator t = _load_path_translations.find(path);
 	
@@ -106,262 +106,6 @@ PatchLibrarian::translate_load_path(const string& path)
 		return path;
 	}
 }
-
-
-/** Save a patch from a PatchModel to a filename.
- *
- * The filename passed is the true filename the patch will be saved to (with no prefixing or anything
- * like that), and the patch_model's filename member will be set accordingly.
- *
- * This will break if:
- * - The filename does not have an extension (ie contain a ".")
- * - The patch_model has no (Ingen) path
- */
-#if 0
-void
-PatchLibrarian::save_patch(CountedPtr<PatchModel> patch_model, const string& filename, bool recursive)
-{
-	assert(filename != "");
-	assert(patch_model->path() != "");
-	
-	cout << "Saving patch " << patch_model->path() << " to " << filename << endl;
-
-	if (patch_model->filename() != filename)
-		cerr << "Warning: Saving patch to file other than filename stored in model." << endl;
-
-	string dir = filename.substr(0, filename.find_last_of("/"));
-	
-	NodeModel* nm = NULL;
-	
-	xmlDocPtr  xml_doc = NULL;
-    xmlNodePtr xml_root_node = NULL;
-	xmlNodePtr xml_node = NULL;
-	xmlNodePtr xml_child_node = NULL;
-	//xmlNodePtr xml_grandchild_node = NULL;
-	
-    xml_doc = xmlNewDoc((xmlChar*)"1.0");
-    xml_root_node = xmlNewNode(NULL, (xmlChar*)"patch");
-    xmlDocSetRootElement(xml_doc, xml_root_node);
-
-	const size_t temp_buf_length = 255;
-	char temp_buf[temp_buf_length];
-	
-	string patch_name;
-	if (patch_model->path() != "/") {
-	  patch_name = patch_model->path().name();
-	} else {
-	  patch_name = filename;
-	  if (patch_name.find("/") != string::npos)
-	    patch_name = patch_name.substr(patch_name.find_last_of("/") + 1);
-	  if (patch_name.find(".") != string::npos)
-	    patch_name = patch_name.substr(0, patch_name.find_last_of("."));
-	}
-
-	assert(patch_name.length() > 0);
-	xml_node = xmlNewChild(xml_root_node, NULL, (xmlChar*)"name",
-			       (xmlChar*)patch_name.c_str());
-	
-	snprintf(temp_buf, temp_buf_length, "%zd", patch_model->poly());
-	xml_node = xmlNewChild(xml_root_node, NULL, (xmlChar*)"polyphony", (xmlChar*)temp_buf);
-	
-	// Write metadata
-	for (MetadataMap::const_iterator i = patch_model->metadata().begin();
-			i != patch_model->metadata().end(); ++i) {
-		cerr << "FIXME: metadata save" << endl;
-		// Dirty hack, don't save coordinates in patch file
-		//if (i->first != "module-x" && i->first != "module-y"
-		//		&& i->first != "filename")
-		//	xml_node = xmlNewChild(xml_root_node, NULL,
-		//		(xmlChar*)(*i).first.c_str(), (xmlChar*)(*i).second.c_str());
-
-		assert((*i).first != "node");
-		assert((*i).first != "subpatch");
-		assert((*i).first != "name");
-		assert((*i).first != "polyphony");
-		assert((*i).first != "preset");
-	}
-	
-	// Save nodes and subpatches
-	for (NodeModelMap::const_iterator i = patch_model->nodes().begin(); i != patch_model->nodes().end(); ++i) {
-		nm = i->second.get();
-		
-		if (nm->plugin()->type() == PluginModel::Patch) {  // Subpatch
-			CountedPtr<PatchModel> spm = PtrCast<PatchModel>(i->second);
-			assert(spm);
-
-			xml_node = xmlNewChild(xml_root_node, NULL, (xmlChar*)"subpatch", NULL);
-			
-			xml_child_node = xmlNewChild(xml_node, NULL, (xmlChar*)"name", (xmlChar*)spm->path().name().c_str());
-			
-			string ref_filename;
-			// No path
-			if (spm->filename() == "") {
-				ref_filename = spm->path().name() + ".om";
-				cerr << "FIXME: subpatch filename" << endl;
-				//spm->filename(dir +"/"+ ref_filename);
-			// Absolute path
-			} else if (spm->filename().substr(0, 1) == "/") {
-				// Attempt to make it a relative path, if it's undernath this patch's dir
-				if (dir.substr(0, 1) == "/" && spm->filename().substr(0, dir.length()) == dir) {
-					ref_filename = spm->filename().substr(dir.length()+1);
-				} else { // FIXME: not good
-					ref_filename = spm->filename().substr(spm->filename().find_last_of("/")+1);
-					cerr << "FIXME: subpatch filename (2)" << endl;
-					//spm->filename(dir +"/"+ ref_filename);
-				}
-			} else {
-				ref_filename = spm->filename();
-			}
-			
-			xml_child_node = xmlNewChild(xml_node, NULL, (xmlChar*)"filename", (xmlChar*)ref_filename.c_str());
-			
-			snprintf(temp_buf, temp_buf_length, "%zd", spm->poly());
-			xml_child_node = xmlNewChild(xml_node, NULL,  (xmlChar*)"polyphony", (xmlChar*)temp_buf);
-			
-			// Write metadata
-			for (MetadataMap::const_iterator i = nm->metadata().begin();
-					i != nm->metadata().end(); ++i) {	
-				cerr << "FIXME: save metadata\n";
-				// Dirty hack, don't save metadata that would be in patch file
-				/*if ((*i).first != "polyphony" && (*i).first != "filename"
-					&& (*i).first != "author" && (*i).first != "description")
-					xml_child_node = xmlNewChild(xml_node, NULL,
-						(xmlChar*)(*i).first.c_str(), (xmlChar*)(*i).second.c_str());*/
-			}
-	
-			if (recursive)
-				save_patch(spm, spm->filename(), true);
-
-		} else {  // Normal node
-			xml_node = xmlNewChild(xml_root_node, NULL, (xmlChar*)"node", NULL);
-			
-			xml_child_node = xmlNewChild(xml_node, NULL, (xmlChar*)"name", (xmlChar*)nm->path().name().c_str());
-			
-			if (!nm->plugin()) break;
-	
-			xml_child_node = xmlNewChild(xml_node, NULL,  (xmlChar*)"polyphonic",
-				(xmlChar*)((nm->polyphonic()) ? "true" : "false"));
-				
-			xml_child_node = xmlNewChild(xml_node, NULL,  (xmlChar*)"type",
-				(xmlChar*)nm->plugin()->type_string());
-			/*
-			xml_child_node = xmlNewChild(xml_node, NULL,  (xmlChar*)"plugin-label",
-				(xmlChar*)(nm->plugin()->plug_label().c_str()));
-	
-			if (nm->plugin()->type() != PluginModel::Internal) {
-				xml_child_node = xmlNewChild(xml_node, NULL,  (xmlChar*)"library-name",
-					(xmlChar*)(nm->plugin()->lib_name().c_str()));
-			}*/
-			xml_child_node = xmlNewChild(xml_node, NULL,  (xmlChar*)"plugin-uri",
-				(xmlChar*)(nm->plugin()->uri().c_str()));
-		
-			// Write metadata
-			for (MetadataMap::const_iterator i = nm->metadata().begin(); i != nm->metadata().end(); ++i) {
-				cerr << "FIXME: Save metadata\n";
-				/*
-				// DSSI _hack_ (FIXME: fix OSC to be more like this and not smash DSSI into metadata?)
-				if ((*i).first.substr(0, 16) == "dssi-configure--") {
-					xml_child_node = xmlNewChild(xml_node, NULL, (xmlChar*)"dssi-configure", NULL);
-					xml_grandchild_node = xmlNewChild(xml_child_node, NULL,
-						(xmlChar*)"key", (xmlChar*)(*i).first.substr(16).c_str());
-					xml_grandchild_node = xmlNewChild(xml_child_node, NULL,
-							(xmlChar*)"value", (xmlChar*)(*i).second.c_str());
-				} else if ((*i).first == "dssi-program") {
-					xml_child_node = xmlNewChild(xml_node, NULL, (xmlChar*)"dssi-program", NULL);
-					xml_grandchild_node = xmlNewChild(xml_child_node, NULL,
-						(xmlChar*)"bank", (xmlChar*)(*i).second.substr(0, (*i).second.find("/")).c_str());
-					xml_grandchild_node = xmlNewChild(xml_child_node, NULL,
-						(xmlChar*)"program", (xmlChar*)(*i).second.substr((*i).second.find("/")+1).c_str());
-				} else {
-					xml_child_node = xmlNewChild(xml_node, NULL,
-						(xmlChar*)(*i).first.c_str(), (xmlChar*)(*i).second.c_str());
-				}
-				*/
-			}
-	
-			// Write port metadata, if necessary
-			for (PortModelList::const_iterator i = nm->ports().begin(); i != nm->ports().end(); ++i) {
-				cerr << "FIXME: save metadata\n";
-				/*
-				const PortModel* const pm = i->get();
-				if (pm->is_input() && pm->user_min() != pm->min_val() || pm->user_max() != pm->max_val()) {
-					xml_child_node = xmlNewChild(xml_node, NULL, (xmlChar*)"port", NULL);
-					xml_grandchild_node = xmlNewChild(xml_child_node, NULL, (xmlChar*)"name",
-						(xmlChar*)pm->path().name().c_str());
-					snprintf(temp_buf, temp_buf_length, "%f", pm->user_min());
-					xml_grandchild_node = xmlNewChild(xml_child_node, NULL, (xmlChar*)"user-min", (xmlChar*)temp_buf);
-					snprintf(temp_buf, temp_buf_length, "%f", pm->user_max());
-					xml_grandchild_node = xmlNewChild(xml_child_node, NULL, (xmlChar*)"user-max", (xmlChar*)temp_buf);
-				}*/	
-			}
-		}
-	}
-
-	// Save connections
-	
-	const list<CountedPtr<ConnectionModel> >& cl = patch_model->connections();
-	const ConnectionModel* c = NULL;
-	
-	for (list<CountedPtr<ConnectionModel> >::const_iterator i = cl.begin(); i != cl.end(); ++i) {
-		c = (*i).get();
-		xml_node = xmlNewChild(xml_root_node, NULL, (xmlChar*)"connection", NULL);
-		xml_child_node = xmlNewChild(xml_node, NULL, (xmlChar*)"source-node",
-			(xmlChar*)c->src_port_path().parent().name().c_str());
-		xml_child_node = xmlNewChild(xml_node, NULL, (xmlChar*)"source-port",
-			(xmlChar*)c->src_port_path().name().c_str());
-		xml_child_node = xmlNewChild(xml_node, NULL, (xmlChar*)"destination-node",
-			(xmlChar*)c->dst_port_path().parent().name().c_str());
-		xml_child_node = xmlNewChild(xml_node, NULL, (xmlChar*)"destination-port",
-			(xmlChar*)c->dst_port_path().name().c_str());
-	}
-	
-    // Save control values (ie presets eventually, right now just current control vals)
-	
-	xmlNodePtr xml_preset_node = xmlNewChild(xml_root_node, NULL, (xmlChar*)"preset", NULL);
-	xml_node = xmlNewChild(xml_preset_node, NULL, (xmlChar*)"name", (xmlChar*)"default");
-
-	PortModel* pm = NULL;
-
-	// Save node port controls
-	for (NodeModelMap::const_iterator n = patch_model->nodes().begin(); n != patch_model->nodes().end(); ++n) {
-		nm = n->second.get();
-		for (PortModelList::const_iterator p = nm->ports().begin(); p != nm->ports().end(); ++p) {
-			pm = (*p).get();
-			if (pm->is_input() && pm->is_control()) {
-				float val = pm->value();
-				xml_node = xmlNewChild(xml_preset_node, NULL, (xmlChar*)"control",  NULL);
-				xml_child_node = xmlNewChild(xml_node, NULL, (xmlChar*)"node-name",
-					(xmlChar*)nm->path().name().c_str());
-				xml_child_node = xmlNewChild(xml_node, NULL, (xmlChar*)"port-name",
-					(xmlChar*)pm->path().name().c_str());
-				snprintf(temp_buf, temp_buf_length, "%f", val);
-				xml_child_node = xmlNewChild(xml_node, NULL, (xmlChar*)"value",
-					(xmlChar*)temp_buf);
-			}
-		}
-	}
-	
-	// Save patch port controls
-	for (PortModelList::const_iterator p = patch_model->ports().begin();
-			p != patch_model->ports().end(); ++p) {
-		pm = (*p).get();
-		if (pm->is_input() && pm->is_control()) {
-			float val = pm->value();
-			xml_node = xmlNewChild(xml_preset_node, NULL, (xmlChar*)"control",  NULL);
-			xml_child_node = xmlNewChild(xml_node, NULL, (xmlChar*)"port-name",
-				(xmlChar*)pm->path().name().c_str());
-			snprintf(temp_buf, temp_buf_length, "%f", val);
-			xml_child_node = xmlNewChild(xml_node, NULL, (xmlChar*)"value",
-				(xmlChar*)temp_buf);
-		}
-	}
-	
-	xmlSaveFormatFile(filename.c_str(), xml_doc, 1); // 1 == pretty print
-
-    xmlFreeDoc(xml_doc);
-    xmlCleanupParser();
-}
-#endif
 
 
 /** Load a patch in to the engine (and client) from a patch file.
@@ -390,14 +134,14 @@ PatchLibrarian::save_patch(CountedPtr<PatchModel> patch_model, const string& fil
  * Returns the path of the newly created patch.
  */
 string
-PatchLibrarian::load_patch(const string& filename,
+DeprecatedSerializer::load_patch(const string& filename,
 	                       const string& parent_path,
 	                       const string& name,
 	                       size_t        poly,
 	                       MetadataMap   initial_data,
 	                       bool          existing)
 {
-	cerr << "[PatchLibrarian] Loading patch " << filename << "" << endl;
+	cerr << "[DeprecatedSerializer] Loading patch " << filename << "" << endl;
 
 	Path path = "/"; // path of the new patch
 
@@ -530,7 +274,7 @@ PatchLibrarian::load_patch(const string& filename,
 /** Build a NodeModel given a pointer to a Node in a patch file.
  */
 bool
-PatchLibrarian::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr node)
+DeprecatedSerializer::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr node)
 {
 	xmlChar* key;
 	xmlNodePtr cur = node->xmlChildrenNode;
@@ -669,8 +413,8 @@ PatchLibrarian::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr no
 	}
 	
 	if (path == "") {
-		cerr << "[PatchLibrarian] Malformed patch file (node tag has empty children)" << endl;
-		cerr << "[PatchLibrarian] Node ignored." << endl;
+		cerr << "[DeprecatedSerializer] Malformed patch file (node tag has empty children)" << endl;
+		cerr << "[DeprecatedSerializer] Node ignored." << endl;
 		return false;
 	}
 
@@ -753,7 +497,7 @@ PatchLibrarian::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr no
 
 
 bool
-PatchLibrarian::load_subpatch(const Path& parent, xmlDocPtr doc, const xmlNodePtr subpatch)
+DeprecatedSerializer::load_subpatch(const Path& parent, xmlDocPtr doc, const xmlNodePtr subpatch)
 {
 	xmlChar *key;
 	xmlNodePtr cur = subpatch->xmlChildrenNode;
@@ -794,7 +538,7 @@ PatchLibrarian::load_subpatch(const Path& parent, xmlDocPtr doc, const xmlNodePt
 /** Build a ConnectionModel given a pointer to a connection in a patch file.
  */
 bool
-PatchLibrarian::load_connection(const Path& parent, xmlDocPtr doc, const xmlNodePtr node)
+DeprecatedSerializer::load_connection(const Path& parent, xmlDocPtr doc, const xmlNodePtr node)
 {
 	xmlChar *key;
 	xmlNodePtr cur = node->xmlChildrenNode;
@@ -843,7 +587,7 @@ PatchLibrarian::load_connection(const Path& parent, xmlDocPtr doc, const xmlNode
 /** Build a PresetModel given a pointer to a preset in a patch file.
  */
 bool
-PatchLibrarian::load_preset(const Path& parent, xmlDocPtr doc, const xmlNodePtr node)
+DeprecatedSerializer::load_preset(const Path& parent, xmlDocPtr doc, const xmlNodePtr node)
 {
 	cerr << "FIXME: load preset\n";
 #if 0

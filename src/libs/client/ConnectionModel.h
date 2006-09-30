@@ -68,6 +68,8 @@ private:
 	CountedPtr<PortModel> _dst_port;
 };
 
+typedef list<CountedPtr<ConnectionModel> > ConnectionList;
+
 
 } // namespace Client
 } // namespace Ingen

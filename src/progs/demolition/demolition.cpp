@@ -229,8 +229,8 @@ create_patch()
 	engine->create_patch(path, (rand()%8)+1);
 	
 	// Spread them out a bit for easier monitoring with ingenuity
-	engine->set_metadata(path, "module-x", 1600 + rand()%800 - 400);
-	engine->set_metadata(path, "module-y", 1200 + rand()%700 - 350);
+	engine->set_metadata(path, "ingenuity:module-x", 1600 + rand()%800 - 400);
+	engine->set_metadata(path, "ingenuity:module-y", 1200 + rand()%700 - 350);
 }
 
  
@@ -255,8 +255,8 @@ add_node()
 	engine->create_node(path, random_plugin(), rand()%2);
 
 	// Spread them out a bit for easier monitoring with ingenuity
-	engine->set_metadata(path, "module-x", 1600 + rand()%800 - 400);
-	engine->set_metadata(path, "module-y", 1200 + rand()%700 - 350);
+	engine->set_metadata(path, "ingenuity:module-x", 1600 + rand()%800 - 400);
+	engine->set_metadata(path, "ingenuity:module-y", 1200 + rand()%700 - 350);
 }
 
  

@@ -8,4 +8,5 @@ EXTRA_DIST = \
 	Thread.h \
 	Slave.h \
 	Atom.h \
-	LibloAtom.h 
+	LibloAtom.h \
+	RedlandAtom.h
