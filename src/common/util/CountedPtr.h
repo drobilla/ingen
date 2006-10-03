@@ -31,7 +31,7 @@ static std::list<void*> counted_ptr_counters;
 // Use debug hooks to ensure 2 shared_ptrs never point to the same thing
 namespace boost {
 	
-	static void sp_scalar_constructor_hook(void* object, unsigned long cnt, void* ptr) {
+	inline void sp_scalar_constructor_hook(void* object, unsigned long cnt, void* ptr) {
 		assert(std::find(counted_ptr_counters.begin(), counted_ptr_counters.end(),
 				(void*)object) == counted_ptr_counters.end());
 		counted_ptr_counters.push_back(object);
@@ -39,7 +39,7 @@ namespace boost {
 		//	<< object << ", count = " << cnt << std::endl;
 	}
 	
-	static void sp_scalar_destructor_hook(void* object, unsigned long cnt, void* ptr) {
+	inline void sp_scalar_destructor_hook(void* object, unsigned long cnt, void* ptr) {
 		counted_ptr_counters.remove(object);
 		//std::cerr << "Destroying CountedPtr to "
 		//	<< object << ", count = " << cnt << std::endl;

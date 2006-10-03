@@ -39,7 +39,7 @@ public:
 	: m_uri(uri),
 	  m_name(name)
 	{
-		cerr << "FIXME: plugin type" << endl;
+		//cerr << "FIXME: plugin type" << endl;
 	}
 	
 	Type          type() const                { return m_type; }

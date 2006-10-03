@@ -18,10 +18,12 @@
 #define OMMODULE_H
 
 #include <string>
+#include <boost/enable_shared_from_this.hpp>
 #include <libgnomecanvasmm.h>
 #include <flowcanvas/Module.h>
-#include "NodeMenu.h"
 #include "util/CountedPtr.h"
+#include "Port.h"
+#include "NodeMenu.h"
 using std::string;
 
 class Atom;
@@ -46,14 +48,16 @@ class Port;
  *
  * \ingroup Ingenuity
  */
-class NodeModule : public LibFlowCanvas::Module
+class NodeModule : public boost::enable_shared_from_this<NodeModule>, public LibFlowCanvas::Module
 {
 public:
-	NodeModule(PatchCanvas* canvas, CountedPtr<NodeModel> node);
+	static boost::shared_ptr<NodeModule> create (boost::shared_ptr<PatchCanvas> canvas, CountedPtr<NodeModel> node);
+
 	virtual ~NodeModule() {}
-	
-	virtual Ingenuity::Port* port(const string& port_name) {
-		return (Ingenuity::Port*)Module::get_port(port_name);
+
+	boost::shared_ptr<Port> port(const string& port_name) {
+		return boost::dynamic_pointer_cast<Ingenuity::Port>(
+			Module::get_port(port_name));
 	}
 
 	virtual void store_location();
@@ -65,16 +69,16 @@ public:
 	CountedPtr<NodeModel> node() const { return m_node; }
 
 protected:
+	NodeModule(boost::shared_ptr<PatchCanvas> canvas, CountedPtr<NodeModel> node);
+
 	virtual void on_double_click(GdkEventButton* ev) { show_control_window(); }
 	virtual void on_middle_click(GdkEventButton* ev) { show_control_window(); }
 	
-	void set_all_metadata();
 	void metadata_update(const string& key, const Atom& value);
-
-	void create_all_ports();
-	void add_port(CountedPtr<PortModel> port);
-	void remove_port(CountedPtr<PortModel> port);
-
+	
+	void add_port(CountedPtr<PortModel> port, bool resize=true);
+	void remove_port(CountedPtr<PortModel> port) { Module::remove_port(port->path().name()); }
+	
 	CountedPtr<NodeModel> m_node;
 	NodeMenu              m_menu;
 };

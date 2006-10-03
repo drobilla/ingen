@@ -57,9 +57,9 @@ public:
 	PatchView(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml);
 	~PatchView();
 
-	PatchCanvas*          canvas()               const { return _canvas; }
-	CountedPtr<PatchModel> patch()                const { return _patch; }
-	Gtk::Viewport*         breadcrumb_container() const { return _breadcrumb_container; }
+	CountedPtr<PatchCanvas> canvas()               const { return _canvas; }
+	CountedPtr<PatchModel>  patch()                const { return _patch; }
+	Gtk::Viewport*          breadcrumb_container() const { return _breadcrumb_container; }
 
 	static CountedPtr<PatchView> create(CountedPtr<PatchModel> patch);
 
@@ -75,8 +75,8 @@ private:
 
 	void zoom_full();
 
-	CountedPtr<PatchModel> _patch;
-	PatchCanvas*          _canvas;
+	CountedPtr<PatchModel>  _patch;
+	CountedPtr<PatchCanvas> _canvas;
 	
 	Gtk::ScrolledWindow* _canvas_scrolledwindow;
 

@@ -29,10 +29,9 @@
 namespace Ingenuity {
 
 
-PatchPortModule::PatchPortModule(PatchCanvas* canvas, CountedPtr<PortModel> port)
+PatchPortModule::PatchPortModule(boost::shared_ptr<PatchCanvas> canvas, CountedPtr<PortModel> port)
 : LibFlowCanvas::Module(canvas, "", 0, 0), // FIXME: coords?
-  m_port(port),
-  m_patch_port(NULL)
+  m_port(port)
 {
 	/*if (port_model()->polyphonic() && port_model()->parent() != NULL
 			&& port_model()->parent_patch()->poly() > 1) {
@@ -42,12 +41,9 @@ PatchPortModule::PatchPortModule(PatchCanvas* canvas, CountedPtr<PortModel> port
 	assert(canvas);
 	assert(port);
 
-	if (PtrCast<PatchModel>(port->parent())) {
-		if (m_patch_port)
-			delete m_patch_port;
-
-		m_patch_port = new Port(this, port, true);
-	}
+	//if (PtrCast<PatchModel>(port->parent())) {
+	//	m_patch_port = boost::shared_ptr<Port>(new Port(shared_from_this(), port, true));
+	//}
 	
 	resize();
 
@@ -64,6 +60,21 @@ PatchPortModule::PatchPortModule(PatchCanvas* canvas, CountedPtr<PortModel> port
 	}
 
 	port->metadata_update_sig.connect(sigc::mem_fun(this, &PatchPortModule::metadata_update));
+}
+
+
+boost::shared_ptr<PatchPortModule>
+PatchPortModule::create(boost::shared_ptr<PatchCanvas> canvas, CountedPtr<PortModel> port)
+{
+	boost::shared_ptr<PatchPortModule> ret = boost::shared_ptr<PatchPortModule>(
+		new PatchPortModule(canvas, port));
+
+	for (MetadataMap::const_iterator m = port->metadata().begin(); m != port->metadata().end(); ++m)
+		ret->metadata_update(m->first, m->second);
+
+	ret->resize();
+
+	return ret;
 }
 
 

@@ -35,7 +35,7 @@ namespace Ingenuity {
 class Port : public LibFlowCanvas::Port
 {
 public:
-	Port(LibFlowCanvas::Module* module, CountedPtr<PortModel> pm, bool flip = false);
+	Port(boost::shared_ptr<LibFlowCanvas::Module> module, CountedPtr<PortModel> pm, bool flip = false);
 
 	virtual ~Port() {}
 

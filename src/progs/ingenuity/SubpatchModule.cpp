@@ -31,7 +31,7 @@ using std::cerr; using std::cout; using std::endl;
 namespace Ingenuity {
 
 
-SubpatchModule::SubpatchModule(PatchCanvas* canvas, CountedPtr<PatchModel> patch)
+SubpatchModule::SubpatchModule(boost::shared_ptr<PatchCanvas> canvas, CountedPtr<PatchModel> patch)
 : NodeModule(canvas, patch),
   m_patch(patch)
 {

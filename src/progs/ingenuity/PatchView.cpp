@@ -35,7 +35,6 @@ namespace Ingenuity {
 
 PatchView::PatchView(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 : Gtk::Box(cobject),
-  _canvas(NULL),
   _breadcrumb_container(NULL),
   _enable_signal(true)
 {
@@ -57,12 +56,15 @@ PatchView::PatchView(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::X
 void
 PatchView::set_patch(CountedPtr<PatchModel> patch)
 {
+	assert(!_canvas); // FIXME: remove
+
 	cerr << "Creating view for " << patch->path() << endl;
 
 	assert(_breadcrumb_container); // ensure created
 
 	_patch = patch;
-	_canvas = new PatchCanvas(patch, 1600*2, 1200*2);
+	_canvas = CountedPtr<PatchCanvas>(new PatchCanvas(patch, 1600*2, 1200*2));
+	_canvas->build();
 
 	_canvas_scrolledwindow->add(*_canvas);
 
@@ -80,10 +82,10 @@ PatchView::set_patch(CountedPtr<PatchModel> patch)
 	_refresh_but->signal_clicked().connect(sigc::mem_fun(this, &PatchView::refresh_clicked));
 
 	_zoom_normal_but->signal_clicked().connect(sigc::bind(sigc::mem_fun(
-		static_cast<FlowCanvas*>(_canvas), &FlowCanvas::set_zoom), 1.0));
+		_canvas.get(), &FlowCanvas::set_zoom), 1.0));
 
 	_zoom_full_but->signal_clicked().connect(
-		sigc::mem_fun(static_cast<FlowCanvas*>(_canvas), &FlowCanvas::zoom_full));
+		sigc::mem_fun(_canvas.get(), &FlowCanvas::zoom_full));
 }
 
 

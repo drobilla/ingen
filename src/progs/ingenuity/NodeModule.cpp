@@ -31,7 +31,7 @@
 namespace Ingenuity {
 
 
-NodeModule::NodeModule(PatchCanvas* canvas, CountedPtr<NodeModel> node)
+NodeModule::NodeModule(boost::shared_ptr<PatchCanvas> canvas, CountedPtr<NodeModel> node)
 : LibFlowCanvas::Module(canvas, node->path().name()),
   m_node(node),
   m_menu(node)
@@ -39,55 +39,39 @@ NodeModule::NodeModule(PatchCanvas* canvas, CountedPtr<NodeModel> node)
 	assert(m_node);
 
 	if (node->polyphonic()) {
-		border_width(2.0);
+		set_border_width(2.0);
 	}
 
-	create_all_ports();
-	set_all_metadata();
-
-	node->new_port_sig.connect(sigc::mem_fun(this, &NodeModule::add_port));
+	node->new_port_sig.connect(sigc::bind(sigc::mem_fun(this, &NodeModule::add_port), true));
 	node->removed_port_sig.connect(sigc::mem_fun(this, &NodeModule::remove_port));
 	node->metadata_update_sig.connect(sigc::mem_fun(this, &NodeModule::metadata_update));
 }
 
 
-void
-NodeModule::create_all_ports()
+boost::shared_ptr<NodeModule>
+NodeModule::create(boost::shared_ptr<PatchCanvas> canvas, CountedPtr<NodeModel> node)
 {
-	for (PortModelList::const_iterator i = m_node->ports().begin();
-			i != m_node->ports().end(); ++i) {
-		add_port(*i);
-	}
+	boost::shared_ptr<NodeModule> ret = boost::shared_ptr<NodeModule>(
+		new NodeModule(canvas, node));
 
-	resize();
+	for (MetadataMap::const_iterator m = node->metadata().begin(); m != node->metadata().end(); ++m)
+		ret->metadata_update(m->first, m->second);
 
-	// FIXME
-	//if (has_control_inputs())
-	//	enable_controls_menuitem();
+	for (PortModelList::const_iterator p = node->ports().begin(); p != node->ports().end(); ++p)
+		ret->add_port(*p, false);
+
+	ret->resize();
+
+	return ret;
 }
 
 
 void
-NodeModule::set_all_metadata()
+NodeModule::add_port(CountedPtr<PortModel> port, bool resize_to_fit)
 {
-	for (MetadataMap::const_iterator i = m_node->metadata().begin(); i != m_node->metadata().end(); ++i)
-		metadata_update(i->first, i->second);
-}
-
-
-void
-NodeModule::add_port(CountedPtr<PortModel> port)
-{
-	manage(new Port(this, port));
-	resize();
-}
-
-
-void
-NodeModule::remove_port(CountedPtr<PortModel> port)
-{
-	LibFlowCanvas::Port* canvas_port = get_port(port->path().name());
-	delete canvas_port;
+	Module::add_port(boost::shared_ptr<Port>(new Port(shared_from_this(), port)));
+	if (resize_to_fit)
+		resize();
 }
 
 
@@ -101,6 +85,8 @@ NodeModule::show_control_window()
 void
 NodeModule::store_location()
 {
+	cerr << "FIXME: store_location\n";
+#if 0
 	const float x = static_cast<float>(property_x());
 	const float y = static_cast<float>(property_y());
 	
@@ -112,7 +98,7 @@ NodeModule::store_location()
 		App::instance().engine()->set_metadata(m_node->path(), "ingenuity:canvas-x", Atom(x));
 		App::instance().engine()->set_metadata(m_node->path(), "ingenuity:canvas-y", Atom(y));
 	}
-
+#endif
 }
 
 

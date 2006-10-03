@@ -18,11 +18,14 @@
 #define OMPATCHBAYAREA_H
 
 #include <string>
+#include <boost/shared_ptr.hpp>
 #include <flowcanvas/FlowCanvas.h>
+#include <flowcanvas/Module.h>
 #include "util/CountedPtr.h"
 #include "util/Path.h"
 #include "ConnectionModel.h"
 #include "PatchModel.h"
+#include "NodeModule.h"
 
 using std::string;
 using namespace LibFlowCanvas;
@@ -48,8 +51,14 @@ class PatchCanvas : public LibFlowCanvas::FlowCanvas
 public:
 	PatchCanvas(CountedPtr<PatchModel> patch, int width, int height);
 	
-	NodeModule* find_module(const string& name)
-		{ return (NodeModule*)FlowCanvas::get_module(name); }
+	virtual ~PatchCanvas() {}
+
+	boost::shared_ptr<NodeModule> find_module(const string& name) {
+		return boost::dynamic_pointer_cast<NodeModule>(
+			FlowCanvas::get_module(name));
+	}
+	
+	void build();
 
 	void add_node(CountedPtr<NodeModel> nm);
 	void remove_node(CountedPtr<NodeModel> nm);
@@ -74,12 +83,13 @@ private:
 	
 	MetadataMap get_initial_data();
 
-	void build_canvas();
-
 	bool canvas_event(GdkEvent* event);
 	
-	void connect(const LibFlowCanvas::Port* src_port, const LibFlowCanvas::Port* dst_port);
-	void disconnect(const LibFlowCanvas::Port* src_port, const LibFlowCanvas::Port* dst_port);
+	void connect(boost::shared_ptr<LibFlowCanvas::Port> src,
+	             boost::shared_ptr<LibFlowCanvas::Port> dst);
+
+	void disconnect(boost::shared_ptr<LibFlowCanvas::Port> src,
+	                boost::shared_ptr<LibFlowCanvas::Port> dst);
 
 	CountedPtr<PatchModel> m_patch;
 

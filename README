@@ -1,12 +1,12 @@
 Ingen is a realtime modular synthesizer and/or effects processor for
-Jack/Alsa/LADSPA/DSSI/LV2/etc (ie GNU/Linux audio systems).  More information
-may be found at http://codeson.net/ingen
+Jack/Alsa/LADSPA/DSSI/LV2/etc (ie GNU/Linux audio systems).
 
-To build, do the typical "./configure; make; make install" routine.
+More information may be found at http://codeson.net/ingen
 
-Check "./configure --help" for options, you can build this code in many
-different ways (standalone engine with seperate clients, build engine only,
-build clients only, build monolithic clients, etc. etc)
+To build, first check "./configure --help" for options, you can build this
+code in many different ways (standalone engine with seperate clients, build
+engine server only, build clients only, build monolithic clients, etc. etc).
+Then do the typical "./configure; make; make install" routine.
 
 
 *** Optimization ***
@@ -20,10 +20,12 @@ makes bug hunting easier (see below).
 
 SIMD (SSE/Altivec):
 
-If you have GCC4, it is HIGHLY recommended that you enable your SIMD
-instruction set (ie "-march=pentium4 -mfpmath=sse" in the case of a P4 with
-SSE) through your CXXFLAGS environment variable.  The performance improvement
-(and denormal avoidance if you have a P4) is drastic.
+If you have GCC4, it is hightly recommended that you enable your SIMD
+instruction set, especially if you have a Pentium 4
+(ie "-march=pentium4 -mfpmath=sse").  The performance gain is good for any chip
+with a SIMD instruction set (Altivec, SSE, and friends), but in the case of a P4
+the denormal avoidance is crucial for audio software.  Note that -march=athlon64
+implies -msse, -msse2, -mfpmath=sse, etc.
 
 
 *** Debugging ***
@@ -31,26 +33,21 @@ SSE) through your CXXFLAGS environment variable.  The performance improvement
 Ingen makes very heavy use of assertions to catch bugs.  Assertions have a
 (minor) performance hit unless the preprocessor symbol NDEBUG is defined.
 By default the configure script will add this to the end of your flags,
-but it's worth noting.  You really don't want assertions turned on in a
-production build.  However, if you encounter a bug (especially a segfault)
-it would be a good idea to rebuild with --enable-debug, chances are you'll
-hit an assertion and the console output will be a sufficient bug report so
-I can fix the problem.
+but it's worth noting.  Assertions have a minor overhead everywhere, but
+will likely make bug reports much more useful.  Debug symbols add quite a
+bit of bloat to all the code, and is not useful unless you plan on debugging
+the code yourself.  A good compromise between performance and bug
+reporting ability (eg for using the code from SVN) is
+--enable-assertions without --enable-debug-symbols.
 
 
 *** Bugs ***
 
-If Ingen crashes, PLEASE REPORT THE BUG.  This isn't software from some faceless
-corporation, I'm a real person, and I'm usually on IRC (#lad on freenode.net)
-if you want to talk to me.  Things can't get fixed if I don't know about them,
-and if you report it, it will get fixed - probably immediately.
-
-I write these tens of thousands of lines of code and give it to you completely
-Free, the least you could to is tell me how she goes :)
-
-Have fun...
+If Ingen crashes, PLEASE REPORT THE BUG.  People too often assume "someone"
+"must" know about the bug and it will magically get fixed without telling
+anyone about it.  It probably doesn't happen for me, and if I don't know about
+it, I'm probably not going to fix it :)
 
 
-
-
+Have Fun.
 

@@ -17,7 +17,8 @@
 #ifndef REDLAND_ATOM_H
 #define REDLAND_ATOM_H
 
-#include <redland.h>
+#include <cstring>
+#include <raptor.h>
 #include "util/Atom.h"
 
 #define U(x) ((const unsigned char*)(x))
@@ -28,31 +29,46 @@
  */
 class RedlandAtom {
 public:
-	static librdf_node* atom_to_node(librdf_world* world, const Atom& atom) {
-		char tmp_buf[32];
+	/** Set this atom's value to the object (value) portion of an RDF triple.
+	 *
+	 * Caller is responsible for calling free(triple->object).
+	 */
+	static void atom_to_triple_object(raptor_statement* triple, const Atom& atom) {
+		static const size_t STR_LENGTH = 32; // FIXME ?
+		char* str = (char*)malloc(sizeof(char) * STR_LENGTH);
 
 		switch (atom.type()) {
-		//case NIL:
-			// (see below)
-			//break;
 		case Atom::INT:
-			snprintf(tmp_buf, 32, "%d", atom.get_int32());
-			return librdf_new_node_from_typed_literal(world, U(tmp_buf), NULL, librdf_new_uri(world, U("http://www.w3.org/2001/XMLSchema#integer")));
-				break;
+			snprintf(str, 32, "%d", atom.get_int32());
+			triple->object = (unsigned char*)str;
+			triple->object_type = RAPTOR_IDENTIFIER_TYPE_LITERAL;
+			triple->object_literal_datatype = raptor_new_uri(
+				U("http://www.w3.org/2001/XMLSchema#integer"));
+			break;
 		case Atom::FLOAT:
-			snprintf(tmp_buf, 32, "%f", atom.get_float());
-			return librdf_new_node_from_typed_literal(world, U(tmp_buf), NULL, librdf_new_uri(world, U("http://www.w3.org/2001/XMLSchema#float")));
+			snprintf(str, 32, "%f", atom.get_float());
+			triple->object = (unsigned char*)str;
+			triple->object_type = RAPTOR_IDENTIFIER_TYPE_LITERAL;
+			triple->object_literal_datatype = raptor_new_uri(
+				U("http://www.w3.org/2001/XMLSchema#float"));
 			break;
 		case Atom::STRING:
-			return librdf_new_node_from_literal(world, U(atom.get_string()), NULL, 0);
+			snprintf(str, 32, "%f", atom.get_float());
+			triple->object = (unsigned char*)str;
+			triple->object_type = RAPTOR_IDENTIFIER_TYPE_LITERAL;
+			break;
 		case Atom::BLOB:
+		case Atom::NIL:
+		default:
 			cerr << "WARNING: Unserializable atom!" << endl;
-			return NULL;
-		default: // This catches Atom::Type::NIL too
-			return librdf_new_node(world); // blank node
+			// FIXME: what to do?
+			triple->object = NULL;
+			triple->object_type = RAPTOR_IDENTIFIER_TYPE_UNKNOWN;
+			free(str); // FIXME: ew
 		}
 	}
 
+#if 0
 	static Atom node_to_atom(librdf_node* node) {
 		/*switch (type) {
 		case 'i':
@@ -70,6 +86,7 @@ public:
 		cerr << "FIXME: node_to_atom\n";
 		return Atom();
 	}
+#endif
 
 };
 

@@ -69,6 +69,8 @@ public:
 
 private:	
 
+	void save_patch_event(CountedPtr<PatchModel> model, const string& filename, bool recursive);
+	
 	/** Returns nothing and takes no parameters (because they have all been bound) */
 	typedef sigc::slot<void> Closure;
 

@@ -65,19 +65,42 @@ AC_MSG_WARN([NOTE: LASH support is not available at this time])
 
 AM_CONDITIONAL(WITH_LASH, [test "$build_lash" = "yes"])
 
-# Use debugging flag?
+
+# Debug stuff
+
+
 debug="no"
+debug_symbols="no"
+assertions="no"
+
 AC_ARG_ENABLE(debug,
-	[AS_HELP_STRING(--enable-debug, [Enable debugging (no)])],
+	[AS_HELP_STRING(--enable-debug, [Enable debugging symbols and assertions (no)])],
 	[debug="$enableval"])
 if test "$debug" = "yes"; then
-  CFLAGS="-O0 -g -DDEBUG"
-  CXXFLAGS="$CFLAGS"
-else
-  CFLAGS="$CFLAGS -DNDEBUG"
-  CXXFLAGS="$CFLAGS -DNDEBUG"
+  debug_symbols="yes"
+  assertions="yes"
 fi
 
+AC_ARG_ENABLE(debug_symbols,
+	[AS_HELP_STRING(--enable-debug-symbols, [Enable debugging symbols - overrides CXXFLAGS (no)])],
+	[debug_symbols="$enableval"])
+
+AC_ARG_ENABLE(debug,
+	[AS_HELP_STRING(--enable-debug-assertions, [Enable debugging assertions (no)])],
+	[assertions="$enableval"])
+
+if test "$debug_symbols" = "yes"; then
+  CFLAGS="-O0 -g"
+  CXXFLAGS="$CFLAGS"
+fi
+
+if test "$debug_assertions" = "yes"; then
+  CFLAGS="$CFLAGS -DDEBUG"
+  CXXFLAGS="$CXXFLAGS -DDEBUG"
+else
+  CFLAGS="$CFLAGS -DNDEBUG"
+  CXXFLAGS="$CXXFLAGS -DNDEBUG"
+fi
 
 # Boost shared_ptr debugging
 pointer_debug="no"
@@ -172,7 +195,7 @@ AC_ARG_ENABLE([server],
 # Command-line clients
 build_console_clients="yes"
 AC_ARG_ENABLE([console-clients],
-	AS_HELP_STRING(--enable-console-clients, [Build command-line clients (yes) - Requires: libxml2, librdf, libsigc++]),
+	AS_HELP_STRING(--enable-console-clients, [Build command-line clients (yes) - Requires: libxml2, raptor, libsigc++]),
 	[ if test x$enable_console_clients = xno ; then build_console_clients=no ; fi ])
 
 # Gtk client (Ingenuity)
@@ -296,14 +319,15 @@ if test "$build_console_clients" = "yes"; then
 	AC_SUBST(LXML2_LIBS)
 	AC_SUBST(LXML2_CFLAGS)
 	
-	# Check for redland (for RDF serialization)
-	# FIXME: WTF?
-	# PKG_CHECK_MODULES(REDLAND, redland >= 0.4.0)
-	AC_SUBST(REDLAND_LIBS, "-lrdf")
-	AC_SUBST(REDLAND_CFLAGS, "")
-	AC_CHECK_LIB(rdf, librdf_new_world, [],
-		AC_MSG_ERROR([*** Console clients require Redland (librdf)]))
-	AC_CHECK_HEADER([redland.h])
+	# Check for raptor (for RDF serialization)
+	PKG_CHECK_MODULES(RAPTOR, raptor >= 0.21, build_raptor="yes", build_raptor="no")
+	AC_SUBST(RAPTOR_CFLAGS)
+	AC_SUBST(RAPTOR_LIBS)
+	
+	# Check for rasqal (for RDF querying)
+	#PKG_CHECK_MODULES(RASQAL, rasqal >= 0.9.11, build_rasqal="yes", build_rasqal="no")
+	#AC_SUBST(RASQAL_CFLAGS)
+	#AC_SUBST(RASQAL_LIBS)
 	
 	# Check for sigc++ (FIXME: make this only necessary where.. uh.. necessary)
 	PKG_CHECK_MODULES(LSIGCPP, sigc++-2.0)

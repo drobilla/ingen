@@ -54,8 +54,6 @@ PatchCanvas::PatchCanvas(CountedPtr<PatchModel> patch, int width, int height)
 	xml->get_widget("canvas_menu_load_patch", m_menu_load_patch);
 	xml->get_widget("canvas_menu_new_patch", m_menu_new_patch);
 	
-	build_canvas();
-
 	// Add port menu items
 	m_menu_add_audio_input->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
@@ -92,7 +90,10 @@ PatchCanvas::PatchCanvas(CountedPtr<PatchModel> patch, int width, int height)
 
 
 void
-PatchCanvas::build_canvas() {
+PatchCanvas::build()
+{
+	boost::shared_ptr<PatchCanvas> shared_this =
+		boost::dynamic_pointer_cast<PatchCanvas>(shared_from_this());
 	
 	// Create modules for nodes
 	for (NodeModelMap::const_iterator i = m_patch->nodes().begin();
@@ -103,7 +104,7 @@ PatchCanvas::build_canvas() {
 	// Create pseudo modules for ports (ports on this canvas, not on our module)
 	for (PortModelList::const_iterator i = m_patch->ports().begin();
 			i != m_patch->ports().end(); ++i) {
-		manage(new PatchPortModule(this, *i));
+		add_module(PatchPortModule::create(shared_this, *i));
 	}
 
 	// Create connections
@@ -117,26 +118,31 @@ PatchCanvas::build_canvas() {
 void
 PatchCanvas::add_node(CountedPtr<NodeModel> nm)
 {
+	boost::shared_ptr<PatchCanvas> shared_this =
+		boost::dynamic_pointer_cast<PatchCanvas>(shared_from_this());
+
 	CountedPtr<PatchModel> pm = PtrCast<PatchModel>(nm);
 	if (pm)
-		manage(new SubpatchModule(this, pm));
+		add_module(SubpatchModule::create(shared_this, pm));
 	else
-		manage(new NodeModule(this, nm));
+		add_module(NodeModule::create(shared_this, nm));
 }
 
 
 void
 PatchCanvas::remove_node(CountedPtr<NodeModel> nm)
 {
-	LibFlowCanvas::Module* module = get_module(nm->path().name());
-	delete module;
+	remove_module(nm->path().name()); // should cut all references
 }
 
 
 void
 PatchCanvas::add_port(CountedPtr<PortModel> pm)
 {
-	manage(new PatchPortModule(this, pm));
+	boost::shared_ptr<PatchCanvas> shared_this =
+		boost::dynamic_pointer_cast<PatchCanvas>(shared_from_this());
+
+	add_module(PatchPortModule::create(shared_this, pm));
 }
 
 
@@ -161,11 +167,13 @@ PatchCanvas::connection(CountedPtr<ConnectionModel> cm)
 	const string& dst_parent_name =
 		(dst_parent_path == m_patch->path()) ? "" : dst_parent_path.name();
 
-	LibFlowCanvas::Port* src_port = get_port(src_parent_name, cm->src_port_path().name());
-	LibFlowCanvas::Port* dst_port = get_port(dst_parent_name, cm->dst_port_path().name());
-	assert(src_port && dst_port);
-
-	add_connection(src_port, dst_port);
+	boost::shared_ptr<LibFlowCanvas::Port> src = get_port(src_parent_name, cm->src_port_path().name());
+	boost::shared_ptr<LibFlowCanvas::Port> dst = get_port(dst_parent_name, cm->dst_port_path().name());
+	
+	if (src && dst)
+		add_connection(src, dst);
+	else
+		cerr << "[Canvas] ERROR: Unable to find ports to create connection." << endl;
 }
 
 
@@ -177,8 +185,8 @@ PatchCanvas::disconnection(const Path& src_port_path, const Path& dst_port_path)
 	const string& dst_node_name = dst_port_path.parent().name();
 	const string& dst_port_name = dst_port_path.name();
 
-	LibFlowCanvas::Port* src_port = get_port(src_node_name, src_port_name);
-	LibFlowCanvas::Port* dst_port = get_port(dst_node_name, dst_port_name);
+	boost::shared_ptr<LibFlowCanvas::Port> src_port = get_port(src_node_name, src_port_name);
+	boost::shared_ptr<LibFlowCanvas::Port> dst_port = get_port(dst_node_name, dst_port_name);
 
 	if (src_port && dst_port) {
 		remove_connection(src_port, dst_port);
@@ -199,14 +207,16 @@ PatchCanvas::disconnection(const Path& src_port_path, const Path& dst_port_path)
 
 
 void
-PatchCanvas::connect(const LibFlowCanvas::Port* src_port, const LibFlowCanvas::Port* dst_port)
+PatchCanvas::connect(boost::shared_ptr<LibFlowCanvas::Port> src_port, boost::shared_ptr<LibFlowCanvas::Port> dst_port)
 {
-	assert(src_port != NULL);
-	assert(dst_port != NULL);
+	const boost::shared_ptr<Ingenuity::Port> src
+		= boost::dynamic_pointer_cast<Ingenuity::Port>(src_port);
+
+	const boost::shared_ptr<Ingenuity::Port> dst
+		= boost::dynamic_pointer_cast<Ingenuity::Port>(dst_port);
 	
-	const Ingenuity::Port* const src = dynamic_cast<const Ingenuity::Port* const>(src_port);
-	const Ingenuity::Port* const dst = dynamic_cast<const Ingenuity::Port* const>(dst_port);
-	assert(src && dst);
+	if (!src || !dst)
+		return;
 
 	// Midi binding/learn shortcut
 	if (src->model()->type() == PortModel::MIDI &&
@@ -240,13 +250,16 @@ PatchCanvas::connect(const LibFlowCanvas::Port* src_port, const LibFlowCanvas::P
 
 
 void
-PatchCanvas::disconnect(const LibFlowCanvas::Port* src_port, const LibFlowCanvas::Port* dst_port)
+PatchCanvas::disconnect(boost::shared_ptr<LibFlowCanvas::Port> src_port, boost::shared_ptr<LibFlowCanvas::Port> dst_port)
 {
-	assert(src_port != NULL);
-	assert(dst_port != NULL);
+	const boost::shared_ptr<Ingenuity::Port> src
+		= boost::dynamic_pointer_cast<Ingenuity::Port>(src_port);
+
+	const boost::shared_ptr<Ingenuity::Port> dst
+		= boost::dynamic_pointer_cast<Ingenuity::Port>(dst_port);
 	
-	App::instance().engine()->disconnect(((Ingenuity::Port*)src_port)->model()->path(),
-	                       ((Ingenuity::Port*)dst_port)->model()->path());
+	App::instance().engine()->disconnect(src->model()->path(),
+	                                     dst->model()->path());
 }
 
 
@@ -282,8 +295,11 @@ PatchCanvas::canvas_event(GdkEvent* event)
 void
 PatchCanvas::destroy_selected()
 {
-	for (list<Module*>::iterator m = m_selected_modules.begin(); m != m_selected_modules.end(); ++m)
-		App::instance().engine()->destroy(((NodeModule*)(*m))->node()->path());
+	for (list<boost::shared_ptr<Module> >::iterator m = m_selected_modules.begin(); m != m_selected_modules.end(); ++m) {
+		boost::shared_ptr<NodeModule> module = boost::dynamic_pointer_cast<NodeModule>(*m);
+		App::instance().engine()->destroy(module->node()->path());
+	}
+
 }
 
 

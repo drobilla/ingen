@@ -81,12 +81,24 @@ Loader::save_patch(CountedPtr<PatchModel> model, const string& filename, bool re
 	_mutex.lock();
 
 	_events.push_back(sigc::hide_return(sigc::bind(
-		sigc::mem_fun(_serializer, &Serializer::save_patch),
+		sigc::mem_fun(this, &Loader::save_patch_event),
 		model, filename, recursive)));
 
 	_mutex.unlock();
 	
 	whip();
+}
+
+
+void
+Loader::save_patch_event(CountedPtr<PatchModel> model, const string& filename, bool recursive)
+{
+	if (recursive)
+		cerr << "FIXME: Recursive save." << endl;
+
+	_serializer->start_to_filename(filename);
+	_serializer->serialize_patch(model);
+	_serializer->finish();
 }
 
 

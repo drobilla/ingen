@@ -18,6 +18,7 @@
 #define OMPORTMODULE_H
 
 #include <string>
+#include <boost/enable_shared_from_this.hpp>
 #include <libgnomecanvasmm.h>
 #include <flowcanvas/Module.h>
 #include "util/Atom.h"
@@ -43,10 +44,12 @@ class Port;
  *
  * \ingroup Ingenuity
  */
-class PatchPortModule : public LibFlowCanvas::Module
+class PatchPortModule : public LibFlowCanvas::Module//, public boost::enable_shared_from_this<LibFlowCanvas::Module>
 {
 public:
-	PatchPortModule(PatchCanvas* canvas, CountedPtr<PortModel> port);
+	static boost::shared_ptr<PatchPortModule> create (boost::shared_ptr<PatchCanvas> canvas,
+	                                                  CountedPtr<PortModel>          port);
+
 	virtual ~PatchPortModule() {}
 	
 	virtual void store_location();
@@ -56,13 +59,15 @@ public:
 	CountedPtr<PortModel> port() const { return m_port; }
 
 protected:
+	PatchPortModule(boost::shared_ptr<PatchCanvas> canvas, CountedPtr<PortModel> port);
+
 	//virtual void on_double_click(GdkEventButton* ev) { show_control_window(); }
 	//virtual void on_middle_click(GdkEventButton* ev) { show_control_window(); }
 	
 	void metadata_update(const string& key, const Atom& value);
 
-	CountedPtr<PortModel> m_port;
-	Port*                 m_patch_port; ///< Port on this 'anonymous' module
+	CountedPtr<PortModel>   m_port;
+	boost::shared_ptr<Port> m_patch_port; ///< Port on this 'anonymous' module
 };
 
 
