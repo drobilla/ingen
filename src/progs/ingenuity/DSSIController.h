@@ -20,6 +20,7 @@
 #include <string>
 #include <gtkmm.h>
 #include "util/Path.h"
+#include "NodeModel.h"
 
 using std::string;
 using namespace Ingen::Client;

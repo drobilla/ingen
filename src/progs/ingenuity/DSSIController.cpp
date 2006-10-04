@@ -75,6 +75,8 @@ DSSIController::show_gui()
 void
 DSSIController::update_program_menu()
 {
+	cerr << "FIXME: Program menu\n";
+#if 0
 	m_program_menu.items().clear();
 	
 	const map<int, map<int, string> >& banks = node_model()->get_programs();
@@ -113,13 +115,14 @@ DSSIController::update_program_menu()
 		m_program_menu_item->set_sensitive(true);
 	
 	m_banks_dirty = false;
+#endif
 }
 
 
 void
 DSSIController::send_program_change(int bank, int program)
 {
-	App::instance().engine()->set_program(node_model()->path(), bank, program);
+	//App::instance().engine()->set_program(node_model()->path(), bank, program);
 }
 
 

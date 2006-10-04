@@ -13,7 +13,6 @@ ingenuity_DEPENDENCIES = ../../libs/client/libingenclient.la
 # FIXME: make engine have a separate include dir
 if MONOLITHIC_INGENUITY
 ingenuity_CXXFLAGS += -I$(top_srcdir)/src/libs
-#ingenuity_LDADD += @JACK_LIBS@ @ALSA_LIBS@ @LASH_LIBS@ @SLV2_LIBS@ -lrt ../../libs/engine/libingen.la
 ingenuity_LDADD += ../../libs/engine/libingen.la
 ingenuity_DEPENDENCIES += ../../libs/engine/libingen.la
 endif
@@ -58,14 +57,14 @@ ingenuity_SOURCES = \
 	PatchWindow.cpp \
 	WindowFactory.h \
 	WindowFactory.cpp \
-	../../common/types.h \
-	../../common/Path.h \
 	NodeModule.h \
 	NodeModule.cpp \
 	PatchPortModule.h \
 	PatchPortModule.cpp \
 	DSSIModule.h \
 	DSSIModule.cpp \
+	DSSIController.h \
+	DSSIController.cpp \
 	SubpatchModule.h \
 	SubpatchModule.cpp \
 	Port.h \

@@ -1,4 +1,4 @@
 SUBDIRS = scripts
 
-EXTRA_DIST = omecho.py omsynth.py OSC.py
+EXTRA_DIST = ingen.py ingenecho.py OSC.py
 

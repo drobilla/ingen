@@ -1,3 +1,4 @@
 SUBDIRS = libs progs
-DIST_SUBDIRS = common
+
+DIST_SUBDIRS = $(SUBDIRS) common
 

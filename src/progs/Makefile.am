@@ -1,6 +1,6 @@
 AM_CXXFLAGS = -I$(top_srcdir)/src/common
 
-DIST_SUBDIRS = python supercollider
+DIST_SUBDIRS = python supercollider patch_loader ingenuity server demolition
 
 SUBDIRS = server
 

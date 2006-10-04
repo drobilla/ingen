@@ -1,5 +1,4 @@
-SUBDIRS = tests
-DIST_SUBDIRS = events
+SUBDIRS = tests events
 
 AM_CXXFLAGS = @JACK_CFLAGS@ @LOSC_CFLAGS@ @ALSA_CFLAGS@ @LASH_CFLAGS@ @SLV2_CFLAGS@ -I$(top_srcdir)/src/common -I$(top_srcdir)/src/libs/engine/events
 
@@ -12,6 +11,7 @@ noinst_LTLIBRARIES = libingen.la
 libingen_la_SOURCES = \
 	util.h \
 	tuning.h \
+	events.h \
 	DataType.h \
 	Node.h \
 	NodeBase.h \
@@ -31,7 +31,6 @@ libingen_la_SOURCES = \
 	DirectResponder.h \
 	OSCResponder.h \
 	OSCResponder.cpp \
-	ClientKey.h \
 	ClientBroadcaster.h \
 	ClientBroadcaster.cpp \
 	ObjectSender.h \
@@ -68,7 +67,7 @@ libingen_la_SOURCES = \
 	Maid.cpp \
 	MaidObject.h \
 	Tree.h \
-	ClientRecord.h \
+	TreeImplementation.h \
 	PluginLibrary.h \
 	Plugin.h \
 	Plugin.cpp \
@@ -88,12 +87,6 @@ libingen_la_SOURCES = \
 	AudioDriver.h \
 	MidiDriver.h \
 	midi.h \
-	../libingen_la/util/Semaphore.h \
-	../libingen_la/util/types.h \
-	../libingen_la/util/Path.h \
-	../libingen_la/util/Queue.h \
-	../libingen_la/interface/ClientInterface.h \
-	../libingen_la/interface/EngineInterface.h \
 	instantiations.cpp \
 	events/RegisterClientEvent.h \
 	events/RegisterClientEvent.cpp \
@@ -213,7 +206,6 @@ endif
 if WITH_LASH
 libingen_la_SOURCES += \
 	LashDriver.h \
-	LashDriver.cpp \
-	LashRestoreDoneEvent.h
+	LashDriver.cpp
 endif
 

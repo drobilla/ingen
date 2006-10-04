@@ -7,7 +7,6 @@ libingenclient_la_CXXFLAGS = -I$(top_srcdir)/src/common -DPKGDATADIR=\"$(pkgdata
 libingenclient_la_LIBADD = @LXML2_LIBS@ @LOSC_LIBS@ @RAPTOR_LIBS@ @LSIGCPP_LIBS@
 
 libingenclient_la_SOURCES = \
-	ClientInterface.h \
 	OSCEngineSender.h \
 	OSCEngineSender.cpp \
 	OSCModelEngineInterface.h \
@@ -21,7 +20,6 @@ libingenclient_la_SOURCES = \
 	ModelEngineInterface.cpp \
 	PresetModel.h \
 	ControlModel.h \
-	ObjectController.h \
 	ObjectModel.h \
 	ObjectModel.cpp \
 	NodeModel.h \

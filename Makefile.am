@@ -1,4 +1,4 @@
-SUBDIRS = src
+SUBDIRS = src patches
 
 doc: doc/Doxyfile src/engine/*.h src/engine/*.cpp \
 src/common/util/*.h \

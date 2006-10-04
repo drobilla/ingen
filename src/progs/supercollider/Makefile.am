@@ -1,2 +1,2 @@
-EXTRA_DIST = Om.sc example.sc
+EXTRA_DIST = Ingen.sc example.sc
 
