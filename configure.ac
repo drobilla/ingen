@@ -85,7 +85,7 @@ AC_ARG_ENABLE(debug_symbols,
 	[AS_HELP_STRING(--enable-debug-symbols, [Enable debugging symbols - overrides CXXFLAGS (no)])],
 	[debug_symbols="$enableval"])
 
-AC_ARG_ENABLE(debug,
+AC_ARG_ENABLE(debug_asertions,
 	[AS_HELP_STRING(--enable-debug-assertions, [Enable debugging assertions (no)])],
 	[assertions="$enableval"])
 
@@ -104,7 +104,7 @@ fi
 
 # Boost shared_ptr debugging
 pointer_debug="no"
-AC_ARG_ENABLE(debug,
+AC_ARG_ENABLE(pointer_debug,
 	[AS_HELP_STRING(--enable-pointer-debug, [Enable smart pointer debugging (no)])],
 	[pointer_debug="$enableval"])
 if test "$pointer_debug" = "yes"; then

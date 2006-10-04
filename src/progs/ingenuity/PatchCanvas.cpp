@@ -26,11 +26,14 @@
 #include "LoadSubpatchWindow.h"
 #include "NewSubpatchWindow.h"
 #include "Port.h"
+#include "Connection.h"
 #include "NodeModel.h"
 #include "NodeModule.h"
 #include "SubpatchModule.h"
 #include "GladeFactory.h"
 #include "WindowFactory.h"
+#include "Serializer.h"
+using Ingen::Client::Serializer;
 
 namespace Ingenuity {
 
@@ -170,10 +173,14 @@ PatchCanvas::connection(CountedPtr<ConnectionModel> cm)
 	boost::shared_ptr<LibFlowCanvas::Port> src = get_port(src_parent_name, cm->src_port_path().name());
 	boost::shared_ptr<LibFlowCanvas::Port> dst = get_port(dst_parent_name, cm->dst_port_path().name());
 	
-	if (src && dst)
-		add_connection(src, dst);
-	else
+	if (src && dst) {
+		boost::shared_ptr<Connection> c(new Connection(shared_from_this(), cm, src, dst));
+		src->add_connection(c);
+		dst->add_connection(c);
+		add_connection(c);
+	} else {
 		cerr << "[Canvas] ERROR: Unable to find ports to create connection." << endl;
+	}
 }
 
 
@@ -293,13 +300,39 @@ PatchCanvas::canvas_event(GdkEvent* event)
 
 
 void
-PatchCanvas::destroy_selected()
+PatchCanvas::destroy_selection()
 {
 	for (list<boost::shared_ptr<Module> >::iterator m = m_selected_modules.begin(); m != m_selected_modules.end(); ++m) {
 		boost::shared_ptr<NodeModule> module = boost::dynamic_pointer_cast<NodeModule>(*m);
 		App::instance().engine()->destroy(module->node()->path());
 	}
 
+}
+
+
+void
+PatchCanvas::copy_selection()
+{
+	Serializer serializer(App::instance().engine());
+	serializer.start_to_string();
+
+	for (list<boost::shared_ptr<Module> >::iterator m = m_selected_modules.begin(); m != m_selected_modules.end(); ++m) {
+		boost::shared_ptr<NodeModule> module = boost::dynamic_pointer_cast<NodeModule>(*m);
+		if (module)
+			serializer.serialize(module->node());
+	}
+	
+	for (list<boost::shared_ptr<LibFlowCanvas::Connection> >::iterator c = m_selected_connections.begin();
+			c != m_selected_connections.end(); ++c) {
+		boost::shared_ptr<Connection> connection = boost::dynamic_pointer_cast<Connection>(*c);
+		if (connection)
+			serializer.serialize_connection(connection->model());
+	}
+	
+	string result = serializer.finish();
+	
+	Glib::RefPtr<Gtk::Clipboard> clipboard = Gtk::Clipboard::get();
+	clipboard->set_text(result);
 }
 
 

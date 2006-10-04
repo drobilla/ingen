@@ -85,8 +85,6 @@ NodeModule::show_control_window()
 void
 NodeModule::store_location()
 {
-	cerr << "FIXME: store_location\n";
-#if 0
 	const float x = static_cast<float>(property_x());
 	const float y = static_cast<float>(property_y());
 	
@@ -98,7 +96,6 @@ NodeModule::store_location()
 		App::instance().engine()->set_metadata(m_node->path(), "ingenuity:canvas-x", Atom(x));
 		App::instance().engine()->set_metadata(m_node->path(), "ingenuity:canvas-y", Atom(y));
 	}
-#endif
 }
 
 

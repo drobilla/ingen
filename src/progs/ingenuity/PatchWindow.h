@@ -81,6 +81,8 @@ private:
 	void event_import();
 	void event_save();
 	void event_save_as();
+	void event_copy();
+	void event_delete();
 	void event_quit();
 	void event_destroy();
 	void event_clear();
@@ -100,6 +102,10 @@ private:
 	Gtk::MenuItem*      m_menu_import;
 	Gtk::MenuItem*      m_menu_save;
 	Gtk::MenuItem*      m_menu_save_as;
+	Gtk::MenuItem*      m_menu_cut;
+	Gtk::MenuItem*      m_menu_copy;
+	Gtk::MenuItem*      m_menu_paste;
+	Gtk::MenuItem*      m_menu_delete;
 	Gtk::MenuItem*      m_menu_configuration;
 	Gtk::MenuItem*      m_menu_close;
 	Gtk::MenuItem*      m_menu_quit;

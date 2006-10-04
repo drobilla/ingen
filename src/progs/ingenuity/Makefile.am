@@ -70,6 +70,7 @@ ingenuity_SOURCES = \
 	SubpatchModule.cpp \
 	Port.h \
 	Port.cpp \
+	Connection.h \
 	NewSubpatchWindow.h \
 	NewSubpatchWindow.cpp \
 	ConfigWindow.h \

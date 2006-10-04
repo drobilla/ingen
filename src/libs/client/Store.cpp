@@ -435,7 +435,7 @@ Store::metadata_update_event(const Path& subject_path, const string& predicate, 
 		subject->set_metadata(predicate, value);
 	} else {
 		add_metadata_orphan(subject_path, predicate, value);
-		cerr << "WARNING: metadata for unknown object." << endl;
+		cerr << "WARNING: metadata for unknown object " << subject_path << endl;
 	}
 }
 
@@ -447,7 +447,7 @@ Store::control_change_event(const Path& port_path, float value)
 	if (port)
 		port->value(value);
 	else
-		cerr << "ERROR: metadata for nonexistant object." << endl;
+		cerr << "ERROR: control change for nonexistant port " << port_path << endl;
 }
 
 
@@ -504,7 +504,7 @@ Store::disconnection_event(const Path& src_port_path, const Path& dst_port_path)
 	if (patch)
 		patch->remove_connection(src_port_path, dst_port_path);
 	else
-		cerr << "ERROR: disconnection in nonexistant patch" << endl;
+		cerr << "ERROR: disconnection in nonexistant patch " << cm->patch_path() << endl;
 }
 
 

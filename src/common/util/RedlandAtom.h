@@ -17,6 +17,7 @@
 #ifndef REDLAND_ATOM_H
 #define REDLAND_ATOM_H
 
+#include <sstream>
 #include <cstring>
 #include <raptor.h>
 #include "util/Atom.h"
@@ -34,37 +35,35 @@ public:
 	 * Caller is responsible for calling free(triple->object).
 	 */
 	static void atom_to_triple_object(raptor_statement* triple, const Atom& atom) {
-		static const size_t STR_LENGTH = 32; // FIXME ?
-		char* str = (char*)malloc(sizeof(char) * STR_LENGTH);
+		std::ostringstream os;
+
+		triple->object_literal_language = NULL;
 
 		switch (atom.type()) {
 		case Atom::INT:
-			snprintf(str, 32, "%d", atom.get_int32());
-			triple->object = (unsigned char*)str;
+			os << atom.get_int32();
+			triple->object = (unsigned char*)strdup(os.str().c_str());
 			triple->object_type = RAPTOR_IDENTIFIER_TYPE_LITERAL;
 			triple->object_literal_datatype = raptor_new_uri(
 				U("http://www.w3.org/2001/XMLSchema#integer"));
 			break;
 		case Atom::FLOAT:
-			snprintf(str, 32, "%f", atom.get_float());
-			triple->object = (unsigned char*)str;
+			os << atom.get_float();
+			triple->object = (unsigned char*)strdup(os.str().c_str());
 			triple->object_type = RAPTOR_IDENTIFIER_TYPE_LITERAL;
 			triple->object_literal_datatype = raptor_new_uri(
 				U("http://www.w3.org/2001/XMLSchema#float"));
 			break;
 		case Atom::STRING:
-			snprintf(str, 32, "%f", atom.get_float());
-			triple->object = (unsigned char*)str;
+			triple->object = strdup(atom.get_string());
 			triple->object_type = RAPTOR_IDENTIFIER_TYPE_LITERAL;
 			break;
 		case Atom::BLOB:
 		case Atom::NIL:
 		default:
-			cerr << "WARNING: Unserializable atom!" << endl;
-			// FIXME: what to do?
+			cerr << "WARNING: Unserializable Atom!" << endl;
 			triple->object = NULL;
 			triple->object_type = RAPTOR_IDENTIFIER_TYPE_UNKNOWN;
-			free(str); // FIXME: ew
 		}
 	}
 

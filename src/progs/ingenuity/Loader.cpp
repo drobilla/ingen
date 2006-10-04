@@ -97,7 +97,7 @@ Loader::save_patch_event(CountedPtr<PatchModel> model, const string& filename, b
 		cerr << "FIXME: Recursive save." << endl;
 
 	_serializer->start_to_filename(filename);
-	_serializer->serialize_patch(model);
+	_serializer->serialize(model);
 	_serializer->finish();
 }
 

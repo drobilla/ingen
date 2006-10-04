@@ -69,7 +69,8 @@ public:
 
 	void get_new_module_location(double& x, double& y);
 
-	void destroy_selected();
+	void destroy_selection();
+	void copy_selection();
 
 	void show_menu(GdkEvent* event)
 	{ m_menu->popup(event->button.button, event->button.time); }

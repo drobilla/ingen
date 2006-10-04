@@ -68,37 +68,39 @@ public:
 	                  MetadataMap   initial_data,
 	                  bool          existing = false);
 	
-	void start_to_filename(const string& filename);
-	void start_to_string();
-
-	void serialize_patch(CountedPtr<PatchModel> patch) throw(std::logic_error);
-	
-	string finish() throw(std::logic_error);
+	void   start_to_filename(const string& filename)            throw (std::logic_error);
+	void   start_to_string()                                    throw (std::logic_error);
+	void   serialize(CountedPtr<ObjectModel> object)            throw (std::logic_error);
+	void   serialize_connection(CountedPtr<ConnectionModel> c)  throw (std::logic_error);
+	string finish()                                             throw (std::logic_error);
 
 private:
 
 	// Model -> RDF
 	
-	void add_node_to_rdf(raptor_serializer* rdf,
-		CountedPtr<NodeModel> node, const string ns_prefix="");
+	void serialize_patch(CountedPtr<PatchModel> p);
+
+	void serialize_node(CountedPtr<NodeModel> n, const string ns_prefix="");
 	
-	void add_port_to_rdf(raptor_serializer* rdf,
-		CountedPtr<PortModel> port, const string ns_prefix="");
+	void serialize_port(CountedPtr<PortModel> p, const string ns_prefix="");
 	
-	void add_connection_to_rdf(raptor_serializer* rdf,
-		CountedPtr<ConnectionModel> connection, const string port_ns_prefix="");
+
 
 
 	// Triple -> RDF
 	
-	void add_resource_to_rdf(raptor_serializer* rdf,
-			const string& subject_uri, const string& predicate_uri, const string& object_uri);
+    void serialize_resource(const string& subject_uri,
+	                        const string& predicate_uri,
+	                        const string& object_uri);
 	
-	//void add_resource_to_rdf(raptor_serializer* rdf
-	//		librdf_node* subject, const string& predicate_uri, const string& object_uri);
+
+    void serialize_resource(raptor_identifier* subject,
+	                        const string&      predicate_uri,
+	                        const string&      object_uri);
 	
-	void add_atom_to_rdf(raptor_serializer* rdf,
-			const string& subject_uri, const string& predicate_uri, const Atom& atom);
+	void serialize_atom(const string& subject_uri,
+	                    const string& predicate_uri,
+	                    const Atom&   atom);
 
 	void   setup_prefixes();
 	string expand_uri(const string& uri);

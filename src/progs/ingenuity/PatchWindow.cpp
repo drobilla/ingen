@@ -59,6 +59,10 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 	//xml->get_widget("patch_open_into_menuitem", m_menu_open_into);
 	xml->get_widget("patch_save_menuitem", m_menu_save);
 	xml->get_widget("patch_save_as_menuitem", m_menu_save_as);
+	xml->get_widget("patch_cut_menuitem", m_menu_cut);
+	xml->get_widget("patch_copy_menuitem", m_menu_copy);
+	xml->get_widget("patch_paste_menuitem", m_menu_paste);
+	xml->get_widget("patch_delete_menuitem", m_menu_delete);
 	xml->get_widget("patch_close_menuitem", m_menu_close);
 	xml->get_widget("patch_configuration_menuitem", m_menu_configuration);
 	xml->get_widget("patch_quit_menuitem", m_menu_quit);
@@ -84,6 +88,10 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 		sigc::mem_fun(this, &PatchWindow::event_save));
 	m_menu_save_as->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_save_as));
+	m_menu_copy->signal_activate().connect(
+		sigc::mem_fun(this, &PatchWindow::event_copy));
+	m_menu_delete->signal_activate().connect(
+		sigc::mem_fun(this, &PatchWindow::event_delete));
 	m_menu_quit->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_quit));
 	m_menu_configuration->signal_activate().connect(
@@ -303,6 +311,22 @@ PatchWindow::event_save_as()
 		}
 	}
 	App::instance().configuration()->set_patch_folder(dialog.get_current_folder());
+}
+
+
+void
+PatchWindow::event_copy()
+{
+	if (m_view)
+		m_view->canvas()->copy_selection();
+}
+
+
+void
+PatchWindow::event_delete()
+{
+	if (m_view)
+		m_view->canvas()->destroy_selection();
 }
 
 
