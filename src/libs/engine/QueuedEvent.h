@@ -74,7 +74,7 @@ protected:
 	QueuedEvent& operator=(const QueuedEvent&);
 	
 	QueuedEvent(Engine&               engine,
-	            CountedPtr<Responder> responder,
+	            SharedPtr<Responder> responder,
 	            FrameTime             time, 
 	            bool                  blocking = false,
 	            QueuedEventSource*    source = NULL)
@@ -87,7 +87,7 @@ protected:
 	
 	// NULL event base (for internal events only!)
 	QueuedEvent(Engine& engine)
-	: Event(engine, CountedPtr<Ingen::Responder>(), 0)
+	: Event(engine, SharedPtr<Ingen::Responder>(), 0)
 	, _pre_processed(false), _blocking(false), _source(NULL)
 	{}
 

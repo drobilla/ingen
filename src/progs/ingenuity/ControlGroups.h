@@ -22,7 +22,7 @@
 #include <libglademm/xml.h>
 #include <libglademm.h>
 #include "PortModel.h"
-#include "util/CountedPtr.h"
+#include "raul/SharedPtr.h"
 
 namespace Ingen { namespace Client { class PortModel; } }
 using namespace Ingen::Client;
@@ -39,11 +39,11 @@ class ControlPanel;
 class ControlGroup : public Gtk::VBox
 {
 public:
-	ControlGroup(ControlPanel* panel, CountedPtr<PortModel> pm, bool separator);
+	ControlGroup(ControlPanel* panel, SharedPtr<PortModel> pm, bool separator);
 
 	~ControlGroup() { delete m_separator; }
 	
-	inline const CountedPtr<PortModel> port_model() const { return m_port_model; }
+	inline const SharedPtr<PortModel> port_model() const { return m_port_model; }
 
 	void remove_separator() {
 		assert(m_has_separator); remove(*m_separator); delete m_separator;
@@ -61,7 +61,7 @@ protected:
 	virtual void metadata_update(const string& key, const Atom& value);
 
 	ControlPanel*          m_control_panel;
-	CountedPtr<PortModel>  m_port_model;
+	SharedPtr<PortModel>  m_port_model;
 	bool                   m_has_separator;
 	Gtk::HSeparator*       m_separator;
 };
@@ -74,7 +74,7 @@ protected:
 class SliderControlGroup : public ControlGroup
 {
 public:
-	SliderControlGroup(ControlPanel* panel, CountedPtr<PortModel> pm, bool separator);
+	SliderControlGroup(ControlPanel* panel, SharedPtr<PortModel> pm, bool separator);
 
 	void enable();
 	void disable();
@@ -133,7 +133,7 @@ SliderControlGroup::set_value(const float val)
 class IntegerControlGroup : public ControlGroup
 {
 public:
-	IntegerControlGroup(ControlPanel* panel, CountedPtr<PortModel> pm, bool separator);
+	IntegerControlGroup(ControlPanel* panel, SharedPtr<PortModel> pm, bool separator);
 	
 	void enable();
 	void disable();
@@ -158,7 +158,7 @@ private:
 class ToggleControlGroup : public ControlGroup
 {
 public:
-	ToggleControlGroup(ControlPanel* panel, CountedPtr<PortModel> pm, bool separator);
+	ToggleControlGroup(ControlPanel* panel, SharedPtr<PortModel> pm, bool separator);
 	
 	void enable();
 	void disable();

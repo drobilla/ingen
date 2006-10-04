@@ -40,7 +40,7 @@ namespace Ingen {
 /** Register a client to receive messages over the notification band.
  */
 void
-ClientBroadcaster::register_client(const ClientKey key, CountedPtr<ClientInterface> client)
+ClientBroadcaster::register_client(const ClientKey key, SharedPtr<ClientInterface> client)
 {
 	bool found = false;
 	for (ClientList::iterator i = _clients.begin(); i != _clients.end(); ++i)
@@ -48,7 +48,7 @@ ClientBroadcaster::register_client(const ClientKey key, CountedPtr<ClientInterfa
 			found = true;
 
 	if (!found) {
-		_clients.push_back(pair<ClientKey, CountedPtr<ClientInterface> >(key, client));
+		_clients.push_back(pair<ClientKey, SharedPtr<ClientInterface> >(key, client));
 		cout << "[ClientBroadcaster] Registered client " << key.uri()
 			<< " (" << _clients.size() << " clients)" << endl;
 	} else {
@@ -103,7 +103,7 @@ ClientBroadcaster::unregister_client(const ClientKey& key)
  * (A responder is passed to remove the dependency on liblo addresses in request
  * events, in anticipation of libom and multiple ways of responding to clients).
  */
-CountedPtr<ClientInterface>
+SharedPtr<ClientInterface>
 ClientBroadcaster::client(const ClientKey& key)
 {
 	for (ClientList::iterator i = _clients.begin(); i != _clients.end(); ++i)
@@ -112,7 +112,7 @@ ClientBroadcaster::client(const ClientKey& key)
 
 	cerr << "[ClientBroadcaster] Failed to find client." << endl;
 
-	return CountedPtr<ClientInterface>();
+	return SharedPtr<ClientInterface>();
 }
 
 
@@ -124,7 +124,7 @@ ClientBroadcaster::send_error(const string& msg)
 }
 
 void
-ClientBroadcaster::send_plugins_to(CountedPtr<ClientInterface> client, const list<Plugin*>& plugin_list)
+ClientBroadcaster::send_plugins_to(SharedPtr<ClientInterface> client, const list<Plugin*>& plugin_list)
 {
 #if 0
 	// FIXME: This probably isn't actually thread safe

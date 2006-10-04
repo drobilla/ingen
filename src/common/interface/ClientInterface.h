@@ -18,7 +18,7 @@
 #define CLIENTINTERFACE_H
 
 #include <inttypes.h>
-#include "util/Atom.h"
+#include "raul/Atom.h"
 #include <string>
 using std::string;
 

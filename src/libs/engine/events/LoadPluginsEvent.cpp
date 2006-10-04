@@ -26,7 +26,7 @@ using std::cerr;
 namespace Ingen {
 
 
-LoadPluginsEvent::LoadPluginsEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp)
+LoadPluginsEvent::LoadPluginsEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp)
 : QueuedEvent(engine, responder, timestamp)
 {
 }

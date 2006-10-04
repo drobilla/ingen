@@ -34,7 +34,7 @@
 using std::cout; using std::endl; using std::cerr;
 using namespace Ingen;
 
-CountedPtr<Engine> engine;
+SharedPtr<Engine> engine;
 
 
 void
@@ -137,7 +137,7 @@ main(int argc, char** argv)
 
 		set_denormal_flags();
 
-		engine = CountedPtr<Engine>(new Engine());
+		engine = SharedPtr<Engine>(new Engine());
 
 		OSCEngineReceiver* receiver = new OSCEngineReceiver(
 				engine, pre_processor_queue_size, args_info.port_arg);

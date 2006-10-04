@@ -24,7 +24,7 @@
 namespace Ingen {
 
 
-DSSIConfigureEvent::DSSIConfigureEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& node_path, const string& key, const string& val)
+DSSIConfigureEvent::DSSIConfigureEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& node_path, const string& key, const string& val)
 : QueuedEvent(engine, responder, timestamp),
   m_node_path(node_path),
   m_key(key),

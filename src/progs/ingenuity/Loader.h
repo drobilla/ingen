@@ -20,10 +20,10 @@
 #include <string>
 #include <list>
 #include <cassert>
-#include "util/Thread.h"
-#include "util/Slave.h"
-#include "util/Mutex.h"
-#include "util/Condition.h"
+#include "raul/Thread.h"
+#include "raul/Slave.h"
+#include "raul/Mutex.h"
+#include "raul/Condition.h"
 #include "ModelEngineInterface.h"
 #include "ObjectModel.h"
 using std::string;
@@ -52,7 +52,7 @@ namespace Ingenuity {
 class Loader : public Slave
 {
 public:
-	Loader(CountedPtr<ModelEngineInterface> engine);
+	Loader(SharedPtr<ModelEngineInterface> engine);
 	~Loader();
 
 	Serializer& serializer() const { return *_serializer; }
@@ -64,12 +64,12 @@ public:
 	                const MetadataMap& initial_data,
 	                bool               merge = false);
 	
-	void save_patch(CountedPtr<PatchModel> model, const string& filename, bool recursive);
+	void save_patch(SharedPtr<PatchModel> model, const string& filename, bool recursive);
 
 
 private:	
 
-	void save_patch_event(CountedPtr<PatchModel> model, const string& filename, bool recursive);
+	void save_patch_event(SharedPtr<PatchModel> model, const string& filename, bool recursive);
 	
 	/** Returns nothing and takes no parameters (because they have all been bound) */
 	typedef sigc::slot<void> Closure;

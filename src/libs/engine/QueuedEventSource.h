@@ -20,9 +20,9 @@
 #include <cstdlib>
 #include <pthread.h>
 #include "types.h"
-#include "util/Semaphore.h"
-#include "util/Queue.h"
-#include "util/Slave.h"
+#include "raul/Semaphore.h"
+#include "raul/Queue.h"
+#include "raul/Slave.h"
 #include "Event.h"
 #include "EventSource.h"
 

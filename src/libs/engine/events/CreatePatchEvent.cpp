@@ -24,13 +24,13 @@
 #include "Maid.h"
 #include "ClientBroadcaster.h"
 #include "AudioDriver.h"
-#include "util/Path.h"
+#include "raul/Path.h"
 #include "ObjectStore.h"
 
 namespace Ingen {
 
 
-CreatePatchEvent::CreatePatchEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& path, int poly)
+CreatePatchEvent::CreatePatchEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path, int poly)
 : QueuedEvent(engine, responder, timestamp),
   m_path(path),
   m_patch(NULL),

@@ -37,7 +37,7 @@ using Shared::ClientInterface;
 class RequestPortValueEvent : public QueuedEvent
 {
 public:
-	RequestPortValueEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& port_path);
+	RequestPortValueEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& port_path);
 
 	void pre_process();
 	void execute(SampleCount nframes, FrameTime start, FrameTime end);
@@ -47,7 +47,7 @@ private:
 	string                      m_port_path;
 	Port*                       m_port;
 	Sample                      m_value;
-	CountedPtr<ClientInterface> m_client;
+	SharedPtr<ClientInterface> m_client;
 };
 
 

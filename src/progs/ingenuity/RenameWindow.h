@@ -19,7 +19,7 @@
 
 #include <gtkmm.h>
 #include <libglademm.h>
-#include "util/CountedPtr.h"
+#include "raul/SharedPtr.h"
 #include "ObjectModel.h"
 using Ingen::Client::ObjectModel;
 
@@ -35,16 +35,16 @@ class RenameWindow : public Gtk::Window
 public:
 	RenameWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& refGlade);
 
-	void present(CountedPtr<ObjectModel> object) { set_object(object); Gtk::Window::present(); }
+	void present(SharedPtr<ObjectModel> object) { set_object(object); Gtk::Window::present(); }
 
 private:
-	void set_object(CountedPtr<ObjectModel> object);
+	void set_object(SharedPtr<ObjectModel> object);
 
 	void name_changed();
 	void cancel_clicked();
 	void ok_clicked();
 	
-	CountedPtr<ObjectModel> m_object;
+	SharedPtr<ObjectModel> m_object;
 
 	Gtk::Entry*      m_name_entry;
 	Gtk::Label*      m_message_label;

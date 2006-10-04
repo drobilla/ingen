@@ -26,7 +26,7 @@
 #include <iostream>
 #include <utility> // for pair<>
 #include "ControlGroups.h"
-#include "util/Path.h"
+#include "raul/Path.h"
 
 using std::vector; using std::string; using std::pair;
 using std::cerr; using std::cout; using std::endl;
@@ -51,11 +51,11 @@ public:
 	ControlPanel(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml);
 	virtual ~ControlPanel();
 	
-	void init(CountedPtr<NodeModel> node, size_t poly);
+	void init(SharedPtr<NodeModel> node, size_t poly);
 
 	ControlGroup* find_port(const Path& path) const;
 
-	void add_port(CountedPtr<PortModel> port);
+	void add_port(SharedPtr<PortModel> port);
 	void remove_port(const Path& path);
 
 	//void rename_port(const Path& old_path, const Path& new_path);

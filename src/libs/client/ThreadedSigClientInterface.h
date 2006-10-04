@@ -22,8 +22,8 @@
 #include <sigc++/sigc++.h>
 #include "interface/ClientInterface.h"
 #include "SigClientInterface.h"
-#include "util/Queue.h"
-#include "util/Atom.h"
+#include "raul/Queue.h"
+#include "raul/Atom.h"
 using std::string;
 
 /** Returns nothing and takes no parameters (because they have all been bound) */

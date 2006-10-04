@@ -18,7 +18,7 @@
 #ifndef DIRECTRESPONDER_H
 #define DIRECTRESPONDER_H
 
-#include "util/CountedPtr.h"
+#include "raul/SharedPtr.h"
 #include "interface/ClientInterface.h"
 #include "Responder.h"
 
@@ -30,7 +30,7 @@ namespace Ingen {
 class DirectResponder : public Responder
 {
 public:
-	DirectResponder(CountedPtr<ClientInterface> client, int32_t id)
+	DirectResponder(SharedPtr<ClientInterface> client, int32_t id)
 	: _client(client), _id(id)
 	{}
 
@@ -39,10 +39,10 @@ public:
 	void respond_ok()                     { _client->response(_id, true, ""); }
 	void respond_error(const string& msg) { _client->response(_id, false, msg); }
 
-	CountedPtr<ClientInterface> client() { return _client; }
+	SharedPtr<ClientInterface> client() { return _client; }
 
 private:
-	CountedPtr<ClientInterface> _client;
+	SharedPtr<ClientInterface> _client;
 	int32_t                     _id;
 };
 

@@ -28,7 +28,7 @@
 namespace Ingenuity {
 
 
-DSSIController::DSSIController(CountedPtr<NodeModel> model)
+DSSIController::DSSIController(SharedPtr<NodeModel> model)
 : m_banks_dirty(true)
 {
 #if 0

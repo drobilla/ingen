@@ -104,7 +104,7 @@ LoadPluginWindow::LoadPluginWindow(BaseObjectType* cobject, const Glib::RefPtr<G
 
 
 void
-LoadPluginWindow::present(CountedPtr<PatchModel> patch, MetadataMap data)
+LoadPluginWindow::present(SharedPtr<PatchModel> patch, MetadataMap data)
 {
 	set_patch(patch);
 	m_initial_data = data;
@@ -140,7 +140,7 @@ LoadPluginWindow::name_changed()
  * This function MUST be called before using the window in any way!
  */
 void
-LoadPluginWindow::set_patch(CountedPtr<PatchModel> patch)
+LoadPluginWindow::set_patch(SharedPtr<PatchModel> patch)
 {
 	m_patch = patch;
 
@@ -182,12 +182,12 @@ LoadPluginWindow::on_show()
 
 
 void
-LoadPluginWindow::set_plugin_list(const std::map<string, CountedPtr<PluginModel> >& m)
+LoadPluginWindow::set_plugin_list(const std::map<string, SharedPtr<PluginModel> >& m)
 {
 	m_plugins_liststore->clear();
 
-	for (std::map<string, CountedPtr<PluginModel> >::const_iterator i = m.begin(); i != m.end(); ++i) {
-		CountedPtr<PluginModel> plugin = (*i).second;
+	for (std::map<string, SharedPtr<PluginModel> >::const_iterator i = m.begin(); i != m.end(); ++i) {
+		SharedPtr<PluginModel> plugin = (*i).second;
 
 		Gtk::TreeModel::iterator iter = m_plugins_liststore->append();
 		Gtk::TreeModel::Row row = *iter;
@@ -206,7 +206,7 @@ LoadPluginWindow::set_plugin_list(const std::map<string, CountedPtr<PluginModel>
 
 
 void
-LoadPluginWindow::add_plugin(CountedPtr<PluginModel> plugin)
+LoadPluginWindow::add_plugin(SharedPtr<PluginModel> plugin)
 {
 	Gtk::TreeModel::iterator iter = m_plugins_liststore->append();
 	Gtk::TreeModel::Row row = *iter;
@@ -260,7 +260,7 @@ LoadPluginWindow::generate_module_name(int offset)
 	
 	if (iter) {
 		Gtk::TreeModel::Row row = *iter;
-		CountedPtr<PluginModel> plugin = row.get_value(m_plugins_columns.m_col_plugin_model);
+		SharedPtr<PluginModel> plugin = row.get_value(m_plugins_columns.m_col_plugin_model);
 		char num_buf[3];
 		for (uint i=0; i < 99; ++i) {
 			name = plugin->default_node_name();
@@ -290,7 +290,7 @@ LoadPluginWindow::add_clicked()
 	
 	if (iter) { // If anything is selected			
 		Gtk::TreeModel::Row row = *iter;
-		CountedPtr<PluginModel> plugin = row.get_value(m_plugins_columns.m_col_plugin_model);
+		SharedPtr<PluginModel> plugin = row.get_value(m_plugins_columns.m_col_plugin_model);
 		string name = m_node_name_entry->get_text();
 		if (name == "") {
 			name = generate_module_name();
@@ -351,10 +351,10 @@ LoadPluginWindow::filter_changed()
 	size_t                   num_visible = 0;
 	
 
-	for (std::map<string, CountedPtr<PluginModel> >::const_iterator i = App::instance().store()->plugins().begin();
+	for (std::map<string, SharedPtr<PluginModel> >::const_iterator i = App::instance().store()->plugins().begin();
 			i != App::instance().store()->plugins().end(); ++i) {
 	
-		const CountedPtr<PluginModel> plugin = (*i).second;
+		const SharedPtr<PluginModel> plugin = (*i).second;
 
 		switch (criteria) {
 		case CriteriaColumns::NAME:

@@ -27,7 +27,7 @@ namespace Ingen {
 
 /** Voice-specific control setting
  */
-SetPortValueEvent::SetPortValueEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, size_t voice_num, const string& port_path, Sample val)
+SetPortValueEvent::SetPortValueEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, size_t voice_num, const string& port_path, Sample val)
 : Event(engine, responder, timestamp),
   m_voice_num(voice_num),
   m_port_path(port_path),
@@ -38,7 +38,7 @@ SetPortValueEvent::SetPortValueEvent(Engine& engine, CountedPtr<Responder> respo
 }
 
 
-SetPortValueEvent::SetPortValueEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& port_path, Sample val)
+SetPortValueEvent::SetPortValueEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& port_path, Sample val)
 : Event(engine, responder, timestamp),
   m_voice_num(-1),
   m_port_path(port_path),

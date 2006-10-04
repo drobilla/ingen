@@ -21,13 +21,13 @@
 #include "Tree.h"
 #include "Engine.h"
 #include "ClientBroadcaster.h"
-#include "util/Path.h"
+#include "raul/Path.h"
 #include "ObjectStore.h"
 
 namespace Ingen {
 
 
-RenameEvent::RenameEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& name)
+RenameEvent::RenameEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& name)
 : QueuedEvent(engine, responder, timestamp),
   m_old_path(path),
   m_name(name),

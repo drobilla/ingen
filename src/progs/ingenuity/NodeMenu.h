@@ -19,8 +19,8 @@
 
 #include <string>
 #include <gtkmm.h>
-#include "util/Path.h"
-#include "util/CountedPtr.h"
+#include "raul/Path.h"
+#include "raul/SharedPtr.h"
 #include "NodeModel.h"
 using Ingen::Client::NodeModel;
 
@@ -40,7 +40,7 @@ class PatchCanvas;
 class NodeMenu : public Gtk::Menu
 {
 public:
-	NodeMenu(CountedPtr<NodeModel> node);
+	NodeMenu(SharedPtr<NodeModel> node);
 
 	void set_path(const Path& new_path);
 	
@@ -57,7 +57,7 @@ protected:
 	virtual void enable_controls_menuitem();
 	virtual void disable_controls_menuitem();
 
-	//virtual void add_port(CountedPtr<PortModel> pm);
+	//virtual void add_port(SharedPtr<PortModel> pm);
 
 	void on_menu_destroy();
 	void on_menu_clone();
@@ -65,7 +65,7 @@ protected:
 	void on_menu_disconnect_all();
 
 	//Gtk::Menu                   m_menu;
-	CountedPtr<NodeModel>       _node;
+	SharedPtr<NodeModel>       _node;
 	Glib::RefPtr<Gtk::MenuItem> _controls_menuitem;
 };
 

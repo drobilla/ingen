@@ -22,10 +22,10 @@
 namespace Ingen {
 
 
-RegisterClientEvent::RegisterClientEvent(Engine& engine, CountedPtr<Responder>       responder,
+RegisterClientEvent::RegisterClientEvent(Engine& engine, SharedPtr<Responder>       responder,
                                          SampleCount                 timestamp,
                                          ClientKey                   key,
-                                         CountedPtr<ClientInterface> client)
+                                         SharedPtr<ClientInterface> client)
 : QueuedEvent(engine, responder, timestamp)
 , _key(key)
 , _client(client)

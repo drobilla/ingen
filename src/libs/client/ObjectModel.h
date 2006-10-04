@@ -24,9 +24,9 @@
 #include <algorithm>
 #include <cassert>
 #include <sigc++/sigc++.h>
-#include "util/Atom.h"
-#include "util/Path.h"
-#include "util/CountedPtr.h"
+#include "raul/Atom.h"
+#include "raul/Path.h"
+#include "raul/SharedPtr.h"
 using std::string; using std::map; using std::find;
 using std::cout; using std::cerr; using std::endl;
 
@@ -56,7 +56,7 @@ public:
 
 	const MetadataMap&      metadata() const { return _metadata; }
 	inline const Path&      path()     const { return _path; }
-	CountedPtr<ObjectModel> parent()   const { return _parent; }
+	SharedPtr<ObjectModel> parent()   const { return _parent; }
 
 	// Signals
 	sigc::signal<void, const string&, const Atom&> metadata_update_sig; 
@@ -68,20 +68,20 @@ protected:
 	ObjectModel(const Path& path);
 	
 	virtual void set_path(const Path& p)               { _path = p; }
-	virtual void set_parent(CountedPtr<ObjectModel> p) { assert(p); _parent = p; }
-	virtual void add_child(CountedPtr<ObjectModel> c) = 0;
-	virtual void remove_child(CountedPtr<ObjectModel> c) = 0;
+	virtual void set_parent(SharedPtr<ObjectModel> p) { assert(p); _parent = p; }
+	virtual void add_child(SharedPtr<ObjectModel> c) = 0;
+	virtual void remove_child(SharedPtr<ObjectModel> c) = 0;
 	
 	void add_metadata(const MetadataMap& data);
 	
-	void set(CountedPtr<ObjectModel> model);
+	void set(SharedPtr<ObjectModel> model);
 	
 	void set_metadata(const string& key, const Atom& value)
 		{ _metadata[key] = value; metadata_update_sig.emit(key, value); }
 
 
 	Path                    _path;
-	CountedPtr<ObjectModel> _parent;
+	SharedPtr<ObjectModel> _parent;
 	
 	MetadataMap _metadata;
 

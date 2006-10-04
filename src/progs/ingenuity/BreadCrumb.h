@@ -18,8 +18,8 @@
 #define BREADCRUMB_H
 
 #include <gtkmm.h>
-#include "util/Path.h"
-#include "util/CountedPtr.h"
+#include "raul/Path.h"
+#include "raul/SharedPtr.h"
 #include "PatchView.h"
 
 namespace Ingenuity {
@@ -37,7 +37,7 @@ namespace Ingenuity {
 class BreadCrumb : public Gtk::ToggleButton
 {
 public:
-	BreadCrumb(const Path& path, CountedPtr<PatchView> view = CountedPtr<PatchView>())
+	BreadCrumb(const Path& path, SharedPtr<PatchView> view = SharedPtr<PatchView>())
 		: _path(path)
 		, _view(view)
 	{
@@ -47,13 +47,13 @@ public:
 		show_all();
 	}
 
-	void set_view(CountedPtr<PatchView> view) {
+	void set_view(SharedPtr<PatchView> view) {
 		assert( !view || view->patch()->path() == _path);
 		_view = view;
 	}
 
 	const Path&           path() const { return _path; }
-	CountedPtr<PatchView> view() const { return _view; }
+	SharedPtr<PatchView> view() const { return _view; }
 	
 	void set_path(const Path& path)
 	{
@@ -70,7 +70,7 @@ public:
 
 private:
 	Path                  _path;
-	CountedPtr<PatchView> _view;
+	SharedPtr<PatchView> _view;
 };
 
 } // namespace Ingenuity

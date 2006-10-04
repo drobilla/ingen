@@ -63,7 +63,7 @@ ObjectModel::add_metadata(const MetadataMap& data)
  * @a model as correct.  The paths of the two models MUST be equal.
  */
 void
-ObjectModel::set(CountedPtr<ObjectModel> model)
+ObjectModel::set(SharedPtr<ObjectModel> model)
 {
 	assert(_path == model->path());
 

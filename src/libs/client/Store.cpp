@@ -28,7 +28,7 @@ namespace Client {
 
 
 
-Store::Store(CountedPtr<EngineInterface> engine, CountedPtr<SigClientInterface> emitter)
+Store::Store(SharedPtr<EngineInterface> engine, SharedPtr<SigClientInterface> emitter)
 : _engine(engine)
 , _emitter(emitter)
 {
@@ -57,12 +57,12 @@ Store::clear()
 
 
 void
-Store::add_plugin_orphan(CountedPtr<NodeModel> node)
+Store::add_plugin_orphan(SharedPtr<NodeModel> node)
 {
 	cerr << "WARNING: Node " << node->path() << " received, but plugin "
 		<< node->plugin_uri() << " unknown." << endl;
 
-	map<string, list<CountedPtr<NodeModel> > >::iterator spawn
+	map<string, list<SharedPtr<NodeModel> > >::iterator spawn
 		= _plugin_orphans.find(node->plugin_uri());
 
 	_engine->request_plugin(node->plugin_uri());
@@ -70,7 +70,7 @@ Store::add_plugin_orphan(CountedPtr<NodeModel> node)
 	if (spawn != _plugin_orphans.end()) {
 		spawn->second.push_back(node);
 	} else {
-		list<CountedPtr<NodeModel> > l;
+		list<SharedPtr<NodeModel> > l;
 		l.push_back(node);
 		_plugin_orphans[node->plugin_uri()] = l;
 	}
@@ -78,18 +78,18 @@ Store::add_plugin_orphan(CountedPtr<NodeModel> node)
 
 
 void
-Store::resolve_plugin_orphans(CountedPtr<PluginModel> plugin)
+Store::resolve_plugin_orphans(SharedPtr<PluginModel> plugin)
 {
-	map<string, list<CountedPtr<NodeModel> > >::iterator n
+	map<string, list<SharedPtr<NodeModel> > >::iterator n
 		= _plugin_orphans.find(plugin->uri());
 
 	if (n != _plugin_orphans.end()) {
 	
-		list<CountedPtr<NodeModel> > spawn = n->second; // take a copy
+		list<SharedPtr<NodeModel> > spawn = n->second; // take a copy
 
 		_plugin_orphans.erase(plugin->uri()); // prevent infinite recursion
 		
-		for (list<CountedPtr<NodeModel> >::iterator i = spawn.begin();
+		for (list<SharedPtr<NodeModel> >::iterator i = spawn.begin();
 				i != spawn.end(); ++i) {
 			add_object(*i);
 		}
@@ -98,7 +98,7 @@ Store::resolve_plugin_orphans(CountedPtr<PluginModel> plugin)
 
 
 void
-Store::add_connection_orphan(CountedPtr<ConnectionModel> connection)
+Store::add_connection_orphan(SharedPtr<ConnectionModel> connection)
 {
 	cerr << "WARNING: Orphan connection " << connection->src_port_path()
 		<< " -> " << connection->dst_port_path() << " received." << endl;
@@ -108,11 +108,11 @@ Store::add_connection_orphan(CountedPtr<ConnectionModel> connection)
 
 
 void
-Store::resolve_connection_orphans(CountedPtr<PortModel> port)
+Store::resolve_connection_orphans(SharedPtr<PortModel> port)
 {
 	assert(port->parent());
 
-	for (list<CountedPtr<ConnectionModel> >::iterator c = _connection_orphans.begin();
+	for (list<SharedPtr<ConnectionModel> >::iterator c = _connection_orphans.begin();
 			c != _connection_orphans.end(); ) {
 		
 		if ((*c)->src_port_path() == port->path())
@@ -121,11 +121,11 @@ Store::resolve_connection_orphans(CountedPtr<PortModel> port)
 		if ((*c)->dst_port_path() == port->path())
 			(*c)->set_dst_port(port);
 
-		list<CountedPtr<ConnectionModel> >::iterator next = c;
+		list<SharedPtr<ConnectionModel> >::iterator next = c;
 		++next;
 		
 		if ((*c)->src_port() && (*c)->dst_port()) {
-			CountedPtr<PatchModel> patch = PtrCast<PatchModel>(this->object((*c)->patch_path()));
+			SharedPtr<PatchModel> patch = PtrCast<PatchModel>(this->object((*c)->patch_path()));
 			if (patch) {
 				cerr << "Resolved orphan connection " << (*c)->src_port_path() <<
 					(*c)->dst_port_path() << endl;
@@ -140,11 +140,11 @@ Store::resolve_connection_orphans(CountedPtr<PortModel> port)
 
 
 void
-Store::add_orphan(CountedPtr<ObjectModel> child)
+Store::add_orphan(SharedPtr<ObjectModel> child)
 {
 	cerr << "WARNING: Orphan object " << child->path() << " received." << endl;
 
-	map<Path, list<CountedPtr<ObjectModel> > >::iterator children
+	map<Path, list<SharedPtr<ObjectModel> > >::iterator children
 		= _orphans.find(child->path().parent());
 
 	_engine->request_object(child->path().parent());
@@ -152,7 +152,7 @@ Store::add_orphan(CountedPtr<ObjectModel> child)
 	if (children != _orphans.end()) {
 		children->second.push_back(child);
 	} else {
-		list<CountedPtr<ObjectModel> > l;
+		list<SharedPtr<ObjectModel> > l;
 		l.push_back(child);
 		_orphans[child->path().parent()] = l;
 	}
@@ -178,7 +178,7 @@ Store::add_metadata_orphan(const Path& subject_path, const string& predicate, co
 
 
 void
-Store::resolve_metadata_orphans(CountedPtr<ObjectModel> subject)
+Store::resolve_metadata_orphans(SharedPtr<ObjectModel> subject)
 {
 	map<Path, list<std::pair<string, Atom> > >::iterator v
 		= _metadata_orphans.find(subject->path());
@@ -198,18 +198,18 @@ Store::resolve_metadata_orphans(CountedPtr<ObjectModel> subject)
 
 
 void
-Store::resolve_orphans(CountedPtr<ObjectModel> parent)
+Store::resolve_orphans(SharedPtr<ObjectModel> parent)
 {
-	map<Path, list<CountedPtr<ObjectModel> > >::iterator c
+	map<Path, list<SharedPtr<ObjectModel> > >::iterator c
 		= _orphans.find(parent->path());
 
 	if (c != _orphans.end()) {
 	
-		list<CountedPtr<ObjectModel> > children = c->second; // take a copy
+		list<SharedPtr<ObjectModel> > children = c->second; // take a copy
 
 		_orphans.erase(parent->path()); // prevent infinite recursion
 		
-		for (list<CountedPtr<ObjectModel> >::iterator i = children.begin();
+		for (list<SharedPtr<ObjectModel> >::iterator i = children.begin();
 				i != children.end(); ++i) {
 			add_object(*i);
 		}
@@ -218,7 +218,7 @@ Store::resolve_orphans(CountedPtr<ObjectModel> parent)
 
 
 void
-Store::add_object(CountedPtr<ObjectModel> object)
+Store::add_object(SharedPtr<ObjectModel> object)
 {
 	// If we already have "this" object, merge the existing one into the new
 	// one (with precedence to the new values).
@@ -228,7 +228,7 @@ Store::add_object(CountedPtr<ObjectModel> object)
 	} else {
 
 		if (object->path() != "/") {
-			CountedPtr<ObjectModel> parent = this->object(object->path().parent());
+			SharedPtr<ObjectModel> parent = this->object(object->path().parent());
 			if (parent) {
 				assert(object->path().is_child_of(parent->path()));
 				object->set_parent(parent);
@@ -241,7 +241,7 @@ Store::add_object(CountedPtr<ObjectModel> object)
 				resolve_metadata_orphans(parent);
 				resolve_orphans(parent);
 
-				CountedPtr<PortModel> port = PtrCast<PortModel>(object);
+				SharedPtr<PortModel> port = PtrCast<PortModel>(object);
 				if (port)
 					resolve_connection_orphans(port);
 
@@ -259,14 +259,14 @@ Store::add_object(CountedPtr<ObjectModel> object)
 }
 
 
-CountedPtr<ObjectModel>
+SharedPtr<ObjectModel>
 Store::remove_object(const Path& path)
 {
-	map<Path, CountedPtr<ObjectModel> >::iterator i = _objects.find(path);
+	map<Path, SharedPtr<ObjectModel> >::iterator i = _objects.find(path);
 
 	if (i != _objects.end()) {
 		assert((*i).second->path() == path);
-		CountedPtr<ObjectModel> result = (*i).second;
+		SharedPtr<ObjectModel> result = (*i).second;
 		_objects.erase(i);
 		//cout << "[Store] Removed " << path << endl;
 
@@ -276,7 +276,7 @@ Store::remove_object(const Path& path)
 		if (result->path() != "/") {
 			assert(result->parent());
 
-			CountedPtr<ObjectModel> parent = this->object(result->path().parent());
+			SharedPtr<ObjectModel> parent = this->object(result->path().parent());
 			if (parent) {
 				parent->remove_child(result);
 			}
@@ -288,30 +288,30 @@ Store::remove_object(const Path& path)
 
 	} else {
 		cerr << "[Store] Unable to find object " << path << " to remove." << endl;
-		return CountedPtr<ObjectModel>();
+		return SharedPtr<ObjectModel>();
 	}
 }
 
 
-CountedPtr<PluginModel>
+SharedPtr<PluginModel>
 Store::plugin(const string& uri)
 {
 	assert(uri.length() > 0);
-	map<string, CountedPtr<PluginModel> >::iterator i = _plugins.find(uri);
+	map<string, SharedPtr<PluginModel> >::iterator i = _plugins.find(uri);
 	if (i == _plugins.end())
-		return CountedPtr<PluginModel>();
+		return SharedPtr<PluginModel>();
 	else
 		return (*i).second;
 }
 
 
-CountedPtr<ObjectModel>
+SharedPtr<ObjectModel>
 Store::object(const Path& path)
 {
 	assert(path.length() > 0);
-	map<Path, CountedPtr<ObjectModel> >::iterator i = _objects.find(path);
+	map<Path, SharedPtr<ObjectModel> >::iterator i = _objects.find(path);
 	if (i == _objects.end()) {
-		return CountedPtr<ObjectModel>();
+		return SharedPtr<ObjectModel>();
 	} else {
 		assert(i->second->path() == "/" || i->second->parent());
 		return i->second;
@@ -319,7 +319,7 @@ Store::object(const Path& path)
 }
 
 void
-Store::add_plugin(CountedPtr<PluginModel> pm)
+Store::add_plugin(SharedPtr<PluginModel> pm)
 {
 	// FIXME: dupes?  merge, like with objects?
 	
@@ -334,7 +334,7 @@ Store::add_plugin(CountedPtr<PluginModel> pm)
 void
 Store::destruction_event(const Path& path)
 {
-	CountedPtr<ObjectModel> removed = remove_object(path);
+	SharedPtr<ObjectModel> removed = remove_object(path);
 
 	removed.reset();
 
@@ -345,7 +345,7 @@ Store::destruction_event(const Path& path)
 void
 Store::new_plugin_event(const string& uri, const string& name)
 {
-	CountedPtr<PluginModel> p(new PluginModel(uri, name));
+	SharedPtr<PluginModel> p(new PluginModel(uri, name));
 	add_plugin(p);
 	resolve_plugin_orphans(p);
 }
@@ -354,7 +354,7 @@ Store::new_plugin_event(const string& uri, const string& name)
 void
 Store::new_patch_event(const Path& path, uint32_t poly)
 {
-	CountedPtr<PatchModel> p(new PatchModel(path, poly));
+	SharedPtr<PatchModel> p(new PatchModel(path, poly));
 	add_object(p);
 }
 
@@ -364,12 +364,12 @@ Store::new_node_event(const string& plugin_uri, const Path& node_path, bool is_p
 {
 	// FIXME: num_ports unused
 	
-	CountedPtr<PluginModel> plug = plugin(plugin_uri);
+	SharedPtr<PluginModel> plug = plugin(plugin_uri);
 	if (!plug) {
-		CountedPtr<NodeModel> n(new NodeModel(plugin_uri, node_path, is_polyphonic));
+		SharedPtr<NodeModel> n(new NodeModel(plugin_uri, node_path, is_polyphonic));
 		add_plugin_orphan(n);
 	} else {
-		CountedPtr<NodeModel> n(new NodeModel(plug, node_path, is_polyphonic));
+		SharedPtr<NodeModel> n(new NodeModel(plug, node_path, is_polyphonic));
 		add_object(n);
 	}
 }
@@ -388,7 +388,7 @@ Store::new_port_event(const Path& path, const string& type, bool is_output)
 
 	PortModel::Direction pdir = is_output ? PortModel::OUTPUT : PortModel::INPUT;
 
-	CountedPtr<PortModel> p(new PortModel(path, ptype, pdir));
+	SharedPtr<PortModel> p(new PortModel(path, ptype, pdir));
 	add_object(p);
 	if (p->parent())
 		resolve_connection_orphans(p);
@@ -398,7 +398,7 @@ Store::new_port_event(const Path& path, const string& type, bool is_output)
 void
 Store::patch_enabled_event(const Path& path)
 {
-	CountedPtr<PatchModel> patch = PtrCast<PatchModel>(object(path));
+	SharedPtr<PatchModel> patch = PtrCast<PatchModel>(object(path));
 	if (patch)
 		patch->enable();
 }
@@ -407,7 +407,7 @@ Store::patch_enabled_event(const Path& path)
 void
 Store::patch_disabled_event(const Path& path)
 {
-	CountedPtr<PatchModel> patch = PtrCast<PatchModel>(object(path));
+	SharedPtr<PatchModel> patch = PtrCast<PatchModel>(object(path));
 	if (patch)
 		patch->disable();
 }
@@ -416,7 +416,7 @@ Store::patch_disabled_event(const Path& path)
 void
 Store::patch_cleared_event(const Path& path)
 {
-	CountedPtr<PatchModel> patch = PtrCast<PatchModel>(object(path));
+	SharedPtr<PatchModel> patch = PtrCast<PatchModel>(object(path));
 	if (patch) {
 		NodeModelMap children = patch->nodes(); // take a copy
 		for (NodeModelMap::iterator i = children.begin(); i != children.end(); ++i) {
@@ -429,7 +429,7 @@ Store::patch_cleared_event(const Path& path)
 void
 Store::metadata_update_event(const Path& subject_path, const string& predicate, const Atom& value)
 {
-	CountedPtr<ObjectModel> subject = object(subject_path);
+	SharedPtr<ObjectModel> subject = object(subject_path);
 	
 	if (subject) {
 		subject->set_metadata(predicate, value);
@@ -443,7 +443,7 @@ Store::metadata_update_event(const Path& subject_path, const string& predicate, 
 void
 Store::control_change_event(const Path& port_path, float value)
 {
-	CountedPtr<PortModel> port = PtrCast<PortModel>(object(port_path));
+	SharedPtr<PortModel> port = PtrCast<PortModel>(object(port_path));
 	if (port)
 		port->value(value);
 	else
@@ -454,20 +454,20 @@ Store::control_change_event(const Path& port_path, float value)
 void
 Store::connection_event(const Path& src_port_path, const Path& dst_port_path)
 {
-	CountedPtr<PortModel> src_port = PtrCast<PortModel>(object(src_port_path));
-	CountedPtr<PortModel> dst_port = PtrCast<PortModel>(object(dst_port_path));
+	SharedPtr<PortModel> src_port = PtrCast<PortModel>(object(src_port_path));
+	SharedPtr<PortModel> dst_port = PtrCast<PortModel>(object(dst_port_path));
 
-	CountedPtr<ConnectionModel> dangling_cm(new ConnectionModel(src_port_path, dst_port_path));
+	SharedPtr<ConnectionModel> dangling_cm(new ConnectionModel(src_port_path, dst_port_path));
 
 	if (src_port && dst_port) { 
 	
 		assert(src_port->parent());
 		assert(dst_port->parent());
 
-		CountedPtr<PatchModel> patch = PtrCast<PatchModel>(this->object(dangling_cm->patch_path()));
+		SharedPtr<PatchModel> patch = PtrCast<PatchModel>(this->object(dangling_cm->patch_path()));
 		assert(patch);
 
-		CountedPtr<ConnectionModel> cm(new ConnectionModel(src_port, dst_port));
+		SharedPtr<ConnectionModel> cm(new ConnectionModel(src_port, dst_port));
 		
 		src_port->connected_to(dst_port);
 		dst_port->connected_to(src_port);
@@ -488,8 +488,8 @@ Store::disconnection_event(const Path& src_port_path, const Path& dst_port_path)
 	// Find the ports and create a ConnectionModel just to get at the parent path
 	// finding logic in ConnectionModel.  So I'm lazy.
 	
-	CountedPtr<PortModel> src_port = PtrCast<PortModel>(object(src_port_path));
-	CountedPtr<PortModel> dst_port = PtrCast<PortModel>(object(dst_port_path));
+	SharedPtr<PortModel> src_port = PtrCast<PortModel>(object(src_port_path));
+	SharedPtr<PortModel> dst_port = PtrCast<PortModel>(object(dst_port_path));
 
 	assert(src_port);
 	assert(dst_port);
@@ -497,9 +497,9 @@ Store::disconnection_event(const Path& src_port_path, const Path& dst_port_path)
 	src_port->disconnected_from(dst_port);
 	dst_port->disconnected_from(src_port);
 
-	CountedPtr<ConnectionModel> cm(new ConnectionModel(src_port, dst_port));
+	SharedPtr<ConnectionModel> cm(new ConnectionModel(src_port, dst_port));
 
-	CountedPtr<PatchModel> patch = PtrCast<PatchModel>(this->object(cm->patch_path()));
+	SharedPtr<PatchModel> patch = PtrCast<PatchModel>(this->object(cm->patch_path()));
 	
 	if (patch)
 		patch->remove_connection(src_port_path, dst_port_path);

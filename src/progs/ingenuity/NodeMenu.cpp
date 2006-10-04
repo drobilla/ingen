@@ -27,7 +27,7 @@ using std::cerr; using std::endl;
 namespace Ingenuity {
 
 
-NodeMenu::NodeMenu(CountedPtr<NodeModel> node)
+NodeMenu::NodeMenu(SharedPtr<NodeModel> node)
 : _node(node)
 , _controls_menuitem(NULL)
 {
@@ -88,7 +88,7 @@ void
 NodeMenu::destroy()
 {
 	cerr << "FIXME: NODE DESTROYED\n";
-	//CountedPtr<ObjectModel> model = m_model;
+	//SharedPtr<ObjectModel> model = m_model;
 	//m_model.reset();
 }
 #endif
@@ -143,7 +143,7 @@ NodeMenu::destroy()
 
 #if 0
 void
-NodeMenu::add_port(CountedPtr<PortModel> pm)
+NodeMenu::add_port(SharedPtr<PortModel> pm)
 {
 	assert(pm->parent().get() == _node.get());
 	assert(pm->parent() == _node);

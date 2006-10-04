@@ -58,7 +58,7 @@ public:
 	/* *** EngineInterface implementation below here *** */
 
 	// Client registration
-	void register_client(ClientKey key, CountedPtr<ClientInterface> client);
+	void register_client(ClientKey key, SharedPtr<ClientInterface> client);
 	void unregister_client(ClientKey key);
 
 	

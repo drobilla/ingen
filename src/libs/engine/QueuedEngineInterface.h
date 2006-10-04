@@ -20,7 +20,7 @@
 #include <inttypes.h>
 #include <string>
 #include <memory>
-#include "util/CountedPtr.h"
+#include "raul/SharedPtr.h"
 #include "interface/EngineInterface.h"
 #include "interface/ClientInterface.h"
 #include "interface/ClientKey.h"
@@ -60,16 +60,16 @@ class Engine;
 class QueuedEngineInterface : public QueuedEventSource, public virtual EngineInterface
 {
 public:
-	QueuedEngineInterface(CountedPtr<Engine> engine, size_t queued_size, size_t stamped_size);
+	QueuedEngineInterface(SharedPtr<Engine> engine, size_t queued_size, size_t stamped_size);
 	virtual ~QueuedEngineInterface() {}
 	
 	void set_next_response_id(int32_t id);
 
-	virtual void set_responder(CountedPtr<Responder> responder);
+	virtual void set_responder(SharedPtr<Responder> responder);
 	virtual void disable_responses();
 
 	// Client registration
-	virtual void register_client(ClientKey key, CountedPtr<ClientInterface> client);
+	virtual void register_client(ClientKey key, SharedPtr<ClientInterface> client);
 	virtual void unregister_client(ClientKey key);
 	
 
@@ -155,9 +155,9 @@ public:
 protected:
 
 	/** Where responses to current messages will go. */
-	CountedPtr<Responder> _responder;
+	SharedPtr<Responder> _responder;
 
-	CountedPtr<Engine> _engine;
+	SharedPtr<Engine> _engine;
 
 private:
 	SampleCount now() const;

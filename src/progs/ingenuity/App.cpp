@@ -30,7 +30,7 @@
 #include "MessagesWindow.h"
 #include "ConfigWindow.h"
 #include "GladeFactory.h"
-#include "util/Path.h"
+#include "raul/Path.h"
 #include "ObjectModel.h"
 #include "PatchModel.h"
 #include "PatchTreeWindow.h"
@@ -90,7 +90,7 @@ App::instantiate()
 
 
 void
-App::attach(const CountedPtr<ModelEngineInterface>& engine, const CountedPtr<SigClientInterface>& client)
+App::attach(const SharedPtr<ModelEngineInterface>& engine, const SharedPtr<SigClientInterface>& client)
 {
 	assert( ! _engine);
 	assert( ! _client);

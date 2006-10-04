@@ -18,7 +18,7 @@
 #define CONTROLMODEL_H
 
 #include <string>
-#include "util/Path.h"
+#include "raul/Path.h"
 
 namespace Ingen {
 namespace Client {

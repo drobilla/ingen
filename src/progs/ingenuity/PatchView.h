@@ -21,7 +21,7 @@
 #include <gtkmm.h>
 #include <libglademm/xml.h>
 #include <libglademm.h>
-#include "util/CountedPtr.h"
+#include "raul/SharedPtr.h"
 #include "PatchModel.h"
 
 using std::string;
@@ -57,14 +57,14 @@ public:
 	PatchView(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml);
 	~PatchView();
 
-	CountedPtr<PatchCanvas> canvas()               const { return _canvas; }
-	CountedPtr<PatchModel>  patch()                const { return _patch; }
+	SharedPtr<PatchCanvas> canvas()               const { return _canvas; }
+	SharedPtr<PatchModel>  patch()                const { return _patch; }
 	Gtk::Viewport*          breadcrumb_container() const { return _breadcrumb_container; }
 
-	static CountedPtr<PatchView> create(CountedPtr<PatchModel> patch);
+	static SharedPtr<PatchView> create(SharedPtr<PatchModel> patch);
 
 private:
-	void set_patch(CountedPtr<PatchModel> patch);
+	void set_patch(SharedPtr<PatchModel> patch);
 
 	void process_toggled();
 	void clear_clicked();
@@ -75,8 +75,8 @@ private:
 
 	void zoom_full();
 
-	CountedPtr<PatchModel>  _patch;
-	CountedPtr<PatchCanvas> _canvas;
+	SharedPtr<PatchModel>  _patch;
+	SharedPtr<PatchCanvas> _canvas;
 	
 	Gtk::ScrolledWindow* _canvas_scrolledwindow;
 

@@ -23,7 +23,7 @@
 #include <libglademm/xml.h>
 #include <libglademm.h>
 #include <gtkmm.h>
-#include "util/CountedPtr.h"
+#include "raul/SharedPtr.h"
 #include "PatchModel.h"
 using Ingen::Client::PluginModel;
 using Ingen::Client::PatchModel;
@@ -57,7 +57,7 @@ public:
 
   // Not displayed:
   Gtk::TreeModelColumn<Glib::ustring>            m_col_label;
-  Gtk::TreeModelColumn<CountedPtr<PluginModel> > m_col_plugin_model;
+  Gtk::TreeModelColumn<SharedPtr<PluginModel> > m_col_plugin_model;
 };
 
 
@@ -88,13 +88,13 @@ class LoadPluginWindow : public Gtk::Window
 public:
 	LoadPluginWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml);
 
-	void set_patch(CountedPtr<PatchModel> patch);
-	void set_plugin_list(const std::map<string, CountedPtr<PluginModel> >& m);
+	void set_patch(SharedPtr<PatchModel> patch);
+	void set_plugin_list(const std::map<string, SharedPtr<PluginModel> >& m);
 
-	void add_plugin(CountedPtr<PluginModel> plugin);
+	void add_plugin(SharedPtr<PluginModel> plugin);
 	bool has_shown() const { return m_has_shown; }
 
-	void present(CountedPtr<PatchModel> patch, MetadataMap data);
+	void present(SharedPtr<PatchModel> patch, MetadataMap data);
 
 protected:
 	void on_show();
@@ -114,7 +114,7 @@ private:
 
 	MetadataMap m_initial_data;
 
-	CountedPtr<PatchModel> m_patch;
+	SharedPtr<PatchModel> m_patch;
 
 	bool m_has_shown; // plugin list only populated on show to speed patch window creation
 

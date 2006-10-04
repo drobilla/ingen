@@ -16,7 +16,7 @@
 
 #include "NodeModule.h"
 #include <cassert>
-#include "util/Atom.h"
+#include "raul/Atom.h"
 #include "App.h"
 #include "ModelEngineInterface.h"
 #include "PatchCanvas.h"
@@ -31,7 +31,7 @@
 namespace Ingenuity {
 
 
-NodeModule::NodeModule(boost::shared_ptr<PatchCanvas> canvas, CountedPtr<NodeModel> node)
+NodeModule::NodeModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeModel> node)
 : LibFlowCanvas::Module(canvas, node->path().name()),
   m_node(node),
   m_menu(node)
@@ -49,7 +49,7 @@ NodeModule::NodeModule(boost::shared_ptr<PatchCanvas> canvas, CountedPtr<NodeMod
 
 
 boost::shared_ptr<NodeModule>
-NodeModule::create(boost::shared_ptr<PatchCanvas> canvas, CountedPtr<NodeModel> node)
+NodeModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeModel> node)
 {
 	boost::shared_ptr<NodeModule> ret = boost::shared_ptr<NodeModule>(
 		new NodeModule(canvas, node));
@@ -67,7 +67,7 @@ NodeModule::create(boost::shared_ptr<PatchCanvas> canvas, CountedPtr<NodeModel> 
 
 
 void
-NodeModule::add_port(CountedPtr<PortModel> port, bool resize_to_fit)
+NodeModule::add_port(SharedPtr<PortModel> port, bool resize_to_fit)
 {
 	Module::add_port(boost::shared_ptr<Port>(new Port(shared_from_this(), port)));
 	if (resize_to_fit)

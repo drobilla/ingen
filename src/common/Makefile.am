@@ -1,1 +1,1 @@
-DIST_SUBDIRS = util interface
+DIST_SUBDIRS = interface

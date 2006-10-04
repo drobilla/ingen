@@ -25,7 +25,7 @@
 #include <pthread.h>
 #include "types.h"
 #include "interface/ClientInterface.h"
-#include "util/CountedPtr.h"
+#include "raul/SharedPtr.h"
 
 using std::list; using std::string; using std::pair;
 
@@ -55,10 +55,10 @@ using Shared::ClientInterface;
 class ClientBroadcaster
 {
 public:
-	void register_client(const ClientKey key, CountedPtr<ClientInterface> client);
+	void register_client(const ClientKey key, SharedPtr<ClientInterface> client);
 	bool unregister_client(const ClientKey& key);
 	
-	CountedPtr<ClientInterface> client(const ClientKey& key);
+	SharedPtr<ClientInterface> client(const ClientKey& key);
 	
 	// Notification band:
 	
@@ -88,10 +88,10 @@ public:
 	void send_program_add(const string& node_path, int bank, int program, const string& name);
 	void send_program_remove(const string& node_path, int bank, int program);
 	
-	void send_plugins_to(CountedPtr<ClientInterface>, const list<Plugin*>& plugin_list);
+	void send_plugins_to(SharedPtr<ClientInterface>, const list<Plugin*>& plugin_list);
 
 private:
-	typedef list<pair<ClientKey, CountedPtr<ClientInterface> > > ClientList;
+	typedef list<pair<ClientKey, SharedPtr<ClientInterface> > > ClientList;
 	//list<pair<ClientKey, ClientInterface* const> > _clients;
 	ClientList _clients;
 };

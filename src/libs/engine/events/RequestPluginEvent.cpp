@@ -30,7 +30,7 @@ using std::string;
 namespace Ingen {
 
 
-RequestPluginEvent::RequestPluginEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& uri)
+RequestPluginEvent::RequestPluginEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& uri)
 : QueuedEvent(engine, responder, timestamp),
   m_uri(uri),
   m_plugin(NULL)

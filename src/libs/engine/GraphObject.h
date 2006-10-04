@@ -22,8 +22,8 @@
 #include <cstddef>
 #include <cassert>
 #include "MaidObject.h"
-#include "util/Path.h"
-#include "util/Atom.h"
+#include "raul/Path.h"
+#include "raul/Atom.h"
 #include "types.h"
 using std::string;
 

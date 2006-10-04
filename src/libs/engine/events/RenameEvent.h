@@ -18,7 +18,7 @@
 #define RENAMEEVENT_H
 
 #include "QueuedEvent.h"
-#include "util/Path.h"
+#include "raul/Path.h"
 #include <string>
 using std::string;
 
@@ -42,7 +42,7 @@ class DisconnectPortEvent;
 class RenameEvent : public QueuedEvent
 {
 public:
-	RenameEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& name);
+	RenameEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& name);
 	~RenameEvent();
 
 	void pre_process();

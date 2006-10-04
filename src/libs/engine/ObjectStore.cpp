@@ -19,7 +19,7 @@
 #include "Node.h"
 #include "Port.h"
 #include "List.h"
-#include "util/Path.h"
+#include "raul/Path.h"
 #include "Tree.h"
 
 namespace Ingen {

@@ -51,7 +51,7 @@ ControlPanel::~ControlPanel()
 
 
 void
-ControlPanel::init(CountedPtr<NodeModel> node, size_t poly)
+ControlPanel::init(SharedPtr<NodeModel> node, size_t poly)
 {
 	assert(node != NULL);
 	assert(poly > 0);
@@ -84,7 +84,7 @@ ControlPanel::find_port(const Path& path) const
 /** Add a control to the panel for the given port.
  */
 void
-ControlPanel::add_port(CountedPtr<PortModel> pm)
+ControlPanel::add_port(SharedPtr<PortModel> pm)
 {
 	assert(pm);
 	

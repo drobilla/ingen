@@ -22,8 +22,8 @@
 #include <list>
 #include <sigc++/sigc++.h>
 #include "ObjectModel.h"
-#include "util/CountedPtr.h"
-#include "util/Path.h"
+#include "raul/SharedPtr.h"
+#include "raul/Path.h"
 using std::string; using std::list;
 
 namespace Ingen {
@@ -58,8 +58,8 @@ public:
 
 	// Signals
 	sigc::signal<void, float>                  control_change_sig; ///< "Control" ports only
-	sigc::signal<void, CountedPtr<PortModel> > connection_sig;
-	sigc::signal<void, CountedPtr<PortModel> > disconnection_sig;
+	sigc::signal<void, SharedPtr<PortModel> > connection_sig;
+	sigc::signal<void, SharedPtr<PortModel> > disconnection_sig;
 
 private:
 	friend class Store;
@@ -86,15 +86,15 @@ private:
 	
 	inline void value(float f) { m_current_val = f; control_change_sig.emit(f); }
 
-	void add_child(CountedPtr<ObjectModel> c)    { throw; }
-	void remove_child(CountedPtr<ObjectModel> c) { throw; }
+	void add_child(SharedPtr<ObjectModel> c)    { throw; }
+	void remove_child(SharedPtr<ObjectModel> c) { throw; }
 	
 	// Prevent copies (undefined)
 	PortModel(const PortModel& copy);
 	PortModel& operator=(const PortModel& copy);
 	
-	void connected_to(CountedPtr<PortModel> p)      { ++m_connections; connection_sig.emit(p); }
-	void disconnected_from(CountedPtr<PortModel> p) { --m_connections; disconnection_sig.emit(p); }
+	void connected_to(SharedPtr<PortModel> p)      { ++m_connections; connection_sig.emit(p); }
+	void disconnected_from(SharedPtr<PortModel> p) { --m_connections; disconnection_sig.emit(p); }
 	
 	
 	Type      m_type;
@@ -104,7 +104,7 @@ private:
 	size_t    m_connections;
 };
 
-typedef list<CountedPtr<PortModel> > PortModelList;
+typedef list<SharedPtr<PortModel> > PortModelList;
 
 
 } // namespace Client

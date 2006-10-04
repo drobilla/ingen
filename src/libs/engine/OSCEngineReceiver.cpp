@@ -20,9 +20,9 @@
 #include <string>
 #include <lo/lo.h>
 #include "types.h"
-#include "util/Queue.h"
-#include "util/CountedPtr.h"
-#include "util/LibloAtom.h"
+#include "raul/Queue.h"
+#include "raul/SharedPtr.h"
+#include "raul/AtomLiblo.h"
 #include "QueuedEventSource.h"
 #include "interface/ClientKey.h"
 #include "interface/ClientInterface.h"
@@ -48,12 +48,12 @@ using Shared::ClientKey;
  */
 
 
-OSCEngineReceiver::OSCEngineReceiver(CountedPtr<Engine> engine, size_t queue_size, const char* const port)
+OSCEngineReceiver::OSCEngineReceiver(SharedPtr<Engine> engine, size_t queue_size, const char* const port)
 : EngineInterface(),
   QueuedEngineInterface(engine, queue_size, queue_size), // FIXME
   _port(port),
   _server(NULL),
-  _osc_responder(CountedPtr<OSCResponder>())
+  _osc_responder(SharedPtr<OSCResponder>())
 {
 	_server = lo_server_new(port, error_cb);
 	
@@ -231,7 +231,7 @@ OSCEngineReceiver::set_response_address_cb(const char* path, const char* types, 
 			} else {
 				// Shitty deal, make a new one
 				//cerr << "** Setting response address to " << url << "(2)" << endl;
-				me->_osc_responder = CountedPtr<OSCResponder>(
+				me->_osc_responder = SharedPtr<OSCResponder>(
 					new OSCResponder(me->_engine->broadcaster(), id, url));
 
 				me->set_responder(me->_osc_responder);
@@ -242,7 +242,7 @@ OSCEngineReceiver::set_response_address_cb(const char* path, const char* types, 
 		// Otherwise we have a NULL responder, definitely need to set a new one
 		} else {
 			//cerr << "** null responder\n";
-			me->_osc_responder = CountedPtr<OSCResponder>(new OSCResponder(me->_engine->broadcaster(), id, url));
+			me->_osc_responder = SharedPtr<OSCResponder>(new OSCResponder(me->_engine->broadcaster(), id, url));
 			me->set_responder(me->_osc_responder);
 			//cerr << "** Setting response address to " << url << "(2)" << endl;
 		}
@@ -325,7 +325,7 @@ OSCEngineReceiver::m_register_client_cb(const char* path, const char* types, lo_
 	lo_address        addr         = lo_message_get_source(msg);
 
 	char* const url = lo_address_get_url(addr);
-	CountedPtr<ClientInterface> client(new OSCClientSender((const char*)url));
+	SharedPtr<ClientInterface> client(new OSCClientSender((const char*)url));
 	register_client(ClientKey(ClientKey::OSC_URL, (const char*)url), client);
 	free(url);
 
@@ -766,7 +766,7 @@ OSCEngineReceiver::m_metadata_set_cb(const char* path, const char* types, lo_arg
 	const char* node_path   = &argv[1]->s;
 	const char* key         = &argv[2]->s;
 	
-	Atom value = LibloAtom::lo_arg_to_atom(types[3], argv[3]);
+	Atom value = AtomLiblo::lo_arg_to_atom(types[3], argv[3]);
 	
 	set_metadata(node_path, key, value);
 	

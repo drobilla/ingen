@@ -28,7 +28,7 @@ using std::cout; using std::cerr; using std::endl;
 namespace Ingen {
 
 
-DSSIProgramEvent::DSSIProgramEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& node_path, int bank, int program)
+DSSIProgramEvent::DSSIProgramEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& node_path, int bank, int program)
 : QueuedEvent(engine, responder, timestamp),
   m_node_path(node_path),
   m_bank(bank),

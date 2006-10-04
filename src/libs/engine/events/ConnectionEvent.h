@@ -19,7 +19,7 @@
 
 #include <string>
 #include "QueuedEvent.h"
-#include "util/Path.h"
+#include "raul/Path.h"
 #include "types.h"
 using std::string;
 
@@ -46,7 +46,7 @@ template <typename T> class TypedConnectionEvent; // helper, defined below
 class ConnectionEvent : public QueuedEvent
 {
 public:
-	ConnectionEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& src_port_path, const string& dst_port_path);
+	ConnectionEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& src_port_path, const string& dst_port_path);
 	~ConnectionEvent();
 
 	void pre_process();
@@ -80,7 +80,7 @@ template <typename T>
 class TypedConnectionEvent : public QueuedEvent
 {
 public:
-	TypedConnectionEvent(Engine& engine, CountedPtr<Responder> responder, FrameTime time, OutputPort<T>* src_port, InputPort<T>* dst_port);
+	TypedConnectionEvent(Engine& engine, SharedPtr<Responder> responder, FrameTime time, OutputPort<T>* src_port, InputPort<T>* dst_port);
 	
 	void pre_process();
 	void execute(SampleCount nframes, FrameTime start, FrameTime end);

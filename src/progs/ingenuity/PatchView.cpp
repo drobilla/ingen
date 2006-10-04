@@ -54,7 +54,7 @@ PatchView::PatchView(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::X
 
 
 void
-PatchView::set_patch(CountedPtr<PatchModel> patch)
+PatchView::set_patch(SharedPtr<PatchModel> patch)
 {
 	assert(!_canvas); // FIXME: remove
 
@@ -63,7 +63,7 @@ PatchView::set_patch(CountedPtr<PatchModel> patch)
 	assert(_breadcrumb_container); // ensure created
 
 	_patch = patch;
-	_canvas = CountedPtr<PatchCanvas>(new PatchCanvas(patch, 1600*2, 1200*2));
+	_canvas = SharedPtr<PatchCanvas>(new PatchCanvas(patch, 1600*2, 1200*2));
 	_canvas->build();
 
 	_canvas_scrolledwindow->add(*_canvas);
@@ -95,8 +95,8 @@ PatchView::~PatchView()
 }
 
 
-CountedPtr<PatchView>
-PatchView::create(CountedPtr<PatchModel> patch)
+SharedPtr<PatchView>
+PatchView::create(SharedPtr<PatchModel> patch)
 
 {
 	const Glib::RefPtr<Gnome::Glade::Xml>& xml = GladeFactory::new_glade_reference("patch_view_box");
@@ -104,7 +104,7 @@ PatchView::create(CountedPtr<PatchModel> patch)
 	xml->get_widget_derived("patch_view_box", result);
 	assert(result);
 	result->set_patch(patch);
-	return CountedPtr<PatchView>(result);
+	return SharedPtr<PatchView>(result);
 }
 
 

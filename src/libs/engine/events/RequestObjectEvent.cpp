@@ -31,7 +31,7 @@ using std::string;
 namespace Ingen {
 
 
-RequestObjectEvent::RequestObjectEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& path)
+RequestObjectEvent::RequestObjectEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path)
 : QueuedEvent(engine, responder, timestamp),
   m_path(path),
   m_object(NULL)

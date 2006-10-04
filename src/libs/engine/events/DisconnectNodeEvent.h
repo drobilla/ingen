@@ -18,7 +18,7 @@
 #define DISCONNECTNODEEVENT_H
 
 #include <string>
-#include "util/Path.h"
+#include "raul/Path.h"
 #include "QueuedEvent.h"
 #include "List.h"
 using std::string;
@@ -42,7 +42,7 @@ template <typename T> class OutputPort;
 class DisconnectNodeEvent : public QueuedEvent
 {
 public:
-	DisconnectNodeEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& node_path);
+	DisconnectNodeEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& node_path);
 	DisconnectNodeEvent(Engine& engine, Node* node);
 	~DisconnectNodeEvent();
 

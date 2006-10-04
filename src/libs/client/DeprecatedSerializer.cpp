@@ -26,7 +26,7 @@
 #include "PresetModel.h"
 #include "ModelEngineInterface.h"
 #include "PluginModel.h"
-#include "util/Path.h"
+#include "raul/Path.h"
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -335,7 +335,7 @@ DeprecatedSerializer::load_node(const Path& parent, xmlDocPtr doc, const xmlNode
 			assert(Path::is_valid(path));
 
 			// FIXME: /nasty/ assumptions
-			CountedPtr<PortModel> pm(new PortModel(Path(path).base() + port_name,
+			SharedPtr<PortModel> pm(new PortModel(Path(path).base() + port_name,
 					PortModel::CONTROL, PortModel::INPUT, PortModel::NONE,
 					0.0, user_min, user_max));
 			//pm->set_parent(nm);
@@ -459,7 +459,7 @@ DeprecatedSerializer::load_node(const Path& parent, xmlDocPtr doc, const xmlNode
 
 			_engine->set_metadata_map(path, initial_data);
 
-			return CountedPtr<NodeModel>();
+			return SharedPtr<NodeModel>();
 
 		} else {
 			if (plugin_label  == "note_in") {

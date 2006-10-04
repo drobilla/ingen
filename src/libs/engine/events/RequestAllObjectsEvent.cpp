@@ -24,7 +24,7 @@
 namespace Ingen {
 
 
-RequestAllObjectsEvent::RequestAllObjectsEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp)
+RequestAllObjectsEvent::RequestAllObjectsEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp)
 : QueuedEvent(engine, responder, timestamp)
 {
 }

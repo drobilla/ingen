@@ -21,7 +21,7 @@
 #include <jack/midiport.h>
 #include "config.h"
 #include "List.h"
-#include "util/Queue.h"
+#include "raul/Queue.h"
 #include "MidiDriver.h"
 
 namespace Ingen {

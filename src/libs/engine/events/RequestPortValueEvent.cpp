@@ -28,7 +28,7 @@ using std::string;
 namespace Ingen {
 
 
-RequestPortValueEvent::RequestPortValueEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& port_path)
+RequestPortValueEvent::RequestPortValueEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& port_path)
 : QueuedEvent(engine, responder, timestamp),
   m_port_path(port_path),
   m_port(NULL),

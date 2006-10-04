@@ -35,17 +35,17 @@ namespace Ingen {
 class RegisterClientEvent : public QueuedEvent
 {
 public:
-	RegisterClientEvent(Engine& engine, CountedPtr<Responder>       responder,
+	RegisterClientEvent(Engine& engine, SharedPtr<Responder>       responder,
 	                    SampleCount                 timestamp,
 	                    ClientKey                   key,
-	                    CountedPtr<ClientInterface> client);
+	                    SharedPtr<ClientInterface> client);
 
 	void pre_process();
 	void post_process();
 
 private:
 	ClientKey                   _key;
-	CountedPtr<ClientInterface> _client;
+	SharedPtr<ClientInterface> _client;
 };
 
 

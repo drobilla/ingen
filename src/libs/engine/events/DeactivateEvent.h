@@ -29,7 +29,7 @@ namespace Ingen {
 class DeactivateEvent : public QueuedEvent
 {
 public:
-	DeactivateEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp);
+	DeactivateEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp);
 	
 	void pre_process();
 	void execute(SampleCount nframes, FrameTime start, FrameTime end);

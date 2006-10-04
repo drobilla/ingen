@@ -21,7 +21,7 @@
 #include <string>
 #include <libgnomecanvasmm.h>
 #include "NodeModule.h"
-#include "util/CountedPtr.h"
+#include "raul/SharedPtr.h"
 #include "PatchModel.h"
 #include "PatchPortModule.h"
 using std::string; using std::list;
@@ -47,7 +47,7 @@ class NodeControlWindow;
 class SubpatchModule : public NodeModule
 {
 public:
-	SubpatchModule(boost::shared_ptr<PatchCanvas> canvas, CountedPtr<PatchModel> controller);
+	SubpatchModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<PatchModel> controller);
 	virtual ~SubpatchModule() {}
 
 	void on_double_click(GdkEventButton* ev);
@@ -56,10 +56,10 @@ public:
 	void browse_to_patch();
 	void menu_remove();
 
-	CountedPtr<PatchModel> patch() { return m_patch; }
+	SharedPtr<PatchModel> patch() { return m_patch; }
 
 protected:
-	CountedPtr<PatchModel> m_patch;
+	SharedPtr<PatchModel> m_patch;
 };
 
 

@@ -23,7 +23,7 @@
 #include "SubpatchModule.h"
 #include "PatchModel.h"
 #include "WindowFactory.h"
-#include "util/Path.h"
+#include "raul/Path.h"
 
 namespace Ingenuity {
 	
@@ -72,22 +72,22 @@ PatchTreeWindow::init(Store& store)
 
 
 void
-PatchTreeWindow::new_object(CountedPtr<ObjectModel> object)
+PatchTreeWindow::new_object(SharedPtr<ObjectModel> object)
 {
-	CountedPtr<PatchModel> patch = PtrCast<PatchModel>(object);
+	SharedPtr<PatchModel> patch = PtrCast<PatchModel>(object);
 	if (patch)
 		add_patch(patch);
 }
 
 
 void
-PatchTreeWindow::add_patch(CountedPtr<PatchModel> pm)
+PatchTreeWindow::add_patch(SharedPtr<PatchModel> pm)
 {
 	if (!pm->parent()) {
 		Gtk::TreeModel::iterator iter = m_patch_treestore->append();
 		Gtk::TreeModel::Row row = *iter;
 		if (pm->path() == "/") {
-			CountedPtr<OSCEngineSender> osc_sender = PtrCast<OSCEngineSender>(App::instance().engine());
+			SharedPtr<OSCEngineSender> osc_sender = PtrCast<OSCEngineSender>(App::instance().engine());
 			string root_name = osc_sender ? osc_sender->engine_url() : "Internal";
 			// Hack off trailing '/' if it's there (ugly)
 			//if (root_name.substr(root_name.length()-1,1) == "/")
@@ -132,7 +132,7 @@ Gtk::TreeModel::iterator
 PatchTreeWindow::find_patch(Gtk::TreeModel::Children root, const Path& path)
 {
 	for (Gtk::TreeModel::iterator c = root.begin(); c != root.end(); ++c) {
-		CountedPtr<PatchModel> pm = (*c)[m_patch_tree_columns.patch_model_col];
+		SharedPtr<PatchModel> pm = (*c)[m_patch_tree_columns.patch_model_col];
 		if (pm->path() == path) {
 			return c;
 		} else if ((*c)->children().size() > 0) {
@@ -151,7 +151,7 @@ PatchTreeWindow::event_patch_selected()
 	Gtk::TreeModel::iterator active = m_patch_tree_selection->get_selected();
 	if (active) {
 		Gtk::TreeModel::Row row = *active;
-		CountedPtr<PatchModel> pm = row[m_patch_tree_columns.patch_model_col];
+		SharedPtr<PatchModel> pm = row[m_patch_tree_columns.patch_model_col];
 	}
 }
 */
@@ -165,7 +165,7 @@ PatchTreeWindow::show_patch_menu(GdkEventButton* ev)
 	Gtk::TreeModel::iterator active = m_patch_tree_selection->get_selected();
 	if (active) {
 		Gtk::TreeModel::Row row = *active;
-		CountedPtr<PatchModel> pm = row[m_patch_tree_columns.patch_model_col];
+		SharedPtr<PatchModel> pm = row[m_patch_tree_columns.patch_model_col];
 		if (pm)
 			cerr << "FIXME: patch menu\n";
 			//pm->show_menu(ev);
@@ -178,7 +178,7 @@ PatchTreeWindow::event_patch_activated(const Gtk::TreeModel::Path& path, Gtk::Tr
 {
 	Gtk::TreeModel::iterator active = m_patch_treestore->get_iter(path);
 	Gtk::TreeModel::Row row = *active;
-	CountedPtr<PatchModel> pm = row[m_patch_tree_columns.patch_model_col];
+	SharedPtr<PatchModel> pm = row[m_patch_tree_columns.patch_model_col];
 	
 	App::instance().window_factory()->present_patch(pm);
 }
@@ -191,7 +191,7 @@ PatchTreeWindow::event_patch_enabled_toggled(const Glib::ustring& path_str)
 	Gtk::TreeModel::iterator active = m_patch_treestore->get_iter(path);
 	Gtk::TreeModel::Row row = *active;
 	
-	CountedPtr<PatchModel> pm = row[m_patch_tree_columns.patch_model_col];
+	SharedPtr<PatchModel> pm = row[m_patch_tree_columns.patch_model_col];
 	Glib::ustring patch_path = pm->path();
 	
 	assert(pm);

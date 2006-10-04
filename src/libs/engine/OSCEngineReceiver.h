@@ -20,7 +20,7 @@
 #include "config.h"
 #include <string>
 #include <lo/lo.h>
-#include "util/CountedPtr.h"
+#include "raul/SharedPtr.h"
 #include "QueuedEngineInterface.h"
 #include "OSCResponder.h"
 using std::string;
@@ -60,7 +60,7 @@ inline static int name##_cb(LO_HANDLER_ARGS, void* myself)\
 class OSCEngineReceiver : public QueuedEngineInterface
 {
 public:
-	OSCEngineReceiver(CountedPtr<Engine> engine, size_t queue_size, const char* const port);
+	OSCEngineReceiver(SharedPtr<Engine> engine, size_t queue_size, const char* const port);
 	~OSCEngineReceiver();
 
 	void activate();
@@ -124,7 +124,7 @@ private:
 	lo_server         _server;
 
 	/** Cached OSC responder (for most recent incoming message) */
-	CountedPtr<OSCResponder> _osc_responder;
+	SharedPtr<OSCResponder> _osc_responder;
 };
 
 

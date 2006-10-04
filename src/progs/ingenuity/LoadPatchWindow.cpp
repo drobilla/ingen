@@ -60,7 +60,7 @@ LoadPatchWindow::LoadPatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gno
 
 
 void
-LoadPatchWindow::present(CountedPtr<PatchModel> patch, MetadataMap data)
+LoadPatchWindow::present(SharedPtr<PatchModel> patch, MetadataMap data)
 {
 	set_patch(patch);
 	m_initial_data = data;
@@ -73,7 +73,7 @@ LoadPatchWindow::present(CountedPtr<PatchModel> patch, MetadataMap data)
  * This function MUST be called before using the window in any way!
  */
 void
-LoadPatchWindow::set_patch(CountedPtr<PatchModel> patch)
+LoadPatchWindow::set_patch(SharedPtr<PatchModel> patch)
 {
 	m_patch = patch;
 }
@@ -119,7 +119,7 @@ LoadPatchWindow::ok_clicked()
 		App::instance().engine()->clear_patch(m_patch->path());
 
 	cerr << "FIXME: load patch" << endl;
-	//CountedPtr<PatchModel> pm(new PatchModel(m_patch->path(), poly));
+	//SharedPtr<PatchModel> pm(new PatchModel(m_patch->path(), poly));
 	//pm->filename(get_filename());
 	//pm->set_metadata("filename", Atom(get_filename().c_str()));
 	// FIXME: necessary?

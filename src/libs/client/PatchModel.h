@@ -23,7 +23,7 @@
 #include <map>
 #include <sigc++/sigc++.h>
 #include "NodeModel.h"
-#include "util/CountedPtr.h"
+#include "raul/SharedPtr.h"
 #include "ConnectionModel.h"
 
 using std::list; using std::string; using std::map;
@@ -44,8 +44,8 @@ public:
 	const NodeModelMap&   nodes()       const { return m_nodes; }
 	const ConnectionList& connections() const { return m_connections; }
 	
-	CountedPtr<ConnectionModel> get_connection(const string& src_port_path, const string& dst_port_path) const;
-	CountedPtr<NodeModel>       get_node(const string& node_name) const;
+	SharedPtr<ConnectionModel> get_connection(const string& src_port_path, const string& dst_port_path) const;
+	SharedPtr<NodeModel>       get_node(const string& node_name) const;
 	
 	size_t        poly()       const { return m_poly; }
 	const string& filename()   const { return m_filename; }
@@ -53,9 +53,9 @@ public:
 	bool          polyphonic() const;
 	
 	// Signals
-	sigc::signal<void, CountedPtr<NodeModel> >       new_node_sig; 
-	sigc::signal<void, CountedPtr<NodeModel> >       removed_node_sig; 
-	sigc::signal<void, CountedPtr<ConnectionModel> > new_connection_sig; 
+	sigc::signal<void, SharedPtr<NodeModel> >       new_node_sig; 
+	sigc::signal<void, SharedPtr<NodeModel> >       removed_node_sig; 
+	sigc::signal<void, SharedPtr<ConnectionModel> > new_connection_sig; 
 	sigc::signal<void, const Path&, const Path& >    removed_connection_sig;
 	sigc::signal<void>                               enabled_sig;
 	sigc::signal<void>                               disabled_sig;
@@ -76,12 +76,12 @@ private:
 	void disable();
 	void clear();
 	void set_path(const Path& path);
-	void add_node(CountedPtr<NodeModel> nm);
-	void remove_node(CountedPtr<NodeModel> nm);
-	void add_child(CountedPtr<ObjectModel> c);
-	void remove_child(CountedPtr<ObjectModel> c);
+	void add_node(SharedPtr<NodeModel> nm);
+	void remove_node(SharedPtr<NodeModel> nm);
+	void add_child(SharedPtr<ObjectModel> c);
+	void remove_child(SharedPtr<ObjectModel> c);
 	
-	void add_connection(CountedPtr<ConnectionModel> cm);
+	void add_connection(SharedPtr<ConnectionModel> cm);
 	void remove_connection(const string& src_port_path, const string& dst_port_path);
 	
 	void rename_node(const Path& old_path, const Path& new_path);
@@ -98,7 +98,7 @@ private:
 	size_t         m_poly;
 };
 
-typedef map<string, CountedPtr<PatchModel> > PatchModelMap;
+typedef map<string, SharedPtr<PatchModel> > PatchModelMap;
 
 
 } // namespace Client

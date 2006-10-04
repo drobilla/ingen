@@ -27,7 +27,7 @@
 #include "Port.h"
 #include "Maid.h"
 #include "ObjectStore.h"
-#include "util/Path.h"
+#include "raul/Path.h"
 
 using std::string;
 namespace Ingen {
@@ -36,7 +36,7 @@ namespace Ingen {
 //// ConnectionEvent ////
 
 
-ConnectionEvent::ConnectionEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& src_port_path, const string& dst_port_path)
+ConnectionEvent::ConnectionEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& src_port_path, const string& dst_port_path)
 : QueuedEvent(engine, responder, timestamp),
   m_src_port_path(src_port_path),
   m_dst_port_path(dst_port_path),
@@ -152,7 +152,7 @@ ConnectionEvent::post_process()
 
 
 template <typename T>
-TypedConnectionEvent<T>::TypedConnectionEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, OutputPort<T>* src_port, InputPort<T>* dst_port)
+TypedConnectionEvent<T>::TypedConnectionEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, OutputPort<T>* src_port, InputPort<T>* dst_port)
 : QueuedEvent(engine, responder, timestamp),
   m_src_port(src_port),
   m_dst_port(dst_port),

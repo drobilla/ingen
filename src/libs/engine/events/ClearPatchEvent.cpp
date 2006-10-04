@@ -30,7 +30,7 @@
 namespace Ingen {
 
 
-ClearPatchEvent::ClearPatchEvent(Engine& engine, CountedPtr<Responder> responder, FrameTime time, QueuedEventSource* source, const string& patch_path)
+ClearPatchEvent::ClearPatchEvent(Engine& engine, SharedPtr<Responder> responder, FrameTime time, QueuedEventSource* source, const string& patch_path)
 : QueuedEvent(engine, responder, time, true, source),
   m_patch_path(patch_path),
   m_patch(NULL),

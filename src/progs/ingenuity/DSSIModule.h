@@ -30,7 +30,7 @@ class DSSIController;
 class DSSIModule : public Ingenuity::NodeModule
 {
 public:
-	DSSIModule(boost::shared_ptr<PatchCanvas> canvas, CountedPtr<NodeModel> node);
+	DSSIModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeModel> node);
 	virtual ~DSSIModule() {}
 
 	void on_double_click(GdkEventButton* ev);

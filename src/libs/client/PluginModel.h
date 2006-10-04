@@ -19,7 +19,7 @@
 
 #include <string>
 #include <iostream>
-#include "util/Path.h"
+#include "raul/Path.h"
 using std::string; using std::cerr; using std::endl;
 
 namespace Ingen {

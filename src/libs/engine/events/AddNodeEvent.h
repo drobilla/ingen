@@ -18,7 +18,7 @@
 #define ADDNODEEVENT_H
 
 #include "QueuedEvent.h"
-#include "util/Path.h"
+#include "raul/Path.h"
 #include <string>
 using std::string;
 
@@ -40,7 +40,7 @@ class AddNodeEvent : public QueuedEvent
 {
 public:
 	AddNodeEvent(Engine&               engine,
-	             CountedPtr<Responder> responder,
+	             SharedPtr<Responder> responder,
 	             SampleCount           timestamp,
 	             const string&         node_path,
 	             const string&         plugin_uri,
@@ -48,7 +48,7 @@ public:
 	
 	// DEPRECATED
 	AddNodeEvent(Engine&               engine,
-	             CountedPtr<Responder> responder,
+	             SharedPtr<Responder> responder,
 	             SampleCount           timestamp,
 	             const string&         node_path,
 				 const string&         plugin_type,

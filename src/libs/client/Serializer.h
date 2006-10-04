@@ -23,9 +23,9 @@
 #include <stdexcept>
 #include <raptor.h>
 #include <cassert>
-#include "util/CountedPtr.h"
-#include "util/Path.h"
-#include "util/Atom.h"
+#include "raul/SharedPtr.h"
+#include "raul/Path.h"
+#include "raul/Atom.h"
 #include "ObjectModel.h"
 
 using std::string;
@@ -53,7 +53,7 @@ class ModelEngineInterface;
 class Serializer
 {
 public:
-	Serializer(CountedPtr<ModelEngineInterface> engine);
+	Serializer(SharedPtr<ModelEngineInterface> engine);
 	~Serializer();
 
 	void          path(const string& path) { _patch_search_path = path; }
@@ -70,19 +70,19 @@ public:
 	
 	void   start_to_filename(const string& filename)            throw (std::logic_error);
 	void   start_to_string()                                    throw (std::logic_error);
-	void   serialize(CountedPtr<ObjectModel> object)            throw (std::logic_error);
-	void   serialize_connection(CountedPtr<ConnectionModel> c)  throw (std::logic_error);
+	void   serialize(SharedPtr<ObjectModel> object)            throw (std::logic_error);
+	void   serialize_connection(SharedPtr<ConnectionModel> c)  throw (std::logic_error);
 	string finish()                                             throw (std::logic_error);
 
 private:
 
 	// Model -> RDF
 	
-	void serialize_patch(CountedPtr<PatchModel> p);
+	void serialize_patch(SharedPtr<PatchModel> p);
 
-	void serialize_node(CountedPtr<NodeModel> n, const string ns_prefix="");
+	void serialize_node(SharedPtr<NodeModel> n, const string ns_prefix="");
 	
-	void serialize_port(CountedPtr<PortModel> p, const string ns_prefix="");
+	void serialize_port(SharedPtr<PortModel> p, const string ns_prefix="");
 	
 
 
@@ -110,7 +110,7 @@ private:
 	unsigned char*                   _string_output;
 	string                           _patch_search_path;
 	map<string, string>              _prefixes;
-	CountedPtr<ModelEngineInterface> _engine;
+	SharedPtr<ModelEngineInterface> _engine;
 };
 
 

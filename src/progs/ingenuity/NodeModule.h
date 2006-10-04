@@ -21,7 +21,7 @@
 #include <boost/enable_shared_from_this.hpp>
 #include <libgnomecanvasmm.h>
 #include <flowcanvas/Module.h>
-#include "util/CountedPtr.h"
+#include "raul/SharedPtr.h"
 #include "Port.h"
 #include "NodeMenu.h"
 using std::string;
@@ -51,7 +51,7 @@ class Port;
 class NodeModule : public boost::enable_shared_from_this<NodeModule>, public LibFlowCanvas::Module
 {
 public:
-	static boost::shared_ptr<NodeModule> create (boost::shared_ptr<PatchCanvas> canvas, CountedPtr<NodeModel> node);
+	static boost::shared_ptr<NodeModule> create (boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeModel> node);
 
 	virtual ~NodeModule() {}
 
@@ -66,20 +66,20 @@ public:
 	
 	void show_control_window();
 
-	CountedPtr<NodeModel> node() const { return m_node; }
+	SharedPtr<NodeModel> node() const { return m_node; }
 
 protected:
-	NodeModule(boost::shared_ptr<PatchCanvas> canvas, CountedPtr<NodeModel> node);
+	NodeModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeModel> node);
 
 	virtual void on_double_click(GdkEventButton* ev) { show_control_window(); }
 	virtual void on_middle_click(GdkEventButton* ev) { show_control_window(); }
 	
 	void metadata_update(const string& key, const Atom& value);
 	
-	void add_port(CountedPtr<PortModel> port, bool resize=true);
-	void remove_port(CountedPtr<PortModel> port) { Module::remove_port(port->path().name()); }
+	void add_port(SharedPtr<PortModel> port, bool resize=true);
+	void remove_port(SharedPtr<PortModel> port) { Module::remove_port(port->path().name()); }
 	
-	CountedPtr<NodeModel> m_node;
+	SharedPtr<NodeModel> m_node;
 	NodeMenu              m_menu;
 };
 

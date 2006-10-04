@@ -19,7 +19,7 @@
 
 #include <gtkmm.h>
 #include <libglademm.h>
-#include "util/CountedPtr.h"
+#include "raul/SharedPtr.h"
 #include "NodeModel.h"
 using namespace Ingen::Client;
 
@@ -37,12 +37,12 @@ class NodePropertiesWindow : public Gtk::Window
 public:
 	NodePropertiesWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& refGlade);
 
-	void present(CountedPtr<NodeModel> node_model) { set_node(node_model); Gtk::Window::present(); }
-	void set_node(CountedPtr<NodeModel> node_model);
+	void present(SharedPtr<NodeModel> node_model) { set_node(node_model); Gtk::Window::present(); }
+	void set_node(SharedPtr<NodeModel> node_model);
 
 private:
 	
-	CountedPtr<NodeModel> m_node_model;
+	SharedPtr<NodeModel> m_node_model;
 	Gtk::Label*           m_node_path_label;
 	Gtk::CheckButton*     m_node_polyphonic_toggle;
 	Gtk::Label*           m_plugin_type_label;

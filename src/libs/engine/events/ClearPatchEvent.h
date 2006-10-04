@@ -35,7 +35,7 @@ class Patch;
 class ClearPatchEvent : public QueuedEvent
 {
 public:
-	ClearPatchEvent(Engine& engine, CountedPtr<Responder> responder, FrameTime time, QueuedEventSource* source, const string& patch_path);
+	ClearPatchEvent(Engine& engine, SharedPtr<Responder> responder, FrameTime time, QueuedEventSource* source, const string& patch_path);
 	
 	void pre_process();
 	void execute(SampleCount nframes, FrameTime start, FrameTime end);

@@ -28,14 +28,14 @@ BreadCrumbBox::BreadCrumbBox()
 }
 
 
-CountedPtr<PatchView>
+SharedPtr<PatchView>
 BreadCrumbBox::view(const Path& path)
 {
 	for (std::list<BreadCrumb*>::const_iterator i = _breadcrumbs.begin(); i != _breadcrumbs.end(); ++i)
 		if ((*i)->path() == path)
 			return (*i)->view();
 
-	return CountedPtr<PatchView>();
+	return SharedPtr<PatchView>();
 }
 
 
@@ -45,7 +45,7 @@ BreadCrumbBox::view(const Path& path)
  * children preserved.
  */
 void
-BreadCrumbBox::build(Path path, CountedPtr<PatchView> view)
+BreadCrumbBox::build(Path path, SharedPtr<PatchView> view)
 {
 	bool old_enable_signal = _enable_signal;
 	_enable_signal = false;
@@ -130,10 +130,10 @@ BreadCrumbBox::build(Path path, CountedPtr<PatchView> view)
  */
 BreadCrumb*
 BreadCrumbBox::create_crumb(const Path&           path,
-                            CountedPtr<PatchView> view)
+                            SharedPtr<PatchView> view)
 {
 	BreadCrumb* but = manage(new BreadCrumb(path,
-			(view && path == view->patch()->path()) ? view : CountedPtr<PatchView>()));
+			(view && path == view->patch()->path()) ? view : SharedPtr<PatchView>()));
 	
 	but->signal_toggled().connect(sigc::bind(sigc::mem_fun(
 				this, &BreadCrumbBox::breadcrumb_clicked), but));

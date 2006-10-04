@@ -19,7 +19,7 @@
 
 #include <gtkmm.h>
 #include <libglademm.h>
-#include "util/Path.h"
+#include "raul/Path.h"
 
 namespace Ingen { namespace Client {
 	class Store;
@@ -43,13 +43,13 @@ public:
 
 	void init(Store& store);
 
-	void new_object(CountedPtr<ObjectModel> object);
+	void new_object(SharedPtr<ObjectModel> object);
 
 	void patch_enabled(const Path& path);
 	void patch_disabled(const Path& path);
 	void patch_renamed(const Path& old_path, const Path& new_path);
 
-	void add_patch(CountedPtr<PatchModel> pm);
+	void add_patch(SharedPtr<PatchModel> pm);
 	void remove_patch(const Path& path);
 	void show_patch_menu(GdkEventButton* ev);
 
@@ -69,7 +69,7 @@ protected:
 		
 		Gtk::TreeModelColumn<Glib::ustring>                name_col;
 		Gtk::TreeModelColumn<bool>                         enabled_col;
-		Gtk::TreeModelColumn<CountedPtr<PatchModel> > patch_model_col;
+		Gtk::TreeModelColumn<SharedPtr<PatchModel> > patch_model_col;
 	};
 
 	bool                             m_enable_signal;

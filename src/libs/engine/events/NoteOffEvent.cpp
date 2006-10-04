@@ -27,7 +27,7 @@ namespace Ingen {
 
 /** Note off with patch explicitly passed - triggered by MIDI.
  */
-NoteOffEvent::NoteOffEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, Node* node, uchar note_num)
+NoteOffEvent::NoteOffEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, Node* node, uchar note_num)
 : Event(engine, responder, timestamp),
   m_node(node),
   m_note_num(note_num)
@@ -37,7 +37,7 @@ NoteOffEvent::NoteOffEvent(Engine& engine, CountedPtr<Responder> responder, Samp
 
 /** Note off event with lookup - triggered by OSC.
  */
-NoteOffEvent::NoteOffEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& node_path, uchar note_num)
+NoteOffEvent::NoteOffEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& node_path, uchar note_num)
 : Event(engine, responder, timestamp),
   m_node(NULL),
   m_node_path(node_path),

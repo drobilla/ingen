@@ -20,8 +20,8 @@
 #include <sys/mman.h>
 #include <iostream>
 #include <unistd.h>
+#include "raul/Queue.h"
 #include "Event.h"
-#include "util/Queue.h"
 #include "JackAudioDriver.h"
 #include "NodeFactory.h"
 #include "ClientBroadcaster.h"
@@ -154,11 +154,11 @@ Engine::activate()
 		return;
 	
 	// Create root patch
-	CreatePatchEvent create_ev(*this, CountedPtr<Responder>(new Responder()), 0, "/", 1);
+	CreatePatchEvent create_ev(*this, SharedPtr<Responder>(new Responder()), 0, "/", 1);
 	create_ev.pre_process();
 	create_ev.execute(1, 0, 1);
 	create_ev.post_process();
-	EnablePatchEvent enable_ev(*this, CountedPtr<Responder>(new Responder()), 0, "/");
+	EnablePatchEvent enable_ev(*this, SharedPtr<Responder>(new Responder()), 0, "/");
 	enable_ev.pre_process();
 	enable_ev.execute(1, 0, 1);
 	enable_ev.post_process();

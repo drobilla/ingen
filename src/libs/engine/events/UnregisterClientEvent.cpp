@@ -23,7 +23,7 @@
 namespace Ingen {
 
 
-UnregisterClientEvent::UnregisterClientEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, ClientKey key)
+UnregisterClientEvent::UnregisterClientEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, ClientKey key)
 : QueuedEvent(engine, responder, timestamp)
 , _key(key)
 {

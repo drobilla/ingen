@@ -17,7 +17,7 @@
 #ifndef CREATEPATCHEVENT_H
 #define CREATEPATCHEVENT_H
 
-#include "util/Path.h"
+#include "raul/Path.h"
 #include "QueuedEvent.h"
 #include <string>
 using std::string;
@@ -39,7 +39,7 @@ class Plugin;
 class CreatePatchEvent : public QueuedEvent
 {
 public:
-	CreatePatchEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& path, int poly);
+	CreatePatchEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path, int poly);
 
 	void pre_process();
 	void execute(SampleCount nframes, FrameTime start, FrameTime end);

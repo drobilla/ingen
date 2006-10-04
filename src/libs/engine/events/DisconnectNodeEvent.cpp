@@ -31,14 +31,14 @@
 #include "ClientBroadcaster.h"
 #include "util.h"
 #include "ObjectStore.h"
-#include "util/Path.h"
+#include "raul/Path.h"
 
 using std::cerr; using std::endl;
 
 namespace Ingen {
 
 
-DisconnectNodeEvent::DisconnectNodeEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& node_path)
+DisconnectNodeEvent::DisconnectNodeEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& node_path)
 : QueuedEvent(engine, responder, timestamp),
   m_node_path(node_path),
   m_patch(NULL),
@@ -98,7 +98,7 @@ DisconnectNodeEvent::pre_process()
 	for (ConnectionListIterator i = m_patch->connections().begin(); i != m_patch->connections().end(); ++i) {
 		c = (*i);
 		if ((c->src_port()->parent_node() == m_node || c->dst_port()->parent_node() == m_node) && !c->pending_disconnection()) {
-			DisconnectionEvent* ev = new DisconnectionEvent(_engine, CountedPtr<Responder>(new Responder()), _time,
+			DisconnectionEvent* ev = new DisconnectionEvent(_engine, SharedPtr<Responder>(new Responder()), _time,
 				c->src_port(), c->dst_port());
 			ev->pre_process();
 			m_disconnection_events.push_back(new ListNode<DisconnectionEvent*>(ev));

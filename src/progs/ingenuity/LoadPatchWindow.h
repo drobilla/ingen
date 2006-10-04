@@ -21,7 +21,7 @@
 
 #include <libglademm/xml.h>
 #include <gtkmm.h>
-#include "util/CountedPtr.h"
+#include "raul/SharedPtr.h"
 #include "PatchModel.h"
 using Ingen::Client::PatchModel;
 using Ingen::Client::MetadataMap;
@@ -44,12 +44,12 @@ class LoadPatchWindow : public Gtk::FileChooserDialog
 public:
 	LoadPatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml);
 
-	void set_patch(CountedPtr<PatchModel> patch);
+	void set_patch(SharedPtr<PatchModel> patch);
 
 	void set_replace() { m_replace = true; }
 	void set_merge()   { m_replace = false; }
 
-	void present(CountedPtr<PatchModel> patch, MetadataMap data);
+	void present(SharedPtr<PatchModel> patch, MetadataMap data);
 
 protected:
 	void on_show();
@@ -62,7 +62,7 @@ private:
 
 	MetadataMap m_initial_data;
 
-	CountedPtr<PatchModel> m_patch;
+	SharedPtr<PatchModel> m_patch;
 	bool                   m_replace;
 
 	Gtk::RadioButton* m_poly_from_current_radio;

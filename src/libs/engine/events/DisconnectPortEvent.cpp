@@ -31,14 +31,14 @@
 #include "ClientBroadcaster.h"
 #include "util.h"
 #include "ObjectStore.h"
-#include "util/Path.h"
+#include "raul/Path.h"
 
 using std::cerr; using std::endl;
 
 namespace Ingen {
 
 
-DisconnectPortEvent::DisconnectPortEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& port_path)
+DisconnectPortEvent::DisconnectPortEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& port_path)
 : QueuedEvent(engine, responder, timestamp),
   m_port_path(port_path),
   m_patch(NULL),
@@ -103,7 +103,7 @@ DisconnectPortEvent::pre_process()
 	for (List<Connection*>::const_iterator i = m_patch->connections().begin(); i != m_patch->connections().end(); ++i) {
 		c = (*i);
 		if ((c->src_port() == m_port || c->dst_port() == m_port) && !c->pending_disconnection()) {
-			DisconnectionEvent* ev = new DisconnectionEvent(_engine, CountedPtr<Responder>(new Responder()), _time,
+			DisconnectionEvent* ev = new DisconnectionEvent(_engine, SharedPtr<Responder>(new Responder()), _time,
 					c->src_port(), c->dst_port());
 			ev->pre_process();
 			m_disconnection_events.push_back(new ListNode<DisconnectionEvent*>(ev));

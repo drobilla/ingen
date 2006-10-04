@@ -41,7 +41,7 @@ PatchPropertiesWindow::PatchPropertiesWindow(BaseObjectType* cobject, const Glib
  * the window in any way.
  */
 void
-PatchPropertiesWindow::set_patch(CountedPtr<PatchModel> patch_model)
+PatchPropertiesWindow::set_patch(SharedPtr<PatchModel> patch_model)
 {
 	property_title() = patch_model->path() + " Properties";
 	m_patch_model = patch_model;

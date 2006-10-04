@@ -37,7 +37,7 @@ using Shared::ClientInterface;
 class RequestPluginEvent : public QueuedEvent
 {
 public:
-	RequestPluginEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& uri);
+	RequestPluginEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& uri);
 
 	void pre_process();
 	void execute(SampleCount nframes, FrameTime start, FrameTime end);
@@ -46,7 +46,7 @@ public:
 private:
 	string                      m_uri;
 	const Plugin*               m_plugin;
-	CountedPtr<ClientInterface> m_client;
+	SharedPtr<ClientInterface> m_client;
 };
 
 

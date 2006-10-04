@@ -29,7 +29,7 @@
 namespace Ingenuity {
 
 
-PatchPortModule::PatchPortModule(boost::shared_ptr<PatchCanvas> canvas, CountedPtr<PortModel> port)
+PatchPortModule::PatchPortModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<PortModel> port)
 : LibFlowCanvas::Module(canvas, "", 0, 0), // FIXME: coords?
   m_port(port)
 {
@@ -64,7 +64,7 @@ PatchPortModule::PatchPortModule(boost::shared_ptr<PatchCanvas> canvas, CountedP
 
 
 boost::shared_ptr<PatchPortModule>
-PatchPortModule::create(boost::shared_ptr<PatchCanvas> canvas, CountedPtr<PortModel> port)
+PatchPortModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<PortModel> port)
 {
 	boost::shared_ptr<PatchPortModule> ret = boost::shared_ptr<PatchPortModule>(
 		new PatchPortModule(canvas, port));

@@ -22,7 +22,7 @@ namespace Ingen {
 namespace Client {
 
 
-NodeModel::NodeModel(CountedPtr<PluginModel> plugin, const Path& path, bool polyphonic)
+NodeModel::NodeModel(SharedPtr<PluginModel> plugin, const Path& path, bool polyphonic)
 : ObjectModel(path),
   m_polyphonic(polyphonic),
   m_plugin_uri(plugin->uri()),
@@ -45,7 +45,7 @@ NodeModel::~NodeModel()
 
 
 void
-NodeModel::remove_port(CountedPtr<PortModel> port)
+NodeModel::remove_port(SharedPtr<PortModel> port)
 {
 	m_ports.remove(port);
 	removed_port_sig.emit(port);
@@ -89,30 +89,30 @@ NodeModel::set_path(const Path& p)
 
 
 void
-NodeModel::add_child(CountedPtr<ObjectModel> c)
+NodeModel::add_child(SharedPtr<ObjectModel> c)
 {
 	assert(c->parent().get() == this);
 
-	CountedPtr<PortModel> pm = PtrCast<PortModel>(c);
+	SharedPtr<PortModel> pm = PtrCast<PortModel>(c);
 	assert(pm);
 	add_port(pm);
 }
 
 
 void
-NodeModel::remove_child(CountedPtr<ObjectModel> c)
+NodeModel::remove_child(SharedPtr<ObjectModel> c)
 {
 	assert(c->path().is_child_of(_path));
 	assert(c->parent().get() == this);
 
-	CountedPtr<PortModel> pm = PtrCast<PortModel>(c);
+	SharedPtr<PortModel> pm = PtrCast<PortModel>(c);
 	assert(pm);
 	remove_port(pm);
 }
 
 
 void
-NodeModel::add_port(CountedPtr<PortModel> pm)
+NodeModel::add_port(SharedPtr<PortModel> pm)
 {
 	assert(pm);
 	assert(pm->path().is_child_of(_path));
@@ -128,14 +128,14 @@ NodeModel::add_port(CountedPtr<PortModel> pm)
 }
 
 
-CountedPtr<PortModel>
+SharedPtr<PortModel>
 NodeModel::get_port(const string& port_name) const
 {
 	assert(port_name.find("/") == string::npos);
 	for (PortModelList::const_iterator i = m_ports.begin(); i != m_ports.end(); ++i)
 		if ((*i)->path().name() == port_name)
 			return (*i);
-	return CountedPtr<PortModel>();
+	return SharedPtr<PortModel>();
 }
 
 

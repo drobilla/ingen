@@ -20,7 +20,7 @@
 namespace Ingenuity {
 
 
-DSSIModule::DSSIModule(boost::shared_ptr<PatchCanvas> canvas, CountedPtr<NodeModel> node)
+DSSIModule::DSSIModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeModel> node)
 : NodeModule(canvas, node)
 {
 }

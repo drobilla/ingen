@@ -17,7 +17,7 @@
 #include <iostream>
 #include "OSCEngineSender.h"
 #include "interface/ClientKey.h"
-#include "util/LibloAtom.h"
+#include "raul/AtomLiblo.h"
 using std::cout; using std::cerr; using std::endl;
 
 namespace Ingen {
@@ -107,7 +107,7 @@ OSCEngineSender::attach(int32_t ping_id, bool block)
  * traversal.  It is a parameter to remain compatible with EngineInterface.
  */
 void
-OSCEngineSender::register_client(ClientKey key, CountedPtr<ClientInterface> client)
+OSCEngineSender::register_client(ClientKey key, SharedPtr<ClientInterface> client)
 {
 	// FIXME: use parameters.. er, somehow.
 	assert(_engine_addr);
@@ -381,7 +381,7 @@ OSCEngineSender::set_metadata(const string& obj_path,
 	lo_message_add_int32(m, next_id());
 	lo_message_add_string(m, obj_path.c_str());
 	lo_message_add_string(m, predicate.c_str());
-	LibloAtom::lo_message_add_atom(m, value);
+	AtomLiblo::lo_message_add_atom(m, value);
 	lo_send_message(_engine_addr, "/om/metadata/set", m);
 }
 

@@ -46,7 +46,7 @@ RenameWindow::RenameWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Gl
  * This function MUST be called before using this object in any way.
  */
 void
-RenameWindow::set_object(CountedPtr<ObjectModel> object)
+RenameWindow::set_object(SharedPtr<ObjectModel> object)
 {
 	m_object = object;
 	m_name_entry->set_text(object->path().name());

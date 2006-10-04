@@ -52,7 +52,7 @@ public:
 
 	ClientKey client_key() { return ClientKey(ClientKey::OSC_URL, _url); }
 	
-	CountedPtr<ClientInterface> client();
+	SharedPtr<ClientInterface> client();
 
 
 private:

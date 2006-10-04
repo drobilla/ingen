@@ -31,7 +31,7 @@ namespace Ingenuity {
 
 // ////////////////////// ControlGroup ///////////////////////////////// //
 
-ControlGroup::ControlGroup(ControlPanel* panel, CountedPtr<PortModel> pm, bool separator)
+ControlGroup::ControlGroup(ControlPanel* panel, SharedPtr<PortModel> pm, bool separator)
 : Gtk::VBox(false, 0),
   m_control_panel(panel),
   m_port_model(pm),
@@ -64,7 +64,7 @@ ControlGroup::metadata_update(const string& key, const Atom& value)
 
 // ////////////////// SliderControlGroup ////////////////////// //
 
-SliderControlGroup::SliderControlGroup(ControlPanel* panel, CountedPtr<PortModel> pm, bool separator)
+SliderControlGroup::SliderControlGroup(ControlPanel* panel, SharedPtr<PortModel> pm, bool separator)
 : ControlGroup(panel, pm, separator),
   m_enabled(true),
   m_enable_signal(false),
@@ -303,7 +303,7 @@ SliderControlGroup::slider_pressed(GdkEvent* ev)
 // ///////////// IntegerControlGroup ////////////// //
 
 
-IntegerControlGroup::IntegerControlGroup(ControlPanel* panel, CountedPtr<PortModel> pm, bool separator)
+IntegerControlGroup::IntegerControlGroup(ControlPanel* panel, SharedPtr<PortModel> pm, bool separator)
 : ControlGroup(panel, pm, separator),
   m_enable_signal(false),
   m_alignment(0.5, 0.5, 0.0, 0.0),
@@ -377,7 +377,7 @@ IntegerControlGroup::update_value()
 // ///////////// ToggleControlGroup ////////////// //
 
 
-ToggleControlGroup::ToggleControlGroup(ControlPanel* panel, CountedPtr<PortModel> pm, bool separator)
+ToggleControlGroup::ToggleControlGroup(ControlPanel* panel, SharedPtr<PortModel> pm, bool separator)
 : ControlGroup(panel, pm, separator),
   m_enable_signal(false),
   m_alignment(0.5, 0.5, 0.0, 0.0),

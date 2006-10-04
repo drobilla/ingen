@@ -22,7 +22,7 @@
 #include "Store.h"
 #include "PatchLibrarian.h"
 #include "PluginModel.h"
-#include "util/CountedPtr.h"
+#include "raul/SharedPtr.h"
 #include <iostream>
 #include <unistd.h>
 #include <stdlib.h>
@@ -49,8 +49,8 @@ void rename_object();
 
 
 // Yay globals!
-CountedPtr<OSCModelEngineInterface> engine;
-CountedPtr<Store> store;
+SharedPtr<OSCModelEngineInterface> engine;
+SharedPtr<Store> store;
 
 
 // OSC listening non-threaded signal emitter
@@ -88,10 +88,10 @@ main(int argc, char** argv)
 	else
 		client_port = 0; // will choose a free port automatically
 	
-	engine = CountedPtr<ModelEngineInterface>(new OSCModelEngineInterface(engine_url));
-	CountedPtr<SigClientInterface> emitter(new OSCSigEmitter(16182));
+	engine = SharedPtr<ModelEngineInterface>(new OSCModelEngineInterface(engine_url));
+	SharedPtr<SigClientInterface> emitter(new OSCSigEmitter(16182));
 	
-	store = CountedPtr<Store>(new Store(engine, emitter));
+	store = SharedPtr<Store>(new Store(engine, emitter));
 
 	engine->activate();
 	
@@ -170,7 +170,7 @@ random_name()
 Path
 random_object()
 {
-	typedef map<Path, CountedPtr<ObjectModel> > ObjectMap;
+	typedef map<Path, SharedPtr<ObjectModel> > ObjectMap;
 	
 	const ObjectMap& objects = store->objects();
 
@@ -190,7 +190,7 @@ random_object()
 string
 random_plugin()
 {
-	typedef map<string, CountedPtr<PluginModel> > PluginMap;
+	typedef map<string, SharedPtr<PluginModel> > PluginMap;
 	
 	const PluginMap& plugins = store->plugins();
 

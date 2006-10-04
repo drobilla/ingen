@@ -18,7 +18,7 @@
 #define DISCONNECTPORTEVENT_H
 
 #include <string>
-#include "util/Path.h"
+#include "raul/Path.h"
 #include "QueuedEvent.h"
 #include "List.h"
 
@@ -43,7 +43,7 @@ using std::string;
 class DisconnectPortEvent : public QueuedEvent
 {
 public:
-	DisconnectPortEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& port_path);
+	DisconnectPortEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& port_path);
 	DisconnectPortEvent(Engine& engine, Port* port);
 	~DisconnectPortEvent();
 

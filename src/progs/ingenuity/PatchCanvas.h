@@ -21,8 +21,8 @@
 #include <boost/shared_ptr.hpp>
 #include <flowcanvas/FlowCanvas.h>
 #include <flowcanvas/Module.h>
-#include "util/CountedPtr.h"
-#include "util/Path.h"
+#include "raul/SharedPtr.h"
+#include "raul/Path.h"
 #include "ConnectionModel.h"
 #include "PatchModel.h"
 #include "NodeModule.h"
@@ -49,7 +49,7 @@ class NodeModule;
 class PatchCanvas : public LibFlowCanvas::FlowCanvas
 {
 public:
-	PatchCanvas(CountedPtr<PatchModel> patch, int width, int height);
+	PatchCanvas(SharedPtr<PatchModel> patch, int width, int height);
 	
 	virtual ~PatchCanvas() {}
 
@@ -60,11 +60,11 @@ public:
 	
 	void build();
 
-	void add_node(CountedPtr<NodeModel> nm);
-	void remove_node(CountedPtr<NodeModel> nm);
-	void add_port(CountedPtr<PortModel> pm);
-	void remove_port(CountedPtr<PortModel> pm);
-	void connection(CountedPtr<ConnectionModel> cm);
+	void add_node(SharedPtr<NodeModel> nm);
+	void remove_node(SharedPtr<NodeModel> nm);
+	void add_port(SharedPtr<PortModel> pm);
+	void remove_port(SharedPtr<PortModel> pm);
+	void connection(SharedPtr<ConnectionModel> cm);
 	void disconnection(const Path& src_port_path, const Path& dst_port_path);
 
 	void get_new_module_location(double& x, double& y);
@@ -92,7 +92,7 @@ private:
 	void disconnect(boost::shared_ptr<LibFlowCanvas::Port> src,
 	                boost::shared_ptr<LibFlowCanvas::Port> dst);
 
-	CountedPtr<PatchModel> m_patch;
+	SharedPtr<PatchModel> m_patch;
 
 	int m_last_click_x;
 	int m_last_click_y;

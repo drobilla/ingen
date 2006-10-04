@@ -19,8 +19,8 @@
 
 #include <pthread.h>
 #include "types.h"
-#include "util/Queue.h"
-#include "util/Slave.h"
+#include "raul/Queue.h"
+#include "raul/Slave.h"
 
 class Maid;
 

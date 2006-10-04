@@ -18,7 +18,7 @@
 #define MAID_H
 
 #include "MaidObject.h"
-#include "util/Queue.h"
+#include "raul/Queue.h"
 
 
 /** Explicitly driven garbage collector.

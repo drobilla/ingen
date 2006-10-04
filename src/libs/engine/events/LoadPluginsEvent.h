@@ -32,7 +32,7 @@ class Plugin;
 class LoadPluginsEvent : public QueuedEvent
 {
 public:
-	LoadPluginsEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp);
+	LoadPluginsEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp);
 	
 	void pre_process();
 	void post_process();

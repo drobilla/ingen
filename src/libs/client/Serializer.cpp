@@ -34,9 +34,9 @@
 #include "PresetModel.h"
 #include "ModelEngineInterface.h"
 #include "PluginModel.h"
-#include "util/Path.h"
-#include "util/Atom.h"
-#include "util/RedlandAtom.h"
+#include "raul/Path.h"
+#include "raul/Atom.h"
+#include "raul/AtomRaptor.h"
 
 #define U(x) ((const unsigned char*)(x))
 
@@ -47,7 +47,7 @@ namespace Ingen {
 namespace Client {
 
 
-Serializer::Serializer(CountedPtr<ModelEngineInterface> engine)
+Serializer::Serializer(SharedPtr<ModelEngineInterface> engine)
 	: _serializer(NULL)
 	, _string_output(NULL)
 	, _patch_search_path(".")
@@ -70,7 +70,7 @@ Serializer::~Serializer()
  * This must be called before any serializing methods.
  */
 void
-Serializer::start_to_filename(const string& filename) throw(std::logic_error)
+Serializer::start_to_filename(const string& filename) throw (std::logic_error)
 {
 	if (_serializer)
 		throw std::logic_error("start_to_string called with serialization in progress");
@@ -90,7 +90,7 @@ Serializer::start_to_filename(const string& filename) throw(std::logic_error)
  * the desired objects have been serialized.
  */
 void
-Serializer::start_to_string() throw(std::logic_error)
+Serializer::start_to_string() throw (std::logic_error)
 {
 	if (_serializer)
 		throw std::logic_error("start_to_string called with serialization in progress");
@@ -282,31 +282,31 @@ Serializer::serialize_atom(
 	triple.predicate = (void*)raptor_new_uri((const unsigned char*)predicate_uri.c_str());
 	triple.predicate_type = RAPTOR_IDENTIFIER_TYPE_RESOURCE;
 
-	RedlandAtom::atom_to_triple_object(&triple, atom);
+	AtomRaptor::atom_to_triple_object(&triple, atom);
 
 	raptor_serialize_statement(_serializer, &triple);
 }
 
 
 void
-Serializer::serialize(CountedPtr<ObjectModel> object) throw (std::logic_error)
+Serializer::serialize(SharedPtr<ObjectModel> object) throw (std::logic_error)
 {
 	if (!_serializer)
 		throw std::logic_error("serialize_patch called without serialization in progress");
 
-	CountedPtr<PatchModel> patch = PtrCast<PatchModel>(object);
+	SharedPtr<PatchModel> patch = PtrCast<PatchModel>(object);
 	if (patch) {
 		serialize_patch(patch);
 		return;
 	}
 	
-	CountedPtr<NodeModel> node = PtrCast<NodeModel>(object);
+	SharedPtr<NodeModel> node = PtrCast<NodeModel>(object);
 	if (node) {
 		serialize_node(node);
 		return;
 	}
 	
-	CountedPtr<PortModel> port = PtrCast<PortModel>(object);
+	SharedPtr<PortModel> port = PtrCast<PortModel>(object);
 	if (port) {
 		serialize_port(port);
 		return;
@@ -318,7 +318,7 @@ Serializer::serialize(CountedPtr<ObjectModel> object) throw (std::logic_error)
 
 
 void
-Serializer::serialize_patch(CountedPtr<PatchModel> patch)
+Serializer::serialize_patch(SharedPtr<PatchModel> patch)
 {
 	assert(_serializer);
 
@@ -361,7 +361,7 @@ Serializer::serialize_patch(CountedPtr<PatchModel> patch)
 
 void
 Serializer::serialize_node(
-		CountedPtr<NodeModel> node, const string ns_prefix)
+		SharedPtr<NodeModel> node, const string ns_prefix)
 {
 	assert(_serializer);
 
@@ -394,7 +394,7 @@ Serializer::serialize_node(
 
 
 void
-Serializer::serialize_port(CountedPtr<PortModel> port, const string ns_prefix)
+Serializer::serialize_port(SharedPtr<PortModel> port, const string ns_prefix)
 {
 	assert(_serializer);
 
@@ -417,7 +417,7 @@ Serializer::serialize_port(CountedPtr<PortModel> port, const string ns_prefix)
 
 
 void
-Serializer::serialize_connection(CountedPtr<ConnectionModel> connection) throw (std::logic_error)
+Serializer::serialize_connection(SharedPtr<ConnectionModel> connection) throw (std::logic_error)
 {
 	assert(_serializer);
 	

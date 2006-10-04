@@ -26,7 +26,7 @@
 namespace Ingen {
 
 
-DisablePatchEvent::DisablePatchEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& patch_path)
+DisablePatchEvent::DisablePatchEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& patch_path)
 : QueuedEvent(engine, responder, timestamp),
   m_patch_path(patch_path),
   m_patch(NULL)

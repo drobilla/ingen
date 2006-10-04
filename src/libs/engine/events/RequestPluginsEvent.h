@@ -38,13 +38,13 @@ namespace Shared {
 class RequestPluginsEvent : public QueuedEvent
 {
 public:
-	RequestPluginsEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp);
+	RequestPluginsEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp);
 
 	void pre_process();
 	void post_process();
 
 private:
-	CountedPtr<ClientInterface> m_client;
+	SharedPtr<ClientInterface> m_client;
 	std::list<Plugin*>          m_plugins;
 };
 

@@ -20,7 +20,7 @@
 #include <string>
 #include <gtkmm.h>
 #include <libglademm/xml.h>
-#include "util/CountedPtr.h"
+#include "raul/SharedPtr.h"
 using std::string;
 
 namespace Ingen { namespace Client { class PatchModel; } }
@@ -40,14 +40,14 @@ class PatchPropertiesWindow : public Gtk::Window
 public:
 	PatchPropertiesWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& refGlade);
 
-	void present(CountedPtr<PatchModel> patch_model) { set_patch(patch_model); Gtk::Window::present(); }
-	void set_patch(CountedPtr<PatchModel> patch_model);
+	void present(SharedPtr<PatchModel> patch_model) { set_patch(patch_model); Gtk::Window::present(); }
+	void set_patch(SharedPtr<PatchModel> patch_model);
 	
 	void cancel_clicked();
 	void ok_clicked();
 
 private:
-	CountedPtr<PatchModel> m_patch_model;
+	SharedPtr<PatchModel> m_patch_model;
 
 	Gtk::Entry*    m_author_entry;
 	Gtk::TextView* m_textview;

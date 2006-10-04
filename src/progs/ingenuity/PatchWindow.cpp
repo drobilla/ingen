@@ -139,13 +139,13 @@ PatchWindow::~PatchWindow()
 /** Set the patch controller from a Path (for use by eg. BreadCrumbBox)
  */
 void 
-PatchWindow::set_patch_from_path(const Path& path, CountedPtr<PatchView> view)
+PatchWindow::set_patch_from_path(const Path& path, SharedPtr<PatchView> view)
 {	
 	if (view) {
 		assert(view->patch()->path() == path);
 		App::instance().window_factory()->present_patch(view->patch(), this, view);
 	} else {
-		CountedPtr<PatchModel> model = PtrCast<PatchModel>(App::instance().store()->object(path));
+		SharedPtr<PatchModel> model = PtrCast<PatchModel>(App::instance().store()->object(path));
 		if (model)
 			App::instance().window_factory()->present_patch(model, this);
 	}
@@ -157,7 +157,7 @@ PatchWindow::set_patch_from_path(const Path& path, CountedPtr<PatchView> view)
  * If @a view is NULL, a new view will be created.
  */
 void
-PatchWindow::set_patch(CountedPtr<PatchModel> patch, CountedPtr<PatchView> view)
+PatchWindow::set_patch(SharedPtr<PatchModel> patch, SharedPtr<PatchView> view)
 {
 	if (!patch || patch == m_patch)
 		return;

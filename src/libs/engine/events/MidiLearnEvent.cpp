@@ -37,7 +37,7 @@ MidiLearnResponseEvent::post_process()
 
 // MidiLearnEvent
 
-MidiLearnEvent::MidiLearnEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& node_path)
+MidiLearnEvent::MidiLearnEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& node_path)
 : QueuedEvent(engine, responder, timestamp),
   m_node_path(node_path),
   m_node(NULL),

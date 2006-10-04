@@ -25,15 +25,15 @@
 #include "NodeFactory.h"
 #include "ClientBroadcaster.h"
 #include "Maid.h"
-#include "util/Path.h"
+#include "raul/Path.h"
 #include "ObjectStore.h"
-#include "util/Path.h"
+#include "raul/Path.h"
 #include "Port.h"
 
 namespace Ingen {
 
 
-AddNodeEvent::AddNodeEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& path,
+AddNodeEvent::AddNodeEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path,
 		const string& plugin_uri, bool poly)
 : QueuedEvent(engine, responder, timestamp),
   m_path(path),
@@ -51,7 +51,7 @@ AddNodeEvent::AddNodeEvent(Engine& engine, CountedPtr<Responder> responder, Samp
  *
  * Do not use.
  */
-AddNodeEvent::AddNodeEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& path,
+AddNodeEvent::AddNodeEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path,
 		const string& plugin_type, const string& plugin_lib, const string& plugin_label, bool poly)
 : QueuedEvent(engine, responder, timestamp),
   m_path(path),

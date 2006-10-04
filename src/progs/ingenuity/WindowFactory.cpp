@@ -62,7 +62,7 @@ WindowFactory::~WindowFactory()
 
 
 PatchWindow*
-WindowFactory::patch_window(CountedPtr<PatchModel> patch)
+WindowFactory::patch_window(SharedPtr<PatchModel> patch)
 {
 	PatchWindowMap::iterator w = _patch_windows.find(patch->path());
 
@@ -71,7 +71,7 @@ WindowFactory::patch_window(CountedPtr<PatchModel> patch)
 
 	
 NodeControlWindow*
-WindowFactory::control_window(CountedPtr<NodeModel> node)
+WindowFactory::control_window(SharedPtr<NodeModel> node)
 {
 	ControlWindowMap::iterator w = _control_windows.find(node->path());
 
@@ -86,7 +86,7 @@ WindowFactory::control_window(CountedPtr<NodeModel> node)
  * @a preferred left unmodified.
  */
 void
-WindowFactory::present_patch(CountedPtr<PatchModel> patch, PatchWindow* preferred, CountedPtr<PatchView> view)
+WindowFactory::present_patch(SharedPtr<PatchModel> patch, PatchWindow* preferred, SharedPtr<PatchView> view)
 {
 	assert( !view || view->patch() == patch);
 
@@ -111,7 +111,7 @@ WindowFactory::present_patch(CountedPtr<PatchModel> patch, PatchWindow* preferre
 
 
 PatchWindow*
-WindowFactory::new_patch_window(CountedPtr<PatchModel> patch, CountedPtr<PatchView> view)
+WindowFactory::new_patch_window(SharedPtr<PatchModel> patch, SharedPtr<PatchView> view)
 {
 	assert( !view || view->patch() == patch);
 
@@ -160,7 +160,7 @@ WindowFactory::remove_patch_window(PatchWindow* win, GdkEventAny* ignored)
 
 
 void
-WindowFactory::present_controls(CountedPtr<NodeModel> node)
+WindowFactory::present_controls(SharedPtr<NodeModel> node)
 {
 	NodeControlWindow* win = control_window(node);
 
@@ -174,7 +174,7 @@ WindowFactory::present_controls(CountedPtr<NodeModel> node)
 
 
 NodeControlWindow*
-WindowFactory::new_control_window(CountedPtr<NodeModel> node)
+WindowFactory::new_control_window(SharedPtr<NodeModel> node)
 {
 	size_t poly = 1;
 	if (node->polyphonic())
@@ -205,7 +205,7 @@ WindowFactory::remove_control_window(NodeControlWindow* win, GdkEventAny* ignore
 }
 
 void
-WindowFactory::present_load_plugin(CountedPtr<PatchModel> patch, MetadataMap data)
+WindowFactory::present_load_plugin(SharedPtr<PatchModel> patch, MetadataMap data)
 {
 	PatchWindowMap::iterator w = _patch_windows.find(patch->path());
 
@@ -217,7 +217,7 @@ WindowFactory::present_load_plugin(CountedPtr<PatchModel> patch, MetadataMap dat
 
 
 void
-WindowFactory::present_load_patch(CountedPtr<PatchModel> patch, MetadataMap data)
+WindowFactory::present_load_patch(SharedPtr<PatchModel> patch, MetadataMap data)
 {
 	PatchWindowMap::iterator w = _patch_windows.find(patch->path());
 
@@ -231,7 +231,7 @@ WindowFactory::present_load_patch(CountedPtr<PatchModel> patch, MetadataMap data
 
 
 void
-WindowFactory::present_new_subpatch(CountedPtr<PatchModel> patch, MetadataMap data)
+WindowFactory::present_new_subpatch(SharedPtr<PatchModel> patch, MetadataMap data)
 {
 	PatchWindowMap::iterator w = _patch_windows.find(patch->path());
 
@@ -243,7 +243,7 @@ WindowFactory::present_new_subpatch(CountedPtr<PatchModel> patch, MetadataMap da
 
 
 void
-WindowFactory::present_load_subpatch(CountedPtr<PatchModel> patch, MetadataMap data)
+WindowFactory::present_load_subpatch(SharedPtr<PatchModel> patch, MetadataMap data)
 {
 	PatchWindowMap::iterator w = _patch_windows.find(patch->path());
 
@@ -255,7 +255,7 @@ WindowFactory::present_load_subpatch(CountedPtr<PatchModel> patch, MetadataMap d
 
 
 void
-WindowFactory::present_rename(CountedPtr<ObjectModel> object)
+WindowFactory::present_rename(SharedPtr<ObjectModel> object)
 {
 	PatchWindowMap::iterator w = _patch_windows.find(object->path());
 
@@ -267,9 +267,9 @@ WindowFactory::present_rename(CountedPtr<ObjectModel> object)
 
 
 void
-WindowFactory::present_properties(CountedPtr<NodeModel> node)
+WindowFactory::present_properties(SharedPtr<NodeModel> node)
 {
-	CountedPtr<PatchModel> patch = PtrCast<PatchModel>(node);
+	SharedPtr<PatchModel> patch = PtrCast<PatchModel>(node);
 	if (patch) {
 	
 		PatchWindowMap::iterator w = _patch_windows.find(patch->path());

@@ -22,7 +22,7 @@
 #include <gtkmm.h>
 #include <libglademm.h>
 #include <sigc++/sigc++.h>
-#include "util/CountedPtr.h"
+#include "raul/SharedPtr.h"
 using std::string; using std::vector;
 
 namespace Ingen { namespace Client {
@@ -43,11 +43,11 @@ class ControlPanel;
 class NodeControlWindow : public Gtk::Window
 {
 public:
-	NodeControlWindow(CountedPtr<NodeModel> node, size_t poly);
-	NodeControlWindow(CountedPtr<NodeModel> node, ControlPanel* panel);
+	NodeControlWindow(SharedPtr<NodeModel> node, size_t poly);
+	NodeControlWindow(SharedPtr<NodeModel> node, ControlPanel* panel);
 	virtual ~NodeControlWindow();
 
-	CountedPtr<NodeModel> node() { return m_node; }
+	SharedPtr<NodeModel> node() { return m_node; }
 
 	ControlPanel* control_panel() const { return m_control_panel; }
 	
@@ -58,7 +58,7 @@ protected:
 	void on_hide();
 
 private:
-	CountedPtr<NodeModel>    m_node;
+	SharedPtr<NodeModel>    m_node;
 	ControlPanel* m_control_panel;
 	bool          m_callback_enabled;
 	

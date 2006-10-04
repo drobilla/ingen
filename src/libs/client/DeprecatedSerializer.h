@@ -22,8 +22,8 @@
 #include <string>
 #include <libxml/tree.h>
 #include <cassert>
-#include "util/CountedPtr.h"
-#include "util/Path.h"
+#include "raul/SharedPtr.h"
+#include "raul/Path.h"
 #include "ObjectModel.h"
 
 using std::string;
@@ -45,7 +45,7 @@ class ModelEngineInterface;
 class DeprecatedSerializer
 {
 public:
-	DeprecatedSerializer(CountedPtr<ModelEngineInterface> engine)
+	DeprecatedSerializer(SharedPtr<ModelEngineInterface> engine)
 	: _patch_search_path("."), _engine(engine)
 	{
 		assert(_engine);
@@ -67,7 +67,7 @@ private:
 	string translate_load_path(const string& path);
 
 	string                           _patch_search_path;
-	CountedPtr<ModelEngineInterface> _engine;
+	SharedPtr<ModelEngineInterface> _engine;
 
 	/// Translations of paths from the loading file to actual paths (for deprecated patches)
 	std::map<string, string> _load_path_translations;

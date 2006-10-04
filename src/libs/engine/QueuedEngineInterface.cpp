@@ -18,15 +18,15 @@
 #include "config.h"
 #include "QueuedEventSource.h"
 #include "events.h"
-#include "util/Queue.h"
+#include "raul/Queue.h"
 #include "Engine.h"
 #include "AudioDriver.h"
 
 namespace Ingen {
 
-QueuedEngineInterface::QueuedEngineInterface(CountedPtr<Engine> engine, size_t queued_size, size_t stamped_size)
+QueuedEngineInterface::QueuedEngineInterface(SharedPtr<Engine> engine, size_t queued_size, size_t stamped_size)
 : QueuedEventSource(queued_size, stamped_size)
-, _responder(CountedPtr<Responder>(new Responder())) // NULL responder
+, _responder(SharedPtr<Responder>(new Responder())) // NULL responder
 , _engine(engine)
 {
 }
@@ -47,7 +47,7 @@ QueuedEngineInterface::now() const
  * Ownership of @a responder is taken.
  */
 void
-QueuedEngineInterface::set_responder(CountedPtr<Responder> responder)
+QueuedEngineInterface::set_responder(SharedPtr<Responder> responder)
 {
 	_responder = responder;
 }
@@ -64,7 +64,7 @@ QueuedEngineInterface::set_next_response_id(int32_t id)
 void
 QueuedEngineInterface::disable_responses()
 {
-	static CountedPtr<Responder> null_responder(new Responder());
+	static SharedPtr<Responder> null_responder(new Responder());
 	//cerr << "DISABLE\n";
 	set_responder(null_responder);
 }
@@ -74,7 +74,7 @@ QueuedEngineInterface::disable_responses()
 
 
 void
-QueuedEngineInterface::register_client(ClientKey key, CountedPtr<ClientInterface> client)
+QueuedEngineInterface::register_client(ClientKey key, SharedPtr<ClientInterface> client)
 {
 	push_queued(new RegisterClientEvent(*_engine.get(), _responder, now(), key, client));
 }

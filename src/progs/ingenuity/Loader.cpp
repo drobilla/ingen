@@ -25,7 +25,7 @@ using std::cout; using std::endl;
 namespace Ingenuity {
 
 
-Loader::Loader(CountedPtr<ModelEngineInterface> engine)
+Loader::Loader(SharedPtr<ModelEngineInterface> engine)
 : _serializer(new Serializer(engine))
 {
 	assert(_serializer != NULL);
@@ -76,7 +76,7 @@ Loader::load_patch(const string&      filename,
 
 
 void
-Loader::save_patch(CountedPtr<PatchModel> model, const string& filename, bool recursive)
+Loader::save_patch(SharedPtr<PatchModel> model, const string& filename, bool recursive)
 {
 	_mutex.lock();
 
@@ -91,7 +91,7 @@ Loader::save_patch(CountedPtr<PatchModel> model, const string& filename, bool re
 
 
 void
-Loader::save_patch_event(CountedPtr<PatchModel> model, const string& filename, bool recursive)
+Loader::save_patch_event(SharedPtr<PatchModel> model, const string& filename, bool recursive)
 {
 	if (recursive)
 		cerr << "FIXME: Recursive save." << endl;

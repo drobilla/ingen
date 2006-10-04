@@ -65,7 +65,7 @@ LoadSubpatchWindow::LoadSubpatchWindow(BaseObjectType* cobject, const Glib::RefP
 
 
 void
-LoadSubpatchWindow::present(CountedPtr<PatchModel> patch, MetadataMap data)
+LoadSubpatchWindow::present(SharedPtr<PatchModel> patch, MetadataMap data)
 {
 	set_patch(patch);
 	m_initial_data = data;
@@ -78,7 +78,7 @@ LoadSubpatchWindow::present(CountedPtr<PatchModel> patch, MetadataMap data)
  * This function MUST be called before using the window in any way!
  */
 void
-LoadSubpatchWindow::set_patch(CountedPtr<PatchModel> patch)
+LoadSubpatchWindow::set_patch(SharedPtr<PatchModel> patch)
 {
 	m_patch = patch;
 

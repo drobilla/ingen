@@ -77,13 +77,13 @@ OSCResponder::respond_error(const string& msg)
 }
 
 
-CountedPtr<ClientInterface>
+SharedPtr<ClientInterface>
 OSCResponder::client()
 {
 	if (_broadcaster)
 		return _broadcaster->client(client_key());
 	else
-		return CountedPtr<ClientInterface>();
+		return SharedPtr<ClientInterface>();
 }
 
 } // namespace OM

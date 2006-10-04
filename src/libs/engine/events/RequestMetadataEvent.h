@@ -19,7 +19,7 @@
 
 #include <string>
 #include "QueuedEvent.h"
-#include "util/Atom.h"
+#include "raul/Atom.h"
 using std::string;
 
 namespace Ingen {
@@ -37,7 +37,7 @@ namespace Shared {
 class RequestMetadataEvent : public QueuedEvent
 {
 public:
-	RequestMetadataEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& key);
+	RequestMetadataEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& key);
 
 	void pre_process();
 	void post_process();
@@ -47,7 +47,7 @@ private:
 	string                      m_key;
 	Atom                        m_value; 
 	GraphObject*                m_object;
-	CountedPtr<ClientInterface> m_client;
+	SharedPtr<ClientInterface> m_client;
 };
 
 

@@ -34,8 +34,8 @@ class Port;
 class SetPortValueQueuedEvent : public QueuedEvent
 {
 public:
-	SetPortValueQueuedEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& port_path, Sample val);
-	SetPortValueQueuedEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, size_t voice_num, const string& port_path, Sample val);
+	SetPortValueQueuedEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& port_path, Sample val);
+	SetPortValueQueuedEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, size_t voice_num, const string& port_path, Sample val);
 
 	void pre_process();
 	void execute(SampleCount nframes, FrameTime start, FrameTime end);

@@ -54,7 +54,7 @@ struct OSCSigEmitter : public OSCClientReceiver, public ThreadedSigClientInterfa
 
 
 struct QueuedModelEngineInterface : public QueuedEngineInterface, public ModelEngineInterface {
-	QueuedModelEngineInterface(CountedPtr<Ingen::Engine> engine)
+	QueuedModelEngineInterface(SharedPtr<Ingen::Engine> engine)
 		: Ingen::Shared::EngineInterface()
 		, Ingen::QueuedEngineInterface(engine, Ingen::event_queue_size, Ingen::event_queue_size)
 	{
@@ -138,9 +138,9 @@ ConnectWindow::connect()
 	_connect_button->set_sensitive(false);
 
 	if (_mode == CONNECT_REMOTE) {
-		CountedPtr<ModelEngineInterface> engine(new OSCModelEngineInterface(_url_entry->get_text()));
+		SharedPtr<ModelEngineInterface> engine(new OSCModelEngineInterface(_url_entry->get_text()));
 		OSCSigEmitter* ose = new OSCSigEmitter(1024, 16181); // FIXME: args
-		CountedPtr<SigClientInterface> client(ose);
+		SharedPtr<SigClientInterface> client(ose);
 		App::instance().attach(engine, client);
 
 		Glib::signal_timeout().connect(
@@ -168,15 +168,15 @@ ConnectWindow::connect()
 		throw;
 #ifdef MONOLITHIC_INGENUITY
 	} else if (_mode == INTERNAL) {
-		CountedPtr<Ingen::Engine> engine(new Ingen::Engine());
+		SharedPtr<Ingen::Engine> engine(new Ingen::Engine());
 		QueuedModelEngineInterface* qmei = new QueuedModelEngineInterface(engine);
-		CountedPtr<ModelEngineInterface> engine_interface(qmei);
+		SharedPtr<ModelEngineInterface> engine_interface(qmei);
 		ThreadedSigClientInterface* tsci = new ThreadedSigClientInterface(Ingen::event_queue_size);
-		CountedPtr<SigClientInterface> client(tsci);
+		SharedPtr<SigClientInterface> client(tsci);
 		
 		App::instance().attach(engine_interface, client);
 
-		qmei->set_responder(CountedPtr<Ingen::Responder>(new Ingen::DirectResponder(client, 1)));
+		qmei->set_responder(SharedPtr<Ingen::Responder>(new Ingen::DirectResponder(client, 1)));
 		engine->set_event_source(qmei);
 		
 		Glib::signal_timeout().connect(
@@ -348,7 +348,7 @@ ConnectWindow::gtk_callback()
 		++stage;
 	} else if (stage == 7) {
 		if (App::instance().store()->objects().size() > 0) {
-			CountedPtr<PatchModel> root = PtrCast<PatchModel>(App::instance().store()->object("/"));
+			SharedPtr<PatchModel> root = PtrCast<PatchModel>(App::instance().store()->object("/"));
 			assert(root);
 			App::instance().window_factory()->present_patch(root);
 			++stage;

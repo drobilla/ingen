@@ -19,7 +19,7 @@
 
 #include <string>
 #include "QueuedEvent.h"
-#include "util/Atom.h"
+#include "raul/Atom.h"
 
 using std::string;
 
@@ -35,7 +35,7 @@ class GraphObject;
 class SetMetadataEvent : public QueuedEvent
 {
 public:
-	SetMetadataEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& key, const Atom& value);
+	SetMetadataEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& key, const Atom& value);
 	
 	void pre_process();
 	void execute(SampleCount nframes, FrameTime start, FrameTime end);

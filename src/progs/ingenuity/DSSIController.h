@@ -19,7 +19,7 @@
 
 #include <string>
 #include <gtkmm.h>
-#include "util/Path.h"
+#include "raul/Path.h"
 #include "NodeModel.h"
 
 using std::string;
@@ -46,7 +46,7 @@ class NodePropertiesWindow;
 class DSSIController
 {
 public:
-	DSSIController(CountedPtr<NodeModel> model);
+	DSSIController(SharedPtr<NodeModel> model);
 
 	virtual ~DSSIController() {}
 	

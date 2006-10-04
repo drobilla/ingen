@@ -25,7 +25,7 @@
 #include <libgnomecanvasmm.h>
 #include <gtkmm.h>
 #include <libglademm.h>
-#include <util/CountedPtr.h>
+#include <raul/SharedPtr.h>
 using std::string; using std::map; using std::list;
 using std::cerr; using std::endl;
 
@@ -80,8 +80,8 @@ public:
 
 	int num_open_patch_windows();
 
-	void attach(const CountedPtr<ModelEngineInterface>& engine,
-	            const CountedPtr<SigClientInterface>&   client);
+	void attach(const SharedPtr<ModelEngineInterface>& engine,
+	            const SharedPtr<SigClientInterface>&   client);
 
 	ConnectWindow*   connect_window()       const { return _connect_window; }
 	Gtk::Dialog*     about_dialog()         const { return _about_dialog; }
@@ -93,8 +93,8 @@ public:
 	Loader*          loader()               const { return _loader; }
 	WindowFactory*   window_factory()       const { return _window_factory; }
 
-	const CountedPtr<ModelEngineInterface>& engine() const { return _engine; }
-	const CountedPtr<SigClientInterface>&   client() const { return _client; }
+	const SharedPtr<ModelEngineInterface>& engine() const { return _engine; }
+	const SharedPtr<SigClientInterface>&   client() const { return _client; }
 
 	static inline App& instance() { assert(_instance); return *_instance; }
 	static void        instantiate();
@@ -103,8 +103,8 @@ protected:
 	App();
 	static App* _instance;
 
-	CountedPtr<ModelEngineInterface> _engine;
-	CountedPtr<SigClientInterface>   _client;
+	SharedPtr<ModelEngineInterface> _engine;
+	SharedPtr<SigClientInterface>   _client;
 	
 	Store*  _store;
 	Loader* _loader;

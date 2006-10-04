@@ -19,7 +19,7 @@
 #include <iostream>
 #include <pthread.h>
 #include "Event.h"
-#include "util/Queue.h"
+#include "raul/Queue.h"
 #include "Maid.h"
 
 

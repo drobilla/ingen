@@ -21,7 +21,7 @@
 namespace Ingen {
 
 
-ActivateEvent::ActivateEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp)
+ActivateEvent::ActivateEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp)
 : QueuedEvent(engine, responder, timestamp)
 {
 	_engine.activate();

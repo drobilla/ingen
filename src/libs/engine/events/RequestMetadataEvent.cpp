@@ -27,12 +27,12 @@ using std::string;
 namespace Ingen {
 
 
-RequestMetadataEvent::RequestMetadataEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& node_path, const string& key)
+RequestMetadataEvent::RequestMetadataEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& node_path, const string& key)
 : QueuedEvent(engine, responder, timestamp),
   m_path(node_path),
   m_key(key),
   m_object(NULL),
-  m_client(CountedPtr<ClientInterface>())
+  m_client(SharedPtr<ClientInterface>())
 {
 }
 

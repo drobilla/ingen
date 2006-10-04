@@ -19,7 +19,7 @@
 
 #include <map>
 #include <gtkmm.h>
-#include "util/CountedPtr.h"
+#include "raul/SharedPtr.h"
 #include "PatchView.h"
 #include "PatchModel.h"
 using Ingen::Client::PatchModel;
@@ -45,21 +45,21 @@ public:
 	WindowFactory();
 	~WindowFactory();
 
-	PatchWindow*       patch_window(CountedPtr<PatchModel> patch);
-	NodeControlWindow* control_window(CountedPtr<NodeModel> node);
+	PatchWindow*       patch_window(SharedPtr<PatchModel> patch);
+	NodeControlWindow* control_window(SharedPtr<NodeModel> node);
 
-	void present_patch(CountedPtr<PatchModel> patch,
+	void present_patch(SharedPtr<PatchModel> patch,
 	                   PatchWindow*           preferred = NULL,
-	                   CountedPtr<PatchView>  patch     = CountedPtr<PatchView>());
+	                   SharedPtr<PatchView>  patch     = SharedPtr<PatchView>());
 
-	void present_controls(CountedPtr<NodeModel> node);
+	void present_controls(SharedPtr<NodeModel> node);
 
-	void present_load_plugin(CountedPtr<PatchModel> patch, MetadataMap data = MetadataMap());
-	void present_load_patch(CountedPtr<PatchModel> patch, MetadataMap data = MetadataMap());
-	void present_new_subpatch(CountedPtr<PatchModel> patch, MetadataMap data = MetadataMap());
-	void present_load_subpatch(CountedPtr<PatchModel> patch, MetadataMap data = MetadataMap());
-	void present_rename(CountedPtr<ObjectModel> object);
-	void present_properties(CountedPtr<NodeModel> node);
+	void present_load_plugin(SharedPtr<PatchModel> patch, MetadataMap data = MetadataMap());
+	void present_load_patch(SharedPtr<PatchModel> patch, MetadataMap data = MetadataMap());
+	void present_new_subpatch(SharedPtr<PatchModel> patch, MetadataMap data = MetadataMap());
+	void present_load_subpatch(SharedPtr<PatchModel> patch, MetadataMap data = MetadataMap());
+	void present_rename(SharedPtr<ObjectModel> object);
+	void present_properties(SharedPtr<NodeModel> node);
 	
 	bool remove_patch_window(PatchWindow* win, GdkEventAny* ignored = NULL);
 
@@ -67,10 +67,10 @@ private:
 	typedef std::map<Path, PatchWindow*>       PatchWindowMap;
 	typedef std::map<Path, NodeControlWindow*> ControlWindowMap;
 
-	PatchWindow* new_patch_window(CountedPtr<PatchModel> patch, CountedPtr<PatchView> view);
+	PatchWindow* new_patch_window(SharedPtr<PatchModel> patch, SharedPtr<PatchView> view);
 
 
-	NodeControlWindow* new_control_window(CountedPtr<NodeModel> node);
+	NodeControlWindow* new_control_window(SharedPtr<NodeModel> node);
 	bool               remove_control_window(NodeControlWindow* win, GdkEventAny* ignored);
 
 	PatchWindowMap   _patch_windows;

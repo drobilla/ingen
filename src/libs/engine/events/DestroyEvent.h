@@ -17,7 +17,7 @@
 #ifndef DESTROYEVENT_H
 #define DESTROYEVENT_H
 
-#include "util/Path.h"
+#include "raul/Path.h"
 #include "QueuedEvent.h"
 #include <string>
 
@@ -44,8 +44,8 @@ class DisconnectPortEvent;
 class DestroyEvent : public QueuedEvent
 {
 public:
-	DestroyEvent(Engine& engine, CountedPtr<Responder> responder, FrameTime timestamp, QueuedEventSource* source, const string& path, bool block = true);
-	DestroyEvent(Engine& engine, CountedPtr<Responder> responder, FrameTime timestamp, QueuedEventSource* source, Node* node, bool block = true);
+	DestroyEvent(Engine& engine, SharedPtr<Responder> responder, FrameTime timestamp, QueuedEventSource* source, const string& path, bool block = true);
+	DestroyEvent(Engine& engine, SharedPtr<Responder> responder, FrameTime timestamp, QueuedEventSource* source, Node* node, bool block = true);
 	~DestroyEvent();
 
 	void pre_process();

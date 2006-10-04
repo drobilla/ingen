@@ -19,7 +19,7 @@
 
 #include <inttypes.h>
 #include <string>
-#include "util/CountedPtr.h"
+#include "raul/SharedPtr.h"
 #include "interface/ClientInterface.h"
 using std::string;
 
@@ -44,7 +44,7 @@ public:
 	virtual void disable_responses() = 0;
 	
 	// Client registration
-	virtual void register_client(ClientKey key, CountedPtr<ClientInterface> client) = 0;
+	virtual void register_client(ClientKey key, SharedPtr<ClientInterface> client) = 0;
 	virtual void unregister_client(ClientKey key) = 0;
 	
 	

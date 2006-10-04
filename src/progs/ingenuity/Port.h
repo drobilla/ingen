@@ -20,7 +20,7 @@
 #include <cassert>
 #include <string>
 #include <flowcanvas/Port.h>
-#include "util/CountedPtr.h"
+#include "raul/SharedPtr.h"
 
 namespace Ingen { namespace Client { class PortModel; } }
 using Ingen::Client::PortModel;
@@ -35,14 +35,14 @@ namespace Ingenuity {
 class Port : public LibFlowCanvas::Port
 {
 public:
-	Port(boost::shared_ptr<LibFlowCanvas::Module> module, CountedPtr<PortModel> pm, bool flip = false);
+	Port(boost::shared_ptr<LibFlowCanvas::Module> module, SharedPtr<PortModel> pm, bool flip = false);
 
 	virtual ~Port() {}
 
-	CountedPtr<PortModel> model() const { return m_port_model; }
+	SharedPtr<PortModel> model() const { return m_port_model; }
 	
 private:
-	CountedPtr<PortModel> m_port_model;
+	SharedPtr<PortModel> m_port_model;
 };
 
 

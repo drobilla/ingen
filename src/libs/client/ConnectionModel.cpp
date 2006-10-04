@@ -33,7 +33,7 @@ ConnectionModel::ConnectionModel(const Path& src_port, const Path& dst_port)
 }
 
 
-ConnectionModel::ConnectionModel(CountedPtr<PortModel> src, CountedPtr<PortModel> dst)
+ConnectionModel::ConnectionModel(SharedPtr<PortModel> src, SharedPtr<PortModel> dst)
 : _src_port_path(src->path()),
   _dst_port_path(dst->path()),
   _src_port(src),
@@ -77,7 +77,7 @@ ConnectionModel::patch_path() const
 		// Direct connection from patch input to patch output (pass through)
 		// (parent patch is parent of ports)
 		if (_src_port->parent() == _dst_port->parent()) {
-			CountedPtr<PatchModel> parent_patch = PtrCast<PatchModel>(_src_port->parent());
+			SharedPtr<PatchModel> parent_patch = PtrCast<PatchModel>(_src_port->parent());
 			if (parent_patch)
 				return parent_patch->path();
 		}
@@ -101,7 +101,7 @@ ConnectionModel::patch_path() const
 	return patch_path;
 }
 
-typedef list<CountedPtr<ConnectionModel> > ConnectionList;
+typedef list<SharedPtr<ConnectionModel> > ConnectionList;
 
 
 } // namespace Client

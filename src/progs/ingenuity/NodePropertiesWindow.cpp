@@ -39,7 +39,7 @@ NodePropertiesWindow::NodePropertiesWindow(BaseObjectType* cobject, const Glib::
  * This function MUST be called before using this object in any way.
  */
 void
-NodePropertiesWindow::set_node(CountedPtr<NodeModel> node_model)
+NodePropertiesWindow::set_node(SharedPtr<NodeModel> node_model)
 {
 	assert(node_model);
 	
@@ -50,7 +50,7 @@ NodePropertiesWindow::set_node(CountedPtr<NodeModel> node_model)
 	m_node_path_label->set_text(node_model->path());
 	m_node_polyphonic_toggle->set_active(node_model->polyphonic());
 
-	CountedPtr<PluginModel> pm = node_model->plugin();
+	SharedPtr<PluginModel> pm = node_model->plugin();
 	
 	if (pm) {
 		m_plugin_type_label->set_text(pm->type_string());

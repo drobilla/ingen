@@ -38,7 +38,7 @@ using Ingen::Client::Serializer;
 namespace Ingenuity {
 
 
-PatchCanvas::PatchCanvas(CountedPtr<PatchModel> patch, int width, int height)
+PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 : FlowCanvas(width, height),
   m_patch(patch),
   m_last_click_x(0),
@@ -111,7 +111,7 @@ PatchCanvas::build()
 	}
 
 	// Create connections
-	for (list<CountedPtr<ConnectionModel> >::const_iterator i = m_patch->connections().begin();
+	for (list<SharedPtr<ConnectionModel> >::const_iterator i = m_patch->connections().begin();
 			i != m_patch->connections().end(); ++i) {
 		connection(*i);
 	}
@@ -119,12 +119,12 @@ PatchCanvas::build()
 
 
 void
-PatchCanvas::add_node(CountedPtr<NodeModel> nm)
+PatchCanvas::add_node(SharedPtr<NodeModel> nm)
 {
 	boost::shared_ptr<PatchCanvas> shared_this =
 		boost::dynamic_pointer_cast<PatchCanvas>(shared_from_this());
 
-	CountedPtr<PatchModel> pm = PtrCast<PatchModel>(nm);
+	SharedPtr<PatchModel> pm = PtrCast<PatchModel>(nm);
 	if (pm)
 		add_module(SubpatchModule::create(shared_this, pm));
 	else
@@ -133,14 +133,14 @@ PatchCanvas::add_node(CountedPtr<NodeModel> nm)
 
 
 void
-PatchCanvas::remove_node(CountedPtr<NodeModel> nm)
+PatchCanvas::remove_node(SharedPtr<NodeModel> nm)
 {
 	remove_module(nm->path().name()); // should cut all references
 }
 
 
 void
-PatchCanvas::add_port(CountedPtr<PortModel> pm)
+PatchCanvas::add_port(SharedPtr<PortModel> pm)
 {
 	boost::shared_ptr<PatchCanvas> shared_this =
 		boost::dynamic_pointer_cast<PatchCanvas>(shared_from_this());
@@ -150,7 +150,7 @@ PatchCanvas::add_port(CountedPtr<PortModel> pm)
 
 
 void
-PatchCanvas::remove_port(CountedPtr<PortModel> pm)
+PatchCanvas::remove_port(SharedPtr<PortModel> pm)
 {
 	cerr << "FIXME: PORT REMOVE" << endl;
 	//LibFlowCanvas::Module* module = get_module(pm->path().name());
@@ -159,7 +159,7 @@ PatchCanvas::remove_port(CountedPtr<PortModel> pm)
 
 
 void
-PatchCanvas::connection(CountedPtr<ConnectionModel> cm)
+PatchCanvas::connection(SharedPtr<ConnectionModel> cm)
 {
 	// Deal with port "anonymous nodes" for this patch's own ports...
 	const Path& src_parent_path = cm->src_port_path().parent();
@@ -229,8 +229,8 @@ PatchCanvas::connect(boost::shared_ptr<LibFlowCanvas::Port> src_port, boost::sha
 	{
 		cerr << "FIXME: MIDI binding" << endl;
 #if 0
-		CountedPtr<PluginModel> pm(new PluginModel(PluginModel::Internal, "", "midi_control_in", ""));
-		CountedPtr<NodeModel> nm(new NodeModel(pm, m_patch->path().base()
+		SharedPtr<PluginModel> pm(new PluginModel(PluginModel::Internal, "", "midi_control_in", ""));
+		SharedPtr<NodeModel> nm(new NodeModel(pm, m_patch->path().base()
 			+ src->name() + "-" + dst->name(), false));
 		nm->set_metadata("canvas-x", Atom((float)
 			(dst->module()->property_x() - dst->module()->width() - 20)));

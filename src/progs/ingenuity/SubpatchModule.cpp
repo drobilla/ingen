@@ -31,7 +31,7 @@ using std::cerr; using std::cout; using std::endl;
 namespace Ingenuity {
 
 
-SubpatchModule::SubpatchModule(boost::shared_ptr<PatchCanvas> canvas, CountedPtr<PatchModel> patch)
+SubpatchModule::SubpatchModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<PatchModel> patch)
 : NodeModule(canvas, patch),
   m_patch(patch)
 {
@@ -45,7 +45,7 @@ SubpatchModule::on_double_click(GdkEventButton* event)
 {
 	assert(m_patch);
 
-	CountedPtr<PatchModel> parent = PtrCast<PatchModel>(m_patch->parent());
+	SharedPtr<PatchModel> parent = PtrCast<PatchModel>(m_patch->parent());
 
 	PatchWindow* const preferred = ( (parent && (event->state & GDK_SHIFT_MASK))
 		? NULL
@@ -64,7 +64,7 @@ SubpatchModule::browse_to_patch()
 {
 	assert(m_patch->parent());
 	
-	CountedPtr<PatchModel> parent = PtrCast<PatchModel>(m_patch->parent());
+	SharedPtr<PatchModel> parent = PtrCast<PatchModel>(m_patch->parent());
 
 	PatchWindow* const preferred = ( (parent)
 		? App::instance().window_factory()->patch_window(parent)

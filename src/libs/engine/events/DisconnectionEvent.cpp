@@ -26,7 +26,7 @@
 #include "Port.h"
 #include "Maid.h"
 #include "ObjectStore.h"
-#include "util/Path.h"
+#include "raul/Path.h"
 
 using std::string;
 namespace Ingen {
@@ -35,7 +35,7 @@ namespace Ingen {
 //// DisconnectionEvent ////
 
 
-DisconnectionEvent::DisconnectionEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& src_port_path, const string& dst_port_path)
+DisconnectionEvent::DisconnectionEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& src_port_path, const string& dst_port_path)
 : QueuedEvent(engine, responder, timestamp),
   m_src_port_path(src_port_path),
   m_dst_port_path(dst_port_path),
@@ -49,7 +49,7 @@ DisconnectionEvent::DisconnectionEvent(Engine& engine, CountedPtr<Responder> res
 }
 
 
-DisconnectionEvent::DisconnectionEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, Port* const src_port, Port* const dst_port)
+DisconnectionEvent::DisconnectionEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, Port* const src_port, Port* const dst_port)
 : QueuedEvent(engine, responder, timestamp),
   m_src_port_path(src_port->path()),
   m_dst_port_path(dst_port->path()),
@@ -160,7 +160,7 @@ DisconnectionEvent::post_process()
 
 
 template <typename T>
-TypedDisconnectionEvent<T>::TypedDisconnectionEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, OutputPort<T>* src_port, InputPort<T>* dst_port)
+TypedDisconnectionEvent<T>::TypedDisconnectionEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, OutputPort<T>* src_port, InputPort<T>* dst_port)
 : QueuedEvent(engine, responder, timestamp),
   m_src_port(src_port),
   m_dst_port(dst_port),

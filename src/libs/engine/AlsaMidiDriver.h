@@ -19,7 +19,7 @@
 
 #include <alsa/asoundlib.h>
 #include "List.h"
-#include "util/Queue.h"
+#include "raul/Queue.h"
 #include "MidiDriver.h"
 
 namespace Ingen {

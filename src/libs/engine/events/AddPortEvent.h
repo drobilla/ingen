@@ -18,7 +18,7 @@
 #define ADDPORTEVENT_H
 
 #include "QueuedEvent.h"
-#include "util/Path.h"
+#include "raul/Path.h"
 #include "DataType.h"
 #include "Array.h"
 #include <string>
@@ -41,7 +41,7 @@ class DriverPort;
 class AddPortEvent : public QueuedEvent
 {
 public:
-	AddPortEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& type, bool is_output, QueuedEventSource* source);
+	AddPortEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& type, bool is_output, QueuedEventSource* source);
 
 	void pre_process();
 	void execute(SampleCount nframes, FrameTime start, FrameTime end);

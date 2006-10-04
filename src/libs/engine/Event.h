@@ -18,7 +18,7 @@
 #define EVENT_H
 
 #include <cassert>
-#include "util/CountedPtr.h"
+#include "raul/SharedPtr.h"
 #include "types.h"
 #include "MaidObject.h"
 #include "Responder.h"
@@ -68,7 +68,7 @@ protected:
 	Event(const Event&);
 	Event& operator=(const Event&);
 
-	Event(Engine& engine, CountedPtr<Responder> responder, FrameTime time)
+	Event(Engine& engine, SharedPtr<Responder> responder, FrameTime time)
 	: _engine(engine)
 	, _responder(responder)
 	, _time(time)
@@ -76,7 +76,7 @@ protected:
 	{}
 	
 	Engine&                _engine;
-	CountedPtr<Responder>  _responder;
+	SharedPtr<Responder>  _responder;
 	FrameTime              _time;
 	bool                   _executed;
 };

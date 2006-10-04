@@ -18,7 +18,7 @@
 #define DISCONNECTIONEVENT_H
 
 #include <string>
-#include "util/Path.h"
+#include "raul/Path.h"
 #include "QueuedEvent.h"
 #include "types.h"
 using std::string;
@@ -46,8 +46,8 @@ template <typename T> class TypedDisconnectionEvent; // helper, defined below
 class DisconnectionEvent : public QueuedEvent
 {
 public:
-	DisconnectionEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& src_port_path, const string& dst_port_path);
-	DisconnectionEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, Port* const src_port, Port* const dst_port);
+	DisconnectionEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& src_port_path, const string& dst_port_path);
+	DisconnectionEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, Port* const src_port, Port* const dst_port);
 	~DisconnectionEvent();
 
 	void pre_process();
@@ -82,7 +82,7 @@ template <typename T>
 class TypedDisconnectionEvent : public QueuedEvent
 {
 public:
-	TypedDisconnectionEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, OutputPort<T>* src_port, InputPort<T>* dst_port);
+	TypedDisconnectionEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, OutputPort<T>* src_port, InputPort<T>* dst_port);
 	
 	void pre_process();
 	void execute(SampleCount nframes, FrameTime start, FrameTime end);

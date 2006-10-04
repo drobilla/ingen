@@ -22,11 +22,11 @@
 #include "Engine.h"
 #include "Patch.h"
 #include "Maid.h"
-#include "util/Path.h"
+#include "raul/Path.h"
 #include "QueuedEventSource.h"
 #include "ObjectStore.h"
 #include "ClientBroadcaster.h"
-#include "util/Path.h"
+#include "raul/Path.h"
 #include "Port.h"
 #include "AudioDriver.h"
 #include "MidiDriver.h"
@@ -38,7 +38,7 @@
 namespace Ingen {
 
 
-AddPortEvent::AddPortEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& type, bool is_output, QueuedEventSource* source)
+AddPortEvent::AddPortEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& type, bool is_output, QueuedEventSource* source)
 : QueuedEvent(engine, responder, timestamp, true, source),
   _path(path),
   _type(type),

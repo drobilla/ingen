@@ -15,7 +15,7 @@
  */
 
 #include "OSCClientReceiver.h"
-#include "util/LibloAtom.h"
+#include "raul/AtomLiblo.h"
 #include <list>
 #include <cassert>
 #include <cstring>
@@ -338,7 +338,7 @@ OSCClientReceiver::m_metadata_update_cb(const char* path, const char* types, lo_
 	const char* obj_path  = &argv[0]->s;
 	const char* key       = &argv[1]->s;
 
-	Atom value = LibloAtom::lo_arg_to_atom(types[2], argv[2]);
+	Atom value = AtomLiblo::lo_arg_to_atom(types[2], argv[2]);
 
 	metadata_update(obj_path, key, value);
 

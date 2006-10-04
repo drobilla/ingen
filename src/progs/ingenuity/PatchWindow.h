@@ -22,8 +22,8 @@
 #include <gtkmm.h>
 #include <libglademm/xml.h>
 #include <libglademm.h>
-#include "util/Path.h"
-#include "util/CountedPtr.h"
+#include "raul/Path.h"
+#include "raul/SharedPtr.h"
 #include "PatchModel.h"
 #include "PatchView.h"
 using Ingen::Client::PatchModel;
@@ -65,10 +65,10 @@ public:
 	PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml);
 	~PatchWindow();
 	
-	void set_patch_from_path(const Path& path, CountedPtr<PatchView> view);
-	void set_patch(CountedPtr<PatchModel> pc, CountedPtr<PatchView> view);
+	void set_patch_from_path(const Path& path, SharedPtr<PatchView> view);
+	void set_patch(SharedPtr<PatchModel> pc, SharedPtr<PatchView> view);
 
-	CountedPtr<PatchModel> patch() const { return m_patch; }
+	SharedPtr<PatchModel> patch() const { return m_patch; }
 
 	Gtk::MenuItem* menu_view_control_window() { return m_menu_view_control_window; }
 
@@ -91,8 +91,8 @@ private:
 	void event_show_controls();
 	void event_show_engine();
 
-	CountedPtr<PatchModel> m_patch;
-	CountedPtr<PatchView>  m_view;
+	SharedPtr<PatchModel> m_patch;
+	SharedPtr<PatchView>  m_view;
 	
 	bool m_enable_signal;
 	bool m_position_stored;

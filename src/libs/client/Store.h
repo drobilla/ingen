@@ -21,10 +21,10 @@
 #include <string>
 #include <map>
 #include <list>
-#include "util/CountedPtr.h"
+#include "raul/SharedPtr.h"
 #include <sigc++/sigc++.h>
-#include "util/Path.h"
-#include "util/Atom.h"
+#include "raul/Path.h"
+#include "raul/Atom.h"
 #include "interface/EngineInterface.h"
 using std::string; using std::map; using std::list;
 using Ingen::Shared::EngineInterface;
@@ -47,39 +47,39 @@ class ConnectionModel;
  */
 class Store : public sigc::trackable { // FIXME: is trackable necessary?
 public:
-	Store(CountedPtr<EngineInterface> engine, CountedPtr<SigClientInterface> emitter);
+	Store(SharedPtr<EngineInterface> engine, SharedPtr<SigClientInterface> emitter);
 
-	CountedPtr<PluginModel> plugin(const string& uri);
-	CountedPtr<ObjectModel> object(const Path& path);
+	SharedPtr<PluginModel> plugin(const string& uri);
+	SharedPtr<ObjectModel> object(const Path& path);
 
 	void clear();
 
 	size_t num_object() { return _objects.size(); }
 	
-	const map<string, CountedPtr<PluginModel> >& plugins() const { return _plugins; }
-	const map<Path, CountedPtr<ObjectModel> >&   objects() const { return _objects; }
+	const map<string, SharedPtr<PluginModel> >& plugins() const { return _plugins; }
+	const map<Path, SharedPtr<ObjectModel> >&   objects() const { return _objects; }
 
-	sigc::signal<void, CountedPtr<ObjectModel> > new_object_sig; 
+	sigc::signal<void, SharedPtr<ObjectModel> > new_object_sig; 
 private:
 
-	void add_object(CountedPtr<ObjectModel> object);
-	CountedPtr<ObjectModel> remove_object(const Path& path);
+	void add_object(SharedPtr<ObjectModel> object);
+	SharedPtr<ObjectModel> remove_object(const Path& path);
 	
-	void add_plugin(CountedPtr<PluginModel> plugin);
+	void add_plugin(SharedPtr<PluginModel> plugin);
 
 	// It would be nice to integrate these somehow..
 	
-	void add_orphan(CountedPtr<ObjectModel> orphan);
-	void resolve_orphans(CountedPtr<ObjectModel> parent);
+	void add_orphan(SharedPtr<ObjectModel> orphan);
+	void resolve_orphans(SharedPtr<ObjectModel> parent);
 	
-	void add_connection_orphan(CountedPtr<ConnectionModel> orphan);
-	void resolve_connection_orphans(CountedPtr<PortModel> port);
+	void add_connection_orphan(SharedPtr<ConnectionModel> orphan);
+	void resolve_connection_orphans(SharedPtr<PortModel> port);
 	
-	void add_plugin_orphan(CountedPtr<NodeModel> orphan);
-	void resolve_plugin_orphans(CountedPtr<PluginModel> plugin);
+	void add_plugin_orphan(SharedPtr<NodeModel> orphan);
+	void resolve_plugin_orphans(SharedPtr<PluginModel> plugin);
 	
 	void add_metadata_orphan(const Path& subject, const string& predicate, const Atom& value);
-	void resolve_metadata_orphans(CountedPtr<ObjectModel> subject);
+	void resolve_metadata_orphans(SharedPtr<ObjectModel> subject);
 
 	// Slots for SigClientInterface signals
 	void destruction_event(const Path& path);
@@ -95,27 +95,27 @@ private:
 	void connection_event(const Path& src_port_path, const Path& dst_port_path);
 	void disconnection_event(const Path& src_port_path, const Path& dst_port_path);
 	
-	CountedPtr<EngineInterface>    _engine;
-	CountedPtr<SigClientInterface> _emitter;
+	SharedPtr<EngineInterface>    _engine;
+	SharedPtr<SigClientInterface> _emitter;
 
-	typedef map<Path, CountedPtr<ObjectModel> > ObjectMap;
+	typedef map<Path, SharedPtr<ObjectModel> > ObjectMap;
 	ObjectMap _objects; ///< Keyed by Ingen path
 
-	map<string, CountedPtr<PluginModel> > _plugins; ///< Keyed by URI
+	map<string, SharedPtr<PluginModel> > _plugins; ///< Keyed by URI
 
 	/** Objects we've received, but depend on the existance of another unknown object.
 	 * Keyed by the path of the depended-on object (for tolerance of orderless comms) */
-	map<Path, list<CountedPtr<ObjectModel> > > _orphans;
+	map<Path, list<SharedPtr<ObjectModel> > > _orphans;
 	
 	/** Same idea, except with plugins instead of parents.
 	 * It's unfortunate everything doesn't just have a URI and this was the same.. ahem.. */
-	map<string, list<CountedPtr<NodeModel> > > _plugin_orphans;
+	map<string, list<SharedPtr<NodeModel> > > _plugin_orphans;
 	
 	/** Not orphans OF metadata like the above, but orphans which are metadata */
 	map<Path, list<std::pair<string, Atom> > > _metadata_orphans;
 	
 	/** Ditto */
-	list<CountedPtr<ConnectionModel> > _connection_orphans;
+	list<SharedPtr<ConnectionModel> > _connection_orphans;
 };
 
 

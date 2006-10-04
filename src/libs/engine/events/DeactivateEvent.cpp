@@ -21,7 +21,7 @@
 namespace Ingen {
 
 
-DeactivateEvent::DeactivateEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp)
+DeactivateEvent::DeactivateEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp)
 : QueuedEvent(engine, responder, timestamp)
 {
 }

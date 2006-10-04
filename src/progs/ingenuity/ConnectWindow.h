@@ -20,7 +20,7 @@
 #include <gtkmm.h>
 #include <libglademm/xml.h>
 #include <libglademm.h>
-#include "util/CountedPtr.h"
+#include "raul/SharedPtr.h"
 #include "ThreadedSigClientInterface.h"
 using Ingen::Client::SigClientInterface;
 

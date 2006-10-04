@@ -37,7 +37,7 @@ class Node;
 class EnablePatchEvent : public QueuedEvent
 {
 public:
-	EnablePatchEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& patch_path);
+	EnablePatchEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& patch_path);
 	
 	void pre_process();
 	void execute(SampleCount nframes, FrameTime start, FrameTime end);

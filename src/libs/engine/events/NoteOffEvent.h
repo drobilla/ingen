@@ -34,8 +34,8 @@ class Node;
 class NoteOffEvent : public Event
 {
 public:
-	NoteOffEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, Node* node, uchar note_num);
-	NoteOffEvent(Engine& engine, CountedPtr<Responder> responder, SampleCount timestamp, const string& node_path, uchar note_num);
+	NoteOffEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, Node* node, uchar note_num);
+	NoteOffEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& node_path, uchar note_num);
 	
 	void execute(SampleCount nframes, FrameTime start, FrameTime end);
 	void post_process();

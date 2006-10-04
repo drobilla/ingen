@@ -19,7 +19,7 @@
 
 #include <inttypes.h>
 #include <string>
-#include "util/CountedPtr.h"
+#include "raul/SharedPtr.h"
 #include "interface/ClientKey.h"
 #include "interface/ClientInterface.h"
 using std::string;
@@ -52,7 +52,7 @@ public:
 	virtual ~Responder() {}
 
 	virtual ClientKey                   client_key() { return ClientKey(); }
-	virtual CountedPtr<ClientInterface> client()     { return CountedPtr<ClientInterface>(); }
+	virtual SharedPtr<ClientInterface> client()     { return SharedPtr<ClientInterface>(); }
 
 	virtual void set_id(int32_t id) {}
 

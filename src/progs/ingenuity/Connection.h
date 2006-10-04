@@ -21,7 +21,7 @@
 #include <string>
 #include <flowcanvas/Connection.h>
 #include "ConnectionModel.h"
-#include "util/CountedPtr.h"
+#include "raul/SharedPtr.h"
 using Ingen::Client::ConnectionModel;
 
 namespace Ingenuity {
@@ -44,10 +44,10 @@ public:
 
 	virtual ~Connection() {}
 
-	CountedPtr<ConnectionModel> model() const { return m_connection_model; }
+	SharedPtr<ConnectionModel> model() const { return m_connection_model; }
 	
 private:
-	CountedPtr<ConnectionModel> m_connection_model;
+	SharedPtr<ConnectionModel> m_connection_model;
 };
 
 
