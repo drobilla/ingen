@@ -33,8 +33,6 @@ AC_HEADER_DIRENT
 
 # Check for liblo
 PKG_CHECK_MODULES(LOSC, liblo >= 0.22)
-AC_SUBST(LOSC_LIBS)
-AC_SUBST(LOSC_CFLAGS)
 
 # Check for pthreads
 AC_CHECK_LIB(pthread, pthread_create, [],
@@ -53,8 +51,6 @@ if test "$build_lash" = "yes"; then
 fi
 if test "$build_lash" = "yes"; then
 	AC_DEFINE(HAVE_LASH, 1, [Has lash.h])
-	AC_SUBST(LASH_CFLAGS)
-	AC_SUBST(LASH_LIBS)
 else
 	AC_MSG_WARN([LASH not found, session support will not be built.])
 fi
@@ -223,8 +219,6 @@ if test "$build_server" = "yes" -o "$monolothic_ingenuity"; then
 	
 	# Check for Jack
 	PKG_CHECK_MODULES(JACK, jack >= 0.99.0)
-	AC_SUBST(JACK_LIBS)
-	AC_SUBST(JACK_CFLAGS)
 
 	# Check for Jack MIDI
 	if test "$build_jack_midi" = "yes"; then
@@ -238,8 +232,6 @@ if test "$build_server" = "yes" -o "$monolothic_ingenuity"; then
 	# Check for ALSA
 	if test "$build_alsa_midi" = "yes" -o "$build_dssi" = "yes"; then
 		PKG_CHECK_MODULES(ALSA, alsa >= 1.0.0, [have_alsa_midi="yes"], [have_alsa_midi="no"])
-		AC_SUBST(ALSA_CFLAGS)
-		AC_SUBST(ALSA_LIBS)
 	fi
 
 	if test "$build_alsa_midi" = "yes"; then
@@ -266,8 +258,6 @@ if test "$build_server" = "yes" -o "$monolothic_ingenuity"; then
 	if test "$build_lv2" = "yes"; then
 		build_lv2="no"
 		PKG_CHECK_MODULES(SLV2, libslv2 >= 0.0.1, [build_lv2="yes"], [build_lv2="no"])
-		AC_SUBST(SLV2_CFLAGS)
-		AC_SUBST(SLV2_LIBS)
 	fi
 	if test "$build_lv2" = "yes"; then
 		AC_DEFINE(HAVE_SLV2, 1, [Has libslv2])
@@ -313,23 +303,15 @@ if test "$build_console_clients" = "yes"; then
 	
 	# Check for libxml2 # FIXME: deprecated, make optional
 	PKG_CHECK_MODULES(LXML2, libxml-2.0 >= 2.6.0)
-	AC_SUBST(LXML2_LIBS)
-	AC_SUBST(LXML2_CFLAGS)
 	
 	# Check for raptor (for RDF serialization)
 	PKG_CHECK_MODULES(RAPTOR, raptor >= 0.21, build_raptor="yes", build_raptor="no")
-	AC_SUBST(RAPTOR_CFLAGS)
-	AC_SUBST(RAPTOR_LIBS)
 	
 	# Check for rasqal (for RDF querying)
 	#PKG_CHECK_MODULES(RASQAL, rasqal >= 0.9.11, build_rasqal="yes", build_rasqal="no")
-	#AC_SUBST(RASQAL_CFLAGS)
-	#AC_SUBST(RASQAL_LIBS)
 	
 	# Check for sigc++ (FIXME: make this only necessary where.. uh.. necessary)
 	PKG_CHECK_MODULES(LSIGCPP, sigc++-2.0)
-	AC_SUBST(LSIGCPP_CFLAGS)
-	AC_SUBST(LSIGCPP_LIBS)
 else
  	AC_MSG_WARN([Console clients will be built!])
 fi
@@ -353,20 +335,9 @@ if test "$build_gtk_client" = "yes"; then
 	AC_CHECK_FUNCS([gettimeofday mkdir strcasecmp strchr strdup strtol])
 
 	PKG_CHECK_MODULES(GTKMM, gtkmm-2.4)
-	AC_SUBST(GTKMM_CFLAGS)
-	AC_SUBST(GTKMM_LIBS)
-	
 	PKG_CHECK_MODULES(GNOMECANVASMM, libgnomecanvasmm-2.6)
-	AC_SUBST(GNOMECANVASMM_CFLAGS)
-	AC_SUBST(GNOMECANVASMM_LIBS)
-	
 	PKG_CHECK_MODULES(LIBGLADEMM, libglademm-2.4)
-	AC_SUBST(LIBGLADEMM_CFLAGS)
-	AC_SUBST(LIBGLADEMM_LIBS)
-	
 	PKG_CHECK_MODULES(FLOWCANVAS, flowcanvas >= 0.1.0)
-	AC_SUBST(FLOWCANVAS_CFLAGS)
-	AC_SUBST(FLOWCANVAS_LIBS)
 
 	if test "$monolithic_ingenuity" = "yes"; then
 		AC_DEFINE(MONOLITHIC_INGENUITY, 1, [Whether to build an internal engine into Ingenuity])
@@ -402,10 +373,11 @@ AC_CONFIG_FILES([src/progs/patch_loader/Makefile])
 AC_CONFIG_FILES([src/progs/ingenuity/Makefile])
 AC_CONFIG_FILES([patches/Makefile])
 AC_CONFIG_FILES([doc/Doxyfile])
+
 AC_OUTPUT
 
-# Display summary
 AC_MSG_RESULT([])
+AC_MSG_RESULT([**********************************************************************])
 AC_MSG_RESULT([Ingen build configuration:])
 AC_MSG_RESULT([])
 AC_MSG_RESULT([Building server:            $build_engine])
@@ -425,5 +397,6 @@ AC_MSG_RESULT([    Monolithic:             $monolithic_ingenuity])
 AC_MSG_RESULT([])
 AC_MSG_RESULT([])
 AC_MSG_RESULT([Building with flags: $CXXFLAGS])
-AC_MSG_RESULT([])
 AC_MSG_RESULT([Please note the above and see README for performance information.])
+AC_MSG_RESULT([**********************************************************************])
+AC_MSG_RESULT([])

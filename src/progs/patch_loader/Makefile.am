@@ -1,7 +1,7 @@
 EXTRA_DIST = README
 
-ingen_load_CXXFLAGS = -I$(top_srcdir)/src/libs/client -I$(top_srcdir)/src/common @LSIGCPP_CFLAGS@
-ingen_load_LDADD = ../../libs/client/libingenclient.la 
+ingen_load_CXXFLAGS = -I$(top_srcdir)/src/libs/client -I$(top_srcdir)/src/common @LSIGCPP_CFLAGS@ @RAUL_CFLAGS@
+ingen_load_LDADD = ../../libs/client/libingenclient.la  @RAUL_LIBS@ @LSIGCPP_LIBS@
 
 bin_PROGRAMS = ingen_load
 
