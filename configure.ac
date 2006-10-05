@@ -352,7 +352,6 @@ AM_CONDITIONAL(MONOLITHIC_INGENUITY, [test "$monolithic_ingenuity" = "yes"])
 # Build client lib if anything above that depends on it is to be built
 AM_CONDITIONAL(BUILD_CLIENT_LIB, [test "$build_console_clients" = "yes" -o "$build_gtk_client" = "yes"])
 
-
 # Write Makefiles
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([src/Makefile])
@@ -371,9 +370,9 @@ AC_CONFIG_FILES([src/progs/python/scripts/Makefile])
 AC_CONFIG_FILES([src/progs/demolition/Makefile])
 AC_CONFIG_FILES([src/progs/patch_loader/Makefile])
 AC_CONFIG_FILES([src/progs/ingenuity/Makefile])
+AC_CONFIG_FILES([src/progs/ingenuity/ingenuity.desktop])
 AC_CONFIG_FILES([patches/Makefile])
 AC_CONFIG_FILES([doc/Doxyfile])
-
 AC_OUTPUT
 
 AC_MSG_RESULT([])
