@@ -95,8 +95,8 @@ template <typename T>
 class Tree
 {
 public:
-	Tree<T>() : m_root(0), m_size(0) {}
-	~Tree<T>();
+	Tree() : m_root(0), m_size(0) {}
+	~Tree();
 
 	void         insert(TreeNode<T>* const n);
 	TreeNode<T>* remove(const string& key);
