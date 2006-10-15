@@ -31,22 +31,31 @@ namespace Ingenuity {
 
 // ////////////////////// ControlGroup ///////////////////////////////// //
 
-ControlGroup::ControlGroup(ControlPanel* panel, SharedPtr<PortModel> pm, bool separator)
-: Gtk::VBox(false, 0),
-  m_control_panel(panel),
-  m_port_model(pm),
-  m_has_separator(separator)
+ControlGroup::ControlGroup(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml)
+: Gtk::VBox(cobject),
+  m_control_panel(NULL),
+  m_has_separator(false),
+  m_separator(NULL)
 {
+}
+
+
+void
+ControlGroup::init(ControlPanel* panel, SharedPtr<PortModel> pm, bool separator)
+{
+	m_control_panel = panel;
+	m_port_model = pm,
+	m_has_separator = separator,
+
 	assert(m_port_model);
 	assert(panel);
 
-	if (separator) {
-		m_separator = new Gtk::HSeparator();
-		pack_start(*m_separator, false, false, 4);
-	} else {
-		m_separator = NULL;
-	}
-	
+	/*if (separator) {
+	  m_separator = new Gtk::VSeparator();
+	  pack_start(*m_separator, false, false, 4);
+	  }
+	  */
+
 	pm->metadata_update_sig.connect(sigc::mem_fun(this, &ControlGroup::metadata_update));
 	pm->control_change_sig.connect(sigc::mem_fun(this, &ControlGroup::set_value));
 }
@@ -64,21 +73,41 @@ ControlGroup::metadata_update(const string& key, const Atom& value)
 
 // ////////////////// SliderControlGroup ////////////////////// //
 
-SliderControlGroup::SliderControlGroup(ControlPanel* panel, SharedPtr<PortModel> pm, bool separator)
-: ControlGroup(panel, pm, separator),
+
+SliderControlGroup::SliderControlGroup(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
+: ControlGroup(cobject, xml),
+  m_enabled(true),
+  m_enable_signal(false)
+{
+	xml->get_widget("control_strip_name_label", m_name_label);
+	xml->get_widget("control_strip_min_spinner", m_min_spinner);
+	xml->get_widget("control_strip_max_spinner", m_max_spinner);
+	xml->get_widget("control_strip_slider", m_slider);
+}
+
+
+void
+SliderControlGroup::init(ControlPanel* panel, SharedPtr<PortModel> pm, bool separator)
+/*: ControlGroup(panel, pm, separator),
   m_enabled(true),
   m_enable_signal(false),
   m_name_label(pm->path().name(), 0.0, 0.0),
-  m_range_box(false, 0),
-  m_range_label("<small>Range: </small>"),
-  m_min_spinner(1.0, (pm->is_integer() ? 0 : 4)), // climb rate, digits
-  m_hyphen_label(" - "),
-  m_max_spinner(1.0, (pm->is_integer() ? 0 : 4)),
-  m_slider_box(false, 0),
-  m_value_spinner(1.0, (pm->is_integer() ? 0 : 4)),
-  m_slider(0, 1, (pm->is_integer() ? 1.0 : 0.0001))
+  m_min_spinner(1.0, (pm->is_integer() ? 0 : 2)), // climb rate, digits
+  m_max_spinner(1.0, (pm->is_integer() ? 0 : 2)),
+  m_box(false, 0),
+  m_value_spinner(1.0, (pm->is_integer() ? 0 : 2)),
+  m_slider(0, 1, (pm->is_integer() ? 1.0 : 0.0001))*/
 {
-	m_slider.set_increments(1.0, 10.0);
+	ControlGroup::init(panel, pm, separator);
+
+	assert(m_name_label);
+	assert(m_min_spinner);
+	assert(m_max_spinner);
+	assert(m_slider);
+
+	//m_slider->set_increments(1.0, 10.0);
+	//m_slider->set_value_pos(Gtk::POS_RIGHT);
+	m_slider->set_draw_value(true);
 
 	float min = 0.0f;
 	float max = 1.0f;
@@ -90,54 +119,49 @@ SliderControlGroup::SliderControlGroup(ControlPanel* panel, SharedPtr<PortModel>
 		max = max_atom.get_float();
 	}
 
-	m_slider.property_draw_value() = false;
-	
+	if (max <= min)
+		max = min + 1.0f;
+
 	set_name(pm->path().name());
 	
-	m_name_label.property_use_markup() = true;
-	m_range_label.property_use_markup() = true;
+	//m_name_label->property_use_markup() = true;
 
+/*
 	m_value_spinner.set_range(-99999, 99999);
 	m_value_spinner.set_update_policy(Gtk::UPDATE_ALWAYS); // allow entered values outside range
 	m_value_spinner.set_value(m_port_model->value());
 	m_value_spinner.set_increments(1.0, 10.0);
-	m_value_spinner.set_digits(5);
+	m_value_spinner.set_digits(2);
 	m_value_spinner.signal_value_changed().connect(
-		sigc::mem_fun(*this, &SliderControlGroup::update_value_from_spinner));
-	m_min_spinner.set_range(-99999, 99999);
-	m_min_spinner.set_value(min);
-	m_min_spinner.set_increments(1.0, 10.0);
-	m_min_spinner.set_digits(5);
-	m_min_spinner.signal_value_changed().connect(sigc::mem_fun(*this, &SliderControlGroup::min_changed));
-	m_max_spinner.set_range(-99999, 99999);
-	m_max_spinner.set_value(max);
-	m_max_spinner.set_increments(1.0, 10.0);
-	m_max_spinner.set_digits(5);
-	m_max_spinner.signal_value_changed().connect(sigc::mem_fun(*this, &SliderControlGroup::max_changed));
+		sigc::mem_fun(*this, &SliderControlGroup::update_value_from_spinner));*/
+	//m_min_spinner->set_range(-99999, 99999);
+	m_min_spinner->set_value(min);
+	//m_min_spinner->set_increments(1.0, 10.0);
+	//m_min_spinner->set_digits(2);
+	m_min_spinner->signal_value_changed().connect(sigc::mem_fun(*this, &SliderControlGroup::min_changed));
+	//m_max_spinner->set_range(-99999, 99999);
+	m_max_spinner->set_value(max);
+	//m_max_spinner->set_increments(1.0, 10.0);
+	//m_max_spinner->set_digits(2);
+	m_max_spinner->signal_value_changed().connect(sigc::mem_fun(*this, &SliderControlGroup::max_changed));
 
-	m_slider.set_value(m_port_model->value());
+	m_slider->set_value(m_port_model->value());
 
-	m_slider.signal_event().connect(
+	m_slider->signal_event().connect(
 		sigc::mem_fun(*this, &SliderControlGroup::slider_pressed));
 
-	m_slider.signal_value_changed().connect(
+	m_slider->signal_value_changed().connect(
 		sigc::mem_fun(*this, &SliderControlGroup::update_value_from_slider));
-
-	m_range_box.pack_start(m_range_label, false, false, 2);
-	m_range_box.pack_start(m_min_spinner, false, false, 1);
-	m_range_box.pack_start(m_hyphen_label, false, false, 1);
-	m_range_box.pack_start(m_max_spinner, false, false, 1);
+#if 0
+	m_box.pack_start(m_name_label, false, false, 6);
+	//m_box.pack_start(m_value_spinner, true, true, 1);
+	m_box.pack_start(m_min_spinner, false, false, 1);
+	m_box.pack_start(m_slider, true, true, 2);
+	m_box.pack_start(m_max_spinner, false, false, 1);
 	
-	m_header_box.pack_start(m_name_label, true, true, 0);
-	m_header_box.pack_start(m_range_box, true, true, 2);
-	
-	m_slider_box.pack_start(m_value_spinner, false, false, 1);
-	m_slider_box.pack_start(m_slider, true, true, 5);
-	
-	pack_start(m_header_box, false, false, 0);
-	pack_start(m_slider_box, false, false, 0);
-	
-	m_slider.set_range(min, max);
+	pack_start(m_box);
+#endif
+	m_slider->set_range(min, max);
 
 	m_enable_signal = true;
 
@@ -148,9 +172,9 @@ SliderControlGroup::SliderControlGroup(ControlPanel* panel, SharedPtr<PortModel>
 void
 SliderControlGroup::set_name(const string& name)
 {
-	string name_label = "<small><span weight=\"bold\">";
-	name_label += name + "</span></small>";
-	m_name_label.set_markup(name_label);
+	string name_label = "<span weight=\"bold\">";
+	name_label += name + "</span>";
+	m_name_label->set_markup(name_label);
 }
 
 
@@ -158,7 +182,7 @@ void
 SliderControlGroup::set_min(float val)
 {
 	m_enable_signal = false;
-	m_min_spinner.set_value(val);
+	m_min_spinner->set_value(val);
 	m_enable_signal = true;
 }
 
@@ -167,7 +191,7 @@ void
 SliderControlGroup::set_max(float val)
 {
 	m_enable_signal = false;
-	m_max_spinner.set_value(val);
+	m_max_spinner->set_value(val);
 	m_enable_signal = true;
 }
 
@@ -175,39 +199,37 @@ SliderControlGroup::set_max(float val)
 void
 SliderControlGroup::enable()
 {
-	m_slider.property_sensitive() = true;
-	m_min_spinner.property_sensitive() = true;
-	m_max_spinner.property_sensitive() = true;
-	m_value_spinner.property_sensitive() = true;
-	m_name_label.property_sensitive() = true;
-	m_range_label.property_sensitive() = true;
+	m_slider->property_sensitive() = true;
+	m_min_spinner->property_sensitive() = true;
+	m_max_spinner->property_sensitive() = true;
+	//m_value_spinner.property_sensitive() = true;
+	m_name_label->property_sensitive() = true;
 }
 
 
 void
 SliderControlGroup::disable()
 {
-	m_slider.property_sensitive() = false;
-	m_min_spinner.property_sensitive() = false;
-	m_max_spinner.property_sensitive() = false;
-	m_value_spinner.property_sensitive() = false;
-	m_name_label.property_sensitive() = false;
-	m_range_label.property_sensitive() = false;
+	m_slider->property_sensitive() = false;
+	m_min_spinner->property_sensitive() = false;
+	m_max_spinner->property_sensitive() = false;
+	//m_value_spinner.property_sensitive() = false;
+	m_name_label->property_sensitive() = false;
 }
 
 
 void
 SliderControlGroup::min_changed()
 {
-	double       min = m_min_spinner.get_value();
-	const double max = m_max_spinner.get_value();
+	double       min = m_min_spinner->get_value();
+	const double max = m_max_spinner->get_value();
 	
 	if (min >= max) {
 		min = max - 1.0;
-		m_min_spinner.set_value(min);
+		m_min_spinner->set_value(min);
 	}
 
-	m_slider.set_range(min, max);
+	m_slider->set_range(min, max);
 
 	if (m_enable_signal) {
 		char temp_buf[16];
@@ -220,15 +242,15 @@ SliderControlGroup::min_changed()
 void
 SliderControlGroup::max_changed()
 {
-	const double min = m_min_spinner.get_value();
-	double       max = m_max_spinner.get_value();
+	const double min = m_min_spinner->get_value();
+	double       max = m_max_spinner->get_value();
 	
 	if (max <= min) {
 		max = min + 1.0;
-		m_max_spinner.set_value(max);
+		m_max_spinner->set_value(max);
 	}
 
-	m_slider.set_range(min, max);
+	m_slider->set_range(min, max);
 
 	if (m_enable_signal) {
 		char temp_buf[16];
@@ -242,10 +264,10 @@ void
 SliderControlGroup::update_value_from_slider()
 {
 	if (m_enable_signal) {
-		const float value = m_slider.get_value();
+		const float value = m_slider->get_value();
 		// Prevent spinner signal from doing all this over again (slow)
 		m_enable_signal = false;
-		m_value_spinner.set_value(value);
+		//m_value_spinner.set_value(value);
 		m_control_panel->value_changed(m_port_model->path(), value);
 		//m_port_model->value(value);
 		m_enable_signal = true;
@@ -253,6 +275,7 @@ SliderControlGroup::update_value_from_slider()
 }
 
 
+/*
 void
 SliderControlGroup::update_value_from_spinner()
 {
@@ -260,16 +283,16 @@ SliderControlGroup::update_value_from_spinner()
 		m_enable_signal = false;
 		const float value = m_value_spinner.get_value();
 		
-		if (value < m_min_spinner.get_value()) {
-			m_min_spinner.set_value(value);
-			m_slider.set_range(m_min_spinner.get_value(), m_max_spinner.get_value());
+		if (value < m_min_spinner->get_value()) {
+			m_min_spinner->set_value(value);
+			m_slider->set_range(m_min_spinner->get_value(), m_max_spinner->get_value());
 		}
-		if (value > m_max_spinner.get_value()) {
-			m_max_spinner.set_value(value);
-			m_slider.set_range(m_min_spinner.get_value(), m_max_spinner.get_value());
+		if (value > m_max_spinner->get_value()) {
+			m_max_spinner->set_value(value);
+			m_slider->set_range(m_min_spinner->get_value(), m_max_spinner->get_value());
 		}
 
-		m_slider.set_value(m_value_spinner.get_value());
+		m_slider->set_value(m_value_spinner.get_value());
 
 		m_control_panel->value_changed(m_port_model->path(), value);
 		
@@ -277,7 +300,7 @@ SliderControlGroup::update_value_from_spinner()
 		m_enable_signal = true;
 	}
 }
-
+*/
 
 /** Callback for when slider is grabbed so we can ignore set_control
  * events for this port (and avoid nasty feedback issues).
@@ -302,7 +325,7 @@ SliderControlGroup::slider_pressed(GdkEvent* ev)
 
 // ///////////// IntegerControlGroup ////////////// //
 
-
+#if 0
 IntegerControlGroup::IntegerControlGroup(ControlPanel* panel, SharedPtr<PortModel> pm, bool separator)
 : ControlGroup(panel, pm, separator),
   m_enable_signal(false),
@@ -333,7 +356,7 @@ IntegerControlGroup::set_name(const string& name)
 {
 	string name_label = "<span weight=\"bold\">";
 	name_label += name + "</span>";
-	m_name_label.set_markup(name_label);
+	m_name_label->set_markup(name_label);
 }
 
 
@@ -351,7 +374,7 @@ void
 IntegerControlGroup::enable()
 {
 	m_spinner.property_sensitive() = true;
-	m_name_label.property_sensitive() = true;
+	m_name_label->property_sensitive() = true;
 }
 
 
@@ -359,7 +382,7 @@ void
 IntegerControlGroup::disable()
 {
 	m_spinner.property_sensitive() = false;
-	m_name_label.property_sensitive() = false;
+	m_name_label->property_sensitive() = false;
 }
 
 
@@ -404,7 +427,7 @@ ToggleControlGroup::set_name(const string& name)
 {
 	string name_label = "<span weight=\"bold\">";
 	name_label += name + "</span>";
-	m_name_label.set_markup(name_label);
+	m_name_label->set_markup(name_label);
 }
 
 
@@ -422,7 +445,7 @@ void
 ToggleControlGroup::enable()
 {
 	m_checkbutton.property_sensitive() = true;
-	m_name_label.property_sensitive() = true;
+	m_name_label->property_sensitive() = true;
 }
 
 
@@ -430,7 +453,7 @@ void
 ToggleControlGroup::disable()
 {
 	m_checkbutton.property_sensitive() = false;
-	m_name_label.property_sensitive() = false;
+	m_name_label->property_sensitive() = false;
 }
 
 
@@ -443,6 +466,6 @@ ToggleControlGroup::update_value()
 		//m_port_model->value(value);
 	}
 }
-
+#endif
 
 } // namespace Ingenuity

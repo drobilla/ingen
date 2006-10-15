@@ -1,0 +1,10 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Ingenuity
+Version=0.4.0pre
+Comment=Create synthesizers and effects processors in a modular environment
+Exec=ingenuity
+Terminal=false
+Icon=ingen-icon.svg
+Type=Application
+Categories=Application;AudioVideo;Sound;Audio

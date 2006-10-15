@@ -39,7 +39,9 @@ class ControlPanel;
 class ControlGroup : public Gtk::VBox
 {
 public:
-	ControlGroup(ControlPanel* panel, SharedPtr<PortModel> pm, bool separator);
+	ControlGroup(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml);
+	
+	void init(ControlPanel* panel, SharedPtr<PortModel> pm, bool separator);
 
 	~ControlGroup() { delete m_separator; }
 	
@@ -49,21 +51,17 @@ public:
 		assert(m_has_separator); remove(*m_separator); delete m_separator;
 	}
 
-	virtual void enable() {}
-	virtual void disable() {}
-	
 protected:
-	virtual void set_name(const string& name) {}
-	virtual void set_value(float val) = 0;
-	virtual void set_min(float val) {}
-	virtual void set_max(float val) {}
 
+	virtual void set_value(float value) = 0;
+	virtual void set_min(float min) = 0;
+	virtual void set_max(float max) = 0;
 	virtual void metadata_update(const string& key, const Atom& value);
 
-	ControlPanel*          m_control_panel;
-	SharedPtr<PortModel>  m_port_model;
-	bool                   m_has_separator;
-	Gtk::HSeparator*       m_separator;
+	ControlPanel*        m_control_panel;
+	SharedPtr<PortModel> m_port_model;
+	bool                 m_has_separator;
+	Gtk::VSeparator*     m_separator;
 };
 
 
@@ -74,7 +72,8 @@ protected:
 class SliderControlGroup : public ControlGroup
 {
 public:
-	SliderControlGroup(ControlPanel* panel, SharedPtr<PortModel> pm, bool separator);
+	SliderControlGroup(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml);
+	void init(ControlPanel* panel, SharedPtr<PortModel> pm, bool separator);
 
 	void enable();
 	void disable();
@@ -99,16 +98,11 @@ private:
 	bool m_enabled;
 	bool m_enable_signal;
 	
-	Gtk::HBox       m_header_box;
-	Gtk::Label      m_name_label;
-	Gtk::HBox       m_range_box;
-	Gtk::Label      m_range_label;
-	Gtk::SpinButton m_min_spinner;
-	Gtk::Label      m_hyphen_label;
-	Gtk::SpinButton m_max_spinner;
-	Gtk::HBox       m_slider_box;
-	Gtk::SpinButton m_value_spinner;
-	Gtk::HScale     m_slider;
+	Gtk::Label*      m_name_label;
+	Gtk::SpinButton* m_min_spinner;
+	Gtk::SpinButton* m_max_spinner;
+	//Gtk::SpinButton* m_value_spinner;
+	Gtk::VScale*     m_slider;
 };
 
 
@@ -117,14 +111,14 @@ SliderControlGroup::set_value(const float val)
 {
 	m_enable_signal = false;
 	if (m_enabled) {
-		m_slider.set_value(val);
-		m_value_spinner.set_value(val);
+		m_slider->set_value(val);
+		//m_value_spinner->set_value(val);
 	}
 	m_enable_signal = true;
 }
 
 
-
+#if 0
 
 /** A spinbutton for integer controls.
  * 
@@ -174,7 +168,7 @@ private:
 	Gtk::Label       m_name_label;
 	Gtk::CheckButton m_checkbutton;
 };
-
+#endif
 
 } // namespace Ingenuity
 

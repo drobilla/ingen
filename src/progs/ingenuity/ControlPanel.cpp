@@ -21,12 +21,13 @@
 #include "NodeModel.h"
 #include "PortModel.h"
 #include "ControlGroups.h"
+#include "GladeFactory.h"
 
 namespace Ingenuity {
 
 	
 ControlPanel::ControlPanel(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
-: Gtk::VBox(cobject),
+: Gtk::HBox(cobject),
   m_callback_enabled(true)
 {
 	xml->get_widget("control_panel_controls_box", m_control_box);
@@ -95,23 +96,30 @@ ControlPanel::add_port(SharedPtr<PortModel> pm)
 	// Add port
 	if (pm->is_control() && pm->is_input()) {
 		bool separator = (m_controls.size() > 0);
-		ControlGroup* cg = NULL;
+		SliderControlGroup* cg = NULL;
 		if (pm->is_integer())
-			cg = new IntegerControlGroup(this, pm, separator);
+			cerr << "FIXME: integer\n";
+			//cg = new IntegerControlGroup(this, pm, separator);
 		else if (pm->is_toggle())
-			cg = new ToggleControlGroup(this, pm, separator);
-		else
-			cg = new SliderControlGroup(this, pm, separator);
+			cerr << "FIXME: toggle\n";
+			//cg = new ToggleControlGroup(this, pm, separator);
+		else {
+			Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference("control_strip");
+			xml->get_widget_derived("control_strip", cg);
+			cg->init(this, pm, separator);
+		}
 	
 		m_controls.push_back(cg);
 		m_control_box->pack_start(*cg, false, false, 0);
 
-		if (pm->connected())
+		/*if (pm->connected())
 			cg->disable();
 		else
-			cg->enable();
+			cg->enable();*/
 
-		cerr << "FIXME: Control panel add port\n";
+		cg->show();
+
+		cerr << "FIXME: control panel connected port tracking\n";
 		//	pm->connection_sig.connect(bind(sigc::mem_fun(this, &ControlPanel::connection), pm))
 		//	pm->disconnection_sig.connect(bind(sigc::mem_fun(this, &ControlPanel::disconnection), pm))
 	}
@@ -167,6 +175,7 @@ ControlPanel::rename_port(const Path& old_path, const Path& new_path)
 }
 */
 
+#if 0
 /** Enable the control for the given port.
  *
  * Used when all connections to port are un-made.
@@ -197,7 +206,7 @@ ControlPanel::disable_port(const Path& path)
 		}
 	}
 }
-
+#endif
 
 /** Callback for ControlGroups to notify this of a change.
  */
@@ -213,37 +222,6 @@ ControlPanel::value_changed(const Path& port_path, float val)
 		}
 	}
 }
-
-/*
-void
-ControlPanel::set_range_min(const Path& port_path, float val)
-{
-	bool found = false;
-	for (vector<ControlGroup*>::iterator i = m_controls.begin(); i != m_controls.end(); ++i) {
-		if ((*i)->port_model()->path() == port_path) {
-			found = true;
-			(*i)->set_min(val);
-		}
-	}
-	if (found == false)
-		cerr << "[ControlPanel::set_range_min] Unable to find control " << port_path << endl;
-}
-
-
-void
-ControlPanel::set_range_max(const Path& port_path, float val)
-{
-	bool found = false;
-	for (vector<ControlGroup*>::iterator i = m_controls.begin(); i != m_controls.end(); ++i) {
-		if ((*i)->port_model()->path() == port_path) {
-			found = true;
-			(*i)->set_max(val);
-		}
-	}
-	if (found == false)
-		cerr << "[ControlPanel::set_range_max] Unable to find control " << port_path << endl;
-}
-*/
 
 void
 ControlPanel::all_voices_selected()

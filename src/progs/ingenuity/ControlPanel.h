@@ -46,7 +46,7 @@ namespace Ingenuity {
  *
  * \ingroup Ingenuity
  */
-class ControlPanel : public Gtk::VBox {
+class ControlPanel : public Gtk::HBox {
 public:
 	ControlPanel(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml);
 	virtual ~ControlPanel();
@@ -58,8 +58,6 @@ public:
 	void add_port(SharedPtr<PortModel> port);
 	void remove_port(const Path& path);
 
-	//void rename_port(const Path& old_path, const Path& new_path);
-
 	void enable_port(const Path& path);
 	void disable_port(const Path& path);
 	
@@ -68,10 +66,6 @@ public:
 	
 	// Callback for ControlGroup (FIXME: ugly)
 	void value_changed(const Path& port_path, float val);
-
-	//inline void set_control(const Path& port_path, float value);
-	//void set_range_min(const Path& port_path, float value);
-	//void set_range_max(const Path& port_path, float value);
 
 private:
 	void all_voices_selected();
@@ -83,42 +77,13 @@ private:
 	pair<int,int> m_ideal_size;
 
 	vector<ControlGroup*>    m_controls;
-	Gtk::VBox*               m_control_box;
+	Gtk::HBox*               m_control_box;
 	Gtk::Box*                m_voice_control_box;
 	Gtk::RadioButton*        m_all_voices_radio;
 	Gtk::RadioButton*        m_specific_voice_radio;
 	Gtk::SpinButton*         m_voice_spinbutton;
 };
 
-
-/** Set a port on this panel to a certain value.
- *
- * Profiling has shown this is performance critical.  Needs to be made
- * faster.
- */
-/*
-inline void
-ControlPanel::set_control(const Path& port_path, const float val)
-{
-	// FIXME: double lookup, ports should just have a pointer directly to
-	// their control group
-	
-	m_callback_enabled = false;
-	ControlGroup* cg   = NULL;
-	
-	for (vector<ControlGroup*>::iterator i = m_controls.begin(); i != m_controls.end(); ++i) {
-		cg = (*i);
-		if (cg->port_model()->path() == port_path) {
-			cg->set_value(val);
-			m_callback_enabled = true;
-			return;
-		}
-	}
-	
-	cerr << "[ControlPanel::set_control] Unable to find control " << port_path << endl;
-	m_callback_enabled = true;
-}
-*/
 
 } // namespace Ingenuity
 
