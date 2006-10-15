@@ -50,9 +50,6 @@ NodeControlWindow::NodeControlWindow(SharedPtr<NodeModel> node, size_t poly)
 	show_all_children();
 	resize();
 	
-	// FIXME: not working
-	//set_icon_from_file(string(PKGDATADIR) + "/om-icon.png");
-
 	m_callback_enabled = true;
 }
 

@@ -41,11 +41,9 @@ PatchPortModule::PatchPortModule(boost::shared_ptr<PatchCanvas> canvas, SharedPt
 	assert(canvas);
 	assert(port);
 
-	//if (PtrCast<PatchModel>(port->parent())) {
-	//	m_patch_port = boost::shared_ptr<Port>(new Port(shared_from_this(), port, true));
-	//}
-	
-	resize();
+	assert(PtrCast<PatchModel>(port->parent()));
+
+	/*resize();
 
 	const Atom& x_atom = port->get_metadata("ingenuity:canvas-x");
 	const Atom& y_atom = port->get_metadata("ingenuity:canvas-y");
@@ -57,7 +55,7 @@ PatchPortModule::PatchPortModule(boost::shared_ptr<PatchCanvas> canvas, SharedPt
 		double default_y;
 		canvas->get_new_module_location(default_x, default_y);
 		move_to(default_x, default_y);
-	}
+	}*/
 
 	port->metadata_update_sig.connect(sigc::mem_fun(this, &PatchPortModule::metadata_update));
 }
@@ -68,10 +66,14 @@ PatchPortModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<PortMod
 {
 	boost::shared_ptr<PatchPortModule> ret = boost::shared_ptr<PatchPortModule>(
 		new PatchPortModule(canvas, port));
+	assert(ret);
 
 	for (MetadataMap::const_iterator m = port->metadata().begin(); m != port->metadata().end(); ++m)
 		ret->metadata_update(m->first, m->second);
 
+	ret->m_patch_port = boost::shared_ptr<Port>(new Port(ret->shared_from_this(), port, true));
+	ret->add_port(ret->m_patch_port);
+	
 	ret->resize();
 
 	return ret;

@@ -3207,7 +3207,7 @@ Contributors:
   <property name="artists">Usability / UI Design:
 	Thorsten Wilms</property>
   <property name="translator_credits" translatable="yes" comments="TRANSLATORS: Replace this string with your names, one name per line.">translator-credits</property>
-  <property name="logo">om-icon.png</property>
+  <property name="logo">ingen-icon.png</property>
 </widget>
 
 <widget class="GtkWindow" id="patch_tree_win">

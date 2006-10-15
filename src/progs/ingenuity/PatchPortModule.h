@@ -44,7 +44,7 @@ class Port;
  *
  * \ingroup Ingenuity
  */
-class PatchPortModule : public LibFlowCanvas::Module//, public boost::enable_shared_from_this<LibFlowCanvas::Module>
+class PatchPortModule : public boost::enable_shared_from_this<LibFlowCanvas::Module>, public LibFlowCanvas::Module
 {
 public:
 	static boost::shared_ptr<PatchPortModule> create (boost::shared_ptr<PatchCanvas> canvas,
@@ -66,7 +66,7 @@ protected:
 	
 	void metadata_update(const string& key, const Atom& value);
 
-	SharedPtr<PortModel>   m_port;
+	SharedPtr<PortModel>    m_port;
 	boost::shared_ptr<Port> m_patch_port; ///< Port on this 'anonymous' module
 };
 
