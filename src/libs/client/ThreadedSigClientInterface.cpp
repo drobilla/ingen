@@ -27,6 +27,9 @@ namespace Client {
 void
 ThreadedSigClientInterface::push_sig(Closure ev)
 {
+	if (!_enabled)
+		return;
+
 	bool success = false;
 	bool first   = true;
 	

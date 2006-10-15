@@ -44,6 +44,11 @@ using Shared::ClientInterface;
  * ClientInterface and Responder are seperate because responding might not
  * actually get exposed to the client interface (eg in simulated blocking
  * interfaces that wait for responses before returning).
+ *
+ * Note for messages that have a "response" and some broadcasted effect
+ * (eg setting a port value) the "response" MUST be sent first since Responder
+ * is responsible for controlling whether the client wishes to receive the
+ * notification.
  */
 class Responder
 {
@@ -51,7 +56,7 @@ public:
 	Responder() {}
 	virtual ~Responder() {}
 
-	virtual ClientKey                   client_key() { return ClientKey(); }
+	virtual ClientKey                  client_key() { return ClientKey(); }
 	virtual SharedPtr<ClientInterface> client()     { return SharedPtr<ClientInterface>(); }
 
 	virtual void set_id(int32_t id) {}

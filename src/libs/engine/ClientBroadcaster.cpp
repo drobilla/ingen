@@ -110,7 +110,7 @@ ClientBroadcaster::client(const ClientKey& key)
 		if ((*i).first == key)
 			return (*i).second;
 
-	cerr << "[ClientBroadcaster] Failed to find client." << endl;
+	cerr << "[ClientBroadcaster] Failed to find client " << key.uri() << endl;
 
 	return SharedPtr<ClientInterface>();
 }

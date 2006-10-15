@@ -44,7 +44,8 @@ class ThreadedSigClientInterface : public SigClientInterface
 {
 public:
 	ThreadedSigClientInterface(uint32_t queue_size)
-	: _sigs(queue_size)
+	: _enabled(true)
+	, _sigs(queue_size)
 	, response_slot(response_sig.make_slot())
 	, error_slot(error_sig.make_slot())
 	, new_plugin_slot(new_plugin_sig.make_slot())
@@ -64,6 +65,8 @@ public:
 	, program_remove_slot(program_remove_sig.make_slot())
 	{}
 
+	void enable()  { _enabled = true; }
+	void disable() { _enabled = false ; }
 
 	// FIXME: make this insert bundle-boundary-events, where the GTK thread
 	// process all events between start and finish in one cycle, guaranteed
@@ -132,6 +135,8 @@ public:
 
 private:
 	void push_sig(Closure ev);
+	
+	bool _enabled;
 	
 	Queue<Closure> _sigs;
 	uint32_t       _num_plugins;

@@ -54,6 +54,10 @@ OSCResponder::~OSCResponder()
 void
 OSCResponder::respond_ok()
 {
+	SharedPtr<ClientInterface> client = this->client();
+	if (client)
+		client->enable();
+
 	 _addr = lo_address_new_from_url(_url);
 
 	//cerr << "OK  " << _id << endl;
@@ -67,6 +71,10 @@ OSCResponder::respond_ok()
 void
 OSCResponder::respond_error(const string& msg)
 {
+	SharedPtr<ClientInterface> client = this->client();
+	if (client)
+		client->enable();
+
 	_addr = lo_address_new_from_url(_url);
 
 	//cerr << "ERR " << _id << endl;

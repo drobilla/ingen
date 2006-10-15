@@ -214,11 +214,11 @@ OSCEngineReceiver::set_response_address_cb(const char* path, const char* types, 
 
 	const int id = argv[0]->i;
 
+	const lo_address addr = lo_message_get_source(msg);
+	char* const      url  = lo_address_get_url(addr);
+	
 	// Need to respond
 	if (id != -1) {
-		const lo_address addr = lo_message_get_source(msg);
-		char* const      url  = lo_address_get_url(addr);
-	
 		//cerr << "** need to respond\n";
 
 		// Currently have an OSC responder, check if it's still okay
@@ -246,12 +246,19 @@ OSCEngineReceiver::set_response_address_cb(const char* path, const char* types, 
 			me->set_responder(me->_osc_responder);
 			//cerr << "** Setting response address to " << url << "(2)" << endl;
 		}
-		
+
 		me->set_next_response_id(id);
 	
 	// Don't respond
 	} else {
 		me->disable_responses();
+		SharedPtr<ClientInterface> client = me->_engine->broadcaster()->client(
+			ClientKey(ClientKey::OSC_URL, (const char*)url));
+		if (client)
+			client->disable();
+		else
+			cerr << "UNKNOWN CLIENT!\n";
+	
 		//cerr << "** Not responding." << endl;
 	}
 

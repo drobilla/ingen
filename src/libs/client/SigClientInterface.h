@@ -67,6 +67,10 @@ protected:
 
 	// ClientInterface hooks that fire the above signals
 	
+	// FIXME: implement for this (is implemented for ThreadedSigClientInterface)
+	void enable()  { }
+	void disable() { }
+
 	void bundle_begin() {}
 	void bundle_end()   {}
 	

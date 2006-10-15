@@ -35,7 +35,8 @@ ControlGroup::ControlGroup(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Gl
 : Gtk::VBox(cobject),
   m_control_panel(NULL),
   m_has_separator(false),
-  m_separator(NULL)
+  m_separator(NULL),
+  m_enable_signal(false)
 {
 }
 
@@ -61,23 +62,12 @@ ControlGroup::init(ControlPanel* panel, SharedPtr<PortModel> pm, bool separator)
 }
 
 
-void
-ControlGroup::metadata_update(const string& key, const Atom& value)
-{
-	if ( (key == "min") && value.type() == Atom::FLOAT)
-		set_min(value.get_float());
-	else if ( (key == "max") && value.type() == Atom::FLOAT)
-		set_max(value.get_float());
-}
-
-
 // ////////////////// SliderControlGroup ////////////////////// //
 
 
 SliderControlGroup::SliderControlGroup(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 : ControlGroup(cobject, xml),
-  m_enabled(true),
-  m_enable_signal(false)
+  m_enabled(true)
 {
 	xml->get_widget("control_strip_name_label", m_name_label);
 	xml->get_widget("control_strip_min_spinner", m_min_spinner);
@@ -88,15 +78,6 @@ SliderControlGroup::SliderControlGroup(BaseObjectType* cobject, const Glib::RefP
 
 void
 SliderControlGroup::init(ControlPanel* panel, SharedPtr<PortModel> pm, bool separator)
-/*: ControlGroup(panel, pm, separator),
-  m_enabled(true),
-  m_enable_signal(false),
-  m_name_label(pm->path().name(), 0.0, 0.0),
-  m_min_spinner(1.0, (pm->is_integer() ? 0 : 2)), // climb rate, digits
-  m_max_spinner(1.0, (pm->is_integer() ? 0 : 2)),
-  m_box(false, 0),
-  m_value_spinner(1.0, (pm->is_integer() ? 0 : 2)),
-  m_slider(0, 1, (pm->is_integer() ? 1.0 : 0.0001))*/
 {
 	ControlGroup::init(panel, pm, separator);
 
@@ -105,8 +86,6 @@ SliderControlGroup::init(ControlPanel* panel, SharedPtr<PortModel> pm, bool sepa
 	assert(m_max_spinner);
 	assert(m_slider);
 
-	//m_slider->set_increments(1.0, 10.0);
-	//m_slider->set_value_pos(Gtk::POS_RIGHT);
 	m_slider->set_draw_value(true);
 
 	float min = 0.0f;
@@ -124,25 +103,9 @@ SliderControlGroup::init(ControlPanel* panel, SharedPtr<PortModel> pm, bool sepa
 
 	set_name(pm->path().name());
 	
-	//m_name_label->property_use_markup() = true;
-
-/*
-	m_value_spinner.set_range(-99999, 99999);
-	m_value_spinner.set_update_policy(Gtk::UPDATE_ALWAYS); // allow entered values outside range
-	m_value_spinner.set_value(m_port_model->value());
-	m_value_spinner.set_increments(1.0, 10.0);
-	m_value_spinner.set_digits(2);
-	m_value_spinner.signal_value_changed().connect(
-		sigc::mem_fun(*this, &SliderControlGroup::update_value_from_spinner));*/
-	//m_min_spinner->set_range(-99999, 99999);
 	m_min_spinner->set_value(min);
-	//m_min_spinner->set_increments(1.0, 10.0);
-	//m_min_spinner->set_digits(2);
 	m_min_spinner->signal_value_changed().connect(sigc::mem_fun(*this, &SliderControlGroup::min_changed));
-	//m_max_spinner->set_range(-99999, 99999);
 	m_max_spinner->set_value(max);
-	//m_max_spinner->set_increments(1.0, 10.0);
-	//m_max_spinner->set_digits(2);
 	m_max_spinner->signal_value_changed().connect(sigc::mem_fun(*this, &SliderControlGroup::max_changed));
 
 	m_slider->set_value(m_port_model->value());
@@ -152,15 +115,7 @@ SliderControlGroup::init(ControlPanel* panel, SharedPtr<PortModel> pm, bool sepa
 
 	m_slider->signal_value_changed().connect(
 		sigc::mem_fun(*this, &SliderControlGroup::update_value_from_slider));
-#if 0
-	m_box.pack_start(m_name_label, false, false, 6);
-	//m_box.pack_start(m_value_spinner, true, true, 1);
-	m_box.pack_start(m_min_spinner, false, false, 1);
-	m_box.pack_start(m_slider, true, true, 2);
-	m_box.pack_start(m_max_spinner, false, false, 1);
 	
-	pack_start(m_box);
-#endif
 	m_slider->set_range(min, max);
 
 	m_enable_signal = true;
@@ -170,29 +125,25 @@ SliderControlGroup::init(ControlPanel* panel, SharedPtr<PortModel> pm, bool sepa
 
 
 void
+SliderControlGroup::metadata_update(const string& key, const Atom& value)
+{
+	m_enable_signal = false;
+
+	if ( (key == "min") && value.type() == Atom::FLOAT)
+		m_min_spinner->set_value(value.get_float());
+	else if ( (key == "max") && value.type() == Atom::FLOAT)
+		m_max_spinner->set_value(value.get_float());
+	
+	m_enable_signal = true;
+}
+
+
+void
 SliderControlGroup::set_name(const string& name)
 {
 	string name_label = "<span weight=\"bold\">";
 	name_label += name + "</span>";
 	m_name_label->set_markup(name_label);
-}
-
-
-void
-SliderControlGroup::set_min(float val)
-{
-	m_enable_signal = false;
-	m_min_spinner->set_value(val);
-	m_enable_signal = true;
-}
-
-
-void
-SliderControlGroup::set_max(float val)
-{
-	m_enable_signal = false;
-	m_max_spinner->set_value(val);
-	m_enable_signal = true;
 }
 
 

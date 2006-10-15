@@ -67,7 +67,7 @@ OSCClientReceiver::start()
 	}
 
 	// Print all incoming messages
-	//lo_server_thread_add_method(_st, NULL, NULL, generic_cb, NULL);
+	lo_server_thread_add_method(_st, NULL, NULL, generic_cb, NULL);
 
 	//lo_server_thread_add_method(_st, "/om/response/ok", "i", om_response_ok_cb, this);
 	//lo_server_thread_add_method(_st, "/om/response/error", "is", om_responseerror_cb, this);

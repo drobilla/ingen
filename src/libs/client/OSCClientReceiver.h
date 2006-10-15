@@ -60,6 +60,10 @@ public:
 	OSCClientReceiver(int listen_port);
 	~OSCClientReceiver();
 
+	// Engine side only
+	//void enable() {}
+	//void disable() {}
+
 	void start();
 	void stop();
 	

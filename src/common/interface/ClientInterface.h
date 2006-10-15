@@ -38,6 +38,13 @@ public:
 	
 	virtual void response(int32_t id, bool success, string msg) = 0;
 	
+	virtual void enable() = 0;
+	
+	/** Signifies the client does not wish to receive any messages until
+	 * enable is called.  Useful for performance and avoiding feedback.
+	 */
+	virtual void disable() = 0;
+
 	/** Bundles are a group of messages that are guaranteed to be in an
 	 * atomic unit with guaranteed order (eg a packet).  For datagram
 	 * protocols (like UDP) there is likely an upper limit on bundle size.

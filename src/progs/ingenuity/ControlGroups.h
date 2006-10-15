@@ -54,14 +54,13 @@ public:
 protected:
 
 	virtual void set_value(float value) = 0;
-	virtual void set_min(float min) = 0;
-	virtual void set_max(float max) = 0;
-	virtual void metadata_update(const string& key, const Atom& value);
+	virtual void metadata_update(const string& key, const Atom& value) = 0;
 
 	ControlPanel*        m_control_panel;
 	SharedPtr<PortModel> m_port_model;
 	bool                 m_has_separator;
 	Gtk::VSeparator*     m_separator;
+	bool                 m_enable_signal;
 };
 
 
@@ -80,6 +79,7 @@ public:
 
 private:
 	void set_name(const string& name);
+	virtual void metadata_update(const string& key, const Atom& value);
 
 	inline void set_value(const float val);
 	void set_min(float val);
@@ -96,7 +96,6 @@ private:
 	bool slider_pressed(GdkEvent* ev);
 
 	bool m_enabled;
-	bool m_enable_signal;
 	
 	Gtk::Label*      m_name_label;
 	Gtk::SpinButton* m_min_spinner;

@@ -42,7 +42,8 @@ public:
 	OSCClientSender(const string& url)
 	: _url(url),
 	  _address(lo_address_new_from_url(url.c_str())),
-	  _transfer(NULL)
+	  _transfer(NULL),
+	  _enabled(true)
 	{}
 
 	virtual ~OSCClientSender()
@@ -60,6 +61,9 @@ public:
 
 	//void client_registration(string url, int client_id);
 	
+	void enable()  { _enabled = true; }
+	void disable() { _enabled = false; }
+
 	void bundle_begin();
 	void bundle_end();
 	
@@ -128,6 +132,8 @@ private:
 	lo_address  _address;
 
 	lo_bundle _transfer;
+
+	bool _enabled;
 };
 
 

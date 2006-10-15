@@ -214,12 +214,16 @@ void
 ControlPanel::value_changed(const Path& port_path, float val)
 {
 	if (m_callback_enabled) {
+		App::instance().engine()->disable_responses();
+
 		if (m_all_voices_radio->get_active()) {
 			App::instance().engine()->set_port_value(port_path, val);
 		} else {
 			int voice = m_voice_spinbutton->get_value_as_int();
 			App::instance().engine()->set_port_value(port_path, voice, val);
 		}
+
+		App::instance().engine()->set_next_response_id(rand()); // FIXME: inefficient, probably not good
 	}
 }
 

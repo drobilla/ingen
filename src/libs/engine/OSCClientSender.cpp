@@ -100,6 +100,9 @@ OSCClientSender::transfer_end()
 void
 OSCClientSender::response(int32_t id, bool success, string msg)
 {
+	if (!_enabled)
+		return;
+
 	if (lo_send(_address, "/om/response", "iis", id, success ? 1 : 0, msg.c_str()) < 0) {
 		cerr << "Unable to send response " << id << "! ("
 			<< lo_address_errstr(_address) << ")" << endl;
@@ -122,6 +125,9 @@ OSCClientSender::response(int32_t id, bool success, string msg)
 void
 OSCClientSender::error(string msg)
 {
+	if (!_enabled)
+		return;
+
 	lo_send(_address, "/om/error", "s", msg.c_str());
 }
 
@@ -143,6 +149,9 @@ OSCClientSender::error(string msg)
 void
 OSCClientSender::num_plugins(uint32_t num)
 {
+	if (!_enabled)
+		return;
+
 	lo_message m = lo_message_new();
 	lo_message_add_int32(m, num);
 	lo_send_message(_address, "/om/num_plugins", m);
@@ -222,6 +231,9 @@ void OSCClientSender::new_node(string   plugin_uri,
                                bool     is_polyphonic,
                                uint32_t num_ports)
 {
+	if (!_enabled)
+		return;
+
 	//cerr << "Sending node " << node_path << endl;
 
 	lo_send(_address, "/om/new_node", "ssii", plugin_uri.c_str(),
@@ -334,6 +346,9 @@ OSCClientSender::new_port(string path,
 	                string data_type,
 	                bool          is_output)
 {
+	if (!_enabled)
+		return;
+
 	//PortInfo* info = port->port_info();
 	
 	lo_send(_address, "/om/new_port", "ssi", path.c_str(), data_type.c_str(), is_output);
@@ -352,6 +367,9 @@ OSCClientSender::new_port(string path,
 void
 OSCClientSender::object_destroyed(string path)
 {
+	if (!_enabled)
+		return;
+
 	assert(path != "/");
 	
 	lo_send(_address, "/om/destroyed", "s", path.c_str());
@@ -365,6 +383,9 @@ OSCClientSender::object_destroyed(string path)
 void
 OSCClientSender::patch_cleared(string patch_path)
 {
+	if (!_enabled)
+		return;
+
 	lo_send(_address, "/om/patch_cleared", "s", patch_path.c_str());
 }
 
@@ -376,6 +397,9 @@ OSCClientSender::patch_cleared(string patch_path)
 void
 OSCClientSender::patch_enabled(string patch_path)
 {
+	if (!_enabled)
+		return;
+
 	lo_send(_address, "/om/patch_enabled", "s", patch_path.c_str());
 }
 
@@ -387,6 +411,9 @@ OSCClientSender::patch_enabled(string patch_path)
 void
 OSCClientSender::patch_disabled(string patch_path)
 {
+	if (!_enabled)
+		return;
+
 	lo_send(_address, "/om/patch_disabled", "s", patch_path.c_str());
 }
 
@@ -399,6 +426,9 @@ OSCClientSender::patch_disabled(string patch_path)
 void
 OSCClientSender::connection(string src_port_path, string dst_port_path)
 {
+	if (!_enabled)
+		return;
+
 	lo_send(_address, "/om/new_connection", "ss", src_port_path.c_str(), dst_port_path.c_str());
 }
 
@@ -411,6 +441,9 @@ OSCClientSender::connection(string src_port_path, string dst_port_path)
 void
 OSCClientSender::disconnection(string src_port_path, string dst_port_path)
 {
+	if (!_enabled)
+		return;
+
 	lo_send(_address, "/om/disconnection", "ss", src_port_path.c_str(), dst_port_path.c_str());
 }
 
@@ -424,6 +457,9 @@ OSCClientSender::disconnection(string src_port_path, string dst_port_path)
 void
 OSCClientSender::metadata_update(string path, string key, Atom value)
 {
+	if (!_enabled)
+		return;
+
 	lo_message m = lo_message_new();
 	lo_message_add_string(m, path.c_str());
 	lo_message_add_string(m, key.c_str());
@@ -443,6 +479,9 @@ OSCClientSender::metadata_update(string path, string key, Atom value)
 void
 OSCClientSender::control_change(string port_path, float value)
 {
+	if (!_enabled)
+		return;
+
 	lo_send(_address, "/om/control_change", "sf", port_path.c_str(), value);
 }
 
@@ -456,6 +495,9 @@ OSCClientSender::control_change(string port_path, float value)
 void
 OSCClientSender::new_plugin(string uri, string name)
 {
+	if (!_enabled)
+		return;
+
 	lo_message m = lo_message_new();
 	lo_message_add_string(m, uri.c_str());
 	lo_message_add_string(m, name.c_str());
@@ -475,6 +517,9 @@ OSCClientSender::new_plugin(string uri, string name)
 void
 OSCClientSender::new_patch(string path, uint32_t poly)
 {
+	if (!_enabled)
+		return;
+
 	lo_send(_address, "/om/new_patch", "si", path.c_str(), poly);
 	
 	/*
@@ -498,6 +543,9 @@ OSCClientSender::new_patch(string path, uint32_t poly)
 void
 OSCClientSender::object_renamed(string old_path, string new_path)
 {
+	if (!_enabled)
+		return;
+
 	lo_send(_address, "/om/object_renamed", "ss", old_path.c_str(), new_path.c_str());
 }
 
@@ -507,6 +555,9 @@ OSCClientSender::object_renamed(string old_path, string new_path)
 void
 OSCClientSender::program_add(string node_path, uint32_t bank, uint32_t program, string name)
 {
+	if (!_enabled)
+		return;
+
 	lo_send(_address, "/om/program_add", "siis", 
 		node_path.c_str(), bank, program, name.c_str());
 }
@@ -515,6 +566,9 @@ OSCClientSender::program_add(string node_path, uint32_t bank, uint32_t program, 
 void
 OSCClientSender::program_remove(string node_path, uint32_t bank, uint32_t program)
 {
+	if (!_enabled)
+		return;
+
 	lo_send(_address, "/om/program_remove", "sii", 
 		node_path.c_str(), bank, program);
 }
