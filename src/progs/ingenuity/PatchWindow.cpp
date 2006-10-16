@@ -113,10 +113,8 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 	m_menu_view_patch_tree_window->signal_activate().connect(
 		sigc::mem_fun<void>(App::instance().patch_tree(), &PatchTreeWindow::present));
 
-	// Temporary workaround for Gtkmm 2.4 (no AboutDialog)
-	if (App::instance().about_dialog() != NULL) 
-		m_menu_help_about->signal_activate().connect(
-			sigc::mem_fun<void>(App::instance().about_dialog(), &Gtk::Dialog::present));
+	m_menu_help_about->signal_activate().connect(
+		sigc::mem_fun<void>(App::instance().about_dialog(), &Gtk::Dialog::present));
 	
 	m_breadcrumb_box = new BreadCrumbBox();
 	m_breadcrumb_box->signal_patch_selected.connect(sigc::mem_fun(this, &PatchWindow::set_patch_from_path));
