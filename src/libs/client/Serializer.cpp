@@ -76,7 +76,7 @@ Serializer::start_to_filename(const string& filename) throw (std::logic_error)
 		throw std::logic_error("start_to_string called with serialization in progress");
 
 	raptor_init();
-	_serializer = raptor_new_serializer("rdfxml-abbrev");
+	_serializer = raptor_new_serializer("rdfxml");//-abbrev");
 	setup_prefixes();
 	raptor_serialize_start_to_filename(_serializer, filename.c_str());
 }
@@ -96,7 +96,7 @@ Serializer::start_to_string() throw (std::logic_error)
 		throw std::logic_error("start_to_string called with serialization in progress");
 
 	raptor_init();
-	_serializer = raptor_new_serializer("rdfxml-abbrev");
+	_serializer = raptor_new_serializer("rdfxml");//-abbrev");
 	setup_prefixes();
 	raptor_serialize_start_to_string(_serializer,
 	                                 NULL /*base_uri*/,
@@ -271,8 +271,9 @@ Serializer::serialize_resource(raptor_serializer* rdf
 #endif
 
 void
-Serializer::serialize_atom(
-		const string& subject_uri, const string& predicate_uri, const Atom& atom)
+Serializer::serialize_atom(const string& subject_uri,
+                           const string& predicate_uri,
+                           const Atom&   atom)
 {
 	assert(_serializer);
 
@@ -360,8 +361,7 @@ Serializer::serialize_patch(SharedPtr<PatchModel> patch)
 
 
 void
-Serializer::serialize_node(
-		SharedPtr<NodeModel> node, const string ns_prefix)
+Serializer::serialize_node(SharedPtr<NodeModel> node, const string ns_prefix)
 {
 	assert(_serializer);
 
@@ -392,7 +392,10 @@ Serializer::serialize_node(
 	}
 }
 
-
+/** Writes a port subject with various information only if there are some
+ * predicate/object pairs to go with it (eg if the port has metadata, or a value, or..).
+ * Audio output ports with no metadata will not be written, for example.
+ */
 void
 Serializer::serialize_port(SharedPtr<PortModel> port, const string ns_prefix)
 {
@@ -400,18 +403,22 @@ Serializer::serialize_port(SharedPtr<PortModel> port, const string ns_prefix)
 
 	const string port_uri_ref = ns_prefix + port->path().name();
 
-	serialize_resource(
-		port_uri_ref.c_str(),
-		NS_RDF("type"),
-		NS_INGEN("Port"));
-	
-	for (MetadataMap::const_iterator m = port->metadata().begin(); m != port->metadata().end(); ++m) {
-		if (expand_uri(m->first) != "") {
-			serialize_atom(
+	if (port->metadata().size() > 0) {
+
+		serialize_resource(
 				port_uri_ref.c_str(),
-				expand_uri(m->first).c_str(),
-				m->second);
+				NS_RDF("type"),
+				NS_INGEN("Port"));
+
+		for (MetadataMap::const_iterator m = port->metadata().begin(); m != port->metadata().end(); ++m) {
+			if (expand_uri(m->first) != "") {
+				serialize_atom(
+						port_uri_ref.c_str(),
+						expand_uri(m->first).c_str(),
+						m->second);
+			}
 		}
+
 	}
 }
 
@@ -421,17 +428,15 @@ Serializer::serialize_connection(SharedPtr<ConnectionModel> connection) throw (s
 {
 	assert(_serializer);
 	
+	const string literal_id = connection->src_port_path() + "--" + connection->dst_port_path();
+	cerr << "Serializing " << literal_id << endl;
+
 	string ns_prefix = "";
 
 	// FIXME FIXME FIXME: strip ":" and make sure ID is a valid XMLID!
 	
 	raptor_identifier* c = raptor_new_identifier(RAPTOR_IDENTIFIER_TYPE_ANONYMOUS,
-		NULL, RAPTOR_URI_SOURCE_BLANK_ID,
-		(unsigned char*)((
-			connection->src_port_path().parent().name() +"."+ connection->src_port_path().name()
-		  + connection->dst_port_path().parent().name() +"."+ connection->dst_port_path().name()
-		).c_str()),
-		NULL, NULL, NULL);
+		NULL, RAPTOR_URI_SOURCE_BLANK_ID, NULL,/*(const unsigned char*)literal_id.c_str(),*/ NULL, NULL, NULL);
 
 	const string src_port_rel_path = connection->src_port_path().substr(connection->patch_path().length());
 	const string dst_port_rel_path = connection->dst_port_path().substr(connection->patch_path().length());
