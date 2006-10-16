@@ -39,7 +39,7 @@ static const int MAX_MIDI_EVENT_SIZE = 3;
  *
  * \ingroup engine
  */
-class AlsaMidiPort : boost::noncopyable, DriverPort, ListNode<AlsaMidiPort*>
+class AlsaMidiPort : DriverPort, ListNode<AlsaMidiPort*>
 {
 public:
 	AlsaMidiPort(AlsaMidiDriver* driver, DuplexPort<MidiMessage>* port);
@@ -72,7 +72,7 @@ private:
  *
  * \ingroup engine
  */
-class AlsaMidiDriver : boost::noncopyable, MidiDriver
+class AlsaMidiDriver : MidiDriver
 {
 public:
 	AlsaMidiDriver(AudioDriver* audio_driver);
