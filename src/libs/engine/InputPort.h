@@ -64,10 +64,6 @@ public:
 	bool is_output() const { return false; }
 	
 private:
-	// Prevent copies (Undefined)
-	InputPort<T>(const InputPort<T>& copy);
-	InputPort<T>& operator=(const InputPort<T>&);
-
 	void update_buffers();
 
 	List<TypedConnection<T>*> m_connections;

@@ -56,10 +56,6 @@ public:
 	inline Buffer<T>* buffer(size_t voice) const;
 	
 private:
-	// Disallow copies (undefined)
-	TypedConnection(const TypedConnection& copy);
-	TypedConnection& operator=(const TypedConnection&);
-
 	Buffer<T>* m_local_buffer;  ///< Only used for poly->mono connections
 	bool       m_must_mix;
 	size_t     m_buffer_size;

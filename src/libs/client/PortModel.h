@@ -89,13 +89,8 @@ private:
 	void add_child(SharedPtr<ObjectModel> c)    { throw; }
 	void remove_child(SharedPtr<ObjectModel> c) { throw; }
 	
-	// Prevent copies (undefined)
-	PortModel(const PortModel& copy);
-	PortModel& operator=(const PortModel& copy);
-	
 	void connected_to(SharedPtr<PortModel> p)      { ++m_connections; connection_sig.emit(p); }
 	void disconnected_from(SharedPtr<PortModel> p) { --m_connections; disconnection_sig.emit(p); }
-	
 	
 	Type      m_type;
 	Direction m_direction;

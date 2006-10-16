@@ -52,10 +52,6 @@ public:
 	virtual bool is_output() const { return _is_output; }
 
 protected:
-	// Prevent copies (undefined)
-	DuplexPort(const DuplexPort<T>& copy);
-	DuplexPort& operator=(const Port&);
-
 	bool _is_output;
 };
 

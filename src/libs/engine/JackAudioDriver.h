@@ -45,7 +45,7 @@ public:
 	
 	void add_to_driver();
 	void remove_from_driver();
-	void set_name(const string& name) { jack_port_set_name(_jack_port, name.c_str()); };
+	void set_name(const std::string& name) { jack_port_set_name(_jack_port, name.c_str()); };
 	
 	void prepare_buffer(jack_nframes_t nframes);
 
@@ -53,10 +53,6 @@ public:
 	DuplexPort<Sample>*   patch_port() const { return _patch_port; }
 
 private:
-	// Prevent copies (undefined)
-	JackAudioPort(const JackAudioPort&);
-	JackAudioPort& operator=(const JackAudioPort&);
-	
 	JackAudioDriver*      _driver;
 	jack_port_t*          _jack_port;
 	jack_sample_t*        _jack_buffer; ///< Cached for output ports
@@ -104,10 +100,6 @@ public:
 	inline SampleCount frame_time() const { return jack_frame_time(_client); }
 
 private:
-	// Prevent copies (undefined)
-	JackAudioDriver(const JackAudioDriver&);
-	JackAudioDriver& operator=(const JackAudioDriver&);
-	
 	friend class JackAudioPort;
 	
 	// Functions for JackAudioPort

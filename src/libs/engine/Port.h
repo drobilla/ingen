@@ -67,10 +67,6 @@ public:
 protected:
 	Port(Node* const node, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size);
 	
-	// Prevent copies (undefined)
-	Port(const Port&);
-	Port& operator=(const Port&);
-
 	size_t    _index;
 	size_t    _poly;
 	DataType  _type;

@@ -17,21 +17,18 @@
 #ifndef MAIDOBJECT_H
 #define MAIDOBJECT_H
 
+#include <boost/utility.hpp>
 	
+
 /** An object that can be passed to the maid for deletion.
  *
  * \ingroup engine
  */
-class MaidObject
+class MaidObject : boost::noncopyable
 {
 public:
 	MaidObject()          {}
 	virtual ~MaidObject() {}
-
-private:
-	// Prevent copies
-	MaidObject(const MaidObject&);
-	MaidObject& operator=(const MaidObject&);
 };
 
 

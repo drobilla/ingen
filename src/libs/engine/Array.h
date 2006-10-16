@@ -96,10 +96,6 @@ public:
 	inline T& at(size_t i) const { assert(i < m_size); return m_elems[i]; }
 
 private:
-	// Disallow copies (undefined)
-	Array(const Array& copy);
-	Array& operator=(const Array& copy);
-
 	size_t m_size;
 	size_t m_top; // points to empty element above "top" element
 	T*     m_elems;

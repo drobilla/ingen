@@ -59,10 +59,6 @@ public:
 protected:
 	TypedPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size);
 	
-	// Prevent copies (undefined)
-	TypedPort(const TypedPort<T>& copy);
-	TypedPort& operator=(const Port&);
-
 	void allocate_buffers();
 
 	bool m_fixed_buffers;

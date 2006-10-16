@@ -65,10 +65,6 @@ public:
 	void plugin(const Plugin* const pi) { _plugin = pi; }
 
 private:
-	// Prevent copies (undefined)
-	DSSINode(const DSSINode& copy);
-	DSSINode& operator=(const DSSINode& copy);
-	
 	bool has_midi_input() const;
 	
 	// DSSI GUI messages

@@ -56,10 +56,6 @@ public:
 protected:
 	Plugin* plugin() const { return const_cast<Plugin*>(_plugin); }
 
-	// Disallow copies (undefined)
-	InternalNode(const InternalNode&);
-	InternalNode& operator=(const InternalNode&);
-	
 	bool   _is_added;
 };
 

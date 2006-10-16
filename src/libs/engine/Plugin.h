@@ -20,6 +20,7 @@
 #include "config.h"
 
 #include <cstdlib>
+#include <boost/utility.hpp>
 #include <dlfcn.h>
 #include <string>
 #include <iostream>
@@ -45,7 +46,7 @@ class Node;
  * FIXME: This whole thing is a filthy mess and needs a rewrite.  Probably
  * with derived classes for each plugin type.
  */
-class Plugin
+class Plugin : boost::noncopyable
 {
 public:
 	enum Type { LV2, LADSPA, DSSI, Internal, Patch };
@@ -130,10 +131,6 @@ public:
 	Node* instantiate(const string& name, size_t poly, Ingen::Patch* parent, SampleRate srate, size_t buffer_size);
 
 private:
-	// Disallow copies (undefined)
-	Plugin(const Plugin&);
-	Plugin& operator=(const Plugin&);
-	
 	Type   _type;
 	string _uri;        ///< LV2 only
 	string _lib_path;   ///< LADSPA/DSSI only

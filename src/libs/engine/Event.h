@@ -64,10 +64,6 @@ public:
 	inline SampleCount time() { return _time; }
 		
 protected:
-	// Prevent copies
-	Event(const Event&);
-	Event& operator=(const Event&);
-
 	Event(Engine& engine, SharedPtr<Responder> responder, FrameTime time)
 	: _engine(engine)
 	, _responder(responder)

@@ -52,11 +52,6 @@ public:
 
 	bool is_input()  const { return false; }
 	bool is_output() const { return true; }
-
-private:
-	// Prevent copies (undefined)
-	OutputPort(const OutputPort& copy);
-	OutputPort<T>& operator=(const OutputPort<T>&);
 };
 
 

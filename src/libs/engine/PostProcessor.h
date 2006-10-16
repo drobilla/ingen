@@ -46,10 +46,6 @@ public:
 	inline void push(Event* const ev) { _events.push(ev); }
 
 private:
-	// Prevent copies
-	PostProcessor(const PostProcessor&);
-	PostProcessor& operator=(const PostProcessor&);
-
 	Maid&         _maid;
 	Queue<Event*> _events;
 	virtual void  _whipped();

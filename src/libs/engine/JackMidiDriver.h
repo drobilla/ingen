@@ -46,15 +46,11 @@ public:
 	
 	void add_to_driver();
 	void remove_from_driver();
-	void set_name(const string& name) { jack_port_set_name(m_jack_port, name.c_str()); };
+	void set_name(const std::string& name) { jack_port_set_name(m_jack_port, name.c_str()); };
 	
 	DuplexPort<MidiMessage>* patch_port() const { return m_patch_port; }
 
 private:
-	// Prevent copies (undefined)
-	JackMidiPort(const JackMidiPort&);
-	JackMidiPort& operator=(const JackMidiPort&);
- 
 	JackMidiDriver*          m_driver;
 	jack_port_t*             m_jack_port;
 	DuplexPort<MidiMessage>* m_patch_port;
@@ -90,10 +86,6 @@ public:
 	jack_client_t* jack_client()        { return m_client; }
 
 private:
-	// Prevent copies (undefined)
-	JackMidiDriver(const JackMidiDriver&);
-	JackMidiDriver& operator=(const JackMidiDriver&);
-	
 	List<JackMidiPort*> m_in_ports;
 	List<JackMidiPort*> m_out_ports;
 	

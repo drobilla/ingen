@@ -49,10 +49,6 @@ public:
 	void plugin(const Plugin* const pi) { _plugin = pi; }
 	
 protected:
-	// Prevent copies (undefined)
-	LADSPANode(const LADSPANode& copy);
-	LADSPANode& operator=(const LADSPANode&);
-
 	//void get_port_vals(ulong port_index, PortInfo* info);
 	void get_port_limits(unsigned long port_index, Sample& default_value, Sample& lower_bound, Sample& upper_bound);
 	

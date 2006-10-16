@@ -69,10 +69,6 @@ public:
 	string default_node_name() { return Path::nameify(m_name); }
 
 private:
-	// Prevent copies
-	PluginModel(const PluginModel& copy);
-	PluginModel& operator=(const PluginModel& copy);
-	
 	Type   m_type;
 	string m_uri;
 	string m_name;

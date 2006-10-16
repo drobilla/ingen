@@ -87,10 +87,6 @@ public:
 	Patch* parent_patch() const { return (Patch*)_parent; }
 	
 protected:	
-	// Disallow copies (undefined)
-	NodeBase(const NodeBase&);
-	NodeBase& operator=(const NodeBase&);
-	
 	ObjectStore* _store;
 
 	const Plugin* _plugin;

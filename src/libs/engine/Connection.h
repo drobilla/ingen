@@ -18,6 +18,7 @@
 #define CONNECTION_H
 
 #include <cstdlib>
+#include <boost/utility.hpp>
 #include "MaidObject.h"
 #include "types.h"
 
@@ -49,9 +50,6 @@ public:
 	void pending_disconnection(bool b) { m_pending_disconnection = b; }
 	
 protected:
-	// Disallow copies (undefined)
-	Connection(const Connection&);
-
 	Connection(Port* const src_port, Port* const dst_port);
 	
 	Port* const m_src_port;

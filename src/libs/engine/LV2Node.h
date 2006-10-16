@@ -52,10 +52,6 @@ public:
 	void set_port_buffer(size_t voice, size_t port_num, void* buf);
 
 protected:
-	// Prevent copies (undefined)
-	LV2Node(const LV2Node& copy);
-	LV2Node& operator=(const LV2Node&);
-
 	//void get_port_vals(ulong port_index, PortInfo* info);
 	
 	const SLV2Plugin* _lv2_plugin;

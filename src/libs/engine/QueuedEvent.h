@@ -69,10 +69,6 @@ public:
 	bool is_prepared() { return _pre_processed; }
 	
 protected:
-	// Prevent copies
-	QueuedEvent(const QueuedEvent& copy);
-	QueuedEvent& operator=(const QueuedEvent&);
-	
 	QueuedEvent(Engine&               engine,
 	            SharedPtr<Responder> responder,
 	            FrameTime             time, 

@@ -87,10 +87,6 @@ private:
 	void rename_node(const Path& old_path, const Path& new_path);
 	void rename_node_port(const Path& old_path, const Path& new_path);
 
-	// Prevent copies (undefined)
-	PatchModel(const PatchModel& copy);
-	PatchModel& operator=(const PatchModel& copy);
-	
 	NodeModelMap   m_nodes;
 	ConnectionList m_connections;
 	string         m_filename;

@@ -17,10 +17,12 @@
 #ifndef ALSAMIDIDRIVER_H
 #define ALSAMIDIDRIVER_H
 
+#include <boost/utility.hpp>
 #include <alsa/asoundlib.h>
 #include "List.h"
 #include "raul/Queue.h"
 #include "MidiDriver.h"
+
 
 namespace Ingen {
 
@@ -37,7 +39,7 @@ static const int MAX_MIDI_EVENT_SIZE = 3;
  *
  * \ingroup engine
  */
-class AlsaMidiPort : public DriverPort, public ListNode<AlsaMidiPort*>
+class AlsaMidiPort : boost::noncopyable, DriverPort, ListNode<AlsaMidiPort*>
 {
 public:
 	AlsaMidiPort(AlsaMidiDriver* driver, DuplexPort<MidiMessage>* port);
@@ -55,10 +57,6 @@ public:
 	DuplexPort<MidiMessage>* patch_port() const { return _patch_port; }
 
 private:
-	// Prevent copies (undefined)
-	AlsaMidiPort(const AlsaMidiPort&);
-	AlsaMidiPort& operator=(const AlsaMidiPort&);
- 
 	AlsaMidiDriver*          _driver;
 	DuplexPort<MidiMessage>* _patch_port;
 	int                      _port_id;
@@ -74,7 +72,7 @@ private:
  *
  * \ingroup engine
  */
-class AlsaMidiDriver : public MidiDriver
+class AlsaMidiDriver : boost::noncopyable, MidiDriver
 {
 public:
 	AlsaMidiDriver(AudioDriver* audio_driver);
@@ -96,11 +94,6 @@ public:
 	snd_midi_event_t* event_coder() const { return _event_coder; }
 
 private:
-
-	// Prevent copies (undefined)
-	AlsaMidiDriver(const AlsaMidiDriver&);
-	AlsaMidiDriver& operator=(const AlsaMidiDriver&);
-	
 	List<AlsaMidiPort*> _in_ports;
 	List<AlsaMidiPort*> _out_ports;
 	

@@ -18,6 +18,7 @@
 #define OSCCLIENTRECEIVER_H
 
 #include <cstdlib>
+#include <boost/utility.hpp>
 #include <lo/lo.h>
 #include "interface/ClientInterface.h"
 
@@ -54,7 +55,7 @@ inline static int name##_cb(LO_HANDLER_ARGS, void* osc_listener)\
  *
  * \ingroup IngenClient
  */
-class OSCClientReceiver : virtual public Ingen::Shared::ClientInterface
+class OSCClientReceiver : boost::noncopyable, virtual public Ingen::Shared::ClientInterface
 {
 public:
 	OSCClientReceiver(int listen_port);
@@ -71,10 +72,6 @@ public:
 	string listen_url()  { return lo_server_thread_get_url(_st); }
 	
 private:
-	// Prevent copies
-	OSCClientReceiver(const OSCClientReceiver& copy);          
-	OSCClientReceiver& operator=(const OSCClientReceiver& copy);
-	
 	void setup_callbacks();
 	
 	static void error_cb(int num, const char* msg, const char* path);

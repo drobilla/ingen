@@ -98,10 +98,6 @@ public:
 	size_t internal_poly() const { return _internal_poly; }
 
 private:
-	// Prevent copies (undefined)
-	Patch(const Patch&);
-	Patch& operator=(const Patch&);
-	
 	inline void   build_process_order_recursive(Node* n, Array<Node*>* order) const;
 
 	size_t             _internal_poly;

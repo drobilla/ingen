@@ -43,10 +43,6 @@ public:
 	const T&  elem() const       { return m_elem; }
 	
 private:
-	// Prevent copies (undefined)
-	ListNode(const ListNode& copy);
-	ListNode& operator=(const ListNode& copy);
-
 	T         m_elem;
 	ListNode* m_next;
 	ListNode* m_prev;
@@ -132,10 +128,6 @@ public:
 	//const_iterator end()   const;
 
 private:
-	// Prevent copies (undefined)
-	List(const List& copy);
-	List& operator=(const List& copy);
-
 	ListNode<T>*   m_head;
 	ListNode<T>*   m_tail;
 	size_t         m_size;

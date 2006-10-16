@@ -18,6 +18,7 @@
 #define ENGINE_H
 
 #include <cassert>
+#include <boost/utility.hpp>
 
 template<typename T> class Queue;
 class Maid;
@@ -47,7 +48,7 @@ template <typename T> class Driver;
  *
  * \ingroup engine
  */
-class Engine
+class Engine : boost::noncopyable
 {
 public:
 	Engine(AudioDriver* audio_driver = 0);
@@ -81,10 +82,6 @@ public:
 	template<typename T> Driver<T>* driver();
 	
 private:
-	// Prevent copies (undefined)
-	Engine(const Engine&);
-	Engine& operator=(const Engine&);
-
 	EventSource*       m_event_source;
 	AudioDriver*       m_audio_driver;
 	MidiDriver*        m_midi_driver;

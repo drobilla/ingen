@@ -18,9 +18,10 @@
 #ifndef PLUGINLIBRARY_H
 #define PLUGINLIBRARY_H
 
-#include <dlfcn.h>
-#include <string>
 #include <iostream>
+#include <string>
+#include <boost/utility.hpp>
+#include <dlfcn.h>
 using std::string;
 using std::cerr; using std::endl;
 
@@ -33,7 +34,7 @@ namespace Ingen {
  * In the NodeFactory, this represents one loaded shared library instance,
  * which is what handle() returns.
  */
-class PluginLibrary
+class PluginLibrary : boost::noncopyable
 {
 public:
 	/** Construct a new PluginLibrary.
@@ -85,10 +86,6 @@ public:
 	void* handle() const { return m_handle; }
 
 private:
-	// Disallow copies (undefined)
-	PluginLibrary(const PluginLibrary&);
-	PluginLibrary& operator=(const PluginLibrary&);
-	
 	string m_path;
 	void*  m_handle;
 };

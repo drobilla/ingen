@@ -103,10 +103,6 @@ protected:
 	string       _name;
 
 private:	
-	// Prevent copies (undefined)
-	GraphObject(const GraphObject&);
-	GraphObject& operator=(const GraphObject& copy);
-
 	MetadataMap _metadata;
 };
 

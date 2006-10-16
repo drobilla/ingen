@@ -67,10 +67,6 @@ protected:
 	virtual void _whipped(); ///< Prepare 1 event
 
 private:
-	// Prevent copies (undefined)
-	QueuedEventSource(const QueuedEventSource&);
-	QueuedEventSource& operator=(const QueuedEventSource&);
-	
 	// Note that it's crucially important which functions access which of these
 	// variables, to maintain threadsafeness.
 	

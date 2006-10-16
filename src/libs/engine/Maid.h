@@ -17,8 +17,9 @@
 #ifndef MAID_H
 #define MAID_H
 
-#include "MaidObject.h"
+#include <boost/utility.hpp>
 #include "raul/Queue.h"
+#include "MaidObject.h"
 
 
 /** Explicitly driven garbage collector.
@@ -32,7 +33,7 @@
  *
  * \ingroup engine
  */
-class Maid
+class Maid : boost::noncopyable
 {
 public:
 	Maid(size_t size);
@@ -43,10 +44,6 @@ public:
 	void cleanup();
 	
 private:
-	// Prevent copies
-	Maid(const Maid&);
-	Maid& operator=(const Maid&);
-	
 	Queue<MaidObject*> m_objects;
 };
 

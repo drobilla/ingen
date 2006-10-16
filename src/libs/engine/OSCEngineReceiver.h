@@ -67,10 +67,6 @@ public:
 	void deactivate();
 
 private:
-	// Prevent copies (undefined)
-	OSCEngineReceiver(const OSCEngineReceiver&);
-	OSCEngineReceiver& operator=(const OSCEngineReceiver&);
-
 	virtual void _run();
 
 	static void error_cb(int num, const char* msg, const char* path);	

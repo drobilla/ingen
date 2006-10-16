@@ -49,10 +49,6 @@ public:
 	void learn(MidiLearnResponseEvent* ev) { _learning = true; _learn_event = ev; }
 
 private:
-	// Disallow copies (undefined)
-	MidiControlNode(const MidiControlNode& copy);
-	MidiControlNode& operator=(const MidiControlNode&);
-	
 	bool _learning;
 
 	InputPort<MidiMessage>* _midi_in_port;

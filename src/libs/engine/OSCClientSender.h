@@ -124,10 +124,6 @@ public:
 	                            uint32_t program);
 
 private:
-	// Prevent copies (undefined)
-	OSCClientSender(const OSCClientSender&);
-	OSCClientSender& operator=(const OSCClientSender&);
-	
 	string      _url;
 	lo_address  _address;
 

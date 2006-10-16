@@ -23,6 +23,7 @@
 #include <string>
 #include <algorithm>
 #include <cassert>
+#include <boost/utility.hpp>
 #include <sigc++/sigc++.h>
 #include "raul/Atom.h"
 #include "raul/Path.h"
@@ -47,7 +48,7 @@ typedef map<string, Atom> MetadataMap;
  *
  * \ingroup IngenClient
  */
-class ObjectModel
+class ObjectModel : boost::noncopyable
 {
 public:
 	virtual ~ObjectModel();
@@ -84,11 +85,6 @@ protected:
 	SharedPtr<ObjectModel> _parent;
 	
 	MetadataMap _metadata;
-
-private:
-	// Prevent copies (undefined)
-	ObjectModel(const ObjectModel& copy);
-	ObjectModel& operator=(const ObjectModel& copy);
 };
 
 

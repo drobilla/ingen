@@ -83,13 +83,8 @@ protected:
 	bool                        m_polyphonic;
 	PortModelList               m_ports;      ///< List of ports (not a map to preserve order)
 	string                      m_plugin_uri; ///< Plugin URI (if PluginModel is unknown)
-	SharedPtr<PluginModel>     m_plugin;     ///< The plugin this node is an instance of
+	SharedPtr<PluginModel>      m_plugin;     ///< The plugin this node is an instance of
 	map<int, map<int, string> > m_banks;      ///< DSSI banks
-
-private:
-	// Prevent copies (undefined)
-	NodeModel(const NodeModel& copy);
-	NodeModel& operator=(const NodeModel& copy);	
 };
 
 

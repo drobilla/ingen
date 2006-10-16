@@ -19,6 +19,7 @@
 
 #include <string>
 #include <cassert>
+#include <boost/utility.hpp>
 #include "MaidObject.h"
 using std::string;
 
@@ -65,10 +66,6 @@ public:
 	friend class Tree<T>;
 	
 protected:
-	// Prevent copies (undefined)
-	TreeNode(const TreeNode&);
-	TreeNode& operator=(const TreeNode&);
-	
 	TreeNode<T>* m_parent;
 	TreeNode<T>* m_left_child;
 	TreeNode<T>* m_right_child;
@@ -92,7 +89,7 @@ protected:
  * of Tree<T> do not use them.
  */
 template <typename T>
-class Tree
+class Tree : boost::noncopyable
 {
 public:
 	Tree() : m_root(0), m_size(0) {}
@@ -132,10 +129,6 @@ public:
 	iterator end() const;
 
 private:
-	// Prevent copies (undefined)
-	Tree<T>(const Tree<T>&);
-	Tree<T>& operator=(const Tree<T>&);
-	
 	void m_set_all_traversed_recursive(TreeNode<T>* root, bool b);
 	
 	TreeNode<T>* m_find_smallest(TreeNode<T>* root);

@@ -18,7 +18,7 @@
 #define DRIVER_H
 
 #include <string>
-using std::string;
+#include <boost/utility.hpp>
 
 namespace Ingen {
 
@@ -33,7 +33,7 @@ template <typename T> class DuplexPort;
  *
  * \ingroup engine
  */
-class DriverPort {
+class DriverPort : boost::noncopyable {
 public:
 	virtual ~DriverPort() {}
 
@@ -44,7 +44,7 @@ public:
 	virtual void remove_from_driver() = 0;
 
 	/** Set the name of the system port */
-	virtual void set_name(const string& name) = 0;
+	virtual void set_name(const std::string& name) = 0;
 	
 protected:
 	DriverPort() {}
@@ -63,7 +63,7 @@ protected:
  * \ingroup engine
  */
 template <typename T>
-class Driver
+class Driver : boost::noncopyable
 {
 public:
 	virtual ~Driver() {}
