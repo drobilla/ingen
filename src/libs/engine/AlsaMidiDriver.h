@@ -39,7 +39,7 @@ static const int MAX_MIDI_EVENT_SIZE = 3;
  *
  * \ingroup engine
  */
-class AlsaMidiPort : DriverPort, ListNode<AlsaMidiPort*>
+class AlsaMidiPort : public DriverPort, public ListNode<AlsaMidiPort*>
 {
 public:
 	AlsaMidiPort(AlsaMidiDriver* driver, DuplexPort<MidiMessage>* port);
@@ -72,7 +72,7 @@ private:
  *
  * \ingroup engine
  */
-class AlsaMidiDriver : MidiDriver
+class AlsaMidiDriver : public MidiDriver
 {
 public:
 	AlsaMidiDriver(AudioDriver* audio_driver);
