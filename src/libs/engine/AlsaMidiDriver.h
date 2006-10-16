@@ -51,7 +51,7 @@ public:
 	
 	void add_to_driver();
 	void remove_from_driver();
-	void set_name(const string& name);
+	void set_name(const std::string& name);
 	
 	int                      port_id()    const { return _port_id; }
 	DuplexPort<MidiMessage>* patch_port() const { return _patch_port; }
