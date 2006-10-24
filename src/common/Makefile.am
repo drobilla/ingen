@@ -1,1 +1,1 @@
-DIST_SUBDIRS = interface
+DIST_SUBDIRS = interface lv2ext
