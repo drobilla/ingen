@@ -136,20 +136,23 @@ LoadSubpatchWindow::ok_clicked()
 {
 	assert(m_patch);
 	
-	const string filename = get_filename();
-
-	string name = "";
-	int    poly = 1;
+	// If unset load_patch will load values
+	optional<const string&> name;
+	optional<size_t> poly;
+	string name_str = "";
 	
-	if (m_name_from_user_radio->get_active())
-		name = m_name_entry->get_text();
+	if (m_name_from_user_radio->get_active()) {
+		name_str = m_name_entry->get_text();
+		name = name_str;
+	}
 
 	if (m_poly_from_user_radio->get_active())
 		poly = m_poly_spinbutton->get_value_as_int();
 	else if (m_poly_from_parent_radio->get_active())
 		poly = m_patch->poly();
 
-	App::instance().loader()->load_patch(filename, m_patch->path(), name, poly, m_initial_data);
+	App::instance().loader()->load_patch(false, get_filename(), "/",
+		m_initial_data, m_patch->parent()->path(), name, poly);
 
 	hide();
 }			

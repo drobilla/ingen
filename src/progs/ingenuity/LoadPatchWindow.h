@@ -31,9 +31,9 @@ namespace Ingenuity {
 
 /** 'Load Patch' window.
  *
- * Loaded by glade as a derived object.  Used for both "Load" and "Load Into"
- * operations (the radio button state should be changed with the provided
- * methods prior to presenting this window).
+ * Loaded by glade as a derived object.  Used for both "Import" and "Load"
+ * (e.g. Replace, clear-then-import) operations (the radio button state
+ * should be changed with the provided methods before presenting).
  *
  * This is not for loading subpatches.  See @a LoadSubpatchWindow for that.
  *

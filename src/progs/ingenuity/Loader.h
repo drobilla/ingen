@@ -20,6 +20,7 @@
 #include <string>
 #include <list>
 #include <cassert>
+#include <boost/optional/optional.hpp>
 #include "raul/Thread.h"
 #include "raul/Slave.h"
 #include "raul/Mutex.h"
@@ -28,6 +29,7 @@
 #include "ObjectModel.h"
 using std::string;
 using std::list;
+using boost::optional;
 
 namespace Ingen { namespace Client {
 	class Serializer;
@@ -57,15 +59,18 @@ public:
 
 	Serializer& serializer() const { return *_serializer; }
 
-	void load_patch(const string&      filename,
-	                const string&      parent_path,
-	                const string&      name,
-	                size_t             poly,
-	                const MetadataMap& initial_data,
-	                bool               merge = false);
+	// FIXME: there's a pattern here....
+	// (same core interface as Serializer)
+	
+	void load_patch(bool                    merge,
+	                const string&           data_base_uri,
+	                const Path&             data_path,
+	                MetadataMap             engine_data,
+	                optional<const Path&>   engine_parent = optional<const Path&>(),
+	                optional<const string&> engine_name = optional<const string&>(),
+	                optional<size_t>        engine_poly = optional<size_t>());
 	
 	void save_patch(SharedPtr<PatchModel> model, const string& filename, bool recursive);
-
 
 private:	
 

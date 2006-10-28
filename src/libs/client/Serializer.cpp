@@ -24,6 +24,7 @@
 #include <cassert>
 #include <cmath>
 #include <cstdlib> // atof
+#include <boost/optional/optional.hpp>
 #include <cstring>
 #include <raptor.h>
 #include "Serializer.h"
@@ -42,6 +43,7 @@
 
 using std::string; using std::vector; using std::pair;
 using std::cerr; using std::cout; using std::endl;
+using boost::optional;
 
 namespace Ingen {
 namespace Client {
@@ -453,39 +455,41 @@ Serializer::serialize_connection(SharedPtr<ConnectionModel> connection) throw (s
 }
 
 
-/** Load a patch in to the engine (and client) from a patch file.
+/** Load a patch into the engine (e.g. from a patch file).
  *
- * The name and poly from the passed PatchModel are used.  If the name is
- * the empty string, the name will be loaded from the file.  If the poly
- * is 0, it will be loaded from file.  Otherwise the given values will
- * be used.
+ * @param base_uri Base URI (e.g. URI of the file to load from).
  *
- * @param wait If true the patch will be checked for existence before
- * loading everything in to it (to prevent messing up existing patches
- * that exist at the path this one should load as).
- *
- * @param existing If true, the patch will be loaded into a currently
- * existing patch (ie a merging will take place).  Errors will result
- * if Nodes of conflicting names exist.
- *
- * @param parent_path Patch to load this patch as a child of (empty string to load
- * to the root patch)
- *
- * @param name Name of this patch (loaded/generated if the empty string)
- *
+ * @param data_path Path of the patch relative to base_uri
+ * (e.g. relative to file root patch).
+ * 
+ * @param engine_path Path in the engine for the newly created patch
+ * (i.e. 'destination' of the load).
+ * 
  * @param initial_data will be set last, so values passed there will override
- * any values loaded from the patch file.
+ * any values loaded from the patch file (or values in the existing patch).
  *
- * Returns the path of the newly created patch.
+ * @param merge If true, the loaded patch's contents will be loaded into a
+ * currently existing patch.  Errors may result if Nodes of conflicting names
+ * (etc) exist - the loaded patch will take precendence (ie overwriting
+ * existing values).  If false and the patch at @a load_path already exists,
+ * load is aborted and false is returned.
+ *
+ * @param poly Polyphony of new loaded patch if given, otherwise polyphony
+ * will be loaded (unless saved polyphony isn't found, in which case it's 1).
+ *
+ * Returns whether or not patch was loaded.
  */
-string
-Serializer::load_patch(const string& filename,
-	                   const string& parent_path,
-	                   const string& name,
-	                   size_t        poly,
-	                   MetadataMap   initial_data,
-	                   bool          existing)
+bool
+Serializer::load_patch(bool                    merge,
+                       const string&           data_base_uri,
+                       const Path&             data_path,
+                       MetadataMap             engine_data,
+                       optional<const Path&>   engine_parent,
+                       optional<const string&> engine_name,
+                       optional<size_t>        engine_poly)
+
 {
+	cerr << "LOAD: " << data_base_uri << ", " << data_path << ", " << engine_parent << endl;
 #if 0
 	cerr << "[Serializer] Loading patch " << filename << "" << endl;
 

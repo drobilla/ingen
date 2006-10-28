@@ -17,11 +17,14 @@
 #include "LoadPatchWindow.h"
 #include <sys/types.h>
 #include <dirent.h>
+#include <boost/optional/optional.hpp>
 #include "App.h"
 #include "Configuration.h"
 #include "PatchModel.h"
 #include "ModelEngineInterface.h"
 #include "Loader.h"
+
+using boost::optional;
 
 namespace Ingenuity {
 
@@ -108,9 +111,9 @@ LoadPatchWindow::poly_from_user_selected()
 void
 LoadPatchWindow::ok_clicked()
 {
-	// These values are interpreted by load_patch() as "not defined", ie load from file
-	string name = "";
-	int    poly = 0;
+	// If unset load_patch will load values
+	optional<const string&> name;
+	optional<size_t> poly;
 	
 	if (m_poly_from_user_radio->get_active())
 		poly = m_poly_spinbutton->get_value_as_int();
@@ -118,14 +121,8 @@ LoadPatchWindow::ok_clicked()
 	if (m_replace)
 		App::instance().engine()->clear_patch(m_patch->path());
 
-	cerr << "FIXME: load patch" << endl;
-	//SharedPtr<PatchModel> pm(new PatchModel(m_patch->path(), poly));
-	//pm->filename(get_filename());
-	//pm->set_metadata("filename", Atom(get_filename().c_str()));
-	// FIXME: necessary?
-	//pm->set_parent(m_patch->parent());
-	//App::instance().engine()->push_added_patch(pm);
-	//App::instance().loader()->load_patch(pm, true, true);
+	App::instance().loader()->load_patch(true, get_filename(), "/",
+		m_initial_data, m_patch->parent()->path(), name, poly);
 	
 	hide();
 }			

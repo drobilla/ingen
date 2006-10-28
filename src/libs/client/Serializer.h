@@ -21,14 +21,16 @@
 #include <utility>
 #include <string>
 #include <stdexcept>
-#include <raptor.h>
 #include <cassert>
+#include <boost/optional/optional.hpp>
+#include <raptor.h>
 #include "raul/SharedPtr.h"
 #include "raul/Path.h"
 #include "raul/Atom.h"
 #include "ObjectModel.h"
 
 using std::string;
+using boost::optional;
 
 namespace Ingen {
 namespace Client {
@@ -61,17 +63,19 @@ public:
 	
 	string find_file(const string& filename, const string& additional_path = "");
 	
-	string load_patch(const string& filename,
-	                  const string& parent_path,
-	                  const string& name,
-	                  size_t        poly,
-	                  MetadataMap   initial_data,
-	                  bool          existing = false);
+	bool load_patch(bool                    merge,
+	                const string&           data_base_uri,
+	                const Path&             data_path,
+	                MetadataMap             engine_data,
+	                optional<const Path&>   engine_parent = optional<const Path&>(),
+	                optional<const string&> engine_name = optional<const string&>(),
+	                optional<size_t>        engine_poly = optional<size_t>());
+
 	
 	void   start_to_filename(const string& filename)            throw (std::logic_error);
 	void   start_to_string()                                    throw (std::logic_error);
-	void   serialize(SharedPtr<ObjectModel> object)            throw (std::logic_error);
-	void   serialize_connection(SharedPtr<ConnectionModel> c)  throw (std::logic_error);
+	void   serialize(SharedPtr<ObjectModel> object)             throw (std::logic_error);
+	void   serialize_connection(SharedPtr<ConnectionModel> c)   throw (std::logic_error);
 	string finish()                                             throw (std::logic_error);
 
 private:

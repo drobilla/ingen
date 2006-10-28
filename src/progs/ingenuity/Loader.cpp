@@ -54,20 +54,21 @@ Loader::_whipped()
 	_mutex.unlock();
 }
 
-
 void
-Loader::load_patch(const string&      filename,
-	               const string&      parent_path,
-	               const string&      name,
-	               size_t             poly,
-                   const MetadataMap& initial_data,
-	               bool               existing)
+Loader::load_patch(bool                    merge,
+                   const string&           data_base_uri,
+                   const Path&             data_path,
+                   MetadataMap             engine_data,
+                   optional<const Path&>   engine_parent,
+                   optional<const string&> engine_name,
+                   optional<size_t>        engine_poly)
 {
 	_mutex.lock();
 
 	_events.push_back(sigc::hide_return(sigc::bind(
 		sigc::mem_fun(_serializer, &Serializer::load_patch),
-		filename, parent_path, name, poly, initial_data, existing)));
+		merge, data_base_uri, data_path,
+		engine_data, engine_parent, engine_name, engine_poly)));
 	
 	_mutex.unlock();
 
