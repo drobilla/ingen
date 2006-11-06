@@ -97,10 +97,9 @@ private:
 	                        const string& predicate_uri,
 	                        const string& object_uri);
 	
-
-    void serialize_resource(raptor_identifier* subject,
-	                        const string&      predicate_uri,
-	                        const string&      object_uri);
+    void serialize_resource_blank(const string& node_id,
+	                              const string& predicate_uri,
+	                              const string& object_uri);
 	
 	void serialize_atom(const string& subject_uri,
 	                    const string& predicate_uri,
