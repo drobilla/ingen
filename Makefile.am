@@ -1,8 +1,7 @@
 SUBDIRS = src patches
 
-doc: doc/Doxyfile src/engine/*.h src/engine/*.cpp \
-src/common/util/*.h \
+doc: doc/Doxyfile src/libs/engine/*.h src/libs/engine/*.cpp \
 src/common/interface/*.h \
-src/clients/*.h src/clients/*.cpp \
-src/clients/gtk/*.h src/clients/gtk/*.cpp
+src/libs/client/*.h src/libs/client/*.cpp \
+src/progs/ingenuity/*.h src/progs/ingenuity/*.cpp
 	doxygen doc/Doxyfile

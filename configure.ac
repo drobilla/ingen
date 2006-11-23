@@ -219,7 +219,8 @@ if test "$build_server" = "yes" -o "$monolothic_ingenuity"; then
 	AC_FUNC_CLOSEDIR_VOID
 	
 	# Check for Jack
-	PKG_CHECK_MODULES(JACK, jack >= 0.99.0)
+	# (102.20 = MIDI API changes)
+	PKG_CHECK_MODULES(JACK, jack >= 0.102.20)
 
 	# Check for Jack MIDI
 	if test "$build_jack_midi" = "yes"; then

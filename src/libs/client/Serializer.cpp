@@ -415,8 +415,8 @@ Serializer::serialize_connection(SharedPtr<ConnectionModel> connection) throw (s
 {
 	assert(_serializer);
 	
-	const string node_id = connection->src_port_path().parent().name() + connection->src_port_path().name()
-		+ connection->dst_port_path().parent().name() + connection->dst_port_path().name();
+	// (Double slash intentional)
+	const string node_id = connection->src_port_path() + "/" + connection->dst_port_path();
 
 	//raptor_identifier* c = raptor_new_identifier(RAPTOR_IDENTIFIER_TYPE_ANONYMOUS,
 	//	NULL, RAPTOR_URI_SOURCE_BLANK_ID, (const unsigned char*)"genid1", NULL, NULL, NULL);

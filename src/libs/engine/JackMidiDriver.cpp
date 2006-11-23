@@ -89,7 +89,7 @@ JackMidiPort::prepare_block(const SampleCount block_start, const SampleCount blo
 	
 	const SampleCount    nframes     = block_end - block_start;
 	void*                jack_buffer = jack_port_get_buffer(m_jack_port, nframes);
-	const jack_nframes_t event_count = jack_midi_port_get_info(jack_buffer, nframes)->event_count;
+	const jack_nframes_t event_count = jack_midi_get_event_count(jack_buffer, nframes);
 	
 	assert(event_count < m_patch_port->buffer_size());
 	
