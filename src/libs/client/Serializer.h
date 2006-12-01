@@ -97,13 +97,25 @@ private:
 	                        const string& predicate_uri,
 	                        const string& object_uri);
 	
-    void serialize_resource_blank(const string& node_id,
+    void serialize_resource_blank(const string& subject_node_id,
 	                              const string& predicate_uri,
 	                              const string& object_uri);
+    
+	void serialize_blank(const string& subject_uri,
+	                     const string& predicate_uri,
+	                     const string& object_node_id);
+	
+	void serialize_blank_blank(const string& subject_node_id,
+	                           const string& predicate_uri,
+	                           const string& object_node_id);
 	
 	void serialize_atom(const string& subject_uri,
 	                    const string& predicate_uri,
 	                    const Atom&   atom);
+	
+	void serialize_atom_blank(const string& subject_node_id,
+	                          const string& predicate_uri,
+	                          const Atom&   atom);
 
 	void   setup_prefixes();
 	string expand_uri(const string& uri);

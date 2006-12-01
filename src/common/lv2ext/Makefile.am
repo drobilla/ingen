@@ -1,1 +1,1 @@
-DIST_HEADERS = lv2-miditype.h
+noinst_HEADERS = lv2-miditype.h
