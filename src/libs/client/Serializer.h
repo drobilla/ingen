@@ -28,6 +28,7 @@
 #include "raul/Path.h"
 #include "raul/Atom.h"
 #include "ObjectModel.h"
+#include "RDFWriter.h"
 
 using std::string;
 using boost::optional;
@@ -44,8 +45,8 @@ class ModelEngineInterface;
 
 
 /** Namespace prefix macros. */
-#define NS_RDF(x) "http://www.w3.org/1999/02/22-rdf-syntax-ns#" x
-#define NS_INGEN(x) "http://codeson.net/ns/ingen#" x
+#define NS_RDF(x) RdfId(RdfId::RESOURCE, "http://www.w3.org/1999/02/22-rdf-syntax-ns#" x)
+#define NS_INGEN(x) RdfId(RdfId::RESOURCE, "http://codeson.net/ns/ingen#" x)
 
 	
 /** Handles all patch saving and loading.
@@ -72,59 +73,22 @@ public:
 	                optional<size_t>        engine_poly = optional<size_t>());
 
 	
-	void   start_to_filename(const string& filename)            throw (std::logic_error);
-	void   start_to_string()                                    throw (std::logic_error);
-	void   serialize(SharedPtr<ObjectModel> object)             throw (std::logic_error);
-	void   serialize_connection(SharedPtr<ConnectionModel> c)   throw (std::logic_error);
-	string finish()                                             throw (std::logic_error);
+	void   start_to_filename(const string& filename)          throw (std::logic_error);
+	void   start_to_string()                                  throw (std::logic_error);
+	void   serialize(SharedPtr<ObjectModel> object)           throw (std::logic_error);
+	void   serialize_connection(SharedPtr<ConnectionModel> c) throw (std::logic_error);
+	string finish()                                           throw (std::logic_error);
 
 private:
 
-	// Model -> RDF
+	void serialize_patch(SharedPtr<PatchModel> p, unsigned depth);
+	void serialize_node(SharedPtr<NodeModel> n, unsigned depth);
+	void serialize_port(SharedPtr<PortModel> p, unsigned depth);
 	
-	void serialize_patch(SharedPtr<PatchModel> p);
+	RdfId path_to_node_id(const Path& path);
 
-	void serialize_node(SharedPtr<NodeModel> n, const string ns_prefix="");
-	
-	void serialize_port(SharedPtr<PortModel> p, const string ns_prefix="");
-	
-
-
-
-	// Triple -> RDF
-	
-    void serialize_resource(const string& subject_uri,
-	                        const string& predicate_uri,
-	                        const string& object_uri);
-	
-    void serialize_resource_blank(const string& subject_node_id,
-	                              const string& predicate_uri,
-	                              const string& object_uri);
-    
-	void serialize_blank(const string& subject_uri,
-	                     const string& predicate_uri,
-	                     const string& object_node_id);
-	
-	void serialize_blank_blank(const string& subject_node_id,
-	                           const string& predicate_uri,
-	                           const string& object_node_id);
-	
-	void serialize_atom(const string& subject_uri,
-	                    const string& predicate_uri,
-	                    const Atom&   atom);
-	
-	void serialize_atom_blank(const string& subject_node_id,
-	                          const string& predicate_uri,
-	                          const Atom&   atom);
-
-	void   setup_prefixes();
-	string expand_uri(const string& uri);
-
-
-	raptor_serializer*               _serializer;
-	unsigned char*                   _string_output;
-	string                           _patch_search_path;
-	map<string, string>              _prefixes;
+	RDFWriter                       _writer;
+	string                          _patch_search_path;
 	SharedPtr<ModelEngineInterface> _engine;
 };
 

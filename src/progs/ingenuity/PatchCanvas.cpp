@@ -316,8 +316,13 @@ PatchCanvas::copy_selection()
 
 	for (list<boost::shared_ptr<Module> >::iterator m = m_selected_modules.begin(); m != m_selected_modules.end(); ++m) {
 		boost::shared_ptr<NodeModule> module = boost::dynamic_pointer_cast<NodeModule>(*m);
-		if (module)
+		if (module) {
 			serializer.serialize(module->node());
+		} else {
+			boost::shared_ptr<PatchPortModule> port_module = boost::dynamic_pointer_cast<PatchPortModule>(*m);
+			if (port_module)
+				serializer.serialize(port_module->port());
+		}
 	}
 	
 	for (list<boost::shared_ptr<LibFlowCanvas::Connection> >::iterator c = m_selected_connections.begin();

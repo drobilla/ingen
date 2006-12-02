@@ -39,11 +39,6 @@
 #include "raul/Atom.h"
 #include "raul/AtomRaptor.h"
 
-#define U(x) ((const unsigned char*)(x))
-
-static const char* const RDF_LANG = "rdfxml-abbrev";
-//static const char* const RDF_LANG = "turtle";
-
 using std::string; using std::vector; using std::pair;
 using std::cerr; using std::cout; using std::endl;
 using boost::optional;
@@ -53,15 +48,9 @@ namespace Client {
 
 
 Serializer::Serializer(SharedPtr<ModelEngineInterface> engine)
-	: _serializer(NULL)
-	, _string_output(NULL)
-	, _patch_search_path(".")
+	: _patch_search_path(".")
 	, _engine(engine)
 {
-	//_prefixes["xsd"]       = "http://www.w3.org/2001/XMLSchema#";
-	_prefixes["rdf"]       = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
-	_prefixes["ingen"]     = "http://codeson.net/ns/ingen#";
-	_prefixes["ingenuity"] = "http://codeson.net/ns/ingenuity#";
 }
 
 
@@ -77,13 +66,7 @@ Serializer::~Serializer()
 void
 Serializer::start_to_filename(const string& filename) throw (std::logic_error)
 {
-	if (_serializer)
-		throw std::logic_error("start_to_string called with serialization in progress");
-
-	raptor_init();
-	_serializer = raptor_new_serializer(RDF_LANG);
-	setup_prefixes();
-	raptor_serialize_start_to_filename(_serializer, filename.c_str());
+	_writer.start_to_filename(filename);
 }
 
 
@@ -97,16 +80,7 @@ Serializer::start_to_filename(const string& filename) throw (std::logic_error)
 void
 Serializer::start_to_string() throw (std::logic_error)
 {
-	if (_serializer)
-		throw std::logic_error("start_to_string called with serialization in progress");
-
-	raptor_init();
-	_serializer = raptor_new_serializer(RDF_LANG);
-	setup_prefixes();
-	raptor_serialize_start_to_string(_serializer,
-	                                 NULL /*base_uri*/,
-									 (void**)&_string_output,
-									 NULL /*size*/);
+	_writer.start_to_string();
 }
 
 
@@ -118,53 +92,23 @@ Serializer::start_to_string() throw (std::logic_error)
 string
 Serializer::finish() throw(std::logic_error)
 {
-	string ret = "";
-
-	if (!_serializer)
-		throw std::logic_error("finish() called with no serialization in progress");
-
-	raptor_serialize_end(_serializer);
-
-	if (_string_output) {
-		ret = string((char*)_string_output);
-		free(_string_output);
-		_string_output = NULL;
-	}
-
-	raptor_free_serializer(_serializer);
-	_serializer = NULL;
-
-	return ret;
+	return _writer.finish();
 }
 
 
-void
-Serializer::setup_prefixes()
-{
-	for (map<string,string>::const_iterator i = _prefixes.begin(); i != _prefixes.end(); ++i) {
-		raptor_serialize_set_namespace(_serializer,
-			raptor_new_uri(U(i->second.c_str())), U(i->first.c_str()));
-	}
-}
-
-
-/** Expands the prefix of URI, if the prefix is registered.
- *
- * If uri is not a valid URI, the empty string is returned (so invalid URIs won't be serialized).
+/** Convert a path to an RDF blank node ID for serializing.
  */
-string
-Serializer::expand_uri(const string& uri)
+RdfId
+Serializer::path_to_node_id(const Path& path)
 {
-	// FIXME: slow, stupid
-	for (map<string,string>::const_iterator i = _prefixes.begin(); i != _prefixes.end(); ++i)
-		if (uri.substr(0, i->first.length()+1) == i->first + ":")
-			return i->second + uri.substr(i->first.length()+1);
+	string ret = path.substr(1);
 
-	// FIXME: find a correct way to validate a URI
-	if (uri.find(":") == string::npos && uri.find("/") == string::npos)
-		return "";
-	else
-		return uri;
+	for (size_t i=0; i < ret.length(); ++i) {
+		if (ret[i] == '/')
+			ret[i] = '_';
+	}
+
+	return RdfId(RdfId::ANONYMOUS, ret);
 }
 
 
@@ -219,149 +163,28 @@ Serializer::find_file(const string& filename, const string& additional_path)
 
 
 void
-Serializer::serialize_resource(const string& subject_uri,
-	                           const string& predicate_uri,
-	                           const string& object_uri)
-{
-	assert(_serializer);
-
-	raptor_statement triple;
-	triple.subject = (void*)raptor_new_uri((const unsigned char*)subject_uri.c_str());
-	triple.subject_type = RAPTOR_IDENTIFIER_TYPE_RESOURCE;
-	triple.predicate = (void*)raptor_new_uri((const unsigned char*)predicate_uri.c_str());
-	triple.predicate_type = RAPTOR_IDENTIFIER_TYPE_RESOURCE;
-	triple.object = (void*)raptor_new_uri((const unsigned char*)object_uri.c_str());
-	triple.object_type = RAPTOR_IDENTIFIER_TYPE_RESOURCE;
-	
-	raptor_serialize_statement(_serializer, &triple);
-	
-	raptor_free_uri((raptor_uri*)triple.subject);
-	raptor_free_uri((raptor_uri*)triple.predicate);
-}
-
-
-void
-Serializer::serialize_resource_blank(const string& node_id,
-                                     const string& predicate_uri,
-                                     const string& object_uri)
-{
-	assert(_serializer);
-
-	raptor_statement triple;
-	triple.subject = (unsigned char*)strdup(node_id.c_str());
-	triple.subject_type = RAPTOR_IDENTIFIER_TYPE_ANONYMOUS;
-	triple.predicate = (void*)raptor_new_uri((const unsigned char*)predicate_uri.c_str());
-	triple.predicate_type = RAPTOR_IDENTIFIER_TYPE_RESOURCE;
-	triple.object = (void*)raptor_new_uri((const unsigned char*)object_uri.c_str());
-	triple.object_type = RAPTOR_IDENTIFIER_TYPE_RESOURCE;
-	
-	raptor_serialize_statement(_serializer, &triple);
-	
-	raptor_free_uri((raptor_uri*)triple.predicate);
-	raptor_free_uri((raptor_uri*)triple.object);
-}
-
-
-void
-Serializer::serialize_blank(const string& subject_uri,
-	                        const string& predicate_uri,
-	                        const string& object_node_id)
-{
-	assert(_serializer);
-
-	raptor_statement triple;
-	triple.subject = (void*)raptor_new_uri((const unsigned char*)subject_uri.c_str());
-	triple.subject_type = RAPTOR_IDENTIFIER_TYPE_RESOURCE;
-	triple.predicate = (void*)raptor_new_uri((const unsigned char*)predicate_uri.c_str());
-	triple.predicate_type = RAPTOR_IDENTIFIER_TYPE_RESOURCE;
-	triple.object = (unsigned char*)strdup(object_node_id.c_str());
-	triple.object_type = RAPTOR_IDENTIFIER_TYPE_ANONYMOUS;
-	
-	raptor_serialize_statement(_serializer, &triple);
-	
-	raptor_free_uri((raptor_uri*)triple.subject);
-	raptor_free_uri((raptor_uri*)triple.predicate);
-}
-
-
-void
-Serializer::serialize_blank_blank(const string& subject_node_id,
-	                              const string& predicate_uri,
-	                              const string& object_node_id)
-{
-	assert(_serializer);
-
-	raptor_statement triple;
-	triple.subject = (unsigned char*)strdup(subject_node_id.c_str());
-	triple.subject_type = RAPTOR_IDENTIFIER_TYPE_ANONYMOUS;
-	triple.predicate = (void*)raptor_new_uri((const unsigned char*)predicate_uri.c_str());
-	triple.predicate_type = RAPTOR_IDENTIFIER_TYPE_RESOURCE;
-	triple.object = (unsigned char*)strdup(object_node_id.c_str());
-	triple.object_type = RAPTOR_IDENTIFIER_TYPE_ANONYMOUS;
-	
-	raptor_serialize_statement(_serializer, &triple);
-	
-	raptor_free_uri((raptor_uri*)triple.predicate);
-}
-
-void
-Serializer::serialize_atom(const string& subject_uri,
-                           const string& predicate_uri,
-                           const Atom&   atom)
-{
-	assert(_serializer);
-
-	raptor_statement triple;
-	triple.subject = (void*)raptor_new_uri((const unsigned char*)subject_uri.c_str());
-	triple.subject_type = RAPTOR_IDENTIFIER_TYPE_RESOURCE;
-	triple.predicate = (void*)raptor_new_uri((const unsigned char*)predicate_uri.c_str());
-	triple.predicate_type = RAPTOR_IDENTIFIER_TYPE_RESOURCE;
-
-	AtomRaptor::atom_to_triple_object(&triple, atom);
-
-	raptor_serialize_statement(_serializer, &triple);
-}
-
-
-void
-Serializer::serialize_atom_blank(const string& node_id,
-                                 const string& predicate_uri,
-                                 const Atom&   atom)
-{
-	assert(_serializer);
-
-	raptor_statement triple;
-	triple.subject = (unsigned char*)strdup(node_id.c_str());
-	triple.subject_type = RAPTOR_IDENTIFIER_TYPE_ANONYMOUS;
-	triple.predicate = (void*)raptor_new_uri((const unsigned char*)predicate_uri.c_str());
-	triple.predicate_type = RAPTOR_IDENTIFIER_TYPE_RESOURCE;
-
-	AtomRaptor::atom_to_triple_object(&triple, atom);
-
-	raptor_serialize_statement(_serializer, &triple);
-}
-
-void
 Serializer::serialize(SharedPtr<ObjectModel> object) throw (std::logic_error)
 {
-	if (!_serializer)
-		throw std::logic_error("serialize_patch called without serialization in progress");
+	if (!_writer.serialization_in_progress())
+		throw std::logic_error("serialize called without serialization in progress");
 
+	// FIXME: depth
+	
 	SharedPtr<PatchModel> patch = PtrCast<PatchModel>(object);
 	if (patch) {
-		serialize_patch(patch);
+		serialize_patch(patch, 0);
 		return;
 	}
 	
 	SharedPtr<NodeModel> node = PtrCast<NodeModel>(object);
 	if (node) {
-		serialize_node(node);
+		serialize_node(node, 0);
 		return;
 	}
 	
 	SharedPtr<PortModel> port = PtrCast<PortModel>(object);
 	if (port) {
-		serialize_port(port);
+		serialize_port(port, 0);
 		return;
 	}
 
@@ -371,40 +194,43 @@ Serializer::serialize(SharedPtr<ObjectModel> object) throw (std::logic_error)
 
 
 void
-Serializer::serialize_patch(SharedPtr<PatchModel> patch)
+Serializer::serialize_patch(SharedPtr<PatchModel> patch, unsigned depth)
 {
 	assert(_serializer);
 
-	const string uri = "#";
+	const RdfId patch_id = (depth == 0)
+		? RdfId(RdfId::RESOURCE, string("#") + patch->path().substr(1))
+		: path_to_node_id(patch->path()); // anonymous
 
-	serialize_resource(
-		uri.c_str(),
+	_writer.write(
+		patch_id,
 		NS_RDF("type"),
 		NS_INGEN("Patch"));
 
 	if (patch->path().name().length() > 0) {
-		serialize_atom(
-			uri.c_str(), NS_INGEN("name"),
+		_writer.write(
+			patch_id, NS_INGEN("name"),
 			Atom(patch->path().name().c_str()));
 	}
 
-	serialize_atom(
-		uri.c_str(),
+	_writer.write(
+		patch_id,
 		NS_INGEN("polyphony"),
 		Atom((int)patch->poly()));
 
 	for (NodeModelMap::const_iterator n = patch->nodes().begin(); n != patch->nodes().end(); ++n) {
-		serialize_node(n->second, "#");
-		serialize_resource("#", NS_INGEN("node"), uri + n->second->path().name());
+		_writer.write(patch_id, NS_INGEN("node"), path_to_node_id(n->second->path()));
+		serialize_node(n->second, depth+1);
 	}
 	
 	for (PortModelList::const_iterator p = patch->ports().begin(); p != patch->ports().end(); ++p) {
-		serialize_port(*p, uri);
-		serialize_blank("#", NS_INGEN("port"), (*p)->path());
+		_writer.write(patch_id, NS_INGEN("port"), path_to_node_id((*p)->path()));
+		serialize_port(*p, depth+1);
+
 	}
 
 	for (ConnectionList::const_iterator c = patch->connections().begin(); c != patch->connections().end(); ++c) {
-		serialize_connection(*c/*, uri*/);
+		serialize_connection(*c);
 	}
 	
 	//_engine->set_metadata(patch->path(), "uri", uri);
@@ -412,32 +238,34 @@ Serializer::serialize_patch(SharedPtr<PatchModel> patch)
 
 
 void
-Serializer::serialize_node(SharedPtr<NodeModel> node, const string ns_prefix)
+Serializer::serialize_node(SharedPtr<NodeModel> node, unsigned depth)
 {
 	assert(_serializer);
 
-	const string node_uri = ns_prefix + node->path().name();
-
-	serialize_resource(
-		node_uri.c_str(),
+	const RdfId node_id = (depth == 0)
+		? RdfId(RdfId::RESOURCE, string("#") + node->path().substr(1))
+		: path_to_node_id(node->path()); // anonymous
+	
+	_writer.write(
+		node_id,
 		NS_RDF("type"),
 		NS_INGEN("Node"));
 	
-	/*serialize_atom(_serializer,
+	/*_writer.write(_serializer,
 		node_uri_ref.c_str(),
 		NS_INGEN("name"),
 		Atom(node->path().name()));*/
 
 	for (PortModelList::const_iterator p = node->ports().begin(); p != node->ports().end(); ++p) {
-		serialize_port(*p, node_uri + "/");
-		serialize_blank(node_uri, NS_INGEN("port"), (*p)->path());
+		serialize_port(*p, depth+1);
+		_writer.write(node_id, NS_INGEN("port"), path_to_node_id((*p)->path()));
 	}
 
 	for (MetadataMap::const_iterator m = node->metadata().begin(); m != node->metadata().end(); ++m) {
-		if (expand_uri(m->first) != "") {
-			serialize_atom(
-				node_uri.c_str(),
-				expand_uri(m->first.c_str()).c_str(),
+		if (_writer.expand_uri(m->first) != "") {
+			_writer.write(
+				node_id,
+				RdfId(RdfId::RESOURCE, _writer.expand_uri(m->first.c_str()).c_str()),
 				m->second);
 		}
 	}
@@ -448,26 +276,27 @@ Serializer::serialize_node(SharedPtr<NodeModel> node, const string ns_prefix)
  * Audio output ports with no metadata will not be written, for example.
  */
 void
-Serializer::serialize_port(SharedPtr<PortModel> port, const string ns_prefix)
+Serializer::serialize_port(SharedPtr<PortModel> port, unsigned depth)
 {
 	assert(_serializer);
 
-	//const string port_uri_ref = ns_prefix + port->path().name();
-	const string node_id = port->path();
+	const RdfId port_id = (depth == 0)
+		? RdfId(RdfId::RESOURCE, string("#") + port->path().substr(1))
+		: path_to_node_id(port->path()); // anonymous
 	
 	if (port->is_input())
-		serialize_resource_blank(node_id, NS_RDF("type"), NS_INGEN("InputPort"));
+		_writer.write(port_id, NS_RDF("type"), NS_INGEN("InputPort"));
 	else
-		serialize_resource_blank(node_id, NS_RDF("type"), NS_INGEN("OutputPort"));
+		_writer.write(port_id, NS_RDF("type"), NS_INGEN("OutputPort"));
 
-	serialize_atom_blank(node_id, NS_INGEN("name"), Atom(port->path().name().c_str()));
+	_writer.write(port_id, NS_INGEN("name"), Atom(port->path().name().c_str()));
 
 	if (port->metadata().size() > 0) {
 		for (MetadataMap::const_iterator m = port->metadata().begin(); m != port->metadata().end(); ++m) {
-			if (expand_uri(m->first) != "") {
-				serialize_atom_blank(
-						node_id,
-						expand_uri(m->first).c_str(),
+			if (_writer.expand_uri(m->first) != "") {
+				_writer.write(
+						port_id,
+						RdfId(RdfId::RESOURCE, _writer.expand_uri(m->first).c_str()),
 						m->second);
 			}
 		}
@@ -480,24 +309,23 @@ Serializer::serialize_connection(SharedPtr<ConnectionModel> connection) throw (s
 {
 	assert(_serializer);
 	
-	// (Double slash intentional)
-	const string node_id = connection->src_port_path() + "/" + connection->dst_port_path();
+	const RdfId connection_id = RdfId(RdfId::ANONYMOUS,
+			path_to_node_id(connection->src_port_path()).to_string()
+			+ "-" + path_to_node_id(connection->dst_port_path()).to_string());
 
-	//raptor_identifier* c = raptor_new_identifier(RAPTOR_IDENTIFIER_TYPE_ANONYMOUS,
-	//	NULL, RAPTOR_URI_SOURCE_BLANK_ID, (const unsigned char*)"genid1", NULL, NULL, NULL);
-
+	/*
 	const string src_port_rel_path = connection->src_port_path().substr(connection->patch_path().length());
 	const string dst_port_rel_path = connection->dst_port_path().substr(connection->patch_path().length());
-
-	serialize_resource_blank(node_id, NS_RDF("type"), NS_INGEN("Connection"));
+*/
+	_writer.write(connection_id, NS_RDF("type"), NS_INGEN("Connection"));
 	
-	serialize_blank_blank(node_id,
+	_writer.write(connection_id,
 		NS_INGEN("source"),
-		src_port_rel_path);
+		path_to_node_id(connection->src_port_path()));
 	
-	serialize_blank_blank(node_id,
+	_writer.write(connection_id,
 		NS_INGEN("destination"),
-		dst_port_rel_path);
+		path_to_node_id(connection->dst_port_path()));
 }
 
 
