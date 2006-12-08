@@ -85,8 +85,8 @@ public:
 	void error(string msg)
 		{ push_sig(sigc::bind(error_slot, msg)); }
 	
-	void new_plugin(string uri, string name)
-		{ push_sig(sigc::bind(new_plugin_slot, uri, name)); }
+	void new_plugin(string uri, string type_uri, string name)
+		{ push_sig(sigc::bind(new_plugin_slot, uri, type_uri, name)); }
 	
 	void new_patch(string path, uint32_t poly)
 		{ push_sig(sigc::bind(new_patch_slot, path, poly)); }
@@ -146,7 +146,7 @@ private:
 	sigc::slot<void, uint32_t>                           num_plugins_slot; 
 	sigc::slot<void, int32_t, bool, string>              response_slot; 
 	sigc::slot<void, string>                             error_slot; 
-	sigc::slot<void, string, string>                     new_plugin_slot; 
+	sigc::slot<void, string, string, string>             new_plugin_slot; 
 	sigc::slot<void, string, uint32_t>                   new_patch_slot; 
 	sigc::slot<void, string, string, bool, int>          new_node_slot; 
 	sigc::slot<void, string, string, bool>               new_port_slot;

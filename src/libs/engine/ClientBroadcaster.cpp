@@ -175,7 +175,7 @@ ClientBroadcaster::send_plugins_to(SharedPtr<ClientInterface> client, const list
 
 	for (list<Plugin*>::const_iterator i = plugin_list.begin(); i != plugin_list.end(); ++i) {
 		const Plugin* const plugin = *i;
-		client->new_plugin(plugin->uri(), plugin->name());
+		client->new_plugin(plugin->uri(), plugin->type_uri(), plugin->name());
 	}
 
 	client->transfer_end();

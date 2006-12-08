@@ -77,6 +77,7 @@ public:
 	void error(string msg);
 
 	virtual void new_plugin(string uri,
+	                        string type_uri,
 	                        string name);
 	
 	virtual void new_patch(string path, uint32_t poly);

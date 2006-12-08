@@ -170,7 +170,7 @@ ObjectSender::send_plugins(ClientInterface* client, const list<Plugin*>& plugs)
 */
 	for (list<Plugin*>::const_iterator j = plugs.begin(); j != plugs.end(); ++j) {
 		const Plugin* const p = *j;
-		client->new_plugin(p->uri(), p->name());
+		client->new_plugin(p->uri(), p->type_uri(), p->name());
 	}
 /*
 		plugin = (*j);

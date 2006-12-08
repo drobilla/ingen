@@ -47,7 +47,7 @@ public:
 	sigc::signal<void>                                     bundle_end_sig; 
 	sigc::signal<void, string>                             error_sig; 
 	sigc::signal<void, uint32_t>                           num_plugins_sig; 
-	sigc::signal<void, string, string>                     new_plugin_sig; 
+	sigc::signal<void, string, string, string>             new_plugin_sig; 
 	sigc::signal<void, string, uint32_t>                   new_patch_sig; 
 	sigc::signal<void, string, string, bool, uint32_t>     new_node_sig; 
 	sigc::signal<void, string, string, bool>               new_port_sig; 
@@ -85,8 +85,8 @@ protected:
 	void error(string msg)
 		{ error_sig.emit(msg); }
 	
-	void new_plugin(string uri, string name)
-		{ new_plugin_sig.emit(uri, name); }
+	void new_plugin(string uri, string type_uri, string name)
+		{ new_plugin_sig.emit(uri, type_uri, name); }
 	
 	void new_patch(string path, uint32_t poly)
 		{ new_patch_sig.emit(path, poly); }

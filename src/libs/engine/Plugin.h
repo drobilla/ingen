@@ -112,6 +112,10 @@ public:
 		else if (_type == Patch) return "Patch";
 		else return "";
 	}
+	
+	string type_uri() const {
+		return string("ingen:") + type_string();
+	}
 
 	void set_type(const string& type_string) {
 		if (type_string == "LADSPA") _type = LADSPA;

@@ -198,9 +198,12 @@ Serializer::serialize_patch(SharedPtr<PatchModel> patch, unsigned depth)
 {
 	assert(_serializer);
 
-	const RdfId patch_id = (depth == 0)
-		? RdfId(RdfId::RESOURCE, string("#") + patch->path().substr(1))
-		: path_to_node_id(patch->path()); // anonymous
+	RdfId patch_id = path_to_node_id(patch->path()); // anonymous
+
+	if (patch->path().length() < 2)
+		patch_id = RdfId(RdfId::RESOURCE, string(""));
+	else if (depth == 0)
+		patch_id = RdfId(RdfId::RESOURCE, string("#") + patch->path().substr(1));
 
 	_writer.write(
 		patch_id,
@@ -313,11 +316,11 @@ Serializer::serialize_connection(SharedPtr<ConnectionModel> connection) throw (s
 			path_to_node_id(connection->src_port_path()).to_string()
 			+ "-" + path_to_node_id(connection->dst_port_path()).to_string());
 
-	/*
-	const string src_port_rel_path = connection->src_port_path().substr(connection->patch_path().length());
-	const string dst_port_rel_path = connection->dst_port_path().substr(connection->patch_path().length());
-*/
-	_writer.write(connection_id, NS_RDF("type"), NS_INGEN("Connection"));
+	_writer.write(path_to_node_id(connection->dst_port_path()),
+		NS_INGEN("connectedTo"),
+		path_to_node_id(connection->src_port_path()));
+	
+	/*_writer.write(connection_id, NS_RDF("type"), NS_INGEN("Connection"));
 	
 	_writer.write(connection_id,
 		NS_INGEN("source"),
@@ -326,6 +329,7 @@ Serializer::serialize_connection(SharedPtr<ConnectionModel> connection) throw (s
 	_writer.write(connection_id,
 		NS_INGEN("destination"),
 		path_to_node_id(connection->dst_port_path()));
+	*/
 }
 
 

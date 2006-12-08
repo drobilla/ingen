@@ -343,9 +343,9 @@ Store::destruction_event(const Path& path)
 }
 
 void
-Store::new_plugin_event(const string& uri, const string& name)
+Store::new_plugin_event(const string& uri, const string& type_uri, const string& name)
 {
-	SharedPtr<PluginModel> p(new PluginModel(uri, name));
+	SharedPtr<PluginModel> p(new PluginModel(uri, type_uri, name));
 	add_plugin(p);
 	resolve_plugin_orphans(p);
 }

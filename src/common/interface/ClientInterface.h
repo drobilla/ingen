@@ -65,6 +65,7 @@ public:
 	virtual void num_plugins(uint32_t num_plugins) = 0;
 	
 	virtual void new_plugin(string uri,
+	                        string type_uri,
 	                        string name) = 0;
 	
 	virtual void new_patch(string path, uint32_t poly) = 0;

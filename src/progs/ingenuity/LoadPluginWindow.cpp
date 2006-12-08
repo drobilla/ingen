@@ -194,7 +194,7 @@ LoadPluginWindow::set_plugin_list(const std::map<string, SharedPtr<PluginModel> 
 		
 		row[m_plugins_columns.m_col_name] = plugin->name();
 		//row[m_plugins_columns.m_col_label] = plugin->plug_label();
-		row[m_plugins_columns.m_col_type] = plugin->type_string();
+		row[m_plugins_columns.m_col_type] = plugin->type_uri();
 		row[m_plugins_columns.m_col_uri] = plugin->uri();
 		row[m_plugins_columns.m_col_label] = plugin->name();
 		//row[m_plugins_columns.m_col_library] = plugin->lib_name();
@@ -213,7 +213,7 @@ LoadPluginWindow::add_plugin(SharedPtr<PluginModel> plugin)
 	
 	row[m_plugins_columns.m_col_name] = plugin->name();
 	//row[m_plugins_columns.m_col_label] = plugin->plug_label();
-	row[m_plugins_columns.m_col_type] = plugin->type_string();
+	row[m_plugins_columns.m_col_type] = plugin->type_uri();
 	row[m_plugins_columns.m_col_uri] = plugin->uri();
 	row[m_plugins_columns.m_col_label] = plugin->name();
 	//row[m_plugins_columns.m_col_library] = plugin->lib_name();
@@ -360,7 +360,7 @@ LoadPluginWindow::filter_changed()
 		case CriteriaColumns::NAME:
 			field = plugin->name(); break;
 		case CriteriaColumns::TYPE:
-			field = plugin->type_string(); break;
+			field = plugin->type_uri(); break;
 		case CriteriaColumns::URI:
 			field = plugin->uri(); break;
 		/*case CriteriaColumns::LIBRARY:
@@ -379,7 +379,7 @@ LoadPluginWindow::filter_changed()
 		
 			model_row[m_plugins_columns.m_col_name] = plugin->name();
 			//model_row[m_plugins_columns.m_col_label] = plugin->plug_label();
-			model_row[m_plugins_columns.m_col_type] = plugin->type_string();
+			model_row[m_plugins_columns.m_col_type] = plugin->type_uri();
 			model_row[m_plugins_columns.m_col_uri] = plugin->uri();
 			model_row[m_plugins_columns.m_col_plugin_model] = plugin;
 

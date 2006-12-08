@@ -139,7 +139,7 @@ OSCClientReceiver::setup_callbacks()
 {
 	lo_server_thread_add_method(_st, "/om/response", "iis", response_cb, this);
 	lo_server_thread_add_method(_st, "/om/num_plugins", "i", num_plugins_cb, this);
-	lo_server_thread_add_method(_st, "/om/plugin", "ss", plugin_cb, this);
+	lo_server_thread_add_method(_st, "/om/plugin", "sss", plugin_cb, this);
 	lo_server_thread_add_method(_st, "/om/new_patch", "si", new_patch_cb, this);
 	lo_server_thread_add_method(_st, "/om/destroyed", "s", destroyed_cb, this);
 	lo_server_thread_add_method(_st, "/om/patch_enabled", "s", patch_enabled_cb, this);
@@ -385,8 +385,8 @@ OSCClientReceiver::m_num_plugins_cb(const char* path, const char* types, lo_arg*
 int
 OSCClientReceiver::m_plugin_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	assert(argc == 2 && !strcmp(types, "ss"));
-	new_plugin(&argv[0]->s, &argv[1]->s); // type, uri
+	assert(argc == 3 && !strcmp(types, "sss"));
+	new_plugin(&argv[0]->s, &argv[1]->s, &argv[2]->s); // type, uri
 
 	return 0;	
 }

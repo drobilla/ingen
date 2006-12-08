@@ -493,13 +493,14 @@ OSCClientSender::control_change(string port_path, float value)
  * \arg \b name (string) - Descriptive human-readable name of plugin (ie "ADSR Envelope")
  */
 void
-OSCClientSender::new_plugin(string uri, string name)
+OSCClientSender::new_plugin(string uri, string type_uri, string name)
 {
 	if (!_enabled)
 		return;
 
 	lo_message m = lo_message_new();
 	lo_message_add_string(m, uri.c_str());
+	lo_message_add_string(m, type_uri.c_str());
 	lo_message_add_string(m, name.c_str());
 
 	//if (_transfer)

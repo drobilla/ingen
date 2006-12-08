@@ -53,7 +53,7 @@ NodePropertiesWindow::set_node(SharedPtr<NodeModel> node_model)
 	SharedPtr<PluginModel> pm = node_model->plugin();
 	
 	if (pm) {
-		m_plugin_type_label->set_text(pm->type_string());
+		m_plugin_type_label->set_text(pm->type_uri());
 		m_plugin_uri_label->set_text(pm->uri());
 		m_plugin_name_label->set_text(pm->name());
 	}
