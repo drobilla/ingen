@@ -19,6 +19,9 @@
 #include <rasqal.h>
 #include "RDFQuery.h"
 
+#include <iostream>
+using std::cerr; using std::endl;
+
 namespace Ingen {
 namespace Client {
 
@@ -43,10 +46,9 @@ RDFQuery::run(const Glib::ustring filename)
 		for (int i=0; i < rasqal_query_results_get_bindings_count(results); i++) {
 			const unsigned char* rname  = rasqal_query_results_get_binding_name(results, i);
 			rasqal_literal*      rvalue = rasqal_query_results_get_binding_value(results, i);
-
 			Glib::ustring name((const char*)rname);
+
 			Glib::ustring value((const char*)rasqal_literal_as_string(rvalue));
-		
 			bindings.insert(std::make_pair(name, value));
 		}
 

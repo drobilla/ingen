@@ -23,9 +23,15 @@ namespace Ingen {
 namespace Client {
 
 
-Loader::Loader(SharedPtr<ModelEngineInterface> engine)
+Loader::Loader(SharedPtr<ModelEngineInterface> engine, SharedPtr<Namespaces> namespaces)
 	: _engine(engine)
+	, _namespaces(namespaces)
 {
+	if (!_namespaces)
+		_namespaces = SharedPtr<Namespaces>(new Namespaces());
+
+	// FIXME: hack
+	_namespaces->add("ingenuity", "http://codeson.net/ns/ingenuity#");
 }
 
 
@@ -39,16 +45,40 @@ void
 Loader::load(const Glib::ustring& filename,
              const Path& parent)
 {
-	RDFQuery query(Glib::ustring("SELECT DISTINCT ?name ?plugin FROM <") + filename + "> WHERE {\n"
-		+ "?patch ingen:node   ?node .\n"
-		+ "?node  ingen:name   ?name ;\n"
-		+ "       ingen:plugin ?plugin .\n"
-		+ "}");
+	std::map<Glib::ustring, bool> created;
+
+	RDFQuery query(Glib::ustring(
+		"SELECT DISTINCT ?name ?plugin ?floatkey ?floatval FROM <") + filename + "> WHERE {\n"
+		"?patch ingen:node   ?node .\n"
+		"?node  ingen:name   ?name ;\n"
+		"       ingen:plugin ?plugin ;\n"
+		"OPTIONAL { ?node ?floatkey  ?floatval . \n"
+		"           FILTER ( datatype(?floatval) = xsd:decimal )\n"
+		"         }\n"
+		"}");
 
 	RDFQuery::Results nodes = query.run(filename);
 
-	for (RDFQuery::Results::iterator i = nodes.begin(); i != nodes.end(); ++i)
-		_engine->create_node(parent.base() + (*i)["name"], (*i)["plugin"], false);
+	for (RDFQuery::Results::iterator i = nodes.begin(); i != nodes.end(); ++i) {
+		const Glib::ustring& name   = (*i)["name"];
+		const Glib::ustring& plugin = (*i)["plugin"];
+
+		if (created.find(name) == created.end()) {
+			cerr << "CREATING " << name << endl;
+			_engine->create_node(parent.base() + name, plugin, false);
+			created[name] = true;
+		}
+
+		Glib::ustring floatkey = _namespaces->qualify((*i)["floatkey"]);
+		Glib::ustring floatval = (*i)["floatval"];
+
+		float val = atof(floatval.c_str());
+
+		cerr << floatkey << " = " << val << endl;
+
+		_engine->set_metadata(parent.base() + name, floatkey, Atom(val));
+	}
+	
 }
 
 

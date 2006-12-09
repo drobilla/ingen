@@ -14,37 +14,31 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef LOADER_H
-#define LOADER_H
+#ifndef NAMESPACES_H
+#define NAMESPACES_H
 
-#include <glibmm/ustring.h>
-#include "raul/SharedPtr.h"
-#include "raul/Path.h"
-#include "Namespaces.h"
+#include <map>
+#include <string>
+using std::string;
 
 namespace Ingen {
 namespace Client {
 
-class ModelEngineInterface;
 
-
-/** Loads objects (patches, nodes, etc) into the engine from RDF.
+/** Collection of RDF namespaces with prefixes.
  */
-class Loader {
+class Namespaces {
 public:
-	Loader(SharedPtr<ModelEngineInterface> engine, SharedPtr<Namespaces> = SharedPtr<Namespaces>());
-
-	void load(const Glib::ustring& filename,
-	          const Path&          parent);
+	void add(string prefix, string uri) { _namespaces[prefix] = uri; }
+	
+	string qualify(string uri);
 
 private:
-	//string                          _patch_search_path;
-	SharedPtr<ModelEngineInterface> _engine;
-	SharedPtr<Namespaces>           _namespaces;
+	std::map<string, string> _namespaces; ///< (prefix, URI)
 };
 
 
 } // namespace Client
 } // namespace Ingen
 
-#endif // LOADER_H
+#endif // NAMESPACES_H

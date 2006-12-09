@@ -14,9 +14,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-
 #include "OSCModelEngineInterface.h"
-//#include "Serializer.h"
+#include "Loader.h"
 #include "PatchModel.h"
 #include "raul/Path.h"
 #include <iostream>
@@ -53,7 +52,7 @@ int main(int argc, char** argv)
 
 
 	SharedPtr<OSCModelEngineInterface> engine(new OSCModelEngineInterface(engine_url));
-	//Serializer serializer(engine);
+	Loader loader(engine);
 	
 	/* Connect to engine */
 	engine->attach(-1, client_port);
@@ -71,10 +70,9 @@ int main(int argc, char** argv)
 
 	// Load patches
 	for (uint i=0; i < args_info.inputs_num; ++i) {
-		cerr << "FIXME: load patch" << endl;
-		//SharedPtr<PatchModel> pm(new PatchModel("", 0));
-		//pm->filename(args_info.inputs[i]);
-		//serializer.load_patch(pm, true);
+		cerr << "FIXME: load patch under root" << endl;
+		cerr << "Load " << args_info.inputs[i] << endl;
+		loader.load(args_info.inputs[i], "/");
 	}
 	
 	return 0;

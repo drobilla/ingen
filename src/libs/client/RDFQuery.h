@@ -37,6 +37,8 @@ public:
 	RDFQuery(Glib::ustring query)
 	{
 		const char* const _prefix_header =
+			"PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+			"PREFIX xsd:   <http://www.w3.org/2001/XMLSchema#>\n"
 			"PREFIX ingen: <http://codeson.net/ns/ingen#>\n"
 			"PREFIX lv2:   <http://lv2plug.in/ontology#>\n";
 

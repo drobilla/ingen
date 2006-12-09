@@ -32,6 +32,8 @@ libingenclient_la_SOURCES = \
 	RDFWriter.cpp \
 	RDFQuery.h \
 	RDFQuery.cpp \
+	Namespaces.h \
+	Namespaces.cpp \
 	Serializer.h \
 	Serializer.cpp \
 	Loader.h \
