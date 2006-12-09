@@ -14,8 +14,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef LOADERTHREAD_H
-#define LOADERTHREAD_H
+#ifndef THREADEDLOADER_H
+#define THREADEDLOADER_H
 
 #include <string>
 #include <list>
@@ -27,12 +27,13 @@
 #include "raul/Condition.h"
 #include "ModelEngineInterface.h"
 #include "ObjectModel.h"
+#include "Serializer.h"
 using std::string;
 using std::list;
 using boost::optional;
 
 namespace Ingen { namespace Client {
-	class Serializer;
+	class Loader;
 	class PatchModel;
 } }
 using namespace Ingen::Client;
@@ -51,16 +52,17 @@ namespace Ingenuity {
  *
  * \ingroup Ingenuity
  */
-class Loader : public Slave
+class ThreadedLoader : public Slave
 {
 public:
-	Loader(SharedPtr<ModelEngineInterface> engine);
-	~Loader();
+	ThreadedLoader(SharedPtr<ModelEngineInterface> engine);
+	~ThreadedLoader();
 
+	Loader& loader()         const { return *_loader; }
 	Serializer& serializer() const { return *_serializer; }
 
 	// FIXME: there's a pattern here....
-	// (same core interface as Serializer)
+	// (same core interface as Loader/Serializer)
 	
 	void load_patch(bool                    merge,
 	                const string&           data_base_uri,
@@ -81,6 +83,7 @@ private:
 
 	void _whipped();
 
+	Loader* const     _loader;
 	Serializer* const _serializer;
 	Mutex             _mutex;
 	list<Closure>     _events;

@@ -59,10 +59,10 @@ public:
 	}*/
 
 	const char* const type_uri() const {
-		if (m_type == LV2) return "ingen:LV2";
-		else if (m_type == LADSPA) return "ingen:LADSPA";
-		else if (m_type == DSSI) return "ingen:DSSI";
-		else if (m_type == Internal) return "ingen:Internal";
+		if (m_type == LV2) return "ingen:LV2Plugin";
+		else if (m_type == LADSPA) return "ingen:LADSPAPlugin";
+		else if (m_type == DSSI) return "ingen:DSSIPlugin";
+		else if (m_type == Internal) return "ingen:InternalPlugin";
 		else if (m_type == Patch) return "ingen:Patch";
 		else return "";
 	}

@@ -37,7 +37,7 @@
 #include "Configuration.h"
 #include "ConnectWindow.h"
 #include "Store.h"
-#include "Loader.h"
+#include "ThreadedLoader.h"
 #include "WindowFactory.h"
 #ifdef HAVE_LASH
 #include "LashController.h"
@@ -100,7 +100,7 @@ App::attach(const SharedPtr<ModelEngineInterface>& engine, const SharedPtr<SigCl
 	_engine = engine;
 	_client = client;
 	_store = new Store(engine, client);
-	_loader = new Loader(engine);
+	_loader = new ThreadedLoader(engine);
 
 	_patch_tree_window->init(*_store);
 }

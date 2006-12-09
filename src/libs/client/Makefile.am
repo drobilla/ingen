@@ -3,8 +3,8 @@ AM_CXXFLAGS = -I$(top_srcdir)/src/common
 if BUILD_CLIENT_LIB
 noinst_LTLIBRARIES = libingenclient.la
 
-libingenclient_la_CXXFLAGS = -I$(top_srcdir)/src/common -DPKGDATADIR=\"$(pkgdatadir)\" @LXML2_CFLAGS@ @RAPTOR_CFLAGS@ @LSIGCPP_CFLAGS@ @RAUL_CFLAGS@
-libingenclient_la_LIBADD = @LXML2_LIBS@ @LOSC_LIBS@ @RAPTOR_LIBS@ @LSIGCPP_LIBS@ @RAUL_LIBS@
+libingenclient_la_CXXFLAGS = -I$(top_srcdir)/src/common -DPKGDATADIR=\"$(pkgdatadir)\" @LXML2_CFLAGS@ @RAPTOR_CFLAGS@ @LSIGCPP_CFLAGS@ @RAUL_CFLAGS@ @GLIBMM_CFLAGS@
+libingenclient_la_LIBADD = @LXML2_LIBS@ @LOSC_LIBS@ @RAPTOR_LIBS@ @LSIGCPP_LIBS@ @RAUL_LIBS@ @GLIBMM_LIBS@
 
 libingenclient_la_SOURCES = \
 	OSCEngineSender.h \
@@ -30,8 +30,12 @@ libingenclient_la_SOURCES = \
 	PluginModel.h \
 	RDFWriter.h \
 	RDFWriter.cpp \
+	RDFQuery.h \
+	RDFQuery.cpp \
 	Serializer.h \
 	Serializer.cpp \
+	Loader.h \
+	Loader.cpp \
 	DeprecatedSerializer.h \
 	DeprecatedSerializer.cpp \
 	ConnectionModel.h \

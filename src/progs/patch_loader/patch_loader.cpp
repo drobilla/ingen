@@ -16,7 +16,7 @@
 
 
 #include "OSCModelEngineInterface.h"
-#include "Serializer.h"
+//#include "Serializer.h"
 #include "PatchModel.h"
 #include "raul/Path.h"
 #include <iostream>
@@ -53,7 +53,7 @@ int main(int argc, char** argv)
 
 
 	SharedPtr<OSCModelEngineInterface> engine(new OSCModelEngineInterface(engine_url));
-	Serializer serializer(engine);
+	//Serializer serializer(engine);
 	
 	/* Connect to engine */
 	engine->attach(-1, client_port);

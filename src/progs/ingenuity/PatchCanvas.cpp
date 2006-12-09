@@ -311,7 +311,7 @@ PatchCanvas::destroy_selection()
 void
 PatchCanvas::copy_selection()
 {
-	Serializer serializer(App::instance().engine());
+	Serializer serializer;
 	serializer.start_to_string();
 
 	for (list<boost::shared_ptr<Module> >::iterator m = m_selected_modules.begin(); m != m_selected_modules.end(); ++m) {

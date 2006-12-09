@@ -14,8 +14,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef PATCHLIBRARIAN_H
-#define PATCHLIBRARIAN_H
+#ifndef SERIALIZER_H
+#define SERIALIZER_H
 
 #include <map>
 #include <utility>
@@ -36,6 +36,7 @@ using boost::optional;
 namespace Ingen {
 namespace Client {
 
+class PluginModel;
 class PatchModel;
 class NodeModel;
 class PortModel;
@@ -49,20 +50,17 @@ class ModelEngineInterface;
 #define NS_INGEN(x) RdfId(RdfId::RESOURCE, "http://codeson.net/ns/ingen#" x)
 
 	
-/** Handles all patch saving and loading.
+/** Serializes Ingen objects (patches, nodes, etc) to RDF.
  *
  * \ingroup IngenClient
  */
 class Serializer
 {
 public:
-	Serializer(SharedPtr<ModelEngineInterface> engine);
-	~Serializer();
-
-	void          path(const string& path) { _patch_search_path = path; }
-	const string& path()                   { return _patch_search_path; }
+	//void          path(const string& path) { _patch_search_path = path; }
+	//const string& path()                   { return _patch_search_path; }
 	
-	string find_file(const string& filename, const string& additional_path = "");
+	//string find_file(const string& filename, const string& additional_path = "");
 	
 	bool load_patch(bool                    merge,
 	                const string&           data_base_uri,
@@ -81,19 +79,19 @@ public:
 
 private:
 
+	void serialize_plugin(SharedPtr<PluginModel> p);
+
 	void serialize_patch(SharedPtr<PatchModel> p, unsigned depth);
 	void serialize_node(SharedPtr<NodeModel> n, unsigned depth);
 	void serialize_port(SharedPtr<PortModel> p, unsigned depth);
 	
 	RdfId path_to_node_id(const Path& path);
 
-	RDFWriter                       _writer;
-	string                          _patch_search_path;
-	SharedPtr<ModelEngineInterface> _engine;
+	RDFWriter _writer;
 };
 
 
 } // namespace Client
 } // namespace Ingen
 
-#endif // PATCHLIBRARIAN_H
+#endif // SERIALIZER_H

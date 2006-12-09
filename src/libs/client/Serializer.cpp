@@ -47,18 +47,6 @@ namespace Ingen {
 namespace Client {
 
 
-Serializer::Serializer(SharedPtr<ModelEngineInterface> engine)
-	: _patch_search_path(".")
-	, _engine(engine)
-{
-}
-
-
-Serializer::~Serializer()
-{
-}
-
-
 /** Begin a serialization to a file.
  *
  * This must be called before any serializing methods.
@@ -111,7 +99,7 @@ Serializer::path_to_node_id(const Path& path)
 	return RdfId(RdfId::ANONYMOUS, ret);
 }
 
-
+#if 0
 /** Searches for the filename passed in the path, returning the full
  * path of the file, or the empty string if not found.
  *
@@ -160,7 +148,7 @@ Serializer::find_file(const string& filename, const string& additional_path)
 
 	return "";
 }
-
+#endif
 
 void
 Serializer::serialize(SharedPtr<ObjectModel> object) throw (std::logic_error)
@@ -235,8 +223,18 @@ Serializer::serialize_patch(SharedPtr<PatchModel> patch, unsigned depth)
 	for (ConnectionList::const_iterator c = patch->connections().begin(); c != patch->connections().end(); ++c) {
 		serialize_connection(*c);
 	}
-	
-	//_engine->set_metadata(patch->path(), "uri", uri);
+}
+
+
+void
+Serializer::serialize_plugin(SharedPtr<PluginModel> plugin)
+{
+	const RdfId plugin_id = RdfId(RdfId::RESOURCE, plugin->uri());
+
+	_writer.write(
+		plugin_id,
+		NS_RDF("type"),
+		RdfId(RdfId::RESOURCE, plugin->type_uri()));
 }
 
 
@@ -249,10 +247,24 @@ Serializer::serialize_node(SharedPtr<NodeModel> node, unsigned depth)
 		? RdfId(RdfId::RESOURCE, string("#") + node->path().substr(1))
 		: path_to_node_id(node->path()); // anonymous
 	
+	const RdfId plugin_id = RdfId(RdfId::RESOURCE, node->plugin()->uri());
+
 	_writer.write(
 		node_id,
 		NS_RDF("type"),
 		NS_INGEN("Node"));
+	
+	_writer.write(
+		node_id,
+		NS_INGEN("name"),
+		node->path().name());
+	
+	_writer.write(
+		node_id,
+		NS_INGEN("plugin"),
+		plugin_id);
+
+	//serialize_plugin(node->plugin());
 	
 	/*_writer.write(_serializer,
 		node_uri_ref.c_str(),

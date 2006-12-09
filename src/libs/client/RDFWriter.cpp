@@ -19,8 +19,8 @@
 
 #define U(x) ((const unsigned char*)(x))
 
-static const char* const RDF_LANG = "rdfxml-abbrev";
-//static const char* const RDF_LANG = "turtle";
+//static const char* const RDF_LANG = "rdfxml-abbrev";
+static const char* const RDF_LANG = "turtle";
 
 
 RDFWriter::RDFWriter()

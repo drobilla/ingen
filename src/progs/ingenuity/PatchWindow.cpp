@@ -34,7 +34,7 @@
 #include "BreadCrumbBox.h"
 #include "Store.h"
 #include "ConnectWindow.h"
-#include "Loader.h"
+#include "ThreadedLoader.h"
 #include "WindowFactory.h"
 #include "PatchView.h"
 
@@ -283,8 +283,8 @@ PatchWindow::event_save_as()
 	
 	if (result == Gtk::RESPONSE_OK) {	
 		string filename = dialog.get_filename();
-		if (filename.length() < 4 || filename.substr(filename.length()-3) != ".om")
-			filename += ".om";
+		if (filename.length() < 11 || filename.substr(filename.length()-10) != ".ingen.ttl")
+			filename += ".ingen.ttl";
 			
 		bool confirm = false;
 		std::fstream fin;

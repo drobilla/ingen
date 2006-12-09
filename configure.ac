@@ -306,11 +306,14 @@ if test "$build_console_clients" = "yes"; then
 	# Check for libxml2 # FIXME: deprecated, make optional
 	PKG_CHECK_MODULES(LXML2, libxml-2.0 >= 2.6.0)
 	
+	# Check for glibmm
+	PKG_CHECK_MODULES(GLIBMM, glibmm-2.4)
+
 	# Check for raptor (for RDF serialization)
 	PKG_CHECK_MODULES(RAPTOR, raptor >= 0.21, build_raptor="yes", build_raptor="no")
 	
 	# Check for rasqal (for RDF querying)
-	#PKG_CHECK_MODULES(RASQAL, rasqal >= 0.9.11, build_rasqal="yes", build_rasqal="no")
+	PKG_CHECK_MODULES(RASQAL, rasqal >= 0.9.11, build_rasqal="yes", build_rasqal="no")
 	
 	# Check for sigc++ (FIXME: make this only necessary where.. uh.. necessary)
 	PKG_CHECK_MODULES(LSIGCPP, sigc++-2.0)

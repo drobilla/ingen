@@ -14,35 +14,36 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "Loader.h"
+#include "ThreadedLoader.h"
 #include <fstream>
 #include <cassert>
 #include <string>
-#include "Serializer.h"
+#include "Loader.h"
 #include "PatchModel.h"
 using std::cout; using std::endl;
 
 namespace Ingenuity {
 
 
-Loader::Loader(SharedPtr<ModelEngineInterface> engine)
-: _serializer(new Serializer(engine))
+ThreadedLoader::ThreadedLoader(SharedPtr<ModelEngineInterface> engine)
+: _loader(new Loader(engine))
+, _serializer(new Serializer())
 {
-	assert(_serializer != NULL);
+	assert(_loader != NULL);
 	
 	// FIXME: rework this so the thread is only present when it's doing something (save mem)
 	start();
 }
 
 
-Loader::~Loader()
+ThreadedLoader::~ThreadedLoader()
 {
-	delete _serializer;
+	delete _loader;
 }
 
 
 void
-Loader::_whipped()
+ThreadedLoader::_whipped()
 {
 	_mutex.lock();
 	
@@ -55,20 +56,26 @@ Loader::_whipped()
 }
 
 void
-Loader::load_patch(bool                    merge,
-                   const string&           data_base_uri,
-                   const Path&             data_path,
-                   MetadataMap             engine_data,
-                   optional<const Path&>   engine_parent,
-                   optional<const string&> engine_name,
-                   optional<size_t>        engine_poly)
+ThreadedLoader::load_patch(bool                    merge,
+                           const string&           data_base_uri,
+                           const Path&             data_path,
+                           MetadataMap             engine_data,
+                           optional<const Path&>   engine_parent,
+                           optional<const string&> engine_name,
+                           optional<size_t>        engine_poly)
 {
 	_mutex.lock();
 
-	_events.push_back(sigc::hide_return(sigc::bind(
-		sigc::mem_fun(_serializer, &Serializer::load_patch),
+	/*_events.push_back(sigc::hide_return(sigc::bind(
+		sigc::mem_fun(_loader, &Loader::load_patch),
 		merge, data_base_uri, data_path,
-		engine_data, engine_parent, engine_name, engine_poly)));
+		engine_data, engine_parent, engine_name, engine_poly)));*/
+	
+	cerr << "FIXME: load under root only\n";
+
+	_events.push_back(sigc::bind(
+		sigc::mem_fun(_loader, &Loader::load),
+		data_base_uri, "/"));
 	
 	_mutex.unlock();
 
@@ -77,12 +84,12 @@ Loader::load_patch(bool                    merge,
 
 
 void
-Loader::save_patch(SharedPtr<PatchModel> model, const string& filename, bool recursive)
+ThreadedLoader::save_patch(SharedPtr<PatchModel> model, const string& filename, bool recursive)
 {
 	_mutex.lock();
 
 	_events.push_back(sigc::hide_return(sigc::bind(
-		sigc::mem_fun(this, &Loader::save_patch_event),
+		sigc::mem_fun(this, &ThreadedLoader::save_patch_event),
 		model, filename, recursive)));
 
 	_mutex.unlock();
@@ -92,7 +99,7 @@ Loader::save_patch(SharedPtr<PatchModel> model, const string& filename, bool rec
 
 
 void
-Loader::save_patch_event(SharedPtr<PatchModel> model, const string& filename, bool recursive)
+ThreadedLoader::save_patch_event(SharedPtr<PatchModel> model, const string& filename, bool recursive)
 {
 	if (recursive)
 		cerr << "FIXME: Recursive save." << endl;

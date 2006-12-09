@@ -18,13 +18,15 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include <cassert>
+#include <boost/optional.hpp>
 #include "App.h"
 #include "PatchView.h"
 #include "NodeModel.h"
 #include "PatchModel.h"
 #include "Configuration.h"
 #include "ModelEngineInterface.h"
-#include "Loader.h"
+#include "ThreadedLoader.h"
+using boost::optional;
 
 namespace Ingenuity {
 
@@ -52,7 +54,9 @@ LoadSubpatchWindow::LoadSubpatchWindow(BaseObjectType* cobject, const Glib::RefP
 
 	Gtk::FileFilter filt;
 	filt.add_pattern("*.om");
-	filt.set_name("Om patch files (*.om)");
+	filt.set_name("Om patch files (DEPRECATED) (*.om)");
+	filt.add_pattern("*.ingen.ttl");
+	filt.set_name("Ingen patch files (*.ingen.ttl)");
 	set_filter(filt);
 	
 	// Add global examples directory to "shortcut folders" (bookmarks)

@@ -54,7 +54,7 @@ class PatchTreeView;
 class PatchTreeWindow;
 class ConnectWindow;
 class Configuration;
-class Loader;
+class ThreadedLoader;
 class WindowFactory;
 
 
@@ -90,7 +90,7 @@ public:
 	PatchTreeWindow* patch_tree()           const { return _patch_tree_window; }
 	Configuration*   configuration()        const { return _configuration; }
 	Store*           store()                const { return _store; }
-	Loader*          loader()               const { return _loader; }
+	ThreadedLoader*  loader()               const { return _loader; }
 	WindowFactory*   window_factory()       const { return _window_factory; }
 
 	const SharedPtr<ModelEngineInterface>& engine() const { return _engine; }
@@ -106,8 +106,8 @@ protected:
 	SharedPtr<ModelEngineInterface> _engine;
 	SharedPtr<SigClientInterface>   _client;
 	
-	Store*  _store;
-	Loader* _loader;
+	Store*          _store;
+	ThreadedLoader* _loader;
 
 	Configuration*    _configuration;
 

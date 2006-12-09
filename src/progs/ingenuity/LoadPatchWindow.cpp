@@ -22,7 +22,7 @@
 #include "Configuration.h"
 #include "PatchModel.h"
 #include "ModelEngineInterface.h"
-#include "Loader.h"
+#include "ThreadedLoader.h"
 
 using boost::optional;
 
@@ -50,7 +50,9 @@ LoadPatchWindow::LoadPatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gno
 
 	Gtk::FileFilter filt;
 	filt.add_pattern("*.om");
-	filt.set_name("Om patch files (*.om)");
+	filt.set_name("Om patch files (DEPRECATED) (*.om)");
+	filt.add_pattern("*.ingen.ttl");
+	filt.set_name("Ingen patch files (*.ingen.ttl)");
 	set_filter(filt);
 
 	// Add global examples directory to "shortcut folders" (bookmarks)

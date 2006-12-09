@@ -82,8 +82,8 @@ ingenuity_SOURCES = \
 	ConfigWindow.cpp \
 	PatchPropertiesWindow.h \
 	PatchPropertiesWindow.cpp \
-	Loader.h \
-	Loader.cpp \
+	ThreadedLoader.h \
+	ThreadedLoader.cpp \
 	RenameWindow.h \
 	RenameWindow.cpp \
 	NodePropertiesWindow.h \
