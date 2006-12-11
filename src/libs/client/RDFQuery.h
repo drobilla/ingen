@@ -45,9 +45,9 @@ public:
 		_query = _prefix_header + query;
 	}
 
-	Results run(const Glib::ustring filename);
+	Results run(const Glib::ustring filename) const;
 
-	Glib::ustring string() { return _query; }
+	Glib::ustring string() const { return _query; };
 
 private:
 

@@ -130,9 +130,11 @@ ObjectSender::send_port(ClientInterface* client, const Port* port)
 	string type = port->type().uri();
 	if (port->type() == DataType::FLOAT) {
 		if (port->buffer_size() == 1) 
-			type = "CONTROL";
+			type = "ingen:control";
 		else
-			type = "AUDIO";
+			type = "ingen:audio";
+	} else if (port->type() == DataType::MIDI) {
+		type = "ingen:midi";
 	}
 	
 	//cerr << ", type = " << type << endl;

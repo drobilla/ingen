@@ -18,13 +18,14 @@
 #define PORTMODEL_H
 
 #include <cstdlib>
+#include <iostream>
 #include <string>
 #include <list>
 #include <sigc++/sigc++.h>
 #include "ObjectModel.h"
 #include "raul/SharedPtr.h"
 #include "raul/Path.h"
-using std::string; using std::list;
+using std::string; using std::list; using std::cerr; using std::endl;
 
 namespace Ingen {
 namespace Client {
@@ -37,22 +38,22 @@ namespace Client {
 class PortModel : public ObjectModel
 {
 public:
-	// FIXME: metadataify
-	enum Type      { CONTROL, AUDIO, MIDI };
 	enum Direction { INPUT, OUTPUT };
+	
+	// FIXME: metadataify
 	enum Hint      { NONE, INTEGER, TOGGLE, LOGARITHMIC };
 	
-	inline float value()          const { return m_current_val; }
-	inline bool  connected()      const { return (m_connections > 0); }
-	inline Type  type()           const { return m_type; }
-	inline bool  is_input()       const { return (m_direction == INPUT); }
-	inline bool  is_output()      const { return (m_direction == OUTPUT); }
-	inline bool  is_audio()       const { return (m_type == AUDIO); }
-	inline bool  is_control()     const { return (m_type == CONTROL); }
-	inline bool  is_midi()        const { return (m_type == MIDI); }
-	inline bool  is_logarithmic() const { return (m_hint == LOGARITHMIC); }
-	inline bool  is_integer()     const { return (m_hint == INTEGER); }
-	inline bool  is_toggle()      const { return (m_hint == TOGGLE); }
+	inline float  value()          const { return m_current_val; }
+	inline bool   connected()      const { return (m_connections > 0); }
+	inline string type()           const { return m_type; }
+	inline bool   is_input()       const { return (m_direction == INPUT); }
+	inline bool   is_output()      const { return (m_direction == OUTPUT); }
+	inline bool   is_audio()       const { return (m_type == "ingen:audio"); }
+	inline bool   is_control()     const { return (m_type == "ingen:control"); }
+	inline bool   is_midi()        const { return (m_type == "ingen:midi"); }
+	inline bool   is_logarithmic() const { return (m_hint == LOGARITHMIC); }
+	inline bool   is_integer()     const { return (m_hint == INTEGER); }
+	inline bool   is_toggle()      const { return (m_hint == TOGGLE); }
 	
 	inline bool operator==(const PortModel& pm) const { return (_path == pm._path); }
 
@@ -64,7 +65,7 @@ public:
 private:
 	friend class Store;
 	
-	PortModel(const Path& path, Type type, Direction dir, Hint hint)
+	PortModel(const Path& path, const string& type, Direction dir, Hint hint)
 	: ObjectModel(path),
 	  m_type(type),
 	  m_direction(dir),
@@ -72,9 +73,11 @@ private:
 	  m_current_val(0.0f),
 	  m_connections(0)
 	{
+		if (!is_audio() && !is_control() && !is_input())
+			cerr << "[PortModel] Warning: Unknown port type" << endl;
 	}
 	
-	PortModel(const Path& path, Type type, Direction dir)
+	PortModel(const Path& path, const string& type, Direction dir)
 	: ObjectModel(path),
 	  m_type(type),
 	  m_direction(dir),
@@ -82,6 +85,8 @@ private:
 	  m_current_val(0.0f),
 	  m_connections(0)
 	{
+		if (!is_audio() && !is_control() && !is_input())
+			cerr << "[PortModel] Warning: Unknown port type" << endl;
 	}
 	
 	inline void value(float f) { m_current_val = f; control_change_sig.emit(f); }
@@ -92,7 +97,7 @@ private:
 	void connected_to(SharedPtr<PortModel> p)      { ++m_connections; connection_sig.emit(p); }
 	void disconnected_from(SharedPtr<PortModel> p) { --m_connections; disconnection_sig.emit(p); }
 	
-	Type      m_type;
+	string    m_type;
 	Direction m_direction;
 	Hint      m_hint;
 	float     m_current_val;

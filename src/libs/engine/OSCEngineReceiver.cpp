@@ -479,7 +479,7 @@ OSCEngineReceiver::m_clear_patch_cb(const char* path, const char* types, lo_arg*
  * <p> \b /om/synth/create_port - Add a port into a given patch (load a plugin by URI)
  * \arg \b response-id (integer)
  * \arg \b path (string) - Full path of the new port (ie. /patch2/subpatch/newport)
- * \arg \b data-type (string) - Data type for port to contain ("AUDIO", "CONTROL", or "MIDI")
+ * \arg \b data-type (string) - Data type for port to contain ("ingen:audio", "ingen:control", or "ingen:midi")
  * \arg \b direction ("is-output") (integer) - Direction of data flow (Input = 0, Output = 1) </p> \n \n
  */
 int

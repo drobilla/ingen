@@ -425,22 +425,22 @@ DeprecatedSerializer::load_node(const Path& parent, xmlDocPtr doc, const xmlNode
 
 		if (plugin_type == "Internal") {
 			if (plugin_label == "audio_input") {
-				_engine->create_port(path, "AUDIO", false);
+				_engine->create_port(path, "ingen:audio", false);
 				is_port = true;
 			} else if (plugin_label == "audio_output") {
-				_engine->create_port(path, "AUDIO", true);
+				_engine->create_port(path, "ingen:audio", true);
 				is_port = true;
 			} else if (plugin_label == "control_input") {
-				_engine->create_port(path, "CONTROL", false);
+				_engine->create_port(path, "ingen:control", false);
 				is_port = true;
 			} else if (plugin_label == "control_output" ) {
-				_engine->create_port(path, "CONTROL", true);
+				_engine->create_port(path, "ingen:control", true);
 				is_port = true;
 			} else if (plugin_label == "midi_input") {
-				_engine->create_port(path, "MIDI", false);
+				_engine->create_port(path, "ingen:midi", false);
 				is_port = true;
 			} else if (plugin_label == "midi_output" ) {
-				_engine->create_port(path, "MIDI", true);
+				_engine->create_port(path, "ingen:midi", true);
 				is_port = true;
 			}
 		}

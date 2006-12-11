@@ -378,17 +378,9 @@ Store::new_node_event(const string& plugin_uri, const Path& node_path, bool is_p
 void
 Store::new_port_event(const Path& path, const string& type, bool is_output)
 {
-	// FIXME: this sucks
-
-	PortModel::Type ptype = PortModel::CONTROL;
-	if (type == "AUDIO") ptype = PortModel::AUDIO;
-	else if (type == "CONTROL") ptype = PortModel::CONTROL;
-	else if (type== "MIDI") ptype = PortModel::MIDI;
-	else cerr << "[Store] WARNING:  Unknown port type received (" << type << ")" << endl;
-
 	PortModel::Direction pdir = is_output ? PortModel::OUTPUT : PortModel::INPUT;
 
-	SharedPtr<PortModel> p(new PortModel(path, ptype, pdir));
+	SharedPtr<PortModel> p(new PortModel(path, type, pdir));
 	add_object(p);
 	if (p->parent())
 		resolve_connection_orphans(p);

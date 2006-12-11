@@ -27,7 +27,7 @@ namespace Client {
 
 
 RDFQuery::Results
-RDFQuery::run(const Glib::ustring filename)
+RDFQuery::run(const Glib::ustring filename) const
 {
 	Results result;
 

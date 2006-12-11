@@ -38,7 +38,13 @@
 namespace Ingen {
 
 
-AddPortEvent::AddPortEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& type, bool is_output, QueuedEventSource* source)
+AddPortEvent::AddPortEvent(Engine&              engine,
+                           SharedPtr<Responder> responder,
+                           SampleCount          timestamp,
+                           const string&        path,
+                           const string&        type,
+                           bool                 is_output,
+                           QueuedEventSource*   source)
 : QueuedEvent(engine, responder, timestamp, true, source),
   _path(path),
   _type(type),
@@ -57,9 +63,9 @@ AddPortEvent::AddPortEvent(Engine& engine, SharedPtr<Responder> responder, Sampl
 	 */
 
 	string type_str;
-	if (type == "CONTROL" || type == "AUDIO")
+	if (type == "ingen:control" || type == "ingen:audio")
 		_data_type = DataType::FLOAT;
-	else if (type == "MIDI")
+	else if (type == "ingen:midi")
 		_data_type = DataType::MIDI;
 }
 
@@ -80,7 +86,7 @@ AddPortEvent::pre_process()
 		assert(_patch->path() == _path.parent());
 		
 		size_t buffer_size = 1;
-		if (_type == "AUDIO" || _type == "MIDI")
+		if (_type == "ingen:audio" || _type == "ingen:midi")
 			buffer_size = _engine.audio_driver()->buffer_size();
 	
 		const size_t old_num_ports = _patch->num_ports();
@@ -104,10 +110,10 @@ AddPortEvent::pre_process()
 			_engine.object_store()->add(_patch_port);
 
 			if (!_patch->parent()) {
-				if (_type == "AUDIO")
+				if (_type == "ingen:audio")
 					_driver_port = _engine.audio_driver()->create_port(
 						dynamic_cast<DuplexPort<Sample>*>(_patch_port));
-				else if (_type == "MIDI")
+				else if (_type == "ingen:midi")
 					_driver_port = _engine.midi_driver()->create_port(
 						dynamic_cast<DuplexPort<MidiMessage>*>(_patch_port));
 			}

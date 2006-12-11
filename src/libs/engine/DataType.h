@@ -56,6 +56,7 @@ public:
 	inline bool operator!=(const Symbol& symbol) const { return (_symbol != symbol); }
 	inline bool operator==(const DataType& type) const { return (_symbol == type._symbol); }
 	inline bool operator!=(const DataType& type) const { return (_symbol != type._symbol); }
+
 private:
 	Symbol _symbol;
 

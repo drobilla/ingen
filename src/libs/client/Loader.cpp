@@ -31,6 +31,7 @@ Loader::Loader(SharedPtr<ModelEngineInterface> engine, SharedPtr<Namespaces> nam
 		_namespaces = SharedPtr<Namespaces>(new Namespaces());
 
 	// FIXME: hack
+	_namespaces->add("ingen", "http://codeson.net/ns/ingen#");
 	_namespaces->add("ingenuity", "http://codeson.net/ns/ingenuity#");
 }
 
@@ -47,14 +48,16 @@ Loader::load(const Glib::ustring& filename,
 {
 	std::map<Glib::ustring, bool> created;
 
+
+	/* Load nodes */
+	
 	RDFQuery query(Glib::ustring(
 		"SELECT DISTINCT ?name ?plugin ?floatkey ?floatval FROM <") + filename + "> WHERE {\n"
 		"?patch ingen:node   ?node .\n"
 		"?node  ingen:name   ?name ;\n"
 		"       ingen:plugin ?plugin ;\n"
-		"OPTIONAL { ?node ?floatkey  ?floatval . \n"
-		"           FILTER ( datatype(?floatval) = xsd:decimal )\n"
-		"         }\n"
+		"OPTIONAL { ?node ?floatkey ?floatval . \n"
+		"           FILTER ( datatype(?floatval) = xsd:decimal ) }\n"
 		"}");
 
 	RDFQuery::Results nodes = query.run(filename);
@@ -64,7 +67,6 @@ Loader::load(const Glib::ustring& filename,
 		const Glib::ustring& plugin = (*i)["plugin"];
 
 		if (created.find(name) == created.end()) {
-			cerr << "CREATING " << name << endl;
 			_engine->create_node(parent.base() + name, plugin, false);
 			created[name] = true;
 		}
@@ -72,13 +74,49 @@ Loader::load(const Glib::ustring& filename,
 		Glib::ustring floatkey = _namespaces->qualify((*i)["floatkey"]);
 		Glib::ustring floatval = (*i)["floatval"];
 
-		float val = atof(floatval.c_str());
-
-		cerr << floatkey << " = " << val << endl;
-
-		_engine->set_metadata(parent.base() + name, floatkey, Atom(val));
+		if (floatkey != "" && floatval != "") {
+			const float val = atof(floatval.c_str());
+			_engine->set_metadata(parent.base() + name, floatkey, Atom(val));
+		}
 	}
 	
+	created.clear();
+
+
+	/* Load patch ports */
+	
+	query = RDFQuery(Glib::ustring(
+		"SELECT DISTINCT ?port ?type ?name ?datatype ?floatkey ?floatval FROM <") + filename + "> WHERE {\n"
+		"?patch ingen:port     ?port .\n"
+		"?port  a              ?type ;\n"
+		"       ingen:name     ?name ;\n"
+		"       ingen:dataType ?datatype .\n"
+		"OPTIONAL { ?port ?floatkey ?floatval . \n"
+		"           FILTER ( datatype(?floatval) = xsd:decimal ) }\n"
+		"}");
+
+	RDFQuery::Results ports = query.run(filename);
+
+	for (RDFQuery::Results::iterator i = ports.begin(); i != ports.end(); ++i) {
+		const Glib::ustring& name     = (*i)["name"];
+		const Glib::ustring& type     = _namespaces->qualify((*i)["type"]);
+		const Glib::ustring& datatype = (*i)["datatype"];
+
+		if (created.find(name) == created.end()) {
+			cerr << "TYPE: " << type << endl;
+			bool is_output = (type == "ingen:OutputPort"); // FIXME: check validity
+			_engine->create_port(parent.base() + name, datatype, is_output);
+			created[name] = true;
+		}
+
+		Glib::ustring floatkey = _namespaces->qualify((*i)["floatkey"]);
+		Glib::ustring floatval = (*i)["floatval"];
+
+		if (floatkey != "" && floatval != "") {
+			const float val = atof(floatval.c_str());
+			_engine->set_metadata(parent.base() + name, floatkey, Atom(val));
+		}
+	}
 }
 
 

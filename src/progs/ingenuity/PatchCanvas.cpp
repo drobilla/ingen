@@ -60,22 +60,22 @@ PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 	// Add port menu items
 	m_menu_add_audio_input->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
-			"audio_input", "AUDIO", false));
+			"audio_input", "ingen:audio", false));
 	m_menu_add_audio_output->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
-			"audio_output", "AUDIO", true));
+			"audio_output", "ingen:audio", true));
 	m_menu_add_control_input->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
-			"control_input", "CONTROL", false));
+			"control_input", "ingen:control", false));
 	m_menu_add_control_output->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
-			"control_output", "CONTROL", true));
+			"control_output", "ingen:control", true));
 	m_menu_add_midi_input->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
-			"midi_input", "MIDI", false));
+			"midi_input", "ingen:midi", false));
 	m_menu_add_midi_output->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
-			"midi_output", "MIDI", true));
+			"midi_output", "ingen:midi", true));
 
 	// Connect to model signals to track state
 	m_patch->new_node_sig.connect(sigc::mem_fun(this, &PatchCanvas::add_node));
@@ -224,8 +224,7 @@ PatchCanvas::connect(boost::shared_ptr<LibFlowCanvas::Port> src_port, boost::sha
 		return;
 
 	// Midi binding/learn shortcut
-	if (src->model()->type() == PortModel::MIDI &&
-			dst->model()->type() == PortModel::CONTROL)
+	if (src->model()->is_midi() && dst->model()->is_control())
 	{
 		cerr << "FIXME: MIDI binding" << endl;
 #if 0
