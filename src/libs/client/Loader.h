@@ -21,6 +21,7 @@
 #include "raul/SharedPtr.h"
 #include "raul/Path.h"
 #include "Namespaces.h"
+#include "ObjectModel.h"
 
 namespace Ingen {
 namespace Client {
@@ -34,8 +35,10 @@ class Loader {
 public:
 	Loader(SharedPtr<ModelEngineInterface> engine, SharedPtr<Namespaces> = SharedPtr<Namespaces>());
 
-	void load(const Glib::ustring& filename,
-	          const Path&          parent);
+	bool load(const Glib::ustring& filename,
+	          const Path&          parent,
+	          Glib::ustring        patch_uri = "",
+	          MetadataMap          initial_data = MetadataMap());
 
 private:
 	//string                          _patch_search_path;

@@ -73,9 +73,9 @@ ThreadedLoader::load_patch(bool                    merge,
 	
 	cerr << "FIXME: load under root only\n";
 
-	_events.push_back(sigc::bind(
+	_events.push_back(sigc::hide_return(sigc::bind(
 		sigc::mem_fun(_loader, &Loader::load),
-		data_base_uri, "/"));
+		data_base_uri, "/", "", engine_data)));
 	
 	_mutex.unlock();
 

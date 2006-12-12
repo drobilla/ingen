@@ -68,13 +68,13 @@ PatchPortModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<PortMod
 		new PatchPortModule(canvas, port));
 	assert(ret);
 
-	for (MetadataMap::const_iterator m = port->metadata().begin(); m != port->metadata().end(); ++m)
-		ret->metadata_update(m->first, m->second);
-
-	ret->m_patch_port = boost::shared_ptr<Port>(new Port(ret->shared_from_this(), port, true));
+	ret->m_patch_port = boost::shared_ptr<Port>(new Port(ret, port, true));
 	ret->add_port(ret->m_patch_port);
 	
 	ret->resize();
+	
+	for (MetadataMap::const_iterator m = port->metadata().begin(); m != port->metadata().end(); ++m)
+		ret->metadata_update(m->first, m->second);
 
 	return ret;
 }

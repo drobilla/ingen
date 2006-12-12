@@ -27,6 +27,7 @@
 #include "RenameWindow.h"
 #include "PatchWindow.h"
 #include "WindowFactory.h"
+#include "SubpatchModule.h"
 
 namespace Ingenuity {
 
@@ -51,8 +52,13 @@ NodeModule::NodeModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeMode
 boost::shared_ptr<NodeModule>
 NodeModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeModel> node)
 {
-	boost::shared_ptr<NodeModule> ret = boost::shared_ptr<NodeModule>(
-		new NodeModule(canvas, node));
+	boost::shared_ptr<NodeModule> ret;
+
+	SharedPtr<PatchModel> patch = PtrCast<PatchModel>(node);
+	if (patch)
+		ret = boost::shared_ptr<NodeModule>(new SubpatchModule(canvas, patch));
+	else
+		ret = boost::shared_ptr<NodeModule>(new NodeModule(canvas, node));
 
 	for (MetadataMap::const_iterator m = node->metadata().begin(); m != node->metadata().end(); ++m)
 		ret->metadata_update(m->first, m->second);

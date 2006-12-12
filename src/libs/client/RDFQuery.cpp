@@ -27,7 +27,7 @@ namespace Client {
 
 
 RDFQuery::Results
-RDFQuery::run(const Glib::ustring filename) const
+RDFQuery::run(const Glib::ustring base_uri_str) const
 {
 	Results result;
 
@@ -35,7 +35,11 @@ RDFQuery::run(const Glib::ustring filename) const
 
 	rasqal_query *rq = rasqal_new_query("sparql", NULL);
 
-	rasqal_query_prepare(rq, (unsigned char*)_query.c_str(), NULL);
+	raptor_uri* base_uri = NULL;
+	if (base_uri_str != "")
+		base_uri = raptor_new_uri((const unsigned char*)base_uri_str.c_str());
+	rasqal_query_prepare(rq, (unsigned char*)_query.c_str(), base_uri);
+
 	rasqal_query_results* results = rasqal_query_execute(rq);
 	assert(results);
 
@@ -62,6 +66,10 @@ RDFQuery::run(const Glib::ustring filename) const
 
 	rasqal_free_query_results(results);
 	rasqal_free_query(rq);
+	
+	if (base_uri)
+		raptor_free_uri(base_uri);
+
 	rasqal_finish();
 
 	return result;
