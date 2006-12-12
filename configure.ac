@@ -72,7 +72,7 @@ AC_ARG_ENABLE(debug,
 	[debug="$enableval"])
 if test "$debug" = "yes"; then
   debug_symbols="yes"
-  assertions="yes"
+  debug_assertions="yes"
 fi
 
 AC_ARG_ENABLE(debug_symbols,

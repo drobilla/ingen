@@ -52,7 +52,7 @@ Loader::load(const Glib::ustring& filename,
 	/* Load nodes */
 	
 	RDFQuery query(Glib::ustring(
-		"SELECT DISTINCT ?name ?plugin ?floatkey ?floatval FROM <") + filename + "> WHERE {\n"
+		"SELECT DISTINCT ?patch ?name ?plugin ?floatkey ?floatval FROM <") + filename + "> WHERE {\n"
 		"?patch ingen:node   ?node .\n"
 		"?node  ingen:name   ?name ;\n"
 		"       ingen:plugin ?plugin ;\n"
@@ -63,8 +63,12 @@ Loader::load(const Glib::ustring& filename,
 	RDFQuery::Results nodes = query.run(filename);
 
 	for (RDFQuery::Results::iterator i = nodes.begin(); i != nodes.end(); ++i) {
+		
+		const Glib::ustring& patch  = (*i)["patch"];
 		const Glib::ustring& name   = (*i)["name"];
 		const Glib::ustring& plugin = (*i)["plugin"];
+		
+		cerr << "LOADING NODE IN PATCH : " << patch << endl;
 
 		if (created.find(name) == created.end()) {
 			_engine->create_node(parent.base() + name, plugin, false);
@@ -103,7 +107,7 @@ Loader::load(const Glib::ustring& filename,
 		const Glib::ustring& datatype = (*i)["datatype"];
 
 		if (created.find(name) == created.end()) {
-			cerr << "TYPE: " << type << endl;
+			//cerr << "TYPE: " << type << endl;
 			bool is_output = (type == "ingen:OutputPort"); // FIXME: check validity
 			_engine->create_port(parent.base() + name, datatype, is_output);
 			created[name] = true;
@@ -117,6 +121,42 @@ Loader::load(const Glib::ustring& filename,
 			_engine->set_metadata(parent.base() + name, floatkey, Atom(val));
 		}
 	}
+
+	/* Load connections */
+
+	query = RDFQuery(Glib::ustring(
+		"SELECT DISTINCT ?srcnode ?src ?dstnode ?dst FROM <") + filename + "> WHERE {\n"
+		"?srcnoderef ingen:port ?srcref .\n"
+		"?dstnoderef ingen:port ?dstref .\n"
+		"?dstref ingen:connectedTo ?srcref .\n"
+		"?srcref ingen:name ?src .\n"
+		"?dstref ingen:name ?dst .\n"
+		"OPTIONAL { ?srcnoderef ingen:name ?srcnode } .\n"
+		"OPTIONAL { ?dstnoderef ingen:name ?dstnode }\n"
+		"}\n");
+	
+	cerr << "*************\n" << query.string() << "*****************\n";
+
+	RDFQuery::Results connections = query.run(filename);
+	
+	for (RDFQuery::Results::iterator i = connections.begin(); i != connections.end(); ++i) {
+		// FIXME: kludge
+		Path src_node = string("/");
+		if ((*i).find("srcnode") != (*i).end())
+			src_node += string((*i)["srcnode"]);
+		Path src_port = src_node.base() + string((*i)["src"]);
+		
+		Path dst_node = string("/");
+		if ((*i).find("dstnode") != (*i).end())
+			dst_node += string((*i)["dstnode"]);
+		Path dst_port = dst_node.base() + string((*i)["dst"]);
+		
+		cerr << "CONNECTION: " << src_port << " -> " << dst_port << endl;
+
+		_engine->connect(src_port, dst_port);
+	}
+
+
 }
 
 

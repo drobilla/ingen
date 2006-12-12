@@ -93,8 +93,6 @@ libingen_la_SOURCES = \
 	events/UnregisterClientEvent.h \
 	events/UnregisterClientEvent.cpp \
 	events/PingQueuedEvent.h \
-	events/ActivateEvent.h \
-	events/ActivateEvent.cpp \
 	events/DeactivateEvent.h \
 	events/DeactivateEvent.cpp \
 	events/SetPortValueEvent.h \

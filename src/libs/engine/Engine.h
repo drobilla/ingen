@@ -19,6 +19,7 @@
 
 #include <cassert>
 #include <boost/utility.hpp>
+#include <raul/SharedPtr.h>
 
 template<typename T> class Queue;
 class Maid;
@@ -41,17 +42,15 @@ template <typename T> class Driver;
 
 /** The main class for the Engine.
  *
- * With access to this you can find any object that's a part of the engine.
- * Access to this should be limited as possible, it basically exists so
- * there's something to pass Event constructors so they can access what
- * they need to perform their function.
+ * This is a (GoF) facade for the engine.  Pointers to all components are
+ * available for more advanced control than this facade allows.
  *
  * \ingroup engine
  */
 class Engine : boost::noncopyable
 {
 public:
-	Engine(AudioDriver* audio_driver = 0);
+	Engine();
 	~Engine();
 
 	int  main();
@@ -61,15 +60,13 @@ public:
 	 * Note that it will take some time. */
 	void quit() { m_quit_flag = true; }
 	
-	void activate();
+	bool activate(SharedPtr<AudioDriver> ad, SharedPtr<EventSource> es);
 	void deactivate();
 
 	bool activated() { return m_activated; }
 
-	void set_event_source(EventSource* es) { m_event_source = es; }
-
-	EventSource*       event_source()       const { return m_event_source; }
-	AudioDriver*       audio_driver()       const { return m_audio_driver; }
+	EventSource*       event_source()       const { return m_event_source.get(); }
+	AudioDriver*       audio_driver()       const { return m_audio_driver.get(); }
 	MidiDriver*        midi_driver()        const { return m_midi_driver; }
 	Maid*              maid()               const { return m_maid; }
 	PostProcessor*     post_processor()     const { return m_post_processor; }
@@ -82,15 +79,15 @@ public:
 	template<typename T> Driver<T>* driver();
 	
 private:
-	EventSource*       m_event_source;
-	AudioDriver*       m_audio_driver;
-	MidiDriver*        m_midi_driver;
-	Maid*              m_maid;
-	PostProcessor*     m_post_processor;
-	ClientBroadcaster* m_broadcaster;
-	ObjectStore*       m_object_store;
-	NodeFactory*       m_node_factory;
-	LashDriver*        m_lash_driver;
+	SharedPtr<EventSource> m_event_source;
+	SharedPtr<AudioDriver> m_audio_driver;
+	MidiDriver*            m_midi_driver;
+	Maid*                  m_maid;
+	PostProcessor*         m_post_processor;
+	ClientBroadcaster*     m_broadcaster;
+	ObjectStore*           m_object_store;
+	NodeFactory*           m_node_factory;
+	LashDriver*            m_lash_driver;
 	
 	bool m_quit_flag;
 	bool m_activated;

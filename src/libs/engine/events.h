@@ -19,7 +19,6 @@
 
 #include "config.h"
 
-#include "ActivateEvent.h"
 #include "DeactivateEvent.h"
 #include "EnablePatchEvent.h"
 #include "DisablePatchEvent.h"

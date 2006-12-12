@@ -2,6 +2,7 @@
 
 package "Om - An OSC controlled realtime modular synthesizer"
 
-option	"port"  	p	"OSC port to listen on"	string	default="16180"		no
-option	"in-jackd"	i	"Run engine as in-process JACK client"	flag	off
+option	"port"  	  p	"OSC port to listen on"	string	default="16180"		no
+option  "jack-server" j "Name of Jack server to attach to" string 	no
+option	"in-jackd"	  i	"Run engine as in-process JACK client"	flag	off
 

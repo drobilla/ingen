@@ -14,6 +14,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <cassert>
 #include "Engine.h"	
 #include "config.h"
 #include "tuning.h"
@@ -48,16 +49,8 @@ using std::cout; using std::cerr; using std::endl;
 namespace Ingen {
 
 
-Engine::Engine(AudioDriver* audio_driver)
-: m_event_source(NULL),
-  m_audio_driver( (audio_driver) ? audio_driver : new JackAudioDriver(*this) ),
-#ifdef HAVE_JACK_MIDI
-  m_midi_driver(new JackMidiDriver(((JackAudioDriver*)m_audio_driver)->jack_client())),
-#elif HAVE_ALSA_MIDI
-  m_midi_driver(new AlsaMidiDriver(m_audio_driver)),
-#else
-  m_midi_driver(new DummyMidiDriver()),
-#endif
+Engine::Engine()
+: m_midi_driver(NULL),
   m_maid(new Maid(maid_queue_size)),
   m_post_processor(new PostProcessor(*m_maid, post_processor_queue_size)),
   m_broadcaster(new ClientBroadcaster()),
@@ -88,7 +81,6 @@ Engine::~Engine()
 	delete m_broadcaster;
 	delete m_node_factory;
 	delete m_midi_driver;
-	delete m_audio_driver;
 	
 	delete m_maid;
 
@@ -105,7 +97,7 @@ Engine::~Engine()
 template<>
 Driver<MidiMessage>* Engine::driver<MidiMessage>() { return m_midi_driver; }
 template<>
-Driver<Sample>* Engine::driver<Sample>() { return m_audio_driver; }
+Driver<Sample>* Engine::driver<Sample>() { return m_audio_driver.get(); }
 
 
 int
@@ -147,12 +139,28 @@ Engine::main_iteration()
 }
 
 
-void
-Engine::activate()
+bool
+Engine::activate(SharedPtr<AudioDriver> ad, SharedPtr<EventSource> es)
 {
 	if (m_activated)
-		return;
+		return false;
+
+	// Setup drivers
+	m_audio_driver = ad;
+#ifdef HAVE_JACK_MIDI
+	m_midi_driver = new JackMidiDriver(((JackAudioDriver*)m_audio_driver.get())->jack_client());
+#elif HAVE_ALSA_MIDI
+	m_midi_driver = new AlsaMidiDriver(m_audio_driver);
+#else
+	m_midi_driver = new DummyMidiDriver();
+#endif
 	
+	// Set event source (FIXME: handle multiple sources)
+	m_event_source = es;
+	
+	m_audio_driver->activate();
+	m_event_source->activate();
+
 	// Create root patch
 	CreatePatchEvent create_ev(*this, SharedPtr<Responder>(new Responder()), 0, "/", 1);
 	create_ev.pre_process();
@@ -173,6 +181,8 @@ Engine::activate()
 	m_post_processor->start();
 
 	m_activated = true;
+	
+	return true;
 }
 
 
@@ -199,6 +209,10 @@ Engine::deactivate()
 	m_post_processor->whip();
 	m_post_processor->stop();
 
+	m_audio_driver.reset();
+
+	m_event_source.reset();
+	
 	m_activated = false;
 }
 

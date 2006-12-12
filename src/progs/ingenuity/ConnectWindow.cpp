@@ -29,8 +29,9 @@
 #include "App.h"
 #include "WindowFactory.h"
 #ifdef MONOLITHIC_INGENUITY
-	#include "engine/QueuedEngineInterface.h"
 	#include "engine/Engine.h"
+	#include "engine/JackAudioDriver.h"
+	#include "engine/QueuedEngineInterface.h"
 	#include "engine/DirectResponder.h"
 	#include "engine/tuning.h"
 #endif
@@ -169,16 +170,19 @@ ConnectWindow::connect()
 #ifdef MONOLITHIC_INGENUITY
 	} else if (_mode == INTERNAL) {
 		SharedPtr<Ingen::Engine> engine(new Ingen::Engine());
-		QueuedModelEngineInterface* qmei = new QueuedModelEngineInterface(engine);
-		SharedPtr<ModelEngineInterface> engine_interface(qmei);
+		SharedPtr<Ingen::AudioDriver> audio_driver(
+			new Ingen::JackAudioDriver(*engine.get()) );
+		SharedPtr<QueuedModelEngineInterface> engine_interface(
+			new QueuedModelEngineInterface(engine) );
 		ThreadedSigClientInterface* tsci = new ThreadedSigClientInterface(Ingen::event_queue_size);
 		SharedPtr<SigClientInterface> client(tsci);
 		
 		App::instance().attach(engine_interface, client);
 
-		qmei->set_responder(SharedPtr<Ingen::Responder>(new Ingen::DirectResponder(client, 1)));
-		engine->set_event_source(qmei);
-		
+		engine_interface->set_responder(SharedPtr<Ingen::Responder>(new Ingen::DirectResponder(client, 1)));
+
+		engine->activate(audio_driver, engine_interface);
+
 		Glib::signal_timeout().connect(
 			sigc::mem_fun(engine.get(), &Ingen::Engine::main_iteration), 1000);
 		

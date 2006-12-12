@@ -118,7 +118,9 @@ JackAudioPort::prepare_buffer(jack_nframes_t nframes)
 	
 //// JackAudioDriver ////
 
-JackAudioDriver::JackAudioDriver(Engine& engine, jack_client_t* jack_client)
+JackAudioDriver::JackAudioDriver(Engine&        engine,
+                                 std::string    server_name,
+                                 jack_client_t* jack_client)
 : _engine(engine),
   _client(jack_client),
   _buffer_size(jack_client ? jack_get_buffer_size(jack_client) : 0),
@@ -128,11 +130,29 @@ JackAudioDriver::JackAudioDriver(Engine& engine, jack_client_t* jack_client)
   _root_patch(NULL)
 {
 	if (!_client) {
-		_client = jack_client_new("Ingen");
-		if (_client == NULL) {
+		// Try supplied server name
+		if (server_name != "") {
+			_client = jack_client_open("Ingen", JackServerName, NULL, server_name.c_str());
+			if (_client)
+				cerr << "[JackAudioDriver] Connected to JACK server '" <<
+					server_name << "'" << endl;
+		}
+		
+		// Either server name not specified, or supplied server name does not exist
+		// Connect to default server
+		if (!_client) {
+			_client = jack_client_open("Ingen", JackNullOption, NULL);
+			
+			if (_client)
+				cerr << "[JackAudioDriver] Connected to default JACK server." << endl;
+		}
+
+		// Still failed
+		if (!_client) {
 			cerr << "[JackAudioDriver] Unable to connect to Jack.  Exiting." << endl;
 			exit(EXIT_FAILURE);
 		}
+
 		_buffer_size = jack_get_buffer_size(_client);
 		_sample_rate = jack_get_sample_rate(_client);
 	}
@@ -272,11 +292,14 @@ JackAudioDriver::_process_cb(jack_nframes_t nframes)
 	if (_engine.event_source())
 		_engine.event_source()->process(*_engine.post_processor(), nframes, start_of_last_cycle, start_of_current_cycle);
 	
+	assert(_engine.midi_driver());
 	_engine.midi_driver()->prepare_block(start_of_last_cycle, start_of_current_cycle);
 	
 	// Set buffers of patch ports to Jack port buffers (zero-copy processing)
-	for (List<JackAudioPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
+	for (List<JackAudioPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i) {
+		assert(*i);
 		(*i)->prepare_buffer(nframes);
+	}
 	
 	// Run root patch
 	assert(_root_patch != NULL);

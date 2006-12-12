@@ -48,8 +48,12 @@ RDFQuery::run(const Glib::ustring filename) const
 			rasqal_literal*      rvalue = rasqal_query_results_get_binding_value(results, i);
 			Glib::ustring name((const char*)rname);
 
-			Glib::ustring value((const char*)rasqal_literal_as_string(rvalue));
-			bindings.insert(std::make_pair(name, value));
+			const unsigned char* str = rasqal_literal_as_string(rvalue);
+
+			if (str) {
+				Glib::ustring value((const char*)str);
+				bindings.insert(std::make_pair(name, value));
+			}
 		}
 
 		result.push_back(bindings);

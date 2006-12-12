@@ -22,6 +22,7 @@
 #include "cmdline.h"
 #include "tuning.h"
 #include "Engine.h"
+#include "JackAudioDriver.h"
 #include "OSCEngineReceiver.h"
 #ifdef HAVE_LASH
 #include "LashDriver.h"
@@ -139,11 +140,16 @@ main(int argc, char** argv)
 
 		engine = SharedPtr<Engine>(new Engine());
 
-		OSCEngineReceiver* receiver = new OSCEngineReceiver(
-				engine, pre_processor_queue_size, args_info.port_arg);
+		std::string jack_name
+			= (args_info.jack_server_given) ? args_info.jack_server_arg : "";
 
-		receiver->activate();
-		engine->set_event_source(receiver);
+		SharedPtr<AudioDriver> audio_driver(
+			new JackAudioDriver(*engine.get(), jack_name) );
+
+		SharedPtr<EventSource> event_source(new OSCEngineReceiver(
+			engine, pre_processor_queue_size, args_info.port_arg ));
+
+		engine->activate(audio_driver, event_source);
 
 #ifdef HAVE_LASH
 		lash_driver = new LashDriver(engine, lash_args);
@@ -151,13 +157,12 @@ main(int argc, char** argv)
 
 		engine->main();
 
-		receiver->deactivate();
+		event_source->deactivate();
 
 #ifdef HAVE_LASH
 		delete lash_driver;
 #endif
 
-		delete receiver;
 	}
 	
 	return ret;

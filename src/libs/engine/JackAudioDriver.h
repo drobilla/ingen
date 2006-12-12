@@ -72,7 +72,10 @@ private:
 class JackAudioDriver : public AudioDriver
 {
 public:	
-	JackAudioDriver(Engine& engine, jack_client_t *jack_client = 0);
+	JackAudioDriver(Engine&        engine,
+	                std::string    server_name = "",
+	                jack_client_t* jack_client = 0);
+
 	~JackAudioDriver();
 
 	void activate();
@@ -136,23 +139,27 @@ private:
 
 inline int JackAudioDriver::process_cb(jack_nframes_t nframes, void* jack_driver)
 {
+	assert(jack_driver);
 	return ((JackAudioDriver*)jack_driver)->_process_cb(nframes);
 }
 
 inline void JackAudioDriver::shutdown_cb(void* jack_driver)
 {
+	assert(jack_driver);
 	return ((JackAudioDriver*)jack_driver)->_shutdown_cb();
 }
 
 
 inline int JackAudioDriver::buffer_size_cb(jack_nframes_t nframes, void* jack_driver)
 {
+	assert(jack_driver);
 	return ((JackAudioDriver*)jack_driver)->_buffer_size_cb(nframes);
 }
 
 
 inline int JackAudioDriver::sample_rate_cb(jack_nframes_t nframes, void* jack_driver)
 {
+	assert(jack_driver);
 	return ((JackAudioDriver*)jack_driver)->_sample_rate_cb(nframes);
 }
 	
