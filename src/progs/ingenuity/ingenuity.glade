@@ -1829,6 +1829,43 @@
 		  <property name="show_arrow">False</property>
 
 		  <child>
+		    <widget class="GtkToolItem" id="toolitem4">
+		      <property name="visible">True</property>
+		      <property name="visible_horizontal">True</property>
+		      <property name="visible_vertical">True</property>
+		      <property name="is_important">False</property>
+
+		      <child>
+			<widget class="GtkViewport" id="patch_view_breadcrumb_container">
+			  <property name="visible">True</property>
+			  <property name="shadow_type">GTK_SHADOW_NONE</property>
+
+			  <child>
+			    <placeholder/>
+			  </child>
+			</widget>
+		      </child>
+		    </widget>
+		    <packing>
+		      <property name="expand">False</property>
+		      <property name="homogeneous">False</property>
+		    </packing>
+		  </child>
+
+		  <child>
+		    <widget class="GtkSeparatorToolItem" id="separatortoolitem14">
+		      <property name="visible">True</property>
+		      <property name="draw">True</property>
+		      <property name="visible_horizontal">True</property>
+		      <property name="visible_vertical">True</property>
+		    </widget>
+		    <packing>
+		      <property name="expand">False</property>
+		      <property name="homogeneous">False</property>
+		    </packing>
+		  </child>
+
+		  <child>
 		    <widget class="GtkToggleToolButton" id="patch_view_process_but">
 		      <property name="visible">True</property>
 		      <property name="tooltip" translatable="yes">Enable DSP processing</property>
@@ -1843,19 +1880,6 @@
 		    <packing>
 		      <property name="expand">False</property>
 		      <property name="homogeneous">True</property>
-		    </packing>
-		  </child>
-
-		  <child>
-		    <widget class="GtkSeparatorToolItem" id="separatortoolitem6">
-		      <property name="visible">True</property>
-		      <property name="draw">True</property>
-		      <property name="visible_horizontal">True</property>
-		      <property name="visible_vertical">True</property>
-		    </widget>
-		    <packing>
-		      <property name="expand">False</property>
-		      <property name="homogeneous">False</property>
 		    </packing>
 		  </child>
 
@@ -2020,7 +2044,7 @@
 		  <child>
 		    <widget class="GtkToolButton" id="patch_view_zoom_full_but">
 		      <property name="visible">True</property>
-		      <property name="tooltip" translatable="yes">Fit patch in window</property>
+		      <property name="tooltip" translatable="yes">Fit patch to window</property>
 		      <property name="label" translatable="yes"></property>
 		      <property name="use_underline">True</property>
 		      <property name="stock_id">gtk-zoom-fit</property>
@@ -2031,43 +2055,6 @@
 		    <packing>
 		      <property name="expand">False</property>
 		      <property name="homogeneous">True</property>
-		    </packing>
-		  </child>
-
-		  <child>
-		    <widget class="GtkSeparatorToolItem" id="separatortoolitem14">
-		      <property name="visible">True</property>
-		      <property name="draw">True</property>
-		      <property name="visible_horizontal">True</property>
-		      <property name="visible_vertical">True</property>
-		    </widget>
-		    <packing>
-		      <property name="expand">False</property>
-		      <property name="homogeneous">False</property>
-		    </packing>
-		  </child>
-
-		  <child>
-		    <widget class="GtkToolItem" id="toolitem4">
-		      <property name="visible">True</property>
-		      <property name="visible_horizontal">True</property>
-		      <property name="visible_vertical">True</property>
-		      <property name="is_important">False</property>
-
-		      <child>
-			<widget class="GtkViewport" id="patch_view_breadcrumb_container">
-			  <property name="visible">True</property>
-			  <property name="shadow_type">GTK_SHADOW_NONE</property>
-
-			  <child>
-			    <placeholder/>
-			  </child>
-			</widget>
-		      </child>
-		    </widget>
-		    <packing>
-		      <property name="expand">False</property>
-		      <property name="homogeneous">False</property>
 		    </packing>
 		  </child>
 		</widget>

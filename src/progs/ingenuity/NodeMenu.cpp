@@ -39,11 +39,6 @@ NodeMenu::NodeMenu(SharedPtr<NodeModel> node)
 			node));
 	_controls_menuitem = controls_elem.get_child();
 	items().push_back(controls_elem);
-
-	items().push_back(Gtk::Menu_Helpers::MenuElem("Properties",
-		sigc::bind(
-			sigc::mem_fun(app.window_factory(), &WindowFactory::present_properties),
-			node)));
 	
 	items().push_back(Gtk::Menu_Helpers::SeparatorElem());
 
@@ -73,6 +68,13 @@ NodeMenu::NodeMenu(SharedPtr<NodeModel> node)
 			sigc::mem_fun(this, &NodeMenu::on_menu_learn)));
 	}
 	*/
+	
+	items().push_back(Gtk::Menu_Helpers::SeparatorElem());
+	
+	items().push_back(Gtk::Menu_Helpers::MenuElem("Properties",
+		sigc::bind(
+			sigc::mem_fun(app.window_factory(), &WindowFactory::present_properties),
+			node)));
 
 	//model->new_port_sig.connect(sigc::mem_fun(this, &NodeMenu::add_port));
 	//model->destroyed_sig.connect(sigc::mem_fun(this, &NodeMenu::destroy));
