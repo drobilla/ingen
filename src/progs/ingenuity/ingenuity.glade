@@ -144,7 +144,7 @@
 		  <child>
 		    <widget class="GtkImageMenuItem" id="patch_quit_menuitem">
 		      <property name="visible">True</property>
-		      <property name="tooltip" translatable="yes">Quit OmGtk (Om engine will continue running)</property>
+		      <property name="tooltip" translatable="yes">Quit Ingenuity (engine may continue running)</property>
 		      <property name="label">gtk-quit</property>
 		      <property name="use_stock">True</property>
 		      <signal name="activate" handler="on_patch_file_quit_nokill_menuitem_activate" last_modification_time="Sun, 29 Jan 2006 21:18:07 GMT"/>
