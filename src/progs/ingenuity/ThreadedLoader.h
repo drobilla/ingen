@@ -68,7 +68,7 @@ public:
 	                const string&           data_base_uri,
 	                const Path&             data_path,
 	                MetadataMap             engine_data,
-	                optional<const Path&>   engine_parent = optional<const Path&>(),
+	                const Path&             engine_parent,
 	                optional<const string&> engine_name = optional<const string&>(),
 	                optional<size_t>        engine_poly = optional<size_t>());
 	

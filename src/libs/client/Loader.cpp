@@ -46,6 +46,7 @@ Loader::Loader(SharedPtr<ModelEngineInterface> engine, SharedPtr<Namespaces> nam
 bool
 Loader::load(const Glib::ustring& filename,
              const Path&          parent,
+			 string               patch_name,
 			 Glib::ustring        patch_uri,
 			 MetadataMap          data)
 {
@@ -82,23 +83,24 @@ Loader::load(const Glib::ustring& filename,
 	size_t patch_poly = atoi(((*results.begin())["poly"]).c_str());
 	
 	
-	/* Get name (if available) */
+	/* Get name (if available/necessary) */
 
-	query = RDFQuery(Glib::ustring(
-		"SELECT DISTINCT ?name \nFROM <") + document_uri + ">\nWHERE {\n\t" +
-		patch_uri + " ingen:name ?name .\n"
-		"}");
+	if (patch_name == "") {	
+		patch_name = string(filename.substr(filename.find_last_of("/")+1));
+		
+		query = RDFQuery(Glib::ustring(
+			"SELECT DISTINCT ?name FROM <") + document_uri + "> WHERE {\n" +
+			patch_uri + " ingen:name ?name .\n"
+			"}");
 
-	results = query.run(document_uri);
-	
-	string patch_name = string(filename.substr(filename.find_last_of("/")+1));
-	Path patch_path = parent.base() + string(filename.substr(filename.find_last_of("/")+1));
+		results = query.run(document_uri);
 
-	if (results.size() > 0)
-		patch_path = parent.base() + string((*results.begin())["name"]);
-	
+		if (results.size() > 0)
+			patch_name = string((*results.begin())["name"]);
+	}
+
+	Path patch_path = parent.base() + patch_name;
 	cerr << "************ PATCH: " << patch_path << ", poly = " << patch_poly << endl;
-
 	_engine->create_patch(patch_path, patch_poly);
 
 

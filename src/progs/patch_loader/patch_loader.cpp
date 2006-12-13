@@ -72,7 +72,7 @@ int main(int argc, char** argv)
 	for (uint i=0; i < args_info.inputs_num; ++i) {
 		cerr << "FIXME: load patch under root" << endl;
 		cerr << "Load " << args_info.inputs[i] << endl;
-		loader.load(args_info.inputs[i], "/");
+		loader.load(args_info.inputs[i], "/", "");
 	}
 	
 	return 0;

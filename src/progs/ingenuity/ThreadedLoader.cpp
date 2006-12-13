@@ -55,12 +55,13 @@ ThreadedLoader::_whipped()
 	_mutex.unlock();
 }
 
+/** FIXME: most of these paramteres do nothing */
 void
 ThreadedLoader::load_patch(bool                    merge,
                            const string&           data_base_uri,
                            const Path&             data_path,
                            MetadataMap             engine_data,
-                           optional<const Path&>   engine_parent,
+                           const Path&             engine_parent,
                            optional<const string&> engine_name,
                            optional<size_t>        engine_poly)
 {
@@ -75,7 +76,11 @@ ThreadedLoader::load_patch(bool                    merge,
 
 	_events.push_back(sigc::hide_return(sigc::bind(
 		sigc::mem_fun(_loader, &Loader::load),
-		data_base_uri, "/", "", engine_data)));
+			data_base_uri,
+			engine_parent,
+			(engine_name) ? engine_name.get() : "",
+			"",
+			engine_data )));
 	
 	_mutex.unlock();
 

@@ -37,6 +37,7 @@ public:
 
 	bool load(const Glib::ustring& filename,
 	          const Path&          parent,
+			  string               patch_name,
 	          Glib::ustring        patch_uri = "",
 	          MetadataMap          initial_data = MetadataMap());
 

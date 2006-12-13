@@ -156,7 +156,7 @@ LoadSubpatchWindow::ok_clicked()
 		poly = m_patch->poly();
 
 	App::instance().loader()->load_patch(false, get_filename(), "/",
-		m_initial_data, m_patch->parent()->path(), name, poly);
+		m_initial_data, m_patch->path(), name, poly);
 
 	hide();
 }			

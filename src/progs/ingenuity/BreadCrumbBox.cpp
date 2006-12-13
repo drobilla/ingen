@@ -73,19 +73,21 @@ BreadCrumbBox::build(Path path, SharedPtr<PatchView> view)
 
 	// Moving to a child of the full path, just append crumbs (preserve view cache)
 	} else if (_breadcrumbs.size() > 0 && (path.is_child_of(_full_path))) {
-		string postfix = path.substr(_full_path.length());
-		while (postfix.length() > 0) {
-			const string name = postfix.substr(0, postfix.find("/"));
-			cerr << "NAME: " << name << endl;
+
+		string suffix = path.substr(_full_path.length());
+		while (suffix.length() > 0) {
+			if (suffix[0] == '/')
+				suffix = suffix.substr(1);
+			const string name = suffix.substr(0, suffix.find("/"));
 			_full_path = _full_path.base() + name;
 			BreadCrumb* but = create_crumb(_full_path, view);
-			pack_end(*but, false, false, 1);
+			pack_start(*but, false, false, 1);
 			_breadcrumbs.push_back(but);
 			but->show();
-			if (postfix.find("/") == string::npos)
+			if (suffix.find("/") == string::npos)
 				break;
 			else
-				postfix = postfix.substr(postfix.find("/")+1);
+				suffix = suffix.substr(suffix.find("/")+1);
 		}
 		
 		for (std::list<BreadCrumb*>::iterator i = _breadcrumbs.begin(); i != _breadcrumbs.end(); ++i)
@@ -106,21 +108,30 @@ BreadCrumbBox::build(Path path, SharedPtr<PatchView> view)
 		_breadcrumbs.clear();
 
 		// Add root
-		BreadCrumb* but = create_crumb("/", view);
-		pack_start(*but, false, false, 1);
-		_breadcrumbs.push_front(but);
-		but->set_active(but->path() == _active_path);
+		BreadCrumb* root_but = create_crumb("/", view);
+		pack_start(*root_but, false, false, 1);
+		_breadcrumbs.push_front(root_but);
+		root_but->set_active(root_but->path() == _active_path);
 
-		// Add the others
-		while (path != "/") {
-			BreadCrumb* but = create_crumb(path, view);
+		Path working_path = "/";
+		string suffix = path.substr(1);
+		while (suffix.length() > 0) {
+			if (suffix[0] == '/')
+				suffix = suffix.substr(1);
+			const string name = suffix.substr(0, suffix.find("/"));
+			working_path = working_path.base() + name;
+			BreadCrumb* but = create_crumb(working_path, view);
 			pack_start(*but, false, false, 1);
-			_breadcrumbs.push_front(but);
-			but->set_active(but->path() == _active_path);
-			path = path.parent();
+			_breadcrumbs.push_back(but);
+			but->set_active(working_path == _active_path);
+			but->show();
+			if (suffix.find("/") == string::npos)
+				break;
+			else
+				suffix = suffix.substr(suffix.find("/")+1);
 		}
 	}
-
+		
 	_enable_signal = old_enable_signal;
 }
 
