@@ -37,9 +37,9 @@ using namespace Ingen::Client;
 
 Configuration::Configuration()
 : m_patch_path("/usr/share/om/patches:/usr/local/share/om/patches"),
-  m_audio_port_color(  0x394f66FF),
-  m_control_port_color(0x396639FF),
-  m_midi_port_color(   0x663939FF)
+  m_audio_port_color(  0x394f66B0),
+  m_control_port_color(0x396639B0),
+  m_midi_port_color(   0x663939B0)
 {
 }
 
@@ -149,7 +149,7 @@ Configuration::get_port_color(const PortModel* pi)
 	}
 	
 	cerr << "[Configuration] Unknown port type!  Port will be bright red, this is an error." << endl;
-	return 0xFF0000FF;
+	return 0xFF0000B0;
 }
 
 /*
