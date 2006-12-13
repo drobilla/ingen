@@ -184,8 +184,6 @@ Serializer::serialize(SharedPtr<ObjectModel> object) throw (std::logic_error)
 void
 Serializer::serialize_patch(SharedPtr<PatchModel> patch, unsigned depth)
 {
-	assert(_serializer);
-
 	RdfId patch_id = path_to_node_id(patch->path()); // anonymous
 
 	if (patch->path().length() < 2)
@@ -241,8 +239,6 @@ Serializer::serialize_plugin(SharedPtr<PluginModel> plugin)
 void
 Serializer::serialize_node(SharedPtr<NodeModel> node, unsigned depth)
 {
-	assert(_serializer);
-
 	const RdfId node_id = (depth == 0)
 		? RdfId(RdfId::RESOURCE, string("#") + node->path().substr(1))
 		: path_to_node_id(node->path()); // anonymous
@@ -293,8 +289,6 @@ Serializer::serialize_node(SharedPtr<NodeModel> node, unsigned depth)
 void
 Serializer::serialize_port(SharedPtr<PortModel> port, unsigned depth)
 {
-	assert(_serializer);
-
 	const RdfId port_id = (depth == 0)
 		? RdfId(RdfId::RESOURCE, string("#") + port->path().substr(1))
 		: path_to_node_id(port->path()); // anonymous
@@ -324,8 +318,6 @@ Serializer::serialize_port(SharedPtr<PortModel> port, unsigned depth)
 void
 Serializer::serialize_connection(SharedPtr<ConnectionModel> connection) throw (std::logic_error)
 {
-	assert(_serializer);
-	
 	const RdfId connection_id = RdfId(RdfId::ANONYMOUS,
 			path_to_node_id(connection->src_port_path()).to_string()
 			+ "-" + path_to_node_id(connection->dst_port_path()).to_string());
