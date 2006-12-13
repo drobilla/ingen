@@ -61,6 +61,36 @@ WindowFactory::~WindowFactory()
 }
 
 
+void
+WindowFactory::clear()
+{
+	for (PatchWindowMap::iterator i = _patch_windows.begin(); i != _patch_windows.end(); ++i)
+		delete i->second;
+	
+	_patch_windows.clear();
+	
+	for (ControlWindowMap::iterator i = _control_windows.begin(); i != _control_windows.end(); ++i)
+		delete i->second;
+	
+	_control_windows.clear();
+}
+
+
+/** Returns the number of Patch windows currently visible.
+ */
+size_t
+WindowFactory::num_open_patch_windows()
+{
+	size_t ret = 0;
+	for (PatchWindowMap::iterator i = _patch_windows.begin(); i != _patch_windows.end(); ++i)
+		if (i->second->is_visible())
+			++ret;
+
+	return ret;
+}
+
+
+
 PatchWindow*
 WindowFactory::patch_window(SharedPtr<PatchModel> patch)
 {
@@ -145,7 +175,7 @@ WindowFactory::remove_patch_window(PatchWindow* win, GdkEventAny* ignored)
 		if (ret == Gtk::RESPONSE_CLOSE)
 			App::instance().quit();
 		else
-			return false;
+			return true;
 	}
 
 	PatchWindowMap::iterator w = _patch_windows.find(win->patch()->path());
@@ -155,7 +185,7 @@ WindowFactory::remove_patch_window(PatchWindow* win, GdkEventAny* ignored)
 
 	delete win;
 	
-	return true;
+	return false;
 }
 
 

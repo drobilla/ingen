@@ -205,7 +205,7 @@ ConnectWindow::disconnect()
 	_connect_button->set_sensitive(false);
 	_disconnect_button->set_sensitive(false);
 
-	App::instance().disconnect();
+	App::instance().detach();
 
 	init();
 }

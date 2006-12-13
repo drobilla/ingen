@@ -118,8 +118,6 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 	
 	m_breadcrumb_box = new BreadCrumbBox();
 	m_breadcrumb_box->signal_patch_selected.connect(sigc::mem_fun(this, &PatchWindow::set_patch_from_path));
-
-	App::instance().add_patch_window(this);
 }
 
 
@@ -127,8 +125,6 @@ PatchWindow::~PatchWindow()
 {
 	// Prevents deletion
 	//m_patch->claim_patch_view();
-
-	//App::instance().remove_patch_window(this);
 
 	delete m_breadcrumb_box;
 }

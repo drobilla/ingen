@@ -45,11 +45,13 @@ public:
 	WindowFactory();
 	~WindowFactory();
 
+	size_t num_open_patch_windows();
+
 	PatchWindow*       patch_window(SharedPtr<PatchModel> patch);
 	NodeControlWindow* control_window(SharedPtr<NodeModel> node);
 
 	void present_patch(SharedPtr<PatchModel> patch,
-	                   PatchWindow*           preferred = NULL,
+	                   PatchWindow*          preferred = NULL,
 	                   SharedPtr<PatchView>  patch     = SharedPtr<PatchView>());
 
 	void present_controls(SharedPtr<NodeModel> node);
@@ -62,6 +64,8 @@ public:
 	void present_properties(SharedPtr<NodeModel> node);
 	
 	bool remove_patch_window(PatchWindow* win, GdkEventAny* ignored = NULL);
+
+	void clear();
 
 private:
 	typedef std::map<Path, PatchWindow*>       PatchWindowMap;

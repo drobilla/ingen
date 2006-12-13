@@ -57,9 +57,7 @@ App* App::_instance = 0;
 
 
 App::App()
-: _store(NULL),
-  _loader(NULL),
-  _configuration(new Configuration()),
+: _configuration(new Configuration()),
   _about_dialog(NULL),
   _window_factory(new WindowFactory()),
   _enable_signal(true)
@@ -99,10 +97,23 @@ App::attach(const SharedPtr<ModelEngineInterface>& engine, const SharedPtr<SigCl
 	
 	_engine = engine;
 	_client = client;
-	_store = new Store(engine, client);
-	_loader = new ThreadedLoader(engine);
+	_store = SharedPtr<Store>(new Store(engine, client));
+	_loader = SharedPtr<ThreadedLoader>(new ThreadedLoader(engine));
 
 	_patch_tree_window->init(*_store);
+}
+
+
+void
+App::detach()
+{
+	_window_factory->clear();
+	_store->clear();
+	
+	_loader.reset();
+	_store.reset();
+	_client.reset();
+	_engine.reset();
 }
 
 
@@ -206,50 +217,6 @@ App::event_save_session_as()
 	}
 }
 #endif
-
-void
-App::add_patch_window(PatchWindow* pw)
-{
-	_windows.push_back(pw);
-}
-
-
-void
-App::remove_patch_window(PatchWindow* pw)
-{
-	_windows.erase(find(_windows.begin(), _windows.end(), pw));
-}
-
-
-/** Returns the number of Patch windows currently visible.
- */
-int
-App::num_open_patch_windows()
-{
-	int ret = 0;
-	for (list<PatchWindow*>::iterator i = _windows.begin(); i != _windows.end(); ++i)
-		if ((*i)->is_visible())
-			++ret;
-
-	return ret;
-}
-
-
-void
-App::disconnect()
-{
-	// FIXME: this is pretty gross.. figure out the death situation better
-	
-	list<PatchWindow*> windows = _windows; // make a copy
-
-	for (list<PatchWindow*>::iterator i = windows.begin(); i != windows.end(); ++i)
-		delete (*i);
-
-	_store->clear();
-
-	// PatchWindow destructor removes them from the list
-	assert(_windows.size() == 0);
-}
 
 
 void

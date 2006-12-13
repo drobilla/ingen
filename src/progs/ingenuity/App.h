@@ -44,8 +44,6 @@ using namespace Ingen::Client;
 /** GTK Graphical client */
 namespace Ingenuity {
 
-class PatchWindow;
-class LoadPatchWindow;
 class MessagesWindow;
 class ConfigWindow;
 class IngenuityObject;
@@ -72,16 +70,12 @@ public:
 
 	void error_message(const string& msg);
 
-	void disconnect();
-	void quit();
-
-	void add_patch_window(PatchWindow* pw);
-	void remove_patch_window(PatchWindow* pw);
-
-	int num_open_patch_windows();
-
 	void attach(const SharedPtr<ModelEngineInterface>& engine,
 	            const SharedPtr<SigClientInterface>&   client);
+	
+	void detach();
+	
+	void quit();
 
 	ConnectWindow*   connect_window()       const { return _connect_window; }
 	Gtk::Dialog*     about_dialog()         const { return _about_dialog; }
@@ -89,12 +83,12 @@ public:
 	MessagesWindow*  messages_dialog()      const { return _messages_window; }
 	PatchTreeWindow* patch_tree()           const { return _patch_tree_window; }
 	Configuration*   configuration()        const { return _configuration; }
-	Store*           store()                const { return _store; }
-	ThreadedLoader*  loader()               const { return _loader; }
 	WindowFactory*   window_factory()       const { return _window_factory; }
 
 	const SharedPtr<ModelEngineInterface>& engine() const { return _engine; }
 	const SharedPtr<SigClientInterface>&   client() const { return _client; }
+	const SharedPtr<Store>&                store()  const { return _store; }
+	const SharedPtr<ThreadedLoader>&       loader() const { return _loader; }
 
 	static inline App& instance() { assert(_instance); return *_instance; }
 	static void        instantiate();
@@ -105,14 +99,11 @@ protected:
 
 	SharedPtr<ModelEngineInterface> _engine;
 	SharedPtr<SigClientInterface>   _client;
-	
-	Store*          _store;
-	ThreadedLoader* _loader;
+	SharedPtr<Store>                _store;
+	SharedPtr<ThreadedLoader>       _loader;
 
 	Configuration*    _configuration;
 
-	list<PatchWindow*> _windows;
-	
 	ConnectWindow*    _connect_window;
 	MessagesWindow*   _messages_window;
 	PatchTreeWindow*  _patch_tree_window;
