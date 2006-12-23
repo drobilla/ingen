@@ -14,8 +14,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef OMGTKAPP_H
-#define OMGTKAPP_H
+#ifndef APP_H
+#define APP_H
 
 #include <cassert>
 #include <string>
@@ -122,5 +122,5 @@ protected:
 
 } // namespace Ingenuity
 
-#endif // OMGTKAPP_H
+#endif // APP_H
 

@@ -14,8 +14,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef OMMODULE_H
-#define OMMODULE_H
+#ifndef NODEMODULE_H
+#define NODEMODULE_H
 
 #include <string>
 #include <boost/enable_shared_from_this.hpp>
@@ -80,10 +80,10 @@ protected:
 	void remove_port(SharedPtr<PortModel> port) { Module::remove_port(port->path().name()); }
 	
 	SharedPtr<NodeModel> m_node;
-	NodeMenu              m_menu;
+	NodeMenu             m_menu;
 };
 
 
 } // namespace Ingenuity
 
-#endif // OMMODULE_H
+#endif // NODEMODULE_H

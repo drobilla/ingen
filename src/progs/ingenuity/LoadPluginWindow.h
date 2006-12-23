@@ -102,7 +102,7 @@ protected:
 	
 private:
 	void add_clicked();
-	void close_clicked();
+	//void close_clicked();
 	//void ok_clicked();
 	void filter_changed();
 	void clear_clicked();
@@ -133,7 +133,7 @@ private:
 	Gtk::Entry*       m_node_name_entry;
 	Gtk::Button*      m_clear_button;
 	Gtk::Button*      m_add_button;
-	Gtk::Button*      m_close_button;
+	//Gtk::Button*      m_close_button;
 	//Gtk::Button*      m_ok_button;
 	Gtk::ComboBox*    m_filter_combo;
 	Gtk::Entry*       m_search_entry;

@@ -14,8 +14,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef OMPATCHBAYAREA_H
-#define OMPATCHBAYAREA_H
+#ifndef PATCHCANVAS_H
+#define PATCHCANVAS_H
 
 #include <string>
 #include <boost/shared_ptr.hpp>
@@ -112,4 +112,4 @@ private:
 
 } // namespace Ingenuity
 
-#endif // OMPATCHBAYAREA_H
+#endif // PATCHCANVAS_H

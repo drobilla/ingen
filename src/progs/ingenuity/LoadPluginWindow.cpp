@@ -42,7 +42,7 @@ LoadPluginWindow::LoadPluginWindow(BaseObjectType* cobject, const Glib::RefPtr<G
 	xml->get_widget("load_plugin_name_entry", m_node_name_entry);
 	xml->get_widget("load_plugin_clear_button", m_clear_button);
 	xml->get_widget("load_plugin_add_button", m_add_button);
-	xml->get_widget("load_plugin_close_button", m_close_button);
+	//xml->get_widget("load_plugin_close_button", m_close_button);
 	//xml->get_widget("load_plugin_ok_button", m_add_button);
 	
 	xml->get_widget("load_plugin_filter_combo", m_filter_combo);
@@ -71,14 +71,14 @@ LoadPluginWindow::LoadPluginWindow(BaseObjectType* cobject, const Glib::RefPtr<G
 	m_filter_combo->set_model(m_criteria_liststore);
 	Gtk::TreeModel::iterator iter = m_criteria_liststore->append();
 	Gtk::TreeModel::Row row = *iter;
-	row[m_criteria_columns.m_col_label] = "Name contains: ";
+	row[m_criteria_columns.m_col_label] = "Name contains";
 	row[m_criteria_columns.m_col_criteria] = CriteriaColumns::NAME;
 	m_filter_combo->set_active(iter);
 	iter = m_criteria_liststore->append(); row = *iter;
-	row[m_criteria_columns.m_col_label] = "Type contains: ";
+	row[m_criteria_columns.m_col_label] = "Type contains";
 	row[m_criteria_columns.m_col_criteria] = CriteriaColumns::TYPE;
 	iter = m_criteria_liststore->append(); row = *iter;
-	row[m_criteria_columns.m_col_label] = "URI contains: ";
+	row[m_criteria_columns.m_col_label] = "URI contains";
 	row[m_criteria_columns.m_col_criteria] = CriteriaColumns::URI;
 	/*iter = m_criteria_liststore->append(); row = *iter;
 	row[m_criteria_columns.m_col_label] = "Library contains: ";
@@ -89,7 +89,7 @@ LoadPluginWindow::LoadPluginWindow(BaseObjectType* cobject, const Glib::RefPtr<G
 
 	m_clear_button->signal_clicked().connect(          sigc::mem_fun(this, &LoadPluginWindow::clear_clicked));
 	m_add_button->signal_clicked().connect(            sigc::mem_fun(this, &LoadPluginWindow::add_clicked));
-	m_close_button->signal_clicked().connect(          sigc::mem_fun(this, &LoadPluginWindow::close_clicked));
+	//m_close_button->signal_clicked().connect(          sigc::mem_fun(this, &LoadPluginWindow::close_clicked));
 	//m_add_button->signal_clicked().connect(             sigc::mem_fun(this, &LoadPluginWindow::ok_clicked));
 	m_plugins_treeview->signal_row_activated().connect(sigc::mem_fun(this, &LoadPluginWindow::plugin_activated));
 	m_search_entry->signal_activate().connect(         sigc::mem_fun(this, &LoadPluginWindow::add_clicked));
@@ -316,6 +316,7 @@ LoadPluginWindow::add_clicked()
 }
 
 
+/*
 void
 LoadPluginWindow::close_clicked()
 {
@@ -323,7 +324,6 @@ LoadPluginWindow::close_clicked()
 }
 
 
-/*
 void
 LoadPluginWindow::ok_clicked()
 {

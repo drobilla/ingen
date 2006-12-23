@@ -14,8 +14,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef OMPORTMODULE_H
-#define OMPORTMODULE_H
+#ifndef PATCHPORTMODULE_H
+#define PATCHPORTMODULE_H
 
 #include <string>
 #include <boost/enable_shared_from_this.hpp>
@@ -73,4 +73,4 @@ protected:
 
 } // namespace Ingenuity
 
-#endif // OMPORTMODULE_H
+#endif // PATCHPORTMODULE_H
