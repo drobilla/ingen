@@ -155,39 +155,6 @@ template bool InputPort<Sample>::is_connected_to(const OutputPort<Sample>* const
 template bool InputPort<MidiMessage>::is_connected_to(const OutputPort<MidiMessage>* const port) const;
 
 
-/** "Ties" this port to an OutputPort, so they share the same buffer.
- *
- * This is used by OutputNode and InputNode to provide two different ports
- * (internal and external) that share a buffer.
- */
-/*
-template <typename T>
-void
-InputPort<T>::tie(OutputPort<T>* const port)
-{
-	assert((Port*)port != (Port*)this);
-	assert(port->poly() == this->poly());
-	assert(!m_is_tied);
-	assert(m_tied_port == NULL);
-
-	if (Port::parent_node() != NULL) {
-		assert(_poly == port->poly());
-	
-		for (size_t i=0; i < _poly; ++i)
-			port->buffer(i)->join(m_buffers.at(i));
-	}
-	m_is_tied = true;
-	m_tied_port = port;
-	port->set_tied_port(this);
-
-	assert(m_buffers.at(0)->data() == port->buffer(0)->data());
-
-	//cerr << "*** Tied " << this->path() << " <-> " << port->path() << endl;
-}
-template void InputPort<Sample>::tie(OutputPort<Sample>* const port);
-template void InputPort<MidiMessage>::tie(OutputPort<MidiMessage>* const port);
-*/
-
 /** Prepare buffer for access, mixing if necessary.  Realtime safe.
  *  FIXME: nframes parameter not used,
  */

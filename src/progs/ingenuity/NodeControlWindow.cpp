@@ -14,6 +14,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include "App.h"
+#include "ModelEngineInterface.h"
 #include "NodeControlWindow.h"
 #include "GladeFactory.h"
 #include "NodeModel.h"
@@ -106,6 +108,12 @@ NodeControlWindow::resize()
 void
 NodeControlWindow::on_show()
 {
+	for (PortModelList::const_iterator i = m_node->ports().begin();
+			i != m_node->ports().end(); ++i) {
+		App::instance().engine()->request_port_value((*i)->path());
+	}
+
+
 	if (m_position_stored)
 		move(m_x, m_y);
 

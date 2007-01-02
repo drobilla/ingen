@@ -54,7 +54,7 @@ RequestPortValueEvent::execute(SampleCount nframes, FrameTime start, FrameTime e
 	assert(_time >= start && _time <= end);
 
 	if (m_port != NULL && m_port->type() == DataType::FLOAT)
-		m_value = ((TypedPort<Sample>*)m_port)->buffer(0)->value_at(_time - start);
+		m_value = ((TypedPort<Sample>*)m_port)->buffer(0)->value_at(0/*_time - start*/);
 	else 
 		m_port = NULL; // triggers error response
 }
@@ -64,7 +64,7 @@ void
 RequestPortValueEvent::post_process()
 {
 	string msg;
-	if (m_port) {
+	if (!m_port) {
 		_responder->respond_error("Unable to find port for get_value responder.");
 	} else if (m_client) {
 		_responder->respond_ok();

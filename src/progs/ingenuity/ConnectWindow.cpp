@@ -34,9 +34,9 @@
 	#include "engine/QueuedEngineInterface.h"
 	#include "engine/DirectResponder.h"
 	#include "engine/tuning.h"
+using Ingen::QueuedEngineInterface;
 #endif
 using Ingen::Client::ThreadedSigClientInterface;
-using Ingen::QueuedEngineInterface;
 
 namespace Ingenuity {
 
@@ -54,6 +54,7 @@ struct OSCSigEmitter : public OSCClientReceiver, public ThreadedSigClientInterfa
 };
 
 
+#ifdef MONOLITHIC_INGENUITY
 struct QueuedModelEngineInterface : public QueuedEngineInterface, public ModelEngineInterface {
 	QueuedModelEngineInterface(SharedPtr<Ingen::Engine> engine)
 		: Ingen::Shared::EngineInterface()
@@ -62,6 +63,7 @@ struct QueuedModelEngineInterface : public QueuedEngineInterface, public ModelEn
 		QueuedEventSource::start();
 	}
 };
+#endif
 
 
 // ConnectWindow

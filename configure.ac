@@ -200,9 +200,9 @@ AC_ARG_ENABLE([gtk-client],
 
 # Ingenuity with internal engine
 monolithic_ingenuity="$build_gtk_client"
-AC_ARG_ENABLE([monolithic-gtk-client],
-	AS_HELP_STRING(--enable-monolithic-gtk-client [Build Ingenuity with internal engine (true, if building Ingenuity)]),
-	[ if test x$enable_monolithic_gtk_client = xno ; then monolithic_gtk_client=no ; fi ])
+AC_ARG_ENABLE([monolithic-ingenuity],
+	AS_HELP_STRING(--enable-monolithic-ingenuity [Build Ingenuity with internal engine (true, if building Ingenuity)]),
+	[ if test x$enable_monolithic_ingenuity = xno ; then monolithic_ingenuity=no ; fi ])
 
 
 
