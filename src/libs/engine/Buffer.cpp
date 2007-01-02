@@ -29,20 +29,52 @@ namespace Ingen {
 
 template <typename T>
 Buffer<T>::Buffer(size_t size)
-: m_size(size),
-  m_filled_size(0),
-  m_is_joined(false),
-  m_state(OK),
-  m_set_value(0),
-  m_data(NULL),
-  m_local_data(NULL)
+: _data(NULL),
+  _local_data(NULL),
+  _joined_buf(NULL),
+  _size(size),
+  _filled_size(0),
+  _state(OK),
+  _set_value(0)
 {
-	assert(m_size > 0);
+	assert(_size > 0);
 	allocate();
-	assert(m_data);
+	assert(data());
 }
 template Buffer<Sample>::Buffer(size_t size);
 template Buffer<MidiMessage>::Buffer(size_t size);
+
+
+template<typename T>
+void
+Buffer<T>::resize(size_t size)
+{
+	_size = size;
+
+	T* const old_data = _data;
+	
+	const bool using_local_data = (_data == _local_data);
+
+	deallocate();
+
+	const int ret = posix_memalign((void**)&_local_data, 16, _size * sizeof(T));
+	if (ret != 0) {
+		cerr << "[Buffer] Failed to allocate buffer.  Aborting." << endl;
+		exit(EXIT_FAILURE);
+	}
+		
+	assert(ret == 0);
+	assert(_local_data);
+	
+	if (using_local_data)
+		_data = _local_data;
+	else
+		_data = old_data;
+
+	set(0, 0, _size-1);
+}
+template void Buffer<Sample>::resize(size_t size);
+template void Buffer<MidiMessage>::resize(size_t size);
 
 
 /** Allocate and use a locally managed buffer (data).
@@ -51,22 +83,22 @@ template<typename T>
 void
 Buffer<T>::allocate()
 {
-	assert(!m_is_joined);
-	assert(m_data == NULL);
-	assert(m_local_data == NULL);
-	assert(m_size > 0);
+	assert(!_joined_buf);
+	assert(_local_data == NULL);
+	assert(_size > 0);
 
-	const int ret = posix_memalign((void**)&m_local_data, 16, m_size * sizeof(T));
+	const int ret = posix_memalign((void**)&_local_data, 16, _size * sizeof(T));
 	if (ret != 0) {
 		cerr << "[Buffer] Failed to allocate buffer.  Aborting." << endl;
 		exit(EXIT_FAILURE);
 	}
 		
 	assert(ret == 0);
-	assert(m_local_data != NULL);
-	m_data = m_local_data;
+	assert(_local_data);
 
-	set(0, 0, m_size-1);
+	_data = _local_data;
+
+	set(0, 0, _size-1);
 }
 template void Buffer<Sample>::allocate();
 template void Buffer<MidiMessage>::allocate();
@@ -78,11 +110,10 @@ template<typename T>
 void
 Buffer<T>::deallocate()
 {
-	assert(!m_is_joined);
-	free(m_local_data);
-	if (m_data == m_local_data)
-		m_data = NULL;
-	m_local_data = NULL;
+	assert(!_joined_buf);
+	free(_local_data);
+	_local_data = NULL;
+	_data = NULL;
 }
 template void Buffer<Sample>::deallocate();
 template void Buffer<MidiMessage>::deallocate();
@@ -94,9 +125,9 @@ template<typename T>
 void
 Buffer<T>::clear()
 {
-	set(0, 0, m_size-1);
-	m_state = OK;
-	m_filled_size = 0;
+	set(0, 0, _size-1);
+	_state = OK;
+	_filled_size = 0;
 }
 template void Buffer<Sample>::clear();
 template void Buffer<MidiMessage>::clear();
@@ -112,14 +143,14 @@ template <typename T>
 void
 Buffer<T>::set(T val, size_t start_sample)
 {
-	assert(start_sample < m_size);
+	assert(start_sample < _size);
 
-	set(val, start_sample, m_size-1);
+	set(val, start_sample, _size-1);
 	
 	if (start_sample > 0)
-		m_state = HALF_SET_CYCLE_1;
+		_state = HALF_SET_CYCLE_1;
 
-	m_set_value = val;
+	_set_value = val;
 }
 template void Buffer<Sample>::set(Sample val, size_t start_sample);
 template void Buffer<MidiMessage>::set(MidiMessage val, size_t start_sample);
@@ -134,11 +165,13 @@ void
 Buffer<T>::set(T val, size_t start_sample, size_t end_sample)
 {
 	assert(end_sample >= start_sample);
-	assert(end_sample < m_size);
-	assert(m_data != NULL);
+	assert(end_sample < _size);
+	
+	T* const buf = data();
+	assert(buf);
 
 	for (size_t i=start_sample; i <= end_sample; ++i)
-		m_data[i] = val;
+		buf[i] = val;
 }
 template void Buffer<Sample>::set(Sample val, size_t start_sample, size_t end_sample);
 template void Buffer<MidiMessage>::set(MidiMessage val, size_t start_sample, size_t end_sample);
@@ -153,11 +186,13 @@ void
 Buffer<T>::scale(T val, size_t start_sample, size_t end_sample)
 {
 	assert(end_sample >= start_sample);
-	assert(end_sample < m_size);
-	assert(m_data != NULL);
+	assert(end_sample < _size);
+	
+	T* const buf = data();
+	assert(buf);
 
 	for (size_t i=start_sample; i <= end_sample; ++i)
-		m_data[i] *= val;
+		buf[i] *= val;
 }
 template void Buffer<Sample>::scale(Sample val, size_t start_sample, size_t end_sample);
 
@@ -172,15 +207,17 @@ void
 Buffer<T>::copy(const Buffer<T>* src, size_t start_sample, size_t end_sample)
 {
 	assert(end_sample >= start_sample);
-	assert(end_sample < m_size);
-	assert(src != NULL);
-	assert(src->data() != NULL);
-	assert(m_data != NULL);
+	assert(end_sample < _size);
+	assert(src);
 	
-	register const T* const src_data = src->data();
+	T* const buf = data();
+	assert(buf);
+	
+	const T* const src_buf = src->data();
+	assert(src_buf);
 
 	for (size_t i=start_sample; i <= end_sample; ++i)
-		m_data[i] = src_data[i];
+		buf[i] = src_buf[i];
 }
 template void Buffer<Sample>::copy(const Buffer<Sample>* const src, size_t start_sample, size_t end_sample);
 template void Buffer<MidiMessage>::copy(const Buffer<MidiMessage>* const src, size_t start_sample, size_t end_sample);
@@ -196,15 +233,17 @@ void
 Buffer<T>::accumulate(const Buffer<T>* const src, size_t start_sample, size_t end_sample)
 {
 	assert(end_sample >= start_sample);
-	assert(end_sample < m_size);
-	assert(src != NULL);
-	assert(src->data() != NULL);
-	assert(m_data != NULL);
-
-	register const T* const src_data = src->data();
+	assert(end_sample < _size);
+	assert(src);
 	
+	T* const buf = data();
+	assert(buf);
+	
+	const T* const src_buf = src->data();
+	assert(src_buf);
+
 	for (size_t i=start_sample; i <= end_sample; ++i)
-		m_data[i] += src_data[i];
+		buf[i] += src_buf[i];
 	
 }
 template void Buffer<Sample>::accumulate(const Buffer<Sample>* const src, size_t start_sample, size_t end_sample);
@@ -218,13 +257,12 @@ template<typename T>
 void
 Buffer<T>::join(Buffer<T>* buf)
 {
-	assert(buf->size() == m_size);
+	assert(buf->size() == _size);
 	
-	m_data = buf->m_data;
-	m_filled_size = buf->filled_size();
-	m_is_joined = true;
+	_joined_buf = buf;
+	_filled_size = buf->filled_size();
 
-	assert(m_filled_size <= m_size);
+	assert(_filled_size <= _size);
 }
 template void Buffer<Sample>::join(Buffer<Sample>* buf);
 template void Buffer<MidiMessage>::join(Buffer<MidiMessage>* buf);
@@ -234,8 +272,8 @@ template<typename T>
 void
 Buffer<T>::unjoin()
 {
-	m_is_joined = false;
-	m_data = m_local_data;
+	_joined_buf = NULL;
+	_data = _local_data;
 }
 template void Buffer<Sample>::unjoin();
 template void Buffer<MidiMessage>::unjoin();
@@ -247,15 +285,15 @@ Buffer<Sample>::prepare(SampleCount nframes)
 {
 	// FIXME: nframes parameter doesn't actually work,
 	// writing starts from 0 every time
-	assert(m_size == 1 || nframes == m_size);
+	assert(_size == 1 || nframes == _size);
 
-	switch (m_state) {
+	switch (_state) {
 	case HALF_SET_CYCLE_1:
-		m_state = HALF_SET_CYCLE_2;
+		_state = HALF_SET_CYCLE_2;
 		break;
 	case HALF_SET_CYCLE_2:
-		set(m_set_value, 0, m_size-1);
-		m_state = OK;
+		set(_set_value, 0, _size-1);
+		_state = OK;
 		break;
 	default:
 		break;
@@ -276,41 +314,14 @@ Buffer<MidiMessage>::prepare(SampleCount nframes)
  */
 template<typename T>
 void
-Buffer<T>::set_data(T* data)
+Buffer<T>::set_data(T* buf)
 {
-	assert(!m_is_joined);
-	m_data = data;
+	assert(buf);
+	assert(!_joined_buf);
+	_data = buf;
 }
 template void Buffer<Sample>::set_data(Sample* data);
 template void Buffer<MidiMessage>::set_data(MidiMessage* data);
 
-
-////// DriverBuffer ////////
-#if 0
-template <typename T>
-DriverBuffer<T>::DriverBuffer(size_t size)
-: Buffer<T>(size)
-{
-	Buffer<T>::deallocate(); // FIXME: allocate then immediately deallocate, dirty
-	Buffer<T>::m_data = NULL;
-}
-template DriverBuffer<Sample>::DriverBuffer(size_t size);
-template DriverBuffer<MidiMessage>::DriverBuffer(size_t size);
-
-
-/** Set the buffer (data) used.
- *
- * This is only to be used by Drivers (to provide zero-copy processing).
- */
-template<typename T>
-void
-DriverBuffer<T>::set_data(T* data)
-{
-	assert(!m_is_joined);
-	m_data = data;
-}
-template void DriverBuffer<Sample>::set_data(sample* data);
-template void DriverBuffer<MidiMessage>::set_data(MidiMessage* data);
-#endif
 
 } // namespace Ingen

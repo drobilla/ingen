@@ -64,6 +64,9 @@ public:
 	DataType type()        const { return _type; }
 	size_t   buffer_size() const { return _buffer_size; }
 
+	virtual void set_buffer_size(size_t size) = 0;
+	virtual void connect_buffers()            = 0;
+
 protected:
 	Port(Node* const node, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size);
 	

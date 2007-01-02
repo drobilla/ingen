@@ -61,6 +61,22 @@ template TypedConnection<Sample>::~TypedConnection();
 template TypedConnection<MidiMessage>::~TypedConnection();
 
 
+/** Allocate a mixdown buffer if necessary */
+template <typename T>
+void
+TypedConnection<T>::set_buffer_size(size_t size)
+{
+	if (m_must_mix) {
+		assert(m_local_buffer);
+		delete m_local_buffer;
+
+		m_local_buffer = new Buffer<T>(size);
+	}
+	
+	m_buffer_size = size;
+}
+
+
 template <typename Sample>
 void
 TypedConnection<Sample>::process(SampleCount nframes, FrameTime start, FrameTime end)

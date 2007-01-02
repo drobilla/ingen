@@ -43,49 +43,31 @@ public:
 	/** For driver use only!! */
 	void set_data(T* data);
 	
-	inline T& value_at(size_t offset) { assert(offset < m_size); return m_data[offset]; }
+	inline T& value_at(size_t offset) { assert(offset < _size); return data()[offset]; }
 	
 	void prepare(SampleCount nframes);
 	
-	void     filled_size(size_t size) { m_filled_size = size; }
-	size_t   filled_size() const { return m_filled_size; }
-	bool     is_joined()   const { return m_is_joined; }
-	size_t   size()        const { return m_size; }
-	T*       data()        const { return m_data; }
+	void      filled_size(size_t size) { _filled_size = size; }
+	size_t    filled_size() const { return _filled_size; }
+	bool      is_joined()   const { return (_joined_buf == NULL); }
+	size_t    size()        const { return _size; }
+	inline T* data()        const { return ((_joined_buf != NULL) ? _joined_buf->data() : _data); }
+	
+	void resize(size_t size);
 
-protected:
+private:
 	enum BufferState { OK, HALF_SET_CYCLE_1, HALF_SET_CYCLE_2 };
 
 	void allocate();
 	void deallocate();
 
-	size_t      m_size;          ///< Allocated buffer size
-	size_t      m_filled_size;   ///< Usable buffer size (for MIDI ports etc)
-	bool        m_is_joined;     ///< Whether or not @ref m_data is shares with another Buffer
-	BufferState m_state;         ///< State of buffer for setting values next cycle
-	T           m_set_value;     ///< Value set by @ref set (may need to be set next cycle)
-
-	T* m_data; ///< Buffer to be returned by data() (not equal to m_local_data if joined)
-	T* m_local_data; ///< Locally allocated buffer
-};
-
-
-/** Less robust Buffer for Driver's use.
- *
- * Does not allocate an array by default, and allows direct setting of
- * data pointer for zero-copy processing.
- */
-template <typename T>
-class DriverBuffer : public Buffer<T>
-{
-public:
-	DriverBuffer(size_t size);
-	
-
-	
-private:
-	using Buffer<T>::m_data;
-	using Buffer<T>::m_is_joined;
+	T*          _data;        ///< Used data pointer (probably same as _local_data)
+	T*          _local_data;  ///< Locally allocated buffer (possibly unused if joined or set_data used)
+	Buffer<T>*  _joined_buf;  ///< Buffer to mirror, if joined
+	size_t      _size;        ///< Allocated buffer size
+	size_t      _filled_size; ///< Usable buffer size (for MIDI ports etc)
+	BufferState _state;       ///< State of buffer for setting values next cycle
+	T           _set_value;   ///< Value set by @ref set (may need to be set next cycle)
 };
 
 

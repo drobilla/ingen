@@ -56,6 +56,8 @@ public:
 
 	void process(SampleCount nframes, FrameTime start, FrameTime end);
 	
+	void set_buffer_size(size_t size);
+	
 	//void send_creation_messages(ClientInterface* client) const;
 	
 	void add_to_store(ObjectStore* store);

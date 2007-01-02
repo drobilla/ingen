@@ -71,7 +71,7 @@ InputPort<T>::add_connection(ListNode<TypedConnection<T>*>* const c)
 				//	m_tied_port->buffer(i)->join(m_buffers.at(i));
 			}
 		}
-		update_buffers();
+		TypedPort<T>::connect_buffers();
 	}
 		
 	//assert( ! m_is_tied || m_tied_port != NULL);
@@ -125,7 +125,7 @@ InputPort<T>::remove_connection(const OutputPort<T>* const src_port)
 	}
 
 	if (modify_buffers)
-		update_buffers();
+		TypedPort<T>::connect_buffers();
 
 	//assert( ! m_is_tied || m_tied_port != NULL);
 	//assert( ! m_is_tied || m_buffers.at(0)->data() == m_tied_port->buffer(0)->data());
@@ -136,22 +136,6 @@ template ListNode<TypedConnection<Sample>*>*
 InputPort<Sample>::remove_connection(const OutputPort<Sample>* const src_port);
 template ListNode<TypedConnection<MidiMessage>*>*
 InputPort<MidiMessage>::remove_connection(const OutputPort<MidiMessage>* const src_port);
-
-
-/** Update any changed buffers with the plugin this is a port on.
- *
- * This calls ie the LADSPA connect_port function when buffers have been changed
- * due to a connection or disconnection.
- */
-template <typename T>
-void
-InputPort<T>::update_buffers()
-{
-	for (size_t i=0; i < _poly; ++i)
-		InputPort<T>::parent_node()->set_port_buffer(i, _index, m_buffers.at(i)->data());
-}
-template void InputPort<Sample>::update_buffers();
-template void InputPort<MidiMessage>::update_buffers();
 
 
 /** Returns whether this port is connected to the passed port.
@@ -234,7 +218,7 @@ InputPort<Sample>::process(SampleCount nframes, FrameTime start, FrameTime end)
 				m_buffers.at(0)->join((*m_connections.begin())->buffer(0));
 				do_mixdown = false;
 			}
-			update_buffers();
+			connect_buffers();
 		} else {
 			do_mixdown = false;
 		}
@@ -303,7 +287,7 @@ InputPort<MidiMessage>::process(SampleCount nframes, FrameTime start, FrameTime 
 				//	m_tied_port->buffer(0)->join(m_buffers.at(0));
 				do_mixdown = false;
 			}
-			update_buffers();
+			connect_buffers();
 		} else {
 			do_mixdown = false;
 		}
@@ -347,6 +331,21 @@ InputPort<MidiMessage>::process(SampleCount nframes, FrameTime start, FrameTime 
 		for (size_t i=0; i < m_buffers.at(0)->filled_size(); ++i)
 			m_buffers.at(0)[i] = (*m_connections.begin())->buffer(0)[i];
 }
+
+
+template <typename T>
+void
+InputPort<T>::set_buffer_size(size_t size)
+{
+	TypedPort<T>::set_buffer_size(size);
+	assert(_buffer_size = size);
+
+	for (typename List<TypedConnection<T>*>::iterator c = m_connections.begin(); c != m_connections.end(); ++c)
+		(*c)->set_buffer_size(size);
+	
+}
+template void InputPort<Sample>::set_buffer_size(size_t size);
+template void InputPort<MidiMessage>::set_buffer_size(size_t size);
 
 
 } // namespace Ingen

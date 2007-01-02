@@ -137,6 +137,17 @@ Patch::process(SampleCount nframes, FrameTime start, FrameTime end)
 		(*i)->process(nframes, start, end);
 }
 
+	
+void
+Patch::set_buffer_size(size_t size)
+{
+	NodeBase::set_buffer_size(size);
+	assert(_buffer_size == size);
+	
+	for (List<Node*>::iterator j = _nodes.begin(); j != _nodes.end(); ++j)
+		(*j)->set_buffer_size(size);
+}
+
 
 void
 Patch::add_to_store(ObjectStore* store)

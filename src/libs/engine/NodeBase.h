@@ -56,6 +56,8 @@ public:
 		
 	virtual void set_port_buffer(size_t voice, size_t port_num, void* buf) {}
 	
+	virtual void set_buffer_size(size_t size);
+	
 	virtual void add_to_patch() {}
 	virtual void remove_from_patch() {}
 	

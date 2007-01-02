@@ -49,6 +49,8 @@ public:
 	bool pending_disconnection()       { return m_pending_disconnection; }
 	void pending_disconnection(bool b) { m_pending_disconnection = b; }
 	
+	virtual void set_buffer_size(size_t size) {}
+
 protected:
 	Connection(Port* const src_port, Port* const dst_port);
 	

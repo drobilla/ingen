@@ -55,6 +55,8 @@ public:
 	 */
 	inline Buffer<T>* buffer(size_t voice) const;
 	
+	void set_buffer_size(size_t size);
+
 private:
 	Buffer<T>* m_local_buffer;  ///< Only used for poly->mono connections
 	bool       m_must_mix;

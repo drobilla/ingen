@@ -50,7 +50,7 @@ public:
 	InputPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size);
 	virtual ~InputPort() {}
 	
-	void                          add_connection(ListNode<TypedConnection<T>*>* const c);
+	void                           add_connection(ListNode<TypedConnection<T>*>* const c);
 	ListNode<TypedConnection<T>*>* remove_connection(const OutputPort<T>* const src_port);
 
 	const List<TypedConnection<T>*>& connections() { return m_connections; }
@@ -63,8 +63,9 @@ public:
 	bool is_input()  const { return true; }
 	bool is_output() const { return false; }
 	
+	virtual void set_buffer_size(size_t size);
+	
 private:
-	void update_buffers();
 
 	List<TypedConnection<T>*> m_connections;
 

@@ -112,8 +112,7 @@ public:
 
 	virtual void remove_from_patch() = 0;
 
-	/** Send any necessary notification to client on node creation. */
-	//virtual void send_creation_messages(Shared::ClientInterface* client) const = 0;
+	virtual void set_buffer_size(size_t size) = 0;
 };
 
 

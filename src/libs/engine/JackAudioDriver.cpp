@@ -302,8 +302,8 @@ JackAudioDriver::_process_cb(jack_nframes_t nframes)
 	}
 	
 	// Run root patch
-	assert(_root_patch != NULL);
-	_root_patch->process(nframes, start_of_current_cycle, start_of_current_cycle + nframes);
+	if (_root_patch)
+		_root_patch->process(nframes, start_of_current_cycle, start_of_current_cycle + nframes);
 	
 	return 0;
 }
@@ -333,10 +333,8 @@ JackAudioDriver::_sample_rate_cb(jack_nframes_t nframes)
 int
 JackAudioDriver::_buffer_size_cb(jack_nframes_t nframes) 
 {
-	if (_is_activated) {
-		cerr << "[JackAudioDriver] On-the-fly buffer size changing not supported (yet).  Aborting." << endl;
-		exit(EXIT_FAILURE);
-	} else {
+	if (_root_patch) {
+		_root_patch->set_buffer_size(nframes);
 		_buffer_size = nframes;
 	}
 	return 0;

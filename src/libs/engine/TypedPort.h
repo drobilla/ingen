@@ -56,10 +56,13 @@ public:
 	void fixed_buffers(bool b) { m_fixed_buffers = b; }
 	bool fixed_buffers()       { return m_fixed_buffers; }
 
+	virtual void set_buffer_size(size_t size);
+
 protected:
 	TypedPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size);
 	
 	void allocate_buffers();
+	void connect_buffers();
 
 	bool m_fixed_buffers;
 	

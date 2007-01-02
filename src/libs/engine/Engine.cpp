@@ -157,8 +157,7 @@ Engine::activate(SharedPtr<AudioDriver> ad, SharedPtr<EventSource> es)
 	
 	// Set event source (FIXME: handle multiple sources)
 	m_event_source = es;
-	
-	m_audio_driver->activate();
+
 	m_event_source->activate();
 
 	// Create root patch
@@ -170,7 +169,7 @@ Engine::activate(SharedPtr<AudioDriver> ad, SharedPtr<EventSource> es)
 	enable_ev.pre_process();
 	enable_ev.execute(1, 0, 1);
 	enable_ev.post_process();
-
+	
 	assert(m_audio_driver->root_patch() != NULL);
 
 	m_audio_driver->activate();

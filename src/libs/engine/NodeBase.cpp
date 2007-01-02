@@ -125,6 +125,17 @@ NodeBase::remove_from_store()
 }
 
 
+void
+NodeBase::set_buffer_size(size_t size)
+{
+	_buffer_size = size;
+	
+	if (_ports)
+		for (size_t i=0; i < _ports->size(); ++i)
+			_ports->at(i)->set_buffer_size(size);
+}
+
+
 /** Runs the Node for the specified number of frames (block size)
  */
 void

@@ -100,11 +100,33 @@ template void TypedPort<MidiMessage>::allocate_buffers();
 
 template <typename T>
 void
-TypedPort<T>::process(SampleCount nframes, FrameTime start, FrameTime end)
+TypedPort<T>::set_buffer_size(size_t size)
+{
+	_buffer_size = size;
+
+	for (size_t i=0; i < _poly; ++i)
+		m_buffers.at(i)->resize(size);
+
+	connect_buffers();
+}
+template void TypedPort<Sample>::set_buffer_size(size_t size);
+template void TypedPort<MidiMessage>::set_buffer_size(size_t size);
+
+
+/** Update any changed buffers with the plugin this is a port on.
+ *
+ * This calls ie the LADSPA connect_port function when buffers have been changed
+ * due to a connection, disconnection, resize, etc.
+ */
+template <typename T>
+void
+TypedPort<T>::connect_buffers()
 {
 	for (size_t i=0; i < _poly; ++i)
-		m_buffers.at(i)->prepare(nframes);
+		TypedPort<T>::parent_node()->set_port_buffer(i, _index, m_buffers.at(i)->data());
 }
+template void TypedPort<Sample>::connect_buffers();
+template void TypedPort<MidiMessage>::connect_buffers();
 
 
 template<typename T>
@@ -116,6 +138,15 @@ TypedPort<T>::clear_buffers()
 }
 template void TypedPort<Sample>::clear_buffers();
 template void TypedPort<MidiMessage>::clear_buffers();
+
+
+template <typename T>
+void
+TypedPort<T>::process(SampleCount nframes, FrameTime start, FrameTime end)
+{
+	for (size_t i=0; i < _poly; ++i)
+		m_buffers.at(i)->prepare(nframes);
+}
 
 
 } // namespace Ingen
