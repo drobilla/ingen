@@ -52,7 +52,7 @@ DisconnectPortEvent::DisconnectPortEvent(Engine& engine, SharedPtr<Responder> re
 
 DisconnectPortEvent::DisconnectPortEvent(Engine& engine, Port* port)
 : QueuedEvent(engine),
-  m_port_path(""),
+  m_port_path(port->path()),
   m_patch((port->parent_node() == NULL) ? NULL : port->parent_node()->parent_patch()),
   m_port(port),
   m_process_order(NULL),
@@ -132,11 +132,13 @@ void
 DisconnectPortEvent::post_process()
 {
 	if (m_succeeded) {
-		_responder->respond_ok();
+		if (_responder)
+			_responder->respond_ok();
 		for (List<DisconnectionEvent*>::iterator i = m_disconnection_events.begin(); i != m_disconnection_events.end(); ++i)
 			(*i)->post_process();
 	} else {
-		_responder->respond_error("Unable to disconnect port.");
+		if (_responder)
+			_responder->respond_error("Unable to disconnect port.");
 	}
 }
 

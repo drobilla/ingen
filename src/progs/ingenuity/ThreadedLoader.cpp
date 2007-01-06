@@ -55,7 +55,7 @@ ThreadedLoader::_whipped()
 	_mutex.unlock();
 }
 
-/** FIXME: most of these paramteres do nothing */
+/** FIXME: use poly parameter */
 void
 ThreadedLoader::load_patch(bool                    merge,
                            const string&           data_base_uri,
@@ -66,13 +66,6 @@ ThreadedLoader::load_patch(bool                    merge,
                            optional<size_t>        engine_poly)
 {
 	_mutex.lock();
-
-	/*_events.push_back(sigc::hide_return(sigc::bind(
-		sigc::mem_fun(_loader, &Loader::load_patch),
-		merge, data_base_uri, data_path,
-		engine_data, engine_parent, engine_name, engine_poly)));*/
-	
-	cerr << "FIXME: load under root only\n";
 
 	_events.push_back(sigc::hide_return(sigc::bind(
 		sigc::mem_fun(_loader, &Loader::load),

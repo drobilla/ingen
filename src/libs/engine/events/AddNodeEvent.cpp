@@ -96,6 +96,8 @@ AddNodeEvent::pre_process()
 			m_patch->add_node(new ListNode<Node*>(m_node));
 			m_node->add_to_store(_engine.object_store());
 			
+			// FIXME: not really necessary to build process order since it's not connected,
+			// just append to the list
 			if (m_patch->enabled())
 				m_process_order = m_patch->build_process_order();
 		}
@@ -110,8 +112,6 @@ AddNodeEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 	QueuedEvent::execute(nframes, start, end);
 
 	if (m_node != NULL) {
-		m_node->add_to_patch();
-		
 		if (m_patch->process_order() != NULL)
 			_engine.maid()->push(m_patch->process_order());
 		m_patch->process_order(m_process_order);

@@ -49,7 +49,7 @@ public:
 	typedef std::map<string, Atom> MetadataMap;
 
 	GraphObject(GraphObject* parent, const string& name)
-	: _parent(parent), _name(name)
+	: _store(NULL), _parent(parent), _name(name)
 	{
 		assert(parent == NULL || _name.length() > 0);
 		assert(_name.find("/") == string::npos);
@@ -83,10 +83,13 @@ public:
 
 
 	/** Patch and Node override this to recursively add their children. */
-	virtual void add_to_store(ObjectStore* store) = 0;
+	virtual void add_to_store(ObjectStore* store);
 	
 	/** Patch and Node override this to recursively remove their children. */
-	virtual void remove_from_store() = 0;
+	virtual void remove_from_store();
+	
+	/** The Patch this object is a child of. */
+	virtual Patch* parent_patch() const;
 	
 	/** Path is dynamically generated from parent to ease renaming */
 	inline const Path path() const {
@@ -99,6 +102,7 @@ public:
 	}
 
 protected:
+	ObjectStore* _store;
 	GraphObject* _parent;
 	string       _name;
 

@@ -64,8 +64,9 @@ ClearPatchEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 	if (m_patch != NULL) {
 		m_patch->disable();
 		
-		for (List<Node*>::const_iterator i = m_patch->nodes().begin(); i != m_patch->nodes().end(); ++i)
-			(*i)->remove_from_patch();
+		cerr << "FIXME: CLEAR PATCH\n";
+		//for (List<Node*>::const_iterator i = m_patch->nodes().begin(); i != m_patch->nodes().end(); ++i)
+		//	(*i)->remove_from_patch();
 
 		if (m_patch->process_order() != NULL) {
 			_engine.maid()->push(m_patch->process_order());

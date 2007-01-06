@@ -32,6 +32,7 @@ namespace Ingen {
 class GraphObject;
 class Patch;
 class Node;
+class Port;
 class Plugin;
 class DisconnectNodeEvent;
 class DisconnectPortEvent;
@@ -53,12 +54,16 @@ public:
 	void post_process();
 
 private:
-	Path                    m_path;
-	Node*                   m_node; 
-	ListNode<Node*>*        m_patch_listnode;
-	TreeNode<GraphObject*>* m_store_treenode;
-	Array<Node*>*           m_process_order; // Patch's new process order
-	DisconnectNodeEvent*    m_disconnect_event;
+	Path                    _path;
+	GraphObject*            _object;
+	Node*                   _node;  ///< Same as _object if it is a Node, otherwise NULL
+	Port*                   _port;  ///< Same as _object if it is a Port, otherwise NULL
+	ListNode<Node*>*        _patch_node_listnode;
+	ListNode<Port*>*        _patch_port_listnode;
+	TreeNode<GraphObject*>* _store_treenode;
+	Array<Node*>*           _process_order;  ///< Patch's new process order
+	DisconnectNodeEvent*    _disconnect_node_event;
+	DisconnectPortEvent*    _disconnect_port_event;
 };
 
 

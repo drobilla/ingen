@@ -102,8 +102,6 @@ CreatePatchEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 			assert(m_parent != NULL);
 			assert(m_path != "/");
 			
-			m_patch->add_to_patch();
-			
 			if (m_parent->process_order() != NULL)
 				_engine.maid()->push(m_parent->process_order());
 			m_parent->process_order(m_process_order);

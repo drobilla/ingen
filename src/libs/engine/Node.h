@@ -103,15 +103,6 @@ public:
 	 */
 	virtual const Plugin* plugin() const = 0;
 
-	/** Add self to a Patch.
-	 *
-	 * This function must be realtime-safe!  Any non-realtime actions that
-	 * need to be done before adding to a patch can be done in activate().
-	 */
-	virtual void add_to_patch() = 0;
-
-	virtual void remove_from_patch() = 0;
-
 	virtual void set_buffer_size(size_t size) = 0;
 };
 

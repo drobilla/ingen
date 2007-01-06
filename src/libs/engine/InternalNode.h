@@ -35,28 +35,17 @@ class InternalNode : public NodeBase
 {
 public:
 	InternalNode(const Plugin* plugin, const string& path, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size)
-	: NodeBase(plugin, path, poly, parent, srate, buffer_size),
-	  _is_added(false)
+	: NodeBase(plugin, path, poly, parent, srate, buffer_size)
 	{
 	}
 	
 	virtual ~InternalNode() {}
 
-	virtual void deactivate() { if (_is_added) remove_from_patch(); NodeBase::deactivate(); }
-	
 	virtual void process(SampleCount nframes, FrameTime start, FrameTime end)
 		{ NodeBase::process(nframes, start, end); }
 
-	virtual void add_to_patch()      { assert(!_is_added); _is_added = true; }
-	virtual void remove_from_patch() { assert(_is_added); _is_added = false; }
-
-	//virtual void send_creation_messages(ClientInterface* client) const
-	//{ NodeBase::send_creation_messages(client); }
-	
 protected:
 	Plugin* plugin() const { return const_cast<Plugin*>(_plugin); }
-
-	bool   _is_added;
 };
 
 

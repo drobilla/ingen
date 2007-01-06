@@ -21,6 +21,7 @@
 #include "PortModel.h"
 #include "ControlModel.h"
 #include "Configuration.h"
+#include "ModelEngineInterface.h"
 #include "App.h"
 using std::cerr; using std::endl;
 
@@ -31,15 +32,26 @@ namespace Ingenuity {
 
 /** @param flip Make an input port appear as an output port, and vice versa.
  */
-Port::Port(boost::shared_ptr<LibFlowCanvas::Module> module, SharedPtr<PortModel> pm, bool flip)
+Port::Port(boost::shared_ptr<LibFlowCanvas::Module> module, SharedPtr<PortModel> pm, bool flip, bool destroyable)
 : LibFlowCanvas::Port(module,
 		pm->path().name(),
 		flip ? (!pm->is_input()) : pm->is_input(),
 		App::instance().configuration()->get_port_color(pm.get())),
-  m_port_model(pm)
+  _port_model(pm)
 {
 	assert(module);
-	assert(m_port_model);
+	assert(_port_model);
+
+	if (destroyable)
+		m_menu.items().push_back(Gtk::Menu_Helpers::MenuElem("Destroy",
+				sigc::mem_fun(this, &Port::on_menu_destroy)));
+}
+
+
+void
+Port::on_menu_destroy()
+{
+	App::instance().engine()->destroy(_port_model->path());
 }
 
 

@@ -58,9 +58,6 @@ public:
 	
 	virtual void set_buffer_size(size_t size);
 	
-	virtual void add_to_patch() {}
-	virtual void remove_from_patch() {}
-	
 	void add_to_store(ObjectStore* store);
 	void remove_from_store();
 	
@@ -89,8 +86,6 @@ public:
 	Patch* parent_patch() const { return (Patch*)_parent; }
 	
 protected:	
-	ObjectStore* _store;
-
 	const Plugin* _plugin;
 
 	size_t      _poly;

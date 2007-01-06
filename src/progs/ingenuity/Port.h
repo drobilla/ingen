@@ -35,14 +35,17 @@ namespace Ingenuity {
 class Port : public LibFlowCanvas::Port
 {
 public:
-	Port(boost::shared_ptr<LibFlowCanvas::Module> module, SharedPtr<PortModel> pm, bool flip = false);
+	Port(boost::shared_ptr<LibFlowCanvas::Module> module, SharedPtr<PortModel> pm, bool flip = false, bool destroyable = false);
 
 	virtual ~Port() {}
 
-	SharedPtr<PortModel> model() const { return m_port_model; }
+	SharedPtr<PortModel> model() const { return _port_model; }
 	
 private:
-	SharedPtr<PortModel> m_port_model;
+
+	void on_menu_destroy();
+
+	SharedPtr<PortModel> _port_model;
 };
 
 

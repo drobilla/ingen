@@ -79,7 +79,7 @@ public:
 	Port*            create_port(const string& name, DataType type, size_t buffer_size, bool is_output);
 	void             add_input(ListNode<Port*>* port)  { _input_ports.push_back(port); } ///< Preprocesser thread
 	void             add_output(ListNode<Port*>* port) { _output_ports.push_back(port); } ///< Preprocessor thread
-	ListNode<Port*>* remove_port(const Port* p);
+	ListNode<Port*>* remove_port(const string& name);
 	
 	void                   add_connection(ListNode<Connection*>* c) { _connections.push_back(c); }
 	ListNode<Connection*>* remove_connection(const Port* src_port, const Port* dst_port);

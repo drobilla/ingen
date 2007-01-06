@@ -34,7 +34,6 @@ namespace Ingen {
 
 NodeBase::NodeBase(const Plugin* plugin, const string& name, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size)
 : Node(parent, name),
-  _store(NULL),
   _plugin(plugin),
   _poly(poly),
   _srate(srate),
@@ -79,21 +78,12 @@ NodeBase::deactivate()
 }
 
 
-/*
-void
-NodeBase::send_creation_messages(ClientInterface* client) const
-{
-	cerr << "FIXME: send_creation\n";
-	//_engine.broadcaster()->send_node_to(client, this);
-}
-*/
-
 void
 NodeBase::add_to_store(ObjectStore* store)
 {
 	assert(!_store);
 
-	store->add(this);
+	GraphObject::add_to_store(store);
 	
 	for (size_t i=0; i < num_ports(); ++i)
 		store->add(_ports->at(i));
@@ -105,23 +95,19 @@ NodeBase::add_to_store(ObjectStore* store)
 void
 NodeBase::remove_from_store()
 {
-	// Remove self
-	TreeNode<GraphObject*>* node = _store->remove(path());
-	if (node != NULL) {
-		assert(_store->find(path()) == NULL);
-		delete node;
-	}
-	
 	// Remove ports
 	for (size_t i=0; i < num_ports(); ++i) {
-		node = _store->remove(_ports->at(i)->path());
+		TreeNode<GraphObject*>* node = _store->remove(_ports->at(i)->path());
 		if (node != NULL) {
 			assert(_store->find(_ports->at(i)->path()) == NULL);
 			delete node;
 		}
 	}
+	
+	// Remove self
+	GraphObject::remove_from_store();
 
-	_store = NULL;
+	assert(_store == NULL);
 }
 
 

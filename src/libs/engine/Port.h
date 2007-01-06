@@ -43,9 +43,6 @@ class Port : public GraphObject
 public:
 	virtual ~Port() {}
 
-	void add_to_store(ObjectStore* store) { assert(false); }
-	void remove_from_store()        { assert(false); }
-	
 	/** A port's parent is always a node, so static cast should be safe */
 	Node* parent_node() const { return (Node*)_parent; }
 

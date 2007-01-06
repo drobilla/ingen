@@ -188,6 +188,9 @@ Patch::add_node(ListNode<Node*>* ln)
 }
 
 
+/** Remove a node.
+ * Realtime Safe.  Preprocessing thread.
+ */
 ListNode<Node*>*
 Patch::remove_node(const string& name)
 {
@@ -263,15 +266,16 @@ Patch::create_port(const string& name, DataType type, size_t buffer_size, bool i
 }
 
 
-/** Remove a port.  Realtime safe.
+/** Remove a port.
+ * Realtime safe.  Preprocessing thread.
  */
 ListNode<Port*>*
-Patch::remove_port(const Port* port)
+Patch::remove_port(const string& name)
 {
 	bool found = false;
 	ListNode<Port*>* ret = NULL;
 	for (List<Port*>::iterator i = _input_ports.begin(); i != _input_ports.end(); ++i) {
-		if ((*i) == port) {
+		if ((*i)->name() == name) {
 			ret = _input_ports.remove(i);
 			found = true;
 		}
@@ -279,7 +283,7 @@ Patch::remove_port(const Port* port)
 
 	if (!found)
 	for (List<Port*>::iterator i = _output_ports.begin(); i != _output_ports.end(); ++i) {
-		if ((*i) == port) {
+		if ((*i)->name() == name) {
 			ret = _output_ports.remove(i);
 			found = true;
 		}
@@ -305,7 +309,7 @@ Patch::remove_port(const Port* port)
 Array<Node*>*
 Patch::build_process_order() const
 {
-	//cerr << "*********** BUILDING PROCESS ORDER FOR " << path() << endl;
+	cerr << "*********** Building process order for " << path() << endl;
 
 	Array<Node*>* const process_order = new Array<Node*>(_nodes.size(), NULL);
 	
