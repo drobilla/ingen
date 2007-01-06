@@ -150,7 +150,7 @@ Engine::activate(SharedPtr<AudioDriver> ad, SharedPtr<EventSource> es)
 #ifdef HAVE_JACK_MIDI
 	m_midi_driver = new JackMidiDriver(((JackAudioDriver*)m_audio_driver.get())->jack_client());
 #elif HAVE_ALSA_MIDI
-	m_midi_driver = new AlsaMidiDriver(m_audio_driver);
+	m_midi_driver = new AlsaMidiDriver(m_audio_driver.get());
 #else
 	m_midi_driver = new DummyMidiDriver();
 #endif
