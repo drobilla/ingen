@@ -106,8 +106,8 @@ AddPortEvent::pre_process()
 				_ports_array = new Array<Port*>(old_num_ports + 1, NULL);
 
 
-			_ports_array->at(_patch->num_ports()) = _patch_port;
-			_engine.object_store()->add(_patch_port);
+			_ports_array->at(_patch->num_ports()-1) = _patch_port;
+			_patch_port->add_to_store(_engine.object_store());
 
 			if (!_patch->parent()) {
 				if (_type == "ingen:audio")
@@ -118,8 +118,9 @@ AddPortEvent::pre_process()
 						dynamic_cast<DuplexPort<MidiMessage>*>(_patch_port));
 			}
 
-			assert(_patch->num_ports() == old_num_ports);
-			assert(_ports_array->size() == _patch->num_ports() + 1);
+			assert(_ports_array->size() == _patch->num_ports());
+
+
 		}
 	}
 	QueuedEvent::pre_process();

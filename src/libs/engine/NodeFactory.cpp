@@ -22,6 +22,7 @@
 #include <float.h>
 #include <cmath>
 #include <dlfcn.h>
+#include "ThreadManager.h"
 #include "MidiNoteNode.h"
 #include "MidiTriggerNode.h"
 #include "MidiControlNode.h"
@@ -124,6 +125,8 @@ NodeFactory::plugin(const string& type, const string& lib, const string& label)
 void
 NodeFactory::load_plugins()
 {
+	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
+
 	// Only load if we havn't already, so every client connecting doesn't cause
 	// this (expensive!) stuff to happen.  Not the best solution - would be nice
 	// if clients could refresh plugins list for whatever reason :/

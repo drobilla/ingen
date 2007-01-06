@@ -12,6 +12,7 @@ libingen_la_SOURCES = \
 	util.h \
 	tuning.h \
 	events.h \
+	ThreadManager.h \
 	DataType.h \
 	Node.h \
 	NodeBase.h \

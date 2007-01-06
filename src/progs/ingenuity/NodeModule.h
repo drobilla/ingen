@@ -77,7 +77,7 @@ protected:
 	void metadata_update(const string& key, const Atom& value);
 	
 	void add_port(SharedPtr<PortModel> port, bool resize=true);
-	void remove_port(SharedPtr<PortModel> port) { Module::remove_port(port->path().name()); }
+	void remove_port(SharedPtr<PortModel> port);
 	
 	SharedPtr<NodeModel> m_node;
 	NodeMenu             m_menu;

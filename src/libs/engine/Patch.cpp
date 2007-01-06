@@ -17,6 +17,7 @@
 #include <cassert>
 #include <cmath>
 #include <iostream>
+#include "ThreadManager.h"
 #include "Node.h"
 #include "Patch.h"
 #include "Plugin.h"
@@ -244,6 +245,19 @@ Patch::remove_bridge_node(const InternalNode* node)
 }
 #endif
 
+
+size_t
+Patch::num_ports() const
+{
+	ThreadID context = ThreadManager::current_thread_id();
+
+	if (context == THREAD_PROCESS)
+		return NodeBase::num_ports();
+	else
+		return _input_ports.size() + _output_ports.size();
+}
+
+
 /** Create a port.  Not realtime safe.
  */
 Port*
@@ -266,12 +280,18 @@ Patch::create_port(const string& name, DataType type, size_t buffer_size, bool i
 }
 
 
-/** Remove a port.
- * Realtime safe.  Preprocessing thread.
+/** Remove port from ports list used in pre-processing thread.
+ *
+ * Port is not removed from ports array for process thread (which could be
+ * simultaneously running).
+ *
+ * Realtime safe.  Preprocessing thread only.
  */
 ListNode<Port*>*
 Patch::remove_port(const string& name)
 {
+	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
+
 	bool found = false;
 	ListNode<Port*>* ret = NULL;
 	for (List<Port*>::iterator i = _input_ports.begin(); i != _input_ports.end(); ++i) {
@@ -296,6 +316,25 @@ Patch::remove_port(const string& name)
 }
 
 
+Array<Port*>*
+Patch::build_ports_array() const
+{
+	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
+
+	Array<Port*>* const result = new Array<Port*>(_input_ports.size() + _output_ports.size());
+
+	size_t i = 0;
+	
+	for (List<Port*>::const_iterator p = _input_ports.begin(); p != _input_ports.end(); ++p,++i)
+		result->at(i) = *p;
+	
+	for (List<Port*>::const_iterator p = _output_ports.begin(); p != _output_ports.end(); ++p,++i)
+		result->at(i) = *p;
+
+	return result;
+}
+
+
 /** Find the process order for this Patch.
  *
  * The process order is a flat list that the patch will execute in order
@@ -309,6 +348,8 @@ Patch::remove_port(const string& name)
 Array<Node*>*
 Patch::build_process_order() const
 {
+	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
+
 	cerr << "*********** Building process order for " << path() << endl;
 
 	Array<Node*>* const process_order = new Array<Node*>(_nodes.size(), NULL);

@@ -17,6 +17,7 @@
 #include "QueuedEventSource.h"
 #include "QueuedEvent.h"
 #include "PostProcessor.h"
+#include "ThreadManager.h"
 #include <sys/mman.h>
 #include <iostream>
 using std::cout; using std::cerr; using std::endl;
@@ -37,7 +38,8 @@ QueuedEventSource::QueuedEventSource(size_t queued_size, size_t stamped_size)
 
 	mlock(_events, _size * sizeof(QueuedEvent*));
 
-	Thread::set_name("PreProcessor");
+	Thread::set_context(THREAD_PRE_PROCESS);
+	assert(context() == THREAD_PRE_PROCESS);
 }
 
 
@@ -74,6 +76,8 @@ QueuedEventSource::push_queued(QueuedEvent* const ev)
 void
 QueuedEventSource::process(PostProcessor& dest, SampleCount nframes, FrameTime cycle_start, FrameTime cycle_end)
 {
+	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
+
 	Event* ev = NULL;
 
 	/* Limit the maximum number of queued events to process per cycle.  This
@@ -118,6 +122,8 @@ QueuedEventSource::process(PostProcessor& dest, SampleCount nframes, FrameTime c
 Event*
 QueuedEventSource::pop_earliest_queued_before(const SampleCount time)
 {
+	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
+
 	QueuedEvent* const front_event = _events[_front];
 	
 	// Pop

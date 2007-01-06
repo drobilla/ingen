@@ -152,9 +152,7 @@ PatchCanvas::add_port(SharedPtr<PortModel> pm)
 void
 PatchCanvas::remove_port(SharedPtr<PortModel> pm)
 {
-	cerr << "FIXME: PORT REMOVE" << endl;
-	//LibFlowCanvas::Module* module = get_module(pm->path().name());
-	//delete module;
+	remove_module(pm->path().name()); // should cut all references
 }
 
 

@@ -76,6 +76,8 @@ public:
 	const List<Node*>&       nodes()       const { return _nodes; }
 	const List<Connection*>& connections() const { return _connections; }
 	
+	size_t num_ports() const;
+	
 	Port*            create_port(const string& name, DataType type, size_t buffer_size, bool is_output);
 	void             add_input(ListNode<Port*>* port)  { _input_ports.push_back(port); } ///< Preprocesser thread
 	void             add_output(ListNode<Port*>* port) { _output_ports.push_back(port); } ///< Preprocessor thread
@@ -91,6 +93,7 @@ public:
 	void          external_ports(Array<Port*>* pa) { _ports = pa; }
 
 	Array<Node*>* build_process_order() const;
+	Array<Port*>* build_ports_array() const;
 	
 	/** Whether to run this patch's DSP bits in the audio thread */
 	bool enabled() const { return _process; }

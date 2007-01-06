@@ -19,6 +19,7 @@
 
 #include <jack/jack.h>
 #include <jack/transport.h>
+#include "raul/Thread.h"
 #include "List.h"
 #include "AudioDriver.h"
 #include "Buffer.h"
@@ -111,18 +112,21 @@ private:
 
 	// These are the static versions of the callbacks, they call
 	// the non-static ones below
-	inline static int  process_cb(jack_nframes_t nframes, void* const jack_driver);
+	inline static void thread_init_cb(void* const jack_driver);
 	inline static void shutdown_cb(void* const jack_driver);
+	inline static int  process_cb(jack_nframes_t nframes, void* const jack_driver);
 	inline static int  buffer_size_cb(jack_nframes_t nframes, void* const jack_driver);
 	inline static int  sample_rate_cb(jack_nframes_t nframes, void* const jack_driver);
 
 	// Non static callbacks
-	int  _process_cb(jack_nframes_t nframes);
+	void _thread_init_cb();
 	void _shutdown_cb();
+	int  _process_cb(jack_nframes_t nframes);
 	int  _buffer_size_cb(jack_nframes_t nframes);
 	int  _sample_rate_cb(jack_nframes_t nframes);
 
 	Engine&                _engine;
+	Thread*                _jack_thread;
 	jack_client_t*         _client;
 	jack_nframes_t         _buffer_size;
 	jack_nframes_t         _sample_rate;
@@ -141,6 +145,12 @@ inline int JackAudioDriver::process_cb(jack_nframes_t nframes, void* jack_driver
 {
 	assert(jack_driver);
 	return ((JackAudioDriver*)jack_driver)->_process_cb(nframes);
+}
+
+inline void JackAudioDriver::thread_init_cb(void* jack_driver)
+{
+	assert(jack_driver);
+	return ((JackAudioDriver*)jack_driver)->_thread_init_cb();
 }
 
 inline void JackAudioDriver::shutdown_cb(void* jack_driver)

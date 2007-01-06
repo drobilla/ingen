@@ -22,6 +22,7 @@
 #include "Engine.h"
 #include "util.h"
 #include "Event.h"
+#include "ThreadManager.h"
 #include "QueuedEvent.h"
 #include "EventSource.h"
 #include "PostProcessor.h"
@@ -122,6 +123,7 @@ JackAudioDriver::JackAudioDriver(Engine&        engine,
                                  std::string    server_name,
                                  jack_client_t* jack_client)
 : _engine(engine),
+  _jack_thread(NULL),
   _client(jack_client),
   _buffer_size(jack_client ? jack_get_buffer_size(jack_client) : 0),
   _sample_rate(jack_client ? jack_get_sample_rate(jack_client) : 0),
@@ -159,6 +161,7 @@ JackAudioDriver::JackAudioDriver(Engine&        engine,
 
 	jack_on_shutdown(_client, shutdown_cb, this);
 
+	jack_set_thread_init_callback(_client, thread_init_cb, this);
 	jack_set_sample_rate_callback(_client, sample_rate_cb, this);
 	jack_set_buffer_size_callback(_client, buffer_size_cb, this);
 }
@@ -310,10 +313,21 @@ JackAudioDriver::_process_cb(jack_nframes_t nframes)
 
 
 void 
+JackAudioDriver::_thread_init_cb() 
+{
+	// Initialize thread specific data
+	_jack_thread = Thread::create_for_this_thread("Jack");
+	assert(&Thread::get() == _jack_thread);
+	_jack_thread->set_context(THREAD_PROCESS);
+	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
+}
+
+void 
 JackAudioDriver::_shutdown_cb() 
 {
 	cout << "[JackAudioDriver] Jack shutdown.  Exiting." << endl;
 	_engine.quit();
+	_jack_thread = NULL;
 }
 
 

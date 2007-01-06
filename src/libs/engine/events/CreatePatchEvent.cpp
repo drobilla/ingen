@@ -45,7 +45,7 @@ CreatePatchEvent::CreatePatchEvent(Engine& engine, SharedPtr<Responder> responde
 void
 CreatePatchEvent::pre_process()
 {
-	if (_engine.object_store()->find(m_path) != NULL) {
+	if (m_path == "/" || _engine.object_store()->find(m_path) != NULL) {
 		m_error = OBJECT_EXISTS;
 		QueuedEvent::pre_process();
 		return;
@@ -57,13 +57,11 @@ CreatePatchEvent::pre_process()
 		return;
 	}
 	
-	if (m_path != "/") {
-		m_parent = _engine.object_store()->find_patch(m_path.parent());
-		if (m_parent == NULL) {
-			m_error = PARENT_NOT_FOUND;
-			QueuedEvent::pre_process();
-			return;
-		}
+	m_parent = _engine.object_store()->find_patch(m_path.parent());
+	if (m_parent == NULL) {
+		m_error = PARENT_NOT_FOUND;
+		QueuedEvent::pre_process();
+		return;
 	}
 	
 	size_t poly = 1;

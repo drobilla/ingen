@@ -61,6 +61,7 @@ private:
 	ListNode<Node*>*        _patch_node_listnode;
 	ListNode<Port*>*        _patch_port_listnode;
 	TreeNode<GraphObject*>* _store_treenode;
+	Array<Port*>*           _ports_array; ///< New (external) ports array for Patch
 	Array<Node*>*           _process_order;  ///< Patch's new process order
 	DisconnectNodeEvent*    _disconnect_node_event;
 	DisconnectPortEvent*    _disconnect_port_event;

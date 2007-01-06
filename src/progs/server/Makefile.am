@@ -9,7 +9,7 @@ if BUILD_SERVER
 
 bin_PROGRAMS = ingen
 ingen_DEPENDENCIES = ../../libs/engine/libingen.la
-ingen_LDADD = @JACK_LIBS@ @LOSC_LIBS@ @ALSA_LIBS@ @LASH_LIBS@ @SLV2_LIBS@ -lrt ../../libs/engine/libingen.la
+ingen_LDADD = @RAUL_LIBS@ @JACK_LIBS@ @LOSC_LIBS@ @ALSA_LIBS@ @LASH_LIBS@ @SLV2_LIBS@ -lrt ../../libs/engine/libingen.la
 
 ingen_SOURCES = \
 	main.cpp \

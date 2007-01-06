@@ -82,6 +82,14 @@ NodeModule::add_port(SharedPtr<PortModel> port, bool resize_to_fit)
 
 
 void
+NodeModule::remove_port(SharedPtr<PortModel> port)
+{
+	SharedPtr<LibFlowCanvas::Port> p = Module::remove_port(port->path().name());
+	p.reset();
+}
+
+
+void
 NodeModule::show_control_window()
 {
 	App::instance().window_factory()->present_controls(m_node);

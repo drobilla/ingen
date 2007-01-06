@@ -125,7 +125,7 @@ OSCEngineReceiver::OSCEngineReceiver(SharedPtr<Engine> engine, size_t queue_size
 
 	lo_server_add_method(_server, NULL, NULL, unknown_cb, NULL);
 
-	Thread::set_name("OSC Receiver");
+	Thread::set_name("OSCEngineReceiver");
 }
 
 
@@ -143,7 +143,6 @@ OSCEngineReceiver::~OSCEngineReceiver()
 void
 OSCEngineReceiver::activate()
 {
-	set_name("OSCEngineReceiver");
 	QueuedEventSource::activate();
 	set_scheduling(SCHED_FIFO, 10);
 }

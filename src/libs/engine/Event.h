@@ -22,6 +22,7 @@
 #include "types.h"
 #include "MaidObject.h"
 #include "Responder.h"
+#include "ThreadManager.h"
 
 namespace Ingen {	
 
@@ -47,6 +48,7 @@ public:
 	/** Execute this event in the audio thread (MUST be realtime safe). */
 	virtual void execute(SampleCount nframes, FrameTime start, FrameTime end)
 	{
+		assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
 		assert(!_executed);
 		assert(_time <= end);
 
@@ -59,7 +61,10 @@ public:
 	
 	/** Perform any actions after execution (ie send replies to commands)
 	 * (no realtime requirements). */
-	virtual void post_process() {}
+	virtual void post_process()
+	{
+		assert(ThreadManager::current_thread_id() == THREAD_POST_PROCESS);
+	}
 	
 	inline SampleCount time() { return _time; }
 		
@@ -71,10 +76,10 @@ protected:
 	, _executed(false)
 	{}
 	
-	Engine&                _engine;
-	SharedPtr<Responder>  _responder;
-	FrameTime              _time;
-	bool                   _executed;
+	Engine&              _engine;
+	SharedPtr<Responder> _responder;
+	FrameTime            _time;
+	bool                 _executed;
 };
 
 

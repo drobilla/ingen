@@ -45,6 +45,7 @@ public:
 	/** Process this event into a realtime-suitable event.
 	 */
 	virtual void pre_process() {
+		assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
 		assert(_pre_processed == false);
 		_pre_processed = true;
 	}

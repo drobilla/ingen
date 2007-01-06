@@ -30,7 +30,7 @@ namespace Ingenuity {
 
 
 PatchPortModule::PatchPortModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<PortModel> port)
-: LibFlowCanvas::Module(canvas, "", 0, 0), // FIXME: coords?
+: LibFlowCanvas::Module(canvas, port->path().name(), 0, 0, false), // FIXME: coords?
   m_port(port)
 {
 	/*if (port_model()->polyphonic() && port_model()->parent() != NULL

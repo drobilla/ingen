@@ -14,46 +14,27 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "GraphObject.h"
-#include "Patch.h"
-#include "ObjectStore.h"
+#ifndef THREADMANAGER_H
+#define THREADMANAGER_H
+
+#include "raul/Thread.h"
 
 namespace Ingen {
 
 
-Patch*
-GraphObject::parent_patch() const
-{
-	return dynamic_cast<Patch*>((Node*)_parent);
-}
+enum ThreadID {
+	THREAD_PRE_PROCESS,
+	THREAD_PROCESS,
+	THREAD_POST_PROCESS
+};
 
 
-// FIXME: these functions are stupid/ugly
-
-void
-GraphObject::add_to_store(ObjectStore* store)
-{
-	assert(!_store);
-	store->add(this);
-	_store = store;
-}
-
-
-void
-GraphObject::remove_from_store()
-{
-	assert(_store);
-
-	if (_store) {
-		TreeNode<GraphObject*>* node = _store->remove(path());
-		if (node != NULL) {
-			assert(_store->find(path()) == NULL);
-			delete node;
-		}
-	}
-
-	_store = NULL;
-}
+class ThreadManager {
+public:
+	inline static ThreadID current_thread_id() { return (ThreadID)Thread::get().context(); }
+};
 
 
 } // namespace Ingen
+
+#endif // THREADMANAGER_H

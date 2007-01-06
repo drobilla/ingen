@@ -161,16 +161,16 @@ Engine::activate(SharedPtr<AudioDriver> ad, SharedPtr<EventSource> es)
 	m_event_source->activate();
 
 	// Create root patch
-	CreatePatchEvent create_ev(*this, SharedPtr<Responder>(new Responder()), 0, "/", 1);
-	create_ev.pre_process();
-	create_ev.execute(1, 0, 1);
-	create_ev.post_process();
-	EnablePatchEvent enable_ev(*this, SharedPtr<Responder>(new Responder()), 0, "/");
-	enable_ev.pre_process();
-	enable_ev.execute(1, 0, 1);
-	enable_ev.post_process();
-	
-	assert(m_audio_driver->root_patch() != NULL);
+
+	Patch* root_patch = new Patch("", 1, NULL,
+			m_audio_driver->sample_rate(), m_audio_driver->buffer_size(), 1);
+	root_patch->activate();
+	root_patch->add_to_store(m_object_store);
+	root_patch->process_order(root_patch->build_process_order());
+	root_patch->enable();
+
+	assert(m_audio_driver->root_patch() == NULL);
+	m_audio_driver->set_root_patch(root_patch);
 
 	m_audio_driver->activate();
 #ifdef HAVE_ALSA_MIDI
