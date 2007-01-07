@@ -20,6 +20,7 @@
 #include <pthread.h>
 #include "types.h"
 #include "midi.h"
+#include "ThreadManager.h"
 #include "Maid.h"
 #include "AudioDriver.h"
 #include "MidiMessage.h"
@@ -35,15 +36,15 @@ namespace Ingen {
 //// JackMidiPort ////
 
 JackMidiPort::JackMidiPort(JackMidiDriver* driver, DuplexPort<MidiMessage>* patch_port)
-: DriverPort(),
+: DriverPort(patch_port->is_input()),
   ListNode<JackMidiPort*>(this),
-  m_driver(driver),
-  m_jack_port(NULL),
-  m_patch_port(patch_port)
+  _driver(driver),
+  _jack_port(NULL),
+  _patch_port(patch_port)
 {
 	assert(patch_port->poly() == 1);
 
-	m_jack_port = jack_port_register(m_driver->jack_client(),
+	_jack_port = jack_port_register(_driver->jack_client(),
 		patch_port->path().c_str(), JACK_DEFAULT_MIDI_TYPE,
 		(patch_port->is_input()) ? JackPortIsInput : JackPortIsOutput,
 		0);
@@ -55,7 +56,7 @@ JackMidiPort::JackMidiPort(JackMidiDriver* driver, DuplexPort<MidiMessage>* patc
 
 JackMidiPort::~JackMidiPort()
 {
-	jack_port_unregister(m_driver->jack_client(), m_jack_port);
+	jack_port_unregister(_driver->jack_client(), _jack_port);
 }
 
 
@@ -74,14 +75,14 @@ JackMidiPort::prepare_block(const SampleCount block_start, const SampleCount blo
 	assert(block_end >= block_start);
 	
 	const SampleCount    nframes     = block_end - block_start;
-	void*                jack_buffer = jack_port_get_buffer(m_jack_port, nframes);
+	void*                jack_buffer = jack_port_get_buffer(_jack_port, nframes);
 	const jack_nframes_t event_count = jack_midi_get_event_count(jack_buffer, nframes);
 	
-	assert(event_count < m_patch_port->buffer_size());
+	assert(event_count < _patch_port->buffer_size());
 	
 	// Copy events from Jack port buffer into patch port buffer
 	for (jack_nframes_t i=0; i < event_count; ++i) {
-		jack_midi_event_t* ev = (jack_midi_event_t*)&m_patch_port->buffer(0)->value_at(i);
+		jack_midi_event_t* ev = (jack_midi_event_t*)&_patch_port->buffer(0)->value_at(i);
 		jack_midi_event_get(ev, jack_buffer, i, nframes);
 
 		// Convert note ons with velocity 0 to proper note offs
@@ -89,7 +90,7 @@ JackMidiPort::prepare_block(const SampleCount block_start, const SampleCount blo
 			ev->buffer[0] = MIDI_CMD_NOTE_OFF;
 		
 		// MidiMessage and jack_midi_event_t* are the same thing :/
-		MidiMessage* const message = &m_patch_port->buffer(0)->data()[i];
+		MidiMessage* const message = &_patch_port->buffer(0)->data()[i];
 		message->time   = ev->time;
 		message->size   = ev->size;
 		message->buffer = ev->buffer;
@@ -97,8 +98,8 @@ JackMidiPort::prepare_block(const SampleCount block_start, const SampleCount blo
 
 	//cerr << "Jack MIDI got " << event_count << " events." << endl;
 
-	m_patch_port->buffer(0)->filled_size(event_count);
-	//m_patch_port->tied_port()->buffer(0)->filled_size(event_count);
+	_patch_port->buffer(0)->filled_size(event_count);
+	//_patch_port->tied_port()->buffer(0)->filled_size(event_count);
 }
 
 
@@ -106,13 +107,13 @@ JackMidiPort::prepare_block(const SampleCount block_start, const SampleCount blo
 //// JackMidiDriver ////
 
 
-bool JackMidiDriver::m_midi_thread_exit_flag = true;
+bool JackMidiDriver::_midi_thread_exit_flag = true;
 
 
 JackMidiDriver::JackMidiDriver(jack_client_t* client)
-: m_client(client),
-  m_is_activated(false),
-  m_is_enabled(false)
+: _client(client),
+  _is_activated(false),
+  _is_enabled(false)
 {
 }
 
@@ -128,7 +129,7 @@ JackMidiDriver::~JackMidiDriver()
 void
 JackMidiDriver::activate() 
 {
-	m_is_activated = true;
+	_is_activated = true;
 }
 
 
@@ -137,7 +138,7 @@ JackMidiDriver::activate()
 void
 JackMidiDriver::deactivate() 
 {
-	m_is_activated = false;
+	_is_activated = false;
 }
 
 
@@ -146,7 +147,7 @@ JackMidiDriver::deactivate()
 void
 JackMidiDriver::prepare_block(const SampleCount block_start, const SampleCount block_end)
 {
-	for (List<JackMidiPort*>::iterator i = m_in_ports.begin(); i != m_in_ports.end(); ++i)
+	for (List<JackMidiPort*>::iterator i = _in_ports.begin(); i != _in_ports.end(); ++i)
 		(*i)->prepare_block(block_start, block_end);
 }
 
@@ -159,12 +160,15 @@ JackMidiDriver::prepare_block(const SampleCount block_start, const SampleCount b
  * See create_port() and remove_port().
  */
 void
-JackMidiDriver::add_port(JackMidiPort* port)
+JackMidiDriver::add_port(DriverPort* port)
 {
-	if (port->patch_port()->is_input())
-		m_in_ports.push_back(port);
+	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
+	assert(dynamic_cast<JackMidiPort*>(port));
+
+	if (port->is_input())
+		_in_ports.push_back((JackMidiPort*)port);
 	else
-		m_out_ports.push_back(port);
+		_out_ports.push_back((JackMidiPort*)port);
 }
 
 
@@ -176,19 +180,21 @@ JackMidiDriver::add_port(JackMidiPort* port)
  *
  * It is the callers responsibility to delete the returned port.
  */
-JackMidiPort*
-JackMidiDriver::remove_port(JackMidiPort* port)
+DriverPort*
+JackMidiDriver::remove_port(const Path& path)
 {
-	if (port->patch_port()->is_input()) {
-		for (List<JackMidiPort*>::iterator i = m_in_ports.begin(); i != m_in_ports.end(); ++i)
-			if ((*i) == (JackMidiPort*)port)
-				return m_in_ports.remove(i)->elem();
-	} else {
-		for (List<JackMidiPort*>::iterator i = m_out_ports.begin(); i != m_out_ports.end(); ++i)
-			if ((*i) == port)
-				return m_out_ports.remove(i)->elem();
-	}
-	
+	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
+
+	// FIXME: duplex?
+
+	for (List<JackMidiPort*>::iterator i = _in_ports.begin(); i != _in_ports.end(); ++i)
+		if ((*i)->patch_port()->path() == path)
+			return _in_ports.remove(i)->elem();
+
+	for (List<JackMidiPort*>::iterator i = _out_ports.begin(); i != _out_ports.end(); ++i)
+		if ((*i)->patch_port()->path() == path)
+			return _out_ports.remove(i)->elem();
+
 	cerr << "[JackMidiDriver::remove_input] WARNING: Failed to find Jack port to remove!" << endl;
 	return NULL;
 }

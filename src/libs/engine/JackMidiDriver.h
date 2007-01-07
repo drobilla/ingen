@@ -44,14 +44,14 @@ public:
 
 	void prepare_block(const SampleCount block_start, const SampleCount block_end);
 	
-	void set_name(const std::string& name) { jack_port_set_name(m_jack_port, name.c_str()); };
+	void set_name(const std::string& name) { jack_port_set_name(_jack_port, name.c_str()); };
 	
-	DuplexPort<MidiMessage>* patch_port() const { return m_patch_port; }
+	DuplexPort<MidiMessage>* patch_port() const { return _patch_port; }
 
 private:
-	JackMidiDriver*          m_driver;
-	jack_port_t*             m_jack_port;
-	DuplexPort<MidiMessage>* m_patch_port;
+	JackMidiDriver*          _driver;
+	jack_port_t*             _jack_port;
+	DuplexPort<MidiMessage>* _patch_port;
 };
 
 
@@ -70,28 +70,27 @@ public:
 
 	void activate();
 	void deactivate();
-	void enable()  { m_is_enabled = true; }
-	void disable() { m_is_enabled = false; }
+	void enable()  { _is_enabled = true; }
+	void disable() { _is_enabled = false; }
 	
-	bool is_activated() const { return m_is_activated; }
-	bool is_enabled() const   { return m_is_enabled; }
+	bool is_activated() const { return _is_activated; }
+	bool is_enabled() const   { return _is_enabled; }
 	
 	void prepare_block(const SampleCount block_start, const SampleCount block_end);
 
 	JackMidiPort* create_port(DuplexPort<MidiMessage>* patch_port)
 	{ return new JackMidiPort(this, patch_port); }
+	
+	void        add_port(DriverPort* port);
+	DriverPort* remove_port(const Path& path);
 
-	jack_client_t* jack_client()        { return m_client; }
+	jack_client_t* jack_client()        { return _client; }
 
 private:
-	List<JackMidiPort*> m_in_ports;
-	List<JackMidiPort*> m_out_ports;
+	List<JackMidiPort*> _in_ports;
+	List<JackMidiPort*> _out_ports;
 	
 	friend class JackMidiPort;
-	
-	// Functions for JackMidiPort
-	void          add_port(JackMidiPort* port);
-	JackMidiPort* remove_port(JackMidiPort* port);
 	
 	void add_output(ListNode<JackMidiPort*>* port);
 	ListNode<JackMidiPort*>* remove_output(JackMidiPort* port);
@@ -99,11 +98,11 @@ private:
 	// MIDI thread
 	static void* process_midi_in(void* me);
 
-	jack_client_t* m_client;
-	pthread_t      m_process_thread;
-	bool           m_is_activated;
-	bool           m_is_enabled;
-	static bool    m_midi_thread_exit_flag;
+	jack_client_t* _client;
+	pthread_t      _process_thread;
+	bool           _is_activated;
+	bool           _is_enabled;
+	static bool    _midi_thread_exit_flag;
 };
 
 

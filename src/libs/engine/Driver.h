@@ -19,6 +19,7 @@
 
 #include <string>
 #include <boost/utility.hpp>
+#include "raul/Path.h"
 
 namespace Ingen {
 
@@ -40,8 +41,13 @@ public:
 	/** Set the name of the system port */
 	virtual void set_name(const std::string& name) = 0;
 	
+	bool is_input() { return _is_input; }
+
 protected:
-	DriverPort() {}
+	/** is_input from the perspective outside of ingen */
+	DriverPort(bool is_input) : _is_input(is_input) {}
+
+	bool _is_input;
 };
 
 
@@ -72,6 +78,9 @@ public:
 	 * May return NULL if the Driver can not drive the port for some reason.
 	 */
 	virtual DriverPort* create_port(DuplexPort<T>* patch_port) = 0;
+	
+	virtual void        add_port(DriverPort* port)    = 0;
+	virtual DriverPort* remove_port(const Path& path) = 0;
 };
 
 

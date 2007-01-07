@@ -47,7 +47,7 @@ namespace Ingen {
 //// JackAudioPort ////
 
 JackAudioPort::JackAudioPort(JackAudioDriver* driver, DuplexPort<Sample>* patch_port)
-: DriverPort(),
+: DriverPort(patch_port->is_input()),
   ListNode<JackAudioPort*>(this),
   _driver(driver),
   _jack_port(NULL),

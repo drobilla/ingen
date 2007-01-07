@@ -22,6 +22,7 @@
 #include "Node.h"
 #include "Plugin.h"
 #include "AudioDriver.h"
+#include "MidiDriver.h"
 #include "InternalNode.h"
 #include "DisconnectNodeEvent.h"
 #include "DisconnectPortEvent.h"
@@ -178,9 +179,11 @@ DestroyEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 		
 		_port->parent_patch()->external_ports(_ports_array);
 		
-		if (!_port->parent_patch()->parent())
+		if (!_port->parent_patch()->parent()) {
 			_driver_port = _engine.audio_driver()->remove_port(_port->path());
-
+			if (!_driver_port)
+				_driver_port = _engine.midi_driver()->remove_port(_port->path());
+		}
 	}
 }
 

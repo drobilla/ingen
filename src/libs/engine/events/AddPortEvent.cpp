@@ -140,7 +140,10 @@ AddPortEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 	}
 
 	if (_driver_port)
-		_engine.audio_driver()->add_port(_driver_port);
+		if (_type == "ingen:audio")
+			_engine.audio_driver()->add_port(_driver_port);
+		else if (_type == "ingen:midi")
+			_engine.midi_driver()->add_port(_driver_port);
 }
 
 
