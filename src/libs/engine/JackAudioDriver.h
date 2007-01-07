@@ -20,6 +20,7 @@
 #include <jack/jack.h>
 #include <jack/transport.h>
 #include "raul/Thread.h"
+#include "raul/Path.h"
 #include "List.h"
 #include "AudioDriver.h"
 #include "Buffer.h"
@@ -44,8 +45,6 @@ public:
 	JackAudioPort(JackAudioDriver* driver, DuplexPort<Sample>* patch_port);
 	~JackAudioPort();
 	
-	void add_to_driver();
-	void remove_from_driver();
 	void set_name(const std::string& name) { jack_port_set_name(_jack_port, name.c_str()); };
 	
 	void prepare_buffer(jack_nframes_t nframes);
@@ -84,7 +83,11 @@ public:
 	void enable();
 	void disable();
 
+	DriverPort* port(const Path& path);
 	DriverPort* create_port(DuplexPort<Sample>* patch_port);
+	
+	void        add_port(DriverPort* port);
+	DriverPort* remove_port(const Path& path);
 	
 	Patch* root_patch()                 { return _root_patch; }
 	void   set_root_patch(Patch* patch) { _root_patch = patch; }
@@ -105,10 +108,6 @@ public:
 
 private:
 	friend class JackAudioPort;
-	
-	// Functions for JackAudioPort
-	void           add_port(JackAudioPort* port);
-	JackAudioPort* remove_port(JackAudioPort* port);
 
 	// These are the static versions of the callbacks, they call
 	// the non-static ones below

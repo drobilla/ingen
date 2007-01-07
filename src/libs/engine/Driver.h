@@ -37,12 +37,6 @@ class DriverPort : boost::noncopyable {
 public:
 	virtual ~DriverPort() {}
 
-	/** Add this port to driver at the beginning of a process cycle (realtime safe) */
-	virtual void add_to_driver() = 0;
-	
-	/** Remove this port at the beginning of a process cycle (realtime safe) */
-	virtual void remove_from_driver() = 0;
-
 	/** Set the name of the system port */
 	virtual void set_name(const std::string& name) = 0;
 	

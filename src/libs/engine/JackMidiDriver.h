@@ -44,8 +44,6 @@ public:
 
 	void prepare_block(const SampleCount block_start, const SampleCount block_end);
 	
-	void add_to_driver();
-	void remove_from_driver();
 	void set_name(const std::string& name) { jack_port_set_name(m_jack_port, name.c_str()); };
 	
 	DuplexPort<MidiMessage>* patch_port() const { return m_patch_port; }

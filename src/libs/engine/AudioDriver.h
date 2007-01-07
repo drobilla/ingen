@@ -20,6 +20,7 @@
 #include "Driver.h"
 #include "types.h"
 #include "List.h"
+#include "raul/Path.h"
 
 namespace Ingen {
 
@@ -38,6 +39,9 @@ public:
 	
 	virtual void   set_root_patch(Patch* patch) = 0;
 	virtual Patch* root_patch()                 = 0;
+	
+	virtual void        add_port(DriverPort* port)    = 0;
+	virtual DriverPort* remove_port(const Path& path) = 0;
 	
 	virtual SampleCount buffer_size()  const = 0;
 	virtual SampleCount sample_rate()  const = 0;

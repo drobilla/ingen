@@ -59,20 +59,6 @@ JackMidiPort::~JackMidiPort()
 }
 
 
-void
-JackMidiPort::add_to_driver()
-{
-	m_driver->add_port(this);
-}
-
-
-void
-JackMidiPort::remove_from_driver()
-{
-	m_driver->remove_port(this);
-}
-
-
 /** Prepare events for a block.
  *
  * This is basically trivial (as opposed to AlsaMidiPort) since Jack MIDI

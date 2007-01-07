@@ -120,7 +120,6 @@ AddPortEvent::pre_process()
 
 			assert(_ports_array->size() == _patch->num_ports());
 
-
 		}
 	}
 	QueuedEvent::pre_process();
@@ -141,7 +140,7 @@ AddPortEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 	}
 
 	if (_driver_port)
-		_driver_port->add_to_driver();
+		_engine.audio_driver()->add_port(_driver_port);
 }
 
 

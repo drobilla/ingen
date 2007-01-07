@@ -89,20 +89,6 @@ AlsaMidiPort::~AlsaMidiPort()
 
 
 void
-AlsaMidiPort::add_to_driver()
-{
-	_driver->add_port(this);
-}
-
-
-void
-AlsaMidiPort::remove_from_driver()
-{
-	_driver->remove_port(this);
-}
-
-
-void
 AlsaMidiPort::set_name(const string& name)
 {
 	snd_seq_port_info_t* info = NULL;

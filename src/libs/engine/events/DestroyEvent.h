@@ -33,6 +33,7 @@ class GraphObject;
 class Patch;
 class Node;
 class Port;
+class DriverPort;
 class Plugin;
 class DisconnectNodeEvent;
 class DisconnectPortEvent;
@@ -58,6 +59,7 @@ private:
 	GraphObject*            _object;
 	Node*                   _node;  ///< Same as _object if it is a Node, otherwise NULL
 	Port*                   _port;  ///< Same as _object if it is a Port, otherwise NULL
+	DriverPort*             _driver_port;
 	ListNode<Node*>*        _patch_node_listnode;
 	ListNode<Port*>*        _patch_port_listnode;
 	TreeNode<GraphObject*>* _store_treenode;

@@ -21,6 +21,7 @@
 #include "Tree.h"
 #include "Node.h"
 #include "Plugin.h"
+#include "AudioDriver.h"
 #include "InternalNode.h"
 #include "DisconnectNodeEvent.h"
 #include "DisconnectPortEvent.h"
@@ -40,6 +41,7 @@ DestroyEvent::DestroyEvent(Engine& engine, SharedPtr<Responder> responder, Frame
   _object(NULL),
   _node(NULL),
   _port(NULL),
+  _driver_port(NULL),
   _patch_node_listnode(NULL),
   _patch_port_listnode(NULL),
   _store_treenode(NULL),
@@ -58,6 +60,7 @@ DestroyEvent::DestroyEvent(Engine& engine, SharedPtr<Responder> responder, Frame
   _object(node),
   _node(node),
   _port(NULL),
+  _driver_port(NULL),
   _patch_node_listnode(NULL),
   _patch_port_listnode(NULL),
   _store_treenode(NULL),
@@ -174,6 +177,10 @@ DestroyEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 			_engine.maid()->push(_port->parent_patch()->external_ports());
 		
 		_port->parent_patch()->external_ports(_ports_array);
+		
+		if (!_port->parent_patch()->parent())
+			_driver_port = _engine.audio_driver()->remove_port(_port->path());
+
 	}
 }
 
@@ -209,6 +216,10 @@ DestroyEvent::post_process()
 	} else {
 		_responder->respond_error("Unable to destroy object");
 	}
+
+	if (_driver_port)
+		delete _driver_port;
+		//_engine.maid()->push(_driver_port);
 }
 
 

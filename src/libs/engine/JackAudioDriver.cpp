@@ -73,19 +73,6 @@ JackAudioPort::~JackAudioPort()
 
 
 void
-JackAudioPort::add_to_driver()
-{
-	_driver->add_port(this);
-}
-
-
-void
-JackAudioPort::remove_from_driver()
-{
-	_driver->remove_port(this);
-}
-
-void
 JackAudioPort::prepare_buffer(jack_nframes_t nframes)
 {
 	// FIXME: Technically this doesn't need to be done every time for output ports
@@ -227,9 +214,12 @@ JackAudioDriver::deactivate()
  * See create_port() and remove_port().
  */
 void
-JackAudioDriver::add_port(JackAudioPort* port)
+JackAudioDriver::add_port(DriverPort* port)
 {
-	_ports.push_back(port);
+	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
+
+	assert(dynamic_cast<JackAudioPort*>(port));
+	_ports.push_back((JackAudioPort*)port);
 }
 
 
@@ -241,14 +231,27 @@ JackAudioDriver::add_port(JackAudioPort* port)
  *
  * It is the callers responsibility to delete the returned port.
  */
-JackAudioPort*
-JackAudioDriver::remove_port(JackAudioPort* port)
+DriverPort*
+JackAudioDriver::remove_port(const Path& path)
 {
+	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
+
 	for (List<JackAudioPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
-		if ((*i) == port)
+		if ((*i)->patch_port()->path() == path)
 			return _ports.remove(i)->elem();
 	
 	cerr << "[JackAudioDriver::remove_port] WARNING: Failed to find Jack port to remove!" << endl;
+	return NULL;
+}
+
+
+DriverPort*
+JackAudioDriver::port(const Path& path)
+{
+	for (List<JackAudioPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
+		if ((*i)->patch_port()->path() == path)
+			return (*i);
+
 	return NULL;
 }
 
