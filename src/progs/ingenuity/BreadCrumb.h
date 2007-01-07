@@ -69,7 +69,7 @@ public:
 	}
 
 private:
-	Path                  _path;
+	Path                 _path;
 	SharedPtr<PatchView> _view;
 };
 

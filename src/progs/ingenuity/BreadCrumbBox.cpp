@@ -160,8 +160,7 @@ BreadCrumbBox::breadcrumb_clicked(BreadCrumb* crumb)
 		_enable_signal = false;
 
 		if (!crumb->get_active()) {
-			assert(_active_path == crumb->path());
-			// Tried to turn off the current active button, bad user!
+			// Tried to turn off the current active button, bad user, no cookie
 			crumb->set_active(true);
 		} else {
 			signal_patch_selected.emit(crumb->path(), crumb->view());
