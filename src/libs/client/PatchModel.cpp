@@ -127,18 +127,18 @@ PatchModel::remove_node(SharedPtr<NodeModel> nm)
 
 		// Remove any connections which referred to this node,
 		// since they can't possibly exist anymore
-		for (list<SharedPtr<ConnectionModel> >::iterator i = m_connections.begin();
-				i != m_connections.end() ; ) {
-			list<SharedPtr<ConnectionModel> >::iterator next = i;
+		for (list<SharedPtr<ConnectionModel> >::iterator j = m_connections.begin();
+				j != m_connections.end() ; ) {
+			list<SharedPtr<ConnectionModel> >::iterator next = j;
 			++next;
-			SharedPtr<ConnectionModel> cm = (*i);
+			SharedPtr<ConnectionModel> cm = (*j);
 			if (cm->src_port_path().parent() == nm->path()
 					|| cm->dst_port_path().parent() == nm->path()) {
-				m_connections.erase(i); // cuts our reference
+				m_connections.erase(j); // cuts our reference
 				assert(!get_connection(cm->src_port_path(), cm->dst_port_path())); // no duplicates
 				removed_connection_sig.emit(cm->src_port_path(), cm->dst_port_path());
 			}
-			i = next;
+			j = next;
 		}
 		
 		// Remove the Node itself
