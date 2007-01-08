@@ -163,41 +163,56 @@ PatchCanvas::connection(SharedPtr<ConnectionModel> cm)
 	const Path& src_parent_path = cm->src_port_path().parent();
 	const Path& dst_parent_path = cm->dst_port_path().parent();
 
-	const string& src_parent_name =
-		(src_parent_path == m_patch->path()) ? "" : src_parent_path.name();
-	const string& dst_parent_name =
-		(dst_parent_path == m_patch->path()) ? "" : dst_parent_path.name();
+	const string& src_parent_name = (src_parent_path == m_patch->path())
+		? cm->src_port_path().name()
+		: src_parent_path.name();
+
+	const string& dst_parent_name = (dst_parent_path == m_patch->path())
+		? cm->dst_port_path().name()
+		: dst_parent_path.name();
 
 	boost::shared_ptr<LibFlowCanvas::Port> src = get_port(src_parent_name, cm->src_port_path().name());
 	boost::shared_ptr<LibFlowCanvas::Port> dst = get_port(dst_parent_name, cm->dst_port_path().name());
 	
-	if (src && dst) {
-		add_connection(boost::shared_ptr<Connection>(
-			new Connection(shared_from_this(), cm, src, dst)));
-	} else {
-		cerr << "[Canvas] ERROR: Unable to find ports to create connection." << endl;
-	}
+	cerr << "SPN: " << src_parent_name << endl;
+	cerr << "DPN: " << dst_parent_name << endl;
+
+	if (src && dst)
+		add_connection(boost::shared_ptr<Connection>(new Connection(shared_from_this(), cm, src, dst)));
+	else
+		cerr << "[PatchCanvas] ERROR: Unable to find ports to connect "
+			<< cm->src_port_path() << " -> " << cm->dst_port_path() << endl;
 }
 
 
 void
 PatchCanvas::disconnection(const Path& src_port_path, const Path& dst_port_path)
 {
-	const string& src_node_name = src_port_path.parent().name();
-	const string& src_port_name = src_port_path.name();
-	const string& dst_node_name = dst_port_path.parent().name();
-	const string& dst_port_name = dst_port_path.name();
+	// Deal with port "anonymous nodes" for this patch's own ports...
+	const Path& src_parent_path = src_port_path.parent();
+	const Path& dst_parent_path = dst_port_path.parent();
 
-	boost::shared_ptr<LibFlowCanvas::Port> src_port = get_port(src_node_name, src_port_name);
-	boost::shared_ptr<LibFlowCanvas::Port> dst_port = get_port(dst_node_name, dst_port_name);
+	const string& src_parent_name = (src_parent_path == m_patch->path())
+		? src_port_path.name()
+		: src_parent_path.name();
 
-	if (src_port && dst_port) {
-		remove_connection(src_port, dst_port);
-	}
+	const string& dst_parent_name = (dst_parent_path == m_patch->path())
+		? dst_port_path.name()
+		: dst_parent_path.name();
+	
+	cerr << "SPN: " << src_parent_name << endl;
+	cerr << "DPN: " << dst_parent_name << endl;
 
-	//patch_model()->remove_connection(src_port_path, dst_port_path);
+	boost::shared_ptr<LibFlowCanvas::Port> src = get_port(src_parent_name, src_port_path.name());
+	boost::shared_ptr<LibFlowCanvas::Port> dst = get_port(dst_parent_name, dst_port_path.name());
 
-	cerr << "FIXME: disconnection\n";
+	if (src && dst)
+		remove_connection(src, dst);
+	else
+		cerr << "[PatchCanvas] ERROR: Unable to find ports to disconnect "
+			<< src_port_path << " -> " << dst_port_path << endl;
+
+	cerr << "FIXME: disconnection control window stuff\n";
 	/*
 	// Enable control slider in destination node control window
 	PortController* p = (PortController)Store::instance().port(dst_port_path)->controller();

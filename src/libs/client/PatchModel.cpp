@@ -124,14 +124,31 @@ PatchModel::remove_node(SharedPtr<NodeModel> nm)
 	NodeModelMap::iterator i = m_nodes.find(nm->path().name());
 	if (i != m_nodes.end()) {
 		assert(i->second == nm);
+
+		// Remove any connections which referred to this node,
+		// since they can't possibly exist anymore
+		for (list<SharedPtr<ConnectionModel> >::iterator i = m_connections.begin();
+				i != m_connections.end() ; ) {
+			list<SharedPtr<ConnectionModel> >::iterator next = i;
+			++next;
+			SharedPtr<ConnectionModel> cm = (*i);
+			if (cm->src_port_path().parent() == nm->path()
+					|| cm->dst_port_path().parent() == nm->path()) {
+				m_connections.erase(i); // cuts our reference
+				assert(!get_connection(cm->src_port_path(), cm->dst_port_path())); // no duplicates
+				removed_connection_sig.emit(cm->src_port_path(), cm->dst_port_path());
+			}
+			i = next;
+		}
+		
+		// Remove the Node itself
 		m_nodes.erase(i);
 		removed_node_sig.emit(nm);
-		//i->second->parent().reset();
-		return;
+
+	} else {
+		cerr << "[PatchModel::remove_node] " << _path
+			<< ": failed to find node " << nm->path().name() << endl;
 	}
-	
-	cerr << "[PatchModel::remove_node] " << _path
-		<< ": failed to find node " << nm->path().name() << endl;
 }
 
 #if 0
@@ -255,7 +272,6 @@ PatchModel::add_connection(SharedPtr<ConnectionModel> cm)
 void
 PatchModel::remove_connection(const string& src_port_path, const string& dst_port_path)
 {
-	cerr << path() << " PatchModel::remove_connection: " << src_port_path << " -> " << dst_port_path << endl;
 	for (list<SharedPtr<ConnectionModel> >::iterator i = m_connections.begin(); i != m_connections.end(); ++i) {
 		SharedPtr<ConnectionModel> cm = (*i);
 		if (cm->src_port_path() == src_port_path && cm->dst_port_path() == dst_port_path) {

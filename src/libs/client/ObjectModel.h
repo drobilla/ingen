@@ -55,8 +55,8 @@ public:
 
 	const Atom& get_metadata(const string& key) const;
 
-	const MetadataMap&      metadata() const { return _metadata; }
-	inline const Path&      path()     const { return _path; }
+	const MetadataMap&     metadata() const { return _metadata; }
+	inline const Path&     path()     const { return _path; }
 	SharedPtr<ObjectModel> parent()   const { return _parent; }
 
 	// Signals

@@ -95,17 +95,15 @@ DestroyEvent::pre_process()
 	}
 
 	if (_node != NULL && _path != "/") {
-		assert(_node->parent_patch() != NULL);
+		assert(_node->parent_patch());
 		_patch_node_listnode = _node->parent_patch()->remove_node(_path.name());
-		if (_patch_node_listnode != NULL) {
+		if (_patch_node_listnode) {
 			assert(_patch_node_listnode->elem() == _node);
 			
 			_node->remove_from_store();
 
-			if (_node->providers()->size() != 0 || _node->dependants()->size() != 0) {
-				_disconnect_node_event = new DisconnectNodeEvent(_engine, _node);
-				_disconnect_node_event->pre_process();
-			}
+			_disconnect_node_event = new DisconnectNodeEvent(_engine, _node);
+			_disconnect_node_event->pre_process();
 			
 			if (_node->parent_patch()->enabled()) {
 				// FIXME: is this called multiple times?
@@ -124,9 +122,9 @@ DestroyEvent::pre_process()
 			}
 		}
 	} else if (_port) {
-		assert(_port->parent_patch() != NULL);
+		assert(_port->parent_patch());
 		_patch_port_listnode = _port->parent_patch()->remove_port(_path.name());
-		if (_patch_port_listnode != NULL) {
+		if (_patch_port_listnode) {
 			assert(_patch_port_listnode->elem() == _port);
 			
 			_port->remove_from_store();
@@ -153,28 +151,28 @@ DestroyEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {
 	QueuedEvent::execute(nframes, start, end);
 
-	if (_patch_node_listnode != NULL) {
+	if (_patch_node_listnode) {
 		assert(_node);
 
-		if (_disconnect_node_event != NULL)
+		if (_disconnect_node_event)
 			_disconnect_node_event->execute(nframes, start, end);
 		
-		if (_node->parent_patch()->process_order() != NULL)
+		if (_node->parent_patch()->process_order())
 			_engine.maid()->push(_node->parent_patch()->process_order());
 		_node->parent_patch()->process_order(_process_order);
 	
-	} else if (_patch_port_listnode != NULL) {
+	} else if (_patch_port_listnode) {
 		assert(_port);
 
-		if (_disconnect_port_event != NULL)
+		if (_disconnect_port_event)
 			_disconnect_port_event->execute(nframes, start, end);
 		
-		if (_port->parent_patch()->process_order() != NULL)
+		if (_port->parent_patch()->process_order())
 			_engine.maid()->push(_port->parent_patch()->process_order());
 		
 		_port->parent_patch()->process_order(_process_order);
 		
-		if (_port->parent_patch()->external_ports() != NULL)
+		if (_port->parent_patch()->external_ports())
 			_engine.maid()->push(_port->parent_patch()->external_ports());
 		
 		_port->parent_patch()->external_ports(_ports_array);
@@ -199,19 +197,19 @@ DestroyEvent::post_process()
 			_responder->respond_error("You can not destroy the root patch (/)");
 		else
 			_responder->respond_error("Could not find object to destroy");
-	} else if (_patch_node_listnode != NULL) {	
+	} else if (_patch_node_listnode) {	
 		assert(_node);
 		_node->deactivate();
 		_responder->respond_ok();
-		if (_disconnect_node_event != NULL)
+		if (_disconnect_node_event)
 			_disconnect_node_event->post_process();
 		_engine.broadcaster()->send_destroyed(_path);
 		_engine.maid()->push(_patch_node_listnode);
 		_engine.maid()->push(_node);
-	} else if (_patch_port_listnode != NULL) {	
+	} else if (_patch_port_listnode) {	
 		assert(_port);
 		_responder->respond_ok();
-		if (_disconnect_port_event != NULL)
+		if (_disconnect_port_event)
 			_disconnect_port_event->post_process();
 		_engine.broadcaster()->send_destroyed(_path);
 		_engine.maid()->push(_patch_port_listnode);

@@ -54,7 +54,6 @@ JackAudioPort::JackAudioPort(JackAudioDriver* driver, DuplexPort<Sample>* patch_
   _jack_buffer(NULL),
   _patch_port(patch_port)
 {
-	//assert(patch_port->tied_port() != NULL);
 	assert(patch_port->poly() == 1);
 
 	_jack_port = jack_port_register(_driver->jack_client(),
@@ -62,6 +61,7 @@ JackAudioPort::JackAudioPort(JackAudioDriver* driver, DuplexPort<Sample>* patch_
 		(patch_port->is_input()) ? JackPortIsInput : JackPortIsOutput,
 		0);
 
+	patch_port->buffer(0)->clear();
 	patch_port->fixed_buffers(true);
 }	
 

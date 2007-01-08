@@ -62,8 +62,8 @@ private:
 	void src_port_path(const string& s) { _src_port_path = s; }
 	void dst_port_path(const string& s) { _dst_port_path = s; }
 
-	Path                  _src_port_path; ///< Only used if _src_port == NULL
-	Path                  _dst_port_path; ///< Only used if _dst_port == NULL
+	Path                 _src_port_path; ///< Only used if _src_port == NULL
+	Path                 _dst_port_path; ///< Only used if _dst_port == NULL
 	SharedPtr<PortModel> _src_port;
 	SharedPtr<PortModel> _dst_port;
 };
