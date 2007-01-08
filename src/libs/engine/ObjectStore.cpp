@@ -69,7 +69,7 @@ ObjectStore::find(const Path& path)
 void
 ObjectStore::add(GraphObject* o)
 {
-	//cerr << "[ObjectStore] Adding " << o->path() << endl;
+	cerr << "[ObjectStore] Adding " << o->path() << endl;
 	m_objects.insert(new TreeNode<GraphObject*>(o->path(), o));
 }
 
@@ -79,7 +79,7 @@ ObjectStore::add(GraphObject* o)
 void
 ObjectStore::add(TreeNode<GraphObject*>* tn)
 {
-	//cerr << "[ObjectStore] Adding " << tn->key() << endl;
+	cerr << "[ObjectStore] Adding " << tn->key() << endl;
 	m_objects.insert(tn);
 }
 
@@ -97,8 +97,8 @@ ObjectStore::remove(const string& path)
 
 	if (removed == NULL)
 		cerr << "[ObjectStore] WARNING: Removing " << path << " failed." << endl;
-	//else
-	//	cerr << "[ObjectStore] Removed " << path << endl;
+	else
+		cerr << "[ObjectStore] Removed " << path << endl;
 	
 	return removed;
 }
