@@ -87,6 +87,9 @@ public:
 
 	DriverPort* create_port(DuplexPort<MidiMessage>* patch_port)
 	{ return new AlsaMidiPort(this, patch_port); }
+	
+	void        add_port(DriverPort* port);
+	DriverPort* remove_port(const Path& path);
 
 	snd_seq_t*        seq_handle()  const { return _seq_handle; }
 	snd_midi_event_t* event_coder() const { return _event_coder; }
@@ -96,13 +99,6 @@ private:
 	List<AlsaMidiPort*> _out_ports;
 	
 	friend class AlsaMidiPort;
-	
-	// Functions for AlsaMidiPort
-	void          add_port(AlsaMidiPort* port);
-	AlsaMidiPort* remove_port(AlsaMidiPort* port);
-	
-	void add_output(ListNode<AlsaMidiPort*>* port);
-	ListNode<AlsaMidiPort*>* remove_output(AlsaMidiPort* port);
 	
 	// MIDI thread
 	static void* process_midi_in(void* me);

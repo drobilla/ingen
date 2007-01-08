@@ -301,6 +301,9 @@ Serializer::serialize_port(SharedPtr<PortModel> port, unsigned depth)
 	_writer.write(port_id, NS_INGEN("name"), Atom(port->path().name().c_str()));
 	
 	_writer.write(port_id, NS_INGEN("dataType"), Atom(port->type()));
+	
+	if (port->is_control() && port->is_input())
+		_writer.write(port_id, NS_INGEN("value"), Atom(port->value()));
 
 	if (port->metadata().size() > 0) {
 		for (MetadataMap::const_iterator m = port->metadata().begin(); m != port->metadata().end(); ++m) {

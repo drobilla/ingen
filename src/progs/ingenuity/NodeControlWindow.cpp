@@ -109,9 +109,9 @@ void
 NodeControlWindow::on_show()
 {
 	for (PortModelList::const_iterator i = m_node->ports().begin();
-			i != m_node->ports().end(); ++i) {
-		App::instance().engine()->request_port_value((*i)->path());
-	}
+			i != m_node->ports().end(); ++i)
+		if ((*i)->is_control() && (*i)->is_input())
+			App::instance().engine()->request_port_value((*i)->path());
 
 
 	if (m_position_stored)

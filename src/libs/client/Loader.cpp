@@ -174,6 +174,7 @@ Loader::load(const Glib::ustring& filename,
 		}
 	}
 
+
 	/* Load connections */
 
 	// FIXME: path?
@@ -205,6 +206,7 @@ Loader::load(const Glib::ustring& filename,
 
 		_engine->connect(src_port, dst_port);
 	}
+	
 	
 	// Set passed metadata last to override any loaded values
 	for (MetadataMap::const_iterator i = data.begin(); i != data.end(); ++i)

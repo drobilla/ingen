@@ -19,8 +19,8 @@
 #include <cstdlib>
 #include <pthread.h>
 #include "types.h"
-//#include "Engine.h"
 #include "Maid.h"
+#include "ThreadManager.h"
 #include "AudioDriver.h"
 #include "MidiMessage.h"
 #include "DuplexPort.h"
@@ -34,20 +34,19 @@ namespace Ingen {
 	
 //// AlsaMidiPort ////
 
-AlsaMidiPort::AlsaMidiPort(AlsaMidiDriver* driver, DuplexPort<MidiMessage>* port)
-: DriverPort(),
+AlsaMidiPort::AlsaMidiPort(AlsaMidiDriver* driver, DuplexPort<MidiMessage>* patch_port)
+: DriverPort(patch_port->is_input()),
   ListNode<AlsaMidiPort*>(this),
   _driver(driver),
-  _patch_port(port),
+  _patch_port(patch_port),
   _port_id(0),
-  _midi_pool(new unsigned char*[port->buffer_size()]),
+  _midi_pool(new unsigned char*[patch_port->buffer_size()]),
   _events(1024)
 {
-	assert(port->parent() != NULL);
-	assert(port->poly() == 1);
+	assert(patch_port->poly() == 1);
 
-	if (port->is_input()) {
-		if ((_port_id = snd_seq_create_simple_port(driver->seq_handle(), port->path().c_str(),
+	if (patch_port->is_input()) {
+		if ((_port_id = snd_seq_create_simple_port(driver->seq_handle(), patch_port->path().c_str(),
    	 		SND_SEQ_PORT_CAP_WRITE | SND_SEQ_PORT_CAP_SUBS_WRITE,
 			SND_SEQ_PORT_TYPE_APPLICATION)) < 0)
 		{
@@ -55,7 +54,7 @@ AlsaMidiPort::AlsaMidiPort(AlsaMidiDriver* driver, DuplexPort<MidiMessage>* port
 			exit(EXIT_FAILURE);
 		}
 	} else {
-		if ((_port_id = snd_seq_create_simple_port(driver->seq_handle(), port->path().c_str(),
+		if ((_port_id = snd_seq_create_simple_port(driver->seq_handle(), patch_port->path().c_str(),
    	 		SND_SEQ_PORT_CAP_READ | SND_SEQ_PORT_CAP_SUBS_READ,
 			SND_SEQ_PORT_TYPE_APPLICATION)) < 0)
 		{
@@ -68,11 +67,11 @@ AlsaMidiPort::AlsaMidiPort(AlsaMidiDriver* driver, DuplexPort<MidiMessage>* port
 	 * of Alsa events.  The buffer member of the MidiMessage's in the patch port's
 	 * buffer will be set directly to an element in this pool, then next cycle they
 	 * will be overwritten (eliminating the need for any allocation/freeing). */
-	for (size_t i=0; i < port->buffer_size(); ++i)
+	for (size_t i=0; i < patch_port->buffer_size(); ++i)
 		_midi_pool[i] = new unsigned char[MAX_MIDI_EVENT_SIZE];
 
-	port->buffer(0)->clear();
-	port->fixed_buffers(true);
+	patch_port->buffer(0)->clear();
+	patch_port->fixed_buffers(true);
 }
 
 
@@ -293,12 +292,15 @@ AlsaMidiDriver::prepare_block(const SampleCount block_start, const SampleCount b
  * See create_port() and remove_port().
  */
 void
-AlsaMidiDriver::add_port(AlsaMidiPort* port)
+AlsaMidiDriver::add_port(DriverPort* port)
 {
-	if (port->patch_port()->is_input())
-		_in_ports.push_back(port);
+	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
+	assert(dynamic_cast<AlsaMidiPort*>(port));
+
+	if (port->is_input())
+		_in_ports.push_back((AlsaMidiPort*)port);
 	else
-		_out_ports.push_back(port);
+		_out_ports.push_back((AlsaMidiPort*)port);
 }
 
 
@@ -310,20 +312,22 @@ AlsaMidiDriver::add_port(AlsaMidiPort* port)
  *
  * It is the callers responsibility to delete the returned port.
  */
-AlsaMidiPort*
-AlsaMidiDriver::remove_port(AlsaMidiPort* port)
+DriverPort*
+AlsaMidiDriver::remove_port(const Path& path)
 {
-	if (port->patch_port()->is_input()) {
-		for (List<AlsaMidiPort*>::iterator i = _in_ports.begin(); i != _in_ports.end(); ++i)
-			if ((*i) == (AlsaMidiPort*)port)
-				return _in_ports.remove(i)->elem();
-	} else {
-		for (List<AlsaMidiPort*>::iterator i = _out_ports.begin(); i != _out_ports.end(); ++i)
-			if ((*i) == port)
-				return _out_ports.remove(i)->elem();
-	}
+	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
+
+	// FIXME: duplex?
 	
-	cerr << "[AlsaMidiDriver::remove_input] WARNING: Failed to find Jack port to remove!" << endl;
+	for (List<AlsaMidiPort*>::iterator i = _in_ports.begin(); i != _in_ports.end(); ++i)
+		if ((*i)->patch_port()->path() == path)
+			return _in_ports.remove(i)->elem();
+
+	for (List<AlsaMidiPort*>::iterator i = _out_ports.begin(); i != _out_ports.end(); ++i)
+		if ((*i)->patch_port()->path() == path)
+			return _out_ports.remove(i)->elem();
+
+	cerr << "[AlsaMidiDriver::remove_port] WARNING: Failed to find Jack port to remove!" << endl;
 	return NULL;
 }
 

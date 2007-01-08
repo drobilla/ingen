@@ -58,7 +58,7 @@ public:
 	inline bool operator==(const PortModel& pm) const { return (_path == pm._path); }
 
 	// Signals
-	sigc::signal<void, float>                  control_change_sig; ///< "Control" ports only
+	sigc::signal<void, float>                 control_change_sig; ///< "Control" ports only
 	sigc::signal<void, SharedPtr<PortModel> > connection_sig;
 	sigc::signal<void, SharedPtr<PortModel> > disconnection_sig;
 
