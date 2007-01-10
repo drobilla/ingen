@@ -27,8 +27,8 @@
 #include "raul/SharedPtr.h"
 #include "raul/Path.h"
 #include "raul/Atom.h"
+#include "raul/RDFWriter.h"
 #include "ObjectModel.h"
-#include "RDFWriter.h"
 
 using std::string;
 using boost::optional;

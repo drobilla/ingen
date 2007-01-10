@@ -28,8 +28,6 @@ libingenclient_la_SOURCES = \
 	PatchModel.h \
 	PatchModel.cpp \
 	PluginModel.h \
-	RDFWriter.h \
-	RDFWriter.cpp \
 	RDFQuery.h \
 	RDFQuery.cpp \
 	Namespaces.h \
