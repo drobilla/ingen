@@ -64,9 +64,9 @@ public:
 	size_t        num_controls() const { return m_controls.size(); }
 	pair<int,int> ideal_size()   const { return m_ideal_size; }
 	
-	// Callback for ControlGroup (FIXME: ugly)
-	void value_changed(const Path& port_path, float val);
-
+	// Callback for ControlGroup
+	void value_changed(SharedPtr<PortModel> port_path, float val);
+	
 private:
 	void all_voices_selected();
 	void specific_voice_selected();

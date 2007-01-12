@@ -14,8 +14,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef OMOBJECT_H
-#define OMOBJECT_H
+#ifndef GRAPHOBJECT_H
+#define GRAPHOBJECT_H
 
 #include <string>
 #include <map>
@@ -113,4 +113,4 @@ private:
 
 } // namespace Ingen
 
-#endif // OMOBJECT_H
+#endif // GRAPHOBJECT_H

@@ -118,6 +118,8 @@ SliderControlGroup::init(ControlPanel* panel, SharedPtr<PortModel> pm, bool sepa
 	
 	m_slider->set_range(min, max);
 
+	set_value(pm->value());
+
 	m_enable_signal = true;
 
 	show_all();
@@ -218,9 +220,9 @@ SliderControlGroup::update_value_from_slider()
 		const float value = m_slider->get_value();
 		// Prevent spinner signal from doing all this over again (slow)
 		m_enable_signal = false;
-		//m_value_spinner.set_value(value);
-		m_control_panel->value_changed(m_port_model->path(), value);
-		//m_port_model->value(value);
+		
+		m_control_panel->value_changed(m_port_model, value);
+
 		m_enable_signal = true;
 	}
 }
@@ -245,7 +247,7 @@ SliderControlGroup::update_value_from_spinner()
 
 		m_slider->set_value(m_value_spinner.get_value());
 
-		m_control_panel->value_changed(m_port_model->path(), value);
+		m_control_panel->value_changed(m_port_model, value);
 		
 		//m_port_model->value(value);
 		m_enable_signal = true;
@@ -342,7 +344,7 @@ IntegerControlGroup::update_value()
 {
 	if (m_enable_signal) {
 		float value = m_spinner.get_value();
-		m_control_panel->value_changed(m_port_model->path(), value);
+		m_control_panel->value_changed(m_port_model, value);
 		//m_port_model->value(value);
 	}
 }
@@ -413,7 +415,7 @@ ToggleControlGroup::update_value()
 {
 	if (m_enable_signal) {
 		float value = m_checkbutton.get_active() ? 1.0f : 0.0f;
-		m_control_panel->value_changed(m_port_model->path(), value);
+		m_control_panel->value_changed(m_port_model, value);
 		//m_port_model->value(value);
 	}
 }

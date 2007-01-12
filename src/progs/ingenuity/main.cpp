@@ -42,9 +42,6 @@ main(int argc, char** argv)
 	if (args_info.client_port_given)
 		client_port = args_info.client_port_arg;
 	
-	// FIXME:
-	client_port = 16181;
-
 	Gnome::Canvas::init();
 	Gtk::Main gtk_main(argc, argv);
 	

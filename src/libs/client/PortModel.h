@@ -43,19 +43,27 @@ public:
 	// FIXME: metadataify
 	enum Hint      { NONE, INTEGER, TOGGLE, LOGARITHMIC };
 	
-	inline float  value()          const { return m_current_val; }
-	inline bool   connected()      const { return (m_connections > 0); }
-	inline string type()           const { return m_type; }
-	inline bool   is_input()       const { return (m_direction == INPUT); }
-	inline bool   is_output()      const { return (m_direction == OUTPUT); }
-	inline bool   is_audio()       const { return (m_type == "ingen:audio"); }
-	inline bool   is_control()     const { return (m_type == "ingen:control"); }
-	inline bool   is_midi()        const { return (m_type == "ingen:midi"); }
-	inline bool   is_logarithmic() const { return (m_hint == LOGARITHMIC); }
-	inline bool   is_integer()     const { return (m_hint == INTEGER); }
-	inline bool   is_toggle()      const { return (m_hint == TOGGLE); }
+	inline string type()           const { return _type; }
+	inline float  value()          const { return _current_val; }
+	inline bool   connected()      const { return (_connections > 0); }
+	inline bool   is_input()       const { return (_direction == INPUT); }
+	inline bool   is_output()      const { return (_direction == OUTPUT); }
+	inline bool   is_audio()       const { return (_type == "ingen:audio"); }
+	inline bool   is_control()     const { return (_type == "ingen:control"); }
+	inline bool   is_midi()        const { return (_type == "ingen:midi"); }
+	inline bool   is_logarithmic() const { return (_hint == LOGARITHMIC); }
+	inline bool   is_integer()     const { return (_hint == INTEGER); }
+	inline bool   is_toggle()      const { return (_hint == TOGGLE); }
 	
 	inline bool operator==(const PortModel& pm) const { return (_path == pm._path); }
+	
+	inline void value(float val)
+	{
+		if (val != _current_val) {
+			_current_val = val;
+			control_change_sig.emit(val);
+		}
+	}
 
 	// Signals
 	sigc::signal<void, float>                 control_change_sig; ///< "Control" ports only
@@ -67,11 +75,11 @@ private:
 	
 	PortModel(const Path& path, const string& type, Direction dir, Hint hint)
 	: ObjectModel(path),
-	  m_type(type),
-	  m_direction(dir),
-	  m_hint(hint),
-	  m_current_val(0.0f),
-	  m_connections(0)
+	  _type(type),
+	  _direction(dir),
+	  _hint(hint),
+	  _current_val(0.0f),
+	  _connections(0)
 	{
 		if (!is_audio() && !is_control() && !is_input())
 			cerr << "[PortModel] Warning: Unknown port type" << endl;
@@ -79,29 +87,27 @@ private:
 	
 	PortModel(const Path& path, const string& type, Direction dir)
 	: ObjectModel(path),
-	  m_type(type),
-	  m_direction(dir),
-	  m_hint(NONE),
-	  m_current_val(0.0f),
-	  m_connections(0)
+	  _type(type),
+	  _direction(dir),
+	  _hint(NONE),
+	  _current_val(0.0f),
+	  _connections(0)
 	{
 		if (!is_audio() && !is_control() && !is_input())
 			cerr << "[PortModel] Warning: Unknown port type" << endl;
 	}
-	
-	inline void value(float f) { m_current_val = f; control_change_sig.emit(f); }
 
 	void add_child(SharedPtr<ObjectModel> c)    { throw; }
 	void remove_child(SharedPtr<ObjectModel> c) { throw; }
 	
-	void connected_to(SharedPtr<PortModel> p)      { ++m_connections; connection_sig.emit(p); }
-	void disconnected_from(SharedPtr<PortModel> p) { --m_connections; disconnection_sig.emit(p); }
+	void connected_to(SharedPtr<PortModel> p)      { ++_connections; connection_sig.emit(p); }
+	void disconnected_from(SharedPtr<PortModel> p) { --_connections; disconnection_sig.emit(p); }
 	
-	string    m_type;
-	Direction m_direction;
-	Hint      m_hint;
-	float     m_current_val;
-	size_t    m_connections;
+	string    _type;
+	Direction _direction;
+	Hint      _hint;
+	float     _current_val;
+	size_t    _connections;
 };
 
 typedef list<SharedPtr<PortModel> > PortModelList;

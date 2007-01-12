@@ -50,13 +50,17 @@ OSCClientReceiver::start()
 	if (_st != NULL)
 		return;
 
-	if (_listen_port == 0) { 
-		_st = lo_server_thread_new(NULL, error_cb);
-		_listen_port = lo_server_thread_get_port(_st);
-	} else {
+	// Attempt preferred port
+	if (_listen_port != 0) {
 		char port_str[8];
 		snprintf(port_str, 8, "%d", _listen_port);
 		_st = lo_server_thread_new(port_str, error_cb);
+	}
+
+	// Find a free port
+	if (!_st) { 
+		_st = lo_server_thread_new(NULL, error_cb);
+		_listen_port = lo_server_thread_get_port(_st);
 	}
 
 	if (_st == NULL) {

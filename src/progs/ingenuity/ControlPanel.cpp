@@ -211,16 +211,21 @@ ControlPanel::disable_port(const Path& path)
 /** Callback for ControlGroups to notify this of a change.
  */
 void
-ControlPanel::value_changed(const Path& port_path, float val)
+ControlPanel::value_changed(SharedPtr<PortModel> port, float val)
 {
 	if (m_callback_enabled) {
 		App::instance().engine()->disable_responses();
 
+		/* Send the message, but set the client-side model's value to the new
+		 * setting right away (so the value doesn't need to be echoed back) */
+	
 		if (m_all_voices_radio->get_active()) {
-			App::instance().engine()->set_port_value(port_path, val);
+			App::instance().engine()->set_port_value(port->path(), val);
+			port->value(val);
 		} else {
 			int voice = m_voice_spinbutton->get_value_as_int();
-			App::instance().engine()->set_port_value(port_path, voice, val);
+			App::instance().engine()->set_port_value(port->path(), voice, val);
+			port->value(val);
 		}
 
 		App::instance().engine()->set_next_response_id(rand()); // FIXME: inefficient, probably not good

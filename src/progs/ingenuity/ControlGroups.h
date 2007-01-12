@@ -109,10 +109,11 @@ inline void
 SliderControlGroup::set_value(const float val)
 {
 	m_enable_signal = false;
-	if (m_enabled) {
-		m_slider->set_value(val);
+	//if (m_enabled) {
+		if (m_slider->get_value() != val)
+			m_slider->set_value(val);
 		//m_value_spinner->set_value(val);
-	}
+	//}
 	m_enable_signal = true;
 }
 

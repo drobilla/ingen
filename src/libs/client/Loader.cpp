@@ -52,7 +52,7 @@ Loader::load(const Glib::ustring& filename,
 {
 	// FIXME: this whole thing is a mess
 	
-	std::map<Glib::ustring, bool> created;
+	std::map<Path, bool> created;
 
 	// FIXME: kluge
 	unsigned char* document_uri_str = raptor_uri_filename_to_uri_string(filename.c_str());
@@ -60,7 +60,7 @@ Loader::load(const Glib::ustring& filename,
 	//Glib::ustring document_uri = "file:///home/dave/code/codesonnet/ingen/src/progs/ingenuity/test2.ingen.ttl";
 
 	if (patch_uri == "")
-		patch_uri = "<>";
+		patch_uri = "<>"; // FIXME: Will load every patch in the file?
 
 	cerr << "[Loader] Loading " << patch_uri << " from " << document_uri
 		<< " under " << parent << endl;
@@ -122,9 +122,11 @@ Loader::load(const Glib::ustring& filename,
 		const Glib::ustring& name   = (*i)["name"];
 		const Glib::ustring& plugin = (*i)["plugin"];
 		
-		if (created.find(name) == created.end()) {
-			_engine->create_node(patch_path.base() + name, plugin, false);
-			created[name] = true;
+		const Path node_path = patch_path.base() + (string)name;
+
+		if (created.find(node_path) == created.end()) {
+			_engine->create_node(node_path, plugin, false);
+			created[node_path] = true;
 		}
 
 		Glib::ustring floatkey = _namespaces->qualify((*i)["floatkey"]);
@@ -139,16 +141,47 @@ Loader::load(const Glib::ustring& filename,
 	created.clear();
 
 
+	/* Set node port control values */
+	
+	query = RDFQuery(Glib::ustring(
+		"SELECT DISTINCT ?nodename ?portname ?portval FROM <") + document_uri + "> WHERE {\n" +
+		patch_uri + " ingen:node   ?node .\n"
+		"?node        ingen:name   ?nodename ;\n"
+		"             ingen:port   ?port .\n"
+		"?port        ingen:name   ?portname ;\n"
+		"             ingen:value  ?portval .\n"
+		"}\n");
+
+	results = query.run(document_uri);
+
+	for (RDFQuery::Results::iterator i = results.begin(); i != results.end(); ++i) {
+		
+		const Glib::ustring& node_name = (*i)["nodename"];
+		const Glib::ustring& port_name = (*i)["portname"];
+		const Glib::ustring& portval   = (*i)["portval"];
+
+		Path port_path = patch_path.base() + (const string&)node_name +"/"+ (const string&)port_name;
+
+		if (portval != "") {
+			const float val = atof(portval.c_str());
+			cerr << port_path << " VALUE: " << val << endl;
+			_engine->set_port_value(port_path, val);
+		}
+	}
+	
+
 	/* Load this patch's ports */
 	
 	query = RDFQuery(Glib::ustring(
-		"SELECT DISTINCT ?port ?type ?name ?datatype ?floatkey ?floatval FROM <") + document_uri + "> WHERE {\n" +
+		"SELECT DISTINCT ?port ?type ?name ?datatype ?floatkey ?floatval ?portval FROM <") + document_uri + "> WHERE {\n" +
 		patch_uri + " ingen:port     ?port .\n"
 		"?port        a              ?type ;\n"
 		"             ingen:name     ?name ;\n"
 		"             ingen:dataType ?datatype .\n"
 		"OPTIONAL { ?port ?floatkey ?floatval . \n"
 		"           FILTER ( datatype(?floatval) = xsd:decimal ) }\n"
+		"OPTIONAL { ?port ingen:value ?portval . \n"
+		"           FILTER ( datatype(?portval) = xsd:decimal ) }\n"
 		"}");
 
 	results = query.run(document_uri);
@@ -158,21 +191,32 @@ Loader::load(const Glib::ustring& filename,
 		const Glib::ustring& type     = _namespaces->qualify((*i)["type"]);
 		const Glib::ustring& datatype = (*i)["datatype"];
 
-		if (created.find(name) == created.end()) {
+		const Path port_path = patch_path.base() + (string)name;
+
+		if (created.find(port_path) == created.end()) {
 			//cerr << "TYPE: " << type << endl;
 			bool is_output = (type == "ingen:OutputPort"); // FIXME: check validity
-			_engine->create_port(patch_path.base() + name, datatype, is_output);
-			created[name] = true;
+			_engine->create_port(port_path, datatype, is_output);
+			created[port_path] = true;
 		}
 
-		Glib::ustring floatkey = _namespaces->qualify((*i)["floatkey"]);
-		Glib::ustring floatval = (*i)["floatval"];
+		const Glib::ustring& portval = (*i)["portval"];
+		if (portval != "") {
+			const float val = atof(portval.c_str());
+			cerr << name << " VALUE: " << val << endl;
+			_engine->set_port_value(patch_path.base() + name, val);
+		}
+
+		const Glib::ustring& floatkey = _namespaces->qualify((*i)["floatkey"]);
+		const Glib::ustring& floatval = (*i)["floatval"];
 
 		if (floatkey != "" && floatval != "") {
 			const float val = atof(floatval.c_str());
 			_engine->set_metadata(patch_path.base() + name, floatkey, Atom(val));
 		}
 	}
+	
+	created.clear();
 
 
 	/* Load connections */
