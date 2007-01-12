@@ -47,6 +47,14 @@ namespace Ingen {
 namespace Client {
 
 
+Serializer::Serializer()
+{
+	_writer.add_prefix("ingen", "http://codeson.net/ns/ingen#");
+	_writer.add_prefix("ingenuity", "http://codeson.net/ns/ingenuity#");
+	_writer.add_prefix("lv2", "http://lv2plug.in/ontology#>");
+}
+
+
 /** Begin a serialization to a file.
  *
  * This must be called before any serializing methods.

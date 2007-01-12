@@ -57,6 +57,8 @@ class ModelEngineInterface;
 class Serializer
 {
 public:
+	Serializer();
+
 	//void          path(const string& path) { _patch_search_path = path; }
 	//const string& path()                   { return _patch_search_path; }
 	

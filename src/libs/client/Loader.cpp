@@ -34,6 +34,7 @@ Loader::Loader(SharedPtr<ModelEngineInterface> engine, SharedPtr<Namespaces> nam
 	// FIXME: hack
 	_namespaces->add("ingen", "http://codeson.net/ns/ingen#");
 	_namespaces->add("ingenuity", "http://codeson.net/ns/ingenuity#");
+	_namespaces->add("lv2", "http://lv2plug.in/ontology#>");
 }
 
 
