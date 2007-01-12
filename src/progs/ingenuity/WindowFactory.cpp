@@ -234,6 +234,7 @@ WindowFactory::remove_control_window(NodeControlWindow* win, GdkEventAny* ignore
 	return true;
 }
 
+
 void
 WindowFactory::present_load_plugin(SharedPtr<PatchModel> patch, MetadataMap data)
 {

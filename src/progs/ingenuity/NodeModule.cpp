@@ -28,6 +28,7 @@
 #include "PatchWindow.h"
 #include "WindowFactory.h"
 #include "SubpatchModule.h"
+#include "NodeControlWindow.h"
 
 namespace Ingenuity {
 
@@ -46,6 +47,17 @@ NodeModule::NodeModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeMode
 	node->new_port_sig.connect(sigc::bind(sigc::mem_fun(this, &NodeModule::add_port), true));
 	node->removed_port_sig.connect(sigc::mem_fun(this, &NodeModule::remove_port));
 	node->metadata_update_sig.connect(sigc::mem_fun(this, &NodeModule::metadata_update));
+}
+
+
+NodeModule::~NodeModule()
+{
+	NodeControlWindow* win = App::instance().window_factory()->control_window(m_node);
+	
+	if (win) {
+		// Should remove from window factory via signal
+		delete win;
+	}
 }
 
 

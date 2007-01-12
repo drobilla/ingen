@@ -53,7 +53,7 @@ class NodeModule : public boost::enable_shared_from_this<NodeModule>, public Lib
 public:
 	static boost::shared_ptr<NodeModule> create (boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeModel> node);
 
-	virtual ~NodeModule() {}
+	virtual ~NodeModule();
 
 	boost::shared_ptr<Port> port(const string& port_name) {
 		return boost::dynamic_pointer_cast<Ingenuity::Port>(
