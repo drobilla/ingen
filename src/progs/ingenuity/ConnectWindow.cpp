@@ -18,6 +18,9 @@
 #include <time.h>
 #include <sys/time.h>
 #include <stdlib.h>
+#include <sys/time.h>
+#include <sys/resource.h>
+#include "raul/Process.h"
 #include "config.h"
 #include "ConnectWindow.h"
 #include "interface/ClientKey.h"
@@ -141,7 +144,9 @@ ConnectWindow::connect()
 	_connect_button->set_sensitive(false);
 
 	if (_mode == CONNECT_REMOTE) {
-		SharedPtr<ModelEngineInterface> engine(new OSCModelEngineInterface(_url_entry->get_text()));
+		SharedPtr<ModelEngineInterface> engine(
+			new OSCModelEngineInterface(_url_entry->get_text()));
+
 		OSCSigEmitter* ose = new OSCSigEmitter(1024, 16181); // FIXME: args
 		SharedPtr<SigClientInterface> client(ose);
 		App::instance().attach(engine, client);
@@ -153,22 +158,30 @@ ConnectWindow::connect()
 			sigc::mem_fun(ose, &ThreadedSigClientInterface::emit_signals), 2, G_PRIORITY_HIGH_IDLE);
 
 	} else if (_mode == LAUNCH_REMOTE) {
-		/*
+
 		int port = _port_spinbutton->get_value_as_int();
 		char port_str[6];
 		snprintf(port_str, 6, "%u", port);
-		const string port_arg = string("--port=").append(port_str);
-		App::instance().engine()->set_engine_url(
-			string("osc.udp://localhost:").append(port_str));
-		
-		if (fork() == 0) { // child
-			cerr << "Executing 'ingen " << port_arg << "' ..." << endl; 
-			execlp("ingen", port_arg.c_str(), (char*)NULL);
-		} else {
-			Glib::signal_timeout().connect(
+		const string cmd = string("ingen --port=").append(port_str);
+
+		if (Process::launch(cmd)) {
+		SharedPtr<ModelEngineInterface> engine(
+				new OSCModelEngineInterface(string("osc.udp://localhost:").append(port_str)));
+
+		OSCSigEmitter* ose = new OSCSigEmitter(1024, 16181); // FIXME: args
+		SharedPtr<SigClientInterface> client(ose);
+		App::instance().attach(engine, client);
+
+		Glib::signal_timeout().connect(
 				sigc::mem_fun(this, &ConnectWindow::gtk_callback), 100);
-		}*/
-		throw;
+
+		Glib::signal_timeout().connect(
+				sigc::mem_fun(ose, &ThreadedSigClientInterface::emit_signals),
+				2, G_PRIORITY_HIGH_IDLE);
+		} else {
+			cerr << "Failed to launch ingen process." << endl;
+		}
+
 #ifdef MONOLITHIC_INGENUITY
 	} else if (_mode == INTERNAL) {
 		SharedPtr<Ingen::Engine> engine(new Ingen::Engine());
