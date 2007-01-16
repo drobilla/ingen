@@ -18,7 +18,6 @@
 #include <fstream>
 #include <cassert>
 #include <string>
-#include "Loader.h"
 #include "PatchModel.h"
 using std::cout; using std::endl;
 
@@ -26,11 +25,9 @@ namespace Ingenuity {
 
 
 ThreadedLoader::ThreadedLoader(SharedPtr<ModelEngineInterface> engine)
-: _loader(new Loader(engine))
-, _serializer(new Serializer())
+	: _deprecated_loader(engine)
+	, _loader(engine)
 {
-	assert(_loader != NULL);
-	
 	// FIXME: rework this so the thread is only present when it's doing something (save mem)
 	start();
 }
@@ -38,7 +35,6 @@ ThreadedLoader::ThreadedLoader(SharedPtr<ModelEngineInterface> engine)
 
 ThreadedLoader::~ThreadedLoader()
 {
-	delete _loader;
 }
 
 
@@ -67,13 +63,26 @@ ThreadedLoader::load_patch(bool                    merge,
 {
 	_mutex.lock();
 
-	_events.push_back(sigc::hide_return(sigc::bind(
-		sigc::mem_fun(_loader, &Loader::load),
-			data_base_uri,
-			engine_parent,
-			(engine_name) ? engine_name.get() : "",
-			"",
-			engine_data )));
+	// FIXME: Filthy hack to load deprecated patches based on file extension
+	if (data_base_uri.substr(data_base_uri.length()-3) == ".om") {
+		_events.push_back(sigc::hide_return(sigc::bind(
+				sigc::mem_fun(_deprecated_loader, &DeprecatedLoader::load_patch),
+				data_base_uri,
+				engine_parent,
+				(engine_name) ? engine_name.get() : "",
+				(engine_poly) ? engine_poly.get() : 1,
+				engine_data,
+				false)));
+	} else {
+		_events.push_back(sigc::hide_return(sigc::bind(
+				sigc::mem_fun(_loader, &Loader::load),
+				data_base_uri,
+				engine_parent,
+				(engine_name) ? engine_name.get() : "",
+				// FIXME: poly here
+				"",
+				engine_data )));
+	}
 	
 	_mutex.unlock();
 
@@ -102,9 +111,9 @@ ThreadedLoader::save_patch_event(SharedPtr<PatchModel> model, const string& file
 	if (recursive)
 		cerr << "FIXME: Recursive save." << endl;
 
-	_serializer->start_to_filename(filename);
-	_serializer->serialize(model);
-	_serializer->finish();
+	_serializer.start_to_filename(filename);
+	_serializer.serialize(model);
+	_serializer.finish();
 }
 
 

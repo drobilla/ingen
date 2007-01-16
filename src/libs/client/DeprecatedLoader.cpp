@@ -14,7 +14,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "DeprecatedSerializer.h"
+#include "DeprecatedLoader.h"
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 #include <libxml/xpath.h>
@@ -43,7 +43,7 @@ using std::cerr; using std::cout; using std::endl;
 namespace Ingen {
 namespace Client {
 
-	
+#if 0	
 /** Searches for the filename passed in the path, returning the full
  * path of the file, or the empty string if not found.
  *
@@ -56,7 +56,7 @@ namespace Client {
  * be a good idea to pass as additional_path, in the case of a subpatch.
  */
 string
-DeprecatedSerializer::find_file(const string& filename, const string& additional_path)
+DeprecatedLoader::find_file(const string& filename, const string& additional_path)
 {
 	string search_path = additional_path + ":" + _patch_search_path;
 	
@@ -86,16 +86,17 @@ DeprecatedSerializer::find_file(const string& filename, const string& additional
 			is.close();
 			return full_patch_path;
 		} else {
-			cerr << "[DeprecatedSerializer] Could not find patch file " << full_patch_path << endl;
+			cerr << "[DeprecatedLoader] Could not find patch file " << full_patch_path << endl;
 		}
 	}
 
 	return "";
 }
 
+#endif
 
 string
-DeprecatedSerializer::translate_load_path(const string& path)
+DeprecatedLoader::translate_load_path(const string& path)
 {
 	std::map<string,string>::iterator t = _load_path_translations.find(path);
 	
@@ -104,6 +105,38 @@ DeprecatedSerializer::translate_load_path(const string& path)
 	} else {
 		assert(Path::is_valid(path));
 		return path;
+	}
+}
+
+
+/** Add a piece of data to a MetadataMap, translating from deprecated unqualified keys
+ *
+ * Adds a namespace prefix for known keys, and ignores the rest.
+ */
+void
+DeprecatedLoader::add_metadata(MetadataMap& data, string old_key, string value)
+{
+	string key = "";
+	if (old_key == "module-x")
+		key = "ingenuity:canvas-x";
+	else if (old_key == "module-y")
+		key = "ingenuity:canvas-y";
+
+	if (key != "") {
+		// FIXME: should this overwrite existing values?
+		if (data.find(key) == data.end()) {
+			// Hack to make module-x and module-y set as floats
+			char* c_val = strdup(value.c_str());
+			char* endptr = NULL;
+			float fval = strtof(c_val, &endptr);
+
+			if (endptr != c_val && *endptr == '\0')
+				data[key] = Atom(fval);
+			else
+				data[key]= Atom(value);
+			
+			free(c_val);
+		}
 	}
 }
 
@@ -134,14 +167,14 @@ DeprecatedSerializer::translate_load_path(const string& path)
  * Returns the path of the newly created patch.
  */
 string
-DeprecatedSerializer::load_patch(const string& filename,
-	                       const string& parent_path,
-	                       const string& name,
-	                       size_t        poly,
-	                       MetadataMap   initial_data,
-	                       bool          existing)
+DeprecatedLoader::load_patch(const Glib::ustring& filename,
+                             const Path&          parent_path,
+                             string               name,
+                             size_t               poly,
+                             MetadataMap          initial_data,
+                             bool                 existing)
 {
-	cerr << "[DeprecatedSerializer] Loading patch " << filename << "" << endl;
+	cerr << "[DeprecatedLoader] Loading patch " << filename << "" << endl;
 
 	Path path = "/"; // path of the new patch
 
@@ -197,8 +230,7 @@ DeprecatedSerializer::load_patch(const string& filename,
 			// Don't know what this tag is, add it as metadata without overwriting
 			// (so caller can set arbitrary parameters which will be preserved)
 			if (key)
-				if (initial_data.find((const char*)cur->name) == initial_data.end())
-					initial_data[(const char*)cur->name] = (const char*)key;
+				add_metadata(initial_data, (const char*)cur->name, (const char*)key);
 		}
 		
 		xmlFree(key);
@@ -274,7 +306,7 @@ DeprecatedSerializer::load_patch(const string& filename,
 /** Build a NodeModel given a pointer to a Node in a patch file.
  */
 bool
-DeprecatedSerializer::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr node)
+DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr node)
 {
 	xmlChar* key;
 	xmlNodePtr cur = node->xmlChildrenNode;
@@ -395,16 +427,8 @@ DeprecatedSerializer::load_node(const Path& parent, xmlDocPtr doc, const xmlNode
 			nm->set_metadata(string("dssi-configure--").append(dssi_key), Atom(dssi_value.c_str()));
 #endif		
 		} else {  // Don't know what this tag is, add it as metadata
-			if (key) {
-
-				// Hack to make module-x and module-y set as floats
-				char* endptr = NULL;
-				float fval = strtof((const char*)key, &endptr);
-				if (endptr != (char*)key && *endptr == '\0')
-					initial_data[(const char*)cur->name] = Atom(fval);
-				else
-					initial_data[(const char*)cur->name] = Atom((const char*)key);
-			}
+			if (key)
+				add_metadata(initial_data, (const char*)cur->name, (const char*)key);
 		}
 		xmlFree(key);
 		key = NULL;
@@ -413,8 +437,8 @@ DeprecatedSerializer::load_node(const Path& parent, xmlDocPtr doc, const xmlNode
 	}
 	
 	if (path == "") {
-		cerr << "[DeprecatedSerializer] Malformed patch file (node tag has empty children)" << endl;
-		cerr << "[DeprecatedSerializer] Node ignored." << endl;
+		cerr << "[DeprecatedLoader] Malformed patch file (node tag has empty children)" << endl;
+		cerr << "[DeprecatedLoader] Node ignored." << endl;
 		return false;
 	}
 
@@ -497,7 +521,7 @@ DeprecatedSerializer::load_node(const Path& parent, xmlDocPtr doc, const xmlNode
 
 
 bool
-DeprecatedSerializer::load_subpatch(const Path& parent, xmlDocPtr doc, const xmlNodePtr subpatch)
+DeprecatedLoader::load_subpatch(const Path& parent, xmlDocPtr doc, const xmlNodePtr subpatch)
 {
 	xmlChar *key;
 	xmlNodePtr cur = subpatch->xmlChildrenNode;
@@ -519,7 +543,7 @@ DeprecatedSerializer::load_subpatch(const Path& parent, xmlDocPtr doc, const xml
 			filename = (const char*)key;
 		} else {  // Don't know what this tag is, add it as metadata
 			if (key != NULL && strlen((const char*)key) > 0)
-				initial_data[(const char*)cur->name] = Atom((const char*)key);
+				add_metadata(initial_data, (const char*)cur->name, (const char*)key);
 		}
 		xmlFree(key);
 		key = NULL;
@@ -538,7 +562,7 @@ DeprecatedSerializer::load_subpatch(const Path& parent, xmlDocPtr doc, const xml
 /** Build a ConnectionModel given a pointer to a connection in a patch file.
  */
 bool
-DeprecatedSerializer::load_connection(const Path& parent, xmlDocPtr doc, const xmlNodePtr node)
+DeprecatedLoader::load_connection(const Path& parent, xmlDocPtr doc, const xmlNodePtr node)
 {
 	xmlChar *key;
 	xmlNodePtr cur = node->xmlChildrenNode;
@@ -587,7 +611,7 @@ DeprecatedSerializer::load_connection(const Path& parent, xmlDocPtr doc, const x
 /** Build a PresetModel given a pointer to a preset in a patch file.
  */
 bool
-DeprecatedSerializer::load_preset(const Path& parent, xmlDocPtr doc, const xmlNodePtr node)
+DeprecatedLoader::load_preset(const Path& parent, xmlDocPtr doc, const xmlNodePtr node)
 {
 	cerr << "FIXME: load preset\n";
 #if 0

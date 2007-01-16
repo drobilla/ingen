@@ -20,8 +20,9 @@
 #include <map>
 #include <utility>
 #include <string>
-#include <libxml/tree.h>
 #include <cassert>
+#include <glibmm/ustring.h>
+#include <libxml/tree.h>
 #include "raul/SharedPtr.h"
 #include "raul/Path.h"
 #include "ObjectModel.h"
@@ -42,31 +43,33 @@ class ModelEngineInterface;
  *
  * \ingroup IngenClient
  */
-class DeprecatedSerializer
+class DeprecatedLoader
 {
 public:
-	DeprecatedSerializer(SharedPtr<ModelEngineInterface> engine)
-	: _patch_search_path("."), _engine(engine)
+	DeprecatedLoader(SharedPtr<ModelEngineInterface> engine)
+	: /*_patch_search_path(".")*/ _engine(engine)
 	{
 		assert(_engine);
 	}
 
-	void          path(const string& path) { _patch_search_path = path; }
-	const string& path()                   { return _patch_search_path; }
+	/*void          path(const string& path) { _patch_search_path = path; }
+	const string& path()                   { return _patch_search_path; }*/
 	
 	string find_file(const string& filename, const string& additional_path = "");
 	
-	string load_patch(const string& filename,
-	                  const string& parent_path,
-	                  const string& name,
-	                  size_t        poly,
-	                  MetadataMap   initial_data,
-	                  bool          existing = false);
+	string load_patch(const Glib::ustring& filename,
+	                  const Path&          parent_path,
+	                  string               name,
+	                  size_t               poly,
+	                  MetadataMap          initial_data,
+	                  bool                 existing = false);
 
 private:
+	void add_metadata(MetadataMap& data, string key, string value);
+
 	string translate_load_path(const string& path);
 
-	string                           _patch_search_path;
+	//string                          _patch_search_path;
 	SharedPtr<ModelEngineInterface> _engine;
 
 	/// Translations of paths from the loading file to actual paths (for deprecated patches)

@@ -28,14 +28,12 @@
 #include "ModelEngineInterface.h"
 #include "ObjectModel.h"
 #include "Serializer.h"
+#include "DeprecatedLoader.h"
+#include "Loader.h"
 using std::string;
 using std::list;
 using boost::optional;
 
-namespace Ingen { namespace Client {
-	class Loader;
-	class PatchModel;
-} }
 using namespace Ingen::Client;
 
 namespace Ingenuity {
@@ -58,8 +56,8 @@ public:
 	ThreadedLoader(SharedPtr<ModelEngineInterface> engine);
 	~ThreadedLoader();
 
-	Loader& loader()         const { return *_loader; }
-	Serializer& serializer() const { return *_serializer; }
+	//Loader& loader()         const { return *_loader; }
+	//Serializer& serializer() const { return *_serializer; }
 
 	// FIXME: there's a pattern here....
 	// (same core interface as Loader/Serializer)
@@ -83,10 +81,11 @@ private:
 
 	void _whipped();
 
-	Loader* const     _loader;
-	Serializer* const _serializer;
-	Mutex             _mutex;
-	list<Closure>     _events;
+	DeprecatedLoader _deprecated_loader;
+	Loader           _loader;
+	Serializer       _serializer;
+	Mutex            _mutex;
+	list<Closure>    _events;
 };
 
 

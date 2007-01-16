@@ -36,8 +36,8 @@ libingenclient_la_SOURCES = \
 	Serializer.cpp \
 	Loader.h \
 	Loader.cpp \
-	DeprecatedSerializer.h \
-	DeprecatedSerializer.cpp \
+	DeprecatedLoader.h \
+	DeprecatedLoader.cpp \
 	ConnectionModel.h \
 	ConnectionModel.cpp \
 	Store.h \
