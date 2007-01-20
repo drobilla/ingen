@@ -20,7 +20,7 @@
 #include <glibmm/ustring.h>
 #include "raul/SharedPtr.h"
 #include "raul/Path.h"
-#include "Namespaces.h"
+#include "raul/Namespaces.h"
 #include "ObjectModel.h"
 
 namespace Ingen {

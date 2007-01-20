@@ -28,10 +28,6 @@ libingenclient_la_SOURCES = \
 	PatchModel.h \
 	PatchModel.cpp \
 	PluginModel.h \
-	RDFQuery.h \
-	RDFQuery.cpp \
-	Namespaces.h \
-	Namespaces.cpp \
 	Serializer.h \
 	Serializer.cpp \
 	Loader.h \

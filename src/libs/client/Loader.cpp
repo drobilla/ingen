@@ -16,8 +16,8 @@
 
 #include <iostream>
 #include <raptor.h>
+#include "raul/RDFQuery.h"
 #include "Loader.h"
-#include "RDFQuery.h"
 #include "ModelEngineInterface.h"
 
 namespace Ingen {
@@ -32,9 +32,9 @@ Loader::Loader(SharedPtr<ModelEngineInterface> engine, SharedPtr<Namespaces> nam
 		_namespaces = SharedPtr<Namespaces>(new Namespaces());
 
 	// FIXME: hack
-	_namespaces->add("ingen", "http://codeson.net/ns/ingen#");
-	_namespaces->add("ingenuity", "http://codeson.net/ns/ingenuity#");
-	_namespaces->add("lv2", "http://lv2plug.in/ontology#>");
+	(*_namespaces)["ingen"] = "http://codeson.net/ns/ingen#";
+	(*_namespaces)["ingenuity"] = "http://codeson.net/ns/ingenuity#";
+	(*_namespaces)["lv2"] = "http://lv2plug.in/ontology#>";
 }
 
 
@@ -69,7 +69,7 @@ Loader::load(const Glib::ustring& filename,
 	/* Get polyphony (mandatory) */
 
 	// FIXME: polyphony datatype
-	RDFQuery query(Glib::ustring(
+	RDFQuery query(*_namespaces, Glib::ustring(
 		"SELECT DISTINCT ?poly \nFROM <") + document_uri + ">\nWHERE {\n\t" +
 		patch_uri + " ingen:polyphony ?poly .\n"
 		"}");
@@ -89,7 +89,7 @@ Loader::load(const Glib::ustring& filename,
 	if (patch_name == "") {	
 		patch_name = string(filename.substr(filename.find_last_of("/")+1));
 		
-		query = RDFQuery(Glib::ustring(
+		query = RDFQuery(*_namespaces, Glib::ustring(
 			"SELECT DISTINCT ?name FROM <") + document_uri + "> WHERE {\n" +
 			patch_uri + " ingen:name ?name .\n"
 			"}");
@@ -107,7 +107,7 @@ Loader::load(const Glib::ustring& filename,
 
 	/* Load nodes */
 	
-	query = RDFQuery(Glib::ustring(
+	query = RDFQuery(*_namespaces, Glib::ustring(
 		"SELECT DISTINCT ?name ?plugin ?floatkey ?floatval FROM <") + document_uri + "> WHERE {\n" +
 		patch_uri + " ingen:node   ?node .\n"
 		"?node        ingen:name   ?name ;\n"
@@ -144,7 +144,7 @@ Loader::load(const Glib::ustring& filename,
 
 	/* Set node port control values */
 	
-	query = RDFQuery(Glib::ustring(
+	query = RDFQuery(*_namespaces, Glib::ustring(
 		"SELECT DISTINCT ?nodename ?portname ?portval FROM <") + document_uri + "> WHERE {\n" +
 		patch_uri + " ingen:node   ?node .\n"
 		"?node        ingen:name   ?nodename ;\n"
@@ -173,7 +173,7 @@ Loader::load(const Glib::ustring& filename,
 
 	/* Load this patch's ports */
 	
-	query = RDFQuery(Glib::ustring(
+	query = RDFQuery(*_namespaces, Glib::ustring(
 		"SELECT DISTINCT ?port ?type ?name ?datatype ?floatkey ?floatval ?portval FROM <") + document_uri + "> WHERE {\n" +
 		patch_uri + " ingen:port     ?port .\n"
 		"?port        a              ?type ;\n"
@@ -223,7 +223,7 @@ Loader::load(const Glib::ustring& filename,
 	/* Load connections */
 
 	// FIXME: path?
-	query = RDFQuery(Glib::ustring(
+	query = RDFQuery(*_namespaces, Glib::ustring(
 		"SELECT DISTINCT ?srcnode ?src ?dstnode ?dst FROM <") + document_uri + "> WHERE {\n" +
 		"?srcnoderef ingen:port ?srcref .\n"
 		"?dstnoderef ingen:port ?dstref .\n"
