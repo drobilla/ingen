@@ -771,7 +771,7 @@ OSCEngineReceiver::m_metadata_set_cb(const char* path, const char* types, lo_arg
 	const char* node_path   = &argv[1]->s;
 	const char* key         = &argv[2]->s;
 	
-	Atom value = AtomLiblo::lo_arg_to_atom(types[3], argv[3]);
+	Raul::Atom value = Raul::AtomLiblo::lo_arg_to_atom(types[3], argv[3]);
 	
 	set_metadata(node_path, key, value);
 	

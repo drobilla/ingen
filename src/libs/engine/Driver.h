@@ -79,8 +79,8 @@ public:
 	 */
 	virtual DriverPort* create_port(DuplexPort<T>* patch_port) = 0;
 	
-	virtual void        add_port(DriverPort* port)    = 0;
-	virtual DriverPort* remove_port(const Path& path) = 0;
+	virtual void        add_port(DriverPort* port)          = 0;
+	virtual DriverPort* remove_port(const Raul::Path& path) = 0;
 };
 
 

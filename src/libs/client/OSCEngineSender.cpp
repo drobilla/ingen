@@ -371,9 +371,9 @@ OSCEngineSender::midi_learn(const string& node_path)
 
 
 void
-OSCEngineSender::set_metadata(const string& obj_path,
-                              const string& predicate,
-                              const Atom&   value)
+OSCEngineSender::set_metadata(const string&     obj_path,
+                              const string&     predicate,
+                              const Raul::Atom& value)
 {
 	
 	assert(_engine_addr);
@@ -381,7 +381,7 @@ OSCEngineSender::set_metadata(const string& obj_path,
 	lo_message_add_int32(m, next_id());
 	lo_message_add_string(m, obj_path.c_str());
 	lo_message_add_string(m, predicate.c_str());
-	AtomLiblo::lo_message_add_atom(m, value);
+	Raul::AtomLiblo::lo_message_add_atom(m, value);
 	lo_send_message(_engine_addr, "/om/metadata/set", m);
 }
 

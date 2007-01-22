@@ -64,7 +64,7 @@ protected:
 	//virtual void on_double_click(GdkEventButton* ev) { show_control_window(); }
 	//virtual void on_middle_click(GdkEventButton* ev) { show_control_window(); }
 	
-	void metadata_update(const string& key, const Atom& value);
+	void metadata_update(const string& key, const Raul::Atom& value);
 
 	SharedPtr<PortModel>    m_port;
 	boost::shared_ptr<Port> m_patch_port; ///< Port on this 'anonymous' module

@@ -31,8 +31,6 @@
 using std::string;
 using std::cerr; using std::endl;
 
-class Path;
-
 namespace Ingen {
 
 class PluginLibrary;

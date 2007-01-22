@@ -58,7 +58,7 @@ public:
 	sigc::signal<void, string>                             object_destroyed_sig; 
 	sigc::signal<void, string, string>                     connection_sig; 
 	sigc::signal<void, string, string>                     disconnection_sig; 
-	sigc::signal<void, string, string, Atom>               metadata_update_sig; 
+	sigc::signal<void, string, string, Raul::Atom>         metadata_update_sig; 
 	sigc::signal<void, string, float>                      control_change_sig; 
 	sigc::signal<void, string, uint32_t, uint32_t, string> program_add_sig; 
 	sigc::signal<void, string, uint32_t, uint32_t>         program_remove_sig; 
@@ -118,7 +118,7 @@ protected:
 	void disconnection(string src_port_path, string dst_port_path)
 		{ disconnection_sig.emit(src_port_path, dst_port_path); }
 	
-	void metadata_update(string path, string key, Atom value)
+	void metadata_update(string path, string key, Raul::Atom value)
 		{ metadata_update_sig.emit(path, key, value); }
 
 	void control_change(string port_path, float value)

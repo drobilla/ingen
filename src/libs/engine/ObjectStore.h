@@ -21,7 +21,9 @@
 #include <string>
 #include "raul/Path.h"
 #include "Tree.h"
+
 using std::string;
+using Raul::Path;
 
 namespace Ingen {
 

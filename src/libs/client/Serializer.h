@@ -87,9 +87,9 @@ private:
 	void serialize_node(SharedPtr<NodeModel> n, unsigned depth);
 	void serialize_port(SharedPtr<PortModel> p, unsigned depth);
 	
-	RdfId path_to_node_id(const Path& path);
+	Raul::RdfId path_to_node_id(const Path& path);
 
-	RDFWriter _writer;
+	Raul::RDFWriter _writer;
 };
 
 

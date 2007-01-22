@@ -83,11 +83,11 @@ public:
 	void enable();
 	void disable();
 
-	DriverPort* port(const Path& path);
+	DriverPort* port(const Raul::Path& path);
 	DriverPort* create_port(DuplexPort<Sample>* patch_port);
 	
 	void        add_port(DriverPort* port);
-	DriverPort* remove_port(const Path& path);
+	DriverPort* remove_port(const Raul::Path& path);
 	
 	Patch* root_patch()                 { return _root_patch; }
 	void   set_root_patch(Patch* patch) { _root_patch = patch; }
@@ -125,7 +125,7 @@ private:
 	int  _sample_rate_cb(jack_nframes_t nframes);
 
 	Engine&                _engine;
-	Thread*                _jack_thread;
+	Raul::Thread*          _jack_thread;
 	jack_client_t*         _client;
 	jack_nframes_t         _buffer_size;
 	jack_nframes_t         _sample_rate;

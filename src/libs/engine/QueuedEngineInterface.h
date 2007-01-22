@@ -134,9 +134,9 @@ public:
 
 	virtual void midi_learn(const string& node_path);
 
-	virtual void set_metadata(const string& path,
-	                          const string& predicate,
-	                          const Atom&   value);
+	virtual void set_metadata(const string&     path,
+	                          const string&     predicate,
+	                          const Raul::Atom& value);
 	
 	// Requests //
 	

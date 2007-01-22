@@ -50,7 +50,7 @@ namespace Ingenuity {
  *
  * \ingroup Ingenuity
  */
-class ThreadedLoader : public Slave
+class ThreadedLoader : public Raul::Slave
 {
 public:
 	ThreadedLoader(SharedPtr<ModelEngineInterface> engine);
@@ -84,7 +84,7 @@ private:
 	DeprecatedLoader _deprecated_loader;
 	Loader           _loader;
 	Serializer       _serializer;
-	Mutex            _mutex;
+	Raul::Mutex      _mutex;
 	list<Closure>    _events;
 };
 

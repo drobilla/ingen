@@ -20,6 +20,8 @@
 #include "Loader.h"
 #include "ModelEngineInterface.h"
 
+using namespace Raul;
+
 namespace Ingen {
 namespace Client {
 

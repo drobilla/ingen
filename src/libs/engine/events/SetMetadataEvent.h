@@ -35,7 +35,7 @@ class GraphObject;
 class SetMetadataEvent : public QueuedEvent
 {
 public:
-	SetMetadataEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& key, const Atom& value);
+	SetMetadataEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& key, const Raul::Atom& value);
 	
 	void pre_process();
 	void execute(SampleCount nframes, FrameTime start, FrameTime end);
@@ -44,7 +44,7 @@ public:
 private:
 	string       m_path;
 	string       m_key;
-	Atom         m_value;
+	Raul::Atom   m_value;
 	GraphObject* m_object;
 };
 

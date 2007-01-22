@@ -84,7 +84,7 @@ public:
 		}
 	}
 
-	string default_node_name() { return Path::nameify(m_name); }
+	string default_node_name() { return Raul::Path::nameify(m_name); }
 
 private:
 	Type   m_type;

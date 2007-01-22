@@ -57,14 +57,14 @@ private:
 	
 	enum ErrorType { NO_ERROR, PARENT_PATCH_DIFFERENT, PORT_NOT_FOUND, TYPE_MISMATCH };
 	
-	Path           m_src_port_path;
-	Path           m_dst_port_path;
+	Raul::Path m_src_port_path;
+	Raul::Path m_dst_port_path;
 	
-	Patch*         m_patch;
-	Port*          m_src_port;
-	Port*          m_dst_port;
+	Patch* m_patch;
+	Port*  m_src_port;
+	Port*  m_dst_port;
 
-	QueuedEvent*     m_typed_event;
+	QueuedEvent* m_typed_event;
 	
 	ErrorType m_error;
 };

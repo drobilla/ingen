@@ -96,9 +96,9 @@ public:
 	virtual void disconnection(string src_port_path,
 	                           string dst_port_path) = 0;
 	
-	virtual void metadata_update(string subject_path,
-	                             string predicate,
-	                             Atom   value) = 0;
+	virtual void metadata_update(string     subject_path,
+	                             string     predicate,
+	                             Raul::Atom value) = 0;
 	
 	virtual void control_change(string port_path,
 	                            float  value) = 0;

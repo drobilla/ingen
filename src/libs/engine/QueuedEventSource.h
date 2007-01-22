@@ -42,7 +42,7 @@ class PostProcessor;
  *
  * This class is it's own slave. :)
  */
-class QueuedEventSource : public EventSource, protected Slave
+class QueuedEventSource : public EventSource, protected Raul::Slave
 {
 public:
 	QueuedEventSource(size_t queued_size, size_t stamped_size);
@@ -72,15 +72,15 @@ private:
 	
 	//(FIXME: make this a separate class?)
 	// 2-part queue for events that require pre-processing: 
-	size_t         _front;         ///< Front of queue
-	size_t         _back;          ///< Back of entire queue (1 past index of back element)
-	size_t         _prepared_back; ///< Back of prepared section (1 past index of back prepared element)
-	const size_t   _size;
-	QueuedEvent**  _events;
-	Semaphore      _blocking_semaphore;
+	size_t          _front;         ///< Front of queue
+	size_t          _back;          ///< Back of entire queue (1 past index of back element)
+	size_t          _prepared_back; ///< Back of prepared section (1 past index of back prepared element)
+	const size_t    _size;
+	QueuedEvent**   _events;
+	Raul::Semaphore _blocking_semaphore;
 
 	/** Queue for timestamped events (no pre-processing). */
-	SRSWQueue<Event*> _stamped_queue;
+	Raul::SRSWQueue<Event*> _stamped_queue;
 };
 
 

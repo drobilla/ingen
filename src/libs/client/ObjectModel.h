@@ -28,8 +28,11 @@
 #include "raul/Atom.h"
 #include "raul/Path.h"
 #include "raul/SharedPtr.h"
+
 using std::string; using std::map; using std::find;
 using std::cout; using std::cerr; using std::endl;
+using Raul::Atom;
+using Raul::Path;
 
 namespace Ingen {
 namespace Client {

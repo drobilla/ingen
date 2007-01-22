@@ -26,9 +26,9 @@ using Ingen::Shared::EngineInterface;
 using Ingen::Shared::ClientInterface;
 using Ingen::Shared::ClientKey;
 
-
 namespace Ingen {
 namespace Client {
+
 
 /* OSC (via liblo) interface to the engine.
  *
@@ -123,9 +123,9 @@ public:
 
 	void midi_learn(const string& node_path);
 
-	void set_metadata(const string& obj_path,
-	                  const string& predicate,
-	                  const Atom&   value);
+	void set_metadata(const string&     obj_path,
+	                  const string&     predicate,
+	                  const Raul::Atom& value);
 	
 	// Requests //
 	

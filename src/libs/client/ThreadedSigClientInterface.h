@@ -118,7 +118,7 @@ public:
 	void disconnection(string src_port_path, string dst_port_path)
 		{ push_sig(sigc::bind(disconnection_slot, src_port_path, dst_port_path)); }
 	
-	void metadata_update(string path, string key, Atom value)
+	void metadata_update(string path, string key, Raul::Atom value)
 		{ push_sig(sigc::bind(metadata_update_slot, path, key, value)); }
 
 	void control_change(string port_path, float value)
@@ -138,8 +138,8 @@ private:
 	
 	bool _enabled;
 	
-	SRSWQueue<Closure> _sigs;
-	uint32_t           _num_plugins;
+	Raul::SRSWQueue<Closure> _sigs;
+	uint32_t                 _num_plugins;
 
 	sigc::slot<void>                                     bundle_begin_slot; 
 	sigc::slot<void>                                     bundle_end_slot; 
@@ -157,7 +157,7 @@ private:
 	sigc::slot<void, string>                             object_destroyed_slot; 
 	sigc::slot<void, string, string>                     object_renamed_slot; 
 	sigc::slot<void, string, string>                     disconnection_slot; 
-	sigc::slot<void, string, string, Atom>               metadata_update_slot; 
+	sigc::slot<void, string, string, Raul::Atom>         metadata_update_slot; 
 	sigc::slot<void, string, float>                      control_change_slot; 
 	sigc::slot<void, string, uint32_t, uint32_t, string> program_add_slot; 
 	sigc::slot<void, string, uint32_t, uint32_t>         program_remove_slot; 

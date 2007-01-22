@@ -24,6 +24,9 @@
 #include "Responder.h"
 #include "ThreadManager.h"
 
+namespace Raul { class Path; }
+using Raul::Path;
+
 namespace Ingen {	
 
 class Engine;

@@ -164,7 +164,7 @@ ConnectWindow::connect()
 		snprintf(port_str, 6, "%u", port);
 		const string cmd = string("ingen --port=").append(port_str);
 
-		if (Process::launch(cmd)) {
+		if (Raul::Process::launch(cmd)) {
 		SharedPtr<ModelEngineInterface> engine(
 				new OSCModelEngineInterface(string("osc.udp://localhost:").append(port_str)));
 

@@ -43,10 +43,10 @@ public:
 	void post_process();
 
 private:
-	string                      m_path;
-	string                      m_key;
-	Atom                        m_value; 
-	GraphObject*                m_object;
+	string                     m_path;
+	string                     m_key;
+	Raul::Atom                 m_value; 
+	GraphObject*               m_object;
 	SharedPtr<ClientInterface> m_client;
 };
 

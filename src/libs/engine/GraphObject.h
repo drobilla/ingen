@@ -25,7 +25,10 @@
 #include "raul/Path.h"
 #include "raul/Atom.h"
 #include "types.h"
+
 using std::string;
+using Raul::Atom;
+using Raul::Path;
 
 namespace Ingen {
 

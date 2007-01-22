@@ -23,6 +23,8 @@
 #include "raul/Namespaces.h"
 #include "ObjectModel.h"
 
+using Raul::Namespaces;
+
 namespace Ingen {
 namespace Client {
 

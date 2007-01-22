@@ -111,7 +111,7 @@ public:
 	
 	virtual void set_metadata(const string& path,
 	                          const string& predicate,
-	                          const Atom&   value) = 0;
+	                          const Raul::Atom&   value) = 0;
 	
 	// Requests //
 	

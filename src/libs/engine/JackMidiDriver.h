@@ -81,7 +81,7 @@ public:
 	{ return new JackMidiPort(this, patch_port); }
 	
 	void        add_port(DriverPort* port);
-	DriverPort* remove_port(const Path& path);
+	DriverPort* remove_port(const Raul::Path& path);
 
 	jack_client_t* jack_client()        { return _client; }
 

@@ -69,7 +69,7 @@ public:
 	DriverPort* create_port(DuplexPort<MidiMessage>* patch_port) { return NULL; }
 	
 	void        add_port(DriverPort* port)    {}
-	DriverPort* remove_port(const Path& path) { return NULL; }
+	DriverPort* remove_port(const Raul::Path& path) { return NULL; }
 	
 	void prepare_block(const SampleCount block_start, const SampleCount block_end) {}
 };

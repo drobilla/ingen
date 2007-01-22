@@ -37,7 +37,7 @@ class Event;
  *
  * \ingroup engine
  */
-class PostProcessor : public Slave
+class PostProcessor : public Raul::Slave
 {
 public:
 	PostProcessor(Maid& maid, size_t queue_size);
@@ -46,9 +46,9 @@ public:
 	inline void push(Event* const ev) { _events.push(ev); }
 
 private:
-	Maid&             _maid;
-	SRSWQueue<Event*> _events;
-	virtual void      _whipped();
+	Maid&                   _maid;
+	Raul::SRSWQueue<Event*> _events;
+	virtual void            _whipped();
 };
 
 

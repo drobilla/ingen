@@ -28,6 +28,8 @@
 #include "interface/EngineInterface.h"
 using std::string; using std::map; using std::list;
 using Ingen::Shared::EngineInterface;
+using Raul::Path;
+using Raul::Atom;
 
 namespace Ingen {
 namespace Client {

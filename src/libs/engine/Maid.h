@@ -44,7 +44,7 @@ public:
 	void cleanup();
 	
 private:
-	SRSWQueue<MaidObject*> _objects;
+	Raul::SRSWQueue<MaidObject*> _objects;
 };
 
 

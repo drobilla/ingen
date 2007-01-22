@@ -19,6 +19,8 @@
 
 #include "raul/Thread.h"
 
+using Raul::Thread;
+
 namespace Ingen {
 
 

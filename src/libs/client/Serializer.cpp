@@ -42,6 +42,7 @@
 using std::string; using std::vector; using std::pair;
 using std::cerr; using std::cout; using std::endl;
 using boost::optional;
+using namespace Raul;
 
 namespace Ingen {
 namespace Client {

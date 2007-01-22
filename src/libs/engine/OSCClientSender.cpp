@@ -463,7 +463,7 @@ OSCClientSender::metadata_update(string path, string key, Atom value)
 	lo_message m = lo_message_new();
 	lo_message_add_string(m, path.c_str());
 	lo_message_add_string(m, key.c_str());
-	AtomLiblo::lo_message_add_atom(m, value);
+	Raul::AtomLiblo::lo_message_add_atom(m, value);
 	lo_send_message(_address, "/om/metadata/update", m);
 }
 
