@@ -20,7 +20,7 @@
 #include <boost/utility.hpp>
 #include <alsa/asoundlib.h>
 #include "List.h"
-#include "raul/Queue.h"
+#include "raul/SRSWQueue.h"
 #include "MidiDriver.h"
 
 
@@ -55,11 +55,11 @@ public:
 	DuplexPort<MidiMessage>* patch_port() const { return _patch_port; }
 
 private:
-	AlsaMidiDriver*          _driver;
-	DuplexPort<MidiMessage>* _patch_port;
-	int                      _port_id;
-	unsigned char**          _midi_pool; ///< Pool of raw MIDI events for MidiMessage::buffer
-	Queue<snd_seq_event_t>   _events;
+	AlsaMidiDriver*            _driver;
+	DuplexPort<MidiMessage>*   _patch_port;
+	int                        _port_id;
+	unsigned char**            _midi_pool; ///< Pool of raw MIDI events for MidiMessage::buffer
+	SRSWQueue<snd_seq_event_t> _events;
 };
 
 
