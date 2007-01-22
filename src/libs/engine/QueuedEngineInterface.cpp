@@ -18,7 +18,6 @@
 #include "config.h"
 #include "QueuedEventSource.h"
 #include "events.h"
-#include "raul/Queue.h"
 #include "Engine.h"
 #include "AudioDriver.h"
 

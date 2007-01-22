@@ -21,7 +21,7 @@
 #include <pthread.h>
 #include "types.h"
 #include "raul/Semaphore.h"
-#include "raul/Queue.h"
+#include "raul/SRSWQueue.h"
 #include "raul/Slave.h"
 #include "Event.h"
 #include "EventSource.h"
@@ -80,7 +80,7 @@ private:
 	Semaphore      _blocking_semaphore;
 
 	/** Queue for timestamped events (no pre-processing). */
-	Queue<Event*> _stamped_queue;
+	SRSWQueue<Event*> _stamped_queue;
 };
 
 
@@ -93,9 +93,14 @@ private:
 inline Event*
 QueuedEventSource::pop_earliest_stamped_before(const SampleCount time)
 {
-	if (!_stamped_queue.is_empty() && _stamped_queue.front()->time() < time)
-		return _stamped_queue.pop();
-	return NULL;
+	Event* ret = NULL;
+
+	if (!_stamped_queue.empty() && _stamped_queue.front()->time() < time) {
+		ret = _stamped_queue.front();
+		_stamped_queue.pop();
+	}
+
+	return ret;
 }
 
 

@@ -19,7 +19,7 @@
 
 #include <pthread.h>
 #include "types.h"
-#include "raul/Queue.h"
+#include "raul/SRSWQueue.h"
 #include "raul/Slave.h"
 
 class Maid;
@@ -46,9 +46,9 @@ public:
 	inline void push(Event* const ev) { _events.push(ev); }
 
 private:
-	Maid&         _maid;
-	Queue<Event*> _events;
-	virtual void  _whipped();
+	Maid&             _maid;
+	SRSWQueue<Event*> _events;
+	virtual void      _whipped();
 };
 
 

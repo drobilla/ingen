@@ -18,7 +18,7 @@
 #define MAID_H
 
 #include <boost/utility.hpp>
-#include "raul/Queue.h"
+#include "raul/SRSWQueue.h"
 #include "MaidObject.h"
 
 
@@ -28,7 +28,7 @@
  * objects - push() is realtime safe.
  *
  * cleanup() is meant to be called periodically to free memory, often
- * enough to prevent the queue from overdflowing.  This is done by the
+ * enough to prevent the queue from overflowing.  This is done by the
  * main thread (in Ingen.cpp) since it has nothing better to do.
  *
  * \ingroup engine
@@ -44,7 +44,7 @@ public:
 	void cleanup();
 	
 private:
-	Queue<MaidObject*> m_objects;
+	SRSWQueue<MaidObject*> _objects;
 };
 
 
@@ -54,7 +54,7 @@ inline void
 Maid::push(MaidObject* obj)
 {
 	if (obj != NULL)
-		m_objects.push(obj);
+		_objects.push(obj);
 }	
 
 

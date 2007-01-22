@@ -20,7 +20,6 @@
 #include <string>
 #include <lo/lo.h>
 #include "types.h"
-#include "raul/Queue.h"
 #include "raul/SharedPtr.h"
 #include "raul/AtomLiblo.h"
 #include "QueuedEventSource.h"

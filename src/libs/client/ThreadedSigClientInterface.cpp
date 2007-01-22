@@ -61,9 +61,10 @@ ThreadedSigClientInterface::emit_signals()
 	// thread indefinitely while processing continually arriving events
 	const size_t limit = _sigs.capacity();
 	size_t num_processed = 0;
-	while (!_sigs.is_empty() && num_processed++ < limit) {
+	while (!_sigs.empty() && num_processed++ < limit) {
 		//printf("emit %zu\n", _sigs.fill());
-		Closure& ev = _sigs.pop();
+		Closure& ev = _sigs.front();
+		_sigs.pop();
 		ev();
 		ev.disconnect();
 	}

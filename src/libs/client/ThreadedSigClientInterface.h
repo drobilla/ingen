@@ -22,7 +22,7 @@
 #include <sigc++/sigc++.h>
 #include "interface/ClientInterface.h"
 #include "SigClientInterface.h"
-#include "raul/Queue.h"
+#include "raul/SRSWQueue.h"
 #include "raul/Atom.h"
 using std::string;
 
@@ -138,8 +138,8 @@ private:
 	
 	bool _enabled;
 	
-	Queue<Closure> _sigs;
-	uint32_t       _num_plugins;
+	SRSWQueue<Closure> _sigs;
+	uint32_t           _num_plugins;
 
 	sigc::slot<void>                                     bundle_begin_slot; 
 	sigc::slot<void>                                     bundle_end_slot; 

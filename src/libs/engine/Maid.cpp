@@ -19,7 +19,7 @@
 
 
 Maid::Maid(size_t size)
-: m_objects(size)
+: _objects(size)
 {
 }
 
@@ -37,8 +37,9 @@ Maid::cleanup()
 {
 	MaidObject* obj = NULL;
 
-	while (!m_objects.is_empty()) {
-		obj = m_objects.pop();
+	while (!_objects.empty()) {
+		obj = _objects.front();
+		_objects.pop();
 		delete obj;
 	}
 }

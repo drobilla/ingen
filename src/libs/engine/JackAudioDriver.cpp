@@ -26,7 +26,6 @@
 #include "QueuedEvent.h"
 #include "EventSource.h"
 #include "PostProcessor.h"
-#include "raul/Queue.h"
 #include "Node.h"
 #include "Patch.h"
 #include "Port.h"

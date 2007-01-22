@@ -19,7 +19,7 @@
 #include <iostream>
 #include <pthread.h>
 #include "Event.h"
-#include "raul/Queue.h"
+#include "raul/SRSWQueue.h"
 #include "Maid.h"
 
 
@@ -43,8 +43,9 @@ PostProcessor::PostProcessor(Maid& maid, size_t queue_size)
 void
 PostProcessor::_whipped()
 {
-	while ( ! _events.is_empty()) {
-		Event* const ev = _events.pop();
+	while ( ! _events.empty()) {
+		Event* const ev = _events.front();
+		_events.pop();
 		assert(ev);
 		ev->post_process();
 		_maid.push(ev);

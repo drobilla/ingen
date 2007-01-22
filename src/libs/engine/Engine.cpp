@@ -21,7 +21,6 @@
 #include <sys/mman.h>
 #include <iostream>
 #include <unistd.h>
-#include "raul/Queue.h"
 #include "Event.h"
 #include "JackAudioDriver.h"
 #include "NodeFactory.h"
