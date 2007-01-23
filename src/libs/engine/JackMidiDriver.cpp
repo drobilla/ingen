@@ -64,10 +64,6 @@ JackMidiPort::~JackMidiPort()
  *
  * This is basically trivial (as opposed to AlsaMidiPort) since Jack MIDI
  * data is in-band with the audio thread.
- *
- * Prepares all events that occurred during the time interval passed
- * (which ideally are the events from the previous cycle with an exact
- * 1 cycle delay).
  */
 void
 JackMidiPort::prepare_block(const SampleCount block_start, const SampleCount block_end)
@@ -94,6 +90,8 @@ JackMidiPort::prepare_block(const SampleCount block_start, const SampleCount blo
 		message->time   = ev->time;
 		message->size   = ev->size;
 		message->buffer = ev->buffer;
+
+		assert(message->time < nframes);
 	}
 
 	//cerr << "Jack MIDI got " << event_count << " events." << endl;

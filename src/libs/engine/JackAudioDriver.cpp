@@ -297,14 +297,16 @@ JackAudioDriver::_process_cb(jack_nframes_t nframes)
 	if (_engine.event_source())
 		_engine.event_source()->process(*_engine.post_processor(), nframes, start_of_last_cycle, start_of_current_cycle);
 	
-	assert(_engine.midi_driver());
-	_engine.midi_driver()->prepare_block(start_of_last_cycle, start_of_current_cycle);
-	
 	// Set buffers of patch ports to Jack port buffers (zero-copy processing)
 	for (List<JackAudioPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i) {
 		assert(*i);
 		(*i)->prepare_buffer(nframes);
 	}
+
+	assert(_engine.midi_driver());
+	//_engine.midi_driver()->prepare_block(start_of_last_cycle, start_of_current_cycle);
+	_engine.midi_driver()->prepare_block(start_of_current_cycle, start_of_current_cycle + nframes);
+
 	
 	// Run root patch
 	if (_root_patch)

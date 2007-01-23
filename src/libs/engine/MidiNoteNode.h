@@ -44,9 +44,9 @@ public:
 
 	void process(SampleCount nframes, FrameTime start, FrameTime end);
 	
-	void note_on(uchar note_num, uchar velocity, SampleCount nframes, FrameTime time, FrameTime start, FrameTime end);
+	void note_on(uchar note_num, uchar velocity, FrameTime time, SampleCount nframes, FrameTime start, FrameTime end);
 	void note_off(uchar note_num, FrameTime time, SampleCount nframes, FrameTime start, FrameTime end);
-	void all_notes_off(SampleCount nframes, FrameTime time, FrameTime start, FrameTime end);
+	void all_notes_off(FrameTime time, SampleCount nframes, FrameTime start, FrameTime end);
 
 	void sustain_on(FrameTime time, SampleCount nframes, FrameTime start, FrameTime end);
 	void sustain_off(FrameTime time, SampleCount nframes, FrameTime start, FrameTime end);

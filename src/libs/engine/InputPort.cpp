@@ -248,7 +248,6 @@ InputPort<MidiMessage>::process(SampleCount nframes, FrameTime start, FrameTime 
 				do_mixdown = true;
 			} else {
 				// zero-copy
-				assert(m_buffers.at(0)->is_joined());
 				m_buffers.at(0)->join((*m_connections.begin())->buffer(0));
 				//if (m_is_tied)
 				//	m_tied_port->buffer(0)->join(m_buffers.at(0));

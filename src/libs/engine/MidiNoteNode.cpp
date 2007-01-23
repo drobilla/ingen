@@ -80,27 +80,29 @@ MidiNoteNode::process(SampleCount nframes, FrameTime start, FrameTime end)
 	for (size_t i=0; i < _midi_in_port->buffer(0)->filled_size(); ++i) {
 		ev = _midi_in_port->buffer(0)->value_at(i);
 
+		const FrameTime time = ev.time + start;
+
 		switch (ev.buffer[0] & 0xF0) {
 		case MIDI_CMD_NOTE_ON:
 			if (ev.buffer[2] == 0)
-				note_off(ev.buffer[1], ev.time, nframes, start, end);
+				note_off(ev.buffer[1], time, nframes, start, end);
 			else
-				note_on(ev.buffer[1], ev.buffer[2], ev.time, nframes, start, end);
+				note_on(ev.buffer[1], ev.buffer[2], time, nframes, start, end);
 			break;
 		case MIDI_CMD_NOTE_OFF:
-			note_off(ev.buffer[1], ev.time, nframes, start, end);
+			note_off(ev.buffer[1], time, nframes, start, end);
 			break;
 		case MIDI_CMD_CONTROL:
 			switch (ev.buffer[1]) {
 			case MIDI_CTL_ALL_NOTES_OFF:
 			case MIDI_CTL_ALL_SOUNDS_OFF:
-				all_notes_off(ev.time, nframes, start, end);
+				all_notes_off(time, nframes, start, end);
 				break;
 			case MIDI_CTL_SUSTAIN:
 				if (ev.buffer[2] > 63)
-					sustain_on(ev.time, nframes, start, end);
+					sustain_on(time, nframes, start, end);
 				else
-					sustain_off(ev.time, nframes, start, end);
+					sustain_off(time, nframes, start, end);
 				break;
 			case MIDI_CMD_BENDER:
 
@@ -114,7 +116,7 @@ MidiNoteNode::process(SampleCount nframes, FrameTime start, FrameTime end)
 
 
 void
-MidiNoteNode::note_on(uchar note_num, uchar velocity, SampleCount nframes, FrameTime time, FrameTime start, FrameTime end)
+MidiNoteNode::note_on(uchar note_num, uchar velocity, FrameTime time, SampleCount nframes, FrameTime start, FrameTime end)
 {
 	assert(time >= start && time <= end);
 	assert(time - start < _buffer_size);
@@ -210,7 +212,7 @@ MidiNoteNode::note_off(uchar note_num, FrameTime time, SampleCount nframes, Fram
 		key->state = Key::OFF;
 
 		if ( ! _sustain)
-			free_voice(key->voice, time - start, nframes, start, end);
+			free_voice(key->voice, time, nframes, start, end);
 		else
 			_voices[key->voice].state = Voice::HOLDING;
 	}
@@ -260,7 +262,7 @@ MidiNoteNode::free_voice(size_t voice, FrameTime time, SampleCount nframes, Fram
 
 
 void
-MidiNoteNode::all_notes_off(SampleCount nframes, FrameTime time, FrameTime start, FrameTime end)
+MidiNoteNode::all_notes_off(FrameTime time, SampleCount nframes, FrameTime start, FrameTime end)
 {
 	assert(time >= start && time <= end);
 	assert(time - start < _buffer_size);
