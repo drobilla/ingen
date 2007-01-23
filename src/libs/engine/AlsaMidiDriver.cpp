@@ -130,7 +130,7 @@ AlsaMidiPort::prepare_block(const SampleCount block_start, const SampleCount blo
 	size_t           event_size = 0; // decoded length of Alsa event in bytes
 	int              timestamp  = 0;
 	
-	while (!_events.is_empty() && _events.front().time.tick < block_end) {
+	while (!_events.empty() && _events.front().time.tick < block_end) {
 		assert(nu_events < _patch_port->buffer_size());
 		ev = &_events.front();
 		message = &_patch_port->buffer(0)->data()[nu_events];

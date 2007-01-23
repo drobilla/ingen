@@ -55,11 +55,11 @@ public:
 	DuplexPort<MidiMessage>* patch_port() const { return _patch_port; }
 
 private:
-	AlsaMidiDriver*            _driver;
-	DuplexPort<MidiMessage>*   _patch_port;
-	int                        _port_id;
-	unsigned char**            _midi_pool; ///< Pool of raw MIDI events for MidiMessage::buffer
-	SRSWQueue<snd_seq_event_t> _events;
+	AlsaMidiDriver*                  _driver;
+	DuplexPort<MidiMessage>*         _patch_port;
+	int                              _port_id;
+	unsigned char**                  _midi_pool; ///< Pool of raw MIDI events for MidiMessage::buffer
+	Raul::SRSWQueue<snd_seq_event_t> _events;
 };
 
 
@@ -89,7 +89,7 @@ public:
 	{ return new AlsaMidiPort(this, patch_port); }
 	
 	void        add_port(DriverPort* port);
-	DriverPort* remove_port(const Path& path);
+	DriverPort* remove_port(const Raul::Path& path);
 
 	snd_seq_t*        seq_handle()  const { return _seq_handle; }
 	snd_midi_event_t* event_coder() const { return _event_coder; }
