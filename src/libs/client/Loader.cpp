@@ -33,7 +33,7 @@ Loader::Loader(SharedPtr<ModelEngineInterface> engine, SharedPtr<Namespaces> nam
 	if (!_namespaces)
 		_namespaces = SharedPtr<Namespaces>(new Namespaces());
 
-	// FIXME: hack
+	(*_namespaces)["xsd"] = "http://www.w3.org/2001/XMLSchema#";
 	(*_namespaces)["ingen"] = "http://codeson.net/ns/ingen#";
 	(*_namespaces)["ingenuity"] = "http://codeson.net/ns/ingenuity#";
 	(*_namespaces)["lv2"] = "http://lv2plug.in/ontology#>";
