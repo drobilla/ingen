@@ -258,6 +258,8 @@ NodeFactory::load_internal_plugin(const string& uri,
 void
 NodeFactory::load_lv2_plugins()
 {
+	slv2_init();
+
 	SLV2List plugins = slv2_list_new();
 	slv2_list_load_all(plugins);
 
@@ -299,6 +301,8 @@ NodeFactory::load_lv2_plugins()
 	}
 	
 	slv2_list_free(plugins);
+
+	slv2_finish();
 }
 
 

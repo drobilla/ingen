@@ -86,11 +86,11 @@ private:
 
 	bool canvas_event(GdkEvent* event);
 	
-	void connect(boost::shared_ptr<LibFlowCanvas::Port> src,
-	             boost::shared_ptr<LibFlowCanvas::Port> dst);
+	void connect(boost::shared_ptr<LibFlowCanvas::Connectable> src,
+	             boost::shared_ptr<LibFlowCanvas::Connectable> dst);
 
-	void disconnect(boost::shared_ptr<LibFlowCanvas::Port> src,
-	                boost::shared_ptr<LibFlowCanvas::Port> dst);
+	void disconnect(boost::shared_ptr<LibFlowCanvas::Connectable> src,
+	                boost::shared_ptr<LibFlowCanvas::Connectable> dst);
 
 	SharedPtr<PatchModel> _patch;
 

@@ -178,7 +178,7 @@ PatchCanvas::connection(SharedPtr<ConnectionModel> cm)
 	cerr << "DPN: " << dst_parent_name << endl;
 
 	if (src && dst)
-		add_connection(boost::shared_ptr<Connection>(new Connection(shared_from_this(), cm, src, dst)));
+		add_connection(boost::shared_ptr<Connection>(new Connection(shared_from_this(), cm, src, dst, src->color() + 0xFFFFFF00)));
 	else
 		cerr << "[PatchCanvas] ERROR: Unable to find ports to connect "
 			<< cm->src_port_path() << " -> " << cm->dst_port_path() << endl;
@@ -225,7 +225,8 @@ PatchCanvas::disconnection(const Path& src_port_path, const Path& dst_port_path)
 
 
 void
-PatchCanvas::connect(boost::shared_ptr<LibFlowCanvas::Port> src_port, boost::shared_ptr<LibFlowCanvas::Port> dst_port)
+PatchCanvas::connect(boost::shared_ptr<LibFlowCanvas::Connectable> src_port,
+                     boost::shared_ptr<LibFlowCanvas::Connectable> dst_port)
 {
 	const boost::shared_ptr<Ingenuity::Port> src
 		= boost::dynamic_pointer_cast<Ingenuity::Port>(src_port);
@@ -267,7 +268,8 @@ PatchCanvas::connect(boost::shared_ptr<LibFlowCanvas::Port> src_port, boost::sha
 
 
 void
-PatchCanvas::disconnect(boost::shared_ptr<LibFlowCanvas::Port> src_port, boost::shared_ptr<LibFlowCanvas::Port> dst_port)
+PatchCanvas::disconnect(boost::shared_ptr<LibFlowCanvas::Connectable> src_port,
+                        boost::shared_ptr<LibFlowCanvas::Connectable> dst_port)
 {
 	const boost::shared_ptr<Ingenuity::Port> src
 		= boost::dynamic_pointer_cast<Ingenuity::Port>(src_port);

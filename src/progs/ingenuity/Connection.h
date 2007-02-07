@@ -27,18 +27,19 @@ using Ingen::Client::ConnectionModel;
 namespace Ingenuity {
 
 
-/** A Connection on an Module.
+/** A Connection in a Patch.
  * 
  * \ingroup Ingenuity
  */
 class Connection : public LibFlowCanvas::Connection
 {
 public:
-	Connection(boost::shared_ptr<LibFlowCanvas::FlowCanvas> canvas,
-	           boost::shared_ptr<ConnectionModel>           model,
-	           boost::shared_ptr<LibFlowCanvas::Port>       src,
-	           boost::shared_ptr<LibFlowCanvas::Port>       dst)
-	: LibFlowCanvas::Connection(canvas, src, dst)
+	Connection(boost::shared_ptr<LibFlowCanvas::FlowCanvas>  canvas,
+	           boost::shared_ptr<ConnectionModel>            model,
+	           boost::shared_ptr<LibFlowCanvas::Connectable> src,
+	           boost::shared_ptr<LibFlowCanvas::Connectable> dst,
+	           uint32_t                                      color)
+	: LibFlowCanvas::Connection(canvas, src, dst, color)
 	, _connection_model(model)
 	{}
 
