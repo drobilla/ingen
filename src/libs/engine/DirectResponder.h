@@ -1,5 +1,6 @@
 
-/* This file is part of Ingen.  Copyright (C) 2006 Dave Robillard.
+/* This file is part of Ingen.
+ * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
  * 
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software

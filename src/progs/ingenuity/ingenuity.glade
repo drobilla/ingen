@@ -3243,7 +3243,7 @@
 <widget class="GtkAboutDialog" id="about_win">
   <property name="destroy_with_parent">True</property>
   <property name="name" translatable="yes">Ingenuity</property>
-  <property name="copyright" translatable="yes">Copyright (C) 2005-2007 Dave Robillard</property>
+  <property name="copyright" translatable="yes">Copyright (C) 2005-2007 Dave Robillard &lt;http://drobilla.net&gt;</property>
   <property name="comments" translatable="yes">A graphical client for the Ingen audio system</property>
   <property name="license" translatable="yes">Licensed under the GNU GPL, Version 2.
 
@@ -3252,7 +3252,7 @@ See COPYING file included with this distribution, or http://www.gnu.org/licenses
   <property name="website">http://codeson.net/software/ingen</property>
   <property name="website_label" translatable="yes"></property>
   <property name="authors">Author:
-	Dave Robillard &lt;dave@codeson.net&gt;
+	Dave Robillard &lt;dave@drobilla.net&gt;
 
 Contributors:
 	Lars Luthman - DSSI enhancements, bugfixes
