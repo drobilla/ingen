@@ -41,15 +41,15 @@ class Store;
 class PatchModel : public NodeModel
 {
 public:
-	const NodeModelMap&   nodes()       const { return m_nodes; }
-	const ConnectionList& connections() const { return m_connections; }
+	const NodeModelMap&   nodes()       const { return _nodes; }
+	const ConnectionList& connections() const { return _connections; }
 	
 	SharedPtr<ConnectionModel> get_connection(const string& src_port_path, const string& dst_port_path) const;
 	SharedPtr<NodeModel>       get_node(const string& node_name) const;
 	
-	size_t        poly()       const { return m_poly; }
-	const string& filename()   const { return m_filename; }
-	bool          enabled()    const { return m_enabled; }
+	size_t        poly()       const { return _poly; }
+	const string& filename()   const { return _filename; }
+	bool          enabled()    const { return _enabled; }
 	bool          polyphonic() const;
 	
 	// Signals
@@ -65,13 +65,13 @@ private:
 
 	PatchModel(const Path& patch_path, size_t internal_poly)
 	: NodeModel("ingen:patch", patch_path, false), // FIXME
-	  m_enabled(false),
-	  m_poly(internal_poly)
+	  _enabled(false),
+	  _poly(internal_poly)
 	{
 	}
 	
-	void filename(const string& f) { m_filename = f; }
-	void poly(size_t p)            { m_poly = p; }
+	void filename(const string& f) { _filename = f; }
+	void poly(size_t p)            { _poly = p; }
 	void enable();
 	void disable();
 	void clear();
@@ -87,11 +87,11 @@ private:
 	void rename_node(const Path& old_path, const Path& new_path);
 	void rename_node_port(const Path& old_path, const Path& new_path);
 
-	NodeModelMap   m_nodes;
-	ConnectionList m_connections;
-	string         m_filename;
-	bool           m_enabled;
-	size_t         m_poly;
+	NodeModelMap   _nodes;
+	ConnectionList _connections;
+	string         _filename;
+	bool           _enabled;
+	size_t         _poly;
 };
 
 typedef map<string, SharedPtr<PatchModel> > PatchModelMap;

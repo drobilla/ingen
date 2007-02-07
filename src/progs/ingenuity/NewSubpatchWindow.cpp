@@ -27,24 +27,24 @@ namespace Ingenuity {
 NewSubpatchWindow::NewSubpatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 : Gtk::Window(cobject)
 {
-	xml->get_widget("new_subpatch_name_entry", m_name_entry);
-	xml->get_widget("new_subpatch_message_label", m_message_label);
-	xml->get_widget("new_subpatch_polyphony_spinbutton", m_poly_spinbutton);
-	xml->get_widget("new_subpatch_ok_button", m_ok_button);
-	xml->get_widget("new_subpatch_cancel_button", m_cancel_button);
+	xml->get_widget("new_subpatch_name_entry", _name_entry);
+	xml->get_widget("new_subpatch_message_label", _message_label);
+	xml->get_widget("new_subpatch_polyphony_spinbutton", _poly_spinbutton);
+	xml->get_widget("new_subpatch_ok_button", _ok_button);
+	xml->get_widget("new_subpatch_cancel_button", _cancel_button);
 
-	m_name_entry->signal_changed().connect(sigc::mem_fun(this, &NewSubpatchWindow::name_changed));
-	m_ok_button->signal_clicked().connect(sigc::mem_fun(this, &NewSubpatchWindow::ok_clicked));
-	m_cancel_button->signal_clicked().connect(sigc::mem_fun(this, &NewSubpatchWindow::cancel_clicked));
+	_name_entry->signal_changed().connect(sigc::mem_fun(this, &NewSubpatchWindow::name_changed));
+	_ok_button->signal_clicked().connect(sigc::mem_fun(this, &NewSubpatchWindow::ok_clicked));
+	_cancel_button->signal_clicked().connect(sigc::mem_fun(this, &NewSubpatchWindow::cancel_clicked));
 	
-	m_ok_button->property_sensitive() = false;
+	_ok_button->property_sensitive() = false;
 }
 
 void
 NewSubpatchWindow::present(SharedPtr<PatchModel> patch, MetadataMap data)
 {
 	set_patch(patch);
-	m_initial_data = data;
+	_initial_data = data;
 	Gtk::Window::present();
 }
 
@@ -55,7 +55,7 @@ NewSubpatchWindow::present(SharedPtr<PatchModel> patch, MetadataMap data)
 void
 NewSubpatchWindow::set_patch(SharedPtr<PatchModel> patch)
 {
-	m_patch = patch;
+	_patch = patch;
 }
 
 
@@ -65,19 +65,19 @@ NewSubpatchWindow::set_patch(SharedPtr<PatchModel> patch)
 void
 NewSubpatchWindow::name_changed()
 {
-	string name = m_name_entry->get_text();
+	string name = _name_entry->get_text();
 	if (!Path::is_valid_name(name)) {
-		m_message_label->set_text("Name contains invalid characters.");
-		m_ok_button->property_sensitive() = false;
-	} else if (m_patch->get_node(name)) {
-		m_message_label->set_text("An object already exists with that name.");
-		m_ok_button->property_sensitive() = false;
+		_message_label->set_text("Name contains invalid characters.");
+		_ok_button->property_sensitive() = false;
+	} else if (_patch->get_node(name)) {
+		_message_label->set_text("An object already exists with that name.");
+		_ok_button->property_sensitive() = false;
 	} else if (name.length() == 0) {
-		m_message_label->set_text("");
-		m_ok_button->property_sensitive() = false;
+		_message_label->set_text("");
+		_ok_button->property_sensitive() = false;
 	} else {
-		m_message_label->set_text("");
-		m_ok_button->property_sensitive() = true;
+		_message_label->set_text("");
+		_ok_button->property_sensitive() = true;
 	}	
 }
 
@@ -85,10 +85,10 @@ NewSubpatchWindow::name_changed()
 void
 NewSubpatchWindow::ok_clicked()
 {
-	const Path path = m_patch->path().base() + Path::nameify(m_name_entry->get_text());
-	const size_t poly = m_poly_spinbutton->get_value_as_int();
+	const Path path = _patch->path().base() + Path::nameify(_name_entry->get_text());
+	const size_t poly = _poly_spinbutton->get_value_as_int();
 
-	App::instance().engine()->create_patch_with_data(path, poly, m_initial_data);
+	App::instance().engine()->create_patch_with_data(path, poly, _initial_data);
 	App::instance().engine()->enable_patch(path);
 	
 	hide();

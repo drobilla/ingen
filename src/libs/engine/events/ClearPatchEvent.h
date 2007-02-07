@@ -42,9 +42,9 @@ public:
 	void post_process();
 
 private:
-	string m_patch_path;
-	Patch* m_patch;
-	bool   m_process;
+	string _patch_path;
+	Patch* _patch;
+	bool   _process;
 };
 
 

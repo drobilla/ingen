@@ -43,7 +43,7 @@ Port::Port(boost::shared_ptr<LibFlowCanvas::Module> module, SharedPtr<PortModel>
 	assert(_port_model);
 
 	if (destroyable)
-		m_menu.items().push_back(Gtk::Menu_Helpers::MenuElem("Destroy",
+		_menu.items().push_back(Gtk::Menu_Helpers::MenuElem("Destroy",
 				sigc::mem_fun(this, &Port::on_menu_destroy)));
 }
 

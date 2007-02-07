@@ -39,9 +39,9 @@ class Patch;
  * wrapper around a non-static method that does the real work.  Makes a whoole
  * lot of ugly boiler plate go away */
 #define LO_HANDLER(name) \
-int m_##name##_cb (LO_HANDLER_ARGS);\
+int _##name##_cb (LO_HANDLER_ARGS);\
 inline static int name##_cb(LO_HANDLER_ARGS, void* myself)\
-{ return ((OSCEngineReceiver*)myself)->m_##name##_cb(path, types, argv, argc, msg); }
+{ return ((OSCEngineReceiver*)myself)->_##name##_cb(path, types, argv, argc, msg); }
 
 
 /* FIXME: Make this receive and preprocess in the same thread? */

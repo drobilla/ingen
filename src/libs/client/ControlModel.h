@@ -32,20 +32,20 @@ class ControlModel
 {
 public:
 	ControlModel(const Path& port_path, float value)
-	: m_port_path(port_path),
-	  m_value(value)
+	: _port_path(port_path),
+	  _value(value)
 	{
-		assert(m_port_path.find("//") == string::npos);
+		assert(_port_path.find("//") == string::npos);
 	}
 	
-	const Path&   port_path() const          { return m_port_path; }
-	void          port_path(const string& p) { m_port_path = p; }
-	float         value() const              { return m_value; }
-	void          value(float v)             { m_value = v; }
+	const Path&   port_path() const          { return _port_path; }
+	void          port_path(const string& p) { _port_path = p; }
+	float         value() const              { return _value; }
+	void          value(float v)             { _value = v; }
 
 private:
-	Path  m_port_path;
-	float m_value;
+	Path  _port_path;
+	float _value;
 };
 
 

@@ -40,24 +40,24 @@ namespace Ingen {
 
 DisconnectPortEvent::DisconnectPortEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& port_path)
 : QueuedEvent(engine, responder, timestamp),
-  m_port_path(port_path),
-  m_patch(NULL),
-  m_port(NULL),
-  m_process_order(NULL),
-  m_succeeded(true),
-  m_lookup(true)
+  _port_path(port_path),
+  _patch(NULL),
+  _port(NULL),
+  _process_order(NULL),
+  _succeeded(true),
+  _lookup(true)
 {
 }
 
 
 DisconnectPortEvent::DisconnectPortEvent(Engine& engine, Port* port)
 : QueuedEvent(engine),
-  m_port_path(port->path()),
-  m_patch((port->parent_node() == NULL) ? NULL : port->parent_node()->parent_patch()),
-  m_port(port),
-  m_process_order(NULL),
-  m_succeeded(true),
-  m_lookup(false)
+  _port_path(port->path()),
+  _patch((port->parent_node() == NULL) ? NULL : port->parent_node()->parent_patch()),
+  _port(port),
+  _process_order(NULL),
+  _succeeded(true),
+  _lookup(false)
 {
 	//cerr << "DisconnectPortEvent(Engine& engine, )\n";
 }
@@ -65,7 +65,7 @@ DisconnectPortEvent::DisconnectPortEvent(Engine& engine, Port* port)
 
 DisconnectPortEvent::~DisconnectPortEvent()
 {
-	for (List<DisconnectionEvent*>::iterator i = m_disconnection_events.begin(); i != m_disconnection_events.end(); ++i)
+	for (List<DisconnectionEvent*>::iterator i = _disconnection_events.begin(); i != _disconnection_events.end(); ++i)
 		delete (*i);
 }
 
@@ -75,43 +75,43 @@ DisconnectPortEvent::pre_process()
 {
 	// cerr << "Preparing disconnection event...\n";
 	
-	if (m_lookup) {
-		m_patch = _engine.object_store()->find_patch(m_port_path.parent().parent());
+	if (_lookup) {
+		_patch = _engine.object_store()->find_patch(_port_path.parent().parent());
 	
-		if (m_patch == NULL) {
-			m_succeeded = false;
+		if (_patch == NULL) {
+			_succeeded = false;
 			QueuedEvent::pre_process();
 			return;
 		}
 		
-		m_port = _engine.object_store()->find_port(m_port_path);
+		_port = _engine.object_store()->find_port(_port_path);
 		
-		if (m_port == NULL) {
-			m_succeeded = false;
+		if (_port == NULL) {
+			_succeeded = false;
 			QueuedEvent::pre_process();
 			return;
 		}
 	}
 
-	if (m_patch == NULL) {
-		m_succeeded = false;
+	if (_patch == NULL) {
+		_succeeded = false;
 		QueuedEvent::pre_process();
 		return;
 	}
 	
 	Connection* c = NULL;
-	for (List<Connection*>::const_iterator i = m_patch->connections().begin(); i != m_patch->connections().end(); ++i) {
+	for (List<Connection*>::const_iterator i = _patch->connections().begin(); i != _patch->connections().end(); ++i) {
 		c = (*i);
-		if ((c->src_port() == m_port || c->dst_port() == m_port) && !c->pending_disconnection()) {
+		if ((c->src_port() == _port || c->dst_port() == _port) && !c->pending_disconnection()) {
 			DisconnectionEvent* ev = new DisconnectionEvent(_engine, SharedPtr<Responder>(new Responder()), _time,
 					c->src_port(), c->dst_port());
 			ev->pre_process();
-			m_disconnection_events.push_back(new ListNode<DisconnectionEvent*>(ev));
+			_disconnection_events.push_back(new ListNode<DisconnectionEvent*>(ev));
 			c->pending_disconnection(true);
 		}
 	}
 
-	m_succeeded = true;
+	_succeeded = true;
 	QueuedEvent::pre_process();	
 }
 
@@ -121,8 +121,8 @@ DisconnectPortEvent::execute(SampleCount nframes, FrameTime start, FrameTime end
 {
 	QueuedEvent::execute(nframes, start, end);
 
-	if (m_succeeded) {
-		for (List<DisconnectionEvent*>::iterator i = m_disconnection_events.begin(); i != m_disconnection_events.end(); ++i)
+	if (_succeeded) {
+		for (List<DisconnectionEvent*>::iterator i = _disconnection_events.begin(); i != _disconnection_events.end(); ++i)
 			(*i)->execute(nframes, start, end);
 	}
 }
@@ -131,10 +131,10 @@ DisconnectPortEvent::execute(SampleCount nframes, FrameTime start, FrameTime end
 void
 DisconnectPortEvent::post_process()
 {
-	if (m_succeeded) {
+	if (_succeeded) {
 		if (_responder)
 			_responder->respond_ok();
-		for (List<DisconnectionEvent*>::iterator i = m_disconnection_events.begin(); i != m_disconnection_events.end(); ++i)
+		for (List<DisconnectionEvent*>::iterator i = _disconnection_events.begin(); i != _disconnection_events.end(); ++i)
 			(*i)->post_process();
 	} else {
 		if (_responder)

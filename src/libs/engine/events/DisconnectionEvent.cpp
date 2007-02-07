@@ -37,28 +37,28 @@ namespace Ingen {
 
 DisconnectionEvent::DisconnectionEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& src_port_path, const string& dst_port_path)
 : QueuedEvent(engine, responder, timestamp),
-  m_src_port_path(src_port_path),
-  m_dst_port_path(dst_port_path),
-  m_patch(NULL),
-  m_src_port(NULL),
-  m_dst_port(NULL),
-  m_lookup(true),
-  m_typed_event(NULL),
-  m_error(NO_ERROR)
+  _src_port_path(src_port_path),
+  _dst_port_path(dst_port_path),
+  _patch(NULL),
+  _src_port(NULL),
+  _dst_port(NULL),
+  _lookup(true),
+  _typed_event(NULL),
+  _error(NO_ERROR)
 {
 }
 
 
 DisconnectionEvent::DisconnectionEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, Port* const src_port, Port* const dst_port)
 : QueuedEvent(engine, responder, timestamp),
-  m_src_port_path(src_port->path()),
-  m_dst_port_path(dst_port->path()),
-  m_patch(src_port->parent_node()->parent_patch()),
-  m_src_port(src_port),
-  m_dst_port(dst_port),
-  m_lookup(false),
-  m_typed_event(NULL),
-  m_error(NO_ERROR)
+  _src_port_path(src_port->path()),
+  _dst_port_path(dst_port->path()),
+  _patch(src_port->parent_node()->parent_patch()),
+  _src_port(src_port),
+  _dst_port(dst_port),
+  _lookup(false),
+  _typed_event(NULL),
+  _error(NO_ERROR)
 {
 	// FIXME: These break for patch ports.. is that ok?
 	/*assert(src_port->is_output());
@@ -70,63 +70,63 @@ DisconnectionEvent::DisconnectionEvent(Engine& engine, SharedPtr<Responder> resp
 
 DisconnectionEvent::~DisconnectionEvent()
 {
-	delete m_typed_event;
+	delete _typed_event;
 }
 
 
 void
 DisconnectionEvent::pre_process()
 {
-	if (m_lookup) {
-		if (m_src_port_path.parent().parent() != m_dst_port_path.parent().parent()
-				&& m_src_port_path.parent() != m_dst_port_path.parent().parent()
-				&& m_src_port_path.parent().parent() != m_dst_port_path.parent()) {
-			m_error = PARENT_PATCH_DIFFERENT;
+	if (_lookup) {
+		if (_src_port_path.parent().parent() != _dst_port_path.parent().parent()
+				&& _src_port_path.parent() != _dst_port_path.parent().parent()
+				&& _src_port_path.parent().parent() != _dst_port_path.parent()) {
+			_error = PARENT_PATCH_DIFFERENT;
 			QueuedEvent::pre_process();
 			return;
 		}
 
-		/*m_patch = _engine.object_store()->find_patch(m_src_port_path.parent().parent());
+		/*_patch = _engine.object_store()->find_patch(_src_port_path.parent().parent());
 
-		  if (m_patch == NULL) {
-		  m_error = PORT_NOT_FOUND;
+		  if (_patch == NULL) {
+		  _error = PORT_NOT_FOUND;
 		  QueuedEvent::pre_process();
 		  return;
 		  }*/
 
-		m_src_port = _engine.object_store()->find_port(m_src_port_path);
-		m_dst_port = _engine.object_store()->find_port(m_dst_port_path);
+		_src_port = _engine.object_store()->find_port(_src_port_path);
+		_dst_port = _engine.object_store()->find_port(_dst_port_path);
 	}
 	
-	if (m_src_port == NULL || m_dst_port == NULL) {
-		m_error = PORT_NOT_FOUND;
+	if (_src_port == NULL || _dst_port == NULL) {
+		_error = PORT_NOT_FOUND;
 		QueuedEvent::pre_process();
 		return;
 	}
 
-	if (m_src_port->type() != m_dst_port->type() || m_src_port->buffer_size() != m_dst_port->buffer_size()) {
-		m_error = TYPE_MISMATCH;
+	if (_src_port->type() != _dst_port->type() || _src_port->buffer_size() != _dst_port->buffer_size()) {
+		_error = TYPE_MISMATCH;
 		QueuedEvent::pre_process();
 		return;
 	}
 
 	// Create the typed event to actually do the work
-	const DataType type = m_src_port->type();
+	const DataType type = _src_port->type();
 	if (type == DataType::FLOAT) {
-		m_typed_event = new TypedDisconnectionEvent<Sample>(_engine, _responder, _time,
-				dynamic_cast<OutputPort<Sample>*>(m_src_port), dynamic_cast<InputPort<Sample>*>(m_dst_port));
+		_typed_event = new TypedDisconnectionEvent<Sample>(_engine, _responder, _time,
+				dynamic_cast<OutputPort<Sample>*>(_src_port), dynamic_cast<InputPort<Sample>*>(_dst_port));
 	} else if (type == DataType::MIDI) {
-		m_typed_event = new TypedDisconnectionEvent<MidiMessage>(_engine, _responder, _time,
-				dynamic_cast<OutputPort<MidiMessage>*>(m_src_port), dynamic_cast<InputPort<MidiMessage>*>(m_dst_port));
+		_typed_event = new TypedDisconnectionEvent<MidiMessage>(_engine, _responder, _time,
+				dynamic_cast<OutputPort<MidiMessage>*>(_src_port), dynamic_cast<InputPort<MidiMessage>*>(_dst_port));
 	} else {
-		m_error = TYPE_MISMATCH;
+		_error = TYPE_MISMATCH;
 		QueuedEvent::pre_process();
 		return;
 	}
 
-	assert(m_typed_event);
-	m_typed_event->pre_process();
-	assert(m_typed_event->is_prepared());
+	assert(_typed_event);
+	_typed_event->pre_process();
+	assert(_typed_event->is_prepared());
 
 	QueuedEvent::pre_process();
 }
@@ -137,20 +137,20 @@ DisconnectionEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {
 	QueuedEvent::execute(nframes, start, end);
 
-	if (m_error == NO_ERROR)
-		m_typed_event->execute(nframes, start, end);
+	if (_error == NO_ERROR)
+		_typed_event->execute(nframes, start, end);
 }
 
 
 void
 DisconnectionEvent::post_process()
 {
-	if (m_error == NO_ERROR) {
-		m_typed_event->post_process();
+	if (_error == NO_ERROR) {
+		_typed_event->post_process();
 	} else {
 		// FIXME: better error messages
 		string msg = "Unable to disconnect ";
-		msg.append(m_src_port_path + " -> " + m_dst_port_path);
+		msg.append(_src_port_path + " -> " + _dst_port_path);
 		_responder->respond_error(msg);
 	}
 }
@@ -163,11 +163,11 @@ DisconnectionEvent::post_process()
 template <typename T>
 TypedDisconnectionEvent<T>::TypedDisconnectionEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, OutputPort<T>* src_port, InputPort<T>* dst_port)
 : QueuedEvent(engine, responder, timestamp),
-  m_src_port(src_port),
-  m_dst_port(dst_port),
-  m_patch(NULL),
-  m_process_order(NULL),
-  m_succeeded(true)
+  _src_port(src_port),
+  _dst_port(dst_port),
+  _patch(NULL),
+  _process_order(NULL),
+  _succeeded(true)
 {
 	assert(src_port != NULL);
 	assert(dst_port != NULL);
@@ -178,37 +178,37 @@ template <typename T>
 void
 TypedDisconnectionEvent<T>::pre_process()
 {
-	if (!m_dst_port->is_connected_to(m_src_port)) {
-		m_succeeded = false;
+	if (!_dst_port->is_connected_to(_src_port)) {
+		_succeeded = false;
 		QueuedEvent::pre_process();
 		return;
 	}
 	
-	Node* const src_node = m_src_port->parent_node();
-	Node* const dst_node = m_dst_port->parent_node();
+	Node* const src_node = _src_port->parent_node();
+	Node* const dst_node = _dst_port->parent_node();
 
 	// Connection to a patch port from inside the patch
 	if (src_node->parent_patch() != dst_node->parent_patch()) {
 
 		assert(src_node->parent() == dst_node || dst_node->parent() == src_node);
 		if (src_node->parent() == dst_node)
-			m_patch = dynamic_cast<Patch*>(dst_node);
+			_patch = dynamic_cast<Patch*>(dst_node);
 		else
-			m_patch = dynamic_cast<Patch*>(src_node);
+			_patch = dynamic_cast<Patch*>(src_node);
 	
 	// Connection from a patch input to a patch output (pass through)
 	} else if (src_node == dst_node && dynamic_cast<Patch*>(src_node)) {
-		m_patch = dynamic_cast<Patch*>(src_node);
+		_patch = dynamic_cast<Patch*>(src_node);
 	
 	// Normal connection between nodes with the same parent
 	} else {
-		m_patch = src_node->parent_patch();
+		_patch = src_node->parent_patch();
 	}
 
-	assert(m_patch);
+	assert(_patch);
 
 	if (src_node == NULL || dst_node == NULL) {
-		m_succeeded = false;
+		_succeeded = false;
 		QueuedEvent::pre_process();
 		return;
 	}
@@ -225,10 +225,10 @@ TypedDisconnectionEvent<T>::pre_process()
 			break;
 		}
 	
-	if (m_patch->enabled())
-		m_process_order = m_patch->build_process_order();
+	if (_patch->enabled())
+		_process_order = _patch->build_process_order();
 	
-	m_succeeded = true;
+	_succeeded = true;
 	QueuedEvent::pre_process();	
 }
 
@@ -239,14 +239,14 @@ TypedDisconnectionEvent<T>::execute(SampleCount nframes, FrameTime start, FrameT
 {
 	QueuedEvent::execute(nframes, start, end);
 
-	if (m_succeeded) {
+	if (_succeeded) {
 
 		ListNode<TypedConnection<T>*>* const port_connection
-			= m_dst_port->remove_connection(m_src_port);
+			= _dst_port->remove_connection(_src_port);
 		
 		if (port_connection != NULL) {
 			ListNode<Connection*>* const patch_connection
-				= m_patch->remove_connection(m_src_port, m_dst_port);
+				= _patch->remove_connection(_src_port, _dst_port);
 			
 			assert(patch_connection);
 			assert((Connection*)port_connection->elem() == patch_connection->elem());
@@ -256,11 +256,11 @@ TypedDisconnectionEvent<T>::execute(SampleCount nframes, FrameTime start, FrameT
 			_engine.maid()->push(patch_connection);
 			_engine.maid()->push(port_connection->elem());
 	
-			if (m_patch->process_order() != NULL)
-				_engine.maid()->push(m_patch->process_order());
-			m_patch->process_order(m_process_order);
+			if (_patch->process_order() != NULL)
+				_engine.maid()->push(_patch->process_order());
+			_patch->process_order(_process_order);
 		} else {
-			m_succeeded = false;  // Ports weren't connected
+			_succeeded = false;  // Ports weren't connected
 		}
 	}
 }
@@ -270,11 +270,11 @@ template <typename T>
 void
 TypedDisconnectionEvent<T>::post_process()
 {
-	if (m_succeeded) {
+	if (_succeeded) {
 	
 		_responder->respond_ok();
 	
-		_engine.broadcaster()->send_disconnection(m_src_port->path(), m_dst_port->path());
+		_engine.broadcaster()->send_disconnection(_src_port->path(), _dst_port->path());
 	} else {
 		_responder->respond_error("Unable to disconnect ports.");
 	}

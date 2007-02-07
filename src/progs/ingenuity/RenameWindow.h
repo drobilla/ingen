@@ -44,12 +44,12 @@ private:
 	void cancel_clicked();
 	void ok_clicked();
 	
-	SharedPtr<ObjectModel> m_object;
+	SharedPtr<ObjectModel> _object;
 
-	Gtk::Entry*      m_name_entry;
-	Gtk::Label*      m_message_label;
-	Gtk::Button*     m_cancel_button;
-	Gtk::Button*     m_ok_button;
+	Gtk::Entry*      _name_entry;
+	Gtk::Label*      _message_label;
+	Gtk::Button*     _cancel_button;
+	Gtk::Button*     _ok_button;
 };
 
 } // namespace Ingenuity

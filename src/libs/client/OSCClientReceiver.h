@@ -37,9 +37,9 @@ namespace Client {
  * wrapper around a non-static method that does the real work.  Makes a whoole
  * lot of ugly boiler plate go away */
 #define LO_HANDLER(name) \
-int m_##name##_cb (LO_HANDLER_ARGS);\
+int _##name##_cb (LO_HANDLER_ARGS);\
 inline static int name##_cb(LO_HANDLER_ARGS, void* osc_listener)\
-{ return ((OSCClientReceiver*)osc_listener)->m_##name##_cb(path, types, argv, argc, msg); }
+{ return ((OSCClientReceiver*)osc_listener)->_##name##_cb(path, types, argv, argc, msg); }
 
 
 /** Callbacks for "notification band" OSC messages.
@@ -77,12 +77,7 @@ private:
 	static void error_cb(int num, const char* msg, const char* path);
 	static int  generic_cb(const char* path, const char* types, lo_arg** argv, int argc, void* data, void* user_data);
 	static int  unknown_cb(const char* path, const char* types, lo_arg** argv, int argc, void* data, void* osc_receiver);
-	/*
-	inline static int om_response_ok_cb(const char* path, const char* types, lo_arg** argv, int argc, void* data, void* comm);
-	int             m_om_response_ok_cb(const char* path, const char* types, lo_arg** argv, int argc, void* data);
-	inline static int om_response_error_cb(const char* path, const char* types, lo_arg** argv, int argc, void* data, void* comm);
-	int             m_om_response_error_cb(const char* path, const char* types, lo_arg** argv, int argc, void* data);
-*/
+	
 	int              _listen_port;
 	lo_server_thread _st;
 

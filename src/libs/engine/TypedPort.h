@@ -47,14 +47,14 @@ public:
 	void set_value(size_t voice, T val, size_t offset);
 	void set_value(T val, size_t offset);
 	
-	Buffer<T>* buffer(size_t voice) const { return m_buffers.at(voice); }
+	Buffer<T>* buffer(size_t voice) const { return _buffers.at(voice); }
 	
 	virtual void process(SampleCount nframes, FrameTime start, FrameTime end);
 	virtual void clear_buffers();
 	
 	/** Used by drivers to prevent port from changing buffers */
-	void fixed_buffers(bool b) { m_fixed_buffers = b; }
-	bool fixed_buffers()       { return m_fixed_buffers; }
+	void fixed_buffers(bool b) { _fixed_buffers = b; }
+	bool fixed_buffers()       { return _fixed_buffers; }
 
 	virtual void set_buffer_size(size_t size);
 
@@ -64,9 +64,9 @@ protected:
 	void allocate_buffers();
 	void connect_buffers();
 
-	bool m_fixed_buffers;
+	bool _fixed_buffers;
 	
-	Array<Buffer<T>*> m_buffers;
+	Array<Buffer<T>*> _buffers;
 };
 
 

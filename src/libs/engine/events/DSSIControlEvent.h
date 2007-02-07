@@ -39,10 +39,10 @@ public:
 	void post_process();
 
 private:
-	string    m_node_path;
-	int       m_port_num;
-	float     m_val;
-	DSSINode* m_node;
+	string    _node_path;
+	int       _port_num;
+	float     _val;
+	DSSINode* _node;
 };
 
 

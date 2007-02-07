@@ -36,10 +36,10 @@ using namespace Ingen::Client;
 
 
 Configuration::Configuration()
-: m_patch_path("/usr/share/om/patches:/usr/local/share/om/patches"),
-  m_audio_port_color(  0x394f66B0),
-  m_control_port_color(0x396639B0),
-  m_midi_port_color(   0x663939B0)
+: _patch_path("/usr/share/om/patches:/usr/local/share/om/patches"),
+  _audio_port_color(  0x394f66B0),
+  _control_port_color(0x396639B0),
+  _midi_port_color(   0x663939B0)
 {
 }
 
@@ -92,7 +92,7 @@ Configuration::load_settings(string filename)
 	}
 
 	is >> s;
-	m_patch_path = s;
+	_patch_path = s;
 	
 	is.close();
 }
@@ -118,7 +118,7 @@ Configuration::save_settings(string filename)
 	}
 	
 	os << "file_version 1" << endl;
-	os << "patch_path " << m_patch_path << endl;
+	os << "patch_path " << _patch_path << endl;
 	
 	os.close();
 }
@@ -131,7 +131,7 @@ void
 Configuration::apply_settings()
 {
 	cerr << "FIXME: patch path" << endl;
-	//App::instance().loader()->set_patch_path(m_patch_path);
+	//App::instance().loader()->set_patch_path(_patch_path);
 }
 
 
@@ -141,11 +141,11 @@ Configuration::get_port_color(const PortModel* pi)
 	assert(pi != NULL);
 	
 	if (pi->is_control()) {
-		return m_control_port_color;
+		return _control_port_color;
 	} else if (pi->is_audio()) {
-		return m_audio_port_color;
+		return _audio_port_color;
 	} else if (pi->is_midi()) {
-		return m_midi_port_color;
+		return _midi_port_color;
 	}
 	
 	cerr << "[Configuration] Unknown port type!  Port will be bright red, this is an error." << endl;
@@ -156,28 +156,28 @@ Configuration::get_port_color(const PortModel* pi)
 Coord
 Configuration::get_window_location(const string& id) 
 {
-	return m_window_locations[id];
+	return _window_locations[id];
 }
 
 
 void
 Configuration::set_window_location(const string& id, Coord loc) 
 {
-	m_window_locations[id] = loc;
+	_window_locations[id] = loc;
 }
 
 
 Coord
 Configuration::get_window_size(const string& id) 
 {
-	return m_window_sizes[id];
+	return _window_sizes[id];
 }
 
 
 void
 Configuration::set_window_size(const string& id, Coord size) 
 {
-	m_window_sizes[id] = size;
+	_window_sizes[id] = size;
 }*/
 
 

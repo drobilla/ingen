@@ -27,19 +27,19 @@ namespace Ingen {
 	
 
 LashDriver::LashDriver(Ingen* app, lash_args_t* args)
-: m_app(app),
-  m_client(NULL),
-  m_alsa_client_id(0) // FIXME: appropriate sentinel?
+: _app(app),
+  _client(NULL),
+  _alsa_client_id(0) // FIXME: appropriate sentinel?
 {
-	m_client = lash_init(args, PACKAGE_NAME,
+	_client = lash_init(args, PACKAGE_NAME,
 		/*LASH_Config_Data_Set|LASH_Config_File*/0, LASH_PROTOCOL(2, 0));
-	if (m_client == NULL) {
+	if (_client == NULL) {
 		cerr << "[LashDriver] Failed to connect to LASH.  Session management will not function." << endl;
 	} else {
 		cout << "[LashDriver] Lash initialised" << endl;
 		lash_event_t* event = lash_event_new_with_type(LASH_Client_Name);
 		lash_event_set_string(event, "Ingen");
-		lash_send_event(m_client, event);			
+		lash_send_event(_client, event);			
 	}
 }
 
@@ -50,8 +50,8 @@ LashDriver::LashDriver(Ingen* app, lash_args_t* args)
 void
 LashDriver::set_jack_client_name(const char* name)
 {
-	m_jack_client_name = name;
-	lash_jack_client_name(m_client, m_jack_client_name.c_str());
+	_jack_client_name = name;
+	lash_jack_client_name(_client, _jack_client_name.c_str());
 }
 
 
@@ -61,8 +61,8 @@ LashDriver::set_jack_client_name(const char* name)
 void
 LashDriver::set_alsa_client_id(int id)
 {
-	m_alsa_client_id = id;
-	lash_alsa_client_id(m_client, m_alsa_client_id);
+	_alsa_client_id = id;
+	lash_alsa_client_id(_client, _alsa_client_id);
 }
 
 
@@ -73,32 +73,32 @@ LashDriver::set_alsa_client_id(int id)
 void
 LashDriver::restore_finished()
 {
-	assert(m_jack_client_name != "");
-	assert(m_alsa_client_id != 0);
+	assert(_jack_client_name != "");
+	assert(_alsa_client_id != 0);
 
-	cerr << "LASH RESTORE FINISHED " << m_jack_client_name << "  -  " << m_alsa_client_id << endl;
+	cerr << "LASH RESTORE FINISHED " << _jack_client_name << "  -  " << _alsa_client_id << endl;
 
-	lash_jack_client_name(m_client, m_jack_client_name.c_str());
-	lash_alsa_client_id(m_client, m_alsa_client_id);
+	lash_jack_client_name(_client, _jack_client_name.c_str());
+	lash_alsa_client_id(_client, _alsa_client_id);
 }
 
 
 void
 LashDriver::process_events()
 {
-	assert(m_client != NULL);
+	assert(_client != NULL);
 	
 	lash_event_t*  ev = NULL;
 	lash_config_t* conf = NULL;
 
 	// Process events
-	while ((ev = lash_get_event(m_client)) != NULL) {
+	while ((ev = lash_get_event(_client)) != NULL) {
 		handle_event(ev);
 		lash_event_destroy(ev);	
 	}
 
 	// Process configs
-	while ((conf = lash_get_config(m_client)) != NULL) {
+	while ((conf = lash_get_config(_client)) != NULL) {
 		handle_config(conf);
 		lash_config_destroy(conf);	
 	}
@@ -116,24 +116,24 @@ LashDriver::handle_event(lash_event_t* ev)
 	
 	/*if (type == LASH_Save_File) {
 		//cout << "[LashDriver] LASH Save File - " << str << endl;
-		m_app->store_window_location();
-		m_app->state_manager()->save(str.append("/locations"));
-		lash_send_event(m_client, lash_event_new_with_type(LASH_Save_File));
+		_app->store_window_location();
+		_app->state_manager()->save(str.append("/locations"));
+		lash_send_event(_client, lash_event_new_with_type(LASH_Save_File));
 	} else if (type == LASH_Restore_File) {
 		//cout << "[LashDriver] LASH Restore File - " << str << endl;
-		m_app->state_manager()->load(str.append("/locations"));
-		m_app->update_state();
-		lash_send_event(m_client, lash_event_new_with_type(LASH_Restore_File));
+		_app->state_manager()->load(str.append("/locations"));
+		_app->update_state();
+		lash_send_event(_client, lash_event_new_with_type(LASH_Restore_File));
 	} else if (type == LASH_Save_Data_Set) {
 		//cout << "[LashDriver] LASH Save Data Set - " << endl;
 		
 		// Tell LASH we're done
-		lash_send_event(m_client, lash_event_new_with_type(LASH_Save_Data_Set));
+		lash_send_event(_client, lash_event_new_with_type(LASH_Save_Data_Set));
 	} else*/
 	if (type == LASH_Quit) {
 		//stop_thread();
-		m_client = NULL;
-		m_app->quit();
+		_client = NULL;
+		_app->quit();
 	} else {
 		cerr << "[LashDriver] WARNING: Unhandled lash event, type " << static_cast<int>(type) << endl;
 	}

@@ -44,9 +44,9 @@ public:
 	void post_process();
 
 private:
-	string                      m_path;
-	GraphObject*                m_object;
-	SharedPtr<ClientInterface> m_client;
+	string                      _path;
+	GraphObject*                _object;
+	SharedPtr<ClientInterface> _client;
 };
 
 

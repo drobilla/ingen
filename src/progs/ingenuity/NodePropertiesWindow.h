@@ -42,12 +42,12 @@ public:
 
 private:
 	
-	SharedPtr<NodeModel> m_node_model;
-	Gtk::Label*           m_node_path_label;
-	Gtk::CheckButton*     m_node_polyphonic_toggle;
-	Gtk::Label*           m_plugin_type_label;
-	Gtk::Label*           m_plugin_uri_label;
-	Gtk::Label*           m_plugin_name_label;
+	SharedPtr<NodeModel> _node_model;
+	Gtk::Label*           _node_path_label;
+	Gtk::CheckButton*     _node_polyphonic_toggle;
+	Gtk::Label*           _plugin_type_label;
+	Gtk::Label*           _plugin_uri_label;
+	Gtk::Label*           _plugin_name_label;
 };
 
 } // namespace Ingenuity

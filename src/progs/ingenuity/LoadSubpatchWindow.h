@@ -55,19 +55,19 @@ private:
 	void ok_clicked();
 	void cancel_clicked();
 
-	MetadataMap m_initial_data;
+	MetadataMap _initial_data;
 
-	SharedPtr<PatchModel> m_patch;
+	SharedPtr<PatchModel> _patch;
 	
-	Gtk::RadioButton* m_name_from_file_radio;
-	Gtk::RadioButton* m_name_from_user_radio;
-	Gtk::Entry*       m_name_entry;
-	Gtk::RadioButton* m_poly_from_file_radio;
-	Gtk::RadioButton* m_poly_from_parent_radio;
-	Gtk::RadioButton* m_poly_from_user_radio;
-	Gtk::SpinButton*  m_poly_spinbutton;
-	Gtk::Button*      m_ok_button;
-	Gtk::Button*      m_cancel_button;
+	Gtk::RadioButton* _name_from_file_radio;
+	Gtk::RadioButton* _name_from_user_radio;
+	Gtk::Entry*       _name_entry;
+	Gtk::RadioButton* _poly_from_file_radio;
+	Gtk::RadioButton* _poly_from_parent_radio;
+	Gtk::RadioButton* _poly_from_user_radio;
+	Gtk::SpinButton*  _poly_spinbutton;
+	Gtk::Button*      _ok_button;
+	Gtk::Button*      _cancel_button;
 };
  
 

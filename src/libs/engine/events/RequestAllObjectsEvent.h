@@ -41,7 +41,7 @@ public:
 	void post_process();
 	
 private:
-	SharedPtr<ClientInterface> m_client;
+	SharedPtr<ClientInterface> _client;
 };
 
 

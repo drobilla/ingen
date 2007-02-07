@@ -32,65 +32,65 @@ namespace Ingenuity {
 /** Create a node control window and load a new ControlPanel for it.
  */
 NodeControlWindow::NodeControlWindow(SharedPtr<NodeModel> node, size_t poly)
-: m_node(node),
-  m_position_stored(false),
-  m_x(0), m_y(0)
+: _node(node),
+  _position_stored(false),
+  _x(0), _y(0)
 {
-	assert(m_node != NULL);
+	assert(_node != NULL);
 	
 	property_resizable() = true;
 	set_border_width(5);
 
-	set_title(m_node->path() + " Controls");
+	set_title(_node->path() + " Controls");
 
 	Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference("warehouse_win");
-	xml->get_widget_derived("control_panel_vbox", m_control_panel);
-	m_control_panel->reparent(*this);
+	xml->get_widget_derived("control_panel_vbox", _control_panel);
+	_control_panel->reparent(*this);
 	
-	m_control_panel->init(m_node, poly);
+	_control_panel->init(_node, poly);
 	
 	show_all_children();
 	resize();
 	
-	m_callback_enabled = true;
+	_callback_enabled = true;
 }
 
 
 /** Create a node control window and with an existing ControlPanel.
  */
 NodeControlWindow::NodeControlWindow(SharedPtr<NodeModel> node, ControlPanel* panel)
-: m_node(node),
-  m_control_panel(panel)
+: _node(node),
+  _control_panel(panel)
 {
-	assert(m_node);
+	assert(_node);
 	
 	property_resizable() = true;
 	set_border_width(5);
 
-	set_title(m_node->path() + " Controls");
+	set_title(_node->path() + " Controls");
 
-	m_control_panel->reparent(*this);
+	_control_panel->reparent(*this);
 
 	show_all_children();
 	resize();
 	
-	m_callback_enabled = true;
+	_callback_enabled = true;
 }
 
 
 NodeControlWindow::~NodeControlWindow()
 {
-	delete m_control_panel;
+	delete _control_panel;
 }
 
 
 void
 NodeControlWindow::resize()
 {
-	pair<int,int> controls_size = m_control_panel->ideal_size();
+	pair<int,int> controls_size = _control_panel->ideal_size();
 	/*int width = 400;
 	int height = controls_size.second
-		+ ((m_node->polyphonic()) ? 4 : 40);*/
+		+ ((_node->polyphonic()) ? 4 : 40);*/
 	int width = controls_size.first;
 	int height = controls_size.second;
 
@@ -108,14 +108,14 @@ NodeControlWindow::resize()
 void
 NodeControlWindow::on_show()
 {
-	for (PortModelList::const_iterator i = m_node->ports().begin();
-			i != m_node->ports().end(); ++i)
+	for (PortModelList::const_iterator i = _node->ports().begin();
+			i != _node->ports().end(); ++i)
 		if ((*i)->is_control() && (*i)->is_input())
 			App::instance().engine()->request_port_value((*i)->path());
 
 
-	if (m_position_stored)
-		move(m_x, m_y);
+	if (_position_stored)
+		move(_x, _y);
 
 	Gtk::Window::on_show();
 }
@@ -124,8 +124,8 @@ NodeControlWindow::on_show()
 void
 NodeControlWindow::on_hide()
 {
-	m_position_stored = true;
-	get_position(m_x, m_y);
+	_position_stored = true;
+	get_position(_x, _y);
 	Gtk::Window::on_hide();
 }
 

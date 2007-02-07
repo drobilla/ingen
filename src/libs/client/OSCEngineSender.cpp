@@ -58,8 +58,8 @@ OSCEngineSender::attach(int32_t ping_id, bool block)
 	//start_listen_thread(_client_port);
 	
 	/*if (engine_url == "") {
-		string local_url = m_osc_listener->listen_url().substr(
-			0, m_osc_listener->listen_url().find_last_of(":"));
+		string local_url = _osc_listener->listen_url().substr(
+			0, _osc_listener->listen_url().find_last_of(":"));
 		local_url.append(":16180");
 		_engine_addr = lo_address_new_from_url(local_url.c_str());
 	} else {
@@ -82,14 +82,14 @@ OSCEngineSender::attach(int32_t ping_id, bool block)
 		set_wait_response_id(request_id);	
 
 		while (1) {	
-			if (m_response_semaphore.try_wait() != 0) {
+			if (_response_semaphore.try_wait() != 0) {
 				cout << ".";
 				cout.flush();
 				ping(request_id);
 				usleep(100000);
 			} else {
 				cout << " connected." << endl;
-				m_waiting_for_response = false;
+				_waiting_for_response = false;
 				break;
 			}
 		}

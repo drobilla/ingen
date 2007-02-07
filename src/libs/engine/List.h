@@ -32,20 +32,20 @@ template <typename T>
 class ListNode : public MaidObject
 {
 public:
-	ListNode(T elem) : m_elem(elem), m_next(NULL), m_prev(NULL) {}
+	ListNode(T elem) : _elem(elem), _next(NULL), _prev(NULL) {}
 	virtual ~ListNode() {}
 
-	ListNode* next() const       { return m_next; }
-	void      next(ListNode* ln) { m_next = ln; }
-	ListNode* prev() const       { return m_prev; }
-	void      prev(ListNode* ln) { m_prev = ln; }
-	T&        elem()             { return m_elem;}
-	const T&  elem() const       { return m_elem; }
+	ListNode* next() const       { return _next; }
+	void      next(ListNode* ln) { _next = ln; }
+	ListNode* prev() const       { return _prev; }
+	void      prev(ListNode* ln) { _prev = ln; }
+	T&        elem()             { return _elem;}
+	const T&  elem() const       { return _elem; }
 	
 private:
-	T         m_elem;
-	ListNode* m_next;
-	ListNode* m_prev;
+	T         _elem;
+	ListNode* _next;
+	ListNode* _prev;
 };
 
 
@@ -59,12 +59,12 @@ template <typename T>
 class List : public MaidObject
 {
 public:
-	List() : m_head(NULL), m_tail(NULL), m_size(0), m_end_iter(this), m_const_end_iter(this)
+	List() : _head(NULL), _tail(NULL), _size(0), _end_iter(this), _const_end_iter(this)
 	{
-		m_end_iter.m_listnode = NULL;
-		m_end_iter.m_next = NULL;
-		m_const_end_iter.m_listnode = NULL;
-		m_const_end_iter.m_next = NULL;
+		_end_iter._listnode = NULL;
+		_end_iter._next = NULL;
+		_const_end_iter._listnode = NULL;
+		_const_end_iter._next = NULL;
 	}
 	~List();
 
@@ -72,7 +72,7 @@ public:
 	ListNode<T>*  remove(const T elem);
 
 	void clear();
-	size_t size() const { return m_size; }
+	size_t size() const { return _size; }
 
 	class iterator;
 
@@ -82,7 +82,7 @@ public:
 	public:
 		const_iterator(const List<T>* const list);
 		const_iterator(const iterator& i)
-		: m_list(i.m_list), m_listnode(i.m_listnode), m_next(i.m_next) {}
+		: _list(i._list), _listnode(i._listnode), _next(i._next) {}
 	
 		inline const T&        operator*();
 		inline const_iterator& operator++();
@@ -92,9 +92,9 @@ public:
 		friend class List<T>;
 		
 	private:
-		const List<T>* const m_list;
-		const ListNode<T>*   m_listnode;
-		const ListNode<T>*   m_next;  // use this instead of m_listnode->next() to allow deleting
+		const List<T>* const _list;
+		const ListNode<T>*   _listnode;
+		const ListNode<T>*   _next;  // use this instead of _listnode->next() to allow deleting
 	};
 
 
@@ -113,9 +113,9 @@ public:
 		friend class List<T>::const_iterator;
 
 	private:
-		const List<T>* m_list;
-		ListNode<T>*   m_listnode;
-		ListNode<T>*   m_next;  // use this instead of m_listnode->next() to allow deleting
+		const List<T>* _list;
+		ListNode<T>*   _listnode;
+		ListNode<T>*   _next;  // use this instead of _listnode->next() to allow deleting
 	};
 
 	
@@ -128,11 +128,11 @@ public:
 	//const_iterator end()   const;
 
 private:
-	ListNode<T>*   m_head;
-	ListNode<T>*   m_tail;
-	size_t         m_size;
-	iterator       m_end_iter;
-	const_iterator m_const_end_iter;
+	ListNode<T>*   _head;
+	ListNode<T>*   _tail;
+	size_t         _size;
+	iterator       _end_iter;
+	const_iterator _const_end_iter;
 };
 
 
@@ -153,9 +153,9 @@ template <typename T>
 void
 List<T>::clear()
 {
-	if (m_head == NULL) return;
+	if (_head == NULL) return;
 	
-	ListNode<T>* node = m_head;
+	ListNode<T>* node = _head;
 	ListNode<T>* next = NULL;
 	
 	while (node != NULL) {
@@ -163,8 +163,8 @@ List<T>::clear()
 		delete node;
 		node = next;
 	}
-	m_tail = m_head = NULL;
-	m_size = 0;
+	_tail = _head = NULL;
+	_size = 0;
 }
 
 
@@ -181,15 +181,15 @@ List<T>::push_back(ListNode<T>* const ln)
 
 	ln->next(NULL);
 	// FIXME: atomicity?  relevant?
-	if (m_head == NULL) {
+	if (_head == NULL) {
 		ln->prev(NULL);
-		m_head = m_tail = ln;
+		_head = _tail = ln;
 	} else {
-		ln->prev(m_tail);
-		m_tail->next(ln);
-		m_tail = ln;
+		ln->prev(_tail);
+		_tail->next(ln);
+		_tail = ln;
 	}
-	++m_size;
+	++_size;
 }
 
 
@@ -203,21 +203,21 @@ ListNode<T>*
 List<T>::remove(const T elem)
 {
 	// FIXME: atomicity?
-	ListNode<T>* n = m_head;
+	ListNode<T>* n = _head;
 	while (n != NULL) {
 		if (n->elem() == elem)
 			break;
 		n = n->next();
 	}
 	if (n != NULL) {
-		if (n == m_head) m_head = m_head->next();
-		if (n == m_tail) m_tail = m_tail->prev();
+		if (n == _head) _head = _head->next();
+		if (n == _tail) _tail = _tail->prev();
 		if (n->prev() != NULL)
 			n->prev()->next(n->next());
 		if (n->next() != NULL)
 			n->next()->prev(n->prev());
-		--m_size;
-		if (m_size == 0) m_head = m_tail = NULL; // FIXME: Shouldn't be necessary
+		--_size;
+		if (_size == 0) _head = _tail = NULL; // FIXME: Shouldn't be necessary
 		return n;
 	}
 	return NULL;
@@ -233,16 +233,16 @@ template <typename T>
 ListNode<T>*
 List<T>::remove(const iterator iter)
 {
-	ListNode<T>* n = iter.m_listnode;
+	ListNode<T>* n = iter._listnode;
 	if (n != NULL) {
-		if (n == m_head) m_head = m_head->next();
-		if (n == m_tail) m_tail = m_tail->prev();
+		if (n == _head) _head = _head->next();
+		if (n == _tail) _tail = _tail->prev();
 		if (n->prev() != NULL)
 			n->prev()->next(n->next());
 		if (n->next() != NULL)
 			n->next()->prev(n->prev());
-		--m_size;
-		if (m_size == 0) m_head = m_tail = NULL; // FIXME: Shouldn't be necessary
+		--_size;
+		if (_size == 0) _head = _tail = NULL; // FIXME: Shouldn't be necessary
 		return n;
 	}
 	return NULL;
@@ -253,9 +253,9 @@ List<T>::remove(const iterator iter)
 
 template <typename T>
 List<T>::iterator::iterator(List<T>* list)
-: m_list(list),
-  m_listnode(NULL),
-  m_next(NULL)
+: _list(list),
+  _listnode(NULL),
+  _next(NULL)
 {
 }
 
@@ -264,8 +264,8 @@ template <typename T>
 T&
 List<T>::iterator::operator*()
 {
-	assert(m_listnode != NULL);
-	return m_listnode->elem();
+	assert(_listnode != NULL);
+	return _listnode->elem();
 }
 
 
@@ -273,12 +273,12 @@ template <typename T>
 inline typename List<T>::iterator&
 List<T>::iterator::operator++()
 {
-	assert(m_listnode != NULL);
-	m_listnode = m_next;
-	if (m_next != NULL)
-		m_next = m_next->next();
+	assert(_listnode != NULL);
+	_listnode = _next;
+	if (_next != NULL)
+		_next = _next->next();
 	else
-		m_next = NULL;
+		_next = NULL;
 
 	return *this;
 }
@@ -288,7 +288,7 @@ template <typename T>
 inline bool
 List<T>::iterator::operator!=(const iterator& iter) const
 {
-	return (m_listnode != iter.m_listnode);
+	return (_listnode != iter._listnode);
 }
 
 
@@ -296,7 +296,7 @@ template <typename T>
 inline bool
 List<T>::iterator::operator!=(const const_iterator& iter) const
 {
-	return (m_listnode != iter.m_listnode);
+	return (_listnode != iter._listnode);
 }
 
 
@@ -305,11 +305,11 @@ inline typename List<T>::iterator
 List<T>::begin()
 {
 	typename List<T>::iterator iter(this);
-	iter.m_listnode = m_head;
-	if (m_head != NULL)
-		iter.m_next = m_head->next();
+	iter._listnode = _head;
+	if (_head != NULL)
+		iter._next = _head->next();
 	else
-		iter.m_next = NULL;
+		iter._next = NULL;
 	return iter;
 }
 
@@ -319,10 +319,10 @@ inline const typename List<T>::iterator
 List<T>::end() const
 {
 	/*typename List<T>::iterator iter(this);
-	iter.m_listnode = NULL;
-	iter.m_next = NULL;
+	iter._listnode = NULL;
+	iter._next = NULL;
 	return iter;*/
-	return m_end_iter;
+	return _end_iter;
 }
 
 
@@ -332,9 +332,9 @@ List<T>::end() const
 
 template <typename T>
 List<T>::const_iterator::const_iterator(const List<T>* const list)
-: m_list(list),
-  m_listnode(NULL),
-  m_next(NULL)
+: _list(list),
+  _listnode(NULL),
+  _next(NULL)
 {
 }
 
@@ -343,8 +343,8 @@ template <typename T>
 const T&
 List<T>::const_iterator::operator*() 
 {
-	assert(m_listnode != NULL);
-	return m_listnode->elem();
+	assert(_listnode != NULL);
+	return _listnode->elem();
 }
 
 
@@ -352,12 +352,12 @@ template <typename T>
 inline typename List<T>::const_iterator&
 List<T>::const_iterator::operator++()
 {
-	assert(m_listnode != NULL);
-	m_listnode = m_next;
-	if (m_next != NULL)
-		m_next = m_next->next();
+	assert(_listnode != NULL);
+	_listnode = _next;
+	if (_next != NULL)
+		_next = _next->next();
 	else
-		m_next = NULL;
+		_next = NULL;
 
 	return *this;
 }
@@ -367,7 +367,7 @@ template <typename T>
 inline bool
 List<T>::const_iterator::operator!=(const const_iterator& iter) const
 {
-	return (m_listnode != iter.m_listnode);
+	return (_listnode != iter._listnode);
 }
 
 
@@ -375,7 +375,7 @@ template <typename T>
 inline bool
 List<T>::const_iterator::operator!=(const iterator& iter) const
 {
-	return (m_listnode != iter.m_listnode);
+	return (_listnode != iter._listnode);
 }
 
 
@@ -384,11 +384,11 @@ inline typename List<T>::const_iterator
 List<T>::begin() const
 {
 	typename List<T>::const_iterator iter(this);
-	iter.m_listnode = m_head;
-	if (m_head != NULL)
-		iter.m_next = m_head->next();
+	iter._listnode = _head;
+	if (_head != NULL)
+		iter._next = _head->next();
 	else
-		iter.m_next = NULL;
+		iter._next = NULL;
 	return iter;
 }
 
@@ -398,10 +398,10 @@ inline typename List<T>::const_iterator
 List<T>::end() const
 {
 	/*typename List<T>::const_iterator iter(this);
-	iter.m_listnode = NULL;
-	iter.m_next = NULL;
+	iter._listnode = NULL;
+	iter._next = NULL;
 	return iter;*/
-	return m_const_end_iter;
+	return _const_end_iter;
 }
 #endif
 

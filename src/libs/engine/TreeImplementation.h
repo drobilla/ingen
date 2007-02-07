@@ -51,12 +51,12 @@ Tree<T>::insert(TreeNode<T>* const n)
 	assert(n->key().length() > 0);
 	assert(find_treenode(n->key()) == NULL);
 
-	if (m_root == NULL) {
-		m_root = n;
+	if (_root == NULL) {
+		_root = n;
 	} else {
 		bool left = false; // which child to insert at
 		bool right = false;
-		TreeNode<T>* i = m_root;
+		TreeNode<T>* i = _root;
 		while (true) {
 			assert(i != NULL);
 			if (n->key() <= i->key()) {
@@ -89,7 +89,7 @@ Tree<T>::insert(TreeNode<T>* const n)
 		} 
 		n->parent(i);
 	}
-	++m_size;
+	++_size;
 }
 
 
@@ -113,7 +113,7 @@ Tree<T>::remove(const string& key)
 		return NULL;
 	
 	// Node is not even in tree
-	if (node->parent() == NULL && m_root != node)
+	if (node->parent() == NULL && _root != node)
 		return NULL;
 	// FIXME: What if the node is in a different tree?  Check for this?
 
@@ -124,19 +124,19 @@ Tree<T>::remove(const string& key)
 	// n has two children
 	if (n->left_child() != NULL && n->right_child() != NULL) {
 		if (rand()%2)
-			swap = m_find_largest(n->left_child());
+			swap = _find_largest(n->left_child());
 		else
-			swap = m_find_smallest(n->right_child());
+			swap = _find_smallest(n->right_child());
 		
 		// Swap node's elements
-		temp_node = swap->m_node;
-		swap->m_node = n->m_node;
-		n->m_node = temp_node;
+		temp_node = swap->_node;
+		swap->_node = n->_node;
+		n->_node = temp_node;
 		
 		// Swap node's keys
-		temp_key = swap->m_key;
-		swap->m_key = n->m_key;
-		n->m_key = temp_key;
+		temp_key = swap->_key;
+		swap->_key = n->_key;
+		n->_key = temp_key;
 
 		n = swap;
 		assert(n != NULL);
@@ -154,7 +154,7 @@ Tree<T>::remove(const string& key)
 		else if (n->is_right_child())
 			n->parent()->right_child(NULL);
 		
-		if (m_root == n) m_root = NULL;
+		if (_root == n) _root = NULL;
 	} else {  // has a single child
 		TreeNode<T>* child = NULL;
 		if (n->left_child() != NULL)
@@ -179,7 +179,7 @@ Tree<T>::remove(const string& key)
 		} else {
 			child->parent(NULL);
 		}
-		if (m_root == n) m_root = child;	
+		if (_root == n) _root = child;	
 	}
 	
 	// Be sure node is cut off completely
@@ -188,15 +188,15 @@ Tree<T>::remove(const string& key)
 	assert(n->parent() == NULL || n->parent()->right_child() != n);
 	assert(n->left_child() == NULL || n->left_child()->parent() != n);
 	assert(n->right_child() == NULL || n->right_child()->parent() != n);
-	assert(m_root != n);
+	assert(_root != n);
 
 	n->parent(NULL);
 	n->left_child(NULL);
 	n->right_child(NULL);
 
-	--m_size;
+	--_size;
 
-	if (m_size == 0) m_root = NULL;
+	if (_size == 0) _root = NULL;
 
 	// Be sure right node is being removed
 	assert(n->node() == remove_node);
@@ -219,7 +219,7 @@ template<typename T>
 TreeNode<T>*
 Tree<T>::find_treenode(const string& name) const
 {
-	TreeNode<T>* i = m_root;
+	TreeNode<T>* i = _root;
 	int cmp = 0;
 	
 	while (i != NULL) {
@@ -239,16 +239,16 @@ Tree<T>::find_treenode(const string& name) const
 /// Private ///
 template<typename T>
 void
-Tree<T>::m_set_all_traversed_recursive(TreeNode<T>* root, bool b)
+Tree<T>::_set_all_traversed_recursive(TreeNode<T>* root, bool b)
 {
 	assert(root != NULL);
 	
 	// Preorder traversal
 	root->node()->traversed(b);
 	if (root->left_child() != NULL)
-		m_set_all_traversed_recursive(root->left_child(), b);
+		_set_all_traversed_recursive(root->left_child(), b);
 	if (root->right_child() != NULL)
-		m_set_all_traversed_recursive(root->right_child(), b);
+		_set_all_traversed_recursive(root->right_child(), b);
 }
 
 
@@ -256,7 +256,7 @@ Tree<T>::m_set_all_traversed_recursive(TreeNode<T>* root, bool b)
  */
 template<typename T>
 TreeNode<T>*
-Tree<T>::m_find_smallest(TreeNode<T>* root)
+Tree<T>::_find_smallest(TreeNode<T>* root)
 {
 	TreeNode<T>* r = root;
 
@@ -271,7 +271,7 @@ Tree<T>::m_find_smallest(TreeNode<T>* root)
  */
 template<typename T>
 TreeNode<T>*
-Tree<T>::m_find_largest(TreeNode<T>* root)
+Tree<T>::_find_largest(TreeNode<T>* root)
 {
 	TreeNode<T>* r = root;
 
@@ -290,20 +290,20 @@ Tree<T>::m_find_largest(TreeNode<T>* root)
 
 template<typename T>
 Tree<T>::iterator::iterator(const Tree *tree, size_t size)
-: m_depth(-1),
-  m_size(size),
-  m_stack(NULL),
-  m_tree(tree)
+: _depth(-1),
+  _size(size),
+  _stack(NULL),
+  _tree(tree)
 {
 	if (size > 0)
-		m_stack = new TreeNode<T>*[size];
+		_stack = new TreeNode<T>*[size];
 }
 
 
 template<typename T>
 Tree<T>::iterator::~iterator()
 {
-	delete[] m_stack;
+	delete[] _stack;
 }
 
 
@@ -314,13 +314,13 @@ Tree<T>::iterator::~iterator()
 // Copy constructor (for the typical for loop usage)
 template<typename T>
 Tree<T>::iterator::iterator(const Tree<T>::iterator& copy)
-: m_depth(copy.m_depth),
-  m_size(copy.m_size),
-  m_tree(copy.m_tree)
+: _depth(copy._depth),
+  _size(copy._size),
+  _tree(copy._tree)
 {
-	if (m_size > 0) {
-		m_stack = new TreeNode<T>*[m_size];
-		memcpy(m_stack, copy.m_stack, m_size * sizeof(TreeNode<T>*));
+	if (_size > 0) {
+		_stack = new TreeNode<T>*[_size];
+		memcpy(_stack, copy._stack, _size * sizeof(TreeNode<T>*));
 	}
 }
 
@@ -329,13 +329,13 @@ Tree<T>::iterator::iterator(const Tree<T>::iterator& copy)
 template<typename T>
 typename Tree<T>::iterator&
 Tree<T>::iterator::operator=(const Tree<T>::iterator& copy) {
-	m_depth = copy.m_depth;
-	m_size = copy.m_size;
-	m_tree = copy.m_tree;
+	_depth = copy._depth;
+	_size = copy._size;
+	_tree = copy._tree;
 	
-	if (m_size > 0) {
-		m_stack = new TreeNode<T>*[m_size];
-		memcpy(m_stack, copy.m_stack, m_size * sizeof(TreeNode<T>*));
+	if (_size > 0) {
+		_stack = new TreeNode<T>*[_size];
+		memcpy(_stack, copy._stack, _size * sizeof(TreeNode<T>*));
 	}
 	return *this;
 }
@@ -345,8 +345,8 @@ template<typename T>
 T
 Tree<T>::iterator::operator*() const
 {
-	assert(m_depth >= 0);
-	return m_stack[m_depth]->node();
+	assert(_depth >= 0);
+	return _stack[_depth]->node();
 }
 
 
@@ -354,15 +354,15 @@ template<typename T>
 typename Tree<T>::iterator&
 Tree<T>::iterator::operator++()
 {
-	assert(m_depth >= 0);
+	assert(_depth >= 0);
 
-	TreeNode<T>* tn = m_stack[m_depth];
-	--m_depth;
+	TreeNode<T>* tn = _stack[_depth];
+	--_depth;
 
 	tn = tn->right_child();
 	while (tn != NULL) {
-		++m_depth;
-		m_stack[m_depth] = tn;
+		++_depth;
+		_stack[_depth] = tn;
 		tn = tn->left_child();
 	}
 
@@ -375,7 +375,7 @@ bool
 Tree<T>::iterator::operator!=(const Tree<T>::iterator& iter) const
 {
 	// (DeMorgan's Law)
-	return (m_tree != iter.m_tree || m_depth != iter.m_depth);
+	return (_tree != iter._tree || _depth != iter._depth);
 }
 
 
@@ -383,13 +383,13 @@ template<typename T>
 typename Tree<T>::iterator
 Tree<T>::begin() const
 {
-	typename Tree<T>::iterator iter(this, m_size);
-	iter.m_depth = -1;
+	typename Tree<T>::iterator iter(this, _size);
+	iter._depth = -1;
 	
-	TreeNode<T> *ptr = m_root;
+	TreeNode<T> *ptr = _root;
 	while (ptr != NULL) {
-		iter.m_depth++;
-		iter.m_stack[iter.m_depth] = ptr;
+		iter._depth++;
+		iter._stack[iter._depth] = ptr;
 		ptr = ptr->left_child();
 	}
 
@@ -402,7 +402,7 @@ typename Tree<T>::iterator
 Tree<T>::end() const
 {
 	typename Tree<T>::iterator iter(this, 0);
-	iter.m_depth = -1;
+	iter._depth = -1;
 
 	return iter;
 }

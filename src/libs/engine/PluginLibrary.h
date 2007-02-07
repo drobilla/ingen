@@ -43,7 +43,7 @@ public:
 	 * successfully dlopen'ed.
 	 */
 	PluginLibrary(const string& path)
-	: m_path(path), m_handle(NULL)
+	: _path(path), _handle(NULL)
 	{}
 	
 	~PluginLibrary()
@@ -59,12 +59,12 @@ public:
 	 */
 	void open()
 	{
-		if (m_handle == NULL) {
+		if (_handle == NULL) {
 			dlerror();
-			m_handle = dlopen(m_path.c_str(), RTLD_NOW);
-			if (m_handle == NULL)
+			_handle = dlopen(_path.c_str(), RTLD_NOW);
+			if (_handle == NULL)
 				cerr << "[PluginLibrary] Warning:  Error opening shared library "
-					<< m_path << "(" << dlerror() << ")" << endl;
+					<< _path << "(" << dlerror() << ")" << endl;
 		}
 	}
 	
@@ -74,20 +74,20 @@ public:
 	 */
 	void close()
 	{
-		if (m_handle != NULL) {
+		if (_handle != NULL) {
 			dlerror();
-			if (dlclose(m_handle))
-				cerr << "[PluginLibrary] Error closing shared library " << m_path
+			if (dlclose(_handle))
+				cerr << "[PluginLibrary] Error closing shared library " << _path
 					<< "(" << dlerror() << ")" << endl;
 		}
-		m_handle = NULL;
+		_handle = NULL;
 	}
 
-	void* handle() const { return m_handle; }
+	void* handle() const { return _handle; }
 
 private:
-	string m_path;
-	void*  m_handle;
+	string _path;
+	void*  _handle;
 };
 
 

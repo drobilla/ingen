@@ -43,9 +43,9 @@ public:
 	void post_process();
 
 private:
-	string     m_path;
-	string     m_url;
-	DSSINode*  m_node;
+	string     _path;
+	string     _url;
+	DSSINode*  _node;
 };
 
 

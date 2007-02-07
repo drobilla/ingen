@@ -29,16 +29,16 @@ namespace Ingenuity {
 RenameWindow::RenameWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml)
 : Gtk::Window(cobject)
 {
-	glade_xml->get_widget("rename_name_entry", m_name_entry);
-	glade_xml->get_widget("rename_message_label", m_message_label);
-	glade_xml->get_widget("rename_cancel_button", m_cancel_button);
-	glade_xml->get_widget("rename_ok_button", m_ok_button);
+	glade_xml->get_widget("rename_name_entry", _name_entry);
+	glade_xml->get_widget("rename_message_label", _message_label);
+	glade_xml->get_widget("rename_cancel_button", _cancel_button);
+	glade_xml->get_widget("rename_ok_button", _ok_button);
 
-	m_name_entry->signal_changed().connect(sigc::mem_fun(this, &RenameWindow::name_changed));
-	m_cancel_button->signal_clicked().connect(sigc::mem_fun(this, &RenameWindow::cancel_clicked));
-	m_ok_button->signal_clicked().connect(sigc::mem_fun(this, &RenameWindow::ok_clicked));
+	_name_entry->signal_changed().connect(sigc::mem_fun(this, &RenameWindow::name_changed));
+	_cancel_button->signal_clicked().connect(sigc::mem_fun(this, &RenameWindow::cancel_clicked));
+	_ok_button->signal_clicked().connect(sigc::mem_fun(this, &RenameWindow::ok_clicked));
 
-	m_ok_button->property_sensitive() = false;
+	_ok_button->property_sensitive() = false;
 }
 
 
@@ -48,8 +48,8 @@ RenameWindow::RenameWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Gl
 void
 RenameWindow::set_object(SharedPtr<ObjectModel> object)
 {
-	m_object = object;
-	m_name_entry->set_text(object->path().name());
+	_object = object;
+	_name_entry->set_text(object->path().name());
 }
 
 
@@ -59,25 +59,25 @@ RenameWindow::set_object(SharedPtr<ObjectModel> object)
 void
 RenameWindow::name_changed()
 {
-	assert(m_name_entry);
-	assert(m_message_label);
-	assert(m_object);
-	assert(m_object->parent());
+	assert(_name_entry);
+	assert(_message_label);
+	assert(_object);
+	assert(_object->parent());
 
-	string name = m_name_entry->get_text();
+	string name = _name_entry->get_text();
 	if (name.find("/") != string::npos) {
-		m_message_label->set_text("Name may not contain '/'");
-		m_ok_button->property_sensitive() = false;
-	//} else if (m_object->parent()->patch_model()->get_node(name) != NULL) {
-	} else if (App::instance().store()->object(m_object->parent()->path().base() + name)) {
-		m_message_label->set_text("An object already exists with that name.");
-		m_ok_button->property_sensitive() = false;
+		_message_label->set_text("Name may not contain '/'");
+		_ok_button->property_sensitive() = false;
+	//} else if (_object->parent()->patch_model()->get_node(name) != NULL) {
+	} else if (App::instance().store()->object(_object->parent()->path().base() + name)) {
+		_message_label->set_text("An object already exists with that name.");
+		_ok_button->property_sensitive() = false;
 	} else if (name.length() == 0) {
-		m_message_label->set_text("");
-		m_ok_button->property_sensitive() = false;
+		_message_label->set_text("");
+		_ok_button->property_sensitive() = false;
 	} else {
-		m_message_label->set_text("");
-		m_ok_button->property_sensitive() = true;
+		_message_label->set_text("");
+		_ok_button->property_sensitive() = true;
 	}	
 }
 
@@ -86,7 +86,7 @@ void
 RenameWindow::cancel_clicked()
 {
 	cout << "cancel\n";
-	m_name_entry->set_text("");
+	_name_entry->set_text("");
 	hide();
 }
 
@@ -100,11 +100,11 @@ RenameWindow::cancel_clicked()
 void
 RenameWindow::ok_clicked()
 {
-	string name = m_name_entry->get_text();
+	string name = _name_entry->get_text();
 	assert(name.length() > 0);
 	assert(name.find("/") == string::npos);
 
-	App::instance().engine()->rename(m_object->path(), name);
+	App::instance().engine()->rename(_object->path(), name);
 
 	hide();
 }

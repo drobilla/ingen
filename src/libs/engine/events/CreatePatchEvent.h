@@ -48,13 +48,13 @@ public:
 private:
 	enum ErrorType { NO_ERROR, OBJECT_EXISTS, PARENT_NOT_FOUND, INVALID_POLY };
 	
-	Path              m_path;
-	Patch*            m_patch;
-	Patch*            m_parent;
-	Array<Node*>*     m_process_order;
-	TreeNode<Node*>*  m_patch_treenode;
-	int               m_poly;
-	ErrorType         m_error;
+	Path              _path;
+	Patch*            _patch;
+	Patch*            _parent;
+	Array<Node*>*     _process_order;
+	TreeNode<Node*>*  _patch_treenode;
+	int               _poly;
+	ErrorType         _error;
 };
 
 

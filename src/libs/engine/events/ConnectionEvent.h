@@ -57,16 +57,16 @@ private:
 	
 	enum ErrorType { NO_ERROR, PARENT_PATCH_DIFFERENT, PORT_NOT_FOUND, TYPE_MISMATCH };
 	
-	Raul::Path m_src_port_path;
-	Raul::Path m_dst_port_path;
+	Raul::Path _src_port_path;
+	Raul::Path _dst_port_path;
 	
-	Patch* m_patch;
-	Port*  m_src_port;
-	Port*  m_dst_port;
+	Patch* _patch;
+	Port*  _src_port;
+	Port*  _dst_port;
 
-	QueuedEvent* m_typed_event;
+	QueuedEvent* _typed_event;
 	
-	ErrorType m_error;
+	ErrorType _error;
 };
 
 
@@ -87,16 +87,16 @@ public:
 	void post_process();
 
 private:
-	OutputPort<T>*                 m_src_port;
-	InputPort<T>*                  m_dst_port;
+	OutputPort<T>*                 _src_port;
+	InputPort<T>*                  _dst_port;
 
-	Patch*                         m_patch;
-	Array<Node*>*                  m_process_order; ///< New process order for Patch
-	TypedConnection<T>*            m_connection;
-	ListNode<Connection*>*         m_patch_listnode;
-	ListNode<TypedConnection<T>*>* m_port_listnode;
+	Patch*                         _patch;
+	Array<Node*>*                  _process_order; ///< New process order for Patch
+	TypedConnection<T>*            _connection;
+	ListNode<Connection*>*         _patch_listnode;
+	ListNode<TypedConnection<T>*>* _port_listnode;
 	
-	bool m_succeeded;
+	bool _succeeded;
 };
 
 

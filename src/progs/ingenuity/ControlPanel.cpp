@@ -28,17 +28,17 @@ namespace Ingenuity {
 	
 ControlPanel::ControlPanel(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 : Gtk::HBox(cobject),
-  m_callback_enabled(true)
+  _callback_enabled(true)
 {
-	xml->get_widget("control_panel_controls_box", m_control_box);
-	xml->get_widget("control_panel_voice_controls_box", m_voice_control_box);
-	xml->get_widget("control_panel_all_voices_radio", m_all_voices_radio);
-	xml->get_widget("control_panel_specific_voice_radio", m_specific_voice_radio);
-	xml->get_widget("control_panel_voice_spinbutton", m_voice_spinbutton);
+	xml->get_widget("control_panel_controls_box", _control_box);
+	xml->get_widget("control_panel_voice_controls_box", _voice_control_box);
+	xml->get_widget("control_panel_all_voices_radio", _all_voices_radio);
+	xml->get_widget("control_panel_specific_voice_radio", _specific_voice_radio);
+	xml->get_widget("control_panel_voice_spinbutton", _voice_spinbutton);
 	
-	m_all_voices_radio->signal_toggled().connect(sigc::mem_fun(this, &ControlPanel::all_voices_selected));
-	m_specific_voice_radio->signal_toggled().connect(sigc::mem_fun(this, &ControlPanel::specific_voice_selected));
-	m_voice_spinbutton->signal_value_changed().connect(sigc::mem_fun(this, &ControlPanel::voice_selected));
+	_all_voices_radio->signal_toggled().connect(sigc::mem_fun(this, &ControlPanel::all_voices_selected));
+	_specific_voice_radio->signal_toggled().connect(sigc::mem_fun(this, &ControlPanel::specific_voice_selected));
+	_voice_spinbutton->signal_value_changed().connect(sigc::mem_fun(this, &ControlPanel::voice_selected));
 
 	show_all();
 }
@@ -46,7 +46,7 @@ ControlPanel::ControlPanel(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Gl
 
 ControlPanel::~ControlPanel()
 {
-	for (vector<ControlGroup*>::iterator i = m_controls.begin(); i != m_controls.end(); ++i)
+	for (vector<ControlGroup*>::iterator i = _controls.begin(); i != _controls.end(); ++i)
 		delete (*i);
 }
 
@@ -58,23 +58,23 @@ ControlPanel::init(SharedPtr<NodeModel> node, size_t poly)
 	assert(poly > 0);
 	
 	if (poly > 1) {
-		m_voice_spinbutton->set_range(0, poly - 1);
+		_voice_spinbutton->set_range(0, poly - 1);
 	} else {
-		remove(*m_voice_control_box);
+		remove(*_voice_control_box);
 	}
 
 	for (PortModelList::const_iterator i = node->ports().begin(); i != node->ports().end(); ++i) {
 		add_port(*i);
 	}
 	
-	m_callback_enabled = true;
+	_callback_enabled = true;
 }
 
 
 ControlGroup*
 ControlPanel::find_port(const Path& path) const
 {
-	for (vector<ControlGroup*>::const_iterator cg = m_controls.begin(); cg != m_controls.end(); ++cg)
+	for (vector<ControlGroup*>::const_iterator cg = _controls.begin(); cg != _controls.end(); ++cg)
 		if ((*cg)->port_model()->path() == path)
 			return (*cg);
 
@@ -95,7 +95,7 @@ ControlPanel::add_port(SharedPtr<PortModel> pm)
 	
 	// Add port
 	if (pm->is_control() && pm->is_input()) {
-		bool separator = (m_controls.size() > 0);
+		bool separator = (_controls.size() > 0);
 		SliderControlGroup* cg = NULL;
 		if (pm->is_integer())
 			cerr << "FIXME: integer\n";
@@ -109,8 +109,8 @@ ControlPanel::add_port(SharedPtr<PortModel> pm)
 			cg->init(this, pm, separator);
 		}
 	
-		m_controls.push_back(cg);
-		m_control_box->pack_start(*cg, false, false, 0);
+		_controls.push_back(cg);
+		_control_box->pack_start(*cg, false, false, 0);
 
 		/*if (pm->connected())
 			cg->disable();
@@ -125,17 +125,17 @@ ControlPanel::add_port(SharedPtr<PortModel> pm)
 	}
 
 	Gtk::Requisition controls_size;
-	m_control_box->size_request(controls_size);
-	m_ideal_size.first = controls_size.width;
-	m_ideal_size.second = controls_size.height;
+	_control_box->size_request(controls_size);
+	_ideal_size.first = controls_size.width;
+	_ideal_size.second = controls_size.height;
 	
 	Gtk::Requisition voice_size;
-	m_voice_control_box->size_request(voice_size);
-	m_ideal_size.first += voice_size.width;
-	m_ideal_size.second += voice_size.height;
+	_voice_control_box->size_request(voice_size);
+	_ideal_size.first += voice_size.width;
+	_ideal_size.second += voice_size.height;
 
-	//cerr << "Setting ideal size to " << m_ideal_size.first
-	//	<< " x " << m_ideal_size.second << endl;
+	//cerr << "Setting ideal size to " << _ideal_size.first
+	//	<< " x " << _ideal_size.second << endl;
 }
 
 
@@ -145,18 +145,18 @@ void
 ControlPanel::remove_port(const Path& path)
 {
 	bool was_first = false;
-	for (vector<ControlGroup*>::iterator cg = m_controls.begin(); cg != m_controls.end(); ++cg) {
+	for (vector<ControlGroup*>::iterator cg = _controls.begin(); cg != _controls.end(); ++cg) {
 		if ((*cg)->port_model()->path() == path) {
-			m_control_box->remove(**cg);
-			if (cg == m_controls.begin())
+			_control_box->remove(**cg);
+			if (cg == _controls.begin())
 				was_first = true;
-			m_controls.erase(cg);
+			_controls.erase(cg);
 			break;
 		}
 	}
 	
-	if (was_first && m_controls.size() > 0)
-		(*m_controls.begin())->remove_separator();		
+	if (was_first && _controls.size() > 0)
+		(*_controls.begin())->remove_separator();		
 }
 
 
@@ -166,7 +166,7 @@ ControlPanel::remove_port(const Path& path)
 void
 ControlPanel::rename_port(const Path& old_path, const Path& new_path)
 {
-	for (vector<ControlGroup*>::iterator cg = m_controls.begin(); cg != m_controls.end(); ++cg) {
+	for (vector<ControlGroup*>::iterator cg = _controls.begin(); cg != _controls.end(); ++cg) {
 		if ((*cg)->port_model()->path() == old_path) {
 			(*cg)->set_name(new_path.name());
 			return;
@@ -183,7 +183,7 @@ ControlPanel::rename_port(const Path& old_path, const Path& new_path)
 void
 ControlPanel::enable_port(const Path& path)
 {
-	for (vector<ControlGroup*>::iterator i = m_controls.begin(); i != m_controls.end(); ++i) {
+	for (vector<ControlGroup*>::iterator i = _controls.begin(); i != _controls.end(); ++i) {
 		if ((*i)->port_model()->path() == path) {
 			(*i)->enable();
 			return;
@@ -199,7 +199,7 @@ ControlPanel::enable_port(const Path& path)
 void
 ControlPanel::disable_port(const Path& path)
 {
-	for (vector<ControlGroup*>::iterator i = m_controls.begin(); i != m_controls.end(); ++i) {
+	for (vector<ControlGroup*>::iterator i = _controls.begin(); i != _controls.end(); ++i) {
 		if ((*i)->port_model()->path() == path) {
 			(*i)->disable();
 			return;
@@ -213,17 +213,17 @@ ControlPanel::disable_port(const Path& path)
 void
 ControlPanel::value_changed(SharedPtr<PortModel> port, float val)
 {
-	if (m_callback_enabled) {
+	if (_callback_enabled) {
 		App::instance().engine()->disable_responses();
 
 		/* Send the message, but set the client-side model's value to the new
 		 * setting right away (so the value doesn't need to be echoed back) */
 	
-		if (m_all_voices_radio->get_active()) {
+		if (_all_voices_radio->get_active()) {
 			App::instance().engine()->set_port_value(port->path(), val);
 			port->value(val);
 		} else {
-			int voice = m_voice_spinbutton->get_value_as_int();
+			int voice = _voice_spinbutton->get_value_as_int();
 			App::instance().engine()->set_port_value(port->path(), voice, val);
 			port->value(val);
 		}
@@ -235,14 +235,14 @@ ControlPanel::value_changed(SharedPtr<PortModel> port, float val)
 void
 ControlPanel::all_voices_selected()
 {
-	m_voice_spinbutton->property_sensitive() = false;
+	_voice_spinbutton->property_sensitive() = false;
 }
 
 
 void
 ControlPanel::specific_voice_selected()
 {
-	m_voice_spinbutton->property_sensitive() = true;
+	_voice_spinbutton->property_sensitive() = true;
 }
 
 

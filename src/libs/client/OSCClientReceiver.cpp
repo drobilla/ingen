@@ -166,7 +166,7 @@ OSCClientReceiver::setup_callbacks()
 /** Catches errors that aren't a direct result of a client request.
  */
 int
-OSCClientReceiver::m_error_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCClientReceiver::_error_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	cerr << "ERROR: " << argv[0]->s << endl;
 	// FIXME
@@ -176,7 +176,7 @@ OSCClientReceiver::m_error_cb(const char* path, const char* types, lo_arg** argv
  
 
 int
-OSCClientReceiver::m_new_patch_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCClientReceiver::_new_patch_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	new_patch(&argv[0]->s, argv[1]->i); // path, poly
 	return 0;
@@ -184,7 +184,7 @@ OSCClientReceiver::m_new_patch_cb(const char* path, const char* types, lo_arg** 
 
 
 int
-OSCClientReceiver::m_destroyed_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCClientReceiver::_destroyed_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	object_destroyed((const char*)&argv[0]->s);
 	return 0;
@@ -192,7 +192,7 @@ OSCClientReceiver::m_destroyed_cb(const char* path, const char* types, lo_arg** 
 
 
 int
-OSCClientReceiver::m_patch_enabled_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCClientReceiver::_patch_enabled_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	patch_enabled((const char*)&argv[0]->s);
 	return 0;
@@ -200,7 +200,7 @@ OSCClientReceiver::m_patch_enabled_cb(const char* path, const char* types, lo_ar
 
 
 int
-OSCClientReceiver::m_patch_disabled_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCClientReceiver::_patch_disabled_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	patch_disabled((const char*)&argv[0]->s);
 	return 0;
@@ -208,7 +208,7 @@ OSCClientReceiver::m_patch_disabled_cb(const char* path, const char* types, lo_a
 
 
 int
-OSCClientReceiver::m_patch_cleared_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCClientReceiver::_patch_cleared_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	patch_cleared((const char*)&argv[0]->s);
 	return 0;
@@ -216,7 +216,7 @@ OSCClientReceiver::m_patch_cleared_cb(const char* path, const char* types, lo_ar
 
 
 int
-OSCClientReceiver::m_object_renamed_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCClientReceiver::_object_renamed_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	object_renamed((const char*)&argv[0]->s, (const char*)&argv[1]->s);
 	return 0;
@@ -224,7 +224,7 @@ OSCClientReceiver::m_object_renamed_cb(const char* path, const char* types, lo_a
 
 
 int
-OSCClientReceiver::m_connection_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCClientReceiver::_connection_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	const char* const src_port_path = &argv[0]->s;
 	const char* const dst_port_path = &argv[1]->s;
@@ -236,7 +236,7 @@ OSCClientReceiver::m_connection_cb(const char* path, const char* types, lo_arg**
 
 
 int
-OSCClientReceiver::m_disconnection_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCClientReceiver::_disconnection_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	const char* src_port_path = &argv[0]->s;
 	const char* dst_port_path = &argv[1]->s;
@@ -250,7 +250,7 @@ OSCClientReceiver::m_disconnection_cb(const char* path, const char* types, lo_ar
 /** Notification of a new node creation.
  */
 int
-OSCClientReceiver::m_new_node_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCClientReceiver::_new_node_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	const char*   uri        = &argv[0]->s;
 	const char*   node_path  = &argv[1]->s;
@@ -276,7 +276,7 @@ OSCClientReceiver::m_new_node_cb(const char* path, const char* types, lo_arg** a
 /** Notification of a new port creation.
  */
 int
-OSCClientReceiver::m_new_port_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCClientReceiver::_new_port_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	const char* port_path   = &argv[0]->s;
 	const char* type        = &argv[1]->s;
@@ -312,17 +312,17 @@ OSCClientReceiver::m_new_port_cb(const char* path, const char* types, lo_arg** a
 	PortModel* port_model = new PortModel(port_path, ptype, pdir, phint, default_val, min_val, max_val);
 */	
 	PortModel* port_model = new PortModel(port_path, ptype, pdir);
-	if (m_receiving_node) {
-		assert(m_receiving_node_model);
-		m_receiving_node_model->add_port(port_model);
+	if (_receiving_node) {
+		assert(_receiving_node_model);
+		_receiving_node_model->add_port(port_model);
 		++m_num_received_ports;
 		
 		// If transmission is done, send new node to client
-		if (m_num_received_ports == m_receiving_node_num_ports) {
-			new_node_model(m_receiving_node_model);
-			m_receiving_node = false;
-			m_receiving_node_model = NULL;
-			m_num_received_ports = 0;
+		if (_num_received_ports == _receiving_node_num_ports) {
+			new_node_model(_receiving_node_model);
+			_receiving_node = false;
+			_receiving_node_model = NULL;
+			_num_received_ports = 0;
 		}
 	} else {
 		new_port_model(port_model);
@@ -336,7 +336,7 @@ OSCClientReceiver::m_new_port_cb(const char* path, const char* types, lo_arg** a
 /** Notification of a new or updated piece of metadata.
  */
 int
-OSCClientReceiver::m_metadata_update_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCClientReceiver::_metadata_update_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	if (argc != 3 || types[0] != 's' || types[1] != 's')
 		return 1;
@@ -353,7 +353,7 @@ OSCClientReceiver::m_metadata_update_cb(const char* path, const char* types, lo_
 
 
 int
-OSCClientReceiver::m_control_change_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCClientReceiver::_control_change_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	const char* const port_path  = &argv[0]->s;
 	const float       value      =  argv[1]->f;
@@ -365,7 +365,7 @@ OSCClientReceiver::m_control_change_cb(const char* path, const char* types, lo_a
 
 
 int
-OSCClientReceiver::m_response_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCClientReceiver::_response_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	assert(!strcmp(types, "iis"));
 	response(argv[0]->i, argv[1]->i, &argv[2]->s);
@@ -378,7 +378,7 @@ OSCClientReceiver::m_response_cb(const char* path, const char* types, lo_arg** a
  * to a /om/send_plugins
  */
 int
-OSCClientReceiver::m_num_plugins_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCClientReceiver::_num_plugins_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	num_plugins(argv[0]->i);
 
@@ -389,7 +389,7 @@ OSCClientReceiver::m_num_plugins_cb(const char* path, const char* types, lo_arg*
 /** A plugin info response from the server, in response to a /send_plugins
  */
 int
-OSCClientReceiver::m_plugin_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCClientReceiver::_plugin_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	assert(argc == 3 && !strcmp(types, "sss"));
 	new_plugin(&argv[0]->s, &argv[1]->s, &argv[2]->s); // type, uri
@@ -399,7 +399,7 @@ OSCClientReceiver::m_plugin_cb(const char* path, const char* types, lo_arg** arg
 
 
 int
-OSCClientReceiver::m_program_add_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCClientReceiver::_program_add_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	const char* node_path  = &argv[0]->s;
 	int32_t     bank       =  argv[1]->i;
@@ -413,7 +413,7 @@ OSCClientReceiver::m_program_add_cb(const char* path, const char* types, lo_arg*
 
 
 int
-OSCClientReceiver::m_program_remove_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCClientReceiver::_program_remove_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	const char* node_path  = &argv[0]->s;
 	int32_t     bank       =  argv[1]->i;

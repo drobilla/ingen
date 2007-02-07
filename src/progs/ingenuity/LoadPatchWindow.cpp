@@ -31,22 +31,22 @@ namespace Ingenuity {
 
 LoadPatchWindow::LoadPatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 : Gtk::FileChooserDialog(cobject),
-  m_replace(true)
+  _replace(true)
 {
-	xml->get_widget("load_patch_poly_from_current_radio", m_poly_from_current_radio);
-	xml->get_widget("load_patch_poly_from_file_radio", m_poly_from_file_radio);
-	xml->get_widget("load_patch_poly_from_user_radio", m_poly_from_user_radio);
-	xml->get_widget("load_patch_poly_spinbutton", m_poly_spinbutton);
-	xml->get_widget("load_patch_ok_button", m_ok_button);
-	xml->get_widget("load_patch_cancel_button", m_cancel_button);
+	xml->get_widget("load_patch_poly_from_current_radio", _poly_from_current_radio);
+	xml->get_widget("load_patch_poly_from_file_radio", _poly_from_file_radio);
+	xml->get_widget("load_patch_poly_from_user_radio", _poly_from_user_radio);
+	xml->get_widget("load_patch_poly_spinbutton", _poly_spinbutton);
+	xml->get_widget("load_patch_ok_button", _ok_button);
+	xml->get_widget("load_patch_cancel_button", _cancel_button);
 	
-	m_poly_from_current_radio->signal_toggled().connect(sigc::mem_fun(this, &LoadPatchWindow::poly_from_file_selected));
-	m_poly_from_file_radio->signal_toggled().connect(sigc::mem_fun(this, &LoadPatchWindow::poly_from_file_selected));
-	m_poly_from_user_radio->signal_toggled().connect(sigc::mem_fun(this, &LoadPatchWindow::poly_from_user_selected));
-	m_ok_button->signal_clicked().connect(sigc::mem_fun(this, &LoadPatchWindow::ok_clicked));
-	m_cancel_button->signal_clicked().connect(sigc::mem_fun(this, &LoadPatchWindow::cancel_clicked));
+	_poly_from_current_radio->signal_toggled().connect(sigc::mem_fun(this, &LoadPatchWindow::poly_from_file_selected));
+	_poly_from_file_radio->signal_toggled().connect(sigc::mem_fun(this, &LoadPatchWindow::poly_from_file_selected));
+	_poly_from_user_radio->signal_toggled().connect(sigc::mem_fun(this, &LoadPatchWindow::poly_from_user_selected));
+	_ok_button->signal_clicked().connect(sigc::mem_fun(this, &LoadPatchWindow::ok_clicked));
+	_cancel_button->signal_clicked().connect(sigc::mem_fun(this, &LoadPatchWindow::cancel_clicked));
 	
-	m_poly_from_current_radio->set_active(true);
+	_poly_from_current_radio->set_active(true);
 
 	Gtk::FileFilter filt;
 	filt.add_pattern("*.om");
@@ -68,7 +68,7 @@ void
 LoadPatchWindow::present(SharedPtr<PatchModel> patch, MetadataMap data)
 {
 	set_patch(patch);
-	m_initial_data = data;
+	_initial_data = data;
 	Gtk::Window::present();
 }
 
@@ -80,7 +80,7 @@ LoadPatchWindow::present(SharedPtr<PatchModel> patch, MetadataMap data)
 void
 LoadPatchWindow::set_patch(SharedPtr<PatchModel> patch)
 {
-	m_patch = patch;
+	_patch = patch;
 }
 
 
@@ -99,14 +99,14 @@ LoadPatchWindow::on_show()
 void
 LoadPatchWindow::poly_from_file_selected()
 {
-	m_poly_spinbutton->property_sensitive() = false;
+	_poly_spinbutton->property_sensitive() = false;
 }
 
 
 void
 LoadPatchWindow::poly_from_user_selected()
 {
-	m_poly_spinbutton->property_sensitive() = true;
+	_poly_spinbutton->property_sensitive() = true;
 }
 
 
@@ -117,14 +117,14 @@ LoadPatchWindow::ok_clicked()
 	optional<const string&> name;
 	optional<size_t> poly;
 	
-	if (m_poly_from_user_radio->get_active())
-		poly = m_poly_spinbutton->get_value_as_int();
+	if (_poly_from_user_radio->get_active())
+		poly = _poly_spinbutton->get_value_as_int();
 	
-	if (m_replace)
-		App::instance().engine()->clear_patch(m_patch->path());
+	if (_replace)
+		App::instance().engine()->clear_patch(_patch->path());
 
 	App::instance().loader()->load_patch(true, get_filename(), "/",
-		m_initial_data, m_patch->parent()->path(), name, poly);
+		_initial_data, _patch->parent()->path(), name, poly);
 	
 	hide();
 }			

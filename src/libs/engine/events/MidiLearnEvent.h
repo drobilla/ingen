@@ -39,16 +39,16 @@ class MidiLearnResponseEvent : public Event
 public:
 	MidiLearnResponseEvent(Engine& engine, const string& port_path, SampleCount timestamp)
 	: Event(engine, SharedPtr<Responder>(), timestamp),
-	  m_port_path(port_path),
-	  m_value(0.0f)
+	  _port_path(port_path),
+	  _value(0.0f)
 	{}
 	
-	void set_value(Sample val) { m_value = val; }
+	void set_value(Sample val) { _value = val; }
 	void post_process();
 	
 private:
-	string m_port_path;
-	Sample m_value;
+	string _port_path;
+	Sample _value;
 };
 
 
@@ -71,11 +71,11 @@ public:
 	void post_process();
 
 private:
-	string  m_node_path;
-	Node*   m_node;
+	string  _node_path;
+	Node*   _node;
 	
 	/// Event to respond with when learned
-	MidiLearnResponseEvent* m_response_event;
+	MidiLearnResponseEvent* _response_event;
 };
 
 

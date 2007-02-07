@@ -61,17 +61,17 @@ public:
 	void post_process();
 
 private:
-	string           m_patch_name;
-	Path             m_path;
-	string           m_plugin_uri; ///< If nonempty then type, library, label, are ignored
-	string           m_plugin_type;
-	string           m_plugin_lib;
-	string           m_plugin_label;
-	bool             m_poly;
-	Patch*           m_patch;
-	Node*            m_node;
-	Array<Node*>*    m_process_order; ///< Patch's new process order
-	bool             m_node_already_exists;
+	string           _patch_name;
+	Path             _path;
+	string           _plugin_uri; ///< If nonempty then type, library, label, are ignored
+	string           _plugin_type;
+	string           _plugin_lib;
+	string           _plugin_label;
+	bool             _poly;
+	Patch*           _patch;
+	Node*            _node;
+	Array<Node*>*    _process_order; ///< Patch's new process order
+	bool             _node_already_exists;
 };
 
 

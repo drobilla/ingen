@@ -30,9 +30,9 @@ namespace Ingen {
 
 RequestPortValueEvent::RequestPortValueEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& port_path)
 : QueuedEvent(engine, responder, timestamp),
-  m_port_path(port_path),
-  m_port(NULL),
-  m_value(0.0)
+  _port_path(port_path),
+  _port(NULL),
+  _value(0.0)
 {
 }
 
@@ -40,8 +40,8 @@ RequestPortValueEvent::RequestPortValueEvent(Engine& engine, SharedPtr<Responder
 void
 RequestPortValueEvent::pre_process()
 {
-	m_client = _engine.broadcaster()->client(_responder->client_key());
-	m_port = _engine.object_store()->find_port(m_port_path);
+	_client = _engine.broadcaster()->client(_responder->client_key());
+	_port = _engine.object_store()->find_port(_port_path);
 
 	QueuedEvent::pre_process();
 }
@@ -53,10 +53,10 @@ RequestPortValueEvent::execute(SampleCount nframes, FrameTime start, FrameTime e
 	QueuedEvent::execute(nframes, start, end);
 	assert(_time >= start && _time <= end);
 
-	if (m_port != NULL && m_port->type() == DataType::FLOAT)
-		m_value = ((TypedPort<Sample>*)m_port)->buffer(0)->value_at(0/*_time - start*/);
+	if (_port != NULL && _port->type() == DataType::FLOAT)
+		_value = ((TypedPort<Sample>*)_port)->buffer(0)->value_at(0/*_time - start*/);
 	else 
-		m_port = NULL; // triggers error response
+		_port = NULL; // triggers error response
 }
 
 
@@ -64,11 +64,11 @@ void
 RequestPortValueEvent::post_process()
 {
 	string msg;
-	if (!m_port) {
+	if (!_port) {
 		_responder->respond_error("Unable to find port for get_value responder.");
-	} else if (m_client) {
+	} else if (_client) {
 		_responder->respond_ok();
-		m_client->control_change(m_port_path, m_value);
+		_client->control_change(_port_path, _value);
 	} else {
 		_responder->respond_error("Unable to find client to send port value");
 	}

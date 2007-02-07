@@ -40,11 +40,11 @@ namespace Ingen {
 
 DisconnectNodeEvent::DisconnectNodeEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& node_path)
 : QueuedEvent(engine, responder, timestamp),
-  m_node_path(node_path),
-  m_patch(NULL),
-  m_node(NULL),
-  m_succeeded(true),
-  m_lookup(true)
+  _node_path(node_path),
+  _patch(NULL),
+  _node(NULL),
+  _succeeded(true),
+  _lookup(true)
 {
 }
 
@@ -53,18 +53,18 @@ DisconnectNodeEvent::DisconnectNodeEvent(Engine& engine, SharedPtr<Responder> re
  */
 DisconnectNodeEvent::DisconnectNodeEvent(Engine& engine, Node* node)
 : QueuedEvent(engine),
-  m_node_path(node->path()),
-  m_patch(node->parent_patch()),
-  m_node(node),
-  m_succeeded(true),
-  m_lookup(false)
+  _node_path(node->path()),
+  _patch(node->parent_patch()),
+  _node(node),
+  _succeeded(true),
+  _lookup(false)
 {
 }
 
 
 DisconnectNodeEvent::~DisconnectNodeEvent()
 {
-	for (List<DisconnectionEvent*>::iterator i = m_disconnection_events.begin(); i != m_disconnection_events.end(); ++i)
+	for (List<DisconnectionEvent*>::iterator i = _disconnection_events.begin(); i != _disconnection_events.end(); ++i)
 		delete (*i);
 }
 
@@ -76,37 +76,37 @@ DisconnectNodeEvent::pre_process()
 	
 	// cerr << "Preparing disconnection event...\n";
 	
-	if (m_lookup) {
-		m_patch = _engine.object_store()->find_patch(m_node_path.parent());
+	if (_lookup) {
+		_patch = _engine.object_store()->find_patch(_node_path.parent());
 	
-		if (m_patch == NULL) {
-			m_succeeded = false;
+		if (_patch == NULL) {
+			_succeeded = false;
 			QueuedEvent::pre_process();
 			return;
 		}
 		
-		m_node = _engine.object_store()->find_node(m_node_path);
+		_node = _engine.object_store()->find_node(_node_path);
 		
-		if (m_node == NULL) {
-			m_succeeded = false;
+		if (_node == NULL) {
+			_succeeded = false;
 			QueuedEvent::pre_process();
 			return;
 		}
 	}
 
 	Connection* c = NULL;
-	for (ConnectionListIterator i = m_patch->connections().begin(); i != m_patch->connections().end(); ++i) {
+	for (ConnectionListIterator i = _patch->connections().begin(); i != _patch->connections().end(); ++i) {
 		c = (*i);
-		if ((c->src_port()->parent_node() == m_node || c->dst_port()->parent_node() == m_node) && !c->pending_disconnection()) {
+		if ((c->src_port()->parent_node() == _node || c->dst_port()->parent_node() == _node) && !c->pending_disconnection()) {
 			DisconnectionEvent* ev = new DisconnectionEvent(_engine, SharedPtr<Responder>(new Responder()), _time,
 				c->src_port(), c->dst_port());
 			ev->pre_process();
-			m_disconnection_events.push_back(new ListNode<DisconnectionEvent*>(ev));
+			_disconnection_events.push_back(new ListNode<DisconnectionEvent*>(ev));
 			c->pending_disconnection(true);
 		}
 	}
 	
-	m_succeeded = true;
+	_succeeded = true;
 	QueuedEvent::pre_process();	
 }
 
@@ -116,8 +116,8 @@ DisconnectNodeEvent::execute(SampleCount nframes, FrameTime start, FrameTime end
 {
 	QueuedEvent::execute(nframes, start, end);
 
-	if (m_succeeded) {
-		for (List<DisconnectionEvent*>::iterator i = m_disconnection_events.begin(); i != m_disconnection_events.end(); ++i)
+	if (_succeeded) {
+		for (List<DisconnectionEvent*>::iterator i = _disconnection_events.begin(); i != _disconnection_events.end(); ++i)
 			(*i)->execute(nframes, start, end);
 	}
 }
@@ -126,10 +126,10 @@ DisconnectNodeEvent::execute(SampleCount nframes, FrameTime start, FrameTime end
 void
 DisconnectNodeEvent::post_process()
 {
-	if (m_succeeded) {
+	if (_succeeded) {
 		if (_responder)
 			_responder->respond_ok();
-		for (List<DisconnectionEvent*>::iterator i = m_disconnection_events.begin(); i != m_disconnection_events.end(); ++i)
+		for (List<DisconnectionEvent*>::iterator i = _disconnection_events.begin(); i != _disconnection_events.end(); ++i)
 			(*i)->post_process();
 	} else {
 		if (_responder)

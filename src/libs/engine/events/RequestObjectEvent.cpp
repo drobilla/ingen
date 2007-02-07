@@ -33,8 +33,8 @@ namespace Ingen {
 
 RequestObjectEvent::RequestObjectEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path)
 : QueuedEvent(engine, responder, timestamp),
-  m_path(path),
-  m_object(NULL)
+  _path(path),
+  _object(NULL)
 {
 }
 
@@ -42,8 +42,8 @@ RequestObjectEvent::RequestObjectEvent(Engine& engine, SharedPtr<Responder> resp
 void
 RequestObjectEvent::pre_process()
 {
-	m_client = _engine.broadcaster()->client(_responder->client_key());
-	m_object = _engine.object_store()->find(m_path);
+	_client = _engine.broadcaster()->client(_responder->client_key());
+	_object = _engine.object_store()->find(_path);
 
 	QueuedEvent::pre_process();
 }
@@ -60,28 +60,28 @@ RequestObjectEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 void
 RequestObjectEvent::post_process()
 {
-	if (!m_object) {
+	if (!_object) {
 		_responder->respond_error("Unable to find object requested.");
 	
-	} else if (m_client) {	
-		Patch* const patch = dynamic_cast<Patch*>(m_object);
+	} else if (_client) {	
+		Patch* const patch = dynamic_cast<Patch*>(_object);
 		if (patch) {
 			_responder->respond_ok();
-			ObjectSender::send_patch(m_client.get(), patch, true);
+			ObjectSender::send_patch(_client.get(), patch, true);
 			return;
 		}
 		
-		Node* const node = dynamic_cast<Node*>(m_object);
+		Node* const node = dynamic_cast<Node*>(_object);
 		if (node) {
 			_responder->respond_ok();
-			ObjectSender::send_node(m_client.get(), node, true);
+			ObjectSender::send_node(_client.get(), node, true);
 			return;
 		}
 		
-		Port* const port = dynamic_cast<Port*>(m_object);
+		Port* const port = dynamic_cast<Port*>(_object);
 		if (port) {
 			_responder->respond_ok();
-			ObjectSender::send_port(m_client.get(), port);
+			ObjectSender::send_port(_client.get(), port);
 			return;
 		}
 		

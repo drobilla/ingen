@@ -43,12 +43,12 @@ public:
 	
 	void init(ControlPanel* panel, SharedPtr<PortModel> pm, bool separator);
 
-	~ControlGroup() { delete m_separator; }
+	~ControlGroup() { delete _separator; }
 	
-	inline const SharedPtr<PortModel> port_model() const { return m_port_model; }
+	inline const SharedPtr<PortModel> port_model() const { return _port_model; }
 
 	void remove_separator() {
-		assert(m_has_separator); remove(*m_separator); delete m_separator;
+		assert(_has_separator); remove(*_separator); delete _separator;
 	}
 
 protected:
@@ -56,11 +56,11 @@ protected:
 	virtual void set_value(float value) = 0;
 	virtual void metadata_update(const string& key, const Atom& value) = 0;
 
-	ControlPanel*        m_control_panel;
-	SharedPtr<PortModel> m_port_model;
-	bool                 m_has_separator;
-	Gtk::VSeparator*     m_separator;
-	bool                 m_enable_signal;
+	ControlPanel*        _control_panel;
+	SharedPtr<PortModel> _port_model;
+	bool                 _has_separator;
+	Gtk::VSeparator*     _separator;
+	bool                 _enable_signal;
 };
 
 
@@ -95,26 +95,26 @@ private:
 
 	bool slider_pressed(GdkEvent* ev);
 
-	bool m_enabled;
+	bool _enabled;
 	
-	Gtk::Label*      m_name_label;
-	Gtk::SpinButton* m_min_spinner;
-	Gtk::SpinButton* m_max_spinner;
-	//Gtk::SpinButton* m_value_spinner;
-	Gtk::VScale*     m_slider;
+	Gtk::Label*      _name_label;
+	Gtk::SpinButton* _min_spinner;
+	Gtk::SpinButton* _max_spinner;
+	//Gtk::SpinButton* _value_spinner;
+	Gtk::VScale*     _slider;
 };
 
 
 inline void
 SliderControlGroup::set_value(const float val)
 {
-	m_enable_signal = false;
-	//if (m_enabled) {
-		if (m_slider->get_value() != val)
-			m_slider->set_value(val);
+	_enable_signal = false;
+	//if (_enabled) {
+		if (_slider->get_value() != val)
+			_slider->set_value(val);
 		//m_value_spinner->set_value(val);
 	//}
-	m_enable_signal = true;
+	_enable_signal = true;
 }
 
 
@@ -138,10 +138,10 @@ private:
 
 	void update_value();
 	
-	bool            m_enable_signal;
-	Gtk::Alignment  m_alignment;
-	Gtk::Label      m_name_label;
-	Gtk::SpinButton m_spinner;
+	bool            _enable_signal;
+	Gtk::Alignment  _alignment;
+	Gtk::Label      _name_label;
+	Gtk::SpinButton _spinner;
 };
 
 
@@ -163,10 +163,10 @@ private:
 
 	void update_value();
 	
-	bool             m_enable_signal;
-	Gtk::Alignment   m_alignment;
-	Gtk::Label       m_name_label;
-	Gtk::CheckButton m_checkbutton;
+	bool             _enable_signal;
+	Gtk::Alignment   _alignment;
+	Gtk::Label       _name_label;
+	Gtk::CheckButton _checkbutton;
 };
 #endif
 

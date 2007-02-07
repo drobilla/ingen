@@ -41,8 +41,8 @@ public:
 	void post_process();
 
 private:
-	string m_patch_path;
-	Patch* m_patch;
+	string _patch_path;
+	Patch* _patch;
 };
 
 

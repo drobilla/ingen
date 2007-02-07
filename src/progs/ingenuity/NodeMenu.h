@@ -50,7 +50,7 @@ public:
 	bool has_control_inputs();
 	
 	//virtual void show_menu(GdkEventButton* event)
-	//{ m_menu.popup(event->button, event->time); }
+	//{ _menu.popup(event->button, event->time); }
 
 protected:
 	
@@ -64,7 +64,7 @@ protected:
 	void on_menu_learn();
 	void on_menu_disconnect_all();
 
-	//Gtk::Menu                   m_menu;
+	//Gtk::Menu                   _menu;
 	SharedPtr<NodeModel>       _node;
 	Glib::RefPtr<Gtk::MenuItem> _controls_menuitem;
 };

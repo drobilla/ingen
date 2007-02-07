@@ -32,8 +32,8 @@ namespace Ingen {
 
 RequestPluginEvent::RequestPluginEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& uri)
 : QueuedEvent(engine, responder, timestamp),
-  m_uri(uri),
-  m_plugin(NULL)
+  _uri(uri),
+  _plugin(NULL)
 {
 }
 
@@ -41,8 +41,8 @@ RequestPluginEvent::RequestPluginEvent(Engine& engine, SharedPtr<Responder> resp
 void
 RequestPluginEvent::pre_process()
 {
-	m_client = _engine.broadcaster()->client(_responder->client_key());
-	m_plugin = _engine.node_factory()->plugin(m_uri);
+	_client = _engine.broadcaster()->client(_responder->client_key());
+	_plugin = _engine.node_factory()->plugin(_uri);
 
 	QueuedEvent::pre_process();
 }
@@ -59,14 +59,14 @@ RequestPluginEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 void
 RequestPluginEvent::post_process()
 {
-	if (!m_plugin) {
+	if (!_plugin) {
 		_responder->respond_error("Unable to find plugin requested.");
 	
-	} else if (m_client) {
+	} else if (_client) {
 
 		_responder->respond_ok();
-		assert(m_plugin->uri() == m_uri);
-		m_client->new_plugin(m_uri, m_plugin->type_uri(), m_plugin->name());
+		assert(_plugin->uri() == _uri);
+		_client->new_plugin(_uri, _plugin->type_uri(), _plugin->name());
 
 	} else {
 		_responder->respond_error("Unable to find client to send plugin.");

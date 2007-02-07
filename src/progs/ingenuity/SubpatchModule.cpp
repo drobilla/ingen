@@ -33,7 +33,7 @@ namespace Ingenuity {
 
 SubpatchModule::SubpatchModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<PatchModel> patch)
 : NodeModule(canvas, patch),
-  m_patch(patch)
+  _patch(patch)
 {
 	assert(canvas);
 	assert(patch);
@@ -43,15 +43,15 @@ SubpatchModule::SubpatchModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<
 void
 SubpatchModule::on_double_click(GdkEventButton* event)
 {
-	assert(m_patch);
+	assert(_patch);
 
-	SharedPtr<PatchModel> parent = PtrCast<PatchModel>(m_patch->parent());
+	SharedPtr<PatchModel> parent = PtrCast<PatchModel>(_patch->parent());
 
 	PatchWindow* const preferred = ( (parent && (event->state & GDK_SHIFT_MASK))
 		? NULL
 		: App::instance().window_factory()->patch_window(parent) );
 
-	App::instance().window_factory()->present_patch(m_patch, preferred);
+	App::instance().window_factory()->present_patch(_patch, preferred);
 }
 
 
@@ -62,15 +62,15 @@ SubpatchModule::on_double_click(GdkEventButton* event)
 void
 SubpatchModule::browse_to_patch()
 {
-	assert(m_patch->parent());
+	assert(_patch->parent());
 	
-	SharedPtr<PatchModel> parent = PtrCast<PatchModel>(m_patch->parent());
+	SharedPtr<PatchModel> parent = PtrCast<PatchModel>(_patch->parent());
 
 	PatchWindow* const preferred = ( (parent)
 		? App::instance().window_factory()->patch_window(parent)
 		: NULL );
 	
-	App::instance().window_factory()->present_patch(m_patch, preferred);
+	App::instance().window_factory()->present_patch(_patch, preferred);
 }
 
 
@@ -86,7 +86,7 @@ SubpatchModule::show_dialog()
 void
 SubpatchModule::menu_remove()
 {
-	App::instance().engine()->destroy(m_patch->path());
+	App::instance().engine()->destroy(_patch->path());
 }
 
 } // namespace Ingenuity

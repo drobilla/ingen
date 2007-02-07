@@ -44,11 +44,11 @@ public:
 private:
 	enum ErrorType { NO_ERROR, PORT_NOT_FOUND, TYPE_MISMATCH };
 	
-	int       m_voice_num;
-	string    m_port_path;
-	float     m_val;
-	Port*     m_port;
-	ErrorType m_error;
+	int       _voice_num;
+	string    _port_path;
+	float     _val;
+	Port*     _port;
+	ErrorType _error;
 };
 
 

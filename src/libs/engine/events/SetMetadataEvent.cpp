@@ -29,10 +29,10 @@ namespace Ingen {
 
 SetMetadataEvent::SetMetadataEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& key, const Atom& value)
 : QueuedEvent(engine, responder, timestamp),
-  m_path(path),
-  m_key(key),
-  m_value(value),
-  m_object(NULL)
+  _path(path),
+  _key(key),
+  _value(value),
+  _object(NULL)
 {
 }
 
@@ -40,13 +40,13 @@ SetMetadataEvent::SetMetadataEvent(Engine& engine, SharedPtr<Responder> responde
 void
 SetMetadataEvent::pre_process()
 {
-	m_object = _engine.object_store()->find(m_path);
-	if (m_object == NULL) {
+	_object = _engine.object_store()->find(_path);
+	if (_object == NULL) {
 		QueuedEvent::pre_process();
 		return;
 	}
 
-	m_object->set_metadata(m_key, m_value);
+	_object->set_metadata(_key, _value);
 
 	QueuedEvent::pre_process();
 }
@@ -63,13 +63,13 @@ SetMetadataEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 void
 SetMetadataEvent::post_process()
 {
-	if (m_object == NULL) {
+	if (_object == NULL) {
 		string msg = "Unable to find object ";
-		msg += m_path;
+		msg += _path;
 		_responder->respond_error(msg);
 	} else {
 		_responder->respond_ok();
-		_engine.broadcaster()->send_metadata_update(m_path, m_key, m_value);
+		_engine.broadcaster()->send_metadata_update(_path, _key, _value);
 	}
 }
 

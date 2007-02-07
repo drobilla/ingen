@@ -47,12 +47,12 @@ public:
 	void ok_clicked();
 
 private:
-	SharedPtr<PatchModel> m_patch_model;
+	SharedPtr<PatchModel> _patch_model;
 
-	Gtk::Entry*    m_author_entry;
-	Gtk::TextView* m_textview;
-	Gtk::Button*   m_cancel_button;
-	Gtk::Button*   m_ok_button;
+	Gtk::Entry*    _author_entry;
+	Gtk::TextView* _textview;
+	Gtk::Button*   _cancel_button;
+	Gtk::Button*   _ok_button;
 };
 
 

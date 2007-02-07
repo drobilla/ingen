@@ -66,7 +66,7 @@ public:
 	
 	void show_control_window();
 
-	SharedPtr<NodeModel> node() const { return m_node; }
+	SharedPtr<NodeModel> node() const { return _node; }
 
 protected:
 	NodeModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeModel> node);
@@ -79,8 +79,8 @@ protected:
 	void add_port(SharedPtr<PortModel> port, bool resize=true);
 	void remove_port(SharedPtr<PortModel> port);
 	
-	SharedPtr<NodeModel> m_node;
-	NodeMenu             m_menu;
+	SharedPtr<NodeModel> _node;
+	NodeMenu             _menu;
 };
 
 

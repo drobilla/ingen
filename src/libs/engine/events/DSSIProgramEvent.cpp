@@ -30,10 +30,10 @@ namespace Ingen {
 
 DSSIProgramEvent::DSSIProgramEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& node_path, int bank, int program)
 : QueuedEvent(engine, responder, timestamp),
-  m_node_path(node_path),
-  m_bank(bank),
-  m_program(program),
-  m_node(NULL)
+  _node_path(node_path),
+  _bank(bank),
+  _program(program),
+  _node(NULL)
 {
 }
 
@@ -41,10 +41,10 @@ DSSIProgramEvent::DSSIProgramEvent(Engine& engine, SharedPtr<Responder> responde
 void
 DSSIProgramEvent::pre_process()
 {
-	Node* node = _engine.object_store()->find_node(m_node_path);
+	Node* node = _engine.object_store()->find_node(_node_path);
 
 	if (node != NULL && node->plugin()->type() == Plugin::DSSI)
-		m_node = (DSSINode*)node;
+		_node = (DSSINode*)node;
 
 	QueuedEvent::pre_process();
 }
@@ -55,21 +55,21 @@ DSSIProgramEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {
 	QueuedEvent::execute(nframes, start, end);
 
-	if (m_node != NULL)
-		m_node->program(m_bank, m_program);
+	if (_node != NULL)
+		_node->program(_bank, _program);
 }
 
 
 void
 DSSIProgramEvent::post_process()
 {
-	if (m_node == NULL) {
-		cerr << "Unable to find DSSI node " << m_node_path << endl;
+	if (_node == NULL) {
+		cerr << "Unable to find DSSI node " << _node_path << endl;
 	} else {
 		// sends program as metadata in the form bank/program
 		char* temp_buf = new char[16];
-		snprintf(temp_buf, 16, "%d/%d", m_bank, m_program);
-		_engine.broadcaster()->send_metadata_update(m_node_path, "dssi-program", temp_buf);
+		snprintf(temp_buf, 16, "%d/%d", _bank, _program);
+		_engine.broadcaster()->send_metadata_update(_node_path, "dssi-program", temp_buf);
 	}
 }
 

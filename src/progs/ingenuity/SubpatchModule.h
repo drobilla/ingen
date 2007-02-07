@@ -56,10 +56,10 @@ public:
 	void browse_to_patch();
 	void menu_remove();
 
-	SharedPtr<PatchModel> patch() { return m_patch; }
+	SharedPtr<PatchModel> patch() { return _patch; }
 
 protected:
-	SharedPtr<PatchModel> m_patch;
+	SharedPtr<PatchModel> _patch;
 };
 
 

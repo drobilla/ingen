@@ -31,11 +31,11 @@ namespace Ingenuity {
 	
 
 LashController::LashController(lash_args_t* args)
-: m_client(NULL)
+: _client(NULL)
 {
-	m_client = lash_init(args, PACKAGE_NAME,
+	_client = lash_init(args, PACKAGE_NAME,
 		/*LASH_Config_Data_Set|*/LASH_Config_File, LASH_PROTOCOL(2, 0));
-	if (m_client == NULL) {
+	if (_client == NULL) {
 		cerr << "[LashController] Failed to connect to LASH.  Session management will not function." << endl;
 	} else {
 		cout << "[LashController] Lash initialised" << endl;
@@ -43,15 +43,15 @@ LashController::LashController(lash_args_t* args)
 	
 	lash_event_t* event = lash_event_new_with_type(LASH_Client_Name);
 	lash_event_set_string(event, "Ingenuity");
-	lash_send_event(m_client, event);			
+	lash_send_event(_client, event);			
 }
 
 
 LashController::~LashController()
 {
-	if (m_client != NULL) {
+	if (_client != NULL) {
 		lash_event_t* quit_event = lash_event_new_with_type(LASH_Quit);
-		lash_send_event(m_client, quit_event);
+		lash_send_event(_client, quit_event);
 	}
 }
 
@@ -59,19 +59,19 @@ LashController::~LashController()
 void
 LashController::process_events()
 {
-	assert(m_client != NULL);
+	assert(_client != NULL);
 
 	lash_event_t*  ev = NULL;
 	lash_config_t* conf = NULL;
 
 	// Process events
-	while ((ev = lash_get_event(m_client)) != NULL) {
+	while ((ev = lash_get_event(_client)) != NULL) {
 		handle_event(ev);
 		lash_event_destroy(ev);	
 	}
 
 	// Process configs
-	while ((conf = lash_get_config(m_client)) != NULL) {
+	while ((conf = lash_get_config(_client)) != NULL) {
 		handle_config(conf);
 		lash_config_destroy(conf);	
 	}
@@ -90,23 +90,23 @@ LashController::handle_event(lash_event_t* ev)
 	if (type == LASH_Save_File) {
 		cout << "[LashController] LASH Save File - " << str << endl;
 		save(str);
-		lash_send_event(m_client, lash_event_new_with_type(LASH_Save_File));
+		lash_send_event(_client, lash_event_new_with_type(LASH_Save_File));
 	} else if (type == LASH_Restore_File) {
 		cout << "[LashController] LASH Restore File - " << str << endl;
 		cerr << "LASH RESTORE NOT YET (RE)IMPLEMENTED." << endl;
 		/*_controller->load_session_blocking(str + "/session");
 		_controller->lash_restore_finished();
-		lash_send_event(m_client, lash_event_new_with_type(LASH_Restore_File));
+		lash_send_event(_client, lash_event_new_with_type(LASH_Restore_File));
 		*/
 	/*} else if (type == LASH_Save_Data_Set) {
 		//cout << "[LashController] LASH Save Data Set - " << endl;
 		
 		// Tell LASH we're done
-		lash_send_event(m_client, lash_event_new_with_type(LASH_Save_Data_Set));
+		lash_send_event(_client, lash_event_new_with_type(LASH_Save_Data_Set));
 		*/
 	} else if (type == LASH_Quit) {
 		cout << "[LashController] LASH Quit" << endl;
-		m_client = NULL;
+		_client = NULL;
 		App::instance().quit();
 	} else {
 		cerr << "[LashController] Unhandled LASH event, type: " << static_cast<int>(type) << endl;
@@ -139,15 +139,15 @@ LashController::save(const string& dir)
 	
 	// Save every patch under dir with it's path as a filename
 	// (so the dir structure will resemble the patch heirarchy)
-	for (map<string,PatchController*>::iterator i = m_app->patches().begin();
-			i != m_app->patches().end(); ++i) {
+	for (map<string,PatchController*>::iterator i = _app->patches().begin();
+			i != _app->patches().end(); ++i) {
 		pc = (*i).second;
 		pc->model()->filename(dir + pc->model()->path() + ".om");
 	}
 	
 	// Create directories
-	for (map<string,PatchController*>::iterator i = m_app->patches().begin();
-			i != m_app->patches().end(); ++i) {
+	for (map<string,PatchController*>::iterator i = _app->patches().begin();
+			i != _app->patches().end(); ++i) {
 		pc = (*i).second;
 		if (pc->model()->parent() != NULL) {
 			string path = Path::parent(pc->model()->path()).substr(1) + "/";

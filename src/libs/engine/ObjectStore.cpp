@@ -60,7 +60,7 @@ ObjectStore::find_port(const Path& path)
 GraphObject*
 ObjectStore::find(const Path& path)
 {
-	return m_objects.find(path);
+	return _objects.find(path);
 }
 
 
@@ -70,7 +70,7 @@ void
 ObjectStore::add(GraphObject* o)
 {
 	cerr << "[ObjectStore] Adding " << o->path() << endl;
-	m_objects.insert(new TreeNode<GraphObject*>(o->path(), o));
+	_objects.insert(new TreeNode<GraphObject*>(o->path(), o));
 }
 
 
@@ -80,7 +80,7 @@ void
 ObjectStore::add(TreeNode<GraphObject*>* tn)
 {
 	cerr << "[ObjectStore] Adding " << tn->key() << endl;
-	m_objects.insert(tn);
+	_objects.insert(tn);
 }
 
 
@@ -93,7 +93,7 @@ ObjectStore::add(TreeNode<GraphObject*>* tn)
 TreeNode<GraphObject*>*
 ObjectStore::remove(const string& path)
 {
-	TreeNode<GraphObject*>* const removed = m_objects.remove(path);
+	TreeNode<GraphObject*>* const removed = _objects.remove(path);
 
 	if (removed == NULL)
 		cerr << "[ObjectStore] WARNING: Removing " << path << " failed." << endl;

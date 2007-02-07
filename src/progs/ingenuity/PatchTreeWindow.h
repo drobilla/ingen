@@ -60,7 +60,7 @@ protected:
 
 	Gtk::TreeModel::iterator find_patch(Gtk::TreeModel::Children root, const Path& path);
 	
-	PatchTreeView* m_patches_treeview;
+	PatchTreeView* _patches_treeview;
 
 	struct PatchTreeModelColumns : public Gtk::TreeModel::ColumnRecord
 	{
@@ -72,10 +72,10 @@ protected:
 		Gtk::TreeModelColumn<SharedPtr<PatchModel> > patch_model_col;
 	};
 
-	bool                             m_enable_signal;
-	PatchTreeModelColumns            m_patch_tree_columns;
-	Glib::RefPtr<Gtk::TreeStore>     m_patch_treestore;
-	Glib::RefPtr<Gtk::TreeSelection> m_patch_tree_selection;
+	bool                             _enable_signal;
+	PatchTreeModelColumns            _patch_tree_columns;
+	Glib::RefPtr<Gtk::TreeStore>     _patch_treestore;
+	Glib::RefPtr<Gtk::TreeSelection> _patch_tree_selection;
 };
 
 
@@ -87,19 +87,19 @@ public:
 	: Gtk::TreeView(cobject)
 	{}
 
-	void set_window(PatchTreeWindow* win) { m_window = win; }
+	void set_window(PatchTreeWindow* win) { _window = win; }
 	
 	bool on_button_press_event(GdkEventButton* ev) {
 		bool ret = Gtk::TreeView::on_button_press_event(ev);
 	
 		if ((ev->type == GDK_BUTTON_PRESS) && (ev->button == 3))
-			m_window->show_patch_menu(ev);
+			_window->show_patch_menu(ev);
 
 		return ret;
 	}
 	
 private:
-	PatchTreeWindow* m_window;
+	PatchTreeWindow* _window;
 
 }; // struct PatchTreeView
 

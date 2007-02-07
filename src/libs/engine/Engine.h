@@ -58,39 +58,39 @@ public:
 	
 	/** Set the quit flag that should kill all threads and exit cleanly.
 	 * Note that it will take some time. */
-	void quit() { m_quit_flag = true; }
+	void quit() { _quit_flag = true; }
 	
 	bool activate(SharedPtr<AudioDriver> ad, SharedPtr<EventSource> es);
 	void deactivate();
 
-	bool activated() { return m_activated; }
+	bool activated() { return _activated; }
 
-	EventSource*       event_source()       const { return m_event_source.get(); }
-	AudioDriver*       audio_driver()       const { return m_audio_driver.get(); }
-	MidiDriver*        midi_driver()        const { return m_midi_driver; }
-	Maid*              maid()               const { return m_maid; }
-	PostProcessor*     post_processor()     const { return m_post_processor; }
-	ClientBroadcaster* broadcaster()        const { return m_broadcaster; }
-	ObjectStore*       object_store()       const { return m_object_store; }
-	NodeFactory*       node_factory()       const { return m_node_factory; }
-	LashDriver*        lash_driver()        const { return m_lash_driver; }
+	EventSource*       event_source()       const { return _event_source.get(); }
+	AudioDriver*       audio_driver()       const { return _audio_driver.get(); }
+	MidiDriver*        midi_driver()        const { return _midi_driver; }
+	Maid*              maid()               const { return _maid; }
+	PostProcessor*     post_processor()     const { return _post_processor; }
+	ClientBroadcaster* broadcaster()        const { return _broadcaster; }
+	ObjectStore*       object_store()       const { return _object_store; }
+	NodeFactory*       node_factory()       const { return _node_factory; }
+	LashDriver*        lash_driver()        const { return _lash_driver; }
 
 	/** Return the active driver for the given (template parameter) type */
 	template<typename T> Driver<T>* driver();
 	
 private:
-	SharedPtr<EventSource> m_event_source;
-	SharedPtr<AudioDriver> m_audio_driver;
-	MidiDriver*            m_midi_driver;
-	Maid*                  m_maid;
-	PostProcessor*         m_post_processor;
-	ClientBroadcaster*     m_broadcaster;
-	ObjectStore*           m_object_store;
-	NodeFactory*           m_node_factory;
-	LashDriver*            m_lash_driver;
+	SharedPtr<EventSource> _event_source;
+	SharedPtr<AudioDriver> _audio_driver;
+	MidiDriver*            _midi_driver;
+	Maid*                  _maid;
+	PostProcessor*         _post_processor;
+	ClientBroadcaster*     _broadcaster;
+	ObjectStore*           _object_store;
+	NodeFactory*           _node_factory;
+	LashDriver*            _lash_driver;
 	
-	bool m_quit_flag;
-	bool m_activated;
+	bool _quit_flag;
+	bool _activated;
 };
 
 

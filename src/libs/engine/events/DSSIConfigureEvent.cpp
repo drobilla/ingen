@@ -26,10 +26,10 @@ namespace Ingen {
 
 DSSIConfigureEvent::DSSIConfigureEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& node_path, const string& key, const string& val)
 : QueuedEvent(engine, responder, timestamp),
-  m_node_path(node_path),
-  m_key(key),
-  m_val(val),
-  m_node(NULL)
+  _node_path(node_path),
+  _key(key),
+  _val(val),
+  _node(NULL)
 {
 }
 
@@ -37,11 +37,11 @@ DSSIConfigureEvent::DSSIConfigureEvent(Engine& engine, SharedPtr<Responder> resp
 void
 DSSIConfigureEvent::pre_process()
 {
-	Node* node = _engine.object_store()->find_node(m_node_path);
+	Node* node = _engine.object_store()->find_node(_node_path);
 
 	if (node != NULL && node->plugin()->type() == Plugin::DSSI) {
-		m_node = (DSSINode*)node;
-		m_node->configure(m_key, m_val);
+		_node = (DSSINode*)node;
+		_node->configure(_key, _val);
 	}
 
 	QueuedEvent::pre_process();
@@ -59,12 +59,12 @@ DSSIConfigureEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 void
 DSSIConfigureEvent::post_process()
 {
-	if (m_node == NULL) {
-		cerr << "Unable to find DSSI node " << m_node_path << endl;
+	if (_node == NULL) {
+		cerr << "Unable to find DSSI node " << _node_path << endl;
 	} else {
 		string key = "dssi-configure--";
-		key += m_key;
-		_engine.broadcaster()->send_metadata_update(m_node_path, key, Atom(m_val.c_str()));
+		key += _key;
+		_engine.broadcaster()->send_metadata_update(_node_path, key, Atom(_val.c_str()));
 	}
 }
 

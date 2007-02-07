@@ -42,22 +42,22 @@ class ModelColumns : public Gtk::TreeModel::ColumnRecord
 {
 public:
   ModelColumns() {
-	  add(m_col_name);
-	  add(m_col_type);
-	  add(m_col_uri);
-	  add(m_col_label);
-	  //add(m_col_library);
-	  //add(m_col_label);
-	  add(m_col_plugin_model);
+	  add(_col_name);
+	  add(_col_type);
+	  add(_col_uri);
+	  add(_col_label);
+	  //add(_col_library);
+	  //add(_col_label);
+	  add(_col_plugin_model);
   }
 
-  Gtk::TreeModelColumn<Glib::ustring> m_col_name;
-  Gtk::TreeModelColumn<Glib::ustring> m_col_type;
-  Gtk::TreeModelColumn<Glib::ustring> m_col_uri;
+  Gtk::TreeModelColumn<Glib::ustring> _col_name;
+  Gtk::TreeModelColumn<Glib::ustring> _col_type;
+  Gtk::TreeModelColumn<Glib::ustring> _col_uri;
 
   // Not displayed:
-  Gtk::TreeModelColumn<Glib::ustring>            m_col_label;
-  Gtk::TreeModelColumn<SharedPtr<PluginModel> > m_col_plugin_model;
+  Gtk::TreeModelColumn<Glib::ustring>            _col_label;
+  Gtk::TreeModelColumn<SharedPtr<PluginModel> > _col_plugin_model;
 };
 
 
@@ -70,10 +70,10 @@ class CriteriaColumns : public Gtk::TreeModel::ColumnRecord
 public:
 	enum Criteria { NAME, TYPE, URI, };
 	
-	CriteriaColumns() { add(m_col_label); add(m_col_criteria); }
+	CriteriaColumns() { add(_col_label); add(_col_criteria); }
 	
-	Gtk::TreeModelColumn<Glib::ustring> m_col_label;
-	Gtk::TreeModelColumn<Criteria>      m_col_criteria;
+	Gtk::TreeModelColumn<Glib::ustring> _col_label;
+	Gtk::TreeModelColumn<Criteria>      _col_criteria;
 };
 
 
@@ -92,7 +92,7 @@ public:
 	void set_plugin_list(const std::map<string, SharedPtr<PluginModel> >& m);
 
 	void add_plugin(SharedPtr<PluginModel> plugin);
-	bool has_shown() const { return m_has_shown; }
+	bool has_shown() const { return _has_shown; }
 
 	void present(SharedPtr<PatchModel> patch, MetadataMap data);
 
@@ -112,31 +112,31 @@ private:
 	void plugin_selection_changed();
 	string generate_module_name(int offset = 0);
 
-	MetadataMap m_initial_data;
+	MetadataMap _initial_data;
 
-	SharedPtr<PatchModel> m_patch;
+	SharedPtr<PatchModel> _patch;
 
-	bool m_has_shown; // plugin list only populated on show to speed patch window creation
+	bool _has_shown; // plugin list only populated on show to speed patch window creation
 
-	Glib::RefPtr<Gtk::ListStore> m_plugins_liststore;
-	ModelColumns                 m_plugins_columns;
+	Glib::RefPtr<Gtk::ListStore> _plugins_liststore;
+	ModelColumns                 _plugins_columns;
 
-	Glib::RefPtr<Gtk::ListStore> m_criteria_liststore;
-	CriteriaColumns              m_criteria_columns;
+	Glib::RefPtr<Gtk::ListStore> _criteria_liststore;
+	CriteriaColumns              _criteria_columns;
 	
-	Glib::RefPtr<Gtk::TreeSelection> m_selection;
+	Glib::RefPtr<Gtk::TreeSelection> _selection;
 	
-	int m_plugin_name_offset; // see comments for generate_plugin_name
+	int _plugin_name_offset; // see comments for generate_plugin_name
 	
-	Gtk::TreeView*    m_plugins_treeview;
-	Gtk::CheckButton* m_polyphonic_checkbutton;
-	Gtk::Entry*       m_node_name_entry;
-	Gtk::Button*      m_clear_button;
-	Gtk::Button*      m_add_button;
-	//Gtk::Button*      m_close_button;
-	//Gtk::Button*      m_ok_button;
-	Gtk::ComboBox*    m_filter_combo;
-	Gtk::Entry*       m_search_entry;
+	Gtk::TreeView*    _plugins_treeview;
+	Gtk::CheckButton* _polyphonic_checkbutton;
+	Gtk::Entry*       _node_name_entry;
+	Gtk::Button*      _clear_button;
+	Gtk::Button*      _add_button;
+	//Gtk::Button*      _close_button;
+	//Gtk::Button*      _ok_button;
+	Gtk::ComboBox*    _filter_combo;
+	Gtk::Entry*       _search_entry;
 };
 
 

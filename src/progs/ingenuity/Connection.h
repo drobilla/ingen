@@ -39,15 +39,15 @@ public:
 	           boost::shared_ptr<LibFlowCanvas::Port>       src,
 	           boost::shared_ptr<LibFlowCanvas::Port>       dst)
 	: LibFlowCanvas::Connection(canvas, src, dst)
-	, m_connection_model(model)
+	, _connection_model(model)
 	{}
 
 	virtual ~Connection() {}
 
-	SharedPtr<ConnectionModel> model() const { return m_connection_model; }
+	SharedPtr<ConnectionModel> model() const { return _connection_model; }
 	
 private:
-	SharedPtr<ConnectionModel> m_connection_model;
+	SharedPtr<ConnectionModel> _connection_model;
 };
 
 

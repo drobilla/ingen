@@ -29,10 +29,10 @@ namespace Ingen {
 
 RequestMetadataEvent::RequestMetadataEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& node_path, const string& key)
 : QueuedEvent(engine, responder, timestamp),
-  m_path(node_path),
-  m_key(key),
-  m_object(NULL),
-  m_client(SharedPtr<ClientInterface>())
+  _path(node_path),
+  _key(key),
+  _object(NULL),
+  _client(SharedPtr<ClientInterface>())
 {
 }
 
@@ -40,17 +40,17 @@ RequestMetadataEvent::RequestMetadataEvent(Engine& engine, SharedPtr<Responder> 
 void
 RequestMetadataEvent::pre_process()
 {
-	m_client = _engine.broadcaster()->client(_responder->client_key());
+	_client = _engine.broadcaster()->client(_responder->client_key());
 	
-	if (m_client) {
-		m_object = _engine.object_store()->find(m_path);
-		if (m_object == NULL) {
+	if (_client) {
+		_object = _engine.object_store()->find(_path);
+		if (_object == NULL) {
 			QueuedEvent::pre_process();
 			return;
 		}
 	}
 
-	m_value = m_object->get_metadata(m_key);
+	_value = _object->get_metadata(_key);
 	
 	QueuedEvent::pre_process();
 }
@@ -59,14 +59,14 @@ RequestMetadataEvent::pre_process()
 void
 RequestMetadataEvent::post_process()
 {
-	if (m_client) {
-		if (!m_object) {
+	if (_client) {
+		if (!_object) {
 			string msg = "Unable to find metadata subject ";
-			msg += m_path;
+			msg += _path;
 			_responder->respond_error(msg);
 		} else {
 			_responder->respond_ok();
-			m_client->metadata_update(m_path, m_key, m_value);
+			_client->metadata_update(_path, _key, _value);
 		}
 	} else {
 		_responder->respond_error("Unknown client");

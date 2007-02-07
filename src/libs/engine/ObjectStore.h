@@ -51,10 +51,10 @@ public:
 	void                 add(TreeNode<GraphObject*>* o);
 	TreeNode<GraphObject*>* remove(const string& key);
 	
-	const Tree<GraphObject*>& objects() { return m_objects; }
+	const Tree<GraphObject*>& objects() { return _objects; }
 
 private:
-	Tree<GraphObject*> m_objects;
+	Tree<GraphObject*> _objects;
 };
 
 

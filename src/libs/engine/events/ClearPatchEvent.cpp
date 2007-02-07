@@ -32,9 +32,9 @@ namespace Ingen {
 
 ClearPatchEvent::ClearPatchEvent(Engine& engine, SharedPtr<Responder> responder, FrameTime time, QueuedEventSource* source, const string& patch_path)
 : QueuedEvent(engine, responder, time, true, source),
-  m_patch_path(patch_path),
-  m_patch(NULL),
-  m_process(false)
+  _patch_path(patch_path),
+  _patch(NULL),
+  _process(false)
 {
 }
 
@@ -42,13 +42,13 @@ ClearPatchEvent::ClearPatchEvent(Engine& engine, SharedPtr<Responder> responder,
 void
 ClearPatchEvent::pre_process()
 {
-	m_patch = _engine.object_store()->find_patch(m_patch_path);
+	_patch = _engine.object_store()->find_patch(_patch_path);
 	
-	if (m_patch != NULL) {
+	if (_patch != NULL) {
 	
-		m_process = m_patch->enabled();
+		_process = _patch->enabled();
 
-		for (List<Node*>::const_iterator i = m_patch->nodes().begin(); i != m_patch->nodes().end(); ++i)
+		for (List<Node*>::const_iterator i = _patch->nodes().begin(); i != _patch->nodes().end(); ++i)
 			(*i)->remove_from_store();
 	}
 
@@ -61,16 +61,16 @@ ClearPatchEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {
 	QueuedEvent::execute(nframes, start, end);
 
-	if (m_patch != NULL) {
-		m_patch->disable();
+	if (_patch != NULL) {
+		_patch->disable();
 		
 		cerr << "FIXME: CLEAR PATCH\n";
-		//for (List<Node*>::const_iterator i = m_patch->nodes().begin(); i != m_patch->nodes().end(); ++i)
+		//for (List<Node*>::const_iterator i = _patch->nodes().begin(); i != _patch->nodes().end(); ++i)
 		//	(*i)->remove_from_patch();
 
-		if (m_patch->process_order() != NULL) {
-			_engine.maid()->push(m_patch->process_order());
-			m_patch->process_order(NULL);
+		if (_patch->process_order() != NULL) {
+			_engine.maid()->push(_patch->process_order());
+			_patch->process_order(NULL);
 		}
 	}
 }
@@ -79,34 +79,34 @@ ClearPatchEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 void
 ClearPatchEvent::post_process()
 {	
-	if (m_patch != NULL) {
+	if (_patch != NULL) {
 		// Delete all nodes
-		for (List<Node*>::iterator i = m_patch->nodes().begin(); i != m_patch->nodes().end(); ++i) {
+		for (List<Node*>::iterator i = _patch->nodes().begin(); i != _patch->nodes().end(); ++i) {
 			(*i)->deactivate();
 			delete *i;
 		}
-		m_patch->nodes().clear();
+		_patch->nodes().clear();
 
 		// Delete all connections
-		for (List<Connection*>::iterator i = m_patch->connections().begin(); i != m_patch->connections().end(); ++i)
+		for (List<Connection*>::iterator i = _patch->connections().begin(); i != _patch->connections().end(); ++i)
 			delete *i;
-		m_patch->connections().clear();
+		_patch->connections().clear();
 		
 		// Restore patch's run state
-		if (m_process)
-			m_patch->enable();
+		if (_process)
+			_patch->enable();
 		else
-			m_patch->disable();
+			_patch->disable();
 
 		// Make sure everything's sane
-		assert(m_patch->nodes().size() == 0);
-		assert(m_patch->connections().size() == 0);
+		assert(_patch->nodes().size() == 0);
+		assert(_patch->connections().size() == 0);
 		
 		// Reply
 		_responder->respond_ok();
-		_engine.broadcaster()->send_patch_cleared(m_patch_path);
+		_engine.broadcaster()->send_patch_cleared(_patch_path);
 	} else {
-		_responder->respond_error(string("Patch ") + m_patch_path + " not found");
+		_responder->respond_error(string("Patch ") + _patch_path + " not found");
 	}
 	
 	_source->unblock();

@@ -27,11 +27,11 @@ using std::string;
 NodePropertiesWindow::NodePropertiesWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml)
 : Gtk::Window(cobject)
 {
-	glade_xml->get_widget("node_properties_path_label", m_node_path_label);
-	glade_xml->get_widget("node_properties_polyphonic_checkbutton", m_node_polyphonic_toggle);
-	glade_xml->get_widget("node_properties_plugin_type_label", m_plugin_type_label);
-	glade_xml->get_widget("node_properties_plugin_uri_label", m_plugin_uri_label);
-	glade_xml->get_widget("node_properties_plugin_name_label", m_plugin_name_label);
+	glade_xml->get_widget("node_properties_path_label", _node_path_label);
+	glade_xml->get_widget("node_properties_polyphonic_checkbutton", _node_polyphonic_toggle);
+	glade_xml->get_widget("node_properties_plugin_type_label", _plugin_type_label);
+	glade_xml->get_widget("node_properties_plugin_uri_label", _plugin_uri_label);
+	glade_xml->get_widget("node_properties_plugin_name_label", _plugin_name_label);
 }
 
 
@@ -43,19 +43,19 @@ NodePropertiesWindow::set_node(SharedPtr<NodeModel> node_model)
 {
 	assert(node_model);
 	
-	m_node_model = node_model;
+	_node_model = node_model;
 
 	set_title(node_model->path() + " Properties");
 	
-	m_node_path_label->set_text(node_model->path());
-	m_node_polyphonic_toggle->set_active(node_model->polyphonic());
+	_node_path_label->set_text(node_model->path());
+	_node_polyphonic_toggle->set_active(node_model->polyphonic());
 
 	SharedPtr<PluginModel> pm = node_model->plugin();
 	
 	if (pm) {
-		m_plugin_type_label->set_text(pm->type_uri());
-		m_plugin_uri_label->set_text(pm->uri());
-		m_plugin_name_label->set_text(pm->name());
+		_plugin_type_label->set_text(pm->type_uri());
+		_plugin_uri_label->set_text(pm->uri());
+		_plugin_name_label->set_text(pm->name());
 	}
 }
 

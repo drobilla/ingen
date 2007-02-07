@@ -30,22 +30,22 @@ namespace Ingen {
  */
 SetPortValueQueuedEvent::SetPortValueQueuedEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, size_t voice_num, const string& port_path, Sample val)
 : QueuedEvent(engine, responder, timestamp),
-  m_voice_num(voice_num),
-  m_port_path(port_path),
-  m_val(val),
-  m_port(NULL),
-  m_error(NO_ERROR)
+  _voice_num(voice_num),
+  _port_path(port_path),
+  _val(val),
+  _port(NULL),
+  _error(NO_ERROR)
 {
 }
 
 
 SetPortValueQueuedEvent::SetPortValueQueuedEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& port_path, Sample val)
 : QueuedEvent(engine, responder, timestamp),
-  m_voice_num(-1),
-  m_port_path(port_path),
-  m_val(val),
-  m_port(NULL),
-  m_error(NO_ERROR)
+  _voice_num(-1),
+  _port_path(port_path),
+  _val(val),
+  _port(NULL),
+  _error(NO_ERROR)
 {
 }
 
@@ -53,13 +53,13 @@ SetPortValueQueuedEvent::SetPortValueQueuedEvent(Engine& engine, SharedPtr<Respo
 void
 SetPortValueQueuedEvent::pre_process()
 {
-	if (m_port == NULL)
-		m_port = _engine.object_store()->find_port(m_port_path);
+	if (_port == NULL)
+		_port = _engine.object_store()->find_port(_port_path);
 
-	if (m_port == NULL) {
-		m_error = PORT_NOT_FOUND;
-	} else if ( !(m_port->type() == DataType::FLOAT) ) {
-		m_error = TYPE_MISMATCH;
+	if (_port == NULL) {
+		_error = PORT_NOT_FOUND;
+	} else if ( !(_port->type() == DataType::FLOAT) ) {
+		_error = TYPE_MISMATCH;
 	}
 	
 	QueuedEvent::pre_process();
@@ -72,12 +72,12 @@ SetPortValueQueuedEvent::execute(SampleCount nframes, FrameTime start, FrameTime
 	QueuedEvent::execute(nframes, start, end);
 	assert(_time >= start && _time <= end);
 
-	if (m_error == NO_ERROR) {
-		assert(m_port != NULL);
-		if (m_voice_num == -1) 
-			((TypedPort<Sample>*)m_port)->set_value(m_val, _time - start);
+	if (_error == NO_ERROR) {
+		assert(_port != NULL);
+		if (_voice_num == -1) 
+			((TypedPort<Sample>*)_port)->set_value(_val, _time - start);
 		else
-			((TypedPort<Sample>*)m_port)->buffer(m_voice_num)->set(m_val, _time - start); // FIXME: check range
+			((TypedPort<Sample>*)_port)->buffer(_voice_num)->set(_val, _time - start); // FIXME: check range
 	}
 }
 
@@ -85,27 +85,27 @@ SetPortValueQueuedEvent::execute(SampleCount nframes, FrameTime start, FrameTime
 void
 SetPortValueQueuedEvent::post_process()
 {
-	if (m_error == NO_ERROR) {
-		assert(m_port != NULL);
+	if (_error == NO_ERROR) {
+		assert(_port != NULL);
 		
 		_responder->respond_ok();
-		_engine.broadcaster()->send_control_change(m_port_path, m_val);
+		_engine.broadcaster()->send_control_change(_port_path, _val);
 		
 		// Send patch port control change, if this is a bridge port
-		/*Port* parent_port = m_port->parent_node()->as_port();
+		/*Port* parent_port = _port->parent_node()->as_port();
 		if (parent_port != NULL) {
 			assert(parent_port->type() == DataType::FLOAT);
-			_engine.broadcaster()->send_control_change(parent_port->path(), m_val);
+			_engine.broadcaster()->send_control_change(parent_port->path(), _val);
 		}*/
 
-	} else if (m_error == PORT_NOT_FOUND) {
+	} else if (_error == PORT_NOT_FOUND) {
 		string msg = "Unable to find port ";
-		msg.append(m_port_path).append(" for set_port_value_slow");
+		msg.append(_port_path).append(" for set_port_value_slow");
 		_responder->respond_error(msg);
 	
-	} else if (m_error == TYPE_MISMATCH) {
+	} else if (_error == TYPE_MISMATCH) {
 		string msg = "Attempt to set ";
-		msg.append(m_port_path).append(" to incompatible type");
+		msg.append(_port_path).append(" to incompatible type");
 		_responder->respond_error(msg);
 	}
 }

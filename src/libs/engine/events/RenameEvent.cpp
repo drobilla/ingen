@@ -29,18 +29,18 @@ namespace Ingen {
 
 RenameEvent::RenameEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& name)
 : QueuedEvent(engine, responder, timestamp),
-  m_old_path(path),
-  m_name(name),
-  m_new_path(m_old_path.parent().base() + name),
-  m_parent_patch(NULL),
-  m_store_treenode(NULL),
-  m_error(NO_ERROR)
+  _old_path(path),
+  _name(name),
+  _new_path(_old_path.parent().base() + name),
+  _parent_patch(NULL),
+  _store_treenode(NULL),
+  _error(NO_ERROR)
 {
 	/*
-	if (m_old_path.parent() == "/")
-		m_new_path = string("/") + m_name;
+	if (_old_path.parent() == "/")
+		_new_path = string("/") + _name;
 	else
-		m_new_path = m_old_path.parent() +"/"+ m_name;*/
+		_new_path = _old_path.parent() +"/"+ _name;*/
 }
 
 
@@ -52,36 +52,36 @@ RenameEvent::~RenameEvent()
 void
 RenameEvent::pre_process()
 {
-	if (m_name.find("/") != string::npos) {
-		m_error = INVALID_NAME;
+	if (_name.find("/") != string::npos) {
+		_error = INVALID_NAME;
 		QueuedEvent::pre_process();
 		return;
 	}
 
-	if (_engine.object_store()->find(m_new_path)) {
-		m_error = OBJECT_EXISTS;
+	if (_engine.object_store()->find(_new_path)) {
+		_error = OBJECT_EXISTS;
 		QueuedEvent::pre_process();
 		return;
 	}
 	
-	GraphObject* obj = _engine.object_store()->find(m_old_path);
+	GraphObject* obj = _engine.object_store()->find(_old_path);
 
 	if (obj == NULL) {
-		m_error = OBJECT_NOT_FOUND;
+		_error = OBJECT_NOT_FOUND;
 		QueuedEvent::pre_process();
 		return;
 	}
 	
 	// Renaming only works for Nodes and Patches (which are Nodes)
 	/*if (obj->as_node() == NULL) {
-		m_error = OBJECT_NOT_RENAMABLE;
+		_error = OBJECT_NOT_RENAMABLE;
 		QueuedEvent::pre_process();
 		return;
 	}*/
 	
 	if (obj != NULL) {
-		obj->set_path(m_new_path);
-		assert(obj->path() == m_new_path);
+		obj->set_path(_new_path);
+		assert(obj->path() == _new_path);
 	}
 	
 	QueuedEvent::pre_process();
@@ -101,18 +101,18 @@ RenameEvent::post_process()
 {
 	string msg = "Unable to rename object - ";
 	
-	if (m_error == NO_ERROR) {
+	if (_error == NO_ERROR) {
 		_responder->respond_ok();
-		_engine.broadcaster()->send_rename(m_old_path, m_new_path);
+		_engine.broadcaster()->send_rename(_old_path, _new_path);
 	} else {
-		if (m_error == OBJECT_EXISTS)
-			msg.append("Object already exists at ").append(m_new_path);
-		else if (m_error == OBJECT_NOT_FOUND)
-			msg.append("Could not find object ").append(m_old_path);
-		else if (m_error == OBJECT_NOT_RENAMABLE)
-			msg.append(m_old_path).append(" is not renamable");
-		else if (m_error == INVALID_NAME)
-			msg.append(m_name).append(" is not a valid name");
+		if (_error == OBJECT_EXISTS)
+			msg.append("Object already exists at ").append(_new_path);
+		else if (_error == OBJECT_NOT_FOUND)
+			msg.append("Could not find object ").append(_old_path);
+		else if (_error == OBJECT_NOT_RENAMABLE)
+			msg.append(_old_path).append(" is not renamable");
+		else if (_error == INVALID_NAME)
+			msg.append(_name).append(" is not a valid name");
 
 		_responder->respond_error(msg);
 	}

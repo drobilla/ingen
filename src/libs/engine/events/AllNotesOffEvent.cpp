@@ -26,7 +26,7 @@ namespace Ingen {
  */
 AllNotesOffEvent::AllNotesOffEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, Patch* patch)
 : Event(engine, responder, timestamp),
-  m_patch(patch)
+  _patch(patch)
 {
 }
 
@@ -35,8 +35,8 @@ AllNotesOffEvent::AllNotesOffEvent(Engine& engine, SharedPtr<Responder> responde
  */
 AllNotesOffEvent::AllNotesOffEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& patch_path)
 : Event(engine, responder, timestamp),
-  m_patch(NULL),
-  m_patch_path(patch_path)
+  _patch(NULL),
+  _patch_path(patch_path)
 {
 }
 
@@ -46,11 +46,11 @@ AllNotesOffEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {
 	Event::execute(nframes, start, end);
 
-	if (m_patch == NULL && m_patch_path != "")
-		m_patch = _engine.object_store()->find_patch(m_patch_path);
+	if (_patch == NULL && _patch_path != "")
+		_patch = _engine.object_store()->find_patch(_patch_path);
 		
-	//if (m_patch != NULL)
-	//	for (List<MidiInNode*>::iterator j = m_patch->midi_in_nodes().begin(); j != m_patch->midi_in_nodes().end(); ++j)
+	//if (_patch != NULL)
+	//	for (List<MidiInNode*>::iterator j = _patch->midi_in_nodes().begin(); j != _patch->midi_in_nodes().end(); ++j)
 	//		(*j)->all_notes_off(offset);
 }
 
@@ -58,7 +58,7 @@ AllNotesOffEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 void
 AllNotesOffEvent::post_process()
 {
-	if (m_patch != NULL)
+	if (_patch != NULL)
 		_responder->respond_ok();
 }
 

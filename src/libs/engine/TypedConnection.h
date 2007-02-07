@@ -41,12 +41,12 @@ public:
 
 	void process(SampleCount nframes, FrameTime start, FrameTime end);
 
-	inline OutputPort<T>* src_port() const { return dynamic_cast<OutputPort<T>*>(m_src_port); }
-	inline InputPort<T>*  dst_port() const { return dynamic_cast<InputPort<T>*>(m_dst_port); }
+	inline OutputPort<T>* src_port() const { return dynamic_cast<OutputPort<T>*>(_src_port); }
+	inline InputPort<T>*  dst_port() const { return dynamic_cast<InputPort<T>*>(_dst_port); }
 
 	/** Used by some (recursive) events to prevent double disconnections */
-	bool pending_disconnection()       { return m_pending_disconnection; }
-	void pending_disconnection(bool b) { m_pending_disconnection = b; }
+	bool pending_disconnection()       { return _pending_disconnection; }
+	void pending_disconnection(bool b) { _pending_disconnection = b; }
 	
 	/** Get the buffer for a particular voice.
 	 * A TypedConnection is smart - it knows the destination port respondering the
@@ -58,10 +58,10 @@ public:
 	void set_buffer_size(size_t size);
 
 private:
-	Buffer<T>* m_local_buffer;  ///< Only used for poly->mono connections
-	bool       m_must_mix;
-	size_t     m_buffer_size;
-	bool       m_pending_disconnection;
+	Buffer<T>* _local_buffer;  ///< Only used for poly->mono connections
+	bool       _must_mix;
+	size_t     _buffer_size;
+	bool       _pending_disconnection;
 };
 
 
@@ -69,10 +69,10 @@ template <>
 inline Buffer<Sample>* 
 TypedConnection<Sample>::buffer(size_t voice) const
 {
-	TypedPort<Sample>* const src_port = (TypedPort<Sample>*)m_src_port;
+	TypedPort<Sample>* const src_port = (TypedPort<Sample>*)_src_port;
 	
-	if (m_must_mix) {
-		return m_local_buffer;
+	if (_must_mix) {
+		return _local_buffer;
 	} else {
 		if (src_port->poly() == 1)
 			return src_port->buffer(0);
@@ -87,10 +87,10 @@ inline Buffer<MidiMessage>*
 TypedConnection<MidiMessage>::buffer(size_t voice) const
 {
 	// No such thing as polyphonic MIDI ports
-	assert(m_src_port->poly() == 1);
-	assert(m_dst_port->poly() == 1);
+	assert(_src_port->poly() == 1);
+	assert(_dst_port->poly() == 1);
 
-	TypedPort<MidiMessage>* const src_port = (TypedPort<MidiMessage>*)m_src_port;
+	TypedPort<MidiMessage>* const src_port = (TypedPort<MidiMessage>*)_src_port;
 	return src_port->buffer(0);
 }
 

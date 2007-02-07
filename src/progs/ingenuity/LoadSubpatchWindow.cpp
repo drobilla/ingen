@@ -34,23 +34,23 @@ namespace Ingenuity {
 LoadSubpatchWindow::LoadSubpatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 : Gtk::FileChooserDialog(cobject)
 {
-	xml->get_widget("load_subpatch_name_from_file_radio", m_name_from_file_radio);
-	xml->get_widget("load_subpatch_name_from_user_radio", m_name_from_user_radio);
-	xml->get_widget("load_subpatch_name_entry", m_name_entry);
-	xml->get_widget("load_subpatch_poly_from_file_radio", m_poly_from_file_radio);
-	xml->get_widget("load_subpatch_poly_from_parent_radio", m_poly_from_parent_radio);
-	xml->get_widget("load_subpatch_poly_from_user_radio", m_poly_from_user_radio);
-	xml->get_widget("load_subpatch_poly_spinbutton", m_poly_spinbutton);
-	xml->get_widget("load_subpatch_ok_button", m_ok_button);
-	xml->get_widget("load_subpatch_cancel_button", m_cancel_button);
+	xml->get_widget("load_subpatch_name_from_file_radio", _name_from_file_radio);
+	xml->get_widget("load_subpatch_name_from_user_radio", _name_from_user_radio);
+	xml->get_widget("load_subpatch_name_entry", _name_entry);
+	xml->get_widget("load_subpatch_poly_from_file_radio", _poly_from_file_radio);
+	xml->get_widget("load_subpatch_poly_from_parent_radio", _poly_from_parent_radio);
+	xml->get_widget("load_subpatch_poly_from_user_radio", _poly_from_user_radio);
+	xml->get_widget("load_subpatch_poly_spinbutton", _poly_spinbutton);
+	xml->get_widget("load_subpatch_ok_button", _ok_button);
+	xml->get_widget("load_subpatch_cancel_button", _cancel_button);
 
-	m_name_from_file_radio->signal_toggled().connect(sigc::mem_fun(this, &LoadSubpatchWindow::disable_name_entry));
-	m_name_from_user_radio->signal_toggled().connect(sigc::mem_fun(this, &LoadSubpatchWindow::enable_name_entry));
-	m_poly_from_file_radio->signal_toggled().connect(sigc::mem_fun(this, &LoadSubpatchWindow::disable_poly_spinner));
-	m_poly_from_parent_radio->signal_toggled().connect(sigc::mem_fun(this, &LoadSubpatchWindow::disable_poly_spinner));
-	m_poly_from_user_radio->signal_toggled().connect(sigc::mem_fun(this, &LoadSubpatchWindow::enable_poly_spinner));
-	m_ok_button->signal_clicked().connect(sigc::mem_fun(this, &LoadSubpatchWindow::ok_clicked));
-	m_cancel_button->signal_clicked().connect(sigc::mem_fun(this, &LoadSubpatchWindow::cancel_clicked));
+	_name_from_file_radio->signal_toggled().connect(sigc::mem_fun(this, &LoadSubpatchWindow::disable_name_entry));
+	_name_from_user_radio->signal_toggled().connect(sigc::mem_fun(this, &LoadSubpatchWindow::enable_name_entry));
+	_poly_from_file_radio->signal_toggled().connect(sigc::mem_fun(this, &LoadSubpatchWindow::disable_poly_spinner));
+	_poly_from_parent_radio->signal_toggled().connect(sigc::mem_fun(this, &LoadSubpatchWindow::disable_poly_spinner));
+	_poly_from_user_radio->signal_toggled().connect(sigc::mem_fun(this, &LoadSubpatchWindow::enable_poly_spinner));
+	_ok_button->signal_clicked().connect(sigc::mem_fun(this, &LoadSubpatchWindow::ok_clicked));
+	_cancel_button->signal_clicked().connect(sigc::mem_fun(this, &LoadSubpatchWindow::cancel_clicked));
 
 	Gtk::FileFilter filt;
 	filt.add_pattern("*.om");
@@ -72,7 +72,7 @@ void
 LoadSubpatchWindow::present(SharedPtr<PatchModel> patch, MetadataMap data)
 {
 	set_patch(patch);
-	m_initial_data = data;
+	_initial_data = data;
 	Gtk::Window::present();
 }
 
@@ -84,13 +84,13 @@ LoadSubpatchWindow::present(SharedPtr<PatchModel> patch, MetadataMap data)
 void
 LoadSubpatchWindow::set_patch(SharedPtr<PatchModel> patch)
 {
-	m_patch = patch;
+	_patch = patch;
 
 	char temp_buf[4];
 	snprintf(temp_buf, 4, "%zd", patch->poly());
 	Glib::ustring txt = "Same as parent (";
 	txt.append(temp_buf).append(")");
-	m_poly_from_parent_radio->set_label(txt);
+	_poly_from_parent_radio->set_label(txt);
 }
 
 
@@ -110,53 +110,53 @@ LoadSubpatchWindow::on_show()
 void
 LoadSubpatchWindow::disable_name_entry()
 {
-	m_name_entry->property_sensitive() = false;
+	_name_entry->property_sensitive() = false;
 }
 
 
 void
 LoadSubpatchWindow::enable_name_entry()
 {
-	m_name_entry->property_sensitive() = true;
+	_name_entry->property_sensitive() = true;
 }
 
 
 void
 LoadSubpatchWindow::disable_poly_spinner()
 {
-	m_poly_spinbutton->property_sensitive() = false;
+	_poly_spinbutton->property_sensitive() = false;
 }
 
 
 void
 LoadSubpatchWindow::enable_poly_spinner()
 {
-	m_poly_spinbutton->property_sensitive() = true;
+	_poly_spinbutton->property_sensitive() = true;
 }
 
 
 void
 LoadSubpatchWindow::ok_clicked()
 {
-	assert(m_patch);
+	assert(_patch);
 	
 	// If unset load_patch will load values
 	optional<const string&> name;
 	optional<size_t> poly;
 	string name_str = "";
 	
-	if (m_name_from_user_radio->get_active()) {
-		name_str = m_name_entry->get_text();
+	if (_name_from_user_radio->get_active()) {
+		name_str = _name_entry->get_text();
 		name = name_str;
 	}
 
-	if (m_poly_from_user_radio->get_active())
-		poly = m_poly_spinbutton->get_value_as_int();
-	else if (m_poly_from_parent_radio->get_active())
-		poly = m_patch->poly();
+	if (_poly_from_user_radio->get_active())
+		poly = _poly_spinbutton->get_value_as_int();
+	else if (_poly_from_parent_radio->get_active())
+		poly = _patch->poly();
 
 	App::instance().loader()->load_patch(false, get_filename(), "/",
-		m_initial_data, m_patch->path(), name, poly);
+		_initial_data, _patch->path(), name, poly);
 
 	hide();
 }			

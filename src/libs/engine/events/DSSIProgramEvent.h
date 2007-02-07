@@ -37,10 +37,10 @@ public:
 	void post_process();
 
 private:
-	string    m_node_path;
-	int       m_bank;
-	int       m_program;
-	DSSINode* m_node;
+	string    _node_path;
+	int       _bank;
+	int       _program;
+	DSSINode* _node;
 };
 
 

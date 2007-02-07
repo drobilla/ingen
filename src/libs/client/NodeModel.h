@@ -49,12 +49,12 @@ public:
 
 	SharedPtr<PortModel> get_port(const string& port_name) const;
 	
-	const map<int, map<int, string> >& get_programs() const { return m_banks; }
-	const string&                      plugin_uri()   const { return m_plugin_uri; }
-	SharedPtr<PluginModel>            plugin()       const { return m_plugin; }
-	int                                num_ports()    const { return m_ports.size(); }
-	const PortModelList&               ports()        const { return m_ports; }
-	virtual bool                       polyphonic()   const { return m_polyphonic; }
+	const map<int, map<int, string> >& get_programs() const { return _banks; }
+	const string&                      plugin_uri()   const { return _plugin_uri; }
+	SharedPtr<PluginModel>            plugin()       const { return _plugin; }
+	int                                num_ports()    const { return _ports.size(); }
+	const PortModelList&               ports()        const { return _ports; }
+	virtual bool                       polyphonic()   const { return _polyphonic; }
 	
 	// Signals
 	sigc::signal<void, SharedPtr<PortModel> > new_port_sig; 
@@ -80,11 +80,11 @@ protected:
 	friend class PatchModel;
 	void set_path(const Path& p);
 
-	bool                        m_polyphonic;
-	PortModelList               m_ports;      ///< List of ports (not a map to preserve order)
-	string                      m_plugin_uri; ///< Plugin URI (if PluginModel is unknown)
-	SharedPtr<PluginModel>      m_plugin;     ///< The plugin this node is an instance of
-	map<int, map<int, string> > m_banks;      ///< DSSI banks
+	bool                        _polyphonic;
+	PortModelList               _ports;      ///< List of ports (not a map to preserve order)
+	string                      _plugin_uri; ///< Plugin URI (if PluginModel is unknown)
+	SharedPtr<PluginModel>      _plugin;     ///< The plugin this node is an instance of
+	map<int, map<int, string> > _banks;      ///< DSSI banks
 };
 
 

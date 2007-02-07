@@ -48,14 +48,14 @@ private:
 	void ok_clicked();
 	void cancel_clicked();
 
-	MetadataMap            m_initial_data;
-	SharedPtr<PatchModel> m_patch;
+	MetadataMap            _initial_data;
+	SharedPtr<PatchModel> _patch;
 	
-	Gtk::Entry*      m_name_entry;
-	Gtk::Label*      m_message_label;
-	Gtk::SpinButton* m_poly_spinbutton;
-	Gtk::Button*     m_ok_button;
-	Gtk::Button*     m_cancel_button;
+	Gtk::Entry*      _name_entry;
+	Gtk::Label*      _message_label;
+	Gtk::SpinButton* _poly_spinbutton;
+	Gtk::Button*     _ok_button;
+	Gtk::Button*     _cancel_button;
 };
  
 

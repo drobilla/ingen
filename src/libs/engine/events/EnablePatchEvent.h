@@ -44,9 +44,9 @@ public:
 	void post_process();
 
 private:
-	string        m_patch_path;
-	Patch*        m_patch;
-	Array<Node*>* m_process_order; // Patch's new process order
+	string        _patch_path;
+	Patch*        _patch;
+	Array<Node*>* _process_order; // Patch's new process order
 };
 
 

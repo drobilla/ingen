@@ -27,16 +27,16 @@ namespace Ingenuity {
 
 ConfigWindow::ConfigWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 : Gtk::Window(cobject),
-  m_configuration(NULL)
+  _configuration(NULL)
 {
-	xml->get_widget("config_path_entry", m_path_entry);
-	xml->get_widget("config_save_button", m_save_button);
-	xml->get_widget("config_cancel_button", m_cancel_button);
-	xml->get_widget("config_ok_button", m_ok_button);
+	xml->get_widget("config_path_entry", _path_entry);
+	xml->get_widget("config_save_button", _save_button);
+	xml->get_widget("config_cancel_button", _cancel_button);
+	xml->get_widget("config_ok_button", _ok_button);
 	
-	m_save_button->signal_clicked().connect(  sigc::mem_fun(this, &ConfigWindow::save_clicked));
-	m_cancel_button->signal_clicked().connect(sigc::mem_fun(this, &ConfigWindow::cancel_clicked));
-	m_ok_button->signal_clicked().connect(    sigc::mem_fun(this, &ConfigWindow::ok_clicked));
+	_save_button->signal_clicked().connect(  sigc::mem_fun(this, &ConfigWindow::save_clicked));
+	_cancel_button->signal_clicked().connect(sigc::mem_fun(this, &ConfigWindow::cancel_clicked));
+	_ok_button->signal_clicked().connect(    sigc::mem_fun(this, &ConfigWindow::ok_clicked));
 }
 
 
@@ -47,8 +47,8 @@ ConfigWindow::ConfigWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Gl
 void
 ConfigWindow::configuration(Configuration* sm)
 {
-	m_configuration = sm;
-	m_path_entry->set_text(sm->patch_path());
+	_configuration = sm;
+	_path_entry->set_text(sm->patch_path());
 }
 
 
@@ -59,9 +59,9 @@ ConfigWindow::configuration(Configuration* sm)
 void
 ConfigWindow::save_clicked()
 {
-	m_configuration->patch_path(m_path_entry->get_text());
-	m_configuration->apply_settings();
-	m_configuration->save_settings();
+	_configuration->patch_path(_path_entry->get_text());
+	_configuration->apply_settings();
+	_configuration->save_settings();
 }
 
 
@@ -75,8 +75,8 @@ ConfigWindow::cancel_clicked()
 void
 ConfigWindow::ok_clicked()
 {
-	m_configuration->patch_path(m_path_entry->get_text());
-	m_configuration->apply_settings();
+	_configuration->patch_path(_path_entry->get_text());
+	_configuration->apply_settings();
 	hide();
 }
 

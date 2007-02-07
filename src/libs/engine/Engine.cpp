@@ -49,19 +49,19 @@ namespace Ingen {
 
 
 Engine::Engine()
-: m_midi_driver(NULL),
-  m_maid(new Maid(maid_queue_size)),
-  m_post_processor(new PostProcessor(*m_maid, post_processor_queue_size)),
-  m_broadcaster(new ClientBroadcaster()),
-  m_object_store(new ObjectStore()),
-  m_node_factory(new NodeFactory()),
+: _midi_driver(NULL),
+  _maid(new Maid(maid_queue_size)),
+  _post_processor(new PostProcessor(*_maid, post_processor_queue_size)),
+  _broadcaster(new ClientBroadcaster()),
+  _object_store(new ObjectStore()),
+  _node_factory(new NodeFactory()),
 #ifdef HAVE_LASH
-  m_lash_driver(new LashDriver()),
+  _lash_driver(new LashDriver()),
 #else 
-  m_lash_driver(NULL),
+  _lash_driver(NULL),
 #endif
-  m_quit_flag(false),
-  m_activated(false)
+  _quit_flag(false),
+  _activated(false)
 {
 }
 
@@ -70,18 +70,18 @@ Engine::~Engine()
 {
 	deactivate();
 
-	for (Tree<GraphObject*>::iterator i = m_object_store->objects().begin();
-			i != m_object_store->objects().end(); ++i) {
+	for (Tree<GraphObject*>::iterator i = _object_store->objects().begin();
+			i != _object_store->objects().end(); ++i) {
 		if ((*i)->parent() == NULL)
 			delete (*i);
 	}
 	
-	delete m_object_store;
-	delete m_broadcaster;
-	delete m_node_factory;
-	delete m_midi_driver;
+	delete _object_store;
+	delete _broadcaster;
+	delete _node_factory;
+	delete _midi_driver;
 	
-	delete m_maid;
+	delete _maid;
 
 	munlockall();
 }
@@ -94,22 +94,22 @@ Engine::~Engine()
  * more elegant and extensible, but this is faster and simpler - for now.
  */
 template<>
-Driver<MidiMessage>* Engine::driver<MidiMessage>() { return m_midi_driver; }
+Driver<MidiMessage>* Engine::driver<MidiMessage>() { return _midi_driver; }
 template<>
-Driver<Sample>* Engine::driver<Sample>() { return m_audio_driver.get(); }
+Driver<Sample>* Engine::driver<Sample>() { return _audio_driver.get(); }
 
 
 int
 Engine::main()
 {
 	// Loop until quit flag is set (by OSCReceiver)
-	while ( ! m_quit_flag) {
+	while ( ! _quit_flag) {
 		nanosleep(&main_rate, NULL);
 		main_iteration();
 	}
 	cout << "[Main] Done main loop." << endl;
 	
-	if (m_activated)
+	if (_activated)
 		deactivate();
 
 	sleep(1);
@@ -132,53 +132,53 @@ Engine::main_iteration()
 		lash_driver->process_events();
 #endif
 	// Run the maid (garbage collector)
-	m_maid->cleanup();
+	_maid->cleanup();
 	
-	return !m_quit_flag;
+	return !_quit_flag;
 }
 
 
 bool
 Engine::activate(SharedPtr<AudioDriver> ad, SharedPtr<EventSource> es)
 {
-	if (m_activated)
+	if (_activated)
 		return false;
 
 	// Setup drivers
-	m_audio_driver = ad;
+	_audio_driver = ad;
 #ifdef HAVE_JACK_MIDI
-	m_midi_driver = new JackMidiDriver(((JackAudioDriver*)m_audio_driver.get())->jack_client());
+	_midi_driver = new JackMidiDriver(((JackAudioDriver*)_audio_driver.get())->jack_client());
 #elif HAVE_ALSA_MIDI
-	m_midi_driver = new AlsaMidiDriver(m_audio_driver.get());
+	_midi_driver = new AlsaMidiDriver(_audio_driver.get());
 #else
-	m_midi_driver = new DummyMidiDriver();
+	_midi_driver = new DummyMidiDriver();
 #endif
 	
 	// Set event source (FIXME: handle multiple sources)
-	m_event_source = es;
+	_event_source = es;
 
-	m_event_source->activate();
+	_event_source->activate();
 
 	// Create root patch
 
 	Patch* root_patch = new Patch("", 1, NULL,
-			m_audio_driver->sample_rate(), m_audio_driver->buffer_size(), 1);
+			_audio_driver->sample_rate(), _audio_driver->buffer_size(), 1);
 	root_patch->activate();
-	root_patch->add_to_store(m_object_store);
+	root_patch->add_to_store(_object_store);
 	root_patch->process_order(root_patch->build_process_order());
 	root_patch->enable();
 
-	assert(m_audio_driver->root_patch() == NULL);
-	m_audio_driver->set_root_patch(root_patch);
+	assert(_audio_driver->root_patch() == NULL);
+	_audio_driver->set_root_patch(root_patch);
 
-	m_audio_driver->activate();
+	_audio_driver->activate();
 #ifdef HAVE_ALSA_MIDI
-	m_midi_driver->activate();
+	_midi_driver->activate();
 #endif
 	
-	m_post_processor->start();
+	_post_processor->start();
 
-	m_activated = true;
+	_activated = true;
 	
 	return true;
 }
@@ -187,31 +187,31 @@ Engine::activate(SharedPtr<AudioDriver> ad, SharedPtr<EventSource> es)
 void
 Engine::deactivate()
 {
-	if (!m_activated)
+	if (!_activated)
 		return;
 	
-	m_audio_driver->root_patch()->disable();
-	m_audio_driver->root_patch()->deactivate();
+	_audio_driver->root_patch()->disable();
+	_audio_driver->root_patch()->deactivate();
 
-	/*for (Tree<GraphObject*>::iterator i = m_object_store->objects().begin();
-			i != m_object_store->objects().end(); ++i)
+	/*for (Tree<GraphObject*>::iterator i = _object_store->objects().begin();
+			i != _object_store->objects().end(); ++i)
 		if ((*i)->as_node() != NULL && (*i)->as_node()->parent() == NULL)
 			(*i)->as_node()->deactivate();*/
 	
-	if (m_midi_driver != NULL)
-		m_midi_driver->deactivate();
+	if (_midi_driver != NULL)
+		_midi_driver->deactivate();
 	
-	m_audio_driver->deactivate();
+	_audio_driver->deactivate();
 
 	// Finalize any lingering events (unlikely)
-	m_post_processor->whip();
-	m_post_processor->stop();
+	_post_processor->whip();
+	_post_processor->stop();
 
-	m_audio_driver.reset();
+	_audio_driver.reset();
 
-	m_event_source.reset();
+	_event_source.reset();
 	
-	m_activated = false;
+	_activated = false;
 }
 
 

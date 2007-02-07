@@ -32,12 +32,12 @@ namespace Ingen {
 template <typename T>
 TypedPort<T>::TypedPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size)
 : Port(parent, name, index, poly, type, buffer_size)
-, m_fixed_buffers(false)
+, _fixed_buffers(false)
 {
 	allocate_buffers();
 	clear_buffers();
 
-	assert(m_buffers.size() > 0);
+	assert(_buffers.size() > 0);
 }
 template
 TypedPort<Sample>::TypedPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size);
@@ -49,7 +49,7 @@ template <typename T>
 TypedPort<T>::~TypedPort()
 {
 	for (size_t i=0; i < _poly; ++i)
-		delete m_buffers.at(i);
+		delete _buffers.at(i);
 }
 template TypedPort<Sample>::~TypedPort();
 template TypedPort<MidiMessage>::~TypedPort();
@@ -66,7 +66,7 @@ TypedPort<Sample>::set_value(Sample val, size_t offset)
 	assert(offset < _buffer_size);
 	
 	for (size_t v=0; v < _poly; ++v)
-		m_buffers.at(v)->set(val, offset);
+		_buffers.at(v)->set(val, offset);
 }
 
 /** Set the port's value for a specific voice.
@@ -81,7 +81,7 @@ TypedPort<Sample>::set_value(size_t voice, Sample val, size_t offset)
 	
 	cerr << path() << " setting voice value " << val << endl;
 
-	m_buffers.at(voice)->set(val, offset);
+	_buffers.at(voice)->set(val, offset);
 }
 
 
@@ -89,10 +89,10 @@ template <typename T>
 void
 TypedPort<T>::allocate_buffers()
 {
-	m_buffers.alloc(_poly);
+	_buffers.alloc(_poly);
 
 	for (size_t i=0; i < _poly; ++i)
-		m_buffers.at(i) = new Buffer<T>(_buffer_size);
+		_buffers.at(i) = new Buffer<T>(_buffer_size);
 }
 template void TypedPort<Sample>::allocate_buffers();
 template void TypedPort<MidiMessage>::allocate_buffers();
@@ -105,7 +105,7 @@ TypedPort<T>::set_buffer_size(size_t size)
 	_buffer_size = size;
 
 	for (size_t i=0; i < _poly; ++i)
-		m_buffers.at(i)->resize(size);
+		_buffers.at(i)->resize(size);
 
 	connect_buffers();
 }
@@ -123,7 +123,7 @@ void
 TypedPort<T>::connect_buffers()
 {
 	for (size_t i=0; i < _poly; ++i)
-		TypedPort<T>::parent_node()->set_port_buffer(i, _index, m_buffers.at(i)->data());
+		TypedPort<T>::parent_node()->set_port_buffer(i, _index, _buffers.at(i)->data());
 }
 template void TypedPort<Sample>::connect_buffers();
 template void TypedPort<MidiMessage>::connect_buffers();
@@ -134,7 +134,7 @@ void
 TypedPort<T>::clear_buffers()
 {
 	for (size_t i=0; i < _poly; ++i)
-		m_buffers.at(i)->clear();
+		_buffers.at(i)->clear();
 }
 template void TypedPort<Sample>::clear_buffers();
 template void TypedPort<MidiMessage>::clear_buffers();
@@ -145,7 +145,7 @@ void
 TypedPort<T>::process(SampleCount nframes, FrameTime start, FrameTime end)
 {
 	for (size_t i=0; i < _poly; ++i)
-		m_buffers.at(i)->prepare(nframes);
+		_buffers.at(i)->prepare(nframes);
 }
 
 

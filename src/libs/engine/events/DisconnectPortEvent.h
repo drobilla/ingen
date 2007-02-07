@@ -52,15 +52,15 @@ public:
 	void post_process();
 
 private:
-	Path                      m_port_path;
-	Patch*                    m_patch;
-	Port*                     m_port;
-	List<DisconnectionEvent*> m_disconnection_events;
+	Path                      _port_path;
+	Patch*                    _patch;
+	Port*                     _port;
+	List<DisconnectionEvent*> _disconnection_events;
 	
-	Array<Node*>* m_process_order; // Patch's new process order
+	Array<Node*>* _process_order; // Patch's new process order
 	
-	bool m_succeeded;
-	bool m_lookup;
+	bool _succeeded;
+	bool _lookup;
 };
 
 

@@ -28,9 +28,9 @@ namespace Ingen {
  * user (InputPort).
  */
 Connection::Connection(Port* const src_port, Port* const dst_port)
-: m_src_port(src_port),
-  m_dst_port(dst_port),
-  m_pending_disconnection(false)
+: _src_port(src_port),
+  _dst_port(dst_port),
+  _pending_disconnection(false)
 {
 	assert(src_port != NULL);
 	assert(dst_port != NULL);

@@ -31,25 +31,25 @@ template <class T>
 class Array : public MaidObject
 {
 public:
-	Array(size_t size = 0) : m_size(size), m_top(0), m_elems(NULL) {
+	Array(size_t size = 0) : _size(size), _top(0), _elems(NULL) {
 		if (size > 0)
-			m_elems = new T[size];
+			_elems = new T[size];
 	}
 	
-	Array(size_t size, T initial_value) : m_size(size), m_top(0), m_elems(NULL) {
+	Array(size_t size, T initial_value) : _size(size), _top(0), _elems(NULL) {
 		if (size > 0) {
-			m_elems = new T[size];
+			_elems = new T[size];
 			for (size_t i=0; i < size; ++i)
-				m_elems[i] = initial_value;
+				_elems[i] = initial_value;
 		}
 	}
 	
-	Array(size_t size, const Array<T>& contents) : m_size(size), m_top(size+1) {
-		m_elems = new T[size];
+	Array(size_t size, const Array<T>& contents) : _size(size), _top(size+1) {
+		_elems = new T[size];
 		if (size <= contents.size())
-			memcpy(m_elems, contents.m_elems, size * sizeof(T));
+			memcpy(_elems, contents._elems, size * sizeof(T));
 		else
-			memcpy(m_elems, contents.m_elems, contents.size() * sizeof(T));
+			memcpy(_elems, contents._elems, contents.size() * sizeof(T));
 	}
 
 	~Array() {
@@ -59,46 +59,46 @@ public:
 	void alloc(size_t num_elems) {
 		assert(num_elems > 0);
 		
-		delete[] m_elems;
-		m_size = num_elems;
-		m_top = 0;
+		delete[] _elems;
+		_size = num_elems;
+		_top = 0;
 		
-		m_elems = new T[num_elems];
+		_elems = new T[num_elems];
 	}
 	
 	void alloc(size_t num_elems, T initial_value) {
 		assert(num_elems > 0);
 		
-		delete[] m_elems;
-		m_size = num_elems;
-		m_top = 0;
+		delete[] _elems;
+		_size = num_elems;
+		_top = 0;
 
-		m_elems = new T[num_elems];
-		for (size_t i=0; i < m_size; ++i)
-			m_elems[i] = initial_value;
+		_elems = new T[num_elems];
+		for (size_t i=0; i < _size; ++i)
+			_elems[i] = initial_value;
 	}
 	
 	void free() {
-		delete[] m_elems;
-		m_size = 0;
-		m_top = 0;
+		delete[] _elems;
+		_size = 0;
+		_top = 0;
 	}
 
 	void push_back(T n) {
-		assert(m_top < m_size);
-		m_elems[m_top++] = n;
+		assert(_top < _size);
+		_elems[_top++] = n;
 	}
 	
-	inline size_t size() const  { return m_size; }
+	inline size_t size() const  { return _size; }
 
-	inline T& operator[](size_t i) const { assert(i < m_size); return m_elems[i]; }
+	inline T& operator[](size_t i) const { assert(i < _size); return _elems[i]; }
 	
-	inline T& at(size_t i) const { assert(i < m_size); return m_elems[i]; }
+	inline T& at(size_t i) const { assert(i < _size); return _elems[i]; }
 
 private:
-	size_t m_size;
-	size_t m_top; // points to empty element above "top" element
-	T*     m_elems;
+	size_t _size;
+	size_t _top; // points to empty element above "top" element
+	T*     _elems;
 };
 
 

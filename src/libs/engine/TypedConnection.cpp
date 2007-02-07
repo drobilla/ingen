@@ -32,21 +32,21 @@ namespace Ingen {
 template <typename T>
 TypedConnection<T>::TypedConnection(OutputPort<T>* const src_port, InputPort<T>* const dst_port)
 : Connection(src_port, dst_port),
-  m_local_buffer(NULL),
-  m_must_mix(true),
-  m_buffer_size(src_port->buffer_size()),
-  m_pending_disconnection(false)
+  _local_buffer(NULL),
+  _must_mix(true),
+  _buffer_size(src_port->buffer_size()),
+  _pending_disconnection(false)
 {
 	assert((src_port->parent_node()->poly() == dst_port->parent_node()->poly())
 		|| (src_port->parent_node()->poly() == 1 || dst_port->parent_node()->poly() == 1));
 
 	if (src_port->poly() == dst_port->poly())
-		m_must_mix = false;
+		_must_mix = false;
 	else // Poly -> Mono connection, need a buffer to mix into
-		m_local_buffer = new Buffer<T>(m_buffer_size);
+		_local_buffer = new Buffer<T>(_buffer_size);
 
 	//cerr << "Connection " << src_port->path() << " -> " << dst_port->path()
-	//	<< "\t mixing: " << m_must_mix << endl;
+	//	<< "\t mixing: " << _must_mix << endl;
 }
 template TypedConnection<Sample>::TypedConnection(OutputPort<Sample>* const src_port, InputPort<Sample>* const dst_port);
 template TypedConnection<MidiMessage>::TypedConnection(OutputPort<MidiMessage>* const src_port, InputPort<MidiMessage>* const dst_port);
@@ -55,7 +55,7 @@ template TypedConnection<MidiMessage>::TypedConnection(OutputPort<MidiMessage>* 
 template <typename T>
 TypedConnection<T>::~TypedConnection()
 {
-	delete m_local_buffer;
+	delete _local_buffer;
 }
 template TypedConnection<Sample>::~TypedConnection();
 template TypedConnection<MidiMessage>::~TypedConnection();
@@ -66,14 +66,14 @@ template <typename T>
 void
 TypedConnection<T>::set_buffer_size(size_t size)
 {
-	if (m_must_mix) {
-		assert(m_local_buffer);
-		delete m_local_buffer;
+	if (_must_mix) {
+		assert(_local_buffer);
+		delete _local_buffer;
 
-		m_local_buffer = new Buffer<T>(size);
+		_local_buffer = new Buffer<T>(size);
 	}
 	
-	m_buffer_size = size;
+	_buffer_size = size;
 }
 
 
@@ -82,7 +82,7 @@ void
 TypedConnection<Sample>::process(SampleCount nframes, FrameTime start, FrameTime end)
 {
 	// FIXME: nframes parameter not used
-	assert(m_buffer_size == 1 || m_buffer_size == nframes);
+	assert(_buffer_size == 1 || _buffer_size == nframes);
 
 	/* Thought:  A poly output port can be connected to multiple mono input
 	 * ports, which means this mix down would have to happen many times.
@@ -91,20 +91,20 @@ TypedConnection<Sample>::process(SampleCount nframes, FrameTime start, FrameTime
 	 * would avoid having to mix multiple times.  Probably not a very common
 	 * case, but it would be faster anyway. */
 	
-	if (m_must_mix) {
+	if (_must_mix) {
 		//cerr << "Mixing " << src_port()->buffer(0)->data()
-		//	<< " -> " << m_local_buffer->data() << endl;
+		//	<< " -> " << _local_buffer->data() << endl;
 
-		m_local_buffer->copy(src_port()->buffer(0), 0, m_buffer_size-1);
+		_local_buffer->copy(src_port()->buffer(0), 0, _buffer_size-1);
 	
 		// Mix all the source's voices down into local buffer starting at the second
 		// voice (buffer is already set to first voice above)
 		for (size_t j=1; j < src_port()->poly(); ++j)
-			m_local_buffer->accumulate(src_port()->buffer(j), 0, m_buffer_size-1);
+			_local_buffer->accumulate(src_port()->buffer(j), 0, _buffer_size-1);
 
 		// Scale the buffer down.
 		if (src_port()->poly() > 1)
-			m_local_buffer->scale(1.0f/(float)src_port()->poly(), 0, m_buffer_size-1);
+			_local_buffer->scale(1.0f/(float)src_port()->poly(), 0, _buffer_size-1);
 	}
 }
 template void TypedConnection<Sample>::process(SampleCount nframes, FrameTime start, FrameTime end);

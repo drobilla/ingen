@@ -44,9 +44,9 @@ private:
 	void clear_clicked();
 	void close_clicked();
 
-	Gtk::TextView* m_textview;
-	Gtk::Button*   m_clear_button;
-	Gtk::Button*   m_close_button;
+	Gtk::TextView* _textview;
+	Gtk::Button*   _clear_button;
+	Gtk::Button*   _close_button;
 };
 
 

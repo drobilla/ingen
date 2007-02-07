@@ -47,9 +47,9 @@ public:
 	NodeControlWindow(SharedPtr<NodeModel> node, ControlPanel* panel);
 	virtual ~NodeControlWindow();
 
-	SharedPtr<NodeModel> node() { return m_node; }
+	SharedPtr<NodeModel> node() { return _node; }
 
-	ControlPanel* control_panel() const { return m_control_panel; }
+	ControlPanel* control_panel() const { return _control_panel; }
 	
 	void resize();
 
@@ -58,13 +58,13 @@ protected:
 	void on_hide();
 
 private:
-	SharedPtr<NodeModel>    m_node;
-	ControlPanel* m_control_panel;
-	bool          m_callback_enabled;
+	SharedPtr<NodeModel>    _node;
+	ControlPanel* _control_panel;
+	bool          _callback_enabled;
 	
-	bool m_position_stored;
-	int  m_x;
-	int  m_y;
+	bool _position_stored;
+	int  _x;
+	int  _y;
 };
 
 

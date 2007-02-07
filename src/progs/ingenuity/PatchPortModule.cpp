@@ -31,7 +31,7 @@ namespace Ingenuity {
 
 PatchPortModule::PatchPortModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<PortModel> port)
 : LibFlowCanvas::Module(canvas, port->path().name(), 0, 0, false), // FIXME: coords?
-  m_port(port)
+  _port(port)
 {
 	/*if (port_model()->polyphonic() && port_model()->parent() != NULL
 			&& port_model()->parent_patch()->poly() > 1) {
@@ -68,8 +68,8 @@ PatchPortModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<PortMod
 		new PatchPortModule(canvas, port));
 	assert(ret);
 
-	ret->m_patch_port = boost::shared_ptr<Port>(new Port(ret, port, true, true));
-	ret->add_port(ret->m_patch_port);
+	ret->_patch_port = boost::shared_ptr<Port>(new Port(ret, port, true, true));
+	ret->add_port(ret->_patch_port);
 	
 	ret->resize();
 	
@@ -86,13 +86,13 @@ PatchPortModule::store_location()
 	const float x = static_cast<float>(property_x());
 	const float y = static_cast<float>(property_y());
 	
-	const Atom& existing_x = m_port->get_metadata("ingenuity:canvas-x");
-	const Atom& existing_y = m_port->get_metadata("ingenuity:canvas-y");
+	const Atom& existing_x = _port->get_metadata("ingenuity:canvas-x");
+	const Atom& existing_y = _port->get_metadata("ingenuity:canvas-y");
 	
 	if (existing_x.type() != Atom::FLOAT || existing_y.type() != Atom::FLOAT
 			|| existing_x.get_float() != x || existing_y.get_float() != y) {
-		App::instance().engine()->set_metadata(m_port->path(), "ingenuity:canvas-x", Atom(x));
-		App::instance().engine()->set_metadata(m_port->path(), "ingenuity:canvas-y", Atom(y));
+		App::instance().engine()->set_metadata(_port->path(), "ingenuity:canvas-x", Atom(x));
+		App::instance().engine()->set_metadata(_port->path(), "ingenuity:canvas-y", Atom(y));
 	}
 }
 

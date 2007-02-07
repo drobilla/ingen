@@ -28,8 +28,8 @@ namespace Ingen {
 
 DisablePatchEvent::DisablePatchEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& patch_path)
 : QueuedEvent(engine, responder, timestamp),
-  m_patch_path(patch_path),
-  m_patch(NULL)
+  _patch_path(patch_path),
+  _patch(NULL)
 {
 }
 
@@ -37,7 +37,7 @@ DisablePatchEvent::DisablePatchEvent(Engine& engine, SharedPtr<Responder> respon
 void
 DisablePatchEvent::pre_process()
 {
-	m_patch = _engine.object_store()->find_patch(m_patch_path);
+	_patch = _engine.object_store()->find_patch(_patch_path);
 	
 	QueuedEvent::pre_process();
 }
@@ -48,19 +48,19 @@ DisablePatchEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {
 	QueuedEvent::execute(nframes, start, end);
 	
-	if (m_patch != NULL)
-		m_patch->disable();
+	if (_patch != NULL)
+		_patch->disable();
 }
 
 
 void
 DisablePatchEvent::post_process()
 {	
-	if (m_patch != NULL) {
+	if (_patch != NULL) {
 		_responder->respond_ok();
-		_engine.broadcaster()->send_patch_disable(m_patch_path);
+		_engine.broadcaster()->send_patch_disable(_patch_path);
 	} else {
-		_responder->respond_error(string("Patch ") + m_patch_path + " not found");
+		_responder->respond_error(string("Patch ") + _patch_path + " not found");
 	}
 }
 

@@ -200,7 +200,7 @@ App::event_save_session_as()
 		if (fin.is_open()) {  // File exists
 			string msg = "File already exists!  Are you sure you want to overwrite ";
 			msg += filename + "?";
-			Gtk::MessageDialog confir_dialog(*m_main_window,
+			Gtk::MessageDialog confir_dialog(*_main_window,
 				msg, false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO, true);
 			if (confir_dialog.run() == Gtk::RESPONSE_YES)
 				confirm = true;

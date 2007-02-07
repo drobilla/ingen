@@ -24,24 +24,24 @@ using std::string;
 MessagesWindow::MessagesWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml)
 : Gtk::Window(cobject)
 {
-	glade_xml->get_widget("messages_textview", m_textview);
-	glade_xml->get_widget("messages_clear_button", m_clear_button);
-	glade_xml->get_widget("messages_close_button", m_close_button);
+	glade_xml->get_widget("messages_textview", _textview);
+	glade_xml->get_widget("messages_clear_button", _clear_button);
+	glade_xml->get_widget("messages_close_button", _close_button);
 
-	m_clear_button->signal_clicked().connect(sigc::mem_fun(this, &MessagesWindow::clear_clicked));
-	m_close_button->signal_clicked().connect(sigc::mem_fun(this, &MessagesWindow::close_clicked));
+	_clear_button->signal_clicked().connect(sigc::mem_fun(this, &MessagesWindow::clear_clicked));
+	_close_button->signal_clicked().connect(sigc::mem_fun(this, &MessagesWindow::close_clicked));
 }
 
 
 void
 MessagesWindow::post(const string& msg)
 {
-	Glib::RefPtr<Gtk::TextBuffer> text_buf = m_textview->get_buffer();
+	Glib::RefPtr<Gtk::TextBuffer> text_buf = _textview->get_buffer();
 	text_buf->insert(text_buf->end(), msg);
 	text_buf->insert(text_buf->end(), "\n");
 
-	if (!m_clear_button->is_sensitive())
-		m_clear_button->set_sensitive(true);
+	if (!_clear_button->is_sensitive())
+		_clear_button->set_sensitive(true);
 }
 
 
@@ -55,9 +55,9 @@ MessagesWindow::close_clicked()
 void
 MessagesWindow::clear_clicked()
 {
-	Glib::RefPtr<Gtk::TextBuffer> text_buf = m_textview->get_buffer();
+	Glib::RefPtr<Gtk::TextBuffer> text_buf = _textview->get_buffer();
 	text_buf->erase(text_buf->begin(), text_buf->end());
-	m_clear_button->set_sensitive(false);
+	_clear_button->set_sensitive(false);
 }
 
 

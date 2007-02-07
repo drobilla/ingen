@@ -25,13 +25,13 @@ using std::string;
 PatchPropertiesWindow::PatchPropertiesWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml)
 : Gtk::Window(cobject)
 {
-	glade_xml->get_widget("properties_author_entry", m_author_entry);
-	glade_xml->get_widget("properties_description_textview", m_textview);
-	glade_xml->get_widget("properties_cancel_button", m_cancel_button);
-	glade_xml->get_widget("properties_ok_button", m_ok_button);
+	glade_xml->get_widget("properties_author_entry", _author_entry);
+	glade_xml->get_widget("properties_description_textview", _textview);
+	glade_xml->get_widget("properties_cancel_button", _cancel_button);
+	glade_xml->get_widget("properties_ok_button", _ok_button);
 
-	m_cancel_button->signal_clicked().connect(sigc::mem_fun(this, &PatchPropertiesWindow::cancel_clicked));
-	m_ok_button->signal_clicked().connect(sigc::mem_fun(this, &PatchPropertiesWindow::ok_clicked));
+	_cancel_button->signal_clicked().connect(sigc::mem_fun(this, &PatchPropertiesWindow::cancel_clicked));
+	_ok_button->signal_clicked().connect(sigc::mem_fun(this, &PatchPropertiesWindow::ok_clicked));
 }
 
 
@@ -44,14 +44,14 @@ void
 PatchPropertiesWindow::set_patch(SharedPtr<PatchModel> patch_model)
 {
 	property_title() = patch_model->path() + " Properties";
-	m_patch_model = patch_model;
+	_patch_model = patch_model;
 	
-	const Atom& author_atom = m_patch_model->get_metadata("author");
-	m_author_entry->set_text(
+	const Atom& author_atom = _patch_model->get_metadata("author");
+	_author_entry->set_text(
 		(author_atom.type() == Atom::STRING) ? author_atom.get_string() : "" );
 
-	const Atom& desc_atom = m_patch_model->get_metadata("description");
-	m_textview->get_buffer()->set_text(
+	const Atom& desc_atom = _patch_model->get_metadata("description");
+	_textview->get_buffer()->set_text(
 		(desc_atom.type() == Atom::STRING) ? desc_atom.get_string() : "" );
 }
 
@@ -59,12 +59,12 @@ PatchPropertiesWindow::set_patch(SharedPtr<PatchModel> patch_model)
 void
 PatchPropertiesWindow::cancel_clicked()
 {
-	const Atom& author_atom = m_patch_model->get_metadata("author");
-	m_author_entry->set_text(
+	const Atom& author_atom = _patch_model->get_metadata("author");
+	_author_entry->set_text(
 		(author_atom.type() == Atom::STRING) ? author_atom.get_string() : "" );
 
-	const Atom& desc_atom = m_patch_model->get_metadata("description");
-	m_textview->get_buffer()->set_text(
+	const Atom& desc_atom = _patch_model->get_metadata("description");
+	_textview->get_buffer()->set_text(
 		(desc_atom.type() == Atom::STRING) ? desc_atom.get_string() : "" );
 	
 	hide();
@@ -76,8 +76,8 @@ PatchPropertiesWindow::ok_clicked()
 {
 	cerr << "FIXME: properties\n";
 
-	//m_patch_model->set_metadata("author", Atom(m_author_entry->get_text().c_str()));
-	//m_patch_model->set_metadata("description", Atom(m_textview->get_buffer()->get_text().c_str()));
+	//m_patch_model->set_metadata("author", Atom(_author_entry->get_text().c_str()));
+	//m_patch_model->set_metadata("description", Atom(_textview->get_buffer()->get_text().c_str()));
 	hide();
 }
 

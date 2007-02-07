@@ -73,7 +73,7 @@ public:
 	void copy_selection();
 
 	void show_menu(GdkEvent* event)
-	{ m_menu->popup(event->button.button, event->button.time); }
+	{ _menu->popup(event->button.button, event->button.time); }
 	
 private:
 	string generate_port_name(const string& base);
@@ -92,21 +92,21 @@ private:
 	void disconnect(boost::shared_ptr<LibFlowCanvas::Port> src,
 	                boost::shared_ptr<LibFlowCanvas::Port> dst);
 
-	SharedPtr<PatchModel> m_patch;
+	SharedPtr<PatchModel> _patch;
 
-	int m_last_click_x;
-	int m_last_click_y;
+	int _last_click_x;
+	int _last_click_y;
 	
-	Gtk::Menu*      m_menu;
-	Gtk::MenuItem*  m_menu_add_audio_input;
-	Gtk::MenuItem*  m_menu_add_audio_output;
-	Gtk::MenuItem*  m_menu_add_control_input;
-	Gtk::MenuItem*  m_menu_add_control_output;
-	Gtk::MenuItem*  m_menu_add_midi_input;
-	Gtk::MenuItem*  m_menu_add_midi_output;
-	Gtk::MenuItem*  m_menu_load_plugin;
-	Gtk::MenuItem*  m_menu_load_patch;
-	Gtk::MenuItem*  m_menu_new_patch;
+	Gtk::Menu*      _menu;
+	Gtk::MenuItem*  _menu_add_audio_input;
+	Gtk::MenuItem*  _menu_add_audio_output;
+	Gtk::MenuItem*  _menu_add_control_input;
+	Gtk::MenuItem*  _menu_add_control_output;
+	Gtk::MenuItem*  _menu_add_midi_input;
+	Gtk::MenuItem*  _menu_add_midi_output;
+	Gtk::MenuItem*  _menu_load_plugin;
+	Gtk::MenuItem*  _menu_load_patch;
+	Gtk::MenuItem*  _menu_new_patch;
 };
 
 

@@ -48,24 +48,24 @@ public:
 
 	void apply_settings();
 
-	string patch_path()                   { return m_patch_path; }
-	void   patch_path(const string& path) { m_patch_path = path; }
+	string patch_path()                   { return _patch_path; }
+	void   patch_path(const string& path) { _patch_path = path; }
 	
-	const string& patch_folder()                    { return m_patch_folder; }
-	void          set_patch_folder(const string& f) { m_patch_folder = f; }
+	const string& patch_folder()                    { return _patch_folder; }
+	void          set_patch_folder(const string& f) { _patch_folder = f; }
 	
 	int get_port_color(const PortModel* pi);
 
 private:
 	/** Search path for patch files.  Colon delimited, as usual. */
-	string m_patch_path;
+	string _patch_path;
 
 	/** Most recent patch folder shown in open dialog */
-	string m_patch_folder;
+	string _patch_folder;
 	
-	int    m_audio_port_color;
-	int    m_control_port_color;
-	int    m_midi_port_color;
+	int    _audio_port_color;
+	int    _control_port_color;
+	int    _midi_port_color;
 };
 
 

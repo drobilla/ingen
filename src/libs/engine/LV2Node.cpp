@@ -80,14 +80,16 @@ LV2Node::instantiate()
 	Port* port = NULL;
 	
 	for (size_t j=0; j < num_ports; ++j) {
+		SLV2PortID id = slv2_port_by_index(j);
+
 		// LV2 shortnames are guaranteed to be unique, valid C identifiers
-		port_name = (char*)slv2_port_get_symbol(_lv2_plugin, j);
+		port_name = (char*)slv2_port_get_symbol(_lv2_plugin, id);
 	
 		assert(port_name.find("/") == string::npos);
 
 		port_path = path() + "/" + port_name;
 		
-		SLV2PortClass port_class = slv2_port_get_class(_lv2_plugin, j);
+		SLV2PortClass port_class = slv2_port_get_class(_lv2_plugin, id);
 		const bool is_control = (port_class == SLV2_CONTROL_RATE_INPUT
 			|| port_class == SLV2_CONTROL_RATE_OUTPUT);
 		const bool is_input = (port_class == SLV2_CONTROL_RATE_INPUT
@@ -98,7 +100,7 @@ LV2Node::instantiate()
 		else
 			port_buffer_size = _buffer_size;
 		
-		char* const data_type = slv2_port_get_data_type(_lv2_plugin, j);
+		char* const data_type = slv2_port_get_data_type(_lv2_plugin, id);
 
 		if (!strcmp(data_type, SLV2_DATA_TYPE_FLOAT)) {
 			if (is_input) {

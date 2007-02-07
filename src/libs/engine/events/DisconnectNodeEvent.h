@@ -51,14 +51,14 @@ public:
 	void post_process();
 
 private:
-	Path                      m_node_path;
-	Patch*                    m_patch;
-	Node*                     m_node;
-	List<DisconnectionEvent*> m_disconnection_events;
+	Path                      _node_path;
+	Patch*                    _patch;
+	Node*                     _node;
+	List<DisconnectionEvent*> _disconnection_events;
 	
-	bool m_succeeded;
-	bool m_lookup;
-	bool m_disconnect_parent;
+	bool _succeeded;
+	bool _lookup;
+	bool _disconnect_parent;
 };
 
 

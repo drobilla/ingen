@@ -35,10 +35,10 @@ namespace Ingenuity {
 
 NodeModule::NodeModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeModel> node)
 : LibFlowCanvas::Module(canvas, node->path().name()),
-  m_node(node),
-  m_menu(node)
+  _node(node),
+  _menu(node)
 {
-	assert(m_node);
+	assert(_node);
 
 	if (node->polyphonic()) {
 		set_border_width(2.0);
@@ -52,7 +52,7 @@ NodeModule::NodeModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeMode
 
 NodeModule::~NodeModule()
 {
-	NodeControlWindow* win = App::instance().window_factory()->control_window(m_node);
+	NodeControlWindow* win = App::instance().window_factory()->control_window(_node);
 	
 	if (win) {
 		// Should remove from window factory via signal
@@ -104,7 +104,7 @@ NodeModule::remove_port(SharedPtr<PortModel> port)
 void
 NodeModule::show_control_window()
 {
-	App::instance().window_factory()->present_controls(m_node);
+	App::instance().window_factory()->present_controls(_node);
 }
 
 
@@ -114,13 +114,13 @@ NodeModule::store_location()
 	const float x = static_cast<float>(property_x());
 	const float y = static_cast<float>(property_y());
 	
-	const Atom& existing_x = m_node->get_metadata("ingenuity:canvas-x");
-	const Atom& existing_y = m_node->get_metadata("ingenuity:canvas-y");
+	const Atom& existing_x = _node->get_metadata("ingenuity:canvas-x");
+	const Atom& existing_y = _node->get_metadata("ingenuity:canvas-y");
 	
 	if (existing_x.type() != Atom::FLOAT || existing_y.type() != Atom::FLOAT
 			|| existing_x.get_float() != x || existing_y.get_float() != y) {
-		App::instance().engine()->set_metadata(m_node->path(), "ingenuity:canvas-x", Atom(x));
-		App::instance().engine()->set_metadata(m_node->path(), "ingenuity:canvas-y", Atom(y));
+		App::instance().engine()->set_metadata(_node->path(), "ingenuity:canvas-x", Atom(x));
+		App::instance().engine()->set_metadata(_node->path(), "ingenuity:canvas-y", Atom(y));
 	}
 }
 
@@ -128,7 +128,7 @@ NodeModule::store_location()
 void
 NodeModule::on_right_click(GdkEventButton* event)
 {
-	m_menu.popup(event->button, event->time);
+	_menu.popup(event->button, event->time);
 }
 
 

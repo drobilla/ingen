@@ -35,13 +35,13 @@ public:
 	LashController(lash_args_t* args);
 	~LashController();
 	
-	bool enabled() { return lash_enabled(m_client); }
+	bool enabled() { return lash_enabled(_client); }
 	void process_events();
 
 private:
 	void save(const string& dir);
 
-	lash_client_t* m_client;
+	lash_client_t* _client;
 	
 	void handle_event(lash_event_t* conf);
 	void handle_config(lash_config_t* conf);

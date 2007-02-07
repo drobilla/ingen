@@ -27,9 +27,9 @@ namespace Ingen {
 
 EnablePatchEvent::EnablePatchEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& patch_path)
 : QueuedEvent(engine, responder, timestamp),
-  m_patch_path(patch_path),
-  m_patch(NULL),
-  m_process_order(NULL)
+  _patch_path(patch_path),
+  _patch(NULL),
+  _process_order(NULL)
 {
 }
 
@@ -37,14 +37,14 @@ EnablePatchEvent::EnablePatchEvent(Engine& engine, SharedPtr<Responder> responde
 void
 EnablePatchEvent::pre_process()
 {
-	m_patch = _engine.object_store()->find_patch(m_patch_path);
+	_patch = _engine.object_store()->find_patch(_patch_path);
 	
-	if (m_patch != NULL) {
+	if (_patch != NULL) {
 		/* Any event that requires a new process order will set the patch's
 		 * process order to NULL if it is executed when the patch is not
 		 * active.  So, if the PO is NULL, calculate it here */
-		if (m_patch->process_order() == NULL)
-			m_process_order = m_patch->build_process_order();
+		if (_patch->process_order() == NULL)
+			_process_order = _patch->build_process_order();
 	}
 
 	QueuedEvent::pre_process();
@@ -56,11 +56,11 @@ EnablePatchEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {
 	QueuedEvent::execute(nframes, start, end);
 
-	if (m_patch != NULL) {
-		m_patch->enable();
+	if (_patch != NULL) {
+		_patch->enable();
 
-		if (m_patch->process_order() == NULL)
-			m_patch->process_order(m_process_order);
+		if (_patch->process_order() == NULL)
+			_patch->process_order(_process_order);
 	}
 }
 
@@ -68,11 +68,11 @@ EnablePatchEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 void
 EnablePatchEvent::post_process()
 {
-	if (m_patch != NULL) {
+	if (_patch != NULL) {
 		_responder->respond_ok();
-		_engine.broadcaster()->send_patch_enable(m_patch_path);
+		_engine.broadcaster()->send_patch_enable(_patch_path);
 	} else {
-		_responder->respond_error(string("Patch ") + m_patch_path + " not found");
+		_responder->respond_error(string("Patch ") + _patch_path + " not found");
 	}
 }
 

@@ -42,21 +42,21 @@ class Connection : public MaidObject
 public:
 	virtual ~Connection() {}
 	
-	Port* src_port() const { return m_src_port; }
-	Port* dst_port() const { return m_dst_port; }
+	Port* src_port() const { return _src_port; }
+	Port* dst_port() const { return _dst_port; }
 
 	/** Used by some (recursive) events to prevent double disconnections */
-	bool pending_disconnection()       { return m_pending_disconnection; }
-	void pending_disconnection(bool b) { m_pending_disconnection = b; }
+	bool pending_disconnection()       { return _pending_disconnection; }
+	void pending_disconnection(bool b) { _pending_disconnection = b; }
 	
 	virtual void set_buffer_size(size_t size) {}
 
 protected:
 	Connection(Port* const src_port, Port* const dst_port);
 	
-	Port* const m_src_port;
-	Port* const m_dst_port;
-	bool        m_pending_disconnection;
+	Port* const _src_port;
+	Port* const _dst_port;
+	bool        _pending_disconnection;
 };
 
 

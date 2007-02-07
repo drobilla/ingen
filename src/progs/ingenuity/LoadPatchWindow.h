@@ -46,8 +46,8 @@ public:
 
 	void set_patch(SharedPtr<PatchModel> patch);
 
-	void set_replace() { m_replace = true; }
-	void set_merge()   { m_replace = false; }
+	void set_replace() { _replace = true; }
+	void set_merge()   { _replace = false; }
 
 	void present(SharedPtr<PatchModel> patch, MetadataMap data);
 
@@ -60,17 +60,17 @@ private:
 	void ok_clicked();
 	void cancel_clicked();
 
-	MetadataMap m_initial_data;
+	MetadataMap _initial_data;
 
-	SharedPtr<PatchModel> m_patch;
-	bool                   m_replace;
+	SharedPtr<PatchModel> _patch;
+	bool                   _replace;
 
-	Gtk::RadioButton* m_poly_from_current_radio;
-	Gtk::RadioButton* m_poly_from_file_radio;
-	Gtk::RadioButton* m_poly_from_user_radio;
-	Gtk::SpinButton*  m_poly_spinbutton;
-	Gtk::Button*      m_ok_button;
-	Gtk::Button*      m_cancel_button;
+	Gtk::RadioButton* _poly_from_current_radio;
+	Gtk::RadioButton* _poly_from_file_radio;
+	Gtk::RadioButton* _poly_from_user_radio;
+	Gtk::SpinButton*  _poly_spinbutton;
+	Gtk::Button*      _ok_button;
+	Gtk::Button*      _cancel_button;
 };
  
 

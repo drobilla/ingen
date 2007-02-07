@@ -32,11 +32,11 @@ RequestPluginsEvent::RequestPluginsEvent(Engine& engine, SharedPtr<Responder> re
 void
 RequestPluginsEvent::pre_process()
 {
-	m_client = _engine.broadcaster()->client(_responder->client_key());
+	_client = _engine.broadcaster()->client(_responder->client_key());
 	
 	// Take a copy to send in the post processing thread (to avoid problems
 	// because std::list isn't thread safe)
-	m_plugins = _engine.node_factory()->plugins();
+	_plugins = _engine.node_factory()->plugins();
 
 	QueuedEvent::pre_process();
 }
@@ -45,8 +45,8 @@ RequestPluginsEvent::pre_process()
 void
 RequestPluginsEvent::post_process()
 {
-	if (m_client) {
-		_engine.broadcaster()->send_plugins_to(m_client, m_plugins);
+	if (_client) {
+		_engine.broadcaster()->send_plugins_to(_client, _plugins);
 		_responder->respond_ok();
 	} else {
 		_responder->respond_error("Unable to find client to send plugins");

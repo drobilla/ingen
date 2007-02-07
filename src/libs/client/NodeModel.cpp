@@ -24,16 +24,16 @@ namespace Client {
 
 NodeModel::NodeModel(SharedPtr<PluginModel> plugin, const Path& path, bool polyphonic)
 : ObjectModel(path),
-  m_polyphonic(polyphonic),
-  m_plugin_uri(plugin->uri()),
-  m_plugin(plugin)
+  _polyphonic(polyphonic),
+  _plugin_uri(plugin->uri()),
+  _plugin(plugin)
 {
 }
 
 NodeModel::NodeModel(const string& plugin_uri, const Path& path, bool polyphonic)
 : ObjectModel(path),
-  m_polyphonic(polyphonic),
-  m_plugin_uri(plugin_uri)
+  _polyphonic(polyphonic),
+  _plugin_uri(plugin_uri)
 {
 }
 
@@ -47,7 +47,7 @@ NodeModel::~NodeModel()
 void
 NodeModel::remove_port(SharedPtr<PortModel> port)
 {
-	m_ports.remove(port);
+	_ports.remove(port);
 	removed_port_sig.emit(port);
 }
 
@@ -55,9 +55,9 @@ NodeModel::remove_port(SharedPtr<PortModel> port)
 void
 NodeModel::remove_port(const Path& port_path)
 {
-	for (PortModelList::iterator i = m_ports.begin(); i != m_ports.end(); ++i) {
+	for (PortModelList::iterator i = _ports.begin(); i != _ports.end(); ++i) {
 		if ((*i)->path() == port_path) {
-			m_ports.erase(i);
+			_ports.erase(i);
 			break;
 		}
 	}
@@ -67,8 +67,8 @@ NodeModel::remove_port(const Path& port_path)
 void
 NodeModel::clear()
 {
-	m_ports.clear();
-	assert(m_ports.empty());
+	_ports.clear();
+	assert(_ports.empty());
 }
 
 
@@ -80,10 +80,10 @@ NodeModel::set_path(const Path& p)
 	ObjectModel::set_path(p);
 	
 	// FIXME: rename
-//	for (PortModelList::iterator i = m_ports.begin(); i != m_ports.end(); ++i)
+//	for (PortModelList::iterator i = _ports.begin(); i != _ports.end(); ++i)
 //		(*i)->set_path(_path + "/" + (*i)->path().name());
 
-	//if (m_parent && old_path.length() > 0)
+	//if (_parent && old_path.length() > 0)
 	//	parent_patch()->rename_node(old_path, p);
 }
 
@@ -118,12 +118,12 @@ NodeModel::add_port(SharedPtr<PortModel> pm)
 	assert(pm->path().is_child_of(_path));
 	assert(pm->parent().get() == this);
 
-	PortModelList::iterator existing = find(m_ports.begin(), m_ports.end(), pm);
+	PortModelList::iterator existing = find(_ports.begin(), _ports.end(), pm);
 	
 	// Store should have handled this by merging the two
-	assert(existing == m_ports.end());
+	assert(existing == _ports.end());
 
-	m_ports.push_back(pm);
+	_ports.push_back(pm);
 	new_port_sig.emit(pm);
 }
 
@@ -132,7 +132,7 @@ SharedPtr<PortModel>
 NodeModel::get_port(const string& port_name) const
 {
 	assert(port_name.find("/") == string::npos);
-	for (PortModelList::const_iterator i = m_ports.begin(); i != m_ports.end(); ++i)
+	for (PortModelList::const_iterator i = _ports.begin(); i != _ports.end(); ++i)
 		if ((*i)->path().name() == port_name)
 			return (*i);
 	return SharedPtr<PortModel>();
@@ -142,16 +142,16 @@ NodeModel::get_port(const string& port_name) const
 void 
 NodeModel::add_program(int bank, int program, const string& name) 
 {
-        m_banks[bank][program] = name; 
+        _banks[bank][program] = name; 
 }
 
 
 void
 NodeModel::remove_program(int bank, int program)
 {
-	m_banks[bank].erase(program);
-	if (m_banks[bank].size() == 0)
-		m_banks.erase(bank);
+	_banks[bank].erase(program);
+	if (_banks[bank].size() == 0)
+		_banks.erase(bank);
 }
 
 

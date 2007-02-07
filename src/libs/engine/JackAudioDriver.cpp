@@ -75,10 +75,10 @@ void
 JackAudioPort::prepare_buffer(jack_nframes_t nframes)
 {
 	// FIXME: Technically this doesn't need to be done every time for output ports
-	/*m_jack_buffer->set_data((jack_default_audio_sample_t*)
-		jack_port_get_buffer(m_jack_port, nframes));
+	/*_jack_buffer->set_data((jack_default_audio_sample_t*)
+		jack_port_get_buffer(_jack_port, nframes));
 	
-	m_patch_port->buffer(0)->join(m_jack_buffer);
+	_patch_port->buffer(0)->join(_jack_buffer);
 */
 	jack_sample_t* jack_buf = (jack_sample_t*)jack_port_get_buffer(_jack_port, nframes);
 
@@ -88,17 +88,17 @@ JackAudioPort::prepare_buffer(jack_nframes_t nframes)
 		_jack_buffer = jack_buf;
 	}
 
-	//assert(m_patch_port->tied_port() != NULL);
+	//assert(_patch_port->tied_port() != NULL);
 	
 	// FIXME: fixed_buffers switch on/off thing can be removed once this
 	// gets figured out and assertions can go away
 	//m_patch_port->fixed_buffers(false);
-	//m_patch_port->buffer(0)->join(m_jack_buffer);
-	//m_patch_port->tied_port()->buffer(0)->join(m_jack_buffer);
+	//m_patch_port->buffer(0)->join(_jack_buffer);
+	//m_patch_port->tied_port()->buffer(0)->join(_jack_buffer);
 
 	//m_patch_port->fixed_buffers(true);
 	
-	//assert(m_patch_port->buffer(0)->data() == _patch_port->tied_port()->buffer(0)->data());
+	//assert(_patch_port->buffer(0)->data() == _patch_port->tied_port()->buffer(0)->data());
 	assert(_patch_port->buffer(0)->data() == jack_buf);
 }
 

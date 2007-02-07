@@ -36,44 +36,44 @@ public:
 	enum Type { LV2, LADSPA, DSSI, Internal, Patch };
 
 	PluginModel(const string& uri, const string& type_uri, const string& name)
-	: m_uri(uri),
-	  m_name(name)
+	: _uri(uri),
+	  _name(name)
 	{
 		set_type_from_uri(type_uri);
 	}
 	
-	Type          type() const                { return m_type; }
-	void          type(Type t)                { m_type = t; }
-	const string& uri() const                 { return m_uri; }
-	void          uri(const string& s)        { m_uri = s; }
-	const string& name() const                { return m_name; }
-	void          name(const string& s)       { m_name = s; }
+	Type          type() const                { return _type; }
+	void          type(Type t)                { _type = t; }
+	const string& uri() const                 { return _uri; }
+	void          uri(const string& s)        { _uri = s; }
+	const string& name() const                { return _name; }
+	void          name(const string& s)       { _name = s; }
 	
 	/*const char* const type_string() const {
-		if (m_type == LV2) return "LV2";
-		else if (m_type == LADSPA) return "LADSPA";
-		else if (m_type == DSSI) return "DSSI";
-		else if (m_type == Internal) return "Internal";
-		else if (m_type == Patch) return "Patch";
+		if (_type == LV2) return "LV2";
+		else if (_type == LADSPA) return "LADSPA";
+		else if (_type == DSSI) return "DSSI";
+		else if (_type == Internal) return "Internal";
+		else if (_type == Patch) return "Patch";
 		else return "";
 	}*/
 
 	const char* const type_uri() const {
-		if (m_type == LV2) return "ingen:LV2Plugin";
-		else if (m_type == LADSPA) return "ingen:LADSPAPlugin";
-		else if (m_type == DSSI) return "ingen:DSSIPlugin";
-		else if (m_type == Internal) return "ingen:InternalPlugin";
-		else if (m_type == Patch) return "ingen:Patch";
+		if (_type == LV2) return "ingen:LV2Plugin";
+		else if (_type == LADSPA) return "ingen:LADSPAPlugin";
+		else if (_type == DSSI) return "ingen:DSSIPlugin";
+		else if (_type == Internal) return "ingen:InternalPlugin";
+		else if (_type == Patch) return "ingen:Patch";
 		else return "";
 	}
 	
 	/** DEPRECATED */
 	void set_type(const string& type_string) {
-		if (type_string == "LV2") m_type = LV2;
-		else if (type_string == "LADSPA") m_type = LADSPA;
-		else if (type_string == "DSSI") m_type = DSSI;
-		else if (type_string == "Internal") m_type = Internal;
-		else if (type_string == "Patch") m_type = Patch;
+		if (type_string == "LV2") _type = LV2;
+		else if (type_string == "LADSPA") _type = LADSPA;
+		else if (type_string == "DSSI") _type = DSSI;
+		else if (type_string == "Internal") _type = Internal;
+		else if (type_string == "Patch") _type = Patch;
 	}
 	
 	void set_type_from_uri(const string& type_uri) {
@@ -84,12 +84,12 @@ public:
 		}
 	}
 
-	string default_node_name() { return Raul::Path::nameify(m_name); }
+	string default_node_name() { return Raul::Path::nameify(_name); }
 
 private:
-	Type   m_type;
-	string m_uri;
-	string m_name;
+	Type   _type;
+	string _uri;
+	string _name;
 };
 
 

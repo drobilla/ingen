@@ -33,44 +33,44 @@ class TreeNode : public MaidObject
 {
 public:
 	TreeNode(const string& key)
-	: m_parent(NULL), m_left_child(NULL), m_right_child(NULL),
-	  m_key(key), m_node(NULL) {}
+	: _parent(NULL), _left_child(NULL), _right_child(NULL),
+	  _key(key), _node(NULL) {}
 
 	TreeNode(const string& key, T n)
-	: m_parent(NULL), m_left_child(NULL), m_right_child(NULL),
-	  m_key(key), m_node(n) {}
+	: _parent(NULL), _left_child(NULL), _right_child(NULL),
+	  _key(key), _node(n) {}
 
 	~TreeNode() {
-		assert(m_parent == NULL || m_parent->left_child() != this);
-		assert(m_parent == NULL || m_parent->right_child() != this);
-		assert(m_left_child == NULL || m_left_child->parent() != this);
-		assert(m_right_child == NULL || m_right_child->parent() != this);
-		m_parent = m_left_child = m_right_child = NULL;
+		assert(_parent == NULL || _parent->left_child() != this);
+		assert(_parent == NULL || _parent->right_child() != this);
+		assert(_left_child == NULL || _left_child->parent() != this);
+		assert(_right_child == NULL || _right_child->parent() != this);
+		_parent = _left_child = _right_child = NULL;
 	}
 	
-	string       key() const                 { return m_key; }
-	void         key(const string& key)      { m_key = key; }
-	TreeNode<T>* parent() const              { return m_parent; }
-	void         parent(TreeNode<T>* n)      { m_parent = n; }
-	TreeNode<T>* left_child() const          { return m_left_child; }
-	void         left_child(TreeNode<T>* n)  { m_left_child = n; }
-	TreeNode<T>* right_child() const         { return m_right_child; }
-	void         right_child(TreeNode<T>* n) { m_right_child = n; }
+	string       key() const                 { return _key; }
+	void         key(const string& key)      { _key = key; }
+	TreeNode<T>* parent() const              { return _parent; }
+	void         parent(TreeNode<T>* n)      { _parent = n; }
+	TreeNode<T>* left_child() const          { return _left_child; }
+	void         left_child(TreeNode<T>* n)  { _left_child = n; }
+	TreeNode<T>* right_child() const         { return _right_child; }
+	void         right_child(TreeNode<T>* n) { _right_child = n; }
 	
-	bool is_leaf()        { return (m_left_child == NULL && m_right_child == NULL); }
-	bool is_left_child()  { return (m_parent != NULL && m_parent->left_child() == this); }
-	bool is_right_child() { return (m_parent != NULL && m_parent->right_child() == this); }
+	bool is_leaf()        { return (_left_child == NULL && _right_child == NULL); }
+	bool is_left_child()  { return (_parent != NULL && _parent->left_child() == this); }
+	bool is_right_child() { return (_parent != NULL && _parent->right_child() == this); }
 
-	T node() { return m_node; }
+	T node() { return _node; }
 	
 	friend class Tree<T>;
 	
 protected:
-	TreeNode<T>* m_parent;
-	TreeNode<T>* m_left_child;
-	TreeNode<T>* m_right_child;
-	string       m_key;
-	T            m_node;
+	TreeNode<T>* _parent;
+	TreeNode<T>* _left_child;
+	TreeNode<T>* _right_child;
+	string       _key;
+	T            _node;
 };
 
 
@@ -92,7 +92,7 @@ template <typename T>
 class Tree : boost::noncopyable
 {
 public:
-	Tree() : m_root(0), m_size(0) {}
+	Tree() : _root(0), _size(0) {}
 	~Tree();
 
 	void         insert(TreeNode<T>* const n);
@@ -100,7 +100,7 @@ public:
 	T            find(const string& key) const;
 	TreeNode<T>* find_treenode(const string& key) const;
 
-	size_t size() const { return m_size; }
+	size_t size() const { return _size; }
 	
 	/** NON realtime safe iterator for a Tree<T>. */
 	class iterator
@@ -119,23 +119,23 @@ public:
 		iterator& operator=(const iterator& copy);
 
 	private:
-		int            m_depth;
-		size_t         m_size;
-		TreeNode<T>**  m_stack;
-		const Tree<T>* m_tree;
+		int            _depth;
+		size_t         _size;
+		TreeNode<T>**  _stack;
+		const Tree<T>* _tree;
 	};
 
 	iterator begin() const;
 	iterator end() const;
 
 private:
-	void m_set_all_traversed_recursive(TreeNode<T>* root, bool b);
+	void _set_all_traversed_recursive(TreeNode<T>* root, bool b);
 	
-	TreeNode<T>* m_find_smallest(TreeNode<T>* root);
-	TreeNode<T>* m_find_largest(TreeNode<T>* root);
+	TreeNode<T>* _find_smallest(TreeNode<T>* root);
+	TreeNode<T>* _find_largest(TreeNode<T>* root);
 
-	TreeNode<T>* m_root;
-	size_t       m_size;
+	TreeNode<T>* _root;
+	size_t       _size;
 };
 
 

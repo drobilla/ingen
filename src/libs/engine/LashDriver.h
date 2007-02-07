@@ -34,18 +34,18 @@ class LashDriver
 public:
 	LashDriver(Ingen* app, lash_args_t* args);
 
-	bool enabled() { return (m_client != NULL && lash_enabled(m_client)); }
+	bool enabled() { return (_client != NULL && lash_enabled(_client)); }
 	void process_events();
 	void set_jack_client_name(const char* name);
 	void set_alsa_client_id(int id);
 	void restore_finished();
 
 private:
-	Ingen*      m_app;
-	lash_client_t* m_client;
+	Ingen*      _app;
+	lash_client_t* _client;
 	
-	int    m_alsa_client_id;
-	string m_jack_client_name;
+	int    _alsa_client_id;
+	string _jack_client_name;
 	
 	void handle_event(lash_event_t* conf);
 	void handle_config(lash_config_t* conf);

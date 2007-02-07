@@ -41,9 +41,9 @@ public:
 	void post_process();
 
 private:
-	Node*  m_node;
-	string m_node_path;
-	uchar  m_note_num;
+	Node*  _node;
+	string _node_path;
+	uchar  _note_num;
 };
 
 

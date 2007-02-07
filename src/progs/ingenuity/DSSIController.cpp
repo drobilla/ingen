@@ -29,17 +29,17 @@ namespace Ingenuity {
 
 
 DSSIController::DSSIController(SharedPtr<NodeModel> model)
-: m_banks_dirty(true)
+: _banks_dirty(true)
 {
 #if 0
 	assert(model->plugin()->type() == PluginModel::DSSI);
-	Gtk::Menu::MenuList& items = m_menu.items();
+	Gtk::Menu::MenuList& items = _menu.items();
 	items[0].property_sensitive() = true; // "Show Control Window" item
 	
-	Gtk::Menu_Helpers::MenuElem program_elem("Select Program", m_program_menu);
+	Gtk::Menu_Helpers::MenuElem program_elem("Select Program", _program_menu);
 	items.push_front(program_elem);
-	m_program_menu_item = program_elem.get_child();
-	m_program_menu_item->set_sensitive(false);
+	_program_menu_item = program_elem.get_child();
+	_program_menu_item->set_sensitive(false);
 	
 	items.push_front(Gtk::Menu_Helpers::MenuElem("Show Plugin GUI",
 		sigc::mem_fun(this, &DSSIController::show_gui)));
@@ -77,7 +77,7 @@ DSSIController::update_program_menu()
 {
 	cerr << "FIXME: Program menu\n";
 #if 0
-	m_program_menu.items().clear();
+	_program_menu.items().clear();
 	
 	const map<int, map<int, string> >& banks = node_model()->get_programs();
 	std::ostringstream oss;
@@ -88,7 +88,7 @@ DSSIController::update_program_menu()
 		if (banks.size() > 1)
 			bank_menu = manage(new Gtk::Menu());
 		else
-			bank_menu = &m_program_menu;
+			bank_menu = &_program_menu;
 		map<int, string>::const_iterator j;
 		for (j = i->second.begin(); j != i->second.end(); ++j) {
 			oss.str("");
@@ -103,18 +103,18 @@ DSSIController::update_program_menu()
 		if (banks.size() > 1) {
 			oss.str("");
 			oss << "Bank " << i->first;
-			m_program_menu.items().push_back(
+			_program_menu.items().push_back(
 				Gtk::Menu_Helpers::MenuElem(oss.str(), *bank_menu));
 		}
 	}
 
 	// Disable the program menu if there are no programs
 	if (banks.size() == 0)
-		m_program_menu_item->set_sensitive(false);
+		_program_menu_item->set_sensitive(false);
 	else
-		m_program_menu_item->set_sensitive(true);
+		_program_menu_item->set_sensitive(true);
 	
-	m_banks_dirty = false;
+	_banks_dirty = false;
 #endif
 }
 
@@ -265,7 +265,7 @@ void
 DSSIController::show_menu(GdkEventButton* event)
 {
 #if 0
-        if (m_banks_dirty)
+        if (_banks_dirty)
 	        update_program_menu();
 	NodeController::show_menu(event);
 #endif

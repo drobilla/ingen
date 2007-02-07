@@ -32,12 +32,12 @@ namespace Ingen {
 
 CreatePatchEvent::CreatePatchEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path, int poly)
 : QueuedEvent(engine, responder, timestamp),
-  m_path(path),
-  m_patch(NULL),
-  m_parent(NULL),
-  m_process_order(NULL),
-  m_poly(poly),
-  m_error(NO_ERROR)
+  _path(path),
+  _patch(NULL),
+  _parent(NULL),
+  _process_order(NULL),
+  _poly(poly),
+  _error(NO_ERROR)
 {
 }
 
@@ -45,42 +45,42 @@ CreatePatchEvent::CreatePatchEvent(Engine& engine, SharedPtr<Responder> responde
 void
 CreatePatchEvent::pre_process()
 {
-	if (m_path == "/" || _engine.object_store()->find(m_path) != NULL) {
-		m_error = OBJECT_EXISTS;
+	if (_path == "/" || _engine.object_store()->find(_path) != NULL) {
+		_error = OBJECT_EXISTS;
 		QueuedEvent::pre_process();
 		return;
 	}
 
-	if (m_poly < 1) {
-		m_error = INVALID_POLY;
+	if (_poly < 1) {
+		_error = INVALID_POLY;
 		QueuedEvent::pre_process();
 		return;
 	}
 	
-	m_parent = _engine.object_store()->find_patch(m_path.parent());
-	if (m_parent == NULL) {
-		m_error = PARENT_NOT_FOUND;
+	_parent = _engine.object_store()->find_patch(_path.parent());
+	if (_parent == NULL) {
+		_error = PARENT_NOT_FOUND;
 		QueuedEvent::pre_process();
 		return;
 	}
 	
 	size_t poly = 1;
-	if (m_parent != NULL && m_poly > 1 && m_poly == static_cast<int>(m_parent->internal_poly()))
-		poly = m_poly;
+	if (_parent != NULL && _poly > 1 && _poly == static_cast<int>(_parent->internal_poly()))
+		poly = _poly;
 	
-	m_patch = new Patch(m_path.name(), poly, m_parent, _engine.audio_driver()->sample_rate(), _engine.audio_driver()->buffer_size(), m_poly);
+	_patch = new Patch(_path.name(), poly, _parent, _engine.audio_driver()->sample_rate(), _engine.audio_driver()->buffer_size(), _poly);
 		
-	if (m_parent != NULL) {
-		m_parent->add_node(new ListNode<Node*>(m_patch));
+	if (_parent != NULL) {
+		_parent->add_node(new ListNode<Node*>(_patch));
 
-		if (m_parent->enabled())
-			m_process_order = m_parent->build_process_order();
+		if (_parent->enabled())
+			_process_order = _parent->build_process_order();
 	}
 	
-	m_patch->activate();
+	_patch->activate();
 	
 	// Insert into ObjectStore
-	m_patch->add_to_store(_engine.object_store());
+	_patch->add_to_store(_engine.object_store());
 	
 	QueuedEvent::pre_process();
 }
@@ -91,18 +91,18 @@ CreatePatchEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {
 	QueuedEvent::execute(nframes, start, end);
 
-	if (m_patch != NULL) {
-		if (m_parent == NULL) {
-			assert(m_path == "/");
-			assert(m_patch->parent_patch() == NULL);
-			_engine.audio_driver()->set_root_patch(m_patch);
+	if (_patch != NULL) {
+		if (_parent == NULL) {
+			assert(_path == "/");
+			assert(_patch->parent_patch() == NULL);
+			_engine.audio_driver()->set_root_patch(_patch);
 		} else {
-			assert(m_parent != NULL);
-			assert(m_path != "/");
+			assert(_parent != NULL);
+			assert(_path != "/");
 			
-			if (m_parent->process_order() != NULL)
-				_engine.maid()->push(m_parent->process_order());
-			m_parent->process_order(m_process_order);
+			if (_parent->process_order() != NULL)
+				_engine.maid()->push(_parent->process_order());
+			_parent->process_order(_process_order);
 		}
 	}
 }
@@ -112,25 +112,25 @@ void
 CreatePatchEvent::post_process()
 {
 	if (_responder.get()) {
-		if (m_error == NO_ERROR) {
+		if (_error == NO_ERROR) {
 			
 			_responder->respond_ok();
 			
 			// Don't send ports/nodes that have been added since prepare()
 			// (otherwise they would be sent twice)
-			_engine.broadcaster()->send_patch(m_patch, false);
+			_engine.broadcaster()->send_patch(_patch, false);
 			
-		} else if (m_error == OBJECT_EXISTS) {
+		} else if (_error == OBJECT_EXISTS) {
 			string msg = "Unable to create patch: ";
-			msg += m_path += " already exists.";
+			msg += _path += " already exists.";
 			_responder->respond_error(msg);
-		} else if (m_error == PARENT_NOT_FOUND) {
+		} else if (_error == PARENT_NOT_FOUND) {
 			string msg = "Unable to create patch: Parent ";
-			msg += m_path.parent() += " not found.";
+			msg += _path.parent() += " not found.";
 			_responder->respond_error(msg);
-		} else if (m_error == INVALID_POLY) {
+		} else if (_error == INVALID_POLY) {
 			string msg = "Unable to create patch ";
-			msg.append(m_path).append(": ").append("Invalid polyphony respondered.");
+			msg.append(_path).append(": ").append("Invalid polyphony respondered.");
 			_responder->respond_error(msg);
 		} else {
 			_responder->respond_error("Unable to load patch.");

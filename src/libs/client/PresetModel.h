@@ -35,7 +35,7 @@ class PresetModel
 {
 public:
 	PresetModel(const string& base_path)
-	: m_base_path(base_path)
+	: _base_path(base_path)
 	{}
 
 	/** Add a control value to this preset.  An empty string for a node_name
@@ -45,20 +45,20 @@ public:
 	                 const string& port_name, float value)
 	{
 		if (node_name != "")
-			m_controls.push_back(ControlModel(m_base_path + node_name +"/"+ port_name, value));
+			_controls.push_back(ControlModel(_base_path + node_name +"/"+ port_name, value));
 		else
-			m_controls.push_back(ControlModel(m_base_path + port_name, value));
+			_controls.push_back(ControlModel(_base_path + port_name, value));
 	}
 
-	const string& name() const          { return m_name; }
-	void          name(const string& n) { m_name = n; }
+	const string& name() const          { return _name; }
+	void          name(const string& n) { _name = n; }
 
-	const list<ControlModel>& controls() const { return m_controls; }
+	const list<ControlModel>& controls() const { return _controls; }
 
 private:
-	string             m_name;
-	string             m_base_path;
-	list<ControlModel> m_controls;
+	string             _name;
+	string             _base_path;
+	list<ControlModel> _controls;
 };
 
 

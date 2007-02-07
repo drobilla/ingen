@@ -32,10 +32,10 @@ namespace Ingen {
  */
 NoteOnEvent::NoteOnEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, Node* patch, uchar note_num, uchar velocity)
 : Event(engine, responder, timestamp),
-  m_node(patch),
-  m_note_num(note_num),
-  m_velocity(velocity),
-  m_is_osc_triggered(false)
+  _node(patch),
+  _note_num(note_num),
+  _velocity(velocity),
+  _is_osc_triggered(false)
 {
 }
 
@@ -46,11 +46,11 @@ NoteOnEvent::NoteOnEvent(Engine& engine, SharedPtr<Responder> responder, SampleC
  */
 NoteOnEvent::NoteOnEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& node_path, uchar note_num, uchar velocity)
 : Event(engine, responder, timestamp),
-  m_node(NULL),
-  m_node_path(node_path),
-  m_note_num(note_num),
-  m_velocity(velocity),
-  m_is_osc_triggered(true)
+  _node(NULL),
+  _node_path(node_path),
+  _note_num(note_num),
+  _velocity(velocity),
+  _is_osc_triggered(true)
 {
 }
 
@@ -62,15 +62,15 @@ NoteOnEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 	assert(_time >= start && _time <= end);
 
 	// Lookup if neccessary
-	if (m_is_osc_triggered)
-		m_node = _engine.object_store()->find_node(m_node_path);
+	if (_is_osc_triggered)
+		_node = _engine.object_store()->find_node(_node_path);
 		
 	// FIXME: this isn't very good at all.
-	if (m_node != NULL && m_node->plugin()->type() == Plugin::Internal) {
-		if (m_node->plugin()->plug_label() == "note_in")
-			((MidiNoteNode*)m_node)->note_on(m_note_num, m_velocity, _time, nframes, start, end);
-		else if (m_node->plugin()->plug_label() == "trigger_in")
-			((MidiTriggerNode*)m_node)->note_on(m_note_num, m_velocity, _time, nframes, start, end);
+	if (_node != NULL && _node->plugin()->type() == Plugin::Internal) {
+		if (_node->plugin()->plug_label() == "note_in")
+			((MidiNoteNode*)_node)->note_on(_note_num, _velocity, _time, nframes, start, end);
+		else if (_node->plugin()->plug_label() == "trigger_in")
+			((MidiTriggerNode*)_node)->note_on(_note_num, _velocity, _time, nframes, start, end);
 	}
 }
 
@@ -78,8 +78,8 @@ NoteOnEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 void
 NoteOnEvent::post_process()
 {
-	if (m_is_osc_triggered) {
-		if (m_node != NULL)
+	if (_is_osc_triggered) {
+		if (_node != NULL)
 			_responder->respond_ok();
 		else
 			_responder->respond_error("Did not find node for note_on");

@@ -121,12 +121,12 @@ TransportNode::process(SampleCount nframes, FrameTime start, FrameTime end)
 	}
 
 	
-	((OutputPort<Sample>*)m_ports.at(0))->buffer(0)->set(spb, 0, 0);
-	((OutputPort<Sample>*)m_ports.at(1))->buffer(0)->set(bpb, 0, 0);
+	((OutputPort<Sample>*)_ports.at(0))->buffer(0)->set(spb, 0, 0);
+	((OutputPort<Sample>*)_ports.at(1))->buffer(0)->set(bpb, 0, 0);
 	
 	// fill the trigger buffers with zeros
-	((OutputPort<Sample>*)m_ports.at(2))->buffer(0)->set(0.0f, 0, nframes - 1);
-	((OutputPort<Sample>*)m_ports.at(3))->buffer(0)->set(0.0f, 0, nframes - 1);
+	((OutputPort<Sample>*)_ports.at(2))->buffer(0)->set(0.0f, 0, nframes - 1);
+	((OutputPort<Sample>*)_ports.at(3))->buffer(0)->set(0.0f, 0, nframes - 1);
 	
 	// if the transport is rolling, add triggers at the right frame positions
 	if ((position->valid & JackTransportBBT) && (state == JackTransportRolling)) {
@@ -138,9 +138,9 @@ TransportNode::process(SampleCount nframes, FrameTime start, FrameTime end)
 			--first_beat_no;
 		}
 		for ( ; first_beat < nframes; first_beat += frames_per_beat) {
-			((OutputPort<Sample>*)m_ports.at(2))->buffer(0)->set(1.0f, size_t(first_beat));
+			((OutputPort<Sample>*)_ports.at(2))->buffer(0)->set(1.0f, size_t(first_beat));
 			if (first_beat_no % int(bpb) == 0) {
-				((OutputPort<Sample>*)m_ports.at(3))->buffer(0)->set(1.0f, size_t(first_beat));
+				((OutputPort<Sample>*)_ports.at(3))->buffer(0)->set(1.0f, size_t(first_beat));
 				++first_beat_no;
 			}
 		}

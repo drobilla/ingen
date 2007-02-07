@@ -68,9 +68,9 @@ public:
 	void set_patch_from_path(const Path& path, SharedPtr<PatchView> view);
 	void set_patch(SharedPtr<PatchModel> pc, SharedPtr<PatchView> view);
 
-	SharedPtr<PatchModel> patch() const { return m_patch; }
+	SharedPtr<PatchModel> patch() const { return _patch; }
 
-	Gtk::MenuItem* menu_view_control_window() { return m_menu_view_control_window; }
+	Gtk::MenuItem* menu_view_control_window() { return _menu_view_control_window; }
 
 protected:
 	void on_show();
@@ -91,42 +91,42 @@ private:
 	void event_show_controls();
 	void event_show_engine();
 
-	SharedPtr<PatchModel> m_patch;
-	SharedPtr<PatchView>  m_view;
+	SharedPtr<PatchModel> _patch;
+	SharedPtr<PatchView>  _view;
 	
-	bool m_enable_signal;
-	bool m_position_stored;
-	int  m_x;
-	int  m_y;
+	bool _enable_signal;
+	bool _position_stored;
+	int  _x;
+	int  _y;
 	
-	Gtk::MenuItem*      m_menu_import;
-	Gtk::MenuItem*      m_menu_save;
-	Gtk::MenuItem*      m_menu_save_as;
-	Gtk::MenuItem*      m_menu_cut;
-	Gtk::MenuItem*      m_menu_copy;
-	Gtk::MenuItem*      m_menu_paste;
-	Gtk::MenuItem*      m_menu_delete;
-	Gtk::MenuItem*      m_menu_configuration;
-	Gtk::MenuItem*      m_menu_close;
-	Gtk::MenuItem*      m_menu_quit;
-	Gtk::MenuItem*      m_menu_fullscreen;
-	Gtk::MenuItem*      m_menu_clear;
-	Gtk::MenuItem*      m_menu_destroy_patch;
-	Gtk::MenuItem*      m_menu_view_engine_window;
-	Gtk::MenuItem*      m_menu_view_control_window;
-	Gtk::MenuItem*      m_menu_view_patch_properties;
-	Gtk::MenuItem*      m_menu_view_messages_window;
-	Gtk::MenuItem*      m_menu_view_patch_tree_window;
-	Gtk::MenuItem*      m_menu_help_about;
+	Gtk::MenuItem*      _menu_import;
+	Gtk::MenuItem*      _menu_save;
+	Gtk::MenuItem*      _menu_save_as;
+	Gtk::MenuItem*      _menu_cut;
+	Gtk::MenuItem*      _menu_copy;
+	Gtk::MenuItem*      _menu_paste;
+	Gtk::MenuItem*      _menu_delete;
+	Gtk::MenuItem*      _menu_configuration;
+	Gtk::MenuItem*      _menu_close;
+	Gtk::MenuItem*      _menu_quit;
+	Gtk::MenuItem*      _menu_fullscreen;
+	Gtk::MenuItem*      _menu_clear;
+	Gtk::MenuItem*      _menu_destroy_patch;
+	Gtk::MenuItem*      _menu_view_engine_window;
+	Gtk::MenuItem*      _menu_view_control_window;
+	Gtk::MenuItem*      _menu_view_patch_properties;
+	Gtk::MenuItem*      _menu_view_messages_window;
+	Gtk::MenuItem*      _menu_view_patch_tree_window;
+	Gtk::MenuItem*      _menu_help_about;
 	
-	Gtk::VBox*          m_vbox;
-	Gtk::Viewport*      m_viewport;
-	BreadCrumbBox*      m_breadcrumb_box;
+	Gtk::VBox*          _vbox;
+	Gtk::Viewport*      _viewport;
+	BreadCrumbBox*      _breadcrumb_box;
 	
-	//Gtk::Statusbar*   m_status_bar;
+	//Gtk::Statusbar*   _status_bar;
 	
 	/** Invisible bin used to store breadcrumbs when not shown by a view */
-	Gtk::Alignment m_breadcrumb_bin;
+	Gtk::Alignment _breadcrumb_bin;
 };
 
 

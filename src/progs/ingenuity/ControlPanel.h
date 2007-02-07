@@ -61,8 +61,8 @@ public:
 	void enable_port(const Path& path);
 	void disable_port(const Path& path);
 	
-	size_t        num_controls() const { return m_controls.size(); }
-	pair<int,int> ideal_size()   const { return m_ideal_size; }
+	size_t        num_controls() const { return _controls.size(); }
+	pair<int,int> ideal_size()   const { return _ideal_size; }
 	
 	// Callback for ControlGroup
 	void value_changed(SharedPtr<PortModel> port_path, float val);
@@ -72,16 +72,16 @@ private:
 	void specific_voice_selected();
 	void voice_selected();
 
-	bool m_callback_enabled;
+	bool _callback_enabled;
 	
-	pair<int,int> m_ideal_size;
+	pair<int,int> _ideal_size;
 
-	vector<ControlGroup*>    m_controls;
-	Gtk::HBox*               m_control_box;
-	Gtk::Box*                m_voice_control_box;
-	Gtk::RadioButton*        m_all_voices_radio;
-	Gtk::RadioButton*        m_specific_voice_radio;
-	Gtk::SpinButton*         m_voice_spinbutton;
+	vector<ControlGroup*>    _controls;
+	Gtk::HBox*               _control_box;
+	Gtk::Box*                _voice_control_box;
+	Gtk::RadioButton*        _all_voices_radio;
+	Gtk::RadioButton*        _specific_voice_radio;
+	Gtk::SpinButton*         _voice_spinbutton;
 };
 
 

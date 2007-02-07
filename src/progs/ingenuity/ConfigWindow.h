@@ -49,12 +49,12 @@ private:
 	void cancel_clicked();
 	void ok_clicked();
 	
-	Configuration* m_configuration;
+	Configuration* _configuration;
 	
-	Gtk::Entry*       m_path_entry;
-	Gtk::Button*      m_save_button;
-	Gtk::Button*      m_cancel_button;
-	Gtk::Button*      m_ok_button;
+	Gtk::Entry*       _path_entry;
+	Gtk::Button*      _save_button;
+	Gtk::Button*      _cancel_button;
+	Gtk::Button*      _ok_button;
 };
 
 

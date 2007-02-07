@@ -40,8 +40,8 @@ public:
 	void post_process();
 
 private:
-	Patch* m_patch;
-	string m_patch_path;
+	Patch* _patch;
+	string _patch_path;
 };
 
 

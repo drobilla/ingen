@@ -33,7 +33,7 @@ RequestAllObjectsEvent::RequestAllObjectsEvent(Engine& engine, SharedPtr<Respond
 void
 RequestAllObjectsEvent::pre_process()
 {
-	m_client = _engine.broadcaster()->client(_responder->client_key());
+	_client = _engine.broadcaster()->client(_responder->client_key());
 	
 	QueuedEvent::pre_process();
 }
@@ -42,13 +42,13 @@ RequestAllObjectsEvent::pre_process()
 void
 RequestAllObjectsEvent::post_process()
 {
-	if (m_client) {
+	if (_client) {
 		_responder->respond_ok();
 
 		// Everything is a child of the root patch, so this sends it all
 		Patch* root = _engine.object_store()->find_patch("/");
 		if (root)
-			ObjectSender::send_patch(m_client.get(), root, true);
+			ObjectSender::send_patch(_client.get(), root, true);
 
 	} else {
 		_responder->respond_error("Unable to find client to send all objects");

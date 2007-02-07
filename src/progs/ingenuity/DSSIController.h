@@ -62,10 +62,10 @@ public:
 private:
 	void update_program_menu();
 	
-	Gtk::Menu                   m_program_menu;
-	Glib::RefPtr<Gtk::MenuItem> m_program_menu_item;
+	Gtk::Menu                   _program_menu;
+	Glib::RefPtr<Gtk::MenuItem> _program_menu_item;
 	
-	bool m_banks_dirty;
+	bool _banks_dirty;
 };
 
 

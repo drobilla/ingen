@@ -30,7 +30,7 @@ namespace Ingen {
 void
 MidiLearnResponseEvent::post_process()
 {
-	_engine.broadcaster()->send_control_change(m_port_path, m_value);
+	_engine.broadcaster()->send_control_change(_port_path, _value);
 }
 
 
@@ -39,9 +39,9 @@ MidiLearnResponseEvent::post_process()
 
 MidiLearnEvent::MidiLearnEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& node_path)
 : QueuedEvent(engine, responder, timestamp),
-  m_node_path(node_path),
-  m_node(NULL),
-  m_response_event(NULL)
+  _node_path(node_path),
+  _node(NULL),
+  _response_event(NULL)
 {
 }
 
@@ -49,8 +49,8 @@ MidiLearnEvent::MidiLearnEvent(Engine& engine, SharedPtr<Responder> responder, S
 void
 MidiLearnEvent::pre_process()
 {
-	m_node = _engine.object_store()->find_node(m_node_path);
-	m_response_event = new MidiLearnResponseEvent(_engine, m_node_path + "/Controller_Number", _time);
+	_node = _engine.object_store()->find_node(_node_path);
+	_response_event = new MidiLearnResponseEvent(_engine, _node_path + "/Controller_Number", _time);
 	
 	QueuedEvent::pre_process();
 }
@@ -62,9 +62,9 @@ MidiLearnEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 	QueuedEvent::execute(nframes, start, end);
 	
 	// FIXME: this isn't very good at all.
-	if (m_node != NULL && m_node->plugin()->type() == Plugin::Internal
-			&& m_node->plugin()->plug_label() == "midi_control_in") {
-			((MidiControlNode*)m_node)->learn(m_response_event);
+	if (_node != NULL && _node->plugin()->type() == Plugin::Internal
+			&& _node->plugin()->plug_label() == "midi_control_in") {
+			((MidiControlNode*)_node)->learn(_response_event);
 	}
 }
 
@@ -72,11 +72,11 @@ MidiLearnEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 void
 MidiLearnEvent::post_process()
 {
-	if (m_node != NULL) {
+	if (_node != NULL) {
 		_responder->respond_ok();
 	} else {
 		string msg = "Did not find node '";
-		msg.append(m_node_path).append("' for MIDI learn.");
+		msg.append(_node_path).append("' for MIDI learn.");
 		_responder->respond_error(msg);
 	}
 }

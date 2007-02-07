@@ -53,11 +53,11 @@ public:
 	void                           add_connection(ListNode<TypedConnection<T>*>* const c);
 	ListNode<TypedConnection<T>*>* remove_connection(const OutputPort<T>* const src_port);
 
-	const List<TypedConnection<T>*>& connections() { return m_connections; }
+	const List<TypedConnection<T>*>& connections() { return _connections; }
 
 	void process(SampleCount nframes, FrameTime start, FrameTime end);
 	
-	bool is_connected() const { return (m_connections.size() > 0); }
+	bool is_connected() const { return (_connections.size() > 0); }
 	bool is_connected_to(const OutputPort<T>* const port) const;
 	
 	bool is_input()  const { return true; }
@@ -67,14 +67,14 @@ public:
 	
 private:
 
-	List<TypedConnection<T>*> m_connections;
+	List<TypedConnection<T>*> _connections;
 
 	// This is just stupid...
-	using TypedPort<T>::m_buffers;
+	using TypedPort<T>::_buffers;
 	using TypedPort<T>::_poly;
 	using TypedPort<T>::_index;
 	using TypedPort<T>::_buffer_size;
-	using TypedPort<T>::m_fixed_buffers;
+	using TypedPort<T>::_fixed_buffers;
 };
 
 

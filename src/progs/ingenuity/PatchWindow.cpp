@@ -43,81 +43,81 @@ namespace Ingenuity {
 
 PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 : Gtk::Window(cobject),
-  m_enable_signal(true),
-  m_position_stored(false),
-  m_x(0),
-  m_y(0),
-  m_breadcrumb_box(NULL)
+  _enable_signal(true),
+  _position_stored(false),
+  _x(0),
+  _y(0),
+  _breadcrumb_box(NULL)
 {
 	property_visible() = false;
 
-	xml->get_widget("patch_win_vbox", m_vbox);
-	xml->get_widget("patch_win_viewport", m_viewport);
-	//xml->get_widget("patch_win_status_bar", m_status_bar);
-	//xml->get_widget("patch_open_menuitem", m_menu_open);
-	xml->get_widget("patch_import_menuitem", m_menu_import);
-	//xml->get_widget("patch_open_into_menuitem", m_menu_open_into);
-	xml->get_widget("patch_save_menuitem", m_menu_save);
-	xml->get_widget("patch_save_as_menuitem", m_menu_save_as);
-	xml->get_widget("patch_cut_menuitem", m_menu_cut);
-	xml->get_widget("patch_copy_menuitem", m_menu_copy);
-	xml->get_widget("patch_paste_menuitem", m_menu_paste);
-	xml->get_widget("patch_delete_menuitem", m_menu_delete);
-	xml->get_widget("patch_close_menuitem", m_menu_close);
-	xml->get_widget("patch_configuration_menuitem", m_menu_configuration);
-	xml->get_widget("patch_quit_menuitem", m_menu_quit);
-	xml->get_widget("patch_view_control_window_menuitem", m_menu_view_control_window);
-	xml->get_widget("patch_view_engine_window_menuitem", m_menu_view_engine_window);
-	xml->get_widget("patch_properties_menuitem", m_menu_view_patch_properties);
-	xml->get_widget("patch_fullscreen_menuitem", m_menu_fullscreen);
-	xml->get_widget("patch_clear_menuitem", m_menu_clear);
-	xml->get_widget("patch_destroy_menuitem", m_menu_destroy_patch);
-	xml->get_widget("patch_view_messages_window_menuitem", m_menu_view_messages_window);
-	xml->get_widget("patch_view_patch_tree_window_menuitem", m_menu_view_patch_tree_window);
-	xml->get_widget("patch_help_about_menuitem", m_menu_help_about);
+	xml->get_widget("patch_win_vbox", _vbox);
+	xml->get_widget("patch_win_viewport", _viewport);
+	//xml->get_widget("patch_win_status_bar", _status_bar);
+	//xml->get_widget("patch_open_menuitem", _menu_open);
+	xml->get_widget("patch_import_menuitem", _menu_import);
+	//xml->get_widget("patch_open_into_menuitem", _menu_open_into);
+	xml->get_widget("patch_save_menuitem", _menu_save);
+	xml->get_widget("patch_save_as_menuitem", _menu_save_as);
+	xml->get_widget("patch_cut_menuitem", _menu_cut);
+	xml->get_widget("patch_copy_menuitem", _menu_copy);
+	xml->get_widget("patch_paste_menuitem", _menu_paste);
+	xml->get_widget("patch_delete_menuitem", _menu_delete);
+	xml->get_widget("patch_close_menuitem", _menu_close);
+	xml->get_widget("patch_configuration_menuitem", _menu_configuration);
+	xml->get_widget("patch_quit_menuitem", _menu_quit);
+	xml->get_widget("patch_view_control_window_menuitem", _menu_view_control_window);
+	xml->get_widget("patch_view_engine_window_menuitem", _menu_view_engine_window);
+	xml->get_widget("patch_properties_menuitem", _menu_view_patch_properties);
+	xml->get_widget("patch_fullscreen_menuitem", _menu_fullscreen);
+	xml->get_widget("patch_clear_menuitem", _menu_clear);
+	xml->get_widget("patch_destroy_menuitem", _menu_destroy_patch);
+	xml->get_widget("patch_view_messages_window_menuitem", _menu_view_messages_window);
+	xml->get_widget("patch_view_patch_tree_window_menuitem", _menu_view_patch_tree_window);
+	xml->get_widget("patch_help_about_menuitem", _menu_help_about);
 
-	m_menu_view_control_window->property_sensitive() = false;
+	_menu_view_control_window->property_sensitive() = false;
 	//m_status_bar->push(App::instance().engine()->engine_url());
 	//m_status_bar->pack_start(*Gtk::manage(new Gtk::Image(Gtk::Stock::CONNECT, Gtk::ICON_SIZE_MENU)), false, false);
 	
-	/*m_menu_open->signal_activate().connect(
+	/*_menu_open->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_open));*/
-	m_menu_import->signal_activate().connect(
+	_menu_import->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_import));
-	m_menu_save->signal_activate().connect(
+	_menu_save->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_save));
-	m_menu_save_as->signal_activate().connect(
+	_menu_save_as->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_save_as));
-	m_menu_copy->signal_activate().connect(
+	_menu_copy->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_copy));
-	m_menu_delete->signal_activate().connect(
+	_menu_delete->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_delete));
-	m_menu_quit->signal_activate().connect(
+	_menu_quit->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_quit));
-	m_menu_configuration->signal_activate().connect(
+	_menu_configuration->signal_activate().connect(
 		sigc::mem_fun(App::instance().configuration_dialog(), &ConfigWindow::show));
-	m_menu_fullscreen->signal_activate().connect(
+	_menu_fullscreen->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_fullscreen_toggled));
-	m_menu_view_engine_window->signal_activate().connect(
+	_menu_view_engine_window->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_show_engine));
-	m_menu_view_control_window->signal_activate().connect(
+	_menu_view_control_window->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_show_controls));
-	m_menu_view_patch_properties->signal_activate().connect(
+	_menu_view_patch_properties->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_show_properties));
-	m_menu_destroy_patch->signal_activate().connect(
+	_menu_destroy_patch->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_destroy));
-	m_menu_clear->signal_activate().connect(
+	_menu_clear->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_clear));
-	m_menu_view_messages_window->signal_activate().connect(
+	_menu_view_messages_window->signal_activate().connect(
 		sigc::mem_fun<void>(App::instance().messages_dialog(), &MessagesWindow::present));
-	m_menu_view_patch_tree_window->signal_activate().connect(
+	_menu_view_patch_tree_window->signal_activate().connect(
 		sigc::mem_fun<void>(App::instance().patch_tree(), &PatchTreeWindow::present));
 
-	m_menu_help_about->signal_activate().connect(
+	_menu_help_about->signal_activate().connect(
 		sigc::mem_fun<void>(App::instance().about_dialog(), &Gtk::Dialog::present));
 	
-	m_breadcrumb_box = new BreadCrumbBox();
-	m_breadcrumb_box->signal_patch_selected.connect(sigc::mem_fun(this, &PatchWindow::set_patch_from_path));
+	_breadcrumb_box = new BreadCrumbBox();
+	_breadcrumb_box->signal_patch_selected.connect(sigc::mem_fun(this, &PatchWindow::set_patch_from_path));
 }
 
 
@@ -126,7 +126,7 @@ PatchWindow::~PatchWindow()
 	// Prevents deletion
 	//m_patch->claim_patch_view();
 
-	delete m_breadcrumb_box;
+	delete _breadcrumb_box;
 }
 
 
@@ -153,67 +153,67 @@ PatchWindow::set_patch_from_path(const Path& path, SharedPtr<PatchView> view)
 void
 PatchWindow::set_patch(SharedPtr<PatchModel> patch, SharedPtr<PatchView> view)
 {
-	if (!patch || patch == m_patch)
+	if (!patch || patch == _patch)
 		return;
 
-	m_enable_signal = false;
+	_enable_signal = false;
 
-	m_patch = patch;
+	_patch = patch;
 
-	m_view = m_breadcrumb_box->view(patch->path());
+	_view = _breadcrumb_box->view(patch->path());
 	
-	if (!m_view)
-		m_view = PatchView::create(patch);
+	if (!_view)
+		_view = PatchView::create(patch);
 	else
-		assert(!view || m_view == view);
+		assert(!view || _view == view);
 	
-	assert(m_view);
+	assert(_view);
 
 	// Add view to ourself
-	if (m_view->get_parent())
-		m_view->get_parent()->remove(*m_view);
+	if (_view->get_parent())
+		_view->get_parent()->remove(*_view);
 
-	m_viewport->remove();
-	m_viewport->add(*m_view.get());
+	_viewport->remove();
+	_viewport->add(*_view.get());
 
 
 	// Add our breadcrumbs to the view
-	if (m_breadcrumb_box->get_parent())
-		m_breadcrumb_box->get_parent()->remove(*m_breadcrumb_box);
+	if (_breadcrumb_box->get_parent())
+		_breadcrumb_box->get_parent()->remove(*_breadcrumb_box);
 
-	m_view->breadcrumb_container()->remove();
-	m_view->breadcrumb_container()->add(*m_breadcrumb_box);
+	_view->breadcrumb_container()->remove();
+	_view->breadcrumb_container()->add(*_breadcrumb_box);
 
-	m_breadcrumb_box->build(patch->path(), m_view);
-	m_breadcrumb_box->show();
+	_breadcrumb_box->build(patch->path(), _view);
+	_breadcrumb_box->show();
 
 	//m_menu_view_control_window->property_sensitive() = patch->has_control_inputs();
 
 	int width, height;
 	get_size(width, height);
-	m_view->canvas()->scroll_to(
-			((int)m_view->canvas()->width() - width)/2,
-			((int)m_view->canvas()->height() - height)/2);
+	_view->canvas()->scroll_to(
+			((int)_view->canvas()->width() - width)/2,
+			((int)_view->canvas()->height() - height)/2);
 
-	set_title(m_patch->path());
+	set_title(_patch->path());
 
 	//m_properties_window->patch_model(pc->patch_model());
 
 	if (patch->path() == "/")
-		m_menu_destroy_patch->set_sensitive(false);
+		_menu_destroy_patch->set_sensitive(false);
 	else
-		m_menu_destroy_patch->set_sensitive(true);
+		_menu_destroy_patch->set_sensitive(true);
 	
 	show_all();
 
-	m_enable_signal = true;
+	_enable_signal = true;
 }
 
 
 void
 PatchWindow::event_show_engine()
 {
-	if (m_patch)
+	if (_patch)
 		App::instance().connect_window()->show();
 }
 
@@ -221,31 +221,31 @@ PatchWindow::event_show_engine()
 void
 PatchWindow::event_show_controls()
 {
-	App::instance().window_factory()->present_controls(m_patch);
+	App::instance().window_factory()->present_controls(_patch);
 }
 
 
 void
 PatchWindow::event_show_properties()
 {
-	App::instance().window_factory()->present_properties(m_patch);
+	App::instance().window_factory()->present_properties(_patch);
 }
 
 
 void
 PatchWindow::event_import()
 {
-	App::instance().window_factory()->present_load_patch(m_patch);
+	App::instance().window_factory()->present_load_patch(_patch);
 }
 
 
 void
 PatchWindow::event_save()
 {
-	if (m_patch->filename() == "")
+	if (_patch->filename() == "")
 		event_save_as();
 	else
-		App::instance().loader()->save_patch(m_patch, m_patch->filename(), false);
+		App::instance().loader()->save_patch(_patch, _patch->filename(), false);
 }
 
 
@@ -266,7 +266,7 @@ PatchWindow::event_save_as()
 	dialog.add_button(Gtk::Stock::SAVE, Gtk::RESPONSE_OK);	
 	
 	// Set current folder to most sensible default
-	const string& current_filename = m_patch->filename();
+	const string& current_filename = _patch->filename();
 	if (current_filename.length() > 0)
 		dialog.set_filename(current_filename);
 	else if (App::instance().configuration()->patch_folder().length() > 0)
@@ -300,7 +300,7 @@ PatchWindow::event_save_as()
 		fin.close();
 		
 		if (confirm) {
-			App::instance().loader()->save_patch(m_patch, filename, recursive);
+			App::instance().loader()->save_patch(_patch, filename, recursive);
 			//m_patch->set_metadata("filename", Atom(filename.c_str()));
 		}
 	}
@@ -311,24 +311,24 @@ PatchWindow::event_save_as()
 void
 PatchWindow::event_copy()
 {
-	if (m_view)
-		m_view->canvas()->copy_selection();
+	if (_view)
+		_view->canvas()->copy_selection();
 }
 
 
 void
 PatchWindow::event_delete()
 {
-	if (m_view)
-		m_view->canvas()->destroy_selection();
+	if (_view)
+		_view->canvas()->destroy_selection();
 }
 
 
 void
 PatchWindow::on_show()
 {
-	if (m_position_stored)
-		move(m_x, m_y);
+	if (_position_stored)
+		move(_x, _y);
 
 	Gtk::Window::on_show();
 }
@@ -337,8 +337,8 @@ PatchWindow::on_show()
 void
 PatchWindow::on_hide()
 {
-	m_position_stored = true;
-	get_position(m_x, m_y);
+	_position_stored = true;
+	get_position(_x, _y);
 	Gtk::Window::on_hide();
 }
 
@@ -349,9 +349,9 @@ PatchWindow::on_key_press_event(GdkEventKey* event)
 	if (event->keyval == GDK_Delete) {
 		cerr << "FIXME: delete key\n";
 		/*
-		if (m_patch && m_patch->get_view()) {
-			assert(m_patch->get_view()->canvas());
-			m_patch->get_view()->canvas()->destroy_selected();
+		if (_patch && _patch->get_view()) {
+			assert(_patch->get_view()->canvas());
+			_patch->get_view()->canvas()->destroy_selected();
 		}*/
 		return true;
 	} else {
@@ -391,14 +391,14 @@ PatchWindow::event_quit()
 void
 PatchWindow::event_destroy()
 {
-	App::instance().engine()->destroy(m_patch->path());
+	App::instance().engine()->destroy(_patch->path());
 }
 
 
 void
 PatchWindow::event_clear()
 {
-	App::instance().engine()->clear_patch(m_patch->path());
+	App::instance().engine()->clear_patch(_patch->path());
 }
 
 void

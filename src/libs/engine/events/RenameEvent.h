@@ -52,12 +52,12 @@ public:
 private:
 	enum ErrorType { NO_ERROR, OBJECT_NOT_FOUND, OBJECT_EXISTS, OBJECT_NOT_RENAMABLE, INVALID_NAME };
 
-	Path                 m_old_path;
-	string               m_name;
-	Path                 m_new_path;
-	Patch*               m_parent_patch;
-	TreeNode<GraphObject*>* m_store_treenode;
-	ErrorType            m_error;
+	Path                 _old_path;
+	string               _name;
+	Path                 _new_path;
+	Patch*               _parent_patch;
+	TreeNode<GraphObject*>* _store_treenode;
+	ErrorType            _error;
 };
 
 

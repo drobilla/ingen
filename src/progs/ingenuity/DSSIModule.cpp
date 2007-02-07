@@ -30,7 +30,7 @@ void
 DSSIModule::on_double_click(GdkEventButton* ev)
 {
 	/*
-	DSSIController* dc = dynamic_cast<DSSIController*>(m_node);
+	DSSIController* dc = dynamic_cast<DSSIController*>(_node);
 	if (!dc || ! dc->attempt_to_show_gui())
 		show_control_window();
 	*/

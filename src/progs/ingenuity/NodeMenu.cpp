@@ -90,7 +90,7 @@ void
 NodeMenu::destroy()
 {
 	cerr << "FIXME: NODE DESTROYED\n";
-	//SharedPtr<ObjectModel> model = m_model;
+	//SharedPtr<ObjectModel> model = _model;
 	//m_model.reset();
 }
 #endif
@@ -107,15 +107,15 @@ NodeMenu::set_path(const Path& new_path)
 			i != _node->ports().end(); ++i) {
 		ObjectController* const pc = (*i)->controller();
 		assert(pc != NULL);
-		pc->set_path(m_model->path().base() + pc->model()->name());
+		pc->set_path(_model->path().base() + pc->model()->name());
 	}
 
 	// Handle bridge port, if this node represents one
-	if (m_bridge_port != NULL)
-		m_bridge_port->set_path(new_path);
+	if (_bridge_port != NULL)
+		_bridge_port->set_path(new_path);
 
-	if (m_module != NULL)
-		m_module->canvas()->rename_module(_node->path().name(), new_path.name());
+	if (_module != NULL)
+		_module->canvas()->rename_module(_node->path().name(), new_path.name());
 	
 	ObjectController::set_path(new_path);
 	
@@ -127,19 +127,19 @@ NodeMenu::set_path(const Path& new_path)
 void
 NodeMenu::destroy()
 {
-	PatchController* pc = ((PatchController*)m_model->parent()->controller());
+	PatchController* pc = ((PatchController*)_model->parent()->controller());
 	assert(pc != NULL);
 
 	//remove_from_store();
-	//pc->remove_node(m_model->path().name());
+	//pc->remove_node(_model->path().name());
 	cerr << "FIXME: remove node\n";
 
-	if (m_bridge_port != NULL)
-		m_bridge_port->destroy();
-	m_bridge_port = NULL;
+	if (_bridge_port != NULL)
+		_bridge_port->destroy();
+	_bridge_port = NULL;
 
-	//if (m_module != NULL)
-	//	delete m_module;
+	//if (_module != NULL)
+	//	delete _module;
 }
 #endif
 
@@ -154,10 +154,10 @@ NodeMenu::add_port(SharedPtr<PortModel> pm)
 	//cout << "[NodeMenu] Adding port " << pm->path() << endl;
 	
 	/*
-	if (m_module != NULL) {
+	if (_module != NULL) {
 		// (formerly PortController)
-		pc->create_port(m_module);
-		m_module->resize();
+		pc->create_port(_module);
+		_module->resize();
 		
 		// Enable "Controls" menu item on module
 		if (has_control_inputs())
@@ -179,8 +179,8 @@ NodeMenu::on_menu_clone()
 	cerr << "FIXME: clone broken\n";
 	/*
 	assert(_node);
-	//assert(m_parent != NULL);
-	//assert(m_parent->model() != NULL);
+	//assert(_parent != NULL);
+	//assert(_parent->model() != NULL);
 	
 	string clone_name = _node->name();
 	int i = 2; // postfix number (ie oldname_2)
@@ -249,8 +249,8 @@ NodeMenu::disable_controls_menuitem()
 {
 	_controls_menuitem->property_sensitive() = false;
 	
-	//if (m_control_window != NULL)
-	//	m_control_window->hide();
+	//if (_control_window != NULL)
+	//	_control_window->hide();
 }
 
 

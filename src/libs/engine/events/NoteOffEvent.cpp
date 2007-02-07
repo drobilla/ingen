@@ -29,8 +29,8 @@ namespace Ingen {
  */
 NoteOffEvent::NoteOffEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, Node* node, uchar note_num)
 : Event(engine, responder, timestamp),
-  m_node(node),
-  m_note_num(note_num)
+  _node(node),
+  _note_num(note_num)
 {
 }
 
@@ -39,9 +39,9 @@ NoteOffEvent::NoteOffEvent(Engine& engine, SharedPtr<Responder> responder, Sampl
  */
 NoteOffEvent::NoteOffEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& node_path, uchar note_num)
 : Event(engine, responder, timestamp),
-  m_node(NULL),
-  m_node_path(node_path),
-  m_note_num(note_num)
+  _node(NULL),
+  _node_path(node_path),
+  _note_num(note_num)
 {
 }
 
@@ -52,15 +52,15 @@ NoteOffEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 	Event::execute(nframes, start, end);
 	assert(_time >= start && _time <= end);
 
-	if (m_node == NULL && m_node_path != "")
-		m_node = _engine.object_store()->find_node(m_node_path);
+	if (_node == NULL && _node_path != "")
+		_node = _engine.object_store()->find_node(_node_path);
 		
 	// FIXME: this isn't very good at all.
-	if (m_node != NULL && m_node->plugin()->type() == Plugin::Internal) {
-		if (m_node->plugin()->plug_label() == "note_in")
-			((MidiNoteNode*)m_node)->note_off(m_note_num, _time, nframes, start, end);
-		else if (m_node->plugin()->plug_label() == "trigger_in")
-			((MidiTriggerNode*)m_node)->note_off(m_note_num, _time, nframes, start, end);
+	if (_node != NULL && _node->plugin()->type() == Plugin::Internal) {
+		if (_node->plugin()->plug_label() == "note_in")
+			((MidiNoteNode*)_node)->note_off(_note_num, _time, nframes, start, end);
+		else if (_node->plugin()->plug_label() == "trigger_in")
+			((MidiTriggerNode*)_node)->note_off(_note_num, _time, nframes, start, end);
 	}
 }
 
@@ -68,7 +68,7 @@ NoteOffEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 void
 NoteOffEvent::post_process()
 {
-	if (m_node != NULL) 
+	if (_node != NULL) 
 		_responder->respond_ok();
 	else
 		_responder->respond_error("Did not find node for note_off");

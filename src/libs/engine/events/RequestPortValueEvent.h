@@ -44,10 +44,10 @@ public:
 	void post_process();
 
 private:
-	string                      m_port_path;
-	Port*                       m_port;
-	Sample                      m_value;
-	SharedPtr<ClientInterface> m_client;
+	string                      _port_path;
+	Port*                       _port;
+	Sample                      _value;
+	SharedPtr<ClientInterface> _client;
 };
 
 
