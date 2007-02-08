@@ -108,7 +108,7 @@ PatchCanvas::build()
 	// Create pseudo modules for ports (ports on this canvas, not on our module)
 	for (PortModelList::const_iterator i = _patch->ports().begin();
 			i != _patch->ports().end(); ++i) {
-		add_module(PatchPortModule::create(shared_this, *i));
+		add_item(PatchPortModule::create(shared_this, *i));
 	}
 
 	// Create connections
@@ -127,16 +127,16 @@ PatchCanvas::add_node(SharedPtr<NodeModel> nm)
 
 	SharedPtr<PatchModel> pm = PtrCast<PatchModel>(nm);
 	if (pm)
-		add_module(SubpatchModule::create(shared_this, pm));
+		add_item(SubpatchModule::create(shared_this, pm));
 	else
-		add_module(NodeModule::create(shared_this, nm));
+		add_item(NodeModule::create(shared_this, nm));
 }
 
 
 void
 PatchCanvas::remove_node(SharedPtr<NodeModel> nm)
 {
-	remove_module(nm->path().name()); // should cut all references
+	remove_item(nm->path().name()); // should cut all references
 }
 
 
@@ -146,14 +146,14 @@ PatchCanvas::add_port(SharedPtr<PortModel> pm)
 	boost::shared_ptr<PatchCanvas> shared_this =
 		boost::dynamic_pointer_cast<PatchCanvas>(shared_from_this());
 
-	add_module(PatchPortModule::create(shared_this, pm));
+	add_item(PatchPortModule::create(shared_this, pm));
 }
 
 
 void
 PatchCanvas::remove_port(SharedPtr<PortModel> pm)
 {
-	remove_module(pm->path().name()); // should cut all references
+	remove_item(pm->path().name()); // should cut all references
 }
 
 
@@ -286,7 +286,7 @@ PatchCanvas::disconnect(boost::shared_ptr<LibFlowCanvas::Connectable> src_port,
 bool
 PatchCanvas::canvas_event(GdkEvent* event)
 {
-	assert(event != NULL);
+	assert(event);
 	
 	switch (event->type) {
 
@@ -315,7 +315,7 @@ PatchCanvas::canvas_event(GdkEvent* event)
 void
 PatchCanvas::destroy_selection()
 {
-	for (list<boost::shared_ptr<Module> >::iterator m = _selected_modules.begin(); m != _selected_modules.end(); ++m) {
+	for (list<boost::shared_ptr<Item> >::iterator m = _selected_items.begin(); m != _selected_items.end(); ++m) {
 		boost::shared_ptr<NodeModule> module = boost::dynamic_pointer_cast<NodeModule>(*m);
 		if (module) {
 			App::instance().engine()->destroy(module->node()->path());
@@ -335,7 +335,7 @@ PatchCanvas::copy_selection()
 	Serializer serializer;
 	serializer.start_to_string();
 
-	for (list<boost::shared_ptr<Module> >::iterator m = _selected_modules.begin(); m != _selected_modules.end(); ++m) {
+	for (list<boost::shared_ptr<Item> >::iterator m = _selected_items.begin(); m != _selected_items.end(); ++m) {
 		boost::shared_ptr<NodeModule> module = boost::dynamic_pointer_cast<NodeModule>(*m);
 		if (module) {
 			serializer.serialize(module->node());

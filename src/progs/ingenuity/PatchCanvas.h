@@ -56,7 +56,7 @@ public:
 
 	boost::shared_ptr<NodeModule> find_module(const string& name) {
 		return boost::dynamic_pointer_cast<NodeModule>(
-			FlowCanvas::get_module(name));
+			FlowCanvas::get_item(name));
 	}
 	
 	void build();
