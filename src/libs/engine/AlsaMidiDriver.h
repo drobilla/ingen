@@ -20,8 +20,8 @@
 
 #include <boost/utility.hpp>
 #include <alsa/asoundlib.h>
-#include "List.h"
-#include "raul/SRSWQueue.h"
+#include <raul/List.h>
+#include <raul/SRSWQueue.h>
 #include "MidiDriver.h"
 
 
@@ -40,7 +40,7 @@ static const int MAX_MIDI_EVENT_SIZE = 3;
  *
  * \ingroup engine
  */
-class AlsaMidiPort : public DriverPort, public ListNode<AlsaMidiPort*>
+class AlsaMidiPort : public DriverPort, public Raul::ListNode<AlsaMidiPort*>
 {
 public:
 	AlsaMidiPort(AlsaMidiDriver* driver, DuplexPort<MidiMessage>* port);
@@ -96,8 +96,8 @@ public:
 	snd_midi_event_t* event_coder() const { return _event_coder; }
 
 private:
-	List<AlsaMidiPort*> _in_ports;
-	List<AlsaMidiPort*> _out_ports;
+	Raul::List<AlsaMidiPort*> _in_ports;
+	Raul::List<AlsaMidiPort*> _out_ports;
 	
 	friend class AlsaMidiPort;
 	

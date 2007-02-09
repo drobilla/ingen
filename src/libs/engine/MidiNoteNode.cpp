@@ -18,11 +18,11 @@
 #include "MidiNoteNode.h"
 #include <cmath>
 #include <iostream>
+#include <raul/Array.h>
 #include "MidiMessage.h"
 #include "InputPort.h"
 #include "OutputPort.h"
 #include "Plugin.h"
-#include "Array.h"
 #include "AudioDriver.h"
 #include "util.h"
 #include "midi.h"
@@ -38,7 +38,7 @@ MidiNoteNode::MidiNoteNode(const string& path, size_t poly, Patch* parent, Sampl
   _voices(new Voice[poly]),
   _sustain(false)
 {
-	_ports = new Array<Port*>(5);
+	_ports = new Raul::Array<Port*>(5);
 	
 	_midi_in_port = new InputPort<MidiMessage>(this, "MIDI_In", 0, 1, DataType::MIDI, _buffer_size);
 	_ports->at(0) = _midi_in_port;

@@ -71,13 +71,13 @@ public:
 	bool       traversed()   const { return _traversed; }
 	void       traversed(bool b)   { _traversed = b; }
 	
-	const Array<Port*>& ports() const { return *_ports; }
+	const Raul::Array<Port*>& ports() const { return *_ports; }
 	
-	virtual List<Node*>* providers()               { return _providers; }
-	virtual void         providers(List<Node*>* l) { _providers = l; }
+	virtual Raul::List<Node*>* providers()               { return _providers; }
+	virtual void         providers(Raul::List<Node*>* l) { _providers = l; }
 	
-	virtual List<Node*>* dependants()               { return _dependants; }
-	virtual void         dependants(List<Node*>* l) { _dependants = l; }
+	virtual Raul::List<Node*>* dependants()               { return _dependants; }
+	virtual void         dependants(Raul::List<Node*>* l) { _dependants = l; }
 	
 	virtual const Plugin* plugin() const { return _plugin; }
 	
@@ -95,11 +95,11 @@ protected:
 	size_t      _buffer_size;
 	bool        _activated;
 
-	Array<Port*>* _ports;     ///< Access in audio thread only
+	Raul::Array<Port*>* _ports;     ///< Access in audio thread only
 
 	bool         _traversed;  ///< Flag for process order algorithm
-	List<Node*>* _providers;  ///< Nodes connected to this one's input ports
-	List<Node*>* _dependants; ///< Nodes this one's output ports are connected to
+	Raul::List<Node*>* _providers;  ///< Nodes connected to this one's input ports
+	Raul::List<Node*>* _dependants; ///< Nodes this one's output ports are connected to
 };
 
 

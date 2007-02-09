@@ -20,9 +20,9 @@
 
 #include <jack/jack.h>
 #include <jack/transport.h>
-#include "raul/Thread.h"
-#include "raul/Path.h"
-#include "List.h"
+#include <raul/Thread.h>
+#include <raul/Path.h>
+#include <raul/List.h>
 #include "AudioDriver.h"
 #include "Buffer.h"
 
@@ -40,7 +40,7 @@ typedef jack_default_audio_sample_t jack_sample_t;
  *
  * A Jack port always has a one-to-one association with a Patch port.
  */
-class JackAudioPort : public DriverPort, public ListNode<JackAudioPort*>
+class JackAudioPort : public DriverPort, public Raul::ListNode<JackAudioPort*>
 {
 public:
 	JackAudioPort(JackAudioDriver* driver, DuplexPort<Sample>* patch_port);
@@ -135,7 +135,7 @@ private:
 	jack_position_t        _position;
 	jack_transport_state_t _transport_state;
 	
-	List<JackAudioPort*> _ports;
+	Raul::List<JackAudioPort*> _ports;
 
 	Patch* _root_patch;
 };

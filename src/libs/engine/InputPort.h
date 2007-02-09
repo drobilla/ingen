@@ -21,8 +21,8 @@
 #include <string>
 #include <cstdlib>
 #include <cassert>
+#include <raul/List.h>
 #include "TypedPort.h"
-#include "List.h"
 #include "MidiMessage.h"
 using std::string;
 
@@ -51,10 +51,10 @@ public:
 	InputPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size);
 	virtual ~InputPort() {}
 	
-	void                           add_connection(ListNode<TypedConnection<T>*>* const c);
-	ListNode<TypedConnection<T>*>* remove_connection(const OutputPort<T>* const src_port);
+	void                           add_connection(Raul::ListNode<TypedConnection<T>*>* const c);
+	Raul::ListNode<TypedConnection<T>*>* remove_connection(const OutputPort<T>* const src_port);
 
-	const List<TypedConnection<T>*>& connections() { return _connections; }
+	const Raul::List<TypedConnection<T>*>& connections() { return _connections; }
 
 	void process(SampleCount nframes, FrameTime start, FrameTime end);
 	
@@ -68,7 +68,7 @@ public:
 	
 private:
 
-	List<TypedConnection<T>*> _connections;
+	Raul::List<TypedConnection<T>*> _connections;
 
 	// This is just stupid...
 	using TypedPort<T>::_buffers;

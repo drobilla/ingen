@@ -21,7 +21,7 @@
 #include <string>
 #include <cassert>
 #include <boost/utility.hpp>
-#include "MaidObject.h"
+#include <raul/Deletable.h>
 using std::string;
 
 template<typename T> class Tree;
@@ -30,7 +30,7 @@ template<typename T> class Tree;
 /** A node in a Tree.
  */
 template <typename T>
-class TreeNode : public MaidObject
+class TreeNode : public Raul::Deletable
 {
 public:
 	TreeNode(const string& key)

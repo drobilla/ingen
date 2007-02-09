@@ -15,12 +15,12 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <raul/List.h>
+#include <raul/Path.h>
 #include "ObjectStore.h"
 #include "Patch.h"
 #include "Node.h"
 #include "Port.h"
-#include "List.h"
-#include "raul/Path.h"
 #include "Tree.h"
 
 namespace Ingen {
@@ -87,7 +87,7 @@ ObjectStore::add(TreeNode<GraphObject*>* tn)
 
 /** Remove a patch from the store.
  *
- * It it the caller's responsibility to delete the returned ListNode.
+ * It it the caller's responsibility to delete the returned Raul::ListNode.
  * 
  * @returns TreeNode containing object removed on success, NULL if not found.
  */

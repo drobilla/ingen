@@ -20,7 +20,7 @@
 
 #include <string>
 #include "types.h"
-#include "Array.h"
+#include <raul/Array.h>
 #include "Port.h"
 #include "Buffer.h"
 
@@ -67,7 +67,7 @@ protected:
 
 	bool _fixed_buffers;
 	
-	Array<Buffer<T>*> _buffers;
+	Raul::Array<Buffer<T>*> _buffers;
 };
 
 

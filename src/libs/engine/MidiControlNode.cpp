@@ -33,7 +33,7 @@ MidiControlNode::MidiControlNode(const string& path, size_t poly, Patch* parent,
 : InternalNode(new Plugin(Plugin::Internal, "ingen:control_node"), path, 1, parent, srate, buffer_size),
   _learning(false)
 {
-	_ports = new Array<Port*>(7);
+	_ports = new Raul::Array<Port*>(7);
 
 	_midi_in_port = new InputPort<MidiMessage>(this, "MIDI_In", 0, 1, DataType::MIDI, _buffer_size);
 	_ports->at(0) = _midi_in_port;

@@ -18,12 +18,13 @@
 #ifndef CREATEPATCHEVENT_H
 #define CREATEPATCHEVENT_H
 
-#include "raul/Path.h"
-#include "QueuedEvent.h"
 #include <string>
+#include <raul/Path.h>
+#include "QueuedEvent.h"
+
 using std::string;
 
-template<typename T> class Array;
+namespace Raul { template<typename T> class Array; }
 template<typename T> class TreeNode;
 
 namespace Ingen {
@@ -52,7 +53,7 @@ private:
 	Path              _path;
 	Patch*            _patch;
 	Patch*            _parent;
-	Array<Node*>*     _process_order;
+	Raul::Array<Node*>*     _process_order;
 	TreeNode<Node*>*  _patch_treenode;
 	int               _poly;
 	ErrorType         _error;

@@ -31,10 +31,10 @@
 #include "Port.h"
 #include "AudioDriver.h"
 #include "MidiDriver.h"
-#include "List.h"
+#include <raul/List.h>
 #include "Driver.h"
 #include "DuplexPort.h"
-#include "Array.h"
+#include <raul/Array.h>
 
 namespace Ingen {
 
@@ -97,14 +97,14 @@ AddPortEvent::pre_process()
 		if (_patch_port) {
 
 			if (_is_output)
-				_patch->add_output(new ListNode<Port*>(_patch_port));
+				_patch->add_output(new Raul::ListNode<Port*>(_patch_port));
 			else
-				_patch->add_input(new ListNode<Port*>(_patch_port));
+				_patch->add_input(new Raul::ListNode<Port*>(_patch_port));
 			
 			if (_patch->external_ports())
-				_ports_array = new Array<Port*>(old_num_ports + 1, *_patch->external_ports());
+				_ports_array = new Raul::Array<Port*>(old_num_ports + 1, *_patch->external_ports());
 			else
-				_ports_array = new Array<Port*>(old_num_ports + 1, NULL);
+				_ports_array = new Raul::Array<Port*>(old_num_ports + 1, NULL);
 
 
 			_ports_array->at(_patch->num_ports()-1) = _patch_port;

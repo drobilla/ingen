@@ -72,7 +72,7 @@ CreatePatchEvent::pre_process()
 	_patch = new Patch(_path.name(), poly, _parent, _engine.audio_driver()->sample_rate(), _engine.audio_driver()->buffer_size(), _poly);
 		
 	if (_parent != NULL) {
-		_parent->add_node(new ListNode<Node*>(_patch));
+		_parent->add_node(new Raul::ListNode<Node*>(_patch));
 
 		if (_parent->enabled())
 			_process_order = _parent->build_process_order();

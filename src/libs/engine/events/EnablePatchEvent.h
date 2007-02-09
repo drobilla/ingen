@@ -23,7 +23,7 @@
 
 using std::string;
 
-template <typename T> class Array;
+namespace Raul { template <typename T> class Array; }
 
 namespace Ingen {
 
@@ -47,7 +47,7 @@ public:
 private:
 	string        _patch_path;
 	Patch*        _patch;
-	Array<Node*>* _process_order; // Patch's new process order
+	Raul::Array<Node*>* _process_order; // Patch's new process order
 };
 
 

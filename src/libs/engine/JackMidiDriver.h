@@ -20,8 +20,8 @@
 
 #include <jack/jack.h>
 #include <jack/midiport.h>
+#include <raul/List.h>
 #include "config.h"
-#include "List.h"
 #include "MidiDriver.h"
 
 namespace Ingen {
@@ -36,7 +36,7 @@ template <typename T> class DuplexPort;
  *
  * \ingroup engine
  */
-class JackMidiPort : public DriverPort, public ListNode<JackMidiPort*>
+class JackMidiPort : public DriverPort, public Raul::ListNode<JackMidiPort*>
 {
 public:
 	JackMidiPort(JackMidiDriver* driver, DuplexPort<MidiMessage>* port);
@@ -87,13 +87,13 @@ public:
 	jack_client_t* jack_client()        { return _client; }
 
 private:
-	List<JackMidiPort*> _in_ports;
-	List<JackMidiPort*> _out_ports;
+	Raul::List<JackMidiPort*> _in_ports;
+	Raul::List<JackMidiPort*> _out_ports;
 	
 	friend class JackMidiPort;
 	
-	void add_output(ListNode<JackMidiPort*>* port);
-	ListNode<JackMidiPort*>* remove_output(JackMidiPort* port);
+	void add_output(Raul::ListNode<JackMidiPort*>* port);
+	Raul::ListNode<JackMidiPort*>* remove_output(JackMidiPort* port);
 	
 	// MIDI thread
 	static void* process_midi_in(void* me);

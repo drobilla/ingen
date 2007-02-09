@@ -23,7 +23,7 @@
 #include <string>
 using std::string;
 
-template <typename T> class Array;
+namespace Raul { template <typename T> class Array; }
 template<typename T> class TreeNode;
 
 namespace Ingen {
@@ -71,7 +71,7 @@ private:
 	bool             _poly;
 	Patch*           _patch;
 	Node*            _node;
-	Array<Node*>*    _process_order; ///< Patch's new process order
+	Raul::Array<Node*>*    _process_order; ///< Patch's new process order
 	bool             _node_already_exists;
 };
 

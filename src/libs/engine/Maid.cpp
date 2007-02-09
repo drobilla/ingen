@@ -16,7 +16,7 @@
  */
 
 #include "Maid.h"
-#include "MaidObject.h"
+#include <raul/Deletable.h>
 
 
 Maid::Maid(size_t size)
@@ -36,7 +36,7 @@ Maid::~Maid()
 void
 Maid::cleanup()
 {
-	MaidObject* obj = NULL;
+	Raul::Deletable* obj = NULL;
 
 	while (!_objects.empty()) {
 		obj = _objects.front();

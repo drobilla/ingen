@@ -22,7 +22,7 @@
 #include <map>
 #include <cstddef>
 #include <cassert>
-#include "MaidObject.h"
+#include <raul/Deletable.h>
 #include "raul/Path.h"
 #include "raul/Atom.h"
 #include "types.h"
@@ -41,13 +41,13 @@ class ObjectStore;
 
 /** An object on the audio graph - Patch, Node, Port, etc.
  *
- * Each of these is a MaidObject and so can be deleted in a realtime safe
+ * Each of these is a Raul::Deletable and so can be deleted in a realtime safe
  * way from anywhere, and they all have a map of metadata for clients to store
  * arbitrary values in (which the engine puts no significance to whatsoever).
  *
  * \ingroup engine
  */
-class GraphObject : public MaidObject
+class GraphObject : public Raul::Deletable
 {
 public:
 	typedef std::map<string, Atom> MetadataMap;

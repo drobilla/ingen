@@ -66,14 +66,11 @@ libingen_la_SOURCES = \
 	GraphObject.cpp \
 	Maid.h \
 	Maid.cpp \
-	MaidObject.h \
 	Tree.h \
 	TreeImplementation.h \
 	PluginLibrary.h \
 	Plugin.h \
 	Plugin.cpp \
-	Array.h \
-	List.h \
 	PostProcessor.h \
 	PostProcessor.cpp \
 	Connection.h \

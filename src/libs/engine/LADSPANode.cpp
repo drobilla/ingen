@@ -56,7 +56,7 @@ LADSPANode::instantiate()
 {
 	// Note that a DSSI plugin might tack more on to the end of this
 	if (!_ports)
-		_ports = new Array<Port*>(_descriptor->PortCount);
+		_ports = new Raul::Array<Port*>(_descriptor->PortCount);
 	
 	_instances = new LADSPA_Handle[_poly];
 	

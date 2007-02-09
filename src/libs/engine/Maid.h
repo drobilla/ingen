@@ -20,7 +20,7 @@
 
 #include <boost/utility.hpp>
 #include "raul/SRSWQueue.h"
-#include "MaidObject.h"
+#include <raul/Deletable.h>
 
 
 /** Explicitly driven garbage collector.
@@ -40,19 +40,19 @@ public:
 	Maid(size_t size);
 	~Maid();
 
-	inline void push(MaidObject* obj);
+	inline void push(Raul::Deletable* obj);
 	
 	void cleanup();
 	
 private:
-	Raul::SRSWQueue<MaidObject*> _objects;
+	Raul::SRSWQueue<Raul::Deletable*> _objects;
 };
 
 
 /** Push an event to be deleted. Realtime safe.
  */
 inline void
-Maid::push(MaidObject* obj)
+Maid::push(Raul::Deletable* obj)
 {
 	if (obj != NULL)
 		_objects.push(obj);

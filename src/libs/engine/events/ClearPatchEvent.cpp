@@ -49,7 +49,7 @@ ClearPatchEvent::pre_process()
 	
 		_process = _patch->enabled();
 
-		for (List<Node*>::const_iterator i = _patch->nodes().begin(); i != _patch->nodes().end(); ++i)
+		for (Raul::List<Node*>::const_iterator i = _patch->nodes().begin(); i != _patch->nodes().end(); ++i)
 			(*i)->remove_from_store();
 	}
 
@@ -66,7 +66,7 @@ ClearPatchEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 		_patch->disable();
 		
 		cerr << "FIXME: CLEAR PATCH\n";
-		//for (List<Node*>::const_iterator i = _patch->nodes().begin(); i != _patch->nodes().end(); ++i)
+		//for (Raul::List<Node*>::const_iterator i = _patch->nodes().begin(); i != _patch->nodes().end(); ++i)
 		//	(*i)->remove_from_patch();
 
 		if (_patch->process_order() != NULL) {
@@ -82,14 +82,14 @@ ClearPatchEvent::post_process()
 {	
 	if (_patch != NULL) {
 		// Delete all nodes
-		for (List<Node*>::iterator i = _patch->nodes().begin(); i != _patch->nodes().end(); ++i) {
+		for (Raul::List<Node*>::iterator i = _patch->nodes().begin(); i != _patch->nodes().end(); ++i) {
 			(*i)->deactivate();
 			delete *i;
 		}
 		_patch->nodes().clear();
 
 		// Delete all connections
-		for (List<Connection*>::iterator i = _patch->connections().begin(); i != _patch->connections().end(); ++i)
+		for (Raul::List<Connection*>::iterator i = _patch->connections().begin(); i != _patch->connections().end(); ++i)
 			delete *i;
 		_patch->connections().clear();
 		

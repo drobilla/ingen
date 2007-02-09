@@ -259,7 +259,7 @@ void OSCClientSender::new_node(string   plugin_uri,
 
 
 	/*
-	const Array<Port*>& ports = node->ports();
+	const Raul::Array<Port*>& ports = node->ports();
 	Port*     port;
 	PortInfo* info;
 	for (size_t j=0; j < ports.size(); ++j) {

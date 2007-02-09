@@ -37,7 +37,7 @@ namespace Ingen {
 
 AlsaMidiPort::AlsaMidiPort(AlsaMidiDriver* driver, DuplexPort<MidiMessage>* patch_port)
 : DriverPort(patch_port->is_input()),
-  ListNode<AlsaMidiPort*>(this),
+  Raul::ListNode<AlsaMidiPort*>(this),
   _driver(driver),
   _patch_port(patch_port),
   _port_id(0),
@@ -280,7 +280,7 @@ AlsaMidiDriver::deactivate()
 void
 AlsaMidiDriver::prepare_block(const SampleCount block_start, const SampleCount block_end)
 {
-	for (List<AlsaMidiPort*>::iterator i = _in_ports.begin(); i != _in_ports.end(); ++i)
+	for (Raul::List<AlsaMidiPort*>::iterator i = _in_ports.begin(); i != _in_ports.end(); ++i)
 		(*i)->prepare_block(block_start, block_end);
 }
 
@@ -320,11 +320,11 @@ AlsaMidiDriver::remove_port(const Path& path)
 
 	// FIXME: duplex?
 	
-	for (List<AlsaMidiPort*>::iterator i = _in_ports.begin(); i != _in_ports.end(); ++i)
+	for (Raul::List<AlsaMidiPort*>::iterator i = _in_ports.begin(); i != _in_ports.end(); ++i)
 		if ((*i)->patch_port()->path() == path)
 			return _in_ports.remove(i)->elem();
 
-	for (List<AlsaMidiPort*>::iterator i = _out_ports.begin(); i != _out_ports.end(); ++i)
+	for (Raul::List<AlsaMidiPort*>::iterator i = _out_ports.begin(); i != _out_ports.end(); ++i)
 		if ((*i)->patch_port()->path() == path)
 			return _out_ports.remove(i)->elem();
 
@@ -349,7 +349,7 @@ AlsaMidiDriver::process_midi_in(void* alsa_driver)
 	while ( ! _midi_thread_exit_flag)
 		if (poll(&pfd, npfd, 100000) > 0)
 			while (snd_seq_event_input(ad->_seq_handle, &ev) > 0)
-				for (List<AlsaMidiPort*>::iterator i = ad->_in_ports.begin(); i != ad->_in_ports.end(); ++i)
+				for (Raul::List<AlsaMidiPort*>::iterator i = ad->_in_ports.begin(); i != ad->_in_ports.end(); ++i)
 					if ((*i)->port_id() == ev->dest.port)
 						(*i)->event(ev);
 	

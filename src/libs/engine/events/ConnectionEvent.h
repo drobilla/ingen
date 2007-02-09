@@ -24,8 +24,10 @@
 #include "types.h"
 using std::string;
 
-template <typename T> class ListNode;
-template <typename T> class Array;
+namespace Raul {
+	template <typename T> class ListNode;
+	template <typename T> class Array;
+}
 
 namespace Ingen {
 	
@@ -92,10 +94,10 @@ private:
 	InputPort<T>*                  _dst_port;
 
 	Patch*                         _patch;
-	Array<Node*>*                  _process_order; ///< New process order for Patch
+	Raul::Array<Node*>*                  _process_order; ///< New process order for Patch
 	TypedConnection<T>*            _connection;
-	ListNode<Connection*>*         _patch_listnode;
-	ListNode<TypedConnection<T>*>* _port_listnode;
+	Raul::ListNode<Connection*>*         _patch_listnode;
+	Raul::ListNode<TypedConnection<T>*>* _port_listnode;
 	
 	bool _succeeded;
 };

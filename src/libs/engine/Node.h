@@ -19,13 +19,14 @@
 #define NODE_H
 
 #include <string>
+#include <raul/Array.h>
 #include "types.h"
 #include "GraphObject.h"
-#include "Array.h"
+
 
 using std::string;
 
-template <typename T> class List;
+namespace Raul { template <typename T> class List; }
 
 namespace Ingen {
 
@@ -75,7 +76,7 @@ public:
 	virtual void set_port_buffer(size_t voice, size_t port_num, void* buf) = 0;
 
 	// FIXME: Only used by client senders.  Remove?
-	virtual const Array<Port*>& ports() const = 0;
+	virtual const Raul::Array<Port*>& ports() const = 0;
 	
 	virtual size_t num_ports() const  = 0;
 	virtual size_t poly() const       = 0;
@@ -87,14 +88,14 @@ public:
 	/** Nodes that are connected to this Node's inputs.
 	 * (This Node depends on them)
 	 */
-	virtual List<Node*>* providers()               = 0;
-	virtual void         providers(List<Node*>* l) = 0;
+	virtual Raul::List<Node*>* providers()               = 0;
+	virtual void         providers(Raul::List<Node*>* l) = 0;
 	
 	/** Nodes are are connected to this Node's outputs.
 	 * (They depend on this Node)
 	 */
-	virtual List<Node*>* dependants()               = 0;
-	virtual void         dependants(List<Node*>* l) = 0;
+	virtual Raul::List<Node*>* dependants()               = 0;
+	virtual void         dependants(Raul::List<Node*>* l) = 0;
 	
 	/** The Patch this Node belongs to. */
 	virtual Patch* parent_patch() const = 0;

@@ -20,7 +20,7 @@
 
 #include <string>
 #include "types.h"
-#include "Array.h"
+#include <raul/Array.h>
 #include "Buffer.h"
 #include "InputPort.h"
 #include "OutputPort.h"

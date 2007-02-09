@@ -19,13 +19,15 @@
 #define DISCONNECTIONEVENT_H
 
 #include <string>
-#include "raul/Path.h"
+#include <raul/Path.h>
 #include "QueuedEvent.h"
 #include "types.h"
 using std::string;
 
-template <typename T> class ListNode;
-template <typename T> class Array;
+namespace Raul {
+	template <typename T> class ListNode;
+	template <typename T> class Array;
+}
 
 namespace Ingen {
 	
@@ -94,7 +96,7 @@ private:
 	InputPort<T>*                  _dst_port;
 
 	Patch*                         _patch;
-	Array<Node*>*                  _process_order; ///< New process order for Patch
+	Raul::Array<Node*>*            _process_order; ///< New process order for Patch
 	
 	bool _succeeded;
 };

@@ -20,7 +20,7 @@
 
 #include <cstdlib>
 #include <boost/utility.hpp>
-#include "MaidObject.h"
+#include <raul/Deletable.h>
 #include "types.h"
 
 namespace Ingen {
@@ -38,7 +38,7 @@ class Port;
  *
  * \ingroup engine
  */
-class Connection : public MaidObject
+class Connection : public Raul::Deletable
 {
 public:
 	virtual ~Connection() {}

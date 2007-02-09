@@ -19,9 +19,9 @@
 #define ADDPORTEVENT_H
 
 #include "QueuedEvent.h"
-#include "raul/Path.h"
+#include <raul/Path.h>
+#include <raul/Array.h>
 #include "DataType.h"
-#include "Array.h"
 #include <string>
 using std::string;
 
@@ -55,7 +55,7 @@ private:
 	DataType      _data_type;
 	Patch*        _patch;
 	Port*         _patch_port;
-	Array<Port*>* _ports_array; ///< New (external) ports array for Patch
+	Raul::Array<Port*>* _ports_array; ///< New (external) ports array for Patch
 	DriverPort*   _driver_port; ///< Driver (eg Jack) port if this is a toplevel port
 	bool          _succeeded;
 };

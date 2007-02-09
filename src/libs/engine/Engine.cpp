@@ -28,7 +28,7 @@
 #include "ClientBroadcaster.h"
 #include "Patch.h"
 #include "ObjectStore.h"
-#include "MaidObject.h"
+#include <raul/Deletable.h>
 #include "Maid.h"
 #include "MidiDriver.h"
 #include "QueuedEventSource.h"

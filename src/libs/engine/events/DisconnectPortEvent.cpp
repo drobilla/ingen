@@ -20,12 +20,12 @@
 #include "Responder.h"
 #include "Engine.h"
 #include "Maid.h"
-#include "List.h"
+#include <raul/List.h>
 #include "Node.h"
 #include "Connection.h"
 #include "DisconnectionEvent.h"
 #include "Port.h"
-#include "Array.h"
+#include <raul/Array.h>
 #include "InputPort.h"
 #include "OutputPort.h"
 #include "Patch.h"
@@ -66,7 +66,7 @@ DisconnectPortEvent::DisconnectPortEvent(Engine& engine, Port* port)
 
 DisconnectPortEvent::~DisconnectPortEvent()
 {
-	for (List<DisconnectionEvent*>::iterator i = _disconnection_events.begin(); i != _disconnection_events.end(); ++i)
+	for (Raul::List<DisconnectionEvent*>::iterator i = _disconnection_events.begin(); i != _disconnection_events.end(); ++i)
 		delete (*i);
 }
 
@@ -101,13 +101,13 @@ DisconnectPortEvent::pre_process()
 	}
 	
 	Connection* c = NULL;
-	for (List<Connection*>::const_iterator i = _patch->connections().begin(); i != _patch->connections().end(); ++i) {
+	for (Raul::List<Connection*>::const_iterator i = _patch->connections().begin(); i != _patch->connections().end(); ++i) {
 		c = (*i);
 		if ((c->src_port() == _port || c->dst_port() == _port) && !c->pending_disconnection()) {
 			DisconnectionEvent* ev = new DisconnectionEvent(_engine, SharedPtr<Responder>(new Responder()), _time,
 					c->src_port(), c->dst_port());
 			ev->pre_process();
-			_disconnection_events.push_back(new ListNode<DisconnectionEvent*>(ev));
+			_disconnection_events.push_back(new Raul::ListNode<DisconnectionEvent*>(ev));
 			c->pending_disconnection(true);
 		}
 	}
@@ -123,7 +123,7 @@ DisconnectPortEvent::execute(SampleCount nframes, FrameTime start, FrameTime end
 	QueuedEvent::execute(nframes, start, end);
 
 	if (_succeeded) {
-		for (List<DisconnectionEvent*>::iterator i = _disconnection_events.begin(); i != _disconnection_events.end(); ++i)
+		for (Raul::List<DisconnectionEvent*>::iterator i = _disconnection_events.begin(); i != _disconnection_events.end(); ++i)
 			(*i)->execute(nframes, start, end);
 	}
 }
@@ -135,7 +135,7 @@ DisconnectPortEvent::post_process()
 	if (_succeeded) {
 		if (_responder)
 			_responder->respond_ok();
-		for (List<DisconnectionEvent*>::iterator i = _disconnection_events.begin(); i != _disconnection_events.end(); ++i)
+		for (Raul::List<DisconnectionEvent*>::iterator i = _disconnection_events.begin(); i != _disconnection_events.end(); ++i)
 			(*i)->post_process();
 	} else {
 		if (_responder)

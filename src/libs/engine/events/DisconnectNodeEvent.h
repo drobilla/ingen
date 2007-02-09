@@ -19,9 +19,10 @@
 #define DISCONNECTNODEEVENT_H
 
 #include <string>
-#include "raul/Path.h"
+#include <raul/List.h>
+#include <raul/Path.h>
 #include "QueuedEvent.h"
-#include "List.h"
+
 using std::string;
 
 namespace Ingen {
@@ -55,7 +56,7 @@ private:
 	Path                      _node_path;
 	Patch*                    _patch;
 	Node*                     _node;
-	List<DisconnectionEvent*> _disconnection_events;
+	Raul::List<DisconnectionEvent*> _disconnection_events;
 	
 	bool _succeeded;
 	bool _lookup;

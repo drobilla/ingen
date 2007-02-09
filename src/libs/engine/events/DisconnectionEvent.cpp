@@ -214,13 +214,13 @@ TypedDisconnectionEvent<T>::pre_process()
 		return;
 	}
 	
-	for (List<Node*>::iterator i = dst_node->providers()->begin(); i != dst_node->providers()->end(); ++i)
+	for (Raul::List<Node*>::iterator i = dst_node->providers()->begin(); i != dst_node->providers()->end(); ++i)
 		if ((*i) == src_node) {
 			delete dst_node->providers()->remove(i);
 			break;
 		}
 
-	for (List<Node*>::iterator i = src_node->dependants()->begin(); i != src_node->dependants()->end(); ++i)
+	for (Raul::List<Node*>::iterator i = src_node->dependants()->begin(); i != src_node->dependants()->end(); ++i)
 		if ((*i) == dst_node) {
 			delete src_node->dependants()->remove(i);
 			break;
@@ -242,11 +242,11 @@ TypedDisconnectionEvent<T>::execute(SampleCount nframes, FrameTime start, FrameT
 
 	if (_succeeded) {
 
-		ListNode<TypedConnection<T>*>* const port_connection
+		Raul::ListNode<TypedConnection<T>*>* const port_connection
 			= _dst_port->remove_connection(_src_port);
 		
 		if (port_connection != NULL) {
-			ListNode<Connection*>* const patch_connection
+			Raul::ListNode<Connection*>* const patch_connection
 				= _patch->remove_connection(_src_port, _dst_port);
 			
 			assert(patch_connection);

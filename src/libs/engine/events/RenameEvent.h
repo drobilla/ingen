@@ -18,9 +18,10 @@
 #ifndef RENAMEEVENT_H
 #define RENAMEEVENT_H
 
-#include "QueuedEvent.h"
-#include "raul/Path.h"
 #include <string>
+#include "QueuedEvent.h"
+#include <raul/Path.h>
+
 using std::string;
 
 template<typename T> class TreeNode;

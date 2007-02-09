@@ -36,7 +36,7 @@ ObjectSender::send_patch(ClientInterface* client, const Patch* patch, bool recur
 	if (recursive) {
 
 		// Send nodes
-		for (List<Node*>::const_iterator j = patch->nodes().begin();
+		for (Raul::List<Node*>::const_iterator j = patch->nodes().begin();
 				j != patch->nodes().end(); ++j) {
 
 			const Node* const node = (*j); 
@@ -52,7 +52,7 @@ ObjectSender::send_patch(ClientInterface* client, const Patch* patch, bool recur
 		}
 
 		// Send connections
-		for (List<Connection*>::const_iterator j = patch->connections().begin();
+		for (Raul::List<Connection*>::const_iterator j = patch->connections().begin();
 				j != patch->connections().end(); ++j) {
 			
 			client->connection((*j)->src_port()->path(), (*j)->dst_port()->path());
@@ -97,7 +97,7 @@ ObjectSender::send_node(ClientInterface* client, const Node* node, bool recursiv
 	// FIXME: bundleify
 	//client->bundle_begin();
 	
-	const Array<Port*>& ports = node->ports();
+	const Raul::Array<Port*>& ports = node->ports();
 
 	client->new_node(node->plugin()->uri(), node->path(), polyphonic, ports.size());
 	

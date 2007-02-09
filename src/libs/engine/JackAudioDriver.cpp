@@ -20,6 +20,7 @@
 #include "tuning.h"
 #include <iostream>
 #include <cstdlib>
+#include <raul/List.h>
 #include "Engine.h"
 #include "util.h"
 #include "Event.h"
@@ -31,7 +32,6 @@
 #include "Patch.h"
 #include "Port.h"
 #include "MidiDriver.h"
-#include "List.h"
 #include "DuplexPort.h"
 #include "EventSource.h"
 #ifdef HAVE_LASH
@@ -48,7 +48,7 @@ namespace Ingen {
 
 JackAudioPort::JackAudioPort(JackAudioDriver* driver, DuplexPort<Sample>* patch_port)
 : DriverPort(patch_port->is_input()),
-  ListNode<JackAudioPort*>(this),
+  Raul::ListNode<JackAudioPort*>(this),
   _driver(driver),
   _jack_port(NULL),
   _jack_buffer(NULL),
@@ -194,7 +194,7 @@ JackAudioDriver::deactivate()
 		jack_deactivate(_client);
 		_is_activated = false;
 	
-		for (List<JackAudioPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
+		for (Raul::List<JackAudioPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
 			jack_port_unregister(_client, (*i)->jack_port());
 	
 		_ports.clear();
@@ -236,7 +236,7 @@ JackAudioDriver::remove_port(const Path& path)
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
 
-	for (List<JackAudioPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
+	for (Raul::List<JackAudioPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
 		if ((*i)->patch_port()->path() == path)
 			return _ports.remove(i)->elem();
 	
@@ -248,7 +248,7 @@ JackAudioDriver::remove_port(const Path& path)
 DriverPort*
 JackAudioDriver::port(const Path& path)
 {
-	for (List<JackAudioPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
+	for (Raul::List<JackAudioPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
 		if ((*i)->patch_port()->path() == path)
 			return (*i);
 
@@ -299,7 +299,7 @@ JackAudioDriver::_process_cb(jack_nframes_t nframes)
 		_engine.event_source()->process(*_engine.post_processor(), nframes, start_of_last_cycle, start_of_current_cycle);
 	
 	// Set buffers of patch ports to Jack port buffers (zero-copy processing)
-	for (List<JackAudioPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i) {
+	for (Raul::List<JackAudioPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i) {
 		assert(*i);
 		(*i)->prepare_buffer(nframes);
 	}

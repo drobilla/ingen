@@ -21,9 +21,9 @@
 #include <string>
 #include "raul/Path.h"
 #include "QueuedEvent.h"
-#include "List.h"
+#include <raul/List.h>
 
-template <typename T> class Array;
+namespace Raul { template <typename T> class Array; }
 
 namespace Ingen {
 
@@ -56,9 +56,9 @@ private:
 	Path                      _port_path;
 	Patch*                    _patch;
 	Port*                     _port;
-	List<DisconnectionEvent*> _disconnection_events;
+	Raul::List<DisconnectionEvent*> _disconnection_events;
 	
-	Array<Node*>* _process_order; // Patch's new process order
+	Raul::Array<Node*>* _process_order; // Patch's new process order
 	
 	bool _succeeded;
 	bool _lookup;

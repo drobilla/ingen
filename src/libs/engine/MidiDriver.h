@@ -18,6 +18,7 @@
 #ifndef MIDIDRIVER_H
 #define MIDIDRIVER_H
 
+#include "types.h"
 #include "Driver.h"
 #include <iostream>
 using std::cout; using std::endl;

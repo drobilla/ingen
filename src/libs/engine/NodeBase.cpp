@@ -19,12 +19,12 @@
 #include <cassert>
 #include <iostream>
 #include <stdint.h>
+#include <raul/List.h>
+#include <raul/Array.h>
 #include "util.h"
-#include "Array.h"
 #include "Plugin.h"
 #include "ClientBroadcaster.h"
 #include "Port.h"
-#include "List.h"
 #include "Patch.h"
 #include "ObjectStore.h"
 
@@ -42,8 +42,8 @@ NodeBase::NodeBase(const Plugin* plugin, const string& name, size_t poly, Patch*
   _activated(false),
   _ports(NULL),
   _traversed(false),
-  _providers(new List<Node*>()),
-  _dependants(new List<Node*>())
+  _providers(new Raul::List<Node*>()),
+  _dependants(new Raul::List<Node*>())
 {
 	assert(_plugin);
 	assert(_poly > 0);

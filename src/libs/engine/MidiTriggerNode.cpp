@@ -29,7 +29,7 @@ namespace Ingen {
 MidiTriggerNode::MidiTriggerNode(const string& path, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size)
 : InternalNode(new Plugin(Plugin::Internal, "ingen:trigger_node"), path, 1, parent, srate, buffer_size)
 {
-	_ports = new Array<Port*>(5);
+	_ports = new Raul::Array<Port*>(5);
 
 	_midi_in_port = new InputPort<MidiMessage>(this, "MIDI_In", 0, 1, DataType::MIDI, _buffer_size);
 	_ports->at(0) = _midi_in_port;

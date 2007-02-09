@@ -18,14 +18,17 @@
 #ifndef DESTROYEVENT_H
 #define DESTROYEVENT_H
 
-#include "raul/Path.h"
-#include "QueuedEvent.h"
 #include <string>
+#include <raul/Path.h>
+#include "QueuedEvent.h"
+
 
 using std::string;
 
-template<typename T> class Array;
-template<typename T> class ListNode;
+namespace Raul {
+	template<typename T> class Array;
+	template<typename T> class ListNode;
+}
 template<typename T> class TreeNode;
 
 namespace Ingen {
@@ -61,11 +64,11 @@ private:
 	Node*                   _node;  ///< Same as _object if it is a Node, otherwise NULL
 	Port*                   _port;  ///< Same as _object if it is a Port, otherwise NULL
 	DriverPort*             _driver_port;
-	ListNode<Node*>*        _patch_node_listnode;
-	ListNode<Port*>*        _patch_port_listnode;
+	Raul::ListNode<Node*>*        _patch_node_listnode;
+	Raul::ListNode<Port*>*        _patch_port_listnode;
 	TreeNode<GraphObject*>* _store_treenode;
-	Array<Port*>*           _ports_array; ///< New (external) ports array for Patch
-	Array<Node*>*           _process_order;  ///< Patch's new process order
+	Raul::Array<Port*>*           _ports_array; ///< New (external) ports array for Patch
+	Raul::Array<Node*>*           _process_order;  ///< Patch's new process order
 	DisconnectNodeEvent*    _disconnect_node_event;
 	DisconnectPortEvent*    _disconnect_port_event;
 };

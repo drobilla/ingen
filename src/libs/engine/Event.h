@@ -21,7 +21,7 @@
 #include <cassert>
 #include "raul/SharedPtr.h"
 #include "types.h"
-#include "MaidObject.h"
+#include <raul/Deletable.h>
 #include "Responder.h"
 #include "ThreadManager.h"
 
@@ -44,7 +44,7 @@ class Engine;
  *
  * \ingroup engine
  */
-class Event : public MaidObject
+class Event : public Raul::Deletable
 {
 public:
 	virtual ~Event() {}

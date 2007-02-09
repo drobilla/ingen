@@ -19,8 +19,8 @@
 #define CLEARPATCHEVENT_H
 
 #include <string>
+#include <raul/Array.h>
 #include "QueuedEvent.h"
-#include "Array.h"
 
 using std::string;
 

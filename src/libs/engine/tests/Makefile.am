@@ -1,14 +1,10 @@
 if BUILD_UNIT_TESTS
 
-AM_CXXFLAGS = @JACK_CFLAGS@ @LOSC_CFLAGS@ @ALSA_CFLAGS@ -I../../common
-common_ldadd = @JACK_LIBS@ @LOSC_LIBS@ @ALSA_LIBS@ -lrt
+AM_CXXFLAGS = @JACK_CFLAGS@ @RAUL_CFLAGS@ @LOSC_CFLAGS@ @ALSA_CFLAGS@ -I../../common
+common_ldadd = @JACK_LIBS@ @RAUL_LIBS@ @LOSC_LIBS@ @ALSA_LIBS@ -lrt
 node_tree_test_LDADD = $(common_ldadd)
 
-bin_PROGRAMS = node_tree_test list_test
-
-list_test_SOURCES = \
-	../List.h \
-	list_test.cpp
+bin_PROGRAMS = node_tree_test
 
 node_tree_test_SOURCES = \
 	node_tree_test.cpp

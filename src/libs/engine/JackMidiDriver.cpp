@@ -38,7 +38,7 @@ namespace Ingen {
 
 JackMidiPort::JackMidiPort(JackMidiDriver* driver, DuplexPort<MidiMessage>* patch_port)
 : DriverPort(patch_port->is_input()),
-  ListNode<JackMidiPort*>(this),
+  Raul::ListNode<JackMidiPort*>(this),
   _driver(driver),
   _jack_port(NULL),
   _patch_port(patch_port)
@@ -146,7 +146,7 @@ JackMidiDriver::deactivate()
 void
 JackMidiDriver::prepare_block(const SampleCount block_start, const SampleCount block_end)
 {
-	for (List<JackMidiPort*>::iterator i = _in_ports.begin(); i != _in_ports.end(); ++i)
+	for (Raul::List<JackMidiPort*>::iterator i = _in_ports.begin(); i != _in_ports.end(); ++i)
 		(*i)->prepare_block(block_start, block_end);
 }
 
@@ -186,11 +186,11 @@ JackMidiDriver::remove_port(const Path& path)
 
 	// FIXME: duplex?
 
-	for (List<JackMidiPort*>::iterator i = _in_ports.begin(); i != _in_ports.end(); ++i)
+	for (Raul::List<JackMidiPort*>::iterator i = _in_ports.begin(); i != _in_ports.end(); ++i)
 		if ((*i)->patch_port()->path() == path)
 			return _in_ports.remove(i)->elem();
 
-	for (List<JackMidiPort*>::iterator i = _out_ports.begin(); i != _out_ports.end(); ++i)
+	for (Raul::List<JackMidiPort*>::iterator i = _out_ports.begin(); i != _out_ports.end(); ++i)
 		if ((*i)->patch_port()->path() == path)
 			return _out_ports.remove(i)->elem();
 

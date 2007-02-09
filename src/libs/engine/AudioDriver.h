@@ -20,8 +20,8 @@
 
 #include "Driver.h"
 #include "types.h"
-#include "List.h"
-#include "raul/Path.h"
+#include <raul/List.h>
+#include <raul/Path.h>
 
 namespace Ingen {
 

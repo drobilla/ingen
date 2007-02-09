@@ -51,12 +51,12 @@ Patch::~Patch()
 {
 	assert(!_activated);
 	
-	for (List<Connection*>::iterator i = _connections.begin(); i != _connections.end(); ++i) {
+	for (Raul::List<Connection*>::iterator i = _connections.begin(); i != _connections.end(); ++i) {
 		delete (*i);
 		delete _connections.remove(i);
 	}
 
-	for (List<Node*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
+	for (Raul::List<Node*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
 		assert(!(*i)->activated());
 		delete (*i);
 		delete _nodes.remove(i);
@@ -71,7 +71,7 @@ Patch::activate()
 {
 	NodeBase::activate();
 
-	for (List<Node*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
+	for (Raul::List<Node*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		(*i)->activate();
 	
 	assert(_activated);
@@ -85,7 +85,7 @@ Patch::deactivate()
 	
 		NodeBase::deactivate();
 	
-		for (List<Node*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
+		for (Raul::List<Node*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
 			if ((*i)->activated())
 				(*i)->deactivate();
 			assert(!(*i)->activated());
@@ -99,11 +99,11 @@ void
 Patch::disable()
 {
 	// Write output buffers to 0
-	/*for (List<InternalNode*>::iterator i = _bridge_nodes.begin(); i != _bridge_nodes.end(); ++i) {
+	/*for (Raul::List<InternalNode*>::iterator i = _bridge_nodes.begin(); i != _bridge_nodes.end(); ++i) {
 	  assert((*i)->as_port() != NULL);
 	  if ((*i)->as_port()->port_info()->is_output())
 	  (*i)->as_port()->clear_buffers();*/
-	for (List<Port*>::iterator i = _output_ports.begin(); i != _output_ports.end(); ++i)
+	for (Raul::List<Port*>::iterator i = _output_ports.begin(); i != _output_ports.end(); ++i)
 		(*i)->clear_buffers();
 
 	_process = false;
@@ -123,7 +123,7 @@ Patch::process(SampleCount nframes, FrameTime start, FrameTime end)
 	// FIXME: This is far too slow, too much checking every cycle
 	
 	// Prepare input ports for nodes to consume
-	for (List<Port*>::iterator i = _input_ports.begin(); i != _input_ports.end(); ++i)
+	for (Raul::List<Port*>::iterator i = _input_ports.begin(); i != _input_ports.end(); ++i)
 		(*i)->process(nframes, start, end);
 
 	// Run all nodes (consume input ports)
@@ -135,7 +135,7 @@ Patch::process(SampleCount nframes, FrameTime start, FrameTime end)
 	}
 	
 	// Prepare output ports (for caller to consume)
-	for (List<Port*>::iterator i = _output_ports.begin(); i != _output_ports.end(); ++i)
+	for (Raul::List<Port*>::iterator i = _output_ports.begin(); i != _output_ports.end(); ++i)
 		(*i)->process(nframes, start, end);
 }
 
@@ -146,7 +146,7 @@ Patch::set_buffer_size(size_t size)
 	NodeBase::set_buffer_size(size);
 	assert(_buffer_size == size);
 	
-	for (List<Node*>::iterator j = _nodes.begin(); j != _nodes.end(); ++j)
+	for (Raul::List<Node*>::iterator j = _nodes.begin(); j != _nodes.end(); ++j)
 		(*j)->set_buffer_size(size);
 }
 
@@ -158,7 +158,7 @@ Patch::add_to_store(ObjectStore* store)
 	NodeBase::add_to_store(store);
 
 	// Add nodes
-	for (List<Node*>::iterator j = _nodes.begin(); j != _nodes.end(); ++j)
+	for (Raul::List<Node*>::iterator j = _nodes.begin(); j != _nodes.end(); ++j)
 		(*j)->add_to_store(store);
 }
 
@@ -170,7 +170,7 @@ Patch::remove_from_store()
 	NodeBase::remove_from_store();
 
 	// Remove nodes
-	for (List<Node*>::iterator j = _nodes.begin(); j != _nodes.end(); ++j)
+	for (Raul::List<Node*>::iterator j = _nodes.begin(); j != _nodes.end(); ++j)
 		(*j)->remove_from_store();
 }
 
@@ -179,7 +179,7 @@ Patch::remove_from_store()
 
 
 void
-Patch::add_node(ListNode<Node*>* ln)
+Patch::add_node(Raul::ListNode<Node*>* ln)
 {
 	assert(ln != NULL);
 	assert(ln->elem() != NULL);
@@ -193,10 +193,10 @@ Patch::add_node(ListNode<Node*>* ln)
 /** Remove a node.
  * Realtime Safe.  Preprocessing thread.
  */
-ListNode<Node*>*
+Raul::ListNode<Node*>*
 Patch::remove_node(const string& name)
 {
-	for (List<Node*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
+	for (Raul::List<Node*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		if ((*i)->name() == name)
 			return _nodes.remove(i);
 	
@@ -206,12 +206,12 @@ Patch::remove_node(const string& name)
 
 /** Remove a connection.  Realtime safe.
  */
-ListNode<Connection*>*
+Raul::ListNode<Connection*>*
 Patch::remove_connection(const Port* src_port, const Port* dst_port)
 {
 	bool found = false;
-	ListNode<Connection*>* connection = NULL;
-	for (List<Connection*>::iterator i = _connections.begin(); i != _connections.end(); ++i) {
+	Raul::ListNode<Connection*>* connection = NULL;
+	for (Raul::List<Connection*>::iterator i = _connections.begin(); i != _connections.end(); ++i) {
 		if ((*i)->src_port() == src_port && (*i)->dst_port() == dst_port) {
 			connection = _connections.remove(i);
 			found = true;
@@ -227,12 +227,12 @@ Patch::remove_connection(const Port* src_port, const Port* dst_port)
 #if 0
 /** Remove a bridge_node.  Realtime safe.
  */
-ListNode<InternalNode*>*
+Raul::ListNode<InternalNode*>*
 Patch::remove_bridge_node(const InternalNode* node)
 {
 	bool found = false;
-	ListNode<InternalNode*>* bridge_node = NULL;
-	for (List<InternalNode*>::iterator i = _bridge_nodes.begin(); i != _bridge_nodes.end(); ++i) {
+	Raul::ListNode<InternalNode*>* bridge_node = NULL;
+	for (Raul::List<InternalNode*>::iterator i = _bridge_nodes.begin(); i != _bridge_nodes.end(); ++i) {
 		if ((*i) == node) {
 			bridge_node = _bridge_nodes.remove(i);
 			found = true;
@@ -288,14 +288,14 @@ Patch::create_port(const string& name, DataType type, size_t buffer_size, bool i
  *
  * Realtime safe.  Preprocessing thread only.
  */
-ListNode<Port*>*
+Raul::ListNode<Port*>*
 Patch::remove_port(const string& name)
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
 
 	bool found = false;
-	ListNode<Port*>* ret = NULL;
-	for (List<Port*>::iterator i = _input_ports.begin(); i != _input_ports.end(); ++i) {
+	Raul::ListNode<Port*>* ret = NULL;
+	for (Raul::List<Port*>::iterator i = _input_ports.begin(); i != _input_ports.end(); ++i) {
 		if ((*i)->name() == name) {
 			ret = _input_ports.remove(i);
 			found = true;
@@ -303,7 +303,7 @@ Patch::remove_port(const string& name)
 	}
 
 	if (!found)
-	for (List<Port*>::iterator i = _output_ports.begin(); i != _output_ports.end(); ++i) {
+	for (Raul::List<Port*>::iterator i = _output_ports.begin(); i != _output_ports.end(); ++i) {
 		if ((*i)->name() == name) {
 			ret = _output_ports.remove(i);
 			found = true;
@@ -317,19 +317,19 @@ Patch::remove_port(const string& name)
 }
 
 
-Array<Port*>*
+Raul::Array<Port*>*
 Patch::build_ports_array() const
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
 
-	Array<Port*>* const result = new Array<Port*>(_input_ports.size() + _output_ports.size());
+	Raul::Array<Port*>* const result = new Raul::Array<Port*>(_input_ports.size() + _output_ports.size());
 
 	size_t i = 0;
 	
-	for (List<Port*>::const_iterator p = _input_ports.begin(); p != _input_ports.end(); ++p,++i)
+	for (Raul::List<Port*>::const_iterator p = _input_ports.begin(); p != _input_ports.end(); ++p,++i)
 		result->at(i) = *p;
 	
-	for (List<Port*>::const_iterator p = _output_ports.begin(); p != _output_ports.end(); ++p,++i)
+	for (Raul::List<Port*>::const_iterator p = _output_ports.begin(); p != _output_ports.end(); ++p,++i)
 		result->at(i) = *p;
 
 	return result;
@@ -346,24 +346,24 @@ Patch::build_ports_array() const
  *
  * Not realtime safe.
  */
-Array<Node*>*
+Raul::Array<Node*>*
 Patch::build_process_order() const
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
 
 	cerr << "*********** Building process order for " << path() << endl;
 
-	Array<Node*>* const process_order = new Array<Node*>(_nodes.size(), NULL);
+	Raul::Array<Node*>* const process_order = new Raul::Array<Node*>(_nodes.size(), NULL);
 	
 	// FIXME: tweak algorithm so it just ends up like this and save the cost of iteration?
-	for (List<Node*>::const_iterator i = _nodes.begin(); i != _nodes.end(); ++i)
+	for (Raul::List<Node*>::const_iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		(*i)->traversed(false);
 		
 	// Traverse backwards starting at outputs
-	//for (List<Port*>::const_iterator p = _output_ports.begin(); p != _output_ports.end(); ++p) {
+	//for (Raul::List<Port*>::const_iterator p = _output_ports.begin(); p != _output_ports.end(); ++p) {
 
 		/*const Port* const port = (*p);
-		for (List<Connection*>::const_iterator c = port->connections().begin();
+		for (Raul::List<Connection*>::const_iterator c = port->connections().begin();
 				c != port->connections().end(); ++c) {
 			const Connection* const connection = (*c);
 			assert(connection->dst_port() == port);
@@ -373,7 +373,7 @@ Patch::build_process_order() const
 		}*/
 	//}
 	
-	for (List<Node*>::const_iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
+	for (Raul::List<Node*>::const_iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
 		Node* const node = (*i);
 		// Either a sink or connected to our output ports:
 		if ( ( ! node->traversed()) && node->dependants()->size() == 0)
@@ -382,7 +382,7 @@ Patch::build_process_order() const
 
 	// Add any (disjoint) nodes that weren't hit by the traversal
 	// FIXME: this shouldn't be necessary
-	/*for (List<Node*>::const_iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
+	/*for (Raul::List<Node*>::const_iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
 		Node* const node = (*i);
 		if ( ! node->traversed()) {
 			process_order->push_back(*i);
@@ -417,7 +417,7 @@ Patch::set_path(const Path& new_path)
 	const Path old_path = path();
 
 	// Update nodes
-	for (List<Node*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
+	for (Raul::List<Node*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		(*i)->set_path(new_path.base() + (*i)->name());
 	
 	// Update self
