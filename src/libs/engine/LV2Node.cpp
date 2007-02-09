@@ -91,35 +91,24 @@ LV2Node::instantiate()
 		port_path = path() + "/" + port_name;
 		
 		SLV2PortClass port_class = slv2_port_get_class(_lv2_plugin, id);
-		const bool is_control = (port_class == SLV2_CONTROL_RATE_INPUT
-			|| port_class == SLV2_CONTROL_RATE_OUTPUT);
-		const bool is_input = (port_class == SLV2_CONTROL_RATE_INPUT
-			|| port_class == SLV2_AUDIO_RATE_INPUT);
 
-		if (is_control)
-			port_buffer_size = 1;
-		else
+		if (port_class == SLV2_AUDIO_INPUT || port_class == SLV2_AUDIO_OUTPUT)
 			port_buffer_size = _buffer_size;
+		else
+			port_buffer_size = 1;
 		
-		char* const data_type = slv2_port_get_data_type(_lv2_plugin, id);
-
-		if (!strcmp(data_type, SLV2_DATA_TYPE_FLOAT)) {
-			if (is_input) {
-				port = new InputPort<Sample>(this, port_name, j, _poly, DataType::FLOAT, port_buffer_size);
-				_ports->at(j) = port;
-			} else /* output */ {
-				port = new OutputPort<Sample>(this, port_name, j, _poly, DataType::FLOAT, port_buffer_size);
-				_ports->at(j) = port;
-			}
-		} else if (!strcmp(data_type, "http://ll-plugins.nongnu.org/lv2/namespace#miditype")) {
-			cerr << "MIDI PORT!\n";
-			if (is_input) {
-				port = new InputPort<MidiMessage>(this, port_name, j, _poly, DataType::MIDI, port_buffer_size);
-				_ports->at(j) = port;
-			} else /* output */ {
-				port = new OutputPort<MidiMessage>(this, port_name, j, _poly, DataType::MIDI, port_buffer_size);
-				_ports->at(j) = port;
-			}
+		if (port_class == SLV2_CONTROL_INPUT || port_class == SLV2_AUDIO_INPUT) {
+			port = new InputPort<Sample>(this, port_name, j, _poly, DataType::FLOAT, port_buffer_size);
+			_ports->at(j) = port;
+		} else if (port_class == SLV2_CONTROL_INPUT || port_class == SLV2_AUDIO_INPUT) {
+			port = new OutputPort<Sample>(this, port_name, j, _poly, DataType::FLOAT, port_buffer_size);
+			_ports->at(j) = port;
+		} else if (port_class == SLV2_MIDI_INPUT) {
+			port = new InputPort<MidiMessage>(this, port_name, j, _poly, DataType::MIDI, port_buffer_size);
+			_ports->at(j) = port;
+		} else if (port_class == SLV2_MIDI_OUTPUT) {
+			port = new OutputPort<MidiMessage>(this, port_name, j, _poly, DataType::MIDI, port_buffer_size);
+			_ports->at(j) = port;
 		}
 
 		assert(_ports->at(j) != NULL);
