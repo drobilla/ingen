@@ -82,10 +82,6 @@ JackMidiPort::prepare_block(const SampleCount block_start, const SampleCount blo
 		jack_midi_event_t* ev = (jack_midi_event_t*)&_patch_port->buffer(0)->value_at(i);
 		jack_midi_event_get(ev, jack_buffer, i, nframes);
 
-		// Convert note ons with velocity 0 to proper note offs
-		if (ev->buffer[0] == MIDI_CMD_NOTE_ON && ev->buffer[2] == 0)
-			ev->buffer[0] = MIDI_CMD_NOTE_OFF;
-		
 		// MidiMessage and jack_midi_event_t* are the same thing :/
 		MidiMessage* const message = &_patch_port->buffer(0)->data()[i];
 		message->time   = ev->time;

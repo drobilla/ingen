@@ -322,11 +322,11 @@ AlsaMidiDriver::remove_port(const Path& path)
 	
 	for (Raul::List<AlsaMidiPort*>::iterator i = _in_ports.begin(); i != _in_ports.end(); ++i)
 		if ((*i)->patch_port()->path() == path)
-			return _in_ports.remove(i)->elem();
+			return _in_ports.erase(i)->elem(); // FIXME: leak
 
 	for (Raul::List<AlsaMidiPort*>::iterator i = _out_ports.begin(); i != _out_ports.end(); ++i)
 		if ((*i)->patch_port()->path() == path)
-			return _out_ports.remove(i)->elem();
+			return _out_ports.erase(i)->elem(); // FIXME: leak
 
 	cerr << "[AlsaMidiDriver::remove_port] WARNING: Failed to find Jack port to remove!" << endl;
 	return NULL;
