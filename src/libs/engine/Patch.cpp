@@ -53,13 +53,13 @@ Patch::~Patch()
 	
 	for (Raul::List<Connection*>::iterator i = _connections.begin(); i != _connections.end(); ++i) {
 		delete (*i);
-		delete _connections.remove(i);
+		delete _connections.erase(i);
 	}
 
 	for (Raul::List<Node*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
 		assert(!(*i)->activated());
 		delete (*i);
-		delete _nodes.remove(i);
+		delete _nodes.erase(i);
 	}
 
 	delete _process_order;
@@ -198,7 +198,7 @@ Patch::remove_node(const string& name)
 {
 	for (Raul::List<Node*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		if ((*i)->name() == name)
-			return _nodes.remove(i);
+			return _nodes.erase(i);
 	
 	return NULL;
 }
@@ -213,7 +213,7 @@ Patch::remove_connection(const Port* src_port, const Port* dst_port)
 	Raul::ListNode<Connection*>* connection = NULL;
 	for (Raul::List<Connection*>::iterator i = _connections.begin(); i != _connections.end(); ++i) {
 		if ((*i)->src_port() == src_port && (*i)->dst_port() == dst_port) {
-			connection = _connections.remove(i);
+			connection = _connections.erase(i);
 			found = true;
 		}
 	}
@@ -297,7 +297,7 @@ Patch::remove_port(const string& name)
 	Raul::ListNode<Port*>* ret = NULL;
 	for (Raul::List<Port*>::iterator i = _input_ports.begin(); i != _input_ports.end(); ++i) {
 		if ((*i)->name() == name) {
-			ret = _input_ports.remove(i);
+			ret = _input_ports.erase(i);
 			found = true;
 		}
 	}
@@ -305,7 +305,7 @@ Patch::remove_port(const string& name)
 	if (!found)
 	for (Raul::List<Port*>::iterator i = _output_ports.begin(); i != _output_ports.end(); ++i) {
 		if ((*i)->name() == name) {
-			ret = _output_ports.remove(i);
+			ret = _output_ports.erase(i);
 			found = true;
 		}
 	}

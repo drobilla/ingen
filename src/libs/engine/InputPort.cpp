@@ -97,7 +97,7 @@ InputPort<T>::remove_connection(const OutputPort<T>* const src_port)
 	Raul::ListNode<TypedConnection<T>*>* connection = NULL;
 	for (TypedConnectionListIterator i = _connections.begin(); i != _connections.end(); ++i) {
 		if ((*i)->src_port()->path() == src_port->path()) {
-			connection = _connections.remove(i);
+			connection = _connections.erase(i);
 			found = true;
 		}
 	}

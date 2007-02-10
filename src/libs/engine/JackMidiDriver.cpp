@@ -188,11 +188,11 @@ JackMidiDriver::remove_port(const Path& path)
 
 	for (Raul::List<JackMidiPort*>::iterator i = _in_ports.begin(); i != _in_ports.end(); ++i)
 		if ((*i)->patch_port()->path() == path)
-			return _in_ports.remove(i)->elem();
+			return _in_ports.erase(i)->elem(); // FIXME: LEAK
 
 	for (Raul::List<JackMidiPort*>::iterator i = _out_ports.begin(); i != _out_ports.end(); ++i)
 		if ((*i)->patch_port()->path() == path)
-			return _out_ports.remove(i)->elem();
+			return _out_ports.erase(i)->elem(); // FIXME: LEAK
 
 	cerr << "[JackMidiDriver::remove_input] WARNING: Failed to find Jack port to remove!" << endl;
 	return NULL;

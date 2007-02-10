@@ -216,13 +216,13 @@ TypedDisconnectionEvent<T>::pre_process()
 	
 	for (Raul::List<Node*>::iterator i = dst_node->providers()->begin(); i != dst_node->providers()->end(); ++i)
 		if ((*i) == src_node) {
-			delete dst_node->providers()->remove(i);
+			delete dst_node->providers()->erase(i);
 			break;
 		}
 
 	for (Raul::List<Node*>::iterator i = src_node->dependants()->begin(); i != src_node->dependants()->end(); ++i)
 		if ((*i) == dst_node) {
-			delete src_node->dependants()->remove(i);
+			delete src_node->dependants()->erase(i);
 			break;
 		}
 	
