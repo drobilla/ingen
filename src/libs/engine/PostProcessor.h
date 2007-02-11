@@ -23,7 +23,7 @@
 #include "raul/SRSWQueue.h"
 #include "raul/Slave.h"
 
-class Maid;
+namespace Raul { class Maid; }
 
 namespace Ingen {
 
@@ -41,13 +41,13 @@ class Event;
 class PostProcessor : public Raul::Slave
 {
 public:
-	PostProcessor(Maid& maid, size_t queue_size);
+	PostProcessor(Raul::Maid& maid, size_t queue_size);
 
 	/** Push an event on to the process queue, realtime-safe, not thread-safe. */
 	inline void push(Event* const ev) { _events.push(ev); }
 
 private:
-	Maid&                   _maid;
+	Raul::Maid&             _maid;
 	Raul::SRSWQueue<Event*> _events;
 	virtual void            _whipped();
 };

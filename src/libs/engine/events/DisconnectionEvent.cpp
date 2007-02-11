@@ -17,6 +17,8 @@
 
 #include "DisconnectionEvent.h"
 #include <string>
+#include <raul/Maid.h>
+#include <raul/Path.h>
 #include "Responder.h"
 #include "Engine.h"
 #include "TypedConnection.h"
@@ -25,9 +27,7 @@
 #include "Patch.h"
 #include "ClientBroadcaster.h"
 #include "Port.h"
-#include "Maid.h"
 #include "ObjectStore.h"
-#include "raul/Path.h"
 
 using std::string;
 namespace Ingen {

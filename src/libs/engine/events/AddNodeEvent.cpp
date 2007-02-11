@@ -25,7 +25,7 @@
 #include "Patch.h"
 #include "NodeFactory.h"
 #include "ClientBroadcaster.h"
-#include "Maid.h"
+#include <raul/Maid.h>
 #include "raul/Path.h"
 #include "ObjectStore.h"
 #include "raul/Path.h"

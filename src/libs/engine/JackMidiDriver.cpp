@@ -22,7 +22,7 @@
 #include "types.h"
 #include "midi.h"
 #include "ThreadManager.h"
-#include "Maid.h"
+#include <raul/Maid.h>
 #include "AudioDriver.h"
 #include "MidiMessage.h"
 #include "DuplexPort.h"

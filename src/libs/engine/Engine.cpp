@@ -22,14 +22,14 @@
 #include <sys/mman.h>
 #include <iostream>
 #include <unistd.h>
+#include <raul/Deletable.h>
+#include <raul/Maid.h>
 #include "Event.h"
 #include "JackAudioDriver.h"
 #include "NodeFactory.h"
 #include "ClientBroadcaster.h"
 #include "Patch.h"
 #include "ObjectStore.h"
-#include <raul/Deletable.h>
-#include "Maid.h"
 #include "MidiDriver.h"
 #include "QueuedEventSource.h"
 #include "PostProcessor.h"
@@ -51,7 +51,7 @@ namespace Ingen {
 
 Engine::Engine()
 : _midi_driver(NULL),
-  _maid(new Maid(maid_queue_size)),
+  _maid(new Raul::Maid(maid_queue_size)),
   _post_processor(new PostProcessor(*_maid, post_processor_queue_size)),
   _broadcaster(new ClientBroadcaster()),
   _object_store(new ObjectStore()),

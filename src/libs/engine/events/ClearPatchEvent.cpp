@@ -23,7 +23,7 @@
 #include "util.h"
 #include "ObjectStore.h"
 #include "Port.h"
-#include "Maid.h"
+#include <raul/Maid.h>
 #include "Node.h"
 #include "Connection.h"
 #include "QueuedEventSource.h"

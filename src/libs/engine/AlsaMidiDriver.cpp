@@ -20,7 +20,7 @@
 #include <cstdlib>
 #include <pthread.h>
 #include "types.h"
-#include "Maid.h"
+#include <raul/Maid.h>
 #include "ThreadManager.h"
 #include "AudioDriver.h"
 #include "MidiMessage.h"

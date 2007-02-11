@@ -22,7 +22,7 @@
 #include "Plugin.h"
 #include "Engine.h"
 #include "Patch.h"
-#include "Maid.h"
+#include <raul/Maid.h>
 #include "raul/Path.h"
 #include "QueuedEventSource.h"
 #include "ObjectStore.h"

@@ -28,7 +28,7 @@
 #include "DisconnectNodeEvent.h"
 #include "DisconnectPortEvent.h"
 #include "ClientBroadcaster.h"
-#include "Maid.h"
+#include <raul/Maid.h>
 #include "ObjectStore.h"
 #include "raul/Path.h"
 #include "QueuedEventSource.h"

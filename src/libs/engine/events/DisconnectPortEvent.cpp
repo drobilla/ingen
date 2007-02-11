@@ -15,24 +15,24 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "DisconnectPortEvent.h"
 #include <iostream>
+#include <raul/Maid.h>
+#include <raul/List.h>
+#include <raul/Path.h>
+#include <raul/Array.h>
 #include "Responder.h"
 #include "Engine.h"
-#include "Maid.h"
-#include <raul/List.h>
 #include "Node.h"
 #include "Connection.h"
 #include "DisconnectionEvent.h"
 #include "Port.h"
-#include <raul/Array.h>
 #include "InputPort.h"
 #include "OutputPort.h"
 #include "Patch.h"
 #include "ClientBroadcaster.h"
 #include "util.h"
 #include "ObjectStore.h"
-#include "raul/Path.h"
+#include "DisconnectPortEvent.h"
 
 using std::cerr; using std::endl;
 

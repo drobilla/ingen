@@ -19,9 +19,9 @@
 #include <iostream>
 #include <raul/List.h>
 #include <raul/Array.h>
+#include <raul/Maid.h>
 #include "Responder.h"
 #include "Engine.h"
-#include "Maid.h"
 #include "Node.h"
 #include "TypedConnection.h"
 #include "DisconnectionEvent.h"

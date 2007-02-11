@@ -23,7 +23,8 @@
 #include <raul/SharedPtr.h>
 
 template<typename T> class Queue;
-class Maid;
+
+namespace Raul { class Maid; }
 
 namespace Ingen {
 
@@ -66,10 +67,10 @@ public:
 
 	bool activated() { return _activated; }
 
+	Raul::Maid*        maid()               const { return _maid; }
 	EventSource*       event_source()       const { return _event_source.get(); }
 	AudioDriver*       audio_driver()       const { return _audio_driver.get(); }
 	MidiDriver*        midi_driver()        const { return _midi_driver; }
-	Maid*              maid()               const { return _maid; }
 	PostProcessor*     post_processor()     const { return _post_processor; }
 	ClientBroadcaster* broadcaster()        const { return _broadcaster; }
 	ObjectStore*       object_store()       const { return _object_store; }
@@ -83,7 +84,7 @@ private:
 	SharedPtr<EventSource> _event_source;
 	SharedPtr<AudioDriver> _audio_driver;
 	MidiDriver*            _midi_driver;
-	Maid*                  _maid;
+	Raul::Maid*            _maid;
 	PostProcessor*         _post_processor;
 	ClientBroadcaster*     _broadcaster;
 	ObjectStore*           _object_store;

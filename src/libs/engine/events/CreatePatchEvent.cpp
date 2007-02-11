@@ -22,7 +22,7 @@
 #include "Tree.h"
 #include "Plugin.h"
 #include "Engine.h"
-#include "Maid.h"
+#include <raul/Maid.h>
 #include "ClientBroadcaster.h"
 #include "AudioDriver.h"
 #include "raul/Path.h"

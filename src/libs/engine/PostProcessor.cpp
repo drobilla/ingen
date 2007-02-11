@@ -15,21 +15,20 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "PostProcessor.h"
 #include <cassert>
 #include <iostream>
 #include <pthread.h>
+#include <raul/SRSWQueue.h>
+#include <raul/Maid.h>
 #include "Event.h"
-#include "raul/SRSWQueue.h"
-#include "Maid.h"
-
+#include "PostProcessor.h"
 
 using std::cerr; using std::cout; using std::endl;
 
 namespace Ingen {
 
 
-PostProcessor::PostProcessor(Maid& maid, size_t queue_size)
+PostProcessor::PostProcessor(Raul::Maid& maid, size_t queue_size)
 : _maid(maid),
   _events(queue_size)
 {

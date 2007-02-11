@@ -64,8 +64,6 @@ libingen_la_SOURCES = \
 	QueuedEngineInterface.cpp \
 	GraphObject.h \
 	GraphObject.cpp \
-	Maid.h \
-	Maid.cpp \
 	Tree.h \
 	TreeImplementation.h \
 	PluginLibrary.h \
