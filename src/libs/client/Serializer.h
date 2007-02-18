@@ -48,7 +48,7 @@ class ModelEngineInterface;
 
 /** Namespace prefix macros. */
 #define NS_RDF(x) RdfId(RdfId::RESOURCE, "http://www.w3.org/1999/02/22-rdf-syntax-ns#" x)
-#define NS_INGEN(x) RdfId(RdfId::RESOURCE, "http://codeson.net/ns/ingen#" x)
+#define NS_INGEN(x) RdfId(RdfId::RESOURCE, "http://drobilla.net/ns/ingen#" x)
 
 	
 /** Serializes Ingen objects (patches, nodes, etc) to RDF.

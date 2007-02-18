@@ -35,8 +35,8 @@ Loader::Loader(SharedPtr<ModelEngineInterface> engine, SharedPtr<Namespaces> nam
 		_namespaces = SharedPtr<Namespaces>(new Namespaces());
 
 	(*_namespaces)["xsd"] = "http://www.w3.org/2001/XMLSchema#";
-	(*_namespaces)["ingen"] = "http://codeson.net/ns/ingen#";
-	(*_namespaces)["ingenuity"] = "http://codeson.net/ns/ingenuity#";
+	(*_namespaces)["ingen"] = "http://drobilla.net/ns/ingen#";
+	(*_namespaces)["ingenuity"] = "http://drobilla.net/ns/ingenuity#";
 	(*_namespaces)["lv2"] = "http://lv2plug.in/ontology#>";
 }
 
@@ -61,7 +61,7 @@ Loader::load(const Glib::ustring& filename,
 	// FIXME: kluge
 	unsigned char* document_uri_str = raptor_uri_filename_to_uri_string(filename.c_str());
 	Glib::ustring document_uri = (const char*)document_uri_str;
-	//Glib::ustring document_uri = "file:///home/dave/code/codesonnet/ingen/src/progs/ingenuity/test2.ingen.ttl";
+	//Glib::ustring document_uri = "file:///home/dave/code/drobillanet/ingen/src/progs/ingenuity/test2.ingen.ttl";
 
 	if (patch_uri == "")
 		patch_uri = "<>"; // FIXME: Will load every patch in the file?

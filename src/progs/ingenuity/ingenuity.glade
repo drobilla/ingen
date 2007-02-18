@@ -3249,7 +3249,7 @@
 
 See COPYING file included with this distribution, or http://www.gnu.org/licenses/gpl.txt for more information</property>
   <property name="wrap_license">True</property>
-  <property name="website">http://codeson.net/software/ingen</property>
+  <property name="website">http://drobilla.net/software/ingen</property>
   <property name="website_label" translatable="yes"></property>
   <property name="authors">Author:
 	Dave Robillard &lt;dave@drobilla.net&gt;

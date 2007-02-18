@@ -1,7 +1,7 @@
 Ingen is a realtime modular synthesizer and/or effects processor for
 Jack/Alsa/LADSPA/DSSI/LV2/etc (ie GNU/Linux audio systems).
 
-More information may be found at http://codeson.net/ingen
+More information may be found at http://drobilla.net/software/ingen
 
 To build, first check "./configure --help" for options, you can build this
 code in many different ways (standalone engine with seperate clients, build
