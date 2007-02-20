@@ -55,8 +55,8 @@ public:
 protected:
 	//void get_port_vals(ulong port_index, PortInfo* info);
 	
-	const SLV2Plugin* _lv2_plugin;
-	SLV2Instance**    _instances;
+	SLV2Plugin    _lv2_plugin;
+	SLV2Instance* _instances;
 };
 
 

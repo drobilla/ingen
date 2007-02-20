@@ -69,6 +69,15 @@ public:
 #endif
 	}
 
+#ifdef HAVE_SLV2
+	~Plugin()
+	{
+		if (_slv2_plugin)
+			slv2_plugin_free(_slv2_plugin);
+	}
+#endif
+
+
 	Plugin(const Plugin* const copy) {
 		// Copying only allowed for Internal plugins.  Bit of a hack, but
 		// allows the PluginInfo to be defined in the Node class which keeps
@@ -126,8 +135,8 @@ public:
 	
 	// FIXME: ew
 #ifdef HAVE_SLV2
-	SLV2Plugin* slv2_plugin() const              { return _slv2_plugin; }
-	void        slv2_plugin(const SLV2Plugin* p) { _slv2_plugin = p; }
+	SLV2Plugin slv2_plugin() const             { return _slv2_plugin; }
+	void       slv2_plugin(const SLV2Plugin p) { _slv2_plugin = slv2_plugin_duplicate(p); }
 	
 #endif
 
@@ -145,7 +154,7 @@ private:
 	PluginLibrary* _library;
 
 #ifdef HAVE_SLV2
-	SLV2Plugin* _slv2_plugin;
+	SLV2Plugin _slv2_plugin;
 #endif
 };
 

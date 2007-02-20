@@ -63,7 +63,7 @@ LV2Node::instantiate()
 
 	_ports = new Raul::Array<Port*>(num_ports);
 	
-	_instances = new SLV2Instance*[_poly];
+	_instances = new SLV2Instance[_poly];
 	
 	size_t port_buffer_size = 0;
 	
@@ -100,7 +100,7 @@ LV2Node::instantiate()
 		if (port_class == SLV2_CONTROL_INPUT || port_class == SLV2_AUDIO_INPUT) {
 			port = new InputPort<Sample>(this, port_name, j, _poly, DataType::FLOAT, port_buffer_size);
 			_ports->at(j) = port;
-		} else if (port_class == SLV2_CONTROL_INPUT || port_class == SLV2_AUDIO_INPUT) {
+		} else if (port_class == SLV2_CONTROL_OUTPUT || port_class == SLV2_AUDIO_OUTPUT) {
 			port = new OutputPort<Sample>(this, port_name, j, _poly, DataType::FLOAT, port_buffer_size);
 			_ports->at(j) = port;
 		} else if (port_class == SLV2_MIDI_INPUT) {

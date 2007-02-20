@@ -58,6 +58,10 @@ namespace Ingen {
 NodeFactory::NodeFactory()
 : _has_loaded(false)
 {
+#ifdef HAVE_SLV2
+	slv2_init();
+#endif
+
 	// Add builtin plugin types to _internal_plugins list
 	// FIXME: ewwww, definitely a better way to do this!
 
@@ -77,7 +81,6 @@ NodeFactory::NodeFactory()
 	_internal_plugins.push_back(new Plugin(n->plugin()));
 	delete n;
 	
-
 	delete parent;
 }
 
@@ -91,6 +94,10 @@ NodeFactory::~NodeFactory()
 		(*i)->close();
 		delete (*i);
 	}
+#ifdef HAVE_SLV2
+	slv2_finish();
+#endif
+
 }
 
 
@@ -259,16 +266,14 @@ NodeFactory::load_internal_plugin(const string& uri,
 void
 NodeFactory::load_lv2_plugins()
 {
-	slv2_init();
+	SLV2Plugins plugins = slv2_plugins_new();
+	slv2_plugins_load_all(plugins);
 
-	SLV2List plugins = slv2_list_new();
-	slv2_list_load_all(plugins);
-
-	//cerr << "[NodeFactory] Found " << slv2_list_get_length(plugins) << " LV2 plugins." << endl;
+	//cerr << "[NodeFactory] Found " << slv2_plugins_get_length(plugins) << " LV2 plugins." << endl;
 	
-	for (unsigned long i=0; i < slv2_list_get_length(plugins); ++i) {
+	for (unsigned i=0; i < slv2_plugins_size(plugins); ++i) {
 		
-		SLV2Plugin* lv2_plug = slv2_list_get_plugin_by_index(plugins, i);
+		SLV2Plugin lv2_plug = slv2_plugins_get_at(plugins, i);
 		
 		
 		//om_plug->library(plugin_library);
@@ -301,9 +306,7 @@ NodeFactory::load_lv2_plugins()
 		}
 	}
 	
-	slv2_list_free(plugins);
-
-	slv2_finish();
+	slv2_plugins_free(plugins);
 }
 
 
