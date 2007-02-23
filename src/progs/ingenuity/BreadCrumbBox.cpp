@@ -40,7 +40,7 @@ BreadCrumbBox::view(const Path& path)
 }
 
 
-/** Sets up the crumbs to display a @a path.
+/** Sets up the crumbs to display @a path.
  *
  * If @a path is already part of the shown path, it will be selected and the 
  * children preserved.

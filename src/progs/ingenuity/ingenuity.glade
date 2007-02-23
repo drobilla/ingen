@@ -1766,7 +1766,7 @@
 	      <property name="spacing">0</property>
 
 	      <child>
-		<widget class="GtkToolbar" id="toolbar1">
+		<widget class="GtkToolbar" id="toolbar6">
 		  <property name="visible">True</property>
 		  <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
 		  <property name="toolbar_style">GTK_TOOLBAR_BOTH_HORIZ</property>
@@ -1774,19 +1774,33 @@
 		  <property name="show_arrow">True</property>
 
 		  <child>
-		    <widget class="GtkToolItem" id="toolitem4">
+		    <widget class="GtkToolItem" id="patch_view_breadcrumb_toolitem">
 		      <property name="visible">True</property>
 		      <property name="visible_horizontal">True</property>
 		      <property name="visible_vertical">True</property>
 		      <property name="is_important">False</property>
 
 		      <child>
-			<widget class="GtkViewport" id="patch_view_breadcrumb_container">
+			<widget class="GtkAlignment" id="alignment4">
 			  <property name="visible">True</property>
-			  <property name="shadow_type">GTK_SHADOW_NONE</property>
+			  <property name="xalign">0.5</property>
+			  <property name="yalign">0.5</property>
+			  <property name="xscale">1</property>
+			  <property name="yscale">1</property>
+			  <property name="top_padding">0</property>
+			  <property name="bottom_padding">0</property>
+			  <property name="left_padding">0</property>
+			  <property name="right_padding">0</property>
 
 			  <child>
-			    <placeholder/>
+			    <widget class="GtkViewport" id="patch_view_breadcrumb_container">
+			      <property name="visible">True</property>
+			      <property name="shadow_type">GTK_SHADOW_NONE</property>
+
+			      <child>
+				<placeholder/>
+			      </child>
+			    </widget>
 			  </child>
 			</widget>
 		      </child>
@@ -1796,24 +1810,9 @@
 		      <property name="homogeneous">False</property>
 		    </packing>
 		  </child>
-		</widget>
-		<packing>
-		  <property name="padding">0</property>
-		  <property name="expand">False</property>
-		  <property name="fill">True</property>
-		</packing>
-	      </child>
-
-	      <child>
-		<widget class="GtkToolbar" id="toolbar4">
-		  <property name="visible">True</property>
-		  <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
-		  <property name="toolbar_style">GTK_TOOLBAR_BOTH_HORIZ</property>
-		  <property name="tooltips">True</property>
-		  <property name="show_arrow">True</property>
 
 		  <child>
-		    <widget class="GtkToolItem" id="toolitem11">
+		    <widget class="GtkToolItem" id="toolitem14">
 		      <property name="visible">True</property>
 		      <property name="visible_horizontal">True</property>
 		      <property name="visible_vertical">True</property>

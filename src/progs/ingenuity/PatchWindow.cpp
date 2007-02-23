@@ -1,4 +1,5 @@
 /* This file is part of Ingen.
+			e< "\n\tcycle_start: " << _cycle_time.start_ticks()
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
  * 
  * Ingen is free software; you can redistribute it and/or modify it under the
@@ -161,29 +162,30 @@ PatchWindow::set_patch(SharedPtr<PatchModel> patch, SharedPtr<PatchView> view)
 
 	_patch = patch;
 
-	_view = _breadcrumb_box->view(patch->path());
+	_view = view;
+
+	if (!_view)
+		_view = _breadcrumb_box->view(patch->path());
 	
 	if (!_view)
 		_view = PatchView::create(patch);
-	else
-		assert(!view || _view == view);
 	
 	assert(_view);
 
-	// Add view to ourself
+	// Add view to our viewport
 	if (_view->get_parent())
-		_view->get_parent()->remove(*_view);
+		_view->get_parent()->remove(*_view.get());
 
 	_viewport->remove();
 	_viewport->add(*_view.get());
 
 
-	// Add our breadcrumbs to the view
 	if (_breadcrumb_box->get_parent())
 		_breadcrumb_box->get_parent()->remove(*_breadcrumb_box);
 
 	_view->breadcrumb_container()->remove();
 	_view->breadcrumb_container()->add(*_breadcrumb_box);
+	_view->breadcrumb_container()->show();
 
 	_breadcrumb_box->build(patch->path(), _view);
 	_breadcrumb_box->show();
