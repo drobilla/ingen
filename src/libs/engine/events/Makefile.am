@@ -6,8 +6,6 @@ EXTRA_DIST = \
 	UnregisterClientEvent.h \
 	UnregisterClientEvent.cpp \
 	PingQueuedEvent.h \
-	ActivateEvent.h \
-	ActivateEvent.cpp \
 	DeactivateEvent.h \
 	DeactivateEvent.cpp \
 	SetPortValueEvent.h \
