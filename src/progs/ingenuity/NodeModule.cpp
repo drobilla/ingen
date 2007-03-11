@@ -48,6 +48,8 @@ NodeModule::NodeModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeMode
 	node->new_port_sig.connect(sigc::bind(sigc::mem_fun(this, &NodeModule::add_port), true));
 	node->removed_port_sig.connect(sigc::mem_fun(this, &NodeModule::remove_port));
 	node->metadata_update_sig.connect(sigc::mem_fun(this, &NodeModule::metadata_update));
+	
+	signal_clicked.connect(sigc::mem_fun(this, &NodeModule::on_click));
 }
 
 
@@ -127,9 +129,10 @@ NodeModule::store_location()
 
 
 void
-NodeModule::on_right_click(GdkEventButton* event)
+NodeModule::on_click(GdkEventButton* event)
 {
-	_menu.popup(event->button, event->time);
+	if (event->button == 3)
+		_menu.popup(event->button, event->time);
 }
 
 

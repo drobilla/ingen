@@ -1,5 +1,4 @@
-/* This file is part of Ingen.
- * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
+/* This file is part of In* Copyright (C) 2007 Dave Robillard <http://drobilla.net>
  * 
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
@@ -63,7 +62,7 @@ public:
 
 	virtual void store_location();
 
-	void on_right_click(GdkEventButton* event);
+	void on_click(GdkEventButton* event);
 	
 	void show_control_window();
 
