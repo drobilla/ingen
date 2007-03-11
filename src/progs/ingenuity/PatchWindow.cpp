@@ -198,7 +198,7 @@ PatchWindow::set_patch(SharedPtr<PatchModel> patch, SharedPtr<PatchView> view)
 			((int)_view->canvas()->width() - width)/2,
 			((int)_view->canvas()->height() - height)/2);
 
-	set_title(_patch->path());
+	set_title(_patch->path() + " - Ingenuity");
 
 	//m_properties_window->patch_model(pc->patch_model());
 
