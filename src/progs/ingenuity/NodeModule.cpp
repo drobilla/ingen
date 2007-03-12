@@ -90,7 +90,9 @@ NodeModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeModel> n
 void
 NodeModule::add_port(SharedPtr<PortModel> port, bool resize_to_fit)
 {
-	Module::add_port(boost::shared_ptr<Port>(new Port(shared_from_this(), port)));
+	Module::add_port(boost::shared_ptr<Port>(new Port(
+			PtrCast<NodeModule>(shared_from_this()), port)));
+
 	if (resize_to_fit)
 		resize();
 }

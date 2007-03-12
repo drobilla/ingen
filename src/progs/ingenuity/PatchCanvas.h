@@ -19,11 +19,12 @@
 #define PATCHCANVAS_H
 
 #include <string>
+#include <map>
 #include <boost/shared_ptr.hpp>
 #include <flowcanvas/FlowCanvas.h>
 #include <flowcanvas/Module.h>
-#include "raul/SharedPtr.h"
-#include "raul/Path.h"
+#include <raul/SharedPtr.h>
+#include <raul/Path.h>
 #include "ConnectionModel.h"
 #include "PatchModel.h"
 #include "NodeModule.h"
@@ -54,10 +55,10 @@ public:
 	
 	virtual ~PatchCanvas() {}
 
-	boost::shared_ptr<NodeModule> find_module(const string& name) {
+	/*boost::shared_ptr<NodeModule> find_module(const string& name) {
 		return boost::dynamic_pointer_cast<NodeModule>(
 			FlowCanvas::get_item(name));
-	}
+	}*/
 	
 	void build();
 
@@ -66,7 +67,7 @@ public:
 	void add_port(SharedPtr<PortModel> pm);
 	void remove_port(SharedPtr<PortModel> pm);
 	void connection(SharedPtr<ConnectionModel> cm);
-	void disconnection(const Path& src_port_path, const Path& dst_port_path);
+	void disconnection(SharedPtr<ConnectionModel> cm);
 
 	void get_new_module_location(double& x, double& y);
 
@@ -87,6 +88,8 @@ private:
 
 	bool canvas_event(GdkEvent* event);
 	
+	SharedPtr<LibFlowCanvas::Port> get_port_view(SharedPtr<PortModel> port);
+
 	void connect(boost::shared_ptr<LibFlowCanvas::Connectable> src,
 	             boost::shared_ptr<LibFlowCanvas::Connectable> dst);
 
@@ -94,6 +97,9 @@ private:
 	                boost::shared_ptr<LibFlowCanvas::Connectable> dst);
 
 	SharedPtr<PatchModel> _patch;
+
+	typedef std::map<SharedPtr<ObjectModel>, SharedPtr<LibFlowCanvas::Module> > Views;
+	Views _views;
 
 	int _last_click_x;
 	int _last_click_y;

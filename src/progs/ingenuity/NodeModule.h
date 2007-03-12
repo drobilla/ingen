@@ -18,7 +18,6 @@
 #define NODEMODULE_H
 
 #include <string>
-#include <boost/enable_shared_from_this.hpp>
 #include <libgnomecanvasmm.h>
 #include <flowcanvas/Module.h>
 #include "raul/SharedPtr.h"
@@ -48,7 +47,7 @@ class Port;
  *
  * \ingroup Ingenuity
  */
-class NodeModule : public boost::enable_shared_from_this<NodeModule>, public LibFlowCanvas::Module
+class NodeModule : public LibFlowCanvas::Module
 {
 public:
 	static boost::shared_ptr<NodeModule> create (boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeModel> node);

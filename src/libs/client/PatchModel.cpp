@@ -135,9 +135,9 @@ PatchModel::remove_node(SharedPtr<NodeModel> nm)
 			SharedPtr<ConnectionModel> cm = (*j);
 			if (cm->src_port_path().parent() == nm->path()
 					|| cm->dst_port_path().parent() == nm->path()) {
+				removed_connection_sig.emit(cm);
 				_connections.erase(j); // cuts our reference
 				assert(!get_connection(cm->src_port_path(), cm->dst_port_path())); // no duplicates
-				removed_connection_sig.emit(cm->src_port_path(), cm->dst_port_path());
 			}
 			j = next;
 		}
@@ -276,9 +276,9 @@ PatchModel::remove_connection(const string& src_port_path, const string& dst_por
 	for (list<SharedPtr<ConnectionModel> >::iterator i = _connections.begin(); i != _connections.end(); ++i) {
 		SharedPtr<ConnectionModel> cm = (*i);
 		if (cm->src_port_path() == src_port_path && cm->dst_port_path() == dst_port_path) {
+			removed_connection_sig.emit(cm);
 			_connections.erase(i); // cuts our reference
 			assert(!get_connection(src_port_path, dst_port_path)); // no duplicates
-			removed_connection_sig.emit(src_port_path, dst_port_path);
 			return;
 		}
 	}

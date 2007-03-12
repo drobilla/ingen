@@ -108,7 +108,7 @@ PatchCanvas::build()
 	// Create pseudo modules for ports (ports on this canvas, not on our module)
 	for (PortModelList::const_iterator i = _patch->ports().begin();
 			i != _patch->ports().end(); ++i) {
-		add_item(PatchPortModule::create(shared_this, *i));
+		add_port(*i);
 	}
 
 	// Create connections
@@ -126,17 +126,26 @@ PatchCanvas::add_node(SharedPtr<NodeModel> nm)
 		boost::dynamic_pointer_cast<PatchCanvas>(shared_from_this());
 
 	SharedPtr<PatchModel> pm = PtrCast<PatchModel>(nm);
+	SharedPtr<NodeModule> module;
 	if (pm)
-		add_item(SubpatchModule::create(shared_this, pm));
+		module = SubpatchModule::create(shared_this, pm);
 	else
-		add_item(NodeModule::create(shared_this, nm));
+		module = NodeModule::create(shared_this, nm);
+
+	add_item(module);
+	_views.insert(std::make_pair(nm, module));
 }
 
 
 void
 PatchCanvas::remove_node(SharedPtr<NodeModel> nm)
 {
-	remove_item(nm->path().name()); // should cut all references
+	Views::iterator i = _views.find(nm);
+
+	if (i != _views.end()) {
+		remove_item(i->second);
+		_views.erase(i);
+	}
 }
 
 
@@ -146,37 +155,50 @@ PatchCanvas::add_port(SharedPtr<PortModel> pm)
 	boost::shared_ptr<PatchCanvas> shared_this =
 		boost::dynamic_pointer_cast<PatchCanvas>(shared_from_this());
 
-	add_item(PatchPortModule::create(shared_this, pm));
+	SharedPtr<PatchPortModule> view = PatchPortModule::create(shared_this, pm);
+	_views.insert(std::make_pair(pm, view));
+	add_item(view);
 }
 
 
 void
 PatchCanvas::remove_port(SharedPtr<PortModel> pm)
 {
-	remove_item(pm->path().name()); // should cut all references
+	Views::iterator i = _views.find(pm);
+
+	if (i != _views.end()) {
+		remove_item(i->second);
+		_views.erase(i);
+	}
+}
+
+
+SharedPtr<LibFlowCanvas::Port>
+PatchCanvas::get_port_view(SharedPtr<PortModel> port)
+{
+	SharedPtr<LibFlowCanvas::Port> ret;
+	SharedPtr<LibFlowCanvas::Module> module = _views[port];
+	
+	// Port on this patch
+	if (module) {
+		ret = (PtrCast<PatchPortModule>(module))
+			? *(PtrCast<PatchPortModule>(module)->ports().begin())
+			: PtrCast<LibFlowCanvas::Port>(module);
+	} else {
+		module = PtrCast<NodeModule>(_views[port->parent()]);
+		if (module)
+			ret = module->get_port(port->path().name());
+	}
+	
+	return ret;
 }
 
 
 void
 PatchCanvas::connection(SharedPtr<ConnectionModel> cm)
 {
-	// Deal with port "anonymous nodes" for this patch's own ports...
-	const Path& src_parent_path = cm->src_port_path().parent();
-	const Path& dst_parent_path = cm->dst_port_path().parent();
-
-	const string& src_parent_name = (src_parent_path == _patch->path())
-		? cm->src_port_path().name()
-		: src_parent_path.name();
-
-	const string& dst_parent_name = (dst_parent_path == _patch->path())
-		? cm->dst_port_path().name()
-		: dst_parent_path.name();
-
-	boost::shared_ptr<LibFlowCanvas::Port> src = get_port(src_parent_name, cm->src_port_path().name());
-	boost::shared_ptr<LibFlowCanvas::Port> dst = get_port(dst_parent_name, cm->dst_port_path().name());
-	
-	cerr << "SPN: " << src_parent_name << endl;
-	cerr << "DPN: " << dst_parent_name << endl;
+	const SharedPtr<LibFlowCanvas::Port> src = get_port_view(cm->src_port());
+	const SharedPtr<LibFlowCanvas::Port> dst = get_port_view(cm->dst_port());
 
 	if (src && dst)
 		add_connection(boost::shared_ptr<Connection>(new Connection(shared_from_this(), cm, src, dst, src->color() + 0xFFFFFF00)));
@@ -187,41 +209,16 @@ PatchCanvas::connection(SharedPtr<ConnectionModel> cm)
 
 
 void
-PatchCanvas::disconnection(const Path& src_port_path, const Path& dst_port_path)
+PatchCanvas::disconnection(SharedPtr<ConnectionModel> cm)
 {
-	// Deal with port "anonymous nodes" for this patch's own ports...
-	const Path& src_parent_path = src_port_path.parent();
-	const Path& dst_parent_path = dst_port_path.parent();
-
-	const string& src_parent_name = (src_parent_path == _patch->path())
-		? src_port_path.name()
-		: src_parent_path.name();
-
-	const string& dst_parent_name = (dst_parent_path == _patch->path())
-		? dst_port_path.name()
-		: dst_parent_path.name();
-	
-	cerr << "SPN: " << src_parent_name << endl;
-	cerr << "DPN: " << dst_parent_name << endl;
-
-	boost::shared_ptr<LibFlowCanvas::Port> src = get_port(src_parent_name, src_port_path.name());
-	boost::shared_ptr<LibFlowCanvas::Port> dst = get_port(dst_parent_name, dst_port_path.name());
-
+	const SharedPtr<LibFlowCanvas::Port> src = get_port_view(cm->src_port());
+	const SharedPtr<LibFlowCanvas::Port> dst = get_port_view(cm->dst_port());
+		
 	if (src && dst)
 		remove_connection(src, dst);
 	else
 		cerr << "[PatchCanvas] ERROR: Unable to find ports to disconnect "
-			<< src_port_path << " -> " << dst_port_path << endl;
-
-	cerr << "FIXME: disconnection control window stuff\n";
-	/*
-	// Enable control slider in destination node control window
-	PortController* p = (PortController)Store::instance().port(dst_port_path)->controller();
-	assert(p);
-
-	if (p->control_panel())
-	p->control_panel()->enable_port(p->path());
-	*/
+			<< cm->src_port_path() << " -> " << cm->dst_port_path() << endl;
 }
 
 

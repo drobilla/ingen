@@ -57,9 +57,9 @@ public:
 	sigc::signal<void, SharedPtr<NodeModel> >       new_node_sig; 
 	sigc::signal<void, SharedPtr<NodeModel> >       removed_node_sig; 
 	sigc::signal<void, SharedPtr<ConnectionModel> > new_connection_sig; 
-	sigc::signal<void, const Path&, const Path& >    removed_connection_sig;
-	sigc::signal<void>                               enabled_sig;
-	sigc::signal<void>                               disabled_sig;
+	sigc::signal<void, SharedPtr<ConnectionModel> > removed_connection_sig;
+	sigc::signal<void>                              enabled_sig;
+	sigc::signal<void>                              disabled_sig;
 
 private:
 	friend class Store;
