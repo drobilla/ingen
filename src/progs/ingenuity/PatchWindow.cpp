@@ -1,5 +1,4 @@
 /* This file is part of Ingen.
-			e< "\n\tcycle_start: " << _cycle_time.start_ticks()
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
  * 
  * Ingen is free software; you can redistribute it and/or modify it under the
