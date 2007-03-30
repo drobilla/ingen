@@ -58,7 +58,7 @@ ThreadedLoader::load_patch(bool                    merge,
                            const string&           data_base_uri,
                            const Path&             data_path,
                            MetadataMap             engine_data,
-                           const Path&             engine_parent,
+                           optional<Path>          engine_parent,
                            optional<const string&> engine_name,
                            optional<size_t>        engine_poly)
 {

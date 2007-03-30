@@ -37,7 +37,7 @@ Loader::Loader(SharedPtr<ModelEngineInterface> engine, SharedPtr<Namespaces> nam
 	(*_namespaces)["xsd"] = "http://www.w3.org/2001/XMLSchema#";
 	(*_namespaces)["ingen"] = "http://drobilla.net/ns/ingen#";
 	(*_namespaces)["ingenuity"] = "http://drobilla.net/ns/ingenuity#";
-	(*_namespaces)["lv2"] = "http://lv2plug.in/ontology#>";
+	(*_namespaces)["lv2"] = "http://lv2plug.in/ontology#";
 }
 
 
@@ -48,11 +48,11 @@ Loader::Loader(SharedPtr<ModelEngineInterface> engine, SharedPtr<Namespaces> nam
  * @return whether or not load was successful.
  */
 bool
-Loader::load(const Glib::ustring& filename,
-             const Path&          parent,
-			 string               patch_name,
-			 Glib::ustring        patch_uri,
-			 MetadataMap          data)
+Loader::load(const Glib::ustring&  filename,
+             boost::optional<Path> parent,
+			 string                patch_name,
+			 Glib::ustring         patch_uri,
+			 MetadataMap           data)
 {
 	// FIXME: this whole thing is a mess
 	
@@ -73,7 +73,7 @@ Loader::load(const Glib::ustring& filename,
 
 	// FIXME: polyphony datatype
 	RDFQuery query(*_namespaces, Glib::ustring(
-		"SELECT DISTINCT ?poly \nFROM <") + document_uri + ">\nWHERE {\n\t" +
+		"SELECT DISTINCT ?poly FROM <") + document_uri + "> WHERE {\n" +
 		patch_uri + " ingen:polyphony ?poly .\n"
 		"}");
 
@@ -91,6 +91,8 @@ Loader::load(const Glib::ustring& filename,
 
 	if (patch_name == "") {	
 		patch_name = string(filename.substr(filename.find_last_of("/")+1));
+		if (patch_name.substr(patch_name.length()-6) == ".ingen")
+			patch_name = patch_name.substr(0, patch_name.length()-6);
 		
 		query = RDFQuery(*_namespaces, Glib::ustring(
 			"SELECT DISTINCT ?name FROM <") + document_uri + "> WHERE {\n" +
@@ -103,7 +105,7 @@ Loader::load(const Glib::ustring& filename,
 			patch_name = string((*results.begin())["name"]);
 	}
 
-	Path patch_path = parent.base() + patch_name;
+	Path patch_path = ( parent ? (parent.get().base() + patch_name) : Path("/") );
 	cerr << "************ PATCH: " << patch_path << ", poly = " << patch_poly << endl;
 	_engine->create_patch(patch_path, patch_poly);
 

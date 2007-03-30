@@ -51,9 +51,9 @@ LoadPatchWindow::LoadPatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gno
 
 	Gtk::FileFilter filt;
 	filt.add_pattern("*.om");
-	filt.set_name("Om patch files (DEPRECATED) (*.om)");
-	filt.add_pattern("*.ingen.ttl");
-	filt.set_name("Ingen patch files (*.ingen.ttl)");
+	filt.set_name("Om patch files (XML, DEPRECATED) (*.om)");
+	filt.add_pattern("*.ingen");
+	filt.set_name("Ingen patch files (RDF, *.ingen)");
 	set_filter(filt);
 
 	// Add global examples directory to "shortcut folders" (bookmarks)
@@ -118,14 +118,19 @@ LoadPatchWindow::ok_clicked()
 	optional<const string&> name;
 	optional<size_t> poly;
 	
+	optional<Path> parent;
+	
 	if (_poly_from_user_radio->get_active())
 		poly = _poly_spinbutton->get_value_as_int();
 	
 	if (_replace)
 		App::instance().engine()->clear_patch(_patch->path());
 
+	if (_patch->path() != "/")
+		parent = _patch->path().parent();
+
 	App::instance().loader()->load_patch(true, get_filename(), "/",
-		_initial_data, _patch->parent()->path(), name, poly);
+		_initial_data, parent, name, poly);
 	
 	hide();
 }			

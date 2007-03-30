@@ -168,12 +168,12 @@ DeprecatedLoader::add_metadata(MetadataMap& data, string old_key, string value)
  * Returns the path of the newly created patch.
  */
 string
-DeprecatedLoader::load_patch(const Glib::ustring& filename,
-                             const Path&          parent_path,
-                             string               name,
-                             size_t               poly,
-                             MetadataMap          initial_data,
-                             bool                 existing)
+DeprecatedLoader::load_patch(const Glib::ustring&  filename,
+                             boost::optional<Path> parent_path,
+                             string                name,
+                             size_t                poly,
+                             MetadataMap           initial_data,
+                             bool                  existing)
 {
 	cerr << "[DeprecatedLoader] Loading patch " << filename << "" << endl;
 
@@ -216,8 +216,10 @@ DeprecatedLoader::load_patch(const Glib::ustring& filename,
 		if ((!xmlStrcmp(cur->name, (const xmlChar*)"name"))) {
 			if (load_name) {
 				assert(key != NULL);
-				if (parent_path != "")
-					path = Path(parent_path).base() + Path::nameify((char*)key);
+				if (parent_path)
+					path = Path(parent_path.get()).base() + Path::nameify((char*)key);
+				else
+					path = Path("/") + Path::nameify((char*)key);
 			}
 		} else if ((!xmlStrcmp(cur->name, (const xmlChar*)"polyphony"))) {
 			if (load_poly) {

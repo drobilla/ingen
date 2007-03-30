@@ -18,6 +18,7 @@
 #ifndef LOADER_H
 #define LOADER_H
 
+#include <boost/optional.hpp>
 #include <glibmm/ustring.h>
 #include "raul/SharedPtr.h"
 #include "raul/Path.h"
@@ -38,11 +39,11 @@ class Loader {
 public:
 	Loader(SharedPtr<ModelEngineInterface> engine, SharedPtr<Namespaces> = SharedPtr<Namespaces>());
 
-	bool load(const Glib::ustring& filename,
-	          const Path&          parent,
-			  string               patch_name,
-	          Glib::ustring        patch_uri = "",
-	          MetadataMap          initial_data = MetadataMap());
+	bool load(const Glib::ustring&  filename,
+	          boost::optional<Path> parent,
+			  string                patch_name,
+	          Glib::ustring         patch_uri = "",
+	          MetadataMap           initial_data = MetadataMap());
 
 private:
 	//string                          _patch_search_path;

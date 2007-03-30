@@ -281,8 +281,8 @@ PatchWindow::event_save_as()
 	
 	if (result == Gtk::RESPONSE_OK) {	
 		string filename = dialog.get_filename();
-		if (filename.length() < 11 || filename.substr(filename.length()-10) != ".ingen.ttl")
-			filename += ".ingen.ttl";
+		if (filename.length() < 7 || filename.substr(filename.length()-6) != ".ingen")
+			filename += ".ingen";
 			
 		bool confirm = false;
 		std::fstream fin;

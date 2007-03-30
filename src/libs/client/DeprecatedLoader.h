@@ -22,6 +22,7 @@
 #include <utility>
 #include <string>
 #include <cassert>
+#include <boost/optional.hpp>
 #include <glibmm/ustring.h>
 #include <libxml/tree.h>
 #include "raul/SharedPtr.h"
@@ -58,12 +59,12 @@ public:
 	
 	string find_file(const string& filename, const string& additional_path = "");
 	
-	string load_patch(const Glib::ustring& filename,
-	                  const Path&          parent_path,
-	                  string               name,
-	                  size_t               poly,
-	                  MetadataMap          initial_data,
-	                  bool                 existing = false);
+	string load_patch(const Glib::ustring&  filename,
+	                  boost::optional<Path> parent_path,
+	                  string                name,
+	                  size_t                poly,
+	                  MetadataMap           initial_data,
+	                  bool                  existing = false);
 
 private:
 	void add_metadata(MetadataMap& data, string key, string value);

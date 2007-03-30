@@ -133,6 +133,7 @@ PatchCanvas::add_node(SharedPtr<NodeModel> nm)
 		module = NodeModule::create(shared_this, nm);
 
 	add_item(module);
+	module->show();
 	_views.insert(std::make_pair(nm, module));
 }
 
@@ -158,6 +159,7 @@ PatchCanvas::add_port(SharedPtr<PortModel> pm)
 	SharedPtr<PatchPortModule> view = PatchPortModule::create(shared_this, pm);
 	_views.insert(std::make_pair(pm, view));
 	add_item(view);
+	view->show();
 }
 
 
