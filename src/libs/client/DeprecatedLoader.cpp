@@ -219,7 +219,7 @@ DeprecatedLoader::load_patch(const Glib::ustring&  filename,
 				if (parent_path)
 					path = Path(parent_path.get()).base() + Path::nameify((char*)key);
 				else
-					path = Path("/") + Path::nameify((char*)key);
+					path = Path("/");
 			}
 		} else if ((!xmlStrcmp(cur->name, (const xmlChar*)"polyphony"))) {
 			if (load_poly) {
