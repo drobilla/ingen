@@ -1,5 +1,5 @@
 AC_PREREQ(2.59)
-AC_INIT([ingen],[0.4.0pre],[drobilla@connect.carleton.ca])
+AC_INIT([ingen],[0.4.0pre],[dave@drobilla.net])
 AC_CONFIG_SRCDIR([src/common/interface/EngineInterface.h])
 AC_CONFIG_SRCDIR([src/common/lv2ext/lv2-miditype.h])
 AC_CONFIG_SRCDIR([src/libs/engine/JackAudioDriver.cpp])
