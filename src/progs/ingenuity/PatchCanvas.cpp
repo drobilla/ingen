@@ -203,7 +203,8 @@ PatchCanvas::connection(SharedPtr<ConnectionModel> cm)
 	const SharedPtr<LibFlowCanvas::Port> dst = get_port_view(cm->dst_port());
 
 	if (src && dst)
-		add_connection(boost::shared_ptr<Connection>(new Connection(shared_from_this(), cm, src, dst, src->color() + 0xFFFFFF00)));
+		add_connection(boost::shared_ptr<Connection>(new Connection(shared_from_this(),
+				cm, src, dst, src->color() + 0x22222200)));
 	else
 		cerr << "[PatchCanvas] ERROR: Unable to find ports to connect "
 			<< cm->src_port_path() << " -> " << cm->dst_port_path() << endl;
