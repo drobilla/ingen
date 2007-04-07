@@ -329,7 +329,9 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 		key = xmlNodeListGetString(doc, cur->xmlChildrenNode, 1);
 		
 		if ((!xmlStrcmp(cur->name, (const xmlChar*)"name"))) {
+			cerr << "NAME: " << (char*)key;
 			path = parent.base() + Path::nameify((char*)key);
+			cerr << ", PATH: " << path << endl;
 		} else if ((!xmlStrcmp(cur->name, (const xmlChar*)"polyphonic"))) {
 			polyphonic = !strcmp((char*)key, "true");
 		} else if ((!xmlStrcmp(cur->name, (const xmlChar*)"type"))) {

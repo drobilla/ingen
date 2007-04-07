@@ -63,7 +63,7 @@ DSSINode::instantiate()
 	
 	if (has_midi_input()) {
 		_ports = new Raul::Array<Port*>(_descriptor->PortCount + 1);
-		_midi_in_port = new InputPort<MidiMessage>(this, "MIDI_In", _ports->size()-1, 1, DataType::MIDI, _buffer_size);
+		_midi_in_port = new InputPort<MidiMessage>(this, "MIDIIn", _ports->size()-1, 1, DataType::MIDI, _buffer_size);
 		_ports->at(_ports->size()-1) = _midi_in_port;
 	}	
 

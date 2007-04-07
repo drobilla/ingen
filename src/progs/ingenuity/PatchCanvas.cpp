@@ -120,6 +120,16 @@ PatchCanvas::build()
 
 
 void
+PatchCanvas::arrange()
+{
+	LibFlowCanvas::FlowCanvas::arrange();
+	
+	for (list<boost::shared_ptr<Item> >::iterator i = _items.begin(); i != _items.end(); ++i)
+		(*i)->store_location();
+}
+
+
+void
 PatchCanvas::add_node(SharedPtr<NodeModel> nm)
 {
 	boost::shared_ptr<PatchCanvas> shared_this =

@@ -40,7 +40,7 @@ MidiNoteNode::MidiNoteNode(const string& path, size_t poly, Patch* parent, Sampl
 {
 	_ports = new Raul::Array<Port*>(5);
 	
-	_midi_in_port = new InputPort<MidiMessage>(this, "MIDI_In", 0, 1, DataType::MIDI, _buffer_size);
+	_midi_in_port = new InputPort<MidiMessage>(this, "MIDIIn", 0, 1, DataType::MIDI, _buffer_size);
 	_ports->at(0) = _midi_in_port;
 
 	_freq_port = new OutputPort<Sample>(this, "Frequency", 1, poly, DataType::FLOAT, _buffer_size);

@@ -35,10 +35,10 @@ MidiControlNode::MidiControlNode(const string& path, size_t poly, Patch* parent,
 {
 	_ports = new Raul::Array<Port*>(7);
 
-	_midi_in_port = new InputPort<MidiMessage>(this, "MIDI_In", 0, 1, DataType::MIDI, _buffer_size);
+	_midi_in_port = new InputPort<MidiMessage>(this, "MIDIIn", 0, 1, DataType::MIDI, _buffer_size);
 	_ports->at(0) = _midi_in_port;
 	
-	_param_port = new InputPort<Sample>(this, "Controller_Number", 1, 1, DataType::FLOAT, 1);
+	_param_port = new InputPort<Sample>(this, "ControllerNumber", 1, 1, DataType::FLOAT, 1);
 	_ports->at(1) = _param_port;
 
 	_log_port = new InputPort<Sample>(this, "Logarithmic", 2, 1, DataType::FLOAT, 1);
@@ -50,10 +50,10 @@ MidiControlNode::MidiControlNode(const string& path, size_t poly, Patch* parent,
 	_max_port = new InputPort<Sample>(this, "Max", 4, 1, DataType::FLOAT, 1);
 	_ports->at(4) = _max_port;
 	
-	_audio_port = new OutputPort<Sample>(this, "Out_(AR)", 5, 1, DataType::FLOAT, _buffer_size);
+	_audio_port = new OutputPort<Sample>(this, "Out(AR)", 5, 1, DataType::FLOAT, _buffer_size);
 	_ports->at(5) = _audio_port;
 
-	_control_port = new OutputPort<Sample>(this, "Out_(CR)", 6, 1, DataType::FLOAT, 1);
+	_control_port = new OutputPort<Sample>(this, "Out(CR)", 6, 1, DataType::FLOAT, 1);
 	_ports->at(6) = _control_port;
 	
 	plugin()->plug_label("midi_control_in");
