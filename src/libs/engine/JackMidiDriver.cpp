@@ -73,14 +73,14 @@ JackMidiPort::prepare_block(const SampleCount block_start, const SampleCount blo
 	
 	const SampleCount    nframes     = block_end - block_start;
 	void*                jack_buffer = jack_port_get_buffer(_jack_port, nframes);
-	const jack_nframes_t event_count = jack_midi_get_event_count(jack_buffer, nframes);
+	const jack_nframes_t event_count = jack_midi_get_event_count(jack_buffer);
 	
 	assert(event_count < _patch_port->buffer_size());
 	
 	// Copy events from Jack port buffer into patch port buffer
 	for (jack_nframes_t i=0; i < event_count; ++i) {
 		jack_midi_event_t* ev = (jack_midi_event_t*)&_patch_port->buffer(0)->value_at(i);
-		jack_midi_event_get(ev, jack_buffer, i, nframes);
+		jack_midi_event_get(ev, jack_buffer, i);
 
 		// MidiMessage and jack_midi_event_t* are the same thing :/
 		MidiMessage* const message = &_patch_port->buffer(0)->data()[i];
