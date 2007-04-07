@@ -43,7 +43,6 @@ using namespace Ingen::Client;
 
 namespace Ingenuity {
 	
-class PatchCanvas;
 class LoadPluginWindow;
 class LoadPatchWindow;
 class NewSubpatchWindow;
@@ -88,6 +87,7 @@ private:
 	void event_destroy();
 	void event_clear();
 	void event_fullscreen_toggled();
+	void event_arrange();
 	void event_show_properties();
 	void event_show_controls();
 	void event_show_engine();
@@ -113,6 +113,7 @@ private:
 	Gtk::MenuItem*      _menu_fullscreen;
 	Gtk::MenuItem*      _menu_clear;
 	Gtk::MenuItem*      _menu_destroy_patch;
+	Gtk::MenuItem*      _menu_arrange;
 	Gtk::MenuItem*      _menu_view_engine_window;
 	Gtk::MenuItem*      _menu_view_control_window;
 	Gtk::MenuItem*      _menu_view_patch_properties;

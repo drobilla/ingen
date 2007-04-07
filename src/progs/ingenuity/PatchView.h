@@ -60,7 +60,7 @@ public:
 
 	SharedPtr<PatchCanvas> canvas()               const { return _canvas; }
 	SharedPtr<PatchModel>  patch()                const { return _patch; }
-	Gtk::Viewport*          breadcrumb_container() const { return _breadcrumb_container; }
+	Gtk::Viewport*         breadcrumb_container() const { return _breadcrumb_container; }
 
 	static SharedPtr<PatchView> create(SharedPtr<PatchModel> patch);
 

@@ -71,6 +71,7 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 	xml->get_widget("patch_view_engine_window_menuitem", _menu_view_engine_window);
 	xml->get_widget("patch_properties_menuitem", _menu_view_patch_properties);
 	xml->get_widget("patch_fullscreen_menuitem", _menu_fullscreen);
+	xml->get_widget("patch_arrange_menuitem", _menu_arrange);
 	xml->get_widget("patch_clear_menuitem", _menu_clear);
 	xml->get_widget("patch_destroy_menuitem", _menu_destroy_patch);
 	xml->get_widget("patch_view_messages_window_menuitem", _menu_view_messages_window);
@@ -99,6 +100,8 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 		sigc::mem_fun(App::instance().configuration_dialog(), &ConfigWindow::show));
 	_menu_fullscreen->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_fullscreen_toggled));
+	_menu_arrange->signal_activate().connect(
+		sigc::mem_fun(this, &PatchWindow::event_arrange));
 	_menu_view_engine_window->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_show_engine));
 	_menu_view_control_window->signal_activate().connect(
@@ -378,6 +381,7 @@ PatchWindow::event_quit()
 	b->set_label("_Quit");
 	Gtk::Widget* close_img = Gtk::manage(new Gtk::Image(Gtk::Stock::QUIT, Gtk::ICON_SIZE_BUTTON));
 	b->set_image(*close_img);
+	b->grab_default();
 	
 	int ret = d.run();
 	if (ret == 1) {
@@ -402,6 +406,14 @@ PatchWindow::event_clear()
 {
 	App::instance().engine()->clear_patch(_patch->path());
 }
+
+
+void
+PatchWindow::event_arrange()
+{
+	_view->canvas()->arrange();
+}
+
 
 void
 PatchWindow::event_fullscreen_toggled()
