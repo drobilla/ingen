@@ -19,13 +19,13 @@
 #include <cmath>
 #include <iostream>
 #include <raul/Array.h>
+#include <raul/midi_events.h>
 #include "MidiMessage.h"
 #include "InputPort.h"
 #include "OutputPort.h"
 #include "Plugin.h"
 #include "AudioDriver.h"
 #include "util.h"
-#include "midi.h"
 
 using std::cerr; using std::cout; using std::endl;
 

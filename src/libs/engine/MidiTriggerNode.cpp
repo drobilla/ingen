@@ -17,11 +17,11 @@
 
 #include "MidiTriggerNode.h"
 #include <cmath>
+#include <raul/midi_events.h>
 #include "InputPort.h"
 #include "OutputPort.h"
 #include "Plugin.h"
 #include "util.h"
-#include "midi.h"
 
 namespace Ingen {
 

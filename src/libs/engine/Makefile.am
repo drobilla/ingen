@@ -82,7 +82,6 @@ libingen_la_SOURCES = \
 	Driver.h \
 	AudioDriver.h \
 	MidiDriver.h \
-	midi.h \
 	instantiations.cpp \
 	events/RegisterClientEvent.h \
 	events/RegisterClientEvent.cpp \

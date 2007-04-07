@@ -19,10 +19,10 @@
 #include <iostream>
 #include <cstdlib>
 #include <pthread.h>
-#include "types.h"
-#include "midi.h"
-#include "ThreadManager.h"
 #include <raul/Maid.h>
+#include <raul/midi_events.h>
+#include "types.h"
+#include "ThreadManager.h"
 #include "AudioDriver.h"
 #include "MidiMessage.h"
 #include "DuplexPort.h"

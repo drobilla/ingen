@@ -17,13 +17,13 @@
 
 #include "MidiControlNode.h"
 #include <math.h>
+#include <raul/midi_events.h>
 #include "PostProcessor.h"
 #include "MidiLearnEvent.h"
 #include "InputPort.h"
 #include "OutputPort.h"
 #include "Plugin.h"
 #include "util.h"
-#include "midi.h"
 
 
 namespace Ingen {
