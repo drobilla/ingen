@@ -21,6 +21,7 @@
 #include "PatchModel.h"
 #include "NodeModel.h"
 #include "PortModel.h"
+#include "PluginModel.h"
 #include "ControlGroups.h"
 #include "GladeFactory.h"
 

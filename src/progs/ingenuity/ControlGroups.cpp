@@ -20,6 +20,8 @@
 #include "ModelEngineInterface.h"
 #include "ControlGroups.h"
 #include "ControlPanel.h"
+#include "PluginModel.h"
+#include "NodeModel.h"
 #include "PortModel.h"
 #include "App.h"
 
@@ -98,12 +100,23 @@ SliderControlGroup::init(ControlPanel* panel, SharedPtr<PortModel> pm, bool sepa
 		min = min_atom.get_float();
 		max = max_atom.get_float();
 	}
+	
+	const SharedPtr<NodeModel> parent = PtrCast<NodeModel>(pm->parent());
+
+	if (parent && parent->plugin()->type() == PluginModel::LV2) {
+		min = slv2_port_get_minimum_value(
+				parent->plugin()->slv2_plugin(),
+				slv2_port_by_symbol(pm->path().name().c_str()));
+		max = slv2_port_get_maximum_value(
+					parent->plugin()->slv2_plugin(),
+					slv2_port_by_symbol(pm->path().name().c_str()));
+	}
 
 	if (max <= min)
 		max = min + 1.0f;
 
 	set_name(pm->path().name());
-	
+
 	_min_spinner->set_value(min);
 	_min_spinner->signal_value_changed().connect(sigc::mem_fun(*this, &SliderControlGroup::min_changed));
 	_max_spinner->set_value(max);
@@ -112,11 +125,11 @@ SliderControlGroup::init(ControlPanel* panel, SharedPtr<PortModel> pm, bool sepa
 	_slider->set_value(_port_model->value());
 
 	_slider->signal_event().connect(
-		sigc::mem_fun(*this, &SliderControlGroup::slider_pressed));
+			sigc::mem_fun(*this, &SliderControlGroup::slider_pressed));
 
 	_slider->signal_value_changed().connect(
-		sigc::mem_fun(*this, &SliderControlGroup::update_value_from_slider));
-	
+			sigc::mem_fun(*this, &SliderControlGroup::update_value_from_slider));
+
 	_slider->set_range(min, max);
 
 	set_value(pm->value());
@@ -124,6 +137,19 @@ SliderControlGroup::init(ControlPanel* panel, SharedPtr<PortModel> pm, bool sepa
 	_enable_signal = true;
 
 	show_all();
+}
+
+
+void
+SliderControlGroup::set_value(float val)
+{
+	_enable_signal = false;
+	//if (_enabled) {
+		if (_slider->get_value() != val)
+			_slider->set_value(val);
+		//m_value_spinner->set_value(val);
+	//}
+	_enable_signal = true;
 }
 
 

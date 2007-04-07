@@ -23,6 +23,9 @@
 #ifdef HAVE_LASH
 	#include "LashController.h"
 #endif
+#ifdef HAVE_SLV2
+	#include <slv2/slv2.h>
+#endif
 
 using namespace Ingenuity;
 
@@ -52,19 +55,21 @@ main(int argc, char** argv)
 	/* Load settings */
 	App::instance().configuration()->load_settings();
 	App::instance().configuration()->apply_settings();
+#ifdef HAVE_SLV2
+	slv2_init();
+#endif
 
 #ifdef HAVE_LASH
 	lash_args_t* lash_args = lash_extract_args(&argc, &argv);
-#endif
-	
-	//gtk_main.signal_quit().connect(sigc::ptr_fun(cleanup));		
-
-#ifdef HAVE_LASH
 	LashController* lash_controller = new LashController(lash_args);
 #endif
 	
 	App::instance().connect_window()->start();
 	gtk_main.run();
+
+#ifdef HAVE_SLV2
+	slv2_finish();
+#endif
 
 	return 0;
 }

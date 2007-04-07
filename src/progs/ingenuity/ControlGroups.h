@@ -41,10 +41,9 @@ class ControlGroup : public Gtk::VBox
 {
 public:
 	ControlGroup(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml);
+	virtual ~ControlGroup() { delete _separator; }
 	
 	void init(ControlPanel* panel, SharedPtr<PortModel> pm, bool separator);
-
-	~ControlGroup() { delete _separator; }
 	
 	inline const SharedPtr<PortModel> port_model() const { return _port_model; }
 
@@ -77,14 +76,15 @@ public:
 
 	void enable();
 	void disable();
+	
+	void set_min(float val);
+	void set_max(float val);
 
 private:
 	void set_name(const string& name);
 	virtual void metadata_update(const string& key, const Atom& value);
 
-	inline void set_value(const float val);
-	void set_min(float val);
-	void set_max(float val);
+	void set_value(float value);
 
 	void min_changed();
 	void max_changed();
@@ -104,19 +104,6 @@ private:
 	//Gtk::SpinButton* _value_spinner;
 	Gtk::VScale*     _slider;
 };
-
-
-inline void
-SliderControlGroup::set_value(const float val)
-{
-	_enable_signal = false;
-	//if (_enabled) {
-		if (_slider->get_value() != val)
-			_slider->set_value(val);
-		//m_value_spinner->set_value(val);
-	//}
-	_enable_signal = true;
-}
 
 
 #if 0

@@ -191,8 +191,16 @@ PatchWindow::set_patch(SharedPtr<PatchModel> patch, SharedPtr<PatchView> view)
 
 	_breadcrumb_box->build(patch->path(), _view);
 	_breadcrumb_box->show();
+	
+	_menu_view_control_window->property_sensitive() = false;
 
-	//m_menu_view_control_window->property_sensitive() = patch->has_control_inputs();
+	for (PortModelList::const_iterator p = patch->ports().begin();
+			p != patch->ports().end(); ++p) {
+		if ((*p)->is_control()) {
+			_menu_view_control_window->property_sensitive() = true;
+			break;
+		}
+	}
 
 	int width, height;
 	get_size(width, height);

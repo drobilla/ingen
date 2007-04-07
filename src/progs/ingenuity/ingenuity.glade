@@ -52,7 +52,7 @@
 		      <accelerator key="I" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1987">
+			<widget class="GtkImage" id="image2003">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-open</property>
 			  <property name="icon_size">1</property>
@@ -104,10 +104,9 @@
 		      <property name="label" translatable="yes">Confi_guration</property>
 		      <property name="use_underline">True</property>
 		      <signal name="activate" handler="on_patch_configuration_menuitem_activate" last_modification_time="Sun, 29 Jan 2006 21:17:26 GMT"/>
-		      <accelerator key="G" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1988">
+			<widget class="GtkImage" id="image2004">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-preferences</property>
 			  <property name="icon_size">1</property>
@@ -237,10 +236,10 @@
 		      <property name="tooltip" translatable="yes">Automatically arrange canvas</property>
 		      <property name="label" translatable="yes">_Arrange</property>
 		      <property name="use_underline">True</property>
-		      <accelerator key="A" modifiers="GDK_CONTROL_MASK" signal="activate"/>
+		      <accelerator key="G" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1989">
+			<widget class="GtkImage" id="image2005">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-sort-ascending</property>
 			  <property name="icon_size">1</property>
@@ -263,7 +262,7 @@
 		      <accelerator key="C" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1990">
+			<widget class="GtkImage" id="image2006">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-preferences</property>
 			  <property name="icon_size">1</property>
@@ -305,7 +304,7 @@
 		      <signal name="activate" handler="on_patch_destroy_menuitem_activate" last_modification_time="Wed, 25 May 2005 00:22:00 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1991">
+			<widget class="GtkImage" id="image2007">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-delete</property>
 			  <property name="icon_size">1</property>
@@ -342,7 +341,7 @@
 		      <accelerator key="E" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1992">
+			<widget class="GtkImage" id="image2008">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-connect</property>
 			  <property name="icon_size">1</property>
@@ -365,7 +364,7 @@
 		      <accelerator key="T" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1993">
+			<widget class="GtkImage" id="image2009">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-index</property>
 			  <property name="icon_size">1</property>
@@ -388,7 +387,7 @@
 		      <accelerator key="M" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1994">
+			<widget class="GtkImage" id="image2010">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-dialog-error</property>
 			  <property name="icon_size">1</property>
@@ -423,7 +422,7 @@
 		      <signal name="activate" handler="on_right-click_the_canvas_to_add_objects1_activate" last_modification_time="Fri, 16 Jun 2006 17:51:05 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image1995">
+			<widget class="GtkImage" id="image2011">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-info</property>
 			  <property name="icon_size">1</property>

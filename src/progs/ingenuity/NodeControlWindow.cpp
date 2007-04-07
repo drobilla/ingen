@@ -114,7 +114,6 @@ NodeControlWindow::on_show()
 		if ((*i)->is_control() && (*i)->is_input())
 			App::instance().engine()->request_port_value((*i)->path());
 
-
 	if (_position_stored)
 		move(_x, _y);
 

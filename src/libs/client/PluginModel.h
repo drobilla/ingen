@@ -18,9 +18,13 @@
 #ifndef PLUGINMODEL_H
 #define PLUGINMODEL_H
 
+#include "../../config.h"
 #include <string>
 #include <iostream>
 #include "raul/Path.h"
+#ifdef HAVE_SLV2
+#include <slv2/slv2.h>
+#endif
 using std::string; using std::cerr; using std::endl;
 
 namespace Ingen {
@@ -37,10 +41,19 @@ public:
 	enum Type { LV2, LADSPA, DSSI, Internal, Patch };
 
 	PluginModel(const string& uri, const string& type_uri, const string& name)
-	: _uri(uri),
-	  _name(name)
+		: _uri(uri)
+		, _name(name)
 	{
 		set_type_from_uri(type_uri);
+#ifdef HAVE_SLV2
+		static SLV2Plugins plugins = NULL;
+		if (!plugins) {
+			plugins = slv2_plugins_new();
+			slv2_plugins_load_all(plugins);
+		}
+		
+		_slv2_plugin = slv2_plugins_get_by_uri(plugins, uri.c_str());
+#endif
 	}
 	
 	Type          type() const                { return _type; }
@@ -87,10 +100,18 @@ public:
 
 	string default_node_name() { return Raul::Path::nameify(_name); }
 
+#ifdef HAVE_SLV2
+	SLV2Plugin slv2_plugin() { return _slv2_plugin; }
+#endif
+
 private:
 	Type   _type;
 	string _uri;
 	string _name;
+
+#ifdef HAVE_SLV2
+	SLV2Plugin _slv2_plugin;
+#endif
 };
 
 

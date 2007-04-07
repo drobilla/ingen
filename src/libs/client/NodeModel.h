@@ -52,7 +52,7 @@ public:
 	
 	const map<int, map<int, string> >& get_programs() const { return _banks; }
 	const string&                      plugin_uri()   const { return _plugin_uri; }
-	SharedPtr<PluginModel>            plugin()       const { return _plugin; }
+	SharedPtr<PluginModel>             plugin()       const { return _plugin; }
 	int                                num_ports()    const { return _ports.size(); }
 	const PortModelList&               ports()        const { return _ports; }
 	virtual bool                       polyphonic()   const { return _polyphonic; }
