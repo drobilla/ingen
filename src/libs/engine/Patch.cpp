@@ -115,23 +115,26 @@ Patch::process(SampleCount nframes, FrameTime start, FrameTime end)
 	if (_process_order == NULL || !_process)
 		return;
 
-	// FIXME: This is far too slow, too much checking every cycle
+	// FIXME: This is far too slow, too much iteration/conditionals every cycle
 	
-	// Prepare input ports for nodes to consume
-	for (Raul::List<Port*>::iterator i = _input_ports.begin(); i != _input_ports.end(); ++i)
-		(*i)->process(nframes, start, end);
+	// This breaks MIDI input, somehow (?)
+	//for (Raul::List<Port*>::iterator i = _input_ports.begin(); i != _input_ports.end(); ++i)
+	//	(*i)->pre_process(nframes, start, end);
+	for (Raul::List<Port*>::iterator i = _output_ports.begin(); i != _output_ports.end(); ++i)
+		(*i)->pre_process(nframes, start, end);
 
 	// Run all nodes (consume input ports)
 	for (size_t i=0; i < _process_order->size(); ++i) {
 		// Could be a gap due to a node removal event (see RemoveNodeEvent.cpp)
 		// Yes, this is ugly
-		if (_process_order->at(i) != NULL)
+		if (_process_order->at(i))
 			_process_order->at(i)->process(nframes, start, end);
 	}
 	
-	// Prepare output ports (for caller to consume)
+	for (Raul::List<Port*>::iterator i = _input_ports.begin(); i != _input_ports.end(); ++i)
+		(*i)->post_process(nframes, start, end);
 	for (Raul::List<Port*>::iterator i = _output_ports.begin(); i != _output_ports.end(); ++i)
-		(*i)->process(nframes, start, end);
+		(*i)->post_process(nframes, start, end);
 }
 
 	

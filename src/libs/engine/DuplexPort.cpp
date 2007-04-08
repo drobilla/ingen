@@ -43,26 +43,24 @@ DuplexPort::DuplexPort(Node* parent, const string& name, size_t index, size_t po
 void
 DuplexPort::pre_process(SampleCount nframes, FrameTime start, FrameTime end)
 {
-	if (_is_output) {
-		for (size_t i=0; i < _poly; ++i)
-			_buffers.at(i)->prepare_write(nframes);
-	} else {
-		for (size_t i=0; i < _poly; ++i)
-			_buffers.at(i)->prepare_read(nframes);
-	}
+	// Think about it...
+	
+	if (_is_output)
+		InputPort::pre_process(nframes, start, end);
+	else
+		OutputPort::pre_process(nframes, start, end);
 }
 
 
 void
 DuplexPort::post_process(SampleCount nframes, FrameTime start, FrameTime end)
 {
-	if (_is_output) {
-		for (size_t i=0; i < _poly; ++i)
-			_buffers.at(i)->prepare_read(nframes);
-	} else {
-		for (size_t i=0; i < _poly; ++i)
-			_buffers.at(i)->prepare_write(nframes);
-	}
+	// Think about it...
+	
+	if (_is_output)
+		InputPort::pre_process(nframes, start, end);
+	else
+		OutputPort::pre_process(nframes, start, end);
 }
 
 
