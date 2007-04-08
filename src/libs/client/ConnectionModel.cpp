@@ -70,37 +70,6 @@ ConnectionModel::dst_port_path() const
 		return _dst_port->path();
 }
 
-const Path
-ConnectionModel::patch_path() const
-{
-	// Resolved
-	if (_src_port && _dst_port) {
-		// Direct connection from patch input to patch output (pass through)
-		// (parent patch is parent of ports)
-		if (_src_port->parent() == _dst_port->parent()) {
-			SharedPtr<PatchModel> parent_patch = PtrCast<PatchModel>(_src_port->parent());
-			if (parent_patch)
-				return parent_patch->path();
-		}
-	}
-
-	// Aside from the above special case, parent patch is parent of parent of ports
-		
-	const Path& src_node = _src_port_path.parent();
-	const Path& dst_node = _dst_port_path.parent();
-	Path patch_path = src_node.parent();
-
-	if (src_node.parent() != dst_node.parent()) {
-		// Connection to a patch port from inside the patch
-		assert(src_node.parent() == dst_node || dst_node.parent() == src_node);
-		if (src_node.parent() == dst_node)
-			patch_path = dst_node;
-		else
-			patch_path = src_node;
-	}
-
-	return patch_path;
-}
 
 typedef list<SharedPtr<ConnectionModel> > ConnectionList;
 

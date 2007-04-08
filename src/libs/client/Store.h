@@ -70,6 +70,8 @@ private:
 	
 	void add_plugin(SharedPtr<PluginModel> plugin);
 
+	SharedPtr<PatchModel> connection_patch(const Path& src_port_path, const Path& dst_port_path);
+
 	// It would be nice to integrate these somehow..
 	
 	void add_orphan(SharedPtr<ObjectModel> orphan);

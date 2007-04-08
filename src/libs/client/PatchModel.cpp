@@ -248,7 +248,6 @@ PatchModel::add_connection(SharedPtr<ConnectionModel> cm)
 {
 	// Store should have 'resolved' the connection already
 	assert(cm);
-	assert(cm->patch_path() == path());
 	assert(cm->src_port());
 	assert(cm->dst_port());
 	assert(cm->src_port()->parent());

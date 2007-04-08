@@ -126,7 +126,7 @@ Store::resolve_connection_orphans(SharedPtr<PortModel> port)
 		++next;
 		
 		if ((*c)->src_port() && (*c)->dst_port()) {
-			SharedPtr<PatchModel> patch = PtrCast<PatchModel>(this->object((*c)->patch_path()));
+			SharedPtr<PatchModel> patch = connection_patch((*c)->src_port_path(), (*c)->dst_port_path());
 			if (patch) {
 				cerr << "Resolved orphan connection " << (*c)->src_port_path() <<
 					(*c)->dst_port_path() << endl;
@@ -444,6 +444,22 @@ Store::control_change_event(const Path& port_path, float value)
 }
 
 
+SharedPtr<PatchModel>
+Store::connection_patch(const Path& src_port_path, const Path& dst_port_path)
+{
+	// Connection between patch ports
+	if (src_port_path.parent() == dst_port_path.parent()) {
+		SharedPtr<PatchModel> patch = PtrCast<PatchModel>(this->object(src_port_path.parent()));
+		if (patch)
+			return patch;
+	}
+
+	// Normal connection
+	assert(src_port_path.parent().parent() == dst_port_path.parent().parent());
+	return PtrCast<PatchModel>(this->object(src_port_path.parent().parent()));
+}
+
+
 void
 Store::connection_event(const Path& src_port_path, const Path& dst_port_path)
 {
@@ -457,7 +473,7 @@ Store::connection_event(const Path& src_port_path, const Path& dst_port_path)
 		assert(src_port->parent());
 		assert(dst_port->parent());
 
-		SharedPtr<PatchModel> patch = PtrCast<PatchModel>(this->object(dangling_cm->patch_path()));
+		SharedPtr<PatchModel> patch = connection_patch(src_port_path, dst_port_path);
 		assert(patch);
 
 		SharedPtr<ConnectionModel> cm(new ConnectionModel(src_port, dst_port));
@@ -492,12 +508,13 @@ Store::disconnection_event(const Path& src_port_path, const Path& dst_port_path)
 
 	SharedPtr<ConnectionModel> cm(new ConnectionModel(src_port, dst_port));
 
-	SharedPtr<PatchModel> patch = PtrCast<PatchModel>(this->object(cm->patch_path()));
+	SharedPtr<PatchModel> patch = connection_patch(src_port_path, dst_port_path);
 	
 	if (patch)
 		patch->remove_connection(src_port_path, dst_port_path);
 	else
-		cerr << "ERROR: disconnection in nonexistant patch " << cm->patch_path() << endl;
+		cerr << "ERROR: disconnection in nonexistant patch: "
+			<< src_port_path << " -> " << dst_port_path << endl;
 }
 
 

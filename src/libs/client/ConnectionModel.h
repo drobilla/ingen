@@ -49,7 +49,6 @@ public:
 
 	const Path& src_port_path() const;
 	const Path& dst_port_path() const;
-	const Path  patch_path()    const;
 	
 private:
 	friend class Store;
