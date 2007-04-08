@@ -42,6 +42,7 @@ libingen_la_SOURCES = \
 	AudioBuffer.cpp \
 	MidiBuffer.h \
 	MidiBuffer.cpp \
+	BufferFactory.h \
 	BufferFactory.cpp \
 	Port.h \
 	Port.cpp \
@@ -51,7 +52,6 @@ libingen_la_SOURCES = \
 	OutputPort.cpp \
 	DuplexPort.h \
 	DuplexPort.cpp \
-	MidiMessage.h \
 	MidiNoteNode.h \
 	MidiNoteNode.cpp \
 	MidiTriggerNode.h \

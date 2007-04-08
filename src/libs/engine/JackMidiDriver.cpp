@@ -92,9 +92,6 @@ JackMidiPort::prepare_block(const SampleCount block_start, const SampleCount blo
 	}
 
 	//cerr << "Jack MIDI got " << event_count << " events." << endl;
-
-	//_patch_port->buffer(0)->filled_size(event_count);
-	//_patch_port->tied_port()->buffer(0)->filled_size(event_count);
 }
 
 

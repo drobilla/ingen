@@ -35,7 +35,7 @@ namespace Ingen {
 	
 //// AlsaMidiPort ////
 
-AlsaMidiPort::AlsaMidiPort(AlsaMidiDriver* driver, DuplexPort<MidiBuffer>* patch_port)
+AlsaMidiPort::AlsaMidiPort(AlsaMidiDriver* driver, DuplexPort* patch_port)
 : DriverPort(patch_port->is_input()),
   Raul::ListNode<AlsaMidiPort*>(this),
   _driver(driver),
@@ -125,16 +125,20 @@ AlsaMidiPort::prepare_block(const SampleCount block_start, const SampleCount blo
 {
 	assert(block_end >= block_start);
 	
-	snd_seq_event_t* ev         = NULL;
-	MidiMessage*     message    = NULL;
-	size_t           nu_events = 0;
-	size_t           event_size = 0; // decoded length of Alsa event in bytes
-	int              timestamp  = 0;
+	const SampleCount nframes  = block_end - block_start;
+	snd_seq_event_t*  ev         = NULL;
+	size_t            num_events = 0;
+	size_t            event_size = 0; // decoded length of Alsa event in bytes
+	int               timestamp  = 0;
 	
+	MidiBuffer* patch_buf = dynamic_cast<MidiBuffer*>(_patch_port->buffer(0));
+	assert(patch_buf);
+
+	patch_buf->prepare_write(nframes);
+
 	while (!_events.empty() && _events.front().time.tick < block_end) {
-		assert(nu_events < _patch_port->buffer_size());
+		assert(num_events < _patch_port->buffer_size());
 		ev = &_events.front();
-		message = &_patch_port->buffer(0)->data()[nu_events];
 		
 		timestamp = ev->time.tick - block_start;
 		if (timestamp < 0) {
@@ -149,20 +153,17 @@ AlsaMidiPort::prepare_block(const SampleCount block_start, const SampleCount blo
 
 		// FIXME: is this realtime safe?
 		if ((event_size = snd_midi_event_decode(_driver->event_coder(),
-				_midi_pool[nu_events], MAX_MIDI_EVENT_SIZE, ev)) > 0) {
-			message->size = event_size;
-			message->time = timestamp;
-			message->buffer = _midi_pool[nu_events];
-			++nu_events;
+				_midi_pool[num_events], MAX_MIDI_EVENT_SIZE, ev)) > 0) {
+
+			patch_buf->put_event(timestamp, event_size, _midi_pool[num_events]);
+			++num_events;
+
 		} else {
 			cerr << "[AlsaMidiPort] Unable to decode MIDI event" << endl;
 		}
 		
 		_events.pop();
 	}
-
-	_patch_port->buffer(0)->filled_size(nu_events);
-	//_patch_port->tied_port()->buffer(0)->filled_size(nu_events);
 }
 
 

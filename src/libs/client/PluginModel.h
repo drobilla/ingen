@@ -18,7 +18,7 @@
 #ifndef PLUGINMODEL_H
 #define PLUGINMODEL_H
 
-#include "../../config.h"
+#include "../../../config.h"
 #include <string>
 #include <iostream>
 #include "raul/Path.h"
