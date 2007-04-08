@@ -21,10 +21,11 @@
 #include <string>
 #include <boost/utility.hpp>
 #include "raul/Path.h"
+#include "DataType.h"
 
 namespace Ingen {
 
-template <typename T> class DuplexPort;
+class DuplexPort;
 
 
 /** Representation of a "system" (eg outside Ingen) port.
@@ -58,15 +59,15 @@ protected:
  * interface for managing system ports.  An implementation of Driver basically
  * needs to manage DriverPorts, and handle writing/reading data to/from them.
  *
- * The template parameter T is the type of data this driver manages (ie the
- * data type of the bridge ports it will handle).
- *
  * \ingroup engine
  */
-template <typename T>
 class Driver : boost::noncopyable
 {
 public:
+	Driver(DataType type)
+		: _type(type)
+	{}
+
 	virtual ~Driver() {}
 
 	virtual void activate()   = 0;
@@ -78,10 +79,13 @@ public:
 	 *
 	 * May return NULL if the Driver can not drive the port for some reason.
 	 */
-	virtual DriverPort* create_port(DuplexPort<T>* patch_port) = 0;
+	virtual DriverPort* create_port(DuplexPort* patch_port) = 0;
 	
 	virtual void        add_port(DriverPort* port)          = 0;
 	virtual DriverPort* remove_port(const Raul::Path& path) = 0;
+
+protected:
+	DataType _type;
 };
 
 

@@ -55,7 +55,7 @@ public:
 
 	virtual void process(SampleCount nframes, FrameTime start, FrameTime end);
 		
-	virtual void set_port_buffer(size_t voice, size_t port_num, void* buf) {}
+	virtual void set_port_buffer(size_t voice, size_t port_num, Buffer* buf) {}
 	
 	virtual void set_buffer_size(size_t size);
 	

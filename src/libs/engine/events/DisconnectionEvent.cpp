@@ -21,7 +21,7 @@
 #include <raul/Path.h>
 #include "Responder.h"
 #include "Engine.h"
-#include "TypedConnection.h"
+#include "Connection.h"
 #include "InputPort.h"
 #include "OutputPort.h"
 #include "Patch.h"
@@ -44,7 +44,7 @@ DisconnectionEvent::DisconnectionEvent(Engine& engine, SharedPtr<Responder> resp
   _src_port(NULL),
   _dst_port(NULL),
   _lookup(true),
-  _typed_event(NULL),
+  _process_order(NULL),
   _error(NO_ERROR)
 {
 }
@@ -58,7 +58,7 @@ DisconnectionEvent::DisconnectionEvent(Engine& engine, SharedPtr<Responder> resp
   _src_port(src_port),
   _dst_port(dst_port),
   _lookup(false),
-  _typed_event(NULL),
+  _process_order(NULL),
   _error(NO_ERROR)
 {
 	// FIXME: These break for patch ports.. is that ok?
@@ -67,11 +67,6 @@ DisconnectionEvent::DisconnectionEvent(Engine& engine, SharedPtr<Responder> resp
 	assert(src_port->type() == dst_port->type());
 	assert(src_port->parent_node()->parent_patch()
 			== dst_port->parent_node()->parent_patch()); */
-}
-
-DisconnectionEvent::~DisconnectionEvent()
-{
-	delete _typed_event;
 }
 
 
@@ -86,14 +81,6 @@ DisconnectionEvent::pre_process()
 			QueuedEvent::pre_process();
 			return;
 		}
-
-		/*_patch = _engine.object_store()->find_patch(_src_port_path.parent().parent());
-
-		  if (_patch == NULL) {
-		  _error = PORT_NOT_FOUND;
-		  QueuedEvent::pre_process();
-		  return;
-		  }*/
 
 		_src_port = _engine.object_store()->find_port(_src_port_path);
 		_dst_port = _engine.object_store()->find_port(_dst_port_path);
@@ -111,76 +98,13 @@ DisconnectionEvent::pre_process()
 		return;
 	}
 
-	// Create the typed event to actually do the work
-	const DataType type = _src_port->type();
-	if (type == DataType::FLOAT) {
-		_typed_event = new TypedDisconnectionEvent<Sample>(_engine, _responder, _time,
-				dynamic_cast<OutputPort<Sample>*>(_src_port), dynamic_cast<InputPort<Sample>*>(_dst_port));
-	} else if (type == DataType::MIDI) {
-		_typed_event = new TypedDisconnectionEvent<MidiMessage>(_engine, _responder, _time,
-				dynamic_cast<OutputPort<MidiMessage>*>(_src_port), dynamic_cast<InputPort<MidiMessage>*>(_dst_port));
-	} else {
-		_error = TYPE_MISMATCH;
-		QueuedEvent::pre_process();
-		return;
-	}
+	_dst_input_port = dynamic_cast<InputPort*>(_dst_port);
+	_src_output_port = dynamic_cast<OutputPort*>(_src_port);
+	assert(_src_output_port);
+	assert(_dst_input_port);
 
-	assert(_typed_event);
-	_typed_event->pre_process();
-	assert(_typed_event->is_prepared());
-
-	QueuedEvent::pre_process();
-}
-
-
-void
-DisconnectionEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
-{
-	QueuedEvent::execute(nframes, start, end);
-
-	if (_error == NO_ERROR)
-		_typed_event->execute(nframes, start, end);
-}
-
-
-void
-DisconnectionEvent::post_process()
-{
-	if (_error == NO_ERROR) {
-		_typed_event->post_process();
-	} else {
-		// FIXME: better error messages
-		string msg = "Unable to disconnect ";
-		msg.append(_src_port_path + " -> " + _dst_port_path);
-		_responder->respond_error(msg);
-	}
-}
-
-
-
-//// TypedDisconnectionEvent ////
-
-
-template <typename T>
-TypedDisconnectionEvent<T>::TypedDisconnectionEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, OutputPort<T>* src_port, InputPort<T>* dst_port)
-: QueuedEvent(engine, responder, timestamp),
-  _src_port(src_port),
-  _dst_port(dst_port),
-  _patch(NULL),
-  _process_order(NULL),
-  _succeeded(true)
-{
-	assert(src_port != NULL);
-	assert(dst_port != NULL);
-}
-
-
-template <typename T>
-void
-TypedDisconnectionEvent<T>::pre_process()
-{
-	if (!_dst_port->is_connected_to(_src_port)) {
-		_succeeded = false;
+	if (!_dst_input_port->is_connected_to(_src_output_port)) {
+		_error = NOT_CONNECTED;
 		QueuedEvent::pre_process();
 		return;
 	}
@@ -209,7 +133,7 @@ TypedDisconnectionEvent<T>::pre_process()
 	assert(_patch);
 
 	if (src_node == NULL || dst_node == NULL) {
-		_succeeded = false;
+		_error = PARENTS_NOT_FOUND;
 		QueuedEvent::pre_process();
 		return;
 	}
@@ -229,21 +153,18 @@ TypedDisconnectionEvent<T>::pre_process()
 	if (_patch->enabled())
 		_process_order = _patch->build_process_order();
 	
-	_succeeded = true;
-	QueuedEvent::pre_process();	
+	QueuedEvent::pre_process();
 }
 
 
-template <typename T>
 void
-TypedDisconnectionEvent<T>::execute(SampleCount nframes, FrameTime start, FrameTime end)
+DisconnectionEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {
 	QueuedEvent::execute(nframes, start, end);
 
-	if (_succeeded) {
-
-		Raul::ListNode<TypedConnection<T>*>* const port_connection
-			= _dst_port->remove_connection(_src_port);
+	if (_error == NO_ERROR) {
+		Raul::ListNode<Connection*>* const port_connection
+			= _dst_input_port->remove_connection(_src_output_port);
 		
 		if (port_connection != NULL) {
 			Raul::ListNode<Connection*>* const patch_connection
@@ -261,23 +182,23 @@ TypedDisconnectionEvent<T>::execute(SampleCount nframes, FrameTime start, FrameT
 				_engine.maid()->push(_patch->process_order());
 			_patch->process_order(_process_order);
 		} else {
-			_succeeded = false;  // Ports weren't connected
+			_error = CONNECTION_NOT_FOUND;
 		}
 	}
 }
 
 
-template <typename T>
 void
-TypedDisconnectionEvent<T>::post_process()
+DisconnectionEvent::post_process()
 {
-	if (_succeeded) {
-	
+	if (_error == NO_ERROR) {
 		_responder->respond_ok();
-	
 		_engine.broadcaster()->send_disconnection(_src_port->path(), _dst_port->path());
 	} else {
-		_responder->respond_error("Unable to disconnect ports.");
+		// FIXME: better error messages
+		string msg = "Unable to disconnect ";
+		msg.append(_src_port_path + " -> " + _dst_port_path);
+		_responder->respond_error(msg);
 	}
 }
 

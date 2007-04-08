@@ -15,19 +15,21 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef TYPES_H
-#define TYPES_H
+#ifndef BUFFERFACTORY_H
+#define BUFFERFACTORY_H
 
-#include <cstddef> // for NULL, size_t, etc
-#include <jack/jack.h>
+#include "Buffer.h"
 
-typedef unsigned char uchar;
-typedef unsigned int  uint;
-typedef unsigned long ulong;
+namespace Ingen {
 
-typedef jack_default_audio_sample_t Sample;
-typedef jack_nframes_t              SampleCount;
-typedef jack_nframes_t              SampleRate;
-typedef jack_nframes_t              FrameTime;
+	
+namespace BufferFactory {
 
-#endif // TYPES_H
+	Buffer* create(DataType type, size_t size);
+
+}
+
+
+} // namespace Ingen
+
+#endif // BUFFERFACTORY_H

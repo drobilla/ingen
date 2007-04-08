@@ -15,19 +15,25 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef TYPES_H
-#define TYPES_H
+#include "BufferFactory.h"
+#include "AudioBuffer.h"
+#include "MidiBuffer.h"
 
-#include <cstddef> // for NULL, size_t, etc
-#include <jack/jack.h>
+namespace Ingen {
+namespace BufferFactory {
 
-typedef unsigned char uchar;
-typedef unsigned int  uint;
-typedef unsigned long ulong;
 
-typedef jack_default_audio_sample_t Sample;
-typedef jack_nframes_t              SampleCount;
-typedef jack_nframes_t              SampleRate;
-typedef jack_nframes_t              FrameTime;
+Buffer*
+create(DataType type, size_t size)
+{
+	if (type == DataType::FLOAT)
+		return new AudioBuffer(size);
+	else if (type == DataType::MIDI)
+		return new MidiBuffer(size);
+	else
+		return NULL;
+}
 
-#endif // TYPES_H
+
+} // namespace BufferFactory
+} // namespace Ingen

@@ -20,12 +20,10 @@
 
 #include <string>
 #include <cstdlib>
-#include "TypedPort.h"
+#include "Port.h"
 #include "types.h"
 
 namespace Ingen {
-
-template <typename T> class InputPort;
 
 
 /** An output port.
@@ -39,14 +37,16 @@ template <typename T> class InputPort;
  *
  * \ingroup engine
  */
-template <typename T>
-class OutputPort : virtual public TypedPort<T>
+class OutputPort : virtual public Port
 {
 public:
-	OutputPort(Node* parent, const string& name,
-	           size_t index, size_t poly,
-	           DataType type, size_t buffer_size)
-	: TypedPort<T>(parent, name, index, poly, type, buffer_size)
+	OutputPort(Node*         parent,
+	           const string& name,
+	           size_t        index,
+	           size_t        poly,
+	           DataType      type,
+	           size_t        buffer_size)
+	: Port(parent, name, index, poly, type, buffer_size)
 	{}
 
 	virtual ~OutputPort() {}
@@ -55,8 +55,6 @@ public:
 	bool is_output() const { return true; }
 };
 
-
-template class OutputPort<Sample>;
 
 } // namespace Ingen
 

@@ -18,25 +18,27 @@
 #ifndef AUDIODRIVER_H
 #define AUDIODRIVER_H
 
-#include "Driver.h"
-#include "types.h"
 #include <raul/List.h>
 #include <raul/Path.h>
+#include "Driver.h"
+#include "types.h"
+#include "DataType.h"
 
 namespace Ingen {
 
 class Patch;
 class AudioDriver;
-template <typename T> class TypedPort;
+class Port;
 
 
 /** Audio driver abstract base class.
  *
  * \ingroup engine
  */
-class AudioDriver : public Driver<Sample>
+class AudioDriver : public Driver
 {
 public:
+	AudioDriver() : Driver(DataType::FLOAT) {}
 	
 	virtual void   set_root_patch(Patch* patch) = 0;
 	virtual Patch* root_patch()                 = 0;

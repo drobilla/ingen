@@ -15,13 +15,12 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-
 #include "LADSPANode.h"
 #include <iostream>
 #include <cassert>
-#include "float.h"
 #include <stdint.h>
 #include <cmath>
+#include "AudioBuffer.h"
 #include "InputPort.h"
 #include "OutputPort.h"
 #include "Plugin.h"
@@ -106,10 +105,10 @@ LADSPANode::instantiate()
 			|| LADSPA_IS_PORT_OUTPUT(_descriptor->PortDescriptors[j]));
 
 		if (LADSPA_IS_PORT_INPUT(_descriptor->PortDescriptors[j])) {
-			port = new InputPort<Sample>(this, port_name, j, _poly, DataType::FLOAT, port_buffer_size);
+			port = new InputPort(this, port_name, j, _poly, DataType::FLOAT, port_buffer_size);
 			_ports->at(j) = port;
 		} else if (LADSPA_IS_PORT_OUTPUT(_descriptor->PortDescriptors[j])) {
-			port = new OutputPort<Sample>(this, port_name, j, _poly, DataType::FLOAT, port_buffer_size);
+			port = new OutputPort(this, port_name, j, _poly, DataType::FLOAT, port_buffer_size);
 			_ports->at(j) = port;
 		}
 
@@ -121,9 +120,8 @@ LADSPANode::instantiate()
 
 		// Set default value
 		if (port->buffer_size() == 1) {
-			((TypedPort<Sample>*)port)->set_value(default_val, 0);
-		} else {
-			((TypedPort<Sample>*)port)->set_value(0.0f, 0);
+			for (size_t i=0; i < _poly; ++i)
+				((AudioBuffer*)port->buffer(i))->set(default_val, 0);
 		}
 
 		if (port->is_input() && port->buffer_size() == 1) {
@@ -150,12 +148,9 @@ LADSPANode::activate()
 {
 	NodeBase::activate();
 
-	TypedPort<Sample>* port = NULL;
-	
 	for (size_t i=0; i < _poly; ++i) {
 		for (unsigned long j=0; j < _descriptor->PortCount; ++j) {
-			port = static_cast<TypedPort<Sample>*>(_ports->at(j));
-			set_port_buffer(i, j, ((TypedPort<Sample>*)_ports->at(j))->buffer(i)->data());
+			set_port_buffer(i, j, _ports->at(j)->buffer(i));
 			/*	if (port->type() == DataType::FLOAT && port->buffer_size() == 1)
 					port->set_value(0.0f, 0); // FIXME
 				else if (port->type() == DataType::FLOAT && port->buffer_size() > 1)
@@ -188,13 +183,17 @@ LADSPANode::process(SampleCount nframes, FrameTime start, FrameTime end)
 
 
 void
-LADSPANode::set_port_buffer(size_t voice, size_t port_num, void* buf)
+LADSPANode::set_port_buffer(size_t voice, size_t port_num, Buffer* buf)
 {
 	assert(voice < _poly);
 	
+	AudioBuffer* audio_buffer = dynamic_cast<AudioBuffer*>(buf);
+	assert(audio_buffer);
+
 	// Could be a MIDI port after this
 	if (port_num < _descriptor->PortCount)
-		_descriptor->connect_port(_instances[voice], port_num, (Sample*)buf);
+		_descriptor->connect_port(_instances[voice], port_num,
+			audio_buffer->data());
 }
 
 #if 0

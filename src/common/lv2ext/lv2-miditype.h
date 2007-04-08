@@ -1,37 +1,38 @@
-/************************************************************************
+/****************************************************************************
+    
+    lv2-miditype.h - header file for using MIDI in LV2 plugins
+    
+    Copyright (C) 2006  Lars Luthman <lars.luthman@gmail.com>
+    
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+    
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+    
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 01222-1307  USA
 
-   LV2 MIDI Data Type Extension
-   Copyright 2006 Lars Luthman in 2006
-
-   This library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public License
-   as published by the Free Software Foundation; either version 2.1 of
-   the License, or (at your option) any later version.
-   
-   This library is distributed in the hope that it will be useful, but
-   WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-   Lesser General Public License for more details.
-   
-   You should have received a copy of the GNU Lesser General Public
-   License along with this library; if not, write to the Free Software
-   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-   USA.
-
-*************************************************************************/
+****************************************************************************/
 
 #ifndef LV2_MIDITYPE_H
 #define LV2_MIDITYPE_H
 
+#include <stdint.h>
 
 /** This data structure is used to contain the MIDI events for one run() 
     cycle. The port buffer for a LV2 port that has the datatype 
-    <http://ll-plugins.nongnu.org/lv2/namespace#miditype> should be a pointer 
+    <http://ll-plugins.nongnu.org/lv2/ext/miditype> should be a pointer 
     to an instance of this struct. 
 
     To store two Note On events on MIDI channel 0 in a buffer, with timestamps
-    12 and 35.5, you could use something like this code (assuming that midi_data
-    is a variable of type LV2_MIDI):
+    12 and 35.5, you could use something like this code (assuming that 
+    midi_data is a variable of type LV2_MIDI):
     @code
     
       size_t buffer_offset = 0;
@@ -71,7 +72,8 @@
         buffer_offset += sizeof(double);
         size_t size = *(size_t*)(midi_data->data + buffer_offset);
         buffer_offset += sizeof(size_t);
-        do_something_with_event(timestamp, size, midi_data->data + buffer_offset);
+        do_something_with_event(timestamp, size, 
+                                midi_data->data + buffer_offset);
         buffer_offset += size;
       }
         

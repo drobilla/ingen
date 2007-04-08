@@ -18,11 +18,12 @@
 #include "SetPortValueQueuedEvent.h"
 #include "Responder.h"
 #include "Engine.h"
-#include "TypedPort.h"
+#include "Port.h"
 #include "ClientBroadcaster.h"
 #include "Plugin.h"
 #include "Node.h"
 #include "ObjectStore.h"
+#include "AudioBuffer.h"
 
 namespace Ingen {
 
@@ -74,11 +75,14 @@ SetPortValueQueuedEvent::execute(SampleCount nframes, FrameTime start, FrameTime
 	assert(_time >= start && _time <= end);
 
 	if (_error == NO_ERROR) {
-		assert(_port != NULL);
-		if (_voice_num == -1) 
-			((TypedPort<Sample>*)_port)->set_value(_val, _time - start);
+		assert(_port);
+		AudioBuffer* const buf = (AudioBuffer*)_port->buffer(0);
+		const size_t offset = (buf->size() == 1) ? 0 : _time - start;
+		if (_voice_num == -1)
+			for (size_t i=0; i < _port->poly(); ++i)
+				((AudioBuffer*)_port->buffer(i))->set(_val, offset);
 		else
-			((TypedPort<Sample>*)_port)->buffer(_voice_num)->set(_val, _time - start); // FIXME: check range
+			((AudioBuffer*)_port->buffer(_voice_num))->set(_val, offset);
 	}
 }
 

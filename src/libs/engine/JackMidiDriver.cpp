@@ -24,7 +24,7 @@
 #include "types.h"
 #include "ThreadManager.h"
 #include "AudioDriver.h"
-#include "MidiMessage.h"
+#include "MidiBuffer.h"
 #include "DuplexPort.h"
 #ifdef HAVE_LASH
 #include "LashDriver.h"
@@ -36,7 +36,7 @@ namespace Ingen {
 	
 //// JackMidiPort ////
 
-JackMidiPort::JackMidiPort(JackMidiDriver* driver, DuplexPort<MidiMessage>* patch_port)
+JackMidiPort::JackMidiPort(JackMidiDriver* driver, DuplexPort* patch_port)
 : DriverPort(patch_port->is_input()),
   Raul::ListNode<JackMidiPort*>(this),
   _driver(driver),
@@ -75,25 +75,25 @@ JackMidiPort::prepare_block(const SampleCount block_start, const SampleCount blo
 	void*                jack_buffer = jack_port_get_buffer(_jack_port, nframes);
 	const jack_nframes_t event_count = jack_midi_get_event_count(jack_buffer);
 	
-	assert(event_count < _patch_port->buffer_size());
+	assert(_patch_port->poly() == 1);
+
+	MidiBuffer* patch_buf = dynamic_cast<MidiBuffer*>(_patch_port->buffer(0));
+	assert(patch_buf);
+
+	patch_buf->clear();
+	patch_buf->reset_state(nframes);
 	
 	// Copy events from Jack port buffer into patch port buffer
 	for (jack_nframes_t i=0; i < event_count; ++i) {
-		jack_midi_event_t* ev = (jack_midi_event_t*)&_patch_port->buffer(0)->value_at(i);
-		jack_midi_event_get(ev, jack_buffer, i);
+		jack_midi_event_t ev;
+		jack_midi_event_get(&ev, jack_buffer, i);
 
-		// MidiMessage and jack_midi_event_t* are the same thing :/
-		MidiMessage* const message = &_patch_port->buffer(0)->data()[i];
-		message->time   = ev->time;
-		message->size   = ev->size;
-		message->buffer = ev->buffer;
-
-		assert(message->time < nframes);
+		patch_buf->put_event(ev.time, ev.size, ev.buffer);
 	}
 
 	//cerr << "Jack MIDI got " << event_count << " events." << endl;
 
-	_patch_port->buffer(0)->filled_size(event_count);
+	//_patch_port->buffer(0)->filled_size(event_count);
 	//_patch_port->tied_port()->buffer(0)->filled_size(event_count);
 }
 

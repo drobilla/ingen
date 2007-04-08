@@ -21,14 +21,13 @@
 #include <string>
 #include "NodeBase.h"
 #include "InternalNode.h"
-using std::string;
+#include "MidiBuffer.h"
 
 namespace Ingen {
 	
 class MidiLearnResponseEvent;
-class MidiMessage;
-template <typename T> class InputPort;
-template <typename T> class OutputPort;
+class InputPort;
+class OutputPort;
 
 
 /** MIDI control input node.
@@ -41,7 +40,7 @@ template <typename T> class OutputPort;
 class MidiControlNode : public InternalNode
 {
 public:
-	MidiControlNode(const string& path, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size);
+	MidiControlNode(const std::string& path, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size);
 	
 	void process(SampleCount nframes, FrameTime start, FrameTime end);
 	
@@ -52,13 +51,13 @@ public:
 private:
 	bool _learning;
 
-	InputPort<MidiMessage>* _midi_in_port;
-	InputPort<Sample>*      _param_port;
-	InputPort<Sample>*      _log_port;
-	InputPort<Sample>*      _min_port;
-	InputPort<Sample>*      _max_port;
-	OutputPort<Sample>*     _control_port;
-	OutputPort<Sample>*     _audio_port;
+	InputPort*  _midi_in_port;
+	InputPort*  _param_port;
+	InputPort*  _log_port;
+	InputPort*  _min_port;
+	InputPort*  _max_port;
+	OutputPort* _control_port;
+	OutputPort* _audio_port;
 
 	MidiLearnResponseEvent* _learn_event;
 };

@@ -15,20 +15,19 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-
 #ifndef MIDITRIGGERNODE_H
 #define MIDITRIGGERNODE_H
 
 #include <string>
 #include "InternalNode.h"
+#include "MidiBuffer.h"
 
 using std::string;
 
 namespace Ingen {
 
-class MidiMessage;
-template <typename T> class InputPort;
-template <typename T> class OutputPort;
+class InputPort;
+class OutputPort;
 
 
 /** MIDI trigger input node.
@@ -52,11 +51,11 @@ public:
 	void note_off(uchar note_num, FrameTime time, SampleCount nframes, FrameTime start, FrameTime end);
 
 private:
-	InputPort<MidiMessage>* _midi_in_port;
-	InputPort<Sample>*      _note_port;
-	OutputPort<Sample>*     _gate_port;
-	OutputPort<Sample>*     _trig_port;
-	OutputPort<Sample>*     _vel_port;
+	InputPort*  _midi_in_port;
+	InputPort*  _note_port;
+	OutputPort* _gate_port;
+	OutputPort* _trig_port;
+	OutputPort* _vel_port;
 };
 
 

@@ -23,7 +23,7 @@
 #include "Responder.h"
 #include "Engine.h"
 #include "Node.h"
-#include "TypedConnection.h"
+#include "Connection.h"
 #include "DisconnectionEvent.h"
 #include "Port.h"
 #include "InputPort.h"

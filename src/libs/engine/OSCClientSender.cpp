@@ -25,7 +25,7 @@
 #include "Patch.h"
 #include "Node.h"
 #include "Plugin.h"
-#include "TypedPort.h"
+#include "Port.h"
 #include "Connection.h"
 #include "AudioDriver.h"
 #include "interface/ClientInterface.h"

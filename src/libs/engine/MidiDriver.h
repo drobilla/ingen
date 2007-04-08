@@ -21,20 +21,20 @@
 #include "types.h"
 #include "Driver.h"
 #include <iostream>
-using std::cout; using std::endl;
+#include "MidiBuffer.h"
 
 namespace Ingen {
-
-class MidiMessage;
 
 
 /** Midi driver abstract base class.
  *
  * \ingroup engine
  */
-class MidiDriver : public Driver<MidiMessage>
+class MidiDriver : public Driver
 {
 public:
+	MidiDriver() : Driver(DataType::MIDI) {}
+
 	/** Prepare events (however neccessary) for the specified block (realtime safe) */
 	virtual void prepare_block(const SampleCount block_start, const SampleCount block_end) = 0;
 };
@@ -54,7 +54,7 @@ class DummyMidiDriver : public MidiDriver
 {
 public:
 	DummyMidiDriver() {
-		cout << "[DummyMidiDriver] Started Dummy MIDI driver." << endl;
+		std::cout << "[DummyMidiDriver] Started Dummy MIDI driver." << std::endl;
 	}
 	
 	~DummyMidiDriver() {}
@@ -68,7 +68,7 @@ public:
 	void enable()  {}
 	void disable() {}
 	
-	DriverPort* create_port(DuplexPort<MidiMessage>* patch_port) { return NULL; }
+	DriverPort* create_port(DuplexPort* patch_port) { return NULL; }
 	
 	void        add_port(DriverPort* port)    {}
 	DriverPort* remove_port(const Raul::Path& path) { return NULL; }

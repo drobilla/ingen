@@ -30,13 +30,12 @@ namespace Raul { template <typename T> class List; }
 
 namespace Ingen {
 
-class Port;
-template <typename T> class OutputPort;
+class Buffer;
 class Plugin;
 class Patch;
-namespace Shared {
-	class ClientInterface;
-}
+class Port;
+class OutputPort;
+namespace Shared { class ClientInterface; }
 
 
 /** A Node (or "module") in a Patch (which is also a Node).
@@ -73,7 +72,7 @@ public:
 	 */
 	virtual void process(SampleCount nframes, FrameTime start, FrameTime end) = 0;
 
-	virtual void set_port_buffer(size_t voice, size_t port_num, void* buf) = 0;
+	virtual void set_port_buffer(size_t voice, size_t port_num, Buffer* buf) = 0;
 
 	// FIXME: Only used by client senders.  Remove?
 	virtual const Raul::Array<Port*>& ports() const = 0;

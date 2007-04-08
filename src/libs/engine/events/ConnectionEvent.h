@@ -36,10 +36,9 @@ class Node;
 class Connection;
 class MidiMessage;
 class Port;
-template <typename T> class TypedConnection;
-template <typename T> class InputPort;
-template <typename T> class OutputPort;
-template <typename T> class TypedConnectionEvent; // helper, defined below
+class Connection;
+class InputPort;
+class OutputPort;
 
 
 /** Make a Connection between two Ports.
@@ -50,7 +49,6 @@ class ConnectionEvent : public QueuedEvent
 {
 public:
 	ConnectionEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& src_port_path, const string& dst_port_path);
-	~ConnectionEvent();
 
 	void pre_process();
 	void execute(SampleCount nframes, FrameTime start, FrameTime end);
@@ -58,50 +56,32 @@ public:
 
 private:
 	
-	enum ErrorType { NO_ERROR, PARENT_PATCH_DIFFERENT, PORT_NOT_FOUND, TYPE_MISMATCH };
+	enum ErrorType { 
+		NO_ERROR,
+		PARENT_PATCH_DIFFERENT,
+		PORT_NOT_FOUND,
+		TYPE_MISMATCH,
+		ALREADY_CONNECTED,
+		PARENTS_NOT_FOUND
+	};
 	
 	Raul::Path _src_port_path;
 	Raul::Path _dst_port_path;
 	
-	Patch* _patch;
-	Port*  _src_port;
-	Port*  _dst_port;
+	Patch*      _patch;
+	Port*       _src_port;
+	Port*       _dst_port;
+	OutputPort* _src_output_port;
+	InputPort*  _dst_input_port;
 
-	QueuedEvent* _typed_event;
+	Raul::Array<Node*>* _process_order; ///< New process order for Patch
 	
+	Connection*                  _connection;
+	Raul::ListNode<Connection*>* _patch_listnode;
+	Raul::ListNode<Connection*>* _port_listnode;
+
 	ErrorType _error;
 };
-
-
-/** Templated ConnectionEvent.
- *
- * Intended to be called from ConnectionEvent so callers (ie OSCReceiver)
- * can use ConnectionEvent without knowing anything about types (which
- * they can't, since all they have is Port paths).
- */
-template <typename T>
-class TypedConnectionEvent : public QueuedEvent
-{
-public:
-	TypedConnectionEvent(Engine& engine, SharedPtr<Responder> responder, FrameTime time, OutputPort<T>* src_port, InputPort<T>* dst_port);
-	
-	void pre_process();
-	void execute(SampleCount nframes, FrameTime start, FrameTime end);
-	void post_process();
-
-private:
-	OutputPort<T>*                 _src_port;
-	InputPort<T>*                  _dst_port;
-
-	Patch*                         _patch;
-	Raul::Array<Node*>*                  _process_order; ///< New process order for Patch
-	TypedConnection<T>*            _connection;
-	Raul::ListNode<Connection*>*         _patch_listnode;
-	Raul::ListNode<TypedConnection<T>*>* _port_listnode;
-	
-	bool _succeeded;
-};
-
 
 
 } // namespace Ingen

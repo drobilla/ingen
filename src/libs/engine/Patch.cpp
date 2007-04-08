@@ -271,13 +271,7 @@ Patch::create_port(const string& name, DataType type, size_t buffer_size, bool i
 
 	assert( !(type == DataType::UNKNOWN) );
 
-	// FIXME: is it possible to just "pass" the type directly as the template parameter somehow?
-	if (type == DataType::FLOAT)
-		return new DuplexPort<Sample>(this, name, 0, _poly, type, buffer_size, is_output);
-	else if (type == DataType::MIDI)
-		return new DuplexPort<MidiMessage>(this, name, 0, _poly, type, buffer_size, is_output);
-	else
-		return NULL;
+	return new DuplexPort(this, name, 0, _poly, type, buffer_size, is_output);
 }
 
 

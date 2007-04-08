@@ -19,7 +19,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <cassert>
-#include "TypedConnection.h"
+#include "Connection.h"
 #include "OutputPort.h"
 #include "Node.h"
 #include "util.h"
@@ -30,17 +30,14 @@ using std::cerr; using std::cout; using std::endl;
 namespace Ingen {
 
 
-template <typename T>
-DuplexPort<T>::DuplexPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size, bool is_output)
-: TypedPort<T>(parent, name, index, poly, type, buffer_size)
-, InputPort<T>(parent, name, index, poly, type, buffer_size)
-, OutputPort<T>(parent, name, index, poly, type, buffer_size)
+DuplexPort::DuplexPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size, bool is_output)
+: Port(parent, name, index, poly, type, buffer_size)
+, InputPort(parent, name, index, poly, type, buffer_size)
+, OutputPort(parent, name, index, poly, type, buffer_size)
 , _is_output(is_output)
 {
-	assert(TypedPort<T>::_parent == parent);
+	assert(Port::_parent == parent);
 }
-template DuplexPort<Sample>::DuplexPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size, bool is_output);
-template DuplexPort<MidiMessage>::DuplexPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size, bool is_output);
 
 
 } // namespace Ingen

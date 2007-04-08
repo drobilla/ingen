@@ -21,9 +21,11 @@
 #include "Patch.h"
 #include "Node.h"
 #include "Port.h"
-#include "TypedPort.h"
+#include "Port.h"
 #include "Connection.h"
 #include "NodeFactory.h"
+#include "DataType.h"
+#include "AudioBuffer.h"
 
 namespace Ingen {
 
@@ -144,8 +146,8 @@ ObjectSender::send_port(ClientInterface* client, const Port* port)
 	
 	// Send control value
 	if (port->type() == DataType::FLOAT && port->buffer_size() == 1) {
-		Sample default_value = dynamic_cast<const TypedPort<Sample>*>(
-				port)->buffer(0)->value_at(0);
+		Sample default_value = dynamic_cast<const AudioBuffer*>(
+				port->buffer(0))->value_at(0);
 		//cerr << port->path() << " sending default value " << default_value << endl;
 		client->control_change(port->path(), default_value);
 	}

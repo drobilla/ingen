@@ -17,14 +17,14 @@
 
 #include "RequestObjectEvent.h"
 #include <string>
+#include "interface/ClientInterface.h"
 #include "Responder.h"
 #include "Engine.h"
-#include "interface/ClientInterface.h"
-#include "TypedPort.h"
 #include "ObjectStore.h"
 #include "ClientBroadcaster.h"
 #include "Patch.h"
 #include "Node.h"
+#include "Port.h"
 #include "ObjectSender.h"
 
 using std::string;

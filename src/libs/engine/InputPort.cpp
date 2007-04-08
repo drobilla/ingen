@@ -19,7 +19,8 @@
 #include <iostream>
 #include <cstdlib>
 #include <cassert>
-#include "TypedConnection.h"
+#include "AudioBuffer.h"
+#include "Connection.h"
 #include "OutputPort.h"
 #include "Node.h"
 #include "util.h"
@@ -30,13 +31,10 @@ using std::cerr; using std::cout; using std::endl;
 namespace Ingen {
 
 
-template <typename T>
-InputPort<T>::InputPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size)
-: TypedPort<T>(parent, name, index, poly, type, buffer_size)
+InputPort::InputPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size)
+: Port(parent, name, index, poly, type, buffer_size)
 {
 }
-template InputPort<Sample>::InputPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size);
-template InputPort<MidiMessage>::InputPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size);
 
 
 /** Add a connection.  Realtime safe.
@@ -44,9 +42,8 @@ template InputPort<MidiMessage>::InputPort(Node* parent, const string& name, siz
  * The buffer of this port will be set directly to the connection's buffer
  * if there is only one connection, since no mixing needs to take place.
  */
-template<typename T>
 void
-InputPort<T>::add_connection(Raul::ListNode<TypedConnection<T>*>* const c)
+InputPort::add_connection(Raul::ListNode<Connection*>* const c)
 {
 	_connections.push_back(c);
 
@@ -61,7 +58,7 @@ InputPort<T>::add_connection(Raul::ListNode<TypedConnection<T>*>* const c)
 				_buffers.at(i)->join(c->elem()->buffer(i));
 				//if (_is_tied)
 				//	_tied_port->buffer(i)->join(_buffers.at(i));
-				assert(_buffers.at(i)->data() == c->elem()->buffer(i)->data());
+				//assert(_buffers.at(i)->data() == c->elem()->buffer(i)->data());
 			}
 		} else if (_connections.size() == 2) {
 			// Used to directly use single connection buffer, now there's two
@@ -72,30 +69,26 @@ InputPort<T>::add_connection(Raul::ListNode<TypedConnection<T>*>* const c)
 				//	_tied_port->buffer(i)->join(_buffers.at(i));
 			}
 		}
-		TypedPort<T>::connect_buffers();
+		Port::connect_buffers();
 	}
 		
 	//assert( ! _is_tied || _tied_port != NULL);
 	//assert( ! _is_tied || _buffers.at(0)->data() == _tied_port->buffer(0)->data());
 }
-template void InputPort<Sample>::add_connection(Raul::ListNode<TypedConnection<Sample>*>* const c);
-template void InputPort<MidiMessage>::add_connection(Raul::ListNode<TypedConnection<MidiMessage>*>* const c);
 
 
 /** Remove a connection.  Realtime safe.
  */
-template <typename T>
-Raul::ListNode<TypedConnection<T>*>*
-InputPort<T>::remove_connection(const OutputPort<T>* const src_port)
+Raul::ListNode<Connection*>*
+InputPort::remove_connection(const OutputPort* src_port)
 {
 	bool modify_buffers = !_fixed_buffers;
 	//if (modify_buffers && _is_tied)
 	//	modify_buffers = !_tied_port->fixed_buffers();
 	
-	typedef typename Raul::List<TypedConnection<T>*>::iterator TypedConnectionListIterator;
 	bool found = false;
-	Raul::ListNode<TypedConnection<T>*>* connection = NULL;
-	for (TypedConnectionListIterator i = _connections.begin(); i != _connections.end(); ++i) {
+	Raul::ListNode<Connection*>* connection = NULL;
+	for (Connections::iterator i = _connections.begin(); i != _connections.end(); ++i) {
 		if ((*i)->src_port()->path() == src_port->path()) {
 			connection = _connections.erase(i);
 			found = true;
@@ -103,7 +96,7 @@ InputPort<T>::remove_connection(const OutputPort<T>* const src_port)
 	}
 
 	if ( ! found) {
-		cerr << "WARNING:  [InputPort<T>::remove_connection] Connection not found !" << endl;
+		cerr << "WARNING:  [InputPort::remove_connection] Connection not found !" << endl;
 		exit(EXIT_FAILURE);
 	} else {
 		if (_connections.size() == 0) {
@@ -126,63 +119,55 @@ InputPort<T>::remove_connection(const OutputPort<T>* const src_port)
 	}
 
 	if (modify_buffers)
-		TypedPort<T>::connect_buffers();
+		Port::connect_buffers();
 
 	//assert( ! _is_tied || _tied_port != NULL);
 	//assert( ! _is_tied || _buffers.at(0)->data() == _tied_port->buffer(0)->data());
 
 	return connection;
 }
-template Raul::ListNode<TypedConnection<Sample>*>*
-InputPort<Sample>::remove_connection(const OutputPort<Sample>* const src_port);
-template Raul::ListNode<TypedConnection<MidiMessage>*>*
-InputPort<MidiMessage>::remove_connection(const OutputPort<MidiMessage>* const src_port);
 
 
 /** Returns whether this port is connected to the passed port.
  */
-template <typename T>
 bool
-InputPort<T>::is_connected_to(const OutputPort<T>* const port) const
+InputPort::is_connected_to(const OutputPort* port) const
 {
-	typedef typename Raul::List<TypedConnection<T>*>::const_iterator TypedConnectionListIterator;
-	for (TypedConnectionListIterator i = _connections.begin(); i != _connections.end(); ++i)
+	for (Connections::const_iterator i = _connections.begin(); i != _connections.end(); ++i)
 		if ((*i)->src_port() == port)
 			return true;
 	
 	return false;
 }
-template bool InputPort<Sample>::is_connected_to(const OutputPort<Sample>* const port) const;
-template bool InputPort<MidiMessage>::is_connected_to(const OutputPort<MidiMessage>* const port) const;
 
 
 /** Prepare buffer for access, mixing if necessary.  Realtime safe.
  *  FIXME: nframes parameter not used,
  */
-template<>
 void
-InputPort<Sample>::process(SampleCount nframes, FrameTime start, FrameTime end)
+InputPort::process(SampleCount nframes, FrameTime start, FrameTime end)
 {
+	Port::process(nframes, start, end);
+
 	//assert(!_is_tied || _tied_port != NULL);
 
-	typedef Raul::List<TypedConnection<Sample>*>::iterator TypedConnectionListIterator;
 	bool do_mixdown = true;
 	
 	if (_connections.size() == 0) return;
 
-	for (TypedConnectionListIterator c = _connections.begin(); c != _connections.end(); ++c)
+	for (Connections::iterator c = _connections.begin(); c != _connections.end(); ++c)
 		(*c)->process(nframes, start, end);
 
 	// If only one connection, buffer is (maybe) used directly (no copying)
 	if (_connections.size() == 1) {
 		// Buffer changed since connection
-		if (_buffers.at(0)->data() != (*_connections.begin())->buffer(0)->data()) {
+		if (!_buffers.at(0)->is_joined_to((*_connections.begin())->buffer(0))) {
 			if (_fixed_buffers) { // || (_is_tied && _tied_port->fixed_buffers())) {
 				// can't change buffer, must copy
 				do_mixdown = true;
 			} else {
 				// zero-copy
-				assert(_buffers.at(0)->is_joined());
+				//assert(_buffers.at(0)->is_joined());
 				_buffers.at(0)->join((*_connections.begin())->buffer(0));
 				do_mixdown = false;
 			}
@@ -195,7 +180,7 @@ InputPort<Sample>::process(SampleCount nframes, FrameTime start, FrameTime end)
 	//cerr << path() << " mixing: " << do_mixdown << endl;
 
 	if (!do_mixdown) {
-		assert(_buffers.at(0)->data() == (*_connections.begin())->buffer(0)->data());
+		assert(_buffers.at(0)->is_joined_to((*_connections.begin())->buffer(0)));
 		return;
 	}
 
@@ -204,28 +189,30 @@ InputPort<Sample>::process(SampleCount nframes, FrameTime start, FrameTime end)
 
 	for (size_t voice=0; voice < _poly; ++voice) {
 		// Copy first connection
-		_buffers.at(voice)->copy((*_connections.begin())->buffer(voice), 0, _buffer_size-1);
+		((AudioBuffer*)_buffers.at(voice))->copy(
+			((AudioBuffer*)(*_connections.begin())->buffer(voice)), 0, _buffer_size-1);
 		
 		// Accumulate the rest
 		if (_connections.size() > 1) {
 
-			TypedConnectionListIterator c = _connections.begin();
+			Connections::iterator c = _connections.begin();
 
 			for (++c; c != _connections.end(); ++c)
-				_buffers.at(voice)->accumulate((*c)->buffer(voice), 0, _buffer_size-1);
+				((AudioBuffer*)_buffers.at(voice))->accumulate(
+					((AudioBuffer*)(*c)->buffer(voice)), 0, _buffer_size-1);
 		}
 	}
 }
 
+#if 0
 
 /** Prepare buffer for access, realtime safe.
  *
  * MIDI mixing not yet implemented.
  */
-template <>
 void
-InputPort<MidiMessage>::process(SampleCount nframes, FrameTime start, FrameTime end)
-{	
+InputPort<MidiBuffer>::process(SampleCount nframes, FrameTime start, FrameTime end)
+{
 	//assert(!_is_tied || _tied_port != NULL);
 	
 	const size_t num_ins = _connections.size();
@@ -233,10 +220,9 @@ InputPort<MidiMessage>::process(SampleCount nframes, FrameTime start, FrameTime 
 	
 	assert(num_ins == 0 || num_ins == 1);
 	
-	typedef Raul::List<TypedConnection<MidiMessage>*>::iterator TypedConnectionListIterator;
 	assert(_poly == 1);
 	
-	for (TypedConnectionListIterator c = _connections.begin(); c != _connections.end(); ++c)
+	for (Connections::iterator c = _connections.begin(); c != _connections.end(); ++c)
 		(*c)->process(nframes, start, end);
 	
 
@@ -298,21 +284,19 @@ InputPort<MidiMessage>::process(SampleCount nframes, FrameTime start, FrameTime 
 		for (size_t i=0; i < _buffers.at(0)->filled_size(); ++i)
 			_buffers.at(0)[i] = (*_connections.begin())->buffer(0)[i];
 }
+#endif
 
 
-template <typename T>
 void
-InputPort<T>::set_buffer_size(size_t size)
+InputPort::set_buffer_size(size_t size)
 {
-	TypedPort<T>::set_buffer_size(size);
+	Port::set_buffer_size(size);
 	assert(_buffer_size = size);
 
-	for (typename Raul::List<TypedConnection<T>*>::iterator c = _connections.begin(); c != _connections.end(); ++c)
+	for (Raul::List<Connection*>::iterator c = _connections.begin(); c != _connections.end(); ++c)
 		(*c)->set_buffer_size(size);
 	
 }
-template void InputPort<Sample>::set_buffer_size(size_t size);
-template void InputPort<MidiMessage>::set_buffer_size(size_t size);
 
 
 } // namespace Ingen

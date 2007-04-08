@@ -15,11 +15,10 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "Buffer.h"
 #include <iostream>
 #include <cassert>
 #include <stdlib.h>
-#include "MidiMessage.h"
+#include "AudioBuffer.h"
 using std::cerr; using std::endl;
 
 /* TODO: Be sure these functions are vectorized by GCC when it's vectorizer
@@ -28,37 +27,34 @@ using std::cerr; using std::endl;
 namespace Ingen {
 
 
-template <typename T>
-Buffer<T>::Buffer(size_t size)
-: _data(NULL),
-  _local_data(NULL),
-  _joined_buf(NULL),
-  _size(size),
-  _filled_size(0),
-  _state(OK),
-  _set_value(0)
+AudioBuffer::AudioBuffer(size_t size)
+	: Buffer(DataType::FLOAT, size)
+	, _data(NULL)
+	, _local_data(NULL)
+	, _joined_buf(NULL)
+	, _size(size)
+	, _filled_size(0)
+	, _state(OK)
+	, _set_value(0)
 {
 	assert(_size > 0);
 	allocate();
 	assert(data());
 }
-template Buffer<Sample>::Buffer(size_t size);
-template Buffer<MidiMessage>::Buffer(size_t size);
 
 
-template<typename T>
 void
-Buffer<T>::resize(size_t size)
+AudioBuffer::resize(size_t size)
 {
 	_size = size;
 
-	T* const old_data = _data;
+	Sample* const old_data = _data;
 	
 	const bool using_local_data = (_data == _local_data);
 
 	deallocate();
 
-	const int ret = posix_memalign((void**)&_local_data, 16, _size * sizeof(T));
+	const int ret = posix_memalign((void**)&_local_data, 16, _size * sizeof(Sample));
 	if (ret != 0) {
 		cerr << "[Buffer] Failed to allocate buffer.  Aborting." << endl;
 		exit(EXIT_FAILURE);
@@ -74,21 +70,18 @@ Buffer<T>::resize(size_t size)
 
 	set(0, 0, _size-1);
 }
-template void Buffer<Sample>::resize(size_t size);
-template void Buffer<MidiMessage>::resize(size_t size);
 
 
 /** Allocate and use a locally managed buffer (data).
  */
-template<typename T>
 void
-Buffer<T>::allocate()
+AudioBuffer::allocate()
 {
 	assert(!_joined_buf);
 	assert(_local_data == NULL);
 	assert(_size > 0);
 
-	const int ret = posix_memalign((void**)&_local_data, 16, _size * sizeof(T));
+	const int ret = posix_memalign((void**)&_local_data, 16, _size * sizeof(Sample));
 	if (ret != 0) {
 		cerr << "[Buffer] Failed to allocate buffer.  Aborting." << endl;
 		exit(EXIT_FAILURE);
@@ -101,37 +94,29 @@ Buffer<T>::allocate()
 
 	set(0, 0, _size-1);
 }
-template void Buffer<Sample>::allocate();
-template void Buffer<MidiMessage>::allocate();
 
 
 /** Free locally allocated buffer.
  */
-template<typename T>
 void
-Buffer<T>::deallocate()
+AudioBuffer::deallocate()
 {
 	assert(!_joined_buf);
 	free(_local_data);
 	_local_data = NULL;
 	_data = NULL;
 }
-template void Buffer<Sample>::deallocate();
-template void Buffer<MidiMessage>::deallocate();
 
 
 /** Empty (ie zero) the buffer.
  */
-template<typename T>
 void
-Buffer<T>::clear()
+AudioBuffer::clear()
 {
 	set(0, 0, _size-1);
 	_state = OK;
 	_filled_size = 0;
 }
-template void Buffer<Sample>::clear();
-template void Buffer<MidiMessage>::clear();
 
 
 /** Set value of buffer to @a val after @a start_sample.
@@ -140,9 +125,8 @@ template void Buffer<MidiMessage>::clear();
  * value on the next cycle automatically (if @a start_sample is > 0), as
  * long as pre_process() is called every cycle.
  */
-template <typename T>
 void
-Buffer<T>::set(T val, size_t start_sample)
+AudioBuffer::set(Sample val, size_t start_sample)
 {
 	assert(start_sample < _size);
 
@@ -153,49 +137,42 @@ Buffer<T>::set(T val, size_t start_sample)
 
 	_set_value = val;
 }
-template void Buffer<Sample>::set(Sample val, size_t start_sample);
-template void Buffer<MidiMessage>::set(MidiMessage val, size_t start_sample);
 
 
 /** Set a block of buffer to @a val.
  *
  * @a start_sample and @a end_sample define the inclusive range to be set.
  */
-template <typename T>
 void
-Buffer<T>::set(T val, size_t start_sample, size_t end_sample)
+AudioBuffer::set(Sample val, size_t start_sample, size_t end_sample)
 {
 	assert(end_sample >= start_sample);
 	assert(end_sample < _size);
 	
-	T* const buf = data();
+	Sample* const buf = data();
 	assert(buf);
 
 	for (size_t i=start_sample; i <= end_sample; ++i)
 		buf[i] = val;
 }
-template void Buffer<Sample>::set(Sample val, size_t start_sample, size_t end_sample);
-template void Buffer<MidiMessage>::set(MidiMessage val, size_t start_sample, size_t end_sample);
 
 
 /** Scale a block of buffer by @a val.
  *
  * @a start_sample and @a end_sample define the inclusive range to be set.
  */
-template <typename T>
 void
-Buffer<T>::scale(T val, size_t start_sample, size_t end_sample)
+AudioBuffer::scale(Sample val, size_t start_sample, size_t end_sample)
 {
 	assert(end_sample >= start_sample);
 	assert(end_sample < _size);
 	
-	T* const buf = data();
+	Sample* const buf = data();
 	assert(buf);
 
 	for (size_t i=start_sample; i <= end_sample; ++i)
 		buf[i] *= val;
 }
-template void Buffer<Sample>::scale(Sample val, size_t start_sample, size_t end_sample);
 
 
 /** Copy a block of @a src into buffer.
@@ -203,25 +180,22 @@ template void Buffer<Sample>::scale(Sample val, size_t start_sample, size_t end_
  * @a start_sample and @a end_sample define the inclusive range to be set.
  * This function only copies the same range in one buffer to another.
  */
-template <typename T>
 void
-Buffer<T>::copy(const Buffer<T>* src, size_t start_sample, size_t end_sample)
+AudioBuffer::copy(const AudioBuffer* src, size_t start_sample, size_t end_sample)
 {
 	assert(end_sample >= start_sample);
 	assert(end_sample < _size);
 	assert(src);
 	
-	T* const buf = data();
+	Sample* const buf = data();
 	assert(buf);
 	
-	const T* const src_buf = src->data();
+	const Sample* const src_buf = src->data();
 	assert(src_buf);
 
 	for (size_t i=start_sample; i <= end_sample; ++i)
 		buf[i] = src_buf[i];
 }
-template void Buffer<Sample>::copy(const Buffer<Sample>* const src, size_t start_sample, size_t end_sample);
-template void Buffer<MidiMessage>::copy(const Buffer<MidiMessage>* const src, size_t start_sample, size_t end_sample);
 
 
 /** Accumulate a block of @a src into @a dst.
@@ -229,60 +203,68 @@ template void Buffer<MidiMessage>::copy(const Buffer<MidiMessage>* const src, si
  * @a start_sample and @a end_sample define the inclusive range to be accumulated.
  * This function only adds the same range in one buffer to another.
  */
-template <typename T>
 void
-Buffer<T>::accumulate(const Buffer<T>* const src, size_t start_sample, size_t end_sample)
+AudioBuffer::accumulate(const AudioBuffer* const src, size_t start_sample, size_t end_sample)
 {
 	assert(end_sample >= start_sample);
 	assert(end_sample < _size);
 	assert(src);
 	
-	T* const buf = data();
+	Sample* const buf = data();
 	assert(buf);
 	
-	const T* const src_buf = src->data();
+	const Sample* const src_buf = src->data();
 	assert(src_buf);
 
 	for (size_t i=start_sample; i <= end_sample; ++i)
 		buf[i] += src_buf[i];
 	
 }
-template void Buffer<Sample>::accumulate(const Buffer<Sample>* const src, size_t start_sample, size_t end_sample);
 
 
 /** Use another buffer's data instead of the local one.
  *
  * This buffer will essentially be identical to @a buf after this call.
  */
-template<typename T>
-void
-Buffer<T>::join(Buffer<T>* buf)
+bool
+AudioBuffer::join(Buffer* buf)
 {
-	assert(buf->size() == _size);
+	AudioBuffer* abuf = dynamic_cast<AudioBuffer*>(buf);
+	if (!abuf)
+		return false;
+
+	assert(abuf->size() == _size);
 	
-	_joined_buf = buf;
-	_filled_size = buf->filled_size();
+	_joined_buf = abuf;
+	_filled_size = abuf->filled_size();
 
 	assert(_filled_size <= _size);
+
+	return true;
 }
-template void Buffer<Sample>::join(Buffer<Sample>* buf);
-template void Buffer<MidiMessage>::join(Buffer<MidiMessage>* buf);
 
 	
-template<typename T>
 void
-Buffer<T>::unjoin()
+AudioBuffer::unjoin()
 {
 	_joined_buf = NULL;
 	_data = _local_data;
 }
-template void Buffer<Sample>::unjoin();
-template void Buffer<MidiMessage>::unjoin();
 
 
-template<>
+bool
+AudioBuffer::is_joined_to(Buffer* buf) const
+{
+	AudioBuffer* abuf = dynamic_cast<AudioBuffer*>(buf);
+	if (abuf)
+		return (data() == abuf->data());
+
+	return false;
+}
+
+
 void
-Buffer<Sample>::prepare(SampleCount nframes)
+AudioBuffer::prepare(SampleCount nframes)
 {
 	// FIXME: nframes parameter doesn't actually work,
 	// writing starts from 0 every time
@@ -302,27 +284,17 @@ Buffer<Sample>::prepare(SampleCount nframes)
 }
 
 
-template<>
-void
-Buffer<MidiMessage>::prepare(SampleCount nframes)
-{
-}
-
-
 /** Set the buffer (data) used.
  *
  * This is only to be used by Drivers (to provide zero-copy processing).
  */
-template<typename T>
 void
-Buffer<T>::set_data(T* buf)
+AudioBuffer::set_data(Sample* buf)
 {
 	assert(buf);
 	assert(!_joined_buf);
 	_data = buf;
 }
-template void Buffer<Sample>::set_data(Sample* data);
-template void Buffer<MidiMessage>::set_data(MidiMessage* data);
 
 
 } // namespace Ingen

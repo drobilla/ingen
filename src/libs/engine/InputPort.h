@@ -22,14 +22,14 @@
 #include <cstdlib>
 #include <cassert>
 #include <raul/List.h>
-#include "TypedPort.h"
-#include "MidiMessage.h"
+#include "Port.h"
+#include "MidiBuffer.h"
 using std::string;
 
 namespace Ingen {
 
-template <typename T> class TypedConnection;
-template <typename T> class OutputPort;
+class Connection;
+class OutputPort;
 class Node;
 
 
@@ -44,22 +44,22 @@ class Node;
  *
  * \ingroup engine
  */
-template <typename T>
-class InputPort : virtual public TypedPort<T>
+class InputPort : virtual public Port
 {
 public:
 	InputPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size);
 	virtual ~InputPort() {}
 	
-	void                           add_connection(Raul::ListNode<TypedConnection<T>*>* const c);
-	Raul::ListNode<TypedConnection<T>*>* remove_connection(const OutputPort<T>* const src_port);
+	void                         add_connection(Raul::ListNode<Connection*>* c);
+	Raul::ListNode<Connection*>* remove_connection(const OutputPort* src_port);
 
-	const Raul::List<TypedConnection<T>*>& connections() { return _connections; }
+	typedef Raul::List<Connection*> Connections;
+	const Connections& connections() { return _connections; }
 
 	void process(SampleCount nframes, FrameTime start, FrameTime end);
 	
 	bool is_connected() const { return (_connections.size() > 0); }
-	bool is_connected_to(const OutputPort<T>* const port) const;
+	bool is_connected_to(const OutputPort* port) const;
 	
 	bool is_input()  const { return true; }
 	bool is_output() const { return false; }
@@ -67,20 +67,9 @@ public:
 	virtual void set_buffer_size(size_t size);
 	
 private:
-
-	Raul::List<TypedConnection<T>*> _connections;
-
-	// This is just stupid...
-	using TypedPort<T>::_buffers;
-	using TypedPort<T>::_poly;
-	using TypedPort<T>::_index;
-	using TypedPort<T>::_buffer_size;
-	using TypedPort<T>::_fixed_buffers;
+	Connections _connections;
 };
 
-
-template class InputPort<Sample>;
-template class InputPort<MidiMessage>;
 
 } // namespace Ingen
 

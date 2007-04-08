@@ -24,7 +24,7 @@
 #include "OutputPort.h"
 #include "Plugin.h"
 #include "util.h"
-
+#include "AudioBuffer.h"
 
 namespace Ingen {
 
@@ -35,25 +35,25 @@ MidiControlNode::MidiControlNode(const string& path, size_t poly, Patch* parent,
 {
 	_ports = new Raul::Array<Port*>(7);
 
-	_midi_in_port = new InputPort<MidiMessage>(this, "MIDIIn", 0, 1, DataType::MIDI, _buffer_size);
+	_midi_in_port = new InputPort(this, "MIDIIn", 0, 1, DataType::MIDI, _buffer_size);
 	_ports->at(0) = _midi_in_port;
 	
-	_param_port = new InputPort<Sample>(this, "ControllerNumber", 1, 1, DataType::FLOAT, 1);
+	_param_port = new InputPort(this, "ControllerNumber", 1, 1, DataType::FLOAT, 1);
 	_ports->at(1) = _param_port;
 
-	_log_port = new InputPort<Sample>(this, "Logarithmic", 2, 1, DataType::FLOAT, 1);
+	_log_port = new InputPort(this, "Logarithmic", 2, 1, DataType::FLOAT, 1);
 	_ports->at(2) = _log_port;
 	
-	_min_port = new InputPort<Sample>(this, "Min", 3, 1, DataType::FLOAT, 1);
+	_min_port = new InputPort(this, "Min", 3, 1, DataType::FLOAT, 1);
 	_ports->at(3) = _min_port;
 	
-	_max_port = new InputPort<Sample>(this, "Max", 4, 1, DataType::FLOAT, 1);
+	_max_port = new InputPort(this, "Max", 4, 1, DataType::FLOAT, 1);
 	_ports->at(4) = _max_port;
 	
-	_audio_port = new OutputPort<Sample>(this, "Out(AR)", 5, 1, DataType::FLOAT, _buffer_size);
+	_audio_port = new OutputPort(this, "Out(AR)", 5, 1, DataType::FLOAT, _buffer_size);
 	_ports->at(5) = _audio_port;
 
-	_control_port = new OutputPort<Sample>(this, "Out(CR)", 6, 1, DataType::FLOAT, 1);
+	_control_port = new OutputPort(this, "Out(CR)", 6, 1, DataType::FLOAT, 1);
 	_ports->at(6) = _control_port;
 	
 	plugin()->plug_label("midi_control_in");
@@ -66,14 +66,20 @@ void
 MidiControlNode::process(SampleCount nframes, FrameTime start, FrameTime end)
 {
 	InternalNode::process(nframes, start, end);
-
-	MidiMessage ev;
 	
-	for (size_t i=0; i < _midi_in_port->buffer(0)->filled_size(); ++i) {
-		ev = _midi_in_port->buffer(0)->value_at(i);
+	double         timestamp = 0;
+	uint32_t       size = 0;
+	unsigned char* buffer = NULL;
 
-		if ((ev.buffer[0] & 0xF0) == MIDI_CMD_CONTROL)
-			control(ev.buffer[1], ev.buffer[2], ev.time);
+	MidiBuffer* const midi_in = (MidiBuffer*)_midi_in_port->buffer(0);
+	assert(midi_in->this_nframes() == nframes);
+
+	while (midi_in->get_event(&timestamp, &size, &buffer) < nframes) {
+		
+		const FrameTime time = start + (FrameTime)timestamp;
+
+		if (size >= 3 && (buffer[0] & 0xF0) == MIDI_CMD_CONTROL)
+			control(buffer[1], buffer[2], time);
 	}
 }
 
@@ -102,23 +108,25 @@ MidiControlNode::control(uchar control_num, uchar val, SampleCount offset)
 #endif
 	}
 
-	if (_log_port->buffer(0)->value_at(0) > 0.0f) {
+	const Sample min_port_val = ((AudioBuffer*)_min_port->buffer(0))->value_at(0);
+	const Sample max_port_val = ((AudioBuffer*)_max_port->buffer(0))->value_at(0);
+	const Sample log_port_val = ((AudioBuffer*)_log_port->buffer(0))->value_at(0);
+
+	if (log_port_val > 0.0f) {
 		// haaaaack, stupid negatives and logarithms
 		Sample log_offset = 0;
-		if (_min_port->buffer(0)->value_at(0) < 0)
-			log_offset = fabs(_min_port->buffer(0)->value_at(0));
-		const Sample min = log(_min_port->buffer(0)->value_at(0)+1+log_offset);
-		const Sample max = log(_max_port->buffer(0)->value_at(0)+1+log_offset);
+		if (min_port_val < 0)
+			log_offset = fabs(min_port_val);
+		const Sample min = log(min_port_val+1+log_offset);
+		const Sample max = log(max_port_val+1+log_offset);
 		scaled_value = expf(nval * (max - min) + min) - 1 - log_offset;
 	} else {
-		const Sample min = _min_port->buffer(0)->value_at(0);
-		const Sample max = _max_port->buffer(0)->value_at(0);
-		scaled_value = ((nval) * (max - min)) + min;
+		scaled_value = ((nval) * (max_port_val - min_port_val)) + min_port_val;
 	}
 
-	if (control_num == _param_port->buffer(0)->value_at(0)) {
-		_control_port->set_value(scaled_value, offset);
-		_audio_port->set_value(scaled_value, offset);
+	if (control_num == ((AudioBuffer*)_param_port->buffer(0))->value_at(0)) {
+		((AudioBuffer*)_control_port->buffer(0))->set(scaled_value, offset);
+		((AudioBuffer*)_audio_port->buffer(0))->set(scaled_value, offset);
 	}
 }
 

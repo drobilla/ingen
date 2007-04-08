@@ -28,7 +28,6 @@ using std::string;
 
 namespace Ingen {
 	
-class MidiMessage;
 class Node;
 
 
@@ -40,8 +39,7 @@ class Node;
  *
  * \ingroup engine
  */
-template <typename T>
-class DuplexPort : public InputPort<T>, public OutputPort<T>
+class DuplexPort : public InputPort, public OutputPort
 {
 public:
 	DuplexPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size, bool is_output);
@@ -56,9 +54,6 @@ protected:
 	bool _is_output;
 };
 
-
-template class DuplexPort<Sample>;
-template class DuplexPort<MidiMessage>;
 
 } // namespace Ingen
 

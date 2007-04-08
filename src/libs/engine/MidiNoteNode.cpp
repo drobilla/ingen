@@ -20,7 +20,8 @@
 #include <iostream>
 #include <raul/Array.h>
 #include <raul/midi_events.h>
-#include "MidiMessage.h"
+#include "MidiBuffer.h"
+#include "AudioBuffer.h"
 #include "InputPort.h"
 #include "OutputPort.h"
 #include "Plugin.h"
@@ -40,22 +41,22 @@ MidiNoteNode::MidiNoteNode(const string& path, size_t poly, Patch* parent, Sampl
 {
 	_ports = new Raul::Array<Port*>(5);
 	
-	_midi_in_port = new InputPort<MidiMessage>(this, "MIDIIn", 0, 1, DataType::MIDI, _buffer_size);
+	_midi_in_port = new InputPort(this, "MIDIIn", 0, 1, DataType::MIDI, _buffer_size);
 	_ports->at(0) = _midi_in_port;
 
-	_freq_port = new OutputPort<Sample>(this, "Frequency", 1, poly, DataType::FLOAT, _buffer_size);
+	_freq_port = new OutputPort(this, "Frequency", 1, poly, DataType::FLOAT, _buffer_size);
 	//	new PortInfo("Frequency", AUDIO, OUTPUT, 440, 0, 99999), _buffer_size);
 	_ports->at(1) = _freq_port;
 	
-	_vel_port = new OutputPort<Sample>(this, "Velocity", 2, poly, DataType::FLOAT, _buffer_size);
+	_vel_port = new OutputPort(this, "Velocity", 2, poly, DataType::FLOAT, _buffer_size);
 	//	new PortInfo("Velocity", AUDIO, OUTPUT, 0, 0, 1), _buffer_size);
 	_ports->at(2) = _vel_port;
 	
-	_gate_port = new OutputPort<Sample>(this, "Gate", 3, poly, DataType::FLOAT, _buffer_size);
+	_gate_port = new OutputPort(this, "Gate", 3, poly, DataType::FLOAT, _buffer_size);
 	//	new PortInfo("Gate", AUDIO, OUTPUT, 0, 0, 1), _buffer_size);
 	_ports->at(3) = _gate_port;
 	
-	_trig_port = new OutputPort<Sample>(this, "Trigger", 4, poly, DataType::FLOAT, _buffer_size);
+	_trig_port = new OutputPort(this, "Trigger", 4, poly, DataType::FLOAT, _buffer_size);
 	//	new PortInfo("Trigger", AUDIO, OUTPUT, 0, 0, 1), _buffer_size);
 	_ports->at(4) = _trig_port;
 	
@@ -76,42 +77,50 @@ MidiNoteNode::process(SampleCount nframes, FrameTime start, FrameTime end)
 {
 	InternalNode::process(nframes, start, end);
 	
-	MidiMessage ev;
-	
-	for (size_t i=0; i < _midi_in_port->buffer(0)->filled_size(); ++i) {
-		ev = _midi_in_port->buffer(0)->value_at(i);
+	double         timestamp = 0;
+	uint32_t       size = 0;
+	unsigned char* buffer = NULL;
 
-		const FrameTime time = ev.time + start;
+	MidiBuffer* const midi_in = (MidiBuffer*)_midi_in_port->buffer(0);
+	assert(midi_in->this_nframes() == nframes);
 
-		switch (ev.buffer[0] & 0xF0) {
-		case MIDI_CMD_NOTE_ON:
-			if (ev.buffer[2] == 0)
-				note_off(ev.buffer[1], time, nframes, start, end);
-			else
-				note_on(ev.buffer[1], ev.buffer[2], time, nframes, start, end);
-			break;
-		case MIDI_CMD_NOTE_OFF:
-			note_off(ev.buffer[1], time, nframes, start, end);
-			break;
-		case MIDI_CMD_CONTROL:
-			switch (ev.buffer[1]) {
-			case MIDI_CTL_ALL_NOTES_OFF:
-			case MIDI_CTL_ALL_SOUNDS_OFF:
-				all_notes_off(time, nframes, start, end);
-				break;
-			case MIDI_CTL_SUSTAIN:
-				if (ev.buffer[2] > 63)
-					sustain_on(time, nframes, start, end);
+	while (midi_in->get_event(&timestamp, &size, &buffer) < nframes) {
+		
+		const FrameTime time = start + (FrameTime)timestamp;
+
+		if (size >= 3) {
+			switch (buffer[0] & 0xF0) {
+			case MIDI_CMD_NOTE_ON:
+				if (buffer[2] == 0)
+					note_off(buffer[1], time, nframes, start, end);
 				else
-					sustain_off(time, nframes, start, end);
+					note_on(buffer[1], buffer[2], time, nframes, start, end);
 				break;
-			case MIDI_CMD_BENDER:
-
+			case MIDI_CMD_NOTE_OFF:
+				note_off(buffer[1], time, nframes, start, end);
+				break;
+			case MIDI_CMD_CONTROL:
+				switch (buffer[1]) {
+				case MIDI_CTL_ALL_NOTES_OFF:
+				case MIDI_CTL_ALL_SOUNDS_OFF:
+					all_notes_off(time, nframes, start, end);
+					break;
+				case MIDI_CTL_SUSTAIN:
+					if (buffer[2] > 63)
+						sustain_on(time, nframes, start, end);
+					else
+						sustain_off(time, nframes, start, end);
+					break;
+				case MIDI_CMD_BENDER:
+	
+					break;
+				}
+			default:
 				break;
 			}
-		default:
-			break;
 		}
+
+		midi_in->increment();
 	}
 }
 
@@ -183,13 +192,13 @@ MidiNoteNode::note_on(uchar note_num, uchar velocity, FrameTime time, SampleCoun
 	if (offset == (SampleCount)(_buffer_size-1))
 		--offset;
 	
-	_freq_port->buffer(voice_num)->set(note_to_freq(note_num), offset);
-	_vel_port->buffer(voice_num)->set(velocity/127.0, offset);
-	_gate_port->buffer(voice_num)->set(1.0f, offset);
+	((AudioBuffer*)_freq_port->buffer(voice_num))->set(note_to_freq(note_num), offset);
+	((AudioBuffer*)_vel_port->buffer(voice_num))->set(velocity/127.0, offset);
+	((AudioBuffer*)_gate_port->buffer(voice_num))->set(1.0f, offset);
 	
 	// trigger (one sample)
-	_trig_port->buffer(voice_num)->set(1.0f, offset, offset);
-	_trig_port->buffer(voice_num)->set(0.0f, offset+1);
+	((AudioBuffer*)_trig_port->buffer(voice_num))->set(1.0f, offset, offset);
+	((AudioBuffer*)_trig_port->buffer(voice_num))->set(0.0f, offset+1);
 
 	assert(key->state == Key::Key::ON_ASSIGNED);
 	assert(voice->state == Voice::Voice::ACTIVE);
@@ -246,7 +255,7 @@ MidiNoteNode::free_voice(size_t voice, FrameTime time, SampleCount nframes, Fram
 		assert(replace_key->state == Key::ON_UNASSIGNED);
 		
 		// Change the freq but leave the gate high and don't retrigger
-		_freq_port->buffer(voice)->set(note_to_freq(replace_key_num), time - start);
+		((AudioBuffer*)_freq_port->buffer(voice))->set(note_to_freq(replace_key_num), time - start);
 
 		replace_key->state = Key::ON_ASSIGNED;
 		replace_key->voice = voice;
@@ -256,7 +265,7 @@ MidiNoteNode::free_voice(size_t voice, FrameTime time, SampleCount nframes, Fram
 	} else {
 		// No new note for voice, deactivate (set gate low)
 		//cerr << "[MidiNoteNode] Note off. Key " << (int)note_num << ", Voice " << voice << " Killed" << endl;
-		_gate_port->buffer(voice)->set(0.0f, time - start);
+		((AudioBuffer*)_gate_port->buffer(voice))->set(0.0f, time - start);
 		_voices[voice].state = Voice::FREE;
 	}
 }
@@ -273,7 +282,7 @@ MidiNoteNode::all_notes_off(FrameTime time, SampleCount nframes, FrameTime start
 	// FIXME: set all keys to Key::OFF?
 	
 	for (size_t i=0; i < _poly; ++i) {
-		_gate_port->buffer(i)->set(0.0f, time - start);
+		((AudioBuffer*)_gate_port->buffer(i))->set(0.0f, time - start);
 		_voices[i].state = Voice::FREE;
 	}
 }

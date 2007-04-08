@@ -20,55 +20,39 @@
 
 #include <cstddef>
 #include <cassert>
+#include <boost/utility.hpp>
 #include "types.h"
+#include "DataType.h"
 
 namespace Ingen {
 
 	
-template <typename T>
-class Buffer
+class Buffer : public boost::noncopyable
 {
 public:
-	Buffer(size_t size);
+	Buffer(DataType type, size_t size)
+		: _type(type)
+		, _size(size)
+	{}
 
-	void clear();
-	void set(T val, size_t start_sample);
-	void set(T val, size_t start_sample, size_t end_sample);
-	void scale(T val, size_t start_sample, size_t end_sample);
-	void copy(const Buffer<T>* src, size_t start_sample, size_t end_sample);
-	void accumulate(const Buffer<T>* src, size_t start_sample, size_t end_sample);
+	virtual ~Buffer() {}
 	
-	void join(Buffer* buf);
-	void unjoin();
+	virtual void clear() = 0;
+	virtual void prepare(SampleCount nframes) = 0;
 	
-	/** For driver use only!! */
-	void set_data(T* data);
-	
-	inline T& value_at(size_t offset) { assert(offset < _size); return data()[offset]; }
-	
-	void prepare(SampleCount nframes);
-	
-	void      filled_size(size_t size) { _filled_size = size; }
-	size_t    filled_size() const { return _filled_size; }
-	bool      is_joined()   const { return (_joined_buf == NULL); }
-	size_t    size()        const { return _size; }
-	inline T* data()        const { return ((_joined_buf != NULL) ? _joined_buf->data() : _data); }
-	
-	void resize(size_t size);
+	virtual bool is_joined() const = 0;
+	virtual bool is_joined_to(Buffer* buf) const = 0;
+	virtual bool join(Buffer* buf) = 0;
+	virtual void unjoin() = 0;
 
-private:
-	enum BufferState { OK, HALF_SET_CYCLE_1, HALF_SET_CYCLE_2 };
+	virtual void resize(size_t size) { _size = size; }
 
-	void allocate();
-	void deallocate();
+	DataType type() const { return _type; }
+	size_t   size() const { return _size; }
 
-	T*          _data;        ///< Used data pointer (probably same as _local_data)
-	T*          _local_data;  ///< Locally allocated buffer (possibly unused if joined or set_data used)
-	Buffer<T>*  _joined_buf;  ///< Buffer to mirror, if joined
-	size_t      _size;        ///< Allocated buffer size
-	size_t      _filled_size; ///< Usable buffer size (for MIDI ports etc)
-	BufferState _state;       ///< State of buffer for setting values next cycle
-	T           _set_value;   ///< Value set by @ref set (may need to be set next cycle)
+protected:
+	DataType _type;
+	size_t   _size;
 };
 
 

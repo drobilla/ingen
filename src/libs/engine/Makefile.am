@@ -38,11 +38,13 @@ libingen_la_SOURCES = \
 	OSCClientSender.h \
 	OSCClientSender.cpp \
 	Buffer.h \
-	Buffer.cpp \
+	AudioBuffer.h \
+	AudioBuffer.cpp \
+	MidiBuffer.h \
+	MidiBuffer.cpp \
+	BufferFactory.cpp \
 	Port.h \
 	Port.cpp \
-	TypedPort.h \
-	TypedPort.cpp \
 	InputPort.h \
 	InputPort.cpp \
 	OutputPort.h \
@@ -73,8 +75,6 @@ libingen_la_SOURCES = \
 	PostProcessor.cpp \
 	Connection.h \
 	Connection.cpp \
-	TypedConnection.h \
-	TypedConnection.cpp \
 	ObjectStore.h \
 	ObjectStore.cpp \
 	TransportNode.h \

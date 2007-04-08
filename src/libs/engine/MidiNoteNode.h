@@ -21,14 +21,14 @@
 #include <string>
 #include "InternalNode.h"
 #include "types.h"
+#include "MidiBuffer.h"
 
 using std::string;
 
 namespace Ingen {
 
-class MidiMessage;
-template <typename T> class InputPort;
-template <typename T> class OutputPort;
+class InputPort;
+class OutputPort;
 
 
 /** MIDI note input node.
@@ -74,11 +74,11 @@ private:
 	Key    _keys[128];
 	bool   _sustain;   ///< Whether or not hold pedal is depressed
 	
-	InputPort<MidiMessage>* _midi_in_port;
-	OutputPort<Sample>*     _freq_port;
-	OutputPort<Sample>*     _vel_port;
-	OutputPort<Sample>*     _gate_port;
-	OutputPort<Sample>*     _trig_port;
+	InputPort*  _midi_in_port;
+	OutputPort* _freq_port;
+	OutputPort* _vel_port;
+	OutputPort* _gate_port;
+	OutputPort* _trig_port;
 };
 
 

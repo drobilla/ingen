@@ -17,12 +17,13 @@
 
 #include "RequestPortValueEvent.h"
 #include <string>
+#include "interface/ClientInterface.h"
 #include "Responder.h"
 #include "Engine.h"
-#include "interface/ClientInterface.h"
-#include "TypedPort.h"
+#include "Port.h"
 #include "ObjectStore.h"
 #include "ClientBroadcaster.h"
+#include "AudioBuffer.h"
 
 using std::string;
 
@@ -55,7 +56,7 @@ RequestPortValueEvent::execute(SampleCount nframes, FrameTime start, FrameTime e
 	assert(_time >= start && _time <= end);
 
 	if (_port != NULL && _port->type() == DataType::FLOAT)
-		_value = ((TypedPort<Sample>*)_port)->buffer(0)->value_at(0/*_time - start*/);
+		_value = ((AudioBuffer*)_port->buffer(0))->value_at(0/*_time - start*/);
 	else 
 		_port = NULL; // triggers error response
 }

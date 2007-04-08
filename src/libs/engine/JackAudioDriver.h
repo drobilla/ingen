@@ -31,7 +31,7 @@ namespace Ingen {
 class Engine;
 class Patch;
 class Port;
-template <typename T> class DuplexPort;
+class DuplexPort;
 class JackAudioDriver;
 typedef jack_default_audio_sample_t jack_sample_t;
 
@@ -43,21 +43,21 @@ typedef jack_default_audio_sample_t jack_sample_t;
 class JackAudioPort : public DriverPort, public Raul::ListNode<JackAudioPort*>
 {
 public:
-	JackAudioPort(JackAudioDriver* driver, DuplexPort<Sample>* patch_port);
+	JackAudioPort(JackAudioDriver* driver, DuplexPort* patch_port);
 	~JackAudioPort();
 	
 	void set_name(const std::string& name) { jack_port_set_name(_jack_port, name.c_str()); };
 	
 	void prepare_buffer(jack_nframes_t nframes);
 
-	jack_port_t*          jack_port() const  { return _jack_port; }
-	DuplexPort<Sample>*   patch_port() const { return _patch_port; }
+	jack_port_t*  jack_port() const  { return _jack_port; }
+	DuplexPort*   patch_port() const { return _patch_port; }
 
 private:
-	JackAudioDriver*      _driver;
-	jack_port_t*          _jack_port;
-	jack_sample_t*        _jack_buffer; ///< Cached for output ports
-	DuplexPort<Sample>*   _patch_port;
+	JackAudioDriver* _driver;
+	jack_port_t*     _jack_port;
+	jack_sample_t*   _jack_buffer; ///< Cached for output ports
+	DuplexPort*      _patch_port;
 };
 
 
@@ -85,7 +85,7 @@ public:
 	void disable();
 
 	DriverPort* port(const Raul::Path& path);
-	DriverPort* create_port(DuplexPort<Sample>* patch_port);
+	DriverPort* create_port(DuplexPort* patch_port);
 	
 	void        add_port(DriverPort* port);
 	DriverPort* remove_port(const Raul::Path& path);

@@ -21,6 +21,7 @@
 #include <cassert>
 #include <boost/utility.hpp>
 #include <raul/SharedPtr.h>
+#include "DataType.h"
 
 template<typename T> class Queue;
 
@@ -39,7 +40,7 @@ class PostProcessor;
 class Event;
 class QueuedEvent;
 class LashDriver;
-template <typename T> class Driver;
+class Driver;
 
 
 /** The main class for the Engine.
@@ -77,8 +78,8 @@ public:
 	NodeFactory*       node_factory()       const { return _node_factory; }
 	LashDriver*        lash_driver()        const { return _lash_driver; }
 
-	/** Return the active driver for the given (template parameter) type */
-	template<typename T> Driver<T>* driver();
+	/** Return the active driver for the given type */
+	Driver* driver(DataType type);
 	
 private:
 	SharedPtr<EventSource> _event_source;

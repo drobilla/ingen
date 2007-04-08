@@ -88,16 +88,16 @@ Engine::~Engine()
 }
 
 
-/* driver() template specializations.
- * Due to the lack of RTTI, this needs to be implemented manually like this.
- * If more types/drivers start getting added, it may be worth it to enable
- * RTTI and put all the drivers into a map with typeid's as the key.  That's
- * more elegant and extensible, but this is faster and simpler - for now.
- */
-template<>
-Driver<MidiMessage>* Engine::driver<MidiMessage>() { return _midi_driver; }
-template<>
-Driver<Sample>* Engine::driver<Sample>() { return _audio_driver.get(); }
+Driver*
+Engine::driver(DataType type)
+{
+	if (type == DataType::FLOAT)
+		return _audio_driver.get();
+	else if (type == DataType::MIDI)
+		return _midi_driver;
+	else
+		return NULL;
+}
 
 
 int

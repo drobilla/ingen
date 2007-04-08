@@ -31,10 +31,9 @@ class DisconnectionEvent;
 class Patch;
 class Node;
 class Connection;
-template <typename T> class TypedConnection;
 class Port;
-template <typename T> class InputPort;
-template <typename T> class OutputPort;
+class InputPort;
+class OutputPort;
 
 
 /** An event to disconnect all connections to a Node.

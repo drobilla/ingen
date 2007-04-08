@@ -21,11 +21,14 @@
 #include <cstdlib>
 #include <boost/utility.hpp>
 #include <raul/Deletable.h>
+#include "DataType.h"
+#include "Port.h"
 #include "types.h"
 
 namespace Ingen {
 
 class Port;
+class Buffer;
 
 
 /** Represents a single inbound connection for an InputPort.
@@ -41,7 +44,8 @@ class Port;
 class Connection : public Raul::Deletable
 {
 public:
-	virtual ~Connection() {}
+	Connection(Port* src_port, Port* dst_port);
+	virtual ~Connection();
 	
 	Port* src_port() const { return _src_port; }
 	Port* dst_port() const { return _dst_port; }
@@ -50,15 +54,39 @@ public:
 	bool pending_disconnection()       { return _pending_disconnection; }
 	void pending_disconnection(bool b) { _pending_disconnection = b; }
 	
-	virtual void set_buffer_size(size_t size) {}
+	void process(SampleCount nframes, FrameTime start, FrameTime end);
+
+	/** Get the buffer for a particular voice.
+	 * A Connection is smart - it knows the destination port requesting the
+	 * buffer, and will return accordingly (ie the same buffer for every voice
+	 * in a mono->poly connection).
+	 */
+	inline Buffer* buffer(size_t voice) const;
+	
+	void set_buffer_size(size_t size);
+
+	DataType type() const { return _src_port->type(); }
 
 protected:
-	Connection(Port* const src_port, Port* const dst_port);
-	
 	Port* const _src_port;
 	Port* const _dst_port;
+	Buffer*     _local_buffer;
+	size_t      _buffer_size;
+	bool        _must_mix;
 	bool        _pending_disconnection;
 };
+
+
+inline Buffer*
+Connection::buffer(size_t voice) const
+{
+	if (_must_mix)
+		return _local_buffer;
+	else if (_src_port->poly() == 1)
+		return _src_port->buffer(0);
+	else
+		return _src_port->buffer(voice);
+}
 
 
 } // namespace Ingen

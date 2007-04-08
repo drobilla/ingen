@@ -18,6 +18,8 @@
 #include "Port.h"
 #include "Node.h"
 #include "DataType.h"
+#include "Buffer.h"
+#include "BufferFactory.h"
 
 namespace Ingen {
 
@@ -27,14 +29,73 @@ const char* const DataType::type_uris[3] = { "UNKNOWN", "FLOAT", "MIDI" };
 
 
 Port::Port(Node* const node, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size)
-: GraphObject(node, name),
-  _index(index),
-  _poly(poly),
-  _type(type),
-  _buffer_size(buffer_size)
+	: GraphObject(node, name)
+	, _index(index)
+	, _poly(poly)
+	, _type(type)
+	, _buffer_size(buffer_size)
+	, _fixed_buffers(false)
 {
 	assert(node != NULL);
 	assert(_poly > 0);
+
+	allocate_buffers();
+	clear_buffers();
+
+	assert(_buffers.size() > 0);
+}
+
+
+Port::~Port()
+{
+	for (size_t i=0; i < _poly; ++i)
+		delete _buffers.at(i);
+}
+
+
+void
+Port::allocate_buffers()
+{
+	_buffers.alloc(_poly);
+
+	for (size_t i=0; i < _poly; ++i)
+		_buffers.at(i) = BufferFactory::create(_type, _buffer_size);
+}
+
+
+void
+Port::set_buffer_size(size_t size)
+{
+	_buffer_size = size;
+
+	for (size_t i=0; i < _poly; ++i)
+		_buffers.at(i)->resize(size);
+
+	connect_buffers();
+}
+
+
+void
+Port::connect_buffers()
+{
+	for (size_t i=0; i < _poly; ++i)
+		Port::parent_node()->set_port_buffer(i, _index, _buffers.at(i));
+}
+
+	
+void
+Port::clear_buffers()
+{
+	for (size_t i=0; i < _poly; ++i)
+		_buffers.at(i)->clear();
+}
+
+
+void
+Port::process(SampleCount nframes, FrameTime start, FrameTime end)
+{
+	for (size_t i=0; i < _poly; ++i)
+		_buffers.at(i)->prepare(nframes);
 }
 
 

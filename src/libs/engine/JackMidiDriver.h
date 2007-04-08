@@ -29,7 +29,7 @@ namespace Ingen {
 class Node;
 class SetPortValueEvent;
 class JackMidiDriver;
-template <typename T> class DuplexPort;
+class DuplexPort;
 
 
 /** Representation of an JACK MIDI port.
@@ -39,19 +39,19 @@ template <typename T> class DuplexPort;
 class JackMidiPort : public DriverPort, public Raul::ListNode<JackMidiPort*>
 {
 public:
-	JackMidiPort(JackMidiDriver* driver, DuplexPort<MidiMessage>* port);
+	JackMidiPort(JackMidiDriver* driver, DuplexPort* port);
 	virtual ~JackMidiPort();
 
 	void prepare_block(const SampleCount block_start, const SampleCount block_end);
 	
 	void set_name(const std::string& name) { jack_port_set_name(_jack_port, name.c_str()); };
 	
-	DuplexPort<MidiMessage>* patch_port() const { return _patch_port; }
+	DuplexPort* patch_port() const { return _patch_port; }
 
 private:
-	JackMidiDriver*          _driver;
-	jack_port_t*             _jack_port;
-	DuplexPort<MidiMessage>* _patch_port;
+	JackMidiDriver* _driver;
+	jack_port_t*    _jack_port;
+	DuplexPort*     _patch_port;
 };
 
 
@@ -78,7 +78,7 @@ public:
 	
 	void prepare_block(const SampleCount block_start, const SampleCount block_end);
 
-	JackMidiPort* create_port(DuplexPort<MidiMessage>* patch_port)
+	JackMidiPort* create_port(DuplexPort* patch_port)
 	{ return new JackMidiPort(this, patch_port); }
 	
 	void        add_port(DriverPort* port);

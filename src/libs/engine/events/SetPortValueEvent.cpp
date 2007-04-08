@@ -18,10 +18,11 @@
 #include "SetPortValueEvent.h"
 #include "Responder.h"
 #include "Engine.h"
-#include "TypedPort.h"
+#include "Port.h"
 #include "ClientBroadcaster.h"
 #include "Node.h"
 #include "ObjectStore.h"
+#include "AudioBuffer.h"
 
 namespace Ingen {
 
@@ -64,11 +65,13 @@ SetPortValueEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 	} else if (!(_port->type() == DataType::FLOAT)) {
 		_error = TYPE_MISMATCH;
 	} else {
-		if (_voice_num == -1) 
-			((TypedPort<Sample>*)_port)->set_value(_val, _time - start);
+		AudioBuffer* const buf = (AudioBuffer*)_port->buffer(0);
+		const size_t offset = (buf->size() == 1) ? 0 : _time - start;
+		if (_voice_num == -1)
+			for (size_t i=0; i < _port->poly(); ++i)
+				((AudioBuffer*)_port->buffer(i))->set(_val, offset);
 		else
-			((TypedPort<Sample>*)_port)->set_value(_voice_num, _val, _time - start);
-			//((TypedPort<Sample>*)_port)->buffer(_voice_num)->set(_val, offset); // FIXME: check range
+			((AudioBuffer*)_port->buffer(_voice_num))->set(_val, offset);
 	}
 }
 

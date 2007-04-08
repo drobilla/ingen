@@ -34,6 +34,7 @@
 #include "MidiDriver.h"
 #include "DuplexPort.h"
 #include "EventSource.h"
+#include "AudioBuffer.h"
 #ifdef HAVE_LASH
 #include "LashDriver.h"
 #endif
@@ -46,7 +47,7 @@ namespace Ingen {
 	
 //// JackAudioPort ////
 
-JackAudioPort::JackAudioPort(JackAudioDriver* driver, DuplexPort<Sample>* patch_port)
+JackAudioPort::JackAudioPort(JackAudioDriver* driver, DuplexPort* patch_port)
 : DriverPort(patch_port->is_input()),
   Raul::ListNode<JackAudioPort*>(this),
   _driver(driver),
@@ -83,9 +84,11 @@ JackAudioPort::prepare_buffer(jack_nframes_t nframes)
 */
 	jack_sample_t* jack_buf = (jack_sample_t*)jack_port_get_buffer(_jack_port, nframes);
 
+	AudioBuffer* patch_buf = (AudioBuffer*)_patch_port->buffer(0);
+
 	if (jack_buf != _jack_buffer) {
 		//cerr << "Jack buffer: " << jack_buf << endl;
-		_patch_port->buffer(0)->set_data(jack_buf);
+		patch_buf->set_data(jack_buf);
 		_jack_buffer = jack_buf;
 	}
 
@@ -100,7 +103,7 @@ JackAudioPort::prepare_buffer(jack_nframes_t nframes)
 	//m_patch_port->fixed_buffers(true);
 	
 	//assert(_patch_port->buffer(0)->data() == _patch_port->tied_port()->buffer(0)->data());
-	assert(_patch_port->buffer(0)->data() == jack_buf);
+	assert(patch_buf->data() == jack_buf);
 }
 
 	
@@ -257,7 +260,7 @@ JackAudioDriver::port(const Path& path)
 
 
 DriverPort*
-JackAudioDriver::create_port(DuplexPort<Sample>* patch_port)
+JackAudioDriver::create_port(DuplexPort* patch_port)
 {
 	if (patch_port->buffer_size() == _buffer_size)
 		return new JackAudioPort(this, patch_port);

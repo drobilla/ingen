@@ -44,7 +44,7 @@ public:
 	
 	void process(SampleCount nframes, FrameTime start, FrameTime end);
 	
-	void set_port_buffer(size_t voice, size_t port_num, void* buf);
+	void set_port_buffer(size_t voice, size_t port_num, Buffer* buf);
 
 	const Plugin* plugin() const  { return _plugin; }
 	void plugin(const Plugin* const pi) { _plugin = pi; }

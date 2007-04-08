@@ -22,11 +22,11 @@
 #include <dssi.h>
 #include <lo/lo.h>
 #include "LADSPANode.h"
+#include "MidiBuffer.h"
 
 namespace Ingen {
 
-class MidiMessage;
-template <typename T> class InputPort;
+class InputPort;
 namespace Shared {
 	class ClientInterface;
 } using Shared::ClientInterface;
@@ -71,7 +71,7 @@ private:
 	// DSSI GUI messages
 	void send_control(int port_num, float value);
 	void send_program(int bank, int value);
-	void send_configure(const string& key, const string& val);
+	void send_configure(const std::string& key, const std::string& val);
 	void send_show();
 	void send_hide();
 	void send_quit();
@@ -82,20 +82,20 @@ private:
 	
 	DSSI_Descriptor* _dssi_descriptor;
 	
-	string     _ui_url;
-	string     _ui_base_path;
-	lo_address _ui_addr;
+	std::string _ui_url;
+	std::string _ui_base_path;
+	lo_address  _ui_addr;
 
 	// Current values
-	int                      _bank;
-	int                      _program;
-	std::map<string, string> _configures;
-	std::map<int, Bank>      _banks;
+	int                                _bank;
+	int                                _program;
+	std::map<std::string, std::string> _configures;
+	std::map<int, Bank>                _banks;
 
-	InputPort<MidiMessage>* _midi_in_port;
- 	snd_seq_event_t*        _alsa_events;
- 	unsigned long           _encoded_events;
- 	snd_midi_event_t*       _alsa_encoder;
+	InputPort*        _midi_in_port;
+ 	snd_seq_event_t*  _alsa_events;
+ 	unsigned long     _encoded_events;
+ 	snd_midi_event_t* _alsa_encoder;
 };
 
 

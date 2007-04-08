@@ -15,9 +15,10 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "MidiTriggerNode.h"
 #include <cmath>
 #include <raul/midi_events.h>
+#include "MidiTriggerNode.h"
+#include "AudioBuffer.h"
 #include "InputPort.h"
 #include "OutputPort.h"
 #include "Plugin.h"
@@ -31,22 +32,22 @@ MidiTriggerNode::MidiTriggerNode(const string& path, size_t poly, Patch* parent,
 {
 	_ports = new Raul::Array<Port*>(5);
 
-	_midi_in_port = new InputPort<MidiMessage>(this, "MIDIIn", 0, 1, DataType::MIDI, _buffer_size);
+	_midi_in_port = new InputPort(this, "MIDIIn", 0, 1, DataType::MIDI, _buffer_size);
 	_ports->at(0) = _midi_in_port;
 	
-	_note_port = new InputPort<Sample>(this, "NoteNumber", 1, 1, DataType::FLOAT, 1);
+	_note_port = new InputPort(this, "NoteNumber", 1, 1, DataType::FLOAT, 1);
 	//	new PortInfo("Note Number", CONTROL, INPUT, INTEGER, 60, 0, 127), 1);
 	_ports->at(1) = _note_port;
 	
-	_gate_port = new OutputPort<Sample>(this, "Gate", 2, 1, DataType::FLOAT, _buffer_size);
+	_gate_port = new OutputPort(this, "Gate", 2, 1, DataType::FLOAT, _buffer_size);
 	//	new PortInfo("Gate", AUDIO, OUTPUT, 0, 0, 1), _buffer_size);
 	_ports->at(2) = _gate_port;
 
-	_trig_port = new OutputPort<Sample>(this, "Trigger", 3, 1, DataType::FLOAT, _buffer_size);
+	_trig_port = new OutputPort(this, "Trigger", 3, 1, DataType::FLOAT, _buffer_size);
 	//	new PortInfo("Trigger", AUDIO, OUTPUT, 0, 0, 1), _buffer_size);
 	_ports->at(3) = _trig_port;
 	
-	_vel_port = new OutputPort<Sample>(this, "Velocity", 4, poly, DataType::FLOAT, _buffer_size);
+	_vel_port = new OutputPort(this, "Velocity", 4, poly, DataType::FLOAT, _buffer_size);
 	//	new PortInfo("Velocity", AUDIO, OUTPUT, 0, 0, 1), _buffer_size);
 	_ports->at(4) = _vel_port;
 	
@@ -61,27 +62,35 @@ MidiTriggerNode::process(SampleCount nframes, FrameTime start, FrameTime end)
 {
 	InternalNode::process(nframes, start, end);
 	
-	MidiMessage ev;
-	
-	for (size_t i=0; i < _midi_in_port->buffer(0)->filled_size(); ++i) {
-		ev = _midi_in_port->buffer(0)->value_at(i);
+	double         timestamp = 0;
+	uint32_t       size = 0;
+	unsigned char* buffer = NULL;
 
-		switch (ev.buffer[0] & 0xF0) {
-		case MIDI_CMD_NOTE_ON:
-			if (ev.buffer[2] == 0)
-				note_off(ev.buffer[1], ev.time, nframes, start, end);
-			else
-				note_on(ev.buffer[1], ev.buffer[2], ev.time, nframes, start, end);
-			break;
-		case MIDI_CMD_NOTE_OFF:
-			note_off(ev.buffer[1], ev.time, nframes, start, end);
-			break;
-		case MIDI_CMD_CONTROL:
-			if (ev.buffer[1] == MIDI_CTL_ALL_NOTES_OFF
-					|| ev.buffer[1] == MIDI_CTL_ALL_SOUNDS_OFF)
-				_gate_port->buffer(0)->set(0.0f, ev.time);
-		default:
-			break;
+	MidiBuffer* const midi_in = (MidiBuffer*)_midi_in_port->buffer(0);
+	assert(midi_in->this_nframes() == nframes);
+
+	while (midi_in->get_event(&timestamp, &size, &buffer) < nframes) {
+		
+		const FrameTime time = start + (FrameTime)timestamp;
+
+		if (size >= 3) {
+			switch (buffer[0] & 0xF0) {
+			case MIDI_CMD_NOTE_ON:
+				if (buffer[2] == 0)
+					note_off(buffer[1], time, nframes, start, end);
+				else
+					note_on(buffer[1], buffer[2], time, nframes, start, end);
+				break;
+			case MIDI_CMD_NOTE_OFF:
+				note_off(buffer[1], time, nframes, start, end);
+				break;
+			case MIDI_CMD_CONTROL:
+				if (buffer[1] == MIDI_CTL_ALL_NOTES_OFF
+						|| buffer[1] == MIDI_CTL_ALL_SOUNDS_OFF)
+					((AudioBuffer*)_gate_port->buffer(0))->set(0.0f, time);
+			default:
+				break;
+			}
 		}
 	}
 }
@@ -95,7 +104,7 @@ MidiTriggerNode::note_on(uchar note_num, uchar velocity, FrameTime time, SampleC
 
 	//std::cerr << "Note on starting at sample " << offset << std::endl;
 
-	const Sample filter_note = _note_port->buffer(0)->value_at(0);
+	const Sample filter_note = ((AudioBuffer*)_note_port->buffer(0))->value_at(0);
 	if (filter_note >= 0.0 && filter_note < 127.0 && (note_num == (uchar)filter_note)){
 			
 		// FIXME FIXME FIXME
@@ -105,10 +114,10 @@ MidiTriggerNode::note_on(uchar note_num, uchar velocity, FrameTime time, SampleC
 		if (offset == (SampleCount)(_buffer_size-1))
 			--offset;
 		
-		_gate_port->buffer(0)->set(1.0f, offset);
-		_trig_port->buffer(0)->set(1.0f, offset, offset);
-		_trig_port->buffer(0)->set(0.0f, offset+1);
-		_vel_port->buffer(0)->set(velocity/127.0f, offset);
+		((AudioBuffer*)_gate_port->buffer(0))->set(1.0f, offset);
+		((AudioBuffer*)_trig_port->buffer(0))->set(1.0f, offset, offset);
+		((AudioBuffer*)_trig_port->buffer(0))->set(0.0f, offset+1);
+		((AudioBuffer*)_vel_port->buffer(0))->set(velocity/127.0f, offset);
 	}
 }
 
@@ -119,8 +128,8 @@ MidiTriggerNode::note_off(uchar note_num, FrameTime time, SampleCount nframes, F
 	assert(time >= start && time <= end);
 	assert(time - start < _buffer_size);
 
-	if (note_num == lrintf(_note_port->buffer(0)->value_at(0)))
-		_gate_port->buffer(0)->set(0.0f, time - start);
+	if (note_num == lrintf(((AudioBuffer*)_note_port->buffer(0))->value_at(0)))
+		((AudioBuffer*)_gate_port->buffer(0))->set(0.0f, time - start);
 }
 
 

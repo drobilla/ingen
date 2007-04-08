@@ -24,6 +24,7 @@
 #include "InputPort.h"
 #include "OutputPort.h"
 #include "Plugin.h"
+#include "AudioBuffer.h"
 
 namespace Ingen {
 
@@ -98,16 +99,16 @@ LV2Node::instantiate()
 			port_buffer_size = 1;
 		
 		if (port_class == SLV2_CONTROL_INPUT || port_class == SLV2_AUDIO_INPUT) {
-			port = new InputPort<Sample>(this, port_name, j, _poly, DataType::FLOAT, port_buffer_size);
+			port = new InputPort(this, port_name, j, _poly, DataType::FLOAT, port_buffer_size);
 			_ports->at(j) = port;
 		} else if (port_class == SLV2_CONTROL_OUTPUT || port_class == SLV2_AUDIO_OUTPUT) {
-			port = new OutputPort<Sample>(this, port_name, j, _poly, DataType::FLOAT, port_buffer_size);
+			port = new OutputPort(this, port_name, j, _poly, DataType::FLOAT, port_buffer_size);
 			_ports->at(j) = port;
 		} else if (port_class == SLV2_MIDI_INPUT) {
-			port = new InputPort<MidiMessage>(this, port_name, j, _poly, DataType::MIDI, port_buffer_size);
+			port = new InputPort(this, port_name, j, _poly, DataType::MIDI, port_buffer_size);
 			_ports->at(j) = port;
 		} else if (port_class == SLV2_MIDI_OUTPUT) {
-			port = new OutputPort<MidiMessage>(this, port_name, j, _poly, DataType::MIDI, port_buffer_size);
+			port = new OutputPort(this, port_name, j, _poly, DataType::MIDI, port_buffer_size);
 			_ports->at(j) = port;
 		}
 
@@ -140,16 +141,16 @@ LV2Node::activate()
 {
 	NodeBase::activate();
 
-	TypedPort<Sample>* port = NULL;
-	
 	for (size_t i=0; i < _poly; ++i) {
 		for (unsigned long j=0; j < num_ports(); ++j) {
-			port = static_cast<TypedPort<Sample>*>(_ports->at(j));
-			set_port_buffer(i, j, ((TypedPort<Sample>*)_ports->at(j))->buffer(i)->data());
-			if (port->type() == DataType::FLOAT && port->buffer_size() == 1)
-				port->set_value(0.0f, 0); // FIXME
-			else if (port->type() == DataType::FLOAT && port->buffer_size() > 1)
-				port->set_value(0.0f, 0);
+			Port* const port = _ports->at(j);
+			set_port_buffer(i, j, port->buffer(i));
+			if (port->type() == DataType::FLOAT && port->buffer_size() == 1) {
+				cerr << "FIXME: LV2 default value\n";
+				((AudioBuffer*)port->buffer(i))->set(0.0f, 0); // FIXME
+			} else if (port->type() == DataType::FLOAT && port->buffer_size() > 1) {
+				((AudioBuffer*)port->buffer(i))->set(0.0f, 0);
+			}
 		}
 		slv2_instance_activate(_instances[i]);
 	}
@@ -176,14 +177,14 @@ LV2Node::process(SampleCount nframes, FrameTime start, FrameTime end)
 
 
 void
-LV2Node::set_port_buffer(size_t voice, size_t port_num, void* buf)
+LV2Node::set_port_buffer(size_t voice, size_t port_num, Buffer* buf)
 {
 	assert(voice < _poly);
 	
-	// Could be a MIDI port after this
-	if (port_num < num_ports()) {
-		slv2_instance_connect_port(_instances[voice], port_num, buf);
-	}
+	if (buf->type() == DataType::FLOAT)
+		slv2_instance_connect_port(_instances[voice], port_num, ((AudioBuffer*)buf)->data());
+	else if (buf->type() == DataType::MIDI)
+		slv2_instance_connect_port(_instances[voice], port_num, ((MidiBuffer*)buf)->data());
 }
 
 

@@ -36,10 +36,10 @@ public:
 		MIDI    = 2
 	};
 
-	DataType(const string& uri)
+	DataType(const std::string& uri)
 	: _symbol(UNKNOWN)
 	{
-		if (uri== type_uris[MIDI]) {
+		if (uri == type_uris[MIDI]) {
 			_symbol = MIDI;
 		} else if (uri == type_uris[FLOAT]) {
 			_symbol = FLOAT;

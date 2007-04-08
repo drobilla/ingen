@@ -20,6 +20,7 @@
 
 #include <cstdlib>
 #include <string>
+#include <raul/Array.h>
 #include "types.h"
 #include "GraphObject.h"
 #include "DataType.h"
@@ -29,6 +30,7 @@ using std::string;
 namespace Ingen {
 
 class Node;
+class Buffer;
 
 
 /** A port on a Node.
@@ -42,36 +44,45 @@ class Node;
 class Port : public GraphObject
 {
 public:
-	virtual ~Port() {}
+	virtual ~Port();
 
 	/** A port's parent is always a node, so static cast should be safe */
 	Node* parent_node() const { return (Node*)_parent; }
 
+	Buffer* buffer(size_t voice) const { return _buffers.at(voice); }
+
 	/** Called once per process cycle */
-	virtual void process(SampleCount nframes, FrameTime start, FrameTime end) = 0;
+	virtual void process(SampleCount nframes, FrameTime start, FrameTime end);
 	
 	/** Empty buffer contents completely (ie silence) */
-	virtual void clear_buffers() = 0;
+	virtual void clear_buffers();
 	
 	virtual bool is_input()  const = 0;
 	virtual bool is_output() const = 0;
 
-	bool     is_sample()   const { return false; }
 	size_t   num()         const { return _index; }
 	size_t   poly()        const { return _poly; }
 	DataType type()        const { return _type; }
 	size_t   buffer_size() const { return _buffer_size; }
 
-	virtual void set_buffer_size(size_t size) = 0;
-	virtual void connect_buffers()            = 0;
+	virtual void set_buffer_size(size_t size);
+	
+	void fixed_buffers(bool b) { _fixed_buffers = b; }
+	bool fixed_buffers()       { return _fixed_buffers; }
 
 protected:
 	Port(Node* const node, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size);
 	
+	virtual void allocate_buffers();
+	virtual void connect_buffers();
+
 	size_t    _index;
 	size_t    _poly;
 	DataType  _type;
 	size_t    _buffer_size;
+	bool      _fixed_buffers;
+
+	Raul::Array<Buffer*> _buffers;
 };
 
 

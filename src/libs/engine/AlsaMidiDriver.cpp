@@ -23,7 +23,7 @@
 #include <raul/Maid.h>
 #include "ThreadManager.h"
 #include "AudioDriver.h"
-#include "MidiMessage.h"
+#include "MidiBuffer.h"
 #include "DuplexPort.h"
 #ifdef HAVE_LASH
 #include "LashDriver.h"
@@ -35,7 +35,7 @@ namespace Ingen {
 	
 //// AlsaMidiPort ////
 
-AlsaMidiPort::AlsaMidiPort(AlsaMidiDriver* driver, DuplexPort<MidiMessage>* patch_port)
+AlsaMidiPort::AlsaMidiPort(AlsaMidiDriver* driver, DuplexPort<MidiBuffer>* patch_port)
 : DriverPort(patch_port->is_input()),
   Raul::ListNode<AlsaMidiPort*>(this),
   _driver(driver),

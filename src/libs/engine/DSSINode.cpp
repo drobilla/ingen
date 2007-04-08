@@ -22,6 +22,7 @@
 #include "interface/ClientInterface.h"
 #include "InputPort.h"
 #include "types.h"
+#include "AudioBuffer.h"
 
 using namespace std;
 
@@ -63,7 +64,7 @@ DSSINode::instantiate()
 	
 	if (has_midi_input()) {
 		_ports = new Raul::Array<Port*>(_descriptor->PortCount + 1);
-		_midi_in_port = new InputPort<MidiMessage>(this, "MIDIIn", _ports->size()-1, 1, DataType::MIDI, _buffer_size);
+		_midi_in_port = new InputPort(this, "MIDIIn", _ports->size()-1, 1, DataType::MIDI, _buffer_size);
 		_ports->at(_ports->size()-1) = _midi_in_port;
 	}	
 
@@ -108,7 +109,8 @@ void
 DSSINode::set_control(size_t port_num, Sample val)
 {
 	assert(port_num < _descriptor->PortCount);
-	((TypedPort<Sample>*)_ports->at(port_num))->set_value(val, 0);
+	cerr << "FIXME: set_control\n";
+	//((TypedPort<Sample>*)_ports->at(port_num))->set_value(val, 0);
 }
 
 
@@ -137,7 +139,7 @@ DSSINode::convert_events()
 {
 	assert(has_midi_input());
 	assert(_midi_in_port != NULL);
-	
+#if 0
 	Buffer<MidiMessage>& buffer = *_midi_in_port->buffer(0);
 	_encoded_events = 0;
 
@@ -149,6 +151,7 @@ DSSINode::convert_events()
 		if (_alsa_events[_encoded_events].type != SND_SEQ_EVENT_NONE)
 			++_encoded_events;
 	}
+#endif
 }
 
 
@@ -242,7 +245,7 @@ DSSINode::send_update()
 	// send "control"s
 	for (size_t i=0; i < _ports->size(); ++i)
 		if (_ports->at(i)->type() == DataType::FLOAT && _ports->at(i)->buffer_size() == 1)
-			send_control(_ports->at(i)->num(), ((TypedPort<Sample>*)_ports->at(i))->buffer(0)->value_at(0));
+			send_control(_ports->at(i)->num(), ((AudioBuffer*)_ports->at(i)->buffer(0))->value_at(0));
 
 	// send "show" FIXME: not to spec
 	send_show();

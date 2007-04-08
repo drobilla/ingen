@@ -31,7 +31,7 @@ class Node;
 class SetPortValueEvent;
 class AlsaMidiDriver;
 class AudioDriver;
-template <typename T> class DuplexPort;
+class DuplexPort;
 
 static const int MAX_MIDI_EVENT_SIZE = 3;
 
@@ -43,7 +43,7 @@ static const int MAX_MIDI_EVENT_SIZE = 3;
 class AlsaMidiPort : public DriverPort, public Raul::ListNode<AlsaMidiPort*>
 {
 public:
-	AlsaMidiPort(AlsaMidiDriver* driver, DuplexPort<MidiMessage>* port);
+	AlsaMidiPort(AlsaMidiDriver* driver, DuplexPort<MidiBuffer>* port);
 	virtual ~AlsaMidiPort();
 
 	void event(snd_seq_event_t* const ev);
@@ -53,11 +53,11 @@ public:
 	void set_name(const std::string& name);
 	
 	int                      port_id()    const { return _port_id; }
-	DuplexPort<MidiMessage>* patch_port() const { return _patch_port; }
+	DuplexPort<MidiBuffer>* patch_port() const { return _patch_port; }
 
 private:
 	AlsaMidiDriver*                  _driver;
-	DuplexPort<MidiMessage>*         _patch_port;
+	DuplexPort<MidiBuffer>*         _patch_port;
 	int                              _port_id;
 	unsigned char**                  _midi_pool; ///< Pool of raw MIDI events for MidiMessage::buffer
 	Raul::SRSWQueue<snd_seq_event_t> _events;
@@ -86,7 +86,7 @@ public:
 
 	AudioDriver* audio_driver() { return _audio_driver; }
 
-	DriverPort* create_port(DuplexPort<MidiMessage>* patch_port)
+	DriverPort* create_port(DuplexPort<MidiBuffer>* patch_port)
 	{ return new AlsaMidiPort(this, patch_port); }
 	
 	void        add_port(DriverPort* port);

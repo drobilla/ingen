@@ -113,10 +113,10 @@ AddPortEvent::pre_process()
 			if (!_patch->parent()) {
 				if (_type == "ingen:audio")
 					_driver_port = _engine.audio_driver()->create_port(
-						dynamic_cast<DuplexPort<Sample>*>(_patch_port));
+						dynamic_cast<DuplexPort*>(_patch_port));
 				else if (_type == "ingen:midi")
 					_driver_port = _engine.midi_driver()->create_port(
-						dynamic_cast<DuplexPort<MidiMessage>*>(_patch_port));
+						dynamic_cast<DuplexPort*>(_patch_port));
 			}
 
 			assert(_ports_array->size() == _patch->num_ports());
