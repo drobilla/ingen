@@ -75,7 +75,7 @@ MidiNoteNode::~MidiNoteNode()
 void
 MidiNoteNode::process(SampleCount nframes, FrameTime start, FrameTime end)
 {
-	InternalNode::process(nframes, start, end);
+	NodeBase::pre_process(nframes, start, end);
 	
 	double         timestamp = 0;
 	uint32_t       size = 0;
@@ -122,6 +122,8 @@ MidiNoteNode::process(SampleCount nframes, FrameTime start, FrameTime end)
 
 		midi_in->increment();
 	}
+	
+	NodeBase::post_process(nframes, start, end);
 }
 
 

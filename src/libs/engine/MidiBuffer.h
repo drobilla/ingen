@@ -31,20 +31,19 @@ public:
 	MidiBuffer(size_t capacity)
 		: Buffer(DataType(DataType::MIDI), capacity)
 		, _state(&_local_state)
-		, _buf(lv2midi_new((uint32_t)capacity))
-		, _local_buf(NULL)
+		, _local_buf(lv2midi_new((uint32_t)capacity))
+		, _buf(_local_buf)
 		, _joined_buf(NULL)
 	{
 		clear();
-		reset_state(0);
 	}
 
 	~MidiBuffer() { lv2midi_free(_buf); }
 
-	void prepare(SampleCount nframes);
+	void prepare_read(SampleCount nframes);
+	void prepare_write(SampleCount nframes);
 
 	bool is_joined_to(Buffer* buf) const;
-	bool is_joined() const { return (_joined_buf == NULL); }
 	bool join(Buffer* buf);
 	void unjoin();
 
@@ -57,9 +56,9 @@ public:
 		{ return ((_joined_buf != NULL) ? _joined_buf->state() : _state); }
 
 	inline void clear()
-		{ lv2midi_reset_buffer(_buf); }
+		{ lv2midi_reset_buffer(_buf); _state->position = 0; }
 
-	inline void reset_state(uint32_t nframes)
+	inline void reset(SampleCount nframes)
 		{ lv2midi_reset_state(_state, _buf, nframes); _this_nframes = nframes; }
 
 	inline double increment()
@@ -72,10 +71,10 @@ public:
 		{ return lv2midi_put_event(_state, timestamp, size, data); }
 
 private:
-	LV2_MIDIState* _state;
 	LV2_MIDIState  _local_state;
-	LV2_MIDI*      _buf;
+	LV2_MIDIState* _state;
 	LV2_MIDI*      _local_buf;
+	LV2_MIDI*      _buf;
 	
 	MidiBuffer* _joined_buf;  ///< Buffer to mirror, if joined
 

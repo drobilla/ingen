@@ -49,6 +49,9 @@ public:
 	: Port(parent, name, index, poly, type, buffer_size)
 	{}
 
+	void pre_process(SampleCount nframes, FrameTime start, FrameTime end);
+	void post_process(SampleCount nframes, FrameTime start, FrameTime end);
+	
 	virtual ~OutputPort() {}
 
 	bool is_input()  const { return false; }

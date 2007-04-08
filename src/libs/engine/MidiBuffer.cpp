@@ -15,7 +15,10 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+//#include <iostream>
 #include "MidiBuffer.h"
+
+using namespace std;
 
 namespace Ingen {
 
@@ -48,6 +51,8 @@ MidiBuffer::unjoin()
 	_joined_buf = NULL;
 	_buf   = _local_buf;
 	_state = &_local_state;
+	clear();
+	reset(_this_nframes);
 }
 
 
@@ -63,14 +68,23 @@ MidiBuffer::is_joined_to(Buffer* buf) const
 
 
 void
-MidiBuffer::prepare(SampleCount nframes)
+MidiBuffer::prepare_read(SampleCount nframes)
 {
-	if (_joined_buf)
-		_local_state = *_joined_buf->state();
-	else
-		reset_state(nframes);
+	assert(!_joined_buf || data() == _joined_buf->data());
+	assert(!_joined_buf || state() == _joined_buf->state());
+	
+	reset(nframes);
+}
 
-	_this_nframes = nframes;
+
+void
+MidiBuffer::prepare_write(SampleCount nframes)
+{
+	clear();
+	reset(nframes);
+
+	assert(!_joined_buf || data() == _joined_buf->data());
+	assert(!_joined_buf || state() == _joined_buf->state());
 }
 
 

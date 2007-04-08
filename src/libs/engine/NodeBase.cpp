@@ -123,16 +123,29 @@ NodeBase::set_buffer_size(size_t size)
 }
 
 
-/** Runs the Node for the specified number of frames (block size)
+/** Prepare to run a cycle (in the audio thread)
  */
 void
-NodeBase::process(SampleCount nframes, FrameTime start, FrameTime end)
+NodeBase::pre_process(SampleCount nframes, FrameTime start, FrameTime end)
 {
 	assert(_activated);
 	// Mix down any ports with multiple inputs
 	for (size_t i=0; i < _ports->size(); ++i)
-		_ports->at(i)->process(nframes, start, end);
+		_ports->at(i)->pre_process(nframes, start, end);
 }
+
+
+/** Prepare to run a cycle (in the audio thread)
+ */
+void
+NodeBase::post_process(SampleCount nframes, FrameTime start, FrameTime end)
+{
+	assert(_activated);
+	// Prepare any output ports for reading (MIDI)
+	for (size_t i=0; i < _ports->size(); ++i)
+		_ports->at(i)->post_process(nframes, start, end);
+}
+
 
 
 /** Rename this Node.

@@ -15,38 +15,26 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef INTERNALNODE_H
-#define INTERNALNODE_H
-
-#include <cstdlib>
-#include "NodeBase.h"
-#include "Plugin.h"
-#include "types.h"
+#include "OutputPort.h"
+#include "Buffer.h"
 
 namespace Ingen {
 
-class Patch;
 
-
-/** Base class for Internal (builtin) nodes
- *
- * \ingroup engine
- */
-class InternalNode : public NodeBase
+void
+OutputPort::pre_process(SampleCount nframes, FrameTime start, FrameTime end)
 {
-public:
-	InternalNode(const Plugin* plugin, const string& path, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size)
-	: NodeBase(plugin, path, poly, parent, srate, buffer_size)
-	{
-	}
-	
-	virtual ~InternalNode() {}
+	for (size_t i=0; i < _poly; ++i)
+		_buffers.at(i)->prepare_write(nframes);
+}
 
-protected:
-	Plugin* plugin() const { return const_cast<Plugin*>(_plugin); }
-};
+
+void
+OutputPort::post_process(SampleCount nframes, FrameTime start, FrameTime end)
+{
+	for (size_t i=0; i < _poly; ++i)
+		_buffers.at(i)->prepare_read(nframes);
+}
 
 
 } // namespace Ingen
-
-#endif // INTERNALNODE_H

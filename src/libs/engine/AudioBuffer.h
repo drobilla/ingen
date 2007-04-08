@@ -52,14 +52,15 @@ public:
 	inline Sample& value_at(size_t offset) const
 		{ assert(offset < _size); return data()[offset]; }
 	
-	void prepare(SampleCount nframes);
+	void prepare_read(SampleCount nframes);
+	void prepare_write(SampleCount nframes) {}
+	
+	void reset(SampleCount nframes) {}
+	void resize(size_t size);
 	
 	void      filled_size(size_t size) { _filled_size = size; }
 	size_t    filled_size() const { return _filled_size; }
-	bool      is_joined()   const { return (_joined_buf == NULL); }
 	size_t    size()        const { return _size; }
-	
-	void resize(size_t size);
 
 private:
 	enum State { OK, HALF_SET_CYCLE_1, HALF_SET_CYCLE_2 };

@@ -37,10 +37,15 @@ public:
 
 	virtual ~Buffer() {}
 	
+	/** Clear contents and reset state */
 	virtual void clear() = 0;
-	virtual void prepare(SampleCount nframes) = 0;
+
+	/** Reset state (ie reset read ptr), but leave contents */
+	virtual void reset(SampleCount nframes) = 0;
+
+	virtual void prepare_read(SampleCount nframes) = 0;
+	virtual void prepare_write(SampleCount nframes) = 0;
 	
-	virtual bool is_joined() const = 0;
 	virtual bool is_joined_to(Buffer* buf) const = 0;
 	virtual bool join(Buffer* buf) = 0;
 	virtual void unjoin() = 0;

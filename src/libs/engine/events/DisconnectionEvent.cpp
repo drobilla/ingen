@@ -92,12 +92,6 @@ DisconnectionEvent::pre_process()
 		return;
 	}
 
-	if (_src_port->type() != _dst_port->type() || _src_port->buffer_size() != _dst_port->buffer_size()) {
-		_error = TYPE_MISMATCH;
-		QueuedEvent::pre_process();
-		return;
-	}
-
 	_dst_input_port = dynamic_cast<InputPort*>(_dst_port);
 	_src_output_port = dynamic_cast<OutputPort*>(_src_port);
 	assert(_src_output_port);

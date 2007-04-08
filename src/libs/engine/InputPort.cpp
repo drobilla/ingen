@@ -102,7 +102,7 @@ InputPort::remove_connection(const OutputPort* src_port)
 		if (_connections.size() == 0) {
 			for (size_t i=0; i < _poly; ++i) {
 				// Use a local buffer
-				if (modify_buffers && _buffers.at(i)->is_joined())
+				if (modify_buffers)
 					_buffers.at(i)->unjoin();
 				_buffers.at(i)->clear(); // Write silence
 				//if (_is_tied)
@@ -145,10 +145,8 @@ InputPort::is_connected_to(const OutputPort* port) const
  *  FIXME: nframes parameter not used,
  */
 void
-InputPort::process(SampleCount nframes, FrameTime start, FrameTime end)
+InputPort::pre_process(SampleCount nframes, FrameTime start, FrameTime end)
 {
-	Port::process(nframes, start, end);
-
 	//assert(!_is_tied || _tied_port != NULL);
 
 	bool do_mixdown = true;
@@ -167,7 +165,6 @@ InputPort::process(SampleCount nframes, FrameTime start, FrameTime end)
 				do_mixdown = true;
 			} else {
 				// zero-copy
-				//assert(_buffers.at(0)->is_joined());
 				_buffers.at(0)->join((*_connections.begin())->buffer(0));
 				do_mixdown = false;
 			}
@@ -179,6 +176,9 @@ InputPort::process(SampleCount nframes, FrameTime start, FrameTime end)
 
 	//cerr << path() << " mixing: " << do_mixdown << endl;
 
+	for (size_t i=0; i < _poly; ++i)
+		_buffers.at(i)->prepare_read(nframes);
+
 	if (!do_mixdown) {
 		assert(_buffers.at(0)->is_joined_to((*_connections.begin())->buffer(0)));
 		return;
@@ -188,6 +188,7 @@ InputPort::process(SampleCount nframes, FrameTime start, FrameTime end)
 	assert(!_is_tied || _buffers.at(0)->data() == _tied_port->buffer(0)->data());*/
 
 	for (size_t voice=0; voice < _poly; ++voice) {
+		assert(_type == DataType::FLOAT);
 		// Copy first connection
 		((AudioBuffer*)_buffers.at(voice))->copy(
 			((AudioBuffer*)(*_connections.begin())->buffer(voice)), 0, _buffer_size-1);

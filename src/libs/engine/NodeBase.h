@@ -53,7 +53,9 @@ public:
 	virtual void deactivate();
 	bool activated() { return _activated; }
 
-	virtual void process(SampleCount nframes, FrameTime start, FrameTime end);
+	virtual void post_process(SampleCount nframes, FrameTime start, FrameTime end);
+	virtual void process(SampleCount nframes, FrameTime start, FrameTime end) = 0;
+	virtual void pre_process(SampleCount nframes, FrameTime start, FrameTime end);
 		
 	virtual void set_port_buffer(size_t voice, size_t port_num, Buffer* buf) {}
 	

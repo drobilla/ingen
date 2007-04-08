@@ -165,7 +165,7 @@ DSSINode::has_midi_input() const
 void
 DSSINode::process(SampleCount nframes, FrameTime start, FrameTime end)
 {
-	NodeBase::process(nframes, start, end);
+	NodeBase::pre_process(nframes, start, end);
 
 	if (_dssi_descriptor->run_synth) {
 		convert_events();
@@ -181,6 +181,8 @@ DSSINode::process(SampleCount nframes, FrameTime start, FrameTime end)
 	} else {
 		LADSPANode::process(nframes, start, end);
 	}
+	
+	NodeBase::post_process(nframes, start, end);
 }
 
 

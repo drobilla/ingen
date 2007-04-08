@@ -91,12 +91,4 @@ Port::clear_buffers()
 }
 
 
-void
-Port::process(SampleCount nframes, FrameTime start, FrameTime end)
-{
-	for (size_t i=0; i < _poly; ++i)
-		_buffers.at(i)->prepare(nframes);
-}
-
-
 } // namespace Ingen

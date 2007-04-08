@@ -264,7 +264,7 @@ AudioBuffer::is_joined_to(Buffer* buf) const
 
 
 void
-AudioBuffer::prepare(SampleCount nframes)
+AudioBuffer::prepare_read(SampleCount nframes)
 {
 	// FIXME: nframes parameter doesn't actually work,
 	// writing starts from 0 every time

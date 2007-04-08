@@ -45,10 +45,11 @@ public:
 	DuplexPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size, bool is_output);
 	virtual ~DuplexPort() {}
 
-	virtual void prepare_buffers(size_t nframes) {}
+	void pre_process(SampleCount nframes, FrameTime start, FrameTime end);
+	void post_process(SampleCount nframes, FrameTime start, FrameTime end);
 	
-	virtual bool is_input()  const { return !_is_output; }
-	virtual bool is_output() const { return _is_output; }
+	bool is_input()  const { return !_is_output; }
+	bool is_output() const { return _is_output; }
 
 protected:
 	bool _is_output;

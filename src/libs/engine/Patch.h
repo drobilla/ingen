@@ -98,21 +98,21 @@ public:
 	
 	/** Whether to run this patch's DSP bits in the audio thread */
 	bool enabled() const { return _process; }
-	void enable()        { _process = true; }
+	void enable() { _process = true; }
 	void disable();
 
 	size_t internal_poly() const { return _internal_poly; }
 
 private:
-	inline void   build_process_order_recursive(Node* n, Raul::Array<Node*>* order) const;
+	inline void build_process_order_recursive(Node* n, Raul::Array<Node*>* order) const;
 
-	size_t             _internal_poly;
-	Raul::Array<Node*>*      _process_order; ///< Accessed in audio thread only
-	Raul::List<Connection*>  _connections;   ///< Accessed in audio thread only
-	Raul::List<Port*>        _input_ports;   ///< Accessed in preprocessing thread only
-	Raul::List<Port*>        _output_ports;  ///< Accessed in preprocessing thread only
-	Raul::List<Node*>        _nodes;         ///< Accessed in preprocessing thread only
-	bool               _process;
+	size_t                  _internal_poly;
+	Raul::Array<Node*>*     _process_order; ///< Accessed in audio thread only
+	Raul::List<Connection*> _connections;   ///< Accessed in audio thread only
+	Raul::List<Port*>       _input_ports;   ///< Accessed in preprocessing thread only
+	Raul::List<Port*>       _output_ports;  ///< Accessed in preprocessing thread only
+	Raul::List<Node*>       _nodes;         ///< Accessed in preprocessing thread only
+	bool                    _process;
 };
 
 

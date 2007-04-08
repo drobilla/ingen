@@ -80,8 +80,7 @@ JackMidiPort::prepare_block(const SampleCount block_start, const SampleCount blo
 	MidiBuffer* patch_buf = dynamic_cast<MidiBuffer*>(_patch_port->buffer(0));
 	assert(patch_buf);
 
-	patch_buf->clear();
-	patch_buf->reset_state(nframes);
+	patch_buf->prepare_write(nframes);
 	
 	// Copy events from Jack port buffer into patch port buffer
 	for (jack_nframes_t i=0; i < event_count; ++i) {

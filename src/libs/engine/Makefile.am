@@ -48,6 +48,7 @@ libingen_la_SOURCES = \
 	InputPort.h \
 	InputPort.cpp \
 	OutputPort.h \
+	OutputPort.cpp \
 	DuplexPort.h \
 	DuplexPort.cpp \
 	MidiMessage.h \

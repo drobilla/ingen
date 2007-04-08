@@ -60,7 +60,7 @@ MidiTriggerNode::MidiTriggerNode(const string& path, size_t poly, Patch* parent,
 void
 MidiTriggerNode::process(SampleCount nframes, FrameTime start, FrameTime end)
 {
-	InternalNode::process(nframes, start, end);
+	NodeBase::pre_process(nframes, start, end);
 	
 	double         timestamp = 0;
 	uint32_t       size = 0;
@@ -93,6 +93,8 @@ MidiTriggerNode::process(SampleCount nframes, FrameTime start, FrameTime end)
 			}
 		}
 	}
+	
+	NodeBase::post_process(nframes, start, end);
 }
 
 

@@ -52,7 +52,9 @@ public:
 	Buffer* buffer(size_t voice) const { return _buffers.at(voice); }
 
 	/** Called once per process cycle */
-	virtual void process(SampleCount nframes, FrameTime start, FrameTime end);
+	virtual void pre_process(SampleCount nframes, FrameTime start, FrameTime end) = 0;
+	virtual void process(SampleCount nframes, FrameTime start, FrameTime end) {}
+	virtual void post_process(SampleCount nframes, FrameTime start, FrameTime end) {};
 	
 	/** Empty buffer contents completely (ie silence) */
 	virtual void clear_buffers();

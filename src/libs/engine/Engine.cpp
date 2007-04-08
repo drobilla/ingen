@@ -190,9 +190,6 @@ Engine::deactivate()
 {
 	if (!_activated)
 		return;
-	
-	_audio_driver->root_patch()->disable();
-	_audio_driver->root_patch()->deactivate();
 
 	/*for (Tree<GraphObject*>::iterator i = _object_store->objects().begin();
 			i != _object_store->objects().end(); ++i)
@@ -203,6 +200,8 @@ Engine::deactivate()
 		_midi_driver->deactivate();
 	
 	_audio_driver->deactivate();
+
+	_audio_driver->root_patch()->deactivate();
 
 	// Finalize any lingering events (unlikely)
 	_post_processor->whip();

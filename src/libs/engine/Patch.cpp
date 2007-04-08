@@ -98,15 +98,10 @@ Patch::deactivate()
 void
 Patch::disable()
 {
-	// Write output buffers to 0
-	/*for (Raul::List<InternalNode*>::iterator i = _bridge_nodes.begin(); i != _bridge_nodes.end(); ++i) {
-	  assert((*i)->as_port() != NULL);
-	  if ((*i)->as_port()->port_info()->is_output())
-	  (*i)->as_port()->clear_buffers();*/
+	_process = false;
+
 	for (Raul::List<Port*>::iterator i = _output_ports.begin(); i != _output_ports.end(); ++i)
 		(*i)->clear_buffers();
-
-	_process = false;
 }
 
 

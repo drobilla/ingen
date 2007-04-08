@@ -65,7 +65,7 @@ MidiControlNode::MidiControlNode(const string& path, size_t poly, Patch* parent,
 void
 MidiControlNode::process(SampleCount nframes, FrameTime start, FrameTime end)
 {
-	InternalNode::process(nframes, start, end);
+	NodeBase::pre_process(nframes, start, end);
 	
 	double         timestamp = 0;
 	uint32_t       size = 0;
@@ -81,6 +81,8 @@ MidiControlNode::process(SampleCount nframes, FrameTime start, FrameTime end)
 		if (size >= 3 && (buffer[0] & 0xF0) == MIDI_CMD_CONTROL)
 			control(buffer[1], buffer[2], time);
 	}
+	
+	NodeBase::post_process(nframes, start, end);
 }
 
 
