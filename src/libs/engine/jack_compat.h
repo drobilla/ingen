@@ -15,20 +15,23 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#ifndef JACK_COMPAT_H
+#define JACK_COMPAT_H
+
 #if defined(HAVE_OLD_JACK_MIDI)
 #define jack_midi_get_event_count(port_buf, nframes) jack_midi_port_get_info(port_buf, nframes)->event_count
 #endif
 
 #if defined(JACK_MIDI_NEEDS_NFRAMES)
 
-jack_nframes_t
+inline jack_nframes_t
 jack_midi_get_event_count_compat(
   void * port_buffer)
 {
   return jack_midi_get_event_count(port_buffer, 0);
 }
 
-int
+inline int
 jack_midi_event_get_compat(
   jack_midi_event_t * event,
   void * port_buffer,
@@ -41,3 +44,5 @@ jack_midi_event_get_compat(
 #define jack_midi_event_get jack_midi_event_get_compat
 
 #endif  /* #if defined(HAVE_JACK_MIDI_WITH_NFRAMES) */
+
+#endif /* JACK_COMPAT_H */

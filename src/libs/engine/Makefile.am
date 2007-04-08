@@ -163,7 +163,7 @@ if WITH_JACK_MIDI
 libingen_la_SOURCES += \
 	JackMidiDriver.h \
 	JackMidiDriver.cpp \
-	jack_compat.c
+	jack_compat.h
 endif
 
 if WITH_ALSA_MIDI

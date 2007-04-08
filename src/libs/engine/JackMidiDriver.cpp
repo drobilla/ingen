@@ -26,6 +26,7 @@
 #include "AudioDriver.h"
 #include "MidiBuffer.h"
 #include "DuplexPort.h"
+#include "jack_compat.h"
 #ifdef HAVE_LASH
 #include "LashDriver.h"
 #endif
