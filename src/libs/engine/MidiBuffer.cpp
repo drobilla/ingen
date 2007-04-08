@@ -38,8 +38,7 @@ MidiBuffer::join(Buffer* buf)
 	
 	_joined_buf = mbuf;
 	
-	_buf = mbuf->data();
-	_state = mbuf->state();
+	_state = mbuf->data();
 
 	return true;
 }
@@ -49,8 +48,9 @@ void
 MidiBuffer::unjoin()
 {
 	_joined_buf = NULL;
-	_buf   = _local_buf;
 	_state = &_local_state;
+	_state->midi = _buf;
+
 	clear();
 	reset(_this_nframes);
 }
@@ -71,7 +71,6 @@ void
 MidiBuffer::prepare_read(SampleCount nframes)
 {
 	assert(!_joined_buf || data() == _joined_buf->data());
-	assert(!_joined_buf || state() == _joined_buf->state());
 	
 	reset(nframes);
 }
@@ -84,7 +83,6 @@ MidiBuffer::prepare_write(SampleCount nframes)
 	reset(nframes);
 
 	assert(!_joined_buf || data() == _joined_buf->data());
-	assert(!_joined_buf || state() == _joined_buf->state());
 }
 
 

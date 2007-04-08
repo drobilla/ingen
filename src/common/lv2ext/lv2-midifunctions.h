@@ -2,7 +2,7 @@
     
     lv2-midifunctions.h - support file for using MIDI in LV2 plugins
     
-    Copyright (C) 2006  Lars Luthman <lars.luthman@gmail.com>
+    Copyright (C) 2006-2007  Lars Luthman <lars.luthman@gmail.com>
     
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -20,13 +20,18 @@
 
 ****************************************************************************/
 
+/** @file
+    This file contains static helper functions for the LV2 MIDI datatype
+    extension. 
+*/
+
 #ifndef LV2_MIDIFUNCTIONS
 #define LV2_MIDIFUNCTIONS
 
 #include <string.h>
 #include <stdlib.h>
 
-#include "lv2-miditype.h"
+#include "lv2-midiport.h"
 
 
 /** This structure contains information about a MIDI port buffer, the 
@@ -73,33 +78,12 @@ static void lv2midi_reset_buffer(LV2_MIDI* midi)
 	midi->size = 0;
 }
 
+
 static void lv2midi_reset_state(LV2_MIDIState* state, LV2_MIDI* midi, uint32_t frame_count)
 {
 	state->midi = midi;
 	state->frame_count = frame_count;
 	state->position = 0;
-}
-
-
-/** This function advances the read/write position in @c state to the next 
-    event and returns its timestamp, or the @c frame_count member of @c state
-    is there are no more events. */
-static double lv2midi_increment(LV2_MIDIState* state) {
-
-  if (state->position + sizeof(double) + sizeof(size_t) >= state->midi->size) {
-    state->position = state->midi->size;
-    return state->frame_count;
-  }
-  
-  state->position += sizeof(double);
-  size_t size = *(size_t*)(state->midi->data + state->position);
-  state->position += sizeof(size_t);
-  state->position += size;
-  
-  if (state->position >= state->midi->size)
-    return state->frame_count;
-  
-  return *(double*)(state->midi->data + state->position);
 }
 
 
@@ -125,10 +109,32 @@ static double lv2midi_get_event(LV2_MIDIState* state,
   }
   
   *timestamp = *(double*)(state->midi->data + state->position);
-  *size = *(size_t*)(state->midi->data + state->position + sizeof(double));
+  *size = *(uint32_t*)(state->midi->data + state->position + sizeof(double));
   *data = state->midi->data + state->position + 
-    sizeof(double) + sizeof(size_t);
+    sizeof(double) + sizeof(uint32_t);
   return *timestamp;
+}
+
+
+/** This function advances the read/write position in @c state to the next 
+    event and returns its timestamp, or the @c frame_count member of @c state
+    is there are no more events. */
+static double lv2midi_step(LV2_MIDIState* state) {
+
+  if (state->position + sizeof(double) + sizeof(uint32_t) >= state->midi->size) {
+    state->position = state->midi->size;
+    return state->frame_count;
+  }
+  
+  state->position += sizeof(double);
+  uint32_t size = *(uint32_t*)(state->midi->data + state->position);
+  state->position += sizeof(uint32_t);
+  state->position += size;
+  
+  if (state->position >= state->midi->size)
+    return state->frame_count;
+  
+  return *(double*)(state->midi->data + state->position);
 }
 
 
@@ -142,14 +148,14 @@ static int lv2midi_put_event(LV2_MIDIState* state,
                              const unsigned char* data) {
 
   if (state->midi->capacity - state->midi->size < 
-      sizeof(double) + sizeof(size_t) + size)
+      sizeof(double) + sizeof(uint32_t) + size)
     return -1;
   
   *(double*)(state->midi->data + state->midi->size) = timestamp;
   state->midi->size += sizeof(double);
-  *(size_t*)(state->midi->data + state->midi->size) = size;
-  state->midi->size += sizeof(size_t);
-  memcpy(state->midi->data + state->midi->size, data, (size_t)size);
+  *(uint32_t*)(state->midi->data + state->midi->size) = size;
+  state->midi->size += sizeof(uint32_t);
+  memcpy(state->midi->data + state->midi->size, data, size);
   state->midi->size += size;
   
   ++state->midi->event_count;

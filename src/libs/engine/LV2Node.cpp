@@ -187,7 +187,7 @@ LV2Node::set_port_buffer(size_t voice, size_t port_num, Buffer* buf)
 	if (buf->type() == DataType::FLOAT)
 		slv2_instance_connect_port(_instances[voice], port_num, ((AudioBuffer*)buf)->data());
 	else if (buf->type() == DataType::MIDI)
-		slv2_instance_connect_port(_instances[voice], port_num, ((MidiBuffer*)buf)->data());
+		slv2_instance_connect_port(_instances[voice], port_num, ((MidiBuffer*)buf)->data()->midi);
 }
 
 

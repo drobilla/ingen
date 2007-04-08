@@ -18,7 +18,6 @@
 #ifndef MIDIBUFFER_H
 #define MIDIBUFFER_H
 
-#include <lv2ext/lv2-miditype.h>
 #include <lv2ext/lv2-midifunctions.h>
 #include "Buffer.h"
 #include "DataType.h"
@@ -30,15 +29,18 @@ class MidiBuffer : public Buffer {
 public:
 	MidiBuffer(size_t capacity)
 		: Buffer(DataType(DataType::MIDI), capacity)
-		, _state(&_local_state)
-		, _local_buf(lv2midi_new((uint32_t)capacity))
-		, _buf(_local_buf)
+		, _buf(lv2midi_new((uint32_t)capacity))
 		, _joined_buf(NULL)
 	{
+		_local_state.midi = _buf;
+		_state = &_local_state;
+		assert(_local_state.midi);
+		reset(0);
 		clear();
+		assert(_local_state.midi == _buf);
 	}
 
-	~MidiBuffer() { lv2midi_free(_buf); }
+	~MidiBuffer() { lv2midi_free(_local_state.midi); }
 
 	void prepare_read(SampleCount nframes);
 	void prepare_write(SampleCount nframes);
@@ -49,32 +51,31 @@ public:
 
 	uint32_t this_nframes() const { return _this_nframes; }
 	
-	inline LV2_MIDI* data() const
-		{ return ((_joined_buf != NULL) ? _joined_buf->data() : _buf); }
+	inline LV2_MIDIState* data()
+		{ return ((_joined_buf != NULL) ? _joined_buf->data() : _state); }
 	
-	inline LV2_MIDIState* state() const
-		{ return ((_joined_buf != NULL) ? _joined_buf->state() : _state); }
+	inline const LV2_MIDIState* data() const
+		{ return ((_joined_buf != NULL) ? _joined_buf->data() : _state); }
 
 	inline void clear()
-		{ lv2midi_reset_buffer(_buf); _state->position = 0; }
+		{ assert(_state); assert(_state->midi); lv2midi_reset_buffer(_state->midi); _state->position = 0; }
 
 	inline void reset(SampleCount nframes)
-		{ lv2midi_reset_state(_state, _buf, nframes); _this_nframes = nframes; }
+		{ assert(_state); assert(_state->midi); lv2midi_reset_state(_state, _state->midi, nframes); _this_nframes = nframes; }
 
 	inline double increment()
-		{ return lv2midi_increment(_state); }
+		{ assert(_state); assert(_state->midi); return lv2midi_step(_state); }
  
 	inline double get_event(double* timestamp, uint32_t* size, unsigned char** data)
-		{ return lv2midi_get_event(_state, timestamp, size, data); }
+		{ assert(_state); assert(_state->midi); return lv2midi_get_event(_state, timestamp, size, data); }
 
 	inline int put_event(double timestamp, uint32_t size, const unsigned char* data)
-		{ return lv2midi_put_event(_state, timestamp, size, data); }
+		{ assert(_state); assert(_state->midi); return lv2midi_put_event(_state, timestamp, size, data); }
 
 private:
-	LV2_MIDIState  _local_state;
-	LV2_MIDIState* _state;
-	LV2_MIDI*      _local_buf;
-	LV2_MIDI*      _buf;
+	LV2_MIDIState    _local_state;
+	LV2_MIDIState*   _state;
+	LV2_MIDI* const  _buf;
 	
 	MidiBuffer* _joined_buf;  ///< Buffer to mirror, if joined
 
