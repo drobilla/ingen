@@ -219,7 +219,11 @@ Serializer::serialize_patch(SharedPtr<PatchModel> patch, unsigned depth)
 
 	for (NodeModelMap::const_iterator n = patch->nodes().begin(); n != patch->nodes().end(); ++n) {
 		_writer.write(patch_id, NS_INGEN("node"), path_to_node_id(n->second->path()));
-		serialize_node(n->second, depth+1);
+		SharedPtr<PatchModel> patch = PtrCast<PatchModel>(n->second);
+		if (patch)
+			serialize_patch(patch, depth+1);
+		else
+			serialize_node(n->second, depth+1);
 	}
 	
 	for (PortModelList::const_iterator p = patch->ports().begin(); p != patch->ports().end(); ++p) {
