@@ -151,7 +151,11 @@ InputPort::pre_process(SampleCount nframes, FrameTime start, FrameTime end)
 
 	bool do_mixdown = true;
 	
-	if (_connections.size() == 0) return;
+	if (_connections.size() == 0) {
+		for (size_t i=0; i < _poly; ++i)
+			_buffers.at(i)->prepare_read(nframes);
+		return;
+	}
 
 	for (Connections::iterator c = _connections.begin(); c != _connections.end(); ++c)
 		(*c)->process(nframes, start, end);

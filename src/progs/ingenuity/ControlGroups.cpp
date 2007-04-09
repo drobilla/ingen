@@ -103,7 +103,7 @@ SliderControlGroup::init(ControlPanel* panel, SharedPtr<PortModel> pm, bool sepa
 	
 	const SharedPtr<NodeModel> parent = PtrCast<NodeModel>(pm->parent());
 
-	if (parent && parent->plugin()->type() == PluginModel::LV2) {
+	if (parent && parent->plugin() && parent->plugin()->type() == PluginModel::LV2) {
 		min = slv2_port_get_minimum_value(
 				parent->plugin()->slv2_plugin(),
 				slv2_port_by_symbol(pm->path().name().c_str()));
