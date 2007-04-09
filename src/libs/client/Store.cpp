@@ -447,16 +447,23 @@ Store::control_change_event(const Path& port_path, float value)
 SharedPtr<PatchModel>
 Store::connection_patch(const Path& src_port_path, const Path& dst_port_path)
 {
-	// Connection between patch ports
-	if (src_port_path.parent() == dst_port_path.parent()) {
-		SharedPtr<PatchModel> patch = PtrCast<PatchModel>(this->object(src_port_path.parent()));
-		if (patch)
-			return patch;
-	}
+	SharedPtr<PatchModel> patch;
 
-	// Normal connection
-	assert(src_port_path.parent().parent() == dst_port_path.parent().parent());
-	return PtrCast<PatchModel>(this->object(src_port_path.parent().parent()));
+	// Connection between patch ports
+	if (src_port_path.parent() == dst_port_path.parent())
+		patch = PtrCast<PatchModel>(this->object(src_port_path.parent()));
+	else if (src_port_path.parent() == dst_port_path.parent().parent())
+		patch = PtrCast<PatchModel>(this->object(src_port_path.parent()));
+	else if (src_port_path.parent().parent() == dst_port_path.parent())
+		patch = PtrCast<PatchModel>(this->object(dst_port_path.parent()));
+	else
+		patch = PtrCast<PatchModel>(this->object(src_port_path.parent().parent()));
+
+	if (!patch)
+		cerr << "ERROR: Unable to find connection patch " << src_port_path
+			<< " -> " << dst_port_path << endl;
+
+	return patch;
 }
 
 
