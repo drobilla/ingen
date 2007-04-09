@@ -15,12 +15,28 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-//#include <iostream>
+#include <iostream>
 #include "MidiBuffer.h"
 
 using namespace std;
 
 namespace Ingen {
+
+MidiBuffer::MidiBuffer(size_t capacity)
+	: Buffer(DataType(DataType::MIDI), capacity)
+	, _buf(lv2midi_new((uint32_t)capacity))
+	, _joined_buf(NULL)
+{
+	_local_state.midi = _buf;
+	_state = &_local_state;
+	assert(_local_state.midi);
+	reset(0);
+	clear();
+	assert(_local_state.midi == _buf);
+
+	cerr << "Creating MIDI Buffer " << _buf << ", capacity = " << _buf->capacity << endl;
+}
+
 
 
 /** Use another buffer's data instead of the local one.
@@ -38,7 +54,7 @@ MidiBuffer::join(Buffer* buf)
 	
 	_joined_buf = mbuf;
 	
-	_state = mbuf->data();
+	_state = mbuf->_state;
 
 	return true;
 }

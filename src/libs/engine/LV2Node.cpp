@@ -93,7 +93,9 @@ LV2Node::instantiate()
 		
 		SLV2PortClass port_class = slv2_port_get_class(_lv2_plugin, id);
 
-		if (port_class == SLV2_AUDIO_INPUT || port_class == SLV2_AUDIO_OUTPUT)
+		// FIXME: MIDI buffer size?
+		if (port_class == SLV2_AUDIO_INPUT || port_class == SLV2_AUDIO_OUTPUT
+				|| port_class == SLV2_MIDI_INPUT || port_class == SLV2_MIDI_OUTPUT)
 			port_buffer_size = _buffer_size;
 		else
 			port_buffer_size = 1;
@@ -184,10 +186,13 @@ LV2Node::set_port_buffer(size_t voice, size_t port_num, Buffer* buf)
 {
 	assert(voice < _poly);
 	
-	if (buf->type() == DataType::FLOAT)
+	if (buf->type() == DataType::FLOAT) {
 		slv2_instance_connect_port(_instances[voice], port_num, ((AudioBuffer*)buf)->data());
-	else if (buf->type() == DataType::MIDI)
-		slv2_instance_connect_port(_instances[voice], port_num, ((MidiBuffer*)buf)->data()->midi);
+	} else if (buf->type() == DataType::MIDI) { 
+		cerr << "Connecting " << path() << ":" << port_num << " -> " <<
+			((MidiBuffer*)buf)->data() << endl;
+		slv2_instance_connect_port(_instances[voice], port_num, ((MidiBuffer*)buf)->data());
+	}
 }
 
 

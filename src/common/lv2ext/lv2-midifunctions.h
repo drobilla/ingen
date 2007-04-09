@@ -52,7 +52,7 @@ typedef struct {
 } LV2_MIDIState;
 
 
-static LV2_MIDI* lv2midi_new(uint32_t capacity)
+inline static LV2_MIDI* lv2midi_new(uint32_t capacity)
 {
 	LV2_MIDI* midi = (LV2_MIDI*)malloc(sizeof(LV2_MIDI));
 

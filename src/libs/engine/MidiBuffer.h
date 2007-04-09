@@ -27,19 +27,8 @@ namespace Ingen {
 
 class MidiBuffer : public Buffer {
 public:
-	MidiBuffer(size_t capacity)
-		: Buffer(DataType(DataType::MIDI), capacity)
-		, _buf(lv2midi_new((uint32_t)capacity))
-		, _joined_buf(NULL)
-	{
-		_local_state.midi = _buf;
-		_state = &_local_state;
-		assert(_local_state.midi);
-		reset(0);
-		clear();
-		assert(_local_state.midi == _buf);
-	}
-
+	MidiBuffer(size_t capacity);
+	
 	~MidiBuffer() { lv2midi_free(_local_state.midi); }
 
 	void prepare_read(SampleCount nframes);
@@ -51,11 +40,11 @@ public:
 
 	uint32_t this_nframes() const { return _this_nframes; }
 	
-	inline LV2_MIDIState* data()
-		{ return ((_joined_buf != NULL) ? _joined_buf->data() : _state); }
+	inline LV2_MIDI* data()
+		{ return ((_joined_buf != NULL) ? _joined_buf->data() : _state->midi); }
 	
-	inline const LV2_MIDIState* data() const
-		{ return ((_joined_buf != NULL) ? _joined_buf->data() : _state); }
+	inline const LV2_MIDI* data() const
+		{ return ((_joined_buf != NULL) ? _joined_buf->data() : _state->midi); }
 
 	inline void clear()
 		{ assert(_state); assert(_state->midi); lv2midi_reset_buffer(_state->midi); _state->position = 0; }
