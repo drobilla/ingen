@@ -449,14 +449,16 @@ Store::connection_patch(const Path& src_port_path, const Path& dst_port_path)
 {
 	SharedPtr<PatchModel> patch;
 
-	// Connection between patch ports
 	if (src_port_path.parent() == dst_port_path.parent())
 		patch = PtrCast<PatchModel>(this->object(src_port_path.parent()));
-	else if (src_port_path.parent() == dst_port_path.parent().parent())
+	
+	if (!patch && src_port_path.parent() == dst_port_path.parent().parent())
 		patch = PtrCast<PatchModel>(this->object(src_port_path.parent()));
-	else if (src_port_path.parent().parent() == dst_port_path.parent())
+
+	if (!patch && src_port_path.parent().parent() == dst_port_path.parent())
 		patch = PtrCast<PatchModel>(this->object(dst_port_path.parent()));
-	else
+	
+	if (!patch)
 		patch = PtrCast<PatchModel>(this->object(src_port_path.parent().parent()));
 
 	if (!patch)
