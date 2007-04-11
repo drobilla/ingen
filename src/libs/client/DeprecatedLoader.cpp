@@ -149,21 +149,20 @@ DeprecatedLoader::add_metadata(MetadataMap& data, string old_key, string value)
  * is 0, it will be loaded from file.  Otherwise the given values will
  * be used.
  *
- * @param wait If true the patch will be checked for existence before
- * loading everything in to it (to prevent messing up existing patches
- * that exist at the path this one should load as).
- *
- * @param existing If true, the patch will be loaded into a currently
- * existing patch (ie a merging will take place).  Errors will result
- * if Nodes of conflicting names exist.
+ * @param filename Local name of file to load patch from
  *
  * @param parent_path Patch to load this patch as a child of (empty string to load
  * to the root patch)
  *
  * @param name Name of this patch (loaded/generated if the empty string)
+ * @param poly Polyphony of this patch (loaded/generated if 0)
  *
  * @param initial_data will be set last, so values passed there will override
  * any values loaded from the patch file.
+ *
+ * @param existing If true, the patch will be loaded into a currently
+ * existing patch (ie a merging will take place).  Errors will result
+ * if Nodes of conflicting names exist.
  *
  * Returns the path of the newly created patch.
  */

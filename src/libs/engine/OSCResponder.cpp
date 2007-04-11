@@ -62,7 +62,7 @@ OSCResponder::respond_ok()
 	 _addr = lo_address_new_from_url(_url);
 
 	//cerr << "OK  " << _id << endl;
-	if (lo_send(_addr, "/om/response", "iis", _id, 1, "") < 0) {
+	if (lo_send(_addr, "/ingen/response", "iis", _id, 1, "") < 0) {
 		cerr << "Unable to send response " << _id << "! ("
 			<< lo_address_errstr(_addr) << ")" << endl;
 	}
@@ -79,7 +79,7 @@ OSCResponder::respond_error(const string& msg)
 	_addr = lo_address_new_from_url(_url);
 
 	//cerr << "ERR " << _id << endl;
-	if (lo_send(_addr, "/om/response", "iis",_id, 0, msg.c_str()) < 0) {
+	if (lo_send(_addr, "/ingen/response", "iis",_id, 0, msg.c_str()) < 0) {
 		cerr << "Unable to send response " << _id << "! ("
 			<< lo_address_errstr(_addr) << endl;
 	}

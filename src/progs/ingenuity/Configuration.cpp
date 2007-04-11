@@ -37,7 +37,7 @@ using namespace Ingen::Client;
 
 
 Configuration::Configuration()
-: _patch_path("/usr/share/om/patches:/usr/local/share/om/patches"),
+: _patch_path("/usr/share/ingen/patches:/usr/local/share/ingen/patches"),
   _audio_port_color(  0x394f66B0),
   _control_port_color(0x396639B0),
   _midi_port_color(   0x663939B0)

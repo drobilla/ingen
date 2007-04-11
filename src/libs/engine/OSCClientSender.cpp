@@ -89,10 +89,15 @@ OSCClientSender::transfer_end()
  * \n\n
  */
 
+
+/** \page client_osc_namespace
+ * \n
+ * <h2>Control Band</h2>
+ */
 	
 
 /** \page client_osc_namespace
- * <p> \b /om/response - Respond to a user command
+ * <p> \b /ingen/response - Respond to a user command
  * \arg \b response-id (int) - Request ID this is a response to
  * \arg \b success (boolean int) - Whether response is affirmative or an error
  * \arg \b message (string) - Error message (natural language text)
@@ -104,7 +109,7 @@ OSCClientSender::response(int32_t id, bool success, string msg)
 	if (!_enabled)
 		return;
 
-	if (lo_send(_address, "/om/response", "iis", id, success ? 1 : 0, msg.c_str()) < 0) {
+	if (lo_send(_address, "/ingen/response", "iis", id, success ? 1 : 0, msg.c_str()) < 0) {
 		cerr << "Unable to send response " << id << "! ("
 			<< lo_address_errstr(_address) << ")" << endl;
 	}
@@ -113,13 +118,13 @@ OSCClientSender::response(int32_t id, bool success, string msg)
 
 /** \page client_osc_namespace
  * \n
- * <h3>Notification Band</h3>
+ * <h2>Notification Band</h2>
  */
 
+
 /** \page client_osc_namespace
- * <p> \b /om/error - Notification that an error has occurred
- * \arg \b message (string) - Error message (natural language text)
- * 
+ * <p> \b /ingen/error - Notification that an error has occurred
+ * \arg \b message (string) - Error message (natural language text) \n\n
  * \li This is for notification of errors that aren't a direct response to a
  * user command, ie "unexpected" errors.</p> \n \n
  */
@@ -129,23 +134,23 @@ OSCClientSender::error(string msg)
 	if (!_enabled)
 		return;
 
-	lo_send(_address, "/om/error", "s", msg.c_str());
+	lo_send(_address, "/ingen/error", "s", msg.c_str());
 }
 
 
 /** \page client_osc_namespace
- * <p> \b /om/num_plugins
- * \arg \b num (int) - Number of plugins engine has loaded
+ * <p> \b /ingen/num_plugins
+ * \arg \b num (int) - Number of plugins engine has loaded\n\n
  * \li This is sent before sending the list of plugins, so the client is aware
- * of how many plugins (/om/plugin messages) to expect.</p> \n \n
+ * of how many plugins (/ingen/plugin messages) to expect.</p> \n \n
  */
 
 
 /** \page client_osc_namespace
- * <p> \b /om/num_plugins
- * \arg \b num (int) - Number of plugins engine has loaded
+ * <p> \b /ingen/num_plugins
+ * \arg \b num (int) - Number of plugins engine has loaded\n\n
  * \li This is sent before sending the list of plugins, so the client is aware
- * of how many plugins (/om/plugin messages) to expect.</p> \n \n
+ * of how many plugins (/ingen/plugin messages) to expect.</p> \n \n
  */
 void
 OSCClientSender::num_plugins(uint32_t num)
@@ -155,12 +160,12 @@ OSCClientSender::num_plugins(uint32_t num)
 
 	lo_message m = lo_message_new();
 	lo_message_add_int32(m, num);
-	lo_send_message(_address, "/om/num_plugins", m);
+	lo_send_message(_address, "/ingen/num_plugins", m);
 }
 
 
 /** \page client_osc_namespace
- * <p> \b /om/plugin - Notification of the existance of a plugin
+ * <p> \b /ingen/plugin - Notification of the existance of a plugin
  * \arg \b type (string) - Type if plugin ("LADSPA", "DSSI", or "Internal")
  * \arg \b uri (string) - URI of the plugin (see engine namespace documentation) \n
  * \arg \b lib-name (string) - Name of shared library plugin resides in (ie "cmt.so")
@@ -184,7 +189,7 @@ OSCClientSender::plugins()
 	list<lo_message> msgs;
 
 	lo_message_add_int32(m, plugs.size());
-	lo_bundle_add_message(b, "/om/num_plugins", m);
+	lo_bundle_add_message(b, "/ingen/num_plugins", m);
 	msgs.push_back(m);
 
 	for (list<Plugin*>::const_iterator j = plugs.begin(); j != plugs.end(); ++j) {
@@ -195,7 +200,7 @@ OSCClientSender::plugins()
 		lo_message_add_string(m, plugin->uri().c_str());
 		lo_message_add_string(m, plugin->plug_label().c_str());
 		lo_message_add_string(m, plugin->name().c_str());
-		lo_bundle_add_message(b, "/om/plugin", m);
+		lo_bundle_add_message(b, "/ingen/plugin", m);
 		msgs.push_back(m);
 		if (lo_bundle_length(b) > 1024) {
 			lo_send_bundle(_address, b);
@@ -218,14 +223,14 @@ OSCClientSender::plugins()
 */
 
 /** \page client_osc_namespace
- * <p> \b /om/new_node - Notification of a new node's creation.
+ * <p> \b /ingen/new_node - Notification of a new node's creation.
  * \arg \b plug-uri (string) - URI of the plugin new node is an instance of
  * \arg \b path (string) - Path of the new node
  * \arg \b polyphonic (integer-boolean) - Node is polyphonic (1 = yes, 0 = no)
- * \arg \b num-ports (integer) - Number of ports (number of new_port messages to expect)
+ * \arg \b num-ports (integer) - Number of ports (number of new_port messages to expect)\n\n
  * \li New nodes are sent as a bundle.  The first message in the bundle will be
- * this one (/om/new_node), followed by a series of /om/new_port commands,
- * followed by /om/new_node_end. </p> \n \n
+ * this one (/ingen/new_node), followed by a series of /ingen/new_port commands,
+ * followed by /ingen/new_node_end. </p> \n \n
  */
 void OSCClientSender::new_node(string   plugin_uri,
                                string   node_path,
@@ -237,7 +242,7 @@ void OSCClientSender::new_node(string   plugin_uri,
 
 	//cerr << "Sending node " << node_path << endl;
 
-	lo_send(_address, "/om/new_node", "ssii", plugin_uri.c_str(),
+	lo_send(_address, "/ingen/new_node", "ssii", plugin_uri.c_str(),
 	        node_path.c_str(), is_polyphonic ? 1 : 0, num_ports);
 #if 0
 	/*
@@ -253,7 +258,7 @@ void OSCClientSender::new_node(string   plugin_uri,
 	lo_message_add_int32(m, is_polyphonic ? 1 : 0);
 	lo_message_add_int32(m, num_ports);
 
-	lo_bundle_add_message(b, "/om/new_node", m);
+	lo_bundle_add_message(b, "/ingen/new_node", m);
 	msgs.push_back(m);
 */
 
@@ -277,7 +282,7 @@ void OSCClientSender::new_node(string   plugin_uri,
 		lo_message_add_float(m, info->default_val());
 		lo_message_add_float(m, info->min_val());
 		lo_message_add_float(m, info->max_val());
-		lo_bundle_add_message(b, "/om/new_port", m);
+		lo_bundle_add_message(b, "/ingen/new_port", m);
 		msgs.push_back(m);
 		
 		// If the bundle is getting very large, send it and start
@@ -290,7 +295,7 @@ void OSCClientSender::new_node(string   plugin_uri,
 	}
 */
 	/*m = lo_message_new();
-	//lo_bundle_add_message(b, "/om/new_node_end", m);
+	//lo_bundle_add_message(b, "/ingen/new_node_end", m);
 	//msgs.push_back(m);
 
 	lo_send_bundle(_address, b);
@@ -329,7 +334,7 @@ void OSCClientSender::new_node(string   plugin_uri,
 
 
 /** \page client_osc_namespace
- * <p> \b /om/new_port - Notification of a new port's creation.
+ * <p> \b /ingen/new_port - Notification of a new port's creation.
  * \arg \b path (string) - Path of new port
  * \arg \b data-type (string) - Type of port (ingen:audio, ingen:control, or ingen:midi)
  * \arg \b direction ("is-output") (integer) - Direction of data flow (Input = 0, Output = 1)
@@ -352,7 +357,7 @@ OSCClientSender::new_port(string path,
 
 	//PortInfo* info = port->port_info();
 	
-	lo_send(_address, "/om/new_port", "ssi", path.c_str(), data_type.c_str(), is_output);
+	lo_send(_address, "/ingen/new_port", "ssi", path.c_str(), data_type.c_str(), is_output);
 	
 	// Send metadata
 	/*const map<string, string>& data = port->metadata();
@@ -362,7 +367,7 @@ OSCClientSender::new_port(string path,
 
 
 /** \page client_osc_namespace
- * <p> \b /om/destroyed - Notification an object has been destroyed
+ * <p> \b /ingen/destroyed - Notification an object has been destroyed
  * \arg \b path (string) - Path of object (which no longer exists) </p> \n \n
  */
 void
@@ -373,12 +378,12 @@ OSCClientSender::object_destroyed(string path)
 
 	assert(path != "/");
 	
-	lo_send(_address, "/om/destroyed", "s", path.c_str());
+	lo_send(_address, "/ingen/destroyed", "s", path.c_str());
 }
 
 
 /** \page client_osc_namespace
- * <p> \b /om/patch_cleared - Notification a patch has been cleared (all children destroyed)
+ * <p> \b /ingen/patch_cleared - Notification a patch has been cleared (all children destroyed)
  * \arg \b path (string) - Path of patch (which is now empty)</p> \n \n
  */
 void
@@ -387,12 +392,12 @@ OSCClientSender::patch_cleared(string patch_path)
 	if (!_enabled)
 		return;
 
-	lo_send(_address, "/om/patch_cleared", "s", patch_path.c_str());
+	lo_send(_address, "/ingen/patch_cleared", "s", patch_path.c_str());
 }
 
 
 /** \page client_osc_namespace
- * <p> \b /om/patch_enabled - Notification a patch's DSP processing has been enabled.
+ * <p> \b /ingen/patch_enabled - Notification a patch's DSP processing has been enabled.
  * \arg \b path (string) - Path of enabled patch</p> \n \n
  */
 void
@@ -401,12 +406,12 @@ OSCClientSender::patch_enabled(string patch_path)
 	if (!_enabled)
 		return;
 
-	lo_send(_address, "/om/patch_enabled", "s", patch_path.c_str());
+	lo_send(_address, "/ingen/patch_enabled", "s", patch_path.c_str());
 }
 
 
 /** \page client_osc_namespace
- * <p> \b /om/patch_disabled - Notification a patch's DSP processing has been disabled.
+ * <p> \b /ingen/patch_disabled - Notification a patch's DSP processing has been disabled.
  * \arg \b path (string) - Path of disabled patch</p> \n \n
  */
 void
@@ -415,12 +420,12 @@ OSCClientSender::patch_disabled(string patch_path)
 	if (!_enabled)
 		return;
 
-	lo_send(_address, "/om/patch_disabled", "s", patch_path.c_str());
+	lo_send(_address, "/ingen/patch_disabled", "s", patch_path.c_str());
 }
 
 
 /** \page client_osc_namespace
- * <p> \b /om/new_connection - Notification a new connection has been made.
+ * <p> \b /ingen/new_connection - Notification a new connection has been made.
  * \arg \b src-path (string) - Path of the source port
  * \arg \b dst-path (string) - Path of the destination port</p> \n \n
  */
@@ -430,12 +435,12 @@ OSCClientSender::connection(string src_port_path, string dst_port_path)
 	if (!_enabled)
 		return;
 
-	lo_send(_address, "/om/new_connection", "ss", src_port_path.c_str(), dst_port_path.c_str());
+	lo_send(_address, "/ingen/new_connection", "ss", src_port_path.c_str(), dst_port_path.c_str());
 }
 
 
 /** \page client_osc_namespace
- * <p> \b /om/disconnection - Notification a connection has been unmade.
+ * <p> \b /ingen/disconnection - Notification a connection has been unmade.
  * \arg \b src-path (string) - Path of the source port
  * \arg \b dst-path (string) - Path of the destination port</p> \n \n
  */
@@ -445,12 +450,12 @@ OSCClientSender::disconnection(string src_port_path, string dst_port_path)
 	if (!_enabled)
 		return;
 
-	lo_send(_address, "/om/disconnection", "ss", src_port_path.c_str(), dst_port_path.c_str());
+	lo_send(_address, "/ingen/disconnection", "ss", src_port_path.c_str(), dst_port_path.c_str());
 }
 
 
 /** \page client_osc_namespace
- * <p> \b /om/metadata/update - Notification of a piece of metadata.
+ * <p> \b /ingen/metadata_update - Notification of a piece of metadata.
  * \arg \b path (string) - Path of the object associated with metadata (can be a node, patch, or port)
  * \arg \b key (string)
  * \arg \b value (string)</p> \n \n
@@ -465,12 +470,12 @@ OSCClientSender::metadata_update(string path, string key, Atom value)
 	lo_message_add_string(m, path.c_str());
 	lo_message_add_string(m, key.c_str());
 	Raul::AtomLiblo::lo_message_add_atom(m, value);
-	lo_send_message(_address, "/om/metadata/update", m);
+	lo_send_message(_address, "/ingen/metadata_update", m);
 }
 
 
 /** \page client_osc_namespace
- * <p> \b /om/control_change - Notification the value of a port has changed
+ * <p> \b /ingen/control_change - Notification the value of a port has changed
  * \arg \b path (string) - Path of port
  * \arg \b value (float) - New value of port
  *
@@ -483,14 +488,14 @@ OSCClientSender::control_change(string port_path, float value)
 	if (!_enabled)
 		return;
 
-	lo_send(_address, "/om/control_change", "sf", port_path.c_str(), value);
+	lo_send(_address, "/ingen/control_change", "sf", port_path.c_str(), value);
 }
 
 
 /** \page client_osc_namespace
- * <p> \b /om/plugin - Notification of the existance of a plugin
- * \arg \b type (string) - Type if plugin ("LADSPA", "DSSI", or "Internal")</p> \n \n
- * \arg \b uri (string) - Type if plugin ("LADSPA", "DSSI", or "Internal")</p> \n \n
+ * <p> \b /ingen/plugin - Notification of the existance of a plugin
+ * \arg \b type (string) - Type of plugin ("LADSPA", "DSSI", or "Internal")
+ * \arg \b uri (string) - Type of plugin ("LADSPA", "DSSI", or "Internal")
  * \arg \b name (string) - Descriptive human-readable name of plugin (ie "ADSR Envelope")
  */
 void
@@ -505,14 +510,14 @@ OSCClientSender::new_plugin(string uri, string type_uri, string name)
 	lo_message_add_string(m, name.c_str());
 
 	//if (_transfer)
-	//	lo_bundle_add_message(_transfer, "/om/plugin", m);
+	//	lo_bundle_add_message(_transfer, "/ingen/plugin", m);
 	//else
-		lo_send_message(_address, "/om/plugin", m);
+		lo_send_message(_address, "/ingen/plugin", m);
 }
 
 
 /** \page client_osc_namespace
- * <p> \b /om/new_patch - Notification of a new patch
+ * <p> \b /ingen/new_patch - Notification of a new patch
  * \arg \b path (string) - Path of new patch
  * \arg \b poly (int) - Polyphony of new patch (\em not a boolean like new_node) </p> \n \n
  */
@@ -522,7 +527,7 @@ OSCClientSender::new_patch(string path, uint32_t poly)
 	if (!_enabled)
 		return;
 
-	lo_send(_address, "/om/new_patch", "si", path.c_str(), poly);
+	lo_send(_address, "/ingen/new_patch", "si", path.c_str(), poly);
 	
 	/*
 	if (p->process())
@@ -538,7 +543,7 @@ OSCClientSender::new_patch(string path, uint32_t poly)
 
 
 /** \page client_osc_namespace
- * <p> \b /om/object_renamed - Notification of an object's renaming
+ * <p> \b /ingen/object_renamed - Notification of an object's renaming
  * \arg \b old-path (string) - Old path of object
  * \arg \b new-path (string) - New path of object </p> \n \n
  */
@@ -548,7 +553,7 @@ OSCClientSender::object_renamed(string old_path, string new_path)
 	if (!_enabled)
 		return;
 
-	lo_send(_address, "/om/object_renamed", "ss", old_path.c_str(), new_path.c_str());
+	lo_send(_address, "/ingen/object_renamed", "ss", old_path.c_str(), new_path.c_str());
 }
 
 
@@ -560,7 +565,7 @@ OSCClientSender::program_add(string node_path, uint32_t bank, uint32_t program, 
 	if (!_enabled)
 		return;
 
-	lo_send(_address, "/om/program_add", "siis", 
+	lo_send(_address, "/ingen/program_add", "siis", 
 		node_path.c_str(), bank, program, name.c_str());
 }
 
@@ -571,7 +576,7 @@ OSCClientSender::program_remove(string node_path, uint32_t bank, uint32_t progra
 	if (!_enabled)
 		return;
 
-	lo_send(_address, "/om/program_remove", "sii", 
+	lo_send(_address, "/ingen/program_remove", "sii", 
 		node_path.c_str(), bank, program);
 }
 

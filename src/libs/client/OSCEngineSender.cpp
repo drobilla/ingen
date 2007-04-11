@@ -112,7 +112,7 @@ OSCEngineSender::register_client(ClientKey key, SharedPtr<ClientInterface> clien
 {
 	// FIXME: use parameters.. er, somehow.
 	assert(_engine_addr);
-	lo_send(_engine_addr, "/om/engine/register_client", "i", next_id());
+	lo_send(_engine_addr, "/ingen/register_client", "i", next_id());
 }
 
 
@@ -120,7 +120,7 @@ void
 OSCEngineSender::unregister_client(ClientKey key)
 {
 	assert(_engine_addr);
-	lo_send(_engine_addr, "/om/engine/unregister_client", "i", next_id());
+	lo_send(_engine_addr, "/ingen/unregister_client", "i", next_id());
 }
 
 
@@ -130,7 +130,7 @@ void
 OSCEngineSender::load_plugins()
 {
 	assert(_engine_addr);
-	lo_send(_engine_addr, "/om/engine/load_plugins", "i", next_id());
+	lo_send(_engine_addr, "/ingen/load_plugins", "i", next_id());
 }
 
 
@@ -138,7 +138,7 @@ void
 OSCEngineSender::activate()    
 {
 	assert(_engine_addr);
-	lo_send(_engine_addr, "/om/engine/activate", "i", next_id());
+	lo_send(_engine_addr, "/ingen/activate", "i", next_id());
 }
 
 
@@ -146,7 +146,7 @@ void
 OSCEngineSender::deactivate()  
 {
 	assert(_engine_addr);
-	lo_send(_engine_addr, "/om/engine/deactivate", "i", next_id());
+	lo_send(_engine_addr, "/ingen/deactivate", "i", next_id());
 }
 
 
@@ -154,7 +154,7 @@ void
 OSCEngineSender::quit()        
 {
 	assert(_engine_addr);
-	lo_send(_engine_addr, "/om/engine/quit", "i", next_id());
+	lo_send(_engine_addr, "/ingen/quit", "i", next_id());
 }
 
 
@@ -166,7 +166,7 @@ OSCEngineSender::create_patch(const string& path,
                               uint32_t      poly)
 {
 	assert(_engine_addr);
-	lo_send(_engine_addr, "/om/synth/create_patch", "isi",
+	lo_send(_engine_addr, "/ingen/create_patch", "isi",
 		next_id(),
 		path.c_str(),
 		poly);
@@ -179,7 +179,7 @@ OSCEngineSender::create_port(const string& path,
                              bool          is_output)
 {
 	assert(_engine_addr);
-	lo_send(_engine_addr, "/om/synth/create_port",  "issi",
+	lo_send(_engine_addr, "/ingen/create_port",  "issi",
 		next_id(),
 		path.c_str(),
 		data_type.c_str(),
@@ -193,7 +193,7 @@ OSCEngineSender::create_node(const string& path,
                              bool          polyphonic)
 {
 	assert(_engine_addr);
-	lo_send(_engine_addr, "/om/synth/create_node",  "issi",
+	lo_send(_engine_addr, "/ingen/create_node",  "issi",
 		next_id(),
 		path.c_str(),
 		plugin_uri.c_str(),
@@ -213,7 +213,7 @@ OSCEngineSender::create_node(const string& path,
                              bool          polyphonic)
 {
 	assert(_engine_addr);
-	lo_send(_engine_addr, "/om/synth/create_node",  "issssi",
+	lo_send(_engine_addr, "/ingen/create_node",  "issssi",
 		next_id(),
 		path.c_str(),
 		plugin_type.c_str(),
@@ -228,7 +228,7 @@ OSCEngineSender::rename(const string& old_path,
                         const string& new_name)
 {
 	assert(_engine_addr);
-	lo_send(_engine_addr, "/om/synth/rename", "iss",
+	lo_send(_engine_addr, "/ingen/rename", "iss",
 		next_id(),
 		old_path.c_str(),
 		new_name.c_str());
@@ -239,7 +239,7 @@ void
 OSCEngineSender::destroy(const string& path)
 {
 	assert(_engine_addr);
-	lo_send(_engine_addr, "/om/synth/destroy", "is",
+	lo_send(_engine_addr, "/ingen/destroy", "is",
 		next_id(),
 		path.c_str());
 }
@@ -249,7 +249,7 @@ void
 OSCEngineSender::clear_patch(const string& patch_path)
 {
 	assert(_engine_addr);
-	lo_send(_engine_addr, "/om/synth/clear_patch", "is",
+	lo_send(_engine_addr, "/ingen/clear_patch", "is",
 		next_id(),
 		patch_path.c_str());
 }
@@ -259,7 +259,7 @@ void
 OSCEngineSender::enable_patch(const string& patch_path)
 {
 	assert(_engine_addr);
-	lo_send(_engine_addr, "/om/synth/enable_patch", "is",
+	lo_send(_engine_addr, "/ingen/enable_patch", "is",
 		next_id(),
 		patch_path.c_str());
 }
@@ -269,7 +269,7 @@ void
 OSCEngineSender::disable_patch(const string& patch_path)
 {
 	assert(_engine_addr);
-	lo_send(_engine_addr, "/om/synth/disable_patch", "is",
+	lo_send(_engine_addr, "/ingen/disable_patch", "is",
 		next_id(),
 		patch_path.c_str());
 }
@@ -280,7 +280,7 @@ OSCEngineSender::connect(const string& src_port_path,
                          const string& dst_port_path)
 {
 	assert(_engine_addr);
-	lo_send(_engine_addr, "/om/synth/connect", "iss",
+	lo_send(_engine_addr, "/ingen/connect", "iss",
 		next_id(),
 		src_port_path.c_str(),
 		dst_port_path.c_str());
@@ -292,7 +292,7 @@ OSCEngineSender::disconnect(const string& src_port_path,
                             const string& dst_port_path)
 {
 	assert(_engine_addr);
-	lo_send(_engine_addr, "/om/synth/disconnect", "iss",
+	lo_send(_engine_addr, "/ingen/disconnect", "iss",
 		next_id(),
 		src_port_path.c_str(),
 		dst_port_path.c_str());
@@ -303,7 +303,7 @@ void
 OSCEngineSender::disconnect_all(const string& node_path)
 {
 	assert(_engine_addr);
-	lo_send(_engine_addr, "/om/synth/disconnect_all", "is",
+	lo_send(_engine_addr, "/ingen/disconnect_all", "is",
 		next_id(),
 		node_path.c_str());
 }
@@ -314,7 +314,7 @@ OSCEngineSender::set_port_value(const string& port_path,
                                 float         val)
 {
 	assert(_engine_addr);
-	lo_send(_engine_addr, "/om/synth/set_port_value", "isf",
+	lo_send(_engine_addr, "/ingen/set_port_value", "isf",
 		next_id(),
 		port_path.c_str(),
 		val);
@@ -327,7 +327,7 @@ OSCEngineSender::set_port_value(const string& port_path,
                                 float         val)
 {
 	assert(_engine_addr);
-	lo_send(_engine_addr, "/om/synth/set_port_value", "isif",
+	lo_send(_engine_addr, "/ingen/set_port_value", "isif",
 		next_id(),
 		port_path.c_str(),
 		voice,
@@ -340,7 +340,7 @@ OSCEngineSender::set_port_value_queued(const string& port_path,
                                        float         val)
 {
 	assert(_engine_addr);
-	lo_send(_engine_addr, "/om/synth/set_port_value_queued", "isf",
+	lo_send(_engine_addr, "/ingen/set_port_value_queued", "isf",
 		next_id(),
 		port_path.c_str(),
 		val);
@@ -365,7 +365,7 @@ void
 OSCEngineSender::midi_learn(const string& node_path)
 {
 	assert(_engine_addr);
-	lo_send(_engine_addr, "/om/synth/midi_learn", "is",
+	lo_send(_engine_addr, "/ingen/midi_learn", "is",
 		next_id(),
 		node_path.c_str());
 }
@@ -383,7 +383,7 @@ OSCEngineSender::set_metadata(const string&     obj_path,
 	lo_message_add_string(m, obj_path.c_str());
 	lo_message_add_string(m, predicate.c_str());
 	Raul::AtomLiblo::lo_message_add_atom(m, value);
-	lo_send_message(_engine_addr, "/om/metadata/set", m);
+	lo_send_message(_engine_addr, "/ingen/set_metadata", m);
 }
 
 
@@ -393,7 +393,7 @@ void
 OSCEngineSender::ping()
 {
 	assert(_engine_addr);
-	lo_send(_engine_addr, "/om/ping", "i", next_id());
+	lo_send(_engine_addr, "/ingen/ping", "i", next_id());
 }
 
 
@@ -401,7 +401,7 @@ void
 OSCEngineSender::request_plugin(const string& uri)
 {
 	assert(_engine_addr);
-	lo_send(_engine_addr, "/om/request/plugin", "is",
+	lo_send(_engine_addr, "/ingen/request_plugin", "is",
 		next_id(),
 		uri.c_str());
 }
@@ -411,7 +411,7 @@ void
 OSCEngineSender::request_object(const string& path)
 {
 	assert(_engine_addr);
-	lo_send(_engine_addr, "/om/request/object", "is",
+	lo_send(_engine_addr, "/ingen/request_object", "is",
 		next_id(),
 		path.c_str());
 }
@@ -421,7 +421,7 @@ void
 OSCEngineSender::request_port_value(const string& port_path)
 {
 	assert(_engine_addr);
-	lo_send(_engine_addr, "/om/request/port_value", "is",
+	lo_send(_engine_addr, "/ingen/request_port_value", "is",
 		next_id(),
 		port_path.c_str());
 }
@@ -431,7 +431,7 @@ void
 OSCEngineSender::request_plugins()
 {
 	assert(_engine_addr);
-	lo_send(_engine_addr, "/om/request/plugins", "i", next_id());
+	lo_send(_engine_addr, "/ingen/request_plugins", "i", next_id());
 }
 
 
@@ -439,7 +439,7 @@ void
 OSCEngineSender::request_all_objects()
 {
 	assert(_engine_addr);
-	lo_send(_engine_addr, "/om/request/all_objects", "i", next_id());
+	lo_send(_engine_addr, "/ingen/request_all_objects", "i", next_id());
 }
 
 

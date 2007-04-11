@@ -113,9 +113,6 @@ private:
 #ifdef HAVE_DSSI
 	LO_HANDLER(dssi);
 #endif
-#ifdef HAVE_LASH
-	LO_HANDLER(lash_restore_done);
-#endif	
 
 	const char* const _port;
 	lo_server         _server;

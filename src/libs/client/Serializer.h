@@ -61,20 +61,6 @@ class Serializer
 public:
 	Serializer();
 
-	//void          path(const string& path) { _patch_search_path = path; }
-	//const string& path()                   { return _patch_search_path; }
-	
-	//string find_file(const string& filename, const string& additional_path = "");
-	
-	/*bool load_patch(bool                    merge,
-	                const string&           data_base_uri,
-	                const Path&             data_path,
-	                MetadataMap             engine_data,
-	                optional<const Path&>   engine_parent = optional<const Path&>(),
-	                optional<const string&> engine_name = optional<const string&>(),
-	                optional<size_t>        engine_poly = optional<size_t>());
-	*/
-	
 	void   start_to_filename(const string& filename)          throw (std::logic_error);
 	void   start_to_string()                                  throw (std::logic_error);
 	void   serialize(SharedPtr<ObjectModel> object)           throw (std::logic_error);

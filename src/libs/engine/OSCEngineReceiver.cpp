@@ -44,7 +44,7 @@ using Shared::ClientKey;
  *
  * <p>All commands on this page are in the "control band".  If a client needs to
  * know about the state of the engine, it must listen to the "notification band".
- * See the "Client OSC Namespace Documentation" for details.
+ * See the "Client OSC Namespace Documentation" for details.</p>\n\n
  */
 
 
@@ -74,47 +74,43 @@ OSCEngineReceiver::OSCEngineReceiver(SharedPtr<Engine> engine, size_t queue_size
 	lo_server_add_method(_server, NULL, NULL, set_response_address_cb, this);
 	
 	// Commands
-	lo_server_add_method(_server, "/om/ping", "i", ping_cb, this);
-	lo_server_add_method(_server, "/om/ping_slow", "i", ping_slow_cb, this);
-	lo_server_add_method(_server, "/om/engine/quit", "i", quit_cb, this);
-	//lo_server_add_method(_server, "/om/engine/register_client", "is", register_client_cb, this);
-	lo_server_add_method(_server, "/om/engine/register_client", "i", register_client_cb, this);
-	lo_server_add_method(_server, "/om/engine/unregister_client", "i", unregister_client_cb, this);
-	lo_server_add_method(_server, "/om/engine/load_plugins", "i", load_plugins_cb, this);
-	lo_server_add_method(_server, "/om/engine/activate", "i", engine_activate_cb, this);
-	lo_server_add_method(_server, "/om/engine/deactivate", "i", engine_deactivate_cb, this);
-	lo_server_add_method(_server, "/om/synth/create_patch", "isi", create_patch_cb, this);
-	lo_server_add_method(_server, "/om/synth/enable_patch", "is", enable_patch_cb, this);
-	lo_server_add_method(_server, "/om/synth/disable_patch", "is", disable_patch_cb, this);
-	lo_server_add_method(_server, "/om/synth/clear_patch", "is", clear_patch_cb, this);
-	lo_server_add_method(_server, "/om/synth/create_port", "issi", create_port_cb, this);
-	lo_server_add_method(_server, "/om/synth/create_node", "issssi", create_node_cb, this);
-	lo_server_add_method(_server, "/om/synth/create_node", "issi", create_node_by_uri_cb, this);
-	lo_server_add_method(_server, "/om/synth/destroy", "is", destroy_cb, this);
-	lo_server_add_method(_server, "/om/synth/rename", "iss", rename_cb, this);
-	lo_server_add_method(_server, "/om/synth/connect", "iss", connect_cb, this);
-	lo_server_add_method(_server, "/om/synth/disconnect", "iss", disconnect_cb, this);
-	lo_server_add_method(_server, "/om/synth/disconnect_all", "is", disconnect_all_cb, this);
-	lo_server_add_method(_server, "/om/synth/set_port_value", "isf", set_port_value_cb, this);
-	lo_server_add_method(_server, "/om/synth/set_port_value", "isif", set_port_value_voice_cb, this);
-	lo_server_add_method(_server, "/om/synth/set_port_value_slow", "isf", set_port_value_slow_cb, this);
-	lo_server_add_method(_server, "/om/synth/note_on", "isii", note_on_cb, this);
-	lo_server_add_method(_server, "/om/synth/note_off", "isi", note_off_cb, this);
-	lo_server_add_method(_server, "/om/synth/all_notes_off", "isi", all_notes_off_cb, this);
-	lo_server_add_method(_server, "/om/synth/midi_learn", "is", midi_learn_cb, this);
-#ifdef HAVE_LASH
-	lo_server_add_method(_server, "/om/lash/restore_finished", "i", lash_restore_done_cb, this);
-#endif
-	
-	lo_server_add_method(_server, "/om/metadata/request", "isss", metadata_get_cb, this);
-	lo_server_add_method(_server, "/om/metadata/set", NULL, metadata_set_cb, this);
-	
+	lo_server_add_method(_server, "/ingen/ping", "i", ping_cb, this);
+	lo_server_add_method(_server, "/ingen/ping_queued", "i", ping_slow_cb, this);
+	lo_server_add_method(_server, "/ingen/quit", "i", quit_cb, this);
+	//lo_server_add_method(_server, "/ingen/register_client", "is", register_client_cb, this);
+	lo_server_add_method(_server, "/ingen/register_client", "i", register_client_cb, this);
+	lo_server_add_method(_server, "/ingen/unregister_client", "i", unregister_client_cb, this);
+	lo_server_add_method(_server, "/ingen/load_plugins", "i", load_plugins_cb, this);
+	lo_server_add_method(_server, "/ingen/activate", "i", engine_activate_cb, this);
+	lo_server_add_method(_server, "/ingen/deactivate", "i", engine_deactivate_cb, this);
+	lo_server_add_method(_server, "/ingen/create_patch", "isi", create_patch_cb, this);
+	lo_server_add_method(_server, "/ingen/enable_patch", "is", enable_patch_cb, this);
+	lo_server_add_method(_server, "/ingen/disable_patch", "is", disable_patch_cb, this);
+	lo_server_add_method(_server, "/ingen/clear_patch", "is", clear_patch_cb, this);
+	lo_server_add_method(_server, "/ingen/create_port", "issi", create_port_cb, this);
+	lo_server_add_method(_server, "/ingen/create_node", "issssi", create_node_cb, this);
+	lo_server_add_method(_server, "/ingen/create_node", "issi", create_node_by_uri_cb, this);
+	lo_server_add_method(_server, "/ingen/destroy", "is", destroy_cb, this);
+	lo_server_add_method(_server, "/ingen/rename", "iss", rename_cb, this);
+	lo_server_add_method(_server, "/ingen/connect", "iss", connect_cb, this);
+	lo_server_add_method(_server, "/ingen/disconnect", "iss", disconnect_cb, this);
+	lo_server_add_method(_server, "/ingen/disconnect_all", "is", disconnect_all_cb, this);
+	lo_server_add_method(_server, "/ingen/set_port_value", "isf", set_port_value_cb, this);
+	lo_server_add_method(_server, "/ingen/set_port_value", "isif", set_port_value_voice_cb, this);
+	lo_server_add_method(_server, "/ingen/set_port_value_queued", "isf", set_port_value_slow_cb, this);
+	lo_server_add_method(_server, "/ingen/note_on", "isii", note_on_cb, this);
+	lo_server_add_method(_server, "/ingen/note_off", "isi", note_off_cb, this);
+	lo_server_add_method(_server, "/ingen/all_notes_off", "isi", all_notes_off_cb, this);
+	lo_server_add_method(_server, "/ingen/midi_learn", "is", midi_learn_cb, this);
+	lo_server_add_method(_server, "/ingen/set_metadata", NULL, metadata_set_cb, this);
+
 	// Queries
-	lo_server_add_method(_server, "/om/request/plugin", "is", request_plugin_cb, this);
-	lo_server_add_method(_server, "/om/request/object", "is", request_object_cb, this);
-	lo_server_add_method(_server, "/om/request/port_value", "is", request_port_value_cb, this);
-	lo_server_add_method(_server, "/om/request/plugins", "i", request_plugins_cb, this);
-	lo_server_add_method(_server, "/om/request/all_objects", "i", request_all_objects_cb, this);
+	lo_server_add_method(_server, "/ingen/request_metadata", "iss", metadata_get_cb, this);
+	lo_server_add_method(_server, "/ingen/request_plugin", "is", request_plugin_cb, this);
+	lo_server_add_method(_server, "/ingen/request_object", "is", request_object_cb, this);
+	lo_server_add_method(_server, "/ingen/request_port_value", "is", request_port_value_cb, this);
+	lo_server_add_method(_server, "/ingen/request_plugins", "i", request_plugins_cb, this);
+	lo_server_add_method(_server, "/ingen/request_all_objects", "i", request_all_objects_cb, this);
 
 	
 	// DSSI support
@@ -274,7 +270,7 @@ OSCEngineReceiver::error_cb(int num, const char* msg, const char* path)
 
 
 /** \page engine_osc_namespace
- * <p> \b /om/ping - Immediately sends a successful response to the given response id.
+ * <p> \b /ingen/ping - Immediately sends a successful response to the given response id.
  * \arg \b response-id (integer) </p> \n \n
  */
 int
@@ -286,11 +282,11 @@ OSCEngineReceiver::_ping_cb(const char* path, const char* types, lo_arg** argv, 
 
 
 /** \page engine_osc_namespace
- * <p> \b /om/ping_slow - Sends response after going through the ("slow") event queue.
+ * <p> \b /ingen/ping_queued - Sends response after going through the event queue.
  * \arg \b response-id (integer)
  *
- * \li See the documentation for /om/synth/set_port_value_slow for an explanation of how
- * this differs from /om/ping.  This is useful to send after sending a large cluster of
+ * \li See the documentation for /ingen/set_port_value_queued for an explanation of how
+ * this differs from /ingen/ping.  This is useful to send after sending a large cluster of
  * events as a sentinel and wait on it's response, to know when the events are all
  * finished processing.</p> \n \n
  */
@@ -303,7 +299,7 @@ OSCEngineReceiver::_ping_slow_cb(const char* path, const char* types, lo_arg** a
 
 
 /** \page engine_osc_namespace
- * <p> \b /om/engine/quit - Terminates the engine.
+ * <p> \b /ingen/quit - Terminates the engine.
  * \arg \b response-id (integer)
  *
  * \li Note that there is NO order guarantees with this command at all.  You could
@@ -313,22 +309,20 @@ OSCEngineReceiver::_ping_slow_cb(const char* path, const char* types, lo_arg** a
 int
 OSCEngineReceiver::_quit_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-
 	quit();
 	return 0;
 }
 
 /** \page engine_osc_namespace
- * <p> \b /om/engine/register_client - Registers a new client with the engine
- * \arg \b response-id (integer)
- *
- * The incoming address will be used for the new registered client.  If you
- * want to register a different specific address, use the URL version.
+ * <p> \b /ingen/register_client - Registers a new client with the engine
+ * \arg \b response-id (integer) \n\n
+ * \li The incoming address will be used for the new registered client.  If you
+ * want to register a different specific address, use the URL version. </p> \n \n
  */
 int
 OSCEngineReceiver::_register_client_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	lo_address        addr         = lo_message_get_source(msg);
+	lo_address addr = lo_message_get_source(msg);
 
 	char* const url = lo_address_get_url(addr);
 	SharedPtr<ClientInterface> client(new OSCClientSender((const char*)url));
@@ -340,13 +334,13 @@ OSCEngineReceiver::_register_client_cb(const char* path, const char* types, lo_a
 
 
 /** \page engine_osc_namespace
- * <p> \b /om/engine/unregister_client - Unregisters a client
+ * <p> \b /ingen/unregister_client - Unregisters a client
  * \arg \b response-id (integer) </p> \n \n
  */
 int
 OSCEngineReceiver::_unregister_client_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	lo_address        addr         = lo_message_get_source(msg);
+	lo_address addr = lo_message_get_source(msg);
 
 	char* url = lo_address_get_url(addr);
 	unregister_client(ClientKey(ClientKey::OSC_URL, url));
@@ -357,7 +351,7 @@ OSCEngineReceiver::_unregister_client_cb(const char* path, const char* types, lo
 
 
 /** \page engine_osc_namespace
- * <p> \b /om/engine/load_plugins - Locates all available plugins, making them available for use.
+ * <p> \b /ingen/load_plugins - Locates all available plugins, making them available for use.
  * \arg \b response-id (integer) </p> \n \n
  */
 int
@@ -369,7 +363,7 @@ OSCEngineReceiver::_load_plugins_cb(const char* path, const char* types, lo_arg*
 
 
 /** \page engine_osc_namespace
- * <p> \b /om/engine/activate - Activate the engine (MIDI, audio, everything)
+ * <p> \b /ingen/activate - Activate the engine (MIDI, audio, everything)
  * \arg \b response-id (integer) </p>
  *
  * \li Note that you <b>must</b> send this message first if you want the engine to do
@@ -384,7 +378,7 @@ OSCEngineReceiver::_engine_activate_cb(const char* path, const char* types, lo_a
 
 
 /** \page engine_osc_namespace
- * <p> \b /om/engine/deactivate - Deactivate the engine completely.
+ * <p> \b /ingen/deactivate - Deactivate the engine completely.
  * \arg \b response-id (integer) </p> \n \n
  */
 int
@@ -396,7 +390,7 @@ OSCEngineReceiver::_engine_deactivate_cb(const char* path, const char* types, lo
 
 
 /** \page engine_osc_namespace
- * <p> \b /om/synth/create_patch - Creates a new, empty, toplevel patch.
+ * <p> \b /ingen/create_patch - Creates a new, empty, toplevel patch.
  * \arg \b response-id  (integer)
  * \arg \b patch-path  (string) - Patch path (complete, ie /master/parent/new_patch)
  * \arg \b poly        (integer) - Patch's (internal) polyphony </p> \n \n
@@ -413,7 +407,7 @@ OSCEngineReceiver::_create_patch_cb(const char* path, const char* types, lo_arg*
 
 
 /** \page engine_osc_namespace
- * <p> \b /om/synth/rename - Rename an Object (only Nodes, for now)
+ * <p> \b /ingen/rename - Rename an Object (only Nodes, for now)
  * \arg \b response-id (integer)
  * \arg \b path - Object's path
  * \arg \b name - New name for object </p> \n \n
@@ -430,9 +424,9 @@ OSCEngineReceiver::_rename_cb(const char* path, const char* types, lo_arg** argv
 
 
 /** \page engine_osc_namespace
- * <p> \b /om/synth/enable_patch - Enable DSP processing of a patch
+ * <p> \b /ingen/enable_patch - Enable DSP processing of a patch
  * \arg \b response-id (integer)
- * \arg \b patch-path - Patch's path
+ * \arg \b patch-path - Patch's path </p> \n \n
  */
 int
 OSCEngineReceiver::_enable_patch_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -445,9 +439,9 @@ OSCEngineReceiver::_enable_patch_cb(const char* path, const char* types, lo_arg*
 
 
 /** \page engine_osc_namespace
- * <p> \b /om/synth/disable_patch - Disable DSP processing of a patch
+ * <p> \b /ingen/disable_patch - Disable DSP processing of a patch
  * \arg \b response-id (integer)
- * \arg \b patch-path - Patch's path
+ * \arg \b patch-path - Patch's path </p> \n \n
  */
 int
 OSCEngineReceiver::_disable_patch_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -460,9 +454,9 @@ OSCEngineReceiver::_disable_patch_cb(const char* path, const char* types, lo_arg
 
 
 /** \page engine_osc_namespace
- * <p> \b /om/synth/clear_patch - Remove all nodes from a patch
+ * <p> \b /ingen/clear_patch - Remove all nodes from a patch
  * \arg \b response-id (integer)
- * \arg \b patch-path - Patch's path
+ * \arg \b patch-path - Patch's path </p> \n \n
  */
 int
 OSCEngineReceiver::_clear_patch_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -475,7 +469,7 @@ OSCEngineReceiver::_clear_patch_cb(const char* path, const char* types, lo_arg**
 
 
 /** \page engine_osc_namespace
- * <p> \b /om/synth/create_port - Add a port into a given patch (load a plugin by URI)
+ * <p> \b /ingen/create_port - Add a port into a given patch (load a plugin by URI)
  * \arg \b response-id (integer)
  * \arg \b path (string) - Full path of the new port (ie. /patch2/subpatch/newport)
  * \arg \b data-type (string) - Data type for port to contain ("ingen:audio", "ingen:control", or "ingen:midi")
@@ -493,7 +487,7 @@ OSCEngineReceiver::_create_port_cb(const char* path, const char* types, lo_arg**
 }
 
 /** \page engine_osc_namespace
- * <p> \b /om/synth/create_node - Add a node into a given patch (load a plugin by URI)
+ * <p> \b /ingen/create_node - Add a node into a given patch (load a plugin by URI)
  * \arg \b response-id (integer)
  * \arg \b node-path (string) - Full path of the new node (ie. /patch2/subpatch/newnode)
  * \arg \b plug-uri (string) - URI of the plugin to load
@@ -514,7 +508,7 @@ OSCEngineReceiver::_create_node_by_uri_cb(const char* path, const char* types, l
 
 
 /** \page engine_osc_namespace
- * <p> \b /om/synth/create_node - Add a node into a given patch (load a plugin by libname, label) \b DEPRECATED
+ * <p> \b /ingen/create_node - Add a node into a given patch (load a plugin by libname, label) \b DEPRECATED
  * \arg \b response-id (integer)
  * \arg \b node-path (string) - Full path of the new node (ie. /patch2/subpatch/newnode)
  * \arg \b type (string) - Plugin type ("LADSPA" or "Internal")
@@ -541,7 +535,7 @@ OSCEngineReceiver::_create_node_cb(const char* path, const char* types, lo_arg**
 
 
 /** \page engine_osc_namespace
- * <p> \b /om/synth/destroy - Removes (destroys) a Patch or a Node
+ * <p> \b /ingen/destroy - Removes (destroys) a Patch or a Node
  * \arg \b response-id (integer)
  * \arg \b node-path (string) - Full path of the object </p> \n \n
  */
@@ -556,7 +550,7 @@ OSCEngineReceiver::_destroy_cb(const char* path, const char* types, lo_arg** arg
 
 
 /** \page engine_osc_namespace
- * <p> \b /om/synth/connect - Connects two ports (must be in the same patch)
+ * <p> \b /ingen/connect - Connects two ports (must be in the same patch)
  * \arg \b response-id (integer)
  * \arg \b src-port-path (string) - Full path of source port
  * \arg \b dst-port-path (string) - Full path of destination port </p> \n \n
@@ -573,7 +567,7 @@ OSCEngineReceiver::_connect_cb(const char* path, const char* types, lo_arg** arg
 
 
 /** \page engine_osc_namespace
- * <p> \b /om/synth/disconnect - Disconnects two ports.
+ * <p> \b /ingen/disconnect - Disconnects two ports.
  * \arg \b response-id (integer)
  * \arg \b src-port-path (string) - Full path of source port
  * \arg \b dst-port-path (string) - Full path of destination port </p> \n \n
@@ -590,7 +584,7 @@ OSCEngineReceiver::_disconnect_cb(const char* path, const char* types, lo_arg** 
 
 
 /** \page engine_osc_namespace
- * <p> \b /om/synth/disconnect_all - Disconnect all connections to/from a node.
+ * <p> \b /ingen/disconnect_all - Disconnect all connections to/from a node.
  * \arg \b response-id (integer)
  * \arg \b node-path (string) - Full path of node. </p> \n \n
  */
@@ -605,7 +599,7 @@ OSCEngineReceiver::_disconnect_all_cb(const char* path, const char* types, lo_ar
 
 
 /** \page engine_osc_namespace
- * <p> \b /om/synth/set_port_value - Sets the value of a port for all voices (both AR and CR)
+ * <p> \b /ingen/set_port_value - Sets the value of a port for all voices (both AR and CR)
  * \arg \b response-id (integer)
  * \arg \b port-path (string) - Name of port
  * \arg \b value (float) - Value to set port to
@@ -622,7 +616,7 @@ OSCEngineReceiver::_set_port_value_cb(const char* path, const char* types, lo_ar
 
 
 /** \page engine_osc_namespace
- * <p> \b /om/synth/set_port_value - Sets the value of a port for a specific voice (both AR and CR)
+ * <p> \b /ingen/set_port_value - Sets the value of a port for a specific voice (both AR and CR)
  * \arg \b response-id (integer)
  * \arg \b port-path (string) - Name of port
  * \arg \b voice (integer) - Voice to set port value for
@@ -641,14 +635,14 @@ OSCEngineReceiver::_set_port_value_voice_cb(const char* path, const char* types,
 
 
 /** \page engine_osc_namespace
- * <p> \b /om/synth/set_port_value_slow - Sets the value of a port for all voices (as a QueuedEvent)
+ * <p> \b /ingen/set_port_value_queued - Sets the value of a port for all voices (as a QueuedEvent)
  * \arg \b response-id (integer)
  * \arg \b port-path (string) - Name of port
  * \arg \b value (float) - Value to set port to
  *
  * \li This version exists so you can send it immediately after a QueuedEvent it may depend on (ie a
  * node creation) and be sure it happens after the event (a normal set_port_value could beat the
- * slow event and arrive out of order). </p> \n \n
+ * queued event and arrive out of order). </p> \n \n
  */
 int
 OSCEngineReceiver::_set_port_value_slow_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -662,7 +656,7 @@ OSCEngineReceiver::_set_port_value_slow_cb(const char* path, const char* types, 
 
 
 /** \page engine_osc_namespace
- * <p> \b /om/synth/note_on - Triggers a note-on, just as if it came from MIDI
+ * <p> \b /ingen/note_on - Triggers a note-on, just as if it came from MIDI
  * \arg \b response-id (integer)
  * \arg \b node-path (string) - Patch of Node to trigger (must be a trigger or note node)
  * \arg \b note-num (int) - MIDI style note number (0-127)
@@ -684,7 +678,7 @@ OSCEngineReceiver::_note_on_cb(const char* path, const char* types, lo_arg** arg
 
 
 /** \page engine_osc_namespace
- * <p> \b /om/synth/note_off - Triggers a note-off, just as if it came from MIDI
+ * <p> \b /ingen/note_off - Triggers a note-off, just as if it came from MIDI
  * \arg \b response-id (integer)
  * \arg \b node-path (string) - Patch of Node to trigger (must be a trigger or note node)
  * \arg \b note-num (int) - MIDI style note number (0-127)</p> \n \n
@@ -704,7 +698,7 @@ OSCEngineReceiver::_note_off_cb(const char* path, const char* types, lo_arg** ar
 
 
 /** \page engine_osc_namespace
- * <p> \b /om/synth/all_notes_off - Triggers a note-off for all voices, just as if it came from MIDI
+ * <p> \b /ingen/all_notes_off - Triggers a note-off for all voices, just as if it came from MIDI
  * \arg \b response-id (integer)
  * \arg \b patch-path (string) - Patch of patch to send event to </p> \n \n
  */
@@ -722,7 +716,7 @@ OSCEngineReceiver::_all_notes_off_cb(const char* path, const char* types, lo_arg
 
 
 /** \page engine_osc_namespace
- * <p> \b /om/synth/midi_learn - Initiate MIDI learn for a given (MIDI Control) Node
+ * <p> \b /ingen/midi_learn - Initiate MIDI learn for a given (MIDI Control) Node
  * \arg \b response-id (integer)
  * \arg \b node-path (string) - Patch of the Node that should learn the next MIDI event.
  * 
@@ -742,26 +736,12 @@ OSCEngineReceiver::_midi_learn_cb(const char* path, const char* types, lo_arg** 
 }
 
 
-#ifdef HAVE_LASH
 /** \page engine_osc_namespace
- * <p> \b /om/lash/restore_done - Notify LASH restoring is finished and connections can be made.
- * \arg \b response-id (integer)
- */
-int
-OSCEngineReceiver::_lash_restore_done_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
-{
-	lash_restore_done();
-	return 0;
-}
-#endif // HAVE_LASH
-
-
-/** \page engine_osc_namespace
- * <p> \b /om/metadata/set - Sets a piece of metadata, associated with a synth-space object (node, etc)
+ * <p> \b /ingen/set_metadata - Sets a piece of metadata, associated with a synth-space object (node, etc)
  * \arg \b response-id (integer)
  * \arg \b object-path (string) - Full path of object to associate metadata with
  * \arg \b key (string) - Key (index) for new piece of metadata
- * \arg \b value (string) - Value of new piece of metadata
+ * \arg \b value (string) - Value of new piece of metadata </p> \n \n
  */
 int
 OSCEngineReceiver::_metadata_set_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -781,7 +761,7 @@ OSCEngineReceiver::_metadata_set_cb(const char* path, const char* types, lo_arg*
 
 
 /** \page engine_osc_namespace
- * <p> \b /om/metadata/responder - Requests the engine send a piece of metadata, associated with a synth-space object (node, etc)
+ * <p> \b /ingen/request_metadata - Requests the engine send a piece of metadata, associated with a synth-space object (node, etc)
  * \arg \b response-id (integer)
  * \arg \b object-path (string) - Full path of object metadata is associated with
  * \arg \b key (string) - Key (index) for piece of metadata
@@ -808,11 +788,10 @@ OSCEngineReceiver::_metadata_get_cb(const char* path, const char* types, lo_arg*
 
 
 /** \page engine_osc_namespace
- * <p> \b /om/responder/plugin - Requests the engine send the value of a port.
+ * <p> \b /ingen/request_plugin - Requests the engine send the value of a port.
  * \arg \b response-id (integer)
- * \arg \b port-path (string) - Full path of port to send the value of </p> \n \n
- *
- * \li Reply will be sent to client registered with the source address of this message.</p> \n \n
+ * \arg \b port-path (string) - Full path of port to send the value of \n\n
+ * \li Reply will be sent to client registered with the source address of this message.</p>\n\n
  */
 int
 OSCEngineReceiver::_request_plugin_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -826,11 +805,10 @@ OSCEngineReceiver::_request_plugin_cb(const char* path, const char* types, lo_ar
 
 
 /** \page engine_osc_namespace
- * <p> \b /om/responder/object - Requests the engine send the value of a port.
+ * <p> \b /ingen/request_object - Requests the engine send the value of a port.
  * \arg \b response-id (integer)
- * \arg \b port-path (string) - Full path of port to send the value of </p> \n \n
- *
- * \li Reply will be sent to client registered with the source address of this message.</p> \n \n
+ * \arg \b port-path (string) - Full path of port to send the value of \n\n
+ * \li Reply will be sent to client registered with the source address of this message.</p>\n\n
  */
 int
 OSCEngineReceiver::_request_object_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -844,11 +822,10 @@ OSCEngineReceiver::_request_object_cb(const char* path, const char* types, lo_ar
 
 
 /** \page engine_osc_namespace
- * <p> \b /om/responder/port_value - Requests the engine send the value of a port.
+ * <p> \b /ingen/request_port_value - Requests the engine send the value of a port.
  * \arg \b response-id (integer)
- * \arg \b port-path (string) - Full path of port to send the value of </p> \n \n
- *
- * \li Reply will be sent to client registered with the source address of this message.</p> \n \n
+ * \arg \b port-path (string) - Full path of port to send the value of \n\n
+ * \li Reply will be sent to client registered with the source address of this message.</p>\n\n
  */
 int
 OSCEngineReceiver::_request_port_value_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -861,10 +838,9 @@ OSCEngineReceiver::_request_port_value_cb(const char* path, const char* types, l
 
 
 /** \page engine_osc_namespace
- * <p> \b /om/responder/plugins - Requests the engine send a list of all known plugins.
- * \arg \b response-id (integer)
- *
- * \li Reply will be sent to client registered with the source address of this message.</p> \n \n
+ * <p> \b /ingen/request_plugins - Requests the engine send a list of all known plugins.
+ * \arg \b response-id (integer) \n\n
+ * \li Reply will be sent to client registered with the source address of this message.</p>\n\n
  */
 int
 OSCEngineReceiver::_request_plugins_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -875,9 +851,8 @@ OSCEngineReceiver::_request_plugins_cb(const char* path, const char* types, lo_a
 
 
 /** \page engine_osc_namespace
- * <p> \b /om/responder/all_objects - Requests the engine send information about \em all objects (patches, nodes, etc)
- * \arg \b response-id (integer)
- * 
+ * <p> \b /ingen/request_all_objects - Requests the engine send information about \em all objects (patches, nodes, etc)
+ * \arg \b response-id (integer)\n\n
  * \li Reply will be sent to client registered with the source address of this message.</p> \n \n
  */
 int

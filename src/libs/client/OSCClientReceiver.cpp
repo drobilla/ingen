@@ -76,8 +76,8 @@ OSCClientReceiver::start()
 	// Print all incoming messages
 	lo_server_thread_add_method(_st, NULL, NULL, generic_cb, NULL);
 
-	//lo_server_thread_add_method(_st, "/om/response/ok", "i", om_response_ok_cb, this);
-	//lo_server_thread_add_method(_st, "/om/response/error", "is", om_responseerror_cb, this);
+	//lo_server_thread_add_method(_st, "/ingen/response/ok", "i", om_response_ok_cb, this);
+	//lo_server_thread_add_method(_st, "/ingen/response/error", "is", om_responseerror_cb, this);
 	
 	setup_callbacks();
 
@@ -144,23 +144,23 @@ OSCClientReceiver::unknown_cb(const char* path, const char* types, lo_arg** argv
 void
 OSCClientReceiver::setup_callbacks()
 {
-	lo_server_thread_add_method(_st, "/om/response", "iis", response_cb, this);
-	lo_server_thread_add_method(_st, "/om/num_plugins", "i", num_plugins_cb, this);
-	lo_server_thread_add_method(_st, "/om/plugin", "sss", plugin_cb, this);
-	lo_server_thread_add_method(_st, "/om/new_patch", "si", new_patch_cb, this);
-	lo_server_thread_add_method(_st, "/om/destroyed", "s", destroyed_cb, this);
-	lo_server_thread_add_method(_st, "/om/patch_enabled", "s", patch_enabled_cb, this);
-	lo_server_thread_add_method(_st, "/om/patch_disabled", "s", patch_disabled_cb, this);
-	lo_server_thread_add_method(_st, "/om/patch_cleared", "s", patch_cleared_cb, this);
-	lo_server_thread_add_method(_st, "/om/object_renamed", "ss", object_renamed_cb, this);
-	lo_server_thread_add_method(_st, "/om/new_connection", "ss", connection_cb, this);
-	lo_server_thread_add_method(_st, "/om/disconnection", "ss", disconnection_cb, this);
-	lo_server_thread_add_method(_st, "/om/new_node", "ssii", new_node_cb, this);
-	lo_server_thread_add_method(_st, "/om/new_port", "ssi", new_port_cb, this);
-	lo_server_thread_add_method(_st, "/om/metadata/update", NULL, metadata_update_cb, this);
-	lo_server_thread_add_method(_st, "/om/control_change", "sf", control_change_cb, this);
-	lo_server_thread_add_method(_st, "/om/program_add", "siis", program_add_cb, this);
-	lo_server_thread_add_method(_st, "/om/program_remove", "sii", program_remove_cb, this);
+	lo_server_thread_add_method(_st, "/ingen/response", "iis", response_cb, this);
+	lo_server_thread_add_method(_st, "/ingen/num_plugins", "i", num_plugins_cb, this);
+	lo_server_thread_add_method(_st, "/ingen/plugin", "sss", plugin_cb, this);
+	lo_server_thread_add_method(_st, "/ingen/new_patch", "si", new_patch_cb, this);
+	lo_server_thread_add_method(_st, "/ingen/destroyed", "s", destroyed_cb, this);
+	lo_server_thread_add_method(_st, "/ingen/patch_enabled", "s", patch_enabled_cb, this);
+	lo_server_thread_add_method(_st, "/ingen/patch_disabled", "s", patch_disabled_cb, this);
+	lo_server_thread_add_method(_st, "/ingen/patch_cleared", "s", patch_cleared_cb, this);
+	lo_server_thread_add_method(_st, "/ingen/object_renamed", "ss", object_renamed_cb, this);
+	lo_server_thread_add_method(_st, "/ingen/new_connection", "ss", connection_cb, this);
+	lo_server_thread_add_method(_st, "/ingen/disconnection", "ss", disconnection_cb, this);
+	lo_server_thread_add_method(_st, "/ingen/new_node", "ssii", new_node_cb, this);
+	lo_server_thread_add_method(_st, "/ingen/new_port", "ssi", new_port_cb, this);
+	lo_server_thread_add_method(_st, "/ingen/metadata_update", NULL, metadata_update_cb, this);
+	lo_server_thread_add_method(_st, "/ingen/control_change", "sf", control_change_cb, this);
+	lo_server_thread_add_method(_st, "/ingen/program_add", "siis", program_add_cb, this);
+	lo_server_thread_add_method(_st, "/ingen/program_remove", "sii", program_remove_cb, this);
 }
 
 
@@ -375,8 +375,8 @@ OSCClientReceiver::_response_cb(const char* path, const char* types, lo_arg** ar
 }
 
 
-/** Number of plugins in engine, should precede /om/plugin messages in response
- * to a /om/send_plugins
+/** Number of plugins in engine, should precede /ingen/plugin messages in response
+ * to a /ingen/send_plugins
  */
 int
 OSCClientReceiver::_num_plugins_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -387,7 +387,7 @@ OSCClientReceiver::_num_plugins_cb(const char* path, const char* types, lo_arg**
 }
 
 
-/** A plugin info response from the server, in response to a /send_plugins
+/** A plugin info response from the server, in response to an /ingen/send_plugins
  */
 int
 OSCClientReceiver::_plugin_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
