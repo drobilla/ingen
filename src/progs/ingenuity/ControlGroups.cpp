@@ -201,8 +201,8 @@ SliderControlGroup::disable()
 void
 SliderControlGroup::min_changed()
 {
-	double       min = _min_spinner->get_value();
-	const double max = _max_spinner->get_value();
+	float       min = _min_spinner->get_value();
+	const float max = _max_spinner->get_value();
 	
 	if (min >= max) {
 		min = max - 1.0;
@@ -211,19 +211,16 @@ SliderControlGroup::min_changed()
 
 	_slider->set_range(min, max);
 
-	if (_enable_signal) {
-		char temp_buf[16];
-		snprintf(temp_buf, 16, "%f", min);
-		App::instance().engine()->set_metadata(_port_model->path(), "min", temp_buf);
-	}
+	if (_enable_signal)
+		App::instance().engine()->set_metadata(_port_model->path(), "min", min);
 }
 
 
 void
 SliderControlGroup::max_changed()
 {
-	const double min = _min_spinner->get_value();
-	double       max = _max_spinner->get_value();
+	const float min = _min_spinner->get_value();
+	float       max = _max_spinner->get_value();
 	
 	if (max <= min) {
 		max = min + 1.0;
@@ -232,11 +229,8 @@ SliderControlGroup::max_changed()
 
 	_slider->set_range(min, max);
 
-	if (_enable_signal) {
-		char temp_buf[16];
-		snprintf(temp_buf, 16, "%f", max);
-		App::instance().engine()->set_metadata(_port_model->path(), "max", temp_buf);
-	}
+	if (_enable_signal)
+		App::instance().engine()->set_metadata(_port_model->path(), "max", max);
 }
 
 
