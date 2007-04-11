@@ -329,14 +329,5 @@ ClientBroadcaster::send_all_objects()
 	//	(*i).second->send_all_objects();
 }
 
-/*
-void
-ClientBroadcaster::send_node_creation_messages(const Node* const node)
-{
-	// This is pretty stupid :/  in and out and back again!
-	for (ClientList::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
-		node->send_creation_messages((*i).second);
-}
-*/	
 
 } // namespace Ingen

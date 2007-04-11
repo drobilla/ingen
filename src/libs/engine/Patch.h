@@ -59,8 +59,6 @@ public:
 	
 	void set_buffer_size(size_t size);
 	
-	//void send_creation_messages(ClientInterface* client) const;
-	
 	void add_to_store(ObjectStore* store);
 	void remove_from_store();
 	
@@ -68,7 +66,7 @@ public:
 	
 	// Patch specific stuff not inherited from Node
 	
-	void             add_node(Raul::ListNode<Node*>* tn);
+	void                   add_node(Raul::ListNode<Node*>* tn);
 	Raul::ListNode<Node*>* remove_node(const string& name);
 
 	Raul::List<Node*>&       nodes()       { return _nodes; }
@@ -79,19 +77,19 @@ public:
 	
 	size_t num_ports() const;
 	
-	Port*            create_port(const string& name, DataType type, size_t buffer_size, bool is_output);
-	void             add_input(Raul::ListNode<Port*>* port)  { _input_ports.push_back(port); } ///< Preprocesser thread
-	void             add_output(Raul::ListNode<Port*>* port) { _output_ports.push_back(port); } ///< Preprocessor thread
+	Port* create_port(const string& name, DataType type, size_t buffer_size, bool is_output);
+	void add_input(Raul::ListNode<Port*>* port)  { _input_ports.push_back(port); } ///< Preprocesser thread
+	void add_output(Raul::ListNode<Port*>* port) { _output_ports.push_back(port); } ///< Preprocessor thread
 	Raul::ListNode<Port*>* remove_port(const string& name);
 	
-	void                   add_connection(Raul::ListNode<Connection*>* c) { _connections.push_back(c); }
+	void add_connection(Raul::ListNode<Connection*>* c) { _connections.push_back(c); }
 	Raul::ListNode<Connection*>* remove_connection(const Port* src_port, const Port* dst_port);
 	
-	Raul::Array<Node*>* process_order()                 { return _process_order; }
-	void          process_order(Raul::Array<Node*>* po) { _process_order = po; }
+	Raul::Array<Node*>* process_order()                       { return _process_order; }
+	void                process_order(Raul::Array<Node*>* po) { _process_order = po; }
 	
-	Raul::Array<Port*>* external_ports()                 { return _ports; }
-	void          external_ports(Raul::Array<Port*>* pa) { _ports = pa; }
+	Raul::Array<Port*>* external_ports()                       { return _ports; }
+	void                external_ports(Raul::Array<Port*>* pa) { _ports = pa; }
 
 	Raul::Array<Node*>* build_process_order() const;
 	Raul::Array<Port*>* build_ports_array() const;

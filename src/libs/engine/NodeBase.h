@@ -64,8 +64,6 @@ public:
 	void add_to_store(ObjectStore* store);
 	void remove_from_store();
 	
-	//void send_creation_messages(ClientInterface* client) const;
-	
 	SampleRate sample_rate() const { return _srate; }
 	size_t     buffer_size() const { return _buffer_size; }
 	size_t     num_ports()   const { return _ports ? _ports->size() : 0; }

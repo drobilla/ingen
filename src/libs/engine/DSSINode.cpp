@@ -327,20 +327,4 @@ DSSINode::get_programs() const
 }
 
 
-/*
-void
-DSSINode::send_creation_messages(ClientInterface* client) const
-{
-	LADSPANode::send_creation_messages(client);
-	
-	for (map<int, Bank>::const_iterator i = get_programs().begin();
-			i != get_programs().end(); ++i) {
-		
-		for (Bank::const_iterator j = i->second.begin(); j != i->second.end(); ++j)
-		  client->program_add(path(), 
-			i->first, j->first, j->second);
-	}
-}
-*/
-
 } // namespace Ingen

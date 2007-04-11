@@ -87,14 +87,14 @@ public:
 	/** Nodes that are connected to this Node's inputs.
 	 * (This Node depends on them)
 	 */
-	virtual Raul::List<Node*>* providers()               = 0;
-	virtual void         providers(Raul::List<Node*>* l) = 0;
+	virtual Raul::List<Node*>* providers()                     = 0;
+	virtual void               providers(Raul::List<Node*>* l) = 0;
 	
 	/** Nodes are are connected to this Node's outputs.
 	 * (They depend on this Node)
 	 */
-	virtual Raul::List<Node*>* dependants()               = 0;
-	virtual void         dependants(Raul::List<Node*>* l) = 0;
+	virtual Raul::List<Node*>* dependants()                     = 0;
+	virtual void               dependants(Raul::List<Node*>* l) = 0;
 	
 	/** The Patch this Node belongs to. */
 	virtual Patch* parent_patch() const = 0;

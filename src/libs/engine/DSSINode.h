@@ -60,8 +60,6 @@ public:
 	void set_default_program();
 	const std::map<int, Bank>& get_programs() const;
 
-	//void send_creation_messages(ClientInterface* client) const;
-
 	const Plugin* plugin() const        { return _plugin; }
 	void plugin(const Plugin* const pi) { _plugin = pi; }
 
