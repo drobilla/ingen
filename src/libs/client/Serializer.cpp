@@ -64,6 +64,7 @@ Serializer::Serializer()
 void
 Serializer::start_to_filename(const string& filename) throw (std::logic_error)
 {
+	_base_uri = "file://" + filename;
 	_writer.start_to_filename(filename);
 }
 
@@ -78,6 +79,7 @@ Serializer::start_to_filename(const string& filename) throw (std::logic_error)
 void
 Serializer::start_to_string() throw (std::logic_error)
 {
+	_base_uri = "";
 	_writer.start_to_string();
 }
 
@@ -91,6 +93,7 @@ string
 Serializer::finish() throw(std::logic_error)
 {
 	return _writer.finish();
+	_id_map.clear();
 }
 
 
@@ -99,7 +102,7 @@ Serializer::finish() throw(std::logic_error)
 RdfId
 Serializer::path_to_node_id(const Path& path)
 {
-	string ret = path.substr(1);
+	/*string ret = path.substr(1);
 
 	for (size_t i=0; i < ret.length(); ++i) {
 		if (ret[i] == '/')
@@ -107,7 +110,18 @@ Serializer::path_to_node_id(const Path& path)
 	}
 
 	return RdfId(RdfId::ANONYMOUS, ret);
+	*/
+
+	IDMap::iterator i = _id_map.find(path);
+	if (i != _id_map.end()) {
+		return i->second;
+	} else {
+		const RdfId id = _writer.blank_id();
+		_id_map[path] = id;
+		return id;
+	}
 }
+
 
 #if 0
 /** Searches for the filename passed in the path, returning the full
@@ -166,23 +180,21 @@ Serializer::serialize(SharedPtr<ObjectModel> object) throw (std::logic_error)
 	if (!_writer.serialization_in_progress())
 		throw std::logic_error("serialize called without serialization in progress");
 
-	// FIXME: depth
-	
 	SharedPtr<PatchModel> patch = PtrCast<PatchModel>(object);
 	if (patch) {
-		serialize_patch(patch, 0);
+		serialize_patch(patch, RdfId(RdfId::RESOURCE, _base_uri));
 		return;
 	}
 	
 	SharedPtr<NodeModel> node = PtrCast<NodeModel>(object);
 	if (node) {
-		serialize_node(node, 0);
+		serialize_node(node, path_to_node_id(node->path()));
 		return;
 	}
 	
 	SharedPtr<PortModel> port = PtrCast<PortModel>(object);
 	if (port) {
-		serialize_port(port, 0);
+		serialize_port(port, path_to_node_id(port->path()));
 		return;
 	}
 
@@ -192,15 +204,8 @@ Serializer::serialize(SharedPtr<ObjectModel> object) throw (std::logic_error)
 
 
 void
-Serializer::serialize_patch(SharedPtr<PatchModel> patch, unsigned depth)
+Serializer::serialize_patch(SharedPtr<PatchModel> patch, const RdfId& patch_id)
 {
-	RdfId patch_id = path_to_node_id(patch->path()); // anonymous
-
-	if (patch->path().length() < 2)
-		patch_id = RdfId(RdfId::RESOURCE, string(""));
-	else if (depth == 0)
-		patch_id = RdfId(RdfId::RESOURCE, string("#") + patch->path().substr(1));
-
 	_writer.write(
 		patch_id,
 		NS_RDF("type"),
@@ -218,22 +223,36 @@ Serializer::serialize_patch(SharedPtr<PatchModel> patch, unsigned depth)
 		Atom((int)patch->poly()));
 
 	for (NodeModelMap::const_iterator n = patch->nodes().begin(); n != patch->nodes().end(); ++n) {
-		_writer.write(patch_id, NS_INGEN("node"), path_to_node_id(n->second->path()));
 		SharedPtr<PatchModel> patch = PtrCast<PatchModel>(n->second);
-		if (patch)
-			serialize_patch(patch, depth+1);
-		else
-			serialize_node(n->second, depth+1);
+		if (patch) {
+			const RdfId subpatch_id = RdfId(RdfId::RESOURCE,
+					patch_id.to_string() + "#" + patch->path().substr(1));
+			_writer.write(patch_id, NS_INGEN("node"), subpatch_id);
+			serialize_patch(patch, subpatch_id);
+		} else {
+			const RdfId node_id = path_to_node_id(n->second->path());
+			_writer.write(patch_id, NS_INGEN("node"), node_id);
+			serialize_node(n->second, node_id);
+		}
 	}
 	
 	for (PortModelList::const_iterator p = patch->ports().begin(); p != patch->ports().end(); ++p) {
-		_writer.write(patch_id, NS_INGEN("port"), path_to_node_id((*p)->path()));
-		serialize_port(*p, depth+1);
-
+		const RdfId port_id = path_to_node_id((*p)->path());
+		_writer.write(patch_id, NS_INGEN("port"), port_id);
+		serialize_port(*p, port_id);
 	}
 
 	for (ConnectionList::const_iterator c = patch->connections().begin(); c != patch->connections().end(); ++c) {
 		serialize_connection(*c);
+	}
+	
+	for (MetadataMap::const_iterator m = patch->metadata().begin(); m != patch->metadata().end(); ++m) {
+		if (_writer.expand_uri(m->first) != "") {
+			_writer.write(
+				patch_id,
+				RdfId(RdfId::RESOURCE, _writer.expand_uri(m->first.c_str()).c_str()),
+				m->second);
+		}
 	}
 }
 
@@ -251,12 +270,8 @@ Serializer::serialize_plugin(SharedPtr<PluginModel> plugin)
 
 
 void
-Serializer::serialize_node(SharedPtr<NodeModel> node, unsigned depth)
+Serializer::serialize_node(SharedPtr<NodeModel> node, const RdfId& node_id)
 {
-	const RdfId node_id = (depth == 0)
-		? RdfId(RdfId::RESOURCE, string("#") + node->path().substr(1))
-		: path_to_node_id(node->path()); // anonymous
-	
 	const RdfId plugin_id = RdfId(RdfId::RESOURCE, node->plugin()->uri());
 
 	_writer.write(
@@ -282,8 +297,9 @@ Serializer::serialize_node(SharedPtr<NodeModel> node, unsigned depth)
 		Atom(node->path().name()));*/
 
 	for (PortModelList::const_iterator p = node->ports().begin(); p != node->ports().end(); ++p) {
-		serialize_port(*p, depth+1);
-		_writer.write(node_id, NS_INGEN("port"), path_to_node_id((*p)->path()));
+		const RdfId port_id = path_to_node_id((*p)->path());
+		serialize_port(*p, port_id);
+		_writer.write(node_id, NS_INGEN("port"), port_id);
 	}
 
 	for (MetadataMap::const_iterator m = node->metadata().begin(); m != node->metadata().end(); ++m) {
@@ -301,12 +317,8 @@ Serializer::serialize_node(SharedPtr<NodeModel> node, unsigned depth)
  * Audio output ports with no metadata will not be written, for example.
  */
 void
-Serializer::serialize_port(SharedPtr<PortModel> port, unsigned depth)
+Serializer::serialize_port(SharedPtr<PortModel> port, const RdfId& port_id)
 {
-	const RdfId port_id = (depth == 0)
-		? RdfId(RdfId::RESOURCE, string("#") + port->path().substr(1))
-		: path_to_node_id(port->path()); // anonymous
-	
 	if (port->is_input())
 		_writer.write(port_id, NS_RDF("type"), NS_INGEN("InputPort"));
 	else
@@ -355,7 +367,7 @@ Serializer::serialize_connection(SharedPtr<ConnectionModel> connection) throw (s
 	*/
 }
 
-
+#if 0
 /** Load a patch into the engine (e.g. from a patch file).
  *
  * @param base_uri Base URI (e.g. URI of the file to load from).
@@ -522,6 +534,7 @@ Serializer::load_patch(bool                    merge,
 #endif
 	return "/FIXME";
 }
+#endif
 
 } // namespace Client
 } // namespace Ingen

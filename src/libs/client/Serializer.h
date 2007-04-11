@@ -33,6 +33,7 @@
 
 using std::string;
 using boost::optional;
+using Raul::RdfId;
 
 namespace Ingen {
 namespace Client {
@@ -65,14 +66,14 @@ public:
 	
 	//string find_file(const string& filename, const string& additional_path = "");
 	
-	bool load_patch(bool                    merge,
+	/*bool load_patch(bool                    merge,
 	                const string&           data_base_uri,
 	                const Path&             data_path,
 	                MetadataMap             engine_data,
 	                optional<const Path&>   engine_parent = optional<const Path&>(),
 	                optional<const string&> engine_name = optional<const string&>(),
 	                optional<size_t>        engine_poly = optional<size_t>());
-
+	*/
 	
 	void   start_to_filename(const string& filename)          throw (std::logic_error);
 	void   start_to_string()                                  throw (std::logic_error);
@@ -84,12 +85,15 @@ private:
 
 	void serialize_plugin(SharedPtr<PluginModel> p);
 
-	void serialize_patch(SharedPtr<PatchModel> p, unsigned depth);
-	void serialize_node(SharedPtr<NodeModel> n, unsigned depth);
-	void serialize_port(SharedPtr<PortModel> p, unsigned depth);
+	void serialize_patch(SharedPtr<PatchModel> p, const Raul::RdfId& id);
+	void serialize_node(SharedPtr<NodeModel> n, const Raul::RdfId& id);
+	void serialize_port(SharedPtr<PortModel> p, const Raul::RdfId& id);
 	
 	Raul::RdfId path_to_node_id(const Path& path);
 
+	typedef std::map<Path, RdfId> IDMap;
+	IDMap           _id_map;
+	string          _base_uri;
 	Raul::RDFWriter _writer;
 };
 

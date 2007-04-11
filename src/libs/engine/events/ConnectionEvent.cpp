@@ -84,16 +84,14 @@ ConnectionEvent::pre_process()
 		return;
 	}
 
-	/*if ( !( _src_port->is_output() && _dst_port->is_input() ) ) {
-		_error = TYPE_MISMATCH;
-		QueuedEvent::pre_process();
-		return;
-	}*/
-
 	_dst_input_port = dynamic_cast<InputPort*>(_dst_port);
 	_src_output_port = dynamic_cast<OutputPort*>(_src_port);
-	assert(_src_output_port);
-	assert(_dst_input_port);
+	
+	if (!_dst_input_port || !_src_output_port) {
+		_error = DIRECTION_MISMATCH;
+		QueuedEvent::pre_process();
+		return;
+	}
 
 	if (_dst_input_port->is_connected_to(_src_output_port)) {
 		_error = ALREADY_CONNECTED;

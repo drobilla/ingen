@@ -48,6 +48,8 @@ public:
 	SharedPtr<ConnectionModel> get_connection(const string& src_port_path, const string& dst_port_path) const;
 	SharedPtr<NodeModel>       get_node(const string& node_name) const;
 	
+	void set_filename(const string& filename) { _filename = filename; }
+
 	size_t        poly()       const { return _poly; }
 	const string& filename()   const { return _filename; }
 	bool          enabled()    const { return _enabled; }

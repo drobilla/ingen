@@ -16,6 +16,7 @@
  */
 
 #include <iostream>
+#include <glibmm/ustring.h>
 #include <raptor.h>
 #include "raul/RDFQuery.h"
 #include "Loader.h"
@@ -63,11 +64,10 @@ Loader::load(const Glib::ustring&  filename,
 	Glib::ustring document_uri = (const char*)document_uri_str;
 	//Glib::ustring document_uri = "file:///home/dave/code/drobillanet/ingen/src/progs/ingenuity/test2.ingen.ttl";
 
-	if (patch_uri == "")
-		patch_uri = "<>"; // FIXME: Will load every patch in the file?
+	patch_uri = string("<") + patch_uri + ">";
 
 	cerr << "[Loader] Loading " << patch_uri << " from " << document_uri
-		<< " under " << parent << endl;
+		<< " under " << (string)(parent ? (string)parent.get() : "no parent") << endl;
 
 	/* Get polyphony (mandatory) */
 
@@ -106,11 +106,12 @@ Loader::load(const Glib::ustring&  filename,
 	}
 
 	Path patch_path = ( parent ? (parent.get().base() + patch_name) : Path("/") );
-	cerr << "************ PATCH: " << patch_path << ", poly = " << patch_poly << endl;
+	cerr << "************ PATCH: name=" << patch_name << ", path=" << patch_path
+		<< ", poly = " << patch_poly << endl;
 	_engine->create_patch(patch_path, patch_poly);
 
 
-	/* Load nodes */
+	/* Load (plugin) nodes */
 	
 	query = RDFQuery(*_namespaces, Glib::ustring(
 		"SELECT DISTINCT ?name ?plugin ?floatkey ?floatval FROM <") + document_uri + "> WHERE {\n" +
@@ -135,12 +136,37 @@ Loader::load(const Glib::ustring&  filename,
 			created[node_path] = true;
 		}
 
-		Glib::ustring floatkey = _namespaces->qualify((*i)["floatkey"]);
-		Glib::ustring floatval = (*i)["floatval"];
+		const Glib::ustring& floatkey = _namespaces->qualify((*i)["floatkey"]);
+		const Glib::ustring& floatval = (*i)["floatval"];
 
 		if (floatkey != "" && floatval != "") {
 			const float val = atof(floatval.c_str());
 			_engine->set_metadata(patch_path.base() + name, floatkey, Atom(val));
+		}
+	}
+	
+
+	/* Load subpatches */
+	
+	query = RDFQuery(*_namespaces, Glib::ustring(
+		"SELECT DISTINCT ?patch ?name FROM <") + document_uri + "> WHERE {\n" +
+		patch_uri + " ingen:node ?patch .\n"
+		"?patch       a          ingen:Patch ;\n"
+		"             ingen:name ?name .\n"
+		"}");
+
+	results = query.run(document_uri);
+
+	for (RDFQuery::Results::iterator i = results.begin(); i != results.end(); ++i) {
+		
+		const Glib::ustring& name  = (*i)["name"];
+		const Glib::ustring& patch = (*i)["patch"];
+		
+		const Path subpatch_path = patch_path.base() + (string)name;
+		
+		if (created.find(subpatch_path) == created.end()) {
+			load(filename, patch_path, name, patch);
+			created[subpatch_path] = true;
 		}
 	}
 	
@@ -225,39 +251,111 @@ Loader::load(const Glib::ustring&  filename,
 	created.clear();
 
 
-	/* Load connections */
+	/* Node -> Node connections */
 
-	// FIXME: path?
 	query = RDFQuery(*_namespaces, Glib::ustring(
-		"SELECT DISTINCT ?srcnode ?src ?dstnode ?dst FROM <") + document_uri + "> WHERE {\n" +
-		"?srcnoderef ingen:port ?srcref .\n"
-		"?dstnoderef ingen:port ?dstref .\n"
-		"?dstref ingen:connectedTo ?srcref .\n"
-		"?srcref ingen:name ?src .\n"
-		"?dstref ingen:name ?dst .\n"
-		"OPTIONAL { ?srcnoderef ingen:name ?srcnode } .\n"
-		"OPTIONAL { ?dstnoderef ingen:name ?dstnode }\n"
+		"SELECT DISTINCT ?srcnodename ?srcname ?dstnodename ?dstname FROM <") + document_uri + "> WHERE {\n" +
+		patch_uri + " ingen:node ?srcnode ;\n"
+		"             ingen:node ?dstnode .\n"
+		"?srcnode     ingen:port ?src ;\n"
+		"             ingen:name ?srcnodename .\n" + 
+		"?dstnode     ingen:port ?dst ;\n"
+		"             ingen:name ?dstnodename .\n"
+		"?src         ingen:name ?srcname .\n"
+		"?dst         ingen:connectedTo ?src ;\n"
+		"             ingen:name ?dstname .\n" 
 		"}\n");
 	
 	results = query.run(document_uri);
 	
 	for (RDFQuery::Results::iterator i = results.begin(); i != results.end(); ++i) {
-		Path src_node = patch_path;
-		if ((*i).find("srcnode") != (*i).end())
-			src_node = patch_path.base() + string((*i)["srcnode"]);
-		Path src_port = src_node.base() + string((*i)["src"]);
+		Path src_node = patch_path.base() + string((*i)["srcnodename"]);
+		Path src_port = src_node.base() + string((*i)["srcname"]);
+		Path dst_node = patch_path.base() + string((*i)["dstnodename"]);
+		Path dst_port = dst_node.base() + string((*i)["dstname"]);
 		
-		Path dst_node = patch_path;
-		if ((*i).find("dstnode") != (*i).end())
-			dst_node = patch_path.base() + string((*i)["dstnode"]);
-		Path dst_port = dst_node.base() + string((*i)["dst"]);
+		cerr << patch_path << " 1 CONNECTION: " << src_port << " -> " << dst_port << endl;
+
+		_engine->connect(src_port, dst_port);
+	}
+	
+
+	/* This Patch -> Node connections */
+
+	query = RDFQuery(*_namespaces, Glib::ustring(
+		"SELECT DISTINCT ?srcname ?dstnodename ?dstname FROM <") + document_uri + "> WHERE {\n" +
+		patch_uri + " ingen:port ?src ;\n" +
+		"             ingen:node ?dstnode .\n"
+		"?dstnode     ingen:port ?dst ;\n"
+		"             ingen:name ?dstnodename .\n"
+		"?dst         ingen:connectedTo ?src ;\n"
+		"             ingen:name ?dstname .\n" 
+		"?src         ingen:name ?srcname .\n"
+		"}\n");
+	
+	results = query.run(document_uri);
+	
+	for (RDFQuery::Results::iterator i = results.begin(); i != results.end(); ++i) {
+		Path src_port = patch_path.base() + string((*i)["srcname"]);
 		
-		//cerr << "CONNECTION: " << src_port << " -> " << dst_port << endl;
+		Path dst_node = patch_path.base() + string((*i)["dstnodename"]);
+		Path dst_port = dst_node.base() + string((*i)["dstname"]);
+		
+		cerr << patch_path << " 2 CONNECTION: " << src_port << " -> " << dst_port << endl;
 
 		_engine->connect(src_port, dst_port);
 	}
 	
 	
+	/* Node -> This Patch connections */
+
+	query = RDFQuery(*_namespaces, Glib::ustring(
+		"SELECT DISTINCT ?srcnodename ?srcname ?dstname FROM <") + document_uri + "> WHERE {\n" +
+		patch_uri + " ingen:port ?dst ;\n" +
+		"             ingen:node ?srcnode .\n"
+		"?srcnode     ingen:port ?src ;\n"
+		"             ingen:name ?srcnodename .\n"
+		"?dst         ingen:connectedTo ?src ;\n"
+		"             ingen:name ?dstname .\n" 
+		"?src         ingen:name ?srcname .\n"
+		"}\n");
+	
+	results = query.run(document_uri);
+	
+	for (RDFQuery::Results::iterator i = results.begin(); i != results.end(); ++i) {
+		Path dst_port = patch_path.base() + string((*i)["dstname"]);
+		
+		Path src_node = patch_path.base() + string((*i)["srcnodename"]);
+		Path src_port = src_node.base() + string((*i)["srcname"]);
+		
+		cerr << patch_path << " 3 CONNECTION: " << src_port << " -> " << dst_port << endl;
+
+		_engine->connect(src_port, dst_port);
+	}
+	
+	
+	/* Load metadata */
+	
+	query = RDFQuery(*_namespaces, Glib::ustring(
+		"SELECT DISTINCT ?floatkey ?floatval FROM <") + document_uri + "> WHERE {\n" +
+		patch_uri + " ?floatkey ?floatval . \n"
+		"           FILTER ( datatype(?floatval) = xsd:decimal ) \n"
+		"}");
+
+	results = query.run(document_uri);
+
+	for (RDFQuery::Results::iterator i = results.begin(); i != results.end(); ++i) {
+
+		const Glib::ustring& floatkey = _namespaces->qualify((*i)["floatkey"]);
+		const Glib::ustring& floatval = (*i)["floatval"];
+
+		if (floatkey != "" && floatval != "") {
+			const float val = atof(floatval.c_str());
+			_engine->set_metadata(patch_path, floatkey, Atom(val));
+		}
+	}
+	
+
 	// Set passed metadata last to override any loaded values
 	for (MetadataMap::const_iterator i = data.begin(); i != data.end(); ++i)
 		_engine->set_metadata(patch_path, i->first, i->second);

@@ -267,16 +267,18 @@ PatchWindow::event_save_as()
 {
 	Gtk::FileChooserDialog dialog(*this, "Save Patch", Gtk::FILE_CHOOSER_ACTION_SAVE);
 	
-	Gtk::VBox* box = dialog.get_vbox();
+	/*Gtk::VBox* box = dialog.get_vbox();
 	Gtk::Label warning("Warning:  Recursively saving will overwrite any subpatch files \
 		without confirmation.");
 	box->pack_start(warning, false, false, 2);
 	Gtk::CheckButton recursive_checkbutton("Recursively save all subpatches");
 	box->pack_start(recursive_checkbutton, false, false, 0);
 	recursive_checkbutton.show();
+	*/
 			
 	dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
-	dialog.add_button(Gtk::Stock::SAVE, Gtk::RESPONSE_OK);	
+	Gtk::Button* save_button = dialog.add_button(Gtk::Stock::SAVE, Gtk::RESPONSE_OK);	
+	save_button->property_has_default() = true;
 	
 	// Set current folder to most sensible default
 	const string& current_filename = _patch->filename();
@@ -286,7 +288,7 @@ PatchWindow::event_save_as()
 		dialog.set_current_folder(App::instance().configuration()->patch_folder());
 	
 	int result = dialog.run();
-	bool recursive = recursive_checkbutton.get_active();
+	//bool recursive = recursive_checkbutton.get_active();
 	
 	assert(result == Gtk::RESPONSE_OK || result == Gtk::RESPONSE_CANCEL || result == Gtk::RESPONSE_NONE);
 	
@@ -313,8 +315,9 @@ PatchWindow::event_save_as()
 		fin.close();
 		
 		if (confirm) {
-			App::instance().loader()->save_patch(_patch, filename, recursive);
-			//m_patch->set_metadata("filename", Atom(filename.c_str()));
+			App::instance().loader()->save_patch(_patch, filename, true);
+			_patch->set_filename(filename);
+			//_patch->set_metadata("filename", Atom(filename.c_str()));
 		}
 	}
 	App::instance().configuration()->set_patch_folder(dialog.get_current_folder());
