@@ -46,13 +46,36 @@
 		    <widget class="GtkImageMenuItem" id="patch_import_menuitem">
 		      <property name="visible">True</property>
 		      <property name="tooltip" translatable="yes">Load a patch into the current patch (merge with existing contents).</property>
-		      <property name="label" translatable="yes">_Import</property>
+		      <property name="label" translatable="yes">_Import...</property>
 		      <property name="use_underline">True</property>
 		      <signal name="activate" handler="on_patch_import_menuitem_activate" last_modification_time="Mon, 06 Feb 2006 06:20:27 GMT"/>
 		      <accelerator key="I" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image2003">
+			<widget class="GtkImage" id="image2088">
+			  <property name="visible">True</property>
+			  <property name="stock">gtk-open</property>
+			  <property name="icon_size">1</property>
+			  <property name="xalign">0.5</property>
+			  <property name="yalign">0.5</property>
+			  <property name="xpad">0</property>
+			  <property name="ypad">0</property>
+			</widget>
+		      </child>
+		    </widget>
+		  </child>
+
+		  <child>
+		    <widget class="GtkImageMenuItem" id="import_location1">
+		      <property name="visible">True</property>
+		      <property name="tooltip" translatable="yes">Import a patch from a URI</property>
+		      <property name="label" translatable="yes">Import _Location...</property>
+		      <property name="use_underline">True</property>
+		      <signal name="activate" handler="on_import_location1_activate" last_modification_time="Wed, 11 Apr 2007 03:53:44 GMT"/>
+		      <accelerator key="L" modifiers="GDK_CONTROL_MASK" signal="activate"/>
+
+		      <child internal-child="image">
+			<widget class="GtkImage" id="image2089">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-open</property>
 			  <property name="icon_size">1</property>
@@ -84,10 +107,22 @@
 		  <child>
 		    <widget class="GtkImageMenuItem" id="patch_save_as_menuitem">
 		      <property name="visible">True</property>
-		      <property name="tooltip" translatable="yes">Save this patch to a specific filename</property>
-		      <property name="label">gtk-save-as</property>
-		      <property name="use_stock">True</property>
-		      <signal name="activate" handler="on_file_save_patch_menuitem_activate" last_modification_time="Sat, 23 Oct 2004 02:16:12 GMT"/>
+		      <property name="tooltip" translatable="yes">Save this patch to a specific file name</property>
+		      <property name="label" translatable="yes">Save _As...</property>
+		      <property name="use_underline">True</property>
+		      <signal name="activate" handler="on_patch_save_as_menuitem_activate" last_modification_time="Sat, 23 Oct 2004 02:16:12 GMT"/>
+
+		      <child internal-child="image">
+			<widget class="GtkImage" id="image2090">
+			  <property name="visible">True</property>
+			  <property name="stock">gtk-save-as</property>
+			  <property name="icon_size">1</property>
+			  <property name="xalign">0.5</property>
+			  <property name="yalign">0.5</property>
+			  <property name="xpad">0</property>
+			  <property name="ypad">0</property>
+			</widget>
+		      </child>
 		    </widget>
 		  </child>
 
@@ -101,12 +136,12 @@
 		    <widget class="GtkImageMenuItem" id="patch_configuration_menuitem">
 		      <property name="visible">True</property>
 		      <property name="tooltip" translatable="yes">Configure OmGtk</property>
-		      <property name="label" translatable="yes">Confi_guration</property>
+		      <property name="label" translatable="yes">Confi_guration...</property>
 		      <property name="use_underline">True</property>
 		      <signal name="activate" handler="on_patch_configuration_menuitem_activate" last_modification_time="Sun, 29 Jan 2006 21:17:26 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image2004">
+			<widget class="GtkImage" id="image2091">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-preferences</property>
 			  <property name="icon_size">1</property>
@@ -239,7 +274,7 @@
 		      <accelerator key="G" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image2005">
+			<widget class="GtkImage" id="image2092">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-sort-ascending</property>
 			  <property name="icon_size">1</property>
@@ -256,13 +291,13 @@
 		    <widget class="GtkImageMenuItem" id="patch_view_control_window_menuitem">
 		      <property name="visible">True</property>
 		      <property name="tooltip" translatable="yes">View/Edit controls for this patch</property>
-		      <property name="label" translatable="yes">_Controls</property>
+		      <property name="label" translatable="yes">_Controls...</property>
 		      <property name="use_underline">True</property>
 		      <signal name="activate" handler="on_patch_view_control_window_menuitem_activate" last_modification_time="Wed, 20 Apr 2005 16:05:32 GMT"/>
 		      <accelerator key="C" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image2006">
+			<widget class="GtkImage" id="image2093">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-preferences</property>
 			  <property name="icon_size">1</property>
@@ -279,9 +314,22 @@
 		    <widget class="GtkImageMenuItem" id="patch_properties_menuitem">
 		      <property name="visible">True</property>
 		      <property name="tooltip" translatable="yes">View/Edit properties for this patch</property>
-		      <property name="label">gtk-properties</property>
-		      <property name="use_stock">True</property>
+		      <property name="label" translatable="yes">_Properties...</property>
+		      <property name="use_underline">True</property>
 		      <signal name="activate" handler="on_patch_properties_menuitem_activate" last_modification_time="Mon, 08 Aug 2005 07:18:52 GMT"/>
+		      <accelerator key="P" modifiers="GDK_CONTROL_MASK" signal="activate"/>
+
+		      <child internal-child="image">
+			<widget class="GtkImage" id="image2094">
+			  <property name="visible">True</property>
+			  <property name="stock">gtk-properties</property>
+			  <property name="icon_size">1</property>
+			  <property name="xalign">0.5</property>
+			  <property name="yalign">0.5</property>
+			  <property name="xpad">0</property>
+			  <property name="ypad">0</property>
+			</widget>
+		      </child>
 		    </widget>
 		  </child>
 
@@ -304,7 +352,7 @@
 		      <signal name="activate" handler="on_patch_destroy_menuitem_activate" last_modification_time="Wed, 25 May 2005 00:22:00 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image2007">
+			<widget class="GtkImage" id="image2095">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-delete</property>
 			  <property name="icon_size">1</property>
@@ -335,13 +383,13 @@
 		    <widget class="GtkImageMenuItem" id="patch_view_engine_window_menuitem">
 		      <property name="visible">True</property>
 		      <property name="tooltip" translatable="yes">Connect to, Disconnect from, or Launch Engine</property>
-		      <property name="label" translatable="yes">_Engine</property>
+		      <property name="label" translatable="yes">_Engine...</property>
 		      <property name="use_underline">True</property>
 		      <signal name="activate" handler="on_patch_view_engine_window_menuitem_activate" last_modification_time="Fri, 16 Jun 2006 03:48:44 GMT"/>
 		      <accelerator key="E" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image2008">
+			<widget class="GtkImage" id="image2096">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-connect</property>
 			  <property name="icon_size">1</property>
@@ -358,13 +406,13 @@
 		    <widget class="GtkImageMenuItem" id="patch_view_patch_tree_window_menuitem">
 		      <property name="visible">True</property>
 		      <property name="tooltip" translatable="yes">View all patches in the engine as a heirarchial list</property>
-		      <property name="label" translatable="yes">_Patch Tree</property>
+		      <property name="label" translatable="yes">_Patch Tree...</property>
 		      <property name="use_underline">True</property>
 		      <signal name="activate" handler="on_patch_view_tree_window_menuitem_activate" last_modification_time="Sun, 29 Jan 2006 21:29:58 GMT"/>
 		      <accelerator key="T" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image2009">
+			<widget class="GtkImage" id="image2097">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-index</property>
 			  <property name="icon_size">1</property>
@@ -381,13 +429,13 @@
 		    <widget class="GtkImageMenuItem" id="patch_view_messages_window_menuitem">
 		      <property name="visible">True</property>
 		      <property name="tooltip" translatable="yes">View error messages from the engine</property>
-		      <property name="label" translatable="yes">_Messages</property>
+		      <property name="label" translatable="yes">_Messages...</property>
 		      <property name="use_underline">True</property>
 		      <signal name="activate" handler="on_patch_view_messages_window_menuitem_activate" last_modification_time="Sun, 29 Jan 2006 21:29:58 GMT"/>
 		      <accelerator key="M" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image2010">
+			<widget class="GtkImage" id="image2098">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-dialog-error</property>
 			  <property name="icon_size">1</property>
@@ -422,7 +470,7 @@
 		      <signal name="activate" handler="on_right-click_the_canvas_to_add_objects1_activate" last_modification_time="Fri, 16 Jun 2006 17:51:05 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image2011">
+			<widget class="GtkImage" id="image2099">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-info</property>
 			  <property name="icon_size">1</property>
@@ -2155,7 +2203,7 @@
 	      <property name="visible">True</property>
 	      <property name="can_focus">True</property>
 	      <property name="climb_rate">1</property>
-	      <property name="digits">0</property>
+	      <property name="digits">3</property>
 	      <property name="numeric">True</property>
 	      <property name="update_policy">GTK_UPDATE_ALWAYS</property>
 	      <property name="snap_to_ticks">False</property>
@@ -2218,10 +2266,10 @@
 		      <property name="can_focus">True</property>
 		      <property name="draw_value">True</property>
 		      <property name="value_pos">GTK_POS_RIGHT</property>
-		      <property name="digits">2</property>
+		      <property name="digits">3</property>
 		      <property name="update_policy">GTK_UPDATE_CONTINUOUS</property>
 		      <property name="inverted">True</property>
-		      <property name="adjustment">0.8 0 1 0 0 0</property>
+		      <property name="adjustment">0 0 1 0.0010000000475 0 0</property>
 		    </widget>
 		    <packing>
 		      <property name="padding">0</property>
@@ -2244,12 +2292,12 @@
 	      <property name="visible">True</property>
 	      <property name="can_focus">True</property>
 	      <property name="climb_rate">1</property>
-	      <property name="digits">0</property>
+	      <property name="digits">3</property>
 	      <property name="numeric">True</property>
 	      <property name="update_policy">GTK_UPDATE_ALWAYS</property>
 	      <property name="snap_to_ticks">False</property>
 	      <property name="wrap">False</property>
-	      <property name="adjustment">1 -99999 99999 1 10 10</property>
+	      <property name="adjustment">0 -99999 99999 1 10 10</property>
 	    </widget>
 	    <packing>
 	      <property name="padding">0</property>
