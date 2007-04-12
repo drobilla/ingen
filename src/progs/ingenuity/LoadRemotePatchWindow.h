@@ -28,7 +28,25 @@ using Ingen::Client::PatchModel;
 using Ingen::Client::MetadataMap;
 
 namespace Ingenuity {
-	
+
+
+/** Columns for the remote patch list.
+ *
+ * \ingroup Ingenuity
+ */
+class PatchColumns : public Gtk::TreeModel::ColumnRecord
+{
+public:
+  PatchColumns() {
+	  add(_col_name);
+	  add(_col_uri);
+  }
+
+  Gtk::TreeModelColumn<Glib::ustring> _col_name;
+  Gtk::TreeModelColumn<Glib::ustring> _col_uri;
+};
+
+
 
 /* Load remote patch ("import location") dialog.
  *
@@ -47,6 +65,9 @@ public:
 	void present(SharedPtr<PatchModel> patch, MetadataMap data);
 
 private:
+	void patch_activated(const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* col);
+	void patch_selected();
+	void uri_changed();
 	void open_clicked();
 	void cancel_clicked();
 
@@ -54,10 +75,15 @@ private:
 
 	SharedPtr<PatchModel> _patch;
 	bool                  _replace;
+	
+	Glib::RefPtr<Gtk::TreeSelection> _selection;
+	Glib::RefPtr<Gtk::ListStore>     _liststore;
+	PatchColumns                     _columns;
 
-	Gtk::Entry*  _uri_entry;
-	Gtk::Button* _open_button;
-	Gtk::Button* _cancel_button;
+	Gtk::TreeView* _treeview;
+	Gtk::Entry*    _uri_entry;
+	Gtk::Button*   _open_button;
+	Gtk::Button*   _cancel_button;
 };
  
 
