@@ -39,7 +39,7 @@ class Loader {
 public:
 	Loader(SharedPtr<ModelEngineInterface> engine, SharedPtr<Namespaces> = SharedPtr<Namespaces>());
 
-	bool load(const Glib::ustring&  filename,
+	bool load(const Glib::ustring&  uri,
 	          boost::optional<Path> parent,
 			  string                patch_name,
 	          Glib::ustring         patch_uri = "",

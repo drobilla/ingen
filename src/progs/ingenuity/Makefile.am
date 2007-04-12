@@ -47,6 +47,8 @@ ingenuity_SOURCES = \
 	LoadPluginWindow.cpp \
 	LoadPatchWindow.h \
 	LoadPatchWindow.cpp \
+	LoadRemotePatchWindow.h \
+	LoadRemotePatchWindow.cpp \
 	MessagesWindow.h \
 	MessagesWindow.cpp \
 	LoadSubpatchWindow.h \

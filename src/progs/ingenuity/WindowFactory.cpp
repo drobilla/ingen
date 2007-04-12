@@ -24,6 +24,7 @@
 #include "NodeControlWindow.h"
 #include "LoadPluginWindow.h"
 #include "LoadPatchWindow.h"
+#include "LoadRemotePatchWindow.h"
 #include "LoadSubpatchWindow.h"
 #include "RenameWindow.h"
 #include "NewSubpatchWindow.h"
@@ -34,6 +35,7 @@ namespace Ingenuity {
 WindowFactory::WindowFactory()
 : _load_plugin_win(NULL)
 , _load_patch_win(NULL)
+, _load_remote_patch_win(NULL)
 , _new_subpatch_win(NULL)
 , _load_subpatch_win(NULL)
 , _node_properties_win(NULL)
@@ -41,13 +43,13 @@ WindowFactory::WindowFactory()
 {
 	Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference();
 
-	xml->get_widget_derived("load_plugin_win",   _load_plugin_win);
-	xml->get_widget_derived("load_patch_win",    _load_patch_win);
-	xml->get_widget_derived("new_subpatch_win",  _new_subpatch_win);
+	xml->get_widget_derived("load_plugin_win", _load_plugin_win);
+	xml->get_widget_derived("load_patch_win", _load_patch_win);
+	xml->get_widget_derived("load_remote_patch_win", _load_remote_patch_win);
+	xml->get_widget_derived("new_subpatch_win", _new_subpatch_win);
 	xml->get_widget_derived("load_subpatch_win", _load_subpatch_win);
 	xml->get_widget_derived("node_properties_win", _node_properties_win);
 	xml->get_widget_derived("patch_properties_win", _patch_properties_win);
-
 }
 
 
@@ -259,6 +261,20 @@ WindowFactory::present_load_patch(SharedPtr<PatchModel> patch, MetadataMap data)
 	_load_patch_win->set_merge(); // Import is the only choice
 
 	_load_patch_win->present(patch, data);
+}
+
+	
+void
+WindowFactory::present_load_remote_patch(SharedPtr<PatchModel> patch, MetadataMap data)
+{
+	PatchWindowMap::iterator w = _patch_windows.find(patch->path());
+
+	if (w != _patch_windows.end())
+		_load_remote_patch_win->set_transient_for(*w->second);
+
+	_load_remote_patch_win->set_merge(); // Import is the only choice
+
+	_load_remote_patch_win->present(patch, data);
 }
 
 

@@ -52,8 +52,8 @@ LoadPatchWindow::LoadPatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gno
 	Gtk::FileFilter filt;
 	filt.add_pattern("*.om");
 	filt.set_name("Om patch files (XML, DEPRECATED) (*.om)");
-	filt.add_pattern("*.ingen");
-	filt.set_name("Ingen patch files (RDF, *.ingen)");
+	filt.add_pattern("*.ingen.ttl");
+	filt.set_name("Ingen patch files (RDF, *.ingen.ttl)");
 	set_filter(filt);
 
 	// Add global examples directory to "shortcut folders" (bookmarks)
@@ -129,7 +129,7 @@ LoadPatchWindow::ok_clicked()
 	if (_patch->path() != "/")
 		parent = _patch->path().parent();
 
-	App::instance().loader()->load_patch(true, get_filename(), "/",
+	App::instance().loader()->load_patch(true, get_uri(), "/",
 		_initial_data, parent, name, poly);
 	
 	hide();

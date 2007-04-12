@@ -56,8 +56,8 @@ LoadSubpatchWindow::LoadSubpatchWindow(BaseObjectType* cobject, const Glib::RefP
 	Gtk::FileFilter filt;
 	filt.add_pattern("*.om");
 	filt.set_name("Om patch files (XML, DEPRECATED) (*.om)");
-	filt.add_pattern("*.ingen");
-	filt.set_name("Ingen patch files (RDF, *.ingen)");
+	filt.add_pattern("*.ingen.ttl");
+	filt.set_name("Ingen patch files (RDF, *.ingen.ttl)");
 	set_filter(filt);
 	
 	// Add global examples directory to "shortcut folders" (bookmarks)

@@ -44,12 +44,12 @@ Loader::Loader(SharedPtr<ModelEngineInterface> engine, SharedPtr<Namespaces> nam
 
 /** Load (create) all objects from an RDF into the engine.
  *
- * @param filename Filename to load objects from.
+ * @param document_uri URI of file to load objects from.
  * @param parent Path of parent under which to load objects.
  * @return whether or not load was successful.
  */
 bool
-Loader::load(const Glib::ustring&  filename,
+Loader::load(const Glib::ustring&  document_uri,
              boost::optional<Path> parent,
 			 string                patch_name,
 			 Glib::ustring         patch_uri,
@@ -60,8 +60,8 @@ Loader::load(const Glib::ustring&  filename,
 	std::map<Path, bool> created;
 
 	// FIXME: kluge
-	unsigned char* document_uri_str = raptor_uri_filename_to_uri_string(filename.c_str());
-	Glib::ustring document_uri = (const char*)document_uri_str;
+	//unsigned char* document_uri_str = raptor_uri_filename_to_uri_string(filename.c_str());
+	//Glib::ustring document_uri = (const char*)document_uri_str;
 	//Glib::ustring document_uri = "file:///home/dave/code/drobillanet/ingen/src/progs/ingenuity/test2.ingen.ttl";
 
 	patch_uri = string("<") + patch_uri + ">";
@@ -90,9 +90,9 @@ Loader::load(const Glib::ustring&  filename,
 	/* Get name (if available/necessary) */
 
 	if (patch_name == "") {	
-		patch_name = string(filename.substr(filename.find_last_of("/")+1));
-		if (patch_name.substr(patch_name.length()-6) == ".ingen")
-			patch_name = patch_name.substr(0, patch_name.length()-6);
+		patch_name = string(document_uri.substr(document_uri.find_last_of("/")+1));
+		if (patch_name.substr(patch_name.length()-10) == ".ingen.ttl")
+			patch_name = patch_name.substr(0, patch_name.length()-10);
 		
 		query = RDFQuery(*_namespaces, Glib::ustring(
 			"SELECT DISTINCT ?name FROM <") + document_uri + "> WHERE {\n" +
@@ -165,7 +165,7 @@ Loader::load(const Glib::ustring&  filename,
 		const Path subpatch_path = patch_path.base() + (string)name;
 		
 		if (created.find(subpatch_path) == created.end()) {
-			load(filename, patch_path, name, patch);
+			load(document_uri, patch_path, name, patch);
 			created[subpatch_path] = true;
 		}
 	}

@@ -79,6 +79,7 @@ protected:
 	
 private:
 	void event_import();
+	void event_import_location();
 	void event_save();
 	void event_save_as();
 	void event_copy();
@@ -101,6 +102,7 @@ private:
 	int  _y;
 	
 	Gtk::MenuItem*      _menu_import;
+	Gtk::MenuItem*      _menu_import_location;
 	Gtk::MenuItem*      _menu_save;
 	Gtk::MenuItem*      _menu_save_as;
 	Gtk::MenuItem*      _menu_cut;

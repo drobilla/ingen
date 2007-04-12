@@ -57,6 +57,7 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 	//xml->get_widget("patch_win_status_bar", _status_bar);
 	//xml->get_widget("patch_open_menuitem", _menu_open);
 	xml->get_widget("patch_import_menuitem", _menu_import);
+	xml->get_widget("patch_import_location_menuitem", _menu_import_location);
 	//xml->get_widget("patch_open_into_menuitem", _menu_open_into);
 	xml->get_widget("patch_save_menuitem", _menu_save);
 	xml->get_widget("patch_save_as_menuitem", _menu_save_as);
@@ -86,6 +87,8 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 		sigc::mem_fun(this, &PatchWindow::event_open));*/
 	_menu_import->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_import));
+	_menu_import_location->signal_activate().connect(
+		sigc::mem_fun(this, &PatchWindow::event_import_location));
 	_menu_save->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_save));
 	_menu_save_as->signal_activate().connect(
@@ -253,6 +256,13 @@ PatchWindow::event_import()
 
 
 void
+PatchWindow::event_import_location()
+{
+	App::instance().window_factory()->present_load_remote_patch(_patch);
+}
+
+
+void
 PatchWindow::event_save()
 {
 	if (_patch->filename() == "")
@@ -294,8 +304,8 @@ PatchWindow::event_save_as()
 	
 	if (result == Gtk::RESPONSE_OK) {	
 		string filename = dialog.get_filename();
-		if (filename.length() < 7 || filename.substr(filename.length()-6) != ".ingen")
-			filename += ".ingen";
+		if (filename.length() < 11 || filename.substr(filename.length()-10) != ".ingen.ttl")
+			filename += ".ingen.ttl";
 			
 		bool confirm = false;
 		std::fstream fin;
