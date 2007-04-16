@@ -67,15 +67,15 @@ LoadRemotePatchWindow::present(SharedPtr<PatchModel> patch, MetadataMap data)
 	Namespaces namespaces;
 	namespaces["ingen"] = "http://drobilla.net/ns/ingen#";
 	namespaces["rdfs"] = "http://www.w3.org/2000/01/rdf-schema#";
+	namespaces["doap"] = "http://usefulinc.com/ns/doap#";
 
 	RDFQuery query(namespaces, Glib::ustring(
 		"SELECT DISTINCT ?name ?uri FROM <> WHERE {"
-		"  ?patch a            ingen:Patch ;"
-		"         rdfs:seeAlso ?uri ;"
-		"         ingen:name   ?name ."
+		"  ?uri a            ingen:Patch ;"
+		"       doap:name    ?name ."
 		"}"));
 
-	RDFQuery::Results results = query.run("http://drobilla.net/ingen/index.ttl");
+	RDFQuery::Results results = query.run("http://rdf.drobilla.net/ingen_patches/index.ttl");
 	
 	for (RDFQuery::Results::iterator i = results.begin(); i != results.end(); ++i) {
 		Gtk::TreeModel::iterator iter = _liststore->append();

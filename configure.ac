@@ -220,7 +220,7 @@ if test "$build_server" = "yes" -o "$monolothic_ingenuity"; then
 	
 	# Check for Jack
 	# (102.20 = MIDI API changes)
-	PKG_CHECK_MODULES(JACK, jack >= 0.102.20)
+	PKG_CHECK_MODULES(JACK, jack >= 0.103.0)
 
 	# Check for Jack MIDI
 	if test "$build_jack_midi" = "yes"; then
@@ -347,6 +347,7 @@ if test "$build_gtk_client" = "yes"; then
 	PKG_CHECK_MODULES(GNOMECANVASMM, libgnomecanvasmm-2.6)
 	PKG_CHECK_MODULES(LIBGLADEMM, libglademm-2.4)
 	PKG_CHECK_MODULES(FLOWCANVAS, flowcanvas >= 0.1.0)
+	PKG_CHECK_MODULES(CURL, curl >= 0.21, build_curl="yes", build_curl="no")
 
 	if test "$monolithic_ingenuity" = "yes"; then
 		AC_DEFINE(MONOLITHIC_INGENUITY, 1, [Whether to build an internal engine into Ingenuity])

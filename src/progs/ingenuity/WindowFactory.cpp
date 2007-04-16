@@ -25,6 +25,7 @@
 #include "LoadPluginWindow.h"
 #include "LoadPatchWindow.h"
 #include "LoadRemotePatchWindow.h"
+#include "UploadPatchWindow.h"
 #include "LoadSubpatchWindow.h"
 #include "RenameWindow.h"
 #include "NewSubpatchWindow.h"
@@ -36,6 +37,7 @@ WindowFactory::WindowFactory()
 : _load_plugin_win(NULL)
 , _load_patch_win(NULL)
 , _load_remote_patch_win(NULL)
+, _upload_patch_win(NULL)
 , _new_subpatch_win(NULL)
 , _load_subpatch_win(NULL)
 , _node_properties_win(NULL)
@@ -46,6 +48,7 @@ WindowFactory::WindowFactory()
 	xml->get_widget_derived("load_plugin_win", _load_plugin_win);
 	xml->get_widget_derived("load_patch_win", _load_patch_win);
 	xml->get_widget_derived("load_remote_patch_win", _load_remote_patch_win);
+	xml->get_widget_derived("upload_patch_win", _upload_patch_win);
 	xml->get_widget_derived("new_subpatch_win", _new_subpatch_win);
 	xml->get_widget_derived("load_subpatch_win", _load_subpatch_win);
 	xml->get_widget_derived("node_properties_win", _node_properties_win);
@@ -275,6 +278,18 @@ WindowFactory::present_load_remote_patch(SharedPtr<PatchModel> patch, MetadataMa
 	_load_remote_patch_win->set_merge(); // Import is the only choice
 
 	_load_remote_patch_win->present(patch, data);
+}
+
+
+void
+WindowFactory::present_upload_patch(SharedPtr<PatchModel> patch)
+{
+	PatchWindowMap::iterator w = _patch_windows.find(patch->path());
+
+	if (w != _patch_windows.end())
+		_upload_patch_win->set_transient_for(*w->second);
+
+	_upload_patch_win->present(patch);
 }
 
 

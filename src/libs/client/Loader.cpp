@@ -39,6 +39,7 @@ Loader::Loader(SharedPtr<ModelEngineInterface> engine, SharedPtr<Namespaces> nam
 	(*_namespaces)["ingen"] = "http://drobilla.net/ns/ingen#";
 	(*_namespaces)["ingenuity"] = "http://drobilla.net/ns/ingenuity#";
 	(*_namespaces)["lv2"] = "http://lv2plug.in/ontology#";
+	(*_namespaces)["doap"] = "http://usefulinc.com/ns/doap#";
 }
 
 

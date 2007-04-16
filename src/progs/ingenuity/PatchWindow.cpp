@@ -61,6 +61,7 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 	//xml->get_widget("patch_open_into_menuitem", _menu_open_into);
 	xml->get_widget("patch_save_menuitem", _menu_save);
 	xml->get_widget("patch_save_as_menuitem", _menu_save_as);
+	xml->get_widget("patch_upload_menuitem", _menu_upload);
 	xml->get_widget("patch_cut_menuitem", _menu_cut);
 	xml->get_widget("patch_copy_menuitem", _menu_copy);
 	xml->get_widget("patch_paste_menuitem", _menu_paste);
@@ -93,6 +94,8 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 		sigc::mem_fun(this, &PatchWindow::event_save));
 	_menu_save_as->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_save_as));
+	_menu_upload->signal_activate().connect(
+		sigc::mem_fun(this, &PatchWindow::event_upload));
 	_menu_copy->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_copy));
 	_menu_delete->signal_activate().connect(
@@ -331,6 +334,13 @@ PatchWindow::event_save_as()
 		}
 	}
 	App::instance().configuration()->set_patch_folder(dialog.get_current_folder());
+}
+
+
+void
+PatchWindow::event_upload()
+{
+	App::instance().window_factory()->present_upload_patch(_patch);
 }
 
 

@@ -58,6 +58,8 @@ public:
 	virtual ~ObjectModel();
 
 	const Atom& get_metadata(const string& key) const;
+	void set_metadata(const string& key, const Atom& value)
+		{ _metadata[key] = value; metadata_update_sig.emit(key, value); }
 
 	const MetadataMap&     metadata() const { return _metadata; }
 	inline const Path&     path()     const { return _path; }
@@ -80,10 +82,6 @@ protected:
 	void add_metadata(const MetadataMap& data);
 	
 	void set(SharedPtr<ObjectModel> model);
-	
-	void set_metadata(const string& key, const Atom& value)
-		{ _metadata[key] = value; metadata_update_sig.emit(key, value); }
-
 
 	Path                    _path;
 	SharedPtr<ObjectModel> _parent;

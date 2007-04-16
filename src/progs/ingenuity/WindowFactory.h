@@ -33,6 +33,7 @@ class NodePropertiesWindow;
 class PatchPropertiesWindow;
 class LoadPatchWindow;
 class LoadRemotePatchWindow;
+class UploadPatchWindow;
 class RenameWindow;
 
 
@@ -61,6 +62,7 @@ public:
 	void present_load_plugin(SharedPtr<PatchModel> patch, MetadataMap data = MetadataMap());
 	void present_load_patch(SharedPtr<PatchModel> patch, MetadataMap data = MetadataMap());
 	void present_load_remote_patch(SharedPtr<PatchModel> patch, MetadataMap data = MetadataMap());
+	void present_upload_patch(SharedPtr<PatchModel> patch);
 	void present_new_subpatch(SharedPtr<PatchModel> patch, MetadataMap data = MetadataMap());
 	void present_load_subpatch(SharedPtr<PatchModel> patch, MetadataMap data = MetadataMap());
 	void present_rename(SharedPtr<ObjectModel> object);
@@ -86,6 +88,7 @@ private:
 	LoadPluginWindow*      _load_plugin_win;
 	LoadPatchWindow*       _load_patch_win;
 	LoadRemotePatchWindow* _load_remote_patch_win;
+	UploadPatchWindow*     _upload_patch_win;
 	NewSubpatchWindow*     _new_subpatch_win;
 	LoadSubpatchWindow*    _load_subpatch_win;
 	NodePropertiesWindow*  _node_properties_win;

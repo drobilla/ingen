@@ -54,6 +54,7 @@ Serializer::Serializer()
 	_writer.add_prefix("ingen", "http://drobilla.net/ns/ingen#");
 	_writer.add_prefix("ingenuity", "http://drobilla.net/ns/ingenuity#");
 	_writer.add_prefix("lv2", "http://lv2plug.in/ontology#");
+	_writer.add_prefix("doap", "http://usefulinc.com/ns/doap#");
 }
 
 
@@ -221,6 +222,15 @@ Serializer::serialize_patch(SharedPtr<PatchModel> patch, const RdfId& patch_id)
 		patch_id,
 		NS_INGEN("polyphony"),
 		Atom((int)patch->poly()));
+	
+	for (MetadataMap::const_iterator m = patch->metadata().begin(); m != patch->metadata().end(); ++m) {
+		if (_writer.expand_uri(m->first) != "") {
+			_writer.write(
+				patch_id,
+				RdfId(RdfId::RESOURCE, _writer.expand_uri(m->first.c_str()).c_str()),
+				m->second);
+		}
+	}
 
 	for (NodeModelMap::const_iterator n = patch->nodes().begin(); n != patch->nodes().end(); ++n) {
 		SharedPtr<PatchModel> patch = PtrCast<PatchModel>(n->second);
@@ -244,15 +254,6 @@ Serializer::serialize_patch(SharedPtr<PatchModel> patch, const RdfId& patch_id)
 
 	for (ConnectionList::const_iterator c = patch->connections().begin(); c != patch->connections().end(); ++c) {
 		serialize_connection(*c);
-	}
-	
-	for (MetadataMap::const_iterator m = patch->metadata().begin(); m != patch->metadata().end(); ++m) {
-		if (_writer.expand_uri(m->first) != "") {
-			_writer.write(
-				patch_id,
-				RdfId(RdfId::RESOURCE, _writer.expand_uri(m->first.c_str()).c_str()),
-				m->second);
-		}
 	}
 }
 
