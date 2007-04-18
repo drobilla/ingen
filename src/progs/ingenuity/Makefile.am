@@ -12,8 +12,8 @@ dist_desktopfiles_DATA = ingenuity.desktop
 globalpixmapsdir = $(datadir)/pixmaps
 dist_globalpixmaps_DATA = ingen.svg
 
-ingenuity_CXXFLAGS = -DGTK_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -I$(top_srcdir)/src/common -I$(top_srcdir)/src/libs/client -DPKGDATADIR=\"$(pkgdatadir)\" @RAUL_CFLAGS@ @GTKMM_CFLAGS@ @LIBGLADEMM_CFLAGS@ @GNOMECANVASMM_CFLAGS@ @LOSC_CFLAGS@ @LASH_CFLAGS@ @FLOWCANVAS_CFLAGS@ @SLV2_CFLAGS@
-ingenuity_LDADD = @RAUL_LIBS@ @GTKMM_LIBS@ @LIBGLADEMM_LIBS@ @GNOMECANVASMM_LIBS@ @LOSC_LIBS@ @LASH_LIBS@ @FLOWCANVAS_LIBS@ @SLV2_LIBS@ ../../libs/client/libingenclient.la
+ingenuity_CXXFLAGS = -DGTK_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -I$(top_srcdir)/src/common -I$(top_srcdir)/src/libs/client -DPKGDATADIR=\"$(pkgdatadir)\" @RAUL_CFLAGS@ @GTKMM_CFLAGS@ @LIBGLADEMM_CFLAGS@ @GNOMECANVASMM_CFLAGS@ @LOSC_CFLAGS@ @LASH_CFLAGS@ @FLOWCANVAS_CFLAGS@ @SLV2_CFLAGS@ @CURL_CFLAGS@
+ingenuity_LDADD = @RAUL_LIBS@ @GTKMM_LIBS@ @LIBGLADEMM_LIBS@ @GNOMECANVASMM_LIBS@ @LOSC_LIBS@ @LASH_LIBS@ @FLOWCANVAS_LIBS@ @SLV2_LIBS@ @CURL_LIBS@ ../../libs/client/libingenclient.la
 ingenuity_DEPENDENCIES = ../../libs/client/libingenclient.la
 
 # FIXME: make engine have a separate include dir
