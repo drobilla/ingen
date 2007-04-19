@@ -59,7 +59,8 @@ NodeFactory::NodeFactory()
 : _has_loaded(false)
 {
 #ifdef HAVE_SLV2
-	slv2_init();
+	_world = slv2_world_new();
+	slv2_world_load_all(_world);
 #endif
 
 	// Add builtin plugin types to _internal_plugins list
@@ -95,7 +96,7 @@ NodeFactory::~NodeFactory()
 		delete (*i);
 	}
 #ifdef HAVE_SLV2
-	slv2_finish();
+	slv2_world_free(_world);
 #endif
 
 }
@@ -266,8 +267,7 @@ NodeFactory::load_internal_plugin(const string& uri,
 void
 NodeFactory::load_lv2_plugins()
 {
-	SLV2Plugins plugins = slv2_plugins_new();
-	slv2_plugins_load_all(plugins);
+	SLV2Plugins plugins = slv2_world_get_all_plugins(_world);
 
 	//cerr << "[NodeFactory] Found " << slv2_plugins_get_length(plugins) << " LV2 plugins." << endl;
 	

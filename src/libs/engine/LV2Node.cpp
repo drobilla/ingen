@@ -82,7 +82,7 @@ LV2Node::instantiate()
 	Port* port = NULL;
 	
 	for (size_t j=0; j < num_ports; ++j) {
-		SLV2PortID id = slv2_port_by_index(j);
+		SLV2Port id = slv2_plugin_get_port_by_index(_lv2_plugin, j);
 
 		// LV2 shortnames are guaranteed to be unique, valid C identifiers
 		port_name = (char*)slv2_port_get_symbol(_lv2_plugin, id);

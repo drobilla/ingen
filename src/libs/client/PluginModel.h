@@ -46,10 +46,13 @@ public:
 	{
 		set_type_from_uri(type_uri);
 #ifdef HAVE_SLV2
+		static SLV2World world = NULL;
 		static SLV2Plugins plugins = NULL;
-		if (!plugins) {
-			plugins = slv2_plugins_new();
-			slv2_plugins_load_all(plugins);
+
+		if (!world) {
+			world = slv2_world_new();
+			slv2_world_load_all(world);
+			plugins = slv2_world_get_all_plugins(world);
 		}
 		
 		_slv2_plugin = slv2_plugins_get_by_uri(plugins, uri.c_str());

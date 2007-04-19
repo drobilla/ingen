@@ -106,10 +106,12 @@ SliderControlGroup::init(ControlPanel* panel, SharedPtr<PortModel> pm, bool sepa
 	if (parent && parent->plugin() && parent->plugin()->type() == PluginModel::LV2) {
 		min = slv2_port_get_minimum_value(
 				parent->plugin()->slv2_plugin(),
-				slv2_port_by_symbol(pm->path().name().c_str()));
+				slv2_plugin_get_port_by_symbol(parent->plugin()->slv2_plugin(),
+					pm->path().name().c_str()));
 		max = slv2_port_get_maximum_value(
 					parent->plugin()->slv2_plugin(),
-					slv2_port_by_symbol(pm->path().name().c_str()));
+					slv2_plugin_get_port_by_symbol(parent->plugin()->slv2_plugin(),
+						pm->path().name().c_str()));
 	}
 
 	if (max <= min)

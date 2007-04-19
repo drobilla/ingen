@@ -25,6 +25,9 @@
 #include <string>
 #include <ladspa.h>
 #include <pthread.h>
+#ifdef HAVE_SLV2
+#include <slv2/slv2.h>
+#endif
 
 using std::string; using std::list;
 
@@ -69,6 +72,8 @@ private:
 #ifdef HAVE_SLV2
 	void load_lv2_plugins();
 	Node* load_lv2_plugin(const string& plugin_uri, const string& name, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size);
+
+	SLV2World _world;
 #endif
 
 #ifdef HAVE_DSSI

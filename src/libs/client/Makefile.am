@@ -2,9 +2,9 @@ if BUILD_CLIENT_LIB
 
 noinst_LTLIBRARIES = libingenclient.la
 
-libingenclient_la_CXXFLAGS = @RAUL_CFLAGS@ @LXML2_CFLAGS@ @RASQAL_CFLAGS@ @RAPTOR_CFLAGS@ @LSIGCPP_CFLAGS@ @GLIBMM_CFLAGS@ -I$(top_srcdir)/src/common -DPKGDATADIR=\"$(pkgdatadir)\"
+libingenclient_la_CXXFLAGS = @RAUL_CFLAGS@ @SLV2_CFLAGS@ @LXML2_CFLAGS@ @RASQAL_CFLAGS@ @RAPTOR_CFLAGS@ @LSIGCPP_CFLAGS@ @GLIBMM_CFLAGS@ -I$(top_srcdir)/src/common -DPKGDATADIR=\"$(pkgdatadir)\"
 
-libingenclient_la_LIBADD = @RAUL_LIBS@ @LXML2_LIBS@ @LOSC_LIBS@ @RASQAL_LIBS@ @RAPTOR_LIBS@ @LSIGCPP_LIBS@ @GLIBMM_LIBS@
+libingenclient_la_LIBADD = @RAUL_LIBS@ @SLV2_LIBS@ @LXML2_LIBS@ @LOSC_LIBS@ @RASQAL_LIBS@ @RAPTOR_LIBS@ @LSIGCPP_LIBS@ @GLIBMM_LIBS@
 
 libingenclient_la_SOURCES = \
 	OSCEngineSender.h \
