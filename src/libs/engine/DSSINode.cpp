@@ -36,6 +36,7 @@ DSSINode::DSSINode(const Plugin* plugin, const string& name, size_t poly, Patch*
   _bank(-1),
   _program(-1),
   _midi_in_port(NULL),
+  _midi_in_buffer(NULL),
   _alsa_events(new snd_seq_event_t[_buffer_size]),
   _alsa_encoder(NULL)
 {
@@ -135,23 +136,30 @@ DSSINode::program(int bank, int program)
 
 
 void
-DSSINode::convert_events()
+DSSINode::convert_events(SampleCount nframes)
 {
 	assert(has_midi_input());
-	assert(_midi_in_port != NULL);
-#if 0
-	Buffer<MidiMessage>& buffer = *_midi_in_port->buffer(0);
+	  
 	_encoded_events = 0;
-
-	for (size_t i = 0; i < buffer.filled_size(); ++i) {
-		snd_midi_event_encode(_alsa_encoder, buffer.value_at(i).buffer,
-			buffer.value_at(i).size, 
-			&_alsa_events[_encoded_events]);
-		_alsa_events[_encoded_events].time.tick = buffer.value_at(i).time;
-		if (_alsa_events[_encoded_events].type != SND_SEQ_EVENT_NONE)
-			++_encoded_events;
+	MidiBuffer& buffer = *_midi_in_buffer;
+	
+	if (_midi_in_buffer == 0)
+	  return;
+	
+	buffer.prepare_read(nframes);
+	double timestamp;
+	uint32_t size;
+	unsigned char* data;
+	while (buffer.get_event(&timestamp, &size, &data) < nframes &&
+	       _encoded_events < _buffer_size) {
+	  snd_midi_event_encode(_alsa_encoder, data, size, 
+				&_alsa_events[_encoded_events]);
+	  _alsa_events[_encoded_events].time.tick = 
+	    (snd_seq_tick_time_t)timestamp;
+	  if (_alsa_events[_encoded_events].type != SND_SEQ_EVENT_NONE)
+	    ++_encoded_events;
+	  buffer.increment();
 	}
-#endif
 }
 
 
@@ -168,11 +176,11 @@ DSSINode::process(SampleCount nframes, FrameTime start, FrameTime end)
 	NodeBase::pre_process(nframes, start, end);
 
 	if (_dssi_descriptor->run_synth) {
-		convert_events();
+		convert_events(nframes);
 		_dssi_descriptor->run_synth(_instances[0], nframes,
 					     _alsa_events, _encoded_events);
 	} else if (_dssi_descriptor->run_multiple_synths) {
-		convert_events();
+		convert_events(nframes);
 		// I hate this stupid function
 		snd_seq_event_t* events[1]       = { _alsa_events };
 		long unsigned    events_sizes[1] = { _encoded_events };
@@ -183,6 +191,27 @@ DSSINode::process(SampleCount nframes, FrameTime start, FrameTime end)
 	}
 	
 	NodeBase::post_process(nframes, start, end);
+}
+
+
+void
+DSSINode::set_port_buffer(size_t voice, size_t port_num, Buffer* buf)
+{
+	assert(voice < _poly);
+	
+	// Could be a MIDI port after this
+	if (port_num < _descriptor->PortCount) {
+	        AudioBuffer* audio_buffer = dynamic_cast<AudioBuffer*>(buf);
+		assert(audio_buffer);
+		_descriptor->connect_port(_instances[voice], port_num,
+			audio_buffer->data());
+	}
+	
+	else if (port_num == _descriptor->PortCount && has_midi_input()) {
+	        MidiBuffer* midi_buffer = dynamic_cast<MidiBuffer*>(buf);
+		assert(midi_buffer);
+		_midi_in_buffer = midi_buffer;
+	}
 }
 
 

@@ -193,7 +193,6 @@ LADSPANode::set_port_buffer(size_t voice, size_t port_num, Buffer* buf)
 	AudioBuffer* audio_buffer = dynamic_cast<AudioBuffer*>(buf);
 	assert(audio_buffer);
 
-	// Could be a MIDI port after this
 	if (port_num < _descriptor->PortCount)
 		_descriptor->connect_port(_instances[voice], port_num,
 			audio_buffer->data());

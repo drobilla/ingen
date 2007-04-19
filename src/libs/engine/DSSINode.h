@@ -55,7 +55,9 @@ public:
 	void program(int bank, int program);
 
 	void process(SampleCount nframes, FrameTime start, FrameTime end);
-
+	
+	void set_port_buffer(size_t voice, size_t port_num, Buffer* buf);
+	
 	bool update_programs(bool send_events);
 	void set_default_program();
 	const std::map<int, Bank>& get_programs() const;
@@ -75,7 +77,7 @@ private:
 	void send_quit();
 	
 	// Conversion to ALSA MIDI events
-	void convert_events();
+	void convert_events(SampleCount nframes);
 	
 	
 	DSSI_Descriptor* _dssi_descriptor;
@@ -91,6 +93,7 @@ private:
 	std::map<int, Bank>                _banks;
 
 	InputPort*        _midi_in_port;
+	MidiBuffer*       _midi_in_buffer;
  	snd_seq_event_t*  _alsa_events;
  	unsigned long     _encoded_events;
  	snd_midi_event_t* _alsa_encoder;
