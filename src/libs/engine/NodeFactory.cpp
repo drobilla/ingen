@@ -306,7 +306,7 @@ NodeFactory::load_lv2_plugins()
 		}
 	}
 	
-	slv2_plugins_free(plugins);
+	slv2_plugins_free(_world, plugins);
 }
 
 

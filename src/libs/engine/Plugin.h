@@ -60,6 +60,7 @@ public:
 #endif
 	{}
 
+#if 0
 	// FIXME: remove
 	Plugin() : _type(Internal), _lib_path("/Ingen"),
 	           _id(0), _library(NULL)
@@ -68,15 +69,7 @@ public:
 		_slv2_plugin = NULL;
 #endif
 	}
-
-#ifdef HAVE_SLV2
-	~Plugin()
-	{
-		if (_slv2_plugin)
-			slv2_plugin_free(_slv2_plugin);
-	}
 #endif
-
 
 	Plugin(const Plugin* const copy) {
 		// Copying only allowed for Internal plugins.  Bit of a hack, but
@@ -135,9 +128,8 @@ public:
 	
 	// FIXME: ew
 #ifdef HAVE_SLV2
-	SLV2Plugin slv2_plugin() const             { return _slv2_plugin; }
-	void       slv2_plugin(const SLV2Plugin p) { _slv2_plugin = slv2_plugin_duplicate(p); }
-	
+	SLV2Plugin slv2_plugin() const       { return _slv2_plugin; }
+	void       slv2_plugin(SLV2Plugin p) { _slv2_plugin = p; }	
 #endif
 
 	Node* instantiate(const string& name, size_t poly, Ingen::Patch* parent, SampleRate srate, size_t buffer_size);
