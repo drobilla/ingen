@@ -59,8 +59,11 @@ public:
 
 	size_t num_object() { return _objects.size(); }
 	
-	const map<string, SharedPtr<PluginModel> >& plugins() const { return _plugins; }
-	const map<Path, SharedPtr<ObjectModel> >&   objects() const { return _objects; }
+	typedef map<string, SharedPtr<PluginModel> > Plugins;
+	const Plugins& plugins() const { return _plugins; }
+
+	typedef map<Path, SharedPtr<ObjectModel> > Objects;
+	const Objects& objects() const { return _objects; }
 
 	sigc::signal<void, SharedPtr<ObjectModel> > new_object_sig; 
 private:
@@ -103,10 +106,9 @@ private:
 	SharedPtr<EngineInterface>    _engine;
 	SharedPtr<SigClientInterface> _emitter;
 
-	typedef map<Path, SharedPtr<ObjectModel> > ObjectMap;
-	ObjectMap _objects; ///< Keyed by Ingen path
 
-	map<string, SharedPtr<PluginModel> > _plugins; ///< Keyed by URI
+	Objects _objects; ///< Map, keyed by Ingen path
+	Plugins _plugins; ///< Map, keyed by plugin URI
 
 	/** Objects we've received, but depend on the existance of another unknown object.
 	 * Keyed by the path of the depended-on object (for tolerance of orderless comms) */

@@ -262,7 +262,9 @@ LoadPluginWindow::generate_module_name(int offset)
 	if (iter) {
 		Gtk::TreeModel::Row row = *iter;
 		SharedPtr<PluginModel> plugin = row.get_value(_plugins_columns._col_plugin_model);
-		char num_buf[3];
+		return plugin->default_node_name(_patch);
+	}
+		/*char num_buf[3];
 		for (uint i=0; i < 99; ++i) {
 			name = plugin->default_node_name();
 			if (name == "")
@@ -277,7 +279,7 @@ LoadPluginWindow::generate_module_name(int offset)
 			else
 				name = "";
 		}
-	}
+	}*/
 
 	return name;
 }

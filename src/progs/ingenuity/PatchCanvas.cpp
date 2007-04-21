@@ -34,7 +34,12 @@
 #include "GladeFactory.h"
 #include "WindowFactory.h"
 #include "Serializer.h"
+#include "Store.h"
+#include "PluginModel.h"
+#include "config.h"
+using Ingen::Client::Store;
 using Ingen::Client::Serializer;
+using Ingen::Client::PluginModel;
 
 namespace Ingenuity {
 
@@ -78,6 +83,8 @@ PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
 			"midi_output", "ingen:midi", true));
 
+	build_plugin_menu();
+
 	// Connect to model signals to track state
 	_patch->new_node_sig.connect(sigc::mem_fun(this, &PatchCanvas::add_node));
 	_patch->removed_node_sig.connect(sigc::mem_fun(this, &PatchCanvas::remove_node));
@@ -90,6 +97,62 @@ PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 	_menu_load_plugin->signal_activate().connect(sigc::mem_fun(this, &PatchCanvas::menu_load_plugin));
 	_menu_load_patch->signal_activate().connect(sigc::mem_fun(this, &PatchCanvas::menu_load_patch));
 	_menu_new_patch->signal_activate().connect(sigc::mem_fun(this, &PatchCanvas::menu_new_patch));
+}
+
+
+void
+PatchCanvas::build_plugin_class_menu(Gtk::Menu* menu,
+		SLV2PluginClass plugin_class, SLV2PluginClasses classes)
+{
+#ifdef HAVE_SLV2
+	// Add submenus
+	for (unsigned i=0; i < slv2_plugin_classes_size(classes); ++i) {
+		SLV2PluginClass c = slv2_plugin_classes_get_at(classes, i);
+		const char* parent = slv2_plugin_class_get_parent_uri(c);
+
+		if (parent && !strcmp(parent, slv2_plugin_class_get_uri(plugin_class))) {
+			menu->items().push_back(Gtk::Menu_Helpers::MenuElem(
+					slv2_plugin_class_get_label(c)));
+			Gtk::MenuItem* menu_item = &(menu->items().back());
+			Gtk::Menu* submenu = Gtk::manage(new Gtk::Menu());
+			menu_item->set_submenu(*submenu);
+			build_plugin_class_menu(submenu, c, classes);
+		}
+	}
+	
+
+	const Store::Plugins& plugins = App::instance().store()->plugins();
+
+	// Add plugins
+	for (Store::Plugins::const_iterator i = plugins.begin(); i != plugins.end(); ++i) {
+		SLV2Plugin p = i->second->slv2_plugin();
+		if (p && slv2_plugin_get_class(p) == plugin_class)
+			menu->items().push_back(Gtk::Menu_Helpers::MenuElem(i->second->name(),
+					sigc::bind(sigc::mem_fun(this, &PatchCanvas::load_plugin),
+						i->second)));
+	}
+
+
+#endif
+}
+
+
+void
+PatchCanvas::build_plugin_menu()
+{
+#ifdef HAVE_SLV2
+	_menu->items().push_back(Gtk::Menu_Helpers::ImageMenuElem("Plugin",
+			*(manage(new Gtk::Image(Gtk::Stock::EXECUTE, Gtk::ICON_SIZE_MENU)))));
+    Gtk::MenuItem* plugin_menu_item = &(_menu->items().back());
+	Gtk::Menu* plugin_menu = Gtk::manage(new Gtk::Menu());
+	plugin_menu_item->set_submenu(*plugin_menu);
+	_menu->reorder_child(*plugin_menu_item, 2);
+
+	SLV2PluginClass lv2_plugin = slv2_world_get_plugin_class(PluginModel::slv2_world());
+	SLV2PluginClasses classes = slv2_world_get_plugin_classes(PluginModel::slv2_world());
+
+	build_plugin_class_menu(plugin_menu, lv2_plugin, classes);
+#endif
 }
 
 
@@ -118,7 +181,7 @@ PatchCanvas::build()
 	}
 }
 
-
+	
 void
 PatchCanvas::arrange()
 {
@@ -394,6 +457,15 @@ PatchCanvas::menu_add_port(const string& name, const string& type, bool is_outpu
 {
 	const Path& path = _patch->path().base() + generate_port_name(name);
 	App::instance().engine()->create_port_with_data(path, type, is_output, get_initial_data());
+}
+
+
+void
+PatchCanvas::load_plugin(SharedPtr<PluginModel> plugin)
+{
+	const Path& path = _patch->path().base() + plugin->default_node_name(_patch);
+	// FIXME: polyphony?
+	App::instance().engine()->create_node_with_data(plugin->uri(), path, false, get_initial_data());
 }
 
 

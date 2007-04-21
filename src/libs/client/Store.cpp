@@ -223,7 +223,7 @@ Store::add_object(SharedPtr<ObjectModel> object)
 {
 	// If we already have "this" object, merge the existing one into the new
 	// one (with precedence to the new values).
-	ObjectMap::iterator existing = _objects.find(object->path());
+	Objects::iterator existing = _objects.find(object->path());
 	if (existing != _objects.end()) {
 		existing->second->set(object);
 	} else {

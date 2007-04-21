@@ -28,6 +28,7 @@ libingenclient_la_SOURCES = \
 	PatchModel.h \
 	PatchModel.cpp \
 	PluginModel.h \
+	PluginModel.cpp \
 	Serializer.h \
 	Serializer.cpp \
 	Loader.h \

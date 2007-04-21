@@ -22,6 +22,7 @@
 #include <string>
 #include <iostream>
 #include "raul/Path.h"
+#include "raul/SharedPtr.h"
 #ifdef HAVE_SLV2
 #include <slv2/slv2.h>
 #endif
@@ -29,6 +30,8 @@ using std::string; using std::cerr; using std::endl;
 
 namespace Ingen {
 namespace Client {
+
+class PatchModel;
 
 
 /** Model for a plugin available for loading.
@@ -46,13 +49,12 @@ public:
 	{
 		set_type_from_uri(type_uri);
 #ifdef HAVE_SLV2
-		static SLV2World world = NULL;
 		static SLV2Plugins plugins = NULL;
 
-		if (!world) {
-			world = slv2_world_new();
-			slv2_world_load_all(world);
-			plugins = slv2_world_get_all_plugins(world);
+		if (!_slv2_world) {
+			_slv2_world = slv2_world_new();
+			slv2_world_load_all(_slv2_world);
+			plugins = slv2_world_get_all_plugins(_slv2_world);
 		}
 		
 		_slv2_plugin = slv2_plugins_get_by_uri(plugins, uri.c_str());
@@ -101,10 +103,11 @@ public:
 		}
 	}
 
-	string default_node_name() { return Raul::Path::nameify(_name); }
+	string default_node_name(SharedPtr<PatchModel> parent);
 
 #ifdef HAVE_SLV2
-	SLV2Plugin slv2_plugin() { return _slv2_plugin; }
+	SLV2Plugin       slv2_plugin() { return _slv2_plugin; }
+	static SLV2World slv2_world()  { return _slv2_world; }
 #endif
 
 private:
@@ -113,6 +116,7 @@ private:
 	string _name;
 
 #ifdef HAVE_SLV2
+	static SLV2World _slv2_world;
 	SLV2Plugin _slv2_plugin;
 #endif
 };

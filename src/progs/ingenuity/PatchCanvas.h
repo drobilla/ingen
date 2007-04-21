@@ -84,6 +84,10 @@ private:
 	void menu_load_plugin();
 	void menu_new_patch();
 	void menu_load_patch();
+	void load_plugin(SharedPtr<PluginModel> plugin);
+	void build_plugin_menu();
+	void build_plugin_class_menu(Gtk::Menu* menu,
+		SLV2PluginClass plugin_class, SLV2PluginClasses classes);
 	
 	MetadataMap get_initial_data();
 
