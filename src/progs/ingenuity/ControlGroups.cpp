@@ -23,6 +23,8 @@
 #include "PluginModel.h"
 #include "NodeModel.h"
 #include "PortModel.h"
+#include "PortPropertiesWindow.h"
+#include "GladeFactory.h"
 #include "App.h"
 
 using std::cerr; using std::cout; using std::endl;
@@ -60,7 +62,6 @@ ControlGroup::init(ControlPanel* panel, SharedPtr<PortModel> pm, bool separator)
 	  }
 	  */
 
-	pm->metadata_update_sig.connect(sigc::mem_fun(this, &ControlGroup::metadata_update));
 	pm->control_change_sig.connect(sigc::mem_fun(this, &ControlGroup::set_value));
 }
 
@@ -73,9 +74,14 @@ SliderControlGroup::SliderControlGroup(BaseObjectType* cobject, const Glib::RefP
   _enabled(true)
 {
 	xml->get_widget("control_strip_name_label", _name_label);
-	xml->get_widget("control_strip_min_spinner", _min_spinner);
-	xml->get_widget("control_strip_max_spinner", _max_spinner);
 	xml->get_widget("control_strip_slider", _slider);
+	
+	Glib::RefPtr<Gnome::Glade::Xml> menu_xml = GladeFactory::new_glade_reference("port_control_menu");
+	menu_xml->get_widget("port_control_menu", _menu);
+	menu_xml->get_widget("port_control_menu_properties", _menu_properties);
+	
+	_menu_properties->signal_activate().connect(
+		sigc::mem_fun(this, &SliderControlGroup::menu_properties));
 }
 
 
@@ -85,12 +91,22 @@ SliderControlGroup::init(ControlPanel* panel, SharedPtr<PortModel> pm, bool sepa
 	ControlGroup::init(panel, pm, separator);
 
 	assert(_name_label);
-	assert(_min_spinner);
-	assert(_max_spinner);
 	assert(_slider);
 
+	set_name(pm->path().name());
+	
 	_slider->set_draw_value(true);
+	_slider->set_value(_port_model->value());
 
+	_slider->signal_button_press_event().connect(sigc::mem_fun(*this, &SliderControlGroup::clicked));
+
+	_slider->signal_event().connect(
+			sigc::mem_fun(*this, &SliderControlGroup::slider_pressed));
+
+	_slider->signal_value_changed().connect(
+			sigc::mem_fun(*this, &SliderControlGroup::update_value_from_slider));
+
+	// FIXME: code duplication w/ PortPropertiesWindow.cpp
 	float min = 0.0f;
 	float max = 1.0f;
 
@@ -117,21 +133,6 @@ SliderControlGroup::init(ControlPanel* panel, SharedPtr<PortModel> pm, bool sepa
 	if (max <= min)
 		max = min + 1.0f;
 
-	set_name(pm->path().name());
-
-	_min_spinner->set_value(min);
-	_min_spinner->signal_value_changed().connect(sigc::mem_fun(*this, &SliderControlGroup::min_changed));
-	_max_spinner->set_value(max);
-	_max_spinner->signal_value_changed().connect(sigc::mem_fun(*this, &SliderControlGroup::max_changed));
-
-	_slider->set_value(_port_model->value());
-
-	_slider->signal_event().connect(
-			sigc::mem_fun(*this, &SliderControlGroup::slider_pressed));
-
-	_slider->signal_value_changed().connect(
-			sigc::mem_fun(*this, &SliderControlGroup::update_value_from_slider));
-
 	_slider->set_range(min, max);
 
 	set_value(pm->value());
@@ -139,6 +140,30 @@ SliderControlGroup::init(ControlPanel* panel, SharedPtr<PortModel> pm, bool sepa
 	_enable_signal = true;
 
 	show_all();
+}
+
+
+bool
+SliderControlGroup::clicked(GdkEventButton* ev)
+{
+	if (ev->button == 3) {
+		_menu->popup(ev->button, ev->time);
+		return true;
+	} else {
+		return false;
+	}
+}
+
+
+void
+SliderControlGroup::menu_properties()
+{
+	Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference();
+
+	PortPropertiesWindow* dialog;
+	xml->get_widget_derived("port_properties_win", dialog);
+	dialog->init(this, _port_model);
+	dialog->run();
 }
 
 
@@ -156,16 +181,9 @@ SliderControlGroup::set_value(float val)
 
 
 void
-SliderControlGroup::metadata_update(const string& key, const Atom& value)
+SliderControlGroup::set_range(float min, float max)
 {
-	_enable_signal = false;
-
-	if ( (key == "min") && value.type() == Atom::FLOAT)
-		_min_spinner->set_value(value.get_float());
-	else if ( (key == "max") && value.type() == Atom::FLOAT)
-		_max_spinner->set_value(value.get_float());
-	
-	_enable_signal = true;
+	_slider->set_range(min, max);
 }
 
 
@@ -182,8 +200,8 @@ void
 SliderControlGroup::enable()
 {
 	_slider->property_sensitive() = true;
-	_min_spinner->property_sensitive() = true;
-	_max_spinner->property_sensitive() = true;
+	//_min_spinner->property_sensitive() = true;
+	//_max_spinner->property_sensitive() = true;
 	//m_value_spinner.property_sensitive() = true;
 	_name_label->property_sensitive() = true;
 }
@@ -193,46 +211,10 @@ void
 SliderControlGroup::disable()
 {
 	_slider->property_sensitive() = false;
-	_min_spinner->property_sensitive() = false;
-	_max_spinner->property_sensitive() = false;
+	//_min_spinner->property_sensitive() = false;
+	//_max_spinner->property_sensitive() = false;
 	//m_value_spinner.property_sensitive() = false;
 	_name_label->property_sensitive() = false;
-}
-
-
-void
-SliderControlGroup::min_changed()
-{
-	float       min = _min_spinner->get_value();
-	const float max = _max_spinner->get_value();
-	
-	if (min >= max) {
-		min = max - 1.0;
-		_min_spinner->set_value(min);
-	}
-
-	_slider->set_range(min, max);
-
-	if (_enable_signal)
-		App::instance().engine()->set_metadata(_port_model->path(), "min", min);
-}
-
-
-void
-SliderControlGroup::max_changed()
-{
-	const float min = _min_spinner->get_value();
-	float       max = _max_spinner->get_value();
-	
-	if (max <= min) {
-		max = min + 1.0;
-		_max_spinner->set_value(max);
-	}
-
-	_slider->set_range(min, max);
-
-	if (_enable_signal)
-		App::instance().engine()->set_metadata(_port_model->path(), "max", max);
 }
 
 

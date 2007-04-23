@@ -15,42 +15,54 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef NODEPROPERTIESWINDOW_H
-#define NODEPROPERTIESWINDOW_H
+#ifndef PORTPROPERTIESWINDOW_H
+#define PORTPROPERTIESWINDOW_H
 
 #include <gtkmm.h>
 #include <libglademm.h>
 #include "raul/SharedPtr.h"
-#include "NodeModel.h"
+#include "PortModel.h"
 using namespace Ingen::Client;
 
 namespace Ingenuity {
 
+class ControlGroup;
 
-/** Node properties window.
+
+/** Port properties window.
  *
  * Loaded by libglade as a derived object.
  *
  * \ingroup Ingenuity
  */
-class NodePropertiesWindow : public Gtk::Window
+class PortPropertiesWindow : public Gtk::Dialog
 {
 public:
-	NodePropertiesWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& refGlade);
+	PortPropertiesWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& refGlade);
 
-	void present(SharedPtr<NodeModel> node_model) { set_node(node_model); Gtk::Window::present(); }
-	void set_node(SharedPtr<NodeModel> node_model);
+	void init(ControlGroup* control, SharedPtr<PortModel> port_model);
 
 private:
+	void metadata_update(const string& key, const Atom& value);
+	void min_changed();
+	void max_changed();
 	
-	SharedPtr<NodeModel> _node_model;
-	Gtk::Label*           _node_path_label;
-	Gtk::CheckButton*     _node_polyphonic_toggle;
-	Gtk::Label*           _plugin_type_label;
-	Gtk::Label*           _plugin_uri_label;
-	Gtk::Label*           _plugin_name_label;
+	void ok();
+	void cancel();
+
+	bool _enable_signal;
+
+	float _initial_min;
+	float _initial_max;
+
+	ControlGroup*        _control;
+	SharedPtr<PortModel> _port_model;
+	Gtk::SpinButton*     _min_spinner;
+	Gtk::SpinButton*     _max_spinner;
+	Gtk::Button*         _cancel_button;
+	Gtk::Button*         _ok_button;
 };
 
 } // namespace Ingenuity
 
-#endif // NODEPROPERTIESWINDOW_H
+#endif // PORTPROPERTIESWINDOW_H

@@ -31,6 +31,7 @@ using namespace Ingen::Client;
 namespace Ingenuity {
 
 class ControlPanel;
+class PortPropertiesWindow;
 
 
 /** A group of controls (for a single Port) in a NodeControlWindow.
@@ -52,9 +53,10 @@ public:
 	}
 
 protected:
+	friend class PortPropertiesWindow;
 
 	virtual void set_value(float value) = 0;
-	virtual void metadata_update(const string& key, const Atom& value) = 0;
+	virtual void set_range(float min, float max) {}
 
 	ControlPanel*        _control_panel;
 	SharedPtr<PortModel> _port_model;
@@ -82,15 +84,17 @@ public:
 
 private:
 	void set_name(const string& name);
-	virtual void metadata_update(const string& key, const Atom& value);
+
+	bool clicked(GdkEventButton* ev);
 
 	void set_value(float value);
+	void set_range(float min, float max);
 
-	void min_changed();
-	void max_changed();
 	void update_range();
 	void update_value_from_slider();
 	void update_value_from_spinner();
+
+	void menu_properties();
 	
 	//void slider_grabbed(bool b);
 
@@ -99,10 +103,11 @@ private:
 	bool _enabled;
 	
 	Gtk::Label*      _name_label;
-	Gtk::SpinButton* _min_spinner;
-	Gtk::SpinButton* _max_spinner;
 	//Gtk::SpinButton* _value_spinner;
 	Gtk::VScale*     _slider;
+	
+	Gtk::Menu*      _menu;
+	Gtk::MenuItem*  _menu_properties;
 };
 
 

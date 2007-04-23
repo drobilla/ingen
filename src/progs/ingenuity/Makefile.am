@@ -92,6 +92,8 @@ ingenuity_SOURCES = \
 	RenameWindow.cpp \
 	NodePropertiesWindow.h \
 	NodePropertiesWindow.cpp \
+	PortPropertiesWindow.h \
+	PortPropertiesWindow.cpp \
 	PatchTreeWindow.h \
 	PatchTreeWindow.cpp
 
