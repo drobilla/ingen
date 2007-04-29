@@ -507,8 +507,8 @@ OSCClientSender::new_plugin(string uri, string type_uri, string name)
 		return;
 
 	// FIXME: size?  liblo doesn't export this.
-	// don't want to exceed max UDP packet size
-	static const size_t MAX_BUNDLE_SIZE = 32768; // FIXME: best value?
+	// Don't want to exceed max UDP packet size (1500 bytes)
+	static const size_t MAX_BUNDLE_SIZE = 1500 - 32*5;
 		
 	lo_message m = lo_message_new();
 	lo_message_add_string(m, uri.c_str());
