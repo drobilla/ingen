@@ -38,30 +38,32 @@ namespace Ingen {
 void
 OSCClientSender::bundle_begin()
 {
-	// FIXME
+	// FIXME: Don't split bundles as for 'transfers'
+	_transfer = lo_bundle_new(LO_TT_IMMEDIATE);
 }
 
 void
 OSCClientSender::bundle_end()
 {
-	// FIXME
+	// FIXME: Don't split bundles as for 'transfers'
+	transfer_end();
 }
 
 
 void
 OSCClientSender::transfer_begin()
 {
-	//_transfer = lo_bundle_new(LO_TT_IMMEDIATE);
+	_transfer = lo_bundle_new(LO_TT_IMMEDIATE);
 }
 
 
 void
 OSCClientSender::transfer_end()
 {
-	/*assert(_transfer);
+	assert(_transfer);
 	lo_send_bundle(_address, _transfer);
 	lo_bundle_free(_transfer);
-	_transfer = NULL;*/
+	_transfer = NULL;
 }
 
 
@@ -504,15 +506,27 @@ OSCClientSender::new_plugin(string uri, string type_uri, string name)
 	if (!_enabled)
 		return;
 
+	// FIXME: size?  liblo doesn't export this.
+	// don't want to exceed max UDP packet size
+	static const size_t MAX_BUNDLE_SIZE = 32768; // FIXME: best value?
+		
 	lo_message m = lo_message_new();
 	lo_message_add_string(m, uri.c_str());
 	lo_message_add_string(m, type_uri.c_str());
 	lo_message_add_string(m, name.c_str());
+	
+	if (_transfer) {
 
-	//if (_transfer)
-	//	lo_bundle_add_message(_transfer, "/ingen/plugin", m);
-	//else
+		if (lo_bundle_length(_transfer) + lo_message_length(m, "/ingen/plugin")
+				> MAX_BUNDLE_SIZE) {
+			lo_send_bundle(_address, _transfer);
+			_transfer = lo_bundle_new(LO_TT_IMMEDIATE);
+		}
+		lo_bundle_add_message(_transfer, "/ingen/plugin", m);
+
+	} else {
 		lo_send_message(_address, "/ingen/plugin", m);
+	}
 }
 
 

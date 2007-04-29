@@ -155,6 +155,8 @@ NodeFactory::load_plugins()
 		
 		_has_loaded = true;
 	}
+
+	//cerr << "[NodeFactory] # Plugins: " << _plugins.size() << endl;
 }
 
 
