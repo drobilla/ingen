@@ -42,15 +42,11 @@ class ControlGroup : public Gtk::VBox
 {
 public:
 	ControlGroup(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml);
-	virtual ~ControlGroup() { delete _separator; }
+	virtual ~ControlGroup() { }
 	
-	void init(ControlPanel* panel, SharedPtr<PortModel> pm, bool separator);
+	void init(ControlPanel* panel, SharedPtr<PortModel> pm);
 	
 	inline const SharedPtr<PortModel> port_model() const { return _port_model; }
-
-	void remove_separator() {
-		assert(_has_separator); remove(*_separator); delete _separator;
-	}
 
 protected:
 	friend class PortPropertiesWindow;
@@ -60,8 +56,6 @@ protected:
 
 	ControlPanel*        _control_panel;
 	SharedPtr<PortModel> _port_model;
-	bool                 _has_separator;
-	Gtk::VSeparator*     _separator;
 	bool                 _enable_signal;
 };
 
@@ -74,7 +68,7 @@ class SliderControlGroup : public ControlGroup
 {
 public:
 	SliderControlGroup(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml);
-	void init(ControlPanel* panel, SharedPtr<PortModel> pm, bool separator);
+	void init(ControlPanel* panel, SharedPtr<PortModel> pm);
 
 	void enable();
 	void disable();
@@ -96,15 +90,13 @@ private:
 
 	void menu_properties();
 	
-	//void slider_grabbed(bool b);
-
 	bool slider_pressed(GdkEvent* ev);
 
 	bool _enabled;
 	
 	Gtk::Label*      _name_label;
-	//Gtk::SpinButton* _value_spinner;
-	Gtk::VScale*     _slider;
+	Gtk::SpinButton* _value_spinner;
+	Gtk::HScale*     _slider;
 	
 	Gtk::Menu*      _menu;
 	Gtk::MenuItem*  _menu_properties;
@@ -120,7 +112,7 @@ private:
 class IntegerControlGroup : public ControlGroup
 {
 public:
-	IntegerControlGroup(ControlPanel* panel, SharedPtr<PortModel> pm, bool separator);
+	IntegerControlGroup(ControlPanel* panel, SharedPtr<PortModel> pm);
 	
 	void enable();
 	void disable();
@@ -145,7 +137,7 @@ private:
 class ToggleControlGroup : public ControlGroup
 {
 public:
-	ToggleControlGroup(ControlPanel* panel, SharedPtr<PortModel> pm, bool separator);
+	ToggleControlGroup(ControlPanel* panel, SharedPtr<PortModel> pm);
 	
 	void enable();
 	void disable();

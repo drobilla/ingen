@@ -78,7 +78,7 @@ private:
 	pair<int,int> _ideal_size;
 
 	vector<ControlGroup*>    _controls;
-	Gtk::HBox*               _control_box;
+	Gtk::VBox*               _control_box;
 	Gtk::Box*                _voice_control_box;
 	Gtk::RadioButton*        _all_voices_radio;
 	Gtk::RadioButton*        _specific_voice_radio;

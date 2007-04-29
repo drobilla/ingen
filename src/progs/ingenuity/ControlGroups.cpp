@@ -39,28 +39,19 @@ namespace Ingenuity {
 ControlGroup::ControlGroup(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml)
 : Gtk::VBox(cobject),
   _control_panel(NULL),
-  _has_separator(false),
-  _separator(NULL),
   _enable_signal(false)
 {
 }
 
 
 void
-ControlGroup::init(ControlPanel* panel, SharedPtr<PortModel> pm, bool separator)
+ControlGroup::init(ControlPanel* panel, SharedPtr<PortModel> pm)
 {
 	_control_panel = panel;
 	_port_model = pm,
-	_has_separator = separator,
 
 	assert(_port_model);
 	assert(panel);
-
-	/*if (separator) {
-	  _separator = new Gtk::VSeparator();
-	  pack_start(*_separator, false, false, 4);
-	  }
-	  */
 
 	pm->control_change_sig.connect(sigc::mem_fun(this, &ControlGroup::set_value));
 }
@@ -75,6 +66,7 @@ SliderControlGroup::SliderControlGroup(BaseObjectType* cobject, const Glib::RefP
 {
 	xml->get_widget("control_strip_name_label", _name_label);
 	xml->get_widget("control_strip_slider", _slider);
+	xml->get_widget("control_strip_spinner", _value_spinner);
 	
 	Glib::RefPtr<Gnome::Glade::Xml> menu_xml = GladeFactory::new_glade_reference("port_control_menu");
 	menu_xml->get_widget("port_control_menu", _menu);
@@ -86,18 +78,21 @@ SliderControlGroup::SliderControlGroup(BaseObjectType* cobject, const Glib::RefP
 
 
 void
-SliderControlGroup::init(ControlPanel* panel, SharedPtr<PortModel> pm, bool separator)
+SliderControlGroup::init(ControlPanel* panel, SharedPtr<PortModel> pm)
 {
-	ControlGroup::init(panel, pm, separator);
+	_enable_signal = false;
+	_enabled = true;
+
+	ControlGroup::init(panel, pm);
 
 	assert(_name_label);
 	assert(_slider);
 
 	set_name(pm->path().name());
 	
-	_slider->set_draw_value(true);
-	_slider->set_value(_port_model->value());
+	_slider->set_draw_value(false);
 
+	_name_label->signal_button_press_event().connect(sigc::mem_fun(*this, &SliderControlGroup::clicked));
 	_slider->signal_button_press_event().connect(sigc::mem_fun(*this, &SliderControlGroup::clicked));
 
 	_slider->signal_event().connect(
@@ -105,6 +100,9 @@ SliderControlGroup::init(ControlPanel* panel, SharedPtr<PortModel> pm, bool sepa
 
 	_slider->signal_value_changed().connect(
 			sigc::mem_fun(*this, &SliderControlGroup::update_value_from_slider));
+	
+	_value_spinner->signal_value_changed().connect(
+			sigc::mem_fun(*this, &SliderControlGroup::update_value_from_spinner));
 
 	// FIXME: code duplication w/ PortPropertiesWindow.cpp
 	float min = 0.0f;
@@ -133,7 +131,9 @@ SliderControlGroup::init(ControlPanel* panel, SharedPtr<PortModel> pm, bool sepa
 	if (max <= min)
 		max = min + 1.0f;
 
+	_slider->set_increments(0, 0);
 	_slider->set_range(min, max);
+	_value_spinner->set_range(min, max);
 
 	set_value(pm->value());
 
@@ -171,11 +171,12 @@ void
 SliderControlGroup::set_value(float val)
 {
 	_enable_signal = false;
-	//if (_enabled) {
+	if (_enabled) {
 		if (_slider->get_value() != val)
 			_slider->set_value(val);
-		//m_value_spinner->set_value(val);
-	//}
+		if (_value_spinner->get_value() != val)
+			_value_spinner->set_value(val);
+	}
 	_enable_signal = true;
 }
 
@@ -184,6 +185,7 @@ void
 SliderControlGroup::set_range(float min, float max)
 {
 	_slider->set_range(min, max);
+	_value_spinner->set_range(min, max);
 }
 
 
@@ -202,7 +204,7 @@ SliderControlGroup::enable()
 	_slider->property_sensitive() = true;
 	//_min_spinner->property_sensitive() = true;
 	//_max_spinner->property_sensitive() = true;
-	//m_value_spinner.property_sensitive() = true;
+	_value_spinner->property_sensitive() = true;
 	_name_label->property_sensitive() = true;
 }
 
@@ -213,7 +215,7 @@ SliderControlGroup::disable()
 	_slider->property_sensitive() = false;
 	//_min_spinner->property_sensitive() = false;
 	//_max_spinner->property_sensitive() = false;
-	//m_value_spinner.property_sensitive() = false;
+	_value_spinner->property_sensitive() = false;
 	_name_label->property_sensitive() = false;
 }
 
@@ -223,9 +225,9 @@ SliderControlGroup::update_value_from_slider()
 {
 	if (_enable_signal) {
 		const float value = _slider->get_value();
-		// Prevent spinner signal from doing all this over again (slow)
 		_enable_signal = false;
 		
+		_value_spinner->set_value(value);
 		_control_panel->value_changed(_port_model, value);
 
 		_enable_signal = true;
@@ -233,24 +235,23 @@ SliderControlGroup::update_value_from_slider()
 }
 
 
-/*
 void
 SliderControlGroup::update_value_from_spinner()
 {
 	if (_enable_signal) {
 		_enable_signal = false;
-		const float value = _value_spinner.get_value();
+		const float value = _value_spinner->get_value();
 		
-		if (value < _min_spinner->get_value()) {
+		/*if (value < _min_spinner->get_value()) {
 			_min_spinner->set_value(value);
 			_slider->set_range(_min_spinner->get_value(), _max_spinner->get_value());
 		}
 		if (value > _max_spinner->get_value()) {
 			_max_spinner->set_value(value);
 			_slider->set_range(_min_spinner->get_value(), _max_spinner->get_value());
-		}
+		}*/
 
-		_slider->set_value(_value_spinner.get_value());
+		_slider->set_value(value);
 
 		_control_panel->value_changed(_port_model, value);
 		
@@ -258,7 +259,7 @@ SliderControlGroup::update_value_from_spinner()
 		_enable_signal = true;
 	}
 }
-*/
+
 
 /** Callback for when slider is grabbed so we can ignore set_control
  * events for this port (and avoid nasty feedback issues).
@@ -269,11 +270,9 @@ SliderControlGroup::slider_pressed(GdkEvent* ev)
 	//cerr << "Pressed: " << ev->type << endl;
 	if (ev->type == GDK_BUTTON_PRESS) {
 		_enabled = false;
-		//cerr << "SLIDER FIXME\n";
 		//GtkClientInterface::instance()->set_ignore_port(_port_model->path());
 	} else if (ev->type == GDK_BUTTON_RELEASE) {
 		_enabled = true;
-		//cerr << "SLIDER FIXME\n";
 		//GtkClientInterface::instance()->clear_ignore_port();
 	}
 	
@@ -284,8 +283,8 @@ SliderControlGroup::slider_pressed(GdkEvent* ev)
 // ///////////// IntegerControlGroup ////////////// //
 
 #if 0
-IntegerControlGroup::IntegerControlGroup(ControlPanel* panel, SharedPtr<PortModel> pm, bool separator)
-: ControlGroup(panel, pm, separator),
+IntegerControlGroup::IntegerControlGroup(ControlPanel* panel, SharedPtr<PortModel> pm)
+: ControlGroup(panel, pm),
   _enable_signal(false),
   _alignment(0.5, 0.5, 0.0, 0.0),
   _name_label(pm->path().name()),
@@ -358,8 +357,8 @@ IntegerControlGroup::update_value()
 // ///////////// ToggleControlGroup ////////////// //
 
 
-ToggleControlGroup::ToggleControlGroup(ControlPanel* panel, SharedPtr<PortModel> pm, bool separator)
-: ControlGroup(panel, pm, separator),
+ToggleControlGroup::ToggleControlGroup(ControlPanel* panel, SharedPtr<PortModel> pm)
+: ControlGroup(panel, pm),
   _enable_signal(false),
   _alignment(0.5, 0.5, 0.0, 0.0),
   _name_label(pm->path().name())
