@@ -41,7 +41,7 @@ class PatchModel;
 class PluginModel
 {
 public:
-	enum Type { LV2, LADSPA, DSSI, Internal, Patch };
+	enum Type { Internal=0, LV2, DSSI, LADSPA, Patch };
 
 	PluginModel(const string& uri, const string& type_uri, const string& name)
 		: _uri(uri)
@@ -78,10 +78,10 @@ public:
 	}*/
 
 	const char* const type_uri() const {
-		if (_type == LV2) return "ingen:LV2Plugin";
-		else if (_type == LADSPA) return "ingen:LADSPAPlugin";
-		else if (_type == DSSI) return "ingen:DSSIPlugin";
-		else if (_type == Internal) return "ingen:InternalPlugin";
+		if (_type == LV2) return "ingen:LV2";
+		else if (_type == LADSPA) return "ingen:LADSPA";
+		else if (_type == DSSI) return "ingen:DSSI";
+		else if (_type == Internal) return "ingen:Internal";
 		else if (_type == Patch) return "ingen:Patch";
 		else return "";
 	}

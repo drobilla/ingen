@@ -66,6 +66,8 @@ LoadPluginWindow::LoadPluginWindow(BaseObjectType* cobject, const Glib::RefPtr<G
 	//m_plugins_treeview->get_column(4)->set_sort_column(_plugins_columns._col_label);
 	for (int i=0; i < 3; ++i)
 		_plugins_treeview->get_column(i)->set_resizable(true);
+	
+	_plugins_liststore->set_default_sort_func(sigc::mem_fun(this, &LoadPluginWindow::plugin_compare));
 
 	// Set up the search criteria combobox
 	_criteria_liststore = Gtk::ListStore::create(_criteria_columns);
@@ -182,6 +184,20 @@ LoadPluginWindow::on_show()
 }
 
 
+int
+LoadPluginWindow::plugin_compare(const Gtk::TreeModel::iterator& a_i,
+                                 const Gtk::TreeModel::iterator& b_i)
+{
+	SharedPtr<PluginModel> a = a_i->get_value(_plugins_columns._col_plugin_model);
+	SharedPtr<PluginModel> b = b_i->get_value(_plugins_columns._col_plugin_model);
+
+	if (a->type() == b->type())
+		return strcmp(a->name().c_str(), b->name().c_str());
+	else
+		return ((int)a->type() < (int)b->type()) ? -1 : 1;
+}
+
+
 void
 LoadPluginWindow::set_plugin_list(const std::map<string, SharedPtr<PluginModel> >& m)
 {
@@ -195,12 +211,23 @@ LoadPluginWindow::set_plugin_list(const std::map<string, SharedPtr<PluginModel> 
 		
 		row[_plugins_columns._col_name] = plugin->name();
 		//row[_plugins_columns._col_label] = plugin->plug_label();
-		row[_plugins_columns._col_type] = plugin->type_uri();
+		if (plugin->type_uri() == "ingen:Internal")
+			row[_plugins_columns._col_type] = "Internal";
+		else if (plugin->type_uri() == "ingen:LV2")
+			row[_plugins_columns._col_type] = "LV2";
+		else if (plugin->type_uri() == "ingen:DSSI")
+			row[_plugins_columns._col_type] = "DSSI";
+		else if (plugin->type_uri() == "ingen:LADSPA")
+			row[_plugins_columns._col_type] = "LADSPA";
+		else
+			row[_plugins_columns._col_type] = plugin->type_uri();
 		row[_plugins_columns._col_uri] = plugin->uri();
 		row[_plugins_columns._col_label] = plugin->name();
 		//row[_plugins_columns._col_library] = plugin->lib_name();
 		row[_plugins_columns._col_plugin_model] = plugin;
 	}
+
+	_plugins_liststore->set_sort_column(Gtk::TreeSortable::DEFAULT_SORT_COLUMN_ID, Gtk::SORT_ASCENDING);
 
 	_plugins_treeview->columns_autosize();
 }

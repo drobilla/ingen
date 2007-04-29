@@ -109,6 +109,9 @@ private:
 	void clear_clicked();
 	void name_changed();
 
+	int plugin_compare(const Gtk::TreeModel::iterator& a,
+	                   const Gtk::TreeModel::iterator& b);
+
 	void plugin_activated(const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* col);
 	void plugin_selection_changed();
 	string generate_module_name(int offset = 0);
