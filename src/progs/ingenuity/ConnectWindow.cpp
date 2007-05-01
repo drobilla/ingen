@@ -145,6 +145,7 @@ ConnectWindow::connect()
 	assert(!App::instance().client());
 
 	_connect_button->set_sensitive(false);
+	_disconnect_button->set_label("gtk-cancel");
 	_disconnect_button->set_sensitive(true);
 
 	_connect_stage = 0;
@@ -391,6 +392,7 @@ ConnectWindow::gtk_callback()
 		_progress_bar->set_fraction(1.0);
 		_url_entry->set_sensitive(false);
 		_connect_button->set_sensitive(false);
+		_disconnect_button->set_label("gtk-disconnect");
 		_disconnect_button->set_sensitive(true);
 		_port_spinbutton->set_sensitive(false);
 		_launch_radio->set_sensitive(false);
@@ -407,8 +409,9 @@ ConnectWindow::gtk_callback()
 		_progress_bar->set_fraction(0.0);
 		_connect_button->set_sensitive(true);
 		_disconnect_button->set_sensitive(false);
-		_connect_stage = 0; // set ourselves up for next time (if there is one)
-		return false; // deregister this callback
+		_disconnect_button->set_label("gtk-disconnect");
+		_progress_label->set_text(string("Disconnected"));
+		return false;
 	} else {
 		return true;
 	}
