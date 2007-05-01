@@ -26,6 +26,7 @@
 #include <libgnomecanvasmm.h>
 #include <gtkmm.h>
 #include <libglademm.h>
+#include <raul/RDFWorld.h>
 #include <raul/SharedPtr.h>
 using std::string; using std::map; using std::list;
 using std::cerr; using std::endl;
@@ -85,6 +86,8 @@ public:
 	PatchTreeWindow* patch_tree()           const { return _patch_tree_window; }
 	Configuration*   configuration()        const { return _configuration; }
 	WindowFactory*   window_factory()       const { return _window_factory; }
+	
+	Raul::RDF::World* rdf_world() { return &_rdf_world; }
 
 	const SharedPtr<ModelEngineInterface>& engine() const { return _engine; }
 	const SharedPtr<SigClientInterface>&   client() const { return _client; }
@@ -111,6 +114,8 @@ protected:
 	ConfigWindow*     _config_window;
 	Gtk::Dialog*      _about_dialog;
 	WindowFactory*    _window_factory;
+
+	Raul::RDF::World _rdf_world;
 
 	/** Used to avoid feedback loops with (eg) process checkbutton
 	 * FIXME: Maybe this should be globally implemented at the Controller level,

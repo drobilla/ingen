@@ -22,10 +22,9 @@
 #include <glibmm/ustring.h>
 #include "raul/SharedPtr.h"
 #include "raul/Path.h"
-#include "raul/Namespaces.h"
 #include "ObjectModel.h"
 
-using Raul::Namespaces;
+namespace Raul { namespace RDF { class World; } }
 
 namespace Ingen {
 namespace Client {
@@ -37,9 +36,10 @@ class ModelEngineInterface;
  */
 class Loader {
 public:
-	Loader(SharedPtr<ModelEngineInterface> engine, SharedPtr<Namespaces> = SharedPtr<Namespaces>());
+	Loader(SharedPtr<ModelEngineInterface> engine, Raul::RDF::World* rdf_world);
 
-	bool load(const Glib::ustring&  uri,
+	bool load(Raul::RDF::World*     world,
+	          const Glib::ustring&  uri,
 	          boost::optional<Path> parent,
 			  string                patch_name,
 	          Glib::ustring         patch_uri = "",
@@ -48,7 +48,7 @@ public:
 private:
 	//string                          _patch_search_path;
 	SharedPtr<ModelEngineInterface> _engine;
-	SharedPtr<Namespaces>           _namespaces;
+	Raul::RDF::World*               _rdf_world;
 };
 
 

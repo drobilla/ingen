@@ -156,7 +156,7 @@ LoadSubpatchWindow::ok_clicked()
 	else if (_poly_from_parent_radio->get_active())
 		poly = _patch->poly();
 
-	App::instance().loader()->load_patch(false, get_filename(), "/",
+	App::instance().loader()->load_patch(false, get_uri(), "/",
 		_initial_data, _patch->path(), name, poly);
 
 	hide();

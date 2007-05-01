@@ -71,14 +71,26 @@ App::App()
 	glade_xml->get_widget_derived("config_win", _config_window);
 	glade_xml->get_widget("about_win", _about_dialog);
 
+	_rdf_world.add_prefix("xsd", "http://www.w3.org/2001/XMLSchema#");
+	_rdf_world.add_prefix("ingen", "http://drobilla.net/ns/ingen#");
+	_rdf_world.add_prefix("ingenuity", "http://drobilla.net/ns/ingenuity#");
+	_rdf_world.add_prefix("lv2", "http://lv2plug.in/ontology#");
+	_rdf_world.add_prefix("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
+	_rdf_world.add_prefix("doap", "http://usefulinc.com/ns/doap#");
 	
 	_config_window->configuration(_configuration);
+
+#ifdef HAVE_SLV2
+	SLV2World slv2_world = slv2_world_new_using_rdf_world(_rdf_world.world());
+	PluginModel::set_slv2_world(slv2_world);
+#endif
 }
 
 
 App::~App()
 {
 }
+
 
 void
 App::instantiate()

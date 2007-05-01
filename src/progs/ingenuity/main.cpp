@@ -45,6 +45,7 @@ main(int argc, char** argv)
 	
 	Gnome::Canvas::init();
 	Gtk::Main gtk_main(argc, argv);
+	Gtk::Window::set_default_icon_from_file(PKGDATADIR "/ingen-icon.svg");
 	
 	/* Instantiate all singletons */
 	App::instantiate();

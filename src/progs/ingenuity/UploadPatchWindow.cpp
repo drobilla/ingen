@@ -246,7 +246,7 @@ UploadPatchWindow::upload_clicked()
 	_upload_progress->set_fraction(0.0);
 	_upload_progress->set_text("");
 
-	Serializer s;
+	Serializer s(*App::instance().rdf_world());
 	s.start_to_string();
 	s.serialize(_patch);
 	const string str = s.finish();

@@ -63,24 +63,22 @@ LoadRemotePatchWindow::present(SharedPtr<PatchModel> patch, MetadataMap data)
 
 	set_patch(patch);
 	_initial_data = data;
+	
+	RDF::Model model(*App::instance().rdf_world(),
+			"http://rdf.drobilla.net/ingen_patches/index.ttl");
 
-	Namespaces namespaces;
-	namespaces["ingen"] = "http://drobilla.net/ns/ingen#";
-	namespaces["rdfs"] = "http://www.w3.org/2000/01/rdf-schema#";
-	namespaces["doap"] = "http://usefulinc.com/ns/doap#";
-
-	RDFQuery query(namespaces, Glib::ustring(
+	RDF::Query query(*App::instance().rdf_world(), Glib::ustring(
 		"SELECT DISTINCT ?name ?uri FROM <> WHERE {"
 		"  ?uri a            ingen:Patch ;"
 		"       doap:name    ?name ."
 		"}"));
 
-	RDFQuery::Results results = query.run("http://rdf.drobilla.net/ingen_patches/index.ttl");
+	RDF::Query::Results results = query.run(*App::instance().rdf_world(), model);
 	
-	for (RDFQuery::Results::iterator i = results.begin(); i != results.end(); ++i) {
+	for (RDF::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
 		Gtk::TreeModel::iterator iter = _liststore->append();
-		(*iter)[_columns._col_name] = (*i)["name"];
-		(*iter)[_columns._col_uri] = (*i)["uri"];
+		(*iter)[_columns._col_name] = (*i)["name"].to_string();
+		(*iter)[_columns._col_uri] = (*i)["uri"].to_string();
 	}
 
 	_treeview->columns_autosize();

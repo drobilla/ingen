@@ -27,7 +27,12 @@
 #include <cstdlib> // atof
 #include <boost/optional/optional.hpp>
 #include <cstring>
-#include <raptor.h>
+#include <raul/RDFWorld.h>
+#include <raul/RDFModel.h>
+#include <raul/RDFNode.h>
+#include <raul/Path.h>
+#include <raul/Atom.h>
+#include <raul/AtomRedland.h>
 #include "Serializer.h"
 #include "PatchModel.h"
 #include "NodeModel.h"
@@ -36,25 +41,19 @@
 #include "PresetModel.h"
 #include "ModelEngineInterface.h"
 #include "PluginModel.h"
-#include "raul/Path.h"
-#include "raul/Atom.h"
-#include "raul/AtomRaptor.h"
 
-using std::string; using std::vector; using std::pair;
-using std::cerr; using std::cout; using std::endl;
-using boost::optional;
+using namespace std;
 using namespace Raul;
+using namespace Raul::RDF;
+using boost::optional;
 
 namespace Ingen {
 namespace Client {
 
 
-Serializer::Serializer()
+Serializer::Serializer(Raul::RDF::World& world)
+	: _world(world)
 {
-	_writer.add_prefix("ingen", "http://drobilla.net/ns/ingen#");
-	_writer.add_prefix("ingenuity", "http://drobilla.net/ns/ingenuity#");
-	_writer.add_prefix("lv2", "http://lv2plug.in/ontology#");
-	_writer.add_prefix("doap", "http://usefulinc.com/ns/doap#");
 }
 
 
@@ -63,10 +62,12 @@ Serializer::Serializer()
  * This must be called before any serializing methods.
  */
 void
-Serializer::start_to_filename(const string& filename) throw (std::logic_error)
+Serializer::start_to_filename(const string& filename)
 {
 	_base_uri = "file://" + filename;
-	_writer.start_to_filename(filename);
+	_model = new RDF::Model(_world);
+	_mode = TO_FILE;
+	_filename = filename;
 }
 
 
@@ -78,10 +79,12 @@ Serializer::start_to_filename(const string& filename) throw (std::logic_error)
  * the desired objects have been serialized.
  */
 void
-Serializer::start_to_string() throw (std::logic_error)
+Serializer::start_to_string()
 {
 	_base_uri = "";
-	_writer.start_to_string();
+	_model = new RDF::Model(_world);
+	_mode = TO_STRING;
+	_filename = "";
 }
 
 
@@ -91,18 +94,28 @@ Serializer::start_to_string() throw (std::logic_error)
  * will be returned, otherwise the empty string is returned.
  */
 string
-Serializer::finish() throw(std::logic_error)
+Serializer::finish()
 {
-	return _writer.finish();
-	_id_map.clear();
+	string ret = "";
+
+	if (_mode == TO_FILE)
+		_model->serialize_to_file(_filename);
+	else
+		ret = _model->serialize_to_string();
+
+	_filename = "";
+	_node_map.clear();
+	
+	return ret;
 }
 
 
 /** Convert a path to an RDF blank node ID for serializing.
  */
-RdfId
+Node
 Serializer::path_to_node_id(const Path& path)
 {
+	assert(_model);
 	/*string ret = path.substr(1);
 
 	for (size_t i=0; i < ret.length(); ++i) {
@@ -110,15 +123,15 @@ Serializer::path_to_node_id(const Path& path)
 			ret[i] = '_';
 	}
 
-	return RdfId(RdfId::ANONYMOUS, ret);
+	return Node(Node::BLANK, ret);
 	*/
 
-	IDMap::iterator i = _id_map.find(path);
-	if (i != _id_map.end()) {
+	NodeMap::iterator i = _node_map.find(path);
+	if (i != _node_map.end()) {
 		return i->second;
 	} else {
-		const RdfId id = _writer.blank_id();
-		_id_map[path] = id;
+		Node id = _world.blank_id();
+		_node_map[path] = id;
 		return id;
 	}
 }
@@ -178,12 +191,12 @@ Serializer::find_file(const string& filename, const string& additional_path)
 void
 Serializer::serialize(SharedPtr<ObjectModel> object) throw (std::logic_error)
 {
-	if (!_writer.serialization_in_progress())
+	if (!_model)
 		throw std::logic_error("serialize called without serialization in progress");
 
 	SharedPtr<PatchModel> patch = PtrCast<PatchModel>(object);
 	if (patch) {
-		serialize_patch(patch, RdfId(RdfId::RESOURCE, _base_uri));
+		serialize_patch(patch, Node(_model->world(), Node::RESOURCE, _base_uri));
 		return;
 	}
 	
@@ -205,29 +218,31 @@ Serializer::serialize(SharedPtr<ObjectModel> object) throw (std::logic_error)
 
 
 void
-Serializer::serialize_patch(SharedPtr<PatchModel> patch, const RdfId& patch_id)
+Serializer::serialize_patch(SharedPtr<PatchModel> patch, const Node& patch_id)
 {
-	_writer.write(
+	assert(_model);
+
+	_model->add_statement(
 		patch_id,
-		NS_RDF("type"),
-		NS_INGEN("Patch"));
+		"rdf:type",
+		"ingen:Patch");
 
 	if (patch->path().name().length() > 0) {
-		_writer.write(
-			patch_id, NS_INGEN("name"),
+		_model->add_statement(
+			patch_id, "ingen:name",
 			Atom(patch->path().name().c_str()));
 	}
 
-	_writer.write(
+	_model->add_statement(
 		patch_id,
-		NS_INGEN("polyphony"),
+		"ingen:polyphony",
 		Atom((int)patch->poly()));
 	
 	for (MetadataMap::const_iterator m = patch->metadata().begin(); m != patch->metadata().end(); ++m) {
-		if (_writer.expand_uri(m->first) != "") {
-			_writer.write(
+		if (m->first.find(":") != string::npos) {
+			_model->add_statement(
 				patch_id,
-				RdfId(RdfId::RESOURCE, _writer.expand_uri(m->first.c_str()).c_str()),
+				m->first.c_str(),
 				m->second);
 		}
 	}
@@ -235,20 +250,20 @@ Serializer::serialize_patch(SharedPtr<PatchModel> patch, const RdfId& patch_id)
 	for (NodeModelMap::const_iterator n = patch->nodes().begin(); n != patch->nodes().end(); ++n) {
 		SharedPtr<PatchModel> patch = PtrCast<PatchModel>(n->second);
 		if (patch) {
-			const RdfId subpatch_id = RdfId(RdfId::RESOURCE,
+			const Node subpatch_id = Node(_model->world(), Node::RESOURCE,
 					patch_id.to_string() + "#" + patch->path().substr(1));
-			_writer.write(patch_id, NS_INGEN("node"), subpatch_id);
+			_model->add_statement(patch_id, "ingen:node", subpatch_id);
 			serialize_patch(patch, subpatch_id);
 		} else {
-			const RdfId node_id = path_to_node_id(n->second->path());
-			_writer.write(patch_id, NS_INGEN("node"), node_id);
+			const Node node_id = path_to_node_id(n->second->path());
+			_model->add_statement(patch_id, "ingen:node", node_id);
 			serialize_node(n->second, node_id);
 		}
 	}
 	
 	for (PortModelList::const_iterator p = patch->ports().begin(); p != patch->ports().end(); ++p) {
-		const RdfId port_id = path_to_node_id((*p)->path());
-		_writer.write(patch_id, NS_INGEN("port"), port_id);
+		const Node port_id = path_to_node_id((*p)->path());
+		_model->add_statement(patch_id, "ingen:port", port_id);
 		serialize_port(*p, port_id);
 	}
 
@@ -261,53 +276,55 @@ Serializer::serialize_patch(SharedPtr<PatchModel> patch, const RdfId& patch_id)
 void
 Serializer::serialize_plugin(SharedPtr<PluginModel> plugin)
 {
-	const RdfId plugin_id = RdfId(RdfId::RESOURCE, plugin->uri());
+	assert(_model);
 
-	_writer.write(
+	const Node plugin_id = Node(_model->world(), Node::RESOURCE, plugin->uri());
+
+	_model->add_statement(
 		plugin_id,
-		NS_RDF("type"),
-		RdfId(RdfId::RESOURCE, plugin->type_uri()));
-}
+		"rdf:type",
+		Node(_model->world(), Node::RESOURCE, plugin->type_uri()));
+} 
 
 
 void
-Serializer::serialize_node(SharedPtr<NodeModel> node, const RdfId& node_id)
+Serializer::serialize_node(SharedPtr<NodeModel> node, const Node& node_id)
 {
-	const RdfId plugin_id = RdfId(RdfId::RESOURCE, node->plugin()->uri());
+	const Node plugin_id = Node(_model->world(), Node::RESOURCE, node->plugin()->uri());
 
-	_writer.write(
+	_model->add_statement(
 		node_id,
-		NS_RDF("type"),
-		NS_INGEN("Node"));
+		"rdf:type",
+		"ingen:Node");
 	
-	_writer.write(
+	_model->add_statement(
 		node_id,
-		NS_INGEN("name"),
+		"ingen:name",
 		node->path().name());
 	
-	_writer.write(
+	_model->add_statement(
 		node_id,
-		NS_INGEN("plugin"),
+		"ingen:plugin",
 		plugin_id);
 
 	//serialize_plugin(node->plugin());
 	
-	/*_writer.write(_serializer,
+	/*_model->add_statement(_serializer,
 		node_uri_ref.c_str(),
-		NS_INGEN("name"),
+		"ingen:name",
 		Atom(node->path().name()));*/
 
 	for (PortModelList::const_iterator p = node->ports().begin(); p != node->ports().end(); ++p) {
-		const RdfId port_id = path_to_node_id((*p)->path());
+		const Node port_id = path_to_node_id((*p)->path());
 		serialize_port(*p, port_id);
-		_writer.write(node_id, NS_INGEN("port"), port_id);
+		_model->add_statement(node_id, "ingen:port", port_id);
 	}
 
 	for (MetadataMap::const_iterator m = node->metadata().begin(); m != node->metadata().end(); ++m) {
-		if (_writer.expand_uri(m->first) != "") {
-			_writer.write(
+		if (m->first.find(":") != string::npos) {
+			_model->add_statement(
 				node_id,
-				RdfId(RdfId::RESOURCE, _writer.expand_uri(m->first.c_str()).c_str()),
+				m->first,
 				m->second);
 		}
 	}
@@ -318,26 +335,26 @@ Serializer::serialize_node(SharedPtr<NodeModel> node, const RdfId& node_id)
  * Audio output ports with no metadata will not be written, for example.
  */
 void
-Serializer::serialize_port(SharedPtr<PortModel> port, const RdfId& port_id)
+Serializer::serialize_port(SharedPtr<PortModel> port, const Node& port_id)
 {
 	if (port->is_input())
-		_writer.write(port_id, NS_RDF("type"), NS_INGEN("InputPort"));
+		_model->add_statement(port_id, "rdf:type", "ingen:InputPort");
 	else
-		_writer.write(port_id, NS_RDF("type"), NS_INGEN("OutputPort"));
+		_model->add_statement(port_id, "rdf:type", "ingen:OutputPort");
 
-	_writer.write(port_id, NS_INGEN("name"), Atom(port->path().name().c_str()));
+	_model->add_statement(port_id, "ingen:name", Atom(port->path().name().c_str()));
 	
-	_writer.write(port_id, NS_INGEN("dataType"), Atom(port->type()));
+	_model->add_statement(port_id, "ingen:dataType", Atom(port->type()));
 	
 	if (port->is_control() && port->is_input())
-		_writer.write(port_id, NS_INGEN("value"), Atom(port->value()));
+		_model->add_statement(port_id, "ingen:value", Atom(port->value()));
 
 	if (port->metadata().size() > 0) {
 		for (MetadataMap::const_iterator m = port->metadata().begin(); m != port->metadata().end(); ++m) {
-			if (_writer.expand_uri(m->first) != "") {
-				_writer.write(
+		if (m->first.find(":") != string::npos) {
+				_model->add_statement(
 						port_id,
-						RdfId(RdfId::RESOURCE, _writer.expand_uri(m->first).c_str()),
+						m->first,
 						m->second);
 			}
 		}
@@ -348,22 +365,25 @@ Serializer::serialize_port(SharedPtr<PortModel> port, const RdfId& port_id)
 void
 Serializer::serialize_connection(SharedPtr<ConnectionModel> connection) throw (std::logic_error)
 {
-	const RdfId connection_id = RdfId(RdfId::ANONYMOUS,
+	if (!_model)
+		throw std::logic_error("serialize_connection called without serialization in progress");
+
+	const Node connection_id = Node(_model->world(), Node::BLANK,
 			path_to_node_id(connection->src_port_path()).to_string()
 			+ "-" + path_to_node_id(connection->dst_port_path()).to_string());
 
-	_writer.write(path_to_node_id(connection->dst_port_path()),
-		NS_INGEN("connectedTo"),
+	_model->add_statement(path_to_node_id(connection->dst_port_path()),
+		"ingen:connectedTo",
 		path_to_node_id(connection->src_port_path()));
 	
-	/*_writer.write(connection_id, NS_RDF("type"), NS_INGEN("Connection"));
+	/*_model->add_statement(connection_id, "rdf:type", "ingen:Connection";
 	
-	_writer.write(connection_id,
-		NS_INGEN("source"),
+	_model->add_statement(connection_id,
+		"ingen:source",
 		path_to_node_id(connection->src_port_path()));
 	
-	_writer.write(connection_id,
-		NS_INGEN("destination"),
+	_model->add_statement(connection_id,
+		"ingen:destination",
 		path_to_node_id(connection->dst_port_path()));
 	*/
 }

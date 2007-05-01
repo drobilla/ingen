@@ -191,6 +191,14 @@ LoadPluginWindow::plugin_compare(const Gtk::TreeModel::iterator& a_i,
 	SharedPtr<PluginModel> a = a_i->get_value(_plugins_columns._col_plugin_model);
 	SharedPtr<PluginModel> b = b_i->get_value(_plugins_columns._col_plugin_model);
 
+	// FIXME: haaack
+	if (!a && !b)
+		return 0;
+	else if (!a)
+		return 1;
+	else if (!b)
+		return -1;
+
 	if (a->type() == b->type())
 		return strcmp(a->name().c_str(), b->name().c_str());
 	else

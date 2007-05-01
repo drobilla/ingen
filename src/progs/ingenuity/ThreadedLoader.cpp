@@ -20,6 +20,7 @@
 #include <cassert>
 #include <string>
 #include "PatchModel.h"
+#include "App.h"
 using std::cout; using std::endl;
 
 namespace Ingenuity {
@@ -27,7 +28,8 @@ namespace Ingenuity {
 
 ThreadedLoader::ThreadedLoader(SharedPtr<ModelEngineInterface> engine)
 	: _deprecated_loader(engine)
-	, _loader(engine)
+	, _loader(engine, App::instance().rdf_world())
+	, _serializer(*App::instance().rdf_world())
 {
 	// FIXME: rework this so the thread is only present when it's doing something (save mem)
 	start();
@@ -77,6 +79,7 @@ ThreadedLoader::load_patch(bool                    merge,
 	} else {
 		_events.push_back(sigc::hide_return(sigc::bind(
 				sigc::mem_fun(_loader, &Loader::load),
+				App::instance().rdf_world(),
 				data_base_uri,
 				engine_parent,
 				(engine_name) ? engine_name.get() : "",

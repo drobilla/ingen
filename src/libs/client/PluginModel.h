@@ -48,17 +48,7 @@ public:
 		, _name(name)
 	{
 		set_type_from_uri(type_uri);
-#ifdef HAVE_SLV2
-		static SLV2Plugins plugins = NULL;
-
-		if (!_slv2_world) {
-			_slv2_world = slv2_world_new();
-			slv2_world_load_all(_slv2_world);
-			plugins = slv2_world_get_all_plugins(_slv2_world);
-		}
-		
-		_slv2_plugin = slv2_plugins_get_by_uri(plugins, uri.c_str());
-#endif
+		_slv2_plugin = slv2_plugins_get_by_uri(_slv2_plugins, uri.c_str());
 	}
 	
 	Type          type() const                { return _type; }
@@ -108,6 +98,12 @@ public:
 #ifdef HAVE_SLV2
 	SLV2Plugin       slv2_plugin() { return _slv2_plugin; }
 	static SLV2World slv2_world()  { return _slv2_world; }
+
+	static void set_slv2_world(SLV2World world) {
+		_slv2_world = world; 
+		slv2_world_load_all(_slv2_world);
+		_slv2_plugins = slv2_world_get_all_plugins(_slv2_world);
+	}
 #endif
 
 private:
@@ -116,7 +112,9 @@ private:
 	string _name;
 
 #ifdef HAVE_SLV2
-	static SLV2World _slv2_world;
+	static SLV2World   _slv2_world;
+	static SLV2Plugins _slv2_plugins;
+
 	SLV2Plugin _slv2_plugin;
 #endif
 };

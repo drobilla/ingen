@@ -108,8 +108,8 @@ SliderControlGroup::init(ControlPanel* panel, SharedPtr<PortModel> pm)
 	float min = 0.0f;
 	float max = 1.0f;
 
-	const Atom& min_atom = pm->get_metadata("min");
-	const Atom& max_atom = pm->get_metadata("max");
+	const Atom& min_atom = pm->get_metadata("ingen:minimum");
+	const Atom& max_atom = pm->get_metadata("ingen:maximum");
 	if (min_atom.type() == Atom::FLOAT && max_atom.type() == Atom::FLOAT) {
 		min = min_atom.get_float();
 		max = max_atom.get_float();

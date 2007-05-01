@@ -66,8 +66,8 @@ PortPropertiesWindow::init(ControlGroup* control, SharedPtr<PortModel> pm)
 	float min = 0.0f;
 	float max = 1.0f;
 
-	const Atom& min_atom = pm->get_metadata("min");
-	const Atom& max_atom = pm->get_metadata("max");
+	const Atom& min_atom = pm->get_metadata("ingen:minimum");
+	const Atom& max_atom = pm->get_metadata("ingen_maximum");
 	if (min_atom.type() == Atom::FLOAT && max_atom.type() == Atom::FLOAT) {
 		min = min_atom.get_float();
 		max = max_atom.get_float();
@@ -108,9 +108,9 @@ PortPropertiesWindow::metadata_update(const string& key, const Atom& value)
 {
 	_enable_signal = false;
 
-	if ( (key == "min") && value.type() == Atom::FLOAT)
+	if ( (key == "ingen:minimum") && value.type() == Atom::FLOAT)
 		_min_spinner->set_value(value.get_float());
-	else if ( (key == "max") && value.type() == Atom::FLOAT)
+	else if ( (key == "ingen:maximum") && value.type() == Atom::FLOAT)
 		_max_spinner->set_value(value.get_float());
 	
 	_enable_signal = true;
@@ -131,7 +131,7 @@ PortPropertiesWindow::min_changed()
 	_control->set_range(min, max);
 
 	if (_enable_signal)
-		App::instance().engine()->set_metadata(_port_model->path(), "min", min);
+		App::instance().engine()->set_metadata(_port_model->path(), "ingen:minimum", min);
 }
 
 
@@ -149,15 +149,15 @@ PortPropertiesWindow::max_changed()
 	_control->set_range(min, max);
 
 	if (_enable_signal)
-		App::instance().engine()->set_metadata(_port_model->path(), "max", max);
+		App::instance().engine()->set_metadata(_port_model->path(), "ingen:maximum", max);
 }
 
 
 void
 PortPropertiesWindow::cancel()
 {
-	App::instance().engine()->set_metadata(_port_model->path(), "min", _initial_min);
-	App::instance().engine()->set_metadata(_port_model->path(), "max", _initial_max);
+	App::instance().engine()->set_metadata(_port_model->path(), "ingen:minimum", _initial_min);
+	App::instance().engine()->set_metadata(_port_model->path(), "ingen:maximum", _initial_max);
 	delete this;
 }
 
