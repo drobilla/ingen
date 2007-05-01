@@ -65,10 +65,11 @@ LoadRemotePatchWindow::present(SharedPtr<PatchModel> patch, MetadataMap data)
 	_initial_data = data;
 	
 	RDF::Model model(*App::instance().rdf_world(),
-			"http://rdf.drobilla.net/ingen_patches/index.ttl");
+			"http://rdf.drobilla.net/ingen_patches/index.ttl",
+			"http://rdf.drobilla.net/ingen_patches/");
 
 	RDF::Query query(*App::instance().rdf_world(), Glib::ustring(
-		"SELECT DISTINCT ?name ?uri FROM <> WHERE {"
+		"SELECT DISTINCT ?name ?uri WHERE {"
 		"  ?uri a            ingen:Patch ;"
 		"       doap:name    ?name ."
 		"}"));
