@@ -63,6 +63,8 @@ private:
 	Mode    _mode;
 	int32_t _ping_id;
 	bool    _attached;
+	
+	int _connect_stage;
 
 	Gtk::Image*        _icon;
 	Gtk::ProgressBar*  _progress_bar;

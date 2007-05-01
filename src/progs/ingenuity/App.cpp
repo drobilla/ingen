@@ -120,13 +120,15 @@ App::attach(const SharedPtr<ModelEngineInterface>& engine, const SharedPtr<SigCl
 void
 App::detach()
 {
-	_window_factory->clear();
-	_store->clear();
-	
-	_loader.reset();
-	_store.reset();
-	_client.reset();
-	_engine.reset();
+	if (_engine) {
+		_window_factory->clear();
+		_store->clear();
+
+		_loader.reset();
+		_store.reset();
+		_client.reset();
+		_engine.reset();
+	}
 }
 
 

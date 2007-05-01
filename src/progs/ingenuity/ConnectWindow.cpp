@@ -74,10 +74,11 @@ struct QueuedModelEngineInterface : public QueuedEngineInterface, public ModelEn
 
 
 ConnectWindow::ConnectWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
-: Gtk::Dialog(cobject)
-, _mode(CONNECT_REMOTE)
-, _ping_id(-1)
-, _attached(false)
+	: Gtk::Dialog(cobject)
+	, _mode(CONNECT_REMOTE)
+	, _ping_id(-1)
+	, _attached(false)
+	, _connect_stage(0)
 {
 	xml->get_widget("connect_icon",                 _icon);
 	xml->get_widget("connect_progress_bar",         _progress_bar);
@@ -106,6 +107,7 @@ ConnectWindow::start()
 	resize(100, 100);
 	init();
 	show();
+	connect();
 }
 
 
@@ -143,6 +145,9 @@ ConnectWindow::connect()
 	assert(!App::instance().client());
 
 	_connect_button->set_sensitive(false);
+	_disconnect_button->set_sensitive(true);
+
+	_connect_stage = 0;
 
 	if (_mode == CONNECT_REMOTE) {
 		SharedPtr<ModelEngineInterface> engine(
@@ -215,6 +220,7 @@ ConnectWindow::connect()
 void
 ConnectWindow::disconnect()
 {
+	_connect_stage = -1;
 	_attached = false;
 
 	_progress_bar->set_fraction(0.0);
@@ -224,6 +230,9 @@ ConnectWindow::disconnect()
 	App::instance().detach();
 
 	init();
+	
+	_connect_button->set_sensitive(true);
+	_disconnect_button->set_sensitive(false);
 }
 
 
@@ -284,10 +293,8 @@ ConnectWindow::gtk_callback()
 	gettimeofday(&now, NULL);
 	static timeval last = now;
 	
-	static int stage = 0;
-	
 	/* Connecting to engine */
-	if (stage == 0) {
+	if (_connect_stage == 0) {
 
 		assert(!_attached);
 		assert(App::instance().engine());
@@ -306,13 +313,13 @@ ConnectWindow::gtk_callback()
 
 		App::instance().engine()->set_next_response_id(_ping_id);
 		App::instance().engine()->ping();
-		++stage;
+		++_connect_stage;
 
 
-	} else if (stage == 1) {
+	} else if (_connect_stage == 1) {
 		if (_attached) {
 			App::instance().engine()->activate();
-			++stage;
+			++_connect_stage;
 		} else {
 			const float ms_since_last = (now.tv_sec - last.tv_sec) * 1000.0f +
 				(now.tv_usec - last.tv_usec) * 0.001f;
@@ -322,15 +329,15 @@ ConnectWindow::gtk_callback()
 				last = now;
 			}
 		}
-	} else if (stage == 2) {
+	} else if (_connect_stage == 2) {
 		_progress_label->set_text(string("Registering as client..."));
 		//App::instance().engine()->register_client(App::instance().engine()->client_hooks());
 		// FIXME
 		//auto_ptr<ClientInterface> client(new ThreadedSigClientInterface();
 		App::instance().engine()->register_client(ClientKey(), App::instance().client());
 		App::instance().engine()->load_plugins();
-		++stage;
-	} else if (stage == 3) {
+		++_connect_stage;
+	} else if (_connect_stage == 3) {
 		// Register idle callback to process events and whatnot
 		// (Gtk refreshes at priority G_PRIORITY_HIGH_IDLE+20)
 		/*Glib::signal_timeout().connect(
@@ -342,14 +349,14 @@ ConnectWindow::gtk_callback()
 		
 		_progress_label->set_text(string("Requesting plugins..."));
 		App::instance().engine()->request_plugins();
-		++stage;
-	} else if (stage == 4) {
+		++_connect_stage;
+	} else if (_connect_stage == 4) {
 		// Wait for first plugins message
 		if (App::instance().store()->plugins().size() > 0) {
 			_progress_label->set_text(string("Receiving plugins..."));
-			++stage;
+			++_connect_stage;
 		}
-	} else if (stage == 5) {
+	} else if (_connect_stage == 5) {
 		// FIXME
 		/*if (App::instance().store().plugins().size() < _client->num_plugins()) {
 			static char buf[32];
@@ -360,31 +367,26 @@ ConnectWindow::gtk_callback()
 				App::instance().store().plugins().size() / (double)_client->num_plugins());
 		} else {*/
 			_progress_bar->set_text("");
-			++stage;
+			++_connect_stage;
 		//}
-	} else if (stage == 6) {
+	} else if (_connect_stage == 6) {
 		_progress_label->set_text(string("Waiting for root patch..."));
 		App::instance().engine()->request_all_objects();
-		++stage;
-	} else if (stage == 7) {
+		++_connect_stage;
+	} else if (_connect_stage == 7) {
 		if (App::instance().store()->objects().size() > 0) {
 			SharedPtr<PatchModel> root = PtrCast<PatchModel>(App::instance().store()->object("/"));
 			assert(root);
 			App::instance().window_factory()->present_patch(root);
-			++stage;
+			++_connect_stage;
 		}
-	} else if (stage == 8) {
+	} else if (_connect_stage == 8) {
 		_progress_label->set_text("Connected to engine");
-		++stage;
-	} else if (stage == 9) {
-		stage = -1;
+		++_connect_stage;
+	} else if (_connect_stage == 9) {
+		++_connect_stage;
 		hide();
-	}
-	
-	if (stage != 5) // yeah, ew
-		_progress_bar->pulse();
-	
-	if (stage == -1) { // finished connecting
+	} else if (_connect_stage == 10) {
 		_icon->set(Gtk::Stock::CONNECT, Gtk::ICON_SIZE_LARGE_TOOLBAR);
 		_progress_bar->set_fraction(1.0);
 		_url_entry->set_sensitive(false);
@@ -393,7 +395,19 @@ ConnectWindow::gtk_callback()
 		_port_spinbutton->set_sensitive(false);
 		_launch_radio->set_sensitive(false);
 		_internal_radio->set_sensitive(false);
-		stage = 0; // set ourselves up for next time (if there is one)
+		_connect_stage = 0; // set ourselves up for next time (if there is one)
+		return false; // deregister this callback
+	}
+	
+	if (_connect_stage != 5) // yeah, ew
+		_progress_bar->pulse();
+	
+	if (_connect_stage == -1) { // we were cancelled
+		_icon->set(Gtk::Stock::DISCONNECT, Gtk::ICON_SIZE_LARGE_TOOLBAR);
+		_progress_bar->set_fraction(0.0);
+		_connect_button->set_sensitive(true);
+		_disconnect_button->set_sensitive(false);
+		_connect_stage = 0; // set ourselves up for next time (if there is one)
 		return false; // deregister this callback
 	} else {
 		return true;
