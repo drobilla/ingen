@@ -25,6 +25,7 @@
 #include "ModelEngineInterface.h"
 #include "ThreadedLoader.h"
 
+using namespace Ingen::Serialisation;
 using boost::optional;
 
 namespace Ingenuity {

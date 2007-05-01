@@ -40,6 +40,7 @@
 #include "Store.h"
 #include "ThreadedLoader.h"
 #include "WindowFactory.h"
+#include "ModelEngineInterface.h"
 #ifdef HAVE_LASH
 #include "LashController.h"
 #endif

@@ -18,41 +18,32 @@
 #ifndef LOADER_H
 #define LOADER_H
 
-#include <boost/optional.hpp>
+#include <string>
+#include <map>
 #include <glibmm/ustring.h>
-#include "raul/SharedPtr.h"
-#include "raul/Path.h"
-#include "ObjectModel.h"
+#include <boost/optional.hpp>
+#include <raul/SharedPtr.h>
+#include <raul/Path.h>
 
-namespace Raul { namespace RDF { class World; } }
+namespace Raul { class Atom; namespace RDF { class World; } }
+namespace Ingen { namespace Shared { class EngineInterface; } }
 
 namespace Ingen {
-namespace Client {
+namespace Serialisation {
 
-class ModelEngineInterface;
+typedef std::map<std::string, Raul::Atom> Metadata;
 
-
-/** Loads objects (patches, nodes, etc) into the engine from RDF.
- */
-class Loader {
-public:
-	Loader(SharedPtr<ModelEngineInterface> engine, Raul::RDF::World* rdf_world);
-
-	bool load(Raul::RDF::World*     world,
-	          const Glib::ustring&  uri,
-	          boost::optional<Path> parent,
-			  string                patch_name,
-	          Glib::ustring         patch_uri = "",
-	          MetadataMap           initial_data = MetadataMap());
-
-private:
-	//string                          _patch_search_path;
-	SharedPtr<ModelEngineInterface> _engine;
-	Raul::RDF::World*               _rdf_world;
-};
+bool
+load(SharedPtr<Ingen::Shared::EngineInterface> engine,
+     Raul::RDF::World*                         world,
+     const Glib::ustring&                      uri,
+     boost::optional<Raul::Path>               parent,
+     std::string                               patch_name,
+     Glib::ustring                             patch_uri = "",
+     Metadata                                  data = Metadata());
 
 
-} // namespace Client
+} // namespace Serialisation
 } // namespace Ingen
 
 #endif // LOADER_H

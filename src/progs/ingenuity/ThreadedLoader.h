@@ -22,15 +22,15 @@
 #include <list>
 #include <cassert>
 #include <boost/optional/optional.hpp>
-#include "raul/Thread.h"
-#include "raul/Slave.h"
-#include "raul/Mutex.h"
-#include "raul/Condition.h"
+#include <raul/Thread.h>
+#include <raul/Slave.h>
+#include <raul/Mutex.h>
+#include <raul/Condition.h>
 #include "ModelEngineInterface.h"
-#include "ObjectModel.h"
 #include "Serializer.h"
 #include "DeprecatedLoader.h"
 #include "Loader.h"
+#include "PatchModel.h"
 using std::string;
 using std::list;
 using boost::optional;
@@ -57,9 +57,6 @@ public:
 	ThreadedLoader(SharedPtr<ModelEngineInterface> engine);
 	~ThreadedLoader();
 
-	//Loader& loader()         const { return *_loader; }
-	//Serializer& serializer() const { return *_serializer; }
-
 	// FIXME: there's a pattern here....
 	// (same core interface as Loader/Serializer)
 	
@@ -82,8 +79,9 @@ private:
 
 	void _whipped();
 
+	SharedPtr<ModelEngineInterface> _engine;
+
 	DeprecatedLoader _deprecated_loader;
-	Loader           _loader;
 	Serializer       _serializer;
 	Raul::Mutex      _mutex;
 	list<Closure>    _events;

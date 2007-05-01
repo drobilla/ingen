@@ -20,34 +20,30 @@
 #include <raul/RDFModel.h>
 #include <raul/RDFQuery.h>
 #include "Loader.h"
-#include "ModelEngineInterface.h"
+#include "interface/EngineInterface.h"
 
+using namespace std;
 using namespace Raul;
+using namespace Ingen::Shared;
 
 namespace Ingen {
-namespace Client {
+namespace Serialisation {
 
 
-Loader::Loader(SharedPtr<ModelEngineInterface> engine, Raul::RDF::World* rdf_world)
-	: _engine(engine)
-	, _rdf_world(rdf_world)
-{
-}
-
-
-/** Load (create) all objects from an RDF into the engine.
+/** Load (create) a patch from RDF into the engine.
  *
  * @param document_uri URI of file to load objects from.
  * @param parent Path of parent under which to load objects.
  * @return whether or not load was successful.
  */
 bool
-Loader::load(Raul::RDF::World*     rdf_world,
-             const Glib::ustring&  document_uri,
-             boost::optional<Path> parent,
-			 string                patch_name,
-			 Glib::ustring         patch_uri,
-			 MetadataMap           data)
+load(SharedPtr<EngineInterface> engine,
+     Raul::RDF::World*          rdf_world,
+     const Glib::ustring&       document_uri,
+     boost::optional<Path>      parent,
+     string                     patch_name,
+     Glib::ustring              patch_uri,
+     map<string,Atom>           data)
 {
 	// FIXME: this whole thing is a mess
 	
@@ -99,7 +95,7 @@ Loader::load(Raul::RDF::World*     rdf_world,
 	Path patch_path = ( parent ? (parent.get().base() + patch_name) : Path("/") );
 	cerr << "************ PATCH: name=" << patch_name << ", path=" << patch_path
 		<< ", poly = " << patch_poly << endl;
-	_engine->create_patch(patch_path, patch_poly);
+	engine->create_patch(patch_path, patch_poly);
 
 
 	/* Load (plugin) nodes */
@@ -123,7 +119,7 @@ Loader::load(Raul::RDF::World*     rdf_world,
 		const Path node_path = patch_path.base() + (string)name;
 
 		if (created.find(node_path) == created.end()) {
-			_engine->create_node(node_path, plugin, false);
+			engine->create_node(node_path, plugin, false);
 			created[node_path] = true;
 		}
 
@@ -131,7 +127,7 @@ Loader::load(Raul::RDF::World*     rdf_world,
 		RDF::Node val_node = (*i)["floatval"];
 
 		if (floatkey != "" && val_node.is_float())
-			_engine->set_metadata(patch_path.base() + name, floatkey, Atom(val_node.to_float()));
+			engine->set_metadata(patch_path.base() + name, floatkey, Atom(val_node.to_float()));
 	}
 	
 
@@ -154,7 +150,7 @@ Loader::load(Raul::RDF::World*     rdf_world,
 		const Path subpatch_path = patch_path.base() + (string)name;
 		
 		if (created.find(subpatch_path) == created.end()) {
-			load(rdf_world, document_uri, patch_path, name, patch);
+			load(engine, rdf_world, document_uri, patch_path, name, patch);
 			created[subpatch_path] = true;
 		}
 	}
@@ -184,7 +180,7 @@ Loader::load(Raul::RDF::World*     rdf_world,
 
 		Path port_path = patch_path.base() + (const string&)node_name +"/"+ (const string&)port_name;
 
-		_engine->set_port_value(port_path, val);
+		engine->set_port_value(port_path, val);
 	}
 	
 
@@ -206,7 +202,7 @@ Loader::load(Raul::RDF::World*     rdf_world,
 
 	for (RDF::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
 		string name     = (*i)["name"].to_string();
-		string type     = _rdf_world->qualify((*i)["type"].to_string());
+		string type     = rdf_world->qualify((*i)["type"].to_string());
 		string datatype = (*i)["datatype"].to_string();
 
 		const Path port_path = patch_path.base() + (string)name;
@@ -214,19 +210,19 @@ Loader::load(Raul::RDF::World*     rdf_world,
 		if (created.find(port_path) == created.end()) {
 			//cerr << "TYPE: " << type << endl;
 			bool is_output = (type == "ingen:OutputPort"); // FIXME: check validity
-			_engine->create_port(port_path, datatype, is_output);
+			engine->create_port(port_path, datatype, is_output);
 			created[port_path] = true;
 		}
 
 		RDF::Node val_node = (*i)["portval"];
 		if (val_node.is_float())
-			_engine->set_port_value(patch_path.base() + name, val_node.to_float());
+			engine->set_port_value(patch_path.base() + name, val_node.to_float());
 
-		string floatkey = _rdf_world->qualify((*i)["floatkey"].to_string());
+		string floatkey = rdf_world->qualify((*i)["floatkey"].to_string());
 		val_node = (*i)["floatval"];
 
 		if (floatkey != "" && val_node.is_float())
-			_engine->set_metadata(patch_path.base() + name, floatkey, Atom(val_node.to_float()));
+			engine->set_metadata(patch_path.base() + name, floatkey, Atom(val_node.to_float()));
 	}
 	
 	created.clear();
@@ -257,7 +253,7 @@ Loader::load(Raul::RDF::World*     rdf_world,
 		
 		cerr << patch_path << " 1 CONNECTION: " << src_port << " -> " << dst_port << endl;
 
-		_engine->connect(src_port, dst_port);
+		engine->connect(src_port, dst_port);
 	}
 	
 
@@ -283,7 +279,7 @@ Loader::load(Raul::RDF::World*     rdf_world,
 		
 		cerr << patch_path << " 2 CONNECTION: " << src_port << " -> " << dst_port << endl;
 
-		_engine->connect(src_port, dst_port);
+		engine->connect(src_port, dst_port);
 	}
 	
 	
@@ -309,7 +305,7 @@ Loader::load(Raul::RDF::World*     rdf_world,
 		
 		cerr << patch_path << " 3 CONNECTION: " << src_port << " -> " << dst_port << endl;
 
-		_engine->connect(src_port, dst_port);
+		engine->connect(src_port, dst_port);
 	}
 	
 	
@@ -329,18 +325,18 @@ Loader::load(Raul::RDF::World*     rdf_world,
 		RDF::Node val_node = (*i)["floatval"];
 
 		if (floatkey != "" && val_node.is_float())
-			_engine->set_metadata(patch_path, floatkey, Atom(val_node.to_float()));
+			engine->set_metadata(patch_path, floatkey, Atom(val_node.to_float()));
 	}
 	
 
 	// Set passed metadata last to override any loaded values
-	for (MetadataMap::const_iterator i = data.begin(); i != data.end(); ++i)
-		_engine->set_metadata(patch_path, i->first, i->second);
+	for (Metadata::const_iterator i = data.begin(); i != data.end(); ++i)
+		engine->set_metadata(patch_path, i->first, i->second);
 
 	return true;
 }
 
 
-} // namespace Client
+} // namespace Serialisation
 } // namespace Ingen
 

@@ -61,7 +61,6 @@ int main(int argc, char** argv)
 	rdf_world.add_prefix("doap", "http://usefulinc.com/ns/doap#");
 
 	SharedPtr<OSCModelEngineInterface> engine(new OSCModelEngineInterface(engine_url));
-	Loader loader(engine, &rdf_world);
 	
 	/* Connect to engine */
 	engine->attach(-1, client_port);
@@ -81,7 +80,8 @@ int main(int argc, char** argv)
 	for (uint i=0; i < args_info.inputs_num; ++i) {
 		cerr << "FIXME: load patch under root" << endl;
 		cerr << "Load " << args_info.inputs[i] << endl;
-		loader.load(&rdf_world, string("file:") + args_info.inputs[i], Path("/"), "");
+		Ingen::Serialisation::load(engine, &rdf_world,
+				string("file:") + args_info.inputs[i], Path("/"), "");
 	}
 	
 	return 0;
