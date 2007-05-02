@@ -15,15 +15,15 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "PatchView.h"
 #include <iostream>
 #include <cassert>
 #include <fstream>
+#include "interface/EngineInterface.h"
+#include "client/PatchModel.h"
 #include "App.h"
-#include "ModelEngineInterface.h"
+#include "PatchView.h"
 #include "PatchCanvas.h"
 #include "LoadPluginWindow.h"
-#include "PatchModel.h"
 #include "NewSubpatchWindow.h"
 #include "LoadSubpatchWindow.h"
 #include "NodeControlWindow.h"

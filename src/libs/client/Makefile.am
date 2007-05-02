@@ -1,23 +1,20 @@
 if BUILD_CLIENT_LIB
 
-noinst_LTLIBRARIES = libingenclient.la
+noinst_LTLIBRARIES = libingen_client.la
 
-libingenclient_la_CXXFLAGS = @RAUL_CFLAGS@ @SLV2_CFLAGS@ @LXML2_CFLAGS@ @RASQAL_CFLAGS@ @RAPTOR_CFLAGS@ @LSIGCPP_CFLAGS@ @GLIBMM_CFLAGS@ -I$(top_srcdir)/src/common -DPKGDATADIR=\"$(pkgdatadir)\"
+libingen_client_la_CXXFLAGS = @RAUL_CFLAGS@ @SLV2_CFLAGS@ @LXML2_CFLAGS@ @RASQAL_CFLAGS@ @RAPTOR_CFLAGS@ @LSIGCPP_CFLAGS@ @GLIBMM_CFLAGS@ -I$(top_srcdir)/src/common -DPKGDATADIR=\"$(pkgdatadir)\"
 
-libingenclient_la_LIBADD = @RAUL_LIBS@ @SLV2_LIBS@ @LXML2_LIBS@ @LOSC_LIBS@ @RASQAL_LIBS@ @RAPTOR_LIBS@ @LSIGCPP_LIBS@ @GLIBMM_LIBS@
+libingen_client_la_LIBADD = @RAUL_LIBS@ @SLV2_LIBS@ @LXML2_LIBS@ @LOSC_LIBS@ @RASQAL_LIBS@ @RAPTOR_LIBS@ @LSIGCPP_LIBS@ @GLIBMM_LIBS@
 
-libingenclient_la_SOURCES = \
+libingen_client_la_SOURCES = \
 	OSCEngineSender.h \
 	OSCEngineSender.cpp \
-	OSCModelEngineInterface.h \
 	OSCClientReceiver.h \
 	OSCClientReceiver.cpp \
 	SigClientInterface.h \
 	DirectSigClientInterface.h \
 	ThreadedSigClientInterface.h \
 	ThreadedSigClientInterface.cpp \
-	ModelEngineInterface.h \
-	ModelEngineInterface.cpp \
 	PresetModel.h \
 	ControlModel.h \
 	ObjectModel.h \
@@ -31,8 +28,6 @@ libingenclient_la_SOURCES = \
 	PluginModel.cpp \
 	Serializer.h \
 	Serializer.cpp \
-	Loader.h \
-	Loader.cpp \
 	DeprecatedLoader.h \
 	DeprecatedLoader.cpp \
 	ConnectionModel.h \

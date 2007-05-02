@@ -22,7 +22,7 @@
 #include <boost/enable_shared_from_this.hpp>
 #include <libgnomecanvasmm.h>
 #include <flowcanvas/Module.h>
-#include "raul/Atom.h"
+#include <raul/Atom.h>
 #include "Port.h"
 using std::string;
 

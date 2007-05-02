@@ -19,7 +19,7 @@
 #ifndef DIRECTRESPONDER_H
 #define DIRECTRESPONDER_H
 
-#include "raul/SharedPtr.h"
+#include <raul/SharedPtr.h>
 #include "interface/ClientInterface.h"
 #include "Responder.h"
 

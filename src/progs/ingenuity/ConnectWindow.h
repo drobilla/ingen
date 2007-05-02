@@ -21,9 +21,11 @@
 #include <gtkmm.h>
 #include <libglademm/xml.h>
 #include <libglademm.h>
-#include "raul/SharedPtr.h"
-#include "ThreadedSigClientInterface.h"
+#include <raul/SharedPtr.h>
+#include "client/ThreadedSigClientInterface.h"
 using Ingen::Client::SigClientInterface;
+
+namespace Ingen { class Engine; class QueuedEngineInterface; }
 
 namespace Ingenuity {
 
@@ -65,6 +67,10 @@ private:
 	bool    _attached;
 	
 	int _connect_stage;
+
+	SharedPtr<Glib::Module> _engine_module;
+	Ingen::Engine* (*_new_engine)();
+	Ingen::QueuedEngineInterface* (*_new_queued_engine_interface)(Ingen::Engine&);
 
 	Gtk::Image*        _icon;
 	Gtk::ProgressBar*  _progress_bar;

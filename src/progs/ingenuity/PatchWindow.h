@@ -23,9 +23,9 @@
 #include <gtkmm.h>
 #include <libglademm/xml.h>
 #include <libglademm.h>
-#include "raul/Path.h"
-#include "raul/SharedPtr.h"
-#include "PatchModel.h"
+#include <raul/Path.h>
+#include <raul/SharedPtr.h>
+#include "client/PatchModel.h"
 #include "PatchView.h"
 using Ingen::Client::PatchModel;
 

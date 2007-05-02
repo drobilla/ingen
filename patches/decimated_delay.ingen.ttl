@@ -1,0 +1,141 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix doap: <http://usefulinc.com/ns/doap#> .
+@prefix ingen: <http://drobilla.net/ns/ingen#> .
+@prefix ingenuity: <http://drobilla.net/ns/ingenuity#> .
+@prefix lv2: <http://lv2plug.in/ontology#> .
+
+<>
+    a ingen:Patch;
+    ingen:polyphony 1;
+    doap:name "Decimated Delay";
+    lv2:symbol "decimated_delay";
+    ingen:node [
+        a ingen:Node;
+        ingen:name "Delayorama";
+        ingen:plugin <http://plugin.org.uk/swh-plugins/delayorama>;
+        ingen:port [
+            a ingen:InputPort;
+            ingen:name "seed";
+            ingen:dataType "ingen:control";
+            ingen:value 0.0
+        ], [
+            a ingen:InputPort;
+            ingen:name "gain";
+            ingen:dataType "ingen:control";
+            ingen:value -0.7
+        ], [
+            a ingen:InputPort;
+            ingen:name "feedback_pc";
+            ingen:dataType "ingen:control";
+            ingen:value 39.2
+        ], [
+            a ingen:InputPort;
+            ingen:name "tap_count";
+            ingen:dataType "ingen:control";
+            ingen:value 15.8
+        ], [
+            a ingen:InputPort;
+            ingen:name "first_delay";
+            ingen:dataType "ingen:control";
+            ingen:value 0.2
+        ], [
+            a ingen:InputPort;
+            ingen:name "delay_range";
+            ingen:dataType "ingen:control";
+            ingen:value 3.9
+        ], [
+            a ingen:InputPort;
+            ingen:name "delay_scale";
+            ingen:dataType "ingen:control";
+            ingen:value 4.4
+        ], [
+            a ingen:InputPort;
+            ingen:name "delay_rand_pc";
+            ingen:dataType "ingen:control";
+            ingen:value 0.0
+        ], [
+            a ingen:InputPort;
+            ingen:name "gain_scale";
+            ingen:dataType "ingen:control";
+            ingen:value 0.2
+        ], [
+            a ingen:InputPort;
+            ingen:name "gain_rand_pc";
+            ingen:dataType "ingen:control";
+            ingen:value 0.0
+        ], [
+            a ingen:InputPort;
+            ingen:name "wet";
+            ingen:dataType "ingen:control";
+            ingen:value 0.5
+        ], [
+            a ingen:InputPort;
+            ingen:name "input";
+            ingen:dataType "ingen:audio";
+            ingen:connectedTo _:n21, _:n19
+        ], _:n13;
+        ingenuity:canvas-x 1520.5;
+        ingenuity:canvas-y 1056.6
+    ], [
+        a ingen:Node;
+        ingen:name "SmoothDecimator";
+        ingen:plugin <http://plugin.org.uk/swh-plugins/smoothDecimate>;
+        ingen:port [
+            a ingen:InputPort;
+            ingen:name "rate";
+            ingen:dataType "ingen:control";
+            ingen:value 2794.2;
+        ], [
+            a ingen:InputPort;
+            ingen:name "smooth";
+            ingen:dataType "ingen:control";
+            ingen:value 0.1
+        ], [
+            a ingen:InputPort;
+            ingen:name "input";
+            ingen:dataType "ingen:audio";
+            ingen:connectedTo _:n13
+        ], _:n18;
+        ingenuity:canvas-x 1644.5;
+        ingenuity:canvas-y 1124.1
+    ];
+    ingen:port _:n19, [
+        a ingen:OutputPort;
+        ingen:name "audio_output_1";
+        ingen:dataType "ingen:audio";
+        ingenuity:canvas-x 1804.5;
+        ingenuity:canvas-y 1128.1;
+        ingen:connectedTo _:n18
+    ], _:n21, [
+        a ingen:OutputPort;
+        ingen:name "audio_output_2";
+        ingen:dataType "ingen:audio";
+        ingenuity:canvas-x 1804.5;
+        ingenuity:canvas-y 1180.6;
+        ingen:connectedTo _:n18
+    ] .
+
+_:n13
+    a ingen:OutputPort;
+    ingen:name "output";
+    ingen:dataType "ingen:audio" .
+
+_:n18
+    a ingen:OutputPort;
+    ingen:name "output";
+    ingen:dataType "ingen:audio" .
+
+_:n19
+    a ingen:InputPort;
+    ingen:name "audio_input_1";
+    ingen:dataType "ingen:audio";
+    ingenuity:canvas-x 1384.5;
+    ingenuity:canvas-y 1128.1 .
+
+_:n21
+    a ingen:InputPort;
+    ingen:name "audio_input_2";
+    ingen:dataType "ingen:audio";
+    ingenuity:canvas-x 1384.5;
+    ingenuity:canvas-y 1180.6 .
+

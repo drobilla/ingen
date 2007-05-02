@@ -15,14 +15,14 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "NodeModule.h"
 #include <cassert>
-#include "raul/Atom.h"
+#include <raul/Atom.h>
+#include "interface/EngineInterface.h"
+#include "client/PatchModel.h"
+#include "client/NodeModel.h"
 #include "App.h"
-#include "ModelEngineInterface.h"
+#include "NodeModule.h"
 #include "PatchCanvas.h"
-#include "PatchModel.h"
-#include "NodeModel.h"
 #include "Port.h"
 #include "GladeFactory.h"
 #include "RenameWindow.h"

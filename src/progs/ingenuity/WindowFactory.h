@@ -20,9 +20,10 @@
 
 #include <map>
 #include <gtkmm.h>
-#include "raul/SharedPtr.h"
+#include <raul/SharedPtr.h>
+#include "client/PatchModel.h"
 #include "PatchView.h"
-#include "PatchModel.h"
+
 using Ingen::Client::PatchModel;
 
 namespace Ingenuity {

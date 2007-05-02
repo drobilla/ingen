@@ -20,8 +20,8 @@
 
 #include <gtkmm.h>
 #include <libglademm.h>
-#include "raul/SharedPtr.h"
-#include "ObjectModel.h"
+#include <raul/SharedPtr.h>
+#include "client/ObjectModel.h"
 using Ingen::Client::ObjectModel;
 
 namespace Ingenuity {

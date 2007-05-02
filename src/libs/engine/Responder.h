@@ -20,7 +20,7 @@
 
 #include <inttypes.h>
 #include <string>
-#include "raul/SharedPtr.h"
+#include <raul/SharedPtr.h>
 #include "interface/ClientKey.h"
 #include "interface/ClientInterface.h"
 using std::string;

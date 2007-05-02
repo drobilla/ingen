@@ -25,11 +25,13 @@
 #include <boost/optional.hpp>
 #include <glibmm/ustring.h>
 #include <libxml/tree.h>
-#include "raul/SharedPtr.h"
-#include "raul/Path.h"
+#include <raul/SharedPtr.h>
+#include <raul/Path.h>
+#include "interface/EngineInterface.h"
 #include "ObjectModel.h"
 
 using std::string;
+using Ingen::Shared::EngineInterface;
 
 namespace Ingen {
 namespace Client {
@@ -38,7 +40,6 @@ class PatchModel;
 class NodeModel;
 class ConnectionModel;
 class PresetModel;
-class ModelEngineInterface;
 
 	
 /** Loads deprecated (XML) patch files (from the Om days).
@@ -48,7 +49,7 @@ class ModelEngineInterface;
 class DeprecatedLoader
 {
 public:
-	DeprecatedLoader(SharedPtr<ModelEngineInterface> engine)
+	DeprecatedLoader(SharedPtr<EngineInterface> engine)
 	: /*_patch_search_path(".")*/ _engine(engine)
 	{
 		assert(_engine);
@@ -72,7 +73,7 @@ private:
 	string translate_load_path(const string& path);
 
 	//string                          _patch_search_path;
-	SharedPtr<ModelEngineInterface> _engine;
+	SharedPtr<EngineInterface> _engine;
 
 	/// Translations of paths from the loading file to actual paths (for deprecated patches)
 	std::map<string, string> _load_path_translations;

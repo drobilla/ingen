@@ -19,7 +19,7 @@
 #define EVENT_H
 
 #include <cassert>
-#include "raul/SharedPtr.h"
+#include <raul/SharedPtr.h>
 #include "types.h"
 #include <raul/Deletable.h>
 #include "Responder.h"

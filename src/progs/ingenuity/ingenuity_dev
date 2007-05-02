@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+
+INGEN_MODULE_PATH=../../libs/engine/.libs:../../libs/serialisation/.libs  ./ingenuity

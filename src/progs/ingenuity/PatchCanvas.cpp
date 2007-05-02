@@ -15,12 +15,16 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "PatchCanvas.h"
 #include <cassert>
 #include <flowcanvas/FlowCanvas.h>
+#include "interface/EngineInterface.h"
+#include "client/PluginModel.h"
+#include "client/PatchModel.h"
+#include "client/NodeModel.h"
+#include "client/Store.h"
+#include "client/Serializer.h"
 #include "App.h"
-#include "ModelEngineInterface.h"
-#include "PatchModel.h"
+#include "PatchCanvas.h"
 #include "PatchWindow.h"
 #include "PatchPortModule.h"
 #include "LoadPluginWindow.h"
@@ -28,14 +32,10 @@
 #include "NewSubpatchWindow.h"
 #include "Port.h"
 #include "Connection.h"
-#include "NodeModel.h"
 #include "NodeModule.h"
 #include "SubpatchModule.h"
 #include "GladeFactory.h"
 #include "WindowFactory.h"
-#include "Serializer.h"
-#include "Store.h"
-#include "PluginModel.h"
 #include "config.h"
 using Ingen::Client::Store;
 using Ingen::Client::Serializer;
@@ -456,7 +456,10 @@ void
 PatchCanvas::menu_add_port(const string& name, const string& type, bool is_output)
 {
 	const Path& path = _patch->path().base() + generate_port_name(name);
-	App::instance().engine()->create_port_with_data(path, type, is_output, get_initial_data());
+	App::instance().engine()->create_port(path, type, is_output);
+	MetadataMap data = get_initial_data();
+	for (MetadataMap::const_iterator i = data.begin(); i != data.end(); ++i)
+		App::instance().engine()->set_metadata(path, i->first, i->second);
 }
 
 
@@ -465,7 +468,10 @@ PatchCanvas::load_plugin(SharedPtr<PluginModel> plugin)
 {
 	const Path& path = _patch->path().base() + plugin->default_node_name(_patch);
 	// FIXME: polyphony?
-	App::instance().engine()->create_node_with_data(plugin->uri(), path, false, get_initial_data());
+	App::instance().engine()->create_node(plugin->uri(), path, false);
+	MetadataMap data = get_initial_data();
+	for (MetadataMap::const_iterator i = data.begin(); i != data.end(); ++i)
+		App::instance().engine()->set_metadata(path, i->first, i->second);
 }
 
 

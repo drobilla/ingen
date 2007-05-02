@@ -15,16 +15,15 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <raul/Path.h>
+#include "interface/EngineInterface.h"
+#include "client/OSCEngineSender.h"
+#include "client/Store.h"
+#include "client/PatchModel.h"
 #include "App.h"
-#include "ModelEngineInterface.h"
-#include "OSCEngineSender.h"
 #include "PatchTreeWindow.h"
-#include "PatchWindow.h"
-#include "Store.h"
 #include "SubpatchModule.h"
-#include "PatchModel.h"
 #include "WindowFactory.h"
-#include "raul/Path.h"
 
 namespace Ingenuity {
 	

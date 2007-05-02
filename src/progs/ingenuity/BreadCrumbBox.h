@@ -22,8 +22,8 @@
 #include <gtkmm.h>
 #include <libglademm/xml.h>
 #include <libglademm.h>
-#include "raul/Path.h"
-#include "raul/SharedPtr.h"
+#include <raul/Path.h>
+#include <raul/SharedPtr.h>
 #include "PatchView.h"
 
 namespace Ingenuity {

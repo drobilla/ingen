@@ -21,25 +21,24 @@
 #include <stdlib.h>
 #include <sys/time.h>
 #include <sys/resource.h>
-#include "raul/Process.h"
+#include <raul/Process.h>
 #include "config.h"
-#include "ConnectWindow.h"
 #include "interface/ClientKey.h"
-#include "OSCModelEngineInterface.h"
-#include "OSCClientReceiver.h"
-#include "ThreadedSigClientInterface.h"
-#include "Store.h"
-#include "PatchModel.h"
+#include "interface/EngineInterface.h"
+#include "engine/tuning.h"
+#include "engine/Engine.h"
+#include "engine/DirectResponder.h"
+#include "engine/QueuedEngineInterface.h"
+#include "client/OSCClientReceiver.h"
+#include "client/OSCEngineSender.h"
+#include "client/ThreadedSigClientInterface.h"
+#include "client/Store.h"
+#include "client/PatchModel.h"
+#include "module/Module.h"
 #include "App.h"
 #include "WindowFactory.h"
-#ifdef MONOLITHIC_INGENUITY
-	#include "engine/Engine.h"
-	#include "engine/JackAudioDriver.h"
-	#include "engine/QueuedEngineInterface.h"
-	#include "engine/DirectResponder.h"
-	#include "engine/tuning.h"
+#include "ConnectWindow.h"
 using Ingen::QueuedEngineInterface;
-#endif
 using Ingen::Client::ThreadedSigClientInterface;
 
 namespace Ingenuity {
@@ -58,18 +57,6 @@ struct OSCSigEmitter : public OSCClientReceiver, public ThreadedSigClientInterfa
 };
 
 
-#ifdef MONOLITHIC_INGENUITY
-struct QueuedModelEngineInterface : public QueuedEngineInterface, public ModelEngineInterface {
-	QueuedModelEngineInterface(SharedPtr<Ingen::Engine> engine)
-		: Ingen::Shared::EngineInterface()
-		, Ingen::QueuedEngineInterface(engine, Ingen::event_queue_size, Ingen::event_queue_size)
-	{
-		QueuedEventSource::start();
-	}
-};
-#endif
-
-
 // ConnectWindow
 
 
@@ -79,6 +66,8 @@ ConnectWindow::ConnectWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::
 	, _ping_id(-1)
 	, _attached(false)
 	, _connect_stage(0)
+	, _new_engine(NULL)
+	, _new_queued_engine_interface(NULL)
 {
 	xml->get_widget("connect_icon",                 _icon);
 	xml->get_widget("connect_progress_bar",         _progress_bar);
@@ -91,13 +80,29 @@ ConnectWindow::ConnectWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::
 	xml->get_widget("connect_disconnect_button",    _disconnect_button);
 	xml->get_widget("connect_connect_button",       _connect_button);
 	xml->get_widget("connect_quit_button",          _quit_button);
-	
+
 	_server_radio->signal_toggled().connect(sigc::mem_fun(this, &ConnectWindow::server_toggled));
 	_launch_radio->signal_toggled().connect(sigc::mem_fun(this, &ConnectWindow::launch_toggled));
 	_internal_radio->signal_clicked().connect(sigc::mem_fun(this, &ConnectWindow::internal_toggled));
 	_disconnect_button->signal_clicked().connect(sigc::mem_fun(this, &ConnectWindow::disconnect));
 	_connect_button->signal_clicked().connect(sigc::mem_fun(this, &ConnectWindow::connect));
 	_quit_button->signal_clicked().connect(sigc::mem_fun(this, &ConnectWindow::quit));
+
+	_engine_module = Ingen::Shared::load_module("ingen_engine");
+
+	if (!_engine_module) {
+		cerr << "Unable to load ingen_engine module, internal engine unavailable." << endl;
+		cerr << "If you are running from the source tree, run ingenuity_dev." << endl;
+	}
+
+	bool found1 = _engine_module->get_symbol("new_engine", (void*&)_new_engine);
+	bool found2 = _engine_module->get_symbol("new_queued_engine_interface",
+			(void*&)_new_queued_engine_interface);
+
+	if (!found1 || !found2) {
+		cerr << "Unable to find module entry point, internal engine unavailable." << endl;
+		_engine_module.reset();
+	}
 }
 
 
@@ -121,11 +126,10 @@ ConnectWindow::init()
 	_disconnect_button->set_sensitive(false);
 	_port_spinbutton->set_sensitive(false);
 	_launch_radio->set_sensitive(true);
-#ifdef MONOLITHIC_INGENUITY
-	_internal_radio->set_sensitive(true);
-#else
-	_internal_radio->set_sensitive(false);
-#endif
+	if (_new_engine)
+		_internal_radio->set_sensitive(true);
+	else
+		_internal_radio->set_sensitive(false);
 	server_toggled();
 		
 	_progress_label->set_text(string("Disconnected"));
@@ -151,8 +155,8 @@ ConnectWindow::connect()
 	_connect_stage = 0;
 
 	if (_mode == CONNECT_REMOTE) {
-		SharedPtr<ModelEngineInterface> engine(
-			new OSCModelEngineInterface(_url_entry->get_text()));
+		SharedPtr<EngineInterface> engine(
+			new OSCEngineSender(_url_entry->get_text()));
 
 		OSCSigEmitter* ose = new OSCSigEmitter(1024, 16181); // FIXME: args
 		SharedPtr<SigClientInterface> client(ose);
@@ -172,8 +176,8 @@ ConnectWindow::connect()
 		const string cmd = string("ingen --port=").append(port_str);
 
 		if (Raul::Process::launch(cmd)) {
-		SharedPtr<ModelEngineInterface> engine(
-				new OSCModelEngineInterface(string("osc.udp://localhost:").append(port_str)));
+		SharedPtr<EngineInterface> engine(
+				new OSCEngineSender(string("osc.udp://localhost:").append(port_str)));
 
 		OSCSigEmitter* ose = new OSCSigEmitter(1024, 16181); // FIXME: args
 		SharedPtr<SigClientInterface> client(ose);
@@ -189,13 +193,14 @@ ConnectWindow::connect()
 			cerr << "Failed to launch ingen process." << endl;
 		}
 
-#ifdef MONOLITHIC_INGENUITY
 	} else if (_mode == INTERNAL) {
-		SharedPtr<Ingen::Engine> engine(new Ingen::Engine());
-		SharedPtr<Ingen::AudioDriver> audio_driver(
-			new Ingen::JackAudioDriver(*engine.get()) );
-		SharedPtr<QueuedModelEngineInterface> engine_interface(
-			new QueuedModelEngineInterface(engine) );
+		assert(_new_engine);
+		SharedPtr<Ingen::Engine> engine(_new_engine());
+		engine->start_jack_driver();
+		
+		assert(_new_queued_engine_interface);
+		SharedPtr<Ingen::QueuedEngineInterface> engine_interface(_new_queued_engine_interface(*engine.get()));
+
 		ThreadedSigClientInterface* tsci = new ThreadedSigClientInterface(Ingen::event_queue_size);
 		SharedPtr<SigClientInterface> client(tsci);
 		
@@ -203,7 +208,9 @@ ConnectWindow::connect()
 
 		engine_interface->set_responder(SharedPtr<Ingen::Responder>(new Ingen::DirectResponder(client, 1)));
 
-		engine->activate(audio_driver, engine_interface);
+		engine->set_event_source(engine_interface);
+
+		engine->activate();
 
 		Glib::signal_timeout().connect(
 			sigc::mem_fun(engine.get(), &Ingen::Engine::main_iteration), 1000);
@@ -213,7 +220,6 @@ ConnectWindow::connect()
 		
 		Glib::signal_timeout().connect(
 			sigc::mem_fun(tsci, &ThreadedSigClientInterface::emit_signals), 2, G_PRIORITY_HIGH_IDLE);
-#endif
 	}
 }
 

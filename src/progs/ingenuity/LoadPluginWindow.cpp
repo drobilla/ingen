@@ -15,17 +15,17 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "LoadPluginWindow.h"
 #include <iostream>
 #include <cassert>
 #include <algorithm>
 #include <cctype>
-#include "NodeModel.h"
+#include "interface/EngineInterface.h"
+#include "client/NodeModel.h"
+#include "client/PatchModel.h"
+#include "client/Store.h"
 #include "App.h"
+#include "LoadPluginWindow.h"
 #include "PatchWindow.h"
-#include "PatchModel.h"
-#include "Store.h"
-#include "ModelEngineInterface.h"
 #include "PatchView.h"
 #include "PatchCanvas.h"
 using std::cout; using std::cerr; using std::endl;
@@ -341,7 +341,9 @@ LoadPluginWindow::add_clicked()
 			dialog.run();
 		} else {
 			Path path = _patch->path().base() + Path::nameify(name);
-			App::instance().engine()->create_node_with_data(plugin->uri(), path, polyphonic, _initial_data);
+			App::instance().engine()->create_node(plugin->uri(), path, polyphonic);
+			for (MetadataMap::const_iterator i = _initial_data.begin(); i != _initial_data.end(); ++i)
+				App::instance().engine()->set_metadata(path, i->first, i->second);
 			++_plugin_name_offset;
 			_node_name_entry->set_text(generate_module_name(_plugin_name_offset));
 			

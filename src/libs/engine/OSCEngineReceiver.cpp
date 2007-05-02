@@ -15,17 +15,17 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "OSCEngineReceiver.h"
 #include <iostream>
 #include <cstdlib>
 #include <string>
 #include <lo/lo.h>
 #include "types.h"
-#include "raul/SharedPtr.h"
-#include "raul/AtomLiblo.h"
-#include "QueuedEventSource.h"
+#include <raul/SharedPtr.h>
+#include <raul/AtomLiblo.h>
 #include "interface/ClientKey.h"
 #include "interface/ClientInterface.h"
+#include "OSCEngineReceiver.h"
+#include "QueuedEventSource.h"
 #include "OSCClientSender.h"
 #include "OSCResponder.h"
 #include "ClientBroadcaster.h"
@@ -48,7 +48,7 @@ using Shared::ClientKey;
  */
 
 
-OSCEngineReceiver::OSCEngineReceiver(SharedPtr<Engine> engine, size_t queue_size, const char* const port)
+OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, const char* const port)
 : EngineInterface(),
   QueuedEngineInterface(engine, queue_size, queue_size), // FIXME
   _port(port),
@@ -227,7 +227,7 @@ OSCEngineReceiver::set_response_address_cb(const char* path, const char* types, 
 				// Shitty deal, make a new one
 				//cerr << "** Setting response address to " << url << "(2)" << endl;
 				me->_osc_responder = SharedPtr<OSCResponder>(
-					new OSCResponder(me->_engine->broadcaster(), id, url));
+					new OSCResponder(me->_engine.broadcaster(), id, url));
 
 				me->set_responder(me->_osc_responder);
 
@@ -237,7 +237,7 @@ OSCEngineReceiver::set_response_address_cb(const char* path, const char* types, 
 		// Otherwise we have a NULL responder, definitely need to set a new one
 		} else {
 			//cerr << "** null responder\n";
-			me->_osc_responder = SharedPtr<OSCResponder>(new OSCResponder(me->_engine->broadcaster(), id, url));
+			me->_osc_responder = SharedPtr<OSCResponder>(new OSCResponder(me->_engine.broadcaster(), id, url));
 			me->set_responder(me->_osc_responder);
 			//cerr << "** Setting response address to " << url << "(2)" << endl;
 		}
@@ -247,7 +247,7 @@ OSCEngineReceiver::set_response_address_cb(const char* path, const char* types, 
 	// Don't respond
 	} else {
 		me->disable_responses();
-		SharedPtr<ClientInterface> client = me->_engine->broadcaster()->client(
+		SharedPtr<ClientInterface> client = me->_engine.broadcaster()->client(
 			ClientKey(ClientKey::OSC_URL, (const char*)url));
 		if (client)
 			client->disable();

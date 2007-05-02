@@ -39,7 +39,6 @@ class NodeModel;
 class PortModel;
 class ConnectionModel;
 class PresetModel;
-class ModelEngineInterface;
 
 
 /** Serializes Ingen objects (patches, nodes, etc) to RDF.

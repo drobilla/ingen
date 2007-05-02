@@ -54,19 +54,23 @@ class Engine : boost::noncopyable
 {
 public:
 	Engine();
-	~Engine();
+	virtual ~Engine();
 
-	int  main();
-	bool main_iteration();
+	virtual int  main();
+	virtual bool main_iteration();
 	
 	/** Set the quit flag that should kill all threads and exit cleanly.
 	 * Note that it will take some time. */
-	void quit() { _quit_flag = true; }
-	
-	bool activate(SharedPtr<AudioDriver> ad, SharedPtr<EventSource> es);
-	void deactivate();
+	virtual void quit() { _quit_flag = true; }
 
-	bool activated() { return _activated; }
+	virtual void start_jack_driver();
+	virtual void start_osc_driver(const std::string& port);
+	virtual void set_event_source(SharedPtr<EventSource> source);
+	
+	virtual bool activate();
+	virtual void deactivate();
+
+	virtual bool activated() { return _activated; }
 
 	Raul::Maid*        maid()               const { return _maid; }
 	EventSource*       event_source()       const { return _event_source.get(); }

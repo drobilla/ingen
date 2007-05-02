@@ -15,17 +15,17 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "LoadSubpatchWindow.h"
 #include <sys/types.h>
 #include <dirent.h>
 #include <cassert>
 #include <boost/optional.hpp>
+#include "interface/EngineInterface.h"
+#include "client/NodeModel.h"
+#include "client/PatchModel.h"
 #include "App.h"
+#include "LoadSubpatchWindow.h"
 #include "PatchView.h"
-#include "NodeModel.h"
-#include "PatchModel.h"
 #include "Configuration.h"
-#include "ModelEngineInterface.h"
 #include "ThreadedLoader.h"
 using boost::optional;
 

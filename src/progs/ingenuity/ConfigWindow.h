@@ -15,16 +15,15 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-
 #ifndef CONFIGWINDOW_H
 #define CONFIGWINDOW_H
 
-#include "PluginModel.h"
-#include "Configuration.h"
 #include <list>
 #include <libglademm/xml.h>
 #include <libglademm.h>
 #include <gtkmm.h>
+#include "client/PluginModel.h"
+#include "Configuration.h"
 
 using std::list;
 using Ingen::Client::PluginModel;

@@ -2,8 +2,10 @@ AC_PREREQ(2.59)
 AC_INIT([ingen],[0.4.0pre],[dave@drobilla.net])
 AC_CONFIG_SRCDIR([src/common/interface/EngineInterface.h])
 AC_CONFIG_SRCDIR([src/common/lv2ext/lv2-miditype.h])
+AC_CONFIG_SRCDIR([src/libs/module/Module.cpp])
 AC_CONFIG_SRCDIR([src/libs/engine/JackAudioDriver.cpp])
 AC_CONFIG_SRCDIR([src/libs/engine/tests/node_tree_test.cpp])
+AC_CONFIG_SRCDIR([src/libs/serialisation/Loader.cpp])
 AC_CONFIG_SRCDIR([src/libs/client/OSCController.cpp])
 AC_CONFIG_SRCDIR([src/progs/server/main.cpp])
 AC_CONFIG_SRCDIR([src/progs/patch_loader/patch_loader.cpp])
@@ -198,19 +200,12 @@ AC_ARG_ENABLE([gtk-client],
 	AS_HELP_STRING(--enable-gtk-client, [Build GTK client, Ingenuity (true)]),
 	[ if test x$enable_gtk_client = xno ; then build_gtk_client=no ; fi ])
 
-# Ingenuity with internal engine
-monolithic_ingenuity="$build_gtk_client"
-AC_ARG_ENABLE([monolithic-ingenuity],
-	AS_HELP_STRING(--enable-monolithic-ingenuity [Build Ingenuity with internal engine (true, if building Ingenuity)]),
-	[ if test x$enable_monolithic_ingenuity = xno ; then monolithic_ingenuity=no ; fi ])
-
-
 
 ##########################################################################
 ## SERVER
 ##########################################################################
 
-if test "$build_server" = "yes" -o "$monolothic_ingenuity"; then
+if test "$build_server" = "yes"; then
 	# Check for standard lib stuff
 	AC_CHECK_FUNCS([posix_memalign, fesetround])
 	AC_CHECK_HEADERS([float.h stddef.h fenv.h])
@@ -349,15 +344,10 @@ if test "$build_gtk_client" = "yes"; then
 	PKG_CHECK_MODULES(FLOWCANVAS, flowcanvas >= 0.1.0)
 	PKG_CHECK_MODULES(CURL, libcurl >= 7.15.0, build_curl="yes", build_curl="no")
 
-	if test "$monolithic_ingenuity" = "yes"; then
-		AC_DEFINE(MONOLITHIC_INGENUITY, 1, [Whether to build an internal engine into Ingenuity])
-	fi
-	
 else
   AC_MSG_WARN([GTK client will NOT be built!])
 fi
 AM_CONDITIONAL(BUILD_GTK_CLIENT, [test "$build_gtk_client" = "yes"])
-AM_CONDITIONAL(MONOLITHIC_INGENUITY, [test "$monolithic_ingenuity" = "yes"])
 
 # Build client lib if anything above that depends on it is to be built
 AM_CONDITIONAL(BUILD_CLIENT_LIB, [test "$build_console_clients" = "yes" -o "$build_gtk_client" = "yes"])
@@ -369,9 +359,11 @@ AC_CONFIG_FILES([src/common/Makefile])
 AC_CONFIG_FILES([src/common/interface/Makefile])
 AC_CONFIG_FILES([src/common/lv2ext/Makefile])
 AC_CONFIG_FILES([src/libs/Makefile])
+AC_CONFIG_FILES([src/libs/module/Makefile])
 AC_CONFIG_FILES([src/libs/engine/Makefile])
 AC_CONFIG_FILES([src/libs/engine/tests/Makefile])
 AC_CONFIG_FILES([src/libs/engine/events/Makefile])
+AC_CONFIG_FILES([src/libs/serialisation/Makefile])
 AC_CONFIG_FILES([src/libs/client/Makefile])
 AC_CONFIG_FILES([src/progs/Makefile])
 AC_CONFIG_FILES([src/progs/server/Makefile])
@@ -403,7 +395,6 @@ AC_MSG_RESULT([])
 AC_MSG_RESULT([Building console clients:   $build_console_clients])
 AC_MSG_RESULT([])
 AC_MSG_RESULT([Building Ingenuity (GTK):   $build_gtk_client])
-AC_MSG_RESULT([    Monolithic:             $monolithic_ingenuity])
 AC_MSG_RESULT([])
 AC_MSG_RESULT([AGAIN, LASH SUPPORT IS NOT AVAILABLE.])
 AC_MSG_RESULT([THERE IS NO LASH SUPPORT IN INGEN AT THIS TIME])

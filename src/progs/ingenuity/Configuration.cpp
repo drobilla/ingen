@@ -21,10 +21,10 @@
 #include <iostream>
 #include <fstream>
 #include <map>
-#include "PortModel.h"
-#include "PluginModel.h"
-#include "PatchModel.h"
-#include "Loader.h"
+#include "client/PortModel.h"
+#include "client/PluginModel.h"
+#include "client/PatchModel.h"
+#include "serialisation/Loader.h"
 #include "App.h"
 
 using std::cerr; using std::cout; using std::endl;

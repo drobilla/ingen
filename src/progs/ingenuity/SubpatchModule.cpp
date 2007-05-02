@@ -18,11 +18,11 @@
 #include "SubpatchModule.h"
 #include <cassert>
 #include <iostream>
+#include "interface/EngineInterface.h"
+#include "client/PatchModel.h"
 #include "App.h"
-#include "ModelEngineInterface.h"
 #include "NodeModule.h"
 #include "NodeControlWindow.h"
-#include "PatchModel.h"
 #include "PatchWindow.h"
 #include "PatchCanvas.h"
 #include "Port.h"

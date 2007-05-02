@@ -15,11 +15,11 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "NodePropertiesWindow.h"
 #include <cassert>
 #include <string>
-#include "NodeModel.h"
-#include "PluginModel.h"
+#include "client/NodeModel.h"
+#include "client/PluginModel.h"
+#include "NodePropertiesWindow.h"
 
 namespace Ingenuity {
 using std::string;

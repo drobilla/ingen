@@ -20,7 +20,7 @@
 
 #include <string>
 #include <boost/utility.hpp>
-#include "raul/Path.h"
+#include <raul/Path.h>
 #include "DataType.h"
 
 namespace Ingen {

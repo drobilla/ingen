@@ -35,6 +35,7 @@
 #include "PostProcessor.h"
 #include "CreatePatchEvent.h"
 #include "EnablePatchEvent.h"
+#include "OSCEngineReceiver.h"
 #ifdef HAVE_JACK_MIDI
 #include "JackMidiDriver.h"
 #endif
@@ -139,14 +140,37 @@ Engine::main_iteration()
 }
 
 
+void
+Engine::start_jack_driver()
+{
+	_audio_driver = SharedPtr<AudioDriver>(new JackAudioDriver(*this));
+}
+
+
+void
+Engine::start_osc_driver(const std::string& port)
+{
+	_event_source = SharedPtr<EventSource>(new OSCEngineReceiver(
+			*this, pre_processor_queue_size, port.c_str()));
+}
+	
+
+void
+Engine::set_event_source(SharedPtr<EventSource> source)
+{
+	_event_source = source;
+}
+
+
 bool
-Engine::activate(SharedPtr<AudioDriver> ad, SharedPtr<EventSource> es)
+Engine::activate()
 {
 	if (_activated)
 		return false;
 
-	// Setup drivers
-	_audio_driver = ad;
+	assert(_audio_driver);
+	assert(_event_source);
+
 #ifdef HAVE_JACK_MIDI
 	_midi_driver = new JackMidiDriver(((JackAudioDriver*)_audio_driver.get())->jack_client());
 #elif HAVE_ALSA_MIDI
@@ -155,9 +179,6 @@ Engine::activate(SharedPtr<AudioDriver> ad, SharedPtr<EventSource> es)
 	_midi_driver = new DummyMidiDriver();
 #endif
 	
-	// Set event source (FIXME: handle multiple sources)
-	_event_source = es;
-
 	_event_source->activate();
 
 	// Create root patch

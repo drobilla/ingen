@@ -20,7 +20,7 @@
 #include <string>
 #include <libgnomecanvasmm.h>
 #include <flowcanvas/Module.h>
-#include "raul/SharedPtr.h"
+#include <raul/SharedPtr.h>
 #include "Port.h"
 #include "NodeMenu.h"
 using std::string;

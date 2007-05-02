@@ -24,7 +24,7 @@
 #include <map>
 #include <sigc++/sigc++.h>
 #include "NodeModel.h"
-#include "raul/SharedPtr.h"
+#include <raul/SharedPtr.h>
 #include "ConnectionModel.h"
 
 using std::list; using std::string; using std::map;

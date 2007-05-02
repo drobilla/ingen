@@ -19,11 +19,12 @@
 #include <iostream>
 #include <cassert>
 #include <fstream>
+#include "interface/EngineInterface.h"
+#include "client/PatchModel.h"
+#include "client/Store.h"
 #include "App.h"
-#include "ModelEngineInterface.h"
 #include "PatchCanvas.h"
 #include "LoadPluginWindow.h"
-#include "PatchModel.h"
 #include "NewSubpatchWindow.h"
 #include "LoadPatchWindow.h"
 #include "LoadSubpatchWindow.h"
@@ -33,7 +34,6 @@
 #include "MessagesWindow.h"
 #include "PatchTreeWindow.h"
 #include "BreadCrumbBox.h"
-#include "Store.h"
 #include "ConnectWindow.h"
 #include "ThreadedLoader.h"
 #include "WindowFactory.h"

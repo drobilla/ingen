@@ -15,14 +15,14 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "PortPropertiesWindow.h"
 #include <cassert>
 #include <string>
-#include "NodeModel.h"
-#include "PluginModel.h"
-#include "ModelEngineInterface.h"
-#include "ControlGroups.h"
+#include "interface/EngineInterface.h"
+#include "client/NodeModel.h"
+#include "client/PluginModel.h"
 #include "App.h"
+#include "ControlGroups.h"
+#include "PortPropertiesWindow.h"
 
 using std::string;
 

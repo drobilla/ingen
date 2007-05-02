@@ -18,12 +18,11 @@
 #ifndef LOADPATCHWINDOW_H
 #define LOADPATCHWINDOW_H
 
-#include "PluginModel.h"
-
 #include <libglademm/xml.h>
 #include <gtkmm.h>
-#include "raul/SharedPtr.h"
-#include "PatchModel.h"
+#include <raul/SharedPtr.h>
+#include "client/PluginModel.h"
+#include "client/PatchModel.h"
 using Ingen::Client::PatchModel;
 using Ingen::Client::MetadataMap;
 

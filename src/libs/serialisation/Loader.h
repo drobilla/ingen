@@ -24,6 +24,7 @@
 #include <boost/optional.hpp>
 #include <raul/SharedPtr.h>
 #include <raul/Path.h>
+#include <raul/Atom.h>
 
 namespace Raul { class Atom; namespace RDF { class World; } }
 namespace Ingen { namespace Shared { class EngineInterface; } }
@@ -31,16 +32,22 @@ namespace Ingen { namespace Shared { class EngineInterface; } }
 namespace Ingen {
 namespace Serialisation {
 
-typedef std::map<std::string, Raul::Atom> Metadata;
 
-bool
-load(SharedPtr<Ingen::Shared::EngineInterface> engine,
-     Raul::RDF::World*                         world,
-     const Glib::ustring&                      uri,
-     boost::optional<Raul::Path>               parent,
-     std::string                               patch_name,
-     Glib::ustring                             patch_uri = "",
-     Metadata                                  data = Metadata());
+class Loader {
+public:
+	virtual ~Loader() {}
+	
+	typedef std::map<std::string, Raul::Atom> Metadata;
+	
+	virtual bool
+	load(SharedPtr<Ingen::Shared::EngineInterface> engine,
+	     Raul::RDF::World*                         world,
+	     const Glib::ustring&                      uri,
+	     boost::optional<Raul::Path>               parent,
+	     std::string                               patch_name,
+	     Glib::ustring                             patch_uri = "",
+	     Metadata                                  data = Metadata());
+};
 
 
 } // namespace Serialisation

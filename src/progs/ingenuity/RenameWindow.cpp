@@ -15,13 +15,14 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "RenameWindow.h"
 #include <cassert>
 #include <string>
-#include "ObjectModel.h"
-#include "Store.h"
+#include "interface/EngineInterface.h"
+#include "client/ObjectModel.h"
+#include "client/Store.h"
 #include "App.h"
-#include "ModelEngineInterface.h"
+#include "RenameWindow.h"
+
 using std::string;
 
 namespace Ingenuity {

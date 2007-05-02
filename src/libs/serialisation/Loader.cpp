@@ -19,8 +19,8 @@
 #include <glibmm/ustring.h>
 #include <raul/RDFModel.h>
 #include <raul/RDFQuery.h>
-#include "Loader.h"
 #include "interface/EngineInterface.h"
+#include "Loader.h"
 
 using namespace std;
 using namespace Raul;
@@ -37,13 +37,13 @@ namespace Serialisation {
  * @return whether or not load was successful.
  */
 bool
-load(SharedPtr<EngineInterface> engine,
-     Raul::RDF::World*          rdf_world,
-     const Glib::ustring&       document_uri,
-     boost::optional<Path>      parent,
-     string                     patch_name,
-     Glib::ustring              patch_uri,
-     map<string,Atom>           data)
+Loader::load(SharedPtr<EngineInterface> engine,
+             Raul::RDF::World*          rdf_world,
+             const Glib::ustring&       document_uri,
+             boost::optional<Path>      parent,
+             string                     patch_name,
+             Glib::ustring              patch_uri,
+             map<string,Atom>           data)
 {
 	// FIXME: this whole thing is a mess
 	

@@ -20,8 +20,8 @@
 
 #include <gtkmm.h>
 #include <libglademm.h>
-#include "raul/SharedPtr.h"
-#include "NodeModel.h"
+#include <raul/SharedPtr.h>
+#include "client/NodeModel.h"
 using namespace Ingen::Client;
 
 namespace Ingenuity {

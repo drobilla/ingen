@@ -1,6 +1,7 @@
-AM_CXXFLAGS = @RAUL_CFLAGS@ @SLV2_CFLAGS@ @JACK_CFLAGS@ @LOSC_CFLAGS@ @ALSA_CFLAGS@ @LASH_CFLAGS@ -I$(top_srcdir)/src/common -I$(top_srcdir)/src/libs/engine -I$(top_srcdir)/src/libs/engine/events
+AM_CXXFLAGS = @RAUL_CFLAGS@ @JACK_CFLAGS@ @LOSC_CFLAGS@ @ALSA_CFLAGS@ @LASH_CFLAGS@ @SLV2_CFLAGS@ -I$(top_srcdir)/src/common -I$(top_srcdir)/src/libs -DINGEN_MODULE_DIR=\"$(libdir)/ingen\"
 
 MAINTAINERCLEANFILES = Makefile.in
+EXTRA_DIST = ingen_dev
 
 #
 # Stand-alone engine
@@ -8,8 +9,8 @@ MAINTAINERCLEANFILES = Makefile.in
 if BUILD_SERVER
 
 bin_PROGRAMS = ingen
-ingen_DEPENDENCIES = ../../libs/engine/libingen.la
-ingen_LDADD = @RAUL_LIBS@ @SLV2_LIBS@ @JACK_LIBS@ @LOSC_LIBS@ @ALSA_LIBS@ @LASH_LIBS@ -lrt ../../libs/engine/libingen.la
+ingen_LDADD = @RAUL_LIBS@ @JACK_LIBS@ @LOSC_LIBS@ @ALSA_LIBS@ @LASH_LIBS@ @SLV2_LIBS@ -lrt ../../libs/module/libingen_module.la
+ingen_DEPENDENCIES = ../../libs/module/libingen_module.la
 
 ingen_SOURCES = \
 	main.cpp \

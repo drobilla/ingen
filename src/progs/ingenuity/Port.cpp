@@ -15,15 +15,15 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "Port.h"
 #include <cassert>
 #include <iostream>
-#include "PatchModel.h"
-#include "PortModel.h"
-#include "ControlModel.h"
+#include "interface/EngineInterface.h"
+#include "client/PatchModel.h"
+#include "client/PortModel.h"
+#include "client/ControlModel.h"
 #include "Configuration.h"
-#include "ModelEngineInterface.h"
 #include "App.h"
+#include "Port.h"
 using std::cerr; using std::endl;
 
 using namespace Ingen::Client;

@@ -22,10 +22,10 @@
 #include <string>
 #include <map>
 #include <list>
-#include "raul/SharedPtr.h"
+#include <raul/SharedPtr.h>
 #include <sigc++/sigc++.h>
-#include "raul/Path.h"
-#include "raul/Atom.h"
+#include <raul/Path.h>
+#include <raul/Atom.h>
 #include "interface/EngineInterface.h"
 using std::string; using std::map; using std::list;
 using Ingen::Shared::EngineInterface;

@@ -18,16 +18,17 @@
 #ifndef CONTROLPANEL_H
 #define CONTROLPANEL_H
 
-#include <gtkmm.h>
-#include <sigc++/sigc++.h>
-#include <libglademm/xml.h>
-#include <libglademm.h>
 #include <vector>
 #include <string>
 #include <iostream>
 #include <utility> // for pair<>
+#include <sigc++/sigc++.h>
+#include <gtkmm.h>
+#include <libglademm/xml.h>
+#include <libglademm.h>
+#include <raul/Path.h>
 #include "ControlGroups.h"
-#include "raul/Path.h"
+
 
 using std::vector; using std::string; using std::pair;
 using std::cerr; using std::cout; using std::endl;

@@ -19,8 +19,8 @@
 #define CONNECTIONMODEL_H
 
 #include <string>
-#include "raul/Path.h"
-#include "raul/SharedPtr.h"
+#include <raul/Path.h>
+#include <raul/SharedPtr.h>
 #include "PortModel.h"
 #include <cassert>
 using std::string;

@@ -23,6 +23,11 @@
 #include <libgnomecanvasmm.h>
 #include <time.h>
 #include <sys/time.h>
+#include <raul/Path.h>
+#include "interface/EngineInterface.h"
+#include "client/ObjectModel.h"
+#include "client/PatchModel.h"
+#include "client/Store.h"
 #include "NodeModule.h"
 #include "ControlPanel.h"
 #include "SubpatchModule.h"
@@ -31,16 +36,11 @@
 #include "MessagesWindow.h"
 #include "ConfigWindow.h"
 #include "GladeFactory.h"
-#include "raul/Path.h"
-#include "ObjectModel.h"
-#include "PatchModel.h"
 #include "PatchTreeWindow.h"
 #include "Configuration.h"
 #include "ConnectWindow.h"
-#include "Store.h"
 #include "ThreadedLoader.h"
 #include "WindowFactory.h"
-#include "ModelEngineInterface.h"
 #ifdef HAVE_LASH
 #include "LashController.h"
 #endif
@@ -102,7 +102,7 @@ App::instantiate()
 
 
 void
-App::attach(const SharedPtr<ModelEngineInterface>& engine, const SharedPtr<SigClientInterface>& client)
+App::attach(const SharedPtr<EngineInterface>& engine, const SharedPtr<SigClientInterface>& client)
 {
 	assert( ! _engine);
 	assert( ! _client);

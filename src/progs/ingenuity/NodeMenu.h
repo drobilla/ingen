@@ -20,9 +20,9 @@
 
 #include <string>
 #include <gtkmm.h>
-#include "raul/Path.h"
-#include "raul/SharedPtr.h"
-#include "NodeModel.h"
+#include <raul/Path.h>
+#include <raul/SharedPtr.h>
+#include "client/NodeModel.h"
 using Ingen::Client::NodeModel;
 
 using std::string;

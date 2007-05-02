@@ -15,9 +15,9 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "PatchPropertiesWindow.h"
 #include <string>
-#include "PatchModel.h"
+#include "client/PatchModel.h"
+#include "PatchPropertiesWindow.h"
 
 namespace Ingenuity {
 using std::string;

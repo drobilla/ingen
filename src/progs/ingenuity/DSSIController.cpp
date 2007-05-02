@@ -21,10 +21,10 @@
 #include <dirent.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include "interface/EngineInterface.h"
+#include "client/NodeModel.h"
 #include "App.h"
-#include "NodeModel.h"
 #include "DSSIModule.h"
-#include "ModelEngineInterface.h"
 
 namespace Ingenuity {
 

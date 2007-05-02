@@ -21,7 +21,7 @@
 #include "config.h"
 #include <string>
 #include <lo/lo.h>
-#include "raul/SharedPtr.h"
+#include <raul/SharedPtr.h>
 #include "QueuedEngineInterface.h"
 #include "OSCResponder.h"
 using std::string;
@@ -61,7 +61,7 @@ inline static int name##_cb(LO_HANDLER_ARGS, void* myself)\
 class OSCEngineReceiver : public QueuedEngineInterface
 {
 public:
-	OSCEngineReceiver(SharedPtr<Engine> engine, size_t queue_size, const char* const port);
+	OSCEngineReceiver(Engine& engine, size_t queue_size, const char* const port);
 	~OSCEngineReceiver();
 
 	void activate();

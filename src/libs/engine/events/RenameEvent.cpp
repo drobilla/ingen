@@ -22,7 +22,7 @@
 #include "Tree.h"
 #include "Engine.h"
 #include "ClientBroadcaster.h"
-#include "raul/Path.h"
+#include <raul/Path.h>
 #include "ObjectStore.h"
 
 namespace Ingen {

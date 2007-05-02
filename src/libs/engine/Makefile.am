@@ -2,12 +2,16 @@ SUBDIRS = tests events
 
 MAINTAINERCLEANFILES = Makefile.in
 
-noinst_LTLIBRARIES = libingen.la
-libingen_la_CXXFLAGS = @RAUL_CFLAGS@ @JACK_CFLAGS@ @LOSC_CFLAGS@ @ALSA_CFLAGS@ @LASH_CFLAGS@ @SLV2_CFLAGS@ -I$(top_srcdir)/src/common -I$(top_srcdir)/src/libs/engine/events
+moduledir = $(libdir)/ingen
 
-libingen_la_LIBADD = @RAUL_LIBS@ @JACK_LIBS@ @LOSC_LIBS@ @ALSA_LIBS@ @LASH_LIBS@ @SLV2_LIBS@
+module_LTLIBRARIES = libingen_engine.la
+libingen_engine_la_CXXFLAGS = @RAUL_CFLAGS@ @JACK_CFLAGS@ @LOSC_CFLAGS@ @ALSA_CFLAGS@ @LASH_CFLAGS@ @SLV2_CFLAGS@ -I$(top_srcdir)/src/common -I$(top_srcdir)/src/libs/engine/events
+libingen_engine_la_LDFLAGS = -no-undefined -module -avoid-version
+libingen_engine_la_LIBADD = @RAUL_LIBS@ @JACK_LIBS@ @LOSC_LIBS@ @ALSA_LIBS@ @LASH_LIBS@ @SLV2_LIBS@
 
-libingen_la_SOURCES = \
+libingen_engine_la_SOURCES = \
+	engine.h \
+	engine.cpp \
 	util.h \
 	tuning.h \
 	events.h \
@@ -160,26 +164,26 @@ libingen_la_SOURCES = \
 # 	MidiOutputNode.cpp 
 
 if WITH_JACK_MIDI
-libingen_la_SOURCES += \
+libingen_engine_la_SOURCES += \
 	JackMidiDriver.h \
 	JackMidiDriver.cpp \
 	jack_compat.h
 endif
 
 if WITH_ALSA_MIDI
-libingen_la_SOURCES += \
+libingen_engine_la_SOURCES += \
 	AlsaMidiDriver.h \
 	AlsaMidiDriver.cpp
 endif
 
 if WITH_LADSPA
-libingen_la_SOURCES += \
+libingen_engine_la_SOURCES += \
 	LADSPANode.h \
 	LADSPANode.cpp
 endif
 
 if WITH_DSSI
-libingen_la_SOURCES += \
+libingen_engine_la_SOURCES += \
 	DSSINode.h \
 	DSSINode.cpp \
 	events/DSSIConfigureEvent.cpp \
@@ -193,13 +197,13 @@ libingen_la_SOURCES += \
 endif
 
 if WITH_LV2
-libingen_la_SOURCES += \
+libingen_engine_la_SOURCES += \
 	LV2Node.h \
 	LV2Node.cpp
 endif
 
 if WITH_LASH
-libingen_la_SOURCES += \
+libingen_engine_la_SOURCES += \
 	LashDriver.h \
 	LashDriver.cpp
 endif

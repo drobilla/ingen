@@ -19,11 +19,11 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include <boost/optional/optional.hpp>
-#include "raul/RDFQuery.h"
+#include <raul/RDFQuery.h>
+#include "interface/EngineInterface.h"
+#include "client/PatchModel.h"
 #include "App.h"
 #include "Configuration.h"
-#include "PatchModel.h"
-#include "ModelEngineInterface.h"
 #include "ThreadedLoader.h"
 
 using boost::optional;

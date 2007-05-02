@@ -17,11 +17,11 @@
 
 #include "PatchPortModule.h"
 #include <cassert>
+#include "interface/EngineInterface.h"
+#include "client/PatchModel.h"
+#include "client/NodeModel.h"
 #include "App.h"
-#include "ModelEngineInterface.h"
 #include "PatchCanvas.h"
-#include "PatchModel.h"
-#include "NodeModel.h"
 #include "Port.h"
 #include "GladeFactory.h"
 #include "RenameWindow.h"

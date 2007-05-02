@@ -22,8 +22,8 @@
 #include <gtkmm.h>
 #include <libglademm/xml.h>
 #include <libglademm.h>
-#include "PortModel.h"
-#include "raul/SharedPtr.h"
+#include "client/PortModel.h"
+#include <raul/SharedPtr.h>
 
 namespace Ingen { namespace Client { class PortModel; } }
 using namespace Ingen::Client;

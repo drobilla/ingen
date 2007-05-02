@@ -20,8 +20,8 @@
 
 #include <pthread.h>
 #include "types.h"
-#include "raul/SRSWQueue.h"
-#include "raul/Slave.h"
+#include <raul/SRSWQueue.h>
+#include <raul/Slave.h>
 
 namespace Raul { class Maid; }
 

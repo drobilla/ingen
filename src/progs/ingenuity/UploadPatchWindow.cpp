@@ -21,13 +21,13 @@
 #include <dirent.h>
 #include <boost/optional/optional.hpp>
 #include <curl/curl.h>
-#include "Serializer.h"
-#include "raul/RDFQuery.h"
+#include <raul/RDFQuery.h>
+#include "interface/EngineInterface.h"
+#include "client/Serializer.h"
+#include "client/PatchModel.h"
 #include "UploadPatchWindow.h"
 #include "App.h"
 #include "Configuration.h"
-#include "PatchModel.h"
-#include "ModelEngineInterface.h"
 #include "ThreadedLoader.h"
 
 using boost::optional;

@@ -20,8 +20,8 @@
 
 #include <string>
 #include <gtkmm.h>
-#include "raul/Path.h"
-#include "NodeModel.h"
+#include <raul/Path.h>
+#include "client/NodeModel.h"
 
 using std::string;
 using namespace Ingen::Client;

@@ -25,8 +25,8 @@
 #include <flowcanvas/Module.h>
 #include <raul/SharedPtr.h>
 #include <raul/Path.h>
-#include "ConnectionModel.h"
-#include "PatchModel.h"
+#include "client/ConnectionModel.h"
+#include "client/PatchModel.h"
 #include "NodeModule.h"
 
 using std::string;

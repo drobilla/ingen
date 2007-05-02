@@ -23,8 +23,8 @@
 #include <cstddef>
 #include <cassert>
 #include <raul/Deletable.h>
-#include "raul/Path.h"
-#include "raul/Atom.h"
+#include <raul/Path.h>
+#include <raul/Atom.h>
 #include "types.h"
 
 using std::string;

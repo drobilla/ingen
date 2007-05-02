@@ -26,9 +26,9 @@
 #include <cassert>
 #include <boost/utility.hpp>
 #include <sigc++/sigc++.h>
-#include "raul/Atom.h"
-#include "raul/Path.h"
-#include "raul/SharedPtr.h"
+#include <raul/Atom.h>
+#include <raul/Path.h>
+#include <raul/SharedPtr.h>
 
 using std::string; using std::map; using std::find;
 using std::cout; using std::cerr; using std::endl;

@@ -1,6 +1,6 @@
 if BUILD_GTK_CLIENT
 
-EXTRA_DIST = ingenuity.gladep
+EXTRA_DIST = ingenuity.gladep ingenuity_dev
 MAINTAINERCLEANFILES = Makefile.in
 
 sharefilesdir = $(pkgdatadir)
@@ -12,16 +12,9 @@ dist_desktopfiles_DATA = ingenuity.desktop
 globalpixmapsdir = $(datadir)/pixmaps
 dist_globalpixmaps_DATA = ingen.svg
 
-ingenuity_CXXFLAGS = -DGTK_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -I$(top_srcdir)/src/common -I$(top_srcdir)/src/libs/client -DPKGDATADIR=\"$(pkgdatadir)\" @RAUL_CFLAGS@ @GTKMM_CFLAGS@ @LIBGLADEMM_CFLAGS@ @GNOMECANVASMM_CFLAGS@ @LOSC_CFLAGS@ @LASH_CFLAGS@ @FLOWCANVAS_CFLAGS@ @SLV2_CFLAGS@ @CURL_CFLAGS@
-ingenuity_LDADD = @RAUL_LIBS@ @GTKMM_LIBS@ @LIBGLADEMM_LIBS@ @GNOMECANVASMM_LIBS@ @LOSC_LIBS@ @LASH_LIBS@ @FLOWCANVAS_LIBS@ @SLV2_LIBS@ @CURL_LIBS@ ../../libs/client/libingenclient.la
-ingenuity_DEPENDENCIES = ../../libs/client/libingenclient.la
-
-# FIXME: make engine have a separate include dir
-if MONOLITHIC_INGENUITY
-ingenuity_CXXFLAGS += -I$(top_srcdir)/src/libs
-ingenuity_LDADD += ../../libs/engine/libingen.la
-ingenuity_DEPENDENCIES += ../../libs/engine/libingen.la
-endif
+ingenuity_CXXFLAGS = -DGTK_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -I$(top_srcdir)/src/common -I$(top_srcdir)/src/libs -DPKGDATADIR=\"$(pkgdatadir)\" @RAUL_CFLAGS@ @GTKMM_CFLAGS@ @LIBGLADEMM_CFLAGS@ @GNOMECANVASMM_CFLAGS@ @LOSC_CFLAGS@ @LASH_CFLAGS@ @FLOWCANVAS_CFLAGS@ @SLV2_CFLAGS@ @CURL_CFLAGS@ -DINGEN_MODULE_DIR=\"$(libdir)/ingen\"
+ingenuity_LDADD = @RAUL_LIBS@ @GTKMM_LIBS@ @LIBGLADEMM_LIBS@ @GNOMECANVASMM_LIBS@ @LOSC_LIBS@ @LASH_LIBS@ @FLOWCANVAS_LIBS@ @SLV2_LIBS@ @CURL_LIBS@ ../../libs/client/libingen_client.la ../../libs/module/libingen_module.la
+ingenuity_DEPENDENCIES = ../../libs/client/libingen_client.la ../../libs/module/libingen_module.la
 
 bin_PROGRAMS = ingenuity
 ingenuity_SOURCES = \

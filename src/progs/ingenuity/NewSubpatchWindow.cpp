@@ -16,10 +16,10 @@
  */
 
 #include "App.h"
-#include "ModelEngineInterface.h"
+#include "interface/EngineInterface.h"
+#include "client/NodeModel.h"
+#include "client/PatchModel.h"
 #include "NewSubpatchWindow.h"
-#include "NodeModel.h"
-#include "PatchModel.h"
 #include "PatchView.h"
 
 namespace Ingenuity {
@@ -89,7 +89,10 @@ NewSubpatchWindow::ok_clicked()
 	const Path path = _patch->path().base() + Path::nameify(_name_entry->get_text());
 	const size_t poly = _poly_spinbutton->get_value_as_int();
 
-	App::instance().engine()->create_patch_with_data(path, poly, _initial_data);
+	App::instance().engine()->create_patch(path, poly);
+	for (MetadataMap::const_iterator i = _initial_data.begin(); i != _initial_data.end(); ++i)
+		App::instance().engine()->set_metadata(path, i->first, i->second);
+
 	App::instance().engine()->enable_patch(path);
 	
 	hide();

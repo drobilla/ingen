@@ -20,8 +20,8 @@
 
 #include <gtkmm.h>
 #include <libglademm.h>
-#include "raul/SharedPtr.h"
-#include "PortModel.h"
+#include <raul/SharedPtr.h>
+#include "client/PortModel.h"
 using namespace Ingen::Client;
 
 namespace Ingenuity {

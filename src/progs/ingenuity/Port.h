@@ -21,7 +21,7 @@
 #include <cassert>
 #include <string>
 #include <flowcanvas/Port.h>
-#include "raul/SharedPtr.h"
+#include <raul/SharedPtr.h>
 
 namespace Ingen { namespace Client { class PortModel; } }
 using Ingen::Client::PortModel;

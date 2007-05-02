@@ -20,7 +20,7 @@
 
 #include <string>
 #include "QueuedEvent.h"
-#include "raul/Path.h"
+#include <raul/Path.h>
 #include "types.h"
 using std::string;
 

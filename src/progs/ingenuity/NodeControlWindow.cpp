@@ -15,17 +15,18 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <iostream>
+#include <cmath>
+#include "interface/EngineInterface.h"
+#include "client/NodeModel.h"
 #include "App.h"
-#include "ModelEngineInterface.h"
 #include "NodeControlWindow.h"
 #include "GladeFactory.h"
-#include "NodeModel.h"
 #include "ControlGroups.h"
 #include "ControlPanel.h"
 #include "PatchWindow.h"
-#include <iostream>
-#include <cmath>
-using std::cerr; using std::cout; using std::endl;
+
+using namespace std;
 
 namespace Ingenuity {
 

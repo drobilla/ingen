@@ -17,12 +17,12 @@
 
 #include <cmath>
 #include <iostream>
-#include "ModelEngineInterface.h"
+#include "interface/EngineInterface.h"
+#include "client/PluginModel.h"
+#include "client/NodeModel.h"
+#include "client/PortModel.h"
 #include "ControlGroups.h"
 #include "ControlPanel.h"
-#include "PluginModel.h"
-#include "NodeModel.h"
-#include "PortModel.h"
 #include "PortPropertiesWindow.h"
 #include "GladeFactory.h"
 #include "App.h"

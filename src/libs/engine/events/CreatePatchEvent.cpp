@@ -25,7 +25,7 @@
 #include <raul/Maid.h>
 #include "ClientBroadcaster.h"
 #include "AudioDriver.h"
-#include "raul/Path.h"
+#include <raul/Path.h>
 #include "ObjectStore.h"
 
 namespace Ingen {

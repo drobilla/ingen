@@ -15,24 +15,38 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "ThreadedLoader.h"
 #include <fstream>
 #include <cassert>
 #include <string>
-#include "PatchModel.h"
+#include "client/PatchModel.h"
+#include "module/Module.h"
 #include "App.h"
+#include "ThreadedLoader.h"
 using std::cout; using std::endl;
 
 namespace Ingenuity {
 
 
-ThreadedLoader::ThreadedLoader(SharedPtr<ModelEngineInterface> engine)
-	: _engine(engine)
+ThreadedLoader::ThreadedLoader(SharedPtr<EngineInterface> engine)
+	: _serialisation_module(Ingen::Shared::load_module("ingen_serialisation"))
+	, _engine(engine)
 	, _deprecated_loader(engine)
 	, _serializer(*App::instance().rdf_world())
 {
 	// FIXME: rework this so the thread is only present when it's doing something (save mem)
-	start();
+	if (_serialisation_module) {
+		Loader* (*new_loader)() = NULL;
+		bool found = _serialisation_module->get_symbol("new_loader", (void*&)new_loader);
+		if (found)
+			_loader = SharedPtr<Loader>(new_loader());
+	}
+
+	if (_loader) {
+		start();
+	} else {
+		cerr << "WARNING: Failed to load ingen_serialisation module, unable to load patches." << endl;;
+		cerr << "If you are running from the source tree, run ingenuity_dev." << endl;
+	}
 }
 
 
@@ -78,7 +92,7 @@ ThreadedLoader::load_patch(bool                    merge,
 				false)));
 	} else {
 		_events.push_back(sigc::hide_return(sigc::bind(
-				sigc::ptr_fun(&Ingen::Serialisation::load),
+				sigc::mem_fun(_loader.get(), &Ingen::Serialisation::Loader::load),
 				App::instance().engine(),
 				App::instance().rdf_world(),
 				data_base_uri,

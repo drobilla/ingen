@@ -30,7 +30,7 @@
 #include "AudioDriver.h"
 #include "interface/ClientInterface.h"
 #include "Responder.h"
-#include "raul/AtomLiblo.h"
+#include <raul/AtomLiblo.h>
 using std::cout; using std::cerr; using std::endl;
 
 namespace Ingen {

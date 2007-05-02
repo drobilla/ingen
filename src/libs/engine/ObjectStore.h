@@ -20,7 +20,7 @@
 #define OBJECTSTORE_H
 
 #include <string>
-#include "raul/Path.h"
+#include <raul/Path.h>
 #include "Tree.h"
 
 using std::string;

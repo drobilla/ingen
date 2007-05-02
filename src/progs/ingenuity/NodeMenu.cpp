@@ -17,10 +17,10 @@
 
 #include <iostream>
 #include <gtkmm.h>
-#include "NodeMenu.h"
-#include "NodeModel.h"
+#include "interface/EngineInterface.h"
+#include "client/NodeModel.h"
 #include "App.h"
-#include "ModelEngineInterface.h"
+#include "NodeMenu.h"
 #include "WindowFactory.h"
 
 using std::cerr; using std::endl;

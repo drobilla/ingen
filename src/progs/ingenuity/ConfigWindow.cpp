@@ -15,16 +15,17 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "ConfigWindow.h"
 #include <iostream>
 #include <cassert>
 #include <algorithm>
 #include <cctype>
-#include "NodeModel.h"
-using std::cout; using std::cerr; using std::endl;
+#include "client/NodeModel.h"
+#include "ConfigWindow.h"
 
+using namespace std;
 
 namespace Ingenuity {
+
 
 ConfigWindow::ConfigWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 : Gtk::Window(cobject),

@@ -15,13 +15,13 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include "interface/EngineInterface.h"
+#include "client/PatchModel.h"
+#include "client/NodeModel.h"
+#include "client/PortModel.h"
+#include "client/PluginModel.h"
 #include "App.h"
-#include "ModelEngineInterface.h"
 #include "ControlPanel.h"
-#include "PatchModel.h"
-#include "NodeModel.h"
-#include "PortModel.h"
-#include "PluginModel.h"
 #include "ControlGroups.h"
 #include "GladeFactory.h"
 

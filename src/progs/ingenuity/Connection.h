@@ -21,8 +21,8 @@
 #include <cassert>
 #include <string>
 #include <flowcanvas/Connection.h>
-#include "ConnectionModel.h"
-#include "raul/SharedPtr.h"
+#include <raul/SharedPtr.h>
+#include "client/ConnectionModel.h"
 using Ingen::Client::ConnectionModel;
 
 namespace Ingenuity {

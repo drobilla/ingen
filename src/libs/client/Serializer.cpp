@@ -33,13 +33,13 @@
 #include <raul/Path.h>
 #include <raul/Atom.h>
 #include <raul/AtomRedland.h>
+#include "interface/EngineInterface.h"
 #include "Serializer.h"
 #include "PatchModel.h"
 #include "NodeModel.h"
 #include "ConnectionModel.h"
 #include "PortModel.h"
 #include "PresetModel.h"
-#include "ModelEngineInterface.h"
 #include "PluginModel.h"
 
 using namespace std;

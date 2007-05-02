@@ -15,28 +15,28 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef OSCMODELENGINEINTERFACE_H
-#define OSCMODELENGINEINTERFACE_H
+#include "engine.h"
+#include "Engine.h"
+#include "QueuedEngineInterface.h"
+#include "tuning.h"
 
-#include <string>
-#include "OSCEngineSender.h"
-#include "ModelEngineInterface.h"
-
-using std::string;
-
-/** \defgroup IngenClient Client Library */
 namespace Ingen {
-namespace Client {
 
 
-class OSCModelEngineInterface : public OSCEngineSender, public ModelEngineInterface
+Engine*
+new_engine()
 {
-public:
-	OSCModelEngineInterface(const string& engine_url) : OSCEngineSender(engine_url) {}
-};
+	return new Engine();
+}
 
 
-} // namespace Client
+QueuedEngineInterface*
+new_queued_engine_interface(Engine& engine)
+{
+	return new QueuedEngineInterface(engine,
+			Ingen::event_queue_size, Ingen::event_queue_size);
+}
+
+
 } // namespace Ingen
 
-#endif // OSCMODELENGINEINTERFACE_H

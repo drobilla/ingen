@@ -32,7 +32,7 @@
 #include "ClientBroadcaster.h"
 #include "util.h"
 #include "ObjectStore.h"
-#include "raul/Path.h"
+#include <raul/Path.h>
 
 using std::cerr; using std::endl;
 

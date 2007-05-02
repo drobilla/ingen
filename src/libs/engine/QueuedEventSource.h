@@ -21,9 +21,9 @@
 #include <cstdlib>
 #include <pthread.h>
 #include "types.h"
-#include "raul/Semaphore.h"
-#include "raul/SRSWQueue.h"
-#include "raul/Slave.h"
+#include <raul/Semaphore.h>
+#include <raul/SRSWQueue.h>
+#include <raul/Slave.h>
 #include "Event.h"
 #include "EventSource.h"
 

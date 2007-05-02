@@ -26,16 +26,17 @@
 #include <raul/Slave.h>
 #include <raul/Mutex.h>
 #include <raul/Condition.h>
-#include "ModelEngineInterface.h"
-#include "Serializer.h"
-#include "DeprecatedLoader.h"
-#include "Loader.h"
-#include "PatchModel.h"
+#include "interface/EngineInterface.h"
+#include "client/PatchModel.h"
+#include "client/Serializer.h"
+#include "client/DeprecatedLoader.h"
+#include "serialisation/Loader.h"
 using std::string;
 using std::list;
 using boost::optional;
 
 using namespace Ingen::Client;
+using namespace Ingen::Serialisation;
 
 namespace Ingenuity {
 
@@ -54,7 +55,7 @@ namespace Ingenuity {
 class ThreadedLoader : public Raul::Slave
 {
 public:
-	ThreadedLoader(SharedPtr<ModelEngineInterface> engine);
+	ThreadedLoader(SharedPtr<EngineInterface> engine);
 	~ThreadedLoader();
 
 	// FIXME: there's a pattern here....
@@ -79,7 +80,10 @@ private:
 
 	void _whipped();
 
-	SharedPtr<ModelEngineInterface> _engine;
+	SharedPtr<Glib::Module> _serialisation_module;
+
+	SharedPtr<EngineInterface> _engine;
+	SharedPtr<Loader>          _loader;
 
 	DeprecatedLoader _deprecated_loader;
 	Serializer       _serializer;

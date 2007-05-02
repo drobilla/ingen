@@ -19,8 +19,8 @@
 #define BREADCRUMB_H
 
 #include <gtkmm.h>
-#include "raul/Path.h"
-#include "raul/SharedPtr.h"
+#include <raul/Path.h>
+#include <raul/SharedPtr.h>
 #include "PatchView.h"
 
 namespace Ingenuity {

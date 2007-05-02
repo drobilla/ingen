@@ -26,7 +26,7 @@
 #include <pthread.h>
 #include "types.h"
 #include "interface/ClientInterface.h"
-#include "raul/SharedPtr.h"
+#include <raul/SharedPtr.h>
 
 using std::list; using std::string; using std::pair;
 

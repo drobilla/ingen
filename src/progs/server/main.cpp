@@ -19,19 +19,18 @@
 #include <cstddef>
 #include <signal.h>
 #include "config.h"
-#include "util.h"
-#include "cmdline.h"
-#include "tuning.h"
-#include "Engine.h"
-#include "JackAudioDriver.h"
-#include "OSCEngineReceiver.h"
+#include "module/Module.h"
+#include "engine/util.h"
+#include "engine/Engine.h"
+#include "engine/EventSource.h"
 #ifdef HAVE_LASH
-#include "LashDriver.h"
+#include "engine/LashDriver.h"
 #endif
 #ifdef BUILD_IN_PROCESS_ENGINE
 #include <jack/jack.h>
 #include <jack/intclient.h>
 #endif
+#include "cmdline.h"
 
 using std::cout; using std::endl; using std::cerr;
 using namespace Ingen;
@@ -139,18 +138,28 @@ main(int argc, char** argv)
 
 		set_denormal_flags();
 
-		engine = SharedPtr<Engine>(new Engine());
+		SharedPtr<Glib::Module> module = Ingen::Shared::load_module("ingen_engine");
 
-		std::string jack_name
-			= (args_info.jack_server_given) ? args_info.jack_server_arg : "";
+		if (!module) {
+			cerr << "Aborting.  If you are running from the source tree, run ingen_dev." << endl;
+			return -1;
+		}
 
-		SharedPtr<AudioDriver> audio_driver(
-			new JackAudioDriver(*engine.get(), jack_name) );
+		Engine* (*new_engine)() = NULL;
 
-		SharedPtr<EventSource> event_source(new OSCEngineReceiver(
-			engine, pre_processor_queue_size, args_info.port_arg ));
+		bool found = module->get_symbol("new_engine", (void*&)new_engine);
 
-		engine->activate(audio_driver, event_source);
+		if (!found) {
+			cerr << "Unable to find module entry point, exiting." << endl;
+			return -1;
+		}
+
+		SharedPtr<Engine> engine(new_engine());
+
+		engine->start_jack_driver();
+		engine->start_osc_driver(args_info.port_arg);
+
+		engine->activate();
 
 #ifdef HAVE_LASH
 		lash_driver = new LashDriver(engine, lash_args);
@@ -158,7 +167,7 @@ main(int argc, char** argv)
 
 		engine->main();
 
-		event_source->deactivate();
+		engine->event_source()->deactivate();
 
 #ifdef HAVE_LASH
 		delete lash_driver;

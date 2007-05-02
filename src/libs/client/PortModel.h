@@ -24,8 +24,8 @@
 #include <list>
 #include <sigc++/sigc++.h>
 #include "ObjectModel.h"
-#include "raul/SharedPtr.h"
-#include "raul/Path.h"
+#include <raul/SharedPtr.h>
+#include <raul/Path.h>
 using std::string; using std::list; using std::cerr; using std::endl;
 
 namespace Ingen {

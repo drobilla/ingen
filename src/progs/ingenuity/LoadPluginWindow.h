@@ -19,13 +19,13 @@
 #ifndef LOADPLUGINWINDOW_H
 #define LOADPLUGINWINDOW_H
 
-#include "PluginModel.h"
 #include <map>
 #include <libglademm/xml.h>
 #include <libglademm.h>
 #include <gtkmm.h>
-#include "raul/SharedPtr.h"
-#include "PatchModel.h"
+#include <raul/SharedPtr.h>
+#include "client/PatchModel.h"
+#include "client/PluginModel.h"
 using Ingen::Client::PluginModel;
 using Ingen::Client::PatchModel;
 using Ingen::Client::MetadataMap;

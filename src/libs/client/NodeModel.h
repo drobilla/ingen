@@ -25,8 +25,8 @@
 #include <sigc++/sigc++.h>
 #include "ObjectModel.h"
 #include "PortModel.h"
-#include "raul/Path.h"
-#include "raul/SharedPtr.h"
+#include <raul/Path.h>
+#include <raul/SharedPtr.h>
 #include "PluginModel.h"
 
 using std::string; using std::map; using std::find;

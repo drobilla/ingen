@@ -21,8 +21,8 @@
 #include "../../../config.h"
 #include <string>
 #include <iostream>
-#include "raul/Path.h"
-#include "raul/SharedPtr.h"
+#include <raul/Path.h>
+#include <raul/SharedPtr.h>
 #ifdef HAVE_SLV2
 #include <slv2/slv2.h>
 #endif

@@ -15,28 +15,29 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "DeprecatedLoader.h"
-#include <libxml/parser.h>
-#include <libxml/tree.h>
-#include <libxml/xpath.h>
-#include <algorithm>
-#include "PatchModel.h"
-#include "NodeModel.h"
-#include "ConnectionModel.h"
-#include "PortModel.h"
-#include "PresetModel.h"
-#include "ModelEngineInterface.h"
-#include "PluginModel.h"
-#include "raul/Path.h"
+
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <algorithm>
 #include <utility> // for pair, make_pair
 #include <cassert>
 #include <cstring>
 #include <string>
 #include <cstdlib>  // for atof
 #include <cmath>
+#include <libxml/parser.h>
+#include <libxml/tree.h>
+#include <libxml/xpath.h>
+#include <raul/Path.h>
+#include "interface/EngineInterface.h"
+#include "PatchModel.h"
+#include "NodeModel.h"
+#include "ConnectionModel.h"
+#include "PortModel.h"
+#include "PresetModel.h"
+#include "PluginModel.h"
+#include "DeprecatedLoader.h"
 
 using std::string; using std::vector; using std::pair;
 using std::cerr; using std::cout; using std::endl;
@@ -245,8 +246,11 @@ DeprecatedLoader::load_patch(const Glib::ustring&  filename,
 		poly = 1;
 
 	// Create it, if we're not merging
-	if (!existing)
-		_engine->create_patch_with_data(path, poly, initial_data);
+	if (!existing) {
+		_engine->create_patch(path, poly);
+		for (MetadataMap::const_iterator i = initial_data.begin(); i != initial_data.end(); ++i)
+			_engine->set_metadata(path, i->first, i->second);
+	}
 
 	// Load nodes
 	cur = xmlDocGetRootElement(doc)->xmlChildrenNode;
@@ -294,7 +298,8 @@ DeprecatedLoader::load_patch(const Glib::ustring&  filename,
 	xmlCleanupParser();
 
 	// Done above.. late enough?
-	//_engine->set_metadata_map(path, initial_data);
+	//for (MetadataMap::const_iterator i = data.begin(); i != data.end(); ++i)
+	//	_engine->set_metadata(subject, i->first, i->second);
 
 	if (!existing)
 		_engine->enable_patch(path);
@@ -485,7 +490,8 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 
 			path = new_path;
 
-			_engine->set_metadata_map(path, initial_data);
+			for (MetadataMap::const_iterator i = initial_data.begin(); i != initial_data.end(); ++i)
+				_engine->set_metadata(path, i->first, i->second);
 
 			return SharedPtr<NodeModel>();
 
@@ -508,7 +514,8 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 			else
 				_engine->create_node(path, plugin_type, library_name, plugin_label, polyphonic);
 		
-			_engine->set_metadata_map(path, initial_data);
+			for (MetadataMap::const_iterator i = initial_data.begin(); i != initial_data.end(); ++i)
+				_engine->set_metadata(path, i->first, i->second);
 
 			return true;
 		}
@@ -516,7 +523,8 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 	// Not deprecated
 	} else {
 		_engine->create_node(path, plugin_uri, polyphonic);
-		_engine->set_metadata_map(path, initial_data);
+		for (MetadataMap::const_iterator i = initial_data.begin(); i != initial_data.end(); ++i)
+			_engine->set_metadata(path, i->first, i->second);
 		return true;
 	}
 

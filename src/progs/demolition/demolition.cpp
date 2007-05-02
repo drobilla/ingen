@@ -23,7 +23,7 @@
 #include "Store.h"
 #include "PatchLibrarian.h"
 #include "PluginModel.h"
-#include "raul/SharedPtr.h"
+#include <raul/SharedPtr.h>
 #include <iostream>
 #include <unistd.h>
 #include <stdlib.h>

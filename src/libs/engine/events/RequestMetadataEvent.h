@@ -20,7 +20,7 @@
 
 #include <string>
 #include "QueuedEvent.h"
-#include "raul/Atom.h"
+#include <raul/Atom.h>
 using std::string;
 
 namespace Ingen {

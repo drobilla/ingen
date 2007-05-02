@@ -19,7 +19,7 @@
 #define ADDNODEEVENT_H
 
 #include "QueuedEvent.h"
-#include "raul/Path.h"
+#include <raul/Path.h>
 #include <string>
 using std::string;
 

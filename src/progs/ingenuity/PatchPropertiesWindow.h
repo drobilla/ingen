@@ -21,7 +21,7 @@
 #include <string>
 #include <gtkmm.h>
 #include <libglademm/xml.h>
-#include "raul/SharedPtr.h"
+#include <raul/SharedPtr.h>
 using std::string;
 
 namespace Ingen { namespace Client { class PatchModel; } }

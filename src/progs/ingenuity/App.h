@@ -31,14 +31,19 @@
 using std::string; using std::map; using std::list;
 using std::cerr; using std::endl;
 
-namespace Ingen { namespace Client {
-	class PatchModel;
-	class PluginModel;
-	class Store;
-	class SigClientInterface;
-	class ModelEngineInterface;
-} }
+namespace Ingen { 
+	namespace Shared {
+		class EngineInterface;
+	}
+	namespace Client {
+		class PatchModel;
+		class PluginModel;
+		class Store;
+		class SigClientInterface;
+	}
+}
 using namespace Ingen::Client;
+using Ingen::Shared::EngineInterface;
 
 /** \defgroup Ingenuity GTK Client
  */
@@ -72,8 +77,8 @@ public:
 
 	void error_message(const string& msg);
 
-	void attach(const SharedPtr<ModelEngineInterface>& engine,
-	            const SharedPtr<SigClientInterface>&   client);
+	void attach(const SharedPtr<EngineInterface>&    engine,
+	            const SharedPtr<SigClientInterface>& client);
 	
 	void detach();
 	
@@ -89,10 +94,10 @@ public:
 	
 	Raul::RDF::World* rdf_world() { return &_rdf_world; }
 
-	const SharedPtr<ModelEngineInterface>& engine() const { return _engine; }
-	const SharedPtr<SigClientInterface>&   client() const { return _client; }
-	const SharedPtr<Store>&                store()  const { return _store; }
-	const SharedPtr<ThreadedLoader>&       loader() const { return _loader; }
+	const SharedPtr<EngineInterface>&    engine() const { return _engine; }
+	const SharedPtr<SigClientInterface>& client() const { return _client; }
+	const SharedPtr<Store>&              store()  const { return _store; }
+	const SharedPtr<ThreadedLoader>&     loader() const { return _loader; }
 
 	static inline App& instance() { assert(_instance); return *_instance; }
 	static void        instantiate();
@@ -101,8 +106,8 @@ protected:
 	App();
 	static App* _instance;
 
-	SharedPtr<ModelEngineInterface> _engine;
-	SharedPtr<SigClientInterface>   _client;
+	SharedPtr<EngineInterface>    _engine;
+	SharedPtr<SigClientInterface> _client;
 	SharedPtr<Store>                _store;
 	SharedPtr<ThreadedLoader>       _loader;
 

@@ -21,10 +21,10 @@
 
 #include <string>
 #include <libgnomecanvasmm.h>
-#include "NodeModule.h"
-#include "raul/SharedPtr.h"
-#include "PatchModel.h"
+#include <raul/SharedPtr.h>
+#include "client/PatchModel.h"
 #include "PatchPortModule.h"
+#include "NodeModule.h"
 using std::string; using std::list;
 
 namespace Ingen { namespace Client {

@@ -26,9 +26,9 @@
 #include "NodeFactory.h"
 #include "ClientBroadcaster.h"
 #include <raul/Maid.h>
-#include "raul/Path.h"
+#include <raul/Path.h>
 #include "ObjectStore.h"
-#include "raul/Path.h"
+#include <raul/Path.h>
 #include "Port.h"
 
 namespace Ingen {
