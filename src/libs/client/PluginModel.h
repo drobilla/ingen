@@ -48,7 +48,9 @@ public:
 		, _name(name)
 	{
 		set_type_from_uri(type_uri);
+#ifdef HAVE_SLV2
 		_slv2_plugin = slv2_plugins_get_by_uri(_slv2_plugins, uri.c_str());
+#endif
 	}
 	
 	Type          type() const                { return _type; }
