@@ -18,6 +18,8 @@
 #include <iostream>
 #include <string>
 #include <signal.h>
+#include <glibmm/convert.h>
+#include <glibmm/miscutils.h>
 #include <boost/optional.hpp>
 #include <raul/Path.h>
 #include <raul/RDFWorld.h>
@@ -63,7 +65,9 @@ main(int argc, char** argv)
 	}
 
 	SharedPtr<Glib::Module> engine_module;
+	SharedPtr<Glib::Module> client_module;
 	SharedPtr<Glib::Module> gui_module;
+
 
 	SharedPtr<Shared::EngineInterface> engine_interface;
 
@@ -104,8 +108,7 @@ main(int argc, char** argv)
 	/* Connect to remote engine */
 	if (args.connect_given || (args.load_given && !engine_interface)) {
 		bool found = false;
-		SharedPtr<Glib::Module> client_module
-			= Ingen::Shared::load_module("ingen_client");
+		client_module = Ingen::Shared::load_module("ingen_client");
 
 		SharedPtr<Shared::EngineInterface> (*new_osc_interface)(const std::string&) = NULL;
 
@@ -122,7 +125,7 @@ main(int argc, char** argv)
 
 
 	/* Load a patch */
-	if (args.load_given) {
+	if (args.load_given && engine_interface) {
 
 		Raul::RDF::World rdf_world;
 		rdf_world.add_prefix("xsd", "http://www.w3.org/2001/XMLSchema#");
@@ -147,8 +150,18 @@ main(int argc, char** argv)
 		
 		if (serialisation_module && found) {
 			SharedPtr<Serialisation::Loader> loader(new_loader());
-			loader->load(engine_interface, &rdf_world,
-					string("file:") + args.load_arg, parent_path, "");
+			
+			// Assumption:  Containing ':' means URI, otherwise filename
+			string uri = args.load_arg;
+			if (uri.find(':') == string::npos) 
+				if (Glib::path_is_absolute(args.load_arg))
+					uri = Glib::filename_to_uri(args.load_arg);
+				else
+					uri = Glib::filename_to_uri(Glib::build_filename(
+						Glib::get_current_dir(), args.load_arg));
+
+			loader->load(engine_interface, &rdf_world, uri, parent_path, "");
+
 		} else {
 			cerr << "Unable to load serialisation module, aborting." << endl;
 			return -1;
