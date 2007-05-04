@@ -89,7 +89,7 @@ main(int argc, char** argv)
 				if (engine_module->get_symbol("new_engine", (void*&)new_engine)) {
 					engine = SharedPtr<Engine>(new_engine());
 					//engine->start_jack_driver();
-					//engine->launch_osc_interface(args.engine_port_arg);
+					//engine->start_osc_driver(args.engine_port_arg);
 				} else {
 					engine_module.reset();
 				}
@@ -102,12 +102,6 @@ main(int argc, char** argv)
 			cerr << "Try running ingen_dev or setting INGEN_MODULE_PATH." << endl;
 		}
 
-	}
-				
-	if (engine) {
-		engine_interface = engine->new_queued_interface();
-		engine->start_jack_driver();
-		engine->activate();
 	}
 	
 
@@ -128,11 +122,18 @@ main(int argc, char** argv)
 			return -1;
 		}
 	}
+	
+
+	if (engine) {
+		engine->start_jack_driver();
+		engine->start_osc_driver(args.engine_port_arg);
+		engine->activate();
+	}
 
 
 	/* Load a patch */
 	if (args.load_given && engine_interface) {
-
+		
 		Raul::RDF::World rdf_world;
 		rdf_world.add_prefix("xsd", "http://www.w3.org/2001/XMLSchema#");
 		rdf_world.add_prefix("ingen", "http://drobilla.net/ns/ingen#");
@@ -192,15 +193,18 @@ main(int argc, char** argv)
 	}
 
 
-	/* Didn't run the GUI, do our own main thing. */
+	/* Didn't run the GUI, listen to OSC and do our own main thing. */
 	if (engine && !ran_gui) {
 
 		signal(SIGINT, catch_int);
 		signal(SIGTERM, catch_int);
 		
-		engine->start_osc_driver(args.engine_port_arg);
+		//engine->start_osc_driver(args.engine_port_arg);
+		engine->activate();
 
 		engine->main();
+
+		cout << "Exiting." << endl;
 
 		engine.reset();
 	}
