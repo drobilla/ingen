@@ -34,6 +34,8 @@ ThreadedLoader::ThreadedLoader(SharedPtr<EngineInterface> engine)
 	, _deprecated_loader(engine)
 	, _serializer(*App::instance().rdf_world())
 {
+	set_name("Loader");
+
 	// FIXME: rework this so the thread is only present when it's doing something (save mem)
 	if (_serialisation_module) {
 		Loader* (*new_loader)() = NULL;
