@@ -142,6 +142,9 @@ Engine::main_iteration()
 void
 Engine::start_jack_driver()
 {
+	if (_audio_driver)
+		cerr << "[Engine] Warning:  replaced audio driver" << endl;
+	
 	_audio_driver = SharedPtr<AudioDriver>(new JackAudioDriver(*this));
 }
 
@@ -149,6 +152,9 @@ Engine::start_jack_driver()
 void
 Engine::start_osc_driver(int port)
 {
+	if (_event_source)
+		cerr << "[Engine] Warning: replaced event source (engine interface)" << endl;
+
 	_event_source = SharedPtr<EventSource>(new OSCEngineReceiver(
 			*this, pre_processor_queue_size, port));
 }

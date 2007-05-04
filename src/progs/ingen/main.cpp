@@ -88,7 +88,7 @@ main(int argc, char** argv)
 				Engine* (*new_engine)() = NULL;
 				if (engine_module->get_symbol("new_engine", (void*&)new_engine)) {
 					engine = SharedPtr<Engine>(new_engine());
-					engine->start_jack_driver();
+					//engine->start_jack_driver();
 					//engine->launch_osc_interface(args.engine_port_arg);
 				} else {
 					engine_module.reset();
@@ -106,6 +106,7 @@ main(int argc, char** argv)
 				
 	if (engine) {
 		engine_interface = engine->new_queued_interface();
+		engine->start_jack_driver();
 		engine->activate();
 	}
 	
@@ -197,10 +198,7 @@ main(int argc, char** argv)
 		signal(SIGINT, catch_int);
 		signal(SIGTERM, catch_int);
 		
-		engine->start_jack_driver();
 		engine->start_osc_driver(args.engine_port_arg);
-
-		engine->activate();
 
 		engine->main();
 
