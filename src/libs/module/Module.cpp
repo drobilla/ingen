@@ -20,6 +20,7 @@
 #include <iostream>
 #include <glibmm/module.h>
 #include <glibmm/miscutils.h>
+#include <glibmm/fileutils.h>
 #include <raul/SharedPtr.h>
 
 #ifndef INGEN_MODULE_DIR
@@ -43,7 +44,7 @@ namespace Shared {
 SharedPtr<Glib::Module>
 load_module(const string& name)
 {
-	SharedPtr<Glib::Module> module;
+	Glib::Module* module = NULL;
 
 	// Search INGEN_MODULE_PATH first
 	bool module_path_found;
@@ -52,24 +53,30 @@ load_module(const string& name)
 		string dir;
 		istringstream iss(module_path);
 		while (getline(iss, dir, ':')) {
-			module = SharedPtr<Glib::Module>(new Glib::Module(
-					Glib::Module::build_path(dir, name),
-					Glib::MODULE_BIND_LAZY));
+			
+			string filename = Glib::Module::build_path(dir, name);
+			if (Glib::file_test(filename, Glib::FILE_TEST_EXISTS)) {
+				module = new Glib::Module(filename, Glib::MODULE_BIND_LAZY);
 
-			if (module && *module.get())
-				return module;
+				if (*module) {
+					return SharedPtr<Glib::Module>(module);
+				} else {
+					delete module;
+					cerr << Glib::Module::get_last_error() << endl;
+				}
+			}
 		}
 	}
 
 	// Try default directory if not found
-	module = SharedPtr<Glib::Module>(new Glib::Module(
+	module = new Glib::Module(
 			Glib::Module::build_path(INGEN_MODULE_DIR, name),
-			Glib::MODULE_BIND_LAZY));
+			Glib::MODULE_BIND_LAZY);
 
-	if (*module.get()) {
-		return module;
+	if (*module) {
+		return SharedPtr<Glib::Module>(module);
 	} else {
-		cerr << "Unable to load module \"" <<  name << "\" (you may want to set INGEN_MODULE_PATH)." << endl;
+		cerr << "Unable to load module \"" <<  name << "\" (try setting INGEN_MODULE_PATH)." << endl;
 		return SharedPtr<Glib::Module>();
 	}
 }

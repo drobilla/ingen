@@ -16,7 +16,7 @@
  */
 
 #include "DestroyEvent.h"
-#include "Responder.h"
+#include "interface/Responder.h"
 #include "Engine.h"
 #include "Patch.h"
 #include "Tree.h"
@@ -37,7 +37,7 @@
 namespace Ingen {
 
 
-DestroyEvent::DestroyEvent(Engine& engine, SharedPtr<Responder> responder, FrameTime time, QueuedEventSource* source, const string& path, bool block)
+DestroyEvent::DestroyEvent(Engine& engine, SharedPtr<Shared::Responder> responder, FrameTime time, QueuedEventSource* source, const string& path, bool block)
 : QueuedEvent(engine, responder, time, source, source),
   _path(path),
   _object(NULL),
@@ -56,7 +56,7 @@ DestroyEvent::DestroyEvent(Engine& engine, SharedPtr<Responder> responder, Frame
 }
 
 
-DestroyEvent::DestroyEvent(Engine& engine, SharedPtr<Responder> responder, FrameTime time, QueuedEventSource* source, Node* node, bool block)
+DestroyEvent::DestroyEvent(Engine& engine, SharedPtr<Shared::Responder> responder, FrameTime time, QueuedEventSource* source, Node* node, bool block)
 : QueuedEvent(engine, responder, block, source),
   _path(node->path()),
   _object(node),

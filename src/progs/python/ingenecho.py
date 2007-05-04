@@ -17,11 +17,11 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
-import omsynth
+import ingen
 import os,time,sys
 
 def main(om):
-	om.setEnvironment(omsynth.Environment())
+	om.setEnvironment(ingen.Environment())
 	om.engine.activate()
  	om.engine.register_client(om.getAddressAsString())
  	om.request.all_objects(om.getAddressAsString())
@@ -30,11 +30,11 @@ def main(om):
 	time.sleep(3)	
 	om.getEnvironment().printPatch()
 	om.getEnvironment().printConnections()
-	print "omecho will now monitor and mirror changes in the structure"
+	print "ingenecho will now monitor and mirror changes in the structure"
 	print "hit return to exit when youre done"
 	sys.stdin.readline()
  	om.engine.unregister_client(om.getAddressAsString())
 	os._exit(0)
 
 if __name__ == "__main__":
-	omsynth.startClient(main)
+	ingen.startClient(main)

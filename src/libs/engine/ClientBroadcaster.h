@@ -24,9 +24,9 @@
 #include <list>
 #include <lo/lo.h>
 #include <pthread.h>
-#include "types.h"
-#include "interface/ClientInterface.h"
 #include <raul/SharedPtr.h>
+#include "interface/ClientInterface.h"
+#include "types.h"
 
 using std::list; using std::string; using std::pair;
 
@@ -37,8 +37,7 @@ class Port;
 class Plugin;
 class Patch;
 class Connection;
-class Responder;
-namespace Shared { class ClientKey; }
+namespace Shared { class ClientKey; class Responder; }
 using Shared::ClientKey;
 using Shared::ClientInterface;
 

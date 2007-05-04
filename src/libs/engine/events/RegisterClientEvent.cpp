@@ -15,15 +15,15 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include "interface/Responder.h"
 #include "RegisterClientEvent.h"
-#include "Responder.h"
 #include "Engine.h"
 #include "ClientBroadcaster.h"
 
 namespace Ingen {
 
 
-RegisterClientEvent::RegisterClientEvent(Engine& engine, SharedPtr<Responder>       responder,
+RegisterClientEvent::RegisterClientEvent(Engine& engine, SharedPtr<Shared::Responder>       responder,
                                          SampleCount                 timestamp,
                                          ClientKey                   key,
                                          SharedPtr<ClientInterface> client)

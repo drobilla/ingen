@@ -25,6 +25,7 @@
 using std::string;
 using Ingen::Shared::ClientInterface;
 using Ingen::Shared::ClientKey;
+using Ingen::Shared::Responder;
 
 namespace Ingen {
 
@@ -36,10 +37,11 @@ namespace Ingen {
 class RegisterClientEvent : public QueuedEvent
 {
 public:
-	RegisterClientEvent(Engine& engine, SharedPtr<Responder>       responder,
-	                    SampleCount                 timestamp,
-	                    ClientKey                   key,
-	                    SharedPtr<ClientInterface> client);
+	RegisterClientEvent(Engine&                      engine,
+	                    SharedPtr<Shared::Responder> responder,
+	                    SampleCount                  timestamp,
+	                    ClientKey                    key,
+	                    SharedPtr<ClientInterface>   client);
 
 	void pre_process();
 	void post_process();

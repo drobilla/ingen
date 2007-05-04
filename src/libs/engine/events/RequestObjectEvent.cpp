@@ -18,7 +18,7 @@
 #include "RequestObjectEvent.h"
 #include <string>
 #include "interface/ClientInterface.h"
-#include "Responder.h"
+#include "interface/Responder.h"
 #include "Engine.h"
 #include "ObjectStore.h"
 #include "ClientBroadcaster.h"
@@ -32,7 +32,7 @@ using std::string;
 namespace Ingen {
 
 
-RequestObjectEvent::RequestObjectEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path)
+RequestObjectEvent::RequestObjectEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, const string& path)
 : QueuedEvent(engine, responder, timestamp),
   _path(path),
   _object(NULL)

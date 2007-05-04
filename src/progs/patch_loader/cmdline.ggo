@@ -1,7 +1,0 @@
-# Process this file with gengetopt -u to generate the necessary code (in cmdline.h, cmdline.c)
-
-package "om_patch_loader - A command line patch loading client for Om"
-
-option "engine-url"  u "Om engine URL to connect to" string no
-option "client-port" p "Client port to listen on"    int    no
-

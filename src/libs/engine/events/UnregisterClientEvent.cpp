@@ -15,16 +15,16 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include "interface/ClientInterface.h"
+#include "interface/Responder.h"
 #include "UnregisterClientEvent.h"
-#include "Responder.h"
 #include "Engine.h"
 #include "ClientBroadcaster.h"
-#include "interface/ClientInterface.h"
 
 namespace Ingen {
 
 
-UnregisterClientEvent::UnregisterClientEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, ClientKey key)
+UnregisterClientEvent::UnregisterClientEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, ClientKey key)
 : QueuedEvent(engine, responder, timestamp)
 , _key(key)
 {

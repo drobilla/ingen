@@ -16,7 +16,7 @@
  */
 
 #include "SetPortValueQueuedEvent.h"
-#include "Responder.h"
+#include "interface/Responder.h"
 #include "Engine.h"
 #include "Port.h"
 #include "ClientBroadcaster.h"
@@ -30,7 +30,7 @@ namespace Ingen {
 
 /** Voice-specific control setting
  */
-SetPortValueQueuedEvent::SetPortValueQueuedEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, size_t voice_num, const string& port_path, Sample val)
+SetPortValueQueuedEvent::SetPortValueQueuedEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, size_t voice_num, const string& port_path, Sample val)
 : QueuedEvent(engine, responder, timestamp),
   _voice_num(voice_num),
   _port_path(port_path),
@@ -41,7 +41,7 @@ SetPortValueQueuedEvent::SetPortValueQueuedEvent(Engine& engine, SharedPtr<Respo
 }
 
 
-SetPortValueQueuedEvent::SetPortValueQueuedEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& port_path, Sample val)
+SetPortValueQueuedEvent::SetPortValueQueuedEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, const string& port_path, Sample val)
 : QueuedEvent(engine, responder, timestamp),
   _voice_num(-1),
   _port_path(port_path),

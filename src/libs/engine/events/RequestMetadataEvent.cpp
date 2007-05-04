@@ -17,7 +17,7 @@
 
 #include "RequestMetadataEvent.h"
 #include <string>
-#include "Responder.h"
+#include "interface/Responder.h"
 #include "Engine.h"
 #include "GraphObject.h"
 #include "ObjectStore.h"
@@ -28,7 +28,7 @@ using std::string;
 namespace Ingen {
 
 
-RequestMetadataEvent::RequestMetadataEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& node_path, const string& key)
+RequestMetadataEvent::RequestMetadataEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, const string& node_path, const string& key)
 : QueuedEvent(engine, responder, timestamp),
   _path(node_path),
   _key(key),

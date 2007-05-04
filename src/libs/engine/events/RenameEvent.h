@@ -44,7 +44,7 @@ class DisconnectPortEvent;
 class RenameEvent : public QueuedEvent
 {
 public:
-	RenameEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& name);
+	RenameEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, const string& path, const string& name);
 	~RenameEvent();
 
 	void pre_process();

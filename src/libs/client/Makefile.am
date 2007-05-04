@@ -1,12 +1,25 @@
 if BUILD_CLIENT_LIB
 
-noinst_LTLIBRARIES = libingen_client.la
 
-libingen_client_la_CXXFLAGS = @RAUL_CFLAGS@ @SLV2_CFLAGS@ @LXML2_CFLAGS@ @RASQAL_CFLAGS@ @RAPTOR_CFLAGS@ @LSIGCPP_CFLAGS@ @GLIBMM_CFLAGS@ -I$(top_srcdir)/src/common -DPKGDATADIR=\"$(pkgdatadir)\"
+moduledir = $(libdir)/ingen
 
-libingen_client_la_LIBADD = @RAUL_LIBS@ @SLV2_LIBS@ @LXML2_LIBS@ @LOSC_LIBS@ @RASQAL_LIBS@ @RAPTOR_LIBS@ @LSIGCPP_LIBS@ @GLIBMM_LIBS@
+module_LTLIBRARIES = libingen_client.la
+
+libingen_client_la_CXXFLAGS = \
+	@RAUL_CFLAGS@ @SLV2_CFLAGS@ @LOSC_CFLAGS@ \
+	@LXML2_CFLAGS@ @RASQAL_CFLAGS@ @RAPTOR_CFLAGS@ \
+	@LSIGCPP_CFLAGS@ @GLIBMM_CFLAGS@ \
+	-I$(top_srcdir)/src/common \
+	-DPKGDATADIR=\"$(pkgdatadir)\"
+
+libingen_client_la_LIBADD = \
+	@RAUL_LIBS@ @SLV2_LIBS@ @LOSC_LIBS@ \
+	@LXML2_LIBS@ @RASQAL_LIBS@ @RAPTOR_LIBS@ \
+	@LSIGCPP_LIBS@ @GLIBMM_LIBS@
 
 libingen_client_la_SOURCES = \
+	client.h \
+	client.cpp \
 	OSCEngineSender.h \
 	OSCEngineSender.cpp \
 	OSCClientReceiver.h \

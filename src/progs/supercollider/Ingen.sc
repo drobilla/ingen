@@ -1,6 +1,6 @@
 // TODO:
 // * Keep track of established connections.
-Om : Model {
+Ingen : Model {
 	classvar <>program = "om", <>patchLoader = "om_patch_loader";
 	classvar <>oscURL, <nodeTypeMap, <>uiClass;
 	var <addr;
@@ -55,11 +55,11 @@ Om : Model {
 		};
 		oscURL="osc.udp://"++NetAddr.localAddr.ip++$:++NetAddr.localAddr.port;
 		nodeTypeMap = IdentityDictionary[
-			\Internal -> OmInternalNode,
-			\LADSPA   -> OmLADSPANode,
-			\DSSI     -> OmDSSINode
+			\Internal -> IngenInternalNode,
+			\LADSPA   -> IngenLADSPANode,
+			\DSSI     -> IngenDSSINode
 		];
-		uiClass = OmEmacsUI
+		uiClass = IngenEmacsUI
 	}
 	*new { | netaddr |
 		^super.new.init(netaddr)
@@ -76,7 +76,7 @@ Om : Model {
 			"response/error" -> {|id,text|
 				requestHandlers.removeAt(id);
 				allocator.free(id);
-				("Om"+text).error }
+				("Ingen"+text).error }
 		].collect({|a|
 			var func = a.value;
 			OSCresponder(addr, "/om/"++a.key, {|time,resp,msg|
@@ -110,11 +110,11 @@ Om : Model {
 							patch.changed(\newNode, node);
 						} {
 							if (patch.getNode(nodeName).class != nodeTypeMap[type]) {
-								("Om sent an existng node with differing type"+path).warn
+								("Ingen sent an existng node with differing type"+path).warn
 							}
 						}
 					} {
-						("Om tried to create node in non-existing patch"+patchPath).warn
+						("Ingen tried to create node in non-existing patch"+patchPath).warn
 					}
 				} {
 					("Invalid path in node creation"+path).warn
@@ -135,17 +135,17 @@ Om : Model {
 					parent = this.getNode(basePath) ? this.getPatch(basePath);
 					if (parent.notNil) {
 						if (parent.hasPort(portName).not) {
-							port = OmPort.new(portName, parent, type, dir, hint, def, min, max);
+							port = IngenPort.new(portName, parent, type, dir, hint, def, min, max);
 							parent.ports[portName.asSymbol] = port;
 							parent.changed(\newPort, port)
 						} {
 							if (parent.getPort(portName).porttype != type) {
-								("Om tried to create an already existing port with differing type"
+								("Ingen tried to create an already existing port with differing type"
 									+path).warn
 							}
 						}
 					} {
-						("Om tried to create port on non-existing object"+basePath).warn
+						("Ingen tried to create port on non-existing object"+basePath).warn
 					}
 				} {
 					("Invalid path in port creation"+path).warn
@@ -163,7 +163,7 @@ Om : Model {
 				if (node.notNil) {
 					node.parent.nodes.removeAt(node.name.asSymbol).free
 				} {
-					("Om attempting to remove non-existing node"+path).warn
+					("Ingen attempting to remove non-existing node"+path).warn
 				}
 			},
 			"port_removal" -> {|path|
@@ -171,7 +171,7 @@ Om : Model {
 				if (port.notNil) {
 					port.parent.ports.removeAt(port.name.asSymbol).free
 				} {
-					("Om attempting to remove non-existing port"+path).warn
+					("Ingen attempting to remove non-existing port"+path).warn
 				}
 			},
 			"patch_destruction" -> {|path|
@@ -179,7 +179,7 @@ Om : Model {
 				if (patch.notNil) {
 					patch.parent.patches.removeAt(patch.name.asSymbol).free
 				} {
-					("Om attempting to remove non-existing patch"+path).warn
+					("Ingen attempting to remove non-existing patch"+path).warn
 				}
 			},
 			"program_add" -> {|path,bank,program,name|
@@ -187,7 +187,7 @@ Om : Model {
 				if (node.respondsTo(\prProgramAdd)) {
 					node.prProgramAdd(bank,program,name)
 				} {
-					("Om tried to add program info to"+node).warn
+					("Ingen tried to add program info to"+node).warn
 				}
 			}
 		].collect({|a|
@@ -217,7 +217,7 @@ Om : Model {
 				addr.sendMsg("/om/ping", id)
 			};
 			requestHandlers.removeAt(id);
-			"Om engine boot failed".error;
+			"Ingen engine boot failed".error;
 		}
 	}
 	getPatch {|path, mustExist=true|
@@ -267,7 +267,7 @@ Om : Model {
 	}
 	at {|path|^this.getObject(path.asString)}
 	*boot {|func|
-		^Om.new.waitForBoot {|e|
+		^Ingen.new.waitForBoot {|e|
 			e.activate {
 				e.register {
 					e.loadPlugins {
@@ -286,18 +286,18 @@ Om : Model {
 		booting = true;
 		if (addr.addr == 2130706433) {
 			if (loadIntoJack) {
-				("jack_load"+"-i"+addr.port+"Om"+"om").unixCmd
+				("jack_load"+"-i"+addr.port+"Ingen"+"om").unixCmd
 			} {
 				(program+"-p"+addr.port).unixCmd
 			}
 		} {
-			"You have to manually boot Om now".postln
+			"You have to manually boot Ingen now".postln
 		}
 	}
 	loadPatch {|patchPath| (patchLoader + patchPath).unixCmd }
 	activate { | handler |
 		this.sendReq("engine/activate", {
-			root = OmPatch("",nil,this);
+			root = IngenPatch("",nil,this);
 			this.changed(\newPatch, root);
 			handler.value
 		})
@@ -377,7 +377,7 @@ Om : Model {
 	}
 	quit {
 		if (loadIntoJack) {
-			("jack_unload"+"Om").unixCmd;
+			("jack_unload"+"Ingen").unixCmd;
 			booting=false;
 			requestResponders.do(_.remove);
 			notificationResponders.do(_.remove);
@@ -445,7 +445,7 @@ Om : Model {
 	}
 }
 
-OmMetadata {
+IngenMetadata {
 	var object, dict;
 	*new {|obj|^super.new.metadataInit(obj)}
 	metadataInit {|obj|
@@ -463,22 +463,22 @@ OmMetadata {
 	}
 }
 
-OmObject : Model {
+IngenObject : Model {
 	var <name, <parent, <metadata;
 	*new {|name, parent|
-		^super.new.initOmObject(name,parent);
+		^super.new.initIngenObject(name,parent);
 	}
-	initOmObject {|argName, argParent|
+	initIngenObject {|argName, argParent|
 		name = argName;
 		parent = argParent;
-		metadata=OmMetadata(this)
+		metadata=IngenMetadata(this)
 	}
 	path { ^parent.notNil.if({ parent.path ++ $/ ++ name }, name).asString }
 	depth { ^parent.notNil.if({ parent.depth + 1 }, 0) }
 	engine { ^parent.engine }
 }
 
-OmPort : OmObject {
+IngenPort : IngenObject {
 	var <porttype, <direction, <spec, <value, <connections;
 	*new {|name,parent,type,dir,hint,def,min,max|
 		^super.new(name,parent).initPort(type,dir,hint,def,min,max)
@@ -497,7 +497,7 @@ OmPort : OmObject {
 			|| direction.asSymbol!=\OUTPUT) {
 			Error("Not a audio output port").throw
 		};
-		("jack_connect" + "Om:"++(this.path) + jackPort).unixCmd
+		("jack_connect" + "Ingen:"++(this.path) + jackPort).unixCmd
 	}
 	value_ {|val|
 		if (porttype == \CONTROL and: {direction == \INPUT}) {
@@ -523,7 +523,7 @@ OmPort : OmObject {
 	}
 }
 
-OmNode : OmObject { // Abstract class
+IngenNode : IngenObject { // Abstract class
 	var <ports, <polyphonic;
 	*new {|name,parent,poly|
 		^super.new(name,parent).initNode(poly)
@@ -551,7 +551,7 @@ OmNode : OmObject { // Abstract class
 	}
 }
 
-OmInternalNode : OmNode {
+IngenInternalNode : IngenNode {
 	var <pluginlabel;
 	*new {|name,parent,poly,label|
 		^super.new(name,parent,poly).initInternalNode(label)
@@ -577,7 +577,7 @@ OmInternalNode : OmNode {
 	}
 }
 
-OmLADSPANode : OmNode {
+IngenLADSPANode : IngenNode {
 	var <pluginlabel, <libname;
 	*new {|name, parent, poly, label, lib|
 		^super.new(name,parent,poly).initLADSPANode(label,lib)
@@ -588,7 +588,7 @@ OmLADSPANode : OmNode {
 	}
 }
 
-OmDSSINode : OmLADSPANode {
+IngenDSSINode : IngenLADSPANode {
 	var programs;
 	*new {|name,parent,poly,label,lib|
 		^super.new(name,parent,poly,label,lib).initDSSI
@@ -608,7 +608,7 @@ OmDSSINode : OmLADSPANode {
 	}
 }
 
-OmPatch : OmNode {
+IngenPatch : IngenNode {
 	var <nodes, <patches, <poly, <enabled;
 	var om;
 	*new {|name,parent,engine|
@@ -631,7 +631,7 @@ OmPatch : OmNode {
 	getPatch {|name,mustExist=false|
 		if (this.hasPatch(name).not) {
 			if (mustExist) { ^nil };
-			patches[name.asSymbol] = OmPatch(name,this);
+			patches[name.asSymbol] = IngenPatch(name,this);
 		};
 		^patches[name.asSymbol]
 	}
@@ -654,7 +654,7 @@ OmPatch : OmNode {
 	noteOn {|note,vel|
 		var targetNode;
 		this.nodes.do{|node|
-			if (node.class == OmInternalNode) {
+			if (node.class == IngenInternalNode) {
 				node.pluginlabel.switch(
 					\trigger_in, {
 						if (node.ports['Note Number'].value == note) {
@@ -676,7 +676,7 @@ OmPatch : OmNode {
 	noteOff {|note|
 		var targetNode;
 		this.nodes.do{|node|
-			if (node.class == OmInternalNode) {
+			if (node.class == IngenInternalNode) {
 				node.pluginlabel.switch(
 					\trigger_in, {
 						if (node.ports['Note Number'].value == note) {
@@ -722,11 +722,11 @@ OmPatch : OmNode {
 }
 
 
-OmEmacsUI {
+IngenEmacsUI {
 	var engine, window, bootBtn;
 	*new {|engine| ^super.newCopyArgs(engine).init }
 	init {
-		window = EmacsBuffer("*Om -"+engine.addr.ip++$:++engine.addr.port);
+		window = EmacsBuffer("*Ingen -"+engine.addr.ip++$:++engine.addr.port);
 		bootBtn = EmacsButton(window, ["Boot","Quit"], {|value|
 			if (value==1) {
 				engine.boot

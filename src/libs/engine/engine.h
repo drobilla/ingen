@@ -21,13 +21,20 @@
 namespace Ingen {
 
 class Engine;
-class QueuedEngineInterface;
+namespace Shared { class EngineInterface; }
 
 
 extern "C" {
 
-	extern Engine*                new_engine();
-	extern QueuedEngineInterface* new_queued_interface(Engine& engine);
+	//void run(int argc, char** argv);
+
+	/** Create a new engine in this process */
+	Engine* new_engine();
+	
+	/** Launch an OSC engine as a completely separate process
+	 * \return true if successful
+	 */
+	bool launch_osc_engine(int port);
 
 }
 

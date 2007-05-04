@@ -29,6 +29,7 @@ namespace Ingen {
 namespace Shared {
 
 class ClientKey;
+class Responder;
 
 
 /** The (only) interface clients use to communicate with the engine.
@@ -41,6 +42,7 @@ public:
 	virtual ~EngineInterface() {}
 	
 	// Responses
+	virtual void set_responder(SharedPtr<Responder> responder) = 0;
 	virtual void set_next_response_id(int32_t id) = 0;
 	virtual void disable_responses() = 0;
 	

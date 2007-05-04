@@ -41,7 +41,7 @@ class AddNodeEvent : public QueuedEvent
 {
 public:
 	AddNodeEvent(Engine&               engine,
-	             SharedPtr<Responder> responder,
+	             SharedPtr<Shared::Responder> responder,
 	             SampleCount           timestamp,
 	             const string&         node_path,
 	             const string&         plugin_uri,
@@ -49,7 +49,7 @@ public:
 	
 	// DEPRECATED
 	AddNodeEvent(Engine&               engine,
-	             SharedPtr<Responder> responder,
+	             SharedPtr<Shared::Responder> responder,
 	             SampleCount           timestamp,
 	             const string&         node_path,
 				 const string&         plugin_type,

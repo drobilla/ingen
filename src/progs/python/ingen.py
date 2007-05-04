@@ -367,22 +367,22 @@ class Environment:
 		for connection in self.getConnections():
 			print ">>> %s -> %s" % (connection.getSrcPort().getPath(), connection.getDstPort().getPath())
 
-	#~ /om/engine_enabled - Notification engine's DSP has been enabled.
+	#~ /ingen/engine_enabled - Notification engine's DSP has been enabled.
 	def __ingen__engine_enabled(self):
 		self.enabled = True
 	
-	#~ /om/engine_disabled - Notification engine's DSP has been disabled.
+	#~ /ingen/engine_disabled - Notification engine's DSP has been disabled.
 	def __ingen__engine_disabled(self):
 		self.enabled = False
 		
-	#~ /om/new_node - Notification of a new node's creation.
+	#~ /ingen/new_node - Notification of a new node's creation.
 	#~ * path (string) - Path of the new node
 	#~ * polyphonic (integer-boolean) - Node is polyphonic (1 for yes, 0 for no)
 	#~ * type (string) - Type of plugin (LADSPA, DSSI, Internal, Patch)
 	#~ * lib-name (string) - Name of library if a plugin (ie cmt.so)
 	#~ * plug-label (string) - Label of plugin in library (ie adsr_env)
 
-	#~ * New nodes are sent as a blob. The first message in the blob will be this one (/om/new_node), followed by a series of /om/new_port commands, followed by /om/new_node_end.
+	#~ * New nodes are sent as a blob. The first message in the blob will be this one (/ingen/new_node), followed by a series of /om/new_port commands, followed by /om/new_node_end.
 	def __ingen__new_node(self,path,polyphonic,plugintype,libname,pluginlabel):
 		node = self.getNode(path)
 		node.setPolyphonic(polyphonic)
@@ -393,13 +393,13 @@ class Environment:
 	def __ingen__new_node_end(self):
 		pass
 		
-	#~ /om/node_removal - Notification of a node's destruction.
+	#~ /ingen/node_removal - Notification of a node's destruction.
 	#~ * path (string) - Path of node (which no longer exists)
 	def __ingen__node_removal(self,path):
 		node = self.getNode(path)
 		node.remove()
 
-	#~ /om/new_port - Notification of a node's destruction.
+	#~ /ingen/new_port - Notification of a node's destruction.
 
 	#~ * path (string) - Path of new port
 	#~ * type (string) - Type of port (CONTROL or AUDIO)
@@ -420,37 +420,37 @@ class Environment:
 		port.setMinValue(minvalue)
 		port.setMaxValue(maxvalue)
 
-	#~ /om/port_removal - Notification of a port's destruction.
+	#~ /ingen/port_removal - Notification of a port's destruction.
 	#~ * path (string) - Path of port (which no longer exists)
 	def __ingen__port_removal(self,path):
 		port = self.getPort(path)
 		port.remove()
 
-	#~ /om/patch_destruction - Notification of a patch's destruction.
+	#~ /ingen/patch_destruction - Notification of a patch's destruction.
 	#~ * path (string) - Path of patch (which no longer exists)
 	def __ingen__patch_destruction(self,path):
 		patch = self.getPatch(path)
 		patch.remove()
 
-	#~ /om/patch_enabled - Notification a patch's DSP processing has been enabled.
+	#~ /ingen/patch_enabled - Notification a patch's DSP processing has been enabled.
 	#~ * path (string) - Path of enabled patch
 	def __ingen__patch_enabled(self,path):
 		patch = self.getPatch(path)
 		patch.setEnabled(True)
 
-	#~ /om/patch_disabled - Notification a patch's DSP processing has been disabled.
+	#~ /ingen/patch_disabled - Notification a patch's DSP processing has been disabled.
 	#~ * path (string) - Path of disabled patch
 	def __ingen__patch_disabled(self,path):
 		patch = self.getPatch(path)
 		patch.setEnabled(False)
 
-	#~ /om/new_connection - Notification a new connection has been made.
+	#~ /ingen/new_connection - Notification a new connection has been made.
 	#~ * src-path (string) - Path of the source port
 	#~ * dst-path (string) - Path of the destination port
 	def __ingen__new_connection(self,srcpath,dstpath):
 		self.getConnection(srcpath,dstpath)
 
-	#~ /om/disconnection - Notification a connection has been unmade.
+	#~ /ingen/disconnection - Notification a connection has been unmade.
 	#~ * src-path (string) - Path of the source port
 	#~ * dst-path (string) - Path of the destination port
 	def __ingen__disconnection(self,srcpath,dstpath):
@@ -459,7 +459,7 @@ class Environment:
 		connection.remove()
 		del self.connections[portpair]
 
-	#~ /om/metadata/update - Notification of a piece of metadata.
+	#~ /ingen/metadata/update - Notification of a piece of metadata.
 	#~ * path (string) - Path of the object associated with metadata (can be a node, patch, or port)
 	#~ * key (string)
 	#~ * value (string)
@@ -467,7 +467,7 @@ class Environment:
 		object = self.getObject(path)
 		object.setMetaData(key,value)
 
-	#~ /om/control_change - Notification the value of a port has changed
+	#~ /ingen/control_change - Notification the value of a port has changed
 	#~ * path (string) - Path of port
 	#~ * value (float) - New value of port
 	#~ * This will only send updates for values set by clients of course - not values changing because of connections to other ports!
@@ -475,7 +475,7 @@ class Environment:
 		port = self.getPort(path)
 		port.setValue(value)
 
-	#~ /om/new_patch - Notification of a new patch
+	#~ /ingen/new_patch - Notification of a new patch
 	#~ * path (string) - Path of new patch
 	#~ * poly (int) - Polyphony of new patch (not a boolean like new_node)
 	def __ingen__new_patch(self,path,poly):				
@@ -502,7 +502,7 @@ class ClientProxy:
 		result = self.om.sendMsgBlocking(self.name, *args)
 		if not result:
 			return None
-		if result[0] == "/om/response/ok":
+		if result[0] == "/ingen/response/ok":
 			return True
 		print "ERROR: %s" % result[1][1]
 		return False
@@ -519,7 +519,7 @@ class ClientProxy:
 
 class Client(DatagramProtocol, ClientProxy):
 	def __init__(self):
-		ClientProxy.__init__(self, self, "/om")
+		ClientProxy.__init__(self, self, "/ingen")
 	
 	def startProtocol(self):		
 		self.transport.connect("127.0.0.1", 16180)
@@ -550,15 +550,15 @@ class Client(DatagramProtocol, ClientProxy):
 		os._exit(-1)
 
 	def messageReceived(self, (msg, args)):
-		if msg == "/om/error":
+		if msg == "/ingen/error":
 			print "ERROR: %r" % args
 			return
-		if msg == "/om/response/ok":
+		if msg == "/ingen/response/ok":
 			omcall = self.calls[args[0]]
 			omcall.result = (msg,args)
 			omcall.done = True
 			return
- 		if msg == "/om/response/error":
+ 		if msg == "/ingen/response/error":
  			omcall = self.calls[args[0]]
  			omcall.result = (msg,args)
  			omcall.done = True

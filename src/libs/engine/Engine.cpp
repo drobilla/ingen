@@ -111,12 +111,11 @@ Engine::main()
 	}
 	cout << "[Main] Done main loop." << endl;
 	
+	_event_source->deactivate();
+	
 	if (_activated)
 		deactivate();
 
-	sleep(1);
-	cout << "[Main] Exiting..." << endl;
-	
 	return 0;
 }
 
@@ -148,17 +147,24 @@ Engine::start_jack_driver()
 
 
 void
-Engine::start_osc_driver(const std::string& port)
+Engine::start_osc_driver(int port)
 {
 	_event_source = SharedPtr<EventSource>(new OSCEngineReceiver(
-			*this, pre_processor_queue_size, port.c_str()));
+			*this, pre_processor_queue_size, port));
 }
 	
 
-void
-Engine::set_event_source(SharedPtr<EventSource> source)
+SharedPtr<QueuedEngineInterface>
+Engine::new_queued_interface()
 {
-	_event_source = source;
+	assert(!_event_source);
+
+	SharedPtr<QueuedEngineInterface> result(new QueuedEngineInterface(
+			*this, Ingen::event_queue_size, Ingen::event_queue_size));
+	
+	_event_source = result;
+
+	return result;
 }
 
 

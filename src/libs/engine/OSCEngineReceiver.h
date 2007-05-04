@@ -20,6 +20,7 @@
 
 #include "config.h"
 #include <string>
+#include <stdint.h>
 #include <lo/lo.h>
 #include <raul/SharedPtr.h>
 #include "QueuedEngineInterface.h"
@@ -61,7 +62,7 @@ inline static int name##_cb(LO_HANDLER_ARGS, void* myself)\
 class OSCEngineReceiver : public QueuedEngineInterface
 {
 public:
-	OSCEngineReceiver(Engine& engine, size_t queue_size, const char* const port);
+	OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t port);
 	~OSCEngineReceiver();
 
 	void activate();
@@ -114,8 +115,7 @@ private:
 	LO_HANDLER(dssi);
 #endif
 
-	const char* const _port;
-	lo_server         _server;
+	lo_server _server;
 
 	/** Cached OSC responder (for most recent incoming message) */
 	SharedPtr<OSCResponder> _osc_responder;

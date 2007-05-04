@@ -25,9 +25,9 @@
 #include "interface/EngineInterface.h"
 #include "interface/ClientInterface.h"
 #include "interface/ClientKey.h"
+#include "interface/Responder.h"
 #include "QueuedEventSource.h"
 #include "Engine.h"
-#include "Responder.h"
 using std::string;
 
 namespace Ingen {
@@ -58,7 +58,7 @@ class Engine;
  * events and get pushed directly into the realtime event queue.  Should that
  * be separated into a different interface/client?
  */
-class QueuedEngineInterface : public QueuedEventSource, public virtual EngineInterface
+class QueuedEngineInterface : public QueuedEventSource, public EngineInterface
 {
 public:
 	QueuedEngineInterface(Engine& engine, size_t queued_size, size_t stamped_size);
@@ -66,7 +66,7 @@ public:
 	
 	void set_next_response_id(int32_t id);
 
-	virtual void set_responder(SharedPtr<Responder> responder);
+	virtual void set_responder(SharedPtr<Shared::Responder> responder);
 	virtual void disable_responses();
 
 	// Client registration
@@ -156,7 +156,7 @@ public:
 protected:
 
 	/** Where responses to current messages will go. */
-	SharedPtr<Responder> _responder;
+	SharedPtr<Shared::Responder> _responder;
 
 	Engine& _engine;
 

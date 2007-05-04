@@ -16,7 +16,7 @@
  */
 
 #include "RequestPluginsEvent.h"
-#include "Responder.h"
+#include "interface/Responder.h"
 #include "Engine.h"
 #include "ClientBroadcaster.h"
 #include "NodeFactory.h"
@@ -24,7 +24,7 @@
 namespace Ingen {
 
 
-RequestPluginsEvent::RequestPluginsEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp)
+RequestPluginsEvent::RequestPluginsEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp)
 : QueuedEvent(engine, responder, timestamp)
 {
 }

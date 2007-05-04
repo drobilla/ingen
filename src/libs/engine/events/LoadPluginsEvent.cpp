@@ -16,7 +16,7 @@
  */
 
 #include "LoadPluginsEvent.h"
-#include "Responder.h"
+#include "interface/Responder.h"
 #include "Engine.h"
 #include "NodeFactory.h"
 #include "ClientBroadcaster.h"
@@ -27,7 +27,7 @@ using std::cerr;
 namespace Ingen {
 
 
-LoadPluginsEvent::LoadPluginsEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp)
+LoadPluginsEvent::LoadPluginsEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp)
 : QueuedEvent(engine, responder, timestamp)
 {
 }

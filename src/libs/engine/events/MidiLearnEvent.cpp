@@ -16,7 +16,7 @@
  */
 
 #include "MidiLearnEvent.h"
-#include "Responder.h"
+#include "interface/Responder.h"
 #include "Engine.h"
 #include "ObjectStore.h"
 #include "Node.h"
@@ -38,7 +38,7 @@ MidiLearnResponseEvent::post_process()
 
 // MidiLearnEvent
 
-MidiLearnEvent::MidiLearnEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& node_path)
+MidiLearnEvent::MidiLearnEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, const string& node_path)
 : QueuedEvent(engine, responder, timestamp),
   _node_path(node_path),
   _node(NULL),

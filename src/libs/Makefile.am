@@ -1,2 +1,2 @@
-SUBDIRS = module engine serialisation client
+SUBDIRS = module engine serialisation client gui
 

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Ingen
+Version=@PACKAGE_VERSION@
+Comment=Create synthesizers and effects processors in a modular environment
+Exec=ingen -g
+Terminal=false
+Icon=ingen-icon.svg
+Type=Application
+Categories=Application;AudioVideo;Sound;Audio

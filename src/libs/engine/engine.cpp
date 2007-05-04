@@ -15,28 +15,74 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <raul/Process.h>
 #include "engine.h"
 #include "Engine.h"
 #include "QueuedEngineInterface.h"
 #include "tuning.h"
+#include "util.h"
 
 namespace Ingen {
 
+/*
+void
+catch_int(int)
+{
+	signal(SIGINT, catch_int);
+	signal(SIGTERM, catch_int);
+
+	std::cout << "[Main] Ingen interrupted." << std::endl;
+	engine->quit();
+}
+*/
 
 Engine*
 new_engine()
 {
+	set_denormal_flags();
 	return new Engine();
 }
 
 
-QueuedEngineInterface*
-new_queued_engine_interface(Engine& engine)
+bool
+launch_osc_engine(int port)
 {
-	return new QueuedEngineInterface(engine,
-			Ingen::event_queue_size, Ingen::event_queue_size);
+	char port_str[6];
+	snprintf(port_str, 6, "%u", port);
+	const string cmd = string("ingen -e --engine-port=").append(port_str);
+
+	if (Raul::Process::launch(cmd)) {
+		return true;
+		//return SharedPtr<EngineInterface>(new OSCEngineSender(
+		//			string("osc.udp://localhost:").append(port_str)));
+	} else {
+		cerr << "Failed to launch engine process." << endl;
+		//return SharedPtr<EngineInterface>();
+		return false;
+	}
 }
 
+/*
+void
+run(int port)
+{
+	signal(SIGINT, catch_int);
+	signal(SIGTERM, catch_int);
+
+	set_denormal_flags();
+
+	Engine* engine = new_engine();
+
+	engine->start_jack_driver();
+	engine->start_osc_driver(port);
+
+	engine->activate();
+
+	engine->main();
+
+	delete engine;
+}
+*/
 
 } // namespace Ingen
 

@@ -48,8 +48,8 @@ class OutputPort;
 class DisconnectionEvent : public QueuedEvent
 {
 public:
-	DisconnectionEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& src_port_path, const string& dst_port_path);
-	DisconnectionEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, Port* const src_port, Port* const dst_port);
+	DisconnectionEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, const string& src_port_path, const string& dst_port_path);
+	DisconnectionEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, Port* const src_port, Port* const dst_port);
 
 	void pre_process();
 	void execute(SampleCount nframes, FrameTime start, FrameTime end);

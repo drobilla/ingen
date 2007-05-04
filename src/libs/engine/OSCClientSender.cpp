@@ -19,6 +19,7 @@
 #include <cassert>
 #include <iostream>
 #include <unistd.h>
+#include <raul/AtomLiblo.h>
 #include "ObjectStore.h"
 #include "NodeFactory.h"
 #include "util.h"
@@ -29,8 +30,7 @@
 #include "Connection.h"
 #include "AudioDriver.h"
 #include "interface/ClientInterface.h"
-#include "Responder.h"
-#include <raul/AtomLiblo.h>
+#include "interface/Responder.h"
 using std::cout; using std::cerr; using std::endl;
 
 namespace Ingen {

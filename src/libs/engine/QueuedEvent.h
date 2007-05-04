@@ -22,7 +22,6 @@
 
 namespace Ingen {
 
-class Responder;
 class QueuedEventSource;
 
 
@@ -71,11 +70,11 @@ public:
 	bool is_prepared() { return _pre_processed; }
 	
 protected:
-	QueuedEvent(Engine&               engine,
-	            SharedPtr<Responder> responder,
-	            FrameTime             time, 
-	            bool                  blocking = false,
-	            QueuedEventSource*    source = NULL)
+	QueuedEvent(Engine&                      engine,
+	            SharedPtr<Shared::Responder> responder,
+	            FrameTime                    time, 
+	            bool                         blocking = false,
+	            QueuedEventSource*           source = NULL)
 	: Event(engine, responder, time)
 	, _pre_processed(false), _blocking(blocking), _source(source)
 	{
@@ -85,7 +84,7 @@ protected:
 	
 	// NULL event base (for internal events only!)
 	QueuedEvent(Engine& engine)
-	: Event(engine, SharedPtr<Ingen::Responder>(), 0)
+	: Event(engine, SharedPtr<Shared::Responder>(), 0)
 	, _pre_processed(false), _blocking(false), _source(NULL)
 	{}
 

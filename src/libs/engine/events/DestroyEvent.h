@@ -50,8 +50,8 @@ class DisconnectPortEvent;
 class DestroyEvent : public QueuedEvent
 {
 public:
-	DestroyEvent(Engine& engine, SharedPtr<Responder> responder, FrameTime timestamp, QueuedEventSource* source, const string& path, bool block = true);
-	DestroyEvent(Engine& engine, SharedPtr<Responder> responder, FrameTime timestamp, QueuedEventSource* source, Node* node, bool block = true);
+	DestroyEvent(Engine& engine, SharedPtr<Shared::Responder> responder, FrameTime timestamp, QueuedEventSource* source, const string& path, bool block = true);
+	DestroyEvent(Engine& engine, SharedPtr<Shared::Responder> responder, FrameTime timestamp, QueuedEventSource* source, Node* node, bool block = true);
 	~DestroyEvent();
 
 	void pre_process();

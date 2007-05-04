@@ -39,6 +39,7 @@ class EventSource;
 class PostProcessor;
 class Event;
 class QueuedEvent;
+class QueuedEngineInterface;
 class LashDriver;
 class Driver;
 
@@ -64,8 +65,9 @@ public:
 	virtual void quit() { _quit_flag = true; }
 
 	virtual void start_jack_driver();
-	virtual void start_osc_driver(const std::string& port);
-	virtual void set_event_source(SharedPtr<EventSource> source);
+	virtual void start_osc_driver(int port);
+	
+	virtual SharedPtr<QueuedEngineInterface> new_queued_interface();
 	
 	virtual bool activate();
 	virtual void deactivate();

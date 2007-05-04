@@ -18,7 +18,7 @@
 #include "RequestPortValueEvent.h"
 #include <string>
 #include "interface/ClientInterface.h"
-#include "Responder.h"
+#include "interface/Responder.h"
 #include "Engine.h"
 #include "Port.h"
 #include "ObjectStore.h"
@@ -30,7 +30,7 @@ using std::string;
 namespace Ingen {
 
 
-RequestPortValueEvent::RequestPortValueEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& port_path)
+RequestPortValueEvent::RequestPortValueEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, const string& port_path)
 : QueuedEvent(engine, responder, timestamp),
   _port_path(port_path),
   _port(NULL),

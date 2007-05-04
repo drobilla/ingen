@@ -20,13 +20,15 @@
 
 #include <cassert>
 #include <raul/SharedPtr.h>
-#include "types.h"
 #include <raul/Deletable.h>
-#include "Responder.h"
+#include "interface/Responder.h"
+#include "types.h"
 #include "ThreadManager.h"
 
 namespace Raul { class Path; }
 using Raul::Path;
+
+using Ingen::Shared::Responder;
 
 namespace Ingen {	
 
@@ -73,17 +75,17 @@ public:
 	inline SampleCount time() { return _time; }
 		
 protected:
-	Event(Engine& engine, SharedPtr<Responder> responder, FrameTime time)
+	Event(Engine& engine, SharedPtr<Shared::Responder> responder, FrameTime time)
 	: _engine(engine)
 	, _responder(responder)
 	, _time(time)
 	, _executed(false)
 	{}
 	
-	Engine&              _engine;
-	SharedPtr<Responder> _responder;
-	FrameTime            _time;
-	bool                 _executed;
+	Engine&                      _engine;
+	SharedPtr<Shared::Responder> _responder;
+	FrameTime                    _time;
+	bool                         _executed;
 };
 
 

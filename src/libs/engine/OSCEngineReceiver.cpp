@@ -48,14 +48,15 @@ using Shared::ClientKey;
  */
 
 
-OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, const char* const port)
-: EngineInterface(),
-  QueuedEngineInterface(engine, queue_size, queue_size), // FIXME
-  _port(port),
+OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t port)
+: QueuedEngineInterface(engine, queue_size, queue_size), // FIXME
   _server(NULL),
   _osc_responder(SharedPtr<OSCResponder>())
 {
-	_server = lo_server_new(port, error_cb);
+	char port_str[6];
+	snprintf(port_str, 6, "%u", port);
+
+	_server = lo_server_new(port_str, error_cb);
 	
 	if (_server == NULL) {
 		cerr << "[OSC] Could not start OSC server.  Aborting." << endl;

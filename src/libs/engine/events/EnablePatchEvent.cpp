@@ -16,7 +16,7 @@
  */
 
 #include "EnablePatchEvent.h"
-#include "Responder.h"
+#include "interface/Responder.h"
 #include "Engine.h"
 #include "Patch.h"
 #include "util.h"
@@ -26,7 +26,7 @@
 namespace Ingen {
 
 
-EnablePatchEvent::EnablePatchEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& patch_path)
+EnablePatchEvent::EnablePatchEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, const string& patch_path)
 : QueuedEvent(engine, responder, timestamp),
   _patch_path(patch_path),
   _patch(NULL),

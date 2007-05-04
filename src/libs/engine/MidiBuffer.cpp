@@ -34,7 +34,7 @@ MidiBuffer::MidiBuffer(size_t capacity)
 	clear();
 	assert(_local_state.midi == _buf);
 
-	cerr << "Creating MIDI Buffer " << _buf << ", capacity = " << _buf->capacity << endl;
+	//cerr << "Creating MIDI Buffer " << _buf << ", capacity = " << _buf->capacity << endl;
 }
 
 

@@ -31,7 +31,7 @@ namespace Ingen {
 class DSSIConfigureEvent : public QueuedEvent
 {
 public:
-	DSSIConfigureEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& node_path, const string& key, const string& val);
+	DSSIConfigureEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, const string& node_path, const string& key, const string& val);
 
 	void pre_process();
 	void execute(SampleCount nframes, FrameTime start, FrameTime end);

@@ -343,7 +343,7 @@ Patch::build_process_order() const
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
 
-	cerr << "*********** Building process order for " << path() << endl;
+	//cerr << "*********** Building process order for " << path() << endl;
 
 	Raul::Array<Node*>* const process_order = new Raul::Array<Node*>(_nodes.size(), NULL);
 	

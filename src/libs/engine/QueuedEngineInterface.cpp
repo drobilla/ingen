@@ -26,7 +26,7 @@ namespace Ingen {
 
 QueuedEngineInterface::QueuedEngineInterface(Engine& engine, size_t queued_size, size_t stamped_size)
 : QueuedEventSource(queued_size, stamped_size)
-, _responder(SharedPtr<Responder>(new Responder())) // NULL responder
+, _responder(SharedPtr<Shared::Responder>(new Shared::Responder())) // NULL responder
 , _engine(engine)
 {
 }
@@ -47,7 +47,7 @@ QueuedEngineInterface::now() const
  * Ownership of @a responder is taken.
  */
 void
-QueuedEngineInterface::set_responder(SharedPtr<Responder> responder)
+QueuedEngineInterface::set_responder(SharedPtr<Shared::Responder> responder)
 {
 	_responder = responder;
 }
@@ -64,7 +64,7 @@ QueuedEngineInterface::set_next_response_id(int32_t id)
 void
 QueuedEngineInterface::disable_responses()
 {
-	static SharedPtr<Responder> null_responder(new Responder());
+	static SharedPtr<Shared::Responder> null_responder(new Shared::Responder());
 	//cerr << "DISABLE\n";
 	set_responder(null_responder);
 }
@@ -93,7 +93,6 @@ void
 QueuedEngineInterface::load_plugins()
 {
 	push_queued(new LoadPluginsEvent(_engine, _responder, now()));
-
 }
 
 

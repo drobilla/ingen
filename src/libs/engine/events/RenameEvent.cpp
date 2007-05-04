@@ -16,7 +16,7 @@
  */
 
 #include "RenameEvent.h"
-#include "Responder.h"
+#include "interface/Responder.h"
 #include "Patch.h"
 #include "Node.h"
 #include "Tree.h"
@@ -28,7 +28,7 @@
 namespace Ingen {
 
 
-RenameEvent::RenameEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& name)
+RenameEvent::RenameEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, const string& path, const string& name)
 : QueuedEvent(engine, responder, timestamp),
   _old_path(path),
   _name(name),

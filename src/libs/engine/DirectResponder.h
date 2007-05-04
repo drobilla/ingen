@@ -21,17 +21,17 @@
 
 #include <raul/SharedPtr.h>
 #include "interface/ClientInterface.h"
-#include "Responder.h"
+#include "interface/Responder.h"
 
 namespace Ingen {
 
 
 /** Responder for Direct clients (directly calls methods on a ClientInterface).
  */
-class DirectResponder : public Responder
+class DirectResponder : public Shared::Responder
 {
 public:
-	DirectResponder(SharedPtr<ClientInterface> client, int32_t id)
+	DirectResponder(SharedPtr<Shared::ClientInterface> client, int32_t id)
 	: _client(client), _id(id)
 	{}
 
@@ -40,10 +40,10 @@ public:
 	void respond_ok()                     { _client->response(_id, true, ""); }
 	void respond_error(const string& msg) { _client->response(_id, false, msg); }
 
-	SharedPtr<ClientInterface> client() { return _client; }
+	SharedPtr<Shared::ClientInterface> client() { return _client; }
 
 private:
-	SharedPtr<ClientInterface> _client;
+	SharedPtr<Shared::ClientInterface> _client;
 	int32_t                     _id;
 };
 

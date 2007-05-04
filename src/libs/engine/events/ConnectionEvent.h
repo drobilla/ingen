@@ -48,7 +48,7 @@ class OutputPort;
 class ConnectionEvent : public QueuedEvent
 {
 public:
-	ConnectionEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& src_port_path, const string& dst_port_path);
+	ConnectionEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, const string& src_port_path, const string& dst_port_path);
 
 	void pre_process();
 	void execute(SampleCount nframes, FrameTime start, FrameTime end);

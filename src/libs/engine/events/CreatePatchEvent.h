@@ -41,7 +41,7 @@ class Plugin;
 class CreatePatchEvent : public QueuedEvent
 {
 public:
-	CreatePatchEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path, int poly);
+	CreatePatchEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, const string& path, int poly);
 
 	void pre_process();
 	void execute(SampleCount nframes, FrameTime start, FrameTime end);

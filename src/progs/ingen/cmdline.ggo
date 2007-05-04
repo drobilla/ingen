@@ -1,0 +1,19 @@
+# Process this file with gengetopt to generate the necessary code (in cmdline.h, cmdline.c)
+
+package "ingen"
+purpose "A modular realtime audio processing system"
+
+description "This executable can be used to launch any configuration of Ingen.
+Ingen can run as a stand-alone server controlled by OSC, or internal to
+another process.  The GUI can communicate with the engine via either method,
+and many GUIs (or other things) may connect to an engine via OSC.
+"
+
+option "engine" e "Run (JACK) engine" flag off
+option "engine-port" E "Engine OSC port"    int    no default="16180"
+option "connect" c "Connect to existing engine at OSC URI" string no default="osc.udp://localhost:16180"
+option "gui" g "Launch the GTK graphical interface" flag on
+option "client-port" C "Client OSC port"    int    no
+option "load" l "Load patch" string no
+option "path" p "Target path for loaded patch" string no
+

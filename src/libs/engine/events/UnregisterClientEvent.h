@@ -40,7 +40,10 @@ using Shared::ClientKey;
 class UnregisterClientEvent : public QueuedEvent
 {
 public:
-	UnregisterClientEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, ClientKey key);
+	UnregisterClientEvent(Engine&                      engine,
+	                      SharedPtr<Shared::Responder> responder,
+	                      SampleCount                  timestamp,
+	                      ClientKey                    key);
 
 	void post_process();
 

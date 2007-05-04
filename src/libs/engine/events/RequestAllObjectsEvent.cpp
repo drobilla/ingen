@@ -16,7 +16,7 @@
  */
 
 #include "RequestAllObjectsEvent.h"
-#include "Responder.h"
+#include "interface/Responder.h"
 #include "Engine.h"
 #include "ObjectSender.h"
 #include "ClientBroadcaster.h"
@@ -25,7 +25,7 @@
 namespace Ingen {
 
 
-RequestAllObjectsEvent::RequestAllObjectsEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp)
+RequestAllObjectsEvent::RequestAllObjectsEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp)
 : QueuedEvent(engine, responder, timestamp)
 {
 }

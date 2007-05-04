@@ -34,8 +34,8 @@ class Patch;
 class AllNotesOffEvent : public Event
 {
 public:
-	AllNotesOffEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, Patch* patch);
-	AllNotesOffEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& patch_path);
+	AllNotesOffEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, Patch* patch);
+	AllNotesOffEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, const string& patch_path);
 	
 	void execute(SampleCount nframes, FrameTime start, FrameTime end);
 	void post_process();

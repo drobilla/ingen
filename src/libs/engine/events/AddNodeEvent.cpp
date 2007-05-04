@@ -16,7 +16,7 @@
  */
 
 #include "AddNodeEvent.h"
-#include "Responder.h"
+#include "interface/Responder.h"
 #include "Patch.h"
 #include "Node.h"
 #include "Tree.h"
@@ -34,7 +34,7 @@
 namespace Ingen {
 
 
-AddNodeEvent::AddNodeEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path,
+AddNodeEvent::AddNodeEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, const string& path,
 		const string& plugin_uri, bool poly)
 : QueuedEvent(engine, responder, timestamp),
   _path(path),
@@ -52,7 +52,7 @@ AddNodeEvent::AddNodeEvent(Engine& engine, SharedPtr<Responder> responder, Sampl
  *
  * Do not use.
  */
-AddNodeEvent::AddNodeEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path,
+AddNodeEvent::AddNodeEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, const string& path,
 		const string& plugin_type, const string& plugin_lib, const string& plugin_label, bool poly)
 : QueuedEvent(engine, responder, timestamp),
   _path(path),

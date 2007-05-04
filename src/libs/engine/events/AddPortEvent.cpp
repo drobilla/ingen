@@ -16,7 +16,7 @@
  */
 
 #include "AddPortEvent.h"
-#include "Responder.h"
+#include "interface/Responder.h"
 #include "Patch.h"
 #include "Tree.h"
 #include "Plugin.h"
@@ -40,7 +40,7 @@ namespace Ingen {
 
 
 AddPortEvent::AddPortEvent(Engine&              engine,
-                           SharedPtr<Responder> responder,
+                           SharedPtr<Shared::Responder> responder,
                            SampleCount          timestamp,
                            const string&        path,
                            const string&        type,

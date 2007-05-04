@@ -42,7 +42,7 @@ class DriverPort;
 class AddPortEvent : public QueuedEvent
 {
 public:
-	AddPortEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& type, bool is_output, QueuedEventSource* source);
+	AddPortEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, const string& path, const string& type, bool is_output, QueuedEventSource* source);
 
 	void pre_process();
 	void execute(SampleCount nframes, FrameTime start, FrameTime end);

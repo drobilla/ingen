@@ -43,7 +43,7 @@ class OutputPort;
 class DisconnectNodeEvent : public QueuedEvent
 {
 public:
-	DisconnectNodeEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& node_path);
+	DisconnectNodeEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, const string& node_path);
 	DisconnectNodeEvent(Engine& engine, Node* node);
 	~DisconnectNodeEvent();
 

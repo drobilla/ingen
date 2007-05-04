@@ -39,7 +39,7 @@ class MidiLearnResponseEvent : public Event
 {
 public:
 	MidiLearnResponseEvent(Engine& engine, const string& port_path, SampleCount timestamp)
-	: Event(engine, SharedPtr<Responder>(), timestamp),
+	: Event(engine, SharedPtr<Shared::Responder>(), timestamp),
 	  _port_path(port_path),
 	  _value(0.0f)
 	{}
@@ -65,7 +65,7 @@ private:
 class MidiLearnEvent : public QueuedEvent
 {
 public:
-	MidiLearnEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& node_path);
+	MidiLearnEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, const string& node_path);
 	
 	void pre_process();
 	void execute(SampleCount nframes, FrameTime start, FrameTime end);

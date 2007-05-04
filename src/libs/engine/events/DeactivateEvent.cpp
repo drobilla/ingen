@@ -16,13 +16,13 @@
  */
 
 #include "DeactivateEvent.h"
-#include "Responder.h"
+#include "interface/Responder.h"
 #include "Engine.h"
 
 namespace Ingen {
 
 
-DeactivateEvent::DeactivateEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp)
+DeactivateEvent::DeactivateEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp)
 : QueuedEvent(engine, responder, timestamp)
 {
 }

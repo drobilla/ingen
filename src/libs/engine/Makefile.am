@@ -31,7 +31,6 @@ libingen_engine_la_SOURCES = \
 	JackAudioDriver.cpp \
 	OSCEngineReceiver.h \
 	OSCEngineReceiver.cpp \
-	Responder.h \
 	DirectResponder.h \
 	OSCResponder.h \
 	OSCResponder.cpp \

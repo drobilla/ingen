@@ -21,7 +21,7 @@
 #include <inttypes.h>
 #include <memory>
 #include <lo/lo.h>
-#include "Responder.h"
+#include "interface/Responder.h"
 
 namespace Ingen {
 
@@ -38,7 +38,7 @@ class ClientBroadcaster;
  * Creation of the lo_address is deferred until needed to avoid bogging down
  * the receiving thread as much as possible.
  */
-class OSCResponder : public Responder
+class OSCResponder : public Shared::Responder
 {
 public:
 	OSCResponder(ClientBroadcaster* broadcaster, int32_t id, char* url);
@@ -51,10 +51,10 @@ public:
 
 	const char* url() const { return _url; }
 
-	ClientKey client_key() { return ClientKey(ClientKey::OSC_URL, _url); }
+	Shared::ClientKey client_key() 
+		{ return Shared::ClientKey(Shared::ClientKey::OSC_URL, _url); }
 	
-	SharedPtr<ClientInterface> client();
-
+	SharedPtr<Shared::ClientInterface> client();
 
 private:
 	ClientBroadcaster* _broadcaster;

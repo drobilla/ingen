@@ -18,7 +18,7 @@
 #include "RequestPluginEvent.h"
 #include <string>
 #include "interface/ClientInterface.h"
-#include "Responder.h"
+#include "interface/Responder.h"
 #include "Engine.h"
 #include "Port.h"
 #include "ObjectStore.h"
@@ -31,7 +31,7 @@ using std::string;
 namespace Ingen {
 
 
-RequestPluginEvent::RequestPluginEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& uri)
+RequestPluginEvent::RequestPluginEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, const string& uri)
 : QueuedEvent(engine, responder, timestamp),
   _uri(uri),
   _plugin(NULL)
