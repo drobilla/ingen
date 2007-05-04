@@ -105,32 +105,72 @@ ConnectWindow::ConnectWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::
 
 
 void
-ConnectWindow::start()
+ConnectWindow::start(SharedPtr<Ingen::Engine> engine, SharedPtr<Shared::EngineInterface> interface)
 {
-	resize(100, 100);
-	init();
+	set_connected_to(interface);
 	show();
-	connect();
+	
+	if (engine) {
+		Glib::signal_timeout().connect(
+			sigc::mem_fun(engine.get(), &Ingen::Engine::main_iteration), 1000);
+		
+		ThreadedSigClientInterface* tsci = new ThreadedSigClientInterface(Ingen::event_queue_size);
+		SharedPtr<SigClientInterface> client(tsci);
+		
+		if (interface) {
+			App::instance().attach(interface, client);
+			interface->set_responder(SharedPtr<Ingen::Shared::Responder>(new Ingen::DirectResponder(client, 1)));
+		}
+
+		engine->activate();
+
+		_connect_stage = 0;
+
+		Glib::signal_timeout().connect(
+			sigc::mem_fun(engine.get(), &Ingen::Engine::main_iteration), 1000);
+		
+		Glib::signal_timeout().connect(
+			sigc::mem_fun(tsci, &ThreadedSigClientInterface::emit_signals), 2, G_PRIORITY_HIGH_IDLE);
+	}
+		
+	if (interface) {
+		Glib::signal_timeout().connect(
+			sigc::mem_fun(this, &ConnectWindow::gtk_callback), 100);
+	} else {
+		connect();
+	}
 }
 
 
 void
-ConnectWindow::init()
+ConnectWindow::set_connected_to(SharedPtr<Shared::EngineInterface> engine)
 {
-	_icon->set(Gtk::Stock::DISCONNECT, Gtk::ICON_SIZE_LARGE_TOOLBAR);
-	_progress_bar->set_fraction(0.0);
-	_url_entry->set_sensitive(true);
-	_connect_button->set_sensitive(true);
-	_disconnect_button->set_sensitive(false);
-	_port_spinbutton->set_sensitive(false);
-	_launch_radio->set_sensitive(true);
-	if (_new_engine)
-		_internal_radio->set_sensitive(true);
-	else
+	if (engine) {
+		_icon->set(Gtk::Stock::CONNECT, Gtk::ICON_SIZE_LARGE_TOOLBAR);
+		_progress_bar->set_fraction(1.0);
+		_url_entry->set_sensitive(false);
+		_connect_button->set_sensitive(false);
+		_disconnect_button->set_label("gtk-disconnect");
+		_disconnect_button->set_sensitive(true);
+		_port_spinbutton->set_sensitive(false);
+		_launch_radio->set_sensitive(false);
 		_internal_radio->set_sensitive(false);
-	server_toggled();
-		
-	_progress_label->set_text(string("Disconnected"));
+	} else {
+		_icon->set(Gtk::Stock::DISCONNECT, Gtk::ICON_SIZE_LARGE_TOOLBAR);
+		_progress_bar->set_fraction(0.0);
+		_url_entry->set_sensitive(true);
+		_connect_button->set_sensitive(true);
+		_disconnect_button->set_sensitive(false);
+		_port_spinbutton->set_sensitive(false);
+		_launch_radio->set_sensitive(true);
+		if (_new_engine)
+			_internal_radio->set_sensitive(true);
+		else
+			_internal_radio->set_sensitive(false);
+		server_toggled();
+
+		_progress_label->set_text(string("Disconnected"));
+	}
 }
 
 
@@ -206,8 +246,6 @@ ConnectWindow::connect()
 
 		engine_interface->set_responder(SharedPtr<Ingen::Shared::Responder>(new Ingen::DirectResponder(client, 1)));
 
-		//engine->set_event_source(engine_interface);
-
 		engine->activate();
 
 		Glib::signal_timeout().connect(
@@ -234,7 +272,7 @@ ConnectWindow::disconnect()
 
 	App::instance().detach();
 
-	init();
+	set_connected_to();
 	
 	_connect_button->set_sensitive(true);
 	_disconnect_button->set_sensitive(false);
@@ -289,9 +327,7 @@ ConnectWindow::internal_toggled()
 bool
 ConnectWindow::gtk_callback()
 {
-	/* This isn't very nice (isn't threaded), but better than no dialog at 
-	 * all like before :)
-	 */
+	/* If I call this a "state machine" it's not ugly code any more */
 	
 	// Timing stuff for repeated attach attempts
 	timeval now;
@@ -392,15 +428,7 @@ ConnectWindow::gtk_callback()
 		++_connect_stage;
 		hide();
 	} else if (_connect_stage == 10) {
-		_icon->set(Gtk::Stock::CONNECT, Gtk::ICON_SIZE_LARGE_TOOLBAR);
-		_progress_bar->set_fraction(1.0);
-		_url_entry->set_sensitive(false);
-		_connect_button->set_sensitive(false);
-		_disconnect_button->set_label("gtk-disconnect");
-		_disconnect_button->set_sensitive(true);
-		_port_spinbutton->set_sensitive(false);
-		_launch_radio->set_sensitive(false);
-		_internal_radio->set_sensitive(false);
+		set_connected_to(App::instance().engine());
 		_connect_stage = 0; // set ourselves up for next time (if there is one)
 		return false; // deregister this callback
 	}

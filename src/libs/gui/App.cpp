@@ -95,7 +95,9 @@ App::~App()
 
 
 void
-App::run(int argc, char** argv)
+App::run(int argc, char** argv,
+		SharedPtr<Engine> engine,
+		SharedPtr<Shared::EngineInterface> interface)
 {
 	Gnome::Canvas::init();
 	Gtk::Main main(argc, argv);
@@ -108,7 +110,8 @@ App::run(int argc, char** argv)
 	_instance->configuration()->apply_settings();
 	
 	Gtk::Window::set_default_icon_from_file(PKGDATADIR "/ingen.svg");
-	App::instance().connect_window()->start();
+	
+	App::instance().connect_window()->start(engine, interface);
 	
 	main.run();
 }

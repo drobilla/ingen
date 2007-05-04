@@ -46,7 +46,8 @@ class ConnectWindow : public Gtk::Dialog
 public:
 	ConnectWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml);
 	
-	void start();
+	void set_connected_to(SharedPtr<Shared::EngineInterface> e=SharedPtr<Shared::EngineInterface>());
+	void start(SharedPtr<Ingen::Engine> engine, SharedPtr<Shared::EngineInterface> interface);
 	void response_received(int32_t id, bool, string) { if ((id) == _ping_id) _attached = true; }
 
 private:
@@ -56,7 +57,6 @@ private:
 	void launch_toggled();
 	void internal_toggled();
 	
-	void init();
 	void disconnect();
 	void connect();
 	void quit();

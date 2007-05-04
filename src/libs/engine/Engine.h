@@ -68,6 +68,8 @@ public:
 	virtual void start_osc_driver(int port);
 	
 	virtual SharedPtr<QueuedEngineInterface> new_queued_interface();
+
+	//virtual void set_event_source(SharedPtr<EventSource>);
 	
 	virtual bool activate();
 	virtual void deactivate();

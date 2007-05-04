@@ -32,6 +32,7 @@ using std::string; using std::map; using std::list;
 using std::cerr; using std::endl;
 
 namespace Ingen { 
+	class Engine;
 	namespace Shared {
 		class EngineInterface;
 	}
@@ -100,7 +101,9 @@ public:
 
 	static inline App& instance() { assert(_instance); return *_instance; }
 
-	static void run(int argc, char** argv);
+	static void run(int argc, char** argv,
+			SharedPtr<Ingen::Engine> engine,
+			SharedPtr<Shared::EngineInterface> interface);
 
 protected:
 	App();

@@ -68,8 +68,8 @@ main(int argc, char** argv)
 	SharedPtr<Glib::Module> client_module;
 	SharedPtr<Glib::Module> gui_module;
 
-
 	SharedPtr<Shared::EngineInterface> engine_interface;
+
 
 	/* Run engine */
 	if (args.engine_flag) {
@@ -93,7 +93,7 @@ main(int argc, char** argv)
 				} else {
 					engine_module.reset();
 				}
-				engine_interface = engine->new_queued_interface();
+
 			/*} else {
 				cerr << "Nonsense command line parameters, engine not loaded." << endl;
 			}*/
@@ -102,6 +102,11 @@ main(int argc, char** argv)
 			cerr << "Try running ingen_dev or setting INGEN_MODULE_PATH." << endl;
 		}
 
+	}
+				
+	if (engine) {
+		engine_interface = engine->new_queued_interface();
+		engine->activate();
 	}
 	
 
@@ -173,12 +178,12 @@ main(int argc, char** argv)
 	bool ran_gui = false;
 	if (args.gui_given) {
 		gui_module = Ingen::Shared::load_module("ingen_gui");
-		void (*run)(int, char**) = NULL;
+		void (*run)(int, char**, SharedPtr<Ingen::Engine>, SharedPtr<Shared::EngineInterface>) = NULL;
 		bool found = gui_module->get_symbol("run", (void*&)run);
 
 		if (found) {
 			ran_gui = true;
-			run(argc, argv);
+			run(argc, argv, engine, engine_interface);
 		} else {
 			cerr << "Unable to find GUI module, GUI not loaded." << endl;
 			cerr << "Try running ingen_dev or setting INGEN_MODULE_PATH." << endl;

@@ -167,6 +167,17 @@ Engine::new_queued_interface()
 	return result;
 }
 
+/*
+void
+Engine::set_event_source(SharedPtr<EventSource> source)
+{
+	if (_event_source)
+		cerr << "Warning:  Dropped event source (engine interface)" << endl;
+
+	_event_source = source;
+}
+*/
+
 
 bool
 Engine::activate()
