@@ -9,7 +9,6 @@ AC_CONFIG_SRCDIR([src/libs/serialisation/Loader.cpp])
 AC_CONFIG_SRCDIR([src/libs/client/OSCController.cpp])
 AC_CONFIG_SRCDIR([src/libs/gui/App.cpp])
 AC_CONFIG_SRCDIR([src/progs/ingen/main.cpp])
-AC_CONFIG_SRCDIR([src/progs/demolition/demolition.cpp])
 AC_CONFIG_HEADER([config.h])
 AM_INIT_AUTOMAKE
 

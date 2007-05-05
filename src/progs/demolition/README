@@ -1,7 +1,0 @@
-This is a stress tester for the Om engine.
-
-It constantly sends random events (with a bias towards sane events) to the
-engine, to test for potential segfaults (or assertion failures, etc).
-
-It's not very clever at the moment, and doesn't hit all test cases.  Renaming
-is also not supported yet.
