@@ -39,9 +39,6 @@
 #ifdef HAVE_JACK_MIDI
 #include "JackMidiDriver.h"
 #endif
-#ifdef HAVE_ALSA_MIDI
-#include "AlsaMidiDriver.h"
-#endif
 #ifdef HAVE_LASH
 #include "LashDriver.h"
 #endif
@@ -196,8 +193,6 @@ Engine::activate()
 
 #ifdef HAVE_JACK_MIDI
 	_midi_driver = new JackMidiDriver(((JackAudioDriver*)_audio_driver.get())->jack_client());
-#elif HAVE_ALSA_MIDI
-	_midi_driver = new AlsaMidiDriver(_audio_driver.get());
 #else
 	_midi_driver = new DummyMidiDriver();
 #endif
@@ -217,9 +212,6 @@ Engine::activate()
 	_audio_driver->set_root_patch(root_patch);
 
 	_audio_driver->activate();
-#ifdef HAVE_ALSA_MIDI
-	_midi_driver->activate();
-#endif
 	
 	_post_processor->start();
 

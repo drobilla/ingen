@@ -169,12 +169,6 @@ libingen_engine_la_SOURCES += \
 	jack_compat.h
 endif
 
-if WITH_ALSA_MIDI
-libingen_engine_la_SOURCES += \
-	AlsaMidiDriver.h \
-	AlsaMidiDriver.cpp
-endif
-
 if WITH_LADSPA
 libingen_engine_la_SOURCES += \
 	LADSPANode.h \

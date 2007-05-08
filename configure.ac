@@ -134,16 +134,10 @@ AC_ARG_ENABLE([in-process-engine],
 	[ if test x$enable_in_process_engine = xyes ; then build_in_process_engine=yes ; fi ])
 
 # Jack MIDI support
-build_jack_midi="no"
+build_jack_midi="yes"
 AC_ARG_ENABLE(jack-midi,
-	[AS_HELP_STRING(--enable-jack-midi, [Enable Jack MIDI support (no)])],
+	[AS_HELP_STRING(--enable-jack-midi, [Enable Jack MIDI support (yes)])],
 	[ if test x$enable_jack_midi = xyes ; then build_jack_midi=yes ; fi ])
-
-# ALSA support
-build_alsa_midi="yes"
-AC_ARG_ENABLE(alsa-midi,
-	[AS_HELP_STRING(--enable-alsa-midi, [Enable Alsa MIDI driver (yes)])],
-	[ if test x$enable_alsa_midi = xno ; then build_alsa_midi=no ; fi ])
 
 # LV2 support
 build_lv2="yes"
@@ -228,21 +222,6 @@ if test "$build_server" = "yes"; then
 		fi
 	fi
 	
-	# Check for ALSA
-	if test "$build_alsa_midi" = "yes" -o "$build_dssi" = "yes"; then
-		PKG_CHECK_MODULES(ALSA, alsa >= 1.0.0, [have_alsa_midi="yes"], [have_alsa_midi="no"])
-	fi
-
-	if test "$build_alsa_midi" = "yes"; then
-		if test "$build_jack_midi" = "yes"; then
-			AC_MSG_WARN(["Only one MIDI driver can be built (for now).  Alsa MIDI disabled."])
-			build_alsa_midi="no"
-		fi
-	fi
-	if test "$build_alsa_midi" = "yes"; then
-		AC_DEFINE(HAVE_ALSA_MIDI, 1, [Has Alsa MIDI])
-	fi
-	
 	# Check for LADSPA
 	if test "$build_ladspa" = "yes"; then
 		build_ladspa="no"
@@ -253,6 +232,28 @@ if test "$build_server" = "yes"; then
 		AC_DEFINE(HAVE_LADSPA, 1, [Has ladspa.h])
 	fi
 	
+	# Check for DSSI
+	if test "$build_dssi" = "yes"; then
+		if test "$build_ladspa" = "no"; then
+			AC_MSG_WARN([DSSI support requires LADSPA.  DSSI support will not be built.])
+			build_dssi="no"
+		fi 
+		if test "$build_dssi" = "yes"; then
+			PKG_CHECK_MODULES(ALSA, alsa >= 1.0.0, [build_dssi="yes"], [build_dssi="no"])
+			if test "$build_dssi" = "no"; then
+				AC_MSG_WARN([DSSI support requires Alsa.  DSSI support will not be built.])
+			fi
+		fi
+		if test "$build_dssi" = "yes"; then
+			build_dssi="no"
+			AC_CHECK_HEADER([dssi.h], [build_dssi="yes"],
+				[AC_MSG_WARN([You do not seem to have dssi.h, DSSI support will not be built.])])
+			if test "$build_dssi" = "yes"; then
+				AC_DEFINE(HAVE_DSSI, 1, [Has dssi.h])
+			fi
+		fi
+	fi
+
 	# Check for LV2 (libslv2)
 	if test "$build_lv2" = "yes"; then
 		build_lv2="no"
@@ -262,24 +263,6 @@ if test "$build_server" = "yes"; then
 		AC_DEFINE(HAVE_SLV2, 1, [Has libslv2])
 	fi
 	
-	# Check for DSSI
-	if test "$build_ladspa" = "no"; then
-		AC_MSG_WARN([DSSI support requires LADSPA.  DSSI support will not be built.])
-		build_dssi="no"
-	fi
-	if test "$build_alsa" = "no"; then
-		AC_MSG_WARN([DSSI support requires Alsa.  DSSI support will not be built.])
-		build_dssi="no"
-	fi
-	if test "$build_dssi" = "yes"; then
-		build_dssi="no"
-		AC_CHECK_HEADER([dssi.h], [build_dssi="yes"],
-			[AC_MSG_WARN([You do not seem to have dssi.h, Ingen will be built without DSSI support])])
-		if test "$build_dssi" = "yes"; then
-			AC_DEFINE(HAVE_DSSI, 1, [Has dssi.h])
-		fi
-	fi
-	
 else
   AC_MSG_WARN([Engine will NOT be built! (Nothing you're building produces any sound itself)])
 fi
@@ -287,7 +270,6 @@ AM_CONDITIONAL(BUILD_SERVER, [test "$build_server" = "yes"])
 AM_CONDITIONAL(BUILD_IN_PROCESS_ENGINE, [test "$build_in_process_engine" = "yes"])
 AM_CONDITIONAL(BUILD_UNIT_TESTS, [test "$build_unit_tests" = "yes"])
 AM_CONDITIONAL(WITH_JACK_MIDI, [test "$build_jack_midi" = "yes"])
-AM_CONDITIONAL(WITH_ALSA_MIDI, [test "$build_alsa_midi" = "yes"])
 AM_CONDITIONAL(WITH_LADSPA, [test "$build_ladspa" = "yes"])
 AM_CONDITIONAL(WITH_LV2, [test "$build_lv2" = "yes"])
 AM_CONDITIONAL(WITH_DSSI, [test "$build_dssi" = "yes"])
@@ -381,7 +363,6 @@ AC_MSG_RESULT([])
 AC_MSG_RESULT([Building engine:            $build_engine])
 AC_MSG_RESULT([   JACK in-process support: $build_in_process_engine])
 AC_MSG_RESULT([   Jack MIDI support:       $build_jack_midi])
-AC_MSG_RESULT([   ALSA MIDI support:       $build_alsa_midi])
 AC_MSG_RESULT([   LV2 Plugin support:      $build_lv2])
 AC_MSG_RESULT([   DSSI Plugin support:     $build_dssi])
 AC_MSG_RESULT([   LADSPA Plugin support:   $build_ladspa])
