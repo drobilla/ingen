@@ -23,6 +23,7 @@
 #include <boost/optional.hpp>
 #include <raul/Path.h>
 #include <raul/RDFWorld.h>
+#include <raul/SharedPtr.h>
 #include "config.h"
 #include "module/Module.h"
 #include "engine/Engine.h"
