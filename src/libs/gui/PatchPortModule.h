@@ -46,7 +46,7 @@ class Port;
  *
  * \ingroup GUI
  */
-class PatchPortModule : public LibFlowCanvas::Module
+class PatchPortModule : public FlowCanvas::Module
 {
 public:
 	static boost::shared_ptr<PatchPortModule> create(boost::shared_ptr<PatchCanvas> canvas,

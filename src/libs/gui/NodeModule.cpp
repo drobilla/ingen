@@ -36,7 +36,7 @@ namespace GUI {
 
 
 NodeModule::NodeModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeModel> node)
-: LibFlowCanvas::Module(canvas, node->path().name()),
+: FlowCanvas::Module(canvas, node->path().name()),
   _node(node),
   _menu(node)
 {
@@ -102,7 +102,7 @@ NodeModule::add_port(SharedPtr<PortModel> port, bool resize_to_fit)
 void
 NodeModule::remove_port(SharedPtr<PortModel> port)
 {
-	SharedPtr<LibFlowCanvas::Port> p = Module::remove_port(port->path().name());
+	SharedPtr<FlowCanvas::Port> p = Module::remove_port(port->path().name());
 	p.reset();
 }
 

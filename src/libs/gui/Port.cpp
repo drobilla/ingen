@@ -34,8 +34,8 @@ namespace GUI {
 
 /** @param flip Make an input port appear as an output port, and vice versa.
  */
-Port::Port(boost::shared_ptr<LibFlowCanvas::Module> module, SharedPtr<PortModel> pm, bool flip, bool destroyable)
-: LibFlowCanvas::Port(module,
+Port::Port(boost::shared_ptr<FlowCanvas::Module> module, SharedPtr<PortModel> pm, bool flip, bool destroyable)
+: FlowCanvas::Port(module,
 		pm->path().name(),
 		flip ? (!pm->is_input()) : pm->is_input(),
 		App::instance().configuration()->get_port_color(pm.get())),

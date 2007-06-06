@@ -33,15 +33,15 @@ namespace GUI {
  * 
  * \ingroup GUI
  */
-class Connection : public LibFlowCanvas::Connection
+class Connection : public FlowCanvas::Connection
 {
 public:
-	Connection(boost::shared_ptr<LibFlowCanvas::FlowCanvas>  canvas,
+	Connection(boost::shared_ptr<FlowCanvas::Canvas>  canvas,
 	           boost::shared_ptr<ConnectionModel>            model,
-	           boost::shared_ptr<LibFlowCanvas::Connectable> src,
-	           boost::shared_ptr<LibFlowCanvas::Connectable> dst,
+	           boost::shared_ptr<FlowCanvas::Connectable> src,
+	           boost::shared_ptr<FlowCanvas::Connectable> dst,
 	           uint32_t                                      color)
-	: LibFlowCanvas::Connection(canvas, src, dst, color)
+	: FlowCanvas::Connection(canvas, src, dst, color)
 	, _connection_model(model)
 	{}
 

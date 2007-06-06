@@ -84,10 +84,10 @@ PatchView::set_patch(SharedPtr<PatchModel> patch)
 	_refresh_but->signal_clicked().connect(sigc::mem_fun(this, &PatchView::refresh_clicked));
 
 	_zoom_normal_but->signal_clicked().connect(sigc::bind(sigc::mem_fun(
-		_canvas.get(), &FlowCanvas::set_zoom), 1.0));
+		_canvas.get(), &PatchCanvas::set_zoom), 1.0));
 
 	_zoom_full_but->signal_clicked().connect(
-		sigc::mem_fun(_canvas.get(), &FlowCanvas::zoom_full));
+		sigc::mem_fun(_canvas.get(), &PatchCanvas::zoom_full));
 }
 
 

@@ -21,7 +21,7 @@
 #include <string>
 #include <map>
 #include <boost/shared_ptr.hpp>
-#include <flowcanvas/FlowCanvas.h>
+#include <flowcanvas/Canvas.h>
 #include <flowcanvas/Module.h>
 #include <raul/SharedPtr.h>
 #include <raul/Path.h>
@@ -30,9 +30,9 @@
 #include "NodeModule.h"
 
 using std::string;
-using namespace LibFlowCanvas;
+using namespace FlowCanvas;
 
-using LibFlowCanvas::Port;
+using FlowCanvas::Port;
 using Ingen::Client::ConnectionModel;
 using Ingen::Client::PatchModel;
 using Ingen::Client::NodeModel;
@@ -49,7 +49,7 @@ class NodeModule;
  *
  * \ingroup GUI
  */
-class PatchCanvas : public LibFlowCanvas::FlowCanvas
+class PatchCanvas : public FlowCanvas::Canvas
 {
 public:
 	PatchCanvas(SharedPtr<PatchModel> patch, int width, int height);
@@ -58,7 +58,7 @@ public:
 
 	/*boost::shared_ptr<NodeModule> find_module(const string& name) {
 		return boost::dynamic_pointer_cast<NodeModule>(
-			FlowCanvas::get_item(name));
+		Canvas::get_item(name));
 	}*/
 	
 	void build();
@@ -94,17 +94,17 @@ private:
 
 	bool canvas_event(GdkEvent* event);
 	
-	SharedPtr<LibFlowCanvas::Port> get_port_view(SharedPtr<PortModel> port);
+	SharedPtr<FlowCanvas::Port> get_port_view(SharedPtr<PortModel> port);
 
-	void connect(boost::shared_ptr<LibFlowCanvas::Connectable> src,
-	             boost::shared_ptr<LibFlowCanvas::Connectable> dst);
+	void connect(boost::shared_ptr<FlowCanvas::Connectable> src,
+	             boost::shared_ptr<FlowCanvas::Connectable> dst);
 
-	void disconnect(boost::shared_ptr<LibFlowCanvas::Connectable> src,
-	                boost::shared_ptr<LibFlowCanvas::Connectable> dst);
+	void disconnect(boost::shared_ptr<FlowCanvas::Connectable> src,
+	                boost::shared_ptr<FlowCanvas::Connectable> dst);
 
 	SharedPtr<PatchModel> _patch;
 
-	typedef std::map<SharedPtr<ObjectModel>, SharedPtr<LibFlowCanvas::Module> > Views;
+	typedef std::map<SharedPtr<ObjectModel>, SharedPtr<FlowCanvas::Module> > Views;
 	Views _views;
 
 	int _last_click_x;

@@ -48,7 +48,7 @@ class Port;
  *
  * \ingroup GUI
  */
-class NodeModule : public LibFlowCanvas::Module
+class NodeModule : public FlowCanvas::Module
 {
 public:
 	static boost::shared_ptr<NodeModule> create (boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeModel> node);

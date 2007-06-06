@@ -34,10 +34,10 @@ namespace GUI {
  * 
  * \ingroup GUI
  */
-class Port : public LibFlowCanvas::Port
+class Port : public FlowCanvas::Port
 {
 public:
-	Port(boost::shared_ptr<LibFlowCanvas::Module> module, SharedPtr<PortModel> pm, bool flip = false, bool destroyable = false);
+	Port(boost::shared_ptr<FlowCanvas::Module> module, SharedPtr<PortModel> pm, bool flip = false, bool destroyable = false);
 
 	virtual ~Port() {}
 

@@ -16,7 +16,7 @@
  */
 
 #include <cassert>
-#include <flowcanvas/FlowCanvas.h>
+#include <flowcanvas/Canvas.h>
 #include "interface/EngineInterface.h"
 #include "client/PluginModel.h"
 #include "client/PatchModel.h"
@@ -46,7 +46,7 @@ namespace GUI {
 
 
 PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
-: FlowCanvas(width, height),
+:Canvas(width, height),
   _patch(patch),
   _last_click_x(0),
   _last_click_y(0)
@@ -186,7 +186,7 @@ PatchCanvas::build()
 void
 PatchCanvas::arrange()
 {
-	LibFlowCanvas::FlowCanvas::arrange();
+	FlowCanvas::Canvas::arrange();
 	
 	for (list<boost::shared_ptr<Item> >::iterator i = _items.begin(); i != _items.end(); ++i)
 		(*i)->store_location();
@@ -249,17 +249,17 @@ PatchCanvas::remove_port(SharedPtr<PortModel> pm)
 }
 
 
-SharedPtr<LibFlowCanvas::Port>
+SharedPtr<FlowCanvas::Port>
 PatchCanvas::get_port_view(SharedPtr<PortModel> port)
 {
-	SharedPtr<LibFlowCanvas::Port> ret;
-	SharedPtr<LibFlowCanvas::Module> module = _views[port];
+	SharedPtr<FlowCanvas::Port> ret;
+	SharedPtr<FlowCanvas::Module> module = _views[port];
 	
 	// Port on this patch
 	if (module) {
 		ret = (PtrCast<PatchPortModule>(module))
 			? *(PtrCast<PatchPortModule>(module)->ports().begin())
-			: PtrCast<LibFlowCanvas::Port>(module);
+			: PtrCast<FlowCanvas::Port>(module);
 	} else {
 		module = PtrCast<NodeModule>(_views[port->parent()]);
 		if (module)
@@ -273,8 +273,8 @@ PatchCanvas::get_port_view(SharedPtr<PortModel> port)
 void
 PatchCanvas::connection(SharedPtr<ConnectionModel> cm)
 {
-	const SharedPtr<LibFlowCanvas::Port> src = get_port_view(cm->src_port());
-	const SharedPtr<LibFlowCanvas::Port> dst = get_port_view(cm->dst_port());
+	const SharedPtr<FlowCanvas::Port> src = get_port_view(cm->src_port());
+	const SharedPtr<FlowCanvas::Port> dst = get_port_view(cm->dst_port());
 
 	if (src && dst)
 		add_connection(boost::shared_ptr<Connection>(new Connection(shared_from_this(),
@@ -288,8 +288,8 @@ PatchCanvas::connection(SharedPtr<ConnectionModel> cm)
 void
 PatchCanvas::disconnection(SharedPtr<ConnectionModel> cm)
 {
-	const SharedPtr<LibFlowCanvas::Port> src = get_port_view(cm->src_port());
-	const SharedPtr<LibFlowCanvas::Port> dst = get_port_view(cm->dst_port());
+	const SharedPtr<FlowCanvas::Port> src = get_port_view(cm->src_port());
+	const SharedPtr<FlowCanvas::Port> dst = get_port_view(cm->dst_port());
 		
 	if (src && dst)
 		remove_connection(src, dst);
@@ -300,8 +300,8 @@ PatchCanvas::disconnection(SharedPtr<ConnectionModel> cm)
 
 
 void
-PatchCanvas::connect(boost::shared_ptr<LibFlowCanvas::Connectable> src_port,
-                     boost::shared_ptr<LibFlowCanvas::Connectable> dst_port)
+PatchCanvas::connect(boost::shared_ptr<FlowCanvas::Connectable> src_port,
+                     boost::shared_ptr<FlowCanvas::Connectable> dst_port)
 {
 	const boost::shared_ptr<Ingen::GUI::Port> src
 		= boost::dynamic_pointer_cast<Ingen::GUI::Port>(src_port);
@@ -343,8 +343,8 @@ PatchCanvas::connect(boost::shared_ptr<LibFlowCanvas::Connectable> src_port,
 
 
 void
-PatchCanvas::disconnect(boost::shared_ptr<LibFlowCanvas::Connectable> src_port,
-                        boost::shared_ptr<LibFlowCanvas::Connectable> dst_port)
+PatchCanvas::disconnect(boost::shared_ptr<FlowCanvas::Connectable> src_port,
+                        boost::shared_ptr<FlowCanvas::Connectable> dst_port)
 {
 	const boost::shared_ptr<Ingen::GUI::Port> src
 		= boost::dynamic_pointer_cast<Ingen::GUI::Port>(src_port);
@@ -382,7 +382,7 @@ PatchCanvas::canvas_event(GdkEvent* event)
 		break;
 	}
 
-	return FlowCanvas::canvas_event(event);
+	return Canvas::canvas_event(event);
 }
 
 
@@ -420,7 +420,7 @@ PatchCanvas::copy_selection()
 		}
 	}
 	
-	for (list<boost::shared_ptr<LibFlowCanvas::Connection> >::iterator c = _selected_connections.begin();
+	for (list<boost::shared_ptr<FlowCanvas::Connection> >::iterator c = _selected_connections.begin();
 			c != _selected_connections.end(); ++c) {
 		boost::shared_ptr<Connection> connection = boost::dynamic_pointer_cast<Connection>(*c);
 		if (connection)

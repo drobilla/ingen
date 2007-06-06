@@ -32,7 +32,7 @@ namespace GUI {
 
 
 PatchPortModule::PatchPortModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<PortModel> port)
-: LibFlowCanvas::Module(canvas, port->path().name(), 0, 0, false), // FIXME: coords?
+: FlowCanvas::Module(canvas, port->path().name(), 0, 0, false), // FIXME: coords?
   _port(port)
 {
 	/*if (port_model()->polyphonic() && port_model()->parent() != NULL
