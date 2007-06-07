@@ -4,7 +4,7 @@ AM_CXXFLAGS = @JACK_CFLAGS@ @RAUL_CFLAGS@ @LOSC_CFLAGS@ @ALSA_CFLAGS@ -I../../co
 common_ldadd = @JACK_LIBS@ @RAUL_LIBS@ @LOSC_LIBS@ @ALSA_LIBS@ -lrt
 node_tree_test_LDADD = $(common_ldadd)
 
-bin_PROGRAMS = node_tree_test
+noinst_PROGRAMS = node_tree_test
 
 node_tree_test_SOURCES = \
 	node_tree_test.cpp
