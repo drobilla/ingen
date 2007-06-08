@@ -18,33 +18,13 @@
 /** @file
  * Explicit template instantiations.
  *
- * Need to do this to avoid undefined references, because GCC doesn't seem to
- * know how to recursively instantiate templates.  Cleaner to do it all here
- * than pollute everything with it. :/
+ * Needed to avoid undefined references, because GCC doesn't automatically
+ * instantiate templates (at least not well/completely).
  */
 
 #include "Tree.h"
 #include "TreeImplementation.h"
 #include "GraphObject.h"
-#include "Node.h"
 
-
-/* Tree */
-template class Tree<Ingen::Node*>;
-template class TreeNode<Ingen::Node*>;
-
-template                          Tree<Ingen::GraphObject*>::Tree();
-template                          Tree<Ingen::GraphObject*>::~Tree();
-template void                     Tree<Ingen::GraphObject*>::insert(TreeNode<Ingen::GraphObject*>* const n);
-template TreeNode<Ingen::GraphObject*>* Tree<Ingen::GraphObject*>::remove(const string& key);
-template Ingen::GraphObject*            Tree<Ingen::GraphObject*>::find(const string& key) const;
-template TreeNode<Ingen::GraphObject*>* Tree<Ingen::GraphObject*>::find_treenode(const string& key) const;
-
-template Tree<Ingen::GraphObject*>::iterator Tree<Ingen::GraphObject*>::begin() const;
-template Tree<Ingen::GraphObject*>::iterator Tree<Ingen::GraphObject*>::end() const;
-
-template Tree<Ingen::GraphObject*>::iterator::~iterator();
-template Ingen::GraphObject* Tree<Ingen::GraphObject*>::iterator::operator*() const;
-template Tree<Ingen::GraphObject*>::iterator&     Tree<Ingen::GraphObject*>::iterator::operator++();
-template bool          Tree<Ingen::GraphObject*>::iterator::operator!=(const iterator& iter) const;
+template class Tree<Ingen::GraphObject*>;
 

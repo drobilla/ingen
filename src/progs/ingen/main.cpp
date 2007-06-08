@@ -61,7 +61,7 @@ main(int argc, char** argv)
 		cout << "No arguments provided.  Try something like:" << endl << endl;
 		cout << "Run an engine: ingen -e" << endl;
 		cout << "Run the GUI:   ingen -g" << endl;
-		cout << "Pring full help: ingen -h" << endl << endl;
+		cout << "Print full help: ingen -h" << endl << endl;
 		cmdline_parser_print_help();
 		return 0;
 	}

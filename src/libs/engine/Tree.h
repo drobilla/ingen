@@ -130,8 +130,6 @@ public:
 	iterator end() const;
 
 private:
-	void _set_all_traversed_recursive(TreeNode<T>* root, bool b);
-	
 	TreeNode<T>* _find_smallest(TreeNode<T>* root);
 	TreeNode<T>* _find_largest(TreeNode<T>* root);
 

@@ -237,22 +237,6 @@ Tree<T>::find_treenode(const string& name) const
 }
 
 
-/// Private ///
-template<typename T>
-void
-Tree<T>::_set_all_traversed_recursive(TreeNode<T>* root, bool b)
-{
-	assert(root != NULL);
-	
-	// Preorder traversal
-	root->node()->traversed(b);
-	if (root->left_child() != NULL)
-		_set_all_traversed_recursive(root->left_child(), b);
-	if (root->right_child() != NULL)
-		_set_all_traversed_recursive(root->right_child(), b);
-}
-
-
 /** Finds the smallest (key) node in the subtree rooted at "root"
  */
 template<typename T>

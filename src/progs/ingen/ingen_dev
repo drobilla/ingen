@@ -1,3 +1,0 @@
-#!/usr/bin/env sh
-
-INGEN_MODULE_PATH=../../libs/engine/.libs ./ingen
