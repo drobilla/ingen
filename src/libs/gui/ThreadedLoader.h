@@ -24,8 +24,7 @@
 #include <boost/optional/optional.hpp>
 #include <raul/Thread.h>
 #include <raul/Slave.h>
-#include <raul/Mutex.h>
-#include <raul/Condition.h>
+#include <glibmm/thread.h>
 #include "interface/EngineInterface.h"
 #include "client/PatchModel.h"
 #include "client/Serializer.h"
@@ -88,7 +87,7 @@ private:
 
 	DeprecatedLoader _deprecated_loader;
 	Serializer       _serializer;
-	Raul::Mutex      _mutex;
+	Glib::Mutex      _mutex;
 	list<Closure>    _events;
 };
 
