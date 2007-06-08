@@ -22,13 +22,11 @@
 #include <dirent.h>
 #include <float.h>
 #include <cmath>
-#include <dlfcn.h>
 #include "ThreadManager.h"
 #include "MidiNoteNode.h"
 #include "MidiTriggerNode.h"
 #include "MidiControlNode.h"
 #include "TransportNode.h"
-#include "PluginLibrary.h"
 #include "Plugin.h"
 #include "Patch.h"
 #ifdef HAVE_SLV2
@@ -90,11 +88,13 @@ NodeFactory::~NodeFactory()
 {
 	for (list<Plugin*>::iterator i = _plugins.begin(); i != _plugins.end(); ++i)
 		delete (*i);
+	_plugins.clear();
+
 	
-	for (list<PluginLibrary*>::iterator i = _libraries.begin(); i != _libraries.end(); ++i) {
-		(*i)->close();
+	for (list<Glib::Module*>::iterator i = _libraries.begin(); i != _libraries.end(); ++i)
 		delete (*i);
-	}
+	_libraries.clear();
+
 #ifdef HAVE_SLV2
 	slv2_world_free(_world);
 #endif
@@ -297,7 +297,7 @@ NodeFactory::load_lv2_plugins()
 			Plugin* om_plug = new Plugin(Plugin::LV2, uri);
 			om_plug->slv2_plugin(lv2_plug);
 			// FIXME FIXME FIXME temporary hack
-			om_plug->library(NULL);
+			om_plug->module(NULL);
 			om_plug->lib_path("FIXME/Some/path");
 			om_plug->plug_label("FIXMElabel");
 			char* name = slv2_plugin_get_name(lv2_plug);
@@ -408,7 +408,10 @@ NodeFactory::load_dssi_plugins()
 				continue;
 			}
 
-			PluginLibrary* plugin_library = new PluginLibrary(full_lib_name);
+			Glib::Module* plugin_library = new Glib::Module(full_lib_name);
+			if (!(*plugin_library))
+				continue;
+
 			_libraries.push_back(plugin_library);
 
 			const LADSPA_Descriptor* ld = NULL;
@@ -418,8 +421,7 @@ NodeFactory::load_dssi_plugins()
 				assert(ld != NULL);
 				string uri = string("dssi:") + pfile->d_name +":"+ ld->Label;
 				Plugin* plugin = new Plugin(Plugin::DSSI, uri);
-				assert(plugin_library != NULL);
-				plugin->library(plugin_library);
+				plugin->module(plugin_library);
 				plugin->lib_path(dir + "/" + pfile->d_name);
 				plugin->plug_label(ld->Label);
 				plugin->name(ld->Name);
@@ -466,7 +468,6 @@ NodeFactory::load_dssi_plugin(const string& uri,
 	DSSI_Descriptor_Function df = NULL;
 	const Plugin* plugin = NULL;
 	Node* n = NULL;
-	void* handle = NULL;
 	
 	// Attempt to find the lib
 	list<Plugin*>::iterator i;
@@ -481,15 +482,8 @@ NodeFactory::load_dssi_plugin(const string& uri,
 		cerr << "Did not find DSSI plugin " << uri << " in database." << endl;
 		return NULL;
 	} else {
-		assert(plugin != NULL);
-		plugin->library()->open();
-		handle = plugin->library()->handle();
-		assert(handle != NULL);	
-		
-		// Load descriptor function
-		dlerror();
-		df = (DSSI_Descriptor_Function)dlsym(handle, "dssi_descriptor");
-		if (df == NULL || dlerror() != NULL) {
+		assert(plugin);
+		if (!plugin->module()->get_symbol("dssi_descriptor", (void*&)df)) {
 			cerr << "Looks like this isn't a DSSI plugin." << endl;
 			return NULL;
 		}
@@ -578,7 +572,10 @@ NodeFactory::load_ladspa_plugins()
 				continue;
 			}	
 
-			PluginLibrary* plugin_library = new PluginLibrary(full_lib_name);
+			Glib::Module* plugin_library = new Glib::Module(full_lib_name);
+			if (!(*plugin_library))
+				continue;
+			
 			_libraries.push_back(plugin_library);
 
 			for (unsigned long i=0; (descriptor = (LADSPA_Descriptor*)df(i)) != NULL; ++i) {
@@ -588,7 +585,7 @@ NodeFactory::load_ladspa_plugins()
 				Plugin* plugin = new Plugin(Plugin::LADSPA, uri);
 				
 				assert(plugin_library != NULL);
-				plugin->library(plugin_library);
+				plugin->module(plugin_library);
 				plugin->lib_path(dir + "/" + pfile->d_name);
 				plugin->plug_label(descriptor->Label);
 				plugin->name(descriptor->Name);
@@ -638,7 +635,6 @@ NodeFactory::load_ladspa_plugin(const string& uri,
 	LADSPA_Descriptor_Function df = NULL;
 	Plugin* plugin = NULL;
 	Node* n = NULL;
-	void* plugin_lib = NULL;
 	
 	// Attempt to find the lib
 	list<Plugin*>::iterator i;
@@ -653,15 +649,7 @@ NodeFactory::load_ladspa_plugin(const string& uri,
 		cerr << "Did not find LADSPA plugin " << uri << " in database." << endl;
 		return NULL;
 	} else {
-		assert(plugin != NULL);
-		plugin->library()->open();
-		plugin_lib = plugin->library()->handle();
-		assert(plugin_lib != NULL);	
-		
-		// Load descriptor function
-		dlerror();
-		df = (LADSPA_Descriptor_Function)dlsym(plugin_lib, "ladspa_descriptor");
-		if (df == NULL || dlerror() != NULL) {
+		if (!plugin->module()->get_symbol("ladspa_descriptor", (void*&)df)) {
 			cerr << "Looks like this isn't a LADSPA plugin." << endl;
 			return NULL;
 		}

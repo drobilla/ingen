@@ -19,10 +19,6 @@
 #include <glibmm/module.h>
 #include <raul/SharedPtr.h>
 
-#ifndef INGEN_MODULE_DIR
-#error This file expects INGEN_MODULE_DIR to be defined.
-#endif
-
 namespace Ingen {
 namespace Shared {
 

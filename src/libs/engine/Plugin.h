@@ -21,6 +21,7 @@
 #include "config.h"
 
 #include <cstdlib>
+#include <glibmm/module.h>
 #include <boost/utility.hpp>
 #include <dlfcn.h>
 #include <string>
@@ -34,7 +35,6 @@ using std::cerr; using std::endl;
 
 namespace Ingen {
 
-class PluginLibrary;
 class Patch;
 class Node;
 
@@ -54,7 +54,7 @@ public:
 	: _type(type)
 	, _uri(uri)
 	, _id(0)
-	, _library(NULL)
+	, _module(NULL)
 #ifdef HAVE_SLV2
 	, _slv2_plugin(NULL)
 #endif
@@ -84,26 +84,25 @@ public:
 		_plug_label = copy->_plug_label;
 		_name = copy->_name;
 		_id = _id;
-		_library = copy->_library;
+		_module = copy->_module;
 	}
 	
-	Type          type() const                { return _type; }
-	void          type(Type t)                { _type = t; }
-	const string& lib_path() const            { return _lib_path; }
-	void          lib_path(const string& s)   { _lib_path = s; _lib_name = _lib_path.substr(_lib_path.find_last_of("/")+1); }
-	string        lib_name() const            { return _lib_name; }
-	void          lib_name(const string& s)   { _lib_name = s; }
-	const string& plug_label() const          { return _plug_label; }
-	void          plug_label(const string& s) { _plug_label = s; }
-	const string& name() const                { return _name; }
-	void          name(const string& s)       { _name = s; }
-	unsigned long id() const                  { return _id; }
-	void          id(unsigned long i)         { _id = i; }
-	const string  uri() const                 { return _uri; }
-	void          uri(const string& s)        { _uri = s; }
-	
-	PluginLibrary* library() const             { return _library; }
-	void library(PluginLibrary* const library) { _library = library; }
+	Type          type() const                 { return _type; }
+	void          type(Type t)                 { _type = t; }
+	const string& lib_path() const             { return _lib_path; }
+	void          lib_path(const string& s)    { _lib_path = s; _lib_name = _lib_path.substr(_lib_path.find_last_of("/")+1); }
+	string        lib_name() const             { return _lib_name; }
+	void          lib_name(const string& s)    { _lib_name = s; }
+	const string& plug_label() const           { return _plug_label; }
+	void          plug_label(const string& s)  { _plug_label = s; }
+	const string& name() const                 { return _name; }
+	void          name(const string& s)        { _name = s; }
+	unsigned long id() const                   { return _id; }
+	void          id(unsigned long i)          { _id = i; }
+	const string  uri() const                  { return _uri; }
+	void          uri(const string& s)         { _uri = s; }
+	Glib::Module* module() const               { return _module; }
+	void          module(Glib::Module* module) { _module = module; }
 	
 	const char* type_string() const {
 		if (_type == LADSPA) return "LADSPA";
@@ -143,7 +142,7 @@ private:
 	string _name;       ///< LADSPA/DSSI only
 	unsigned long _id;  ///< LADSPA/DSSI only
 	
-	PluginLibrary* _library;
+	Glib::Module* _module;
 
 #ifdef HAVE_SLV2
 	SLV2Plugin _slv2_plugin;

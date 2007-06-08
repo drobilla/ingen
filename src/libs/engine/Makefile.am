@@ -72,7 +72,6 @@ libingen_engine_la_SOURCES = \
 	GraphObject.cpp \
 	Tree.h \
 	TreeImplementation.h \
-	PluginLibrary.h \
 	Plugin.h \
 	Plugin.cpp \
 	PostProcessor.h \

@@ -25,6 +25,7 @@
 #include <string>
 #include <ladspa.h>
 #include <pthread.h>
+#include <glibmm/module.h>
 #ifdef HAVE_SLV2
 #include <slv2/slv2.h>
 #endif
@@ -35,7 +36,6 @@ namespace Ingen {
 
 class Node;
 class Patch;
-class PluginLibrary;
 class Plugin;
 
 
@@ -83,9 +83,9 @@ private:
 	
 	Node* load_internal_plugin(const string& plug_label, const string& name, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size);
 	
-	list<PluginLibrary*> _libraries;
-	list<Plugin*>        _internal_plugins;
-	list<Plugin*>        _plugins; // FIXME: make a map
+	list<Glib::Module*> _libraries;
+	list<Plugin*>       _internal_plugins;
+	list<Plugin*>       _plugins; // FIXME: make a map
 
 	bool _has_loaded;
 };
