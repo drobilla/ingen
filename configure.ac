@@ -287,6 +287,9 @@ if test "$build_console_clients" = "yes"; then
 	
 	# Check for glibmm
 	PKG_CHECK_MODULES(GLIBMM, glibmm-2.4)
+	
+	# Check for glib threads
+	PKG_CHECK_MODULES(GTHREAD, gthread-2.0)
 
 	# Check for raptor (for RDF serialization)
 	PKG_CHECK_MODULES(RAPTOR, raptor >= 1.4.14, build_raptor="yes", build_raptor="no")

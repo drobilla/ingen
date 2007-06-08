@@ -21,6 +21,7 @@
 #include <glibmm/convert.h>
 #include <glibmm/miscutils.h>
 #include <boost/optional.hpp>
+#include <glibmm/thread.h>
 #include <raul/Path.h>
 #include <raul/RDFWorld.h>
 #include <raul/SharedPtr.h>
@@ -71,6 +72,7 @@ main(int argc, char** argv)
 
 	SharedPtr<Shared::EngineInterface> engine_interface;
 
+	Glib::thread_init();
 
 	/* Run engine */
 	if (args.engine_flag) {
