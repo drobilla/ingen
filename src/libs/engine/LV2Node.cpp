@@ -100,30 +100,21 @@ LV2Node::instantiate()
 		else
 			port_buffer_size = 1;
 		
-		if (port_class == SLV2_CONTROL_INPUT || port_class == SLV2_AUDIO_INPUT) {
+		if (port_class == SLV2_CONTROL_INPUT || port_class == SLV2_AUDIO_INPUT)
 			port = new InputPort(this, port_name, j, _poly, DataType::FLOAT, port_buffer_size);
-			_ports->at(j) = port;
-		} else if (port_class == SLV2_CONTROL_OUTPUT || port_class == SLV2_AUDIO_OUTPUT) {
+		else if (port_class == SLV2_CONTROL_OUTPUT || port_class == SLV2_AUDIO_OUTPUT)
 			port = new OutputPort(this, port_name, j, _poly, DataType::FLOAT, port_buffer_size);
-			_ports->at(j) = port;
-		} else if (port_class == SLV2_MIDI_INPUT) {
+		else if (port_class == SLV2_MIDI_INPUT)
 			port = new InputPort(this, port_name, j, _poly, DataType::MIDI, port_buffer_size);
-			_ports->at(j) = port;
-		} else if (port_class == SLV2_MIDI_OUTPUT) {
+		else if (port_class == SLV2_MIDI_OUTPUT)
 			port = new OutputPort(this, port_name, j, _poly, DataType::MIDI, port_buffer_size);
-			_ports->at(j) = port;
-		}
 
-		assert(_ports->at(j) != NULL);
+		assert(port);
+		
+		if (port_class == SLV2_CONTROL_INPUT)
+			((AudioBuffer*)port->buffer(0))->set(slv2_port_get_default_value(_lv2_plugin, id), 0);
 
-		//PortInfo* pi = port->port_info();
-		//get_port_vals(j, pi);
-
-		// Set default control val
-		/*if (pi->is_control())
-			((TypedPort<Sample>*)port)->set_value(pi->default_val(), 0);
-		else
-			((TypedPort<Sample>*)port)->set_value(0.0f, 0);*/
+		_ports->at(j) = port;
 	}
 	return true;
 }
@@ -148,9 +139,11 @@ LV2Node::activate()
 			Port* const port = _ports->at(j);
 			set_port_buffer(i, j, port->buffer(i));
 			if (port->type() == DataType::FLOAT && port->buffer_size() == 1) {
-				cerr << "FIXME: LV2 default value\n";
-				((AudioBuffer*)port->buffer(i))->set(0.0f, 0); // FIXME
-			} else if (port->type() == DataType::FLOAT && port->buffer_size() > 1) {
+				((AudioBuffer*)port->buffer(i))->set(
+					slv2_port_get_default_value(_lv2_plugin,
+							slv2_plugin_get_port_by_index(_lv2_plugin, j)),
+					0);
+			} else if (port->type() == DataType::FLOAT) {
 				((AudioBuffer*)port->buffer(i))->set(0.0f, 0);
 			}
 		}

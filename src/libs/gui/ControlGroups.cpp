@@ -129,6 +129,12 @@ SliderControlGroup::init(ControlPanel* panel, SharedPtr<PortModel> pm)
 						pm->path().name().c_str()));
 	}
 
+	if (min > pm->value())
+		min = pm->value();
+
+	if (max < pm->value())
+		max = pm->value();
+
 	if (max <= min)
 		max = min + 1.0f;
 

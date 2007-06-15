@@ -146,10 +146,9 @@ ObjectSender::send_port(ClientInterface* client, const Port* port)
 	
 	// Send control value
 	if (port->type() == DataType::FLOAT && port->buffer_size() == 1) {
-		Sample default_value = dynamic_cast<const AudioBuffer*>(
-				port->buffer(0))->value_at(0);
+		const Sample value = dynamic_cast<const AudioBuffer*>(port->buffer(0))->value_at(0);
 		//cerr << port->path() << " sending default value " << default_value << endl;
-		client->control_change(port->path(), default_value);
+		client->control_change(port->path(), value);
 	}
 	
 	// Send metadata
