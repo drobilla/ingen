@@ -16,6 +16,7 @@
  */
 
 #include <iostream>
+#include <locale.h>
 #include <glibmm/ustring.h>
 #include <raul/RDFModel.h>
 #include <raul/RDFQuery.h>
@@ -45,6 +46,8 @@ Loader::load(SharedPtr<EngineInterface> engine,
              Glib::ustring              patch_uri,
              map<string,Atom>           data)
 {
+	setlocale(LC_NUMERIC, "C");
+
 	// FIXME: this whole thing is a mess
 	
 	std::map<Path, bool> created;

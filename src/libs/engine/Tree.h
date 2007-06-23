@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef NODETREE_H
-#define NODETREE_H
+#ifndef TREE_H
+#define TREE_H
 
 #include <string>
 #include <cassert>
@@ -138,10 +138,4 @@ private:
 };
 
 
-/* This needs to be done so the templates are defined and can get instantiated
- * automatically by the compilter.
- */
-//#include "TreeImplementation.h"
-
-
-#endif // NODETREE_H
+#endif // TREE_H

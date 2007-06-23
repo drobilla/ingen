@@ -27,6 +27,7 @@
 #include <cstdlib> // atof
 #include <boost/optional/optional.hpp>
 #include <cstring>
+#include <locale.h>
 #include <raul/RDFWorld.h>
 #include <raul/RDFModel.h>
 #include <raul/RDFNode.h>
@@ -64,6 +65,8 @@ Serializer::Serializer(Raul::RDF::World& world)
 void
 Serializer::start_to_filename(const string& filename)
 {
+	setlocale(LC_NUMERIC, "C");
+
 	_base_uri = "file://" + filename;
 	_model = new RDF::Model(_world);
 	_mode = TO_FILE;
@@ -81,6 +84,8 @@ Serializer::start_to_filename(const string& filename)
 void
 Serializer::start_to_string()
 {
+	setlocale(LC_NUMERIC, "C");
+
 	_base_uri = "";
 	_model = new RDF::Model(_world);
 	_mode = TO_STRING;
