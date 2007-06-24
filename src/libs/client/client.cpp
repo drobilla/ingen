@@ -30,7 +30,6 @@ new_osc_interface(const std::string& url)
 	return SharedPtr<Shared::EngineInterface>(oes);
 }
 
-
 } // namespace Client
 } // namespace Ingen
 

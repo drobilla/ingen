@@ -70,6 +70,7 @@ public:
 private:
 	void add_metadata(MetadataMap& data, string key, string value);
 
+	string nameify_if_invalid(const string& name);
 	string translate_load_path(const string& path);
 
 	//string                          _patch_search_path;

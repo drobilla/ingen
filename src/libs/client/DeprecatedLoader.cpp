@@ -98,11 +98,25 @@ DeprecatedLoader::find_file(const string& filename, const string& additional_pat
 #endif
 
 string
+DeprecatedLoader::nameify_if_invalid(const string& name)
+{
+	if (Path::is_valid_name(name)) {
+		return name;
+	} else {
+		const string new_name = Path::nameify(name);
+		cerr << "WARNING: Illegal name '" << name << "' converted to '" << name << "'" << endl;
+		return new_name;
+	}
+}
+
+
+string
 DeprecatedLoader::translate_load_path(const string& path)
 {
 	std::map<string,string>::iterator t = _load_path_translations.find(path);
 	
 	if (t != _load_path_translations.end()) {
+		assert(Path::is_valid((*t).second));
 		return (*t).second;
 	} else {
 		assert(Path::is_valid(path));
@@ -217,7 +231,7 @@ DeprecatedLoader::load_patch(const Glib::ustring&  filename,
 			if (load_name) {
 				assert(key != NULL);
 				if (parent_path)
-					path = Path(parent_path.get()).base() + Path::nameify((char*)key);
+					path = Path(parent_path.get()).base() + nameify_if_invalid((char*)key);
 				else
 					path = Path("/");
 			}
@@ -333,9 +347,7 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 		key = xmlNodeListGetString(doc, cur->xmlChildrenNode, 1);
 		
 		if ((!xmlStrcmp(cur->name, (const xmlChar*)"name"))) {
-			cerr << "NAME: " << (char*)key;
-			path = parent.base() + Path::nameify((char*)key);
-			cerr << ", PATH: " << path << endl;
+			path = parent.base() + nameify_if_invalid((char*)key);
 		} else if ((!xmlStrcmp(cur->name, (const xmlChar*)"polyphonic"))) {
 			polyphonic = !strcmp((char*)key, "true");
 		} else if ((!xmlStrcmp(cur->name, (const xmlChar*)"type"))) {
@@ -359,7 +371,7 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 				key = xmlNodeListGetString(doc, child->xmlChildrenNode, 1);
 				
 				if ((!xmlStrcmp(child->name, (const xmlChar*)"name"))) {
-					port_name = Path::nameify((char*)key);
+					port_name = nameify_if_invalid((char*)key);
 				} else if ((!xmlStrcmp(child->name, (const xmlChar*)"user-min"))) {
 					user_min = atof((char*)key);
 				} else if ((!xmlStrcmp(child->name, (const xmlChar*)"user-max"))) {
@@ -480,7 +492,7 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 
 		if (is_port) {
 			const string old_path = path;
-			const string new_path = Path::pathify(old_path);
+			const string new_path = (Path::is_valid(old_path) ? old_path : Path::pathify(old_path));
 
 			// Set up translations (for connections etc) to alias both the old
 			// module path and the old module/port path to the new port path
@@ -607,10 +619,10 @@ DeprecatedLoader::load_connection(const Path& parent, xmlDocPtr doc, const xmlNo
 	}
 
 	// Compatibility fixes for old (fundamentally broken) patches
-	source_node = Path::nameify(source_node);
-	source_port = Path::nameify(source_port);
-	dest_node = Path::nameify(dest_node);
-	dest_port = Path::nameify(dest_port);
+	source_node = nameify_if_invalid(source_node);
+	source_port = nameify_if_invalid(source_port);
+	dest_node = nameify_if_invalid(dest_node);
+	dest_port = nameify_if_invalid(dest_port);
 
 	_engine->connect(
 		translate_load_path(parent.base() + source_node +"/"+ source_port),
@@ -662,8 +674,8 @@ DeprecatedLoader::load_preset(const Path& parent, xmlDocPtr doc, const xmlNodePt
 			}
 
 			// Compatibility fixes for old patch files
-			node_name = Path::nameify(node_name);
-			port_name = Path::nameify(port_name);
+			node_name = nameify_if_invalid(node_name);
+			port_name = nameify_if_invalid(port_name);
 			
 			if (port_name == "") {
 				string msg = "Unable to parse control in patch file ( node = ";
