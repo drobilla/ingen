@@ -102,11 +102,12 @@ main(int argc, char** argv)
 			}*/
 		} else {
 			cerr << "Unable to load engine module, engine not loaded." << endl;
-			cerr << "Try running ingen_dev or setting INGEN_MODULE_PATH." << endl;
+			cerr << "Try using src/set_dev_environment.sh, or setting INGEN_MODULE_PATH." << endl;
 		}
 
 	}
 	
+	bool use_osc = false;
 
 	/* Connect to remote engine */
 	if (args.connect_given || (args.load_given && !engine_interface)) {
@@ -120,19 +121,24 @@ main(int argc, char** argv)
 
 		if (client_module && found) {
 			engine_interface = new_osc_interface(args.connect_arg);
+			use_osc = true;
 		} else {
 			cerr << "Unable to load ingen_client module, aborting." << endl;
+			cerr << "Try using src/set_dev_environment.sh, or setting INGEN_MODULE_PATH." << endl;
 			return -1;
 		}
 	}
 	
+	/* Load queued (direct in-process) engine interface */
+	if (engine && !engine_interface && (args.load_given || args.gui_given))
+		engine_interface = engine->new_queued_interface();
 
-	if (engine) {
+	if (engine && engine_interface) {
 		engine->start_jack_driver();
-		engine->start_osc_driver(args.engine_port_arg);
+		if (use_osc)
+			engine->start_osc_driver(args.engine_port_arg);
 		engine->activate();
 	}
-
 
 	/* Load a patch */
 	if (args.load_given && engine_interface) {
@@ -174,6 +180,7 @@ main(int argc, char** argv)
 
 		} else {
 			cerr << "Unable to load serialisation module, aborting." << endl;
+			cerr << "Try using src/set_dev_environment.sh, or setting INGEN_MODULE_PATH." << endl;
 			return -1;
 		}
 	}
@@ -191,7 +198,7 @@ main(int argc, char** argv)
 			run(argc, argv, engine, engine_interface);
 		} else {
 			cerr << "Unable to find GUI module, GUI not loaded." << endl;
-			cerr << "Try running ingen_dev or setting INGEN_MODULE_PATH." << endl;
+			cerr << "Try using src/set_dev_environment.sh, or setting INGEN_MODULE_PATH." << endl;
 		}
 	}
 
@@ -199,10 +206,12 @@ main(int argc, char** argv)
 	/* Didn't run the GUI, listen to OSC and do our own main thing. */
 	if (engine && !ran_gui) {
 
+		engine->start_jack_driver();
+
 		signal(SIGINT, catch_int);
 		signal(SIGTERM, catch_int);
 		
-		//engine->start_osc_driver(args.engine_port_arg);
+		engine->start_osc_driver(args.engine_port_arg);
 		engine->activate();
 
 		engine->main();

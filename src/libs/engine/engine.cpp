@@ -24,18 +24,6 @@
 
 namespace Ingen {
 
-/*
-void
-catch_int(int)
-{
-	signal(SIGINT, catch_int);
-	signal(SIGTERM, catch_int);
-
-	std::cout << "[Main] Ingen interrupted." << std::endl;
-	engine->quit();
-}
-*/
-
 Engine*
 new_engine()
 {
@@ -61,28 +49,6 @@ launch_osc_engine(int port)
 		return false;
 	}
 }
-
-/*
-void
-run(int port)
-{
-	signal(SIGINT, catch_int);
-	signal(SIGTERM, catch_int);
-
-	set_denormal_flags();
-
-	Engine* engine = new_engine();
-
-	engine->start_jack_driver();
-	engine->start_osc_driver(port);
-
-	engine->activate();
-
-	engine->main();
-
-	delete engine;
-}
-*/
 
 } // namespace Ingen
 

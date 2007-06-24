@@ -280,6 +280,9 @@ JackAudioDriver::create_port(DuplexPort* patch_port)
 int
 JackAudioDriver::_process_cb(jack_nframes_t nframes) 
 {
+	if (nframes == 0)
+		return 0;
+
 	// FIXME: all of this time stuff is screwy
 	
 	static jack_nframes_t start_of_current_cycle = 0;

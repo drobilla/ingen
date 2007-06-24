@@ -1,4 +1,3 @@
-
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
  * 
@@ -44,7 +43,7 @@ public:
 
 private:
 	SharedPtr<Shared::ClientInterface> _client;
-	int32_t                     _id;
+	int32_t                            _id;
 };
 
 

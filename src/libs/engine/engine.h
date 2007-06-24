@@ -18,6 +18,8 @@
 #ifndef INGEN_ENGINE_H
 #define INGEN_ENGINE_H
 
+#include <raul/SharedPtr.h>
+
 namespace Ingen {
 
 class Engine;
@@ -30,12 +32,11 @@ extern "C" {
 
 	/** Create a new engine in this process */
 	Engine* new_engine();
-	
+
 	/** Launch an OSC engine as a completely separate process
 	 * \return true if successful
 	 */
 	bool launch_osc_engine(int port);
-
 }
 
 

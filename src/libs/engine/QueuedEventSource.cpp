@@ -41,6 +41,9 @@ QueuedEventSource::QueuedEventSource(size_t queued_size, size_t stamped_size)
 
 	Thread::set_context(THREAD_PRE_PROCESS);
 	assert(context() == THREAD_PRE_PROCESS);
+
+	set_name("QueuedEventSource");
+	Thread::start();
 }
 
 
@@ -106,6 +109,8 @@ QueuedEventSource::process(PostProcessor& dest, SampleCount nframes, FrameTime c
 
 	if (num_events_processed > 0)
 		dest.whip();
+	//else
+	//	cerr << "NO PROC: queued: " << unprepared_events() << ", stamped: " << !_stamped_queue.empty() << endl;
 }
 
 

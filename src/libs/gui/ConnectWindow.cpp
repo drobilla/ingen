@@ -127,9 +127,6 @@ ConnectWindow::start(SharedPtr<Ingen::Engine> engine, SharedPtr<Shared::EngineIn
 		_connect_stage = 0;
 
 		Glib::signal_timeout().connect(
-			sigc::mem_fun(engine.get(), &Ingen::Engine::main_iteration), 1000);
-		
-		Glib::signal_timeout().connect(
 			sigc::mem_fun(tsci, &ThreadedSigClientInterface::emit_signals), 2, G_PRIORITY_HIGH_IDLE);
 	}
 		
