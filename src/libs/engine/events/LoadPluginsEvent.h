@@ -33,13 +33,13 @@ class Plugin;
 class LoadPluginsEvent : public QueuedEvent
 {
 public:
-	LoadPluginsEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp);
+	LoadPluginsEvent(Engine&                      engine,
+	                 SharedPtr<Shared::Responder> responder,
+	                 SampleCount                  timestamp,
+	                 QueuedEventSource*           source);
 	
 	void pre_process();
 	void post_process();
-
-private:
-	std::list<Plugin*> _plugins;
 };
 
 

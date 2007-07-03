@@ -110,6 +110,14 @@ NodeModule::remove_port(SharedPtr<PortModel> port)
 void
 NodeModule::show_control_window()
 {
+	if (_node->plugin()->type() == PluginModel::LV2) {
+		GtkWidget* gui = (GtkWidget*)_node->plugin()->gui();
+		if (gui) {
+			cerr << "GUI!\n";
+		} else {
+			cerr << "No gui :(\n";
+		}
+	}
 	App::instance().window_factory()->present_controls(_node);
 }
 

@@ -92,7 +92,7 @@ QueuedEngineInterface::unregister_client(ClientKey key)
 void
 QueuedEngineInterface::load_plugins()
 {
-	push_queued(new LoadPluginsEvent(_engine, _responder, now()));
+	push_queued(new LoadPluginsEvent(_engine, _responder, now(), this));
 }
 
 

@@ -164,7 +164,8 @@ QueuedEventSource::_whipped()
 {
 	QueuedEvent* const ev = _events[_prepared_back];
 	
-	assert(ev);
+	if (!ev)
+		return;
 	
 	assert(!ev->is_prepared());
 	ev->pre_process();

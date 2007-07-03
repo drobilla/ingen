@@ -32,6 +32,7 @@
 #ifdef HAVE_SLV2
 #include "LV2Node.h"
 #include <slv2/slv2.h>
+#include <slv2/util.h> // old slv2 compat
 #endif
 #ifdef HAVE_LADSPA
 #include "LADSPANode.h"
@@ -271,43 +272,42 @@ NodeFactory::load_lv2_plugins()
 {
 	SLV2Plugins plugins = slv2_world_get_all_plugins(_world);
 
-	//cerr << "[NodeFactory] Found " << slv2_plugins_get_length(plugins) << " LV2 plugins." << endl;
-	
+	cerr << "[NodeFactory] Found " << slv2_plugins_size(plugins) << " LV2 plugins:" << endl;
+
 	for (unsigned i=0; i < slv2_plugins_size(plugins); ++i) {
-		
+
 		SLV2Plugin lv2_plug = slv2_plugins_get_at(plugins, i);
-		
-		
-		//om_plug->library(plugin_library);
-		
+
 		const char* uri = (const char*)slv2_plugin_get_uri(lv2_plug);
-		//cerr << "LV2 plugin: " << uri << endl;
+		assert(uri);
+		cerr << "\t" << uri << endl;
+
+		Plugin* plug = NULL;
 
 		bool found = false;
 		for (list<Plugin*>::const_iterator i = _plugins.begin(); i != _plugins.end(); ++i) {
 			if (!strcmp((*i)->uri().c_str(), uri)) {
-				cerr << "Warning: Duplicate LV2 plugin (" << uri << ").\nUsing "
-					<< (*i)->lib_path() << " version." << endl;
+				plug = (*i);
 				found = true;
 				break;
 			}
 		}
-		if (!found) {
-			//printf("[NodeFactory] Found LV2 plugin %s\n", uri);
-			Plugin* om_plug = new Plugin(Plugin::LV2, uri);
-			om_plug->slv2_plugin(lv2_plug);
-			// FIXME FIXME FIXME temporary hack
-			om_plug->module(NULL);
-			om_plug->lib_path("FIXME/Some/path");
-			om_plug->plug_label("FIXMElabel");
-			char* name = slv2_plugin_get_name(lv2_plug);
-			om_plug->name(name);
-			free(name);
-			om_plug->type(Plugin::LV2);
-			_plugins.push_back(om_plug);
-		}
+
+		if (!found)
+			plug = new Plugin(Plugin::LV2, uri);
+
+		plug->slv2_plugin(lv2_plug);
+		plug->module(NULL); // FIXME?
+		plug->lib_path(slv2_uri_to_path(slv2_plugin_get_library_uri(lv2_plug)));
+		char* name = slv2_plugin_get_name(lv2_plug);
+		assert(name);
+		plug->name(name);
+		free(name);
+		
+		if (!found)
+			_plugins.push_back(plug);
 	}
-	
+
 	slv2_plugins_free(_world, plugins);
 }
 

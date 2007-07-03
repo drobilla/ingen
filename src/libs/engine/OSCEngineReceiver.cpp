@@ -129,6 +129,7 @@ OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t
 OSCEngineReceiver::~OSCEngineReceiver()
 {
 	deactivate();
+	stop();
 
 	if (_server != NULL)  {
 		lo_server_free(_server);
@@ -163,6 +164,11 @@ OSCEngineReceiver::_run()
 	 * they all get executed in the same cycle */
 
 	while (true) {
+		if ( ! _server) {
+			cout << "[OSCEngineReceiver] Server is NULL, exiting" << endl;
+			break;
+		}
+
 		assert( ! unprepared_events());
 		
 		// Wait on a message and enqueue it

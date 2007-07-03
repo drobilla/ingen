@@ -20,6 +20,7 @@
 #include "Engine.h"
 #include "NodeFactory.h"
 #include "ClientBroadcaster.h"
+#include "QueuedEventSource.h"
 
 #include <iostream>
 using std::cerr;
@@ -27,9 +28,10 @@ using std::cerr;
 namespace Ingen {
 
 
-LoadPluginsEvent::LoadPluginsEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp)
-: QueuedEvent(engine, responder, timestamp)
+LoadPluginsEvent::LoadPluginsEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, QueuedEventSource* source)
+: QueuedEvent(engine, responder, timestamp, true, source)
 {
+	/* Not sure why this has to be blocking, but it fixes some nasty bugs.. */
 }
 
 void
@@ -37,18 +39,15 @@ LoadPluginsEvent::pre_process()
 {
 	_engine.node_factory()->load_plugins();
 	
-	// FIXME: send the changes (added and removed plugins) instead of the entire list each time
-	
-	// Take a copy to send in the post processing thread (to avoid problems
-	// because std::list isn't thread safe)
-	_plugins = _engine.node_factory()->plugins();
-	
 	QueuedEvent::pre_process();
 }
 
 void
 LoadPluginsEvent::post_process()
 {
+	if (_source)
+		_source->unblock();
+	
 	_responder->respond_ok();
 }
 

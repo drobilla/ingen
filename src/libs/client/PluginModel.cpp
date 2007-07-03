@@ -48,6 +48,35 @@ PluginModel::default_node_name(SharedPtr<PatchModel> parent)
 	return name;
 }
 
+#ifdef HAVE_SLV2
+void*
+PluginModel::gui()
+{
+	assert(_type == LV2);
+	
+	SLV2Values gui = slv2_plugin_get_guis(_slv2_plugin);
+	if (slv2_values_size(gui) > 0) {
+		printf("\tGUI:\n");
+		for (unsigned i=0; i < slv2_values_size(gui); ++i) {
+			printf("\t\t%s\n", slv2_value_as_uri(slv2_values_get_at(gui, i)));
+			
+			SLV2Value binary = slv2_plugin_get_gui_library_uri(_slv2_plugin, slv2_values_get_at(gui, i));
+			
+			printf("\t\t\tType: %s\n", slv2_gui_type_get_uri(slv2_value_as_gui_type(
+						slv2_values_get_at(gui, i))));
+	
+			if (binary)
+			  printf("\t\t\tBinary: %s\n", slv2_value_as_uri(binary));
+			
+			slv2_value_free(binary);
+		}
+	}
+	slv2_values_free(gui);
+
+	return NULL;
+}
+
+#endif
 
 } // namespace Client
 } // namespace Ingen
