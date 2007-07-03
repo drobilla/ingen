@@ -31,8 +31,12 @@ Glib::ustring GladeFactory::glade_filename = "";
 void
 GladeFactory::find_glade_file()
 {
-	// Check for the .glade file in current directory
-	glade_filename = "./ingen_gui.glade";
+	char* env_path = getenv("INGEN_GLADE_PATH");
+	if (env_path)
+		glade_filename = env_path;
+	else
+		glade_filename = "./ingen_gui.glade";
+
 	ifstream fs(glade_filename.c_str());
 	if (fs.fail()) { // didn't find it, check PKGDATADIR
 		fs.clear();

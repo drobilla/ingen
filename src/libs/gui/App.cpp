@@ -109,7 +109,8 @@ App::run(int argc, char** argv,
 	_instance->configuration()->load_settings();
 	_instance->configuration()->apply_settings();
 	
-	Gtk::Window::set_default_icon_from_file(PKGDATADIR "/ingen.svg");
+	if (Glib::file_test(PKGDATADIR "/ingen.svg", Glib::FILE_TEST_EXISTS))
+		Gtk::Window::set_default_icon_from_file(PKGDATADIR "/ingen.svg");
 	
 	App::instance().connect_window()->start(engine, interface);
 	
