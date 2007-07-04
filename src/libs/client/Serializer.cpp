@@ -228,7 +228,7 @@ Serializer::serialize_patch(SharedPtr<PatchModel> patch, const Node& patch_id)
 	_model->add_statement(
 		patch_id,
 		"rdf:type",
-		"ingen:Patch");
+		Node(_model->world(), Node::RESOURCE, "http://drobilla.net/ns/ingen#Patch"));
 
 	if (patch->path().name().length() > 0) {
 		_model->add_statement(
