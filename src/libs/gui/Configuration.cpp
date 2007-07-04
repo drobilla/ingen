@@ -57,6 +57,7 @@ Configuration::~Configuration()
 void
 Configuration::load_settings(string filename)
 {	
+#if 0
 	if (filename == "")
 		filename = string(getenv("HOME")).append("/.omgtkrc");
 	
@@ -97,6 +98,7 @@ Configuration::load_settings(string filename)
 	_patch_path = s;
 	
 	is.close();
+#endif
 }
 
 
@@ -106,6 +108,7 @@ Configuration::load_settings(string filename)
 void
 Configuration::save_settings(string filename)
 {
+#if 0
 	if (filename == "")
 		filename = string(getenv("HOME")).append("/.omgtkrc");
 	
@@ -123,6 +126,7 @@ Configuration::save_settings(string filename)
 	os << "patch_path " << _patch_path << endl;
 	
 	os.close();
+#endif
 }
 
 
@@ -132,7 +136,6 @@ Configuration::save_settings(string filename)
 void
 Configuration::apply_settings()
 {
-	cerr << "FIXME: patch path" << endl;
 	//App::instance().loader()->set_patch_path(_patch_path);
 }
 
