@@ -75,6 +75,11 @@ MidiControlNode::process(SampleCount nframes, FrameTime start, FrameTime end)
 	assert(midi_in->this_nframes() == nframes);
 
 	while (midi_in->get_event(&timestamp, &size, &buffer) < nframes) {
+
+		cerr << "EVENT: ";
+		for (size_t i=0; i < size; ++i)
+			cerr << buffer[i] << " ";
+		cerr << endl;
 		
 		//const FrameTime time = start + (FrameTime)timestamp;
 

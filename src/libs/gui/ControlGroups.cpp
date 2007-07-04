@@ -17,6 +17,7 @@
 
 #include <cmath>
 #include <iostream>
+#include <algorithm>
 #include "interface/EngineInterface.h"
 #include "client/PluginModel.h"
 #include "client/NodeModel.h"
@@ -27,8 +28,7 @@
 #include "GladeFactory.h"
 #include "App.h"
 
-using std::cerr; using std::cout; using std::endl;
-
+using namespace std;
 using namespace Ingen::Client;
 
 namespace Ingen {
@@ -140,7 +140,7 @@ SliderControlGroup::init(ControlPanel* panel, SharedPtr<PortModel> pm)
 
 	_slider->set_increments(0, 0);
 	_slider->set_range(min, max);
-	_value_spinner->set_range(min, max);
+	//_value_spinner->set_range(min, max);
 
 	set_value(pm->value());
 
@@ -179,8 +179,14 @@ SliderControlGroup::set_value(float val)
 {
 	_enable_signal = false;
 	if (_enabled) {
-		if (_slider->get_value() != val)
+		if (_slider->get_value() != val) {
+			const Gtk::Adjustment* range = _slider->get_adjustment();
+			const float lower = range->get_lower();
+			const float upper = range->get_upper();
+			if (val < lower || val > upper)
+				set_range(min(lower, val), max(lower, val));
 			_slider->set_value(val);
+		}
 		if (_value_spinner->get_value() != val)
 			_value_spinner->set_value(val);
 	}
@@ -192,7 +198,7 @@ void
 SliderControlGroup::set_range(float min, float max)
 {
 	_slider->set_range(min, max);
-	_value_spinner->set_range(min, max);
+	//_value_spinner->set_range(min, max);
 }
 
 
@@ -248,17 +254,8 @@ SliderControlGroup::update_value_from_spinner()
 	if (_enable_signal) {
 		_enable_signal = false;
 		const float value = _value_spinner->get_value();
-		
-		/*if (value < _min_spinner->get_value()) {
-			_min_spinner->set_value(value);
-			_slider->set_range(_min_spinner->get_value(), _max_spinner->get_value());
-		}
-		if (value > _max_spinner->get_value()) {
-			_max_spinner->set_value(value);
-			_slider->set_range(_min_spinner->get_value(), _max_spinner->get_value());
-		}*/
 
-		_slider->set_value(value);
+		set_value(value);
 
 		_control_panel->value_changed(_port_model, value);
 		

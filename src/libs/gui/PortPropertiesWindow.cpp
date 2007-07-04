@@ -68,7 +68,7 @@ PortPropertiesWindow::init(ControlGroup* control, SharedPtr<PortModel> pm)
 	float max = 1.0f;
 
 	const Atom& min_atom = pm->get_metadata("ingen:minimum");
-	const Atom& max_atom = pm->get_metadata("ingen_maximum");
+	const Atom& max_atom = pm->get_metadata("ingen:maximum");
 	if (min_atom.type() == Atom::FLOAT && max_atom.type() == Atom::FLOAT) {
 		min = min_atom.get_float();
 		max = max_atom.get_float();
@@ -121,12 +121,12 @@ PortPropertiesWindow::metadata_update(const string& key, const Atom& value)
 void
 PortPropertiesWindow::min_changed()
 {
-	float       min = _min_spinner->get_value();
-	const float max = _max_spinner->get_value();
+	const float min = _min_spinner->get_value();
+	float max       = _max_spinner->get_value();
 	
-	if (min >= max) {
-		min = max - 1.0;
-		_min_spinner->set_value(min);
+	if (max <= min) {
+		max = min + 1.0;
+		_max_spinner->set_value(max);
 	}
 
 	_control->set_range(min, max);
@@ -139,12 +139,12 @@ PortPropertiesWindow::min_changed()
 void
 PortPropertiesWindow::max_changed()
 {
-	const float min = _min_spinner->get_value();
-	float       max = _max_spinner->get_value();
+	float min       = _min_spinner->get_value();
+	const float max = _max_spinner->get_value();
 	
-	if (max <= min) {
-		max = min + 1.0;
-		_max_spinner->set_value(max);
+	if (min >= max) {
+		min = max - 1.0;
+		_min_spinner->set_value(min);
 	}
 
 	_control->set_range(min, max);
