@@ -41,9 +41,6 @@ class PortModel : public ObjectModel
 public:
 	enum Direction { INPUT, OUTPUT };
 	
-	// FIXME: metadataify
-	enum Hint      { NONE, INTEGER, TOGGLE, LOGARITHMIC };
-	
 	inline string type()           const { return _type; }
 	inline float  value()          const { return _current_val; }
 	inline bool   connected()      const { return (_connections > 0); }
@@ -52,10 +49,11 @@ public:
 	inline bool   is_audio()       const { return (_type == "ingen:audio"); }
 	inline bool   is_control()     const { return (_type == "ingen:control"); }
 	inline bool   is_midi()        const { return (_type == "ingen:midi"); }
-	inline bool   is_logarithmic() const { return (_hint == LOGARITHMIC); }
-	inline bool   is_integer()     const { return (_hint == INTEGER); }
-	inline bool   is_toggle()      const { return (_hint == TOGGLE); }
 	
+	bool is_logarithmic() const;
+	bool is_integer()     const;
+	bool is_toggle()      const;
+
 	inline bool operator==(const PortModel& pm) const { return (_path == pm._path); }
 	
 	inline void value(float val)
@@ -74,11 +72,10 @@ public:
 private:
 	friend class Store;
 	
-	PortModel(const Path& path, const string& type, Direction dir, Hint hint)
+	PortModel(const Path& path, const string& type, Direction dir)
 	: ObjectModel(path),
 	  _type(type),
 	  _direction(dir),
-	  _hint(hint),
 	  _current_val(0.0f),
 	  _connections(0)
 	{
@@ -86,18 +83,6 @@ private:
 			cerr << "[PortModel] Warning: Unknown port type" << endl;
 	}
 	
-	PortModel(const Path& path, const string& type, Direction dir)
-	: ObjectModel(path),
-	  _type(type),
-	  _direction(dir),
-	  _hint(NONE),
-	  _current_val(0.0f),
-	  _connections(0)
-	{
-		if (!is_audio() && !is_control() && !is_input())
-			cerr << "[PortModel] Warning: Unknown port type" << endl;
-	}
-
 	void add_child(SharedPtr<ObjectModel> c)    { throw; }
 	void remove_child(SharedPtr<ObjectModel> c) { throw; }
 	
@@ -106,7 +91,6 @@ private:
 	
 	string    _type;
 	Direction _direction;
-	Hint      _hint;
 	float     _current_val;
 	size_t    _connections;
 };

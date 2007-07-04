@@ -99,6 +99,7 @@ ControlPanel::add_port(SharedPtr<PortModel> pm)
 	// Add port
 	if (pm->is_control() && pm->is_input()) {
 		SliderControlGroup* cg = NULL;
+#if 0
 		if (pm->is_integer())
 			cerr << "FIXME: integer\n";
 			//cg = new IntegerControlGroup(this, pm);
@@ -106,10 +107,13 @@ ControlPanel::add_port(SharedPtr<PortModel> pm)
 			cerr << "FIXME: toggle\n";
 			//cg = new ToggleControlGroup(this, pm);
 		else {
+#endif
 			Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference("control_strip");
 			xml->get_widget_derived("control_strip", cg);
 			cg->init(this, pm);
+#if 0
 		}
+#endif
 	
 		if (_controls.size() > 0)
 			_control_box->pack_start(*Gtk::manage(new Gtk::HSeparator()), false, false, 4);

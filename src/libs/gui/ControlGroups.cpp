@@ -93,7 +93,7 @@ SliderControlGroup::init(ControlPanel* panel, SharedPtr<PortModel> pm)
 	
 	_slider->set_draw_value(false);
 
-	_name_label->signal_button_press_event().connect(sigc::mem_fun(*this, &SliderControlGroup::clicked));
+	signal_button_press_event().connect(sigc::mem_fun(*this, &SliderControlGroup::clicked));
 	_slider->signal_button_press_event().connect(sigc::mem_fun(*this, &SliderControlGroup::clicked));
 
 	_slider->signal_event().connect(
@@ -138,7 +138,13 @@ SliderControlGroup::init(ControlPanel* panel, SharedPtr<PortModel> pm)
 	if (max <= min)
 		max = min + 1.0f;
 
-	_slider->set_increments(0, 0);
+	if (pm->is_integer() || pm->is_toggle()) {
+		_slider->set_increments(1, 10);
+		_value_spinner->set_digits(0);
+	} else {
+		_slider->set_increments(0, 0);
+	}
+
 	_slider->set_range(min, max);
 	//_value_spinner->set_range(min, max);
 
@@ -177,6 +183,9 @@ SliderControlGroup::menu_properties()
 void
 SliderControlGroup::set_value(float val)
 {
+	if (_port_model->is_integer())
+		val = lrintf(val);
+
 	_enable_signal = false;
 	if (_enabled) {
 		if (_slider->get_value() != val) {
@@ -237,12 +246,22 @@ void
 SliderControlGroup::update_value_from_slider()
 {
 	if (_enable_signal) {
-		const float value = _slider->get_value();
+		float value = _slider->get_value();
+		bool change = true;
+			
 		_enable_signal = false;
 		
-		_value_spinner->set_value(value);
-		_control_panel->value_changed(_port_model, value);
-
+		if (_port_model->is_integer()) {
+			value = lrintf(value);
+			if (value == lrintf(_port_model->value()))
+				change = false;
+		}
+		
+		if (change) {
+			_value_spinner->set_value(value);
+			_control_panel->value_changed(_port_model, value);
+		}
+		
 		_enable_signal = true;
 	}
 }

@@ -73,7 +73,6 @@ private:
 
 	typedef std::map<Path, Raul::RDF::Node> NodeMap;
 	Mode              _mode;
-	std::string       _filename;
 	NodeMap           _node_map;
 	string            _base_uri;
 	Raul::RDF::World& _world;

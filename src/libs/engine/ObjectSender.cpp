@@ -96,29 +96,22 @@ ObjectSender::send_node(ClientInterface* client, const Node* node, bool recursiv
 		return;
 	}
 	
-	// FIXME: bundleify
-	//client->bundle_begin();
+	client->bundle_begin();
 	
-	const Raul::Array<Port*>& ports = node->ports();
-
-	client->new_node(node->plugin()->uri(), node->path(), polyphonic, ports.size());
+	client->new_node(node->plugin()->uri(), node->path(), polyphonic, node->ports().size());
 	
-	if (recursive) {
-		// Send ports
-		for (size_t j=0; j < ports.size(); ++j) {
-			Port* const port = ports.at(j);
-			assert(port);
-
-			send_port(client, port);
-		}
-	}
-
 	// Send metadata
 	const GraphObject::MetadataMap& data = node->metadata();
 	for (GraphObject::MetadataMap::const_iterator j = data.begin(); j != data.end(); ++j)
 		client->metadata_update(node->path(), (*j).first, (*j).second);
 	
-	//client->bundle_end();
+	client->bundle_end();
+	
+	if (recursive) {
+		// Send ports
+		for (size_t j=0; j < node->ports().size(); ++j)
+			send_port(client, node->ports().at(j));
+	}
 }
 
 
@@ -142,6 +135,8 @@ ObjectSender::send_port(ClientInterface* client, const Port* port)
 	
 	//cerr << ", type = " << type << endl;
 
+	client->bundle_begin();
+
 	client->new_port(port->path(), type, port->is_output());
 	
 	// Send control value
@@ -155,6 +150,8 @@ ObjectSender::send_port(ClientInterface* client, const Port* port)
 	const GraphObject::MetadataMap& data = port->metadata();
 	for (GraphObject::MetadataMap::const_iterator j = data.begin(); j != data.end(); ++j)
 		client->metadata_update(port->path(), (*j).first, (*j).second);
+	
+	client->bundle_end();
 }
 
 

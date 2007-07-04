@@ -36,19 +36,19 @@ MidiTriggerNode::MidiTriggerNode(const string& path, size_t poly, Patch* parent,
 	_ports->at(0) = _midi_in_port;
 	
 	_note_port = new InputPort(this, "NoteNumber", 1, 1, DataType::FLOAT, 1);
-	//	new PortInfo("Note Number", CONTROL, INPUT, INTEGER, 60, 0, 127), 1);
+	_note_port->set_metadata("ingen:minimum", 0.0f);
+	_note_port->set_metadata("ingen:maximum", 127.0f);
+	_note_port->set_metadata("ingen:default", 60.0f);
+	_note_port->set_metadata("ingen:integer", 1);
 	_ports->at(1) = _note_port;
 	
 	_gate_port = new OutputPort(this, "Gate", 2, 1, DataType::FLOAT, _buffer_size);
-	//	new PortInfo("Gate", AUDIO, OUTPUT, 0, 0, 1), _buffer_size);
 	_ports->at(2) = _gate_port;
 
 	_trig_port = new OutputPort(this, "Trigger", 3, 1, DataType::FLOAT, _buffer_size);
-	//	new PortInfo("Trigger", AUDIO, OUTPUT, 0, 0, 1), _buffer_size);
 	_ports->at(3) = _trig_port;
 	
 	_vel_port = new OutputPort(this, "Velocity", 4, poly, DataType::FLOAT, _buffer_size);
-	//	new PortInfo("Velocity", AUDIO, OUTPUT, 0, 0, 1), _buffer_size);
 	_ports->at(4) = _vel_port;
 	
 	plugin()->plug_label("trigger_in");

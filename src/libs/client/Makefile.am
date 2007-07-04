@@ -35,6 +35,7 @@ libingen_client_la_SOURCES = \
 	NodeModel.h \
 	NodeModel.cpp \
 	PortModel.h \
+	PortModel.cpp \
 	PatchModel.h \
 	PatchModel.cpp \
 	PluginModel.h \

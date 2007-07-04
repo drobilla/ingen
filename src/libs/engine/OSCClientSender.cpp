@@ -351,20 +351,13 @@ void OSCClientSender::new_node(string   plugin_uri,
  */
 void
 OSCClientSender::new_port(string path,
-	                string data_type,
-	                bool          is_output)
+                          string data_type,
+                          bool   is_output)
 {
 	if (!_enabled)
 		return;
 
-	//PortInfo* info = port->port_info();
-	
 	lo_send(_address, "/ingen/new_port", "ssi", path.c_str(), data_type.c_str(), is_output);
-	
-	// Send metadata
-	/*const map<string, string>& data = port->metadata();
-	for (map<string, string>::const_iterator i = data.begin(); i != data.end(); ++i)
-		metadata_update(port->path(), (*i).first, (*i).second);*/
 }
 
 

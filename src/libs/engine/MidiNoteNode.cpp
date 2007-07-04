@@ -45,19 +45,21 @@ MidiNoteNode::MidiNoteNode(const string& path, size_t poly, Patch* parent, Sampl
 	_ports->at(0) = _midi_in_port;
 
 	_freq_port = new OutputPort(this, "Frequency", 1, poly, DataType::FLOAT, _buffer_size);
-	//	new PortInfo("Frequency", AUDIO, OUTPUT, 440, 0, 99999), _buffer_size);
 	_ports->at(1) = _freq_port;
 	
 	_vel_port = new OutputPort(this, "Velocity", 2, poly, DataType::FLOAT, _buffer_size);
-	//	new PortInfo("Velocity", AUDIO, OUTPUT, 0, 0, 1), _buffer_size);
+	_vel_port->set_metadata("ingen:minimum", 0.0f);
+	_vel_port->set_metadata("ingen:maximum", 1.0f);
 	_ports->at(2) = _vel_port;
 	
 	_gate_port = new OutputPort(this, "Gate", 3, poly, DataType::FLOAT, _buffer_size);
-	//	new PortInfo("Gate", AUDIO, OUTPUT, 0, 0, 1), _buffer_size);
+	_gate_port->set_metadata("ingen:toggled", 1);
+	_gate_port->set_metadata("ingen:default", 0.0f);
 	_ports->at(3) = _gate_port;
 	
 	_trig_port = new OutputPort(this, "Trigger", 4, poly, DataType::FLOAT, _buffer_size);
-	//	new PortInfo("Trigger", AUDIO, OUTPUT, 0, 0, 1), _buffer_size);
+	_trig_port->set_metadata("ingen:toggled", 1);
+	_trig_port->set_metadata("ingen:default", 0.0f);
 	_ports->at(4) = _trig_port;
 	
 	plugin()->plug_label("note_in");

@@ -70,7 +70,6 @@ Serializer::start_to_filename(const string& filename)
 	_base_uri = "file://" + filename;
 	_model = new RDF::Model(_world);
 	_mode = TO_FILE;
-	_filename = filename;
 }
 
 
@@ -89,7 +88,6 @@ Serializer::start_to_string()
 	_base_uri = "";
 	_model = new RDF::Model(_world);
 	_mode = TO_STRING;
-	_filename = "";
 }
 
 
@@ -104,11 +102,11 @@ Serializer::finish()
 	string ret = "";
 
 	if (_mode == TO_FILE)
-		_model->serialize_to_file(_filename);
+		_model->serialize_to_file(_base_uri);
 	else
 		ret = _model->serialize_to_string();
 
-	_filename = "";
+	_base_uri = "";
 	_node_map.clear();
 	
 	return ret;
