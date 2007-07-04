@@ -75,9 +75,12 @@ LADSPANode::instantiate()
 	Port* port = NULL;
 	
 	for (size_t j=0; j < _descriptor->PortCount; ++j) {
-		cerr << "Name before: " << _descriptor->PortNames[j] << endl;
 		port_name = Path::nameify(_descriptor->PortNames[j]);
-		cerr << "Name after: " << port_name << endl;
+		
+		if (_descriptor->PortNames[j] != port_name)
+			cerr << "WARNING: Translated LADSPA port name: " <<
+				_descriptor->PortNames[j] << " -> " << port_name << endl;
+
 		string::size_type slash_index;
 		
 		// Name mangling, to guarantee port names are unique

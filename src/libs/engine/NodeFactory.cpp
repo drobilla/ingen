@@ -272,7 +272,7 @@ NodeFactory::load_lv2_plugins()
 {
 	SLV2Plugins plugins = slv2_world_get_all_plugins(_world);
 
-	cerr << "[NodeFactory] Found " << slv2_plugins_size(plugins) << " LV2 plugins:" << endl;
+	//cerr << "[NodeFactory] Found " << slv2_plugins_size(plugins) << " LV2 plugins:" << endl;
 
 	for (unsigned i=0; i < slv2_plugins_size(plugins); ++i) {
 
@@ -280,7 +280,7 @@ NodeFactory::load_lv2_plugins()
 
 		const char* uri = (const char*)slv2_plugin_get_uri(lv2_plug);
 		assert(uri);
-		cerr << "\t" << uri << endl;
+		//cerr << "\t" << uri << endl;
 
 		Plugin* plug = NULL;
 
