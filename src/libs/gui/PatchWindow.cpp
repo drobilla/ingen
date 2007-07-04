@@ -168,6 +168,9 @@ PatchWindow::set_patch(SharedPtr<PatchModel> patch, SharedPtr<PatchView> view)
 		return;
 
 	_enable_signal = false;
+	
+	new_port_connection.disconnect();
+	removed_port_connection.disconnect();
 
 	_patch = patch;
 
@@ -203,7 +206,7 @@ PatchWindow::set_patch(SharedPtr<PatchModel> patch, SharedPtr<PatchView> view)
 
 	for (PortModelList::const_iterator p = patch->ports().begin();
 			p != patch->ports().end(); ++p) {
-		if ((*p)->is_control()) {
+		if ((*p)->is_control() && (*p)->is_input()) {
 			_menu_view_control_window->property_sensitive() = true;
 			break;
 		}
@@ -223,11 +226,42 @@ PatchWindow::set_patch(SharedPtr<PatchModel> patch, SharedPtr<PatchView> view)
 		_menu_destroy_patch->set_sensitive(false);
 	else
 		_menu_destroy_patch->set_sensitive(true);
-	
+
+	new_port_connection = patch->new_port_sig.connect(sigc::mem_fun(this, &PatchWindow::patch_port_added));
+	removed_port_connection = patch->removed_port_sig.connect(sigc::mem_fun(this, &PatchWindow::patch_port_removed));
 	show_all();
 
 	_enable_signal = true;
 }
+
+
+void
+PatchWindow::patch_port_added(SharedPtr<PortModel> port)
+{
+	if (port->is_control() && port->is_input()) {
+		_menu_view_control_window->property_sensitive() = true;
+	}
+}
+
+
+void
+PatchWindow::patch_port_removed(SharedPtr<PortModel> port)
+{
+	if (port->is_control() && port->is_input()) {
+		
+		bool found_control = false;
+
+		for (PortModelList::const_iterator i = _patch->ports().begin(); i != _patch->ports().end(); ++i) {
+			if ((*i)->is_control() && (*i)->is_input()) {
+				found_control = true;
+				break;
+			}
+		}
+		
+		_menu_view_control_window->property_sensitive() = found_control;
+	}
+}
+
 
 
 void
@@ -384,12 +418,9 @@ bool
 PatchWindow::on_key_press_event(GdkEventKey* event)
 {
 	if (event->keyval == GDK_Delete) {
-		cerr << "FIXME: delete key\n";
-		/*
-		if (_patch && _patch->get_view()) {
-			assert(_patch->get_view()->canvas());
-			_patch->get_view()->canvas()->destroy_selected();
-		}*/
+		if (_view) {
+			_view->canvas()->destroy_selection();
+		}
 		return true;
 	} else {
 		return Gtk::Window::on_key_press_event(event);

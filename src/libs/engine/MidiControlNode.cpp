@@ -76,13 +76,6 @@ MidiControlNode::process(SampleCount nframes, FrameTime start, FrameTime end)
 
 	while (midi_in->get_event(&timestamp, &size, &buffer) < nframes) {
 
-		printf("EVENT: ");
-		for (size_t i=0; i < size; ++i)
-			printf("%X ", (int)buffer[i]);
-		printf("\n");
-		
-		//const FrameTime time = start + (FrameTime)timestamp;
-
 		if (size >= 3 && (buffer[0] & 0xF0) == MIDI_CMD_CONTROL)
 			control(buffer[1], buffer[2], (SampleCount)timestamp);
 		

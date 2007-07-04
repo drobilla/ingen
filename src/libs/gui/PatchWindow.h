@@ -79,6 +79,10 @@ protected:
 	bool on_key_press_event(GdkEventKey* event);
 	
 private:
+
+	void patch_port_added(SharedPtr<PortModel> port);
+	void patch_port_removed(SharedPtr<PortModel> port);
+
 	void event_import();
 	void event_import_location();
 	void event_save();
@@ -98,6 +102,9 @@ private:
 	SharedPtr<PatchModel> _patch;
 	SharedPtr<PatchView>  _view;
 	
+	sigc::connection new_port_connection;
+	sigc::connection removed_port_connection;
+
 	bool _enable_signal;
 	bool _position_stored;
 	int  _x;
