@@ -76,15 +76,17 @@ MidiControlNode::process(SampleCount nframes, FrameTime start, FrameTime end)
 
 	while (midi_in->get_event(&timestamp, &size, &buffer) < nframes) {
 
-		cerr << "EVENT: ";
+		printf("EVENT: ");
 		for (size_t i=0; i < size; ++i)
-			cerr << buffer[i] << " ";
-		cerr << endl;
+			printf("%X ", (int)buffer[i]);
+		printf("\n");
 		
 		//const FrameTime time = start + (FrameTime)timestamp;
 
 		if (size >= 3 && (buffer[0] & 0xF0) == MIDI_CMD_CONTROL)
 			control(buffer[1], buffer[2], (SampleCount)timestamp);
+		
+		midi_in->increment();
 	}
 	
 	NodeBase::post_process(nframes, start, end);
@@ -132,7 +134,7 @@ MidiControlNode::control(uchar control_num, uchar val, SampleCount offset)
 	}
 
 	if (control_num == ((AudioBuffer*)_param_port->buffer(0))->value_at(0)) {
-		((AudioBuffer*)_control_port->buffer(0))->set(scaled_value, offset);
+		((AudioBuffer*)_control_port->buffer(0))->set(scaled_value, 0);
 		((AudioBuffer*)_audio_port->buffer(0))->set(scaled_value, offset);
 	}
 }

@@ -221,6 +221,14 @@ InputPort::set_buffer_size(size_t size)
 	
 }
 
+void
+InputPort::post_process(SampleCount nframes, FrameTime start, FrameTime end)
+{
+	// Prepare for next cycle
+	for (size_t i=0; i < _poly; ++i)
+		_buffers.at(i)->prepare_write(nframes);
+}
+
 
 } // namespace Ingen
 

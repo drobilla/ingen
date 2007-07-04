@@ -92,6 +92,8 @@ MidiTriggerNode::process(SampleCount nframes, FrameTime start, FrameTime end)
 				break;
 			}
 		}
+		
+		midi_in->increment();
 	}
 	
 	NodeBase::post_process(nframes, start, end);
