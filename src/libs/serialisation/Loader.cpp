@@ -76,7 +76,7 @@ Loader::load(SharedPtr<EngineInterface> engine,
 
 	RDF::Node poly_node = (*results.begin())["poly"];
 	assert(poly_node.is_int());
-	size_t patch_poly = (size_t)poly_node.to_int();
+	const size_t patch_poly = static_cast<size_t>(poly_node.to_int());
 	
 	/* Get name (if available/necessary) */
 
@@ -116,8 +116,8 @@ Loader::load(SharedPtr<EngineInterface> engine,
 
 	for (RDF::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
 		
-		string name   = (*i)["name"].to_string();
-		string plugin = (*i)["plugin"].to_string();
+		const string name   = (*i)["name"].to_string();
+		const string plugin = (*i)["plugin"].to_string();
 		
 		const Path node_path = patch_path.base() + (string)name;
 
@@ -147,8 +147,8 @@ Loader::load(SharedPtr<EngineInterface> engine,
 
 	for (RDF::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
 		
-		string name  = (*i)["name"].to_string();
-		string patch = (*i)["patch"].to_string();
+		const string name  = (*i)["name"].to_string();
+		const string patch = (*i)["patch"].to_string();
 		
 		const Path subpatch_path = patch_path.base() + (string)name;
 		
@@ -177,11 +177,11 @@ Loader::load(SharedPtr<EngineInterface> engine,
 
 	for (RDF::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
 		
-		string node_name = (*i)["nodename"].to_string();
-		string port_name = (*i)["portname"].to_string();
-		const float val                = (*i)["portval"].to_float();
+		const string node_name = (*i)["nodename"].to_string();
+		const string port_name = (*i)["portname"].to_string();
+		const float  val       = (*i)["portval"].to_float();
 
-		Path port_path = patch_path.base() + (const string&)node_name +"/"+ (const string&)port_name;
+		const Path port_path = patch_path.base() + node_name +"/"+ port_name;
 
 		engine->set_port_value(port_path, val);
 	}
@@ -204,9 +204,9 @@ Loader::load(SharedPtr<EngineInterface> engine,
 	results = query.run(*rdf_world, model);
 
 	for (RDF::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
-		string name     = (*i)["name"].to_string();
-		string type     = rdf_world->qualify((*i)["type"].to_string());
-		string datatype = (*i)["datatype"].to_string();
+		const string name     = (*i)["name"].to_string();
+		const string type     = rdf_world->qualify((*i)["type"].to_string());
+		const string datatype = (*i)["datatype"].to_string();
 
 		const Path port_path = patch_path.base() + (string)name;
 
