@@ -134,9 +134,12 @@ main(int argc, char** argv)
 		engine_interface = engine->new_queued_interface();
 
 	if (engine && engine_interface) {
-		engine->start_jack_driver();
+
 		if (use_osc)
 			engine->start_osc_driver(args.engine_port_arg);
+
+		engine->start_jack_driver();
+
 		engine->activate();
 	}
 
