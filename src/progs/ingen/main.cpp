@@ -209,12 +209,11 @@ main(int argc, char** argv)
 	/* Didn't run the GUI, listen to OSC and do our own main thing. */
 	if (engine && !ran_gui) {
 
-		engine->start_jack_driver();
-
 		signal(SIGINT, catch_int);
 		signal(SIGTERM, catch_int);
 		
 		engine->start_osc_driver(args.engine_port_arg);
+		engine->start_jack_driver();
 		engine->activate();
 
 		engine->main();
