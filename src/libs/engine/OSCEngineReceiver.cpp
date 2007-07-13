@@ -164,10 +164,11 @@ OSCEngineReceiver::_run()
 	 * they all get executed in the same cycle */
 
 	while (true) {
-		if ( ! _server) {
+		assert(_server);
+		/*if ( ! _server) {
 			cout << "[OSCEngineReceiver] Server is NULL, exiting" << endl;
 			break;
-		}
+		}*/
 
 		assert( ! unprepared_events());
 		
