@@ -43,7 +43,6 @@ QueuedEventSource::QueuedEventSource(size_t queued_size, size_t stamped_size)
 	assert(context() == THREAD_PRE_PROCESS);
 
 	set_name("QueuedEventSource");
-	Thread::start();
 }
 
 
