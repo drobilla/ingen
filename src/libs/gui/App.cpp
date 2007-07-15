@@ -109,8 +109,13 @@ App::run(int argc, char** argv,
 	_instance->configuration()->load_settings();
 	_instance->configuration()->apply_settings();
 	
-	if (Glib::file_test(PKGDATADIR "/ingen.svg", Glib::FILE_TEST_EXISTS))
-		Gtk::Window::set_default_icon_from_file(PKGDATADIR "/ingen.svg");
+	const Glib::ustring icon_path = PKGDATADIR "/ingen.svg";
+	try {
+		if (Glib::file_test(icon_path, Glib::FILE_TEST_EXISTS))
+			Gtk::Window::set_default_icon_from_file(icon_path);
+	} catch (Gdk::PixbufError err) {
+		cerr << "Unable to load window icon " << icon_path << ": " << err.what() << endl;
+	}
 	
 	App::instance().connect_window()->start(engine, interface);
 	
