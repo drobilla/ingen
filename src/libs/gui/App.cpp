@@ -76,7 +76,7 @@ App::App()
 	_rdf_world.add_prefix("xsd", "http://www.w3.org/2001/XMLSchema#");
 	_rdf_world.add_prefix("ingen", "http://drobilla.net/ns/ingen#");
 	_rdf_world.add_prefix("ingenuity", "http://drobilla.net/ns/ingenuity#");
-	_rdf_world.add_prefix("lv2", "http://lv2plug.in/ontology#");
+	_rdf_world.add_prefix("lv2", "http://lv2plug.in/ns/lv2core#");
 	_rdf_world.add_prefix("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
 	_rdf_world.add_prefix("doap", "http://usefulinc.com/ns/doap#");
 	

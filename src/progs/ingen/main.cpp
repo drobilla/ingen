@@ -150,7 +150,7 @@ main(int argc, char** argv)
 		rdf_world.add_prefix("xsd", "http://www.w3.org/2001/XMLSchema#");
 		rdf_world.add_prefix("ingen", "http://drobilla.net/ns/ingen#");
 		rdf_world.add_prefix("ingenuity", "http://drobilla.net/ns/ingenuity#");
-		rdf_world.add_prefix("lv2", "http://lv2plug.in/ontology#");
+		rdf_world.add_prefix("lv2", "http://lv2plug.in/ns/lv2core#");
 		rdf_world.add_prefix("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
 		rdf_world.add_prefix("doap", "http://usefulinc.com/ns/doap#");
 
