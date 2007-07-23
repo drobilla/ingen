@@ -233,7 +233,7 @@ AudioBuffer::join(Buffer* buf)
 	if (!abuf)
 		return false;
 
-	assert(abuf->size() == _size);
+	assert(abuf->size() >= _size);
 	
 	_joined_buf = abuf;
 	_filled_size = abuf->filled_size();

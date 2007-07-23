@@ -76,14 +76,6 @@ ConnectionEvent::pre_process()
 		return;
 	}
 			
-	// FIXME: MIDI buffer size is a kluge all around
-	if (_src_port->type() == DataType::FLOAT
-			&& _src_port->buffer_size() != _dst_port->buffer_size()) {
-		_error = TYPE_MISMATCH;
-		QueuedEvent::pre_process();
-		return;
-	}
-
 	_dst_input_port = dynamic_cast<InputPort*>(_dst_port);
 	_src_output_port = dynamic_cast<OutputPort*>(_src_port);
 	

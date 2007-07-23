@@ -15,6 +15,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <algorithm>
 #include "Connection.h"
 #include "util.h"
 #include "Node.h"
@@ -35,7 +36,8 @@ Connection::Connection(Port* src_port, Port* dst_port)
 	, _dst_port(dst_port)
 	, _local_buffer(NULL)
 	, _buffer_size(dst_port->buffer_size())
-	, _must_mix(src_port->poly() != dst_port->poly())
+	, _must_mix( (src_port->poly() != dst_port->poly())
+			|| (src_port->buffer(0)->size() < dst_port->buffer(0)->size()) )
 	, _pending_disconnection(false)
 {
 	assert(src_port);
@@ -88,17 +90,35 @@ Connection::process(SampleCount nframes, FrameTime start, FrameTime end)
 	if (_must_mix) {
 		assert(type() == DataType::FLOAT);
 
-		AudioBuffer* mix_buf = (AudioBuffer*)_local_buffer;
+		const AudioBuffer* const src_buffer = (AudioBuffer*)src_port()->buffer(0);
+		AudioBuffer*             mix_buf    = (AudioBuffer*)_local_buffer;
+
+		const size_t copy_size = std::min(src_buffer->size(), mix_buf->size());
 
 		//cerr << "Mixing " << src_port()->buffer(0)->data()
 		//	<< " -> " << _local_buffer->data() << endl;
 
-		mix_buf->copy((AudioBuffer*)src_port()->buffer(0), 0, _buffer_size-1);
+		// Copy src buffer to start of mix buffer
+		mix_buf->copy((AudioBuffer*)src_port()->buffer(0), 0, copy_size-1);
+
+		// Write last value of src buffer to remainder of dst buffer, if necessary
+		if (copy_size < mix_buf->size())
+			mix_buf->set(src_buffer->value_at(copy_size-1), copy_size, mix_buf->size()-1);
 	
-		// Mix all the source's voices down into local buffer starting at the second
+		// Accumulate the source's voices into local buffer starting at the second
 		// voice (buffer is already set to first voice above)
-		for (size_t j=1; j < src_port()->poly(); ++j)
-			mix_buf->accumulate((AudioBuffer*)src_port()->buffer(j), 0, _buffer_size-1);
+		for (size_t j=1; j < src_port()->poly(); ++j) {
+			mix_buf->accumulate((AudioBuffer*)src_port()->buffer(j), 0, copy_size-1);
+		}
+		
+		// Find the summed value and write it to the remainder of dst buffer
+		if (copy_size < mix_buf->size()) {
+			float src_value = src_buffer->value_at(copy_size-1);
+			for (size_t j=1; j < src_port()->poly(); ++j)
+				src_value += ((AudioBuffer*)src_port()->buffer(j))->value_at(copy_size-1);
+
+			mix_buf->set(src_value, copy_size, mix_buf->size()-1);
+		}
 
 		// Scale the buffer down.
 		if (src_port()->poly() > 1)
