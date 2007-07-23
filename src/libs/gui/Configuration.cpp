@@ -38,10 +38,12 @@ using namespace Ingen::Client;
 
 
 Configuration::Configuration()
-: _patch_path("/usr/share/ingen/patches:/usr/local/share/ingen/patches"),
-  _audio_port_color(  0x394f66B0),
-  _control_port_color(0x396639B0),
-  _midi_port_color(   0x663939B0)
+	: _patch_path("/usr/share/ingen/patches:/usr/local/share/ingen/patches")
+	// Agave FTW
+	, _audio_port_color(  0x0D597FFF)
+	, _control_port_color(0x2F7F0DFF)
+	, _midi_port_color(   0x7F240DFF)
+	, _osc_port_color(    0x5D0D7FFF)
 {
 }
 
@@ -140,7 +142,7 @@ Configuration::apply_settings()
 }
 
 
-int
+uint32_t
 Configuration::get_port_color(const PortModel* pi)
 {
 	assert(pi != NULL);
@@ -151,9 +153,13 @@ Configuration::get_port_color(const PortModel* pi)
 		return _audio_port_color;
 	} else if (pi->is_midi()) {
 		return _midi_port_color;
+	} else if (pi->is_osc()) {
+		return _osc_port_color;
 	}
 	
-	cerr << "[Configuration] Unknown port type!  Port will be bright red, this is an error." << endl;
+	cerr << "[Configuration] Unknown port type " << pi->type() << ", port will appear bright red."
+		<< endl;
+	
 	return 0xFF0000B0;
 }
 

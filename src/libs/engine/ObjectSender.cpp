@@ -131,6 +131,8 @@ ObjectSender::send_port(ClientInterface* client, const Port* port)
 			type = "ingen:audio";
 	} else if (port->type() == DataType::MIDI) {
 		type = "ingen:midi";
+	} else if (port->type() == DataType::OSC) {
+		type = "ingen:osc";
 	}
 	
 	//cerr << ", type = " << type << endl;

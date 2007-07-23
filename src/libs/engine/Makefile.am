@@ -9,6 +9,8 @@ libingen_engine_la_CXXFLAGS = @RAUL_CFLAGS@ @JACK_CFLAGS@ @LOSC_CFLAGS@ @ALSA_CF
 libingen_engine_la_LDFLAGS = -no-undefined -module -avoid-version
 libingen_engine_la_LIBADD = @RAUL_LIBS@ @JACK_LIBS@ @LOSC_LIBS@ @ALSA_LIBS@ @LASH_LIBS@ @SLV2_LIBS@
 
+AM_CFLAGS="-std=c99"
+
 libingen_engine_la_SOURCES = \
 	engine.h \
 	engine.cpp \
@@ -45,6 +47,9 @@ libingen_engine_la_SOURCES = \
 	AudioBuffer.cpp \
 	MidiBuffer.h \
 	MidiBuffer.cpp \
+	OSCBuffer.h \
+	OSCBuffer.cpp \
+	../../../../lv2/extensions/osc/lv2_osc.c \
 	BufferFactory.h \
 	BufferFactory.cpp \
 	Port.h \

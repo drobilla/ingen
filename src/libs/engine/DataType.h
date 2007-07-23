@@ -33,16 +33,19 @@ public:
 	enum Symbol {
 		UNKNOWN = 0,
 		FLOAT   = 1,
-		MIDI    = 2
+		MIDI    = 2,
+		OSC     = 3
 	};
 
 	DataType(const std::string& uri)
 	: _symbol(UNKNOWN)
 	{
-		if (uri == type_uris[MIDI]) {
-			_symbol = MIDI;
-		} else if (uri == type_uris[FLOAT]) {
+		if (uri == type_uris[FLOAT]) {
 			_symbol = FLOAT;
+		} else if (uri == type_uris[MIDI]) {
+			_symbol = MIDI;
+		} else if (uri == type_uris[OSC]) {
+			_symbol = OSC;
 		}
 	}
 
@@ -62,7 +65,7 @@ private:
 	Symbol _symbol;
 
 	// Defined in Port.cpp for no good reason
-	static const char* const type_uris[3];
+	static const char* const type_uris[4];
 };
 
 

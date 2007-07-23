@@ -49,6 +49,7 @@ public:
 	inline bool   is_audio()       const { return (_type == "ingen:audio"); }
 	inline bool   is_control()     const { return (_type == "ingen:control"); }
 	inline bool   is_midi()        const { return (_type == "ingen:midi"); }
+	inline bool   is_osc()         const { return (_type == "ingen:osc"); }
 	
 	bool is_logarithmic() const;
 	bool is_integer()     const;

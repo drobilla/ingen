@@ -68,6 +68,8 @@ AddPortEvent::AddPortEvent(Engine&              engine,
 		_data_type = DataType::FLOAT;
 	else if (type == "ingen:midi")
 		_data_type = DataType::MIDI;
+	else if (type == "ingen:osc")
+		_data_type = DataType::OSC;
 }
 
 
@@ -87,7 +89,7 @@ AddPortEvent::pre_process()
 		assert(_patch->path() == _path.parent());
 		
 		size_t buffer_size = 1;
-		if (_type == "ingen:audio" || _type == "ingen:midi")
+		if (_type != "ingen:control")
 			buffer_size = _engine.audio_driver()->buffer_size();
 	
 		const size_t old_num_ports = _patch->num_ports();
@@ -145,6 +147,8 @@ AddPortEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 			_engine.audio_driver()->add_port(_driver_port);
 		else if (_type == "ingen:midi")
 			_engine.midi_driver()->add_port(_driver_port);
+		else if (_type == "ingen:osc")
+			cerr << "OSC DRIVER PORT" << endl;
 }
 
 

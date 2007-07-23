@@ -18,6 +18,7 @@
 #include "BufferFactory.h"
 #include "AudioBuffer.h"
 #include "MidiBuffer.h"
+#include "OSCBuffer.h"
 
 namespace Ingen {
 namespace BufferFactory {
@@ -30,6 +31,8 @@ create(DataType type, size_t size)
 		return new AudioBuffer(size);
 	else if (type == DataType::MIDI)
 		return new MidiBuffer(size);
+	else if (type == DataType::OSC)
+		return new OSCBuffer(size);
 	else
 		return NULL;
 }

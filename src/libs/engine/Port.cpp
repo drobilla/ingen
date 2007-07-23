@@ -24,8 +24,8 @@
 namespace Ingen {
 
 
-// Yeah, this shouldn't be here.
-const char* const DataType::type_uris[3] = { "UNKNOWN", "FLOAT", "MIDI" };
+// FIXME: Make these actually URIs..
+const char* const DataType::type_uris[4] = { "UNKNOWN", "FLOAT", "MIDI", "OSC" };
 
 
 Port::Port(Node* const node, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size)

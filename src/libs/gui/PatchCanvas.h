@@ -117,6 +117,8 @@ private:
 	Gtk::MenuItem*  _menu_add_control_output;
 	Gtk::MenuItem*  _menu_add_midi_input;
 	Gtk::MenuItem*  _menu_add_midi_output;
+	Gtk::MenuItem*  _menu_add_osc_input;
+	Gtk::MenuItem*  _menu_add_osc_output;
 	Gtk::MenuItem*  _menu_load_plugin;
 	Gtk::MenuItem*  _menu_load_patch;
 	Gtk::MenuItem*  _menu_new_patch;
