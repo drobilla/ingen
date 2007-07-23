@@ -31,6 +31,7 @@
 #include "Patch.h"
 #include "ObjectStore.h"
 #include "MidiDriver.h"
+#include "OSCDriver.h"
 #include "QueuedEventSource.h"
 #include "PostProcessor.h"
 #include "CreatePatchEvent.h"
@@ -49,6 +50,7 @@ namespace Ingen {
 
 Engine::Engine()
 : _midi_driver(NULL),
+  _osc_driver(NULL),
   _maid(new Raul::Maid(maid_queue_size)),
   _post_processor(new PostProcessor(*_maid, post_processor_queue_size)),
   _broadcaster(new ClientBroadcaster()),
@@ -79,6 +81,7 @@ Engine::~Engine()
 	delete _broadcaster;
 	delete _node_factory;
 	delete _midi_driver;
+	delete _osc_driver;
 	
 	delete _maid;
 
@@ -93,6 +96,8 @@ Engine::driver(DataType type)
 		return _audio_driver.get();
 	else if (type == DataType::MIDI)
 		return _midi_driver;
+	else if (type == DataType::OSC)
+		return _osc_driver;
 	else
 		return NULL;
 }
@@ -154,6 +159,8 @@ Engine::start_osc_driver(int port)
 
 	_event_source = SharedPtr<EventSource>(new OSCEngineReceiver(
 			*this, pre_processor_queue_size, port));
+	
+	//_osc_driver = _event_source;
 }
 	
 

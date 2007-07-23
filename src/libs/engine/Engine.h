@@ -31,6 +31,7 @@ namespace Ingen {
 
 class AudioDriver;
 class MidiDriver;
+class OSCDriver;
 class NodeFactory;
 class ClientBroadcaster;
 class Patch;
@@ -80,6 +81,7 @@ public:
 	EventSource*       event_source()       const { return _event_source.get(); }
 	AudioDriver*       audio_driver()       const { return _audio_driver.get(); }
 	MidiDriver*        midi_driver()        const { return _midi_driver; }
+	OSCDriver*         osc_driver()         const { return _osc_driver; }
 	PostProcessor*     post_processor()     const { return _post_processor; }
 	ClientBroadcaster* broadcaster()        const { return _broadcaster; }
 	ObjectStore*       object_store()       const { return _object_store; }
@@ -93,6 +95,7 @@ private:
 	SharedPtr<EventSource> _event_source;
 	SharedPtr<AudioDriver> _audio_driver;
 	MidiDriver*            _midi_driver;
+	OSCDriver*             _osc_driver;
 	Raul::Maid*            _maid;
 	PostProcessor*         _post_processor;
 	ClientBroadcaster*     _broadcaster;

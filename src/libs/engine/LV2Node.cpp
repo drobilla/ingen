@@ -91,27 +91,44 @@ LV2Node::instantiate()
 
 		port_path = path() + "/" + port_name;
 		
-		SLV2PortClass port_class = slv2_port_get_class(_lv2_plugin, id);
+		SLV2PortDirection port_direction = slv2_port_get_direction(_lv2_plugin, id);
+		SLV2PortType      port_type      = slv2_port_get_type(_lv2_plugin, id);
 
-		// FIXME: MIDI buffer size?
-		if (port_class == SLV2_AUDIO_INPUT || port_class == SLV2_AUDIO_OUTPUT
-				|| port_class == SLV2_MIDI_INPUT || port_class == SLV2_MIDI_OUTPUT)
+		// FIXME: MIDI/OSC buffer size?
+		if (port_type != SLV2_PORT_TYPE_CONTROL)
 			port_buffer_size = _buffer_size;
 		else
 			port_buffer_size = 1;
 		
-		if (port_class == SLV2_CONTROL_INPUT || port_class == SLV2_AUDIO_INPUT)
-			port = new InputPort(this, port_name, j, _poly, DataType::FLOAT, port_buffer_size);
-		else if (port_class == SLV2_CONTROL_OUTPUT || port_class == SLV2_AUDIO_OUTPUT)
-			port = new OutputPort(this, port_name, j, _poly, DataType::FLOAT, port_buffer_size);
-		else if (port_class == SLV2_MIDI_INPUT)
-			port = new InputPort(this, port_name, j, _poly, DataType::MIDI, port_buffer_size);
-		else if (port_class == SLV2_MIDI_OUTPUT)
-			port = new OutputPort(this, port_name, j, _poly, DataType::MIDI, port_buffer_size);
+		DataType data_type = DataType::UNKNOWN;
+		switch (port_type) {
+		case SLV2_PORT_TYPE_CONTROL:
+		case SLV2_PORT_TYPE_AUDIO:
+			data_type = DataType::FLOAT; break;
+		case SLV2_PORT_TYPE_MIDI:
+			data_type = DataType::MIDI; break;
+		case SLV2_PORT_TYPE_OSC:
+			data_type = DataType::OSC;
+		default:
+			break;
+		}
 
-		assert(port);
-		
-		if (port_class == SLV2_CONTROL_INPUT)
+		if (data_type == DataType::UNKNOWN || port_direction == SLV2_PORT_DIRECTION_UNKNOWN) {
+			delete _ports;
+			_ports = NULL;
+			delete _instances;
+			_instances = NULL;
+			return false;
+		}
+
+		bool is_input = (port_direction == SLV2_PORT_DIRECTION_INPUT);
+
+		if (is_input)
+			port = new InputPort(this, port_name, j, _poly, data_type, port_buffer_size);
+		else
+			port = new OutputPort(this, port_name, j, _poly, data_type, port_buffer_size);
+
+		if (is_input && port_type == SLV2_PORT_TYPE_CONTROL)
 			((AudioBuffer*)port->buffer(0))->set(slv2_port_get_default_value(_lv2_plugin, id), 0);
 
 		_ports->at(j) = port;

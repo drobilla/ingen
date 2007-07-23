@@ -15,26 +15,25 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "AddPortEvent.h"
+#include <raul/Path.h>
+#include <raul/Array.h>
+#include <raul/List.h>
+#include <raul/Maid.h>
 #include "interface/Responder.h"
+#include "AddPortEvent.h"
 #include "Patch.h"
 #include "Tree.h"
 #include "Plugin.h"
 #include "Engine.h"
 #include "Patch.h"
-#include <raul/Maid.h>
-#include <raul/Path.h>
 #include "QueuedEventSource.h"
 #include "ObjectStore.h"
 #include "ClientBroadcaster.h"
-#include <raul/Path.h>
 #include "Port.h"
 #include "AudioDriver.h"
 #include "MidiDriver.h"
-#include <raul/List.h>
-#include "Driver.h"
+#include "OSCDriver.h"
 #include "DuplexPort.h"
-#include <raul/Array.h>
 
 namespace Ingen {
 
@@ -119,6 +118,11 @@ AddPortEvent::pre_process()
 				else if (_type == "ingen:midi")
 					_driver_port = _engine.midi_driver()->create_port(
 						dynamic_cast<DuplexPort*>(_patch_port));
+			}
+
+			if (_type == "ingen:osc" && _engine.osc_driver()) {
+				_driver_port = _engine.osc_driver()->create_port(
+					dynamic_cast<DuplexPort*>(_patch_port));
 			}
 
 			assert(_ports_array->size() == _patch->num_ports());
