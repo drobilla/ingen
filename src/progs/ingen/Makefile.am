@@ -1,13 +1,12 @@
-AM_CXXFLAGS = @RAUL_CFLAGS@ @GTHREAD_CFLAGS@ -I$(top_srcdir)/src/common -I$(top_srcdir)/src/libs -DINGEN_MODULE_DIR=\"$(libdir)/ingen\"
+AM_CXXFLAGS = -I$(top_srcdir)/raul -I$(top_srcdir)/ingen/src/common -I$(top_srcdir)/ingen/src/libs -DINGEN_MODULE_DIR=\"$(libdir)/ingen\" @GTHREAD_CFLAGS@ @GLIBMM_CFLAGS@
 
 MAINTAINERCLEANFILES = Makefile.in
-EXTRA_DIST = ingen_dev
 
 desktopfilesdir = $(datadir)/applications
 dist_desktopfiles_DATA = ingen.desktop
 
 bin_PROGRAMS = ingen
-ingen_LDADD = @RAUL_LIBS@ @GTHREAD_LIBS@../../libs/module/libingen_module.la
+ingen_LDADD = @RAUL_LIBS@ @GTHREAD_LIBS@ @GLIBMM_LIBS@ ../../libs/module/libingen_module.la
 ingen_DEPENDENCIES = ../../libs/module/libingen_module.la
 
 ingen_SOURCES = \

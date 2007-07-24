@@ -15,22 +15,22 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "JackMidiDriver.h"
 #include <iostream>
 #include <cstdlib>
 #include <pthread.h>
 #include <raul/Maid.h>
 #include <raul/midi_events.h>
 #include "types.h"
+#include "JackMidiDriver.h"
 #include "ThreadManager.h"
 #include "AudioDriver.h"
 #include "MidiBuffer.h"
 #include "DuplexPort.h"
 #include "jack_compat.h"
-#ifdef HAVE_LASH
+/*#ifdef HAVE_LASH
 #include "LashDriver.h"
-#endif
-using std::cout; using std::cerr; using std::endl;
+#endif*/
+using namespace std;
 
 namespace Ingen {
 

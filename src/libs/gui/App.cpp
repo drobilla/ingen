@@ -15,7 +15,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "config.h"
+#include "../../../config/config.h"
 #include "App.h"
 #include <cassert>
 #include <string>
@@ -41,9 +41,9 @@
 #include "ConnectWindow.h"
 #include "ThreadedLoader.h"
 #include "WindowFactory.h"
-#ifdef HAVE_LASH
+/*#ifdef HAVE_LASH
 #include "LashController.h"
-#endif
+#endif*/
 using std::cerr; using std::cout; using std::endl;
 using std::string;
 namespace Ingen { namespace Client { class PluginModel; } }

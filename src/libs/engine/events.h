@@ -50,10 +50,6 @@
 #include "PingQueuedEvent.h"
 #include "MidiLearnEvent.h"
 
-#ifdef HAVE_LASH
-#include "LashRestoreDoneEvent.h"
-#endif
-
 #ifdef HAVE_DSSI
 #include "DSSIUpdateEvent.h"
 #include "DSSIControlEvent.h"

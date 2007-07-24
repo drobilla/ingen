@@ -22,9 +22,9 @@
 #include "Engine.h"
 #include "OSCReceiver.h"
 #include "JackAudioDriver.h"
-#ifdef HAVE_LASH
+/*#ifdef HAVE_LASH
 #include "LashDriver.h"
-#endif
+#endif*/
 
 extern "C"
 {

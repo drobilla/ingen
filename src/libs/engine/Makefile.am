@@ -5,9 +5,16 @@ MAINTAINERCLEANFILES = Makefile.in
 moduledir = $(libdir)/ingen
 
 module_LTLIBRARIES = libingen_engine.la
-libingen_engine_la_CXXFLAGS = @RAUL_CFLAGS@ @JACK_CFLAGS@ @LOSC_CFLAGS@ @ALSA_CFLAGS@ @LASH_CFLAGS@ @SLV2_CFLAGS@ -I$(top_srcdir)/src/common -I$(top_srcdir)/src/libs/engine/events
+libingen_engine_la_CXXFLAGS = \
+	-I$(top_srcdir)/slv2 \
+	-I$(top_srcdir)/raul \
+	-I$(top_srcdir)/ingen/src/common \
+	-I$(top_srcdir)/ingen/src/libs \
+	-I$(top_srcdir)/ingen/src/libs/engine/events \
+	@JACK_CFLAGS@ @LIBLO_CFLAGS@ @ALSA_CFLAGS@ @LASH_CFLAGS@ @GLIBMM_CFLAGS@
+
 libingen_engine_la_LDFLAGS = -no-undefined -module -avoid-version
-libingen_engine_la_LIBADD = @RAUL_LIBS@ @JACK_LIBS@ @LOSC_LIBS@ @ALSA_LIBS@ @LASH_LIBS@ @SLV2_LIBS@
+libingen_engine_la_LIBADD = @RAUL_LIBS@ @JACK_LIBS@ @LIBLO_LIBS@ @ALSA_LIBS@ @LASH_LIBS@ @SLV2_LIBS@ @GLIBMM_LIBS@
 
 AM_CFLAGS=-std=c99
 
@@ -91,6 +98,7 @@ libingen_engine_la_SOURCES = \
 	Driver.h \
 	AudioDriver.h \
 	MidiDriver.h \
+	OSCDriver.h \
 	instantiations.cpp \
 	events/RegisterClientEvent.h \
 	events/RegisterClientEvent.cpp \
@@ -200,9 +208,9 @@ libingen_engine_la_SOURCES += \
 	LV2Node.cpp
 endif
 
-if WITH_LASH
-libingen_engine_la_SOURCES += \
-	LashDriver.h \
-	LashDriver.cpp
-endif
+#if WITH_LASH
+#libingen_engine_la_SOURCES += \
+#	LashDriver.h \
+#	LashDriver.cpp
+#endif
 

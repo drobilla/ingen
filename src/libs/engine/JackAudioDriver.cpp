@@ -35,12 +35,11 @@
 #include "DuplexPort.h"
 #include "EventSource.h"
 #include "AudioBuffer.h"
-#ifdef HAVE_LASH
+/*#ifdef HAVE_LASH
 #include "LashDriver.h"
-#endif
+#endif*/
 
-using std::cout; using std::cerr; using std::endl;
-
+using namespace std;
 
 namespace Ingen {
 
@@ -183,9 +182,9 @@ JackAudioDriver::activate()
 		exit(EXIT_FAILURE);
 	} else {
 		cout << "[JackAudioDriver] Activated Jack client." << endl;
-#ifdef HAVE_LASH
+/*#ifdef HAVE_LASH
 	_engine.lash_driver()->set_jack_client_name(jack_client_get_name(_client));
-#endif
+#endif*/
 	}
 }
 

@@ -18,7 +18,7 @@
 #ifndef DSSINODE_H
 #define DSSINODE_H
 
-#include <asoundlib.h>
+#include <alsa/asoundlib.h>
 #include <dssi.h>
 #include <lo/lo.h>
 #include "LADSPANode.h"

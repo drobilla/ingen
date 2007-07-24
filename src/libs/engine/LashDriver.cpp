@@ -15,14 +15,14 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "LashDriver.h"
-#include "config.h"
 #include <iostream>
 #include <string>
 #include <cassert>
+#include "config/config.h"
+#include "LashDriver.h"
+#include "App.h"
 
-using std::cerr; using std::cout; using std::endl;
-using std::string;
+using namespace std;
 
 namespace Ingen {
 	

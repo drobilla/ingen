@@ -12,18 +12,21 @@ moduledir = $(libdir)/ingen
 module_LTLIBRARIES = libingen_gui.la
 
 libingen_gui_la_CXXFLAGS = \
+	-I$(top_srcdir)/slv2 \
+	-I$(top_srcdir)/raul \
+	-I$(top_srcdir)/flowcanvas \
+	-I$(top_srcdir)/ingen/src/common \
+	-I$(top_srcdir)/ingen/src/libs \
 	-DPKGDATADIR=\"$(pkgdatadir)\" \
 	-DINGEN_MODULE_DIR=\"$(libdir)/ingen\" \
 	-DGTK_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED \
-	@RAUL_CFLAGS@ @LOSC_CFLAGS@ @SLV2_CFLAGS@ @CURL_CFLAGS@ \
-	@GTKMM_CFLAGS@ @LIBGLADEMM_CFLAGS@ @FLOWCANVAS_CFLAGS@ @GNOMECANVASMM_CFLAGS@ \
-	-I$(top_srcdir)/src/common \
-	-I$(top_srcdir)/src/libs
+	@LIBLO_CFLAGS@ @CURL_CFLAGS@ \
+	@GTKMM_CFLAGS@ @LIBGLADEMM_CFLAGS@ @GNOMECANVASMM_CFLAGS@ 
 
 libingen_gui_la_LDFLAGS = -no-undefined -module -avoid-version
 
 libingen_gui_la_LIBADD = \
-	@RAUL_LIBS@ @LOSC_LIBS@ @SLV2_LIBS@ @CURL_LIBS@ \
+	@RAUL_LIBS@ @LIBLO_LIBS@ @SLV2_LIBS@ @CURL_LIBS@ \
 	@GTKMM_LIBS@ @LIBGLADEMM_LIBS@ @FLOWCANVAS_LIBS@ @GNOMECANVASMM_LIBS@ \
 	../module/libingen_module.la \
 	../client/libingen_client.la

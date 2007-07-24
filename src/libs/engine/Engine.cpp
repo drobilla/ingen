@@ -40,10 +40,10 @@
 #ifdef HAVE_JACK_MIDI
 #include "JackMidiDriver.h"
 #endif
-#ifdef HAVE_LASH
+/*#ifdef HAVE_LASH
 #include "LashDriver.h"
-#endif
-using std::cout; using std::cerr; using std::endl;
+#endif*/
+using namespace std;
 
 namespace Ingen {
 
@@ -56,11 +56,11 @@ Engine::Engine()
   _broadcaster(new ClientBroadcaster()),
   _object_store(new ObjectStore()),
   _node_factory(new NodeFactory()),
-#ifdef HAVE_LASH
+/*#ifdef HAVE_LASH
   _lash_driver(new LashDriver()),
-#else 
+#else */
   _lash_driver(NULL),
-#endif
+//#endif
   _quit_flag(false),
   _activated(false)
 {
@@ -129,11 +129,11 @@ Engine::main()
 bool
 Engine::main_iteration()
 {
-#ifdef HAVE_LASH
+/*#ifdef HAVE_LASH
 	// Process any pending LASH events
 	if (lash_driver->enabled())
 		lash_driver->process_events();
-#endif
+#endif*/
 	// Run the maid (garbage collector)
 	_maid->cleanup();
 	
