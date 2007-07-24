@@ -121,6 +121,17 @@ LADSPANode::instantiate()
 		Sample default_val, min, max;
 		get_port_limits(j, default_val, min, max);
 
+		// Work around broke-ass crackhead plugins
+		if (default_val < min) {
+			cerr << "WARNING: Broken LADSPA: Port default < minimum.  Minimum adjusted." << endl;
+			min = default_val;
+		}
+		
+		if (default_val > max) {
+			cerr << "WARNING: Broken LADSPA: Port default > maximum.  Maximum adjusted." << endl;
+			max = default_val;
+		}
+		
 		// Set default value
 		if (port->buffer_size() == 1) {
 			for (size_t i=0; i < _poly; ++i)

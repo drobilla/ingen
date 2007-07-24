@@ -18,7 +18,7 @@
 #include <iostream>
 #include <cassert>
 #include <algorithm>
-#include <cctype>
+#include <ctype.h>
 #include "interface/EngineInterface.hpp"
 #include "client/NodeModel.hpp"
 #include "client/PatchModel.hpp"
@@ -28,7 +28,8 @@
 #include "PatchWindow.hpp"
 #include "PatchView.hpp"
 #include "PatchCanvas.hpp"
-using std::cout; using std::cerr; using std::endl;
+
+using namespace std;
 
 
 namespace Ingen {
@@ -379,7 +380,7 @@ LoadPluginWindow::filter_changed()
 	_plugins_liststore->clear();
 
 	string search = _search_entry->get_text();
-	transform(search.begin(), search.end(), search.begin(), toupper);
+	transform(search.begin(), search.end(), search.begin(), ::toupper);
 
 	// Get selected criteria
 	const Gtk::TreeModel::Row row = *(_filter_combo->get_active());
@@ -412,7 +413,7 @@ LoadPluginWindow::filter_changed()
 			throw;
 		}
 		
-		transform(field.begin(), field.end(), field.begin(), toupper);
+		transform(field.begin(), field.end(), field.begin(), ::toupper);
 		
 		if (field.find(search) != string::npos) {
 			model_iter = _plugins_liststore->append();

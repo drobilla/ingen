@@ -304,6 +304,11 @@ QueuedEngineInterface::request_port_value(const string& port_path)
 	push_queued(new RequestPortValueEvent(_engine, _responder, now(), port_path));
 }
 
+void
+QueuedEngineInterface::request_metadata(const string& object_path, const string& key)
+{
+	push_queued(new RequestMetadataEvent(_engine, _responder, now(), object_path, key));
+}
 
 void
 QueuedEngineInterface::request_plugins()

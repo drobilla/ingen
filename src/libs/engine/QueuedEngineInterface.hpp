@@ -147,7 +147,7 @@ public:
 	
 	virtual void request_port_value(const string& port_path);
 	
-	virtual void request_metadata(const string& path, const string& key);
+	virtual void request_metadata(const string& object_path, const string& key);
 
 	virtual void request_plugins();
 
