@@ -17,7 +17,6 @@
 
 #include <iostream>
 #include "OSCEngineSender.hpp"
-#include "interface/ClientKey.hpp"
 #include <raul/AtomLiblo.hpp>
 using std::cout; using std::cerr; using std::endl;
 
@@ -108,7 +107,7 @@ OSCEngineSender::attach(int32_t ping_id, bool block)
  * traversal.  It is a parameter to remain compatible with EngineInterface.
  */
 void
-OSCEngineSender::register_client(ClientKey key, SharedPtr<ClientInterface> client)
+OSCEngineSender::register_client(const string& uri, SharedPtr<ClientInterface> client)
 {
 	// FIXME: use parameters.. er, somehow.
 	assert(_engine_addr);
@@ -117,7 +116,7 @@ OSCEngineSender::register_client(ClientKey key, SharedPtr<ClientInterface> clien
 
 
 void
-OSCEngineSender::unregister_client(ClientKey key)
+OSCEngineSender::unregister_client(const string& uri)
 {
 	assert(_engine_addr);
 	lo_send(_engine_addr, "/ingen/unregister_client", "i", next_id());
@@ -424,6 +423,16 @@ OSCEngineSender::request_port_value(const string& port_path)
 	lo_send(_engine_addr, "/ingen/request_port_value", "is",
 		next_id(),
 		port_path.c_str());
+}
+
+void
+OSCEngineSender::request_metadata(const string& object_path, const string& key)
+{
+	assert(_engine_addr);
+	lo_send(_engine_addr, "/ingen/request_metadata", "iss",
+		next_id(),
+		object_path.c_str(),
+		key.c_str());
 }
 
 

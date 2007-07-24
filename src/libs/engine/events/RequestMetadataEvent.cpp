@@ -41,7 +41,7 @@ RequestMetadataEvent::RequestMetadataEvent(Engine& engine, SharedPtr<Shared::Res
 void
 RequestMetadataEvent::pre_process()
 {
-	_client = _engine.broadcaster()->client(_responder->client_key());
+	_client = _engine.broadcaster()->client(_responder->client_uri());
 	
 	if (_client) {
 		_object = _engine.object_store()->find(_path);

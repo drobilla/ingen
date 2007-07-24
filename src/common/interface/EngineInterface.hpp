@@ -28,7 +28,6 @@ namespace Ingen {
 /** Shared code used on both client side and engine side (abstract interfaces). */
 namespace Shared {
 
-class ClientKey;
 class Responder;
 
 
@@ -47,8 +46,8 @@ public:
 	virtual void disable_responses() = 0;
 	
 	// Client registration
-	virtual void register_client(ClientKey key, SharedPtr<ClientInterface> client) = 0;
-	virtual void unregister_client(ClientKey key) = 0;
+	virtual void register_client(const string& uri, SharedPtr<ClientInterface> client) = 0;
+	virtual void unregister_client(const string& uri) = 0;
 	
 	
 	// Engine commands
@@ -125,6 +124,8 @@ public:
 	virtual void request_object(const string& path) = 0;
 
 	virtual void request_port_value(const string& port_path) = 0;
+	
+	virtual void request_metadata(const string& path, const string& key) = 0;
 
 	virtual void request_plugins() = 0;
 	

@@ -22,7 +22,6 @@
 #include "types.hpp"
 #include <raul/SharedPtr.hpp>
 #include <raul/AtomLiblo.hpp>
-#include "interface/ClientKey.hpp"
 #include "interface/ClientInterface.hpp"
 #include "OSCEngineReceiver.hpp"
 #include "QueuedEventSource.hpp"
@@ -33,8 +32,6 @@
 using std::cerr; using std::cout; using std::endl;
 
 namespace Ingen {
-
-using Shared::ClientKey;
 
 
 /*! \page engine_osc_namespace Engine OSC Namespace Documentation
@@ -255,8 +252,7 @@ OSCEngineReceiver::set_response_address_cb(const char* path, const char* types, 
 	// Don't respond
 	} else {
 		me->disable_responses();
-		SharedPtr<ClientInterface> client = me->_engine.broadcaster()->client(
-			ClientKey(ClientKey::OSC_URL, (const char*)url));
+		SharedPtr<ClientInterface> client = me->_engine.broadcaster()->client(url);
 		if (client)
 			client->disable();
 		else
@@ -334,7 +330,7 @@ OSCEngineReceiver::_register_client_cb(const char* path, const char* types, lo_a
 
 	char* const url = lo_address_get_url(addr);
 	SharedPtr<ClientInterface> client(new OSCClientSender((const char*)url));
-	register_client(ClientKey(ClientKey::OSC_URL, (const char*)url), client);
+	register_client(url, client);
 	free(url);
 
 	return 0;
@@ -351,7 +347,7 @@ OSCEngineReceiver::_unregister_client_cb(const char* path, const char* types, lo
 	lo_address addr = lo_message_get_source(msg);
 
 	char* url = lo_address_get_url(addr);
-	unregister_client(ClientKey(ClientKey::OSC_URL, url));
+	unregister_client(url);
 	free(url);
 	
 	return 0;
@@ -757,12 +753,12 @@ OSCEngineReceiver::_metadata_set_cb(const char* path, const char* types, lo_arg*
 	if (argc != 4 || types[0] != 'i' || types[1] != 's' || types[2] != 's')
 		return 1;
 
-	const char* node_path   = &argv[1]->s;
+	const char* object_path = &argv[1]->s;
 	const char* key         = &argv[2]->s;
 	
 	Raul::Atom value = Raul::AtomLiblo::lo_arg_to_atom(types[3], argv[3]);
 	
-	set_metadata(node_path, key, value);
+	set_metadata(object_path, key, value);
 	
 	return 0;
 }
@@ -779,18 +775,11 @@ OSCEngineReceiver::_metadata_set_cb(const char* path, const char* types, lo_arg*
 int
 OSCEngineReceiver::_metadata_get_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	/*
-	const char* node_path   = &argv[1]->s;
+	const char* object_path = &argv[1]->s;
 	const char* key         = &argv[2]->s;
-	*/
-	cerr << "FIXME: OSC metadata request\n";
-	// FIXME: Equivalent?
-	/*
-	RequestMetadataEvent* ev = new RequestMetadataEvent(
-		new OSCResponder(ClientKey(addr)),
-		node_path, key);
 
-		*/
+	request_metadata(object_path, key);
+
 	return 0;
 }
 

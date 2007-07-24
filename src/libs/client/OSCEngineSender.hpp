@@ -26,7 +26,6 @@
 using std::string;
 using Ingen::Shared::EngineInterface;
 using Ingen::Shared::ClientInterface;
-using Ingen::Shared::ClientKey;
 using Ingen::Shared::Responder;
 
 namespace Ingen {
@@ -62,8 +61,8 @@ public:
 	/* *** EngineInterface implementation below here *** */
 
 	// Client registration
-	void register_client(ClientKey key, SharedPtr<ClientInterface> client);
-	void unregister_client(ClientKey key);
+	void register_client(const string& uri, SharedPtr<ClientInterface> client);
+	void unregister_client(const string& uri);
 
 	
 	// Engine commands
@@ -140,6 +139,8 @@ public:
 	void request_object(const string& path);
 
 	void request_port_value(const string& port_path);
+	
+	void request_metadata(const string& path, const string& key);
 
 	void request_plugins();
 

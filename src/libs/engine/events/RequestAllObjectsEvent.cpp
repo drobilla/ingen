@@ -34,7 +34,7 @@ RequestAllObjectsEvent::RequestAllObjectsEvent(Engine& engine, SharedPtr<Shared:
 void
 RequestAllObjectsEvent::pre_process()
 {
-	_client = _engine.broadcaster()->client(_responder->client_key());
+	_client = _engine.broadcaster()->client(_responder->client_uri());
 	
 	QueuedEvent::pre_process();
 }

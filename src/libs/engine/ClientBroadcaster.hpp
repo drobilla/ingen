@@ -19,16 +19,17 @@
 #define CLIENTBROADCASTER_H
 
 #include <string>
-#include <iostream>
-#include <utility>
 #include <list>
+#include <map>
 #include <lo/lo.h>
 #include <pthread.h>
 #include <raul/SharedPtr.hpp>
 #include "interface/ClientInterface.hpp"
 #include "types.hpp"
 
-using std::list; using std::string; using std::pair;
+using std::map;
+using std::string;
+using std::list;
 
 namespace Ingen {
 
@@ -37,8 +38,7 @@ class Port;
 class Plugin;
 class Patch;
 class Connection;
-namespace Shared { class ClientKey; class Responder; }
-using Shared::ClientKey;
+namespace Shared { class Responder; }
 using Shared::ClientInterface;
 
 
@@ -55,10 +55,10 @@ using Shared::ClientInterface;
 class ClientBroadcaster
 {
 public:
-	void register_client(const ClientKey key, SharedPtr<ClientInterface> client);
-	bool unregister_client(const ClientKey& key);
+	void register_client(const string& uri, SharedPtr<ClientInterface> client);
+	bool unregister_client(const string& uri);
 	
-	SharedPtr<ClientInterface> client(const ClientKey& key);
+	SharedPtr<ClientInterface> client(const string& uri);
 	
 	// Notification band:
 	
@@ -91,9 +91,8 @@ public:
 	void send_plugins_to(SharedPtr<ClientInterface>, const list<Plugin*>& plugin_list);
 
 private:
-	typedef list<pair<ClientKey, SharedPtr<ClientInterface> > > ClientList;
-	//list<pair<ClientKey, ClientInterface* const> > _clients;
-	ClientList _clients;
+	typedef std::map<string, SharedPtr<ClientInterface> > ClientMap;
+	ClientMap _clients;
 };
 
 

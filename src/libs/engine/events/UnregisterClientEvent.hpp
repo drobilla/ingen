@@ -19,7 +19,6 @@
 #define UNREGISTERCLIENTEVENT_H
 
 #include "QueuedEvent.hpp"
-#include "interface/ClientKey.hpp"
 #include <string>
 using std::string;
 
@@ -27,10 +26,8 @@ namespace Ingen {
 
 namespace Shared {
 	class ClientInterface;
-	class ClientKey;
 }
 using Shared::ClientInterface;
-using Shared::ClientKey;
 
 
 /** Unregisters an OSC client so it no longer receives notifications.
@@ -43,12 +40,12 @@ public:
 	UnregisterClientEvent(Engine&                      engine,
 	                      SharedPtr<Shared::Responder> responder,
 	                      SampleCount                  timestamp,
-	                      ClientKey                    key);
+	                      const string&                uri);
 
 	void post_process();
 
 private:
-	ClientKey _key;
+	string _uri;
 };
 
 

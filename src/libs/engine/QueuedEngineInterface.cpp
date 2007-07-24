@@ -25,9 +25,9 @@
 namespace Ingen {
 
 QueuedEngineInterface::QueuedEngineInterface(Engine& engine, size_t queued_size, size_t stamped_size)
-: QueuedEventSource(queued_size, stamped_size)
-, _responder(SharedPtr<Shared::Responder>(new Shared::Responder())) // NULL responder
-, _engine(engine)
+	: QueuedEventSource(queued_size, stamped_size)
+	, _responder(SharedPtr<Shared::Responder>(new Shared::Responder())) // NULL responder
+	, _engine(engine)
 {
 }
 
@@ -74,16 +74,16 @@ QueuedEngineInterface::disable_responses()
 
 
 void
-QueuedEngineInterface::register_client(ClientKey key, SharedPtr<ClientInterface> client)
+QueuedEngineInterface::register_client(const string& uri, SharedPtr<ClientInterface> client)
 {
-	push_queued(new RegisterClientEvent(_engine, _responder, now(), key, client));
+	push_queued(new RegisterClientEvent(_engine, _responder, now(), uri, client));
 }
 
 
 void
-QueuedEngineInterface::unregister_client(ClientKey key)
+QueuedEngineInterface::unregister_client(const string& uri)
 {
-	push_queued(new UnregisterClientEvent(_engine, _responder, now(), key));
+	push_queued(new UnregisterClientEvent(_engine, _responder, now(), uri));
 }
 
 

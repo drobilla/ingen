@@ -24,7 +24,6 @@
 #include <raul/SharedPtr.hpp>
 #include "interface/EngineInterface.hpp"
 #include "interface/ClientInterface.hpp"
-#include "interface/ClientKey.hpp"
 #include "interface/Responder.hpp"
 #include "QueuedEventSource.hpp"
 #include "Engine.hpp"
@@ -32,7 +31,6 @@ using std::string;
 
 namespace Ingen {
 
-using Shared::ClientKey;
 using Shared::ClientInterface;
 using Shared::EngineInterface;
 class Engine;
@@ -70,8 +68,8 @@ public:
 	virtual void disable_responses();
 
 	// Client registration
-	virtual void register_client(ClientKey key, SharedPtr<ClientInterface> client);
-	virtual void unregister_client(ClientKey key);
+	virtual void register_client(const string& uri, SharedPtr<ClientInterface> client);
+	virtual void unregister_client(const string& uri);
 	
 
 	// Engine commands
@@ -148,6 +146,8 @@ public:
 	virtual void request_object(const string& path);
 	
 	virtual void request_port_value(const string& port_path);
+	
+	virtual void request_metadata(const string& path, const string& key);
 
 	virtual void request_plugins();
 

@@ -33,7 +33,7 @@ RequestPluginsEvent::RequestPluginsEvent(Engine& engine, SharedPtr<Shared::Respo
 void
 RequestPluginsEvent::pre_process()
 {
-	_client = _engine.broadcaster()->client(_responder->client_key());
+	_client = _engine.broadcaster()->client(_responder->client_uri());
 	
 	// Take a copy to send in the post processing thread (to avoid problems
 	// because std::list isn't thread safe)

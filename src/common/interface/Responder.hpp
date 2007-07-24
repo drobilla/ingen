@@ -21,14 +21,10 @@
 #include <inttypes.h>
 #include <string>
 #include <raul/SharedPtr.hpp>
-#include "interface/ClientKey.hpp"
 #include "interface/ClientInterface.hpp"
 
 namespace Ingen {
 namespace Shared {
-
-using Shared::ClientKey;
-using Shared::ClientInterface;
 
 
 /** Class to handle responding to clients.
@@ -39,8 +35,8 @@ using Shared::ClientInterface;
  * Note that this class only handles sending responses to commands from
  * clients, (ie OK or an error), <b>not</b> notifications (ie new node,
  * disconnection) - that's what ClientInterface is for.  If a command is
- * a request, the ClientKey of the Responder can be used to find the
- * ClientInterface which should receive the response.
+ * a request, the Responder can be used to find the ClientInterface
+ * (by URI) which should receive the response.
  *
  * ClientInterface and Responder are seperate because responding might not
  * actually get exposed to the client interface (eg in simulated blocking
@@ -57,8 +53,9 @@ public:
 	Responder() {}
 	virtual ~Responder() {}
 
-	virtual ClientKey                  client_key() { return ClientKey(); }
-	virtual SharedPtr<ClientInterface> client()     { return SharedPtr<ClientInterface>(); }
+	virtual std::string client_uri() { return ""; }
+
+	virtual SharedPtr<ClientInterface> client() { return SharedPtr<ClientInterface>(); }
 
 	virtual void set_id(int32_t id) {}
 

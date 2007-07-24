@@ -19,12 +19,10 @@
 #define REGISTERCLIENTEVENT_H
 
 #include "QueuedEvent.hpp"
-#include "interface/ClientKey.hpp"
 #include "interface/ClientInterface.hpp"
 #include <string>
 using std::string;
 using Ingen::Shared::ClientInterface;
-using Ingen::Shared::ClientKey;
 using Ingen::Shared::Responder;
 
 namespace Ingen {
@@ -40,14 +38,14 @@ public:
 	RegisterClientEvent(Engine&                      engine,
 	                    SharedPtr<Shared::Responder> responder,
 	                    SampleCount                  timestamp,
-	                    ClientKey                    key,
+	                    const string&                uri,
 	                    SharedPtr<ClientInterface>   client);
 
 	void pre_process();
 	void post_process();
 
 private:
-	ClientKey                   _key;
+	string                     _uri;
 	SharedPtr<ClientInterface> _client;
 };
 

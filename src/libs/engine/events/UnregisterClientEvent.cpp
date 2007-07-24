@@ -24,9 +24,9 @@
 namespace Ingen {
 
 
-UnregisterClientEvent::UnregisterClientEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, ClientKey key)
+UnregisterClientEvent::UnregisterClientEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, const string& uri)
 : QueuedEvent(engine, responder, timestamp)
-, _key(key)
+, _uri(uri)
 {
 }
 
@@ -34,7 +34,7 @@ UnregisterClientEvent::UnregisterClientEvent(Engine& engine, SharedPtr<Shared::R
 void
 UnregisterClientEvent::post_process()
 {
-	if (_engine.broadcaster()->unregister_client(_key))
+	if (_engine.broadcaster()->unregister_client(_uri))
 		_responder->respond_ok();
 	else
 		_responder->respond_error("Unable to unregister client");

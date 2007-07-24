@@ -42,7 +42,7 @@ RequestPortValueEvent::RequestPortValueEvent(Engine& engine, SharedPtr<Shared::R
 void
 RequestPortValueEvent::pre_process()
 {
-	_client = _engine.broadcaster()->client(_responder->client_key());
+	_client = _engine.broadcaster()->client(_responder->client_uri());
 	_port = _engine.object_store()->find_port(_port_path);
 
 	QueuedEvent::pre_process();

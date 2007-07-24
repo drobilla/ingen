@@ -108,6 +108,7 @@ private:
 	LO_HANDLER(request_plugin);
 	LO_HANDLER(request_object);
 	LO_HANDLER(request_port_value);
+	LO_HANDLER(request_metadata);
 	LO_HANDLER(request_plugins);
 	LO_HANDLER(request_all_objects);
 

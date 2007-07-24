@@ -19,6 +19,7 @@
 #define OSCRESPONDER_H
 
 #include <inttypes.h>
+#include <string>
 #include <memory>
 #include <lo/lo.h>
 #include "interface/Responder.hpp"
@@ -51,8 +52,7 @@ public:
 
 	const char* url() const { return _url; }
 
-	Shared::ClientKey client_key() 
-		{ return Shared::ClientKey(Shared::ClientKey::OSC_URL, _url); }
+	std::string client_uri() { return _url; }
 	
 	SharedPtr<Shared::ClientInterface> client();
 

@@ -23,7 +23,6 @@
 #include <sys/resource.h>
 #include <raul/Process.hpp>
 #include "../../../../config/config.h"
-#include "interface/ClientKey.hpp"
 #include "interface/EngineInterface.hpp"
 #include "engine/tuning.hpp"
 #include "engine/Engine.hpp"
@@ -372,7 +371,7 @@ ConnectWindow::gtk_callback()
 		//App::instance().engine()->register_client(App::instance().engine()->client_hooks());
 		// FIXME
 		//auto_ptr<ClientInterface> client(new ThreadedSigClientInterface();
-		App::instance().engine()->register_client(ClientKey(), App::instance().client());
+		App::instance().engine()->register_client("FIXME_CLIENT_URI", App::instance().client());
 		App::instance().engine()->load_plugins();
 		++_connect_stage;
 	} else if (_connect_stage == 3) {

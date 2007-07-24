@@ -43,7 +43,7 @@ RequestObjectEvent::RequestObjectEvent(Engine& engine, SharedPtr<Shared::Respond
 void
 RequestObjectEvent::pre_process()
 {
-	_client = _engine.broadcaster()->client(_responder->client_key());
+	_client = _engine.broadcaster()->client(_responder->client_uri());
 	_object = _engine.object_store()->find(_path);
 
 	QueuedEvent::pre_process();

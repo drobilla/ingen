@@ -23,13 +23,14 @@
 namespace Ingen {
 
 
-RegisterClientEvent::RegisterClientEvent(Engine& engine, SharedPtr<Shared::Responder>       responder,
-                                         SampleCount                 timestamp,
-                                         ClientKey                   key,
-                                         SharedPtr<ClientInterface> client)
-: QueuedEvent(engine, responder, timestamp)
-, _key(key)
-, _client(client)
+RegisterClientEvent::RegisterClientEvent(Engine&                      engine,
+                                         SharedPtr<Shared::Responder> responder,
+                                         SampleCount                  timestamp,
+                                         const string&                uri,
+                                         SharedPtr<ClientInterface>   client)
+	: QueuedEvent(engine, responder, timestamp)
+	, _uri(uri)
+	, _client(client)
 {
 }
 
@@ -37,7 +38,7 @@ RegisterClientEvent::RegisterClientEvent(Engine& engine, SharedPtr<Shared::Respo
 void
 RegisterClientEvent::pre_process()
 {  
-	_engine.broadcaster()->register_client(_key, _client);
+	_engine.broadcaster()->register_client(_uri, _client);
 
 	QueuedEvent::pre_process();
 }

@@ -17,7 +17,6 @@
 
 #include "OSCResponder.hpp"
 #include "ClientBroadcaster.hpp"
-#include "interface/ClientKey.hpp"
 #include <cstdlib>
 #include <iostream>
 #include <inttypes.h>
@@ -90,7 +89,7 @@ SharedPtr<ClientInterface>
 OSCResponder::client()
 {
 	if (_broadcaster)
-		return _broadcaster->client(client_key());
+		return _broadcaster->client(client_uri());
 	else
 		return SharedPtr<ClientInterface>();
 }
