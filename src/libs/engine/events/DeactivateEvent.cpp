@@ -15,9 +15,9 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "DeactivateEvent.h"
-#include "interface/Responder.h"
-#include "Engine.h"
+#include "DeactivateEvent.hpp"
+#include "interface/Responder.hpp"
+#include "Engine.hpp"
 
 namespace Ingen {
 

@@ -19,11 +19,11 @@
 #include <stdio.h>
 #include <memory.h>
 #include <jack/jack.h>
-#include "Engine.h"
-#include "OSCReceiver.h"
-#include "JackAudioDriver.h"
+#include "Engine.hpp"
+#include "OSCReceiver.hpp"
+#include "JackAudioDriver.hpp"
 /*#ifdef HAVE_LASH
-#include "LashDriver.h"
+#include "LashDriver.hpp"
 #endif*/
 
 extern "C"

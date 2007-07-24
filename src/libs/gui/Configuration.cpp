@@ -15,17 +15,17 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "Configuration.h"
+#include "Configuration.hpp"
 #include <cstdlib>
 #include <cassert>
 #include <iostream>
 #include <fstream>
 #include <map>
-#include "client/PortModel.h"
-#include "client/PluginModel.h"
-#include "client/PatchModel.h"
-#include "serialisation/Loader.h"
-#include "App.h"
+#include "client/PortModel.hpp"
+#include "client/PluginModel.hpp"
+#include "client/PatchModel.hpp"
+#include "serialisation/Loader.hpp"
+#include "App.hpp"
 
 using std::cerr; using std::cout; using std::endl;
 using std::map; using std::string;

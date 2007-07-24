@@ -15,10 +15,10 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "QueuedEventSource.h"
-#include "QueuedEvent.h"
-#include "PostProcessor.h"
-#include "ThreadManager.h"
+#include "QueuedEventSource.hpp"
+#include "QueuedEvent.hpp"
+#include "PostProcessor.hpp"
+#include "ThreadManager.hpp"
 #include <sys/mman.h>
 #include <iostream>
 using std::cout; using std::cerr; using std::endl;

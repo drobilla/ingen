@@ -15,15 +15,15 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <raul/Path.h>
-#include "interface/EngineInterface.h"
-#include "client/OSCEngineSender.h"
-#include "client/Store.h"
-#include "client/PatchModel.h"
-#include "App.h"
-#include "PatchTreeWindow.h"
-#include "SubpatchModule.h"
-#include "WindowFactory.h"
+#include <raul/Path.hpp>
+#include "interface/EngineInterface.hpp"
+#include "client/OSCEngineSender.hpp"
+#include "client/Store.hpp"
+#include "client/PatchModel.hpp"
+#include "App.hpp"
+#include "PatchTreeWindow.hpp"
+#include "SubpatchModule.hpp"
+#include "WindowFactory.hpp"
 
 namespace Ingen {
 namespace GUI {

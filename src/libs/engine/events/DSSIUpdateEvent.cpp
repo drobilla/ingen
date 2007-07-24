@@ -15,13 +15,13 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "DSSIUpdateEvent.h"
+#include "DSSIUpdateEvent.hpp"
 #include <iostream>
-#include "Node.h"
-#include "ObjectStore.h"
-#include "Engine.h"
-#include "DSSINode.h"
-#include "Plugin.h"
+#include "Node.hpp"
+#include "ObjectStore.hpp"
+#include "Engine.hpp"
+#include "DSSINode.hpp"
+#include "Plugin.hpp"
 
 using std::cerr; using std::endl;
 

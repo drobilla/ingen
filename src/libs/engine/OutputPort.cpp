@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "OutputPort.h"
-#include "Buffer.h"
+#include "OutputPort.hpp"
+#include "Buffer.hpp"
 
 namespace Ingen {
 

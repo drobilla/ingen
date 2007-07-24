@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "NodeModel.h"
-#include "PatchModel.h"
+#include "NodeModel.hpp"
+#include "PatchModel.hpp"
 #include <cassert>
 
 namespace Ingen {

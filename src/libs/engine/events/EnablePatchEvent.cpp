@@ -15,13 +15,13 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "EnablePatchEvent.h"
-#include "interface/Responder.h"
-#include "Engine.h"
-#include "Patch.h"
-#include "util.h"
-#include "ClientBroadcaster.h"
-#include "ObjectStore.h"
+#include "EnablePatchEvent.hpp"
+#include "interface/Responder.hpp"
+#include "Engine.hpp"
+#include "Patch.hpp"
+#include "util.hpp"
+#include "ClientBroadcaster.hpp"
+#include "ObjectStore.hpp"
 
 namespace Ingen {
 

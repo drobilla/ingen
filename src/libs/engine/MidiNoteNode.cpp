@@ -15,18 +15,18 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "MidiNoteNode.h"
+#include "MidiNoteNode.hpp"
 #include <cmath>
 #include <iostream>
-#include <raul/Array.h>
+#include <raul/Array.hpp>
 #include <raul/midi_events.h>
-#include "MidiBuffer.h"
-#include "AudioBuffer.h"
-#include "InputPort.h"
-#include "OutputPort.h"
-#include "Plugin.h"
-#include "AudioDriver.h"
-#include "util.h"
+#include "MidiBuffer.hpp"
+#include "AudioBuffer.hpp"
+#include "InputPort.hpp"
+#include "OutputPort.hpp"
+#include "Plugin.hpp"
+#include "AudioDriver.hpp"
+#include "util.hpp"
 
 using std::cerr; using std::cout; using std::endl;
 

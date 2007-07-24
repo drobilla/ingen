@@ -5,5 +5,5 @@ libingen_module_la_CXXFLAGS = -I$(top_srcdir)/raul -DINGEN_MODULE_DIR=\"$(libdir
 libingen_module_la_LIBADD = @RAUL_LIBS@ @GLIBMM_LIBS@
 
 libingen_module_la_SOURCES = \
-	Module.h \
+	Module.hpp \
 	Module.cpp

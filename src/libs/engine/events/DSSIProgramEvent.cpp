@@ -15,14 +15,14 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "DSSIProgramEvent.h"
+#include "DSSIProgramEvent.hpp"
 #include <cstdio>
 #include <iostream>
-#include "Engine.h"
-#include "Node.h"
-#include "ClientBroadcaster.h"
-#include "Plugin.h"
-#include "ObjectStore.h"
+#include "Engine.hpp"
+#include "Node.hpp"
+#include "ClientBroadcaster.hpp"
+#include "Plugin.hpp"
+#include "ObjectStore.hpp"
 using std::cout; using std::cerr; using std::endl;
 
 

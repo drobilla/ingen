@@ -18,13 +18,13 @@
 #include <cassert>
 #include <cmath>
 #include <iostream>
-#include "ThreadManager.h"
-#include "Node.h"
-#include "Patch.h"
-#include "Plugin.h"
-#include "Port.h"
-#include "Connection.h"
-#include "DuplexPort.h"
+#include "ThreadManager.hpp"
+#include "Node.hpp"
+#include "Patch.hpp"
+#include "Plugin.hpp"
+#include "Port.hpp"
+#include "Connection.hpp"
+#include "DuplexPort.hpp"
 
 using std::cerr; using std::cout; using std::endl;
 

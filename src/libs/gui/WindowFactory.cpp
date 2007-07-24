@@ -15,20 +15,20 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "WindowFactory.h"
-#include "App.h"
-#include "PatchWindow.h"
-#include "GladeFactory.h"
-#include "NodePropertiesWindow.h"
-#include "PatchPropertiesWindow.h"
-#include "NodeControlWindow.h"
-#include "LoadPluginWindow.h"
-#include "LoadPatchWindow.h"
-#include "LoadRemotePatchWindow.h"
-#include "UploadPatchWindow.h"
-#include "LoadSubpatchWindow.h"
-#include "RenameWindow.h"
-#include "NewSubpatchWindow.h"
+#include "WindowFactory.hpp"
+#include "App.hpp"
+#include "PatchWindow.hpp"
+#include "GladeFactory.hpp"
+#include "NodePropertiesWindow.hpp"
+#include "PatchPropertiesWindow.hpp"
+#include "NodeControlWindow.hpp"
+#include "LoadPluginWindow.hpp"
+#include "LoadPatchWindow.hpp"
+#include "LoadRemotePatchWindow.hpp"
+#include "UploadPatchWindow.hpp"
+#include "LoadSubpatchWindow.hpp"
+#include "RenameWindow.hpp"
+#include "NewSubpatchWindow.hpp"
 
 namespace Ingen {
 namespace GUI {

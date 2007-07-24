@@ -15,11 +15,11 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "Port.h"
-#include "Node.h"
-#include "DataType.h"
-#include "Buffer.h"
-#include "BufferFactory.h"
+#include "Port.hpp"
+#include "Node.hpp"
+#include "DataType.hpp"
+#include "Buffer.hpp"
+#include "BufferFactory.hpp"
 
 namespace Ingen {
 

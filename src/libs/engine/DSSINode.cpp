@@ -15,14 +15,14 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "DSSINode.h"
+#include "DSSINode.hpp"
 #include <map>
 #include <set>
-#include "ClientBroadcaster.h"
-#include "interface/ClientInterface.h"
-#include "InputPort.h"
-#include "types.h"
-#include "AudioBuffer.h"
+#include "ClientBroadcaster.hpp"
+#include "interface/ClientInterface.hpp"
+#include "InputPort.hpp"
+#include "types.hpp"
+#include "AudioBuffer.hpp"
 
 using namespace std;
 

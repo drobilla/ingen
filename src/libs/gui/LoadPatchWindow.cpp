@@ -15,15 +15,15 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "LoadPatchWindow.h"
+#include "LoadPatchWindow.hpp"
 #include <sys/types.h>
 #include <dirent.h>
 #include <boost/optional/optional.hpp>
-#include "interface/EngineInterface.h"
-#include "client/PatchModel.h"
-#include "App.h"
-#include "Configuration.h"
-#include "ThreadedLoader.h"
+#include "interface/EngineInterface.hpp"
+#include "client/PatchModel.hpp"
+#include "App.hpp"
+#include "Configuration.hpp"
+#include "ThreadedLoader.hpp"
 
 using namespace Ingen::Serialisation;
 using boost::optional;

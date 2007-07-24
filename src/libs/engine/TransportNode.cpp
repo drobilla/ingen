@@ -15,14 +15,14 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "TransportNode.h"
+#include "TransportNode.hpp"
 #include <jack/transport.h>
-#include "OutputPort.h"
-#include "Plugin.h"
-#include "JackAudioDriver.h"
-#include "Port.h"
-#include "util.h"
-//#include "Engine.h"
+#include "OutputPort.hpp"
+#include "Plugin.hpp"
+#include "JackAudioDriver.hpp"
+#include "Port.hpp"
+#include "util.hpp"
+//#include "Engine.hpp"
 
 namespace Ingen {
 

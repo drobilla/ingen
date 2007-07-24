@@ -20,38 +20,38 @@ libingen_client_la_LIBADD = \
 	@LSIGCPP_LIBS@ @GLIBMM_LIBS@
 
 libingen_client_la_SOURCES = \
-	client.h \
-	client.cpp \
-	OSCEngineSender.h \
-	OSCEngineSender.cpp \
-	OSCClientReceiver.h \
-	OSCClientReceiver.cpp \
-	SigClientInterface.h \
-	DirectSigClientInterface.h \
-	ThreadedSigClientInterface.h \
-	ThreadedSigClientInterface.cpp \
-	PresetModel.h \
-	ControlModel.h \
-	ObjectModel.h \
-	ObjectModel.cpp \
-	NodeModel.h \
-	NodeModel.cpp \
-	PortModel.h \
-	PortModel.cpp \
-	PatchModel.h \
-	PatchModel.cpp \
-	PluginModel.h \
-	PluginModel.cpp \
-	Serializer.h \
-	Serializer.cpp \
-	DeprecatedLoader.h \
-	DeprecatedLoader.cpp \
-	ConnectionModel.h \
+	$(top_srcdir)/ingen/src/common/interface/ClientInterface.hpp \
+	$(top_srcdir)/ingen/src/common/interface/EngineInterface.hpp \
 	ConnectionModel.cpp \
-	Store.h \
+	ConnectionModel.hpp \
+	ControlModel.hpp \
+	DeprecatedLoader.cpp \
+	DeprecatedLoader.hpp \
+	DirectSigClientInterface.hpp \
+	NodeModel.cpp \
+	NodeModel.hpp \
+	OSCClientReceiver.cpp \
+	OSCClientReceiver.hpp \
+	OSCEngineSender.cpp \
+	OSCEngineSender.hpp \
+	ObjectModel.cpp \
+	ObjectModel.hpp \
+	PatchModel.cpp \
+	PatchModel.hpp \
+	PluginModel.cpp \
+	PluginModel.hpp \
+	PortModel.cpp \
+	PortModel.hpp \
+	PresetModel.hpp \
+	Serializer.cpp \
+	Serializer.hpp \
+	SigClientInterface.hpp \
 	Store.cpp \
-	$(top_srcdir)/ingen/src/common/interface/ClientInterface.h \
-	$(top_srcdir)/ingen/src/common/interface/EngineInterface.h
+	Store.hpp \
+	ThreadedSigClientInterface.cpp \
+	ThreadedSigClientInterface.hpp \
+	client.cpp \
+	client.hpp
 
 endif # BUILD_CLIENT_LIB
 

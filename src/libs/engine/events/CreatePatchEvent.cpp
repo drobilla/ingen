@@ -15,18 +15,18 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "CreatePatchEvent.h"
-#include "interface/Responder.h"
-#include "Patch.h"
-#include "Node.h"
-#include "Tree.h"
-#include "Plugin.h"
-#include "Engine.h"
-#include <raul/Maid.h>
-#include "ClientBroadcaster.h"
-#include "AudioDriver.h"
-#include <raul/Path.h>
-#include "ObjectStore.h"
+#include "CreatePatchEvent.hpp"
+#include "interface/Responder.hpp"
+#include "Patch.hpp"
+#include "Node.hpp"
+#include "Tree.hpp"
+#include "Plugin.hpp"
+#include "Engine.hpp"
+#include <raul/Maid.hpp>
+#include "ClientBroadcaster.hpp"
+#include "AudioDriver.hpp"
+#include <raul/Path.hpp>
+#include "ObjectStore.hpp"
 
 namespace Ingen {
 

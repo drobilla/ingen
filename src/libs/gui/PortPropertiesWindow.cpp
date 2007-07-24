@@ -17,12 +17,12 @@
 
 #include <cassert>
 #include <string>
-#include "interface/EngineInterface.h"
-#include "client/NodeModel.h"
-#include "client/PluginModel.h"
-#include "App.h"
-#include "ControlGroups.h"
-#include "PortPropertiesWindow.h"
+#include "interface/EngineInterface.hpp"
+#include "client/NodeModel.hpp"
+#include "client/PluginModel.hpp"
+#include "App.hpp"
+#include "ControlGroups.hpp"
+#include "PortPropertiesWindow.hpp"
 
 using std::string;
 

@@ -15,11 +15,11 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "DSSIControlEvent.h"
-#include "Engine.h"
-#include "Node.h"
-#include "Plugin.h"
-#include "ObjectStore.h"
+#include "DSSIControlEvent.hpp"
+#include "Engine.hpp"
+#include "Node.hpp"
+#include "Plugin.hpp"
+#include "ObjectStore.hpp"
 
 namespace Ingen {
 

@@ -15,12 +15,12 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "App.h"
-#include "interface/EngineInterface.h"
-#include "client/NodeModel.h"
-#include "client/PatchModel.h"
-#include "NewSubpatchWindow.h"
-#include "PatchView.h"
+#include "App.hpp"
+#include "interface/EngineInterface.hpp"
+#include "client/NodeModel.hpp"
+#include "client/PatchModel.hpp"
+#include "NewSubpatchWindow.hpp"
+#include "PatchView.hpp"
 
 namespace Ingen {
 namespace GUI {

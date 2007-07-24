@@ -18,8 +18,9 @@
 #include <iostream>
 #include <cassert>
 #include <stdlib.h>
-#include "AudioBuffer.h"
-using std::cerr; using std::endl;
+#include "AudioBuffer.hpp"
+
+using namespace std;
 
 /* TODO: Be sure these functions are vectorized by GCC when it's vectorizer
  * stops sucking.  Probably a good idea to inline them as well */

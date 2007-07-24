@@ -15,15 +15,15 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "InputPort.h"
+#include "InputPort.hpp"
 #include <iostream>
 #include <cstdlib>
 #include <cassert>
-#include "AudioBuffer.h"
-#include "Connection.h"
-#include "OutputPort.h"
-#include "Node.h"
-#include "util.h"
+#include "AudioBuffer.hpp"
+#include "Connection.hpp"
+#include "OutputPort.hpp"
+#include "Node.hpp"
+#include "util.hpp"
 
 using std::cerr; using std::cout; using std::endl;
 

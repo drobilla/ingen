@@ -15,13 +15,13 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "NoteOffEvent.h"
-#include "interface/Responder.h"
-#include "Engine.h"
-#include "ObjectStore.h"
-#include "Node.h"
-#include "MidiNoteNode.h"
-#include "MidiTriggerNode.h"
+#include "NoteOffEvent.hpp"
+#include "interface/Responder.hpp"
+#include "Engine.hpp"
+#include "ObjectStore.hpp"
+#include "Node.hpp"
+#include "MidiNoteNode.hpp"
+#include "MidiTriggerNode.hpp"
 
 namespace Ingen {
 

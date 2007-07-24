@@ -16,9 +16,9 @@
  */
 
 #include <cassert>
-#include "ConnectionModel.h"
-#include "PortModel.h"
-#include "PatchModel.h"
+#include "ConnectionModel.hpp"
+#include "PortModel.hpp"
+#include "PatchModel.hpp"
 
 namespace Ingen {
 namespace Client {

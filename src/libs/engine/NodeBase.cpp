@@ -15,18 +15,18 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "NodeBase.h"
+#include "NodeBase.hpp"
 #include <cassert>
 #include <iostream>
 #include <stdint.h>
-#include <raul/List.h>
-#include <raul/Array.h>
-#include "util.h"
-#include "Plugin.h"
-#include "ClientBroadcaster.h"
-#include "Port.h"
-#include "Patch.h"
-#include "ObjectStore.h"
+#include <raul/List.hpp>
+#include <raul/Array.hpp>
+#include "util.hpp"
+#include "Plugin.hpp"
+#include "ClientBroadcaster.hpp"
+#include "Port.hpp"
+#include "Patch.hpp"
+#include "ObjectStore.hpp"
 
 using std::cout; using std::cerr; using std::endl;
 

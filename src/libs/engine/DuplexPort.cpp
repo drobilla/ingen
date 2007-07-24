@@ -15,17 +15,16 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "DuplexPort.h"
 #include <iostream>
 #include <cstdlib>
 #include <cassert>
-#include "Connection.h"
-#include "OutputPort.h"
-#include "Node.h"
-#include "util.h"
+#include "util.hpp"
+#include "DuplexPort.hpp"
+#include "Connection.hpp"
+#include "OutputPort.hpp"
+#include "Node.hpp"
 
-using std::cerr; using std::cout; using std::endl;
-
+using namespace std;
 
 namespace Ingen {
 

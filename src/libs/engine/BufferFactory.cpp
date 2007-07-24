@@ -15,10 +15,10 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "BufferFactory.h"
-#include "AudioBuffer.h"
-#include "MidiBuffer.h"
-#include "OSCBuffer.h"
+#include "BufferFactory.hpp"
+#include "AudioBuffer.hpp"
+#include "MidiBuffer.hpp"
+#include "OSCBuffer.hpp"
 
 namespace Ingen {
 namespace BufferFactory {

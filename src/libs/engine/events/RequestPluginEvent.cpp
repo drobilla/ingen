@@ -15,16 +15,16 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "RequestPluginEvent.h"
+#include "RequestPluginEvent.hpp"
 #include <string>
-#include "interface/ClientInterface.h"
-#include "interface/Responder.h"
-#include "Engine.h"
-#include "Port.h"
-#include "ObjectStore.h"
-#include "ClientBroadcaster.h"
-#include "NodeFactory.h"
-#include "Plugin.h"
+#include "interface/ClientInterface.hpp"
+#include "interface/Responder.hpp"
+#include "Engine.hpp"
+#include "Port.hpp"
+#include "ObjectStore.hpp"
+#include "ClientBroadcaster.hpp"
+#include "NodeFactory.hpp"
+#include "Plugin.hpp"
 
 using std::string;
 

@@ -29,15 +29,15 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 #include <libxml/xpath.h>
-#include <raul/Path.h>
-#include "interface/EngineInterface.h"
-#include "PatchModel.h"
-#include "NodeModel.h"
-#include "ConnectionModel.h"
-#include "PortModel.h"
-#include "PresetModel.h"
-#include "PluginModel.h"
-#include "DeprecatedLoader.h"
+#include <raul/Path.hpp>
+#include "interface/EngineInterface.hpp"
+#include "PatchModel.hpp"
+#include "NodeModel.hpp"
+#include "ConnectionModel.hpp"
+#include "PortModel.hpp"
+#include "PresetModel.hpp"
+#include "PluginModel.hpp"
+#include "DeprecatedLoader.hpp"
 
 using std::string; using std::vector; using std::pair;
 using std::cerr; using std::cout; using std::endl;

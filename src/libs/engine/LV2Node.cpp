@@ -15,18 +15,18 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "LV2Node.h"
+#include "LV2Node.hpp"
 #include <iostream>
 #include <cassert>
-#include "float.h"
+#include <float.h>
 #include <stdint.h>
 #include <cmath>
-#include "InputPort.h"
-#include "OutputPort.h"
-#include "Plugin.h"
-#include "AudioBuffer.h"
-#include "MidiBuffer.h"
-#include "OSCBuffer.h"
+#include "InputPort.hpp"
+#include "OutputPort.hpp"
+#include "Plugin.hpp"
+#include "AudioBuffer.hpp"
+#include "MidiBuffer.hpp"
+#include "OSCBuffer.hpp"
 
 namespace Ingen {
 

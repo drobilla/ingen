@@ -15,7 +15,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "ThreadedSigClientInterface.h"
+#include "ThreadedSigClientInterface.hpp"
 #include <iostream>
 using std::cerr; using std::endl;
 

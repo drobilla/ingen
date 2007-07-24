@@ -15,24 +15,24 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "DestroyEvent.h"
-#include "interface/Responder.h"
-#include "Engine.h"
-#include "Patch.h"
-#include "Tree.h"
-#include "Node.h"
-#include "Plugin.h"
-#include "AudioDriver.h"
-#include "MidiDriver.h"
-#include "InternalNode.h"
-#include "DisconnectNodeEvent.h"
-#include "DisconnectPortEvent.h"
-#include "ClientBroadcaster.h"
-#include <raul/Maid.h>
-#include "ObjectStore.h"
-#include <raul/Path.h>
-#include "QueuedEventSource.h"
-#include "Port.h"
+#include "DestroyEvent.hpp"
+#include "interface/Responder.hpp"
+#include "Engine.hpp"
+#include "Patch.hpp"
+#include "Tree.hpp"
+#include "Node.hpp"
+#include "Plugin.hpp"
+#include "AudioDriver.hpp"
+#include "MidiDriver.hpp"
+#include "InternalNode.hpp"
+#include "DisconnectNodeEvent.hpp"
+#include "DisconnectPortEvent.hpp"
+#include "ClientBroadcaster.hpp"
+#include <raul/Maid.hpp>
+#include "ObjectStore.hpp"
+#include <raul/Path.hpp>
+#include "QueuedEventSource.hpp"
+#include "Port.hpp"
 
 namespace Ingen {
 

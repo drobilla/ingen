@@ -15,7 +15,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "GladeFactory.h"
+#include "GladeFactory.hpp"
 #include <iostream>
 #include <fstream>
 using std::cout; using std::cerr; using std::endl;

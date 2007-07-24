@@ -16,33 +16,33 @@
  */
 
 #include "../../../config/config.h"
-#include "App.h"
+#include "App.hpp"
 #include <cassert>
 #include <string>
 #include <fstream>
 #include <libgnomecanvasmm.h>
 #include <time.h>
 #include <sys/time.h>
-#include <raul/Path.h>
-#include "interface/EngineInterface.h"
-#include "client/ObjectModel.h"
-#include "client/PatchModel.h"
-#include "client/Store.h"
-#include "NodeModule.h"
-#include "ControlPanel.h"
-#include "SubpatchModule.h"
-#include "LoadPluginWindow.h"
-#include "PatchWindow.h"
-#include "MessagesWindow.h"
-#include "ConfigWindow.h"
-#include "GladeFactory.h"
-#include "PatchTreeWindow.h"
-#include "Configuration.h"
-#include "ConnectWindow.h"
-#include "ThreadedLoader.h"
-#include "WindowFactory.h"
+#include <raul/Path.hpp>
+#include "interface/EngineInterface.hpp"
+#include "client/ObjectModel.hpp"
+#include "client/PatchModel.hpp"
+#include "client/Store.hpp"
+#include "NodeModule.hpp"
+#include "ControlPanel.hpp"
+#include "SubpatchModule.hpp"
+#include "LoadPluginWindow.hpp"
+#include "PatchWindow.hpp"
+#include "MessagesWindow.hpp"
+#include "ConfigWindow.hpp"
+#include "GladeFactory.hpp"
+#include "PatchTreeWindow.hpp"
+#include "Configuration.hpp"
+#include "ConnectWindow.hpp"
+#include "ThreadedLoader.hpp"
+#include "WindowFactory.hpp"
 /*#ifdef HAVE_LASH
-#include "LashController.h"
+#include "LashController.hpp"
 #endif*/
 using std::cerr; using std::cout; using std::endl;
 using std::string;

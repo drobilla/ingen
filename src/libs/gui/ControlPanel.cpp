@@ -15,15 +15,15 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "interface/EngineInterface.h"
-#include "client/PatchModel.h"
-#include "client/NodeModel.h"
-#include "client/PortModel.h"
-#include "client/PluginModel.h"
-#include "App.h"
-#include "ControlPanel.h"
-#include "ControlGroups.h"
-#include "GladeFactory.h"
+#include "interface/EngineInterface.hpp"
+#include "client/PatchModel.hpp"
+#include "client/NodeModel.hpp"
+#include "client/PortModel.hpp"
+#include "client/PluginModel.hpp"
+#include "App.hpp"
+#include "ControlPanel.hpp"
+#include "ControlGroups.hpp"
+#include "GladeFactory.hpp"
 
 namespace Ingen {
 namespace GUI {

@@ -16,8 +16,8 @@
  */
 
 #include <string>
-#include "client/PatchModel.h"
-#include "PatchPropertiesWindow.h"
+#include "client/PatchModel.hpp"
+#include "PatchPropertiesWindow.hpp"
 
 namespace Ingen {
 namespace GUI {

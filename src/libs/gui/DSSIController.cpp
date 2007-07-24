@@ -15,16 +15,16 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "DSSIController.h"
+#include "DSSIController.hpp"
 #include <iomanip>
 #include <sstream>
 #include <dirent.h>
 #include <unistd.h>
 #include <sys/stat.h>
-#include "interface/EngineInterface.h"
-#include "client/NodeModel.h"
-#include "App.h"
-#include "DSSIModule.h"
+#include "interface/EngineInterface.hpp"
+#include "client/NodeModel.hpp"
+#include "App.hpp"
+#include "DSSIModule.hpp"
 
 namespace Ingen {
 namespace GUI {

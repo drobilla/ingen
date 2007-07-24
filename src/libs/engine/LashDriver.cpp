@@ -18,9 +18,9 @@
 #include <iostream>
 #include <string>
 #include <cassert>
-#include "config/config.h"
-#include "LashDriver.h"
-#include "App.h"
+#include "../../../../config/config.h"
+#include "LashDriver.hpp"
+#include "App.hpp"
 
 using namespace std;
 

@@ -15,12 +15,12 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <raul/Process.h>
-#include "engine.h"
-#include "Engine.h"
-#include "QueuedEngineInterface.h"
-#include "tuning.h"
-#include "util.h"
+#include <raul/Process.hpp>
+#include "engine.hpp"
+#include "Engine.hpp"
+#include "QueuedEngineInterface.hpp"
+#include "tuning.hpp"
+#include "util.hpp"
 
 namespace Ingen {
 

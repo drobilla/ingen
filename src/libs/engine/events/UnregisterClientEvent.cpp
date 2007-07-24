@@ -15,11 +15,11 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "interface/ClientInterface.h"
-#include "interface/Responder.h"
-#include "UnregisterClientEvent.h"
-#include "Engine.h"
-#include "ClientBroadcaster.h"
+#include "interface/ClientInterface.hpp"
+#include "interface/Responder.hpp"
+#include "UnregisterClientEvent.hpp"
+#include "Engine.hpp"
+#include "ClientBroadcaster.hpp"
 
 namespace Ingen {
 

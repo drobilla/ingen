@@ -15,17 +15,17 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "PatchPortModule.h"
+#include "PatchPortModule.hpp"
 #include <cassert>
-#include "interface/EngineInterface.h"
-#include "client/PatchModel.h"
-#include "client/NodeModel.h"
-#include "App.h"
-#include "PatchCanvas.h"
-#include "Port.h"
-#include "GladeFactory.h"
-#include "RenameWindow.h"
-#include "PatchWindow.h"
+#include "interface/EngineInterface.hpp"
+#include "client/PatchModel.hpp"
+#include "client/NodeModel.hpp"
+#include "App.hpp"
+#include "PatchCanvas.hpp"
+#include "Port.hpp"
+#include "GladeFactory.hpp"
+#include "RenameWindow.hpp"
+#include "PatchWindow.hpp"
 
 namespace Ingen {
 namespace GUI {

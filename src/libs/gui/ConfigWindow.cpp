@@ -19,8 +19,8 @@
 #include <cassert>
 #include <algorithm>
 #include <cctype>
-#include "client/NodeModel.h"
-#include "ConfigWindow.h"
+#include "client/NodeModel.hpp"
+#include "ConfigWindow.hpp"
 
 using namespace std;
 

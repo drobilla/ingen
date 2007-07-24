@@ -15,12 +15,12 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "LoadPluginsEvent.h"
-#include "interface/Responder.h"
-#include "Engine.h"
-#include "NodeFactory.h"
-#include "ClientBroadcaster.h"
-#include "QueuedEventSource.h"
+#include "LoadPluginsEvent.hpp"
+#include "interface/Responder.hpp"
+#include "Engine.hpp"
+#include "NodeFactory.hpp"
+#include "ClientBroadcaster.hpp"
+#include "QueuedEventSource.hpp"
 
 #include <iostream>
 using std::cerr;

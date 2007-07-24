@@ -15,6 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include "../../../../config/config.h"
+
 #include <iostream>
 #include <string>
 #include <signal.h>
@@ -22,14 +24,13 @@
 #include <glibmm/miscutils.h>
 #include <boost/optional.hpp>
 #include <glibmm/thread.h>
-#include <raul/Path.h>
-#include <raul/RDFWorld.h>
-#include <raul/SharedPtr.h>
-#include "config.h"
-#include "module/Module.h"
-#include "engine/Engine.h"
-#include "engine/QueuedEngineInterface.h"
-#include "serialisation/Loader.h"
+#include <raul/Path.hpp>
+#include <raul/RDFWorld.hpp>
+#include <raul/SharedPtr.hpp>
+#include "module/Module.hpp"
+#include "engine/Engine.hpp"
+#include "engine/QueuedEngineInterface.hpp"
+#include "serialisation/Loader.hpp"
 #include "cmdline.h"
 
 using namespace std;

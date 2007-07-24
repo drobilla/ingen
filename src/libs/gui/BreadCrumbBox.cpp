@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "BreadCrumbBox.h"
-#include "BreadCrumb.h"
+#include "BreadCrumbBox.hpp"
+#include "BreadCrumb.hpp"
 namespace Ingen {
 namespace GUI {
 

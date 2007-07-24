@@ -15,9 +15,9 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "PatchModel.h"
-#include "NodeModel.h"
-#include "ConnectionModel.h"
+#include "PatchModel.hpp"
+#include "NodeModel.hpp"
+#include "ConnectionModel.hpp"
 #include <cassert>
 #include <iostream>
 

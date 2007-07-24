@@ -17,13 +17,13 @@
 
 #include <cassert>
 #include <iostream>
-#include "interface/EngineInterface.h"
-#include "client/PatchModel.h"
-#include "client/PortModel.h"
-#include "client/ControlModel.h"
-#include "Configuration.h"
-#include "App.h"
-#include "Port.h"
+#include "interface/EngineInterface.hpp"
+#include "client/PatchModel.hpp"
+#include "client/PortModel.hpp"
+#include "client/ControlModel.hpp"
+#include "Configuration.hpp"
+#include "App.hpp"
+#include "Port.hpp"
 using std::cerr; using std::endl;
 
 using namespace Ingen::Client;

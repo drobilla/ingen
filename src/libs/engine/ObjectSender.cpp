@@ -15,17 +15,17 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "ObjectSender.h"
-#include "interface/ClientInterface.h"
-#include "ObjectStore.h"
-#include "Patch.h"
-#include "Node.h"
-#include "Port.h"
-#include "Port.h"
-#include "Connection.h"
-#include "NodeFactory.h"
-#include "DataType.h"
-#include "AudioBuffer.h"
+#include "ObjectSender.hpp"
+#include "interface/ClientInterface.hpp"
+#include "ObjectStore.hpp"
+#include "Patch.hpp"
+#include "Node.hpp"
+#include "Port.hpp"
+#include "Port.hpp"
+#include "Connection.hpp"
+#include "NodeFactory.hpp"
+#include "DataType.hpp"
+#include "AudioBuffer.hpp"
 
 namespace Ingen {
 

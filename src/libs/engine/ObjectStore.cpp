@@ -15,13 +15,13 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <raul/List.h>
-#include <raul/Path.h>
-#include "ObjectStore.h"
-#include "Patch.h"
-#include "Node.h"
-#include "Port.h"
-#include "Tree.h"
+#include <raul/List.hpp>
+#include <raul/Path.hpp>
+#include "ObjectStore.hpp"
+#include "Patch.hpp"
+#include "Node.hpp"
+#include "Port.hpp"
+#include "Tree.hpp"
 
 namespace Ingen {
 

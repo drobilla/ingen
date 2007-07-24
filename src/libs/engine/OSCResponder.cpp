@@ -15,9 +15,9 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "OSCResponder.h"
-#include "ClientBroadcaster.h"
-#include "interface/ClientKey.h"
+#include "OSCResponder.hpp"
+#include "ClientBroadcaster.hpp"
+#include "interface/ClientKey.hpp"
 #include <cstdlib>
 #include <iostream>
 #include <inttypes.h>

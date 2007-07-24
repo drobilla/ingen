@@ -16,20 +16,20 @@
  */
 
 #include <cassert>
-#include <raul/Atom.h>
-#include "interface/EngineInterface.h"
-#include "client/PatchModel.h"
-#include "client/NodeModel.h"
-#include "App.h"
-#include "NodeModule.h"
-#include "PatchCanvas.h"
-#include "Port.h"
-#include "GladeFactory.h"
-#include "RenameWindow.h"
-#include "PatchWindow.h"
-#include "WindowFactory.h"
-#include "SubpatchModule.h"
-#include "NodeControlWindow.h"
+#include <raul/Atom.hpp>
+#include "interface/EngineInterface.hpp"
+#include "client/PatchModel.hpp"
+#include "client/NodeModel.hpp"
+#include "App.hpp"
+#include "NodeModule.hpp"
+#include "PatchCanvas.hpp"
+#include "Port.hpp"
+#include "GladeFactory.hpp"
+#include "RenameWindow.hpp"
+#include "PatchWindow.hpp"
+#include "WindowFactory.hpp"
+#include "SubpatchModule.hpp"
+#include "NodeControlWindow.hpp"
 
 namespace Ingen {
 namespace GUI {

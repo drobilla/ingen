@@ -21,14 +21,14 @@
 #include <dirent.h>
 #include <boost/optional/optional.hpp>
 #include <curl/curl.h>
-#include <raul/RDFQuery.h>
-#include "interface/EngineInterface.h"
-#include "client/Serializer.h"
-#include "client/PatchModel.h"
-#include "UploadPatchWindow.h"
-#include "App.h"
-#include "Configuration.h"
-#include "ThreadedLoader.h"
+#include <raul/RDFQuery.hpp>
+#include "interface/EngineInterface.hpp"
+#include "client/Serializer.hpp"
+#include "client/PatchModel.hpp"
+#include "UploadPatchWindow.hpp"
+#include "App.hpp"
+#include "Configuration.hpp"
+#include "ThreadedLoader.hpp"
 
 using boost::optional;
 using namespace Raul;

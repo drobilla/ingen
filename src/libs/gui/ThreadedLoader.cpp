@@ -18,10 +18,10 @@
 #include <fstream>
 #include <cassert>
 #include <string>
-#include "client/PatchModel.h"
-#include "module/Module.h"
-#include "App.h"
-#include "ThreadedLoader.h"
+#include "client/PatchModel.hpp"
+#include "module/Module.hpp"
+#include "App.hpp"
+#include "ThreadedLoader.hpp"
 using std::cout; using std::endl;
 
 namespace Ingen {

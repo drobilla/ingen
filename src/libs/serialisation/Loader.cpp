@@ -18,10 +18,10 @@
 #include <iostream>
 #include <locale.h>
 #include <glibmm/ustring.h>
-#include <raul/RDFModel.h>
-#include <raul/RDFQuery.h>
-#include "interface/EngineInterface.h"
-#include "Loader.h"
+#include <raul/RDFModel.hpp>
+#include <raul/RDFQuery.hpp>
+#include "interface/EngineInterface.hpp"
+#include "Loader.hpp"
 
 using namespace std;
 using namespace Raul;

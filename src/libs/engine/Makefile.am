@@ -19,194 +19,180 @@ libingen_engine_la_LIBADD = @RAUL_LIBS@ @JACK_LIBS@ @LIBLO_LIBS@ @ALSA_LIBS@ @LA
 AM_CFLAGS=-std=c99
 
 libingen_engine_la_SOURCES = \
-	engine.h \
-	engine.cpp \
-	util.h \
-	tuning.h \
-	events.h \
-	ThreadManager.h \
-	DataType.h \
-	Node.h \
-	NodeBase.h \
-	NodeBase.cpp \
-	InternalNode.h \
-	Patch.h \
-	Patch.cpp \
-	NodeFactory.h \
-	NodeFactory.cpp \
-	Engine.h \
-	Engine.cpp \
-	JackAudioDriver.h \
-	JackAudioDriver.cpp \
-	JackMidiDriver.h \
-	JackMidiDriver.cpp \
-	jack_compat.h \
-	OSCEngineReceiver.h \
-	OSCEngineReceiver.cpp \
-	DirectResponder.h \
-	OSCResponder.h \
-	OSCResponder.cpp \
-	ClientBroadcaster.h \
-	ClientBroadcaster.cpp \
-	ObjectSender.h \
-	ObjectSender.cpp \
-	OSCClientSender.h \
-	OSCClientSender.cpp \
-	Buffer.h \
-	AudioBuffer.h \
-	AudioBuffer.cpp \
-	MidiBuffer.h \
-	MidiBuffer.cpp \
-	OSCBuffer.h \
-	OSCBuffer.cpp \
 	../../../../lv2/extensions/osc/lv2_osc.c \
 	../../../../lv2/extensions/osc/lv2_osc_print.c \
-	BufferFactory.h \
+	AudioBuffer.cpp \
+	AudioBuffer.hpp \
+	AudioDriver.hpp \
+	Buffer.hpp \
 	BufferFactory.cpp \
-	Port.h \
-	Port.cpp \
-	InputPort.h \
-	InputPort.cpp \
-	OutputPort.h \
-	OutputPort.cpp \
-	DuplexPort.h \
-	DuplexPort.cpp \
-	MidiNoteNode.h \
-	MidiNoteNode.cpp \
-	MidiTriggerNode.h \
-	MidiTriggerNode.cpp \
-	MidiControlNode.h \
-	MidiControlNode.cpp \
-	Event.h \
-	QueuedEvent.h \
-	EventSource.h \
-	QueuedEventSource.h \
-	QueuedEventSource.cpp \
-	QueuedEngineInterface.h \
-	QueuedEngineInterface.cpp \
-	GraphObject.h \
-	GraphObject.cpp \
-	Tree.h \
-	TreeImplementation.h \
-	Plugin.h \
-	Plugin.cpp \
-	PostProcessor.h \
-	PostProcessor.cpp \
-	Connection.h \
+	BufferFactory.hpp \
+	ClientBroadcaster.cpp \
+	ClientBroadcaster.hpp \
 	Connection.cpp \
-	ObjectStore.h \
+	Connection.hpp \
+	DataType.hpp \
+	DirectResponder.hpp \
+	Driver.hpp \
+	DuplexPort.cpp \
+	DuplexPort.hpp \
+	Engine.cpp \
+	Engine.hpp \
+	Event.hpp \
+	EventSource.hpp \
+	GraphObject.cpp \
+	GraphObject.hpp \
+	InputPort.cpp \
+	InputPort.hpp \
+	InternalNode.hpp \
+	JackAudioDriver.cpp \
+	JackAudioDriver.hpp \
+	JackMidiDriver.cpp \
+	JackMidiDriver.hpp \
+	MidiBuffer.cpp \
+	MidiBuffer.hpp \
+	MidiControlNode.cpp \
+	MidiControlNode.hpp \
+	MidiDriver.hpp \
+	MidiNoteNode.cpp \
+	MidiNoteNode.hpp \
+	MidiTriggerNode.cpp \
+	MidiTriggerNode.hpp \
+	Node.hpp \
+	NodeBase.cpp \
+	NodeBase.hpp \
+	NodeFactory.cpp \
+	NodeFactory.hpp \
+	OSCBuffer.cpp \
+	OSCBuffer.hpp \
+	OSCClientSender.cpp \
+	OSCClientSender.hpp \
+	OSCDriver.hpp \
+	OSCEngineReceiver.cpp \
+	OSCEngineReceiver.hpp \
+	OSCResponder.cpp \
+	OSCResponder.hpp \
+	ObjectSender.cpp \
+	ObjectSender.hpp \
 	ObjectStore.cpp \
-	TransportNode.h \
+	ObjectStore.hpp \
+	OutputPort.cpp \
+	OutputPort.hpp \
+	Patch.cpp \
+	Patch.hpp \
+	Plugin.cpp \
+	Plugin.hpp \
+	Port.cpp \
+	Port.hpp \
+	PostProcessor.cpp \
+	PostProcessor.hpp \
+	QueuedEngineInterface.cpp \
+	QueuedEngineInterface.hpp \
+	QueuedEvent.hpp \
+	QueuedEventSource.cpp \
+	QueuedEventSource.hpp \
+	ThreadManager.hpp \
 	TransportNode.cpp \
-	Driver.h \
-	AudioDriver.h \
-	MidiDriver.h \
-	OSCDriver.h \
-	instantiations.cpp \
-	events/RegisterClientEvent.h \
-	events/RegisterClientEvent.cpp \
-	events/UnregisterClientEvent.h \
-	events/UnregisterClientEvent.cpp \
-	events/PingQueuedEvent.h \
-	events/DeactivateEvent.h \
-	events/DeactivateEvent.cpp \
-	events/SetPortValueEvent.h \
-	events/SetPortValueEvent.cpp \
-	events/SetPortValueQueuedEvent.h \
-	events/SetPortValueQueuedEvent.cpp \
-	events/NoteOnEvent.h \
-	events/NoteOnEvent.cpp \
-	events/NoteOffEvent.h \
-	events/NoteOffEvent.cpp \
-	events/AllNotesOffEvent.h \
-	events/AllNotesOffEvent.cpp \
-	events/ConnectionEvent.h \
-	events/ConnectionEvent.cpp \
-	events/DisconnectionEvent.h \
-	events/DisconnectionEvent.cpp \
-	events/DisconnectNodeEvent.h \
-	events/DisconnectNodeEvent.cpp \
-	events/DisconnectPortEvent.h \
-	events/DisconnectPortEvent.cpp \
-	events/DestroyEvent.h \
-	events/DestroyEvent.cpp \
-	events/AddPortEvent.h \
-	events/AddPortEvent.cpp \
-	events/AddNodeEvent.h \
+	TransportNode.hpp \
+	Tree.hpp \
+	TreeImplementation.hpp \
+	engine.cpp \
+	engine.hpp \
+	events.hpp \
 	events/AddNodeEvent.cpp \
-	events/SetMetadataEvent.h \
-	events/SetMetadataEvent.cpp \
-	events/RequestMetadataEvent.h \
-	events/RequestMetadataEvent.cpp \
-	events/RequestPluginEvent.h \
-	events/RequestPluginEvent.cpp \
-	events/RequestObjectEvent.h \
-	events/RequestObjectEvent.cpp \
-	events/RequestPortValueEvent.h \
-	events/RequestPortValueEvent.cpp \
-	events/RequestAllObjectsEvent.h \
-	events/RequestAllObjectsEvent.cpp \
-	events/RequestPluginsEvent.h \
-	events/RequestPluginsEvent.cpp \
-	events/CreatePatchEvent.h \
-	events/CreatePatchEvent.cpp \
-	events/LoadPluginsEvent.h \
-	events/LoadPluginsEvent.cpp \
-	events/EnablePatchEvent.h \
-	events/EnablePatchEvent.cpp \
-	events/DisablePatchEvent.h \
-	events/DisablePatchEvent.cpp \
-	events/ClearPatchEvent.h \
+	events/AddNodeEvent.hpp \
+	events/AddPortEvent.cpp \
+	events/AddPortEvent.hpp \
+	events/AllNotesOffEvent.cpp \
+	events/AllNotesOffEvent.hpp \
 	events/ClearPatchEvent.cpp \
-	events/RenameEvent.h \
-	events/RenameEvent.cpp \
-	events/MidiLearnEvent.h \
+	events/ClearPatchEvent.hpp \
+	events/ConnectionEvent.cpp \
+	events/ConnectionEvent.hpp \
+	events/CreatePatchEvent.cpp \
+	events/CreatePatchEvent.hpp \
+	events/DeactivateEvent.cpp \
+	events/DeactivateEvent.hpp \
+	events/DestroyEvent.cpp \
+	events/DestroyEvent.hpp \
+	events/DisablePatchEvent.cpp \
+	events/DisablePatchEvent.hpp \
+	events/DisconnectNodeEvent.cpp \
+	events/DisconnectNodeEvent.hpp \
+	events/DisconnectPortEvent.cpp \
+	events/DisconnectPortEvent.hpp \
+	events/DisconnectionEvent.cpp \
+	events/DisconnectionEvent.hpp \
+	events/EnablePatchEvent.cpp \
+	events/EnablePatchEvent.hpp \
+	events/LoadPluginsEvent.cpp \
+	events/LoadPluginsEvent.hpp \
 	events/MidiLearnEvent.cpp \
-	types.h
-# 	BridgeNode.h 
-# 	BridgeNode.cpp 
-# 	ControlInputNode.h 
-# 	ControlInputNode.cpp 
-# 	ControlOutputNode.h 
-# 	ControlOutputNode.cpp 
-# 	AudioInputNode.h 
-# 	AudioInputNode.cpp 
-# 	AudioOutputNode.h 
-# 	AudioOutputNode.cpp 
-# 	MidiInputNode.h 
-# 	MidiInputNode.cpp 
-# 	MidiOutputNode.h 
-# 	MidiOutputNode.cpp 
+	events/MidiLearnEvent.hpp \
+	events/NoteOffEvent.cpp \
+	events/NoteOffEvent.hpp \
+	events/NoteOnEvent.cpp \
+	events/NoteOnEvent.hpp \
+	events/PingQueuedEvent.hpp \
+	events/RegisterClientEvent.cpp \
+	events/RegisterClientEvent.hpp \
+	events/RenameEvent.cpp \
+	events/RenameEvent.hpp \
+	events/RequestAllObjectsEvent.cpp \
+	events/RequestAllObjectsEvent.hpp \
+	events/RequestMetadataEvent.cpp \
+	events/RequestMetadataEvent.hpp \
+	events/RequestObjectEvent.cpp \
+	events/RequestObjectEvent.hpp \
+	events/RequestPluginEvent.cpp \
+	events/RequestPluginEvent.hpp \
+	events/RequestPluginsEvent.cpp \
+	events/RequestPluginsEvent.hpp \
+	events/RequestPortValueEvent.cpp \
+	events/RequestPortValueEvent.hpp \
+	events/SetMetadataEvent.cpp \
+	events/SetMetadataEvent.hpp \
+	events/SetPortValueEvent.cpp \
+	events/SetPortValueEvent.hpp \
+	events/SetPortValueQueuedEvent.cpp \
+	events/SetPortValueQueuedEvent.hpp \
+	events/UnregisterClientEvent.cpp \
+	events/UnregisterClientEvent.hpp \
+	instantiations.cpp \
+	jack_compat.hpp \
+	tuning.hpp \
+	types.hpp \
+	util.hpp
 
 if WITH_LADSPA
 libingen_engine_la_SOURCES += \
-	LADSPANode.h \
+	LADSPANode.hpp \
 	LADSPANode.cpp
 endif
 
 if WITH_DSSI
 libingen_engine_la_SOURCES += \
-	DSSINode.h \
+	DSSINode.hpp \
 	DSSINode.cpp \
 	events/DSSIConfigureEvent.cpp \
-	events/DSSIConfigureEvent.h \
+	events/DSSIConfigureEvent.hpp \
 	events/DSSIControlEvent.cpp \
-	events/DSSIControlEvent.h \
+	events/DSSIControlEvent.hpp \
 	events/DSSIProgramEvent.cpp \
-	events/DSSIProgramEvent.h \
+	events/DSSIProgramEvent.hpp \
 	events/DSSIUpdateEvent.cpp \
-	events/DSSIUpdateEvent.h
+	events/DSSIUpdateEvent.hpp
 endif
 
 if WITH_LV2
 libingen_engine_la_SOURCES += \
-	LV2Node.h \
+	LV2Node.hpp \
 	LV2Node.cpp
 endif
 
 #if WITH_LASH
 #libingen_engine_la_SOURCES += \
-#	LashDriver.h \
+#	LashDriver.hpp \
 #	LashDriver.cpp
 #endif
 

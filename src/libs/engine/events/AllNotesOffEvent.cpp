@@ -15,10 +15,10 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "AllNotesOffEvent.h"
-#include "interface/Responder.h"
-#include "Engine.h"
-#include "ObjectStore.h"
+#include "AllNotesOffEvent.hpp"
+#include "interface/Responder.hpp"
+#include "Engine.hpp"
+#include "ObjectStore.hpp"
 
 namespace Ingen {
 

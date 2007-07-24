@@ -17,11 +17,11 @@
 
 #include <cassert>
 #include <string>
-#include "interface/EngineInterface.h"
-#include "client/ObjectModel.h"
-#include "client/Store.h"
-#include "App.h"
-#include "RenameWindow.h"
+#include "interface/EngineInterface.hpp"
+#include "client/ObjectModel.hpp"
+#include "client/Store.hpp"
+#include "App.hpp"
+#include "RenameWindow.hpp"
 
 using std::string;
 

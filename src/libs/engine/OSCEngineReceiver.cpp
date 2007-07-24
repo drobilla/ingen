@@ -19,16 +19,16 @@
 #include <cstdlib>
 #include <string>
 #include <lo/lo.h>
-#include "types.h"
-#include <raul/SharedPtr.h>
-#include <raul/AtomLiblo.h>
-#include "interface/ClientKey.h"
-#include "interface/ClientInterface.h"
-#include "OSCEngineReceiver.h"
-#include "QueuedEventSource.h"
-#include "OSCClientSender.h"
-#include "OSCResponder.h"
-#include "ClientBroadcaster.h"
+#include "types.hpp"
+#include <raul/SharedPtr.hpp>
+#include <raul/AtomLiblo.hpp>
+#include "interface/ClientKey.hpp"
+#include "interface/ClientInterface.hpp"
+#include "OSCEngineReceiver.hpp"
+#include "QueuedEventSource.hpp"
+#include "OSCClientSender.hpp"
+#include "OSCResponder.hpp"
+#include "ClientBroadcaster.hpp"
 
 using std::cerr; using std::cout; using std::endl;
 

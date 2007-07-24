@@ -19,14 +19,14 @@
 #include <dirent.h>
 #include <cassert>
 #include <boost/optional.hpp>
-#include "interface/EngineInterface.h"
-#include "client/NodeModel.h"
-#include "client/PatchModel.h"
-#include "App.h"
-#include "LoadSubpatchWindow.h"
-#include "PatchView.h"
-#include "Configuration.h"
-#include "ThreadedLoader.h"
+#include "interface/EngineInterface.hpp"
+#include "client/NodeModel.hpp"
+#include "client/PatchModel.hpp"
+#include "App.hpp"
+#include "LoadSubpatchWindow.hpp"
+#include "PatchView.hpp"
+#include "Configuration.hpp"
+#include "ThreadedLoader.hpp"
 using boost::optional;
 
 namespace Ingen {

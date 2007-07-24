@@ -15,13 +15,13 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "SetMetadataEvent.h"
+#include "SetMetadataEvent.hpp"
 #include <string>
-#include "interface/Responder.h"
-#include "Engine.h"
-#include "ClientBroadcaster.h"
-#include "GraphObject.h"
-#include "ObjectStore.h"
+#include "interface/Responder.hpp"
+#include "Engine.hpp"
+#include "ClientBroadcaster.hpp"
+#include "GraphObject.hpp"
+#include "ObjectStore.hpp"
 
 using std::string;
 

@@ -15,29 +15,29 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "PatchWindow.h"
+#include "PatchWindow.hpp"
 #include <iostream>
 #include <cassert>
 #include <fstream>
-#include "interface/EngineInterface.h"
-#include "client/PatchModel.h"
-#include "client/Store.h"
-#include "App.h"
-#include "PatchCanvas.h"
-#include "LoadPluginWindow.h"
-#include "NewSubpatchWindow.h"
-#include "LoadPatchWindow.h"
-#include "LoadSubpatchWindow.h"
-#include "NodeControlWindow.h"
-#include "PatchPropertiesWindow.h"
-#include "ConfigWindow.h"
-#include "MessagesWindow.h"
-#include "PatchTreeWindow.h"
-#include "BreadCrumbBox.h"
-#include "ConnectWindow.h"
-#include "ThreadedLoader.h"
-#include "WindowFactory.h"
-#include "PatchView.h"
+#include "interface/EngineInterface.hpp"
+#include "client/PatchModel.hpp"
+#include "client/Store.hpp"
+#include "App.hpp"
+#include "PatchCanvas.hpp"
+#include "LoadPluginWindow.hpp"
+#include "NewSubpatchWindow.hpp"
+#include "LoadPatchWindow.hpp"
+#include "LoadSubpatchWindow.hpp"
+#include "NodeControlWindow.hpp"
+#include "PatchPropertiesWindow.hpp"
+#include "ConfigWindow.hpp"
+#include "MessagesWindow.hpp"
+#include "PatchTreeWindow.hpp"
+#include "BreadCrumbBox.hpp"
+#include "ConnectWindow.hpp"
+#include "ThreadedLoader.hpp"
+#include "WindowFactory.hpp"
+#include "PatchView.hpp"
 
 namespace Ingen {
 namespace GUI {

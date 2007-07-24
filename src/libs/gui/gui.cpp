@@ -15,10 +15,10 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "gui.h"
-#include "ConnectWindow.h"
-#include "App.h"
-#include "Configuration.h"
+#include "gui.hpp"
+#include "ConnectWindow.hpp"
+#include "App.hpp"
+#include "Configuration.hpp"
 
 namespace Ingen {
 namespace GUI {

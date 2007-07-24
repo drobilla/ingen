@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "OSCClientReceiver.h"
-#include <raul/AtomLiblo.h>
+#include "OSCClientReceiver.hpp"
+#include <raul/AtomLiblo.hpp>
 #include <list>
 #include <cassert>
 #include <cstring>
@@ -132,7 +132,7 @@ OSCClientReceiver::error_cb(int num, const char* msg, const char* path)
 int
 OSCClientReceiver::unknown_cb(const char* path, const char* types, lo_arg** argv, int argc, void* data, void* user_data)
 {
-	string msg = "Received unknown OSC message: ";
+	std::string msg = "Received unknown OSC message: ";
 	msg += path;
 
 	cerr << msg << endl;

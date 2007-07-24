@@ -15,13 +15,13 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "MidiLearnEvent.h"
-#include "interface/Responder.h"
-#include "Engine.h"
-#include "ObjectStore.h"
-#include "Node.h"
-#include "MidiControlNode.h"
-#include "ClientBroadcaster.h"
+#include "MidiLearnEvent.hpp"
+#include "interface/Responder.hpp"
+#include "Engine.hpp"
+#include "ObjectStore.hpp"
+#include "Node.hpp"
+#include "MidiControlNode.hpp"
+#include "ClientBroadcaster.hpp"
 
 namespace Ingen {
 

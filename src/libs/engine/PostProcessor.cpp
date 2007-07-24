@@ -18,10 +18,10 @@
 #include <cassert>
 #include <iostream>
 #include <pthread.h>
-#include <raul/SRSWQueue.h>
-#include <raul/Maid.h>
-#include "Event.h"
-#include "PostProcessor.h"
+#include <raul/SRSWQueue.hpp>
+#include <raul/Maid.hpp>
+#include "Event.hpp"
+#include "PostProcessor.hpp"
 
 using std::cerr; using std::cout; using std::endl;
 

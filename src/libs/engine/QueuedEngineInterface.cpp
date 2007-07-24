@@ -15,12 +15,12 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "QueuedEngineInterface.h"
-#include "config.h"
-#include "QueuedEventSource.h"
-#include "events.h"
-#include "Engine.h"
-#include "AudioDriver.h"
+#include "QueuedEngineInterface.hpp"
+#include "../../../../config/config.h"
+#include "QueuedEventSource.hpp"
+#include "events.hpp"
+#include "Engine.hpp"
+#include "AudioDriver.hpp"
 
 namespace Ingen {
 

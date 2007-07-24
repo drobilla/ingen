@@ -18,17 +18,17 @@
 #include <iostream>
 #include <cstdlib>
 #include <pthread.h>
-#include <raul/Maid.h>
+#include <raul/Maid.hpp>
 #include <raul/midi_events.h>
-#include "types.h"
-#include "JackMidiDriver.h"
-#include "ThreadManager.h"
-#include "AudioDriver.h"
-#include "MidiBuffer.h"
-#include "DuplexPort.h"
+#include "types.hpp"
+#include "JackMidiDriver.hpp"
+#include "ThreadManager.hpp"
+#include "AudioDriver.hpp"
+#include "MidiBuffer.hpp"
+#include "DuplexPort.hpp"
 #include "jack_compat.h"
 /*#ifdef HAVE_LASH
-#include "LashDriver.h"
+#include "LashDriver.hpp"
 #endif*/
 using namespace std;
 

@@ -16,12 +16,12 @@
  */
 
 #include <algorithm>
-#include "Connection.h"
-#include "util.h"
-#include "Node.h"
-#include "Port.h"
-#include "BufferFactory.h"
-#include "AudioBuffer.h"
+#include "util.hpp"
+#include "Connection.hpp"
+#include "Node.hpp"
+#include "Port.hpp"
+#include "BufferFactory.hpp"
+#include "AudioBuffer.hpp"
 
 namespace Ingen {
 

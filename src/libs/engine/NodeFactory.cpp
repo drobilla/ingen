@@ -15,30 +15,30 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "NodeFactory.h"
-#include "config.h"
+#include "NodeFactory.hpp"
+#include "../../../../config/config.h"
 #include <cstdlib>
 #include <pthread.h>
 #include <dirent.h>
 #include <float.h>
 #include <cmath>
-#include "ThreadManager.h"
-#include "MidiNoteNode.h"
-#include "MidiTriggerNode.h"
-#include "MidiControlNode.h"
-#include "TransportNode.h"
-#include "Plugin.h"
-#include "Patch.h"
+#include "ThreadManager.hpp"
+#include "MidiNoteNode.hpp"
+#include "MidiTriggerNode.hpp"
+#include "MidiControlNode.hpp"
+#include "TransportNode.hpp"
+#include "Plugin.hpp"
+#include "Patch.hpp"
 #ifdef HAVE_SLV2
-#include "LV2Node.h"
+#include "LV2Node.hpp"
 #include <slv2/slv2.h>
 #include <slv2/util.h> // old slv2 compat
 #endif
 #ifdef HAVE_LADSPA
-#include "LADSPANode.h"
+#include "LADSPANode.hpp"
 #endif
 #ifdef HAVE_DSSI
-#include "DSSINode.h"
+#include "DSSINode.hpp"
 #endif
 
 using std::string;

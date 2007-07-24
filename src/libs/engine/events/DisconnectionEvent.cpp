@@ -15,19 +15,19 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "DisconnectionEvent.h"
+#include "DisconnectionEvent.hpp"
 #include <string>
-#include <raul/Maid.h>
-#include <raul/Path.h>
-#include "interface/Responder.h"
-#include "Engine.h"
-#include "Connection.h"
-#include "InputPort.h"
-#include "OutputPort.h"
-#include "Patch.h"
-#include "ClientBroadcaster.h"
-#include "Port.h"
-#include "ObjectStore.h"
+#include <raul/Maid.hpp>
+#include <raul/Path.hpp>
+#include "interface/Responder.hpp"
+#include "Engine.hpp"
+#include "Connection.hpp"
+#include "InputPort.hpp"
+#include "OutputPort.hpp"
+#include "Patch.hpp"
+#include "ClientBroadcaster.hpp"
+#include "Port.hpp"
+#include "ObjectStore.hpp"
 
 using std::string;
 namespace Ingen {

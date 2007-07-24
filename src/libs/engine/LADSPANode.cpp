@@ -15,15 +15,15 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "LADSPANode.h"
+#include "LADSPANode.hpp"
 #include <iostream>
 #include <cassert>
 #include <stdint.h>
 #include <cmath>
-#include "AudioBuffer.h"
-#include "InputPort.h"
-#include "OutputPort.h"
-#include "Plugin.h"
+#include "AudioBuffer.hpp"
+#include "InputPort.hpp"
+#include "OutputPort.hpp"
+#include "Plugin.hpp"
 
 namespace Ingen {
 

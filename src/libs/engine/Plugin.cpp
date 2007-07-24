@@ -15,11 +15,11 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "Plugin.h"
-#include "MidiNoteNode.h"
-#include "MidiTriggerNode.h"
-#include "MidiControlNode.h"
-#include "TransportNode.h"
+#include "Plugin.hpp"
+#include "MidiNoteNode.hpp"
+#include "MidiTriggerNode.hpp"
+#include "MidiControlNode.hpp"
+#include "TransportNode.hpp"
 
 namespace Ingen {
 

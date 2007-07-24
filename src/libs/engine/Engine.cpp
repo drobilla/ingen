@@ -16,32 +16,32 @@
  */
 
 #include <cassert>
-#include "Engine.h"	
-#include "config.h"
-#include "tuning.h"
 #include <sys/mman.h>
 #include <iostream>
 #include <unistd.h>
-#include <raul/Deletable.h>
-#include <raul/Maid.h>
-#include "Event.h"
-#include "JackAudioDriver.h"
-#include "NodeFactory.h"
-#include "ClientBroadcaster.h"
-#include "Patch.h"
-#include "ObjectStore.h"
-#include "MidiDriver.h"
-#include "OSCDriver.h"
-#include "QueuedEventSource.h"
-#include "PostProcessor.h"
-#include "CreatePatchEvent.h"
-#include "EnablePatchEvent.h"
-#include "OSCEngineReceiver.h"
+#include <raul/Deletable.hpp>
+#include <raul/Maid.hpp>
+#include "Engine.hpp"	
+#include "../../../../config/config.h"
+#include "tuning.hpp"
+#include "Event.hpp"
+#include "JackAudioDriver.hpp"
+#include "NodeFactory.hpp"
+#include "ClientBroadcaster.hpp"
+#include "Patch.hpp"
+#include "ObjectStore.hpp"
+#include "MidiDriver.hpp"
+#include "OSCDriver.hpp"
+#include "QueuedEventSource.hpp"
+#include "PostProcessor.hpp"
+#include "CreatePatchEvent.hpp"
+#include "EnablePatchEvent.hpp"
+#include "OSCEngineReceiver.hpp"
 #ifdef HAVE_JACK_MIDI
-#include "JackMidiDriver.h"
+#include "JackMidiDriver.hpp"
 #endif
 /*#ifdef HAVE_LASH
-#include "LashDriver.h"
+#include "LashDriver.hpp"
 #endif*/
 using namespace std;
 

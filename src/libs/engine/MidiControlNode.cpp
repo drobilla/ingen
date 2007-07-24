@@ -15,16 +15,16 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "MidiControlNode.h"
+#include "MidiControlNode.hpp"
 #include <math.h>
 #include <raul/midi_events.h>
-#include "PostProcessor.h"
-#include "MidiLearnEvent.h"
-#include "InputPort.h"
-#include "OutputPort.h"
-#include "Plugin.h"
-#include "util.h"
-#include "AudioBuffer.h"
+#include "PostProcessor.hpp"
+#include "MidiLearnEvent.hpp"
+#include "InputPort.hpp"
+#include "OutputPort.hpp"
+#include "Plugin.hpp"
+#include "util.hpp"
+#include "AudioBuffer.hpp"
 
 namespace Ingen {
 

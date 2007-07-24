@@ -15,22 +15,22 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "OSCClientSender.h"
+#include "OSCClientSender.hpp"
 #include <cassert>
 #include <iostream>
 #include <unistd.h>
-#include <raul/AtomLiblo.h>
-#include "ObjectStore.h"
-#include "NodeFactory.h"
-#include "util.h"
-#include "Patch.h"
-#include "Node.h"
-#include "Plugin.h"
-#include "Port.h"
-#include "Connection.h"
-#include "AudioDriver.h"
-#include "interface/ClientInterface.h"
-#include "interface/Responder.h"
+#include <raul/AtomLiblo.hpp>
+#include "ObjectStore.hpp"
+#include "NodeFactory.hpp"
+#include "util.hpp"
+#include "Patch.hpp"
+#include "Node.hpp"
+#include "Plugin.hpp"
+#include "Port.hpp"
+#include "Connection.hpp"
+#include "AudioDriver.hpp"
+#include "interface/ClientInterface.hpp"
+#include "interface/Responder.hpp"
 using std::cout; using std::cerr; using std::endl;
 
 namespace Ingen {

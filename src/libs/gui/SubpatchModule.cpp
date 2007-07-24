@@ -15,18 +15,18 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "SubpatchModule.h"
+#include "SubpatchModule.hpp"
 #include <cassert>
 #include <iostream>
-#include "interface/EngineInterface.h"
-#include "client/PatchModel.h"
-#include "App.h"
-#include "NodeModule.h"
-#include "NodeControlWindow.h"
-#include "PatchWindow.h"
-#include "PatchCanvas.h"
-#include "Port.h"
-#include "WindowFactory.h"
+#include "interface/EngineInterface.hpp"
+#include "client/PatchModel.hpp"
+#include "App.hpp"
+#include "NodeModule.hpp"
+#include "NodeControlWindow.hpp"
+#include "PatchWindow.hpp"
+#include "PatchCanvas.hpp"
+#include "Port.hpp"
+#include "WindowFactory.hpp"
 using std::cerr; using std::cout; using std::endl;
 
 namespace Ingen {

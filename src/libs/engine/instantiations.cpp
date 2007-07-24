@@ -22,9 +22,9 @@
  * instantiate templates (at least not well/completely).
  */
 
-#include "Tree.h"
-#include "TreeImplementation.h"
-#include "GraphObject.h"
+#include "Tree.hpp"
+#include "TreeImplementation.hpp"
+#include "GraphObject.hpp"
 
 template class Tree<Ingen::GraphObject*>;
 

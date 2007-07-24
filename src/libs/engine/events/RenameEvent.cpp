@@ -15,15 +15,15 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "RenameEvent.h"
-#include "interface/Responder.h"
-#include "Patch.h"
-#include "Node.h"
-#include "Tree.h"
-#include "Engine.h"
-#include "ClientBroadcaster.h"
-#include <raul/Path.h>
-#include "ObjectStore.h"
+#include "RenameEvent.hpp"
+#include "interface/Responder.hpp"
+#include "Patch.hpp"
+#include "Node.hpp"
+#include "Tree.hpp"
+#include "Engine.hpp"
+#include "ClientBroadcaster.hpp"
+#include <raul/Path.hpp>
+#include "ObjectStore.hpp"
 
 namespace Ingen {
 

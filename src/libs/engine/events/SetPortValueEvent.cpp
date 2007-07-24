@@ -15,14 +15,14 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "interface/Responder.h"
-#include "SetPortValueEvent.h"
-#include "Engine.h"
-#include "Port.h"
-#include "ClientBroadcaster.h"
-#include "Node.h"
-#include "ObjectStore.h"
-#include "AudioBuffer.h"
+#include "interface/Responder.hpp"
+#include "SetPortValueEvent.hpp"
+#include "Engine.hpp"
+#include "Port.hpp"
+#include "ClientBroadcaster.hpp"
+#include "Node.hpp"
+#include "ObjectStore.hpp"
+#include "AudioBuffer.hpp"
 
 namespace Ingen {
 

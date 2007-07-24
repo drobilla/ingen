@@ -15,24 +15,25 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "ClientBroadcaster.h"
 #include <cassert>
 #include <iostream>
 #include <unistd.h>
-#include "ObjectStore.h"
-#include "NodeFactory.h"
-#include "util.h"
-#include "Patch.h"
-#include "Node.h"
-#include "Plugin.h"
-#include "Port.h"
-#include "Connection.h"
-#include "AudioDriver.h"
-#include "ObjectSender.h"
-#include "interface/ClientKey.h"
-#include "interface/ClientInterface.h"
-#include "OSCClientSender.h"
-using std::cout; using std::cerr; using std::endl;
+#include "interface/ClientKey.hpp"
+#include "interface/ClientInterface.hpp"
+#include "ClientBroadcaster.hpp"
+#include "ObjectStore.hpp"
+#include "NodeFactory.hpp"
+#include "util.hpp"
+#include "Patch.hpp"
+#include "Node.hpp"
+#include "Plugin.hpp"
+#include "Port.hpp"
+#include "Connection.hpp"
+#include "AudioDriver.hpp"
+#include "ObjectSender.hpp"
+#include "OSCClientSender.hpp"
+
+using namespace std;
 using Ingen::Shared::ClientInterface;
 
 namespace Ingen {

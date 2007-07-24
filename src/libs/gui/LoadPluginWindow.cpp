@@ -19,15 +19,15 @@
 #include <cassert>
 #include <algorithm>
 #include <cctype>
-#include "interface/EngineInterface.h"
-#include "client/NodeModel.h"
-#include "client/PatchModel.h"
-#include "client/Store.h"
-#include "App.h"
-#include "LoadPluginWindow.h"
-#include "PatchWindow.h"
-#include "PatchView.h"
-#include "PatchCanvas.h"
+#include "interface/EngineInterface.hpp"
+#include "client/NodeModel.hpp"
+#include "client/PatchModel.hpp"
+#include "client/Store.hpp"
+#include "App.hpp"
+#include "LoadPluginWindow.hpp"
+#include "PatchWindow.hpp"
+#include "PatchView.hpp"
+#include "PatchCanvas.hpp"
 using std::cout; using std::cerr; using std::endl;
 
 

@@ -16,7 +16,7 @@
  */
 
 #include <iostream>
-#include "OSCBuffer.h"
+#include "OSCBuffer.hpp"
 
 using namespace std;
 

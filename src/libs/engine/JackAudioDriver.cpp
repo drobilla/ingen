@@ -15,28 +15,28 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "JackAudioDriver.h"
-#include "config.h"
-#include "tuning.h"
+#include "JackAudioDriver.hpp"
+#include "../../../../config/config.h"
+#include "tuning.hpp"
 #include <iostream>
 #include <cstdlib>
-#include <raul/List.h>
-#include "Engine.h"
-#include "util.h"
-#include "Event.h"
-#include "ThreadManager.h"
-#include "QueuedEvent.h"
-#include "EventSource.h"
-#include "PostProcessor.h"
-#include "Node.h"
-#include "Patch.h"
-#include "Port.h"
-#include "MidiDriver.h"
-#include "DuplexPort.h"
-#include "EventSource.h"
-#include "AudioBuffer.h"
+#include <raul/List.hpp>
+#include "Engine.hpp"
+#include "util.hpp"
+#include "Event.hpp"
+#include "ThreadManager.hpp"
+#include "QueuedEvent.hpp"
+#include "EventSource.hpp"
+#include "PostProcessor.hpp"
+#include "Node.hpp"
+#include "Patch.hpp"
+#include "Port.hpp"
+#include "MidiDriver.hpp"
+#include "DuplexPort.hpp"
+#include "EventSource.hpp"
+#include "AudioBuffer.hpp"
 /*#ifdef HAVE_LASH
-#include "LashDriver.h"
+#include "LashDriver.hpp"
 #endif*/
 
 using namespace std;

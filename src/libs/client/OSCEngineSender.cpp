@@ -16,9 +16,9 @@
  */
 
 #include <iostream>
-#include "OSCEngineSender.h"
-#include "interface/ClientKey.h"
-#include <raul/AtomLiblo.h>
+#include "OSCEngineSender.hpp"
+#include "interface/ClientKey.hpp"
+#include <raul/AtomLiblo.hpp>
 using std::cout; using std::cerr; using std::endl;
 
 namespace Ingen {

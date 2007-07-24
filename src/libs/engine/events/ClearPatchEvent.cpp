@@ -15,18 +15,18 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "ClearPatchEvent.h"
-#include "interface/Responder.h"
-#include "Engine.h"
-#include "Patch.h"
-#include "ClientBroadcaster.h"
-#include "util.h"
-#include "ObjectStore.h"
-#include "Port.h"
-#include <raul/Maid.h>
-#include "Node.h"
-#include "Connection.h"
-#include "QueuedEventSource.h"
+#include "ClearPatchEvent.hpp"
+#include "interface/Responder.hpp"
+#include "Engine.hpp"
+#include "Patch.hpp"
+#include "ClientBroadcaster.hpp"
+#include "util.hpp"
+#include "ObjectStore.hpp"
+#include "Port.hpp"
+#include <raul/Maid.hpp>
+#include "Node.hpp"
+#include "Connection.hpp"
+#include "QueuedEventSource.hpp"
 
 namespace Ingen {
 

@@ -17,14 +17,14 @@
 
 #include <iostream>
 #include <cmath>
-#include "interface/EngineInterface.h"
-#include "client/NodeModel.h"
-#include "App.h"
-#include "NodeControlWindow.h"
-#include "GladeFactory.h"
-#include "ControlGroups.h"
-#include "ControlPanel.h"
-#include "PatchWindow.h"
+#include "interface/EngineInterface.hpp"
+#include "client/NodeModel.hpp"
+#include "App.hpp"
+#include "NodeControlWindow.hpp"
+#include "GladeFactory.hpp"
+#include "ControlGroups.hpp"
+#include "ControlPanel.hpp"
+#include "PatchWindow.hpp"
 
 using namespace std;
 

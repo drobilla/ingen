@@ -28,20 +28,20 @@
 #include <boost/optional/optional.hpp>
 #include <cstring>
 #include <locale.h>
-#include <raul/RDFWorld.h>
-#include <raul/RDFModel.h>
-#include <raul/RDFNode.h>
-#include <raul/Path.h>
-#include <raul/Atom.h>
-#include <raul/AtomRedland.h>
-#include "interface/EngineInterface.h"
-#include "Serializer.h"
-#include "PatchModel.h"
-#include "NodeModel.h"
-#include "ConnectionModel.h"
-#include "PortModel.h"
-#include "PresetModel.h"
-#include "PluginModel.h"
+#include <raul/RDFWorld.hpp>
+#include <raul/RDFModel.hpp>
+#include <raul/RDFNode.hpp>
+#include <raul/Path.hpp>
+#include <raul/Atom.hpp>
+#include <raul/AtomRedland.hpp>
+#include "interface/EngineInterface.hpp"
+#include "Serializer.hpp"
+#include "PatchModel.hpp"
+#include "NodeModel.hpp"
+#include "ConnectionModel.hpp"
+#include "PortModel.hpp"
+#include "PresetModel.hpp"
+#include "PluginModel.hpp"
 
 using namespace std;
 using namespace Raul;

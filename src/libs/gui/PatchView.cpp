@@ -18,18 +18,18 @@
 #include <iostream>
 #include <cassert>
 #include <fstream>
-#include "interface/EngineInterface.h"
-#include "client/PatchModel.h"
-#include "App.h"
-#include "PatchView.h"
-#include "PatchCanvas.h"
-#include "LoadPluginWindow.h"
-#include "NewSubpatchWindow.h"
-#include "LoadSubpatchWindow.h"
-#include "NodeControlWindow.h"
-#include "PatchPropertiesWindow.h"
-#include "PatchTreeWindow.h"
-#include "GladeFactory.h"
+#include "interface/EngineInterface.hpp"
+#include "client/PatchModel.hpp"
+#include "App.hpp"
+#include "PatchView.hpp"
+#include "PatchCanvas.hpp"
+#include "LoadPluginWindow.hpp"
+#include "NewSubpatchWindow.hpp"
+#include "LoadSubpatchWindow.hpp"
+#include "NodeControlWindow.hpp"
+#include "PatchPropertiesWindow.hpp"
+#include "PatchTreeWindow.hpp"
+#include "GladeFactory.hpp"
 
 namespace Ingen {
 namespace GUI {

@@ -16,9 +16,9 @@
  */
 
 #include <sstream>
-#include <raul/Path.h>
-#include "PluginModel.h"
-#include "PatchModel.h"
+#include <raul/Path.hpp>
+#include "PluginModel.hpp"
+#include "PatchModel.hpp"
 
 
 namespace Ingen {

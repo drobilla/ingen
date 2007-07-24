@@ -15,15 +15,15 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "LashController.h"
-#include "config.h"
+#include "LashController.hpp"
+#include "../../../../config/config.hpp"
 #include <iostream>
 #include <string>
 #include <cassert>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include "App.h"
-#include "PatchModel.h"
+#include "App.hpp"
+#include "PatchModel.hpp"
 
 using std::cerr; using std::cout; using std::endl;
 using std::string;

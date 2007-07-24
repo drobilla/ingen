@@ -16,7 +16,7 @@
  */
 
 #include <iostream>
-#include "MidiBuffer.h"
+#include "MidiBuffer.hpp"
 
 using namespace std;
 

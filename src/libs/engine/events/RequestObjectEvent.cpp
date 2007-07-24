@@ -15,17 +15,17 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "RequestObjectEvent.h"
+#include "RequestObjectEvent.hpp"
 #include <string>
-#include "interface/ClientInterface.h"
-#include "interface/Responder.h"
-#include "Engine.h"
-#include "ObjectStore.h"
-#include "ClientBroadcaster.h"
-#include "Patch.h"
-#include "Node.h"
-#include "Port.h"
-#include "ObjectSender.h"
+#include "interface/ClientInterface.hpp"
+#include "interface/Responder.hpp"
+#include "Engine.hpp"
+#include "ObjectStore.hpp"
+#include "ClientBroadcaster.hpp"
+#include "Patch.hpp"
+#include "Node.hpp"
+#include "Port.hpp"
+#include "ObjectSender.hpp"
 
 using std::string;
 

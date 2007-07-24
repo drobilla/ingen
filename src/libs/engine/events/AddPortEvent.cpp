@@ -15,25 +15,25 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <raul/Path.h>
-#include <raul/Array.h>
-#include <raul/List.h>
-#include <raul/Maid.h>
-#include "interface/Responder.h"
-#include "AddPortEvent.h"
-#include "Patch.h"
-#include "Tree.h"
-#include "Plugin.h"
-#include "Engine.h"
-#include "Patch.h"
-#include "QueuedEventSource.h"
-#include "ObjectStore.h"
-#include "ClientBroadcaster.h"
-#include "Port.h"
-#include "AudioDriver.h"
-#include "MidiDriver.h"
-#include "OSCDriver.h"
-#include "DuplexPort.h"
+#include <raul/Path.hpp>
+#include <raul/Array.hpp>
+#include <raul/List.hpp>
+#include <raul/Maid.hpp>
+#include "interface/Responder.hpp"
+#include "AddPortEvent.hpp"
+#include "Patch.hpp"
+#include "Tree.hpp"
+#include "Plugin.hpp"
+#include "Engine.hpp"
+#include "Patch.hpp"
+#include "QueuedEventSource.hpp"
+#include "ObjectStore.hpp"
+#include "ClientBroadcaster.hpp"
+#include "Port.hpp"
+#include "AudioDriver.hpp"
+#include "MidiDriver.hpp"
+#include "OSCDriver.hpp"
+#include "DuplexPort.hpp"
 
 namespace Ingen {
 

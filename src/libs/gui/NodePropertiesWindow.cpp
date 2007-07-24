@@ -17,9 +17,9 @@
 
 #include <cassert>
 #include <string>
-#include "client/NodeModel.h"
-#include "client/PluginModel.h"
-#include "NodePropertiesWindow.h"
+#include "client/NodeModel.hpp"
+#include "client/PluginModel.hpp"
+#include "NodePropertiesWindow.hpp"
 
 namespace Ingen {
 namespace GUI {

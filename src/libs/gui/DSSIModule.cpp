@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "DSSIModule.h"
-#include "DSSIController.h"
+#include "DSSIModule.hpp"
+#include "DSSIController.hpp"
 
 namespace Ingen {
 namespace GUI {

@@ -18,15 +18,15 @@
 #include <cmath>
 #include <iostream>
 #include <algorithm>
-#include "interface/EngineInterface.h"
-#include "client/PluginModel.h"
-#include "client/NodeModel.h"
-#include "client/PortModel.h"
-#include "ControlGroups.h"
-#include "ControlPanel.h"
-#include "PortPropertiesWindow.h"
-#include "GladeFactory.h"
-#include "App.h"
+#include "interface/EngineInterface.hpp"
+#include "client/PluginModel.hpp"
+#include "client/NodeModel.hpp"
+#include "client/PortModel.hpp"
+#include "ControlGroups.hpp"
+#include "ControlPanel.hpp"
+#include "PortPropertiesWindow.hpp"
+#include "GladeFactory.hpp"
+#include "App.hpp"
 
 using namespace std;
 using namespace Ingen::Client;

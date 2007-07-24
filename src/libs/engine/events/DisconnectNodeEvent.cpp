@@ -15,24 +15,24 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "DisconnectNodeEvent.h"
+#include "DisconnectNodeEvent.hpp"
 #include <iostream>
-#include <raul/List.h>
-#include <raul/Array.h>
-#include <raul/Maid.h>
-#include "interface/Responder.h"
-#include "Engine.h"
-#include "Node.h"
-#include "Connection.h"
-#include "DisconnectionEvent.h"
-#include "Port.h"
-#include "InputPort.h"
-#include "OutputPort.h"
-#include "Patch.h"
-#include "ClientBroadcaster.h"
-#include "util.h"
-#include "ObjectStore.h"
-#include <raul/Path.h>
+#include <raul/List.hpp>
+#include <raul/Array.hpp>
+#include <raul/Maid.hpp>
+#include "interface/Responder.hpp"
+#include "Engine.hpp"
+#include "Node.hpp"
+#include "Connection.hpp"
+#include "DisconnectionEvent.hpp"
+#include "Port.hpp"
+#include "InputPort.hpp"
+#include "OutputPort.hpp"
+#include "Patch.hpp"
+#include "ClientBroadcaster.hpp"
+#include "util.hpp"
+#include "ObjectStore.hpp"
+#include <raul/Path.hpp>
 
 using std::cerr; using std::endl;
 

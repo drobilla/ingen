@@ -15,9 +15,9 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "GraphObject.h"
-#include "Patch.h"
-#include "ObjectStore.h"
+#include "GraphObject.hpp"
+#include "Patch.hpp"
+#include "ObjectStore.hpp"
 
 namespace Ingen {
 

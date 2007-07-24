@@ -15,16 +15,16 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "LoadRemotePatchWindow.h"
+#include "LoadRemotePatchWindow.hpp"
 #include <sys/types.h>
 #include <dirent.h>
 #include <boost/optional/optional.hpp>
-#include <raul/RDFQuery.h>
-#include "interface/EngineInterface.h"
-#include "client/PatchModel.h"
-#include "App.h"
-#include "Configuration.h"
-#include "ThreadedLoader.h"
+#include <raul/RDFQuery.hpp>
+#include "interface/EngineInterface.hpp"
+#include "client/PatchModel.hpp"
+#include "App.hpp"
+#include "Configuration.hpp"
+#include "ThreadedLoader.hpp"
 
 using boost::optional;
 using namespace Raul;

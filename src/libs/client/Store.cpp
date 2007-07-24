@@ -15,14 +15,14 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "Store.h"
-#include "ObjectModel.h"
-#include "PatchModel.h"
-#include "NodeModel.h"
-#include "PortModel.h"
-#include "PluginModel.h"
-#include "PatchModel.h"
-#include "SigClientInterface.h"
+#include "Store.hpp"
+#include "ObjectModel.hpp"
+#include "PatchModel.hpp"
+#include "NodeModel.hpp"
+#include "PortModel.hpp"
+#include "PluginModel.hpp"
+#include "PatchModel.hpp"
+#include "SigClientInterface.hpp"
 
 namespace Ingen {
 namespace Client {

@@ -15,28 +15,29 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include "../../../../config/config.h"
+
 #include <cassert>
-#include <flowcanvas/Canvas.h>
-#include "interface/EngineInterface.h"
-#include "client/PluginModel.h"
-#include "client/PatchModel.h"
-#include "client/NodeModel.h"
-#include "client/Store.h"
-#include "client/Serializer.h"
-#include "App.h"
-#include "PatchCanvas.h"
-#include "PatchWindow.h"
-#include "PatchPortModule.h"
-#include "LoadPluginWindow.h"
-#include "LoadSubpatchWindow.h"
-#include "NewSubpatchWindow.h"
-#include "Port.h"
-#include "Connection.h"
-#include "NodeModule.h"
-#include "SubpatchModule.h"
-#include "GladeFactory.h"
-#include "WindowFactory.h"
-#include "config.h"
+#include <flowcanvas/Canvas.hpp>
+#include "interface/EngineInterface.hpp"
+#include "client/PluginModel.hpp"
+#include "client/PatchModel.hpp"
+#include "client/NodeModel.hpp"
+#include "client/Store.hpp"
+#include "client/Serializer.hpp"
+#include "App.hpp"
+#include "PatchCanvas.hpp"
+#include "PatchWindow.hpp"
+#include "PatchPortModule.hpp"
+#include "LoadPluginWindow.hpp"
+#include "LoadSubpatchWindow.hpp"
+#include "NewSubpatchWindow.hpp"
+#include "Port.hpp"
+#include "Connection.hpp"
+#include "NodeModule.hpp"
+#include "SubpatchModule.hpp"
+#include "GladeFactory.hpp"
+#include "WindowFactory.hpp"
 using Ingen::Client::Store;
 using Ingen::Client::Serializer;
 using Ingen::Client::PluginModel;
