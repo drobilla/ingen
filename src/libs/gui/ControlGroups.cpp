@@ -43,6 +43,14 @@ ControlGroup::ControlGroup(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Gl
   _enable_signal(false)
 {
 }
+	
+
+ControlGroup::~ControlGroup()
+{
+	_enable_signal = false;
+	_control_connection.disconnect();
+	_port_model.reset();
+}
 
 
 void
@@ -54,7 +62,7 @@ ControlGroup::init(ControlPanel* panel, SharedPtr<PortModel> pm)
 	assert(_port_model);
 	assert(panel);
 
-	pm->control_change_sig.connect(sigc::mem_fun(this, &ControlGroup::set_value));
+	_control_connection = pm->control_change_sig.connect(sigc::mem_fun(this, &ControlGroup::set_value));
 }
 
 

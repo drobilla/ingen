@@ -43,7 +43,7 @@ class ControlGroup : public Gtk::VBox
 {
 public:
 	ControlGroup(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml);
-	virtual ~ControlGroup() { }
+	virtual ~ControlGroup();
 	
 	void init(ControlPanel* panel, SharedPtr<PortModel> pm);
 	
@@ -57,6 +57,7 @@ protected:
 
 	ControlPanel*        _control_panel;
 	SharedPtr<PortModel> _port_model;
+	sigc::connection     _control_connection;
 	bool                 _enable_signal;
 };
 
