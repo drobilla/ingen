@@ -50,6 +50,7 @@ libingen_engine_la_SOURCES = \
 	OSCBuffer.h \
 	OSCBuffer.cpp \
 	../../../../lv2/extensions/osc/lv2_osc.c \
+	../../../../lv2/extensions/osc/lv2_osc_print.c \
 	BufferFactory.h \
 	BufferFactory.cpp \
 	Port.h \

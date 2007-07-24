@@ -25,6 +25,8 @@
 #include "OutputPort.h"
 #include "Plugin.h"
 #include "AudioBuffer.h"
+#include "MidiBuffer.h"
+#include "OSCBuffer.h"
 
 namespace Ingen {
 
@@ -199,9 +201,9 @@ LV2Node::set_port_buffer(size_t voice, size_t port_num, Buffer* buf)
 	if (buf->type() == DataType::FLOAT) {
 		slv2_instance_connect_port(_instances[voice], port_num, ((AudioBuffer*)buf)->data());
 	} else if (buf->type() == DataType::MIDI) { 
-		cerr << "Connecting " << path() << ":" << port_num << " -> " <<
-			((MidiBuffer*)buf)->data() << endl;
 		slv2_instance_connect_port(_instances[voice], port_num, ((MidiBuffer*)buf)->data());
+	} else if (buf->type() == DataType::OSC) { 
+		slv2_instance_connect_port(_instances[voice], port_num, ((OSCBuffer*)buf)->data());
 	}
 }
 

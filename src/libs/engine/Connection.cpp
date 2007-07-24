@@ -49,6 +49,8 @@ Connection::Connection(Port* src_port, Port* dst_port)
 
 	if (_must_mix)
 		_local_buffer = BufferFactory::create(dst_port->type(), dst_port->buffer(0)->size());
+
+	cerr << src_port->path() << " -> " << dst_port->path() << " must mix: " << _must_mix << endl;
 }
 
 

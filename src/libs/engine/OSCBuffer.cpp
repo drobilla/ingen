@@ -46,14 +46,16 @@ OSCBuffer::OSCBuffer(size_t capacity)
 bool
 OSCBuffer::join(Buffer* buf)
 {
-	OSCBuffer* mbuf = dynamic_cast<OSCBuffer*>(buf);
-	if (!mbuf)
+	OSCBuffer* obuf = dynamic_cast<OSCBuffer*>(buf);
+	if (!obuf)
 		return false;
 
 	//assert(mbuf->size() == _size);
 	
-	_joined_buf = mbuf;
+	_joined_buf = obuf;
 	
+	cerr << "OSC buffer joined" << endl;
+
 	//_state = mbuf->_state;
 
 	return true;
@@ -75,9 +77,9 @@ OSCBuffer::unjoin()
 bool
 OSCBuffer::is_joined_to(Buffer* buf) const
 {
-	OSCBuffer* mbuf = dynamic_cast<OSCBuffer*>(buf);
-	if (mbuf)
-		return (data() == mbuf->data());
+	OSCBuffer* obuf = dynamic_cast<OSCBuffer*>(buf);
+	if (obuf)
+		return (data() == obuf->data());
 
 	return false;
 }
