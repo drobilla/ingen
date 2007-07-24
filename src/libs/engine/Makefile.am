@@ -38,6 +38,9 @@ libingen_engine_la_SOURCES = \
 	Engine.cpp \
 	JackAudioDriver.h \
 	JackAudioDriver.cpp \
+	JackMidiDriver.h \
+	JackMidiDriver.cpp \
+	jack_compat.h \
 	OSCEngineReceiver.h \
 	OSCEngineReceiver.cpp \
 	DirectResponder.h \
@@ -174,13 +177,6 @@ libingen_engine_la_SOURCES = \
 # 	MidiInputNode.cpp 
 # 	MidiOutputNode.h 
 # 	MidiOutputNode.cpp 
-
-if WITH_JACK_MIDI
-libingen_engine_la_SOURCES += \
-	JackMidiDriver.h \
-	JackMidiDriver.cpp \
-	jack_compat.h
-endif
 
 if WITH_LADSPA
 libingen_engine_la_SOURCES += \
