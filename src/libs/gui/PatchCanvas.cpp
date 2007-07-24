@@ -109,10 +109,12 @@ PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 }
 
 
-void
+size_t
 PatchCanvas::build_plugin_class_menu(Gtk::Menu* menu,
 		SLV2PluginClass plugin_class, SLV2PluginClasses classes)
 {
+	size_t num_items = 0;
+
 #ifdef HAVE_SLV2
 	// Add submenus
 	for (unsigned i=0; i < slv2_plugin_classes_size(classes); ++i) {
@@ -120,12 +122,18 @@ PatchCanvas::build_plugin_class_menu(Gtk::Menu* menu,
 		const char* parent = slv2_plugin_class_get_parent_uri(c);
 
 		if (parent && !strcmp(parent, slv2_plugin_class_get_uri(plugin_class))) {
-			menu->items().push_back(Gtk::Menu_Helpers::MenuElem(
-					slv2_plugin_class_get_label(c)));
-			Gtk::MenuItem* menu_item = &(menu->items().back());
+			Gtk::Menu_Helpers::MenuElem menu_elem = Gtk::Menu_Helpers::MenuElem(
+					slv2_plugin_class_get_label(c));
+
 			Gtk::Menu* submenu = Gtk::manage(new Gtk::Menu());
-			menu_item->set_submenu(*submenu);
-			build_plugin_class_menu(submenu, c, classes);
+			size_t sub_num_items = build_plugin_class_menu(submenu, c, classes);
+
+			if (sub_num_items > 0) {
+				menu->items().push_back(menu_elem);
+				Gtk::MenuItem* menu_item = &(menu->items().back());
+				menu_item->set_submenu(*submenu);
+				++num_items;
+			}
 		}
 	}
 	
@@ -135,14 +143,16 @@ PatchCanvas::build_plugin_class_menu(Gtk::Menu* menu,
 	// Add plugins
 	for (Store::Plugins::const_iterator i = plugins.begin(); i != plugins.end(); ++i) {
 		SLV2Plugin p = i->second->slv2_plugin();
-		if (p && slv2_plugin_get_class(p) == plugin_class)
+		if (p && slv2_plugin_get_class(p) == plugin_class) {
 			menu->items().push_back(Gtk::Menu_Helpers::MenuElem(i->second->name(),
 					sigc::bind(sigc::mem_fun(this, &PatchCanvas::load_plugin),
 						i->second)));
+			++num_items;
+		}
 	}
-
-
 #endif
+
+	return num_items;
 }
 
 
