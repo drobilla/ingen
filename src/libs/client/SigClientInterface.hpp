@@ -41,7 +41,7 @@ class SigClientInterface : virtual public Ingen::Shared::ClientInterface, public
 {
 public:
 
-	// Signal parameters math up directly with ClientInterface calls
+	// Signal parameters match up directly with ClientInterface calls
 	
 	sigc::signal<void, int32_t, bool, string>              response_sig;
 	sigc::signal<void>                                     bundle_begin_sig; 

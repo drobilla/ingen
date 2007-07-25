@@ -103,7 +103,6 @@ public:
 
 	static void set_slv2_world(SLV2World world) {
 		_slv2_world = world; 
-		slv2_world_load_all(_slv2_world);
 		_slv2_plugins = slv2_world_get_all_plugins(_slv2_world);
 	}
 

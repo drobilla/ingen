@@ -32,7 +32,6 @@
 #ifdef HAVE_SLV2
 #include "LV2Node.hpp"
 #include <slv2/slv2.h>
-#include <slv2/util.h> // old slv2 compat
 #endif
 #ifdef HAVE_LADSPA
 #include "LADSPANode.hpp"
@@ -41,9 +40,7 @@
 #include "DSSINode.hpp"
 #endif
 
-using std::string;
-using std::cerr; using std::cout; using std::endl;
-
+using namespace std;
 
 namespace Ingen {
 
@@ -54,14 +51,10 @@ namespace Ingen {
 
 
 
-NodeFactory::NodeFactory()
-: _has_loaded(false)
+NodeFactory::NodeFactory(Ingen::Shared::World* world)
+	: _world(world)
+	, _has_loaded(false)
 {
-#ifdef HAVE_SLV2
-	_world = slv2_world_new();
-	slv2_world_load_all(_world);
-#endif
-
 	// Add builtin plugin types to _internal_plugins list
 	// FIXME: ewwww, definitely a better way to do this!
 
@@ -95,11 +88,6 @@ NodeFactory::~NodeFactory()
 	for (list<Glib::Module*>::iterator i = _libraries.begin(); i != _libraries.end(); ++i)
 		delete (*i);
 	_libraries.clear();
-
-#ifdef HAVE_SLV2
-	slv2_world_free(_world);
-#endif
-
 }
 
 
@@ -270,7 +258,7 @@ NodeFactory::load_internal_plugin(const string& uri,
 void
 NodeFactory::load_lv2_plugins()
 {
-	SLV2Plugins plugins = slv2_world_get_all_plugins(_world);
+	SLV2Plugins plugins = slv2_world_get_all_plugins(_world->slv2_world);
 
 	//cerr << "[NodeFactory] Found " << slv2_plugins_size(plugins) << " LV2 plugins:" << endl;
 
@@ -300,7 +288,10 @@ NodeFactory::load_lv2_plugins()
 		plug->module(NULL); // FIXME?
 		plug->lib_path(slv2_uri_to_path(slv2_plugin_get_library_uri(lv2_plug)));
 		char* name = slv2_plugin_get_name(lv2_plug);
-		assert(name);
+		if (!name) {
+			cerr << "ERROR: LV2 Plugin " << uri << " has no name.  Ignoring." << endl;
+			continue;
+		}
 		plug->name(name);
 		free(name);
 		
@@ -308,7 +299,7 @@ NodeFactory::load_lv2_plugins()
 			_plugins.push_back(plug);
 	}
 
-	slv2_plugins_free(_world, plugins);
+	slv2_plugins_free(_world->slv2_world, plugins);
 }
 
 

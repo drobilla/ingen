@@ -16,6 +16,7 @@
  */
 
 #include "../../../config/config.h"
+#include "module/module.h"
 #include "App.hpp"
 #include <cassert>
 #include <string>
@@ -44,6 +45,9 @@
 /*#ifdef HAVE_LASH
 #include "LashController.hpp"
 #endif*/
+#ifdef HAVE_SLV2
+#include <slv2/slv2.h>
+#endif
 using std::cerr; using std::cout; using std::endl;
 using std::string;
 namespace Ingen { namespace Client { class PluginModel; } }
@@ -59,10 +63,11 @@ class Port;
 App* App::_instance = 0;
 
 
-App::App()
+App::App(Ingen::Shared::World* world)
 : _configuration(new Configuration()),
   _about_dialog(NULL),
   _window_factory(new WindowFactory()),
+  _world(world),
   _enable_signal(true)
 {
 	Glib::RefPtr<Gnome::Glade::Xml> glade_xml = GladeFactory::new_glade_reference();
@@ -73,18 +78,19 @@ App::App()
 	glade_xml->get_widget_derived("config_win", _config_window);
 	glade_xml->get_widget("about_win", _about_dialog);
 
-	_rdf_world.add_prefix("xsd", "http://www.w3.org/2001/XMLSchema#");
-	_rdf_world.add_prefix("ingen", "http://drobilla.net/ns/ingen#");
-	_rdf_world.add_prefix("ingenuity", "http://drobilla.net/ns/ingenuity#");
-	_rdf_world.add_prefix("lv2", "http://lv2plug.in/ns/lv2core#");
-	_rdf_world.add_prefix("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
-	_rdf_world.add_prefix("doap", "http://usefulinc.com/ns/doap#");
+	Raul::RDF::World& rdf_world = world->rdf_world;
+
+	rdf_world.add_prefix("xsd", "http://www.w3.org/2001/XMLSchema#");
+	rdf_world.add_prefix("ingen", "http://drobilla.net/ns/ingen#");
+	rdf_world.add_prefix("ingenuity", "http://drobilla.net/ns/ingenuity#");
+	rdf_world.add_prefix("lv2", "http://lv2plug.in/ns/lv2core#");
+	rdf_world.add_prefix("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
+	rdf_world.add_prefix("doap", "http://usefulinc.com/ns/doap#");
 	
 	_config_window->configuration(_configuration);
 
 #ifdef HAVE_SLV2
-	SLV2World slv2_world = slv2_world_new_using_rdf_world(_rdf_world.world());
-	PluginModel::set_slv2_world(slv2_world);
+	PluginModel::set_slv2_world(world->slv2_world);
 #endif
 }
 
@@ -93,9 +99,9 @@ App::~App()
 {
 }
 
-
 void
 App::run(int argc, char** argv,
+		Ingen::Shared::World* world,
 		SharedPtr<Engine> engine,
 		SharedPtr<Shared::EngineInterface> interface)
 {
@@ -103,7 +109,7 @@ App::run(int argc, char** argv,
 	Gtk::Main main(argc, argv);
 
 	if (!_instance)
-		_instance = new App();
+		_instance = new App(world);
 	
 	/* Load settings */
 	_instance->configuration()->load_settings();

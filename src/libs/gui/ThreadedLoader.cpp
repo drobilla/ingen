@@ -19,7 +19,7 @@
 #include <cassert>
 #include <string>
 #include "client/PatchModel.hpp"
-#include "module/Module.hpp"
+#include "module/module.h"
 #include "App.hpp"
 #include "ThreadedLoader.hpp"
 using std::cout; using std::endl;
@@ -32,7 +32,7 @@ ThreadedLoader::ThreadedLoader(SharedPtr<EngineInterface> engine)
 	: _serialisation_module(Ingen::Shared::load_module("ingen_serialisation"))
 	, _engine(engine)
 	, _deprecated_loader(engine)
-	, _serializer(*App::instance().rdf_world())
+	, _serializer(App::instance().world()->rdf_world)
 {
 	set_name("Loader");
 
@@ -97,7 +97,7 @@ ThreadedLoader::load_patch(bool                    merge,
 		_events.push_back(sigc::hide_return(sigc::bind(
 				sigc::mem_fun(_loader.get(), &Ingen::Serialisation::Loader::load),
 				App::instance().engine(),
-				App::instance().rdf_world(),
+				&App::instance().world()->rdf_world,
 				data_base_uri,
 				engine_parent,
 				(engine_name) ? engine_name.get() : "",

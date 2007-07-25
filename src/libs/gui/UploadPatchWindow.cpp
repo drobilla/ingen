@@ -22,6 +22,7 @@
 #include <boost/optional/optional.hpp>
 #include <curl/curl.h>
 #include <raul/RDFQuery.hpp>
+#include "module/module.h"
 #include "interface/EngineInterface.hpp"
 #include "client/Serializer.hpp"
 #include "client/PatchModel.hpp"
@@ -247,7 +248,7 @@ UploadPatchWindow::upload_clicked()
 	_upload_progress->set_fraction(0.0);
 	_upload_progress->set_text("");
 
-	Serializer s(*App::instance().rdf_world());
+	Serializer s(App::instance().world()->rdf_world);
 	s.start_to_string();
 	s.serialize(_patch);
 	const string str = s.finish();

@@ -99,6 +99,7 @@ QueuedEngineInterface::load_plugins()
 void
 QueuedEngineInterface::activate()
 {
+	QueuedEventSource::activate();
 	push_queued(new PingQueuedEvent(_engine, _responder, now()));
 }
 

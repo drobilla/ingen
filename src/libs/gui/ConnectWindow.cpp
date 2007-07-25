@@ -229,7 +229,7 @@ ConnectWindow::connect()
 
 	} else if (_mode == INTERNAL) {
 		assert(_new_engine);
-		SharedPtr<Ingen::Engine> engine(_new_engine());
+		SharedPtr<Ingen::Engine> engine(_new_engine(App::instance().world()));
 		
 		engine->start_jack_driver();
 		
@@ -371,7 +371,8 @@ ConnectWindow::gtk_callback()
 		//App::instance().engine()->register_client(App::instance().engine()->client_hooks());
 		// FIXME
 		//auto_ptr<ClientInterface> client(new ThreadedSigClientInterface();
-		App::instance().engine()->register_client("FIXME_CLIENT_URI", App::instance().client());
+		// FIXME: client URI
+		App::instance().engine()->register_client("", App::instance().client());
 		App::instance().engine()->load_plugins();
 		++_connect_stage;
 	} else if (_connect_stage == 3) {

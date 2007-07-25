@@ -25,27 +25,11 @@ namespace GUI {
 
 
 void run(int argc, char** argv,
+		Ingen::Shared::World* world,
 		SharedPtr<Ingen::Engine> engine,
 		SharedPtr<Shared::EngineInterface> interface)
 {
-	App::run(argc, argv, engine, interface);
-#if 0
-	Gnome::Canvas::init();
-	Gtk::Main gtk_main(argc, argv);
-	Gtk::Window::set_default_icon_from_file(PKGDATADIR "/ingen.svg");
-	
-	/* Instantiate singleton (bad, FIXME) */
-	App::instantiate(argc, argv);
-
-	/* Load settings */
-	App::instance().configuration()->load_settings();
-	App::instance().configuration()->apply_settings();
-
-	App::instance().connect_window()->start();
-	gtk_main.run();
-
-	return 0;
-#endif
+	App::run(argc, argv, world, engine, interface);
 }
 
 

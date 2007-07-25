@@ -27,7 +27,7 @@
 #include <raul/Path.hpp>
 #include <raul/RDFWorld.hpp>
 #include <raul/SharedPtr.hpp>
-#include "module/Module.hpp"
+#include "module/module.h"
 #include "engine/Engine.hpp"
 #include "engine/QueuedEngineInterface.hpp"
 #include "serialisation/Loader.hpp"
@@ -75,32 +75,20 @@ main(int argc, char** argv)
 
 	Glib::thread_init();
 
+	Ingen::Shared::World* world = Ingen::Shared::get_world();
+
 	/* Run engine */
 	if (args.engine_flag) {
 
 		engine_module = Ingen::Shared::load_module("ingen_engine");
 
 		if (engine_module) {
-			/*if (args.engine_port_given) {
-				bool (*launch_engine)(int) = NULL;
-				if ( ! module->get_symbol("launch_osc_engine", (void*&)launch_engine))
-					module.reset();
-				else
-					launch_engine(args.engine_port_arg);
-
-			} else if (args.gui_given || args.load_given) {*/
-				Engine* (*new_engine)() = NULL;
-				if (engine_module->get_symbol("new_engine", (void*&)new_engine)) {
-					engine = SharedPtr<Engine>(new_engine());
-					//engine->start_jack_driver();
-					//engine->start_osc_driver(args.engine_port_arg);
-				} else {
-					engine_module.reset();
-				}
-
-			/*} else {
-				cerr << "Nonsense command line parameters, engine not loaded." << endl;
-			}*/
+			Engine* (*new_engine)(Ingen::Shared::World* world) = NULL;
+			if (engine_module->get_symbol("new_engine", (void*&)new_engine)) {
+				engine = SharedPtr<Engine>(new_engine(world));
+			} else {
+				engine_module.reset();
+			}
 		} else {
 			cerr << "Unable to load engine module, engine not loaded." << endl;
 			cerr << "Try using src/set_dev_environment.sh, or setting INGEN_MODULE_PATH." << endl;
@@ -194,12 +182,12 @@ main(int argc, char** argv)
 	bool ran_gui = false;
 	if (args.gui_given) {
 		gui_module = Ingen::Shared::load_module("ingen_gui");
-		void (*run)(int, char**, SharedPtr<Ingen::Engine>, SharedPtr<Shared::EngineInterface>) = NULL;
+		void (*run)(int, char**, Ingen::Shared::World*, SharedPtr<Ingen::Engine>, SharedPtr<Shared::EngineInterface>) = NULL;
 		bool found = gui_module->get_symbol("run", (void*&)run);
 
 		if (found) {
 			ran_gui = true;
-			run(argc, argv, engine, engine_interface);
+			run(argc, argv, world, engine, engine_interface);
 		} else {
 			cerr << "Unable to find GUI module, GUI not loaded." << endl;
 			cerr << "Try using src/set_dev_environment.sh, or setting INGEN_MODULE_PATH." << endl;
@@ -223,6 +211,8 @@ main(int argc, char** argv)
 
 		engine.reset();
 	}
+
+	Ingen::Shared::destroy_world();
 
 	return 0;
 }

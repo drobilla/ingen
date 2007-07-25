@@ -19,6 +19,7 @@
 #define NODEFACTORY_H
 
 #include "../../../../config/config.h"
+#include "module/module.h"
 
 #include <list>
 #include <string>
@@ -52,7 +53,7 @@ class Plugin;
 class NodeFactory
 {
 public:
-	NodeFactory();
+	NodeFactory(Ingen::Shared::World* world);
 	~NodeFactory();
 
 	void  load_plugins();
@@ -72,8 +73,6 @@ private:
 #ifdef HAVE_SLV2
 	void load_lv2_plugins();
 	Node* load_lv2_plugin(const string& plugin_uri, const string& name, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size);
-
-	SLV2World _world;
 #endif
 
 #ifdef HAVE_DSSI
@@ -87,6 +86,7 @@ private:
 	list<Plugin*>       _internal_plugins;
 	list<Plugin*>       _plugins; // FIXME: make a map
 
+	Ingen::Shared::World* _world;
 	bool _has_loaded;
 };
 

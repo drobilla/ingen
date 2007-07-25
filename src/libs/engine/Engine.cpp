@@ -48,14 +48,15 @@ using namespace std;
 namespace Ingen {
 
 
-Engine::Engine()
-: _midi_driver(NULL),
+Engine::Engine(Ingen::Shared::World* world)
+: _world(world),
+  _midi_driver(NULL),
   _osc_driver(NULL),
   _maid(new Raul::Maid(maid_queue_size)),
   _post_processor(new PostProcessor(*_maid, post_processor_queue_size)),
   _broadcaster(new ClientBroadcaster()),
   _object_store(new ObjectStore()),
-  _node_factory(new NodeFactory()),
+  _node_factory(new NodeFactory(world)),
 /*#ifdef HAVE_LASH
   _lash_driver(new LashDriver()),
 #else */

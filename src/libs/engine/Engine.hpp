@@ -18,6 +18,9 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
+#include "../../../config/config.h"
+#include "module/module.h"
+
 #include <cassert>
 #include <boost/utility.hpp>
 #include <raul/SharedPtr.hpp>
@@ -55,7 +58,8 @@ class Driver;
 class Engine : boost::noncopyable
 {
 public:
-	Engine();
+	Engine(Ingen::Shared::World* world);
+	
 	virtual ~Engine();
 
 	virtual int  main();
@@ -90,8 +94,13 @@ public:
 
 	/** Return the active driver for the given type */
 	Driver* driver(DataType type);
+
+	Ingen::Shared::World* world() { return _world; }
 	
 private:
+
+	Ingen::Shared::World* _world;
+
 	SharedPtr<EventSource> _event_source;
 	SharedPtr<AudioDriver> _audio_driver;
 	MidiDriver*            _midi_driver;

@@ -28,13 +28,14 @@
 #include <libglademm.h>
 #include <raul/RDFWorld.hpp>
 #include <raul/SharedPtr.hpp>
-using std::string; using std::map; using std::list;
-using std::cerr; using std::endl;
+
+using namespace std;
 
 namespace Ingen { 
 	class Engine;
 	namespace Shared {
 		class EngineInterface;
+		class World;
 	}
 	namespace Client {
 		class PatchModel;
@@ -92,8 +93,6 @@ public:
 	Configuration*   configuration()        const { return _configuration; }
 	WindowFactory*   window_factory()       const { return _window_factory; }
 	
-	Raul::RDF::World* rdf_world() { return &_rdf_world; }
-
 	const SharedPtr<EngineInterface>&    engine() const { return _engine; }
 	const SharedPtr<SigClientInterface>& client() const { return _client; }
 	const SharedPtr<Store>&              store()  const { return _store; }
@@ -102,15 +101,17 @@ public:
 	static inline App& instance() { assert(_instance); return *_instance; }
 
 	static void run(int argc, char** argv,
+			Ingen::Shared::World* world,
 			SharedPtr<Ingen::Engine> engine,
 			SharedPtr<Shared::EngineInterface> interface);
 
+	Ingen::Shared::World* world() { return _world; }
+
 protected:
-	App();
+	App(Ingen::Shared::World* world);
+	
 	static App* _instance;
 	
-	static void instantiate(int argc, char** argv);
-
 	SharedPtr<EngineInterface>    _engine;
 	SharedPtr<SigClientInterface> _client;
 	SharedPtr<Store>                _store;
@@ -125,7 +126,7 @@ protected:
 	Gtk::Dialog*      _about_dialog;
 	WindowFactory*    _window_factory;
 
-	Raul::RDF::World _rdf_world;
+	Ingen::Shared::World* _world;
 
 	/** Used to avoid feedback loops with (eg) process checkbutton
 	 * FIXME: Maybe this should be globally implemented at the Controller level,

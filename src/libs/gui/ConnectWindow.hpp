@@ -18,6 +18,12 @@
 #ifndef CONNECT_WINDOW_H
 #define CONNECT_WINDOW_H
 
+#include "../../../config/config.h"
+
+#ifdef HAVE_SLV2
+#include <slv2/slv2.h>
+#endif
+
 #include <gtkmm.h>
 #include <libglademm/xml.h>
 #include <libglademm.h>
@@ -70,7 +76,7 @@ private:
 	int _connect_stage;
 
 	SharedPtr<Glib::Module> _engine_module;
-	Ingen::Engine* (*_new_engine)();
+	Ingen::Engine* (*_new_engine)(Ingen::Shared::World* world);
 
 	Gtk::Image*        _icon;
 	Gtk::ProgressBar*  _progress_bar;

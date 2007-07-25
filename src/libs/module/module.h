@@ -15,42 +15,25 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "../../../../config/config.h"
+#ifndef INGEN_MODULE_H
+#define INGEN_MODULE_H
 
-#include <raul/Process.hpp>
-#include "engine.hpp"
-#include "Engine.hpp"
-#include "QueuedEngineInterface.hpp"
-#include "tuning.hpp"
-#include "util.hpp"
+#include "World.hpp"
+#include "Module.hpp"
 
 namespace Ingen {
+namespace Shared {
 
-Engine*
-new_engine(Ingen::Shared::World* world)
-{
-	set_denormal_flags();
-	return new Engine(world);
+extern "C" {
+
+	World* get_world();
+	void destroy_world();
+
 }
 
 
-bool
-launch_osc_engine(int port)
-{
-	char port_str[6];
-	snprintf(port_str, 6, "%u", port);
-	const string cmd = string("ingen -e --engine-port=").append(port_str);
-
-	if (Raul::Process::launch(cmd)) {
-		return true;
-		//return SharedPtr<EngineInterface>(new OSCEngineSender(
-		//			string("osc.udp://localhost:").append(port_str)));
-	} else {
-		cerr << "Failed to launch engine process." << endl;
-		//return SharedPtr<EngineInterface>();
-		return false;
-	}
-}
-
+} // namesace Shared
 } // namespace Ingen
+
+#endif // INGEN_MODULE_H
 

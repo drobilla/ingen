@@ -18,6 +18,8 @@
 #ifndef INGEN_GUI_H
 #define INGEN_GUI_H
 
+#include "../../../config/config.h"
+#include "module/module.h"
 #include <raul/SharedPtr.hpp>
 
 namespace Ingen {
@@ -32,6 +34,7 @@ namespace GUI {
 extern "C" {
 
 	void run(int argc, char** argv,
+			Ingen::Shared::World* world,
 			SharedPtr<Ingen::Engine> engine,
 			SharedPtr<Shared::EngineInterface> interface);
 

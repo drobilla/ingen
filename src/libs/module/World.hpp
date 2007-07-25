@@ -15,42 +15,44 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#ifndef INGEN_WORLD_HPP
+#define INGEN_WORLD_HPP
+
+#include <string>
+#include <glibmm/module.h>
+#include <raul/SharedPtr.hpp>
+#include <raul/RDFWorld.hpp>
+
 #include "../../../../config/config.h"
 
-#include <raul/Process.hpp>
-#include "engine.hpp"
-#include "Engine.hpp"
-#include "QueuedEngineInterface.hpp"
-#include "tuning.hpp"
-#include "util.hpp"
+#ifdef HAVE_SLV2
+#include <slv2/slv2.h>
+#endif
 
 namespace Ingen {
-
-Engine*
-new_engine(Ingen::Shared::World* world)
-{
-	set_denormal_flags();
-	return new Engine(world);
-}
+namespace Shared {
 
 
-bool
-launch_osc_engine(int port)
-{
-	char port_str[6];
-	snprintf(port_str, 6, "%u", port);
-	const string cmd = string("ingen -e --engine-port=").append(port_str);
+/** The "world" all Ingen modules may share.
+ *
+ * This is required for shared access to things like Redland, so locking can
+ * take place centrally and the engine/gui using the same library won't
+ * explode horribly.
+ *
+ * Hopefully at some point in the future it can allow some fun things like
+ * scripting bindings that play with all loaded components of
+ * The Ingen System(TM) and whatnot.
+ */
+struct World {
+#ifdef HAVE_SLV2
+	SLV2World slv2_world;
+#endif
+	Raul::RDF::World rdf_world;
+};
 
-	if (Raul::Process::launch(cmd)) {
-		return true;
-		//return SharedPtr<EngineInterface>(new OSCEngineSender(
-		//			string("osc.udp://localhost:").append(port_str)));
-	} else {
-		cerr << "Failed to launch engine process." << endl;
-		//return SharedPtr<EngineInterface>();
-		return false;
-	}
-}
 
+} // namespace Shared
 } // namespace Ingen
+
+#endif // INGEN_WORLD_HPP
 
