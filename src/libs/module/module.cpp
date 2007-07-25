@@ -18,6 +18,11 @@
 #include "module.h"
 #include "World.hpp"
 
+#include "../../../../config/config.h"
+#ifdef HAVE_SLV2
+#include <slv2/slv2.h>
+#endif
+
 namespace Ingen {
 namespace Shared {
 
@@ -40,7 +45,10 @@ get_world()
 void
 destroy_world()
 {
+#ifdef HAVE_SLV2
 	slv2_world_free(world->slv2_world);
+#endif
+
 	delete world;
 }
 

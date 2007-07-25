@@ -76,6 +76,7 @@ PortPropertiesWindow::init(ControlGroup* control, SharedPtr<PortModel> pm)
 	
 	const SharedPtr<NodeModel> parent = PtrCast<NodeModel>(pm->parent());
 
+#ifdef HAVE_SLV2
 	if (parent && parent->plugin() && parent->plugin()->type() == PluginModel::LV2) {
 		min = slv2_port_get_minimum_value(
 				parent->plugin()->slv2_plugin(),
@@ -86,6 +87,7 @@ PortPropertiesWindow::init(ControlGroup* control, SharedPtr<PortModel> pm)
 					slv2_plugin_get_port_by_symbol(parent->plugin()->slv2_plugin(),
 						pm->path().name().c_str()));
 	}
+#endif
 
 	if (max <= min)
 		max = min + 1.0f;

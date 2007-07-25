@@ -7,5 +7,6 @@ libingen_module_la_LIBADD = @RAUL_LIBS@ @GLIBMM_LIBS@
 libingen_module_la_SOURCES = \
 	module.h \
 	module.cpp \
+	World.hpp \
 	Module.hpp \
 	Module.cpp

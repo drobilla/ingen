@@ -24,8 +24,10 @@
 namespace Ingen {
 namespace Client {
 
+#ifdef HAVE_SLV2
 SLV2World   PluginModel::_slv2_world   = NULL;
 SLV2Plugins PluginModel::_slv2_plugins = NULL;
+#endif
 	
 
 string

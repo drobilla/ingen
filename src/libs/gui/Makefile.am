@@ -33,75 +33,75 @@ libingen_gui_la_LIBADD = \
 
 
 libingen_gui_la_SOURCES = \
-	gui.h \
+	gui.hpp \
 	gui.cpp \
 	App.cpp \
-	App.h \
-	BreadCrumb.h \
+	App.hpp \
+	BreadCrumb.hpp \
 	BreadCrumbBox.cpp \
-	BreadCrumbBox.h \
+	BreadCrumbBox.hpp \
 	ConfigWindow.cpp \
-	ConfigWindow.h \
+	ConfigWindow.hpp \
 	Configuration.cpp \
-	Configuration.h \
+	Configuration.hpp \
 	ConnectWindow.cpp \
-	ConnectWindow.h \
-	Connection.h \
+	ConnectWindow.hpp \
+	Connection.hpp \
 	ControlGroups.cpp \
-	ControlGroups.h \
+	ControlGroups.hpp \
 	ControlPanel.cpp \
-	ControlPanel.h \
+	ControlPanel.hpp \
 	DSSIController.cpp \
-	DSSIController.h \
+	DSSIController.hpp \
 	DSSIModule.cpp \
-	DSSIModule.h \
+	DSSIModule.hpp \
 	GladeFactory.cpp \
-	GladeFactory.h \
+	GladeFactory.hpp \
 	LoadPatchWindow.cpp \
-	LoadPatchWindow.h \
+	LoadPatchWindow.hpp \
 	LoadPluginWindow.cpp \
-	LoadPluginWindow.h \
+	LoadPluginWindow.hpp \
 	LoadRemotePatchWindow.cpp \
-	LoadRemotePatchWindow.h \
+	LoadRemotePatchWindow.hpp \
 	LoadSubpatchWindow.cpp \
-	LoadSubpatchWindow.h \
+	LoadSubpatchWindow.hpp \
 	MessagesWindow.cpp \
-	MessagesWindow.h \
+	MessagesWindow.hpp \
 	NewSubpatchWindow.cpp \
-	NewSubpatchWindow.h \
+	NewSubpatchWindow.hpp \
 	NodeControlWindow.cpp \
-	NodeControlWindow.h \
+	NodeControlWindow.hpp \
 	NodeMenu.cpp \
-	NodeMenu.h \
+	NodeMenu.hpp \
 	NodeModule.cpp \
-	NodeModule.h \
+	NodeModule.hpp \
 	NodePropertiesWindow.cpp \
-	NodePropertiesWindow.h \
+	NodePropertiesWindow.hpp \
 	PatchCanvas.cpp \
-	PatchCanvas.h \
+	PatchCanvas.hpp \
 	PatchPortModule.cpp \
-	PatchPortModule.h \
+	PatchPortModule.hpp \
 	PatchPropertiesWindow.cpp \
-	PatchPropertiesWindow.h \
+	PatchPropertiesWindow.hpp \
 	PatchTreeWindow.cpp \
-	PatchTreeWindow.h \
+	PatchTreeWindow.hpp \
 	PatchView.cpp \
-	PatchView.h \
+	PatchView.hpp \
 	PatchWindow.cpp \
-	PatchWindow.h \
+	PatchWindow.hpp \
 	Port.cpp \
-	Port.h \
+	Port.hpp \
 	PortPropertiesWindow.cpp \
-	PortPropertiesWindow.h \
+	PortPropertiesWindow.hpp \
 	RenameWindow.cpp \
-	RenameWindow.h \
+	RenameWindow.hpp \
 	SubpatchModule.cpp \
-	SubpatchModule.h \
+	SubpatchModule.hpp \
 	ThreadedLoader.cpp \
-	ThreadedLoader.h \
+	ThreadedLoader.hpp \
 	UploadPatchWindow.cpp \
-	UploadPatchWindow.h \
+	UploadPatchWindow.hpp \
 	WindowFactory.cpp \
-	WindowFactory.h
+	WindowFactory.hpp
 
 

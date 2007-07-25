@@ -110,6 +110,7 @@ NodeModule::remove_port(SharedPtr<PortModel> port)
 void
 NodeModule::show_control_window()
 {
+#ifdef HAVE_SLV2
 	if (_node->plugin()->type() == PluginModel::LV2) {
 		GtkWidget* gui = (GtkWidget*)_node->plugin()->gui();
 		if (gui) {
@@ -118,6 +119,7 @@ NodeModule::show_control_window()
 			cerr << "No gui :(\n";
 		}
 	}
+#endif
 	App::instance().window_factory()->present_controls(_node);
 }
 

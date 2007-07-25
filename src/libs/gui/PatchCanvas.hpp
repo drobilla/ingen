@@ -18,6 +18,8 @@
 #ifndef PATCHCANVAS_H
 #define PATCHCANVAS_H
 
+#include "../../../../config/config.h"
+
 #include <string>
 #include <map>
 #include <boost/shared_ptr.hpp>
@@ -86,9 +88,12 @@ private:
 	void menu_new_patch();
 	void menu_load_patch();
 	void load_plugin(SharedPtr<PluginModel> plugin);
+
+#ifdef HAVE_SLV2
 	void build_plugin_menu();
 	size_t build_plugin_class_menu(Gtk::Menu* menu,
 		SLV2PluginClass plugin_class, SLV2PluginClasses classes);
+#endif
 	
 	MetadataMap get_initial_data();
 

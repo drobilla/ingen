@@ -15,7 +15,6 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "../../../../config/config.h"
 #include "module/module.h"
 
 #include <cassert>
@@ -94,7 +93,9 @@ PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
 			"osc_output", "ingen:osc", true));
 
+#ifdef HAVE_SLV2
 	build_plugin_menu();
+#endif
 
 	// Connect to model signals to track state
 	_patch->new_node_sig.connect(sigc::mem_fun(this, &PatchCanvas::add_node));
@@ -111,13 +112,13 @@ PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 }
 
 
+#ifdef HAVE_SLV2
 size_t
 PatchCanvas::build_plugin_class_menu(Gtk::Menu* menu,
 		SLV2PluginClass plugin_class, SLV2PluginClasses classes)
 {
 	size_t num_items = 0;
 
-#ifdef HAVE_SLV2
 	// Add submenus
 	for (unsigned i=0; i < slv2_plugin_classes_size(classes); ++i) {
 		SLV2PluginClass c = slv2_plugin_classes_get_at(classes, i);
@@ -152,7 +153,6 @@ PatchCanvas::build_plugin_class_menu(Gtk::Menu* menu,
 			++num_items;
 		}
 	}
-#endif
 
 	return num_items;
 }
@@ -161,7 +161,6 @@ PatchCanvas::build_plugin_class_menu(Gtk::Menu* menu,
 void
 PatchCanvas::build_plugin_menu()
 {
-#ifdef HAVE_SLV2
 	_menu->items().push_back(Gtk::Menu_Helpers::ImageMenuElem("Plugin",
 			*(manage(new Gtk::Image(Gtk::Stock::EXECUTE, Gtk::ICON_SIZE_MENU)))));
     Gtk::MenuItem* plugin_menu_item = &(_menu->items().back());
@@ -173,8 +172,8 @@ PatchCanvas::build_plugin_menu()
 	SLV2PluginClasses classes = slv2_world_get_plugin_classes(PluginModel::slv2_world());
 
 	build_plugin_class_menu(plugin_menu, lv2_plugin, classes);
-#endif
 }
+#endif
 
 
 void
