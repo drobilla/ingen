@@ -15,10 +15,12 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include "../../../config/config.h"
 #include "module/module.h"
 
 #include <cassert>
 #include <flowcanvas/Canvas.hpp>
+#include <flowcanvas/Ellipse.hpp>
 #include "interface/EngineInterface.hpp"
 #include "client/PluginModel.hpp"
 #include "client/PatchModel.hpp"
@@ -55,6 +57,8 @@ PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 	Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference();
 	xml->get_widget("canvas_menu", _menu);
 	
+	xml->get_widget("canvas_menu_add_number_control", _menu_add_number_control);
+	xml->get_widget("canvas_menu_add_button_control", _menu_add_button_control);
 	xml->get_widget("canvas_menu_add_audio_input", _menu_add_audio_input);
 	xml->get_widget("canvas_menu_add_audio_output", _menu_add_audio_output);
 	xml->get_widget("canvas_menu_add_control_input", _menu_add_control_input);
@@ -67,6 +71,12 @@ PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 	xml->get_widget("canvas_menu_load_patch", _menu_load_patch);
 	xml->get_widget("canvas_menu_new_patch", _menu_new_patch);
 	
+	// Add control menu items
+	_menu_add_number_control->signal_activate().connect(
+		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_control), NUMBER));
+	_menu_add_button_control->signal_activate().connect(
+		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_control), BUTTON));
+
 	// Add port menu items
 	_menu_add_audio_input->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
@@ -471,10 +481,25 @@ PatchCanvas::generate_port_name(const string& base) {
 	return name;
 }
 
+void
+PatchCanvas::menu_add_control(ControlType type)
+{
+	// FIXME: bundleify
+
+	MetadataMap data = get_initial_data();
+	float x = data["ingenuity:canvas-x"].get_float();
+	float y = data["ingenuity:canvas-y"].get_float();
+	
+	cerr << "ADD CONTROL: " << (unsigned)type << " @ " << x << ", " << y << endl;
+
+	add_item(boost::shared_ptr<FlowCanvas::Item>(
+			new FlowCanvas::Ellipse(shared_from_this(), "control", x, y, 20, 20, true)));
+}
 
 void
 PatchCanvas::menu_add_port(const string& name, const string& type, bool is_output)
 {
+	// FIXME: bundleify
 	const Path& path = _patch->path().base() + generate_port_name(name);
 	App::instance().engine()->create_port(path, type, is_output);
 	MetadataMap data = get_initial_data();
