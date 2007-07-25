@@ -126,7 +126,7 @@ ConnectWindow::start(SharedPtr<Ingen::Engine> engine, SharedPtr<Shared::EngineIn
 		_connect_stage = 0;
 
 		Glib::signal_timeout().connect(
-			sigc::mem_fun(tsci, &ThreadedSigClientInterface::emit_signals), 2, G_PRIORITY_HIGH_IDLE);
+			sigc::mem_fun(tsci, &ThreadedSigClientInterface::emit_signals), 10, G_PRIORITY_HIGH_IDLE);
 	}
 		
 	if (interface) {
@@ -200,7 +200,7 @@ ConnectWindow::connect()
 			sigc::mem_fun(this, &ConnectWindow::gtk_callback), 100);
 		
 		Glib::signal_timeout().connect(
-			sigc::mem_fun(ose, &ThreadedSigClientInterface::emit_signals), 2, G_PRIORITY_HIGH_IDLE);
+			sigc::mem_fun(ose, &ThreadedSigClientInterface::emit_signals), 10, G_PRIORITY_HIGH_IDLE);
 
 	} else if (_mode == LAUNCH_REMOTE) {
 
@@ -222,7 +222,7 @@ ConnectWindow::connect()
 
 		Glib::signal_timeout().connect(
 				sigc::mem_fun(ose, &ThreadedSigClientInterface::emit_signals),
-				2, G_PRIORITY_HIGH_IDLE);
+				10, G_PRIORITY_HIGH_IDLE);
 		} else {
 			cerr << "Failed to launch ingen process." << endl;
 		}
@@ -251,7 +251,7 @@ ConnectWindow::connect()
 			sigc::mem_fun(this, &ConnectWindow::gtk_callback), 100);
 		
 		Glib::signal_timeout().connect(
-			sigc::mem_fun(tsci, &ThreadedSigClientInterface::emit_signals), 2, G_PRIORITY_HIGH_IDLE);
+			sigc::mem_fun(tsci, &ThreadedSigClientInterface::emit_signals), 10, G_PRIORITY_HIGH_IDLE);
 	}
 }
 
