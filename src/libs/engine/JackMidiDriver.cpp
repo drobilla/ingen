@@ -69,8 +69,6 @@ JackMidiPort::~JackMidiPort()
 void
 JackMidiPort::prepare_block(const SampleCount block_start, const SampleCount block_end)
 {
-	assert(block_end >= block_start);
-	
 	const SampleCount    nframes     = block_end - block_start;
 	void*                jack_buffer = jack_port_get_buffer(_jack_port, nframes);
 	const jack_nframes_t event_count = jack_midi_get_event_count(jack_buffer);
