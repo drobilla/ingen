@@ -64,8 +64,7 @@ JackMidiPort::~JackMidiPort()
 
 /** Prepare events for a block.
  *
- * This is basically trivial (as opposed to AlsaMidiPort) since Jack MIDI
- * data is in-band with the audio thread.
+ * This is basically simple since Jack MIDI data is in-band with the audio thread.
  */
 void
 JackMidiPort::prepare_block(const SampleCount block_start, const SampleCount block_end)
