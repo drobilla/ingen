@@ -212,7 +212,6 @@ Engine::activate()
 	Patch* root_patch = new Patch("", 1, NULL,
 			_audio_driver->sample_rate(), _audio_driver->buffer_size(), 1);
 	root_patch->activate();
-	//root_patch->add_to_store(_object_store);
 	_object_store->add(root_patch);
 	root_patch->process_order(root_patch->build_process_order());
 	root_patch->enable();

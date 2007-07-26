@@ -78,40 +78,6 @@ NodeBase::deactivate()
 	_activated = false;
 }
 
-#if 0
-void
-NodeBase::add_to_store(ObjectStore* store)
-{
-	assert(!_store);
-
-	GraphObject::add_to_store(store);
-	
-	for (size_t i=0; i < num_ports(); ++i)
-		store->add(_ports->at(i));
-
-	_store = store;
-}
-
-
-void
-NodeBase::remove_from_store()
-{
-	// Remove ports
-	for (size_t i=0; i < num_ports(); ++i) {
-		TreeNode<GraphObject*>* node = _store->remove(_ports->at(i)->path());
-		if (node != NULL) {
-			assert(_store->find(_ports->at(i)->path()) == NULL);
-			delete node;
-		}
-	}
-	
-	// Remove self
-	GraphObject::remove_from_store();
-
-	assert(_store == NULL);
-}
-#endif
-
 
 void
 NodeBase::set_buffer_size(size_t size)
@@ -145,52 +111,6 @@ NodeBase::post_process(SampleCount nframes, FrameTime start, FrameTime end)
 	// Prepare any output ports for reading (MIDI)
 	for (size_t i=0; i < _ports->size(); ++i)
 		_ports->at(i)->post_process(nframes, start, end);
-}
-
-
-
-/** Rename this Node.
- *
- * This is responsible for updating the ObjectStore so the Node can be
- * found at it's new path, as well as all it's children.
- */
-void
-NodeBase::set_path(const Path& new_path)
-{
-#if 0
-	const Path old_path = path();
-	//cerr << "Renaming " << old_path << " -> " << new_path << endl;
-	
-	TreeNode<GraphObject*>* treenode = NULL;
-	
-	// Reinsert ports
-	for (size_t i=0; i < num_ports(); ++i) {
-		treenode = _store->remove(old_path +"/"+ _ports->at(i)->name());
-		assert(treenode != NULL);
-		assert(treenode->node() == _ports->at(i));
-		treenode->key(new_path +"/" + _ports->at(i)->name());
-		_store->add(treenode);
-	}
-	
-	// Rename and reinsert self
-	treenode = _store->remove(old_path);
-	assert(treenode != NULL);
-	assert(treenode->node() == this);
-	GraphObject::set_path(new_path);
-	treenode->key(new_path);
-	_store->add(treenode);
-	
-
-	assert(_store->find(new_path) == this);
-#endif
-	GraphObject::set_path(new_path);
-	
-	// Rename children (ports)
-	for (size_t i=0; i < num_ports(); ++i) {
-		Port* const port = _ports->at(i);
-		const string name = port->path().name();
-		port->set_path(new_path.base() + name);
-	}
 }
 
 

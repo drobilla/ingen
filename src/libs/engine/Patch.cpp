@@ -148,30 +148,6 @@ Patch::set_buffer_size(size_t size)
 		(*j)->set_buffer_size(size);
 }
 
-#if 0
-void
-Patch::add_to_store(ObjectStore* store)
-{
-	// Add self and ports
-	NodeBase::add_to_store(store);
-
-	// Add nodes
-	for (Raul::List<Node*>::iterator j = _nodes.begin(); j != _nodes.end(); ++j)
-		(*j)->add_to_store(store);
-}
-
-
-void
-Patch::remove_from_store()
-{
-	// Remove self and ports
-	NodeBase::remove_from_store();
-
-	// Remove nodes
-	for (Raul::List<Node*>::iterator j = _nodes.begin(); j != _nodes.end(); ++j)
-		(*j)->remove_from_store();
-}
-#endif
 
 // Patch specific stuff
 
@@ -221,28 +197,6 @@ Patch::remove_connection(const Port* src_port, const Port* dst_port)
 
 	return connection;
 }
-
-#if 0
-/** Remove a bridge_node.  Realtime safe.
- */
-Raul::ListNode<InternalNode*>*
-Patch::remove_bridge_node(const InternalNode* node)
-{
-	bool found = false;
-	Raul::ListNode<InternalNode*>* bridge_node = NULL;
-	for (Raul::List<InternalNode*>::iterator i = _bridge_nodes.begin(); i != _bridge_nodes.end(); ++i) {
-		if ((*i) == node) {
-			bridge_node = _bridge_nodes.remove(i);
-			found = true;
-		}
-	}
-
-	if ( ! found)
-		cerr << "WARNING:  [Patch::remove_bridge_node] InternalNode not found !" << endl;
-
-	return bridge_node;
-}
-#endif
 
 
 size_t
@@ -395,25 +349,6 @@ Patch::build_process_order() const
 	assert(process_order->size() == _nodes.size());
 
 	return process_order;
-}
-
-
-/** Rename this Patch.
- *
- * This is responsible for updating the ObjectStore so the Patch can be
- * found at it's new path, as well as all it's children.
- */
-void
-Patch::set_path(const Path& new_path)
-{
-	const Path old_path = path();
-
-	// Update nodes
-	for (Raul::List<Node*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
-		(*i)->set_path(new_path.base() + (*i)->name());
-	
-	// Update self
-	NodeBase::set_path(new_path);
 }
 
 

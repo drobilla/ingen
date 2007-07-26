@@ -29,32 +29,4 @@ GraphObject::parent_patch() const
 }
 
 
-// FIXME: these functions are stupid/ugly
-#if 0
-void
-GraphObject::add_to_store(ObjectStore* store)
-{
-	assert(!_store);
-	store->add(this);
-	_store = store;
-}
-
-
-void
-GraphObject::remove_from_store()
-{
-	assert(_store);
-
-	if (_store) {
-		TreeNode<GraphObject*>* node = _store->remove(path());
-		if (node != NULL) {
-			assert(_store->find(path()) == NULL);
-			delete node;
-		}
-	}
-
-	_store = NULL;
-}
-#endif
-
 } // namespace Ingen

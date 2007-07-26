@@ -60,10 +60,6 @@ public:
 	virtual void set_port_buffer(size_t voice, size_t port_num, Buffer* buf) {}
 	
 	virtual void set_buffer_size(size_t size);
-#if 0
-	void add_to_store(ObjectStore* store);
-	void remove_from_store();
-#endif
 	
 	SampleRate sample_rate() const { return _srate; }
 	size_t     buffer_size() const { return _buffer_size; }
@@ -82,25 +78,21 @@ public:
 	
 	virtual const Plugin* plugin() const { return _plugin; }
 	
-	virtual void set_path(const Path& new_path);
-	
 	/** A node's parent is always a patch, so static cast should be safe */
 	Patch* parent_patch() const { return (Patch*)_parent; }
 	
 protected:	
 	const Plugin* _plugin;
 
-	size_t      _poly;
-
-	SampleRate  _srate;
-	size_t      _buffer_size;
-	bool        _activated;
-
-	Raul::Array<Port*>* _ports;     ///< Access in audio thread only
-
-	bool         _traversed;  ///< Flag for process order algorithm
-	Raul::List<Node*>* _providers;  ///< Nodes connected to this one's input ports
-	Raul::List<Node*>* _dependants; ///< Nodes this one's output ports are connected to
+	size_t     _poly;
+	SampleRate _srate;
+	size_t     _buffer_size;
+	bool       _activated;
+	
+	bool                _traversed;  ///< Flag for process order algorithm
+	Raul::Array<Port*>* _ports;      ///< Access in audio thread only
+	Raul::List<Node*>*  _providers;  ///< Nodes connected to this one's input ports
+	Raul::List<Node*>*  _dependants; ///< Nodes this one's output ports are connected to
 };
 
 
