@@ -25,6 +25,8 @@
 #include <raul/Path.hpp>
 #include "ObjectStore.hpp"
 
+using namespace std;
+
 namespace Ingen {
 
 
@@ -34,7 +36,7 @@ RenameEvent::RenameEvent(Engine& engine, SharedPtr<Shared::Responder> responder,
   _name(name),
   _new_path(_old_path.parent().base() + name),
   _parent_patch(NULL),
-  _store_treenode(NULL),
+  _store_iterator(engine.object_store()->objects().end()),
   _error(NO_ERROR)
 {
 	/*
@@ -59,34 +61,33 @@ RenameEvent::pre_process()
 		return;
 	}
 
-	if (_engine.object_store()->find(_new_path)) {
-		_error = OBJECT_EXISTS;
-		QueuedEvent::pre_process();
-		return;
-	}
-	
-	TreeNode<GraphObject*>* obj = _engine.object_store()->remove(_old_path);
-
-	if (obj == NULL) {
+	_store_iterator = _engine.object_store()->find(_old_path);
+	if (_store_iterator == _engine.object_store()->objects().end())  {
 		_error = OBJECT_NOT_FOUND;
 		QueuedEvent::pre_process();
 		return;
 	}
 	
-	// Renaming only works for Nodes and Patches (which are Nodes)
-	/*if (obj->as_node() == NULL) {
-		_error = OBJECT_NOT_RENAMABLE;
-		QueuedEvent::pre_process();
-		return;
-	}*/
+	Table<Path,GraphObject*> removed = _engine.object_store()->remove(_store_iterator);
+	assert(removed.size() > 0);
 	
-	if (obj != NULL) {
-		obj->node()->set_path(_new_path);
-		obj->key(_new_path);
-		_engine.object_store()->add(obj);
-		assert(obj->node()->path() == _new_path);
+	for (Table<Path,GraphObject*>::iterator i = removed.begin(); i != removed.end(); ++i) {
+		const Path& child_old_path = i->first;
+		assert(Path::descendant_comparator(_old_path, child_old_path));
+		
+		Path child_new_path;
+		if (child_old_path == _old_path)
+			child_new_path = _new_path;
+		else
+			child_new_path = _new_path.base() + child_old_path.substr(_old_path.length()+1);
+
+		cerr << "Renamed " << child_old_path << " -> " << child_new_path << endl;
+		i->second->set_path(child_new_path);
+		i->first = child_new_path;
 	}
-	
+
+	_engine.object_store()->add(removed);
+
 	QueuedEvent::pre_process();
 }
 

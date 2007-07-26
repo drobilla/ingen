@@ -148,7 +148,7 @@ Patch::set_buffer_size(size_t size)
 		(*j)->set_buffer_size(size);
 }
 
-
+#if 0
 void
 Patch::add_to_store(ObjectStore* store)
 {
@@ -171,7 +171,7 @@ Patch::remove_from_store()
 	for (Raul::List<Node*>::iterator j = _nodes.begin(); j != _nodes.end(); ++j)
 		(*j)->remove_from_store();
 }
-
+#endif
 
 // Patch specific stuff
 

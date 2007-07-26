@@ -58,10 +58,10 @@ public:
 	void process(SampleCount nframes, FrameTime start, FrameTime end);
 	
 	void set_buffer_size(size_t size);
-	
+#if 0
 	void add_to_store(ObjectStore* store);
 	void remove_from_store();
-	
+#endif	
 	void set_path(const Path& new_path);
 	
 	// Patch specific stuff not inherited from Node

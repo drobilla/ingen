@@ -21,7 +21,7 @@
 #include <string>
 #include <raul/Path.hpp>
 #include "QueuedEvent.hpp"
-
+#include "ObjectStore.hpp"
 
 using std::string;
 
@@ -51,7 +51,7 @@ class DestroyEvent : public QueuedEvent
 {
 public:
 	DestroyEvent(Engine& engine, SharedPtr<Shared::Responder> responder, FrameTime timestamp, QueuedEventSource* source, const string& path, bool block = true);
-	DestroyEvent(Engine& engine, SharedPtr<Shared::Responder> responder, FrameTime timestamp, QueuedEventSource* source, Node* node, bool block = true);
+	//DestroyEvent(Engine& engine, SharedPtr<Shared::Responder> responder, FrameTime timestamp, QueuedEventSource* source, Node* node, bool block = true);
 	~DestroyEvent();
 
 	void pre_process();
@@ -59,18 +59,18 @@ public:
 	void post_process();
 
 private:
-	Path                    _path;
-	GraphObject*            _object;
-	Node*                   _node;  ///< Same as _object if it is a Node, otherwise NULL
-	Port*                   _port;  ///< Same as _object if it is a Port, otherwise NULL
-	DriverPort*             _driver_port;
-	Raul::ListNode<Node*>*        _patch_node_listnode;
-	Raul::ListNode<Port*>*        _patch_port_listnode;
-	TreeNode<GraphObject*>* _store_treenode;
-	Raul::Array<Port*>*           _ports_array; ///< New (external) ports array for Patch
-	Raul::Array<Node*>*           _process_order;  ///< Patch's new process order
-	DisconnectNodeEvent*    _disconnect_node_event;
-	DisconnectPortEvent*    _disconnect_port_event;
+	Path                           _path;
+	ObjectStore::Objects::iterator _store_iterator;
+	GraphObject*                   _object;
+	Node*                          _node;  ///< Same as _object if it is a Node, otherwise NULL
+	Port*                          _port;  ///< Same as _object if it is a Port, otherwise NULL
+	DriverPort*                    _driver_port;
+	Raul::ListNode<Node*>*         _patch_node_listnode;
+	Raul::ListNode<Port*>*         _patch_port_listnode;
+	Raul::Array<Port*>*            _ports_array; ///< New (external) ports array for Patch
+	Raul::Array<Node*>*            _process_order;  ///< Patch's new process order
+	DisconnectNodeEvent*           _disconnect_node_event;
+	DisconnectPortEvent*           _disconnect_port_event;
 };
 
 

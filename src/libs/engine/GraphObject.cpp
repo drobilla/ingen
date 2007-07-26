@@ -30,7 +30,7 @@ GraphObject::parent_patch() const
 
 
 // FIXME: these functions are stupid/ugly
-
+#if 0
 void
 GraphObject::add_to_store(ObjectStore* store)
 {
@@ -55,6 +55,6 @@ GraphObject::remove_from_store()
 
 	_store = NULL;
 }
-
+#endif
 
 } // namespace Ingen

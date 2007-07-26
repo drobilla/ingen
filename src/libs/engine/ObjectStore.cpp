@@ -15,13 +15,19 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <utility>
+#include <vector>
 #include <raul/List.hpp>
-#include <raul/Path.hpp>
+#include <raul/PathTable.hpp>
+#include <raul/TableImpl.hpp>
 #include "ObjectStore.hpp"
 #include "Patch.hpp"
 #include "Node.hpp"
 #include "Port.hpp"
-#include "Tree.hpp"
+#include "ThreadManager.hpp"
+
+using namespace std;
+using namespace Raul;
 
 namespace Ingen {
 
@@ -31,7 +37,7 @@ namespace Ingen {
 Patch*
 ObjectStore::find_patch(const Path& path) 
 {
-	GraphObject* const object = find(path);
+	GraphObject* const object = find_object(path);
 	return dynamic_cast<Patch*>(object);
 }
 
@@ -41,7 +47,7 @@ ObjectStore::find_patch(const Path& path)
 Node*
 ObjectStore::find_node(const Path& path) 
 {
-	GraphObject* const object = find(path);
+	GraphObject* const object = find_object(path);
 	return dynamic_cast<Node*>(object);
 }
 
@@ -51,7 +57,7 @@ ObjectStore::find_node(const Path& path)
 Port*
 ObjectStore::find_port(const Path& path) 
 {
-	GraphObject* const object = find(path);
+	GraphObject* const object = find_object(path);
 	return dynamic_cast<Port*>(object);
 }
 
@@ -59,9 +65,10 @@ ObjectStore::find_port(const Path& path)
 /** Find the Object at the given path.
  */
 GraphObject*
-ObjectStore::find(const Path& path)
+ObjectStore::find_object(const Path& path)
 {
-	return _objects.find(path);
+	Objects::iterator i = _objects.find(path);
+	return ((i == _objects.end()) ? NULL : i->second);
 }
 
 
@@ -70,11 +77,37 @@ ObjectStore::find(const Path& path)
 void
 ObjectStore::add(GraphObject* o)
 {
+	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
+
 	cerr << "[ObjectStore] Adding " << o->path() << endl;
-	_objects.insert(new TreeNode<GraphObject*>(o->path(), o));
+	_objects.insert(make_pair(o->path(), o));
+
+	Node* node = dynamic_cast<Node*>(o);
+	if (node) {
+		for (size_t i=0; i < node->num_ports(); ++i) {
+			add(node->ports().at(i));
+		}
+	}
 }
 
 
+/** Add a family of objects to the store. Not realtime safe.
+ */
+void
+ObjectStore::add(const Table<Path,GraphObject*>& table)
+{
+	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
+
+	//cerr << "[ObjectStore] Adding " << o[0].second->path() << endl;
+	_objects.cram(table);
+	
+	cerr << "[ObjectStore] Adding Table:" << endl;
+	for (Table<Path,GraphObject*>::const_iterator i = table.begin(); i != table.end(); ++i) {
+		cerr << i->first << " = " << i->second->path() << endl;
+	}
+}
+
+#if 0
 /** Add an object to the store. Not realtime safe.
  */
 void
@@ -83,25 +116,45 @@ ObjectStore::add(TreeNode<GraphObject*>* tn)
 	cerr << "[ObjectStore] Adding " << tn->key() << endl;
 	_objects.insert(tn);
 }
+#endif
 
-
-/** Remove a patch from the store.
+/** Remove an object from the store.
  *
- * It it the caller's responsibility to delete the returned Raul::ListNode.
- * 
- * @returns TreeNode containing object removed on success, NULL if not found.
+ * Returned is a vector containing all descendants of the object removed
+ * including the object itself, in lexicographically sorted order by Path.
  */
-TreeNode<GraphObject*>*
-ObjectStore::remove(const string& path)
+Table<Path,GraphObject*>
+ObjectStore::remove(const Path& path)
 {
-	TreeNode<GraphObject*>* const removed = _objects.remove(path);
+	return remove(_objects.find(path));
+}
 
-	if (removed == NULL)
-		cerr << "[ObjectStore] WARNING: Removing " << path << " failed." << endl;
-	else
-		cerr << "[ObjectStore] Removed " << path << endl;
+
+/** Remove an object from the store.
+ *
+ * Returned is a vector containing all descendants of the object removed
+ * including the object itself, in lexicographically sorted order by Path.
+ */
+Table<Path,GraphObject*>
+ObjectStore::remove(Objects::iterator object)
+{
+	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
 	
-	return removed;
+	if (object != _objects.end()) {
+		Objects::iterator descendants_end = _objects.find_descendants_end(object);
+		cout << "[ObjectStore] Removing " << object->first << " {" << endl;
+		Table<Path,GraphObject*> removed = _objects.yank(object, descendants_end);
+		for (Table<Path,GraphObject*>::iterator i = removed.begin(); i != removed.end(); ++i) {
+			cout << "\t" << i->first << endl;
+		}
+		cout << "}" << endl;
+	
+		return removed;
+
+	} else {
+		cerr << "[ObjectStore] WARNING: Removing " << object->first << " failed." << endl;
+		return Table<Path,GraphObject*>();
+	}
 }
 
 

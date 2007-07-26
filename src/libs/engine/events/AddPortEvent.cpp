@@ -75,7 +75,7 @@ AddPortEvent::AddPortEvent(Engine&              engine,
 void
 AddPortEvent::pre_process()
 {
-	if (_engine.object_store()->find(_path) != NULL) {
+	if (_engine.object_store()->find_object(_path) != NULL) {
 		QueuedEvent::pre_process();
 		return;
 	}
@@ -109,7 +109,8 @@ AddPortEvent::pre_process()
 
 
 			_ports_array->at(_patch->num_ports()-1) = _patch_port;
-			_patch_port->add_to_store(_engine.object_store());
+			//_patch_port->add_to_store(_engine.object_store());
+			_engine.object_store()->add(_patch_port);
 
 			if (!_patch->parent()) {
 				if (_type == "ingen:audio")

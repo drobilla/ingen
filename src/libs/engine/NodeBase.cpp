@@ -78,7 +78,7 @@ NodeBase::deactivate()
 	_activated = false;
 }
 
-
+#if 0
 void
 NodeBase::add_to_store(ObjectStore* store)
 {
@@ -110,6 +110,7 @@ NodeBase::remove_from_store()
 
 	assert(_store == NULL);
 }
+#endif
 
 
 void

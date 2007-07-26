@@ -46,7 +46,7 @@ CreatePatchEvent::CreatePatchEvent(Engine& engine, SharedPtr<Shared::Responder> 
 void
 CreatePatchEvent::pre_process()
 {
-	if (_path == "/" || _engine.object_store()->find(_path) != NULL) {
+	if (_path == "/" || _engine.object_store()->find_object(_path) != NULL) {
 		_error = OBJECT_EXISTS;
 		QueuedEvent::pre_process();
 		return;
@@ -81,7 +81,8 @@ CreatePatchEvent::pre_process()
 	_patch->activate();
 	
 	// Insert into ObjectStore
-	_patch->add_to_store(_engine.object_store());
+	//_patch->add_to_store(_engine.object_store());
+	_engine.object_store()->add(_patch);
 	
 	QueuedEvent::pre_process();
 }

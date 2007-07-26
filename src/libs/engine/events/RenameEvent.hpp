@@ -19,8 +19,9 @@
 #define RENAMEEVENT_H
 
 #include <string>
-#include "QueuedEvent.hpp"
 #include <raul/Path.hpp>
+#include "QueuedEvent.hpp"
+#include "ObjectStore.hpp"
 
 using std::string;
 
@@ -54,12 +55,12 @@ public:
 private:
 	enum ErrorType { NO_ERROR, OBJECT_NOT_FOUND, OBJECT_EXISTS, OBJECT_NOT_RENAMABLE, INVALID_NAME };
 
-	Path                 _old_path;
-	string               _name;
-	Path                 _new_path;
-	Patch*               _parent_patch;
-	TreeNode<GraphObject*>* _store_treenode;
-	ErrorType            _error;
+	Path                           _old_path;
+	string                         _name;
+	Path                           _new_path;
+	Patch*                         _parent_patch;
+	ObjectStore::Objects::iterator _store_iterator;
+	ErrorType                      _error;
 };
 
 

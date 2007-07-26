@@ -43,6 +43,8 @@ ClearPatchEvent::ClearPatchEvent(Engine& engine, SharedPtr<Shared::Responder> re
 void
 ClearPatchEvent::pre_process()
 {
+	cerr << "FIXME: CLEAR PATCH\n";
+#if 0
 	_patch = _engine.object_store()->find_patch(_patch_path);
 	
 	if (_patch != NULL) {
@@ -52,6 +54,7 @@ ClearPatchEvent::pre_process()
 		for (Raul::List<Node*>::const_iterator i = _patch->nodes().begin(); i != _patch->nodes().end(); ++i)
 			(*i)->remove_from_store();
 	}
+#endif
 
 	QueuedEvent::pre_process();
 }

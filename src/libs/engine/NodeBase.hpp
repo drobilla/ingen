@@ -60,9 +60,10 @@ public:
 	virtual void set_port_buffer(size_t voice, size_t port_num, Buffer* buf) {}
 	
 	virtual void set_buffer_size(size_t size);
-	
+#if 0
 	void add_to_store(ObjectStore* store);
 	void remove_from_store();
+#endif
 	
 	SampleRate sample_rate() const { return _srate; }
 	size_t     buffer_size() const { return _buffer_size; }

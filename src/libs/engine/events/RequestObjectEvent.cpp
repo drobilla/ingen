@@ -44,7 +44,7 @@ void
 RequestObjectEvent::pre_process()
 {
 	_client = _engine.broadcaster()->client(_responder->client_uri());
-	_object = _engine.object_store()->find(_path);
+	_object = _engine.object_store()->find_object(_path);
 
 	QueuedEvent::pre_process();
 }

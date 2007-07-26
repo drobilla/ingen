@@ -40,13 +40,13 @@ namespace Ingen {
 DestroyEvent::DestroyEvent(Engine& engine, SharedPtr<Shared::Responder> responder, FrameTime time, QueuedEventSource* source, const string& path, bool block)
 : QueuedEvent(engine, responder, time, source, source),
   _path(path),
+  _store_iterator(engine.object_store()->objects().end()),
   _object(NULL),
   _node(NULL),
   _port(NULL),
   _driver_port(NULL),
   _patch_node_listnode(NULL),
   _patch_port_listnode(NULL),
-  _store_treenode(NULL),
   _ports_array(NULL),
   _process_order(NULL),
   _disconnect_node_event(NULL),
@@ -55,10 +55,11 @@ DestroyEvent::DestroyEvent(Engine& engine, SharedPtr<Shared::Responder> responde
 	assert(_source);
 }
 
-
+#if 0
 DestroyEvent::DestroyEvent(Engine& engine, SharedPtr<Shared::Responder> responder, FrameTime time, QueuedEventSource* source, Node* node, bool block)
 : QueuedEvent(engine, responder, block, source),
   _path(node->path()),
+  _store_iterator(engine.object_store()->objects().end())
   _object(node),
   _node(node),
   _port(NULL),
@@ -72,7 +73,7 @@ DestroyEvent::DestroyEvent(Engine& engine, SharedPtr<Shared::Responder> responde
   _disconnect_port_event(NULL)
 {
 }
-
+#endif
 
 DestroyEvent::~DestroyEvent()
 {
@@ -84,16 +85,20 @@ DestroyEvent::~DestroyEvent()
 void
 DestroyEvent::pre_process()
 {
-	if (_object == NULL) {
-		_object = _engine.object_store()->find(_path);
+	//if (_object == NULL) {
+		_store_iterator = _engine.object_store()->find(_path);
+		//_object = _engine.object_store()->find_object(_path);
 
-		if (_object)  {
+		if (_store_iterator != _engine.object_store()->objects().end())  {
 			_node = dynamic_cast<Node*>(_object);
 
 			if (!_node)
 				_port = dynamic_cast<Port*>(_object);
 		}
-	}
+	//}
+			
+	if (_store_iterator != _engine.object_store()->objects().end())
+		_engine.object_store()->remove(_store_iterator);
 
 	if (_node != NULL && _path != "/") {
 		assert(_node->parent_patch());
@@ -101,11 +106,12 @@ DestroyEvent::pre_process()
 		if (_patch_node_listnode) {
 			assert(_patch_node_listnode->elem() == _node);
 			
-			_node->remove_from_store();
-
 			_disconnect_node_event = new DisconnectNodeEvent(_engine, _node);
 			_disconnect_node_event->pre_process();
 			
+			//_node->remove_from_store();
+			_engine.object_store()->remove(_store_iterator);
+
 			if (_node->parent_patch()->enabled()) {
 				// FIXME: is this called multiple times?
 				_process_order = _node->parent_patch()->build_process_order();
@@ -128,7 +134,7 @@ DestroyEvent::pre_process()
 		if (_patch_port_listnode) {
 			assert(_patch_port_listnode->elem() == _port);
 			
-			_port->remove_from_store();
+			//_port->remove_from_store();
 
 			_disconnect_port_event = new DisconnectPortEvent(_engine, _port);
 			_disconnect_port_event->pre_process();

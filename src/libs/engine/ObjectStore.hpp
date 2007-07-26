@@ -19,11 +19,10 @@
 #define OBJECTSTORE_H
 
 #include <string>
-#include <raul/Path.hpp>
-#include "Tree.hpp"
+#include <raul/PathTable.hpp>
 
 using std::string;
-using Raul::Path;
+using namespace Raul;
 
 namespace Ingen {
 
@@ -38,23 +37,34 @@ class GraphObject;
  * All looking up in pre_process() methods (and anything else that isn't in-band
  * with the audio thread) should use this (to read and modify the GraphObject
  * tree).
+ *
+ * Searching with find*() is fast (O(log(n)) binary search on contiguous
+ * memory) and realtime safe, but modification (add or remove) are neither.
  */
 class ObjectStore
 {
 public:
-	Patch*    find_patch(const Path& path);
-	Node*     find_node(const Path& path);
-	Port*     find_port(const Path& path);
-	GraphObject* find(const Path& path);
+	typedef Raul::PathTable<GraphObject*> Objects;
+
+	Patch*       find_patch(const Path& path);
+	Node*        find_node(const Path& path);
+	Port*        find_port(const Path& path);
+	GraphObject* find_object(const Path& path);
 	
-	void                    add(GraphObject* o);
-	void                    add(TreeNode<GraphObject*>* o);
-	TreeNode<GraphObject*>* remove(const string& key);
+	Objects::iterator find(const Path& path) { return _objects.find(path); }
 	
-	const Tree<GraphObject*>& objects() { return _objects; }
+	void add(GraphObject* o);
+	void add(const Table<Path,GraphObject*>& family);
+	//void add(TreeNode<GraphObject*>* o);
+
+	Table<Path,GraphObject*> remove(const Path& path);
+	Table<Path,GraphObject*> remove(Objects::iterator i);
+
+	const Objects& objects() const { return _objects; }
+	Objects&       objects()       { return _objects; }
 
 private:
-	Tree<GraphObject*> _objects;
+	Objects _objects;
 };
 
 

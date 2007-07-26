@@ -85,13 +85,13 @@ public:
 
 	const MetadataMap& metadata() const { return _metadata; }
 
-
+#if 0
 	/** Patch and Node override this to recursively add their children. */
 	virtual void add_to_store(ObjectStore* store);
 	
 	/** Patch and Node override this to recursively remove their children. */
 	virtual void remove_from_store();
-	
+#endif
 	/** The Patch this object is a child of. */
 	virtual Patch* parent_patch() const;
 	

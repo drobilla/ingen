@@ -15,6 +15,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <raul/PathTable.hpp>
 #include "Store.hpp"
 #include "ObjectModel.hpp"
 #include "PatchModel.hpp"
@@ -25,7 +26,7 @@
 #include "SigClientInterface.hpp"
 
 using namespace std;
-using Raul::Path;
+using namespace Raul;
 
 namespace Ingen {
 namespace Client {
@@ -358,11 +359,11 @@ Store::rename_event(const Path& old_path, const Path& new_path)
 
 	Objects::iterator descendants_end = _objects.find_descendants_end(parent);
 	
-	vector<pair<Path, SharedPtr<ObjectModel> > > objs = _objects.yank(parent, descendants_end);
+	Table<Path,SharedPtr<ObjectModel> > removed = _objects.yank(parent, descendants_end);
 	
-	assert(objs.size() > 0);
+	assert(removed.size() > 0);
 
-	for (vector<pair<Path, SharedPtr<ObjectModel> > >::iterator i = objs.begin(); i != objs.end(); ++i) {
+	for (Table<Path,SharedPtr<ObjectModel> >::iterator i = removed.begin(); i != removed.end(); ++i) {
 		const Path& child_old_path = i->first;
 		assert(Path::descendant_comparator(old_path, child_old_path));
 		
@@ -377,15 +378,15 @@ Store::rename_event(const Path& old_path, const Path& new_path)
 		i->first = child_new_path;
 	}
 
-	_objects.cram(objs);
+	_objects.cram(removed);
 
-	cerr << "[Store] Table:" << endl;
-	//for (size_t i=0; i < objs.size(); ++i) {
-	//	cerr << objs[i].first << "\t\t: " << objs[i].second << endl;
+	//cerr << "[Store] Table:" << endl;
+	//for (size_t i=0; i < removed.size(); ++i) {
+	//	cerr << removed[i].first << "\t\t: " << removed[i].second << endl;
 	//}
-	for (Objects::iterator i = _objects.begin(); i != _objects.end(); ++i) {
+	/*for (Objects::iterator i = _objects.begin(); i != _objects.end(); ++i) {
 		cerr << i->first << "\t\t: " << i->second << endl;
-	}
+	}*/
 }
 
 void
