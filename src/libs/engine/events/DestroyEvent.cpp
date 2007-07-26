@@ -41,7 +41,6 @@ DestroyEvent::DestroyEvent(Engine& engine, SharedPtr<Shared::Responder> responde
 : QueuedEvent(engine, responder, time, source, source),
   _path(path),
   _store_iterator(engine.object_store()->objects().end()),
-  _object(NULL),
   _node(NULL),
   _port(NULL),
   _driver_port(NULL),
@@ -90,15 +89,16 @@ DestroyEvent::pre_process()
 		//_object = _engine.object_store()->find_object(_path);
 
 		if (_store_iterator != _engine.object_store()->objects().end())  {
-			_node = dynamic_cast<Node*>(_object);
+			_node = dynamic_cast<Node*>(_store_iterator->second);
 
 			if (!_node)
-				_port = dynamic_cast<Port*>(_object);
+				_port = dynamic_cast<Port*>(_store_iterator->second);
 		}
 	//}
 			
-	if (_store_iterator != _engine.object_store()->objects().end())
-		_engine.object_store()->remove(_store_iterator);
+	if (_store_iterator != _engine.object_store()->objects().end()) {
+		_table = _engine.object_store()->remove(_store_iterator);
+	}
 
 	if (_node != NULL && _path != "/") {
 		assert(_node->parent_patch());
@@ -198,13 +198,17 @@ DestroyEvent::post_process()
 {
 	if (_source)
 		_source->unblock();
-	
-	if (_object == NULL) {
+
+	if (_store_iterator != _engine.object_store()->objects().end()) {
+		_engine.broadcaster()->send_destroyed(_path);
+	} else {
 		if (_path == "/")
 			_responder->respond_error("You can not destroy the root patch (/)");
 		else
 			_responder->respond_error("Could not find object to destroy");
-	} else if (_patch_node_listnode) {	
+	}
+
+	if (_patch_node_listnode) {	
 		assert(_node);
 		_node->deactivate();
 		_responder->respond_ok();
@@ -227,7 +231,6 @@ DestroyEvent::post_process()
 
 	if (_driver_port)
 		delete _driver_port;
-		//_engine.maid()->push(_driver_port);
 }
 
 

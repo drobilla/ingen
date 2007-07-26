@@ -61,7 +61,7 @@ public:
 private:
 	Path                           _path;
 	ObjectStore::Objects::iterator _store_iterator;
-	GraphObject*                   _object;
+	Table<Path,GraphObject*>       _table;
 	Node*                          _node;  ///< Same as _object if it is a Node, otherwise NULL
 	Port*                          _port;  ///< Same as _object if it is a Port, otherwise NULL
 	DriverPort*                    _driver_port;
