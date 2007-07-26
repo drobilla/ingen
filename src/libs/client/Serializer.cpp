@@ -250,17 +250,18 @@ Serializer::serialize_patch(SharedPtr<PatchModel> patch, const Node& patch_id)
 		}
 	}
 
-	for (NodeModelMap::const_iterator n = patch->nodes().begin(); n != patch->nodes().end(); ++n) {
+	for (ObjectModel::Children::const_iterator n = patch->children().begin(); n != patch->children().end(); ++n) {
 		SharedPtr<PatchModel> patch = PtrCast<PatchModel>(n->second);
+		SharedPtr<NodeModel> node   = PtrCast<NodeModel>(n->second);
 		if (patch) {
 			const Node subpatch_id = Node(_model->world(), Node::RESOURCE,
 					patch_id.to_string() + "#" + patch->path().substr(1));
 			_model->add_statement(patch_id, "ingen:node", subpatch_id);
 			serialize_patch(patch, subpatch_id);
-		} else {
+		} else if (node) {
 			const Node node_id = path_to_node_id(n->second->path());
 			_model->add_statement(patch_id, "ingen:node", node_id);
-			serialize_node(n->second, node_id);
+			serialize_node(node, node_id);
 		}
 	}
 	

@@ -19,11 +19,11 @@
 #ifndef LOADPLUGINWINDOW_H
 #define LOADPLUGINWINDOW_H
 
-#include <map>
 #include <libglademm/xml.h>
 #include <libglademm.h>
 #include <gtkmm.h>
 #include <raul/SharedPtr.hpp>
+#include <raul/Table.hpp>
 #include "client/PatchModel.hpp"
 #include "client/PluginModel.hpp"
 using Ingen::Client::PluginModel;
@@ -91,7 +91,7 @@ public:
 	LoadPluginWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml);
 
 	void set_patch(SharedPtr<PatchModel> patch);
-	void set_plugin_list(const std::map<string, SharedPtr<PluginModel> >& m);
+	void set_plugins(const Raul::Table<string, SharedPtr<PluginModel> >& m);
 
 	void add_plugin(SharedPtr<PluginModel> plugin);
 	bool has_shown() const { return _has_shown; }

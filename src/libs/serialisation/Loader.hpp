@@ -19,12 +19,12 @@
 #define LOADER_H
 
 #include <string>
-#include <map>
 #include <glibmm/ustring.h>
 #include <boost/optional.hpp>
 #include <raul/SharedPtr.hpp>
 #include <raul/Path.hpp>
 #include <raul/Atom.hpp>
+#include <raul/Table.hpp>
 
 namespace Raul { class Atom; namespace RDF { class World; } }
 namespace Ingen { namespace Shared { class EngineInterface; } }
@@ -37,7 +37,7 @@ class Loader {
 public:
 	virtual ~Loader() {}
 	
-	typedef std::map<std::string, Raul::Atom> Metadata;
+	typedef Raul::Table<std::string, Raul::Atom> Metadata;
 	
 	virtual bool
 	load(SharedPtr<Ingen::Shared::EngineInterface> engine,

@@ -168,7 +168,7 @@ void
 LoadPluginWindow::on_show()
 {
 	if (!_has_shown) {
-		set_plugin_list(App::instance().store()->plugins());
+		set_plugins(App::instance().store()->plugins());
 	
 		// Center on patch window
 		/*int _w, _h;
@@ -209,11 +209,11 @@ LoadPluginWindow::plugin_compare(const Gtk::TreeModel::iterator& a_i,
 
 
 void
-LoadPluginWindow::set_plugin_list(const std::map<string, SharedPtr<PluginModel> >& m)
+LoadPluginWindow::set_plugins(const Raul::Table<string, SharedPtr<PluginModel> >& m)
 {
 	_plugins_liststore->clear();
 
-	for (std::map<string, SharedPtr<PluginModel> >::const_iterator i = m.begin(); i != m.end(); ++i) {
+	for (Raul::Table<string, SharedPtr<PluginModel> >::const_iterator i = m.begin(); i != m.end(); ++i) {
 		SharedPtr<PluginModel> plugin = (*i).second;
 
 		Gtk::TreeModel::iterator iter = _plugins_liststore->append();
@@ -393,7 +393,7 @@ LoadPluginWindow::filter_changed()
 	size_t                   num_visible = 0;
 	
 
-	for (std::map<string, SharedPtr<PluginModel> >::const_iterator i = App::instance().store()->plugins().begin();
+	for (Raul::Table<string, SharedPtr<PluginModel> >::const_iterator i = App::instance().store()->plugins().begin();
 			i != App::instance().store()->plugins().end(); ++i) {
 	
 		const SharedPtr<PluginModel> plugin = (*i).second;
@@ -440,7 +440,7 @@ void
 LoadPluginWindow::clear_clicked()
 {
 	_search_entry->set_text("");
-	set_plugin_list(App::instance().store()->plugins());
+	set_plugins(App::instance().store()->plugins());
 }
 
 bool

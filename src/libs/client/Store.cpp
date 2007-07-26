@@ -34,6 +34,7 @@ Store::Store(SharedPtr<EngineInterface> engine, SharedPtr<SigClientInterface> em
 , _emitter(emitter)
 {
 	emitter->object_destroyed_sig.connect(sigc::mem_fun(this, &Store::destruction_event));
+	emitter->object_renamed_sig.connect(sigc::mem_fun(this, &Store::rename_event));
 	emitter->new_plugin_sig.connect(sigc::mem_fun(this, &Store::new_plugin_event));
 	emitter->new_patch_sig.connect(sigc::mem_fun(this, &Store::new_patch_event));
 	emitter->new_node_sig.connect(sigc::mem_fun(this, &Store::new_node_event));
@@ -63,7 +64,7 @@ Store::add_plugin_orphan(SharedPtr<NodeModel> node)
 	cerr << "WARNING: Node " << node->path() << " received, but plugin "
 		<< node->plugin_uri() << " unknown." << endl;
 
-	map<string, list<SharedPtr<NodeModel> > >::iterator spawn
+	Raul::Table<string, list<SharedPtr<NodeModel> > >::iterator spawn
 		= _plugin_orphans.find(node->plugin_uri());
 
 	_engine->request_plugin(node->plugin_uri());
@@ -81,7 +82,7 @@ Store::add_plugin_orphan(SharedPtr<NodeModel> node)
 void
 Store::resolve_plugin_orphans(SharedPtr<PluginModel> plugin)
 {
-	map<string, list<SharedPtr<NodeModel> > >::iterator n
+	Raul::Table<string, list<SharedPtr<NodeModel> > >::iterator n
 		= _plugin_orphans.find(plugin->uri());
 
 	if (n != _plugin_orphans.end()) {
@@ -145,7 +146,7 @@ Store::add_orphan(SharedPtr<ObjectModel> child)
 {
 	cerr << "WARNING: Orphan object " << child->path() << " received." << endl;
 
-	map<Path, list<SharedPtr<ObjectModel> > >::iterator children
+	Raul::Table<Path, list<SharedPtr<ObjectModel> > >::iterator children
 		= _orphans.find(child->path().parent());
 
 	_engine->request_object(child->path().parent());
@@ -155,7 +156,7 @@ Store::add_orphan(SharedPtr<ObjectModel> child)
 	} else {
 		list<SharedPtr<ObjectModel> > l;
 		l.push_back(child);
-		_orphans[child->path().parent()] = l;
+		_orphans.insert(make_pair(child->path().parent(), l));
 	}
 }
 
@@ -163,7 +164,7 @@ Store::add_orphan(SharedPtr<ObjectModel> child)
 void
 Store::add_metadata_orphan(const Path& subject_path, const string& predicate, const Atom& value)
 {
-	map<Path, list<std::pair<string, Atom> > >::iterator orphans
+	Raul::Table<Path, list<std::pair<string, Atom> > >::iterator orphans
 		= _metadata_orphans.find(subject_path);
 
 	_engine->request_object(subject_path);
@@ -181,7 +182,7 @@ Store::add_metadata_orphan(const Path& subject_path, const string& predicate, co
 void
 Store::resolve_metadata_orphans(SharedPtr<ObjectModel> subject)
 {
-	map<Path, list<std::pair<string, Atom> > >::iterator v
+	Raul::Table<Path, list<std::pair<string, Atom> > >::iterator v
 		= _metadata_orphans.find(subject->path());
 
 	if (v != _metadata_orphans.end()) {
@@ -201,7 +202,7 @@ Store::resolve_metadata_orphans(SharedPtr<ObjectModel> subject)
 void
 Store::resolve_orphans(SharedPtr<ObjectModel> parent)
 {
-	map<Path, list<SharedPtr<ObjectModel> > >::iterator c
+	Raul::Table<Path, list<SharedPtr<ObjectModel> > >::iterator c
 		= _orphans.find(parent->path());
 
 	if (c != _orphans.end()) {
@@ -263,7 +264,7 @@ Store::add_object(SharedPtr<ObjectModel> object)
 SharedPtr<ObjectModel>
 Store::remove_object(const Path& path)
 {
-	map<Path, SharedPtr<ObjectModel> >::iterator i = _objects.find(path);
+	Objects::iterator i = _objects.find(path);
 
 	if (i != _objects.end()) {
 		assert((*i).second->path() == path);
@@ -298,7 +299,7 @@ SharedPtr<PluginModel>
 Store::plugin(const string& uri)
 {
 	assert(uri.length() > 0);
-	map<string, SharedPtr<PluginModel> >::iterator i = _plugins.find(uri);
+	Plugins::iterator i = _plugins.find(uri);
 	if (i == _plugins.end())
 		return SharedPtr<PluginModel>();
 	else
@@ -310,7 +311,7 @@ SharedPtr<ObjectModel>
 Store::object(const Path& path)
 {
 	assert(path.length() > 0);
-	map<Path, SharedPtr<ObjectModel> >::iterator i = _objects.find(path);
+	Objects::iterator i = _objects.find(path);
 	if (i == _objects.end()) {
 		return SharedPtr<ObjectModel>();
 	} else {
@@ -342,6 +343,20 @@ Store::destruction_event(const Path& path)
 
 	//cerr << "Store removed object " << path
 	//	<< ", count: " << removed.use_count();
+}
+
+void
+Store::rename_event(const Path& old_path, const Path& new_path)
+{
+	SharedPtr<ObjectModel> object = remove_object(old_path);
+	if (object) {
+		object->set_path(new_path);
+		add_object(object);
+		object->renamed_sig.emit();
+		cerr << "[Store] Renamed " << old_path << " -> " << new_path << endl;
+	} else {
+		cerr << "[Store] Failed to find object " << old_path << " to rename." << endl;
+	}
 }
 
 void
@@ -412,8 +427,8 @@ Store::patch_cleared_event(const Path& path)
 {
 	SharedPtr<PatchModel> patch = PtrCast<PatchModel>(object(path));
 	if (patch) {
-		NodeModelMap children = patch->nodes(); // take a copy
-		for (NodeModelMap::iterator i = children.begin(); i != children.end(); ++i) {
+		ObjectModel::Children children = patch->children(); // take a copy
+		for (ObjectModel::Children::iterator i = children.begin(); i != children.end(); ++i) {
 			destruction_event(i->second->path());
 		}
 	}

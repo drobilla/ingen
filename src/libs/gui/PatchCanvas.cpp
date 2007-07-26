@@ -70,12 +70,6 @@ PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 	xml->get_widget("canvas_menu_load_plugin", _menu_load_plugin);
 	xml->get_widget("canvas_menu_load_patch", _menu_load_patch);
 	xml->get_widget("canvas_menu_new_patch", _menu_new_patch);
-	
-	// Add control menu items
-	_menu_add_number_control->signal_activate().connect(
-		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_control), NUMBER));
-	_menu_add_button_control->signal_activate().connect(
-		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_control), BUTTON));
 
 	// Add port menu items
 	_menu_add_audio_input->signal_activate().connect(
@@ -102,6 +96,12 @@ PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 	_menu_add_osc_output->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
 			"osc_output", "ingen:osc", true));
+	
+	// Add control menu items
+	_menu_add_number_control->signal_activate().connect(
+		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_control), NUMBER));
+	_menu_add_button_control->signal_activate().connect(
+		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_control), BUTTON));
 
 #ifdef HAVE_SLV2
 	build_plugin_menu();
@@ -176,7 +176,7 @@ PatchCanvas::build_plugin_menu()
     Gtk::MenuItem* plugin_menu_item = &(_menu->items().back());
 	Gtk::Menu* plugin_menu = Gtk::manage(new Gtk::Menu());
 	plugin_menu_item->set_submenu(*plugin_menu);
-	_menu->reorder_child(*plugin_menu_item, 2);
+	_menu->reorder_child(*plugin_menu_item, 3);
 
 	SLV2PluginClass lv2_plugin = slv2_world_get_plugin_class(PluginModel::slv2_world());
 	SLV2PluginClasses classes = slv2_world_get_plugin_classes(PluginModel::slv2_world());
@@ -193,9 +193,11 @@ PatchCanvas::build()
 		boost::dynamic_pointer_cast<PatchCanvas>(shared_from_this());
 	
 	// Create modules for nodes
-	for (NodeModelMap::const_iterator i = _patch->nodes().begin();
-			i != _patch->nodes().end(); ++i) {
-		add_node((*i).second);
+	for (ObjectModel::Children::const_iterator i = _patch->children().begin();
+			i != _patch->children().end(); ++i) {
+		SharedPtr<NodeModel> node = PtrCast<NodeModel>(i->second);
+		if (node)
+			add_node(node);
 	}
 
 	// Create pseudo modules for ports (ports on this canvas, not on our module)

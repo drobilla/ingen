@@ -1,6 +1,6 @@
 if BUILD_UNIT_TESTS
 
-AM_CXXFLAGS = @JACK_CFLAGS@ @RAUL_CFLAGS@ @LIBLO_CFLAGS@ @ALSA_CFLAGS@ -I../../common
+AM_CXXFLAGS = @JACK_CFLAGS@ @LIBLO_CFLAGS@ @ALSA_CFLAGS@ -I$(top_srcdir)/raul -I../../common
 common_ldadd = @JACK_LIBS@ @RAUL_LIBS@ @LIBLO_LIBS@ @ALSA_LIBS@ -lrt
 node_tree_test_LDADD = $(common_ldadd)
 

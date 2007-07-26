@@ -47,8 +47,8 @@ public:
 	Port*     find_port(const Path& path);
 	GraphObject* find(const Path& path);
 	
-	void                 add(GraphObject* o);
-	void                 add(TreeNode<GraphObject*>* o);
+	void                    add(GraphObject* o);
+	void                    add(TreeNode<GraphObject*>* o);
 	TreeNode<GraphObject*>* remove(const string& key);
 	
 	const Tree<GraphObject*>& objects() { return _objects; }

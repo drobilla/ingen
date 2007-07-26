@@ -93,6 +93,8 @@ void
 NodeModel::add_child(SharedPtr<ObjectModel> c)
 {
 	assert(c->parent().get() == this);
+	
+	ObjectModel::add_child(c);
 
 	SharedPtr<PortModel> pm = PtrCast<PortModel>(c);
 	assert(pm);
@@ -100,15 +102,19 @@ NodeModel::add_child(SharedPtr<ObjectModel> c)
 }
 
 
-void
+bool
 NodeModel::remove_child(SharedPtr<ObjectModel> c)
 {
 	assert(c->path().is_child_of(_path));
 	assert(c->parent().get() == this);
+	
+	bool ret = ObjectModel::remove_child(c);
 
 	SharedPtr<PortModel> pm = PtrCast<PortModel>(c);
 	assert(pm);
 	remove_port(pm);
+
+	return ret;
 }
 
 

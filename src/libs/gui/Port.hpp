@@ -46,6 +46,7 @@ public:
 private:
 
 	void on_menu_destroy();
+	void renamed();
 
 	SharedPtr<PortModel> _port_model;
 };

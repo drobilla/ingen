@@ -65,7 +65,7 @@ RenameEvent::pre_process()
 		return;
 	}
 	
-	GraphObject* obj = _engine.object_store()->find(_old_path);
+	TreeNode<GraphObject*>* obj = _engine.object_store()->remove(_old_path);
 
 	if (obj == NULL) {
 		_error = OBJECT_NOT_FOUND;
@@ -81,8 +81,10 @@ RenameEvent::pre_process()
 	}*/
 	
 	if (obj != NULL) {
-		obj->set_path(_new_path);
-		assert(obj->path() == _new_path);
+		obj->node()->set_path(_new_path);
+		obj->key(_new_path);
+		_engine.object_store()->add(obj);
+		assert(obj->node()->path() == _new_path);
 	}
 	
 	QueuedEvent::pre_process();

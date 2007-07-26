@@ -16,6 +16,10 @@
  */
 
 #include "ObjectModel.hpp"
+#include <raul/TableImpl.hpp>
+#include <iostream>
+
+using namespace std;
 
 namespace Ingen {
 namespace Client {
@@ -29,6 +33,50 @@ ObjectModel::ObjectModel(const Path& path)
 
 ObjectModel::~ObjectModel()
 {
+}
+
+SharedPtr<ObjectModel>
+ObjectModel::get_child(const string& name) const
+{
+	assert(name.find("/") == string::npos);
+	Children::const_iterator i = _children.find(name);
+	return ((i != _children.end()) ? (*i).second : SharedPtr<ObjectModel>());
+}
+
+void
+ObjectModel::add_child(SharedPtr<ObjectModel> o)
+{
+	assert(o);
+	assert(o->path().is_child_of(_path));
+	assert(o->parent().get() == this);
+	
+#ifndef NDEBUG
+	// Be sure there's no duplicates
+	Children::iterator existing = _children.find(o->path().name());
+	assert(existing == _children.end());
+#endif
+
+	_children.insert(make_pair(o->path().name(), o));
+	new_child_sig.emit(o);
+}
+
+bool
+ObjectModel::remove_child(SharedPtr<ObjectModel> o)
+{
+	assert(o->path().is_child_of(_path));
+	assert(o->parent().get() == this);
+
+	Children::iterator i = _children.find(o->path().name());
+	if (i != _children.end()) {
+		assert(i->second == o);
+		_children.erase(i);
+		removed_child_sig.emit(o);
+		return true;
+	} else {
+		cerr << "[ObjectModel::remove_child] " << _path
+			<< ": failed to find child " << o->path().name() << endl;
+		return false;
+	}
 }
 
 /** Get a piece of metadata for this object.

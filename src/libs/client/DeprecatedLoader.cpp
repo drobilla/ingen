@@ -149,7 +149,7 @@ DeprecatedLoader::add_metadata(MetadataMap& data, string old_key, string value)
 			if (endptr != c_val && *endptr == '\0')
 				data[key] = Atom(fval);
 			else
-				data[key]= Atom(value);
+				data[key] = Atom(value);
 			
 			free(c_val);
 		}

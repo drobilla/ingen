@@ -19,18 +19,18 @@
 #define NODEMODEL_H
 
 #include <cstdlib>
-#include <map>
 #include <iostream>
 #include <string>
 #include <sigc++/sigc++.h>
+#include <raul/Table.hpp>
 #include "ObjectModel.hpp"
 #include "PortModel.hpp"
 #include <raul/Path.hpp>
 #include <raul/SharedPtr.hpp>
 #include "PluginModel.hpp"
 
-using std::string; using std::map; using std::find;
-using std::cout; using std::cerr; using std::endl;
+using std::string;
+using Raul::Table;
 
 namespace Ingen {
 namespace Client {
@@ -50,7 +50,8 @@ public:
 
 	SharedPtr<PortModel> get_port(const string& port_name) const;
 	
-	const map<int, map<int, string> >& get_programs() const { return _banks; }
+	const Table<int,Table<int,string> >& get_programs() const { return _banks; }
+
 	const string&                      plugin_uri()   const { return _plugin_uri; }
 	SharedPtr<PluginModel>             plugin()       const { return _plugin; }
 	int                                num_ports()    const { return _ports.size(); }
@@ -69,7 +70,7 @@ protected:
 
 	NodeModel(const Path& path);
 	void add_child(SharedPtr<ObjectModel> c);
-	void remove_child(SharedPtr<ObjectModel> c);
+	bool remove_child(SharedPtr<ObjectModel> c);
 	void add_port(SharedPtr<PortModel> pm);
 	void remove_port(SharedPtr<PortModel> pm);
 	void remove_port(const Path& port_path);
@@ -81,15 +82,15 @@ protected:
 	friend class PatchModel;
 	void set_path(const Path& p);
 
-	bool                        _polyphonic;
-	PortModelList               _ports;      ///< List of ports (not a map to preserve order)
-	string                      _plugin_uri; ///< Plugin URI (if PluginModel is unknown)
-	SharedPtr<PluginModel>      _plugin;     ///< The plugin this node is an instance of
-	map<int, map<int, string> > _banks;      ///< DSSI banks
+	bool                            _polyphonic;
+	PortModelList                   _ports;      ///< List of ports (not a Table to preserve order)
+	string                          _plugin_uri; ///< Plugin URI (if PluginModel is unknown)
+	SharedPtr<PluginModel>          _plugin;     ///< The plugin this node is an instance of
+	Table<int, Table<int, string> > _banks;      ///< DSSI banks
 };
 
 
-typedef map<string, SharedPtr<NodeModel> > NodeModelMap;
+typedef Table<string, SharedPtr<NodeModel> > NodeModelMap;
 
 
 } // namespace Client

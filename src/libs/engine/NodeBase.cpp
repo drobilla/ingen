@@ -156,6 +156,7 @@ NodeBase::post_process(SampleCount nframes, FrameTime start, FrameTime end)
 void
 NodeBase::set_path(const Path& new_path)
 {
+#if 0
 	const Path old_path = path();
 	//cerr << "Renaming " << old_path << " -> " << new_path << endl;
 	
@@ -180,6 +181,15 @@ NodeBase::set_path(const Path& new_path)
 	
 
 	assert(_store->find(new_path) == this);
+#endif
+	GraphObject::set_path(new_path);
+	
+	// Rename children (ports)
+	for (size_t i=0; i < num_ports(); ++i) {
+		Port* const port = _ports->at(i);
+		const string name = port->path().name();
+		port->set_path(new_path.base() + name);
+	}
 }
 
 

@@ -21,13 +21,12 @@
 #include <cassert>
 #include <list>
 #include <string>
-#include <map>
 #include <sigc++/sigc++.h>
 #include "NodeModel.hpp"
 #include <raul/SharedPtr.hpp>
 #include "ConnectionModel.hpp"
 
-using std::list; using std::string; using std::map;
+using std::list; using std::string;
 
 namespace Ingen {
 namespace Client {
@@ -42,7 +41,6 @@ class Store;
 class PatchModel : public NodeModel
 {
 public:
-	const NodeModelMap&   nodes()       const { return _nodes; }
 	const ConnectionList& connections() const { return _connections; }
 	
 	SharedPtr<ConnectionModel> get_connection(const string& src_port_path, const string& dst_port_path) const;
@@ -79,10 +77,10 @@ private:
 	void disable();
 	void clear();
 	void set_path(const Path& path);
-	void add_node(SharedPtr<NodeModel> nm);
-	void remove_node(SharedPtr<NodeModel> nm);
+	//void add_node(SharedPtr<NodeModel> nm);
+	//void remove_node(SharedPtr<NodeModel> nm);
 	void add_child(SharedPtr<ObjectModel> c);
-	void remove_child(SharedPtr<ObjectModel> c);
+	bool remove_child(SharedPtr<ObjectModel> c);
 	
 	void add_connection(SharedPtr<ConnectionModel> cm);
 	void remove_connection(const string& src_port_path, const string& dst_port_path);
@@ -90,14 +88,13 @@ private:
 	void rename_node(const Path& old_path, const Path& new_path);
 	void rename_node_port(const Path& old_path, const Path& new_path);
 
-	NodeModelMap   _nodes;
 	ConnectionList _connections;
 	string         _filename;
 	bool           _enabled;
 	size_t         _poly;
 };
 
-typedef map<string, SharedPtr<PatchModel> > PatchModelMap;
+typedef Table<string, SharedPtr<PatchModel> > PatchModelMap;
 
 
 } // namespace Client

@@ -26,6 +26,7 @@
 #include "GladeFactory.hpp"
 #include "RenameWindow.hpp"
 #include "PatchWindow.hpp"
+#include "WindowFactory.hpp"
 
 namespace Ingen {
 namespace GUI {
@@ -71,6 +72,10 @@ PatchPortModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<PortMod
 	assert(ret);
 
 	ret->_patch_port = boost::shared_ptr<Port>(new Port(ret, port, true, true));
+	ret->_patch_port->menu().items().push_back(Gtk::Menu_Helpers::MenuElem("Rename...",
+		sigc::bind(
+			sigc::mem_fun(App::instance().window_factory(), &WindowFactory::present_rename),
+			port)));
 	ret->add_port(ret->_patch_port);
 	
 	for (MetadataMap::const_iterator m = port->metadata().begin(); m != port->metadata().end(); ++m)

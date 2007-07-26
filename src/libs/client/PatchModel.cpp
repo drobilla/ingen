@@ -30,6 +30,8 @@ namespace Client {
 void
 PatchModel::set_path(const Path& new_path)
 {
+	throw;
+#if 0
 	// FIXME: haack
 	if (new_path == "") {
 		_path = "";
@@ -37,7 +39,7 @@ PatchModel::set_path(const Path& new_path)
 	}
 
 	NodeModel::set_path(new_path);
-	for (NodeModelMap::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
+	for (Children::iterator i = _children.begin(); i != _children.end(); ++i)
 		(*i).second->set_path(_path +"/"+ (*i).second->path().name());
 	
 #ifdef DEBUG
@@ -48,6 +50,7 @@ PatchModel::set_path(const Path& new_path)
 		assert((*j)->src_port_path().parent().parent() == new_path);
 	}
 #endif
+#endif
 }
 
 
@@ -55,6 +58,8 @@ void
 PatchModel::add_child(SharedPtr<ObjectModel> c)
 {
 	assert(c->parent().get() == this);
+	
+	ObjectModel::add_child(c);
 
 	SharedPtr<PortModel> pm = PtrCast<PortModel>(c);
 	if (pm) {
@@ -63,92 +68,55 @@ PatchModel::add_child(SharedPtr<ObjectModel> c)
 	}
 	
 	SharedPtr<NodeModel> nm = PtrCast<NodeModel>(c);
-	if (nm) {
-		add_node(nm);
-		return;
-	}
+	if (nm)
+		new_node_sig.emit(nm);
 }
-
-
-void
-PatchModel::remove_child(SharedPtr<ObjectModel> c)
-{
-	assert(c->path().is_child_of(_path));
-	assert(c->parent().get() == this);
-
-	SharedPtr<PortModel> pm = PtrCast<PortModel>(c);
-	if (pm) {
-		remove_port(pm);
-		return;
-	}
-	
-	SharedPtr<NodeModel> nm = PtrCast<NodeModel>(c);
-	if (nm) {
-		remove_node(nm);
-		return;
-	}
-}
-
 
 SharedPtr<NodeModel>
 PatchModel::get_node(const string& name) const
 {
-	assert(name.find("/") == string::npos);
-	NodeModelMap::const_iterator i = _nodes.find(name);
-	return ((i != _nodes.end()) ? (*i).second : SharedPtr<NodeModel>());
+	return PtrCast<NodeModel>(get_child(name));
 }
 
 
-void
-PatchModel::add_node(SharedPtr<NodeModel> nm)
+bool
+PatchModel::remove_child(SharedPtr<ObjectModel> o)
 {
-	assert(nm);
-	assert(nm->path().is_child_of(_path));
-	assert(nm->parent().get() == this);
+	assert(o->path().is_child_of(_path));
+	assert(o->parent().get() == this);
+
+	SharedPtr<PortModel> pm = PtrCast<PortModel>(o);
+	if (pm)
+		remove_port(pm);
 	
-	NodeModelMap::iterator existing = _nodes.find(nm->path().name());
+	// Remove any connections which referred to this object,
+	// since they can't possibly exist anymore
+	for (ConnectionList::iterator j = _connections.begin(); j != _connections.end() ; ) {
 
-	// Store should have handled this by merging the two
-	assert(existing == _nodes.end());
+		list<SharedPtr<ConnectionModel> >::iterator next = j;
+		++next;
 
-	_nodes[nm->path().name()] = nm;
-	new_node_sig.emit(nm);
-}
+		SharedPtr<ConnectionModel> cm = (*j);
 
-
-void
-PatchModel::remove_node(SharedPtr<NodeModel> nm)
-{
-	assert(nm->path().is_child_of(_path));
-	assert(nm->parent().get() == this);
-
-	NodeModelMap::iterator i = _nodes.find(nm->path().name());
-	if (i != _nodes.end()) {
-		assert(i->second == nm);
-
-		// Remove any connections which referred to this node,
-		// since they can't possibly exist anymore
-		for (list<SharedPtr<ConnectionModel> >::iterator j = _connections.begin();
-				j != _connections.end() ; ) {
-			list<SharedPtr<ConnectionModel> >::iterator next = j;
-			++next;
-			SharedPtr<ConnectionModel> cm = (*j);
-			if (cm->src_port_path().parent() == nm->path()
-					|| cm->dst_port_path().parent() == nm->path()) {
-				removed_connection_sig.emit(cm);
-				_connections.erase(j); // cuts our reference
-				assert(!get_connection(cm->src_port_path(), cm->dst_port_path())); // no duplicates
-			}
-			j = next;
+		if (cm->src_port_path().parent() == o->path()
+				|| cm->src_port_path() == o->path()
+				|| cm->dst_port_path().parent() == o->path()
+				|| cm->dst_port_path() == o->path()) {
+			removed_connection_sig.emit(cm);
+			_connections.erase(j); // cuts our reference
+			assert(!get_connection(cm->src_port_path(), cm->dst_port_path())); // no duplicates
 		}
-		
-		// Remove the Node itself
-		_nodes.erase(i);
-		removed_node_sig.emit(nm);
+		j = next;
+	}
 
+	if (ObjectModel::remove_child(o)) {
+		SharedPtr<NodeModel> nm = PtrCast<NodeModel>(o);
+		if (nm) {
+			removed_node_sig.emit(nm);
+		}
+		return true;
 	} else {
-		cerr << "[PatchModel::remove_node] " << _path
-			<< ": failed to find node " << nm->path().name() << endl;
+		return false;
 	}
 }
 
@@ -157,10 +125,10 @@ void
 PatchModel::remove_node(const string& name)
 {
 	assert(name.find("/") == string::npos);
-	NodeModelMap::iterator i = _nodes.find(name);
-	if (i != _nodes.end()) {
+	NodeModelMap::iterator i = _children.find(name);
+	if (i != _children.end()) {
 		//delete i->second;
-		_nodes.erase(i);
+		_children.erase(i);
 		removed_node_sig.emit(name);
 		i->second->parent().reset();
 		return;
@@ -176,17 +144,17 @@ PatchModel::clear()
 	//for (list<SharedPtr<ConnectionModel> >::iterator j = _connections.begin(); j != _connections.end(); ++j)
 	//	delete (*j);
 	
-	for (NodeModelMap::iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
+	/*for (Children::iterator i = _children.begin(); i != _children.end(); ++i) {
 		(*i).second->clear();
 		//delete (*i).second;
-	}
+	}*/
 	
-	_nodes.clear();
+	_children.clear();
 	_connections.clear();
 
 	NodeModel::clear();
 
-	assert(_nodes.empty());
+	assert(_children.empty());
 	assert(_connections.empty());
 	assert(_ports.empty());
 }
@@ -205,9 +173,9 @@ PatchModel::rename_node(const Path& old_path, const Path& new_path)
 	assert(old_path.parent() == path());
 	assert(new_path.parent() == path());
 	
-	NodeModelMap::iterator i = _nodes.find(old_path.name());
+	NodeModelMap::iterator i = _children.find(old_path.name());
 	
-	if (i != _nodes.end()) {
+	if (i != _children.end()) {
 		SharedPtr<NodeModel> nm = (*i).second;
 		for (list<SharedPtr<ConnectionModel> >::iterator j = _connections.begin(); j != _connections.end(); ++j) {
 			if ((*j)->src_port_path().parent() == old_path)
@@ -215,9 +183,9 @@ PatchModel::rename_node(const Path& old_path, const Path& new_path)
 			if ((*j)->dst_port_path().parent() == old_path)
 				(*j)->dst_port_path(new_path.base() + (*j)->dst_port_path().name());
 		}
-		_nodes.erase(i);
+		_children.erase(i);
 		assert(nm->path() == new_path);
-		_nodes[new_path.name()] = nm;
+		_children[new_path.name()] = nm;
 		return;
 	}
 	

@@ -44,15 +44,15 @@ NodeMenu::NodeMenu(SharedPtr<NodeModel> node)
 	
 	items().push_back(Gtk::Menu_Helpers::SeparatorElem());
 
-	/*items().push_back(Gtk::Menu_Helpers::MenuElem("Rename...",
+	items().push_back(Gtk::Menu_Helpers::MenuElem("Rename...",
 		sigc::bind(
 			sigc::mem_fun(app.window_factory(), &WindowFactory::present_rename),
-			node)));*/
+			node)));
+	
 	/*items().push_back(Gtk::Menu_Helpers::MenuElem("Clone",
 		sigc::bind(
 			sigc::mem_fun(app.engine(), &EngineInterface::clone),
-			node)));
-		sigc::mem_fun(this, &NodeMenu::on_menu_clone)));*/
+			node)));*/
 	
 	items().push_back(Gtk::Menu_Helpers::MenuElem("Disconnect All",
 			sigc::mem_fun(this, &NodeMenu::on_menu_disconnect_all)));

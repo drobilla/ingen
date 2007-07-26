@@ -35,14 +35,14 @@ namespace GUI {
 
 
 WindowFactory::WindowFactory()
-: _load_plugin_win(NULL)
-, _load_patch_win(NULL)
-, _load_remote_patch_win(NULL)
-, _upload_patch_win(NULL)
-, _new_subpatch_win(NULL)
-, _load_subpatch_win(NULL)
-, _node_properties_win(NULL)
-, _patch_properties_win(NULL)
+	: _load_plugin_win(NULL)
+	, _load_patch_win(NULL)
+	, _load_remote_patch_win(NULL)
+	, _upload_patch_win(NULL)
+	, _new_subpatch_win(NULL)
+	, _load_subpatch_win(NULL)
+	, _node_properties_win(NULL)
+	, _patch_properties_win(NULL)
 {
 	Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference();
 
@@ -54,6 +54,7 @@ WindowFactory::WindowFactory()
 	xml->get_widget_derived("load_subpatch_win", _load_subpatch_win);
 	xml->get_widget_derived("node_properties_win", _node_properties_win);
 	xml->get_widget_derived("patch_properties_win", _patch_properties_win);
+	xml->get_widget_derived("rename_win", _rename_win);
 }
 
 

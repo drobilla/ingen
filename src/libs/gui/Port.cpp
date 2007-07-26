@@ -47,6 +47,8 @@ Port::Port(boost::shared_ptr<FlowCanvas::Module> module, SharedPtr<PortModel> pm
 	if (destroyable)
 		_menu.items().push_back(Gtk::Menu_Helpers::MenuElem("Destroy",
 				sigc::mem_fun(this, &Port::on_menu_destroy)));
+
+	_port_model->renamed_sig.connect(sigc::mem_fun(this, &Port::renamed));
 }
 
 
@@ -54,6 +56,13 @@ void
 Port::on_menu_destroy()
 {
 	App::instance().engine()->destroy(_port_model->path());
+}
+
+
+void
+Port::renamed()
+{
+	set_name(_port_model->path().name());
 }
 
 

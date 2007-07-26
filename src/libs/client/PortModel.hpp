@@ -85,7 +85,7 @@ private:
 	}
 	
 	void add_child(SharedPtr<ObjectModel> c)    { throw; }
-	void remove_child(SharedPtr<ObjectModel> c) { throw; }
+	bool remove_child(SharedPtr<ObjectModel> c) { throw; }
 	
 	void connected_to(SharedPtr<PortModel> p)      { ++_connections; connection_sig.emit(p); }
 	void disconnected_from(SharedPtr<PortModel> p) { --_connections; disconnection_sig.emit(p); }

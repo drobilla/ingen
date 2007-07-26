@@ -20,6 +20,7 @@
 #include <glibmm/ustring.h>
 #include <raul/RDFModel.hpp>
 #include <raul/RDFQuery.hpp>
+#include <raul/TableImpl.hpp>
 #include "interface/EngineInterface.hpp"
 #include "Loader.hpp"
 
@@ -44,13 +45,13 @@ Loader::load(SharedPtr<EngineInterface> engine,
              boost::optional<Path>      parent,
              string                     patch_name,
              Glib::ustring              patch_uri,
-             map<string,Atom>           data)
+             Raul::Table<string, Atom>  data)
 {
 	setlocale(LC_NUMERIC, "C");
 
 	// FIXME: this whole thing is a mess
 	
-	std::map<Path, bool> created;
+	Raul::Table<Path, bool> created;
 
 	RDF::Model model(*rdf_world, document_uri);
 

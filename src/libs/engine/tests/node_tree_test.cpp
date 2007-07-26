@@ -1,8 +1,8 @@
 #include <cstdlib>
 #include <iostream>
 #include <vector>
-#include "../Tree.h"
-#include "../TreeImplementation.h"
+#include "../Tree.hpp"
+#include "../TreeImplementation.hpp"
 
 using std::vector;
 using std::cout; using std::cerr; using std::endl;

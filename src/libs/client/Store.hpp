@@ -20,14 +20,15 @@
 
 #include <cassert>
 #include <string>
-#include <map>
 #include <list>
 #include <raul/SharedPtr.hpp>
 #include <sigc++/sigc++.h>
 #include <raul/Path.hpp>
 #include <raul/Atom.hpp>
+#include <raul/Table.hpp>
+#include <raul/TableImpl.hpp>
 #include "interface/EngineInterface.hpp"
-using std::string; using std::map; using std::list;
+using std::string; using std::list;
 using Ingen::Shared::EngineInterface;
 using Raul::Path;
 using Raul::Atom;
@@ -59,10 +60,10 @@ public:
 
 	size_t num_object() { return _objects.size(); }
 	
-	typedef map<string, SharedPtr<PluginModel> > Plugins;
+	typedef Raul::Table<string, SharedPtr<PluginModel> > Plugins;
 	const Plugins& plugins() const { return _plugins; }
 
-	typedef map<Path, SharedPtr<ObjectModel> > Objects;
+	typedef Raul::Table<Path, SharedPtr<ObjectModel> > Objects;
 	const Objects& objects() const { return _objects; }
 
 	sigc::signal<void, SharedPtr<ObjectModel> > new_object_sig; 
@@ -91,6 +92,7 @@ private:
 
 	// Slots for SigClientInterface signals
 	void destruction_event(const Path& path);
+	void rename_event(const Path& old_path, const Path& new_path);
 	void new_plugin_event(const string& uri, const string& type_uri, const string& name);
 	void new_patch_event(const Path& path, uint32_t poly);
 	void new_node_event(const string& plugin_uri, const Path& node_path, bool is_polyphonic, uint32_t num_ports);
@@ -106,20 +108,19 @@ private:
 	SharedPtr<EngineInterface>    _engine;
 	SharedPtr<SigClientInterface> _emitter;
 
-
 	Objects _objects; ///< Map, keyed by Ingen path
 	Plugins _plugins; ///< Map, keyed by plugin URI
 
 	/** Objects we've received, but depend on the existance of another unknown object.
 	 * Keyed by the path of the depended-on object (for tolerance of orderless comms) */
-	map<Path, list<SharedPtr<ObjectModel> > > _orphans;
+	Raul::Table<Path, list<SharedPtr<ObjectModel> > > _orphans;
 	
 	/** Same idea, except with plugins instead of parents.
 	 * It's unfortunate everything doesn't just have a URI and this was the same.. ahem.. */
-	map<string, list<SharedPtr<NodeModel> > > _plugin_orphans;
+	Raul::Table<string, list<SharedPtr<NodeModel> > > _plugin_orphans;
 	
 	/** Not orphans OF metadata like the above, but orphans which are metadata */
-	map<Path, list<std::pair<string, Atom> > > _metadata_orphans;
+	Raul::Table<Path, list<std::pair<string, Atom> > > _metadata_orphans;
 	
 	/** Ditto */
 	list<SharedPtr<ConnectionModel> > _connection_orphans;

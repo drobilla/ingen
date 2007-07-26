@@ -19,7 +19,6 @@
 #define OBJECTMODEL_H
 
 #include <cstdlib>
-#include <map>
 #include <iostream>
 #include <string>
 #include <algorithm>
@@ -29,16 +28,16 @@
 #include <raul/Atom.hpp>
 #include <raul/Path.hpp>
 #include <raul/SharedPtr.hpp>
+#include <raul/Table.hpp>
 
-using std::string; using std::map; using std::find;
-using std::cout; using std::cerr; using std::endl;
+using std::string; using std::find;
 using Raul::Atom;
 using Raul::Path;
 
 namespace Ingen {
 namespace Client {
 
-typedef map<string, Atom> MetadataMap;
+typedef Raul::Table<string, Atom> MetadataMap;
 
 
 /** Base class for all GraphObject models (NodeModel, PatchModel, PortModel).
@@ -59,34 +58,43 @@ public:
 
 	const Atom& get_metadata(const string& key) const;
 	void set_metadata(const string& key, const Atom& value)
-		{ _metadata[key] = value; metadata_update_sig.emit(key, value); }
+		{ _metadata.insert(make_pair(key, value)); metadata_update_sig.emit(key, value); }
+
+	typedef Raul::Table<string, SharedPtr<ObjectModel> > Children;
 
 	const MetadataMap&     metadata() const { return _metadata; }
+	const Children&        children() const { return _children; }
 	inline const Path&     path()     const { return _path; }
 	SharedPtr<ObjectModel> parent()   const { return _parent; }
 
+	SharedPtr<ObjectModel> get_child(const string& name) const;
+
 	// Signals
 	sigc::signal<void, const string&, const Atom&> metadata_update_sig; 
+	sigc::signal<void, SharedPtr<ObjectModel> >    new_child_sig; 
+	sigc::signal<void, SharedPtr<ObjectModel> >    removed_child_sig; 
 	sigc::signal<void>                             destroyed_sig; 
+	sigc::signal<void>                             renamed_sig; 
 
 protected:
 	friend class Store;
 	
 	ObjectModel(const Path& path);
 	
-	virtual void set_path(const Path& p)               { _path = p; }
+	virtual void set_path(const Path& p) { _path = p; }
 	virtual void set_parent(SharedPtr<ObjectModel> p) { assert(p); _parent = p; }
-	virtual void add_child(SharedPtr<ObjectModel> c) = 0;
-	virtual void remove_child(SharedPtr<ObjectModel> c) = 0;
+	virtual void add_child(SharedPtr<ObjectModel> c);
+	virtual bool remove_child(SharedPtr<ObjectModel> c);
 	
 	void add_metadata(const MetadataMap& data);
 	
 	void set(SharedPtr<ObjectModel> model);
 
-	Path                    _path;
+	Path                   _path;
 	SharedPtr<ObjectModel> _parent;
 	
 	MetadataMap _metadata;
+	Children    _children;
 };
 
 

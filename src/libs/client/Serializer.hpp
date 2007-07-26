@@ -28,6 +28,7 @@
 #include <raul/Atom.hpp>
 #include <raul/RDFWorld.hpp>
 #include <raul/RDFModel.hpp>
+#include <raul/Table.hpp>
 #include "ObjectModel.hpp"
 
 namespace Ingen {
@@ -71,7 +72,8 @@ private:
 	
 	Raul::RDF::Node path_to_node_id(const Path& path);
 
-	typedef std::map<Path, Raul::RDF::Node> NodeMap;
+	typedef Raul::Table<Path, Raul::RDF::Node> NodeMap;
+
 	Mode              _mode;
 	NodeMap           _node_map;
 	string            _base_uri;
