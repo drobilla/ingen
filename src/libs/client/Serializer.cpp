@@ -34,6 +34,7 @@
 #include <raul/Path.hpp>
 #include <raul/Atom.hpp>
 #include <raul/AtomRedland.hpp>
+#include <raul/TableImpl.hpp>
 #include "interface/EngineInterface.hpp"
 #include "Serializer.hpp"
 #include "PatchModel.hpp"
