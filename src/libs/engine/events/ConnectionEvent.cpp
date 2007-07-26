@@ -170,6 +170,7 @@ ConnectionEvent::post_process()
 		// FIXME: better error messages
 		string msg = "Unable to make connection ";
 		msg.append(_src_port_path + " -> " + _dst_port_path);
+		cerr << "CONNECTION ERROR " << (unsigned)_error << endl;
 		_responder->respond_error(msg);
 	}
 }

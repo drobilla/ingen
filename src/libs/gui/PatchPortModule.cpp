@@ -76,6 +76,7 @@ PatchPortModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<PortMod
 		sigc::bind(
 			sigc::mem_fun(App::instance().window_factory(), &WindowFactory::present_rename),
 			port)));
+
 	ret->add_port(ret->_patch_port);
 	
 	for (MetadataMap::const_iterator m = port->metadata().begin(); m != port->metadata().end(); ++m)

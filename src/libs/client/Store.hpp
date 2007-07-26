@@ -25,7 +25,7 @@
 #include <sigc++/sigc++.h>
 #include <raul/Path.hpp>
 #include <raul/Atom.hpp>
-#include <raul/Table.hpp>
+#include <raul/PathTable.hpp>
 #include <raul/TableImpl.hpp>
 #include "interface/EngineInterface.hpp"
 using std::string; using std::list;
@@ -63,7 +63,7 @@ public:
 	typedef Raul::Table<string, SharedPtr<PluginModel> > Plugins;
 	const Plugins& plugins() const { return _plugins; }
 
-	typedef Raul::Table<Path, SharedPtr<ObjectModel> > Objects;
+	typedef Raul::PathTable<SharedPtr<ObjectModel> > Objects;
 	const Objects& objects() const { return _objects; }
 
 	sigc::signal<void, SharedPtr<ObjectModel> > new_object_sig; 
@@ -113,14 +113,14 @@ private:
 
 	/** Objects we've received, but depend on the existance of another unknown object.
 	 * Keyed by the path of the depended-on object (for tolerance of orderless comms) */
-	Raul::Table<Path, list<SharedPtr<ObjectModel> > > _orphans;
+	Raul::PathTable<list<SharedPtr<ObjectModel> > > _orphans;
 	
 	/** Same idea, except with plugins instead of parents.
 	 * It's unfortunate everything doesn't just have a URI and this was the same.. ahem.. */
 	Raul::Table<string, list<SharedPtr<NodeModel> > > _plugin_orphans;
 	
 	/** Not orphans OF metadata like the above, but orphans which are metadata */
-	Raul::Table<Path, list<std::pair<string, Atom> > > _metadata_orphans;
+	Raul::PathTable<list<std::pair<string, Atom> > > _metadata_orphans;
 	
 	/** Ditto */
 	list<SharedPtr<ConnectionModel> > _connection_orphans;

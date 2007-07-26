@@ -51,6 +51,7 @@ NodeModule::NodeModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeMode
 	node->metadata_update_sig.connect(sigc::mem_fun(this, &NodeModule::metadata_update));
 	
 	signal_clicked.connect(sigc::mem_fun(this, &NodeModule::on_click));
+	node->renamed_sig.connect(sigc::mem_fun(this, &NodeModule::renamed));
 }
 
 
@@ -85,6 +86,13 @@ NodeModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeModel> n
 	ret->resize();
 
 	return ret;
+}
+
+
+void
+NodeModule::renamed()
+{
+	set_name(_node->path().name());
 }
 
 

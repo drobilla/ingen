@@ -71,7 +71,9 @@ RenameWindow::name_changed()
 	if (name.find("/") != string::npos) {
 		_message_label->set_text("Name may not contain '/'");
 		_ok_button->property_sensitive() = false;
-	//} else if (_object->parent()->patch_model()->get_node(name) != NULL) {
+	} else if (!Path::is_valid_name(name)) {
+		_message_label->set_text("Name contains invalid characters");
+		_ok_button->property_sensitive() = false;
 	} else if (App::instance().store()->object(_object->parent()->path().base() + name)) {
 		_message_label->set_text("An object already exists with that name.");
 		_ok_button->property_sensitive() = false;

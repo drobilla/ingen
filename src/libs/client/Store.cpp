@@ -24,9 +24,11 @@
 #include "PatchModel.hpp"
 #include "SigClientInterface.hpp"
 
+using namespace std;
+using Raul::Path;
+
 namespace Ingen {
 namespace Client {
-
 
 
 Store::Store(SharedPtr<EngineInterface> engine, SharedPtr<SigClientInterface> emitter)
@@ -146,7 +148,7 @@ Store::add_orphan(SharedPtr<ObjectModel> child)
 {
 	cerr << "WARNING: Orphan object " << child->path() << " received." << endl;
 
-	Raul::Table<Path, list<SharedPtr<ObjectModel> > >::iterator children
+	Raul::PathTable<list<SharedPtr<ObjectModel> > >::iterator children
 		= _orphans.find(child->path().parent());
 
 	_engine->request_object(child->path().parent());
@@ -164,7 +166,7 @@ Store::add_orphan(SharedPtr<ObjectModel> child)
 void
 Store::add_metadata_orphan(const Path& subject_path, const string& predicate, const Atom& value)
 {
-	Raul::Table<Path, list<std::pair<string, Atom> > >::iterator orphans
+	Raul::PathTable<list<std::pair<string, Atom> > >::iterator orphans
 		= _metadata_orphans.find(subject_path);
 
 	_engine->request_object(subject_path);
@@ -182,7 +184,7 @@ Store::add_metadata_orphan(const Path& subject_path, const string& predicate, co
 void
 Store::resolve_metadata_orphans(SharedPtr<ObjectModel> subject)
 {
-	Raul::Table<Path, list<std::pair<string, Atom> > >::iterator v
+	Raul::PathTable<list<std::pair<string, Atom> > >::iterator v
 		= _metadata_orphans.find(subject->path());
 
 	if (v != _metadata_orphans.end()) {
@@ -202,7 +204,7 @@ Store::resolve_metadata_orphans(SharedPtr<ObjectModel> subject)
 void
 Store::resolve_orphans(SharedPtr<ObjectModel> parent)
 {
-	Raul::Table<Path, list<SharedPtr<ObjectModel> > >::iterator c
+	Raul::PathTable<list<SharedPtr<ObjectModel> > >::iterator c
 		= _orphans.find(parent->path());
 
 	if (c != _orphans.end()) {
@@ -257,7 +259,7 @@ Store::add_object(SharedPtr<ObjectModel> object)
 
 	}
 
-	//cout << "[Store] Added " << object->path() << endl;
+	cout << "[Store] Added " << object->path() << endl;
 }
 
 
@@ -348,14 +350,41 @@ Store::destruction_event(const Path& path)
 void
 Store::rename_event(const Path& old_path, const Path& new_path)
 {
-	SharedPtr<ObjectModel> object = remove_object(old_path);
-	if (object) {
-		object->set_path(new_path);
-		add_object(object);
-		object->renamed_sig.emit();
-		cerr << "[Store] Renamed " << old_path << " -> " << new_path << endl;
-	} else {
+	Objects::iterator parent = _objects.find(old_path);
+	if (parent == _objects.end()) {
 		cerr << "[Store] Failed to find object " << old_path << " to rename." << endl;
+		return;
+	}
+
+	Objects::iterator descendants_end = _objects.find_descendants_end(parent);
+	
+	vector<pair<Path, SharedPtr<ObjectModel> > > objs = _objects.yank(parent, descendants_end);
+	
+	assert(objs.size() > 0);
+
+	for (vector<pair<Path, SharedPtr<ObjectModel> > >::iterator i = objs.begin(); i != objs.end(); ++i) {
+		const Path& child_old_path = i->first;
+		assert(Path::descendant_comparator(old_path, child_old_path));
+		
+		Path child_new_path;
+		if (child_old_path == old_path)
+			child_new_path = new_path;
+		else
+			child_new_path = new_path.base() + child_old_path.substr(old_path.length()+1);
+
+		cerr << "[Store] Renamed " << child_old_path << " -> " << child_new_path << endl;
+		i->second->set_path(child_new_path);
+		i->first = child_new_path;
+	}
+
+	_objects.cram(objs);
+
+	cerr << "[Store] Table:" << endl;
+	//for (size_t i=0; i < objs.size(); ++i) {
+	//	cerr << objs[i].first << "\t\t: " << objs[i].second << endl;
+	//}
+	for (Objects::iterator i = _objects.begin(); i != _objects.end(); ++i) {
+		cerr << i->first << "\t\t: " << i->second << endl;
 	}
 }
 

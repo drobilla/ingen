@@ -30,7 +30,7 @@ namespace Client {
 void
 PatchModel::set_path(const Path& new_path)
 {
-	throw;
+	ObjectModel::set_path(new_path);
 #if 0
 	// FIXME: haack
 	if (new_path == "") {

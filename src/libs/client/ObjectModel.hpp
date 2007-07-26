@@ -81,7 +81,7 @@ protected:
 	
 	ObjectModel(const Path& path);
 	
-	virtual void set_path(const Path& p) { _path = p; }
+	virtual void set_path(const Path& p) { _path = p; renamed_sig.emit(); }
 	virtual void set_parent(SharedPtr<ObjectModel> p) { assert(p); _parent = p; }
 	virtual void add_child(SharedPtr<ObjectModel> c);
 	virtual bool remove_child(SharedPtr<ObjectModel> c);

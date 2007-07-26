@@ -79,6 +79,8 @@ protected:
 	void add_port(SharedPtr<PortModel> port, bool resize=true);
 	void remove_port(SharedPtr<PortModel> port);
 	
+	void renamed();
+	
 	SharedPtr<NodeModel> _node;
 	NodeMenu             _menu;
 };

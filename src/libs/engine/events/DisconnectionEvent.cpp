@@ -192,6 +192,7 @@ DisconnectionEvent::post_process()
 		// FIXME: better error messages
 		string msg = "Unable to disconnect ";
 		msg.append(_src_port_path + " -> " + _dst_port_path);
+		cerr << "DISCONNECTION ERROR " << (unsigned)_error << endl;
 		_responder->respond_error(msg);
 	}
 }
