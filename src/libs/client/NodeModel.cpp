@@ -74,22 +74,6 @@ NodeModel::clear()
 
 
 void
-NodeModel::set_path(const Path& p)
-{
-	const string old_path = _path;
-	
-	ObjectModel::set_path(p);
-	
-	// FIXME: rename
-//	for (PortModelList::iterator i = _ports.begin(); i != _ports.end(); ++i)
-//		(*i)->set_path(_path + "/" + (*i)->path().name());
-
-	//if (_parent && old_path.length() > 0)
-	//	parent_patch()->rename_node(old_path, p);
-}
-
-
-void
 NodeModel::add_child(SharedPtr<ObjectModel> c)
 {
 	assert(c->parent().get() == this);

@@ -51,6 +51,7 @@ PatchView::PatchView(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::X
 	xml->get_widget("patch_view_save_but", _save_but);
 	xml->get_widget("patch_view_zoom_full_but", _zoom_full_but);
 	xml->get_widget("patch_view_zoom_normal_but", _zoom_normal_but);
+	xml->get_widget("patch_view_edit_mode_but", _edit_mode_but);
 	xml->get_widget("patch_view_scrolledwindow", _canvas_scrolledwindow);
 }
 
@@ -88,6 +89,15 @@ PatchView::set_patch(SharedPtr<PatchModel> patch)
 
 	_zoom_full_but->signal_clicked().connect(
 		sigc::mem_fun(_canvas.get(), &PatchCanvas::zoom_full));
+
+	patch->editable_sig.connect(sigc::mem_fun(
+			*this, &PatchView::on_editable_sig));
+
+	_edit_mode_but->signal_toggled().connect(sigc::mem_fun(
+			*this, &PatchView::editable_toggled));
+
+
+	_canvas->grab_focus();
 }
 
 
@@ -107,6 +117,23 @@ PatchView::create(SharedPtr<PatchModel> patch)
 	assert(result);
 	result->set_patch(patch);
 	return SharedPtr<PatchView>(result);
+}
+
+
+void
+PatchView::on_editable_sig(bool editable)
+{
+	_edit_mode_but->set_active(editable);
+	_canvas->lock(!editable);
+}
+
+
+void
+PatchView::editable_toggled()
+{
+	const bool editable = _edit_mode_but->get_active();
+	_patch->set_editable(editable);
+	_canvas->lock(!editable);
 }
 
 

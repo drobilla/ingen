@@ -52,6 +52,15 @@ public:
 	const string& filename()   const { return _filename; }
 	bool          enabled()    const { return _enabled; }
 	bool          polyphonic() const;
+
+	/** "editable" = arranging,connecting,adding,deleting,etc
+	 * not editable (control mode) you can just change controllers (performing)
+	 */
+	bool get_editable() const { return _editable; }
+	void set_editable(bool e) { if (_editable != e) {
+		_editable = e;
+		editable_sig.emit(e);
+	} }
 	
 	// Signals
 	sigc::signal<void, SharedPtr<NodeModel> >       new_node_sig; 
@@ -60,6 +69,7 @@ public:
 	sigc::signal<void, SharedPtr<ConnectionModel> > removed_connection_sig;
 	sigc::signal<void>                              enabled_sig;
 	sigc::signal<void>                              disabled_sig;
+	sigc::signal<void, bool>                        editable_sig;
 
 private:
 	friend class Store;
@@ -67,7 +77,8 @@ private:
 	PatchModel(const Path& patch_path, size_t internal_poly)
 	: NodeModel("ingen:patch", patch_path, false), // FIXME
 	  _enabled(false),
-	  _poly(internal_poly)
+	  _poly(internal_poly),
+	  _editable(true)
 	{
 	}
 	
@@ -76,9 +87,6 @@ private:
 	void enable();
 	void disable();
 	void clear();
-	void set_path(const Path& path);
-	//void add_node(SharedPtr<NodeModel> nm);
-	//void remove_node(SharedPtr<NodeModel> nm);
 	void add_child(SharedPtr<ObjectModel> c);
 	bool remove_child(SharedPtr<ObjectModel> c);
 	
@@ -92,6 +100,7 @@ private:
 	string         _filename;
 	bool           _enabled;
 	size_t         _poly;
+	bool           _editable;
 };
 
 typedef Table<string, SharedPtr<PatchModel> > PatchModelMap;

@@ -79,9 +79,6 @@ protected:
 
 	virtual void clear();
 	
-	friend class PatchModel;
-	void set_path(const Path& p);
-
 	bool                            _polyphonic;
 	PortModelList                   _ports;      ///< List of ports (not a Table to preserve order)
 	string                          _plugin_uri; ///< Plugin URI (if PluginModel is unknown)

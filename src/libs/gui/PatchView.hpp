@@ -71,6 +71,8 @@ private:
 	void process_toggled();
 	void clear_clicked();
 	void refresh_clicked();
+	void on_editable_sig(bool locked);
+	void editable_toggled();
 	
 	void enable();
 	void disable();
@@ -90,6 +92,7 @@ private:
 	Gtk::ToolButton*        _save_but;
 	Gtk::ToolButton*        _zoom_normal_but;
 	Gtk::ToolButton*        _zoom_full_but;
+	Gtk::ToggleToolButton*  _edit_mode_but;
 	Gtk::Viewport*          _breadcrumb_container;
 
 	bool _enable_signal;

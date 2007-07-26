@@ -393,6 +393,8 @@ PatchCanvas::canvas_event(GdkEvent* event)
 {
 	assert(event);
 	
+	static bool control_modded = false;
+
 	switch (event->type) {
 
 	case GDK_BUTTON_PRESS:
@@ -403,11 +405,25 @@ PatchCanvas::canvas_event(GdkEvent* event)
 		}
 		break;
 	
-	/*case GDK_KEY_PRESS:
-		if (event->key.keyval == GDK_Delete)
-			destroy_selected();
+	case GDK_KEY_PRESS:
+		if (event->key.keyval == GDK_Delete) {
+			destroy_selection();
+		} else if (event->key.keyval == GDK_Control_L || event->key.keyval == GDK_Control_R) {
+			if (_patch->get_editable() == true) {
+				control_modded = true;
+				_patch->set_editable(false);
+			}
+		}
 		break;
-	*/
+	
+	case GDK_KEY_RELEASE:
+		if (event->key.keyval == GDK_Control_L || event->key.keyval == GDK_Control_R) {
+			if (_patch->get_editable() == false &&control_modded) {
+				control_modded = false;
+				_patch->set_editable(true);
+			}
+		}
+		break;
 		
 	default:
 		break;

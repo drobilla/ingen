@@ -28,33 +28,6 @@ namespace Client {
 
 
 void
-PatchModel::set_path(const Path& new_path)
-{
-	ObjectModel::set_path(new_path);
-#if 0
-	// FIXME: haack
-	if (new_path == "") {
-		_path = "";
-		return;
-	}
-
-	NodeModel::set_path(new_path);
-	for (Children::iterator i = _children.begin(); i != _children.end(); ++i)
-		(*i).second->set_path(_path +"/"+ (*i).second->path().name());
-	
-#ifdef DEBUG
-	// Be sure connection paths are updated and sane
-	for (list<SharedPtr<ConnectionModel> >::iterator j = _connections.begin();
-			j != _connections.end(); ++j) {
-		assert((*j)->src_port_path().parent().parent() == new_path);
-		assert((*j)->src_port_path().parent().parent() == new_path);
-	}
-#endif
-#endif
-}
-
-
-void
 PatchModel::add_child(SharedPtr<ObjectModel> c)
 {
 	assert(c->parent().get() == this);
@@ -120,23 +93,6 @@ PatchModel::remove_child(SharedPtr<ObjectModel> o)
 	}
 }
 
-#if 0
-void
-PatchModel::remove_node(const string& name)
-{
-	assert(name.find("/") == string::npos);
-	NodeModelMap::iterator i = _children.find(name);
-	if (i != _children.end()) {
-		//delete i->second;
-		_children.erase(i);
-		removed_node_sig.emit(name);
-		i->second->parent().reset();
-		return;
-	}
-	
-	cerr << "[PatchModel::remove_node] " << _path << ": failed to find node " << name << endl;
-}
-#endif
 
 void
 PatchModel::clear()
@@ -157,40 +113,6 @@ PatchModel::clear()
 	assert(_children.empty());
 	assert(_connections.empty());
 	assert(_ports.empty());
-}
-
-
-/** Updated the map key of the given node.
- *
- * The NodeModel must already have it's new path set to @a new_path, or this will
- * abort with a fatal error.
- */
-void
-PatchModel::rename_node(const Path& old_path, const Path& new_path)
-{
-	cerr << "FIXME: node rename" << endl;
-#if 0
-	assert(old_path.parent() == path());
-	assert(new_path.parent() == path());
-	
-	NodeModelMap::iterator i = _children.find(old_path.name());
-	
-	if (i != _children.end()) {
-		SharedPtr<NodeModel> nm = (*i).second;
-		for (list<SharedPtr<ConnectionModel> >::iterator j = _connections.begin(); j != _connections.end(); ++j) {
-			if ((*j)->src_port_path().parent() == old_path)
-				(*j)->src_port_path(new_path.base() + (*j)->src_port_path().name());
-			if ((*j)->dst_port_path().parent() == old_path)
-				(*j)->dst_port_path(new_path.base() + (*j)->dst_port_path().name());
-		}
-		_children.erase(i);
-		assert(nm->path() == new_path);
-		_children[new_path.name()] = nm;
-		return;
-	}
-	
-	cerr << "[PatchModel::rename_node] " << _path << ": failed to find node " << old_path << endl;
-#endif
 }
 
 
