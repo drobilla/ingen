@@ -306,7 +306,7 @@ PatchWindow::event_save()
 	if (_patch->filename() == "")
 		event_save_as();
 	else
-		App::instance().loader()->save_patch(_patch, _patch->filename(), false);
+		App::instance().loader()->save_patch(_patch, _patch->filename());
 }
 
 
@@ -363,7 +363,7 @@ PatchWindow::event_save_as()
 		fin.close();
 		
 		if (confirm) {
-			App::instance().loader()->save_patch(_patch, filename, true);
+			App::instance().loader()->save_patch(_patch, filename);
 			_patch->set_filename(filename);
 			//_patch->set_metadata("filename", Atom(filename.c_str()));
 		}

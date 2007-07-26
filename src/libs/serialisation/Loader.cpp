@@ -55,8 +55,10 @@ Loader::load(SharedPtr<EngineInterface> engine,
 
 	RDF::Model model(*rdf_world, document_uri);
 
-	//patch_uri = string("<") + patch_uri + ">";
-	patch_uri = string("<") + document_uri + ">";
+	if (patch_uri == "")
+		patch_uri = string("<") + document_uri + ">";
+	else
+		patch_uri = string("<") + patch_uri + ">";
 
 	cerr << "[Loader] Loading " << patch_uri << " from " << document_uri
 		<< " under " << (string)(parent ? (string)parent.get() : "no parent") << endl;
@@ -154,12 +156,12 @@ Loader::load(SharedPtr<EngineInterface> engine,
 		const Path subpatch_path = patch_path.base() + (string)name;
 		
 		if (created.find(subpatch_path) == created.end()) {
-			load(engine, rdf_world, document_uri, patch_path, name, patch);
 			created[subpatch_path] = true;
+			load(engine, rdf_world, document_uri, patch_path, name, patch);
 		}
 	}
 	
-	created.clear();
+	//created.clear();
 
 
 	/* Set node port control values */

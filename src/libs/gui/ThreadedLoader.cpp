@@ -113,13 +113,13 @@ ThreadedLoader::load_patch(bool                    merge,
 
 
 void
-ThreadedLoader::save_patch(SharedPtr<PatchModel> model, const string& filename, bool recursive)
+ThreadedLoader::save_patch(SharedPtr<PatchModel> model, const string& filename)
 {
 	_mutex.lock();
 
 	_events.push_back(sigc::hide_return(sigc::bind(
 		sigc::mem_fun(this, &ThreadedLoader::save_patch_event),
-		model, filename, recursive)));
+		model, filename)));
 
 	_mutex.unlock();
 	
@@ -128,14 +128,9 @@ ThreadedLoader::save_patch(SharedPtr<PatchModel> model, const string& filename, 
 
 
 void
-ThreadedLoader::save_patch_event(SharedPtr<PatchModel> model, const string& filename, bool recursive)
+ThreadedLoader::save_patch_event(SharedPtr<PatchModel> model, const string& filename)
 {
-	if (recursive)
-		cerr << "FIXME: Recursive save." << endl;
-
-	_serializer.start_to_filename(filename);
-	_serializer.serialize(model);
-	_serializer.finish();
+	_serializer.to_file(model, filename);
 }
 
 

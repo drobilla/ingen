@@ -40,8 +40,8 @@ NodeBase::NodeBase(const Plugin* plugin, const string& name, size_t poly, Patch*
   _srate(srate),
   _buffer_size(buffer_size),
   _activated(false),
-  _ports(NULL),
   _traversed(false),
+  _ports(NULL),
   _providers(new Raul::List<Node*>()),
   _dependants(new Raul::List<Node*>())
 {

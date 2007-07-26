@@ -69,11 +69,11 @@ public:
 	                optional<const string&> engine_name = optional<const string&>(),
 	                optional<size_t>        engine_poly = optional<size_t>());
 	
-	void save_patch(SharedPtr<PatchModel> model, const string& filename, bool recursive);
+	void save_patch(SharedPtr<PatchModel> model, const string& filename);
 
 private:	
 
-	void save_patch_event(SharedPtr<PatchModel> model, const string& filename, bool recursive);
+	void save_patch_event(SharedPtr<PatchModel> model, const string& filename);
 	
 	/** Returns nothing and takes no parameters (because they have all been bound) */
 	typedef sigc::slot<void> Closure;

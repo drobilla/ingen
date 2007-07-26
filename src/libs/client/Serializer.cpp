@@ -57,6 +57,25 @@ Serializer::Serializer(Raul::RDF::World& world)
 	: _world(world)
 {
 }
+	
+void
+Serializer::to_file(SharedPtr<ObjectModel> object, const string& filename)
+{
+	_root_object = object;
+	start_to_filename(filename);
+	serialize(object);
+	finish();
+}
+
+
+string
+Serializer::to_string(SharedPtr<ObjectModel> object)
+{
+	_root_object = object;
+	start_to_string();
+	serialize(object);
+	return finish();
+}
 
 
 /** Begin a serialization to a file.
@@ -200,7 +219,7 @@ Serializer::serialize(SharedPtr<ObjectModel> object) throw (std::logic_error)
 
 	SharedPtr<PatchModel> patch = PtrCast<PatchModel>(object);
 	if (patch) {
-		serialize_patch(patch, Node(_model->world(), Node::RESOURCE, _base_uri));
+		serialize_patch(patch);
 		return;
 	}
 	
@@ -221,11 +240,26 @@ Serializer::serialize(SharedPtr<ObjectModel> object) throw (std::logic_error)
 }
 
 
+Node
+Serializer::patch_path_to_rdf_id(const Path& path)
+{
+	if (path == _root_object->path()) {
+		return Node(_model->world(), Node::RESOURCE, _base_uri);
+	} else {
+		assert(path.length() > _root_object->path().length());
+		return Node(_model->world(), Node::RESOURCE,
+				_base_uri + string("#") + path.substr(_root_object->path().length() + 1));
+	}
+}
+
+
 void
-Serializer::serialize_patch(SharedPtr<PatchModel> patch, const Node& patch_id)
+Serializer::serialize_patch(SharedPtr<PatchModel> patch)
 {
 	assert(_model);
 
+	const Node patch_id = patch_path_to_rdf_id(patch->path());
+	
 	_model->add_statement(
 		patch_id,
 		"rdf:type",
@@ -255,10 +289,8 @@ Serializer::serialize_patch(SharedPtr<PatchModel> patch, const Node& patch_id)
 		SharedPtr<PatchModel> patch = PtrCast<PatchModel>(n->second);
 		SharedPtr<NodeModel> node   = PtrCast<NodeModel>(n->second);
 		if (patch) {
-			const Node subpatch_id = Node(_model->world(), Node::RESOURCE,
-					patch_id.to_string() + "#" + patch->path().substr(1));
-			_model->add_statement(patch_id, "ingen:node", subpatch_id);
-			serialize_patch(patch, subpatch_id);
+			_model->add_statement(patch_id, "ingen:node", patch_path_to_rdf_id(patch->path()));
+			serialize_patch(patch);
 		} else if (node) {
 			const Node node_id = path_to_node_id(n->second->path());
 			_model->add_statement(patch_id, "ingen:node", node_id);

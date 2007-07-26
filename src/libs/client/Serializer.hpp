@@ -51,34 +51,38 @@ class Serializer
 public:
 	Serializer(Raul::RDF::World& world);
 
-	void   start_to_filename(const string& filename);
-	void   start_to_string();
-
-	void   serialize(SharedPtr<ObjectModel> object)           throw (std::logic_error);
-	void   serialize_connection(SharedPtr<ConnectionModel> c) throw (std::logic_error);
+	void   to_file(SharedPtr<ObjectModel> object, const string& filename);
+	string to_string(SharedPtr<ObjectModel> object);
 	
+	void   start_to_string();
+	void   serialize(SharedPtr<ObjectModel> object) throw (std::logic_error);
+	void   serialize_connection(SharedPtr<ConnectionModel> c) throw (std::logic_error);
 	string finish();
-
+	
 private:
 	enum Mode { TO_FILE, TO_STRING };
+	
+	void start_to_filename(const string& filename);
 
 	void setup_prefixes();
 
 	void serialize_plugin(SharedPtr<PluginModel> p);
 
-	void serialize_patch(SharedPtr<PatchModel> p, const Raul::RDF::Node& id);
+	void serialize_patch(SharedPtr<PatchModel> p);
 	void serialize_node(SharedPtr<NodeModel> n, const Raul::RDF::Node& id);
 	void serialize_port(SharedPtr<PortModel> p, const Raul::RDF::Node& id);
 	
 	Raul::RDF::Node path_to_node_id(const Path& path);
+	Raul::RDF::Node patch_path_to_rdf_id(const Path& path);
 
 	typedef Raul::PathTable<Raul::RDF::Node> NodeMap;
 
-	Mode              _mode;
-	NodeMap           _node_map;
-	string            _base_uri;
-	Raul::RDF::World& _world;
-	Raul::RDF::Model* _model;
+	SharedPtr<ObjectModel> _root_object;
+	Mode                   _mode;
+	NodeMap                _node_map;
+	string                 _base_uri;
+	Raul::RDF::World&      _world;
+	Raul::RDF::Model*      _model;
 };
 
 
