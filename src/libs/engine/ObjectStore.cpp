@@ -84,7 +84,7 @@ ObjectStore::add(GraphObject* o)
 
 	Node* node = dynamic_cast<Node*>(o);
 	if (node) {
-		for (size_t i=0; i < node->num_ports(); ++i) {
+		for (uint32_t i=0; i < node->num_ports(); ++i) {
 			add(node->ports().at(i));
 		}
 	}

@@ -47,7 +47,7 @@ public:
 	/** A port's parent is always a node, so static cast should be safe */
 	Node* parent_node() const { return (Node*)_parent; }
 
-	Buffer* buffer(size_t voice) const { return _buffers.at(voice); }
+	Buffer* buffer(uint32_t voice) const { return _buffers.at(voice); }
 
 	/** Called once per process cycle */
 	virtual void pre_process(SampleCount nframes, FrameTime start, FrameTime end) = 0;
@@ -60,8 +60,8 @@ public:
 	virtual bool is_input()  const = 0;
 	virtual bool is_output() const = 0;
 
-	size_t   num()         const { return _index; }
-	size_t   poly()        const { return _poly; }
+	uint32_t num()         const { return _index; }
+	uint32_t poly()        const { return _poly; }
 	DataType type()        const { return _type; }
 	size_t   buffer_size() const { return _buffer_size; }
 
@@ -71,13 +71,13 @@ public:
 	bool fixed_buffers()       { return _fixed_buffers; }
 
 protected:
-	Port(Node* const node, const std::string& name, size_t index, size_t poly, DataType type, size_t buffer_size);
+	Port(Node* const node, const std::string& name, uint32_t index, uint32_t poly, DataType type, size_t buffer_size);
 	
 	virtual void allocate_buffers();
 	virtual void connect_buffers();
 
-	size_t    _index;
-	size_t    _poly;
+	uint32_t  _index;
+	uint32_t  _poly;
 	DataType  _type;
 	size_t    _buffer_size;
 	bool      _fixed_buffers;

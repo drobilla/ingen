@@ -40,7 +40,7 @@ public:
 
 	typedef std::map<int, string> Bank;
 	
-	DSSINode(const Plugin* plugin, const string& name, size_t poly, Patch* parent, DSSI_Descriptor* descriptor, SampleRate srate, size_t buffer_size);
+	DSSINode(const Plugin* plugin, const string& name, uint32_t poly, Patch* parent, DSSI_Descriptor* descriptor, SampleRate srate, size_t buffer_size);
 	~DSSINode();
 	
 	bool instantiate();
@@ -50,13 +50,13 @@ public:
 	void set_ui_url(const string& url);
 	void send_update();
 
-	void set_control(size_t port_num, Sample val);
+	void set_control(uint32_t port_num, Sample val);
 	void configure(const string& key, const string& val);
 	void program(int bank, int program);
 
 	void process(SampleCount nframes, FrameTime start, FrameTime end);
 	
-	void set_port_buffer(size_t voice, size_t port_num, Buffer* buf);
+	void set_port_buffer(uint32_t voice, uint32_t port_num, Buffer* buf);
 	
 	bool update_programs(bool send_events);
 	void set_default_program();

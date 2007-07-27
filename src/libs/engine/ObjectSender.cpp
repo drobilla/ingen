@@ -46,7 +46,7 @@ ObjectSender::send_patch(ClientInterface* client, const Patch* patch, bool recur
 		}
 
 		// Send ports
-		for (size_t i=0; i < patch->num_ports(); ++i) {
+		for (uint32_t i=0; i < patch->num_ports(); ++i) {
 
 			Port* const port = patch->ports().at(i);
 			send_port(client, port);

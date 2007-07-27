@@ -131,7 +131,7 @@ public:
 	void       slv2_plugin(SLV2Plugin p) { _slv2_plugin = p; }	
 #endif
 
-	Node* instantiate(const string& name, size_t poly, Ingen::Patch* parent, SampleRate srate, size_t buffer_size);
+	Node* instantiate(const string& name, uint32_t poly, Ingen::Patch* parent, SampleRate srate, size_t buffer_size);
 
 private:
 	Type   _type;

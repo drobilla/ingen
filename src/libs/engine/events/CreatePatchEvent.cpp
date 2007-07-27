@@ -65,7 +65,7 @@ CreatePatchEvent::pre_process()
 		return;
 	}
 	
-	size_t poly = 1;
+	uint32_t poly = 1;
 	if (_parent != NULL && _poly > 1 && _poly == static_cast<int>(_parent->internal_poly()))
 		poly = _poly;
 	

@@ -40,7 +40,7 @@ class OutputPort;
 class MidiNoteNode : public InternalNode
 {
 public:
-	MidiNoteNode(const string& path, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size);
+	MidiNoteNode(const string& path, uint32_t poly, Patch* parent, SampleRate srate, size_t buffer_size);
 	~MidiNoteNode();
 
 	void process(SampleCount nframes, FrameTime start, FrameTime end);

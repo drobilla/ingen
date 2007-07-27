@@ -31,7 +31,7 @@ using std::cerr; using std::cout; using std::endl;
 namespace Ingen {
 
 
-InputPort::InputPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size)
+InputPort::InputPort(Node* parent, const string& name, uint32_t index, uint32_t poly, DataType type, size_t buffer_size)
 : Port(parent, name, index, poly, type, buffer_size)
 {
 }
@@ -54,7 +54,7 @@ InputPort::add_connection(Raul::ListNode<Connection*>* const c)
 	if (modify_buffers) {
 		if (_connections.size() == 1) {
 			// Use buffer directly to avoid copying
-			for (size_t i=0; i < _poly; ++i) {
+			for (uint32_t i=0; i < _poly; ++i) {
 				_buffers.at(i)->join(c->elem()->buffer(i));
 				//if (_is_tied)
 				//	_tied_port->buffer(i)->join(_buffers.at(i));
@@ -63,7 +63,7 @@ InputPort::add_connection(Raul::ListNode<Connection*>* const c)
 		} else if (_connections.size() == 2) {
 			// Used to directly use single connection buffer, now there's two
 			// so have to use local ones again and mix down
-			for (size_t i=0; i < _poly; ++i) {
+			for (uint32_t i=0; i < _poly; ++i) {
 				_buffers.at(i)->unjoin();
 				//if (_is_tied)
 				//	_tied_port->buffer(i)->join(_buffers.at(i));
@@ -100,7 +100,7 @@ InputPort::remove_connection(const OutputPort* src_port)
 		exit(EXIT_FAILURE);
 	} else {
 		if (_connections.size() == 0) {
-			for (size_t i=0; i < _poly; ++i) {
+			for (uint32_t i=0; i < _poly; ++i) {
 				// Use a local buffer
 				if (modify_buffers)
 					_buffers.at(i)->unjoin();
@@ -110,7 +110,7 @@ InputPort::remove_connection(const OutputPort* src_port)
 			}
 		} else if (modify_buffers && _connections.size() == 1) {
 			// Share a buffer
-			for (size_t i=0; i < _poly; ++i) {
+			for (uint32_t i=0; i < _poly; ++i) {
 				_buffers.at(i)->join((*_connections.begin())->buffer(i));
 				//if (_is_tied)
 				//	_tied_port->buffer(i)->join(_buffers.at(i));
@@ -152,7 +152,7 @@ InputPort::pre_process(SampleCount nframes, FrameTime start, FrameTime end)
 	bool do_mixdown = true;
 	
 	if (_connections.size() == 0) {
-		for (size_t i=0; i < _poly; ++i)
+		for (uint32_t i=0; i < _poly; ++i)
 			_buffers.at(i)->prepare_read(nframes);
 		return;
 	}
@@ -180,7 +180,7 @@ InputPort::pre_process(SampleCount nframes, FrameTime start, FrameTime end)
 
 	//cerr << path() << " mixing: " << do_mixdown << endl;
 
-	for (size_t i=0; i < _poly; ++i)
+	for (uint32_t i=0; i < _poly; ++i)
 		_buffers.at(i)->prepare_read(nframes);
 
 	if (!do_mixdown) {
@@ -191,7 +191,7 @@ InputPort::pre_process(SampleCount nframes, FrameTime start, FrameTime end)
 	/*assert(!_is_tied || _tied_port != NULL);
 	assert(!_is_tied || _buffers.at(0)->data() == _tied_port->buffer(0)->data());*/
 
-	for (size_t voice=0; voice < _poly; ++voice) {
+	for (uint32_t voice=0; voice < _poly; ++voice) {
 		assert(_type == DataType::FLOAT);
 		// Copy first connection
 		((AudioBuffer*)_buffers.at(voice))->copy(
@@ -225,7 +225,7 @@ void
 InputPort::post_process(SampleCount nframes, FrameTime start, FrameTime end)
 {
 	// Prepare for next cycle
-	for (size_t i=0; i < _poly; ++i)
+	for (uint32_t i=0; i < _poly; ++i)
 		_buffers.at(i)->prepare_write(nframes);
 }
 

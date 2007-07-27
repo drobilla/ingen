@@ -118,7 +118,7 @@ LoadPatchWindow::ok_clicked()
 {
 	// If unset load_patch will load values
 	optional<const string&> name;
-	optional<size_t> poly;
+	optional<uint32_t> poly;
 	
 	optional<Path> parent;
 	

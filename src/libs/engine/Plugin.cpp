@@ -24,7 +24,7 @@
 namespace Ingen {
 
 Node*
-Plugin::instantiate(const string& name, size_t poly, Ingen::Patch* parent, SampleRate srate, size_t buffer_size)
+Plugin::instantiate(const string& name, uint32_t poly, Ingen::Patch* parent, SampleRate srate, size_t buffer_size)
 {
 	assert(_type == Internal);
 

@@ -54,7 +54,7 @@ public:
 	ControlPanel(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml);
 	virtual ~ControlPanel();
 	
-	void init(SharedPtr<NodeModel> node, size_t poly);
+	void init(SharedPtr<NodeModel> node, uint32_t poly);
 
 	ControlGroup* find_port(const Path& path) const;
 

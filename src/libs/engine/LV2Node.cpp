@@ -38,7 +38,7 @@ namespace Ingen {
  */
 LV2Node::LV2Node(const Plugin*      plugin,
                  const string&      name,
-                 size_t             poly,
+                 uint32_t           poly,
                  Patch*             parent,
                  SampleRate         srate,
                  size_t             buffer_size)
@@ -61,16 +61,16 @@ LV2Node::LV2Node(const Plugin*      plugin,
 bool
 LV2Node::instantiate()
 {
-	size_t num_ports = slv2_plugin_get_num_ports(_lv2_plugin);
+	uint32_t num_ports = slv2_plugin_get_num_ports(_lv2_plugin);
 	assert(num_ports > 0);
 
 	_ports = new Raul::Array<Port*>(num_ports);
 	
 	_instances = new SLV2Instance[_poly];
 	
-	size_t port_buffer_size = 0;
+	uint32_t port_buffer_size = 0;
 	
-	for (size_t i=0; i < _poly; ++i) {
+	for (uint32_t i=0; i < _poly; ++i) {
 		_instances[i] = slv2_plugin_instantiate(_lv2_plugin, _srate, NULL);
 		if (_instances[i] == NULL) {
 			cerr << "Failed to instantiate plugin!" << endl;
@@ -83,7 +83,7 @@ LV2Node::instantiate()
 	
 	Port* port = NULL;
 	
-	for (size_t j=0; j < num_ports; ++j) {
+	for (uint32_t j=0; j < num_ports; ++j) {
 		SLV2Port id = slv2_plugin_get_port_by_index(_lv2_plugin, j);
 
 		// LV2 shortnames are guaranteed to be unique, valid C identifiers
@@ -141,7 +141,7 @@ LV2Node::instantiate()
 
 LV2Node::~LV2Node()
 {
-	for (size_t i=0; i < _poly; ++i)
+	for (uint32_t i=0; i < _poly; ++i)
 		slv2_instance_free(_instances[i]);
 
 	delete[] _instances;
@@ -153,7 +153,7 @@ LV2Node::activate()
 {
 	NodeBase::activate();
 
-	for (size_t i=0; i < _poly; ++i) {
+	for (uint32_t i=0; i < _poly; ++i) {
 		for (unsigned long j=0; j < num_ports(); ++j) {
 			Port* const port = _ports->at(j);
 			set_port_buffer(i, j, port->buffer(i));
@@ -176,7 +176,7 @@ LV2Node::deactivate()
 {
 	NodeBase::deactivate();
 	
-	for (size_t i=0; i < _poly; ++i)
+	for (uint32_t i=0; i < _poly; ++i)
 		slv2_instance_deactivate(_instances[i]);
 }
 
@@ -186,7 +186,7 @@ LV2Node::process(SampleCount nframes, FrameTime start, FrameTime end)
 {
 	NodeBase::pre_process(nframes, start, end);
 
-	for (size_t i=0; i < _poly; ++i) 
+	for (uint32_t i=0; i < _poly; ++i) 
 		slv2_instance_run(_instances[i], nframes);
 	
 	NodeBase::post_process(nframes, start, end);
@@ -194,7 +194,7 @@ LV2Node::process(SampleCount nframes, FrameTime start, FrameTime end)
 
 
 void
-LV2Node::set_port_buffer(size_t voice, size_t port_num, Buffer* buf)
+LV2Node::set_port_buffer(uint32_t voice, uint32_t port_num, Buffer* buf)
 {
 	assert(voice < _poly);
 	

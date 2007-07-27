@@ -45,7 +45,7 @@ class ControlPanel;
 class NodeControlWindow : public Gtk::Window
 {
 public:
-	NodeControlWindow(SharedPtr<NodeModel> node, size_t poly);
+	NodeControlWindow(SharedPtr<NodeModel> node, uint32_t poly);
 	NodeControlWindow(SharedPtr<NodeModel> node, ControlPanel* panel);
 	virtual ~NodeControlWindow();
 

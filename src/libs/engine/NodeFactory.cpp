@@ -156,7 +156,7 @@ NodeFactory::load_plugins()
 Node*
 NodeFactory::load_plugin(const Plugin* a_plugin,
                          const string& name,
-                         size_t        poly,
+                         uint32_t      poly,
                          Patch*        parent)
 {
 	assert(parent != NULL);
@@ -233,7 +233,7 @@ NodeFactory::load_plugin(const Plugin* a_plugin,
 Node*
 NodeFactory::load_internal_plugin(const string& uri,
                                   const string& name,
-                                  size_t        poly,
+                                  uint32_t      poly,
                                   Patch*        parent,
                                   SampleRate    srate,
                                   size_t        buffer_size)
@@ -309,7 +309,7 @@ NodeFactory::load_lv2_plugins()
 Node*
 NodeFactory::load_lv2_plugin(const string& plug_uri,
                              const string& node_name,
-                             size_t        poly,
+                             uint32_t      poly,
                              Patch*        parent,
                              SampleRate    srate,
                              size_t        buffer_size)
@@ -448,7 +448,7 @@ NodeFactory::load_dssi_plugins()
  */
 Node*
 NodeFactory::load_dssi_plugin(const string& uri,
-                              const string& name, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size)
+                              const string& name, uint32_t poly, Patch* parent, SampleRate srate, size_t buffer_size)
 {
 	// FIXME: awful code duplication here
 	
@@ -614,7 +614,7 @@ NodeFactory::load_ladspa_plugins()
 Node*
 NodeFactory::load_ladspa_plugin(const string& uri,
                                 const string& name,
-                                size_t        poly,
+                                uint32_t      poly,
                                 Patch*        parent,
                                 SampleRate    srate,
                                 size_t        buffer_size)

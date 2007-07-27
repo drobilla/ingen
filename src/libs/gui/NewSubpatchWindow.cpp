@@ -88,7 +88,7 @@ void
 NewSubpatchWindow::ok_clicked()
 {
 	const Path path = _patch->path().base() + Path::nameify(_name_entry->get_text());
-	const size_t poly = _poly_spinbutton->get_value_as_int();
+	const uint32_t poly = _poly_spinbutton->get_value_as_int();
 
 	App::instance().engine()->create_patch(path, poly);
 	for (MetadataMap::const_iterator i = _initial_data.begin(); i != _initial_data.end(); ++i)

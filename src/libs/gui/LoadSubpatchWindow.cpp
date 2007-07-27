@@ -144,7 +144,7 @@ LoadSubpatchWindow::ok_clicked()
 	
 	// If unset load_patch will load values
 	optional<const string&> name;
-	optional<size_t> poly;
+	optional<uint32_t> poly;
 	string name_str = "";
 	
 	if (_name_from_user_radio->get_active()) {

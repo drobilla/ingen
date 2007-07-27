@@ -45,7 +45,7 @@ namespace Shared {
 class NodeBase : public Node
 {
 public:
-	NodeBase(const Plugin* plugin, const string& name, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size);
+	NodeBase(const Plugin* plugin, const string& name, uint32_t poly, Patch* parent, SampleRate srate, size_t buffer_size);
 
 	virtual ~NodeBase();
 
@@ -57,14 +57,14 @@ public:
 	virtual void process(SampleCount nframes, FrameTime start, FrameTime end) = 0;
 	virtual void pre_process(SampleCount nframes, FrameTime start, FrameTime end);
 		
-	virtual void set_port_buffer(size_t voice, size_t port_num, Buffer* buf) {}
+	virtual void set_port_buffer(uint32_t voice, uint32_t port_num, Buffer* buf) {}
 	
 	virtual void set_buffer_size(size_t size);
 	
 	SampleRate sample_rate() const { return _srate; }
 	size_t     buffer_size() const { return _buffer_size; }
-	size_t     num_ports()   const { return _ports ? _ports->size() : 0; }
-	size_t     poly()        const { return _poly; }
+	uint32_t   num_ports()   const { return _ports ? _ports->size() : 0; }
+	uint32_t   poly()        const { return _poly; }
 	bool       traversed()   const { return _traversed; }
 	void       traversed(bool b)   { _traversed = b; }
 	
@@ -84,7 +84,7 @@ public:
 protected:	
 	const Plugin* _plugin;
 
-	size_t     _poly;
+	uint32_t   _poly;
 	SampleRate _srate;
 	size_t     _buffer_size;
 	bool       _activated;

@@ -40,7 +40,7 @@ class OutputPort;
 class MidiControlNode : public InternalNode
 {
 public:
-	MidiControlNode(const std::string& path, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size);
+	MidiControlNode(const std::string& path, uint32_t poly, Patch* parent, SampleRate srate, size_t buffer_size);
 	
 	void process(SampleCount nframes, FrameTime start, FrameTime end);
 	

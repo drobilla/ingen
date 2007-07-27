@@ -33,7 +33,7 @@ using std::cout; using std::cerr; using std::endl;
 namespace Ingen {
 
 
-NodeBase::NodeBase(const Plugin* plugin, const string& name, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size)
+NodeBase::NodeBase(const Plugin* plugin, const string& name, uint32_t poly, Patch* parent, SampleRate srate, size_t buffer_size)
 : Node(parent, name),
   _plugin(plugin),
   _poly(poly),
@@ -58,7 +58,7 @@ NodeBase::~NodeBase()
 	delete _providers;
 	delete _dependants;
 	
-	for (size_t i=0; i < num_ports(); ++i)
+	for (uint32_t i=0; i < num_ports(); ++i)
 		delete _ports->at(i);
 }
 

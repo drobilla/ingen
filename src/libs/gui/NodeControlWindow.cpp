@@ -34,7 +34,7 @@ namespace GUI {
 
 /** Create a node control window and load a new ControlPanel for it.
  */
-NodeControlWindow::NodeControlWindow(SharedPtr<NodeModel> node, size_t poly)
+NodeControlWindow::NodeControlWindow(SharedPtr<NodeModel> node, uint32_t poly)
 : _node(node),
   _position_stored(false),
   _x(0), _y(0)

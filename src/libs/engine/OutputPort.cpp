@@ -24,7 +24,7 @@ namespace Ingen {
 void
 OutputPort::pre_process(SampleCount nframes, FrameTime start, FrameTime end)
 {
-	for (size_t i=0; i < _poly; ++i)
+	for (uint32_t i=0; i < _poly; ++i)
 		_buffers.at(i)->prepare_write(nframes);
 }
 
@@ -32,7 +32,7 @@ OutputPort::pre_process(SampleCount nframes, FrameTime start, FrameTime end)
 void
 OutputPort::post_process(SampleCount nframes, FrameTime start, FrameTime end)
 {
-	for (size_t i=0; i < _poly; ++i)
+	for (uint32_t i=0; i < _poly; ++i)
 		_buffers.at(i)->prepare_read(nframes);
 }
 

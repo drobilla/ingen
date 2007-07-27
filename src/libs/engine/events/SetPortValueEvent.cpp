@@ -68,7 +68,7 @@ SetPortValueEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 		AudioBuffer* const buf = (AudioBuffer*)_port->buffer(0);
 		const size_t offset = (buf->size() == 1) ? 0 : _time - start;
 		if (_voice_num == -1)
-			for (size_t i=0; i < _port->poly(); ++i)
+			for (uint32_t i=0; i < _port->poly(); ++i)
 				((AudioBuffer*)_port->buffer(i))->set(_val, offset);
 		else
 			((AudioBuffer*)_port->buffer(_voice_num))->set(_val, offset);

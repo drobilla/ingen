@@ -35,7 +35,7 @@ class Patch;
 class InternalNode : public NodeBase
 {
 public:
-	InternalNode(const Plugin* plugin, const string& path, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size)
+	InternalNode(const Plugin* plugin, const string& path, uint32_t poly, Patch* parent, SampleRate srate, size_t buffer_size)
 	: NodeBase(plugin, path, poly, parent, srate, buffer_size)
 	{
 	}

@@ -31,7 +31,7 @@ using std::cerr; using std::cout; using std::endl;
 namespace Ingen {
 
 
-Patch::Patch(const string& path, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size, size_t internal_poly) 
+Patch::Patch(const string& path, uint32_t poly, Patch* parent, SampleRate srate, size_t buffer_size, uint32_t internal_poly) 
 : NodeBase(new Plugin(Plugin::Patch, "ingen:patch"), path, poly, parent, srate, buffer_size),
   _internal_poly(internal_poly),
   _process_order(NULL),
@@ -199,7 +199,7 @@ Patch::remove_connection(const Port* src_port, const Port* dst_port)
 }
 
 
-size_t
+uint32_t
 Patch::num_ports() const
 {
 	ThreadID context = ThreadManager::current_thread_id();

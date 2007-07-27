@@ -69,13 +69,13 @@ public:
 	 */
 	virtual void process(SampleCount nframes, FrameTime start, FrameTime end) = 0;
 
-	virtual void set_port_buffer(size_t voice, size_t port_num, Buffer* buf) = 0;
+	virtual void set_port_buffer(uint32_t voice, uint32_t port_num, Buffer* buf) = 0;
 
 	// FIXME: Only used by client senders.  Remove?
 	virtual const Raul::Array<Port*>& ports() const = 0;
 	
-	virtual size_t num_ports() const  = 0;
-	virtual size_t poly() const       = 0;
+	virtual uint32_t num_ports() const  = 0;
+	virtual uint32_t poly() const       = 0;
 	
 	/** Used by the process order finding algorithm (ie during connections) */
 	virtual bool traversed() const  = 0;

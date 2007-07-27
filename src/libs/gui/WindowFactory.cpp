@@ -214,7 +214,7 @@ WindowFactory::present_controls(SharedPtr<NodeModel> node)
 NodeControlWindow*
 WindowFactory::new_control_window(SharedPtr<NodeModel> node)
 {
-	size_t poly = 1;
+	uint32_t poly = 1;
 	if (node->polyphonic())
 		poly = ((PatchModel*)node->parent().get())->poly();
 

@@ -38,7 +38,7 @@ using std::string;
 class TransportNode : public InternalNode
 {
 public:
-	TransportNode(const string& path, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size);
+	TransportNode(const string& path, uint32_t poly, Patch* parent, SampleRate srate, size_t buffer_size);
 
 	virtual void process(SampleCount nframes, FrameTime start, FrameTime end);
 };

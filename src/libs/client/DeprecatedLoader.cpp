@@ -185,7 +185,7 @@ string
 DeprecatedLoader::load_patch(const Glib::ustring&  filename,
                              boost::optional<Path> parent_path,
                              string                name,
-                             size_t                poly,
+                             uint32_t              poly,
                              MetadataMap           initial_data,
                              bool                  existing)
 {

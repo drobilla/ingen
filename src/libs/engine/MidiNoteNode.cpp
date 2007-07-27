@@ -34,7 +34,7 @@ using std::cerr; using std::cout; using std::endl;
 namespace Ingen {
 
 
-MidiNoteNode::MidiNoteNode(const string& path, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size)
+MidiNoteNode::MidiNoteNode(const string& path, uint32_t poly, Patch* parent, SampleRate srate, size_t buffer_size)
 : InternalNode(new Plugin(Plugin::Internal, "ingen:note_node"), path, poly, parent, srate, buffer_size),
   _voices(new Voice[poly]),
   _sustain(false)
@@ -136,12 +136,12 @@ MidiNoteNode::note_on(uchar note_num, uchar velocity, FrameTime time, SampleCoun
 	assert(time - start < _buffer_size);
 	assert(note_num <= 127);
 
-	Key*   key        = &_keys[note_num];
-	Voice* voice      = NULL;
-	size_t voice_num  = 0;
+	Key*   key         = &_keys[note_num];
+	Voice* voice       = NULL;
+	uint32_t voice_num = 0;
 	
 	// Look for free voices
-	for (size_t i=0; i < _poly; ++i) {
+	for (uint32_t i=0; i < _poly; ++i) {
 		if (_voices[i].state == Voice::Voice::FREE) {
 			voice = &_voices[i];
 			voice_num = i;
@@ -154,7 +154,7 @@ MidiNoteNode::note_on(uchar note_num, uchar velocity, FrameTime time, SampleCoun
 		voice_num = 0;
 		voice = &_voices[0];
 		jack_nframes_t oldest_time = _voices[0].time;
-		for (size_t i=1; i < _poly; ++i) {
+		for (uint32_t i=1; i < _poly; ++i) {
 			if (_voices[i].time < oldest_time) {
 				voice = &_voices[i];
 				voice_num = i;
@@ -285,7 +285,7 @@ MidiNoteNode::all_notes_off(FrameTime time, SampleCount nframes, FrameTime start
 
 	// FIXME: set all keys to Key::OFF?
 	
-	for (size_t i=0; i < _poly; ++i) {
+	for (uint32_t i=0; i < _poly; ++i) {
 		((AudioBuffer*)_gate_port->buffer(i))->set(0.0f, time - start);
 		_voices[i].state = Voice::FREE;
 	}
@@ -317,7 +317,7 @@ MidiNoteNode::sustain_off(FrameTime time, SampleCount nframes, FrameTime start, 
 
 	_sustain = false;
 	
-	for (size_t i=0; i < _poly; ++i)
+	for (uint32_t i=0; i < _poly; ++i)
 		if (_voices[i].state == Voice::HOLDING)
 			free_voice(i, time, nframes, start, end);
 }

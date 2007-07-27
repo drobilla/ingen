@@ -29,7 +29,7 @@ using namespace std;
 namespace Ingen {
 
 
-DSSINode::DSSINode(const Plugin* plugin, const string& name, size_t poly, Patch* parent, DSSI_Descriptor* descriptor, SampleRate srate, size_t buffer_size)
+DSSINode::DSSINode(const Plugin* plugin, const string& name, uint32_t poly, Patch* parent, DSSI_Descriptor* descriptor, SampleRate srate, size_t buffer_size)
 : LADSPANode(plugin, name, 1, parent, descriptor->LADSPA_Plugin, srate, buffer_size),
   _dssi_descriptor(descriptor),
   _ui_addr(NULL),
@@ -107,11 +107,12 @@ DSSINode::set_ui_url(const string& url)
 
 
 void
-DSSINode::set_control(size_t port_num, Sample val)
+DSSINode::set_control(uint32_t port_num, Sample val)
 {
 	assert(port_num < _descriptor->PortCount);
-	cerr << "FIXME: set_control\n";
-	//((TypedPort<Sample>*)_ports->at(port_num))->set_value(val, 0);
+	Port* port = _ports->at(port_num);
+	assert(port->type() == DataType::FLOAT);
+	((AudioBuffer*)port->buffer(0))->set(val, 0);
 }
 
 
@@ -195,7 +196,7 @@ DSSINode::process(SampleCount nframes, FrameTime start, FrameTime end)
 
 
 void
-DSSINode::set_port_buffer(size_t voice, size_t port_num, Buffer* buf)
+DSSINode::set_port_buffer(uint32_t voice, uint32_t port_num, Buffer* buf)
 {
 	assert(voice < _poly);
 	

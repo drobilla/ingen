@@ -29,7 +29,7 @@ using namespace std;
 namespace Ingen {
 
 
-DuplexPort::DuplexPort(Node* parent, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size, bool is_output)
+DuplexPort::DuplexPort(Node* parent, const string& name, uint32_t index, uint32_t poly, DataType type, size_t buffer_size, bool is_output)
 : Port(parent, name, index, poly, type, buffer_size)
 , InputPort(parent, name, index, poly, type, buffer_size)
 , OutputPort(parent, name, index, poly, type, buffer_size)

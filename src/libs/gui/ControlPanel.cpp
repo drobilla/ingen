@@ -55,7 +55,7 @@ ControlPanel::~ControlPanel()
 
 
 void
-ControlPanel::init(SharedPtr<NodeModel> node, size_t poly)
+ControlPanel::init(SharedPtr<NodeModel> node, uint32_t poly)
 {
 	assert(node != NULL);
 	assert(poly > 0);

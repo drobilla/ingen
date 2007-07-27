@@ -36,7 +36,7 @@ class LV2Node : public NodeBase
 public:
 	LV2Node(const Plugin*      plugin,
 	        const string&      name,
-	        size_t             poly,
+	        uint32_t           poly,
 	        Patch*             parent,
 	        SampleRate         srate,
 	        size_t             buffer_size);
@@ -50,7 +50,7 @@ public:
 	
 	void process(SampleCount nframes, FrameTime start, FrameTime end);
 	
-	void set_port_buffer(size_t voice, size_t port_num, Buffer* buf);
+	void set_port_buffer(uint32_t voice, uint32_t port_num, Buffer* buf);
 
 protected:
 	//void get_port_vals(ulong port_index, PortInfo* info);

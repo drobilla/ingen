@@ -109,14 +109,14 @@ Connection::process(SampleCount nframes, FrameTime start, FrameTime end)
 	
 		// Accumulate the source's voices into local buffer starting at the second
 		// voice (buffer is already set to first voice above)
-		for (size_t j=1; j < src_port()->poly(); ++j) {
+		for (uint32_t j=1; j < src_port()->poly(); ++j) {
 			mix_buf->accumulate((AudioBuffer*)src_port()->buffer(j), 0, copy_size-1);
 		}
 		
 		// Find the summed value and write it to the remainder of dst buffer
 		if (copy_size < mix_buf->size()) {
 			float src_value = src_buffer->value_at(copy_size-1);
-			for (size_t j=1; j < src_port()->poly(); ++j)
+			for (uint32_t j=1; j < src_port()->poly(); ++j)
 				src_value += ((AudioBuffer*)src_port()->buffer(j))->value_at(copy_size-1);
 
 			mix_buf->set(src_value, copy_size, mix_buf->size()-1);

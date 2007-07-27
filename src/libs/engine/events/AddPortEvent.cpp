@@ -91,7 +91,7 @@ AddPortEvent::pre_process()
 		if (_type != "ingen:control")
 			buffer_size = _engine.audio_driver()->buffer_size();
 	
-		const size_t old_num_ports = _patch->num_ports();
+		const uint32_t old_num_ports = _patch->num_ports();
 
 		_patch_port = _patch->create_port(_path.name(), _data_type, buffer_size, _is_output);
 		

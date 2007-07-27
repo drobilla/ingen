@@ -27,7 +27,7 @@
 namespace Ingen {
 
 
-MidiTriggerNode::MidiTriggerNode(const string& path, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size)
+MidiTriggerNode::MidiTriggerNode(const string& path, uint32_t poly, Patch* parent, SampleRate srate, size_t buffer_size)
 : InternalNode(new Plugin(Plugin::Internal, "ingen:trigger_node"), path, 1, parent, srate, buffer_size)
 {
 	_ports = new Raul::Array<Port*>(5);

@@ -45,7 +45,7 @@ class Connection;
 class Patch : public NodeBase
 {
 public:
-	Patch(const string& name, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size, size_t local_poly);
+	Patch(const string& name, uint32_t poly, Patch* parent, SampleRate srate, size_t buffer_size, uint32_t local_poly);
 	virtual ~Patch();
 
 	void activate();
@@ -66,7 +66,7 @@ public:
 	const Raul::List<Node*>&       nodes()       const { return _nodes; }
 	const Raul::List<Connection*>& connections() const { return _connections; }
 	
-	size_t num_ports() const;
+	uint32_t num_ports() const;
 	
 	Port* create_port(const string& name, DataType type, size_t buffer_size, bool is_output);
 	void add_input(Raul::ListNode<Port*>* port)  { _input_ports.push_back(port); } ///< Preprocesser thread
@@ -90,12 +90,12 @@ public:
 	void enable() { _process = true; }
 	void disable();
 
-	size_t internal_poly() const { return _internal_poly; }
+	uint32_t internal_poly() const { return _internal_poly; }
 
 private:
 	inline void build_process_order_recursive(Node* n, Raul::Array<Node*>* order) const;
 
-	size_t                  _internal_poly;
+	uint32_t                _internal_poly;
 	Raul::Array<Node*>*     _process_order; ///< Accessed in audio thread only
 	Raul::List<Connection*> _connections;   ///< Accessed in audio thread only
 	Raul::List<Port*>       _input_ports;   ///< Accessed in preprocessing thread only

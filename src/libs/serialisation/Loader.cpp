@@ -16,6 +16,7 @@
  */
 
 #include <iostream>
+#include <set>
 #include <locale.h>
 #include <glibmm/ustring.h>
 #include <raul/RDFModel.hpp>
@@ -51,7 +52,7 @@ Loader::load(SharedPtr<EngineInterface> engine,
 
 	// FIXME: this whole thing is a mess
 	
-	Raul::Table<Path, bool> created;
+	std::set<Path> created;
 
 	RDF::Model model(*rdf_world, document_uri);
 
@@ -126,7 +127,7 @@ Loader::load(SharedPtr<EngineInterface> engine,
 
 		if (created.find(node_path) == created.end()) {
 			engine->create_node(node_path, plugin, false);
-			created[node_path] = true;
+			created.insert(node_path);
 		}
 
 		string floatkey = rdf_world->prefixes().qualify((*i)["floatkey"].to_string());
@@ -156,7 +157,7 @@ Loader::load(SharedPtr<EngineInterface> engine,
 		const Path subpatch_path = patch_path.base() + (string)name;
 		
 		if (created.find(subpatch_path) == created.end()) {
-			created[subpatch_path] = true;
+			created.insert(subpatch_path);
 			load(engine, rdf_world, document_uri, patch_path, name, patch);
 		}
 	}
@@ -217,7 +218,7 @@ Loader::load(SharedPtr<EngineInterface> engine,
 			//cerr << "TYPE: " << type << endl;
 			bool is_output = (type == "ingen:OutputPort"); // FIXME: check validity
 			engine->create_port(port_path, datatype, is_output);
-			created[port_path] = true;
+			created.insert(port_path);
 		}
 
 		RDF::Node val_node = (*i)["portval"];

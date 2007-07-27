@@ -79,7 +79,7 @@ ThreadedLoader::load_patch(bool                    merge,
                            MetadataMap             engine_data,
                            optional<Path>          engine_parent,
                            optional<const string&> engine_name,
-                           optional<size_t>        engine_poly)
+                           optional<uint32_t>      engine_poly)
 {
 	_mutex.lock();
 

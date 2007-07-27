@@ -27,7 +27,7 @@
 namespace Ingen {
 
 
-TransportNode::TransportNode(const string& path, size_t poly, Patch* parent, SampleRate srate, size_t buffer_size)
+TransportNode::TransportNode(const string& path, uint32_t poly, Patch* parent, SampleRate srate, size_t buffer_size)
 : InternalNode(new Plugin(Plugin::Internal, "ingen:transport_node"), path, 1, parent, srate, buffer_size)
 {
 #if 0

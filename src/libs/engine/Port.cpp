@@ -28,7 +28,7 @@ namespace Ingen {
 const char* const DataType::type_uris[4] = { "UNKNOWN", "FLOAT", "MIDI", "OSC" };
 
 
-Port::Port(Node* const node, const string& name, size_t index, size_t poly, DataType type, size_t buffer_size)
+Port::Port(Node* const node, const string& name, uint32_t index, uint32_t poly, DataType type, size_t buffer_size)
 	: GraphObject(node, name)
 	, _index(index)
 	, _poly(poly)
@@ -48,7 +48,7 @@ Port::Port(Node* const node, const string& name, size_t index, size_t poly, Data
 
 Port::~Port()
 {
-	for (size_t i=0; i < _poly; ++i)
+	for (uint32_t i=0; i < _poly; ++i)
 		delete _buffers.at(i);
 }
 
@@ -58,7 +58,7 @@ Port::allocate_buffers()
 {
 	_buffers.alloc(_poly);
 
-	for (size_t i=0; i < _poly; ++i)
+	for (uint32_t i=0; i < _poly; ++i)
 		_buffers.at(i) = BufferFactory::create(_type, _buffer_size);
 }
 
@@ -68,7 +68,7 @@ Port::set_buffer_size(size_t size)
 {
 	_buffer_size = size;
 
-	for (size_t i=0; i < _poly; ++i)
+	for (uint32_t i=0; i < _poly; ++i)
 		_buffers.at(i)->resize(size);
 
 	connect_buffers();
@@ -78,7 +78,7 @@ Port::set_buffer_size(size_t size)
 void
 Port::connect_buffers()
 {
-	for (size_t i=0; i < _poly; ++i)
+	for (uint32_t i=0; i < _poly; ++i)
 		Port::parent_node()->set_port_buffer(i, _index, _buffers.at(i));
 }
 
@@ -86,7 +86,7 @@ Port::connect_buffers()
 void
 Port::clear_buffers()
 {
-	for (size_t i=0; i < _poly; ++i)
+	for (uint32_t i=0; i < _poly; ++i)
 		_buffers.at(i)->clear();
 }
 

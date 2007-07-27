@@ -33,7 +33,7 @@ namespace Ingen {
  * Object is not usable until instantiate() is called with success.
  * (It _will_ crash!)
  */
-LADSPANode::LADSPANode(const Plugin* plugin, const string& path, size_t poly, Patch* parent, const LADSPA_Descriptor* descriptor, SampleRate srate, size_t buffer_size)
+LADSPANode::LADSPANode(const Plugin* plugin, const string& path, uint32_t poly, Patch* parent, const LADSPA_Descriptor* descriptor, SampleRate srate, size_t buffer_size)
 : NodeBase(plugin, path, poly, parent, srate, buffer_size),
   _descriptor(descriptor),
   _instances(NULL)
@@ -61,7 +61,7 @@ LADSPANode::instantiate()
 	
 	size_t port_buffer_size = 0;
 	
-	for (size_t i=0; i < _poly; ++i) {
+	for (uint32_t i=0; i < _poly; ++i) {
 		_instances[i] = _descriptor->instantiate(_descriptor, _srate);
 		if (_instances[i] == NULL) {
 			cerr << "Failed to instantiate plugin!" << endl;
@@ -134,7 +134,7 @@ LADSPANode::instantiate()
 		
 		// Set default value
 		if (port->buffer_size() == 1) {
-			for (size_t i=0; i < _poly; ++i)
+			for (uint32_t i=0; i < _poly; ++i)
 				((AudioBuffer*)port->buffer(i))->set(default_val, 0);
 		}
 
@@ -150,7 +150,7 @@ LADSPANode::instantiate()
 
 LADSPANode::~LADSPANode()
 {
-	for (size_t i=0; i < _poly; ++i)
+	for (uint32_t i=0; i < _poly; ++i)
 		_descriptor->cleanup(_instances[i]);
 
 	delete[] _instances;
@@ -162,7 +162,7 @@ LADSPANode::activate()
 {
 	NodeBase::activate();
 
-	for (size_t i=0; i < _poly; ++i) {
+	for (uint32_t i=0; i < _poly; ++i) {
 		for (unsigned long j=0; j < _descriptor->PortCount; ++j) {
 			set_port_buffer(i, j, _ports->at(j)->buffer(i));
 			/*	if (port->type() == DataType::FLOAT && port->buffer_size() == 1)
@@ -181,7 +181,7 @@ LADSPANode::deactivate()
 {
 	NodeBase::deactivate();
 	
-	for (size_t i=0; i < _poly; ++i)
+	for (uint32_t i=0; i < _poly; ++i)
 		if (_descriptor->deactivate != NULL)
 			_descriptor->deactivate(_instances[i]);
 }
@@ -192,7 +192,7 @@ LADSPANode::process(SampleCount nframes, FrameTime start, FrameTime end)
 {
 	NodeBase::pre_process(nframes, start, end);
 
-	for (size_t i=0; i < _poly; ++i) 
+	for (uint32_t i=0; i < _poly; ++i) 
 		_descriptor->run(_instances[i], nframes);
 	
 	NodeBase::post_process(nframes, start, end);
@@ -200,7 +200,7 @@ LADSPANode::process(SampleCount nframes, FrameTime start, FrameTime end)
 
 
 void
-LADSPANode::set_port_buffer(size_t voice, size_t port_num, Buffer* buf)
+LADSPANode::set_port_buffer(uint32_t voice, uint32_t port_num, Buffer* buf)
 {
 	assert(voice < _poly);
 	
