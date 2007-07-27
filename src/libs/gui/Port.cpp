@@ -52,7 +52,10 @@ Port::Port(boost::shared_ptr<FlowCanvas::Module> module, SharedPtr<PortModel> pm
 
 	_port_model->renamed_sig.connect(sigc::mem_fun(this, &Port::renamed));
 
-	_port_model->control_change_sig.connect(sigc::mem_fun(this, &Port::control_changed));
+	if (pm->is_control()) {
+		show_control();
+		_port_model->control_change_sig.connect(sigc::mem_fun(this, &Port::control_changed));
+	}
 }
 
 
