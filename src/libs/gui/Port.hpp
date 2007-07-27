@@ -43,6 +43,8 @@ public:
 
 	SharedPtr<PortModel> model() const { return _port_model; }
 	
+	virtual void set_control(float value);
+	
 private:
 
 	void on_menu_destroy();

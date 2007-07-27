@@ -2,13 +2,14 @@
 @prefix doap: <http://usefulinc.com/ns/doap#> .
 @prefix ingen: <http://drobilla.net/ns/ingen#> .
 @prefix ingenuity: <http://drobilla.net/ns/ingenuity#> .
-@prefix lv2: <http://lv2plug.in/ontology#> .
+@prefix lv2: <http://lv2plug.in/ns/lv2core#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 <>
+    ingenuity:canvas-x 1.54E3;
     ingen:node [
-        ingenuity:canvas-x 1495.2;
+        ingenuity:canvas-x E3;
         ingen:port _:n29, [
             ingen:name "SecondInput";
             ingen:dataType "ingen:audio";
@@ -20,13 +21,13 @@
             ingen:dataType "ingen:audio";
             ingen:name "FirstInput"
         ];
-        ingenuity:canvas-y 1172.5;
+        ingenuity:canvas-y 1.1725E3;
         ingen:plugin <ladspa:1668>;
         ingen:name "voice_amp";
         a "ingen:Node"
     ], [
-        ingenuity:canvas-x 1374.0;
-        ingenuity:canvas-y 1044.2;
+        ingenuity:canvas-x 1.374E3;
+        ingenuity:canvas-y 1.0E3;
         ingen:plugin <ladspa:1641>;
         ingen:port _:n25, [
             ingen:connectedTo _:n19;
@@ -41,10 +42,10 @@
         ingen:plugin <ingen:note_node>;
         ingen:port _:n22, _:n21, [
             a "ingen:OutputPort";
-            ingen:maximum 1.0;
+            ingen:maximum 1.0E0;
             ingen:dataType "ingen:audio";
             ingen:name "Velocity";
-            ingen:minimum 0.0
+            ingen:minimum 0.0E0
         ], _:n19, [
             ingen:connectedTo _:n32;
             ingen:dataType "ingen:midi";
@@ -52,8 +53,8 @@
             a "ingen:InputPort"
         ];
         ingen:name "note_in";
-        ingenuity:canvas-x 1258.2;
-        ingenuity:canvas-y 1087.2
+        ingenuity:canvas-x E3;
+        ingenuity:canvas-y 1.0E3
     ], [
         ingen:port _:n16, [
             a "ingen:InputPort";
@@ -62,52 +63,52 @@
             ingen:dataType "ingen:audio"
         ], [
             ingen:connectedTo _:n30;
-            ingen:minimum 0.0;
-            ingen:value 0.0;
+            ingen:minimum 1.1920928955E-7;
+            ingen:value 2.0000000298E-1;
             a "ingen:InputPort";
-            ingen:maximum 0.0;
+            ingen:maximum 1.0E0;
             ingen:name "Gain";
             ingen:dataType "ingen:control"
         ];
         ingen:plugin <ladspa:1067>;
-        ingenuity:canvas-x 1932.0;
+        ingenuity:canvas-x 1.932E3;
         a "ingen:Node";
-        ingenuity:canvas-y 1151.0;
+        ingenuity:canvas-y 1.151E3;
         ingen:name "master_amp"
     ], [
         ingen:plugin <ladspa:1680>;
         a "ingen:Node";
         ingen:name "env";
-        ingenuity:canvas-x 1364.5;
-        ingenuity:canvas-y 1154.2;
+        ingenuity:canvas-x 1.3645E3;
+        ingenuity:canvas-y E3;
         ingen:port _:n12, [
-            ingen:minimum 0.0;
+            ingen:minimum 0.0E0;
             a "ingen:InputPort";
-            ingen:value 0.0;
+            ingen:value 2.0E0;
             ingen:name "ReleaseTime(s)";
             ingen:dataType "ingen:control";
-            ingen:maximum 0.0
+            ingen:maximum 0.0E0
         ], [
-            ingen:value 1.0;
-            ingen:minimum 0.0;
+            ingen:value 1.0000000149E-1;
+            ingen:minimum 0.0E0;
             a "ingen:InputPort";
-            ingen:maximum 1.0;
+            ingen:maximum 1.0E0;
             ingen:name "SustainLevel";
             ingen:dataType "ingen:control"
         ], [
             ingen:dataType "ingen:control";
             ingen:name "DecayTime(s)";
-            ingen:minimum 0.0;
-            ingen:value 0.0;
+            ingen:minimum 0.0E0;
+            ingen:value 0.0E0;
             a "ingen:InputPort";
-            ingen:maximum 0.0
+            ingen:maximum 0.0E0
         ], [
-            ingen:value 0.0;
-            ingen:minimum 0.0;
+            ingen:value 0.0E0;
+            ingen:minimum 0.0E0;
             ingen:dataType "ingen:control";
             ingen:name "AttackTime(s)";
             a "ingen:InputPort";
-            ingen:maximum 0.0
+            ingen:maximum 0.0E0
         ], [
             ingen:connectedTo _:n22;
             a "ingen:InputPort";
@@ -121,9 +122,9 @@
         ]
     ], [
         ingen:plugin <ladspa:1672>;
-        ingenuity:canvas-y 1179.8;
+        ingenuity:canvas-y 1.1798E3;
         ingen:name "4PoleLow-PassFilterWithResonance(FCRCIA)";
-        ingenuity:canvas-x 1617.0;
+        ingenuity:canvas-x 1.617E3;
         ingen:port _:n4, [
             a "ingen:InputPort";
             ingen:connectedTo _:n29;
@@ -131,42 +132,44 @@
             ingen:dataType "ingen:audio"
         ], [
             ingen:name "Resonance";
-            ingen:value 3.3;
+            ingen:value 5.0E-1;
             ingen:dataType "ingen:control";
-            ingen:minimum 0.0;
+            ingen:minimum 0.0E0;
             a "ingen:InputPort";
-            ingen:maximum 4.0
+            ingen:maximum 4.0E0
         ], [
-            ingen:maximum 24000.0;
+            ingen:maximum 2.4E4;
             ingen:dataType "ingen:control";
-            ingen:value 356.6;
+            ingen:value 1.1313E3;
             ingen:connectedTo _:n31;
-            ingen:minimum 1.0;
+            ingen:minimum 9.9999994E-1;
             a "ingen:InputPort";
             ingen:name "CutoffFrequency"
         ];
         a "ingen:Node"
     ];
+    ingen:name "saw_lp";
     ingen:port [
-        ingenuity:canvas-x 2058.8;
+        ingenuity:canvas-x 2.0588E3;
         ingen:connectedTo _:n16;
         a "ingen:OutputPort";
-        ingenuity:canvas-y 1173.8;
+        ingenuity:canvas-y 1.1738E3;
         ingen:dataType "ingen:audio";
         ingen:name "output"
     ], _:n32, _:n31, _:n30;
     ingen:polyphony 1;
-    a ingen:Patch .
+    a ingen:Patch;
+    ingenuity:canvas-y 1.167E3 .
 
 _:n31
-    ingenuity:canvas-y 1080.5;
+    ingenuity:canvas-y 1.0805E3;
     ingen:dataType "ingen:control";
-    ingenuity:canvas-x 1526.8;
-    ingen:value 329.7;
+    ingenuity:canvas-x 1.5268E3;
+    ingen:value 3.29700012207E2, E2;
     ingen:name "cutoff";
-    ingen:minimum 10.0;
+    ingen:minimum 1.0E1;
     a "ingen:InputPort";
-    ingen:maximum 10000.0 .
+    ingen:maximum 1.0E4 .
 
 _:n12
     a "ingen:OutputPort";
@@ -175,15 +178,15 @@ _:n12
 
 _:n21
     a "ingen:OutputPort";
-    ingen:default 0.0;
+    ingen:default 0.0E0;
     ingen:name "Gate";
     ingen:toggled 1;
     ingen:dataType "ingen:audio" .
 
 _:n32
     a "ingen:InputPort";
-    ingenuity:canvas-y 1125.0;
-    ingenuity:canvas-x 1145.2;
+    ingenuity:canvas-y 1.125E3;
+    ingenuity:canvas-x E3;
     ingen:dataType "ingen:midi";
     ingen:name "midi_input" .
 
@@ -201,14 +204,14 @@ _:n22
     ingen:dataType "ingen:audio";
     ingen:toggled 1;
     ingen:name "Trigger";
-    ingen:default 0.0;
+    ingen:default 0.0E0;
     a "ingen:OutputPort" .
 
 _:n30
     a "ingen:InputPort";
-    ingen:value 0.2;
-    ingenuity:canvas-y 1076.2;
-    ingenuity:canvas-x 1833.0;
+    ingen:value 2.0000000298E-1;
+    ingenuity:canvas-y 1.0E3;
+    ingenuity:canvas-x 1.833E3;
     ingen:name "amp";
     ingen:dataType "ingen:control" .
 

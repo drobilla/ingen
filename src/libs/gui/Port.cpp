@@ -66,5 +66,27 @@ Port::renamed()
 }
 
 
+void
+Port::set_control(float value)
+{
+	if (_port_model->is_control()) {
+		float min = 0.0f;
+		float max = 1.0f;
+
+		const Atom& min_atom = _port_model->get_metadata("ingen:minimum");
+		const Atom& max_atom = _port_model->get_metadata("ingen:maximum");
+		if (min_atom.type() == Atom::FLOAT && max_atom.type() == Atom::FLOAT) {
+			min = min_atom.get_float();
+			max = max_atom.get_float();
+		}
+
+		App::instance().engine()->set_port_value(_port_model->path(),
+				min + (value * (max-min)));
+		
+		FlowCanvas::Port::set_control(value);
+	}
+}
+
+
 } // namespace GUI
 } // namespace Ingen
