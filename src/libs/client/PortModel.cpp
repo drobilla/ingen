@@ -16,6 +16,7 @@
  */
 
 #include "PortModel.hpp"
+#include "NodeModel.hpp"
 
 namespace Ingen {
 namespace Client {
@@ -43,8 +44,6 @@ PortModel::is_toggle() const
 	const Atom& hint = get_metadata("ingen:toggled");
 	return (hint && hint > 0);
 }
-
-
 
 } // namespace Client
 } // namespace Ingen

@@ -58,6 +58,8 @@ public:
 	const PortModelList&               ports()        const { return _ports; }
 	virtual bool                       polyphonic()   const { return _polyphonic; }
 	
+	void port_value_range(const string& name, float& min, float& max);
+	
 	// Signals
 	sigc::signal<void, SharedPtr<PortModel> > new_port_sig; 
 	sigc::signal<void, SharedPtr<PortModel> > removed_port_sig; 

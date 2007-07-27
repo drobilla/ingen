@@ -44,6 +44,7 @@ public:
 	SharedPtr<PortModel> model() const { return _port_model; }
 	
 	virtual void set_control(float value);
+	void control_changed(float value);
 	
 private:
 

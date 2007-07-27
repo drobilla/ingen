@@ -48,7 +48,11 @@ Port::Port(boost::shared_ptr<FlowCanvas::Module> module, SharedPtr<PortModel> pm
 		_menu.items().push_back(Gtk::Menu_Helpers::MenuElem("Destroy",
 				sigc::mem_fun(this, &Port::on_menu_destroy)));
 
+	control_changed(_port_model->value());
+
 	_port_model->renamed_sig.connect(sigc::mem_fun(this, &Port::renamed));
+
+	_port_model->control_change_sig.connect(sigc::mem_fun(this, &Port::control_changed));
 }
 
 
@@ -67,22 +71,34 @@ Port::renamed()
 
 
 void
+Port::control_changed(float value)
+{
+	float min = 0.0f, max = 1.0f;
+	boost::shared_ptr<NodeModel> parent = PtrCast<NodeModel>(_port_model->parent());
+	if (parent)
+		parent->port_value_range(_port_model->path().name(), min, max);
+		
+	/*cerr << "Control changed: " << value << endl;
+	cerr << "Min: " << min << endl;
+	cerr << "Max: " << max << endl;*/
+
+	FlowCanvas::Port::set_control((value - min) / (max - min));
+}
+
+
+void
 Port::set_control(float value)
 {
 	if (_port_model->is_control()) {
-		float min = 0.0f;
-		float max = 1.0f;
-
-		const Atom& min_atom = _port_model->get_metadata("ingen:minimum");
-		const Atom& max_atom = _port_model->get_metadata("ingen:maximum");
-		if (min_atom.type() == Atom::FLOAT && max_atom.type() == Atom::FLOAT) {
-			min = min_atom.get_float();
-			max = max_atom.get_float();
-		}
+		//cerr << "Set control: " << value << endl;
+		float min = 0.0f, max = 1.0f;
+		boost::shared_ptr<NodeModel> parent = PtrCast<NodeModel>(_port_model->parent());
+		if (parent)
+			parent->port_value_range(_port_model->path().name(), min, max);
 
 		App::instance().engine()->set_port_value(_port_model->path(),
 				min + (value * (max-min)));
-		
+
 		FlowCanvas::Port::set_control(value);
 	}
 }

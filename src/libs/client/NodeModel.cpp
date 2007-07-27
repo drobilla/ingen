@@ -15,6 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include "../../../config/config.h"
+
 #include "NodeModel.hpp"
 #include "PatchModel.hpp"
 #include <cassert>
@@ -144,6 +146,33 @@ NodeModel::remove_program(int bank, int program)
 	if (_banks[bank].size() == 0)
 		_banks.erase(bank);
 }
+
+
+void
+NodeModel::port_value_range(const string& name, float& min, float& max)
+{
+	// FIXME: cache these values
+	const Atom& min_atom = get_metadata("ingen:minimum");
+	const Atom& max_atom = get_metadata("ingen:maximum");
+	if (min_atom.type() == Atom::FLOAT)
+		min = min_atom.get_float();
+	if (max_atom.type() == Atom::FLOAT)
+		max = max_atom.get_float();
+
+#ifdef HAVE_SLV2
+	if (plugin() && plugin()->type() == PluginModel::LV2) {
+		min = slv2_port_get_minimum_value(
+				plugin()->slv2_plugin(),
+				slv2_plugin_get_port_by_symbol(plugin()->slv2_plugin(),
+					name.c_str()));
+		max = slv2_port_get_maximum_value(
+				plugin()->slv2_plugin(),
+				slv2_plugin_get_port_by_symbol(plugin()->slv2_plugin(),
+					name.c_str()));
+	}
+#endif
+}
+
 
 
 } // namespace Client

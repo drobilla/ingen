@@ -60,37 +60,12 @@ PortPropertiesWindow::init(ControlGroup* control, SharedPtr<PortModel> pm)
 	_port_model = pm;
 	_control = control;
 
-
 	set_title(pm->path() + " Properties");
 	
-	// FIXME: code duplication w/ ControlGroups.cpp
-	float min = 0.0f;
-	float max = 1.0f;
-
-	const Atom& min_atom = pm->get_metadata("ingen:minimum");
-	const Atom& max_atom = pm->get_metadata("ingen:maximum");
-	if (min_atom.type() == Atom::FLOAT && max_atom.type() == Atom::FLOAT) {
-		min = min_atom.get_float();
-		max = max_atom.get_float();
-	}
-	
-	const SharedPtr<NodeModel> parent = PtrCast<NodeModel>(pm->parent());
-
-#ifdef HAVE_SLV2
-	if (parent && parent->plugin() && parent->plugin()->type() == PluginModel::LV2) {
-		min = slv2_port_get_minimum_value(
-				parent->plugin()->slv2_plugin(),
-				slv2_plugin_get_port_by_symbol(parent->plugin()->slv2_plugin(),
-					pm->path().name().c_str()));
-		max = slv2_port_get_maximum_value(
-					parent->plugin()->slv2_plugin(),
-					slv2_plugin_get_port_by_symbol(parent->plugin()->slv2_plugin(),
-						pm->path().name().c_str()));
-	}
-#endif
-
-	if (max <= min)
-		max = min + 1.0f;
+	float min = 0.0f, max = 1.0f;
+	boost::shared_ptr<NodeModel> parent = PtrCast<NodeModel>(_port_model->parent());
+	if (parent)
+		parent->port_value_range(_port_model->path().name(), min, max);
 
 	_initial_min = min;
 	_initial_max = max;
