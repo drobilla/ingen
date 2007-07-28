@@ -48,14 +48,24 @@ Port::Port(boost::shared_ptr<FlowCanvas::Module> module, SharedPtr<PortModel> pm
 		_menu.items().push_back(Gtk::Menu_Helpers::MenuElem("Destroy",
 				sigc::mem_fun(this, &Port::on_menu_destroy)));
 
-	control_changed(_port_model->value());
-
 	_port_model->renamed_sig.connect(sigc::mem_fun(this, &Port::renamed));
 
 	if (pm->is_control()) {
 		show_control();
+		
+		float min = 0.0f, max = 1.0f;
+		boost::shared_ptr<NodeModel> parent = PtrCast<NodeModel>(_port_model->parent());
+		if (parent)
+			parent->port_value_range(_port_model, min, max);
+
+		set_control_min(min);
+		set_control_max(max);
+
+		pm->metadata_update_sig.connect(sigc::mem_fun(this, &Port::metadata_update));
 		_port_model->control_change_sig.connect(sigc::mem_fun(this, &Port::control_changed));
 	}
+	
+	control_changed(_port_model->value());
 }
 
 
@@ -76,33 +86,26 @@ Port::renamed()
 void
 Port::control_changed(float value)
 {
-	float min = 0.0f, max = 1.0f;
-	boost::shared_ptr<NodeModel> parent = PtrCast<NodeModel>(_port_model->parent());
-	if (parent)
-		parent->port_value_range(_port_model->path().name(), min, max);
-		
-	/*cerr << "Control changed: " << value << endl;
-	cerr << "Min: " << min << endl;
-	cerr << "Max: " << max << endl;*/
-
-	FlowCanvas::Port::set_control((value - min) / (max - min));
+	FlowCanvas::Port::set_control(value);
 }
 
 
 void
-Port::set_control(float value)
+Port::set_control(float value, bool signal)
 {
-	if (_port_model->is_control()) {
-		//cerr << "Set control: " << value << endl;
-		float min = 0.0f, max = 1.0f;
-		boost::shared_ptr<NodeModel> parent = PtrCast<NodeModel>(_port_model->parent());
-		if (parent)
-			parent->port_value_range(_port_model->path().name(), min, max);
+	if (signal)
+		App::instance().engine()->set_port_value(_port_model->path(), value);
+	FlowCanvas::Port::set_control(value);
+}
 
-		App::instance().engine()->set_port_value(_port_model->path(),
-				min + (value * (max-min)));
 
-		FlowCanvas::Port::set_control(value);
+void
+Port::metadata_update(const string& key, const Atom& value)
+{
+	if ( (key == "ingen:minimum") && value.type() == Atom::FLOAT) {
+		set_control_min(value.get_float());
+	} else if ( (key == "ingen:maximum") && value.type() == Atom::FLOAT) {
+		set_control_max(value.get_float());
 	}
 }
 

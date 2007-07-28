@@ -135,7 +135,7 @@ NodeModel::get_port(const string& port_name) const
 void 
 NodeModel::add_program(int bank, int program, const string& name) 
 {
-        _banks[bank][program] = name; 
+	_banks[bank][program] = name; 
 }
 
 
@@ -149,28 +149,38 @@ NodeModel::remove_program(int bank, int program)
 
 
 void
-NodeModel::port_value_range(const string& name, float& min, float& max)
+NodeModel::port_value_range(SharedPtr<PortModel> port, float& min, float& max)
 {
-	// FIXME: cache these values
-	const Atom& min_atom = get_metadata("ingen:minimum");
-	const Atom& max_atom = get_metadata("ingen:maximum");
-	if (min_atom.type() == Atom::FLOAT)
-		min = min_atom.get_float();
-	if (max_atom.type() == Atom::FLOAT)
-		max = max_atom.get_float();
+	assert(port->parent().get() == this);
 
+	// FIXME: cache these values
+	
+	// Plugin value first
 #ifdef HAVE_SLV2
 	if (plugin() && plugin()->type() == PluginModel::LV2) {
 		min = slv2_port_get_minimum_value(
 				plugin()->slv2_plugin(),
 				slv2_plugin_get_port_by_symbol(plugin()->slv2_plugin(),
-					name.c_str()));
+					port->path().name().c_str()));
 		max = slv2_port_get_maximum_value(
 				plugin()->slv2_plugin(),
 				slv2_plugin_get_port_by_symbol(plugin()->slv2_plugin(),
-					name.c_str()));
+					port->path().name().c_str()));
+
+		//cerr << "SLV2: " << min << " .. " << max << endl;
 	}
 #endif
+
+	// Possibly overriden
+	const Atom& min_atom = port->get_metadata("ingen:minimum");
+	const Atom& max_atom = port->get_metadata("ingen:maximum");
+	if (min_atom.type() == Atom::FLOAT)
+		min = min_atom.get_float();
+	if (max_atom.type() == Atom::FLOAT)
+		max = max_atom.get_float();
+	
+	//cerr << (unsigned)plugin()->type() << "::" << _path << ".port_value_range(" << port->path().name()
+	//	<< ") == " << min << " .. " << max << endl;
 }
 
 

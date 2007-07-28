@@ -22,6 +22,7 @@
 #include <string>
 #include <flowcanvas/Port.hpp>
 #include <raul/SharedPtr.hpp>
+#include <raul/Atom.hpp>
 
 namespace Ingen { namespace Client { class PortModel; } }
 using Ingen::Client::PortModel;
@@ -43,10 +44,12 @@ public:
 
 	SharedPtr<PortModel> model() const { return _port_model; }
 	
-	virtual void set_control(float value);
+	virtual void set_control(float value, bool signal);
 	void control_changed(float value);
 	
 private:
+	
+	void metadata_update(const string& key, const Raul::Atom& value);
 
 	void on_menu_destroy();
 	void renamed();

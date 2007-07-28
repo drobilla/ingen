@@ -141,17 +141,17 @@ ObjectSender::send_port(ClientInterface* client, const Port* port)
 
 	client->new_port(port->path(), type, port->is_output());
 	
+	// Send metadata
+	const GraphObject::MetadataMap& data = port->metadata();
+	for (GraphObject::MetadataMap::const_iterator j = data.begin(); j != data.end(); ++j)
+		client->metadata_update(port->path(), (*j).first, (*j).second);
+	
 	// Send control value
 	if (port->type() == DataType::FLOAT && port->buffer_size() == 1) {
 		const Sample value = dynamic_cast<const AudioBuffer*>(port->buffer(0))->value_at(0);
 		//cerr << port->path() << " sending default value " << default_value << endl;
 		client->control_change(port->path(), value);
 	}
-	
-	// Send metadata
-	const GraphObject::MetadataMap& data = port->metadata();
-	for (GraphObject::MetadataMap::const_iterator j = data.begin(); j != data.end(); ++j)
-		client->metadata_update(port->path(), (*j).first, (*j).second);
 	
 	client->bundle_end();
 }

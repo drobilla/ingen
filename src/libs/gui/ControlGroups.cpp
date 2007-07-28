@@ -119,7 +119,7 @@ SliderControlGroup::init(ControlPanel* panel, SharedPtr<PortModel> pm)
 	
 	boost::shared_ptr<NodeModel> parent = PtrCast<NodeModel>(_port_model->parent());
 	if (parent)
-		parent->port_value_range(_port_model->path().name(), min, max);
+		parent->port_value_range(_port_model, min, max);
 
 	if (pm->is_integer() || pm->is_toggle()) {
 		_slider->set_increments(1, 10);
@@ -128,7 +128,7 @@ SliderControlGroup::init(ControlPanel* panel, SharedPtr<PortModel> pm)
 		_slider->set_increments(0, 0);
 	}
 
-	_slider->set_range(min, max);
+	_slider->set_range(std::min(min, pm->value()), std::max(max, pm->value()));
 	//_value_spinner->set_range(min, max);
 
 	set_value(pm->value());
