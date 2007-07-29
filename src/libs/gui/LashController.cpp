@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include CONFIG_H_PATH
 #include "LashController.hpp"
-#include "../../../../config/config.hpp"
 #include <iostream>
 #include <string>
 #include <cassert>

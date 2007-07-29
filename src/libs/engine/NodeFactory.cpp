@@ -16,7 +16,7 @@
  */
 
 #include "NodeFactory.hpp"
-#include "../../../../config/config.h"
+#include CONFIG_H_PATH
 #include <cstdlib>
 #include <pthread.h>
 #include <dirent.h>

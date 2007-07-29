@@ -6,8 +6,7 @@ moduledir = $(libdir)/ingen
 
 module_LTLIBRARIES = libingen_engine.la
 libingen_engine_la_CXXFLAGS = \
-	-I$(top_srcdir)/slv2 \
-	-I$(top_srcdir)/raul \
+	@SLV2_CFLAGS@ @RAUL_CFLAGS@ \
 	-I$(top_srcdir)/ingen/src/common \
 	-I$(top_srcdir)/ingen/src/libs \
 	-I$(top_srcdir)/ingen/src/libs/engine/events \

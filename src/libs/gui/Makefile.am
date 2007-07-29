@@ -12,9 +12,7 @@ moduledir = $(libdir)/ingen
 module_LTLIBRARIES = libingen_gui.la
 
 libingen_gui_la_CXXFLAGS = \
-	-I$(top_srcdir)/slv2 \
-	-I$(top_srcdir)/raul \
-	-I$(top_srcdir)/flowcanvas \
+	@SLV2_CFLAGS@ @RAUL_CFLAGS@ @FLOWCANVAS_CFLAGS@ \
 	-I$(top_srcdir)/ingen/src/common \
 	-I$(top_srcdir)/ingen/src/libs \
 	-DPKGDATADIR=\"$(pkgdatadir)\" \

@@ -18,7 +18,7 @@
 #ifndef OSCENGINERECEIVER_H
 #define OSCENGINERECEIVER_H
 
-#include "../../../../config/config.h"
+#include CONFIG_H_PATH
 #include <string>
 #include <stdint.h>
 #include <lo/lo.h>

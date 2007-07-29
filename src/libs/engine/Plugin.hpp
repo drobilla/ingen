@@ -18,7 +18,7 @@
 #ifndef PLUGIN_H
 #define PLUGIN_H
 
-#include "../../../../config/config.h"
+#include CONFIG_H_PATH
 
 #include <cstdlib>
 #include <glibmm/module.h>

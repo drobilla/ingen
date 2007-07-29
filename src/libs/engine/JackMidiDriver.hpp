@@ -21,7 +21,7 @@
 #include <jack/jack.h>
 #include <jack/midiport.h>
 #include <raul/List.hpp>
-#include "../../../../config/config.h"
+#include CONFIG_H_PATH
 #include "MidiDriver.hpp"
 
 namespace Ingen {

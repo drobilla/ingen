@@ -18,7 +18,7 @@
 #ifndef EVENTS_H
 #define EVENTS_H
 
-#include "../../../../config/config.h"
+#include CONFIG_H_PATH
 
 #include "DeactivateEvent.hpp"
 #include "EnablePatchEvent.hpp"

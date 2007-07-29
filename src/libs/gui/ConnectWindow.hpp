@@ -18,7 +18,7 @@
 #ifndef CONNECT_WINDOW_H
 #define CONNECT_WINDOW_H
 
-#include "../../../config/config.h"
+#include CONFIG_H_PATH
 
 #ifdef HAVE_SLV2
 #include <slv2/slv2.h>

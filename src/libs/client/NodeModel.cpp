@@ -15,7 +15,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "../../../config/config.h"
+#include CONFIG_H_PATH
 
 #include "NodeModel.hpp"
 #include "PatchModel.hpp"

@@ -18,7 +18,7 @@
 #include <iostream>
 #include <string>
 #include <cassert>
-#include "../../../../config/config.h"
+#include CONFIG_H_PATH
 #include "LashDriver.hpp"
 #include "App.hpp"
 

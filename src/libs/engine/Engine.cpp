@@ -22,7 +22,7 @@
 #include <raul/Deletable.hpp>
 #include <raul/Maid.hpp>
 #include "Engine.hpp"	
-#include "../../../../config/config.h"
+#include CONFIG_H_PATH
 #include "tuning.hpp"
 #include "Event.hpp"
 #include "JackAudioDriver.hpp"

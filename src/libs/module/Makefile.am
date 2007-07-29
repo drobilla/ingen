@@ -1,6 +1,6 @@
 noinst_LTLIBRARIES = libingen_module.la
 
-libingen_module_la_CXXFLAGS = -I$(top_srcdir)/raul -I$(top_srcdir)/slv2 -DINGEN_MODULE_DIR=\"$(libdir)/ingen\" @GLIBMM_CFLAGS@
+libingen_module_la_CXXFLAGS = @RAUL_CFLAGS@ @SLV2_CFLAGS@ @GLIBMM_CFLAGS@ -DINGEN_MODULE_DIR=\"$(libdir)/ingen\"
 
 libingen_module_la_LIBADD = @RAUL_LIBS@ @GLIBMM_LIBS@ @SLV2_LIBS@
 

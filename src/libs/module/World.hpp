@@ -23,7 +23,7 @@
 #include <raul/SharedPtr.hpp>
 #include <raul/RDFWorld.hpp>
 
-#include "../../../../config/config.h"
+#include CONFIG_H_PATH
 
 #ifdef HAVE_SLV2
 #include <slv2/slv2.h>

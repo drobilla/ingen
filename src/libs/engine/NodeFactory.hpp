@@ -18,7 +18,7 @@
 #ifndef NODEFACTORY_H
 #define NODEFACTORY_H
 
-#include "../../../../config/config.h"
+#include CONFIG_H_PATH
 #include "module/module.h"
 
 #include <list>

@@ -16,7 +16,7 @@
  */
 
 #include "QueuedEngineInterface.hpp"
-#include "../../../../config/config.h"
+#include CONFIG_H_PATH
 #include "QueuedEventSource.hpp"
 #include "events.hpp"
 #include "Engine.hpp"
