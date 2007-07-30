@@ -205,11 +205,18 @@ main(int argc, char** argv)
 		engine->activate();
 
 		engine->main();
+	}
+		
+	cout << "Exiting." << endl;
 
-		cout << "Exiting." << endl;
-
+	if (engine) {
+		engine->deactivate();
 		engine.reset();
 	}
+
+	engine_module.reset();
+	client_module.reset();
+	gui_module.reset();
 
 	Ingen::Shared::destroy_world();
 

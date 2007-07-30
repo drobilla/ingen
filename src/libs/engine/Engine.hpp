@@ -90,7 +90,7 @@ public:
 	ClientBroadcaster* broadcaster()        const { return _broadcaster; }
 	ObjectStore*       object_store()       const { return _object_store; }
 	NodeFactory*       node_factory()       const { return _node_factory; }
-	LashDriver*        lash_driver()        const { return _lash_driver; }
+	//LashDriver*        lash_driver()        const { return _lash_driver; }
 
 	/** Return the active driver for the given type */
 	Driver* driver(DataType type);
@@ -110,7 +110,7 @@ private:
 	ClientBroadcaster*     _broadcaster;
 	ObjectStore*           _object_store;
 	NodeFactory*           _node_factory;
-	LashDriver*            _lash_driver;
+	//LashDriver*            _lash_driver;
 	
 	bool _quit_flag;
 	bool _activated;

@@ -37,6 +37,7 @@
 #include "CreatePatchEvent.hpp"
 #include "EnablePatchEvent.hpp"
 #include "OSCEngineReceiver.hpp"
+#include "PostProcessor.hpp"
 #ifdef HAVE_JACK_MIDI
 #include "JackMidiDriver.hpp"
 #endif
@@ -60,7 +61,7 @@ Engine::Engine(Ingen::Shared::World* world)
 /*#ifdef HAVE_LASH
   _lash_driver(new LashDriver()),
 #else */
-  _lash_driver(NULL),
+//  _lash_driver(NULL),
 //#endif
   _quit_flag(false),
   _activated(false)
@@ -78,12 +79,17 @@ Engine::~Engine()
 			delete i->second;
 	}
 	
+	_event_source.reset();
+	_audio_driver.reset();
+	
 	delete _object_store;
 	delete _broadcaster;
 	delete _node_factory;
 	delete _midi_driver;
 	delete _osc_driver;
-	
+	delete _post_processor;
+	//delete _lash_driver;
+
 	delete _maid;
 
 	munlockall();

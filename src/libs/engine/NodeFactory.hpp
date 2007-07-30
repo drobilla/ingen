@@ -22,6 +22,7 @@
 #include "module/module.h"
 
 #include <list>
+#include <map>
 #include <string>
 #include <ladspa.h>
 #include <pthread.h>
@@ -81,10 +82,14 @@ private:
 #endif
 	
 	Node* load_internal_plugin(const string& plug_label, const string& name, uint32_t poly, Patch* parent, SampleRate srate, size_t buffer_size);
+
+	Glib::Module* library(const string& path);
 	
-	list<Glib::Module*> _libraries;
-	list<Plugin*>       _internal_plugins;
-	list<Plugin*>       _plugins; // FIXME: make a map
+	typedef std::map<std::string,Glib::Module*> Libraries;
+
+	Libraries     _libraries;
+	list<Plugin*> _internal_plugins;
+	list<Plugin*> _plugins; // FIXME: make a map
 
 	Ingen::Shared::World* _world;
 	bool _has_loaded;

@@ -117,7 +117,7 @@ JackAudioDriver::JackAudioDriver(Engine&        engine,
   _buffer_size(jack_client ? jack_get_buffer_size(jack_client) : 0),
   _sample_rate(jack_client ? jack_get_sample_rate(jack_client) : 0),
   _is_activated(false),
-  _local_client(false),
+  _local_client(true), // FIXME
   _root_patch(NULL)
 {
 	if (!_client) {
@@ -193,11 +193,12 @@ void
 JackAudioDriver::deactivate()
 {
 	if (_is_activated) {
+		
+		//for (Raul::List<JackAudioPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
+		//	jack_port_unregister(_client, (*i)->jack_port());
+
 		jack_deactivate(_client);
 		_is_activated = false;
-	
-		for (Raul::List<JackAudioPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
-			jack_port_unregister(_client, (*i)->jack_port());
 	
 		_ports.clear();
 	

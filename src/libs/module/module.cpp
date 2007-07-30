@@ -45,11 +45,14 @@ get_world()
 void
 destroy_world()
 {
+	if (world) {
 #ifdef HAVE_SLV2
-	slv2_world_free(world->slv2_world);
+		slv2_world_free(world->slv2_world);
 #endif
 
-	delete world;
+		delete world;
+		world = NULL;
+	}
 }
 
 

@@ -126,6 +126,8 @@ App::run(int argc, char** argv,
 	App::instance().connect_window()->start(engine, interface);
 	
 	main.run();
+
+	cout << "Gtk exiting." << endl;
 }
 
 

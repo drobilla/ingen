@@ -84,10 +84,30 @@ NodeFactory::~NodeFactory()
 		delete (*i);
 	_plugins.clear();
 
-	
-	for (list<Glib::Module*>::iterator i = _libraries.begin(); i != _libraries.end(); ++i)
-		delete (*i);
+	for (Libraries::iterator i = _libraries.begin(); i != _libraries.end(); ++i) {
+		delete i->second;
+	}
 	_libraries.clear();
+}
+
+
+Glib::Module*
+NodeFactory::library(const string& path)
+{
+	Glib::Module* plugin_library = NULL;
+	Libraries::iterator library_i = _libraries.find(path);
+	if (library_i != _libraries.end()) {
+		plugin_library = library_i->second;
+		assert(plugin_library);
+	} else {
+		plugin_library = new Glib::Module(path, Glib::MODULE_BIND_LOCAL | Glib::MODULE_BIND_LAZY);
+		if (plugin_library && *plugin_library) {
+			_libraries.insert(make_pair(path, plugin_library));
+			return plugin_library;
+		}
+	}
+
+	return NULL;
 }
 
 
@@ -357,9 +377,6 @@ NodeFactory::load_dssi_plugins()
 	} else {
 		dssi_path = env_dssi_path;
 	}
-
-	DSSI_Descriptor_Function df         = NULL;
-	DSSI_Descriptor*         descriptor = NULL;
 	
 	string dir;
 	string full_lib_name;
@@ -380,30 +397,30 @@ NodeFactory::load_dssi_plugins()
 
 		struct dirent* pfile;
 		while ((pfile = readdir(pdir))) {
+	
+			DSSI_Descriptor_Function df         = NULL;
+			DSSI_Descriptor*         descriptor = NULL;
 			
 			if (!strcmp(pfile->d_name, ".") || !strcmp(pfile->d_name, ".."))
 				continue;
 			
 			full_lib_name = dir +"/"+ pfile->d_name;
 			
-			// Load descriptor function
-			// Loaded with LAZY here, will be loaded with NOW on node loading
-			void* handle = dlopen(full_lib_name.c_str(), RTLD_LAZY);
-			if (handle == NULL)
-				continue;
-			
-			df = (DSSI_Descriptor_Function)dlsym(handle, "dssi_descriptor");
-			if (df == NULL) {
-				// Not a DSSI plugin library
-				dlclose(handle);
+			Glib::Module* plugin_library = library(full_lib_name);
+			if (!plugin_library) {
+				cerr << "WARNING: Failed to load library " << full_lib_name << endl;
 				continue;
 			}
-
-			Glib::Module* plugin_library = new Glib::Module(full_lib_name);
-			if (!(*plugin_library))
+	
+			bool found = plugin_library->get_symbol("dssi_descriptor", (void*&)df);
+			if (!found || !df) {
+				// Not a DSSI plugin library
+				cerr << "WARNING: Non-DSSI library found in DSSI path: " <<
+					full_lib_name << endl;
+				_libraries.erase(full_lib_name);
+				delete plugin_library;
 				continue;
-
-			_libraries.push_back(plugin_library);
+			}
 
 			const LADSPA_Descriptor* ld = NULL;
 			
@@ -412,6 +429,7 @@ NodeFactory::load_dssi_plugins()
 				assert(ld != NULL);
 				string uri = string("dssi:") + pfile->d_name +":"+ ld->Label;
 				Plugin* plugin = new Plugin(Plugin::DSSI, uri);
+				assert(plugin_library != NULL);
 				plugin->module(plugin_library);
 				plugin->lib_path(dir + "/" + pfile->d_name);
 				plugin->plug_label(ld->Label);
@@ -434,10 +452,6 @@ NodeFactory::load_dssi_plugins()
 				else
 					delete plugin;
 			}
-			
-			df = NULL;
-			descriptor = NULL;
-			dlclose(handle);
 		}
 		closedir(pdir);
 	}
@@ -523,9 +537,6 @@ NodeFactory::load_ladspa_plugins()
 		ladspa_path = env_ladspa_path;
 	}
 
-	LADSPA_Descriptor_Function df         = NULL;
-	LADSPA_Descriptor*         descriptor = NULL;
-	
 	string dir;
 	string full_lib_name;
 	
@@ -545,29 +556,30 @@ NodeFactory::load_ladspa_plugins()
 
 		struct dirent* pfile;
 		while ((pfile = readdir(pdir))) {
+	
+			LADSPA_Descriptor_Function df         = NULL;
+			LADSPA_Descriptor*         descriptor = NULL;
 			
 			if (!strcmp(pfile->d_name, ".") || !strcmp(pfile->d_name, ".."))
 				continue;
 			
 			full_lib_name = dir +"/"+ pfile->d_name;
 			
-			// Load descriptor function
-			// Loaded with LAZY here, will be loaded with NOW on node loading
-			void* handle = dlopen(full_lib_name.c_str(), RTLD_LAZY);
-			if (handle == NULL)
+			Glib::Module* plugin_library = library(full_lib_name);
+			if (!plugin_library) {
+				cerr << "WARNING: Failed to load library " << full_lib_name << endl;
 				continue;
+			}
 			
-			df = (LADSPA_Descriptor_Function)dlsym(handle, "ladspa_descriptor");
-			if (df == NULL) {
-				dlclose(handle);
+			bool found = plugin_library->get_symbol("ladspa_descriptor", (void*&)df);
+			if (!found || !df) {
+				cerr << "WARNING: Non-LADSPA library found in LADSPA path: " <<
+					full_lib_name << endl;
+				// Not a LADSPA plugin library
+				_libraries.erase(full_lib_name);
+				delete plugin_library;
 				continue;
-			}	
-
-			Glib::Module* plugin_library = new Glib::Module(full_lib_name);
-			if (!(*plugin_library))
-				continue;
-			
-			_libraries.push_back(plugin_library);
+			}
 
 			for (unsigned long i=0; (descriptor = (LADSPA_Descriptor*)df(i)) != NULL; ++i) {
 				char id_str[11];
@@ -598,10 +610,6 @@ NodeFactory::load_ladspa_plugins()
 				else
 					delete plugin;
 			}
-			
-			df = NULL;
-			descriptor = NULL;
-			dlclose(handle);
 		}
 		closedir(pdir);
 	}
