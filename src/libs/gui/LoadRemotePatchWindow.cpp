@@ -66,17 +66,17 @@ LoadRemotePatchWindow::present(SharedPtr<PatchModel> patch, MetadataMap data)
 	set_patch(patch);
 	_initial_data = data;
 	
-	RDF::Model model(App::instance().world()->rdf_world,
+	RDF::Model model(*App::instance().world()->rdf_world,
 			"http://rdf.drobilla.net/ingen_patches/index.ttl",
 			"http://rdf.drobilla.net/ingen_patches/");
 
-	RDF::Query query(App::instance().world()->rdf_world, Glib::ustring(
+	RDF::Query query(*App::instance().world()->rdf_world, Glib::ustring(
 		"SELECT DISTINCT ?name ?uri WHERE {"
 		"  ?uri a            ingen:Patch ;"
 		"       doap:name    ?name ."
 		"}"));
 
-	RDF::Query::Results results = query.run(App::instance().world()->rdf_world, model);
+	RDF::Query::Results results = query.run(*App::instance().world()->rdf_world, model);
 	
 	for (RDF::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
 		Gtk::TreeModel::iterator iter = _liststore->append();

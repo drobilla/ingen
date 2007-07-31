@@ -26,7 +26,7 @@
 namespace Ingen {
 namespace Shared {
 
-World* world;
+World* world = NULL;
 
 World*
 get_world()

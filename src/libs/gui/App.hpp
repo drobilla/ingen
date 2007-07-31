@@ -114,8 +114,8 @@ protected:
 	
 	SharedPtr<EngineInterface>    _engine;
 	SharedPtr<SigClientInterface> _client;
-	SharedPtr<Store>                _store;
-	SharedPtr<ThreadedLoader>       _loader;
+	SharedPtr<Store>              _store;
+	SharedPtr<ThreadedLoader>     _loader;
 
 	Configuration*    _configuration;
 

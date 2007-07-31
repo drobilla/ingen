@@ -78,6 +78,8 @@ private:
 	SharedPtr<Glib::Module> _engine_module;
 	Ingen::Engine* (*_new_engine)(Ingen::Shared::World* world);
 
+    SharedPtr<Ingen::Engine> _engine;
+
 	Gtk::Image*        _icon;
 	Gtk::ProgressBar*  _progress_bar;
 	Gtk::Label*        _progress_label;

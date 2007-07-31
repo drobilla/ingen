@@ -100,6 +100,8 @@ ConnectWindow::ConnectWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::
 		cerr << "Unable to find module entry point, internal engine unavailable." << endl;
 		_engine_module.reset();
 	}
+
+    server_toggled();
 }
 
 
@@ -154,16 +156,21 @@ ConnectWindow::set_connected_to(SharedPtr<Shared::EngineInterface> engine)
 	} else {
 		_icon->set(Gtk::Stock::DISCONNECT, Gtk::ICON_SIZE_LARGE_TOOLBAR);
 		_progress_bar->set_fraction(0.0);
-		_url_entry->set_sensitive(true);
 		_connect_button->set_sensitive(true);
 		_disconnect_button->set_sensitive(false);
-		_port_spinbutton->set_sensitive(false);
-		_launch_radio->set_sensitive(true);
+
 		if (_new_engine)
 			_internal_radio->set_sensitive(true);
 		else
 			_internal_radio->set_sensitive(false);
-		server_toggled();
+
+        _server_radio->set_sensitive(true);
+        _launch_radio->set_sensitive(true);
+
+        if ( _mode == CONNECT_REMOTE )
+            _url_entry->set_sensitive(true);
+        else if ( _mode == LAUNCH_REMOTE )
+            _port_spinbutton->set_sensitive(true);
 
 		_progress_label->set_text(string("Disconnected"));
 	}
@@ -186,6 +193,13 @@ ConnectWindow::connect()
 	_disconnect_button->set_label("gtk-cancel");
 	_disconnect_button->set_sensitive(true);
 
+    // Avoid user messing with our parameters whilst we're trying to connect.
+    _server_radio->set_sensitive(false);
+    _launch_radio->set_sensitive(false);
+    _internal_radio->set_sensitive(false);
+    _url_entry->set_sensitive(false);
+    _port_spinbutton->set_sensitive(false);
+
 	_connect_stage = 0;
 
 	if (_mode == CONNECT_REMOTE) {
@@ -207,7 +221,7 @@ ConnectWindow::connect()
 		int port = _port_spinbutton->get_value_as_int();
 		char port_str[6];
 		snprintf(port_str, 6, "%u", port);
-		const string cmd = string("ingen --port=").append(port_str);
+		const string cmd = string("ingen -e --engine-port=").append(port_str);
 
 		if (Raul::Process::launch(cmd)) {
 		SharedPtr<EngineInterface> engine(
@@ -229,11 +243,11 @@ ConnectWindow::connect()
 
 	} else if (_mode == INTERNAL) {
 		assert(_new_engine);
-		SharedPtr<Ingen::Engine> engine(_new_engine(App::instance().world()));
+		_engine = SharedPtr<Ingen::Engine>(_new_engine(App::instance().world()));
 		
-		engine->start_jack_driver();
+		_engine->start_jack_driver();
 		
-		SharedPtr<Ingen::EngineInterface> engine_interface = engine->new_queued_interface();
+		SharedPtr<Ingen::EngineInterface> engine_interface = _engine->new_queued_interface();
 
 		ThreadedSigClientInterface* tsci = new ThreadedSigClientInterface(Ingen::event_queue_size);
 		SharedPtr<SigClientInterface> client(tsci);
@@ -242,10 +256,10 @@ ConnectWindow::connect()
 
 		engine_interface->set_responder(SharedPtr<Ingen::Shared::Responder>(new Ingen::DirectResponder(client, 1)));
 
-		engine->activate();
+		_engine->activate();
 
 		Glib::signal_timeout().connect(
-			sigc::mem_fun(engine.get(), &Ingen::Engine::main_iteration), 1000);
+			sigc::mem_fun(_engine.get(), &Ingen::Engine::main_iteration), 1000);
 		
 		Glib::signal_timeout().connect(
 			sigc::mem_fun(this, &ConnectWindow::gtk_callback), 100);
