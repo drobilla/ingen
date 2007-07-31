@@ -32,6 +32,8 @@
 namespace Ingen {
 namespace Shared {
 
+class EngineInterface;
+
 
 /** The "world" all Ingen modules may share.
  *
@@ -47,7 +49,9 @@ struct World {
 #ifdef HAVE_SLV2
 	SLV2World slv2_world;
 #endif
-	Raul::RDF::World rdf_world;
+	Raul::RDF::World* rdf_world;
+
+    EngineInterface* engine;
 };
 
 

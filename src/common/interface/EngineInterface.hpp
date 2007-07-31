@@ -23,6 +23,7 @@
 #include <raul/SharedPtr.hpp>
 #include "interface/ClientInterface.hpp"
 using std::string;
+using Ingen::Shared::ClientInterface;
 
 namespace Ingen {
 /** Shared code used on both client side and engine side (abstract interfaces). */
