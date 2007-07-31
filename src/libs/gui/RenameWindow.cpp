@@ -74,7 +74,8 @@ RenameWindow::name_changed()
 	} else if (!Path::is_valid_name(name)) {
 		_message_label->set_text("Name contains invalid characters");
 		_ok_button->property_sensitive() = false;
-	} else if (App::instance().store()->object(_object->parent()->path().base() + name)) {
+	} else if ((App::instance().store()->object(_object->parent()->path().base() + name)) &&
+               (name != _object->path().name())) {
 		_message_label->set_text("An object already exists with that name.");
 		_ok_button->property_sensitive() = false;
 	} else if (name.length() == 0) {

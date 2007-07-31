@@ -25,13 +25,8 @@
 namespace Ingen {
 namespace Shared {
 
-extern "C" {
-
-    World* get_world();
-    void   destroy_world();
-
-}
-
+World* get_world();
+void   destroy_world();
 
 } // namesace Shared
 } // namespace Ingen

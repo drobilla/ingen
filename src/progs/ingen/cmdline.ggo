@@ -16,4 +16,5 @@ option "gui" g "Launch the GTK graphical interface" flag on
 option "client-port" C "Client OSC port"    int    no
 option "load" l "Load patch" string no
 option "path" p "Target path for loaded patch" string no
+option "run" r "Run script" string no
 

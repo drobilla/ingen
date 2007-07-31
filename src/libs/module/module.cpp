@@ -15,6 +15,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <iostream>
 #include "module.h"
 #include "World.hpp"
 
@@ -23,15 +24,25 @@
 #include <slv2/slv2.h>
 #endif
 
+using namespace std;
+
 namespace Ingen {
 namespace Shared {
 
-World* world = NULL;
+static World* world = NULL;
 
 World*
 get_world()
 {
+    static World* world = NULL;
+
+    if (!&world) {
+        cerr << "ERROR: Ingen::Shared::world undefined." << endl;
+        return NULL;
+    }
+
 	if (!world) {
+        cerr << "NEW WORLD\n" << endl;
 		world = new World();
         world->rdf_world = new Raul::RDF::World();
 #ifdef HAVE_SLV2
@@ -46,6 +57,11 @@ get_world()
 void
 destroy_world()
 {
+    if (!&world) {
+        cerr << "ERROR: Ingen::Shared::world undefined." << endl;
+        return;
+    }
+
 	if (world) {
 #ifdef HAVE_SLV2
 		slv2_world_free(world->slv2_world);

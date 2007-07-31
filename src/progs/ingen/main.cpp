@@ -19,8 +19,10 @@
 #include <iostream>
 #include <string>
 #include <signal.h>
+#include <dlfcn.h>
 #include <glibmm/convert.h>
 #include <glibmm/miscutils.h>
+#include <glibmm/spawn.h>
 #include <boost/optional.hpp>
 #include <glibmm/thread.h>
 #include <raul/Path.hpp>
@@ -30,13 +32,14 @@
 #include "engine/Engine.hpp"
 #include "engine/QueuedEngineInterface.hpp"
 #include "serialisation/Loader.hpp"
+#include "bindings/ingen_bindings.hpp"
 #include "cmdline.h"
 
 using namespace std;
 using namespace Ingen;
 
-SharedPtr<Engine> engine;
 
+SharedPtr<Engine> engine;
 
 void
 catch_int(int)
@@ -47,7 +50,6 @@ catch_int(int)
 	cout << "[Main] Ingen interrupted." << endl;
 	engine->quit();
 }
-
 
 int
 main(int argc, char** argv)
@@ -69,6 +71,7 @@ main(int argc, char** argv)
 	SharedPtr<Glib::Module> engine_module;
 	SharedPtr<Glib::Module> client_module;
 	SharedPtr<Glib::Module> gui_module;
+	SharedPtr<Glib::Module> bindings_module;
 
 	SharedPtr<Shared::EngineInterface> engine_interface;
 
@@ -118,8 +121,9 @@ main(int argc, char** argv)
 	}
 	
 	/* Load queued (direct in-process) engine interface */
-	if (engine && !engine_interface && (args.load_given || args.gui_given))
+	if (engine && !engine_interface && (args.load_given || args.gui_given || args.run_given)) {
 		engine_interface = engine->new_queued_interface();
+    }
 
 	if (engine && engine_interface) {
 
@@ -130,6 +134,8 @@ main(int argc, char** argv)
 
 		engine->activate();
 	}
+            
+	world->engine = engine_interface.get();
 
 	/* Load a patch */
 	if (args.load_given && engine_interface) {
@@ -192,6 +198,26 @@ main(int argc, char** argv)
 			cerr << "Try using src/set_dev_environment.sh, or setting INGEN_MODULE_PATH." << endl;
 		}
 	}
+
+    /* Run a script */
+    if (args.run_given) {
+        bool (*run_script)(Ingen::Shared::World*, const char*) = NULL;
+		SharedPtr<Glib::Module> bindings_module = Ingen::Shared::load_module("ingen_bindings");
+        if (!bindings_module)
+            cerr << Glib::Module::get_last_error() << endl;
+       
+        bindings_module->make_resident();
+
+        bool found = bindings_module->get_symbol("run", (void*&)(run_script));
+        if (found) {
+			cerr << "WORLD: " << world << endl;
+			cerr << "ENGINE: " << world->engine << endl;
+			setenv("PYTHONPATH", "../../bindings", 1);
+			run_script(world, args.run_arg);
+        } else {
+			cerr << "FAILED: " << Glib::Module::get_last_error() << endl;
+        }
+    }
 
 
 	/* Didn't run the GUI, listen to OSC and do our own main thing. */

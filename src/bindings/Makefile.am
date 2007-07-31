@@ -1,22 +1,22 @@
 FLAGS = @RAUL_CFLAGS@ @GLIBMM_CFLAGS@ -I$(top_srcdir)/ingen/src/common
-LIBS = @RAUL_LIBS@ @GLIBMM_LIBS@
+LIBS = @RAUL_LIBS@ @GLIBMM_LIBS@ -lpython2.4
 AM_CXXFLAGS = -I/usr/include/python2.4 $(FLAGS)
 
-EXTRA_DIST = ingen.i ingen_test.py
+EXTRA_DIST = ingen.i test_ingen.py
 
 if WITH_SWIG
 bindingsdir = $(libdir)/ingen
 bindings_LTLIBRARIES = libingen_bindings.la
 libingen_bindings_la_LDFLAGS = -no-undefined -module -avoid-version
-libingen_bindings_la_LIBADD = @RAUL_LIBS@ @GLIBMM_LIBS@ ../libs/module/libingen_module.la
-libingen_bindings_la_SOURCES = ingen_wrap.cxx
+libingen_bindings_la_LIBADD = @RAUL_LIBS@ @GLIBMM_LIBS@ #../libs/module/libingen_module.la
+libingen_bindings_la_SOURCES = ingen_wrap.cxx ingen_bindings.cpp ingen_bindings.hpp
 
 swig: ingen.i
 	swig -c++ -Wall $(FLAGS) -python ingen.i
 
 ingen_wrap.cxx: swig
 
-libingen_bindings_la: swig ingen_wrap.cxx
+libingen_bindings_la: swig ingen_wrap.cxx ingen_bindings.cpp
 
 all-local: swig
 	ln -sf .libs/libingen_bindings.so _ingen.so
@@ -28,3 +28,4 @@ clean-local:
 	rm -f *.cxx
 	rm -f *.so
 	rm -f *.o
+	rm -f ingen.py
