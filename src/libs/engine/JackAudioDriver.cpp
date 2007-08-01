@@ -204,7 +204,7 @@ JackAudioDriver::deactivate()
 	
 		cout << "[JackAudioDriver] Deactivated Jack client." << endl;
 		
-		_engine.post_processor()->stop();
+		//_engine.post_processor()->stop();
 	}
 }
 

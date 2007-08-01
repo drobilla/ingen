@@ -88,6 +88,7 @@ main(int argc, char** argv)
 			Engine* (*new_engine)(Ingen::Shared::World* world) = NULL;
 			if (engine_module->get_symbol("new_engine", (void*&)new_engine)) {
 				engine = SharedPtr<Engine>(new_engine(world));
+				world->local_engine = engine.get();
 			} else {
 				engine_module.reset();
 			}

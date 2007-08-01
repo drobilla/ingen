@@ -42,6 +42,11 @@ namespace Ingen { namespace Shared {
             return Ingen::Shared::ingen_world;
         }
     }
+
+    void iteration() {
+        Ingen::Shared::script_iteration($self);
+    }
+
     /*SLV2World slv2() { return $self->me->slv2_world; }*/
 };
 

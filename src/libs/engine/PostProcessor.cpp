@@ -19,7 +19,7 @@
 #include <iostream>
 #include <pthread.h>
 #include <raul/SRSWQueue.hpp>
-#include <raul/Maid.hpp>
+//#include <raul/Maid.hpp>
 #include "Event.hpp"
 #include "PostProcessor.hpp"
 
@@ -28,14 +28,14 @@ using std::cerr; using std::cout; using std::endl;
 namespace Ingen {
 
 
-PostProcessor::PostProcessor(Raul::Maid& maid, size_t queue_size)
-: _maid(maid),
-  _events(queue_size)
+PostProcessor::PostProcessor(/*Raul::Maid& maid, */size_t queue_size)
+    //: _maid(maid)
+    : _events(queue_size)
 {
-	set_name("PostProcessor");
+	//set_name("PostProcessor");
 }
 
-
+#if 0
 /** Post-Process every pending event.
  *
  * The PostProcessor should be whipped by the audio thread once every cycle
@@ -43,12 +43,19 @@ PostProcessor::PostProcessor(Raul::Maid& maid, size_t queue_size)
 void
 PostProcessor::_whipped()
 {
+    //process();
+}
+#endif
+
+void
+PostProcessor::process()
+{
 	while ( ! _events.empty()) {
 		Event* const ev = _events.front();
 		_events.pop();
 		assert(ev);
 		ev->post_process();
-		_maid.push(ev);
+        delete ev;
 	}
 }
 

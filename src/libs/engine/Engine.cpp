@@ -54,7 +54,7 @@ Engine::Engine(Ingen::Shared::World* world)
   _midi_driver(NULL),
   _osc_driver(NULL),
   _maid(new Raul::Maid(maid_queue_size)),
-  _post_processor(new PostProcessor(*_maid, post_processor_queue_size)),
+  _post_processor(new PostProcessor(/**_maid, */post_processor_queue_size)),
   _broadcaster(new ClientBroadcaster()),
   _object_store(new ObjectStore()),
   _node_factory(new NodeFactory(world)),
@@ -142,6 +142,7 @@ Engine::main_iteration()
 		lash_driver->process_events();
 #endif*/
 	// Run the maid (garbage collector)
+    _post_processor->process();
 	_maid->cleanup();
 	
 	return !_quit_flag;
@@ -227,7 +228,7 @@ Engine::activate()
 
 	_audio_driver->activate();
 	
-	_post_processor->start();
+	//_post_processor->start();
 
 	_activated = true;
 	
@@ -254,8 +255,8 @@ Engine::deactivate()
 	_audio_driver->root_patch()->deactivate();
 
 	// Finalize any lingering events (unlikely)
-	_post_processor->whip();
-	_post_processor->stop();
+	//_post_processor->whip();
+	//_post_processor->stop();
 
 	_audio_driver.reset();
 

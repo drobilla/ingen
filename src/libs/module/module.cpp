@@ -48,6 +48,8 @@ get_world()
 		world->slv2_world = slv2_world_new_using_rdf_world(world->rdf_world->world());
 		slv2_world_load_all(world->slv2_world);
 #endif
+		world->engine = NULL;
+		world->local_engine = NULL;
 	}
 
 	return world;

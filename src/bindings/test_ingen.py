@@ -1,39 +1,33 @@
 #!/usr/bin/env python
+
 import ingen
 import time
 
 world = ingen.World()
 
 class PythonClient(ingen.Client):
-    #def __init__(self):
-     #   ingen.Client(self)
-      #  print "Client"
+    def error(self, msg):
+        print "*** Received error:", msg
 
-    def bundle_begin():
-        print "Bundle {"
-
+    def bundle_begin(self):
+        print "*** Receiving Bundle {"
+    
+    def bundle_end(self):
+        print "*** }"
 
     def new_port(self, path, data_type, is_output):
-        print "Port:", path, data_type, is_output
+        print "*** Received Port:", path, data_type, is_output
+
+    def new_node(self, plugin_uri, path, polyphonic, nports):
+        print "*** Received Node:", plugin_uri, path, polyphonic, nports
 
 c = PythonClient()
-c.thisown = 0
-print "C OWN", c.thisown
-#print c.__base__
+c.enable()
 
 e = world.engine
-print "E OWN", e.thisown
-e.thisown = 0
-#print e
-
 e.activate()
 
-#e.register_client("foo", c)
 c.subscribe(e)
-
-c.enable()
-#c.new_patch("/foo/bar", 1)
-
 
 e.create_port("/I", "ingen:midi", False)
 e.create_port("/made", "ingen:audio", False)
@@ -43,5 +37,6 @@ e.create_port("/a", "ingen:audio", True)
 e.create_port("/script", "ingen:audio", True)
 
 while True:
-    time.sleep(1)
+    world.iteration()
+    time.sleep(0.1)
 

@@ -21,9 +21,9 @@
 #include <pthread.h>
 #include "types.hpp"
 #include <raul/SRSWQueue.hpp>
-#include <raul/Slave.hpp>
+//#include <raul/Slave.hpp>
 
-namespace Raul { class Maid; }
+//namespace Raul { class Maid; }
 
 namespace Ingen {
 
@@ -36,20 +36,26 @@ class Event;
  * is realtime-safe), which signals the processing thread through a semaphore
  * to handle the event and pass it on to the Maid.
  *
+ * Update: This is all run from main_iteration now to solve scripting
+ * thread issues.  Not sure if this is permanent/ideal or not...
+ *
  * \ingroup engine
  */
-class PostProcessor : public Raul::Slave
+class PostProcessor //: public Raul::Slave
 {
 public:
-	PostProcessor(Raul::Maid& maid, size_t queue_size);
+	PostProcessor(/*Raul::Maid& maid, */size_t queue_size);
 
 	/** Push an event on to the process queue, realtime-safe, not thread-safe. */
 	inline void push(Event* const ev) { _events.push(ev); }
 
+    /** Post-process and delete all pending events */
+    void process();
+
 private:
-	Raul::Maid&             _maid;
+	//Raul::Maid&             _maid;
 	Raul::SRSWQueue<Event*> _events;
-	virtual void            _whipped();
+	//virtual void            _whipped();
 };
 
 

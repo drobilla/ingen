@@ -106,8 +106,8 @@ QueuedEventSource::process(PostProcessor& dest, SampleCount nframes, FrameTime c
 		++num_events_processed;
 	}
 
-	if (num_events_processed > 0)
-		dest.whip();
+	/*if (num_events_processed > 0)
+	    dest.whip();*/
 	//else
 	//	cerr << "NO PROC: queued: " << unprepared_events() << ", stamped: " << !_stamped_queue.empty() << endl;
 }

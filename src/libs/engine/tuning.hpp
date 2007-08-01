@@ -30,9 +30,8 @@ static const size_t pre_processor_queue_size   = 1024;
 static const size_t post_processor_queue_size  = 1024;
 static const size_t maid_queue_size            = 1024;
 
-// This controls both the LASH event processing rate and the Maid cleanup rate
-// (both of which are driven from the main thread)
-static const timespec main_rate       = { 0, 500000000 }; // 1/2 second
+//static const timespec main_rate     = { 0, 500000000 }; // 1/2 second
+static const timespec main_rate       = { 0, 125000000 }; // 1/8 second
 
 
 } // namespace Ingen

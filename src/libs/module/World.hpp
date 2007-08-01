@@ -30,6 +30,9 @@
 #endif
 
 namespace Ingen {
+
+class Engine;
+
 namespace Shared {
 
 class EngineInterface;
@@ -52,6 +55,8 @@ struct World {
 	Raul::RDF::World* rdf_world;
 
     EngineInterface* engine;
+
+    Engine* local_engine;
 };
 
 
