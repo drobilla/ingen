@@ -42,22 +42,22 @@ class DriverPort;
 class AddPortEvent : public QueuedEvent
 {
 public:
-	AddPortEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, const string& path, const string& type, bool is_output, QueuedEventSource* source);
+	AddPortEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& type, bool is_output, QueuedEventSource* source);
 
 	void pre_process();
 	void execute(SampleCount nframes, FrameTime start, FrameTime end);
 	void post_process();
 
 private:
-	Path          _path;
-	string        _type;
-	bool          _is_output;
-	DataType      _data_type;
-	Patch*        _patch;
-	Port*         _patch_port;
+	Raul::Path          _path;
+	string              _type;
+	bool                _is_output;
+	DataType            _data_type;
+	Patch*              _patch;
+	Port*               _patch_port;
 	Raul::Array<Port*>* _ports_array; ///< New (external) ports array for Patch
-	DriverPort*   _driver_port; ///< Driver (eg Jack) port if this is a toplevel port
-	bool          _succeeded;
+	DriverPort*         _driver_port; ///< Driver (eg Jack) port if this is a toplevel port
+	bool                _succeeded;
 };
 
 

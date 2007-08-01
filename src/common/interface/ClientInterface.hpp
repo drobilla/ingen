@@ -18,6 +18,7 @@
 #ifndef CLIENTINTERFACE_H
 #define CLIENTINTERFACE_H
 
+#include <stdio.h>
 #include <string>
 #include <inttypes.h>
 #include <raul/Atom.hpp>
@@ -38,10 +39,11 @@ public:
 	
 	virtual ~ClientInterface() {}
 
-    /** Wrapper for engine->register_client to appease SWIG */
-    virtual void subscribe(EngineInterface* engine) = 0;
-	
-	virtual void response(int32_t id, bool success, std::string msg) = 0;
+	inline const std::string& uri() const { return _uri; }
+
+	virtual void response_ok(int32_t id) = 0;
+
+	virtual void response_error(int32_t id, const std::string& msg) = 0;
 	
 	virtual void enable() = 0;
 	
@@ -60,65 +62,72 @@ public:
 	/** Transfers are 'weak' bundles.  These are used to break a large group
 	 * of similar/related messages into larger chunks (solely for communication
 	 * efficiency).  A bunch of messages in a transfer will arrive as 1 or more
-	 * bundles (so a transfer can exceep the maximum bundle (packet) size).
+	 * bundles (so a transfer can exceed the maximum bundle (packet) size).
 	 */
 	virtual void transfer_begin() = 0;
 	virtual void transfer_end()   = 0;
 	
-	virtual void error(std::string msg) = 0;
+	virtual void error(const std::string& msg) = 0;
 	
 	virtual void num_plugins(uint32_t num_plugins) = 0;
 	
-	virtual void new_plugin(std::string uri,
-	                        std::string type_uri,
-	                        std::string name) = 0;
+	virtual void new_plugin(const std::string& uri,
+	                        const std::string& type_uri,
+	                        const std::string& name) = 0;
 	
-	virtual void new_patch(std::string path, uint32_t poly) = 0;
+	virtual void new_patch(const std::string& path, uint32_t poly) = 0;
 	
-	virtual void new_node(std::string plugin_uri,
-	                      std::string node_path,
-	                      bool        is_polyphonic,
-	                      uint32_t    num_ports) = 0;
+	virtual void new_node(const std::string& plugin_uri,
+	                      const std::string& node_path,
+	                      bool               is_polyphonic,
+	                      uint32_t           num_ports) = 0;
 	
-	virtual void new_port(std::string path,
-	                      std::string data_type,
-	                      bool        is_output) = 0;
+	virtual void new_port(const std::string& path,
+	                      const std::string& data_type,
+	                      bool               is_output) = 0;
 	
-	virtual void patch_enabled(std::string path) = 0;
+	virtual void patch_enabled(const std::string& path) = 0;
 	
-	virtual void patch_disabled(std::string path) = 0;
+	virtual void patch_disabled(const std::string& path) = 0;
 	
-	virtual void patch_cleared(std::string path) = 0;
+	virtual void patch_cleared(const std::string& path) = 0;
 	
-	virtual void object_renamed(std::string old_path,
-	                            std::string new_path) = 0;
+	virtual void object_renamed(const std::string& old_path,
+	                            const std::string& new_path) = 0;
 	
-	virtual void object_destroyed(std::string path) = 0;
+	virtual void object_destroyed(const std::string& path) = 0;
 	
-	virtual void connection(std::string src_port_path,
-	                        std::string dst_port_path) = 0;
+	virtual void connection(const std::string& src_port_path,
+	                        const std::string& dst_port_path) = 0;
 	
-	virtual void disconnection(std::string src_port_path,
-	                           std::string dst_port_path) = 0;
+	virtual void disconnection(const std::string& src_port_path,
+	                           const std::string& dst_port_path) = 0;
 	
-	virtual void metadata_update(std::string subject_path,
-	                             std::string predicate,
-	                             Raul::Atom  value) = 0;
+	virtual void metadata_update(const std::string& subject_path,
+	                             const std::string& predicate,
+	                             const Raul::Atom&  value) = 0;
 	
-	virtual void control_change(std::string port_path,
-	                            float       value) = 0;
+	virtual void control_change(const std::string& port_path,
+	                            float              value) = 0;
 	
-	virtual void program_add(std::string node_path,
-	                         uint32_t    bank,
-	                         uint32_t    program,
-	                         std::string program_name) = 0;
+	virtual void program_add(const std::string& node_path,
+	                         uint32_t           bank,
+	                         uint32_t           program,
+	                         const std::string& program_name) = 0;
 	
-	virtual void program_remove(std::string node_path,
-	                            uint32_t    bank,
-	                            uint32_t    program) = 0;
+	virtual void program_remove(const std::string& node_path,
+	                            uint32_t           bank,
+	                            uint32_t           program) = 0;
 	
 protected:
-	ClientInterface() {}
+	ClientInterface(const std::string& uri) : _uri(uri) {}
+	ClientInterface() {
+		static char uri_buf[20];
+		snprintf(uri_buf, 127, "%p", this);
+		_uri = uri_buf;
+	}
+
+	std::string _uri;
 };
 
 

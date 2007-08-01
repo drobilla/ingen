@@ -16,7 +16,7 @@
  */
 
 #include "RequestPluginsEvent.hpp"
-#include "interface/Responder.hpp"
+#include "Responder.hpp"
 #include "Engine.hpp"
 #include "ClientBroadcaster.hpp"
 #include "NodeFactory.hpp"
@@ -24,7 +24,7 @@
 namespace Ingen {
 
 
-RequestPluginsEvent::RequestPluginsEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp)
+RequestPluginsEvent::RequestPluginsEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp)
 : QueuedEvent(engine, responder, timestamp)
 {
 }
@@ -33,8 +33,6 @@ RequestPluginsEvent::RequestPluginsEvent(Engine& engine, SharedPtr<Shared::Respo
 void
 RequestPluginsEvent::pre_process()
 {
-	_client = _engine.broadcaster()->client(_responder->client_uri());
-	
 	// Take a copy to send in the post processing thread (to avoid problems
 	// because std::list isn't thread safe)
 	_plugins = _engine.node_factory()->plugins();
@@ -46,8 +44,8 @@ RequestPluginsEvent::pre_process()
 void
 RequestPluginsEvent::post_process()
 {
-	if (_client) {
-		_engine.broadcaster()->send_plugins_to(_client, _plugins);
+	if (_responder->client()) {
+		_engine.broadcaster()->send_plugins_to(_responder->client(), _plugins);
 		_responder->respond_ok();
 	} else {
 		_responder->respond_error("Unable to find client to send plugins");

@@ -22,11 +22,9 @@
 #include <string>
 #include <lo/lo.h>
 #include "interface/EngineInterface.hpp"
-#include "interface/Responder.hpp"
 using std::string;
 using Ingen::Shared::EngineInterface;
 using Ingen::Shared::ClientInterface;
-using Ingen::Shared::Responder;
 
 namespace Ingen {
 namespace Client {
@@ -51,7 +49,6 @@ public:
 	inline size_t next_id()
 	{ int32_t ret = (_id == -1) ? -1 : _id++; return ret; }
 
-	void set_responder(SharedPtr<Responder> responder) { throw; }
 	void set_next_response_id(int32_t id) { _id = id; }
 	void disable_responses() { _id = -1; }
 
@@ -61,7 +58,7 @@ public:
 	/* *** EngineInterface implementation below here *** */
 
 	// Client registration
-	void register_client(const string& uri, ClientInterface* client);
+	void register_client(ClientInterface* client);
 	void unregister_client(const string& uri);
 
 	

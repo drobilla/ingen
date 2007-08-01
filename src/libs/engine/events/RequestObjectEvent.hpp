@@ -38,16 +38,15 @@ using Shared::ClientInterface;
 class RequestObjectEvent : public QueuedEvent
 {
 public:
-	RequestObjectEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, const string& port_path);
+	RequestObjectEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& port_path);
 
 	void pre_process();
 	void execute(SampleCount nframes, FrameTime start, FrameTime end);
 	void post_process();
 
 private:
-	string           _path;
-	GraphObject*     _object;
-	ClientInterface* _client;
+	string       _path;
+	GraphObject* _object;
 };
 
 

@@ -20,7 +20,7 @@
 #include <raul/List.hpp>
 #include <raul/Path.hpp>
 #include <raul/Array.hpp>
-#include "interface/Responder.hpp"
+#include "Responder.hpp"
 #include "Engine.hpp"
 #include "Node.hpp"
 #include "Connection.hpp"
@@ -39,7 +39,7 @@ using std::cerr; using std::endl;
 namespace Ingen {
 
 
-DisconnectPortEvent::DisconnectPortEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, const string& port_path)
+DisconnectPortEvent::DisconnectPortEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& port_path)
 : QueuedEvent(engine, responder, timestamp),
   _port_path(port_path),
   _patch(NULL),
@@ -104,7 +104,7 @@ DisconnectPortEvent::pre_process()
 	for (Raul::List<Connection*>::const_iterator i = _patch->connections().begin(); i != _patch->connections().end(); ++i) {
 		c = (*i);
 		if ((c->src_port() == _port || c->dst_port() == _port) && !c->pending_disconnection()) {
-			DisconnectionEvent* ev = new DisconnectionEvent(_engine, SharedPtr<Shared::Responder>(new Responder()), _time,
+			DisconnectionEvent* ev = new DisconnectionEvent(_engine, SharedPtr<Responder>(new Responder()), _time,
 					c->src_port(), c->dst_port());
 			ev->pre_process();
 			_disconnection_events.push_back(new Raul::ListNode<DisconnectionEvent*>(ev));

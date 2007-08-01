@@ -16,7 +16,7 @@
  */
 
 #include "NoteOnEvent.hpp"
-#include "interface/Responder.hpp"
+#include "Responder.hpp"
 #include "Engine.hpp"
 #include "ObjectStore.hpp"
 #include "Node.hpp"
@@ -31,7 +31,7 @@ namespace Ingen {
  *
  * Used to be triggered by MIDI.  Not used anymore.
  */
-NoteOnEvent::NoteOnEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, Node* patch, uchar note_num, uchar velocity)
+NoteOnEvent::NoteOnEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, Node* patch, uchar note_num, uchar velocity)
 : Event(engine, responder, timestamp),
   _node(patch),
   _note_num(note_num),
@@ -45,7 +45,7 @@ NoteOnEvent::NoteOnEvent(Engine& engine, SharedPtr<Shared::Responder> responder,
  *
  * Triggered by OSC.
  */
-NoteOnEvent::NoteOnEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, const string& node_path, uchar note_num, uchar velocity)
+NoteOnEvent::NoteOnEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& node_path, uchar note_num, uchar velocity)
 : Event(engine, responder, timestamp),
   _node(NULL),
   _node_path(node_path),

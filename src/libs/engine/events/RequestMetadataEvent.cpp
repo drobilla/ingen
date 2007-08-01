@@ -17,7 +17,7 @@
 
 #include "RequestMetadataEvent.hpp"
 #include <string>
-#include "interface/Responder.hpp"
+#include "Responder.hpp"
 #include "Engine.hpp"
 #include "GraphObject.hpp"
 #include "ObjectStore.hpp"
@@ -28,12 +28,11 @@ using std::string;
 namespace Ingen {
 
 
-RequestMetadataEvent::RequestMetadataEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, const string& node_path, const string& key)
+RequestMetadataEvent::RequestMetadataEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& node_path, const string& key)
 : QueuedEvent(engine, responder, timestamp),
   _path(node_path),
   _key(key),
-  _object(NULL),
-  _client(NULL)
+  _object(NULL)
 {
 }
 
@@ -41,9 +40,7 @@ RequestMetadataEvent::RequestMetadataEvent(Engine& engine, SharedPtr<Shared::Res
 void
 RequestMetadataEvent::pre_process()
 {
-	_client = _engine.broadcaster()->client(_responder->client_uri());
-	
-	if (_client) {
+	if (_responder->client()) {
 		_object = _engine.object_store()->find_object(_path);
 		if (_object == NULL) {
 			QueuedEvent::pre_process();
@@ -60,14 +57,14 @@ RequestMetadataEvent::pre_process()
 void
 RequestMetadataEvent::post_process()
 {
-	if (_client) {
+	if (_responder->client()) {
 		if (!_object) {
 			string msg = "Unable to find metadata subject ";
 			msg += _path;
 			_responder->respond_error(msg);
 		} else {
 			_responder->respond_ok();
-			_client->metadata_update(_path, _key, _value);
+			_responder->client()->metadata_update(_path, _key, _value);
 		}
 	} else {
 		_responder->respond_error("Unknown client");

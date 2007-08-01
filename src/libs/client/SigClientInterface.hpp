@@ -43,7 +43,8 @@ public:
 
 	// Signal parameters match up directly with ClientInterface calls
 	
-	sigc::signal<void, int32_t, bool, string>              response_sig;
+	sigc::signal<void, int32_t>                            response_ok_sig;
+	sigc::signal<void, int32_t, string>                    response_error_sig;
 	sigc::signal<void>                                     bundle_begin_sig; 
 	sigc::signal<void>                                     bundle_end_sig; 
 	sigc::signal<void, string>                             error_sig; 
@@ -80,55 +81,58 @@ protected:
 
 	void num_plugins(uint32_t num) { num_plugins_sig.emit(num); }
 
-	void response(int32_t id, bool success, string msg)
-		{ response_sig.emit(id, success, msg); }
+	void response_ok(int32_t id)
+		{ response_ok_sig.emit(id); }
 
-	void error(string msg)
+	void response_error(int32_t id, const string& msg)
+		{ response_error_sig.emit(id, msg); }
+	
+	void error(const string& msg)
 		{ error_sig.emit(msg); }
 	
-	void new_plugin(string uri, string type_uri, string name)
+	void new_plugin(const string& uri, const string& type_uri, const string& name)
 		{ new_plugin_sig.emit(uri, type_uri, name); }
 	
-	void new_patch(string path, uint32_t poly)
+	void new_patch(const string& path, uint32_t poly)
 		{ new_patch_sig.emit(path, poly); }
 	
-	void new_node(string plugin_uri, string node_path, bool is_polyphonic, uint32_t num_ports)
+	void new_node(const string& plugin_uri, const string& node_path, bool is_polyphonic, uint32_t num_ports)
 		{ new_node_sig.emit(plugin_uri, node_path, is_polyphonic, num_ports); }
 	
-	void new_port(string path, string data_type, bool is_output)
+	void new_port(const string& path, const string& data_type, bool is_output)
 		{ new_port_sig.emit(path, data_type, is_output); }
 
-	void connection(string src_port_path, string dst_port_path)
+	void connection(const string& src_port_path, const string& dst_port_path)
 		{ connection_sig.emit(src_port_path, dst_port_path); }
 
-	void object_destroyed(string path)
+	void object_destroyed(const string& path)
 		{ object_destroyed_sig.emit(path); }
 	
-	void patch_enabled(string path)
+	void patch_enabled(const string& path)
 		{ patch_enabled_sig.emit(path); }
 	
-	void patch_disabled(string path)
+	void patch_disabled(const string& path)
 		{ patch_disabled_sig.emit(path); }
 
-	void patch_cleared(string path)
+	void patch_cleared(const string& path)
 		{ patch_cleared_sig.emit(path); }
 
-	void object_renamed(string old_path, string new_path)
+	void object_renamed(const string& old_path, const string& new_path)
 		{ object_renamed_sig.emit(old_path, new_path); }
 	
-	void disconnection(string src_port_path, string dst_port_path)
+	void disconnection(const string& src_port_path, const string& dst_port_path)
 		{ disconnection_sig.emit(src_port_path, dst_port_path); }
 	
-	void metadata_update(string path, string key, Raul::Atom value)
+	void metadata_update(const string& path, const string& key, const Raul::Atom& value)
 		{ metadata_update_sig.emit(path, key, value); }
 
-	void control_change(string port_path, float value)
+	void control_change(const string& port_path, float value)
 		{ control_change_sig.emit(port_path, value); }
 
-	void program_add(string path, uint32_t bank, uint32_t program, string name)
+	void program_add(const string& path, uint32_t bank, uint32_t program, const string& name)
 		{ program_add_sig.emit(path, bank, program, name); }
 	
-	void program_remove(string path, uint32_t bank, uint32_t program)
+	void program_remove(const string& path, uint32_t bank, uint32_t program)
 		{ program_remove_sig.emit(path, bank, program); }
 
 protected:

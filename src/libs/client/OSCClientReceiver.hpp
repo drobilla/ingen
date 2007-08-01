@@ -66,7 +66,7 @@ public:
 	//void enable() {}
 	//void disable() {}
 
-	void start();
+	void start(bool dump_osc);
 	void stop();
 	
 	int         listen_port() { return _listen_port; }
@@ -75,7 +75,8 @@ public:
 private:
 	void setup_callbacks();
 	
-	static void error_cb(int num, const char* msg, const char* path);
+	static void lo_error_cb(int num, const char* msg, const char* path);
+
 	static int  generic_cb(const char* path, const char* types, lo_arg** argv, int argc, void* data, void* user_data);
 	static int  unknown_cb(const char* path, const char* types, lo_arg** argv, int argc, void* data, void* osc_receiver);
 	
@@ -83,7 +84,8 @@ private:
 	lo_server_thread _st;
 
 	LO_HANDLER(error);
-	LO_HANDLER(response);
+	LO_HANDLER(response_ok);
+	LO_HANDLER(response_error);
 	LO_HANDLER(num_plugins);
 	LO_HANDLER(plugin);
 	LO_HANDLER(plugin_list_end);

@@ -35,7 +35,7 @@ class Patch;
 class DisablePatchEvent : public QueuedEvent
 {
 public:
-	DisablePatchEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, const string& patch_path);
+	DisablePatchEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& patch_path);
 	
 	void pre_process();
 	void execute(SampleCount nframes, FrameTime start, FrameTime end);

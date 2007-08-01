@@ -37,7 +37,6 @@ class Port;
 class Plugin;
 class Patch;
 class Connection;
-namespace Shared { class Responder; }
 using Shared::ClientInterface;
 
 

@@ -41,7 +41,7 @@ class Plugin;
 class CreatePatchEvent : public QueuedEvent
 {
 public:
-	CreatePatchEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, const string& path, int poly);
+	CreatePatchEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path, int poly);
 
 	void pre_process();
 	void execute(SampleCount nframes, FrameTime start, FrameTime end);
@@ -50,7 +50,7 @@ public:
 private:
 	enum ErrorType { NO_ERROR, OBJECT_EXISTS, PARENT_NOT_FOUND, INVALID_POLY };
 	
-	Path              _path;
+	Raul::Path        _path;
 	Patch*            _patch;
 	Patch*            _parent;
 	Raul::Array<Node*>*     _process_order;

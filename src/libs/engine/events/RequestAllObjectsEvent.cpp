@@ -16,7 +16,7 @@
  */
 
 #include "RequestAllObjectsEvent.hpp"
-#include "interface/Responder.hpp"
+#include "Responder.hpp"
 #include "Engine.hpp"
 #include "ObjectSender.hpp"
 #include "ClientBroadcaster.hpp"
@@ -25,7 +25,7 @@
 namespace Ingen {
 
 
-RequestAllObjectsEvent::RequestAllObjectsEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp)
+RequestAllObjectsEvent::RequestAllObjectsEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp)
 : QueuedEvent(engine, responder, timestamp)
 {
 }
@@ -34,8 +34,6 @@ RequestAllObjectsEvent::RequestAllObjectsEvent(Engine& engine, SharedPtr<Shared:
 void
 RequestAllObjectsEvent::pre_process()
 {
-	_client = _engine.broadcaster()->client(_responder->client_uri());
-	
 	QueuedEvent::pre_process();
 }
 
@@ -43,13 +41,13 @@ RequestAllObjectsEvent::pre_process()
 void
 RequestAllObjectsEvent::post_process()
 {
-	if (_client) {
+	if (_responder->client()) {
 		_responder->respond_ok();
 
 		// Everything is a child of the root patch, so this sends it all
 		Patch* root = _engine.object_store()->find_patch("/");
-		if (root)
-			ObjectSender::send_patch(_client, root, true);
+		if (root && _responder->client())
+			ObjectSender::send_patch(_responder->client(), root, true);
 
 	} else {
 		_responder->respond_error("Unable to find client to send all objects");

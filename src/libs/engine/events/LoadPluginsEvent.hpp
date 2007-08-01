@@ -34,7 +34,7 @@ class LoadPluginsEvent : public QueuedEvent
 {
 public:
 	LoadPluginsEvent(Engine&                      engine,
-	                 SharedPtr<Shared::Responder> responder,
+	                 SharedPtr<Responder> responder,
 	                 SampleCount                  timestamp,
 	                 QueuedEventSource*           source);
 	

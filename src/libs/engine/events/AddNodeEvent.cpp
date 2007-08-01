@@ -15,8 +15,11 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <raul/Maid.hpp>
+#include <raul/Path.hpp>
+#include <raul/Path.hpp>
 #include "AddNodeEvent.hpp"
-#include "interface/Responder.hpp"
+#include "Responder.hpp"
 #include "Patch.hpp"
 #include "Node.hpp"
 #include "Tree.hpp"
@@ -25,16 +28,13 @@
 #include "Patch.hpp"
 #include "NodeFactory.hpp"
 #include "ClientBroadcaster.hpp"
-#include <raul/Maid.hpp>
-#include <raul/Path.hpp>
 #include "ObjectStore.hpp"
-#include <raul/Path.hpp>
 #include "Port.hpp"
 
 namespace Ingen {
 
 
-AddNodeEvent::AddNodeEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, const string& path,
+AddNodeEvent::AddNodeEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path,
 		const string& plugin_uri, bool poly)
 : QueuedEvent(engine, responder, timestamp),
   _path(path),
@@ -52,7 +52,7 @@ AddNodeEvent::AddNodeEvent(Engine& engine, SharedPtr<Shared::Responder> responde
  *
  * Do not use.
  */
-AddNodeEvent::AddNodeEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, const string& path,
+AddNodeEvent::AddNodeEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path,
 		const string& plugin_type, const string& plugin_lib, const string& plugin_label, bool poly)
 : QueuedEvent(engine, responder, timestamp),
   _path(path),

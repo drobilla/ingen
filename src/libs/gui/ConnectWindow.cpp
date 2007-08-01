@@ -26,7 +26,6 @@
 #include "interface/EngineInterface.hpp"
 #include "engine/tuning.hpp"
 #include "engine/Engine.hpp"
-#include "engine/DirectResponder.hpp"
 #include "engine/QueuedEngineInterface.hpp"
 #include "client/OSCClientReceiver.hpp"
 #include "client/OSCEngineSender.hpp"
@@ -118,12 +117,10 @@ ConnectWindow::start(SharedPtr<Ingen::Engine> engine, SharedPtr<Shared::EngineIn
 		ThreadedSigClientInterface* tsci = new ThreadedSigClientInterface(Ingen::event_queue_size);
 		SharedPtr<SigClientInterface> client(tsci);
 		
-		if (interface) {
-			App::instance().attach(interface, client);
-			interface->set_responder(SharedPtr<Ingen::Shared::Responder>(new Ingen::DirectResponder(tsci, 1)));
-		}
-
 		engine->activate();
+		
+		if (interface)
+			App::instance().attach(interface, client);
 
 		_connect_stage = 0;
 
@@ -254,9 +251,6 @@ ConnectWindow::connect()
 		
 		App::instance().attach(engine_interface, client);
 
-		engine_interface->set_responder(SharedPtr<Ingen::Shared::Responder>(
-                    new Ingen::DirectResponder(tsci, 1)));
-
 		_engine->activate();
 
 		Glib::signal_timeout().connect(
@@ -357,8 +351,9 @@ ConnectWindow::gtk_callback()
 		_progress_label->set_text("Connecting to engine...");
 		present();
 
-		App::instance().client()->response_sig.connect(sigc::mem_fun(this, &ConnectWindow::response_received));
-
+		App::instance().client()->response_ok_sig.connect(
+				sigc::mem_fun(this, &ConnectWindow::response_ok_received));
+		
 		_ping_id = rand();
 		while (_ping_id == -1)
 			_ping_id = rand();
@@ -387,7 +382,7 @@ ConnectWindow::gtk_callback()
 		// FIXME
 		//auto_ptr<ClientInterface> client(new ThreadedSigClientInterface();
 		// FIXME: client URI
-		App::instance().engine()->register_client("", App::instance().client().get());
+		App::instance().engine()->register_client(App::instance().client().get());
 		App::instance().engine()->load_plugins();
 		++_connect_stage;
 	} else if (_connect_stage == 3) {

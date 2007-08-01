@@ -138,6 +138,8 @@ App::attach(const SharedPtr<EngineInterface>& engine, const SharedPtr<SigClientI
 	assert( ! _client);
 	assert( ! _store);
 	assert( ! _loader);
+
+	engine->register_client(client.get());
 	
 	_engine = engine;
 	_client = client;

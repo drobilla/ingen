@@ -24,7 +24,7 @@
 #include <raul/SharedPtr.hpp>
 #include "interface/EngineInterface.hpp"
 #include "interface/ClientInterface.hpp"
-#include "interface/Responder.hpp"
+#include "Responder.hpp"
 #include "QueuedEventSource.hpp"
 #include "Engine.hpp"
 using std::string;
@@ -64,11 +64,8 @@ public:
 	
 	void set_next_response_id(int32_t id);
 
-	virtual void set_responder(SharedPtr<Shared::Responder> responder);
-	virtual void disable_responses();
-
 	// Client registration
-	virtual void register_client(const string& uri, ClientInterface* client);
+	virtual void register_client(ClientInterface* client);
 	virtual void unregister_client(const string& uri);
 	
 
@@ -154,11 +151,11 @@ public:
 	virtual void request_all_objects();
 
 protected:
+	
+	virtual void disable_responses();
 
-	/** Where responses to current messages will go. */
-	SharedPtr<Shared::Responder> _responder;
-
-	Engine& _engine;
+	SharedPtr<Responder> _responder; ///< NULL if responding disabled
+	Engine&              _engine;
 
 private:
 	SampleCount now() const;

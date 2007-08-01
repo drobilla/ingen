@@ -17,7 +17,7 @@
 
 #include "SetMetadataEvent.hpp"
 #include <string>
-#include "interface/Responder.hpp"
+#include "Responder.hpp"
 #include "Engine.hpp"
 #include "ClientBroadcaster.hpp"
 #include "GraphObject.hpp"
@@ -28,7 +28,7 @@ using std::string;
 namespace Ingen {
 
 
-SetMetadataEvent::SetMetadataEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, const string& path, const string& key, const Atom& value)
+SetMetadataEvent::SetMetadataEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& key, const Atom& value)
 : QueuedEvent(engine, responder, timestamp),
   _path(path),
   _key(key),

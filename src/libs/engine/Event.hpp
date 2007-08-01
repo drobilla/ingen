@@ -21,18 +21,13 @@
 #include <cassert>
 #include <raul/SharedPtr.hpp>
 #include <raul/Deletable.hpp>
-#include "interface/Responder.hpp"
 #include "types.hpp"
 #include "ThreadManager.hpp"
-
-namespace Raul { class Path; }
-using Raul::Path;
-
-using Ingen::Shared::Responder;
 
 namespace Ingen {	
 
 class Engine;
+class Responder;
 
 
 /** Base class for all events (both realtime and QueuedEvent).
@@ -75,17 +70,17 @@ public:
 	inline SampleCount time() { return _time; }
 		
 protected:
-	Event(Engine& engine, SharedPtr<Shared::Responder> responder, FrameTime time)
+	Event(Engine& engine, SharedPtr<Responder> responder, FrameTime time)
 	: _engine(engine)
 	, _responder(responder)
 	, _time(time)
 	, _executed(false)
 	{}
 	
-	Engine&                      _engine;
-	SharedPtr<Shared::Responder> _responder;
-	FrameTime                    _time;
-	bool                         _executed;
+	Engine&              _engine;
+	SharedPtr<Responder> _responder;
+	FrameTime            _time;
+	bool                 _executed;
 };
 
 

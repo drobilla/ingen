@@ -16,7 +16,7 @@
  */
 
 #include "RenameEvent.hpp"
-#include "interface/Responder.hpp"
+#include "Responder.hpp"
 #include "Patch.hpp"
 #include "Node.hpp"
 #include "Tree.hpp"
@@ -30,7 +30,7 @@ using namespace std;
 namespace Ingen {
 
 
-RenameEvent::RenameEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, const string& path, const string& name)
+RenameEvent::RenameEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& name)
 : QueuedEvent(engine, responder, timestamp),
   _old_path(path),
   _name(name),

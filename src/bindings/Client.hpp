@@ -5,86 +5,86 @@
 class Client : public Ingen::Shared::ClientInterface
 {
 public:
-    //Client() : Ingen::Shared::ClientInterface() {}
-	
     /** Wrapper for engine->register_client to appease SWIG */
     virtual void subscribe(Ingen::Shared::EngineInterface* engine) {
-        engine->register_client("FIXME", this);
+        engine->register_client(this);
     }
 	
-	virtual void response(int32_t id, bool success, std::string msg) {}
+	virtual void response_ok(int32_t id) {}
 	
-	virtual void enable() {}
+	virtual void response_error(int32_t id, const std::string& msg) {}
+	
+	virtual void enable()  {}
 	
 	/** Signifies the client does not wish to receive any messages until
 	 * enable is called.  Useful for performance and avoiding feedback.
 	 */
-	virtual void disable() {}
+	virtual void disable()  {}
 
 	/** Bundles are a group of messages that are guaranteed to be in an
 	 * atomic unit with guaranteed order (eg a packet).  For datagram
 	 * protocols (like UDP) there is likely an upper limit on bundle size.
 	 */
-	virtual void bundle_begin() {}
-	virtual void bundle_end()   {}
+	virtual void bundle_begin()  {}
+	virtual void bundle_end()    {}
 	
 	/** Transfers are 'weak' bundles.  These are used to break a large group
 	 * of similar/related messages into larger chunks (solely for communication
 	 * efficiency).  A bunch of messages in a transfer will arrive as 1 or more
-	 * bundles (so a transfer can exceep the maximum bundle (packet) size).
+	 * bundles (so a transfer can exceed the maximum bundle (packet) size).
 	 */
-	virtual void transfer_begin() {}
-	virtual void transfer_end()   {}
+	virtual void transfer_begin()  {}
+	virtual void transfer_end()    {}
 	
-	virtual void error(std::string msg) {}
+	virtual void error(const std::string& msg)  {}
 	
-	virtual void num_plugins(uint32_t num_plugins) {}
+	virtual void num_plugins(uint32_t num_plugins)  {}
 	
-	virtual void new_plugin(std::string uri,
-	                        std::string type_uri,
-	                        std::string name) {}
+	virtual void new_plugin(const std::string& uri,
+	                        const std::string& type_uri,
+	                        const std::string& name)  {}
 	
-	virtual void new_patch(std::string path, uint32_t poly) {}
+	virtual void new_patch(const std::string& path, uint32_t poly)  {}
 	
-	virtual void new_node(std::string plugin_uri,
-	                      std::string node_path,
-	                      bool        is_polyphonic,
-	                      uint32_t    num_ports) {}
+	virtual void new_node(const std::string& plugin_uri,
+	                      const std::string& node_path,
+	                      bool               is_polyphonic,
+	                      uint32_t           num_ports)  {}
 	
-	virtual void new_port(std::string path,
-	                      std::string data_type,
-	                      bool        is_output) {}
+	virtual void new_port(const std::string& path,
+	                      const std::string& data_type,
+	                      bool               is_output)  {}
 	
-	virtual void patch_enabled(std::string path) {}
+	virtual void patch_enabled(const std::string& path)  {}
 	
-	virtual void patch_disabled(std::string path) {}
+	virtual void patch_disabled(const std::string& path)  {}
 	
-	virtual void patch_cleared(std::string path) {}
+	virtual void patch_cleared(const std::string& path)  {}
 	
-	virtual void object_renamed(std::string old_path,
-	                            std::string new_path) {}
+	virtual void object_renamed(const std::string& old_path,
+	                            const std::string& new_path)  {}
 	
-	virtual void object_destroyed(std::string path) {}
+	virtual void object_destroyed(const std::string& path)  {}
 	
-	virtual void connection(std::string src_port_path,
-	                        std::string dst_port_path) {}
+	virtual void connection(const std::string& src_port_path,
+	                        const std::string& dst_port_path)  {}
 	
-	virtual void disconnection(std::string src_port_path,
-	                           std::string dst_port_path) {}
+	virtual void disconnection(const std::string& src_port_path,
+	                           const std::string& dst_port_path)  {}
 	
-	virtual void metadata_update(std::string subject_path,
-	                             std::string predicate,
-	                             Raul::Atom  value) {}
+	virtual void metadata_update(const std::string& subject_path,
+	                             const std::string& predicate,
+	                             const Raul::Atom&  value)  {}
 	
-	virtual void control_change(std::string port_path,
-	                            float       value) {}
+	virtual void control_change(const std::string& port_path,
+	                            float              value)  {}
 	
-	virtual void program_add(std::string node_path,
-	                         uint32_t    bank,
-	                         uint32_t    program,
-	                         std::string program_name) {}
+	virtual void program_add(const std::string& node_path,
+	                         uint32_t           bank,
+	                         uint32_t           program,
+	                         const std::string& program_name)  {}
 	
-	virtual void program_remove(std::string node_path,
-	                            uint32_t    bank,
-	                            uint32_t    program) {}
+	virtual void program_remove(const std::string& node_path,
+	                            uint32_t           bank,
+	                            uint32_t           program)  {}
 };

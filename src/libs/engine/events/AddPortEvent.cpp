@@ -19,7 +19,7 @@
 #include <raul/Array.hpp>
 #include <raul/List.hpp>
 #include <raul/Maid.hpp>
-#include "interface/Responder.hpp"
+#include "Responder.hpp"
 #include "AddPortEvent.hpp"
 #include "Patch.hpp"
 #include "Tree.hpp"
@@ -39,7 +39,7 @@ namespace Ingen {
 
 
 AddPortEvent::AddPortEvent(Engine&              engine,
-                           SharedPtr<Shared::Responder> responder,
+                           SharedPtr<Responder> responder,
                            SampleCount          timestamp,
                            const string&        path,
                            const string&        type,

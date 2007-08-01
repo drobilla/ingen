@@ -28,7 +28,7 @@ using std::cerr; using std::endl;
 namespace Ingen {
 
 
-DSSIUpdateEvent::DSSIUpdateEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, const string& path, const string& url)
+DSSIUpdateEvent::DSSIUpdateEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& url)
 : QueuedEvent(engine, responder, timestamp),
   _path(path),
   _url(url),

@@ -43,7 +43,7 @@ class OutputPort;
 class DisconnectNodeEvent : public QueuedEvent
 {
 public:
-	DisconnectNodeEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, const string& node_path);
+	DisconnectNodeEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& node_path);
 	DisconnectNodeEvent(Engine& engine, Node* node);
 	~DisconnectNodeEvent();
 
@@ -52,9 +52,9 @@ public:
 	void post_process();
 
 private:
-	Path                      _node_path;
-	Patch*                    _patch;
-	Node*                     _node;
+	Raul::Path                      _node_path;
+	Patch*                          _patch;
+	Node*                           _node;
 	Raul::List<DisconnectionEvent*> _disconnection_events;
 	
 	bool _succeeded;

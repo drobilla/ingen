@@ -36,13 +36,10 @@ namespace Shared {
 class RequestAllObjectsEvent : public QueuedEvent
 {
 public:
-	RequestAllObjectsEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp);
+	RequestAllObjectsEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp);
 
 	void pre_process();
 	void post_process();
-	
-private:
-	ClientInterface* _client;
 };
 
 

@@ -18,7 +18,7 @@
 #include "RequestPluginEvent.hpp"
 #include <string>
 #include "interface/ClientInterface.hpp"
-#include "interface/Responder.hpp"
+#include "Responder.hpp"
 #include "Engine.hpp"
 #include "Port.hpp"
 #include "ObjectStore.hpp"
@@ -31,7 +31,7 @@ using std::string;
 namespace Ingen {
 
 
-RequestPluginEvent::RequestPluginEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, const string& uri)
+RequestPluginEvent::RequestPluginEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& uri)
 : QueuedEvent(engine, responder, timestamp),
   _uri(uri),
   _plugin(NULL)
@@ -42,7 +42,6 @@ RequestPluginEvent::RequestPluginEvent(Engine& engine, SharedPtr<Shared::Respond
 void
 RequestPluginEvent::pre_process()
 {
-	_client = _engine.broadcaster()->client(_responder->client_uri());
 	_plugin = _engine.node_factory()->plugin(_uri);
 
 	QueuedEvent::pre_process();
@@ -63,11 +62,11 @@ RequestPluginEvent::post_process()
 	if (!_plugin) {
 		_responder->respond_error("Unable to find plugin requested.");
 	
-	} else if (_client) {
+	} else if (_responder->client()) {
 
 		_responder->respond_ok();
 		assert(_plugin->uri() == _uri);
-		_client->new_plugin(_uri, _plugin->type_uri(), _plugin->name());
+		_responder->client()->new_plugin(_uri, _plugin->type_uri(), _plugin->name());
 
 	} else {
 		_responder->respond_error("Unable to find client to send plugin.");

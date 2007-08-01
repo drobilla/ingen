@@ -26,7 +26,7 @@ using std::string;
 namespace Ingen {
 
 class Plugin;
-class Shared::Responder;
+class Responder;
 namespace Shared {
 	class ClientInterface;
 } using Shared::ClientInterface;
@@ -39,13 +39,12 @@ namespace Shared {
 class RequestPluginsEvent : public QueuedEvent
 {
 public:
-	RequestPluginsEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp);
+	RequestPluginsEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp);
 
 	void pre_process();
 	void post_process();
 
 private:
-	ClientInterface*   _client;
 	std::list<Plugin*> _plugins;
 };
 

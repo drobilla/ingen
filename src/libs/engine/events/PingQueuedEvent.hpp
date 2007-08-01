@@ -20,7 +20,7 @@
 
 #include "QueuedEvent.hpp"
 #include "types.hpp"
-#include "interface/Responder.hpp"
+#include "Responder.hpp"
 
 namespace Ingen {
 
@@ -35,7 +35,7 @@ class Port;
 class PingQueuedEvent : public QueuedEvent
 {
 public:
-	PingQueuedEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp)
+	PingQueuedEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp)
 		: QueuedEvent(engine, responder, timestamp)
 	{}
 

@@ -15,7 +15,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "interface/Responder.hpp"
+#include "Responder.hpp"
 #include "SetPortValueEvent.hpp"
 #include "Engine.hpp"
 #include "Port.hpp"
@@ -29,7 +29,7 @@ namespace Ingen {
 
 /** Voice-specific control setting
  */
-SetPortValueEvent::SetPortValueEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, size_t voice_num, const string& port_path, Sample val)
+SetPortValueEvent::SetPortValueEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, size_t voice_num, const string& port_path, Sample val)
 : Event(engine, responder, timestamp),
   _voice_num(voice_num),
   _port_path(port_path),
@@ -40,7 +40,7 @@ SetPortValueEvent::SetPortValueEvent(Engine& engine, SharedPtr<Shared::Responder
 }
 
 
-SetPortValueEvent::SetPortValueEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, const string& port_path, Sample val)
+SetPortValueEvent::SetPortValueEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& port_path, Sample val)
 : Event(engine, responder, timestamp),
   _voice_num(-1),
   _port_path(port_path),

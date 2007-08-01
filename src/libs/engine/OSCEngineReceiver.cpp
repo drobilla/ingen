@@ -26,10 +26,9 @@
 #include "OSCEngineReceiver.hpp"
 #include "QueuedEventSource.hpp"
 #include "OSCClientSender.hpp"
-#include "OSCResponder.hpp"
 #include "ClientBroadcaster.hpp"
 
-using std::cerr; using std::cout; using std::endl;
+using namespace std;
 
 namespace Ingen {
 
@@ -46,9 +45,8 @@ namespace Ingen {
 
 
 OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t port)
-: QueuedEngineInterface(engine, queue_size, queue_size), // FIXME
-  _server(NULL),
-  _osc_responder(SharedPtr<OSCResponder>())
+	: QueuedEngineInterface(engine, queue_size, queue_size) // FIXME
+	, _server(NULL)
 {
 	char port_str[6];
 	snprintf(port_str, 6, "%u", port);
@@ -205,60 +203,27 @@ OSCEngineReceiver::set_response_address_cb(const char* path, const char* types, 
 {
 	OSCEngineReceiver* const me = reinterpret_cast<OSCEngineReceiver*>(user_data);
 
-	//cerr << "SET RESPONSE\n";
-
 	if (argc < 1 || types[0] != 'i') // Not a valid Ingen message
 		return 0; // Save liblo the trouble
-
-	//cerr << "** valid msg\n";
 
 	const int id = argv[0]->i;
 
 	const lo_address addr = lo_message_get_source(msg);
 	char* const      url  = lo_address_get_url(addr);
+		
+	const SharedPtr<Responder> r = me->_responder;
+
+	/* Different address than last time, have to do a lookup */
+	if (!r || !r->client() || strcmp(url, r->client()->uri().c_str()))
+		me->_responder = SharedPtr<Responder>(
+				new Responder(me->_engine.broadcaster()->client(url), id));
 	
-	// Need to respond
 	if (id != -1) {
-		//cerr << "** need to respond\n";
-
-		// Currently have an OSC responder, check if it's still okay
-		if (me->_responder == me->_osc_responder) {
-			//cerr << "** osc responder\n";
-		
-			if (!strcmp(url, me->_osc_responder->url())) {
-				// Nice one, same address, do nothing (just set the ID below)
-				//cerr << "** Using cached response address, hooray" << endl;
-			} else {
-				// Shitty deal, make a new one
-				//cerr << "** Setting response address to " << url << "(2)" << endl;
-				me->_osc_responder = SharedPtr<OSCResponder>(
-					new OSCResponder(me->_engine.broadcaster(), id, url));
-
-				me->set_responder(me->_osc_responder);
-
-				// (responder takes ownership of url, no leak)
-			}
-		
-		// Otherwise we have a NULL responder, definitely need to set a new one
-		} else {
-			//cerr << "** null responder\n";
-			me->_osc_responder = SharedPtr<OSCResponder>(new OSCResponder(me->_engine.broadcaster(), id, url));
-			me->set_responder(me->_osc_responder);
-			//cerr << "** Setting response address to " << url << "(2)" << endl;
-		}
-
 		me->set_next_response_id(id);
-	
-	// Don't respond
 	} else {
 		me->disable_responses();
-		ClientInterface* client = me->_engine.broadcaster()->client(url);
-		if (client)
-			client->disable();
-		else
-			cerr << "UNKNOWN CLIENT!\n";
-	
-		//cerr << "** Not responding." << endl;
+		if (me->_responder->client())
+			me->_responder->client()->disable();
 	}
 
 	// If this returns 0 no OSC commands will work
@@ -330,7 +295,7 @@ OSCEngineReceiver::_register_client_cb(const char* path, const char* types, lo_a
 
 	char* const url = lo_address_get_url(addr);
 	ClientInterface* client = new OSCClientSender((const char*)url);
-	register_client(url, client);
+	register_client(client);
 	free(url);
 
 	return 0;
@@ -928,7 +893,7 @@ OSCEngineReceiver::unknown_cb(const char* path, const char* types, lo_arg** argv
 	string error_msg = "Unknown command: ";
 	error_msg.append(path).append(" ").append(types);
 
-	OSCResponder(NULL, 0, url).respond_error(error_msg);
+	OSCClientSender(url).error(error_msg);
 
 	return 0;
 }

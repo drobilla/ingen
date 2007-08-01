@@ -27,7 +27,8 @@
 #include "types.hpp"
 #include "interface/ClientInterface.hpp"
 
-using std::list; using std::string;
+using std::list;
+using std::string;
 using std::cerr;
 
 namespace Ingen {
@@ -40,29 +41,23 @@ namespace Ingen {
 class OSCClientSender : public Shared::ClientInterface
 {
 public:
-	OSCClientSender(const string& url)
-	: _url(url),
-	  _address(lo_address_new_from_url(url.c_str())),
-	  _transfer(NULL),
-	  _enabled(true)
+	OSCClientSender(const std::string& url)
+		: Shared::ClientInterface(url)
+		, _address(lo_address_new_from_url(url.c_str()))
+		, _transfer(NULL)
+		, _enabled(true)
 	{}
 
 	virtual ~OSCClientSender()
 	{ lo_address_free(_address); }
 
-	const string&     url()     const  { return _url; }
-	const lo_address  address() const  { return _address; }
+	const lo_address   address() const  { return _address; }
 	
     void subscribe(Shared::EngineInterface* engine) { }
 
-	//void plugins(); // FIXME remove
-
-	
-
 	/* *** ClientInterface Implementation Below *** */
 
-
-	//void client_registration(string url, int client_id);
+	//void client_registration(const std::string& url, int client_id);
 	
 	void enable()  { _enabled = true; }
 	void disable() { _enabled = false; }
@@ -73,63 +68,63 @@ public:
 	void transfer_begin();
 	void transfer_end();
 
-	void response(int32_t id, bool success, string msg);
+	void response_ok(int32_t id);
+	void response_error(int32_t id, const std::string& msg);
 
 	void num_plugins(uint32_t num);
 
-	void error(string msg);
+	void error(const std::string& msg);
 
-	virtual void new_plugin(string uri,
-	                        string type_uri,
-	                        string name);
+	virtual void new_plugin(const std::string& uri,
+	                        const std::string& type_uri,
+	                        const std::string& name);
 	
-	virtual void new_patch(string path, uint32_t poly);
+	virtual void new_patch(const std::string& path, uint32_t poly);
 	
-	virtual void new_node(string   plugin_uri,
-	                      string   node_path,
-	                      bool     is_polyphonic,
-	                      uint32_t num_ports);
+	virtual void new_node(const std::string&   plugin_uri,
+	                      const std::string&   node_path,
+	                      bool                 is_polyphonic,
+	                      uint32_t             num_ports);
 	
-	virtual void new_port(string path,
-	                      string data_type,
-	                      bool   is_output);
+	virtual void new_port(const std::string& path,
+	                      const std::string& data_type,
+	                      bool               is_output);
 	
-	virtual void patch_enabled(string path);
+	virtual void patch_enabled(const std::string& path);
 	
-	virtual void patch_disabled(string path);
+	virtual void patch_disabled(const std::string& path);
 	
-	virtual void patch_cleared(string path);
+	virtual void patch_cleared(const std::string& path);
 	
-	virtual void object_destroyed(string path);
+	virtual void object_destroyed(const std::string& path);
 	
-	virtual void object_renamed(string old_path,
-	                            string new_path);
+	virtual void object_renamed(const std::string& old_path,
+	                            const std::string& new_path);
 	
-	virtual void connection(string src_port_path,
-	                        string dst_port_path);
+	virtual void connection(const std::string& src_port_path,
+	                        const std::string& dst_port_path);
 	
-	virtual void disconnection(string src_port_path,
-	                           string dst_port_path);
+	virtual void disconnection(const std::string& src_port_path,
+	                           const std::string& dst_port_path);
 	
-	virtual void metadata_update(string     subject_path,
-	                             string     predicate,
-	                             Raul::Atom value);
+	virtual void metadata_update(const std::string& subject_path,
+	                             const std::string& predicate,
+	                             const Raul::Atom&  value);
 	
-	virtual void control_change(string port_path,
-	                            float  value);
+	virtual void control_change(const std::string& port_path,
+	                            float              value);
 	
-	virtual void program_add(string   node_path,
-	                         uint32_t bank,
-	                         uint32_t program,
-	                         string   program_name);
+	virtual void program_add(const std::string& node_path,
+	                         uint32_t           bank,
+	                         uint32_t           program,
+	                         const std::string& program_name);
 	
-	virtual void program_remove(string   node_path,
-	                            uint32_t bank,
-	                            uint32_t program);
+	virtual void program_remove(const std::string& node_path,
+	                            uint32_t           bank,
+	                            uint32_t           program);
 
 private:
-	string      _url;
-	lo_address  _address;
+	lo_address _address;
 
 	lo_bundle _transfer;
 

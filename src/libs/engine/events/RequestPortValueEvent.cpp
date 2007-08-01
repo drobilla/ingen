@@ -18,7 +18,7 @@
 #include "RequestPortValueEvent.hpp"
 #include <string>
 #include "interface/ClientInterface.hpp"
-#include "interface/Responder.hpp"
+#include "Responder.hpp"
 #include "Engine.hpp"
 #include "Port.hpp"
 #include "ObjectStore.hpp"
@@ -30,7 +30,7 @@ using std::string;
 namespace Ingen {
 
 
-RequestPortValueEvent::RequestPortValueEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, const string& port_path)
+RequestPortValueEvent::RequestPortValueEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& port_path)
 : QueuedEvent(engine, responder, timestamp),
   _port_path(port_path),
   _port(NULL),
@@ -42,7 +42,6 @@ RequestPortValueEvent::RequestPortValueEvent(Engine& engine, SharedPtr<Shared::R
 void
 RequestPortValueEvent::pre_process()
 {
-	_client = _engine.broadcaster()->client(_responder->client_uri());
 	_port = _engine.object_store()->find_port(_port_path);
 
 	QueuedEvent::pre_process();
@@ -68,9 +67,9 @@ RequestPortValueEvent::post_process()
 	string msg;
 	if (!_port) {
 		_responder->respond_error("Unable to find port for get_value responder.");
-	} else if (_client) {
+	} else if (_responder->client()) {
 		_responder->respond_ok();
-		_client->control_change(_port_path, _value);
+		_responder->client()->control_change(_port_path, _value);
 	} else {
 		_responder->respond_error("Unable to find client to send port value");
 	}

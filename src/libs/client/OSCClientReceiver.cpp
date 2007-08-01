@@ -21,8 +21,9 @@
 #include <cassert>
 #include <cstring>
 #include <iostream>
+#include <sstream>
 
-using std::cerr; using std::cout; using std::endl;
+using namespace std;
 using namespace Raul;
 
 namespace Ingen {
@@ -30,14 +31,14 @@ namespace Client {
 
 	
 OSCClientReceiver::OSCClientReceiver(int listen_port)
-: _listen_port(listen_port),
+: ClientInterface("localhost"),
   _st(NULL)//,
 //  _receiving_node(false),
 //  _receiving_node_model(NULL),
 //  _receiving_node_num_ports(0),
 //  _num_received_ports(0)
 {
-	start();
+	start(false);
 }
 
 
@@ -48,7 +49,7 @@ OSCClientReceiver::~OSCClientReceiver()
 
 
 void
-OSCClientReceiver::start()
+OSCClientReceiver::start(bool dump_osc)
 {
 	if (_st != NULL)
 		return;
@@ -57,12 +58,12 @@ OSCClientReceiver::start()
 	if (_listen_port != 0) {
 		char port_str[8];
 		snprintf(port_str, 8, "%d", _listen_port);
-		_st = lo_server_thread_new(port_str, error_cb);
+		_st = lo_server_thread_new(port_str, lo_error_cb);
 	}
 
 	// Find a free port
 	if (!_st) { 
-		_st = lo_server_thread_new(NULL, error_cb);
+		_st = lo_server_thread_new(NULL, lo_error_cb);
 		_listen_port = lo_server_thread_get_port(_st);
 	}
 
@@ -74,11 +75,9 @@ OSCClientReceiver::start()
 	}
 
 	// Print all incoming messages
-	lo_server_thread_add_method(_st, NULL, NULL, generic_cb, NULL);
+	if (dump_osc)
+		lo_server_thread_add_method(_st, NULL, NULL, generic_cb, NULL);
 
-	//lo_server_thread_add_method(_st, "/ingen/response/ok", "i", om_response_ok_cb, this);
-	//lo_server_thread_add_method(_st, "/ingen/response/error", "is", om_responseerror_cb, this);
-	
 	setup_callbacks();
 
 	// Display any uncaught messages to the console
@@ -122,7 +121,7 @@ OSCClientReceiver::generic_cb(const char* path, const char* types, lo_arg** argv
 
 
 void
-OSCClientReceiver::error_cb(int num, const char* msg, const char* path)
+OSCClientReceiver::lo_error_cb(int num, const char* msg, const char* path)
 {
 	cerr << "Got error from server: " << msg << endl;
 }
@@ -144,7 +143,8 @@ OSCClientReceiver::unknown_cb(const char* path, const char* types, lo_arg** argv
 void
 OSCClientReceiver::setup_callbacks()
 {
-	lo_server_thread_add_method(_st, "/ingen/response", "iis", response_cb, this);
+	lo_server_thread_add_method(_st, "/ingen/ok", "i", response_ok_cb, this);
+	lo_server_thread_add_method(_st, "/ingen/error", "is", response_error_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/num_plugins", "i", num_plugins_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/plugin", "sss", plugin_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/new_patch", "si", new_patch_cb, this);
@@ -366,10 +366,20 @@ OSCClientReceiver::_control_change_cb(const char* path, const char* types, lo_ar
 
 
 int
-OSCClientReceiver::_response_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCClientReceiver::_response_ok_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	assert(!strcmp(types, "iis"));
-	response(argv[0]->i, argv[1]->i, &argv[2]->s);
+	assert(!strcmp(types, "i"));
+	response_ok(argv[0]->i);
+
+	return 0;
+}
+
+
+int
+OSCClientReceiver::_response_error_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+{
+	assert(!strcmp(types, "is"));
+	response_error(argv[0]->i, &argv[1]->s);
 
 	return 0;
 }

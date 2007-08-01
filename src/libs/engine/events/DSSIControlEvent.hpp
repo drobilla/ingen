@@ -33,7 +33,7 @@ namespace Ingen {
 class DSSIControlEvent : public QueuedEvent
 {
 public:
-	DSSIControlEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, const string& node_path, int port_num, Sample val);
+	DSSIControlEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& node_path, int port_num, Sample val);
 
 	void pre_process();
 	void execute(SampleCount nframes, FrameTime start, FrameTime end);

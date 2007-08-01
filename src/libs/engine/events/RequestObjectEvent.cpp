@@ -18,7 +18,7 @@
 #include "RequestObjectEvent.hpp"
 #include <string>
 #include "interface/ClientInterface.hpp"
-#include "interface/Responder.hpp"
+#include "Responder.hpp"
 #include "Engine.hpp"
 #include "ObjectStore.hpp"
 #include "ClientBroadcaster.hpp"
@@ -32,7 +32,7 @@ using std::string;
 namespace Ingen {
 
 
-RequestObjectEvent::RequestObjectEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, const string& path)
+RequestObjectEvent::RequestObjectEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path)
 : QueuedEvent(engine, responder, timestamp),
   _path(path),
   _object(NULL)
@@ -43,7 +43,6 @@ RequestObjectEvent::RequestObjectEvent(Engine& engine, SharedPtr<Shared::Respond
 void
 RequestObjectEvent::pre_process()
 {
-	_client = _engine.broadcaster()->client(_responder->client_uri());
 	_object = _engine.object_store()->find_object(_path);
 
 	QueuedEvent::pre_process();
@@ -64,25 +63,25 @@ RequestObjectEvent::post_process()
 	if (!_object) {
 		_responder->respond_error("Unable to find object requested.");
 	
-	} else if (_client) {	
+	} else if (_responder->client()) {	
 		Patch* const patch = dynamic_cast<Patch*>(_object);
 		if (patch) {
 			_responder->respond_ok();
-			ObjectSender::send_patch(_client, patch, true);
+			ObjectSender::send_patch(_responder->client(), patch, true);
 			return;
 		}
 		
 		Node* const node = dynamic_cast<Node*>(_object);
 		if (node) {
 			_responder->respond_ok();
-			ObjectSender::send_node(_client, node, true);
+			ObjectSender::send_node(_responder->client(), node, true);
 			return;
 		}
 		
 		Port* const port = dynamic_cast<Port*>(_object);
 		if (port) {
 			_responder->respond_ok();
-			ObjectSender::send_port(_client, port);
+			ObjectSender::send_port(_responder->client(), port);
 			return;
 		}
 		

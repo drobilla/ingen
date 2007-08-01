@@ -16,7 +16,7 @@
  */
 
 #include "CreatePatchEvent.hpp"
-#include "interface/Responder.hpp"
+#include "Responder.hpp"
 #include "Patch.hpp"
 #include "Node.hpp"
 #include "Tree.hpp"
@@ -31,7 +31,7 @@
 namespace Ingen {
 
 
-CreatePatchEvent::CreatePatchEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, const string& path, int poly)
+CreatePatchEvent::CreatePatchEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path, int poly)
 : QueuedEvent(engine, responder, timestamp),
   _path(path),
   _patch(NULL),

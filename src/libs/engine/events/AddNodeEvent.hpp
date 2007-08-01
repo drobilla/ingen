@@ -41,7 +41,7 @@ class AddNodeEvent : public QueuedEvent
 {
 public:
 	AddNodeEvent(Engine&               engine,
-	             SharedPtr<Shared::Responder> responder,
+	             SharedPtr<Responder> responder,
 	             SampleCount           timestamp,
 	             const string&         node_path,
 	             const string&         plugin_uri,
@@ -49,7 +49,7 @@ public:
 	
 	// DEPRECATED
 	AddNodeEvent(Engine&               engine,
-	             SharedPtr<Shared::Responder> responder,
+	             SharedPtr<Responder> responder,
 	             SampleCount           timestamp,
 	             const string&         node_path,
 				 const string&         plugin_type,
@@ -62,17 +62,17 @@ public:
 	void post_process();
 
 private:
-	string           _patch_name;
-	Path             _path;
-	string           _plugin_uri; ///< If nonempty then type, library, label, are ignored
-	string           _plugin_type;
-	string           _plugin_lib;
-	string           _plugin_label;
-	bool             _poly;
-	Patch*           _patch;
-	Node*            _node;
-	Raul::Array<Node*>*    _process_order; ///< Patch's new process order
-	bool             _node_already_exists;
+	string              _patch_name;
+	Raul::Path          _path;
+	string              _plugin_uri; ///< If nonempty then type, library, label, are ignored
+	string              _plugin_type;
+	string              _plugin_lib;
+	string              _plugin_label;
+	bool                _poly;
+	Patch*              _patch;
+	Node*               _node;
+	Raul::Array<Node*>* _process_order; ///< Patch's new process order
+	bool                _node_already_exists;
 };
 
 

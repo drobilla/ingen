@@ -31,7 +31,6 @@ libingen_engine_la_SOURCES = \
 	Connection.cpp \
 	Connection.hpp \
 	DataType.hpp \
-	DirectResponder.hpp \
 	Driver.hpp \
 	DuplexPort.cpp \
 	DuplexPort.hpp \
@@ -69,8 +68,7 @@ libingen_engine_la_SOURCES = \
 	OSCDriver.hpp \
 	OSCEngineReceiver.cpp \
 	OSCEngineReceiver.hpp \
-	OSCResponder.cpp \
-	OSCResponder.hpp \
+	Responder.hpp \
 	ObjectSender.cpp \
 	ObjectSender.hpp \
 	ObjectStore.cpp \

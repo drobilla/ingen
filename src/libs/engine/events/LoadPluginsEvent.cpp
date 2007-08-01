@@ -16,7 +16,7 @@
  */
 
 #include "LoadPluginsEvent.hpp"
-#include "interface/Responder.hpp"
+#include "Responder.hpp"
 #include "Engine.hpp"
 #include "NodeFactory.hpp"
 #include "ClientBroadcaster.hpp"
@@ -28,7 +28,7 @@ using std::cerr;
 namespace Ingen {
 
 
-LoadPluginsEvent::LoadPluginsEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, QueuedEventSource* source)
+LoadPluginsEvent::LoadPluginsEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, QueuedEventSource* source)
 : QueuedEvent(engine, responder, timestamp, true, source)
 {
 	/* Not sure why this has to be blocking, but it fixes some nasty bugs.. */

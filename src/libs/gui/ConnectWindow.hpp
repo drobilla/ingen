@@ -54,7 +54,7 @@ public:
 	
 	void set_connected_to(SharedPtr<Shared::EngineInterface> e=SharedPtr<Shared::EngineInterface>());
 	void start(SharedPtr<Ingen::Engine> engine, SharedPtr<Shared::EngineInterface> interface);
-	void response_received(int32_t id, bool, string) { if ((id) == _ping_id) _attached = true; }
+	void response_ok_received(int32_t id) { if ((id) == _ping_id) _attached = true; }
 
 private:
 	enum Mode { CONNECT_REMOTE, LAUNCH_REMOTE, INTERNAL };

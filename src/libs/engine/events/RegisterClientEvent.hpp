@@ -23,7 +23,7 @@
 #include <string>
 using std::string;
 using Ingen::Shared::ClientInterface;
-using Ingen::Shared::Responder;
+using Ingen::Responder;
 
 namespace Ingen {
 
@@ -36,7 +36,7 @@ class RegisterClientEvent : public QueuedEvent
 {
 public:
 	RegisterClientEvent(Engine&                      engine,
-	                    SharedPtr<Shared::Responder> responder,
+	                    SharedPtr<Responder> responder,
 	                    SampleCount                  timestamp,
 	                    const string&                uri,
 	                    ClientInterface*             client);

@@ -16,7 +16,7 @@
  */
 
 #include "ClearPatchEvent.hpp"
-#include "interface/Responder.hpp"
+#include "Responder.hpp"
 #include "Engine.hpp"
 #include "Patch.hpp"
 #include "ClientBroadcaster.hpp"
@@ -31,7 +31,7 @@
 namespace Ingen {
 
 
-ClearPatchEvent::ClearPatchEvent(Engine& engine, SharedPtr<Shared::Responder> responder, FrameTime time, QueuedEventSource* source, const string& patch_path)
+ClearPatchEvent::ClearPatchEvent(Engine& engine, SharedPtr<Responder> responder, FrameTime time, QueuedEventSource* source, const string& patch_path)
 : QueuedEvent(engine, responder, time, true, source),
   _patch_path(patch_path),
   _patch(NULL),

@@ -29,8 +29,6 @@ namespace Ingen {
 /** Shared code used on both client side and engine side (abstract interfaces). */
 namespace Shared {
 
-class Responder;
-
 
 /** The (only) interface clients use to communicate with the engine.
  *
@@ -42,12 +40,11 @@ public:
 	virtual ~EngineInterface() {}
 	
 	// Responses
-	virtual void set_responder(SharedPtr<Responder> responder) = 0;
 	virtual void set_next_response_id(int32_t id) = 0;
 	virtual void disable_responses() = 0;
 	
 	// Client registration
-	virtual void register_client(const string& uri, ClientInterface* client) = 0;
+	virtual void register_client(ClientInterface* client) = 0;
 	virtual void unregister_client(const string& uri) = 0;
 	
 	
@@ -112,9 +109,9 @@ public:
 	
 	virtual void midi_learn(const string& node_path) = 0;
 	
-	virtual void set_metadata(const string& path,
-	                          const string& predicate,
-	                          const Raul::Atom&   value) = 0;
+	virtual void set_metadata(const string&     path,
+	                          const string&     predicate,
+	                          const Raul::Atom& value) = 0;
 	
 	// Requests //
 	

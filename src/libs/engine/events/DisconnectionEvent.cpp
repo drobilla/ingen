@@ -19,7 +19,7 @@
 #include <string>
 #include <raul/Maid.hpp>
 #include <raul/Path.hpp>
-#include "interface/Responder.hpp"
+#include "Responder.hpp"
 #include "Engine.hpp"
 #include "Connection.hpp"
 #include "InputPort.hpp"
@@ -36,7 +36,7 @@ namespace Ingen {
 //// DisconnectionEvent ////
 
 
-DisconnectionEvent::DisconnectionEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, const string& src_port_path, const string& dst_port_path)
+DisconnectionEvent::DisconnectionEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& src_port_path, const string& dst_port_path)
 : QueuedEvent(engine, responder, timestamp),
   _src_port_path(src_port_path),
   _dst_port_path(dst_port_path),
@@ -50,7 +50,7 @@ DisconnectionEvent::DisconnectionEvent(Engine& engine, SharedPtr<Shared::Respond
 }
 
 
-DisconnectionEvent::DisconnectionEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, Port* const src_port, Port* const dst_port)
+DisconnectionEvent::DisconnectionEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, Port* const src_port, Port* const dst_port)
 : QueuedEvent(engine, responder, timestamp),
   _src_port_path(src_port->path()),
   _dst_port_path(dst_port->path()),

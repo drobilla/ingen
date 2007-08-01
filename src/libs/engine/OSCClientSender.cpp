@@ -30,8 +30,8 @@
 #include "Connection.hpp"
 #include "AudioDriver.hpp"
 #include "interface/ClientInterface.hpp"
-#include "interface/Responder.hpp"
-using std::cout; using std::cerr; using std::endl;
+
+using namespace std;
 
 namespace Ingen {
 
@@ -96,23 +96,39 @@ OSCClientSender::transfer_end()
  * \n
  * <h2>Control Band</h2>
  */
+
+/** \page client_osc_namespace
+ * <p> \b /ingen/ok - Respond to a successful user command
+ * \arg \b response-id (int) - Request ID this is a response to
+ * </p> \n \n
+ */
+void
+OSCClientSender::response_ok(int32_t id)
+{
+	if (!_enabled)
+		return;
+
+	if (lo_send(_address, "/ingen/ok", "i", id) < 0) {
+		cerr << "Unable to send ok " << id << "! ("
+			<< lo_address_errstr(_address) << ")" << endl;
+	}
+}
 	
 
 /** \page client_osc_namespace
  * <p> \b /ingen/response - Respond to a user command
  * \arg \b response-id (int) - Request ID this is a response to
- * \arg \b success (boolean int) - Whether response is affirmative or an error
- * \arg \b message (string) - Error message (natural language text)
+ * \arg \b message (const std::string&) - Error message (natural language text)
  * </p> \n \n
  */
 void
-OSCClientSender::response(int32_t id, bool success, string msg)
+OSCClientSender::response_error(int32_t id, const std::string& msg)
 {
 	if (!_enabled)
 		return;
 
-	if (lo_send(_address, "/ingen/response", "iis", id, success ? 1 : 0, msg.c_str()) < 0) {
-		cerr << "Unable to send response " << id << "! ("
+	if (lo_send(_address, "/ingen/error", "is", id, msg.c_str()) < 0) {
+		cerr << "Unable to send error " << id << "! ("
 			<< lo_address_errstr(_address) << ")" << endl;
 	}
 }
@@ -126,12 +142,12 @@ OSCClientSender::response(int32_t id, bool success, string msg)
 
 /** \page client_osc_namespace
  * <p> \b /ingen/error - Notification that an error has occurred
- * \arg \b message (string) - Error message (natural language text) \n\n
+ * \arg \b message (const std::string&) - Error message (natural language text) \n\n
  * \li This is for notification of errors that aren't a direct response to a
  * user command, ie "unexpected" errors.</p> \n \n
  */
 void
-OSCClientSender::error(string msg)
+OSCClientSender::error(const std::string& msg)
 {
 	if (!_enabled)
 		return;
@@ -168,11 +184,11 @@ OSCClientSender::num_plugins(uint32_t num)
 
 /** \page client_osc_namespace
  * <p> \b /ingen/plugin - Notification of the existance of a plugin
- * \arg \b type (string) - Type if plugin ("LADSPA", "DSSI", or "Internal")
- * \arg \b uri (string) - URI of the plugin (see engine namespace documentation) \n
- * \arg \b lib-name (string) - Name of shared library plugin resides in (ie "cmt.so")
- * \arg \b plug-label (string) - Label of the plugin (ie "dahdsr_iaoa")
- * \arg \b name (string) - Descriptive human-readable name of plugin (ie "ADSR Envelope")
+ * \arg \b type (const std::string&) - Type if plugin ("LADSPA", "DSSI", or "Internal")
+ * \arg \b uri (const std::string&) - URI of the plugin (see engine namespace documentation) \n
+ * \arg \b lib-name (const std::string&) - Name of shared library plugin resides in (ie "cmt.so")
+ * \arg \b plug-label (const std::string&) - Label of the plugin (ie "dahdsr_iaoa")
+ * \arg \b name (const std::string&) - Descriptive human-readable name of plugin (ie "ADSR Envelope")
  * </p> \n \n
  */
 /*
@@ -198,7 +214,7 @@ OSCClientSender::plugins()
 		plugin = (*j);
 		m = lo_message_new();
 
-		lo_message_add_string(m, plugin->type_string());
+		lo_message_add_string(m, plugin->type_const std::string&());
 		lo_message_add_string(m, plugin->uri().c_str());
 		lo_message_add_string(m, plugin->plug_label().c_str());
 		lo_message_add_string(m, plugin->name().c_str());
@@ -226,16 +242,16 @@ OSCClientSender::plugins()
 
 /** \page client_osc_namespace
  * <p> \b /ingen/new_node - Notification of a new node's creation.
- * \arg \b plug-uri (string) - URI of the plugin new node is an instance of
- * \arg \b path (string) - Path of the new node
+ * \arg \b plug-uri (const std::string&) - URI of the plugin new node is an instance of
+ * \arg \b path (const std::string&) - Path of the new node
  * \arg \b polyphonic (integer-boolean) - Node is polyphonic (1 = yes, 0 = no)
  * \arg \b num-ports (integer) - Number of ports (number of new_port messages to expect)\n\n
  * \li New nodes are sent as a bundle.  The first message in the bundle will be
  * this one (/ingen/new_node), followed by a series of /ingen/new_port commands,
  * followed by /ingen/new_node_end. </p> \n \n
  */
-void OSCClientSender::new_node(string   plugin_uri,
-                               string   node_path,
+void OSCClientSender::new_node(const std::string&   plugin_uri,
+                               const std::string&   node_path,
                                bool     is_polyphonic,
                                uint32_t num_ports)
 {
@@ -278,9 +294,9 @@ void OSCClientSender::new_node(string   plugin_uri,
 		
 		m = lo_message_new();
 		lo_message_add_string(m, port->path().c_str());
-		lo_message_add_string(m, info->type_string().c_str());
-		lo_message_add_string(m, info->direction_string().c_str());
-		lo_message_add_string(m, info->hint_string().c_str());
+		lo_message_add_string(m, info->type_const std::string&().c_str());
+		lo_message_add_string(m, info->direction_const std::string&().c_str());
+		lo_message_add_string(m, info->hint_const std::string&().c_str());
 		lo_message_add_float(m, info->default_val());
 		lo_message_add_float(m, info->min_val());
 		lo_message_add_float(m, info->max_val());
@@ -309,17 +325,17 @@ void OSCClientSender::new_node(string   plugin_uri,
 	usleep(100);
 */
 	/*
-	const map<string, string>& data = node->metadata();
+	const map<const std::string&, const std::string&>& data = node->metadata();
 	// Send node metadata
-	for (map<string, string>::const_iterator i = data.begin(); i != data.end(); ++i)
+	for (map<const std::string&, const std::string&>::const_iterator i = data.begin(); i != data.end(); ++i)
 		metadata_update(node->path(), (*i).first, (*i).second);
 
 	
 	// Send port metadata
 	for (size_t j=0; j < ports.size(); ++j) {
 		port = ports.at(j);
-		const map<string, string>& data = port->metadata();
-		for (map<string, string>::const_iterator i = data.begin(); i != data.end(); ++i)
+		const map<const std::string&, const std::string&>& data = port->metadata();
+		for (map<const std::string&, const std::string&>::const_iterator i = data.begin(); i != data.end(); ++i)
 			metadata_update(port->path(), (*i).first, (*i).second);
 	}
 
@@ -337,8 +353,8 @@ void OSCClientSender::new_node(string   plugin_uri,
 
 /** \page client_osc_namespace
  * <p> \b /ingen/new_port - Notification of a new port's creation.
- * \arg \b path (string) - Path of new port
- * \arg \b data-type (string) - Type of port (ingen:audio, ingen:control, ingen:midi, or ingen:osc)
+ * \arg \b path (const std::string&) - Path of new port
+ * \arg \b data-type (const std::string&) - Type of port (ingen:audio, ingen:control, ingen:midi, or ingen:osc)
  * \arg \b direction ("is-output") (integer) - Direction of data flow (Input = 0, Output = 1)
  *
  * \li Note that in the event of loading a patch, this message could be
@@ -350,8 +366,8 @@ void OSCClientSender::new_node(string   plugin_uri,
  * as metadata.</p> \n \n
  */
 void
-OSCClientSender::new_port(string path,
-                          string data_type,
+OSCClientSender::new_port(const std::string& path,
+                          const std::string& data_type,
                           bool   is_output)
 {
 	if (!_enabled)
@@ -363,10 +379,10 @@ OSCClientSender::new_port(string path,
 
 /** \page client_osc_namespace
  * <p> \b /ingen/destroyed - Notification an object has been destroyed
- * \arg \b path (string) - Path of object (which no longer exists) </p> \n \n
+ * \arg \b path (const std::string&) - Path of object (which no longer exists) </p> \n \n
  */
 void
-OSCClientSender::object_destroyed(string path)
+OSCClientSender::object_destroyed(const std::string& path)
 {
 	if (!_enabled)
 		return;
@@ -379,10 +395,10 @@ OSCClientSender::object_destroyed(string path)
 
 /** \page client_osc_namespace
  * <p> \b /ingen/patch_cleared - Notification a patch has been cleared (all children destroyed)
- * \arg \b path (string) - Path of patch (which is now empty)</p> \n \n
+ * \arg \b path (const std::string&) - Path of patch (which is now empty)</p> \n \n
  */
 void
-OSCClientSender::patch_cleared(string patch_path)
+OSCClientSender::patch_cleared(const std::string& patch_path)
 {
 	if (!_enabled)
 		return;
@@ -393,10 +409,10 @@ OSCClientSender::patch_cleared(string patch_path)
 
 /** \page client_osc_namespace
  * <p> \b /ingen/patch_enabled - Notification a patch's DSP processing has been enabled.
- * \arg \b path (string) - Path of enabled patch</p> \n \n
+ * \arg \b path (const std::string&) - Path of enabled patch</p> \n \n
  */
 void
-OSCClientSender::patch_enabled(string patch_path)
+OSCClientSender::patch_enabled(const std::string& patch_path)
 {
 	if (!_enabled)
 		return;
@@ -407,10 +423,10 @@ OSCClientSender::patch_enabled(string patch_path)
 
 /** \page client_osc_namespace
  * <p> \b /ingen/patch_disabled - Notification a patch's DSP processing has been disabled.
- * \arg \b path (string) - Path of disabled patch</p> \n \n
+ * \arg \b path (const std::string&) - Path of disabled patch</p> \n \n
  */
 void
-OSCClientSender::patch_disabled(string patch_path)
+OSCClientSender::patch_disabled(const std::string& patch_path)
 {
 	if (!_enabled)
 		return;
@@ -421,11 +437,11 @@ OSCClientSender::patch_disabled(string patch_path)
 
 /** \page client_osc_namespace
  * <p> \b /ingen/new_connection - Notification a new connection has been made.
- * \arg \b src-path (string) - Path of the source port
- * \arg \b dst-path (string) - Path of the destination port</p> \n \n
+ * \arg \b src-path (const std::string&) - Path of the source port
+ * \arg \b dst-path (const std::string&) - Path of the destination port</p> \n \n
  */
 void
-OSCClientSender::connection(string src_port_path, string dst_port_path)
+OSCClientSender::connection(const std::string& src_port_path, const std::string& dst_port_path)
 {
 	if (!_enabled)
 		return;
@@ -436,11 +452,11 @@ OSCClientSender::connection(string src_port_path, string dst_port_path)
 
 /** \page client_osc_namespace
  * <p> \b /ingen/disconnection - Notification a connection has been unmade.
- * \arg \b src-path (string) - Path of the source port
- * \arg \b dst-path (string) - Path of the destination port</p> \n \n
+ * \arg \b src-path (const std::string&) - Path of the source port
+ * \arg \b dst-path (const std::string&) - Path of the destination port</p> \n \n
  */
 void
-OSCClientSender::disconnection(string src_port_path, string dst_port_path)
+OSCClientSender::disconnection(const std::string& src_port_path, const std::string& dst_port_path)
 {
 	if (!_enabled)
 		return;
@@ -451,12 +467,12 @@ OSCClientSender::disconnection(string src_port_path, string dst_port_path)
 
 /** \page client_osc_namespace
  * <p> \b /ingen/metadata_update - Notification of a piece of metadata.
- * \arg \b path (string) - Path of the object associated with metadata (can be a node, patch, or port)
- * \arg \b key (string)
- * \arg \b value (string)</p> \n \n
+ * \arg \b path (const std::string&) - Path of the object associated with metadata (can be a node, patch, or port)
+ * \arg \b key (const std::string&)
+ * \arg \b value (const std::string&)</p> \n \n
  */
 void
-OSCClientSender::metadata_update(string path, string key, Atom value)
+OSCClientSender::metadata_update(const std::string& path, const std::string& key, const Atom& value)
 {
 	if (!_enabled)
 		return;
@@ -471,14 +487,14 @@ OSCClientSender::metadata_update(string path, string key, Atom value)
 
 /** \page client_osc_namespace
  * <p> \b /ingen/control_change - Notification the value of a port has changed
- * \arg \b path (string) - Path of port
+ * \arg \b path (const std::string&) - Path of port
  * \arg \b value (float) - New value of port
  *
  * \li This will only send updates for values set by clients of course - not values
  * changing because of connections to other ports!</p> \n \n
  */
 void
-OSCClientSender::control_change(string port_path, float value)
+OSCClientSender::control_change(const std::string& port_path, float value)
 {
 	if (!_enabled)
 		return;
@@ -489,12 +505,12 @@ OSCClientSender::control_change(string port_path, float value)
 
 /** \page client_osc_namespace
  * <p> \b /ingen/plugin - Notification of the existance of a plugin
- * \arg \b type (string) - Type of plugin ("LADSPA", "DSSI", or "Internal")
- * \arg \b uri (string) - Type of plugin ("LADSPA", "DSSI", or "Internal")
- * \arg \b name (string) - Descriptive human-readable name of plugin (ie "ADSR Envelope")
+ * \arg \b type (const std::string&) - Type of plugin ("LADSPA", "DSSI", or "Internal")
+ * \arg \b uri (const std::string&) - Type of plugin ("LADSPA", "DSSI", or "Internal")
+ * \arg \b name (const std::string&) - Descriptive human-readable name of plugin (ie "ADSR Envelope")
  */
 void
-OSCClientSender::new_plugin(string uri, string type_uri, string name)
+OSCClientSender::new_plugin(const std::string& uri, const std::string& type_uri, const std::string& name)
 {
 	if (!_enabled)
 		return;
@@ -525,11 +541,11 @@ OSCClientSender::new_plugin(string uri, string type_uri, string name)
 
 /** \page client_osc_namespace
  * <p> \b /ingen/new_patch - Notification of a new patch
- * \arg \b path (string) - Path of new patch
+ * \arg \b path (const std::string&) - Path of new patch
  * \arg \b poly (int) - Polyphony of new patch (\em not a boolean like new_node) </p> \n \n
  */
 void
-OSCClientSender::new_patch(string path, uint32_t poly)
+OSCClientSender::new_patch(const std::string& path, uint32_t poly)
 {
 	if (!_enabled)
 		return;
@@ -541,8 +557,8 @@ OSCClientSender::new_patch(string path, uint32_t poly)
 		patch_enabled(p->path());
 	
 	// Send metadata
-	const map<string, string>& data = p->metadata();
-	for (map<string, string>::const_iterator i = data.begin(); i != data.end(); ++i) {
+	const map<const std::string&, const std::string&>& data = p->metadata();
+	for (map<const std::string&, const std::string&>::const_iterator i = data.begin(); i != data.end(); ++i) {
 		metadata_update(p->path(), (*i).first, (*i).second);
 	}
 	*/
@@ -551,11 +567,11 @@ OSCClientSender::new_patch(string path, uint32_t poly)
 
 /** \page client_osc_namespace
  * <p> \b /ingen/object_renamed - Notification of an object's renaming
- * \arg \b old-path (string) - Old path of object
- * \arg \b new-path (string) - New path of object </p> \n \n
+ * \arg \b old-path (const std::string&) - Old path of object
+ * \arg \b new-path (const std::string&) - New path of object </p> \n \n
  */
 void
-OSCClientSender::object_renamed(string old_path, string new_path)
+OSCClientSender::object_renamed(const std::string& old_path, const std::string& new_path)
 {
 	if (!_enabled)
 		return;
@@ -567,7 +583,7 @@ OSCClientSender::object_renamed(string old_path, string new_path)
 /** Sends information about a program associated with a DSSI plugin node.
  */
 void
-OSCClientSender::program_add(string node_path, uint32_t bank, uint32_t program, string name)
+OSCClientSender::program_add(const std::string& node_path, uint32_t bank, uint32_t program, const std::string& name)
 {
 	if (!_enabled)
 		return;
@@ -578,7 +594,7 @@ OSCClientSender::program_add(string node_path, uint32_t bank, uint32_t program, 
 
 
 void
-OSCClientSender::program_remove(string node_path, uint32_t bank, uint32_t program)
+OSCClientSender::program_remove(const std::string& node_path, uint32_t bank, uint32_t program)
 {
 	if (!_enabled)
 		return;

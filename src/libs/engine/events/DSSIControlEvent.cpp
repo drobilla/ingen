@@ -24,7 +24,7 @@
 namespace Ingen {
 
 
-DSSIControlEvent::DSSIControlEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, const string& node_path, int port_num, Sample val)
+DSSIControlEvent::DSSIControlEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& node_path, int port_num, Sample val)
 : QueuedEvent(engine, responder, timestamp),
   _node_path(node_path),
   _port_num(port_num),

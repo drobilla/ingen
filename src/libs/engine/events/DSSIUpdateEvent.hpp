@@ -37,7 +37,7 @@ class DSSINode;
 class DSSIUpdateEvent : public QueuedEvent
 {
 public:
-	DSSIUpdateEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, const string& path, const string& url);
+	DSSIUpdateEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& url);
 	
 	void pre_process();
 	void execute(SampleCount nframes, FrameTime start, FrameTime end);

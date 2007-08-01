@@ -24,7 +24,7 @@
 #include <lo/lo.h>
 #include <raul/SharedPtr.hpp>
 #include "QueuedEngineInterface.hpp"
-#include "OSCResponder.hpp"
+#include "Responder.hpp"
 using std::string;
 
 namespace Ingen {
@@ -117,9 +117,6 @@ private:
 #endif
 
 	lo_server _server;
-
-	/** Cached OSC responder (for most recent incoming message) */
-	SharedPtr<OSCResponder> _osc_responder;
 };
 
 

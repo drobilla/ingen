@@ -26,7 +26,7 @@ namespace Ingen {
 
 QueuedEngineInterface::QueuedEngineInterface(Engine& engine, size_t queued_size, size_t stamped_size)
 	: QueuedEventSource(queued_size, stamped_size)
-	, _responder(SharedPtr<Shared::Responder>(new Shared::Responder())) // NULL responder
+	, _responder(new Responder(NULL, 0))
 	, _engine(engine)
 {
 }
@@ -41,18 +41,6 @@ QueuedEngineInterface::now() const
 }
 
 
-/** Set the Responder to send responses to commands with, once the commands
- * are preprocessed and ready to be executed (or not).
- *
- * Ownership of @a responder is taken.
- */
-void
-QueuedEngineInterface::set_responder(SharedPtr<Shared::Responder> responder)
-{
-	_responder = responder;
-}
-
-
 void
 QueuedEngineInterface::set_next_response_id(int32_t id)
 {
@@ -64,9 +52,8 @@ QueuedEngineInterface::set_next_response_id(int32_t id)
 void
 QueuedEngineInterface::disable_responses()
 {
-	static SharedPtr<Shared::Responder> null_responder(new Shared::Responder());
-	//cerr << "DISABLE\n";
-	set_responder(null_responder);
+	_responder->set_client(NULL);
+	_responder->set_id(0);
 }
 
 
@@ -74,9 +61,15 @@ QueuedEngineInterface::disable_responses()
 
 
 void
-QueuedEngineInterface::register_client(const string& uri, ClientInterface* client)
+QueuedEngineInterface::register_client(ClientInterface* client)
 {
-	push_queued(new RegisterClientEvent(_engine, _responder, now(), uri, client));
+	push_queued(new RegisterClientEvent(_engine, _responder, now(), client->uri(), client));
+	if (!_responder) {
+		_responder = SharedPtr<Responder>(new Responder(client, 1));
+	} else {
+		_responder->set_id(1);
+		_responder->set_client(client);
+	}
 }
 
 
@@ -84,6 +77,10 @@ void
 QueuedEngineInterface::unregister_client(const string& uri)
 {
 	push_queued(new UnregisterClientEvent(_engine, _responder, now(), uri));
+	if (_responder && _responder->client() && _responder->client()->uri() == uri) {
+		_responder->set_id(0);
+		_responder->set_client(NULL);
+	}
 }
 
 

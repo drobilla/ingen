@@ -16,7 +16,7 @@
  */
 
 #include "AllNotesOffEvent.hpp"
-#include "interface/Responder.hpp"
+#include "Responder.hpp"
 #include "Engine.hpp"
 #include "ObjectStore.hpp"
 
@@ -25,7 +25,7 @@ namespace Ingen {
 
 /** Note off with patch explicitly passed - triggered by MIDI.
  */
-AllNotesOffEvent::AllNotesOffEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, Patch* patch)
+AllNotesOffEvent::AllNotesOffEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, Patch* patch)
 : Event(engine, responder, timestamp),
   _patch(patch)
 {
@@ -34,7 +34,7 @@ AllNotesOffEvent::AllNotesOffEvent(Engine& engine, SharedPtr<Shared::Responder> 
 
 /** Note off event with lookup - triggered by OSC.
  */
-AllNotesOffEvent::AllNotesOffEvent(Engine& engine, SharedPtr<Shared::Responder> responder, SampleCount timestamp, const string& patch_path)
+AllNotesOffEvent::AllNotesOffEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& patch_path)
 : Event(engine, responder, timestamp),
   _patch(NULL),
   _patch_path(patch_path)

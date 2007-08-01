@@ -38,7 +38,7 @@ class UnregisterClientEvent : public QueuedEvent
 {
 public:
 	UnregisterClientEvent(Engine&                      engine,
-	                      SharedPtr<Shared::Responder> responder,
+	                      SharedPtr<Responder> responder,
 	                      SampleCount                  timestamp,
 	                      const string&                uri);
 
