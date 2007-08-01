@@ -32,8 +32,11 @@
 #include "engine/Engine.hpp"
 #include "engine/QueuedEngineInterface.hpp"
 #include "serialisation/Loader.hpp"
-#include "bindings/ingen_bindings.hpp"
 #include "cmdline.h"
+
+#ifdef WITH_BINDINGS
+#include "bindings/ingen_bindings.hpp"
+#endif
 
 using namespace std;
 using namespace Ingen;
@@ -202,6 +205,7 @@ main(int argc, char** argv)
 
     /* Run a script */
     if (args.run_given) {
+#ifdef WITH_BINDINGS
         bool (*run_script)(Ingen::Shared::World*, const char*) = NULL;
 		SharedPtr<Glib::Module> bindings_module = Ingen::Shared::load_module("ingen_bindings");
         if (!bindings_module)
@@ -218,6 +222,9 @@ main(int argc, char** argv)
         } else {
 			cerr << "FAILED: " << Glib::Module::get_last_error() << endl;
         }
+#else
+		cerr << "This build of ingen does not support scripting." << endl;
+#endif
 	
 	/* Listen to OSC and do our own main thing. */
     } else if (engine && !ran_gui) {
