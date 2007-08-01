@@ -68,6 +68,8 @@ public:
 
 	void enable()  { _enabled = true; }
 	void disable() { _enabled = false ; }
+    
+    virtual void subscribe(Shared::EngineInterface* engine) { throw; } // FIXME
 
 	// FIXME: make this insert bundle-boundary-events, where the GTK thread
 	// process all events between start and finish in one cycle, guaranteed

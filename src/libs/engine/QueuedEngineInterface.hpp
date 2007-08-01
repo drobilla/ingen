@@ -68,7 +68,7 @@ public:
 	virtual void disable_responses();
 
 	// Client registration
-	virtual void register_client(const string& uri, SharedPtr<ClientInterface> client);
+	virtual void register_client(const string& uri, ClientInterface* client);
 	virtual void unregister_client(const string& uri);
 	
 

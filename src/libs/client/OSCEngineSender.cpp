@@ -107,7 +107,7 @@ OSCEngineSender::attach(int32_t ping_id, bool block)
  * traversal.  It is a parameter to remain compatible with EngineInterface.
  */
 void
-OSCEngineSender::register_client(const string& uri, SharedPtr<ClientInterface> client)
+OSCEngineSender::register_client(const string& uri, ClientInterface* client)
 {
 	// FIXME: use parameters.. er, somehow.
 	assert(_engine_addr);

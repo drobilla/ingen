@@ -42,7 +42,6 @@ get_world()
     }
 
 	if (!world) {
-        cerr << "NEW WORLD\n" << endl;
 		world = new World();
         world->rdf_world = new Raul::RDF::World();
 #ifdef HAVE_SLV2

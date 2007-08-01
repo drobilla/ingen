@@ -30,7 +30,7 @@ namespace Ingen {
 class DirectResponder : public Shared::Responder
 {
 public:
-	DirectResponder(SharedPtr<Shared::ClientInterface> client, int32_t id)
+	DirectResponder(Shared::ClientInterface* client, int32_t id)
 	: _client(client), _id(id)
 	{}
 
@@ -39,11 +39,11 @@ public:
 	void respond_ok()                     { _client->response(_id, true, ""); }
 	void respond_error(const string& msg) { _client->response(_id, false, msg); }
 
-	SharedPtr<Shared::ClientInterface> client() { return _client; }
+	Shared::ClientInterface* client() { return _client; }
 
 private:
-	SharedPtr<Shared::ClientInterface> _client;
-	int32_t                            _id;
+	Shared::ClientInterface* _client;
+	int32_t                  _id;
 };
 
 

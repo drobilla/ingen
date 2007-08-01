@@ -61,7 +61,7 @@ public:
 	/* *** EngineInterface implementation below here *** */
 
 	// Client registration
-	void register_client(const string& uri, SharedPtr<ClientInterface> client);
+	void register_client(const string& uri, ClientInterface* client);
 	void unregister_client(const string& uri);
 
 	

@@ -53,6 +53,8 @@ public:
 	const string&     url()     const  { return _url; }
 	const lo_address  address() const  { return _address; }
 	
+    void subscribe(Shared::EngineInterface* engine) { }
+
 	//void plugins(); // FIXME remove
 
 	

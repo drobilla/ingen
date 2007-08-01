@@ -39,14 +39,14 @@ public:
 	                    SharedPtr<Shared::Responder> responder,
 	                    SampleCount                  timestamp,
 	                    const string&                uri,
-	                    SharedPtr<ClientInterface>   client);
+	                    ClientInterface*             client);
 
 	void pre_process();
 	void post_process();
 
 private:
-	string                     _uri;
-	SharedPtr<ClientInterface> _client;
+	string           _uri;
+	ClientInterface* _client;
 };
 
 

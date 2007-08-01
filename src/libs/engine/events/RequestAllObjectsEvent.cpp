@@ -49,7 +49,7 @@ RequestAllObjectsEvent::post_process()
 		// Everything is a child of the root patch, so this sends it all
 		Patch* root = _engine.object_store()->find_patch("/");
 		if (root)
-			ObjectSender::send_patch(_client.get(), root, true);
+			ObjectSender::send_patch(_client, root, true);
 
 	} else {
 		_responder->respond_error("Unable to find client to send all objects");

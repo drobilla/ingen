@@ -23,7 +23,6 @@
 #include <map>
 #include <lo/lo.h>
 #include <pthread.h>
-#include <raul/SharedPtr.hpp>
 #include "interface/ClientInterface.hpp"
 #include "types.hpp"
 
@@ -55,10 +54,10 @@ using Shared::ClientInterface;
 class ClientBroadcaster
 {
 public:
-	void register_client(const string& uri, SharedPtr<ClientInterface> client);
+	void register_client(const string& uri, ClientInterface* client);
 	bool unregister_client(const string& uri);
 	
-	SharedPtr<ClientInterface> client(const string& uri);
+	ClientInterface* client(const string& uri);
 	
 	// Notification band:
 	
@@ -88,11 +87,11 @@ public:
 	void send_program_add(const string& node_path, int bank, int program, const string& name);
 	void send_program_remove(const string& node_path, int bank, int program);
 	
-	void send_plugins_to(SharedPtr<ClientInterface>, const list<Plugin*>& plugin_list);
+	void send_plugins_to(ClientInterface*, const list<Plugin*>& plugin_list);
 
 private:
-	typedef std::map<string, SharedPtr<ClientInterface> > ClientMap;
-	ClientMap _clients;
+	typedef std::map<string, ClientInterface*> Clients;
+	Clients _clients;
 };
 
 

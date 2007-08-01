@@ -68,21 +68,21 @@ RequestObjectEvent::post_process()
 		Patch* const patch = dynamic_cast<Patch*>(_object);
 		if (patch) {
 			_responder->respond_ok();
-			ObjectSender::send_patch(_client.get(), patch, true);
+			ObjectSender::send_patch(_client, patch, true);
 			return;
 		}
 		
 		Node* const node = dynamic_cast<Node*>(_object);
 		if (node) {
 			_responder->respond_ok();
-			ObjectSender::send_node(_client.get(), node, true);
+			ObjectSender::send_node(_client, node, true);
 			return;
 		}
 		
 		Port* const port = dynamic_cast<Port*>(_object);
 		if (port) {
 			_responder->respond_ok();
-			ObjectSender::send_port(_client.get(), port);
+			ObjectSender::send_port(_client, port);
 			return;
 		}
 		

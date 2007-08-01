@@ -55,7 +55,7 @@ public:
 
 	virtual std::string client_uri() { return ""; }
 
-	virtual SharedPtr<ClientInterface> client() { return SharedPtr<ClientInterface>(); }
+	virtual ClientInterface* client() { return NULL; }
 
 	virtual void set_id(int32_t id) {}
 

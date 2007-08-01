@@ -54,7 +54,7 @@ OSCResponder::~OSCResponder()
 void
 OSCResponder::respond_ok()
 {
-	SharedPtr<ClientInterface> client = this->client();
+	ClientInterface* client = this->client();
 	if (client)
 		client->enable();
 
@@ -71,7 +71,7 @@ OSCResponder::respond_ok()
 void
 OSCResponder::respond_error(const string& msg)
 {
-	SharedPtr<ClientInterface> client = this->client();
+	ClientInterface* client = this->client();
 	if (client)
 		client->enable();
 
@@ -85,13 +85,13 @@ OSCResponder::respond_error(const string& msg)
 }
 
 
-SharedPtr<ClientInterface>
+ClientInterface*
 OSCResponder::client()
 {
 	if (_broadcaster)
 		return _broadcaster->client(client_uri());
 	else
-		return SharedPtr<ClientInterface>();
+		return NULL;
 }
 
 } // namespace OM

@@ -27,7 +27,7 @@ RegisterClientEvent::RegisterClientEvent(Engine&                      engine,
                                          SharedPtr<Shared::Responder> responder,
                                          SampleCount                  timestamp,
                                          const string&                uri,
-                                         SharedPtr<ClientInterface>   client)
+                                         ClientInterface*             client)
 	: QueuedEvent(engine, responder, timestamp)
 	, _uri(uri)
 	, _client(client)

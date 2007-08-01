@@ -41,9 +41,9 @@ namespace Ingen {
 /** Register a client to receive messages over the notification band.
  */
 void
-ClientBroadcaster::register_client(const string& uri, SharedPtr<ClientInterface> client)
+ClientBroadcaster::register_client(const string& uri, ClientInterface* client)
 {
-	ClientMap::iterator i = _clients.find(uri);
+	Clients::iterator i = _clients.find(uri);
 
 	if (i == _clients.end()) {
 		_clients[uri] = client;
@@ -79,15 +79,15 @@ ClientBroadcaster::unregister_client(const string& uri)
  * (A responder is passed to remove the dependency on liblo addresses in request
  * events, in anticipation of libom and multiple ways of responding to clients).
  */
-SharedPtr<ClientInterface>
+ClientInterface*
 ClientBroadcaster::client(const string& uri)
 {
-	ClientMap::iterator i = _clients.find(uri);
+	Clients::iterator i = _clients.find(uri);
 	if (i != _clients.end()) {
 		return (*i).second;
 	} else {
 		cerr << "[ClientBroadcaster] Failed to find client: " << uri << endl;
-		return SharedPtr<ClientInterface>();
+		return NULL;
 	}
 }
 
@@ -95,12 +95,12 @@ ClientBroadcaster::client(const string& uri)
 void
 ClientBroadcaster::send_error(const string& msg)
 {
-	for (ClientMap::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
+	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
 		(*i).second->error(msg);
 }
 
 void
-ClientBroadcaster::send_plugins_to(SharedPtr<ClientInterface> client, const list<Plugin*>& plugin_list)
+ClientBroadcaster::send_plugins_to(ClientInterface* client, const list<Plugin*>& plugin_list)
 {
 #if 0
 	// FIXME: This probably isn't actually thread safe
@@ -161,7 +161,7 @@ ClientBroadcaster::send_plugins_to(SharedPtr<ClientInterface> client, const list
 void
 ClientBroadcaster::send_plugins(const list<Plugin*>& plugin_list)
 {
-	for (ClientMap::const_iterator c = _clients.begin(); c != _clients.end(); ++c)
+	for (Clients::const_iterator c = _clients.begin(); c != _clients.end(); ++c)
 		send_plugins_to((*c).second, plugin_list);
 }
 
@@ -169,16 +169,16 @@ ClientBroadcaster::send_plugins(const list<Plugin*>& plugin_list)
 void
 ClientBroadcaster::send_node(const Node* node, bool recursive)
 {
-	for (ClientMap::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
-		ObjectSender::send_node((*i).second.get(), node, recursive);
+	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
+		ObjectSender::send_node((*i).second, node, recursive);
 }
 
 
 void
 ClientBroadcaster::send_port(const Port* port)
 {
-	for (ClientMap::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
-		ObjectSender::send_port((*i).second.get(), port);
+	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
+		ObjectSender::send_port((*i).second, port);
 }
 
 
@@ -186,21 +186,21 @@ void
 ClientBroadcaster::send_destroyed(const string& path)
 {
 	assert(path != "/");
-	for (ClientMap::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
+	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
 		(*i).second->object_destroyed(path);
 }
 
 void
 ClientBroadcaster::send_patch_cleared(const string& patch_path)
 {
-	for (ClientMap::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
+	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
 		(*i).second->patch_cleared(patch_path);
 }
 
 void
 ClientBroadcaster::send_connection(const Connection* const c)
 {
-	for (ClientMap::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
+	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
 		(*i).second->connection(c->src_port()->path(), c->dst_port()->path());
 }
 
@@ -208,7 +208,7 @@ ClientBroadcaster::send_connection(const Connection* const c)
 void
 ClientBroadcaster::send_disconnection(const string& src_port_path, const string& dst_port_path)
 {
-	for (ClientMap::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
+	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
 		(*i).second->disconnection(src_port_path, dst_port_path);
 }
 
@@ -216,7 +216,7 @@ ClientBroadcaster::send_disconnection(const string& src_port_path, const string&
 void
 ClientBroadcaster::send_patch_enable(const string& patch_path)
 {
-	for (ClientMap::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
+	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
 		(*i).second->patch_enabled(patch_path);
 }
 
@@ -224,7 +224,7 @@ ClientBroadcaster::send_patch_enable(const string& patch_path)
 void
 ClientBroadcaster::send_patch_disable(const string& patch_path)
 {
-	for (ClientMap::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
+	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
 		(*i).second->patch_disabled(patch_path);
 }
 
@@ -236,7 +236,7 @@ ClientBroadcaster::send_patch_disable(const string& patch_path)
 void
 ClientBroadcaster::send_metadata_update(const string& node_path, const string& key, const Atom& value)
 {
-	for (ClientMap::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
+	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
 		(*i).second->metadata_update(node_path, key, value);
 }
 
@@ -250,7 +250,7 @@ ClientBroadcaster::send_metadata_update(const string& node_path, const string& k
 void
 ClientBroadcaster::send_control_change(const string& port_path, float value)
 {
-	for (ClientMap::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
+	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
 		(*i).second->control_change(port_path, value);
 }
 
@@ -258,7 +258,7 @@ ClientBroadcaster::send_control_change(const string& port_path, float value)
 void
 ClientBroadcaster::send_program_add(const string& node_path, int bank, int program, const string& name)
 {
-	for (ClientMap::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
+	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
 		(*i).second->program_add(node_path, bank, program, name);
 }
 
@@ -266,7 +266,7 @@ ClientBroadcaster::send_program_add(const string& node_path, int bank, int progr
 void
 ClientBroadcaster::send_program_remove(const string& node_path, int bank, int program)
 {
-	for (ClientMap::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
+	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
 		(*i).second->program_remove(node_path, bank, program);
 }
 
@@ -278,8 +278,8 @@ ClientBroadcaster::send_program_remove(const string& node_path, int bank, int pr
 void
 ClientBroadcaster::send_patch(const Patch* const p, bool recursive)
 {
-	for (ClientMap::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
-		ObjectSender::send_patch((*i).second.get(), p, recursive);
+	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
+		ObjectSender::send_patch((*i).second, p, recursive);
 }
 
 
@@ -288,7 +288,7 @@ ClientBroadcaster::send_patch(const Patch* const p, bool recursive)
 void
 ClientBroadcaster::send_rename(const string& old_path, const string& new_path)
 {
-	for (ClientMap::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
+	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
 		(*i).second->object_renamed(old_path, new_path);
 }
 
@@ -300,7 +300,7 @@ ClientBroadcaster::send_all_objects()
 {	
 	cerr << "FIXME: send_all" << endl;
 
-	//for (ClientMap::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
+	//for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
 	//	(*i).second->send_all_objects();
 }
 

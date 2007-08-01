@@ -33,7 +33,7 @@ RequestMetadataEvent::RequestMetadataEvent(Engine& engine, SharedPtr<Shared::Res
   _path(node_path),
   _key(key),
   _object(NULL),
-  _client(SharedPtr<ClientInterface>())
+  _client(NULL)
 {
 }
 

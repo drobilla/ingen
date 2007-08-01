@@ -252,7 +252,7 @@ OSCEngineReceiver::set_response_address_cb(const char* path, const char* types, 
 	// Don't respond
 	} else {
 		me->disable_responses();
-		SharedPtr<ClientInterface> client = me->_engine.broadcaster()->client(url);
+		ClientInterface* client = me->_engine.broadcaster()->client(url);
 		if (client)
 			client->disable();
 		else
@@ -329,7 +329,7 @@ OSCEngineReceiver::_register_client_cb(const char* path, const char* types, lo_a
 	lo_address addr = lo_message_get_source(msg);
 
 	char* const url = lo_address_get_url(addr);
-	SharedPtr<ClientInterface> client(new OSCClientSender((const char*)url));
+	ClientInterface* client = new OSCClientSender((const char*)url);
 	register_client(url, client);
 	free(url);
 

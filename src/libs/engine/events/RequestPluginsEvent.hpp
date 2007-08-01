@@ -45,8 +45,8 @@ public:
 	void post_process();
 
 private:
-	SharedPtr<ClientInterface> _client;
-	std::list<Plugin*>          _plugins;
+	ClientInterface*   _client;
+	std::list<Plugin*> _plugins;
 };
 
 

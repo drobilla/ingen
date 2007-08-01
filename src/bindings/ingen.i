@@ -1,11 +1,12 @@
 %include "stl.i"
-%module ingen
+%module(directors="1") ingen
 %{
 #include "../common/interface/ClientInterface.hpp"
 #include "../common/interface/EngineInterface.hpp"
 #include "../libs/module/World.hpp"
 /*#include "../libs/module/module.h"*/
 #include "ingen_bindings.hpp"
+#include "Client.hpp"
 
 namespace Ingen { namespace Shared {
     class World;
@@ -22,7 +23,11 @@ namespace Ingen { namespace Shared {
 //%include "../libs/module/module.h"
 %include "ingen_bindings.hpp"
 
-using namespace Ingen::Shared;
+// generate directors for all classes that have virtual methods
+%feature("director");         
+%feature("director") Ingen::Shared::ClientInterface;
+//%feature("director") Ingen::Shared::EngineInterface;
+
 namespace Ingen { namespace Shared {
     class World;
 } }
@@ -39,7 +44,14 @@ namespace Ingen { namespace Shared {
     }
     /*SLV2World slv2() { return $self->me->slv2_world; }*/
 };
+
 } }
+
+
+%include "Client.hpp"
+
+%feature("director") Client;
+
 
 /*SharedPtr<Ingen::Shared::EngineInterface> engine() { return $self->me->engine; }*/
 

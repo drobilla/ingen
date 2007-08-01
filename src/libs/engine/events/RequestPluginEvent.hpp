@@ -45,9 +45,9 @@ public:
 	void post_process();
 
 private:
-	string                      _uri;
-	const Plugin*               _plugin;
-	SharedPtr<ClientInterface> _client;
+	string           _uri;
+	const Plugin*    _plugin;
+	ClientInterface* _client;
 };
 
 

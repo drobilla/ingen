@@ -217,11 +217,9 @@ main(int argc, char** argv)
         } else {
 			cerr << "FAILED: " << Glib::Module::get_last_error() << endl;
         }
-    }
-
-
-	/* Didn't run the GUI, listen to OSC and do our own main thing. */
-	if (engine && !ran_gui) {
+	
+	/* Listen to OSC and do our own main thing. */
+    } else if (engine && !ran_gui) {
 
 		signal(SIGINT, catch_int);
 		signal(SIGTERM, catch_int);

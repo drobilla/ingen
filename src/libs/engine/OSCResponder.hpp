@@ -54,7 +54,7 @@ public:
 
 	std::string client_uri() { return _url; }
 	
-	SharedPtr<Shared::ClientInterface> client();
+	Shared::ClientInterface* client();
 
 private:
 	ClientBroadcaster* _broadcaster;

@@ -120,7 +120,7 @@ ConnectWindow::start(SharedPtr<Ingen::Engine> engine, SharedPtr<Shared::EngineIn
 		
 		if (interface) {
 			App::instance().attach(interface, client);
-			interface->set_responder(SharedPtr<Ingen::Shared::Responder>(new Ingen::DirectResponder(client, 1)));
+			interface->set_responder(SharedPtr<Ingen::Shared::Responder>(new Ingen::DirectResponder(tsci, 1)));
 		}
 
 		engine->activate();
@@ -254,7 +254,8 @@ ConnectWindow::connect()
 		
 		App::instance().attach(engine_interface, client);
 
-		engine_interface->set_responder(SharedPtr<Ingen::Shared::Responder>(new Ingen::DirectResponder(client, 1)));
+		engine_interface->set_responder(SharedPtr<Ingen::Shared::Responder>(
+                    new Ingen::DirectResponder(tsci, 1)));
 
 		_engine->activate();
 
@@ -386,7 +387,7 @@ ConnectWindow::gtk_callback()
 		// FIXME
 		//auto_ptr<ClientInterface> client(new ThreadedSigClientInterface();
 		// FIXME: client URI
-		App::instance().engine()->register_client("", App::instance().client());
+		App::instance().engine()->register_client("", App::instance().client().get());
 		App::instance().engine()->load_plugins();
 		++_connect_stage;
 	} else if (_connect_stage == 3) {

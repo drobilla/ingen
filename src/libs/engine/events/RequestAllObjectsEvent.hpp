@@ -42,7 +42,7 @@ public:
 	void post_process();
 	
 private:
-	SharedPtr<ClientInterface> _client;
+	ClientInterface* _client;
 };
 
 

@@ -25,6 +25,8 @@
 namespace Ingen {
 namespace Shared {
 
+class EngineInterface;
+
 
 /** The (only) interface the engine uses to communicate with clients.
  *
@@ -35,6 +37,9 @@ class ClientInterface
 public:
 	
 	virtual ~ClientInterface() {}
+
+    /** Wrapper for engine->register_client to appease SWIG */
+    virtual void subscribe(EngineInterface* engine) = 0;
 	
 	virtual void response(int32_t id, bool success, std::string msg) = 0;
 	

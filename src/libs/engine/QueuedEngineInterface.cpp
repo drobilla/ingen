@@ -74,7 +74,7 @@ QueuedEngineInterface::disable_responses()
 
 
 void
-QueuedEngineInterface::register_client(const string& uri, SharedPtr<ClientInterface> client)
+QueuedEngineInterface::register_client(const string& uri, ClientInterface* client)
 {
 	push_queued(new RegisterClientEvent(_engine, _responder, now(), uri, client));
 }

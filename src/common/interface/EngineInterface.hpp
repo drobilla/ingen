@@ -47,7 +47,7 @@ public:
 	virtual void disable_responses() = 0;
 	
 	// Client registration
-	virtual void register_client(const string& uri, SharedPtr<ClientInterface> client) = 0;
+	virtual void register_client(const string& uri, ClientInterface* client) = 0;
 	virtual void unregister_client(const string& uri) = 0;
 	
 	
@@ -64,7 +64,7 @@ public:
 	
 	virtual void create_port(const string& path,
 	                         const string& data_type,
-	                         bool          direction) = 0;
+	                         bool          is_output) = 0;
 	
 	virtual void create_node(const string& path,
 	                         const string& plugin_uri,
