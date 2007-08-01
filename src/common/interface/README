@@ -1,11 +1,9 @@
-This directory is code that could POSSIBLY be used by both the engine and
-clients.
+This directory contains the core engine/client interfaces, code used on
+both the engine side and client side.
 
 It's very, very important that nothing here gets messed up that violates
 client/engine separation.  All interfaces use simple messages composed of
-serializable types, and no binary data that could break is shared.  It's
-basically a functional version of a human-readable OSC interface, in both
-directions.
+serializable types.
 
 The interface here maps directly on to the OSC interface - except it can
 happen in the same process as well, with only (virtual) function call
