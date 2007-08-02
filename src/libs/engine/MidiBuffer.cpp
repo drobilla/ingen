@@ -100,6 +100,23 @@ MidiBuffer::prepare_write(SampleCount nframes)
 
 	assert(!_joined_buf || data() == _joined_buf->data());
 }
+	
+/** FIXME: parameters ignored */
+void
+MidiBuffer::copy(const Buffer* src_buf, size_t start_sample, size_t end_sample)
+{
+	MidiBuffer* src = (MidiBuffer*)src_buf;
+	clear();
+	src->reset(_this_nframes);
+	const uint32_t frame_count = min(_this_nframes, src->this_nframes());
+	double time;
+	uint32_t size;
+	unsigned char* data;
+	while (src->increment() < frame_count) {
+		src->get_event(&time, &size, &data);
+		put_event(time, size, data);
+	}
+}
 
 
 } // namespace Ingen

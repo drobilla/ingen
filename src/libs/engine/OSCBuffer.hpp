@@ -32,7 +32,7 @@ public:
 	~OSCBuffer() { }
 
 	void clear() { lv2_osc_buffer_clear(_buf); }
-	void reset(SampleCount nframs) {}
+	void reset(SampleCount nframs) const {}
 
 	void prepare_read(SampleCount nframes);
 	void prepare_write(SampleCount nframes);
@@ -40,6 +40,8 @@ public:
 	bool is_joined_to(Buffer* buf) const;
 	bool join(Buffer* buf);
 	void unjoin();
+	
+	void copy(const Buffer* src, size_t start_sample, size_t end_sample);
 
 	uint32_t this_nframes() const { return _this_nframes; }
 

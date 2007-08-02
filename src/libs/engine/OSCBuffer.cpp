@@ -104,4 +104,13 @@ OSCBuffer::prepare_write(SampleCount nframes)
 }
 
 
+void
+OSCBuffer::copy(const Buffer* src, size_t start_sample, size_t end_sample)
+{
+	// FIXME
+	//cerr << "WARNING: OSC buffer copying not implemented, data dropped." << endl;
+}
+
+
+
 } // namespace Ingen

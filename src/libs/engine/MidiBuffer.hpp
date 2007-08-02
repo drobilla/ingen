@@ -40,6 +40,8 @@ public:
 
 	uint32_t this_nframes() const { return _this_nframes; }
 	
+	void copy(const Buffer* src, size_t start_sample, size_t end_sample);
+	
 	inline LV2_MIDI* data()
 		{ return ((_joined_buf != NULL) ? _joined_buf->data() : _state->midi); }
 	
@@ -49,13 +51,13 @@ public:
 	inline void clear()
 		{ assert(_state); assert(_state->midi); lv2midi_reset_buffer(_state->midi); _state->position = 0; }
 
-	inline void reset(SampleCount nframes)
+	inline void reset(SampleCount nframes) const
 		{ assert(_state); assert(_state->midi); lv2midi_reset_state(_state, _state->midi, nframes); _this_nframes = nframes; }
 
-	inline double increment()
+	inline double increment() const
 		{ assert(_state); assert(_state->midi); return lv2midi_step(_state); }
  
-	inline double get_event(double* timestamp, uint32_t* size, unsigned char** data)
+	inline double get_event(double* timestamp, uint32_t* size, unsigned char** data) const
 		{ assert(_state); assert(_state->midi); return lv2midi_get_event(_state, timestamp, size, data); }
 
 	inline int put_event(double timestamp, uint32_t size, const unsigned char* data)
@@ -68,7 +70,7 @@ private:
 	
 	MidiBuffer* _joined_buf;  ///< Buffer to mirror, if joined
 
-	uint32_t _this_nframes;
+	mutable uint32_t _this_nframes;
 };
 
 

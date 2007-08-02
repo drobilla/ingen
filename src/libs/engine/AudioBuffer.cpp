@@ -182,16 +182,17 @@ AudioBuffer::scale(Sample val, size_t start_sample, size_t end_sample)
  * This function only copies the same range in one buffer to another.
  */
 void
-AudioBuffer::copy(const AudioBuffer* src, size_t start_sample, size_t end_sample)
+AudioBuffer::copy(const Buffer* src, size_t start_sample, size_t end_sample)
 {
 	assert(end_sample >= start_sample);
 	assert(end_sample < _size);
 	assert(src);
+	assert(src->type() == DataType::FLOAT);
 	
 	Sample* const buf = data();
 	assert(buf);
 	
-	const Sample* const src_buf = src->data();
+	const Sample* const src_buf = ((AudioBuffer*)src)->data();
 	assert(src_buf);
 
 	for (size_t i=start_sample; i <= end_sample; ++i)

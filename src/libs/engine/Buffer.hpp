@@ -41,7 +41,7 @@ public:
 	virtual void clear() = 0;
 
 	/** Reset state (ie reset read ptr), but leave contents */
-	virtual void reset(SampleCount nframes) = 0;
+	virtual void reset(SampleCount nframes) const = 0;
 
 	virtual void prepare_read(SampleCount nframes) = 0;
 	virtual void prepare_write(SampleCount nframes) = 0;
@@ -49,6 +49,8 @@ public:
 	virtual bool is_joined_to(Buffer* buf) const = 0;
 	virtual bool join(Buffer* buf) = 0;
 	virtual void unjoin() = 0;
+	
+	virtual void copy(const Buffer* src, size_t start_sample, size_t end_sample) = 0;
 
 	virtual void resize(size_t size) { _size = size; }
 

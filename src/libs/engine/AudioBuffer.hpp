@@ -36,7 +36,7 @@ public:
 	void set(Sample val, size_t start_sample);
 	void set(Sample val, size_t start_sample, size_t end_sample);
 	void scale(Sample val, size_t start_sample, size_t end_sample);
-	void copy(const AudioBuffer* src, size_t start_sample, size_t end_sample);
+	void copy(const Buffer* src, size_t start_sample, size_t end_sample);
 	void accumulate(const AudioBuffer* src, size_t start_sample, size_t end_sample);
 	
 	bool join(Buffer* buf);
@@ -55,7 +55,7 @@ public:
 	void prepare_read(SampleCount nframes);
 	void prepare_write(SampleCount nframes) {}
 	
-	void reset(SampleCount nframes) {}
+	void reset(SampleCount nframes) const {}
 	void resize(size_t size);
 	
 	void      filled_size(size_t size) { _filled_size = size; }

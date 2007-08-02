@@ -191,21 +191,32 @@ InputPort::pre_process(SampleCount nframes, FrameTime start, FrameTime end)
 	/*assert(!_is_tied || _tied_port != NULL);
 	assert(!_is_tied || _buffers.at(0)->data() == _tied_port->buffer(0)->data());*/
 
-	for (uint32_t voice=0; voice < _poly; ++voice) {
-		assert(_type == DataType::FLOAT);
-		// Copy first connection
-		((AudioBuffer*)_buffers.at(voice))->copy(
-			((AudioBuffer*)(*_connections.begin())->buffer(voice)), 0, _buffer_size-1);
-		
-		// Accumulate the rest
-		if (_connections.size() > 1) {
+	if (_type == DataType::FLOAT) {
+		for (uint32_t voice=0; voice < _poly; ++voice) {
+			// Copy first connection
+			_buffers.at(voice)->copy(
+				(*_connections.begin())->buffer(voice), 0, _buffer_size-1);
 
-			Connections::iterator c = _connections.begin();
+			// Accumulate the rest
+			if (_connections.size() > 1) {
 
-			for (++c; c != _connections.end(); ++c)
-				((AudioBuffer*)_buffers.at(voice))->accumulate(
+				Connections::iterator c = _connections.begin();
+
+				for (++c; c != _connections.end(); ++c)
+					((AudioBuffer*)_buffers.at(voice))->accumulate(
 					((AudioBuffer*)(*c)->buffer(voice)), 0, _buffer_size-1);
+			}
 		}
+	} else {
+		assert(_poly == 1);
+		
+		// FIXME
+		//if (_connections.size() > 1)
+		//	cerr << "WARNING: MIDI mixing not implemented, only first connection used." << endl;
+			
+		// Copy first connection
+		_buffers.at(0)->copy(
+			(*_connections.begin())->buffer(0), 0, _buffer_size-1);
 	}
 }
 
