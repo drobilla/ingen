@@ -85,13 +85,13 @@ public:
 	
 	void quit();
 
-	ConnectWindow*   connect_window()       const { return _connect_window; }
-	Gtk::Dialog*     about_dialog()         const { return _about_dialog; }
-	ConfigWindow*    configuration_dialog() const { return _config_window; }
-	MessagesWindow*  messages_dialog()      const { return _messages_window; }
-	PatchTreeWindow* patch_tree()           const { return _patch_tree_window; }
-	Configuration*   configuration()        const { return _configuration; }
-	WindowFactory*   window_factory()       const { return _window_factory; }
+	ConnectWindow*    connect_window()        const { return _connect_window; }
+	Gtk::AboutDialog* about_dialog()          const { return _about_dialog; }
+	ConfigWindow*      configuration_dialog() const { return _config_window; }
+	MessagesWindow*    messages_dialog()      const { return _messages_window; }
+	PatchTreeWindow*   patch_tree()           const { return _patch_tree_window; }
+	Configuration*     configuration()        const { return _configuration; }
+	WindowFactory*     window_factory()       const { return _window_factory; }
 	
 	const SharedPtr<EngineInterface>&    engine() const { return _engine; }
 	const SharedPtr<SigClientInterface>& client() const { return _client; }
@@ -123,7 +123,7 @@ protected:
 	MessagesWindow*   _messages_window;
 	PatchTreeWindow*  _patch_tree_window;
 	ConfigWindow*     _config_window;
-	Gtk::Dialog*      _about_dialog;
+	Gtk::AboutDialog* _about_dialog;
 	WindowFactory*    _window_factory;
 
 	Ingen::Shared::World* _world;

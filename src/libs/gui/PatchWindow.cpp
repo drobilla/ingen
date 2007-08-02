@@ -124,8 +124,8 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 	_menu_view_patch_tree_window->signal_activate().connect(
 		sigc::mem_fun<void>(App::instance().patch_tree(), &PatchTreeWindow::present));
 
-	_menu_help_about->signal_activate().connect(
-		sigc::mem_fun<void>(App::instance().about_dialog(), &Gtk::Dialog::present));
+	_menu_help_about->signal_activate().connect(sigc::hide_return(
+		sigc::mem_fun(App::instance().about_dialog(), &Gtk::AboutDialog::run)));
 	
 	_breadcrumb_box = new BreadCrumbBox();
 	_breadcrumb_box->signal_patch_selected.connect(sigc::mem_fun(this, &PatchWindow::set_patch_from_path));
