@@ -40,8 +40,8 @@ public:
 	/** Clear contents and reset state */
 	virtual void clear() = 0;
 
-	/** Reset state (ie reset read ptr), but leave contents */
-	virtual void reset(SampleCount nframes) const = 0;
+	/** Rewing (ie reset read pointer), but leave contents unchanged */
+	virtual void rewind() const = 0;
 
 	virtual void prepare_read(SampleCount nframes) = 0;
 	virtual void prepare_write(SampleCount nframes) = 0;

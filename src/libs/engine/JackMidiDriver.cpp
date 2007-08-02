@@ -85,10 +85,13 @@ JackMidiPort::prepare_block(const SampleCount block_start, const SampleCount blo
 		jack_midi_event_t ev;
 		jack_midi_event_get(&ev, jack_buffer, i);
 
-		patch_buf->put_event(ev.time, ev.size, ev.buffer);
+		bool success = patch_buf->append(ev.time, ev.size, ev.buffer);
+		if (!success)
+			cerr << "WARNING: Failed to write MIDI to port buffer, event(s) lost!" << endl;
 	}
 
-	//cerr << "Jack MIDI got " << event_count << " events." << endl;
+	//if (event_count)
+	//	cerr << "Jack MIDI got " << event_count << " events." << endl;
 }
 
 

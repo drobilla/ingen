@@ -18,7 +18,7 @@
 #ifndef MIDIBUFFER_H
 #define MIDIBUFFER_H
 
-#include <lv2ext/lv2-midifunctions.h>
+#include <lv2ext/lv2-midiport.h>
 #include "Buffer.hpp"
 #include "DataType.hpp"
 
@@ -29,7 +29,7 @@ class MidiBuffer : public Buffer {
 public:
 	MidiBuffer(size_t capacity);
 	
-	~MidiBuffer() { lv2midi_free(_local_state.midi); }
+	~MidiBuffer();
 
 	void prepare_read(SampleCount nframes);
 	void prepare_write(SampleCount nframes);
@@ -39,38 +39,38 @@ public:
 	void unjoin();
 
 	uint32_t this_nframes() const { return _this_nframes; }
+	uint32_t event_count() const { return _buf->event_count; }
 	
-	void copy(const Buffer* src, size_t start_sample, size_t end_sample);
-	
+	inline LV2_MIDI* local_data() { return _local_buf; }
+
 	inline LV2_MIDI* data()
-		{ return ((_joined_buf != NULL) ? _joined_buf->data() : _state->midi); }
+		{ return ((_joined_buf != NULL) ? _joined_buf->data() : _buf); }
 	
 	inline const LV2_MIDI* data() const
-		{ return ((_joined_buf != NULL) ? _joined_buf->data() : _state->midi); }
+		{ return ((_joined_buf != NULL) ? _joined_buf->data() : _buf); }
+	
+	void copy(const Buffer* src, size_t start_sample, size_t end_sample);
 
-	inline void clear()
-		{ assert(_state); assert(_state->midi); lv2midi_reset_buffer(_state->midi); _state->position = 0; }
+	inline void rewind() const { _position = 0; }
+	inline void clear() { if (_joined_buf) reset(_this_nframes); }
+	inline void reset(SampleCount nframes) {
+		_position = 0;
+		_buf->event_count = 0;
+		_buf->size = 0;
+	}
 
-	inline void reset(SampleCount nframes) const
-		{ assert(_state); assert(_state->midi); lv2midi_reset_state(_state, _state->midi, nframes); _this_nframes = nframes; }
-
-	inline double increment() const
-		{ assert(_state); assert(_state->midi); return lv2midi_step(_state); }
+	double increment() const;
  
-	inline double get_event(double* timestamp, uint32_t* size, unsigned char** data) const
-		{ assert(_state); assert(_state->midi); return lv2midi_get_event(_state, timestamp, size, data); }
+	double get_event(double* timestamp, uint32_t* size, unsigned char** data) const;
 
-	inline int put_event(double timestamp, uint32_t size, const unsigned char* data)
-		{ assert(_state); assert(_state->midi); return lv2midi_put_event(_state, timestamp, size, data); }
+	bool append(double timestamp, uint32_t size, const unsigned char* data);
 
 private:
-	LV2_MIDIState    _local_state;
-	LV2_MIDIState*   _state;
-	LV2_MIDI* const  _buf;
-	
-	MidiBuffer* _joined_buf;  ///< Buffer to mirror, if joined
-
-	mutable uint32_t _this_nframes;
+	uint32_t         _this_nframes; ///< Current cycle nframes
+	mutable uint32_t _position; ///< Index into _buf
+	MidiBuffer*      _joined_buf;  ///< Buffer to mirror, if joined
+	LV2_MIDI*        _buf; ///< Contents (maybe belong to _joined_buf)
+	LV2_MIDI*        _local_buf; ///< Local contents
 };
 
 

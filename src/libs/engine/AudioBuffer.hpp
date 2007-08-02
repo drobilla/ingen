@@ -55,7 +55,7 @@ public:
 	void prepare_read(SampleCount nframes);
 	void prepare_write(SampleCount nframes) {}
 	
-	void reset(SampleCount nframes) const {}
+	void rewind() const {}
 	void resize(size_t size);
 	
 	void      filled_size(size_t size) { _filled_size = size; }

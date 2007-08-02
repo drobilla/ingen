@@ -32,7 +32,8 @@ public:
 	~OSCBuffer() { }
 
 	void clear() { lv2_osc_buffer_clear(_buf); }
-	void reset(SampleCount nframs) const {}
+	void reset(SampleCount nframes) { clear(); _this_nframes = nframes; }
+	void rewind() const {}
 
 	void prepare_read(SampleCount nframes);
 	void prepare_write(SampleCount nframes);

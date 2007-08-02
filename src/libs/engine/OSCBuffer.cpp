@@ -69,7 +69,6 @@ OSCBuffer::unjoin()
 	//_state = &_local_state;
 	//_state->midi = _buf;
 
-	clear();
 	reset(_this_nframes);
 }
 
