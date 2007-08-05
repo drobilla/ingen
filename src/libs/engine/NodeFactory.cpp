@@ -136,6 +136,8 @@ NodeFactory::plugin(const string& type, const string& lib, const string& label)
 		if ((*i)->type_string() == type && (*i)->lib_name() == lib && (*i)->plug_label() == label)
 			return (*i);
 
+	cerr << "ERROR: Failed to find " << type << " plugin " << lib << " / " << label << endl;
+
 	return NULL;
 }
 
@@ -564,6 +566,12 @@ NodeFactory::load_ladspa_plugins()
 				continue;
 			
 			full_lib_name = dir +"/"+ pfile->d_name;
+			
+			// Ignore stupid libtool files.  Kludge alert.
+			if (full_lib_name.substr(full_lib_name.length()-3) == ".la") {
+				cerr << "WARNING: Skipping stupid libtool file " << pfile->d_name << endl;
+				continue;
+			}
 			
 			Glib::Module* plugin_library = library(full_lib_name);
 			if (!plugin_library) {

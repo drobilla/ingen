@@ -183,9 +183,6 @@ InputPort::pre_process(SampleCount nframes, FrameTime start, FrameTime end)
 	for (uint32_t i=0; i < _poly; ++i)
 		_buffers.at(i)->prepare_read(nframes);
 	
-	if (_type == DataType::MIDI)
-		cerr << path() << " nevents: " << ((MidiBuffer*)_buffers.at(0))->event_count() << endl;
-
 	if (!do_mixdown) {
 		assert(_buffers.at(0)->is_joined_to((*_connections.begin())->buffer(0)));
 		return;
