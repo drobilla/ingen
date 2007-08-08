@@ -111,13 +111,14 @@ ConnectWindow::start(SharedPtr<Ingen::Engine> engine, SharedPtr<Shared::EngineIn
 	show();
 	
 	if (engine) {
+		
+		engine->activate();
+		
 		Glib::signal_timeout().connect(
 			sigc::mem_fun(engine.get(), &Ingen::Engine::main_iteration), 1000);
 		
 		ThreadedSigClientInterface* tsci = new ThreadedSigClientInterface(Ingen::event_queue_size);
 		SharedPtr<SigClientInterface> client(tsci);
-		
-		engine->activate();
 		
 		if (interface)
 			App::instance().attach(interface, client);
