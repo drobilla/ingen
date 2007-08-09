@@ -75,11 +75,6 @@ Engine::Engine(Ingen::Shared::World* world)
 Engine::~Engine()
 {
 	deactivate();
-	
-	for (size_t i=0; i < _process_slaves.size(); ++i)
-		delete _process_slaves[i];
-	
-	_process_slaves.clear();
 
 	for (ObjectStore::Objects::const_iterator i = _object_store->objects().begin();
 			i != _object_store->objects().end(); ++i) {
@@ -267,6 +262,12 @@ Engine::deactivate()
 	_audio_driver->deactivate();
 
 	_audio_driver->root_patch()->deactivate();
+	
+	for (size_t i=0; i < _process_slaves.size(); ++i) {
+		delete _process_slaves[i];
+	}
+	
+	_process_slaves.clear();
 
 	// Finalize any lingering events (unlikely)
 	//_post_processor->whip();
