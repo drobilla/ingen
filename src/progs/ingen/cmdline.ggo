@@ -15,6 +15,7 @@ option "connect" c "Connect to existing engine at OSC URI" string no default="os
 option "gui" g "Launch the GTK graphical interface" flag on
 option "client-port" C "Client OSC port"    int    no
 option "load" l "Load patch" string no
-option "path" p "Target path for loaded patch" string no
+option "path" L "Target path for loaded patch" string no
 option "run" r "Run script" string no
+option "parallelism" p "Number of concurrent process threads" int no default="1"
 

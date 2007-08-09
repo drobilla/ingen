@@ -19,11 +19,11 @@
 #define ENGINE_H
 
 #include CONFIG_H_PATH
-#include "module/module.h"
-
 #include <cassert>
+#include <vector>
 #include <boost/utility.hpp>
 #include <raul/SharedPtr.hpp>
+#include "module/module.h"
 #include "DataType.hpp"
 
 template<typename T> class Queue;
@@ -46,6 +46,7 @@ class QueuedEvent;
 class QueuedEngineInterface;
 class LashDriver;
 class Driver;
+class ProcessSlave;
 
 
 /** The main class for the Engine.
@@ -74,9 +75,7 @@ public:
 	
 	virtual SharedPtr<QueuedEngineInterface> new_queued_interface();
 
-	//virtual void set_event_source(SharedPtr<EventSource>);
-	
-	virtual bool activate();
+	virtual bool activate(size_t parallelism);
 	virtual void deactivate();
 
 	virtual bool activated() { return _activated; }
@@ -96,8 +95,12 @@ public:
 	Driver* driver(DataType type);
 
 	Ingen::Shared::World* world() { return _world; }
+
+	typedef std::vector<ProcessSlave*> ProcessSlaves;
+	inline const ProcessSlaves& process_slaves() const { return _process_slaves; }
 	
 private:
+	ProcessSlaves _process_slaves;
 
 	Ingen::Shared::World* _world;
 

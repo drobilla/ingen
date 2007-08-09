@@ -47,7 +47,7 @@ DestroyEvent::DestroyEvent(Engine& engine, SharedPtr<Responder> responder, Frame
   _patch_node_listnode(NULL),
   _patch_port_listnode(NULL),
   _ports_array(NULL),
-  _process_order(NULL),
+  _compiled_patch(NULL),
   _disconnect_node_event(NULL),
   _disconnect_port_event(NULL)
 {
@@ -65,9 +65,8 @@ DestroyEvent::DestroyEvent(Engine& engine, SharedPtr<Responder> responder, Frame
   _driver_port(NULL),
   _patch_node_listnode(NULL),
   _patch_port_listnode(NULL),
-  _store_treenode(NULL),
   _ports_array(NULL),
-  _process_order(NULL),
+  _compiled_patch(NULL),
   _disconnect_node_event(NULL),
   _disconnect_port_event(NULL)
 {
@@ -114,17 +113,19 @@ DestroyEvent::pre_process()
 
 			if (_node->parent_patch()->enabled()) {
 				// FIXME: is this called multiple times?
-				_process_order = _node->parent_patch()->build_process_order();
+				_compiled_patch = _node->parent_patch()->compile();
 				// Remove node to be removed from the process order so it isn't executed by
 				// Patch::run and can safely be destroyed
-				//for (size_t i=0; i < _process_order->size(); ++i)
-				//	if (_process_order->at(i) == _node)
-				//		_process_order->at(i) = NULL; // ew, gap
+				//for (size_t i=0; i < _compiled_patch->size(); ++i)
+				//	if (_compiled_patch->at(i) == _node)
+				//		_compiled_patch->at(i) = NULL; // ew, gap
 				
 #ifdef DEBUG
 				// Be sure node is removed from process order, so it can be destroyed
-				for (size_t i=0; i < _process_order->size(); ++i)
-					assert(_process_order->at(i) != _node);
+				for (size_t i=0; i < _compiled_patch->size(); ++i) {
+					assert(_compiled_patch->at(i).node() != _node);
+					// FIXME: check providers/dependants too
+				}
 #endif
 			}
 		}
@@ -141,7 +142,7 @@ DestroyEvent::pre_process()
 			
 			if (_port->parent_patch()->enabled()) {
 				// FIXME: is this called multiple times?
-				_process_order = _port->parent_patch()->build_process_order();
+				_compiled_patch = _port->parent_patch()->compile();
 				_ports_array   = _port->parent_patch()->build_ports_array();
 				assert(_ports_array->size() == _port->parent_patch()->num_ports());
 			}
@@ -164,9 +165,9 @@ DestroyEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 		if (_disconnect_node_event)
 			_disconnect_node_event->execute(nframes, start, end);
 		
-		if (_node->parent_patch()->process_order())
-			_engine.maid()->push(_node->parent_patch()->process_order());
-		_node->parent_patch()->process_order(_process_order);
+		if (_node->parent_patch()->compiled_patch())
+			_engine.maid()->push(_node->parent_patch()->compiled_patch());
+		_node->parent_patch()->compiled_patch(_compiled_patch);
 	
 	} else if (_patch_port_listnode) {
 		assert(_port);
@@ -174,10 +175,10 @@ DestroyEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 		if (_disconnect_port_event)
 			_disconnect_port_event->execute(nframes, start, end);
 		
-		if (_port->parent_patch()->process_order())
-			_engine.maid()->push(_port->parent_patch()->process_order());
+		if (_port->parent_patch()->compiled_patch())
+			_engine.maid()->push(_port->parent_patch()->compiled_patch());
 		
-		_port->parent_patch()->process_order(_process_order);
+		_port->parent_patch()->compiled_patch(_compiled_patch);
 		
 		if (_port->parent_patch()->external_ports())
 			_engine.maid()->push(_port->parent_patch()->external_ports());

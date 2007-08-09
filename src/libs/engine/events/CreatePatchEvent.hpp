@@ -32,6 +32,7 @@ namespace Ingen {
 class Patch;
 class Node;
 class Plugin;
+class CompiledPatch;
 
 
 /** Creates a new Patch.
@@ -53,8 +54,7 @@ private:
 	Raul::Path        _path;
 	Patch*            _patch;
 	Patch*            _parent;
-	Raul::Array<Node*>*     _process_order;
-	TreeNode<Node*>*  _patch_treenode;
+	CompiledPatch*    _compiled_patch;
 	int               _poly;
 	ErrorType         _error;
 };

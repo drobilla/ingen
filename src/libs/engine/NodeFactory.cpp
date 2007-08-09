@@ -58,7 +58,7 @@ NodeFactory::NodeFactory(Ingen::Shared::World* world)
 	// Add builtin plugin types to _internal_plugins list
 	// FIXME: ewwww, definitely a better way to do this!
 
-	Patch* parent = new Patch("dummy", 1, NULL, 1, 1, 1);
+	Patch* parent = new Patch(*world->local_engine, "dummy", 1, NULL, 1, 1, 1);
 
 	Node* n = NULL;
 	n = new MidiNoteNode("foo", 1, parent, 1, 1);

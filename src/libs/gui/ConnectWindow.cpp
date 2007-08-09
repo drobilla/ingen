@@ -112,7 +112,7 @@ ConnectWindow::start(SharedPtr<Ingen::Engine> engine, SharedPtr<Shared::EngineIn
 	
 	if (engine) {
 		
-		engine->activate();
+		engine->activate(1); // FIXME
 		
 		Glib::signal_timeout().connect(
 			sigc::mem_fun(engine.get(), &Ingen::Engine::main_iteration), 1000);
@@ -252,7 +252,7 @@ ConnectWindow::connect()
 		
 		App::instance().attach(engine_interface, client);
 
-		_engine->activate();
+		_engine->activate(1); // FIXME
 
 		Glib::signal_timeout().connect(
 			sigc::mem_fun(_engine.get(), &Ingen::Engine::main_iteration), 1000);

@@ -38,6 +38,7 @@
 #include "EnablePatchEvent.hpp"
 #include "OSCEngineReceiver.hpp"
 #include "PostProcessor.hpp"
+#include "ProcessSlave.hpp"
 #ifdef HAVE_JACK_MIDI
 #include "JackMidiDriver.hpp"
 #endif
@@ -50,21 +51,23 @@ namespace Ingen {
 
 
 Engine::Engine(Ingen::Shared::World* world)
-: _world(world),
-  _midi_driver(NULL),
-  _osc_driver(NULL),
-  _maid(new Raul::Maid(maid_queue_size)),
-  _post_processor(new PostProcessor(/**_maid, */post_processor_queue_size)),
-  _broadcaster(new ClientBroadcaster()),
-  _object_store(new ObjectStore()),
-  _node_factory(new NodeFactory(world)),
-/*#ifdef HAVE_LASH
-  _lash_driver(new LashDriver()),
-#else */
-//  _lash_driver(NULL),
-//#endif
-  _quit_flag(false),
-  _activated(false)
+  	: _world(world)
+	, _midi_driver(NULL)
+	, _osc_driver(NULL)
+	, _maid(new Raul::Maid(maid_queue_size))
+	, _post_processor(new PostProcessor(/**_maid, */post_processor_queue_size))
+	, _broadcaster(new ClientBroadcaster())
+	, _object_store(new ObjectStore())
+	, _node_factory(new NodeFactory(world))
+#if 0
+#ifdef HAVE_LASH
+	, _lash_driver(new LashDriver())
+#else
+	, _lash_driver(NULL)
+#endif
+#endif
+	, _quit_flag(false)
+	, _activated(false)
 {
 }
 
@@ -72,6 +75,11 @@ Engine::Engine(Ingen::Shared::World* world)
 Engine::~Engine()
 {
 	deactivate();
+	
+	for (size_t i=0; i < _process_slaves.size(); ++i)
+		delete _process_slaves[i];
+	
+	_process_slaves.clear();
 
 	for (ObjectStore::Objects::const_iterator i = _object_store->objects().begin();
 			i != _object_store->objects().end(); ++i) {
@@ -198,7 +206,7 @@ Engine::set_event_source(SharedPtr<EventSource> source)
 
 
 bool
-Engine::activate()
+Engine::activate(size_t parallelism)
 {
 	if (_activated)
 		return false;
@@ -216,17 +224,23 @@ Engine::activate()
 
 	// Create root patch
 
-	Patch* root_patch = new Patch("", 1, NULL,
+	Patch* root_patch = new Patch(*this, "", 1, NULL,
 			_audio_driver->sample_rate(), _audio_driver->buffer_size(), 1);
 	root_patch->activate();
 	_object_store->add(root_patch);
-	root_patch->process_order(root_patch->build_process_order());
-	root_patch->enable();
+	root_patch->compiled_patch(root_patch->compile());
 
 	assert(_audio_driver->root_patch() == NULL);
 	_audio_driver->set_root_patch(root_patch);
 
 	_audio_driver->activate();
+
+	_process_slaves.clear();
+	_process_slaves.reserve(parallelism);
+	for (size_t i=0; i < parallelism - 1; ++i)
+		_process_slaves.push_back(new ProcessSlave(_audio_driver->is_realtime()));
+	
+	root_patch->enable();
 	
 	//_post_processor->start();
 

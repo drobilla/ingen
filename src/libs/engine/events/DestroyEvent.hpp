@@ -41,6 +41,7 @@ class DriverPort;
 class Plugin;
 class DisconnectNodeEvent;
 class DisconnectPortEvent;
+class CompiledPatch;
 
 
 /** An event to remove and delete a Node.
@@ -68,7 +69,7 @@ private:
 	Raul::ListNode<Node*>*         _patch_node_listnode;
 	Raul::ListNode<Port*>*         _patch_port_listnode;
 	Raul::Array<Port*>*            _ports_array; ///< New (external) ports array for Patch
-	Raul::Array<Node*>*            _process_order;  ///< Patch's new process order
+	CompiledPatch*                 _compiled_patch;  ///< Patch's new process order
 	DisconnectNodeEvent*           _disconnect_node_event;
 	DisconnectPortEvent*           _disconnect_port_event;
 };

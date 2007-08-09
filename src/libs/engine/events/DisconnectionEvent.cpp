@@ -44,7 +44,7 @@ DisconnectionEvent::DisconnectionEvent(Engine& engine, SharedPtr<Responder> resp
   _src_port(NULL),
   _dst_port(NULL),
   _lookup(true),
-  _process_order(NULL),
+  _compiled_patch(NULL),
   _error(NO_ERROR)
 {
 }
@@ -58,7 +58,7 @@ DisconnectionEvent::DisconnectionEvent(Engine& engine, SharedPtr<Responder> resp
   _src_port(src_port),
   _dst_port(dst_port),
   _lookup(false),
-  _process_order(NULL),
+  _compiled_patch(NULL),
   _error(NO_ERROR)
 {
 	// FIXME: These break for patch ports.. is that ok?
@@ -145,7 +145,7 @@ DisconnectionEvent::pre_process()
 		}
 	
 	if (_patch->enabled())
-		_process_order = _patch->build_process_order();
+		_compiled_patch = _patch->compile();
 	
 	QueuedEvent::pre_process();
 }
@@ -172,9 +172,9 @@ DisconnectionEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 			_engine.maid()->push(patch_connection);
 			_engine.maid()->push(port_connection->elem());
 	
-			if (_patch->process_order() != NULL)
-				_engine.maid()->push(_patch->process_order());
-			_patch->process_order(_process_order);
+			if (_patch->compiled_patch() != NULL)
+				_engine.maid()->push(_patch->compiled_patch());
+			_patch->compiled_patch(_compiled_patch);
 		} else {
 			_error = CONNECTION_NOT_FOUND;
 		}

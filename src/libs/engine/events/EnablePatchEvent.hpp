@@ -29,6 +29,7 @@ namespace Ingen {
 
 class Patch;
 class Node;
+class CompiledPatch;
 
 
 /** Enables a patch's DSP processing.
@@ -45,9 +46,9 @@ public:
 	void post_process();
 
 private:
-	string        _patch_path;
-	Patch*        _patch;
-	Raul::Array<Node*>* _process_order; // Patch's new process order
+	string         _patch_path;
+	Patch*         _patch;
+	CompiledPatch* _compiled_patch; // Patch's new process order
 };
 
 

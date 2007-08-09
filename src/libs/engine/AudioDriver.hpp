@@ -49,6 +49,8 @@ public:
 	virtual SampleCount buffer_size()  const = 0;
 	virtual SampleCount sample_rate()  const = 0;
 	virtual SampleCount frame_time()   const = 0;
+
+	virtual bool is_realtime() const = 0;
 };
 
 

@@ -36,7 +36,7 @@ CreatePatchEvent::CreatePatchEvent(Engine& engine, SharedPtr<Responder> responde
   _path(path),
   _patch(NULL),
   _parent(NULL),
-  _process_order(NULL),
+  _compiled_patch(NULL),
   _poly(poly),
   _error(NO_ERROR)
 {
@@ -69,13 +69,13 @@ CreatePatchEvent::pre_process()
 	if (_parent != NULL && _poly > 1 && _poly == static_cast<int>(_parent->internal_poly()))
 		poly = _poly;
 	
-	_patch = new Patch(_path.name(), poly, _parent, _engine.audio_driver()->sample_rate(), _engine.audio_driver()->buffer_size(), _poly);
+	_patch = new Patch(_engine, _path.name(), poly, _parent, _engine.audio_driver()->sample_rate(), _engine.audio_driver()->buffer_size(), _poly);
 		
 	if (_parent != NULL) {
 		_parent->add_node(new Raul::ListNode<Node*>(_patch));
 
 		if (_parent->enabled())
-			_process_order = _parent->build_process_order();
+			_compiled_patch = _parent->compile();
 	}
 	
 	_patch->activate();
@@ -102,9 +102,9 @@ CreatePatchEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 			assert(_parent != NULL);
 			assert(_path != "/");
 			
-			if (_parent->process_order() != NULL)
-				_engine.maid()->push(_parent->process_order());
-			_parent->process_order(_process_order);
+			if (_parent->compiled_patch() != NULL)
+				_engine.maid()->push(_parent->compiled_patch());
+			_parent->compiled_patch(_compiled_patch);
 		}
 	}
 }

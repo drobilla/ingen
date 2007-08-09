@@ -38,6 +38,7 @@
 #include "bindings/ingen_bindings.hpp"
 #endif
 
+
 using namespace std;
 using namespace Ingen;
 
@@ -136,7 +137,7 @@ main(int argc, char** argv)
 
 		engine->start_jack_driver();
 
-		engine->activate();
+		engine->activate(args.parallelism_arg);
 	}
             
 	world->engine = engine_interface.get();
@@ -229,12 +230,14 @@ main(int argc, char** argv)
 	/* Listen to OSC and do our own main thing. */
     } else if (engine && !ran_gui) {
 
+		size_t parallelism = args.parallelism_arg;
+
 		signal(SIGINT, catch_int);
 		signal(SIGTERM, catch_int);
 		
 		engine->start_osc_driver(args.engine_port_arg);
 		engine->start_jack_driver();
-		engine->activate();
+		engine->activate(parallelism);
 
 		engine->main();
 	}

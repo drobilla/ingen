@@ -41,6 +41,9 @@ NodeBase::NodeBase(const Plugin* plugin, const string& name, uint32_t poly, Patc
   _buffer_size(buffer_size),
   _activated(false),
   _traversed(false),
+  _input_ready(1),
+  _process_lock(0),
+  _n_inputs_ready(0),
   _ports(NULL),
   _providers(new Raul::List<Node*>()),
   _dependants(new Raul::List<Node*>())
@@ -88,6 +91,55 @@ NodeBase::set_buffer_size(size_t size)
 		for (size_t i=0; i < _ports->size(); ++i)
 			_ports->at(i)->set_buffer_size(size);
 }
+	
+
+void
+NodeBase::reset_input_ready()
+{
+	//cout << path() << " RESET" << endl;
+	_n_inputs_ready = 0;
+	_process_lock = 0;
+	_input_ready.reset(0);
+}
+
+
+bool
+NodeBase::process_lock()
+{
+	return _process_lock.compare_and_exchange(0, 1);
+}
+
+
+void
+NodeBase::process_unlock()
+{
+	_process_lock = 0;
+}
+
+
+void
+NodeBase::wait_for_input(size_t num_providers)
+{
+	assert(_process_lock.get() == 1);
+
+	while ((unsigned)_n_inputs_ready.get() < num_providers) {
+		//cout << path() << " WAITING " << _n_inputs_ready.get() << endl;
+		_input_ready.wait();
+		//cout << path() << " CAUGHT SIGNAL" << endl;
+		//++_n_inputs_ready;
+	}
+
+	//cout << path() << " READY" << endl;
+}
+
+
+void
+NodeBase::signal_input_ready()
+{
+	//cout << path() << " SIGNAL" << endl;
+	++_n_inputs_ready;
+	_input_ready.post();
+}
 
 
 /** Prepare to run a cycle (in the audio thread)
@@ -108,7 +160,8 @@ void
 NodeBase::post_process(SampleCount nframes, FrameTime start, FrameTime end)
 {
 	assert(_activated);
-	// Prepare any output ports for reading (MIDI)
+	
+	/* Write output ports */
 	for (size_t i=0; i < _ports->size(); ++i)
 		_ports->at(i)->post_process(nframes, start, end);
 }

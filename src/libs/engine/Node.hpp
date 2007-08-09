@@ -62,6 +62,37 @@ public:
 	virtual void deactivate() = 0;
 	virtual bool activated()  = 0;
 	
+	/** Parallelism: Reset flags for start of a new cycle.
+	 */
+	virtual void reset_input_ready() = 0;
+	
+	/** Parallelism: Claim this node (to wait on its input).
+	 * Only one thread will ever take this lock on a particular Node.
+	 * \return true if lock was aquired, false otherwise
+	 */
+	virtual bool process_lock() = 0;
+	
+	/** Parallelism: Unclaim this node (let someone else wait on its input).
+	 * Only a thread which successfully called process_lock may call this.
+	 */
+	virtual void process_unlock() = 0;
+
+	/** Parallelism: Wait for signal that input is ready.
+	 * Only a thread which successfully called process_lock may call this.
+	 */
+	virtual void wait_for_input(size_t num_providers) = 0;
+	
+	/** Parallelism: Signal that input is ready.  Realtime safe.
+	 * Calling this will wake up the thread which blocked on wait_for_input
+	 * if there is one, and otherwise cause it to return true the next call.
+	 * \return true if lock was aquired and input is ready, false otherwise
+	 */
+	virtual void signal_input_ready() = 0;
+
+	/** Parallelism: Return the number of providers that have signalled.
+	 */
+	virtual unsigned n_inputs_ready() const = 0;
+
 	/** Run the node for @a nframes input/output.
 	 *
 	 * @a start and @a end are transport times: end is not redundant in the case

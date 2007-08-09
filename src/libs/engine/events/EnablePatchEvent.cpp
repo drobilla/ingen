@@ -30,7 +30,7 @@ EnablePatchEvent::EnablePatchEvent(Engine& engine, SharedPtr<Responder> responde
 : QueuedEvent(engine, responder, timestamp),
   _patch_path(patch_path),
   _patch(NULL),
-  _process_order(NULL)
+  _compiled_patch(NULL)
 {
 }
 
@@ -44,8 +44,8 @@ EnablePatchEvent::pre_process()
 		/* Any event that requires a new process order will set the patch's
 		 * process order to NULL if it is executed when the patch is not
 		 * active.  So, if the PO is NULL, calculate it here */
-		if (_patch->process_order() == NULL)
-			_process_order = _patch->build_process_order();
+		if (_patch->compiled_patch() == NULL)
+			_compiled_patch = _patch->compile();
 	}
 
 	QueuedEvent::pre_process();
@@ -60,8 +60,8 @@ EnablePatchEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 	if (_patch != NULL) {
 		_patch->enable();
 
-		if (_patch->process_order() == NULL)
-			_patch->process_order(_process_order);
+		if (_patch->compiled_patch() == NULL)
+			_patch->compiled_patch(_compiled_patch);
 	}
 }
 

@@ -30,6 +30,7 @@ libingen_engine_la_SOURCES = \
 	ClientBroadcaster.hpp \
 	Connection.cpp \
 	Connection.hpp \
+	CompiledPatch.hpp \
 	DataType.hpp \
 	Driver.hpp \
 	DuplexPort.cpp \
@@ -83,6 +84,8 @@ libingen_engine_la_SOURCES = \
 	Port.hpp \
 	PostProcessor.cpp \
 	PostProcessor.hpp \
+	ProcessSlave.hpp \
+	ProcessSlave.cpp \
 	QueuedEngineInterface.cpp \
 	QueuedEngineInterface.hpp \
 	QueuedEvent.hpp \

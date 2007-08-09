@@ -98,7 +98,7 @@ public:
 	inline const jack_position_t* position() { return &_position; }
 	inline const jack_transport_state_t transport_state() { return _transport_state; }
 	
-	bool is_realtime() { return jack_is_realtime(_client); }
+	bool is_realtime() const { return jack_is_realtime(_client); }
 	
 	jack_client_t* jack_client() const  { return _client; }
 	SampleCount    buffer_size() const  { return _buffer_size; }

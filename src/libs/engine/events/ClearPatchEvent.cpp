@@ -72,9 +72,9 @@ ClearPatchEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 		//for (Raul::List<Node*>::const_iterator i = _patch->nodes().begin(); i != _patch->nodes().end(); ++i)
 		//	(*i)->remove_from_patch();
 
-		if (_patch->process_order() != NULL) {
-			_engine.maid()->push(_patch->process_order());
-			_patch->process_order(NULL);
+		if (_patch->compiled_patch() != NULL) {
+			_engine.maid()->push(_patch->compiled_patch());
+			_patch->compiled_patch(NULL);
 		}
 	}
 }

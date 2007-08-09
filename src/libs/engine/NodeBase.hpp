@@ -21,6 +21,8 @@
 #include "types.hpp"
 #include <string>
 #include <cstdlib>
+#include <raul/Semaphore.hpp>
+#include <raul/AtomicInt.hpp>
 #include "Node.hpp"
 
 using std::string;
@@ -52,10 +54,16 @@ public:
 	virtual void activate();
 	virtual void deactivate();
 	bool activated() { return _activated; }
+	
+	virtual void     reset_input_ready();
+	virtual bool     process_lock();
+	virtual void     process_unlock();
+	virtual void     wait_for_input(size_t num_providers);
+	virtual unsigned n_inputs_ready() const { return _n_inputs_ready.get(); }
 
-	virtual void post_process(SampleCount nframes, FrameTime start, FrameTime end);
-	virtual void process(SampleCount nframes, FrameTime start, FrameTime end) = 0;
 	virtual void pre_process(SampleCount nframes, FrameTime start, FrameTime end);
+	virtual void process(SampleCount nframes, FrameTime start, FrameTime end) = 0;
+	virtual void post_process(SampleCount nframes, FrameTime start, FrameTime end);
 		
 	virtual void set_port_buffer(uint32_t voice, uint32_t port_num, Buffer* buf) {}
 	
@@ -70,18 +78,24 @@ public:
 	
 	const Raul::Array<Port*>& ports() const { return *_ports; }
 	
-	virtual Raul::List<Node*>* providers()               { return _providers; }
-	virtual void         providers(Raul::List<Node*>* l) { _providers = l; }
+	/* These are NOT to be used in the audio thread!
+	 * The providers and dependants in CompiledNode are for that
+	 */
+
+	virtual Raul::List<Node*>* providers()                     { return _providers; }
+	virtual void               providers(Raul::List<Node*>* l) { _providers = l; }
 	
-	virtual Raul::List<Node*>* dependants()               { return _dependants; }
-	virtual void         dependants(Raul::List<Node*>* l) { _dependants = l; }
+	virtual Raul::List<Node*>* dependants()                     { return _dependants; }
+	virtual void               dependants(Raul::List<Node*>* l) { _dependants = l; }
 	
 	virtual const Plugin* plugin() const { return _plugin; }
 	
 	/** A node's parent is always a patch, so static cast should be safe */
 	Patch* parent_patch() const { return (Patch*)_parent; }
 	
-protected:	
+protected:
+	virtual void signal_input_ready();
+	
 	const Plugin* _plugin;
 
 	uint32_t   _poly;
@@ -89,10 +103,13 @@ protected:
 	size_t     _buffer_size;
 	bool       _activated;
 	
-	bool                _traversed;  ///< Flag for process order algorithm
-	Raul::Array<Port*>* _ports;      ///< Access in audio thread only
-	Raul::List<Node*>*  _providers;  ///< Nodes connected to this one's input ports
-	Raul::List<Node*>*  _dependants; ///< Nodes this one's output ports are connected to
+	bool                _traversed;      ///< Flag for process order algorithm
+	Raul::Semaphore     _input_ready;    ///< Parallelism: input ready signal
+	Raul::AtomicInt     _process_lock;   ///< Parallelism: Waiting on inputs 'lock'
+	Raul::AtomicInt     _n_inputs_ready; ///< Parallelism: # input ready signals this cycle
+	Raul::Array<Port*>* _ports;          ///< Access in audio thread only
+	Raul::List<Node*>*  _providers;      ///< Nodes connected to this one's input ports
+	Raul::List<Node*>*  _dependants;     ///< Nodes this one's output ports are connected to
 };
 
 

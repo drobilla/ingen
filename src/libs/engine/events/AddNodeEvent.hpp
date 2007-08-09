@@ -31,6 +31,7 @@ namespace Ingen {
 class Patch;
 class Node;
 class Plugin;
+class CompiledPatch;
 
 
 /** An event to load a Node and insert it into a Patch.
@@ -62,17 +63,17 @@ public:
 	void post_process();
 
 private:
-	string              _patch_name;
-	Raul::Path          _path;
-	string              _plugin_uri; ///< If nonempty then type, library, label, are ignored
-	string              _plugin_type;
-	string              _plugin_lib;
-	string              _plugin_label;
-	bool                _poly;
-	Patch*              _patch;
-	Node*               _node;
-	Raul::Array<Node*>* _process_order; ///< Patch's new process order
-	bool                _node_already_exists;
+	string         _patch_name;
+	Raul::Path     _path;
+	string         _plugin_uri; ///< If nonempty then type, library, label, are ignored
+	string         _plugin_type;
+	string         _plugin_lib;
+	string         _plugin_label;
+	bool           _poly;
+	Patch*         _patch;
+	Node*          _node;
+	CompiledPatch* _compiled_patch; ///< Patch's new process order
+	bool           _node_already_exists;
 };
 
 

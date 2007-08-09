@@ -24,6 +24,7 @@
 #include "NodeBase.hpp"
 #include "Plugin.hpp"
 #include "DataType.hpp"
+#include "CompiledPatch.hpp"
 
 using std::string;
 
@@ -32,6 +33,8 @@ template <typename T> class Array;
 namespace Ingen {
 
 class Connection;
+class Engine;
+class CompiledPatch;
 
 
 /** A group of nodes in a graph, possibly polyphonic.
@@ -45,7 +48,7 @@ class Connection;
 class Patch : public NodeBase
 {
 public:
-	Patch(const string& name, uint32_t poly, Patch* parent, SampleRate srate, size_t buffer_size, uint32_t local_poly);
+	Patch(Engine& engine, const string& name, uint32_t poly, Patch* parent, SampleRate srate, size_t buffer_size, uint32_t local_poly);
 	virtual ~Patch();
 
 	void activate();
@@ -76,13 +79,13 @@ public:
 	void add_connection(Raul::ListNode<Connection*>* c) { _connections.push_back(c); }
 	Raul::ListNode<Connection*>* remove_connection(const Port* src_port, const Port* dst_port);
 	
-	Raul::Array<Node*>* process_order()                       { return _process_order; }
-	void                process_order(Raul::Array<Node*>* po) { _process_order = po; }
+	CompiledPatch* compiled_patch()                  { return _compiled_patch; }
+	void           compiled_patch(CompiledPatch* cp) { _compiled_patch = cp; }
 	
 	Raul::Array<Port*>* external_ports()                       { return _ports; }
 	void                external_ports(Raul::Array<Port*>* pa) { _ports = pa; }
 
-	Raul::Array<Node*>* build_process_order() const;
+	CompiledPatch*      compile() const;
 	Raul::Array<Port*>* build_ports_array() const;
 	
 	/** Whether to run this patch's DSP bits in the audio thread */
@@ -93,32 +96,35 @@ public:
 	uint32_t internal_poly() const { return _internal_poly; }
 
 private:
-	inline void build_process_order_recursive(Node* n, Raul::Array<Node*>* order) const;
+	inline void compile_recursive(Node* n, CompiledPatch* output) const;
 
+	Engine&                 _engine;
 	uint32_t                _internal_poly;
-	Raul::Array<Node*>*     _process_order; ///< Accessed in audio thread only
-	Raul::List<Connection*> _connections;   ///< Accessed in audio thread only
-	Raul::List<Port*>       _input_ports;   ///< Accessed in preprocessing thread only
-	Raul::List<Port*>       _output_ports;  ///< Accessed in preprocessing thread only
-	Raul::List<Node*>       _nodes;         ///< Accessed in preprocessing thread only
+	CompiledPatch*          _compiled_patch; ///< Accessed in audio thread only
+	Raul::List<Connection*> _connections;    ///< Accessed in audio thread only
+	Raul::List<Port*>       _input_ports;    ///< Accessed in preprocessing thread only
+	Raul::List<Port*>       _output_ports;   ///< Accessed in preprocessing thread only
+	Raul::List<Node*>       _nodes;          ///< Accessed in preprocessing thread only
 	bool                    _process;
 };
 
 
 
-/** Private helper for build_process_order */
+/** Private helper for compile */
 inline void
-Patch::build_process_order_recursive(Node* n, Raul::Array<Node*>* order) const
+Patch::compile_recursive(Node* n, CompiledPatch* output) const
 {
-	if (n == NULL || n->traversed()) return;
+	if (n == NULL || n->traversed())
+		return;
+
 	n->traversed(true);
-	assert(order != NULL);
+	assert(output != NULL);
 	
 	for (Raul::List<Node*>::iterator i = n->providers()->begin(); i != n->providers()->end(); ++i)
 		if ( ! (*i)->traversed() )
-			build_process_order_recursive((*i), order);
+			compile_recursive((*i), output);
 
-	order->push_back(n);
+	output->push_back(CompiledNode(n, n->providers()->size(), n->dependants()));
 }
 
 

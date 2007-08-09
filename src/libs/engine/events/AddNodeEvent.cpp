@@ -42,7 +42,7 @@ AddNodeEvent::AddNodeEvent(Engine& engine, SharedPtr<Responder> responder, Sampl
   _poly(poly),
   _patch(NULL),
   _node(NULL),
-  _process_order(NULL),
+  _compiled_patch(NULL),
   _node_already_exists(false)
 {
 }
@@ -62,7 +62,7 @@ AddNodeEvent::AddNodeEvent(Engine& engine, SharedPtr<Responder> responder, Sampl
   _poly(poly),
   _patch(NULL),
   _node(NULL),
-  _process_order(NULL),
+  _compiled_patch(NULL),
   _node_already_exists(false)
 {
 }
@@ -101,7 +101,7 @@ AddNodeEvent::pre_process()
 			// FIXME: not really necessary to build process order since it's not connected,
 			// just append to the list
 			if (_patch->enabled())
-				_process_order = _patch->build_process_order();
+				_compiled_patch = _patch->compile();
 		}
 	}
 	QueuedEvent::pre_process();
@@ -114,9 +114,9 @@ AddNodeEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 	QueuedEvent::execute(nframes, start, end);
 
 	if (_node != NULL) {
-		if (_patch->process_order() != NULL)
-			_engine.maid()->push(_patch->process_order());
-		_patch->process_order(_process_order);
+		if (_patch->compiled_patch() != NULL)
+			_engine.maid()->push(_patch->compiled_patch());
+		_patch->compiled_patch(_compiled_patch);
 	}
 }
 

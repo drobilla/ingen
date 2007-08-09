@@ -39,6 +39,7 @@ class Port;
 class Connection;
 class InputPort;
 class OutputPort;
+class CompiledPatch;
 
 
 /** Make a Connection between two Ports.
@@ -75,7 +76,7 @@ private:
 	OutputPort* _src_output_port;
 	InputPort*  _dst_input_port;
 
-	Raul::Array<Node*>* _process_order; ///< New process order for Patch
+	CompiledPatch* _compiled_patch; ///< New process order for Patch
 	
 	Connection*                  _connection;
 	Raul::ListNode<Connection*>* _patch_listnode;
