@@ -31,9 +31,7 @@ using namespace std;
 namespace Ingen {
 
 
-/** A node, and it's providers/dependants.
- *
- * This is all the information required to execute a node in a process thread.
+/** All information required about a node to execute it in an audio thread.
  */
 struct CompiledNode {
 	CompiledNode(Node* n, size_t np, List<Node*>* d)

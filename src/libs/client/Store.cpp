@@ -260,7 +260,7 @@ Store::add_object(SharedPtr<ObjectModel> object)
 
 	}
 
-	cout << "[Store] Added " << object->path() << endl;
+	//cout << "[Store] Added " << object->path() << endl;
 }
 
 

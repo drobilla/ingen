@@ -104,7 +104,10 @@ DeprecatedLoader::nameify_if_invalid(const string& name)
 		return name;
 	} else {
 		const string new_name = Path::nameify(name);
-		cerr << "WARNING: Illegal name '" << name << "' converted to '" << name << "'" << endl;
+		assert(Path::is_valid_name(new_name));
+		if (new_name != name)
+			cerr << "WARNING: Illegal name '" << name << "' converted to '"
+				<< new_name << "'" << endl;
 		return new_name;
 	}
 }
@@ -293,20 +296,24 @@ DeprecatedLoader::load_patch(const Glib::ustring&  filename,
 		cur = cur->next;
 	}
 	
-	
 	// Load presets (control values)
-	cerr << "FIXME: load preset\n";
-	/*cur = xmlDocGetRootElement(doc)->xmlChildrenNode;
+	cur = xmlDocGetRootElement(doc)->xmlChildrenNode;
 	while (cur != NULL) {
+		// I don't think Om ever wrote any preset other than "default"...
 		if ((!xmlStrcmp(cur->name, (const xmlChar*)"preset"))) {
-			load_preset(pm, doc, cur);
-			assert(preset_model != NULL);
-			if (preset_model->name() == "default")
-				_engine->set_preset(pm->path(), preset_model);
+			SharedPtr<PresetModel> pm = load_preset(path, doc, cur);
+			assert(pm != NULL);
+			if (pm->name() == "default") {
+				list<ControlModel>::const_iterator i = pm->controls().begin();
+				for ( ; i != pm->controls().end(); ++i) {
+					_engine->set_port_value(i->port_path(), i->value());
+				}
+			} else {
+				cerr << "WARNING: Unknown preset: \"" << pm->name() << endl;
+			}
 		}
 		cur = cur->next;
 	}
-	*/
 	
 	xmlFreeDoc(doc);
 	xmlCleanupParser();
@@ -634,15 +641,15 @@ DeprecatedLoader::load_connection(const Path& parent, xmlDocPtr doc, const xmlNo
 
 /** Build a PresetModel given a pointer to a preset in a patch file.
  */
-bool
+SharedPtr<PresetModel>
 DeprecatedLoader::load_preset(const Path& parent, xmlDocPtr doc, const xmlNodePtr node)
 {
-	cerr << "FIXME: load preset\n";
-#if 0
+	cerr << "LOAD PRESET" << endl;
+
 	xmlNodePtr cur = node->xmlChildrenNode;
 	xmlChar* key;
 
-	PresetModel* pm = new PresetModel(patch->path().base());
+	SharedPtr<PresetModel> pm(new PresetModel(parent.base()));
 	
 	while (cur != NULL) {
 		key = xmlNodeListGetString(doc, cur->xmlChildrenNode, 1);
@@ -674,7 +681,8 @@ DeprecatedLoader::load_preset(const Path& parent, xmlDocPtr doc, const xmlNodePt
 			}
 
 			// Compatibility fixes for old patch files
-			node_name = nameify_if_invalid(node_name);
+			if (node_name != "")
+				node_name = nameify_if_invalid(node_name);
 			port_name = nameify_if_invalid(port_name);
 			
 			if (port_name == "") {
@@ -688,6 +696,8 @@ DeprecatedLoader::load_preset(const Path& parent, xmlDocPtr doc, const xmlNodePt
 				string::size_type slash_index;
 				while ((slash_index = port_name.find("/")) != string::npos)
 					port_name[slash_index] = '-';
+
+				cerr << "ADDING CONTROL: " << node_name << " / " << port_name << " = " << val << endl;
 				pm->add_control(node_name, port_name, val);
 			}
 		}
@@ -702,8 +712,6 @@ DeprecatedLoader::load_preset(const Path& parent, xmlDocPtr doc, const xmlNodePt
 	}
 
 	return pm;
-#endif
-	return false;
 }
 
 } // namespace Client

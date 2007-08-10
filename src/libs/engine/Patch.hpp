@@ -97,6 +97,8 @@ public:
 
 private:
 	inline void compile_recursive(Node* n, CompiledPatch* output) const;
+	void process_parallel(SampleCount nframes, FrameTime start, FrameTime end);
+	void process_single(SampleCount nframes, FrameTime start, FrameTime end);
 
 	Engine&                 _engine;
 	uint32_t                _internal_poly;

@@ -118,8 +118,6 @@ Patch::process(SampleCount nframes, FrameTime start, FrameTime end)
 	if (_compiled_patch == NULL || _compiled_patch->size() == 0 || !_process)
 		return;
 	
-	CompiledPatch* const cp = _compiled_patch;
-
 	/* Prepare input ports */
 
 	// This breaks MIDI input, somehow (?)
@@ -129,9 +127,29 @@ Patch::process(SampleCount nframes, FrameTime start, FrameTime end)
 		(*i)->pre_process(nframes, start, end);
 
 
-	/* Start p-1 slaves */
+	if (_engine.process_slaves().size() > 0)
+		process_parallel(nframes, start, end);
+	else
+		process_single(nframes, start, end);
 
+	
+	/* Write output ports */
+
+	for (Raul::List<Port*>::iterator i = _input_ports.begin(); i != _input_ports.end(); ++i)
+		(*i)->post_process(nframes, start, end);
+	for (Raul::List<Port*>::iterator i = _output_ports.begin(); i != _output_ports.end(); ++i)
+		(*i)->post_process(nframes, start, end);
+}
+
+
+void
+Patch::process_parallel(SampleCount nframes, FrameTime start, FrameTime end)
+{
 	size_t n_slaves = _engine.process_slaves().size();
+
+	CompiledPatch* const cp = _compiled_patch;
+
+	/* Start p-1 slaves */
 
 	if (n_slaves >= cp->size())
 		n_slaves = cp->size()-1;
@@ -186,6 +204,8 @@ Patch::process(SampleCount nframes, FrameTime start, FrameTime end)
 
 		index = (index + 1) % cp->size();
 	}
+	
+	//cout << "Main Thread ran \t" << run_count << " nodes this cycle." << endl;
 
 	/* Tell slaves we're done in case we beat them, and pray they're
 	 * really done by the start of next cycle.
@@ -193,18 +213,19 @@ Patch::process(SampleCount nframes, FrameTime start, FrameTime end)
 	 */
 	for (size_t i=0; i < n_slaves; ++i)
 		_engine.process_slaves()[i]->finish();
-	
-	//cout << "Main Thread ran \t" << run_count << " nodes this cycle." << endl;
-
-	/* Write output ports */
-
-	for (Raul::List<Port*>::iterator i = _input_ports.begin(); i != _input_ports.end(); ++i)
-		(*i)->post_process(nframes, start, end);
-	for (Raul::List<Port*>::iterator i = _output_ports.begin(); i != _output_ports.end(); ++i)
-		(*i)->post_process(nframes, start, end);
 }
 
 	
+void
+Patch::process_single(SampleCount nframes, FrameTime start, FrameTime end)
+{
+	CompiledPatch* const cp = _compiled_patch;
+
+	for (size_t i=0; i < cp->size(); ++i)
+		(*cp)[i].node()->process(nframes, start, end);
+}
+	
+
 void
 Patch::set_buffer_size(size_t size)
 {
@@ -368,7 +389,6 @@ Patch::compile() const
 
 	CompiledPatch* const compiled_patch = new CompiledPatch();//_nodes.size());
 	
-	// FIXME: tweak algorithm so it just ends up like this and save the cost of iteration?
 	for (Raul::List<Node*>::const_iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		(*i)->traversed(false);
 		
