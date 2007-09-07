@@ -247,8 +247,10 @@ Serializer::patch_path_to_rdf_id(const Path& path)
 		return Node(_model->world(), Node::RESOURCE, _base_uri);
 	} else {
 		assert(path.length() > _root_object->path().length());
-		return Node(_model->world(), Node::RESOURCE,
-				_base_uri + string("#") + path.substr(_root_object->path().length() + 1));
+		const Node ret(_model->world(), Node::RESOURCE,
+				_base_uri + string("#") + path.substr(_root_object->path().length()));
+		cerr << "RDF ID: " << path << " -> " << ret.to_string() << endl;
+		return ret;
 	}
 }
 
