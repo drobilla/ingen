@@ -247,10 +247,8 @@ Serializer::patch_path_to_rdf_id(const Path& path)
 		return Node(_model->world(), Node::RESOURCE, _base_uri);
 	} else {
 		assert(path.length() > _root_object->path().length());
-		const Node ret(_model->world(), Node::RESOURCE,
+		return Node(_model->world(), Node::RESOURCE,
 				_base_uri + string("#") + path.substr(_root_object->path().length()));
-		cerr << "RDF ID: " << path << " -> " << ret.to_string() << endl;
-		return ret;
 	}
 }
 
@@ -277,6 +275,11 @@ Serializer::serialize_patch(SharedPtr<PatchModel> patch)
 		patch_id,
 		"ingen:polyphony",
 		Atom((int)patch->poly()));
+	
+	_model->add_statement(
+		patch_id,
+		"ingen:enabled",
+		Atom(patch->enabled()));
 	
 	for (MetadataMap::const_iterator m = patch->metadata().begin(); m != patch->metadata().end(); ++m) {
 		if (m->first.find(":") != string::npos) {

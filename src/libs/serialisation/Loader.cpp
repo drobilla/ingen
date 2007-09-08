@@ -41,17 +41,17 @@ namespace Serialisation {
  */
 bool
 Loader::load(SharedPtr<EngineInterface> engine,
-             Raul::RDF::World*          rdf_world,
-             const Glib::ustring&       document_uri,
-             boost::optional<Path>      parent,
-             string                     patch_name,
-             Glib::ustring              patch_uri,
-             Raul::Table<string, Atom>  data)
+		Raul::RDF::World*          rdf_world,
+		const Glib::ustring&       document_uri,
+		boost::optional<Path>      parent,
+		string                     patch_name,
+		Glib::ustring              patch_uri,
+		Raul::Table<string, Atom>  data)
 {
 	setlocale(LC_NUMERIC, "C");
 
 	// FIXME: this whole thing is a mess
-	
+
 	std::set<Path> created;
 
 	RDF::Model model(*rdf_world, document_uri);
@@ -68,8 +68,8 @@ Loader::load(SharedPtr<EngineInterface> engine,
 
 	// FIXME: polyphony datatype
 	RDF::Query query(*rdf_world, Glib::ustring(
-		"SELECT DISTINCT ?poly WHERE {\n") +
-		patch_uri + " ingen:polyphony ?poly\n }");
+				"SELECT DISTINCT ?poly WHERE {\n") +
+			patch_uri + " ingen:polyphony ?poly\n }");
 
 	RDF::Query::Results results = query.run(*rdf_world, model);
 
@@ -81,17 +81,17 @@ Loader::load(SharedPtr<EngineInterface> engine,
 	RDF::Node poly_node = (*results.begin())["poly"];
 	assert(poly_node.is_int());
 	const size_t patch_poly = static_cast<size_t>(poly_node.to_int());
-	
+
 	/* Get name (if available/necessary) */
 
 	if (patch_name == "") {	
 		patch_name = string(document_uri.substr(document_uri.find_last_of("/")+1));
 		if (patch_name.substr(patch_name.length()-10) == ".ingen.ttl")
 			patch_name = patch_name.substr(0, patch_name.length()-10);
-		
+
 		query = RDF::Query(*rdf_world, Glib::ustring(
-			"SELECT DISTINCT ?name WHERE {\n") +
-			patch_uri + " ingen:name ?name\n}");
+				"SELECT DISTINCT ?name WHERE {\n") +
+				patch_uri + " ingen:name ?name\n}");
 
 		results = query.run(*rdf_world, model);
 
@@ -106,23 +106,23 @@ Loader::load(SharedPtr<EngineInterface> engine,
 
 
 	/* Load (plugin) nodes */
-	
+
 	query = RDF::Query(*rdf_world, Glib::ustring(
-		"SELECT DISTINCT ?name ?plugin ?floatkey ?floatval WHERE {\n") +
-		patch_uri + " ingen:node   ?node .\n"
-		"?node        ingen:name   ?name ;\n"
-		"             ingen:plugin ?plugin .\n"
-		"OPTIONAL { ?node ?floatkey ?floatval . \n"
-		"           FILTER ( datatype(?floatval) = xsd:decimal ) }\n"
-		"}");
+			"SELECT DISTINCT ?name ?plugin ?floatkey ?floatval WHERE {\n") +
+			patch_uri + " ingen:node   ?node .\n"
+			"?node        ingen:name   ?name ;\n"
+			"             ingen:plugin ?plugin .\n"
+			"OPTIONAL { ?node ?floatkey ?floatval . \n"
+			"           FILTER ( datatype(?floatval) = xsd:decimal ) }\n"
+			"}");
 
 	results = query.run(*rdf_world, model);
 
 	for (RDF::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
-		
+
 		const string name   = (*i)["name"].to_string();
 		const string plugin = (*i)["plugin"].to_string();
-		
+
 		const Path node_path = patch_path.base() + (string)name;
 
 		if (created.find(node_path) == created.end()) {
@@ -136,51 +136,51 @@ Loader::load(SharedPtr<EngineInterface> engine,
 		if (floatkey != "" && val_node.is_float())
 			engine->set_metadata(patch_path.base() + name, floatkey, Atom(val_node.to_float()));
 	}
-	
+
 
 	/* Load subpatches */
-	
+
 	query = RDF::Query(*rdf_world, Glib::ustring(
-		"SELECT DISTINCT ?patch ?name WHERE {\n") +
-		patch_uri + " ingen:node ?patch .\n"
-		"?patch       a          ingen:Patch ;\n"
-		"             ingen:name ?name .\n"
-		"}");
+				"SELECT DISTINCT ?patch ?name WHERE {\n") +
+			patch_uri + " ingen:node ?patch .\n"
+			"?patch       a          ingen:Patch ;\n"
+			"             ingen:name ?name .\n"
+			"}");
 
 	results = query.run(*rdf_world, model);
 
 	for (RDF::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
-		
+
 		const string name  = (*i)["name"].to_string();
 		const string patch = (*i)["patch"].to_string();
-		
+
 		const Path subpatch_path = patch_path.base() + (string)name;
-		
+
 		if (created.find(subpatch_path) == created.end()) {
 			created.insert(subpatch_path);
 			load(engine, rdf_world, document_uri, patch_path, name, patch);
 		}
 	}
-	
+
 	//created.clear();
 
 
 	/* Set node port control values */
-	
+
 	query = RDF::Query(*rdf_world, Glib::ustring(
-		"SELECT DISTINCT ?nodename ?portname ?portval WHERE {\n") +
-		patch_uri + " ingen:node   ?node .\n"
-		"?node        ingen:name   ?nodename ;\n"
-		"             ingen:port   ?port .\n"
-		"?port        ingen:name   ?portname ;\n"
-		"             ingen:value  ?portval .\n"
-		"FILTER ( datatype(?portval) = xsd:decimal )\n"
-		"}\n");
+			"SELECT DISTINCT ?nodename ?portname ?portval WHERE {\n") +
+			patch_uri + " ingen:node   ?node .\n"
+			"?node        ingen:name   ?nodename ;\n"
+			"             ingen:port   ?port .\n"
+			"?port        ingen:name   ?portname ;\n"
+			"             ingen:value  ?portval .\n"
+			"FILTER ( datatype(?portval) = xsd:decimal )\n"
+			"}\n");
 
 	results = query.run(*rdf_world, model);
 
 	for (RDF::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
-		
+
 		const string node_name = (*i)["nodename"].to_string();
 		const string port_name = (*i)["portname"].to_string();
 		const float  val       = (*i)["portval"].to_float();
@@ -189,21 +189,21 @@ Loader::load(SharedPtr<EngineInterface> engine,
 
 		engine->set_port_value(port_path, val);
 	}
-	
+
 
 	/* Load this patch's ports */
-	
+
 	query = RDF::Query(*rdf_world, Glib::ustring(
-		"SELECT DISTINCT ?port ?type ?name ?datatype ?floatkey ?floatval ?portval WHERE {\n") +
-		patch_uri + " ingen:port     ?port .\n"
-		"?port        a              ?type ;\n"
-		"             ingen:name     ?name ;\n"
-		"             ingen:dataType ?datatype .\n"
-		"OPTIONAL { ?port ?floatkey ?floatval . \n"
-		"           FILTER ( datatype(?floatval) = xsd:decimal ) }\n"
-		"OPTIONAL { ?port ingen:value ?portval . \n"
-		"           FILTER ( datatype(?portval) = xsd:decimal ) }\n"
-		"}");
+			"SELECT DISTINCT ?port ?type ?name ?datatype ?floatkey ?floatval ?portval WHERE {\n") +
+			patch_uri + " ingen:port     ?port .\n"
+			"?port        a              ?type ;\n"
+			"             ingen:name     ?name ;\n"
+			"             ingen:dataType ?datatype .\n"
+			"OPTIONAL { ?port ?floatkey ?floatval . \n"
+			"           FILTER ( datatype(?floatval) = xsd:decimal ) }\n"
+			"OPTIONAL { ?port ingen:value ?portval . \n"
+			"           FILTER ( datatype(?portval) = xsd:decimal ) }\n"
+			"}");
 
 	results = query.run(*rdf_world, model);
 
@@ -231,98 +231,98 @@ Loader::load(SharedPtr<EngineInterface> engine,
 		if (floatkey != "" && val_node.is_float())
 			engine->set_metadata(patch_path.base() + name, floatkey, Atom(val_node.to_float()));
 	}
-	
+
 	created.clear();
 
 
 	/* Node -> Node connections */
 
 	query = RDF::Query(*rdf_world, Glib::ustring(
-		"SELECT DISTINCT ?srcnodename ?srcname ?dstnodename ?dstname WHERE {\n") +
-		patch_uri +  "ingen:node ?srcnode ;\n"
-		"             ingen:node ?dstnode .\n"
-		"?srcnode     ingen:port ?src ;\n"
-		"             ingen:name ?srcnodename .\n"
-		"?dstnode     ingen:port ?dst ;\n"
-		"             ingen:name ?dstnodename .\n"
-		"?src         ingen:name ?srcname .\n"
-		"?dst         ingen:connectedTo ?src ;\n"
-		"             ingen:name ?dstname .\n" 
-		"}\n");
-	
+			"SELECT DISTINCT ?srcnodename ?srcname ?dstnodename ?dstname WHERE {\n") +
+			patch_uri +  "ingen:node ?srcnode ;\n"
+			"             ingen:node ?dstnode .\n"
+			"?srcnode     ingen:port ?src ;\n"
+			"             ingen:name ?srcnodename .\n"
+			"?dstnode     ingen:port ?dst ;\n"
+			"             ingen:name ?dstnodename .\n"
+			"?src         ingen:name ?srcname .\n"
+			"?dst         ingen:connectedTo ?src ;\n"
+			"             ingen:name ?dstname .\n" 
+			"}\n");
+
 	results = query.run(*rdf_world, model);
-	
+
 	for (RDF::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
 		Path src_node = patch_path.base() + (*i)["srcnodename"].to_string();
 		Path src_port = src_node.base() + (*i)["srcname"].to_string();
 		Path dst_node = patch_path.base() + (*i)["dstnodename"].to_string();
 		Path dst_port = dst_node.base() + (*i)["dstname"].to_string();
-		
+
 		cerr << patch_path << " 1 CONNECTION: " << src_port << " -> " << dst_port << endl;
 
 		engine->connect(src_port, dst_port);
 	}
-	
+
 
 	/* This Patch -> Node connections */
 
 	query = RDF::Query(*rdf_world, Glib::ustring(
-		"SELECT DISTINCT ?srcname ?dstnodename ?dstname WHERE {\n") +
-		patch_uri + " ingen:port ?src ;\n"
-		"             ingen:node ?dstnode .\n"
-		"?dstnode     ingen:port ?dst ;\n"
-		"             ingen:name ?dstnodename .\n"
-		"?dst         ingen:connectedTo ?src ;\n"
-		"             ingen:name ?dstname .\n" 
-		"?src         ingen:name ?srcname .\n"
-		"}\n");
-	
+			"SELECT DISTINCT ?srcname ?dstnodename ?dstname WHERE {\n") +
+			patch_uri + " ingen:port ?src ;\n"
+			"             ingen:node ?dstnode .\n"
+			"?dstnode     ingen:port ?dst ;\n"
+			"             ingen:name ?dstnodename .\n"
+			"?dst         ingen:connectedTo ?src ;\n"
+			"             ingen:name ?dstname .\n" 
+			"?src         ingen:name ?srcname .\n"
+			"}\n");
+
 	results = query.run(*rdf_world, model);
-	
+
 	for (RDF::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
 		Path src_port = patch_path.base() + (*i)["srcname"].to_string();
 		Path dst_node = patch_path.base() + (*i)["dstnodename"].to_string();
 		Path dst_port = dst_node.base() + (*i)["dstname"].to_string();
-		
+
 		cerr << patch_path << " 2 CONNECTION: " << src_port << " -> " << dst_port << endl;
 
 		engine->connect(src_port, dst_port);
 	}
-	
-	
+
+
 	/* Node -> This Patch connections */
 
 	query = RDF::Query(*rdf_world, Glib::ustring(
-		"SELECT DISTINCT ?srcnodename ?srcname ?dstname WHERE {\n") +
-		patch_uri + " ingen:port ?dst ;\n"
-		"             ingen:node ?srcnode .\n"
-		"?srcnode     ingen:port ?src ;\n"
-		"             ingen:name ?srcnodename .\n"
-		"?dst         ingen:connectedTo ?src ;\n"
-		"             ingen:name ?dstname .\n" 
-		"?src         ingen:name ?srcname .\n"
-		"}\n");
-	
+			"SELECT DISTINCT ?srcnodename ?srcname ?dstname WHERE {\n") +
+			patch_uri + " ingen:port ?dst ;\n"
+			"             ingen:node ?srcnode .\n"
+			"?srcnode     ingen:port ?src ;\n"
+			"             ingen:name ?srcnodename .\n"
+			"?dst         ingen:connectedTo ?src ;\n"
+			"             ingen:name ?dstname .\n" 
+			"?src         ingen:name ?srcname .\n"
+			"}\n");
+
 	results = query.run(*rdf_world, model);
-	
+
 	for (RDF::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
 		Path dst_port = patch_path.base() + (*i)["dstname"].to_string();
 		Path src_node = patch_path.base() + (*i)["srcnodename"].to_string();
 		Path src_port = src_node.base() + (*i)["srcname"].to_string();
-		
+
 		cerr << patch_path << " 3 CONNECTION: " << src_port << " -> " << dst_port << endl;
 
 		engine->connect(src_port, dst_port);
 	}
-	
-	
+
+
 	/* Load metadata */
-	
+
 	query = RDF::Query(*rdf_world, Glib::ustring(
-		"SELECT DISTINCT ?floatkey ?floatval WHERE {\n") +
-		patch_uri + " ?floatkey ?floatval . \n"
-		"           FILTER ( datatype(?floatval) = xsd:decimal ) \n"
-		"}");
+			"SELECT DISTINCT ?floatkey ?floatval WHERE {\n") +
+			patch_uri + " ?floatkey ?floatval . \n"
+			"           FILTER ( datatype(?floatval) = xsd:decimal ) \n"
+			"}");
 
 	results = query.run(*rdf_world, model);
 
@@ -334,15 +334,34 @@ Loader::load(SharedPtr<EngineInterface> engine,
 		if (floatkey != "" && val_node.is_float())
 			engine->set_metadata(patch_path, floatkey, Atom(val_node.to_float()));
 	}
-	
+
 
 	// Set passed metadata last to override any loaded values
 	for (Metadata::const_iterator i = data.begin(); i != data.end(); ++i)
 		engine->set_metadata(patch_path, i->first, i->second);
 
+
+	/* Enable */
+
+	query = RDF::Query(*rdf_world, Glib::ustring(
+			"SELECT DISTINCT ?enabled WHERE {\n") +
+			patch_uri + " ingen:enabled ?enabled .\n"
+			"}");
+
+	results = query.run(*rdf_world, model);
+
+	for (RDF::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
+
+		RDF::Node enabled_node = (*i)["enabled"];
+
+		if (enabled_node.is_bool() && enabled_node.to_bool()) {
+			engine->enable_patch(patch_path);
+			break;
+		}
+	}
+
 	return true;
 }
-
 
 } // namespace Serialisation
 } // namespace Ingen

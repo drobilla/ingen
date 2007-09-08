@@ -36,7 +36,7 @@ get_world()
 {
     static World* world = NULL;
 
-    if (!&world) {
+    if (&world == NULL) {
         cerr << "ERROR: Ingen::Shared::world undefined." << endl;
         return NULL;
     }
@@ -58,7 +58,7 @@ get_world()
 void
 destroy_world()
 {
-    if (!&world) {
+    if (&world == NULL) {
         cerr << "ERROR: Ingen::Shared::world undefined." << endl;
         return;
     }
