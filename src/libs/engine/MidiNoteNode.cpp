@@ -221,14 +221,19 @@ MidiNoteNode::note_off(uchar note_num, FrameTime time, SampleCount nframes, Fram
 
 	if (key->state == Key::ON_ASSIGNED) {
 		// Assigned key, turn off voice and key
-		assert(_voices[key->voice].state == Voice::ACTIVE);
-		assert(_voices[key->voice].note == note_num);
-		key->state = Key::OFF;
+		if (_voices[key->voice].state == Voice::ACTIVE) {
+			assert(_voices[key->voice].note == note_num);
 
-		if ( ! _sustain)
-			free_voice(key->voice, time, nframes, start, end);
-		else
-			_voices[key->voice].state = Voice::HOLDING;
+			if ( ! _sustain)
+				free_voice(key->voice, time, nframes, start, end);
+			else
+				_voices[key->voice].state = Voice::HOLDING;
+
+		} else {
+#ifndef NDEBUG
+			cerr << "WARNING: Assigned key, but voice not active" << endl;
+#endif
+		}
 	}
 
 	key->state = Key::OFF;
