@@ -64,23 +64,34 @@ Loader::load(SharedPtr<EngineInterface> engine,
 	cerr << "[Loader] Loading " << patch_uri << " from " << document_uri
 		<< " under " << (string)(parent ? (string)parent.get() : "no parent") << endl;
 
-	/* Get polyphony (mandatory) */
+	size_t patch_poly = 1;
+	
+	/* Use parameter overridden polyphony, if given */
+	Raul::Table<string, Atom>::iterator poly_param = data.find("ingen:polyphony");
+	if (poly_param != data.end() && poly_param->second.type() == Atom::INT) {
+		cerr << "Using overridden poly: " << poly_param->second.get_int32();
+		patch_poly = poly_param->second.get_int32();
+	
+	/* Get polyphony from file (mandatory if not specified in parameters) */
+	} else {
+		cerr << "No overridden poly." << endl;
 
-	// FIXME: polyphony datatype
-	RDF::Query query(*rdf_world, Glib::ustring(
-				"SELECT DISTINCT ?poly WHERE {\n") +
-			patch_uri + " ingen:polyphony ?poly\n }");
+		// FIXME: polyphony datatype?
+		RDF::Query query(*rdf_world, Glib::ustring(
+					"SELECT DISTINCT ?poly WHERE {\n") +
+				patch_uri + " ingen:polyphony ?poly\n }");
 
-	RDF::Query::Results results = query.run(*rdf_world, model);
+		RDF::Query::Results results = query.run(*rdf_world, model);
 
-	if (results.size() == 0) {
-		cerr << "[Loader] ERROR: No polyphony found!" << endl;
-		return false;
+		if (results.size() == 0) {
+			cerr << "[Loader] ERROR: No polyphony found!" << endl;
+			return false;
+		}
+
+		const RDF::Node& poly_node = (*results.begin())["poly"];
+		assert(poly_node.is_int());
+		patch_poly = static_cast<size_t>(poly_node.to_int());
 	}
-
-	RDF::Node poly_node = (*results.begin())["poly"];
-	assert(poly_node.is_int());
-	const size_t patch_poly = static_cast<size_t>(poly_node.to_int());
 
 	/* Get name (if available/necessary) */
 
@@ -89,11 +100,11 @@ Loader::load(SharedPtr<EngineInterface> engine,
 		if (patch_name.substr(patch_name.length()-10) == ".ingen.ttl")
 			patch_name = patch_name.substr(0, patch_name.length()-10);
 
-		query = RDF::Query(*rdf_world, Glib::ustring(
+		RDF::Query query(*rdf_world, Glib::ustring(
 				"SELECT DISTINCT ?name WHERE {\n") +
 				patch_uri + " ingen:name ?name\n}");
 
-		results = query.run(*rdf_world, model);
+		RDF::Query::Results results = query.run(*rdf_world, model);
 
 		if (results.size() > 0)
 			patch_name = (*results.begin())["name"].to_string();
@@ -107,7 +118,7 @@ Loader::load(SharedPtr<EngineInterface> engine,
 
 	/* Load (plugin) nodes */
 
-	query = RDF::Query(*rdf_world, Glib::ustring(
+	RDF::Query query(*rdf_world, Glib::ustring(
 			"SELECT DISTINCT ?name ?plugin ?floatkey ?floatval WHERE {\n") +
 			patch_uri + " ingen:node   ?node .\n"
 			"?node        ingen:name   ?name ;\n"
@@ -116,7 +127,7 @@ Loader::load(SharedPtr<EngineInterface> engine,
 			"           FILTER ( datatype(?floatval) = xsd:decimal ) }\n"
 			"}");
 
-	results = query.run(*rdf_world, model);
+	RDF::Query::Results results = query.run(*rdf_world, model);
 
 	for (RDF::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
 

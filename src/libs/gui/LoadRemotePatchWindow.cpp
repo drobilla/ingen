@@ -136,7 +136,6 @@ LoadRemotePatchWindow::open_clicked()
 	
 	// If unset load_patch will load values
 	optional<const string&> name;
-	optional<uint32_t> poly;
 	
 	optional<Path> parent;
 	
@@ -147,7 +146,7 @@ LoadRemotePatchWindow::open_clicked()
 		parent = _patch->path().parent();
 
 	App::instance().loader()->load_patch(true, uri, "/",
-		_initial_data, parent, name, poly);
+		_initial_data, parent, name);
 	
 	hide();
 }			

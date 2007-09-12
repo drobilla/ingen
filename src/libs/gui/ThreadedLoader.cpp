@@ -71,15 +71,13 @@ ThreadedLoader::_whipped()
 	_mutex.unlock();
 }
 
-/** FIXME: use poly parameter */
 void
 ThreadedLoader::load_patch(bool                    merge,
                            const string&           data_base_uri,
                            const Path&             data_path,
                            MetadataMap             engine_data,
                            optional<Path>          engine_parent,
-                           optional<const string&> engine_name,
-                           optional<uint32_t>      engine_poly)
+                           optional<const string&> engine_name)
 {
 	_mutex.lock();
 
@@ -90,7 +88,6 @@ ThreadedLoader::load_patch(bool                    merge,
 				data_base_uri,
 				engine_parent,
 				(engine_name) ? engine_name.get() : "",
-				(engine_poly) ? engine_poly.get() : 1,
 				engine_data,
 				false)));
 	} else {
@@ -101,7 +98,6 @@ ThreadedLoader::load_patch(bool                    merge,
 				data_base_uri,
 				engine_parent,
 				(engine_name) ? engine_name.get() : "",
-				// FIXME: poly here
 				"",
 				engine_data )));
 	}

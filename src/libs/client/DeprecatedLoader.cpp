@@ -39,8 +39,7 @@
 #include "PluginModel.hpp"
 #include "DeprecatedLoader.hpp"
 
-using std::string; using std::vector; using std::pair;
-using std::cerr; using std::cout; using std::endl;
+using namespace std;
 
 namespace Ingen {
 namespace Client {
@@ -188,7 +187,6 @@ string
 DeprecatedLoader::load_patch(const Glib::ustring&  filename,
                              boost::optional<Path> parent_path,
                              string                name,
-                             uint32_t              poly,
                              MetadataMap           initial_data,
                              bool                  existing)
 {
@@ -197,7 +195,13 @@ DeprecatedLoader::load_patch(const Glib::ustring&  filename,
 	Path path = "/"; // path of the new patch
 
 	const bool load_name = (name == "");
-	const bool load_poly = (poly == 0);
+	
+	size_t poly = 0;
+	
+	/* Use parameter overridden polyphony, if given */
+	Raul::Table<string, Atom>::iterator poly_param = initial_data.find("ingen:polyphony");
+	if (poly_param != initial_data.end() && poly_param->second.type() == Atom::INT)
+		poly = poly_param->second;
 	
 	if (initial_data.find("filename") == initial_data.end())
 		initial_data["filename"] = Atom(filename.c_str()); // FIXME: URL?
@@ -239,7 +243,7 @@ DeprecatedLoader::load_patch(const Glib::ustring&  filename,
 					path = Path("/");
 			}
 		} else if ((!xmlStrcmp(cur->name, (const xmlChar*)"polyphony"))) {
-			if (load_poly) {
+			if (poly == 0) {
 				poly = atoi((char*)key);
 			}
 		} else if (xmlStrcmp(cur->name, (const xmlChar*)"connection")
@@ -569,7 +573,7 @@ DeprecatedLoader::load_subpatch(const Path& parent, xmlDocPtr doc, const xmlNode
 		if ((!xmlStrcmp(cur->name, (const xmlChar*)"name"))) {
 			name = (const char*)key;
 		} else if ((!xmlStrcmp(cur->name, (const xmlChar*)"polyphony"))) {
-			poly = atoi((const char*)key);
+			initial_data.insert(make_pair("ingen::polyphony", (int)poly));
 		} else if ((!xmlStrcmp(cur->name, (const xmlChar*)"filename"))) {
 			filename = (const char*)key;
 		} else {  // Don't know what this tag is, add it as metadata
@@ -584,7 +588,7 @@ DeprecatedLoader::load_subpatch(const Path& parent, xmlDocPtr doc, const xmlNode
 
 	// load_patch sets the passed metadata last, so values stored in the parent
 	// will override values stored in the child patch file
-	string path = load_patch(filename, parent, name, poly, initial_data, false);
+	/*string path = */load_patch(filename, parent, name, initial_data, false);
 	
 	return false;
 }

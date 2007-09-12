@@ -66,8 +66,7 @@ public:
 	                const Path&             data_path,
 	                MetadataMap             engine_data,
 	                optional<Path>          engine_parent,
-	                optional<const string&> engine_name = optional<const string&>(),
-	                optional<uint32_t>      engine_poly = optional<uint32_t>());
+	                optional<const string&> engine_name = optional<const string&>());
 	
 	void save_patch(SharedPtr<PatchModel> model, const string& filename);
 

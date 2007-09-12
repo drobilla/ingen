@@ -144,7 +144,6 @@ LoadSubpatchWindow::ok_clicked()
 	
 	// If unset load_patch will load values
 	optional<const string&> name;
-	optional<uint32_t> poly;
 	string name_str = "";
 	
 	if (_name_from_user_radio->get_active()) {
@@ -152,13 +151,15 @@ LoadSubpatchWindow::ok_clicked()
 		name = name_str;
 	}
 
-	if (_poly_from_user_radio->get_active())
-		poly = _poly_spinbutton->get_value_as_int();
-	else if (_poly_from_parent_radio->get_active())
-		poly = _patch->poly();
+	if (_poly_from_user_radio->get_active()) {
+		cerr << "Overriding poly: " << _poly_spinbutton->get_value_as_int() << endl;
+		_initial_data.insert(make_pair("ingen:polyphony", (int)_poly_spinbutton->get_value_as_int()));
+	} else if (_poly_from_parent_radio->get_active()) {
+		_initial_data.insert(make_pair("ingen:polyphony", (int)_patch->poly()));
+	}
 
 	App::instance().loader()->load_patch(false, get_uri(), "/",
-		_initial_data, _patch->path(), name, poly);
+		_initial_data, _patch->path(), name);
 
 	hide();
 }			

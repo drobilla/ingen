@@ -116,14 +116,13 @@ LoadPatchWindow::poly_from_user_selected()
 void
 LoadPatchWindow::ok_clicked()
 {
-	// If unset load_patch will load values
+	// If unset load_patch will load value
 	optional<const string&> name;
-	optional<uint32_t> poly;
 	
 	optional<Path> parent;
 	
 	if (_poly_from_user_radio->get_active())
-		poly = _poly_spinbutton->get_value_as_int();
+		_initial_data.insert(make_pair("ingen:polyphony", _poly_spinbutton->get_value_as_int()));
 	
 	if (_replace)
 		App::instance().engine()->clear_patch(_patch->path());
@@ -132,7 +131,7 @@ LoadPatchWindow::ok_clicked()
 		parent = _patch->path().parent();
 
 	App::instance().loader()->load_patch(true, get_uri(), "/",
-		_initial_data, parent, name, poly);
+		_initial_data, parent, name);
 	
 	hide();
 }			
