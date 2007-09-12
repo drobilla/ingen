@@ -1390,7 +1390,9 @@
                         <child>
                           <widget class="GtkSpinButton" id="patch_view_poly_spin">
                             <property name="visible">True</property>
+                            <property name="sensitive">False</property>
                             <property name="can_focus">True</property>
+                            <property name="editable">False</property>
                             <property name="adjustment">1 0 100 1 10 10</property>
                             <property name="climb_rate">1</property>
                           </widget>
@@ -1498,6 +1500,7 @@
                       </widget>
                       <packing>
                         <property name="expand">False</property>
+                        <property name="homogeneous">False</property>
                       </packing>
                     </child>
                     <child>
