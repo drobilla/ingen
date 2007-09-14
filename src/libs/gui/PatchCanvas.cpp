@@ -57,8 +57,8 @@ PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 	Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference();
 	xml->get_widget("canvas_menu", _menu);
 	
-	xml->get_widget("canvas_menu_add_number_control", _menu_add_number_control);
-	xml->get_widget("canvas_menu_add_button_control", _menu_add_button_control);
+	/*xml->get_widget("canvas_menu_add_number_control", _menu_add_number_control);
+	xml->get_widget("canvas_menu_add_button_control", _menu_add_button_control);*/
 	xml->get_widget("canvas_menu_add_audio_input", _menu_add_audio_input);
 	xml->get_widget("canvas_menu_add_audio_output", _menu_add_audio_output);
 	xml->get_widget("canvas_menu_add_control_input", _menu_add_control_input);
@@ -98,10 +98,10 @@ PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 			"osc_output", "ingen:osc", true));
 	
 	// Add control menu items
-	_menu_add_number_control->signal_activate().connect(
+	/*_menu_add_number_control->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_control), NUMBER));
 	_menu_add_button_control->signal_activate().connect(
-		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_control), BUTTON));
+		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_control), BUTTON));*/
 
 #ifdef HAVE_SLV2
 	build_plugin_menu();
@@ -176,7 +176,7 @@ PatchCanvas::build_plugin_menu()
     Gtk::MenuItem* plugin_menu_item = &(_menu->items().back());
 	Gtk::Menu* plugin_menu = Gtk::manage(new Gtk::Menu());
 	plugin_menu_item->set_submenu(*plugin_menu);
-	_menu->reorder_child(*plugin_menu_item, 3);
+	_menu->reorder_child(*plugin_menu_item, 2);
 
 	SLV2PluginClass lv2_plugin = slv2_world_get_plugin_class(PluginModel::slv2_world());
 	SLV2PluginClasses classes = slv2_world_get_plugin_classes(PluginModel::slv2_world());

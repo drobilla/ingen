@@ -120,8 +120,8 @@ private:
 	int _last_click_y;
 	
 	Gtk::Menu*      _menu;
-	Gtk::MenuItem*  _menu_add_number_control;
-	Gtk::MenuItem*  _menu_add_button_control;
+	/*Gtk::MenuItem*  _menu_add_number_control;
+	Gtk::MenuItem*  _menu_add_button_control;*/
 	Gtk::MenuItem*  _menu_add_audio_input;
 	Gtk::MenuItem*  _menu_add_audio_output;
 	Gtk::MenuItem*  _menu_add_control_input;
