@@ -42,9 +42,8 @@ NodeModule::NodeModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeMode
 {
 	assert(_node);
 
-	if (node->polyphonic()) {
-		set_border_width(2.0);
-	}
+	if (node->polyphonic())
+		set_stacked_border(true);
 
 	node->new_port_sig.connect(sigc::bind(sigc::mem_fun(this, &NodeModule::add_port), true));
 	node->removed_port_sig.connect(sigc::mem_fun(this, &NodeModule::remove_port));
