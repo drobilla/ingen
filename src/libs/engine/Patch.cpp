@@ -388,6 +388,13 @@ Patch::compile() const
 			compile_recursive(node, compiled_patch);
 	}
 	
+	// Traverse any nodes we didn't hit yet
+	for (Raul::List<Node*>::const_iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
+		Node* const node = (*i);
+		if ( ! node->traversed())
+			compile_recursive(node, compiled_patch);
+	}
+	
 	/*cerr << "----------------------------------------\n";
 	for (size_t i=0; i < process_order->size(); ++i) {
 		assert(process_order->at(i));
