@@ -86,6 +86,7 @@ MidiNoteNode::process(SampleCount nframes, FrameTime start, FrameTime end)
 	MidiBuffer* const midi_in = (MidiBuffer*)_midi_in_port->buffer(0);
 	assert(midi_in->this_nframes() == nframes);
 
+	if (midi_in->event_count() > 0)
 	while (midi_in->get_event(&timestamp, &size, &buffer) < nframes) {
 		
 		const FrameTime time = start + (FrameTime)timestamp;
@@ -114,15 +115,23 @@ MidiNoteNode::process(SampleCount nframes, FrameTime start, FrameTime end)
 						sustain_off(time, nframes, start, end);
 					break;
 				case MIDI_CMD_BENDER:
-	
+					// ?
+					break;
+				default:
+					//cerr << "Ignored controller " << buffer[1] << endl;
 					break;
 				}
+				break;
 			default:
+				//fprintf(stderr, "Unknown (size %d) MIDI event %X\n", size, buffer[0]);
 				break;
 			}
+		} else {
+			//fprintf(stderr, "Unknown (size %d) MIDI event %X\n", size, buffer[0]);
 		}
 
-		midi_in->increment();
+		if (midi_in->increment() == midi_in->this_nframes())
+			break;
 	}
 	
 	NodeBase::post_process(nframes, start, end);
@@ -165,7 +174,7 @@ MidiNoteNode::note_on(uchar note_num, uchar velocity, FrameTime time, SampleCoun
 	assert(voice != NULL);
 	assert(voice == &_voices[voice_num]);
 
-	//cerr << "[MidiNoteNode] Note on.  Key " << (int)note_num << ", Voice " << voice_num << endl;
+	//cerr << "[MidiNoteNode] Note on @ " << time << ".  Key " << (int)note_num << ", Voice " << voice_num << endl;
 	
 	// Update stolen key, if applicable
 	if (voice->state == Voice::Voice::ACTIVE) {
@@ -218,16 +227,21 @@ MidiNoteNode::note_off(uchar note_num, FrameTime time, SampleCount nframes, Fram
 	assert(time - start < _buffer_size);
 
 	Key* key = &_keys[note_num];
+	
+	//cerr << "[MidiNoteNode] Note off @ " << time << ".  Key " << (int)note_num << endl;
 
 	if (key->state == Key::ON_ASSIGNED) {
 		// Assigned key, turn off voice and key
 		if (_voices[key->voice].state == Voice::ACTIVE) {
 			assert(_voices[key->voice].note == note_num);
 
-			if ( ! _sustain)
+			if ( ! _sustain) {
+				//cerr << "... free voice " << key->voice << endl;
 				free_voice(key->voice, time, nframes, start, end);
-			else
+			} else {
+				//cerr << "... hold voice " << key->voice << endl;
 				_voices[key->voice].state = Voice::HOLDING;
+			}
 
 		} else {
 #ifndef NDEBUG

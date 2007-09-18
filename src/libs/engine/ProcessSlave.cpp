@@ -39,7 +39,6 @@ ProcessSlave::_whipped()
 	 * and thus are finished this cycle.
 	 */
 
-	//size_t run_count = 0;
 	size_t num_finished = 0; // Number of consecutive finished nodes hit
 
 	while (_state == STATE_RUNNING) {
@@ -50,17 +49,12 @@ ProcessSlave::_whipped()
 
 			n.node()->wait_for_input(n.n_providers());
 
-			//cout << "************ Thread " << _id << " running "
-			//		<< n.node()->path() << " at index " << _index << endl;
 			n.node()->process(_nframes, _start, _end);
-			
-			//cerr << n.node()->path() << " @ " << &n << " dependants: " << n.dependants().size() << endl;
 			
 			/* Signal dependants their input is ready */
 			for (size_t i=0; i < n.dependants().size(); ++i)
 				n.dependants()[i]->signal_input_ready();
 
-			//++run_count;
 			num_finished = 1;
 		} else {
 			++num_finished;
@@ -75,8 +69,6 @@ ProcessSlave::_whipped()
 	_index = 0;
 	_compiled_patch = NULL;
 	_state = STATE_FINISHED;
-
-	//cout << "Thread " << _id << " ran \t" << run_count << " nodes this cycle." << endl;
 }
 
 

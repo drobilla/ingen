@@ -135,6 +135,7 @@ MidiBuffer::copy(const Buffer* src_buf, size_t start_sample, size_t end_sample)
 	unsigned char* data;
 	while (src->increment() < frame_count) {
 		src->get_event(&time, &size, &data);
+		assert(data[0] >= 0x80);
 		append(time, size, data);
 	}
 }
@@ -152,12 +153,15 @@ MidiBuffer::increment() const
 		return _this_nframes; // hit end
 	}
 
-	_position += sizeof(double) + sizeof(uint32_t) + *(uint32_t*)(_buf->data + _position);
+	_position += sizeof(double) + sizeof(uint32_t) +
+		*(uint32_t*)(_buf->data + _position + sizeof(double));
 
-	if (_position >= _buf->size)
+	if (_position >= _buf->size) {
+		_position = _buf->size;
 		return _this_nframes;
-	else
+	} else {
 		return *(double*)(_buf->data + _position);
+	}
 }
 
 
@@ -175,6 +179,9 @@ MidiBuffer::append(double               timestamp,
 {
 	if (_buf->capacity - _buf->size < sizeof(double) + sizeof(uint32_t) + size)
 		return false;
+	
+	assert(size > 0);
+	assert(data[0] >= 0x80);
 
 	*(double*)(_buf->data + _buf->size) = timestamp;
 	_buf->size += sizeof(double);
@@ -204,12 +211,13 @@ MidiBuffer::get_event(double*         timestamp,
 		*timestamp = _this_nframes;
 		*size = 0;
 		*data = NULL;
-		return *timestamp;
+		return _this_nframes;
 	}
 
 	*timestamp = *(double*)(_buf->data + _position);
 	*size = *(uint32_t*)(_buf->data + _position + sizeof(double));
 	*data = _buf->data + _position + sizeof(double) + sizeof(uint32_t);
+
 	return *timestamp;
 }
 

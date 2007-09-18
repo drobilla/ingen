@@ -120,7 +120,7 @@ Patch::process(SampleCount nframes, FrameTime start, FrameTime end)
 	
 	/* Prepare input ports */
 
-	// This breaks MIDI input, somehow (?)
+	// FIXME: This breaks MIDI input, somehow?  OK disabled?
 	//for (Raul::List<Port*>::iterator i = _input_ports.begin(); i != _input_ports.end(); ++i)
 	//	(*i)->pre_process(nframes, start, end);
 	for (Raul::List<Port*>::iterator i = _output_ports.begin(); i != _output_ports.end(); ++i)
@@ -171,7 +171,6 @@ Patch::process_parallel(SampleCount nframes, FrameTime start, FrameTime end)
 	 */
 
 	size_t index = 0;
-	//size_t run_count = 0;
 	size_t num_finished = 0; // Number of consecutive finished nodes hit
 
 	while (num_finished < cp->size()) {
@@ -180,16 +179,12 @@ Patch::process_parallel(SampleCount nframes, FrameTime start, FrameTime end)
 
 		if (n.node()->process_lock()) {
 			if (n.node()->n_inputs_ready() == n.n_providers()) {
-				//cout << "************ Main running " << n.node()->path() << " at index " << index << endl;
 				n.node()->process(nframes, start, end);
-
-				//cerr << n.node()->path() << " @ " << &n << " dependants: " << n.dependants().size() << endl;
 
 				/* Signal dependants their input is ready */
 				for (size_t i=0; i < n.dependants().size(); ++i)
 					n.dependants()[i]->signal_input_ready();
 
-				//++run_count;
 				++num_finished;
 			} else {
 				n.node()->process_unlock();
@@ -205,8 +200,6 @@ Patch::process_parallel(SampleCount nframes, FrameTime start, FrameTime end)
 		index = (index + 1) % cp->size();
 	}
 	
-	//cout << "Main Thread ran \t" << run_count << " nodes this cycle." << endl;
-
 	/* Tell slaves we're done in case we beat them, and pray they're
 	 * really done by the start of next cycle.
 	 * FIXME: This probably breaks (race) at extremely small nframes.
