@@ -83,6 +83,24 @@ NodeBase::deactivate()
 
 
 void
+NodeBase::prepare_poly(uint32_t poly)
+{
+	if (_ports)
+		for (size_t i=0; i < _ports->size(); ++i)
+			_ports->at(i)->prepare_poly(poly);
+}
+
+
+void
+NodeBase::apply_poly(Raul::Maid& maid, uint32_t poly)
+{
+	if (_ports)
+		for (size_t i=0; i < _ports->size(); ++i)
+			_ports->at(i)->apply_poly(maid, poly);
+}
+
+
+void
 NodeBase::set_buffer_size(size_t size)
 {
 	_buffer_size = size;

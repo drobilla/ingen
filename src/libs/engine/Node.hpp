@@ -23,7 +23,7 @@
 #include "types.hpp"
 #include "GraphObject.hpp"
 
-namespace Raul { template <typename T> class List; }
+namespace Raul { template <typename T> class List; class Maid; }
 
 namespace Ingen {
 
@@ -61,7 +61,22 @@ public:
 	virtual void activate()   = 0;
 	virtual void deactivate() = 0;
 	virtual bool activated()  = 0;
+
+	/** Prepare for a new (external) polyphony value.
+	 *
+	 * Preprocessor thread, poly is actually applied by apply_poly.
+	 */
+	virtual void prepare_poly(uint32_t poly) = 0;
 	
+	/** Apply a new polyphony value.
+	 *
+	 * Audio thread.
+	 *
+	 * \param poly Must be < the most recent value passed to prepare_poly.
+	 * \param maid Any objects no longer needed will be pushed to this
+	 */
+	virtual void apply_poly(Raul::Maid& maid, uint32_t poly) = 0;
+
 	/** Parallelism: Reset flags for start of a new cycle.
 	 */
 	virtual void reset_input_ready() = 0;

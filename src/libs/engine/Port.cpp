@@ -15,6 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <raul/Array.hpp>
+#include <raul/Maid.hpp>
 #include "Port.hpp"
 #include "Node.hpp"
 #include "DataType.hpp"
@@ -42,24 +44,52 @@ Port::Port(Node* const node, const string& name, uint32_t index, uint32_t poly, 
 	allocate_buffers();
 	clear_buffers();
 
-	assert(_buffers.size() > 0);
+	assert(_buffers->size() > 0);
 }
 
 
 Port::~Port()
 {
 	for (uint32_t i=0; i < _poly; ++i)
-		delete _buffers.at(i);
+		delete _buffers->at(i);
+}
+
+
+void
+Port::prepare_poly(uint32_t poly)
+{
+	/* FIXME: poly never goes down, harsh on memory.. */
+	if (poly > _poly) {
+		_prepared_buffers = new Raul::Array<Buffer*>(poly, *_buffers);
+		_prepared_poly = poly;
+		for (uint32_t i = _poly; i < _prepared_poly; ++i)
+			_buffers->at(i) = BufferFactory::create(_type, _buffer_size);
+	}
+}
+
+
+void
+Port::apply_poly(Raul::Maid& maid, uint32_t poly)
+{
+	assert(poly <= _prepared_poly);
+
+	// Apply a new set of buffers from a preceding call to prepare_poly
+	if (_prepared_buffers && _buffers != _prepared_buffers) {
+		maid.push(_buffers);
+		_buffers = _prepared_buffers;
+	}
+
+	_poly = poly;
 }
 
 
 void
 Port::allocate_buffers()
 {
-	_buffers.alloc(_poly);
+	_buffers->alloc(_poly);
 
 	for (uint32_t i=0; i < _poly; ++i)
-		_buffers.at(i) = BufferFactory::create(_type, _buffer_size);
+		_buffers->at(i) = BufferFactory::create(_type, _buffer_size);
 }
 
 
@@ -69,7 +99,7 @@ Port::set_buffer_size(size_t size)
 	_buffer_size = size;
 
 	for (uint32_t i=0; i < _poly; ++i)
-		_buffers.at(i)->resize(size);
+		_buffers->at(i)->resize(size);
 
 	connect_buffers();
 }
@@ -79,7 +109,7 @@ void
 Port::connect_buffers()
 {
 	for (uint32_t i=0; i < _poly; ++i)
-		Port::parent_node()->set_port_buffer(i, _index, _buffers.at(i));
+		Port::parent_node()->set_port_buffer(i, _index, _buffers->at(i));
 }
 
 	
@@ -87,7 +117,7 @@ void
 Port::clear_buffers()
 {
 	for (uint32_t i=0; i < _poly; ++i)
-		_buffers.at(i)->clear();
+		_buffers->at(i)->clear();
 }
 
 

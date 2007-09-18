@@ -25,6 +25,8 @@
 #include "GraphObject.hpp"
 #include "DataType.hpp"
 
+namespace Raul { class Maid; }
+
 namespace Ingen {
 
 class Node;
@@ -46,8 +48,22 @@ public:
 
 	/** A port's parent is always a node, so static cast should be safe */
 	Node* parent_node() const { return (Node*)_parent; }
+	
+	/** Prepare for a new (external) polyphony value.
+	 *
+	 * Preprocessor thread, poly is actually applied by apply_poly.
+	 */
+	virtual void prepare_poly(uint32_t poly);
+	
+	/** Apply a new polyphony value.
+	 *
+	 * Audio thread.
+	 *
+	 * \param poly Must be < the most recent value passed to prepare_poly.
+	 */
+	virtual void apply_poly(Raul::Maid& maid, uint32_t poly);
 
-	Buffer* buffer(uint32_t voice) const { return _buffers.at(voice); }
+	Buffer* buffer(uint32_t voice) const { return _buffers->at(voice); }
 
 	/** Called once per process cycle */
 	virtual void pre_process(SampleCount nframes, FrameTime start, FrameTime end) = 0;
@@ -82,7 +98,11 @@ protected:
 	size_t    _buffer_size;
 	bool      _fixed_buffers;
 
-	Raul::Array<Buffer*> _buffers;
+	Raul::Array<Buffer*>* _buffers;
+
+	// Dynamic polyphony
+	uint32_t              _prepared_poly;
+	Raul::Array<Buffer*>* _prepared_buffers;
 };
 
 

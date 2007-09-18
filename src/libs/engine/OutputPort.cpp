@@ -25,7 +25,7 @@ void
 OutputPort::pre_process(SampleCount nframes, FrameTime start, FrameTime end)
 {
 	for (uint32_t i=0; i < _poly; ++i)
-		_buffers.at(i)->prepare_write(nframes);
+		_buffers->at(i)->prepare_write(nframes);
 }
 
 
@@ -33,7 +33,7 @@ void
 OutputPort::post_process(SampleCount nframes, FrameTime start, FrameTime end)
 {
 	for (uint32_t i=0; i < _poly; ++i)
-		_buffers.at(i)->prepare_read(nframes);
+		_buffers->at(i)->prepare_read(nframes);
 }
 
 

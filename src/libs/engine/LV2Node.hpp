@@ -44,6 +44,9 @@ public:
 	virtual ~LV2Node();
 
 	virtual bool instantiate();
+	
+	void prepare_poly(uint32_t poly);
+	void apply_poly(Raul::Maid& maid, uint32_t poly);
 
 	void activate();
 	void deactivate();
@@ -57,6 +60,7 @@ protected:
 	
 	SLV2Plugin    _lv2_plugin;
 	SLV2Instance* _instances;
+	SLV2Instance* _prepared_instances;
 };
 
 

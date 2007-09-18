@@ -55,25 +55,25 @@ InputPort::add_connection(Raul::ListNode<Connection*>* const c)
 		if (_connections.size() == 1) {
 			// Use buffer directly to avoid copying
 			for (uint32_t i=0; i < _poly; ++i) {
-				_buffers.at(i)->join(c->elem()->buffer(i));
+				_buffers->at(i)->join(c->elem()->buffer(i));
 				//if (_is_tied)
-				//	_tied_port->buffer(i)->join(_buffers.at(i));
-				//assert(_buffers.at(i)->data() == c->elem()->buffer(i)->data());
+				//	_tied_port->buffer(i)->join(_buffers->at(i));
+				//assert(_buffers->at(i)->data() == c->elem()->buffer(i)->data());
 			}
 		} else if (_connections.size() == 2) {
 			// Used to directly use single connection buffer, now there's two
 			// so have to use local ones again and mix down
 			for (uint32_t i=0; i < _poly; ++i) {
-				_buffers.at(i)->unjoin();
+				_buffers->at(i)->unjoin();
 				//if (_is_tied)
-				//	_tied_port->buffer(i)->join(_buffers.at(i));
+				//	_tied_port->buffer(i)->join(_buffers->at(i));
 			}
 		}
 		Port::connect_buffers();
 	}
 		
 	//assert( ! _is_tied || _tied_port != NULL);
-	//assert( ! _is_tied || _buffers.at(0)->data() == _tied_port->buffer(0)->data());
+	//assert( ! _is_tied || _buffers->at(0)->data() == _tied_port->buffer(0)->data());
 }
 
 
@@ -103,17 +103,17 @@ InputPort::remove_connection(const OutputPort* src_port)
 			for (uint32_t i=0; i < _poly; ++i) {
 				// Use a local buffer
 				if (modify_buffers)
-					_buffers.at(i)->unjoin();
-				_buffers.at(i)->clear(); // Write silence
+					_buffers->at(i)->unjoin();
+				_buffers->at(i)->clear(); // Write silence
 				//if (_is_tied)
-					//m_tied_port->buffer(i)->join(_buffers.at(i));
+					//m_tied_port->buffer(i)->join(_buffers->at(i));
 			}
 		} else if (modify_buffers && _connections.size() == 1) {
 			// Share a buffer
 			for (uint32_t i=0; i < _poly; ++i) {
-				_buffers.at(i)->join((*_connections.begin())->buffer(i));
+				_buffers->at(i)->join((*_connections.begin())->buffer(i));
 				//if (_is_tied)
-				//	_tied_port->buffer(i)->join(_buffers.at(i));
+				//	_tied_port->buffer(i)->join(_buffers->at(i));
 			}
 		}	
 	}
@@ -122,7 +122,7 @@ InputPort::remove_connection(const OutputPort* src_port)
 		Port::connect_buffers();
 
 	//assert( ! _is_tied || _tied_port != NULL);
-	//assert( ! _is_tied || _buffers.at(0)->data() == _tied_port->buffer(0)->data());
+	//assert( ! _is_tied || _buffers->at(0)->data() == _tied_port->buffer(0)->data());
 
 	return connection;
 }
@@ -153,7 +153,7 @@ InputPort::pre_process(SampleCount nframes, FrameTime start, FrameTime end)
 	
 	if (_connections.size() == 0) {
 		for (uint32_t i=0; i < _poly; ++i)
-			_buffers.at(i)->prepare_read(nframes);
+			_buffers->at(i)->prepare_read(nframes);
 		return;
 	}
 
@@ -163,13 +163,13 @@ InputPort::pre_process(SampleCount nframes, FrameTime start, FrameTime end)
 	// If only one connection, buffer is (maybe) used directly (no copying)
 	if (_connections.size() == 1) {
 		// Buffer changed since connection
-		if (!_buffers.at(0)->is_joined_to((*_connections.begin())->buffer(0))) {
+		if (!_buffers->at(0)->is_joined_to((*_connections.begin())->buffer(0))) {
 			if (_fixed_buffers) { // || (_is_tied && _tied_port->fixed_buffers())) {
 				// can't change buffer, must copy
 				do_mixdown = true;
 			} else {
 				// zero-copy
-				_buffers.at(0)->join((*_connections.begin())->buffer(0));
+				_buffers->at(0)->join((*_connections.begin())->buffer(0));
 				do_mixdown = false;
 			}
 			connect_buffers();
@@ -181,20 +181,20 @@ InputPort::pre_process(SampleCount nframes, FrameTime start, FrameTime end)
 	//cerr << path() << " mixing: " << do_mixdown << endl;
 
 	for (uint32_t i=0; i < _poly; ++i)
-		_buffers.at(i)->prepare_read(nframes);
+		_buffers->at(i)->prepare_read(nframes);
 	
 	if (!do_mixdown) {
-		assert(_buffers.at(0)->is_joined_to((*_connections.begin())->buffer(0)));
+		assert(_buffers->at(0)->is_joined_to((*_connections.begin())->buffer(0)));
 		return;
 	}
 
 	/*assert(!_is_tied || _tied_port != NULL);
-	assert(!_is_tied || _buffers.at(0)->data() == _tied_port->buffer(0)->data());*/
+	assert(!_is_tied || _buffers->at(0)->data() == _tied_port->buffer(0)->data());*/
 
 	if (_type == DataType::FLOAT) {
 		for (uint32_t voice=0; voice < _poly; ++voice) {
 			// Copy first connection
-			_buffers.at(voice)->copy(
+			_buffers->at(voice)->copy(
 				(*_connections.begin())->buffer(voice), 0, _buffer_size-1);
 
 			// Accumulate the rest
@@ -203,7 +203,7 @@ InputPort::pre_process(SampleCount nframes, FrameTime start, FrameTime end)
 				Connections::iterator c = _connections.begin();
 
 				for (++c; c != _connections.end(); ++c)
-					((AudioBuffer*)_buffers.at(voice))->accumulate(
+					((AudioBuffer*)_buffers->at(voice))->accumulate(
 					((AudioBuffer*)(*c)->buffer(voice)), 0, _buffer_size-1);
 			}
 		}
@@ -215,7 +215,7 @@ InputPort::pre_process(SampleCount nframes, FrameTime start, FrameTime end)
 		//	cerr << "WARNING: MIDI mixing not implemented, only first connection used." << endl;
 			
 		// Copy first connection
-		_buffers.at(0)->copy(
+		_buffers->at(0)->copy(
 			(*_connections.begin())->buffer(0), 0, _buffer_size-1);
 	}
 }
@@ -237,7 +237,7 @@ InputPort::post_process(SampleCount nframes, FrameTime start, FrameTime end)
 {
 	// Prepare for next cycle
 	for (uint32_t i=0; i < _poly; ++i)
-		_buffers.at(i)->prepare_write(nframes);
+		_buffers->at(i)->prepare_write(nframes);
 }
 
 

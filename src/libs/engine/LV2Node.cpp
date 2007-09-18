@@ -50,6 +50,20 @@ LV2Node::LV2Node(const Plugin*      plugin,
 }
 
 
+void
+LV2Node::prepare_poly(uint32_t poly)
+{
+	NodeBase::prepare_poly(poly);
+}
+
+
+void
+LV2Node::apply_poly(Raul::Maid& maid, uint32_t poly)
+{
+	NodeBase::apply_poly(maid, poly);
+}
+
+
 /** Instantiate self from LV2 plugin descriptor.
  *
  * Implemented as a seperate function (rather than in the constructor) to

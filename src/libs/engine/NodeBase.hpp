@@ -55,6 +55,9 @@ public:
 	virtual void deactivate();
 	bool activated() { return _activated; }
 	
+	virtual void prepare_poly(uint32_t poly);
+	virtual void apply_poly(Raul::Maid& maid, uint32_t poly);
+	
 	virtual void     reset_input_ready();
 	virtual bool     process_lock();
 	virtual void     process_unlock();
