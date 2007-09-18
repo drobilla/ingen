@@ -119,26 +119,22 @@ Patch::process(SampleCount nframes, FrameTime start, FrameTime end)
 		return;
 	
 	/* Prepare input ports */
+	/* FIXME: Pre-processing input ports breaks MIDI somehow? */
+	if (_ports)
+		for (size_t i=0; i < _ports->size(); ++i)
+			if (_ports->at(i)->is_output())
+				_ports->at(i)->pre_process(nframes, start, end);
 
-	// FIXME: This breaks MIDI input, somehow?  OK disabled?
-	//for (Raul::List<Port*>::iterator i = _input_ports.begin(); i != _input_ports.end(); ++i)
-	//	(*i)->pre_process(nframes, start, end);
-	for (Raul::List<Port*>::iterator i = _output_ports.begin(); i != _output_ports.end(); ++i)
-		(*i)->pre_process(nframes, start, end);
-
-
+	/* Run */
 	if (_engine.process_slaves().size() > 0)
 		process_parallel(nframes, start, end);
 	else
 		process_single(nframes, start, end);
 
-	
 	/* Write output ports */
-
-	for (Raul::List<Port*>::iterator i = _input_ports.begin(); i != _input_ports.end(); ++i)
-		(*i)->post_process(nframes, start, end);
-	for (Raul::List<Port*>::iterator i = _output_ports.begin(); i != _output_ports.end(); ++i)
-		(*i)->post_process(nframes, start, end);
+	if (_ports)
+		for (size_t i=0; i < _ports->size(); ++i)
+			_ports->at(i)->post_process(nframes, start, end);
 }
 
 

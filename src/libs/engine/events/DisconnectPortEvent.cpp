@@ -51,10 +51,10 @@ DisconnectPortEvent::DisconnectPortEvent(Engine& engine, SharedPtr<Responder> re
 }
 
 
-DisconnectPortEvent::DisconnectPortEvent(Engine& engine, Port* port)
+DisconnectPortEvent::DisconnectPortEvent(Engine& engine, Patch* patch, Port* port)
 : QueuedEvent(engine),
   _port_path(port->path()),
-  _patch((port->parent_node() == NULL) ? NULL : port->parent_node()->parent_patch()),
+  _patch(patch),
   _port(port),
   _process_order(NULL),
   _succeeded(true),
@@ -77,6 +77,9 @@ DisconnectPortEvent::pre_process()
 	// cerr << "Preparing disconnection event...\n";
 	
 	if (_lookup) {
+
+		/* FIXME: Double lookup */
+
 		_patch = _engine.object_store()->find_patch(_port_path.parent().parent());
 	
 		if (_patch == NULL) {

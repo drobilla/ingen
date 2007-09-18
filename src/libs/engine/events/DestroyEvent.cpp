@@ -137,7 +137,7 @@ DestroyEvent::pre_process()
 			
 			//_port->remove_from_store();
 
-			_disconnect_port_event = new DisconnectPortEvent(_engine, _port);
+			_disconnect_port_event = new DisconnectPortEvent(_engine, _port->parent_patch(), _port);
 			_disconnect_port_event->pre_process();
 			
 			if (_port->parent_patch()->enabled()) {
@@ -185,9 +185,10 @@ DestroyEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 		
 		_port->parent_patch()->external_ports(_ports_array);
 		
-		if (!_port->parent_patch()->parent()) {
-			_driver_port = _engine.audio_driver()->remove_port(_port->path());
-			if (!_driver_port)
+		if ( ! _port->parent_patch()->parent()) {
+			if (_port->type() == DataType::FLOAT)
+				_driver_port = _engine.audio_driver()->remove_port(_port->path());
+			else if (_port->type() == DataType::MIDI)
 				_driver_port = _engine.midi_driver()->remove_port(_port->path());
 		}
 	}

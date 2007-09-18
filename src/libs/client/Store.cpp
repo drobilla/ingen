@@ -555,13 +555,15 @@ Store::disconnection_event(const Path& src_port_path, const Path& dst_port_path)
 	SharedPtr<PortModel> src_port = PtrCast<PortModel>(object(src_port_path));
 	SharedPtr<PortModel> dst_port = PtrCast<PortModel>(object(dst_port_path));
 
-	assert(src_port);
-	assert(dst_port);
+	if (src_port)
+		src_port->disconnected_from(dst_port);
+	else
+		cerr << "WARNING: Disconnection from nonexistant src port " << src_port_path << endl;
 	
-	src_port->disconnected_from(dst_port);
-	dst_port->disconnected_from(src_port);
-
-	SharedPtr<ConnectionModel> cm(new ConnectionModel(src_port, dst_port));
+	if (dst_port)
+		dst_port->disconnected_from(dst_port);
+	else
+		cerr << "WARNING: Disconnection from nonexistant dst port " << dst_port_path << endl;
 
 	SharedPtr<PatchModel> patch = connection_patch(src_port_path, dst_port_path);
 	
