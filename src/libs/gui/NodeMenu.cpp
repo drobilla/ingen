@@ -30,8 +30,9 @@ namespace GUI {
 
 
 NodeMenu::NodeMenu(SharedPtr<NodeModel> node)
-: _node(node)
-, _controls_menuitem(NULL)
+	: _enable_signal(false)
+	, _node(node)
+	, _controls_menuitem(NULL)
 {
 	App& app = App::instance();
 
@@ -77,6 +78,16 @@ NodeMenu::NodeMenu(SharedPtr<NodeModel> node)
 		sigc::bind(
 			sigc::mem_fun(app.window_factory(), &WindowFactory::present_properties),
 			node)));
+	
+	Gtk::Menu_Helpers::CheckMenuElem poly_elem = Gtk::Menu_Helpers::CheckMenuElem(
+			"Polyphonic", sigc::mem_fun(this, &NodeMenu::on_menu_polyphonic));
+	items().push_back(poly_elem);
+	_polyphonic_menuitem = static_cast<Gtk::RadioMenuItem*>(&items().back());
+	_polyphonic_menuitem->set_active(node->polyphonic());
+
+	node->polyphonic_sig.connect(sigc::mem_fun(this, &NodeMenu::polyphonic_changed));
+
+	_enable_signal = true;
 
 	//model->new_port_sig.connect(sigc::mem_fun(this, &NodeMenu::add_port));
 	//model->destroyed_sig.connect(sigc::mem_fun(this, &NodeMenu::destroy));
@@ -172,6 +183,23 @@ void
 NodeMenu::on_menu_destroy()
 {
 	App::instance().engine()->destroy(_node->path());
+}
+
+
+void
+NodeMenu::on_menu_polyphonic()
+{
+	if (_enable_signal)
+		App::instance().engine()->set_polyphonic(_node->path(), _polyphonic_menuitem->get_active());
+}
+
+
+void
+NodeMenu::polyphonic_changed(bool polyphonic)
+{
+	_enable_signal = false;
+	_polyphonic_menuitem->set_active(polyphonic);
+	_enable_signal = true;
 }
 
 

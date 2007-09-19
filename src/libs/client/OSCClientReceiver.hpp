@@ -99,6 +99,7 @@ private:
 	LO_HANDLER(disconnection);
 	LO_HANDLER(new_node);
 	LO_HANDLER(new_port);
+	LO_HANDLER(polyphonic);
 	LO_HANDLER(metadata_update);
 	LO_HANDLER(control_change);
 	LO_HANDLER(program_add);

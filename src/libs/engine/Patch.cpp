@@ -261,7 +261,7 @@ Patch::add_node(Raul::ListNode<Node*>* ln)
 	assert(ln != NULL);
 	assert(ln->elem() != NULL);
 	assert(ln->elem()->parent_patch() == this);
-	assert(ln->elem()->polyphony() == _internal_poly);
+	//assert(ln->elem()->polyphony() == _internal_poly);
 	
 	_nodes.push_back(ln);
 }

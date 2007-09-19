@@ -159,6 +159,8 @@ OSCClientReceiver::setup_callbacks()
 	lo_server_thread_add_method(_st, "/ingen/new_node", "ssTi", new_node_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/new_node", "ssFi", new_node_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/new_port", "ssi", new_port_cb, this);
+	lo_server_thread_add_method(_st, "/ingen/polyphonic", "sT", polyphonic_cb, this);
+	lo_server_thread_add_method(_st, "/ingen/polyphonic", "sF", polyphonic_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/metadata_update", NULL, metadata_update_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/control_change", "sf", control_change_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/program_add", "siis", program_add_cb, this);
@@ -332,6 +334,20 @@ OSCClientReceiver::_new_port_cb(const char* path, const char* types, lo_arg** ar
 	}
 
 #endif
+	return 0;	
+}
+
+
+/** Notification of an object's polyphonic flag
+ */
+int
+OSCClientReceiver::_polyphonic_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+{
+	const char* obj_path = &argv[0]->s;
+	const bool  poly     = (types[1] == 'T');
+
+	polyphonic(obj_path, poly);
+
 	return 0;	
 }
 

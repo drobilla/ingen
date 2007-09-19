@@ -51,9 +51,6 @@ public:
 
 	bool has_control_inputs();
 	
-	//virtual void show_menu(GdkEventButton* event)
-	//{ _menu.popup(event->button, event->time); }
-
 protected:
 	
 	virtual void enable_controls_menuitem();
@@ -62,13 +59,17 @@ protected:
 	//virtual void add_port(SharedPtr<PortModel> pm);
 
 	void on_menu_destroy();
+	void on_menu_polyphonic();
 	void on_menu_clone();
 	void on_menu_learn();
 	void on_menu_disconnect_all();
 
-	//Gtk::Menu                   _menu;
-	SharedPtr<NodeModel>       _node;
+	void polyphonic_changed(bool p);
+
+	bool                        _enable_signal;
+	SharedPtr<NodeModel>        _node;
 	Glib::RefPtr<Gtk::MenuItem> _controls_menuitem;
+	Gtk::CheckMenuItem*         _polyphonic_menuitem;
 };
 
 

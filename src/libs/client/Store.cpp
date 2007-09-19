@@ -42,6 +42,7 @@ Store::Store(SharedPtr<EngineInterface> engine, SharedPtr<SigClientInterface> em
 	emitter->new_patch_sig.connect(sigc::mem_fun(this, &Store::new_patch_event));
 	emitter->new_node_sig.connect(sigc::mem_fun(this, &Store::new_node_event));
 	emitter->new_port_sig.connect(sigc::mem_fun(this, &Store::new_port_event));
+	emitter->polyphonic_sig.connect(sigc::mem_fun(this, &Store::polyphonic_event));
 	emitter->patch_enabled_sig.connect(sigc::mem_fun(this, &Store::patch_enabled_event));
 	emitter->patch_disabled_sig.connect(sigc::mem_fun(this, &Store::patch_disabled_event));
 	emitter->patch_polyphony_sig.connect(sigc::mem_fun(this, &Store::patch_polyphony_event));
@@ -432,6 +433,15 @@ Store::new_port_event(const Path& path, const string& type, bool is_output)
 	add_object(p);
 	if (p->parent())
 		resolve_connection_orphans(p);
+}
+
+	
+void
+Store::polyphonic_event(const Path& path, bool polyphonic)
+{
+	SharedPtr<ObjectModel> object = this->object(path);
+	if (object)
+		object->set_polyphonic(polyphonic);
 }
 
 

@@ -80,7 +80,6 @@ public:
 	SampleRate sample_rate() const { return _srate; }
 	size_t     buffer_size() const { return _buffer_size; }
 	uint32_t   num_ports()   const { return _ports ? _ports->size() : 0; }
-	bool       polyphonic()  const { return _polyphonic; }
 	uint32_t   polyphony()   const { return _polyphony; }
 	bool       traversed()   const { return _traversed; }
 	void       traversed(bool b)   { _traversed = b; }
@@ -107,7 +106,6 @@ protected:
 	
 	const Plugin* _plugin;
 
-	bool       _polyphonic;
 	uint32_t   _polyphony;
 	SampleRate _srate;
 	size_t     _buffer_size;

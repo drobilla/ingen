@@ -25,8 +25,9 @@ namespace Ingen {
 namespace Client {
 
 
-ObjectModel::ObjectModel(const Path& path)
-: _path(path)
+ObjectModel::ObjectModel(const Path& path, bool polyphonic)
+	: _path(path)
+	, _polyphonic(polyphonic)
 {
 }
 
@@ -103,6 +104,14 @@ ObjectModel::add_metadata(const MetadataMap& data)
 		_metadata[i->first] = i->second;
 		metadata_update_sig.emit(i->first, i->second);
 	}
+}
+
+
+void
+ObjectModel::set_polyphonic(bool polyphonic)
+{
+	_polyphonic = polyphonic;
+	polyphonic_sig.emit(polyphonic);
 }
 
 

@@ -74,12 +74,11 @@ protected:
 	virtual void on_double_click(GdkEventButton* ev) { show_control_window(); }
 	virtual void on_middle_click(GdkEventButton* ev) { show_control_window(); }
 	
-	void metadata_update(const string& key, const Atom& value);
+	void rename();
+	void set_metadata(const string& key, const Atom& value);
 	
 	void add_port(SharedPtr<PortModel> port, bool resize=true);
 	void remove_port(SharedPtr<PortModel> port);
-	
-	void renamed();
 	
 	SharedPtr<NodeModel> _node;
 	NodeMenu             _menu;

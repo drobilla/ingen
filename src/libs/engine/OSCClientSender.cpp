@@ -382,6 +382,30 @@ OSCClientSender::new_port(const std::string& path,
 
 
 /** \page client_osc_namespace
+ * <p> \b /ingen/polyphonic - Notification an object's polyphonic property has changed.
+ * \arg \b path (string) - Path of object
+ * \arg \b polyphonic (bool) - Whether or not object is polyphonic (from it's parent's perspective).
+ *
+ * \li This is a notification that the object is <em>externally</em> polyphonic,
+ * i.e. its parent sees several independent buffers for a single port, one for each voice.
+ * An object can be internally polyphonic but externally not if the voices are mixed down;
+ * this is true of DSSI plugins and subpatches with mismatched polyphony. </p> \n \n
+ */
+void
+OSCClientSender::polyphonic(const std::string& path,
+                            bool               polyphonic)
+{
+	if (!_enabled)
+		return;
+
+	if (polyphonic)
+		lo_send(_address, "/ingen/polyphonic", "sT", path.c_str());
+	else
+		lo_send(_address, "/ingen/polyphonic", "sF", path.c_str());
+}
+
+
+/** \page client_osc_namespace
  * <p> \b /ingen/destroyed - Notification an object has been destroyed
  * \arg \b path (const std::string&) - Path of object (which no longer exists) </p> \n \n
  */

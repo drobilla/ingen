@@ -49,7 +49,10 @@ namespace Shared { class ClientInterface; }
 class Node : public GraphObject
 {
 public:
-	Node(GraphObject* parent, const std::string& name) : GraphObject(parent, name) {}
+	Node(GraphObject* parent, const std::string& name, bool poly)
+		: GraphObject(parent, name, poly)
+	{}
+
 	virtual ~Node() {}
 
 	/** Activate this Node.
@@ -122,9 +125,6 @@ public:
 	virtual const Raul::Array<Port*>& ports() const = 0;
 	
 	virtual uint32_t num_ports() const = 0;
-
-	virtual bool     polyphonic() const = 0;
-	virtual uint32_t polyphony()  const = 0;
 	
 	/** Used by the process order finding algorithm (ie during connections) */
 	virtual bool traversed() const  = 0;

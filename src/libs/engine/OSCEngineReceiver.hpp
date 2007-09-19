@@ -93,6 +93,7 @@ private:
 	LO_HANDLER(disable_patch);
 	LO_HANDLER(clear_patch);
 	LO_HANDLER(set_polyphony);
+	LO_HANDLER(set_polyphonic);
 	LO_HANDLER(destroy);
 	LO_HANDLER(connect);
 	LO_HANDLER(disconnect);

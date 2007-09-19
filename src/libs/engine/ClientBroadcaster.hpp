@@ -74,6 +74,7 @@ public:
 	void send_node(const Node* const node, bool recursive);
 	void send_port(const Port* port);
 	void send_destroyed(const string& path);
+	void send_polyphonic(const string& path, bool polyphonic);
 	void send_patch_cleared(const string& patch_path);
 	void send_connection(const Connection* const connection);
 	void send_disconnection(const string& src_port_path, const string& dst_port_path);

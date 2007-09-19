@@ -26,7 +26,7 @@ using std::string;
 
 namespace Ingen {
 
-class Patch;
+class GraphObject;
 
 
 /** Delete all nodes from a patch.
@@ -36,16 +36,16 @@ class Patch;
 class SetPolyphonicEvent : public QueuedEvent
 {
 public:
-	SetPolyphonicEvent(Engine& engine, SharedPtr<Responder> responder, FrameTime time, QueuedEventSource* source, const string& patch_path, bool poly);
+	SetPolyphonicEvent(Engine& engine, SharedPtr<Responder> responder, FrameTime time, QueuedEventSource* source, const string& path, bool poly);
 	
 	void pre_process();
 	void execute(SampleCount nframes, FrameTime start, FrameTime end);
 	void post_process();
 
 private:
-	string _patch_path;
-	Patch* _patch;
-	bool   _poly;
+	string       _path;
+	GraphObject* _object;
+	bool         _poly;
 };
 
 

@@ -31,10 +31,10 @@
 namespace Ingen {
 
 
-SetPolyphonicEvent::SetPolyphonicEvent(Engine& engine, SharedPtr<Responder> responder, FrameTime time, QueuedEventSource* source, const string& patch_path, bool poly)
+SetPolyphonicEvent::SetPolyphonicEvent(Engine& engine, SharedPtr<Responder> responder, FrameTime time, QueuedEventSource* source, const string& path, bool poly)
 : QueuedEvent(engine, responder, time, true, source),
-  _patch_path(patch_path),
-  _patch(NULL),
+  _path(path),
+  _object(NULL),
   _poly(poly)
 {
 }
@@ -43,12 +43,9 @@ SetPolyphonicEvent::SetPolyphonicEvent(Engine& engine, SharedPtr<Responder> resp
 void
 SetPolyphonicEvent::pre_process()
 {
-	/*
-	_patch = _engine.object_store()->find_patch(_patch_path);
-	 if (_patch && _poly > _patch->internal_poly())
-		 _patch->prepare_internal_poly(_poly);
-*/
-	QueuedEvent::pre_process();
+	_object = _engine.object_store()->find_object(_path);
+	
+	 QueuedEvent::pre_process();
 }
 
 
@@ -56,10 +53,10 @@ void
 SetPolyphonicEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {
 	QueuedEvent::execute(nframes, start, end);
-/*
-	if (_patch)
-		_patch->apply_internal_poly(*_engine.maid(), _poly);
-*/	
+	 
+	if (_object)
+		 _object->set_polyphonic(*_engine.maid(), _poly);
+	
 	_source->unblock();
 }
 
@@ -67,12 +64,12 @@ SetPolyphonicEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 void
 SetPolyphonicEvent::post_process()
 {
-	/*
-	if (_patch)
+	if (_object) {
 		_responder->respond_ok();
-	else
-		_responder->respond_error("Unable to find patch");
-		*/
+		_engine.broadcaster()->send_polyphonic(_path, _poly);
+	} else {
+		_responder->respond_error("Unable to find object");
+	}
 }
 
 

@@ -190,6 +190,15 @@ ClientBroadcaster::send_destroyed(const string& path)
 		(*i).second->object_destroyed(path);
 }
 
+
+void
+ClientBroadcaster::send_polyphonic(const string& path, bool polyphonic)
+{
+	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
+		(*i).second->polyphonic(path, polyphonic);
+}
+
+
 void
 ClientBroadcaster::send_patch_cleared(const string& patch_path)
 {

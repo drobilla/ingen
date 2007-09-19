@@ -26,7 +26,8 @@ namespace Client {
 
 
 NodeModel::NodeModel(SharedPtr<PluginModel> plugin, const Path& path, bool polyphonic)
-: ObjectModel(path),
+
+	: ObjectModel(path, polyphonic),
   _polyphonic(polyphonic),
   _plugin_uri(plugin->uri()),
   _plugin(plugin)
@@ -34,8 +35,7 @@ NodeModel::NodeModel(SharedPtr<PluginModel> plugin, const Path& path, bool polyp
 }
 
 NodeModel::NodeModel(const string& plugin_uri, const Path& path, bool polyphonic)
-: ObjectModel(path),
-  _polyphonic(polyphonic),
+: ObjectModel(path, polyphonic),
   _plugin_uri(plugin_uri)
 {
 }

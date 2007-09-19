@@ -283,11 +283,11 @@ OSCEngineSender::set_polyphonic(const string& path, bool poly)
 {
 	assert(_engine_addr);
 	if (poly) {
-		lo_send(_engine_addr, "/ingen/set_polyphony", "isT",
+		lo_send(_engine_addr, "/ingen/set_polyphonic", "isT",
 				next_id(),
 				path.c_str());
 	} else {
-		lo_send(_engine_addr, "/ingen/set_polyphony", "isF",
+		lo_send(_engine_addr, "/ingen/set_polyphonic", "isF",
 				next_id(),
 				path.c_str());
 	}

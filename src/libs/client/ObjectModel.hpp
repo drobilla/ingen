@@ -62,10 +62,11 @@ public:
 
 	typedef Raul::Table<string, SharedPtr<ObjectModel> > Children;
 
-	const MetadataMap&     metadata() const { return _metadata; }
-	const Children&        children() const { return _children; }
-	inline const Path&     path()     const { return _path; }
-	SharedPtr<ObjectModel> parent()   const { return _parent; }
+	const MetadataMap&     metadata()   const { return _metadata; }
+	const Children&        children()   const { return _children; }
+	inline const Path&     path()       const { return _path; }
+	SharedPtr<ObjectModel> parent()     const { return _parent; }
+	bool                   polyphonic() const { return _polyphonic; }
 
 	SharedPtr<ObjectModel> get_child(const string& name) const;
 
@@ -73,13 +74,14 @@ public:
 	sigc::signal<void, const string&, const Atom&> metadata_update_sig; 
 	sigc::signal<void, SharedPtr<ObjectModel> >    new_child_sig; 
 	sigc::signal<void, SharedPtr<ObjectModel> >    removed_child_sig; 
+	sigc::signal<void, bool>                       polyphonic_sig; 
 	sigc::signal<void>                             destroyed_sig; 
 	sigc::signal<void>                             renamed_sig; 
 
 protected:
 	friend class Store;
 	
-	ObjectModel(const Path& path);
+	ObjectModel(const Path& path, bool polyphonic);
 	
 	virtual void set_path(const Path& p) { _path = p; renamed_sig.emit(); }
 	virtual void set_parent(SharedPtr<ObjectModel> p) { assert(p); _parent = p; }
@@ -87,10 +89,12 @@ protected:
 	virtual bool remove_child(SharedPtr<ObjectModel> c);
 	
 	void add_metadata(const MetadataMap& data);
+	void set_polyphonic(bool);
 	
 	void set(SharedPtr<ObjectModel> model);
 
 	Path                   _path;
+	bool                   _polyphonic;
 	SharedPtr<ObjectModel> _parent;
 	
 	MetadataMap _metadata;

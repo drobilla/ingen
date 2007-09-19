@@ -34,9 +34,8 @@ namespace Ingen {
 
 
 NodeBase::NodeBase(const Plugin* plugin, const string& name, bool poly, Patch* parent, SampleRate srate, size_t buffer_size)
-: Node(parent, name),
+: Node(parent, name, poly),
   _plugin(plugin),
-  _polyphonic(poly),
   _polyphony(parent ? parent->internal_poly() : 1),
   _srate(srate),
   _buffer_size(buffer_size),

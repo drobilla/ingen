@@ -84,6 +84,8 @@ OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t
 	lo_server_add_method(_server, "/ingen/disable_patch", "is", disable_patch_cb, this);
 	lo_server_add_method(_server, "/ingen/clear_patch", "is", clear_patch_cb, this);
 	lo_server_add_method(_server, "/ingen/set_polyphony", "isi", set_polyphony_cb, this);
+	lo_server_add_method(_server, "/ingen/set_polyphonic", "isT", set_polyphonic_cb, this);
+	lo_server_add_method(_server, "/ingen/set_polyphonic", "isF", set_polyphonic_cb, this);
 	lo_server_add_method(_server, "/ingen/create_port", "issi", create_port_cb, this);
 	lo_server_add_method(_server, "/ingen/create_node", "issssT", create_node_cb, this);
 	lo_server_add_method(_server, "/ingen/create_node", "issssF", create_node_cb, this);
@@ -458,6 +460,23 @@ OSCEngineReceiver::_set_polyphony_cb(const char* path, const char* types, lo_arg
 
 
 /** \page engine_osc_namespace
+ * <p> \b /ingen/set_polyphonic - Toggle a node's or port's polyphonic mode
+ * \arg \b response-id (integer)
+ * \arg \b path - Object's path
+ * \arg \b polyphonic (bool) </p> \n \n
+ */
+int
+OSCEngineReceiver::_set_polyphonic_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+{
+	const char* object_path = &argv[1]->s;
+	bool        polyphonic  = (types[2] == 'T');
+	
+	set_polyphonic(object_path, polyphonic);
+	return 0;
+}
+
+
+/** \page engine_osc_namespace
  * <p> \b /ingen/create_port - Add a port into a given patch (load a plugin by URI)
  * \arg \b response-id (integer)
  * \arg \b path (string) - Full path of the new port (ie. /patch2/subpatch/newport)
@@ -490,7 +509,6 @@ OSCEngineReceiver::_create_node_by_uri_cb(const char* path, const char* types, l
 	bool        polyphonic = (types[3] == 'T');
 	
 	create_node(node_path, plug_uri, polyphonic);
-
 	return 0;
 }
 
@@ -719,7 +737,6 @@ OSCEngineReceiver::_midi_learn_cb(const char* path, const char* types, lo_arg** 
 	const char* patch_path  = &argv[1]->s;
 	
 	midi_learn(patch_path);
-		
 	return 0;
 }
 
@@ -743,7 +760,6 @@ OSCEngineReceiver::_metadata_set_cb(const char* path, const char* types, lo_arg*
 	Raul::Atom value = Raul::AtomLiblo::lo_arg_to_atom(types[3], argv[3]);
 	
 	set_metadata(object_path, key, value);
-	
 	return 0;
 }
 
@@ -763,7 +779,6 @@ OSCEngineReceiver::_metadata_get_cb(const char* path, const char* types, lo_arg*
 	const char* key         = &argv[2]->s;
 
 	request_metadata(object_path, key);
-
 	return 0;
 }
 
@@ -780,7 +795,6 @@ OSCEngineReceiver::_request_plugin_cb(const char* path, const char* types, lo_ar
 	const char* uri = &argv[1]->s;
 
 	request_plugin(uri);
-
 	return 0;
 }
 
@@ -797,7 +811,6 @@ OSCEngineReceiver::_request_object_cb(const char* path, const char* types, lo_ar
 	const char* object_path = &argv[1]->s;
 
 	request_object(object_path);
-
 	return 0;
 }
 

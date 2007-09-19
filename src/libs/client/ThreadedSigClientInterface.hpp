@@ -54,6 +54,7 @@ public:
 	, new_patch_slot(new_patch_sig.make_slot())
 	, new_node_slot(new_node_sig.make_slot())
 	, new_port_slot(new_port_sig.make_slot())
+	, polyphonic_slot(polyphonic_sig.make_slot())
 	, connection_slot(connection_sig.make_slot())
 	, patch_enabled_slot(patch_enabled_sig.make_slot())
 	, patch_disabled_slot(patch_disabled_sig.make_slot())
@@ -73,9 +74,8 @@ public:
     
     virtual void subscribe(Shared::EngineInterface* engine) { throw; } // FIXME
 
-	// FIXME: make this insert bundle-boundary-events, where the GTK thread
-	// process all events between start and finish in one cycle, guaranteed
-	// (no more node jumping)
+	// TODO: make this insert bundle-boundary-events, where the GTK thread
+	// process all events between start and finish in one (GTK) "cycle", guaranteed
 	void bundle_begin() {}
 	void bundle_end()   {}
 	
@@ -104,6 +104,9 @@ public:
 	
 	void new_port(const string& path, const string& data_type, bool is_output)
 		{ push_sig(sigc::bind(new_port_slot, path, data_type, is_output)); }
+	
+	void polyphonic(const string& path, bool polyphonic)
+		{ push_sig(sigc::bind(polyphonic_slot, path, polyphonic)); }
 
 	void connection(const string& src_port_path, const string& dst_port_path)
 		{ push_sig(sigc::bind(connection_slot, src_port_path, dst_port_path)); }
@@ -162,6 +165,7 @@ private:
 	sigc::slot<void, string, uint32_t>                   new_patch_slot; 
 	sigc::slot<void, string, string, bool, int>          new_node_slot; 
 	sigc::slot<void, string, string, bool>               new_port_slot;
+	sigc::slot<void, string, bool>                       polyphonic_slot;
 	sigc::slot<void, string, string>                     connection_slot;
 	sigc::slot<void, string>                             patch_enabled_slot; 
 	sigc::slot<void, string>                             patch_disabled_slot; 

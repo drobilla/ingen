@@ -74,6 +74,9 @@ private:
 	virtual void new_port(const string& path, const string& data_type, bool is_output)
 	{ new_port_sig.emit(path, data_type, is_output); }
 	
+	virtual void polyphonic(const string& path, bool polyphonic)
+	{ polyphonic_sig.emit(path, polyphonic); }
+	
 	virtual void patch_enabled(const string& path)
 	{ patch_enabled_sig.emit(path); }
 	

@@ -53,6 +53,7 @@ public:
 	sigc::signal<void, string, uint32_t>                   new_patch_sig; 
 	sigc::signal<void, string, string, bool, uint32_t>     new_node_sig; 
 	sigc::signal<void, string, string, bool>               new_port_sig; 
+	sigc::signal<void, string, bool>                       polyphonic_sig; 
 	sigc::signal<void, string>                             patch_enabled_sig; 
 	sigc::signal<void, string>                             patch_disabled_sig; 
 	sigc::signal<void, string, uint32_t>                   patch_polyphony_sig; 

@@ -42,15 +42,15 @@ NodeModule::NodeModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeMode
 {
 	assert(_node);
 
-	if (node->polyphonic())
-		set_stacked_border(true);
-
 	node->new_port_sig.connect(sigc::bind(sigc::mem_fun(this, &NodeModule::add_port), true));
 	node->removed_port_sig.connect(sigc::mem_fun(this, &NodeModule::remove_port));
-	node->metadata_update_sig.connect(sigc::mem_fun(this, &NodeModule::metadata_update));
-	
+	node->metadata_update_sig.connect(sigc::mem_fun(this, &NodeModule::set_metadata));
+	node->polyphonic_sig.connect(sigc::mem_fun(this, &NodeModule::set_stacked_border));
+	node->renamed_sig.connect(sigc::mem_fun(this, &NodeModule::rename));
+
 	signal_clicked.connect(sigc::mem_fun(this, &NodeModule::on_click));
-	node->renamed_sig.connect(sigc::mem_fun(this, &NodeModule::renamed));
+
+	set_stacked_border(node->polyphonic());
 }
 
 
@@ -77,7 +77,7 @@ NodeModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeModel> n
 		ret = boost::shared_ptr<NodeModule>(new NodeModule(canvas, node));
 
 	for (MetadataMap::const_iterator m = node->metadata().begin(); m != node->metadata().end(); ++m)
-		ret->metadata_update(m->first, m->second);
+		ret->set_metadata(m->first, m->second);
 
 	for (PortModelList::const_iterator p = node->ports().begin(); p != node->ports().end(); ++p)
 		ret->add_port(*p, false);
@@ -89,7 +89,7 @@ NodeModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeModel> n
 
 
 void
-NodeModule::renamed()
+NodeModule::rename()
 {
 	set_name(_node->path().name());
 }
@@ -157,7 +157,7 @@ NodeModule::on_click(GdkEventButton* event)
 
 
 void
-NodeModule::metadata_update(const string& key, const Atom& value)
+NodeModule::set_metadata(const string& key, const Atom& value)
 {
 	if (key == "ingenuity:canvas-x" && value.type() == Atom::FLOAT)
 		move_to(value.get_float(), property_y());

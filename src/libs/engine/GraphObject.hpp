@@ -31,13 +31,12 @@ using std::string;
 using Raul::Atom;
 using Raul::Path;
 
+
+namespace Raul { class Maid; }
+
 namespace Ingen {
 
 class Patch;
-class Node;
-class Port;
-class ObjectStore;
-
 
 /** An object on the audio graph - Patch, Node, Port, etc.
  *
@@ -52,8 +51,8 @@ class GraphObject : public Raul::Deletable
 public:
 	typedef std::map<string, Atom> MetadataMap;
 
-	GraphObject(GraphObject* parent, const string& name)
-	: _store(NULL), _parent(parent), _name(name)
+	GraphObject(GraphObject* parent, const string& name, bool polyphonic=false)
+		: _parent(parent), _name(name), _polyphonic(polyphonic)
 	{
 		assert(parent == NULL || _name.length() > 0);
 		assert(_name.find("/") == string::npos);
@@ -61,6 +60,9 @@ public:
 	}
 	
 	virtual ~GraphObject() {}
+	
+	bool         polyphonic() const                       { return _polyphonic; }
+	virtual void set_polyphonic(Raul::Maid& maid, bool p) { _polyphonic = p; }
 	
 	inline GraphObject*  parent() const { return _parent; }
 	inline const string& name()   const { return _name; }
@@ -99,9 +101,9 @@ public:
 	}
 
 protected:
-	ObjectStore* _store;
 	GraphObject* _parent;
 	string       _name;
+	bool         _polyphonic;
 
 private:	
 	MetadataMap _metadata;
