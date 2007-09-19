@@ -337,7 +337,7 @@ Serializer::serialize_node(SharedPtr<NodeModel> node, const Node& node_id)
 	_model->add_statement(
 		node_id,
 		"rdf:type",
-		"ingen:Node");
+		Node(_model->world(), Node::RESOURCE, "ingen:Node"));
 	
 	_model->add_statement(
 		node_id,
@@ -348,6 +348,11 @@ Serializer::serialize_node(SharedPtr<NodeModel> node, const Node& node_id)
 		node_id,
 		"ingen:plugin",
 		plugin_id);
+	
+	_model->add_statement(
+		node_id,
+		"ingen:polyphonic",
+		node->polyphonic());
 
 	//serialize_plugin(node->plugin());
 	
@@ -380,9 +385,11 @@ void
 Serializer::serialize_port(SharedPtr<PortModel> port, const Node& port_id)
 {
 	if (port->is_input())
-		_model->add_statement(port_id, "rdf:type", "ingen:InputPort");
+		_model->add_statement(port_id, "rdf:type",
+				Node(_model->world(), Node::RESOURCE, "ingen:InputPort"));
 	else
-		_model->add_statement(port_id, "rdf:type", "ingen:OutputPort");
+		_model->add_statement(port_id, "rdf:type",
+				Node(_model->world(), Node::RESOURCE, "ingen:OutputPort"));
 
 	_model->add_statement(port_id, "ingen:name", Atom(port->path().name().c_str()));
 	

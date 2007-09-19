@@ -23,6 +23,7 @@
         ingenuity:canvas-y 1172.5;
         ingen:plugin <ladspa:1668>;
         ingen:name "voice_amp";
+        ingen:polyphonic true;
         a "ingen:Node"
     ], [
         ingenuity:canvas-x 1374.0;

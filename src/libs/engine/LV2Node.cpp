@@ -192,7 +192,7 @@ LV2Node::~LV2Node()
 	for (uint32_t i=0; i < _poly; ++i)
 		slv2_instance_free((*_instances)[i]);
 
-	delete[] _instances;
+	delete _instances;
 }
 
 
