@@ -53,7 +53,7 @@ public:
 	 *
 	 * Preprocessor thread, poly is actually applied by apply_poly.
 	 */
-	virtual void prepare_poly(uint32_t poly);
+	virtual bool prepare_poly(uint32_t poly);
 	
 	/** Apply a new polyphony value.
 	 *
@@ -61,7 +61,7 @@ public:
 	 *
 	 * \param poly Must be < the most recent value passed to prepare_poly.
 	 */
-	virtual void apply_poly(Raul::Maid& maid, uint32_t poly);
+	virtual bool apply_poly(Raul::Maid& maid, uint32_t poly);
 
 	Buffer* buffer(uint32_t voice) const { return _buffers->at(voice); }
 

@@ -107,6 +107,32 @@ Patch::disable()
 		(*i)->clear_buffers();
 }
 
+	
+bool
+Patch::prepare_internal_poly(uint32_t poly)
+{
+	/* TODO: ports?  internal/external poly? */
+
+	for (Raul::List<Node*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
+		(*i)->prepare_poly(poly);
+
+	/* FIXME: Deal with failure */
+
+	return true;
+}
+
+
+bool
+Patch::apply_internal_poly(Raul::Maid& maid, uint32_t poly)
+{
+	/* TODO: ports?  internal/external poly? */
+
+	for (Raul::List<Node*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
+		(*i)->apply_poly(maid, poly);
+	
+	return true;
+}
+
 
 /** Run the patch for the specified number of frames.
  * 

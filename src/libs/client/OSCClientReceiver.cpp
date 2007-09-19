@@ -32,6 +32,7 @@ namespace Client {
 	
 OSCClientReceiver::OSCClientReceiver(int listen_port)
 : ClientInterface("localhost"),
+  _listen_port(listen_port),
   _st(NULL)//,
 //  _receiving_node(false),
 //  _receiving_node_model(NULL),

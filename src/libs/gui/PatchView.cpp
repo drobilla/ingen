@@ -95,7 +95,9 @@ PatchView::set_patch(SharedPtr<PatchModel> patch)
 
 	_edit_mode_but->signal_toggled().connect(sigc::mem_fun(
 			*this, &PatchView::editable_toggled));
-
+	
+	_poly_spin->signal_value_changed().connect(
+			sigc::mem_fun(*this, &PatchView::poly_changed));
 
 	_canvas->grab_focus();
 }
@@ -150,6 +152,13 @@ PatchView::process_toggled()
 		App::instance().engine()->disable_patch(_patch->path());
 		App::instance().patch_tree()->patch_disabled(_patch->path());
 	}
+}
+
+
+void
+PatchView::poly_changed()
+{
+	App::instance().engine()->set_polyphony(_patch->path(), _poly_spin->get_value_as_int());
 }
 
 

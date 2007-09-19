@@ -60,6 +60,10 @@ EXTRA_DIST = \
 	RequestPortValueEvent.hpp \
 	SetMetadataEvent.cpp \
 	SetMetadataEvent.hpp \
+	SetPolyphonyEvent.hpp \
+	SetPolyphonyEvent.cpp \
+	SetPolyphonicEvent.hpp \
+	SetPolyphonicEvent.cpp \
 	SetPortValueEvent.cpp \
 	SetPortValueEvent.hpp \
 	SetPortValueQueuedEvent.cpp \

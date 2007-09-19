@@ -69,6 +69,7 @@ private:
 	void set_patch(SharedPtr<PatchModel> patch);
 
 	void process_toggled();
+	void poly_changed();
 	void clear_clicked();
 	void refresh_clicked();
 	void on_editable_sig(bool locked);

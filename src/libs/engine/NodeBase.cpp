@@ -82,21 +82,25 @@ NodeBase::deactivate()
 }
 
 
-void
+bool
 NodeBase::prepare_poly(uint32_t poly)
 {
 	if (_ports)
 		for (size_t i=0; i < _ports->size(); ++i)
 			_ports->at(i)->prepare_poly(poly);
+
+	return true;
 }
 
 
-void
+bool
 NodeBase::apply_poly(Raul::Maid& maid, uint32_t poly)
 {
 	if (_ports)
 		for (size_t i=0; i < _ports->size(); ++i)
 			_ports->at(i)->apply_poly(maid, poly);
+	
+	return true;
 }
 
 

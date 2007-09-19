@@ -105,6 +105,18 @@ QueuedEventSource::pop_earliest_stamped_before(const SampleCount time)
 }
 
 
+/** Signal that the blocking event is finished.
+ *
+ * When this is called preparing will resume.  This MUST be called by
+ * blocking events in their post_process() method.
+ */
+inline void
+QueuedEventSource::unblock()
+{
+	_blocking_semaphore.post();
+}
+
+
 } // namespace Ingen
 
 #endif // QUEUEDEVENTSOURCE_H

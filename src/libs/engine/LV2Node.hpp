@@ -45,8 +45,8 @@ public:
 
 	virtual bool instantiate();
 	
-	void prepare_poly(uint32_t poly);
-	void apply_poly(Raul::Maid& maid, uint32_t poly);
+	bool prepare_poly(uint32_t poly);
+	bool apply_poly(Raul::Maid& maid, uint32_t poly);
 
 	void activate();
 	void deactivate();
@@ -58,9 +58,10 @@ public:
 protected:
 	//void get_port_vals(ulong port_index, PortInfo* info);
 	
-	SLV2Plugin    _lv2_plugin;
-	SLV2Instance* _instances;
-	SLV2Instance* _prepared_instances;
+	SLV2Plugin                 _lv2_plugin;
+	Raul::Array<SLV2Instance>* _instances;
+	Raul::Array<SLV2Instance>* _prepared_instances;
+	uint32_t                   _prepared_poly;
 };
 
 

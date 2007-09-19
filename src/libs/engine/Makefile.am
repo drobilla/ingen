@@ -154,6 +154,10 @@ libingen_engine_la_SOURCES = \
 	events/SetMetadataEvent.hpp \
 	events/SetPortValueEvent.cpp \
 	events/SetPortValueEvent.hpp \
+	events/SetPolyphonyEvent.hpp \
+	events/SetPolyphonyEvent.cpp \
+	events/SetPolyphonicEvent.hpp \
+	events/SetPolyphonicEvent.cpp \
 	events/SetPortValueQueuedEvent.cpp \
 	events/SetPortValueQueuedEvent.hpp \
 	events/UnregisterClientEvent.cpp \

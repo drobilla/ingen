@@ -94,6 +94,10 @@ public:
 	void destroy(const string& path);
 
 	void clear_patch(const string& patch_path);
+	
+	void set_polyphony(const string& patch_path, uint32_t poly);
+	
+	void set_polyphonic(const string& path, bool poly);
 
 	void enable_patch(const string& patch_path);
 

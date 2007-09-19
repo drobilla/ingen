@@ -83,6 +83,7 @@ OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t
 	lo_server_add_method(_server, "/ingen/enable_patch", "is", enable_patch_cb, this);
 	lo_server_add_method(_server, "/ingen/disable_patch", "is", disable_patch_cb, this);
 	lo_server_add_method(_server, "/ingen/clear_patch", "is", clear_patch_cb, this);
+	lo_server_add_method(_server, "/ingen/set_polyphony", "ii", set_polyphony_cb, this);
 	lo_server_add_method(_server, "/ingen/create_port", "issi", create_port_cb, this);
 	lo_server_add_method(_server, "/ingen/create_node", "issssi", create_node_cb, this);
 	lo_server_add_method(_server, "/ingen/create_node", "issi", create_node_by_uri_cb, this);
@@ -206,7 +207,7 @@ OSCEngineReceiver::set_response_address_cb(const char* path, const char* types, 
 	if (argc < 1 || types[0] != 'i') // Not a valid Ingen message
 		return 0; // Save liblo the trouble
 
-	const int id = argv[0]->i;
+	const int32_t id = argv[0]->i;
 
 	const lo_address addr = lo_message_get_source(msg);
 	char* const      url  = lo_address_get_url(addr);
@@ -367,8 +368,8 @@ OSCEngineReceiver::_engine_deactivate_cb(const char* path, const char* types, lo
 int
 OSCEngineReceiver::_create_patch_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	const char* patch_path  = &argv[1]->s;
-	const int   poly        =  argv[2]->i;
+	const char*   patch_path  = &argv[1]->s;
+	const int32_t poly        =  argv[2]->i;
 
 	create_patch(patch_path, poly);
 	return 0;
@@ -438,6 +439,23 @@ OSCEngineReceiver::_clear_patch_cb(const char* path, const char* types, lo_arg**
 
 
 /** \page engine_osc_namespace
+ * <p> \b /ingen/set_polyphony - Set the polyphony of a patch
+ * \arg \b response-id (integer)
+ * \arg \b patch-path - Patch's path
+ * \arg \b poly (integer) </p> \n \n
+ */
+int
+OSCEngineReceiver::_set_polyphony_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+{
+	const char*    patch_path = &argv[1]->s;
+	const uint32_t poly       = argv[1]->i;
+	
+	set_polyphony(patch_path, poly);
+	return 0;
+}
+
+
+/** \page engine_osc_namespace
  * <p> \b /ingen/create_port - Add a port into a given patch (load a plugin by URI)
  * \arg \b response-id (integer)
  * \arg \b path (string) - Full path of the new port (ie. /patch2/subpatch/newport)
@@ -447,9 +465,9 @@ OSCEngineReceiver::_clear_patch_cb(const char* path, const char* types, lo_arg**
 int
 OSCEngineReceiver::_create_port_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	const char* port_path   = &argv[1]->s;
-	const char* data_type   = &argv[2]->s;
-	const int   direction   =  argv[3]->i;
+	const char*   port_path   = &argv[1]->s;
+	const char*   data_type   = &argv[2]->s;
+	const int32_t direction   =  argv[3]->i;
 	
 	create_port(port_path, data_type, (direction == 1));
 	return 0;
@@ -465,9 +483,9 @@ OSCEngineReceiver::_create_port_cb(const char* path, const char* types, lo_arg**
 int
 OSCEngineReceiver::_create_node_by_uri_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	const char* node_path   = &argv[1]->s;
-	const char* plug_uri    = &argv[2]->s;
-	const int   poly        =  argv[3]->i;
+	const char*   node_path   = &argv[1]->s;
+	const char*   plug_uri    = &argv[2]->s;
+	const int32_t poly        =  argv[3]->i;
 	
 	// FIXME: make sure poly is valid
 	
@@ -492,11 +510,11 @@ OSCEngineReceiver::_create_node_by_uri_cb(const char* path, const char* types, l
 int
 OSCEngineReceiver::_create_node_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	const char* node_path   = &argv[1]->s;
-	const char* type        = &argv[2]->s;
-	const char* lib_name    = &argv[3]->s;
-	const char* plug_label  = &argv[4]->s;
-	const int   poly        =  argv[5]->i;
+	const char*   node_path   = &argv[1]->s;
+	const char*   type        = &argv[2]->s;
+	const char*   lib_name    = &argv[3]->s;
+	const char*   plug_label  = &argv[4]->s;
+	const int32_t poly        =  argv[5]->i;
 	
 	create_node(node_path, type, lib_name, plug_label, (poly == 1));
 	return 0;
@@ -594,9 +612,9 @@ OSCEngineReceiver::_set_port_value_cb(const char* path, const char* types, lo_ar
 int
 OSCEngineReceiver::_set_port_value_voice_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	const char* port_path   = &argv[1]->s;
-	const int   voice       =  argv[2]->i;
-	const float value       =  argv[3]->f;
+	const char*   port_path   = &argv[1]->s;
+	const int32_t voice       =  argv[2]->i;
+	const float   value       =  argv[3]->f;
 
 	set_port_value(port_path, voice, value);
 	return 0;

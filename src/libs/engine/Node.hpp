@@ -65,17 +65,18 @@ public:
 	/** Prepare for a new (external) polyphony value.
 	 *
 	 * Preprocessor thread, poly is actually applied by apply_poly.
+	 * \return true on success.
 	 */
-	virtual void prepare_poly(uint32_t poly) = 0;
+	virtual bool prepare_poly(uint32_t poly) = 0;
 	
-	/** Apply a new polyphony value.
+	/** Apply a new (external) polyphony value.
 	 *
 	 * Audio thread.
 	 *
 	 * \param poly Must be < the most recent value passed to prepare_poly.
 	 * \param maid Any objects no longer needed will be pushed to this
 	 */
-	virtual void apply_poly(Raul::Maid& maid, uint32_t poly) = 0;
+	virtual bool apply_poly(Raul::Maid& maid, uint32_t poly) = 0;
 
 	/** Parallelism: Reset flags for start of a new cycle.
 	 */

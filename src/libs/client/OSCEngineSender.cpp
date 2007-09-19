@@ -253,6 +253,33 @@ OSCEngineSender::clear_patch(const string& patch_path)
 		patch_path.c_str());
 }
 
+	
+void
+OSCEngineSender::set_polyphony(const string& patch_path, uint32_t poly)
+{
+	assert(_engine_addr);
+	lo_send(_engine_addr, "/ingen/set_polyphony", "isi",
+		next_id(),
+		patch_path.c_str(),
+		poly);
+}
+
+	
+void
+OSCEngineSender::set_polyphonic(const string& path, bool poly)
+{
+	assert(_engine_addr);
+	if (poly) {
+		lo_send(_engine_addr, "/ingen/set_polyphony", "isT",
+				next_id(),
+				path.c_str());
+	} else {
+		lo_send(_engine_addr, "/ingen/set_polyphony", "isF",
+				next_id(),
+				path.c_str());
+	}
+}
+
 
 void
 OSCEngineSender::enable_patch(const string& patch_path)

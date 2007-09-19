@@ -192,15 +192,15 @@ DestroyEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 				_driver_port = _engine.midi_driver()->remove_port(_port->path());
 		}
 	}
+	
+	if (_source)
+		_source->unblock();
 }
 
 
 void
 DestroyEvent::post_process()
 {
-	if (_source)
-		_source->unblock();
-
 	if (_store_iterator != _engine.object_store()->objects().end()) {
 		_engine.broadcaster()->send_destroyed(_path);
 	} else {

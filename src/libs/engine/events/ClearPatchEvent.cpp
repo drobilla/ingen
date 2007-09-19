@@ -113,7 +113,7 @@ ClearPatchEvent::post_process()
 		_responder->respond_error(string("Patch ") + _patch_path + " not found");
 	}
 	
-	_source->unblock();
+	_source->unblock(); // FIXME: can be done earlier in execute?
 }
 
 

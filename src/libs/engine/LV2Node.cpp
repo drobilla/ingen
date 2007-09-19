@@ -15,12 +15,13 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "LV2Node.hpp"
+#include <raul/Maid.hpp>
 #include <iostream>
 #include <cassert>
 #include <float.h>
 #include <stdint.h>
 #include <cmath>
+#include "LV2Node.hpp"
 #include "InputPort.hpp"
 #include "OutputPort.hpp"
 #include "Plugin.hpp"
@@ -50,17 +51,44 @@ LV2Node::LV2Node(const Plugin*      plugin,
 }
 
 
-void
+bool
 LV2Node::prepare_poly(uint32_t poly)
 {
 	NodeBase::prepare_poly(poly);
+
+	if (poly <= _prepared_poly)
+		return true;
+	
+	_prepared_poly = poly;
+	_prepared_instances = new Raul::Array<SLV2Instance>(_prepared_poly, *_instances);
+	for (uint32_t i=_poly; i < _prepared_poly; ++i) {
+		_prepared_instances->at(i) = slv2_plugin_instantiate(_lv2_plugin, _srate, NULL);
+		if ((*_instances)[i] == NULL) {
+			cerr << "Failed to instantiate plugin!" << endl;
+			return false;
+		}
+	}
+	
+	for (uint32_t j=0; j < num_ports(); ++j)
+		_ports->at(j)->prepare_poly(poly);
+
+	return true;
 }
 
 
-void
+bool
 LV2Node::apply_poly(Raul::Maid& maid, uint32_t poly)
 {
+	assert(poly <= _prepared_poly);
+
 	NodeBase::apply_poly(maid, poly);
+
+	maid.push(_instances);
+	_instances = _prepared_instances;
+	_poly = poly;
+	_prepared_instances = NULL;
+	
+	return true;
 }
 
 
@@ -80,13 +108,13 @@ LV2Node::instantiate()
 
 	_ports = new Raul::Array<Port*>(num_ports);
 	
-	_instances = new SLV2Instance[_poly];
+	_instances = new Raul::Array<SLV2Instance>(_poly);
 	
 	uint32_t port_buffer_size = 0;
 	
 	for (uint32_t i=0; i < _poly; ++i) {
-		_instances[i] = slv2_plugin_instantiate(_lv2_plugin, _srate, NULL);
-		if (_instances[i] == NULL) {
+		(*_instances)[i] = slv2_plugin_instantiate(_lv2_plugin, _srate, NULL);
+		if ((*_instances)[i] == NULL) {
 			cerr << "Failed to instantiate plugin!" << endl;
 			return false;
 		}
@@ -156,7 +184,7 @@ LV2Node::instantiate()
 LV2Node::~LV2Node()
 {
 	for (uint32_t i=0; i < _poly; ++i)
-		slv2_instance_free(_instances[i]);
+		slv2_instance_free((*_instances)[i]);
 
 	delete[] _instances;
 }
@@ -180,7 +208,7 @@ LV2Node::activate()
 				((AudioBuffer*)port->buffer(i))->set(0.0f, 0);
 			}
 		}
-		slv2_instance_activate(_instances[i]);
+		slv2_instance_activate((*_instances)[i]);
 	}
 }
 
@@ -191,7 +219,7 @@ LV2Node::deactivate()
 	NodeBase::deactivate();
 	
 	for (uint32_t i=0; i < _poly; ++i)
-		slv2_instance_deactivate(_instances[i]);
+		slv2_instance_deactivate((*_instances)[i]);
 }
 
 
@@ -201,7 +229,7 @@ LV2Node::process(SampleCount nframes, FrameTime start, FrameTime end)
 	NodeBase::pre_process(nframes, start, end);
 
 	for (uint32_t i=0; i < _poly; ++i) 
-		slv2_instance_run(_instances[i], nframes);
+		slv2_instance_run((*_instances)[i], nframes);
 	
 	NodeBase::post_process(nframes, start, end);
 }
@@ -213,11 +241,11 @@ LV2Node::set_port_buffer(uint32_t voice, uint32_t port_num, Buffer* buf)
 	assert(voice < _poly);
 	
 	if (buf->type() == DataType::FLOAT) {
-		slv2_instance_connect_port(_instances[voice], port_num, ((AudioBuffer*)buf)->data());
+		slv2_instance_connect_port((*_instances)[voice], port_num, ((AudioBuffer*)buf)->data());
 	} else if (buf->type() == DataType::MIDI) { 
-		slv2_instance_connect_port(_instances[voice], port_num, ((MidiBuffer*)buf)->data());
+		slv2_instance_connect_port((*_instances)[voice], port_num, ((MidiBuffer*)buf)->data());
 	} else if (buf->type() == DataType::OSC) { 
-		slv2_instance_connect_port(_instances[voice], port_num, ((OSCBuffer*)buf)->data());
+		slv2_instance_connect_port((*_instances)[voice], port_num, ((OSCBuffer*)buf)->data());
 	}
 }
 

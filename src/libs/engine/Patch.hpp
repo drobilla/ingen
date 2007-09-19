@@ -58,6 +58,22 @@ public:
 	
 	void set_buffer_size(size_t size);
 	
+	/** Prepare for a new (internal) polyphony value.
+	 *
+	 * Preprocessor thread, poly is actually applied by apply_internal_poly.
+	 * \return true on success.
+	 */
+	bool prepare_internal_poly(uint32_t poly);
+	
+	/** Apply a new (internal) polyphony value.
+	 *
+	 * Audio thread.
+	 *
+	 * \param poly Must be < the most recent value passed to prepare_internal_poly.
+	 * \param maid Any objects no longer needed will be pushed to this
+	 */
+	bool apply_internal_poly(Raul::Maid& maid, uint32_t poly);
+	
 	// Patch specific stuff not inherited from Node
 	
 	void                   add_node(Raul::ListNode<Node*>* tn);

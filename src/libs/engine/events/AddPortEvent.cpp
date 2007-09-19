@@ -154,15 +154,15 @@ AddPortEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 			_engine.midi_driver()->add_port(_driver_port);
 		else if (_type == "ingen:osc")
 			cerr << "OSC DRIVER PORT" << endl;
+	
+	if (_source)
+		_source->unblock();
 }
 
 
 void
 AddPortEvent::post_process()
 {
-	if (_source)
-		_source->unblock();
-
 	if (!_patch_port) {
 		const string msg = string("Could not create port - ").append(_path);
 		_responder->respond_error(msg);

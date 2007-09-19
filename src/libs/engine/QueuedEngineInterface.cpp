@@ -178,6 +178,20 @@ QueuedEngineInterface::clear_patch(const string& patch_path)
 	push_queued(new ClearPatchEvent(_engine, _responder, now(), this, patch_path));
 }
 
+	
+void
+QueuedEngineInterface::set_polyphony(const string& patch_path, uint32_t poly)
+{
+	push_queued(new SetPolyphonyEvent(_engine, _responder, now(), this, patch_path, poly));
+}
+
+	
+void
+QueuedEngineInterface::set_polyphonic(const string& path, bool poly)
+{
+	push_queued(new SetPolyphonicEvent(_engine, _responder, now(), this, path, poly));
+}
+
 
 void
 QueuedEngineInterface::enable_patch(const string& patch_path)

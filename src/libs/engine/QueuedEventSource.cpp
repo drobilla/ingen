@@ -145,18 +145,6 @@ QueuedEventSource::pop_earliest_queued_before(const SampleCount time)
 // Private //
 
 
-/** Signal that the blocking event is finished.
- *
- * When this is called preparing will resume.  This MUST be called by
- * blocking events in their post_process() method.
- */
-void
-QueuedEventSource::unblock()
-{
-	_blocking_semaphore.post();
-}
-
-
 /** Pre-process a single event */
 void
 QueuedEventSource::_whipped()

@@ -37,6 +37,7 @@ Port::Port(Node* const node, const string& name, uint32_t index, uint32_t poly, 
 	, _type(type)
 	, _buffer_size(buffer_size)
 	, _fixed_buffers(false)
+	, _buffers(new Raul::Array<Buffer*>(poly))
 {
 	assert(node != NULL);
 	assert(_poly > 0);
@@ -55,7 +56,7 @@ Port::~Port()
 }
 
 
-void
+bool
 Port::prepare_poly(uint32_t poly)
 {
 	/* FIXME: poly never goes down, harsh on memory.. */
@@ -65,10 +66,12 @@ Port::prepare_poly(uint32_t poly)
 		for (uint32_t i = _poly; i < _prepared_poly; ++i)
 			_buffers->at(i) = BufferFactory::create(_type, _buffer_size);
 	}
+
+	return true;
 }
 
 
-void
+bool
 Port::apply_poly(Raul::Maid& maid, uint32_t poly)
 {
 	assert(poly <= _prepared_poly);
@@ -80,6 +83,8 @@ Port::apply_poly(Raul::Maid& maid, uint32_t poly)
 	}
 
 	_poly = poly;
+
+	return true;
 }
 
 
