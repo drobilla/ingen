@@ -58,7 +58,7 @@ public:
 	~NodeFactory();
 
 	void  load_plugins();
-	Node* load_plugin(const Plugin* info, const string& name, uint32_t poly, Patch* parent);
+	Node* load_plugin(const Plugin* info, const string& name, bool polyphonic, Patch* parent);
 	
 	const list<Plugin*>& plugins() { return _plugins; }
 	
@@ -68,20 +68,20 @@ public:
 private:
 #ifdef HAVE_LADSPA
 	void load_ladspa_plugins();
-	Node* load_ladspa_plugin(const string& plugin_uri, const string& name, uint32_t poly, Patch* parent, SampleRate srate, size_t buffer_size);
+	Node* load_ladspa_plugin(const string& plugin_uri, const string& name, bool polyphonic, Patch* parent, SampleRate srate, size_t buffer_size);
 #endif
 
 #ifdef HAVE_SLV2
 	void load_lv2_plugins();
-	Node* load_lv2_plugin(const string& plugin_uri, const string& name, uint32_t poly, Patch* parent, SampleRate srate, size_t buffer_size);
+	Node* load_lv2_plugin(const string& plugin_uri, const string& name, bool polyphonic, Patch* parent, SampleRate srate, size_t buffer_size);
 #endif
 
 #ifdef HAVE_DSSI
 	void load_dssi_plugins();
-	Node* load_dssi_plugin(const string& plugin_uri, const string& name, uint32_t poly, Patch* parent, SampleRate srate, size_t buffer_size);
+	Node* load_dssi_plugin(const string& plugin_uri, const string& name, bool polyphonic, Patch* parent, SampleRate srate, size_t buffer_size);
 #endif
 	
-	Node* load_internal_plugin(const string& plug_label, const string& name, uint32_t poly, Patch* parent, SampleRate srate, size_t buffer_size);
+	Node* load_internal_plugin(const string& plug_label, const string& name, bool polyphonic, Patch* parent, SampleRate srate, size_t buffer_size);
 
 	Glib::Module* library(const string& path);
 	

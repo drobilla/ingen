@@ -84,10 +84,8 @@ AddNodeEvent::pre_process()
 		: _engine.node_factory()->plugin(_plugin_type, _plugin_lib, _plugin_label);
 
 	if (_patch && plugin) {
-		if (_poly)
-			_node = _engine.node_factory()->load_plugin(plugin, _path.name(), _patch->internal_poly(), _patch);
-		else
-			_node = _engine.node_factory()->load_plugin(plugin, _path.name(), 1, _patch);
+			
+		_node = _engine.node_factory()->load_plugin(plugin, _path.name(), _poly, _patch);
 		
 		if (_node != NULL) {
 			_node->activate();

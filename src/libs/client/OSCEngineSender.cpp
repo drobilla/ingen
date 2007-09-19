@@ -192,11 +192,17 @@ OSCEngineSender::create_node(const string& path,
                              bool          polyphonic)
 {
 	assert(_engine_addr);
-	lo_send(_engine_addr, "/ingen/create_node",  "issi",
-		next_id(),
-		path.c_str(),
-		plugin_uri.c_str(),
-		(polyphonic ? 1 : 0));
+
+	if (polyphonic)
+		lo_send(_engine_addr, "/ingen/create_node",  "issT",
+			next_id(),
+			path.c_str(),
+			plugin_uri.c_str());
+	else
+		lo_send(_engine_addr, "/ingen/create_node",  "issF",
+			next_id(),
+			path.c_str(),
+			plugin_uri.c_str());
 }
 
 
@@ -212,13 +218,20 @@ OSCEngineSender::create_node(const string& path,
                              bool          polyphonic)
 {
 	assert(_engine_addr);
-	lo_send(_engine_addr, "/ingen/create_node",  "issssi",
-		next_id(),
-		path.c_str(),
-		plugin_type.c_str(),
-		library_name.c_str(),
-		plugin_label.c_str(),
-		(polyphonic ? 1 : 0));
+	if (polyphonic)
+		lo_send(_engine_addr, "/ingen/create_node",  "issssT",
+			next_id(),
+			path.c_str(),
+			plugin_type.c_str(),
+			library_name.c_str(),
+			plugin_label.c_str());
+	else
+		lo_send(_engine_addr, "/ingen/create_node",  "issssF",
+			next_id(),
+			path.c_str(),
+			plugin_type.c_str(),
+			library_name.c_str(),
+			plugin_label.c_str());
 }
 
 

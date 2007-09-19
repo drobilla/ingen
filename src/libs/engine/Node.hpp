@@ -121,8 +121,10 @@ public:
 	// FIXME: Only used by client senders.  Remove?
 	virtual const Raul::Array<Port*>& ports() const = 0;
 	
-	virtual uint32_t num_ports() const  = 0;
-	virtual uint32_t poly() const       = 0;
+	virtual uint32_t num_ports() const = 0;
+
+	virtual bool     polyphonic() const = 0;
+	virtual uint32_t polyphony()  const = 0;
 	
 	/** Used by the process order finding algorithm (ie during connections) */
 	virtual bool traversed() const  = 0;

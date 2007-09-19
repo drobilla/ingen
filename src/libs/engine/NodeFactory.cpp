@@ -178,11 +178,10 @@ NodeFactory::load_plugins()
 Node*
 NodeFactory::load_plugin(const Plugin* a_plugin,
                          const string& name,
-                         uint32_t      poly,
+                         bool          polyphonic,
                          Patch*        parent)
 {
 	assert(parent != NULL);
-	assert(poly == 1 || poly == parent->internal_poly());
 	assert(a_plugin);
 
 	Node* r = NULL;
@@ -226,21 +225,21 @@ NodeFactory::load_plugin(const Plugin* a_plugin,
 	switch (a_plugin->type()) {
 #ifdef HAVE_SLV2
 	case Plugin::LV2:
-		r = load_lv2_plugin(plugin->uri(), name, poly, parent, srate, buffer_size);
+		r = load_lv2_plugin(plugin->uri(), name, polyphonic, parent, srate, buffer_size);
 		break;
 #endif
 #ifdef HAVE_DSSI
 	case Plugin::DSSI:
-		r = load_dssi_plugin(plugin->uri(), name, poly, parent, srate, buffer_size);
+		r = load_dssi_plugin(plugin->uri(), name, polyphonic, parent, srate, buffer_size);
 		break;
 #endif
 #ifdef HAVE_LADSPA
 	case Plugin::LADSPA:
-		r = load_ladspa_plugin(plugin->uri(), name, poly, parent, srate, buffer_size);
+		r = load_ladspa_plugin(plugin->uri(), name, polyphonic, parent, srate, buffer_size);
 		break;
 #endif
 	case Plugin::Internal:
-		r = load_internal_plugin(a_plugin->uri(), name, poly, parent, srate, buffer_size);
+		r = load_internal_plugin(a_plugin->uri(), name, polyphonic, parent, srate, buffer_size);
 		break;
 	default:
 		cerr << "[NodeFactory] WARNING: Unknown plugin type." << endl;
@@ -255,19 +254,18 @@ NodeFactory::load_plugin(const Plugin* a_plugin,
 Node*
 NodeFactory::load_internal_plugin(const string& uri,
                                   const string& name,
-                                  uint32_t      poly,
+                                  bool          polyphonic,
                                   Patch*        parent,
                                   SampleRate    srate,
                                   size_t        buffer_size)
 {
 	assert(parent != NULL);
-	assert(poly == 1 || poly == parent->internal_poly());
 	assert(uri.length() > 6);
 	assert(uri.substr(0, 6) == "ingen:");
 
 	for (list<Plugin*>::iterator i = _internal_plugins.begin(); i != _internal_plugins.end(); ++i)
 		if ((*i)->uri() == uri)
-			return (*i)->instantiate(name, poly, parent, srate, buffer_size);
+			return (*i)->instantiate(name, polyphonic, parent, srate, buffer_size);
 	
 	return NULL;
 }
@@ -331,7 +329,7 @@ NodeFactory::load_lv2_plugins()
 Node*
 NodeFactory::load_lv2_plugin(const string& plug_uri,
                              const string& node_name,
-                             uint32_t      poly,
+                             bool          polyphonic,
                              Patch*        parent,
                              SampleRate    srate,
                              size_t        buffer_size)
@@ -347,7 +345,7 @@ NodeFactory::load_lv2_plugin(const string& plug_uri,
 	Node* n = NULL;
 
 	if (plugin) {
-		n = new LV2Node(plugin, node_name, poly, parent, srate, buffer_size);
+		n = new LV2Node(plugin, node_name, polyphonic, parent, srate, buffer_size);
 		bool success = ((LV2Node*)n)->instantiate();
 		if (!success) {
 			delete n;
@@ -464,13 +462,16 @@ NodeFactory::load_dssi_plugins()
  */
 Node*
 NodeFactory::load_dssi_plugin(const string& uri,
-                              const string& name, uint32_t poly, Patch* parent, SampleRate srate, size_t buffer_size)
+                              const string& name,
+	                          bool          polyphonic,
+	                          Patch*        parent,
+	                          SampleRate    srate,
+	                          size_t        buffer_size)
 {
 	// FIXME: awful code duplication here
 	
 	assert(uri != "");
 	assert(name != "");
-	assert(poly > 0);
 	
 	DSSI_Descriptor_Function df = NULL;
 	const Plugin* plugin = NULL;
@@ -510,7 +511,7 @@ NodeFactory::load_dssi_plugin(const string& uri,
 		return NULL;
 	}
 
-	n = new DSSINode(plugin, name, poly, parent, descriptor, srate, buffer_size);
+	n = new DSSINode(plugin, name, polyphonic, parent, descriptor, srate, buffer_size);
 
 	bool success = ((DSSINode*)n)->instantiate();
 	if (!success) {
@@ -630,14 +631,13 @@ NodeFactory::load_ladspa_plugins()
 Node*
 NodeFactory::load_ladspa_plugin(const string& uri,
                                 const string& name,
-                                uint32_t      poly,
+                                bool          polyphonic,
                                 Patch*        parent,
                                 SampleRate    srate,
                                 size_t        buffer_size)
 {
 	assert(uri != "");
 	assert(name != "");
-	assert(poly > 0);
 	
 	LADSPA_Descriptor_Function df = NULL;
 	Plugin* plugin = NULL;
@@ -675,7 +675,7 @@ NodeFactory::load_ladspa_plugin(const string& uri,
 		return NULL;
 	}
 
-	n = new LADSPANode(plugin, name, poly, parent, descriptor, srate, buffer_size);
+	n = new LADSPANode(plugin, name, polyphonic, parent, descriptor, srate, buffer_size);
 
 	bool success = ((LADSPANode*)n)->instantiate();
 	if (!success) {

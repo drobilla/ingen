@@ -33,10 +33,11 @@ using std::cout; using std::cerr; using std::endl;
 namespace Ingen {
 
 
-NodeBase::NodeBase(const Plugin* plugin, const string& name, uint32_t poly, Patch* parent, SampleRate srate, size_t buffer_size)
+NodeBase::NodeBase(const Plugin* plugin, const string& name, bool poly, Patch* parent, SampleRate srate, size_t buffer_size)
 : Node(parent, name),
   _plugin(plugin),
-  _poly(poly),
+  _polyphonic(poly),
+  _polyphony(parent ? parent->internal_poly() : 1),
   _srate(srate),
   _buffer_size(buffer_size),
   _activated(false),
@@ -49,8 +50,8 @@ NodeBase::NodeBase(const Plugin* plugin, const string& name, uint32_t poly, Patc
   _dependants(new Raul::List<Node*>())
 {
 	assert(_plugin);
-	assert(_poly > 0);
-	assert(_parent == NULL || (_poly == parent->internal_poly() || _poly == 1));
+	assert(_polyphony > 0);
+	assert(_parent == NULL || (_polyphony == parent->internal_poly() || _polyphony == 1));
 }
 
 

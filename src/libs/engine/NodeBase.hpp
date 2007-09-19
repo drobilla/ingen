@@ -47,7 +47,12 @@ namespace Shared {
 class NodeBase : public Node
 {
 public:
-	NodeBase(const Plugin* plugin, const string& name, uint32_t poly, Patch* parent, SampleRate srate, size_t buffer_size);
+	NodeBase(const Plugin* plugin,
+	         const string& name,
+	         bool          poly,
+	         Patch*        parent,
+	         SampleRate    rate,
+	         size_t        buffer_size);
 
 	virtual ~NodeBase();
 
@@ -75,7 +80,8 @@ public:
 	SampleRate sample_rate() const { return _srate; }
 	size_t     buffer_size() const { return _buffer_size; }
 	uint32_t   num_ports()   const { return _ports ? _ports->size() : 0; }
-	uint32_t   poly()        const { return _poly; }
+	bool       polyphonic()  const { return _polyphonic; }
+	uint32_t   polyphony()   const { return _polyphony; }
 	bool       traversed()   const { return _traversed; }
 	void       traversed(bool b)   { _traversed = b; }
 	
@@ -94,14 +100,15 @@ public:
 	virtual const Plugin* plugin() const { return _plugin; }
 	
 	/** A node's parent is always a patch, so static cast should be safe */
-	Patch* parent_patch() const { return (Patch*)_parent; }
+	inline Patch* parent_patch() const { return (Patch*)_parent; }
 	
 protected:
 	virtual void signal_input_ready();
 	
 	const Plugin* _plugin;
 
-	uint32_t   _poly;
+	bool       _polyphonic;
+	uint32_t   _polyphony;
 	SampleRate _srate;
 	size_t     _buffer_size;
 	bool       _activated;

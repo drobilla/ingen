@@ -44,8 +44,8 @@ Connection::Connection(Port* src_port, Port* dst_port)
 	assert(dst_port);
 	assert(src_port->type() == dst_port->type());
 
-	assert((src_port->parent_node()->poly() == dst_port->parent_node()->poly())
-		|| (src_port->parent_node()->poly() == 1 || dst_port->parent_node()->poly() == 1));
+	/*assert((src_port->parent_node()->poly() == dst_port->parent_node()->poly())
+		|| (src_port->parent_node()->poly() == 1 || dst_port->parent_node()->poly() == 1));*/
 
 	if (_must_mix)
 		_local_buffer = BufferFactory::create(dst_port->type(), dst_port->buffer(0)->size());

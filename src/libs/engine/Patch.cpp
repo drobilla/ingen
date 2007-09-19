@@ -261,7 +261,7 @@ Patch::add_node(Raul::ListNode<Node*>* ln)
 	assert(ln != NULL);
 	assert(ln->elem() != NULL);
 	assert(ln->elem()->parent_patch() == this);
-	assert(ln->elem()->poly() == _internal_poly || ln->elem()->poly() == 1);
+	assert(ln->elem()->polyphony() == _internal_poly);
 	
 	_nodes.push_back(ln);
 }
@@ -326,7 +326,7 @@ Patch::create_port(const string& name, DataType type, size_t buffer_size, bool i
 
 	assert( !(type == DataType::UNKNOWN) );
 
-	return new DuplexPort(this, name, 0, _poly, type, buffer_size, is_output);
+	return new DuplexPort(this, name, 0, _polyphony, type, buffer_size, is_output);
 }
 
 

@@ -156,7 +156,8 @@ OSCClientReceiver::setup_callbacks()
 	lo_server_thread_add_method(_st, "/ingen/object_renamed", "ss", object_renamed_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/new_connection", "ss", connection_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/disconnection", "ss", disconnection_cb, this);
-	lo_server_thread_add_method(_st, "/ingen/new_node", "ssii", new_node_cb, this);
+	lo_server_thread_add_method(_st, "/ingen/new_node", "ssTi", new_node_cb, this);
+	lo_server_thread_add_method(_st, "/ingen/new_node", "ssFi", new_node_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/new_port", "ssi", new_port_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/metadata_update", NULL, metadata_update_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/control_change", "sf", control_change_cb, this);
@@ -256,10 +257,10 @@ OSCClientReceiver::_new_node_cb(const char* path, const char* types, lo_arg** ar
 {
 	const char*   uri        = &argv[0]->s;
 	const char*   node_path  = &argv[1]->s;
-	const int32_t poly       =  argv[2]->i;
+	bool          polyphonic = (types[2] == 'T');
 	const int32_t num_ports  =  argv[3]->i;
 
-	new_node(uri, node_path, poly, num_ports);
+	new_node(uri, node_path, polyphonic, num_ports);
 
 	/*_receiving_node_model = new NodeModel(node_path);
 	_receiving_node_model->polyphonic((poly == 1));

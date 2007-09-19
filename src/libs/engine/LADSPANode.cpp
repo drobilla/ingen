@@ -57,11 +57,11 @@ LADSPANode::instantiate()
 	if (!_ports)
 		_ports = new Raul::Array<Port*>(_descriptor->PortCount);
 	
-	_instances = new LADSPA_Handle[_poly];
+	_instances = new LADSPA_Handle[_polyphony];
 	
 	size_t port_buffer_size = 0;
 	
-	for (uint32_t i=0; i < _poly; ++i) {
+	for (uint32_t i=0; i < _polyphony; ++i) {
 		_instances[i] = _descriptor->instantiate(_descriptor, _srate);
 		if (_instances[i] == NULL) {
 			cerr << "Failed to instantiate plugin!" << endl;
@@ -108,10 +108,10 @@ LADSPANode::instantiate()
 			|| LADSPA_IS_PORT_OUTPUT(_descriptor->PortDescriptors[j]));
 
 		if (LADSPA_IS_PORT_INPUT(_descriptor->PortDescriptors[j])) {
-			port = new InputPort(this, port_name, j, _poly, DataType::FLOAT, port_buffer_size);
+			port = new InputPort(this, port_name, j, _polyphony, DataType::FLOAT, port_buffer_size);
 			_ports->at(j) = port;
 		} else if (LADSPA_IS_PORT_OUTPUT(_descriptor->PortDescriptors[j])) {
-			port = new OutputPort(this, port_name, j, _poly, DataType::FLOAT, port_buffer_size);
+			port = new OutputPort(this, port_name, j, _polyphony, DataType::FLOAT, port_buffer_size);
 			_ports->at(j) = port;
 		}
 
@@ -134,7 +134,7 @@ LADSPANode::instantiate()
 		
 		// Set default value
 		if (port->buffer_size() == 1) {
-			for (uint32_t i=0; i < _poly; ++i)
+			for (uint32_t i=0; i < _polyphony; ++i)
 				((AudioBuffer*)port->buffer(i))->set(default_val, 0);
 		}
 
@@ -150,7 +150,7 @@ LADSPANode::instantiate()
 
 LADSPANode::~LADSPANode()
 {
-	for (uint32_t i=0; i < _poly; ++i)
+	for (uint32_t i=0; i < _polyphony; ++i)
 		_descriptor->cleanup(_instances[i]);
 
 	delete[] _instances;
@@ -162,7 +162,7 @@ LADSPANode::activate()
 {
 	NodeBase::activate();
 
-	for (uint32_t i=0; i < _poly; ++i) {
+	for (uint32_t i=0; i < _polyphony; ++i) {
 		for (unsigned long j=0; j < _descriptor->PortCount; ++j) {
 			set_port_buffer(i, j, _ports->at(j)->buffer(i));
 			/*	if (port->type() == DataType::FLOAT && port->buffer_size() == 1)
@@ -181,7 +181,7 @@ LADSPANode::deactivate()
 {
 	NodeBase::deactivate();
 	
-	for (uint32_t i=0; i < _poly; ++i)
+	for (uint32_t i=0; i < _polyphony; ++i)
 		if (_descriptor->deactivate != NULL)
 			_descriptor->deactivate(_instances[i]);
 }
@@ -192,7 +192,7 @@ LADSPANode::process(SampleCount nframes, FrameTime start, FrameTime end)
 {
 	NodeBase::pre_process(nframes, start, end);
 
-	for (uint32_t i=0; i < _poly; ++i) 
+	for (uint32_t i=0; i < _polyphony; ++i) 
 		_descriptor->run(_instances[i], nframes);
 	
 	NodeBase::post_process(nframes, start, end);
@@ -202,7 +202,7 @@ LADSPANode::process(SampleCount nframes, FrameTime start, FrameTime end)
 void
 LADSPANode::set_port_buffer(uint32_t voice, uint32_t port_num, Buffer* buf)
 {
-	assert(voice < _poly);
+	assert(voice < _polyphony);
 	
 	AudioBuffer* audio_buffer = dynamic_cast<AudioBuffer*>(buf);
 	assert(audio_buffer);

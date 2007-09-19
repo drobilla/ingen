@@ -198,7 +198,7 @@ DSSINode::process(SampleCount nframes, FrameTime start, FrameTime end)
 void
 DSSINode::set_port_buffer(uint32_t voice, uint32_t port_num, Buffer* buf)
 {
-	assert(voice < _poly);
+	assert(voice < _polyphony);
 	
 	// Could be a MIDI port after this
 	if (port_num < _descriptor->PortCount) {

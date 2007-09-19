@@ -79,11 +79,6 @@ ObjectSender::send_node(ClientInterface* client, const Node* node, bool recursiv
 {
 	const Plugin* const plugin = node->plugin();
 
-	int polyphonic = 
-		(node->poly() > 1
-		&& node->poly() == node->parent_patch()->internal_poly()
-		? 1 : 0);
-
 	assert(node->path().length() > 0);
 	
 	if (plugin->type() == Plugin::Patch) {
@@ -98,7 +93,7 @@ ObjectSender::send_node(ClientInterface* client, const Node* node, bool recursiv
 	
 	client->bundle_begin();
 	
-	client->new_node(node->plugin()->uri(), node->path(), polyphonic, node->ports().size());
+	client->new_node(node->plugin()->uri(), node->path(), node->polyphonic(), node->ports().size());
 	
 	// Send metadata
 	const GraphObject::MetadataMap& data = node->metadata();

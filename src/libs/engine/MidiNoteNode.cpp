@@ -95,7 +95,7 @@ MidiNoteNode::apply_poly(Raul::Maid& maid, uint32_t poly)
 	maid.push(_voices);
 	_voices = _prepared_voices;
 	_prepared_voices = NULL;
-	_poly = poly;
+	_polyphony = poly;
 	
 	return true;
 }
@@ -177,7 +177,7 @@ MidiNoteNode::note_on(uchar note_num, uchar velocity, FrameTime time, SampleCoun
 	uint32_t voice_num = 0;
 	
 	// Look for free voices
-	for (uint32_t i=0; i < _poly; ++i) {
+	for (uint32_t i=0; i < _polyphony; ++i) {
 		if ((*_voices)[i].state == Voice::Voice::FREE) {
 			voice = &(*_voices)[i];
 			voice_num = i;
@@ -190,7 +190,7 @@ MidiNoteNode::note_on(uchar note_num, uchar velocity, FrameTime time, SampleCoun
 		voice_num = 0;
 		voice = &(*_voices)[0];
 		jack_nframes_t oldest_time = (*_voices)[0].time;
-		for (uint32_t i=1; i < _poly; ++i) {
+		for (uint32_t i=1; i < _polyphony; ++i) {
 			if ((*_voices)[i].time < oldest_time) {
 				voice = &(*_voices)[i];
 				voice_num = i;
@@ -331,7 +331,7 @@ MidiNoteNode::all_notes_off(FrameTime time, SampleCount nframes, FrameTime start
 
 	// FIXME: set all keys to Key::OFF?
 	
-	for (uint32_t i=0; i < _poly; ++i) {
+	for (uint32_t i=0; i < _polyphony; ++i) {
 		((AudioBuffer*)_gate_port->buffer(i))->set(0.0f, time - start);
 		(*_voices)[i].state = Voice::FREE;
 	}
@@ -363,7 +363,7 @@ MidiNoteNode::sustain_off(FrameTime time, SampleCount nframes, FrameTime start, 
 
 	_sustain = false;
 	
-	for (uint32_t i=0; i < _poly; ++i)
+	for (uint32_t i=0; i < _polyphony; ++i)
 		if ((*_voices)[i].state == Voice::HOLDING)
 			free_voice(i, time, nframes, start, end);
 }
