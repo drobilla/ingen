@@ -94,6 +94,9 @@ public:
 	
 	virtual void patch_disabled(const std::string& path);
 	
+	virtual void patch_polyphony(const std::string& path,
+	                             uint32_t           poly);
+	
 	virtual void patch_cleared(const std::string& path);
 	
 	virtual void object_destroyed(const std::string& path);

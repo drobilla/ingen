@@ -436,6 +436,21 @@ OSCClientSender::patch_disabled(const std::string& patch_path)
 
 
 /** \page client_osc_namespace
+ * <p> \b /ingen/patch_polyphony - Notification a patch's DSP processing has been polyphony.
+ * \arg \b path (const std::string&) - Path of polyphony patch</p> \n \n
+ */
+void
+OSCClientSender::patch_polyphony(const std::string& patch_path, uint32_t poly)
+{
+	if (!_enabled)
+		return;
+
+	lo_send(_address, "/ingen/patch_polyphony", "si", patch_path.c_str(), poly);
+}
+
+
+
+/** \page client_osc_namespace
  * <p> \b /ingen/new_connection - Notification a new connection has been made.
  * \arg \b src-path (const std::string&) - Path of the source port
  * \arg \b dst-path (const std::string&) - Path of the destination port</p> \n \n

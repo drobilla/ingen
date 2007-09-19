@@ -81,6 +81,7 @@ public:
 	void send_all_objects();
 	void send_patch_enable(const string& patch_path);
 	void send_patch_disable(const string& patch_path);
+	void send_patch_polyphony(const string& patch_path, uint32_t poly);
 	void send_metadata_update(const string& node_path, const string& key, const Raul::Atom& value);
 	void send_control_change(const string& port_path, float value);
 	void send_program_add(const string& node_path, int bank, int program, const string& name);

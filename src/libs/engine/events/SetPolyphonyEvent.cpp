@@ -66,10 +66,12 @@ SetPolyphonyEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 void
 SetPolyphonyEvent::post_process()
 {	
-	if (_patch)
+	if (_patch) {
 		_responder->respond_ok();
-	else
+		_engine.broadcaster()->send_patch_polyphony(_patch_path, _poly);
+	} else {
 		_responder->respond_error("Unable to find patch");
+	}
 }
 
 

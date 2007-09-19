@@ -83,7 +83,7 @@ OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t
 	lo_server_add_method(_server, "/ingen/enable_patch", "is", enable_patch_cb, this);
 	lo_server_add_method(_server, "/ingen/disable_patch", "is", disable_patch_cb, this);
 	lo_server_add_method(_server, "/ingen/clear_patch", "is", clear_patch_cb, this);
-	lo_server_add_method(_server, "/ingen/set_polyphony", "ii", set_polyphony_cb, this);
+	lo_server_add_method(_server, "/ingen/set_polyphony", "isi", set_polyphony_cb, this);
 	lo_server_add_method(_server, "/ingen/create_port", "issi", create_port_cb, this);
 	lo_server_add_method(_server, "/ingen/create_node", "issssi", create_node_cb, this);
 	lo_server_add_method(_server, "/ingen/create_node", "issi", create_node_by_uri_cb, this);
@@ -448,7 +448,7 @@ int
 OSCEngineReceiver::_set_polyphony_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	const char*    patch_path = &argv[1]->s;
-	const uint32_t poly       = argv[1]->i;
+	const uint32_t poly       = argv[2]->i;
 	
 	set_polyphony(patch_path, poly);
 	return 0;

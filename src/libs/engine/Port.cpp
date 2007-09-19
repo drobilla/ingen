@@ -64,7 +64,7 @@ Port::prepare_poly(uint32_t poly)
 		_prepared_buffers = new Raul::Array<Buffer*>(poly, *_buffers);
 		_prepared_poly = poly;
 		for (uint32_t i = _poly; i < _prepared_poly; ++i)
-			_buffers->at(i) = BufferFactory::create(_type, _buffer_size);
+			_prepared_buffers->at(i) = BufferFactory::create(_type, _buffer_size);
 	}
 
 	return true;

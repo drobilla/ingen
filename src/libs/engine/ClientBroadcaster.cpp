@@ -229,6 +229,14 @@ ClientBroadcaster::send_patch_disable(const string& patch_path)
 }
 
 
+void
+ClientBroadcaster::send_patch_polyphony(const string& patch_path, uint32_t poly)
+{
+	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
+		(*i).second->patch_polyphony(patch_path, poly);
+}
+
+
 /** Send notification of a metadata update.
  *
  * Like control changes, does not send update to client that set the metadata, if applicable.

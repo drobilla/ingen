@@ -57,6 +57,7 @@ public:
 	, connection_slot(connection_sig.make_slot())
 	, patch_enabled_slot(patch_enabled_sig.make_slot())
 	, patch_disabled_slot(patch_disabled_sig.make_slot())
+	, patch_polyphony_slot(patch_polyphony_sig.make_slot())
 	, patch_cleared_slot(patch_cleared_sig.make_slot())
 	, object_destroyed_slot(object_destroyed_sig.make_slot())
 	, object_renamed_slot(object_renamed_sig.make_slot())
@@ -115,6 +116,9 @@ public:
 	
 	void patch_disabled(const string& path)
 		{ push_sig(sigc::bind(patch_disabled_slot, path)); }
+	
+	void patch_polyphony(const string& path, uint32_t poly)
+		{ push_sig(sigc::bind(patch_polyphony_slot, path, poly)); }
 
 	void patch_cleared(const string& path)
 		{ push_sig(sigc::bind(patch_cleared_slot, path)); }
@@ -161,6 +165,7 @@ private:
 	sigc::slot<void, string, string>                     connection_slot;
 	sigc::slot<void, string>                             patch_enabled_slot; 
 	sigc::slot<void, string>                             patch_disabled_slot; 
+	sigc::slot<void, string, uint32_t>                   patch_polyphony_slot; 
 	sigc::slot<void, string>                             patch_cleared_slot; 
 	sigc::slot<void, string>                             object_destroyed_slot; 
 	sigc::slot<void, string, string>                     object_renamed_slot; 

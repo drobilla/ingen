@@ -63,7 +63,7 @@ LV2Node::prepare_poly(uint32_t poly)
 	_prepared_instances = new Raul::Array<SLV2Instance>(_prepared_poly, *_instances);
 	for (uint32_t i=_poly; i < _prepared_poly; ++i) {
 		_prepared_instances->at(i) = slv2_plugin_instantiate(_lv2_plugin, _srate, NULL);
-		if ((*_instances)[i] == NULL) {
+		if ((*_prepared_instances)[i] == NULL) {
 			cerr << "Failed to instantiate plugin!" << endl;
 			return false;
 		}

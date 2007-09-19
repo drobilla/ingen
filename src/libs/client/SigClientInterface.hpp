@@ -55,6 +55,7 @@ public:
 	sigc::signal<void, string, string, bool>               new_port_sig; 
 	sigc::signal<void, string>                             patch_enabled_sig; 
 	sigc::signal<void, string>                             patch_disabled_sig; 
+	sigc::signal<void, string, uint32_t>                   patch_polyphony_sig; 
 	sigc::signal<void, string>                             patch_cleared_sig; 
 	sigc::signal<void, string, string>                     object_renamed_sig; 
 	sigc::signal<void, string>                             object_destroyed_sig; 
@@ -113,6 +114,9 @@ protected:
 	
 	void patch_disabled(const string& path)
 		{ patch_disabled_sig.emit(path); }
+	
+	void patch_polyphony(const string& path, uint32_t poly)
+		{ patch_polyphony_sig.emit(path, poly); }
 
 	void patch_cleared(const string& path)
 		{ patch_cleared_sig.emit(path); }
