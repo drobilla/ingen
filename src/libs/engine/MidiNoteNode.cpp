@@ -15,11 +15,12 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "MidiNoteNode.hpp"
+#include <raul/Array.hpp>
+#include <raul/Maid.hpp>
+#include <raul/midi_events.h>
 #include <cmath>
 #include <iostream>
-#include <raul/Array.hpp>
-#include <raul/midi_events.h>
+#include "MidiNoteNode.hpp"
 #include "MidiBuffer.hpp"
 #include "AudioBuffer.hpp"
 #include "InputPort.hpp"
@@ -36,7 +37,7 @@ namespace Ingen {
 
 MidiNoteNode::MidiNoteNode(const string& path, uint32_t poly, Patch* parent, SampleRate srate, size_t buffer_size)
 : InternalNode(new Plugin(Plugin::Internal, "ingen:note_node"), path, poly, parent, srate, buffer_size),
-  _voices(new Voice[poly]),
+  _voices(new Raul::Array<Voice>(poly)),
   _sustain(false)
 {
 	_ports = new Raul::Array<Port*>(5);
@@ -70,7 +71,33 @@ MidiNoteNode::MidiNoteNode(const string& path, uint32_t poly, Patch* parent, Sam
 
 MidiNoteNode::~MidiNoteNode()
 {
-	delete[] _voices;
+	delete _voices;
+}
+
+
+bool
+MidiNoteNode::prepare_poly(uint32_t poly)
+{
+	InternalNode::prepare_poly(poly);
+
+	_prepared_voices = new Raul::Array<Voice>(poly, *_voices);
+	_prepared_poly = poly;
+
+	return true;
+}
+
+
+bool
+MidiNoteNode::apply_poly(Raul::Maid& maid, uint32_t poly)
+{
+	NodeBase::apply_poly(maid, poly);
+
+	maid.push(_voices);
+	_voices = _prepared_voices;
+	_prepared_voices = NULL;
+	_poly = poly;
+	
+	return true;
 }
 
 
@@ -151,8 +178,8 @@ MidiNoteNode::note_on(uchar note_num, uchar velocity, FrameTime time, SampleCoun
 	
 	// Look for free voices
 	for (uint32_t i=0; i < _poly; ++i) {
-		if (_voices[i].state == Voice::Voice::FREE) {
-			voice = &_voices[i];
+		if ((*_voices)[i].state == Voice::Voice::FREE) {
+			voice = &(*_voices)[i];
 			voice_num = i;
 			break;
 		}
@@ -161,18 +188,18 @@ MidiNoteNode::note_on(uchar note_num, uchar velocity, FrameTime time, SampleCoun
 	// If we didn't find a free one, steal the oldest
 	if (voice == NULL) {
 		voice_num = 0;
-		voice = &_voices[0];
-		jack_nframes_t oldest_time = _voices[0].time;
+		voice = &(*_voices)[0];
+		jack_nframes_t oldest_time = (*_voices)[0].time;
 		for (uint32_t i=1; i < _poly; ++i) {
-			if (_voices[i].time < oldest_time) {
-				voice = &_voices[i];
+			if ((*_voices)[i].time < oldest_time) {
+				voice = &(*_voices)[i];
 				voice_num = i;
 				oldest_time = voice->time;
 			}
 		}
 	}		
 	assert(voice != NULL);
-	assert(voice == &_voices[voice_num]);
+	assert(voice == &(*_voices)[voice_num]);
 
 	//cerr << "[MidiNoteNode] Note on @ " << time << ".  Key " << (int)note_num << ", Voice " << voice_num << endl;
 	
@@ -216,7 +243,7 @@ MidiNoteNode::note_on(uchar note_num, uchar velocity, FrameTime time, SampleCoun
 	assert(key->state == Key::Key::ON_ASSIGNED);
 	assert(voice->state == Voice::Voice::ACTIVE);
 	assert(key->voice == voice_num);
-	assert(_voices[key->voice].note == note_num);
+	assert((*_voices)[key->voice].note == note_num);
 }
 
 
@@ -232,15 +259,15 @@ MidiNoteNode::note_off(uchar note_num, FrameTime time, SampleCount nframes, Fram
 
 	if (key->state == Key::ON_ASSIGNED) {
 		// Assigned key, turn off voice and key
-		if (_voices[key->voice].state == Voice::ACTIVE) {
-			assert(_voices[key->voice].note == note_num);
+		if ((*_voices)[key->voice].state == Voice::ACTIVE) {
+			assert((*_voices)[key->voice].note == note_num);
 
 			if ( ! _sustain) {
 				//cerr << "... free voice " << key->voice << endl;
 				free_voice(key->voice, time, nframes, start, end);
 			} else {
 				//cerr << "... hold voice " << key->voice << endl;
-				_voices[key->voice].state = Voice::HOLDING;
+				(*_voices)[key->voice].state = Voice::HOLDING;
 			}
 
 		} else {
@@ -282,14 +309,14 @@ MidiNoteNode::free_voice(size_t voice, FrameTime time, SampleCount nframes, Fram
 
 		replace_key->state = Key::ON_ASSIGNED;
 		replace_key->voice = voice;
-		_keys[_voices[voice].note].state = Key::ON_UNASSIGNED;
-		_voices[voice].note = replace_key_num;
-		_voices[voice].state = Voice::ACTIVE;
+		_keys[(*_voices)[voice].note].state = Key::ON_UNASSIGNED;
+		(*_voices)[voice].note = replace_key_num;
+		(*_voices)[voice].state = Voice::ACTIVE;
 	} else {
 		// No new note for voice, deactivate (set gate low)
 		//cerr << "[MidiNoteNode] Note off. Key " << (int)note_num << ", Voice " << voice << " Killed" << endl;
 		((AudioBuffer*)_gate_port->buffer(voice))->set(0.0f, time - start);
-		_voices[voice].state = Voice::FREE;
+		(*_voices)[voice].state = Voice::FREE;
 	}
 }
 
@@ -306,7 +333,7 @@ MidiNoteNode::all_notes_off(FrameTime time, SampleCount nframes, FrameTime start
 	
 	for (uint32_t i=0; i < _poly; ++i) {
 		((AudioBuffer*)_gate_port->buffer(i))->set(0.0f, time - start);
-		_voices[i].state = Voice::FREE;
+		(*_voices)[i].state = Voice::FREE;
 	}
 }
 
@@ -337,7 +364,7 @@ MidiNoteNode::sustain_off(FrameTime time, SampleCount nframes, FrameTime start, 
 	_sustain = false;
 	
 	for (uint32_t i=0; i < _poly; ++i)
-		if (_voices[i].state == Voice::HOLDING)
+		if ((*_voices)[i].state == Voice::HOLDING)
 			free_voice(i, time, nframes, start, end);
 }
 

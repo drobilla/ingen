@@ -42,6 +42,9 @@ class MidiNoteNode : public InternalNode
 public:
 	MidiNoteNode(const string& path, uint32_t poly, Patch* parent, SampleRate srate, size_t buffer_size);
 	~MidiNoteNode();
+	
+	bool prepare_poly(uint32_t poly);
+	bool apply_poly(Raul::Maid& maid, uint32_t poly);
 
 	void process(SampleCount nframes, FrameTime start, FrameTime end);
 	
@@ -70,9 +73,11 @@ private:
 	float note_to_freq(int num);
 	void free_voice(size_t voice, FrameTime time, SampleCount nframes, FrameTime start, FrameTime end);
 
-	Voice* _voices;
-	Key    _keys[128];
-	bool   _sustain;   ///< Whether or not hold pedal is depressed
+	Raul::Array<Voice>* _voices;
+	Raul::Array<Voice>* _prepared_voices;
+	uint32_t            _prepared_poly;
+	Key                 _keys[128];
+	bool                _sustain; ///< Whether or not hold pedal is depressed
 	
 	InputPort*  _midi_in_port;
 	OutputPort* _freq_port;
