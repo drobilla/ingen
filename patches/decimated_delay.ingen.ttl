@@ -2,7 +2,7 @@
 @prefix doap: <http://usefulinc.com/ns/doap#> .
 @prefix ingen: <http://drobilla.net/ns/ingen#> .
 @prefix ingenuity: <http://drobilla.net/ns/ingenuity#> .
-@prefix lv2: <http://lv2plug.in/ontology#> .
+@prefix lv2: <http://lv2plug.in/ns/lv2core#> .
 
 <>
     a ingen:Patch;
