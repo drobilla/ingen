@@ -61,7 +61,7 @@ LV2Node::prepare_poly(uint32_t poly)
 	
 	_prepared_poly = poly;
 	_prepared_instances = new Raul::Array<SLV2Instance>(_prepared_poly, *_instances);
-	for (uint32_t i=_poly; i < _prepared_poly; ++i) {
+	for (uint32_t i = _poly; i < _prepared_poly; ++i) {
 		_prepared_instances->at(i) = slv2_plugin_instantiate(_lv2_plugin, _srate, NULL);
 		if ((*_prepared_instances)[i] == NULL) {
 			cerr << "Failed to instantiate plugin!" << endl;
@@ -82,9 +82,15 @@ LV2Node::apply_poly(Raul::Maid& maid, uint32_t poly)
 	assert(poly <= _prepared_poly);
 
 	NodeBase::apply_poly(maid, poly);
-
+	
 	maid.push(_instances);
 	_instances = _prepared_instances;
+	
+	for (uint32_t port=0; port < num_ports(); ++port)
+		for (uint32_t voice = _poly; voice < _prepared_poly; ++voice)
+			slv2_instance_connect_port((*_instances)[voice], port,
+					_ports->at(port)->buffer(voice)->raw_data());
+
 	_poly = poly;
 	_prepared_instances = NULL;
 	

@@ -46,6 +46,9 @@ public:
 	/** For driver use only!! */
 	void set_data(Sample* data);
 	
+	inline void* raw_data() const
+		{ return ((_joined_buf != NULL) ? _joined_buf->raw_data() : _data); }
+	
 	inline Sample* data() const
 		{ return ((_joined_buf != NULL) ? _joined_buf->data() : _data); }
 	

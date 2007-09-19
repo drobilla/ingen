@@ -44,6 +44,7 @@ Store::Store(SharedPtr<EngineInterface> engine, SharedPtr<SigClientInterface> em
 	emitter->new_port_sig.connect(sigc::mem_fun(this, &Store::new_port_event));
 	emitter->patch_enabled_sig.connect(sigc::mem_fun(this, &Store::patch_enabled_event));
 	emitter->patch_disabled_sig.connect(sigc::mem_fun(this, &Store::patch_disabled_event));
+	emitter->patch_polyphony_sig.connect(sigc::mem_fun(this, &Store::patch_polyphony_event));
 	emitter->patch_cleared_sig.connect(sigc::mem_fun(this, &Store::patch_cleared_event));
 	emitter->connection_sig.connect(sigc::mem_fun(this, &Store::connection_event));
 	emitter->disconnection_sig.connect(sigc::mem_fun(this, &Store::disconnection_event));
@@ -449,6 +450,15 @@ Store::patch_disabled_event(const Path& path)
 	SharedPtr<PatchModel> patch = PtrCast<PatchModel>(object(path));
 	if (patch)
 		patch->disable();
+}
+
+	
+void
+Store::patch_polyphony_event(const Path& path, uint32_t poly)
+{
+	SharedPtr<PatchModel> patch = PtrCast<PatchModel>(object(path));
+	if (patch)
+		patch->poly(poly);
 }
 
 

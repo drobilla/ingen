@@ -99,6 +99,7 @@ private:
 	void new_port_event(const Path& path, const string& data_type, bool is_output);
 	void patch_enabled_event(const Path& path);
 	void patch_disabled_event(const Path& path);
+	void patch_polyphony_event(const Path& path, uint32_t poly);
 	void patch_cleared_event(const Path& path);
 	void metadata_update_event(const Path& subject_path, const string& predicate, const Atom& value);
 	void control_change_event(const Path& port_path, float value);

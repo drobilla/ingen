@@ -39,6 +39,8 @@ public:
 	
 	/** Clear contents and reset state */
 	virtual void clear() = 0;
+	
+	virtual void* raw_data() const = 0;
 
 	/** Rewing (ie reset read pointer), but leave contents unchanged */
 	virtual void rewind() const = 0;

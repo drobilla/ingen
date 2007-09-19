@@ -37,6 +37,8 @@ public:
 
 	void prepare_read(SampleCount nframes);
 	void prepare_write(SampleCount nframes);
+	
+	void* raw_data() const { return _buf; }
 
 	bool is_joined_to(Buffer* buf) const;
 	bool join(Buffer* buf);

@@ -42,6 +42,9 @@ public:
 	uint32_t event_count() const { return _buf->event_count; }
 	
 	inline LV2_MIDI* local_data() { return _local_buf; }
+	
+	inline void* raw_data() const
+		{ return ((_joined_buf != NULL) ? _joined_buf->raw_data() : _buf); }
 
 	inline LV2_MIDI* data()
 		{ return ((_joined_buf != NULL) ? _joined_buf->data() : _buf); }
