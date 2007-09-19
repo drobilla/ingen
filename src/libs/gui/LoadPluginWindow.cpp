@@ -149,11 +149,10 @@ LoadPluginWindow::set_patch(SharedPtr<PatchModel> patch)
 {
 	_patch = patch;
 
-	if (patch->poly() <= 1)
+	/*if (patch->poly() <= 1)
 		_polyphonic_checkbutton->property_sensitive() = false;
 	else
-		_polyphonic_checkbutton->property_sensitive() = true;
-		
+		_polyphonic_checkbutton->property_sensitive() = true;*/
 }
 
 
