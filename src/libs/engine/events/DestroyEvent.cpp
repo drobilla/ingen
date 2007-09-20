@@ -40,6 +40,7 @@ DestroyEvent::DestroyEvent(Engine& engine, SharedPtr<Responder> responder, Frame
 : QueuedEvent(engine, responder, time, source, source),
   _path(path),
   _store_iterator(engine.object_store()->objects().end()),
+  _removed_table(NULL),
   _node(NULL),
   _port(NULL),
   _driver_port(NULL),
@@ -74,7 +75,7 @@ DestroyEvent::pre_process()
 	}
 			
 	if (_store_iterator != _engine.object_store()->objects().end()) {
-		_table = _engine.object_store()->remove(_store_iterator);
+		_removed_table = _engine.object_store()->remove(_store_iterator);
 	}
 
 	if (_node != NULL && _path != "/") {
@@ -86,19 +87,10 @@ DestroyEvent::pre_process()
 			_disconnect_node_event = new DisconnectNodeEvent(_engine, _node);
 			_disconnect_node_event->pre_process();
 			
-			//_node->remove_from_store();
-			_engine.object_store()->remove(_store_iterator);
-
 			if (_node->parent_patch()->enabled()) {
 				// FIXME: is this called multiple times?
 				_compiled_patch = _node->parent_patch()->compile();
-				// Remove node to be removed from the process order so it isn't executed by
-				// Patch::run and can safely be destroyed
-				//for (size_t i=0; i < _compiled_patch->size(); ++i)
-				//	if (_compiled_patch->at(i) == _node)
-				//		_compiled_patch->at(i) = NULL; // ew, gap
-				
-#ifdef DEBUG
+#ifndef NDEBUG
 				// Be sure node is removed from process order, so it can be destroyed
 				for (size_t i=0; i < _compiled_patch->size(); ++i) {
 					assert(_compiled_patch->at(i).node() != _node);
