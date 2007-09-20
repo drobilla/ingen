@@ -61,7 +61,7 @@ PatchView::set_patch(SharedPtr<PatchModel> patch)
 {
 	assert(!_canvas); // FIXME: remove
 
-	cerr << "Creating view for " << patch->path() << endl;
+	//cerr << "Creating view for " << patch->path() << endl;
 
 	assert(_breadcrumb_container); // ensure created
 
@@ -105,7 +105,7 @@ PatchView::set_patch(SharedPtr<PatchModel> patch)
 
 PatchView::~PatchView()
 {
-	cerr << "Destroying view for " << _patch->path() << endl;
+	//cerr << "Destroying view for " << _patch->path() << endl;
 }
 
 

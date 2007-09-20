@@ -69,13 +69,10 @@ Loader::load(SharedPtr<EngineInterface> engine,
 	/* Use parameter overridden polyphony, if given */
 	Raul::Table<string, Atom>::iterator poly_param = data.find("ingen:polyphony");
 	if (poly_param != data.end() && poly_param->second.type() == Atom::INT) {
-		cerr << "Using overridden poly: " << poly_param->second.get_int32();
 		patch_poly = poly_param->second.get_int32();
 	
 	/* Get polyphony from file (mandatory if not specified in parameters) */
 	} else {
-		cerr << "No overridden poly." << endl;
-
 		// FIXME: polyphony datatype?
 		RDF::Query query(*rdf_world, Glib::ustring(
 					"SELECT DISTINCT ?poly WHERE {\n") +
@@ -111,8 +108,8 @@ Loader::load(SharedPtr<EngineInterface> engine,
 	}
 
 	Path patch_path = ( parent ? (parent.get().base() + patch_name) : Path("/") );
-	cerr << "************ PATCH: name=" << patch_name << ", path=" << patch_path
-		<< ", poly = " << patch_poly << endl;
+	//cerr << "************ PATCH: name=" << patch_name << ", path=" << patch_path
+	//	<< ", poly = " << patch_poly << endl;
 	engine->create_patch(patch_path, patch_poly);
 
 
@@ -287,7 +284,7 @@ Loader::load(SharedPtr<EngineInterface> engine,
 		Path dst_node = patch_path.base() + (*i)["dstnodename"].to_string();
 		Path dst_port = dst_node.base() + (*i)["dstname"].to_string();
 
-		cerr << patch_path << " 1 CONNECTION: " << src_port << " -> " << dst_port << endl;
+		//cerr << patch_path << " 1 CONNECTION: " << src_port << " -> " << dst_port << endl;
 
 		engine->connect(src_port, dst_port);
 	}
@@ -313,7 +310,7 @@ Loader::load(SharedPtr<EngineInterface> engine,
 		Path dst_node = patch_path.base() + (*i)["dstnodename"].to_string();
 		Path dst_port = dst_node.base() + (*i)["dstname"].to_string();
 
-		cerr << patch_path << " 2 CONNECTION: " << src_port << " -> " << dst_port << endl;
+		//cerr << patch_path << " 2 CONNECTION: " << src_port << " -> " << dst_port << endl;
 
 		engine->connect(src_port, dst_port);
 	}
@@ -339,7 +336,7 @@ Loader::load(SharedPtr<EngineInterface> engine,
 		Path src_node = patch_path.base() + (*i)["srcnodename"].to_string();
 		Path src_port = src_node.base() + (*i)["srcname"].to_string();
 
-		cerr << patch_path << " 3 CONNECTION: " << src_port << " -> " << dst_port << endl;
+		//cerr << patch_path << " 3 CONNECTION: " << src_port << " -> " << dst_port << endl;
 
 		engine->connect(src_port, dst_port);
 	}

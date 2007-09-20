@@ -901,12 +901,11 @@ OSCEngineReceiver::_dssi_cb(const char* path, const char* types, lo_arg** argv, 
 int
 OSCEngineReceiver::generic_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg, void* user_data)
 {
-    printf("[OSCMsg] %s\n", path);
+	printf("[OSCMsg] %s (%s)\t", path, types);
     
 	for (int i=0; i < argc; ++i) {
-		printf("         '%c'  ", types[i]);
 		lo_arg_pp(lo_type(types[i]), argv[i]);
-		printf("\n");
+		printf("\t");
     }
     printf("\n");
 

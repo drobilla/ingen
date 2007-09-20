@@ -570,7 +570,7 @@ NodeFactory::load_ladspa_plugins()
 			
 			// Ignore stupid libtool files.  Kludge alert.
 			if (full_lib_name.substr(full_lib_name.length()-3) == ".la") {
-				cerr << "WARNING: Skipping stupid libtool file " << pfile->d_name << endl;
+				//cerr << "WARNING: Skipping stupid libtool file " << pfile->d_name << endl;
 				continue;
 			}
 			
