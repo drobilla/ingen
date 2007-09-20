@@ -66,7 +66,7 @@ public:
 	typedef Raul::PathTable<SharedPtr<ObjectModel> > Objects;
 	const Objects& objects() const { return _objects; }
 
-	sigc::signal<void, SharedPtr<ObjectModel> > new_object_sig; 
+	sigc::signal<void, SharedPtr<ObjectModel> > signal_new_object; 
 private:
 
 	void add_object(SharedPtr<ObjectModel> object);

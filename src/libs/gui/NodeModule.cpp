@@ -42,11 +42,11 @@ NodeModule::NodeModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeMode
 {
 	assert(_node);
 
-	node->new_port_sig.connect(sigc::bind(sigc::mem_fun(this, &NodeModule::add_port), true));
-	node->removed_port_sig.connect(sigc::mem_fun(this, &NodeModule::remove_port));
-	node->metadata_update_sig.connect(sigc::mem_fun(this, &NodeModule::set_metadata));
-	node->polyphonic_sig.connect(sigc::mem_fun(this, &NodeModule::set_stacked_border));
-	node->renamed_sig.connect(sigc::mem_fun(this, &NodeModule::rename));
+	node->signal_new_port.connect(sigc::bind(sigc::mem_fun(this, &NodeModule::add_port), true));
+	node->signal_removed_port.connect(sigc::mem_fun(this, &NodeModule::remove_port));
+	node->signal_metadata.connect(sigc::mem_fun(this, &NodeModule::set_metadata));
+	node->signal_polyphonic.connect(sigc::mem_fun(this, &NodeModule::set_stacked_border));
+	node->signal_renamed.connect(sigc::mem_fun(this, &NodeModule::rename));
 
 	signal_clicked.connect(sigc::mem_fun(this, &NodeModule::on_click));
 

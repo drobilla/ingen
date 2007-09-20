@@ -42,7 +42,7 @@ PatchModel::add_child(SharedPtr<ObjectModel> c)
 	
 	SharedPtr<NodeModel> nm = PtrCast<NodeModel>(c);
 	if (nm)
-		new_node_sig.emit(nm);
+		signal_new_node.emit(nm);
 }
 
 SharedPtr<NodeModel>
@@ -75,7 +75,7 @@ PatchModel::remove_child(SharedPtr<ObjectModel> o)
 				|| cm->src_port_path() == o->path()
 				|| cm->dst_port_path().parent() == o->path()
 				|| cm->dst_port_path() == o->path()) {
-			removed_connection_sig.emit(cm);
+			signal_removed_connection.emit(cm);
 			_connections.erase(j); // cuts our reference
 			assert(!get_connection(cm->src_port_path(), cm->dst_port_path())); // no duplicates
 		}
@@ -85,7 +85,7 @@ PatchModel::remove_child(SharedPtr<ObjectModel> o)
 	if (ObjectModel::remove_child(o)) {
 		SharedPtr<NodeModel> nm = PtrCast<NodeModel>(o);
 		if (nm) {
-			removed_node_sig.emit(nm);
+			signal_removed_node.emit(nm);
 		}
 		return true;
 	} else {
@@ -154,7 +154,7 @@ PatchModel::add_connection(SharedPtr<ConnectionModel> cm)
 		assert(cm->dst_port() == existing->dst_port());
 	} else {
 		_connections.push_back(cm);
-		new_connection_sig.emit(cm);
+		signal_new_connection.emit(cm);
 	}
 }
 
@@ -165,7 +165,7 @@ PatchModel::remove_connection(const string& src_port_path, const string& dst_por
 	for (list<SharedPtr<ConnectionModel> >::iterator i = _connections.begin(); i != _connections.end(); ++i) {
 		SharedPtr<ConnectionModel> cm = (*i);
 		if (cm->src_port_path() == src_port_path && cm->dst_port_path() == dst_port_path) {
-			removed_connection_sig.emit(cm);
+			signal_removed_connection.emit(cm);
 			_connections.erase(i); // cuts our reference
 			assert(!get_connection(src_port_path, dst_port_path)); // no duplicates
 			return;
@@ -182,7 +182,7 @@ PatchModel::enable()
 {
 	if (!_enabled) {
 		_enabled = true;
-		enabled_sig.emit();
+		signal_enabled.emit();
 	}
 }
 
@@ -192,7 +192,7 @@ PatchModel::disable()
 {
 	if (_enabled) {
 		_enabled = false;
-		disabled_sig.emit();
+		signal_disabled.emit();
 	}
 }
 

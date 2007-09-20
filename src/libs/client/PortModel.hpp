@@ -61,14 +61,14 @@ public:
 	{
 		if (val != _current_val) {
 			_current_val = val;
-			control_change_sig.emit(val);
+			signal_control.emit(val);
 		}
 	}
 
 	// Signals
-	sigc::signal<void, float>                 control_change_sig; ///< "Control" ports only
-	sigc::signal<void, SharedPtr<PortModel> > connection_sig;
-	sigc::signal<void, SharedPtr<PortModel> > disconnection_sig;
+	sigc::signal<void, float>                 signal_control; ///< "Control" ports only
+	sigc::signal<void, SharedPtr<PortModel> > signal_connection;
+	sigc::signal<void, SharedPtr<PortModel> > signal_disconnection;
 
 private:
 	friend class Store;
@@ -87,8 +87,8 @@ private:
 	void add_child(SharedPtr<ObjectModel> c)    { throw; }
 	bool remove_child(SharedPtr<ObjectModel> c) { throw; }
 	
-	void connected_to(SharedPtr<PortModel> p)      { ++_connections; connection_sig.emit(p); }
-	void disconnected_from(SharedPtr<PortModel> p) { --_connections; disconnection_sig.emit(p); }
+	void connected_to(SharedPtr<PortModel> p)      { ++_connections; signal_connection.emit(p); }
+	void disconnected_from(SharedPtr<PortModel> p) { --_connections; signal_disconnection.emit(p); }
 	
 	string    _type;
 	Direction _direction;

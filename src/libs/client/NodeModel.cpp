@@ -51,7 +51,7 @@ void
 NodeModel::remove_port(SharedPtr<PortModel> port)
 {
 	_ports.remove(port);
-	removed_port_sig.emit(port);
+	signal_removed_port.emit(port);
 }
 
 
@@ -117,7 +117,7 @@ NodeModel::add_port(SharedPtr<PortModel> pm)
 	assert(existing == _ports.end());
 
 	_ports.push_back(pm);
-	new_port_sig.emit(pm);
+	signal_new_port.emit(pm);
 }
 
 

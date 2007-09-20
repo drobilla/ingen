@@ -58,7 +58,7 @@ ObjectModel::add_child(SharedPtr<ObjectModel> o)
 #endif
 
 	_children.insert(make_pair(o->path().name(), o));
-	new_child_sig.emit(o);
+	signal_new_child.emit(o);
 }
 
 bool
@@ -71,7 +71,7 @@ ObjectModel::remove_child(SharedPtr<ObjectModel> o)
 	if (i != _children.end()) {
 		assert(i->second == o);
 		_children.erase(i);
-		removed_child_sig.emit(o);
+		signal_removed_child.emit(o);
 		return true;
 	} else {
 		cerr << "[ObjectModel::remove_child] " << _path
@@ -102,7 +102,7 @@ ObjectModel::add_metadata(const MetadataMap& data)
 {
 	for (MetadataMap::const_iterator i = data.begin(); i != data.end(); ++i) {
 		_metadata[i->first] = i->second;
-		metadata_update_sig.emit(i->first, i->second);
+		signal_metadata.emit(i->first, i->second);
 	}
 }
 
@@ -111,7 +111,7 @@ void
 ObjectModel::set_polyphonic(bool polyphonic)
 {
 	_polyphonic = polyphonic;
-	polyphonic_sig.emit(polyphonic);
+	signal_polyphonic.emit(polyphonic);
 }
 
 
@@ -136,7 +136,7 @@ ObjectModel::set(SharedPtr<ObjectModel> model)
 		}
 
 		_metadata[other->first] = other->second;
-		metadata_update_sig.emit(other->first, other->second);
+		signal_metadata.emit(other->first, other->second);
 	}
 }
 

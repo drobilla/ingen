@@ -64,7 +64,7 @@ ControlGroup::init(ControlPanel* panel, SharedPtr<PortModel> pm)
 	assert(_port_model);
 	assert(panel);
 
-	_control_connection = pm->control_change_sig.connect(sigc::mem_fun(this, &ControlGroup::set_value));
+	_control_connection = pm->signal_control.connect(sigc::mem_fun(this, &ControlGroup::set_value));
 }
 
 

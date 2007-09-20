@@ -61,8 +61,8 @@ public:
 	void port_value_range(SharedPtr<PortModel> port, float& min, float& max);
 	
 	// Signals
-	sigc::signal<void, SharedPtr<PortModel> > new_port_sig; 
-	sigc::signal<void, SharedPtr<PortModel> > removed_port_sig; 
+	sigc::signal<void, SharedPtr<PortModel> > signal_new_port; 
+	sigc::signal<void, SharedPtr<PortModel> > signal_removed_port; 
 	
 protected:
 	friend class Store;

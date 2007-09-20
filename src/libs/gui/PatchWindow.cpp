@@ -227,8 +227,8 @@ PatchWindow::set_patch(SharedPtr<PatchModel> patch, SharedPtr<PatchView> view)
 	else
 		_menu_destroy_patch->set_sensitive(true);
 
-	new_port_connection = patch->new_port_sig.connect(sigc::mem_fun(this, &PatchWindow::patch_port_added));
-	removed_port_connection = patch->removed_port_sig.connect(sigc::mem_fun(this, &PatchWindow::patch_port_removed));
+	new_port_connection = patch->signal_new_port.connect(sigc::mem_fun(this, &PatchWindow::patch_port_added));
+	removed_port_connection = patch->signal_removed_port.connect(sigc::mem_fun(this, &PatchWindow::patch_port_removed));
 	show_all();
 
 	_enable_signal = true;

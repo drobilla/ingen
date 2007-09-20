@@ -75,7 +75,7 @@ PortPropertiesWindow::init(ControlGroup* control, SharedPtr<PortModel> pm)
 	_max_spinner->set_value(max);
 	_max_spinner->signal_value_changed().connect(sigc::mem_fun(*this, &PortPropertiesWindow::max_changed));
 	
-	pm->metadata_update_sig.connect(sigc::mem_fun(this, &PortPropertiesWindow::metadata_update));
+	pm->signal_metadata.connect(sigc::mem_fun(this, &PortPropertiesWindow::metadata_update));
 
 	_enable_signal = true;
 }

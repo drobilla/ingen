@@ -59,17 +59,17 @@ public:
 	bool get_editable() const { return _editable; }
 	void set_editable(bool e) { if (_editable != e) {
 		_editable = e;
-		editable_sig.emit(e);
+		signal_editable.emit(e);
 	} }
 	
 	// Signals
-	sigc::signal<void, SharedPtr<NodeModel> >       new_node_sig; 
-	sigc::signal<void, SharedPtr<NodeModel> >       removed_node_sig; 
-	sigc::signal<void, SharedPtr<ConnectionModel> > new_connection_sig; 
-	sigc::signal<void, SharedPtr<ConnectionModel> > removed_connection_sig;
-	sigc::signal<void>                              enabled_sig;
-	sigc::signal<void>                              disabled_sig;
-	sigc::signal<void, bool>                        editable_sig;
+	sigc::signal<void, SharedPtr<NodeModel> >       signal_new_node; 
+	sigc::signal<void, SharedPtr<NodeModel> >       signal_removed_node; 
+	sigc::signal<void, SharedPtr<ConnectionModel> > signal_new_connection; 
+	sigc::signal<void, SharedPtr<ConnectionModel> > signal_removed_connection;
+	sigc::signal<void>                              signal_enabled;
+	sigc::signal<void>                              signal_disabled;
+	sigc::signal<void, bool>                        signal_editable;
 
 private:
 	friend class Store;

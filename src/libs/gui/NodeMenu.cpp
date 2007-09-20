@@ -85,7 +85,7 @@ NodeMenu::NodeMenu(SharedPtr<NodeModel> node)
 	_polyphonic_menuitem = static_cast<Gtk::RadioMenuItem*>(&items().back());
 	_polyphonic_menuitem->set_active(node->polyphonic());
 
-	node->polyphonic_sig.connect(sigc::mem_fun(this, &NodeMenu::polyphonic_changed));
+	node->signal_polyphonic.connect(sigc::mem_fun(this, &NodeMenu::polyphonic_changed));
 
 	_enable_signal = true;
 

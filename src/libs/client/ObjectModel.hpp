@@ -58,7 +58,7 @@ public:
 
 	const Atom& get_metadata(const string& key) const;
 	void set_metadata(const string& key, const Atom& value)
-		{ _metadata.insert(make_pair(key, value)); metadata_update_sig.emit(key, value); }
+		{ _metadata.insert(make_pair(key, value)); signal_metadata.emit(key, value); }
 
 	typedef Raul::Table<string, SharedPtr<ObjectModel> > Children;
 
@@ -71,19 +71,19 @@ public:
 	SharedPtr<ObjectModel> get_child(const string& name) const;
 
 	// Signals
-	sigc::signal<void, const string&, const Atom&> metadata_update_sig; 
-	sigc::signal<void, SharedPtr<ObjectModel> >    new_child_sig; 
-	sigc::signal<void, SharedPtr<ObjectModel> >    removed_child_sig; 
-	sigc::signal<void, bool>                       polyphonic_sig; 
-	sigc::signal<void>                             destroyed_sig; 
-	sigc::signal<void>                             renamed_sig; 
+	sigc::signal<void, SharedPtr<ObjectModel> >    signal_new_child; 
+	sigc::signal<void, SharedPtr<ObjectModel> >    signal_removed_child; 
+	sigc::signal<void, const string&, const Atom&> signal_metadata; 
+	sigc::signal<void, bool>                       signal_polyphonic; 
+	sigc::signal<void>                             signal_destroyed; 
+	sigc::signal<void>                             signal_renamed; 
 
 protected:
 	friend class Store;
 	
 	ObjectModel(const Path& path, bool polyphonic);
 	
-	virtual void set_path(const Path& p) { _path = p; renamed_sig.emit(); }
+	virtual void set_path(const Path& p) { _path = p; signal_renamed.emit(); }
 	virtual void set_parent(SharedPtr<ObjectModel> p) { assert(p); _parent = p; }
 	virtual void add_child(SharedPtr<ObjectModel> c);
 	virtual bool remove_child(SharedPtr<ObjectModel> c);

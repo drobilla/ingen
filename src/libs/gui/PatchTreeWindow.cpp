@@ -68,7 +68,7 @@ PatchTreeWindow::PatchTreeWindow(BaseObjectType* cobject,
 void
 PatchTreeWindow::init(Store& store)
 {
-	store.new_object_sig.connect(sigc::mem_fun(this, &PatchTreeWindow::new_object));
+	store.signal_new_object.connect(sigc::mem_fun(this, &PatchTreeWindow::new_object));
 }
 
 
@@ -115,8 +115,8 @@ PatchTreeWindow::add_patch(SharedPtr<PatchModel> pm)
 		}
 	}
 
-	pm->enabled_sig.connect(sigc::bind(sigc::mem_fun(this, &PatchTreeWindow::patch_enabled), pm->path()));
-	pm->disabled_sig.connect(sigc::bind(sigc::mem_fun(this, &PatchTreeWindow::patch_disabled), pm->path()));
+	pm->signal_enabled.connect(sigc::bind(sigc::mem_fun(this, &PatchTreeWindow::patch_enabled), pm->path()));
+	pm->signal_disabled.connect(sigc::bind(sigc::mem_fun(this, &PatchTreeWindow::patch_disabled), pm->path()));
 }
 
 

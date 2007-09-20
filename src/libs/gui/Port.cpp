@@ -48,7 +48,7 @@ Port::Port(boost::shared_ptr<FlowCanvas::Module> module, SharedPtr<PortModel> pm
 		_menu.items().push_back(Gtk::Menu_Helpers::MenuElem("Destroy",
 				sigc::mem_fun(this, &Port::on_menu_destroy)));
 
-	_port_model->renamed_sig.connect(sigc::mem_fun(this, &Port::renamed));
+	_port_model->signal_renamed.connect(sigc::mem_fun(this, &Port::renamed));
 
 	if (pm->is_control()) {
 		show_control();
@@ -61,8 +61,8 @@ Port::Port(boost::shared_ptr<FlowCanvas::Module> module, SharedPtr<PortModel> pm
 		set_control_min(min);
 		set_control_max(max);
 
-		pm->metadata_update_sig.connect(sigc::mem_fun(this, &Port::metadata_update));
-		_port_model->control_change_sig.connect(sigc::mem_fun(this, &Port::control_changed));
+		pm->signal_metadata.connect(sigc::mem_fun(this, &Port::metadata_update));
+		_port_model->signal_control.connect(sigc::mem_fun(this, &Port::control_changed));
 	}
 	
 	control_changed(_port_model->value());

@@ -76,8 +76,8 @@ PatchView::set_patch(SharedPtr<PatchModel> patch)
 	patch->enabled() ? enable() : disable();
 
 	// Connect model signals to track state
-	patch->enabled_sig.connect(sigc::mem_fun(this, &PatchView::enable));
-	patch->disabled_sig.connect(sigc::mem_fun(this, &PatchView::disable));
+	patch->signal_enabled.connect(sigc::mem_fun(this, &PatchView::enable));
+	patch->signal_disabled.connect(sigc::mem_fun(this, &PatchView::disable));
 
 	// Connect widget signals to do things
 	_process_but->signal_toggled().connect(sigc::mem_fun(this, &PatchView::process_toggled));
@@ -90,7 +90,7 @@ PatchView::set_patch(SharedPtr<PatchModel> patch)
 	_zoom_full_but->signal_clicked().connect(
 		sigc::mem_fun(_canvas.get(), &PatchCanvas::zoom_full));
 
-	patch->editable_sig.connect(sigc::mem_fun(
+	patch->signal_editable.connect(sigc::mem_fun(
 			*this, &PatchView::on_editable_sig));
 
 	_edit_mode_but->signal_toggled().connect(sigc::mem_fun(

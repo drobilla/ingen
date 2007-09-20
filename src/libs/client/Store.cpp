@@ -36,21 +36,21 @@ Store::Store(SharedPtr<EngineInterface> engine, SharedPtr<SigClientInterface> em
 : _engine(engine)
 , _emitter(emitter)
 {
-	emitter->object_destroyed_sig.connect(sigc::mem_fun(this, &Store::destruction_event));
-	emitter->object_renamed_sig.connect(sigc::mem_fun(this, &Store::rename_event));
-	emitter->new_plugin_sig.connect(sigc::mem_fun(this, &Store::new_plugin_event));
-	emitter->new_patch_sig.connect(sigc::mem_fun(this, &Store::new_patch_event));
-	emitter->new_node_sig.connect(sigc::mem_fun(this, &Store::new_node_event));
-	emitter->new_port_sig.connect(sigc::mem_fun(this, &Store::new_port_event));
-	emitter->polyphonic_sig.connect(sigc::mem_fun(this, &Store::polyphonic_event));
-	emitter->patch_enabled_sig.connect(sigc::mem_fun(this, &Store::patch_enabled_event));
-	emitter->patch_disabled_sig.connect(sigc::mem_fun(this, &Store::patch_disabled_event));
-	emitter->patch_polyphony_sig.connect(sigc::mem_fun(this, &Store::patch_polyphony_event));
-	emitter->patch_cleared_sig.connect(sigc::mem_fun(this, &Store::patch_cleared_event));
-	emitter->connection_sig.connect(sigc::mem_fun(this, &Store::connection_event));
-	emitter->disconnection_sig.connect(sigc::mem_fun(this, &Store::disconnection_event));
-	emitter->metadata_update_sig.connect(sigc::mem_fun(this, &Store::metadata_update_event));
-	emitter->control_change_sig.connect(sigc::mem_fun(this, &Store::control_change_event));
+	emitter->signal_object_destroyed.connect(sigc::mem_fun(this, &Store::destruction_event));
+	emitter->signal_object_renamed.connect(sigc::mem_fun(this, &Store::rename_event));
+	emitter->signal_new_plugin.connect(sigc::mem_fun(this, &Store::new_plugin_event));
+	emitter->signal_new_patch.connect(sigc::mem_fun(this, &Store::new_patch_event));
+	emitter->signal_new_node.connect(sigc::mem_fun(this, &Store::new_node_event));
+	emitter->signal_new_port.connect(sigc::mem_fun(this, &Store::new_port_event));
+	emitter->signal_polyphonic.connect(sigc::mem_fun(this, &Store::polyphonic_event));
+	emitter->signal_patch_enabled.connect(sigc::mem_fun(this, &Store::patch_enabled_event));
+	emitter->signal_patch_disabled.connect(sigc::mem_fun(this, &Store::patch_disabled_event));
+	emitter->signal_patch_polyphony.connect(sigc::mem_fun(this, &Store::patch_polyphony_event));
+	emitter->signal_patch_cleared.connect(sigc::mem_fun(this, &Store::patch_cleared_event));
+	emitter->signal_connection.connect(sigc::mem_fun(this, &Store::connection_event));
+	emitter->signal_disconnection.connect(sigc::mem_fun(this, &Store::disconnection_event));
+	emitter->signal_metadata_update.connect(sigc::mem_fun(this, &Store::metadata_update_event));
+	emitter->signal_control_change.connect(sigc::mem_fun(this, &Store::control_change_event));
 }
 
 
@@ -243,7 +243,7 @@ Store::add_object(SharedPtr<ObjectModel> object)
 				assert(parent && (object->parent() == parent));
 				
 				_objects[object->path()] = object;
-				new_object_sig.emit(object);
+				signal_new_object.emit(object);
 				
 				resolve_metadata_orphans(parent);
 				resolve_orphans(parent);
@@ -257,7 +257,7 @@ Store::add_object(SharedPtr<ObjectModel> object)
 			}
 		} else {
 			_objects[object->path()] = object;
-			new_object_sig.emit(object);
+			signal_new_object.emit(object);
 		}
 
 	}
@@ -278,7 +278,7 @@ Store::remove_object(const Path& path)
 		//cout << "[Store] Removed " << path << endl;
 
 		if (result)
-			result->destroyed_sig.emit();
+			result->signal_destroyed.emit();
 
 		if (result->path() != "/") {
 			assert(result->parent());

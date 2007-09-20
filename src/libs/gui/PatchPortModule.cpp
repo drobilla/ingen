@@ -60,7 +60,7 @@ PatchPortModule::PatchPortModule(boost::shared_ptr<PatchCanvas> canvas, SharedPt
 		move_to(default_x, default_y);
 	}*/
 
-	port->metadata_update_sig.connect(sigc::mem_fun(this, &PatchPortModule::metadata_update));
+	port->signal_metadata.connect(sigc::mem_fun(this, &PatchPortModule::metadata_update));
 }
 
 

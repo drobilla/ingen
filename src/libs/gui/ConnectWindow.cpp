@@ -352,7 +352,7 @@ ConnectWindow::gtk_callback()
 		_progress_label->set_text("Connecting to engine...");
 		present();
 
-		App::instance().client()->response_ok_sig.connect(
+		App::instance().client()->signal_response_ok.connect(
 				sigc::mem_fun(this, &ConnectWindow::response_ok_received));
 		
 		_ping_id = rand();

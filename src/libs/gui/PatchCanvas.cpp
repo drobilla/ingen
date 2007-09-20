@@ -108,12 +108,12 @@ PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 #endif
 
 	// Connect to model signals to track state
-	_patch->new_node_sig.connect(sigc::mem_fun(this, &PatchCanvas::add_node));
-	_patch->removed_node_sig.connect(sigc::mem_fun(this, &PatchCanvas::remove_node));
-	_patch->new_port_sig.connect(sigc::mem_fun(this, &PatchCanvas::add_port));
-	_patch->removed_port_sig.connect(sigc::mem_fun(this, &PatchCanvas::remove_port));
-	_patch->new_connection_sig.connect(sigc::mem_fun(this, &PatchCanvas::connection));
-	_patch->removed_connection_sig.connect(sigc::mem_fun(this, &PatchCanvas::disconnection));
+	_patch->signal_new_node.connect(sigc::mem_fun(this, &PatchCanvas::add_node));
+	_patch->signal_removed_node.connect(sigc::mem_fun(this, &PatchCanvas::remove_node));
+	_patch->signal_new_port.connect(sigc::mem_fun(this, &PatchCanvas::add_port));
+	_patch->signal_removed_port.connect(sigc::mem_fun(this, &PatchCanvas::remove_port));
+	_patch->signal_new_connection.connect(sigc::mem_fun(this, &PatchCanvas::connection));
+	_patch->signal_removed_connection.connect(sigc::mem_fun(this, &PatchCanvas::disconnection));
 	
 	// Connect widget signals to do things
 	_menu_load_plugin->signal_activate().connect(sigc::mem_fun(this, &PatchCanvas::menu_load_plugin));
