@@ -56,7 +56,6 @@ public:
 	SharedPtr<PluginModel>             plugin()       const { return _plugin; }
 	int                                num_ports()    const { return _ports.size(); }
 	const PortModelList&               ports()        const { return _ports; }
-	virtual bool                       polyphonic()   const { return _polyphonic; }
 	
 	void port_value_range(SharedPtr<PortModel> port, float& min, float& max);
 	
@@ -81,7 +80,6 @@ protected:
 
 	virtual void clear();
 	
-	bool                            _polyphonic;
 	PortModelList                   _ports;      ///< List of ports (not a Table to preserve order)
 	string                          _plugin_uri; ///< Plugin URI (if PluginModel is unknown)
 	SharedPtr<PluginModel>          _plugin;     ///< The plugin this node is an instance of

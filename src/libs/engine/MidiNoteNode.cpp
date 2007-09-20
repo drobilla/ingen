@@ -94,9 +94,13 @@ MidiNoteNode::apply_poly(Raul::Maid& maid, uint32_t poly)
 {
 	NodeBase::apply_poly(maid, poly);
 
-	maid.push(_voices);
-	_voices = _prepared_voices;
-	_prepared_voices = NULL;
+	if (_prepared_voices) {
+		assert(poly <= _prepared_poly);
+		maid.push(_voices);
+		_voices = _prepared_voices;
+		_prepared_voices = NULL;
+	}
+
 	_polyphony = poly;
 	
 	return true;

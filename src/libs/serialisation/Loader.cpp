@@ -117,52 +117,44 @@ Loader::load(SharedPtr<EngineInterface> engine,
 
 	RDF::Query query(*rdf_world, Glib::ustring(
 			"SELECT DISTINCT ?name ?plugin ?floatkey ?floatval ?poly WHERE {\n") +
-			patch_uri + " ingen:node   ?node .\n"
-			"?node        ingen:name   ?name ;\n"
-			"             ingen:plugin ?plugin .\n"
+			patch_uri + " ingen:node       ?node .\n"
+			"?node        ingen:name       ?name ;\n"
+			"             ingen:plugin     ?plugin ;\n"
+			"             ingen:polyphonic ?poly .\n"
 			"OPTIONAL { ?node ?floatkey ?floatval . \n"
 			"           FILTER ( datatype(?floatval) = xsd:decimal ) }\n"
-			"OPTIONAL { ?node ?polyphonic ?poly }\n"
 			"}");
 
 	RDF::Query::Results results = query.run(*rdf_world, model);
 
-	string node_name;
-	string node_plugin;
-	bool node_polyphonic = false;
 	map<const string, const Atom> metadata;
 
-	/* Get all node information */
 	for (RDF::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
 
-		if (node_name.length() == 0)
-			node_name = (*i)["name"].to_string();
+		const string node_name = (*i)["name"].to_string();
+		const Path   node_path = patch_path.base() + node_name;
 
-		if (node_plugin.length() == 0)
-			node_plugin = rdf_world->qualify((*i)["plugin"].to_string());
+		if (created.find(node_path) == created.end()) {
+			const string node_plugin     = rdf_world->qualify((*i)["plugin"].to_string());
+			bool         node_polyphonic = false;
 
-		RDF::Node poly_node = (*i)["poly"];
-		if (poly_node.is_bool() && poly_node.to_bool() == true)
-			node_polyphonic = true;
+			RDF::Node poly_node = (*i)["poly"];
+			if (poly_node.is_bool() && poly_node.to_bool() == true)
+				node_polyphonic = true;
+		
+			engine->create_node(node_path, node_plugin, node_polyphonic);
+			created.insert(node_path);
+		}
 
+		/* Float metadata (FIXME: use using raw predicates is definitely a very
+		 * bad idea, make an ingen:Variable or something */
 		const string floatkey = rdf_world->prefixes().qualify((*i)["floatkey"].to_string());
 		RDF::Node val_node = (*i)["floatval"];
 
 		if (floatkey != "" && val_node.is_float())
-			metadata.insert(make_pair(floatkey, Atom(val_node.to_float())));
+			engine->set_metadata(node_path, floatkey, val_node.to_float());
 	}
 		
-	const Path node_path = patch_path.base() + node_name;
-			
-	/* Create node */
-	if (created.find(node_path) == created.end()) {
-		engine->create_node(node_path, node_plugin, node_polyphonic);
-		created.insert(node_path);
-	}
-
-	/* Set node metadata */
-	for (map<const string, const Atom>::const_iterator i = metadata.begin(); i != metadata.end(); ++i)
-		engine->set_metadata(patch_path.base() + node_name, i->first, i->second);
 
 	/* Load subpatches */
 
