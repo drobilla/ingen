@@ -1210,6 +1210,7 @@
                 <property name="homogeneous">True</property>
                 <child>
                   <widget class="GtkRadioButton" id="control_panel_all_voices_radio">
+                    <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="tooltip" translatable="yes">Apply changed controls to all voices</property>
                     <property name="label" translatable="yes">All Voices</property>

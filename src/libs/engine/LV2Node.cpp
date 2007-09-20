@@ -43,9 +43,11 @@ LV2Node::LV2Node(const Plugin*      plugin,
                  Patch*             parent,
                  SampleRate         srate,
                  size_t             buffer_size)
-: NodeBase(plugin, name, poly, parent, srate, buffer_size),
-  _lv2_plugin(plugin->slv2_plugin()),
-  _instances(NULL)
+	: NodeBase(plugin, name, poly, parent, srate, buffer_size)
+	, _lv2_plugin(plugin->slv2_plugin())
+	, _instances(NULL)
+	, _prepared_instances(NULL)
+	, _prepared_poly(poly)
 {
 	assert(_lv2_plugin);
 }
@@ -83,13 +85,15 @@ LV2Node::apply_poly(Raul::Maid& maid, uint32_t poly)
 
 	NodeBase::apply_poly(maid, poly);
 	
-	maid.push(_instances);
-	_instances = _prepared_instances;
-	
-	for (uint32_t port=0; port < num_ports(); ++port)
-		for (uint32_t voice = _polyphony; voice < _prepared_poly; ++voice)
-			slv2_instance_connect_port((*_instances)[voice], port,
-					_ports->at(port)->buffer(voice)->raw_data());
+	if (_prepared_instances) {
+		maid.push(_instances);
+		_instances = _prepared_instances;
+
+		for (uint32_t port=0; port < num_ports(); ++port)
+			for (uint32_t voice = _polyphony; voice < _prepared_poly; ++voice)
+				slv2_instance_connect_port((*_instances)[voice], port,
+						_ports->at(port)->buffer(voice)->raw_data());
+	}
 
 	_polyphony = poly;
 	_prepared_instances = NULL;

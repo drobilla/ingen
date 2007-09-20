@@ -39,9 +39,11 @@ ControlPanel::ControlPanel(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Gl
 	xml->get_widget("control_panel_specific_voice_radio", _specific_voice_radio);
 	xml->get_widget("control_panel_voice_spinbutton", _voice_spinbutton);
 	
-	_all_voices_radio->signal_toggled().connect(sigc::mem_fun(this, &ControlPanel::all_voices_selected));
-	_specific_voice_radio->signal_toggled().connect(sigc::mem_fun(this, &ControlPanel::specific_voice_selected));
-	_voice_spinbutton->signal_value_changed().connect(sigc::mem_fun(this, &ControlPanel::voice_selected));
+	_all_voices_radio->signal_toggled().connect(
+			sigc::mem_fun(this, &ControlPanel::all_voices_selected));
+
+	_specific_voice_radio->signal_toggled().connect(
+			sigc::mem_fun(this, &ControlPanel::specific_voice_selected));
 
 	show_all();
 }
@@ -60,15 +62,23 @@ ControlPanel::init(SharedPtr<NodeModel> node, uint32_t poly)
 	assert(node != NULL);
 	assert(poly > 0);
 	
-	if (poly > 1) {
+	if (node->polyphonic()) {
 		_voice_spinbutton->set_range(0, poly - 1);
+		_voice_control_box->show();
 	} else {
-		remove(*_voice_control_box);
+		//remove(*_voice_control_box);
+		_voice_control_box->hide();
 	}
 
 	for (PortModelList::const_iterator i = node->ports().begin(); i != node->ports().end(); ++i) {
 		add_port(*i);
 	}
+
+	if (node->parent())
+		((PatchModel*)node->parent().get())->signal_polyphony.connect(
+				sigc::mem_fun(this, &ControlPanel::polyphony_changed));
+	else
+		cerr << "[ControlPanel] No parent, polyphonic controls disabled" << endl;
 	
 	_callback_enabled = true;
 }
@@ -254,8 +264,10 @@ ControlPanel::specific_voice_selected()
 
 
 void
-ControlPanel::voice_selected()
+ControlPanel::polyphony_changed(uint32_t poly)
 {
+	cerr << "POLY CHANGED" << endl;
+	_voice_spinbutton->set_range(0, poly - 1);
 }
 
 	

@@ -93,6 +93,7 @@ private:
 	LO_HANDLER(destroyed);
 	LO_HANDLER(patch_enabled);
 	LO_HANDLER(patch_disabled);
+	LO_HANDLER(patch_polyphony);
 	LO_HANDLER(patch_cleared);
 	LO_HANDLER(object_renamed);
 	LO_HANDLER(connection);

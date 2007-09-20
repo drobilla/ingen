@@ -69,6 +69,7 @@ public:
 	sigc::signal<void, SharedPtr<ConnectionModel> > signal_removed_connection;
 	sigc::signal<void>                              signal_enabled;
 	sigc::signal<void>                              signal_disabled;
+	sigc::signal<void, uint32_t>                    signal_polyphony;
 	sigc::signal<void, bool>                        signal_editable;
 
 private:
@@ -83,7 +84,7 @@ private:
 	}
 	
 	void filename(const string& f) { _filename = f; }
-	void poly(size_t p)            { _poly = p; }
+	void poly(size_t p) { _poly = p; signal_polyphony.emit(p); }
 	void enable();
 	void disable();
 	void clear();

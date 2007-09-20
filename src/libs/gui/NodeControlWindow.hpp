@@ -61,8 +61,8 @@ protected:
 
 private:
 	SharedPtr<NodeModel>    _node;
-	ControlPanel* _control_panel;
-	bool          _callback_enabled;
+	ControlPanel*           _control_panel;
+	bool                    _callback_enabled;
 	
 	bool _position_stored;
 	int  _x;

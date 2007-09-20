@@ -152,6 +152,7 @@ OSCClientReceiver::setup_callbacks()
 	lo_server_thread_add_method(_st, "/ingen/destroyed", "s", destroyed_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/patch_enabled", "s", patch_enabled_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/patch_disabled", "s", patch_disabled_cb, this);
+	lo_server_thread_add_method(_st, "/ingen/patch_polyphony", "si", patch_polyphony_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/patch_cleared", "s", patch_cleared_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/object_renamed", "ss", object_renamed_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/new_connection", "ss", connection_cb, this);
@@ -206,6 +207,14 @@ int
 OSCClientReceiver::_patch_disabled_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	patch_disabled((const char*)&argv[0]->s);
+	return 0;
+}
+
+
+int
+OSCClientReceiver::_patch_polyphony_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+{
+	patch_polyphony((const char*)&argv[0]->s, argv[1]->i);
 	return 0;
 }
 

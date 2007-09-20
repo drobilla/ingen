@@ -73,7 +73,7 @@ public:
 private:
 	void all_voices_selected();
 	void specific_voice_selected();
-	void voice_selected();
+	void polyphony_changed(uint32_t poly);
 
 	bool _callback_enabled;
 	

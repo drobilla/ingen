@@ -129,6 +129,8 @@ Patch::apply_internal_poly(Raul::Maid& maid, uint32_t poly)
 
 	for (Raul::List<Node*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		(*i)->apply_poly(maid, poly);
+
+	_internal_poly = poly;
 	
 	return true;
 }

@@ -38,6 +38,8 @@ namespace Ingen {
 MidiNoteNode::MidiNoteNode(const string& path, uint32_t poly, Patch* parent, SampleRate srate, size_t buffer_size)
 : InternalNode(new Plugin(Plugin::Internal, "ingen:note_node"), path, poly, parent, srate, buffer_size),
   _voices(new Raul::Array<Voice>(poly)),
+  _prepared_voices(NULL),
+  _prepared_poly(poly),
   _sustain(false)
 {
 	_ports = new Raul::Array<Port*>(5);
