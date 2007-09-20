@@ -28,6 +28,8 @@ namespace Client {
 SLV2World   PluginModel::_slv2_world   = NULL;
 SLV2Plugins PluginModel::_slv2_plugins = NULL;
 #endif
+
+Raul::RDF::World* PluginModel::_rdf_world = NULL;
 	
 
 string
@@ -55,6 +57,8 @@ void*
 PluginModel::gui()
 {
 	assert(_type == LV2);
+	
+	Glib::Mutex::Lock(_rdf_world->mutex());
 	
 	SLV2Values gui = slv2_plugin_get_guis(_slv2_plugin);
 	if (slv2_values_size(gui) > 0) {

@@ -151,6 +151,8 @@ NodeModel::port_value_range(SharedPtr<PortModel> port, float& min, float& max)
 {
 	assert(port->parent().get() == this);
 
+	Glib::Mutex::Lock(PluginModel::rdf_world()->mutex());
+	
 	// FIXME: cache these values
 	
 	// Plugin value first

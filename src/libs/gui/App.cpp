@@ -85,6 +85,8 @@ App::App(Ingen::Shared::World* world)
 	rdf_world.add_prefix("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
 	rdf_world.add_prefix("doap", "http://usefulinc.com/ns/doap#");
 	
+	PluginModel::set_rdf_world(rdf_world);
+
 #ifdef HAVE_SLV2
 	PluginModel::set_slv2_world(world->slv2_world);
 #endif

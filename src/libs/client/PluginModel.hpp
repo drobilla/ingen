@@ -23,6 +23,7 @@
 #include <iostream>
 #include <raul/Path.hpp>
 #include <raul/SharedPtr.hpp>
+#include <raul/RDFWorld.hpp>
 #ifdef HAVE_SLV2
 #include <slv2/slv2.h>
 #endif
@@ -109,6 +110,12 @@ public:
 	void* gui();
 #endif
 
+	static void set_rdf_world(Raul::RDF::World& world) {
+		_rdf_world = &world;
+	}
+
+	static Raul::RDF::World* rdf_world() { return _rdf_world; }
+
 private:
 	Type   _type;
 	string _uri;
@@ -120,6 +127,8 @@ private:
 
 	SLV2Plugin _slv2_plugin;
 #endif
+
+	static Raul::RDF::World* _rdf_world;
 };
 
 
