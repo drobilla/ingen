@@ -35,7 +35,6 @@
 #include "LoadPluginWindow.hpp"
 #include "PatchWindow.hpp"
 #include "MessagesWindow.hpp"
-#include "ConfigWindow.hpp"
 #include "GladeFactory.hpp"
 #include "PatchTreeWindow.hpp"
 #include "Configuration.hpp"
@@ -75,7 +74,6 @@ App::App(Ingen::Shared::World* world)
 	glade_xml->get_widget_derived("connect_win", _connect_window);
 	glade_xml->get_widget_derived("messages_win", _messages_window);
 	glade_xml->get_widget_derived("patch_tree_win", _patch_tree_window);
-	glade_xml->get_widget_derived("config_win", _config_window);
 	glade_xml->get_widget("about_win", _about_dialog);
 
 	Raul::RDF::World& rdf_world = *world->rdf_world;
@@ -87,8 +85,6 @@ App::App(Ingen::Shared::World* world)
 	rdf_world.add_prefix("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
 	rdf_world.add_prefix("doap", "http://usefulinc.com/ns/doap#");
 	
-	_config_window->configuration(_configuration);
-
 #ifdef HAVE_SLV2
 	PluginModel::set_slv2_world(world->slv2_world);
 #endif

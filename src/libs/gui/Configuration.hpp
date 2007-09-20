@@ -50,18 +50,12 @@ public:
 
 	void apply_settings();
 
-	string patch_path()                   { return _patch_path; }
-	void   patch_path(const string& path) { _patch_path = path; }
-	
 	const string& patch_folder()                    { return _patch_folder; }
 	void          set_patch_folder(const string& f) { _patch_folder = f; }
 	
 	uint32_t get_port_color(const PortModel* pi);
 
 private:
-	/** Search path for patch files.  Colon delimited, as usual. */
-	string _patch_path;
-
 	/** Most recent patch folder shown in open dialog */
 	string _patch_folder;
 	

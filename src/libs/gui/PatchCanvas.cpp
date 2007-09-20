@@ -346,7 +346,7 @@ PatchCanvas::connect(boost::shared_ptr<FlowCanvas::Connectable> src_port,
 	// Midi binding/learn shortcut
 	if (src->model()->is_midi() && dst->model()->is_control())
 	{
-		cerr << "FIXME: MIDI binding" << endl;
+		cerr << "[PatchCanvas] FIXME: MIDI binding shortcut" << endl;
 #if 0
 		SharedPtr<PluginModel> pm(new PluginModel(PluginModel::Internal, "", "midi_control_in", ""));
 		SharedPtr<NodeModel> nm(new NodeModel(pm, _patch->path().base()

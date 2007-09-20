@@ -229,11 +229,11 @@ DSSIController::attempt_to_show_gui()
 				}
 	
 				if ((S_ISREG(buf.st_mode) || S_ISLNK(buf.st_mode)) &&
-				        (buf.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH))) {
+					(buf.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH))) {
 	
 					if (verbose) {
 						fprintf(stderr, "%s: trying to execute GUI at \"%s\"\n",
-						        myName, filename);
+								myName, filename);
 					}
 	
 					if (fork() == 0) {
@@ -267,8 +267,9 @@ void
 DSSIController::show_menu(GdkEventButton* event)
 {
 #if 0
-        if (_banks_dirty)
-	        update_program_menu();
+	if (_banks_dirty)
+		update_program_menu();
+
 	NodeController::show_menu(event);
 #endif
 }

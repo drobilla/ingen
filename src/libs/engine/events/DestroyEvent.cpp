@@ -54,24 +54,6 @@ DestroyEvent::DestroyEvent(Engine& engine, SharedPtr<Responder> responder, Frame
 	assert(_source);
 }
 
-#if 0
-DestroyEvent::DestroyEvent(Engine& engine, SharedPtr<Responder> responder, FrameTime time, QueuedEventSource* source, Node* node, bool block)
-: QueuedEvent(engine, responder, block, source),
-  _path(node->path()),
-  _store_iterator(engine.object_store()->objects().end())
-  _object(node),
-  _node(node),
-  _port(NULL),
-  _driver_port(NULL),
-  _patch_node_listnode(NULL),
-  _patch_port_listnode(NULL),
-  _ports_array(NULL),
-  _compiled_patch(NULL),
-  _disconnect_node_event(NULL),
-  _disconnect_port_event(NULL)
-{
-}
-#endif
 
 DestroyEvent::~DestroyEvent()
 {
@@ -83,17 +65,14 @@ DestroyEvent::~DestroyEvent()
 void
 DestroyEvent::pre_process()
 {
-	//if (_object == NULL) {
-		_store_iterator = _engine.object_store()->find(_path);
-		//_object = _engine.object_store()->find_object(_path);
+	_store_iterator = _engine.object_store()->find(_path);
 
-		if (_store_iterator != _engine.object_store()->objects().end())  {
-			_node = dynamic_cast<Node*>(_store_iterator->second);
+	if (_store_iterator != _engine.object_store()->objects().end())  {
+		_node = dynamic_cast<Node*>(_store_iterator->second);
 
-			if (!_node)
-				_port = dynamic_cast<Port*>(_store_iterator->second);
-		}
-	//}
+		if (!_node)
+			_port = dynamic_cast<Port*>(_store_iterator->second);
+	}
 			
 	if (_store_iterator != _engine.object_store()->objects().end()) {
 		_table = _engine.object_store()->remove(_store_iterator);

@@ -44,58 +44,6 @@ using namespace std;
 namespace Ingen {
 namespace Client {
 
-#if 0	
-/** Searches for the filename passed in the path, returning the full
- * path of the file, or the empty string if not found.
- *
- * This function tries to be as friendly a black box as possible - if the path
- * passed is an absolute path and the file is found there, it will return
- * that path, etc.
- *
- * additional_path is a list (colon delimeted as usual) of additional
- * directories to look in.  ie the directory the parent patch resides in would
- * be a good idea to pass as additional_path, in the case of a subpatch.
- */
-string
-DeprecatedLoader::find_file(const string& filename, const string& additional_path)
-{
-	string search_path = additional_path + ":" + _patch_search_path;
-	
-	// Try to open the raw filename first
-	std::ifstream is(filename.c_str(), std::ios::in);
-	if (is.good()) {
-		is.close();
-		return filename;
-	}
-	
-	string directory;
-	string full_patch_path = "";
-	
-	while (search_path != "") {
-		directory = search_path.substr(0, search_path.find(':'));
-		if (search_path.find(':') != string::npos)
-			search_path = search_path.substr(search_path.find(':')+1);
-		else
-			search_path = "";
-
-		full_patch_path = directory +"/"+ filename;
-		
-		std::ifstream is;
-		is.open(full_patch_path.c_str(), std::ios::in);
-	
-		if (is.good()) {
-			is.close();
-			return full_patch_path;
-		} else {
-			cerr << "[DeprecatedLoader] Could not find patch file " << full_patch_path << endl;
-		}
-	}
-
-	return "";
-}
-
-#endif
-
 string
 DeprecatedLoader::nameify_if_invalid(const string& name)
 {

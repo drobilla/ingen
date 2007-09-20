@@ -58,17 +58,11 @@ public:
 	
 	ClientInterface* client(const string& uri);
 	
-	// Notification band:
-	
 	//void send_client_registration(const string& url, int client_id);
 	
 	// Error that isn't the direct result of a request
 	void send_error(const string& msg);
 
-
-	
-	//void send_node_creation_messages(const Node* const node);
-	
 	void send_plugins(const list<Plugin*>& plugin_list);
 	void send_patch(const Patch* const p, bool recursive);
 	void send_node(const Node* const node, bool recursive);
@@ -79,7 +73,6 @@ public:
 	void send_connection(const Connection* const connection);
 	void send_disconnection(const string& src_port_path, const string& dst_port_path);
 	void send_rename(const string& old_path, const string& new_path);
-	void send_all_objects();
 	void send_patch_enable(const string& patch_path);
 	void send_patch_disable(const string& patch_path);
 	void send_patch_polyphony(const string& patch_path, uint32_t poly);

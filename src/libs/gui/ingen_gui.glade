@@ -102,27 +102,6 @@
                       </widget>
                     </child>
                     <child>
-                      <widget class="GtkSeparatorMenuItem" id="separator10">
-                        <property name="visible">True</property>
-                      </widget>
-                    </child>
-                    <child>
-                      <widget class="GtkImageMenuItem" id="patch_configuration_menuitem">
-                        <property name="visible">True</property>
-                        <property name="tooltip" translatable="yes">Configure OmGtk</property>
-                        <property name="label" translatable="yes">Confi_guration...</property>
-                        <property name="use_underline">True</property>
-                        <signal name="activate" handler="on_patch_configuration_menuitem_activate"/>
-                        <child internal-child="image">
-                          <widget class="GtkImage" id="image2127">
-                            <property name="visible">True</property>
-                            <property name="stock">gtk-preferences</property>
-                            <property name="icon_size">1</property>
-                          </widget>
-                        </child>
-                      </widget>
-                    </child>
-                    <child>
                       <widget class="GtkSeparatorMenuItem" id="separator11">
                         <property name="visible">True</property>
                       </widget>
@@ -1391,7 +1370,7 @@
                           <widget class="GtkSpinButton" id="patch_view_poly_spin">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
-                            <property name="adjustment">1 1 100 1 10 10</property>
+                            <property name="adjustment">1 1 512 1 10 10</property>
                             <property name="climb_rate">1</property>
                             <property name="numeric">True</property>
                           </widget>

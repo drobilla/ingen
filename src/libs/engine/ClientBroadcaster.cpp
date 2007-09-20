@@ -102,51 +102,6 @@ ClientBroadcaster::send_error(const string& msg)
 void
 ClientBroadcaster::send_plugins_to(ClientInterface* client, const list<Plugin*>& plugin_list)
 {
-#if 0
-	// FIXME: This probably isn't actually thread safe
-	const list<Plugin*> plugs = plugin_list; // make a copy
-
-	const Plugin* plugin;
-
-	// FIXME FIXME FIXME
-	OSCClientSender* osc_client = dynamic_cast<OSCClientSender*>(client);
-	assert(osc_client);
-
-	lo_timetag tt;
-	lo_timetag_now(&tt);
-	lo_bundle b = lo_bundle_new(tt);
-	lo_message m = lo_message_new();
-	list<lo_message> msgs;
-
-	lo_message_add_int32(m, plugs.size());
-	lo_bundle_add_message(b, "/om/num_plugins", m);
-	msgs.push_back(m);
-
-	for (list<Plugin*>::const_iterator j = plugs.begin(); j != plugs.end(); ++j) {
-		plugin = (*j);
-		m = lo_message_new();
-
-		lo_message_add_string(m, plugin->type_string());
-		lo_message_add_string(m, plugin->uri().c_str());
-		lo_message_add_string(m, plugin->name().c_str());
-		lo_bundle_add_message(b, "/om/plugin", m);
-		msgs.push_back(m);
-		if (lo_bundle_length(b) > 1024) {
-			lo_send_bundle(osc_client->address(), b);
-			lo_bundle_free(b);
-			b = lo_bundle_new(tt);
-		}
-	}
-	
-	if (lo_bundle_length(b) > 0) {
-		lo_send_bundle(osc_client->address(), b);
-		lo_bundle_free(b);
-	} else {
-		lo_bundle_free(b);
-	}
-	for (list<lo_bundle>::const_iterator i = msgs.begin(); i != msgs.end(); ++i)
-		lo_message_free(*i);
-#endif
 	client->transfer_begin();
 
 	for (list<Plugin*>::const_iterator i = plugin_list.begin(); i != plugin_list.end(); ++i) {
@@ -307,18 +262,6 @@ ClientBroadcaster::send_rename(const string& old_path, const string& new_path)
 {
 	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
 		(*i).second->object_renamed(old_path, new_path);
-}
-
-
-/** Sends all GraphObjects known to the engine.
- */
-void
-ClientBroadcaster::send_all_objects()
-{	
-	cerr << "FIXME: send_all" << endl;
-
-	//for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
-	//	(*i).second->send_all_objects();
 }
 
 

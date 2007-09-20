@@ -38,8 +38,6 @@ libingen_gui_la_SOURCES = \
 	BreadCrumb.hpp \
 	BreadCrumbBox.cpp \
 	BreadCrumbBox.hpp \
-	ConfigWindow.cpp \
-	ConfigWindow.hpp \
 	Configuration.cpp \
 	Configuration.hpp \
 	ConnectWindow.cpp \

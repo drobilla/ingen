@@ -54,7 +54,6 @@ namespace Ingen {
 namespace GUI {
 
 class MessagesWindow;
-class ConfigWindow;
 class PatchCanvas;
 class PatchTreeView;
 class PatchTreeWindow;
@@ -85,9 +84,8 @@ public:
 	
 	void quit();
 
-	ConnectWindow*    connect_window()        const { return _connect_window; }
-	Gtk::AboutDialog* about_dialog()          const { return _about_dialog; }
-	ConfigWindow*      configuration_dialog() const { return _config_window; }
+	ConnectWindow*     connect_window()       const { return _connect_window; }
+	Gtk::AboutDialog*  about_dialog()         const { return _about_dialog; }
 	MessagesWindow*    messages_dialog()      const { return _messages_window; }
 	PatchTreeWindow*   patch_tree()           const { return _patch_tree_window; }
 	Configuration*     configuration()        const { return _configuration; }
@@ -122,7 +120,6 @@ protected:
 	ConnectWindow*    _connect_window;
 	MessagesWindow*   _messages_window;
 	PatchTreeWindow*  _patch_tree_window;
-	ConfigWindow*     _config_window;
 	Gtk::AboutDialog* _about_dialog;
 	WindowFactory*    _window_factory;
 

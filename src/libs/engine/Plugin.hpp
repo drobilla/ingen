@@ -60,17 +60,6 @@ public:
 #endif
 	{}
 
-#if 0
-	// FIXME: remove
-	Plugin() : _type(Internal), _lib_path("/Ingen"),
-	           _id(0), _library(NULL)
-	{
-#ifdef HAVE_SLV2
-		_slv2_plugin = NULL;
-#endif
-	}
-#endif
-
 	Plugin(const Plugin* const copy) {
 		// Copying only allowed for Internal plugins.  Bit of a hack, but
 		// allows the PluginInfo to be defined in the Node class which keeps

@@ -252,13 +252,11 @@ OSCClientSender::plugins()
  */
 void OSCClientSender::new_node(const std::string&   plugin_uri,
                                const std::string&   node_path,
-                               bool     is_polyphonic,
-                               uint32_t num_ports)
+                               bool                 is_polyphonic,
+                               uint32_t             num_ports)
 {
 	if (!_enabled)
 		return;
-
-	//cerr << "Sending node " << node_path << endl;
 
 	if (is_polyphonic)
 		lo_send(_address, "/ingen/new_node", "ssTi", plugin_uri.c_str(),
@@ -266,91 +264,6 @@ void OSCClientSender::new_node(const std::string&   plugin_uri,
 	else
 		lo_send(_address, "/ingen/new_node", "ssFi", plugin_uri.c_str(),
 		        node_path.c_str(), num_ports);
-#if 0
-	/*
-	lo_timetag tt;
-	lo_timetag_now(&tt);
-	lo_bundle b = lo_bundle_new(tt);
-	lo_message m = lo_message_new();
-	list<lo_message> msgs;
-
-	lo_message_add_string(m, plugin_type.c_str());
-	lo_message_add_string(m, plugin_uri.c_str());
-	lo_message_add_string(m, node_path.c_str());
-	lo_message_add_int32(m, is_polyphonic ? 1 : 0);
-	lo_message_add_int32(m, num_ports);
-
-	lo_bundle_add_message(b, "/ingen/new_node", m);
-	msgs.push_back(m);
-*/
-
-
-	/*
-	const Raul::Array<Port*>& ports = node->ports();
-	Port*     port;
-	PortInfo* info;
-	for (size_t j=0; j < ports.size(); ++j) {
-		port = ports.at(j);
-		info = port->port_info();
-
-		assert(port != NULL);
-		assert(info != NULL);
-		
-		m = lo_message_new();
-		lo_message_add_string(m, port->path().c_str());
-		lo_message_add_string(m, info->type_const std::string&().c_str());
-		lo_message_add_string(m, info->direction_const std::string&().c_str());
-		lo_message_add_string(m, info->hint_const std::string&().c_str());
-		lo_message_add_float(m, info->default_val());
-		lo_message_add_float(m, info->min_val());
-		lo_message_add_float(m, info->max_val());
-		lo_bundle_add_message(b, "/ingen/new_port", m);
-		msgs.push_back(m);
-		
-		// If the bundle is getting very large, send it and start
-		// a new one
-		if (lo_bundle_length(b) > 1024) {
-		  lo_send_bundle(_address, b);
-		  lo_bundle_free(b);
-		  b = lo_bundle_new(tt);
-		}
-	}
-*/
-	/*m = lo_message_new();
-	//lo_bundle_add_message(b, "/ingen/new_node_end", m);
-	//msgs.push_back(m);
-
-	lo_send_bundle(_address, b);
-	lo_bundle_free(b);
-
-	for (list<lo_bundle>::const_iterator i = msgs.begin(); i != msgs.end(); ++i)
-		lo_message_free(*i);
-
-	usleep(100);
-*/
-	/*
-	const map<const std::string&, const std::string&>& data = node->metadata();
-	// Send node metadata
-	for (map<const std::string&, const std::string&>::const_iterator i = data.begin(); i != data.end(); ++i)
-		metadata_update(node->path(), (*i).first, (*i).second);
-
-	
-	// Send port metadata
-	for (size_t j=0; j < ports.size(); ++j) {
-		port = ports.at(j);
-		const map<const std::string&, const std::string&>& data = port->metadata();
-		for (map<const std::string&, const std::string&>::const_iterator i = data.begin(); i != data.end(); ++i)
-			metadata_update(port->path(), (*i).first, (*i).second);
-	}
-
-	// Send control values
-	for (size_t i=0; i < node->ports().size(); ++i) {
-		TypedPort<Sample>* port = (TypedPort<Sample>*)node->ports().at(i);
-		if (port->port_info()->is_input() && port->port_info()->is_control())
-			control_change(port->path(), port->buffer(0)->value_at(0));
-	}
-	*/
-#endif
 }
 
 

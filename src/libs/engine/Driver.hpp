@@ -89,32 +89,6 @@ protected:
 };
 
 
-#if 0
-/** Dummy audio driver.
- *
- * Not abstract, all functions are dummies.  One of these will be allocated and
- * "used" if no working AUDIO driver is loaded.  (Doing it this way as opposed to
- * just making Driver have dummy functions makes sure any existing Driver
- * derived class actually implements the required functions).
- *
- * \ingroup engine
- */
-class DummyDriver : public Driver
-{
-public:
-	~DummyDriver() {}
-
-	void activate()   {}
-	void deactivate() {}
-	
-	void enable()  {}
-	void disable() {}
-	
-	DriverPort* create_port(TypedPort<Sample>* patch_port) { return NULL; }
-};
-#endif
-
-
 } // namespace Ingen
 
 #endif // DRIVER_H

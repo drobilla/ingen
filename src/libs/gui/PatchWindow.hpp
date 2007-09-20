@@ -119,7 +119,6 @@ private:
 	Gtk::MenuItem*      _menu_copy;
 	Gtk::MenuItem*      _menu_paste;
 	Gtk::MenuItem*      _menu_delete;
-	Gtk::MenuItem*      _menu_configuration;
 	Gtk::MenuItem*      _menu_close;
 	Gtk::MenuItem*      _menu_quit;
 	Gtk::MenuItem*      _menu_fullscreen;

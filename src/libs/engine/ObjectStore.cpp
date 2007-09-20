@@ -107,16 +107,6 @@ ObjectStore::add(const Table<Path,GraphObject*>& table)
 	}
 }
 
-#if 0
-/** Add an object to the store. Not realtime safe.
- */
-void
-ObjectStore::add(TreeNode<GraphObject*>* tn)
-{
-	cerr << "[ObjectStore] Adding " << tn->key() << endl;
-	_objects.insert(tn);
-}
-#endif
 
 /** Remove an object from the store.
  *

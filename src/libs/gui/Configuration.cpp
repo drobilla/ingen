@@ -38,9 +38,8 @@ using namespace Ingen::Client;
 
 
 Configuration::Configuration()
-	: _patch_path("/usr/share/ingen/patches:/usr/local/share/ingen/patches")
 	// Agave FTW
-	, _audio_port_color(  0x0D597FFF)
+	: _audio_port_color(  0x0D597FFF)
 	, _control_port_color(0x2F7F0DFF)
 	, _midi_port_color(   0x7F240DFF)
 	, _osc_port_color(    0x5D0D7FFF)
@@ -58,49 +57,8 @@ Configuration::~Configuration()
  */
 void
 Configuration::load_settings(string filename)
-{	
-#if 0
-	if (filename == "")
-		filename = string(getenv("HOME")).append("/.omgtkrc");
-	
-	std::ifstream is;
-	is.open(filename.c_str(), std::ios::in);
-
-	if ( ! is.good()) {
-		cout << "[Configuration] Unable to open settings file " << filename << endl;
-		return;
-	} else {
-		cout << "[Configuration] Loading settings from " << filename << endl;
-	}
-
-	string s;
-
-	is >> s;
-	if (s != "file_version") {
-		cerr << "[Configuration] Corrupt settings file, load aborted." << endl;
-		is.close();
-		return;
-	}
-	
-	is >> s;
-	if (s != "1") {
-		cerr << "[Configuration] Unknown settings file version number, load aborted." << endl;
-		is.close();
-		return;
-	}
-	
-	is >> s;
-	if (s != "patch_path") {
-		cerr << "[Configuration] Corrupt settings file, load aborted." << endl;
-		is.close();
-		return;
-	}
-
-	is >> s;
-	_patch_path = s;
-	
-	is.close();
-#endif
+{
+	/* ... */
 }
 
 
@@ -110,25 +68,7 @@ Configuration::load_settings(string filename)
 void
 Configuration::save_settings(string filename)
 {
-#if 0
-	if (filename == "")
-		filename = string(getenv("HOME")).append("/.omgtkrc");
-	
-	std::ofstream os;
-	os.open(filename.c_str(), std::ios::out);
-	
-	if ( ! os.good()) {
-		cout << "[Configuration] Unable to write to setting file " << filename << endl;
-		return;
-	} else {
-		cout << "[Configuration] Saving settings to " << filename << endl;
-	}
-	
-	os << "file_version 1" << endl;
-	os << "patch_path " << _patch_path << endl;
-	
-	os.close();
-#endif
+	/* ... */
 }
 
 
@@ -138,7 +78,7 @@ Configuration::save_settings(string filename)
 void
 Configuration::apply_settings()
 {
-	//App::instance().loader()->set_patch_path(_patch_path);
+	/* ... */
 }
 
 
@@ -162,34 +102,6 @@ Configuration::get_port_color(const PortModel* pi)
 	
 	return 0xFF0000B0;
 }
-
-/*
-Coord
-Configuration::get_window_location(const string& id) 
-{
-	return _window_locations[id];
-}
-
-
-void
-Configuration::set_window_location(const string& id, Coord loc) 
-{
-	_window_locations[id] = loc;
-}
-
-
-Coord
-Configuration::get_window_size(const string& id) 
-{
-	return _window_sizes[id];
-}
-
-
-void
-Configuration::set_window_size(const string& id, Coord size) 
-{
-	_window_sizes[id] = size;
-}*/
 
 
 } // namespace GUI

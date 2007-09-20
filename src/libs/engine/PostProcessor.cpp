@@ -28,24 +28,11 @@ using std::cerr; using std::cout; using std::endl;
 namespace Ingen {
 
 
-PostProcessor::PostProcessor(/*Raul::Maid& maid, */size_t queue_size)
-    //: _maid(maid)
+PostProcessor::PostProcessor(size_t queue_size)
     : _events(queue_size)
 {
-	//set_name("PostProcessor");
 }
 
-#if 0
-/** Post-Process every pending event.
- *
- * The PostProcessor should be whipped by the audio thread once every cycle
- */
-void
-PostProcessor::_whipped()
-{
-    //process();
-}
-#endif
 
 void
 PostProcessor::process()
@@ -58,5 +45,6 @@ PostProcessor::process()
         delete ev;
 	}
 }
+
 
 } // namespace Ingen

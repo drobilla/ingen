@@ -93,91 +93,6 @@ NodeMenu::NodeMenu(SharedPtr<NodeModel> node)
 	//model->destroyed_sig.connect(sigc::mem_fun(this, &NodeMenu::destroy));
 }
 
-#if 0
-NodeMenu::~NodeMenu()
-{
-	cerr << "~NodeMenu()\n";
-}
-
-void
-NodeMenu::destroy()
-{
-	cerr << "FIXME: NODE DESTROYED\n";
-	//SharedPtr<ObjectModel> model = _model;
-	//m_model.reset();
-}
-#endif
-
-void
-NodeMenu::set_path(const Path& new_path)
-{
-	cerr << "FIXME: rename\n";
-	/*
-	remove_from_store();
-	
-	// Rename ports
-	for (list<PortModel*>::const_iterator i = _node->ports().begin();
-			i != _node->ports().end(); ++i) {
-		ObjectController* const pc = (*i)->controller();
-		assert(pc != NULL);
-		pc->set_path(_model->path().base() + pc->model()->name());
-	}
-
-	// Handle bridge port, if this node represents one
-	if (_bridge_port != NULL)
-		_bridge_port->set_path(new_path);
-
-	if (_module != NULL)
-		_module->canvas()->rename_module(_node->path().name(), new_path.name());
-	
-	ObjectController::set_path(new_path);
-	
-	add_to_store();
-	*/
-}
-
-#if 0
-void
-NodeMenu::destroy()
-{
-	PatchController* pc = ((PatchController*)_model->parent()->controller());
-	assert(pc != NULL);
-
-	//remove_from_store();
-	//pc->remove_node(_model->path().name());
-	cerr << "FIXME: remove node\n";
-
-	if (_bridge_port != NULL)
-		_bridge_port->destroy();
-	_bridge_port = NULL;
-
-	//if (_module != NULL)
-	//	delete _module;
-}
-#endif
-
-#if 0
-void
-NodeMenu::add_port(SharedPtr<PortModel> pm)
-{
-	assert(pm->parent().get() == _node.get());
-	assert(pm->parent() == _node);
-	assert(_node->get_port(pm->path().name()) == pm);
-	
-	//cout << "[NodeMenu] Adding port " << pm->path() << endl;
-	
-	/*
-	if (_module != NULL) {
-		// (formerly PortController)
-		pc->create_port(_module);
-		_module->resize();
-		
-		// Enable "Controls" menu item on module
-		if (has_control_inputs())
-			enable_controls_menuitem();
-	}*/
-}
-#endif
 
 void
 NodeMenu::on_menu_destroy()
@@ -206,7 +121,7 @@ NodeMenu::polyphonic_changed(bool polyphonic)
 void
 NodeMenu::on_menu_clone()
 {
-	cerr << "FIXME: clone broken\n";
+	cerr << "[NodeMenu] FIXME: clone broken\n";
 	/*
 	assert(_node);
 	//assert(_parent != NULL);
@@ -278,9 +193,6 @@ void
 NodeMenu::disable_controls_menuitem()
 {
 	_controls_menuitem->property_sensitive() = false;
-	
-	//if (_control_window != NULL)
-	//	_control_window->hide();
 }
 
 

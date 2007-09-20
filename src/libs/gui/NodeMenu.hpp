@@ -44,8 +44,6 @@ class NodeMenu : public Gtk::Menu
 public:
 	NodeMenu(SharedPtr<NodeModel> node);
 
-	void set_path(const Path& new_path);
-	
 	virtual void program_add(int bank, int program, const string& name) {}
 	virtual void program_remove(int bank, int program) {}
 
@@ -55,8 +53,6 @@ protected:
 	
 	virtual void enable_controls_menuitem();
 	virtual void disable_controls_menuitem();
-
-	//virtual void add_port(SharedPtr<PortModel> pm);
 
 	void on_menu_destroy();
 	void on_menu_polyphonic();

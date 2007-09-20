@@ -30,7 +30,7 @@
 #include "LoadSubpatchWindow.hpp"
 #include "NodeControlWindow.hpp"
 #include "PatchPropertiesWindow.hpp"
-#include "ConfigWindow.hpp"
+#include "Configuration.hpp"
 #include "MessagesWindow.hpp"
 #include "PatchTreeWindow.hpp"
 #include "BreadCrumbBox.hpp"
@@ -68,7 +68,6 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 	xml->get_widget("patch_paste_menuitem", _menu_paste);
 	xml->get_widget("patch_delete_menuitem", _menu_delete);
 	xml->get_widget("patch_close_menuitem", _menu_close);
-	xml->get_widget("patch_configuration_menuitem", _menu_configuration);
 	xml->get_widget("patch_quit_menuitem", _menu_quit);
 	xml->get_widget("patch_view_control_window_menuitem", _menu_view_control_window);
 	xml->get_widget("patch_view_engine_window_menuitem", _menu_view_engine_window);
@@ -103,8 +102,6 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 		sigc::mem_fun(this, &PatchWindow::event_delete));
 	_menu_quit->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_quit));
-	_menu_configuration->signal_activate().connect(
-		sigc::mem_fun(App::instance().configuration_dialog(), &ConfigWindow::show));
 	_menu_fullscreen->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_fullscreen_toggled));
 	_menu_arrange->signal_activate().connect(

@@ -173,9 +173,7 @@ OSCClientReceiver::setup_callbacks()
 int
 OSCClientReceiver::_error_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	cerr << "ERROR: " << argv[0]->s << endl;
-	// FIXME
-	//error((char*)argv[0]);
+	error((char*)argv[0]);
 	return 0;
 }
  
@@ -264,16 +262,6 @@ OSCClientReceiver::_new_node_cb(const char* path, const char* types, lo_arg** ar
 
 	new_node(uri, node_path, polyphonic, num_ports);
 
-	/*_receiving_node_model = new NodeModel(node_path);
-	_receiving_node_model->polyphonic((poly == 1));
-	_receiving_node_num_ports = num_ports;
-
-	PluginModel* pi = new PluginModel(type, uri);
-	_receiving_node_model->plugin(pi);
-	
-	_receiving_node = true;
-	_num_received_ports = 0;
-	*/
 	return 0;
 }
 
@@ -286,54 +274,9 @@ OSCClientReceiver::_new_port_cb(const char* path, const char* types, lo_arg** ar
 	const char* port_path   = &argv[0]->s;
 	const char* type        = &argv[1]->s;
 	bool        is_output   = (argv[2]->i == 1);
-	/*const char* direction   = &argv[2]->s;
-	const char* hint        = &argv[3]->s;
-	float       default_val =  argv[4]->f;
-	float       min_val     =  argv[5]->f;
-	float       max_val     =  argv[6]->f;*/
 
 	new_port(port_path, type, is_output);
-#if 0
-	PortModel::Type ptype = PortModel::CONTROL;
-	if (!strcmp(type, "AUDIO")) ptype = PortModel::AUDIO;
-	else if (!strcmp(type, "CONTROL")) ptype = PortModel::CONTROL;
-	else if (!strcmp(type, "MIDI")) ptype = PortModel::MIDI;
-	else cerr << "[OSCClientReceiver] WARNING:  Unknown port type received (" << type << ")" << endl;
-
-#if 0
-	PortModel::Direction pdir = PortModel::INPUT;
-	if (!strcmp(direction, "INPUT")) pdir = PortModel::INPUT;
-	else if (!strcmp(direction, "OUTPUT")) pdir = PortModel::OUTPUT;
-	else cerr << "[OSCClientReceiver] WARNING:  Unknown port direction received (" << direction << ")" << endl;
-#endif
-	PortModel::Direction pdir = is_output ? PortModel::OUTPUT : PortModel::INPUT;
-
-/*
-	PortModel::Hint phint = PortModel::NONE;
-	if (!strcmp(hint, "LOGARITHMIC")) phint = PortModel::LOGARITHMIC;
-	else if (!strcmp(hint, "INTEGER")) phint = PortModel::INTEGER;
-	else if (!strcmp(hint, "TOGGLE")) phint = PortModel::TOGGLE;
 	
-	PortModel* port_model = new PortModel(port_path, ptype, pdir, phint, default_val, min_val, max_val);
-*/	
-	PortModel* port_model = new PortModel(port_path, ptype, pdir);
-	if (_receiving_node) {
-		assert(_receiving_node_model);
-		_receiving_node_model->add_port(port_model);
-		++m_num_received_ports;
-		
-		// If transmission is done, send new node to client
-		if (_num_received_ports == _receiving_node_num_ports) {
-			new_node_model(_receiving_node_model);
-			_receiving_node = false;
-			_receiving_node_model = NULL;
-			_num_received_ports = 0;
-		}
-	} else {
-		new_port_model(port_model);
-	}
-
-#endif
 	return 0;	
 }
 
