@@ -183,6 +183,8 @@ InputPort::pre_process(SampleCount nframes, FrameTime start, FrameTime end)
 	for (uint32_t i=0; i < _poly; ++i)
 		_buffers->at(i)->prepare_read(nframes);
 	
+	//cerr << path() << " poly = " << _poly << ", mixdown: " << do_mixdown << endl;
+
 	if (!do_mixdown) {
 		assert(_buffers->at(0)->is_joined_to((*_connections.begin())->buffer(0)));
 		return;

@@ -36,7 +36,7 @@ class LV2Node : public NodeBase
 public:
 	LV2Node(const Plugin*      plugin,
 	        const string&      name,
-	        uint32_t           poly,
+	        bool               polyphonic,
 	        Patch*             parent,
 	        SampleRate         srate,
 	        size_t             buffer_size);
@@ -61,7 +61,6 @@ protected:
 	SLV2Plugin                 _lv2_plugin;
 	Raul::Array<SLV2Instance>* _instances;
 	Raul::Array<SLV2Instance>* _prepared_instances;
-	uint32_t                   _prepared_poly;
 };
 
 

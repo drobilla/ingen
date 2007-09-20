@@ -27,8 +27,8 @@
 namespace Ingen {
 
 
-TransportNode::TransportNode(const string& path, uint32_t poly, Patch* parent, SampleRate srate, size_t buffer_size)
-: InternalNode(new Plugin(Plugin::Internal, "ingen:transport_node"), path, 1, parent, srate, buffer_size)
+TransportNode::TransportNode(const string& path, bool polyphonic, Patch* parent, SampleRate srate, size_t buffer_size)
+: NodeBase(new Plugin(Plugin::Internal, "ingen:transport_node"), path, false, parent, srate, buffer_size)
 {
 #if 0
 	_num_ports = 10;
@@ -74,9 +74,10 @@ TransportNode::TransportNode(const string& path, uint32_t poly, Patch* parent, S
 	//	new PortInfo("Bar Tick", AUDIO, OUTPUT, 0, 0, 1), buffer_size);
 	_ports.at(9) = bar_trig_port;
 #endif
-	plugin()->plug_label("transport");
-	assert(plugin()->uri() == "ingen:transport_node");
-	plugin()->name("Ingen Transport Node (BROKEN)");
+	Plugin* p = const_cast<Plugin*>(_plugin);
+	p->plug_label("transport");
+	assert(p->uri() == "ingen:transport_node");
+	p->name("Ingen Transport Node (BROKEN)");
 }
 
 

@@ -39,15 +39,14 @@ namespace Ingen {
  */
 LV2Node::LV2Node(const Plugin*      plugin,
                  const string&      name,
-                 uint32_t           poly,
+                 bool               polyphonic,
                  Patch*             parent,
                  SampleRate         srate,
                  size_t             buffer_size)
-	: NodeBase(plugin, name, poly, parent, srate, buffer_size)
+	: NodeBase(plugin, name, polyphonic, parent, srate, buffer_size)
 	, _lv2_plugin(plugin->slv2_plugin())
 	, _instances(NULL)
 	, _prepared_instances(NULL)
-	, _prepared_poly(poly)
 {
 	assert(_lv2_plugin);
 }
@@ -56,14 +55,16 @@ LV2Node::LV2Node(const Plugin*      plugin,
 bool
 LV2Node::prepare_poly(uint32_t poly)
 {
+	if (!_polyphonic)
+		return true;
+
 	NodeBase::prepare_poly(poly);
 
-	if (poly <= _prepared_poly)
+	if (poly <= _prepared_instances->size())
 		return true;
 	
-	_prepared_poly = poly;
-	_prepared_instances = new Raul::Array<SLV2Instance>(_prepared_poly, *_instances);
-	for (uint32_t i = _polyphony; i < _prepared_poly; ++i) {
+	_prepared_instances = new Raul::Array<SLV2Instance>(poly, *_instances);
+	for (uint32_t i = _polyphony; i < _prepared_instances->size(); ++i) {
 		_prepared_instances->at(i) = slv2_plugin_instantiate(_lv2_plugin, _srate, NULL);
 		if ((*_prepared_instances)[i] == NULL) {
 			cerr << "Failed to instantiate plugin!" << endl;
@@ -81,7 +82,10 @@ LV2Node::prepare_poly(uint32_t poly)
 bool
 LV2Node::apply_poly(Raul::Maid& maid, uint32_t poly)
 {
-	assert(poly <= _prepared_poly);
+	if (!_polyphonic)
+		return true;
+
+	assert(poly <= _prepared_instances->size());
 
 	NodeBase::apply_poly(maid, poly);
 	
@@ -90,13 +94,14 @@ LV2Node::apply_poly(Raul::Maid& maid, uint32_t poly)
 		_instances = _prepared_instances;
 
 		for (uint32_t port=0; port < num_ports(); ++port)
-			for (uint32_t voice = _polyphony; voice < _prepared_poly; ++voice)
+			for (uint32_t voice = _polyphony; voice < _prepared_instances->size(); ++voice)
 				slv2_instance_connect_port((*_instances)[voice], port,
 						_ports->at(port)->buffer(voice)->raw_data());
+	
+		_prepared_instances = NULL;
 	}
 
 	_polyphony = poly;
-	_prepared_instances = NULL;
 	
 	return true;
 }

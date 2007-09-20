@@ -27,6 +27,7 @@
 #include "OutputPort.hpp"
 #include "Plugin.hpp"
 #include "AudioDriver.hpp"
+#include "Patch.hpp"
 #include "util.hpp"
 
 using std::cerr; using std::cout; using std::endl;
@@ -35,11 +36,11 @@ using std::cerr; using std::cout; using std::endl;
 namespace Ingen {
 
 
-MidiNoteNode::MidiNoteNode(const string& path, uint32_t poly, Patch* parent, SampleRate srate, size_t buffer_size)
-: InternalNode(new Plugin(Plugin::Internal, "ingen:note_node"), path, poly, parent, srate, buffer_size),
-  _voices(new Raul::Array<Voice>(poly)),
+MidiNoteNode::MidiNoteNode(const string& path, bool polyphonic, Patch* parent, SampleRate srate, size_t buffer_size)
+: NodeBase(new Plugin(Plugin::Internal, "ingen:note_node"), path, polyphonic, parent, srate, buffer_size),
+  _voices(new Raul::Array<Voice>(_polyphony)),
   _prepared_voices(NULL),
-  _prepared_poly(poly),
+
   _sustain(false)
 {
 	_ports = new Raul::Array<Port*>(5);
@@ -47,27 +48,28 @@ MidiNoteNode::MidiNoteNode(const string& path, uint32_t poly, Patch* parent, Sam
 	_midi_in_port = new InputPort(this, "MIDIIn", 0, 1, DataType::MIDI, _buffer_size);
 	_ports->at(0) = _midi_in_port;
 
-	_freq_port = new OutputPort(this, "Frequency", 1, poly, DataType::FLOAT, _buffer_size);
+	_freq_port = new OutputPort(this, "Frequency", 1, _polyphony, DataType::FLOAT, _buffer_size);
 	_ports->at(1) = _freq_port;
 	
-	_vel_port = new OutputPort(this, "Velocity", 2, poly, DataType::FLOAT, _buffer_size);
+	_vel_port = new OutputPort(this, "Velocity", 2, _polyphony, DataType::FLOAT, _buffer_size);
 	_vel_port->set_metadata("ingen:minimum", 0.0f);
 	_vel_port->set_metadata("ingen:maximum", 1.0f);
 	_ports->at(2) = _vel_port;
 	
-	_gate_port = new OutputPort(this, "Gate", 3, poly, DataType::FLOAT, _buffer_size);
+	_gate_port = new OutputPort(this, "Gate", 3, _polyphony, DataType::FLOAT, _buffer_size);
 	_gate_port->set_metadata("ingen:toggled", 1);
 	_gate_port->set_metadata("ingen:default", 0.0f);
 	_ports->at(3) = _gate_port;
 	
-	_trig_port = new OutputPort(this, "Trigger", 4, poly, DataType::FLOAT, _buffer_size);
+	_trig_port = new OutputPort(this, "Trigger", 4, _polyphony, DataType::FLOAT, _buffer_size);
 	_trig_port->set_metadata("ingen:toggled", 1);
 	_trig_port->set_metadata("ingen:default", 0.0f);
 	_ports->at(4) = _trig_port;
 	
-	plugin()->plug_label("note_in");
-	assert(plugin()->uri() == "ingen:note_node");
-	plugin()->name("Ingen Note Node (MIDI, OSC)");
+	Plugin* p = const_cast<Plugin*>(_plugin);
+	p->plug_label("note_in");
+	assert(p->uri() == "ingen:note_node");
+	p->name("Ingen Note Node (MIDI, OSC)");
 }
 
 
@@ -80,10 +82,14 @@ MidiNoteNode::~MidiNoteNode()
 bool
 MidiNoteNode::prepare_poly(uint32_t poly)
 {
-	InternalNode::prepare_poly(poly);
+	if (!_polyphonic)
+		return true;
+
+	NodeBase::prepare_poly(poly);
 
 	_prepared_voices = new Raul::Array<Voice>(poly, *_voices);
-	_prepared_poly = poly;
+	
+	cerr << path() << " prepared poly " << poly << endl;
 
 	return true;
 }
@@ -92,16 +98,22 @@ MidiNoteNode::prepare_poly(uint32_t poly)
 bool
 MidiNoteNode::apply_poly(Raul::Maid& maid, uint32_t poly)
 {
+	if (!_polyphonic)
+		return true;
+
 	NodeBase::apply_poly(maid, poly);
 
 	if (_prepared_voices) {
-		assert(poly <= _prepared_poly);
+		assert(poly <= _prepared_voices->size());
 		maid.push(_voices);
 		_voices = _prepared_voices;
 		_prepared_voices = NULL;
 	}
 
 	_polyphony = poly;
+	assert(_voices->size() >= _polyphony);
+
+	cerr << path() << " applied poly " << poly << endl;
 	
 	return true;
 }

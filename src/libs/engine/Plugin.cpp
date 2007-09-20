@@ -24,18 +24,18 @@
 namespace Ingen {
 
 Node*
-Plugin::instantiate(const string& name, uint32_t poly, Ingen::Patch* parent, SampleRate srate, size_t buffer_size)
+Plugin::instantiate(const string& name, bool polyphonic, Ingen::Patch* parent, SampleRate srate, size_t buffer_size)
 {
 	assert(_type == Internal);
 
 	if (_uri == "ingen:note_node") {
-		return new MidiNoteNode(name, poly, parent, srate, buffer_size);
+		return new MidiNoteNode(name, polyphonic, parent, srate, buffer_size);
 	} else if (_uri == "ingen:trigger_node") {
-		return new MidiTriggerNode(name, poly, parent, srate, buffer_size);
+		return new MidiTriggerNode(name, polyphonic, parent, srate, buffer_size);
 	} else if (_uri == "ingen:control_node") {
-		return new MidiControlNode(name, poly, parent, srate, buffer_size);
+		return new MidiControlNode(name, polyphonic, parent, srate, buffer_size);
 	} else if (_uri == "ingen:transport_node") {
-		return new TransportNode(name, poly, parent, srate, buffer_size);
+		return new TransportNode(name, polyphonic, parent, srate, buffer_size);
 	} else {
 		return NULL;
 	}

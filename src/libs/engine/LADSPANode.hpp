@@ -34,7 +34,7 @@ namespace Ingen {
 class LADSPANode : public NodeBase
 {
 public:
-	LADSPANode(const Plugin* plugin, const string& name, uint32_t poly, Patch* parent, const LADSPA_Descriptor* descriptor, SampleRate srate, size_t buffer_size);
+	LADSPANode(const Plugin* plugin, const string& name, bool polyphonic, Patch* parent, const LADSPA_Descriptor* descriptor, SampleRate srate, size_t buffer_size);
 	virtual ~LADSPANode();
 
 	virtual bool instantiate();

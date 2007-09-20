@@ -20,7 +20,6 @@
 
 #include <string>
 #include "NodeBase.hpp"
-#include "InternalNode.hpp"
 #include "MidiBuffer.hpp"
 
 namespace Ingen {
@@ -37,10 +36,10 @@ class OutputPort;
  * 
  * \ingroup engine
  */
-class MidiControlNode : public InternalNode
+class MidiControlNode : public NodeBase
 {
 public:
-	MidiControlNode(const std::string& path, uint32_t poly, Patch* parent, SampleRate srate, size_t buffer_size);
+	MidiControlNode(const std::string& path, bool polyphonic, Patch* parent, SampleRate srate, size_t buffer_size);
 	
 	void process(SampleCount nframes, FrameTime start, FrameTime end);
 	

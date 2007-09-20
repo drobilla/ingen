@@ -20,6 +20,7 @@
 #include "Engine.hpp"
 #include "ObjectStore.hpp"
 #include "Node.hpp"
+#include "Plugin.hpp"
 #include "MidiNoteNode.hpp"
 #include "MidiTriggerNode.hpp"
 

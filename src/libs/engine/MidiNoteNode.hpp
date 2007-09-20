@@ -19,11 +19,10 @@
 #define MIDINOTENODE_H
 
 #include <string>
-#include "InternalNode.hpp"
 #include "types.hpp"
+#include "NodeBase.hpp"
 #include "MidiBuffer.hpp"
 
-using std::string;
 
 namespace Ingen {
 
@@ -37,10 +36,10 @@ class OutputPort;
  *
  * \ingroup engine
  */
-class MidiNoteNode : public InternalNode
+class MidiNoteNode : public NodeBase
 {
 public:
-	MidiNoteNode(const string& path, uint32_t poly, Patch* parent, SampleRate srate, size_t buffer_size);
+	MidiNoteNode(const std::string& path, bool polyphonic, Patch* parent, SampleRate srate, size_t buffer_size);
 	~MidiNoteNode();
 	
 	bool prepare_poly(uint32_t poly);
@@ -75,7 +74,6 @@ private:
 
 	Raul::Array<Voice>* _voices;
 	Raul::Array<Voice>* _prepared_voices;
-	uint32_t            _prepared_poly;
 	Key                 _keys[128];
 	bool                _sustain; ///< Whether or not hold pedal is depressed
 	

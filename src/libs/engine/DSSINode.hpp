@@ -40,7 +40,7 @@ public:
 
 	typedef std::map<int, string> Bank;
 	
-	DSSINode(const Plugin* plugin, const string& name, uint32_t poly, Patch* parent, DSSI_Descriptor* descriptor, SampleRate srate, size_t buffer_size);
+	DSSINode(const Plugin* plugin, const string& name, bool polyphonic, Patch* parent, DSSI_Descriptor* descriptor, SampleRate srate, size_t buffer_size);
 	~DSSINode();
 	
 	bool instantiate();

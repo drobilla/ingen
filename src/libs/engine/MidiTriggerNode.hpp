@@ -19,10 +19,8 @@
 #define MIDITRIGGERNODE_H
 
 #include <string>
-#include "InternalNode.hpp"
+#include "NodeBase.hpp"
 #include "MidiBuffer.hpp"
-
-using std::string;
 
 namespace Ingen {
 
@@ -40,10 +38,10 @@ class OutputPort;
  *
  * \ingroup engine
  */
-class MidiTriggerNode : public InternalNode
+class MidiTriggerNode : public NodeBase
 {
 public:
-	MidiTriggerNode(const string& path, uint32_t poly, Patch* parent, SampleRate srate, size_t buffer_size);
+	MidiTriggerNode(const std::string& path, bool polyphonic, Patch* parent, SampleRate srate, size_t buffer_size);
 
 	void process(SampleCount nframes, FrameTime start, FrameTime end);
 	

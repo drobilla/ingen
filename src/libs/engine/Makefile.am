@@ -43,7 +43,6 @@ libingen_engine_la_SOURCES = \
 	GraphObject.hpp \
 	InputPort.cpp \
 	InputPort.hpp \
-	InternalNode.hpp \
 	JackAudioDriver.cpp \
 	JackAudioDriver.hpp \
 	JackMidiDriver.cpp \

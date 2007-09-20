@@ -15,18 +15,14 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-
 #ifndef TRANSPORTNODE_H
 #define TRANSPORTNODE_H
 
-
 #include <string>
 #include <jack/transport.h>
-#include "InternalNode.hpp"
+#include "NodeBase.hpp"
 
 namespace Ingen {
-
-using std::string;
 
 
 /** Transport Node, brings timing information into patches.
@@ -35,10 +31,10 @@ using std::string;
  * signature, etc.. all sample accurate.  Using this you can do
  * tempo-synced effects or even synthesis, etc.
  */
-class TransportNode : public InternalNode
+class TransportNode : public NodeBase
 {
 public:
-	TransportNode(const string& path, uint32_t poly, Patch* parent, SampleRate srate, size_t buffer_size);
+	TransportNode(const std::string& path, bool polyphonic, Patch* parent, SampleRate srate, size_t buffer_size);
 
 	virtual void process(SampleCount nframes, FrameTime start, FrameTime end);
 };

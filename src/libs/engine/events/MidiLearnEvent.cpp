@@ -22,6 +22,7 @@
 #include "Node.hpp"
 #include "MidiControlNode.hpp"
 #include "ClientBroadcaster.hpp"
+#include "Plugin.hpp"
 
 namespace Ingen {
 

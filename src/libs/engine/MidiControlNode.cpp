@@ -29,8 +29,8 @@
 namespace Ingen {
 
 	
-MidiControlNode::MidiControlNode(const string& path, uint32_t poly, Patch* parent, SampleRate srate, size_t buffer_size)
-: InternalNode(new Plugin(Plugin::Internal, "ingen:control_node"), path, 1, parent, srate, buffer_size),
+MidiControlNode::MidiControlNode(const string& path, bool polyphonic, Patch* parent, SampleRate srate, size_t buffer_size)
+: NodeBase(new Plugin(Plugin::Internal, "ingen:control_node"), path, false, parent, srate, buffer_size),
   _learning(false)
 {
 	_ports = new Raul::Array<Port*>(7);
@@ -63,9 +63,10 @@ MidiControlNode::MidiControlNode(const string& path, uint32_t poly, Patch* paren
 	_control_port = new OutputPort(this, "Out(CR)", 6, 1, DataType::FLOAT, 1);
 	_ports->at(6) = _control_port;
 	
-	plugin()->plug_label("midi_control_in");
-	assert(plugin()->uri() == "ingen:control_node");
-	plugin()->name("Ingen Control Node (MIDI)");
+	Plugin* p = const_cast<Plugin*>(_plugin);
+	p->plug_label("midi_control_in");
+	assert(p->uri() == "ingen:control_node");
+	p->name("Ingen Control Node (MIDI)");
 }
 
 
