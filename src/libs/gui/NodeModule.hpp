@@ -61,8 +61,6 @@ public:
 
 	virtual void store_location();
 
-	void on_click(GdkEventButton* event);
-	
 	void show_control_window();
 
 	SharedPtr<NodeModel> node() const { return _node; }

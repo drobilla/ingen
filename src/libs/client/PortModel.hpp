@@ -74,7 +74,7 @@ private:
 	friend class Store;
 	
 	PortModel(const Path& path, const string& type, Direction dir)
-	: ObjectModel(path, false),
+	: ObjectModel(path, true),
 	  _type(type),
 	  _direction(dir),
 	  _current_val(0.0f),

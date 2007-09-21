@@ -44,6 +44,7 @@ NodeModule::NodeModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeMode
 	Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference();
 	xml->get_widget_derived("object_menu", _menu);
 	_menu->init(node);
+	set_menu(_menu);
 
 	node->signal_new_port.connect(sigc::bind(sigc::mem_fun(this, &NodeModule::add_port), true));
 	node->signal_removed_port.connect(sigc::mem_fun(this, &NodeModule::remove_port));
@@ -148,14 +149,6 @@ NodeModule::store_location()
 		App::instance().engine()->set_metadata(_node->path(), "ingenuity:canvas-x", Atom(x));
 		App::instance().engine()->set_metadata(_node->path(), "ingenuity:canvas-y", Atom(y));
 	}
-}
-
-
-void
-NodeModule::on_click(GdkEventButton* event)
-{
-	if (event->button == 3)
-		_menu->popup(event->button, event->time);
 }
 
 
