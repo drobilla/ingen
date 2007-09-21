@@ -67,8 +67,12 @@ libingen_gui_la_SOURCES = \
 	NewSubpatchWindow.hpp \
 	NodeControlWindow.cpp \
 	NodeControlWindow.hpp \
-	NodeMenu.cpp \
+	ObjectMenu.hpp \
+	ObjectMenu.cpp \
 	NodeMenu.hpp \
+	NodeMenu.cpp \
+	PortMenu.hpp \
+	PortMenu.cpp \
 	NodeModule.cpp \
 	NodeModule.hpp \
 	NodePropertiesWindow.cpp \

@@ -56,16 +56,11 @@ public:
 	
 	virtual void store_location();
 
-	//void on_right_click(GdkEventButton* event) { _port->show_menu(event); }
-	
 	SharedPtr<PortModel> port() const { return _port; }
 
 protected:
 	PatchPortModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<PortModel> port);
 
-	//virtual void on_double_click(GdkEventButton* ev) { show_control_window(); }
-	//virtual void on_middle_click(GdkEventButton* ev) { show_control_window(); }
-	
 	void metadata_update(const string& key, const Raul::Atom& value);
 
 	SharedPtr<PortModel>    _port;

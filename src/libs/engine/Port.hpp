@@ -101,7 +101,6 @@ protected:
 	Raul::Array<Buffer*>* _buffers;
 
 	// Dynamic polyphony
-	uint32_t              _prepared_poly;
 	Raul::Array<Buffer*>* _prepared_buffers;
 };
 

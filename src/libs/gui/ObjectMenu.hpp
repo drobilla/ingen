@@ -15,55 +15,54 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef NODEMENU_H
-#define NODEMENU_H
+#ifndef OBJECTMENU_H
+#define OBJECTMENU_H
 
 #include <string>
 #include <gtkmm.h>
+#include <libglademm/xml.h>
 #include <raul/Path.hpp>
 #include <raul/SharedPtr.hpp>
-#include "client/NodeModel.hpp"
-#include "ObjectMenu.hpp"
-
-using Ingen::Client::NodeModel;
+#include "client/ObjectModel.hpp"
+using Ingen::Client::ObjectModel;
 
 namespace Ingen {
 namespace GUI {
 
 class Controller;
-class NodeControlWindow;
-class NodePropertiesWindow;
+class ObjectControlWindow;
+class ObjectPropertiesWindow;
 class PatchCanvas;
 
-/** Controller for a Node.
+/** Menu for a Object.
  *
  * \ingroup GUI
  */
-class NodeMenu : public ObjectMenu
+class ObjectMenu : public Gtk::Menu
 {
 public:
-	NodeMenu(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml);
+	ObjectMenu(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml);
 	
-	virtual void program_add(int bank, int program, const std::string& name) {}
-	virtual void program_remove(int bank, int program) {}
+	void init(SharedPtr<ObjectModel> object);
 
-	void init(SharedPtr<NodeModel> node);
-
-	bool has_control_inputs();
-	
 protected:
-	
-	virtual void enable_controls_menuitem();
-	virtual void disable_controls_menuitem();
 
-	void on_menu_clone();
-	void on_menu_learn();
+	void on_menu_polyphonic();
+	void on_menu_disconnect();
+	void on_menu_destroy();
 
-	Gtk::MenuItem* _controls_menuitem;
+	void polyphonic_changed(bool polyphonic);
+
+	bool                   _enable_signal;
+	SharedPtr<ObjectModel> _object;
+	Gtk::CheckMenuItem*    _polyphonic_menuitem;
+	Gtk::MenuItem*         _disconnect_menuitem;
+	Gtk::MenuItem*         _rename_menuitem;
+	Gtk::MenuItem*         _destroy_menuitem;
 };
 
 
 } // namespace GUI
 } // namespace Ingen
 
-#endif // NODEMENU_H
+#endif // OBJECTMENU_H

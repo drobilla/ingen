@@ -15,55 +15,40 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef NODEMENU_H
-#define NODEMENU_H
-
-#include <string>
+#include <iostream>
 #include <gtkmm.h>
-#include <raul/Path.hpp>
 #include <raul/SharedPtr.hpp>
-#include "client/NodeModel.hpp"
-#include "ObjectMenu.hpp"
-
-using Ingen::Client::NodeModel;
+#include "interface/EngineInterface.hpp"
+#include "client/PortModel.hpp"
+#include "App.hpp"
+#include "PortMenu.hpp"
+#include "WindowFactory.hpp"
 
 namespace Ingen {
 namespace GUI {
 
-class Controller;
-class NodeControlWindow;
-class NodePropertiesWindow;
-class PatchCanvas;
 
-/** Controller for a Node.
- *
- * \ingroup GUI
- */
-class NodeMenu : public ObjectMenu
+PortMenu::PortMenu(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
+	: ObjectMenu(cobject, xml)
 {
-public:
-	NodeMenu(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml);
+}
+
+
+void
+PortMenu::init(SharedPtr<PortModel> port)
+{
+	ObjectMenu::init(port);
 	
-	virtual void program_add(int bank, int program, const std::string& name) {}
-	virtual void program_remove(int bank, int program) {}
-
-	void init(SharedPtr<NodeModel> node);
-
-	bool has_control_inputs();
-	
-protected:
-	
-	virtual void enable_controls_menuitem();
-	virtual void disable_controls_menuitem();
-
-	void on_menu_clone();
-	void on_menu_learn();
-
-	Gtk::MenuItem* _controls_menuitem;
-};
+	if ( ! PtrCast<PatchModel>(port->parent()) ) {
+		_polyphonic_menuitem->set_sensitive(false);
+		_rename_menuitem->hide();
+		_destroy_menuitem->hide();
+	}
+		
+	_enable_signal = true;
+}
 
 
 } // namespace GUI
 } // namespace Ingen
 
-#endif // NODEMENU_H

@@ -36,11 +36,6 @@ PatchPortModule::PatchPortModule(boost::shared_ptr<PatchCanvas> canvas, SharedPt
 : FlowCanvas::Module(canvas, port->path().name(), 0, 0, false), // FIXME: coords?
   _port(port)
 {
-	/*if (port_model()->polyphonic() && port_model()->parent() != NULL
-			&& port_model()->parent_patch()->poly() > 1) {
-		border_width(2.0);
-	}*/
-	
 	assert(canvas);
 	assert(port);
 
@@ -59,8 +54,11 @@ PatchPortModule::PatchPortModule(boost::shared_ptr<PatchCanvas> canvas, SharedPt
 		canvas->get_new_module_location(default_x, default_y);
 		move_to(default_x, default_y);
 	}*/
+	
+	set_stacked_border(port->polyphonic());
 
 	port->signal_metadata.connect(sigc::mem_fun(this, &PatchPortModule::metadata_update));
+	port->signal_polyphonic.connect(sigc::mem_fun(this, &PatchPortModule::set_stacked_border));
 }
 
 
@@ -71,11 +69,7 @@ PatchPortModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<PortMod
 		new PatchPortModule(canvas, port));
 	assert(ret);
 
-	ret->_patch_port = boost::shared_ptr<Port>(new Port(ret, port, true, true));
-	ret->_patch_port->menu().items().push_back(Gtk::Menu_Helpers::MenuElem("Rename...",
-		sigc::bind(
-			sigc::mem_fun(App::instance().window_factory(), &WindowFactory::present_rename),
-			port)));
+	ret->_patch_port = boost::shared_ptr<Port>(new Port(ret, port, true));
 
 	ret->add_port(ret->_patch_port);
 	

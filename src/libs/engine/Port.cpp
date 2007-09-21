@@ -70,8 +70,7 @@ Port::prepare_poly(uint32_t poly)
 	/* FIXME: poly never goes down, harsh on memory.. */
 	if (poly > _poly) {
 		_prepared_buffers = new Raul::Array<Buffer*>(poly, *_buffers);
-		_prepared_poly = poly;
-		for (uint32_t i = _poly; i < _prepared_poly; ++i)
+		for (uint32_t i = _poly; i < _prepared_buffers->size(); ++i)
 			_prepared_buffers->at(i) = BufferFactory::create(_type, _buffer_size);
 	}
 
@@ -85,7 +84,7 @@ Port::apply_poly(Raul::Maid& maid, uint32_t poly)
 	if (!_polyphonic || !_parent->polyphonic())
 		return true;
 
-	assert(poly <= _prepared_poly);
+	assert(poly <= _prepared_buffers->size());
 
 	// Apply a new set of buffers from a preceding call to prepare_poly
 	if (_prepared_buffers && _buffers != _prepared_buffers) {

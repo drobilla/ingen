@@ -23,7 +23,6 @@
 #include <raul/SharedPtr.hpp>
 #include "Port.hpp"
 #include "NodeMenu.hpp"
-using std::string;
 
 class Atom;
 
@@ -55,7 +54,7 @@ public:
 
 	virtual ~NodeModule();
 
-	boost::shared_ptr<Port> port(const string& port_name) {
+	boost::shared_ptr<Port> port(const std::string& port_name) {
 		return boost::dynamic_pointer_cast<Ingen::GUI::Port>(
 			Module::get_port(port_name));
 	}
@@ -75,13 +74,13 @@ protected:
 	virtual void on_middle_click(GdkEventButton* ev) { show_control_window(); }
 	
 	void rename();
-	void set_metadata(const string& key, const Atom& value);
+	void set_metadata(const std::string& key, const Atom& value);
 	
 	void add_port(SharedPtr<PortModel> port, bool resize=true);
 	void remove_port(SharedPtr<PortModel> port);
 	
 	SharedPtr<NodeModel> _node;
-	NodeMenu             _menu;
+	NodeMenu*            _menu;
 };
 
 

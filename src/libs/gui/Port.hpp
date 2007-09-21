@@ -38,7 +38,7 @@ namespace GUI {
 class Port : public FlowCanvas::Port
 {
 public:
-	Port(boost::shared_ptr<FlowCanvas::Module> module, SharedPtr<PortModel> pm, bool flip = false, bool destroyable = false);
+	Port(boost::shared_ptr<FlowCanvas::Module> module, SharedPtr<PortModel> pm, bool flip=false);
 
 	virtual ~Port() {}
 
@@ -51,7 +51,6 @@ private:
 	
 	void metadata_update(const string& key, const Raul::Atom& value);
 
-	void on_menu_destroy();
 	void renamed();
 
 	SharedPtr<PortModel> _port_model;

@@ -23,97 +23,36 @@
 #include "NodeMenu.hpp"
 #include "WindowFactory.hpp"
 
+using namespace std;
 using std::cerr; using std::endl;
 
 namespace Ingen {
 namespace GUI {
 
 
-NodeMenu::NodeMenu(SharedPtr<NodeModel> node)
-	: _enable_signal(false)
-	, _node(node)
+NodeMenu::NodeMenu(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
+	: ObjectMenu(cobject, xml)
 	, _controls_menuitem(NULL)
 {
-	App& app = App::instance();
+	Gtk::Menu* node_menu = NULL;
+	xml->get_widget("node_menu", node_menu);
+	xml->get_widget("node_controls_menuitem", _controls_menuitem);
 
-	Gtk::Menu_Helpers::MenuElem controls_elem = Gtk::Menu_Helpers::MenuElem("Controls",
-		sigc::bind(
-			sigc::mem_fun(app.window_factory(), &WindowFactory::present_controls),
+	node_menu->remove(*_controls_menuitem);
+	items().push_front(Gtk::Menu_Helpers::SeparatorElem());
+	insert(*_controls_menuitem, 0);
+}
+
+
+void
+NodeMenu::init(SharedPtr<NodeModel> node)
+{
+	ObjectMenu::init(node);
+			
+	_controls_menuitem->signal_activate().connect(sigc::bind(
+			sigc::mem_fun(App::instance().window_factory(), &WindowFactory::present_controls),
 			node));
-	_controls_menuitem = controls_elem.get_child();
-	items().push_back(controls_elem);
-	
-	items().push_back(Gtk::Menu_Helpers::SeparatorElem());
 
-	items().push_back(Gtk::Menu_Helpers::MenuElem("Rename...",
-		sigc::bind(
-			sigc::mem_fun(app.window_factory(), &WindowFactory::present_rename),
-			node)));
-	
-	/*items().push_back(Gtk::Menu_Helpers::MenuElem("Clone",
-		sigc::bind(
-			sigc::mem_fun(app.engine(), &EngineInterface::clone),
-			node)));*/
-	
-	items().push_back(Gtk::Menu_Helpers::MenuElem("Disconnect All",
-			sigc::mem_fun(this, &NodeMenu::on_menu_disconnect_all)));
-
-	items().push_back(Gtk::Menu_Helpers::MenuElem("Destroy",
-			sigc::mem_fun(this, &NodeMenu::on_menu_destroy)));
-	
-	//m_controls_menuitem->property_sensitive() = false;
-	
-	cerr << "FIXME: MIDI learn menu\n";
-	/*
-	if (_node->plugin() && _node->plugin()->type() == PluginModel::Internal
-			&& _node->plugin()->plug_label() == "midi_control_in") {
-		items().push_back(Gtk::Menu_Helpers::MenuElem("Learn",
-			sigc::mem_fun(this, &NodeMenu::on_menu_learn)));
-	}
-	*/
-	
-	items().push_back(Gtk::Menu_Helpers::SeparatorElem());
-	
-	items().push_back(Gtk::Menu_Helpers::MenuElem("Properties",
-		sigc::bind(
-			sigc::mem_fun(app.window_factory(), &WindowFactory::present_properties),
-			node)));
-	
-	Gtk::Menu_Helpers::CheckMenuElem poly_elem = Gtk::Menu_Helpers::CheckMenuElem(
-			"Polyphonic", sigc::mem_fun(this, &NodeMenu::on_menu_polyphonic));
-	items().push_back(poly_elem);
-	_polyphonic_menuitem = static_cast<Gtk::RadioMenuItem*>(&items().back());
-	_polyphonic_menuitem->set_active(node->polyphonic());
-
-	node->signal_polyphonic.connect(sigc::mem_fun(this, &NodeMenu::polyphonic_changed));
-
-	_enable_signal = true;
-
-	//model->new_port_sig.connect(sigc::mem_fun(this, &NodeMenu::add_port));
-	//model->destroyed_sig.connect(sigc::mem_fun(this, &NodeMenu::destroy));
-}
-
-
-void
-NodeMenu::on_menu_destroy()
-{
-	App::instance().engine()->destroy(_node->path());
-}
-
-
-void
-NodeMenu::on_menu_polyphonic()
-{
-	if (_enable_signal)
-		App::instance().engine()->set_polyphonic(_node->path(), _polyphonic_menuitem->get_active());
-}
-
-
-void
-NodeMenu::polyphonic_changed(bool polyphonic)
-{
-	_enable_signal = false;
-	_polyphonic_menuitem->set_active(polyphonic);
 	_enable_signal = true;
 }
 
@@ -160,21 +99,15 @@ NodeMenu::on_menu_clone()
 void
 NodeMenu::on_menu_learn()
 {
-	App::instance().engine()->midi_learn(_node->path());
-}
-
-void
-NodeMenu::on_menu_disconnect_all()
-{
-	App::instance().engine()->disconnect_all(_node->path());
+	App::instance().engine()->midi_learn(_object->path());
 }
 
 
 bool
 NodeMenu::has_control_inputs()
 {
-	for (PortModelList::const_iterator i = _node->ports().begin();
-			i != _node->ports().end(); ++i)
+	const NodeModel* const nm = (NodeModel*)_object.get();
+	for (PortModelList::const_iterator i = nm->ports().begin(); i != nm->ports().end(); ++i)
 		if ((*i)->is_input() && (*i)->is_control())
 			return true;
 	

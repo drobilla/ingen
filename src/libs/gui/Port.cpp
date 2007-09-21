@@ -24,7 +24,8 @@
 #include "Configuration.hpp"
 #include "App.hpp"
 #include "Port.hpp"
-using std::cerr; using std::endl;
+#include "PortMenu.hpp"
+#include "GladeFactory.hpp"
 
 using namespace Ingen::Client;
 
@@ -34,20 +35,22 @@ namespace GUI {
 
 /** @param flip Make an input port appear as an output port, and vice versa.
  */
-Port::Port(boost::shared_ptr<FlowCanvas::Module> module, SharedPtr<PortModel> pm, bool flip, bool destroyable)
-: FlowCanvas::Port(module,
-		pm->path().name(),
-		flip ? (!pm->is_input()) : pm->is_input(),
-		App::instance().configuration()->get_port_color(pm.get())),
-  _port_model(pm)
+Port::Port(boost::shared_ptr<FlowCanvas::Module> module, SharedPtr<PortModel> pm, bool flip)
+	: FlowCanvas::Port(module,
+			pm->path().name(),
+			flip ? (!pm->is_input()) : pm->is_input(),
+			App::instance().configuration()->get_port_color(pm.get()))
+	, _port_model(pm)
 {
 	assert(module);
 	assert(_port_model);
 
-	if (destroyable)
-		_menu.items().push_back(Gtk::Menu_Helpers::MenuElem("Destroy",
-				sigc::mem_fun(this, &Port::on_menu_destroy)));
-
+	PortMenu* menu = NULL;
+	Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference();
+	xml->get_widget_derived("object_menu", menu);
+	menu->init(pm);
+	set_menu(menu);
+	
 	_port_model->signal_renamed.connect(sigc::mem_fun(this, &Port::renamed));
 
 	if (pm->is_control()) {
@@ -66,13 +69,6 @@ Port::Port(boost::shared_ptr<FlowCanvas::Module> module, SharedPtr<PortModel> pm
 	}
 	
 	control_changed(_port_model->value());
-}
-
-
-void
-Port::on_menu_destroy()
-{
-	App::instance().engine()->destroy(_port_model->path());
 }
 
 

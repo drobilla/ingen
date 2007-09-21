@@ -22,44 +22,29 @@
 #include <gtkmm.h>
 #include <raul/Path.hpp>
 #include <raul/SharedPtr.hpp>
-#include "client/NodeModel.hpp"
+#include "client/PortModel.hpp"
 #include "ObjectMenu.hpp"
 
-using Ingen::Client::NodeModel;
+using Ingen::Client::PortModel;
 
 namespace Ingen {
 namespace GUI {
 
 class Controller;
-class NodeControlWindow;
-class NodePropertiesWindow;
+class PortControlWindow;
+class PortPropertiesWindow;
 class PatchCanvas;
 
-/** Controller for a Node.
+/** Controller for a Port.
  *
  * \ingroup GUI
  */
-class NodeMenu : public ObjectMenu
+class PortMenu : public ObjectMenu
 {
 public:
-	NodeMenu(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml);
+	PortMenu(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml);
 	
-	virtual void program_add(int bank, int program, const std::string& name) {}
-	virtual void program_remove(int bank, int program) {}
-
-	void init(SharedPtr<NodeModel> node);
-
-	bool has_control_inputs();
-	
-protected:
-	
-	virtual void enable_controls_menuitem();
-	virtual void disable_controls_menuitem();
-
-	void on_menu_clone();
-	void on_menu_learn();
-
-	Gtk::MenuItem* _controls_menuitem;
+	void init(SharedPtr<PortModel> port);
 };
 
 
