@@ -608,7 +608,7 @@ NodeFactory::load_ladspa_plugins()
 				for (list<Plugin*>::const_iterator i = _plugins.begin(); i != _plugins.end(); ++i) {
 					if ((*i)->uri() == plugin->uri()) {
 						cerr << "Warning: Duplicate LADSPA plugin " << plugin->uri()
-							<< " found.\nChoosing " << (*i)->lib_path()
+							<< " found.\n         Choosing " << (*i)->lib_path()
 							<< " over " << plugin->lib_path() << endl;
 						found = true;
 						break;

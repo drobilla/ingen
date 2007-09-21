@@ -87,9 +87,10 @@ MidiNoteNode::prepare_poly(uint32_t poly)
 
 	NodeBase::prepare_poly(poly);
 
+	if (_prepared_voices && poly <= _prepared_voices->size())
+		return true;
+
 	_prepared_voices = new Raul::Array<Voice>(poly, *_voices);
-	
-	cerr << path() << " prepared poly " << poly << endl;
 
 	return true;
 }
@@ -113,8 +114,6 @@ MidiNoteNode::apply_poly(Raul::Maid& maid, uint32_t poly)
 	_polyphony = poly;
 	assert(_voices->size() >= _polyphony);
 
-	cerr << path() << " applied poly " << poly << endl;
-	
 	return true;
 }
 
@@ -219,7 +218,8 @@ MidiNoteNode::note_on(uchar note_num, uchar velocity, FrameTime time, SampleCoun
 	assert(voice != NULL);
 	assert(voice == &(*_voices)[voice_num]);
 
-	//cerr << "[MidiNoteNode] Note on @ " << time << ".  Key " << (int)note_num << ", Voice " << voice_num << endl;
+	//cerr << "[MidiNoteNode] Note " << (int)note_num << " on @ " << time
+	//	<< ". Voice " << voice_num << " / " << _polyphony << endl;
 	
 	// Update stolen key, if applicable
 	if (voice->state == Voice::Voice::ACTIVE) {
@@ -300,7 +300,7 @@ MidiNoteNode::note_off(uchar note_num, FrameTime time, SampleCount nframes, Fram
 
 	
 void
-MidiNoteNode::free_voice(size_t voice, FrameTime time, SampleCount nframes, FrameTime start, FrameTime end)
+MidiNoteNode::free_voice(uint32_t voice, FrameTime time, SampleCount nframes, FrameTime start, FrameTime end)
 {
 	assert(time >= start && time <= end);
 	assert(time - start < _buffer_size);

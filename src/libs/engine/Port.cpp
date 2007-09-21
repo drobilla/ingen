@@ -31,7 +31,7 @@ const char* const DataType::type_uris[4] = { "UNKNOWN", "FLOAT", "MIDI", "OSC" }
 
 
 Port::Port(Node* const node, const string& name, uint32_t index, uint32_t poly, DataType type, size_t buffer_size)
-	: GraphObject(node, name)
+	: GraphObject(node, name, true)
 	, _index(index)
 	, _poly(poly)
 	, _type(type)
@@ -44,6 +44,9 @@ Port::Port(Node* const node, const string& name, uint32_t index, uint32_t poly, 
 
 	allocate_buffers();
 	clear_buffers();
+
+	if (node->parent() == NULL)
+		_polyphonic = false;
 
 	assert(_buffers->size() > 0);
 }
@@ -61,6 +64,9 @@ Port::~Port()
 bool
 Port::prepare_poly(uint32_t poly)
 {
+	if (!_polyphonic || !_parent->polyphonic())
+		return true;
+
 	/* FIXME: poly never goes down, harsh on memory.. */
 	if (poly > _poly) {
 		_prepared_buffers = new Raul::Array<Buffer*>(poly, *_buffers);
@@ -76,6 +82,9 @@ Port::prepare_poly(uint32_t poly)
 bool
 Port::apply_poly(Raul::Maid& maid, uint32_t poly)
 {
+	if (!_polyphonic || !_parent->polyphonic())
+		return true;
+
 	assert(poly <= _prepared_poly);
 
 	// Apply a new set of buffers from a preceding call to prepare_poly
@@ -85,6 +94,8 @@ Port::apply_poly(Raul::Maid& maid, uint32_t poly)
 	}
 
 	_poly = poly;
+
+	connect_buffers();
 
 	return true;
 }

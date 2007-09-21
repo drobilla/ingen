@@ -64,6 +64,8 @@ public:
 	inline Buffer* buffer(size_t voice) const;
 	
 	void set_buffer_size(size_t size);
+	void prepare_poly(uint32_t poly);
+	void apply_poly(Raul::Maid& maid, uint32_t poly);
 
 	DataType type() const { return _src_port->type(); }
 
@@ -80,12 +82,13 @@ protected:
 inline Buffer*
 Connection::buffer(size_t voice) const
 {
-	if (_must_mix)
+	if (_must_mix) {
 		return _local_buffer;
-	else if (_src_port->poly() == 1)
+	} else if ( ! _src_port->polyphonic()) {
 		return _src_port->buffer(0);
-	else
+	} else {
 		return _src_port->buffer(voice);
+	}
 }
 
 

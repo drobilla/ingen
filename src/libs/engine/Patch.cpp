@@ -115,6 +115,9 @@ Patch::prepare_internal_poly(uint32_t poly)
 
 	for (Raul::List<Node*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		(*i)->prepare_poly(poly);
+	
+	for (Raul::List<Connection*>::iterator i = _connections.begin(); i != _connections.end(); ++i)
+		(*i)->prepare_poly(poly);
 
 	/* FIXME: Deal with failure */
 
@@ -128,6 +131,9 @@ Patch::apply_internal_poly(Raul::Maid& maid, uint32_t poly)
 	/* TODO: ports?  internal/external poly? */
 
 	for (Raul::List<Node*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
+		(*i)->apply_poly(maid, poly);
+	
+	for (Raul::List<Connection*>::iterator i = _connections.begin(); i != _connections.end(); ++i)
 		(*i)->apply_poly(maid, poly);
 
 	_internal_poly = poly;

@@ -60,7 +60,7 @@ LV2Node::prepare_poly(uint32_t poly)
 
 	NodeBase::prepare_poly(poly);
 
-	if (poly <= _prepared_instances->size())
+	if (_prepared_instances && poly <= _prepared_instances->size())
 		return true;
 	
 	_prepared_instances = new Raul::Array<SLV2Instance>(poly, *_instances);
@@ -70,11 +70,11 @@ LV2Node::prepare_poly(uint32_t poly)
 			cerr << "Failed to instantiate plugin!" << endl;
 			return false;
 		}
+
+		if (_activated)
+			slv2_instance_activate((*_prepared_instances)[i]);
 	}
 	
-	for (uint32_t j=0; j < num_ports(); ++j)
-		_ports->at(j)->prepare_poly(poly);
-
 	return true;
 }
 
@@ -86,23 +86,25 @@ LV2Node::apply_poly(Raul::Maid& maid, uint32_t poly)
 		return true;
 
 	assert(poly <= _prepared_instances->size());
-
-	NodeBase::apply_poly(maid, poly);
 	
 	if (_prepared_instances) {
 		maid.push(_instances);
 		_instances = _prepared_instances;
 
+#if 0
 		for (uint32_t port=0; port < num_ports(); ++port)
-			for (uint32_t voice = _polyphony; voice < _prepared_instances->size(); ++voice)
+			for (uint32_t voice = /*_polyphony*/0; voice < _prepared_instances->size(); ++voice)
 				slv2_instance_connect_port((*_instances)[voice], port,
 						_ports->at(port)->buffer(voice)->raw_data());
+#endif
 	
 		_prepared_instances = NULL;
 	}
 
 	_polyphony = poly;
 	
+	NodeBase::apply_poly(maid, poly);
+
 	return true;
 }
 
@@ -255,13 +257,7 @@ LV2Node::set_port_buffer(uint32_t voice, uint32_t port_num, Buffer* buf)
 {
 	assert(voice < _polyphony);
 	
-	if (buf->type() == DataType::FLOAT) {
-		slv2_instance_connect_port((*_instances)[voice], port_num, ((AudioBuffer*)buf)->data());
-	} else if (buf->type() == DataType::MIDI) { 
-		slv2_instance_connect_port((*_instances)[voice], port_num, ((MidiBuffer*)buf)->data());
-	} else if (buf->type() == DataType::OSC) { 
-		slv2_instance_connect_port((*_instances)[voice], port_num, ((OSCBuffer*)buf)->data());
-	}
+	slv2_instance_connect_port((*_instances)[voice], port_num, buf->raw_data());
 }
 
 

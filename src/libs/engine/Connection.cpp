@@ -16,6 +16,7 @@
  */
 
 #include <algorithm>
+#include <raul/Maid.hpp>
 #include "util.hpp"
 #include "Connection.hpp"
 #include "Node.hpp"
@@ -36,7 +37,10 @@ Connection::Connection(Port* src_port, Port* dst_port)
 	, _dst_port(dst_port)
 	, _local_buffer(NULL)
 	, _buffer_size(dst_port->buffer_size())
-	, _must_mix( (src_port->poly() != dst_port->poly())
+	/*, _must_mix( (src_port->poly() != dst_port->poly())
+			|| (src_port->buffer(0)->size() < dst_port->buffer(0)->size()) )*/
+	, _must_mix( (src_port->polyphonic() && (! dst_port->polyphonic()))
+			|| (src_port->poly() != dst_port->poly() )
 			|| (src_port->buffer(0)->size() < dst_port->buffer(0)->size()) )
 	, _pending_disconnection(false)
 {
@@ -75,6 +79,33 @@ Connection::set_buffer_size(size_t size)
 
 
 void
+Connection::prepare_poly(uint32_t poly)
+{
+	_must_mix = (type() == DataType::FLOAT) && (poly > 1) && (
+			   (_src_port->poly() != _dst_port->poly())
+			|| (_src_port->polyphonic() && !_dst_port->polyphonic())
+			|| (_src_port->parent()->polyphonic() && !_dst_port->parent()->polyphonic()) );
+
+	/*cerr << src_port()->path() << " * " << src_port()->poly()
+			<< " -> " << dst_port()->path() << " * " << dst_port()->poly()
+			<< "\t\tmust mix: " << _must_mix << " at poly " << poly << endl;*/
+
+	if (_must_mix && ! _local_buffer)
+		_local_buffer = BufferFactory::create(_dst_port->type(), _dst_port->buffer(0)->size());
+}
+
+
+void
+Connection::apply_poly(Raul::Maid& maid, uint32_t poly)
+{
+	if (poly == 1 && _local_buffer && !_must_mix) {
+		maid.push(_local_buffer);
+		_local_buffer = NULL;
+	}
+}
+
+
+void
 Connection::process(SampleCount nframes, FrameTime start, FrameTime end)
 {
 	// FIXME: nframes parameter not used
@@ -97,8 +128,8 @@ Connection::process(SampleCount nframes, FrameTime start, FrameTime end)
 
 		const size_t copy_size = std::min(src_buffer->size(), mix_buf->size());
 
-		//cerr << "Mixing " << src_port()->buffer(0)->data()
-		//	<< " -> " << _local_buffer->data() << endl;
+		/*cerr << "[Connection] Mixing " << src_port()->path() << " * " << src_port()->poly()
+			<< " -> " << dst_port()->path() << " * " << dst_port()->poly() << endl;*/
 
 		// Copy src buffer to start of mix buffer
 		mix_buf->copy((AudioBuffer*)src_port()->buffer(0), 0, copy_size-1);

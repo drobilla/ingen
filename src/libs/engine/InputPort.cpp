@@ -48,32 +48,22 @@ InputPort::add_connection(Raul::ListNode<Connection*>* const c)
 	_connections.push_back(c);
 
 	bool modify_buffers = !_fixed_buffers;
-	//if (modify_buffers && _is_tied)
-	//	modify_buffers = !_tied_port->fixed_buffers();
 	
 	if (modify_buffers) {
 		if (_connections.size() == 1) {
 			// Use buffer directly to avoid copying
 			for (uint32_t i=0; i < _poly; ++i) {
 				_buffers->at(i)->join(c->elem()->buffer(i));
-				//if (_is_tied)
-				//	_tied_port->buffer(i)->join(_buffers->at(i));
-				//assert(_buffers->at(i)->data() == c->elem()->buffer(i)->data());
 			}
 		} else if (_connections.size() == 2) {
 			// Used to directly use single connection buffer, now there's two
 			// so have to use local ones again and mix down
 			for (uint32_t i=0; i < _poly; ++i) {
 				_buffers->at(i)->unjoin();
-				//if (_is_tied)
-				//	_tied_port->buffer(i)->join(_buffers->at(i));
 			}
 		}
 		Port::connect_buffers();
 	}
-		
-	//assert( ! _is_tied || _tied_port != NULL);
-	//assert( ! _is_tied || _buffers->at(0)->data() == _tied_port->buffer(0)->data());
 }
 
 
@@ -83,8 +73,6 @@ Raul::ListNode<Connection*>*
 InputPort::remove_connection(const OutputPort* src_port)
 {
 	bool modify_buffers = !_fixed_buffers;
-	//if (modify_buffers && _is_tied)
-	//	modify_buffers = !_tied_port->fixed_buffers();
 	
 	bool found = false;
 	Raul::ListNode<Connection*>* connection = NULL;
@@ -105,24 +93,17 @@ InputPort::remove_connection(const OutputPort* src_port)
 				if (modify_buffers)
 					_buffers->at(i)->unjoin();
 				_buffers->at(i)->clear(); // Write silence
-				//if (_is_tied)
-					//m_tied_port->buffer(i)->join(_buffers->at(i));
 			}
 		} else if (modify_buffers && _connections.size() == 1) {
 			// Share a buffer
 			for (uint32_t i=0; i < _poly; ++i) {
 				_buffers->at(i)->join((*_connections.begin())->buffer(i));
-				//if (_is_tied)
-				//	_tied_port->buffer(i)->join(_buffers->at(i));
 			}
 		}	
 	}
 
 	if (modify_buffers)
 		Port::connect_buffers();
-
-	//assert( ! _is_tied || _tied_port != NULL);
-	//assert( ! _is_tied || _buffers->at(0)->data() == _tied_port->buffer(0)->data());
 
 	return connection;
 }
@@ -147,8 +128,6 @@ InputPort::is_connected_to(const OutputPort* port) const
 void
 InputPort::pre_process(SampleCount nframes, FrameTime start, FrameTime end)
 {
-	//assert(!_is_tied || _tied_port != NULL);
-
 	bool do_mixdown = true;
 	
 	if (_connections.size() == 0) {
@@ -160,25 +139,17 @@ InputPort::pre_process(SampleCount nframes, FrameTime start, FrameTime end)
 	for (Connections::iterator c = _connections.begin(); c != _connections.end(); ++c)
 		(*c)->process(nframes, start, end);
 
-	// If only one connection, buffer is (maybe) used directly (no copying)
-	if (_connections.size() == 1) {
-		// Buffer changed since connection
-		if (!_buffers->at(0)->is_joined_to((*_connections.begin())->buffer(0))) {
-			if (_fixed_buffers) { // || (_is_tied && _tied_port->fixed_buffers())) {
-				// can't change buffer, must copy
-				do_mixdown = true;
-			} else {
-				// zero-copy
-				_buffers->at(0)->join((*_connections.begin())->buffer(0));
-				do_mixdown = false;
-			}
-			connect_buffers();
-		} else {
+	if ( ! _fixed_buffers) {
+		// If only one connection, try to use buffer directly (zero copy)
+		if (_connections.size() == 1) {
+			for (uint32_t i=0; i < _poly; ++i)
+				_buffers->at(i)->join((*_connections.begin())->buffer(i));
 			do_mixdown = false;
 		}
+		connect_buffers();
+	} else {
+		do_mixdown = true;
 	}
-
-	//cerr << path() << " mixing: " << do_mixdown << endl;
 
 	for (uint32_t i=0; i < _poly; ++i)
 		_buffers->at(i)->prepare_read(nframes);
@@ -186,12 +157,12 @@ InputPort::pre_process(SampleCount nframes, FrameTime start, FrameTime end)
 	//cerr << path() << " poly = " << _poly << ", mixdown: " << do_mixdown << endl;
 
 	if (!do_mixdown) {
-		assert(_buffers->at(0)->is_joined_to((*_connections.begin())->buffer(0)));
+#ifndef NDEBUG
+		for (uint32_t i=0; i < _poly; ++i)
+			assert(_buffers->at(i)->is_joined_to((*_connections.begin())->buffer(i)));
+#endif
 		return;
 	}
-
-	/*assert(!_is_tied || _tied_port != NULL);
-	assert(!_is_tied || _buffers->at(0)->data() == _tied_port->buffer(0)->data());*/
 
 	if (_type == DataType::FLOAT) {
 		for (uint32_t voice=0; voice < _poly; ++voice) {

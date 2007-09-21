@@ -21,13 +21,14 @@
 #include <cstddef>
 #include <cassert>
 #include <boost/utility.hpp>
+#include <raul/Deletable.hpp>
 #include "types.hpp"
 #include "DataType.hpp"
 
 namespace Ingen {
 
 	
-class Buffer : public boost::noncopyable
+class Buffer : public boost::noncopyable, public Raul::Deletable
 {
 public:
 	Buffer(DataType type, size_t size)
@@ -35,8 +36,6 @@ public:
 		, _size(size)
 	{}
 
-	virtual ~Buffer() {}
-	
 	/** Clear contents and reset state */
 	virtual void clear() = 0;
 	

@@ -59,7 +59,7 @@ private:
 	struct Key {
 		enum State { OFF, ON_ASSIGNED, ON_UNASSIGNED };
 		Key() : state(OFF), voice(0), time(0) {}
-		State state; size_t voice; SampleCount time;
+		State state; uint32_t voice; SampleCount time;
 	};
 
 	/** Voice, one of these always exists for each voice */
@@ -70,7 +70,7 @@ private:
 	};
 
 	float note_to_freq(int num);
-	void free_voice(size_t voice, FrameTime time, SampleCount nframes, FrameTime start, FrameTime end);
+	void free_voice(uint32_t voice, FrameTime time, SampleCount nframes, FrameTime start, FrameTime end);
 
 	Raul::Array<Voice>* _voices;
 	Raul::Array<Voice>* _prepared_voices;
