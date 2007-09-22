@@ -3168,5 +3168,21 @@ Thank you for contributing.</property>
         </child>
       </widget>
     </child>
+    <child>
+      <widget class="GtkImageMenuItem" id="node_gui_menuitem">
+        <property name="visible">True</property>
+        <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+        <property name="tooltip" translatable="yes">Show this node's custom graphical interface</property>
+        <property name="label" translatable="yes">GUI</property>
+        <property name="use_underline">True</property>
+        <child internal-child="image">
+          <widget class="GtkImage" id="menu-item-image22">
+            <property name="visible">True</property>
+            <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+            <property name="stock">gtk-edit</property>
+          </widget>
+        </child>
+      </widget>
+    </child>
   </widget>
 </glade-interface>

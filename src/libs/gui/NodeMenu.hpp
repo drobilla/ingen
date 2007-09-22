@@ -55,11 +55,13 @@ protected:
 	
 	virtual void enable_controls_menuitem();
 	virtual void disable_controls_menuitem();
+	void show_gui();
 
 	void on_menu_clone();
 	void on_menu_learn();
 
 	Gtk::MenuItem* _controls_menuitem;
+	Gtk::MenuItem* _gui_menuitem;
 };
 
 

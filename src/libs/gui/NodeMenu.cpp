@@ -37,10 +37,13 @@ NodeMenu::NodeMenu(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml
 	Gtk::Menu* node_menu = NULL;
 	xml->get_widget("node_menu", node_menu);
 	xml->get_widget("node_controls_menuitem", _controls_menuitem);
+	xml->get_widget("node_gui_menuitem", _gui_menuitem);
 
 	node_menu->remove(*_controls_menuitem);
+	node_menu->remove(*_gui_menuitem);
 	items().push_front(Gtk::Menu_Helpers::SeparatorElem());
 	insert(*_controls_menuitem, 0);
+	insert(*_gui_menuitem, 0);
 }
 
 
@@ -52,8 +55,20 @@ NodeMenu::init(SharedPtr<NodeModel> node)
 	_controls_menuitem->signal_activate().connect(sigc::bind(
 			sigc::mem_fun(App::instance().window_factory(), &WindowFactory::present_controls),
 			node));
+	
+	if (node->plugin()->ui())
+		_gui_menuitem->signal_activate().connect(sigc::mem_fun(this, &NodeMenu::show_gui));
+	//else
+	//	_gui_menuitem->hide();
 
 	_enable_signal = true;
+}
+
+
+void
+NodeMenu::show_gui()
+{
+	cerr << "SHOW GUI" << endl;
 }
 
 

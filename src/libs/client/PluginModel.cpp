@@ -52,34 +52,84 @@ PluginModel::default_node_name(SharedPtr<PatchModel> parent)
 	return name;
 }
 
-#ifdef HAVE_SLV2
-void*
-PluginModel::gui()
+
+void
+lv2_ui_write(LV2UI_Controller controller,
+              uint32_t         port,
+              uint32_t         buffer_size,
+              const void*      buffer)
 {
-	assert(_type == LV2);
+	cerr << "********* LV2 UI WRITE" << endl;
+}
+
+
+void
+lv2_ui_command(LV2UI_Controller   controller,
+                uint32_t           argc,
+                const char* const* argv)
+{
+	cerr << "********* LV2 UI COMMAND" << endl;
+}
+
 	
+void
+lv2_ui_program_change(LV2UI_Controller controller,
+                       unsigned char    program)
+{
+	cerr << "********* LV2 UI PROGRAM CHANGE" << endl;
+}
+
+	
+void
+lv2_ui_program_save(LV2UI_Controller controller,
+                     unsigned char    program,
+                     const char*      name)
+{
+	cerr << "********* LV2 UI PROGRAM SAVE" << endl;
+}
+
+	
+#ifdef HAVE_SLV2
+SLV2UIInstance
+PluginModel::ui()
+{
+	if (_type != LV2)
+		return NULL;
+
 	Glib::Mutex::Lock(_rdf_world->mutex());
 	
-	SLV2Values gui = slv2_plugin_get_guis(_slv2_plugin);
-	if (slv2_values_size(gui) > 0) {
-		printf("\tGUI:\n");
-		for (unsigned i=0; i < slv2_values_size(gui); ++i) {
-			printf("\t\t%s\n", slv2_value_as_uri(slv2_values_get_at(gui, i)));
-			
-			SLV2Value binary = slv2_plugin_get_gui_library_uri(_slv2_plugin, slv2_values_get_at(gui, i));
-			
-			printf("\t\t\tType: %s\n", slv2_gui_type_get_uri(slv2_value_as_gui_type(
-						slv2_values_get_at(gui, i))));
-	
+	SLV2UIInstance ret = NULL;
+
+	SLV2Values ui = slv2_plugin_get_uis(_slv2_plugin);
+	if (slv2_values_size(ui) > 0) {
+		printf("\tUIs:\n");
+		for (unsigned i=0; i < slv2_values_size(ui); ++i) {
+			printf("\t\t%s\n", slv2_value_as_uri(slv2_values_get_at(ui, i)));
+
+			SLV2Value binary = slv2_plugin_get_ui_library_uri(_slv2_plugin, slv2_values_get_at(ui, i));
+
+			printf("\t\t\tType: %s\n", slv2_ui_type_get_uri(slv2_value_as_ui_type(
+							slv2_values_get_at(ui, i))));
+
 			if (binary)
-			  printf("\t\t\tBinary: %s\n", slv2_value_as_uri(binary));
-			
+				printf("\t\t\tBinary: %s\n", slv2_value_as_uri(binary));
+
 			slv2_value_free(binary);
 		}
+	
+		if (slv2_values_size(ui) > 1)
+			printf("WARNING:  Multiple UIs found, using the first...");
+		
+		ret = slv2_plugin_ui_instantiate(_slv2_plugin,
+				slv2_values_get_at(ui, 0),
+				lv2_ui_write, lv2_ui_command,
+				lv2_ui_program_change, lv2_ui_program_save,
+				NULL, NULL);
 	}
-	slv2_values_free(gui);
 
-	return NULL;
+	slv2_values_free(ui);
+
+	return ret;
 }
 
 #endif

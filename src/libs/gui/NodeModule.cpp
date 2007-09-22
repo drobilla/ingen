@@ -51,9 +51,7 @@ NodeModule::NodeModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeMode
 	node->signal_metadata.connect(sigc::mem_fun(this, &NodeModule::set_metadata));
 	node->signal_polyphonic.connect(sigc::mem_fun(this, &NodeModule::set_stacked_border));
 	node->signal_renamed.connect(sigc::mem_fun(this, &NodeModule::rename));
-
-	signal_clicked.connect(sigc::mem_fun(this, &NodeModule::on_click));
-
+	
 	set_stacked_border(node->polyphonic());
 }
 
@@ -123,15 +121,31 @@ NodeModule::show_control_window()
 {
 #ifdef HAVE_SLV2
 	if (_node->plugin()->type() == PluginModel::LV2) {
-		GtkWidget* gui = (GtkWidget*)_node->plugin()->gui();
-		if (gui) {
-			cerr << "GUI!\n";
+		// FIXME: check type
+
+		SLV2UIInstance ui = _node->plugin()->ui();
+		if (ui) {
+			cerr << "Showing LV2 GUI" << endl;
+			// FIXME: leak
+			GtkWidget* c_widget = (GtkWidget*)slv2_ui_instance_get_widget(_node->plugin()->ui());
+			Gtk::Window* win = new Gtk::Window();
+			Gtk::Widget* widget = Glib::wrap(c_widget);
+			win->add(*widget);
+			widget->show_all();
+			win->show_all();
+			win->present();
+			widget->show_all();
+			win->show_all();
 		} else {
-			cerr << "No gui :(\n";
+			cerr << "No LV2 GUI, showing builtin controls" << endl;
+			App::instance().window_factory()->present_controls(_node);
 		}
+	} else {
+		App::instance().window_factory()->present_controls(_node);
 	}
-#endif
+#else
 	App::instance().window_factory()->present_controls(_node);
+#endif
 }
 
 

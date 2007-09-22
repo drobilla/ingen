@@ -107,7 +107,7 @@ public:
 		_slv2_plugins = slv2_world_get_all_plugins(_slv2_world);
 	}
 
-	void* gui();
+	SLV2UIInstance ui();
 #endif
 
 	static void set_rdf_world(Raul::RDF::World& world) {
