@@ -35,19 +35,33 @@ class Port;
 class SetPortValueQueuedEvent : public QueuedEvent
 {
 public:
-	SetPortValueQueuedEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& port_path, Sample val);
-	SetPortValueQueuedEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, size_t voice_num, const string& port_path, Sample val);
-
+	SetPortValueQueuedEvent(Engine&              engine,
+	                        SharedPtr<Responder> responder,
+	                        SampleCount          timestamp,
+	                        const string&        port_path,
+	                        uint32_t             data_size,
+	                        const void*          data);
+	
+	SetPortValueQueuedEvent(Engine&              engine,
+	                        SharedPtr<Responder> responder,
+	                        SampleCount          timestamp,
+	                        uint32_t             voice_num,
+	                        const string&        port_path,
+	                        uint32_t             data_size,
+	                        const void*          data);
+	
 	void pre_process();
 	void execute(SampleCount nframes, FrameTime start, FrameTime end);
 	void post_process();
 
 private:
-	enum ErrorType { NO_ERROR, PORT_NOT_FOUND, TYPE_MISMATCH };
+	enum ErrorType { NO_ERROR, PORT_NOT_FOUND, NO_SPACE };
 	
-	int       _voice_num;
+	bool      _omni;
+	uint32_t  _voice_num;
 	string    _port_path;
-	float     _val;
+	uint32_t  _data_size;
+	void*     _data;
 	Port*     _port;
 	ErrorType _error;
 };

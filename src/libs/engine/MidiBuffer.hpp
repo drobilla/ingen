@@ -57,18 +57,21 @@ public:
 	inline void rewind() const { _position = 0; }
 	inline void clear() { if (_joined_buf) reset(_this_nframes); }
 	inline void reset(SampleCount nframes) {
+		_latest_stamp = 0;
 		_position = 0;
 		_buf->event_count = 0;
 		_buf->size = 0;
 	}
 
 	double increment() const;
+	double latest_stamp() const { return _latest_stamp; }
  
 	double get_event(double* timestamp, uint32_t* size, unsigned char** data) const;
 
 	bool append(double timestamp, uint32_t size, const unsigned char* data);
 
 private:
+	double           _latest_stamp; ///< Highest timestamp of all events
 	uint32_t         _this_nframes; ///< Current cycle nframes
 	mutable uint32_t _position; ///< Index into _buf
 	MidiBuffer*      _joined_buf;  ///< Buffer to mirror, if joined

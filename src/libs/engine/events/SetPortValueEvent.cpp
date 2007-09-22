@@ -15,6 +15,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <sstream>
 #include "Responder.hpp"
 #include "SetPortValueEvent.hpp"
 #include "Engine.hpp"
@@ -23,31 +24,57 @@
 #include "Node.hpp"
 #include "ObjectStore.hpp"
 #include "AudioBuffer.hpp"
+#include "MidiBuffer.hpp"
+
+using namespace std;
 
 namespace Ingen {
 
 
-/** Voice-specific control setting
- */
-SetPortValueEvent::SetPortValueEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, size_t voice_num, const string& port_path, Sample val)
+/** Omni (all voices) control setting */
+SetPortValueEvent::SetPortValueEvent(Engine&              engine,
+                                 SharedPtr<Responder> responder,
+                                 SampleCount          timestamp,
+                                 const string&        port_path,
+                                 uint32_t             data_size,
+                                 const void*          data)
 : Event(engine, responder, timestamp),
-  _voice_num(voice_num),
+  _omni(true),
+  _voice_num(0),
   _port_path(port_path),
-  _val(val),
+  _data_size(data_size),
+  _data(malloc(data_size)),
   _port(NULL),
   _error(NO_ERROR)
 {
+	memcpy(_data, data, data_size);
 }
 
 
-SetPortValueEvent::SetPortValueEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& port_path, Sample val)
+/** Voice-specific control setting */
+SetPortValueEvent::SetPortValueEvent(Engine&              engine,
+                                 SharedPtr<Responder> responder,
+                                 SampleCount          timestamp,
+                                 uint32_t             voice_num,
+                                 const string&        port_path,
+                                 uint32_t             data_size,
+                                 const void*          data)
 : Event(engine, responder, timestamp),
-  _voice_num(-1),
+  _omni(false),
+  _voice_num(voice_num),
   _port_path(port_path),
-  _val(val),
+  _data_size(data_size),
+  _data(malloc(data_size)),
   _port(NULL),
   _error(NO_ERROR)
 {
+	memcpy(_data, data, data_size);
+}
+
+
+SetPortValueEvent::~SetPortValueEvent()
+{
+	free(_data);
 }
 
 
@@ -62,16 +89,28 @@ SetPortValueEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 
 	if (_port == NULL) {
 		_error = PORT_NOT_FOUND;
-	} else if (!(_port->type() == DataType::FLOAT)) {
-		_error = TYPE_MISMATCH;
+/*	} else if (_port->buffer(0)->size() < _data_size) {
+		_error = NO_SPACE;*/
 	} else {
-		AudioBuffer* const buf = (AudioBuffer*)_port->buffer(0);
-		const size_t offset = (buf->size() == 1) ? 0 : _time - start;
-		if (_voice_num == -1)
-			for (uint32_t i=0; i < _port->poly(); ++i)
-				((AudioBuffer*)_port->buffer(i))->set(_val, offset);
-		else
-			((AudioBuffer*)_port->buffer(_voice_num))->set(_val, offset);
+		Buffer* const buf = _port->buffer(0);
+		AudioBuffer* const abuf = dynamic_cast<AudioBuffer*>(buf);
+		if (abuf) {
+			const size_t offset = (buf->size() == 1) ? 0 : _time - start;
+
+			if (_omni)
+				for (uint32_t i=0; i < _port->poly(); ++i)
+					((AudioBuffer*)_port->buffer(i))->set(*(float*)_data, offset);
+			else
+				((AudioBuffer*)_port->buffer(_voice_num))->set(*(float*)_data, offset);
+
+			return;
+		}
+		
+		MidiBuffer* const mbuf = dynamic_cast<MidiBuffer*>(buf);
+		if (mbuf) {
+			const double stamp = std::max((double)_time, mbuf->latest_stamp());
+			mbuf->append(stamp, _data_size, (const unsigned char*)_data);
+		}
 	}
 }
 
@@ -83,17 +122,18 @@ SetPortValueEvent::post_process()
 		assert(_port != NULL);
 		
 		_responder->respond_ok();
-		_engine.broadcaster()->send_control_change(_port_path, _val);
+		_engine.broadcaster()->send_control_change(_port_path, *(float*)_data);
 		
 	} else if (_error == PORT_NOT_FOUND) {
 		string msg = "Unable to find port ";
 		msg.append(_port_path).append(" for set_port_value");
 		_responder->respond_error(msg);
 	
-	} else if (_error == TYPE_MISMATCH) {
-		string msg = "Attempt to set ";
-		msg.append(_port_path).append(" to incompatible type");
-		_responder->respond_error(msg);
+	} else if (_error == NO_SPACE) {
+		std::ostringstream msg("Attempt to write ");
+		msg << _data_size << " bytes to " << _port_path << ", with capacity "
+			<< _port->buffer_size() << endl;
+		_responder->respond_error(msg.str());
 	}
 }
 

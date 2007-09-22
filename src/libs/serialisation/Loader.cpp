@@ -205,7 +205,7 @@ Loader::load(SharedPtr<EngineInterface> engine,
 
 		const Path port_path = patch_path.base() + node_name +"/"+ port_name;
 
-		engine->set_port_value(port_path, val);
+		engine->set_port_value(port_path, sizeof(float), &val);
 	}
 
 
@@ -240,8 +240,10 @@ Loader::load(SharedPtr<EngineInterface> engine,
 		}
 
 		RDF::Node val_node = (*i)["portval"];
-		if (val_node.is_float())
-			engine->set_port_value(patch_path.base() + name, val_node.to_float());
+		if (val_node.is_float()) {
+			const float val = val_node.to_float();
+			engine->set_port_value(patch_path.base() + name, sizeof(float), &val);
+		}
 
 		string floatkey = rdf_world->qualify((*i)["floatkey"].to_string());
 		val_node = (*i)["floatval"];

@@ -237,11 +237,11 @@ ControlPanel::value_changed(SharedPtr<PortModel> port, float val)
 		 * setting right away (so the value doesn't need to be echoed back) */
 	
 		if (_all_voices_radio->get_active()) {
-			App::instance().engine()->set_port_value(port->path(), val);
+			App::instance().engine()->set_port_value_immediate(port->path(), sizeof(float), &val);
 			port->value(val);
 		} else {
 			int voice = _voice_spinbutton->get_value_as_int();
-			App::instance().engine()->set_port_value(port->path(), voice, val);
+			App::instance().engine()->set_port_value_immediate(port->path(), voice, sizeof(float), &val);
 			port->value(val);
 		}
 

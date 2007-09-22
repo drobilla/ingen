@@ -55,11 +55,16 @@ PluginModel::default_node_name(SharedPtr<PatchModel> parent)
 
 void
 lv2_ui_write(LV2UI_Controller controller,
-              uint32_t         port,
-              uint32_t         buffer_size,
-              const void*      buffer)
+              uint32_t        port,
+              uint32_t        buffer_size,
+              const void*     buffer)
 {
-	cerr << "********* LV2 UI WRITE" << endl;
+	cerr << "********* LV2 UI WRITE port " << port << ", size "
+		<< buffer_size << endl;
+	for (uint32_t i=0; i < buffer_size; ++i) {
+		fprintf(stderr, "( %X )", *((uint8_t*)buffer + i));
+	}
+	fprintf(stderr, "\n");
 }
 
 

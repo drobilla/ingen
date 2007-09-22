@@ -16,9 +16,10 @@
  */
 
 #include <iostream>
-#include "OSCEngineSender.hpp"
 #include <raul/AtomLiblo.hpp>
-using std::cout; using std::cerr; using std::endl;
+#include "OSCEngineSender.hpp"
+
+using namespace std;
 
 namespace Ingen {
 namespace Client {
@@ -350,39 +351,61 @@ OSCEngineSender::disconnect_all(const string& node_path)
 
 void
 OSCEngineSender::set_port_value(const string& port_path,
-                                float         val)
+                                uint32_t      data_size,
+                                const void*   data)
 {
 	assert(_engine_addr);
+	assert(data_size == 4);
 	lo_send(_engine_addr, "/ingen/set_port_value", "isf",
 		next_id(),
 		port_path.c_str(),
-		val);
+		*(float*)data);
 }
 
 
 void
 OSCEngineSender::set_port_value(const string& port_path,
                                 uint32_t      voice,
-                                float         val)
+                                uint32_t      data_size,
+                                const void*   data)
 {
 	assert(_engine_addr);
+	assert(data_size == 4);
 	lo_send(_engine_addr, "/ingen/set_port_value", "isif",
 		next_id(),
 		port_path.c_str(),
 		voice,
-		val);
+		*(float*)data);
 }
 
 
 void
-OSCEngineSender::set_port_value_queued(const string& port_path,
-                                       float         val)
+OSCEngineSender::set_port_value_immediate(const string& port_path,
+                                          uint32_t      data_size,
+                                          const void*   data)
 {
 	assert(_engine_addr);
-	lo_send(_engine_addr, "/ingen/set_port_value_queued", "isf",
+	assert(data_size == 4);
+	lo_send(_engine_addr, "/ingen/set_port_value_immediate", "isf",
 		next_id(),
 		port_path.c_str(),
-		val);
+		*(float*)data);
+}
+
+
+void
+OSCEngineSender::set_port_value_immediate(const string& port_path,
+                                          uint32_t      voice,
+                                          uint32_t      data_size,
+                                          const void*   data)
+{
+	assert(_engine_addr);
+	assert(data_size == 4);
+	lo_send(_engine_addr, "/ingen/set_port_value_immediate", "isif",
+		next_id(),
+		port_path.c_str(),
+		voice,
+		*(float*)data);
 }
 
 

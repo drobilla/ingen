@@ -112,14 +112,22 @@ public:
 	void disconnect_all(const string& node_path);
 
 	void set_port_value(const string& port_path,
-	                    float         val);
+	                    uint32_t      data_size,
+	                    const void*   data);
 
 	void set_port_value(const string& port_path,
 	                    uint32_t      voice,
-	                    float         val);
-
-	void set_port_value_queued(const string& port_path,
-	                           float         val);
+	                    uint32_t      data_size,
+	                    const void*   data);
+	
+	void set_port_value_immediate(const string& port_path,
+	                              uint32_t      data_size,
+	                              const void*   data);
+	
+	void set_port_value_immediate(const string& port_path,
+	                              uint32_t      voice,
+	                              uint32_t      data_size,
+	                              const void*   data);
 
 	void set_program(const string& node_path,
 	                 uint32_t      bank,

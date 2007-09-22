@@ -30,6 +30,7 @@ namespace Ingen {
  */
 MidiBuffer::MidiBuffer(size_t capacity)
 	: Buffer(DataType(DataType::MIDI), capacity)
+	, _latest_stamp(0)
 	, _joined_buf(NULL)
 {
 	if (capacity > UINT32_MAX) {
@@ -167,7 +168,7 @@ MidiBuffer::increment() const
 
 /** Append a MIDI event to the buffer.
  *
- * \a timestamp must be > the latest event in the buffer,
+ * \a timestamp must be >= the latest event in the buffer,
  * and < this_nframes()
  *
  * \return true on success
@@ -182,6 +183,7 @@ MidiBuffer::append(double               timestamp,
 	
 	assert(size > 0);
 	assert(data[0] >= 0x80);
+	assert(timestamp >= _latest_stamp);
 
 	*(double*)(_buf->data + _buf->size) = timestamp;
 	_buf->size += sizeof(double);
@@ -191,6 +193,7 @@ MidiBuffer::append(double               timestamp,
 	_buf->size += size;
 
 	++_buf->event_count;
+	_latest_stamp = timestamp;
 
 	return true;
 }

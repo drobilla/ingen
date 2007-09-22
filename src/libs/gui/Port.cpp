@@ -90,7 +90,7 @@ void
 Port::set_control(float value, bool signal)
 {
 	if (signal)
-		App::instance().engine()->set_port_value(_port_model->path(), value);
+		App::instance().engine()->set_port_value_immediate(_port_model->path(), sizeof(float), &value);
 	FlowCanvas::Port::set_control(value);
 }
 

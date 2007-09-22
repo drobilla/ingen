@@ -98,7 +98,8 @@ OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t
 	lo_server_add_method(_server, "/ingen/disconnect_all", "is", disconnect_all_cb, this);
 	lo_server_add_method(_server, "/ingen/set_port_value", "isf", set_port_value_cb, this);
 	lo_server_add_method(_server, "/ingen/set_port_value", "isif", set_port_value_voice_cb, this);
-	lo_server_add_method(_server, "/ingen/set_port_value_queued", "isf", set_port_value_slow_cb, this);
+	lo_server_add_method(_server, "/ingen/set_port_value_immediate", "isf", set_port_value_immediate_cb, this);
+	lo_server_add_method(_server, "/ingen/set_port_value_immediate", "isif", set_port_value_immediate_voice_cb, this);
 	lo_server_add_method(_server, "/ingen/note_on", "isii", note_on_cb, this);
 	lo_server_add_method(_server, "/ingen/note_off", "isi", note_off_cb, this);
 	lo_server_add_method(_server, "/ingen/all_notes_off", "isi", all_notes_off_cb, this);
@@ -605,10 +606,56 @@ OSCEngineReceiver::_disconnect_all_cb(const char* path, const char* types, lo_ar
 
 
 /** \page engine_osc_namespace
- * <p> \b /ingen/set_port_value - Sets the value of a port for all voices (both AR and CR)
+ * <p> \b /ingen/set_port_value_immediate - Sets the value of a port for all voices (both AR and CR)
+ * \arg \b response-id (integer)
+ * \arg \b port-path (string) - Name of port
+ * \arg \b value (float) - Value to set port to </p> \n \n
+ */
+int
+OSCEngineReceiver::_set_port_value_immediate_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+{
+	const char* port_path   = &argv[1]->s;
+	const float value       =  argv[2]->f;
+
+	set_port_value_immediate(port_path, sizeof(float), &value);
+	return 0;
+}
+
+
+/** \page engine_osc_namespace
+ * <p> \b /ingen/set_port_value_immediate - Sets the value of a port for a specific voice (both AR and CR)
+ * \arg \b response-id (integer)
+ * \arg \b port-path (string) - Name of port
+ * \arg \b voice (integer) - Voice to set port value for
+ * \arg \b value (float) - Value to set port to </p> \n \n
+ *
+ * See documentation for set_port_value for the distinction between these two messages.
+ */
+int
+OSCEngineReceiver::_set_port_value_immediate_voice_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+{
+	const char*   port_path   = &argv[1]->s;
+	const int32_t voice       =  argv[2]->i;
+	const float   value       =  argv[3]->f;
+
+	set_port_value_immediate(port_path, voice, sizeof(float), &value);
+	return 0;
+}
+
+
+/** \page engine_osc_namespace
+ * <p> \b /ingen/set_port_value - Sets the value of a port for all voices (as a QueuedEvent)
  * \arg \b response-id (integer)
  * \arg \b port-path (string) - Name of port
  * \arg \b value (float) - Value to set port to
+ *
+ * \li This is the queued way to set a port value (it is in the same threading class as e.g.
+ * node creation).  This way the client can stream a sequence of events which depend on each
+ * other (e.g. a node creation followed by several set_port_value messages to set the node's
+ * controls) without needing to wait on a response to the first (node creation) message.
+ *
+ * There is also a fast "immediate" version of this message, set_port_value_immediate, which
+ * does not have this ordering guarantee.</p> \n \n
  */
 int
 OSCEngineReceiver::_set_port_value_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -616,17 +663,24 @@ OSCEngineReceiver::_set_port_value_cb(const char* path, const char* types, lo_ar
 	const char* port_path   = &argv[1]->s;
 	const float value       =  argv[2]->f;
 
-	set_port_value(port_path, value);
+	set_port_value(port_path, sizeof(float), &value);
 	return 0;
 }
 
 
 /** \page engine_osc_namespace
- * <p> \b /ingen/set_port_value - Sets the value of a port for a specific voice (both AR and CR)
+ * <p> \b /ingen/set_port_value - Sets the value of a port for all voices (as a QueuedEvent)
  * \arg \b response-id (integer)
  * \arg \b port-path (string) - Name of port
- * \arg \b voice (integer) - Voice to set port value for
  * \arg \b value (float) - Value to set port to
+ *
+ * \li This is the queued way to set a port value (it is in the same threading class as e.g.
+ * node creation).  This way the client can stream a sequence of events which depend on each
+ * other (e.g. a node creation followed by several set_port_value messages to set the node's
+ * controls) without needing to wait on a response to the first (node creation) message.
+ *
+ * There is also a fast "immediate" version of this message, set_port_value_immediate, which
+ * does not have this ordering guarantee.</p> \n \n
  */
 int
 OSCEngineReceiver::_set_port_value_voice_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -635,28 +689,7 @@ OSCEngineReceiver::_set_port_value_voice_cb(const char* path, const char* types,
 	const int32_t voice       =  argv[2]->i;
 	const float   value       =  argv[3]->f;
 
-	set_port_value(port_path, voice, value);
-	return 0;
-}
-
-
-/** \page engine_osc_namespace
- * <p> \b /ingen/set_port_value_queued - Sets the value of a port for all voices (as a QueuedEvent)
- * \arg \b response-id (integer)
- * \arg \b port-path (string) - Name of port
- * \arg \b value (float) - Value to set port to
- *
- * \li This version exists so you can send it immediately after a QueuedEvent it may depend on (ie a
- * node creation) and be sure it happens after the event (a normal set_port_value could beat the
- * queued event and arrive out of order). </p> \n \n
- */
-int
-OSCEngineReceiver::_set_port_value_slow_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
-{
-	const char* port_path   = &argv[1]->s;
-	const float value       =  argv[2]->f;
-
-	set_port_value_queued(port_path, value);
+	set_port_value(port_path, voice, sizeof(float), &value);
 	return 0;
 }
 

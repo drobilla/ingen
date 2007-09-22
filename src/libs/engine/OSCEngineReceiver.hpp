@@ -100,7 +100,8 @@ private:
 	LO_HANDLER(disconnect_all);
 	LO_HANDLER(set_port_value);
 	LO_HANDLER(set_port_value_voice);
-	LO_HANDLER(set_port_value_slow);
+	LO_HANDLER(set_port_value_immediate);
+	LO_HANDLER(set_port_value_immediate_voice);
 	LO_HANDLER(note_on);
 	LO_HANDLER(note_off);
 	LO_HANDLER(all_notes_off);

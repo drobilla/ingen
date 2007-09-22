@@ -233,26 +233,39 @@ QueuedEngineInterface::disconnect_all(const string& node_path)
 
 void
 QueuedEngineInterface::set_port_value(const string& port_path,
-                                      float         value)
+                                      uint32_t      data_size,
+                                      const void*   data)
 {
-	push_stamped(new SetPortValueEvent(_engine, _responder, now(), port_path, value));
+	push_queued(new SetPortValueQueuedEvent(_engine, _responder, now(), port_path, data_size, data));
 }
 
 
 void
 QueuedEngineInterface::set_port_value(const string& port_path,
                                       uint32_t      voice,
-                                      float         value)
+                                      uint32_t      data_size,
+                                      const void*   data)
 {
-	push_stamped(new SetPortValueEvent(_engine, _responder, now(), voice, port_path, value));
+	push_queued(new SetPortValueQueuedEvent(_engine, _responder, now(), voice, port_path, data_size, data));
 }
 
 
 void
-QueuedEngineInterface::set_port_value_queued(const string& port_path,
-                                             float         value)
+QueuedEngineInterface::set_port_value_immediate(const string& port_path,
+                                                uint32_t      data_size,
+                                                const void*   data)
 {
-	push_queued(new SetPortValueQueuedEvent(_engine, _responder, now(), port_path, value));
+	push_stamped(new SetPortValueEvent(_engine, _responder, now(), port_path, data_size, data));
+}
+
+
+void
+QueuedEngineInterface::set_port_value_immediate(const string& port_path,
+                                                uint32_t      voice,
+                                                uint32_t      data_size,
+                                                const void*   data)
+{
+	push_stamped(new SetPortValueEvent(_engine, _responder, now(), voice, port_path, data_size, data));
 }
 
 
