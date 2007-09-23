@@ -78,6 +78,7 @@ protected:
 	void remove_port(SharedPtr<PortModel> port);
 
 	void embed_gui(bool embed);
+	void gui_size_request(Gtk::Requisition* req);
 	
 	SharedPtr<NodeModel>   _node;
 	NodeMenu*              _menu;

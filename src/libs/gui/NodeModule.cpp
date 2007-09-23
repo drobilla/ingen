@@ -102,7 +102,7 @@ NodeModule::embed_gui(bool embed)
 		// FIXME: leaks?
 				
 		GtkWidget* c_widget = NULL;
-		Gtk::EventBox* container = NULL;
+		Gtk::Bin* container = NULL;
 
 		if (!_gui_item) {
 			cerr << "Embedding LV2 GUI" << endl;
@@ -115,9 +115,17 @@ NodeModule::embed_gui(bool embed)
 				assert(_gui);
 			
 				/* Kludge, show in window to get size */	
-				container = new Gtk::EventBox();
+				container = new Gtk::Alignment();
 				container->add(*_gui);
 				container->show_all();
+				/*Gdk::Color color;
+				color.set_red((_color & 0xFF000000) >> 24);
+				color.set_green((_color & 0x00FF0000) >> 16);
+				color.set_blue((_color & 0xFF000000) >> 8);
+				container->modify_bg(Gtk::STATE_NORMAL,   color);
+				container->modify_bg(Gtk::STATE_ACTIVE,   color);
+				container->modify_bg(Gtk::STATE_PRELIGHT, color);
+				container->modify_bg(Gtk::STATE_SELECTED, color);*/
 			
 				const double y = 4 + _canvas_title.property_text_height();
 				_gui_item = new Gnome::Canvas::Widget(*this, 2.0, y, *container);
@@ -127,22 +135,16 @@ NodeModule::embed_gui(bool embed)
 		if (_gui_item) {
 			assert(_gui);
 			cerr << "Created canvas item" << endl;
-			_gui->show();
 			_gui->show_all();
 			_gui_item->show();
 
 			GtkRequisition r;
 			gtk_widget_size_request(c_widget, &r);
-			cerr << "Size request: " << r.width << "x" << r.height << endl;
+			gui_size_request(&r);
 
-			if (r.width + 4 > _width)
-				set_width(r.width + 4);
-
-			_height = max(_height, (double)r.height);
-			_gui_item->property_width() = _width - 4;
-			_gui_item->property_height() = r.height;
 			_gui_item->raise_to_top();
-			_ports_y_offset = r.height + 2;
+
+			_gui->signal_size_request().connect(sigc::mem_fun(this, &NodeModule::gui_size_request));
 
 		} else {
 			cerr << "*** Failed to create canvas item" << endl;
@@ -154,6 +156,20 @@ NodeModule::embed_gui(bool embed)
 
 		_ports_y_offset = 0;
 	}
+
+	resize();
+}
+	
+
+void
+NodeModule::gui_size_request(Gtk::Requisition* r)
+{
+	if (r->width + 4 > _width)
+		set_width(r->width + 4);
+
+	_gui_item->property_width() = _width - 4;
+	_gui_item->property_height() = r->height;
+	_ports_y_offset = r->height + 2;
 
 	resize();
 }
