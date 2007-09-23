@@ -98,20 +98,29 @@ void
 NodeModule::embed_gui(bool embed)
 {
 	if (embed) {
+			
+		// FIXME: leaks?
 				
 		GtkWidget* c_widget = NULL;
+		Gtk::EventBox* container = NULL;
 
 		if (!_gui_item) {
 			cerr << "Embedding LV2 GUI" << endl;
-			// FIXME: leaks?
+
 			SLV2UIInstance ui = _node->plugin()->ui(App::instance().engine().get(), _node.get());
 			if (ui) {
 				cerr << "Found UI" << endl;
 				c_widget = (GtkWidget*)slv2_ui_instance_get_widget(ui);
 				_gui = Glib::wrap(c_widget);
 				assert(_gui);
+			
+				/* Kludge, show in window to get size */	
+				container = new Gtk::EventBox();
+				container->add(*_gui);
+				container->show_all();
+			
 				const double y = 4 + _canvas_title.property_text_height();
-				_gui_item = new Gnome::Canvas::Widget(/**_canvas.lock()->root()*/*this, 2.0, y, *_gui);
+				_gui_item = new Gnome::Canvas::Widget(*this, 2.0, y, *container);
 			}
 		}
 
@@ -121,16 +130,20 @@ NodeModule::embed_gui(bool embed)
 			_gui->show();
 			_gui->show_all();
 			_gui_item->show();
+
 			GtkRequisition r;
 			gtk_widget_size_request(c_widget, &r);
 			cerr << "Size request: " << r.width << "x" << r.height << endl;
-			_width = max(_width, (double)r.width);
+
+			if (r.width + 4 > _width)
+				set_width(r.width + 4);
+
 			_height = max(_height, (double)r.height);
-			_gui_item->property_width() = _width - 2;
-			_gui_item->property_height() = _height;
+			_gui_item->property_width() = _width - 4;
+			_gui_item->property_height() = r.height;
 			_gui_item->raise_to_top();
-			_ports_y_offset = _height + 2;
-			set_width(_width);
+			_ports_y_offset = r.height + 2;
+
 		} else {
 			cerr << "*** Failed to create canvas item" << endl;
 		}
@@ -189,10 +202,7 @@ NodeModule::show_control_window()
 			Gtk::Window* win = new Gtk::Window();
 			win->add(*widget);
 			widget->show_all();
-			win->show_all();
 			win->present();
-			widget->show_all();
-			win->show_all();
 		} else {
 			cerr << "No LV2 GUI, showing builtin controls" << endl;
 			App::instance().window_factory()->present_controls(_node);
