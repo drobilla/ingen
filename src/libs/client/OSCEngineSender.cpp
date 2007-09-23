@@ -388,7 +388,7 @@ OSCEngineSender::set_port_value(const string& port_path,
 				port_path.c_str(),
 				*(float*)data);
 	} else {
-		lo_blob b = lo_blob_new(data_size, data);
+		lo_blob b = lo_blob_new(data_size, (void*)data);
 		lo_send(_engine_addr, "/ingen/set_port_value", "isb",
 				next_id(),
 				port_path.c_str(),
@@ -413,7 +413,7 @@ OSCEngineSender::set_port_value_immediate(const string& port_path,
 				port_path.c_str(),
 				*(float*)data);
 	} else {
-		lo_blob b = lo_blob_new(data_size, data);
+		lo_blob b = lo_blob_new(data_size, (void*)data);
 		lo_send(_engine_addr, "/ingen/set_port_value_immediate", "isb",
 				next_id(),
 				port_path.c_str(),
@@ -440,7 +440,7 @@ OSCEngineSender::set_port_value_immediate(const string& port_path,
 				voice,
 				*(float*)data);
 	} else {
-		lo_blob b = lo_blob_new(data_size, data);
+		lo_blob b = lo_blob_new(data_size, (void*)data);
 		lo_send(_engine_addr, "/ingen/set_port_value_immediate", "isib",
 				next_id(),
 				port_path.c_str(),

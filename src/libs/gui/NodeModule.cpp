@@ -98,13 +98,16 @@ void
 NodeModule::embed_gui(bool embed)
 {
 	if (embed) {
+				
+		GtkWidget* c_widget = NULL;
+
 		if (!_gui_item) {
 			cerr << "Embedding LV2 GUI" << endl;
 			// FIXME: leaks?
 			SLV2UIInstance ui = _node->plugin()->ui(App::instance().engine().get(), _node.get());
 			if (ui) {
 				cerr << "Found UI" << endl;
-				GtkWidget* c_widget = (GtkWidget*)slv2_ui_instance_get_widget(ui);
+				c_widget = (GtkWidget*)slv2_ui_instance_get_widget(ui);
 				_gui = Glib::wrap(c_widget);
 				assert(_gui);
 				const double y = 4 + _canvas_title.property_text_height();
@@ -118,7 +121,8 @@ NodeModule::embed_gui(bool embed)
 			_gui->show();
 			_gui->show_all();
 			_gui_item->show();
-			Gtk::Requisition r = _gui->size_request();
+			GtkRequisition r;
+			gtk_widget_size_request(c_widget, &r);
 			cerr << "Size request: " << r.width << "x" << r.height << endl;
 			_width = max(_width, (double)r.width);
 			_height = max(_height, (double)r.height);
