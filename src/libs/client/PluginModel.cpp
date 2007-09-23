@@ -20,6 +20,7 @@
 #include "PluginModel.hpp"
 #include "PatchModel.hpp"
 
+using namespace std;
 using Ingen::Shared::EngineInterface;
 
 namespace Ingen {
@@ -114,35 +115,35 @@ PluginModel::ui(EngineInterface* engine, NodeModel* node)
 	controller->node = node;
 	
 	SLV2UIInstance ret = NULL;
+			
+	const char* gtk_gui_uri = "http://ll-plugins.nongnu.org/lv2/ext/gui/dev/1#GtkGUI";
 
-	SLV2Values ui = slv2_plugin_get_uis(_slv2_plugin);
-	if (slv2_values_size(ui) > 0) {
-		printf("\tUIs:\n");
-		for (unsigned i=0; i < slv2_values_size(ui); ++i) {
-			printf("\t\t%s\n", slv2_value_as_uri(slv2_values_get_at(ui, i)));
+	SLV2PluginUIs uis = slv2_plugin_get_uis(_slv2_plugin);
+	SLV2PluginUI ui = NULL;
 
-			SLV2Value binary = slv2_plugin_get_ui_library_uri(_slv2_plugin, slv2_values_get_at(ui, i));
+	if (slv2_values_size(uis) > 0) {
+		for (unsigned i=0; i < slv2_plugin_uis_size(uis); ++i) {
+			ui = slv2_plugin_uis_get_at(uis, i);
 
-			printf("\t\t\tType: %s\n", slv2_ui_type_get_uri(slv2_value_as_ui_type(
-							slv2_values_get_at(ui, i))));
-
-			if (binary)
-				printf("\t\t\tBinary: %s\n", slv2_value_as_uri(binary));
-
-			slv2_value_free(binary);
+			if (slv2_plugin_ui_is_type(ui, gtk_gui_uri)) {
+				break;
+			} else {
+				ui = NULL;
+			}
 		}
+	}
+
+	if (ui) {
+		cout << "Found GTK Plugin UI " << slv2_plugin_ui_get_uri(ui) << endl;
 	
-		if (slv2_values_size(ui) > 1)
-			printf("WARNING:  Multiple UIs found, using the first...");
-		
 		ret = slv2_plugin_ui_instantiate(_slv2_plugin,
-				slv2_values_get_at(ui, 0),
+				ui,
 				lv2_ui_write, lv2_ui_command,
 				lv2_ui_program_change, lv2_ui_program_save,
 				controller, NULL);
+	
+		//slv2_plugin_ui_free(ui);
 	}
-
-	slv2_values_free(ui);
 
 	return ret;
 }
