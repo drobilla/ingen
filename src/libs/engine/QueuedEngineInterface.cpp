@@ -233,6 +233,7 @@ QueuedEngineInterface::disconnect_all(const string& node_path)
 
 void
 QueuedEngineInterface::set_port_value(const string& port_path,
+	                                  const string& type_uri,
                                       uint32_t      data_size,
                                       const void*   data)
 {
@@ -242,6 +243,7 @@ QueuedEngineInterface::set_port_value(const string& port_path,
 
 void
 QueuedEngineInterface::set_port_value(const string& port_path,
+	                                  const string& type_uri,
                                       uint32_t      voice,
                                       uint32_t      data_size,
                                       const void*   data)
@@ -252,6 +254,7 @@ QueuedEngineInterface::set_port_value(const string& port_path,
 
 void
 QueuedEngineInterface::set_port_value_immediate(const string& port_path,
+	                                            const string& type_uri,
                                                 uint32_t      data_size,
                                                 const void*   data)
 {
@@ -261,6 +264,7 @@ QueuedEngineInterface::set_port_value_immediate(const string& port_path,
 
 void
 QueuedEngineInterface::set_port_value_immediate(const string& port_path,
+	                                            const string& type_uri,
                                                 uint32_t      voice,
                                                 uint32_t      data_size,
                                                 const void*   data)

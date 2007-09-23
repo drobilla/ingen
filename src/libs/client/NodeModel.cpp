@@ -48,7 +48,13 @@ NodeModel::~NodeModel()
 void
 NodeModel::remove_port(SharedPtr<PortModel> port)
 {
-	_ports.remove(port);
+	// FIXME: slow
+	for (PortModelList::iterator i = _ports.begin(); i != _ports.end(); ++i) {
+		if ((*i) == port) {
+			_ports.erase(i);
+			break;
+		}
+	}
 	signal_removed_port.emit(port);
 }
 
@@ -56,6 +62,7 @@ NodeModel::remove_port(SharedPtr<PortModel> port)
 void
 NodeModel::remove_port(const Path& port_path)
 {
+	// FIXME: slow
 	for (PortModelList::iterator i = _ports.begin(); i != _ports.end(); ++i) {
 		if ((*i)->path() == port_path) {
 			_ports.erase(i);

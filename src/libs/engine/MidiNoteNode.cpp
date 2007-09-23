@@ -218,8 +218,8 @@ MidiNoteNode::note_on(uchar note_num, uchar velocity, FrameTime time, SampleCoun
 	assert(voice != NULL);
 	assert(voice == &(*_voices)[voice_num]);
 
-	//cerr << "[MidiNoteNode] Note " << (int)note_num << " on @ " << time
-	//	<< ". Voice " << voice_num << " / " << _polyphony << endl;
+	cerr << "[MidiNoteNode] Note " << (int)note_num << " on @ " << time
+		<< ". Voice " << voice_num << " / " << _polyphony << endl;
 	
 	// Update stolen key, if applicable
 	if (voice->state == Voice::Voice::ACTIVE) {
@@ -273,7 +273,7 @@ MidiNoteNode::note_off(uchar note_num, FrameTime time, SampleCount nframes, Fram
 
 	Key* key = &_keys[note_num];
 	
-	//cerr << "[MidiNoteNode] Note off @ " << time << ".  Key " << (int)note_num << endl;
+	cerr << "[MidiNoteNode] Note off @ " << time << ".  Key " << (int)note_num << endl;
 
 	if (key->state == Key::ON_ASSIGNED) {
 		// Assigned key, turn off voice and key

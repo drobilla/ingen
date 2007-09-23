@@ -27,12 +27,14 @@
 #ifdef HAVE_SLV2
 #include <slv2/slv2.h>
 #endif
+#include "interface/EngineInterface.hpp"
 using std::string; using std::cerr; using std::endl;
 
 namespace Ingen {
 namespace Client {
 
 class PatchModel;
+class NodeModel;
 
 
 /** Model for a plugin available for loading.
@@ -107,7 +109,7 @@ public:
 		_slv2_plugins = slv2_world_get_all_plugins(_slv2_world);
 	}
 
-	SLV2UIInstance ui();
+	SLV2UIInstance ui(Ingen::Shared::EngineInterface* engine, NodeModel* node);
 #endif
 
 	static void set_rdf_world(Raul::RDF::World& world) {

@@ -20,6 +20,7 @@
 #include "PluginModel.hpp"
 #include "PatchModel.hpp"
 
+using Ingen::Shared::EngineInterface;
 
 namespace Ingen {
 namespace Client {
@@ -53,25 +54,29 @@ PluginModel::default_node_name(SharedPtr<PatchModel> parent)
 }
 
 
+struct NodeController {
+	EngineInterface* engine;
+	NodeModel*       node;
+};
+
+
 void
 lv2_ui_write(LV2UI_Controller controller,
-              uint32_t        port,
-              uint32_t        buffer_size,
-              const void*     buffer)
+             uint32_t         port,
+             uint32_t         buffer_size,
+             const void*      buffer)
 {
-	cerr << "********* LV2 UI WRITE port " << port << ", size "
-		<< buffer_size << endl;
-	for (uint32_t i=0; i < buffer_size; ++i) {
-		fprintf(stderr, "( %X )", *((uint8_t*)buffer + i));
-	}
-	fprintf(stderr, "\n");
+	NodeController* nc = (NodeController*)controller;
+
+	nc->engine->set_port_value_immediate(nc->node->ports()[port]->path(),
+			"ingen:midi", buffer_size, buffer);
 }
 
 
 void
 lv2_ui_command(LV2UI_Controller   controller,
-                uint32_t           argc,
-                const char* const* argv)
+               uint32_t           argc,
+               const char* const* argv)
 {
 	cerr << "********* LV2 UI COMMAND" << endl;
 }
@@ -79,7 +84,7 @@ lv2_ui_command(LV2UI_Controller   controller,
 	
 void
 lv2_ui_program_change(LV2UI_Controller controller,
-                       unsigned char    program)
+                      unsigned char    program)
 {
 	cerr << "********* LV2 UI PROGRAM CHANGE" << endl;
 }
@@ -87,8 +92,8 @@ lv2_ui_program_change(LV2UI_Controller controller,
 	
 void
 lv2_ui_program_save(LV2UI_Controller controller,
-                     unsigned char    program,
-                     const char*      name)
+                    unsigned char    program,
+                    const char*      name)
 {
 	cerr << "********* LV2 UI PROGRAM SAVE" << endl;
 }
@@ -96,12 +101,17 @@ lv2_ui_program_save(LV2UI_Controller controller,
 	
 #ifdef HAVE_SLV2
 SLV2UIInstance
-PluginModel::ui()
+PluginModel::ui(EngineInterface* engine, NodeModel* node)
 {
 	if (_type != LV2)
 		return NULL;
 
 	Glib::Mutex::Lock(_rdf_world->mutex());
+
+	// FIXME: leak
+	NodeController* controller = new NodeController();
+	controller->engine = engine;
+	controller->node = node;
 	
 	SLV2UIInstance ret = NULL;
 
@@ -129,7 +139,7 @@ PluginModel::ui()
 				slv2_values_get_at(ui, 0),
 				lv2_ui_write, lv2_ui_command,
 				lv2_ui_program_change, lv2_ui_program_save,
-				NULL, NULL);
+				controller, NULL);
 	}
 
 	slv2_values_free(ui);

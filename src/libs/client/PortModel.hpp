@@ -21,12 +21,12 @@
 #include <cstdlib>
 #include <iostream>
 #include <string>
-#include <list>
+#include <vector>
 #include <sigc++/sigc++.h>
 #include "ObjectModel.hpp"
 #include <raul/SharedPtr.hpp>
 #include <raul/Path.hpp>
-using std::string; using std::list; using std::cerr; using std::endl;
+using std::string; using std::vector; using std::cerr; using std::endl;
 
 namespace Ingen {
 namespace Client {
@@ -96,7 +96,7 @@ private:
 	size_t    _connections;
 };
 
-typedef list<SharedPtr<PortModel> > PortModelList;
+typedef vector<SharedPtr<PortModel> > PortModelList;
 
 
 } // namespace Client

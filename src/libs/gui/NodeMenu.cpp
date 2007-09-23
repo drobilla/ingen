@@ -56,7 +56,7 @@ NodeMenu::init(SharedPtr<NodeModel> node)
 			sigc::mem_fun(App::instance().window_factory(), &WindowFactory::present_controls),
 			node));
 	
-	if (node->plugin()->ui())
+	if (node->plugin()->ui(App::instance().engine().get(), node.get()))
 		_gui_menuitem->signal_activate().connect(sigc::mem_fun(this, &NodeMenu::show_gui));
 	//else
 	//	_gui_menuitem->hide();

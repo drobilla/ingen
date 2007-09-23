@@ -123,11 +123,11 @@ NodeModule::show_control_window()
 	if (_node->plugin()->type() == PluginModel::LV2) {
 		// FIXME: check type
 
-		SLV2UIInstance ui = _node->plugin()->ui();
+		SLV2UIInstance ui = _node->plugin()->ui(App::instance().engine().get(), _node.get());
 		if (ui) {
 			cerr << "Showing LV2 GUI" << endl;
 			// FIXME: leak
-			GtkWidget* c_widget = (GtkWidget*)slv2_ui_instance_get_widget(_node->plugin()->ui());
+			GtkWidget* c_widget = (GtkWidget*)slv2_ui_instance_get_widget(ui);
 			Gtk::Window* win = new Gtk::Window();
 			Gtk::Widget* widget = Glib::wrap(c_widget);
 			win->add(*widget);

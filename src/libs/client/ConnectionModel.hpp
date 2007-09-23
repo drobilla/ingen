@@ -19,11 +19,11 @@
 #define CONNECTIONMODEL_H
 
 #include <string>
+#include <list>
 #include <raul/Path.hpp>
 #include <raul/SharedPtr.hpp>
 #include "PortModel.hpp"
 #include <cassert>
-using std::string;
 
 namespace Ingen {
 namespace Client {
@@ -59,8 +59,8 @@ private:
 	void set_src_port(SharedPtr<PortModel> port) { _src_port = port; _src_port_path = port->path(); }
 	void set_dst_port(SharedPtr<PortModel> port) { _dst_port = port; _dst_port_path = port->path(); }
 
-	void src_port_path(const string& s) { _src_port_path = s; }
-	void dst_port_path(const string& s) { _dst_port_path = s; }
+	void src_port_path(const std::string& s) { _src_port_path = s; }
+	void dst_port_path(const std::string& s) { _dst_port_path = s; }
 
 	Path                 _src_port_path; ///< Only used if _src_port == NULL
 	Path                 _dst_port_path; ///< Only used if _dst_port == NULL
@@ -68,7 +68,7 @@ private:
 	SharedPtr<PortModel> _dst_port;
 };
 
-typedef list<SharedPtr<ConnectionModel> > ConnectionList;
+typedef std::list<SharedPtr<ConnectionModel> > ConnectionList;
 
 
 } // namespace Client

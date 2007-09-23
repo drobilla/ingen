@@ -25,6 +25,7 @@
 #include "Node.hpp"
 #include "ObjectStore.hpp"
 #include "AudioBuffer.hpp"
+#include "MidiBuffer.hpp"
 
 namespace Ingen {
 
@@ -94,14 +95,26 @@ SetPortValueQueuedEvent::execute(SampleCount nframes, FrameTime start, FrameTime
 
 	if (_error == NO_ERROR) {
 		assert(_port);
-		AudioBuffer* const buf = (AudioBuffer*)_port->buffer(0);
-		const size_t offset = (buf->size() == 1) ? 0 : _time - start;
+		
+		Buffer* const buf = _port->buffer(0);
+		AudioBuffer* const abuf = dynamic_cast<AudioBuffer*>(buf);
+		if (abuf) {
+			const uint32_t offset = (buf->size() == 1) ? 0 : _time - start;
 
-		if (_omni)
-			for (uint32_t i=0; i < _port->poly(); ++i)
-				((AudioBuffer*)_port->buffer(i))->set(*(float*)_data, offset);
-		else
-			((AudioBuffer*)_port->buffer(_voice_num))->set(*(float*)_data, offset);
+			if (_omni)
+				for (uint32_t i=0; i < _port->poly(); ++i)
+					((AudioBuffer*)_port->buffer(i))->set(*(float*)_data, offset);
+			else
+				((AudioBuffer*)_port->buffer(_voice_num))->set(*(float*)_data, offset);
+
+			return;
+		}
+		
+		MidiBuffer* const mbuf = dynamic_cast<MidiBuffer*>(buf);
+		if (mbuf) {
+			const double stamp = std::max((double)(_time - start), mbuf->latest_stamp());
+			mbuf->append(stamp, _data_size, (const unsigned char*)_data);
+		}
 	}
 }
 

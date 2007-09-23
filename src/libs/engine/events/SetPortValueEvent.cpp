@@ -95,7 +95,7 @@ SetPortValueEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 		Buffer* const buf = _port->buffer(0);
 		AudioBuffer* const abuf = dynamic_cast<AudioBuffer*>(buf);
 		if (abuf) {
-			const size_t offset = (buf->size() == 1) ? 0 : _time - start;
+			const uint32_t offset = (buf->size() == 1) ? 0 : _time - start;
 
 			if (_omni)
 				for (uint32_t i=0; i < _port->poly(); ++i)
@@ -108,7 +108,7 @@ SetPortValueEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 		
 		MidiBuffer* const mbuf = dynamic_cast<MidiBuffer*>(buf);
 		if (mbuf) {
-			const double stamp = std::max((double)_time, mbuf->latest_stamp());
+			const double stamp = std::max((double)(_time - start), mbuf->latest_stamp());
 			mbuf->append(stamp, _data_size, (const unsigned char*)_data);
 		}
 	}

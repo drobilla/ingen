@@ -351,61 +351,103 @@ OSCEngineSender::disconnect_all(const string& node_path)
 
 void
 OSCEngineSender::set_port_value(const string& port_path,
+                                const string& type_uri,
                                 uint32_t      data_size,
                                 const void*   data)
 {
 	assert(_engine_addr);
-	assert(data_size == 4);
-	lo_send(_engine_addr, "/ingen/set_port_value", "isf",
-		next_id(),
-		port_path.c_str(),
-		*(float*)data);
+	if (type_uri == "ingen:control") {
+		assert(data_size == 4);
+		lo_send(_engine_addr, "/ingen/set_port_value", "isf",
+				next_id(),
+				port_path.c_str(),
+				*(float*)data);
+	} else {
+		lo_blob b = lo_blob_new(data_size, data);
+		lo_send(_engine_addr, "/ingen/set_port_value", "isb",
+				next_id(),
+				port_path.c_str(),
+				b);
+		lo_blob_free(b);
+	}
 }
 
 
 void
 OSCEngineSender::set_port_value(const string& port_path,
+                                const string& type_uri,
                                 uint32_t      voice,
                                 uint32_t      data_size,
                                 const void*   data)
 {
 	assert(_engine_addr);
-	assert(data_size == 4);
-	lo_send(_engine_addr, "/ingen/set_port_value", "isif",
-		next_id(),
-		port_path.c_str(),
-		voice,
-		*(float*)data);
+	if (type_uri == "ingen:control") {
+		assert(data_size == 4);
+		lo_send(_engine_addr, "/ingen/set_port_value", "isf",
+				next_id(),
+				port_path.c_str(),
+				*(float*)data);
+	} else {
+		lo_blob b = lo_blob_new(data_size, data);
+		lo_send(_engine_addr, "/ingen/set_port_value", "isb",
+				next_id(),
+				port_path.c_str(),
+				b);
+		lo_blob_free(b);
+	}
 }
 
 
 void
 OSCEngineSender::set_port_value_immediate(const string& port_path,
+                                          const string& type_uri,
                                           uint32_t      data_size,
                                           const void*   data)
 {
 	assert(_engine_addr);
-	assert(data_size == 4);
-	lo_send(_engine_addr, "/ingen/set_port_value_immediate", "isf",
-		next_id(),
-		port_path.c_str(),
-		*(float*)data);
+
+	if (type_uri == "ingen:control") {
+		assert(data_size == 4);
+		lo_send(_engine_addr, "/ingen/set_port_value_immediate", "isf",
+				next_id(),
+				port_path.c_str(),
+				*(float*)data);
+	} else {
+		lo_blob b = lo_blob_new(data_size, data);
+		lo_send(_engine_addr, "/ingen/set_port_value_immediate", "isb",
+				next_id(),
+				port_path.c_str(),
+				b);
+		lo_blob_free(b);
+	}
 }
 
 
 void
 OSCEngineSender::set_port_value_immediate(const string& port_path,
+                                          const string& type_uri,
                                           uint32_t      voice,
                                           uint32_t      data_size,
                                           const void*   data)
 {
 	assert(_engine_addr);
-	assert(data_size == 4);
-	lo_send(_engine_addr, "/ingen/set_port_value_immediate", "isif",
-		next_id(),
-		port_path.c_str(),
-		voice,
-		*(float*)data);
+	
+	if (type_uri == "ingen:control") {
+		assert(data_size == 4);
+		lo_send(_engine_addr, "/ingen/set_port_value_immediate", "isif",
+				next_id(),
+				port_path.c_str(),
+				voice,
+				*(float*)data);
+	} else {
+		lo_blob b = lo_blob_new(data_size, data);
+		lo_send(_engine_addr, "/ingen/set_port_value_immediate", "isib",
+				next_id(),
+				port_path.c_str(),
+				voice,
+				b);
+		lo_blob_free(b);
+	}
 }
 
 

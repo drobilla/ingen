@@ -178,6 +178,11 @@ MidiBuffer::append(double               timestamp,
                    uint32_t             size,
                    const unsigned char* data)
 {
+	/*cerr << "Append midi " << size << " bytes @ " << timestamp << ":" << endl;
+	for (uint32_t i=0; i < size; ++i) {
+		fprintf(stderr, "( %X )", *((uint8_t*)data + i));
+	}*/
+
 	if (_buf->capacity - _buf->size < sizeof(double) + sizeof(uint32_t) + size)
 		return false;
 	

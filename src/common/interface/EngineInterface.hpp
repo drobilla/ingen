@@ -98,19 +98,23 @@ public:
 	virtual void disconnect_all(const string& path) = 0;
 	
 	virtual void set_port_value(const string& port_path,
+	                            const string& type_uri,
 	                            uint32_t      data_size,
 	                            const void*   data) = 0;
 	
 	virtual void set_port_value(const string& port_path,
+	                            const string& type_uri,
 	                            uint32_t      voice,
 	                            uint32_t      data_size,
 	                            const void*   data) = 0;
 	
 	virtual void set_port_value_immediate(const string& port_path,
+	                                      const string& type_uri,
 	                                      uint32_t      data_size,
 	                                      const void*   data) = 0;
 	
 	virtual void set_port_value_immediate(const string& port_path,
+	                                      const string& type_uri,
 	                                      uint32_t      voice,
 	                                      uint32_t      data_size,
 	                                      const void*   data) = 0;
