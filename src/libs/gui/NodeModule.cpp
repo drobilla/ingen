@@ -122,7 +122,7 @@ NodeModule::embed_gui(bool embed)
 			cerr << "Size request: " << r.width << "x" << r.height << endl;
 			_width = max(_width, (double)r.width);
 			_height = max(_height, (double)r.height);
-			_gui_item->property_width() = _width;
+			_gui_item->property_width() = _width - 2;
 			_gui_item->property_height() = _height;
 			_gui_item->raise_to_top();
 			_ports_y_offset = _height + 2;

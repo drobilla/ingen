@@ -363,7 +363,7 @@ OSCEngineSender::set_port_value(const string& port_path,
 				port_path.c_str(),
 				*(float*)data);
 	} else {
-		lo_blob b = lo_blob_new(data_size, data);
+		lo_blob b = lo_blob_new(data_size, (void*)data);
 		lo_send(_engine_addr, "/ingen/set_port_value", "isb",
 				next_id(),
 				port_path.c_str(),
