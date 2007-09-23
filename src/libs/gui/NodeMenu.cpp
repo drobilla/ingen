@@ -37,13 +37,16 @@ NodeMenu::NodeMenu(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml
 	Gtk::Menu* node_menu = NULL;
 	xml->get_widget("node_menu", node_menu);
 	xml->get_widget("node_controls_menuitem", _controls_menuitem);
-	xml->get_widget("node_gui_menuitem", _gui_menuitem);
+	xml->get_widget("node_popup_gui_menuitem", _popup_gui_menuitem);
+	xml->get_widget("node_embed_gui_menuitem", _embed_gui_menuitem);
 
 	node_menu->remove(*_controls_menuitem);
-	node_menu->remove(*_gui_menuitem);
+	node_menu->remove(*_popup_gui_menuitem);
+	node_menu->remove(*_embed_gui_menuitem);
 	items().push_front(Gtk::Menu_Helpers::SeparatorElem());
 	insert(*_controls_menuitem, 0);
-	insert(*_gui_menuitem, 0);
+	insert(*_popup_gui_menuitem, 0);
+	insert(*_embed_gui_menuitem, 0);
 }
 
 
@@ -56,8 +59,11 @@ NodeMenu::init(SharedPtr<NodeModel> node)
 			sigc::mem_fun(App::instance().window_factory(), &WindowFactory::present_controls),
 			node));
 	
-	if (node->plugin()->ui(App::instance().engine().get(), node.get()))
-		_gui_menuitem->signal_activate().connect(sigc::mem_fun(this, &NodeMenu::show_gui));
+	//if (node->plugin()->ui(App::instance().engine().get(), node.get()))
+		_popup_gui_menuitem->signal_activate().connect(sigc::mem_fun(signal_popup_gui,
+				&sigc::signal<void>::emit));
+		_embed_gui_menuitem->signal_toggled().connect(sigc::mem_fun(this,
+				&NodeMenu::on_menu_embed_gui));
 	//else
 	//	_gui_menuitem->hide();
 
@@ -66,9 +72,9 @@ NodeMenu::init(SharedPtr<NodeModel> node)
 
 
 void
-NodeMenu::show_gui()
+NodeMenu::on_menu_embed_gui()
 {
-	cerr << "SHOW GUI" << endl;
+	signal_embed_gui.emit(_embed_gui_menuitem->get_active());
 }
 
 

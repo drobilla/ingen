@@ -38,6 +38,8 @@ namespace GUI {
 NodeModule::NodeModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeModel> node)
 	: FlowCanvas::Module(canvas, node->path().name())
 	, _node(node)
+	, _gui(NULL)
+	, _gui_item(NULL)
 {
 	assert(_node);
 	
@@ -51,6 +53,8 @@ NodeModule::NodeModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeMode
 	node->signal_metadata.connect(sigc::mem_fun(this, &NodeModule::set_metadata));
 	node->signal_polyphonic.connect(sigc::mem_fun(this, &NodeModule::set_stacked_border));
 	node->signal_renamed.connect(sigc::mem_fun(this, &NodeModule::rename));
+
+	_menu->signal_embed_gui.connect(sigc::mem_fun(this, &NodeModule::embed_gui));
 	
 	set_stacked_border(node->polyphonic());
 }
@@ -87,6 +91,54 @@ NodeModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeModel> n
 	ret->resize();
 
 	return ret;
+}
+
+
+void
+NodeModule::embed_gui(bool embed)
+{
+	if (embed) {
+		if (!_gui_item) {
+			cerr << "Embedding LV2 GUI" << endl;
+			// FIXME: leaks?
+			SLV2UIInstance ui = _node->plugin()->ui(App::instance().engine().get(), _node.get());
+			if (ui) {
+				cerr << "Found UI" << endl;
+				GtkWidget* c_widget = (GtkWidget*)slv2_ui_instance_get_widget(ui);
+				_gui = Glib::wrap(c_widget);
+				assert(_gui);
+				const double y = 4 + _canvas_title.property_text_height();
+				_gui_item = new Gnome::Canvas::Widget(/**_canvas.lock()->root()*/*this, 2.0, y, *_gui);
+			}
+		}
+
+		if (_gui_item) {
+			assert(_gui);
+			cerr << "Created canvas item" << endl;
+			_gui->show();
+			_gui->show_all();
+			_gui_item->show();
+			Gtk::Requisition r = _gui->size_request();
+			cerr << "Size request: " << r.width << "x" << r.height << endl;
+			_width = max(_width, (double)r.width);
+			_height = max(_height, (double)r.height);
+			_gui_item->property_width() = _width;
+			_gui_item->property_height() = _height;
+			_gui_item->raise_to_top();
+			_ports_y_offset = _height + 2;
+			set_width(_width);
+		} else {
+			cerr << "*** Failed to create canvas item" << endl;
+		}
+
+	} else {
+		if (_gui_item)
+			_gui_item->hide();
+
+		_ports_y_offset = 0;
+	}
+
+	resize();
 }
 
 
@@ -128,8 +180,9 @@ NodeModule::show_control_window()
 			cerr << "Showing LV2 GUI" << endl;
 			// FIXME: leak
 			GtkWidget* c_widget = (GtkWidget*)slv2_ui_instance_get_widget(ui);
-			Gtk::Window* win = new Gtk::Window();
 			Gtk::Widget* widget = Glib::wrap(c_widget);
+			
+			Gtk::Window* win = new Gtk::Window();
 			win->add(*widget);
 			widget->show_all();
 			win->show_all();

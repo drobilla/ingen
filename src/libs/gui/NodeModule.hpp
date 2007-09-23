@@ -76,9 +76,13 @@ protected:
 	
 	void add_port(SharedPtr<PortModel> port, bool resize=true);
 	void remove_port(SharedPtr<PortModel> port);
+
+	void embed_gui(bool embed);
 	
-	SharedPtr<NodeModel> _node;
-	NodeMenu*            _menu;
+	SharedPtr<NodeModel>   _node;
+	NodeMenu*              _menu;
+	Gtk::Widget*           _gui;
+	Gnome::Canvas::Widget* _gui_item;
 };
 
 

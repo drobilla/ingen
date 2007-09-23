@@ -51,17 +51,21 @@ public:
 
 	bool has_control_inputs();
 	
+	sigc::signal<void>       signal_popup_gui;
+	sigc::signal<void, bool> signal_embed_gui;
+	
 protected:
 	
 	virtual void enable_controls_menuitem();
 	virtual void disable_controls_menuitem();
-	void show_gui();
 
 	void on_menu_clone();
 	void on_menu_learn();
+	void on_menu_embed_gui();
 
-	Gtk::MenuItem* _controls_menuitem;
-	Gtk::MenuItem* _gui_menuitem;
+	Gtk::MenuItem*      _controls_menuitem;
+	Gtk::MenuItem*      _popup_gui_menuitem;
+	Gtk::CheckMenuItem* _embed_gui_menuitem;
 };
 
 
