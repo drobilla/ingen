@@ -43,6 +43,8 @@ public:
 	virtual ~Port() {}
 
 	SharedPtr<PortModel> model() const { return _port_model; }
+
+	void create_menu();
 	
 	virtual void set_control(float value, bool signal);
 	void control_changed(float value);

@@ -56,7 +56,7 @@ load_module(const string& name)
 			
 			string filename = Glib::Module::build_path(dir, name);
 			if (Glib::file_test(filename, Glib::FILE_TEST_EXISTS)) {
-				module = new Glib::Module(filename, Glib::MODULE_BIND_LAZY);
+				module = new Glib::Module(filename, Glib::MODULE_BIND_LAZY|Glib::MODULE_BIND_LOCAL);
 
 				if (*module) {
 					return SharedPtr<Glib::Module>(module);
@@ -71,7 +71,7 @@ load_module(const string& name)
 	// Try default directory if not found
 	module = new Glib::Module(
 			Glib::Module::build_path(INGEN_MODULE_DIR, name),
-            Glib::MODULE_BIND_LAZY);
+            Glib::MODULE_BIND_LAZY|Glib::MODULE_BIND_LOCAL);
 
 	if (*module) {
 		return SharedPtr<Glib::Module>(module);

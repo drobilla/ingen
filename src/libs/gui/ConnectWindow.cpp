@@ -112,21 +112,19 @@ ConnectWindow::start(SharedPtr<Ingen::Engine> engine, SharedPtr<Shared::EngineIn
 	
 	if (engine) {
 		
-		engine->activate(1); // FIXME
-		
 		Glib::signal_timeout().connect(
 			sigc::mem_fun(engine.get(), &Ingen::Engine::main_iteration), 1000);
 		
 		ThreadedSigClientInterface* tsci = new ThreadedSigClientInterface(Ingen::event_queue_size);
 		SharedPtr<SigClientInterface> client(tsci);
 		
-		if (interface)
-			App::instance().attach(interface, client);
-
-		_connect_stage = 0;
-
 		Glib::signal_timeout().connect(
 			sigc::mem_fun(tsci, &ThreadedSigClientInterface::emit_signals), 10, G_PRIORITY_HIGH_IDLE);
+		
+		if (interface)
+			App::instance().attach(interface, client);
+		
+		_connect_stage = 0;
 	}
 		
 	if (interface) {
@@ -243,7 +241,7 @@ ConnectWindow::connect()
 		assert(_new_engine);
 		_engine = SharedPtr<Ingen::Engine>(_new_engine(App::instance().world()));
 		
-		_engine->start_jack_driver();
+		//_engine->start_jack_driver();
 		
 		SharedPtr<Ingen::EngineInterface> engine_interface = _engine->new_queued_interface();
 
@@ -252,16 +250,16 @@ ConnectWindow::connect()
 		
 		App::instance().attach(engine_interface, client);
 
-		_engine->activate(1); // FIXME
+		/*_engine->activate(1); // FIXME
 
 		Glib::signal_timeout().connect(
-			sigc::mem_fun(_engine.get(), &Ingen::Engine::main_iteration), 1000);
+			sigc::mem_fun(_engine.get(), &Ingen::Engine::main_iteration), 1000);*/
 		
 		Glib::signal_timeout().connect(
 			sigc::mem_fun(this, &ConnectWindow::gtk_callback), 100);
 		
-		Glib::signal_timeout().connect(
-			sigc::mem_fun(tsci, &ThreadedSigClientInterface::emit_signals), 10, G_PRIORITY_HIGH_IDLE);
+		/*Glib::signal_timeout().connect(
+			sigc::mem_fun(tsci, &ThreadedSigClientInterface::emit_signals), 10, G_PRIORITY_HIGH_IDLE);*/
 	}
 }
 

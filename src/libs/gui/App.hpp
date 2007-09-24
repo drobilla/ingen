@@ -77,8 +77,8 @@ public:
 
 	void error_message(const string& msg);
 
-	void attach(const SharedPtr<EngineInterface>&    engine,
-	            const SharedPtr<SigClientInterface>& client);
+	void attach(SharedPtr<EngineInterface>    engine,
+	            SharedPtr<SigClientInterface> client);
 	
 	void detach();
 	

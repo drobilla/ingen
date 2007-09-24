@@ -42,19 +42,12 @@ NodeModule::NodeModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeMode
 	, _gui_item(NULL)
 {
 	assert(_node);
-	
-	Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference();
-	xml->get_widget_derived("object_menu", _menu);
-	_menu->init(node);
-	set_menu(_menu);
 
 	node->signal_new_port.connect(sigc::bind(sigc::mem_fun(this, &NodeModule::add_port), true));
 	node->signal_removed_port.connect(sigc::mem_fun(this, &NodeModule::remove_port));
 	node->signal_metadata.connect(sigc::mem_fun(this, &NodeModule::set_metadata));
 	node->signal_polyphonic.connect(sigc::mem_fun(this, &NodeModule::set_stacked_border));
 	node->signal_renamed.connect(sigc::mem_fun(this, &NodeModule::rename));
-
-	_menu->signal_embed_gui.connect(sigc::mem_fun(this, &NodeModule::embed_gui));
 	
 	set_stacked_border(node->polyphonic());
 }
@@ -68,6 +61,18 @@ NodeModule::~NodeModule()
 		// Should remove from window factory via signal
 		delete win;
 	}
+}
+
+
+void
+NodeModule::create_menu()
+{
+	Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference();
+	xml->get_widget_derived("object_menu", _menu);
+	_menu->init(_node);
+	_menu->signal_embed_gui.connect(sigc::mem_fun(this, &NodeModule::embed_gui));
+	
+	set_menu(_menu);
 }
 
 

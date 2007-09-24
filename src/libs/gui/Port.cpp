@@ -44,12 +44,6 @@ Port::Port(boost::shared_ptr<FlowCanvas::Module> module, SharedPtr<PortModel> pm
 {
 	assert(module);
 	assert(_port_model);
-
-	PortMenu* menu = NULL;
-	Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference();
-	xml->get_widget_derived("object_menu", menu);
-	menu->init(pm);
-	set_menu(menu);
 	
 	_port_model->signal_renamed.connect(sigc::mem_fun(this, &Port::renamed));
 
@@ -69,6 +63,17 @@ Port::Port(boost::shared_ptr<FlowCanvas::Module> module, SharedPtr<PortModel> pm
 	}
 	
 	control_changed(_port_model->value());
+}
+
+
+void
+Port::create_menu()
+{
+	PortMenu* menu = NULL;
+	Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference();
+	xml->get_widget_derived("object_menu", menu);
+	menu->init(_port_model);
+	set_menu(menu);
 }
 
 

@@ -79,6 +79,8 @@ protected:
 
 	void embed_gui(bool embed);
 	void gui_size_request(Gtk::Requisition* req);
+
+	void create_menu();
 	
 	SharedPtr<NodeModel>   _node;
 	NodeMenu*              _menu;

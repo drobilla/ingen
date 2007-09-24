@@ -130,7 +130,7 @@ App::run(int argc, char** argv,
 
 
 void
-App::attach(const SharedPtr<EngineInterface>& engine, const SharedPtr<SigClientInterface>& client)
+App::attach(SharedPtr<EngineInterface> engine, SharedPtr<SigClientInterface> client)
 {
 	assert( ! _engine);
 	assert( ! _client);
