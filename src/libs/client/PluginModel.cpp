@@ -118,14 +118,14 @@ PluginModel::ui(EngineInterface* engine, NodeModel* node)
 			
 	const char* gtk_gui_uri = "http://ll-plugins.nongnu.org/lv2/ext/gui/dev/1#GtkGUI";
 
-	SLV2PluginUIs uis = slv2_plugin_get_uis(_slv2_plugin);
-	SLV2PluginUI ui = NULL;
+	SLV2UIs uis = slv2_plugin_get_uis(_slv2_plugin);
+	SLV2UI ui = NULL;
 
 	if (slv2_values_size(uis) > 0) {
-		for (unsigned i=0; i < slv2_plugin_uis_size(uis); ++i) {
-			ui = slv2_plugin_uis_get_at(uis, i);
+		for (unsigned i=0; i < slv2_uis_size(uis); ++i) {
+			ui = slv2_uis_get_at(uis, i);
 
-			if (slv2_plugin_ui_is_type(ui, gtk_gui_uri)) {
+			if (slv2_ui_is_type(ui, gtk_gui_uri)) {
 				break;
 			} else {
 				ui = NULL;
@@ -134,15 +134,15 @@ PluginModel::ui(EngineInterface* engine, NodeModel* node)
 	}
 
 	if (ui) {
-		cout << "Found GTK Plugin UI " << slv2_plugin_ui_get_uri(ui) << endl;
+		cout << "Found GTK Plugin UI " << slv2_ui_get_uri(ui) << endl;
 	
-		ret = slv2_plugin_ui_instantiate(_slv2_plugin,
+		ret = slv2_ui_instantiate(_slv2_plugin,
 				ui,
 				lv2_ui_write, lv2_ui_command,
 				lv2_ui_program_change, lv2_ui_program_save,
 				controller, NULL);
 	
-		//slv2_plugin_ui_free(ui);
+		//slv2_ui_free(ui);
 	}
 
 	return ret;

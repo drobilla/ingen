@@ -114,8 +114,8 @@ NodeModule::embed_gui(bool embed)
 				_gui = Glib::wrap(c_widget);
 				assert(_gui);
 			
-				/* Kludge, show in window to get size */	
-				container = new Gtk::Alignment();
+				//container = new Gtk::Alignment();  // transparent bg but uber slow
+				container = new Gtk::EventBox();
 				container->add(*_gui);
 				container->show_all();
 				/*Gdk::Color color;
