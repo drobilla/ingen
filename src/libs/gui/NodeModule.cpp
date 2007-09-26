@@ -156,10 +156,18 @@ NodeModule::embed_gui(bool embed)
 		}
 
 	} else {
-		if (_gui_item)
-			_gui_item->hide();
+		if (_gui_item) {
+			delete _gui_item;
+			_gui_item = NULL;
+		}
+
+		if (_gui) {
+			delete _gui;
+			_gui = NULL;
+		}
 
 		_ports_y_offset = 0;
+		_width = 0; // resize() takes care of it..
 	}
 
 	resize();
