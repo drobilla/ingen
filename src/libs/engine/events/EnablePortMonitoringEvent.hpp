@@ -35,13 +35,13 @@ using Shared::ClientInterface;
  *
  * \ingroup engine
  */
-class EnablePortNotificationEvent : public QueuedEvent
+class EnablePortMonitoringEvent : public QueuedEvent
 {
 public:
-	EnablePortNotificationEvent(Engine&              engine,
-	                            SharedPtr<Responder> responder,
-	                            SampleCount          timestamp,
-	                            const std::string&   port_path);
+	EnablePortMonitoringEvent(Engine&              engine,
+	                          SharedPtr<Responder> responder,
+	                          SampleCount          timestamp,
+	                          const std::string&   port_path);
 
 	void pre_process();
 	void execute(SampleCount nframes, FrameTime start, FrameTime end);

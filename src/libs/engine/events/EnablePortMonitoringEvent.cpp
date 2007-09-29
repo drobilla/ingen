@@ -15,9 +15,9 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "RequestPortValueEvent.hpp"
 #include <string>
 #include "interface/ClientInterface.hpp"
+#include "events/EnablePortMonitoringEvent.hpp"
 #include "Responder.hpp"
 #include "Engine.hpp"
 #include "Port.hpp"
@@ -30,17 +30,19 @@ using std::string;
 namespace Ingen {
 
 
-RequestPortValueEvent::RequestPortValueEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& port_path)
+EnablePortMonitoringEvent::EnablePortMonitoringEvent(Engine&              engine,
+                                                     SharedPtr<Responder> responder,
+                                                     SampleCount          timestamp,
+                                                     const std::string&   port_path)
 : QueuedEvent(engine, responder, timestamp),
   _port_path(port_path),
-  _port(NULL),
-  _value(0.0)
+  _port(NULL)
 {
 }
 
 
 void
-RequestPortValueEvent::pre_process()
+EnablePortMonitoringEvent::pre_process()
 {
 	_port = _engine.object_store()->find_port(_port_path);
 
@@ -49,21 +51,25 @@ RequestPortValueEvent::pre_process()
 
 
 void
-RequestPortValueEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
+EnablePortMonitoringEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 {
 	QueuedEvent::execute(nframes, start, end);
+
+#if 0
 	assert(_time >= start && _time <= end);
 
 	if (_port != NULL && _port->type() == DataType::FLOAT)
 		_value = ((AudioBuffer*)_port->buffer(0))->value_at(0/*_time - start*/);
 	else 
 		_port = NULL; // triggers error response
+#endif
 }
 
 
 void
-RequestPortValueEvent::post_process()
+EnablePortMonitoringEvent::post_process()
 {
+#if 0
 	string msg;
 	if (!_port) {
 		_responder->respond_error("Unable to find port for get_value responder.");
@@ -73,6 +79,7 @@ RequestPortValueEvent::post_process()
 	} else {
 		_responder->respond_error("Unable to find client to send port value");
 	}
+#endif
 }
 
 
