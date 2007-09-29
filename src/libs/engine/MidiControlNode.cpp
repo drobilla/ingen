@@ -71,7 +71,7 @@ MidiControlNode::MidiControlNode(const string& path, bool polyphonic, Patch* par
 
 
 void
-MidiControlNode::process(SampleCount nframes, FrameTime start, FrameTime end)
+MidiControlNode::process(ProcessContext& context, SampleCount nframes, FrameTime start, FrameTime end)
 {
 	NodeBase::pre_process(nframes, start, end);
 	

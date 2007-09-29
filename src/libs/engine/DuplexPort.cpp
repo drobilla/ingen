@@ -30,10 +30,10 @@ namespace Ingen {
 
 
 DuplexPort::DuplexPort(Node* parent, const string& name, uint32_t index, uint32_t poly, DataType type, size_t buffer_size, bool is_output)
-: Port(parent, name, index, poly, type, buffer_size)
-, InputPort(parent, name, index, poly, type, buffer_size)
-, OutputPort(parent, name, index, poly, type, buffer_size)
-, _is_output(is_output)
+	: Port(parent, name, index, poly, type, buffer_size)
+	, InputPort(parent, name, index, poly, type, buffer_size)
+	, OutputPort(parent, name, index, poly, type, buffer_size)
+	, _is_output(is_output)
 {
 	assert(Port::_parent == parent);
 }
@@ -43,11 +43,19 @@ void
 DuplexPort::pre_process(SampleCount nframes, FrameTime start, FrameTime end)
 {
 	// Think about it...
-	
-	if (_is_output)
+
+//	if (_is_output) {
 		InputPort::pre_process(nframes, start, end);
-	else
-		OutputPort::pre_process(nframes, start, end);
+//	} else {
+		//for (uint32_t i=0; i < _poly; ++i)
+		//	_buffers->at(i)->rewind();
+//		OutputPort::pre_process(nframes, start, end);
+//	}
+}
+
+void
+DuplexPort::process(ProcessContext& events, SampleCount nframes, FrameTime start, FrameTime end)
+{
 }
 
 

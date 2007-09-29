@@ -39,7 +39,8 @@ struct CompiledNode {
 	{
 		// Copy to a vector for maximum iteration speed and cache optimization
 		// (Need to take a copy anyway)
-
+		
+		_dependants.reserve(d->size());
 		for (List<Node*>::iterator i = d->begin(); i != d->end(); ++i)
 			_dependants.push_back(*i);
 	}

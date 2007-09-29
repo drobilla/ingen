@@ -119,7 +119,7 @@ MidiNoteNode::apply_poly(Raul::Maid& maid, uint32_t poly)
 
 
 void
-MidiNoteNode::process(SampleCount nframes, FrameTime start, FrameTime end)
+MidiNoteNode::process(ProcessContext& context, SampleCount nframes, FrameTime start, FrameTime end)
 {
 	NodeBase::pre_process(nframes, start, end);
 	

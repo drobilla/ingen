@@ -117,7 +117,7 @@ public:
 	 * @a start and @a end are transport times: end is not redundant in the case
 	 * of varispeed, where end-start != nframes.
 	 */
-	virtual void process(SampleCount nframes, FrameTime start, FrameTime end) = 0;
+	virtual void process(ProcessContext& events, SampleCount nframes, FrameTime start, FrameTime end) = 0;
 
 	virtual void set_port_buffer(uint32_t voice, uint32_t port_num, Buffer* buf) = 0;
 

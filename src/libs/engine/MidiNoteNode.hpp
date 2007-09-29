@@ -45,7 +45,7 @@ public:
 	bool prepare_poly(uint32_t poly);
 	bool apply_poly(Raul::Maid& maid, uint32_t poly);
 
-	void process(SampleCount nframes, FrameTime start, FrameTime end);
+	void process(ProcessContext& events, SampleCount nframes, FrameTime start, FrameTime end);
 	
 	void note_on(uchar note_num, uchar velocity, FrameTime time, SampleCount nframes, FrameTime start, FrameTime end);
 	void note_off(uchar note_num, FrameTime time, SampleCount nframes, FrameTime start, FrameTime end);

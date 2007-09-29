@@ -15,31 +15,47 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef TRANSPORTNODE_H
-#define TRANSPORTNODE_H
+#include <sstream>
+#include "Responder.hpp"
+#include "SendPortValueEvent.hpp"
+#include "Engine.hpp"
+#include "Port.hpp"
+#include "ClientBroadcaster.hpp"
+#include "Node.hpp"
+#include "ObjectStore.hpp"
+#include "AudioBuffer.hpp"
+#include "MidiBuffer.hpp"
 
-#include <string>
-#include <jack/transport.h>
-#include "NodeBase.hpp"
+using namespace std;
 
 namespace Ingen {
 
 
-/** Transport Node, brings timing information into patches.
- *
- * This node uses the Jack transport API to get information about BPM, time
- * signature, etc.. all sample accurate.  Using this you can do
- * tempo-synced effects or even synthesis, etc.
- */
-class TransportNode : public NodeBase
+SendPortValueEvent(Engine&     engine,
+                   SampleCount timestamp,
+                   Port*       port,
+                   bool        omni,
+                   uint32_t    voice_num,
+				   float       value)
+	: _port(port)
+	, _omni(omni)
+	, _voice_num(voice_num)
+	, _value(value)
 {
-public:
-	TransportNode(const std::string& path, bool polyphonic, Patch* parent, SampleRate srate, size_t buffer_size);
+}
 
-	virtual void process(ProcessContext& events, SampleCount nframes, FrameTime start, FrameTime end);
-};
+
+void
+SendPortValueEvent::post_process()
+{
+	if (_omni) {
+		_engine.broadcaster()->send_control_change(_port->path(), _value);
+	} else {
+		cerr << "NON-OMNI CONTROL CHANGE WHAT?" << endl;
+		_engine.broadcaster()->send_control_change(_port->path(), _value);
+	}
+}
 
 
 } // namespace Ingen
 
-#endif // TRANSPORTNODE_H

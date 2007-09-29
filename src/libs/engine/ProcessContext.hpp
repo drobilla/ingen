@@ -15,31 +15,36 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef TRANSPORTNODE_H
-#define TRANSPORTNODE_H
+#ifndef PROCESSCONTEXT_H
+#define PROCESSCONTEXT_H
 
-#include <string>
-#include <jack/transport.h>
-#include "NodeBase.hpp"
+#include "EventSink.hpp"
 
 namespace Ingen {
 
 
-/** Transport Node, brings timing information into patches.
+/** Context of a process() call.
  *
- * This node uses the Jack transport API to get information about BPM, time
- * signature, etc.. all sample accurate.  Using this you can do
- * tempo-synced effects or even synthesis, etc.
+ * This is used to pass whatever information a GraphObject might need to
+ * process in the audio thread, e.g. the available thread pool, sink for
+ * events (generated in the audio thread, not user initiated events), etc.
+ *
+ * \ingroup engine
  */
-class TransportNode : public NodeBase
+class ProcessContext
 {
 public:
-	TransportNode(const std::string& path, bool polyphonic, Patch* parent, SampleRate srate, size_t buffer_size);
+	ProcessContext() : _event_sink(1024) {} // FIXME: size?
+	
+	EventSink& event_sink() { return _event_sink; }
 
-	virtual void process(ProcessContext& events, SampleCount nframes, FrameTime start, FrameTime end);
+private:
+	EventSink _event_sink;
 };
+
 
 
 } // namespace Ingen
 
-#endif // TRANSPORTNODE_H
+#endif // PROCESSCONTEXT_H
+

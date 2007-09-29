@@ -15,31 +15,45 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef TRANSPORTNODE_H
-#define TRANSPORTNODE_H
+#ifndef EVENTSINK_H
+#define EVENTSINK_H
 
-#include <string>
-#include <jack/transport.h>
-#include "NodeBase.hpp"
+#include <list>
+#include <utility>
+#include <raul/DoubleBuffer.hpp>
+#include "types.hpp"
 
 namespace Ingen {
 
+class Port;
 
-/** Transport Node, brings timing information into patches.
+
+/** Sink for events generated in the audio thread.
  *
- * This node uses the Jack transport API to get information about BPM, time
- * signature, etc.. all sample accurate.  Using this you can do
- * tempo-synced effects or even synthesis, etc.
+ * Implemented as a flat ringbuffer of events, which are constructed directly
+ * in the ringbuffer rather than allocated on the heap (in order to make
+ * writing realtime safe).
+ *
+ * \ingroup engine
  */
-class TransportNode : public NodeBase
+class EventSink
 {
 public:
-	TransportNode(const std::string& path, bool polyphonic, Patch* parent, SampleRate srate, size_t buffer_size);
+	EventSink(size_t capacity) : _capacity(capacity) {}
 
-	virtual void process(ProcessContext& events, SampleCount nframes, FrameTime start, FrameTime end);
+	/* FIXME: Figure out variable sized event queues and make this a generic
+	 * interface (ie don't add a method for every event type, crap..) */
+
+	void control_change(Port* port, float val);
+
+private:
+	size_t _capacity;
+	//Raul::List<std::pair<Port*, Raul::DoubleBuffer<float>  > > _ports;
 };
+
 
 
 } // namespace Ingen
 
-#endif // TRANSPORTNODE_H
+#endif // EVENTSINK_H
+

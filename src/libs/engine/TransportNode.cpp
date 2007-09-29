@@ -82,7 +82,7 @@ TransportNode::TransportNode(const string& path, bool polyphonic, Patch* parent,
 
 
 void
-TransportNode::process(SampleCount nframes, FrameTime start, FrameTime end)
+TransportNode::process(ProcessContext& context, SampleCount nframes, FrameTime start, FrameTime end)
 {
 	NodeBase::pre_process(nframes, start, end);
 #if 0

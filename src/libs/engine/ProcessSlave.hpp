@@ -24,6 +24,7 @@
 #include <raul/Slave.hpp>
 #include <raul/Array.hpp>
 #include <raul/AtomicInt.hpp>
+#include "ProcessContext.hpp"
 #include "types.hpp"
 
 namespace Ingen {
@@ -35,7 +36,7 @@ class CompiledPatch;
 class ProcessSlave : protected Raul::Slave {
 public:
 	ProcessSlave(bool realtime)
-			: _id(_next_id++), _state(STATE_FINISHED), _index(0), _compiled_patch(NULL)
+			: _id(_next_id++), _index(0), _state(STATE_FINISHED), _compiled_patch(NULL)
 	{
 		std::stringstream ss;
 		ss << "Process Slave ";
@@ -55,12 +56,13 @@ public:
 	inline void whip(CompiledPatch* compiled_patch, size_t start_index,
 			SampleCount nframes, FrameTime start, FrameTime end) {
 		assert(_state == STATE_FINISHED);
+		_index = start_index;
+		_state = STATE_RUNNING;
 		_nframes = nframes;
 		_start = start;
 		_end = end;
-		_index = start_index;
 		_compiled_patch = compiled_patch;
-		_state = STATE_RUNNING;
+
 		Raul::Slave::whip();
 	}
 
@@ -82,12 +84,13 @@ private:
 	static const int STATE_FINISHED = 2;
 
 	size_t           _id;
+	size_t           _index;
 	Raul::AtomicInt  _state;
 	SampleCount      _nframes;
 	FrameTime        _start;
 	FrameTime        _end;
-	size_t           _index;
 	CompiledPatch*   _compiled_patch;
+	ProcessContext   _process_context;
 };
 
 

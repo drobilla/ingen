@@ -147,33 +147,25 @@ Patch::apply_internal_poly(Raul::Maid& maid, uint32_t poly)
  * Calls all Nodes in (roughly, if parallel) the order _compiled_patch specifies.
  */
 void
-Patch::process(SampleCount nframes, FrameTime start, FrameTime end)
+Patch::process(ProcessContext& context, SampleCount nframes, FrameTime start, FrameTime end)
 {
 	if (_compiled_patch == NULL || _compiled_patch->size() == 0 || !_process)
 		return;
 	
-	/* Prepare input ports */
-	/* FIXME: Pre-processing input ports breaks MIDI somehow? */
-	if (_ports)
-		for (size_t i=0; i < _ports->size(); ++i)
-			if (_ports->at(i)->is_output())
-				_ports->at(i)->pre_process(nframes, start, end);
+	NodeBase::pre_process(nframes, start, end);
 
 	/* Run */
 	if (_engine.process_slaves().size() > 0)
-		process_parallel(nframes, start, end);
+		process_parallel(context, nframes, start, end);
 	else
-		process_single(nframes, start, end);
+		process_single(context, nframes, start, end);
 
-	/* Write output ports */
-	if (_ports)
-		for (size_t i=0; i < _ports->size(); ++i)
-			_ports->at(i)->post_process(nframes, start, end);
+	NodeBase::post_process(nframes, start, end);
 }
 
 
 void
-Patch::process_parallel(SampleCount nframes, FrameTime start, FrameTime end)
+Patch::process_parallel(ProcessContext& context, SampleCount nframes, FrameTime start, FrameTime end)
 {
 	size_t n_slaves = _engine.process_slaves().size();
 
@@ -209,7 +201,7 @@ Patch::process_parallel(SampleCount nframes, FrameTime start, FrameTime end)
 
 		if (n.node()->process_lock()) {
 			if (n.node()->n_inputs_ready() == n.n_providers()) {
-				n.node()->process(nframes, start, end);
+				n.node()->process(context, nframes, start, end);
 
 				/* Signal dependants their input is ready */
 				for (size_t i=0; i < n.dependants().size(); ++i)
@@ -232,7 +224,8 @@ Patch::process_parallel(SampleCount nframes, FrameTime start, FrameTime end)
 	
 	/* Tell slaves we're done in case we beat them, and pray they're
 	 * really done by the start of next cycle.
-	 * FIXME: This probably breaks (race) at extremely small nframes.
+	 * FIXME: This probably breaks (race) at extremely small nframes where
+	 * ingen is the majority of the DSP load.
 	 */
 	for (size_t i=0; i < n_slaves; ++i)
 		_engine.process_slaves()[i]->finish();
@@ -240,12 +233,12 @@ Patch::process_parallel(SampleCount nframes, FrameTime start, FrameTime end)
 
 	
 void
-Patch::process_single(SampleCount nframes, FrameTime start, FrameTime end)
+Patch::process_single(ProcessContext& context, SampleCount nframes, FrameTime start, FrameTime end)
 {
 	CompiledPatch* const cp = _compiled_patch;
 
 	for (size_t i=0; i < cp->size(); ++i)
-		(*cp)[i].node()->process(nframes, start, end);
+		(*cp)[i].node()->process(context, nframes, start, end);
 }
 	
 

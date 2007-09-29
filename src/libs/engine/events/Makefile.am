@@ -33,6 +33,8 @@ EXTRA_DIST = \
 	DisconnectionEvent.hpp \
 	EnablePatchEvent.cpp \
 	EnablePatchEvent.hpp \
+	EnablePortNotificationEvent.cpp \
+	EnablePortNotificationEvent.hpp \
 	LoadPluginsEvent.cpp \
 	LoadPluginsEvent.hpp \
 	MidiLearnEvent.cpp \
@@ -58,6 +60,8 @@ EXTRA_DIST = \
 	RequestPluginsEvent.hpp \
 	RequestPortValueEvent.cpp \
 	RequestPortValueEvent.hpp \
+	SendPortValueEvent.cpp \
+	SendPortValueEvent.hpp \
 	SetMetadataEvent.cpp \
 	SetMetadataEvent.hpp \
 	SetPolyphonyEvent.hpp \

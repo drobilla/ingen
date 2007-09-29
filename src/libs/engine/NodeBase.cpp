@@ -175,10 +175,10 @@ NodeBase::signal_input_ready()
 void
 NodeBase::pre_process(SampleCount nframes, FrameTime start, FrameTime end)
 {
-	assert(_activated);
 	// Mix down any ports with multiple inputs
-	for (size_t i=0; i < _ports->size(); ++i)
-		_ports->at(i)->pre_process(nframes, start, end);
+	if (_ports)
+		for (size_t i=0; i < _ports->size(); ++i)
+			_ports->at(i)->pre_process(nframes, start, end);
 }
 
 
@@ -187,11 +187,10 @@ NodeBase::pre_process(SampleCount nframes, FrameTime start, FrameTime end)
 void
 NodeBase::post_process(SampleCount nframes, FrameTime start, FrameTime end)
 {
-	assert(_activated);
-	
 	/* Write output ports */
-	for (size_t i=0; i < _ports->size(); ++i)
-		_ports->at(i)->post_process(nframes, start, end);
+	if (_ports)
+		for (size_t i=0; i < _ports->size(); ++i)
+			_ports->at(i)->post_process(nframes, start, end);
 }
 
 

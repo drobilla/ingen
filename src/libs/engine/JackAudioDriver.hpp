@@ -25,6 +25,7 @@
 #include <raul/List.hpp>
 #include "AudioDriver.hpp"
 #include "Buffer.hpp"
+#include "ProcessContext.hpp"
 
 namespace Ingen {
 
@@ -136,6 +137,7 @@ private:
 	jack_transport_state_t _transport_state;
 	
 	Raul::List<JackAudioPort*> _ports;
+	ProcessContext             _process_context;
 
 	Patch* _root_patch;
 };

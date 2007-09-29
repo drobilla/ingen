@@ -54,7 +54,7 @@ public:
 	void configure(const string& key, const string& val);
 	void program(int bank, int program);
 
-	void process(SampleCount nframes, FrameTime start, FrameTime end);
+	void process(ProcessContext& events, SampleCount nframes, FrameTime start, FrameTime end);
 	
 	void set_port_buffer(uint32_t voice, uint32_t port_num, Buffer* buf);
 	

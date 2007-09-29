@@ -27,16 +27,16 @@
 #include <raul/Atom.hpp>
 #include "types.hpp"
 
-using std::string;
 using Raul::Atom;
 using Raul::Path;
-
 
 namespace Raul { class Maid; }
 
 namespace Ingen {
 
 class Patch;
+class ProcessContext;
+
 
 /** An object on the audio graph - Patch, Node, Port, etc.
  *
@@ -67,7 +67,7 @@ public:
 	inline GraphObject*  parent() const { return _parent; }
 	inline const string& name()   const { return _name; }
 	
-	virtual void process(SampleCount nframes, FrameTime start, FrameTime end) = 0;
+	virtual void process(ProcessContext& events, SampleCount nframes, FrameTime start, FrameTime end) = 0;
 
 	/** Rename */
 	virtual void set_path(const Path& new_path) {
@@ -102,7 +102,7 @@ public:
 
 protected:
 	GraphObject* _parent;
-	string       _name;
+	std::string  _name;
 	bool         _polyphonic;
 
 private:	

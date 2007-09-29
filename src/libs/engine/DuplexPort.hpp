@@ -45,6 +45,7 @@ public:
 	virtual ~DuplexPort() {}
 
 	void pre_process(SampleCount nframes, FrameTime start, FrameTime end);
+	void process(ProcessContext& events, SampleCount nframes, FrameTime start, FrameTime end);
 	void post_process(SampleCount nframes, FrameTime start, FrameTime end);
 	
 	bool is_input()  const { return !_is_output; }

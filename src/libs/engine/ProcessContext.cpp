@@ -15,31 +15,11 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef TRANSPORTNODE_H
-#define TRANSPORTNODE_H
+#include "ProcessContext.hpp"
 
-#include <string>
-#include <jack/transport.h>
-#include "NodeBase.hpp"
+using namespace std;
 
 namespace Ingen {
 
 
-/** Transport Node, brings timing information into patches.
- *
- * This node uses the Jack transport API to get information about BPM, time
- * signature, etc.. all sample accurate.  Using this you can do
- * tempo-synced effects or even synthesis, etc.
- */
-class TransportNode : public NodeBase
-{
-public:
-	TransportNode(const std::string& path, bool polyphonic, Patch* parent, SampleRate srate, size_t buffer_size);
-
-	virtual void process(ProcessContext& events, SampleCount nframes, FrameTime start, FrameTime end);
-};
-
-
 } // namespace Ingen
-
-#endif // TRANSPORTNODE_H

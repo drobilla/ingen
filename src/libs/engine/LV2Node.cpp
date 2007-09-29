@@ -241,7 +241,7 @@ LV2Node::deactivate()
 
 
 void
-LV2Node::process(SampleCount nframes, FrameTime start, FrameTime end)
+LV2Node::process(ProcessContext& context, SampleCount nframes, FrameTime start, FrameTime end)
 {
 	NodeBase::pre_process(nframes, start, end);
 

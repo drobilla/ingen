@@ -188,7 +188,7 @@ LADSPANode::deactivate()
 
 
 void
-LADSPANode::process(SampleCount nframes, FrameTime start, FrameTime end)
+LADSPANode::process(ProcessContext& context, SampleCount nframes, FrameTime start, FrameTime end)
 {
 	NodeBase::pre_process(nframes, start, end);
 

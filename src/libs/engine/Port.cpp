@@ -20,8 +20,9 @@
 #include "Port.hpp"
 #include "Node.hpp"
 #include "DataType.hpp"
-#include "Buffer.hpp"
+#include "AudioBuffer.hpp"
 #include "BufferFactory.hpp"
+#include "ProcessContext.hpp"
 
 namespace Ingen {
 
@@ -34,9 +35,10 @@ Port::Port(Node* const node, const string& name, uint32_t index, uint32_t poly, 
 	: GraphObject(node, name, true)
 	, _index(index)
 	, _poly(poly)
-	, _type(type)
 	, _buffer_size(buffer_size)
+	, _type(type)
 	, _fixed_buffers(false)
+	, _monitor(false)
 	, _buffers(new Raul::Array<Buffer*>(poly))
 {
 	assert(node != NULL);

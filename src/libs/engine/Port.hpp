@@ -31,6 +31,7 @@ namespace Ingen {
 
 class Node;
 class Buffer;
+class ProcessContext;
 
 
 /** A port on a Node.
@@ -67,7 +68,6 @@ public:
 
 	/** Called once per process cycle */
 	virtual void pre_process(SampleCount nframes, FrameTime start, FrameTime end) = 0;
-	virtual void process(SampleCount nframes, FrameTime start, FrameTime end) {}
 	virtual void post_process(SampleCount nframes, FrameTime start, FrameTime end) {};
 	
 	/** Empty buffer contents completely (ie silence) */
@@ -85,6 +85,9 @@ public:
 	
 	void fixed_buffers(bool b) { _fixed_buffers = b; }
 	bool fixed_buffers()       { return _fixed_buffers; }
+	
+	void monitor(bool b) { _monitor = b; }
+	bool monitor()       { return _monitor; }
 
 protected:
 	Port(Node* const node, const std::string& name, uint32_t index, uint32_t poly, DataType type, size_t buffer_size);
@@ -92,11 +95,12 @@ protected:
 	virtual void allocate_buffers();
 	virtual void connect_buffers();
 
-	uint32_t  _index;
-	uint32_t  _poly;
-	DataType  _type;
-	size_t    _buffer_size;
-	bool      _fixed_buffers;
+	uint32_t _index;
+	uint32_t _poly;
+	uint32_t _buffer_size;
+	DataType _type;
+	bool     _fixed_buffers;
+	bool     _monitor;
 
 	Raul::Array<Buffer*>* _buffers;
 

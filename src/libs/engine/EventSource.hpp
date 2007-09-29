@@ -42,7 +42,6 @@ class PostProcessor;
 class EventSource
 {
 public:
-
 	virtual ~EventSource() {}
 
 	virtual void activate()   = 0;
@@ -54,7 +53,7 @@ public:
 	                     FrameTime      cycle_end) = 0;
 
 protected:
-	EventSource() {}
+	size_t _capacity;
 };
 
 

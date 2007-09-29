@@ -299,8 +299,9 @@ JackAudioDriver::_process_cb(jack_nframes_t nframes)
 	
 	// Run root patch
 	if (_root_patch)
-		_root_patch->process(nframes, start_of_current_cycle, start_of_current_cycle + nframes);
-	
+		_root_patch->process(_process_context, nframes, start_of_current_cycle,
+				start_of_current_cycle + nframes);
+
 	return 0;
 }
 

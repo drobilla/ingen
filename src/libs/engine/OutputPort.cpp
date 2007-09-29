@@ -16,7 +16,8 @@
  */
 
 #include "OutputPort.hpp"
-#include "Buffer.hpp"
+#include "AudioBuffer.hpp"
+#include "ProcessContext.hpp"
 
 namespace Ingen {
 
@@ -26,6 +27,15 @@ OutputPort::pre_process(SampleCount nframes, FrameTime start, FrameTime end)
 {
 	for (uint32_t i=0; i < _poly; ++i)
 		_buffers->at(i)->prepare_write(nframes);
+}
+
+
+void
+OutputPort::process(ProcessContext& context, SampleCount nframes, FrameTime start, FrameTime end)
+{
+	if (_monitor && _type == DataType::FLOAT && _buffer_size == 1) {
+		context.event_sink().control_change(this, ((AudioBuffer*)(*_buffers)[0])->value_at(0));
+	}
 }
 
 

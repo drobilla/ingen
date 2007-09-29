@@ -59,7 +59,7 @@ MidiTriggerNode::MidiTriggerNode(const string& path, bool polyphonic, Patch* par
 
 
 void
-MidiTriggerNode::process(SampleCount nframes, FrameTime start, FrameTime end)
+MidiTriggerNode::process(ProcessContext& context, SampleCount nframes, FrameTime start, FrameTime end)
 {
 	NodeBase::pre_process(nframes, start, end);
 	

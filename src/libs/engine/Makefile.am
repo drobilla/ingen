@@ -83,6 +83,8 @@ libingen_engine_la_SOURCES = \
 	Port.hpp \
 	PostProcessor.cpp \
 	PostProcessor.hpp \
+	ProcessContext.hpp \
+	ProcessContext.cpp \
 	ProcessSlave.hpp \
 	ProcessSlave.cpp \
 	QueuedEngineInterface.cpp \

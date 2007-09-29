@@ -43,7 +43,7 @@ class MidiTriggerNode : public NodeBase
 public:
 	MidiTriggerNode(const std::string& path, bool polyphonic, Patch* parent, SampleRate srate, size_t buffer_size);
 
-	void process(SampleCount nframes, FrameTime start, FrameTime end);
+	void process(ProcessContext& events, SampleCount nframes, FrameTime start, FrameTime end);
 	
 	void note_on(uchar note_num, uchar velocity, FrameTime time, SampleCount nframes, FrameTime start, FrameTime end);
 	void note_off(uchar note_num, FrameTime time, SampleCount nframes, FrameTime start, FrameTime end);
