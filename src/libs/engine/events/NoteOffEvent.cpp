@@ -23,6 +23,7 @@
 #include "Plugin.hpp"
 #include "MidiNoteNode.hpp"
 #include "MidiTriggerNode.hpp"
+#include "ProcessContext.hpp"
 
 namespace Ingen {
 
@@ -49,10 +50,10 @@ NoteOffEvent::NoteOffEvent(Engine& engine, SharedPtr<Responder> responder, Sampl
 
 
 void
-NoteOffEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
+NoteOffEvent::execute(ProcessContext& context)
 {	
-	Event::execute(nframes, start, end);
-	assert(_time >= start && _time <= end);
+	Event::execute(context);
+	assert(_time >= context.start() && _time <= context.end());
 
 	if (_node == NULL && _node_path != "")
 		_node = _engine.object_store()->find_node(_node_path);
@@ -60,9 +61,9 @@ NoteOffEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 	// FIXME: this isn't very good at all.
 	if (_node != NULL && _node->plugin()->type() == Plugin::Internal) {
 		if (_node->plugin()->plug_label() == "note_in")
-			((MidiNoteNode*)_node)->note_off(_note_num, _time, nframes, start, end);
+			((MidiNoteNode*)_node)->note_off(_note_num, _time, context);
 		else if (_node->plugin()->plug_label() == "trigger_in")
-			((MidiTriggerNode*)_node)->note_off(_note_num, _time, nframes, start, end);
+			((MidiTriggerNode*)_node)->note_off(_note_num, _time, context);
 	}
 }
 

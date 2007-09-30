@@ -41,7 +41,7 @@ class MidiControlNode : public NodeBase
 public:
 	MidiControlNode(const std::string& path, bool polyphonic, Patch* parent, SampleRate srate, size_t buffer_size);
 	
-	void process(ProcessContext& context, SampleCount nframes, FrameTime start, FrameTime end);
+	void process(ProcessContext& context);
 	
 	void control(uchar control_num, uchar val, SampleCount offset);
 

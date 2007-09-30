@@ -54,7 +54,7 @@ public:
 	void activate();
 	void deactivate();
 
-	void process(ProcessContext& context, SampleCount nframes, FrameTime start, FrameTime end);
+	void process(ProcessContext& context);
 	
 	void set_buffer_size(size_t size);
 	
@@ -113,8 +113,8 @@ public:
 
 private:
 	inline void compile_recursive(Node* n, CompiledPatch* output) const;
-	void process_parallel(ProcessContext& context, SampleCount nframes, FrameTime start, FrameTime end);
-	void process_single(ProcessContext& context, SampleCount nframes, FrameTime start, FrameTime end);
+	void process_parallel(ProcessContext& context);
+	void process_single(ProcessContext& context);
 
 	Engine&                 _engine;
 	uint32_t                _internal_poly;

@@ -44,9 +44,8 @@ public:
 	DuplexPort(Node* parent, const std::string& name, uint32_t index, uint32_t poly, DataType type, size_t buffer_size, bool is_output);
 	virtual ~DuplexPort() {}
 
-	void pre_process(SampleCount nframes, FrameTime start, FrameTime end);
-	void process(ProcessContext& context, SampleCount nframes, FrameTime start, FrameTime end);
-	void post_process(SampleCount nframes, FrameTime start, FrameTime end);
+	void pre_process(ProcessContext& context);
+	void post_process(ProcessContext& context);
 	
 	bool is_input()  const { return !_is_output; }
 	bool is_output() const { return _is_output; }

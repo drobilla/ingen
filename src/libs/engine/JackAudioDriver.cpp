@@ -35,6 +35,7 @@
 #include "DuplexPort.hpp"
 #include "EventSource.hpp"
 #include "AudioBuffer.hpp"
+#include "ProcessSlave.hpp"
 /*#ifdef HAVE_LASH
 #include "LashDriver.hpp"
 #endif*/
@@ -100,6 +101,7 @@ JackAudioDriver::JackAudioDriver(Engine&        engine,
   _sample_rate(jack_client ? jack_get_sample_rate(jack_client) : 0),
   _is_activated(false),
   _local_client(true), // FIXME
+  _process_context(engine),
   _root_patch(NULL)
 {
 	if (!_client) {
@@ -280,12 +282,18 @@ JackAudioDriver::_process_cb(jack_nframes_t nframes)
 	assert(start_of_current_cycle - start_of_last_cycle == nframes);
 
 	_transport_state = jack_transport_query(_client, &_position);
+
+	_process_context.set_time_slice(nframes, start_of_current_cycle, end_of_current_cycle);
+
+	for (Engine::ProcessSlaves::iterator i = _engine.process_slaves().begin();
+			i != _engine.process_slaves().end(); ++i) {
+		(*i)->context().set_time_slice(nframes, start_of_current_cycle, end_of_current_cycle);
+	}
 	
 	// Process events that came in during the last cycle
 	// (Aiming for jitter-free 1 block event latency, ideally)
 	if (_engine.event_source())
-		_engine.event_source()->process(*_engine.post_processor(), nframes,
-				start_of_last_cycle, start_of_current_cycle);
+		_engine.event_source()->process(*_engine.post_processor(), _process_context);
 	
 	// Set buffers of patch ports to Jack port buffers (zero-copy processing)
 	for (Raul::List<JackAudioPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i) {
@@ -294,16 +302,15 @@ JackAudioDriver::_process_cb(jack_nframes_t nframes)
 	}
 
 	assert(_engine.midi_driver());
-	_engine.midi_driver()->pre_process(_process_context, nframes,
-			start_of_current_cycle, end_of_current_cycle);
+	_engine.midi_driver()->pre_process(_process_context);
 	
 	// Run root patch
 	if (_root_patch)
-		_root_patch->process(_process_context, nframes,
-				start_of_current_cycle, end_of_current_cycle);
+		_root_patch->process(_process_context);
 	
-	_engine.midi_driver()->post_process(_process_context, nframes,
-			start_of_current_cycle, end_of_current_cycle);
+	_engine.midi_driver()->post_process(_process_context);
+
+	_engine.post_processor()->set_end_time(_process_context.end());
 
 	return 0;
 }

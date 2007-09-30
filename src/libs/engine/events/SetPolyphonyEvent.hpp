@@ -39,7 +39,7 @@ public:
 	SetPolyphonyEvent(Engine& engine, SharedPtr<Responder> responder, FrameTime time, QueuedEventSource* source, const string& patch_path, uint32_t poly);
 	
 	void pre_process();
-	void execute(SampleCount nframes, FrameTime start, FrameTime end);
+	void execute(ProcessContext& context);
 	void post_process();
 
 private:

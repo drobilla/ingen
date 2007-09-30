@@ -89,9 +89,9 @@ CreatePatchEvent::pre_process()
 
 
 void
-CreatePatchEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
+CreatePatchEvent::execute(ProcessContext& context)
 {
-	QueuedEvent::execute(nframes, start, end);
+	QueuedEvent::execute(context);
 
 	if (_patch != NULL) {
 		if (_parent == NULL) {

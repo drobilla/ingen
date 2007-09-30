@@ -23,27 +23,23 @@ namespace Ingen {
 
 
 void
-OutputPort::pre_process(SampleCount nframes, FrameTime start, FrameTime end)
+OutputPort::pre_process(ProcessContext& context)
 {
 	for (uint32_t i=0; i < _poly; ++i)
-		_buffers->at(i)->prepare_write(nframes);
+		_buffers->at(i)->prepare_write(context.nframes());
 }
 
 
 void
-OutputPort::process(ProcessContext& context, SampleCount nframes, FrameTime start, FrameTime end)
+OutputPort::post_process(ProcessContext& context)
 {
 	if (_monitor && _type == DataType::FLOAT && _buffer_size == 1) {
-		context.event_sink().control_change(this, ((AudioBuffer*)(*_buffers)[0])->value_at(0));
+		context.event_sink().control_change(this, context.start(),
+				((AudioBuffer*)(*_buffers)[0])->value_at(0));
 	}
-}
 
-
-void
-OutputPort::post_process(SampleCount nframes, FrameTime start, FrameTime end)
-{
 	for (uint32_t i=0; i < _poly; ++i)
-		_buffers->at(i)->prepare_read(nframes);
+		_buffers->at(i)->prepare_read(context.nframes());
 }
 
 

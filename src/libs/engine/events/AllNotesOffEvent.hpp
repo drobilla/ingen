@@ -37,7 +37,7 @@ public:
 	AllNotesOffEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, Patch* patch);
 	AllNotesOffEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& patch_path);
 	
-	void execute(SampleCount nframes, FrameTime start, FrameTime end);
+	void execute(ProcessContext& context);
 	void post_process();
 
 private:

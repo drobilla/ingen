@@ -15,14 +15,15 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "DSSINode.hpp"
 #include <map>
-#include <set>
+//#include <set>
+#include "DSSINode.hpp"
 #include "ClientBroadcaster.hpp"
 #include "interface/ClientInterface.hpp"
 #include "InputPort.hpp"
 #include "types.hpp"
 #include "AudioBuffer.hpp"
+#include "ProcessContext.hpp"
 
 using namespace std;
 
@@ -172,26 +173,26 @@ DSSINode::has_midi_input() const
 
 
 void
-DSSINode::process(ProcessContext& context, SampleCount nframes, FrameTime start, FrameTime end)
+DSSINode::process(ProcessContext& context)
 {
-	NodeBase::pre_process(nframes, start, end);
+	NodeBase::pre_process(context);
 
 	if (_dssi_descriptor->run_synth) {
-		convert_events(nframes);
-		_dssi_descriptor->run_synth(_instances[0], nframes,
+		convert_events(context.nframes());
+		_dssi_descriptor->run_synth(_instances[0], context.nframes(),
 					     _alsa_events, _encoded_events);
 	} else if (_dssi_descriptor->run_multiple_synths) {
-		convert_events(nframes);
+		convert_events(context.nframes());
 		// I hate this stupid function
 		snd_seq_event_t* events[1]       = { _alsa_events };
 		long unsigned    events_sizes[1] = { _encoded_events };
-		_dssi_descriptor->run_multiple_synths(1, _instances, nframes,
+		_dssi_descriptor->run_multiple_synths(1, _instances, context.nframes(),
 			events, events_sizes);
 	} else {
-		LADSPANode::process(context, nframes, start, end);
+		LADSPANode::process(context);
 	}
 	
-	NodeBase::post_process(nframes, start, end);
+	NodeBase::post_process(context);
 }
 
 

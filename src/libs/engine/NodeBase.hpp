@@ -69,9 +69,9 @@ public:
 	virtual void     wait_for_input(size_t num_providers);
 	virtual unsigned n_inputs_ready() const { return _n_inputs_ready.get(); }
 
-	virtual void pre_process(SampleCount nframes, FrameTime start, FrameTime end);
-	virtual void process(ProcessContext& context, SampleCount nframes, FrameTime start, FrameTime end) = 0;
-	virtual void post_process(SampleCount nframes, FrameTime start, FrameTime end);
+	virtual void pre_process(ProcessContext& context);
+	virtual void process(ProcessContext& context) = 0;
+	virtual void post_process(ProcessContext& context);
 		
 	virtual void set_port_buffer(uint32_t voice, uint32_t port_num, Buffer* buf) {}
 	

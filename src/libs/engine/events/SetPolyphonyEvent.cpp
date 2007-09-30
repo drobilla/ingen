@@ -52,9 +52,9 @@ SetPolyphonyEvent::pre_process()
 
 
 void
-SetPolyphonyEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
+SetPolyphonyEvent::execute(ProcessContext& context)
 {
-	QueuedEvent::execute(nframes, start, end);
+	QueuedEvent::execute(context);
 
 	if (_patch)
 		_patch->apply_internal_poly(*_engine.maid(), _poly);

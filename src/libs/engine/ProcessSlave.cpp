@@ -25,7 +25,7 @@ using namespace std;
 namespace Ingen {
 
 
-size_t ProcessSlave::_next_id = 0;
+uint32_t ProcessSlave::_next_id = 0;
 
 
 void
@@ -49,7 +49,7 @@ ProcessSlave::_whipped()
 
 			n.node()->wait_for_input(n.n_providers());
 
-			n.node()->process(_process_context, _nframes, _start, _end);
+			n.node()->process(_process_context);
 			
 			/* Signal dependants their input is ready */
 			for (size_t i=0; i < n.dependants().size(); ++i)

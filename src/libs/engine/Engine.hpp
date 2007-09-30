@@ -98,6 +98,7 @@ public:
 
 	typedef std::vector<ProcessSlave*> ProcessSlaves;
 	inline const ProcessSlaves& process_slaves() const { return _process_slaves; }
+	inline ProcessSlaves& process_slaves() { return _process_slaves; }
 	
 private:
 	ProcessSlaves _process_slaves;

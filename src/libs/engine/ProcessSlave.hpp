@@ -35,8 +35,12 @@ class CompiledPatch;
 
 class ProcessSlave : protected Raul::Slave {
 public:
-	ProcessSlave(bool realtime)
-			: _id(_next_id++), _index(0), _state(STATE_FINISHED), _compiled_patch(NULL)
+	ProcessSlave(Engine& engine, bool realtime)
+		: _id(_next_id++)
+		, _index(0)
+		, _state(STATE_FINISHED)
+		, _compiled_patch(NULL)
+		, _process_context(engine)
 	{
 		std::stringstream ss;
 		ss << "Process Slave ";
@@ -53,15 +57,12 @@ public:
 		stop();
 	}
 
-	inline void whip(CompiledPatch* compiled_patch, size_t start_index,
-			SampleCount nframes, FrameTime start, FrameTime end) {
+	inline void whip(CompiledPatch* compiled_patch, uint32_t start_index, ProcessContext& context) {
 		assert(_state == STATE_FINISHED);
 		_index = start_index;
 		_state = STATE_RUNNING;
-		_nframes = nframes;
-		_start = start;
-		_end = end;
 		_compiled_patch = compiled_patch;
+		_process_context.set_time_slice(context.nframes(), context.start(), context.end());
 
 		Raul::Slave::whip();
 	}
@@ -71,24 +72,23 @@ public:
 			_state.compare_and_exchange(STATE_RUNNING, STATE_FINISH_SIGNALLED);
 	}
 
-	size_t id() const { return _id; }
+	inline uint32_t              id()      const { return _id; }
+	inline const ProcessContext& context() const { return _process_context; }
+	inline       ProcessContext& context()       { return _process_context; }
 	
 private:
 
 	void _whipped();
 
-	static size_t _next_id;
+	static uint32_t _next_id;
 
 	static const int STATE_RUNNING = 0;
 	static const int STATE_FINISH_SIGNALLED = 1;
 	static const int STATE_FINISHED = 2;
 
-	size_t           _id;
-	size_t           _index;
+	uint32_t         _id;
+	uint32_t         _index;
 	Raul::AtomicInt  _state;
-	SampleCount      _nframes;
-	FrameTime        _start;
-	FrameTime        _end;
 	CompiledPatch*   _compiled_patch;
 	ProcessContext   _process_context;
 };

@@ -64,10 +64,10 @@ EXTRA_DIST = \
 	SendPortValueEvent.hpp \
 	SetMetadataEvent.cpp \
 	SetMetadataEvent.hpp \
-	SetPolyphonyEvent.hpp \
-	SetPolyphonyEvent.cpp \
-	SetPolyphonicEvent.hpp \
 	SetPolyphonicEvent.cpp \
+	SetPolyphonicEvent.hpp \
+	SetPolyphonyEvent.cpp \
+	SetPolyphonyEvent.hpp \
 	SetPortValueEvent.cpp \
 	SetPortValueEvent.hpp \
 	SetPortValueQueuedEvent.cpp \

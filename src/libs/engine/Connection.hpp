@@ -54,7 +54,7 @@ public:
 	bool pending_disconnection()       { return _pending_disconnection; }
 	void pending_disconnection(bool b) { _pending_disconnection = b; }
 	
-	void process(SampleCount nframes, FrameTime start, FrameTime end);
+	void process(ProcessContext& context);
 
 	/** Get the buffer for a particular voice.
 	 * A Connection is smart - it knows the destination port requesting the

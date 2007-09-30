@@ -51,9 +51,9 @@ DisablePortMonitoringEvent::pre_process()
 
 
 void
-DisablePortMonitoringEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
+DisablePortMonitoringEvent::execute(ProcessContext& context)
 {
-	QueuedEvent::execute(nframes, start, end);
+	QueuedEvent::execute(context);
 
 #if 0
 	assert(_time >= start && _time <= end);

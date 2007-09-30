@@ -25,6 +25,7 @@
 #include "ObjectStore.hpp"
 #include "AudioBuffer.hpp"
 #include "MidiBuffer.hpp"
+#include "ProcessContext.hpp"
 
 using namespace std;
 
@@ -79,10 +80,10 @@ SetPortValueEvent::~SetPortValueEvent()
 
 
 void
-SetPortValueEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
+SetPortValueEvent::execute(ProcessContext& context)
 {
-	Event::execute(nframes, start, end);
-	assert(_time >= start && _time <= end);
+	Event::execute(context);
+	assert(_time >= context.start() && _time <= context.end());
 
 	if (_port == NULL)
 		_port = _engine.object_store()->find_port(_port_path);
@@ -95,7 +96,7 @@ SetPortValueEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 		Buffer* const buf = _port->buffer(0);
 		AudioBuffer* const abuf = dynamic_cast<AudioBuffer*>(buf);
 		if (abuf) {
-			const uint32_t offset = (buf->size() == 1) ? 0 : _time - start;
+			const uint32_t offset = (buf->size() == 1) ? 0 : _time - context.start();
 
 			if (_omni)
 				for (uint32_t i=0; i < _port->poly(); ++i)
@@ -108,7 +109,7 @@ SetPortValueEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 		
 		MidiBuffer* const mbuf = dynamic_cast<MidiBuffer*>(buf);
 		if (mbuf) {
-			const double stamp = std::max((double)(_time - start), mbuf->latest_stamp());
+			const double stamp = std::max((double)(_time - context.start()), mbuf->latest_stamp());
 			mbuf->append(stamp, _data_size, (const unsigned char*)_data);
 		}
 	}

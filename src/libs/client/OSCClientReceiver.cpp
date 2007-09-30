@@ -39,7 +39,7 @@ OSCClientReceiver::OSCClientReceiver(int listen_port)
 //  _receiving_node_num_ports(0),
 //  _num_received_ports(0)
 {
-	start(true);
+	start(false);
 }
 
 

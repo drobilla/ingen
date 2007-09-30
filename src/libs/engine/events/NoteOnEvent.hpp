@@ -38,7 +38,7 @@ public:
 	NoteOnEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, Node* patch, uchar note_num, uchar velocity);
 	NoteOnEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& node_path, uchar note_num, uchar velocity);
 	
-	void execute(SampleCount nframes, FrameTime start, FrameTime end);
+	void execute(ProcessContext& context);
 	void post_process();
 
 private:

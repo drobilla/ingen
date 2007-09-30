@@ -94,6 +94,8 @@ public:
 	Patch* root_patch()                 { return _root_patch; }
 	void   set_root_patch(Patch* patch) { _root_patch = patch; }
 	
+	ProcessContext& context() { return _process_context; }
+	
 	/** Transport state for this frame.
 	 * Intended to only be called from the audio thread. */
 	inline const jack_position_t* position() { return &_position; }

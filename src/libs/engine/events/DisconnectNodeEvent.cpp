@@ -113,13 +113,13 @@ DisconnectNodeEvent::pre_process()
 
 
 void
-DisconnectNodeEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
+DisconnectNodeEvent::execute(ProcessContext& context)
 {
-	QueuedEvent::execute(nframes, start, end);
+	QueuedEvent::execute(context);
 
 	if (_succeeded) {
 		for (Raul::List<DisconnectionEvent*>::iterator i = _disconnection_events.begin(); i != _disconnection_events.end(); ++i)
-			(*i)->execute(nframes, start, end);
+			(*i)->execute(context);
 	}
 }
 

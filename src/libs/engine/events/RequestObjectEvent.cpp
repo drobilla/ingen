@@ -26,6 +26,7 @@
 #include "Node.hpp"
 #include "Port.hpp"
 #include "ObjectSender.hpp"
+#include "ProcessContext.hpp"
 
 using std::string;
 
@@ -50,10 +51,10 @@ RequestObjectEvent::pre_process()
 
 
 void
-RequestObjectEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
+RequestObjectEvent::execute(ProcessContext& context)
 {
-	QueuedEvent::execute(nframes, start, end);
-	assert(_time >= start && _time <= end);
+	QueuedEvent::execute(context);
+	assert(_time >= context.start() && _time <= context.end());
 }
 
 

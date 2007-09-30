@@ -28,6 +28,7 @@
 namespace Ingen {
 
 class Event;
+class Engine;
 
 
 /** Processor for Events after leaving the audio thread.
@@ -44,7 +45,7 @@ class Event;
 class PostProcessor //: public Raul::Slave
 {
 public:
-	PostProcessor(/*Raul::Maid& maid, */size_t queue_size);
+	PostProcessor(Engine& engine, /*Raul::Maid& maid, */size_t queue_size);
 
 	/** Push an event on to the process queue, realtime-safe, not thread-safe. */
 	inline void push(Event* const ev) { _events.push(ev); }
@@ -52,7 +53,12 @@ public:
     /** Post-process and delete all pending events */
     void process();
 
+	/** Set the latest event time that should be post-processed */
+	void set_end_time(FrameTime time) { _max_time = time; }
+
 private:
+	Engine&                 _engine;
+	Raul::AtomicInt         _max_time;
 	//Raul::Maid&             _maid;
 	Raul::SRSWQueue<Event*> _events;
 	//virtual void            _whipped();

@@ -18,10 +18,11 @@
 #ifndef MIDIDRIVER_H
 #define MIDIDRIVER_H
 
+#include <iostream>
 #include "types.hpp"
 #include "Driver.hpp"
-#include <iostream>
 #include "MidiBuffer.hpp"
+#include "ProcessContext.hpp"
 
 namespace Ingen {
 
@@ -41,19 +42,13 @@ public:
 	 *
 	 * Realtime safe, run in audio thread before executing the graph for a cycle.
 	 */
-	virtual void pre_process(ProcessContext& context,
-	                         SampleCount     nframes,
-	                         FrameTime       start,
-	                         FrameTime       end) = 0;
+	virtual void pre_process(ProcessContext& context) = 0;
 	
 	/** Prepare output for the specified (just completed) cycle.
 	 *
 	 * Realtime safe, run in audio thread after executing the graph for a cycle.
 	 */
-	virtual void post_process(ProcessContext& context,
-	                          SampleCount     nframes,
-	                          FrameTime       start,
-	                          FrameTime       end) = 0;
+	virtual void post_process(ProcessContext& context) = 0;
 };
 
 
@@ -90,8 +85,8 @@ public:
 	void        add_port(DriverPort* port)    {}
 	DriverPort* remove_port(const Raul::Path& path) { return NULL; }
 	
-	void pre_process(ProcessContext& context, SampleCount nframes, FrameTime start, FrameTime end) {}
-	void post_process(ProcessContext& context, SampleCount nframes, FrameTime start, FrameTime end) {}
+	void pre_process(ProcessContext& context) {}
+	void post_process(ProcessContext& context) {}
 };
 
 

@@ -145,9 +145,9 @@ ConnectionEvent::pre_process()
 
 
 void
-ConnectionEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
+ConnectionEvent::execute(ProcessContext& context)
 {
-	QueuedEvent::execute(nframes, start, end);
+	QueuedEvent::execute(context);
 
 	if (_error == NO_ERROR) {
 		// These must be inserted here, since they're actually used by the audio thread

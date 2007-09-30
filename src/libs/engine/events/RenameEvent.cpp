@@ -93,10 +93,10 @@ RenameEvent::pre_process()
 
 
 void
-RenameEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
+RenameEvent::execute(ProcessContext& context)
 {
 	//cout << "Executing rename event...";
-	QueuedEvent::execute(nframes, start, end);
+	QueuedEvent::execute(context);
 }
 
 

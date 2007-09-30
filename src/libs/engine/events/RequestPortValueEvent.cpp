@@ -24,6 +24,7 @@
 #include "ObjectStore.hpp"
 #include "ClientBroadcaster.hpp"
 #include "AudioBuffer.hpp"
+#include "ProcessContext.hpp"
 
 using std::string;
 
@@ -49,10 +50,10 @@ RequestPortValueEvent::pre_process()
 
 
 void
-RequestPortValueEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
+RequestPortValueEvent::execute(ProcessContext& context)
 {
-	QueuedEvent::execute(nframes, start, end);
-	assert(_time >= start && _time <= end);
+	QueuedEvent::execute(context);
+	assert(_time >= context.start() && _time <= context.end());
 
 	if (_port != NULL && _port->type() == DataType::FLOAT)
 		_value = ((AudioBuffer*)_port->buffer(0))->value_at(0/*_time - start*/);

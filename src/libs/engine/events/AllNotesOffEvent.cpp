@@ -43,9 +43,9 @@ AllNotesOffEvent::AllNotesOffEvent(Engine& engine, SharedPtr<Responder> responde
 
 
 void
-AllNotesOffEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
+AllNotesOffEvent::execute(ProcessContext& context)
 {
-	Event::execute(nframes, start, end);
+	Event::execute(context);
 
 	if (_patch == NULL && _patch_path != "")
 		_patch = _engine.object_store()->find_patch(_patch_path);

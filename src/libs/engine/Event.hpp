@@ -22,12 +22,12 @@
 #include <raul/SharedPtr.hpp>
 #include <raul/Deletable.hpp>
 #include "types.hpp"
-#include "ThreadManager.hpp"
 
 namespace Ingen {	
 
 class Engine;
 class Responder;
+class ProcessContext;
 
 
 /** Base class for all events (both realtime and QueuedEvent).
@@ -47,27 +47,13 @@ public:
 	virtual ~Event() {}
 
 	/** Execute this event in the audio thread (MUST be realtime safe). */
-	virtual void execute(SampleCount nframes, FrameTime start, FrameTime end)
-	{
-		assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
-		assert(!_executed);
-		assert(_time <= end);
-
-		// Missed the event, jitter, damnit.
-		if (_time < start)
-			_time = start;
-
-		_executed = true;
-	}
+	virtual void execute(ProcessContext& context);
 	
 	/** Perform any actions after execution (ie send replies to commands)
 	 * (no realtime requirements). */
-	virtual void post_process()
-	{
-		assert(ThreadManager::current_thread_id() == THREAD_POST_PROCESS);
-	}
+	virtual void post_process();
 	
-	inline SampleCount time() { return _time; }
+	inline SampleCount time() const { return _time; }
 		
 protected:
 	Event(Engine& engine, SharedPtr<Responder> responder, FrameTime time)

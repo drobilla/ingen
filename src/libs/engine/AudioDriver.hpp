@@ -29,6 +29,7 @@ namespace Ingen {
 class Patch;
 class AudioDriver;
 class Port;
+class ProcessContext;
 
 
 /** Audio driver abstract base class.
@@ -51,6 +52,8 @@ public:
 	virtual SampleCount frame_time()   const = 0;
 
 	virtual bool is_realtime() const = 0;
+
+	virtual ProcessContext& context() = 0;
 };
 
 

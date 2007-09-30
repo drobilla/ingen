@@ -15,41 +15,34 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef DSSIUPDATEEVENT_H
-#define DSSIUPDATEEVENT_H
-
-#include "QueuedEvent.hpp"
-#include <string>
-
-using std::string;
+#include "Event.hpp"
+#include "ThreadManager.hpp"
+#include "ProcessContext.hpp"
 
 namespace Ingen {
-	
-class DSSINode;
 
 
-/** A DSSI "update" responder for a DSSI plugin/node.
- *
- * This sends all information about the plugin to the UI (over OSC).
- *
- * \ingroup engine
- */
-class DSSIUpdateEvent : public QueuedEvent
+void
+Event::execute(ProcessContext& context)
 {
-public:
-	DSSIUpdateEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& url);
-	
-	void pre_process();
-	void execute(ProcessContext& context);
-	void post_process();
+	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
+	assert(!_executed);
+	assert(_time <= context.end());
 
-private:
-	string     _path;
-	string     _url;
-	DSSINode*  _node;
-};
+	// Missed the event, jitter, damnit.
+	if (_time < context.start())
+		_time = context.start();
+
+	_executed = true;
+}
+	
+
+void
+Event::post_process()
+{
+	assert(ThreadManager::current_thread_id() == THREAD_POST_PROCESS);
+}
 
 
 } // namespace Ingen
 
-#endif // DSSIUPDATEEVENT_H

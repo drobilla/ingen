@@ -55,7 +55,7 @@ Engine::Engine(Ingen::Shared::World* world)
 	, _midi_driver(NULL)
 	, _osc_driver(NULL)
 	, _maid(new Raul::Maid(maid_queue_size))
-	, _post_processor(new PostProcessor(/**_maid, */post_processor_queue_size))
+	, _post_processor(new PostProcessor(*this, /**_maid, */post_processor_queue_size))
 	, _broadcaster(new ClientBroadcaster())
 	, _object_store(new ObjectStore())
 	, _node_factory(new NodeFactory(world))
@@ -233,7 +233,7 @@ Engine::activate(size_t parallelism)
 	_process_slaves.clear();
 	_process_slaves.reserve(parallelism);
 	for (size_t i=0; i < parallelism - 1; ++i)
-		_process_slaves.push_back(new ProcessSlave(_audio_driver->is_realtime()));
+		_process_slaves.push_back(new ProcessSlave(*this, _audio_driver->is_realtime()));
 	
 	root_patch->enable();
 	

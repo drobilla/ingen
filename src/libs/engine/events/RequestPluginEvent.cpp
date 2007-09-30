@@ -25,6 +25,7 @@
 #include "ClientBroadcaster.hpp"
 #include "NodeFactory.hpp"
 #include "Plugin.hpp"
+#include "ProcessContext.hpp"
 
 using std::string;
 
@@ -49,10 +50,10 @@ RequestPluginEvent::pre_process()
 
 
 void
-RequestPluginEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
+RequestPluginEvent::execute(ProcessContext& context)
 {
-	QueuedEvent::execute(nframes, start, end);
-	assert(_time >= start && _time <= end);
+	QueuedEvent::execute(context);
+	assert(_time >= context.start() && _time <= context.end());
 }
 
 

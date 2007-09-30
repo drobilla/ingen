@@ -61,9 +61,9 @@ ClearPatchEvent::pre_process()
 
 
 void
-ClearPatchEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
+ClearPatchEvent::execute(ProcessContext& context)
 {
-	QueuedEvent::execute(nframes, start, end);
+	QueuedEvent::execute(context);
 
 	if (_patch != NULL) {
 		_patch->disable();

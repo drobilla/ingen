@@ -152,9 +152,9 @@ DisconnectionEvent::pre_process()
 
 
 void
-DisconnectionEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
+DisconnectionEvent::execute(ProcessContext& context)
 {
-	QueuedEvent::execute(nframes, start, end);
+	QueuedEvent::execute(context);
 
 	if (_error == NO_ERROR) {
 		Raul::ListNode<Connection*>* const port_connection

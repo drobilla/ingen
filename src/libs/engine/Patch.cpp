@@ -147,25 +147,25 @@ Patch::apply_internal_poly(Raul::Maid& maid, uint32_t poly)
  * Calls all Nodes in (roughly, if parallel) the order _compiled_patch specifies.
  */
 void
-Patch::process(ProcessContext& context, SampleCount nframes, FrameTime start, FrameTime end)
+Patch::process(ProcessContext& context)
 {
 	if (_compiled_patch == NULL || _compiled_patch->size() == 0 || !_process)
 		return;
 	
-	NodeBase::pre_process(nframes, start, end);
+	NodeBase::pre_process(context);
 
 	/* Run */
 	if (_engine.process_slaves().size() > 0)
-		process_parallel(context, nframes, start, end);
+		process_parallel(context);
 	else
-		process_single(context, nframes, start, end);
+		process_single(context);
 
-	NodeBase::post_process(nframes, start, end);
+	NodeBase::post_process(context);
 }
 
 
 void
-Patch::process_parallel(ProcessContext& context, SampleCount nframes, FrameTime start, FrameTime end)
+Patch::process_parallel(ProcessContext& context)
 {
 	size_t n_slaves = _engine.process_slaves().size();
 
@@ -181,7 +181,7 @@ Patch::process_parallel(ProcessContext& context, SampleCount nframes, FrameTime 
 			(*cp)[i].node()->reset_input_ready();
 
 		for (size_t i=0; i < n_slaves; ++i)
-			_engine.process_slaves()[i]->whip(cp, i+1, nframes, start, end);
+			_engine.process_slaves()[i]->whip(cp, i+1, context);
 	}
 	
 
@@ -201,7 +201,7 @@ Patch::process_parallel(ProcessContext& context, SampleCount nframes, FrameTime 
 
 		if (n.node()->process_lock()) {
 			if (n.node()->n_inputs_ready() == n.n_providers()) {
-				n.node()->process(context, nframes, start, end);
+				n.node()->process(context);
 
 				/* Signal dependants their input is ready */
 				for (size_t i=0; i < n.dependants().size(); ++i)
@@ -233,12 +233,12 @@ Patch::process_parallel(ProcessContext& context, SampleCount nframes, FrameTime 
 
 	
 void
-Patch::process_single(ProcessContext& context, SampleCount nframes, FrameTime start, FrameTime end)
+Patch::process_single(ProcessContext& context)
 {
 	CompiledPatch* const cp = _compiled_patch;
 
 	for (size_t i=0; i < cp->size(); ++i)
-		(*cp)[i].node()->process(context, nframes, start, end);
+		(*cp)[i].node()->process(context);
 }
 	
 

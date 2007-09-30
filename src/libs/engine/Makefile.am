@@ -37,7 +37,10 @@ libingen_engine_la_SOURCES = \
 	DuplexPort.hpp \
 	Engine.cpp \
 	Engine.hpp \
+	Event.cpp \
 	Event.hpp \
+	EventSink.cpp \
+	EventSink.hpp \
 	EventSource.hpp \
 	GraphObject.cpp \
 	GraphObject.hpp \
@@ -89,6 +92,7 @@ libingen_engine_la_SOURCES = \
 	ProcessSlave.cpp \
 	QueuedEngineInterface.cpp \
 	QueuedEngineInterface.hpp \
+	QueuedEvent.cpp \
 	QueuedEvent.hpp \
 	QueuedEventSource.cpp \
 	QueuedEventSource.hpp \
@@ -102,8 +106,6 @@ libingen_engine_la_SOURCES = \
 	events.hpp \
 	events/AddNodeEvent.cpp \
 	events/AddNodeEvent.hpp \
-	events/AddPortEvent.cpp \
-	events/AddPortEvent.hpp \
 	events/AllNotesOffEvent.cpp \
 	events/AllNotesOffEvent.hpp \
 	events/ClearPatchEvent.cpp \
@@ -126,6 +128,8 @@ libingen_engine_la_SOURCES = \
 	events/DisconnectionEvent.hpp \
 	events/EnablePatchEvent.cpp \
 	events/EnablePatchEvent.hpp \
+	events/EnablePortMonitoringEvent.cpp \
+	events/EnablePortMonitoringEvent.hpp \
 	events/LoadPluginsEvent.cpp \
 	events/LoadPluginsEvent.hpp \
 	events/MidiLearnEvent.cpp \
@@ -151,14 +155,16 @@ libingen_engine_la_SOURCES = \
 	events/RequestPluginsEvent.hpp \
 	events/RequestPortValueEvent.cpp \
 	events/RequestPortValueEvent.hpp \
+	events/SendPortValueEvent.cpp \
+	events/SendPortValueEvent.hpp \
 	events/SetMetadataEvent.cpp \
 	events/SetMetadataEvent.hpp \
+	events/SetPolyphonicEvent.cpp \
+	events/SetPolyphonicEvent.hpp \
+	events/SetPolyphonyEvent.cpp \
+	events/SetPolyphonyEvent.hpp \
 	events/SetPortValueEvent.cpp \
 	events/SetPortValueEvent.hpp \
-	events/SetPolyphonyEvent.hpp \
-	events/SetPolyphonyEvent.cpp \
-	events/SetPolyphonicEvent.hpp \
-	events/SetPolyphonicEvent.cpp \
 	events/SetPortValueQueuedEvent.cpp \
 	events/SetPortValueQueuedEvent.hpp \
 	events/UnregisterClientEvent.cpp \

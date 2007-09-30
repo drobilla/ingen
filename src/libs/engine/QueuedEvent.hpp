@@ -44,25 +44,9 @@ class QueuedEvent : public Event
 public:
 	/** Process this event into a realtime-suitable event.
 	 */
-	virtual void pre_process() {
-		assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
-		assert(_pre_processed == false);
-		_pre_processed = true;
-	}
+	virtual void pre_process();
 
-	virtual void execute(SampleCount nframes, FrameTime start, FrameTime end) {
-		assert(_pre_processed);
-		assert(_time <= end);
-
-		// Didn't prepare in time.  QueuedEvents aren't (necessarily) sample accurate
-		// so just run at the beginning of this cycle
-		if (_time <= start)
-			_time = start;
-			
-		Event::execute(nframes, start, end);
-	}
-
-	virtual void post_process() {}
+	virtual void execute(ProcessContext& context);
 
 	/** If this event blocks the prepare phase of other slow events */
 	bool is_blocking() { return _blocking; }

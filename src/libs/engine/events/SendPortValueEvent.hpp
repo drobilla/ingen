@@ -43,15 +43,14 @@ class Port;
 class SendPortValueEvent : public Event
 {
 public:
-	SendPortValueEvent() {}
-
 	inline SendPortValueEvent(Engine&     engine,
 	                          SampleCount timestamp,
 	                          Port*       port,
 	                          bool        omni,
 	                          uint32_t    voice_num,
 	                          Sample      value)
-		: _port(port)
+		: Event(engine, SharedPtr<Responder>(), timestamp)
+		, _port(port)
 		, _omni(omni)
 		, _voice_num(voice_num)
 		, _value(value)

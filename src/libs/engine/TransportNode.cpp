@@ -82,9 +82,9 @@ TransportNode::TransportNode(const string& path, bool polyphonic, Patch* parent,
 
 
 void
-TransportNode::process(ProcessContext& context, SampleCount nframes, FrameTime start, FrameTime end)
+TransportNode::process(ProcessContext& context)
 {
-	NodeBase::pre_process(nframes, start, end);
+	NodeBase::pre_process(context);
 #if 0
 
 	// FIXME: this will die horribly with any driver other than jack (in theory)
@@ -149,7 +149,7 @@ TransportNode::process(ProcessContext& context, SampleCount nframes, FrameTime s
 	}
 	#endif
 	
-	NodeBase::post_process(nframes, start, end);
+	NodeBase::post_process(context);
 }
 
 

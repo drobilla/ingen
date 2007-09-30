@@ -53,9 +53,9 @@ EnablePatchEvent::pre_process()
 
 
 void
-EnablePatchEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
+EnablePatchEvent::execute(ProcessContext& context)
 {
-	QueuedEvent::execute(nframes, start, end);
+	QueuedEvent::execute(context);
 
 	if (_patch != NULL) {
 		_patch->enable();

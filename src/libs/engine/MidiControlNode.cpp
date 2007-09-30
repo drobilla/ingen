@@ -15,16 +15,17 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "MidiControlNode.hpp"
 #include <math.h>
 #include <raul/midi_events.h>
+#include "MidiControlNode.hpp"
 #include "PostProcessor.hpp"
 #include "MidiLearnEvent.hpp"
 #include "InputPort.hpp"
 #include "OutputPort.hpp"
 #include "Plugin.hpp"
-#include "util.hpp"
 #include "AudioBuffer.hpp"
+#include "ProcessContext.hpp"
+#include "util.hpp"
 
 namespace Ingen {
 
@@ -71,18 +72,18 @@ MidiControlNode::MidiControlNode(const string& path, bool polyphonic, Patch* par
 
 
 void
-MidiControlNode::process(ProcessContext& context, SampleCount nframes, FrameTime start, FrameTime end)
+MidiControlNode::process(ProcessContext& context)
 {
-	NodeBase::pre_process(nframes, start, end);
+	NodeBase::pre_process(context);
 	
 	double         timestamp = 0;
 	uint32_t       size = 0;
 	unsigned char* buffer = NULL;
 
 	MidiBuffer* const midi_in = (MidiBuffer*)_midi_in_port->buffer(0);
-	assert(midi_in->this_nframes() == nframes);
+	assert(midi_in->this_nframes() == context.nframes());
 
-	while (midi_in->get_event(&timestamp, &size, &buffer) < nframes) {
+	while (midi_in->get_event(&timestamp, &size, &buffer) < context.nframes()) {
 
 		if (size >= 3 && (buffer[0] & 0xF0) == MIDI_CMD_CONTROL)
 			control(buffer[1], buffer[2], (SampleCount)timestamp);
@@ -90,7 +91,7 @@ MidiControlNode::process(ProcessContext& context, SampleCount nframes, FrameTime
 		midi_in->increment();
 	}
 	
-	NodeBase::post_process(nframes, start, end);
+	NodeBase::post_process(context);
 }
 
 

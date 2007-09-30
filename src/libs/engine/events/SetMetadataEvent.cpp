@@ -54,9 +54,9 @@ SetMetadataEvent::pre_process()
 
 
 void
-SetMetadataEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
+SetMetadataEvent::execute(ProcessContext& context)
 {
-	QueuedEvent::execute(nframes, start, end);
+	QueuedEvent::execute(context);
 	// Do nothing
 }
 

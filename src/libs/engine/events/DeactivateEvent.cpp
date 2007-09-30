@@ -36,9 +36,9 @@ DeactivateEvent::pre_process()
 
 
 void
-DeactivateEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
+DeactivateEvent::execute(ProcessContext& context)
 {
-	QueuedEvent::execute(nframes, start, end);
+	QueuedEvent::execute(context);
 }
 
 

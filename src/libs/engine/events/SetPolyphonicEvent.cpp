@@ -50,9 +50,9 @@ SetPolyphonicEvent::pre_process()
 
 
 void
-SetPolyphonicEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
+SetPolyphonicEvent::execute(ProcessContext& context)
 {
-	QueuedEvent::execute(nframes, start, end);
+	QueuedEvent::execute(context);
 	 
 	if (_object)
 		 _object->set_polyphonic(*_engine.maid(), _poly);

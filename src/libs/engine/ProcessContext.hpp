@@ -29,17 +29,34 @@ namespace Ingen {
  * process in the audio thread, e.g. the available thread pool, sink for
  * events (generated in the audio thread, not user initiated events), etc.
  *
+ * Note the distinction between nframes and start/end.  If transport speed
+ * != 1.0, end-start != nframes (though currently that is never the case, it
+ * may be in the future with sequencerey things).
+ *
  * \ingroup engine
  */
 class ProcessContext
 {
 public:
-	ProcessContext() : _event_sink(1024) {} // FIXME: size?
-	
-	EventSink& event_sink() { return _event_sink; }
+	ProcessContext(Engine& engine) : _event_sink(engine, 1024) {} // FIXME: size?
+
+	void set_time_slice(SampleCount nframes, FrameTime start, FrameTime end) {
+		_nframes = nframes;
+		_start = start;
+		_end = end;
+	}
+
+	inline SampleCount       nframes()    const { return _nframes; }
+	inline FrameTime         start()      const { return _start; }
+	inline FrameTime         end()        const { return _end; }
+	inline const EventSink&  event_sink() const { return _event_sink; }
+	inline EventSink&        event_sink()       { return _event_sink; }
 
 private:
-	EventSink _event_sink;
+	SampleCount _nframes;    ///< Number of actual time (Jack) frames this cycle
+	FrameTime   _start;      ///< Start frame of this cycle, timeline relative
+	FrameTime   _end;        ///< End frame of this cycle, timeline relative
+	EventSink   _event_sink; ///< Sink for events generated in the audio thread
 };
 
 

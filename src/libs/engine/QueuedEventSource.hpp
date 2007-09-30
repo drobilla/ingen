@@ -52,7 +52,7 @@ public:
 	void activate()   { Slave::start(); }
 	void deactivate() { Slave::stop(); }
 
-	void process(PostProcessor& dest, SampleCount nframes, FrameTime cycle_start, FrameTime cycle_end);
+	void process(PostProcessor& dest, ProcessContext& context);
 
 	void unblock();
 

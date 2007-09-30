@@ -49,9 +49,8 @@ public:
 	: Port(parent, name, index, poly, type, buffer_size)
 	{}
 
-	void pre_process(SampleCount nframes, FrameTime start, FrameTime end);
-	void process(ProcessContext& context, SampleCount nframes, FrameTime start, FrameTime end);
-	void post_process(SampleCount nframes, FrameTime start, FrameTime end);
+	void pre_process(ProcessContext& context);
+	void post_process(ProcessContext& context);
 	
 	virtual ~OutputPort() {}
 

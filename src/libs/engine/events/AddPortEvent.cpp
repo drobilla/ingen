@@ -133,9 +133,9 @@ AddPortEvent::pre_process()
 
 
 void
-AddPortEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
+AddPortEvent::execute(ProcessContext& context)
 {
-	QueuedEvent::execute(nframes, start, end);
+	QueuedEvent::execute(context);
 
 	if (_patch_port) {
 

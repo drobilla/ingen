@@ -107,9 +107,9 @@ AddNodeEvent::pre_process()
 
 
 void
-AddNodeEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
+AddNodeEvent::execute(ProcessContext& context)
 {
-	QueuedEvent::execute(nframes, start, end);
+	QueuedEvent::execute(context);
 
 	if (_node != NULL) {
 		if (_patch->compiled_patch() != NULL)

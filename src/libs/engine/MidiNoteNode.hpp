@@ -45,14 +45,14 @@ public:
 	bool prepare_poly(uint32_t poly);
 	bool apply_poly(Raul::Maid& maid, uint32_t poly);
 
-	void process(ProcessContext& context, SampleCount nframes, FrameTime start, FrameTime end);
+	void process(ProcessContext& context);
 	
-	void note_on(uchar note_num, uchar velocity, FrameTime time, SampleCount nframes, FrameTime start, FrameTime end);
-	void note_off(uchar note_num, FrameTime time, SampleCount nframes, FrameTime start, FrameTime end);
-	void all_notes_off(FrameTime time, SampleCount nframes, FrameTime start, FrameTime end);
+	void note_on(uchar note_num, uchar velocity, FrameTime time, ProcessContext& context);
+	void note_off(uchar note_num, FrameTime time, ProcessContext& context);
+	void all_notes_off(FrameTime time, ProcessContext& context);
 
-	void sustain_on(FrameTime time, SampleCount nframes, FrameTime start, FrameTime end);
-	void sustain_off(FrameTime time, SampleCount nframes, FrameTime start, FrameTime end);
+	void sustain_on(FrameTime time, ProcessContext& context);
+	void sustain_off(FrameTime time, ProcessContext& context);
 
 private:
 	/** Key, one for each key on the keyboard */
@@ -70,7 +70,7 @@ private:
 	};
 
 	float note_to_freq(int num);
-	void free_voice(uint32_t voice, FrameTime time, SampleCount nframes, FrameTime start, FrameTime end);
+	void free_voice(uint32_t voice, FrameTime time, ProcessContext& context);
 
 	Raul::Array<Voice>* _voices;
 	Raul::Array<Voice>* _prepared_voices;

@@ -47,10 +47,7 @@ public:
 	virtual void activate()   = 0;
 	virtual void deactivate() = 0;
 
-	virtual void process(PostProcessor& dest,
-	                     SampleCount    nframes,
-	                     FrameTime      cycle_start,
-	                     FrameTime      cycle_end) = 0;
+	virtual void process(PostProcessor& dest, ProcessContext& context) = 0;
 
 protected:
 	size_t _capacity;

@@ -30,28 +30,16 @@ using namespace std;
 
 namespace Ingen {
 
-
-SendPortValueEvent(Engine&     engine,
-                   SampleCount timestamp,
-                   Port*       port,
-                   bool        omni,
-                   uint32_t    voice_num,
-				   float       value)
-	: _port(port)
-	, _omni(omni)
-	, _voice_num(voice_num)
-	, _value(value)
-{
-}
-
+class Engine;
 
 void
 SendPortValueEvent::post_process()
 {
+	// FIXME...
+	
 	if (_omni) {
 		_engine.broadcaster()->send_control_change(_port->path(), _value);
 	} else {
-		cerr << "NON-OMNI CONTROL CHANGE WHAT?" << endl;
 		_engine.broadcaster()->send_control_change(_port->path(), _value);
 	}
 }

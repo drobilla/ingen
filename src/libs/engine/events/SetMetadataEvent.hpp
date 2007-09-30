@@ -39,7 +39,7 @@ public:
 	SetMetadataEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& key, const Raul::Atom& value);
 	
 	void pre_process();
-	void execute(SampleCount nframes, FrameTime start, FrameTime end);
+	void execute(ProcessContext& context);
 	void post_process();
 
 private:

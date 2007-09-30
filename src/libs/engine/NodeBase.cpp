@@ -174,24 +174,24 @@ NodeBase::signal_input_ready()
 /** Prepare to run a cycle (in the audio thread)
  */
 void
-NodeBase::pre_process(SampleCount nframes, FrameTime start, FrameTime end)
+NodeBase::pre_process(ProcessContext& context)
 {
 	// Mix down any ports with multiple inputs
 	if (_ports)
 		for (size_t i=0; i < _ports->size(); ++i)
-			_ports->at(i)->pre_process(nframes, start, end);
+			_ports->at(i)->pre_process(context);
 }
 
 
 /** Prepare to run a cycle (in the audio thread)
  */
 void
-NodeBase::post_process(SampleCount nframes, FrameTime start, FrameTime end)
+NodeBase::post_process(ProcessContext& context)
 {
 	/* Write output ports */
 	if (_ports)
 		for (size_t i=0; i < _ports->size(); ++i)
-			_ports->at(i)->post_process(nframes, start, end);
+			_ports->at(i)->post_process(context);
 }
 
 

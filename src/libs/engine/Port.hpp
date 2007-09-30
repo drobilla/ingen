@@ -67,8 +67,9 @@ public:
 	Buffer* buffer(uint32_t voice) const { return _buffers->at(voice); }
 
 	/** Called once per process cycle */
-	virtual void pre_process(SampleCount nframes, FrameTime start, FrameTime end) = 0;
-	virtual void post_process(SampleCount nframes, FrameTime start, FrameTime end) {};
+	virtual void pre_process(ProcessContext& context) = 0;
+	virtual void process(ProcessContext& context) {};
+	virtual void post_process(ProcessContext& context) = 0;
 	
 	/** Empty buffer contents completely (ie silence) */
 	virtual void clear_buffers();

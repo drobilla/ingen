@@ -15,12 +15,12 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <raul/Maid.hpp>
 #include <iostream>
 #include <cassert>
 #include <float.h>
 #include <stdint.h>
 #include <cmath>
+#include <raul/Maid.hpp>
 #include "LV2Node.hpp"
 #include "InputPort.hpp"
 #include "OutputPort.hpp"
@@ -28,6 +28,7 @@
 #include "AudioBuffer.hpp"
 #include "MidiBuffer.hpp"
 #include "OSCBuffer.hpp"
+#include "ProcessContext.hpp"
 
 namespace Ingen {
 
@@ -241,14 +242,14 @@ LV2Node::deactivate()
 
 
 void
-LV2Node::process(ProcessContext& context, SampleCount nframes, FrameTime start, FrameTime end)
+LV2Node::process(ProcessContext& context)
 {
-	NodeBase::pre_process(nframes, start, end);
+	NodeBase::pre_process(context);
 
 	for (uint32_t i=0; i < _polyphony; ++i) 
-		slv2_instance_run((*_instances)[i], nframes);
+		slv2_instance_run((*_instances)[i], context.nframes());
 	
-	NodeBase::post_process(nframes, start, end);
+	NodeBase::post_process(context);
 }
 
 

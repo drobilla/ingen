@@ -22,6 +22,7 @@
 #include "InputPort.hpp"
 #include "OutputPort.hpp"
 #include "Plugin.hpp"
+#include "ProcessContext.hpp"
 #include "util.hpp"
 
 namespace Ingen {
@@ -59,31 +60,31 @@ MidiTriggerNode::MidiTriggerNode(const string& path, bool polyphonic, Patch* par
 
 
 void
-MidiTriggerNode::process(ProcessContext& context, SampleCount nframes, FrameTime start, FrameTime end)
+MidiTriggerNode::process(ProcessContext& context)
 {
-	NodeBase::pre_process(nframes, start, end);
+	NodeBase::pre_process(context);
 	
 	double         timestamp = 0;
 	uint32_t       size = 0;
 	unsigned char* buffer = NULL;
 
 	MidiBuffer* const midi_in = (MidiBuffer*)_midi_in_port->buffer(0);
-	assert(midi_in->this_nframes() == nframes);
+	assert(midi_in->this_nframes() == context.nframes());
 
-	while (midi_in->get_event(&timestamp, &size, &buffer) < nframes) {
+	while (midi_in->get_event(&timestamp, &size, &buffer) < context.nframes()) {
 		
-		const FrameTime time = start + (FrameTime)timestamp;
+		const FrameTime time = context.start() + (FrameTime)timestamp;
 
 		if (size >= 3) {
 			switch (buffer[0] & 0xF0) {
 			case MIDI_CMD_NOTE_ON:
 				if (buffer[2] == 0)
-					note_off(buffer[1], time, nframes, start, end);
+					note_off(buffer[1], time, context);
 				else
-					note_on(buffer[1], buffer[2], time, nframes, start, end);
+					note_on(buffer[1], buffer[2], time, context);
 				break;
 			case MIDI_CMD_NOTE_OFF:
-				note_off(buffer[1], time, nframes, start, end);
+				note_off(buffer[1], time, context);
 				break;
 			case MIDI_CMD_CONTROL:
 				if (buffer[1] == MIDI_CTL_ALL_NOTES_OFF
@@ -97,15 +98,15 @@ MidiTriggerNode::process(ProcessContext& context, SampleCount nframes, FrameTime
 		midi_in->increment();
 	}
 	
-	NodeBase::post_process(nframes, start, end);
+	NodeBase::post_process(context);
 }
 
 
 void
-MidiTriggerNode::note_on(uchar note_num, uchar velocity, FrameTime time, SampleCount nframes, FrameTime start, FrameTime end)
+MidiTriggerNode::note_on(uchar note_num, uchar velocity, FrameTime time, ProcessContext& context)
 {
-	assert(time >= start && time <= end);
-	assert(time - start < _buffer_size);
+	assert(time >= context.start() && time <= context.end());
+	assert(time - context.start() < _buffer_size);
 
 	//std::cerr << "Note on starting at sample " << offset << std::endl;
 
@@ -113,7 +114,7 @@ MidiTriggerNode::note_on(uchar note_num, uchar velocity, FrameTime time, SampleC
 	if (filter_note >= 0.0 && filter_note < 127.0 && (note_num == (uchar)filter_note)){
 			
 		// FIXME FIXME FIXME
-		SampleCount offset = time - start;
+		SampleCount offset = time - context.start();
 
 		// See comments in MidiNoteNode::note_on (FIXME)
 		if (offset == (SampleCount)(_buffer_size-1))
@@ -128,13 +129,13 @@ MidiTriggerNode::note_on(uchar note_num, uchar velocity, FrameTime time, SampleC
 
 
 void
-MidiTriggerNode::note_off(uchar note_num, FrameTime time, SampleCount nframes, FrameTime start, FrameTime end)
+MidiTriggerNode::note_off(uchar note_num, FrameTime time, ProcessContext& context)
 {
-	assert(time >= start && time <= end);
-	assert(time - start < _buffer_size);
+	assert(time >= context.start() && time <= context.end());
+	assert(time - context.start() < _buffer_size);
 
 	if (note_num == lrintf(((AudioBuffer*)_note_port->buffer(0))->value_at(0)))
-		((AudioBuffer*)_gate_port->buffer(0))->set(0.0f, time - start);
+		((AudioBuffer*)_gate_port->buffer(0))->set(0.0f, time - context.start());
 }
 
 

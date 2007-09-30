@@ -23,6 +23,7 @@
 #include "MidiNoteNode.hpp"
 #include "MidiTriggerNode.hpp"
 #include "Plugin.hpp"
+#include "ProcessContext.hpp"
 
 namespace Ingen {
 
@@ -57,10 +58,10 @@ NoteOnEvent::NoteOnEvent(Engine& engine, SharedPtr<Responder> responder, SampleC
 
 
 void
-NoteOnEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
+NoteOnEvent::execute(ProcessContext& context)
 {
-	Event::execute(nframes, start, end);
-	assert(_time >= start && _time <= end);
+	Event::execute(context);
+	assert(_time >= context.start() && _time <= context.end());
 
 	// Lookup if neccessary
 	if (_is_osc_triggered)
@@ -69,9 +70,9 @@ NoteOnEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 	// FIXME: this isn't very good at all.
 	if (_node != NULL && _node->plugin()->type() == Plugin::Internal) {
 		if (_node->plugin()->plug_label() == "note_in")
-			((MidiNoteNode*)_node)->note_on(_note_num, _velocity, _time, nframes, start, end);
+			((MidiNoteNode*)_node)->note_on(_note_num, _velocity, _time, context);
 		else if (_node->plugin()->plug_label() == "trigger_in")
-			((MidiTriggerNode*)_node)->note_on(_note_num, _velocity, _time, nframes, start, end);
+			((MidiTriggerNode*)_node)->note_on(_note_num, _velocity, _time, context);
 	}
 }
 

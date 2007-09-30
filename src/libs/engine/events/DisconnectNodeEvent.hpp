@@ -48,7 +48,7 @@ public:
 	~DisconnectNodeEvent();
 
 	void pre_process();
-	void execute(SampleCount nframes, FrameTime start, FrameTime end);
+	void execute(ProcessContext& context);
 	void post_process();
 
 private:

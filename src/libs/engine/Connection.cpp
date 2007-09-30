@@ -23,6 +23,7 @@
 #include "Port.hpp"
 #include "BufferFactory.hpp"
 #include "AudioBuffer.hpp"
+#include "ProcessContext.hpp"
 
 namespace Ingen {
 
@@ -110,10 +111,10 @@ Connection::apply_poly(Raul::Maid& maid, uint32_t poly)
 
 
 void
-Connection::process(SampleCount nframes, FrameTime start, FrameTime end)
+Connection::process(ProcessContext& context)
 {
 	// FIXME: nframes parameter not used
-	assert(_buffer_size == 1 || _buffer_size == nframes);
+	assert(_buffer_size == 1 || _buffer_size == context.nframes());
 
 	/* Thought:  A poly output port can be connected to multiple mono input
 	 * ports, which means this mix down would have to happen many times.

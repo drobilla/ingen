@@ -125,15 +125,15 @@ DestroyEvent::pre_process()
 
 
 void
-DestroyEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
+DestroyEvent::execute(ProcessContext& context)
 {
-	QueuedEvent::execute(nframes, start, end);
+	QueuedEvent::execute(context);
 
 	if (_patch_node_listnode) {
 		assert(_node);
 
 		if (_disconnect_node_event)
-			_disconnect_node_event->execute(nframes, start, end);
+			_disconnect_node_event->execute(context);
 		
 		if (_node->parent_patch()->compiled_patch())
 			_engine.maid()->push(_node->parent_patch()->compiled_patch());
@@ -143,7 +143,7 @@ DestroyEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
 		assert(_port);
 
 		if (_disconnect_port_event)
-			_disconnect_port_event->execute(nframes, start, end);
+			_disconnect_port_event->execute(context);
 		
 		if (_port->parent_patch()->compiled_patch())
 			_engine.maid()->push(_port->parent_patch()->compiled_patch());

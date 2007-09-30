@@ -15,14 +15,15 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <sys/mman.h>
+#include <iostream>
 #include "QueuedEventSource.hpp"
 #include "QueuedEvent.hpp"
 #include "PostProcessor.hpp"
 #include "ThreadManager.hpp"
-#include <sys/mman.h>
-#include <iostream>
-using std::cout; using std::cerr; using std::endl;
+#include "ProcessContext.hpp"
 
+using namespace std;
 
 namespace Ingen {
 
@@ -77,7 +78,7 @@ QueuedEventSource::push_queued(QueuedEvent* const ev)
  * Executed events will be pushed to @a dest.
  */
 void
-QueuedEventSource::process(PostProcessor& dest, SampleCount nframes, FrameTime cycle_start, FrameTime cycle_end)
+QueuedEventSource::process(PostProcessor& dest, ProcessContext& context)
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
 
@@ -87,21 +88,21 @@ QueuedEventSource::process(PostProcessor& dest, SampleCount nframes, FrameTime c
 	 * makes the process callback (more) realtime-safe by preventing being
 	 * choked by events coming in faster than they can be processed.
 	 * FIXME: test this and figure out a good value */
-	const unsigned int MAX_QUEUED_EVENTS = nframes / 100;
+	const unsigned int MAX_QUEUED_EVENTS = context.nframes() / 100;
 
 	unsigned int num_events_processed = 0;
 	
 	/* FIXME: Merge these next two loops into one */
 
-	while ((ev = pop_earliest_queued_before(cycle_end))) {
-		ev->execute(nframes, cycle_start, cycle_end);
+	while ((ev = pop_earliest_queued_before(context.end()))) {
+		ev->execute(context);
 		dest.push(ev);
 		if (++num_events_processed > MAX_QUEUED_EVENTS)
 			break;
 	}
 	
-	while ((ev = pop_earliest_stamped_before(cycle_end))) {
-		ev->execute(nframes, cycle_start, cycle_end);
+	while ((ev = pop_earliest_stamped_before(context.end()))) {
+		ev->execute(context);
 		dest.push(ev);
 		++num_events_processed;
 	}

@@ -59,9 +59,9 @@ MidiLearnEvent::pre_process()
 
 
 void
-MidiLearnEvent::execute(SampleCount nframes, FrameTime start, FrameTime end)
+MidiLearnEvent::execute(ProcessContext& context)
 {	
-	QueuedEvent::execute(nframes, start, end);
+	QueuedEvent::execute(context);
 	
 	// FIXME: this isn't very good at all.
 	if (_node != NULL && _node->plugin()->type() == Plugin::Internal

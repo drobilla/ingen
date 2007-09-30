@@ -79,8 +79,10 @@ InputPort::add_connection(Raul::ListNode<Connection*>* const c)
 	}
 
 	// Automatically monitor connected control inputs
-	if (_type == DataType::FLOAT && _buffer_size == 1)
+	if (_type == DataType::FLOAT && _buffer_size == 1) {
+		cerr << path() << " monitor enable" << endl;
 		_monitor = true;
+	}
 }
 
 
@@ -147,18 +149,18 @@ InputPort::is_connected_to(const OutputPort* port) const
  *  FIXME: nframes parameter not used,
  */
 void
-InputPort::pre_process(SampleCount nframes, FrameTime start, FrameTime end)
+InputPort::pre_process(ProcessContext& context)
 {
 	bool do_mixdown = true;
 	
 	if (_connections.size() == 0) {
 		for (uint32_t i=0; i < _poly; ++i)
-			_buffers->at(i)->prepare_read(nframes);
+			_buffers->at(i)->prepare_read(context.nframes());
 		return;
 	}
 
 	for (Connections::iterator c = _connections.begin(); c != _connections.end(); ++c)
-		(*c)->process(nframes, start, end);
+		(*c)->process(context);
 
 	if ( ! _fixed_buffers) {
 		// If only one connection, try to use buffer directly (zero copy)
@@ -173,7 +175,7 @@ InputPort::pre_process(SampleCount nframes, FrameTime start, FrameTime end)
 	}
 
 	for (uint32_t i=0; i < _poly; ++i)
-		_buffers->at(i)->prepare_read(nframes);
+		_buffers->at(i)->prepare_read(context.nframes());
 	
 	//cerr << path() << " poly = " << _poly << ", mixdown: " << do_mixdown << endl;
 
@@ -216,24 +218,20 @@ InputPort::pre_process(SampleCount nframes, FrameTime start, FrameTime end)
 
 
 void
-InputPort::process(ProcessContext& context, SampleCount nframes, FrameTime start, FrameTime end)
+InputPort::post_process(ProcessContext& context)
 {
 	if (_monitor && _type == DataType::FLOAT && _buffer_size == 1) {
 		const Sample value = ((AudioBuffer*)(*_buffers)[0])->value_at(0);
 		if (value != _last_reported_value) {
-			context.event_sink().control_change(this, ((AudioBuffer*)(*_buffers)[0])->value_at(0));
+			context.event_sink().control_change(this, context.start(),
+					((AudioBuffer*)(*_buffers)[0])->value_at(0));
 			_last_reported_value = value;
 		}
 	}
-}
 
-
-void
-InputPort::post_process(SampleCount nframes, FrameTime start, FrameTime end)
-{
 	// Prepare for next cycle
 	for (uint32_t i=0; i < _poly; ++i)
-		_buffers->at(i)->prepare_write(nframes);
+		_buffers->at(i)->prepare_write(context.nframes());
 }
 
 

@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
- */
+() */
 
 #include <iostream>
 #include <cstdlib>
@@ -26,6 +26,7 @@
 #include "AudioDriver.hpp"
 #include "MidiBuffer.hpp"
 #include "DuplexPort.hpp"
+#include "ProcessContext.hpp"
 #include "jack_compat.h"
 /*#ifdef HAVE_LASH
 #include "LashDriver.hpp"
@@ -66,7 +67,7 @@ JackMidiPort::~JackMidiPort()
  * This is simple since Jack MIDI is in-band with audio.
  */
 void
-JackMidiPort::pre_process(SampleCount block_start, SampleCount block_end)
+JackMidiPort::pre_process(ProcessContext& context)
 {
 	if ( ! is_input() )
 		return;
@@ -76,11 +77,10 @@ JackMidiPort::pre_process(SampleCount block_start, SampleCount block_end)
 	MidiBuffer* patch_buf = dynamic_cast<MidiBuffer*>(_patch_port->buffer(0));
 	assert(patch_buf);
 
-	const SampleCount    nframes     = block_end - block_start;
-	void*                jack_buffer = jack_port_get_buffer(_jack_port, nframes);
+	void*                jack_buffer = jack_port_get_buffer(_jack_port, context.nframes());
 	const jack_nframes_t event_count = jack_midi_get_event_count(jack_buffer);
 
-	patch_buf->prepare_write(nframes);
+	patch_buf->prepare_write(context.nframes());
 	
 	// Copy events from Jack port buffer into patch port buffer
 	for (jack_nframes_t i=0; i < event_count; ++i) {
@@ -102,7 +102,7 @@ JackMidiPort::pre_process(SampleCount block_start, SampleCount block_end)
  * This is simple since Jack MIDI is in-band with audio.
  */
 void
-JackMidiPort::post_process(SampleCount block_start, SampleCount block_end)
+JackMidiPort::post_process(ProcessContext& context)
 {
 	if (is_input())
 		return;
@@ -112,11 +112,10 @@ JackMidiPort::post_process(SampleCount block_start, SampleCount block_end)
 	MidiBuffer* patch_buf = dynamic_cast<MidiBuffer*>(_patch_port->buffer(0));
 	assert(patch_buf);
 
-	const SampleCount    nframes     = block_end - block_start;
-	void*                jack_buffer = jack_port_get_buffer(_jack_port, nframes);
+	void*                jack_buffer = jack_port_get_buffer(_jack_port, context.nframes());
 	const jack_nframes_t event_count = patch_buf->event_count();
 
-	patch_buf->prepare_read(nframes);
+	patch_buf->prepare_read(context.nframes());
 
 	jack_midi_clear_buffer(jack_buffer);
 	
@@ -177,20 +176,20 @@ JackMidiDriver::deactivate()
 /** Build flat arrays of events to be used as input for the given cycle.
  */
 void
-JackMidiDriver::pre_process(ProcessContext& context, SampleCount nframes, FrameTime start, FrameTime end)
+JackMidiDriver::pre_process(ProcessContext& context)
 {
 	for (Raul::List<JackMidiPort*>::iterator i = _in_ports.begin(); i != _in_ports.end(); ++i)
-		(*i)->pre_process(start, end);
+		(*i)->pre_process(context);
 }
 
 
 /** Write the output from any (top-level, exported) MIDI output ports to Jack ports.
  */
 void
-JackMidiDriver::post_process(ProcessContext& context, SampleCount nframes, FrameTime start, FrameTime end)
+JackMidiDriver::post_process(ProcessContext& context)
 {
 	for (Raul::List<JackMidiPort*>::iterator i = _out_ports.begin(); i != _out_ports.end(); ++i)
-		(*i)->post_process(start, end);
+		(*i)->post_process(context);
 }
 
 

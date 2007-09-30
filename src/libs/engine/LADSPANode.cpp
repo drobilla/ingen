@@ -15,15 +15,16 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "LADSPANode.hpp"
 #include <iostream>
 #include <cassert>
-#include <stdint.h>
 #include <cmath>
+#include <stdint.h>
+#include "LADSPANode.hpp"
 #include "AudioBuffer.hpp"
 #include "InputPort.hpp"
 #include "OutputPort.hpp"
 #include "Plugin.hpp"
+#include "ProcessContext.hpp"
 
 namespace Ingen {
 
@@ -188,14 +189,14 @@ LADSPANode::deactivate()
 
 
 void
-LADSPANode::process(ProcessContext& context, SampleCount nframes, FrameTime start, FrameTime end)
+LADSPANode::process(ProcessContext& context)
 {
-	NodeBase::pre_process(nframes, start, end);
+	NodeBase::pre_process(context);
 
 	for (uint32_t i=0; i < _polyphony; ++i) 
-		_descriptor->run(_instances[i], nframes);
+		_descriptor->run(_instances[i], context.nframes());
 	
-	NodeBase::post_process(nframes, start, end);
+	NodeBase::post_process(context);
 }
 
 

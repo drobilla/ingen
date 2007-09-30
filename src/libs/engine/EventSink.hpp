@@ -20,12 +20,15 @@
 
 #include <list>
 #include <utility>
-#include <raul/DoubleBuffer.hpp>
+#include <raul/RingBuffer.hpp>
+#include "events/SendPortValueEvent.hpp"
 #include "types.hpp"
 
 namespace Ingen {
 
 class Port;
+class Engine;
+class SendPortValueEvent;
 
 
 /** Sink for events generated in the audio thread.
@@ -39,16 +42,18 @@ class Port;
 class EventSink
 {
 public:
-	EventSink(size_t capacity) : _capacity(capacity) {}
+	EventSink(Engine& engine, size_t capacity) : _engine(engine), _events(capacity) {}
 
 	/* FIXME: Figure out variable sized event queues and make this a generic
 	 * interface (ie don't add a method for every event type, crap..) */
 
-	void control_change(Port* port, float val);
+	void control_change(Port* port, FrameTime time, float val);
+
+	bool read_control_change(SendPortValueEvent& ev);
 
 private:
-	size_t _capacity;
-	//Raul::List<std::pair<Port*, Raul::DoubleBuffer<float>  > > _ports;
+	Engine& _engine;
+	Raul::RingBuffer<uchar> _events;
 };
 
 

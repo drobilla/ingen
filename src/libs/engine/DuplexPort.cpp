@@ -40,12 +40,12 @@ DuplexPort::DuplexPort(Node* parent, const string& name, uint32_t index, uint32_
 
 
 void
-DuplexPort::pre_process(SampleCount nframes, FrameTime start, FrameTime end)
+DuplexPort::pre_process(ProcessContext& context)
 {
 	// Think about it...
 
 //	if (_is_output) {
-		InputPort::pre_process(nframes, start, end);
+		InputPort::pre_process(context);
 //	} else {
 		//for (uint32_t i=0; i < _poly; ++i)
 		//	_buffers->at(i)->rewind();
@@ -53,21 +53,16 @@ DuplexPort::pre_process(SampleCount nframes, FrameTime start, FrameTime end)
 //	}
 }
 
-void
-DuplexPort::process(ProcessContext& context, SampleCount nframes, FrameTime start, FrameTime end)
-{
-}
-
 
 void
-DuplexPort::post_process(SampleCount nframes, FrameTime start, FrameTime end)
+DuplexPort::post_process(ProcessContext& context)
 {
 	// Think about it...
 	
 //	if (_is_output)
 //		InputPort::pre_process(nframes, start, end);
 //else
-		OutputPort::pre_process(nframes, start, end);
+		OutputPort::pre_process(context);
 }
 
 
