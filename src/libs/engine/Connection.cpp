@@ -51,6 +51,9 @@ Connection::Connection(Port* src_port, Port* dst_port)
 	/*assert((src_port->parent_node()->poly() == dst_port->parent_node()->poly())
 		|| (src_port->parent_node()->poly() == 1 || dst_port->parent_node()->poly() == 1));*/
 
+	if (type() == DataType::MIDI)
+		_must_mix = false; // FIXME: kludge
+
 	if (_must_mix)
 		_local_buffer = BufferFactory::create(dst_port->type(), dst_port->buffer(0)->size());
 
@@ -81,10 +84,11 @@ Connection::set_buffer_size(size_t size)
 void
 Connection::prepare_poly(uint32_t poly)
 {
-	_must_mix = (type() == DataType::FLOAT) && (poly > 1) && (
-			   (_src_port->poly() != _dst_port->poly())
-			|| (_src_port->polyphonic() && !_dst_port->polyphonic())
-			|| (_src_port->parent()->polyphonic() && !_dst_port->parent()->polyphonic()) );
+	if (type() == DataType::FLOAT)
+		_must_mix = (poly > 1) && (
+				   (_src_port->poly() != _dst_port->poly())
+				|| (_src_port->polyphonic() && !_dst_port->polyphonic())
+				|| (_src_port->parent()->polyphonic() && !_dst_port->parent()->polyphonic()) );
 
 	/*cerr << src_port()->path() << " * " << src_port()->poly()
 			<< " -> " << dst_port()->path() << " * " << dst_port()->poly()
@@ -118,18 +122,12 @@ Connection::process(SampleCount nframes, FrameTime start, FrameTime end)
 	 * would avoid having to mix multiple times.  Probably not a very common
 	 * case, but it would be faster anyway. */
 	
-	// FIXME: Implement MIDI mixing
-	
-	if (_must_mix) {
-		assert(type() == DataType::FLOAT);
+	if (_must_mix && type() == DataType::FLOAT) {
 
 		const AudioBuffer* const src_buffer = (AudioBuffer*)src_port()->buffer(0);
 		AudioBuffer*             mix_buf    = (AudioBuffer*)_local_buffer;
 
 		const size_t copy_size = std::min(src_buffer->size(), mix_buf->size());
-
-		/*cerr << "[Connection] Mixing " << src_port()->path() << " * " << src_port()->poly()
-			<< " -> " << dst_port()->path() << " * " << dst_port()->poly() << endl;*/
 
 		// Copy src buffer to start of mix buffer
 		mix_buf->copy((AudioBuffer*)src_port()->buffer(0), 0, copy_size-1);
@@ -156,7 +154,13 @@ Connection::process(SampleCount nframes, FrameTime start, FrameTime end)
 		// Scale the buffer down.
 		if (src_port()->poly() > 1)
 			mix_buf->scale(1.0f/(float)src_port()->poly(), 0, _buffer_size-1);
+
+	} else if (_must_mix && type() == DataType::MIDI) {
+
+		cerr << "WARNING: No MIDI mixing." << endl;
+	
 	}
+
 }
 
 

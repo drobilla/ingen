@@ -70,7 +70,7 @@ public:
 	virtual unsigned n_inputs_ready() const { return _n_inputs_ready.get(); }
 
 	virtual void pre_process(SampleCount nframes, FrameTime start, FrameTime end);
-	virtual void process(ProcessContext& events, SampleCount nframes, FrameTime start, FrameTime end) = 0;
+	virtual void process(ProcessContext& context, SampleCount nframes, FrameTime start, FrameTime end) = 0;
 	virtual void post_process(SampleCount nframes, FrameTime start, FrameTime end);
 		
 	virtual void set_port_buffer(uint32_t voice, uint32_t port_num, Buffer* buf) {}

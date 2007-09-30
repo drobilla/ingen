@@ -25,6 +25,8 @@
 
 namespace Ingen {
 
+class ProcessContext;
+
 
 /** Midi driver abstract base class.
  *
@@ -35,8 +37,23 @@ class MidiDriver : public Driver
 public:
 	MidiDriver() : Driver(DataType::MIDI) {}
 
-	/** Prepare events (however neccessary) for the specified block (realtime safe) */
-	virtual void prepare_block(const SampleCount block_start, const SampleCount block_end) = 0;
+	/** Prepare input for the specified (upcoming) cycle.
+	 *
+	 * Realtime safe, run in audio thread before executing the graph for a cycle.
+	 */
+	virtual void pre_process(ProcessContext& context,
+	                         SampleCount     nframes,
+	                         FrameTime       start,
+	                         FrameTime       end) = 0;
+	
+	/** Prepare output for the specified (just completed) cycle.
+	 *
+	 * Realtime safe, run in audio thread after executing the graph for a cycle.
+	 */
+	virtual void post_process(ProcessContext& context,
+	                          SampleCount     nframes,
+	                          FrameTime       start,
+	                          FrameTime       end) = 0;
 };
 
 
@@ -73,7 +90,8 @@ public:
 	void        add_port(DriverPort* port)    {}
 	DriverPort* remove_port(const Raul::Path& path) { return NULL; }
 	
-	void prepare_block(const SampleCount block_start, const SampleCount block_end) {}
+	void pre_process(ProcessContext& context, SampleCount nframes, FrameTime start, FrameTime end) {}
+	void post_process(ProcessContext& context, SampleCount nframes, FrameTime start, FrameTime end) {}
 };
 
 

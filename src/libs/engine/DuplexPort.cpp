@@ -54,7 +54,7 @@ DuplexPort::pre_process(SampleCount nframes, FrameTime start, FrameTime end)
 }
 
 void
-DuplexPort::process(ProcessContext& events, SampleCount nframes, FrameTime start, FrameTime end)
+DuplexPort::process(ProcessContext& context, SampleCount nframes, FrameTime start, FrameTime end)
 {
 }
 
@@ -64,9 +64,9 @@ DuplexPort::post_process(SampleCount nframes, FrameTime start, FrameTime end)
 {
 	// Think about it...
 	
-	if (_is_output)
-		InputPort::pre_process(nframes, start, end);
-	else
+//	if (_is_output)
+//		InputPort::pre_process(nframes, start, end);
+//else
 		OutputPort::pre_process(nframes, start, end);
 }
 

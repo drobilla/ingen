@@ -230,5 +230,57 @@ MidiBuffer::get_event(double*         timestamp,
 }
 
 
+/** Clear, and merge \a a and \a b into this buffer.
+ *
+ * FIXME: This is slow.
+ *
+ * \return true if complete merge was successful
+ */
+bool
+MidiBuffer::merge(const MidiBuffer& a, const MidiBuffer& b)
+{
+	// Die if a merge isn't necessary as it's expensive
+	assert(a.size() > 0 && b.size() > 0);
+
+	reset(_this_nframes);
+
+	a.rewind();
+	b.rewind();
+
+	double         a_time;
+	uint32_t       a_size;
+	unsigned char* a_data;
+	
+	double         b_time;
+	uint32_t       b_size;
+	unsigned char* b_data;
+
+	a.get_event(&a_time, &a_size, &a_data);
+	b.get_event(&b_time, &b_size, &b_data);
+
+	while (true) {
+		if (a_data && (!b_data || (a_time < b_time))) {
+			append(a_time, a_size, a_data);
+			if (a.increment())
+				a.get_event(&a_time, &a_size, &a_data);
+			else
+				a_data = NULL;
+		} else if (b_data) {
+			append(b_time, b_size, b_data);
+			if (b.increment())
+				b.get_event(&b_time, &b_size, &b_data);
+			else
+				b_data = NULL;
+		} else {
+			break;
+		}
+	}
+
+	_latest_stamp = max(a_time, b_time);
+
+	return true;
+}
+
+
 } // namespace Ingen
 

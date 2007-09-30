@@ -42,7 +42,8 @@ public:
 	JackMidiPort(JackMidiDriver* driver, DuplexPort* port);
 	virtual ~JackMidiPort();
 
-	void prepare_block(const SampleCount block_start, const SampleCount block_end);
+	void pre_process(SampleCount block_start, SampleCount block_end);
+	void post_process(SampleCount block_start, SampleCount block_end);
 	
 	void set_name(const std::string& name) { jack_port_set_name(_jack_port, name.c_str()); };
 	
@@ -76,7 +77,8 @@ public:
 	bool is_activated() const { return _is_activated; }
 	bool is_enabled() const   { return _is_enabled; }
 	
-	void prepare_block(const SampleCount block_start, const SampleCount block_end);
+	void pre_process(ProcessContext& context, SampleCount nframes, FrameTime start, FrameTime end);
+	void post_process(ProcessContext& context, SampleCount nframes, FrameTime start, FrameTime end);
 
 	JackMidiPort* create_port(DuplexPort* patch_port)
 	{ return new JackMidiPort(this, patch_port); }

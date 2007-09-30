@@ -54,7 +54,7 @@ public:
 	void activate();
 	void deactivate();
 
-	void process(ProcessContext& events, SampleCount nframes, FrameTime start, FrameTime end);
+	void process(ProcessContext& context, SampleCount nframes, FrameTime start, FrameTime end);
 	
 	void set_buffer_size(size_t size);
 	

@@ -267,24 +267,25 @@ JackAudioDriver::_process_cb(jack_nframes_t nframes)
 
 	// FIXME: all of this time stuff is screwy
 	
-	static jack_nframes_t start_of_current_cycle = 0;
-	static jack_nframes_t start_of_last_cycle    = 0;
-
 	// FIXME: support nframes != buffer_size, even though that never damn well happens
 	assert(nframes == _buffer_size);
 
 	// Jack can elect to not call this function for a cycle, if overloaded
 	// FIXME: this doesn't make sense, and the start time isn't used anyway
-	start_of_current_cycle = jack_last_frame_time(_client);
-	start_of_last_cycle = start_of_current_cycle - nframes;
+	const jack_nframes_t start_of_current_cycle = jack_last_frame_time(_client);
+	const jack_nframes_t start_of_last_cycle = start_of_current_cycle - nframes; // FIXME: maybe not..
+	const jack_nframes_t end_of_current_cycle = start_of_current_cycle + nframes;
 
 	// FIXME: ditto
 	assert(start_of_current_cycle - start_of_last_cycle == nframes);
 
 	_transport_state = jack_transport_query(_client, &_position);
 	
+	// Process events that came in during the last cycle
+	// (Aiming for jitter-free 1 block event latency, ideally)
 	if (_engine.event_source())
-		_engine.event_source()->process(*_engine.post_processor(), nframes, start_of_last_cycle, start_of_current_cycle);
+		_engine.event_source()->process(*_engine.post_processor(), nframes,
+				start_of_last_cycle, start_of_current_cycle);
 	
 	// Set buffers of patch ports to Jack port buffers (zero-copy processing)
 	for (Raul::List<JackAudioPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i) {
@@ -293,14 +294,16 @@ JackAudioDriver::_process_cb(jack_nframes_t nframes)
 	}
 
 	assert(_engine.midi_driver());
-	//_engine.midi_driver()->prepare_block(start_of_last_cycle, start_of_current_cycle);
-	_engine.midi_driver()->prepare_block(start_of_current_cycle, start_of_current_cycle + nframes);
-
+	_engine.midi_driver()->pre_process(_process_context, nframes,
+			start_of_current_cycle, end_of_current_cycle);
 	
 	// Run root patch
 	if (_root_patch)
-		_root_patch->process(_process_context, nframes, start_of_current_cycle,
-				start_of_current_cycle + nframes);
+		_root_patch->process(_process_context, nframes,
+				start_of_current_cycle, end_of_current_cycle);
+	
+	_engine.midi_driver()->post_process(_process_context, nframes,
+			start_of_current_cycle, end_of_current_cycle);
 
 	return 0;
 }

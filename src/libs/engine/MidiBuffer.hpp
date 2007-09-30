@@ -69,6 +69,7 @@ public:
 	double get_event(double* timestamp, uint32_t* size, unsigned char** data) const;
 
 	bool append(double timestamp, uint32_t size, const unsigned char* data);
+	bool merge(const MidiBuffer& a, const MidiBuffer& b);
 
 private:
 	double           _latest_stamp; ///< Highest timestamp of all events

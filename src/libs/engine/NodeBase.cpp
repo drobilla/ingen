@@ -61,8 +61,9 @@ NodeBase::~NodeBase()
 	delete _providers;
 	delete _dependants;
 	
-	for (uint32_t i=0; i < num_ports(); ++i)
-		delete _ports->at(i);
+	if (_ports)
+		for (uint32_t i=0; i < num_ports(); ++i)
+			delete _ports->at(i);
 }
 
 

@@ -52,7 +52,6 @@ JackMidiPort::JackMidiPort(JackMidiDriver* driver, DuplexPort* patch_port)
 		0);
 
 	patch_port->buffer(0)->clear();
-	patch_port->fixed_buffers(true);
 }
 
 
@@ -62,21 +61,24 @@ JackMidiPort::~JackMidiPort()
 }
 
 
-/** Prepare events for a block.
+/** Prepare input for a block before a cycle is run, in the audio thread.
  *
- * This is basically simple since Jack MIDI data is in-band with the audio thread.
+ * This is simple since Jack MIDI is in-band with audio.
  */
 void
-JackMidiPort::prepare_block(const SampleCount block_start, const SampleCount block_end)
+JackMidiPort::pre_process(SampleCount block_start, SampleCount block_end)
 {
-	const SampleCount    nframes     = block_end - block_start;
-	void*                jack_buffer = jack_port_get_buffer(_jack_port, nframes);
-	const jack_nframes_t event_count = jack_midi_get_event_count(jack_buffer);
+	if ( ! is_input() )
+		return;
 	
 	assert(_patch_port->poly() == 1);
 
 	MidiBuffer* patch_buf = dynamic_cast<MidiBuffer*>(_patch_port->buffer(0));
 	assert(patch_buf);
+
+	const SampleCount    nframes     = block_end - block_start;
+	void*                jack_buffer = jack_port_get_buffer(_jack_port, nframes);
+	const jack_nframes_t event_count = jack_midi_get_event_count(jack_buffer);
 
 	patch_buf->prepare_write(nframes);
 	
@@ -92,6 +94,44 @@ JackMidiPort::prepare_block(const SampleCount block_start, const SampleCount blo
 
 	//if (event_count)
 	//	cerr << "Jack MIDI got " << event_count << " events." << endl;
+}
+
+
+/** Prepare output for a block after a cycle is run, in the audio thread.
+ *
+ * This is simple since Jack MIDI is in-band with audio.
+ */
+void
+JackMidiPort::post_process(SampleCount block_start, SampleCount block_end)
+{
+	if (is_input())
+		return;
+	
+	assert(_patch_port->poly() == 1);
+
+	MidiBuffer* patch_buf = dynamic_cast<MidiBuffer*>(_patch_port->buffer(0));
+	assert(patch_buf);
+
+	const SampleCount    nframes     = block_end - block_start;
+	void*                jack_buffer = jack_port_get_buffer(_jack_port, nframes);
+	const jack_nframes_t event_count = patch_buf->event_count();
+
+	patch_buf->prepare_read(nframes);
+
+	jack_midi_clear_buffer(jack_buffer);
+	
+	double         time = 0;
+	uint32_t       size = 0;
+	unsigned char* data = NULL;
+
+	// Copy events from Jack port buffer into patch port buffer
+	for (jack_nframes_t i=0; i < event_count; ++i) {
+		patch_buf->get_event(&time, &size, &data);
+		jack_midi_event_write(jack_buffer, time, data, size);
+	}
+
+	//if (event_count)
+	//	cerr << "Jack MIDI wrote " << event_count << " events." << endl;
 }
 
 
@@ -137,10 +177,20 @@ JackMidiDriver::deactivate()
 /** Build flat arrays of events to be used as input for the given cycle.
  */
 void
-JackMidiDriver::prepare_block(const SampleCount block_start, const SampleCount block_end)
+JackMidiDriver::pre_process(ProcessContext& context, SampleCount nframes, FrameTime start, FrameTime end)
 {
 	for (Raul::List<JackMidiPort*>::iterator i = _in_ports.begin(); i != _in_ports.end(); ++i)
-		(*i)->prepare_block(block_start, block_end);
+		(*i)->pre_process(start, end);
+}
+
+
+/** Write the output from any (top-level, exported) MIDI output ports to Jack ports.
+ */
+void
+JackMidiDriver::post_process(ProcessContext& context, SampleCount nframes, FrameTime start, FrameTime end)
+{
+	for (Raul::List<JackMidiPort*>::iterator i = _out_ports.begin(); i != _out_ports.end(); ++i)
+		(*i)->post_process(start, end);
 }
 
 

@@ -57,7 +57,7 @@ public:
 	const Connections& connections() { return _connections; }
 
 	void pre_process(SampleCount nframes, FrameTime start, FrameTime end);
-	void process(ProcessContext& events, SampleCount nframes, FrameTime start, FrameTime end);
+	void process(ProcessContext& context, SampleCount nframes, FrameTime start, FrameTime end);
 	void post_process(SampleCount nframes, FrameTime start, FrameTime end);
 	
 	bool is_connected() const { return (_connections.size() > 0); }

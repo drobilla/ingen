@@ -123,9 +123,9 @@ LV2Node::instantiate()
 	uint32_t num_ports = slv2_plugin_get_num_ports(_lv2_plugin);
 	assert(num_ports > 0);
 
-	_ports = new Raul::Array<Port*>(num_ports);
+	_ports = new Raul::Array<Port*>(num_ports, NULL);
 	
-	_instances = new Raul::Array<SLV2Instance>(_polyphony);
+	_instances = new Raul::Array<SLV2Instance>(_polyphony, NULL);
 	
 	uint32_t port_buffer_size = 0;
 	
