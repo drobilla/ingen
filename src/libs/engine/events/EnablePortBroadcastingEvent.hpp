@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef ENABLEPORTNOTIFICATIONEVENT_H
-#define ENABLEPORTNOTIFICATIONEVENT_H
+#ifndef ENABLEPORTBROADCASTINGEVENT_H
+#define ENABLEPORTBROADCASTINGEVENT_H
 
 #include <string>
 #include "QueuedEvent.hpp"
@@ -35,13 +35,13 @@ using Shared::ClientInterface;
  *
  * \ingroup engine
  */
-class EnablePortMonitoringEvent : public QueuedEvent
+class EnablePortBroadcastingEvent : public QueuedEvent
 {
 public:
-	EnablePortMonitoringEvent(Engine&              engine,
-	                          SharedPtr<Responder> responder,
-	                          SampleCount          timestamp,
-	                          const std::string&   port_path);
+	EnablePortBroadcastingEvent(Engine&              engine,
+	                            SharedPtr<Responder> responder,
+	                            SampleCount          timestamp,
+	                            const std::string&   port_path);
 
 	void pre_process();
 	void execute(ProcessContext& context);
@@ -55,4 +55,4 @@ private:
 
 } // namespace Ingen
 
-#endif // ENABLEPORTNOTIFICATIONEVENT_H
+#endif // ENABLEPORTBROADCASTINGEVENT_H

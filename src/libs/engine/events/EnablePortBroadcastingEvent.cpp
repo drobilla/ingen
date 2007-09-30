@@ -17,7 +17,7 @@
 
 #include <string>
 #include "interface/ClientInterface.hpp"
-#include "events/EnablePortMonitoringEvent.hpp"
+#include "events/EnablePortBroadcastingEvent.hpp"
 #include "Responder.hpp"
 #include "Engine.hpp"
 #include "Port.hpp"
@@ -30,10 +30,10 @@ using std::string;
 namespace Ingen {
 
 
-EnablePortMonitoringEvent::EnablePortMonitoringEvent(Engine&              engine,
-                                                     SharedPtr<Responder> responder,
-                                                     SampleCount          timestamp,
-                                                     const std::string&   port_path)
+EnablePortBroadcastingEvent::EnablePortBroadcastingEvent(Engine&              engine,
+                                                         SharedPtr<Responder> responder,
+                                                         SampleCount          timestamp,
+                                                         const std::string&   port_path)
 : QueuedEvent(engine, responder, timestamp),
   _port_path(port_path),
   _port(NULL)
@@ -42,7 +42,7 @@ EnablePortMonitoringEvent::EnablePortMonitoringEvent(Engine&              engine
 
 
 void
-EnablePortMonitoringEvent::pre_process()
+EnablePortBroadcastingEvent::pre_process()
 {
 	_port = _engine.object_store()->find_port(_port_path);
 
@@ -51,7 +51,7 @@ EnablePortMonitoringEvent::pre_process()
 
 
 void
-EnablePortMonitoringEvent::execute(ProcessContext& context)
+EnablePortBroadcastingEvent::execute(ProcessContext& context)
 {
 	QueuedEvent::execute(context);
 
@@ -67,7 +67,7 @@ EnablePortMonitoringEvent::execute(ProcessContext& context)
 
 
 void
-EnablePortMonitoringEvent::post_process()
+EnablePortBroadcastingEvent::post_process()
 {
 #if 0
 	string msg;

@@ -33,8 +33,8 @@ EXTRA_DIST = \
 	DisconnectionEvent.hpp \
 	EnablePatchEvent.cpp \
 	EnablePatchEvent.hpp \
-	EnablePortMonitoringEvent.cpp \
-	EnablePortMonitoringEvent.hpp \
+	EnablePortBroadcastingEvent.cpp \
+	EnablePortBroadcastingEvent.hpp \
 	LoadPluginsEvent.cpp \
 	LoadPluginsEvent.hpp \
 	MidiLearnEvent.cpp \
