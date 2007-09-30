@@ -63,7 +63,7 @@ OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t
 	}
 
 	// For debugging, print all incoming OSC messages
-	lo_server_add_method(_server, NULL, NULL, generic_cb, NULL);
+	//lo_server_add_method(_server, NULL, NULL, generic_cb, NULL);
 
 	// Set response address for this message.
 	// It's important this is first and returns nonzero.
@@ -98,6 +98,8 @@ OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t
 	lo_server_add_method(_server, "/ingen/disconnect_all", "is", disconnect_all_cb, this);
 	lo_server_add_method(_server, "/ingen/set_port_value", NULL, set_port_value_cb, this);
 	lo_server_add_method(_server, "/ingen/set_port_value_immediate", NULL, set_port_value_immediate_cb, this);
+	lo_server_add_method(_server, "/ingen/enable_port_broadcasting", NULL, enable_port_broadcasting_cb, this);
+	lo_server_add_method(_server, "/ingen/disable_port_broadcasting", NULL, disable_port_broadcasting_cb, this);
 	lo_server_add_method(_server, "/ingen/note_on", "isii", note_on_cb, this);
 	lo_server_add_method(_server, "/ingen/note_off", "isi", note_off_cb, this);
 	lo_server_add_method(_server, "/ingen/all_notes_off", "isi", all_notes_off_cb, this);
@@ -629,13 +631,13 @@ OSCEngineReceiver::_set_port_value_immediate_cb(const char* path, const char* ty
 	if (argc == 3) {
 		if (types[2] == 'f') {
 			const float value = argv[2]->f;
-			set_port_value_immediate(port_path, "who cares", sizeof(float), &value);
+			set_port_value_immediate(port_path, "", sizeof(float), &value);
 			return 0;
 		} else if (types[2] == 'b') {
 			lo_blob b = argv[2];
 			size_t data_size = lo_blob_datasize(b);
 			void* data = lo_blob_dataptr(b);
-			set_port_value_immediate(port_path, "who cares", data_size, data);
+			set_port_value_immediate(port_path, "", data_size, data);
 			return 0;
 		} else {
 			return 1;
@@ -643,13 +645,13 @@ OSCEngineReceiver::_set_port_value_immediate_cb(const char* path, const char* ty
 	} else {
 		if (types[3] == 'f') {
 			const float value = argv[3]->f;
-			set_port_value_immediate(port_path, "who cares", argv[2]->i, sizeof(float), &value);
+			set_port_value_immediate(port_path, "", argv[2]->i, sizeof(float), &value);
 			return 0;
 		} else if (types[3] == 'b') {
 			lo_blob b = argv[3];
 			size_t data_size = lo_blob_datasize(b);
 			void* data = lo_blob_dataptr(b);
-			set_port_value_immediate(port_path, "who cares", argv[2]->i, data_size, data);
+			set_port_value_immediate(port_path, "", argv[2]->i, data_size, data);
 			return 0;
 		} else {
 			return 1;
@@ -726,6 +728,34 @@ OSCEngineReceiver::_set_port_value_cb(const char* path, const char* types, lo_ar
 		}
 	}
 
+	return 0;
+}
+
+
+/** \page engine_osc_namespace
+ * <p> \b /ingen/enable_port_broadcasting - Enable broadcasting of changing port values
+ * \arg \b response-id (integer)
+ * \arg \b port-path (string) - Name of port </p> \n \n
+ */
+int
+OSCEngineReceiver::_enable_port_broadcasting_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+{
+	const char* port_path = &argv[1]->s;
+	enable_port_broadcasting(port_path);
+	return 0;
+}
+
+
+/** \page engine_osc_namespace
+ * <p> \b /ingen/disable_port_broadcasting - Enable broadcasting of changing port values
+ * \arg \b response-id (integer)
+ * \arg \b port-path (string) - Name of port </p> \n \n
+ */
+int
+OSCEngineReceiver::_disable_port_broadcasting_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+{
+	const char* port_path = &argv[1]->s;
+	disable_port_broadcasting(port_path);
 	return 0;
 }
 

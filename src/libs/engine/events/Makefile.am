@@ -3,6 +3,8 @@ MAINTAINERCLEANFILES = Makefile.in
 EXTRA_DIST = \
 	AddNodeEvent.cpp \
 	AddNodeEvent.hpp \
+	AddPortEvent.cpp \
+	AddPortEvent.hpp \
 	AllNotesOffEvent.cpp \
 	AllNotesOffEvent.hpp \
 	ClearPatchEvent.cpp \
@@ -23,8 +25,6 @@ EXTRA_DIST = \
 	DeactivateEvent.hpp \
 	DestroyEvent.cpp \
 	DestroyEvent.hpp \
-	DisablePatchEvent.cpp \
-	DisablePatchEvent.hpp \
 	DisconnectNodeEvent.cpp \
 	DisconnectNodeEvent.hpp \
 	DisconnectPortEvent.cpp \

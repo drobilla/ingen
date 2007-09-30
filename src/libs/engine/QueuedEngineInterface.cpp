@@ -196,14 +196,14 @@ QueuedEngineInterface::set_polyphonic(const string& path, bool poly)
 void
 QueuedEngineInterface::enable_patch(const string& patch_path)
 {
-	push_queued(new EnablePatchEvent(_engine, _responder, now(), patch_path));
+	push_queued(new EnablePatchEvent(_engine, _responder, now(), patch_path, true));
 }
 
 
 void
 QueuedEngineInterface::disable_patch(const string& patch_path)
 {
-	push_queued(new DisablePatchEvent(_engine, _responder, now(), patch_path));
+	push_queued(new EnablePatchEvent(_engine, _responder, now(), patch_path, false));
 }
 
 
@@ -270,6 +270,20 @@ QueuedEngineInterface::set_port_value_immediate(const string& port_path,
                                                 const void*   data)
 {
 	push_stamped(new SetPortValueEvent(_engine, _responder, now(), voice, port_path, data_size, data));
+}
+
+
+void
+QueuedEngineInterface::enable_port_broadcasting(const string& port_path)
+{
+	push_queued(new EnablePortBroadcastingEvent(_engine, _responder, now(), port_path, true));
+}
+
+
+void
+QueuedEngineInterface::disable_port_broadcasting(const string& port_path)
+{
+	push_queued(new EnablePortBroadcastingEvent(_engine, _responder, now(), port_path, false));
 }
 
 

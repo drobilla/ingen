@@ -132,6 +132,10 @@ public:
 	                              uint32_t      voice,
 	                              uint32_t      data_size,
 	                              const void*   data);
+	
+	void enable_port_broadcasting(const string& port_path);
+	
+	void disable_port_broadcasting(const string& port_path);
 
 	void set_program(const string& node_path,
 	                 uint32_t      bank,

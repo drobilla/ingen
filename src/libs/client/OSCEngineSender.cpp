@@ -450,6 +450,24 @@ OSCEngineSender::set_port_value_immediate(const string& port_path,
 	}
 }
 
+	
+void
+OSCEngineSender::enable_port_broadcasting(const string& port_path)
+{
+	lo_send(_engine_addr, "/ingen/enable_port_broadcasting", "is",
+			next_id(),
+			port_path.c_str());
+}
+
+
+void
+OSCEngineSender::disable_port_broadcasting(const string& port_path)
+{
+	lo_send(_engine_addr, "/ingen/disable_port_broadcasting", "is",
+			next_id(),
+			port_path.c_str());
+}
+
 
 void
 OSCEngineSender::set_program(const string& node_path,

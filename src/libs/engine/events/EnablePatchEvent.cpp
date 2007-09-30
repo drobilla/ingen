@@ -26,11 +26,12 @@
 namespace Ingen {
 
 
-EnablePatchEvent::EnablePatchEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& patch_path)
+EnablePatchEvent::EnablePatchEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& patch_path, bool enable)
 : QueuedEvent(engine, responder, timestamp),
   _patch_path(patch_path),
   _patch(NULL),
-  _compiled_patch(NULL)
+  _compiled_patch(NULL),
+  _enable(enable)
 {
 }
 
@@ -40,10 +41,10 @@ EnablePatchEvent::pre_process()
 {
 	_patch = _engine.object_store()->find_patch(_patch_path);
 	
-	if (_patch != NULL) {
+	if (_enable && _patch) {
 		/* Any event that requires a new process order will set the patch's
-		 * process order to NULL if it is executed when the patch is not
-		 * active.  So, if the PO is NULL, calculate it here */
+		 * compiled_patch to NULL if it is executed when the patch is not
+		 * active.  So, if the CP is NULL, calculate it here */
 		if (_patch->compiled_patch() == NULL)
 			_compiled_patch = _patch->compile();
 	}
@@ -58,9 +59,12 @@ EnablePatchEvent::execute(ProcessContext& context)
 	QueuedEvent::execute(context);
 
 	if (_patch != NULL) {
-		_patch->enable();
+		if (_enable)
+			_patch->enable();
+		else
+			_patch->disable();
 
-		if (_patch->compiled_patch() == NULL)
+		if (_enable && _patch->compiled_patch() == NULL)
 			_patch->compiled_patch(_compiled_patch);
 	}
 }
@@ -71,7 +75,10 @@ EnablePatchEvent::post_process()
 {
 	if (_patch != NULL) {
 		_responder->respond_ok();
-		_engine.broadcaster()->send_patch_enable(_patch_path);
+		if (_enable)
+			_engine.broadcaster()->send_patch_enable(_patch_path);
+		else
+			_engine.broadcaster()->send_patch_disable(_patch_path);
 	} else {
 		_responder->respond_error(string("Patch ") + _patch_path + " not found");
 	}

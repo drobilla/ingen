@@ -119,6 +119,10 @@ public:
 	                                      uint32_t      data_size,
 	                                      const void*   data) = 0;
 	
+	virtual void enable_port_broadcasting(const string& port_path) = 0;
+	
+	virtual void disable_port_broadcasting(const string& port_path) = 0;
+	
 	virtual void set_program(const string& node_path,
 	                         uint32_t      bank,
 	                         uint32_t      program) = 0;

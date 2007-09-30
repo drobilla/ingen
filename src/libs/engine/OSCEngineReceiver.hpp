@@ -100,6 +100,8 @@ private:
 	LO_HANDLER(disconnect_all);
 	LO_HANDLER(set_port_value);
 	LO_HANDLER(set_port_value_immediate);
+	LO_HANDLER(enable_port_broadcasting);
+	LO_HANDLER(disable_port_broadcasting);
 	LO_HANDLER(note_on);
 	LO_HANDLER(note_off);
 	LO_HANDLER(all_notes_off);

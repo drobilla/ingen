@@ -106,6 +106,8 @@ libingen_engine_la_SOURCES = \
 	events.hpp \
 	events/AddNodeEvent.cpp \
 	events/AddNodeEvent.hpp \
+	events/AddPortEvent.cpp \
+	events/AddPortEvent.hpp \
 	events/AllNotesOffEvent.cpp \
 	events/AllNotesOffEvent.hpp \
 	events/ClearPatchEvent.cpp \
@@ -118,8 +120,6 @@ libingen_engine_la_SOURCES = \
 	events/DeactivateEvent.hpp \
 	events/DestroyEvent.cpp \
 	events/DestroyEvent.hpp \
-	events/DisablePatchEvent.cpp \
-	events/DisablePatchEvent.hpp \
 	events/DisconnectNodeEvent.cpp \
 	events/DisconnectNodeEvent.hpp \
 	events/DisconnectPortEvent.cpp \
@@ -128,8 +128,8 @@ libingen_engine_la_SOURCES = \
 	events/DisconnectionEvent.hpp \
 	events/EnablePatchEvent.cpp \
 	events/EnablePatchEvent.hpp \
-	events/EnablePortMonitoringEvent.cpp \
-	events/EnablePortMonitoringEvent.hpp \
+	events/EnablePortBroadcastingEvent.cpp \
+	events/EnablePortBroadcastingEvent.hpp \
 	events/LoadPluginsEvent.cpp \
 	events/LoadPluginsEvent.hpp \
 	events/MidiLearnEvent.cpp \

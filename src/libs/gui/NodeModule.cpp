@@ -38,6 +38,7 @@ namespace GUI {
 NodeModule::NodeModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeModel> node)
 	: FlowCanvas::Module(canvas, node->path().name())
 	, _node(node)
+	, _slv2_ui(NULL)
 	, _gui(NULL)
 	, _gui_item(NULL)
 {
@@ -90,12 +91,28 @@ NodeModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeModel> n
 	for (MetadataMap::const_iterator m = node->metadata().begin(); m != node->metadata().end(); ++m)
 		ret->set_metadata(m->first, m->second);
 
-	for (PortModelList::const_iterator p = node->ports().begin(); p != node->ports().end(); ++p)
+	uint32_t index = 0;
+	for (PortModelList::const_iterator p = node->ports().begin(); p != node->ports().end(); ++p) {
 		ret->add_port(*p, false);
+		(*p)->signal_control.connect(sigc::bind<0>(
+					sigc::mem_fun(ret.get(), &NodeModule::control_change), index));
+		++index;
+	}
 
 	ret->resize();
 
 	return ret;
+}
+
+	
+void
+NodeModule::control_change(uint32_t index, float control)
+{
+	if (_slv2_ui) {
+		const LV2UI_Descriptor* ui_descriptor = slv2_ui_instance_get_descriptor(_slv2_ui);
+		LV2UI_Handle ui_handle = slv2_ui_instance_get_handle(_slv2_ui);
+		ui_descriptor->port_event(ui_handle, index, 4, &control);
+	}
 }
 
 
@@ -112,10 +129,10 @@ NodeModule::embed_gui(bool embed)
 		if (!_gui_item) {
 			cerr << "Embedding LV2 GUI" << endl;
 
-			SLV2UIInstance ui = _node->plugin()->ui(App::instance().engine().get(), _node.get());
-			if (ui) {
+			_slv2_ui = _node->plugin()->ui(App::instance().engine().get(), _node.get());
+			if (_slv2_ui) {
 				cerr << "Found UI" << endl;
-				c_widget = (GtkWidget*)slv2_ui_instance_get_widget(ui);
+				c_widget = (GtkWidget*)slv2_ui_instance_get_widget(_slv2_ui);
 				_gui = Glib::wrap(c_widget);
 				assert(_gui);
 			
@@ -150,6 +167,10 @@ NodeModule::embed_gui(bool embed)
 			_gui_item->raise_to_top();
 
 			_gui->signal_size_request().connect(sigc::mem_fun(this, &NodeModule::gui_size_request));
+		
+			for (PortModelList::const_iterator p = _node->ports().begin(); p != _node->ports().end(); ++p)
+				if ((*p)->is_control() && (*p)->is_output())
+					App::instance().engine()->enable_port_broadcasting((*p)->path());
 
 		} else {
 			cerr << "*** Failed to create canvas item" << endl;
@@ -166,8 +187,15 @@ NodeModule::embed_gui(bool embed)
 			_gui = NULL;
 		}
 
+		slv2_ui_instance_free(_slv2_ui);
+		_slv2_ui = NULL;
+
 		_ports_y_offset = 0;
 		_width = 0; // resize() takes care of it..
+
+		for (PortModelList::const_iterator p = _node->ports().begin(); p != _node->ports().end(); ++p)
+			if ((*p)->is_control() && (*p)->is_output())
+				App::instance().engine()->disable_port_broadcasting((*p)->path());
 	}
 
 	resize();

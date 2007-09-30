@@ -41,7 +41,8 @@ public:
 	EnablePortBroadcastingEvent(Engine&              engine,
 	                            SharedPtr<Responder> responder,
 	                            SampleCount          timestamp,
-	                            const std::string&   port_path);
+	                            const std::string&   port_path,
+								bool                 enable);
 
 	void pre_process();
 	void execute(ProcessContext& context);
@@ -50,6 +51,7 @@ public:
 private:
 	const std::string _port_path;
 	Port*             _port;
+	bool              _enable;
 };
 
 

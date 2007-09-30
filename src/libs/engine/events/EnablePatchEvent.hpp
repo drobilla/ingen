@@ -39,7 +39,11 @@ class CompiledPatch;
 class EnablePatchEvent : public QueuedEvent
 {
 public:
-	EnablePatchEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& patch_path);
+	EnablePatchEvent(Engine&              engine,
+	                 SharedPtr<Responder> responder,
+	                 SampleCount          timestamp,
+	                 const string&        patch_path,
+	                 bool                 enable);
 	
 	void pre_process();
 	void execute(ProcessContext& context);
@@ -49,6 +53,7 @@ private:
 	string         _patch_path;
 	Patch*         _patch;
 	CompiledPatch* _compiled_patch; // Patch's new process order
+	bool           _enable;
 };
 
 

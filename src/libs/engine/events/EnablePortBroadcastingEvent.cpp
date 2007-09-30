@@ -33,10 +33,12 @@ namespace Ingen {
 EnablePortBroadcastingEvent::EnablePortBroadcastingEvent(Engine&              engine,
                                                          SharedPtr<Responder> responder,
                                                          SampleCount          timestamp,
-                                                         const std::string&   port_path)
+                                                         const std::string&   port_path,
+                                                         bool                 enable)
 : QueuedEvent(engine, responder, timestamp),
   _port_path(port_path),
-  _port(NULL)
+  _port(NULL),
+  _enable(enable)
 {
 }
 
@@ -55,31 +57,18 @@ EnablePortBroadcastingEvent::execute(ProcessContext& context)
 {
 	QueuedEvent::execute(context);
 
-#if 0
-	assert(_time >= start && _time <= end);
-
-	if (_port != NULL && _port->type() == DataType::FLOAT)
-		_value = ((AudioBuffer*)_port->buffer(0))->value_at(0/*_time - start*/);
-	else 
-		_port = NULL; // triggers error response
-#endif
+	if (_port)
+		_port->monitor(_enable);
 }
 
 
 void
 EnablePortBroadcastingEvent::post_process()
 {
-#if 0
-	string msg;
-	if (!_port) {
-		_responder->respond_error("Unable to find port for get_value responder.");
-	} else if (_responder->client()) {
+	if (_port)
 		_responder->respond_ok();
-		_responder->client()->control_change(_port_path, _value);
-	} else {
-		_responder->respond_error("Unable to find client to send port value");
-	}
-#endif
+	else
+		_responder->respond_error("Unable to find port for get_value responder.");
 }
 
 

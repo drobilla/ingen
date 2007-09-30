@@ -28,10 +28,10 @@
 #include "CreatePatchEvent.hpp"
 #include "DeactivateEvent.hpp"
 #include "DestroyEvent.hpp"
-#include "DisablePatchEvent.hpp"
-#include "DisconnectionEvent.hpp"
 #include "DisconnectNodeEvent.hpp"
+#include "DisconnectionEvent.hpp"
 #include "EnablePatchEvent.hpp"
+#include "EnablePortBroadcastingEvent.hpp"
 #include "LoadPluginsEvent.hpp"
 #include "MidiLearnEvent.hpp"
 #include "NoteOffEvent.hpp"
@@ -46,17 +46,17 @@
 #include "RequestPluginsEvent.hpp"
 #include "RequestPortValueEvent.hpp"
 #include "SetMetadataEvent.hpp"
-#include "SetPolyphonyEvent.hpp"
 #include "SetPolyphonicEvent.hpp"
+#include "SetPolyphonyEvent.hpp"
 #include "SetPortValueEvent.hpp"
 #include "SetPortValueQueuedEvent.hpp"
 #include "UnregisterClientEvent.hpp"
 
 #ifdef HAVE_DSSI
-#include "DSSIUpdateEvent.hpp"
-#include "DSSIControlEvent.hpp"
 #include "DSSIConfigureEvent.hpp"
+#include "DSSIControlEvent.hpp"
 #include "DSSIProgramEvent.hpp"
+#include "DSSIUpdateEvent.hpp"
 #endif
 
 #endif // EVENTS_H
