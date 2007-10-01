@@ -61,6 +61,9 @@ private:
 	Raul::AtomicInt         _max_time;
 	//Raul::Maid&             _maid;
 	Raul::SRSWQueue<Event*> _events;
+	uint32_t                _event_buffer_size;
+	uint8_t*                _event_buffer;
+
 	//virtual void            _whipped();
 };
 

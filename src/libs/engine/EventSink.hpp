@@ -47,9 +47,9 @@ public:
 	/* FIXME: Figure out variable sized event queues and make this a generic
 	 * interface (ie don't add a method for every event type, crap..) */
 
-	void control_change(Port* port, FrameTime time, float val);
+	bool write(uint32_t size, const Event* ev);
 
-	bool read_control_change(SendPortValueEvent& ev);
+	bool read(uint32_t event_buffer_size, uint8_t* event_buffer);
 
 private:
 	Engine& _engine;

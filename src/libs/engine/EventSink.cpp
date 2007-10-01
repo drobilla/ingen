@@ -24,7 +24,7 @@ using namespace std;
 
 namespace Ingen {
 	
-	
+#if 0
 void
 EventSink::control_change(Port* port, FrameTime time, float val)
 {
@@ -32,12 +32,42 @@ EventSink::control_change(Port* port, FrameTime time, float val)
 	SendPortValueEvent ev(_engine, time, port, false, 0, val);
 	_events.write(sizeof(ev), (uchar*)&ev);
 }
-	
+#endif
 
+/** \a size is not size_t because an event will never be even remotely close
+ * to UINT32_MAX in size, so uint32_t saves wasted space on 64-bit.
+ */
 bool
-EventSink::read_control_change(SendPortValueEvent& ev)
+EventSink::write(uint32_t size, const Event* ev)
 {
-	return _events.full_read(sizeof(SendPortValueEvent), (uchar*)&ev);
+	if (size > _events.write_space())
+		return false;
+
+	_events.write(sizeof(uint32_t), (uint8_t*)&size);
+	_events.write(size, (uint8_t*)ev);
+		
+	return true;
+}
+
+
+/** Read the next event into event_buffer.
+ *
+ * \a event_buffer can be casted to Event* and virtual methods called.
+ */
+bool
+EventSink::read(uint32_t event_buffer_size, uint8_t* event_buffer)
+{
+	uint32_t read_size;
+	bool success = _events.full_read(sizeof(uint32_t), (uint8_t*)&read_size);
+	if (!success)
+		return false;
+
+	assert(read_size <= event_buffer_size);
+
+	if (read_size > 0) 
+		return _events.full_read(read_size, event_buffer);
+	else
+		return false;
 }
 
 

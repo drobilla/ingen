@@ -36,6 +36,8 @@ PostProcessor::PostProcessor(Engine& engine, size_t queue_size)
     : _engine(engine)
 	, _max_time(0)
 	, _events(queue_size)
+	, _event_buffer_size(sizeof(SendPortValueEvent)) // FIXME: make generic
+	, _event_buffer((uint8_t*)malloc(_event_buffer_size))
 {
 }
 
@@ -43,15 +45,19 @@ PostProcessor::PostProcessor(Engine& engine, size_t queue_size)
 void
 PostProcessor::process()
 {
+	const FrameTime end_time = _max_time.get();
+
 	/* Process any audio thread generated events */
-	/* FIXME: process events from all thread if parallel */
-	/* TODO: obviously this needs work to be generic */
-	SendPortValueEvent ev(_engine, 0, NULL, false, 0, 0.0f);
-	while (_engine.audio_driver()->context().event_sink().read_control_change(ev)) {
-		ev.post_process();
+	/* FIXME: process events from all threads if parallel */
+
+	while (_engine.audio_driver()->context().event_sink().read(
+				_event_buffer_size, _event_buffer)) {
+		if (((Event*)_event_buffer)->time() > end_time)
+			break;
+		((Event*)_event_buffer)->post_process();
 	}
 
-	FrameTime end_time = _max_time.get();
+
 
 	/* Process normal events */
 	while ( ! _events.empty()) {

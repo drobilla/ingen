@@ -223,8 +223,8 @@ InputPort::post_process(ProcessContext& context)
 	if (_monitor && _type == DataType::FLOAT && _buffer_size == 1) {
 		const Sample value = ((AudioBuffer*)(*_buffers)[0])->value_at(0);
 		if (value != _last_reported_value) {
-			context.event_sink().control_change(this, context.start(),
-					((AudioBuffer*)(*_buffers)[0])->value_at(0));
+			const SendPortValueEvent ev(context.engine(), context.start(), this, false, 0, value);
+			context.event_sink().write(sizeof(ev), &ev);
 			_last_reported_value = value;
 		}
 	}

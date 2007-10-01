@@ -38,7 +38,10 @@ namespace Ingen {
 class ProcessContext
 {
 public:
-	ProcessContext(Engine& engine) : _event_sink(engine, 1024) {} // FIXME: size?
+	ProcessContext(Engine& engine)
+		: _engine(engine)
+		, _event_sink(engine, 1024) // FIXME: size?
+	{}
 
 	void set_time_slice(SampleCount nframes, FrameTime start, FrameTime end) {
 		_nframes = nframes;
@@ -46,6 +49,7 @@ public:
 		_end = end;
 	}
 
+	inline Engine&           engine()     const { return _engine; }
 	inline SampleCount       nframes()    const { return _nframes; }
 	inline FrameTime         start()      const { return _start; }
 	inline FrameTime         end()        const { return _end; }
@@ -53,6 +57,7 @@ public:
 	inline EventSink&        event_sink()       { return _event_sink; }
 
 private:
+	Engine&     _engine;     ///< Engine we're running in
 	SampleCount _nframes;    ///< Number of actual time (Jack) frames this cycle
 	FrameTime   _start;      ///< Start frame of this cycle, timeline relative
 	FrameTime   _end;        ///< End frame of this cycle, timeline relative
