@@ -15,41 +15,52 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef NOTEONEVENT_H
-#define NOTEONEVENT_H
+#ifndef CREATEPORTEVENT_H
+#define CREATEPORTEVENT_H
 
-#include "Event.hpp"
-#include "types.hpp"
+#include "QueuedEvent.hpp"
+#include <raul/Path.hpp>
+#include <raul/Array.hpp>
+#include "DataType.hpp"
 #include <string>
 using std::string;
 
+template <typename T> class Array;
+
 namespace Ingen {
 
-class Node;
+class Patch;
+class Port;
+class Plugin;
+class DriverPort;
 
 
-/** A note on event.
+/** An event to add a Port to a Patch.
  *
  * \ingroup engine
  */
-class NoteOnEvent : public Event
+class CreatePortEvent : public QueuedEvent
 {
 public:
-	NoteOnEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, Node* patch, uchar note_num, uchar velocity);
-	NoteOnEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& node_path, uchar note_num, uchar velocity);
-	
+	CreatePortEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& type, bool is_output, QueuedEventSource* source);
+
+	void pre_process();
 	void execute(ProcessContext& context);
 	void post_process();
 
 private:
-	Node*  _node;
-	string _node_path;
-	uchar  _note_num;
-	uchar  _velocity;
-	bool   _is_osc_triggered;
+	Raul::Path          _path;
+	string              _type;
+	bool                _is_output;
+	DataType            _data_type;
+	Patch*              _patch;
+	Port*               _patch_port;
+	Raul::Array<Port*>* _ports_array; ///< New (external) ports array for Patch
+	DriverPort*         _driver_port; ///< Driver (eg Jack) port if this is a toplevel port
+	bool                _succeeded;
 };
 
 
 } // namespace Ingen
 
-#endif // NOTEONEVENT_H
+#endif // CREATEPORTEVENT_H

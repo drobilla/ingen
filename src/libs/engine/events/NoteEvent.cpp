@@ -15,7 +15,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "NoteOnEvent.hpp"
+#include "NoteEvent.hpp"
 #include "Responder.hpp"
 #include "Engine.hpp"
 #include "ObjectStore.hpp"
@@ -32,12 +32,12 @@ namespace Ingen {
  *
  * Used to be triggered by MIDI.  Not used anymore.
  */
-NoteOnEvent::NoteOnEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, Node* patch, uchar note_num, uchar velocity)
+NoteEvent::NoteEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, Node* node, bool on, uchar note_num, uchar velocity)
 : Event(engine, responder, timestamp),
-  _node(patch),
+  _node(node),
+  _on(on),
   _note_num(note_num),
-  _velocity(velocity),
-  _is_osc_triggered(false)
+  _velocity(velocity)
 {
 }
 
@@ -46,42 +46,50 @@ NoteOnEvent::NoteOnEvent(Engine& engine, SharedPtr<Responder> responder, SampleC
  *
  * Triggered by OSC.
  */
-NoteOnEvent::NoteOnEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& node_path, uchar note_num, uchar velocity)
+NoteEvent::NoteEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& node_path, bool on, uchar note_num, uchar velocity)
 : Event(engine, responder, timestamp),
   _node(NULL),
   _node_path(node_path),
+  _on(on),
   _note_num(note_num),
-  _velocity(velocity),
-  _is_osc_triggered(true)
+  _velocity(velocity)
 {
 }
 
 
 void
-NoteOnEvent::execute(ProcessContext& context)
+NoteEvent::execute(ProcessContext& context)
 {
 	Event::execute(context);
 	assert(_time >= context.start() && _time <= context.end());
 
 	// Lookup if neccessary
-	if (_is_osc_triggered)
+	if (!_node)
 		_node = _engine.object_store()->find_node(_node_path);
 		
-	// FIXME: this isn't very good at all.
+	// FIXME: barf
+	
 	if (_node != NULL && _node->plugin()->type() == Plugin::Internal) {
-		if (_node->plugin()->plug_label() == "note_in")
-			((MidiNoteNode*)_node)->note_on(_note_num, _velocity, _time, context);
-		else if (_node->plugin()->plug_label() == "trigger_in")
-			((MidiTriggerNode*)_node)->note_on(_note_num, _velocity, _time, context);
+		if (_on) {
+			if (_node->plugin()->plug_label() == "note_in")
+				((MidiNoteNode*)_node)->note_on(_note_num, _velocity, _time, context);
+			else if (_node->plugin()->plug_label() == "trigger_in")
+				((MidiTriggerNode*)_node)->note_on(_note_num, _velocity, _time, context);
+		} else  {
+			if (_node->plugin()->plug_label() == "note_in")
+				((MidiNoteNode*)_node)->note_off(_note_num, _time, context);
+			else if (_node->plugin()->plug_label() == "trigger_in")
+				((MidiTriggerNode*)_node)->note_off(_note_num, _time, context);
+		}
 	}
 }
 
 
 void
-NoteOnEvent::post_process()
+NoteEvent::post_process()
 {
-	if (_is_osc_triggered) {
-		if (_node != NULL)
+	if (_responder) {
+		if (_node)
 			_responder->respond_ok();
 		else
 			_responder->respond_error("Did not find node for note_on");

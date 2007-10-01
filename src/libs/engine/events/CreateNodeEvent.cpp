@@ -18,7 +18,7 @@
 #include <raul/Maid.hpp>
 #include <raul/Path.hpp>
 #include <raul/Path.hpp>
-#include "AddNodeEvent.hpp"
+#include "CreateNodeEvent.hpp"
 #include "Responder.hpp"
 #include "Patch.hpp"
 #include "Node.hpp"
@@ -34,7 +34,7 @@
 namespace Ingen {
 
 
-AddNodeEvent::AddNodeEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path,
+CreateNodeEvent::CreateNodeEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path,
 		const string& plugin_uri, bool poly)
 : QueuedEvent(engine, responder, timestamp),
   _path(path),
@@ -52,7 +52,7 @@ AddNodeEvent::AddNodeEvent(Engine& engine, SharedPtr<Responder> responder, Sampl
  *
  * Do not use.
  */
-AddNodeEvent::AddNodeEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path,
+CreateNodeEvent::CreateNodeEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path,
 		const string& plugin_type, const string& plugin_lib, const string& plugin_label, bool poly)
 : QueuedEvent(engine, responder, timestamp),
   _path(path),
@@ -69,7 +69,7 @@ AddNodeEvent::AddNodeEvent(Engine& engine, SharedPtr<Responder> responder, Sampl
 
 
 void
-AddNodeEvent::pre_process()
+CreateNodeEvent::pre_process()
 {
 	if (_engine.object_store()->find_object(_path) != NULL) {
 		_node_already_exists = true;
@@ -107,7 +107,7 @@ AddNodeEvent::pre_process()
 
 
 void
-AddNodeEvent::execute(ProcessContext& context)
+CreateNodeEvent::execute(ProcessContext& context)
 {
 	QueuedEvent::execute(context);
 
@@ -120,7 +120,7 @@ AddNodeEvent::execute(ProcessContext& context)
 
 
 void
-AddNodeEvent::post_process()
+CreateNodeEvent::post_process()
 {
 	string msg;
 	if (_node_already_exists) {

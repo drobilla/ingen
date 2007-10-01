@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef NOTEOFFEVENT_H
-#define NOTEOFFEVENT_H
+#ifndef NOTEEVENT_H
+#define NOTEEVENT_H
 
 #include "Event.hpp"
 #include "types.hpp"
@@ -28,26 +28,41 @@ namespace Ingen {
 class Node;
 
 
-/** A note off event.
+/** A note on event.
  *
  * \ingroup engine
  */
-class NoteOffEvent : public Event
+class NoteEvent : public Event
 {
 public:
-	NoteOffEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, Node* node, uchar note_num);
-	NoteOffEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& node_path, uchar note_num);
+	NoteEvent(Engine&              engine,
+	          SharedPtr<Responder> responder,
+	          SampleCount          timestamp,
+	          Node*                node,
+			  bool                 on,
+	          uchar                note_num,
+	          uchar                velocity);
+
+	NoteEvent(Engine&              engine,
+	          SharedPtr<Responder> responder,
+	          SampleCount          timestamp,
+	          const string&        node_path,
+			  bool                 on,
+	          uchar                note_num,
+	          uchar                velocity);
 	
 	void execute(ProcessContext& context);
 	void post_process();
 
 private:
-	Node*  _node;
-	string _node_path;
-	uchar  _note_num;
+	Node*        _node;
+	const string _node_path;
+	bool         _on;
+	uchar        _note_num;
+	uchar        _velocity;
 };
 
 
 } // namespace Ingen
 
-#endif // NOTEOFFEVENT_H
+#endif // NOTEEVENT_H

@@ -20,12 +20,12 @@
 
 #include CONFIG_H_PATH
 
-#include "AddNodeEvent.hpp"
-#include "AddPortEvent.hpp"
 #include "AllNotesOffEvent.hpp"
 #include "ClearPatchEvent.hpp"
 #include "ConnectionEvent.hpp"
+#include "CreateNodeEvent.hpp"
 #include "CreatePatchEvent.hpp"
+#include "CreatePortEvent.hpp"
 #include "DeactivateEvent.hpp"
 #include "DestroyEvent.hpp"
 #include "DisconnectNodeEvent.hpp"
@@ -34,8 +34,7 @@
 #include "EnablePortBroadcastingEvent.hpp"
 #include "LoadPluginsEvent.hpp"
 #include "MidiLearnEvent.hpp"
-#include "NoteOffEvent.hpp"
-#include "NoteOnEvent.hpp"
+#include "NoteEvent.hpp"
 #include "PingQueuedEvent.hpp"
 #include "RegisterClientEvent.hpp"
 #include "RenameEvent.hpp"

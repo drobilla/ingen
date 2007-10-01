@@ -1,18 +1,18 @@
 MAINTAINERCLEANFILES = Makefile.in
 
 EXTRA_DIST = \
-	AddNodeEvent.cpp \
-	AddNodeEvent.hpp \
-	AddPortEvent.cpp \
-	AddPortEvent.hpp \
 	AllNotesOffEvent.cpp \
 	AllNotesOffEvent.hpp \
 	ClearPatchEvent.cpp \
 	ClearPatchEvent.hpp \
 	ConnectionEvent.cpp \
 	ConnectionEvent.hpp \
+	CreateNodeEvent.cpp \
+	CreateNodeEvent.hpp \
 	CreatePatchEvent.cpp \
 	CreatePatchEvent.hpp \
+	CreatePortEvent.cpp \
+	CreatePortEvent.hpp \
 	DSSIConfigureEvent.cpp \
 	DSSIConfigureEvent.hpp \
 	DSSIControlEvent.cpp \
@@ -39,10 +39,8 @@ EXTRA_DIST = \
 	LoadPluginsEvent.hpp \
 	MidiLearnEvent.cpp \
 	MidiLearnEvent.hpp \
-	NoteOffEvent.cpp \
-	NoteOffEvent.hpp \
-	NoteOnEvent.cpp \
-	NoteOnEvent.hpp \
+	NoteEvent.cpp \
+	NoteEvent.hpp \
 	PingQueuedEvent.hpp \
 	RegisterClientEvent.cpp \
 	RegisterClientEvent.hpp \

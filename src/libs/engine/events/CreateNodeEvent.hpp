@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef ADDNODEEVENT_H
-#define ADDNODEEVENT_H
+#ifndef CREATENODEEVENT_H
+#define CREATENODEEVENT_H
 
 #include "QueuedEvent.hpp"
 #include <raul/Path.hpp>
@@ -38,25 +38,25 @@ class CompiledPatch;
  *
  * \ingroup engine
  */
-class AddNodeEvent : public QueuedEvent
+class CreateNodeEvent : public QueuedEvent
 {
 public:
-	AddNodeEvent(Engine&               engine,
-	             SharedPtr<Responder> responder,
-	             SampleCount           timestamp,
-	             const string&         node_path,
-	             const string&         plugin_uri,
-	             bool                  poly);
+	CreateNodeEvent(Engine&               engine,
+	                 SharedPtr<Responder> responder,
+	                 SampleCount          timestamp,
+	                 const string&        node_path,
+	                 const string&        plugin_uri,
+	                 bool                 poly);
 	
 	// DEPRECATED
-	AddNodeEvent(Engine&               engine,
-	             SharedPtr<Responder> responder,
-	             SampleCount           timestamp,
-	             const string&         node_path,
-				 const string&         plugin_type,
-				 const string&         lib_name,
-	             const string&         plugin_label,
-	             bool                  poly);
+	CreateNodeEvent(Engine&              engine,
+	                SharedPtr<Responder> responder,
+	                SampleCount          timestamp,
+	                const string&        node_path,
+	                const string&        plugin_type,
+	                const string&        lib_name,
+	                const string&        plugin_label,
+	                bool                 poly);
 
 	void pre_process();
 	void execute(ProcessContext& context);
@@ -79,4 +79,4 @@ private:
 
 } // namespace Ingen
 
-#endif // ADDNODEEVENT_H
+#endif // CREATENODEEVENT_H

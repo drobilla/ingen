@@ -132,7 +132,7 @@ void QueuedEngineInterface::create_port(const string& path,
                                         const string& data_type,
                                         bool          direction)
 {
-	push_queued(new AddPortEvent(_engine, _responder, now(), path, data_type, direction, this));
+	push_queued(new CreatePortEvent(_engine, _responder, now(), path, data_type, direction, this));
 }
 
 
@@ -141,7 +141,7 @@ QueuedEngineInterface::create_node(const string& path,
                                    const string& plugin_uri,
                                    bool          polyphonic)
 {
-	push_queued(new AddNodeEvent(_engine, _responder, now(),
+	push_queued(new CreateNodeEvent(_engine, _responder, now(),
 		path, plugin_uri, polyphonic));
 }
 
@@ -153,7 +153,7 @@ QueuedEngineInterface::create_node(const string& path,
                                    const string& plugin_label,
                                    bool          polyphonic)
 {
-	push_queued(new AddNodeEvent(_engine, _responder, now(),
+	push_queued(new CreateNodeEvent(_engine, _responder, now(),
 		path, plugin_type, plugin_lib, plugin_label, polyphonic));
 }
 

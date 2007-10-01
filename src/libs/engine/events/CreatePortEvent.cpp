@@ -20,7 +20,7 @@
 #include <raul/List.hpp>
 #include <raul/Maid.hpp>
 #include "Responder.hpp"
-#include "AddPortEvent.hpp"
+#include "CreatePortEvent.hpp"
 #include "Patch.hpp"
 #include "Tree.hpp"
 #include "Plugin.hpp"
@@ -38,7 +38,7 @@
 namespace Ingen {
 
 
-AddPortEvent::AddPortEvent(Engine&              engine,
+CreatePortEvent::CreatePortEvent(Engine&              engine,
                            SharedPtr<Responder> responder,
                            SampleCount          timestamp,
                            const string&        path,
@@ -73,7 +73,7 @@ AddPortEvent::AddPortEvent(Engine&              engine,
 
 
 void
-AddPortEvent::pre_process()
+CreatePortEvent::pre_process()
 {
 	if (_engine.object_store()->find_object(_path) != NULL) {
 		QueuedEvent::pre_process();
@@ -133,7 +133,7 @@ AddPortEvent::pre_process()
 
 
 void
-AddPortEvent::execute(ProcessContext& context)
+CreatePortEvent::execute(ProcessContext& context)
 {
 	QueuedEvent::execute(context);
 
@@ -159,7 +159,7 @@ AddPortEvent::execute(ProcessContext& context)
 
 
 void
-AddPortEvent::post_process()
+CreatePortEvent::post_process()
 {
 	if (!_patch_port) {
 		const string msg = string("Could not create port - ").append(_path);
