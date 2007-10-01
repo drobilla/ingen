@@ -58,6 +58,8 @@ EXTRA_DIST = \
 	RequestPluginsEvent.hpp \
 	RequestPortValueEvent.cpp \
 	RequestPortValueEvent.hpp \
+	SendPortActivityEvent.cpp \
+	SendPortActivityEvent.hpp \
 	SendPortValueEvent.cpp \
 	SendPortValueEvent.hpp \
 	SetMetadataEvent.cpp \

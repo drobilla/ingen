@@ -15,14 +15,19 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <iostream>
 #include <raul/Array.hpp>
 #include <raul/Maid.hpp>
 #include "Port.hpp"
 #include "Node.hpp"
 #include "DataType.hpp"
 #include "AudioBuffer.hpp"
+#include "MidiBuffer.hpp"
 #include "BufferFactory.hpp"
 #include "ProcessContext.hpp"
+#include "SendPortActivityEvent.hpp"
+
+using namespace std;
 
 namespace Ingen {
 
@@ -38,7 +43,8 @@ Port::Port(Node* const node, const string& name, uint32_t index, uint32_t poly, 
 	, _buffer_size(buffer_size)
 	, _type(type)
 	, _fixed_buffers(false)
-	, _monitor(false)
+	, _broadcast(false)
+	, _last_broadcasted_value(0.0f) // default?
 	, _buffers(new Raul::Array<Buffer*>(poly))
 {
 	assert(node != NULL);
@@ -49,6 +55,9 @@ Port::Port(Node* const node, const string& name, uint32_t index, uint32_t poly, 
 
 	if (node->parent() == NULL)
 		_polyphonic = false;
+	
+	if (type == DataType::MIDI)
+		_broadcast = true; // send activity blips
 
 	assert(_buffers->size() > 0);
 }
@@ -138,6 +147,28 @@ Port::clear_buffers()
 	for (uint32_t i=0; i < _poly; ++i)
 		_buffers->at(i)->clear();
 }
+	
+
+void
+Port::broadcast(ProcessContext& context)
+{
+	if (_broadcast) {
+		if (_type == DataType::FLOAT && _buffer_size == 1) {
+			const Sample value = ((AudioBuffer*)(*_buffers)[0])->value_at(0);
+			if (value != _last_broadcasted_value) {
+				const SendPortValueEvent ev(context.engine(), context.start(), this, false, 0, value);
+				context.event_sink().write(sizeof(ev), &ev);
+				_last_broadcasted_value = value;
+			}
+		} else if (_type == DataType::MIDI) {
+			if (((MidiBuffer*)(*_buffers)[0])->event_count() > 0) {
+				const SendPortActivityEvent ev(context.engine(), context.start(), this);
+				context.event_sink().write(sizeof(ev), &ev);
+			}
+		}
+	}
+}
+
 
 
 } // namespace Ingen

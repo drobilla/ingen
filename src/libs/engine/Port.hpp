@@ -87,21 +87,23 @@ public:
 	void fixed_buffers(bool b) { _fixed_buffers = b; }
 	bool fixed_buffers()       { return _fixed_buffers; }
 	
-	void monitor(bool b) { _monitor = b; }
-	bool monitor()       { return _monitor; }
+	void broadcast(bool b) { _broadcast = b; }
+	bool broadcast()       { return _broadcast; }
 
 protected:
 	Port(Node* const node, const std::string& name, uint32_t index, uint32_t poly, DataType type, size_t buffer_size);
 	
 	virtual void allocate_buffers();
 	virtual void connect_buffers();
+	virtual void broadcast(ProcessContext& context);
 
 	uint32_t _index;
 	uint32_t _poly;
 	uint32_t _buffer_size;
 	DataType _type;
 	bool     _fixed_buffers;
-	bool     _monitor;
+	bool     _broadcast;
+	Sample   _last_broadcasted_value;
 
 	Raul::Array<Buffer*>* _buffers;
 

@@ -35,8 +35,7 @@ class Port;
  * which are created in the pre-processor thread then run through the audio
  * thread).  This event's job is done entirely in post_process.
  *
- * This only works for control ports right now.  Variable size data is harder.
- * Need some clever variable sized event RT allocation in flat buffer thingie..
+ * This only works for control ports right now.
  *
  * \ingroup engine
  */
@@ -67,10 +66,10 @@ public:
 	void post_process();
 
 private:
-	Port*     _port;
-	bool      _omni;
-	uint32_t  _voice_num;
-	Sample    _value;
+	Port*    _port;
+	bool     _omni;
+	uint32_t _voice_num;
+	Sample   _value;
 };
 
 

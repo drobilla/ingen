@@ -187,7 +187,7 @@ NodeModule::embed_gui(bool embed)
 			_gui = NULL;
 		}
 
-		slv2_ui_instance_free(_slv2_ui);
+		//slv2_ui_instance_free(_slv2_ui); // FIXME: leak
 		_slv2_ui = NULL;
 
 		_ports_y_offset = 0;

@@ -228,6 +228,14 @@ ClientBroadcaster::send_control_change(const string& port_path, float value)
 
 
 void
+ClientBroadcaster::send_port_activity(const string& port_path)
+{
+	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
+		(*i).second->port_activity(port_path);
+}
+
+
+void
 ClientBroadcaster::send_program_add(const string& node_path, int bank, int program, const string& name)
 {
 	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)

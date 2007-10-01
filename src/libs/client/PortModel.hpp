@@ -66,7 +66,8 @@ public:
 	}
 
 	// Signals
-	sigc::signal<void, float>                 signal_control; ///< "Control" ports only
+	sigc::signal<void, float>                 signal_control;  ///< Control ports
+	sigc::signal<void>                        signal_activity; ///< Message ports
 	sigc::signal<void, SharedPtr<PortModel> > signal_connection;
 	sigc::signal<void, SharedPtr<PortModel> > signal_disconnection;
 

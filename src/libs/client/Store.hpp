@@ -104,6 +104,7 @@ private:
 	void patch_cleared_event(const Path& path);
 	void metadata_update_event(const Path& subject_path, const string& predicate, const Atom& value);
 	void control_change_event(const Path& port_path, float value);
+	void port_activity_event(const Path& port_path);
 	void connection_event(const Path& src_port_path, const Path& dst_port_path);
 	void disconnection_event(const Path& src_port_path, const Path& dst_port_path);
 	

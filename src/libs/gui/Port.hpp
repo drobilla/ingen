@@ -48,6 +48,7 @@ public:
 	
 	virtual void set_control(float value, bool signal);
 	void control_changed(float value);
+	void activity();
 	
 private:
 	

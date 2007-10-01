@@ -118,7 +118,7 @@ OSCClientSender::response_ok(int32_t id)
 /** \page client_osc_namespace
  * <p> \b /ingen/response - Respond to a user command
  * \arg \b response-id (int) - Request ID this is a response to
- * \arg \b message (const std::string&) - Error message (natural language text)
+ * \arg \b message (string) - Error message (natural language text)
  * </p> \n \n
  */
 void
@@ -142,7 +142,7 @@ OSCClientSender::response_error(int32_t id, const std::string& msg)
 
 /** \page client_osc_namespace
  * <p> \b /ingen/error - Notification that an error has occurred
- * \arg \b message (const std::string&) - Error message (natural language text) \n\n
+ * \arg \b message (string) - Error message (natural language text) \n\n
  * \li This is for notification of errors that aren't a direct response to a
  * user command, ie "unexpected" errors.</p> \n \n
  */
@@ -184,11 +184,11 @@ OSCClientSender::num_plugins(uint32_t num)
 
 /** \page client_osc_namespace
  * <p> \b /ingen/plugin - Notification of the existance of a plugin
- * \arg \b type (const std::string&) - Type if plugin ("LADSPA", "DSSI", or "Internal")
- * \arg \b uri (const std::string&) - URI of the plugin (see engine namespace documentation) \n
- * \arg \b lib-name (const std::string&) - Name of shared library plugin resides in (ie "cmt.so")
- * \arg \b plug-label (const std::string&) - Label of the plugin (ie "dahdsr_iaoa")
- * \arg \b name (const std::string&) - Descriptive human-readable name of plugin (ie "ADSR Envelope")
+ * \arg \b type (string) - Type if plugin ("LADSPA", "DSSI", or "Internal")
+ * \arg \b uri (string) - URI of the plugin (see engine namespace documentation) \n
+ * \arg \b lib-name (string) - Name of shared library plugin resides in (ie "cmt.so")
+ * \arg \b plug-label (string) - Label of the plugin (ie "dahdsr_iaoa")
+ * \arg \b name (string) - Descriptive human-readable name of plugin (ie "ADSR Envelope")
  * </p> \n \n
  */
 /*
@@ -242,8 +242,8 @@ OSCClientSender::plugins()
 
 /** \page client_osc_namespace
  * <p> \b /ingen/new_node - Notification of a new node's creation.
- * \arg \b plug-uri (const std::string&) - URI of the plugin new node is an instance of
- * \arg \b path (const std::string&) - Path of the new node
+ * \arg \b plug-uri (string) - URI of the plugin new node is an instance of
+ * \arg \b path (string) - Path of the new node
  * \arg \b polyphonic (boolean) - Node is polyphonic
  * \arg \b num-ports (integer) - Number of ports (number of new_port messages to expect)\n\n
  * \li New nodes are sent as a bundle.  The first message in the bundle will be
@@ -270,8 +270,8 @@ void OSCClientSender::new_node(const std::string&   plugin_uri,
 
 /** \page client_osc_namespace
  * <p> \b /ingen/new_port - Notification of a new port's creation.
- * \arg \b path (const std::string&) - Path of new port
- * \arg \b data-type (const std::string&) - Type of port (ingen:audio, ingen:control, ingen:midi, or ingen:osc)
+ * \arg \b path (string) - Path of new port
+ * \arg \b data-type (string) - Type of port (ingen:audio, ingen:control, ingen:midi, or ingen:osc)
  * \arg \b direction ("is-output") (integer) - Direction of data flow (Input = 0, Output = 1)
  *
  * \li Note that in the event of loading a patch, this message could be
@@ -320,7 +320,7 @@ OSCClientSender::polyphonic(const std::string& path,
 
 /** \page client_osc_namespace
  * <p> \b /ingen/destroyed - Notification an object has been destroyed
- * \arg \b path (const std::string&) - Path of object (which no longer exists) </p> \n \n
+ * \arg \b path (string) - Path of object (which no longer exists) </p> \n \n
  */
 void
 OSCClientSender::object_destroyed(const std::string& path)
@@ -336,7 +336,7 @@ OSCClientSender::object_destroyed(const std::string& path)
 
 /** \page client_osc_namespace
  * <p> \b /ingen/patch_cleared - Notification a patch has been cleared (all children destroyed)
- * \arg \b path (const std::string&) - Path of patch (which is now empty)</p> \n \n
+ * \arg \b path (string) - Path of patch (which is now empty)</p> \n \n
  */
 void
 OSCClientSender::patch_cleared(const std::string& patch_path)
@@ -350,7 +350,7 @@ OSCClientSender::patch_cleared(const std::string& patch_path)
 
 /** \page client_osc_namespace
  * <p> \b /ingen/patch_enabled - Notification a patch's DSP processing has been enabled.
- * \arg \b path (const std::string&) - Path of enabled patch</p> \n \n
+ * \arg \b path (string) - Path of enabled patch</p> \n \n
  */
 void
 OSCClientSender::patch_enabled(const std::string& patch_path)
@@ -364,7 +364,7 @@ OSCClientSender::patch_enabled(const std::string& patch_path)
 
 /** \page client_osc_namespace
  * <p> \b /ingen/patch_disabled - Notification a patch's DSP processing has been disabled.
- * \arg \b path (const std::string&) - Path of disabled patch</p> \n \n
+ * \arg \b path (string) - Path of disabled patch</p> \n \n
  */
 void
 OSCClientSender::patch_disabled(const std::string& patch_path)
@@ -378,7 +378,7 @@ OSCClientSender::patch_disabled(const std::string& patch_path)
 
 /** \page client_osc_namespace
  * <p> \b /ingen/patch_polyphony - Notification a patch's DSP processing has been polyphony.
- * \arg \b path (const std::string&) - Path of polyphony patch</p> \n \n
+ * \arg \b path (string) - Path of polyphony patch</p> \n \n
  */
 void
 OSCClientSender::patch_polyphony(const std::string& patch_path, uint32_t poly)
@@ -393,8 +393,8 @@ OSCClientSender::patch_polyphony(const std::string& patch_path, uint32_t poly)
 
 /** \page client_osc_namespace
  * <p> \b /ingen/new_connection - Notification a new connection has been made.
- * \arg \b src-path (const std::string&) - Path of the source port
- * \arg \b dst-path (const std::string&) - Path of the destination port</p> \n \n
+ * \arg \b src-path (string) - Path of the source port
+ * \arg \b dst-path (string) - Path of the destination port</p> \n \n
  */
 void
 OSCClientSender::connection(const std::string& src_port_path, const std::string& dst_port_path)
@@ -408,8 +408,8 @@ OSCClientSender::connection(const std::string& src_port_path, const std::string&
 
 /** \page client_osc_namespace
  * <p> \b /ingen/disconnection - Notification a connection has been unmade.
- * \arg \b src-path (const std::string&) - Path of the source port
- * \arg \b dst-path (const std::string&) - Path of the destination port</p> \n \n
+ * \arg \b src-path (string) - Path of the source port
+ * \arg \b dst-path (string) - Path of the destination port</p> \n \n
  */
 void
 OSCClientSender::disconnection(const std::string& src_port_path, const std::string& dst_port_path)
@@ -423,9 +423,9 @@ OSCClientSender::disconnection(const std::string& src_port_path, const std::stri
 
 /** \page client_osc_namespace
  * <p> \b /ingen/metadata_update - Notification of a piece of metadata.
- * \arg \b path (const std::string&) - Path of the object associated with metadata (can be a node, patch, or port)
- * \arg \b key (const std::string&)
- * \arg \b value (const std::string&)</p> \n \n
+ * \arg \b path (string) - Path of the object associated with metadata (can be a node, patch, or port)
+ * \arg \b key (string)
+ * \arg \b value (string)</p> \n \n
  */
 void
 OSCClientSender::metadata_update(const std::string& path, const std::string& key, const Atom& value)
@@ -443,11 +443,8 @@ OSCClientSender::metadata_update(const std::string& path, const std::string& key
 
 /** \page client_osc_namespace
  * <p> \b /ingen/control_change - Notification the value of a port has changed
- * \arg \b path (const std::string&) - Path of port
- * \arg \b value (float) - New value of port
- *
- * \li This will only send updates for values set by clients of course - not values
- * changing because of connections to other ports!</p> \n \n
+ * \arg \b path (string) - Path of port
+ * \arg \b value (float) - New value of port </p> \n \n
  */
 void
 OSCClientSender::control_change(const std::string& port_path, float value)
@@ -460,10 +457,24 @@ OSCClientSender::control_change(const std::string& port_path, float value)
 
 
 /** \page client_osc_namespace
+ * <p> \b /ingen/port_activity - Notification of activity for a port (e.g. MIDI messages)
+ * \arg \b path (string) - Path of port </p> \n \n
+ */
+void
+OSCClientSender::port_activity(const std::string& port_path)
+{
+	if (!_enabled)
+		return;
+
+	lo_send(_address, "/ingen/port_activity", "s", port_path.c_str());
+}
+
+
+/** \page client_osc_namespace
  * <p> \b /ingen/plugin - Notification of the existance of a plugin
- * \arg \b type (const std::string&) - Type of plugin ("LADSPA", "DSSI", or "Internal")
- * \arg \b uri (const std::string&) - Type of plugin ("LADSPA", "DSSI", or "Internal")
- * \arg \b name (const std::string&) - Descriptive human-readable name of plugin (ie "ADSR Envelope")
+ * \arg \b type (string) - Type of plugin ("LADSPA", "DSSI", or "Internal")
+ * \arg \b uri (string) - Type of plugin ("LADSPA", "DSSI", or "Internal")
+ * \arg \b name (string) - Descriptive human-readable name of plugin (ie "ADSR Envelope")
  */
 void
 OSCClientSender::new_plugin(const std::string& uri, const std::string& type_uri, const std::string& name)
@@ -497,7 +508,7 @@ OSCClientSender::new_plugin(const std::string& uri, const std::string& type_uri,
 
 /** \page client_osc_namespace
  * <p> \b /ingen/new_patch - Notification of a new patch
- * \arg \b path (const std::string&) - Path of new patch
+ * \arg \b path (string) - Path of new patch
  * \arg \b poly (int) - Polyphony of new patch (\em not a boolean like new_node) </p> \n \n
  */
 void
@@ -523,8 +534,8 @@ OSCClientSender::new_patch(const std::string& path, uint32_t poly)
 
 /** \page client_osc_namespace
  * <p> \b /ingen/object_renamed - Notification of an object's renaming
- * \arg \b old-path (const std::string&) - Old path of object
- * \arg \b new-path (const std::string&) - New path of object </p> \n \n
+ * \arg \b old-path (string) - Old path of object
+ * \arg \b new-path (string) - New path of object </p> \n \n
  */
 void
 OSCClientSender::object_renamed(const std::string& old_path, const std::string& new_path)

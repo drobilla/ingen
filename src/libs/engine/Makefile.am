@@ -153,6 +153,8 @@ libingen_engine_la_SOURCES = \
 	events/RequestPluginsEvent.hpp \
 	events/RequestPortValueEvent.cpp \
 	events/RequestPortValueEvent.hpp \
+	events/SendPortActivityEvent.cpp \
+	events/SendPortActivityEvent.hpp \
 	events/SendPortValueEvent.cpp \
 	events/SendPortValueEvent.hpp \
 	events/SetMetadataEvent.cpp \

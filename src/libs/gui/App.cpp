@@ -47,10 +47,11 @@
 #ifdef HAVE_SLV2
 #include <slv2/slv2.h>
 #endif
-using std::cerr; using std::cout; using std::endl;
-using std::string;
-namespace Ingen { namespace Client { class PluginModel; } }
+
+using namespace std;
 using namespace Ingen::Client;
+
+namespace Ingen { namespace Client { class PluginModel; } }
 
 namespace Ingen {
 namespace GUI {
@@ -145,6 +146,9 @@ App::attach(SharedPtr<EngineInterface> engine, SharedPtr<SigClientInterface> cli
 	_loader = SharedPtr<ThreadedLoader>(new ThreadedLoader(engine));
 
 	_patch_tree_window->init(*_store);
+		
+	Glib::signal_timeout().connect(sigc::mem_fun(this, &App::animate_callback),
+			100, G_PRIORITY_DEFAULT_IDLE);
 }
 
 
@@ -169,6 +173,38 @@ App::error_message(const string& str)
 	_messages_window->post(str);
 	_messages_window->show();
 	_messages_window->raise();
+}
+
+
+void
+App::port_activity(Port* port)
+{
+	std::pair<ActivityPorts::iterator, bool> inserted = _activity_ports.insert(make_pair(port, false));
+	if (inserted.second)
+		inserted.first->second = false;
+
+	port->set_highlighted(true, false, true, false);
+}
+
+
+bool
+App::animate_callback()
+{
+	for (ActivityPorts::iterator i = _activity_ports.begin(); i != _activity_ports.end() ; ) {
+		ActivityPorts::iterator next = i;
+		++next;
+
+		if ((*i).second) { // saw it last time, unhighlight and pop
+			(*i).first->set_highlighted(false, false, true, false);
+			_activity_ports.erase(i);
+		} else {
+			(*i).second = true;
+		}
+
+		i = next;
+	}
+
+	return true;
 }
 
 

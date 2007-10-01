@@ -116,6 +116,8 @@ public:
 	virtual void control_change(const std::string& port_path,
 	                            float              value) = 0;
 	
+	virtual void port_activity(const std::string& port_path) = 0;
+	
 	virtual void program_add(const std::string& node_path,
 	                         uint32_t           bank,
 	                         uint32_t           program,

@@ -61,6 +61,8 @@ Port::Port(boost::shared_ptr<FlowCanvas::Module> module, SharedPtr<PortModel> pm
 		pm->signal_metadata.connect(sigc::mem_fun(this, &Port::metadata_update));
 		_port_model->signal_control.connect(sigc::mem_fun(this, &Port::control_changed));
 	}
+		
+	_port_model->signal_activity.connect(sigc::mem_fun(this, &Port::activity));
 	
 	control_changed(_port_model->value());
 }
@@ -88,6 +90,13 @@ void
 Port::control_changed(float value)
 {
 	FlowCanvas::Port::set_control(value);
+}
+
+	
+void
+Port::activity()
+{
+	App::instance().port_activity(this);
 }
 
 

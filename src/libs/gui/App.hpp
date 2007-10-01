@@ -61,6 +61,7 @@ class ConnectWindow;
 class Configuration;
 class ThreadedLoader;
 class WindowFactory;
+class Port;
 
 
 /** Singleton master class most everything is contained within.
@@ -83,6 +84,8 @@ public:
 	void detach();
 	
 	void quit();
+
+	void port_activity(Port* port);
 
 	ConnectWindow*     connect_window()       const { return _connect_window; }
 	Gtk::AboutDialog*  about_dialog()         const { return _about_dialog; }
@@ -108,6 +111,8 @@ public:
 protected:
 	App(Ingen::Shared::World* world);
 	
+	bool animate_callback();
+	
 	static App* _instance;
 	
 	SharedPtr<EngineInterface>    _engine;
@@ -124,6 +129,10 @@ protected:
 	WindowFactory*    _window_factory;
 
 	Ingen::Shared::World* _world;
+
+	/// <Port, whether it has been seen in gtk callback yet>
+	typedef std::map<Port*, bool> ActivityPorts;
+	ActivityPorts _activity_ports;
 
 	/** Used to avoid feedback loops with (eg) process checkbutton
 	 * FIXME: Maybe this should be globally implemented at the Controller level,

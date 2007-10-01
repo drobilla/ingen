@@ -16,21 +16,15 @@
  */
 
 #include <sstream>
-#include "Responder.hpp"
 #include "SendPortValueEvent.hpp"
 #include "Engine.hpp"
 #include "Port.hpp"
 #include "ClientBroadcaster.hpp"
-#include "Node.hpp"
-#include "ObjectStore.hpp"
-#include "AudioBuffer.hpp"
-#include "MidiBuffer.hpp"
 
 using namespace std;
 
 namespace Ingen {
 
-class Engine;
 
 void
 SendPortValueEvent::post_process()

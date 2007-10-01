@@ -42,27 +42,24 @@ DuplexPort::DuplexPort(Node* parent, const string& name, uint32_t index, uint32_
 void
 DuplexPort::pre_process(ProcessContext& context)
 {
-	// Think about it...
+	// <BrainHurt>
+	InputPort::pre_process(context);
 
-//	if (_is_output) {
-		InputPort::pre_process(context);
-//	} else {
-		//for (uint32_t i=0; i < _poly; ++i)
-		//	_buffers->at(i)->rewind();
-//		OutputPort::pre_process(nframes, start, end);
-//	}
+	if ( ! _is_output)
+		broadcast(context);
+	// </BrainHurt>
 }
 
 
 void
 DuplexPort::post_process(ProcessContext& context)
 {
-	// Think about it...
-	
-//	if (_is_output)
-//		InputPort::pre_process(nframes, start, end);
-//else
-		OutputPort::pre_process(context);
+	// <BrainHurt>
+	if (_is_output)
+		broadcast(context);
+
+	OutputPort::pre_process(context);
+	// </BrainHurt>
 }
 
 

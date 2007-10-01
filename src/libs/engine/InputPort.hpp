@@ -69,7 +69,6 @@ public:
 	
 private:
 	Connections _connections;
-	Sample      _last_reported_value;
 };
 
 

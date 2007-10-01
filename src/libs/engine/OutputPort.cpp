@@ -16,7 +16,7 @@
  */
 
 #include "OutputPort.hpp"
-#include "AudioBuffer.hpp"
+#include "Buffer.hpp"
 #include "ProcessContext.hpp"
 
 namespace Ingen {
@@ -33,14 +33,10 @@ OutputPort::pre_process(ProcessContext& context)
 void
 OutputPort::post_process(ProcessContext& context)
 {
-	if (_monitor && _type == DataType::FLOAT && _buffer_size == 1) {
-		const Sample value = ((AudioBuffer*)(*_buffers)[0])->value_at(0);
-		const SendPortValueEvent ev(context.engine(), context.start(), this, false, 0, value);
-		context.event_sink().write(sizeof(ev), &ev);
-	}
-
 	for (uint32_t i=0; i < _poly; ++i)
 		_buffers->at(i)->prepare_read(context.nframes());
+
+	broadcast(context);
 }
 
 

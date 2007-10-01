@@ -33,11 +33,7 @@ namespace Client {
 OSCClientReceiver::OSCClientReceiver(int listen_port)
 : ClientInterface("localhost"),
   _listen_port(listen_port),
-  _st(NULL)//,
-//  _receiving_node(false),
-//  _receiving_node_model(NULL),
-//  _receiving_node_num_ports(0),
-//  _num_received_ports(0)
+  _st(NULL)
 {
 	start(false);
 }
@@ -164,6 +160,7 @@ OSCClientReceiver::setup_callbacks()
 	lo_server_thread_add_method(_st, "/ingen/polyphonic", "sF", polyphonic_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/metadata_update", NULL, metadata_update_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/control_change", "sf", control_change_cb, this);
+	lo_server_thread_add_method(_st, "/ingen/port_activity", "s", port_activity_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/program_add", "siis", program_add_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/program_remove", "sii", program_remove_cb, this);
 }
@@ -330,6 +327,17 @@ OSCClientReceiver::_control_change_cb(const char* path, const char* types, lo_ar
 	const float       value      =  argv[1]->f;
 
 	control_change(port_path, value);
+
+	return 0;	
+}
+
+
+int
+OSCClientReceiver::_port_activity_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+{
+	const char* const port_path = &argv[0]->s;
+
+	port_activity(port_path);
 
 	return 0;	
 }

@@ -58,7 +58,7 @@ EnablePortBroadcastingEvent::execute(ProcessContext& context)
 	QueuedEvent::execute(context);
 
 	if (_port)
-		_port->monitor(_enable);
+		_port->broadcast(_enable);
 }
 
 

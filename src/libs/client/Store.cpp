@@ -51,6 +51,7 @@ Store::Store(SharedPtr<EngineInterface> engine, SharedPtr<SigClientInterface> em
 	emitter->signal_disconnection.connect(sigc::mem_fun(this, &Store::disconnection_event));
 	emitter->signal_metadata_update.connect(sigc::mem_fun(this, &Store::metadata_update_event));
 	emitter->signal_control_change.connect(sigc::mem_fun(this, &Store::control_change_event));
+	emitter->signal_port_activity.connect(sigc::mem_fun(this, &Store::port_activity_event));
 }
 
 
@@ -507,6 +508,17 @@ Store::control_change_event(const Path& port_path, float value)
 		port->value(value);
 	else
 		cerr << "ERROR: control change for nonexistant port " << port_path << endl;
+}
+
+	
+void
+Store::port_activity_event(const Path& port_path)
+{
+	SharedPtr<PortModel> port = PtrCast<PortModel>(object(port_path));
+	if (port)
+		port->signal_activity.emit();
+	else
+		cerr << "ERROR: activity for nonexistant port " << port_path << endl;
 }
 
 

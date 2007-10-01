@@ -33,7 +33,6 @@ namespace Ingen {
 
 InputPort::InputPort(Node* parent, const string& name, uint32_t index, uint32_t poly, DataType type, size_t buffer_size)
 	: Port(parent, name, index, poly, type, buffer_size)
-	, _last_reported_value(0.0f) // default?
 {
 }
 
@@ -78,11 +77,9 @@ InputPort::add_connection(Raul::ListNode<Connection*>* const c)
 		Port::connect_buffers();
 	}
 
-	// Automatically monitor connected control inputs
-	if (_type == DataType::FLOAT && _buffer_size == 1) {
-		cerr << path() << " monitor enable" << endl;
-		_monitor = true;
-	}
+	// Automatically broadcast connected control inputs
+	if (_type == DataType::FLOAT && _buffer_size == 1)
+		_broadcast = true;
 }
 
 
@@ -124,9 +121,9 @@ InputPort::remove_connection(const OutputPort* src_port)
 	if (modify_buffers)
 		Port::connect_buffers();
 	
-	// Turn off monitoring if we're not connected any more (FIXME: not quite right..)
+	// Turn off broadcasting if we're not connected any more (FIXME: not quite right..)
 	if (_type == DataType::FLOAT && _buffer_size == 1 && _connections.size() == 0)
-		_monitor = false;
+		_broadcast = false;
 
 	return connection;
 }
@@ -220,14 +217,7 @@ InputPort::pre_process(ProcessContext& context)
 void
 InputPort::post_process(ProcessContext& context)
 {
-	if (_monitor && _type == DataType::FLOAT && _buffer_size == 1) {
-		const Sample value = ((AudioBuffer*)(*_buffers)[0])->value_at(0);
-		if (value != _last_reported_value) {
-			const SendPortValueEvent ev(context.engine(), context.start(), this, false, 0, value);
-			context.event_sink().write(sizeof(ev), &ev);
-			_last_reported_value = value;
-		}
-	}
+	broadcast(context);
 
 	// Prepare for next cycle
 	for (uint32_t i=0; i < _poly; ++i)

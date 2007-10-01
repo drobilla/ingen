@@ -64,6 +64,7 @@ public:
 	sigc::signal<void, string, string>                     signal_disconnection; 
 	sigc::signal<void, string, string, Raul::Atom>         signal_metadata_update; 
 	sigc::signal<void, string, float>                      signal_control_change; 
+	sigc::signal<void, string>                             signal_port_activity; 
 	sigc::signal<void, string, uint32_t, uint32_t, string> signal_program_add; 
 	sigc::signal<void, string, uint32_t, uint32_t>         signal_program_remove; 
 
@@ -133,6 +134,9 @@ protected:
 
 	void control_change(const string& port_path, float value)
 		{ signal_control_change.emit(port_path, value); }
+	
+	void port_activity(const string& port_path)
+		{ signal_port_activity.emit(port_path); }
 
 	void program_add(const string& path, uint32_t bank, uint32_t program, const string& name)
 		{ signal_program_add.emit(path, bank, program, name); }

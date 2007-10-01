@@ -62,10 +62,6 @@ public:
 	OSCClientReceiver(int listen_port);
 	~OSCClientReceiver();
 
-	// Engine side only
-	//void enable() {}
-	//void disable() {}
-
 	void start(bool dump_osc);
 	void stop();
 	
@@ -103,6 +99,7 @@ private:
 	LO_HANDLER(polyphonic);
 	LO_HANDLER(metadata_update);
 	LO_HANDLER(control_change);
+	LO_HANDLER(port_activity);
 	LO_HANDLER(program_add);
 	LO_HANDLER(program_remove);
 };
