@@ -182,13 +182,9 @@ NodeModule::embed_gui(bool embed)
 			_gui_item = NULL;
 		}
 
-		if (_gui) {
-			delete _gui;
-			_gui = NULL;
-		}
-
-		//slv2_ui_instance_free(_slv2_ui); // FIXME: leak
+		slv2_ui_instance_free(_slv2_ui);
 		_slv2_ui = NULL;
+		_gui = NULL;
 
 		_ports_y_offset = 0;
 		_width = 0; // resize() takes care of it..
