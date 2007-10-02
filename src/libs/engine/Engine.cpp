@@ -81,20 +81,16 @@ Engine::~Engine()
 		if ( ! i->second->parent())
 			delete i->second;
 	}
-	
-	_event_source.reset();
-	_audio_driver.reset();
-	
+
 	delete _object_store;
 	delete _broadcaster;
 	delete _node_factory;
-	delete _midi_driver;
 	delete _osc_driver;
 	delete _post_processor;
 	//delete _lash_driver;
 
 	delete _maid;
-
+	
 	munlockall();
 }
 
@@ -256,8 +252,11 @@ Engine::deactivate()
 		if ((*i)->as_node() != NULL && (*i)->as_node()->parent() == NULL)
 			(*i)->as_node()->deactivate();*/
 	
-	if (_midi_driver != NULL)
+	if (_midi_driver != NULL) {
 		_midi_driver->deactivate();
+		delete _midi_driver;
+		_midi_driver = NULL;
+	}
 	
 	_audio_driver->deactivate();
 
