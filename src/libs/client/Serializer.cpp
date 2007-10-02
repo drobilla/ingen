@@ -151,10 +151,14 @@ Serializer::path_to_node_id(const Path& path)
 
 	NodeMap::iterator i = _node_map.find(path);
 	if (i != _node_map.end()) {
+		assert(i->second);
+		assert(i->second.get_node());
 		return i->second;
 	} else {
 		Node id = _world.blank_id();
+		assert(id);
 		_node_map[path] = id;
+		assert(_node_map[path]);
 		return id;
 	}
 }
@@ -417,24 +421,9 @@ Serializer::serialize_connection(SharedPtr<ConnectionModel> connection) throw (s
 	if (!_model)
 		throw std::logic_error("serialize_connection called without serialization in progress");
 
-	const Node connection_id = Node(_model->world(), Node::BLANK,
-			path_to_node_id(connection->src_port_path()).to_string()
-			+ "-" + path_to_node_id(connection->dst_port_path()).to_string());
-
 	_model->add_statement(path_to_node_id(connection->dst_port_path()),
 		"ingen:connectedTo",
 		path_to_node_id(connection->src_port_path()));
-	
-	/*_model->add_statement(connection_id, "rdf:type", "ingen:Connection";
-	
-	_model->add_statement(connection_id,
-		"ingen:source",
-		path_to_node_id(connection->src_port_path()));
-	
-	_model->add_statement(connection_id,
-		"ingen:destination",
-		path_to_node_id(connection->dst_port_path()));
-	*/
 }
 
 
