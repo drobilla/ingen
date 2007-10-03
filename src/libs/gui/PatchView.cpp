@@ -43,6 +43,7 @@ PatchView::PatchView(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::X
 	property_visible() = false;
 
 	xml->get_widget("patch_view_breadcrumb_container", _breadcrumb_container);
+	xml->get_widget("patch_view_toolbar", _toolbar);
 	xml->get_widget("patch_view_process_but", _process_but);
 	xml->get_widget("patch_view_poly_spin", _poly_spin);
 	xml->get_widget("patch_view_clear_but", _clear_but);
@@ -53,6 +54,8 @@ PatchView::PatchView(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::X
 	xml->get_widget("patch_view_zoom_normal_but", _zoom_normal_but);
 	xml->get_widget("patch_view_edit_mode_but", _edit_mode_but);
 	xml->get_widget("patch_view_scrolledwindow", _canvas_scrolledwindow);
+
+	_toolbar->set_toolbar_style(Gtk::TOOLBAR_ICONS);
 }
 
 

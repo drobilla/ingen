@@ -85,6 +85,7 @@ private:
 	
 	Gtk::ScrolledWindow* _canvas_scrolledwindow;
 
+	Gtk::Toolbar*           _toolbar;
 	Gtk::ToggleToolButton*  _process_but;
 	Gtk::SpinButton*        _poly_spin;
 	Gtk::ToolButton*        _clear_but;
