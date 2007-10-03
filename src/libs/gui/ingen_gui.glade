@@ -3,7 +3,7 @@
 <!--*- mode: xml -*-->
 <glade-interface>
   <widget class="GtkWindow" id="patch_win">
-    <property name="title" translatable="yes">Ingenuity</property>
+    <property name="title" translatable="yes">Ingen</property>
     <property name="default_width">640</property>
     <property name="default_height">480</property>
     <property name="icon">ingen.svg</property>
@@ -124,7 +124,7 @@
                     <child>
                       <widget class="GtkImageMenuItem" id="patch_quit_menuitem">
                         <property name="visible">True</property>
-                        <property name="tooltip" translatable="yes">Quit Ingenuity (engine may continue running)</property>
+                        <property name="tooltip" translatable="yes">Quit GUI (engine may continue running)</property>
                         <property name="label">gtk-quit</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
@@ -1628,7 +1628,7 @@ Hold &lt;Ctrl&gt; to play controls in either mode.</property>
     <property name="width_request">400</property>
     <property name="height_request">180</property>
     <property name="border_width">8</property>
-    <property name="title" translatable="yes">Messages - Ingenuity</property>
+    <property name="title" translatable="yes">Messages - Ingen</property>
     <property name="icon">ingen.svg</property>
     <child>
       <widget class="GtkVBox" id="vbox12">
@@ -1697,7 +1697,7 @@ Hold &lt;Ctrl&gt; to play controls in either mode.</property>
   </widget>
   <widget class="GtkWindow" id="config_win">
     <property name="border_width">8</property>
-    <property name="title" translatable="yes">Configuration - Ingenuity</property>
+    <property name="title" translatable="yes">Configuration - Ingen</property>
     <property name="icon">ingen.svg</property>
     <child>
       <widget class="GtkVBox" id="vbox13">
@@ -2031,7 +2031,7 @@ Hold &lt;Ctrl&gt; to play controls in either mode.</property>
   </widget>
   <widget class="GtkWindow" id="node_properties_win">
     <property name="border_width">6</property>
-    <property name="title" translatable="yes">Node Properties - Ingenuity</property>
+    <property name="title" translatable="yes">Node Properties - Ingen</property>
     <property name="icon">ingen.svg</property>
     <child>
       <widget class="GtkVBox" id="vbox17">
@@ -2219,7 +2219,7 @@ Hold &lt;Ctrl&gt; to play controls in either mode.</property>
   <widget class="GtkAboutDialog" id="about_win">
     <property name="destroy_with_parent">True</property>
     <property name="type_hint">GDK_WINDOW_TYPE_HINT_NORMAL</property>
-    <property name="name">Ingenuity</property>
+    <property name="name">Ingen</property>
     <property name="copyright" translatable="yes">Copyright (C) 2005-2007 Dave Robillard &lt;http://drobilla.net&gt;</property>
     <property name="comments" translatable="yes">A graphical client for the Ingen audio system</property>
     <property name="website">http://drobilla.net/software/ingen</property>
@@ -2256,7 +2256,7 @@ Contributors:
     <property name="width_request">320</property>
     <property name="height_request">340</property>
     <property name="border_width">8</property>
-    <property name="title" translatable="yes">Patches - Ingenuity</property>
+    <property name="title" translatable="yes">Patches - Ingen</property>
     <property name="icon">ingen.svg</property>
     <child>
       <widget class="GtkScrolledWindow" id="scrolledwindow8">
@@ -2279,7 +2279,7 @@ Contributors:
   </widget>
   <widget class="GtkDialog" id="connect_win">
     <property name="border_width">6</property>
-    <property name="title" translatable="yes">Engine - Ingenuity</property>
+    <property name="title" translatable="yes">Engine - Ingen</property>
     <property name="resizable">False</property>
     <property name="icon">ingen.svg</property>
     <property name="type_hint">GDK_WINDOW_TYPE_HINT_DIALOG</property>
@@ -2988,7 +2988,7 @@ Thank you for contributing.</property>
   <widget class="GtkDialog" id="port_properties_win">
     <property name="border_width">8</property>
     <property name="type">GTK_WINDOW_POPUP</property>
-    <property name="title" translatable="yes">Port Properties - Ingenuity</property>
+    <property name="title" translatable="yes">Port Properties - Ingen</property>
     <property name="resizable">False</property>
     <property name="window_position">GTK_WIN_POS_MOUSE</property>
     <property name="destroy_with_parent">True</property>

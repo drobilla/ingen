@@ -215,7 +215,7 @@ PatchWindow::set_patch(SharedPtr<PatchModel> patch, SharedPtr<PatchView> view)
 			((int)_view->canvas()->width() - width)/2,
 			((int)_view->canvas()->height() - height)/2);
 
-	set_title(_patch->path() + " - Ingenuity");
+	set_title(_patch->path() + " - Ingen");
 
 	//m_properties_window->patch_model(pc->patch_model());
 
@@ -428,7 +428,7 @@ PatchWindow::on_key_press_event(GdkEventKey* event)
 void
 PatchWindow::event_quit()
 {
-	Gtk::MessageDialog d(*this, "Would you like to quit just Ingenuity\nor kill the engine as well?",
+	Gtk::MessageDialog d(*this, "Would you like to quit just this GUI\nor kill the engine as well?",
 			true, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE, true);
 	d.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
 	
