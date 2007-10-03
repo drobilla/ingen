@@ -106,7 +106,7 @@ void
 NodeModule::control_change(uint32_t index, float control)
 {
 	if (_slv2_ui) {
-		const LV2UI_Descriptor* ui_descriptor = slv2_ui_instance_get_descriptor(_slv2_ui);
+		const LV2UI_Descriptor* const ui_descriptor = slv2_ui_instance_get_descriptor(_slv2_ui);
 		LV2UI_Handle ui_handle = slv2_ui_instance_get_handle(_slv2_ui);
 		ui_descriptor->port_event(ui_handle, index, 4, &control);
 	}
@@ -194,12 +194,7 @@ NodeModule::embed_gui(bool embed)
 	}
 			
 	if (embed && _gui_item) {
-		uint32_t index=0;
-		for (PortModelList::const_iterator p = _node->ports().begin(); p != _node->ports().end(); ++p) {
-			if ((*p)->is_control())
-				control_change(index, (*p)->value());
-			++index;
-		}
+		initialise_gui_values();
 		set_base_color(0x212222FF);
 	} else {
 		set_default_base_color();
@@ -259,18 +254,25 @@ NodeModule::popup_gui()
 {
 #ifdef HAVE_SLV2
 	if (_node->plugin()->type() == PluginModel::LV2) {
-		// FIXME: check type
+		if (_slv2_ui) {
+			cerr << "LV2 GUI already embedded" << endl;
+			return false;
+		}
 
-		SLV2UIInstance ui = _node->plugin()->ui(App::instance().engine().get(), _node.get());
-		if (ui) {
-			cerr << "Showing LV2 GUI" << endl;
-			// FIXME: leak
-			GtkWidget* c_widget = (GtkWidget*)slv2_ui_instance_get_widget(ui);
-			Gtk::Widget* widget = Glib::wrap(c_widget);
+		_slv2_ui = _node->plugin()->ui(App::instance().engine().get(), _node.get());
+		if (_slv2_ui) {
+			cerr << "Popping up LV2 GUI" << endl;
+
+			// FIXME: leaks
+			
+			GtkWidget* c_widget = (GtkWidget*)slv2_ui_instance_get_widget(_slv2_ui);
+			_gui = Glib::wrap(c_widget);
 			
 			Gtk::Window* win = new Gtk::Window();
-			win->add(*widget);
-			widget->show_all();
+			win->add(*_gui);
+			_gui->show_all();
+			initialise_gui_values();
+
 			win->present();
 			return true;
 		} else {
@@ -279,6 +281,18 @@ NodeModule::popup_gui()
 	}
 #endif
 	return false;
+}
+
+
+void
+NodeModule::initialise_gui_values()
+{
+	uint32_t index=0;
+	for (PortModelList::const_iterator p = _node->ports().begin(); p != _node->ports().end(); ++p) {
+		if ((*p)->is_control())
+			control_change(index, (*p)->value());
+		++index;
+	}
 }
 
 

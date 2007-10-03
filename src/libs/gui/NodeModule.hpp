@@ -81,6 +81,7 @@ protected:
 
 	void embed_gui(bool embed);
 	void gui_size_request(Gtk::Requisition* req);
+	void initialise_gui_values();
 
 	void create_menu();
 	
