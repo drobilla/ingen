@@ -275,8 +275,14 @@ Store::remove_object(const Path& path)
 	if (i != _objects.end()) {
 		assert((*i).second->path() == path);
 		SharedPtr<ObjectModel> result = (*i).second;
-		_objects.erase(i);
-		//cout << "[Store] Removed " << path << endl;
+		//_objects.erase(i);
+		Objects::iterator descendants_end = _objects.find_descendants_end(i);
+		Table<Path,SharedPtr<ObjectModel> > removed = _objects.yank(i, descendants_end);
+		/*cout << "[Store] Removing " << i->first << " {" << endl;
+		for (Objects::iterator i = removed.begin(); i != removed.end(); ++i) {
+			cout << "\t" << i->first << endl;
+		}
+		cout << "}" << endl;*/
 
 		if (result)
 			result->signal_destroyed.emit();
