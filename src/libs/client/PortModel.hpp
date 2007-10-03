@@ -64,6 +64,8 @@ public:
 			signal_control.emit(val);
 		}
 	}
+	
+	inline float value() { return _current_val; }
 
 	// Signals
 	sigc::signal<void, float>                 signal_control;  ///< Control ports

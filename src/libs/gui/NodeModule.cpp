@@ -193,10 +193,17 @@ NodeModule::embed_gui(bool embed)
 				App::instance().engine()->disable_port_broadcasting((*p)->path());
 	}
 			
-	if (embed && _gui_item)
+	if (embed && _gui_item) {
+		uint32_t index=0;
+		for (PortModelList::const_iterator p = _node->ports().begin(); p != _node->ports().end(); ++p) {
+			if ((*p)->is_control())
+				control_change(index, (*p)->value());
+			++index;
+		}
 		set_base_color(0x212222FF);
-	else
+	} else {
 		set_default_base_color();
+	}
 
 	resize();
 }
