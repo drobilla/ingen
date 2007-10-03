@@ -92,12 +92,8 @@ NodeModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeModel> n
 	for (MetadataMap::const_iterator m = node->metadata().begin(); m != node->metadata().end(); ++m)
 		ret->set_metadata(m->first, m->second);
 
-	//uint32_t index = 0;
 	for (PortModelList::const_iterator p = node->ports().begin(); p != node->ports().end(); ++p) {
 		ret->add_port(*p, false);
-		//(*p)->signal_control.connect(sigc::bind<0>(
-		//			sigc::mem_fun(ret.get(), &NodeModule::control_change), index));
-		//++index;
 	}
 
 	ret->resize();

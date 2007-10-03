@@ -59,13 +59,15 @@ NodeMenu::init(SharedPtr<NodeModel> node)
 			sigc::mem_fun(App::instance().window_factory(), &WindowFactory::present_controls),
 			node));
 	
-	//if (node->plugin()->ui(App::instance().engine().get(), node.get()))
-		_popup_gui_menuitem->signal_activate().connect(sigc::mem_fun(signal_popup_gui,
-				&sigc::signal<void>::emit));
-		_embed_gui_menuitem->signal_toggled().connect(sigc::mem_fun(this,
-				&NodeMenu::on_menu_embed_gui));
-	//else
-	//	_gui_menuitem->hide();
+	_popup_gui_menuitem->signal_activate().connect(sigc::mem_fun(signal_popup_gui,
+			&sigc::signal<void>::emit));
+	_embed_gui_menuitem->signal_toggled().connect(sigc::mem_fun(this,
+			&NodeMenu::on_menu_embed_gui));
+
+	if ((!node->plugin()) || node->plugin()->type() != PluginModel::LV2) {
+		_popup_gui_menuitem->hide();
+		_embed_gui_menuitem->hide();
+	}
 
 	_enable_signal = true;
 }
