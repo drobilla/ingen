@@ -159,13 +159,13 @@ NodeModule::embed_gui(bool embed)
 			_gui->show_all();
 			_gui_item->show();
 
-			GtkRequisition r;
-			gtk_widget_size_request(c_widget, &r);
+			Gtk::Requisition r = container->size_request();
 			gui_size_request(&r);
 
 			_gui_item->raise_to_top();
 
-			_gui->signal_size_request().connect(sigc::mem_fun(this, &NodeModule::gui_size_request));
+			container->signal_size_request().connect(
+					sigc::mem_fun(this, &NodeModule::gui_size_request));
 		
 			for (PortModelList::const_iterator p = _node->ports().begin(); p != _node->ports().end(); ++p)
 				if ((*p)->is_control() && (*p)->is_output())
