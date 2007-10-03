@@ -61,15 +61,15 @@ public:
 
 	virtual void store_location();
 
-	void show_control_window();
-
 	SharedPtr<NodeModel> node() const { return _node; }
 
 protected:
 	NodeModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeModel> node);
 
-	virtual void on_double_click(GdkEventButton* ev) { show_control_window(); }
-	virtual void on_middle_click(GdkEventButton* ev) { show_control_window(); }
+	void on_double_click(GdkEventButton* ev);
+	
+	void show_control_window();
+	bool popup_gui();
 	
 	void rename();
 	void set_metadata(const std::string& key, const Atom& value);

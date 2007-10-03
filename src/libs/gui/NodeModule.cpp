@@ -72,6 +72,7 @@ NodeModule::create_menu()
 	xml->get_widget_derived("object_menu", _menu);
 	_menu->init(_node);
 	_menu->signal_embed_gui.connect(sigc::mem_fun(this, &NodeModule::embed_gui));
+	_menu->signal_popup_gui.connect(sigc::hide_return(sigc::mem_fun(this, &NodeModule::popup_gui)));
 	
 	set_menu(_menu);
 }
@@ -243,8 +244,8 @@ NodeModule::remove_port(SharedPtr<PortModel> port)
 }
 
 
-void
-NodeModule::show_control_window()
+bool
+NodeModule::popup_gui()
 {
 #ifdef HAVE_SLV2
 	if (_node->plugin()->type() == PluginModel::LV2) {
@@ -261,16 +262,28 @@ NodeModule::show_control_window()
 			win->add(*widget);
 			widget->show_all();
 			win->present();
+			return true;
 		} else {
-			cerr << "No LV2 GUI, showing builtin controls" << endl;
-			App::instance().window_factory()->present_controls(_node);
+			cerr << "No LV2 GUI" << endl;
 		}
-	} else {
-		App::instance().window_factory()->present_controls(_node);
 	}
-#else
-	App::instance().window_factory()->present_controls(_node);
 #endif
+	return false;
+}
+
+
+void
+NodeModule::show_control_window()
+{
+	App::instance().window_factory()->present_controls(_node);
+}
+	
+
+void
+NodeModule::on_double_click(GdkEventButton* ev)
+{
+	if ( ! popup_gui() )
+		show_control_window();
 }
 
 
