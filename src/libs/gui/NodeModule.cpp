@@ -135,6 +135,8 @@ NodeModule::embed_gui(bool embed)
 			
 				//container = new Gtk::Alignment();  // transparent bg but uber slow
 				container = new Gtk::EventBox();
+				container->set_name("ingen_embedded_node_gui_container");
+				container->set_border_width(2);
 				container->add(*_gui);
 				container->show_all();
 				/*Gdk::Color color;
@@ -190,6 +192,11 @@ NodeModule::embed_gui(bool embed)
 			if ((*p)->is_control() && (*p)->is_output())
 				App::instance().engine()->disable_port_broadcasting((*p)->path());
 	}
+			
+	if (embed && _gui_item)
+		set_base_color(0x212222FF);
+	else
+		set_default_base_color();
 
 	resize();
 }

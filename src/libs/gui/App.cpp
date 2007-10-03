@@ -110,10 +110,11 @@ App::run(int argc, char** argv,
 	if (!_instance)
 		_instance = new App(world);
 	
-	/* Load settings */
+	// Load configuration settings
 	_instance->configuration()->load_settings();
 	_instance->configuration()->apply_settings();
 	
+	// Set default window icon
 	const Glib::ustring icon_path = PKGDATADIR "/ingen.svg";
 	try {
 		if (Glib::file_test(icon_path, Glib::FILE_TEST_EXISTS))
@@ -121,6 +122,24 @@ App::run(int argc, char** argv,
 	} catch (Gdk::PixbufError err) {
 		cerr << "Unable to load window icon " << icon_path << ": " << err.what() << endl;
 	}
+	
+	// Set style for embedded node GUIs
+	const string rc_style =
+	  "style \"ingen_embedded_node_gui_style\" {"
+	  " bg[NORMAL] = \"#212222\""
+	  " bg[ACTIVE] = \"#505050\""
+	  " bg[PRELIGHT] = \"#525454\""
+	  " bg[SELECTED] = \"#99A0A0\""
+	  " bg[INSENSITIVE] = \"#F03030\""
+	  " fg[NORMAL] = \"#FFFFFF\""
+	  " fg[ACTIVE] = \"#FFFFFF\""
+	  " fg[PRELIGHT] = \"#FFFFFF\""
+	  " fg[SELECTED] = \"#FFFFFF\""
+	  " fg[INSENSITIVE] = \"#FFFFFF\""
+	  "}\n"
+	  "widget \"*ingen_embedded_node_gui_container*\" style \"ingen_embedded_node_gui_style\"\n";
+ 	
+	Gtk::RC::parse_string(rc_style);
 	
 	App::instance().connect_window()->start(engine, interface);
 	
