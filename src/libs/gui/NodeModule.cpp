@@ -208,7 +208,7 @@ void
 NodeModule::gui_size_request(Gtk::Requisition* r)
 {
 	if (r->width + 4 > _width)
-		set_width(r->width + 4);
+		set_minimum_width(r->width + 4);
 
 	_gui_item->property_width() = _width - 4;
 	_gui_item->property_height() = r->height;

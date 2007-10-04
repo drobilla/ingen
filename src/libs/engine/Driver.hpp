@@ -22,6 +22,7 @@
 #include <boost/utility.hpp>
 #include <raul/Path.hpp>
 #include "DataType.hpp"
+#include "DuplexPort.hpp"
 
 namespace Ingen {
 
@@ -43,13 +44,14 @@ public:
 	/** Set the name of the system port */
 	virtual void set_name(const std::string& name) = 0;
 	
-	bool is_input() { return _is_input; }
+	bool        is_input()   const { return _patch_port->is_input(); }
+	DuplexPort* patch_port() const { return _patch_port; }
 
 protected:
 	/** is_input from the perspective outside of ingen */
-	DriverPort(bool is_input) : _is_input(is_input) {}
+	DriverPort(DuplexPort* port) : _patch_port(port) {}
 
-	bool _is_input;
+	DuplexPort* _patch_port;
 };
 
 
@@ -74,12 +76,14 @@ public:
 	virtual void deactivate() = 0;
 	
 	virtual bool is_activated() const = 0;
-
+	
 	/** Create a port ready to be inserted with add_input (non realtime).
 	 *
 	 * May return NULL if the Driver can not drive the port for some reason.
 	 */
 	virtual DriverPort* create_port(DuplexPort* patch_port) = 0;
+	
+	virtual DriverPort* driver_port(const Raul::Path& path) = 0;
 	
 	virtual void        add_port(DriverPort* port)          = 0;
 	virtual DriverPort* remove_port(const Raul::Path& path) = 0;

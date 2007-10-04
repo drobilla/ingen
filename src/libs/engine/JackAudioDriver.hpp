@@ -52,13 +52,11 @@ public:
 	void prepare_buffer(jack_nframes_t nframes);
 
 	jack_port_t*  jack_port() const  { return _jack_port; }
-	DuplexPort*   patch_port() const { return _patch_port; }
 
 private:
 	JackAudioDriver* _driver;
 	jack_port_t*     _jack_port;
 	jack_sample_t*   _jack_buffer; ///< Cached for output ports
-	DuplexPort*      _patch_port;
 };
 
 
@@ -90,6 +88,8 @@ public:
 	
 	void        add_port(DriverPort* port);
 	DriverPort* remove_port(const Raul::Path& path);
+	
+	DriverPort* driver_port(const Raul::Path& path);
 	
 	Patch* root_patch()                 { return _root_patch; }
 	void   set_root_patch(Patch* patch) { _root_patch = patch; }

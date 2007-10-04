@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "PatchPortModule.hpp"
 #include <cassert>
+#include "PatchPortModule.hpp"
 #include "interface/EngineInterface.hpp"
 #include "client/PatchModel.hpp"
 #include "client/NodeModel.hpp"
@@ -27,6 +27,7 @@
 #include "RenameWindow.hpp"
 #include "PatchWindow.hpp"
 #include "WindowFactory.hpp"
+#include "PortMenu.hpp"
 
 namespace Ingen {
 namespace GUI {
@@ -81,6 +82,17 @@ PatchPortModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<PortMod
 	ret->resize();
 
 	return ret;
+}
+
+
+void
+PatchPortModule::create_menu()
+{
+	Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference();
+	xml->get_widget_derived("object_menu", _menu);
+	_menu->init(_port);
+	
+	set_menu(_menu);
 }
 
 

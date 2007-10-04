@@ -15,15 +15,17 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <raul/Path.hpp>
+#include "ClientBroadcaster.hpp"
+#include "Engine.hpp"
+#include "Node.hpp"
+#include "ObjectStore.hpp"
+#include "Patch.hpp"
 #include "RenameEvent.hpp"
 #include "Responder.hpp"
-#include "Patch.hpp"
-#include "Node.hpp"
 #include "Tree.hpp"
-#include "Engine.hpp"
-#include "ClientBroadcaster.hpp"
-#include <raul/Path.hpp>
-#include "ObjectStore.hpp"
+#include "AudioDriver.hpp"
+#include "MidiDriver.hpp"
 
 using namespace std;
 
@@ -34,7 +36,7 @@ RenameEvent::RenameEvent(Engine& engine, SharedPtr<Responder> responder, SampleC
 : QueuedEvent(engine, responder, timestamp),
   _old_path(path),
   _name(name),
-  _new_path(_old_path.parent().base() + name),
+  _new_path("/"),
   _parent_patch(NULL),
   _store_iterator(engine.object_store()->objects().end()),
   _error(NO_ERROR)
@@ -55,11 +57,13 @@ RenameEvent::~RenameEvent()
 void
 RenameEvent::pre_process()
 {
-	if (_name.find("/") != string::npos) {
+	if ((!Raul::Path::is_valid_name(_name)) || _name.find("/") != string::npos) {
 		_error = INVALID_NAME;
 		QueuedEvent::pre_process();
 		return;
 	}
+
+	_new_path = _old_path.parent().base() + _name;
 
 	_store_iterator = _engine.object_store()->find(_old_path);
 	if (_store_iterator == _engine.object_store()->objects().end())  {
@@ -67,7 +71,13 @@ RenameEvent::pre_process()
 		QueuedEvent::pre_process();
 		return;
 	}
-	
+
+	if (_engine.object_store()->find_object(_new_path))  {
+		_error = OBJECT_EXISTS;
+		QueuedEvent::pre_process();
+		return;
+	}
+
 	Table<Path,GraphObject*> removed = _engine.object_store()->remove(_store_iterator);
 	assert(removed.size() > 0);
 	
@@ -81,7 +91,6 @@ RenameEvent::pre_process()
 		else
 			child_new_path = _new_path.base() + child_old_path.substr(_old_path.length()+1);
 
-		cerr << "Renamed " << child_old_path << " -> " << child_new_path << endl;
 		i->second->set_path(child_new_path);
 		i->first = child_new_path;
 	}
@@ -95,8 +104,24 @@ RenameEvent::pre_process()
 void
 RenameEvent::execute(ProcessContext& context)
 {
-	//cout << "Executing rename event...";
 	QueuedEvent::execute(context);
+	
+	Port* port = dynamic_cast<Port*>(_store_iterator->second);
+	if (port && port->parent()->parent() == NULL) {
+		DriverPort* driver_port = NULL;
+
+		if (port->type() == DataType::FLOAT)
+			driver_port = _engine.audio_driver()->driver_port(_new_path);
+		else if (port->type() == DataType::MIDI)
+			driver_port = _engine.midi_driver()->driver_port(_new_path);
+
+		if (driver_port) {
+			cerr << "DRIVER PORT :)!" << endl;
+			driver_port->set_name(_new_path);
+		} else {
+			cerr << "NO DRIVER PORT :(" << endl;
+		}
+	}
 }
 
 

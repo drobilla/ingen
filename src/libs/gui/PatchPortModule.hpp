@@ -38,6 +38,7 @@ namespace GUI {
 	
 class PatchCanvas;
 class Port;
+class PortMenu;
 
 
 /** A "module" to represent a patch's port on it's own canvas.
@@ -62,9 +63,11 @@ protected:
 	PatchPortModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<PortModel> port);
 
 	void metadata_update(const string& key, const Raul::Atom& value);
+	void create_menu();
 
-	SharedPtr<PortModel>    _port;
-	boost::shared_ptr<Port> _patch_port; ///< Port on this 'anonymous' module
+	SharedPtr<PortModel> _port;
+	PortMenu*            _menu;
+	SharedPtr<Port>      _patch_port; ///< Port on this 'anonymous' module
 };
 
 

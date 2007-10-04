@@ -18,6 +18,7 @@
 #include <cassert>
 #include <iostream>
 #include "interface/EngineInterface.hpp"
+#include "flowcanvas/Module.hpp"
 #include "client/PatchModel.hpp"
 #include "client/PortModel.hpp"
 #include "client/ControlModel.hpp"
@@ -44,6 +45,9 @@ Port::Port(boost::shared_ptr<FlowCanvas::Module> module, SharedPtr<PortModel> pm
 {
 	assert(module);
 	assert(_port_model);
+
+	delete _menu;
+	_menu = NULL;
 	
 	_port_model->signal_renamed.connect(sigc::mem_fun(this, &Port::renamed));
 
@@ -83,6 +87,7 @@ void
 Port::renamed()
 {
 	set_name(_port_model->path().name());
+	module().lock()->resize();
 }
 
 

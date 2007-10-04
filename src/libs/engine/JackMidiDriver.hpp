@@ -46,13 +46,10 @@ public:
 	void post_process(ProcessContext& context);
 	
 	void set_name(const std::string& name) { jack_port_set_name(_jack_port, name.c_str()); };
-	
-	DuplexPort* patch_port() const { return _patch_port; }
 
 private:
 	JackMidiDriver* _driver;
 	jack_port_t*    _jack_port;
-	DuplexPort*     _patch_port;
 };
 
 
@@ -85,6 +82,8 @@ public:
 	
 	void        add_port(DriverPort* port);
 	DriverPort* remove_port(const Raul::Path& path);
+	
+	DriverPort* driver_port(const Raul::Path& path);
 
 	jack_client_t* jack_client()        { return _client; }
 

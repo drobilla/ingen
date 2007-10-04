@@ -35,7 +35,8 @@ class NodeControlWindow;
 class NodePropertiesWindow;
 class PatchCanvas;
 
-/** Controller for a Node.
+
+/** Menu for a Node.
  *
  * \ingroup GUI
  */

@@ -48,12 +48,11 @@ namespace Ingen {
 //// JackAudioPort ////
 
 JackAudioPort::JackAudioPort(JackAudioDriver* driver, DuplexPort* patch_port)
-: DriverPort(patch_port->is_input()),
+: DriverPort(patch_port),
   Raul::ListNode<JackAudioPort*>(this),
   _driver(driver),
   _jack_port(NULL),
-  _jack_buffer(NULL),
-  _patch_port(patch_port)
+  _jack_buffer(NULL)
 {
 	assert(patch_port->poly() == 1);
 
@@ -250,6 +249,19 @@ JackAudioDriver::create_port(DuplexPort* patch_port)
 		return new JackAudioPort(this, patch_port);
 	else
 		return NULL;
+}
+
+
+DriverPort*
+JackAudioDriver::driver_port(const Path& path)
+{
+	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
+
+	for (Raul::List<JackAudioPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
+		if ((*i)->patch_port()->path() == path)
+			return (*i);
+
+	return NULL;
 }
 
 

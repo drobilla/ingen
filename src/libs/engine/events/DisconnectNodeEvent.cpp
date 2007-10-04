@@ -15,26 +15,23 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "DisconnectNodeEvent.hpp"
-#include <iostream>
-#include <raul/List.hpp>
 #include <raul/Array.hpp>
+#include <raul/List.hpp>
 #include <raul/Maid.hpp>
-#include "Responder.hpp"
-#include "Engine.hpp"
-#include "Node.hpp"
+#include <raul/Path.hpp>
+#include "ClientBroadcaster.hpp"
 #include "Connection.hpp"
+#include "DisconnectNodeEvent.hpp"
 #include "DisconnectionEvent.hpp"
-#include "Port.hpp"
+#include "Engine.hpp"
 #include "InputPort.hpp"
+#include "Node.hpp"
+#include "ObjectStore.hpp"
 #include "OutputPort.hpp"
 #include "Patch.hpp"
-#include "ClientBroadcaster.hpp"
+#include "Port.hpp"
+#include "Responder.hpp"
 #include "util.hpp"
-#include "ObjectStore.hpp"
-#include <raul/Path.hpp>
-
-using std::cerr; using std::endl;
 
 namespace Ingen {
 
@@ -74,8 +71,6 @@ void
 DisconnectNodeEvent::pre_process()
 {
 	typedef Raul::List<Connection*>::const_iterator ConnectionListIterator;
-	
-	// cerr << "Preparing disconnection event...\n";
 	
 	if (_lookup) {
 		_patch = _engine.object_store()->find_patch(_node_path.parent());

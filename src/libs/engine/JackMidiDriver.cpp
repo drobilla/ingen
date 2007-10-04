@@ -39,11 +39,10 @@ namespace Ingen {
 //// JackMidiPort ////
 
 JackMidiPort::JackMidiPort(JackMidiDriver* driver, DuplexPort* patch_port)
-: DriverPort(patch_port->is_input()),
+: DriverPort(patch_port),
   Raul::ListNode<JackMidiPort*>(this),
   _driver(driver),
-  _jack_port(NULL),
-  _patch_port(patch_port)
+  _jack_port(NULL)
 {
 	assert(patch_port->poly() == 1);
 
@@ -237,6 +236,25 @@ JackMidiDriver::remove_port(const Path& path)
 			return _out_ports.erase(i)->elem(); // FIXME: LEAK
 
 	cerr << "[JackMidiDriver::remove_input] WARNING: Failed to find Jack port to remove!" << endl;
+	return NULL;
+}
+
+	
+DriverPort*
+JackMidiDriver::driver_port(const Path& path)
+{
+	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
+
+	// FIXME: duplex?
+
+	for (Raul::List<JackMidiPort*>::iterator i = _in_ports.begin(); i != _in_ports.end(); ++i)
+		if ((*i)->patch_port()->path() == path)
+			return (*i);
+
+	for (Raul::List<JackMidiPort*>::iterator i = _out_ports.begin(); i != _out_ports.end(); ++i)
+		if ((*i)->patch_port()->path() == path)
+			return (*i);
+
 	return NULL;
 }
 

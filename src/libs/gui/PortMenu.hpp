@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef NODEMENU_H
-#define NODEMENU_H
+#ifndef PORTMENU_H
+#define PORTMENU_H
 
 #include <string>
 #include <gtkmm.h>
@@ -35,7 +35,8 @@ class PortControlWindow;
 class PortPropertiesWindow;
 class PatchCanvas;
 
-/** Controller for a Port.
+
+/** Menu for a Port.
  *
  * \ingroup GUI
  */
@@ -51,4 +52,4 @@ public:
 } // namespace GUI
 } // namespace Ingen
 
-#endif // NODEMENU_H
+#endif // PORTMENU_H
