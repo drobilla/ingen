@@ -48,6 +48,8 @@ OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t
 	: QueuedEngineInterface(engine, queue_size, queue_size) // FIXME
 	, _server(NULL)
 {
+	_receive_thread = new ReceiveThread(*this);
+
 	char port_str[6];
 	snprintf(port_str, 6, "%u", port);
 
@@ -131,6 +133,8 @@ OSCEngineReceiver::~OSCEngineReceiver()
 {
 	deactivate();
 	stop();
+	_receive_thread->stop();
+	delete _receive_thread;
 
 	if (_server != NULL)  {
 		lo_server_free(_server);
@@ -143,7 +147,8 @@ void
 OSCEngineReceiver::activate()
 {
 	QueuedEventSource::activate();
-	set_scheduling(SCHED_FIFO, 10);
+	set_scheduling(SCHED_FIFO, 5); // Jack default appears to be 10
+	_receive_thread->start();
 }
 
 
@@ -159,30 +164,26 @@ OSCEngineReceiver::deactivate()
  * to wait on OSC messages and prepare them right away in the same thread.
  */
 void
-OSCEngineReceiver::_run()
+OSCEngineReceiver::ReceiveThread::_run()
 {
 	/* get a timestamp here and stamp all the events with the same time so
 	 * they all get executed in the same cycle */
 
 	while (true) {
-		assert(_server);
+		assert(_receiver._server);
 		/*if ( ! _server) {
 			cout << "[OSCEngineReceiver] Server is NULL, exiting" << endl;
 			break;
 		}*/
 
-		assert( ! unprepared_events());
-		
 		// Wait on a message and enqueue it
-		lo_server_recv(_server);
+		lo_server_recv(_receiver._server);
 
 		// Enqueue every other message that is here "now"
 		// (would this provide truly atomic bundles?)
-		while (lo_server_recv_noblock(_server, 0) > 0) ;
-
-		// Process them all
-		while (unprepared_events())
-			_whipped(); // Whip our slave self
+		while (lo_server_recv_noblock(_receiver._server, 0) > 0) 
+			if (_receiver.unprepared_events())
+				_receiver.whip();
 
 		// No more unprepared events
 	}	

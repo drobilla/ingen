@@ -69,7 +69,16 @@ public:
 	void deactivate();
 
 private:
-	virtual void _run();
+	struct ReceiveThread : public Raul::Thread {
+		ReceiveThread(OSCEngineReceiver& receiver) : _receiver(receiver) {}
+		virtual void _run();
+	private:
+			OSCEngineReceiver& _receiver;
+	};
+
+	friend class ReceiveThread;
+
+	ReceiveThread* _receive_thread;
 
 	static void error_cb(int num, const char* msg, const char* path);	
 	static int  set_response_address_cb(LO_HANDLER_ARGS, void* myself);

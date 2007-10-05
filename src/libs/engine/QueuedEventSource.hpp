@@ -63,7 +63,7 @@ protected:
 	Event*        pop_earliest_queued_before(const SampleCount time);
 	inline Event* pop_earliest_stamped_before(const SampleCount time);
 
-	bool unprepared_events() { return (_prepared_back != _back); }
+	inline bool unprepared_events() { return (_prepared_back != _back); }
 	
 	virtual void _whipped(); ///< Prepare 1 event
 
