@@ -147,7 +147,7 @@ void
 OSCEngineReceiver::activate()
 {
 	QueuedEventSource::activate();
-	set_scheduling(SCHED_FIFO, 5); // Jack default appears to be 10
+	_receive_thread->set_scheduling(SCHED_FIFO, 5); // Jack default appears to be 10
 	_receive_thread->start();
 }
 
