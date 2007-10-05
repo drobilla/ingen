@@ -41,6 +41,8 @@ NodeModule::NodeModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeMode
 	, _slv2_ui(NULL)
 	, _gui(NULL)
 	, _gui_item(NULL)
+	, _last_gui_request_width(0)
+	, _last_gui_request_height(0)
 {
 	assert(_node);
 
@@ -207,6 +209,12 @@ NodeModule::embed_gui(bool embed)
 void
 NodeModule::gui_size_request(Gtk::Requisition* r)
 {
+	// For some reason this is called continuously (probably every redraw)
+	// This shouldn't be happening (FIXME)...
+	
+	if (_last_gui_request_width == r->width && _last_gui_request_height == r->height)
+		return;
+
 	if (r->width + 4 > _width)
 		set_minimum_width(r->width + 4);
 
@@ -215,6 +223,9 @@ NodeModule::gui_size_request(Gtk::Requisition* r)
 	_ports_y_offset = r->height + 2;
 
 	resize();
+
+	_last_gui_request_width = r->width;
+	_last_gui_request_height = r->height;
 }
 
 

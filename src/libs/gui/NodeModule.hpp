@@ -90,6 +90,8 @@ protected:
 	SLV2UIInstance         _slv2_ui;
 	Gtk::Widget*           _gui;
 	Gnome::Canvas::Widget* _gui_item;
+	int                    _last_gui_request_width;
+	int                    _last_gui_request_height;
 };
 
 
