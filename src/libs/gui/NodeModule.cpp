@@ -41,6 +41,7 @@ NodeModule::NodeModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeMode
 	, _slv2_ui(NULL)
 	, _gui(NULL)
 	, _gui_item(NULL)
+	, _gui_container(NULL)
 	, _last_gui_request_width(0)
 	, _last_gui_request_height(0)
 {
@@ -123,7 +124,6 @@ NodeModule::embed_gui(bool embed)
 		// FIXME: leaks?
 				
 		GtkWidget* c_widget = NULL;
-		Gtk::Bin* container = NULL;
 
 		if (!_gui_item) {
 			cerr << "Embedding LV2 GUI" << endl;
@@ -135,12 +135,15 @@ NodeModule::embed_gui(bool embed)
 				_gui = Glib::wrap(c_widget);
 				assert(_gui);
 			
+				if (_gui_container)
+					delete _gui_container;
+
 				//container = new Gtk::Alignment();  // transparent bg but uber slow
-				container = new Gtk::EventBox();
-				container->set_name("ingen_embedded_node_gui_container");
-				container->set_border_width(2);
-				container->add(*_gui);
-				container->show_all();
+				_gui_container = new Gtk::EventBox();
+				_gui_container->set_name("ingen_embedded_node_gui_container");
+				_gui_container->set_border_width(2);
+				_gui_container->add(*_gui);
+				_gui_container->show_all();
 				/*Gdk::Color color;
 				color.set_red((_color & 0xFF000000) >> 24);
 				color.set_green((_color & 0x00FF0000) >> 16);
@@ -151,7 +154,7 @@ NodeModule::embed_gui(bool embed)
 				container->modify_bg(Gtk::STATE_SELECTED, color);*/
 			
 				const double y = 4 + _canvas_title.property_text_height();
-				_gui_item = new Gnome::Canvas::Widget(*this, 2.0, y, *container);
+				_gui_item = new Gnome::Canvas::Widget(*this, 2.0, y, *_gui_container);
 			}
 		}
 
@@ -161,13 +164,13 @@ NodeModule::embed_gui(bool embed)
 			_gui->show_all();
 			_gui_item->show();
 
-			Gtk::Requisition r = container->size_request();
-			gui_size_request(&r);
+			Gtk::Requisition r = _gui_container->size_request();
+			gui_size_request(&r, true);
 
 			_gui_item->raise_to_top();
 
-			container->signal_size_request().connect(
-					sigc::mem_fun(this, &NodeModule::gui_size_request));
+			_gui_container->signal_size_request().connect(sigc::bind(
+					sigc::mem_fun(this, &NodeModule::gui_size_request), false));
 		
 			for (PortModelList::const_iterator p = _node->ports().begin(); p != _node->ports().end(); ++p)
 				if ((*p)->is_control() && (*p)->is_output())
@@ -188,7 +191,7 @@ NodeModule::embed_gui(bool embed)
 		_gui = NULL;
 
 		_ports_y_offset = 0;
-		_width = 0; // resize() takes care of it..
+		_minimum_width = 0; // resize() takes care of it..
 
 		for (PortModelList::const_iterator p = _node->ports().begin(); p != _node->ports().end(); ++p)
 			if ((*p)->is_control() && (*p)->is_output())
@@ -207,22 +210,28 @@ NodeModule::embed_gui(bool embed)
 	
 
 void
-NodeModule::gui_size_request(Gtk::Requisition* r)
+NodeModule::gui_size_request(Gtk::Requisition* r, bool force)
 {
 	// For some reason this is called continuously (probably every redraw)
 	// This shouldn't be happening (FIXME)...
 	
-	if (_last_gui_request_width == r->width && _last_gui_request_height == r->height)
+	if (!force && _last_gui_request_width == r->width && _last_gui_request_height == r->height)
 		return;
 
 	if (r->width + 4 > _width)
 		set_minimum_width(r->width + 4);
+	
+	_ports_y_offset = r->height + 2;
+	
+	resize();
 
+	Gtk::Allocation allocation;
+	allocation.set_width(r->width + 4);
+	allocation.set_height(r->height + 4);
+
+	_gui_container->size_allocate(allocation);
 	_gui_item->property_width() = _width - 4;
 	_gui_item->property_height() = r->height;
-	_ports_y_offset = r->height + 2;
-
-	resize();
 
 	_last_gui_request_width = r->width;
 	_last_gui_request_height = r->height;
