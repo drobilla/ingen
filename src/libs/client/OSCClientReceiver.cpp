@@ -35,7 +35,7 @@ OSCClientReceiver::OSCClientReceiver(int listen_port)
   _listen_port(listen_port),
   _st(NULL)
 {
-	start(true);
+	start(false);
 }
 
 

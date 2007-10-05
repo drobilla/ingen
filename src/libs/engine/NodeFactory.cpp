@@ -100,7 +100,7 @@ NodeFactory::library(const string& path)
 		plugin_library = library_i->second;
 		assert(plugin_library);
 	} else {
-		plugin_library = new Glib::Module(path, Glib::MODULE_BIND_LOCAL | Glib::MODULE_BIND_LAZY);
+		plugin_library = new Glib::Module(path, Glib::MODULE_BIND_LOCAL);
 		if (plugin_library && *plugin_library) {
 			_libraries.insert(make_pair(path, plugin_library));
 			return plugin_library;
