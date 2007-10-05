@@ -16,38 +16,36 @@
  */
 
 #include <algorithm>
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <vector>
-#include <utility> // pair, make_pair
-#include <stdexcept>
 #include <cassert>
 #include <cmath>
 #include <cstdlib> // atof
-#include <boost/optional/optional.hpp>
 #include <cstring>
+#include <fstream>
+#include <iostream>
 #include <locale.h>
-#include <raul/RDFWorld.hpp>
-#include <raul/RDFModel.hpp>
-#include <raul/RDFNode.hpp>
-#include <raul/Path.hpp>
+#include <stdexcept>
+#include <string>
+#include <utility> // pair, make_pair
+#include <vector>
 #include <raul/Atom.hpp>
 #include <raul/AtomRedland.hpp>
+#include <raul/Path.hpp>
+#include <raul/RDFModel.hpp>
+#include <raul/RDFNode.hpp>
+#include <raul/RDFWorld.hpp>
 #include <raul/TableImpl.hpp>
 #include "interface/EngineInterface.hpp"
-#include "Serializer.hpp"
-#include "PatchModel.hpp"
-#include "NodeModel.hpp"
 #include "ConnectionModel.hpp"
+#include "NodeModel.hpp"
+#include "PatchModel.hpp"
+#include "PluginModel.hpp"
 #include "PortModel.hpp"
 #include "PresetModel.hpp"
-#include "PluginModel.hpp"
+#include "Serializer.hpp"
 
 using namespace std;
 using namespace Raul;
 using namespace Raul::RDF;
-using boost::optional;
 
 namespace Ingen {
 namespace Client {
@@ -158,7 +156,6 @@ Serializer::path_to_node_id(const Path& path)
 		Node id = _world.blank_id();
 		assert(id);
 		_node_map[path] = id;
-		assert(_node_map[path]);
 		return id;
 	}
 }
@@ -421,9 +418,10 @@ Serializer::serialize_connection(SharedPtr<ConnectionModel> connection) throw (s
 	if (!_model)
 		throw std::logic_error("serialize_connection called without serialization in progress");
 
-	_model->add_statement(path_to_node_id(connection->dst_port_path()),
-		"ingen:connectedTo",
-		path_to_node_id(connection->src_port_path()));
+	const Node src_node = path_to_node_id(connection->src_port_path());
+	const Node dst_node = path_to_node_id(connection->dst_port_path());
+
+	_model->add_statement(dst_node, "ingen:connectedTo", src_node);
 }
 
 
