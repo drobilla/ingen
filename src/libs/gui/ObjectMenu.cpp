@@ -33,11 +33,13 @@ ObjectMenu::ObjectMenu(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade:
 	, _disconnect_menuitem(NULL)
 	, _rename_menuitem(NULL)
 	, _destroy_menuitem(NULL)
+	, _properties_menuitem(NULL)
 {
 	xml->get_widget("object_polyphonic_menuitem", _polyphonic_menuitem);
 	xml->get_widget("object_disconnect_menuitem", _disconnect_menuitem);
 	xml->get_widget("object_rename_menuitem", _rename_menuitem);
 	xml->get_widget("object_destroy_menuitem", _destroy_menuitem);
+	xml->get_widget("object_properties_menuitem", _properties_menuitem);
 }
 
 
@@ -62,17 +64,13 @@ ObjectMenu::init(SharedPtr<ObjectModel> object)
 	
 	_destroy_menuitem->signal_activate().connect(
 			sigc::mem_fun(this, &ObjectMenu::on_menu_destroy));
+	
+	_properties_menuitem->signal_activate().connect(
+			sigc::mem_fun(this, &ObjectMenu::on_menu_properties));
 
 	object->signal_polyphonic.connect(sigc::mem_fun(this, &ObjectMenu::polyphonic_changed));
 
 	_enable_signal = true;
-}
-
-
-void
-ObjectMenu::on_menu_destroy()
-{
-	App::instance().engine()->destroy(_object->path());
 }
 
 
@@ -97,6 +95,20 @@ void
 ObjectMenu::on_menu_disconnect()
 {
 	App::instance().engine()->disconnect_all(_object->path());
+}
+
+	
+void
+ObjectMenu::on_menu_destroy()
+{
+	App::instance().engine()->destroy(_object->path());
+}
+
+
+void
+ObjectMenu::on_menu_properties()
+{
+	App::instance().window_factory()->present_properties(_object);
 }
 
 

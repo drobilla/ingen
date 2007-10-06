@@ -32,7 +32,6 @@ namespace Ingen {
 namespace GUI {
 
 class ControlPanel;
-class PortPropertiesWindow;
 
 
 /** A group of controls (for a single Port) in a NodeControlWindow.
@@ -50,8 +49,6 @@ public:
 	inline const SharedPtr<PortModel> port_model() const { return _port_model; }
 
 protected:
-	friend class PortPropertiesWindow;
-
 	virtual void set_value(float value) = 0;
 	virtual void set_range(float min, float max) {}
 

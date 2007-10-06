@@ -156,10 +156,9 @@ SliderControlGroup::menu_properties()
 {
 	Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference();
 
-	PortPropertiesWindow* dialog;
-	xml->get_widget_derived("port_properties_win", dialog);
-	dialog->init(this, _port_model);
-	dialog->run();
+	PortPropertiesWindow* window;
+	xml->get_widget_derived("port_properties_win", window);
+	window->present(_port_model);
 }
 
 

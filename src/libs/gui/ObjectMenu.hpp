@@ -50,6 +50,7 @@ protected:
 	void on_menu_polyphonic();
 	void on_menu_disconnect();
 	void on_menu_destroy();
+	void on_menu_properties();
 
 	void polyphonic_changed(bool polyphonic);
 
@@ -59,6 +60,7 @@ protected:
 	Gtk::MenuItem*         _disconnect_menuitem;
 	Gtk::MenuItem*         _rename_menuitem;
 	Gtk::MenuItem*         _destroy_menuitem;
+	Gtk::MenuItem*         _properties_menuitem;
 };
 
 

@@ -27,8 +27,6 @@ using namespace Ingen::Client;
 namespace Ingen {
 namespace GUI {
 
-class ControlGroup;
-
 
 /** Port properties window.
  *
@@ -36,12 +34,12 @@ class ControlGroup;
  *
  * \ingroup GUI
  */
-class PortPropertiesWindow : public Gtk::Dialog
+class PortPropertiesWindow : public Gtk::Window
 {
 public:
 	PortPropertiesWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& refGlade);
 
-	void init(ControlGroup* control, SharedPtr<PortModel> port_model);
+	void present(SharedPtr<PortModel> port_model);
 
 private:
 	void metadata_update(const string& key, const Atom& value);
@@ -56,12 +54,12 @@ private:
 	float _initial_min;
 	float _initial_max;
 
-	ControlGroup*        _control;
-	SharedPtr<PortModel> _port_model;
-	Gtk::SpinButton*     _min_spinner;
-	Gtk::SpinButton*     _max_spinner;
-	Gtk::Button*         _cancel_button;
-	Gtk::Button*         _ok_button;
+	SharedPtr<PortModel>        _port_model;
+	Gtk::SpinButton*            _min_spinner;
+	Gtk::SpinButton*            _max_spinner;
+	Gtk::Button*                _cancel_button;
+	Gtk::Button*                _ok_button;
+	std::list<sigc::connection> _connections;
 };
 
 } // namespace GUI

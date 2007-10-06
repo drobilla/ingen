@@ -30,11 +30,6 @@ using Ingen::Client::PortModel;
 namespace Ingen {
 namespace GUI {
 
-class Controller;
-class PortControlWindow;
-class PortPropertiesWindow;
-class PatchCanvas;
-
 
 /** Menu for a Port.
  *

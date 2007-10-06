@@ -30,11 +30,6 @@ using Ingen::Client::NodeModel;
 namespace Ingen {
 namespace GUI {
 
-class Controller;
-class NodeControlWindow;
-class NodePropertiesWindow;
-class PatchCanvas;
-
 
 /** Menu for a Node.
  *

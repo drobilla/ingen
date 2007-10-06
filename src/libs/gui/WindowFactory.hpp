@@ -31,8 +31,9 @@ namespace GUI {
 
 class PatchWindow;
 class NodeControlWindow;
-class NodePropertiesWindow;
 class PatchPropertiesWindow;
+class NodePropertiesWindow;
+class PortPropertiesWindow;
 class LoadPatchWindow;
 class LoadRemotePatchWindow;
 class UploadPatchWindow;
@@ -68,7 +69,7 @@ public:
 	void present_new_subpatch(SharedPtr<PatchModel> patch, MetadataMap data = MetadataMap());
 	void present_load_subpatch(SharedPtr<PatchModel> patch, MetadataMap data = MetadataMap());
 	void present_rename(SharedPtr<ObjectModel> object);
-	void present_properties(SharedPtr<NodeModel> node);
+	void present_properties(SharedPtr<ObjectModel> object);
 	
 	bool remove_patch_window(PatchWindow* win, GdkEventAny* ignored = NULL);
 
@@ -93,8 +94,9 @@ private:
 	UploadPatchWindow*     _upload_patch_win;
 	NewSubpatchWindow*     _new_subpatch_win;
 	LoadSubpatchWindow*    _load_subpatch_win;
-	NodePropertiesWindow*  _node_properties_win;
 	PatchPropertiesWindow* _patch_properties_win;
+	NodePropertiesWindow*  _node_properties_win;
+	PortPropertiesWindow*  _port_properties_win;
 	RenameWindow*          _rename_win;
 };
 

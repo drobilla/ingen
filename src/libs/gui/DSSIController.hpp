@@ -36,7 +36,7 @@ namespace Ingen {
 namespace GUI {
 
 class NodeControlWindow;
-class NodePropertiesWindow;
+
 
 /* Controller for a DSSI node.
  *

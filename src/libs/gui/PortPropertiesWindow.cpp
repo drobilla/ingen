@@ -31,9 +31,8 @@ namespace GUI {
 
 
 PortPropertiesWindow::PortPropertiesWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
-	: Gtk::Dialog(cobject)
+	: Gtk::Window(cobject)
 	, _enable_signal(false)
-	, _control(NULL)
 {
 	xml->get_widget("port_properties_min_spinner", _min_spinner);
 	xml->get_widget("port_properties_max_spinner", _max_spinner);
@@ -52,13 +51,16 @@ PortPropertiesWindow::PortPropertiesWindow(BaseObjectType* cobject, const Glib::
  * This function MUST be called before using this object in any way.
  */
 void
-PortPropertiesWindow::init(ControlGroup* control, SharedPtr<PortModel> pm)
+PortPropertiesWindow::present(SharedPtr<PortModel> pm)
 {
 	assert(pm);
-	assert(control);
 	
+	for (list<sigc::connection>::iterator i = _connections.begin(); i != _connections.end(); ++i)
+		(*i).disconnect();
+
+	_connections.clear();
+
 	_port_model = pm;
-	_control = control;
 
 	set_title(pm->path() + " Properties");
 	
@@ -71,13 +73,19 @@ PortPropertiesWindow::init(ControlGroup* control, SharedPtr<PortModel> pm)
 	_initial_max = max;
 
 	_min_spinner->set_value(min);
-	_min_spinner->signal_value_changed().connect(sigc::mem_fun(*this, &PortPropertiesWindow::min_changed));
-	_max_spinner->set_value(max);
-	_max_spinner->signal_value_changed().connect(sigc::mem_fun(*this, &PortPropertiesWindow::max_changed));
+	_connections.push_back(_min_spinner->signal_value_changed().connect(
+				sigc::mem_fun(*this, &PortPropertiesWindow::min_changed)));
 	
-	pm->signal_metadata.connect(sigc::mem_fun(this, &PortPropertiesWindow::metadata_update));
+	_max_spinner->set_value(max);
+	_connections.push_back(_max_spinner->signal_value_changed().connect(
+				sigc::mem_fun(*this, &PortPropertiesWindow::max_changed)));
+	
+	_connections.push_back(pm->signal_metadata.connect(
+			sigc::mem_fun(this, &PortPropertiesWindow::metadata_update)));
 
 	_enable_signal = true;
+
+	Gtk::Window::present();
 }
 
 
@@ -106,8 +114,6 @@ PortPropertiesWindow::min_changed()
 		_max_spinner->set_value(max);
 	}
 
-	_control->set_range(min, max);
-
 	if (_enable_signal)
 		App::instance().engine()->set_metadata(_port_model->path(), "ingen:minimum", min);
 }
@@ -124,8 +130,6 @@ PortPropertiesWindow::max_changed()
 		_min_spinner->set_value(min);
 	}
 
-	_control->set_range(min, max);
-
 	if (_enable_signal)
 		App::instance().engine()->set_metadata(_port_model->path(), "ingen:maximum", max);
 }
@@ -136,14 +140,14 @@ PortPropertiesWindow::cancel()
 {
 	App::instance().engine()->set_metadata(_port_model->path(), "ingen:minimum", _initial_min);
 	App::instance().engine()->set_metadata(_port_model->path(), "ingen:maximum", _initial_max);
-	delete this;
+	hide();
 }
 
 
 void
 PortPropertiesWindow::ok()
 {
-	delete this;
+	hide();
 }
 
 
