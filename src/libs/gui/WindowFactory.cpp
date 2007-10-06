@@ -15,6 +15,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include CONFIG_H_PATH
 #include "WindowFactory.hpp"
 #include "App.hpp"
 #include "PatchWindow.hpp"
@@ -25,10 +26,12 @@
 #include "LoadPluginWindow.hpp"
 #include "LoadPatchWindow.hpp"
 #include "LoadRemotePatchWindow.hpp"
-#include "UploadPatchWindow.hpp"
 #include "LoadSubpatchWindow.hpp"
 #include "RenameWindow.hpp"
 #include "NewSubpatchWindow.hpp"
+#ifdef HAVE_CURL
+#include "UploadPatchWindow.hpp"
+#endif
 
 namespace Ingen {
 namespace GUI {
@@ -49,12 +52,15 @@ WindowFactory::WindowFactory()
 	xml->get_widget_derived("load_plugin_win", _load_plugin_win);
 	xml->get_widget_derived("load_patch_win", _load_patch_win);
 	xml->get_widget_derived("load_remote_patch_win", _load_remote_patch_win);
-	xml->get_widget_derived("upload_patch_win", _upload_patch_win);
 	xml->get_widget_derived("new_subpatch_win", _new_subpatch_win);
 	xml->get_widget_derived("load_subpatch_win", _load_subpatch_win);
 	xml->get_widget_derived("node_properties_win", _node_properties_win);
 	xml->get_widget_derived("patch_properties_win", _patch_properties_win);
 	xml->get_widget_derived("rename_win", _rename_win);
+	
+#ifdef HAVE_CURL
+	xml->get_widget_derived("upload_patch_win", _upload_patch_win);
+#endif
 }
 
 
@@ -286,12 +292,14 @@ WindowFactory::present_load_remote_patch(SharedPtr<PatchModel> patch, MetadataMa
 void
 WindowFactory::present_upload_patch(SharedPtr<PatchModel> patch)
 {
+#ifdef HAVE_CURL
 	PatchWindowMap::iterator w = _patch_windows.find(patch->path());
 
 	if (w != _patch_windows.end())
 		_upload_patch_win->set_transient_for(*w->second);
 
 	_upload_patch_win->present(patch);
+#endif
 }
 
 

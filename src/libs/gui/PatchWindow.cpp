@@ -126,6 +126,10 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 	
 	_breadcrumb_box = new BreadCrumbBox();
 	_breadcrumb_box->signal_patch_selected.connect(sigc::mem_fun(this, &PatchWindow::set_patch_from_path));
+
+#ifndef HAVE_CURL
+	_menu_upload->hide();
+#endif
 }
 
 

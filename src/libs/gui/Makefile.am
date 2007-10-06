@@ -29,7 +29,6 @@ libingen_gui_la_LIBADD = \
 	../module/libingen_module.la \
 	../client/libingen_client.la
 
-
 libingen_gui_la_SOURCES = \
 	gui.hpp \
 	gui.cpp \
@@ -99,9 +98,14 @@ libingen_gui_la_SOURCES = \
 	SubpatchModule.hpp \
 	ThreadedLoader.cpp \
 	ThreadedLoader.hpp \
-	UploadPatchWindow.cpp \
-	UploadPatchWindow.hpp \
 	WindowFactory.cpp \
 	WindowFactory.hpp
+	
+if WITH_CURL
+libingen_gui_la_SOURCES += \
+	UploadPatchWindow.cpp \
+	UploadPatchWindow.hpp
+endif
+
 
 
