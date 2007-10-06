@@ -212,9 +212,6 @@ NodeModule::embed_gui(bool embed)
 void
 NodeModule::gui_size_request(Gtk::Requisition* r, bool force)
 {
-	// For some reason this is called continuously (probably every redraw)
-	// This shouldn't be happening (FIXME)...
-	
 	if (!force && _last_gui_request_width == r->width && _last_gui_request_height == r->height)
 		return;
 
