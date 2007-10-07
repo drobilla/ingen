@@ -26,9 +26,7 @@ using std::string;
 
 namespace Ingen {
 	
-class Plugin;
-namespace Shared { class ClientInterface; }
-using Shared::ClientInterface;
+class PluginImpl;
 
 
 /** A request from a client to send the value of a port.
@@ -45,8 +43,8 @@ public:
 	void post_process();
 
 private:
-	string        _uri;
-	const Plugin* _plugin;
+	const string      _uri;
+	const PluginImpl* _plugin;
 };
 
 

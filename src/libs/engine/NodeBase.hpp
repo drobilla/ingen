@@ -29,7 +29,7 @@ using std::string;
 
 namespace Ingen {
 
-class Plugin;
+class PluginImpl;
 class Patch;
 class ObjectStore;
 
@@ -47,12 +47,12 @@ namespace Shared {
 class NodeBase : public NodeImpl
 {
 public:
-	NodeBase(const Plugin* plugin,
-	         const string& name,
-	         bool          poly,
-	         Patch*        parent,
-	         SampleRate    rate,
-	         size_t        buffer_size);
+	NodeBase(const PluginImpl* plugin,
+	         const string&     name,
+	         bool              poly,
+	         Patch*            parent,
+	         SampleRate        rate,
+	         size_t            buffer_size);
 
 	virtual ~NodeBase();
 
@@ -96,7 +96,8 @@ public:
 	Raul::List<NodeImpl*>* dependants()                         { return _dependants; }
 	void                   dependants(Raul::List<NodeImpl*>* l) { _dependants = l; }
 	
-	virtual const Plugin* plugin() const { return _plugin; }
+	virtual const PluginImpl* plugin() const { return _plugin; }
+	virtual void plugin(const PluginImpl* const pi) { _plugin = pi; }
 	
 	/** A node's parent is always a patch, so static cast should be safe */
 	inline Patch* parent_patch() const { return (Patch*)_parent; }
@@ -104,7 +105,7 @@ public:
 protected:
 	virtual void signal_input_ready();
 	
-	const Plugin* _plugin;
+	const PluginImpl* _plugin;
 
 	uint32_t   _polyphony;
 	SampleRate _srate;

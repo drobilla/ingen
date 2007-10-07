@@ -29,7 +29,7 @@ namespace Shared {
 class Patch;
 class NodeImpl;
 class Port;
-class Plugin;
+class PluginImpl;
 
 
 /** Utility class for sending GraphObjects to clients through ClientInterface.
@@ -49,7 +49,6 @@ public:
 	static void send_patch(ClientInterface* client, const Patch* patch, bool recursive);
 	static void send_node(ClientInterface* client, const NodeImpl* node, bool recursive);
 	static void send_port(ClientInterface* client, const Port* port);
-	static void send_plugins(ClientInterface* client, const std::list<Plugin*>& plugs);
 };
 
 } // namespace Ingen

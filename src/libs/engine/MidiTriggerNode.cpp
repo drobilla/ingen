@@ -21,7 +21,7 @@
 #include "AudioBuffer.hpp"
 #include "InputPort.hpp"
 #include "OutputPort.hpp"
-#include "Plugin.hpp"
+#include "PluginImpl.hpp"
 #include "ProcessContext.hpp"
 #include "util.hpp"
 
@@ -29,7 +29,7 @@ namespace Ingen {
 
 
 MidiTriggerNode::MidiTriggerNode(const string& path, bool polyphonic, Patch* parent, SampleRate srate, size_t buffer_size)
-: NodeBase(new Plugin(Plugin::Internal, "ingen:trigger_node"), path, false, parent, srate, buffer_size)
+: NodeBase(new PluginImpl(Plugin::Internal, "ingen:trigger_node"), path, false, parent, srate, buffer_size)
 {
 	_ports = new Raul::Array<Port*>(5);
 
@@ -52,7 +52,7 @@ MidiTriggerNode::MidiTriggerNode(const string& path, bool polyphonic, Patch* par
 	_vel_port = new OutputPort(this, "Velocity", 4, 1, DataType::FLOAT, _buffer_size);
 	_ports->at(4) = _vel_port;
 	
-	Plugin* p = const_cast<Plugin*>(_plugin);
+	PluginImpl* p = const_cast<PluginImpl*>(_plugin);
 	p->plug_label("trigger_in");
 	assert(p->uri() == "ingen:trigger_node");
 	p->name("Ingen Trigger Node (MIDI, OSC)");

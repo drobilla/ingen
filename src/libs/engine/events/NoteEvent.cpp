@@ -22,7 +22,7 @@
 #include "NodeImpl.hpp"
 #include "MidiNoteNode.hpp"
 #include "MidiTriggerNode.hpp"
-#include "Plugin.hpp"
+#include "PluginImpl.hpp"
 #include "ProcessContext.hpp"
 
 namespace Ingen {

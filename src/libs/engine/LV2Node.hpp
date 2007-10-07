@@ -22,7 +22,7 @@
 #include <slv2/slv2.h>
 #include "types.hpp"
 #include "NodeBase.hpp"
-#include "Plugin.hpp"
+#include "PluginImpl.hpp"
 
 namespace Ingen {
 
@@ -34,12 +34,12 @@ namespace Ingen {
 class LV2Node : public NodeBase
 {
 public:
-	LV2Node(const Plugin*      plugin,
-	        const string&      name,
-	        bool               polyphonic,
-	        Patch*             parent,
-	        SampleRate         srate,
-	        size_t             buffer_size);
+	LV2Node(const PluginImpl* plugin,
+	        const string&     name,
+	        bool              polyphonic,
+	        Patch*            parent,
+	        SampleRate        srate,
+	        size_t            buffer_size);
 	
 	virtual ~LV2Node();
 

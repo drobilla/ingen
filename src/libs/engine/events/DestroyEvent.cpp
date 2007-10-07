@@ -22,7 +22,7 @@
 #include "Engine.hpp"
 #include "Patch.hpp"
 #include "NodeBase.hpp"
-#include "Plugin.hpp"
+#include "PluginImpl.hpp"
 #include "AudioDriver.hpp"
 #include "MidiDriver.hpp"
 #include "DisconnectNodeEvent.hpp"

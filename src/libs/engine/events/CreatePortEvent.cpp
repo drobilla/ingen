@@ -22,7 +22,7 @@
 #include "Responder.hpp"
 #include "CreatePortEvent.hpp"
 #include "Patch.hpp"
-#include "Plugin.hpp"
+#include "PluginImpl.hpp"
 #include "Engine.hpp"
 #include "Patch.hpp"
 #include "QueuedEventSource.hpp"

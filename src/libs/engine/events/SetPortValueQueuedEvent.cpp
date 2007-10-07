@@ -21,7 +21,7 @@
 #include "Engine.hpp"
 #include "Port.hpp"
 #include "ClientBroadcaster.hpp"
-#include "Plugin.hpp"
+#include "PluginImpl.hpp"
 #include "NodeImpl.hpp"
 #include "ObjectStore.hpp"
 #include "AudioBuffer.hpp"
@@ -144,7 +144,7 @@ SetPortValueQueuedEvent::post_process()
 	} else if (_error == NO_SPACE) {
 		std::ostringstream msg("Attempt to write ");
 		msg << _data_size << " bytes to " << _port_path << ", with capacity "
-			<< _port->buffer_size() << endl;
+			<< _port->buffer_size() << std::endl;
 		_responder->respond_error(msg.str());
 	}
 }

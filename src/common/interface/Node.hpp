@@ -15,40 +15,36 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef REQUESTPLUGINSEVENT_H
-#define REQUESTPLUGINSEVENT_H
+#ifndef NODE_H
+#define NODE_H
 
 #include <string>
-#include <list>
-#include "QueuedEvent.hpp"
-using std::string;
+#include <raul/Array.hpp>
+#include "GraphObject.hpp"
+
+namespace Raul { template <typename T> class List; class Maid; }
 
 namespace Ingen {
-
-class PluginImpl;
-class Responder;
 namespace Shared {
-	class ClientInterface;
-} using Shared::ClientInterface;
 
 
-/** A request from a client to send notification of all objects (ie refresh).
+/** A Node (or "module") in a Patch (which is also a Node).
+ * 
+ * A Node is a unit with input/output ports, a process() method, and some other
+ * things.
  *
- * \ingroup engine
+ * Purely virtual (except for the destructor).
+ * 
+ * \ingroup interface
  */
-class RequestPluginsEvent : public QueuedEvent
+class Node : public virtual GraphObject
 {
 public:
-	RequestPluginsEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp);
-
-	void pre_process();
-	void post_process();
-
-private:
-	std::list<PluginImpl*> _plugins;
+	virtual uint32_t num_ports() const = 0;
 };
 
 
+} // namespace Shared
 } // namespace Ingen
 
-#endif // REQUESTPLUGINSEVENT_H
+#endif // NODE_H

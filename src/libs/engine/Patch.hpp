@@ -22,7 +22,7 @@
 #include <string>
 #include <raul/List.hpp>
 #include "NodeBase.hpp"
-#include "Plugin.hpp"
+#include "PluginImpl.hpp"
 #include "DataType.hpp"
 #include "CompiledPatch.hpp"
 

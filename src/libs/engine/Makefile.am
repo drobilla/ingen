@@ -80,8 +80,8 @@ libingen_engine_la_SOURCES = \
 	OutputPort.hpp \
 	Patch.cpp \
 	Patch.hpp \
-	Plugin.cpp \
-	Plugin.hpp \
+	PluginImpl.cpp \
+	PluginImpl.hpp \
 	Port.cpp \
 	Port.hpp \
 	PostProcessor.cpp \

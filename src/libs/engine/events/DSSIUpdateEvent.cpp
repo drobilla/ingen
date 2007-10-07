@@ -21,7 +21,7 @@
 #include "ObjectStore.hpp"
 #include "Engine.hpp"
 #include "DSSINode.hpp"
-#include "Plugin.hpp"
+#include "PluginImpl.hpp"
 
 using std::cerr; using std::endl;
 

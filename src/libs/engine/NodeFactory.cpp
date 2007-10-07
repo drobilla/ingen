@@ -27,7 +27,7 @@
 #include "MidiTriggerNode.hpp"
 #include "MidiControlNode.hpp"
 #include "TransportNode.hpp"
-#include "Plugin.hpp"
+#include "PluginImpl.hpp"
 #include "Patch.hpp"
 #ifdef HAVE_SLV2
 #include "LV2Node.hpp"
@@ -62,16 +62,16 @@ NodeFactory::NodeFactory(Ingen::Shared::World* world)
 
 	NodeImpl* n = NULL;
 	n = new MidiNoteNode("foo", 1, parent, 1, 1);
-	_internal_plugins.push_back(new Plugin(n->plugin()));
+	_internal_plugins.push_back(new PluginImpl(n->plugin()));
 	delete n;
 	n = new MidiTriggerNode("foo", 1, parent, 1, 1);
-	_internal_plugins.push_back(new Plugin(n->plugin()));
+	_internal_plugins.push_back(new PluginImpl(n->plugin()));
 	delete n;
 	n = new MidiControlNode("foo", 1, parent, 1, 1);
-	_internal_plugins.push_back(new Plugin(n->plugin()));
+	_internal_plugins.push_back(new PluginImpl(n->plugin()));
 	delete n;
 	n = new TransportNode("foo", 1, parent, 1, 1);
-	_internal_plugins.push_back(new Plugin(n->plugin()));
+	_internal_plugins.push_back(new PluginImpl(n->plugin()));
 	delete n;
 	
 	delete parent;
@@ -80,7 +80,7 @@ NodeFactory::NodeFactory(Ingen::Shared::World* world)
 
 NodeFactory::~NodeFactory()
 {
-	for (list<Plugin*>::iterator i = _plugins.begin(); i != _plugins.end(); ++i)
+	for (list<PluginImpl*>::iterator i = _plugins.begin(); i != _plugins.end(); ++i)
 		delete (*i);
 	_plugins.clear();
 
@@ -111,10 +111,10 @@ NodeFactory::library(const string& path)
 }
 
 
-const Plugin*
+const PluginImpl*
 NodeFactory::plugin(const string& uri)
 {
-	for (list<Plugin*>::iterator i = _plugins.begin(); i != _plugins.end(); ++i)
+	for (list<PluginImpl*>::iterator i = _plugins.begin(); i != _plugins.end(); ++i)
 		if ((*i)->uri() == uri)
 			return (*i);
 
@@ -126,13 +126,13 @@ NodeFactory::plugin(const string& uri)
  *
  * Do not use.
  */
-const Plugin*
+const PluginImpl*
 NodeFactory::plugin(const string& type, const string& lib, const string& label)
 {
 	if (type == "" || lib == "" || label == "")
 		return NULL;
 
-	for (list<Plugin*>::iterator i = _plugins.begin(); i != _plugins.end(); ++i)
+	for (list<PluginImpl*>::iterator i = _plugins.begin(); i != _plugins.end(); ++i)
 		if ((*i)->type_string() == type && (*i)->lib_name() == lib && (*i)->plug_label() == label)
 			return (*i);
 
@@ -176,16 +176,16 @@ NodeFactory::load_plugins()
  * Calls the load_*_plugin functions to actually do things, just a wrapper.
  */
 NodeImpl*
-NodeFactory::load_plugin(const Plugin* a_plugin,
-                         const string& name,
-                         bool          polyphonic,
-                         Patch*        parent)
+NodeFactory::load_plugin(const PluginImpl* a_plugin,
+                         const string&     name,
+                         bool              polyphonic,
+                         Patch*            parent)
 {
 	assert(parent != NULL);
 	assert(a_plugin);
 
 	NodeImpl* r = NULL;
-	Plugin* plugin = NULL;
+	PluginImpl* plugin = NULL;
 
 	const SampleRate srate       = parent->sample_rate();
 	const size_t     buffer_size = parent->buffer_size();
@@ -199,7 +199,7 @@ NodeFactory::load_plugin(const Plugin* a_plugin,
 		if (a_plugin->uri().length() == 0) {
 			assert(a_plugin->lib_name().length() > 0 && a_plugin->plug_label().length() > 0);
 			//cerr << "Searching for: " << a_plugin->lib_name() << " : " << a_plugin->plug_label() << endl;
-			for (list<Plugin*>::iterator i = _plugins.begin(); i != _plugins.end(); ++i) {
+			for (list<PluginImpl*>::iterator i = _plugins.begin(); i != _plugins.end(); ++i) {
 				//cerr << (*i)->lib_name() << " : " << (*i)->plug_label() << endl;
 				if (a_plugin->lib_name() == (*i)->lib_name() && a_plugin->plug_label() == (*i)->plug_label()) {
 					plugin = *i;
@@ -208,7 +208,7 @@ NodeFactory::load_plugin(const Plugin* a_plugin,
 			}
 		} else {
 			// Search by URI
-			for (list<Plugin*>::iterator i = _plugins.begin(); i != _plugins.end(); ++i) {
+			for (list<PluginImpl*>::iterator i = _plugins.begin(); i != _plugins.end(); ++i) {
 				if (a_plugin->uri() == (*i)->uri()) {
 					plugin = *i;
 					break;
@@ -263,7 +263,7 @@ NodeFactory::load_internal_plugin(const string& uri,
 	assert(uri.length() > 6);
 	assert(uri.substr(0, 6) == "ingen:");
 
-	for (list<Plugin*>::iterator i = _internal_plugins.begin(); i != _internal_plugins.end(); ++i)
+	for (list<PluginImpl*>::iterator i = _internal_plugins.begin(); i != _internal_plugins.end(); ++i)
 		if ((*i)->uri() == uri)
 			return (*i)->instantiate(name, polyphonic, parent, srate, buffer_size);
 	
@@ -290,10 +290,10 @@ NodeFactory::load_lv2_plugins()
 		assert(uri);
 		//cerr << "\t" << uri << endl;
 
-		Plugin* plug = NULL;
+		PluginImpl* plug = NULL;
 
 		bool found = false;
-		for (list<Plugin*>::const_iterator i = _plugins.begin(); i != _plugins.end(); ++i) {
+		for (list<PluginImpl*>::const_iterator i = _plugins.begin(); i != _plugins.end(); ++i) {
 			if (!strcmp((*i)->uri().c_str(), uri)) {
 				plug = (*i);
 				found = true;
@@ -302,7 +302,7 @@ NodeFactory::load_lv2_plugins()
 		}
 
 		if (!found)
-			plug = new Plugin(Plugin::LV2, uri);
+			plug = new PluginImpl(Plugin::LV2, uri);
 
 		plug->slv2_plugin(lv2_plug);
 		plug->module(NULL); // FIXME?
@@ -335,8 +335,8 @@ NodeFactory::load_lv2_plugin(const string& plug_uri,
                              size_t        buffer_size)
 {
 	// Find (internal) Plugin
-	Plugin* plugin = NULL;
-	list<Plugin*>::iterator i;
+	PluginImpl* plugin = NULL;
+	list<PluginImpl*>::iterator i;
 	for (i = _plugins.begin(); i != _plugins.end(); ++i) {
 		plugin = (*i);
 		if ((*i)->uri() == plug_uri) break;
@@ -428,7 +428,7 @@ NodeFactory::load_dssi_plugins()
 				ld = descriptor->LADSPA_Plugin;
 				assert(ld != NULL);
 				string uri = string("dssi:") + pfile->d_name +":"+ ld->Label;
-				Plugin* plugin = new Plugin(Plugin::DSSI, uri);
+				PluginImpl* plugin = new PluginImpl(Plugin::DSSI, uri);
 				assert(plugin_library != NULL);
 				plugin->module(plugin_library);
 				plugin->lib_path(dir + "/" + pfile->d_name);
@@ -438,7 +438,7 @@ NodeFactory::load_dssi_plugins()
 				plugin->id(ld->UniqueID);
 
 				bool found = false;
-				for (list<Plugin*>::const_iterator i = _plugins.begin(); i != _plugins.end(); ++i) {
+				for (list<PluginImpl*>::const_iterator i = _plugins.begin(); i != _plugins.end(); ++i) {
 					if ((*i)->uri() == plugin->uri()) {
 						cerr << "Warning: Duplicate DSSI plugin (" << plugin->lib_name() << ":"
 							<< plugin->plug_label() << ")" << " found.\nUsing " << (*i)->lib_path()
@@ -474,11 +474,11 @@ NodeFactory::load_dssi_plugin(const string& uri,
 	assert(name != "");
 	
 	DSSI_Descriptor_Function df = NULL;
-	const Plugin* plugin = NULL;
+	const PluginImpl* plugin = NULL;
 	NodeImpl* n = NULL;
 	
 	// Attempt to find the lib
-	list<Plugin*>::iterator i;
+	list<PluginImpl*>::iterator i;
 	for (i = _plugins.begin(); i != _plugins.end(); ++i) {
 		plugin = (*i);
 		if (plugin->uri() == uri) break;
@@ -594,7 +594,7 @@ NodeFactory::load_ladspa_plugins()
 				char id_str[11];
 				snprintf(id_str, 11, "%lu", descriptor->UniqueID);
 				string uri = string("ladspa:").append(id_str);
-				Plugin* plugin = new Plugin(Plugin::LADSPA, uri);
+				PluginImpl* plugin = new PluginImpl(Plugin::LADSPA, uri);
 				
 				assert(plugin_library != NULL);
 				plugin->module(plugin_library);
@@ -605,7 +605,7 @@ NodeFactory::load_ladspa_plugins()
 				plugin->id(descriptor->UniqueID);
 				
 				bool found = false;
-				for (list<Plugin*>::const_iterator i = _plugins.begin(); i != _plugins.end(); ++i) {
+				for (list<PluginImpl*>::const_iterator i = _plugins.begin(); i != _plugins.end(); ++i) {
 					if ((*i)->uri() == plugin->uri()) {
 						cerr << "Warning: Duplicate LADSPA plugin " << plugin->uri()
 							<< " found.\n         Choosing " << (*i)->lib_path()
@@ -640,11 +640,11 @@ NodeFactory::load_ladspa_plugin(const string& uri,
 	assert(name != "");
 	
 	LADSPA_Descriptor_Function df = NULL;
-	Plugin* plugin = NULL;
+	PluginImpl* plugin = NULL;
 	NodeImpl* n = NULL;
 	
 	// Attempt to find the lib
-	list<Plugin*>::iterator i;
+	list<PluginImpl*>::iterator i;
 	for (i = _plugins.begin(); i != _plugins.end(); ++i) {
 		plugin = (*i);
 		if (plugin->uri() == uri) break;

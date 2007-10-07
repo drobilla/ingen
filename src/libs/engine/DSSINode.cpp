@@ -30,7 +30,7 @@ using namespace std;
 namespace Ingen {
 
 
-DSSINode::DSSINode(const Plugin* plugin, const string& name, bool polyphonic, Patch* parent, DSSI_Descriptor* descriptor, SampleRate srate, size_t buffer_size)
+DSSINode::DSSINode(const PluginImpl* plugin, const string& name, bool polyphonic, Patch* parent, DSSI_Descriptor* descriptor, SampleRate srate, size_t buffer_size)
 : LADSPANode(plugin, name, 1, parent, descriptor->LADSPA_Plugin, srate, buffer_size),
   _dssi_descriptor(descriptor),
   _ui_addr(NULL),

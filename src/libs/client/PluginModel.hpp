@@ -28,6 +28,7 @@
 #include <slv2/slv2.h>
 #endif
 #include "interface/EngineInterface.hpp"
+#include "interface/Plugin.hpp"
 using std::string; using std::cerr; using std::endl;
 
 namespace Ingen {
@@ -41,11 +42,9 @@ class NodeModel;
  *
  * \ingroup IngenClient
  */
-class PluginModel
+class PluginModel : public Ingen::Shared::Plugin
 {
 public:
-	enum Type { Internal=0, LV2, DSSI, LADSPA, Patch };
-
 	PluginModel(const string& uri, const string& type_uri, const string& name)
 		: _uri(uri)
 		, _name(name)

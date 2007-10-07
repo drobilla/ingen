@@ -18,7 +18,7 @@
 #include "TransportNode.hpp"
 #include <jack/transport.h>
 #include "OutputPort.hpp"
-#include "Plugin.hpp"
+#include "PluginImpl.hpp"
 #include "JackAudioDriver.hpp"
 #include "Port.hpp"
 #include "util.hpp"
@@ -28,7 +28,7 @@ namespace Ingen {
 
 
 TransportNode::TransportNode(const string& path, bool polyphonic, Patch* parent, SampleRate srate, size_t buffer_size)
-: NodeBase(new Plugin(Plugin::Internal, "ingen:transport_node"), path, false, parent, srate, buffer_size)
+: NodeBase(new PluginImpl(Plugin::Internal, "ingen:transport_node"), path, false, parent, srate, buffer_size)
 {
 #if 0
 	_num_ports = 10;
@@ -74,7 +74,7 @@ TransportNode::TransportNode(const string& path, bool polyphonic, Patch* parent,
 	//	new PortInfo("Bar Tick", AUDIO, OUTPUT, 0, 0, 1), buffer_size);
 	_ports.at(9) = bar_trig_port;
 #endif
-	Plugin* p = const_cast<Plugin*>(_plugin);
+	PluginImpl* p = const_cast<PluginImpl*>(_plugin);
 	p->plug_label("transport");
 	assert(p->uri() == "ingen:transport_node");
 	p->name("Ingen Transport Node (BROKEN)");

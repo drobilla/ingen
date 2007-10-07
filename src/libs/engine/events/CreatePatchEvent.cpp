@@ -21,7 +21,7 @@
 #include "Responder.hpp"
 #include "Patch.hpp"
 #include "NodeImpl.hpp"
-#include "Plugin.hpp"
+#include "PluginImpl.hpp"
 #include "Engine.hpp"
 #include "ClientBroadcaster.hpp"
 #include "AudioDriver.hpp"

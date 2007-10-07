@@ -21,7 +21,7 @@
 #include "ThreadManager.hpp"
 #include "NodeImpl.hpp"
 #include "Patch.hpp"
-#include "Plugin.hpp"
+#include "PluginImpl.hpp"
 #include "Port.hpp"
 #include "Connection.hpp"
 #include "DuplexPort.hpp"
@@ -34,7 +34,7 @@ namespace Ingen {
 
 
 Patch::Patch(Engine& engine, const string& path, uint32_t poly, Patch* parent, SampleRate srate, size_t buffer_size, uint32_t internal_poly) 
-: NodeBase(new Plugin(Plugin::Patch, "ingen:patch"), path, poly, parent, srate, buffer_size),
+: NodeBase(new PluginImpl(Plugin::Patch, "ingen:patch"), path, poly, parent, srate, buffer_size),
   _engine(engine),
   _internal_poly(internal_poly),
   _compiled_patch(NULL),

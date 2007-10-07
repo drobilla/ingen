@@ -40,7 +40,7 @@ public:
 
 	typedef std::map<int, string> Bank;
 	
-	DSSINode(const Plugin* plugin, const string& name, bool polyphonic, Patch* parent, DSSI_Descriptor* descriptor, SampleRate srate, size_t buffer_size);
+	DSSINode(const PluginImpl* plugin, const string& name, bool polyphonic, Patch* parent, DSSI_Descriptor* descriptor, SampleRate srate, size_t buffer_size);
 	~DSSINode();
 	
 	bool instantiate();
@@ -61,9 +61,6 @@ public:
 	bool update_programs(bool send_events);
 	void set_default_program();
 	const std::map<int, Bank>& get_programs() const;
-
-	const Plugin* plugin() const        { return _plugin; }
-	void plugin(const Plugin* const pi) { _plugin = pi; }
 
 private:
 	bool has_midi_input() const;

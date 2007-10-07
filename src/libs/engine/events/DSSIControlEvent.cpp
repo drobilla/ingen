@@ -18,7 +18,7 @@
 #include "DSSIControlEvent.hpp"
 #include "Engine.hpp"
 #include "NodeImpl.hpp"
-#include "Plugin.hpp"
+#include "PluginImpl.hpp"
 #include "ObjectStore.hpp"
 
 namespace Ingen {

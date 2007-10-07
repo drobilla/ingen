@@ -32,7 +32,7 @@ namespace Ingen {
 
 class NodeImpl;
 class Port;
-class Plugin;
+class PluginImpl;
 class Patch;
 class Connection;
 using Shared::ClientInterface;
@@ -61,7 +61,7 @@ public:
 	// Error that isn't the direct result of a request
 	void send_error(const string& msg);
 
-	void send_plugins(const std::list<Plugin*>& plugin_list);
+	void send_plugins(const std::list<PluginImpl*>& plugin_list);
 	void send_patch(const Patch* const p, bool recursive);
 	void send_node(const NodeImpl* const node, bool recursive);
 	void send_port(const Port* port);
@@ -80,7 +80,7 @@ public:
 	void send_program_add(const string& node_path, int bank, int program, const string& name);
 	void send_program_remove(const string& node_path, int bank, int program);
 	
-	void send_plugins_to(ClientInterface*, const std::list<Plugin*>& plugin_list);
+	void send_plugins_to(ClientInterface*, const std::list<PluginImpl*>& plugin_list);
 
 private:
 	typedef std::map<string, ClientInterface*> Clients;

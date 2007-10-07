@@ -19,8 +19,10 @@
 #include "Engine.hpp"
 #include "NodeImpl.hpp"
 #include "ClientBroadcaster.hpp"
-#include "Plugin.hpp"
+#include "PluginImpl.hpp"
 #include "ObjectStore.hpp"
+
+using namespace std;
 
 namespace Ingen {
 

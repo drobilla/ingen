@@ -29,7 +29,7 @@ namespace Raul { template <typename T> class List; class Maid; }
 namespace Ingen {
 
 class Buffer;
-class Plugin;
+class PluginImpl;
 class Patch;
 class Port;
 
@@ -145,7 +145,7 @@ public:
 	/** Information about the Plugin this Node is an instance of.
 	 * Not the best name - not all nodes come from plugins (ie Patch)
 	 */
-	virtual const Plugin* plugin() const = 0;
+	virtual const PluginImpl* plugin() const = 0;
 
 	virtual void set_buffer_size(size_t size) = 0;
 };

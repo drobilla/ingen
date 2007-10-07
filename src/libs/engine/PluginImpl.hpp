@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef PLUGIN_H
-#define PLUGIN_H
+#ifndef PLUGINIMPL_H
+#define PLUGINIMPL_H
 
 #include CONFIG_H_PATH
 
@@ -30,8 +30,9 @@
 #include <slv2/slv2.h>
 #endif
 #include "types.hpp"
+#include "interface/Plugin.hpp"
 using std::string;
-using std::cerr; using std::endl;
+using Ingen::Shared::Plugin;
 
 namespace Ingen {
 
@@ -45,12 +46,10 @@ class NodeImpl;
  * FIXME: This whole thing is a filthy mess and needs a rewrite.  Probably
  * with derived classes for each plugin type.
  */
-class Plugin : boost::noncopyable
+class PluginImpl : public Ingen::Shared::Plugin, public boost::noncopyable
 {
 public:
-	enum Type { LV2, LADSPA, DSSI, Internal, Patch };
-	
-	Plugin(Type type, const string& uri)
+	PluginImpl(Type type, const string& uri)
 	: _type(type)
 	, _uri(uri)
 	, _id(0)
@@ -60,7 +59,7 @@ public:
 #endif
 	{}
 
-	Plugin(const Plugin* const copy) {
+	PluginImpl(const PluginImpl* const copy) {
 		// Copying only allowed for Internal plugins.  Bit of a hack, but
 		// allows the PluginInfo to be defined in the Node class which keeps
 		// things localized and convenient (FIXME?)
@@ -76,8 +75,8 @@ public:
 		_module = copy->_module;
 	}
 	
-	Type          type() const                 { return _type; }
-	void          type(Type t)                 { _type = t; }
+	Plugin::Type  type() const                 { return _type; }
+	void          type(Plugin::Type t)         { _type = t; }
 	const string& lib_path() const             { return _lib_path; }
 	void          lib_path(const string& s)    { _lib_path = s; _lib_name = _lib_path.substr(_lib_path.find_last_of("/")+1); }
 	string        lib_name() const             { return _lib_name; }
@@ -88,7 +87,7 @@ public:
 	void          name(const string& s)        { _name = s; }
 	unsigned long id() const                   { return _id; }
 	void          id(unsigned long i)          { _id = i; }
-	const string  uri() const                  { return _uri; }
+	const string& uri() const                  { return _uri; }
 	void          uri(const string& s)         { _uri = s; }
 	Glib::Module* module() const               { return _module; }
 	void          module(Glib::Module* module) { _module = module; }
@@ -123,12 +122,12 @@ public:
 	NodeImpl* instantiate(const string& name, bool polyphonic, Ingen::Patch* parent, SampleRate srate, size_t buffer_size);
 
 private:
-	Type   _type;
-	string _uri;        ///< LV2 only
-	string _lib_path;   ///< LADSPA/DSSI only
-	string _lib_name;   ///< LADSPA/DSSI only
-	string _plug_label; ///< LADSPA/DSSI only
-	string _name;       ///< LADSPA/DSSI only
+	Plugin::Type  _type;
+	string        _uri;        ///< LV2 only
+	string        _lib_path;   ///< LADSPA/DSSI only
+	string        _lib_name;   ///< LADSPA/DSSI only
+	string        _plug_label; ///< LADSPA/DSSI only
+	string        _name;       ///< LADSPA/DSSI only
 	unsigned long _id;  ///< LADSPA/DSSI only
 	
 	Glib::Module* _module;
@@ -141,5 +140,5 @@ private:
 
 } // namespace Ingen
 
-#endif // PLUGIN_H
+#endif // PLUGINIMPL_H
 

@@ -15,7 +15,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "Plugin.hpp"
+#include "PluginImpl.hpp"
 #include "MidiNoteNode.hpp"
 #include "MidiTriggerNode.hpp"
 #include "MidiControlNode.hpp"
@@ -24,7 +24,7 @@
 namespace Ingen {
 
 NodeImpl*
-Plugin::instantiate(const string& name, bool polyphonic, Ingen::Patch* parent, SampleRate srate, size_t buffer_size)
+PluginImpl::instantiate(const string& name, bool polyphonic, Ingen::Patch* parent, SampleRate srate, size_t buffer_size)
 {
 	assert(_type == Internal);
 

@@ -21,7 +21,7 @@
 #include "Engine.hpp"
 #include "NodeImpl.hpp"
 #include "ClientBroadcaster.hpp"
-#include "Plugin.hpp"
+#include "PluginImpl.hpp"
 #include "ObjectStore.hpp"
 using std::cout; using std::cerr; using std::endl;
 

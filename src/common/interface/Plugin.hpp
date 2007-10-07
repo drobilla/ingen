@@ -15,40 +15,27 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef REQUESTPLUGINSEVENT_H
-#define REQUESTPLUGINSEVENT_H
+#ifndef PLUGIN_H
+#define PLUGIN_H
 
 #include <string>
-#include <list>
-#include "QueuedEvent.hpp"
-using std::string;
 
 namespace Ingen {
-
-class PluginImpl;
-class Responder;
 namespace Shared {
-	class ClientInterface;
-} using Shared::ClientInterface;
 
 
-/** A request from a client to send notification of all objects (ie refresh).
- *
- * \ingroup engine
- */
-class RequestPluginsEvent : public QueuedEvent
+class Plugin
 {
 public:
-	RequestPluginsEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp);
+	enum Type { LV2, LADSPA, DSSI, Internal, Patch };
 
-	void pre_process();
-	void post_process();
-
-private:
-	std::list<PluginImpl*> _plugins;
+	virtual Type               type() const = 0;
+	virtual const std::string& uri()  const = 0;
+	virtual const std::string& name() const = 0;
 };
 
 
+} // namespace Shared
 } // namespace Ingen
 
-#endif // REQUESTPLUGINSEVENT_H
+#endif // PLUGIN_H

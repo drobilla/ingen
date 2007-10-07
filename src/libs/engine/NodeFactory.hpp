@@ -38,7 +38,7 @@ namespace Ingen {
 
 class NodeImpl;
 class Patch;
-class Plugin;
+class PluginImpl;
 
 
 /** Loads plugins and creates Nodes from them.
@@ -58,12 +58,12 @@ public:
 	~NodeFactory();
 
 	void  load_plugins();
-	NodeImpl* load_plugin(const Plugin* info, const string& name, bool polyphonic, Patch* parent);
+	NodeImpl* load_plugin(const PluginImpl* info, const string& name, bool polyphonic, Patch* parent);
 	
-	const list<Plugin*>& plugins() { return _plugins; }
+	const list<PluginImpl*>& plugins() { return _plugins; }
 	
-	const Plugin* plugin(const string& uri);
-	const Plugin* plugin(const string& type, const string& lib, const string& label); // DEPRECATED
+	const PluginImpl* plugin(const string& uri);
+	const PluginImpl* plugin(const string& type, const string& lib, const string& label); // DEPRECATED
 
 private:
 #ifdef HAVE_LADSPA
@@ -87,9 +87,9 @@ private:
 	
 	typedef std::map<std::string,Glib::Module*> Libraries;
 
-	Libraries     _libraries;
-	list<Plugin*> _internal_plugins;
-	list<Plugin*> _plugins; // FIXME: make a map
+	Libraries         _libraries;
+	list<PluginImpl*> _internal_plugins;
+	list<PluginImpl*> _plugins; // FIXME: make a map
 
 	Ingen::Shared::World* _world;
 	bool _has_loaded;

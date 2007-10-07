@@ -22,7 +22,7 @@
 #include <ladspa.h>
 #include "types.hpp"
 #include "NodeBase.hpp"
-#include "Plugin.hpp"
+#include "PluginImpl.hpp"
 
 namespace Ingen {
 
@@ -34,7 +34,14 @@ namespace Ingen {
 class LADSPANode : public NodeBase
 {
 public:
-	LADSPANode(const Plugin* plugin, const string& name, bool polyphonic, Patch* parent, const LADSPA_Descriptor* descriptor, SampleRate srate, size_t buffer_size);
+	LADSPANode(const PluginImpl*        plugin,
+	           const string&            name,
+	           bool                     polyphonic,
+	           Patch*                   parent,
+	           const LADSPA_Descriptor* descriptor,
+	           SampleRate               srate,
+	           size_t                   buffer_size);
+
 	virtual ~LADSPANode();
 
 	virtual bool instantiate();
@@ -46,9 +53,6 @@ public:
 	
 	void set_port_buffer(uint32_t voice, uint32_t port_num, Buffer* buf);
 
-	const Plugin* plugin() const  { return _plugin; }
-	void plugin(const Plugin* const pi) { _plugin = pi; }
-	
 protected:
 	//void get_port_vals(ulong port_index, PortInfo* info);
 	void get_port_limits(unsigned long port_index, Sample& default_value, Sample& lower_bound, Sample& upper_bound);

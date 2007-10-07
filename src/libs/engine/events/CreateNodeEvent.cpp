@@ -22,7 +22,7 @@
 #include "Responder.hpp"
 #include "Patch.hpp"
 #include "NodeImpl.hpp"
-#include "Plugin.hpp"
+#include "PluginImpl.hpp"
 #include "Engine.hpp"
 #include "Patch.hpp"
 #include "NodeFactory.hpp"
@@ -78,7 +78,7 @@ CreateNodeEvent::pre_process()
 
 	_patch = _engine.object_store()->find_patch(_path.parent());
 
-	const Plugin* plugin = (_plugin_uri != "")
+	const PluginImpl* plugin = (_plugin_uri != "")
 		? _engine.node_factory()->plugin(_plugin_uri)
 		: _engine.node_factory()->plugin(_plugin_type, _plugin_lib, _plugin_label);
 

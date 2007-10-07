@@ -25,7 +25,7 @@
 #include "util.hpp"
 #include "Patch.hpp"
 #include "NodeImpl.hpp"
-#include "Plugin.hpp"
+#include "PluginImpl.hpp"
 #include "Port.hpp"
 #include "Connection.hpp"
 #include "AudioDriver.hpp"
@@ -100,12 +100,12 @@ ClientBroadcaster::send_error(const string& msg)
 }
 
 void
-ClientBroadcaster::send_plugins_to(ClientInterface* client, const list<Plugin*>& plugin_list)
+ClientBroadcaster::send_plugins_to(ClientInterface* client, const list<PluginImpl*>& plugin_list)
 {
 	client->transfer_begin();
 
-	for (list<Plugin*>::const_iterator i = plugin_list.begin(); i != plugin_list.end(); ++i) {
-		const Plugin* const plugin = *i;
+	for (list<PluginImpl*>::const_iterator i = plugin_list.begin(); i != plugin_list.end(); ++i) {
+		const PluginImpl* const plugin = *i;
 		client->new_plugin(plugin->uri(), plugin->type_uri(), plugin->name());
 	}
 
@@ -114,7 +114,7 @@ ClientBroadcaster::send_plugins_to(ClientInterface* client, const list<Plugin*>&
 
 
 void
-ClientBroadcaster::send_plugins(const list<Plugin*>& plugin_list)
+ClientBroadcaster::send_plugins(const list<PluginImpl*>& plugin_list)
 {
 	for (Clients::const_iterator c = _clients.begin(); c != _clients.end(); ++c)
 		send_plugins_to((*c).second, plugin_list);

@@ -25,7 +25,7 @@
 #include "AudioBuffer.hpp"
 #include "InputPort.hpp"
 #include "OutputPort.hpp"
-#include "Plugin.hpp"
+#include "PluginImpl.hpp"
 #include "AudioDriver.hpp"
 #include "Patch.hpp"
 #include "ProcessContext.hpp"
@@ -38,7 +38,7 @@ namespace Ingen {
 
 
 MidiNoteNode::MidiNoteNode(const string& path, bool polyphonic, Patch* parent, SampleRate srate, size_t buffer_size)
-: NodeBase(new Plugin(Plugin::Internal, "ingen:note_node"), path, polyphonic, parent, srate, buffer_size),
+: NodeBase(new PluginImpl(Plugin::Internal, "ingen:note_node"), path, polyphonic, parent, srate, buffer_size),
   _voices(new Raul::Array<Voice>(_polyphony)),
   _prepared_voices(NULL),
 
@@ -67,7 +67,7 @@ MidiNoteNode::MidiNoteNode(const string& path, bool polyphonic, Patch* parent, S
 	_trig_port->set_metadata("ingen:default", 0.0f);
 	_ports->at(4) = _trig_port;
 	
-	Plugin* p = const_cast<Plugin*>(_plugin);
+	PluginImpl* p = const_cast<PluginImpl*>(_plugin);
 	p->plug_label("note_in");
 	assert(p->uri() == "ingen:note_node");
 	p->name("Ingen Note Node (MIDI, OSC)");

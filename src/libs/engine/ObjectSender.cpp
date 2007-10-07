@@ -77,7 +77,7 @@ ObjectSender::send_patch(ClientInterface* client, const Patch* patch, bool recur
 void
 ObjectSender::send_node(ClientInterface* client, const NodeImpl* node, bool recursive)
 {
-	const Plugin* const plugin = node->plugin();
+	const PluginImpl* const plugin = node->plugin();
 
 	assert(node->path().length() > 0);
 	
@@ -149,54 +149,6 @@ ObjectSender::send_port(ClientInterface* client, const Port* port)
 	}
 	
 	client->bundle_end();
-}
-
-
-void
-ObjectSender::send_plugins(ClientInterface* client, const list<Plugin*>& plugs)
-{
-/*
-	lo_timetag tt;
-	lo_timetag_now(&tt);
-	lo_bundle b = lo_bundle_new(tt);
-	lo_message m = lo_message_new();
-	list<lo_message> msgs;
-
-	lo_message_add_int32(m, plugs.size());
-	lo_bundle_add_message(b, "/om/num_plugins", m);
-	msgs.push_back(m);
-*/
-	for (list<Plugin*>::const_iterator j = plugs.begin(); j != plugs.end(); ++j) {
-		const Plugin* const p = *j;
-		client->new_plugin(p->uri(), p->type_uri(), p->name());
-	}
-/*
-		plugin = (*j);
-		m = lo_message_new();
-
-		lo_message_add_string(m, plugin->type_string());
-		lo_message_add_string(m, plugin->uri().c_str());
-		lo_message_add_string(m, plugin->name().c_str());
-		lo_bundle_add_message(b, "/om/plugin", m);
-		msgs.push_back(m);
-		if (lo_bundle_length(b) > 1024) {
-			// FIXME FIXME FIXME dirty, dirty cast
-			lo_send_bundle(((OSCClient*)client)->address(), b);
-			lo_bundle_free(b);
-			b = lo_bundle_new(tt);
-		}
-	}*/
-/*	
-	if (lo_bundle_length(b) > 0) {
-		// FIXME FIXME FIXME dirty, dirty cast
-		lo_send_bundle(((OSCClient*)client)->address(), b);
-		lo_bundle_free(b);
-	} else {
-		lo_bundle_free(b);
-	}
-	for (list<lo_bundle>::const_iterator i = msgs.begin(); i != msgs.end(); ++i)
-		lo_message_free(*i);
-*/
 }
 
 
