@@ -23,8 +23,9 @@
 #include <raul/SharedPtr.hpp>
 #include "client/PatchModel.hpp"
 #include "client/PluginModel.hpp"
+#include "interface/GraphObject.hpp"
+using namespace Ingen::Shared;
 using Ingen::Client::PatchModel;
-using Ingen::Client::MetadataMap;
 
 namespace Ingen {
 namespace GUI {
@@ -43,7 +44,7 @@ public:
 
 	void set_patch(SharedPtr<PatchModel> patch);
 	
-	void present(SharedPtr<PatchModel> patch, MetadataMap data);
+	void present(SharedPtr<PatchModel> patch, GraphObject::MetadataMap data);
 
 protected:
 	void on_show();
@@ -57,7 +58,7 @@ private:
 	void ok_clicked();
 	void cancel_clicked();
 
-	MetadataMap _initial_data;
+	GraphObject::MetadataMap _initial_data;
 
 	SharedPtr<PatchModel> _patch;
 	

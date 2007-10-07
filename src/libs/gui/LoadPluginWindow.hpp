@@ -15,7 +15,6 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-
 #ifndef LOADPLUGINWINDOW_H
 #define LOADPLUGINWINDOW_H
 
@@ -24,11 +23,12 @@
 #include <gtkmm.h>
 #include <raul/SharedPtr.hpp>
 #include <raul/Table.hpp>
+#include "interface/GraphObject.hpp"
 #include "client/PatchModel.hpp"
 #include "client/PluginModel.hpp"
 using Ingen::Client::PluginModel;
 using Ingen::Client::PatchModel;
-using Ingen::Client::MetadataMap;
+using namespace Ingen::Shared;
 
 namespace Ingen {
 namespace GUI {
@@ -96,7 +96,7 @@ public:
 	void add_plugin(SharedPtr<PluginModel> plugin);
 	bool has_shown() const { return _has_shown; }
 
-	void present(SharedPtr<PatchModel> patch, MetadataMap data);
+	void present(SharedPtr<PatchModel> patch, GraphObject::MetadataMap data);
 
 protected:
 	void on_show();
@@ -117,7 +117,7 @@ private:
 	void plugin_selection_changed();
 	string generate_module_name(int offset = 0);
 
-	MetadataMap _initial_data;
+	GraphObject::MetadataMap _initial_data;
 
 	SharedPtr<PatchModel> _patch;
 

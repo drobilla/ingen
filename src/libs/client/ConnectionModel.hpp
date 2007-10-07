@@ -47,8 +47,8 @@ public:
 	SharedPtr<PortModel> src_port() const { return _src_port; }
 	SharedPtr<PortModel> dst_port() const { return _dst_port; }
 
-	const Path& src_port_path() const;
-	const Path& dst_port_path() const;
+	const Path src_port_path() const;
+	const Path dst_port_path() const;
 	
 private:
 	friend class Store;

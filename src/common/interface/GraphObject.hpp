@@ -40,7 +40,7 @@ public:
 	typedef std::map<std::string, Raul::Atom> MetadataMap;
 
 	virtual const Raul::Path   path()       const = 0;
-	virtual const std::string& name()       const = 0;
+	virtual const std::string  name()       const = 0;
 	virtual const MetadataMap& metadata()   const = 0;
 	virtual bool               polyphonic() const = 0;
 };

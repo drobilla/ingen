@@ -21,10 +21,11 @@
 #include <libglademm/xml.h>
 #include <gtkmm.h>
 #include <raul/SharedPtr.hpp>
+#include "interface/GraphObject.hpp"
 #include "client/PluginModel.hpp"
 #include "client/PatchModel.hpp"
 using Ingen::Client::PatchModel;
-using Ingen::Client::MetadataMap;
+using namespace Ingen::Shared;
 
 namespace Ingen {
 namespace GUI {
@@ -50,7 +51,7 @@ public:
 	void set_replace() { _replace = true; }
 	void set_merge()   { _replace = false; }
 
-	void present(SharedPtr<PatchModel> patch, MetadataMap data);
+	void present(SharedPtr<PatchModel> patch, GraphObject::MetadataMap data);
 
 protected:
 	void on_show();
@@ -61,7 +62,7 @@ private:
 	void ok_clicked();
 	void cancel_clicked();
 
-	MetadataMap _initial_data;
+	GraphObject::MetadataMap _initial_data;
 
 	SharedPtr<PatchModel> _patch;
 	bool                   _replace;

@@ -506,7 +506,7 @@ PatchCanvas::menu_add_control(ControlType type)
 {
 	// FIXME: bundleify
 
-	MetadataMap data = get_initial_data();
+	GraphObject::MetadataMap data = get_initial_data();
 	float x = data["ingenuity:canvas-x"].get_float();
 	float y = data["ingenuity:canvas-y"].get_float();
 	
@@ -522,8 +522,8 @@ PatchCanvas::menu_add_port(const string& name, const string& type, bool is_outpu
 	// FIXME: bundleify
 	const Path& path = _patch->path().base() + generate_port_name(name);
 	App::instance().engine()->create_port(path, type, is_output);
-	MetadataMap data = get_initial_data();
-	for (MetadataMap::const_iterator i = data.begin(); i != data.end(); ++i)
+	GraphObject::MetadataMap data = get_initial_data();
+	for (GraphObject::MetadataMap::const_iterator i = data.begin(); i != data.end(); ++i)
 		App::instance().engine()->set_metadata(path, i->first, i->second);
 }
 
@@ -534,8 +534,8 @@ PatchCanvas::load_plugin(SharedPtr<PluginModel> plugin)
 	const Path& path = _patch->path().base() + plugin->default_node_name(_patch);
 	// FIXME: polyphony?
 	App::instance().engine()->create_node(path, plugin->uri(), false);
-	MetadataMap data = get_initial_data();
-	for (MetadataMap::const_iterator i = data.begin(); i != data.end(); ++i)
+	GraphObject::MetadataMap data = get_initial_data();
+	for (GraphObject::MetadataMap::const_iterator i = data.begin(); i != data.end(); ++i)
 		App::instance().engine()->set_metadata(path, i->first, i->second);
 }
 
@@ -553,10 +553,10 @@ PatchCanvas::get_new_module_location(double& x, double& y)
 }
 
 
-MetadataMap
+GraphObject::MetadataMap
 PatchCanvas::get_initial_data()
 {
-	MetadataMap result;
+	GraphObject::MetadataMap result;
 	
 	result["ingenuity:canvas-x"] = Atom((float)_last_click_x);
 	result["ingenuity:canvas-y"] = Atom((float)_last_click_y);

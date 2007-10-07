@@ -43,7 +43,7 @@ NewSubpatchWindow::NewSubpatchWindow(BaseObjectType* cobject, const Glib::RefPtr
 }
 
 void
-NewSubpatchWindow::present(SharedPtr<PatchModel> patch, MetadataMap data)
+NewSubpatchWindow::present(SharedPtr<PatchModel> patch, GraphObject::MetadataMap data)
 {
 	set_patch(patch);
 	_initial_data = data;
@@ -91,7 +91,7 @@ NewSubpatchWindow::ok_clicked()
 	const uint32_t poly = _poly_spinbutton->get_value_as_int();
 
 	App::instance().engine()->create_patch(path, poly);
-	for (MetadataMap::const_iterator i = _initial_data.begin(); i != _initial_data.end(); ++i)
+	for (GraphObject::MetadataMap::const_iterator i = _initial_data.begin(); i != _initial_data.end(); ++i)
 		App::instance().engine()->set_metadata(path, i->first, i->second);
 
 	App::instance().engine()->enable_patch(path);

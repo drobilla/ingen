@@ -25,9 +25,12 @@
 #include <raul/Path.hpp>
 #include <raul/Atom.hpp>
 #include <raul/Table.hpp>
+#include "interface/GraphObject.hpp"
 
 namespace Raul { class Atom; namespace RDF { class World; } }
 namespace Ingen { namespace Shared { class EngineInterface; } }
+
+using namespace Ingen::Shared;
 
 namespace Ingen {
 namespace Serialisation {
@@ -37,8 +40,6 @@ class Loader {
 public:
 	virtual ~Loader() {}
 	
-	typedef Raul::Table<std::string, Raul::Atom> Metadata;
-	
 	virtual bool
 	load(SharedPtr<Ingen::Shared::EngineInterface> engine,
 	     Raul::RDF::World*                         world,
@@ -46,7 +47,7 @@ public:
 	     boost::optional<Raul::Path>               parent,
 	     std::string                               patch_name,
 	     Glib::ustring                             patch_uri = "",
-	     Metadata                                  data = Metadata());
+	     GraphObject::MetadataMap                  data = GraphObject::MetadataMap());
 };
 
 

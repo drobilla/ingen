@@ -92,7 +92,7 @@ NodeModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeModel> n
 	else
 		ret = boost::shared_ptr<NodeModule>(new NodeModule(canvas, node));
 
-	for (MetadataMap::const_iterator m = node->metadata().begin(); m != node->metadata().end(); ++m)
+	for (GraphObject::MetadataMap::const_iterator m = node->metadata().begin(); m != node->metadata().end(); ++m)
 		ret->set_metadata(m->first, m->second);
 
 	for (PortModelList::const_iterator p = node->ports().begin(); p != node->ports().end(); ++p) {

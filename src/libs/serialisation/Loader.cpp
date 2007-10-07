@@ -41,12 +41,12 @@ namespace Serialisation {
  */
 bool
 Loader::load(SharedPtr<EngineInterface> engine,
-		Raul::RDF::World*          rdf_world,
-		const Glib::ustring&       document_uri,
-		boost::optional<Path>      parent,
-		string                     patch_name,
-		Glib::ustring              patch_uri,
-		Raul::Table<string, Atom>  data)
+		Raul::RDF::World*               rdf_world,
+		const Glib::ustring&            document_uri,
+		boost::optional<Path>           parent,
+		string                          patch_name,
+		Glib::ustring                   patch_uri,
+		GraphObject::MetadataMap        data)
 {
 	setlocale(LC_NUMERIC, "C");
 
@@ -67,7 +67,7 @@ Loader::load(SharedPtr<EngineInterface> engine,
 	size_t patch_poly = 1;
 	
 	/* Use parameter overridden polyphony, if given */
-	Raul::Table<string, Atom>::iterator poly_param = data.find("ingen:polyphony");
+	GraphObject::MetadataMap::iterator poly_param = data.find("ingen:polyphony");
 	if (poly_param != data.end() && poly_param->second.type() == Atom::INT) {
 		patch_poly = poly_param->second.get_int32();
 	
@@ -358,7 +358,7 @@ Loader::load(SharedPtr<EngineInterface> engine,
 
 
 	// Set passed metadata last to override any loaded values
-	for (Metadata::const_iterator i = data.begin(); i != data.end(); ++i)
+	for (GraphObject::MetadataMap::const_iterator i = data.begin(); i != data.end(); ++i)
 		engine->set_metadata(patch_path, i->first, i->second);
 
 

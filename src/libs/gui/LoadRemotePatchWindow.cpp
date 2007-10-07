@@ -59,7 +59,7 @@ LoadRemotePatchWindow::LoadRemotePatchWindow(BaseObjectType* cobject, const Glib
 
 
 void
-LoadRemotePatchWindow::present(SharedPtr<PatchModel> patch, MetadataMap data)
+LoadRemotePatchWindow::present(SharedPtr<PatchModel> patch, GraphObject::MetadataMap data)
 {
 	_liststore->clear();
 

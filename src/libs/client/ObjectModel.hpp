@@ -29,15 +29,14 @@
 #include <raul/Path.hpp>
 #include <raul/SharedPtr.hpp>
 #include <raul/Table.hpp>
+#include "interface/GraphObject.hpp"
 
-using std::string; using std::find;
+using std::string;
 using Raul::Atom;
 using Raul::Path;
 
 namespace Ingen {
 namespace Client {
-
-typedef Raul::Table<string, Atom> MetadataMap;
 
 
 /** Base class for all GraphObject models (NodeModel, PatchModel, PortModel).
@@ -51,7 +50,7 @@ typedef Raul::Table<string, Atom> MetadataMap;
  *
  * \ingroup IngenClient
  */
-class ObjectModel : boost::noncopyable
+class ObjectModel : virtual public Ingen::Shared::GraphObject, public boost::noncopyable
 {
 public:
 	virtual ~ObjectModel();
@@ -64,7 +63,8 @@ public:
 
 	const MetadataMap&     metadata()   const { return _metadata; }
 	const Children&        children()   const { return _children; }
-	inline const Path&     path()       const { return _path; }
+	const Path             path()       const { return _path; }
+	const string           name()       const { return _path.name(); }
 	SharedPtr<ObjectModel> parent()     const { return _parent; }
 	bool                   polyphonic() const { return _polyphonic; }
 

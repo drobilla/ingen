@@ -23,10 +23,11 @@
 #include <string>
 #include <sigc++/sigc++.h>
 #include <raul/Table.hpp>
-#include "ObjectModel.hpp"
-#include "PortModel.hpp"
 #include <raul/Path.hpp>
 #include <raul/SharedPtr.hpp>
+#include "interface/Node.hpp"
+#include "ObjectModel.hpp"
+#include "PortModel.hpp"
 #include "PluginModel.hpp"
 
 using std::string;
@@ -43,7 +44,7 @@ class Store;
  *
  * \ingroup IngenClient
  */
-class NodeModel : public ObjectModel
+class NodeModel : public ObjectModel, virtual public Ingen::Shared::Node
 {
 public:
 	virtual ~NodeModel();
@@ -52,10 +53,10 @@ public:
 	
 	const Table<int,Table<int,string> >& get_programs() const { return _banks; }
 
-	const string&                      plugin_uri()   const { return _plugin_uri; }
-	SharedPtr<PluginModel>             plugin()       const { return _plugin; }
-	int                                num_ports()    const { return _ports.size(); }
-	const PortModelList&               ports()        const { return _ports; }
+	const string&          plugin_uri()   const { return _plugin_uri; }
+	SharedPtr<PluginModel> plugin()       const { return _plugin; }
+	uint32_t               num_ports()    const { return _ports.size(); }
+	const PortModelList&   ports()        const { return _ports; }
 	
 	void port_value_range(SharedPtr<PortModel> port, float& min, float& max);
 	

@@ -56,7 +56,7 @@ public:
 	virtual void set_polyphonic(Raul::Maid& maid, bool p) { _polyphonic = p; }
 	
 	inline GraphObjectImpl* parent() const { return _parent; }
-	const string& name()   const { return _name; }
+	const string name()   const { return _name; }
 	
 	virtual void process(ProcessContext& context) = 0;
 

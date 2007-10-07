@@ -71,7 +71,7 @@ LoadSubpatchWindow::LoadSubpatchWindow(BaseObjectType* cobject, const Glib::RefP
 
 
 void
-LoadSubpatchWindow::present(SharedPtr<PatchModel> patch, MetadataMap data)
+LoadSubpatchWindow::present(SharedPtr<PatchModel> patch, GraphObject::MetadataMap data)
 {
 	set_patch(patch);
 	_initial_data = data;

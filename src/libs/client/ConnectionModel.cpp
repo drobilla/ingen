@@ -51,7 +51,7 @@ ConnectionModel::ConnectionModel(SharedPtr<PortModel> src, SharedPtr<PortModel> 
 }
 
 
-const Path&
+const Path
 ConnectionModel::src_port_path() const
 {
 	if (!_src_port)
@@ -61,7 +61,7 @@ ConnectionModel::src_port_path() const
 }
 
 
-const Path&
+const Path
 ConnectionModel::dst_port_path() const
 {
 	if (!_dst_port)

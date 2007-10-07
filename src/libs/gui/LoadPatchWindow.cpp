@@ -68,7 +68,7 @@ LoadPatchWindow::LoadPatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gno
 
 
 void
-LoadPatchWindow::present(SharedPtr<PatchModel> patch, MetadataMap data)
+LoadPatchWindow::present(SharedPtr<PatchModel> patch, GraphObject::MetadataMap data)
 {
 	set_patch(patch);
 	_initial_data = data;

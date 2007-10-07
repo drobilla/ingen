@@ -80,7 +80,7 @@ DeprecatedLoader::translate_load_path(const string& path)
  * Adds a namespace prefix for known keys, and ignores the rest.
  */
 void
-DeprecatedLoader::add_metadata(MetadataMap& data, string old_key, string value)
+DeprecatedLoader::add_metadata(GraphObject::MetadataMap& data, string old_key, string value)
 {
 	string key = "";
 	if (old_key == "module-x")
@@ -132,11 +132,11 @@ DeprecatedLoader::add_metadata(MetadataMap& data, string old_key, string value)
  * Returns the path of the newly created patch.
  */
 string
-DeprecatedLoader::load_patch(const Glib::ustring&  filename,
-                             boost::optional<Path> parent_path,
-                             string                name,
-                             MetadataMap           initial_data,
-                             bool                  existing)
+DeprecatedLoader::load_patch(const Glib::ustring&     filename,
+                             boost::optional<Path>    parent_path,
+                             string                   name,
+                             GraphObject::MetadataMap initial_data,
+                             bool                     existing)
 {
 	cerr << "[DeprecatedLoader] Loading patch " << filename << "" << endl;
 
@@ -147,7 +147,7 @@ DeprecatedLoader::load_patch(const Glib::ustring&  filename,
 	size_t poly = 0;
 	
 	/* Use parameter overridden polyphony, if given */
-	Raul::Table<string, Atom>::iterator poly_param = initial_data.find("ingen:polyphony");
+	GraphObject::MetadataMap::iterator poly_param = initial_data.find("ingen:polyphony");
 	if (poly_param != initial_data.end() && poly_param->second.type() == Atom::INT)
 		poly = poly_param->second;
 	
@@ -217,7 +217,7 @@ DeprecatedLoader::load_patch(const Glib::ustring&  filename,
 	// Create it, if we're not merging
 	if (!existing) {
 		_engine->create_patch(path, poly);
-		for (MetadataMap::const_iterator i = initial_data.begin(); i != initial_data.end(); ++i)
+		for (GraphObject::MetadataMap::const_iterator i = initial_data.begin(); i != initial_data.end(); ++i)
 			_engine->set_metadata(path, i->first, i->second);
 	}
 
@@ -301,7 +301,7 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 	string library_name; // deprecated
 	string plugin_label; // deprecated
 
-	MetadataMap initial_data;
+	GraphObject::MetadataMap initial_data;
 
 	while (cur != NULL) {
 		key = xmlNodeListGetString(doc, cur->xmlChildrenNode, 1);
@@ -462,7 +462,7 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 
 			path = new_path;
 
-			for (MetadataMap::const_iterator i = initial_data.begin(); i != initial_data.end(); ++i)
+			for (GraphObject::MetadataMap::const_iterator i = initial_data.begin(); i != initial_data.end(); ++i)
 				_engine->set_metadata(path, i->first, i->second);
 
 			return SharedPtr<NodeModel>();
@@ -486,7 +486,7 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 			else
 				_engine->create_node(path, plugin_type, library_name, plugin_label, polyphonic);
 		
-			for (MetadataMap::const_iterator i = initial_data.begin(); i != initial_data.end(); ++i)
+			for (GraphObject::MetadataMap::const_iterator i = initial_data.begin(); i != initial_data.end(); ++i)
 				_engine->set_metadata(path, i->first, i->second);
 
 			return true;
@@ -495,7 +495,7 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 	// Not deprecated
 	} else {
 		_engine->create_node(path, plugin_uri, polyphonic);
-		for (MetadataMap::const_iterator i = initial_data.begin(); i != initial_data.end(); ++i)
+		for (GraphObject::MetadataMap::const_iterator i = initial_data.begin(); i != initial_data.end(); ++i)
 			_engine->set_metadata(path, i->first, i->second);
 		return true;
 	}
@@ -514,7 +514,7 @@ DeprecatedLoader::load_subpatch(const Path& parent, xmlDocPtr doc, const xmlNode
 	string filename = "";
 	size_t poly     = 0;
 	
-	MetadataMap initial_data;
+	GraphObject::MetadataMap initial_data;
 
 	while (cur != NULL) {
 		key = xmlNodeListGetString(doc, cur->xmlChildrenNode, 1);

@@ -29,17 +29,18 @@
 #include <raul/Path.hpp>
 #include "client/ConnectionModel.hpp"
 #include "client/PatchModel.hpp"
+#include "interface/GraphObject.hpp"
 #include "NodeModule.hpp"
 
-using std::string;
 using namespace FlowCanvas;
+using namespace Ingen::Shared;
 
+using std::string;
 using FlowCanvas::Port;
 using Ingen::Client::ConnectionModel;
 using Ingen::Client::PatchModel;
 using Ingen::Client::NodeModel;
 using Ingen::Client::PortModel;
-using Ingen::Client::MetadataMap;
 
 namespace Ingen {
 namespace GUI {
@@ -99,7 +100,7 @@ private:
 		SLV2PluginClass plugin_class, SLV2PluginClasses classes);
 #endif
 	
-	MetadataMap get_initial_data();
+	GraphObject::MetadataMap get_initial_data();
 
 	bool canvas_event(GdkEvent* event);
 	

@@ -76,7 +76,7 @@ PatchPortModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<PortMod
 
 	ret->set_menu(ret->_patch_port->menu());
 	
-	for (MetadataMap::const_iterator m = port->metadata().begin(); m != port->metadata().end(); ++m)
+	for (GraphObject::MetadataMap::const_iterator m = port->metadata().begin(); m != port->metadata().end(); ++m)
 		ret->metadata_update(m->first, m->second);
 	
 	ret->resize();

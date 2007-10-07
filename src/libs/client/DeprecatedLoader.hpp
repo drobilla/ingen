@@ -28,10 +28,12 @@
 #include <raul/SharedPtr.hpp>
 #include <raul/Path.hpp>
 #include "interface/EngineInterface.hpp"
+#include "interface/GraphObject.hpp"
 #include "ObjectModel.hpp"
 
 using std::string;
 using Ingen::Shared::EngineInterface;
+using Ingen::Shared::GraphObject;
 
 namespace Ingen {
 namespace Client {
@@ -60,14 +62,14 @@ public:
 	
 	string find_file(const string& filename, const string& additional_path = "");
 	
-	string load_patch(const Glib::ustring&  filename,
-	                  boost::optional<Path> parent_path,
-	                  string                name,
-	                  MetadataMap           initial_data,
-	                  bool                  existing = false);
+	string load_patch(const Glib::ustring&     filename,
+	                  boost::optional<Path>    parent_path,
+	                  string                   name,
+	                  GraphObject::MetadataMap initial_data,
+	                  bool                     existing = false);
 
 private:
-	void add_metadata(MetadataMap& data, string key, string value);
+	void add_metadata(GraphObject::MetadataMap& data, string key, string value);
 
 	string nameify_if_invalid(const string& name);
 	string translate_load_path(const string& path);
