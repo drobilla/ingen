@@ -24,27 +24,31 @@ namespace Ingen
 
 /** A data type that can be stored in a Port.
  *
- * Eventually the goal is to be able to just have to create a new one of these
- * to support a new data type.
+ * This type refers to the type of the entire buffer, mirroring LV2,
+ * e.g. :AudioPort and :ControlPort both are really 32-bit floating point,
+ * but they are different port types.
  */
 class DataType {
 public:
 
 	enum Symbol {
 		UNKNOWN = 0,
-		FLOAT   = 1,
-		MIDI    = 2,
-		OSC     = 3
+		AUDIO   = 1,
+		CONTROL = 2,
+		MIDI    = 3,
+		OSC     = 4
 	};
 
 	DataType(const std::string& uri)
 	: _symbol(UNKNOWN)
 	{
-		if (uri == type_uris[FLOAT]) {
-			_symbol = FLOAT;
-		} else if (uri == type_uris[MIDI]) {
+		if (uri == type_uri(AUDIO)) {
+			_symbol = AUDIO;
+		} else if (uri == type_uri(CONTROL)) {
+			_symbol = CONTROL;
+		} else if (uri == type_uri(MIDI)) {
 			_symbol = MIDI;
-		} else if (uri == type_uris[OSC]) {
+		} else if (uri == type_uri(OSC)) {
 			_symbol = OSC;
 		}
 	}
@@ -53,8 +57,8 @@ public:
 	: _symbol(symbol)
 	{}
 
-	const char* const uri()    const { return type_uris[_symbol]; }
-	const Symbol&     symbol() const { return _symbol; }
+	const char*   uri()    const { return type_uri(_symbol); }
+	const Symbol& symbol() const { return _symbol; }
 
 	inline bool operator==(const Symbol& symbol) const { return (_symbol == symbol); }
 	inline bool operator!=(const Symbol& symbol) const { return (_symbol != symbol); }
@@ -64,8 +68,15 @@ public:
 private:
 	Symbol _symbol;
 
-	// Defined in Port.cpp for no good reason
-	static const char* const type_uris[4];
+	static inline const char* type_uri(unsigned symbol_num)  {
+		switch (symbol_num) {
+		case 0:  return "ingen:AudioPort";
+		case 1:  return "ingen:ControlPort";
+		case 2:  return "ingen:MidiPort";
+		case 3:  return "ingen:OSCPort";
+		default: return "";
+		}
+	}
 };
 
 
