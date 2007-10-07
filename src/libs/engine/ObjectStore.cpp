@@ -37,7 +37,7 @@ namespace Ingen {
 Patch*
 ObjectStore::find_patch(const Path& path) 
 {
-	GraphObject* const object = find_object(path);
+	GraphObjectImpl* const object = find_object(path);
 	return dynamic_cast<Patch*>(object);
 }
 
@@ -47,7 +47,7 @@ ObjectStore::find_patch(const Path& path)
 Node*
 ObjectStore::find_node(const Path& path) 
 {
-	GraphObject* const object = find_object(path);
+	GraphObjectImpl* const object = find_object(path);
 	return dynamic_cast<Node*>(object);
 }
 
@@ -57,14 +57,14 @@ ObjectStore::find_node(const Path& path)
 Port*
 ObjectStore::find_port(const Path& path) 
 {
-	GraphObject* const object = find_object(path);
+	GraphObjectImpl* const object = find_object(path);
 	return dynamic_cast<Port*>(object);
 }
 
 
 /** Find the Object at the given path.
  */
-GraphObject*
+GraphObjectImpl*
 ObjectStore::find_object(const Path& path)
 {
 	Objects::iterator i = _objects.find(path);
@@ -75,7 +75,7 @@ ObjectStore::find_object(const Path& path)
 /** Add an object to the store. Not realtime safe.
  */
 void
-ObjectStore::add(GraphObject* o)
+ObjectStore::add(GraphObjectImpl* o)
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
 
@@ -94,7 +94,7 @@ ObjectStore::add(GraphObject* o)
 /** Add a family of objects to the store. Not realtime safe.
  */
 void
-ObjectStore::add(const Table<Path,GraphObject*>& table)
+ObjectStore::add(const Table<Path,GraphObjectImpl*>& table)
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
 
@@ -102,7 +102,7 @@ ObjectStore::add(const Table<Path,GraphObject*>& table)
 	_objects.cram(table);
 	
 	cerr << "[ObjectStore] Adding Table:" << endl;
-	for (Table<Path,GraphObject*>::const_iterator i = table.begin(); i != table.end(); ++i) {
+	for (Table<Path,GraphObjectImpl*>::const_iterator i = table.begin(); i != table.end(); ++i) {
 		cerr << i->first << " = " << i->second->path() << endl;
 	}
 }
@@ -113,7 +113,7 @@ ObjectStore::add(const Table<Path,GraphObject*>& table)
  * Returned is a vector containing all descendants of the object removed
  * including the object itself, in lexicographically sorted order by Path.
  */
-Table<Path,GraphObject*>
+Table<Path,GraphObjectImpl*>
 ObjectStore::remove(const Path& path)
 {
 	return remove(_objects.find(path));
@@ -125,7 +125,7 @@ ObjectStore::remove(const Path& path)
  * Returned is a vector containing all descendants of the object removed
  * including the object itself, in lexicographically sorted order by Path.
  */
-Table<Path,GraphObject*>
+Table<Path,GraphObjectImpl*>
 ObjectStore::remove(Objects::iterator object)
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
@@ -133,8 +133,8 @@ ObjectStore::remove(Objects::iterator object)
 	if (object != _objects.end()) {
 		Objects::iterator descendants_end = _objects.find_descendants_end(object);
 		cout << "[ObjectStore] Removing " << object->first << " {" << endl;
-		Table<Path,GraphObject*> removed = _objects.yank(object, descendants_end);
-		for (Table<Path,GraphObject*>::iterator i = removed.begin(); i != removed.end(); ++i) {
+		Table<Path,GraphObjectImpl*> removed = _objects.yank(object, descendants_end);
+		for (Table<Path,GraphObjectImpl*>::iterator i = removed.begin(); i != removed.end(); ++i) {
 			cout << "\t" << i->first << endl;
 		}
 		cout << "}" << endl;
@@ -143,7 +143,7 @@ ObjectStore::remove(Objects::iterator object)
 
 	} else {
 		cerr << "[ObjectStore] WARNING: Removing " << object->first << " failed." << endl;
-		return Table<Path,GraphObject*>();
+		return Table<Path,GraphObjectImpl*>();
 	}
 }
 

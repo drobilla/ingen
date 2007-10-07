@@ -33,7 +33,7 @@ template<typename T> class TreeNode;
 
 namespace Ingen {
 
-class GraphObject;
+class GraphObjectImpl;
 class Patch;
 class Node;
 class Port;
@@ -61,7 +61,7 @@ public:
 private:
 	Path                           _path;
 	ObjectStore::Objects::iterator _store_iterator;
-	Table<Path,GraphObject*>       _removed_table;
+	Table<Path,GraphObjectImpl*>   _removed_table;
 	Node*                          _node;  ///< Same as _object if it is a Node, otherwise NULL
 	Port*                          _port;  ///< Same as _object if it is a Port, otherwise NULL
 	DriverPort*                    _driver_port;

@@ -22,7 +22,7 @@
 #include <string>
 #include <raul/Array.hpp>
 #include "types.hpp"
-#include "GraphObject.hpp"
+#include "GraphObjectImpl.hpp"
 #include "DataType.hpp"
 
 namespace Raul { class Maid; }
@@ -42,7 +42,7 @@ class ProcessContext;
  *
  * \ingroup engine
  */
-class Port : public GraphObject
+class Port : public GraphObjectImpl
 {
 public:
 	virtual ~Port();

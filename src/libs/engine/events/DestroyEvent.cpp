@@ -15,11 +15,12 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <raul/Maid.hpp>
+#include <raul/Path.hpp>
 #include "DestroyEvent.hpp"
 #include "Responder.hpp"
 #include "Engine.hpp"
 #include "Patch.hpp"
-#include "Tree.hpp"
 #include "NodeBase.hpp"
 #include "Plugin.hpp"
 #include "AudioDriver.hpp"
@@ -27,9 +28,7 @@
 #include "DisconnectNodeEvent.hpp"
 #include "DisconnectPortEvent.hpp"
 #include "ClientBroadcaster.hpp"
-#include <raul/Maid.hpp>
 #include "ObjectStore.hpp"
-#include <raul/Path.hpp>
 #include "QueuedEventSource.hpp"
 #include "Port.hpp"
 

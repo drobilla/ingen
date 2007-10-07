@@ -1,4 +1,4 @@
-SUBDIRS = tests events
+SUBDIRS = events
 
 MAINTAINERCLEANFILES = Makefile.in
 
@@ -42,8 +42,8 @@ libingen_engine_la_SOURCES = \
 	EventSink.cpp \
 	EventSink.hpp \
 	EventSource.hpp \
-	GraphObject.cpp \
-	GraphObject.hpp \
+	GraphObjectImpl.cpp \
+	GraphObjectImpl.hpp \
 	InputPort.cpp \
 	InputPort.hpp \
 	JackAudioDriver.cpp \
@@ -99,8 +99,6 @@ libingen_engine_la_SOURCES = \
 	ThreadManager.hpp \
 	TransportNode.cpp \
 	TransportNode.hpp \
-	Tree.hpp \
-	TreeImplementation.hpp \
 	engine.cpp \
 	engine.hpp \
 	events.hpp \
@@ -169,7 +167,6 @@ libingen_engine_la_SOURCES = \
 	events/SetPortValueQueuedEvent.hpp \
 	events/UnregisterClientEvent.cpp \
 	events/UnregisterClientEvent.hpp \
-	instantiations.cpp \
 	jack_compat.h \
 	tuning.hpp \
 	types.hpp \

@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef GRAPHOBJECT_H
-#define GRAPHOBJECT_H
+#ifndef GRAPHOBJECTIMPL_H
+#define GRAPHOBJECTIMPL_H
 
 #include <string>
 #include <map>
@@ -25,6 +25,7 @@
 #include <raul/Deletable.hpp>
 #include <raul/Path.hpp>
 #include <raul/Atom.hpp>
+#include "interface/GraphObject.hpp"
 #include "types.hpp"
 
 using Raul::Atom;
@@ -46,12 +47,12 @@ class ProcessContext;
  *
  * \ingroup engine
  */
-class GraphObject : public Raul::Deletable
+class GraphObjectImpl : public Ingen::Shared::GraphObject
 {
 public:
 	typedef std::map<string, Atom> MetadataMap;
 
-	GraphObject(GraphObject* parent, const string& name, bool polyphonic=false)
+	GraphObjectImpl(GraphObjectImpl* parent, const string& name, bool polyphonic=false)
 		: _parent(parent), _name(name), _polyphonic(polyphonic)
 	{
 		assert(parent == NULL || _name.length() > 0);
@@ -59,13 +60,13 @@ public:
 		assert(path().find("//") == string::npos);
 	}
 	
-	virtual ~GraphObject() {}
+	virtual ~GraphObjectImpl() {}
 	
 	bool         polyphonic() const                       { return _polyphonic; }
 	virtual void set_polyphonic(Raul::Maid& maid, bool p) { _polyphonic = p; }
 	
-	inline GraphObject*  parent() const { return _parent; }
-	inline const string& name()   const { return _name; }
+	inline GraphObjectImpl* parent() const { return _parent; }
+	inline const string&    name()   const { return _name; }
 	
 	virtual void process(ProcessContext& context) = 0;
 
@@ -101,9 +102,9 @@ public:
 	}
 
 protected:
-	GraphObject* _parent;
-	std::string  _name;
-	bool         _polyphonic;
+	GraphObjectImpl* _parent;
+	std::string      _name;
+	bool             _polyphonic;
 
 private:	
 	MetadataMap _metadata;
@@ -112,4 +113,4 @@ private:
 
 } // namespace Ingen
 
-#endif // GRAPHOBJECT_H
+#endif // GRAPHOBJECTIMPL_H

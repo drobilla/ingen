@@ -15,17 +15,16 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <raul/Maid.hpp>
+#include <raul/Path.hpp>
 #include "CreatePatchEvent.hpp"
 #include "Responder.hpp"
 #include "Patch.hpp"
 #include "Node.hpp"
-#include "Tree.hpp"
 #include "Plugin.hpp"
 #include "Engine.hpp"
-#include <raul/Maid.hpp>
 #include "ClientBroadcaster.hpp"
 #include "AudioDriver.hpp"
-#include <raul/Path.hpp>
 #include "ObjectStore.hpp"
 
 namespace Ingen {

@@ -21,7 +21,7 @@
 #include <string>
 #include <raul/Array.hpp>
 #include "types.hpp"
-#include "GraphObject.hpp"
+#include "GraphObjectImpl.hpp"
 
 namespace Raul { template <typename T> class List; class Maid; }
 
@@ -46,11 +46,11 @@ namespace Shared { class ClientInterface; }
  *
  * \ingroup engine
  */
-class Node : public GraphObject
+class Node : public GraphObjectImpl
 {
 public:
-	Node(GraphObject* parent, const std::string& name, bool poly)
-		: GraphObject(parent, name, poly)
+	Node(GraphObjectImpl* parent, const std::string& name, bool poly)
+		: GraphObjectImpl(parent, name, poly)
 	{}
 
 	virtual ~Node() {}

@@ -19,7 +19,7 @@
 #include <string>
 #include "Responder.hpp"
 #include "Engine.hpp"
-#include "GraphObject.hpp"
+#include "GraphObjectImpl.hpp"
 #include "ObjectStore.hpp"
 #include "interface/ClientInterface.hpp"
 #include "ClientBroadcaster.hpp"

@@ -25,7 +25,7 @@ using std::string;
 
 namespace Ingen {
 	
-class GraphObject;
+class GraphObjectImpl;
 namespace Shared {
 	class ClientInterface;
 } using Shared::ClientInterface;
@@ -47,7 +47,7 @@ private:
 	string           _path;
 	string           _key;
 	Raul::Atom       _value; 
-	GraphObject*     _object;
+	GraphObjectImpl* _object;
 };
 
 

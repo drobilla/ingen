@@ -22,7 +22,6 @@
 #include "Responder.hpp"
 #include "CreatePortEvent.hpp"
 #include "Patch.hpp"
-#include "Tree.hpp"
 #include "Plugin.hpp"
 #include "Engine.hpp"
 #include "Patch.hpp"

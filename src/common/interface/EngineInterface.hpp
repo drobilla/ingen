@@ -33,6 +33,8 @@ namespace Shared {
 /** The (only) interface clients use to communicate with the engine.
  *
  * Purely virtual (except for the destructor).
+ *
+ * \ingroup interface
  */
 class EngineInterface
 {

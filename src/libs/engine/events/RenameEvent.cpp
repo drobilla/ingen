@@ -23,7 +23,6 @@
 #include "Patch.hpp"
 #include "RenameEvent.hpp"
 #include "Responder.hpp"
-#include "Tree.hpp"
 #include "AudioDriver.hpp"
 #include "MidiDriver.hpp"
 
@@ -78,10 +77,10 @@ RenameEvent::pre_process()
 		return;
 	}
 
-	Table<Path,GraphObject*> removed = _engine.object_store()->remove(_store_iterator);
+	Table<Path,GraphObjectImpl*> removed = _engine.object_store()->remove(_store_iterator);
 	assert(removed.size() > 0);
 	
-	for (Table<Path,GraphObject*>::iterator i = removed.begin(); i != removed.end(); ++i) {
+	for (Table<Path,GraphObjectImpl*>::iterator i = removed.begin(); i != removed.end(); ++i) {
 		const Path& child_old_path = i->first;
 		assert(Path::descendant_comparator(_old_path, child_old_path));
 		

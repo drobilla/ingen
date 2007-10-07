@@ -26,7 +26,7 @@ using std::string;
 
 namespace Ingen {
 	
-class GraphObject;
+class GraphObjectImpl;
 namespace Shared { class ClientInterface; }
 using Shared::ClientInterface;
 
@@ -45,8 +45,8 @@ public:
 	void post_process();
 
 private:
-	string       _path;
-	GraphObject* _object;
+	const string     _path;
+	GraphObjectImpl* _object;
 };
 
 

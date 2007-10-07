@@ -30,7 +30,7 @@ template<typename T> class ListNode;
 
 namespace Ingen {
 
-class GraphObject;
+class GraphObjectImpl;
 class Patch;
 class Node;
 class Plugin;
@@ -38,7 +38,7 @@ class DisconnectNodeEvent;
 class DisconnectPortEvent;
 
 
-/** An event to change the name of an GraphObject.
+/** An event to change the name of an GraphObjectImpl.
  *
  * \ingroup engine
  */

@@ -37,7 +37,7 @@ const char* const DataType::type_uris[4] = { "UNKNOWN", "FLOAT", "MIDI", "OSC" }
 
 
 Port::Port(Node* const node, const string& name, uint32_t index, uint32_t poly, DataType type, size_t buffer_size)
-	: GraphObject(node, name, true)
+	: GraphObjectImpl(node, name, true)
 	, _index(index)
 	, _poly(poly)
 	, _buffer_size(buffer_size)

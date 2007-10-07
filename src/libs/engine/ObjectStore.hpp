@@ -29,7 +29,7 @@ namespace Ingen {
 class Patch;
 class Node;
 class Port;
-class GraphObject;
+class GraphObjectImpl;
 
 
 /** Storage for all GraphObjects (tree of GraphObject's sorted by path).
@@ -44,21 +44,21 @@ class GraphObject;
 class ObjectStore
 {
 public:
-	typedef Raul::PathTable<GraphObject*> Objects;
+	typedef Raul::PathTable<GraphObjectImpl*> Objects;
 
-	Patch*       find_patch(const Path& path);
-	Node*        find_node(const Path& path);
-	Port*        find_port(const Path& path);
-	GraphObject* find_object(const Path& path);
+	Patch*           find_patch(const Path& path);
+	Node*            find_node(const Path& path);
+	Port*            find_port(const Path& path);
+	GraphObjectImpl* find_object(const Path& path);
 	
 	Objects::iterator find(const Path& path) { return _objects.find(path); }
 	
-	void add(GraphObject* o);
-	void add(const Table<Path,GraphObject*>& family);
-	//void add(TreeNode<GraphObject*>* o);
+	void add(GraphObjectImpl* o);
+	void add(const Table<Path,GraphObjectImpl*>& family);
+	//void add(TreeNode<GraphObjectImpl*>* o);
 
-	Table<Path,GraphObject*> remove(const Path& path);
-	Table<Path,GraphObject*> remove(Objects::iterator i);
+	Table<Path,GraphObjectImpl*> remove(const Path& path);
+	Table<Path,GraphObjectImpl*> remove(Objects::iterator i);
 
 	const Objects& objects() const { return _objects; }
 	Objects&       objects()       { return _objects; }

@@ -26,7 +26,7 @@ using std::string;
 
 namespace Ingen {
 
-class GraphObject;
+class GraphObjectImpl;
 
 
 /** Delete all nodes from a patch.
@@ -43,9 +43,9 @@ public:
 	void post_process();
 
 private:
-	string       _path;
-	GraphObject* _object;
-	bool         _poly;
+	const string     _path;
+	GraphObjectImpl* _object;
+	bool             _poly;
 };
 
 

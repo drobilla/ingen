@@ -26,10 +26,10 @@ using std::string;
 
 namespace Ingen {
 
-class GraphObject;
+class GraphObjectImpl;
 
 
-/** An event to set a piece of metadata for an GraphObject.
+/** An event to set a piece of metadata for an GraphObjectImpl.
  *
  * \ingroup engine
  */
@@ -46,7 +46,7 @@ private:
 	string       _path;
 	string       _key;
 	Raul::Atom   _value;
-	GraphObject* _object;
+	GraphObjectImpl* _object;
 };
 
 

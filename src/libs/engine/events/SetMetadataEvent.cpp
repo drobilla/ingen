@@ -20,7 +20,7 @@
 #include "Responder.hpp"
 #include "Engine.hpp"
 #include "ClientBroadcaster.hpp"
-#include "GraphObject.hpp"
+#include "GraphObjectImpl.hpp"
 #include "ObjectStore.hpp"
 
 using std::string;

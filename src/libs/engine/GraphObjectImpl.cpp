@@ -15,7 +15,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "GraphObject.hpp"
+#include "GraphObjectImpl.hpp"
 #include "Patch.hpp"
 #include "ObjectStore.hpp"
 
@@ -23,7 +23,7 @@ namespace Ingen {
 
 
 Patch*
-GraphObject::parent_patch() const
+GraphObjectImpl::parent_patch() const
 {
 	return dynamic_cast<Patch*>((Node*)_parent);
 }

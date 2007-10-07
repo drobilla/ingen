@@ -15,16 +15,38 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-/** @file
- * Explicit template instantiations.
+#ifndef GRAPHOBJECT_H
+#define GRAPHOBJECT_H
+
+#include <string>
+#include <map>
+#include <raul/Deletable.hpp>
+#include <raul/Path.hpp>
+#include <raul/Atom.hpp>
+
+namespace Ingen {
+namespace Shared {
+
+
+/** An object on the audio graph - Patch, Node, Port, etc.
  *
- * Needed to avoid undefined references, because GCC doesn't automatically
- * instantiate templates (at least not well/completely).
+ * Purely virtual (except for the destructor).
+ *
+ * \ingroup interface
  */
+class GraphObject : public Raul::Deletable
+{
+public:
+	typedef std::map<std::string, Raul::Atom> MetadataMap;
 
-#include "Tree.hpp"
-#include "TreeImplementation.hpp"
-#include "GraphObject.hpp"
+	virtual const Raul::Path   path()       const = 0;
+	virtual const std::string& name()       const = 0;
+	virtual const MetadataMap& metadata()   const = 0;
+	virtual bool               polyphonic() const = 0;
+};
 
-template class Tree<Ingen::GraphObject*>;
 
+} // namespace Shared
+} // namespace Ingen
+
+#endif // GRAPHOBJECT_H
