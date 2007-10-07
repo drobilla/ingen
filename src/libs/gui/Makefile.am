@@ -46,10 +46,6 @@ libingen_gui_la_SOURCES = \
 	ControlGroups.hpp \
 	ControlPanel.cpp \
 	ControlPanel.hpp \
-	DSSIController.cpp \
-	DSSIController.hpp \
-	DSSIModule.cpp \
-	DSSIModule.hpp \
 	GladeFactory.cpp \
 	GladeFactory.hpp \
 	LoadPatchWindow.cpp \

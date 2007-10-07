@@ -51,8 +51,6 @@ public:
 
 	SharedPtr<PortModel> get_port(const string& port_name) const;
 	
-	const Table<int,Table<int,string> >& get_programs() const { return _banks; }
-
 	const string&          plugin_uri()   const { return _plugin_uri; }
 	SharedPtr<PluginModel> plugin()       const { return _plugin; }
 	uint32_t               num_ports()    const { return _ports.size(); }
@@ -84,7 +82,6 @@ protected:
 	PortModelList                   _ports;      ///< List of ports (not a Table to preserve order)
 	string                          _plugin_uri; ///< Plugin URI (if PluginModel is unknown)
 	SharedPtr<PluginModel>          _plugin;     ///< The plugin this node is an instance of
-	Table<int, Table<int, string> > _banks;      ///< DSSI banks
 };
 
 

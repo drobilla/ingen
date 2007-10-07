@@ -28,7 +28,6 @@
 #include "client/PatchModel.hpp"
 #include "client/PluginModel.hpp"
 using Ingen::Client::PatchModel;
-using Ingen::Client::MetadataMap;
 
 namespace Ingen {
 namespace GUI {

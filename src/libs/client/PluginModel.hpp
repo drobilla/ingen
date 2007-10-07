@@ -65,7 +65,6 @@ public:
 	/*const char* const type_string() const {
 		if (_type == LV2) return "LV2";
 		else if (_type == LADSPA) return "LADSPA";
-		else if (_type == DSSI) return "DSSI";
 		else if (_type == Internal) return "Internal";
 		else if (_type == Patch) return "Patch";
 		else return "";
@@ -74,7 +73,6 @@ public:
 	const char* const type_uri() const {
 		if (_type == LV2) return "ingen:LV2";
 		else if (_type == LADSPA) return "ingen:LADSPA";
-		else if (_type == DSSI) return "ingen:DSSI";
 		else if (_type == Internal) return "ingen:Internal";
 		else if (_type == Patch) return "ingen:Patch";
 		else return "";
@@ -84,7 +82,6 @@ public:
 	void set_type(const string& type_string) {
 		if (type_string == "LV2") _type = LV2;
 		else if (type_string == "LADSPA") _type = LADSPA;
-		else if (type_string == "DSSI") _type = DSSI;
 		else if (type_string == "Internal") _type = Internal;
 		else if (type_string == "Patch") _type = Patch;
 	}

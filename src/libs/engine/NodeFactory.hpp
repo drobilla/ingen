@@ -76,11 +76,6 @@ private:
 	NodeImpl* load_lv2_plugin(const string& plugin_uri, const string& name, bool polyphonic, Patch* parent, SampleRate srate, size_t buffer_size);
 #endif
 
-#ifdef HAVE_DSSI
-	void load_dssi_plugins();
-	NodeImpl* load_dssi_plugin(const string& plugin_uri, const string& name, bool polyphonic, Patch* parent, SampleRate srate, size_t buffer_size);
-#endif
-	
 	NodeImpl* load_internal_plugin(const string& plug_label, const string& name, bool polyphonic, Patch* parent, SampleRate srate, size_t buffer_size);
 
 	Glib::Module* library(const string& path);

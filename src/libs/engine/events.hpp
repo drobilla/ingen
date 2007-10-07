@@ -51,12 +51,5 @@
 #include "SetPortValueQueuedEvent.hpp"
 #include "UnregisterClientEvent.hpp"
 
-#ifdef HAVE_DSSI
-#include "DSSIConfigureEvent.hpp"
-#include "DSSIControlEvent.hpp"
-#include "DSSIProgramEvent.hpp"
-#include "DSSIUpdateEvent.hpp"
-#endif
-
 #endif // EVENTS_H
 

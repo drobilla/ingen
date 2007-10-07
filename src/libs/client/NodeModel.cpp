@@ -137,22 +137,6 @@ NodeModel::get_port(const string& port_name) const
 }
 
 
-void 
-NodeModel::add_program(int bank, int program, const string& name) 
-{
-	_banks[bank][program] = name; 
-}
-
-
-void
-NodeModel::remove_program(int bank, int program)
-{
-	_banks[bank].erase(program);
-	if (_banks[bank].size() == 0)
-		_banks.erase(bank);
-}
-
-
 void
 NodeModel::port_value_range(SharedPtr<PortModel> port, float& min, float& max)
 {

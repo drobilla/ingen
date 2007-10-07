@@ -124,10 +124,6 @@ private:
 	LO_HANDLER(request_plugins);
 	LO_HANDLER(request_all_objects);
 
-#ifdef HAVE_DSSI
-	LO_HANDLER(dssi);
-#endif
-
 	lo_server _server;
 };
 

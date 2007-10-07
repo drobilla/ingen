@@ -184,7 +184,7 @@ OSCClientSender::num_plugins(uint32_t num)
 
 /** \page client_osc_namespace
  * <p> \b /ingen/plugin - Notification of the existance of a plugin
- * \arg \b type (string) - Type if plugin ("LADSPA", "DSSI", or "Internal")
+ * \arg \b type (string) - Type if plugin ("LADSPA", "LV2", or "Internal")
  * \arg \b uri (string) - URI of the plugin (see engine namespace documentation) \n
  * \arg \b lib-name (string) - Name of shared library plugin resides in (ie "cmt.so")
  * \arg \b plug-label (string) - Label of the plugin (ie "dahdsr_iaoa")
@@ -302,7 +302,7 @@ OSCClientSender::new_port(const std::string& path,
  * \li This is a notification that the object is <em>externally</em> polyphonic,
  * i.e. its parent sees several independent buffers for a single port, one for each voice.
  * An object can be internally polyphonic but externally not if the voices are mixed down;
- * this is true of DSSI plugins and subpatches with mismatched polyphony. </p> \n \n
+ * this is true of some instruments and subpatches with mismatched polyphony. </p> \n \n
  */
 void
 OSCClientSender::polyphonic(const std::string& path,
@@ -472,8 +472,8 @@ OSCClientSender::port_activity(const std::string& port_path)
 
 /** \page client_osc_namespace
  * <p> \b /ingen/plugin - Notification of the existance of a plugin
- * \arg \b type (string) - Type of plugin ("LADSPA", "DSSI", or "Internal")
- * \arg \b uri (string) - Type of plugin ("LADSPA", "DSSI", or "Internal")
+ * \arg \b type (string) - Type of plugin ("LADSPA", "LV2", or "Internal")
+ * \arg \b uri (string) - Type of plugin ("LADSPA", "LV2", or "Internal")
  * \arg \b name (string) - Descriptive human-readable name of plugin (ie "ADSR Envelope")
  */
 void
@@ -547,7 +547,7 @@ OSCClientSender::object_renamed(const std::string& old_path, const std::string& 
 }
 
 
-/** Sends information about a program associated with a DSSI plugin node.
+/** Sends information about a program associated with a node.
  */
 void
 OSCClientSender::program_add(const std::string& node_path, uint32_t bank, uint32_t program, const std::string& name)

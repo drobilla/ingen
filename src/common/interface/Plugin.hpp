@@ -27,7 +27,7 @@ namespace Shared {
 class Plugin
 {
 public:
-	enum Type { LV2, LADSPA, DSSI, Internal, Patch };
+	enum Type { LV2, LADSPA, Internal, Patch };
 
 	virtual Type               type() const = 0;
 	virtual const std::string& uri()  const = 0;

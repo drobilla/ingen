@@ -95,7 +95,6 @@ public:
 	const char* type_string() const {
 		if (_type == LADSPA) return "LADSPA";
 		else if (_type == LV2) return "LV2";
-		else if (_type == DSSI) return "DSSI";
 		else if (_type == Internal) return "Internal";
 		else if (_type == Patch) return "Patch";
 		else return "";
@@ -108,7 +107,6 @@ public:
 	void set_type(const string& type_string) {
 		if (type_string == "LADSPA") _type = LADSPA;
 		else if (type_string == "LV2") _type = LV2;
-		else if (type_string == "DSSI") _type = DSSI;
 		else if (type_string == "Internal") _type = Internal;
 		else if (type_string == "Patch") _type = Patch;
 	}
@@ -124,11 +122,11 @@ public:
 private:
 	Plugin::Type  _type;
 	string        _uri;        ///< LV2 only
-	string        _lib_path;   ///< LADSPA/DSSI only
-	string        _lib_name;   ///< LADSPA/DSSI only
-	string        _plug_label; ///< LADSPA/DSSI only
-	string        _name;       ///< LADSPA/DSSI only
-	unsigned long _id;  ///< LADSPA/DSSI only
+	string        _lib_path;   ///< LADSPA only
+	string        _lib_name;   ///< LADSPA only
+	string        _plug_label; ///< LADSPA only
+	string        _name;       ///< LADSPA only
+	unsigned long _id;         ///< LADSPA only
 	
 	Glib::Module* _module;
 

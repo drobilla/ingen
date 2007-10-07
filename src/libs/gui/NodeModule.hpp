@@ -42,8 +42,7 @@ class Port;
 
 /** A module in a patch.
  *
- * This base class is extended for various types of modules - SubpatchModule,
- * DSSIModule, etc.
+ * This base class is extended for various types of modules.	
  *
  * \ingroup GUI
  */

@@ -13,14 +13,6 @@ EXTRA_DIST = \
 	CreatePatchEvent.hpp \
 	CreatePortEvent.cpp \
 	CreatePortEvent.hpp \
-	DSSIConfigureEvent.cpp \
-	DSSIConfigureEvent.hpp \
-	DSSIControlEvent.cpp \
-	DSSIControlEvent.hpp \
-	DSSIProgramEvent.cpp \
-	DSSIProgramEvent.hpp \
-	DSSIUpdateEvent.cpp \
-	DSSIUpdateEvent.hpp \
 	DeactivateEvent.cpp \
 	DeactivateEvent.hpp \
 	DestroyEvent.cpp \

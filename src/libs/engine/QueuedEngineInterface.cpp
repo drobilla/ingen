@@ -15,6 +15,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <iostream>
 #include "QueuedEngineInterface.hpp"
 #include CONFIG_H_PATH
 #include "QueuedEventSource.hpp"
@@ -292,9 +293,7 @@ QueuedEngineInterface::set_program(const string& node_path,
                                    uint32_t      bank,
                                    uint32_t      program)
 {
-#ifdef HAVE_DSSI
-	push_queued(new DSSIProgramEvent(_engine, _responder, now(), node_path, bank, program));
-#endif
+	std::cerr << "FIXME: set program" << std::endl;
 }
 
 

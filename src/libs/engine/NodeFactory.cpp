@@ -36,9 +36,6 @@
 #ifdef HAVE_LADSPA
 #include "LADSPANode.hpp"
 #endif
-#ifdef HAVE_DSSI
-#include "DSSINode.hpp"
-#endif
 
 using namespace std;
 
@@ -157,9 +154,6 @@ NodeFactory::load_plugins()
 #ifdef HAVE_SLV2
 		load_lv2_plugins();
 #endif
-#ifdef HAVE_DSSI
-		load_dssi_plugins();
-#endif
 #ifdef HAVE_LADSPA
 		load_ladspa_plugins();
 #endif
@@ -226,11 +220,6 @@ NodeFactory::load_plugin(const PluginImpl* a_plugin,
 #ifdef HAVE_SLV2
 	case Plugin::LV2:
 		r = load_lv2_plugin(plugin->uri(), name, polyphonic, parent, srate, buffer_size);
-		break;
-#endif
-#ifdef HAVE_DSSI
-	case Plugin::DSSI:
-		r = load_dssi_plugin(plugin->uri(), name, polyphonic, parent, srate, buffer_size);
 		break;
 #endif
 #ifdef HAVE_LADSPA
@@ -357,171 +346,6 @@ NodeFactory::load_lv2_plugin(const string& plug_uri,
 }
 
 #endif // HAVE_SLV2
-
-
-#ifdef HAVE_DSSI
-
-/** Loads information about all DSSI plugins into internal plugin database.
- */
-void
-NodeFactory::load_dssi_plugins()
-{
-	// FIXME: too much code duplication with load_ladspa_plugin
-	
-	char* env_dssi_path = getenv("DSSI_PATH");
-	string dssi_path;
-	if (!env_dssi_path) {
-	 	cerr << "[NodeFactory] DSSI_PATH is empty.  Assuming /usr/lib/dssi:/usr/local/lib/dssi:~/.dssi" << endl;
-		dssi_path = string("/usr/lib/dssi:/usr/local/lib/dssi:").append(
-			getenv("HOME")).append("/.dssi");
-	} else {
-		dssi_path = env_dssi_path;
-	}
-	
-	string dir;
-	string full_lib_name;
-	
-	// Yep, this should use an sstream alright..
-	while (dssi_path != "") {
-		dir = dssi_path.substr(0, dssi_path.find(':'));
-		if (dssi_path.find(':') != string::npos)
-			dssi_path = dssi_path.substr(dssi_path.find(':')+1);
-		else
-			dssi_path = "";
-	
-		DIR* pdir = opendir(dir.c_str());
-		if (pdir == NULL) {
-			//cerr << "[NodeFactory] Unreadable directory in DSSI_PATH: " << dir.c_str() << endl;
-			continue;
-		}
-
-		struct dirent* pfile;
-		while ((pfile = readdir(pdir))) {
-	
-			DSSI_Descriptor_Function df         = NULL;
-			DSSI_Descriptor*         descriptor = NULL;
-			
-			if (!strcmp(pfile->d_name, ".") || !strcmp(pfile->d_name, ".."))
-				continue;
-			
-			full_lib_name = dir +"/"+ pfile->d_name;
-			
-			Glib::Module* plugin_library = library(full_lib_name);
-			if (!plugin_library) {
-				cerr << "WARNING: Failed to load library " << full_lib_name << endl;
-				continue;
-			}
-	
-			bool found = plugin_library->get_symbol("dssi_descriptor", (void*&)df);
-			if (!found || !df) {
-				// Not a DSSI plugin library
-				cerr << "WARNING: Non-DSSI library found in DSSI path: " <<
-					full_lib_name << endl;
-				_libraries.erase(full_lib_name);
-				delete plugin_library;
-				continue;
-			}
-
-			const LADSPA_Descriptor* ld = NULL;
-			
-			for (unsigned long i=0; (descriptor = (DSSI_Descriptor*)df(i)) != NULL; ++i) {
-				ld = descriptor->LADSPA_Plugin;
-				assert(ld != NULL);
-				string uri = string("dssi:") + pfile->d_name +":"+ ld->Label;
-				PluginImpl* plugin = new PluginImpl(Plugin::DSSI, uri);
-				assert(plugin_library != NULL);
-				plugin->module(plugin_library);
-				plugin->lib_path(dir + "/" + pfile->d_name);
-				plugin->plug_label(ld->Label);
-				plugin->name(ld->Name);
-				plugin->type(Plugin::DSSI);
-				plugin->id(ld->UniqueID);
-
-				bool found = false;
-				for (list<PluginImpl*>::const_iterator i = _plugins.begin(); i != _plugins.end(); ++i) {
-					if ((*i)->uri() == plugin->uri()) {
-						cerr << "Warning: Duplicate DSSI plugin (" << plugin->lib_name() << ":"
-							<< plugin->plug_label() << ")" << " found.\nUsing " << (*i)->lib_path()
-							<< " version." << endl;
-						found = true;
-						break;
-					}
-				}
-				if (!found)
-					_plugins.push_back(plugin);
-				else
-					delete plugin;
-			}
-		}
-		closedir(pdir);
-	}
-}
-
-
-/** Creates a Node by instancing a DSSI plugin.
- */
-NodeImpl*
-NodeFactory::load_dssi_plugin(const string& uri,
-                              const string& name,
-	                          bool          polyphonic,
-	                          Patch*        parent,
-	                          SampleRate    srate,
-	                          size_t        buffer_size)
-{
-	// FIXME: awful code duplication here
-	
-	assert(uri != "");
-	assert(name != "");
-	
-	DSSI_Descriptor_Function df = NULL;
-	const PluginImpl* plugin = NULL;
-	NodeImpl* n = NULL;
-	
-	// Attempt to find the lib
-	list<PluginImpl*>::iterator i;
-	for (i = _plugins.begin(); i != _plugins.end(); ++i) {
-		plugin = (*i);
-		if (plugin->uri() == uri) break;
-	}
-
-	assert(plugin->id() != 0);
-
-	if (i == _plugins.end()) {
-		cerr << "Did not find DSSI plugin " << uri << " in database." << endl;
-		return NULL;
-	} else {
-		assert(plugin);
-		if (!plugin->module()->get_symbol("dssi_descriptor", (void*&)df)) {
-			cerr << "Looks like this isn't a DSSI plugin." << endl;
-			return NULL;
-		}
-	}
-
-	// Attempt to find the plugin in lib
-	DSSI_Descriptor* descriptor = NULL;
-	for (unsigned long i=0; (descriptor = (DSSI_Descriptor*)df(i)) != NULL; ++i) {
-		if (descriptor->LADSPA_Plugin != NULL
-				&& descriptor->LADSPA_Plugin->UniqueID == plugin->id()) {
-			break;
-		}
-	}
-	
-	if (descriptor == NULL) {
-		cerr << "Could not find plugin \"" << plugin->id() << "\" in " << plugin->lib_name() << endl;
-		return NULL;
-	}
-
-	n = new DSSINode(plugin, name, polyphonic, parent, descriptor, srate, buffer_size);
-
-	bool success = ((DSSINode*)n)->instantiate();
-	if (!success) {
-		delete n;
-		n = NULL;
-	}
-
-	return n;
-}
-#endif // HAVE_DSSI
 
 
 #ifdef HAVE_LADSPA

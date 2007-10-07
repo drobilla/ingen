@@ -116,13 +116,6 @@ OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t
 	lo_server_add_method(_server, "/ingen/request_plugins", "i", request_plugins_cb, this);
 	lo_server_add_method(_server, "/ingen/request_all_objects", "i", request_all_objects_cb, this);
 
-	
-	// DSSI support
-#ifdef HAVE_DSSI
-	// XXX WARNING: notice this is a catch-all
-	lo_server_add_method(_server, NULL, NULL, dssi_cb, this);
-#endif
-
 	lo_server_add_method(_server, NULL, NULL, unknown_cb, NULL);
 
 	Thread::set_name("OSC Pre-Processor");
@@ -956,43 +949,6 @@ OSCEngineReceiver::_request_all_objects_cb(const char* path, const char* types, 
 	request_all_objects();
 	return 0;
 }
-
-
-#ifdef HAVE_DSSI
-int
-OSCEngineReceiver::_dssi_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
-{
-#if 0
-	string node_path(path);
-
-	if (node_path.substr(0, 5) != "/dssi")
-		return 1;
-	
-	string command = node_path.substr(node_path.find_last_of("/")+1);
-	node_path = node_path.substr(5); // chop off leading "/dssi/"
-	node_path = node_path.substr(0, node_path.find_last_of("/")); // chop off command at end
-	
-	//cout << "DSSI:  Got message " << command << " for node " << node_path << endl;
-
-	QueuedEvent* ev = NULL;
-	
-	if (command == "update" && !strcmp(types, "s"))
-		ev = new DSSIUpdateEvent(NULL, node_path, &argv[0]->s);
-	else if (command == "control" && !strcmp(types, "if"))
-		ev = new DSSIControlEvent(NULL, node_path, argv[0]->i, argv[1]->f);
-	else if (command == "configure" && ~strcmp(types, "ss"))
-		ev = new DSSIConfigureEvent(NULL, node_path, &argv[0]->s, &argv[1]->s);
-	else if (command == "program" && ~strcmp(types, "ii"))
-		ev = new DSSIProgramEvent(NULL, node_path, argv[0]->i, argv[1]->i);
-
-	if (ev != NULL)
-		push(ev);
-	else
-		cerr << "[OSCEngineReceiver] Unknown DSSI command received: " << path << endl;
-#endif
-	return 0;
-}
-#endif
 
 
 //  Static Callbacks //

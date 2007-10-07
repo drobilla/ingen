@@ -56,7 +56,6 @@ LADSPANode::LADSPANode(const PluginImpl* plugin, const string& path, bool polyph
 bool
 LADSPANode::instantiate()
 {
-	// Note that a DSSI plugin might tack more on to the end of this
 	if (!_ports)
 		_ports = new Raul::Array<Port*>(_descriptor->PortCount);
 	

@@ -355,58 +355,6 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 			nm->add_port(pm);
 #endif
 
-		// DSSI hacks.  Stored in the patch files as special elements, but sent to
-		// the engine as normal metadata with specially formatted key/values.  Not
-		// sure if this is the best way to go about this, but it's the least damaging
-		// right now
-		} else if ((!xmlStrcmp(cur->name, (const xmlChar*)"dssi-program"))) {
-			cerr << "FIXME: load dssi program\n";
-#if 0
-			xmlNodePtr child = cur->xmlChildrenNode;
-			
-			string bank;
-			string program;
-			
-			while (child != NULL) {
-				key = xmlNodeListGetString(doc, child->xmlChildrenNode, 1);
-				
-				if ((!xmlStrcmp(child->name, (const xmlChar*)"bank"))) {
-					bank = (char*)key;
-				} else if ((!xmlStrcmp(child->name, (const xmlChar*)"program"))) {
-					program = (char*)key;
-				}
-				
-				xmlFree(key);
-				key = NULL; // Avoid a (possible?) double free
-				child = child->next;
-			}
-			nm->set_metadata("dssi-program", Atom(bank.append("/").append(program).c_str()));
-#endif
-			
-		} else if ((!xmlStrcmp(cur->name, (const xmlChar*)"dssi-configure"))) {
-			cerr << "FIXME: load dssi configure\n";
-#if 0
-			xmlNodePtr child = cur->xmlChildrenNode;
-			
-			string dssi_key;
-			string dssi_value;
-			
-			while (child != NULL) {
-				key = xmlNodeListGetString(doc, child->xmlChildrenNode, 1);
-				
-				if ((!xmlStrcmp(child->name, (const xmlChar*)"key"))) {
-					dssi_key = (char*)key;
-				} else if ((!xmlStrcmp(child->name, (const xmlChar*)"value"))) {
-					dssi_value = (char*)key;
-				}
-				
-				xmlFree(key);
-				key = NULL; // Avoid a (possible?) double free
-		
-				child = child->next;
-			}
-			nm->set_metadata(string("dssi-configure--").append(dssi_key), Atom(dssi_value.c_str()));
-#endif		
 		} else {  // Don't know what this tag is, add it as metadata
 			if (key)
 				add_metadata(initial_data, (const char*)cur->name, (const char*)key);

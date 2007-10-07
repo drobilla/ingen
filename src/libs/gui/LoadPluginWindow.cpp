@@ -224,8 +224,6 @@ LoadPluginWindow::set_plugins(const Raul::Table<string, SharedPtr<PluginModel> >
 			row[_plugins_columns._col_type] = "Internal";
 		else if (!strcmp(plugin->type_uri(), "ingen:LV2"))
 			row[_plugins_columns._col_type] = "LV2";
-		else if (!strcmp(plugin->type_uri(), "ingen:DSSI"))
-			row[_plugins_columns._col_type] = "DSSI";
 		else if (!strcmp(plugin->type_uri(), "ingen:LADSPA"))
 			row[_plugins_columns._col_type] = "LADSPA";
 		else

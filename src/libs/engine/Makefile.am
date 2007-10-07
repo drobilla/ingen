@@ -178,20 +178,6 @@ libingen_engine_la_SOURCES += \
 	LADSPANode.cpp
 endif
 
-if WITH_DSSI
-libingen_engine_la_SOURCES += \
-	DSSINode.hpp \
-	DSSINode.cpp \
-	events/DSSIConfigureEvent.cpp \
-	events/DSSIConfigureEvent.hpp \
-	events/DSSIControlEvent.cpp \
-	events/DSSIControlEvent.hpp \
-	events/DSSIProgramEvent.cpp \
-	events/DSSIProgramEvent.hpp \
-	events/DSSIUpdateEvent.cpp \
-	events/DSSIUpdateEvent.hpp
-endif
-
 if WITH_LV2
 libingen_engine_la_SOURCES += \
 	LV2Node.hpp \
