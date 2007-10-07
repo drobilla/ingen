@@ -26,7 +26,7 @@ using std::string;
 
 namespace Ingen {
 
-class Node;
+class NodeImpl;
 class ControlChangeEvent;
 
 
@@ -72,8 +72,8 @@ public:
 	void post_process();
 
 private:
-	string  _node_path;
-	Node*   _node;
+	const string _node_path;
+	NodeImpl*    _node;
 	
 	/// Event to respond with when learned
 	MidiLearnResponseEvent* _response_event;

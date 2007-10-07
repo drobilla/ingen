@@ -25,7 +25,7 @@
 #include "DisconnectionEvent.hpp"
 #include "Engine.hpp"
 #include "InputPort.hpp"
-#include "Node.hpp"
+#include "NodeImpl.hpp"
 #include "ObjectStore.hpp"
 #include "OutputPort.hpp"
 #include "Patch.hpp"
@@ -49,7 +49,7 @@ DisconnectNodeEvent::DisconnectNodeEvent(Engine& engine, SharedPtr<Responder> re
 
 /** Internal version, disconnects parent port as well (in the case of InputNode, etc).
  */
-DisconnectNodeEvent::DisconnectNodeEvent(Engine& engine, Node* node)
+DisconnectNodeEvent::DisconnectNodeEvent(Engine& engine, NodeImpl* node)
 : QueuedEvent(engine),
   _node_path(node->path()),
   _patch(node->parent_patch()),

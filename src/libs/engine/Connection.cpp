@@ -19,7 +19,7 @@
 #include <raul/Maid.hpp>
 #include "util.hpp"
 #include "Connection.hpp"
-#include "Node.hpp"
+#include "NodeImpl.hpp"
 #include "Port.hpp"
 #include "BufferFactory.hpp"
 #include "AudioBuffer.hpp"

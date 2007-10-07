@@ -25,7 +25,7 @@ namespace Ingen {
 Patch*
 GraphObjectImpl::parent_patch() const
 {
-	return dynamic_cast<Patch*>((Node*)_parent);
+	return dynamic_cast<Patch*>((NodeImpl*)_parent);
 }
 
 

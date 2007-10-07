@@ -24,7 +24,7 @@
 #include "NodeFactory.hpp"
 #include "util.hpp"
 #include "Patch.hpp"
-#include "Node.hpp"
+#include "NodeImpl.hpp"
 #include "Plugin.hpp"
 #include "Port.hpp"
 #include "Connection.hpp"

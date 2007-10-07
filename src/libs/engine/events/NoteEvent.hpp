@@ -25,7 +25,7 @@ using std::string;
 
 namespace Ingen {
 
-class Node;
+class NodeImpl;
 
 
 /** A note on event.
@@ -38,7 +38,7 @@ public:
 	NoteEvent(Engine&              engine,
 	          SharedPtr<Responder> responder,
 	          SampleCount          timestamp,
-	          Node*                node,
+	          NodeImpl*            node,
 			  bool                 on,
 	          uchar                note_num,
 	          uchar                velocity);
@@ -55,7 +55,7 @@ public:
 	void post_process();
 
 private:
-	Node*        _node;
+	NodeImpl*    _node;
 	const string _node_path;
 	bool         _on;
 	uchar        _note_num;

@@ -17,7 +17,7 @@
 
 #include "DSSIUpdateEvent.hpp"
 #include <iostream>
-#include "Node.hpp"
+#include "NodeImpl.hpp"
 #include "ObjectStore.hpp"
 #include "Engine.hpp"
 #include "DSSINode.hpp"
@@ -40,7 +40,7 @@ DSSIUpdateEvent::DSSIUpdateEvent(Engine& engine, SharedPtr<Responder> responder,
 void
 DSSIUpdateEvent::pre_process()
 {
-	Node* node = _engine.object_store()->find_node(_path);
+	NodeImpl* node = _engine.object_store()->find_node(_path);
 
 	if (node == NULL || node->plugin()->type() != Plugin::DSSI) {
 		_node = NULL;

@@ -34,7 +34,7 @@ namespace Ingen {
 
 
 NodeBase::NodeBase(const Plugin* plugin, const string& name, bool polyphonic, Patch* parent, SampleRate srate, size_t buffer_size)
-: Node(parent, name, polyphonic),
+: NodeImpl(parent, name, polyphonic),
   _plugin(plugin),
   _polyphony((polyphonic && parent) ? parent->internal_poly() : 1),
   _srate(srate),
@@ -45,8 +45,8 @@ NodeBase::NodeBase(const Plugin* plugin, const string& name, bool polyphonic, Pa
   _process_lock(0),
   _n_inputs_ready(0),
   _ports(NULL),
-  _providers(new Raul::List<Node*>()),
-  _dependants(new Raul::List<Node*>())
+  _providers(new Raul::List<NodeImpl*>()),
+  _dependants(new Raul::List<NodeImpl*>())
 {
 	assert(_plugin);
 	assert(_polyphony > 0);

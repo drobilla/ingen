@@ -15,11 +15,12 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef NODE_H
-#define NODE_H
+#ifndef NODEIMPL_H
+#define NODEIMPL_H
 
 #include <string>
 #include <raul/Array.hpp>
+#include "interface/Node.hpp"
 #include "types.hpp"
 #include "GraphObjectImpl.hpp"
 
@@ -31,8 +32,6 @@ class Buffer;
 class Plugin;
 class Patch;
 class Port;
-class OutputPort;
-namespace Shared { class ClientInterface; }
 
 
 /** A Node (or "module") in a Patch (which is also a Node).
@@ -46,14 +45,12 @@ namespace Shared { class ClientInterface; }
  *
  * \ingroup engine
  */
-class Node : public GraphObjectImpl
+class NodeImpl : public GraphObjectImpl, public Ingen::Shared::Node
 {
 public:
-	Node(GraphObjectImpl* parent, const std::string& name, bool poly)
+	NodeImpl(GraphObjectImpl* parent, const std::string& name, bool poly)
 		: GraphObjectImpl(parent, name, poly)
 	{}
-
-	virtual ~Node() {}
 
 	/** Activate this Node.
 	 *
@@ -133,14 +130,14 @@ public:
 	/** Nodes that are connected to this Node's inputs.
 	 * (This Node depends on them)
 	 */
-	virtual Raul::List<Node*>* providers()                     = 0;
-	virtual void               providers(Raul::List<Node*>* l) = 0;
+	virtual Raul::List<NodeImpl*>* providers()                         = 0;
+	virtual void                   providers(Raul::List<NodeImpl*>* l) = 0;
 	
 	/** Nodes are are connected to this Node's outputs.
 	 * (They depend on this Node)
 	 */
-	virtual Raul::List<Node*>* dependants()                     = 0;
-	virtual void               dependants(Raul::List<Node*>* l) = 0;
+	virtual Raul::List<NodeImpl*>* dependants()                         = 0;
+	virtual void                   dependants(Raul::List<NodeImpl*>* l) = 0;
 	
 	/** The Patch this Node belongs to. */
 	virtual Patch* parent_patch() const = 0;
@@ -156,4 +153,4 @@ public:
 
 } // namespace Ingen
 
-#endif // NODE_H
+#endif // NODEIMPL_H

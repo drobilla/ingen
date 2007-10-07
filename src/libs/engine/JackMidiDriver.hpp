@@ -26,7 +26,7 @@
 
 namespace Ingen {
 
-class Node;
+class NodeImpl;
 class SetPortValueEvent;
 class JackMidiDriver;
 class DuplexPort;

@@ -17,7 +17,7 @@
 
 #include <iostream>
 #include "ProcessSlave.hpp"
-#include "Node.hpp"
+#include "NodeImpl.hpp"
 #include "CompiledPatch.hpp"
 
 using namespace std;

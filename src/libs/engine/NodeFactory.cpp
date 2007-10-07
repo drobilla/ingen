@@ -60,7 +60,7 @@ NodeFactory::NodeFactory(Ingen::Shared::World* world)
 
 	Patch* parent = new Patch(*world->local_engine, "dummy", 1, NULL, 1, 1, 1);
 
-	Node* n = NULL;
+	NodeImpl* n = NULL;
 	n = new MidiNoteNode("foo", 1, parent, 1, 1);
 	_internal_plugins.push_back(new Plugin(n->plugin()));
 	delete n;
@@ -175,7 +175,7 @@ NodeFactory::load_plugins()
  *
  * Calls the load_*_plugin functions to actually do things, just a wrapper.
  */
-Node*
+NodeImpl*
 NodeFactory::load_plugin(const Plugin* a_plugin,
                          const string& name,
                          bool          polyphonic,
@@ -184,7 +184,7 @@ NodeFactory::load_plugin(const Plugin* a_plugin,
 	assert(parent != NULL);
 	assert(a_plugin);
 
-	Node* r = NULL;
+	NodeImpl* r = NULL;
 	Plugin* plugin = NULL;
 
 	const SampleRate srate       = parent->sample_rate();
@@ -251,7 +251,7 @@ NodeFactory::load_plugin(const Plugin* a_plugin,
 
 /** Loads an internal plugin.
  */
-Node*
+NodeImpl*
 NodeFactory::load_internal_plugin(const string& uri,
                                   const string& name,
                                   bool          polyphonic,
@@ -324,9 +324,9 @@ NodeFactory::load_lv2_plugins()
 
 
 /** Loads a LV2 plugin.
- * Returns 'poly' independant plugins as a Node*
+ * Returns 'poly' independant plugins as a NodeImpl*
  */
-Node*
+NodeImpl*
 NodeFactory::load_lv2_plugin(const string& plug_uri,
                              const string& node_name,
                              bool          polyphonic,
@@ -342,7 +342,7 @@ NodeFactory::load_lv2_plugin(const string& plug_uri,
 		if ((*i)->uri() == plug_uri) break;
 	}
 	
-	Node* n = NULL;
+	NodeImpl* n = NULL;
 
 	if (plugin) {
 		n = new LV2Node(plugin, node_name, polyphonic, parent, srate, buffer_size);
@@ -460,7 +460,7 @@ NodeFactory::load_dssi_plugins()
 
 /** Creates a Node by instancing a DSSI plugin.
  */
-Node*
+NodeImpl*
 NodeFactory::load_dssi_plugin(const string& uri,
                               const string& name,
 	                          bool          polyphonic,
@@ -475,7 +475,7 @@ NodeFactory::load_dssi_plugin(const string& uri,
 	
 	DSSI_Descriptor_Function df = NULL;
 	const Plugin* plugin = NULL;
-	Node* n = NULL;
+	NodeImpl* n = NULL;
 	
 	// Attempt to find the lib
 	list<Plugin*>::iterator i;
@@ -626,9 +626,9 @@ NodeFactory::load_ladspa_plugins()
 
 
 /** Loads a LADSPA plugin.
- * Returns 'poly' independant plugins as a Node*
+ * Returns 'poly' independant plugins as a NodeImpl*
  */
-Node*
+NodeImpl*
 NodeFactory::load_ladspa_plugin(const string& uri,
                                 const string& name,
                                 bool          polyphonic,
@@ -641,7 +641,7 @@ NodeFactory::load_ladspa_plugin(const string& uri,
 	
 	LADSPA_Descriptor_Function df = NULL;
 	Plugin* plugin = NULL;
-	Node* n = NULL;
+	NodeImpl* n = NULL;
 	
 	// Attempt to find the lib
 	list<Plugin*>::iterator i;

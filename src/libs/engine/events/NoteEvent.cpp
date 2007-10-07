@@ -19,7 +19,7 @@
 #include "Responder.hpp"
 #include "Engine.hpp"
 #include "ObjectStore.hpp"
-#include "Node.hpp"
+#include "NodeImpl.hpp"
 #include "MidiNoteNode.hpp"
 #include "MidiTriggerNode.hpp"
 #include "Plugin.hpp"
@@ -32,7 +32,7 @@ namespace Ingen {
  *
  * Used to be triggered by MIDI.  Not used anymore.
  */
-NoteEvent::NoteEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, Node* node, bool on, uchar note_num, uchar velocity)
+NoteEvent::NoteEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, NodeImpl* node, bool on, uchar note_num, uchar velocity)
 : Event(engine, responder, timestamp),
   _node(node),
   _on(on),

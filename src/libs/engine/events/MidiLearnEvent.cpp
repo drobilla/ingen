@@ -19,7 +19,7 @@
 #include "Responder.hpp"
 #include "Engine.hpp"
 #include "ObjectStore.hpp"
-#include "Node.hpp"
+#include "NodeImpl.hpp"
 #include "MidiControlNode.hpp"
 #include "ClientBroadcaster.hpp"
 #include "Plugin.hpp"

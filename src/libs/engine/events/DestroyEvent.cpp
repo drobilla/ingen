@@ -67,7 +67,7 @@ DestroyEvent::pre_process()
 	_store_iterator = _engine.object_store()->find(_path);
 
 	if (_store_iterator != _engine.object_store()->objects().end())  {
-		_node = dynamic_cast<Node*>(_store_iterator->second);
+		_node = dynamic_cast<NodeImpl*>(_store_iterator->second);
 
 		if (!_node)
 			_port = dynamic_cast<Port*>(_store_iterator->second);

@@ -15,6 +15,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <raul/Maid.hpp>
 #include "ClearPatchEvent.hpp"
 #include "Responder.hpp"
 #include "Engine.hpp"
@@ -23,8 +24,7 @@
 #include "util.hpp"
 #include "ObjectStore.hpp"
 #include "Port.hpp"
-#include <raul/Maid.hpp>
-#include "Node.hpp"
+#include "NodeImpl.hpp"
 #include "Connection.hpp"
 #include "QueuedEventSource.hpp"
 
@@ -85,7 +85,7 @@ ClearPatchEvent::post_process()
 {	
 	if (_patch != NULL) {
 		// Delete all nodes
-		for (Raul::List<Node*>::iterator i = _patch->nodes().begin(); i != _patch->nodes().end(); ++i) {
+		for (Raul::List<NodeImpl*>::iterator i = _patch->nodes().begin(); i != _patch->nodes().end(); ++i) {
 			(*i)->deactivate();
 			delete *i;
 		}

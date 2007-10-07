@@ -24,7 +24,7 @@
 #include "NodeFactory.hpp"
 #include "util.hpp"
 #include "Patch.hpp"
-#include "Node.hpp"
+#include "NodeImpl.hpp"
 #include "Plugin.hpp"
 #include "Port.hpp"
 #include "Connection.hpp"
@@ -122,7 +122,7 @@ ClientBroadcaster::send_plugins(const list<Plugin*>& plugin_list)
 
 
 void
-ClientBroadcaster::send_node(const Node* node, bool recursive)
+ClientBroadcaster::send_node(const NodeImpl* node, bool recursive)
 {
 	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
 		ObjectSender::send_node((*i).second, node, recursive);

@@ -18,7 +18,7 @@
 #include <raul/Path.hpp>
 #include "ClientBroadcaster.hpp"
 #include "Engine.hpp"
-#include "Node.hpp"
+#include "NodeImpl.hpp"
 #include "ObjectStore.hpp"
 #include "Patch.hpp"
 #include "RenameEvent.hpp"

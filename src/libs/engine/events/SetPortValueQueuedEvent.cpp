@@ -22,7 +22,7 @@
 #include "Port.hpp"
 #include "ClientBroadcaster.hpp"
 #include "Plugin.hpp"
-#include "Node.hpp"
+#include "NodeImpl.hpp"
 #include "ObjectStore.hpp"
 #include "AudioBuffer.hpp"
 #include "MidiBuffer.hpp"

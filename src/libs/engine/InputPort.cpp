@@ -22,7 +22,7 @@
 #include "AudioBuffer.hpp"
 #include "Connection.hpp"
 #include "OutputPort.hpp"
-#include "Node.hpp"
+#include "NodeImpl.hpp"
 #include "ProcessContext.hpp"
 #include "util.hpp"
 
@@ -31,7 +31,7 @@ using namespace std;
 namespace Ingen {
 
 
-InputPort::InputPort(Node* parent, const string& name, uint32_t index, uint32_t poly, DataType type, size_t buffer_size)
+InputPort::InputPort(NodeImpl* parent, const string& name, uint32_t index, uint32_t poly, DataType type, size_t buffer_size)
 	: Port(parent, name, index, poly, type, buffer_size)
 {
 }

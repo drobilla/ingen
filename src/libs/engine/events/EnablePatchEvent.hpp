@@ -28,7 +28,7 @@ namespace Raul { template <typename T> class Array; }
 namespace Ingen {
 
 class Patch;
-class Node;
+class NodeImpl;
 class CompiledPatch;
 
 

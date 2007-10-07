@@ -22,7 +22,7 @@
 #include <raul/Array.hpp>
 #include "Responder.hpp"
 #include "Engine.hpp"
-#include "Node.hpp"
+#include "NodeImpl.hpp"
 #include "Connection.hpp"
 #include "DisconnectionEvent.hpp"
 #include "Port.hpp"

@@ -17,7 +17,7 @@
 
 #include "DSSIControlEvent.hpp"
 #include "Engine.hpp"
-#include "Node.hpp"
+#include "NodeImpl.hpp"
 #include "Plugin.hpp"
 #include "ObjectStore.hpp"
 
@@ -37,7 +37,7 @@ DSSIControlEvent::DSSIControlEvent(Engine& engine, SharedPtr<Responder> responde
 void
 DSSIControlEvent::pre_process()
 {
-	Node* node = _engine.object_store()->find_node(_node_path);
+	NodeImpl* node = _engine.object_store()->find_node(_node_path);
 
 	if (node->plugin()->type() != Plugin::DSSI)
 		_node = NULL;

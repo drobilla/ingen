@@ -36,7 +36,7 @@ using std::cerr; using std::endl;
 namespace Ingen {
 
 class Patch;
-class Node;
+class NodeImpl;
 
 
 /** Representation of a plugin (of various types).
@@ -120,7 +120,7 @@ public:
 	void       slv2_plugin(SLV2Plugin p) { _slv2_plugin = p; }	
 #endif
 
-	Node* instantiate(const string& name, bool polyphonic, Ingen::Patch* parent, SampleRate srate, size_t buffer_size);
+	NodeImpl* instantiate(const string& name, bool polyphonic, Ingen::Patch* parent, SampleRate srate, size_t buffer_size);
 
 private:
 	Type   _type;

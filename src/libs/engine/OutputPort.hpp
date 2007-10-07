@@ -40,7 +40,7 @@ namespace Ingen {
 class OutputPort : virtual public Port
 {
 public:
-	OutputPort(Node*         parent,
+	OutputPort(NodeImpl*     parent,
 	           const string& name,
 	           uint32_t      index,
 	           uint32_t      poly,

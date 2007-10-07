@@ -19,7 +19,7 @@
 #include <cmath>
 #include <iostream>
 #include "ThreadManager.hpp"
-#include "Node.hpp"
+#include "NodeImpl.hpp"
 #include "Patch.hpp"
 #include "Plugin.hpp"
 #include "Port.hpp"
@@ -59,7 +59,7 @@ Patch::~Patch()
 		delete _connections.erase(i);
 	}
 
-	for (Raul::List<Node*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
+	for (Raul::List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
 		assert(!(*i)->activated());
 		delete (*i);
 		delete _nodes.erase(i);
@@ -74,7 +74,7 @@ Patch::activate()
 {
 	NodeBase::activate();
 
-	for (Raul::List<Node*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
+	for (Raul::List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		(*i)->activate();
 	
 	assert(_activated);
@@ -88,7 +88,7 @@ Patch::deactivate()
 	
 		NodeBase::deactivate();
 	
-		for (Raul::List<Node*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
+		for (Raul::List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
 			if ((*i)->activated())
 				(*i)->deactivate();
 			assert(!(*i)->activated());
@@ -113,7 +113,7 @@ Patch::prepare_internal_poly(uint32_t poly)
 {
 	/* TODO: ports?  internal/external poly? */
 
-	for (Raul::List<Node*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
+	for (Raul::List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		(*i)->prepare_poly(poly);
 	
 	for (Raul::List<Connection*>::iterator i = _connections.begin(); i != _connections.end(); ++i)
@@ -130,7 +130,7 @@ Patch::apply_internal_poly(Raul::Maid& maid, uint32_t poly)
 {
 	/* TODO: ports?  internal/external poly? */
 
-	for (Raul::List<Node*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
+	for (Raul::List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		(*i)->apply_poly(maid, poly);
 	
 	for (Raul::List<Connection*>::iterator i = _connections.begin(); i != _connections.end(); ++i)
@@ -248,7 +248,7 @@ Patch::set_buffer_size(size_t size)
 	NodeBase::set_buffer_size(size);
 	assert(_buffer_size == size);
 	
-	for (Raul::List<Node*>::iterator j = _nodes.begin(); j != _nodes.end(); ++j)
+	for (Raul::List<NodeImpl*>::iterator j = _nodes.begin(); j != _nodes.end(); ++j)
 		(*j)->set_buffer_size(size);
 }
 
@@ -257,7 +257,7 @@ Patch::set_buffer_size(size_t size)
 
 
 void
-Patch::add_node(Raul::ListNode<Node*>* ln)
+Patch::add_node(Raul::ListNode<NodeImpl*>* ln)
 {
 	assert(ln != NULL);
 	assert(ln->elem() != NULL);
@@ -271,10 +271,10 @@ Patch::add_node(Raul::ListNode<Node*>* ln)
 /** Remove a node.
  * Realtime Safe.  Preprocessing thread.
  */
-Raul::ListNode<Node*>*
+Raul::ListNode<NodeImpl*>*
 Patch::remove_node(const string& name)
 {
-	for (Raul::List<Node*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
+	for (Raul::List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		if ((*i)->name() == name)
 			return _nodes.erase(i);
 	
@@ -405,19 +405,19 @@ Patch::compile() const
 
 	CompiledPatch* const compiled_patch = new CompiledPatch();//_nodes.size());
 	
-	for (Raul::List<Node*>::const_iterator i = _nodes.begin(); i != _nodes.end(); ++i)
+	for (Raul::List<NodeImpl*>::const_iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		(*i)->traversed(false);
 		
-	for (Raul::List<Node*>::const_iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
-		Node* const node = (*i);
+	for (Raul::List<NodeImpl*>::const_iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
+		NodeImpl* const node = (*i);
 		// Either a sink or connected to our output ports:
 		if ( ( ! node->traversed()) && node->dependants()->size() == 0)
 			compile_recursive(node, compiled_patch);
 	}
 	
 	// Traverse any nodes we didn't hit yet
-	for (Raul::List<Node*>::const_iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
-		Node* const node = (*i);
+	for (Raul::List<NodeImpl*>::const_iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
+		NodeImpl* const node = (*i);
 		if ( ! node->traversed())
 			compile_recursive(node, compiled_patch);
 	}

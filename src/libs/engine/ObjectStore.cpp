@@ -22,7 +22,7 @@
 #include <raul/TableImpl.hpp>
 #include "ObjectStore.hpp"
 #include "Patch.hpp"
-#include "Node.hpp"
+#include "NodeImpl.hpp"
 #include "Port.hpp"
 #include "ThreadManager.hpp"
 
@@ -44,11 +44,11 @@ ObjectStore::find_patch(const Path& path)
 
 /** Find the Node at the given path.
  */
-Node*
+NodeImpl*
 ObjectStore::find_node(const Path& path) 
 {
 	GraphObjectImpl* const object = find_object(path);
-	return dynamic_cast<Node*>(object);
+	return dynamic_cast<NodeImpl*>(object);
 }
 
 
@@ -82,7 +82,7 @@ ObjectStore::add(GraphObjectImpl* o)
 	cerr << "[ObjectStore] Adding " << o->path() << endl;
 	_objects.insert(make_pair(o->path(), o));
 
-	Node* node = dynamic_cast<Node*>(o);
+	NodeImpl* node = dynamic_cast<NodeImpl*>(o);
 	if (node) {
 		for (uint32_t i=0; i < node->num_ports(); ++i) {
 			add(node->ports().at(i));

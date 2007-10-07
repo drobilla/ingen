@@ -23,7 +23,7 @@
 #include <cstdlib>
 #include <raul/Semaphore.hpp>
 #include <raul/AtomicInt.hpp>
-#include "Node.hpp"
+#include "NodeImpl.hpp"
 
 using std::string;
 
@@ -44,7 +44,7 @@ namespace Shared {
  *
  * \ingroup engine
  */
-class NodeBase : public Node
+class NodeBase : public NodeImpl
 {
 public:
 	NodeBase(const Plugin* plugin,
@@ -90,11 +90,11 @@ public:
 	 * The providers and dependants in CompiledNode are for that
 	 */
 
-	virtual Raul::List<Node*>* providers()                     { return _providers; }
-	virtual void               providers(Raul::List<Node*>* l) { _providers = l; }
+	Raul::List<NodeImpl*>* providers()                         { return _providers; }
+	void                   providers(Raul::List<NodeImpl*>* l) { _providers = l; }
 	
-	virtual Raul::List<Node*>* dependants()                     { return _dependants; }
-	virtual void               dependants(Raul::List<Node*>* l) { _dependants = l; }
+	Raul::List<NodeImpl*>* dependants()                         { return _dependants; }
+	void                   dependants(Raul::List<NodeImpl*>* l) { _dependants = l; }
 	
 	virtual const Plugin* plugin() const { return _plugin; }
 	
@@ -111,13 +111,13 @@ protected:
 	size_t     _buffer_size;
 	bool       _activated;
 	
-	bool                _traversed;      ///< Flag for process order algorithm
-	Raul::Semaphore     _input_ready;    ///< Parallelism: input ready signal
-	Raul::AtomicInt     _process_lock;   ///< Parallelism: Waiting on inputs 'lock'
-	Raul::AtomicInt     _n_inputs_ready; ///< Parallelism: # input ready signals this cycle
-	Raul::Array<Port*>* _ports;          ///< Access in audio thread only
-	Raul::List<Node*>*  _providers;      ///< Nodes connected to this one's input ports
-	Raul::List<Node*>*  _dependants;     ///< Nodes this one's output ports are connected to
+	bool                   _traversed;      ///< Flag for process order algorithm
+	Raul::Semaphore        _input_ready;    ///< Parallelism: input ready signal
+	Raul::AtomicInt        _process_lock;   ///< Parallelism: Waiting on inputs 'lock'
+	Raul::AtomicInt        _n_inputs_ready; ///< Parallelism: # input ready signals this cycle
+	Raul::Array<Port*>*    _ports;          ///< Access in audio thread only
+	Raul::List<NodeImpl*>* _providers;      ///< Nodes connected to this one's input ports
+	Raul::List<NodeImpl*>* _dependants;     ///< Nodes this one's output ports are connected to
 };
 
 

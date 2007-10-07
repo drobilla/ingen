@@ -32,7 +32,7 @@ namespace Ingen {
 
 class GraphObjectImpl;
 class Patch;
-class Node;
+class NodeImpl;
 class Plugin;
 class DisconnectNodeEvent;
 class DisconnectPortEvent;

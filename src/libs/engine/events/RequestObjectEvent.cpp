@@ -23,7 +23,7 @@
 #include "ObjectStore.hpp"
 #include "ClientBroadcaster.hpp"
 #include "Patch.hpp"
-#include "Node.hpp"
+#include "NodeImpl.hpp"
 #include "Port.hpp"
 #include "ObjectSender.hpp"
 #include "ProcessContext.hpp"
@@ -72,7 +72,7 @@ RequestObjectEvent::post_process()
 			return;
 		}
 		
-		Node* const node = dynamic_cast<Node*>(_object);
+		NodeImpl* const node = dynamic_cast<NodeImpl*>(_object);
 		if (node) {
 			_responder->respond_ok();
 			ObjectSender::send_node(_responder->client(), node, true);

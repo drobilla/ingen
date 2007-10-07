@@ -26,13 +26,11 @@
 #include "interface/ClientInterface.hpp"
 #include "types.hpp"
 
-using std::map;
 using std::string;
-using std::list;
 
 namespace Ingen {
 
-class Node;
+class NodeImpl;
 class Port;
 class Plugin;
 class Patch;
@@ -63,9 +61,9 @@ public:
 	// Error that isn't the direct result of a request
 	void send_error(const string& msg);
 
-	void send_plugins(const list<Plugin*>& plugin_list);
+	void send_plugins(const std::list<Plugin*>& plugin_list);
 	void send_patch(const Patch* const p, bool recursive);
-	void send_node(const Node* const node, bool recursive);
+	void send_node(const NodeImpl* const node, bool recursive);
 	void send_port(const Port* port);
 	void send_destroyed(const string& path);
 	void send_polyphonic(const string& path, bool polyphonic);
@@ -82,7 +80,7 @@ public:
 	void send_program_add(const string& node_path, int bank, int program, const string& name);
 	void send_program_remove(const string& node_path, int bank, int program);
 	
-	void send_plugins_to(ClientInterface*, const list<Plugin*>& plugin_list);
+	void send_plugins_to(ClientInterface*, const std::list<Plugin*>& plugin_list);
 
 private:
 	typedef std::map<string, ClientInterface*> Clients;

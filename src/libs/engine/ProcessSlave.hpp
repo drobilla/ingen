@@ -29,7 +29,7 @@
 
 namespace Ingen {
 
-class Node;
+class NodeImpl;
 class CompiledPatch;
 
 

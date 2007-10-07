@@ -48,7 +48,14 @@ class CompiledPatch;
 class Patch : public NodeBase
 {
 public:
-	Patch(Engine& engine, const string& name, uint32_t poly, Patch* parent, SampleRate srate, size_t buffer_size, uint32_t local_poly);
+	Patch(Engine&       engine,
+	      const string& name,
+	      uint32_t      poly,
+	      Patch*        parent,
+	      SampleRate    srate,
+	      size_t        buffer_size,
+	      uint32_t      local_poly);
+
 	virtual ~Patch();
 
 	void activate();
@@ -76,13 +83,13 @@ public:
 	
 	// Patch specific stuff not inherited from Node
 	
-	void                   add_node(Raul::ListNode<Node*>* tn);
-	Raul::ListNode<Node*>* remove_node(const string& name);
+	void                       add_node(Raul::ListNode<NodeImpl*>* tn);
+	Raul::ListNode<NodeImpl*>* remove_node(const string& name);
 
-	Raul::List<Node*>&       nodes()       { return _nodes; }
+	Raul::List<NodeImpl*>&   nodes()       { return _nodes; }
 	Raul::List<Connection*>& connections() { return _connections; }
 	
-	const Raul::List<Node*>&       nodes()       const { return _nodes; }
+	const Raul::List<NodeImpl*>&   nodes()       const { return _nodes; }
 	const Raul::List<Connection*>& connections() const { return _connections; }
 	
 	uint32_t num_ports() const;
@@ -112,7 +119,7 @@ public:
 	uint32_t internal_poly() const { return _internal_poly; }
 
 private:
-	inline void compile_recursive(Node* n, CompiledPatch* output) const;
+	inline void compile_recursive(NodeImpl* n, CompiledPatch* output) const;
 	void process_parallel(ProcessContext& context);
 	void process_single(ProcessContext& context);
 
@@ -122,7 +129,7 @@ private:
 	Raul::List<Connection*> _connections;    ///< Accessed in audio thread only
 	Raul::List<Port*>       _input_ports;    ///< Accessed in preprocessing thread only
 	Raul::List<Port*>       _output_ports;   ///< Accessed in preprocessing thread only
-	Raul::List<Node*>       _nodes;          ///< Accessed in preprocessing thread only
+	Raul::List<NodeImpl*>   _nodes;          ///< Accessed in preprocessing thread only
 	bool                    _process;
 };
 
@@ -130,7 +137,7 @@ private:
 
 /** Private helper for compile */
 inline void
-Patch::compile_recursive(Node* n, CompiledPatch* output) const
+Patch::compile_recursive(NodeImpl* n, CompiledPatch* output) const
 {
 	if (n == NULL || n->traversed())
 		return;
@@ -138,7 +145,7 @@ Patch::compile_recursive(Node* n, CompiledPatch* output) const
 	n->traversed(true);
 	assert(output != NULL);
 	
-	for (Raul::List<Node*>::iterator i = n->providers()->begin(); i != n->providers()->end(); ++i)
+	for (Raul::List<NodeImpl*>::iterator i = n->providers()->begin(); i != n->providers()->end(); ++i)
 		if ( ! (*i)->traversed() )
 			compile_recursive((*i), output);
 

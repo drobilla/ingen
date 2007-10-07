@@ -91,8 +91,8 @@ ConnectionEvent::pre_process()
 		return;
 	}
 
-	Node* const src_node = _src_port->parent_node();
-	Node* const dst_node = _dst_port->parent_node();
+	NodeImpl* const src_node = _src_port->parent_node();
+	NodeImpl* const dst_node = _dst_port->parent_node();
 
 	// Connection to a patch port from inside the patch
 	if (src_node->parent_patch() != dst_node->parent_patch()) {
@@ -133,8 +133,8 @@ ConnectionEvent::pre_process()
 	// Need to be careful about patch port connections here and adding a node's
 	// parent as a dependant/provider, or adding a patch as it's own provider...
 	if (src_node != dst_node && src_node->parent() == dst_node->parent()) {
-		dst_node->providers()->push_back(new Raul::ListNode<Node*>(src_node));
-		src_node->dependants()->push_back(new Raul::ListNode<Node*>(dst_node));
+		dst_node->providers()->push_back(new Raul::ListNode<NodeImpl*>(src_node));
+		src_node->dependants()->push_back(new Raul::ListNode<NodeImpl*>(dst_node));
 	}
 
 	if (_patch->enabled())

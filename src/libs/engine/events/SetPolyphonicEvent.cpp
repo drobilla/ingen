@@ -24,7 +24,7 @@
 #include "util.hpp"
 #include "ObjectStore.hpp"
 #include "Port.hpp"
-#include "Node.hpp"
+#include "NodeImpl.hpp"
 #include "Connection.hpp"
 #include "QueuedEventSource.hpp"
 

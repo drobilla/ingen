@@ -47,26 +47,16 @@ class ProcessContext;
  *
  * \ingroup engine
  */
-class GraphObjectImpl : public Ingen::Shared::GraphObject
+class GraphObjectImpl : virtual public Ingen::Shared::GraphObject
 {
 public:
-	typedef std::map<string, Atom> MetadataMap;
-
-	GraphObjectImpl(GraphObjectImpl* parent, const string& name, bool polyphonic=false)
-		: _parent(parent), _name(name), _polyphonic(polyphonic)
-	{
-		assert(parent == NULL || _name.length() > 0);
-		assert(_name.find("/") == string::npos);
-		assert(path().find("//") == string::npos);
-	}
-	
 	virtual ~GraphObjectImpl() {}
 	
 	bool         polyphonic() const                       { return _polyphonic; }
 	virtual void set_polyphonic(Raul::Maid& maid, bool p) { _polyphonic = p; }
 	
 	inline GraphObjectImpl* parent() const { return _parent; }
-	inline const string&    name()   const { return _name; }
+	const string& name()   const { return _name; }
 	
 	virtual void process(ProcessContext& context) = 0;
 
@@ -92,7 +82,7 @@ public:
 	virtual Patch* parent_patch() const;
 	
 	/** Path is dynamically generated from parent to ease renaming */
-	inline const Path path() const {
+	const Path path() const {
 		if (_parent == NULL)
 			return Path(string("/").append(_name));
 		else if (_parent->path() == "/")
@@ -102,6 +92,14 @@ public:
 	}
 
 protected:
+	GraphObjectImpl(GraphObjectImpl* parent, const string& name, bool polyphonic=false)
+		: _parent(parent), _name(name), _polyphonic(polyphonic)
+	{
+		assert(parent == NULL || _name.length() > 0);
+		assert(_name.find("/") == string::npos);
+		assert(path().find("//") == string::npos);
+	}
+	
 	GraphObjectImpl* _parent;
 	std::string      _name;
 	bool             _polyphonic;

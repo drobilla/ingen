@@ -27,7 +27,7 @@ using namespace Raul;
 namespace Ingen {
 
 class Patch;
-class Node;
+class NodeImpl;
 class Port;
 class GraphObjectImpl;
 
@@ -47,7 +47,7 @@ public:
 	typedef Raul::PathTable<GraphObjectImpl*> Objects;
 
 	Patch*           find_patch(const Path& path);
-	Node*            find_node(const Path& path);
+	NodeImpl*        find_node(const Path& path);
 	Port*            find_port(const Path& path);
 	GraphObjectImpl* find_object(const Path& path);
 	

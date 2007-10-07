@@ -35,7 +35,7 @@ namespace Ingen {
 
 class GraphObjectImpl;
 class Patch;
-class Node;
+class NodeImpl;
 class Port;
 class DriverPort;
 class Plugin;
@@ -62,10 +62,10 @@ private:
 	Path                           _path;
 	ObjectStore::Objects::iterator _store_iterator;
 	Table<Path,GraphObjectImpl*>   _removed_table;
-	Node*                          _node;  ///< Same as _object if it is a Node, otherwise NULL
+	NodeImpl*                      _node;  ///< Same as _object if it is a Node, otherwise NULL
 	Port*                          _port;  ///< Same as _object if it is a Port, otherwise NULL
 	DriverPort*                    _driver_port;
-	Raul::ListNode<Node*>*         _patch_node_listnode;
+	Raul::ListNode<NodeImpl*>*     _patch_node_listnode;
 	Raul::ListNode<Port*>*         _patch_port_listnode;
 	Raul::Array<Port*>*            _ports_array; ///< New (external) ports array for Patch
 	CompiledPatch*                 _compiled_patch;  ///< Patch's new process order

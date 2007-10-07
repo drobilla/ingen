@@ -19,7 +19,7 @@
 #include <raul/Array.hpp>
 #include <raul/Maid.hpp>
 #include "Port.hpp"
-#include "Node.hpp"
+#include "NodeImpl.hpp"
 #include "DataType.hpp"
 #include "AudioBuffer.hpp"
 #include "MidiBuffer.hpp"
@@ -36,7 +36,7 @@ namespace Ingen {
 const char* const DataType::type_uris[4] = { "UNKNOWN", "FLOAT", "MIDI", "OSC" };
 
 
-Port::Port(Node* const node, const string& name, uint32_t index, uint32_t poly, DataType type, size_t buffer_size)
+Port::Port(NodeImpl* const node, const string& name, uint32_t index, uint32_t poly, DataType type, size_t buffer_size)
 	: GraphObjectImpl(node, name, true)
 	, _index(index)
 	, _poly(poly)

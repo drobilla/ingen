@@ -103,8 +103,8 @@ DisconnectionEvent::pre_process()
 		return;
 	}
 	
-	Node* const src_node = _src_port->parent_node();
-	Node* const dst_node = _dst_port->parent_node();
+	NodeImpl* const src_node = _src_port->parent_node();
+	NodeImpl* const dst_node = _dst_port->parent_node();
 
 	// Connection to a patch port from inside the patch
 	if (src_node->parent_patch() != dst_node->parent_patch()) {
@@ -132,13 +132,13 @@ DisconnectionEvent::pre_process()
 		return;
 	}
 	
-	for (Raul::List<Node*>::iterator i = dst_node->providers()->begin(); i != dst_node->providers()->end(); ++i)
+	for (Raul::List<NodeImpl*>::iterator i = dst_node->providers()->begin(); i != dst_node->providers()->end(); ++i)
 		if ((*i) == src_node) {
 			delete dst_node->providers()->erase(i);
 			break;
 		}
 
-	for (Raul::List<Node*>::iterator i = src_node->dependants()->begin(); i != src_node->dependants()->end(); ++i)
+	for (Raul::List<NodeImpl*>::iterator i = src_node->dependants()->begin(); i != src_node->dependants()->end(); ++i)
 		if ((*i) == dst_node) {
 			delete src_node->dependants()->erase(i);
 			break;

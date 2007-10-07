@@ -17,7 +17,7 @@
 
 #include "DSSIConfigureEvent.hpp"
 #include "Engine.hpp"
-#include "Node.hpp"
+#include "NodeImpl.hpp"
 #include "ClientBroadcaster.hpp"
 #include "Plugin.hpp"
 #include "ObjectStore.hpp"
@@ -38,7 +38,7 @@ DSSIConfigureEvent::DSSIConfigureEvent(Engine& engine, SharedPtr<Responder> resp
 void
 DSSIConfigureEvent::pre_process()
 {
-	Node* node = _engine.object_store()->find_node(_node_path);
+	NodeImpl* node = _engine.object_store()->find_node(_node_path);
 
 	if (node != NULL && node->plugin()->type() == Plugin::DSSI) {
 		_node = (DSSINode*)node;

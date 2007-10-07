@@ -34,25 +34,25 @@ namespace Ingen {
 /** All information required about a node to execute it in an audio thread.
  */
 struct CompiledNode {
-	CompiledNode(Node* n, size_t np, List<Node*>* d)
+	CompiledNode(NodeImpl* n, size_t np, List<NodeImpl*>* d)
 		: _node(n), _n_providers(np)
 	{
 		// Copy to a vector for maximum iteration speed and cache optimization
 		// (Need to take a copy anyway)
 		
 		_dependants.reserve(d->size());
-		for (List<Node*>::iterator i = d->begin(); i != d->end(); ++i)
+		for (List<NodeImpl*>::iterator i = d->begin(); i != d->end(); ++i)
 			_dependants.push_back(*i);
 	}
 
-	Node*                node()        const { return _node; }
-	size_t               n_providers() const { return _n_providers; }
-	const vector<Node*>& dependants()  const { return _dependants; }
+	NodeImpl*                node()        const { return _node; }
+	size_t                   n_providers() const { return _n_providers; }
+	const vector<NodeImpl*>& dependants()  const { return _dependants; }
 
 private:
-	Node*         _node;
-	size_t        _n_providers; ///< Number of input ready signals to trigger run
-	vector<Node*> _dependants; ///< Nodes this one's output ports are connected to
+	NodeImpl*         _node;
+	size_t            _n_providers; ///< Number of input ready signals to trigger run
+	vector<NodeImpl*> _dependants; ///< Nodes this one's output ports are connected to
 };
 
 

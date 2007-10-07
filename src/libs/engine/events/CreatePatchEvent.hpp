@@ -30,7 +30,7 @@ template<typename T> class TreeNode;
 namespace Ingen {
 	
 class Patch;
-class Node;
+class NodeImpl;
 class Plugin;
 class CompiledPatch;
 

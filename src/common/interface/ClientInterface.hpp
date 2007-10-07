@@ -32,6 +32,8 @@ class EngineInterface;
 /** The (only) interface the engine uses to communicate with clients.
  *
  * Purely virtual (except for the destructor).
+ *
+ * \ingroup interface
  */
 class ClientInterface
 {

@@ -29,7 +29,7 @@ namespace Ingen {
 
 class DisconnectionEvent;
 class Patch;
-class Node;
+class NodeImpl;
 class Connection;
 class Port;
 class InputPort;
@@ -44,7 +44,7 @@ class DisconnectNodeEvent : public QueuedEvent
 {
 public:
 	DisconnectNodeEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& node_path);
-	DisconnectNodeEvent(Engine& engine, Node* node);
+	DisconnectNodeEvent(Engine& engine, NodeImpl* node);
 	~DisconnectNodeEvent();
 
 	void pre_process();
@@ -54,7 +54,7 @@ public:
 private:
 	Raul::Path                      _node_path;
 	Patch*                          _patch;
-	Node*                           _node;
+	NodeImpl*                       _node;
 	Raul::List<DisconnectionEvent*> _disconnection_events;
 	
 	bool _succeeded;

@@ -29,7 +29,7 @@ namespace Ingen {
 
 	
 class Patch;
-class Node;
+class NodeImpl;
 class Connection;
 class Port;
 class DisconnectionEvent;
@@ -58,7 +58,7 @@ private:
 	Port*                     _port;
 	Raul::List<DisconnectionEvent*> _disconnection_events;
 	
-	Raul::Array<Node*>* _process_order; // Patch's new process order
+	Raul::Array<NodeImpl*>* _process_order; // Patch's new process order
 	
 	bool _succeeded;
 	bool _lookup;

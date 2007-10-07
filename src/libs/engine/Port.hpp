@@ -29,7 +29,7 @@ namespace Raul { class Maid; }
 
 namespace Ingen {
 
-class Node;
+class NodeImpl;
 class Buffer;
 class ProcessContext;
 
@@ -48,7 +48,7 @@ public:
 	virtual ~Port();
 
 	/** A port's parent is always a node, so static cast should be safe */
-	Node* parent_node() const { return (Node*)_parent; }
+	NodeImpl* parent_node() const { return (NodeImpl*)_parent; }
 	
 	/** Prepare for a new (external) polyphony value.
 	 *
@@ -91,7 +91,7 @@ public:
 	bool broadcast()       { return _broadcast; }
 
 protected:
-	Port(Node* const node, const std::string& name, uint32_t index, uint32_t poly, DataType type, size_t buffer_size);
+	Port(NodeImpl* node, const std::string& name, uint32_t index, uint32_t poly, DataType type, size_t buffer_size);
 	
 	virtual void allocate_buffers();
 	virtual void connect_buffers();

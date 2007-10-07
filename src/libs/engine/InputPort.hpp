@@ -30,7 +30,7 @@ namespace Ingen {
 
 class Connection;
 class OutputPort;
-class Node;
+class NodeImpl;
 
 
 /** An input port on a Node or Patch.
@@ -47,7 +47,7 @@ class Node;
 class InputPort : virtual public Port
 {
 public:
-	InputPort(Node* parent, const string& name, uint32_t index, uint32_t poly, DataType type, size_t buffer_size);
+	InputPort(NodeImpl* parent, const string& name, uint32_t index, uint32_t poly, DataType type, size_t buffer_size);
 	virtual ~InputPort() {}
 	
 	void                         add_connection(Raul::ListNode<Connection*>* c);

@@ -32,7 +32,7 @@ namespace Raul {
 namespace Ingen {
 	
 class Patch;
-class Node;
+class NodeImpl;
 class Connection;
 class MidiMessage;
 class Port;

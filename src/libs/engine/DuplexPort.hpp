@@ -27,7 +27,7 @@
 
 namespace Ingen {
 	
-class Node;
+class NodeImpl;
 
 
 /** A duplex port (which is both an InputPort and an OutputPort)
@@ -41,7 +41,7 @@ class Node;
 class DuplexPort : public InputPort, public OutputPort
 {
 public:
-	DuplexPort(Node* parent, const std::string& name, uint32_t index, uint32_t poly, DataType type, size_t buffer_size, bool is_output);
+	DuplexPort(NodeImpl* parent, const std::string& name, uint32_t index, uint32_t poly, DataType type, size_t buffer_size, bool is_output);
 	virtual ~DuplexPort() {}
 
 	void pre_process(ProcessContext& context);

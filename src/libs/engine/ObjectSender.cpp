@@ -19,7 +19,7 @@
 #include "interface/ClientInterface.hpp"
 #include "ObjectStore.hpp"
 #include "Patch.hpp"
-#include "Node.hpp"
+#include "NodeImpl.hpp"
 #include "Port.hpp"
 #include "Port.hpp"
 #include "Connection.hpp"
@@ -38,10 +38,10 @@ ObjectSender::send_patch(ClientInterface* client, const Patch* patch, bool recur
 	if (recursive) {
 
 		// Send nodes
-		for (Raul::List<Node*>::const_iterator j = patch->nodes().begin();
+		for (Raul::List<NodeImpl*>::const_iterator j = patch->nodes().begin();
 				j != patch->nodes().end(); ++j) {
 
-			const Node* const node = (*j); 
+			const NodeImpl* const node = (*j); 
 			send_node(client, node, true);
 		}
 
@@ -75,7 +75,7 @@ ObjectSender::send_patch(ClientInterface* client, const Patch* patch, bool recur
 
 /** Sends a node or a patch */
 void
-ObjectSender::send_node(ClientInterface* client, const Node* node, bool recursive)
+ObjectSender::send_node(ClientInterface* client, const NodeImpl* node, bool recursive)
 {
 	const Plugin* const plugin = node->plugin();
 
