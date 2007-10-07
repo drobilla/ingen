@@ -27,11 +27,11 @@ namespace BufferFactory {
 Buffer*
 create(DataType type, size_t size)
 {
-	if (type == DataType::CONTROL || type == DataType::AUDIO)
+	if (type.is_control() || type.is_audio())
 		return new AudioBuffer(size);
-	else if (type == DataType::MIDI)
+	else if (type.is_midi())
 		return new MidiBuffer(size);
-	else if (type == DataType::OSC)
+	else if (type.is_osc())
 		return new OSCBuffer(size);
 	else
 		return NULL;

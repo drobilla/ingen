@@ -18,8 +18,8 @@
 #ifndef DATATYPE_H
 #define DATATYPE_H
 
-namespace Ingen
-{
+namespace Ingen {
+namespace Shared {
 
 
 /** A data type that can be stored in a Port.
@@ -30,7 +30,7 @@ namespace Ingen
  */
 class DataType {
 public:
-
+	
 	enum Symbol {
 		UNKNOWN = 0,
 		AUDIO   = 1,
@@ -38,9 +38,9 @@ public:
 		MIDI    = 3,
 		OSC     = 4
 	};
-
+	
 	DataType(const std::string& uri)
-	: _symbol(UNKNOWN)
+		: _symbol(UNKNOWN)
 	{
 		if (uri == type_uri(AUDIO)) {
 			_symbol = AUDIO;
@@ -54,20 +54,23 @@ public:
 	}
 
 	DataType(Symbol symbol)
-	: _symbol(symbol)
+		: _symbol(symbol)
 	{}
 
-	const char*   uri()    const { return type_uri(_symbol); }
-	const Symbol& symbol() const { return _symbol; }
+	inline const char* uri() const { return type_uri(_symbol); }
 
 	inline bool operator==(const Symbol& symbol) const { return (_symbol == symbol); }
 	inline bool operator!=(const Symbol& symbol) const { return (_symbol != symbol); }
 	inline bool operator==(const DataType& type) const { return (_symbol == type._symbol); }
 	inline bool operator!=(const DataType& type) const { return (_symbol != type._symbol); }
 
-private:
-	Symbol _symbol;
+	inline bool is_audio()   { return _symbol == AUDIO; }
+	inline bool is_control() { return _symbol == CONTROL; }
+	inline bool is_midi()    { return _symbol == MIDI; }
+	inline bool is_osc()     { return _symbol == OSC; }
 
+private:
+	
 	static inline const char* type_uri(unsigned symbol_num)  {
 		switch (symbol_num) {
 		case 1:  return "ingen:AudioPort";
@@ -77,10 +80,14 @@ private:
 		default: return "";
 		}
 	}
+
+	Symbol _symbol;
 };
 
 
-
+} // namespace Shared
 } // namespace Ingen
+
+using Ingen::Shared::DataType;
 
 #endif // DATATYPE_H

@@ -31,7 +31,7 @@ namespace Ingen {
 class Buffer : public boost::noncopyable, public Raul::Deletable
 {
 public:
-	Buffer(DataType type, size_t size)
+	Buffer(Shared::DataType type, size_t size)
 		: _type(type)
 		, _size(size)
 	{}
@@ -55,12 +55,12 @@ public:
 
 	virtual void resize(size_t size) { _size = size; }
 
-	DataType type() const { return _type; }
-	size_t   size() const { return _size; }
+	Shared::DataType type() const { return _type; }
+	size_t           size() const { return _size; }
 
 protected:
-	DataType _type;
-	size_t   _size;
+	Shared::DataType _type;
+	size_t           _size;
 };
 
 
