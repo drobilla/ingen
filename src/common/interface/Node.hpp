@@ -18,14 +18,13 @@
 #ifndef NODE_H
 #define NODE_H
 
-#include <string>
-#include <raul/Array.hpp>
 #include "GraphObject.hpp"
-
-namespace Raul { template <typename T> class List; class Maid; }
 
 namespace Ingen {
 namespace Shared {
+
+class Port;
+class Plugin;
 
 
 /** A Node (or "module") in a Patch (which is also a Node).
@@ -40,7 +39,9 @@ namespace Shared {
 class Node : public virtual GraphObject
 {
 public:
-	virtual uint32_t num_ports() const = 0;
+	virtual uint32_t      num_ports()          const = 0;
+	virtual Port*         port(uint32_t index) const = 0;
+	virtual const Plugin* plugin()             const = 0;
 };
 
 

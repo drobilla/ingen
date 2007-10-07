@@ -26,7 +26,7 @@ using std::string;
 
 namespace Ingen {
 	
-class Port;
+class PortImpl;
 namespace Shared { class ClientInterface; }
 using Shared::ClientInterface;
 
@@ -45,9 +45,9 @@ public:
 	void post_process();
 
 private:
-	string _port_path;
-	Port*  _port;
-	Sample _value;
+	const string _port_path;
+	PortImpl*    _port;
+	Sample       _value;
 };
 
 

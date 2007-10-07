@@ -30,12 +30,12 @@ namespace Ingen {
 
 
 DuplexPort::DuplexPort(NodeImpl* parent, const string& name, uint32_t index, uint32_t poly, DataType type, size_t buffer_size, bool is_output)
-	: Port(parent, name, index, poly, type, buffer_size)
+	: PortImpl(parent, name, index, poly, type, buffer_size)
 	, InputPort(parent, name, index, poly, type, buffer_size)
 	, OutputPort(parent, name, index, poly, type, buffer_size)
 	, _is_output(is_output)
 {
-	assert(Port::_parent == parent);
+	assert(PortImpl::_parent == parent);
 }
 
 

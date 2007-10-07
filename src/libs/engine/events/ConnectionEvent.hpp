@@ -35,7 +35,7 @@ class Patch;
 class NodeImpl;
 class Connection;
 class MidiMessage;
-class Port;
+class PortImpl;
 class Connection;
 class InputPort;
 class OutputPort;
@@ -71,8 +71,8 @@ private:
 	Raul::Path _dst_port_path;
 	
 	Patch*      _patch;
-	Port*       _src_port;
-	Port*       _dst_port;
+	PortImpl*   _src_port;
+	PortImpl*   _dst_port;
 	OutputPort* _src_output_port;
 	InputPort*  _dst_input_port;
 

@@ -26,7 +26,7 @@ using std::string;
 
 namespace Ingen {
 	
-class Port;
+class PortImpl;
 namespace Shared { class ClientInterface; }
 using Shared::ClientInterface;
 
@@ -50,7 +50,7 @@ public:
 
 private:
 	const std::string _port_path;
-	Port*             _port;
+	PortImpl*         _port;
 	bool              _enable;
 };
 

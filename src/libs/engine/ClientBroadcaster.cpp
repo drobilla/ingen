@@ -26,7 +26,7 @@
 #include "Patch.hpp"
 #include "NodeImpl.hpp"
 #include "PluginImpl.hpp"
-#include "Port.hpp"
+#include "PortImpl.hpp"
 #include "Connection.hpp"
 #include "AudioDriver.hpp"
 #include "ObjectSender.hpp"
@@ -130,7 +130,7 @@ ClientBroadcaster::send_node(const NodeImpl* node, bool recursive)
 
 
 void
-ClientBroadcaster::send_port(const Port* port)
+ClientBroadcaster::send_port(const PortImpl* port)
 {
 	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
 		ObjectSender::send_port((*i).second, port);

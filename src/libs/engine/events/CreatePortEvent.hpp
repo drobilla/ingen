@@ -21,7 +21,7 @@
 #include "QueuedEvent.hpp"
 #include <raul/Path.hpp>
 #include <raul/Array.hpp>
-#include "DataType.hpp"
+#include "interface/DataType.hpp"
 #include <string>
 using std::string;
 
@@ -30,8 +30,7 @@ template <typename T> class Array;
 namespace Ingen {
 
 class Patch;
-class Port;
-class Plugin;
+class PortImpl;
 class DriverPort;
 
 
@@ -49,15 +48,22 @@ public:
 	void post_process();
 
 private:
-	Raul::Path          _path;
-	string              _type;
-	bool                _is_output;
-	DataType            _data_type;
-	Patch*              _patch;
-	Port*               _patch_port;
-	Raul::Array<Port*>* _ports_array; ///< New (external) ports array for Patch
-	DriverPort*         _driver_port; ///< Driver (eg Jack) port if this is a toplevel port
-	bool                _succeeded;
+	
+	enum ErrorType { 
+		NO_ERROR,
+		UNKNOWN_TYPE
+	};
+
+	ErrorType               _error;
+	Raul::Path              _path;
+	string                  _type;
+	bool                    _is_output;
+	DataType                _data_type;
+	Patch*                  _patch;
+	PortImpl*               _patch_port;
+	Raul::Array<PortImpl*>* _ports_array; ///< New (external) ports array for Patch
+	DriverPort*             _driver_port; ///< Driver (eg Jack) port if this is a toplevel port
+	bool                    _succeeded;
 };
 
 

@@ -126,7 +126,7 @@ LV2Node::instantiate()
 	uint32_t num_ports = slv2_plugin_get_num_ports(_lv2_plugin);
 	assert(num_ports > 0);
 
-	_ports = new Raul::Array<Port*>(num_ports, NULL);
+	_ports = new Raul::Array<PortImpl*>(num_ports, NULL);
 	
 	_instances = new Raul::Array<SLV2Instance>(_polyphony, NULL);
 	
@@ -143,7 +143,7 @@ LV2Node::instantiate()
 	string port_name;
 	string port_path;
 	
-	Port* port = NULL;
+	PortImpl* port = NULL;
 	
 	for (uint32_t j=0; j < num_ports; ++j) {
 		SLV2Port id = slv2_plugin_get_port_by_index(_lv2_plugin, j);
@@ -167,12 +167,13 @@ LV2Node::instantiate()
 		DataType data_type = DataType::UNKNOWN;
 		switch (port_type) {
 		case SLV2_PORT_DATA_TYPE_CONTROL:
+			data_type = DataType::CONTROL; break;
 		case SLV2_PORT_DATA_TYPE_AUDIO:
-			data_type = DataType::FLOAT; break;
+			data_type = DataType::AUDIO; break;
 		case SLV2_PORT_DATA_TYPE_MIDI:
 			data_type = DataType::MIDI; break;
 		case SLV2_PORT_DATA_TYPE_OSC:
-			data_type = DataType::OSC;
+			data_type = DataType::OSC; break;
 		default:
 			break;
 		}
@@ -217,14 +218,14 @@ LV2Node::activate()
 
 	for (uint32_t i=0; i < _polyphony; ++i) {
 		for (unsigned long j=0; j < num_ports(); ++j) {
-			Port* const port = _ports->at(j);
+			PortImpl* const port = _ports->at(j);
 			set_port_buffer(i, j, port->buffer(i));
-			if (port->type() == DataType::FLOAT && port->buffer_size() == 1) {
+			if (port->type() == DataType::CONTROL) {
 				((AudioBuffer*)port->buffer(i))->set(
 					slv2_port_get_default_value(_lv2_plugin,
 							slv2_plugin_get_port_by_index(_lv2_plugin, j)),
 					0);
-			} else if (port->type() == DataType::FLOAT) {
+			} else if (port->type() == DataType::AUDIO) {
 				((AudioBuffer*)port->buffer(i))->set(0.0f, 0);
 			}
 		}

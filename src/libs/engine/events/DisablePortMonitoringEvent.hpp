@@ -26,7 +26,7 @@ using std::string;
 
 namespace Ingen {
 	
-class Port;
+class PortImpl;
 namespace Shared { class ClientInterface; }
 using Shared::ClientInterface;
 

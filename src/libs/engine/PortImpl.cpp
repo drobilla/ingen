@@ -18,9 +18,9 @@
 #include <iostream>
 #include <raul/Array.hpp>
 #include <raul/Maid.hpp>
-#include "Port.hpp"
+#include "PortImpl.hpp"
 #include "NodeImpl.hpp"
-#include "DataType.hpp"
+#include "interface/DataType.hpp"
 #include "AudioBuffer.hpp"
 #include "MidiBuffer.hpp"
 #include "BufferFactory.hpp"
@@ -32,11 +32,12 @@ using namespace std;
 namespace Ingen {
 
 
-// FIXME: Make these actually URIs..
-const char* const DataType::type_uris[4] = { "UNKNOWN", "FLOAT", "MIDI", "OSC" };
-
-
-Port::Port(NodeImpl* const node, const string& name, uint32_t index, uint32_t poly, DataType type, size_t buffer_size)
+PortImpl::PortImpl(NodeImpl* const node,
+                   const string&   name,
+                   uint32_t        index,
+                   uint32_t        poly,
+                   DataType        type,
+                   size_t          buffer_size)
 	: GraphObjectImpl(node, name, true)
 	, _index(index)
 	, _poly(poly)
@@ -63,7 +64,7 @@ Port::Port(NodeImpl* const node, const string& name, uint32_t index, uint32_t po
 }
 
 
-Port::~Port()
+PortImpl::~PortImpl()
 {
 	for (uint32_t i=0; i < _poly; ++i)
 		delete _buffers->at(i);
@@ -73,7 +74,7 @@ Port::~Port()
 
 
 bool
-Port::prepare_poly(uint32_t poly)
+PortImpl::prepare_poly(uint32_t poly)
 {
 	if (!_polyphonic || !_parent->polyphonic())
 		return true;
@@ -90,7 +91,7 @@ Port::prepare_poly(uint32_t poly)
 
 
 bool
-Port::apply_poly(Raul::Maid& maid, uint32_t poly)
+PortImpl::apply_poly(Raul::Maid& maid, uint32_t poly)
 {
 	if (!_polyphonic || !_parent->polyphonic())
 		return true;
@@ -109,10 +110,18 @@ Port::apply_poly(Raul::Maid& maid, uint32_t poly)
 
 	return true;
 }
+	
+
+Raul::Atom
+PortImpl::value() const
+{
+	// FIXME: will need this for ingen-side serialization
+	throw;
+}
 
 
 void
-Port::allocate_buffers()
+PortImpl::allocate_buffers()
 {
 	_buffers->alloc(_poly);
 
@@ -122,7 +131,7 @@ Port::allocate_buffers()
 
 
 void
-Port::set_buffer_size(size_t size)
+PortImpl::set_buffer_size(size_t size)
 {
 	_buffer_size = size;
 
@@ -134,15 +143,15 @@ Port::set_buffer_size(size_t size)
 
 
 void
-Port::connect_buffers()
+PortImpl::connect_buffers()
 {
 	for (uint32_t i=0; i < _poly; ++i)
-		Port::parent_node()->set_port_buffer(i, _index, _buffers->at(i));
+		PortImpl::parent_node()->set_port_buffer(i, _index, _buffers->at(i));
 }
 
 	
 void
-Port::clear_buffers()
+PortImpl::clear_buffers()
 {
 	for (uint32_t i=0; i < _poly; ++i)
 		_buffers->at(i)->clear();
@@ -150,10 +159,10 @@ Port::clear_buffers()
 	
 
 void
-Port::broadcast(ProcessContext& context)
+PortImpl::broadcast(ProcessContext& context)
 {
 	if (_broadcast) {
-		if (_type == DataType::FLOAT && _buffer_size == 1) {
+		if (_type == DataType::CONTROL) {
 			const Sample value = ((AudioBuffer*)(*_buffers)[0])->value_at(0);
 			if (value != _last_broadcasted_value) {
 				const SendPortValueEvent ev(context.engine(), context.start(), this, false, 0, value);

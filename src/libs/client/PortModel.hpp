@@ -46,10 +46,10 @@ public:
 	inline bool   connected()      const { return (_connections > 0); }
 	inline bool   is_input()       const { return (_direction == INPUT); }
 	inline bool   is_output()      const { return (_direction == OUTPUT); }
-	inline bool   is_audio()       const { return (_type == "ingen:audio"); }
-	inline bool   is_control()     const { return (_type == "ingen:control"); }
-	inline bool   is_midi()        const { return (_type == "ingen:midi"); }
-	inline bool   is_osc()         const { return (_type == "ingen:osc"); }
+	inline bool   is_audio()       const { return (_type == "ingen:AudioPort"); }
+	inline bool   is_control()     const { return (_type == "ingen:ControlPort"); }
+	inline bool   is_midi()        const { return (_type == "ingen:MidiPort"); }
+	inline bool   is_osc()         const { return (_type == "ingen:OSCPort"); }
 	
 	bool is_logarithmic() const;
 	bool is_integer()     const;

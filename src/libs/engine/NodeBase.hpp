@@ -23,6 +23,7 @@
 #include <cstdlib>
 #include <raul/Semaphore.hpp>
 #include <raul/AtomicInt.hpp>
+#include "interface/Port.hpp"
 #include "NodeImpl.hpp"
 
 using std::string;
@@ -84,7 +85,8 @@ public:
 	bool       traversed()   const { return _traversed; }
 	void       traversed(bool b)   { _traversed = b; }
 	
-	const Raul::Array<Port*>& ports() const { return *_ports; }
+	virtual Port*     port(uint32_t index) const;
+	virtual PortImpl* port_impl(uint32_t index) const { return (*_ports)[index]; }
 	
 	/* These are NOT to be used in the audio thread!
 	 * The providers and dependants in CompiledNode are for that
@@ -96,8 +98,9 @@ public:
 	Raul::List<NodeImpl*>* dependants()                         { return _dependants; }
 	void                   dependants(Raul::List<NodeImpl*>* l) { _dependants = l; }
 	
-	virtual const PluginImpl* plugin() const { return _plugin; }
-	virtual void plugin(const PluginImpl* const pi) { _plugin = pi; }
+	virtual const Plugin*     plugin()      const;
+	virtual const PluginImpl* plugin_impl() const          { return _plugin; }
+	virtual void              plugin(const PluginImpl* pi) { _plugin = pi; }
 	
 	/** A node's parent is always a patch, so static cast should be safe */
 	inline Patch* parent_patch() const { return (Patch*)_parent; }
@@ -112,13 +115,13 @@ protected:
 	size_t     _buffer_size;
 	bool       _activated;
 	
-	bool                   _traversed;      ///< Flag for process order algorithm
-	Raul::Semaphore        _input_ready;    ///< Parallelism: input ready signal
-	Raul::AtomicInt        _process_lock;   ///< Parallelism: Waiting on inputs 'lock'
-	Raul::AtomicInt        _n_inputs_ready; ///< Parallelism: # input ready signals this cycle
-	Raul::Array<Port*>*    _ports;          ///< Access in audio thread only
-	Raul::List<NodeImpl*>* _providers;      ///< Nodes connected to this one's input ports
-	Raul::List<NodeImpl*>* _dependants;     ///< Nodes this one's output ports are connected to
+	bool                    _traversed;      ///< Flag for process order algorithm
+	Raul::Semaphore         _input_ready;    ///< Parallelism: input ready signal
+	Raul::AtomicInt         _process_lock;   ///< Parallelism: Waiting on inputs 'lock'
+	Raul::AtomicInt         _n_inputs_ready; ///< Parallelism: # input ready signals this cycle
+	Raul::Array<PortImpl*>* _ports;          ///< Access in audio thread only
+	Raul::List<NodeImpl*>*  _providers;      ///< Nodes connected to this one's input ports
+	Raul::List<NodeImpl*>*  _dependants;     ///< Nodes this one's output ports are connected to
 };
 
 

@@ -17,9 +17,10 @@
 
 #include CONFIG_H_PATH
 
+#include <cassert>
+#include "interface/Port.hpp"
 #include "NodeModel.hpp"
 #include "PatchModel.hpp"
-#include <cassert>
 
 namespace Ingen {
 namespace Client {
@@ -135,6 +136,13 @@ NodeModel::get_port(const string& port_name) const
 			return (*i);
 	return SharedPtr<PortModel>();
 }
+	
+
+Shared::Port*
+NodeModel::port(uint32_t index) const
+{
+	return dynamic_cast<Shared::Port*>(_ports[index].get());
+}
 
 
 void
@@ -148,14 +156,14 @@ NodeModel::port_value_range(SharedPtr<PortModel> port, float& min, float& max)
 	
 	// Plugin value first
 #ifdef HAVE_SLV2
-	if (plugin() && plugin()->type() == PluginModel::LV2) {
+	if (_plugin && _plugin->type() == PluginModel::LV2) {
 		min = slv2_port_get_minimum_value(
-				plugin()->slv2_plugin(),
-				slv2_plugin_get_port_by_symbol(plugin()->slv2_plugin(),
+				_plugin->slv2_plugin(),
+				slv2_plugin_get_port_by_symbol(_plugin->slv2_plugin(),
 					port->path().name().c_str()));
 		max = slv2_port_get_maximum_value(
-				plugin()->slv2_plugin(),
-				slv2_plugin_get_port_by_symbol(plugin()->slv2_plugin(),
+				_plugin->slv2_plugin(),
+				slv2_plugin_get_port_by_symbol(_plugin->slv2_plugin(),
 					port->path().name().c_str()));
 
 		//cerr << "SLV2: " << min << " .. " << max << endl;

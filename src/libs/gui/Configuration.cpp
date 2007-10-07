@@ -83,21 +83,21 @@ Configuration::apply_settings()
 
 
 uint32_t
-Configuration::get_port_color(const PortModel* pi)
+Configuration::get_port_color(const PortModel* p)
 {
-	assert(pi != NULL);
-	
-	if (pi->is_control()) {
+	assert(p != NULL);
+
+	if (p->is_control()) {
 		return _control_port_color;
-	} else if (pi->is_audio()) {
+	} else if (p->is_audio()) {
 		return _audio_port_color;
-	} else if (pi->is_midi()) {
+	} else if (p->is_midi()) {
 		return _midi_port_color;
-	} else if (pi->is_osc()) {
+	} else if (p->is_osc()) {
 		return _osc_port_color;
 	}
 	
-	cerr << "[Configuration] Unknown port type " << pi->type() << ", port will appear bright red."
+	cerr << "[Configuration] Unknown port type " << p->type() << ", port will appear bright red."
 		<< endl;
 	
 	return 0xFF0000B0;

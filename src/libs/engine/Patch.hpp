@@ -23,7 +23,7 @@
 #include <raul/List.hpp>
 #include "NodeBase.hpp"
 #include "PluginImpl.hpp"
-#include "DataType.hpp"
+#include "interface/DataType.hpp"
 #include "CompiledPatch.hpp"
 
 using std::string;
@@ -94,22 +94,22 @@ public:
 	
 	uint32_t num_ports() const;
 	
-	Port* create_port(const string& name, DataType type, size_t buffer_size, bool is_output);
-	void add_input(Raul::ListNode<Port*>* port)  { _input_ports.push_back(port); } ///< Preprocesser thread
-	void add_output(Raul::ListNode<Port*>* port) { _output_ports.push_back(port); } ///< Preprocessor thread
-	Raul::ListNode<Port*>* remove_port(const string& name);
+	PortImpl* create_port(const string& name, DataType type, size_t buffer_size, bool is_output);
+	void add_input(Raul::ListNode<PortImpl*>* port)  { _input_ports.push_back(port); } ///< Preprocesser thread
+	void add_output(Raul::ListNode<PortImpl*>* port) { _output_ports.push_back(port); } ///< Preprocessor thread
+	Raul::ListNode<PortImpl*>* remove_port(const string& name);
 	
 	void add_connection(Raul::ListNode<Connection*>* c) { _connections.push_back(c); }
-	Raul::ListNode<Connection*>* remove_connection(const Port* src_port, const Port* dst_port);
+	Raul::ListNode<Connection*>* remove_connection(const PortImpl* src_port, const PortImpl* dst_port);
 	
 	CompiledPatch* compiled_patch()                  { return _compiled_patch; }
 	void           compiled_patch(CompiledPatch* cp) { _compiled_patch = cp; }
 	
-	Raul::Array<Port*>* external_ports()                       { return _ports; }
-	void                external_ports(Raul::Array<Port*>* pa) { _ports = pa; }
+	Raul::Array<PortImpl*>* external_ports()                           { return _ports; }
+	void                    external_ports(Raul::Array<PortImpl*>* pa) { _ports = pa; }
 
-	CompiledPatch*      compile() const;
-	Raul::Array<Port*>* build_ports_array() const;
+	CompiledPatch*          compile() const;
+	Raul::Array<PortImpl*>* build_ports_array() const;
 	
 	/** Whether to run this patch's DSP bits in the audio thread */
 	bool enabled() const { return _process; }
@@ -127,8 +127,8 @@ private:
 	uint32_t                _internal_poly;
 	CompiledPatch*          _compiled_patch; ///< Accessed in audio thread only
 	Raul::List<Connection*> _connections;    ///< Accessed in audio thread only
-	Raul::List<Port*>       _input_ports;    ///< Accessed in preprocessing thread only
-	Raul::List<Port*>       _output_ports;   ///< Accessed in preprocessing thread only
+	Raul::List<PortImpl*>   _input_ports;    ///< Accessed in preprocessing thread only
+	Raul::List<PortImpl*>   _output_ports;   ///< Accessed in preprocessing thread only
 	Raul::List<NodeImpl*>   _nodes;          ///< Accessed in preprocessing thread only
 	bool                    _process;
 };

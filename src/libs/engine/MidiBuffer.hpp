@@ -20,7 +20,7 @@
 
 #include <lv2ext/lv2-midiport.h>
 #include "Buffer.hpp"
-#include "DataType.hpp"
+#include "interface/DataType.hpp"
 
 namespace Ingen {
 

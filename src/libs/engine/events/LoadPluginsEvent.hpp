@@ -23,8 +23,6 @@
 
 namespace Ingen {
 
-class Plugin;
-
 
 /** Loads all plugins into the internal plugin database (in NodeFactory).
  *

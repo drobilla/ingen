@@ -25,7 +25,7 @@ using std::string;
 
 namespace Ingen {
 
-class Port;
+class PortImpl;
 
 
 /** A special event used internally to send port values from the audio thread.
@@ -44,7 +44,7 @@ class SendPortValueEvent : public Event
 public:
 	inline SendPortValueEvent(Engine&     engine,
 	                          SampleCount timestamp,
-	                          Port*       port,
+	                          PortImpl*   port,
 	                          bool        omni,
 	                          uint32_t    voice_num,
 	                          Sample      value)
@@ -66,10 +66,10 @@ public:
 	void post_process();
 
 private:
-	Port*    _port;
-	bool     _omni;
-	uint32_t _voice_num;
-	Sample   _value;
+	PortImpl* _port;
+	bool      _omni;
+	uint32_t  _voice_num;
+	Sample    _value;
 };
 
 

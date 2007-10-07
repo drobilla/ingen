@@ -27,7 +27,7 @@ namespace BufferFactory {
 Buffer*
 create(DataType type, size_t size)
 {
-	if (type == DataType::FLOAT)
+	if (type == DataType::CONTROL || type == DataType::AUDIO)
 		return new AudioBuffer(size);
 	else if (type == DataType::MIDI)
 		return new MidiBuffer(size);

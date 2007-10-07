@@ -31,7 +31,7 @@ using std::string;
 namespace Ingen {
 
 class NodeImpl;
-class Port;
+class PortImpl;
 class PluginImpl;
 class Patch;
 class Connection;
@@ -64,7 +64,7 @@ public:
 	void send_plugins(const std::list<PluginImpl*>& plugin_list);
 	void send_patch(const Patch* const p, bool recursive);
 	void send_node(const NodeImpl* const node, bool recursive);
-	void send_port(const Port* port);
+	void send_port(const PortImpl* port);
 	void send_destroyed(const string& path);
 	void send_polyphonic(const string& path, bool polyphonic);
 	void send_patch_cleared(const string& patch_path);

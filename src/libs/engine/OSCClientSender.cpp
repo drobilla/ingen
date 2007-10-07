@@ -26,7 +26,7 @@
 #include "Patch.hpp"
 #include "NodeImpl.hpp"
 #include "PluginImpl.hpp"
-#include "Port.hpp"
+#include "PortImpl.hpp"
 #include "Connection.hpp"
 #include "AudioDriver.hpp"
 #include "interface/ClientInterface.hpp"

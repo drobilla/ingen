@@ -128,7 +128,11 @@ NodeModule::embed_gui(bool embed)
 		if (!_gui_item) {
 			cerr << "Embedding LV2 GUI" << endl;
 
-			_slv2_ui = _node->plugin()->ui(App::instance().engine().get(), _node.get());
+			const PluginModel* const plugin = dynamic_cast<const PluginModel*>(_node->plugin());
+			assert(plugin);
+
+			_slv2_ui = plugin->ui(App::instance().engine().get(), _node.get());
+
 			if (_slv2_ui) {
 				cerr << "Found UI" << endl;
 				c_widget = (GtkWidget*)slv2_ui_instance_get_widget(_slv2_ui);
@@ -276,7 +280,11 @@ NodeModule::popup_gui()
 			return false;
 		}
 
-		_slv2_ui = _node->plugin()->ui(App::instance().engine().get(), _node.get());
+		const PluginModel* const plugin = dynamic_cast<const PluginModel*>(_node->plugin());
+		assert(plugin);
+
+		_slv2_ui = plugin->ui(App::instance().engine().get(), _node.get());
+
 		if (_slv2_ui) {
 			cerr << "Popping up LV2 GUI" << endl;
 

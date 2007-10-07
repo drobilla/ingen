@@ -31,7 +31,7 @@ namespace Ingen {
 
 class Engine;
 class Patch;
-class Port;
+class PortImpl;
 class DuplexPort;
 class JackAudioDriver;
 typedef jack_default_audio_sample_t jack_sample_t;

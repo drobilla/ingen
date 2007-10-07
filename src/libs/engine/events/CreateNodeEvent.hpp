@@ -30,7 +30,6 @@ namespace Ingen {
 
 class Patch;
 class NodeImpl;
-class Plugin;
 class CompiledPatch;
 
 

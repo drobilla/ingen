@@ -31,7 +31,7 @@ namespace Ingen {
 class Patch;
 class NodeImpl;
 class Connection;
-class Port;
+class PortImpl;
 class DisconnectionEvent;
 
 using std::string;

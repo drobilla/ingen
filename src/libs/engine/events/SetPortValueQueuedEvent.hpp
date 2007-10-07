@@ -25,7 +25,7 @@ using std::string;
 
 namespace Ingen {
 
-class Port;
+class PortImpl;
 
 
 /** An event to change the value of a port.
@@ -62,7 +62,7 @@ private:
 	string    _port_path;
 	uint32_t  _data_size;
 	void*     _data;
-	Port*     _port;
+	PortImpl* _port;
 	ErrorType _error;
 };
 

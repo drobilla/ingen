@@ -29,7 +29,7 @@ namespace Ingen {
 
 
 AudioBuffer::AudioBuffer(size_t size)
-	: Buffer(DataType::FLOAT, size)
+	: Buffer((size == 1) ? DataType::CONTROL : DataType::AUDIO, size)
 	, _data(NULL)
 	, _local_data(NULL)
 	, _joined_buf(NULL)
@@ -187,7 +187,7 @@ AudioBuffer::copy(const Buffer* src, size_t start_sample, size_t end_sample)
 	assert(end_sample >= start_sample);
 	assert(end_sample < _size);
 	assert(src);
-	assert(src->type() == DataType::FLOAT);
+	assert(src->type() == DataType::CONTROL || DataType::AUDIO);
 	
 	Sample* const buf = data();
 	assert(buf);

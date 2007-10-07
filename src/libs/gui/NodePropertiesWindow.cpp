@@ -52,7 +52,8 @@ NodePropertiesWindow::set_node(SharedPtr<NodeModel> node_model)
 	_node_path_label->set_text(node_model->path());
 	_node_polyphonic_toggle->set_active(node_model->polyphonic());
 
-	SharedPtr<PluginModel> pm = node_model->plugin();
+	const PluginModel* pm = dynamic_cast<const PluginModel*>(node_model->plugin());
+	assert(pm);
 	
 	if (pm) {
 		_plugin_type_label->set_text(pm->type_uri());

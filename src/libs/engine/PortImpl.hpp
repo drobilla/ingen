@@ -15,15 +15,16 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef PORT_H
-#define PORT_H
+#ifndef PORTIMPL_H
+#define PORTIMPL_H
 
 #include <cstdlib>
 #include <string>
 #include <raul/Array.hpp>
+#include "interface/Port.hpp"
 #include "types.hpp"
 #include "GraphObjectImpl.hpp"
-#include "DataType.hpp"
+#include "interface/DataType.hpp"
 
 namespace Raul { class Maid; }
 
@@ -42,10 +43,10 @@ class ProcessContext;
  *
  * \ingroup engine
  */
-class Port : public GraphObjectImpl
+class PortImpl : public GraphObjectImpl, public Ingen::Shared::Port
 {
 public:
-	virtual ~Port();
+	virtual ~PortImpl();
 
 	/** A port's parent is always a node, so static cast should be safe */
 	NodeImpl* parent_node() const { return (NodeImpl*)_parent; }
@@ -63,6 +64,8 @@ public:
 	 * \param poly Must be < the most recent value passed to prepare_poly.
 	 */
 	virtual bool apply_poly(Raul::Maid& maid, uint32_t poly);
+	
+	virtual Raul::Atom value() const;
 
 	Buffer* buffer(uint32_t voice) const { return _buffers->at(voice); }
 
@@ -77,10 +80,10 @@ public:
 	virtual bool is_input()  const = 0;
 	virtual bool is_output() const = 0;
 
-	uint32_t num()         const { return _index; }
-	uint32_t poly()        const { return _poly; }
-	DataType type()        const { return _type; }
-	size_t   buffer_size() const { return _buffer_size; }
+	uint32_t     num()         const { return _index; }
+	uint32_t     poly()        const { return _poly; }
+	DataType     type()        const { return _type; }
+	size_t       buffer_size() const { return _buffer_size; }
 
 	virtual void set_buffer_size(size_t size);
 	
@@ -91,7 +94,12 @@ public:
 	bool broadcast()       { return _broadcast; }
 
 protected:
-	Port(NodeImpl* node, const std::string& name, uint32_t index, uint32_t poly, DataType type, size_t buffer_size);
+	PortImpl(NodeImpl*          node,
+	         const std::string& name,
+	         uint32_t           index,
+	         uint32_t           poly,
+	         DataType           type,
+	         size_t             buffer_size);
 	
 	virtual void allocate_buffers();
 	virtual void connect_buffers();
@@ -114,4 +122,4 @@ protected:
 
 } // namespace Ingen
 
-#endif // PORT_H
+#endif // PORTIMPL_H

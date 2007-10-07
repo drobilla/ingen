@@ -30,7 +30,7 @@
 #include "PostProcessor.hpp"
 #include "NodeImpl.hpp"
 #include "Patch.hpp"
-#include "Port.hpp"
+#include "PortImpl.hpp"
 #include "MidiDriver.hpp"
 #include "DuplexPort.hpp"
 #include "EventSource.hpp"

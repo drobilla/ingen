@@ -25,7 +25,7 @@ using std::string;
 
 namespace Ingen {
 
-class Port;
+class PortImpl;
 
 
 /** A special event used internally to send port activity notification (e.g.
@@ -45,7 +45,7 @@ class SendPortActivityEvent : public Event
 public:
 	inline SendPortActivityEvent(Engine&     engine,
 	                             SampleCount timestamp,
-	                             Port*       port)
+	                             PortImpl*   port)
 		: Event(engine, SharedPtr<Responder>(), timestamp)
 		, _port(port)
 	{
@@ -58,7 +58,7 @@ public:
 	void post_process();
 
 private:
-	Port* _port;
+	PortImpl* _port;
 };
 
 

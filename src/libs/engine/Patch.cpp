@@ -22,7 +22,7 @@
 #include "NodeImpl.hpp"
 #include "Patch.hpp"
 #include "PluginImpl.hpp"
-#include "Port.hpp"
+#include "PortImpl.hpp"
 #include "Connection.hpp"
 #include "DuplexPort.hpp"
 #include "Engine.hpp"
@@ -103,7 +103,7 @@ Patch::disable()
 {
 	_process = false;
 
-	for (Raul::List<Port*>::iterator i = _output_ports.begin(); i != _output_ports.end(); ++i)
+	for (Raul::List<PortImpl*>::iterator i = _output_ports.begin(); i != _output_ports.end(); ++i)
 		(*i)->clear_buffers();
 }
 
@@ -285,7 +285,7 @@ Patch::remove_node(const string& name)
 /** Remove a connection.  Realtime safe.
  */
 Raul::ListNode<Connection*>*
-Patch::remove_connection(const Port* src_port, const Port* dst_port)
+Patch::remove_connection(const PortImpl* src_port, const PortImpl* dst_port)
 {
 	bool found = false;
 	Raul::ListNode<Connection*>* connection = NULL;
@@ -317,7 +317,7 @@ Patch::num_ports() const
 
 /** Create a port.  Not realtime safe.
  */
-Port*
+PortImpl*
 Patch::create_port(const string& name, DataType type, size_t buffer_size, bool is_output)
 {
 	if (type == DataType::UNKNOWN) {
@@ -338,14 +338,14 @@ Patch::create_port(const string& name, DataType type, size_t buffer_size, bool i
  *
  * Realtime safe.  Preprocessing thread only.
  */
-Raul::ListNode<Port*>*
+Raul::ListNode<PortImpl*>*
 Patch::remove_port(const string& name)
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
 
 	bool found = false;
-	Raul::ListNode<Port*>* ret = NULL;
-	for (Raul::List<Port*>::iterator i = _input_ports.begin(); i != _input_ports.end(); ++i) {
+	Raul::ListNode<PortImpl*>* ret = NULL;
+	for (Raul::List<PortImpl*>::iterator i = _input_ports.begin(); i != _input_ports.end(); ++i) {
 		if ((*i)->name() == name) {
 			ret = _input_ports.erase(i);
 			found = true;
@@ -353,7 +353,7 @@ Patch::remove_port(const string& name)
 	}
 
 	if (!found)
-	for (Raul::List<Port*>::iterator i = _output_ports.begin(); i != _output_ports.end(); ++i) {
+	for (Raul::List<PortImpl*>::iterator i = _output_ports.begin(); i != _output_ports.end(); ++i) {
 		if ((*i)->name() == name) {
 			ret = _output_ports.erase(i);
 			found = true;
@@ -367,19 +367,19 @@ Patch::remove_port(const string& name)
 }
 
 
-Raul::Array<Port*>*
+Raul::Array<PortImpl*>*
 Patch::build_ports_array() const
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
 
-	Raul::Array<Port*>* const result = new Raul::Array<Port*>(_input_ports.size() + _output_ports.size());
+	Raul::Array<PortImpl*>* const result = new Raul::Array<PortImpl*>(_input_ports.size() + _output_ports.size());
 
 	size_t i = 0;
 	
-	for (Raul::List<Port*>::const_iterator p = _input_ports.begin(); p != _input_ports.end(); ++p,++i)
+	for (Raul::List<PortImpl*>::const_iterator p = _input_ports.begin(); p != _input_ports.end(); ++p,++i)
 		result->at(i) = *p;
 	
-	for (Raul::List<Port*>::const_iterator p = _output_ports.begin(); p != _output_ports.end(); ++p,++i)
+	for (Raul::List<PortImpl*>::const_iterator p = _output_ports.begin(); p != _output_ports.end(); ++p,++i)
 		result->at(i) = *p;
 
 	return result;

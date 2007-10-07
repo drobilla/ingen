@@ -28,7 +28,7 @@
 #include "QueuedEventSource.hpp"
 #include "ObjectStore.hpp"
 #include "ClientBroadcaster.hpp"
-#include "Port.hpp"
+#include "PortImpl.hpp"
 #include "AudioDriver.hpp"
 #include "MidiDriver.hpp"
 #include "OSCDriver.hpp"
@@ -45,10 +45,11 @@ CreatePortEvent::CreatePortEvent(Engine&              engine,
                            bool                 is_output,
                            QueuedEventSource*   source)
 : QueuedEvent(engine, responder, timestamp, true, source),
+  _error(NO_ERROR),
   _path(path),
   _type(type),
   _is_output(is_output),
-  _data_type(DataType::UNKNOWN),
+  _data_type(type),
   _patch(NULL),
   _patch_port(NULL),
   _driver_port(NULL)
@@ -61,20 +62,17 @@ CreatePortEvent::CreatePortEvent(Engine&              engine,
 	 * FIXME: fix this using RCU
 	 */
 
-	string type_str;
-	if (type == "ingen:control" || type == "ingen:audio")
-		_data_type = DataType::FLOAT;
-	else if (type == "ingen:midi")
-		_data_type = DataType::MIDI;
-	else if (type == "ingen:osc")
-		_data_type = DataType::OSC;
+	if (_data_type == DataType::UNKNOWN) {
+		cerr << "[CreatePortEvent] Unknown port type " << type << endl;
+		_error = UNKNOWN_TYPE;
+	}
 }
 
 
 void
 CreatePortEvent::pre_process()
 {
-	if (_engine.object_store()->find_object(_path) != NULL) {
+	if (_error == UNKNOWN_TYPE || _engine.object_store()->find_object(_path)) {
 		QueuedEvent::pre_process();
 		return;
 	}
@@ -97,14 +95,14 @@ CreatePortEvent::pre_process()
 		if (_patch_port) {
 
 			if (_is_output)
-				_patch->add_output(new Raul::ListNode<Port*>(_patch_port));
+				_patch->add_output(new Raul::ListNode<PortImpl*>(_patch_port));
 			else
-				_patch->add_input(new Raul::ListNode<Port*>(_patch_port));
+				_patch->add_input(new Raul::ListNode<PortImpl*>(_patch_port));
 			
 			if (_patch->external_ports())
-				_ports_array = new Raul::Array<Port*>(old_num_ports + 1, *_patch->external_ports());
+				_ports_array = new Raul::Array<PortImpl*>(old_num_ports + 1, *_patch->external_ports());
 			else
-				_ports_array = new Raul::Array<Port*>(old_num_ports + 1, NULL);
+				_ports_array = new Raul::Array<PortImpl*>(old_num_ports + 1, NULL);
 
 
 			_ports_array->at(_patch->num_ports()-1) = _patch_port;
@@ -160,7 +158,7 @@ CreatePortEvent::execute(ProcessContext& context)
 void
 CreatePortEvent::post_process()
 {
-	if (!_patch_port) {
+	if (_error != NO_ERROR || !_patch_port) {
 		const string msg = string("Could not create port - ").append(_path);
 		_responder->respond_error(msg);
 	} else {

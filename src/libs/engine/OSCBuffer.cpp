@@ -54,7 +54,7 @@ OSCBuffer::join(Buffer* buf)
 	
 	_joined_buf = obuf;
 	
-	cerr << "OSC buffer joined" << endl;
+	//cerr << "OSC buffer joined" << endl;
 
 	//_state = mbuf->_state;
 

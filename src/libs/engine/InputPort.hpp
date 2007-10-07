@@ -22,7 +22,7 @@
 #include <cstdlib>
 #include <cassert>
 #include <raul/List.hpp>
-#include "Port.hpp"
+#include "PortImpl.hpp"
 #include "MidiBuffer.hpp"
 using std::string;
 
@@ -44,7 +44,7 @@ class NodeImpl;
  *
  * \ingroup engine
  */
-class InputPort : virtual public Port
+class InputPort : virtual public PortImpl
 {
 public:
 	InputPort(NodeImpl* parent, const string& name, uint32_t index, uint32_t poly, DataType type, size_t buffer_size);

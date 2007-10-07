@@ -28,7 +28,7 @@
 #include "NodeFactory.hpp"
 #include "ClientBroadcaster.hpp"
 #include "ObjectStore.hpp"
-#include "Port.hpp"
+#include "PortImpl.hpp"
 
 namespace Ingen {
 

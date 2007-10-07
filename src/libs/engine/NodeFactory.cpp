@@ -59,16 +59,16 @@ NodeFactory::NodeFactory(Ingen::Shared::World* world)
 
 	NodeImpl* n = NULL;
 	n = new MidiNoteNode("foo", 1, parent, 1, 1);
-	_internal_plugins.push_back(new PluginImpl(n->plugin()));
+	_internal_plugins.push_back(new PluginImpl(n->plugin_impl()));
 	delete n;
 	n = new MidiTriggerNode("foo", 1, parent, 1, 1);
-	_internal_plugins.push_back(new PluginImpl(n->plugin()));
+	_internal_plugins.push_back(new PluginImpl(n->plugin_impl()));
 	delete n;
 	n = new MidiControlNode("foo", 1, parent, 1, 1);
-	_internal_plugins.push_back(new PluginImpl(n->plugin()));
+	_internal_plugins.push_back(new PluginImpl(n->plugin_impl()));
 	delete n;
 	n = new TransportNode("foo", 1, parent, 1, 1);
-	_internal_plugins.push_back(new PluginImpl(n->plugin()));
+	_internal_plugins.push_back(new PluginImpl(n->plugin_impl()));
 	delete n;
 	
 	delete parent;

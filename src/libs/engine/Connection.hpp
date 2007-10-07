@@ -21,13 +21,13 @@
 #include <cstdlib>
 #include <boost/utility.hpp>
 #include <raul/Deletable.hpp>
-#include "DataType.hpp"
-#include "Port.hpp"
+#include "interface/DataType.hpp"
+#include "PortImpl.hpp"
 #include "types.hpp"
 
 namespace Ingen {
 
-class Port;
+class PortImpl;
 class Buffer;
 
 
@@ -44,11 +44,11 @@ class Buffer;
 class Connection : public Raul::Deletable
 {
 public:
-	Connection(Port* src_port, Port* dst_port);
+	Connection(PortImpl* src_port, PortImpl* dst_port);
 	virtual ~Connection();
 	
-	Port* src_port() const { return _src_port; }
-	Port* dst_port() const { return _dst_port; }
+	PortImpl* src_port() const { return _src_port; }
+	PortImpl* dst_port() const { return _dst_port; }
 
 	/** Used by some (recursive) events to prevent double disconnections */
 	bool pending_disconnection()       { return _pending_disconnection; }
@@ -70,12 +70,12 @@ public:
 	DataType type() const { return _src_port->type(); }
 
 protected:
-	Port* const _src_port;
-	Port* const _dst_port;
-	Buffer*     _local_buffer;
-	size_t      _buffer_size;
-	bool        _must_mix;
-	bool        _pending_disconnection;
+	PortImpl* const _src_port;
+	PortImpl* const _dst_port;
+	Buffer*         _local_buffer;
+	size_t          _buffer_size;
+	bool            _must_mix;
+	bool            _pending_disconnection;
 };
 
 

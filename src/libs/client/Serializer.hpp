@@ -30,7 +30,12 @@
 #include <raul/RDFModel.hpp>
 #include "ObjectModel.hpp"
 
+using namespace Ingen::Shared;
+
 namespace Ingen {
+
+namespace Shared { class Node; class Port; }
+
 namespace Client {
 
 class PluginModel;
@@ -68,8 +73,8 @@ private:
 	void serialize_plugin(SharedPtr<PluginModel> p);
 
 	void serialize_patch(SharedPtr<PatchModel> p);
-	void serialize_node(SharedPtr<NodeModel> n, const Raul::RDF::Node& id);
-	void serialize_port(SharedPtr<PortModel> p, const Raul::RDF::Node& id);
+	void serialize_node(SharedPtr<Shared::Node> n, const Raul::RDF::Node& id);
+	void serialize_port(const Shared::Port* p, const Raul::RDF::Node& id);
 	
 	Raul::RDF::Node path_to_node_id(const Path& path);
 	Raul::RDF::Node patch_path_to_rdf_id(const Path& path);

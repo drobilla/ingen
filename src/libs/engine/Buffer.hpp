@@ -23,7 +23,7 @@
 #include <boost/utility.hpp>
 #include <raul/Deletable.hpp>
 #include "types.hpp"
-#include "DataType.hpp"
+#include "interface/DataType.hpp"
 
 namespace Ingen {
 

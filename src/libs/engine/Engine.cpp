@@ -98,7 +98,7 @@ Engine::~Engine()
 Driver*
 Engine::driver(DataType type)
 {
-	if (type == DataType::FLOAT)
+	if (type == DataType::AUDIO)
 		return _audio_driver.get();
 	else if (type == DataType::MIDI)
 		return _midi_driver;

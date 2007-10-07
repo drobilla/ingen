@@ -24,7 +24,7 @@
 #include "util.hpp"
 #include "PluginImpl.hpp"
 #include "ClientBroadcaster.hpp"
-#include "Port.hpp"
+#include "PortImpl.hpp"
 #include "Patch.hpp"
 #include "ObjectStore.hpp"
 
@@ -64,6 +64,20 @@ NodeBase::~NodeBase()
 	if (_ports)
 		for (uint32_t i=0; i < num_ports(); ++i)
 			delete _ports->at(i);
+}
+
+	
+Port*
+NodeBase::port(uint32_t index) const
+{
+	return (*_ports)[index];
+}
+
+
+const Plugin*
+NodeBase::plugin() const
+{
+	return _plugin;
 }
 
 

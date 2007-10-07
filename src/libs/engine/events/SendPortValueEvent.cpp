@@ -18,7 +18,7 @@
 #include <sstream>
 #include "SendPortValueEvent.hpp"
 #include "Engine.hpp"
-#include "Port.hpp"
+#include "PortImpl.hpp"
 #include "ClientBroadcaster.hpp"
 
 using namespace std;

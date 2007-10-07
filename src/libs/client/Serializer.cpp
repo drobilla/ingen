@@ -35,6 +35,7 @@
 #include <raul/RDFWorld.hpp>
 #include <raul/TableImpl.hpp>
 #include "interface/EngineInterface.hpp"
+#include "interface/Port.hpp"
 #include "ConnectionModel.hpp"
 #include "NodeModel.hpp"
 #include "PatchModel.hpp"
@@ -46,6 +47,7 @@
 using namespace std;
 using namespace Raul;
 using namespace Raul::RDF;
+using namespace Ingen;
 using namespace Ingen::Shared;
 
 namespace Ingen {
@@ -225,15 +227,15 @@ Serializer::serialize(SharedPtr<ObjectModel> object) throw (std::logic_error)
 		return;
 	}
 	
-	SharedPtr<NodeModel> node = PtrCast<NodeModel>(object);
+	SharedPtr<Shared::Node> node = PtrCast<Shared::Node>(object);
 	if (node) {
 		serialize_node(node, path_to_node_id(node->path()));
 		return;
 	}
 	
-	SharedPtr<PortModel> port = PtrCast<PortModel>(object);
+	SharedPtr<Port> port = PtrCast<Port>(object);
 	if (port) {
-		serialize_port(port, path_to_node_id(port->path()));
+		serialize_port(port.get(), path_to_node_id(port->path()));
 		return;
 	}
 
@@ -306,10 +308,11 @@ Serializer::serialize_patch(SharedPtr<PatchModel> patch)
 		}
 	}
 	
-	for (PortModelList::const_iterator p = patch->ports().begin(); p != patch->ports().end(); ++p) {
-		const RDF::Node port_id = path_to_node_id((*p)->path());
+	for (uint32_t i=0; i < patch->num_ports(); ++i) {
+		Port* p = patch->port(i);
+		const RDF::Node port_id = path_to_node_id(p->path());
 		_model->add_statement(patch_id, "ingen:port", port_id);
-		serialize_port(*p, port_id);
+		serialize_port(p, port_id);
 	}
 
 	for (ConnectionList::const_iterator c = patch->connections().begin(); c != patch->connections().end(); ++c) {
@@ -333,7 +336,7 @@ Serializer::serialize_plugin(SharedPtr<PluginModel> plugin)
 
 
 void
-Serializer::serialize_node(SharedPtr<NodeModel> node, const RDF::Node& node_id)
+Serializer::serialize_node(SharedPtr<Shared::Node> node, const RDF::Node& node_id)
 {
 	const RDF::Node plugin_id
 		= RDF::Node(_model->world(), RDF::Node::RESOURCE, node->plugin()->uri());
@@ -365,9 +368,10 @@ Serializer::serialize_node(SharedPtr<NodeModel> node, const RDF::Node& node_id)
 		"ingen:name",
 		Atom(node->path().name()));*/
 
-	for (PortModelList::const_iterator p = node->ports().begin(); p != node->ports().end(); ++p) {
-		const RDF::Node port_id = path_to_node_id((*p)->path());
-		serialize_port(*p, port_id);
+	for (uint32_t i=0; i < node->num_ports(); ++i) {
+		Port* p = node->port(i);
+		const RDF::Node port_id = path_to_node_id(p->path());
+		serialize_port(p, port_id);
 		_model->add_statement(node_id, "ingen:port", port_id);
 	}
 
@@ -387,7 +391,7 @@ Serializer::serialize_node(SharedPtr<NodeModel> node, const RDF::Node& node_id)
  * Audio output ports with no metadata will not be written, for example.
  */
 void
-Serializer::serialize_port(SharedPtr<PortModel> port, const RDF::Node& port_id)
+Serializer::serialize_port(const Port* port, const RDF::Node& port_id)
 {
 	if (port->is_input())
 		_model->add_statement(port_id, "rdf:type",
@@ -398,10 +402,10 @@ Serializer::serialize_port(SharedPtr<PortModel> port, const RDF::Node& port_id)
 
 	_model->add_statement(port_id, "ingen:name", Atom(port->path().name().c_str()));
 	
-	_model->add_statement(port_id, "ingen:dataType", Atom(port->type()));
+	_model->add_statement(port_id, "rdf:type", Atom(port->type().uri()));
 	
-	if (port->is_control() && port->is_input())
-		_model->add_statement(port_id, "ingen:value", Atom(port->value()));
+	if (port->type() == DataType::CONTROL && port->is_input())
+		_model->add_statement(port_id, "ingen:value", port->value());
 
 	if (port->metadata().size() > 0) {
 		for (GraphObject::MetadataMap::const_iterator m = port->metadata().begin();

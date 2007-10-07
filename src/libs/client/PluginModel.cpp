@@ -102,7 +102,7 @@ lv2_ui_program_save(LV2UI_Controller controller,
 	
 #ifdef HAVE_SLV2
 SLV2UIInstance
-PluginModel::ui(EngineInterface* engine, NodeModel* node)
+PluginModel::ui(EngineInterface* engine, NodeModel* node) const
 {
 	if (_type != LV2)
 		return NULL;

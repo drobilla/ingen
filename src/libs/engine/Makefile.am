@@ -31,7 +31,6 @@ libingen_engine_la_SOURCES = \
 	Connection.cpp \
 	Connection.hpp \
 	CompiledPatch.hpp \
-	DataType.hpp \
 	Driver.hpp \
 	DuplexPort.cpp \
 	DuplexPort.hpp \
@@ -82,8 +81,8 @@ libingen_engine_la_SOURCES = \
 	Patch.hpp \
 	PluginImpl.cpp \
 	PluginImpl.hpp \
-	Port.cpp \
-	Port.hpp \
+	PortImpl.cpp \
+	PortImpl.hpp \
 	PostProcessor.cpp \
 	PostProcessor.hpp \
 	ProcessContext.hpp \

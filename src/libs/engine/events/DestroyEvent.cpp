@@ -30,7 +30,7 @@
 #include "ClientBroadcaster.hpp"
 #include "ObjectStore.hpp"
 #include "QueuedEventSource.hpp"
-#include "Port.hpp"
+#include "PortImpl.hpp"
 
 namespace Ingen {
 
@@ -70,7 +70,7 @@ DestroyEvent::pre_process()
 		_node = dynamic_cast<NodeImpl*>(_store_iterator->second);
 
 		if (!_node)
-			_port = dynamic_cast<Port*>(_store_iterator->second);
+			_port = dynamic_cast<PortImpl*>(_store_iterator->second);
 	}
 			
 	if (_store_iterator != _engine.object_store()->objects().end()) {
@@ -155,7 +155,7 @@ DestroyEvent::execute(ProcessContext& context)
 		_port->parent_patch()->external_ports(_ports_array);
 		
 		if ( ! _port->parent_patch()->parent()) {
-			if (_port->type() == DataType::FLOAT)
+			if (_port->type() == DataType::AUDIO)
 				_driver_port = _engine.audio_driver()->remove_port(_port->path());
 			else if (_port->type() == DataType::MIDI)
 				_driver_port = _engine.midi_driver()->remove_port(_port->path());

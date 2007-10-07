@@ -26,7 +26,7 @@
 #include "OutputPort.hpp"
 #include "Patch.hpp"
 #include "ClientBroadcaster.hpp"
-#include "Port.hpp"
+#include "PortImpl.hpp"
 #include "ObjectStore.hpp"
 
 using std::string;
@@ -50,7 +50,7 @@ DisconnectionEvent::DisconnectionEvent(Engine& engine, SharedPtr<Responder> resp
 }
 
 
-DisconnectionEvent::DisconnectionEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, Port* const src_port, Port* const dst_port)
+DisconnectionEvent::DisconnectionEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, PortImpl* const src_port, PortImpl* const dst_port)
 : QueuedEvent(engine, responder, timestamp),
   _src_port_path(src_port->path()),
   _dst_port_path(dst_port->path()),

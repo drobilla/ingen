@@ -21,7 +21,7 @@
 #include <string>
 #include <boost/utility.hpp>
 #include <raul/Path.hpp>
-#include "DataType.hpp"
+#include "interface/DataType.hpp"
 #include "DuplexPort.hpp"
 
 namespace Ingen {

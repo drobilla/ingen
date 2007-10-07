@@ -57,7 +57,7 @@ bool
 LADSPANode::instantiate()
 {
 	if (!_ports)
-		_ports = new Raul::Array<Port*>(_descriptor->PortCount);
+		_ports = new Raul::Array<PortImpl*>(_descriptor->PortCount);
 	
 	_instances = new LADSPA_Handle[_polyphony];
 	
@@ -74,7 +74,7 @@ LADSPANode::instantiate()
 	string port_name;
 	string port_path;
 	
-	Port* port = NULL;
+	PortImpl* port = NULL;
 	
 	for (size_t j=0; j < _descriptor->PortCount; ++j) {
 		port_name = Path::nameify(_descriptor->PortNames[j]);
@@ -101,19 +101,23 @@ LADSPANode::instantiate()
 
 		port_path = path() + "/" + port_name;
 
-		if (LADSPA_IS_PORT_CONTROL(_descriptor->PortDescriptors[j]))
+		DataType type = DataType::AUDIO;
+		port_buffer_size = _buffer_size;
+
+		if (LADSPA_IS_PORT_CONTROL(_descriptor->PortDescriptors[j])) {
+			type = DataType::CONTROL;
 			port_buffer_size = 1;
-		else if (LADSPA_IS_PORT_AUDIO(_descriptor->PortDescriptors[j]))
-			port_buffer_size = _buffer_size;
-		
+		} else {
+			assert(LADSPA_IS_PORT_AUDIO(_descriptor->PortDescriptors[j]));
+		}
 		assert (LADSPA_IS_PORT_INPUT(_descriptor->PortDescriptors[j])
 			|| LADSPA_IS_PORT_OUTPUT(_descriptor->PortDescriptors[j]));
 
 		if (LADSPA_IS_PORT_INPUT(_descriptor->PortDescriptors[j])) {
-			port = new InputPort(this, port_name, j, _polyphony, DataType::FLOAT, port_buffer_size);
+			port = new InputPort(this, port_name, j, _polyphony, type, port_buffer_size);
 			_ports->at(j) = port;
 		} else if (LADSPA_IS_PORT_OUTPUT(_descriptor->PortDescriptors[j])) {
-			port = new OutputPort(this, port_name, j, _polyphony, DataType::FLOAT, port_buffer_size);
+			port = new OutputPort(this, port_name, j, _polyphony, type, port_buffer_size);
 			_ports->at(j) = port;
 		}
 

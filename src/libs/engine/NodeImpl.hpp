@@ -28,10 +28,14 @@ namespace Raul { template <typename T> class List; class Maid; }
 
 namespace Ingen {
 
+namespace Shared { class Plugin; class Node; class Port; }
+
+using namespace Shared;
+
 class Buffer;
 class PluginImpl;
 class Patch;
-class Port;
+class PortImpl;
 
 
 /** A Node (or "module") in a Patch (which is also a Node).
@@ -118,10 +122,10 @@ public:
 
 	virtual void set_port_buffer(uint32_t voice, uint32_t port_num, Buffer* buf) = 0;
 
-	// FIXME: Only used by client senders.  Remove?
-	virtual const Raul::Array<Port*>& ports() const = 0;
-	
 	virtual uint32_t num_ports() const = 0;
+
+	virtual Port*     port(uint32_t index) const = 0;
+	virtual PortImpl* port_impl(uint32_t index) const = 0;
 	
 	/** Used by the process order finding algorithm (ie during connections) */
 	virtual bool traversed() const  = 0;
@@ -145,7 +149,12 @@ public:
 	/** Information about the Plugin this Node is an instance of.
 	 * Not the best name - not all nodes come from plugins (ie Patch)
 	 */
-	virtual const PluginImpl* plugin() const = 0;
+	virtual const PluginImpl* plugin_impl() const = 0;
+	
+	/** Information about the Plugin this Node is an instance of.
+	 * Not the best name - not all nodes come from plugins (ie Patch)
+	 */
+	virtual const Shared::Plugin* plugin() const = 0;
 
 	virtual void set_buffer_size(size_t size) = 0;
 };

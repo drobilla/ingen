@@ -18,7 +18,7 @@
 #include <iostream>
 #include "events/SendPortValueEvent.hpp"
 #include "EventSink.hpp"
-#include "Port.hpp"
+#include "PortImpl.hpp"
 
 using namespace std;
 

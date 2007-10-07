@@ -31,7 +31,7 @@ class DisconnectionEvent;
 class Patch;
 class NodeImpl;
 class Connection;
-class Port;
+class PortImpl;
 class InputPort;
 class OutputPort;
 

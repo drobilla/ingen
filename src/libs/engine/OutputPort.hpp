@@ -20,7 +20,7 @@
 
 #include <string>
 #include <cstdlib>
-#include "Port.hpp"
+#include "PortImpl.hpp"
 #include "types.hpp"
 
 namespace Ingen {
@@ -37,7 +37,7 @@ namespace Ingen {
  *
  * \ingroup engine
  */
-class OutputPort : virtual public Port
+class OutputPort : virtual public PortImpl
 {
 public:
 	OutputPort(NodeImpl*     parent,
@@ -46,7 +46,7 @@ public:
 	           uint32_t      poly,
 	           DataType      type,
 	           size_t        buffer_size)
-	: Port(parent, name, index, poly, type, buffer_size)
+	: PortImpl(parent, name, index, poly, type, buffer_size)
 	{}
 
 	void pre_process(ProcessContext& context);

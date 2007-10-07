@@ -35,7 +35,7 @@ class Patch;
 class NodeImpl;
 class Connection;
 class MidiMessage;
-class Port;
+class PortImpl;
 class Connection;
 class InputPort;
 class OutputPort;
@@ -50,7 +50,7 @@ class DisconnectionEvent : public QueuedEvent
 {
 public:
 	DisconnectionEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& src_port_path, const string& dst_port_path);
-	DisconnectionEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, Port* const src_port, Port* const dst_port);
+	DisconnectionEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, PortImpl* const src_port, PortImpl* const dst_port);
 
 	void pre_process();
 	void execute(ProcessContext& context);
@@ -72,8 +72,8 @@ private:
 	Raul::Path _dst_port_path;
 	
 	Patch*      _patch;
-	Port*       _src_port;
-	Port*       _dst_port;
+	PortImpl*   _src_port;
+	PortImpl*   _dst_port;
 	OutputPort* _src_output_port;
 	InputPort*  _dst_input_port;
 

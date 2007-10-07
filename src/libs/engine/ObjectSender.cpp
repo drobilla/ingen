@@ -20,11 +20,11 @@
 #include "ObjectStore.hpp"
 #include "Patch.hpp"
 #include "NodeImpl.hpp"
-#include "Port.hpp"
-#include "Port.hpp"
+#include "PortImpl.hpp"
+#include "PortImpl.hpp"
 #include "Connection.hpp"
 #include "NodeFactory.hpp"
-#include "DataType.hpp"
+#include "interface/DataType.hpp"
 #include "AudioBuffer.hpp"
 
 namespace Ingen {
@@ -48,7 +48,7 @@ ObjectSender::send_patch(ClientInterface* client, const Patch* patch, bool recur
 		// Send ports
 		for (uint32_t i=0; i < patch->num_ports(); ++i) {
 
-			Port* const port = patch->ports().at(i);
+			PortImpl* const port = patch->port_impl(i);
 			send_port(client, port);
 
 		}
@@ -77,7 +77,7 @@ ObjectSender::send_patch(ClientInterface* client, const Patch* patch, bool recur
 void
 ObjectSender::send_node(ClientInterface* client, const NodeImpl* node, bool recursive)
 {
-	const PluginImpl* const plugin = node->plugin();
+	const PluginImpl* const plugin = node->plugin_impl();
 
 	assert(node->path().length() > 0);
 	
@@ -93,7 +93,7 @@ ObjectSender::send_node(ClientInterface* client, const NodeImpl* node, bool recu
 	
 	client->bundle_begin();
 	
-	client->new_node(node->plugin()->uri(), node->path(), node->polyphonic(), node->ports().size());
+	client->new_node(node->plugin()->uri(), node->path(), node->polyphonic(), node->num_ports());
 	
 	// Send metadata
 	const GraphObjectImpl::MetadataMap& data = node->metadata();
@@ -104,37 +104,20 @@ ObjectSender::send_node(ClientInterface* client, const NodeImpl* node, bool recu
 	
 	if (recursive) {
 		// Send ports
-		for (size_t j=0; j < node->ports().size(); ++j)
-			send_port(client, node->ports().at(j));
+		for (size_t j=0; j < node->num_ports(); ++j)
+			send_port(client, node->port_impl(j));
 	}
 }
 
 
 void
-ObjectSender::send_port(ClientInterface* client, const Port* port)
+ObjectSender::send_port(ClientInterface* client, const PortImpl* port)
 {
 	assert(port);
 	
-	//cerr << "Sending port " << port->path();
-
-	// FIXME: temporary compatibility hack
-	string type = port->type().uri();
-	if (port->type() == DataType::FLOAT) {
-		if (port->buffer_size() == 1) 
-			type = "ingen:control";
-		else
-			type = "ingen:audio";
-	} else if (port->type() == DataType::MIDI) {
-		type = "ingen:midi";
-	} else if (port->type() == DataType::OSC) {
-		type = "ingen:osc";
-	}
-	
-	//cerr << ", type = " << type << endl;
-
 	client->bundle_begin();
 
-	client->new_port(port->path(), type, port->is_output());
+	client->new_port(port->path(), port->type().uri(), port->is_output());
 	
 	// Send metadata
 	const GraphObjectImpl::MetadataMap& data = port->metadata();
@@ -142,7 +125,7 @@ ObjectSender::send_port(ClientInterface* client, const Port* port)
 		client->metadata_update(port->path(), (*j).first, (*j).second);
 	
 	// Send control value
-	if (port->type() == DataType::FLOAT && port->buffer_size() == 1) {
+	if (port->type() == DataType::CONTROL) {
 		const Sample value = dynamic_cast<const AudioBuffer*>(port->buffer(0))->value_at(0);
 		//cerr << port->path() << " sending default value " << default_value << endl;
 		client->control_change(port->path(), value);

@@ -20,7 +20,7 @@
 #include "util.hpp"
 #include "Connection.hpp"
 #include "NodeImpl.hpp"
-#include "Port.hpp"
+#include "PortImpl.hpp"
 #include "BufferFactory.hpp"
 #include "AudioBuffer.hpp"
 #include "ProcessContext.hpp"
@@ -33,7 +33,7 @@ namespace Ingen {
  * This handles both polyphonic and monophonic nodes, transparently to the 
  * user (InputPort).
  */
-Connection::Connection(Port* src_port, Port* dst_port)
+Connection::Connection(PortImpl* src_port, PortImpl* dst_port)
 	: _src_port(src_port)
 	, _dst_port(dst_port)
 	, _local_buffer(NULL)
@@ -85,7 +85,7 @@ Connection::set_buffer_size(size_t size)
 void
 Connection::prepare_poly(uint32_t poly)
 {
-	if (type() == DataType::FLOAT)
+	if (type() == DataType::CONTROL || type() == DataType::AUDIO)
 		_must_mix = (poly > 1) && (
 				   (_src_port->poly() != _dst_port->poly())
 				|| (_src_port->polyphonic() && !_dst_port->polyphonic())
@@ -123,7 +123,7 @@ Connection::process(ProcessContext& context)
 	 * would avoid having to mix multiple times.  Probably not a very common
 	 * case, but it would be faster anyway. */
 	
-	if (_must_mix && type() == DataType::FLOAT) {
+	if (_must_mix && type() == DataType::CONTROL || type() == DataType::AUDIO) {
 
 		const AudioBuffer* const src_buffer = (AudioBuffer*)src_port()->buffer(0);
 		AudioBuffer*             mix_buf    = (AudioBuffer*)_local_buffer;

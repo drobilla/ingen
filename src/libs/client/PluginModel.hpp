@@ -105,7 +105,7 @@ public:
 		_slv2_plugins = slv2_world_get_all_plugins(_slv2_world);
 	}
 
-	SLV2UIInstance ui(Ingen::Shared::EngineInterface* engine, NodeModel* node);
+	SLV2UIInstance ui(Ingen::Shared::EngineInterface* engine, NodeModel* node) const;
 #endif
 
 	static void set_rdf_world(Raul::RDF::World& world) {

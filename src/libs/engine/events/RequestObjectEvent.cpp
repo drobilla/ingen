@@ -24,7 +24,7 @@
 #include "ClientBroadcaster.hpp"
 #include "Patch.hpp"
 #include "NodeImpl.hpp"
-#include "Port.hpp"
+#include "PortImpl.hpp"
 #include "ObjectSender.hpp"
 #include "ProcessContext.hpp"
 
@@ -79,7 +79,7 @@ RequestObjectEvent::post_process()
 			return;
 		}
 		
-		Port* const port = dynamic_cast<Port*>(_object);
+		PortImpl* const port = dynamic_cast<PortImpl*>(_object);
 		if (port) {
 			_responder->respond_ok();
 			ObjectSender::send_port(_responder->client(), port);

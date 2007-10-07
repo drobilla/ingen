@@ -26,7 +26,7 @@
 
 namespace Ingen {
 
-class Port;
+class PortImpl;
 class Engine;
 class SendPortValueEvent;
 

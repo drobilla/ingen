@@ -32,7 +32,7 @@ namespace Ingen {
 
 
 InputPort::InputPort(NodeImpl* parent, const string& name, uint32_t index, uint32_t poly, DataType type, size_t buffer_size)
-	: Port(parent, name, index, poly, type, buffer_size)
+	: PortImpl(parent, name, index, poly, type, buffer_size)
 {
 }
 
@@ -40,7 +40,7 @@ InputPort::InputPort(NodeImpl* parent, const string& name, uint32_t index, uint3
 void
 InputPort::set_buffer_size(size_t size)
 {
-	Port::set_buffer_size(size);
+	PortImpl::set_buffer_size(size);
 	assert(_buffer_size = size);
 
 	for (Raul::List<Connection*>::iterator c = _connections.begin(); c != _connections.end(); ++c)
@@ -74,11 +74,11 @@ InputPort::add_connection(Raul::ListNode<Connection*>* const c)
 				_buffers->at(i)->unjoin();
 			}
 		}
-		Port::connect_buffers();
+		PortImpl::connect_buffers();
 	}
 
 	// Automatically broadcast connected control inputs
-	if (_type == DataType::FLOAT && _buffer_size == 1)
+	if (_type == DataType::CONTROL)
 		_broadcast = true;
 }
 
@@ -119,10 +119,10 @@ InputPort::remove_connection(const OutputPort* src_port)
 	}
 
 	if (modify_buffers)
-		Port::connect_buffers();
+		PortImpl::connect_buffers();
 	
 	// Turn off broadcasting if we're not connected any more (FIXME: not quite right..)
-	if (_type == DataType::FLOAT && _buffer_size == 1 && _connections.size() == 0)
+	if (_type == DataType::CONTROL && _connections.size() == 0)
 		_broadcast = false;
 
 	return connection;
@@ -184,7 +184,7 @@ InputPort::pre_process(ProcessContext& context)
 		return;
 	}
 
-	if (_type == DataType::FLOAT) {
+	if (_type == DataType::CONTROL || _type == DataType::AUDIO) {
 		for (uint32_t voice=0; voice < _poly; ++voice) {
 			// Copy first connection
 			_buffers->at(voice)->copy(

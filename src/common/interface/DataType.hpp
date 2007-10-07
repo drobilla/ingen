@@ -70,10 +70,10 @@ private:
 
 	static inline const char* type_uri(unsigned symbol_num)  {
 		switch (symbol_num) {
-		case 0:  return "ingen:AudioPort";
-		case 1:  return "ingen:ControlPort";
-		case 2:  return "ingen:MidiPort";
-		case 3:  return "ingen:OSCPort";
+		case 1:  return "ingen:AudioPort";
+		case 2:  return "ingen:ControlPort";
+		case 3:  return "ingen:MidiPort";
+		case 4:  return "ingen:OSCPort";
 		default: return "";
 		}
 	}

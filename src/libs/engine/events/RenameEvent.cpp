@@ -105,11 +105,11 @@ RenameEvent::execute(ProcessContext& context)
 {
 	QueuedEvent::execute(context);
 	
-	Port* port = dynamic_cast<Port*>(_store_iterator->second);
+	PortImpl* port = dynamic_cast<PortImpl*>(_store_iterator->second);
 	if (port && port->parent()->parent() == NULL) {
 		DriverPort* driver_port = NULL;
 
-		if (port->type() == DataType::FLOAT)
+		if (port->type() == DataType::AUDIO)
 			driver_port = _engine.audio_driver()->driver_port(_new_path);
 		else if (port->type() == DataType::MIDI)
 			driver_port = _engine.midi_driver()->driver_port(_new_path);

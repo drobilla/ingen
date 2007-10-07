@@ -25,7 +25,7 @@
 #include "NodeImpl.hpp"
 #include "Connection.hpp"
 #include "DisconnectionEvent.hpp"
-#include "Port.hpp"
+#include "PortImpl.hpp"
 #include "InputPort.hpp"
 #include "OutputPort.hpp"
 #include "Patch.hpp"

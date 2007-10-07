@@ -17,7 +17,7 @@
 
 #include "SendPortActivityEvent.hpp"
 #include "Engine.hpp"
-#include "Port.hpp"
+#include "PortImpl.hpp"
 #include "ClientBroadcaster.hpp"
 
 namespace Ingen {

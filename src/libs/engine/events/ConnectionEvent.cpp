@@ -27,7 +27,7 @@
 #include "OutputPort.hpp"
 #include "Patch.hpp"
 #include "ClientBroadcaster.hpp"
-#include "Port.hpp"
+#include "PortImpl.hpp"
 #include "ObjectStore.hpp"
 
 using std::string;

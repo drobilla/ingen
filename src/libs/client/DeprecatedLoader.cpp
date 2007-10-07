@@ -378,22 +378,22 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 
 		if (plugin_type == "Internal") {
 			if (plugin_label == "audio_input") {
-				_engine->create_port(path, "ingen:audio", false);
+				_engine->create_port(path, "ingen:AudioPort", false);
 				is_port = true;
 			} else if (plugin_label == "audio_output") {
-				_engine->create_port(path, "ingen:audio", true);
+				_engine->create_port(path, "ingen:AudioPort", true);
 				is_port = true;
 			} else if (plugin_label == "control_input") {
-				_engine->create_port(path, "ingen:control", false);
+				_engine->create_port(path, "ingen:ControlPort", false);
 				is_port = true;
 			} else if (plugin_label == "control_output" ) {
-				_engine->create_port(path, "ingen:control", true);
+				_engine->create_port(path, "ingen:ControlPort", true);
 				is_port = true;
 			} else if (plugin_label == "midi_input") {
-				_engine->create_port(path, "ingen:midi", false);
+				_engine->create_port(path, "ingen:MidiPort", false);
 				is_port = true;
 			} else if (plugin_label == "midi_output" ) {
-				_engine->create_port(path, "ingen:midi", true);
+				_engine->create_port(path, "ingen:MidiPort", true);
 				is_port = true;
 			}
 		}

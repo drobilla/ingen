@@ -29,7 +29,7 @@
 #include "ObjectStore.hpp"
 #include "OutputPort.hpp"
 #include "Patch.hpp"
-#include "Port.hpp"
+#include "PortImpl.hpp"
 #include "Responder.hpp"
 #include "util.hpp"
 

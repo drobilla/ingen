@@ -23,7 +23,7 @@
 #include "ClientBroadcaster.hpp"
 #include "util.hpp"
 #include "ObjectStore.hpp"
-#include "Port.hpp"
+#include "PortImpl.hpp"
 #include "NodeImpl.hpp"
 #include "Connection.hpp"
 #include "QueuedEventSource.hpp"

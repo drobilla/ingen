@@ -24,7 +24,7 @@
 #include <boost/utility.hpp>
 #include <raul/SharedPtr.hpp>
 #include "module/module.h"
-#include "DataType.hpp"
+#include "interface/DataType.hpp"
 
 template<typename T> class Queue;
 

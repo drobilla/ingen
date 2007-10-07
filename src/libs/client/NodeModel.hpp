@@ -51,10 +51,12 @@ public:
 
 	SharedPtr<PortModel> get_port(const string& port_name) const;
 	
-	const string&          plugin_uri()   const { return _plugin_uri; }
-	SharedPtr<PluginModel> plugin()       const { return _plugin; }
-	uint32_t               num_ports()    const { return _ports.size(); }
-	const PortModelList&   ports()        const { return _ports; }
+	Shared::Port* port(uint32_t index) const;
+	
+	const string&         plugin_uri() const { return _plugin_uri; }
+	const Shared::Plugin* plugin()     const { return _plugin.get(); }
+	uint32_t              num_ports()  const { return _ports.size(); }
+	const PortModelList&  ports()     const { return _ports; }
 	
 	void port_value_range(SharedPtr<PortModel> port, float& min, float& max);
 	

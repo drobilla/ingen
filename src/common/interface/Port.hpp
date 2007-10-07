@@ -15,34 +15,33 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef PINGQUEUEDEVENT_H
-#define PINGQUEUEDEVENT_H
+#ifndef PORT_H
+#define PORT_H
 
-#include "QueuedEvent.hpp"
-#include "types.hpp"
-#include "Responder.hpp"
+#include <raul/Atom.hpp>
+#include "GraphObject.hpp"
+#include "DataType.hpp"
 
 namespace Ingen {
+namespace Shared {
 
-class PortImpl;
 
-
-/** A ping that travels through the pre-processed event queue before responding
- * (useful for the order guarantee).
+/** A Port on a Node.
  *
- * \ingroup engine
+ * Purely virtual (except for the destructor).
+ * 
+ * \ingroup interface
  */
-class PingQueuedEvent : public QueuedEvent
+class Port : public virtual GraphObject
 {
 public:
-	PingQueuedEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp)
-		: QueuedEvent(engine, responder, timestamp)
-	{}
-
-	void post_process() { _responder->respond_ok(); }
+	virtual bool       is_input() const = 0;
+	virtual DataType   type()     const = 0;
+	virtual Raul::Atom value()    const = 0;
 };
 
 
+} // namespace Shared
 } // namespace Ingen
 
-#endif // PINGQUEUEDEVENT_H
+#endif // PORT_H

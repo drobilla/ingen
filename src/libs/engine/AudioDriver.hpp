@@ -22,13 +22,13 @@
 #include <raul/Path.hpp>
 #include "Driver.hpp"
 #include "types.hpp"
-#include "DataType.hpp"
+#include "interface/DataType.hpp"
 
 namespace Ingen {
 
 class Patch;
 class AudioDriver;
-class Port;
+class PortImpl;
 class ProcessContext;
 
 
@@ -39,7 +39,7 @@ class ProcessContext;
 class AudioDriver : public Driver
 {
 public:
-	AudioDriver() : Driver(DataType::FLOAT) {}
+	AudioDriver() : Driver(DataType::AUDIO) {}
 	
 	virtual void   set_root_patch(Patch* patch) = 0;
 	virtual Patch* root_patch()                 = 0;

@@ -19,7 +19,7 @@
 #define OSCBUFFER_H
 
 #include "Buffer.hpp"
-#include "DataType.hpp"
+#include "interface/DataType.hpp"
 #include "../../../../lv2/extensions/osc/lv2_osc.h"
 
 namespace Ingen {

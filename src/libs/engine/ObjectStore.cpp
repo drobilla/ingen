@@ -23,7 +23,7 @@
 #include "ObjectStore.hpp"
 #include "Patch.hpp"
 #include "NodeImpl.hpp"
-#include "Port.hpp"
+#include "PortImpl.hpp"
 #include "ThreadManager.hpp"
 
 using namespace std;
@@ -54,11 +54,11 @@ ObjectStore::find_node(const Path& path)
 
 /** Find the Port at the given path.
  */
-Port*
+PortImpl*
 ObjectStore::find_port(const Path& path) 
 {
 	GraphObjectImpl* const object = find_object(path);
-	return dynamic_cast<Port*>(object);
+	return dynamic_cast<PortImpl*>(object);
 }
 
 
@@ -85,7 +85,7 @@ ObjectStore::add(GraphObjectImpl* o)
 	NodeImpl* node = dynamic_cast<NodeImpl*>(o);
 	if (node) {
 		for (uint32_t i=0; i < node->num_ports(); ++i) {
-			add(node->ports().at(i));
+			add(node->port_impl(i));
 		}
 	}
 }

@@ -20,7 +20,7 @@
 #include "interface/ClientInterface.hpp"
 #include "Responder.hpp"
 #include "Engine.hpp"
-#include "Port.hpp"
+#include "PortImpl.hpp"
 #include "ObjectStore.hpp"
 #include "ClientBroadcaster.hpp"
 #include "AudioBuffer.hpp"
@@ -55,7 +55,7 @@ RequestPortValueEvent::execute(ProcessContext& context)
 	QueuedEvent::execute(context);
 	assert(_time >= context.start() && _time <= context.end());
 
-	if (_port != NULL && _port->type() == DataType::FLOAT)
+	if (_port != NULL && (_port->type() == DataType::CONTROL || _port->type() == DataType::AUDIO))
 		_value = ((AudioBuffer*)_port->buffer(0))->value_at(0/*_time - start*/);
 	else 
 		_port = NULL; // triggers error response
