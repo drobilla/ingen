@@ -47,7 +47,7 @@ PluginModel::default_node_name(SharedPtr<PatchModel> parent)
 			snprintf(num_buf, 3, "%d", i+1);
 			name += num_buf;
 		}
-		if (!parent->get_node(name))
+		if (!parent->find_child(name))
 			break;
 	}
 

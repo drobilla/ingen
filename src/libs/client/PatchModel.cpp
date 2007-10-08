@@ -32,7 +32,7 @@ PatchModel::add_child(SharedPtr<ObjectModel> c)
 {
 	assert(c->parent().get() == this);
 	
-	ObjectModel::add_child(c);
+	//ObjectModel::add_child(c);
 
 	SharedPtr<PortModel> pm = PtrCast<PortModel>(c);
 	if (pm) {
@@ -45,12 +45,13 @@ PatchModel::add_child(SharedPtr<ObjectModel> c)
 		signal_new_node.emit(nm);
 }
 
+/*
 SharedPtr<NodeModel>
 PatchModel::get_node(const string& name) const
 {
 	return PtrCast<NodeModel>(get_child(name));
 }
-
+*/
 
 bool
 PatchModel::remove_child(SharedPtr<ObjectModel> o)
@@ -82,35 +83,21 @@ PatchModel::remove_child(SharedPtr<ObjectModel> o)
 		j = next;
 	}
 
-	if (ObjectModel::remove_child(o)) {
-		SharedPtr<NodeModel> nm = PtrCast<NodeModel>(o);
-		if (nm) {
-			signal_removed_node.emit(nm);
-		}
-		return true;
-	} else {
-		return false;
-	}
+	SharedPtr<NodeModel> nm = PtrCast<NodeModel>(o);
+	if (nm) 
+		signal_removed_node.emit(nm);
+		
+	return true;
 }
 
 
 void
 PatchModel::clear()
 {
-	//for (list<SharedPtr<ConnectionModel> >::iterator j = _connections.begin(); j != _connections.end(); ++j)
-	//	delete (*j);
-	
-	/*for (Children::iterator i = _children.begin(); i != _children.end(); ++i) {
-		(*i).second->clear();
-		//delete (*i).second;
-	}*/
-	
-	_children.clear();
 	_connections.clear();
 
 	NodeModel::clear();
 
-	assert(_children.empty());
 	assert(_connections.empty());
 	assert(_ports.empty());
 }

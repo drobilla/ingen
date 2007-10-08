@@ -26,15 +26,15 @@ namespace Ingen {
 namespace Client {
 
 
-NodeModel::NodeModel(SharedPtr<PluginModel> plugin, const Path& path, bool polyphonic)
-	: ObjectModel(path, polyphonic)
+NodeModel::NodeModel(Store& store, SharedPtr<PluginModel> plugin, const Path& path, bool polyphonic)
+	: ObjectModel(store, path, polyphonic)
 	, _plugin_uri(plugin->uri())
 	, _plugin(plugin)
 {
 }
 
-NodeModel::NodeModel(const string& plugin_uri, const Path& path, bool polyphonic)
-	: ObjectModel(path, polyphonic)
+NodeModel::NodeModel(Store& store, const string& plugin_uri, const Path& path, bool polyphonic)
+	: ObjectModel(store, path, polyphonic)
 	, _plugin_uri(plugin_uri)
 {
 }
@@ -86,7 +86,7 @@ NodeModel::add_child(SharedPtr<ObjectModel> c)
 {
 	assert(c->parent().get() == this);
 	
-	ObjectModel::add_child(c);
+	//ObjectModel::add_child(c);
 
 	SharedPtr<PortModel> pm = PtrCast<PortModel>(c);
 	assert(pm);
@@ -100,13 +100,14 @@ NodeModel::remove_child(SharedPtr<ObjectModel> c)
 	assert(c->path().is_child_of(_path));
 	assert(c->parent().get() == this);
 	
-	bool ret = ObjectModel::remove_child(c);
+	//bool ret = ObjectModel::remove_child(c);
 
 	SharedPtr<PortModel> pm = PtrCast<PortModel>(c);
 	assert(pm);
 	remove_port(pm);
 
-	return ret;
+	//return ret;
+	return true;
 }
 
 

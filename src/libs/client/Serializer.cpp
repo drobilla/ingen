@@ -39,6 +39,7 @@
 #include "interface/Connection.hpp"
 #include "PatchModel.hpp"
 #include "Serializer.hpp"
+#include "Store.hpp"
 
 using namespace std;
 using namespace Raul;
@@ -291,7 +292,7 @@ Serializer::serialize_patch(SharedPtr<PatchModel> patch)
 		}
 	}
 
-	for (ObjectModel::Children::const_iterator n = patch->children().begin(); n != patch->children().end(); ++n) {
+	for (Store::Objects::const_iterator n = patch->children_begin(); n != patch->children_end(); ++n) {
 		SharedPtr<PatchModel> patch = PtrCast<PatchModel>(n->second);
 		SharedPtr<NodeModel> node   = PtrCast<NodeModel>(n->second);
 		if (patch) {

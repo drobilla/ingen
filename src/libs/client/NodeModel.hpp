@@ -67,8 +67,8 @@ public:
 protected:
 	friend class Store;
 	
-	NodeModel(const string& plugin_uri, const Path& path, bool polyphonic);
-	NodeModel(SharedPtr<PluginModel> plugin, const Path& path, bool polyphonic);
+	NodeModel(Store& store, const string& plugin_uri, const Path& path, bool polyphonic);
+	NodeModel(Store& store, SharedPtr<PluginModel> plugin, const Path& path, bool polyphonic);
 
 	NodeModel(const Path& path);
 	void add_child(SharedPtr<ObjectModel> c);

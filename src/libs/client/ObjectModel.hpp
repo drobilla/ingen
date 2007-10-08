@@ -30,6 +30,7 @@
 #include <raul/SharedPtr.hpp>
 #include <raul/Table.hpp>
 #include "interface/GraphObject.hpp"
+#include "Store.hpp"
 
 using std::string;
 using Raul::Atom;
@@ -37,6 +38,8 @@ using Raul::Path;
 
 namespace Ingen {
 namespace Client {
+
+class Store;
 
 
 /** Base class for all GraphObject models (NodeModel, PatchModel, PortModel).
@@ -59,16 +62,18 @@ public:
 	void set_metadata(const string& key, const Atom& value)
 		{ _metadata.insert(make_pair(key, value)); signal_metadata.emit(key, value); }
 
-	typedef Raul::Table<string, SharedPtr<ObjectModel> > Children;
-
 	const MetadataMap&     metadata()   const { return _metadata; }
-	const Children&        children()   const { return _children; }
 	const Path             path()       const { return _path; }
 	const string           name()       const { return _path.name(); }
 	SharedPtr<ObjectModel> parent()     const { return _parent; }
 	bool                   polyphonic() const { return _polyphonic; }
 
-	SharedPtr<ObjectModel> get_child(const string& name) const;
+	typedef Store::Objects::iterator       iterator;
+	typedef Store::Objects::const_iterator const_iterator;
+
+	const_iterator         children_begin() const;
+	const_iterator         children_end() const;
+	SharedPtr<ObjectModel> find_child(const string& name) const;
 
 	// Signals
 	sigc::signal<void, SharedPtr<ObjectModel> >    signal_new_child; 
@@ -81,24 +86,24 @@ public:
 protected:
 	friend class Store;
 	
-	ObjectModel(const Path& path, bool polyphonic);
+	ObjectModel(Store& store,  const Path& path, bool polyphonic);
 	
 	virtual void set_path(const Path& p) { _path = p; signal_renamed.emit(); }
 	virtual void set_parent(SharedPtr<ObjectModel> p) { assert(p); _parent = p; }
-	virtual void add_child(SharedPtr<ObjectModel> c);
-	virtual bool remove_child(SharedPtr<ObjectModel> c);
-	
+	virtual void add_child(SharedPtr<ObjectModel> c) {}
+	virtual bool remove_child(SharedPtr<ObjectModel> c) { return true; }
+
 	void add_metadata(const MetadataMap& data);
 	void set_polyphonic(bool);
 	
 	void set(SharedPtr<ObjectModel> model);
 
+	Store&                 _store;
 	Path                   _path;
 	bool                   _polyphonic;
 	SharedPtr<ObjectModel> _parent;
 	
 	MetadataMap _metadata;
-	Children    _children;
 };
 
 

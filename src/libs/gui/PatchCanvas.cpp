@@ -195,8 +195,8 @@ PatchCanvas::build()
 		boost::dynamic_pointer_cast<PatchCanvas>(shared_from_this());
 	
 	// Create modules for nodes
-	for (ObjectModel::Children::const_iterator i = _patch->children().begin();
-			i != _patch->children().end(); ++i) {
+	for (ObjectModel::const_iterator i = _patch->children_begin();
+			i != _patch->children_end(); ++i) {
 		SharedPtr<NodeModel> node = PtrCast<NodeModel>(i->second);
 		if (node)
 			add_node(node);

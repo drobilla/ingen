@@ -46,7 +46,7 @@ public:
 	const Connections& connections() const { return _connections; }
 	
 	SharedPtr<ConnectionModel> get_connection(const string& src_port_path, const string& dst_port_path) const;
-	SharedPtr<NodeModel>       get_node(const string& node_name) const;
+	//SharedPtr<NodeModel>       get_node(const string& node_name) const;
 	
 	void set_filename(const string& filename) { _filename = filename; }
 
@@ -77,11 +77,11 @@ public:
 private:
 	friend class Store;
 
-	PatchModel(const Path& patch_path, size_t internal_poly)
-	: NodeModel("ingen:patch", patch_path, false), // FIXME
-	  _enabled(false),
-	  _poly(internal_poly),
-	  _editable(true)
+	PatchModel(Store& store, const Path& patch_path, size_t internal_poly)
+		: NodeModel(store, "ingen:Patch", patch_path, false) // FIXME
+		, _enabled(false)
+		, _poly(internal_poly)
+		, _editable(true)
 	{
 	}
 	

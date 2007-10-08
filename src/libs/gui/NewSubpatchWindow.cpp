@@ -71,7 +71,7 @@ NewSubpatchWindow::name_changed()
 	if (!Path::is_valid_name(name)) {
 		_message_label->set_text("Name contains invalid characters.");
 		_ok_button->property_sensitive() = false;
-	} else if (_patch->get_node(name)) {
+	} else if (_patch->find_child(name)) {
 		_message_label->set_text("An object already exists with that name.");
 		_ok_button->property_sensitive() = false;
 	} else if (name.length() == 0) {

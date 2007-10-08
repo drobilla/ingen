@@ -400,7 +400,7 @@ Store::new_plugin_event(const string& uri, const string& type_uri, const string&
 void
 Store::new_patch_event(const Path& path, uint32_t poly)
 {
-	SharedPtr<PatchModel> p(new PatchModel(path, poly));
+	SharedPtr<PatchModel> p(new PatchModel(*this, path, poly));
 	add_object(p);
 }
 
@@ -412,10 +412,10 @@ Store::new_node_event(const string& plugin_uri, const Path& node_path, bool is_p
 	
 	SharedPtr<PluginModel> plug = plugin(plugin_uri);
 	if (!plug) {
-		SharedPtr<NodeModel> n(new NodeModel(plugin_uri, node_path, is_polyphonic));
+		SharedPtr<NodeModel> n(new NodeModel(*this, plugin_uri, node_path, is_polyphonic));
 		add_plugin_orphan(n);
 	} else {
-		SharedPtr<NodeModel> n(new NodeModel(plug, node_path, is_polyphonic));
+		SharedPtr<NodeModel> n(new NodeModel(*this, plug, node_path, is_polyphonic));
 		add_object(n);
 	}
 }
@@ -426,7 +426,7 @@ Store::new_port_event(const Path& path, const string& type, bool is_output)
 {
 	PortModel::Direction pdir = is_output ? PortModel::OUTPUT : PortModel::INPUT;
 
-	SharedPtr<PortModel> p(new PortModel(path, type, pdir));
+	SharedPtr<PortModel> p(new PortModel(*this, path, type, pdir));
 	add_object(p);
 	if (p->parent())
 		resolve_connection_orphans(p);
@@ -473,12 +473,9 @@ void
 Store::patch_cleared_event(const Path& path)
 {
 	SharedPtr<PatchModel> patch = PtrCast<PatchModel>(object(path));
-	if (patch) {
-		ObjectModel::Children children = patch->children(); // take a copy
-		for (ObjectModel::Children::iterator i = children.begin(); i != children.end(); ++i) {
+	if (patch)
+		for (ObjectModel::const_iterator i = patch->children_begin(); i != patch->children_end(); ++i)
 			destruction_event(i->second->path());
-		}
-	}
 }
 
 

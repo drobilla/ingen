@@ -25,8 +25,9 @@ namespace Ingen {
 namespace Client {
 
 
-ObjectModel::ObjectModel(const Path& path, bool polyphonic)
-	: _path(path)
+ObjectModel::ObjectModel(Store& store, const Path& path, bool polyphonic)
+	: _store(store)
+	, _path(path)
 	, _polyphonic(polyphonic)
 {
 }
@@ -35,50 +36,40 @@ ObjectModel::ObjectModel(const Path& path, bool polyphonic)
 ObjectModel::~ObjectModel()
 {
 }
+	
+
+ObjectModel::const_iterator
+ObjectModel::children_begin() const
+{
+	Store::Objects::const_iterator me = _store.objects().find(_path);
+	assert(me != _store.objects().end());
+	++me;
+	return me;
+}
+
+
+ObjectModel::const_iterator
+ObjectModel::children_end() const
+{
+	Store::Objects::const_iterator me = _store.objects().find(_path);
+	assert(me != _store.objects().end());
+	return _store.objects().find_descendants_end(me);
+}
+
 
 SharedPtr<ObjectModel>
-ObjectModel::get_child(const string& name) const
+ObjectModel::find_child(const string& name) const
 {
-	assert(name.find("/") == string::npos);
-	Children::const_iterator i = _children.find(name);
-	return ((i != _children.end()) ? (*i).second : SharedPtr<ObjectModel>());
+	const_iterator me = _store.objects().find(_path);
+	assert(me != _store.objects().end());
+	const_iterator children_end = _store.objects().find_descendants_end(me);
+	const_iterator child = _store.objects().find(me, children_end, _path.base() + name);
+	if (child != _store.objects().end())
+		return child->second;
+	else
+		return SharedPtr<ObjectModel>();
 }
 
-void
-ObjectModel::add_child(SharedPtr<ObjectModel> o)
-{
-	assert(o);
-	assert(o->path().is_child_of(_path));
-	assert(o->parent().get() == this);
-	
-#ifndef NDEBUG
-	// Be sure there's no duplicates
-	Children::iterator existing = _children.find(o->path().name());
-	assert(existing == _children.end());
-#endif
-
-	_children.insert(make_pair(o->path().name(), o));
-	signal_new_child.emit(o);
-}
-
-bool
-ObjectModel::remove_child(SharedPtr<ObjectModel> o)
-{
-	assert(o->path().is_child_of(_path));
-	assert(o->parent().get() == this);
-
-	Children::iterator i = _children.find(o->path().name());
-	if (i != _children.end()) {
-		assert(i->second == o);
-		_children.erase(i);
-		signal_removed_child.emit(o);
-		return true;
-	} else {
-		cerr << "[ObjectModel::remove_child] " << _path
-			<< ": failed to find child " << o->path().name() << endl;
-		return false;
-	}
-}
 
 /** Get a piece of metadata for this object.
  *
