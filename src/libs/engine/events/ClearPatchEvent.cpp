@@ -51,7 +51,7 @@ ClearPatchEvent::pre_process()
 	
 		_process = _patch->enabled();
 
-		for (Raul::List<Node*>::const_iterator i = _patch->nodes().begin(); i != _patch->nodes().end(); ++i)
+		for (List<Node*>::const_iterator i = _patch->nodes().begin(); i != _patch->nodes().end(); ++i)
 			(*i)->remove_from_store();
 	}
 #endif
@@ -69,7 +69,7 @@ ClearPatchEvent::execute(ProcessContext& context)
 		_patch->disable();
 		
 		cerr << "FIXME: CLEAR PATCH\n";
-		//for (Raul::List<Node*>::const_iterator i = _patch->nodes().begin(); i != _patch->nodes().end(); ++i)
+		//for (List<Node*>::const_iterator i = _patch->nodes().begin(); i != _patch->nodes().end(); ++i)
 		//	(*i)->remove_from_patch();
 
 		if (_patch->compiled_patch() != NULL) {
@@ -85,15 +85,16 @@ ClearPatchEvent::post_process()
 {	
 	if (_patch != NULL) {
 		// Delete all nodes
-		for (Raul::List<NodeImpl*>::iterator i = _patch->nodes().begin(); i != _patch->nodes().end(); ++i) {
+		for (List<NodeImpl*>::iterator i = _patch->nodes().begin(); i != _patch->nodes().end(); ++i) {
 			(*i)->deactivate();
 			delete *i;
 		}
 		_patch->nodes().clear();
 
 		// Delete all connections
-		for (Raul::List<ConnectionImpl*>::iterator i = _patch->connections().begin(); i != _patch->connections().end(); ++i)
-			delete *i;
+		for (List< SharedPtr<ConnectionImpl> >::iterator i = _patch->connections().begin(); i != _patch->connections().end(); ++i)
+			(*i).reset();
+
 		_patch->connections().clear();
 		
 		// Restore patch's run state

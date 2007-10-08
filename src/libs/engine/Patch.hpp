@@ -21,6 +21,7 @@
 #include <cstdlib>
 #include <string>
 #include <raul/List.hpp>
+#include <raul/SharedPtr.hpp>
 #include "NodeBase.hpp"
 #include "PluginImpl.hpp"
 #include "interface/DataType.hpp"
@@ -29,6 +30,7 @@
 using std::string;
 
 template <typename T> class Array;
+using Raul::List;
 
 namespace Ingen {
 
@@ -83,24 +85,27 @@ public:
 	
 	// Patch specific stuff not inherited from Node
 	
-	void                       add_node(Raul::ListNode<NodeImpl*>* tn);
-	Raul::ListNode<NodeImpl*>* remove_node(const string& name);
-
-	Raul::List<NodeImpl*>&       nodes()       { return _nodes; }
-	Raul::List<ConnectionImpl*>& connections() { return _connections; }
+	typedef List< SharedPtr<ConnectionImpl> > Connections;
+	typedef List<NodeImpl*>                   Nodes;
 	
-	const Raul::List<NodeImpl*>&       nodes()       const { return _nodes; }
-	const Raul::List<ConnectionImpl*>& connections() const { return _connections; }
+	void         add_node(Nodes::Node* tn);
+	Nodes::Node* remove_node(const string& name);
+
+	Nodes&       nodes()       { return _nodes; }
+	Connections& connections() { return _connections; }
+	
+	const Nodes&       nodes()       const { return _nodes; }
+	const Connections& connections() const { return _connections; }
 	
 	uint32_t num_ports() const;
 	
 	PortImpl* create_port(const string& name, DataType type, size_t buffer_size, bool is_output);
-	void add_input(Raul::ListNode<PortImpl*>* port)  { _input_ports.push_back(port); } ///< Preprocesser thread
-	void add_output(Raul::ListNode<PortImpl*>* port) { _output_ports.push_back(port); } ///< Preprocessor thread
-	Raul::ListNode<PortImpl*>* remove_port(const string& name);
+	void add_input(List<PortImpl*>::Node* port)  { _input_ports.push_back(port); } ///< Preprocesser thread
+	void add_output(List<PortImpl*>::Node* port) { _output_ports.push_back(port); } ///< Preprocessor thread
+	List<PortImpl*>::Node* remove_port(const string& name);
 	
-	void add_connection(Raul::ListNode<ConnectionImpl*>* c) { _connections.push_back(c); }
-	Raul::ListNode<ConnectionImpl*>* remove_connection(const PortImpl* src_port, const PortImpl* dst_port);
+	void               add_connection(Connections::Node* c) { _connections.push_back(c); }
+	Connections::Node* remove_connection(const PortImpl* src_port, const PortImpl* dst_port);
 	
 	CompiledPatch* compiled_patch()                  { return _compiled_patch; }
 	void           compiled_patch(CompiledPatch* cp) { _compiled_patch = cp; }
@@ -123,14 +128,14 @@ private:
 	void process_parallel(ProcessContext& context);
 	void process_single(ProcessContext& context);
 
-	Engine&                     _engine;
-	uint32_t                    _internal_poly;
-	CompiledPatch*              _compiled_patch; ///< Accessed in audio thread only
-	Raul::List<ConnectionImpl*> _connections;    ///< Accessed in audio thread only
-	Raul::List<PortImpl*>       _input_ports;    ///< Accessed in preprocessing thread only
-	Raul::List<PortImpl*>       _output_ports;   ///< Accessed in preprocessing thread only
-	Raul::List<NodeImpl*>       _nodes;          ///< Accessed in preprocessing thread only
-	bool                        _process;
+	Engine&         _engine;
+	uint32_t        _internal_poly;
+	CompiledPatch*  _compiled_patch; ///< Accessed in audio thread only
+	Connections     _connections;    ///< Accessed in audio thread only
+	List<PortImpl*> _input_ports;    ///< Accessed in preprocessing thread only
+	List<PortImpl*> _output_ports;   ///< Accessed in preprocessing thread only
+	Nodes           _nodes;          ///< Accessed in preprocessing thread only
+	bool            _process;
 };
 
 
@@ -145,7 +150,7 @@ Patch::compile_recursive(NodeImpl* n, CompiledPatch* output) const
 	n->traversed(true);
 	assert(output != NULL);
 	
-	for (Raul::List<NodeImpl*>::iterator i = n->providers()->begin(); i != n->providers()->end(); ++i)
+	for (List<NodeImpl*>::iterator i = n->providers()->begin(); i != n->providers()->end(); ++i)
 		if ( ! (*i)->traversed() )
 			compile_recursive((*i), output);
 

@@ -95,9 +95,9 @@ CreatePortEvent::pre_process()
 		if (_patch_port) {
 
 			if (_is_output)
-				_patch->add_output(new Raul::ListNode<PortImpl*>(_patch_port));
+				_patch->add_output(new Raul::List<PortImpl*>::Node(_patch_port));
 			else
-				_patch->add_input(new Raul::ListNode<PortImpl*>(_patch_port));
+				_patch->add_input(new Raul::List<PortImpl*>::Node(_patch_port));
 			
 			if (_patch->external_ports())
 				_ports_array = new Raul::Array<PortImpl*>(old_num_ports + 1, *_patch->external_ports());

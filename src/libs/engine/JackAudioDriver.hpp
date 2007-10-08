@@ -41,7 +41,7 @@ typedef jack_default_audio_sample_t jack_sample_t;
  *
  * A Jack port always has a one-to-one association with a Patch port.
  */
-class JackAudioPort : public DriverPort, public Raul::ListNode<JackAudioPort*>
+class JackAudioPort : public DriverPort, public Raul::List<JackAudioPort*>::Node
 {
 public:
 	JackAudioPort(JackAudioDriver* driver, DuplexPort* patch_port);

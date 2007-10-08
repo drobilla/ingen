@@ -54,12 +54,12 @@ Patch::~Patch()
 {
 	assert(!_activated);
 	
-	for (Raul::List<ConnectionImpl*>::iterator i = _connections.begin(); i != _connections.end(); ++i) {
-		delete (*i);
+	for (List< SharedPtr<ConnectionImpl> >::iterator i = _connections.begin(); i != _connections.end(); ++i) {
+		(*i).reset();
 		delete _connections.erase(i);
 	}
 
-	for (Raul::List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
+	for (List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
 		assert(!(*i)->activated());
 		delete (*i);
 		delete _nodes.erase(i);
@@ -74,7 +74,7 @@ Patch::activate()
 {
 	NodeBase::activate();
 
-	for (Raul::List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
+	for (List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		(*i)->activate();
 	
 	assert(_activated);
@@ -88,7 +88,7 @@ Patch::deactivate()
 	
 		NodeBase::deactivate();
 	
-		for (Raul::List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
+		for (List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
 			if ((*i)->activated())
 				(*i)->deactivate();
 			assert(!(*i)->activated());
@@ -103,7 +103,7 @@ Patch::disable()
 {
 	_process = false;
 
-	for (Raul::List<PortImpl*>::iterator i = _output_ports.begin(); i != _output_ports.end(); ++i)
+	for (List<PortImpl*>::iterator i = _output_ports.begin(); i != _output_ports.end(); ++i)
 		(*i)->clear_buffers();
 }
 
@@ -113,10 +113,10 @@ Patch::prepare_internal_poly(uint32_t poly)
 {
 	/* TODO: ports?  internal/external poly? */
 
-	for (Raul::List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
+	for (List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		(*i)->prepare_poly(poly);
 	
-	for (Raul::List<ConnectionImpl*>::iterator i = _connections.begin(); i != _connections.end(); ++i)
+	for (List< SharedPtr<ConnectionImpl> >::iterator i = _connections.begin(); i != _connections.end(); ++i)
 		(*i)->prepare_poly(poly);
 
 	/* FIXME: Deal with failure */
@@ -130,10 +130,10 @@ Patch::apply_internal_poly(Raul::Maid& maid, uint32_t poly)
 {
 	/* TODO: ports?  internal/external poly? */
 
-	for (Raul::List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
+	for (List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		(*i)->apply_poly(maid, poly);
 	
-	for (Raul::List<ConnectionImpl*>::iterator i = _connections.begin(); i != _connections.end(); ++i)
+	for (List< SharedPtr<ConnectionImpl> >::iterator i = _connections.begin(); i != _connections.end(); ++i)
 		(*i)->apply_poly(maid, poly);
 
 	_internal_poly = poly;
@@ -248,7 +248,7 @@ Patch::set_buffer_size(size_t size)
 	NodeBase::set_buffer_size(size);
 	assert(_buffer_size == size);
 	
-	for (Raul::List<NodeImpl*>::iterator j = _nodes.begin(); j != _nodes.end(); ++j)
+	for (List<NodeImpl*>::iterator j = _nodes.begin(); j != _nodes.end(); ++j)
 		(*j)->set_buffer_size(size);
 }
 
@@ -257,7 +257,7 @@ Patch::set_buffer_size(size_t size)
 
 
 void
-Patch::add_node(Raul::ListNode<NodeImpl*>* ln)
+Patch::add_node(List<NodeImpl*>::Node* ln)
 {
 	assert(ln != NULL);
 	assert(ln->elem() != NULL);
@@ -271,10 +271,10 @@ Patch::add_node(Raul::ListNode<NodeImpl*>* ln)
 /** Remove a node.
  * Realtime Safe.  Preprocessing thread.
  */
-Raul::ListNode<NodeImpl*>*
+Patch::Nodes::Node*
 Patch::remove_node(const string& name)
 {
-	for (Raul::List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
+	for (List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		if ((*i)->name() == name)
 			return _nodes.erase(i);
 	
@@ -284,12 +284,12 @@ Patch::remove_node(const string& name)
 
 /** Remove a connection.  Realtime safe.
  */
-Raul::ListNode<ConnectionImpl*>*
+Patch::Connections::Node*
 Patch::remove_connection(const PortImpl* src_port, const PortImpl* dst_port)
 {
 	bool found = false;
-	Raul::ListNode<ConnectionImpl*>* connection = NULL;
-	for (Raul::List<ConnectionImpl*>::iterator i = _connections.begin(); i != _connections.end(); ++i) {
+	Connections::Node* connection = NULL;
+	for (Connections::iterator i = _connections.begin(); i != _connections.end(); ++i) {
 		if ((*i)->src_port() == src_port && (*i)->dst_port() == dst_port) {
 			connection = _connections.erase(i);
 			found = true;
@@ -338,14 +338,14 @@ Patch::create_port(const string& name, DataType type, size_t buffer_size, bool i
  *
  * Realtime safe.  Preprocessing thread only.
  */
-Raul::ListNode<PortImpl*>*
+List<PortImpl*>::Node*
 Patch::remove_port(const string& name)
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
 
 	bool found = false;
-	Raul::ListNode<PortImpl*>* ret = NULL;
-	for (Raul::List<PortImpl*>::iterator i = _input_ports.begin(); i != _input_ports.end(); ++i) {
+	List<PortImpl*>::Node* ret = NULL;
+	for (List<PortImpl*>::iterator i = _input_ports.begin(); i != _input_ports.end(); ++i) {
 		if ((*i)->name() == name) {
 			ret = _input_ports.erase(i);
 			found = true;
@@ -353,7 +353,7 @@ Patch::remove_port(const string& name)
 	}
 
 	if (!found)
-	for (Raul::List<PortImpl*>::iterator i = _output_ports.begin(); i != _output_ports.end(); ++i) {
+	for (List<PortImpl*>::iterator i = _output_ports.begin(); i != _output_ports.end(); ++i) {
 		if ((*i)->name() == name) {
 			ret = _output_ports.erase(i);
 			found = true;
@@ -376,10 +376,10 @@ Patch::build_ports_array() const
 
 	size_t i = 0;
 	
-	for (Raul::List<PortImpl*>::const_iterator p = _input_ports.begin(); p != _input_ports.end(); ++p,++i)
+	for (List<PortImpl*>::const_iterator p = _input_ports.begin(); p != _input_ports.end(); ++p,++i)
 		result->at(i) = *p;
 	
-	for (Raul::List<PortImpl*>::const_iterator p = _output_ports.begin(); p != _output_ports.end(); ++p,++i)
+	for (List<PortImpl*>::const_iterator p = _output_ports.begin(); p != _output_ports.end(); ++p,++i)
 		result->at(i) = *p;
 
 	return result;
@@ -405,10 +405,10 @@ Patch::compile() const
 
 	CompiledPatch* const compiled_patch = new CompiledPatch();//_nodes.size());
 	
-	for (Raul::List<NodeImpl*>::const_iterator i = _nodes.begin(); i != _nodes.end(); ++i)
+	for (Nodes::const_iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		(*i)->traversed(false);
 		
-	for (Raul::List<NodeImpl*>::const_iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
+	for (Nodes::const_iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
 		NodeImpl* const node = (*i);
 		// Either a sink or connected to our output ports:
 		if ( ( ! node->traversed()) && node->dependants()->size() == 0)
@@ -416,7 +416,7 @@ Patch::compile() const
 	}
 	
 	// Traverse any nodes we didn't hit yet
-	for (Raul::List<NodeImpl*>::const_iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
+	for (Nodes::const_iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
 		NodeImpl* const node = (*i);
 		if ( ! node->traversed())
 			compile_recursive(node, compiled_patch);

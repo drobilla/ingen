@@ -19,8 +19,9 @@
 #define CONNECTIONEVENT_H
 
 #include <string>
-#include "QueuedEvent.hpp"
 #include <raul/Path.hpp>
+#include "QueuedEvent.hpp"
+#include "Patch.hpp"
 #include "types.hpp"
 using std::string;
 
@@ -77,9 +78,9 @@ private:
 
 	CompiledPatch* _compiled_patch; ///< New process order for Patch
 	
-	ConnectionImpl*                  _connection;
-	Raul::ListNode<ConnectionImpl*>* _patch_listnode;
-	Raul::ListNode<ConnectionImpl*>* _port_listnode;
+	SharedPtr<ConnectionImpl> _connection;
+	Patch::Connections::Node* _patch_listnode;
+	Patch::Connections::Node* _port_listnode;
 
 	ErrorType _error;
 };

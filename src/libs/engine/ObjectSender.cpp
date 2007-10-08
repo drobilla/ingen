@@ -38,7 +38,7 @@ ObjectSender::send_patch(ClientInterface* client, const Patch* patch, bool recur
 	if (recursive) {
 
 		// Send nodes
-		for (Raul::List<NodeImpl*>::const_iterator j = patch->nodes().begin();
+		for (List<NodeImpl*>::const_iterator j = patch->nodes().begin();
 				j != patch->nodes().end(); ++j) {
 
 			const NodeImpl* const node = (*j); 
@@ -54,7 +54,7 @@ ObjectSender::send_patch(ClientInterface* client, const Patch* patch, bool recur
 		}
 
 		// Send connections
-		for (Raul::List<ConnectionImpl*>::const_iterator j = patch->connections().begin();
+		for (List< SharedPtr<ConnectionImpl> >::const_iterator j = patch->connections().begin();
 				j != patch->connections().end(); ++j) {
 			
 			client->connection((*j)->src_port()->path(), (*j)->dst_port()->path());

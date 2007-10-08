@@ -42,7 +42,6 @@ ConnectionEvent::ConnectionEvent(Engine& engine, SharedPtr<Responder> responder,
   _src_port(NULL),
   _dst_port(NULL),
   _compiled_patch(NULL),
-  _connection(NULL),
   _patch_listnode(NULL),
   _port_listnode(NULL),
   _error(NO_ERROR)
@@ -126,15 +125,15 @@ ConnectionEvent::pre_process()
 		return;
 	}
 
-	_connection = new ConnectionImpl(_src_port, _dst_port);
-	_port_listnode = new Raul::ListNode<ConnectionImpl*>(_connection);
-	_patch_listnode = new Raul::ListNode<ConnectionImpl*>(_connection);
+	_connection = SharedPtr<ConnectionImpl>(new ConnectionImpl(_src_port, _dst_port));
+	_port_listnode = new Patch::Connections::Node(_connection);
+	_patch_listnode = new Patch::Connections::Node(_connection);
 	
 	// Need to be careful about patch port connections here and adding a node's
 	// parent as a dependant/provider, or adding a patch as it's own provider...
 	if (src_node != dst_node && src_node->parent() == dst_node->parent()) {
-		dst_node->providers()->push_back(new Raul::ListNode<NodeImpl*>(src_node));
-		src_node->dependants()->push_back(new Raul::ListNode<NodeImpl*>(dst_node));
+		dst_node->providers()->push_back(new Raul::List<NodeImpl*>::Node(src_node));
+		src_node->dependants()->push_back(new Raul::List<NodeImpl*>::Node(dst_node));
 	}
 
 	if (_patch->enabled())

@@ -71,7 +71,7 @@ CreatePatchEvent::pre_process()
 	_patch = new Patch(_engine, _path.name(), poly, _parent, _engine.audio_driver()->sample_rate(), _engine.audio_driver()->buffer_size(), _poly);
 		
 	if (_parent != NULL) {
-		_parent->add_node(new Raul::ListNode<NodeImpl*>(_patch));
+		_parent->add_node(new Patch::Nodes::Node(_patch));
 
 		if (_parent->enabled())
 			_compiled_patch = _parent->compile();

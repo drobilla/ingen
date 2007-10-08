@@ -43,7 +43,7 @@ InputPort::set_buffer_size(size_t size)
 	PortImpl::set_buffer_size(size);
 	assert(_buffer_size = size);
 
-	for (Raul::List<ConnectionImpl*>::iterator c = _connections.begin(); c != _connections.end(); ++c)
+	for (Raul::List< SharedPtr<ConnectionImpl> >::iterator c = _connections.begin(); c != _connections.end(); ++c)
 		(*c)->set_buffer_size(size);
 	
 }
@@ -55,7 +55,7 @@ InputPort::set_buffer_size(size_t size)
  * if there is only one connection, since no mixing needs to take place.
  */
 void
-InputPort::add_connection(Raul::ListNode<ConnectionImpl*>* const c)
+InputPort::add_connection(Connections::Node* const c)
 {
 	_connections.push_back(c);
 
@@ -85,13 +85,13 @@ InputPort::add_connection(Raul::ListNode<ConnectionImpl*>* const c)
 
 /** Remove a connection.  Realtime safe.
  */
-Raul::ListNode<ConnectionImpl*>*
+InputPort::Connections::Node*
 InputPort::remove_connection(const OutputPort* src_port)
 {
 	bool modify_buffers = !_fixed_buffers;
 	
 	bool found = false;
-	Raul::ListNode<ConnectionImpl*>* connection = NULL;
+	Connections::Node* connection = NULL;
 	for (Connections::iterator i = _connections.begin(); i != _connections.end(); ++i) {
 		if ((*i)->src_port()->path() == src_port->path()) {
 			connection = _connections.erase(i);

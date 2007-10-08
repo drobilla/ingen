@@ -91,7 +91,7 @@ CreateNodeEvent::pre_process()
 		
 			// This can be done here because the audio thread doesn't touch the
 			// node tree - just the process order array
-			_patch->add_node(new Raul::ListNode<NodeImpl*>(_node));
+			_patch->add_node(new Patch::Nodes::Node(_node));
 			//_node->add_to_store(_engine.object_store());
 			_engine.object_store()->add(_node);
 			

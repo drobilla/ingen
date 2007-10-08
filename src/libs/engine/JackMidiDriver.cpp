@@ -40,7 +40,7 @@ namespace Ingen {
 
 JackMidiPort::JackMidiPort(JackMidiDriver* driver, DuplexPort* patch_port)
 : DriverPort(patch_port),
-  Raul::ListNode<JackMidiPort*>(this),
+  Raul::List<JackMidiPort*>::Node(this),
   _driver(driver),
   _jack_port(NULL)
 {

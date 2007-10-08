@@ -70,8 +70,6 @@ DisconnectNodeEvent::~DisconnectNodeEvent()
 void
 DisconnectNodeEvent::pre_process()
 {
-	typedef Raul::List<ConnectionImpl*>::const_iterator ConnectionListIterator;
-	
 	if (_lookup) {
 		_patch = _engine.object_store()->find_patch(_node_path.parent());
 	
@@ -90,14 +88,13 @@ DisconnectNodeEvent::pre_process()
 		}
 	}
 
-	ConnectionImpl* c = NULL;
-	for (ConnectionListIterator i = _patch->connections().begin(); i != _patch->connections().end(); ++i) {
-		c = (*i);
+	for (Patch::Connections::const_iterator i = _patch->connections().begin(); i != _patch->connections().end(); ++i) {
+		const SharedPtr<ConnectionImpl> c(*i);
 		if ((c->src_port()->parent_node() == _node || c->dst_port()->parent_node() == _node) && !c->pending_disconnection()) {
 			DisconnectionEvent* ev = new DisconnectionEvent(_engine, SharedPtr<Responder>(new Responder()), _time,
 				c->src_port(), c->dst_port());
 			ev->pre_process();
-			_disconnection_events.push_back(new Raul::ListNode<DisconnectionEvent*>(ev));
+			_disconnection_events.push_back(new Raul::List<DisconnectionEvent*>::Node(ev));
 			c->pending_disconnection(true);
 		}
 	}

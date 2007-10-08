@@ -157,20 +157,19 @@ DisconnectionEvent::execute(ProcessContext& context)
 	QueuedEvent::execute(context);
 
 	if (_error == NO_ERROR) {
-		Raul::ListNode<ConnectionImpl*>* const port_connection
+		Patch::Connections::Node* const port_connection
 			= _dst_input_port->remove_connection(_src_output_port);
 		
 		if (port_connection != NULL) {
-			Raul::ListNode<ConnectionImpl*>* const patch_connection
+			Patch::Connections::Node* const patch_connection
 				= _patch->remove_connection(_src_port, _dst_port);
 			
 			assert(patch_connection);
-			assert((ConnectionImpl*)port_connection->elem() == patch_connection->elem());
+			assert(port_connection->elem() == patch_connection->elem());
 			
-			// Clean up both the list node and the connection itself...
+			// Destroy list node, which will drop reference to connection itself
 			_engine.maid()->push(port_connection);
 			_engine.maid()->push(patch_connection);
-			_engine.maid()->push(port_connection->elem());
 	
 			if (_patch->compiled_patch() != NULL)
 				_engine.maid()->push(_patch->compiled_patch());

@@ -49,7 +49,7 @@ namespace Ingen {
 
 JackAudioPort::JackAudioPort(JackAudioDriver* driver, DuplexPort* patch_port)
 : DriverPort(patch_port),
-  Raul::ListNode<JackAudioPort*>(this),
+  Raul::List<JackAudioPort*>::Node(this),
   _driver(driver),
   _jack_port(NULL),
   _jack_buffer(NULL)

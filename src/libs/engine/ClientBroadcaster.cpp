@@ -162,7 +162,7 @@ ClientBroadcaster::send_patch_cleared(const string& patch_path)
 }
 
 void
-ClientBroadcaster::send_connection(const ConnectionImpl* const c)
+ClientBroadcaster::send_connection(const SharedPtr<const ConnectionImpl> c)
 {
 	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
 		(*i).second->connection(c->src_port()->path(), c->dst_port()->path());

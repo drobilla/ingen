@@ -36,7 +36,7 @@ class DuplexPort;
  *
  * \ingroup engine
  */
-class JackMidiPort : public DriverPort, public Raul::ListNode<JackMidiPort*>
+class JackMidiPort : public DriverPort, public Raul::List<JackMidiPort*>::Node
 {
 public:
 	JackMidiPort(JackMidiDriver* driver, DuplexPort* port);
@@ -93,8 +93,8 @@ private:
 	
 	friend class JackMidiPort;
 	
-	void add_output(Raul::ListNode<JackMidiPort*>* port);
-	Raul::ListNode<JackMidiPort*>* remove_output(JackMidiPort* port);
+	void add_output(Raul::List<JackMidiPort*>::Node* port);
+	Raul::List<JackMidiPort*>::Node* remove_output(JackMidiPort* port);
 	
 	// MIDI thread
 	static void* process_midi_in(void* me);
