@@ -305,7 +305,7 @@ QueuedEngineInterface::midi_learn(const string& node_path)
 
 
 void
-QueuedEngineInterface::set_metadata(const string& path,
+QueuedEngineInterface::set_variable(const string& path,
                                     const string& predicate,
                                     const Atom&   value)
 {
@@ -347,7 +347,7 @@ QueuedEngineInterface::request_port_value(const string& port_path)
 }
 
 void
-QueuedEngineInterface::request_metadata(const string& object_path, const string& key)
+QueuedEngineInterface::request_variable(const string& object_path, const string& key)
 {
 	push_queued(new RequestMetadataEvent(_engine, _responder, now(), object_path, key));
 }

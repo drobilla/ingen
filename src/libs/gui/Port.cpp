@@ -62,7 +62,7 @@ Port::Port(boost::shared_ptr<FlowCanvas::Module> module, SharedPtr<PortModel> pm
 		set_control_min(min);
 		set_control_max(max);
 
-		pm->signal_metadata.connect(sigc::mem_fun(this, &Port::metadata_update));
+		pm->signal_variable.connect(sigc::mem_fun(this, &Port::variable_change));
 		_port_model->signal_control.connect(sigc::mem_fun(this, &Port::control_changed));
 	}
 		
@@ -116,7 +116,7 @@ Port::set_control(float value, bool signal)
 
 
 void
-Port::metadata_update(const string& key, const Atom& value)
+Port::variable_change(const string& key, const Atom& value)
 {
 	if ( (key == "ingen:minimum") && value.type() == Atom::FLOAT) {
 		set_control_min(value.get_float());

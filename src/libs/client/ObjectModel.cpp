@@ -72,17 +72,17 @@ ObjectModel::find_child(const string& name) const
 }
 
 
-/** Get a piece of metadata for this object.
+/** Get a piece of variable for this object.
  *
  * @return Metadata value with key @a key, empty string otherwise.
  */
 const Atom&
-ObjectModel::get_metadata(const string& key) const
+ObjectModel::get_variable(const string& key) const
 {
 	static const Atom null_atom;
 
-	MetadataMap::const_iterator i = _metadata.find(key);
-	if (i != _metadata.end())
+	Variables::const_iterator i = _variables.find(key);
+	if (i != _variables.end())
 		return i->second;
 	else
 		return null_atom;
@@ -90,11 +90,11 @@ ObjectModel::get_metadata(const string& key) const
 
 
 void
-ObjectModel::add_metadata(const MetadataMap& data)
+ObjectModel::add_variable(const Variables& data)
 {
-	for (MetadataMap::const_iterator i = data.begin(); i != data.end(); ++i) {
-		_metadata[i->first] = i->second;
-		signal_metadata.emit(i->first, i->second);
+	for (Variables::const_iterator i = data.begin(); i != data.end(); ++i) {
+		_variables[i->first] = i->second;
+		signal_variable.emit(i->first, i->second);
 	}
 }
 
@@ -117,18 +117,18 @@ ObjectModel::set(SharedPtr<ObjectModel> model)
 {
 	assert(_path == model->path());
 
-	for (MetadataMap::const_iterator other = model->metadata().begin();
-			other != model->metadata().end(); ++other) {
+	for (Variables::const_iterator other = model->variables().begin();
+			other != model->variables().end(); ++other) {
 		
-		MetadataMap::const_iterator mine = _metadata.find(other->first);
+		Variables::const_iterator mine = _variables.find(other->first);
 		
-		if (mine != _metadata.end()) {
+		if (mine != _variables.end()) {
 			cerr << "WARNING:  " << _path << "Client/Server data mismatch: " << other->first << endl;
 			cerr << "Setting server value " << other->second;
 		}
 
-		_metadata[other->first] = other->second;
-		signal_metadata.emit(other->first, other->second);
+		_variables[other->first] = other->second;
+		signal_variable.emit(other->first, other->second);
 	}
 }
 

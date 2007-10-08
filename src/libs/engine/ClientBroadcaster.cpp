@@ -201,15 +201,15 @@ ClientBroadcaster::send_patch_polyphony(const string& patch_path, uint32_t poly)
 }
 
 
-/** Send notification of a metadata update.
+/** Send notification of a variable update.
  *
- * Like control changes, does not send update to client that set the metadata, if applicable.
+ * Like control changes, does not send update to client that set the variable, if applicable.
  */
 void
-ClientBroadcaster::send_metadata_update(const string& node_path, const string& key, const Atom& value)
+ClientBroadcaster::send_variable_change(const string& node_path, const string& key, const Atom& value)
 {
 	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
-		(*i).second->metadata_update(node_path, key, value);
+		(*i).second->variable_change(node_path, key, value);
 }
 
 

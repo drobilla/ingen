@@ -63,7 +63,7 @@ public:
 	void set_replace() { _replace = true; }
 	void set_merge()   { _replace = false; }
 
-	void present(SharedPtr<PatchModel> patch, GraphObject::MetadataMap data);
+	void present(SharedPtr<PatchModel> patch, GraphObject::Variables data);
 
 private:
 	void patch_activated(const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* col);
@@ -72,7 +72,7 @@ private:
 	void open_clicked();
 	void cancel_clicked();
 
-	GraphObject::MetadataMap _initial_data;
+	GraphObject::Variables _initial_data;
 
 	SharedPtr<PatchModel> _patch;
 	bool                  _replace;

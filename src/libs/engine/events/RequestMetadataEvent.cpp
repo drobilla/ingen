@@ -48,7 +48,7 @@ RequestMetadataEvent::pre_process()
 		}
 	}
 
-	_value = _object->get_metadata(_key);
+	_value = _object->get_variable(_key);
 	
 	QueuedEvent::pre_process();
 }
@@ -59,12 +59,12 @@ RequestMetadataEvent::post_process()
 {
 	if (_responder->client()) {
 		if (!_object) {
-			string msg = "Unable to find metadata subject ";
+			string msg = "Unable to find variable subject ";
 			msg += _path;
 			_responder->respond_error(msg);
 		} else {
 			_responder->respond_ok();
-			_responder->client()->metadata_update(_path, _key, _value);
+			_responder->client()->variable_change(_path, _key, _value);
 		}
 	} else {
 		_responder->respond_error("Unknown client");

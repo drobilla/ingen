@@ -52,7 +52,7 @@ public:
 	
 private:
 	
-	void metadata_update(const string& key, const Raul::Atom& value);
+	void variable_change(const string& key, const Raul::Atom& value);
 
 	void renamed();
 

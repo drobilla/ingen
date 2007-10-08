@@ -42,7 +42,7 @@ public:
 	void present(SharedPtr<PortModel> port_model);
 
 private:
-	void metadata_update(const string& key, const Atom& value);
+	void variable_change(const string& key, const Atom& value);
 	void min_changed();
 	void max_changed();
 	

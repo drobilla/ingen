@@ -74,12 +74,12 @@ ThreadedLoader::_whipped()
 }
 
 void
-ThreadedLoader::load_patch(bool                     merge,
-                           const string&            data_base_uri,
-                           const Path&              data_path,
-                           GraphObject::MetadataMap engine_data,
-                           optional<Path>           engine_parent,
-                           optional<const string&>  engine_name)
+ThreadedLoader::load_patch(bool                    merge,
+                           const string&           data_base_uri,
+                           const Path&             data_path,
+                           GraphObject::Variables  engine_data,
+                           optional<Path>          engine_parent,
+                           optional<const string&> engine_name)
 {
 	_mutex.lock();
 

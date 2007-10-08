@@ -46,7 +46,7 @@ Loader::load(SharedPtr<EngineInterface> engine,
 		boost::optional<Path>           parent,
 		string                          patch_name,
 		Glib::ustring                   patch_uri,
-		GraphObject::MetadataMap        data)
+		GraphObject::Variables        data)
 {
 	setlocale(LC_NUMERIC, "C");
 
@@ -67,7 +67,7 @@ Loader::load(SharedPtr<EngineInterface> engine,
 	size_t patch_poly = 1;
 	
 	/* Use parameter overridden polyphony, if given */
-	GraphObject::MetadataMap::iterator poly_param = data.find("ingen:polyphony");
+	GraphObject::Variables::iterator poly_param = data.find("ingen:polyphony");
 	if (poly_param != data.end() && poly_param->second.type() == Atom::INT) {
 		patch_poly = poly_param->second.get_int32();
 	
@@ -127,7 +127,7 @@ Loader::load(SharedPtr<EngineInterface> engine,
 
 	RDF::Query::Results results = query.run(*rdf_world, model);
 
-	map<const string, const Atom> metadata;
+	map<const string, const Atom> variable;
 
 	for (RDF::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
 
@@ -146,13 +146,13 @@ Loader::load(SharedPtr<EngineInterface> engine,
 			created.insert(node_path);
 		}
 
-		/* Float metadata (FIXME: use using raw predicates is definitely a very
+		/* Float variable (FIXME: use using raw predicates is definitely a very
 		 * bad idea, make an ingen:Variable or something */
 		const string floatkey = rdf_world->prefixes().qualify((*i)["floatkey"].to_string());
 		RDF::Node val_node = (*i)["floatval"];
 
 		if (floatkey != "" && val_node.is_float())
-			engine->set_metadata(node_path, floatkey, val_node.to_float());
+			engine->set_variable(node_path, floatkey, val_node.to_float());
 	}
 		
 
@@ -250,7 +250,7 @@ Loader::load(SharedPtr<EngineInterface> engine,
 		val_node = (*i)["floatval"];
 
 		if (floatkey != "" && val_node.is_float())
-			engine->set_metadata(patch_path.base() + name, floatkey, Atom(val_node.to_float()));
+			engine->set_variable(patch_path.base() + name, floatkey, Atom(val_node.to_float()));
 	}
 
 	created.clear();
@@ -337,7 +337,7 @@ Loader::load(SharedPtr<EngineInterface> engine,
 	}
 
 
-	/* Load metadata */
+	/* Load variable */
 
 	query = RDF::Query(*rdf_world, Glib::ustring(
 			"SELECT DISTINCT ?floatkey ?floatval WHERE {\n") +
@@ -353,13 +353,13 @@ Loader::load(SharedPtr<EngineInterface> engine,
 		RDF::Node val_node = (*i)["floatval"];
 
 		if (floatkey != "" && val_node.is_float())
-			engine->set_metadata(patch_path, floatkey, Atom(val_node.to_float()));
+			engine->set_variable(patch_path, floatkey, Atom(val_node.to_float()));
 	}
 
 
-	// Set passed metadata last to override any loaded values
-	for (GraphObject::MetadataMap::const_iterator i = data.begin(); i != data.end(); ++i)
-		engine->set_metadata(patch_path, i->first, i->second);
+	// Set passed variable last to override any loaded values
+	for (GraphObject::Variables::const_iterator i = data.begin(); i != data.end(); ++i)
+		engine->set_variable(patch_path, i->first, i->second);
 
 
 	/* Enable */

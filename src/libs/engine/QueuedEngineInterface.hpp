@@ -150,7 +150,7 @@ public:
 
 	virtual void midi_learn(const string& node_path);
 
-	virtual void set_metadata(const string&     path,
+	virtual void set_variable(const string&     path,
 	                          const string&     predicate,
 	                          const Raul::Atom& value);
 	
@@ -164,7 +164,7 @@ public:
 	
 	virtual void request_port_value(const string& port_path);
 	
-	virtual void request_metadata(const string& object_path, const string& key);
+	virtual void request_variable(const string& object_path, const string& key);
 
 	virtual void request_plugins();
 

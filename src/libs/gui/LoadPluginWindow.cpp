@@ -109,7 +109,7 @@ LoadPluginWindow::LoadPluginWindow(BaseObjectType* cobject, const Glib::RefPtr<G
 
 
 void
-LoadPluginWindow::present(SharedPtr<PatchModel> patch, GraphObject::MetadataMap data)
+LoadPluginWindow::present(SharedPtr<PatchModel> patch, GraphObject::Variables data)
 {
 	set_patch(patch);
 	_initial_data = data;
@@ -341,8 +341,8 @@ LoadPluginWindow::add_clicked()
 		} else {
 			Path path = _patch->path().base() + Path::nameify(name);
 			App::instance().engine()->create_node(path, plugin->uri(), polyphonic);
-			for (GraphObject::MetadataMap::const_iterator i = _initial_data.begin(); i != _initial_data.end(); ++i)
-				App::instance().engine()->set_metadata(path, i->first, i->second);
+			for (GraphObject::Variables::const_iterator i = _initial_data.begin(); i != _initial_data.end(); ++i)
+				App::instance().engine()->set_variable(path, i->first, i->second);
 			++_plugin_name_offset;
 			_node_name_entry->set_text(generate_module_name(_plugin_name_offset));
 			

@@ -62,14 +62,14 @@ public:
 	
 	string find_file(const string& filename, const string& additional_path = "");
 	
-	string load_patch(const Glib::ustring&     filename,
-	                  boost::optional<Path>    parent_path,
-	                  string                   name,
-	                  GraphObject::MetadataMap initial_data,
-	                  bool                     existing = false);
+	string load_patch(const Glib::ustring&   filename,
+	                  boost::optional<Path>  parent_path,
+	                  string                 name,
+	                  GraphObject::Variables initial_data,
+	                  bool                   existing = false);
 
 private:
-	void add_metadata(GraphObject::MetadataMap& data, string key, string value);
+	void add_variable(GraphObject::Variables& data, string key, string value);
 
 	string nameify_if_invalid(const string& name);
 	string translate_load_path(const string& path);

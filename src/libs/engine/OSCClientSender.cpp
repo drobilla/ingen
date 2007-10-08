@@ -280,7 +280,7 @@ void OSCClientSender::new_node(const std::string&   plugin_uri,
  * \li The minimum and maximum values are suggestions only, they are not
  * enforced in any way, and going outside them is perfectly fine.  Also note
  * that the port ranges in om_gtk are not these ones!  Those ranges are set
- * as metadata.</p> \n \n
+ * as variable.</p> \n \n
  */
 void
 OSCClientSender::new_port(const std::string& path,
@@ -422,13 +422,13 @@ OSCClientSender::disconnection(const std::string& src_port_path, const std::stri
 
 
 /** \page client_osc_namespace
- * <p> \b /ingen/metadata_update - Notification of a piece of metadata.
- * \arg \b path (string) - Path of the object associated with metadata (can be a node, patch, or port)
+ * <p> \b /ingen/variable_change - Notification of a piece of variable.
+ * \arg \b path (string) - Path of the object associated with variable (can be a node, patch, or port)
  * \arg \b key (string)
  * \arg \b value (string)</p> \n \n
  */
 void
-OSCClientSender::metadata_update(const std::string& path, const std::string& key, const Atom& value)
+OSCClientSender::variable_change(const std::string& path, const std::string& key, const Atom& value)
 {
 	if (!_enabled)
 		return;
@@ -437,7 +437,7 @@ OSCClientSender::metadata_update(const std::string& path, const std::string& key
 	lo_message_add_string(m, path.c_str());
 	lo_message_add_string(m, key.c_str());
 	Raul::AtomLiblo::lo_message_add_atom(m, value);
-	lo_send_message(_address, "/ingen/metadata_update", m);
+	lo_send_message(_address, "/ingen/variable_change", m);
 }
 
 
@@ -523,10 +523,10 @@ OSCClientSender::new_patch(const std::string& path, uint32_t poly)
 	if (p->process())
 		patch_enabled(p->path());
 	
-	// Send metadata
-	const map<const std::string&, const std::string&>& data = p->metadata();
+	// Send variables
+	const map<const std::string&, const std::string&>& data = p->variable();
 	for (map<const std::string&, const std::string&>::const_iterator i = data.begin(); i != data.end(); ++i) {
-		metadata_update(p->path(), (*i).first, (*i).second);
+		variable_change(p->path(), (*i).first, (*i).second);
 	}
 	*/
 }

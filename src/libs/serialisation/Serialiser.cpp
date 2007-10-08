@@ -283,8 +283,8 @@ Serialiser::serialize_patch(SharedPtr<Shared::Patch> patch)
 		"ingen:enabled",
 		Atom(patch->enabled()));
 	
-	for (GraphObject::MetadataMap::const_iterator m = patch->metadata().begin();
-			m != patch->metadata().end(); ++m) {
+	for (GraphObject::Variables::const_iterator m = patch->variables().begin();
+			m != patch->variables().end(); ++m) {
 		if (m->first.find(":") != string::npos) {
 			_model->add_statement(
 				patch_id,
@@ -370,8 +370,8 @@ Serialiser::serialize_node(SharedPtr<Shared::Node> node, const RDF::Node& node_i
 		_model->add_statement(node_id, "ingen:port", port_id);
 	}
 
-	for (GraphObject::MetadataMap::const_iterator m = node->metadata().begin();
-			m != node->metadata().end(); ++m) {
+	for (GraphObject::Variables::const_iterator m = node->variables().begin();
+			m != node->variables().end(); ++m) {
 		if (m->first.find(":") != string::npos) {
 			_model->add_statement(
 				node_id,
@@ -382,8 +382,8 @@ Serialiser::serialize_node(SharedPtr<Shared::Node> node, const RDF::Node& node_i
 }
 
 /** Writes a port subject with various information only if there are some
- * predicate/object pairs to go with it (eg if the port has metadata, or a value, or..).
- * Audio output ports with no metadata will not be written, for example.
+ * predicate/object pairs to go with it (eg if the port has variable, or a value, or..).
+ * Audio output ports with no variable will not be written, for example.
  */
 void
 Serialiser::serialize_port(const Port* port, const RDF::Node& port_id)
@@ -403,9 +403,9 @@ Serialiser::serialize_port(const Port* port, const RDF::Node& port_id)
 	if (port->type() == DataType::CONTROL && port->is_input())
 		_model->add_statement(port_id, "ingen:value", port->value());
 
-	if (port->metadata().size() > 0) {
-		for (GraphObject::MetadataMap::const_iterator m = port->metadata().begin();
-				m != port->metadata().end(); ++m) {
+	if (port->variables().size() > 0) {
+		for (GraphObject::Variables::const_iterator m = port->variables().begin();
+				m != port->variables().end(); ++m) {
 		if (m->first.find(":") != string::npos) {
 				_model->add_statement(
 						port_id,

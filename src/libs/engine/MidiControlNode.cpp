@@ -40,19 +40,19 @@ MidiControlNode::MidiControlNode(const string& path, bool polyphonic, PatchImpl*
 	_ports->at(0) = _midi_in_port;
 	
 	_param_port = new InputPort(this, "ControllerNumber", 1, 1, DataType::CONTROL, 1);
-	_param_port->set_metadata("ingen:minimum", 0.0f);
-	_param_port->set_metadata("ingen:maximum", 127.0f);
-	_param_port->set_metadata("ingen:default", 0.0f);
-	_param_port->set_metadata("ingen:integer", 1);
+	_param_port->set_variable("ingen:minimum", 0.0f);
+	_param_port->set_variable("ingen:maximum", 127.0f);
+	_param_port->set_variable("ingen:default", 0.0f);
+	_param_port->set_variable("ingen:integer", 1);
 	_ports->at(1) = _param_port;
 
 	_log_port = new InputPort(this, "Logarithmic", 2, 1, DataType::CONTROL, 1);
-	_log_port->set_metadata("ingen:toggled", 1);
-	_log_port->set_metadata("ingen:default", 0.0f);
+	_log_port->set_variable("ingen:toggled", 1);
+	_log_port->set_variable("ingen:default", 0.0f);
 	_ports->at(2) = _log_port;
 	
 	_min_port = new InputPort(this, "Min", 3, 1, DataType::CONTROL, 1);
-	_min_port->set_metadata("ingen:default", 0.0f);
+	_min_port->set_variable("ingen:default", 0.0f);
 	_ports->at(3) = _min_port;
 	
 	_max_port = new InputPort(this, "Max", 4, 1, DataType::CONTROL, 1);

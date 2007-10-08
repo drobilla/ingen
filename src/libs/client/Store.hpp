@@ -91,8 +91,8 @@ private:
 	void add_plugin_orphan(SharedPtr<NodeModel> orphan);
 	void resolve_plugin_orphans(SharedPtr<PluginModel> plugin);
 	
-	void add_metadata_orphan(const Path& subject, const string& predicate, const Atom& value);
-	void resolve_metadata_orphans(SharedPtr<ObjectModel> subject);
+	void add_variable_orphan(const Path& subject, const string& predicate, const Atom& value);
+	void resolve_variable_orphans(SharedPtr<ObjectModel> subject);
 
 	// Slots for SigClientInterface signals
 	void destruction_event(const Path& path);
@@ -106,7 +106,7 @@ private:
 	void patch_disabled_event(const Path& path);
 	void patch_polyphony_event(const Path& path, uint32_t poly);
 	void patch_cleared_event(const Path& path);
-	void metadata_update_event(const Path& subject_path, const string& predicate, const Atom& value);
+	void variable_change_event(const Path& subject_path, const string& predicate, const Atom& value);
 	void control_change_event(const Path& port_path, float value);
 	void port_activity_event(const Path& port_path);
 	void connection_event(const Path& src_port_path, const Path& dst_port_path);
@@ -128,8 +128,8 @@ private:
 	 * It's unfortunate everything doesn't just have a URI and this was the same.. ahem.. */
 	Raul::Table<string, list<SharedPtr<NodeModel> > > _plugin_orphans;
 	
-	/** Not orphans OF metadata like the above, but orphans which are metadata */
-	Raul::PathTable<list<std::pair<string, Atom> > > _metadata_orphans;
+	/** Not orphans OF variable like the above, but orphans which are variable */
+	Raul::PathTable<list<std::pair<string, Atom> > > _variable_orphans;
 	
 	/** Ditto */
 	list<std::pair<Path, Path> > _connection_orphans;

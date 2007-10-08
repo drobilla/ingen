@@ -366,7 +366,7 @@ PatchWindow::event_save_as()
 		if (confirm) {
 			App::instance().loader()->save_patch(_patch, filename);
 			_patch->set_filename(filename);
-			//_patch->set_metadata("filename", Atom(filename.c_str()));
+			//_patch->set_variable("filename", Atom(filename.c_str()));
 		}
 	}
 	App::instance().configuration()->set_patch_folder(dialog.get_current_folder());

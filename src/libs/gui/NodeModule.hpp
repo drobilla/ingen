@@ -71,7 +71,7 @@ protected:
 	bool popup_gui();
 	
 	void rename();
-	void set_metadata(const std::string& key, const Atom& value);
+	void set_variable(const std::string& key, const Atom& value);
 	
 	void add_port(SharedPtr<PortModel> port, bool resize=true);
 	void remove_port(SharedPtr<PortModel> port);

@@ -42,7 +42,7 @@ class ProcessContext;
 /** An object on the audio graph - Patch, Node, Port, etc.
  *
  * Each of these is a Raul::Deletable and so can be deleted in a realtime safe
- * way from anywhere, and they all have a map of metadata for clients to store
+ * way from anywhere, and they all have a map of variable for clients to store
  * arbitrary values in (which the engine puts no significance to whatsoever).
  *
  * \ingroup engine
@@ -67,16 +67,16 @@ public:
 		assert(_name.find("/") == string::npos);
 	}
 	
-	void set_metadata(const string& key, const Atom& value)
-	{ _metadata[key] = value; }
+	void set_variable(const string& key, const Atom& value)
+		{ _variables[key] = value; }
 
-	const Atom& get_metadata(const string& key) {
+	const Atom& get_variable(const string& key) {
 		static Atom null_atom;
-		MetadataMap::iterator i = _metadata.find(key);
-		return (i != _metadata.end()) ? (*i).second : null_atom;
+		Variables::iterator i = _variables.find(key);
+		return (i != _variables.end()) ? (*i).second : null_atom;
 	}
 
-	const MetadataMap& metadata() const { return _metadata; }
+	const Variables& variables() const { return _variables; }
 
 	/** The Patch this object is a child of. */
 	virtual PatchImpl* parent_patch() const;
@@ -109,7 +109,7 @@ protected:
 	bool             _polyphonic;
 
 private:	
-	MetadataMap _metadata;
+	Variables _variables;
 };
 
 

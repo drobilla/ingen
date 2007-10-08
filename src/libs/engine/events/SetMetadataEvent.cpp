@@ -47,7 +47,7 @@ SetMetadataEvent::pre_process()
 		return;
 	}
 
-	_object->set_metadata(_key, _value);
+	_object->set_variable(_key, _value);
 
 	QueuedEvent::pre_process();
 }
@@ -70,7 +70,7 @@ SetMetadataEvent::post_process()
 		_responder->respond_error(msg);
 	} else {
 		_responder->respond_ok();
-		_engine.broadcaster()->send_metadata_update(_path, _key, _value);
+		_engine.broadcaster()->send_variable_change(_path, _key, _value);
 	}
 }
 

@@ -64,12 +64,12 @@ public:
 
 	void present_controls(SharedPtr<NodeModel> node);
 
-	void present_load_plugin(SharedPtr<PatchModel> patch, GraphObject::MetadataMap data=GraphObject::MetadataMap());
-	void present_load_patch(SharedPtr<PatchModel> patch, GraphObject::MetadataMap data=GraphObject::MetadataMap());
-	void present_load_remote_patch(SharedPtr<PatchModel> patch, GraphObject::MetadataMap data=GraphObject::MetadataMap());
+	void present_load_plugin(SharedPtr<PatchModel> patch, GraphObject::Variables data=GraphObject::Variables());
+	void present_load_patch(SharedPtr<PatchModel> patch, GraphObject::Variables data=GraphObject::Variables());
+	void present_load_remote_patch(SharedPtr<PatchModel> patch, GraphObject::Variables data=GraphObject::Variables());
 	void present_upload_patch(SharedPtr<PatchModel> patch);
-	void present_new_subpatch(SharedPtr<PatchModel> patch, GraphObject::MetadataMap data=GraphObject::MetadataMap());
-	void present_load_subpatch(SharedPtr<PatchModel> patch, GraphObject::MetadataMap data=GraphObject::MetadataMap());
+	void present_new_subpatch(SharedPtr<PatchModel> patch, GraphObject::Variables data=GraphObject::Variables());
+	void present_load_subpatch(SharedPtr<PatchModel> patch, GraphObject::Variables data=GraphObject::Variables());
 	void present_rename(SharedPtr<ObjectModel> object);
 	void present_properties(SharedPtr<ObjectModel> object);
 	

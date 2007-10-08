@@ -46,7 +46,7 @@ public:
 	     boost::optional<Raul::Path>               parent,
 	     std::string                               patch_name,
 	     Glib::ustring                             patch_uri = "",
-	     GraphObject::MetadataMap                  data = GraphObject::MetadataMap());
+	     GraphObject::Variables                  data = GraphObject::Variables());
 };
 
 

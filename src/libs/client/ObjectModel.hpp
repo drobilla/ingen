@@ -59,11 +59,11 @@ class ObjectModel : virtual public Ingen::Shared::GraphObject, public boost::non
 public:
 	virtual ~ObjectModel();
 
-	const Atom& get_metadata(const string& key) const;
-	void set_metadata(const string& key, const Atom& value)
-		{ _metadata.insert(make_pair(key, value)); signal_metadata.emit(key, value); }
+	const Atom& get_variable(const string& key) const;
+	void set_variable(const string& key, const Atom& value)
+		{ _variables.insert(make_pair(key, value)); signal_variable.emit(key, value); }
 
-	const MetadataMap&     metadata()   const { return _metadata; }
+	const Variables&       variables()  const { return _variables; }
 	const Path             path()       const { return _path; }
 	const string           name()       const { return _path.name(); }
 	SharedPtr<ObjectModel> parent()     const { return _parent; }
@@ -76,7 +76,7 @@ public:
 	// Signals
 	sigc::signal<void, SharedPtr<ObjectModel> >    signal_new_child; 
 	sigc::signal<void, SharedPtr<ObjectModel> >    signal_removed_child; 
-	sigc::signal<void, const string&, const Atom&> signal_metadata; 
+	sigc::signal<void, const string&, const Atom&> signal_variable; 
 	sigc::signal<void, bool>                       signal_polyphonic; 
 	sigc::signal<void>                             signal_destroyed; 
 	sigc::signal<void>                             signal_renamed; 
@@ -91,7 +91,7 @@ protected:
 	virtual void add_child(SharedPtr<ObjectModel> c) {}
 	virtual bool remove_child(SharedPtr<ObjectModel> c) { return true; }
 
-	void add_metadata(const MetadataMap& data);
+	void add_variable(const Variables& data);
 	void set_polyphonic(bool);
 	
 	void set(SharedPtr<ObjectModel> model);
@@ -101,7 +101,7 @@ protected:
 	bool                   _polyphonic;
 	SharedPtr<ObjectModel> _parent;
 	
-	MetadataMap _metadata;
+	Variables _variables;
 };
 
 

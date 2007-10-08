@@ -29,7 +29,7 @@ namespace Ingen {
 class GraphObjectImpl;
 
 
-/** An event to set a piece of metadata for an GraphObjectImpl.
+/** An event to set a piece of variable for an GraphObjectImpl.
  *
  * \ingroup engine
  */

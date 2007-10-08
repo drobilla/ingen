@@ -494,7 +494,7 @@ OSCEngineSender::midi_learn(const string& node_path)
 
 
 void
-OSCEngineSender::set_metadata(const string&     obj_path,
+OSCEngineSender::set_variable(const string&     obj_path,
                               const string&     predicate,
                               const Raul::Atom& value)
 {
@@ -505,7 +505,7 @@ OSCEngineSender::set_metadata(const string&     obj_path,
 	lo_message_add_string(m, obj_path.c_str());
 	lo_message_add_string(m, predicate.c_str());
 	Raul::AtomLiblo::lo_message_add_atom(m, value);
-	lo_send_message(_engine_addr, "/ingen/set_metadata", m);
+	lo_send_message(_engine_addr, "/ingen/set_variable", m);
 }
 
 
@@ -549,10 +549,10 @@ OSCEngineSender::request_port_value(const string& port_path)
 }
 
 void
-OSCEngineSender::request_metadata(const string& object_path, const string& key)
+OSCEngineSender::request_variable(const string& object_path, const string& key)
 {
 	assert(_engine_addr);
-	lo_send(_engine_addr, "/ingen/request_metadata", "iss",
+	lo_send(_engine_addr, "/ingen/request_variable", "iss",
 		next_id(),
 		object_path.c_str(),
 		key.c_str());

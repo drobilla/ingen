@@ -49,7 +49,7 @@ Store::Store(SharedPtr<EngineInterface> engine, SharedPtr<SigClientInterface> em
 	emitter->signal_patch_cleared.connect(sigc::mem_fun(this, &Store::patch_cleared_event));
 	emitter->signal_connection.connect(sigc::mem_fun(this, &Store::connection_event));
 	emitter->signal_disconnection.connect(sigc::mem_fun(this, &Store::disconnection_event));
-	emitter->signal_metadata_update.connect(sigc::mem_fun(this, &Store::metadata_update_event));
+	emitter->signal_variable_change.connect(sigc::mem_fun(this, &Store::variable_change_event));
 	emitter->signal_control_change.connect(sigc::mem_fun(this, &Store::control_change_event));
 	emitter->signal_port_activity.connect(sigc::mem_fun(this, &Store::port_activity_event));
 }
@@ -158,38 +158,38 @@ Store::add_orphan(SharedPtr<ObjectModel> child)
 
 
 void
-Store::add_metadata_orphan(const Path& subject_path, const string& predicate, const Atom& value)
+Store::add_variable_orphan(const Path& subject_path, const string& predicate, const Atom& value)
 {
 	Raul::PathTable<list<std::pair<string, Atom> > >::iterator orphans
-		= _metadata_orphans.find(subject_path);
+		= _variable_orphans.find(subject_path);
 
 	_engine->request_object(subject_path);
 
-	if (orphans != _metadata_orphans.end()) {
+	if (orphans != _variable_orphans.end()) {
 		orphans->second.push_back(std::pair<string, Atom>(predicate, value));
 	} else {
 		list<std::pair<string, Atom> > l;
 		l.push_back(std::pair<string, Atom>(predicate, value));
-		_metadata_orphans[subject_path] = l;
+		_variable_orphans[subject_path] = l;
 	}
 }
 
 
 void
-Store::resolve_metadata_orphans(SharedPtr<ObjectModel> subject)
+Store::resolve_variable_orphans(SharedPtr<ObjectModel> subject)
 {
 	Raul::PathTable<list<std::pair<string, Atom> > >::iterator v
-		= _metadata_orphans.find(subject->path());
+		= _variable_orphans.find(subject->path());
 
-	if (v != _metadata_orphans.end()) {
+	if (v != _variable_orphans.end()) {
 	
 		list<std::pair<string, Atom> > values = v->second; // take a copy
 
-		_metadata_orphans.erase(subject->path());
+		_variable_orphans.erase(subject->path());
 		
 		for (list<std::pair<string, Atom> >::iterator i = values.begin();
 				i != values.end(); ++i) {
-			subject->set_metadata(i->first, i->second);
+			subject->set_variable(i->first, i->second);
 		}
 	}
 }
@@ -236,7 +236,7 @@ Store::add_object(SharedPtr<ObjectModel> object)
 				_objects[object->path()] = object;
 				signal_new_object.emit(object);
 				
-				resolve_metadata_orphans(parent);
+				resolve_variable_orphans(parent);
 				resolve_orphans(parent);
 
 				SharedPtr<PortModel> port = PtrCast<PortModel>(object);
@@ -487,15 +487,15 @@ Store::patch_cleared_event(const Path& path)
 
 
 void
-Store::metadata_update_event(const Path& subject_path, const string& predicate, const Atom& value)
+Store::variable_change_event(const Path& subject_path, const string& predicate, const Atom& value)
 {
 	SharedPtr<ObjectModel> subject = object(subject_path);
 	
 	if (subject) {
-		subject->set_metadata(predicate, value);
+		subject->set_variable(predicate, value);
 	} else {
-		add_metadata_orphan(subject_path, predicate, value);
-		cerr << "WARNING: metadata for unknown object " << subject_path << endl;
+		add_variable_orphan(subject_path, predicate, value);
+		cerr << "WARNING: variable for unknown object " << subject_path << endl;
 	}
 }
 

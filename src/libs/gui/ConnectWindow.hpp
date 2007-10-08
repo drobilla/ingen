@@ -37,7 +37,6 @@ namespace Ingen {
 namespace GUI {
 
 class App;
-class Controller;
 
 
 /** The initially visible "Connect to engine" window.

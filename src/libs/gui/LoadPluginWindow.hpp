@@ -96,7 +96,7 @@ public:
 	void add_plugin(SharedPtr<PluginModel> plugin);
 	bool has_shown() const { return _has_shown; }
 
-	void present(SharedPtr<PatchModel> patch, GraphObject::MetadataMap data);
+	void present(SharedPtr<PatchModel> patch, GraphObject::Variables data);
 
 protected:
 	void on_show();
@@ -117,7 +117,7 @@ private:
 	void plugin_selection_changed();
 	string generate_module_name(int offset = 0);
 
-	GraphObject::MetadataMap _initial_data;
+	GraphObject::Variables _initial_data;
 
 	SharedPtr<PatchModel> _patch;
 

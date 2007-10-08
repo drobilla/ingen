@@ -61,12 +61,12 @@ public:
 	// FIXME: there's a pattern here....
 	// (same core interface as Loader/Serialiser)
 	
-	void load_patch(bool                     merge,
-	                const string&            data_base_uri,
-	                const Path&              data_path,
-	                GraphObject::MetadataMap engine_data,
-	                optional<Path>           engine_parent,
-	                optional<const string&>  engine_name = optional<const string&>());
+	void load_patch(bool                    merge,
+	                const string&           data_base_uri,
+	                const Path&             data_path,
+	                GraphObject::Variables  engine_data,
+	                optional<Path>          engine_parent,
+	                optional<const string&> engine_name = optional<const string&>());
 	
 	void save_patch(SharedPtr<PatchModel> model, const string& filename);
 

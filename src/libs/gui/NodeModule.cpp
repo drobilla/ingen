@@ -49,7 +49,7 @@ NodeModule::NodeModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeMode
 
 	node->signal_new_port.connect(sigc::bind(sigc::mem_fun(this, &NodeModule::add_port), true));
 	node->signal_removed_port.connect(sigc::mem_fun(this, &NodeModule::remove_port));
-	node->signal_metadata.connect(sigc::mem_fun(this, &NodeModule::set_metadata));
+	node->signal_variable.connect(sigc::mem_fun(this, &NodeModule::set_variable));
 	node->signal_polyphonic.connect(sigc::mem_fun(this, &NodeModule::set_stacked_border));
 	node->signal_renamed.connect(sigc::mem_fun(this, &NodeModule::rename));
 	
@@ -92,8 +92,8 @@ NodeModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeModel> n
 	else
 		ret = boost::shared_ptr<NodeModule>(new NodeModule(canvas, node));
 
-	for (GraphObject::MetadataMap::const_iterator m = node->metadata().begin(); m != node->metadata().end(); ++m)
-		ret->set_metadata(m->first, m->second);
+	for (GraphObject::Variables::const_iterator m = node->variables().begin(); m != node->variables().end(); ++m)
+		ret->set_variable(m->first, m->second);
 
 	for (PortModelList::const_iterator p = node->ports().begin(); p != node->ports().end(); ++p) {
 		ret->add_port(*p, false);
@@ -342,19 +342,19 @@ NodeModule::store_location()
 	const float x = static_cast<float>(property_x());
 	const float y = static_cast<float>(property_y());
 	
-	const Atom& existing_x = _node->get_metadata("ingenuity:canvas-x");
-	const Atom& existing_y = _node->get_metadata("ingenuity:canvas-y");
+	const Atom& existing_x = _node->get_variable("ingenuity:canvas-x");
+	const Atom& existing_y = _node->get_variable("ingenuity:canvas-y");
 	
 	if (existing_x.type() != Atom::FLOAT || existing_y.type() != Atom::FLOAT
 			|| existing_x.get_float() != x || existing_y.get_float() != y) {
-		App::instance().engine()->set_metadata(_node->path(), "ingenuity:canvas-x", Atom(x));
-		App::instance().engine()->set_metadata(_node->path(), "ingenuity:canvas-y", Atom(y));
+		App::instance().engine()->set_variable(_node->path(), "ingenuity:canvas-x", Atom(x));
+		App::instance().engine()->set_variable(_node->path(), "ingenuity:canvas-y", Atom(y));
 	}
 }
 
 
 void
-NodeModule::set_metadata(const string& key, const Atom& value)
+NodeModule::set_variable(const string& key, const Atom& value)
 {
 	if (key == "ingenuity:canvas-x" && value.type() == Atom::FLOAT)
 		move_to(value.get_float(), property_y());

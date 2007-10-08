@@ -145,8 +145,8 @@ LADSPANode::instantiate()
 		}
 
 		if (port->is_input() && port->buffer_size() == 1) {
-			port->set_metadata("ingen:minimum", min);
-			port->set_metadata("ingen:maximum", max);
+			port->set_variable("ingen:minimum", min);
+			port->set_variable("ingen:maximum", max);
 		}
 	}
 

@@ -53,18 +53,18 @@ MidiNoteNode::MidiNoteNode(const string& path, bool polyphonic, PatchImpl* paren
 	_ports->at(1) = _freq_port;
 	
 	_vel_port = new OutputPort(this, "Velocity", 2, _polyphony, DataType::AUDIO, _buffer_size);
-	_vel_port->set_metadata("ingen:minimum", 0.0f);
-	_vel_port->set_metadata("ingen:maximum", 1.0f);
+	_vel_port->set_variable("ingen:minimum", 0.0f);
+	_vel_port->set_variable("ingen:maximum", 1.0f);
 	_ports->at(2) = _vel_port;
 	
 	_gate_port = new OutputPort(this, "Gate", 3, _polyphony, DataType::AUDIO, _buffer_size);
-	_gate_port->set_metadata("ingen:toggled", 1);
-	_gate_port->set_metadata("ingen:default", 0.0f);
+	_gate_port->set_variable("ingen:toggled", 1);
+	_gate_port->set_variable("ingen:default", 0.0f);
 	_ports->at(3) = _gate_port;
 	
 	_trig_port = new OutputPort(this, "Trigger", 4, _polyphony, DataType::AUDIO, _buffer_size);
-	_trig_port->set_metadata("ingen:toggled", 1);
-	_trig_port->set_metadata("ingen:default", 0.0f);
+	_trig_port->set_variable("ingen:toggled", 1);
+	_trig_port->set_variable("ingen:default", 0.0f);
 	_ports->at(4) = _trig_port;
 	
 	PluginImpl* p = const_cast<PluginImpl*>(_plugin);

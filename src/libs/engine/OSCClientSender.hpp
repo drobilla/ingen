@@ -113,7 +113,7 @@ public:
 	virtual void disconnection(const std::string& src_port_path,
 	                           const std::string& dst_port_path);
 	
-	virtual void metadata_update(const std::string& subject_path,
+	virtual void variable_change(const std::string& subject_path,
 	                             const std::string& predicate,
 	                             const Raul::Atom&  value);
 	

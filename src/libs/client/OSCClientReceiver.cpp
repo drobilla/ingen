@@ -158,7 +158,7 @@ OSCClientReceiver::setup_callbacks()
 	lo_server_thread_add_method(_st, "/ingen/new_port", "ssi", new_port_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/polyphonic", "sT", polyphonic_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/polyphonic", "sF", polyphonic_cb, this);
-	lo_server_thread_add_method(_st, "/ingen/metadata_update", NULL, metadata_update_cb, this);
+	lo_server_thread_add_method(_st, "/ingen/variable_change", NULL, variable_change_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/control_change", "sf", control_change_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/port_activity", "s", port_activity_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/program_add", "siis", program_add_cb, this);
@@ -301,10 +301,10 @@ OSCClientReceiver::_polyphonic_cb(const char* path, const char* types, lo_arg** 
 }
 
 
-/** Notification of a new or updated piece of metadata.
+/** Notification of a new or updated piece of variable.
  */
 int
-OSCClientReceiver::_metadata_update_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCClientReceiver::_variable_change_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	if (argc != 3 || types[0] != 's' || types[1] != 's')
 		return 1;
@@ -314,7 +314,7 @@ OSCClientReceiver::_metadata_update_cb(const char* path, const char* types, lo_a
 
 	Atom value = AtomLiblo::lo_arg_to_atom(types[2], argv[2]);
 
-	metadata_update(obj_path, key, value);
+	variable_change(obj_path, key, value);
 
 	return 0;	
 }

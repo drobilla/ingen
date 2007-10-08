@@ -80,8 +80,8 @@ PortPropertiesWindow::present(SharedPtr<PortModel> pm)
 	_connections.push_back(_max_spinner->signal_value_changed().connect(
 				sigc::mem_fun(*this, &PortPropertiesWindow::max_changed)));
 	
-	_connections.push_back(pm->signal_metadata.connect(
-			sigc::mem_fun(this, &PortPropertiesWindow::metadata_update)));
+	_connections.push_back(pm->signal_variable.connect(
+			sigc::mem_fun(this, &PortPropertiesWindow::variable_change)));
 
 	_enable_signal = true;
 
@@ -90,7 +90,7 @@ PortPropertiesWindow::present(SharedPtr<PortModel> pm)
 
 
 void
-PortPropertiesWindow::metadata_update(const string& key, const Atom& value)
+PortPropertiesWindow::variable_change(const string& key, const Atom& value)
 {
 	_enable_signal = false;
 
@@ -115,7 +115,7 @@ PortPropertiesWindow::min_changed()
 	}
 
 	if (_enable_signal)
-		App::instance().engine()->set_metadata(_port_model->path(), "ingen:minimum", min);
+		App::instance().engine()->set_variable(_port_model->path(), "ingen:minimum", min);
 }
 
 
@@ -131,15 +131,15 @@ PortPropertiesWindow::max_changed()
 	}
 
 	if (_enable_signal)
-		App::instance().engine()->set_metadata(_port_model->path(), "ingen:maximum", max);
+		App::instance().engine()->set_variable(_port_model->path(), "ingen:maximum", max);
 }
 
 
 void
 PortPropertiesWindow::cancel()
 {
-	App::instance().engine()->set_metadata(_port_model->path(), "ingen:minimum", _initial_min);
-	App::instance().engine()->set_metadata(_port_model->path(), "ingen:maximum", _initial_max);
+	App::instance().engine()->set_variable(_port_model->path(), "ingen:minimum", _initial_min);
+	App::instance().engine()->set_variable(_port_model->path(), "ingen:maximum", _initial_max);
 	hide();
 }
 

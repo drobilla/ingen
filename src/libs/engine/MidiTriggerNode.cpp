@@ -37,10 +37,10 @@ MidiTriggerNode::MidiTriggerNode(const string& path, bool polyphonic, PatchImpl*
 	_ports->at(0) = _midi_in_port;
 	
 	_note_port = new InputPort(this, "NoteNumber", 1, 1, DataType::CONTROL, 1);
-	_note_port->set_metadata("ingen:minimum", 0.0f);
-	_note_port->set_metadata("ingen:maximum", 127.0f);
-	_note_port->set_metadata("ingen:default", 60.0f);
-	_note_port->set_metadata("ingen:integer", 1);
+	_note_port->set_variable("ingen:minimum", 0.0f);
+	_note_port->set_variable("ingen:maximum", 127.0f);
+	_note_port->set_variable("ingen:default", 60.0f);
+	_note_port->set_variable("ingen:integer", 1);
 	_ports->at(1) = _note_port;
 	
 	_gate_port = new OutputPort(this, "Gate", 2, 1, DataType::AUDIO, _buffer_size);

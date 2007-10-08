@@ -29,8 +29,6 @@ struct Coord { double x; double y; };
 namespace Ingen {
 namespace GUI {
 
-class Controller;
-
 
 /** Singleton state manager for the entire app.
  *

@@ -143,7 +143,7 @@ public:
 
 	void midi_learn(const string& node_path);
 
-	void set_metadata(const string&     obj_path,
+	void set_variable(const string&     obj_path,
 	                  const string&     predicate,
 	                  const Raul::Atom& value);
 	
@@ -157,7 +157,7 @@ public:
 
 	void request_port_value(const string& port_path);
 	
-	void request_metadata(const string& path, const string& key);
+	void request_variable(const string& path, const string& key);
 
 	void request_plugins();
 

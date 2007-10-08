@@ -40,13 +40,13 @@ namespace Shared {
 class GraphObject : public Raul::Deletable
 {
 public:
-	typedef std::map<std::string, Raul::Atom> MetadataMap;
+	typedef std::map<std::string, Raul::Atom> Variables;
 
 	typedef PathTable< SharedPtr<GraphObject> >::const_iterator const_iterator;
 
 	virtual const Raul::Path   path()       const = 0;
 	virtual const std::string  name()       const = 0;
-	virtual const MetadataMap& metadata()   const = 0;
+	virtual const Variables&   variables()  const = 0;
 	virtual bool               polyphonic() const = 0;
 	
 	virtual const_iterator         children_begin() const = 0;

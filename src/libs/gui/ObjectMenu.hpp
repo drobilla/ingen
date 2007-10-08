@@ -29,7 +29,6 @@ using Ingen::Client::ObjectModel;
 namespace Ingen {
 namespace GUI {
 
-class Controller;
 class ObjectControlWindow;
 class ObjectPropertiesWindow;
 class PatchCanvas;

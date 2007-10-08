@@ -74,11 +74,11 @@ UploadPatchWindow::on_show()
 {
 	Gtk::Dialog::on_show();
 
-	Raul::Atom atom = _patch->get_metadata("lv2:symbol");
+	Raul::Atom atom = _patch->get_variable("lv2:symbol");
 	if (atom)
 		_symbol_entry->set_text(atom.get_string());
 	
-	atom = _patch->get_metadata("doap:name");
+	atom = _patch->get_variable("doap:name");
 	if (atom)
 		_short_name_entry->set_text(atom.get_string());
 }
@@ -237,11 +237,11 @@ UploadPatchWindow::upload_clicked()
 	Glib::ustring symbol = _symbol_entry->get_text();
 	Glib::ustring short_name = _short_name_entry->get_text();
 
-	_patch->set_metadata("lv2:symbol", Atom(symbol));
-	App::instance().engine()->set_metadata(_patch->path(), "lv2:symbol", Atom(symbol));
+	_patch->set_variable("lv2:symbol", Atom(symbol));
+	App::instance().engine()->set_variable(_patch->path(), "lv2:symbol", Atom(symbol));
 	
-	_patch->set_metadata("doap:name", Atom(short_name));
-	App::instance().engine()->set_metadata(_patch->path(), "doap:name", Atom(short_name));
+	_patch->set_variable("doap:name", Atom(short_name));
+	App::instance().engine()->set_variable(_patch->path(), "doap:name", Atom(short_name));
 
 	_response = 0;
 	_progress_pct = 0;

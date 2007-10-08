@@ -173,8 +173,8 @@ NodeModel::port_value_range(SharedPtr<PortModel> port, float& min, float& max)
 #endif
 
 	// Possibly overriden
-	const Atom& min_atom = port->get_metadata("ingen:minimum");
-	const Atom& max_atom = port->get_metadata("ingen:maximum");
+	const Atom& min_atom = port->get_variable("ingen:minimum");
+	const Atom& max_atom = port->get_variable("ingen:maximum");
 	if (min_atom.type() == Atom::FLOAT)
 		min = min_atom.get_float();
 	if (max_atom.type() == Atom::FLOAT)

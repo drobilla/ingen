@@ -44,14 +44,14 @@ public:
 
 	void set_patch(SharedPtr<PatchModel> patch);
 
-	void present(SharedPtr<PatchModel> patch, GraphObject::MetadataMap data);
+	void present(SharedPtr<PatchModel> patch, GraphObject::Variables data);
 
 private:
 	void name_changed();
 	void ok_clicked();
 	void cancel_clicked();
 
-	GraphObject::MetadataMap _initial_data;
+	GraphObject::Variables _initial_data;
 	SharedPtr<PatchModel>    _patch;
 	
 	Gtk::Entry*      _name_entry;

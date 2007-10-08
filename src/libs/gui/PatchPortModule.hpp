@@ -62,7 +62,7 @@ public:
 protected:
 	PatchPortModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<PortModel> port);
 
-	void metadata_update(const string& key, const Raul::Atom& value);
+	void variable_change(const string& key, const Raul::Atom& value);
 	void create_menu();
 
 	SharedPtr<PortModel> _port;

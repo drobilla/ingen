@@ -115,12 +115,12 @@ private:
 	LO_HANDLER(note_off);
 	LO_HANDLER(all_notes_off);
 	LO_HANDLER(midi_learn);
-	LO_HANDLER(metadata_get);
-	LO_HANDLER(metadata_set);
+	LO_HANDLER(variable_get);
+	LO_HANDLER(variable_set);
 	LO_HANDLER(request_plugin);
 	LO_HANDLER(request_object);
 	LO_HANDLER(request_port_value);
-	LO_HANDLER(request_metadata);
+	LO_HANDLER(request_variable);
 	LO_HANDLER(request_plugins);
 	LO_HANDLER(request_all_objects);
 

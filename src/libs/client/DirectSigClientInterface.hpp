@@ -98,8 +98,8 @@ private:
 	virtual void disconnection(const string& src_port_path, const string& dst_port_path)
 	{ disconnection_sig.emit(src_port_path, dst_port_path); }
 	
-	virtual void metadata_update(const string& subject_path, const string& predicate, const string& value)
-	{ metadata_update_sig.emit(subject_path, predicate, value); }
+	virtual void variable_change(const string& subject_path, const string& predicate, const string& value)
+	{ variable_change_sig.emit(subject_path, predicate, value); }
 	
 	virtual void control_change(const string& port_path, float value)
 	{ control_change_sig.emit(port_path, value); }

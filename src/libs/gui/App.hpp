@@ -146,7 +146,7 @@ protected:
 	ActivityPorts _activity_ports;
 
 	/** Used to avoid feedback loops with (eg) process checkbutton
-	 * FIXME: Maybe this should be globally implemented at the Controller level,
+	 * FIXME: This should probably be implemented globally:
 	 * disable all command sending while handling events to avoid feedback
 	 * issues with widget event callbacks?  This same pattern is duplicated
 	 * too much... */

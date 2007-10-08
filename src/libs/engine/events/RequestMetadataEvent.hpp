@@ -31,7 +31,7 @@ namespace Shared {
 } using Shared::ClientInterface;
 
 
-/** A request from a client for a piece of metadata.
+/** A request from a client for a piece of variable.
  *
  * \ingroup engine
  */

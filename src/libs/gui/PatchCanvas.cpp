@@ -357,9 +357,9 @@ PatchCanvas::connect(boost::shared_ptr<FlowCanvas::Connectable> src_port,
 		SharedPtr<PluginModel> pm(new PluginModel(PluginModel::Internal, "", "midi_control_in", ""));
 		SharedPtr<NodeModel> nm(new NodeModel(pm, _patch->path().base()
 			+ src->name() + "-" + dst->name(), false));
-		nm->set_metadata("canvas-x", Atom((float)
+		nm->set_variable("canvas-x", Atom((float)
 			(dst->module()->property_x() - dst->module()->width() - 20)));
-		nm->set_metadata("canvas-y", Atom((float)
+		nm->set_variable("canvas-y", Atom((float)
 			(dst->module()->property_y())));
 		App::instance().engine()->create_node_from_model(nm.get());
 		App::instance().engine()->connect(src->model()->path(), nm->path() + "/MIDI_In");
@@ -369,9 +369,9 @@ PatchCanvas::connect(boost::shared_ptr<FlowCanvas::Connectable> src_port,
 		// Set control node range to port's user range
 		
 		App::instance().engine()->set_port_value_queued(nm->path().base() + "Min",
-			dst->model()->get_metadata("user-min").get_float());
+			dst->model()->get_variable("user-min").get_float());
 		App::instance().engine()->set_port_value_queued(nm->path().base() + "Max",
-			dst->model()->get_metadata("user-max").get_float());
+			dst->model()->get_variable("user-max").get_float());
 #endif
 	} else {
 		App::instance().engine()->connect(src->model()->path(), dst->model()->path());
@@ -510,7 +510,7 @@ PatchCanvas::menu_add_control(ControlType type)
 {
 	// FIXME: bundleify
 
-	GraphObject::MetadataMap data = get_initial_data();
+	GraphObject::Variables data = get_initial_data();
 	float x = data["ingenuity:canvas-x"].get_float();
 	float y = data["ingenuity:canvas-y"].get_float();
 	
@@ -526,9 +526,9 @@ PatchCanvas::menu_add_port(const string& name, const string& type, bool is_outpu
 	// FIXME: bundleify
 	const Path& path = _patch->path().base() + generate_port_name(name);
 	App::instance().engine()->create_port(path, type, is_output);
-	GraphObject::MetadataMap data = get_initial_data();
-	for (GraphObject::MetadataMap::const_iterator i = data.begin(); i != data.end(); ++i)
-		App::instance().engine()->set_metadata(path, i->first, i->second);
+	GraphObject::Variables data = get_initial_data();
+	for (GraphObject::Variables::const_iterator i = data.begin(); i != data.end(); ++i)
+		App::instance().engine()->set_variable(path, i->first, i->second);
 }
 
 
@@ -538,9 +538,9 @@ PatchCanvas::load_plugin(SharedPtr<PluginModel> plugin)
 	const Path& path = _patch->path().base() + plugin->default_node_name(_patch);
 	// FIXME: polyphony?
 	App::instance().engine()->create_node(path, plugin->uri(), false);
-	GraphObject::MetadataMap data = get_initial_data();
-	for (GraphObject::MetadataMap::const_iterator i = data.begin(); i != data.end(); ++i)
-		App::instance().engine()->set_metadata(path, i->first, i->second);
+	GraphObject::Variables data = get_initial_data();
+	for (GraphObject::Variables::const_iterator i = data.begin(); i != data.end(); ++i)
+		App::instance().engine()->set_variable(path, i->first, i->second);
 }
 
 
@@ -557,10 +557,10 @@ PatchCanvas::get_new_module_location(double& x, double& y)
 }
 
 
-GraphObject::MetadataMap
+GraphObject::Variables
 PatchCanvas::get_initial_data()
 {
-	GraphObject::MetadataMap result;
+	GraphObject::Variables result;
 	
 	result["ingenuity:canvas-x"] = Atom((float)_last_click_x);
 	result["ingenuity:canvas-y"] = Atom((float)_last_click_y);

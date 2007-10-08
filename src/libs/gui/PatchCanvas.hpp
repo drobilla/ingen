@@ -100,7 +100,7 @@ private:
 		SLV2PluginClass plugin_class, SLV2PluginClasses classes);
 #endif
 	
-	GraphObject::MetadataMap get_initial_data();
+	GraphObject::Variables get_initial_data();
 
 	bool canvas_event(GdkEvent* event);
 	

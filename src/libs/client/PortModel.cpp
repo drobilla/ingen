@@ -25,7 +25,7 @@ namespace Client {
 bool
 PortModel::is_logarithmic() const
 {
-	const Atom& hint = get_metadata("ingen:logarithmic");
+	const Atom& hint = get_variable("ingen:logarithmic");
 	return (hint && hint > 0);
 }
 
@@ -33,7 +33,7 @@ PortModel::is_logarithmic() const
 bool
 PortModel::is_integer() const
 {
-	const Atom& hint = get_metadata("ingen:integer");
+	const Atom& hint = get_variable("ingen:integer");
 	return (hint && hint > 0);
 }
 
@@ -41,7 +41,7 @@ PortModel::is_integer() const
 bool
 PortModel::is_toggle() const
 {
-	const Atom& hint = get_metadata("ingen:toggled");
+	const Atom& hint = get_variable("ingen:toggled");
 	return (hint && hint > 0);
 }
 

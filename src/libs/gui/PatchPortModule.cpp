@@ -44,8 +44,8 @@ PatchPortModule::PatchPortModule(boost::shared_ptr<PatchCanvas> canvas, SharedPt
 
 	/*resize();
 
-	const Atom& x_atom = port->get_metadata("ingenuity:canvas-x");
-	const Atom& y_atom = port->get_metadata("ingenuity:canvas-y");
+	const Atom& x_atom = port->get_variable("ingenuity:canvas-x");
+	const Atom& y_atom = port->get_variable("ingenuity:canvas-y");
 
 	if (x_atom && y_atom && x_atom.type() == Atom::FLOAT && y_atom.type() == Atom::FLOAT) {
 		move_to(x_atom.get_float(), y_atom.get_float());
@@ -58,7 +58,7 @@ PatchPortModule::PatchPortModule(boost::shared_ptr<PatchCanvas> canvas, SharedPt
 	
 	set_stacked_border(port->polyphonic());
 
-	port->signal_metadata.connect(sigc::mem_fun(this, &PatchPortModule::metadata_update));
+	port->signal_variable.connect(sigc::mem_fun(this, &PatchPortModule::variable_change));
 	port->signal_polyphonic.connect(sigc::mem_fun(this, &PatchPortModule::set_stacked_border));
 }
 
@@ -76,8 +76,8 @@ PatchPortModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<PortMod
 
 	ret->set_menu(ret->_patch_port->menu());
 	
-	for (GraphObject::MetadataMap::const_iterator m = port->metadata().begin(); m != port->metadata().end(); ++m)
-		ret->metadata_update(m->first, m->second);
+	for (GraphObject::Variables::const_iterator m = port->variables().begin(); m != port->variables().end(); ++m)
+		ret->variable_change(m->first, m->second);
 	
 	ret->resize();
 
@@ -102,19 +102,19 @@ PatchPortModule::store_location()
 	const float x = static_cast<float>(property_x());
 	const float y = static_cast<float>(property_y());
 	
-	const Atom& existing_x = _port->get_metadata("ingenuity:canvas-x");
-	const Atom& existing_y = _port->get_metadata("ingenuity:canvas-y");
+	const Atom& existing_x = _port->get_variable("ingenuity:canvas-x");
+	const Atom& existing_y = _port->get_variable("ingenuity:canvas-y");
 	
 	if (existing_x.type() != Atom::FLOAT || existing_y.type() != Atom::FLOAT
 			|| existing_x.get_float() != x || existing_y.get_float() != y) {
-		App::instance().engine()->set_metadata(_port->path(), "ingenuity:canvas-x", Atom(x));
-		App::instance().engine()->set_metadata(_port->path(), "ingenuity:canvas-y", Atom(y));
+		App::instance().engine()->set_variable(_port->path(), "ingenuity:canvas-x", Atom(x));
+		App::instance().engine()->set_variable(_port->path(), "ingenuity:canvas-y", Atom(y));
 	}
 }
 
 
 void
-PatchPortModule::metadata_update(const string& key, const Atom& value)
+PatchPortModule::variable_change(const string& key, const Atom& value)
 {
 	if (key == "ingenuity:canvas-x" && value.type() == Atom::FLOAT)
 		move_to(value.get_float(), property_y());

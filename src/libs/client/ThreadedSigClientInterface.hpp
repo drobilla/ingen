@@ -63,7 +63,7 @@ public:
 	, object_destroyed_slot(signal_object_destroyed.make_slot())
 	, object_renamed_slot(signal_object_renamed.make_slot())
 	, disconnection_slot(signal_disconnection.make_slot())
-	, metadata_update_slot(signal_metadata_update.make_slot())
+	, variable_change_slot(signal_variable_change.make_slot())
 	, control_change_slot(signal_control_change.make_slot())
 	, port_activity_slot(signal_port_activity.make_slot())
 	, program_add_slot(signal_program_add.make_slot())
@@ -133,8 +133,8 @@ public:
 	void disconnection(const string& src_port_path, const string& dst_port_path)
 		{ push_sig(sigc::bind(disconnection_slot, src_port_path, dst_port_path)); }
 	
-	void metadata_update(const string& path, const string& key, const Raul::Atom& value)
-		{ push_sig(sigc::bind(metadata_update_slot, path, key, value)); }
+	void variable_change(const string& path, const string& key, const Raul::Atom& value)
+		{ push_sig(sigc::bind(variable_change_slot, path, key, value)); }
 
 	void control_change(const string& port_path, float value)
 		{ push_sig(sigc::bind(control_change_slot, port_path, value)); }
@@ -178,7 +178,7 @@ private:
 	sigc::slot<void, string>                             object_destroyed_slot; 
 	sigc::slot<void, string, string>                     object_renamed_slot; 
 	sigc::slot<void, string, string>                     disconnection_slot; 
-	sigc::slot<void, string, string, Raul::Atom>         metadata_update_slot; 
+	sigc::slot<void, string, string, Raul::Atom>         variable_change_slot; 
 	sigc::slot<void, string, float>                      control_change_slot; 
 	sigc::slot<void, string>                             port_activity_slot; 
 	sigc::slot<void, string, uint32_t, uint32_t, string> program_add_slot; 

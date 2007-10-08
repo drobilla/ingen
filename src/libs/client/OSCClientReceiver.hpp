@@ -97,7 +97,7 @@ private:
 	LO_HANDLER(new_node);
 	LO_HANDLER(new_port);
 	LO_HANDLER(polyphonic);
-	LO_HANDLER(metadata_update);
+	LO_HANDLER(variable_change);
 	LO_HANDLER(control_change);
 	LO_HANDLER(port_activity);
 	LO_HANDLER(program_add);
