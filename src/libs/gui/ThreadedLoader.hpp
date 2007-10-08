@@ -27,8 +27,8 @@
 #include <glibmm/thread.h>
 #include "interface/EngineInterface.hpp"
 #include "client/PatchModel.hpp"
-#include "client/Serializer.hpp"
 #include "client/DeprecatedLoader.hpp"
+#include "serialisation/Serializer.hpp"
 #include "serialisation/Loader.hpp"
 using std::string;
 using std::list;

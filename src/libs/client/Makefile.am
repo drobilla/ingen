@@ -42,8 +42,6 @@ libingen_client_la_SOURCES = \
 	PortModel.cpp \
 	PortModel.hpp \
 	PresetModel.hpp \
-	Serializer.cpp \
-	Serializer.hpp \
 	SigClientInterface.hpp \
 	Store.cpp \
 	Store.hpp \

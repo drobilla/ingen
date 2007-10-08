@@ -43,7 +43,7 @@ namespace Shared {
 	class Connection;
 }
 
-namespace Client {
+namespace Serialisation {
 
 
 /** Serializes Ingen objects (patches, nodes, etc) to RDF.
@@ -90,7 +90,7 @@ private:
 };
 
 
-} // namespace Client
+} // namespace Serialisation
 } // namespace Ingen
 
 #endif // SERIALIZER_H

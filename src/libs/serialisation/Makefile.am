@@ -9,8 +9,10 @@ libingen_serialisation_la_LDFLAGS = -no-undefined -module -avoid-version
 libingen_serialisation_la_LIBADD = @RAUL_LIBS@ @GLIBMM_LIBS@
 
 libingen_serialisation_la_SOURCES = \
-	serialisation.hpp \
-	serialisation.cpp \
+	Loader.cpp \
 	Loader.hpp \
-	Loader.cpp
+	Serializer.cpp \
+	Serializer.hpp \
+	serialisation.cpp \
+	serialisation.hpp
 

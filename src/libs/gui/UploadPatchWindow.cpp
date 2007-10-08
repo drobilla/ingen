@@ -24,7 +24,7 @@
 #include <raul/RDFQuery.hpp>
 #include "module/module.h"
 #include "interface/EngineInterface.hpp"
-#include "client/Serializer.hpp"
+#include "serialisation/Serializer.hpp"
 #include "client/PatchModel.hpp"
 #include "UploadPatchWindow.hpp"
 #include "App.hpp"

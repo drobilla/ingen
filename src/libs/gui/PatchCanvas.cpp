@@ -22,11 +22,11 @@
 #include <flowcanvas/Canvas.hpp>
 #include <flowcanvas/Ellipse.hpp>
 #include "interface/EngineInterface.hpp"
+#include "serialisation/Serializer.hpp"
 #include "client/PluginModel.hpp"
 #include "client/PatchModel.hpp"
 #include "client/NodeModel.hpp"
 #include "client/Store.hpp"
-#include "client/Serializer.hpp"
 #include "App.hpp"
 #include "PatchCanvas.hpp"
 #include "PatchWindow.hpp"
@@ -41,7 +41,7 @@
 #include "GladeFactory.hpp"
 #include "WindowFactory.hpp"
 using Ingen::Client::Store;
-using Ingen::Client::Serializer;
+using Ingen::Serialisation::Serializer;
 using Ingen::Client::PluginModel;
 
 namespace Ingen {

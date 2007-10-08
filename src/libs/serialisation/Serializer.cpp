@@ -49,7 +49,7 @@ using namespace Ingen;
 using namespace Ingen::Shared;
 
 namespace Ingen {
-namespace Client {
+namespace Serialisation {
 
 
 Serializer::Serializer(Raul::RDF::World& world)
@@ -430,5 +430,5 @@ Serializer::serialize_connection(SharedPtr<Connection> connection) throw (std::l
 }
 
 
-} // namespace Client
+} // namespace Serialisation
 } // namespace Ingen
