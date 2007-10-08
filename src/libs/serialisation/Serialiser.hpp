@@ -28,6 +28,7 @@
 #include <raul/Atom.hpp>
 #include <raul/RDFWorld.hpp>
 #include <raul/RDFModel.hpp>
+#include "interface/GraphObject.hpp"
 
 using namespace Raul;
 using namespace Ingen::Shared;
@@ -59,8 +60,8 @@ public:
 	string to_string(SharedPtr<GraphObject> object);
 	
 	void   start_to_string();
-	void   serialize(SharedPtr<GraphObject> object) throw (std::logic_error);
-	void   serialize_connection(SharedPtr<Shared::Connection> c) throw (std::logic_error);
+	void   serialise(SharedPtr<GraphObject> object) throw (std::logic_error);
+	void   serialise_connection(SharedPtr<Shared::Connection> c) throw (std::logic_error);
 	string finish();
 	
 private:
@@ -70,11 +71,13 @@ private:
 
 	void setup_prefixes();
 
-	void serialize_plugin(SharedPtr<Shared::Plugin> p);
+	void serialise_plugin(SharedPtr<Shared::Plugin> p);
 
-	void serialize_patch(SharedPtr<Shared::Patch> p);
-	void serialize_node(SharedPtr<Shared::Node> n, const Raul::RDF::Node& id);
-	void serialize_port(const Shared::Port* p, const Raul::RDF::Node& id);
+	void serialise_patch(SharedPtr<Shared::Patch> p);
+	void serialise_node(SharedPtr<Shared::Node> n, const Raul::RDF::Node& id);
+	void serialise_port(const Shared::Port* p, const Raul::RDF::Node& id);
+
+	void serialise_variables(RDF::Node subject, const GraphObject::Variables& variables);
 	
 	Raul::RDF::Node path_to_node_id(const Path& path);
 	Raul::RDF::Node patch_path_to_rdf_id(const Path& path);

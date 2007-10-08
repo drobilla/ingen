@@ -38,7 +38,7 @@ class PluginImpl;
  * (protocol), this is used from the engine to easily send proper Objects
  * with these messages (which is done in a few different parts of the code).
  *
- * Basically a serializer, except to calls on ClientInterface rather than
+ * Basically a serialiser, except to calls on ClientInterface rather than
  * eg a byte stream.
  */
 class ObjectSender {

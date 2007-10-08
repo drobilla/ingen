@@ -62,7 +62,7 @@ Serialiser::to_file(SharedPtr<GraphObject> object, const string& filename)
 {
 	_root_object = object;
 	start_to_filename(filename);
-	serialize(object);
+	serialise(object);
 	finish();
 }
 
@@ -72,7 +72,7 @@ Serialiser::to_string(SharedPtr<GraphObject> object)
 {
 	_root_object = object;
 	start_to_string();
-	serialize(object);
+	serialise(object);
 	return finish();
 }
 
@@ -97,7 +97,7 @@ Serialiser::start_to_filename(const string& filename)
  * This must be called before any serializing methods.
  *
  * The results of the serialization will be returned by the finish() method after
- * the desired objects have been serialized.
+ * the desired objects have been serialised.
  */
 void
 Serialiser::start_to_string()
@@ -121,9 +121,9 @@ Serialiser::finish()
 	string ret = "";
 
 	if (_mode == TO_FILE)
-		_model->serialize_to_file(_base_uri);
+		_model->serialise_to_file(_base_uri);
 	else
-		ret = _model->serialize_to_string();
+		ret = _model->serialise_to_string();
 
 	_base_uri = "";
 	_node_map.clear();
@@ -214,31 +214,31 @@ Serialiser::find_file(const string& filename, const string& additional_path)
 #endif
 
 void
-Serialiser::serialize(SharedPtr<GraphObject> object) throw (std::logic_error)
+Serialiser::serialise(SharedPtr<GraphObject> object) throw (std::logic_error)
 {
 	if (!_model)
-		throw std::logic_error("serialize called without serialization in progress");
+		throw std::logic_error("serialise called without serialization in progress");
 
 	SharedPtr<Shared::Patch> patch = PtrCast<Shared::Patch>(object);
 	if (patch) {
-		serialize_patch(patch);
+		serialise_patch(patch);
 		return;
 	}
 	
 	SharedPtr<Shared::Node> node = PtrCast<Shared::Node>(object);
 	if (node) {
-		serialize_node(node, path_to_node_id(node->path()));
+		serialise_node(node, path_to_node_id(node->path()));
 		return;
 	}
 	
 	SharedPtr<Shared::Port> port = PtrCast<Shared::Port>(object);
 	if (port) {
-		serialize_port(port.get(), path_to_node_id(port->path()));
+		serialise_port(port.get(), path_to_node_id(port->path()));
 		return;
 	}
 
 	cerr << "[Serialiser] WARNING: Unsupported object type, "
-		<< object->path() << " not serialized." << endl;
+		<< object->path() << " not serialised." << endl;
 }
 
 
@@ -256,7 +256,7 @@ Serialiser::patch_path_to_rdf_id(const Path& path)
 
 
 void
-Serialiser::serialize_patch(SharedPtr<Shared::Patch> patch)
+Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch)
 {
 	assert(_model);
 
@@ -283,26 +283,18 @@ Serialiser::serialize_patch(SharedPtr<Shared::Patch> patch)
 		"ingen:enabled",
 		Atom(patch->enabled()));
 	
-	for (GraphObject::Variables::const_iterator m = patch->variables().begin();
-			m != patch->variables().end(); ++m) {
-		if (m->first.find(":") != string::npos) {
-			_model->add_statement(
-				patch_id,
-				m->first.c_str(),
-				m->second);
-		}
-	}
+	serialise_variables(patch_id, patch->variables());
 
 	for (GraphObject::const_iterator n = patch->children_begin(); n != patch->children_end(); ++n) {
 		SharedPtr<Shared::Patch> patch = PtrCast<Shared::Patch>(n->second);
 		SharedPtr<Shared::Node>  node  = PtrCast<Shared::Node>(n->second);
 		if (patch) {
 			_model->add_statement(patch_id, "ingen:node", patch_path_to_rdf_id(patch->path()));
-			serialize_patch(patch);
+			serialise_patch(patch);
 		} else if (node) {
 			const RDF::Node node_id = path_to_node_id(n->second->path());
 			_model->add_statement(patch_id, "ingen:node", node_id);
-			serialize_node(node, node_id);
+			serialise_node(node, node_id);
 		}
 	}
 	
@@ -310,18 +302,18 @@ Serialiser::serialize_patch(SharedPtr<Shared::Patch> patch)
 		Port* p = patch->port(i);
 		const RDF::Node port_id = path_to_node_id(p->path());
 		_model->add_statement(patch_id, "ingen:port", port_id);
-		serialize_port(p, port_id);
+		serialise_port(p, port_id);
 	}
 
 	for (Shared::Patch::Connections::const_iterator c = patch->connections().begin();
 			c != patch->connections().end(); ++c) {
-		serialize_connection(*c);
+		serialise_connection(*c);
 	}
 }
 
 
 void
-Serialiser::serialize_plugin(SharedPtr<Shared::Plugin> plugin)
+Serialiser::serialise_plugin(SharedPtr<Shared::Plugin> plugin)
 {
 	assert(_model);
 
@@ -335,7 +327,7 @@ Serialiser::serialize_plugin(SharedPtr<Shared::Plugin> plugin)
 
 
 void
-Serialiser::serialize_node(SharedPtr<Shared::Node> node, const RDF::Node& node_id)
+Serialiser::serialise_node(SharedPtr<Shared::Node> node, const RDF::Node& node_id)
 {
 	const RDF::Node plugin_id
 		= RDF::Node(_model->world(), RDF::Node::RESOURCE, node->plugin()->uri());
@@ -360,33 +352,26 @@ Serialiser::serialize_node(SharedPtr<Shared::Node> node, const RDF::Node& node_i
 		"ingen:polyphonic",
 		node->polyphonic());
 
-	//serialize_plugin(node->plugin());
+	//serialise_plugin(node->plugin());
 	
 	for (uint32_t i=0; i < node->num_ports(); ++i) {
 		Port* p = node->port(i);
 		assert(p);
 		const RDF::Node port_id = path_to_node_id(p->path());
-		serialize_port(p, port_id);
+		serialise_port(p, port_id);
 		_model->add_statement(node_id, "ingen:port", port_id);
 	}
 
-	for (GraphObject::Variables::const_iterator m = node->variables().begin();
-			m != node->variables().end(); ++m) {
-		if (m->first.find(":") != string::npos) {
-			_model->add_statement(
-				node_id,
-				m->first,
-				m->second);
-		}
-	}
+	serialise_variables(node_id, node->variables());
 }
+
 
 /** Writes a port subject with various information only if there are some
  * predicate/object pairs to go with it (eg if the port has variable, or a value, or..).
  * Audio output ports with no variable will not be written, for example.
  */
 void
-Serialiser::serialize_port(const Port* port, const RDF::Node& port_id)
+Serialiser::serialise_port(const Port* port, const RDF::Node& port_id)
 {
 	if (port->is_input())
 		_model->add_statement(port_id, "rdf:type",
@@ -403,30 +388,35 @@ Serialiser::serialize_port(const Port* port, const RDF::Node& port_id)
 	if (port->type() == DataType::CONTROL && port->is_input())
 		_model->add_statement(port_id, "ingen:value", port->value());
 
-	if (port->variables().size() > 0) {
-		for (GraphObject::Variables::const_iterator m = port->variables().begin();
-				m != port->variables().end(); ++m) {
-		if (m->first.find(":") != string::npos) {
-				_model->add_statement(
-						port_id,
-						m->first,
-						m->second);
-			}
-		}
-	}
+	serialise_variables(port_id, port->variables());
 }
 
 
 void
-Serialiser::serialize_connection(SharedPtr<Connection> connection) throw (std::logic_error)
+Serialiser::serialise_connection(SharedPtr<Connection> connection) throw (std::logic_error)
 {
 	if (!_model)
-		throw std::logic_error("serialize_connection called without serialization in progress");
+		throw std::logic_error("serialise_connection called without serialization in progress");
 
 	const RDF::Node src_node = path_to_node_id(connection->src_port_path());
 	const RDF::Node dst_node = path_to_node_id(connection->dst_port_path());
 
 	_model->add_statement(dst_node, "ingen:connectedTo", src_node);
+}
+	
+
+void
+Serialiser::serialise_variables(RDF::Node subject, const GraphObject::Variables& variables)
+{
+	for (GraphObject::Variables::const_iterator v = variables.begin(); v != variables.end(); ++v) {
+		if (v->first.find(":") != string::npos) {
+			RDF::Node var_id = _world.blank_id();
+			_model->add_statement(subject, "ingen:variable", var_id);
+			_model->add_statement(var_id, "ingen:value", v->second);
+		} else {
+			cerr << "Warning: not serialising variable with key '" << v->first << "'" << endl;
+		}
+	}
 }
 
 

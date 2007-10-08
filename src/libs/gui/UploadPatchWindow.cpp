@@ -251,7 +251,7 @@ UploadPatchWindow::upload_clicked()
 
 	Serialiser s(*App::instance().world()->rdf_world);
 	s.start_to_string();
-	s.serialize(_patch);
+	s.serialise(_patch);
 	const string str = s.finish();
 	istringstream stream(str);
 
