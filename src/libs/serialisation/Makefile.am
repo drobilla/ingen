@@ -11,8 +11,8 @@ libingen_serialisation_la_LIBADD = @RAUL_LIBS@ @GLIBMM_LIBS@
 libingen_serialisation_la_SOURCES = \
 	Loader.cpp \
 	Loader.hpp \
-	Serializer.cpp \
-	Serializer.hpp \
+	Serialiser.cpp \
+	Serialiser.hpp \
 	serialisation.cpp \
 	serialisation.hpp
 

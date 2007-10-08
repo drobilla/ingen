@@ -28,7 +28,7 @@
 #include "interface/EngineInterface.hpp"
 #include "client/PatchModel.hpp"
 #include "client/DeprecatedLoader.hpp"
-#include "serialisation/Serializer.hpp"
+#include "serialisation/Serialiser.hpp"
 #include "serialisation/Loader.hpp"
 using std::string;
 using std::list;
@@ -59,7 +59,7 @@ public:
 	~ThreadedLoader();
 
 	// FIXME: there's a pattern here....
-	// (same core interface as Loader/Serializer)
+	// (same core interface as Loader/Serialiser)
 	
 	void load_patch(bool                     merge,
 	                const string&            data_base_uri,
@@ -85,7 +85,7 @@ private:
 	SharedPtr<Loader>          _loader;
 
 	DeprecatedLoader _deprecated_loader;
-	Serializer       _serializer;
+	Serialiser       _serializer;
 	Glib::Mutex      _mutex;
 	list<Closure>    _events;
 };

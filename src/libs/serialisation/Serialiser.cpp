@@ -40,7 +40,7 @@
 #include "interface/Node.hpp"
 #include "interface/Port.hpp"
 #include "interface/Connection.hpp"
-#include "Serializer.hpp"
+#include "Serialiser.hpp"
 
 using namespace std;
 using namespace Raul;
@@ -52,13 +52,13 @@ namespace Ingen {
 namespace Serialisation {
 
 
-Serializer::Serializer(Raul::RDF::World& world)
+Serialiser::Serialiser(Raul::RDF::World& world)
 	: _world(world)
 {
 }
 	
 void
-Serializer::to_file(SharedPtr<GraphObject> object, const string& filename)
+Serialiser::to_file(SharedPtr<GraphObject> object, const string& filename)
 {
 	_root_object = object;
 	start_to_filename(filename);
@@ -68,7 +68,7 @@ Serializer::to_file(SharedPtr<GraphObject> object, const string& filename)
 
 
 string
-Serializer::to_string(SharedPtr<GraphObject> object)
+Serialiser::to_string(SharedPtr<GraphObject> object)
 {
 	_root_object = object;
 	start_to_string();
@@ -82,7 +82,7 @@ Serializer::to_string(SharedPtr<GraphObject> object)
  * This must be called before any serializing methods.
  */
 void
-Serializer::start_to_filename(const string& filename)
+Serialiser::start_to_filename(const string& filename)
 {
 	setlocale(LC_NUMERIC, "C");
 
@@ -100,7 +100,7 @@ Serializer::start_to_filename(const string& filename)
  * the desired objects have been serialized.
  */
 void
-Serializer::start_to_string()
+Serialiser::start_to_string()
 {
 	setlocale(LC_NUMERIC, "C");
 
@@ -116,7 +116,7 @@ Serializer::start_to_string()
  * will be returned, otherwise the empty string is returned.
  */
 string
-Serializer::finish()
+Serialiser::finish()
 {
 	string ret = "";
 
@@ -135,7 +135,7 @@ Serializer::finish()
 /** Convert a path to an RDF blank node ID for serializing.
  */
 RDF::Node
-Serializer::path_to_node_id(const Path& path)
+Serialiser::path_to_node_id(const Path& path)
 {
 	assert(_model);
 	/*string ret = path.substr(1);
@@ -175,7 +175,7 @@ Serializer::path_to_node_id(const Path& path)
  * be a good idea to pass as additional_path, in the case of a subpatch.
  */
 string
-Serializer::find_file(const string& filename, const string& additional_path)
+Serialiser::find_file(const string& filename, const string& additional_path)
 {
 	string search_path = additional_path + ":" + _patch_search_path;
 	
@@ -205,7 +205,7 @@ Serializer::find_file(const string& filename, const string& additional_path)
 			is.close();
 			return full_patch_path;
 		} else {
-			cerr << "[Serializer] Could not find patch file " << full_patch_path << endl;
+			cerr << "[Serialiser] Could not find patch file " << full_patch_path << endl;
 		}
 	}
 
@@ -214,7 +214,7 @@ Serializer::find_file(const string& filename, const string& additional_path)
 #endif
 
 void
-Serializer::serialize(SharedPtr<GraphObject> object) throw (std::logic_error)
+Serialiser::serialize(SharedPtr<GraphObject> object) throw (std::logic_error)
 {
 	if (!_model)
 		throw std::logic_error("serialize called without serialization in progress");
@@ -237,13 +237,13 @@ Serializer::serialize(SharedPtr<GraphObject> object) throw (std::logic_error)
 		return;
 	}
 
-	cerr << "[Serializer] WARNING: Unsupported object type, "
+	cerr << "[Serialiser] WARNING: Unsupported object type, "
 		<< object->path() << " not serialized." << endl;
 }
 
 
 RDF::Node
-Serializer::patch_path_to_rdf_id(const Path& path)
+Serialiser::patch_path_to_rdf_id(const Path& path)
 {
 	if (path == _root_object->path()) {
 		return RDF::Node(_model->world(), RDF::Node::RESOURCE, _base_uri);
@@ -256,7 +256,7 @@ Serializer::patch_path_to_rdf_id(const Path& path)
 
 
 void
-Serializer::serialize_patch(SharedPtr<Shared::Patch> patch)
+Serialiser::serialize_patch(SharedPtr<Shared::Patch> patch)
 {
 	assert(_model);
 
@@ -321,7 +321,7 @@ Serializer::serialize_patch(SharedPtr<Shared::Patch> patch)
 
 
 void
-Serializer::serialize_plugin(SharedPtr<Shared::Plugin> plugin)
+Serialiser::serialize_plugin(SharedPtr<Shared::Plugin> plugin)
 {
 	assert(_model);
 
@@ -335,7 +335,7 @@ Serializer::serialize_plugin(SharedPtr<Shared::Plugin> plugin)
 
 
 void
-Serializer::serialize_node(SharedPtr<Shared::Node> node, const RDF::Node& node_id)
+Serialiser::serialize_node(SharedPtr<Shared::Node> node, const RDF::Node& node_id)
 {
 	const RDF::Node plugin_id
 		= RDF::Node(_model->world(), RDF::Node::RESOURCE, node->plugin()->uri());
@@ -386,7 +386,7 @@ Serializer::serialize_node(SharedPtr<Shared::Node> node, const RDF::Node& node_i
  * Audio output ports with no metadata will not be written, for example.
  */
 void
-Serializer::serialize_port(const Port* port, const RDF::Node& port_id)
+Serialiser::serialize_port(const Port* port, const RDF::Node& port_id)
 {
 	if (port->is_input())
 		_model->add_statement(port_id, "rdf:type",
@@ -418,7 +418,7 @@ Serializer::serialize_port(const Port* port, const RDF::Node& port_id)
 
 
 void
-Serializer::serialize_connection(SharedPtr<Connection> connection) throw (std::logic_error)
+Serialiser::serialize_connection(SharedPtr<Connection> connection) throw (std::logic_error)
 {
 	if (!_model)
 		throw std::logic_error("serialize_connection called without serialization in progress");

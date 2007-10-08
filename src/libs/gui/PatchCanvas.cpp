@@ -22,7 +22,7 @@
 #include <flowcanvas/Canvas.hpp>
 #include <flowcanvas/Ellipse.hpp>
 #include "interface/EngineInterface.hpp"
-#include "serialisation/Serializer.hpp"
+#include "serialisation/Serialiser.hpp"
 #include "client/PluginModel.hpp"
 #include "client/PatchModel.hpp"
 #include "client/NodeModel.hpp"
@@ -41,7 +41,7 @@
 #include "GladeFactory.hpp"
 #include "WindowFactory.hpp"
 using Ingen::Client::Store;
-using Ingen::Serialisation::Serializer;
+using Ingen::Serialisation::Serialiser;
 using Ingen::Client::PluginModel;
 
 namespace Ingen {
@@ -458,7 +458,7 @@ PatchCanvas::destroy_selection()
 void
 PatchCanvas::copy_selection()
 {
-	Serializer serializer(*App::instance().world()->rdf_world);
+	Serialiser serializer(*App::instance().world()->rdf_world);
 	serializer.start_to_string();
 
 	for (list<boost::shared_ptr<Item> >::iterator m = _selected_items.begin(); m != _selected_items.end(); ++m) {

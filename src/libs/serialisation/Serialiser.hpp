@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef SERIALIZER_H
-#define SERIALIZER_H
+#ifndef SERIALISER_H
+#define SERIALISER_H
 
 #include <map>
 #include <utility>
@@ -50,10 +50,10 @@ namespace Serialisation {
  *
  * \ingroup IngenClient
  */
-class Serializer
+class Serialiser
 {
 public:
-	Serializer(Raul::RDF::World& world);
+	Serialiser(Raul::RDF::World& world);
 
 	void   to_file(SharedPtr<GraphObject> object, const string& filename);
 	string to_string(SharedPtr<GraphObject> object);
@@ -93,4 +93,4 @@ private:
 } // namespace Serialisation
 } // namespace Ingen
 
-#endif // SERIALIZER_H
+#endif // SERIALISER_H
