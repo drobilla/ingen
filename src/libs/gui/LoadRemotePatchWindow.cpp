@@ -15,16 +15,17 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "module/module.h"
-#include "LoadRemotePatchWindow.hpp"
 #include <sys/types.h>
 #include <dirent.h>
 #include <boost/optional/optional.hpp>
 #include <raul/RDFQuery.hpp>
-#include "interface/EngineInterface.hpp"
 #include "client/PatchModel.hpp"
+#include "interface/EngineInterface.hpp"
+#include "module/World.hpp"
+#include "module/global.hpp"
 #include "App.hpp"
 #include "Configuration.hpp"
+#include "LoadRemotePatchWindow.hpp"
 #include "ThreadedLoader.hpp"
 
 using boost::optional;

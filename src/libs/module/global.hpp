@@ -15,15 +15,13 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef INGEN_MODULE_H
-#define INGEN_MODULE_H
-
-#include "World.hpp"
-#include "Module.hpp"
-#include "raul/SharedPtr.hpp"
+#ifndef INGEN_GLOBAL_H
+#define INGEN_GLOBAL_H
 
 namespace Ingen {
 namespace Shared {
+
+class World;
 
 World* get_world();
 void   destroy_world();
@@ -31,5 +29,5 @@ void   destroy_world();
 } // namesace Shared
 } // namespace Ingen
 
-#endif // INGEN_MODULE_H
+#endif // INGEN_GLOBAL_H
 

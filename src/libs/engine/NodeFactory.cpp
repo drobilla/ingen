@@ -15,13 +15,14 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "NodeFactory.hpp"
 #include CONFIG_H_PATH
 #include <cstdlib>
 #include <pthread.h>
 #include <dirent.h>
 #include <float.h>
 #include <cmath>
+#include "module/World.hpp"
+#include "NodeFactory.hpp"
 #include "ThreadManager.hpp"
 #include "MidiNoteNode.hpp"
 #include "MidiTriggerNode.hpp"

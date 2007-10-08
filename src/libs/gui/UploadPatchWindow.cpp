@@ -22,7 +22,8 @@
 #include <boost/optional/optional.hpp>
 #include <curl/curl.h>
 #include <raul/RDFQuery.hpp>
-#include "module/module.h"
+#include "module/global.hpp"
+#include "module/World.hpp"
 #include "interface/EngineInterface.hpp"
 #include "serialisation/Serialiser.hpp"
 #include "client/PatchModel.hpp"

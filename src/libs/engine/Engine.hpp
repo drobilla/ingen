@@ -23,7 +23,7 @@
 #include <vector>
 #include <boost/utility.hpp>
 #include <raul/SharedPtr.hpp>
-#include "module/module.h"
+#include "module/global.hpp"
 #include "interface/DataType.hpp"
 
 template<typename T> class Queue;

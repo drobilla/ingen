@@ -28,7 +28,9 @@
 #include <raul/Path.hpp>
 #include <raul/RDFWorld.hpp>
 #include <raul/SharedPtr.hpp>
-#include "module/module.h"
+#include "module/global.hpp"
+#include "module/Module.hpp"
+#include "module/World.hpp"
 #include "engine/Engine.hpp"
 #include "engine/QueuedEngineInterface.hpp"
 #include "serialisation/Loader.hpp"

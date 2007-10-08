@@ -16,7 +16,8 @@
  */
 
 #include CONFIG_H_PATH
-#include "module/module.h"
+#include "module/global.hpp"
+#include "module/World.hpp"
 
 #include <cassert>
 #include <flowcanvas/Canvas.hpp>
@@ -458,17 +459,17 @@ PatchCanvas::destroy_selection()
 void
 PatchCanvas::copy_selection()
 {
-	Serialiser serializer(*App::instance().world()->rdf_world);
-	serializer.start_to_string();
+	Serialiser serialiser(*App::instance().world()->rdf_world);
+	serialiser.start_to_string();
 
 	for (list<boost::shared_ptr<Item> >::iterator m = _selected_items.begin(); m != _selected_items.end(); ++m) {
 		boost::shared_ptr<NodeModule> module = boost::dynamic_pointer_cast<NodeModule>(*m);
 		if (module) {
-			serializer.serialize(module->node());
+			serialiser.serialize(module->node());
 		} else {
 			boost::shared_ptr<PatchPortModule> port_module = boost::dynamic_pointer_cast<PatchPortModule>(*m);
 			if (port_module)
-				serializer.serialize(port_module->port());
+				serialiser.serialize(port_module->port());
 		}
 	}
 	
@@ -476,10 +477,10 @@ PatchCanvas::copy_selection()
 			c != _selected_connections.end(); ++c) {
 		boost::shared_ptr<Connection> connection = boost::dynamic_pointer_cast<Connection>(*c);
 		if (connection)
-			serializer.serialize_connection(connection->model());
+			serialiser.serialize_connection(connection->model());
 	}
 	
-	string result = serializer.finish();
+	string result = serialiser.finish();
 	
 	Glib::RefPtr<Gtk::Clipboard> clipboard = Gtk::Clipboard::get();
 	clipboard->set_text(result);

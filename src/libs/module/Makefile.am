@@ -5,8 +5,8 @@ libingen_module_la_CXXFLAGS = @RAUL_CFLAGS@ @SLV2_CFLAGS@ @GLIBMM_CFLAGS@ -DINGE
 libingen_module_la_LIBADD = @RAUL_LIBS@ @GLIBMM_LIBS@ @SLV2_LIBS@
 
 libingen_module_la_SOURCES = \
-	module.h \
-	module.cpp \
+	global.hpp \
+	global.cpp \
 	World.hpp \
 	Module.hpp \
 	Module.cpp

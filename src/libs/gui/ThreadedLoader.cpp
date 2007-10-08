@@ -18,8 +18,9 @@
 #include <fstream>
 #include <cassert>
 #include <string>
+#include "module/global.hpp"
+#include "module/World.hpp"
 #include "client/PatchModel.hpp"
-#include "module/module.h"
 #include "App.hpp"
 #include "ThreadedLoader.hpp"
 using std::cout; using std::endl;

@@ -16,7 +16,6 @@
  */
 
 #include CONFIG_H_PATH
-#include "module/module.h"
 #include "App.hpp"
 #include <cassert>
 #include <string>
@@ -25,6 +24,9 @@
 #include <time.h>
 #include <sys/time.h>
 #include <raul/Path.hpp>
+#include "module/global.hpp"
+#include "module/Module.hpp"
+#include "module/World.hpp"
 #include "interface/EngineInterface.hpp"
 #include "client/ObjectModel.hpp"
 #include "client/PatchModel.hpp"

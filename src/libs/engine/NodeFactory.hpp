@@ -19,7 +19,7 @@
 #define NODEFACTORY_H
 
 #include CONFIG_H_PATH
-#include "module/module.h"
+#include "module/global.hpp"
 
 #include <list>
 #include <map>

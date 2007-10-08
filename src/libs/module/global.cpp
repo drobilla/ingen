@@ -16,7 +16,7 @@
  */
 
 #include <iostream>
-#include "module.h"
+#include "global.hpp"
 #include "World.hpp"
 
 #include CONFIG_H_PATH
@@ -30,6 +30,7 @@ namespace Ingen {
 namespace Shared {
 
 static World* world = NULL;
+
 
 World*
 get_world()
@@ -54,6 +55,7 @@ get_world()
 
 	return world;
 }
+
 
 void
 destroy_world()
