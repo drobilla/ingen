@@ -46,7 +46,7 @@ namespace Shared {
 namespace Serialisation {
 
 
-/** Serializes Ingen objects (patches, nodes, etc) to RDF.
+/** Serialises Ingen objects (patches, nodes, etc) to RDF.
  *
  * \ingroup IngenClient
  */

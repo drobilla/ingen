@@ -43,9 +43,14 @@ namespace Ingen {
 		class Store;
 		class SigClientInterface;
 	}
+	namespace Serialisation {
+		class Serialiser;
+	}
 }
+
+using namespace Ingen::Shared;
+using namespace Ingen::Serialisation;
 using namespace Ingen::Client;
-using Ingen::Shared::EngineInterface;
 
 /** \defgroup GUI GTK GUI
  */
@@ -94,10 +99,13 @@ public:
 	Configuration*     configuration()        const { return _configuration; }
 	WindowFactory*     window_factory()       const { return _window_factory; }
 	
-	const SharedPtr<EngineInterface>&    engine() const { return _engine; }
-	const SharedPtr<SigClientInterface>& client() const { return _client; }
-	const SharedPtr<Store>&              store()  const { return _store; }
-	const SharedPtr<ThreadedLoader>&     loader() const { return _loader; }
+	const SharedPtr<EngineInterface>&    engine()     const { return _engine; }
+	const SharedPtr<SigClientInterface>& client()     const { return _client; }
+	const SharedPtr<Store>&              store()      const { return _store; }
+	const SharedPtr<ThreadedLoader>&     loader()     const { return _loader; }
+	const SharedPtr<Serialiser>&         serialiser() const { return _serialiser; }
+	
+	SharedPtr<Glib::Module> serialisation_module() { return _serialisation_module; }
 
 	static inline App& instance() { assert(_instance); return *_instance; }
 
@@ -115,10 +123,13 @@ protected:
 	
 	static App* _instance;
 	
+	SharedPtr<Glib::Module> _serialisation_module;
+	
 	SharedPtr<EngineInterface>    _engine;
 	SharedPtr<SigClientInterface> _client;
 	SharedPtr<Store>              _store;
 	SharedPtr<ThreadedLoader>     _loader;
+	SharedPtr<Serialiser>         _serialiser;
 
 	Configuration*    _configuration;
 

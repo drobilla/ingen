@@ -15,8 +15,11 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include CONFIG_H_PATH
+#include "module/World.hpp"
 #include "serialisation.hpp"
 #include "Loader.hpp"
+#include "Serialiser.hpp"
 
 namespace Ingen {
 namespace Serialisation {
@@ -27,6 +30,15 @@ new_loader()
 {
 	return new Loader();
 }
+
+	
+Ingen::Serialisation::Serialiser*
+new_serialiser(Ingen::Shared::World* world)
+{
+	assert(world->rdf_world);
+	return new Serialiser(*world->rdf_world);
+}
+
 
 
 } // namespace Serialisation

@@ -65,12 +65,27 @@ App* App::_instance = 0;
 
 
 App::App(Ingen::Shared::World* world)
-: _configuration(new Configuration()),
-  _about_dialog(NULL),
-  _window_factory(new WindowFactory()),
-  _world(world),
-  _enable_signal(true)
+	: _serialisation_module(Ingen::Shared::load_module("ingen_serialisation"))
+	, _configuration(new Configuration())
+	, _about_dialog(NULL)
+	, _window_factory(new WindowFactory())
+	, _world(world)
+	, _enable_signal(true)
 {
+	if (_serialisation_module) {
+		Serialiser* (*new_serialiser)(Ingen::Shared::World*) = NULL;
+
+		bool found = _serialisation_module->get_symbol("new_serialiser", (void*&)new_serialiser);
+
+		if (found)
+			_serialiser = SharedPtr<Serialiser>(new_serialiser(world));
+	}
+
+	if ( ! _serialiser) {
+		cerr << "WARNING: Failed to load ingen_serialisation module, save disabled." << endl;
+		cerr << "(If you are running from the source tree, source set_dev_environment.sh)" << endl;
+	}
+
 	Glib::RefPtr<Gnome::Glade::Xml> glade_xml = GladeFactory::new_glade_reference();
 
 	glade_xml->get_widget_derived("connect_win", _connect_window);

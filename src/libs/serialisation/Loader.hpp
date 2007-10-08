@@ -23,11 +23,10 @@
 #include <boost/optional.hpp>
 #include <raul/SharedPtr.hpp>
 #include <raul/Path.hpp>
-#include <raul/Atom.hpp>
 #include <raul/Table.hpp>
 #include "interface/GraphObject.hpp"
 
-namespace Raul { class Atom; namespace RDF { class World; } }
+namespace Raul { namespace RDF { class World; } }
 namespace Ingen { namespace Shared { class EngineInterface; } }
 
 using namespace Ingen::Shared;

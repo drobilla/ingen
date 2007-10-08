@@ -29,17 +29,18 @@ namespace GUI {
 
 
 ThreadedLoader::ThreadedLoader(SharedPtr<EngineInterface> engine)
-	: _serialisation_module(Ingen::Shared::load_module("ingen_serialisation"))
-	, _engine(engine)
+	: _engine(engine)
 	, _deprecated_loader(engine)
-	, _serializer(*App::instance().world()->rdf_world)
 {
 	set_name("Loader");
 
 	// FIXME: rework this so the thread is only present when it's doing something (save mem)
-	if (_serialisation_module) {
+	if (App::instance().serialisation_module()) {
 		Loader* (*new_loader)() = NULL;
-		bool found = _serialisation_module->get_symbol("new_loader", (void*&)new_loader);
+
+		bool found = App::instance().serialisation_module()->get_symbol(
+				"new_loader", (void*&)new_loader);
+
 		if (found)
 			_loader = SharedPtr<Loader>(new_loader());
 	}
@@ -47,8 +48,8 @@ ThreadedLoader::ThreadedLoader(SharedPtr<EngineInterface> engine)
 	if (_loader) {
 		start();
 	} else {
-		cerr << "WARNING: Failed to load ingen_serialisation module, unable to load patches." << endl;;
-		cerr << "If you are running from the source tree, run ingenuity_dev." << endl;
+		cerr << "WARNING: Failed to load ingen_serialisation module, load disabled." << endl;
+		cerr << "(If you are running from the source tree, source set_dev_environment.sh)" << endl;
 	}
 }
 
@@ -126,7 +127,7 @@ ThreadedLoader::save_patch(SharedPtr<PatchModel> model, const string& filename)
 void
 ThreadedLoader::save_patch_event(SharedPtr<PatchModel> model, const string& filename)
 {
-	_serializer.to_file(model, filename);
+	App::instance().serialiser()->to_file(model, filename);
 }
 
 

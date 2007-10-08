@@ -19,14 +19,19 @@
 #define INGEN_SERIALISATION_H
 
 namespace Ingen {
+
+namespace Shared { class World; }
+
 namespace Serialisation {
 
 class Loader;
+class Serialiser;
 
 
 extern "C" {
 
-	extern Loader* new_loader();
+	extern Loader*     new_loader();
+	extern Serialiser* new_serialiser(Ingen::Shared::World* world);
 
 }
 

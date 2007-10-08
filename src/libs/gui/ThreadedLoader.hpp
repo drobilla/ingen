@@ -79,13 +79,10 @@ private:
 
 	void _whipped();
 
-	SharedPtr<Glib::Module> _serialisation_module;
-
 	SharedPtr<EngineInterface> _engine;
 	SharedPtr<Loader>          _loader;
 
 	DeprecatedLoader _deprecated_loader;
-	Serialiser       _serializer;
 	Glib::Mutex      _mutex;
 	list<Closure>    _events;
 };
