@@ -43,8 +43,8 @@ InputPort::set_buffer_size(size_t size)
 	PortImpl::set_buffer_size(size);
 	assert(_buffer_size = size);
 
-	for (Raul::List< SharedPtr<ConnectionImpl> >::iterator c = _connections.begin(); c != _connections.end(); ++c)
-		(*c)->set_buffer_size(size);
+	for (Connections::iterator c = _connections.begin(); c != _connections.end(); ++c)
+		((ConnectionImpl*)c->get())->set_buffer_size(size);
 	
 }
 

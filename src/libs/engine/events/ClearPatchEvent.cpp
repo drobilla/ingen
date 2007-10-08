@@ -92,7 +92,7 @@ ClearPatchEvent::post_process()
 		_patch->nodes().clear();
 
 		// Delete all connections
-		for (List< SharedPtr<ConnectionImpl> >::iterator i = _patch->connections().begin(); i != _patch->connections().end(); ++i)
+		for (Patch::Connections::iterator i = _patch->connections().begin(); i != _patch->connections().end(); ++i)
 			(*i).reset();
 
 		_patch->connections().clear();

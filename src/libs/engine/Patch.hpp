@@ -34,6 +34,8 @@ using Raul::List;
 
 namespace Ingen {
 
+namespace Shared { class Connection; }
+
 class ConnectionImpl;
 class Engine;
 class CompiledPatch;
@@ -85,8 +87,8 @@ public:
 	
 	// Patch specific stuff not inherited from Node
 	
-	typedef List< SharedPtr<ConnectionImpl> > Connections;
-	typedef List<NodeImpl*>                   Nodes;
+	typedef List< SharedPtr<Shared::Connection> > Connections;
+	typedef List<NodeImpl*>                       Nodes;
 	
 	void         add_node(Nodes::Node* tn);
 	Nodes::Node* remove_node(const string& name);

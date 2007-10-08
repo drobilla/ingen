@@ -22,6 +22,7 @@
 #include <raul/Path.hpp>
 #include "QueuedEvent.hpp"
 #include "Patch.hpp"
+#include "InputPort.hpp"
 #include "types.hpp"
 using std::string;
 
@@ -78,9 +79,9 @@ private:
 
 	CompiledPatch* _compiled_patch; ///< New process order for Patch
 	
-	SharedPtr<ConnectionImpl> _connection;
-	Patch::Connections::Node* _patch_listnode;
-	Patch::Connections::Node* _port_listnode;
+	SharedPtr<ConnectionImpl>     _connection;
+	Patch::Connections::Node*     _patch_listnode;
+	InputPort::Connections::Node* _port_listnode;
 
 	ErrorType _error;
 };

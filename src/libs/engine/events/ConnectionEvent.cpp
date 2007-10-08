@@ -126,8 +126,8 @@ ConnectionEvent::pre_process()
 	}
 
 	_connection = SharedPtr<ConnectionImpl>(new ConnectionImpl(_src_port, _dst_port));
-	_port_listnode = new Patch::Connections::Node(_connection);
 	_patch_listnode = new Patch::Connections::Node(_connection);
+	_port_listnode = new InputPort::Connections::Node(_connection);
 	
 	// Need to be careful about patch port connections here and adding a node's
 	// parent as a dependant/provider, or adding a patch as it's own provider...

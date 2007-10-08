@@ -54,12 +54,9 @@ ObjectSender::send_patch(ClientInterface* client, const Patch* patch, bool recur
 		}
 
 		// Send connections
-		for (List< SharedPtr<ConnectionImpl> >::const_iterator j = patch->connections().begin();
-				j != patch->connections().end(); ++j) {
-			
-			client->connection((*j)->src_port()->path(), (*j)->dst_port()->path());
-
-		}
+		for (Patch::Connections::const_iterator j = patch->connections().begin();
+				j != patch->connections().end(); ++j)
+			client->connection((*j)->src_port_path(), (*j)->dst_port_path());
 
 	}
 

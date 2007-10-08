@@ -157,7 +157,7 @@ DisconnectionEvent::execute(ProcessContext& context)
 	QueuedEvent::execute(context);
 
 	if (_error == NO_ERROR) {
-		Patch::Connections::Node* const port_connection
+		InputPort::Connections::Node* const port_connection
 			= _dst_input_port->remove_connection(_src_output_port);
 		
 		if (port_connection != NULL) {

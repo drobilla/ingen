@@ -54,7 +54,7 @@ Patch::~Patch()
 {
 	assert(!_activated);
 	
-	for (List< SharedPtr<ConnectionImpl> >::iterator i = _connections.begin(); i != _connections.end(); ++i) {
+	for (Connections::iterator i = _connections.begin(); i != _connections.end(); ++i) {
 		(*i).reset();
 		delete _connections.erase(i);
 	}
@@ -116,8 +116,8 @@ Patch::prepare_internal_poly(uint32_t poly)
 	for (List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		(*i)->prepare_poly(poly);
 	
-	for (List< SharedPtr<ConnectionImpl> >::iterator i = _connections.begin(); i != _connections.end(); ++i)
-		(*i)->prepare_poly(poly);
+	for (Connections::iterator i = _connections.begin(); i != _connections.end(); ++i)
+		((ConnectionImpl*)i->get())->prepare_poly(poly);
 
 	/* FIXME: Deal with failure */
 
@@ -133,8 +133,8 @@ Patch::apply_internal_poly(Raul::Maid& maid, uint32_t poly)
 	for (List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		(*i)->apply_poly(maid, poly);
 	
-	for (List< SharedPtr<ConnectionImpl> >::iterator i = _connections.begin(); i != _connections.end(); ++i)
-		(*i)->apply_poly(maid, poly);
+	for (Connections::iterator i = _connections.begin(); i != _connections.end(); ++i)
+		PtrCast<ConnectionImpl>(*i)->apply_poly(maid, poly);
 
 	_internal_poly = poly;
 	
@@ -290,9 +290,11 @@ Patch::remove_connection(const PortImpl* src_port, const PortImpl* dst_port)
 	bool found = false;
 	Connections::Node* connection = NULL;
 	for (Connections::iterator i = _connections.begin(); i != _connections.end(); ++i) {
-		if ((*i)->src_port() == src_port && (*i)->dst_port() == dst_port) {
+		ConnectionImpl* const c = (ConnectionImpl*)i->get();
+		if (c->src_port() == src_port && c->dst_port() == dst_port) {
 			connection = _connections.erase(i);
 			found = true;
+			break;
 		}
 	}
 

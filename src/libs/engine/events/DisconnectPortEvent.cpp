@@ -105,7 +105,7 @@ DisconnectPortEvent::pre_process()
 	
 	for (Patch::Connections::const_iterator i = _patch->connections().begin();
 			i != _patch->connections().end(); ++i) {
-		const SharedPtr<ConnectionImpl> c(*i);
+		ConnectionImpl* c = (ConnectionImpl*)i->get();
 		if ((c->src_port() == _port || c->dst_port() == _port) && !c->pending_disconnection()) {
 			DisconnectionEvent* ev = new DisconnectionEvent(_engine, SharedPtr<Responder>(new Responder()), _time,
 					c->src_port(), c->dst_port());
