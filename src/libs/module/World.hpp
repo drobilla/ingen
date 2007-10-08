@@ -18,12 +18,12 @@
 #ifndef INGEN_WORLD_HPP
 #define INGEN_WORLD_HPP
 
+#include CONFIG_H_PATH
+
 #include <string>
 #include <glibmm/module.h>
 #include <raul/SharedPtr.hpp>
 #include <raul/RDFWorld.hpp>
-
-#include CONFIG_H_PATH
 
 #ifdef HAVE_SLV2
 #include <slv2/slv2.h>

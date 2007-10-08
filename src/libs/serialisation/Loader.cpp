@@ -22,6 +22,7 @@
 #include <raul/RDFModel.hpp>
 #include <raul/RDFQuery.hpp>
 #include <raul/TableImpl.hpp>
+#include <raul/AtomRedland.hpp>
 #include "interface/EngineInterface.hpp"
 #include "Loader.hpp"
 
@@ -116,13 +117,15 @@ Loader::load(SharedPtr<EngineInterface> engine,
 	/* Load (plugin) nodes */
 
 	RDF::Query query(*rdf_world, Glib::ustring(
-			"SELECT DISTINCT ?name ?plugin ?floatkey ?floatval ?poly WHERE {\n") +
+			"SELECT DISTINCT ?name ?plugin ?varkey ?varval ?poly WHERE {\n") +
 			patch_uri + " ingen:node       ?node .\n"
 			"?node        ingen:name       ?name ;\n"
 			"             ingen:plugin     ?plugin ;\n"
 			"             ingen:polyphonic ?poly .\n"
-			"OPTIONAL { ?node ?floatkey ?floatval . \n"
-			"           FILTER ( datatype(?floatval) = xsd:decimal ) }\n"
+			"OPTIONAL { ?node     ingen:variable ?variable .\n"
+			"           ?variable ingen:key      ?varkey ;\n"
+			"                     ingen:value    ?varval .\n"
+			"         }"
 			"}");
 
 	RDF::Query::Results results = query.run(*rdf_world, model);
@@ -146,13 +149,11 @@ Loader::load(SharedPtr<EngineInterface> engine,
 			created.insert(node_path);
 		}
 
-		/* Float variable (FIXME: use using raw predicates is definitely a very
-		 * bad idea, make an ingen:Variable or something */
-		const string floatkey = rdf_world->prefixes().qualify((*i)["floatkey"].to_string());
-		RDF::Node val_node = (*i)["floatval"];
+		const string key = rdf_world->prefixes().qualify((*i)["varkey"].to_string());
+		RDF::Node val_node = (*i)["varval"];
 
-		if (floatkey != "" && val_node.is_float())
-			engine->set_variable(node_path, floatkey, val_node.to_float());
+		if (key != "")
+			engine->set_variable(node_path, key, AtomRedland::rdf_node_to_atom(val_node));
 	}
 		
 
@@ -212,16 +213,18 @@ Loader::load(SharedPtr<EngineInterface> engine,
 	/* Load this patch's ports */
 
 	query = RDF::Query(*rdf_world, Glib::ustring(
-			"SELECT DISTINCT ?port ?type ?name ?datatype ?floatkey ?floatval ?portval WHERE {\n") +
+			"SELECT DISTINCT ?port ?type ?name ?datatype ?varkey ?varval ?portval WHERE {\n") +
 			patch_uri + " ingen:port     ?port .\n"
 			"?port        a              ?type ;\n"
 			"             a              ?datatype ;\n"
 			"             ingen:name     ?name .\n"
 			" FILTER (?type != ?datatype && ((?type = ingen:InputPort) || (?type = ingen:OutputPort)))\n"
-			"OPTIONAL { ?port ?floatkey ?floatval . \n"
-			"           FILTER ( datatype(?floatval) = xsd:decimal ) }\n"
 			"OPTIONAL { ?port ingen:value ?portval . \n"
 			"           FILTER ( datatype(?portval) = xsd:decimal ) }\n"
+			"OPTIONAL { ?port     ingen:variable ?variable .\n"
+			"           ?variable ingen:key      ?varkey ;\n"
+			"                     ingen:value    ?varval .\n"
+			"         }"
 			"}");
 
 	results = query.run(*rdf_world, model);
@@ -239,18 +242,17 @@ Loader::load(SharedPtr<EngineInterface> engine,
 			created.insert(port_path);
 		}
 
-		RDF::Node val_node = (*i)["portval"];
+		const RDF::Node val_node = (*i)["portval"];
 		if (val_node.is_float()) {
 			const float val = val_node.to_float();
 			engine->set_port_value(patch_path.base() + name, "ingen:control", sizeof(float), &val);
 		}
 
+		const string key = rdf_world->prefixes().qualify((*i)["varkey"].to_string());
+		const RDF::Node var_val_node = (*i)["varval"];
 
-		string floatkey = rdf_world->qualify((*i)["floatkey"].to_string());
-		val_node = (*i)["floatval"];
-
-		if (floatkey != "" && val_node.is_float())
-			engine->set_variable(patch_path.base() + name, floatkey, Atom(val_node.to_float()));
+		if (key != "")
+			engine->set_variable(patch_path.base() + name, key, AtomRedland::rdf_node_to_atom(var_val_node));
 	}
 
 	created.clear();
@@ -337,27 +339,28 @@ Loader::load(SharedPtr<EngineInterface> engine,
 	}
 
 
-	/* Load variable */
+	/* Load variables */
 
 	query = RDF::Query(*rdf_world, Glib::ustring(
-			"SELECT DISTINCT ?floatkey ?floatval WHERE {\n") +
-			patch_uri + " ?floatkey ?floatval . \n"
-			"           FILTER ( datatype(?floatval) = xsd:decimal ) \n"
+			"SELECT DISTINCT ?varkey ?varval WHERE {\n") +
+			patch_uri + " ingen:variable ?variable .\n"
+			"?variable    ingen:key      ?varkey ;\n"
+			"             ingen:value    ?varval .\n"
 			"}");
 
 	results = query.run(*rdf_world, model);
 
 	for (RDF::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
 
-		string floatkey = rdf_world->prefixes().qualify((*i)["floatkey"].to_string());
-		RDF::Node val_node = (*i)["floatval"];
+		const string key = rdf_world->prefixes().qualify((*i)["varkey"].to_string());
+		RDF::Node val_node = (*i)["varval"];
 
-		if (floatkey != "" && val_node.is_float())
-			engine->set_variable(patch_path, floatkey, Atom(val_node.to_float()));
+		if (key != "")
+			engine->set_variable(patch_path, key, AtomRedland::rdf_node_to_atom(val_node));
 	}
 
 
-	// Set passed variable last to override any loaded values
+	// Set passed variables last to override any loaded values
 	for (GraphObject::Variables::const_iterator i = data.begin(); i != data.end(); ++i)
 		engine->set_variable(patch_path, i->first, i->second);
 

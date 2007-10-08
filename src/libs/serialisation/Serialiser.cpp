@@ -410,8 +410,10 @@ Serialiser::serialise_variables(RDF::Node subject, const GraphObject::Variables&
 {
 	for (GraphObject::Variables::const_iterator v = variables.begin(); v != variables.end(); ++v) {
 		if (v->first.find(":") != string::npos) {
-			RDF::Node var_id = _world.blank_id();
+			const RDF::Node var_id = _world.blank_id();
+			const RDF::Node key(_model->world(), RDF::Node::RESOURCE, v->first);
 			_model->add_statement(subject, "ingen:variable", var_id);
+			_model->add_statement(var_id, "ingen:key", key);
 			_model->add_statement(var_id, "ingen:value", v->second);
 		} else {
 			cerr << "Warning: not serialising variable with key '" << v->first << "'" << endl;
