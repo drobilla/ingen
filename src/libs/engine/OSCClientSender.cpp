@@ -27,7 +27,7 @@
 #include "NodeImpl.hpp"
 #include "PluginImpl.hpp"
 #include "PortImpl.hpp"
-#include "Connection.hpp"
+#include "ConnectionImpl.hpp"
 #include "AudioDriver.hpp"
 #include "interface/ClientInterface.hpp"
 

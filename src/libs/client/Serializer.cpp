@@ -36,7 +36,7 @@
 #include <raul/TableImpl.hpp>
 #include "interface/EngineInterface.hpp"
 #include "interface/Port.hpp"
-#include "ConnectionModel.hpp"
+#include "interface/Connection.hpp"
 #include "PatchModel.hpp"
 #include "Serializer.hpp"
 
@@ -311,7 +311,7 @@ Serializer::serialize_patch(SharedPtr<PatchModel> patch)
 		serialize_port(p, port_id);
 	}
 
-	for (ConnectionList::const_iterator c = patch->connections().begin(); c != patch->connections().end(); ++c) {
+	for (PatchModel::Connections::const_iterator c = patch->connections().begin(); c != patch->connections().end(); ++c) {
 		serialize_connection(*c);
 	}
 }
@@ -420,7 +420,7 @@ Serializer::serialize_port(const Port* port, const RDF::Node& port_id)
 
 
 void
-Serializer::serialize_connection(SharedPtr<ConnectionModel> connection) throw (std::logic_error)
+Serializer::serialize_connection(SharedPtr<Connection> connection) throw (std::logic_error)
 {
 	if (!_model)
 		throw std::logic_error("serialize_connection called without serialization in progress");

@@ -106,12 +106,12 @@ Store::resolve_plugin_orphans(SharedPtr<PluginModel> plugin)
 
 
 void
-Store::add_connection_orphan(SharedPtr<ConnectionModel> connection)
+Store::add_connection_orphan(std::pair<Path, Path> orphan)
 {
-	cerr << "WARNING: Orphan connection " << connection->src_port_path()
-		<< " -> " << connection->dst_port_path() << " received." << endl;
+	cerr << "WARNING: Orphan connection " << orphan.first
+		<< " -> " << orphan.second << " received." << endl;
 	
-	_connection_orphans.push_back(connection);
+	_connection_orphans.push_back(orphan);
 }
 
 
@@ -120,26 +120,16 @@ Store::resolve_connection_orphans(SharedPtr<PortModel> port)
 {
 	assert(port->parent());
 
-	for (list<SharedPtr<ConnectionModel> >::iterator c = _connection_orphans.begin();
+	for (list< pair<Path, Path> >::iterator c = _connection_orphans.begin();
 			c != _connection_orphans.end(); ) {
 		
-		if ((*c)->src_port_path() == port->path())
-			(*c)->set_src_port(port);
-		
-		if ((*c)->dst_port_path() == port->path())
-			(*c)->set_dst_port(port);
-
-		list<SharedPtr<ConnectionModel> >::iterator next = c;
+		list< pair<Path, Path> >::iterator next = c;
 		++next;
 		
-		if ((*c)->src_port() && (*c)->dst_port()) {
-			SharedPtr<PatchModel> patch = connection_patch((*c)->src_port_path(), (*c)->dst_port_path());
-			if (patch) {
-				cerr << "Resolved orphan connection " << (*c)->src_port_path() <<
-					(*c)->dst_port_path() << endl;
-				patch->add_connection(*c);
+		if (c->first == port->path() || c->second == port->path()) {
+			bool success = attempt_connection(c->first, c->second);
+			if (success)
 				_connection_orphans.erase(c);
-			}
 		}
 
 		c = next;
@@ -553,13 +543,11 @@ Store::connection_patch(const Path& src_port_path, const Path& dst_port_path)
 }
 
 
-void
-Store::connection_event(const Path& src_port_path, const Path& dst_port_path)
+bool
+Store::attempt_connection(const Path& src_port_path, const Path& dst_port_path, bool add_orphan)
 {
 	SharedPtr<PortModel> src_port = PtrCast<PortModel>(object(src_port_path));
 	SharedPtr<PortModel> dst_port = PtrCast<PortModel>(object(dst_port_path));
-
-	SharedPtr<ConnectionModel> dangling_cm(new ConnectionModel(src_port_path, dst_port_path));
 
 	if (src_port && dst_port) { 
 	
@@ -575,12 +563,23 @@ Store::connection_event(const Path& src_port_path, const Path& dst_port_path)
 		dst_port->connected_to(src_port);
 
 		patch->add_connection(cm);
-	
-	} else {
 
-		add_connection_orphan(dangling_cm);
+		return true;
+	
+	} else if (add_orphan) {
+
+		add_connection_orphan(make_pair(src_port_path, dst_port_path));
 
 	}
+
+	return false;
+}
+
+	
+void
+Store::connection_event(const Path& src_port_path, const Path& dst_port_path)
+{
+	attempt_connection(src_port_path, dst_port_path, true);
 }
 
 

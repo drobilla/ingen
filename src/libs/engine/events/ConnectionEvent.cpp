@@ -22,7 +22,7 @@
 #include "Responder.hpp"
 #include "types.hpp"
 #include "Engine.hpp"
-#include "Connection.hpp"
+#include "ConnectionImpl.hpp"
 #include "InputPort.hpp"
 #include "OutputPort.hpp"
 #include "Patch.hpp"
@@ -126,9 +126,9 @@ ConnectionEvent::pre_process()
 		return;
 	}
 
-	_connection = new Connection(_src_port, _dst_port);
-	_port_listnode = new Raul::ListNode<Connection*>(_connection);
-	_patch_listnode = new Raul::ListNode<Connection*>(_connection);
+	_connection = new ConnectionImpl(_src_port, _dst_port);
+	_port_listnode = new Raul::ListNode<ConnectionImpl*>(_connection);
+	_patch_listnode = new Raul::ListNode<ConnectionImpl*>(_connection);
 	
 	// Need to be careful about patch port connections here and adding a node's
 	// parent as a dependant/provider, or adding a patch as it's own provider...

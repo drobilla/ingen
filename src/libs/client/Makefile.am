@@ -22,7 +22,6 @@ libingen_client_la_LIBADD = \
 libingen_client_la_SOURCES = \
 	$(top_srcdir)/ingen/src/common/interface/ClientInterface.hpp \
 	$(top_srcdir)/ingen/src/common/interface/EngineInterface.hpp \
-	ConnectionModel.cpp \
 	ConnectionModel.hpp \
 	ControlModel.hpp \
 	DeprecatedLoader.cpp \

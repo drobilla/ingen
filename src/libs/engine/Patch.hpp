@@ -32,7 +32,7 @@ template <typename T> class Array;
 
 namespace Ingen {
 
-class Connection;
+class ConnectionImpl;
 class Engine;
 class CompiledPatch;
 
@@ -86,11 +86,11 @@ public:
 	void                       add_node(Raul::ListNode<NodeImpl*>* tn);
 	Raul::ListNode<NodeImpl*>* remove_node(const string& name);
 
-	Raul::List<NodeImpl*>&   nodes()       { return _nodes; }
-	Raul::List<Connection*>& connections() { return _connections; }
+	Raul::List<NodeImpl*>&       nodes()       { return _nodes; }
+	Raul::List<ConnectionImpl*>& connections() { return _connections; }
 	
-	const Raul::List<NodeImpl*>&   nodes()       const { return _nodes; }
-	const Raul::List<Connection*>& connections() const { return _connections; }
+	const Raul::List<NodeImpl*>&       nodes()       const { return _nodes; }
+	const Raul::List<ConnectionImpl*>& connections() const { return _connections; }
 	
 	uint32_t num_ports() const;
 	
@@ -99,8 +99,8 @@ public:
 	void add_output(Raul::ListNode<PortImpl*>* port) { _output_ports.push_back(port); } ///< Preprocessor thread
 	Raul::ListNode<PortImpl*>* remove_port(const string& name);
 	
-	void add_connection(Raul::ListNode<Connection*>* c) { _connections.push_back(c); }
-	Raul::ListNode<Connection*>* remove_connection(const PortImpl* src_port, const PortImpl* dst_port);
+	void add_connection(Raul::ListNode<ConnectionImpl*>* c) { _connections.push_back(c); }
+	Raul::ListNode<ConnectionImpl*>* remove_connection(const PortImpl* src_port, const PortImpl* dst_port);
 	
 	CompiledPatch* compiled_patch()                  { return _compiled_patch; }
 	void           compiled_patch(CompiledPatch* cp) { _compiled_patch = cp; }
@@ -123,14 +123,14 @@ private:
 	void process_parallel(ProcessContext& context);
 	void process_single(ProcessContext& context);
 
-	Engine&                 _engine;
-	uint32_t                _internal_poly;
-	CompiledPatch*          _compiled_patch; ///< Accessed in audio thread only
-	Raul::List<Connection*> _connections;    ///< Accessed in audio thread only
-	Raul::List<PortImpl*>   _input_ports;    ///< Accessed in preprocessing thread only
-	Raul::List<PortImpl*>   _output_ports;   ///< Accessed in preprocessing thread only
-	Raul::List<NodeImpl*>   _nodes;          ///< Accessed in preprocessing thread only
-	bool                    _process;
+	Engine&                     _engine;
+	uint32_t                    _internal_poly;
+	CompiledPatch*              _compiled_patch; ///< Accessed in audio thread only
+	Raul::List<ConnectionImpl*> _connections;    ///< Accessed in audio thread only
+	Raul::List<PortImpl*>       _input_ports;    ///< Accessed in preprocessing thread only
+	Raul::List<PortImpl*>       _output_ports;   ///< Accessed in preprocessing thread only
+	Raul::List<NodeImpl*>       _nodes;          ///< Accessed in preprocessing thread only
+	bool                        _process;
 };
 
 

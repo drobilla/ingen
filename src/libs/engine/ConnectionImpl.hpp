@@ -15,13 +15,14 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef CONNECTION_H
-#define CONNECTION_H
+#ifndef CONNECTIONIMPL_H
+#define CONNECTIONIMPL_H
 
 #include <cstdlib>
 #include <boost/utility.hpp>
 #include <raul/Deletable.hpp>
 #include "interface/DataType.hpp"
+#include "interface/Connection.hpp"
 #include "PortImpl.hpp"
 #include "types.hpp"
 
@@ -41,14 +42,17 @@ class Buffer;
  *
  * \ingroup engine
  */
-class Connection : public Raul::Deletable
+class ConnectionImpl : public Raul::Deletable, public Shared::Connection
 {
 public:
-	Connection(PortImpl* src_port, PortImpl* dst_port);
-	virtual ~Connection();
+	ConnectionImpl(PortImpl* src_port, PortImpl* dst_port);
+	virtual ~ConnectionImpl();
 	
 	PortImpl* src_port() const { return _src_port; }
 	PortImpl* dst_port() const { return _dst_port; }
+	
+	const Raul::Path src_port_path() const { return _src_port->path(); }
+	const Raul::Path dst_port_path() const { return _src_port->path(); }
 
 	/** Used by some (recursive) events to prevent double disconnections */
 	bool pending_disconnection()       { return _pending_disconnection; }
@@ -80,7 +84,7 @@ protected:
 
 
 inline Buffer*
-Connection::buffer(size_t voice) const
+ConnectionImpl::buffer(size_t voice) const
 {
 	if (_must_mix) {
 		return _local_buffer;
@@ -94,4 +98,4 @@ Connection::buffer(size_t voice) const
 
 } // namespace Ingen
 
-#endif // CONNECTION_H
+#endif // CONNECTIONIMPL_H

@@ -18,12 +18,13 @@
 #ifndef CONNECTIONMODEL_H
 #define CONNECTIONMODEL_H
 
+#include <cassert>
 #include <string>
 #include <list>
 #include <raul/Path.hpp>
 #include <raul/SharedPtr.hpp>
+#include "interface/Connection.hpp"
 #include "PortModel.hpp"
-#include <cassert>
 
 namespace Ingen {
 namespace Client {
@@ -41,34 +42,31 @@ class Store;
  *
  * \ingroup IngenClient
  */
-class ConnectionModel
+class ConnectionModel : public Shared::Connection
 {
 public:
 	SharedPtr<PortModel> src_port() const { return _src_port; }
 	SharedPtr<PortModel> dst_port() const { return _dst_port; }
 
-	const Path src_port_path() const;
-	const Path dst_port_path() const;
+	const Path src_port_path() const { return _src_port->path(); }
+	const Path dst_port_path() const { return _dst_port->path(); }
 	
 private:
 	friend class Store;
 
-	ConnectionModel(const Path& src_port, const Path& dst_port);
-	ConnectionModel(SharedPtr<PortModel> src, SharedPtr<PortModel> dst);
+	ConnectionModel(SharedPtr<PortModel> src, SharedPtr<PortModel> dst)
+		: _src_port(src)
+		, _dst_port(dst)
+	{
+		assert(_src_port);
+		assert(_dst_port);
+		assert(_src_port->parent());
+		assert(_dst_port->parent());
+	}
 	
-	void set_src_port(SharedPtr<PortModel> port) { _src_port = port; _src_port_path = port->path(); }
-	void set_dst_port(SharedPtr<PortModel> port) { _dst_port = port; _dst_port_path = port->path(); }
-
-	void src_port_path(const std::string& s) { _src_port_path = s; }
-	void dst_port_path(const std::string& s) { _dst_port_path = s; }
-
-	Path                 _src_port_path; ///< Only used if _src_port == NULL
-	Path                 _dst_port_path; ///< Only used if _dst_port == NULL
 	SharedPtr<PortModel> _src_port;
 	SharedPtr<PortModel> _dst_port;
 };
-
-typedef std::list<SharedPtr<ConnectionModel> > ConnectionList;
 
 
 } // namespace Client

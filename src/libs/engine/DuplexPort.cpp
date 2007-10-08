@@ -20,7 +20,7 @@
 #include <cassert>
 #include "util.hpp"
 #include "DuplexPort.hpp"
-#include "Connection.hpp"
+#include "ConnectionImpl.hpp"
 #include "OutputPort.hpp"
 #include "NodeImpl.hpp"
 

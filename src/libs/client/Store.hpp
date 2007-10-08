@@ -81,7 +81,7 @@ private:
 	void add_orphan(SharedPtr<ObjectModel> orphan);
 	void resolve_orphans(SharedPtr<ObjectModel> parent);
 	
-	void add_connection_orphan(SharedPtr<ConnectionModel> orphan);
+	void add_connection_orphan(std::pair<Path, Path> orphan);
 	void resolve_connection_orphans(SharedPtr<PortModel> port);
 	
 	void add_plugin_orphan(SharedPtr<NodeModel> orphan);
@@ -108,6 +108,8 @@ private:
 	void connection_event(const Path& src_port_path, const Path& dst_port_path);
 	void disconnection_event(const Path& src_port_path, const Path& dst_port_path);
 	
+	bool attempt_connection(const Path& src_port_path, const Path& dst_port_path, bool add_orphan=false);
+	
 	SharedPtr<EngineInterface>    _engine;
 	SharedPtr<SigClientInterface> _emitter;
 
@@ -126,7 +128,7 @@ private:
 	Raul::PathTable<list<std::pair<string, Atom> > > _metadata_orphans;
 	
 	/** Ditto */
-	list<SharedPtr<ConnectionModel> > _connection_orphans;
+	list<std::pair<Path, Path> > _connection_orphans;
 };
 
 

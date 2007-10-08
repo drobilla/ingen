@@ -64,7 +64,7 @@ PatchModel::remove_child(SharedPtr<ObjectModel> o)
 	
 	// Remove any connections which referred to this object,
 	// since they can't possibly exist anymore
-	for (ConnectionList::iterator j = _connections.begin(); j != _connections.end() ; ) {
+	for (Connections::iterator j = _connections.begin(); j != _connections.end() ; ) {
 
 		list<SharedPtr<ConnectionModel> >::iterator next = j;
 		++next;

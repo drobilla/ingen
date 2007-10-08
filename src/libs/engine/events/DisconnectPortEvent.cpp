@@ -23,7 +23,7 @@
 #include "Responder.hpp"
 #include "Engine.hpp"
 #include "NodeImpl.hpp"
-#include "Connection.hpp"
+#include "ConnectionImpl.hpp"
 #include "DisconnectionEvent.hpp"
 #include "PortImpl.hpp"
 #include "InputPort.hpp"
@@ -103,8 +103,8 @@ DisconnectPortEvent::pre_process()
 		return;
 	}
 	
-	Connection* c = NULL;
-	for (Raul::List<Connection*>::const_iterator i = _patch->connections().begin(); i != _patch->connections().end(); ++i) {
+	ConnectionImpl* c = NULL;
+	for (Raul::List<ConnectionImpl*>::const_iterator i = _patch->connections().begin(); i != _patch->connections().end(); ++i) {
 		c = (*i);
 		if ((c->src_port() == _port || c->dst_port() == _port) && !c->pending_disconnection()) {
 			DisconnectionEvent* ev = new DisconnectionEvent(_engine, SharedPtr<Responder>(new Responder()), _time,

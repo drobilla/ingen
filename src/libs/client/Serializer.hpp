@@ -39,12 +39,12 @@ namespace Shared {
 	class GraphObject;
 	class Node;
 	class Port;
+	class Connection;
 }
 
 namespace Client {
 
 class PatchModel;
-class ConnectionModel;
 
 
 /** Serializes Ingen objects (patches, nodes, etc) to RDF.
@@ -61,7 +61,7 @@ public:
 	
 	void   start_to_string();
 	void   serialize(SharedPtr<GraphObject> object) throw (std::logic_error);
-	void   serialize_connection(SharedPtr<ConnectionModel> c) throw (std::logic_error);
+	void   serialize_connection(SharedPtr<Shared::Connection> c) throw (std::logic_error);
 	string finish();
 	
 private:

@@ -28,8 +28,8 @@ libingen_engine_la_SOURCES = \
 	BufferFactory.hpp \
 	ClientBroadcaster.cpp \
 	ClientBroadcaster.hpp \
-	Connection.cpp \
-	Connection.hpp \
+	ConnectionImpl.cpp \
+	ConnectionImpl.hpp \
 	CompiledPatch.hpp \
 	Driver.hpp \
 	DuplexPort.cpp \

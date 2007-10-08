@@ -33,10 +33,9 @@ namespace Ingen {
 	
 class Patch;
 class NodeImpl;
-class Connection;
+class ConnectionImpl;
 class MidiMessage;
 class PortImpl;
-class Connection;
 class InputPort;
 class OutputPort;
 class CompiledPatch;
@@ -78,9 +77,9 @@ private:
 
 	CompiledPatch* _compiled_patch; ///< New process order for Patch
 	
-	Connection*                  _connection;
-	Raul::ListNode<Connection*>* _patch_listnode;
-	Raul::ListNode<Connection*>* _port_listnode;
+	ConnectionImpl*                  _connection;
+	Raul::ListNode<ConnectionImpl*>* _patch_listnode;
+	Raul::ListNode<ConnectionImpl*>* _port_listnode;
 
 	ErrorType _error;
 };

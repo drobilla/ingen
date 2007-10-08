@@ -25,7 +25,7 @@
 #include "ObjectStore.hpp"
 #include "PortImpl.hpp"
 #include "NodeImpl.hpp"
-#include "Connection.hpp"
+#include "ConnectionImpl.hpp"
 #include "QueuedEventSource.hpp"
 
 namespace Ingen {
@@ -92,7 +92,7 @@ ClearPatchEvent::post_process()
 		_patch->nodes().clear();
 
 		// Delete all connections
-		for (Raul::List<Connection*>::iterator i = _patch->connections().begin(); i != _patch->connections().end(); ++i)
+		for (Raul::List<ConnectionImpl*>::iterator i = _patch->connections().begin(); i != _patch->connections().end(); ++i)
 			delete *i;
 		_patch->connections().clear();
 		

@@ -25,7 +25,7 @@
 #include "ObjectStore.hpp"
 #include "PortImpl.hpp"
 #include "NodeImpl.hpp"
-#include "Connection.hpp"
+#include "ConnectionImpl.hpp"
 #include "QueuedEventSource.hpp"
 
 namespace Ingen {

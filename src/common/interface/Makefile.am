@@ -1,8 +1,9 @@
 EXTRA_DIST = \
-	README \
 	ClientInterface.hpp \
-	EngineInterface.hpp \
-	Plugin.hpp \
-	Node.hpp \
-	Port.hpp \
+	Connection.hpp \
 	DataType.hpp \
+	EngineInterface.hpp \
+	Node.hpp \
+	Plugin.hpp \
+	Port.hpp \
+	README

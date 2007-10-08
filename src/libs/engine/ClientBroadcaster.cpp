@@ -27,7 +27,7 @@
 #include "NodeImpl.hpp"
 #include "PluginImpl.hpp"
 #include "PortImpl.hpp"
-#include "Connection.hpp"
+#include "ConnectionImpl.hpp"
 #include "AudioDriver.hpp"
 #include "ObjectSender.hpp"
 #include "OSCClientSender.hpp"
@@ -162,7 +162,7 @@ ClientBroadcaster::send_patch_cleared(const string& patch_path)
 }
 
 void
-ClientBroadcaster::send_connection(const Connection* const c)
+ClientBroadcaster::send_connection(const ConnectionImpl* const c)
 {
 	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
 		(*i).second->connection(c->src_port()->path(), c->dst_port()->path());

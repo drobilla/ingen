@@ -21,7 +21,7 @@
 #include <raul/Path.hpp>
 #include "Responder.hpp"
 #include "Engine.hpp"
-#include "Connection.hpp"
+#include "ConnectionImpl.hpp"
 #include "InputPort.hpp"
 #include "OutputPort.hpp"
 #include "Patch.hpp"
@@ -157,15 +157,15 @@ DisconnectionEvent::execute(ProcessContext& context)
 	QueuedEvent::execute(context);
 
 	if (_error == NO_ERROR) {
-		Raul::ListNode<Connection*>* const port_connection
+		Raul::ListNode<ConnectionImpl*>* const port_connection
 			= _dst_input_port->remove_connection(_src_output_port);
 		
 		if (port_connection != NULL) {
-			Raul::ListNode<Connection*>* const patch_connection
+			Raul::ListNode<ConnectionImpl*>* const patch_connection
 				= _patch->remove_connection(_src_port, _dst_port);
 			
 			assert(patch_connection);
-			assert((Connection*)port_connection->elem() == patch_connection->elem());
+			assert((ConnectionImpl*)port_connection->elem() == patch_connection->elem());
 			
 			// Clean up both the list node and the connection itself...
 			_engine.maid()->push(port_connection);

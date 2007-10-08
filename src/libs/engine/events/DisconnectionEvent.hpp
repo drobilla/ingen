@@ -33,10 +33,9 @@ namespace Ingen {
 	
 class Patch;
 class NodeImpl;
-class Connection;
+class ConnectionImpl;
 class MidiMessage;
 class PortImpl;
-class Connection;
 class InputPort;
 class OutputPort;
 class CompiledPatch;

@@ -34,7 +34,7 @@ class NodeImpl;
 class PortImpl;
 class PluginImpl;
 class Patch;
-class Connection;
+class ConnectionImpl;
 using Shared::ClientInterface;
 
 
@@ -68,7 +68,7 @@ public:
 	void send_destroyed(const string& path);
 	void send_polyphonic(const string& path, bool polyphonic);
 	void send_patch_cleared(const string& patch_path);
-	void send_connection(const Connection* const connection);
+	void send_connection(const ConnectionImpl* const connection);
 	void send_disconnection(const string& src_port_path, const string& dst_port_path);
 	void send_rename(const string& old_path, const string& new_path);
 	void send_patch_enable(const string& patch_path);

@@ -18,7 +18,7 @@
 #include <algorithm>
 #include <raul/Maid.hpp>
 #include "util.hpp"
-#include "Connection.hpp"
+#include "ConnectionImpl.hpp"
 #include "NodeImpl.hpp"
 #include "PortImpl.hpp"
 #include "BufferFactory.hpp"
@@ -33,7 +33,7 @@ namespace Ingen {
  * This handles both polyphonic and monophonic nodes, transparently to the 
  * user (InputPort).
  */
-Connection::Connection(PortImpl* src_port, PortImpl* dst_port)
+ConnectionImpl::ConnectionImpl(PortImpl* src_port, PortImpl* dst_port)
 	: _src_port(src_port)
 	, _dst_port(dst_port)
 	, _local_buffer(NULL)
@@ -62,14 +62,14 @@ Connection::Connection(PortImpl* src_port, PortImpl* dst_port)
 }
 
 
-Connection::~Connection()
+ConnectionImpl::~ConnectionImpl()
 {
 	delete _local_buffer;
 }
 	
 
 void
-Connection::set_buffer_size(size_t size)
+ConnectionImpl::set_buffer_size(size_t size)
 {
 	if (_must_mix) {
 		assert(_local_buffer);
@@ -83,7 +83,7 @@ Connection::set_buffer_size(size_t size)
 
 
 void
-Connection::prepare_poly(uint32_t poly)
+ConnectionImpl::prepare_poly(uint32_t poly)
 {
 	if (type() == DataType::CONTROL || type() == DataType::AUDIO)
 		_must_mix = (poly > 1) && (
@@ -101,7 +101,7 @@ Connection::prepare_poly(uint32_t poly)
 
 
 void
-Connection::apply_poly(Raul::Maid& maid, uint32_t poly)
+ConnectionImpl::apply_poly(Raul::Maid& maid, uint32_t poly)
 {
 	if (poly == 1 && _local_buffer && !_must_mix) {
 		maid.push(_local_buffer);
@@ -111,7 +111,7 @@ Connection::apply_poly(Raul::Maid& maid, uint32_t poly)
 
 
 void
-Connection::process(ProcessContext& context)
+ConnectionImpl::process(ProcessContext& context)
 {
 	// FIXME: nframes parameter not used
 	assert(_buffer_size == 1 || _buffer_size == context.nframes());

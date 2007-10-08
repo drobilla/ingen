@@ -23,7 +23,7 @@
 #include "Patch.hpp"
 #include "PluginImpl.hpp"
 #include "PortImpl.hpp"
-#include "Connection.hpp"
+#include "ConnectionImpl.hpp"
 #include "DuplexPort.hpp"
 #include "Engine.hpp"
 #include "ProcessSlave.hpp"
@@ -54,7 +54,7 @@ Patch::~Patch()
 {
 	assert(!_activated);
 	
-	for (Raul::List<Connection*>::iterator i = _connections.begin(); i != _connections.end(); ++i) {
+	for (Raul::List<ConnectionImpl*>::iterator i = _connections.begin(); i != _connections.end(); ++i) {
 		delete (*i);
 		delete _connections.erase(i);
 	}
@@ -116,7 +116,7 @@ Patch::prepare_internal_poly(uint32_t poly)
 	for (Raul::List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		(*i)->prepare_poly(poly);
 	
-	for (Raul::List<Connection*>::iterator i = _connections.begin(); i != _connections.end(); ++i)
+	for (Raul::List<ConnectionImpl*>::iterator i = _connections.begin(); i != _connections.end(); ++i)
 		(*i)->prepare_poly(poly);
 
 	/* FIXME: Deal with failure */
@@ -133,7 +133,7 @@ Patch::apply_internal_poly(Raul::Maid& maid, uint32_t poly)
 	for (Raul::List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		(*i)->apply_poly(maid, poly);
 	
-	for (Raul::List<Connection*>::iterator i = _connections.begin(); i != _connections.end(); ++i)
+	for (Raul::List<ConnectionImpl*>::iterator i = _connections.begin(); i != _connections.end(); ++i)
 		(*i)->apply_poly(maid, poly);
 
 	_internal_poly = poly;
@@ -284,12 +284,12 @@ Patch::remove_node(const string& name)
 
 /** Remove a connection.  Realtime safe.
  */
-Raul::ListNode<Connection*>*
+Raul::ListNode<ConnectionImpl*>*
 Patch::remove_connection(const PortImpl* src_port, const PortImpl* dst_port)
 {
 	bool found = false;
-	Raul::ListNode<Connection*>* connection = NULL;
-	for (Raul::List<Connection*>::iterator i = _connections.begin(); i != _connections.end(); ++i) {
+	Raul::ListNode<ConnectionImpl*>* connection = NULL;
+	for (Raul::List<ConnectionImpl*>::iterator i = _connections.begin(); i != _connections.end(); ++i) {
 		if ((*i)->src_port() == src_port && (*i)->dst_port() == dst_port) {
 			connection = _connections.erase(i);
 			found = true;

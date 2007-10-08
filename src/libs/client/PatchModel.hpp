@@ -41,7 +41,9 @@ class Store;
 class PatchModel : public NodeModel
 {
 public:
-	const ConnectionList& connections() const { return _connections; }
+	typedef std::list<SharedPtr<ConnectionModel> > Connections;
+
+	const Connections& connections() const { return _connections; }
 	
 	SharedPtr<ConnectionModel> get_connection(const string& src_port_path, const string& dst_port_path) const;
 	SharedPtr<NodeModel>       get_node(const string& node_name) const;
@@ -97,11 +99,11 @@ private:
 	void rename_node(const Path& old_path, const Path& new_path);
 	void rename_node_port(const Path& old_path, const Path& new_path);
 
-	ConnectionList _connections;
-	string         _filename;
-	bool           _enabled;
-	size_t         _poly;
-	bool           _editable;
+	Connections _connections;
+	string      _filename;
+	bool        _enabled;
+	size_t      _poly;
+	bool        _editable;
 };
 
 typedef Table<string, SharedPtr<PatchModel> > PatchModelMap;

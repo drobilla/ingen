@@ -20,7 +20,7 @@
 #include <raul/Maid.hpp>
 #include <raul/Path.hpp>
 #include "ClientBroadcaster.hpp"
-#include "Connection.hpp"
+#include "ConnectionImpl.hpp"
 #include "DisconnectNodeEvent.hpp"
 #include "DisconnectionEvent.hpp"
 #include "Engine.hpp"
@@ -70,7 +70,7 @@ DisconnectNodeEvent::~DisconnectNodeEvent()
 void
 DisconnectNodeEvent::pre_process()
 {
-	typedef Raul::List<Connection*>::const_iterator ConnectionListIterator;
+	typedef Raul::List<ConnectionImpl*>::const_iterator ConnectionListIterator;
 	
 	if (_lookup) {
 		_patch = _engine.object_store()->find_patch(_node_path.parent());
@@ -90,7 +90,7 @@ DisconnectNodeEvent::pre_process()
 		}
 	}
 
-	Connection* c = NULL;
+	ConnectionImpl* c = NULL;
 	for (ConnectionListIterator i = _patch->connections().begin(); i != _patch->connections().end(); ++i) {
 		c = (*i);
 		if ((c->src_port()->parent_node() == _node || c->dst_port()->parent_node() == _node) && !c->pending_disconnection()) {

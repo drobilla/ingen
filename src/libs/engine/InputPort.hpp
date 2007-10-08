@@ -28,7 +28,7 @@ using std::string;
 
 namespace Ingen {
 
-class Connection;
+class ConnectionImpl;
 class OutputPort;
 class NodeImpl;
 
@@ -50,10 +50,10 @@ public:
 	InputPort(NodeImpl* parent, const string& name, uint32_t index, uint32_t poly, DataType type, size_t buffer_size);
 	virtual ~InputPort() {}
 	
-	void                         add_connection(Raul::ListNode<Connection*>* c);
-	Raul::ListNode<Connection*>* remove_connection(const OutputPort* src_port);
+	void                             add_connection(Raul::ListNode<ConnectionImpl*>* c);
+	Raul::ListNode<ConnectionImpl*>* remove_connection(const OutputPort* src_port);
 
-	typedef Raul::List<Connection*> Connections;
+	typedef Raul::List<ConnectionImpl*> Connections;
 	const Connections& connections() { return _connections; }
 
 	void pre_process(ProcessContext& context);

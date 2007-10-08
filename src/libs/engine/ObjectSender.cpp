@@ -22,7 +22,7 @@
 #include "NodeImpl.hpp"
 #include "PortImpl.hpp"
 #include "PortImpl.hpp"
-#include "Connection.hpp"
+#include "ConnectionImpl.hpp"
 #include "NodeFactory.hpp"
 #include "interface/DataType.hpp"
 #include "AudioBuffer.hpp"
@@ -54,7 +54,7 @@ ObjectSender::send_patch(ClientInterface* client, const Patch* patch, bool recur
 		}
 
 		// Send connections
-		for (Raul::List<Connection*>::const_iterator j = patch->connections().begin();
+		for (Raul::List<ConnectionImpl*>::const_iterator j = patch->connections().begin();
 				j != patch->connections().end(); ++j) {
 			
 			client->connection((*j)->src_port()->path(), (*j)->dst_port()->path());
