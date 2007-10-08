@@ -27,7 +27,7 @@
 #include "OutputPort.hpp"
 #include "PluginImpl.hpp"
 #include "AudioDriver.hpp"
-#include "Patch.hpp"
+#include "PatchImpl.hpp"
 #include "ProcessContext.hpp"
 #include "util.hpp"
 
@@ -37,7 +37,7 @@ using std::cerr; using std::cout; using std::endl;
 namespace Ingen {
 
 
-MidiNoteNode::MidiNoteNode(const string& path, bool polyphonic, Patch* parent, SampleRate srate, size_t buffer_size)
+MidiNoteNode::MidiNoteNode(const string& path, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size)
 : NodeBase(new PluginImpl(Plugin::Internal, "ingen:note_node"), path, polyphonic, parent, srate, buffer_size),
   _voices(new Raul::Array<Voice>(_polyphony)),
   _prepared_voices(NULL),

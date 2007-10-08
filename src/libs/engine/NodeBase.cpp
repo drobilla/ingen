@@ -25,7 +25,7 @@
 #include "PluginImpl.hpp"
 #include "ClientBroadcaster.hpp"
 #include "PortImpl.hpp"
-#include "Patch.hpp"
+#include "PatchImpl.hpp"
 #include "ObjectStore.hpp"
 
 using namespace std;
@@ -33,10 +33,10 @@ using namespace std;
 namespace Ingen {
 
 
-NodeBase::NodeBase(const PluginImpl* plugin, const string& name, bool polyphonic, Patch* parent, SampleRate srate, size_t buffer_size)
+NodeBase::NodeBase(const PluginImpl* plugin, const string& name, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size)
 : NodeImpl(parent, name, polyphonic),
   _plugin(plugin),
-  _polyphony((polyphonic && parent) ? parent->internal_poly() : 1),
+  _polyphony((polyphonic && parent) ? parent->internal_polyphony() : 1),
   _srate(srate),
   _buffer_size(buffer_size),
   _activated(false),
@@ -50,7 +50,7 @@ NodeBase::NodeBase(const PluginImpl* plugin, const string& name, bool polyphonic
 {
 	assert(_plugin);
 	assert(_polyphony > 0);
-	assert(_parent == NULL || (_polyphony == parent->internal_poly() || _polyphony == 1));
+	assert(_parent == NULL || (_polyphony == parent->internal_polyphony() || _polyphony == 1));
 }
 
 

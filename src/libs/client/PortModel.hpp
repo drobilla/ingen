@@ -38,7 +38,7 @@ namespace Client {
  *
  * \ingroup IngenClient
  */
-class PortModel : public ObjectModel, public Shared::Port
+class PortModel : public ObjectModel, public Ingen::Shared::Port
 {
 public:
 	enum Direction { INPUT, OUTPUT };

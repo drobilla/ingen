@@ -28,7 +28,7 @@ template<typename T> class TreeNode;
 
 namespace Ingen {
 
-class Patch;
+class PatchImpl;
 class NodeImpl;
 class CompiledPatch;
 
@@ -69,7 +69,7 @@ private:
 	string         _plugin_lib;
 	string         _plugin_label;
 	bool           _poly;
-	Patch*         _patch;
+	PatchImpl*     _patch;
 	NodeImpl*      _node;
 	CompiledPatch* _compiled_patch; ///< Patch's new process order
 	bool           _node_already_exists;

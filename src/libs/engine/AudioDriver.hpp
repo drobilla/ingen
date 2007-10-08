@@ -26,7 +26,7 @@
 
 namespace Ingen {
 
-class Patch;
+class PatchImpl;
 class AudioDriver;
 class PortImpl;
 class ProcessContext;
@@ -41,8 +41,8 @@ class AudioDriver : public Driver
 public:
 	AudioDriver() : Driver(DataType::AUDIO) {}
 	
-	virtual void   set_root_patch(Patch* patch) = 0;
-	virtual Patch* root_patch()                 = 0;
+	virtual void       set_root_patch(PatchImpl* patch) = 0;
+	virtual PatchImpl* root_patch()                 = 0;
 	
 	virtual void        add_port(DriverPort* port)    = 0;
 	virtual DriverPort* remove_port(const Raul::Path& path) = 0;

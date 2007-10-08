@@ -18,7 +18,7 @@
 #include "EnablePatchEvent.hpp"
 #include "Responder.hpp"
 #include "Engine.hpp"
-#include "Patch.hpp"
+#include "PatchImpl.hpp"
 #include "util.hpp"
 #include "ClientBroadcaster.hpp"
 #include "ObjectStore.hpp"

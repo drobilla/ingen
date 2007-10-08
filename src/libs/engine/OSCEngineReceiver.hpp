@@ -31,7 +31,7 @@ namespace Ingen {
 
 class JackDriver;
 class NodeFactory;
-class Patch;
+class PatchImpl;
 
 
 /* Some boilerplate killing macros... */

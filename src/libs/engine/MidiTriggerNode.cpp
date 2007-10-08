@@ -28,7 +28,7 @@
 namespace Ingen {
 
 
-MidiTriggerNode::MidiTriggerNode(const string& path, bool polyphonic, Patch* parent, SampleRate srate, size_t buffer_size)
+MidiTriggerNode::MidiTriggerNode(const string& path, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size)
 : NodeBase(new PluginImpl(Plugin::Internal, "ingen:trigger_node"), path, false, parent, srate, buffer_size)
 {
 	_ports = new Raul::Array<PortImpl*>(5);

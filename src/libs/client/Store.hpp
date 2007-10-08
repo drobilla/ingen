@@ -34,6 +34,9 @@ using Raul::Path;
 using Raul::Atom;
 
 namespace Ingen {
+
+namespace Shared { class GraphObject; }
+
 namespace Client {
 
 class SigClientInterface;
@@ -63,10 +66,11 @@ public:
 	typedef Raul::Table<string, SharedPtr<PluginModel> > Plugins;
 	const Plugins& plugins() const { return _plugins; }
 
-	typedef Raul::PathTable<SharedPtr<ObjectModel> > Objects;
+	typedef Raul::PathTable< SharedPtr<Shared::GraphObject> > Objects;
 	const Objects& objects() const { return _objects; }
 
 	sigc::signal<void, SharedPtr<ObjectModel> > signal_new_object; 
+
 private:
 
 	void add_object(SharedPtr<ObjectModel> object);

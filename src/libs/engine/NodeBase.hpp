@@ -31,7 +31,7 @@ using std::string;
 namespace Ingen {
 
 class PluginImpl;
-class Patch;
+class PatchImpl;
 class ObjectStore;
 
 namespace Shared {
@@ -51,7 +51,7 @@ public:
 	NodeBase(const PluginImpl* plugin,
 	         const string&     name,
 	         bool              poly,
-	         Patch*            parent,
+	         PatchImpl*        parent,
 	         SampleRate        rate,
 	         size_t            buffer_size);
 
@@ -103,7 +103,7 @@ public:
 	virtual void              plugin(const PluginImpl* pi) { _plugin = pi; }
 	
 	/** A node's parent is always a patch, so static cast should be safe */
-	inline Patch* parent_patch() const { return (Patch*)_parent; }
+	inline PatchImpl* parent_patch() const { return (PatchImpl*)_parent; }
 	
 protected:
 	virtual void signal_input_ready();

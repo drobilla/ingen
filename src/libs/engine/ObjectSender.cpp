@@ -18,7 +18,7 @@
 #include "ObjectSender.hpp"
 #include "interface/ClientInterface.hpp"
 #include "ObjectStore.hpp"
-#include "Patch.hpp"
+#include "PatchImpl.hpp"
 #include "NodeImpl.hpp"
 #include "PortImpl.hpp"
 #include "PortImpl.hpp"
@@ -31,9 +31,9 @@ namespace Ingen {
 
 
 void
-ObjectSender::send_patch(ClientInterface* client, const Patch* patch, bool recursive)
+ObjectSender::send_patch(ClientInterface* client, const PatchImpl* patch, bool recursive)
 {
-	client->new_patch(patch->path(), patch->internal_poly());
+	client->new_patch(patch->path(), patch->internal_polyphony());
 	
 	if (recursive) {
 
@@ -54,7 +54,7 @@ ObjectSender::send_patch(ClientInterface* client, const Patch* patch, bool recur
 		}
 
 		// Send connections
-		for (Patch::Connections::const_iterator j = patch->connections().begin();
+		for (PatchImpl::Connections::const_iterator j = patch->connections().begin();
 				j != patch->connections().end(); ++j)
 			client->connection((*j)->src_port_path(), (*j)->dst_port_path());
 
@@ -79,7 +79,7 @@ ObjectSender::send_node(ClientInterface* client, const NodeImpl* node, bool recu
 	assert(node->path().length() > 0);
 	
 	if (plugin->type() == Plugin::Patch) {
-		send_patch(client, (Patch*)node, recursive);
+		send_patch(client, (PatchImpl*)node, recursive);
 		return;
 	}
 

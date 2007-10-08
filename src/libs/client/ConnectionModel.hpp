@@ -62,10 +62,11 @@ private:
 		assert(_dst_port);
 		assert(_src_port->parent());
 		assert(_dst_port->parent());
+		assert(_src_port->path() != _dst_port->path());
 	}
 	
-	SharedPtr<PortModel> _src_port;
-	SharedPtr<PortModel> _dst_port;
+	const SharedPtr<PortModel> _src_port;
+	const SharedPtr<PortModel> _dst_port;
 };
 
 

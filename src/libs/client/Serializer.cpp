@@ -35,11 +35,12 @@
 #include <raul/RDFWorld.hpp>
 #include <raul/TableImpl.hpp>
 #include "interface/EngineInterface.hpp"
+#include "interface/Plugin.hpp"
+#include "interface/Patch.hpp"
+#include "interface/Node.hpp"
 #include "interface/Port.hpp"
 #include "interface/Connection.hpp"
-#include "PatchModel.hpp"
 #include "Serializer.hpp"
-#include "Store.hpp"
 
 using namespace std;
 using namespace Raul;
@@ -218,7 +219,7 @@ Serializer::serialize(SharedPtr<GraphObject> object) throw (std::logic_error)
 	if (!_model)
 		throw std::logic_error("serialize called without serialization in progress");
 
-	SharedPtr<PatchModel> patch = PtrCast<PatchModel>(object);
+	SharedPtr<Shared::Patch> patch = PtrCast<Shared::Patch>(object);
 	if (patch) {
 		serialize_patch(patch);
 		return;
@@ -230,7 +231,7 @@ Serializer::serialize(SharedPtr<GraphObject> object) throw (std::logic_error)
 		return;
 	}
 	
-	SharedPtr<Port> port = PtrCast<Port>(object);
+	SharedPtr<Shared::Port> port = PtrCast<Shared::Port>(object);
 	if (port) {
 		serialize_port(port.get(), path_to_node_id(port->path()));
 		return;
@@ -255,7 +256,7 @@ Serializer::patch_path_to_rdf_id(const Path& path)
 
 
 void
-Serializer::serialize_patch(SharedPtr<PatchModel> patch)
+Serializer::serialize_patch(SharedPtr<Shared::Patch> patch)
 {
 	assert(_model);
 
@@ -275,7 +276,7 @@ Serializer::serialize_patch(SharedPtr<PatchModel> patch)
 	_model->add_statement(
 		patch_id,
 		"ingen:polyphony",
-		Atom((int)patch->poly()));
+		Atom((int)patch->internal_polyphony()));
 	
 	_model->add_statement(
 		patch_id,
@@ -292,9 +293,9 @@ Serializer::serialize_patch(SharedPtr<PatchModel> patch)
 		}
 	}
 
-	for (Store::Objects::const_iterator n = patch->children_begin(); n != patch->children_end(); ++n) {
-		SharedPtr<PatchModel> patch = PtrCast<PatchModel>(n->second);
-		SharedPtr<NodeModel> node   = PtrCast<NodeModel>(n->second);
+	for (GraphObject::const_iterator n = patch->children_begin(); n != patch->children_end(); ++n) {
+		SharedPtr<Shared::Patch> patch = PtrCast<Shared::Patch>(n->second);
+		SharedPtr<Shared::Node>  node  = PtrCast<Shared::Node>(n->second);
 		if (patch) {
 			_model->add_statement(patch_id, "ingen:node", patch_path_to_rdf_id(patch->path()));
 			serialize_patch(patch);
@@ -312,7 +313,8 @@ Serializer::serialize_patch(SharedPtr<PatchModel> patch)
 		serialize_port(p, port_id);
 	}
 
-	for (PatchModel::Connections::const_iterator c = patch->connections().begin(); c != patch->connections().end(); ++c) {
+	for (Shared::Patch::Connections::const_iterator c = patch->connections().begin();
+			c != patch->connections().end(); ++c) {
 		serialize_connection(*c);
 	}
 }
@@ -360,11 +362,6 @@ Serializer::serialize_node(SharedPtr<Shared::Node> node, const RDF::Node& node_i
 
 	//serialize_plugin(node->plugin());
 	
-	/*_model->add_statement(_serializer,
-		node_uri_ref.c_str(),
-		"ingen:name",
-		Atom(node->path().name()));*/
-
 	for (uint32_t i=0; i < node->num_ports(); ++i) {
 		Port* p = node->port(i);
 		assert(p);

@@ -20,13 +20,16 @@
 
 #include <string>
 #include <raul/PathTable.hpp>
+#include <raul/SharedPtr.hpp>
 
 using std::string;
 using namespace Raul;
 
 namespace Ingen {
 
-class Patch;
+namespace Shared { class GraphObject; }
+
+class PatchImpl;
 class NodeImpl;
 class PortImpl;
 class GraphObjectImpl;
@@ -44,9 +47,9 @@ class GraphObjectImpl;
 class ObjectStore
 {
 public:
-	typedef Raul::PathTable<GraphObjectImpl*> Objects;
+	typedef Raul::PathTable< SharedPtr<Shared::GraphObject> > Objects;
 
-	Patch*           find_patch(const Path& path);
+	PatchImpl*       find_patch(const Path& path);
 	NodeImpl*        find_node(const Path& path);
 	PortImpl*        find_port(const Path& path);
 	GraphObjectImpl* find_object(const Path& path);
@@ -54,11 +57,11 @@ public:
 	Objects::iterator find(const Path& path) { return _objects.find(path); }
 	
 	void add(GraphObjectImpl* o);
-	void add(const Table<Path,GraphObjectImpl*>& family);
+	void add(const Table<Path, SharedPtr<Shared::GraphObject> >& family);
 	//void add(TreeNode<GraphObjectImpl*>* o);
 
-	Table<Path,GraphObjectImpl*> remove(const Path& path);
-	Table<Path,GraphObjectImpl*> remove(Objects::iterator i);
+	Table<Path, SharedPtr<Shared::GraphObject> > remove(const Path& path);
+	Table<Path, SharedPtr<Shared::GraphObject> > remove(Objects::iterator i);
 
 	const Objects& objects() const { return _objects; }
 	Objects&       objects()       { return _objects; }

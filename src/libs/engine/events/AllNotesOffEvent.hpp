@@ -24,7 +24,7 @@ using std::string;
 
 namespace Ingen {
 
-class Patch;
+class PatchImpl;
 
 
 /** A note off event for all active voices.
@@ -34,15 +34,15 @@ class Patch;
 class AllNotesOffEvent : public Event
 {
 public:
-	AllNotesOffEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, Patch* patch);
+	AllNotesOffEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, PatchImpl* patch);
 	AllNotesOffEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& patch_path);
 	
 	void execute(ProcessContext& context);
 	void post_process();
 
 private:
-	Patch* _patch;
-	string _patch_path;
+	const string _patch_path;
+	PatchImpl*   _patch;
 };
 
 

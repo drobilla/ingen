@@ -28,7 +28,7 @@
 #include "NodeImpl.hpp"
 #include "ObjectStore.hpp"
 #include "OutputPort.hpp"
-#include "Patch.hpp"
+#include "PatchImpl.hpp"
 #include "PortImpl.hpp"
 #include "Responder.hpp"
 #include "util.hpp"
@@ -88,7 +88,7 @@ DisconnectNodeEvent::pre_process()
 		}
 	}
 
-	for (Patch::Connections::const_iterator i = _patch->connections().begin(); i != _patch->connections().end(); ++i) {
+	for (PatchImpl::Connections::const_iterator i = _patch->connections().begin(); i != _patch->connections().end(); ++i) {
 		ConnectionImpl* c = (ConnectionImpl*)i->get();
 		if ((c->src_port()->parent_node() == _node || c->dst_port()->parent_node() == _node) && !c->pending_disconnection()) {
 			DisconnectionEvent* ev = new DisconnectionEvent(_engine, SharedPtr<Responder>(new Responder()), _time,

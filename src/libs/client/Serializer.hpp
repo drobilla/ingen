@@ -37,14 +37,13 @@ namespace Ingen {
 namespace Shared {
 	class Plugin;
 	class GraphObject;
+	class Patch;
 	class Node;
 	class Port;
 	class Connection;
 }
 
 namespace Client {
-
-class PatchModel;
 
 
 /** Serializes Ingen objects (patches, nodes, etc) to RDF.
@@ -73,7 +72,7 @@ private:
 
 	void serialize_plugin(SharedPtr<Shared::Plugin> p);
 
-	void serialize_patch(SharedPtr<PatchModel> p);
+	void serialize_patch(SharedPtr<Shared::Patch> p);
 	void serialize_node(SharedPtr<Shared::Node> n, const Raul::RDF::Node& id);
 	void serialize_port(const Shared::Port* p, const Raul::RDF::Node& id);
 	

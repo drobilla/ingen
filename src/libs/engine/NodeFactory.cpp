@@ -28,7 +28,7 @@
 #include "MidiControlNode.hpp"
 #include "TransportNode.hpp"
 #include "PluginImpl.hpp"
-#include "Patch.hpp"
+#include "PatchImpl.hpp"
 #ifdef HAVE_SLV2
 #include "LV2Node.hpp"
 #include <slv2/slv2.h>
@@ -55,7 +55,7 @@ NodeFactory::NodeFactory(Ingen::Shared::World* world)
 	// Add builtin plugin types to _internal_plugins list
 	// FIXME: ewwww, definitely a better way to do this!
 
-	Patch* parent = new Patch(*world->local_engine, "dummy", 1, NULL, 1, 1, 1);
+	PatchImpl* parent = new PatchImpl(*world->local_engine, "dummy", 1, NULL, 1, 1, 1);
 
 	NodeImpl* n = NULL;
 	n = new MidiNoteNode("foo", 1, parent, 1, 1);
@@ -173,7 +173,7 @@ NodeImpl*
 NodeFactory::load_plugin(const PluginImpl* a_plugin,
                          const string&     name,
                          bool              polyphonic,
-                         Patch*            parent)
+                         PatchImpl*        parent)
 {
 	assert(parent != NULL);
 	assert(a_plugin);
@@ -244,7 +244,7 @@ NodeImpl*
 NodeFactory::load_internal_plugin(const string& uri,
                                   const string& name,
                                   bool          polyphonic,
-                                  Patch*        parent,
+                                  PatchImpl*    parent,
                                   SampleRate    srate,
                                   size_t        buffer_size)
 {
@@ -319,7 +319,7 @@ NodeImpl*
 NodeFactory::load_lv2_plugin(const string& plug_uri,
                              const string& node_name,
                              bool          polyphonic,
-                             Patch*        parent,
+                             PatchImpl*    parent,
                              SampleRate    srate,
                              size_t        buffer_size)
 {
@@ -456,7 +456,7 @@ NodeImpl*
 NodeFactory::load_ladspa_plugin(const string& uri,
                                 const string& name,
                                 bool          polyphonic,
-                                Patch*        parent,
+                                PatchImpl*    parent,
                                 SampleRate    srate,
                                 size_t        buffer_size)
 {

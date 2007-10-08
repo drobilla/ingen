@@ -28,7 +28,7 @@ using std::string;
 namespace Ingen {
 
 class DisconnectionEvent;
-class Patch;
+class PatchImpl;
 class NodeImpl;
 class Connection;
 class PortImpl;
@@ -53,7 +53,7 @@ public:
 
 private:
 	Raul::Path                      _node_path;
-	Patch*                          _patch;
+	PatchImpl*                      _patch;
 	NodeImpl*                       _node;
 	Raul::List<DisconnectionEvent*> _disconnection_events;
 	

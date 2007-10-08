@@ -20,7 +20,7 @@
 #include "DestroyEvent.hpp"
 #include "Responder.hpp"
 #include "Engine.hpp"
-#include "Patch.hpp"
+#include "PatchImpl.hpp"
 #include "NodeBase.hpp"
 #include "PluginImpl.hpp"
 #include "AudioDriver.hpp"
@@ -40,8 +40,6 @@ DestroyEvent::DestroyEvent(Engine& engine, SharedPtr<Responder> responder, Frame
   _path(path),
   _store_iterator(engine.object_store()->objects().end()),
   _removed_table(NULL),
-  _node(NULL),
-  _port(NULL),
   _driver_port(NULL),
   _patch_node_listnode(NULL),
   _patch_port_listnode(NULL),
@@ -67,10 +65,10 @@ DestroyEvent::pre_process()
 	_store_iterator = _engine.object_store()->find(_path);
 
 	if (_store_iterator != _engine.object_store()->objects().end())  {
-		_node = dynamic_cast<NodeImpl*>(_store_iterator->second);
+		_node = PtrCast<NodeImpl>(_store_iterator->second);
 
 		if (!_node)
-			_port = dynamic_cast<PortImpl*>(_store_iterator->second);
+			_port = PtrCast<PortImpl>(_store_iterator->second);
 	}
 			
 	if (_store_iterator != _engine.object_store()->objects().end()) {
@@ -81,9 +79,9 @@ DestroyEvent::pre_process()
 		assert(_node->parent_patch());
 		_patch_node_listnode = _node->parent_patch()->remove_node(_path.name());
 		if (_patch_node_listnode) {
-			assert(_patch_node_listnode->elem() == _node);
+			assert(_patch_node_listnode->elem() == _node.get());
 			
-			_disconnect_node_event = new DisconnectNodeEvent(_engine, _node);
+			_disconnect_node_event = new DisconnectNodeEvent(_engine, _node.get());
 			_disconnect_node_event->pre_process();
 			
 			if (_node->parent_patch()->enabled()) {
@@ -92,7 +90,7 @@ DestroyEvent::pre_process()
 #ifndef NDEBUG
 				// Be sure node is removed from process order, so it can be destroyed
 				for (size_t i=0; i < _compiled_patch->size(); ++i) {
-					assert(_compiled_patch->at(i).node() != _node);
+					assert(_compiled_patch->at(i).node() != _node.get());
 					// FIXME: check providers/dependants too
 				}
 #endif
@@ -102,11 +100,11 @@ DestroyEvent::pre_process()
 		assert(_port->parent_patch());
 		_patch_port_listnode = _port->parent_patch()->remove_port(_path.name());
 		if (_patch_port_listnode) {
-			assert(_patch_port_listnode->elem() == _port);
+			assert(_patch_port_listnode->elem() == _port.get());
 			
 			//_port->remove_from_store();
 
-			_disconnect_port_event = new DisconnectPortEvent(_engine, _port->parent_patch(), _port);
+			_disconnect_port_event = new DisconnectPortEvent(_engine, _port->parent_patch(), _port.get());
 			_disconnect_port_event->pre_process();
 			
 			if (_port->parent_patch()->enabled()) {
@@ -187,7 +185,8 @@ DestroyEvent::post_process()
 			_disconnect_node_event->post_process();
 		_engine.broadcaster()->send_destroyed(_path);
 		_engine.maid()->push(_patch_node_listnode);
-		_engine.maid()->push(_node);
+		//_engine.maid()->push(_node);
+		_node.reset();
 	} else if (_patch_port_listnode) {	
 		assert(_port);
 		_responder->respond_ok();
@@ -195,7 +194,8 @@ DestroyEvent::post_process()
 			_disconnect_port_event->post_process();
 		_engine.broadcaster()->send_destroyed(_path);
 		_engine.maid()->push(_patch_port_listnode);
-		_engine.maid()->push(_port);
+		//_engine.maid()->push(_port);
+		_port.reset();
 	} else {
 		_responder->respond_error("Unable to destroy object");
 	}

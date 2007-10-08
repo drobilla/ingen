@@ -27,7 +27,7 @@ namespace Raul { template <typename T> class Array; }
 
 namespace Ingen {
 
-class Patch;
+class PatchImpl;
 class NodeImpl;
 class CompiledPatch;
 
@@ -51,7 +51,7 @@ public:
 
 private:
 	string         _patch_path;
-	Patch*         _patch;
+	PatchImpl*     _patch;
 	CompiledPatch* _compiled_patch; // Patch's new process order
 	bool           _enable;
 };

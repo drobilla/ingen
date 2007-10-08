@@ -29,7 +29,7 @@
 #include "EventSource.hpp"
 #include "PostProcessor.hpp"
 #include "NodeImpl.hpp"
-#include "Patch.hpp"
+#include "PatchImpl.hpp"
 #include "PortImpl.hpp"
 #include "MidiDriver.hpp"
 #include "DuplexPort.hpp"

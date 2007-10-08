@@ -31,7 +31,7 @@ template<typename T> class ListNode;
 namespace Ingen {
 
 class GraphObjectImpl;
-class Patch;
+class PatchImpl;
 class NodeImpl;
 class Plugin;
 class DisconnectNodeEvent;
@@ -58,7 +58,7 @@ private:
 	Path                           _old_path;
 	string                         _name;
 	Path                           _new_path;
-	Patch*                         _parent_patch;
+	PatchImpl*                     _parent_patch;
 	ObjectStore::Objects::iterator _store_iterator;
 	ErrorType                      _error;
 };

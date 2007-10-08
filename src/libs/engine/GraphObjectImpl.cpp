@@ -16,16 +16,37 @@
  */
 
 #include "GraphObjectImpl.hpp"
-#include "Patch.hpp"
+#include "PatchImpl.hpp"
 #include "ObjectStore.hpp"
 
 namespace Ingen {
 
 
-Patch*
+PatchImpl*
 GraphObjectImpl::parent_patch() const
 {
-	return dynamic_cast<Patch*>((NodeImpl*)_parent);
+	return dynamic_cast<PatchImpl*>((NodeImpl*)_parent);
+}
+	
+
+GraphObjectImpl::const_iterator
+GraphObjectImpl::children_begin() const
+{
+	throw;
+}
+
+
+GraphObjectImpl::const_iterator
+GraphObjectImpl::children_end() const
+{
+	throw;
+}
+
+
+SharedPtr<GraphObject>
+GraphObjectImpl::find_child(const string& name) const
+{
+	throw;
 }
 
 

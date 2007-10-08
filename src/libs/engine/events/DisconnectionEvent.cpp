@@ -24,7 +24,7 @@
 #include "ConnectionImpl.hpp"
 #include "InputPort.hpp"
 #include "OutputPort.hpp"
-#include "Patch.hpp"
+#include "PatchImpl.hpp"
 #include "ClientBroadcaster.hpp"
 #include "PortImpl.hpp"
 #include "ObjectStore.hpp"
@@ -111,13 +111,13 @@ DisconnectionEvent::pre_process()
 
 		assert(src_node->parent() == dst_node || dst_node->parent() == src_node);
 		if (src_node->parent() == dst_node)
-			_patch = dynamic_cast<Patch*>(dst_node);
+			_patch = dynamic_cast<PatchImpl*>(dst_node);
 		else
-			_patch = dynamic_cast<Patch*>(src_node);
+			_patch = dynamic_cast<PatchImpl*>(src_node);
 	
 	// Connection from a patch input to a patch output (pass through)
-	} else if (src_node == dst_node && dynamic_cast<Patch*>(src_node)) {
-		_patch = dynamic_cast<Patch*>(src_node);
+	} else if (src_node == dst_node && dynamic_cast<PatchImpl*>(src_node)) {
+		_patch = dynamic_cast<PatchImpl*>(src_node);
 	
 	// Normal connection between nodes with the same parent
 	} else {
@@ -161,7 +161,7 @@ DisconnectionEvent::execute(ProcessContext& context)
 			= _dst_input_port->remove_connection(_src_output_port);
 		
 		if (port_connection != NULL) {
-			Patch::Connections::Node* const patch_connection
+			PatchImpl::Connections::Node* const patch_connection
 				= _patch->remove_connection(_src_port, _dst_port);
 			
 			assert(patch_connection);

@@ -20,7 +20,7 @@
 #include <iostream>
 #include "ThreadManager.hpp"
 #include "NodeImpl.hpp"
-#include "Patch.hpp"
+#include "PatchImpl.hpp"
 #include "PluginImpl.hpp"
 #include "PortImpl.hpp"
 #include "ConnectionImpl.hpp"
@@ -33,7 +33,7 @@ using namespace std;
 namespace Ingen {
 
 
-Patch::Patch(Engine& engine, const string& path, uint32_t poly, Patch* parent, SampleRate srate, size_t buffer_size, uint32_t internal_poly) 
+PatchImpl::PatchImpl(Engine& engine, const string& path, uint32_t poly, PatchImpl* parent, SampleRate srate, size_t buffer_size, uint32_t internal_poly) 
 : NodeBase(new PluginImpl(Plugin::Patch, "ingen:patch"), path, poly, parent, srate, buffer_size),
   _engine(engine),
   _internal_poly(internal_poly),
@@ -50,7 +50,7 @@ Patch::Patch(Engine& engine, const string& path, uint32_t poly, Patch* parent, S
 }
 
 
-Patch::~Patch()
+PatchImpl::~PatchImpl()
 {
 	assert(!_activated);
 	
@@ -70,7 +70,7 @@ Patch::~Patch()
 
 
 void
-Patch::activate()
+PatchImpl::activate()
 {
 	NodeBase::activate();
 
@@ -82,7 +82,7 @@ Patch::activate()
 
 
 void
-Patch::deactivate()
+PatchImpl::deactivate()
 {
 	if (_activated) {
 	
@@ -99,7 +99,7 @@ Patch::deactivate()
 
 
 void
-Patch::disable()
+PatchImpl::disable()
 {
 	_process = false;
 
@@ -109,7 +109,7 @@ Patch::disable()
 
 	
 bool
-Patch::prepare_internal_poly(uint32_t poly)
+PatchImpl::prepare_internal_poly(uint32_t poly)
 {
 	/* TODO: ports?  internal/external poly? */
 
@@ -126,7 +126,7 @@ Patch::prepare_internal_poly(uint32_t poly)
 
 
 bool
-Patch::apply_internal_poly(Raul::Maid& maid, uint32_t poly)
+PatchImpl::apply_internal_poly(Raul::Maid& maid, uint32_t poly)
 {
 	/* TODO: ports?  internal/external poly? */
 
@@ -147,7 +147,7 @@ Patch::apply_internal_poly(Raul::Maid& maid, uint32_t poly)
  * Calls all Nodes in (roughly, if parallel) the order _compiled_patch specifies.
  */
 void
-Patch::process(ProcessContext& context)
+PatchImpl::process(ProcessContext& context)
 {
 	if (_compiled_patch == NULL || _compiled_patch->size() == 0 || !_process)
 		return;
@@ -165,7 +165,7 @@ Patch::process(ProcessContext& context)
 
 
 void
-Patch::process_parallel(ProcessContext& context)
+PatchImpl::process_parallel(ProcessContext& context)
 {
 	size_t n_slaves = _engine.process_slaves().size();
 
@@ -233,7 +233,7 @@ Patch::process_parallel(ProcessContext& context)
 
 	
 void
-Patch::process_single(ProcessContext& context)
+PatchImpl::process_single(ProcessContext& context)
 {
 	CompiledPatch* const cp = _compiled_patch;
 
@@ -243,7 +243,7 @@ Patch::process_single(ProcessContext& context)
 	
 
 void
-Patch::set_buffer_size(size_t size)
+PatchImpl::set_buffer_size(size_t size)
 {
 	NodeBase::set_buffer_size(size);
 	assert(_buffer_size == size);
@@ -257,7 +257,7 @@ Patch::set_buffer_size(size_t size)
 
 
 void
-Patch::add_node(List<NodeImpl*>::Node* ln)
+PatchImpl::add_node(List<NodeImpl*>::Node* ln)
 {
 	assert(ln != NULL);
 	assert(ln->elem() != NULL);
@@ -271,8 +271,8 @@ Patch::add_node(List<NodeImpl*>::Node* ln)
 /** Remove a node.
  * Realtime Safe.  Preprocessing thread.
  */
-Patch::Nodes::Node*
-Patch::remove_node(const string& name)
+PatchImpl::Nodes::Node*
+PatchImpl::remove_node(const string& name)
 {
 	for (List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		if ((*i)->name() == name)
@@ -284,8 +284,8 @@ Patch::remove_node(const string& name)
 
 /** Remove a connection.  Realtime safe.
  */
-Patch::Connections::Node*
-Patch::remove_connection(const PortImpl* src_port, const PortImpl* dst_port)
+PatchImpl::Connections::Node*
+PatchImpl::remove_connection(const PortImpl* src_port, const PortImpl* dst_port)
 {
 	bool found = false;
 	Connections::Node* connection = NULL;
@@ -299,14 +299,14 @@ Patch::remove_connection(const PortImpl* src_port, const PortImpl* dst_port)
 	}
 
 	if ( ! found)
-		cerr << "WARNING:  [Patch::remove_connection] Connection not found !" << endl;
+		cerr << "WARNING:  [PatchImpl::remove_connection] Connection not found !" << endl;
 
 	return connection;
 }
 
 
 uint32_t
-Patch::num_ports() const
+PatchImpl::num_ports() const
 {
 	ThreadID context = ThreadManager::current_thread_id();
 
@@ -320,10 +320,10 @@ Patch::num_ports() const
 /** Create a port.  Not realtime safe.
  */
 PortImpl*
-Patch::create_port(const string& name, DataType type, size_t buffer_size, bool is_output)
+PatchImpl::create_port(const string& name, DataType type, size_t buffer_size, bool is_output)
 {
 	if (type == DataType::UNKNOWN) {
-		cerr << "[Patch::create_port] Unknown port type " << type.uri() << endl;
+		cerr << "[PatchImpl::create_port] Unknown port type " << type.uri() << endl;
 		return NULL;
 	}
 
@@ -341,7 +341,7 @@ Patch::create_port(const string& name, DataType type, size_t buffer_size, bool i
  * Realtime safe.  Preprocessing thread only.
  */
 List<PortImpl*>::Node*
-Patch::remove_port(const string& name)
+PatchImpl::remove_port(const string& name)
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
 
@@ -363,14 +363,14 @@ Patch::remove_port(const string& name)
 	}
 
 	if ( ! found)
-		cerr << "WARNING:  [Patch::remove_port] Port not found !" << endl;
+		cerr << "WARNING:  [PatchImpl::remove_port] Port not found !" << endl;
 
 	return ret;
 }
 
 
 Raul::Array<PortImpl*>*
-Patch::build_ports_array() const
+PatchImpl::build_ports_array() const
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
 
@@ -399,7 +399,7 @@ Patch::build_ports_array() const
  * Not realtime safe.
  */
 CompiledPatch*
-Patch::compile() const
+PatchImpl::compile() const
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
 

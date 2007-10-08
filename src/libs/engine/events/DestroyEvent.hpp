@@ -22,7 +22,7 @@
 #include <raul/Path.hpp>
 #include "QueuedEvent.hpp"
 #include "ObjectStore.hpp"
-#include "Patch.hpp"
+#include "PatchImpl.hpp"
 
 using std::string;
 
@@ -58,18 +58,18 @@ public:
 	void post_process();
 
 private:
-	Path                           _path;
-	ObjectStore::Objects::iterator _store_iterator;
-	Table<Path,GraphObjectImpl*>   _removed_table;
-	NodeImpl*                      _node;  ///< Same as _object if it is a Node, otherwise NULL
-	PortImpl*                      _port;  ///< Same as _object if it is a Port, otherwise NULL
-	DriverPort*                    _driver_port;
-	Patch::Nodes::Node*            _patch_node_listnode;
-	Raul::List<PortImpl*>::Node*   _patch_port_listnode;
-	Raul::Array<PortImpl*>*        _ports_array; ///< New (external) ports array for Patch
-	CompiledPatch*                 _compiled_patch;  ///< Patch's new process order
-	DisconnectNodeEvent*           _disconnect_node_event;
-	DisconnectPortEvent*           _disconnect_port_event;
+	Path                                         _path;
+	ObjectStore::Objects::iterator               _store_iterator;
+	Table<Path, SharedPtr<Shared::GraphObject> > _removed_table;
+	SharedPtr<NodeImpl>                          _node;  ///< Non-NULL iff a node
+	SharedPtr<PortImpl>                          _port;  ///< Non-NULL iff a port
+	DriverPort*                                  _driver_port;
+	PatchImpl::Nodes::Node*                      _patch_node_listnode;
+	Raul::List<PortImpl*>::Node*                 _patch_port_listnode;
+	Raul::Array<PortImpl*>*                      _ports_array; ///< New (external) ports for Patch
+	CompiledPatch*                               _compiled_patch;  ///< Patch's new process order
+	DisconnectNodeEvent*                         _disconnect_node_event;
+	DisconnectPortEvent*                         _disconnect_port_event;
 };
 
 

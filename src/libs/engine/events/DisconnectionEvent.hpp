@@ -31,7 +31,7 @@ namespace Raul {
 
 namespace Ingen {
 	
-class Patch;
+class PatchImpl;
 class NodeImpl;
 class ConnectionImpl;
 class MidiMessage;
@@ -70,7 +70,7 @@ private:
 	Raul::Path _src_port_path;
 	Raul::Path _dst_port_path;
 	
-	Patch*      _patch;
+	PatchImpl*  _patch;
 	PortImpl*   _src_port;
 	PortImpl*   _dst_port;
 	OutputPort* _src_output_port;

@@ -19,7 +19,7 @@
 #include "SetPolyphonicEvent.hpp"
 #include "Responder.hpp"
 #include "Engine.hpp"
-#include "Patch.hpp"
+#include "PatchImpl.hpp"
 #include "ClientBroadcaster.hpp"
 #include "util.hpp"
 #include "ObjectStore.hpp"

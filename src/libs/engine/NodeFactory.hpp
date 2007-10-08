@@ -37,7 +37,7 @@ using std::string; using std::list;
 namespace Ingen {
 
 class NodeImpl;
-class Patch;
+class PatchImpl;
 class PluginImpl;
 
 
@@ -58,7 +58,7 @@ public:
 	~NodeFactory();
 
 	void  load_plugins();
-	NodeImpl* load_plugin(const PluginImpl* info, const string& name, bool polyphonic, Patch* parent);
+	NodeImpl* load_plugin(const PluginImpl* info, const string& name, bool polyphonic, PatchImpl* parent);
 	
 	const list<PluginImpl*>& plugins() { return _plugins; }
 	
@@ -68,15 +68,15 @@ public:
 private:
 #ifdef HAVE_LADSPA
 	void load_ladspa_plugins();
-	NodeImpl* load_ladspa_plugin(const string& plugin_uri, const string& name, bool polyphonic, Patch* parent, SampleRate srate, size_t buffer_size);
+	NodeImpl* load_ladspa_plugin(const string& plugin_uri, const string& name, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size);
 #endif
 
 #ifdef HAVE_SLV2
 	void load_lv2_plugins();
-	NodeImpl* load_lv2_plugin(const string& plugin_uri, const string& name, bool polyphonic, Patch* parent, SampleRate srate, size_t buffer_size);
+	NodeImpl* load_lv2_plugin(const string& plugin_uri, const string& name, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size);
 #endif
 
-	NodeImpl* load_internal_plugin(const string& plug_label, const string& name, bool polyphonic, Patch* parent, SampleRate srate, size_t buffer_size);
+	NodeImpl* load_internal_plugin(const string& plug_label, const string& name, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size);
 
 	Glib::Module* library(const string& path);
 	

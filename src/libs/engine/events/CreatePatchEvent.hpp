@@ -29,7 +29,7 @@ template<typename T> class TreeNode;
 
 namespace Ingen {
 	
-class Patch;
+class PatchImpl;
 class CompiledPatch;
 
 
@@ -49,12 +49,12 @@ public:
 private:
 	enum ErrorType { NO_ERROR, OBJECT_EXISTS, PARENT_NOT_FOUND, INVALID_POLY };
 	
-	Raul::Path        _path;
-	Patch*            _patch;
-	Patch*            _parent;
-	CompiledPatch*    _compiled_patch;
-	int               _poly;
-	ErrorType         _error;
+	Raul::Path     _path;
+	PatchImpl*     _patch;
+	PatchImpl*     _parent;
+	CompiledPatch* _compiled_patch;
+	int            _poly;
+	ErrorType      _error;
 };
 
 

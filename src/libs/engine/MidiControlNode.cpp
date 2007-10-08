@@ -30,7 +30,7 @@
 namespace Ingen {
 
 	
-MidiControlNode::MidiControlNode(const string& path, bool polyphonic, Patch* parent, SampleRate srate, size_t buffer_size)
+MidiControlNode::MidiControlNode(const string& path, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size)
 : NodeBase(new PluginImpl(Plugin::Internal, "ingen:control_node"), path, false, parent, srate, buffer_size),
   _learning(false)
 {

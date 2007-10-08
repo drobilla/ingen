@@ -19,7 +19,7 @@
 #include "ClearPatchEvent.hpp"
 #include "Responder.hpp"
 #include "Engine.hpp"
-#include "Patch.hpp"
+#include "PatchImpl.hpp"
 #include "ClientBroadcaster.hpp"
 #include "util.hpp"
 #include "ObjectStore.hpp"
@@ -92,7 +92,7 @@ ClearPatchEvent::post_process()
 		_patch->nodes().clear();
 
 		// Delete all connections
-		for (Patch::Connections::iterator i = _patch->connections().begin(); i != _patch->connections().end(); ++i)
+		for (PatchImpl::Connections::iterator i = _patch->connections().begin(); i != _patch->connections().end(); ++i)
 			(*i).reset();
 
 		_patch->connections().clear();

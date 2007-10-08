@@ -45,7 +45,7 @@ RequestAllObjectsEvent::post_process()
 		_responder->respond_ok();
 
 		// Everything is a child of the root patch, so this sends it all
-		Patch* root = _engine.object_store()->find_patch("/");
+		PatchImpl* root = _engine.object_store()->find_patch("/");
 		if (root && _responder->client())
 			ObjectSender::send_patch(_responder->client(), root, true);
 

@@ -27,7 +27,7 @@
 namespace Ingen {
 
 
-TransportNode::TransportNode(const string& path, bool polyphonic, Patch* parent, SampleRate srate, size_t buffer_size)
+TransportNode::TransportNode(const string& path, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size)
 : NodeBase(new PluginImpl(Plugin::Internal, "ingen:transport_node"), path, false, parent, srate, buffer_size)
 {
 #if 0

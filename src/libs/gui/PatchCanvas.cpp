@@ -209,9 +209,9 @@ PatchCanvas::build()
 	}
 
 	// Create connections
-	for (list<SharedPtr<ConnectionModel> >::const_iterator i = _patch->connections().begin();
+	for (PatchModel::Connections::const_iterator i = _patch->connections().begin();
 			i != _patch->connections().end(); ++i) {
-		connection(*i);
+		connection(PtrCast<ConnectionModel>(*i));
 	}
 }
 
@@ -306,15 +306,18 @@ PatchCanvas::get_port_view(SharedPtr<PortModel> port)
 void
 PatchCanvas::connection(SharedPtr<ConnectionModel> cm)
 {
+	assert(cm);
+	
 	const SharedPtr<FlowCanvas::Port> src = get_port_view(cm->src_port());
 	const SharedPtr<FlowCanvas::Port> dst = get_port_view(cm->dst_port());
 
-	if (src && dst)
+	if (src && dst) {
 		add_connection(boost::shared_ptr<GUI::Connection>(new GUI::Connection(shared_from_this(),
 				cm, src, dst, src->color() + 0x22222200)));
-	else
+	} else {
 		cerr << "[PatchCanvas] ERROR: Unable to find ports to connect "
 			<< cm->src_port_path() << " -> " << cm->dst_port_path() << endl;
+	}
 }
 
 

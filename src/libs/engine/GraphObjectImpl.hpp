@@ -35,7 +35,7 @@ namespace Raul { class Maid; }
 
 namespace Ingen {
 
-class Patch;
+class PatchImpl;
 class ProcessContext;
 
 
@@ -79,7 +79,7 @@ public:
 	const MetadataMap& metadata() const { return _metadata; }
 
 	/** The Patch this object is a child of. */
-	virtual Patch* parent_patch() const;
+	virtual PatchImpl* parent_patch() const;
 	
 	/** Path is dynamically generated from parent to ease renaming */
 	const Path path() const {
@@ -90,6 +90,10 @@ public:
 		else
 			return Path(_parent->path() +"/"+ _name);
 	}
+	
+	const_iterator         children_begin() const;
+	const_iterator         children_end() const;
+	SharedPtr<GraphObject> find_child(const string& name) const;
 
 protected:
 	GraphObjectImpl(GraphObjectImpl* parent, const string& name, bool polyphonic=false)

@@ -22,7 +22,7 @@
 #include "Engine.hpp"
 #include "ObjectStore.hpp"
 #include "ClientBroadcaster.hpp"
-#include "Patch.hpp"
+#include "PatchImpl.hpp"
 #include "NodeImpl.hpp"
 #include "PortImpl.hpp"
 #include "ObjectSender.hpp"
@@ -65,7 +65,7 @@ RequestObjectEvent::post_process()
 		_responder->respond_error("Unable to find object requested.");
 	
 	} else if (_responder->client()) {	
-		Patch* const patch = dynamic_cast<Patch*>(_object);
+		PatchImpl* const patch = dynamic_cast<PatchImpl*>(_object);
 		if (patch) {
 			_responder->respond_ok();
 			ObjectSender::send_patch(_responder->client(), patch, true);

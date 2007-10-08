@@ -34,7 +34,7 @@ namespace Ingen {
 class TransportNode : public NodeBase
 {
 public:
-	TransportNode(const std::string& path, bool polyphonic, Patch* parent, SampleRate srate, size_t buffer_size);
+	TransportNode(const std::string& path, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size);
 
 	virtual void process(ProcessContext& context);
 };

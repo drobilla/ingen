@@ -20,7 +20,7 @@
 #include "Engine.hpp"
 #include "NodeImpl.hpp"
 #include "ObjectStore.hpp"
-#include "Patch.hpp"
+#include "PatchImpl.hpp"
 #include "RenameEvent.hpp"
 #include "Responder.hpp"
 #include "AudioDriver.hpp"
@@ -77,10 +77,10 @@ RenameEvent::pre_process()
 		return;
 	}
 
-	Table<Path,GraphObjectImpl*> removed = _engine.object_store()->remove(_store_iterator);
+	Table<Path, SharedPtr<Shared::GraphObject> > removed = _engine.object_store()->remove(_store_iterator);
 	assert(removed.size() > 0);
 	
-	for (Table<Path,GraphObjectImpl*>::iterator i = removed.begin(); i != removed.end(); ++i) {
+	for (Table<Path, SharedPtr<Shared::GraphObject> >::iterator i = removed.begin(); i != removed.end(); ++i) {
 		const Path& child_old_path = i->first;
 		assert(Path::descendant_comparator(_old_path, child_old_path));
 		
@@ -90,7 +90,7 @@ RenameEvent::pre_process()
 		else
 			child_new_path = _new_path.base() + child_old_path.substr(_old_path.length()+1);
 
-		i->second->set_path(child_new_path);
+		PtrCast<GraphObjectImpl>(i->second)->set_path(child_new_path);
 		i->first = child_new_path;
 	}
 
@@ -105,7 +105,7 @@ RenameEvent::execute(ProcessContext& context)
 {
 	QueuedEvent::execute(context);
 	
-	PortImpl* port = dynamic_cast<PortImpl*>(_store_iterator->second);
+	SharedPtr<PortImpl> port = PtrCast<PortImpl>(_store_iterator->second);
 	if (port && port->parent()->parent() == NULL) {
 		DriverPort* driver_port = NULL;
 

@@ -28,7 +28,7 @@ namespace Raul { template <typename T> class Array; }
 namespace Ingen {
 
 	
-class Patch;
+class PatchImpl;
 class NodeImpl;
 class Connection;
 class PortImpl;
@@ -45,7 +45,7 @@ class DisconnectPortEvent : public QueuedEvent
 {
 public:
 	DisconnectPortEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& port_path);
-	DisconnectPortEvent(Engine& engine, Patch* patch, Port* port);
+	DisconnectPortEvent(Engine& engine, PatchImpl* patch, Port* port);
 	~DisconnectPortEvent();
 
 	void pre_process();
@@ -54,7 +54,7 @@ public:
 
 private:
 	Path                      _port_path;
-	Patch*                    _patch;
+	PatchImpl*                _patch;
 	Port*                     _port;
 	Raul::List<DisconnectionEvent*> _disconnection_events;
 	

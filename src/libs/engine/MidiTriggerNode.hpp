@@ -41,7 +41,7 @@ class OutputPort;
 class MidiTriggerNode : public NodeBase
 {
 public:
-	MidiTriggerNode(const std::string& path, bool polyphonic, Patch* parent, SampleRate srate, size_t buffer_size);
+	MidiTriggerNode(const std::string& path, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size);
 
 	void process(ProcessContext& context);
 	

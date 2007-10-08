@@ -22,8 +22,10 @@
 #include <list>
 #include <string>
 #include <sigc++/sigc++.h>
-#include "NodeModel.hpp"
 #include <raul/SharedPtr.hpp>
+#include "interface/Patch.hpp"
+#include "NodeModel.hpp"
+
 #include "ConnectionModel.hpp"
 
 using std::list; using std::string;
@@ -38,22 +40,21 @@ class Store;
  *
  * \ingroup IngenClient
  */
-class PatchModel : public NodeModel
+class PatchModel : public NodeModel, public Ingen::Shared::Patch
 {
 public:
-	typedef std::list<SharedPtr<ConnectionModel> > Connections;
-
 	const Connections& connections() const { return _connections; }
 	
-	SharedPtr<ConnectionModel> get_connection(const string& src_port_path, const string& dst_port_path) const;
-	//SharedPtr<NodeModel>       get_node(const string& node_name) const;
+	SharedPtr<ConnectionModel> get_connection(const string& src_port_path,
+	                                          const string& dst_port_path) const;
 	
 	void set_filename(const string& filename) { _filename = filename; }
 
-	size_t        poly()       const { return _poly; }
-	const string& filename()   const { return _filename; }
-	bool          enabled()    const { return _enabled; }
-	bool          polyphonic() const;
+	size_t        poly()               const { return _poly; }
+	const string& filename()           const { return _filename; }
+	bool          enabled()            const { return _enabled; }
+	uint32_t      internal_polyphony() const { return _poly; }
+	bool          polyphonic()         const;
 
 	/** "editable" = arranging,connecting,adding,deleting,etc
 	 * not editable (control mode) you can just change controllers (performing)
@@ -96,13 +97,10 @@ private:
 	void add_connection(SharedPtr<ConnectionModel> cm);
 	void remove_connection(const string& src_port_path, const string& dst_port_path);
 	
-	void rename_node(const Path& old_path, const Path& new_path);
-	void rename_node_port(const Path& old_path, const Path& new_path);
-
 	Connections _connections;
 	string      _filename;
 	bool        _enabled;
-	size_t      _poly;
+	uint32_t    _poly;
 	bool        _editable;
 };
 

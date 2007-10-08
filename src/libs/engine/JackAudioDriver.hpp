@@ -30,7 +30,7 @@
 namespace Ingen {
 
 class Engine;
-class Patch;
+class PatchImpl;
 class PortImpl;
 class DuplexPort;
 class JackAudioDriver;
@@ -91,8 +91,8 @@ public:
 	
 	DriverPort* driver_port(const Raul::Path& path);
 	
-	Patch* root_patch()                 { return _root_patch; }
-	void   set_root_patch(Patch* patch) { _root_patch = patch; }
+	PatchImpl* root_patch()                     { return _root_patch; }
+	void       set_root_patch(PatchImpl* patch) { _root_patch = patch; }
 	
 	ProcessContext& context() { return _process_context; }
 	
@@ -141,7 +141,7 @@ private:
 	Raul::List<JackAudioPort*> _ports;
 	ProcessContext             _process_context;
 
-	Patch* _root_patch;
+	PatchImpl* _root_patch;
 };
 
 

@@ -15,9 +15,10 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "ObjectModel.hpp"
-#include <raul/TableImpl.hpp>
 #include <iostream>
+#include <raul/TableImpl.hpp>
+#include "interface/GraphObject.hpp"
+#include "ObjectModel.hpp"
 
 using namespace std;
 
@@ -57,7 +58,7 @@ ObjectModel::children_end() const
 }
 
 
-SharedPtr<ObjectModel>
+SharedPtr<Shared::GraphObject>
 ObjectModel::find_child(const string& name) const
 {
 	const_iterator me = _store.objects().find(_path);
@@ -65,7 +66,7 @@ ObjectModel::find_child(const string& name) const
 	const_iterator children_end = _store.objects().find_descendants_end(me);
 	const_iterator child = _store.objects().find(me, children_end, _path.base() + name);
 	if (child != _store.objects().end())
-		return child->second;
+		return PtrCast<ObjectModel>(child->second);
 	else
 		return SharedPtr<ObjectModel>();
 }

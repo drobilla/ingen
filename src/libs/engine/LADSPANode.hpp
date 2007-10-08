@@ -37,7 +37,7 @@ public:
 	LADSPANode(const PluginImpl*        plugin,
 	           const string&            name,
 	           bool                     polyphonic,
-	           Patch*                   parent,
+	           PatchImpl*               parent,
 	           const LADSPA_Descriptor* descriptor,
 	           SampleRate               srate,
 	           size_t                   buffer_size);

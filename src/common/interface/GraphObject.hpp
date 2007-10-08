@@ -21,8 +21,11 @@
 #include <string>
 #include <map>
 #include <raul/Deletable.hpp>
-#include <raul/Path.hpp>
+#include <raul/PathTable.hpp>
 #include <raul/Atom.hpp>
+#include <raul/SharedPtr.hpp>
+
+using Raul::PathTable;
 
 namespace Ingen {
 namespace Shared {
@@ -39,10 +42,16 @@ class GraphObject : public Raul::Deletable
 public:
 	typedef std::map<std::string, Raul::Atom> MetadataMap;
 
+	typedef PathTable< SharedPtr<GraphObject> >::const_iterator const_iterator;
+
 	virtual const Raul::Path   path()       const = 0;
 	virtual const std::string  name()       const = 0;
 	virtual const MetadataMap& metadata()   const = 0;
 	virtual bool               polyphonic() const = 0;
+	
+	virtual const_iterator         children_begin() const = 0;
+	virtual const_iterator         children_end() const = 0;
+	virtual SharedPtr<GraphObject> find_child(const string& name) const = 0;
 };
 
 

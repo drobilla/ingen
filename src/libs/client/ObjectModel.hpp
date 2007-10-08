@@ -28,10 +28,11 @@
 #include <raul/Atom.hpp>
 #include <raul/Path.hpp>
 #include <raul/SharedPtr.hpp>
-#include <raul/Table.hpp>
+#include <raul/PathTable.hpp>
 #include "interface/GraphObject.hpp"
 #include "Store.hpp"
 
+using Raul::PathTable;
 using std::string;
 using Raul::Atom;
 using Raul::Path;
@@ -68,12 +69,9 @@ public:
 	SharedPtr<ObjectModel> parent()     const { return _parent; }
 	bool                   polyphonic() const { return _polyphonic; }
 
-	typedef Store::Objects::iterator       iterator;
-	typedef Store::Objects::const_iterator const_iterator;
-
-	const_iterator         children_begin() const;
-	const_iterator         children_end() const;
-	SharedPtr<ObjectModel> find_child(const string& name) const;
+	const_iterator                 children_begin() const;
+	const_iterator                 children_end() const;
+	SharedPtr<Shared::GraphObject> find_child(const string& name) const;
 
 	// Signals
 	sigc::signal<void, SharedPtr<ObjectModel> >    signal_new_child; 

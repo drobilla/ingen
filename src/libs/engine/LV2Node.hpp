@@ -37,7 +37,7 @@ public:
 	LV2Node(const PluginImpl* plugin,
 	        const string&     name,
 	        bool              polyphonic,
-	        Patch*            parent,
+	        PatchImpl*        parent,
 	        SampleRate        srate,
 	        size_t            buffer_size);
 	

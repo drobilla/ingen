@@ -39,7 +39,7 @@ class OutputPort;
 class MidiNoteNode : public NodeBase
 {
 public:
-	MidiNoteNode(const std::string& path, bool polyphonic, Patch* parent, SampleRate srate, size_t buffer_size);
+	MidiNoteNode(const std::string& path, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size);
 	~MidiNoteNode();
 	
 	bool prepare_poly(uint32_t poly);

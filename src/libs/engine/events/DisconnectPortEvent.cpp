@@ -28,7 +28,7 @@
 #include "PortImpl.hpp"
 #include "InputPort.hpp"
 #include "OutputPort.hpp"
-#include "Patch.hpp"
+#include "PatchImpl.hpp"
 #include "ClientBroadcaster.hpp"
 #include "util.hpp"
 #include "ObjectStore.hpp"
@@ -51,7 +51,7 @@ DisconnectPortEvent::DisconnectPortEvent(Engine& engine, SharedPtr<Responder> re
 }
 
 
-DisconnectPortEvent::DisconnectPortEvent(Engine& engine, Patch* patch, Port* port)
+DisconnectPortEvent::DisconnectPortEvent(Engine& engine, PatchImpl* patch, Port* port)
 : QueuedEvent(engine),
   _port_path(port->path()),
   _patch(patch),
@@ -103,7 +103,7 @@ DisconnectPortEvent::pre_process()
 		return;
 	}
 	
-	for (Patch::Connections::const_iterator i = _patch->connections().begin();
+	for (PatchImpl::Connections::const_iterator i = _patch->connections().begin();
 			i != _patch->connections().end(); ++i) {
 		ConnectionImpl* c = (ConnectionImpl*)i->get();
 		if ((c->src_port() == _port || c->dst_port() == _port) && !c->pending_disconnection()) {

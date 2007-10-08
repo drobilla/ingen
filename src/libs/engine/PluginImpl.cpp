@@ -24,7 +24,7 @@
 namespace Ingen {
 
 NodeImpl*
-PluginImpl::instantiate(const string& name, bool polyphonic, Ingen::Patch* parent, SampleRate srate, size_t buffer_size)
+PluginImpl::instantiate(const string& name, bool polyphonic, Ingen::PatchImpl* parent, SampleRate srate, size_t buffer_size)
 {
 	assert(_type == Internal);
 

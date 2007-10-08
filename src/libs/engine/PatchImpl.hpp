@@ -15,16 +15,17 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef PATCH_H
-#define PATCH_H
+#ifndef PATCHIMPL_H
+#define PATCHIMPL_H
 
 #include <cstdlib>
 #include <string>
 #include <raul/List.hpp>
 #include <raul/SharedPtr.hpp>
+#include "interface/DataType.hpp"
+#include "interface/Patch.hpp"
 #include "NodeBase.hpp"
 #include "PluginImpl.hpp"
-#include "interface/DataType.hpp"
 #include "CompiledPatch.hpp"
 
 using std::string;
@@ -49,18 +50,18 @@ class CompiledPatch;
  *
  * \ingroup engine
  */
-class Patch : public NodeBase
+class PatchImpl : public NodeBase, public Ingen::Shared::Patch
 {
 public:
-	Patch(Engine&       engine,
+	PatchImpl(Engine&   engine,
 	      const string& name,
 	      uint32_t      poly,
-	      Patch*        parent,
+	      PatchImpl*    parent,
 	      SampleRate    srate,
 	      size_t        buffer_size,
 	      uint32_t      local_poly);
 
-	virtual ~Patch();
+	virtual ~PatchImpl();
 
 	void activate();
 	void deactivate();
@@ -87,7 +88,6 @@ public:
 	
 	// Patch specific stuff not inherited from Node
 	
-	typedef List< SharedPtr<Shared::Connection> > Connections;
 	typedef List<NodeImpl*>                       Nodes;
 	
 	void         add_node(Nodes::Node* tn);
@@ -123,7 +123,7 @@ public:
 	void enable() { _process = true; }
 	void disable();
 
-	uint32_t internal_poly() const { return _internal_poly; }
+	uint32_t internal_polyphony() const { return _internal_poly; }
 
 private:
 	inline void compile_recursive(NodeImpl* n, CompiledPatch* output) const;
@@ -144,7 +144,7 @@ private:
 
 /** Private helper for compile */
 inline void
-Patch::compile_recursive(NodeImpl* n, CompiledPatch* output) const
+PatchImpl::compile_recursive(NodeImpl* n, CompiledPatch* output) const
 {
 	if (n == NULL || n->traversed())
 		return;
@@ -162,4 +162,4 @@ Patch::compile_recursive(NodeImpl* n, CompiledPatch* output) const
 
 } // namespace Ingen
 
-#endif // PATCH_H
+#endif // PATCHIMPL_H

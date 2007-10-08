@@ -26,7 +26,7 @@ using std::string;
 
 namespace Ingen {
 
-class Patch;
+class PatchImpl;
 
 
 /** Delete all nodes from a patch.
@@ -43,9 +43,9 @@ public:
 	void post_process();
 
 private:
-	string _patch_path;
-	Patch* _patch;
-	bool   _process;
+	const string _patch_path;
+	PatchImpl*   _patch;
+	bool         _process;
 };
 
 

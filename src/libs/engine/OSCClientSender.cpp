@@ -23,7 +23,7 @@
 #include "ObjectStore.hpp"
 #include "NodeFactory.hpp"
 #include "util.hpp"
-#include "Patch.hpp"
+#include "PatchImpl.hpp"
 #include "NodeImpl.hpp"
 #include "PluginImpl.hpp"
 #include "PortImpl.hpp"

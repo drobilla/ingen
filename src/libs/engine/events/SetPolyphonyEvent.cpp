@@ -19,7 +19,7 @@
 #include "SetPolyphonyEvent.hpp"
 #include "Responder.hpp"
 #include "Engine.hpp"
-#include "Patch.hpp"
+#include "PatchImpl.hpp"
 #include "ClientBroadcaster.hpp"
 #include "util.hpp"
 #include "ObjectStore.hpp"
@@ -44,7 +44,7 @@ void
 SetPolyphonyEvent::pre_process()
 {
 	_patch = _engine.object_store()->find_patch(_patch_path);
-	 if (_patch && _poly > _patch->internal_poly())
+	 if (_patch && _poly > _patch->internal_polyphony())
 		 _patch->prepare_internal_poly(_poly);
 
 	QueuedEvent::pre_process();

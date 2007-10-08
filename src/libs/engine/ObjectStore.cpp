@@ -21,7 +21,7 @@
 #include <raul/PathTable.hpp>
 #include <raul/TableImpl.hpp>
 #include "ObjectStore.hpp"
-#include "Patch.hpp"
+#include "PatchImpl.hpp"
 #include "NodeImpl.hpp"
 #include "PortImpl.hpp"
 #include "ThreadManager.hpp"
@@ -34,11 +34,11 @@ namespace Ingen {
 
 /** Find the Patch at the given path.
  */
-Patch*
+PatchImpl*
 ObjectStore::find_patch(const Path& path) 
 {
 	GraphObjectImpl* const object = find_object(path);
-	return dynamic_cast<Patch*>(object);
+	return dynamic_cast<PatchImpl*>(object);
 }
 
 
@@ -68,7 +68,7 @@ GraphObjectImpl*
 ObjectStore::find_object(const Path& path)
 {
 	Objects::iterator i = _objects.find(path);
-	return ((i == _objects.end()) ? NULL : i->second);
+	return ((i == _objects.end()) ? NULL : dynamic_cast<GraphObjectImpl*>(i->second.get()));
 }
 
 
@@ -94,7 +94,7 @@ ObjectStore::add(GraphObjectImpl* o)
 /** Add a family of objects to the store. Not realtime safe.
  */
 void
-ObjectStore::add(const Table<Path,GraphObjectImpl*>& table)
+ObjectStore::add(const Table<Path, SharedPtr<Shared::GraphObject> >& table)
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
 
@@ -102,7 +102,7 @@ ObjectStore::add(const Table<Path,GraphObjectImpl*>& table)
 	_objects.cram(table);
 	
 	cerr << "[ObjectStore] Adding Table:" << endl;
-	for (Table<Path,GraphObjectImpl*>::const_iterator i = table.begin(); i != table.end(); ++i) {
+	for (Objects::const_iterator i = table.begin(); i != table.end(); ++i) {
 		cerr << i->first << " = " << i->second->path() << endl;
 	}
 }
@@ -113,7 +113,7 @@ ObjectStore::add(const Table<Path,GraphObjectImpl*>& table)
  * Returned is a vector containing all descendants of the object removed
  * including the object itself, in lexicographically sorted order by Path.
  */
-Table<Path,GraphObjectImpl*>
+Table<Path, SharedPtr<Shared::GraphObject> >
 ObjectStore::remove(const Path& path)
 {
 	return remove(_objects.find(path));
@@ -125,7 +125,7 @@ ObjectStore::remove(const Path& path)
  * Returned is a vector containing all descendants of the object removed
  * including the object itself, in lexicographically sorted order by Path.
  */
-Table<Path,GraphObjectImpl*>
+Table<Path, SharedPtr<Shared::GraphObject> >
 ObjectStore::remove(Objects::iterator object)
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
@@ -133,8 +133,8 @@ ObjectStore::remove(Objects::iterator object)
 	if (object != _objects.end()) {
 		Objects::iterator descendants_end = _objects.find_descendants_end(object);
 		cout << "[ObjectStore] Removing " << object->first << " {" << endl;
-		Table<Path,GraphObjectImpl*> removed = _objects.yank(object, descendants_end);
-		for (Table<Path,GraphObjectImpl*>::iterator i = removed.begin(); i != removed.end(); ++i) {
+		Table<Path, SharedPtr<Shared::GraphObject> > removed = _objects.yank(object, descendants_end);
+		for (Objects::iterator i = removed.begin(); i != removed.end(); ++i) {
 			cout << "\t" << i->first << endl;
 		}
 		cout << "}" << endl;
@@ -143,7 +143,7 @@ ObjectStore::remove(Objects::iterator object)
 
 	} else {
 		cerr << "[ObjectStore] WARNING: Removing " << object->first << " failed." << endl;
-		return Table<Path,GraphObjectImpl*>();
+		return Objects();
 	}
 }
 

@@ -39,7 +39,7 @@ class OutputPort;
 class MidiControlNode : public NodeBase
 {
 public:
-	MidiControlNode(const std::string& path, bool polyphonic, Patch* parent, SampleRate srate, size_t buffer_size);
+	MidiControlNode(const std::string& path, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size);
 	
 	void process(ProcessContext& context);
 	

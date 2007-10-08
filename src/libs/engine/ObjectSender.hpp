@@ -26,7 +26,7 @@ namespace Shared {
 	class ClientInterface;
 } using Shared::ClientInterface;
 
-class Patch;
+class PatchImpl;
 class NodeImpl;
 class PortImpl;
 class PluginImpl;
@@ -46,7 +46,7 @@ public:
 	
 	// FIXME: Make all object parameters const
 	
-	static void send_patch(ClientInterface* client, const Patch* patch, bool recursive);
+	static void send_patch(ClientInterface* client, const PatchImpl* patch, bool recursive);
 	static void send_node(ClientInterface* client, const NodeImpl* node, bool recursive);
 	static void send_port(ClientInterface* client, const PortImpl* port);
 };

@@ -4,6 +4,7 @@ EXTRA_DIST = \
 	DataType.hpp \
 	EngineInterface.hpp \
 	Node.hpp \
+	Patch.hpp \
 	Plugin.hpp \
 	Port.hpp \
 	README

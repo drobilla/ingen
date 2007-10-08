@@ -19,7 +19,7 @@
 #include <raul/Path.hpp>
 #include "CreatePatchEvent.hpp"
 #include "Responder.hpp"
-#include "Patch.hpp"
+#include "PatchImpl.hpp"
 #include "NodeImpl.hpp"
 #include "PluginImpl.hpp"
 #include "Engine.hpp"
@@ -65,13 +65,13 @@ CreatePatchEvent::pre_process()
 	}
 	
 	uint32_t poly = 1;
-	if (_parent != NULL && _poly > 1 && _poly == static_cast<int>(_parent->internal_poly()))
+	if (_parent != NULL && _poly > 1 && _poly == static_cast<int>(_parent->internal_polyphony()))
 		poly = _poly;
 	
-	_patch = new Patch(_engine, _path.name(), poly, _parent, _engine.audio_driver()->sample_rate(), _engine.audio_driver()->buffer_size(), _poly);
+	_patch = new PatchImpl(_engine, _path.name(), poly, _parent, _engine.audio_driver()->sample_rate(), _engine.audio_driver()->buffer_size(), _poly);
 		
 	if (_parent != NULL) {
-		_parent->add_node(new Patch::Nodes::Node(_patch));
+		_parent->add_node(new PatchImpl::Nodes::Node(_patch));
 
 		if (_parent->enabled())
 			_compiled_patch = _parent->compile();

@@ -77,8 +77,8 @@ libingen_engine_la_SOURCES = \
 	ObjectStore.hpp \
 	OutputPort.cpp \
 	OutputPort.hpp \
-	Patch.cpp \
-	Patch.hpp \
+	PatchImpl.cpp \
+	PatchImpl.hpp \
 	PluginImpl.cpp \
 	PluginImpl.hpp \
 	PortImpl.cpp \

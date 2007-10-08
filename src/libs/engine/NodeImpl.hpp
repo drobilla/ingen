@@ -34,7 +34,7 @@ using namespace Shared;
 
 class Buffer;
 class PluginImpl;
-class Patch;
+class PatchImpl;
 class PortImpl;
 
 
@@ -49,7 +49,7 @@ class PortImpl;
  *
  * \ingroup engine
  */
-class NodeImpl : public GraphObjectImpl, public Ingen::Shared::Node
+class NodeImpl : public GraphObjectImpl, virtual public Ingen::Shared::Node
 {
 public:
 	NodeImpl(GraphObjectImpl* parent, const std::string& name, bool poly)
@@ -144,7 +144,7 @@ public:
 	virtual void                   dependants(Raul::List<NodeImpl*>* l) = 0;
 	
 	/** The Patch this Node belongs to. */
-	virtual Patch* parent_patch() const = 0;
+	virtual PatchImpl* parent_patch() const = 0;
 
 	/** Information about the Plugin this Node is an instance of.
 	 * Not the best name - not all nodes come from plugins (ie Patch)

@@ -21,10 +21,10 @@
 #include <raul/Maid.hpp>
 #include "Responder.hpp"
 #include "CreatePortEvent.hpp"
-#include "Patch.hpp"
+#include "PatchImpl.hpp"
 #include "PluginImpl.hpp"
 #include "Engine.hpp"
-#include "Patch.hpp"
+#include "PatchImpl.hpp"
 #include "QueuedEventSource.hpp"
 #include "ObjectStore.hpp"
 #include "ClientBroadcaster.hpp"

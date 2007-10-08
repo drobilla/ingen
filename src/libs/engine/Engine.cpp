@@ -21,6 +21,7 @@
 #include <unistd.h>
 #include <raul/Deletable.hpp>
 #include <raul/Maid.hpp>
+#include <raul/SharedPtr.hpp>
 #include "Engine.hpp"	
 #include CONFIG_H_PATH
 #include "tuning.hpp"
@@ -28,7 +29,7 @@
 #include "JackAudioDriver.hpp"
 #include "NodeFactory.hpp"
 #include "ClientBroadcaster.hpp"
-#include "Patch.hpp"
+#include "PatchImpl.hpp"
 #include "ObjectStore.hpp"
 #include "MidiDriver.hpp"
 #include "OSCDriver.hpp"
@@ -76,10 +77,10 @@ Engine::~Engine()
 {
 	deactivate();
 
-	for (ObjectStore::Objects::const_iterator i = _object_store->objects().begin();
+	for (ObjectStore::Objects::iterator i = _object_store->objects().begin();
 			i != _object_store->objects().end(); ++i) {
-		if ( ! i->second->parent())
-			delete i->second;
+		if ( ! PtrCast<GraphObjectImpl>(i->second)->parent() )
+			i->second.reset();
 	}
 
 	delete _object_store;
@@ -215,7 +216,7 @@ Engine::activate(size_t parallelism)
 
 	// Create root patch
 
-	Patch* root_patch = new Patch(*this, "", 1, NULL,
+	PatchImpl* root_patch = new PatchImpl(*this, "", 1, NULL,
 			_audio_driver->sample_rate(), _audio_driver->buffer_size(), 1);
 	root_patch->activate();
 	_object_store->add(root_patch);

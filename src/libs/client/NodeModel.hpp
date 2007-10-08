@@ -26,6 +26,7 @@
 #include <raul/Path.hpp>
 #include <raul/SharedPtr.hpp>
 #include "interface/Node.hpp"
+#include "interface/Port.hpp"
 #include "ObjectModel.hpp"
 #include "PortModel.hpp"
 #include "PluginModel.hpp"

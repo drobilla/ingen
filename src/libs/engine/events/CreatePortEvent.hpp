@@ -29,7 +29,7 @@ template <typename T> class Array;
 
 namespace Ingen {
 
-class Patch;
+class PatchImpl;
 class PortImpl;
 class DriverPort;
 
@@ -59,7 +59,7 @@ private:
 	string                  _type;
 	bool                    _is_output;
 	DataType                _data_type;
-	Patch*                  _patch;
+	PatchImpl*              _patch;
 	PortImpl*               _patch_port;
 	Raul::Array<PortImpl*>* _ports_array; ///< New (external) ports array for Patch
 	DriverPort*             _driver_port; ///< Driver (eg Jack) port if this is a toplevel port
