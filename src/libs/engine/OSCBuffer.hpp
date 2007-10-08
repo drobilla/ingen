@@ -47,6 +47,7 @@ public:
 	void copy(const Buffer* src, size_t start_sample, size_t end_sample);
 
 	uint32_t this_nframes() const { return _this_nframes; }
+	uint32_t event_count() const { return _buf->message_count; }
 
 	inline LV2OSCBuffer* data()
 		{ return ((_joined_buf != NULL) ? _joined_buf->data() : _buf); }
