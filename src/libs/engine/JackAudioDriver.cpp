@@ -226,7 +226,7 @@ JackAudioDriver::remove_port(const Path& path)
 		if ((*i)->patch_port()->path() == path)
 			return _ports.erase(i)->elem(); // FIXME: LEAK
 	
-	cerr << "[JackAudioDriver::remove_port] WARNING: Failed to find Jack port to remove!" << endl;
+	cerr << "[JackAudioDriver::remove_port] WARNING: Unable to find Jack port " << path << endl;
 	return NULL;
 }
 

@@ -37,11 +37,7 @@
 #include "interface/EngineInterface.hpp"
 #include "interface/Port.hpp"
 #include "ConnectionModel.hpp"
-#include "NodeModel.hpp"
 #include "PatchModel.hpp"
-#include "PluginModel.hpp"
-#include "PortModel.hpp"
-#include "PresetModel.hpp"
 #include "Serializer.hpp"
 
 using namespace std;
@@ -60,7 +56,7 @@ Serializer::Serializer(Raul::RDF::World& world)
 }
 	
 void
-Serializer::to_file(SharedPtr<ObjectModel> object, const string& filename)
+Serializer::to_file(SharedPtr<GraphObject> object, const string& filename)
 {
 	_root_object = object;
 	start_to_filename(filename);
@@ -70,7 +66,7 @@ Serializer::to_file(SharedPtr<ObjectModel> object, const string& filename)
 
 
 string
-Serializer::to_string(SharedPtr<ObjectModel> object)
+Serializer::to_string(SharedPtr<GraphObject> object)
 {
 	_root_object = object;
 	start_to_string();
@@ -216,7 +212,7 @@ Serializer::find_file(const string& filename, const string& additional_path)
 #endif
 
 void
-Serializer::serialize(SharedPtr<ObjectModel> object) throw (std::logic_error)
+Serializer::serialize(SharedPtr<GraphObject> object) throw (std::logic_error)
 {
 	if (!_model)
 		throw std::logic_error("serialize called without serialization in progress");
@@ -322,7 +318,7 @@ Serializer::serialize_patch(SharedPtr<PatchModel> patch)
 
 
 void
-Serializer::serialize_plugin(SharedPtr<PluginModel> plugin)
+Serializer::serialize_plugin(SharedPtr<Shared::Plugin> plugin)
 {
 	assert(_model);
 
@@ -370,6 +366,7 @@ Serializer::serialize_node(SharedPtr<Shared::Node> node, const RDF::Node& node_i
 
 	for (uint32_t i=0; i < node->num_ports(); ++i) {
 		Port* p = node->port(i);
+		assert(p);
 		const RDF::Node port_id = path_to_node_id(p->path());
 		serialize_port(p, port_id);
 		_model->add_statement(node_id, "ingen:port", port_id);
@@ -402,7 +399,8 @@ Serializer::serialize_port(const Port* port, const RDF::Node& port_id)
 
 	_model->add_statement(port_id, "ingen:name", Atom(port->path().name().c_str()));
 	
-	_model->add_statement(port_id, "rdf:type", Atom(port->type().uri()));
+	_model->add_statement(port_id, "rdf:type",
+			RDF::Node(_model->world(), RDF::Node::RESOURCE, port->type().uri()));
 	
 	if (port->type() == DataType::CONTROL && port->is_input())
 		_model->add_statement(port_id, "ingen:value", port->value());

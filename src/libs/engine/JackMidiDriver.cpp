@@ -235,7 +235,7 @@ JackMidiDriver::remove_port(const Path& path)
 		if ((*i)->patch_port()->path() == path)
 			return _out_ports.erase(i)->elem(); // FIXME: LEAK
 
-	cerr << "[JackMidiDriver::remove_input] WARNING: Failed to find Jack port to remove!" << endl;
+	cerr << "[JackMidiDriver::remove_input] WARNING: Unable to find Jack port " << path << endl;
 	return NULL;
 }
 

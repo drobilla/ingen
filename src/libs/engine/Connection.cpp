@@ -123,10 +123,12 @@ Connection::process(ProcessContext& context)
 	 * would avoid having to mix multiple times.  Probably not a very common
 	 * case, but it would be faster anyway. */
 	
-	if (_must_mix && type() == DataType::CONTROL || type() == DataType::AUDIO) {
+	if (_must_mix && (type() == DataType::CONTROL || type() == DataType::AUDIO)) {
 
 		const AudioBuffer* const src_buffer = (AudioBuffer*)src_port()->buffer(0);
 		AudioBuffer*             mix_buf    = (AudioBuffer*)_local_buffer;
+		
+		assert(mix_buf);
 
 		const size_t copy_size = std::min(src_buffer->size(), mix_buf->size());
 

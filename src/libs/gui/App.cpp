@@ -41,6 +41,7 @@
 #include "ConnectWindow.hpp"
 #include "ThreadedLoader.hpp"
 #include "WindowFactory.hpp"
+#include "Port.hpp"
 /*#ifdef HAVE_LASH
 #include "LashController.hpp"
 #endif*/

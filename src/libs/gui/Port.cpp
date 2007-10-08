@@ -51,7 +51,7 @@ Port::Port(boost::shared_ptr<FlowCanvas::Module> module, SharedPtr<PortModel> pm
 	
 	_port_model->signal_renamed.connect(sigc::mem_fun(this, &Port::renamed));
 
-	if (pm->is_control()) {
+	if (pm->type().is_control()) {
 		show_control();
 		
 		float min = 0.0f, max = 1.0f;

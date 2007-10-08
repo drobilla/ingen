@@ -207,7 +207,7 @@ PatchWindow::set_patch(SharedPtr<PatchModel> patch, SharedPtr<PatchView> view)
 
 	for (PortModelList::const_iterator p = patch->ports().begin();
 			p != patch->ports().end(); ++p) {
-		if ((*p)->is_control() && (*p)->is_input()) {
+		if ((*p)->type().is_control() && (*p)->is_input()) {
 			_menu_view_control_window->property_sensitive() = true;
 			break;
 		}
@@ -239,7 +239,7 @@ PatchWindow::set_patch(SharedPtr<PatchModel> patch, SharedPtr<PatchView> view)
 void
 PatchWindow::patch_port_added(SharedPtr<PortModel> port)
 {
-	if (port->is_control() && port->is_input()) {
+	if (port->type().is_control() && port->is_input()) {
 		_menu_view_control_window->property_sensitive() = true;
 	}
 }
@@ -248,12 +248,12 @@ PatchWindow::patch_port_added(SharedPtr<PortModel> port)
 void
 PatchWindow::patch_port_removed(SharedPtr<PortModel> port)
 {
-	if (port->is_control() && port->is_input()) {
+	if (port->type().is_control() && port->is_input()) {
 		
 		bool found_control = false;
 
 		for (PortModelList::const_iterator i = _patch->ports().begin(); i != _patch->ports().end(); ++i) {
-			if ((*i)->is_control() && (*i)->is_input()) {
+			if ((*i)->type().is_control() && (*i)->is_input()) {
 				found_control = true;
 				break;
 			}

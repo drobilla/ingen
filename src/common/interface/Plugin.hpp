@@ -32,6 +32,14 @@ public:
 	virtual Type               type() const = 0;
 	virtual const std::string& uri()  const = 0;
 	virtual const std::string& name() const = 0;
+	
+	inline const char* type_uri() const {
+		if (type() == LV2) return "ingen:LV2";
+		else if (type() == LADSPA) return "ingen:LADSPA";
+		else if (type() == Internal) return "ingen:Internal";
+		else if (type() == Patch) return "ingen:Patch";
+		else return "";
+	}
 };
 
 

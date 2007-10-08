@@ -34,7 +34,7 @@ create(DataType type, size_t size)
 	else if (type.is_osc())
 		return new OSCBuffer(size);
 	else
-		return NULL;
+		throw;
 }
 
 

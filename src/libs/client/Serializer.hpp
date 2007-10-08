@@ -28,22 +28,23 @@
 #include <raul/Atom.hpp>
 #include <raul/RDFWorld.hpp>
 #include <raul/RDFModel.hpp>
-#include "ObjectModel.hpp"
 
+using namespace Raul;
 using namespace Ingen::Shared;
 
 namespace Ingen {
 
-namespace Shared { class Node; class Port; }
+namespace Shared {
+	class Plugin;
+	class GraphObject;
+	class Node;
+	class Port;
+}
 
 namespace Client {
 
-class PluginModel;
 class PatchModel;
-class NodeModel;
-class PortModel;
 class ConnectionModel;
-class PresetModel;
 
 
 /** Serializes Ingen objects (patches, nodes, etc) to RDF.
@@ -55,11 +56,11 @@ class Serializer
 public:
 	Serializer(Raul::RDF::World& world);
 
-	void   to_file(SharedPtr<ObjectModel> object, const string& filename);
-	string to_string(SharedPtr<ObjectModel> object);
+	void   to_file(SharedPtr<GraphObject> object, const string& filename);
+	string to_string(SharedPtr<GraphObject> object);
 	
 	void   start_to_string();
-	void   serialize(SharedPtr<ObjectModel> object) throw (std::logic_error);
+	void   serialize(SharedPtr<GraphObject> object) throw (std::logic_error);
 	void   serialize_connection(SharedPtr<ConnectionModel> c) throw (std::logic_error);
 	string finish();
 	
@@ -70,7 +71,7 @@ private:
 
 	void setup_prefixes();
 
-	void serialize_plugin(SharedPtr<PluginModel> p);
+	void serialize_plugin(SharedPtr<Shared::Plugin> p);
 
 	void serialize_patch(SharedPtr<PatchModel> p);
 	void serialize_node(SharedPtr<Shared::Node> n, const Raul::RDF::Node& id);
@@ -81,7 +82,7 @@ private:
 
 	typedef std::map<Raul::Path, Raul::RDF::Node> NodeMap;
 
-	SharedPtr<ObjectModel> _root_object;
+	SharedPtr<GraphObject> _root_object;
 	Mode                   _mode;
 	NodeMap                _node_map;
 	string                 _base_uri;

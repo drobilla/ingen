@@ -107,7 +107,7 @@ ControlPanel::add_port(SharedPtr<PortModel> pm)
 		return;
 	
 	// Add port
-	if (pm->is_control() && pm->is_input()) {
+	if (pm->type().is_control() && pm->is_input()) {
 		SliderControlGroup* cg = NULL;
 #if 0
 		if (pm->is_integer())

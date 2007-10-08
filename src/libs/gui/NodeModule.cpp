@@ -177,7 +177,7 @@ NodeModule::embed_gui(bool embed)
 					sigc::mem_fun(this, &NodeModule::gui_size_request), false));
 		
 			for (PortModelList::const_iterator p = _node->ports().begin(); p != _node->ports().end(); ++p)
-				if ((*p)->is_control() && (*p)->is_output())
+				if ((*p)->type().is_control() && (*p)->is_output())
 					App::instance().engine()->enable_port_broadcasting((*p)->path());
 
 		} else {
@@ -198,7 +198,7 @@ NodeModule::embed_gui(bool embed)
 		_minimum_width = 0; // resize() takes care of it..
 
 		for (PortModelList::const_iterator p = _node->ports().begin(); p != _node->ports().end(); ++p)
-			if ((*p)->is_control() && (*p)->is_output())
+			if ((*p)->type().is_control() && (*p)->is_output())
 				App::instance().engine()->disable_port_broadcasting((*p)->path());
 	}
 			
@@ -314,7 +314,7 @@ NodeModule::initialise_gui_values()
 {
 	uint32_t index=0;
 	for (PortModelList::const_iterator p = _node->ports().begin(); p != _node->ports().end(); ++p) {
-		if ((*p)->is_control())
+		if ((*p)->type().is_control())
 			control_change(index, (*p)->value());
 		++index;
 	}

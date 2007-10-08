@@ -141,6 +141,7 @@ NodeModel::get_port(const string& port_name) const
 Shared::Port*
 NodeModel::port(uint32_t index) const
 {
+	assert(index < num_ports());
 	return dynamic_cast<Shared::Port*>(_ports[index].get());
 }
 

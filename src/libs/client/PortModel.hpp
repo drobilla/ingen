@@ -23,10 +23,12 @@
 #include <string>
 #include <vector>
 #include <sigc++/sigc++.h>
-#include "ObjectModel.hpp"
 #include <raul/SharedPtr.hpp>
 #include <raul/Path.hpp>
-using std::string; using std::vector; using std::cerr; using std::endl;
+#include "interface/Port.hpp"
+#include "ObjectModel.hpp"
+
+using std::string; using std::vector;
 
 namespace Ingen {
 namespace Client {
@@ -36,20 +38,16 @@ namespace Client {
  *
  * \ingroup IngenClient
  */
-class PortModel : public ObjectModel
+class PortModel : public ObjectModel, public Shared::Port
 {
 public:
 	enum Direction { INPUT, OUTPUT };
 	
-	inline string type()           const { return _type; }
-	inline float  value()          const { return _current_val; }
-	inline bool   connected()      const { return (_connections > 0); }
-	inline bool   is_input()       const { return (_direction == INPUT); }
-	inline bool   is_output()      const { return (_direction == OUTPUT); }
-	inline bool   is_audio()       const { return (_type == "ingen:AudioPort"); }
-	inline bool   is_control()     const { return (_type == "ingen:ControlPort"); }
-	inline bool   is_midi()        const { return (_type == "ingen:MidiPort"); }
-	inline bool   is_osc()         const { return (_type == "ingen:OSCPort"); }
+	inline DataType type()      const { return _type; }
+	inline Atom     value()     const { return Atom(_current_val); }
+	inline bool     connected() const { return (_connections > 0); }
+	inline bool     is_input()  const { return (_direction == INPUT); }
+	inline bool     is_output() const { return (_direction == OUTPUT); }
 	
 	bool is_logarithmic() const;
 	bool is_integer()     const;
@@ -76,15 +74,15 @@ public:
 private:
 	friend class Store;
 	
-	PortModel(const Path& path, const string& type, Direction dir)
+	PortModel(const Path& path, DataType type, Direction dir)
 	: ObjectModel(path, true),
 	  _type(type),
 	  _direction(dir),
 	  _current_val(0.0f),
 	  _connections(0)
 	{
-		if (!is_audio() && !is_control() && !is_input())
-			cerr << "[PortModel] Warning: Unknown port type" << endl;
+		if (_type == DataType::UNKNOWN)
+			std::cerr << "[PortModel] Warning: Unknown port type" << std::endl;
 	}
 	
 	void add_child(SharedPtr<ObjectModel> c)    { throw; }
@@ -93,7 +91,7 @@ private:
 	void connected_to(SharedPtr<PortModel> p)      { ++_connections; signal_connection.emit(p); }
 	void disconnected_from(SharedPtr<PortModel> p) { --_connections; signal_disconnection.emit(p); }
 	
-	string    _type;
+	DataType  _type;
 	Direction _direction;
 	float     _current_val;
 	size_t    _connections;

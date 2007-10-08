@@ -215,8 +215,9 @@ Loader::load(SharedPtr<EngineInterface> engine,
 			"SELECT DISTINCT ?port ?type ?name ?datatype ?floatkey ?floatval ?portval WHERE {\n") +
 			patch_uri + " ingen:port     ?port .\n"
 			"?port        a              ?type ;\n"
-			"             ingen:name     ?name ;\n"
-			"             ingen:dataType ?datatype .\n"
+			"             a              ?datatype ;\n"
+			"             ingen:name     ?name .\n"
+			" FILTER (?type != ?datatype && ((?type = ingen:InputPort) || (?type = ingen:OutputPort)))\n"
 			"OPTIONAL { ?port ?floatkey ?floatval . \n"
 			"           FILTER ( datatype(?floatval) = xsd:decimal ) }\n"
 			"OPTIONAL { ?port ingen:value ?portval . \n"
@@ -228,12 +229,11 @@ Loader::load(SharedPtr<EngineInterface> engine,
 	for (RDF::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
 		const string name     = (*i)["name"].to_string();
 		const string type     = rdf_world->qualify((*i)["type"].to_string());
-		const string datatype = (*i)["datatype"].to_string();
+		const string datatype = rdf_world->qualify((*i)["datatype"].to_string());
 
 		const Path port_path = patch_path.base() + (string)name;
-
+			
 		if (created.find(port_path) == created.end()) {
-			//cerr << "TYPE: " << type << endl;
 			bool is_output = (type == "ingen:OutputPort"); // FIXME: check validity
 			engine->create_port(port_path, datatype, is_output);
 			created.insert(port_path);

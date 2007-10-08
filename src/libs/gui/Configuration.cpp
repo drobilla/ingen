@@ -87,20 +87,20 @@ Configuration::get_port_color(const PortModel* p)
 {
 	assert(p != NULL);
 
-	if (p->is_control()) {
+	if (p->type().is_control()) {
 		return _control_port_color;
-	} else if (p->is_audio()) {
+	} else if (p->type().is_audio()) {
 		return _audio_port_color;
-	} else if (p->is_midi()) {
+	} else if (p->type().is_midi()) {
 		return _midi_port_color;
-	} else if (p->is_osc()) {
+	} else if (p->type().is_osc()) {
 		return _osc_port_color;
 	}
 	
-	cerr << "[Configuration] Unknown port type " << p->type() << ", port will appear bright red."
-		<< endl;
+	cerr << "[Configuration] Unknown port type " << p->type().uri()
+		<< ", port will appear black." << endl;
 	
-	return 0xFF0000B0;
+	return 0x000000FF;
 }
 
 

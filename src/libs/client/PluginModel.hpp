@@ -62,22 +62,6 @@ public:
 	const string& name() const                { return _name; }
 	void          name(const string& s)       { _name = s; }
 	
-	/*const char* const type_string() const {
-		if (_type == LV2) return "LV2";
-		else if (_type == LADSPA) return "LADSPA";
-		else if (_type == Internal) return "Internal";
-		else if (_type == Patch) return "Patch";
-		else return "";
-	}*/
-
-	const char* const type_uri() const {
-		if (_type == LV2) return "ingen:LV2";
-		else if (_type == LADSPA) return "ingen:LADSPA";
-		else if (_type == Internal) return "ingen:Internal";
-		else if (_type == Patch) return "ingen:Patch";
-		else return "";
-	}
-	
 	/** DEPRECATED */
 	void set_type(const string& type_string) {
 		if (type_string == "LV2") _type = LV2;
