@@ -75,7 +75,7 @@ private:
 		switch (symbol_num) {
 		case 1:  return "ingen:AudioPort";
 		case 2:  return "ingen:ControlPort";
-		case 3:  return "ingen:MidiPort";
+		case 3:  return "ingen:MIDIPort";
 		case 4:  return "ingen:OSCPort";
 		default: return "";
 		}

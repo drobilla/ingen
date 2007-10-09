@@ -271,7 +271,7 @@ void OSCClientSender::new_node(const std::string&   plugin_uri,
 /** \page client_osc_namespace
  * <p> \b /ingen/new_port - Notification of a new port's creation.
  * \arg \b path (string) - Path of new port
- * \arg \b data-type (string) - Type of port (ingen:audio, ingen:control, ingen:midi, or ingen:osc)
+ * \arg \b data-type (string) - Type of port (ingen:AudioPort, ingen:ControlPort, ingen:MIDIPort, or ingen:OSCPort)
  * \arg \b direction ("is-output") (integer) - Direction of data flow (Input = 0, Output = 1)
  *
  * \li Note that in the event of loading a patch, this message could be

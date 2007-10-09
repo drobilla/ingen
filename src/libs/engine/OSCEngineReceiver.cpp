@@ -476,7 +476,7 @@ OSCEngineReceiver::_set_polyphonic_cb(const char* path, const char* types, lo_ar
  * <p> \b /ingen/create_port - Add a port into a given patch (load a plugin by URI)
  * \arg \b response-id (integer)
  * \arg \b path (string) - Full path of the new port (ie. /patch2/subpatch/newport)
- * \arg \b data-type (string) - Data type for port to contain ("ingen:audio", "ingen:control", "ingen:midi", or "ingen:osc")
+ * \arg \b data-type (string) - Type of port (ingen:AudioPort, ingen:ControlPort, ingen:MIDIPort, or ingen:OSCPort)
  * \arg \b direction ("is-output") (integer) - Direction of data flow (Input = 0, Output = 1) </p> \n \n
  */
 int

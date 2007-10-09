@@ -87,10 +87,10 @@ PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 			"control_output", "ingen:ControlPort", true));
 	_menu_add_midi_input->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
-			"midi_input", "ingen:MidiPort", false));
+			"midi_input", "ingen:MIDIPort", false));
 	_menu_add_midi_output->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
-			"midi_output", "ingen:MidiPort", true));
+			"midi_output", "ingen:MIDIPort", true));
 	_menu_add_osc_input->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
 			"osc_input", "ingen:OSCPort", false));

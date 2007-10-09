@@ -390,10 +390,10 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 				_engine->create_port(path, "ingen:ControlPort", true);
 				is_port = true;
 			} else if (plugin_label == "midi_input") {
-				_engine->create_port(path, "ingen:MidiPort", false);
+				_engine->create_port(path, "ingen:MIDIPort", false);
 				is_port = true;
 			} else if (plugin_label == "midi_output" ) {
-				_engine->create_port(path, "ingen:MidiPort", true);
+				_engine->create_port(path, "ingen:MIDIPort", true);
 				is_port = true;
 			}
 		}
