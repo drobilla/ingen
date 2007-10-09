@@ -58,13 +58,13 @@ public:
 private:
 	enum ErrorType { NO_ERROR, PORT_NOT_FOUND, NO_SPACE };
 	
-	bool      _omni;
-	uint32_t  _voice_num;
-	string    _port_path;
-	uint32_t  _data_size;
-	void*     _data;
-	PortImpl* _port;
-	ErrorType _error;
+	bool         _omni;
+	uint32_t     _voice_num;
+	const string _port_path;
+	uint32_t     _data_size;
+	void*        _data;
+	PortImpl*    _port;
+	ErrorType    _error;
 };
 
 

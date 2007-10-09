@@ -16,6 +16,7 @@
  */
 
 #include <sstream>
+#include "lv2_osc_print.h"
 #include "Responder.hpp"
 #include "SetPortValueEvent.hpp"
 #include "Engine.hpp"
@@ -25,6 +26,7 @@
 #include "ObjectStore.hpp"
 #include "AudioBuffer.hpp"
 #include "MidiBuffer.hpp"
+#include "OSCBuffer.hpp"
 #include "ProcessContext.hpp"
 
 using namespace std;
@@ -111,6 +113,14 @@ SetPortValueEvent::execute(ProcessContext& context)
 		if (mbuf) {
 			const double stamp = std::max((double)(_time - context.start()), mbuf->latest_stamp());
 			mbuf->append(stamp, _data_size, (const unsigned char*)_data);
+			return;
+		}
+		
+		OSCBuffer* const obuf = dynamic_cast<OSCBuffer*>(buf);
+		if (obuf) {
+			//cerr << "Appending OSC message:" << endl;
+			//lv2_osc_message_print((LV2Message*)_data);
+			lv2_osc_buffer_append_message(obuf->data(), (LV2Message*)_data);
 		}
 	}
 }

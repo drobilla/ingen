@@ -79,7 +79,7 @@ ObjectStore::add(GraphObjectImpl* o)
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
 
-	cerr << "[ObjectStore] Adding " << o->path() << endl;
+	//cerr << "[ObjectStore] Adding " << o->path() << endl;
 	_objects.insert(make_pair(o->path(), o));
 
 	NodeImpl* node = dynamic_cast<NodeImpl*>(o);
@@ -101,10 +101,10 @@ ObjectStore::add(const Table<Path, SharedPtr<Shared::GraphObject> >& table)
 	//cerr << "[ObjectStore] Adding " << o[0].second->path() << endl;
 	_objects.cram(table);
 	
-	cerr << "[ObjectStore] Adding Table:" << endl;
+	/*cerr << "[ObjectStore] Adding Table:" << endl;
 	for (Objects::const_iterator i = table.begin(); i != table.end(); ++i) {
 		cerr << i->first << " = " << i->second->path() << endl;
-	}
+	}*/
 }
 
 
@@ -132,7 +132,7 @@ ObjectStore::remove(Objects::iterator object)
 	
 	if (object != _objects.end()) {
 		Objects::iterator descendants_end = _objects.find_descendants_end(object);
-		cout << "[ObjectStore] Removing " << object->first << " {" << endl;
+		//cout << "[ObjectStore] Removing " << object->first << " {" << endl;
 		Table<Path, SharedPtr<Shared::GraphObject> > removed = _objects.yank(object, descendants_end);
 		for (Objects::iterator i = removed.begin(); i != removed.end(); ++i) {
 			cout << "\t" << i->first << endl;

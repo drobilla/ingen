@@ -10,6 +10,7 @@ libingen_engine_la_CXXFLAGS = \
 	-I$(top_srcdir)/ingen/src/common \
 	-I$(top_srcdir)/ingen/src/libs \
 	-I$(top_srcdir)/ingen/src/libs/engine/events \
+	-I$(top_srcdir)/lv2/extensions/osc \
 	@JACK_CFLAGS@ @LIBLO_CFLAGS@ @ALSA_CFLAGS@ @LASH_CFLAGS@ @GLIBMM_CFLAGS@
 
 libingen_engine_la_LDFLAGS = -no-undefined -module -avoid-version

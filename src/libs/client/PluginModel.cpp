@@ -17,6 +17,7 @@
 
 #include <sstream>
 #include <raul/Path.hpp>
+#include "lv2_osc_print.h"
 #include "PluginModel.hpp"
 #include "PatchModel.hpp"
 
@@ -63,14 +64,31 @@ struct NodeController {
 
 void
 lv2_ui_write(LV2UI_Controller controller,
-             uint32_t         port,
+             uint32_t         port_index,
              uint32_t         buffer_size,
              const void*      buffer)
 {
+	/*cerr << "********* LV2 UI WRITE:" << endl;
+	lv2_osc_message_print((const LV2Message*)buffer);
+
+	fprintf(stderr, "RAW:\n");
+	for (uint32_t i=0; i < buffer_size; ++i) {
+		unsigned char byte = ((unsigned char*)buffer)[i];
+		if (byte >= 32 && byte <= 126)
+			fprintf(stderr, "%c  ", ((unsigned char*)buffer)[i]);
+		else
+			fprintf(stderr, "%2X ", ((unsigned char*)buffer)[i]);
+	}
+	
+	fprintf(stderr, "\n");
+	*/
+
 	NodeController* nc = (NodeController*)controller;
 
-	nc->engine->set_port_value_immediate(nc->node->ports()[port]->path(),
-			"ingen:midi", buffer_size, buffer);
+	SharedPtr<PortModel> port = nc->node->ports()[port_index];
+
+	nc->engine->set_port_value_immediate(port->path(),
+			port->type().uri(), buffer_size, buffer);
 }
 
 

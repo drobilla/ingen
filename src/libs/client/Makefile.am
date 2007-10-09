@@ -9,6 +9,7 @@ libingen_client_la_CXXFLAGS = \
 	-I$(top_srcdir)/slv2 \
 	-I$(top_srcdir)/raul \
 	-I$(top_srcdir)/ingen/src/common \
+	-I$(top_srcdir)/lv2/extensions/osc \
 	-DPKGDATADIR=\"$(pkgdatadir)\" \
 	@LIBLO_CFLAGS@ \
 	@LXML2_CFLAGS@ @RASQAL_CFLAGS@ @RAPTOR_CFLAGS@ \

@@ -111,7 +111,8 @@ NodeModule::control_change(uint32_t index, float control)
 	if (_slv2_ui) {
 		const LV2UI_Descriptor* const ui_descriptor = slv2_ui_instance_get_descriptor(_slv2_ui);
 		LV2UI_Handle ui_handle = slv2_ui_instance_get_handle(_slv2_ui);
-		ui_descriptor->port_event(ui_handle, index, 4, &control);
+		if (ui_descriptor->port_event)
+			ui_descriptor->port_event(ui_handle, index, 4, &control);
 	}
 }
 
@@ -190,9 +191,11 @@ NodeModule::embed_gui(bool embed)
 			_gui_item = NULL;
 		}
 
-		slv2_ui_instance_free(_slv2_ui);
-		_slv2_ui = NULL;
-		_gui = NULL;
+		if (_slv2_ui) {
+			slv2_ui_instance_free(_slv2_ui);
+			_slv2_ui = NULL;
+			_gui = NULL;
+		}
 
 		_ports_y_offset = 0;
 		_minimum_width = 0; // resize() takes care of it..

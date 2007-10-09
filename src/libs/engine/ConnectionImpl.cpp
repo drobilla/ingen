@@ -54,7 +54,7 @@ ConnectionImpl::ConnectionImpl(PortImpl* src_port, PortImpl* dst_port)
 	/*assert((src_port->parent_node()->poly() == dst_port->parent_node()->poly())
 		|| (src_port->parent_node()->poly() == 1 || dst_port->parent_node()->poly() == 1));*/
 
-	if (type() == DataType::MIDI)
+	if (type() == DataType::MIDI || type() == DataType::OSC)
 		_must_mix = false; // FIXME: kludge
 
 	if (_must_mix)
@@ -163,6 +163,10 @@ ConnectionImpl::process(ProcessContext& context)
 	} else if (_must_mix && type() == DataType::MIDI) {
 
 		cerr << "WARNING: No MIDI mixing." << endl;
+	
+	} else if (_must_mix && type() == DataType::OSC) {
+
+		cerr << "WARNING: No OSC mixing." << endl;
 	
 	}
 

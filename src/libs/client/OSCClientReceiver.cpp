@@ -35,7 +35,7 @@ OSCClientReceiver::OSCClientReceiver(int listen_port)
   _listen_port(listen_port),
   _st(NULL)
 {
-	start(false);
+	start(false); // true = dump, false = shutup
 }
 
 
