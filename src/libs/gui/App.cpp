@@ -24,6 +24,7 @@
 #include <time.h>
 #include <sys/time.h>
 #include <raul/Path.hpp>
+#include <flowcanvas/Connection.hpp>
 #include "module/global.hpp"
 #include "module/Module.hpp"
 #include "module/World.hpp"
@@ -219,6 +220,14 @@ App::port_activity(Port* port)
 	std::pair<ActivityPorts::iterator, bool> inserted = _activity_ports.insert(make_pair(port, false));
 	if (inserted.second)
 		inserted.first->second = false;
+
+	if (port->is_output()) {
+		for (Port::Connections::const_iterator i = port->connections().begin(); i != port->connections().end(); ++i) {
+			const SharedPtr<Port> dst = PtrCast<Port>(i->lock()->dest().lock());
+			if (dst)
+				port_activity(dst.get());
+		}
+	}
 
 	port->set_highlighted(true, false, true, false);
 }
