@@ -77,10 +77,12 @@ RenameEvent::pre_process()
 		return;
 	}
 
-	Table<Path, SharedPtr<Shared::GraphObject> > removed = _engine.object_store()->remove(_store_iterator);
-	assert(removed.size() > 0);
+	SharedPtr< Table<Path, SharedPtr<Shared::GraphObject> > > removed
+			= _engine.object_store()->remove(_store_iterator);
+
+	assert(removed->size() > 0);
 	
-	for (Table<Path, SharedPtr<Shared::GraphObject> >::iterator i = removed.begin(); i != removed.end(); ++i) {
+	for (Table<Path, SharedPtr<Shared::GraphObject> >::iterator i = removed->begin(); i != removed->end(); ++i) {
 		const Path& child_old_path = i->first;
 		assert(Path::descendant_comparator(_old_path, child_old_path));
 		
@@ -94,7 +96,7 @@ RenameEvent::pre_process()
 		i->first = child_new_path;
 	}
 
-	_engine.object_store()->add(removed);
+	_engine.object_store()->add(*removed.get());
 
 	QueuedEvent::pre_process();
 }

@@ -104,9 +104,9 @@ ThreadedLoader::load_patch(bool                    merge,
 				engine_data )));
 	}
 	
-	_mutex.unlock();
-
 	whip();
+	
+	_mutex.unlock();
 }
 
 

@@ -154,7 +154,7 @@ Serialiser::path_to_node_id(const Path& path)
 		assert(i->second.get_node());
 		return i->second;
 	} else {
-		RDF::Node id = _world.blank_id();
+		RDF::Node id = _world.blank_id(path.name());
 		assert(id);
 		_node_map[path] = id;
 		return id;
@@ -286,6 +286,10 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch)
 	serialise_variables(patch_id, patch->variables());
 
 	for (GraphObject::const_iterator n = patch->children_begin(); n != patch->children_end(); ++n) {
+		
+		if (n->second->graph_parent() != patch.get())
+			continue;
+
 		SharedPtr<Shared::Patch> patch = PtrCast<Shared::Patch>(n->second);
 		SharedPtr<Shared::Node>  node  = PtrCast<Shared::Node>(n->second);
 		if (patch) {

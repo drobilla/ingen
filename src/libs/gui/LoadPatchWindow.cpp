@@ -116,6 +116,9 @@ LoadPatchWindow::poly_from_user_selected()
 void
 LoadPatchWindow::ok_clicked()
 {
+	if (!_patch)
+		return;
+
 	// If unset load_patch will load value
 	optional<const string&> name;
 	
@@ -129,11 +132,12 @@ LoadPatchWindow::ok_clicked()
 
 	if (_patch->path() != "/")
 		parent = _patch->path().parent();
+	
+	_patch.reset();
+	hide();
 
 	App::instance().loader()->load_patch(true, get_uri(), "/",
 		_initial_data, parent, name);
-	
-	hide();
 }			
 
 

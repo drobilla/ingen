@@ -199,7 +199,7 @@ PatchCanvas::build()
 	for (ObjectModel::const_iterator i = _patch->children_begin();
 			i != _patch->children_end(); ++i) {
 		SharedPtr<NodeModel> node = PtrCast<NodeModel>(i->second);
-		if (node)
+		if (node && node->parent() == _patch)
 			add_node(node);
 	}
 

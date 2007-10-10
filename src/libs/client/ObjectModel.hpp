@@ -68,6 +68,8 @@ public:
 	const string           name()       const { return _path.name(); }
 	SharedPtr<ObjectModel> parent()     const { return _parent; }
 	bool                   polyphonic() const { return _polyphonic; }
+	
+	GraphObject* graph_parent() const { return _parent.get(); }
 
 	const_iterator                 children_begin() const;
 	const_iterator                 children_end() const;

@@ -65,7 +65,7 @@ private:
 	GraphObject::Variables _initial_data;
 
 	SharedPtr<PatchModel> _patch;
-	bool                   _replace;
+	bool                  _replace;
 
 	Gtk::RadioButton* _poly_from_current_radio;
 	Gtk::RadioButton* _poly_from_file_radio;

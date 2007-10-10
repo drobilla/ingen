@@ -55,6 +55,8 @@ public:
 	bool         polyphonic() const                       { return _polyphonic; }
 	virtual void set_polyphonic(Raul::Maid& maid, bool p) { _polyphonic = p; }
 	
+	GraphObject* graph_parent() const { return _parent; }
+	
 	inline GraphObjectImpl* parent() const { return _parent; }
 	const string name()   const { return _name; }
 	

@@ -60,8 +60,8 @@ public:
 	void add(const Table<Path, SharedPtr<Shared::GraphObject> >& family);
 	//void add(TreeNode<GraphObjectImpl*>* o);
 
-	Table<Path, SharedPtr<Shared::GraphObject> > remove(const Path& path);
-	Table<Path, SharedPtr<Shared::GraphObject> > remove(Objects::iterator i);
+	SharedPtr< Table<Path, SharedPtr<Shared::GraphObject> > > remove(const Path& path);
+	SharedPtr< Table<Path, SharedPtr<Shared::GraphObject> > > remove(Objects::iterator i);
 
 	const Objects& objects() const { return _objects; }
 	Objects&       objects()       { return _objects; }

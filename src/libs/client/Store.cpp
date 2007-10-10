@@ -272,7 +272,9 @@ Store::remove_object(const Path& path)
 		assert(result);
 		//_objects.erase(i);
 		Objects::iterator descendants_end = _objects.find_descendants_end(i);
-		Table<Path, SharedPtr<Shared::GraphObject> > removed = _objects.yank(i, descendants_end);
+		SharedPtr< Table<Path, SharedPtr<Shared::GraphObject> > > removed
+				= _objects.yank(i, descendants_end);
+
 		/*cout << "[Store] Removing " << i->first << " {" << endl;
 		for (Objects::iterator i = removed.begin(); i != removed.end(); ++i) {
 			cout << "\t" << i->first << endl;
@@ -365,11 +367,12 @@ Store::rename_event(const Path& old_path, const Path& new_path)
 
 	Objects::iterator descendants_end = _objects.find_descendants_end(parent);
 	
-	Table<Path, SharedPtr<Shared::GraphObject> > removed = _objects.yank(parent, descendants_end);
+	SharedPtr< Table<Path, SharedPtr<Shared::GraphObject> > > removed
+			= _objects.yank(parent, descendants_end);
 	
-	assert(removed.size() > 0);
+	assert(removed->size() > 0);
 
-	for (Table<Path, SharedPtr<Shared::GraphObject> >::iterator i = removed.begin(); i != removed.end(); ++i) {
+	for (Table<Path, SharedPtr<Shared::GraphObject> >::iterator i = removed->begin(); i != removed->end(); ++i) {
 		const Path& child_old_path = i->first;
 		assert(Path::descendant_comparator(old_path, child_old_path));
 		
@@ -384,7 +387,7 @@ Store::rename_event(const Path& old_path, const Path& new_path)
 		i->first = child_new_path;
 	}
 
-	_objects.cram(removed);
+	_objects.cram(*removed.get());
 
 	//cerr << "[Store] Table:" << endl;
 	//for (size_t i=0; i < removed.size(); ++i) {
@@ -482,7 +485,8 @@ Store::patch_cleared_event(const Path& path)
 	SharedPtr<PatchModel> patch = PtrCast<PatchModel>(object(path));
 	if (patch)
 		for (ObjectModel::const_iterator i = patch->children_begin(); i != patch->children_end(); ++i)
-			destruction_event(i->second->path());
+			if (i->second->graph_parent() == patch.get())
+				destruction_event(i->second->path());
 }
 
 

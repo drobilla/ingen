@@ -113,7 +113,7 @@ ObjectStore::add(const Table<Path, SharedPtr<Shared::GraphObject> >& table)
  * Returned is a vector containing all descendants of the object removed
  * including the object itself, in lexicographically sorted order by Path.
  */
-Table<Path, SharedPtr<Shared::GraphObject> >
+SharedPtr< Table<Path, SharedPtr<Shared::GraphObject> > >
 ObjectStore::remove(const Path& path)
 {
 	return remove(_objects.find(path));
@@ -125,7 +125,7 @@ ObjectStore::remove(const Path& path)
  * Returned is a vector containing all descendants of the object removed
  * including the object itself, in lexicographically sorted order by Path.
  */
-Table<Path, SharedPtr<Shared::GraphObject> >
+SharedPtr< Table<Path, SharedPtr<Shared::GraphObject> > >
 ObjectStore::remove(Objects::iterator object)
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
@@ -133,8 +133,10 @@ ObjectStore::remove(Objects::iterator object)
 	if (object != _objects.end()) {
 		Objects::iterator descendants_end = _objects.find_descendants_end(object);
 		//cout << "[ObjectStore] Removing " << object->first << " {" << endl;
-		Table<Path, SharedPtr<Shared::GraphObject> > removed = _objects.yank(object, descendants_end);
-		for (Objects::iterator i = removed.begin(); i != removed.end(); ++i) {
+		SharedPtr< Table<Path, SharedPtr<Shared::GraphObject> > > removed
+				= _objects.yank(object, descendants_end);
+
+		for (Objects::iterator i = removed->begin(); i != removed->end(); ++i) {
 			cout << "\t" << i->first << endl;
 		}
 		cout << "}" << endl;
@@ -143,7 +145,7 @@ ObjectStore::remove(Objects::iterator object)
 
 	} else {
 		cerr << "[ObjectStore] WARNING: Removing " << object->first << " failed." << endl;
-		return Objects();
+		return SharedPtr<Objects>();
 	}
 }
 

@@ -47,7 +47,7 @@ Loader::load(SharedPtr<EngineInterface> engine,
 		boost::optional<Path>           parent,
 		string                          patch_name,
 		Glib::ustring                   patch_uri,
-		GraphObject::Variables        data)
+		GraphObject::Variables          data)
 {
 	setlocale(LC_NUMERIC, "C");
 
@@ -62,8 +62,7 @@ Loader::load(SharedPtr<EngineInterface> engine,
 	else
 		patch_uri = string("<") + patch_uri + ">";
 
-	cerr << "[Loader] Loading " << patch_uri << " from " << document_uri
-		<< " under " << (string)(parent ? (string)parent.get() : "no parent") << endl;
+	cout << "[Loader] Loading " << patch_uri;
 
 	size_t patch_poly = 1;
 	
@@ -108,11 +107,11 @@ Loader::load(SharedPtr<EngineInterface> engine,
 			patch_name = (*results.begin())["name"].to_string();
 	}
 
-	Path patch_path = ( parent ? (parent.get().base() + patch_name) : Path("/") );
-	//cerr << "************ PATCH: name=" << patch_name << ", path=" << patch_path
-	//	<< ", poly = " << patch_poly << endl;
+	const Path patch_path = ( parent ? (parent.get().base() + patch_name) : Path("/") );
+	
+	cout << " as " << patch_path << endl;
+	
 	engine->create_patch(patch_path, patch_poly);
-
 
 	/* Load (plugin) nodes */
 

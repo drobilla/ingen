@@ -39,7 +39,6 @@ DestroyEvent::DestroyEvent(Engine& engine, SharedPtr<Responder> responder, Frame
 : QueuedEvent(engine, responder, time, source, source),
   _path(path),
   _store_iterator(engine.object_store()->objects().end()),
-  _removed_table(NULL),
   _driver_port(NULL),
   _patch_node_listnode(NULL),
   _patch_port_listnode(NULL),

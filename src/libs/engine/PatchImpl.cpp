@@ -54,17 +54,6 @@ PatchImpl::~PatchImpl()
 {
 	assert(!_activated);
 	
-	for (Connections::iterator i = _connections.begin(); i != _connections.end(); ++i) {
-		(*i).reset();
-		delete _connections.erase(i);
-	}
-
-	for (List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
-		assert(!(*i)->activated());
-		delete (*i);
-		delete _nodes.erase(i);
-	}
-
 	delete _compiled_patch;
 }
 
