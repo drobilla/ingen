@@ -71,7 +71,7 @@ load_module(const string& name)
 	// Try default directory if not found
 	module = new Glib::Module(
 			Glib::Module::build_path(INGEN_MODULE_DIR, name),
-            Glib::MODULE_BIND_LAZY|Glib::MODULE_BIND_LOCAL);
+            Glib::MODULE_BIND_LAZY);
 
 	if (*module) {
 		return SharedPtr<Glib::Module>(module);

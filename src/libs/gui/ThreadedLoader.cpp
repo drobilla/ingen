@@ -128,7 +128,8 @@ ThreadedLoader::save_patch(SharedPtr<PatchModel> model, const string& filename)
 void
 ThreadedLoader::save_patch_event(SharedPtr<PatchModel> model, const string& filename)
 {
-	App::instance().serialiser()->to_file(model, filename);
+	if (App::instance().serialiser())
+		App::instance().serialiser()->to_file(model, filename);
 }
 
 
