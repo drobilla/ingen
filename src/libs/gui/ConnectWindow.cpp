@@ -108,31 +108,13 @@ ConnectWindow::ConnectWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::
 void
 ConnectWindow::start(SharedPtr<Ingen::Engine> engine, SharedPtr<Shared::EngineInterface> interface)
 {
+	set_connected_to(interface);
+
 	if (engine) {
 		_engine = engine;
 		_mode = INTERNAL;
+		_internal_radio->set_active(true);
 	}
-
-	set_connected_to(interface);
-	
-#if 0
-	if (engine) {
-		
-		Glib::signal_timeout().connect(
-			sigc::mem_fun(engine.get(), &Ingen::Engine::main_iteration), 1000);
-		
-		ThreadedSigClientInterface* tsci = new ThreadedSigClientInterface(Ingen::event_queue_size);
-		SharedPtr<SigClientInterface> client(tsci);
-		
-		Glib::signal_timeout().connect(
-			sigc::mem_fun(tsci, &ThreadedSigClientInterface::emit_signals), 10, G_PRIORITY_HIGH_IDLE);
-		
-		if (interface)
-			App::instance().attach(interface, client);
-		
-		_connect_stage = 0;
-	}
-#endif
 
 	show();
 	connect();
@@ -208,12 +190,12 @@ ConnectWindow::connect()
 		OSCSigEmitter* ose = new OSCSigEmitter(1024, 16181); // FIXME: args
 		SharedPtr<ThreadedSigClientInterface> client(ose);
 		App::instance().attach(engine, client);
+		
+		Glib::signal_timeout().connect(
+			sigc::mem_fun(App::instance(), &App::gtk_main_iteration), 40, G_PRIORITY_DEFAULT);
 
 		Glib::signal_timeout().connect(
 			sigc::mem_fun(this, &ConnectWindow::gtk_callback), 100);
-		
-		Glib::signal_timeout().connect(
-			sigc::mem_fun(ose, &ThreadedSigClientInterface::emit_signals), 10, G_PRIORITY_HIGH_IDLE);
 
 	} else if (_mode == LAUNCH_REMOTE) {
 
@@ -229,13 +211,13 @@ ConnectWindow::connect()
 		OSCSigEmitter* ose = new OSCSigEmitter(1024, 16181); // FIXME: args
 		SharedPtr<ThreadedSigClientInterface> client(ose);
 		App::instance().attach(engine, client);
+		
+		Glib::signal_timeout().connect(
+			sigc::mem_fun(App::instance(), &App::gtk_main_iteration), 40, G_PRIORITY_DEFAULT);
 
 		Glib::signal_timeout().connect(
 				sigc::mem_fun(this, &ConnectWindow::gtk_callback), 100);
 
-		Glib::signal_timeout().connect(
-				sigc::mem_fun(ose, &ThreadedSigClientInterface::emit_signals),
-				10, G_PRIORITY_HIGH_IDLE);
 		} else {
 			cerr << "Failed to launch ingen process." << endl;
 		}
@@ -247,8 +229,7 @@ ConnectWindow::connect()
 		
 		SharedPtr<Ingen::EngineInterface> engine_interface = _engine->new_queued_interface();
 
-		SharedPtr<ThreadedSigClientInterface> client(
-				new ThreadedSigClientInterface(Ingen::event_queue_size));
+		SharedPtr<SigClientInterface> client(new SigClientInterface());
 		
 		_engine->start_jack_driver();
 		_engine->activate(1); // FIXME: parallelism
@@ -256,7 +237,7 @@ ConnectWindow::connect()
 		App::instance().attach(engine_interface, client);
 
 		Glib::signal_timeout().connect(
-			sigc::mem_fun(App::instance(), &App::gtk_main_iteration), 100);
+			sigc::mem_fun(App::instance(), &App::gtk_main_iteration), 40, G_PRIORITY_DEFAULT);
 		
 		Glib::signal_timeout().connect(
 			sigc::mem_fun(this, &ConnectWindow::gtk_callback), 100);
@@ -375,29 +356,15 @@ ConnectWindow::gtk_callback()
 			}
 		}
 	} else if (_connect_stage == 2) {
-		_progress_label->set_text(string("Registering as client..."));
-		//App::instance().engine()->register_client(App::instance().engine()->client_hooks());
-		// FIXME
-		//auto_ptr<ClientInterface> client(new ThreadedSigClientInterface();
-		// FIXME: client URI
-		//App::instance().engine()->register_client(App::instance().client().get());
+		_progress_label->set_text(string("Loading plugins..."));
 		App::instance().engine()->load_plugins();
 		++_connect_stage;
 	} else if (_connect_stage == 3) {
-		// Register idle callback to process events and whatnot
-		// (Gtk refreshes at priority G_PRIORITY_HIGH_IDLE+20)
-		/*Glib::signal_timeout().connect(
-			sigc::mem_fun(this, &App::idle_callback), 100, G_PRIORITY_HIGH_IDLE);*/
-		//Glib::signal_idle().connect(sigc::mem_fun(this, &App::idle_callback));
-	/*	Glib::signal_timeout().connect(
-			sigc::mem_fun((ThreadedSigClientInterface*)_client, &ThreadedSigClientInterface::emit_signals),
-			5, G_PRIORITY_DEFAULT_IDLE);*/
-		
 		_progress_label->set_text(string("Requesting plugins..."));
 		App::instance().engine()->request_plugins();
 		++_connect_stage;
 	} else if (_connect_stage == 4) {
-		// Wait for first plugins message
+		// Wait for first plugin message
 		if (App::instance().store()->plugins().size() > 0) {
 			_progress_label->set_text(string("Receiving plugins..."));
 			++_connect_stage;

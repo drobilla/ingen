@@ -267,11 +267,9 @@ Engine::deactivate()
 	_process_slaves.clear();
 
 	// Finalize any lingering events (unlikely)
-	//_post_processor->whip();
-	//_post_processor->stop();
+	_post_processor->process();
 
 	_audio_driver.reset();
-
 	_event_source.reset();
 	
 	_activated = false;

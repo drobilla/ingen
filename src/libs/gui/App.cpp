@@ -170,7 +170,7 @@ App::run(int argc, char** argv,
 
 
 void
-App::attach(SharedPtr<EngineInterface> engine, SharedPtr<ThreadedSigClientInterface> client)
+App::attach(SharedPtr<EngineInterface> engine, SharedPtr<SigClientInterface> client)
 {
 	assert( ! _engine);
 	assert( ! _client);
@@ -185,9 +185,6 @@ App::attach(SharedPtr<EngineInterface> engine, SharedPtr<ThreadedSigClientInterf
 	_loader = SharedPtr<ThreadedLoader>(new ThreadedLoader(engine));
 
 	_patch_tree_window->init(*_store);
-		
-	Glib::signal_timeout().connect(sigc::mem_fun(this, &App::animate_callback),
-			100, G_PRIORITY_DEFAULT_IDLE);
 }
 
 
@@ -235,7 +232,7 @@ App::port_activity(Port* port)
 
 
 bool
-App::animate_callback()
+App::animate()
 {
 	for (ActivityPorts::iterator i = _activity_ports.begin(); i != _activity_ports.end() ; ) {
 		ActivityPorts::iterator next = i;
@@ -254,21 +251,6 @@ App::animate_callback()
 	return true;
 }
 
-
-/*
-bool
-App::idle_callback()
-{	
-	_client_hooks->process_events();
-
-#ifdef HAVE_LASH
-	//if (lash_controller->enabled())
-	//	lash_controller->process_events();
-#endif
-	
-	return true;
-}
-*/
 
 
 /******** Event Handlers ************/
@@ -351,11 +333,17 @@ App::event_save_session_as()
 bool
 App::gtk_main_iteration()
 {
-	if (_world->local_engine)
-		_world->local_engine->main_iteration();
-	
-	_client->emit_signals();
+	if (!_client)
+		return false;
 
+	if (_world->local_engine) {
+		_world->local_engine->main_iteration();
+	} else {
+		_client->emit_signals();
+	}
+		
+	animate();
+	
 	return true;
 }
 

@@ -276,7 +276,7 @@ JackAudioDriver::driver_port(const Path& path)
 int
 JackAudioDriver::_process_cb(jack_nframes_t nframes) 
 {
-	if (nframes == 0)
+	if (nframes == 0 || ! _is_activated)
 		return 0;
 
 	// FIXME: all of this time stuff is screwy

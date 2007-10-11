@@ -45,8 +45,7 @@ class ThreadedSigClientInterface : public SigClientInterface
 {
 public:
 	ThreadedSigClientInterface(uint32_t queue_size)
-	: _enabled(true)
-	, _sigs(queue_size)
+	: _sigs(queue_size)
 	, response_ok_slot(signal_response_ok.make_slot())
 	, response_error_slot(signal_response_error.make_slot())
 	, error_slot(signal_error.make_slot())
@@ -70,9 +69,6 @@ public:
 	, program_remove_slot(signal_program_remove.make_slot())
 	{}
 
-	void enable()  { _enabled = true; }
-	void disable() { _enabled = false ; }
-    
     virtual void subscribe(Shared::EngineInterface* engine) { throw; } // FIXME
 
 	// TODO: make this insert bundle-boundary-events, where the GTK thread
@@ -153,8 +149,6 @@ public:
 
 private:
 	void push_sig(Closure ev);
-	
-	bool _enabled;
 	
 	Raul::SRSWQueue<Closure> _sigs;
 	uint32_t                 _num_plugins;

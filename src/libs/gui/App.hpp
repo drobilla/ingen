@@ -41,7 +41,7 @@ namespace Ingen {
 		class PatchModel;
 		class PluginModel;
 		class Store;
-		class ThreadedSigClientInterface;
+		class SigClientInterface;
 	}
 	namespace Serialisation {
 		class Serialiser;
@@ -83,8 +83,8 @@ public:
 
 	void error_message(const string& msg);
 
-	void attach(SharedPtr<EngineInterface>            engine,
-	            SharedPtr<ThreadedSigClientInterface> client);
+	void attach(SharedPtr<EngineInterface>    engine,
+	            SharedPtr<SigClientInterface> client);
 	
 	void detach();
 	
@@ -100,11 +100,11 @@ public:
 	Configuration*     configuration()        const { return _configuration; }
 	WindowFactory*     window_factory()       const { return _window_factory; }
 	
-	const SharedPtr<EngineInterface>&            engine()     const { return _engine; }
-	const SharedPtr<ThreadedSigClientInterface>& client()     const { return _client; }
-	const SharedPtr<Store>&                      store()      const { return _store; }
-	const SharedPtr<ThreadedLoader>&             loader()     const { return _loader; }
-	const SharedPtr<Serialiser>&                 serialiser() const { return _serialiser; }
+	const SharedPtr<EngineInterface>&    engine()     const { return _engine; }
+	const SharedPtr<SigClientInterface>& client()     const { return _client; }
+	const SharedPtr<Store>&              store()      const { return _store; }
+	const SharedPtr<ThreadedLoader>&     loader()     const { return _loader; }
+	const SharedPtr<Serialiser>&         serialiser() const { return _serialiser; }
 	
 	SharedPtr<Glib::Module> serialisation_module() { return _serialisation_module; }
 
@@ -120,17 +120,17 @@ public:
 protected:
 	App(Ingen::Shared::World* world);
 	
-	bool animate_callback();
+	bool animate();
 	
 	static App* _instance;
 	
 	SharedPtr<Glib::Module> _serialisation_module;
 	
-	SharedPtr<EngineInterface>            _engine;
-	SharedPtr<ThreadedSigClientInterface> _client;
-	SharedPtr<Store>                      _store;
-	SharedPtr<ThreadedLoader>             _loader;
-	SharedPtr<Serialiser>                 _serialiser;
+	SharedPtr<EngineInterface>    _engine;
+	SharedPtr<SigClientInterface> _client;
+	SharedPtr<Store>              _store;
+	SharedPtr<ThreadedLoader>     _loader;
+	SharedPtr<Serialiser>         _serialiser;
 
 	Configuration*    _configuration;
 

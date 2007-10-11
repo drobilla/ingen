@@ -40,6 +40,7 @@ namespace Client {
 class SigClientInterface : virtual public Ingen::Shared::ClientInterface, public sigc::trackable
 {
 public:
+	SigClientInterface() : _enabled(true) {}
 
 	// Signal parameters match up directly with ClientInterface calls
 	
@@ -67,14 +68,18 @@ public:
 	sigc::signal<void, string>                             signal_port_activity; 
 	sigc::signal<void, string, uint32_t, uint32_t, string> signal_program_add; 
 	sigc::signal<void, string, uint32_t, uint32_t>         signal_program_remove; 
+	
+	/** Fire pending signals.  Only does anything on derived classes (that may queue) */
+	virtual bool emit_signals() { return false; }
 
 protected:
+	
+	bool _enabled;
 
 	// ClientInterface hooks that fire the above signals
 	
-	// FIXME: implement for this (is implemented for ThreadedSigClientInterface)
-	void enable()  { }
-	void disable() { }
+	void enable()  { _enabled = true; }
+	void disable() { _enabled = false ; }
 
 	void bundle_begin() {}
 	void bundle_end()   {}
@@ -85,67 +90,67 @@ protected:
 	void num_plugins(uint32_t num) { signal_num_plugins.emit(num); }
 
 	void response_ok(int32_t id)
-		{ signal_response_ok.emit(id); }
+		{ if (_enabled) signal_response_ok.emit(id); }
 
 	void response_error(int32_t id, const string& msg)
-		{ signal_response_error.emit(id, msg); }
+		{ if (_enabled) signal_response_error.emit(id, msg); }
 	
 	void error(const string& msg)
-		{ signal_error.emit(msg); }
+		{ if (_enabled) signal_error.emit(msg); }
 	
 	void new_plugin(const string& uri, const string& type_uri, const string& name)
-		{ signal_new_plugin.emit(uri, type_uri, name); }
+		{ if (_enabled) signal_new_plugin.emit(uri, type_uri, name); }
 	
 	void new_patch(const string& path, uint32_t poly)
-		{ signal_new_patch.emit(path, poly); }
+		{ if (_enabled) signal_new_patch.emit(path, poly); }
 	
-	void new_node(const string& plugin_uri, const string& node_path, bool is_polyphonic, uint32_t num_ports)
-		{ signal_new_node.emit(plugin_uri, node_path, is_polyphonic, num_ports); }
+	void new_node(const string& plugin_uri, const string& node_path, bool poly, uint32_t num_ports)
+		{ if (_enabled) signal_new_node.emit(plugin_uri, node_path, poly, num_ports); }
 	
 	void new_port(const string& path, const string& data_type, bool is_output)
-		{ signal_new_port.emit(path, data_type, is_output); }
+		{ if (_enabled) signal_new_port.emit(path, data_type, is_output); }
+	
+	void polyphonic(const string& path, bool polyphonic)
+		{ if (_enabled) signal_polyphonic.emit(path, polyphonic); }
 
 	void connection(const string& src_port_path, const string& dst_port_path)
-		{ signal_connection.emit(src_port_path, dst_port_path); }
+		{ if (_enabled) signal_connection.emit(src_port_path, dst_port_path); }
 
 	void object_destroyed(const string& path)
-		{ signal_object_destroyed.emit(path); }
+		{ if (_enabled) signal_object_destroyed.emit(path); }
 	
 	void patch_enabled(const string& path)
-		{ signal_patch_enabled.emit(path); }
+		{ if (_enabled) signal_patch_enabled.emit(path); }
 	
 	void patch_disabled(const string& path)
-		{ signal_patch_disabled.emit(path); }
+		{ if (_enabled) signal_patch_disabled.emit(path); }
 	
 	void patch_polyphony(const string& path, uint32_t poly)
-		{ signal_patch_polyphony.emit(path, poly); }
+		{ if (_enabled) signal_patch_polyphony.emit(path, poly); }
 
 	void patch_cleared(const string& path)
-		{ signal_patch_cleared.emit(path); }
+		{ if (_enabled) signal_patch_cleared.emit(path); }
 
 	void object_renamed(const string& old_path, const string& new_path)
-		{ signal_object_renamed.emit(old_path, new_path); }
+		{ if (_enabled) signal_object_renamed.emit(old_path, new_path); }
 	
 	void disconnection(const string& src_port_path, const string& dst_port_path)
-		{ signal_disconnection.emit(src_port_path, dst_port_path); }
+		{ if (_enabled) signal_disconnection.emit(src_port_path, dst_port_path); }
 	
 	void variable_change(const string& path, const string& key, const Raul::Atom& value)
-		{ signal_variable_change.emit(path, key, value); }
+		{ if (_enabled) signal_variable_change.emit(path, key, value); }
 
 	void control_change(const string& port_path, float value)
-		{ signal_control_change.emit(port_path, value); }
+		{ if (_enabled) signal_control_change.emit(port_path, value); }
 	
 	void port_activity(const string& port_path)
-		{ signal_port_activity.emit(port_path); }
+		{ if (_enabled) signal_port_activity.emit(port_path); }
 
 	void program_add(const string& path, uint32_t bank, uint32_t program, const string& name)
-		{ signal_program_add.emit(path, bank, program, name); }
+		{ if (_enabled) signal_program_add.emit(path, bank, program, name); }
 	
 	void program_remove(const string& path, uint32_t bank, uint32_t program)
-		{ signal_program_remove.emit(path, bank, program); }
-
-protected:
-	SigClientInterface() {}
+		{ if (_enabled) signal_program_remove.emit(path, bank, program); }
 };
 
 
