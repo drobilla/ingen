@@ -36,7 +36,7 @@ namespace Ingen {
  * Object is not usable until instantiate() is called with success.
  * (It _will_ crash!)
  */
-LADSPANode::LADSPANode(const PluginImpl* plugin, const string& path, bool polyphonic, PatchImpl* parent, const LADSPA_Descriptor* descriptor, SampleRate srate, size_t buffer_size)
+LADSPANode::LADSPANode(PluginImpl* plugin, const string& path, bool polyphonic, PatchImpl* parent, const LADSPA_Descriptor* descriptor, SampleRate srate, size_t buffer_size)
 : NodeBase(plugin, path, polyphonic, parent, srate, buffer_size),
   _descriptor(descriptor),
   _instances(NULL)

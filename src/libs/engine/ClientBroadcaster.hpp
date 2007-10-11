@@ -26,6 +26,7 @@
 #include <raul/SharedPtr.hpp>
 #include "interface/ClientInterface.hpp"
 #include "types.hpp"
+#include "NodeFactory.hpp"
 
 using std::string;
 
@@ -62,7 +63,7 @@ public:
 	// Error that isn't the direct result of a request
 	void send_error(const string& msg);
 
-	void send_plugins(const std::list<PluginImpl*>& plugin_list);
+	void send_plugins(const NodeFactory::Plugins& plugin_list);
 	void send_patch(const PatchImpl* p, bool recursive);
 	void send_node(const NodeImpl* node, bool recursive);
 	void send_port(const PortImpl* port);
@@ -81,7 +82,7 @@ public:
 	void send_program_add(const string& node_path, int bank, int program, const string& name);
 	void send_program_remove(const string& node_path, int bank, int program);
 	
-	void send_plugins_to(ClientInterface*, const std::list<PluginImpl*>& plugin_list);
+	void send_plugins_to(ClientInterface*, const NodeFactory::Plugins& plugin_list);
 
 private:
 	typedef std::map<string, ClientInterface*> Clients;

@@ -149,7 +149,7 @@ public:
 	/** Information about the Plugin this Node is an instance of.
 	 * Not the best name - not all nodes come from plugins (ie Patch)
 	 */
-	virtual const PluginImpl* plugin_impl() const = 0;
+	virtual PluginImpl* plugin_impl() const = 0;
 	
 	/** Information about the Plugin this Node is an instance of.
 	 * Not the best name - not all nodes come from plugins (ie Patch)

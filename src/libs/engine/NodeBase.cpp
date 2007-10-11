@@ -33,7 +33,7 @@ using namespace std;
 namespace Ingen {
 
 
-NodeBase::NodeBase(const PluginImpl* plugin, const string& name, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size)
+NodeBase::NodeBase(PluginImpl* plugin, const string& name, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size)
 : NodeImpl(parent, name, polyphonic),
   _plugin(plugin),
   _polyphony((polyphonic && parent) ? parent->internal_polyphony() : 1),

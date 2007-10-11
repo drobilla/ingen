@@ -117,6 +117,9 @@ public:
 	void       slv2_plugin(SLV2Plugin p) { _slv2_plugin = p; }	
 #endif
 
+	void load();
+	void unload();
+
 	NodeImpl* instantiate(const string& name, bool polyphonic, Ingen::PatchImpl* parent, SampleRate srate, size_t buffer_size);
 
 private:

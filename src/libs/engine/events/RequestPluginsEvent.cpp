@@ -34,7 +34,7 @@ void
 RequestPluginsEvent::pre_process()
 {
 	// Take a copy to send in the post processing thread (to avoid problems
-	// because std::list isn't thread safe)
+	// because std::map isn't thread safe)
 	_plugins = _engine.node_factory()->plugins();
 
 	QueuedEvent::pre_process();

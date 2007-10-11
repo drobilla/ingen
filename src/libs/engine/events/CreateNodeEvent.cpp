@@ -78,9 +78,9 @@ CreateNodeEvent::pre_process()
 
 	_patch = _engine.object_store()->find_patch(_path.parent());
 
-	const PluginImpl* plugin = (_plugin_uri != "")
-		? _engine.node_factory()->plugin(_plugin_uri)
-		: _engine.node_factory()->plugin(_plugin_type, _plugin_lib, _plugin_label);
+	PluginImpl* const plugin = (_plugin_uri != "")
+			? _engine.node_factory()->plugin(_plugin_uri)
+			: _engine.node_factory()->plugin(_plugin_type, _plugin_lib, _plugin_label);
 
 	if (_patch && plugin) {
 			

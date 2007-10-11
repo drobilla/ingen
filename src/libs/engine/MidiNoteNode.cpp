@@ -41,7 +41,6 @@ MidiNoteNode::MidiNoteNode(const string& path, bool polyphonic, PatchImpl* paren
 : NodeBase(new PluginImpl(Plugin::Internal, "ingen:note_node"), path, polyphonic, parent, srate, buffer_size),
   _voices(new Raul::Array<Voice>(_polyphony)),
   _prepared_voices(NULL),
-
   _sustain(false)
 {
 	_ports = new Raul::Array<PortImpl*>(5);

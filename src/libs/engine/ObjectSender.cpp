@@ -74,7 +74,7 @@ ObjectSender::send_patch(ClientInterface* client, const PatchImpl* patch, bool r
 void
 ObjectSender::send_node(ClientInterface* client, const NodeImpl* node, bool recursive)
 {
-	const PluginImpl* const plugin = node->plugin_impl();
+	PluginImpl* const plugin = node->plugin_impl();
 
 	assert(node->path().length() > 0);
 	

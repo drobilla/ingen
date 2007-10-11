@@ -15,13 +15,40 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <iostream>
 #include "PluginImpl.hpp"
 #include "MidiNoteNode.hpp"
 #include "MidiTriggerNode.hpp"
 #include "MidiControlNode.hpp"
 #include "TransportNode.hpp"
 
+using namespace std;
+
 namespace Ingen {
+
+
+void
+PluginImpl::load()
+{
+	if (!_module) {
+		cerr << "Loading " << _lib_path << endl;
+		_module = new Glib::Module(_lib_path, Glib::MODULE_BIND_LOCAL);
+		if (!(*_module))
+			delete _module;
+	}
+}
+
+	
+void
+PluginImpl::unload()
+{
+	if (_module) {
+		cerr << "Unloading " << _lib_path << endl;
+		delete _module;
+		_module = NULL;
+	}
+}
+
 
 NodeImpl*
 PluginImpl::instantiate(const string& name, bool polyphonic, Ingen::PatchImpl* parent, SampleRate srate, size_t buffer_size)

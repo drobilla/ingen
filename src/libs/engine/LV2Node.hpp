@@ -34,12 +34,12 @@ namespace Ingen {
 class LV2Node : public NodeBase
 {
 public:
-	LV2Node(const PluginImpl* plugin,
-	        const string&     name,
-	        bool              polyphonic,
-	        PatchImpl*        parent,
-	        SampleRate        srate,
-	        size_t            buffer_size);
+	LV2Node(PluginImpl*   plugin,
+	        const string& name,
+	        bool          polyphonic,
+	        PatchImpl*    parent,
+	        SampleRate    srate,
+	        size_t        buffer_size);
 	
 	virtual ~LV2Node();
 

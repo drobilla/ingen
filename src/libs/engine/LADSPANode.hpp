@@ -34,7 +34,7 @@ namespace Ingen {
 class LADSPANode : public NodeBase
 {
 public:
-	LADSPANode(const PluginImpl*        plugin,
+	LADSPANode(PluginImpl*              plugin,
 	           const string&            name,
 	           bool                     polyphonic,
 	           PatchImpl*               parent,

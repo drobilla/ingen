@@ -48,12 +48,12 @@ namespace Shared {
 class NodeBase : public NodeImpl
 {
 public:
-	NodeBase(const PluginImpl* plugin,
-	         const string&     name,
-	         bool              poly,
-	         PatchImpl*        parent,
-	         SampleRate        rate,
-	         size_t            buffer_size);
+	NodeBase(PluginImpl*   plugin,
+	         const string& name,
+	         bool          poly,
+	         PatchImpl*    parent,
+	         SampleRate    rate,
+	         size_t        buffer_size);
 
 	virtual ~NodeBase();
 
@@ -98,9 +98,9 @@ public:
 	Raul::List<NodeImpl*>* dependants()                         { return _dependants; }
 	void                   dependants(Raul::List<NodeImpl*>* l) { _dependants = l; }
 	
-	virtual const Plugin*     plugin()      const;
-	virtual const PluginImpl* plugin_impl() const          { return _plugin; }
-	virtual void              plugin(const PluginImpl* pi) { _plugin = pi; }
+	virtual const Plugin* plugin() const;
+	virtual PluginImpl*   plugin_impl() const    { return _plugin; }
+	virtual void          plugin(PluginImpl* pi) { _plugin = pi; }
 	
 	/** A node's parent is always a patch, so static cast should be safe */
 	inline PatchImpl* parent_patch() const { return (PatchImpl*)_parent; }
@@ -108,7 +108,7 @@ public:
 protected:
 	virtual void signal_input_ready();
 	
-	const PluginImpl* _plugin;
+	PluginImpl* _plugin;
 
 	uint32_t   _polyphony;
 	SampleRate _srate;

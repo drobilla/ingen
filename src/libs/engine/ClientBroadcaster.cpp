@@ -100,12 +100,12 @@ ClientBroadcaster::send_error(const string& msg)
 }
 
 void
-ClientBroadcaster::send_plugins_to(ClientInterface* client, const list<PluginImpl*>& plugin_list)
+ClientBroadcaster::send_plugins_to(ClientInterface* client, const NodeFactory::Plugins& plugins)
 {
 	client->transfer_begin();
 
-	for (list<PluginImpl*>::const_iterator i = plugin_list.begin(); i != plugin_list.end(); ++i) {
-		const PluginImpl* const plugin = *i;
+	for (NodeFactory::Plugins::const_iterator i = plugins.begin(); i != plugins.end(); ++i) {
+		const PluginImpl* const plugin = i->second;
 		client->new_plugin(plugin->uri(), plugin->type_uri(), plugin->name());
 	}
 
@@ -114,10 +114,10 @@ ClientBroadcaster::send_plugins_to(ClientInterface* client, const list<PluginImp
 
 
 void
-ClientBroadcaster::send_plugins(const list<PluginImpl*>& plugin_list)
+ClientBroadcaster::send_plugins(const NodeFactory::Plugins& plugins)
 {
 	for (Clients::const_iterator c = _clients.begin(); c != _clients.end(); ++c)
-		send_plugins_to((*c).second, plugin_list);
+		send_plugins_to((*c).second, plugins);
 }
 
 

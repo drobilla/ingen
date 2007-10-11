@@ -18,19 +18,12 @@
 #ifndef REQUESTPLUGINSEVENT_H
 #define REQUESTPLUGINSEVENT_H
 
-#include <string>
-#include <list>
 #include "QueuedEvent.hpp"
-using std::string;
+#include "NodeFactory.hpp"
 
 namespace Ingen {
 
-class PluginImpl;
 class Responder;
-namespace Shared {
-	class ClientInterface;
-} using Shared::ClientInterface;
-
 
 /** A request from a client to send notification of all objects (ie refresh).
  *
@@ -45,7 +38,7 @@ public:
 	void post_process();
 
 private:
-	std::list<PluginImpl*> _plugins;
+	NodeFactory::Plugins _plugins;
 };
 
 

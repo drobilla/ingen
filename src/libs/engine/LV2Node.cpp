@@ -40,12 +40,12 @@ namespace Ingen {
  * Object is not usable until instantiate() is called with success.
  * (It _will_ crash!)
  */
-LV2Node::LV2Node(const PluginImpl* plugin,
-                 const string&     name,
-                 bool              polyphonic,
-                 PatchImpl*        parent,
-                 SampleRate        srate,
-                 size_t            buffer_size)
+LV2Node::LV2Node(PluginImpl*   plugin,
+                 const string& name,
+                 bool          polyphonic,
+                 PatchImpl*    parent,
+                 SampleRate    srate,
+                 size_t        buffer_size)
 	: NodeBase(plugin, name, polyphonic, parent, srate, buffer_size)
 	, _lv2_plugin(plugin->slv2_plugin())
 	, _instances(NULL)
