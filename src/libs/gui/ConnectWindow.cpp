@@ -360,7 +360,7 @@ ConnectWindow::gtk_callback()
 		App::instance().engine()->load_plugins();
 		++_connect_stage;
 	} else if (_connect_stage == 3) {
-		_progress_label->set_text(string("Requesting plugins..."));
+		//_progress_label->set_text(string("Requesting plugins..."));
 		App::instance().engine()->request_plugins();
 		++_connect_stage;
 	} else if (_connect_stage == 4) {
