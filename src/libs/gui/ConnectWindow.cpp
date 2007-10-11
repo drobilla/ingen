@@ -24,6 +24,7 @@
 #include <raul/Process.hpp>
 #include CONFIG_H_PATH
 #include "interface/EngineInterface.hpp"
+#include "module/World.hpp"
 #include "engine/tuning.hpp"
 #include "engine/Engine.hpp"
 #include "engine/QueuedEngineInterface.hpp"
@@ -107,9 +108,14 @@ ConnectWindow::ConnectWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::
 void
 ConnectWindow::start(SharedPtr<Ingen::Engine> engine, SharedPtr<Shared::EngineInterface> interface)
 {
+	if (engine) {
+		_engine = engine;
+		_mode = INTERNAL;
+	}
+
 	set_connected_to(interface);
-	show();
 	
+#if 0
 	if (engine) {
 		
 		Glib::signal_timeout().connect(
@@ -126,13 +132,10 @@ ConnectWindow::start(SharedPtr<Ingen::Engine> engine, SharedPtr<Shared::EngineIn
 		
 		_connect_stage = 0;
 	}
-		
-	if (interface) {
-		Glib::signal_timeout().connect(
-			sigc::mem_fun(this, &ConnectWindow::gtk_callback), 100);
-	} else {
-		connect();
-	}
+#endif
+
+	show();
+	connect();
 }
 
 
@@ -203,7 +206,7 @@ ConnectWindow::connect()
 			new OSCEngineSender(_url_entry->get_text()));
 
 		OSCSigEmitter* ose = new OSCSigEmitter(1024, 16181); // FIXME: args
-		SharedPtr<SigClientInterface> client(ose);
+		SharedPtr<ThreadedSigClientInterface> client(ose);
 		App::instance().attach(engine, client);
 
 		Glib::signal_timeout().connect(
@@ -224,7 +227,7 @@ ConnectWindow::connect()
 				new OSCEngineSender(string("osc.udp://localhost:").append(port_str)));
 
 		OSCSigEmitter* ose = new OSCSigEmitter(1024, 16181); // FIXME: args
-		SharedPtr<SigClientInterface> client(ose);
+		SharedPtr<ThreadedSigClientInterface> client(ose);
 		App::instance().attach(engine, client);
 
 		Glib::signal_timeout().connect(
@@ -240,26 +243,23 @@ ConnectWindow::connect()
 	} else if (_mode == INTERNAL) {
 		assert(_new_engine);
 		_engine = SharedPtr<Ingen::Engine>(_new_engine(App::instance().world()));
-		
-		//_engine->start_jack_driver();
+		App::instance().world()->local_engine = _engine.get();
 		
 		SharedPtr<Ingen::EngineInterface> engine_interface = _engine->new_queued_interface();
 
-		ThreadedSigClientInterface* tsci = new ThreadedSigClientInterface(Ingen::event_queue_size);
-		SharedPtr<SigClientInterface> client(tsci);
+		SharedPtr<ThreadedSigClientInterface> client(
+				new ThreadedSigClientInterface(Ingen::event_queue_size));
+		
+		_engine->start_jack_driver();
+		_engine->activate(1); // FIXME: parallelism
 		
 		App::instance().attach(engine_interface, client);
 
-		/*_engine->activate(1); // FIXME
-
 		Glib::signal_timeout().connect(
-			sigc::mem_fun(_engine.get(), &Ingen::Engine::main_iteration), 1000);*/
+			sigc::mem_fun(App::instance(), &App::gtk_main_iteration), 100);
 		
 		Glib::signal_timeout().connect(
 			sigc::mem_fun(this, &ConnectWindow::gtk_callback), 100);
-		
-		/*Glib::signal_timeout().connect(
-			sigc::mem_fun(tsci, &ThreadedSigClientInterface::emit_signals), 10, G_PRIORITY_HIGH_IDLE);*/
 	}
 }
 
@@ -341,12 +341,11 @@ ConnectWindow::gtk_callback()
 	/* Connecting to engine */
 	if (_connect_stage == 0) {
 
-		assert(!_attached);
+		_attached = false;
+
 		assert(App::instance().engine());
 		assert(App::instance().client());
 
-		// FIXME
-		//assert(!App::instance().engine()->is_attached());
 		_progress_label->set_text("Connecting to engine...");
 		present();
 
@@ -381,7 +380,7 @@ ConnectWindow::gtk_callback()
 		// FIXME
 		//auto_ptr<ClientInterface> client(new ThreadedSigClientInterface();
 		// FIXME: client URI
-		App::instance().engine()->register_client(App::instance().client().get());
+		//App::instance().engine()->register_client(App::instance().client().get());
 		App::instance().engine()->load_plugins();
 		++_connect_stage;
 	} else if (_connect_stage == 3) {

@@ -53,11 +53,9 @@ PostProcessor::process()
 	while (_engine.audio_driver()->context().event_sink().read(
 				_event_buffer_size, _event_buffer)) {
 		if (((Event*)_event_buffer)->time() > end_time)
-			break;
+			break; // FIXME: loses event?
 		((Event*)_event_buffer)->post_process();
 	}
-
-
 
 	/* Process normal events */
 	while ( ! _events.empty()) {

@@ -32,6 +32,7 @@
 #include "client/ObjectModel.hpp"
 #include "client/PatchModel.hpp"
 #include "client/Store.hpp"
+#include "engine/Engine.hpp"
 #include "NodeModule.hpp"
 #include "ControlPanel.hpp"
 #include "SubpatchModule.hpp"
@@ -169,7 +170,7 @@ App::run(int argc, char** argv,
 
 
 void
-App::attach(SharedPtr<EngineInterface> engine, SharedPtr<SigClientInterface> client)
+App::attach(SharedPtr<EngineInterface> engine, SharedPtr<ThreadedSigClientInterface> client)
 {
 	assert( ! _engine);
 	assert( ! _client);
@@ -345,6 +346,18 @@ App::event_save_session_as()
 	}
 }
 #endif
+
+
+bool
+App::gtk_main_iteration()
+{
+	if (_world->local_engine)
+		_world->local_engine->main_iteration();
+	
+	_client->emit_signals();
+
+	return true;
+}
 
 
 void

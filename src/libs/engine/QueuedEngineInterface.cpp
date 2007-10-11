@@ -38,6 +38,7 @@ QueuedEngineInterface::now() const
 {
 	// Exactly one cycle latency (some could run ASAP if we get lucky, but not always, and a slight
 	// constant latency is far better than jittery lower (average) latency
+	assert(_engine.audio_driver());
 	return _engine.audio_driver()->frame_time() + _engine.audio_driver()->buffer_size();
 }
 

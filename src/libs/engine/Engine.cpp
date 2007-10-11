@@ -120,10 +120,7 @@ Engine::main()
 	}
 	cout << "[Main] Done main loop." << endl;
 	
-	_event_source->deactivate();
-	
-	if (_activated)
-		deactivate();
+	deactivate();
 
 	return 0;
 }
@@ -152,23 +149,21 @@ Engine::main_iteration()
 void
 Engine::start_jack_driver()
 {
-	if (_audio_driver)
-		cerr << "[Engine] Warning:  replaced audio driver" << endl;
-	
-	_audio_driver = SharedPtr<AudioDriver>(new JackAudioDriver(*this));
+	if ( ! _audio_driver)
+		_audio_driver = SharedPtr<AudioDriver>(new JackAudioDriver(*this));
+	else
+		cerr << "[Engine::start_jack_driver] Audio driver already running" << endl;
 }
 
 
 void
 Engine::start_osc_driver(int port)
 {
-	if (_event_source)
-		cerr << "[Engine] Warning: replaced event source (engine interface)" << endl;
-
-	_event_source = SharedPtr<EventSource>(new OSCEngineReceiver(
-			*this, pre_processor_queue_size, port));
-	
-	//_osc_driver = _event_source;
+	if ( ! _event_source)
+		_event_source = SharedPtr<EventSource>(new OSCEngineReceiver(
+				*this, pre_processor_queue_size, port));
+	else
+		cerr << "[Engine::start_osc_driver] Event source already running" << endl;
 }
 	
 
@@ -247,6 +242,8 @@ Engine::deactivate()
 {
 	if (!_activated)
 		return;
+	
+	_event_source->deactivate();
 
 	/*for (Tree<GraphObject*>::iterator i = _object_store->objects().begin();
 			i != _object_store->objects().end(); ++i)

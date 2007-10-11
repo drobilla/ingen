@@ -336,7 +336,11 @@ NodeFactory::load_lv2_plugin(const string& plug_uri,
 
 	if (plugin) {
 		n = new LV2Node(plugin, node_name, polyphonic, parent, srate, buffer_size);
-		bool success = ((LV2Node*)n)->instantiate();
+ 
+		Glib::Mutex::Lock lock(_world->rdf_world->mutex());
+		
+		const bool success = ((LV2Node*)n)->instantiate();
+		
 		if (!success) {
 			delete n;
 			n = NULL;

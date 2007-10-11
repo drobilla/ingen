@@ -183,8 +183,7 @@ DeprecatedLoader::load_patch(const Glib::ustring&   filename,
 		key = xmlNodeListGetString(doc, cur->xmlChildrenNode, 1);
 		
 		if ((!xmlStrcmp(cur->name, (const xmlChar*)"name"))) {
-			if (load_name) {
-				assert(key != NULL);
+			if (load_name && key) {
 				if (parent_path)
 					path = Path(parent_path.get()).base() + nameify_if_invalid((char*)key);
 				else
@@ -598,7 +597,6 @@ DeprecatedLoader::load_preset(const Path& parent, xmlDocPtr doc, const xmlNodePt
 				while ((slash_index = port_name.find("/")) != string::npos)
 					port_name[slash_index] = '-';
 
-				cerr << "ADDING CONTROL: " << node_name << " / " << port_name << " = " << val << endl;
 				pm->add_control(node_name, port_name, val);
 			}
 		}

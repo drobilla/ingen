@@ -65,8 +65,6 @@ set_denormal_flags()
 		exit(EXIT_FAILURE);
 	}
 #endif
-	// Set 387 control register via standard C99 interface
-	fesetround(FE_TOWARDZERO);
 }
 
 } // namespace Ingen
