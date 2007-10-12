@@ -224,8 +224,9 @@ NodeFactory::load_lv2_plugins()
 
 		SLV2Plugin lv2_plug = slv2_plugins_get_at(plugins, i);
 
-#ifndef NDEBUG
 		const string uri((const char*)slv2_plugin_get_uri(lv2_plug));
+
+#ifndef NDEBUG
 		assert(_plugins.find(uri) == _plugins.end());
 #endif
 			
