@@ -131,6 +131,8 @@ Loader::load(SharedPtr<EngineInterface> engine,
 
 	map<const string, const Atom> variable;
 
+	rdf_world->mutex().lock();
+	
 	for (RDF::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
 
 		const string node_name = (*i)["name"].to_string();
@@ -154,6 +156,8 @@ Loader::load(SharedPtr<EngineInterface> engine,
 		if (key != "")
 			engine->set_variable(node_path, key, AtomRedland::rdf_node_to_atom(val_node));
 	}
+	
+	rdf_world->mutex().unlock();
 		
 
 	/* Load subpatches */
@@ -166,7 +170,7 @@ Loader::load(SharedPtr<EngineInterface> engine,
 			"}");
 
 	results = query.run(*rdf_world, model);
-
+	
 	for (RDF::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
 
 		const string name  = (*i)["name"].to_string();

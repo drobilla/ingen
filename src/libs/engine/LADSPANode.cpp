@@ -19,6 +19,7 @@
 #include <cassert>
 #include <cmath>
 #include <stdint.h>
+#include <raul/Maid.hpp>
 #include "LADSPANode.hpp"
 #include "AudioBuffer.hpp"
 #include "InputPort.hpp"
@@ -37,11 +38,60 @@ namespace Ingen {
  * (It _will_ crash!)
  */
 LADSPANode::LADSPANode(PluginImpl* plugin, const string& path, bool polyphonic, PatchImpl* parent, const LADSPA_Descriptor* descriptor, SampleRate srate, size_t buffer_size)
-: NodeBase(plugin, path, polyphonic, parent, srate, buffer_size),
-  _descriptor(descriptor),
-  _instances(NULL)
+	: NodeBase(plugin, path, polyphonic, parent, srate, buffer_size)
+	, _descriptor(descriptor)
+	, _instances(NULL)
+	, _prepared_instances(NULL)
 {
 	assert(_descriptor != NULL);
+}
+
+
+bool
+LADSPANode::prepare_poly(uint32_t poly)
+{
+	NodeBase::prepare_poly(poly);
+
+	if ( (!_polyphonic)
+			|| (_prepared_instances && poly <= _prepared_instances->size()) ) {
+		return true;
+	}
+	
+	_prepared_instances = new Raul::Array<LADSPA_Handle>(poly, *_instances);
+	for (uint32_t i = _polyphony; i < _prepared_instances->size(); ++i) {
+		_prepared_instances->at(i) = _descriptor->instantiate(_descriptor, _srate);
+		if ((*_prepared_instances)[i] == NULL) {
+			cerr << "Failed to instantiate plugin!" << endl;
+			return false;
+		}
+
+		if (_activated)
+			_descriptor->activate((*_prepared_instances)[i]);
+	}
+	
+	return true;
+}
+
+
+bool
+LADSPANode::apply_poly(Raul::Maid& maid, uint32_t poly)
+{
+	if (!_polyphonic)
+		return true;
+
+	if (_prepared_instances) {
+		assert(poly <= _prepared_instances->size());
+		maid.push(_instances);
+		_instances = _prepared_instances;
+		_prepared_instances = NULL;
+	}
+		
+	assert(poly <= _instances->size());
+	_polyphony = poly;
+	
+	NodeBase::apply_poly(maid, poly);
+
+	return true;
 }
 
 
@@ -59,13 +109,13 @@ LADSPANode::instantiate()
 	if (!_ports)
 		_ports = new Raul::Array<PortImpl*>(_descriptor->PortCount);
 	
-	_instances = new LADSPA_Handle[_polyphony];
+	_instances = new Raul::Array<LADSPA_Handle>(_polyphony, NULL);
 	
 	size_t port_buffer_size = 0;
 	
 	for (uint32_t i=0; i < _polyphony; ++i) {
-		_instances[i] = _descriptor->instantiate(_descriptor, _srate);
-		if (_instances[i] == NULL) {
+		(*_instances)[i] = _descriptor->instantiate(_descriptor, _srate);
+		if ((*_instances)[i] == NULL) {
 			cerr << "Failed to instantiate plugin!" << endl;
 			return false;
 		}
@@ -157,7 +207,7 @@ LADSPANode::instantiate()
 LADSPANode::~LADSPANode()
 {
 	for (uint32_t i=0; i < _polyphony; ++i)
-		_descriptor->cleanup(_instances[i]);
+		_descriptor->cleanup((*_instances)[i]);
 
 	delete[] _instances;
 }
@@ -177,7 +227,7 @@ LADSPANode::activate()
 					port->set_value(0.0f, 0);*/
 		}
 		if (_descriptor->activate != NULL)
-			_descriptor->activate(_instances[i]);
+			_descriptor->activate((*_instances)[i]);
 	}
 }
 
@@ -189,7 +239,7 @@ LADSPANode::deactivate()
 	
 	for (uint32_t i=0; i < _polyphony; ++i)
 		if (_descriptor->deactivate != NULL)
-			_descriptor->deactivate(_instances[i]);
+			_descriptor->deactivate((*_instances)[i]);
 }
 
 
@@ -199,7 +249,7 @@ LADSPANode::process(ProcessContext& context)
 	NodeBase::pre_process(context);
 
 	for (uint32_t i=0; i < _polyphony; ++i) 
-		_descriptor->run(_instances[i], context.nframes());
+		_descriptor->run((*_instances)[i], context.nframes());
 	
 	NodeBase::post_process(context);
 }
@@ -214,7 +264,7 @@ LADSPANode::set_port_buffer(uint32_t voice, uint32_t port_num, Buffer* buf)
 	assert(audio_buffer);
 
 	if (port_num < _descriptor->PortCount)
-		_descriptor->connect_port(_instances[voice], port_num,
+		_descriptor->connect_port((*_instances)[voice], port_num,
 			audio_buffer->data());
 }
 

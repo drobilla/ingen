@@ -151,24 +151,21 @@ void
 NodeModel::port_value_range(SharedPtr<PortModel> port, float& min, float& max)
 {
 	assert(port->parent().get() == this);
-
-	Glib::Mutex::Lock(PluginModel::rdf_world()->mutex());
 	
-	// FIXME: cache these values
-	
-	// Plugin value first
 #ifdef HAVE_SLV2
+	// Plugin value first
 	if (_plugin && _plugin->type() == PluginModel::LV2) {
+		Glib::Mutex::Lock(PluginModel::rdf_world()->mutex());
+		
 		min = slv2_port_get_minimum_value(
 				_plugin->slv2_plugin(),
 				slv2_plugin_get_port_by_symbol(_plugin->slv2_plugin(),
 					port->path().name().c_str()));
+		
 		max = slv2_port_get_maximum_value(
 				_plugin->slv2_plugin(),
 				slv2_plugin_get_port_by_symbol(_plugin->slv2_plugin(),
 					port->path().name().c_str()));
-
-		//cerr << "SLV2: " << min << " .. " << max << endl;
 	}
 #endif
 
@@ -179,9 +176,6 @@ NodeModel::port_value_range(SharedPtr<PortModel> port, float& min, float& max)
 		min = min_atom.get_float();
 	if (max_atom.type() == Atom::FLOAT)
 		max = max_atom.get_float();
-	
-	//cerr << (unsigned)plugin()->type() << "::" << _path << ".port_value_range(" << port->path().name()
-	//	<< ") == " << min << " .. " << max << endl;
 }
 
 

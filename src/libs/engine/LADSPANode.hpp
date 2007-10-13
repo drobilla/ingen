@@ -42,9 +42,12 @@ public:
 	           SampleRate               srate,
 	           size_t                   buffer_size);
 
-	virtual ~LADSPANode();
+	~LADSPANode();
 
-	virtual bool instantiate();
+	bool instantiate();
+	
+	bool prepare_poly(uint32_t poly);
+	bool apply_poly(Raul::Maid& maid, uint32_t poly);
 
 	void activate();
 	void deactivate();
@@ -54,11 +57,11 @@ public:
 	void set_port_buffer(uint32_t voice, uint32_t port_num, Buffer* buf);
 
 protected:
-	//void get_port_vals(ulong port_index, PortInfo* info);
 	void get_port_limits(unsigned long port_index, Sample& default_value, Sample& lower_bound, Sample& upper_bound);
 	
 	const LADSPA_Descriptor* _descriptor;
-	LADSPA_Handle*           _instances;	
+	Raul::Array<LADSPA_Handle>* _instances;
+	Raul::Array<LADSPA_Handle>* _prepared_instances;
 };
 
 

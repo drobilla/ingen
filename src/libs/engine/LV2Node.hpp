@@ -41,9 +41,9 @@ public:
 	        SampleRate    srate,
 	        size_t        buffer_size);
 	
-	virtual ~LV2Node();
+	~LV2Node();
 
-	virtual bool instantiate();
+	bool instantiate();
 	
 	bool prepare_poly(uint32_t poly);
 	bool apply_poly(Raul::Maid& maid, uint32_t poly);
@@ -56,8 +56,6 @@ public:
 	void set_port_buffer(uint32_t voice, uint32_t port_num, Buffer* buf);
 
 protected:
-	//void get_port_vals(ulong port_index, PortInfo* info);
-	
 	SLV2Plugin                 _lv2_plugin;
 	Raul::Array<SLV2Instance>* _instances;
 	Raul::Array<SLV2Instance>* _prepared_instances;
