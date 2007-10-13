@@ -47,6 +47,15 @@ LADSPANode::LADSPANode(PluginImpl* plugin, const string& path, bool polyphonic, 
 }
 
 
+LADSPANode::~LADSPANode()
+{
+	for (uint32_t i=0; i < _polyphony; ++i)
+		_descriptor->cleanup((*_instances)[i]);
+
+	delete _instances;
+}
+
+
 bool
 LADSPANode::prepare_poly(uint32_t poly)
 {
@@ -201,15 +210,6 @@ LADSPANode::instantiate()
 	}
 
 	return true;
-}
-
-
-LADSPANode::~LADSPANode()
-{
-	for (uint32_t i=0; i < _polyphony; ++i)
-		_descriptor->cleanup((*_instances)[i]);
-
-	delete[] _instances;
 }
 
 

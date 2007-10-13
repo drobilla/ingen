@@ -195,6 +195,11 @@ MidiNoteNode::note_on(uchar note_num, uchar velocity, FrameTime time, ProcessCon
 	Voice* voice       = NULL;
 	uint32_t voice_num = 0;
 	
+	if (key->state != Key::OFF) {
+		cerr << "[MidiNoteNode] Double note.  Who be sendin dem crazy midis?" << endl;
+		return;
+	}
+
 	// Look for free voices
 	for (uint32_t i=0; i < _polyphony; ++i) {
 		if ((*_voices)[i].state == Voice::Voice::FREE) {
@@ -225,8 +230,8 @@ MidiNoteNode::note_on(uchar note_num, uchar velocity, FrameTime time, ProcessCon
 	
 	// Update stolen key, if applicable
 	if (voice->state == Voice::Voice::ACTIVE) {
-		assert(_keys[voice->note].voice == voice_num);
 		assert(_keys[voice->note].state == Key::ON_ASSIGNED);
+		assert(_keys[voice->note].voice == voice_num);
 		_keys[voice->note].state = Key::Key::ON_UNASSIGNED;
 		//cerr << "[MidiNoteNode] Stole voice " << voice_num << endl;
 	}

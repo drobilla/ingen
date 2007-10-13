@@ -55,6 +55,15 @@ LV2Node::LV2Node(PluginImpl*   plugin,
 }
 
 
+LV2Node::~LV2Node()
+{
+	for (uint32_t i=0; i < _polyphony; ++i)
+		slv2_instance_free((*_instances)[i]);
+
+	delete _instances;
+}
+
+
 bool
 LV2Node::prepare_poly(uint32_t poly)
 {
@@ -190,15 +199,6 @@ LV2Node::instantiate()
 		_ports->at(j) = port;
 	}
 	return true;
-}
-
-
-LV2Node::~LV2Node()
-{
-	for (uint32_t i=0; i < _polyphony; ++i)
-		slv2_instance_free((*_instances)[i]);
-
-	delete _instances;
 }
 
 
