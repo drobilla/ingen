@@ -285,7 +285,7 @@ void OSCClientSender::new_node(const std::string&   plugin_uri,
 void
 OSCClientSender::new_port(const std::string& path,
                           const std::string& data_type,
-                          bool   is_output)
+                          bool               is_output)
 {
 	if (!_enabled)
 		return;

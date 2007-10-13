@@ -53,7 +53,7 @@ public:
 	virtual ~GraphObjectImpl() {}
 	
 	bool         polyphonic() const                       { return _polyphonic; }
-	virtual void set_polyphonic(Raul::Maid& maid, bool p) { _polyphonic = p; }
+	virtual bool set_polyphonic(Raul::Maid& maid, bool p) { _polyphonic = p; return true; }
 	
 	GraphObject* graph_parent() const { return _parent; }
 	

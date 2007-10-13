@@ -39,7 +39,7 @@ PortImpl::PortImpl(NodeImpl* const node,
                    uint32_t        poly,
                    DataType        type,
                    size_t          buffer_size)
-	: GraphObjectImpl(node, name, true)
+	: GraphObjectImpl(node, name, (type == DataType::AUDIO || type == DataType::CONTROL))
 	, _index(index)
 	, _poly(poly)
 	, _buffer_size(buffer_size)
@@ -71,6 +71,16 @@ PortImpl::~PortImpl()
 		delete _buffers->at(i);
 
 	delete _buffers;
+}
+
+	
+bool
+PortImpl::set_polyphonic(Raul::Maid& maid, bool p)
+{
+	if (_type == DataType::CONTROL || _type == DataType::AUDIO)
+		return GraphObjectImpl::set_polyphonic(maid, p);
+	else
+		return (!p);
 }
 
 

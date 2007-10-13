@@ -51,6 +51,8 @@ public:
 	/** A port's parent is always a node, so static cast should be safe */
 	NodeImpl* parent_node() const { return (NodeImpl*)_parent; }
 	
+	bool set_polyphonic(Raul::Maid& maid, bool p);
+	
 	/** Prepare for a new (external) polyphony value.
 	 *
 	 * Preprocessor thread, poly is actually applied by apply_poly.

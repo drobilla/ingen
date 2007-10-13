@@ -46,6 +46,7 @@ private:
 	const string     _path;
 	GraphObjectImpl* _object;
 	bool             _poly;
+	bool             _success;
 };
 
 

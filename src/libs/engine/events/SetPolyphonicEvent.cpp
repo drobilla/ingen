@@ -35,7 +35,8 @@ SetPolyphonicEvent::SetPolyphonicEvent(Engine& engine, SharedPtr<Responder> resp
 : QueuedEvent(engine, responder, time, true, source),
   _path(path),
   _object(NULL),
-  _poly(poly)
+  _poly(poly),
+  _success(false)
 {
 }
 
@@ -55,7 +56,7 @@ SetPolyphonicEvent::execute(ProcessContext& context)
 	QueuedEvent::execute(context);
 	 
 	if (_object)
-		 _object->set_polyphonic(*_engine.maid(), _poly);
+		 _success = _object->set_polyphonic(*_engine.maid(), _poly);
 	
 	_source->unblock();
 }
@@ -65,8 +66,12 @@ void
 SetPolyphonicEvent::post_process()
 {
 	if (_object) {
-		_responder->respond_ok();
-		_engine.broadcaster()->send_polyphonic(_path, _poly);
+		if (_success) {
+			_responder->respond_ok();
+			_engine.broadcaster()->send_polyphonic(_path, _poly);
+		} else {
+			_responder->respond_error("Unable to set object as polyphonic");
+		}
 	} else {
 		_responder->respond_error("Unable to find object");
 	}

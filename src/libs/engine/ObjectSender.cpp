@@ -34,6 +34,7 @@ void
 ObjectSender::send_patch(ClientInterface* client, const PatchImpl* patch, bool recursive)
 {
 	client->new_patch(patch->path(), patch->internal_polyphony());
+	client->polyphonic(patch->path(), patch->polyphonic());
 	
 	if (recursive) {
 
@@ -91,6 +92,7 @@ ObjectSender::send_node(ClientInterface* client, const NodeImpl* node, bool recu
 	client->bundle_begin();
 	
 	client->new_node(node->plugin()->uri(), node->path(), node->polyphonic(), node->num_ports());
+	client->polyphonic(node->path(), node->polyphonic());
 	
 	// Send variable
 	const GraphObjectImpl::Variables& data = node->variables();
@@ -115,6 +117,7 @@ ObjectSender::send_port(ClientInterface* client, const PortImpl* port)
 	client->bundle_begin();
 
 	client->new_port(port->path(), port->type().uri(), port->is_output());
+	client->polyphonic(port->path(), port->polyphonic());
 	
 	// Send variable
 	const GraphObjectImpl::Variables& data = port->variables();
