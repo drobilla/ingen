@@ -108,9 +108,13 @@ Port::activity()
 void
 Port::set_control(float value, bool signal)
 {
+	if (_port_model->type() != DataType::CONTROL && _port_model->type() != DataType::AUDIO)
+		return;
+
 	if (signal)
 		App::instance().engine()->set_port_value_immediate(_port_model->path(), "ingen:control",
 				sizeof(float), &value);
+
 	FlowCanvas::Port::set_control(value);
 }
 
