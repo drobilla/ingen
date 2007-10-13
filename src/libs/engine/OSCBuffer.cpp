@@ -73,17 +73,6 @@ OSCBuffer::unjoin()
 }
 
 
-bool
-OSCBuffer::is_joined_to(Buffer* buf) const
-{
-	OSCBuffer* obuf = dynamic_cast<OSCBuffer*>(buf);
-	if (obuf)
-		return (data() == obuf->data());
-
-	return false;
-}
-
-
 void
 OSCBuffer::prepare_read(SampleCount nframes)
 {

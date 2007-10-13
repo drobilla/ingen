@@ -79,6 +79,8 @@ JackAudioPort::prepare_buffer(jack_nframes_t nframes)
 
 	AudioBuffer* patch_buf = (AudioBuffer*)_patch_port->buffer(0);
 
+	//cerr << "[JACK] " << _patch_port->path() << " buffer: " << patch_buf << endl;
+
 	if (jack_buf != _jack_buffer) {
 		patch_buf->set_data(jack_buf);
 		_jack_buffer = jack_buf;

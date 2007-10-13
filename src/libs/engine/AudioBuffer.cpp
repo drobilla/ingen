@@ -32,7 +32,6 @@ AudioBuffer::AudioBuffer(size_t size)
 	: Buffer((size == 1) ? DataType::CONTROL : DataType::AUDIO, size)
 	, _data(NULL)
 	, _local_data(NULL)
-	, _joined_buf(NULL)
 	, _size(size)
 	, _filled_size(0)
 	, _state(OK)
@@ -251,17 +250,6 @@ AudioBuffer::unjoin()
 {
 	_joined_buf = NULL;
 	_data = _local_data;
-}
-
-
-bool
-AudioBuffer::is_joined_to(Buffer* buf) const
-{
-	AudioBuffer* abuf = dynamic_cast<AudioBuffer*>(buf);
-	if (abuf)
-		return (data() == abuf->data());
-
-	return false;
 }
 
 

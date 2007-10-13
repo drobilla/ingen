@@ -34,12 +34,14 @@ public:
 	Buffer(Shared::DataType type, size_t size)
 		: _type(type)
 		, _size(size)
+		, _joined_buf(NULL)
 	{}
 
 	/** Clear contents and reset state */
 	virtual void clear() = 0;
 	
-	virtual void* raw_data() const = 0;
+	virtual void*       raw_data()       = 0;
+	virtual const void* raw_data() const = 0;
 
 	/** Rewing (ie reset read pointer), but leave contents unchanged */
 	virtual void rewind() const = 0;
@@ -47,7 +49,9 @@ public:
 	virtual void prepare_read(SampleCount nframes) = 0;
 	virtual void prepare_write(SampleCount nframes) = 0;
 	
-	virtual bool is_joined_to(Buffer* buf) const = 0;
+	bool is_joined() const { return (_joined_buf != NULL); }
+	Buffer* joined_buffer() const { return _joined_buf; }
+	
 	virtual bool join(Buffer* buf) = 0;
 	virtual void unjoin() = 0;
 	
@@ -61,6 +65,7 @@ public:
 protected:
 	Shared::DataType _type;
 	size_t           _size;
+	Buffer*          _joined_buf;
 };
 
 

@@ -130,6 +130,8 @@ MidiNoteNode::process(ProcessContext& context)
 	MidiBuffer* const midi_in = (MidiBuffer*)_midi_in_port->buffer(0);
 	assert(midi_in->this_nframes() == context.nframes());
 
+	//cerr << path() << " # input events: " << midi_in->event_count() << endl;
+
 	if (midi_in->event_count() > 0)
 	while (midi_in->get_event(&timestamp, &size, &buffer) < context.nframes()) {
 		
@@ -167,11 +169,11 @@ MidiNoteNode::process(ProcessContext& context)
 				}
 				break;
 			default:
-				//fprintf(stderr, "Unknown (size %d) MIDI event %X\n", size, buffer[0]);
+				fprintf(stderr, "Unknown (size %d) MIDI event %X\n", size, buffer[0]);
 				break;
 			}
 		} else {
-			//fprintf(stderr, "Unknown (size %d) MIDI event %X\n", size, buffer[0]);
+			fprintf(stderr, "Unknown (size %d) MIDI event %X\n", size, buffer[0]);
 		}
 
 		if (midi_in->increment() == midi_in->this_nframes())
@@ -218,8 +220,8 @@ MidiNoteNode::note_on(uchar note_num, uchar velocity, FrameTime time, ProcessCon
 	assert(voice != NULL);
 	assert(voice == &(*_voices)[voice_num]);
 
-	cerr << "[MidiNoteNode] Note " << (int)note_num << " on @ " << time
-		<< ". Voice " << voice_num << " / " << _polyphony << endl;
+	//cerr << "[MidiNoteNode] Note " << (int)note_num << " on @ " << time
+	//	<< ". Voice " << voice_num << " / " << _polyphony << endl;
 	
 	// Update stolen key, if applicable
 	if (voice->state == Voice::Voice::ACTIVE) {
@@ -273,7 +275,7 @@ MidiNoteNode::note_off(uchar note_num, FrameTime time, ProcessContext& context)
 
 	Key* key = &_keys[note_num];
 	
-	cerr << "[MidiNoteNode] Note off @ " << time << ".  Key " << (int)note_num << endl;
+	//cerr << "[MidiNoteNode] Note " << (int)note_num << " off @ " << time << endl;
 
 	if (key->state == Key::ON_ASSIGNED) {
 		// Assigned key, turn off voice and key
@@ -345,7 +347,7 @@ MidiNoteNode::all_notes_off(FrameTime time, ProcessContext& context)
 	assert(time >= context.start() && time <= context.end());
 	assert(time - context.start() < _buffer_size);
 
-	//cerr << "Note off starting at sample " << offset << endl;
+	//cerr << "All notes off @ " << offset << endl;
 
 	// FIXME: set all keys to Key::OFF?
 	

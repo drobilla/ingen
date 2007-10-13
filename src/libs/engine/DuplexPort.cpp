@@ -23,6 +23,7 @@
 #include "ConnectionImpl.hpp"
 #include "OutputPort.hpp"
 #include "NodeImpl.hpp"
+#include "ProcessContext.hpp"
 
 using namespace std;
 
@@ -43,10 +44,26 @@ void
 DuplexPort::pre_process(ProcessContext& context)
 {
 	// <BrainHurt>
-	InputPort::pre_process(context);
+		
+	/*cerr << path() << " duplex pre: fixed buffers: " << fixed_buffers() << endl;
+	cerr << path() << " duplex pre: buffer: " << buffer(0) << endl;
+	cerr << path() << " duplex pre: is_output: " << _is_output << " { " << endl;*/
+	
+	if (_is_output) {
 
-	if ( ! _is_output)
+		for (uint32_t i=0; i < _poly; ++i)
+			_buffers->at(i)->prepare_write(context.nframes());
+
+	} else {
+
+		for (uint32_t i=0; i < _poly; ++i)
+			_buffers->at(i)->prepare_read(context.nframes());
+
 		broadcast(context);
+	}
+
+	//cerr << "} pre " << path() << endl;
+
 	// </BrainHurt>
 }
 
@@ -54,12 +71,20 @@ DuplexPort::pre_process(ProcessContext& context)
 void
 DuplexPort::post_process(ProcessContext& context)
 {
+	/*cerr << path() << " duplex post: fixed buffers: " << fixed_buffers() << endl;
+	cerr << path() << " duplex post: buffer: " << buffer(0) << endl;
+	cerr << path() << " duplex post: is_output: " << _is_output << " { " << endl;*/
+	
 	// <BrainHurt>
-	if (_is_output)
+	if (_is_output) {
+		InputPort::pre_process(context); // Mix down inputs
 		broadcast(context);
+	}
 
 	OutputPort::pre_process(context);
 	// </BrainHurt>
+	
+	//cerr << "} post " << path() << endl;
 }
 
 

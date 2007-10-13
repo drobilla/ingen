@@ -41,16 +41,14 @@ public:
 	
 	bool join(Buffer* buf);
 	void unjoin();
-	bool is_joined_to(Buffer* buf) const;
 	
 	/** For driver use only!! */
 	void set_data(Sample* data);
 	
-	inline void* raw_data() const
-		{ return ((_joined_buf != NULL) ? _joined_buf->raw_data() : _data); }
+	inline const void* raw_data() const { return _data; }
+	inline void*       raw_data()       { return _data; }
 	
-	inline Sample* data() const
-		{ return ((_joined_buf != NULL) ? _joined_buf->data() : _data); }
+	inline Sample* data() const { return _data; }
 	
 	inline Sample& value_at(size_t offset) const
 		{ assert(offset < _size); return data()[offset]; }
@@ -73,7 +71,6 @@ private:
 
 	Sample*      _data;        ///< Used data pointer (probably same as _local_data)
 	Sample*      _local_data;  ///< Locally allocated buffer (possibly unused if joined or set_data used)
-	AudioBuffer* _joined_buf;  ///< Buffer to mirror, if joined
 	size_t       _size;        ///< Allocated buffer size
 	size_t       _filled_size; ///< Usable buffer size (for MIDI ports etc)
 	State        _state;       ///< State of buffer for setting values next cycle

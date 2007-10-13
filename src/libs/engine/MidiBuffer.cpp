@@ -31,7 +31,6 @@ namespace Ingen {
 MidiBuffer::MidiBuffer(size_t capacity)
 	: Buffer(DataType(DataType::MIDI), capacity)
 	, _latest_stamp(0)
-	, _joined_buf(NULL)
 {
 	if (capacity > UINT32_MAX) {
 		cerr << "MIDI buffer size " << capacity << " too large, aborting." << endl;
@@ -98,20 +97,11 @@ MidiBuffer::unjoin()
 }
 
 
-bool
-MidiBuffer::is_joined_to(Buffer* buf) const
-{
-	MidiBuffer* mbuf = dynamic_cast<MidiBuffer*>(buf);
-	if (mbuf)
-		return (data() == mbuf->data());
-
-	return false;
-}
-
-
 void
 MidiBuffer::prepare_read(SampleCount nframes)
 {
+	//cerr << "\t" << this << " prepare_read: " << event_count() << endl;
+
 	rewind();
 	_this_nframes = nframes;
 }
@@ -120,6 +110,7 @@ MidiBuffer::prepare_read(SampleCount nframes)
 void
 MidiBuffer::prepare_write(SampleCount nframes)
 {
+	//cerr << "\t" << this << " prepare_write: " << event_count() << endl;
 	reset(nframes);
 }
 	
@@ -214,17 +205,19 @@ MidiBuffer::get_event(double*         timestamp,
                       uint32_t*       size, 
                       unsigned char** data) const
 {
-	if (_position >= _buf->size) {
-		_position = _buf->size;
+	const LV2_MIDI* buf = this->data();
+
+	if (_position >= buf->size) {
+		_position = buf->size;
 		*timestamp = _this_nframes;
 		*size = 0;
 		*data = NULL;
 		return _this_nframes;
 	}
 
-	*timestamp = *(double*)(_buf->data + _position);
-	*size = *(uint32_t*)(_buf->data + _position + sizeof(double));
-	*data = _buf->data + _position + sizeof(double) + sizeof(uint32_t);
+	*timestamp = *(double*)(buf->data + _position);
+	*size = *(uint32_t*)(buf->data + _position + sizeof(double));
+	*data = buf->data + _position + sizeof(double) + sizeof(uint32_t);
 
 	return *timestamp;
 }

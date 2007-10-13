@@ -15,9 +15,12 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <iostream>
 #include "OutputPort.hpp"
 #include "Buffer.hpp"
 #include "ProcessContext.hpp"
+
+using namespace std;
 
 namespace Ingen {
 
@@ -26,7 +29,7 @@ void
 OutputPort::pre_process(ProcessContext& context)
 {
 	for (uint32_t i=0; i < _poly; ++i)
-		_buffers->at(i)->prepare_write(context.nframes());
+		buffer(i)->prepare_write(context.nframes());
 }
 
 
@@ -34,7 +37,9 @@ void
 OutputPort::post_process(ProcessContext& context)
 {
 	for (uint32_t i=0; i < _poly; ++i)
-		_buffers->at(i)->prepare_read(context.nframes());
+		buffer(i)->prepare_read(context.nframes());
+
+	//cerr << path() << " output post: buffer: " << buffer(0) << endl;
 
 	broadcast(context);
 }

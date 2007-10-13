@@ -78,10 +78,6 @@ LADSPANode::instantiate()
 	
 	for (size_t j=0; j < _descriptor->PortCount; ++j) {
 		port_name = Path::nameify(_descriptor->PortNames[j]);
-		
-		if (_descriptor->PortNames[j] != port_name)
-			cerr << "WARNING: Translated LADSPA port name: " <<
-				_descriptor->PortNames[j] << " -> " << port_name << endl;
 
 		string::size_type slash_index;
 		
@@ -90,14 +86,18 @@ LADSPANode::instantiate()
 			assert(_descriptor->PortNames[k] != NULL);
 			if (k != j && port_name == _descriptor->PortNames[k]) { // clash
 				if (LADSPA_IS_PORT_CONTROL(_descriptor->PortDescriptors[j]))
-					port_name += "_(CR)";
+					port_name += "(CR)";
 				else
-					port_name += "_(AR)";
+					port_name += "(AR)";
 			}
 			// Replace all slashes with "-" (so they don't screw up paths)
 			while ((slash_index = port_name.find("/")) != string::npos)
 				port_name[slash_index] = '-';
 		}
+		
+		if (_descriptor->PortNames[j] != port_name)
+			cerr << "NOTICE: Translated LADSPA port name: " <<
+				_descriptor->PortNames[j] << " -> " << port_name << endl;
 
 		port_path = path() + "/" + port_name;
 

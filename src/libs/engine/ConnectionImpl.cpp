@@ -62,6 +62,7 @@ ConnectionImpl::ConnectionImpl(PortImpl* src_port, PortImpl* dst_port)
 	if (_must_mix)
 		_local_buffer = BufferFactory::create(dst_port->type(), dst_port->buffer(0)->size());
 
+	/* FIXME: 1->1 connections with a destination with fixed buffers copies unecessarily */
 	//cerr << src_port->path() << " -> " << dst_port->path() << " must mix: " << _must_mix << endl;
 }
 
@@ -126,6 +127,10 @@ ConnectionImpl::process(ProcessContext& context)
 	 * a buffer (if it hasn't been done already this cycle) and returns that
 	 * would avoid having to mix multiple times.  Probably not a very common
 	 * case, but it would be faster anyway. */
+
+	/*cerr << src_port()->path() << " * " << src_port()->poly()
+			<< " -> " << dst_port()->path() << " * " << dst_port()->poly()
+			<< "\t\tmust mix: " << _must_mix << endl;*/
 	
 	if (_must_mix && (type() == DataType::CONTROL || type() == DataType::AUDIO)) {
 

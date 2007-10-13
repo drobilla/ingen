@@ -152,7 +152,7 @@ InputPort::pre_process(ProcessContext& context)
 	
 	if (_connections.size() == 0) {
 		for (uint32_t i=0; i < _poly; ++i)
-			_buffers->at(i)->prepare_read(context.nframes());
+			buffer(i)->prepare_read(context.nframes());
 		return;
 	}
 
@@ -162,8 +162,10 @@ InputPort::pre_process(ProcessContext& context)
 	if ( ! _fixed_buffers) {
 		// If only one connection, try to use buffer directly (zero copy)
 		if (_connections.size() == 1) {
-			for (uint32_t i=0; i < _poly; ++i)
+			for (uint32_t i=0; i < _poly; ++i) {
+				//cerr << path() << " joining to " << (*_connections.begin())->buffer(i) << endl;
 				_buffers->at(i)->join((*_connections.begin())->buffer(i));
+			}
 			do_mixdown = false;
 		}
 		connect_buffers();
@@ -172,22 +174,27 @@ InputPort::pre_process(ProcessContext& context)
 	}
 
 	for (uint32_t i=0; i < _poly; ++i)
-		_buffers->at(i)->prepare_read(context.nframes());
+		buffer(i)->prepare_read(context.nframes());
 	
-	//cerr << path() << " poly = " << _poly << ", mixdown: " << do_mixdown << endl;
+	/*cerr << path() << " poly = " << _poly << ", mixdown: " << do_mixdown
+		<< ", fixed buffers: " << _fixed_buffers << endl;
+	
+	if (type() == DataType::MIDI) 
+		for (uint32_t i=0; i < _poly; ++i)
+			cerr << path() << " (" << buffer(i) << ") # events: " << ((MidiBuffer*)buffer(i))->event_count() << ", joined: " << _buffers->at(i)->is_joined() << endl;*/
 
 	if (!do_mixdown) {
-#ifndef NDEBUG
+/*#ifndef NDEBUG
 		for (uint32_t i=0; i < _poly; ++i)
-			assert(_buffers->at(i)->is_joined_to((*_connections.begin())->buffer(i)));
-#endif
+			assert(buffer(i) == (*_connections.begin())->buffer(i));
+#endif*/
 		return;
 	}
 
 	if (_type == DataType::CONTROL || _type == DataType::AUDIO) {
 		for (uint32_t voice=0; voice < _poly; ++voice) {
 			// Copy first connection
-			_buffers->at(voice)->copy(
+			buffer(voice)->copy(
 				(*_connections.begin())->buffer(voice), 0, _buffer_size-1);
 
 			// Accumulate the rest
@@ -196,7 +203,7 @@ InputPort::pre_process(ProcessContext& context)
 				Connections::iterator c = _connections.begin();
 
 				for (++c; c != _connections.end(); ++c)
-					((AudioBuffer*)_buffers->at(voice))->accumulate(
+					((AudioBuffer*)buffer(voice))->accumulate(
 					((AudioBuffer*)(*c)->buffer(voice)), 0, _buffer_size-1);
 			}
 		}
@@ -221,7 +228,9 @@ InputPort::post_process(ProcessContext& context)
 
 	// Prepare for next cycle
 	for (uint32_t i=0; i < _poly; ++i)
-		_buffers->at(i)->prepare_write(context.nframes());
+		buffer(i)->prepare_write(context.nframes());
+	
+	//cerr << path() << " input post: buffer: " << buffer(0) << endl;
 }
 
 

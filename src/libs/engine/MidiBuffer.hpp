@@ -18,6 +18,7 @@
 #ifndef MIDIBUFFER_H
 #define MIDIBUFFER_H
 
+#include <iostream>
 #include <lv2ext/lv2-midiport.h>
 #include "Buffer.hpp"
 #include "interface/DataType.hpp"
@@ -34,29 +35,27 @@ public:
 	void prepare_read(SampleCount nframes);
 	void prepare_write(SampleCount nframes);
 
-	bool is_joined_to(Buffer* buf) const;
 	bool join(Buffer* buf);
 	void unjoin();
 
-	uint32_t this_nframes() const { return _this_nframes; }
-	uint32_t event_count() const { return _buf->event_count; }
+	inline uint32_t this_nframes() const { return _this_nframes; }
+	inline uint32_t event_count() const { return _buf->event_count; }
 	
-	inline LV2_MIDI* local_data() { return _local_buf; }
-	
-	inline void* raw_data() const
-		{ return ((_joined_buf != NULL) ? _joined_buf->raw_data() : _buf); }
+	inline void*       raw_data()       { return _buf; }
+	inline const void* raw_data() const { return _buf; }
 
-	inline LV2_MIDI* data()
-		{ return ((_joined_buf != NULL) ? _joined_buf->data() : _buf); }
-	
-	inline const LV2_MIDI* data() const
-		{ return ((_joined_buf != NULL) ? _joined_buf->data() : _buf); }
+	inline LV2_MIDI*       local_data() { return _local_buf; }
+	inline const LV2_MIDI* local_data() const { return _local_buf; }
+
+	inline LV2_MIDI*       data()       { return _buf; }
+	inline const LV2_MIDI* data() const { return _buf; }
 	
 	void copy(const Buffer* src, size_t start_sample, size_t end_sample);
 
 	inline void rewind() const { _position = 0; }
-	inline void clear() { if (_joined_buf) reset(_this_nframes); }
+	inline void clear() { reset(_this_nframes); }
 	inline void reset(SampleCount nframes) {
+		//std::cerr << this << " reset" << std::endl;
 		_latest_stamp = 0;
 		_position = 0;
 		_buf->event_count = 0;
@@ -75,7 +74,6 @@ private:
 	double           _latest_stamp; ///< Highest timestamp of all events
 	uint32_t         _this_nframes; ///< Current cycle nframes
 	mutable uint32_t _position; ///< Index into _buf
-	MidiBuffer*      _joined_buf;  ///< Buffer to mirror, if joined
 	LV2_MIDI*        _buf; ///< Contents (maybe belong to _joined_buf)
 	LV2_MIDI*        _local_buf; ///< Local contents
 };

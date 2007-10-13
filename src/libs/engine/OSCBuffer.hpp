@@ -38,7 +38,6 @@ public:
 	void prepare_read(SampleCount nframes);
 	void prepare_write(SampleCount nframes);
 
-	bool is_joined_to(Buffer* buf) const;
 	bool join(Buffer* buf);
 	void unjoin();
 	
@@ -47,14 +46,10 @@ public:
 	uint32_t this_nframes() const { return _this_nframes; }
 	uint32_t event_count() const { return _buf->message_count; }
 	
-	inline void* raw_data() const
-		{ return ((_joined_buf != NULL) ? _joined_buf->raw_data() : _buf); }
-
-	inline LV2OSCBuffer* data()
-		{ return ((_joined_buf != NULL) ? _joined_buf->data() : _buf); }
-	
-	inline const LV2OSCBuffer* data() const
-		{ return ((_joined_buf != NULL) ? _joined_buf->data() : _buf); }
+	inline void*               raw_data()       { return _buf; }
+	inline const void*         raw_data() const { return _buf; }
+	inline LV2OSCBuffer*       data()           { return _buf; }
+	inline const LV2OSCBuffer* data()     const { return _buf; }
 
 private:
 	LV2OSCBuffer* const _buf;

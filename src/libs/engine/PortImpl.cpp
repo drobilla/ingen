@@ -157,7 +157,7 @@ void
 PortImpl::connect_buffers()
 {
 	for (uint32_t i=0; i < _poly; ++i)
-		PortImpl::parent_node()->set_port_buffer(i, _index, _buffers->at(i));
+		PortImpl::parent_node()->set_port_buffer(i, _index, buffer(i));
 }
 
 	
@@ -165,7 +165,7 @@ void
 PortImpl::clear_buffers()
 {
 	for (uint32_t i=0; i < _poly; ++i)
-		_buffers->at(i)->clear();
+		buffer(i)->clear();
 }
 	
 

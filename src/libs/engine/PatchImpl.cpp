@@ -142,6 +142,13 @@ PatchImpl::process(ProcessContext& context)
 		return;
 	
 	NodeBase::pre_process(context);
+	
+	/*if (_ports)
+		for (size_t i=0; i < _ports->size(); ++i)
+			if (_ports->at(i)->is_input() && _ports->at(i)->type() == DataType::MIDI)
+				cerr << _ports->at(i)->path() << " "
+					<< _ports->at(i)->buffer(0) << " # events: "
+					<< ((MidiBuffer*)_ports->at(i)->buffer(0))->event_count() << endl;*/
 
 	/* Run */
 	if (_engine.process_slaves().size() > 0)

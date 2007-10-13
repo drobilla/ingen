@@ -25,6 +25,7 @@
 #include "types.hpp"
 #include "GraphObjectImpl.hpp"
 #include "interface/DataType.hpp"
+#include "Buffer.hpp"
 
 namespace Raul { class Maid; }
 
@@ -69,7 +70,15 @@ public:
 	
 	virtual Raul::Atom value() const;
 
-	Buffer* buffer(uint32_t voice) const { return _buffers->at(voice); }
+	inline Buffer* buffer(uint32_t voice) const {
+		Buffer* const buf = _buffers->at(voice);
+		if (buf->is_joined()) {
+			assert(buf->joined_buffer());
+			return buf->joined_buffer();
+		} else {
+			return buf;
+		}
+	}
 
 	/** Called once per process cycle */
 	virtual void pre_process(ProcessContext& context) = 0;
