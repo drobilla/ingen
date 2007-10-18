@@ -246,6 +246,7 @@ void
 NodeModule::rename()
 {
 	set_name(_node->path().name());
+	resize();
 }
 
 
