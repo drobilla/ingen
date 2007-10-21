@@ -57,9 +57,12 @@ public:
 	Serialiser(Raul::RDF::World& world);
 
 	void   to_file(SharedPtr<GraphObject> object, const string& filename);
-	string to_string(SharedPtr<GraphObject> object);
+
+	string to_string(SharedPtr<GraphObject>        object,
+	                 const string&                 base_uri,
+	                 const GraphObject::Variables& extra_rdf);
 	
-	void   start_to_string();
+	void   start_to_string(const string& base_uri);
 	void   serialise(SharedPtr<GraphObject> object) throw (std::logic_error);
 	void   serialise_connection(SharedPtr<Shared::Connection> c) throw (std::logic_error);
 	string finish();

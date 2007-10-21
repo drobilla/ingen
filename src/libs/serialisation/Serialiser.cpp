@@ -67,12 +67,25 @@ Serialiser::to_file(SharedPtr<GraphObject> object, const string& filename)
 }
 
 
+	
 string
-Serialiser::to_string(SharedPtr<GraphObject> object)
+Serialiser::to_string(SharedPtr<GraphObject>        object,
+	                  const string&                 base_uri,
+	                  const GraphObject::Variables& extra_rdf)
 {
 	_root_object = object;
-	start_to_string();
+	start_to_string(base_uri);
 	serialise(object);
+	
+	RDF::Node base_rdf_node(_model->world(), RDF::Node::RESOURCE, base_uri);
+	for (GraphObject::Variables::const_iterator v = extra_rdf.begin(); v != extra_rdf.end(); ++v) {
+		if (v->first.find(":") != string::npos) {
+			_model->add_statement(base_rdf_node, v->first, v->second);
+		} else {
+			cerr << "Warning: not serialising extra RDF with key '" << v->first << "'" << endl;
+		}
+	}
+
 	return finish();
 }
 
@@ -100,11 +113,11 @@ Serialiser::start_to_filename(const string& filename)
  * the desired objects have been serialised.
  */
 void
-Serialiser::start_to_string()
+Serialiser::start_to_string(const string& base_uri)
 {
 	setlocale(LC_NUMERIC, "C");
 
-	_base_uri = "";
+	_base_uri = base_uri;
 	_model = new RDF::Model(_world);
 	_mode = TO_STRING;
 }

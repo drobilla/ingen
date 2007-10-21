@@ -237,11 +237,9 @@ UploadPatchWindow::upload_clicked()
 	Glib::ustring symbol = _symbol_entry->get_text();
 	Glib::ustring short_name = _short_name_entry->get_text();
 
-	_patch->set_variable("lv2:symbol", Atom(symbol));
-	App::instance().engine()->set_variable(_patch->path(), "lv2:symbol", Atom(symbol));
-	
-	_patch->set_variable("doap:name", Atom(short_name));
-	App::instance().engine()->set_variable(_patch->path(), "doap:name", Atom(short_name));
+	GraphObject::Variables extra_rdf;
+	extra_rdf.insert(make_pair("lv2:symbol", Atom(symbol)));
+	extra_rdf.insert(make_pair("doap:name", Atom(short_name)));
 
 	_response = 0;
 	_progress_pct = 0;
@@ -250,15 +248,13 @@ UploadPatchWindow::upload_clicked()
 	_upload_progress->set_text("");
 
 	Serialiser s(*App::instance().world()->rdf_world);
-	s.start_to_string();
-	s.serialise(_patch);
-	const string str = s.finish();
-	istringstream stream(str);
 
-	string url = "http://rdf.drobilla.net/ingen_patches/";
-	url += symbol + ".ingen.ttl";
+	const string uri = string("http://rdf.drobilla.net/ingen_patches/")
+		.append(symbol).append(".ingen.ttl");
+	
+	const string str = s.to_string(_patch, uri, extra_rdf);
 
-	_thread = new UploadThread(this, str, url);
+	_thread = new UploadThread(this, str, uri);
 
 	_thread->start();
 		
