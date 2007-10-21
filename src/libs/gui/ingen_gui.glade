@@ -2988,7 +2988,6 @@ Thank you for contributing.</property>
   </widget>
   <widget class="GtkWindow" id="port_properties_win">
     <property name="border_width">8</property>
-    <property name="type">GTK_WINDOW_POPUP</property>
     <property name="title" translatable="yes">Port Properties - Ingen</property>
     <property name="resizable">False</property>
     <property name="window_position">GTK_WIN_POS_MOUSE</property>
