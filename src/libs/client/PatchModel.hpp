@@ -48,10 +48,7 @@ public:
 	SharedPtr<ConnectionModel> get_connection(const string& src_port_path,
 	                                          const string& dst_port_path) const;
 	
-	void set_filename(const string& filename) { _filename = filename; }
-
 	size_t        poly()               const { return _poly; }
-	const string& filename()           const { return _filename; }
 	bool          enabled()            const { return _enabled; }
 	uint32_t      internal_polyphony() const { return _poly; }
 	bool          polyphonic()         const;
@@ -86,7 +83,6 @@ private:
 	{
 	}
 	
-	void filename(const string& f) { _filename = f; }
 	void poly(size_t p) { _poly = p; signal_polyphony.emit(p); }
 	void enable();
 	void disable();
@@ -98,7 +94,6 @@ private:
 	void remove_connection(const string& src_port_path, const string& dst_port_path);
 	
 	Connections _connections;
-	string      _filename;
 	bool        _enabled;
 	uint32_t    _poly;
 	bool        _editable;

@@ -76,9 +76,8 @@ OSCBuffer::unjoin()
 void
 OSCBuffer::prepare_read(SampleCount nframes)
 {
-	assert(!_joined_buf || data() == _joined_buf->data());
-	
 	rewind();
+	_this_nframes = nframes;
 }
 
 
@@ -86,8 +85,6 @@ void
 OSCBuffer::prepare_write(SampleCount nframes)
 {
 	reset(nframes);
-
-	assert(!_joined_buf || data() == _joined_buf->data());
 }
 
 

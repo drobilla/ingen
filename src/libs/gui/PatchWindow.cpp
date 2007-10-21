@@ -304,10 +304,11 @@ PatchWindow::event_import_location()
 void
 PatchWindow::event_save()
 {
-	if (_patch->filename() == "")
+	GraphObject::Variables::const_iterator doc = _patch->variables().find("ingen:document");
+	if (doc == _patch->variables().end())
 		event_save_as();
 	else
-		App::instance().loader()->save_patch(_patch, _patch->filename());
+		App::instance().loader()->save_patch(_patch, doc->second.get_string());
 }
 
 
@@ -330,9 +331,9 @@ PatchWindow::event_save_as()
 	save_button->property_has_default() = true;
 	
 	// Set current folder to most sensible default
-	const string& current_filename = _patch->filename();
-	if (current_filename.length() > 0)
-		dialog.set_filename(current_filename);
+	GraphObject::Variables::const_iterator doc = _patch->variables().find("ingen:document");
+	if (doc != _patch->variables().end())
+		dialog.set_uri(doc->second.get_string());
 	else if (App::instance().configuration()->patch_folder().length() > 0)
 		dialog.set_current_folder(App::instance().configuration()->patch_folder());
 	
@@ -365,8 +366,8 @@ PatchWindow::event_save_as()
 		
 		if (confirm) {
 			App::instance().loader()->save_patch(_patch, filename);
-			_patch->set_filename(filename);
-			//_patch->set_variable("filename", Atom(filename.c_str()));
+			App::instance().engine()->set_variable(_patch->path(), "ingen:document",
+					Atom(Glib::filename_to_uri(filename).c_str()));
 		}
 	}
 	App::instance().configuration()->set_patch_folder(dialog.get_current_folder());

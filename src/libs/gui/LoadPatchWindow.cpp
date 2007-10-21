@@ -15,10 +15,10 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "LoadPatchWindow.hpp"
 #include <sys/types.h>
 #include <dirent.h>
 #include <boost/optional/optional.hpp>
+#include "LoadPatchWindow.hpp"
 #include "interface/EngineInterface.hpp"
 #include "client/PatchModel.hpp"
 #include "App.hpp"
@@ -127,8 +127,11 @@ LoadPatchWindow::ok_clicked()
 	if (_poly_from_user_radio->get_active())
 		_initial_data.insert(make_pair("ingen:polyphony", _poly_spinbutton->get_value_as_int()));
 	
-	if (_replace)
+	if (_replace) {
 		App::instance().engine()->clear_patch(_patch->path());
+		App::instance().engine()->set_variable(_patch->path(), "ingen:document",
+				Atom(get_uri().c_str()));
+	}
 
 	if (_patch->path() != "/")
 		parent = _patch->path().parent();
