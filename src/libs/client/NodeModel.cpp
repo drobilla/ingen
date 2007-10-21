@@ -176,6 +176,8 @@ NodeModel::port_value_range(SharedPtr<PortModel> port, float& min, float& max)
 		min = min_atom.get_float();
 	if (max_atom.type() == Atom::FLOAT)
 		max = max_atom.get_float();
+
+	cerr << port->path() << " VALUE RANGE: " << min << ", " << max << endl;
 }
 
 

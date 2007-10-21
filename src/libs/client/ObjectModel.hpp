@@ -61,7 +61,7 @@ public:
 
 	const Atom& get_variable(const string& key) const;
 	void set_variable(const string& key, const Atom& value)
-		{ _variables.insert(make_pair(key, value)); signal_variable.emit(key, value); }
+		{ _variables[key] = value; signal_variable.emit(key, value); }
 
 	const Variables&       variables()  const { return _variables; }
 	const Path             path()       const { return _path; }

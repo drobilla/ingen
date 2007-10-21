@@ -82,6 +82,8 @@ private:
 
 	void set_value(float value);
 	void set_range(float min, float max);
+	
+	void port_variable_change(const string& key, const Raul::Atom& value);
 
 	void update_range();
 	void update_value_from_slider();

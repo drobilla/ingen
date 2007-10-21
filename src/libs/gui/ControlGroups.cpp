@@ -127,6 +127,8 @@ SliderControlGroup::init(ControlPanel* panel, SharedPtr<PortModel> pm)
 	} else {
 		_slider->set_increments(0, 0);
 	}
+	
+	pm->signal_variable.connect(sigc::mem_fun(this, &SliderControlGroup::port_variable_change));
 
 	_slider->set_range(std::min(min, pm->value()), std::max(max, pm->value()));
 	//_value_spinner->set_range(min, max);
@@ -182,6 +184,16 @@ SliderControlGroup::set_value(float val)
 			_value_spinner->set_value(val);
 	}
 	_enable_signal = true;
+}
+
+	
+void
+SliderControlGroup::port_variable_change(const string& key, const Atom& value)
+{
+	if ( (key == "ingen:minimum") && value.type() == Atom::FLOAT)
+		set_range(value.get_float(), _slider->get_adjustment()->get_upper());
+	else if ( (key == "ingen:maximum") && value.type() == Atom::FLOAT)
+		set_range(_slider->get_adjustment()->get_lower(), value.get_float());
 }
 
 
