@@ -173,20 +173,20 @@ void
 PortImpl::broadcast(ProcessContext& context)
 {
 	if (_broadcast) {
-		if (_type == DataType::CONTROL) {
-			const Sample value = ((AudioBuffer*)(*_buffers)[0])->value_at(0);
+		if (_type == DataType::CONTROL || _type == DataType::AUDIO) {
+			const Sample value = ((AudioBuffer*)buffer(0))->value_at(0);
 			if (value != _last_broadcasted_value) {
 				const SendPortValueEvent ev(context.engine(), context.start(), this, false, 0, value);
 				context.event_sink().write(sizeof(ev), &ev);
 				_last_broadcasted_value = value;
 			}
 		} else if (_type == DataType::MIDI) {
-			if (((MidiBuffer*)(*_buffers)[0])->event_count() > 0) {
+			if (((MidiBuffer*)buffer(0))->event_count() > 0) {
 				const SendPortActivityEvent ev(context.engine(), context.start(), this);
 				context.event_sink().write(sizeof(ev), &ev);
 			}
 		} else if (_type == DataType::OSC) {
-			if (((OSCBuffer*)(*_buffers)[0])->event_count() > 0) {
+			if (((OSCBuffer*)buffer(0))->event_count() > 0) {
 				const SendPortActivityEvent ev(context.engine(), context.start(), this);
 				context.event_sink().write(sizeof(ev), &ev);
 			}

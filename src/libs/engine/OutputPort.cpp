@@ -24,6 +24,19 @@ using namespace std;
 
 namespace Ingen {
 
+	
+OutputPort::OutputPort(NodeImpl*     parent,
+                       const string& name,
+                       uint32_t      index,
+                       uint32_t      poly,
+                       DataType      type,
+                       size_t        buffer_size)
+	: PortImpl(parent, name, index, poly, type, buffer_size)
+{
+	if (type == DataType::CONTROL)
+		_broadcast = true;
+}
+
 
 void
 OutputPort::pre_process(ProcessContext& context)

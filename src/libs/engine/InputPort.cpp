@@ -31,7 +31,12 @@ using namespace std;
 namespace Ingen {
 
 
-InputPort::InputPort(NodeImpl* parent, const string& name, uint32_t index, uint32_t poly, DataType type, size_t buffer_size)
+InputPort::InputPort(NodeImpl*     parent,
+                     const string& name,
+                     uint32_t      index,
+                     uint32_t      poly,
+                     DataType      type,
+                     size_t        buffer_size)
 	: PortImpl(parent, name, index, poly, type, buffer_size)
 {
 }
@@ -177,7 +182,8 @@ InputPort::pre_process(ProcessContext& context)
 		buffer(i)->prepare_read(context.nframes());
 	
 	/*cerr << path() << " poly = " << _poly << ", mixdown: " << do_mixdown
-		<< ", fixed buffers: " << _fixed_buffers << endl;
+		<< ", fixed buffers: " << _fixed_buffers << ", joined: " << _buffers->at(0)->is_joined()
+		<< " to " << _buffers->at(0)->joined_buffer() << endl;
 	
 	if (type() == DataType::MIDI) 
 		for (uint32_t i=0; i < _poly; ++i)
@@ -230,7 +236,12 @@ InputPort::post_process(ProcessContext& context)
 	for (uint32_t i=0; i < _poly; ++i)
 		buffer(i)->prepare_write(context.nframes());
 	
-	//cerr << path() << " input post: buffer: " << buffer(0) << endl;
+	/*if (_broadcast && (_type == DataType::CONTROL)) {
+		const Sample value = ((AudioBuffer*)(*_buffers)[0])->value_at(0);
+
+		cerr << path() << " input post: buffer: " << buffer(0) << " value = "
+			<< value << " (last " << _last_broadcasted_value << ")" <<endl;
+	}*/
 }
 
 

@@ -45,9 +45,7 @@ public:
 	           uint32_t      index,
 	           uint32_t      poly,
 	           DataType      type,
-	           size_t        buffer_size)
-	: PortImpl(parent, name, index, poly, type, buffer_size)
-	{}
+	           size_t        buffer_size);
 
 	void pre_process(ProcessContext& context);
 	void post_process(ProcessContext& context);
