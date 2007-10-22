@@ -37,7 +37,6 @@ class MidiDriver;
 class OSCDriver;
 class NodeFactory;
 class ClientBroadcaster;
-class PatchImpl;
 class ObjectStore;
 class EventSource;
 class PostProcessor;

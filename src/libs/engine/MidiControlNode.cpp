@@ -22,7 +22,7 @@
 #include "MidiLearnEvent.hpp"
 #include "InputPort.hpp"
 #include "OutputPort.hpp"
-#include "PluginImpl.hpp"
+#include "InternalPlugin.hpp"
 #include "AudioBuffer.hpp"
 #include "ProcessContext.hpp"
 #include "util.hpp"
@@ -30,44 +30,44 @@
 namespace Ingen {
 
 	
-MidiControlNode::MidiControlNode(const string& path, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size)
-: NodeBase(new PluginImpl(Plugin::Internal, "ingen:control_node"), path, false, parent, srate, buffer_size),
-  _learning(false)
+MidiControlNode::MidiControlNode(const string& path,
+                                 bool          polyphonic,
+                                 PatchImpl*    parent,
+                                 SampleRate    srate,
+                                 size_t        buffer_size)
+	: NodeBase(new InternalPlugin("ingen:control_node", "controller", "MIDI Controller")
+			, path, false, parent, srate, buffer_size)
+	, _learning(false)
 {
 	_ports = new Raul::Array<PortImpl*>(7);
 
-	_midi_in_port = new InputPort(this, "MIDIIn", 0, 1, DataType::MIDI, _buffer_size);
+	_midi_in_port = new InputPort(this, "input", 0, 1, DataType::MIDI, _buffer_size);
 	_ports->at(0) = _midi_in_port;
 	
-	_param_port = new InputPort(this, "ControllerNumber", 1, 1, DataType::CONTROL, 1);
+	_param_port = new InputPort(this, "controller", 1, 1, DataType::CONTROL, 1);
 	_param_port->set_variable("ingen:minimum", 0.0f);
 	_param_port->set_variable("ingen:maximum", 127.0f);
 	_param_port->set_variable("ingen:default", 0.0f);
 	_param_port->set_variable("ingen:integer", 1);
 	_ports->at(1) = _param_port;
 
-	_log_port = new InputPort(this, "Logarithmic", 2, 1, DataType::CONTROL, 1);
+	_log_port = new InputPort(this, "logarithmic", 2, 1, DataType::CONTROL, 1);
 	_log_port->set_variable("ingen:toggled", 1);
 	_log_port->set_variable("ingen:default", 0.0f);
 	_ports->at(2) = _log_port;
 	
-	_min_port = new InputPort(this, "Min", 3, 1, DataType::CONTROL, 1);
+	_min_port = new InputPort(this, "minimum", 3, 1, DataType::CONTROL, 1);
 	_min_port->set_variable("ingen:default", 0.0f);
 	_ports->at(3) = _min_port;
 	
-	_max_port = new InputPort(this, "Max", 4, 1, DataType::CONTROL, 1);
+	_max_port = new InputPort(this, "maximum", 4, 1, DataType::CONTROL, 1);
 	_ports->at(4) = _max_port;
 	
-	_audio_port = new OutputPort(this, "Out(AR)", 5, 1, DataType::AUDIO, _buffer_size);
+	_audio_port = new OutputPort(this, "ar_output", 5, 1, DataType::AUDIO, _buffer_size);
 	_ports->at(5) = _audio_port;
 
-	_control_port = new OutputPort(this, "Out(CR)", 6, 1, DataType::CONTROL, 1);
+	_control_port = new OutputPort(this, "cr_output", 6, 1, DataType::CONTROL, 1);
 	_ports->at(6) = _control_port;
-	
-	PluginImpl* p = const_cast<PluginImpl*>(_plugin);
-	p->plug_label("midi_control_in");
-	assert(p->uri() == "ingen:control_node");
-	p->name("Ingen Control Node (MIDI)");
 }
 
 

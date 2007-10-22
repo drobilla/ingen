@@ -28,25 +28,21 @@
 #include "MidiTriggerNode.hpp"
 #include "MidiControlNode.hpp"
 #include "TransportNode.hpp"
-#include "PluginImpl.hpp"
 #include "PatchImpl.hpp"
-#ifdef HAVE_SLV2
-#include "LV2Node.hpp"
-#include <slv2/slv2.h>
-#endif
+#include "InternalPlugin.hpp"
 #ifdef HAVE_LADSPA
 #include "LADSPANode.hpp"
+#include "LADSPAPlugin.hpp"
+#endif
+#ifdef HAVE_SLV2
+#include <slv2/slv2.h>
+#include "LV2Plugin.hpp"
+#include "LV2Node.hpp"
 #endif
 
 using namespace std;
 
 namespace Ingen {
-
-
-/* I am perfectly aware that the vast majority of this class is a 
- * vomit inducing nightmare at the moment ;)
- */
-
 
 
 NodeFactory::NodeFactory(Ingen::Shared::World* world)
@@ -69,7 +65,7 @@ NodeFactory::~NodeFactory()
 PluginImpl*
 NodeFactory::plugin(const string& uri)
 {
-	Plugins::const_iterator i = _plugins.find(uri);
+	const Plugins::const_iterator i = _plugins.find(uri);
 	return ((i != _plugins.end()) ? i->second : NULL);
 }
 
@@ -81,14 +77,16 @@ NodeFactory::plugin(const string& uri)
 PluginImpl*
 NodeFactory::plugin(const string& type, const string& lib, const string& label)
 {
-	if (type == "" || lib == "" || label == "")
+	if (type != "LADSPA" || lib == "" || label == "")
 		return NULL;
 
-	for (Plugins::const_iterator i = _plugins.begin(); i != _plugins.end(); ++i)
-		if (i->second->type_string() == type
-				&& i->second->lib_name() == lib
-				&& i->second->plug_label() == label)
-			return i->second;
+	for (Plugins::const_iterator i = _plugins.begin(); i != _plugins.end(); ++i) {
+		LADSPAPlugin* lp = dynamic_cast<LADSPAPlugin*>(i->second);
+		if (lp && lp->type_string() == type
+				&& lp->library_name() == lib
+				&& lp->label() == label)
+			return lp;
+	}
 
 	cerr << "ERROR: Failed to find " << type << " plugin " << lib << " / " << label << endl;
 
@@ -119,48 +117,23 @@ NodeFactory::load_plugins()
 		
 		_has_loaded = true;
 	}
+	
+#if 0
+	for (Plugins::const_iterator i = _plugins.begin(); i != _plugins.end(); ++i) {
+		assert(Path::is_valid_name(i->second->symbol()));
+		cerr << "PLUGIN: " << i->second->uri() << " - " << i->second->symbol()
+			<< " (" << i->second->name() << ")" << endl;
+		PatchImpl* parent = new PatchImpl(*_world->local_engine, "dummy", 1, NULL, 1, 1, 1);
+		NodeImpl* node = i->second->instantiate("foo", 0, parent, 48000, 512);
+		if (node)
+		for (uint32_t i=0; i < node->num_ports(); ++i) {
+			cerr << "\t" << node->port(i)->name() << endl;
+		}
+		cerr << endl;
+	}
+#endif
 
 	//cerr << "[NodeFactory] # Plugins: " << _plugins.size() << endl;
-}
-
-
-/** Loads a plugin.
- *
- * Calls the load_*_plugin functions to actually do things, just a wrapper.
- */
-NodeImpl*
-NodeFactory::load_plugin(PluginImpl*   plugin,
-                         const string& name,
-                         bool          polyphonic,
-                         PatchImpl*    parent)
-{
-	assert(parent != NULL);
-	assert(plugin);
-
-	NodeImpl* r = NULL;
-
-	const SampleRate srate       = parent->sample_rate();
-	const size_t     buffer_size = parent->buffer_size();
-
-	switch (plugin->type()) {
-#ifdef HAVE_SLV2
-	case Plugin::LV2:
-		r = load_lv2_plugin(plugin, name, polyphonic, parent, srate, buffer_size);
-		break;
-#endif
-#ifdef HAVE_LADSPA
-	case Plugin::LADSPA:
-		r = load_ladspa_plugin(plugin, name, polyphonic, parent, srate, buffer_size);
-		break;
-#endif
-	case Plugin::Internal:
-		r = load_internal_plugin(plugin, name, polyphonic, parent, srate, buffer_size);
-		break;
-	default:
-		cerr << "[NodeFactory] WARNING: Unknown plugin type." << endl;
-	}
-
-	return r;
 }
 
 
@@ -189,28 +162,7 @@ NodeFactory::load_internal_plugins()
 }
 
 
-/** Loads an internal plugin.
- */
-NodeImpl*
-NodeFactory::load_internal_plugin(PluginImpl*   plugin,
-                                  const string& name,
-                                  bool          polyphonic,
-                                  PatchImpl*    parent,
-                                  SampleRate    srate,
-                                  size_t        buffer_size)
-{
-	assert(plugin);
-	assert(plugin->type() == Plugin::Internal);
-	assert(parent != NULL);
-	assert(plugin->uri().length() > 6);
-	assert(plugin->uri().substr(0, 6) == "ingen:");
-
-	return plugin->instantiate(name, polyphonic, parent, srate, buffer_size);
-}
-
-
 #ifdef HAVE_SLV2
-
 /** Loads information about all LV2 plugins into internal plugin database.
  */
 void
@@ -230,13 +182,13 @@ NodeFactory::load_lv2_plugins()
 		assert(_plugins.find(uri) == _plugins.end());
 #endif
 			
-		PluginImpl* const plugin = new PluginImpl(Plugin::LV2, uri);
+		LV2Plugin* const plugin = new LV2Plugin(uri);
 
 		plugin->slv2_plugin(lv2_plug);
-		plugin->lib_path(slv2_uri_to_path(slv2_plugin_get_library_uri(lv2_plug)));
+		plugin->library_path(slv2_uri_to_path(slv2_plugin_get_library_uri(lv2_plug)));
 		char* const name = slv2_plugin_get_name(lv2_plug);
 		if (name) {
-			plugin->name(name);
+			//plugin->name(name);
 			free(name);
 			_plugins.insert(make_pair(uri, plugin));
 		} else {
@@ -247,40 +199,6 @@ NodeFactory::load_lv2_plugins()
 
 	slv2_plugins_free(_world->slv2_world, plugins);
 }
-
-
-/** Loads a LV2 plugin.
- * Returns 'poly' independant plugins as a NodeImpl*
- */
-NodeImpl*
-NodeFactory::load_lv2_plugin(PluginImpl*   plugin,
-                             const string& node_name,
-                             bool          polyphonic,
-                             PatchImpl*    parent,
-                             SampleRate    srate,
-                             size_t        buffer_size)
-{
-	assert(plugin);
-	assert(plugin->type() == Plugin::LV2);
-
-	NodeImpl* n = NULL;
-
-	plugin->load(); // FIXME: unload
-
-	n = new LV2Node(plugin, node_name, polyphonic, parent, srate, buffer_size);
-
-	Glib::Mutex::Lock lock(_world->rdf_world->mutex());
-
-	const bool success = ((LV2Node*)n)->instantiate();
-
-	if (!success) {
-		delete n;
-		n = NULL;
-	}
-
-	return n;
-}
-
 #endif // HAVE_SLV2
 
 
@@ -354,20 +272,16 @@ NodeFactory::load_ladspa_plugins()
 				const Plugins::const_iterator i = _plugins.find(uri);
 				
 				if (i == _plugins.end()) {
-					PluginImpl* plugin = new PluginImpl(Plugin::LADSPA, uri);
-
-					assert(plugin_library != NULL);
-					plugin->module(NULL);
-					plugin->lib_path(lib_path);
-					plugin->plug_label(descriptor->Label);
-					plugin->name(descriptor->Name);
-					plugin->type(Plugin::LADSPA);
-					plugin->id(descriptor->UniqueID);
+					LADSPAPlugin* plugin = new LADSPAPlugin(lib_path, uri,
+						descriptor->UniqueID,
+						descriptor->Label,
+						descriptor->Name);
 
 					_plugins.insert(make_pair(uri, plugin));
+
 				} else {
 					cerr << "Warning: Duplicate LADSPA plugin " << uri << " found." << endl;
-					cerr << "\tUsing " << i->second->lib_path() << " over " << lib_path << endl;
+					cerr << "\tUsing " << i->second->library_path() << " over " << lib_path << endl;
 				}
 			}
 
@@ -376,61 +290,6 @@ NodeFactory::load_ladspa_plugins()
 		closedir(pdir);
 	}
 }
-
-
-/** Loads a LADSPA plugin.
- * Returns 'poly' independant plugins as a NodeImpl*
- */
-NodeImpl*
-NodeFactory::load_ladspa_plugin(PluginImpl*   plugin,
-                                const string& name,
-                                bool          polyphonic,
-                                PatchImpl*    parent,
-                                SampleRate    srate,
-                                size_t        buffer_size)
-{
-	assert(plugin);
-	assert(plugin->type() == Plugin::LADSPA);
-	assert(plugin->id() != 0);
-	assert(name != "");
-	
-	LADSPA_Descriptor_Function df = NULL;
-	NodeImpl* n = NULL;
-
-	plugin->load(); // FIXME: unload
-	assert(plugin->module());
-	assert(*plugin->module());
-	
-	if (!plugin->module()->get_symbol("ladspa_descriptor", (void*&)df)) {
-		cerr << "Looks like this isn't a LADSPA plugin." << endl;
-		return NULL;
-	}
-
-	// Attempt to find the plugin in lib
-	LADSPA_Descriptor* descriptor = NULL;
-	for (unsigned long i=0; (descriptor = (LADSPA_Descriptor*)df(i)) != NULL; ++i) {
-		if (descriptor->UniqueID == plugin->id()) {
-			break;
-		}
-	}
-	
-	if (descriptor == NULL) {
-		cerr << "Could not find plugin \"" << plugin->id() << "\" in " << plugin->lib_path() << endl;
-		return NULL;
-	}
-
-	n = new LADSPANode(plugin, name, polyphonic, parent, descriptor, srate, buffer_size);
-
-	bool success = ((LADSPANode*)n)->instantiate();
-	if (!success) {
-		delete n;
-		n = NULL;
-	}
-	
-	return n;
-}
-
-
 #endif // HAVE_LADSPA
 
 

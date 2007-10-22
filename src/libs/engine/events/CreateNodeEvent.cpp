@@ -18,6 +18,7 @@
 #include <raul/Maid.hpp>
 #include <raul/Path.hpp>
 #include <raul/Path.hpp>
+#include "module/World.hpp"
 #include "CreateNodeEvent.hpp"
 #include "Responder.hpp"
 #include "PatchImpl.hpp"
@@ -29,16 +30,17 @@
 #include "ClientBroadcaster.hpp"
 #include "ObjectStore.hpp"
 #include "PortImpl.hpp"
+#include "AudioDriver.hpp"
 
 namespace Ingen {
 
 
 CreateNodeEvent::CreateNodeEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path,
-		const string& plugin_uri, bool poly)
+		const string& plugin_uri, bool polyphonic)
 : QueuedEvent(engine, responder, timestamp),
   _path(path),
   _plugin_uri(plugin_uri),
-  _poly(poly),
+  _polyphonic(polyphonic),
   _patch(NULL),
   _node(NULL),
   _compiled_patch(NULL),
@@ -52,13 +54,13 @@ CreateNodeEvent::CreateNodeEvent(Engine& engine, SharedPtr<Responder> responder,
  * Do not use.
  */
 CreateNodeEvent::CreateNodeEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path,
-		const string& plugin_type, const string& plugin_lib, const string& plugin_label, bool poly)
+		const string& plugin_type, const string& plugin_lib, const string& plugin_label, bool polyphonic)
 : QueuedEvent(engine, responder, timestamp),
   _path(path),
   _plugin_type(plugin_type),
   _plugin_lib(plugin_lib),
   _plugin_label(plugin_label),
-  _poly(poly),
+  _polyphonic(polyphonic),
   _patch(NULL),
   _node(NULL),
   _compiled_patch(NULL),
@@ -84,7 +86,10 @@ CreateNodeEvent::pre_process()
 
 	if (_patch && plugin) {
 			
-		_node = _engine.node_factory()->load_plugin(plugin, _path.name(), _poly, _patch);
+		Glib::Mutex::Lock lock(_engine.world()->rdf_world->mutex());
+		
+		_node = plugin->instantiate(_path.name(), _polyphonic, _patch,
+				_engine.audio_driver()->sample_rate(), _engine.audio_driver()->buffer_size());
 		
 		if (_node != NULL) {
 			_node->activate();

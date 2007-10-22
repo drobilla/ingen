@@ -31,8 +31,8 @@ void
 PluginImpl::load()
 {
 	if (!_module) {
-		cerr << "Loading " << _lib_path << endl;
-		_module = new Glib::Module(_lib_path, Glib::MODULE_BIND_LOCAL);
+		cerr << "Loading " << _library_path << " library" << endl;
+		_module = new Glib::Module(_library_path, Glib::MODULE_BIND_LOCAL);
 		if (!(*_module))
 			delete _module;
 	}
@@ -43,30 +43,12 @@ void
 PluginImpl::unload()
 {
 	if (_module) {
-		cerr << "Unloading " << _lib_path << endl;
+		cerr << "Unloading " << _library_path << endl;
 		delete _module;
 		_module = NULL;
 	}
 }
 
 
-NodeImpl*
-PluginImpl::instantiate(const string& name, bool polyphonic, Ingen::PatchImpl* parent, SampleRate srate, size_t buffer_size)
-{
-	assert(_type == Internal);
-
-	if (_uri == "ingen:note_node") {
-		return new MidiNoteNode(name, polyphonic, parent, srate, buffer_size);
-	} else if (_uri == "ingen:trigger_node") {
-		return new MidiTriggerNode(name, polyphonic, parent, srate, buffer_size);
-	} else if (_uri == "ingen:control_node") {
-		return new MidiControlNode(name, polyphonic, parent, srate, buffer_size);
-	} else if (_uri == "ingen:transport_node") {
-		return new TransportNode(name, polyphonic, parent, srate, buffer_size);
-	} else {
-		return NULL;
-	}
-}
-
-
 } // namespace Ingen
+

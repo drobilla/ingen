@@ -67,7 +67,7 @@ RequestPluginEvent::post_process()
 
 		_responder->respond_ok();
 		assert(_plugin->uri() == _uri);
-		_responder->client()->new_plugin(_uri, _plugin->type_uri(), _plugin->name());
+		_responder->client()->new_plugin(_uri, _plugin->type_uri(), _plugin->symbol(), _plugin->name());
 
 	} else {
 		_responder->respond_error("Unable to find client to send plugin.");

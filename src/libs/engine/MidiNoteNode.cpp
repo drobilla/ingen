@@ -20,56 +20,51 @@
 #include <raul/midi_events.h>
 #include <cmath>
 #include <iostream>
-#include "MidiNoteNode.hpp"
-#include "MidiBuffer.hpp"
 #include "AudioBuffer.hpp"
-#include "InputPort.hpp"
-#include "OutputPort.hpp"
-#include "PluginImpl.hpp"
 #include "AudioDriver.hpp"
+#include "InputPort.hpp"
+#include "InternalPlugin.hpp"
+#include "MidiBuffer.hpp"
+#include "MidiNoteNode.hpp"
+#include "OutputPort.hpp"
 #include "PatchImpl.hpp"
 #include "ProcessContext.hpp"
 #include "util.hpp"
 
-using std::cerr; using std::cout; using std::endl;
-
+using namespace std;
 
 namespace Ingen {
 
 
 MidiNoteNode::MidiNoteNode(const string& path, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size)
-: NodeBase(new PluginImpl(Plugin::Internal, "ingen:note_node"), path, polyphonic, parent, srate, buffer_size),
-  _voices(new Raul::Array<Voice>(_polyphony)),
-  _prepared_voices(NULL),
-  _sustain(false)
+	: NodeBase(new InternalPlugin("ingen:note_node", "note", "MIDI Note"),
+			path, polyphonic, parent, srate, buffer_size)
+	, _voices(new Raul::Array<Voice>(_polyphony))
+	, _prepared_voices(NULL)
+	, _sustain(false)
 {
 	_ports = new Raul::Array<PortImpl*>(5);
 	
-	_midi_in_port = new InputPort(this, "MIDIIn", 0, 1, DataType::MIDI, _buffer_size);
+	_midi_in_port = new InputPort(this, "input", 0, 1, DataType::MIDI, _buffer_size);
 	_ports->at(0) = _midi_in_port;
 
-	_freq_port = new OutputPort(this, "Frequency", 1, _polyphony, DataType::AUDIO, _buffer_size);
+	_freq_port = new OutputPort(this, "frequency", 1, _polyphony, DataType::AUDIO, _buffer_size);
 	_ports->at(1) = _freq_port;
 	
-	_vel_port = new OutputPort(this, "Velocity", 2, _polyphony, DataType::AUDIO, _buffer_size);
+	_vel_port = new OutputPort(this, "velocity", 2, _polyphony, DataType::AUDIO, _buffer_size);
 	_vel_port->set_variable("ingen:minimum", 0.0f);
 	_vel_port->set_variable("ingen:maximum", 1.0f);
 	_ports->at(2) = _vel_port;
 	
-	_gate_port = new OutputPort(this, "Gate", 3, _polyphony, DataType::AUDIO, _buffer_size);
+	_gate_port = new OutputPort(this, "gate", 3, _polyphony, DataType::AUDIO, _buffer_size);
 	_gate_port->set_variable("ingen:toggled", 1);
 	_gate_port->set_variable("ingen:default", 0.0f);
 	_ports->at(3) = _gate_port;
 	
-	_trig_port = new OutputPort(this, "Trigger", 4, _polyphony, DataType::AUDIO, _buffer_size);
+	_trig_port = new OutputPort(this, "trigger", 4, _polyphony, DataType::AUDIO, _buffer_size);
 	_trig_port->set_variable("ingen:toggled", 1);
 	_trig_port->set_variable("ingen:default", 0.0f);
 	_ports->at(4) = _trig_port;
-	
-	PluginImpl* p = const_cast<PluginImpl*>(_plugin);
-	p->plug_label("note_in");
-	assert(p->uri() == "ingen:note_node");
-	p->name("Ingen Note Node (MIDI, OSC)");
 }
 
 

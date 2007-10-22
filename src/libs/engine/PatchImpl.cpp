@@ -21,7 +21,7 @@
 #include "ThreadManager.hpp"
 #include "NodeImpl.hpp"
 #include "PatchImpl.hpp"
-#include "PluginImpl.hpp"
+#include "PatchPlugin.hpp"
 #include "PortImpl.hpp"
 #include "ConnectionImpl.hpp"
 #include "DuplexPort.hpp"
@@ -34,19 +34,14 @@ namespace Ingen {
 
 
 PatchImpl::PatchImpl(Engine& engine, const string& path, uint32_t poly, PatchImpl* parent, SampleRate srate, size_t buffer_size, uint32_t internal_poly) 
-: NodeBase(new PluginImpl(Plugin::Patch, "ingen:patch"), path, poly, parent, srate, buffer_size),
+: NodeBase(new PatchPlugin("http://example.org/FIXME", "patch", "Ingen Patch"),
+		path, poly, parent, srate, buffer_size),
   _engine(engine),
   _internal_poly(internal_poly),
   _compiled_patch(NULL),
   _process(false)
 {
 	assert(internal_poly >= 1);
-
-	//_plugin->plug_label("om_patch");
-	//_plugin->name("Ingen Patch");
-
-	//std::cerr << "Creating patch " << _name << ", poly = " << poly
-	//	<< ", internal poly = " << internal_poly << std::endl;
 }
 
 

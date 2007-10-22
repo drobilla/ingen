@@ -50,7 +50,7 @@ public:
 	sigc::signal<void>                                     signal_bundle_end; 
 	sigc::signal<void, string>                             signal_error; 
 	sigc::signal<void, uint32_t>                           signal_num_plugins; 
-	sigc::signal<void, string, string, string>             signal_new_plugin; 
+	sigc::signal<void, string, string, string, string>     signal_new_plugin; 
 	sigc::signal<void, string, uint32_t>                   signal_new_patch; 
 	sigc::signal<void, string, string, bool, uint32_t>     signal_new_node; 
 	sigc::signal<void, string, string, bool>               signal_new_port; 
@@ -98,8 +98,8 @@ protected:
 	void error(const string& msg)
 		{ if (_enabled) signal_error.emit(msg); }
 	
-	void new_plugin(const string& uri, const string& type_uri, const string& name)
-		{ if (_enabled) signal_new_plugin.emit(uri, type_uri, name); }
+	void new_plugin(const string& uri, const string& type_uri, const string& symbol, const string& name)
+		{ if (_enabled) signal_new_plugin.emit(uri, type_uri, symbol, name); }
 	
 	void new_patch(const string& path, uint32_t poly)
 		{ if (_enabled) signal_new_patch.emit(path, poly); }

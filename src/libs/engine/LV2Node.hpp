@@ -22,9 +22,10 @@
 #include <slv2/slv2.h>
 #include "types.hpp"
 #include "NodeBase.hpp"
-#include "PluginImpl.hpp"
 
 namespace Ingen {
+
+class LV2Plugin;
 
 
 /** An instance of a LV2 plugin.
@@ -34,7 +35,7 @@ namespace Ingen {
 class LV2Node : public NodeBase
 {
 public:
-	LV2Node(PluginImpl*   plugin,
+	LV2Node(LV2Plugin*    plugin,
 	        const string& name,
 	        bool          polyphonic,
 	        PatchImpl*    parent,

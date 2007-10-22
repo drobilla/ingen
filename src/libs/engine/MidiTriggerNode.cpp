@@ -21,7 +21,7 @@
 #include "AudioBuffer.hpp"
 #include "InputPort.hpp"
 #include "OutputPort.hpp"
-#include "PluginImpl.hpp"
+#include "InternalPlugin.hpp"
 #include "ProcessContext.hpp"
 #include "util.hpp"
 
@@ -29,33 +29,29 @@ namespace Ingen {
 
 
 MidiTriggerNode::MidiTriggerNode(const string& path, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size)
-: NodeBase(new PluginImpl(Plugin::Internal, "ingen:trigger_node"), path, false, parent, srate, buffer_size)
+	: NodeBase(new InternalPlugin("ingen:trigger_node", "trigger", "MIDI Trigger"),
+			path, false, parent, srate, buffer_size)
 {
 	_ports = new Raul::Array<PortImpl*>(5);
 
-	_midi_in_port = new InputPort(this, "MIDIIn", 0, 1, DataType::MIDI, _buffer_size);
+	_midi_in_port = new InputPort(this, "input", 0, 1, DataType::MIDI, _buffer_size);
 	_ports->at(0) = _midi_in_port;
 	
-	_note_port = new InputPort(this, "NoteNumber", 1, 1, DataType::CONTROL, 1);
+	_note_port = new InputPort(this, "note", 1, 1, DataType::CONTROL, 1);
 	_note_port->set_variable("ingen:minimum", 0.0f);
 	_note_port->set_variable("ingen:maximum", 127.0f);
 	_note_port->set_variable("ingen:default", 60.0f);
 	_note_port->set_variable("ingen:integer", 1);
 	_ports->at(1) = _note_port;
 	
-	_gate_port = new OutputPort(this, "Gate", 2, 1, DataType::AUDIO, _buffer_size);
+	_gate_port = new OutputPort(this, "gate", 2, 1, DataType::AUDIO, _buffer_size);
 	_ports->at(2) = _gate_port;
 
-	_trig_port = new OutputPort(this, "Trigger", 3, 1, DataType::AUDIO, _buffer_size);
+	_trig_port = new OutputPort(this, "trigger", 3, 1, DataType::AUDIO, _buffer_size);
 	_ports->at(3) = _trig_port;
 	
-	_vel_port = new OutputPort(this, "Velocity", 4, 1, DataType::AUDIO, _buffer_size);
+	_vel_port = new OutputPort(this, "velocity", 4, 1, DataType::AUDIO, _buffer_size);
 	_ports->at(4) = _vel_port;
-	
-	PluginImpl* p = const_cast<PluginImpl*>(_plugin);
-	p->plug_label("trigger_in");
-	assert(p->uri() == "ingen:trigger_node");
-	p->name("Ingen Trigger Node (MIDI, OSC)");
 }
 
 

@@ -77,6 +77,7 @@ public:
 
 	virtual void new_plugin(const std::string& uri,
 	                        const std::string& type_uri,
+	                        const std::string& symbol,
 	                        const std::string& name);
 	
 	virtual void new_patch(const std::string& path, uint32_t poly);

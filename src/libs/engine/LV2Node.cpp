@@ -21,13 +21,13 @@
 #include <stdint.h>
 #include <cmath>
 #include <raul/Maid.hpp>
-#include "LV2Node.hpp"
-#include "InputPort.hpp"
-#include "OutputPort.hpp"
-#include "PluginImpl.hpp"
 #include "AudioBuffer.hpp"
+#include "InputPort.hpp"
+#include "LV2Node.hpp"
+#include "LV2Plugin.hpp"
 #include "MidiBuffer.hpp"
 #include "OSCBuffer.hpp"
+#include "OutputPort.hpp"
 #include "ProcessContext.hpp"
 
 using namespace std;
@@ -40,7 +40,7 @@ namespace Ingen {
  * Object is not usable until instantiate() is called with success.
  * (It _will_ crash!)
  */
-LV2Node::LV2Node(PluginImpl*   plugin,
+LV2Node::LV2Node(LV2Plugin*    plugin,
                  const string& name,
                  bool          polyphonic,
                  PatchImpl*    parent,

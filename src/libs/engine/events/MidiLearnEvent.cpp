@@ -65,7 +65,7 @@ MidiLearnEvent::execute(ProcessContext& context)
 	
 	// FIXME: this isn't very good at all.
 	if (_node != NULL && _node->plugin_impl()->type() == Plugin::Internal
-			&& _node->plugin_impl()->plug_label() == "midi_control_in") {
+			&& _node->plugin_impl()->uri() == "ingen:control_node") {
 			((MidiControlNode*)_node)->learn(_response_event);
 	}
 }

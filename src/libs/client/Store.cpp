@@ -399,9 +399,9 @@ Store::rename_event(const Path& old_path, const Path& new_path)
 }
 
 void
-Store::new_plugin_event(const string& uri, const string& type_uri, const string& name)
+Store::new_plugin_event(const string& uri, const string& type_uri, const string& symbol, const string& name)
 {
-	SharedPtr<PluginModel> p(new PluginModel(uri, type_uri, name));
+	SharedPtr<PluginModel> p(new PluginModel(uri, type_uri, symbol, name));
 	add_plugin(p);
 	resolve_plugin_orphans(p);
 }

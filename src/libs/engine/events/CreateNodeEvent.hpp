@@ -68,7 +68,7 @@ private:
 	string         _plugin_type;
 	string         _plugin_lib;
 	string         _plugin_label;
-	bool           _poly;
+	bool           _polyphonic;
 	PatchImpl*     _patch;
 	NodeImpl*      _node;
 	CompiledPatch* _compiled_patch; ///< Patch's new process order

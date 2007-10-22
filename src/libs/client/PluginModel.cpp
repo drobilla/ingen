@@ -38,14 +38,14 @@ Raul::RDF::World* PluginModel::_rdf_world = NULL;
 string
 PluginModel::default_node_name(SharedPtr<PatchModel> parent)
 {
-	string default_name = Raul::Path::nameify(_name);
+	string default_name = Raul::Path::nameify(_symbol);
 	string name;
 
 	char num_buf[3];
 	for (uint i=0; i < 99; ++i) {
 		name = default_name;
 		if (i != 0) {
-			snprintf(num_buf, 3, "%d", i+1);
+			snprintf(num_buf, 4, "_%d", i+1);
 			name += num_buf;
 		}
 		if (!parent->find_child(name))

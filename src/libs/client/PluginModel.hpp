@@ -45,36 +45,36 @@ class NodeModel;
 class PluginModel : public Ingen::Shared::Plugin
 {
 public:
-	PluginModel(const string& uri, const string& type_uri, const string& name)
-		: _uri(uri)
+	PluginModel(const string& uri, const string& type_uri, const string& symbol, const string& name)
+		: _type(type_from_uri(type_uri))
+		, _uri(uri)
+		, _symbol(symbol)
 		, _name(name)
 	{
-		set_type_from_uri(type_uri);
 #ifdef HAVE_SLV2
 		_slv2_plugin = slv2_plugins_get_by_uri(_slv2_plugins, uri.c_str());
 #endif
 	}
 	
-	Type          type() const                { return _type; }
-	void          type(Type t)                { _type = t; }
-	const string& uri() const                 { return _uri; }
-	void          uri(const string& s)        { _uri = s; }
-	const string& name() const                { return _name; }
-	void          name(const string& s)       { _name = s; }
+	Type          type() const { return _type; }
+	const string& uri()  const { return _uri; }
+	const string& name() const { return _name; }
 	
 	/** DEPRECATED */
-	void set_type(const string& type_string) {
-		if (type_string == "LV2") _type = LV2;
-		else if (type_string == "LADSPA") _type = LADSPA;
-		else if (type_string == "Internal") _type = Internal;
-		else if (type_string == "Patch") _type = Patch;
+	Type type_from_string(const string& type_string) {
+		if (type_string == "LV2") return LV2;
+		else if (type_string == "LADSPA") return LADSPA;
+		else if (type_string == "Internal") return Internal;
+		else if (type_string == "Patch") return Patch;
+		else return Internal; // ?
 	}
 	
-	void set_type_from_uri(const string& type_uri) {
+	Type type_from_uri(const string& type_uri) {
 		if (type_uri.substr(0, 6) != "ingen:") {
 			cerr << "INVALID TYPE STRING!" << endl;
+			return Plugin::Internal; // ?
 		} else {
-			set_type(type_uri.substr(6));
+			return type_from_string(type_uri.substr(6));
 		}
 	}
 
@@ -99,9 +99,10 @@ public:
 	static Raul::RDF::World* rdf_world() { return _rdf_world; }
 
 private:
-	Type   _type;
-	string _uri;
-	string _name;
+	const Type   _type;
+	const string _uri;
+	const string _symbol;
+	const string _name;
 
 #ifdef HAVE_SLV2
 	static SLV2World   _slv2_world;

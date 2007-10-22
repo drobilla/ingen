@@ -472,12 +472,16 @@ OSCClientSender::port_activity(const std::string& port_path)
 
 /** \page client_osc_namespace
  * <p> \b /ingen/plugin - Notification of the existance of a plugin
- * \arg \b type (string) - Type of plugin ("LADSPA", "LV2", or "Internal")
- * \arg \b uri (string) - Type of plugin ("LADSPA", "LV2", or "Internal")
- * \arg \b name (string) - Descriptive human-readable name of plugin (ie "ADSR Envelope")
+ * \arg \b uri (string) - URI of plugin (e.g. http://example.org/filtermatic)
+ * \arg \b type (string) - Type of plugin (e.g. "ingen:LV2Plugin")
+ * \arg \b symbol (string) - Valid symbol for plugin (default symbol for nodes) (e.g. "adsr")
+ * \arg \b name (string) - Descriptive human-readable name of plugin (e.g. "ADSR Envelope")
  */
 void
-OSCClientSender::new_plugin(const std::string& uri, const std::string& type_uri, const std::string& name)
+OSCClientSender::new_plugin(const std::string& uri,
+                            const std::string& type_uri,
+                            const std::string& symbol,
+                            const std::string& name)
 {
 	if (!_enabled)
 		return;
@@ -489,6 +493,7 @@ OSCClientSender::new_plugin(const std::string& uri, const std::string& type_uri,
 	lo_message m = lo_message_new();
 	lo_message_add_string(m, uri.c_str());
 	lo_message_add_string(m, type_uri.c_str());
+	lo_message_add_string(m, symbol.c_str());
 	lo_message_add_string(m, name.c_str());
 	
 	if (_transfer) {

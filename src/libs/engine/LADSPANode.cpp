@@ -154,9 +154,9 @@ LADSPANode::instantiate()
 				port_name[slash_index] = '-';
 		}
 		
-		if (_descriptor->PortNames[j] != port_name)
+		/*if (_descriptor->PortNames[j] != port_name)
 			cerr << "NOTICE: Translated LADSPA port name: " <<
-				_descriptor->PortNames[j] << " -> " << port_name << endl;
+				_descriptor->PortNames[j] << " -> " << port_name << endl;*/
 
 		port_path = path() + "/" + port_name;
 

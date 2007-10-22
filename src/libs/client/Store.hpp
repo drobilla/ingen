@@ -97,7 +97,7 @@ private:
 	// Slots for SigClientInterface signals
 	void destruction_event(const Path& path);
 	void rename_event(const Path& old_path, const Path& new_path);
-	void new_plugin_event(const string& uri, const string& type_uri, const string& name);
+	void new_plugin_event(const string& uri, const string& type_uri, const string& symbol, const string& name);
 	void new_patch_event(const Path& path, uint32_t poly);
 	void new_node_event(const string& plugin_uri, const Path& node_path, bool is_polyphonic, uint32_t num_ports);
 	void new_port_event(const Path& path, const string& data_type, bool is_output);

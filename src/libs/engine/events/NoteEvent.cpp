@@ -71,14 +71,14 @@ NoteEvent::execute(ProcessContext& context)
 	
 	if (_node != NULL && _node->plugin()->type() == Plugin::Internal) {
 		if (_on) {
-			if (_node->plugin_impl()->plug_label() == "note_in")
+			if (_node->plugin_impl()->uri() == "ingen:note_node")
 				((MidiNoteNode*)_node)->note_on(_note_num, _velocity, _time, context);
-			else if (_node->plugin_impl()->plug_label() == "trigger_in")
+			else if (_node->plugin_impl()->uri() == "ingen:trigger_node")
 				((MidiTriggerNode*)_node)->note_on(_note_num, _velocity, _time, context);
 		} else  {
-			if (_node->plugin_impl()->plug_label() == "note_in")
+			if (_node->plugin_impl()->uri() == "ingen:note_node")
 				((MidiNoteNode*)_node)->note_off(_note_num, _time, context);
-			else if (_node->plugin_impl()->plug_label() == "trigger_in")
+			else if (_node->plugin_impl()->uri() == "ingen:trigger_node")
 				((MidiTriggerNode*)_node)->note_off(_note_num, _time, context);
 		}
 	}

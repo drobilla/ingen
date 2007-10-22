@@ -24,7 +24,6 @@
 #include <list>
 #include <map>
 #include <string>
-#include <ladspa.h>
 #include <pthread.h>
 #include <glibmm/module.h>
 #ifdef HAVE_SLV2
@@ -57,8 +56,7 @@ public:
 	NodeFactory(Ingen::Shared::World* world);
 	~NodeFactory();
 
-	void  load_plugins();
-	NodeImpl* load_plugin(PluginImpl* info, const string& name, bool polyphonic, PatchImpl* parent);
+	void load_plugins();
 	
 	typedef std::map<std::string,PluginImpl*> Plugins;
 	const Plugins& plugins() const { return _plugins; }
@@ -71,16 +69,13 @@ public:
 private:
 #ifdef HAVE_LADSPA
 	void load_ladspa_plugins();
-	NodeImpl* load_ladspa_plugin(PluginImpl* plugin, const string& name, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size);
 #endif
 
 #ifdef HAVE_SLV2
 	void load_lv2_plugins();
-	NodeImpl* load_lv2_plugin(PluginImpl* plugin, const string& name, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size);
 #endif
 
 	void load_internal_plugins();
-	NodeImpl* load_internal_plugin(PluginImpl* plugin, const string& name, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size);
 	
 	Plugins _plugins;
 

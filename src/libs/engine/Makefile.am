@@ -29,9 +29,9 @@ libingen_engine_la_SOURCES = \
 	BufferFactory.hpp \
 	ClientBroadcaster.cpp \
 	ClientBroadcaster.hpp \
+	CompiledPatch.hpp \
 	ConnectionImpl.cpp \
 	ConnectionImpl.hpp \
-	CompiledPatch.hpp \
 	Driver.hpp \
 	DuplexPort.cpp \
 	DuplexPort.hpp \
@@ -46,10 +46,16 @@ libingen_engine_la_SOURCES = \
 	GraphObjectImpl.hpp \
 	InputPort.cpp \
 	InputPort.hpp \
+	InternalPlugin.cpp \
+	InternalPlugin.hpp \
 	JackAudioDriver.cpp \
 	JackAudioDriver.hpp \
 	JackMidiDriver.cpp \
 	JackMidiDriver.hpp \
+	LADSPAPlugin.cpp \
+	LADSPAPlugin.hpp \
+	LV2Plugin.cpp \
+	LV2Plugin.hpp \
 	MidiBuffer.cpp \
 	MidiBuffer.hpp \
 	MidiControlNode.cpp \
@@ -71,7 +77,6 @@ libingen_engine_la_SOURCES = \
 	OSCDriver.hpp \
 	OSCEngineReceiver.cpp \
 	OSCEngineReceiver.hpp \
-	Responder.hpp \
 	ObjectSender.cpp \
 	ObjectSender.hpp \
 	ObjectStore.cpp \
@@ -80,22 +85,24 @@ libingen_engine_la_SOURCES = \
 	OutputPort.hpp \
 	PatchImpl.cpp \
 	PatchImpl.hpp \
+	PatchPlugin.hpp \
 	PluginImpl.cpp \
 	PluginImpl.hpp \
 	PortImpl.cpp \
 	PortImpl.hpp \
 	PostProcessor.cpp \
 	PostProcessor.hpp \
-	ProcessContext.hpp \
 	ProcessContext.cpp \
-	ProcessSlave.hpp \
+	ProcessContext.hpp \
 	ProcessSlave.cpp \
+	ProcessSlave.hpp \
 	QueuedEngineInterface.cpp \
 	QueuedEngineInterface.hpp \
 	QueuedEvent.cpp \
 	QueuedEvent.hpp \
 	QueuedEventSource.cpp \
 	QueuedEventSource.hpp \
+	Responder.hpp \
 	ThreadManager.hpp \
 	TransportNode.cpp \
 	TransportNode.hpp \
