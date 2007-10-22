@@ -166,6 +166,34 @@ PluginModel::ui(EngineInterface* engine, NodeModel* node) const
 	return ret;
 }
 
+
+const string&
+PluginModel::icon_path() const
+{
+	if (_icon_path == "" && _type == LV2)
+		_icon_path = get_lv2_icon_path(_slv2_plugin);
+	
+	return _icon_path;
+}
+
+
+string
+PluginModel::get_lv2_icon_path(SLV2Plugin plugin)
+{
+	string result;
+	SLV2Values paths = slv2_plugin_get_value(plugin, SLV2_URI,
+			"http://ll-plugins.nongnu.org/lv2/namespace#svgIcon");
+	
+	if (slv2_values_size(paths) > 0) {
+		SLV2Value value = slv2_values_get_at(paths, 0);
+		if (slv2_value_is_uri(value))
+			result = slv2_uri_to_path(slv2_value_as_string(value));
+		slv2_values_free(paths);
+	}
+	
+	return result;
+}
+
 #endif
 
 } // namespace Client

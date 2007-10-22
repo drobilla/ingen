@@ -157,11 +157,24 @@ PatchCanvas::build_plugin_class_menu(Gtk::Menu* menu,
 	// Add plugins
 	for (Store::Plugins::const_iterator i = plugins.begin(); i != plugins.end(); ++i) {
 		SLV2Plugin p = i->second->slv2_plugin();
+
 		if (p && slv2_plugin_get_class(p) == plugin_class) {
-			menu->items().push_back(Gtk::Menu_Helpers::MenuElem(i->second->name(),
-					sigc::bind(sigc::mem_fun(this, &PatchCanvas::load_plugin),
-						i->second)));
-			++num_items;
+			Glib::RefPtr<Gdk::Pixbuf> icon;
+			string icon_path = PluginModel::get_lv2_icon_path(p);
+
+			if (icon_path != "")
+				icon = Gdk::Pixbuf::create_from_file(icon_path, 20, 20);
+
+			if (icon) {
+				Gtk::Image* image = new Gtk::Image(icon);
+				menu->items().push_back(Gtk::Menu_Helpers::ImageMenuElem(i->second->name(),
+						*image,
+						sigc::bind(sigc::mem_fun(this, &PatchCanvas::load_plugin), i->second)));
+			} else {
+				menu->items().push_back(Gtk::Menu_Helpers::MenuElem(i->second->name(),
+						sigc::bind(sigc::mem_fun(this, &PatchCanvas::load_plugin), i->second)));
+				++num_items;
+			}
 		}
 	}
 
@@ -176,7 +189,7 @@ PatchCanvas::build_plugin_menu()
 
 	_menu->items().push_back(Gtk::Menu_Helpers::ImageMenuElem("Plugin",
 			*(manage(new Gtk::Image(Gtk::Stock::EXECUTE, Gtk::ICON_SIZE_MENU)))));
-    Gtk::MenuItem* plugin_menu_item = &(_menu->items().back());
+	Gtk::MenuItem* plugin_menu_item = &(_menu->items().back());
 	Gtk::Menu* plugin_menu = Gtk::manage(new Gtk::Menu());
 	plugin_menu_item->set_submenu(*plugin_menu);
 	_menu->reorder_child(*plugin_menu_item, 2);

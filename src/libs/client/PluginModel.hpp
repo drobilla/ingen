@@ -90,6 +90,9 @@ public:
 	}
 
 	SLV2UIInstance ui(Ingen::Shared::EngineInterface* engine, NodeModel* node) const;
+
+	const string& icon_path() const;
+	static string get_lv2_icon_path(SLV2Plugin plugin);
 #endif
 
 	static void set_rdf_world(Raul::RDF::World& world) {
@@ -109,6 +112,7 @@ private:
 	static SLV2Plugins _slv2_plugins;
 
 	SLV2Plugin _slv2_plugin;
+	mutable string _icon_path;
 #endif
 
 	static Raul::RDF::World* _rdf_world;
