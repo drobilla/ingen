@@ -355,6 +355,25 @@ App::quit()
 }
 
 
+Glib::RefPtr<Gdk::Pixbuf>
+App::icon_from_path(const string& path)
+{
+	map<string, Glib::RefPtr<Gdk::Pixbuf> >::iterator iter = _icons.find(path);
+
+	if (iter != _icons.end())
+		return iter->second;
+
+	Glib::RefPtr<Gdk::Pixbuf> buf;
+	try {
+		buf = Gdk::Pixbuf::create_from_file(path, 20, 20);
+		_icons.insert(make_pair(path, buf));
+	} catch (...) {
+		buf = Glib::RefPtr<Gdk::Pixbuf>(0);
+	}
+	return buf;
+}
+
+
 } // namespace GUI
 } // namespace Ingen
 

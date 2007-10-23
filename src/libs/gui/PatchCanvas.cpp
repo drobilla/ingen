@@ -159,12 +159,7 @@ PatchCanvas::build_plugin_class_menu(Gtk::Menu* menu,
 		SLV2Plugin p = i->second->slv2_plugin();
 
 		if (p && slv2_plugin_get_class(p) == plugin_class) {
-			Glib::RefPtr<Gdk::Pixbuf> icon;
-			string icon_path = PluginModel::get_lv2_icon_path(p);
-
-			if (icon_path != "")
-				icon = Gdk::Pixbuf::create_from_file(icon_path, 20, 20);
-
+		  Glib::RefPtr<Gdk::Pixbuf> icon = App::instance().icon_from_path(PluginModel::get_lv2_icon_path(p));
 			if (icon) {
 				Gtk::Image* image = new Gtk::Image(icon);
 				menu->items().push_back(Gtk::Menu_Helpers::ImageMenuElem(i->second->name(),

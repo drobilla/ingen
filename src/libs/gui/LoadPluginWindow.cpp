@@ -54,6 +54,7 @@ LoadPluginWindow::LoadPluginWindow(BaseObjectType* cobject, const Glib::RefPtr<G
 	// Set up the plugins list
 	_plugins_liststore = Gtk::ListStore::create(_plugins_columns);
 	_plugins_treeview->set_model(_plugins_liststore);
+	_plugins_treeview->append_column("", _plugins_columns._col_icon);
 	_plugins_treeview->append_column("Name", _plugins_columns._col_name);
 	_plugins_treeview->append_column("Type", _plugins_columns._col_type);
 	_plugins_treeview->append_column("URI", _plugins_columns._col_uri);
@@ -61,9 +62,9 @@ LoadPluginWindow::LoadPluginWindow(BaseObjectType* cobject, const Glib::RefPtr<G
 	//m_plugins_treeview->append_column("Label", _plugins_columns._col_label);
 		
 	// This could be nicer.. store the TreeViewColumns locally maybe?
-	_plugins_treeview->get_column(0)->set_sort_column(_plugins_columns._col_name);
-	_plugins_treeview->get_column(1)->set_sort_column(_plugins_columns._col_type);
-	_plugins_treeview->get_column(2)->set_sort_column(_plugins_columns._col_uri);
+	_plugins_treeview->get_column(1)->set_sort_column(_plugins_columns._col_name);
+	_plugins_treeview->get_column(2)->set_sort_column(_plugins_columns._col_type);
+	_plugins_treeview->get_column(3)->set_sort_column(_plugins_columns._col_uri);
 	//m_plugins_treeview->get_column(3)->set_sort_column(_plugins_columns._col_library);
 	//m_plugins_treeview->get_column(4)->set_sort_column(_plugins_columns._col_label);
 	for (int i=0; i < 3; ++i)
@@ -218,6 +219,7 @@ LoadPluginWindow::set_plugins(const Raul::Table<string, SharedPtr<PluginModel> >
 		Gtk::TreeModel::iterator iter = _plugins_liststore->append();
 		Gtk::TreeModel::Row row = *iter;
 		
+		row[_plugins_columns._col_icon] = App::instance().icon_from_path(plugin->icon_path());
 		row[_plugins_columns._col_name] = plugin->name();
 		//row[_plugins_columns._col_label] = plugin->plug_label();
 		if (!strcmp(plugin->type_uri(), "ingen:Internal"))
@@ -298,22 +300,6 @@ LoadPluginWindow::generate_module_name(int offset)
 		SharedPtr<PluginModel> plugin = row.get_value(_plugins_columns._col_plugin_model);
 		return plugin->default_node_name(_patch);
 	}
-		/*char num_buf[3];
-		for (uint i=0; i < 99; ++i) {
-			name = plugin->default_node_name();
-			if (name == "")
-				name = plugin->name().substr(0, plugin->name().find(' '));
-			if (i+offset != 0) {
-				snprintf(num_buf, 3, "%d", i+offset+1);
-				name += "_";
-				name += num_buf;
-			}
-			if (!_patch->get_node(name))
-				break;
-			else
-				name = "";
-		}
-	}*/
 
 	return name;
 }
@@ -439,6 +425,7 @@ LoadPluginWindow::clear_clicked()
 	_search_entry->set_text("");
 	set_plugins(App::instance().store()->plugins());
 }
+
 
 bool
 LoadPluginWindow::on_key_press_event(GdkEventKey* event)

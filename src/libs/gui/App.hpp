@@ -93,13 +93,15 @@ public:
 
 	void port_activity(Port* port);
 
-	ConnectWindow*     connect_window()       const { return _connect_window; }
-	Gtk::AboutDialog*  about_dialog()         const { return _about_dialog; }
-	MessagesWindow*    messages_dialog()      const { return _messages_window; }
-	PatchTreeWindow*   patch_tree()           const { return _patch_tree_window; }
-	Configuration*     configuration()        const { return _configuration; }
-	WindowFactory*     window_factory()       const { return _window_factory; }
+	ConnectWindow*     connect_window()  const { return _connect_window; }
+	Gtk::AboutDialog*  about_dialog()    const { return _about_dialog; }
+	MessagesWindow*    messages_dialog() const { return _messages_window; }
+	PatchTreeWindow*   patch_tree()      const { return _patch_tree_window; }
+	Configuration*     configuration()   const { return _configuration; }
+	WindowFactory*     window_factory()  const { return _window_factory; }
 	
+	Glib::RefPtr<Gdk::Pixbuf>            icon_from_path(const string& path);
+
 	const SharedPtr<EngineInterface>&    engine()     const { return _engine; }
 	const SharedPtr<SigClientInterface>& client()     const { return _client; }
 	const SharedPtr<Store>&              store()      const { return _store; }
@@ -139,6 +141,8 @@ protected:
 	PatchTreeWindow*  _patch_tree_window;
 	Gtk::AboutDialog* _about_dialog;
 	WindowFactory*    _window_factory;
+  
+	map<string, Glib::RefPtr<Gdk::Pixbuf> > _icons;
 
 	Ingen::Shared::World* _world;
 
