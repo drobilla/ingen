@@ -219,7 +219,7 @@ LoadPluginWindow::set_plugins(const Raul::Table<string, SharedPtr<PluginModel> >
 		Gtk::TreeModel::iterator iter = _plugins_liststore->append();
 		Gtk::TreeModel::Row row = *iter;
 		
-		row[_plugins_columns._col_icon] = App::instance().icon_from_path(plugin->icon_path());
+		row[_plugins_columns._col_icon] = App::instance().icon_from_path(plugin->icon_path(), 20);
 		row[_plugins_columns._col_name] = plugin->name();
 		//row[_plugins_columns._col_label] = plugin->plug_label();
 		if (!strcmp(plugin->type_uri(), "ingen:Internal"))

@@ -100,7 +100,7 @@ public:
 	Configuration*     configuration()   const { return _configuration; }
 	WindowFactory*     window_factory()  const { return _window_factory; }
 	
-	Glib::RefPtr<Gdk::Pixbuf>            icon_from_path(const string& path);
+	Glib::RefPtr<Gdk::Pixbuf>            icon_from_path(const string& path, int size);
 
 	const SharedPtr<EngineInterface>&    engine()     const { return _engine; }
 	const SharedPtr<SigClientInterface>& client()     const { return _client; }
@@ -120,9 +120,24 @@ public:
 	Ingen::Shared::World* world() { return _world; }
 
 protected:
+
+	/** This is needed for the icon map. */
+	template <typename A, typename B>
+	struct LexicalCompare {
+		bool operator()(const pair<A, B>& p1, const pair<A, B>& p2) {
+			return (p1.first < p2.first) || 
+				((p1.first == p2.first) && (p1.second < p2.second));
+		}
+	};
+	
+	typedef map<pair<string, int>, Gdk::Pixbuf*, LexicalCompare<string, int> > IconMap;
+	IconMap _icons;
+	
 	App(Ingen::Shared::World* world);
 	
 	bool animate();
+	
+	static void* icon_destroyed(void* data);
 	
 	static App* _instance;
 	
@@ -141,9 +156,7 @@ protected:
 	PatchTreeWindow*  _patch_tree_window;
 	Gtk::AboutDialog* _about_dialog;
 	WindowFactory*    _window_factory;
-  
-	map<string, Glib::RefPtr<Gdk::Pixbuf> > _icons;
-
+	
 	Ingen::Shared::World* _world;
 
 	/// <Port, whether it has been seen in gtk callback yet>

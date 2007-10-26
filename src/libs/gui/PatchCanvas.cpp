@@ -159,15 +159,16 @@ PatchCanvas::build_plugin_class_menu(Gtk::Menu* menu,
 		SLV2Plugin p = i->second->slv2_plugin();
 
 		if (p && slv2_plugin_get_class(p) == plugin_class) {
-		  Glib::RefPtr<Gdk::Pixbuf> icon = App::instance().icon_from_path(PluginModel::get_lv2_icon_path(p));
+			Glib::RefPtr<Gdk::Pixbuf> icon
+					= App::instance().icon_from_path(PluginModel::get_lv2_icon_path(p), 16);
 			if (icon) {
 				Gtk::Image* image = new Gtk::Image(icon);
 				menu->items().push_back(Gtk::Menu_Helpers::ImageMenuElem(i->second->name(),
-						*image,
-						sigc::bind(sigc::mem_fun(this, &PatchCanvas::load_plugin), i->second)));
+							*image,
+							sigc::bind(sigc::mem_fun(this, &PatchCanvas::load_plugin), i->second)));
 			} else {
 				menu->items().push_back(Gtk::Menu_Helpers::MenuElem(i->second->name(),
-						sigc::bind(sigc::mem_fun(this, &PatchCanvas::load_plugin), i->second)));
+							sigc::bind(sigc::mem_fun(this, &PatchCanvas::load_plugin), i->second)));
 				++num_items;
 			}
 		}
@@ -245,9 +246,14 @@ PatchCanvas::add_node(SharedPtr<NodeModel> nm)
 	SharedPtr<NodeModule> module;
 	if (pm)
 		module = SubpatchModule::create(shared_this, pm);
-	else
+	else {
 		module = NodeModule::create(shared_this, nm);
-
+		const PluginModel* plugm = 
+		  dynamic_cast<const PluginModel*>(nm->plugin());
+		if (plugm)
+		  module->set_icon(App::instance().icon_from_path(plugm->icon_path(), 100));
+	}
+	
 	add_item(module);
 	module->show();
 	_views.insert(std::make_pair(nm, module));
