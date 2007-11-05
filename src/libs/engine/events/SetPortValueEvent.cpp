@@ -16,7 +16,7 @@
  */
 
 #include <sstream>
-#include "lv2_osc_print.h"
+#include <lv2ext/lv2-midiport.h>
 #include "Responder.hpp"
 #include "SetPortValueEvent.hpp"
 #include "Engine.hpp"

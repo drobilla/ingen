@@ -6,11 +6,8 @@ moduledir = $(libdir)/ingen
 module_LTLIBRARIES = libingen_client.la
 
 libingen_client_la_CXXFLAGS = \
-	-I$(top_srcdir)/slv2 \
-	-I$(top_srcdir)/raul \
-	-I$(top_srcdir)/ingen/src/common \
-	-I$(top_srcdir)/lv2/extensions/osc \
 	-DPKGDATADIR=\"$(pkgdatadir)\" \
+	@INGEN_CFLAGS@ \
 	@LIBLO_CFLAGS@ \
 	@LXML2_CFLAGS@ @RASQAL_CFLAGS@ @RAPTOR_CFLAGS@ \
 	@LSIGCPP_CFLAGS@ @GLIBMM_CFLAGS@

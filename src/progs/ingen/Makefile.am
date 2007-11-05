@@ -1,4 +1,4 @@
-AM_CXXFLAGS = @GTHREAD_CFLAGS@ @GLIBMM_CFLAGS@ @RAUL_CFLAGS@ @SLV2_CFLAGS@ -I$(top_srcdir)/ingen/src/common -I$(top_srcdir)/ingen/src/libs -I$(top_srcdir)/ingen/src -DINGEN_MODULE_DIR=\"$(libdir)/ingen\"
+AM_CXXFLAGS = @GTHREAD_CFLAGS@ @GLIBMM_CFLAGS@ @RAUL_CFLAGS@ @SLV2_CFLAGS@ @INGEN_CFLAGS@ -DINGEN_MODULE_DIR=\"$(libdir)/ingen\"
 
 MAINTAINERCLEANFILES = Makefile.in
 

@@ -12,12 +12,10 @@ moduledir = $(libdir)/ingen
 module_LTLIBRARIES = libingen_gui.la
 
 libingen_gui_la_CXXFLAGS = \
-	@SLV2_CFLAGS@ @RAUL_CFLAGS@ @FLOWCANVAS_CFLAGS@ \
-	-I$(top_srcdir)/ingen/src/common \
-	-I$(top_srcdir)/ingen/src/libs \
 	-DPKGDATADIR=\"$(pkgdatadir)\" \
+	@SLV2_CFLAGS@ @RAUL_CFLAGS@ @FLOWCANVAS_CFLAGS@ \
+	@INGEN_CFLAGS@ \
 	-DINGEN_MODULE_DIR=\"$(libdir)/ingen\" \
-	-DGTK_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED \
 	@LIBLO_CFLAGS@ @CURL_CFLAGS@ \
 	@GTKMM_CFLAGS@ @LIBGLADEMM_CFLAGS@ @GNOMECANVASMM_CFLAGS@ 
 

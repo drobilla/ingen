@@ -5,8 +5,7 @@ moduledir = $(libdir)/ingen
 module_LTLIBRARIES = libingen_serialisation.la
 
 libingen_serialisation_la_CXXFLAGS = \
-	-I$(top_srcdir)/ingen/src/common \
-	-I$(top_srcdir)/ingen/src/libs \
+	@INGEN_CFLAGS@ \
 	@RAUL_CFLAGS@ \
 	@GLIBMM_CFLAGS@ \
 	@SLV2_CFLAGS@
