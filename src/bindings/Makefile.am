@@ -9,7 +9,8 @@ bindingsdir = $(libdir)/ingen
 bindings_LTLIBRARIES = libingen_bindings.la
 libingen_bindings_la_LDFLAGS = -no-undefined -module -avoid-version
 libingen_bindings_la_LIBADD = @RAUL_LIBS@ @GLIBMM_LIBS@ #../libs/module/libingen_module.la
-libingen_bindings_la_SOURCES = ingen_wrap.cxx ingen_bindings.cpp ingen_bindings.hpp
+libingen_bindings_la_SOURCES = ingen_bindings.cpp ingen_bindings.hpp
+nodist_libingen_bindings_la_SOURCES = ingen_wrap.cxx
 libingen_bindings_la_CXXFLAGS = \
 	@SLV2_CFLAGS@ @RAUL_CFLAGS@ @GLIBMM_CFLAGS@ \
 	-I$(top_srcdir)/ingen/src/common \

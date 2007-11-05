@@ -61,11 +61,11 @@ libingen_engine_la_SOURCES = \
 	MidiNoteNode.hpp \
 	MidiTriggerNode.cpp \
 	MidiTriggerNode.hpp \
-	Node.hpp \
 	NodeBase.cpp \
 	NodeBase.hpp \
 	NodeFactory.cpp \
 	NodeFactory.hpp \
+	NodeImpl.hpp \
 	OSCBuffer.cpp \
 	OSCBuffer.hpp \
 	OSCClientSender.cpp \
