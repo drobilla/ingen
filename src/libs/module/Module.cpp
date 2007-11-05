@@ -59,6 +59,7 @@ load_module(const string& name)
 				module = new Glib::Module(filename, Glib::MODULE_BIND_LAZY);
 
 				if (*module) {
+					cerr << "Loaded module \"" <<  name << "\" from " << filename << endl;
 					return SharedPtr<Glib::Module>(module);
 				} else {
 					delete module;
@@ -74,6 +75,7 @@ load_module(const string& name)
             Glib::MODULE_BIND_LAZY);
 
 	if (*module) {
+		cerr << "Loaded module \"" <<  name << "\" from " << INGEN_MODULE_DIR << endl;
 		return SharedPtr<Glib::Module>(module);
 	} else {
 		cerr << "Unable to load module \"" <<  name << "\" (try setting INGEN_MODULE_PATH)." << endl;
