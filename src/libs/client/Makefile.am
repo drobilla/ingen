@@ -8,6 +8,7 @@ module_LTLIBRARIES = libingen_client.la
 libingen_client_la_CXXFLAGS = \
 	-DPKGDATADIR=\"$(pkgdatadir)\" \
 	@INGEN_CFLAGS@ \
+	@RAUL_CFLAGS@ \
 	@LIBLO_CFLAGS@ \
 	@LXML2_CFLAGS@ @RASQAL_CFLAGS@ @RAPTOR_CFLAGS@ \
 	@LSIGCPP_CFLAGS@ @GLIBMM_CFLAGS@
