@@ -18,6 +18,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <string>
+//#define ENABLE_AVAHI 1
 #include <lo/lo.h>
 #include "types.hpp"
 #include <raul/SharedPtr.hpp>
@@ -54,6 +55,9 @@ OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t
 	snprintf(port_str, 6, "%u", port);
 
 	_server = lo_server_new(port_str, error_cb);
+#ifdef ENABLE_AVAHI
+	lo_server_avahi_init(_server, "ingen");
+#endif
 	
 	if (_server == NULL) {
 		cerr << "[OSC] Could not start OSC server.  Aborting." << endl;
@@ -130,6 +134,9 @@ OSCEngineReceiver::~OSCEngineReceiver()
 	delete _receive_thread;
 
 	if (_server != NULL)  {
+#ifdef ENABLE_AVAHI
+		lo_server_avahi_free(_server);
+#endif
 		lo_server_free(_server);
 		_server = NULL;
 	}
