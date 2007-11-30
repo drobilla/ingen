@@ -8,15 +8,27 @@ module_LTLIBRARIES = libingen_client.la
 libingen_client_la_CXXFLAGS = \
 	-DPKGDATADIR=\"$(pkgdatadir)\" \
 	@INGEN_CFLAGS@ \
-	@RAUL_CFLAGS@ \
+	@GLIBMM_CFLAGS@ \
 	@LIBLO_CFLAGS@ \
-	@LXML2_CFLAGS@ @RASQAL_CFLAGS@ @RAPTOR_CFLAGS@ \
-	@LSIGCPP_CFLAGS@ @GLIBMM_CFLAGS@
+	@LSIGCPP_CFLAGS@ \
+	@GLIBMM_CFLAGS@ \
+	@LXML2_CFLAGS@ \
+	@RAPTOR_CFLAGS@ \
+	@RASQAL_CFLAGS@ \
+	@RAUL_CFLAGS@ \
+	@REDLANDMM_CFLAGS@ \
+	@SLV2_CFLAGS@
 
 libingen_client_la_LIBADD = \
-	@RAUL_LIBS@ @SLV2_LIBS@ @LIBLO_LIBS@ \
-	@LXML2_LIBS@ @RASQAL_LIBS@ @RAPTOR_LIBS@ \
-	@LSIGCPP_LIBS@ @GLIBMM_LIBS@
+	@GLIBMM_LIBS@ \
+	@LIBLO_LIBS@ \
+	@LSIGCPP_LIBS@ \
+	@LXML2_LIBS@ \
+	@RAPTOR_LIBS@ \
+	@RASQAL_LIBS@ \
+	@RAUL_LIBS@ \
+	@REDLANDMM_LIBS@ \
+	@SLV2_LIBS@
 
 libingen_client_la_SOURCES = \
 	$(top_srcdir)/ingen/src/common/interface/ClientInterface.hpp \

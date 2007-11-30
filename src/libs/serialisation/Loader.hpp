@@ -26,7 +26,7 @@
 #include <raul/Table.hpp>
 #include "interface/GraphObject.hpp"
 
-namespace Raul { namespace RDF { class World; } }
+namespace Redland { class World; }
 namespace Ingen { namespace Shared { class EngineInterface; } }
 
 using namespace Ingen::Shared;
@@ -41,12 +41,12 @@ public:
 	
 	virtual bool
 	load(SharedPtr<Ingen::Shared::EngineInterface> engine,
-	     Raul::RDF::World*                         world,
+	     Redland::World*                           world,
 	     const Glib::ustring&                      uri,
 	     boost::optional<Raul::Path>               parent,
 	     std::string                               patch_name,
 	     Glib::ustring                             patch_uri = "",
-	     GraphObject::Variables                  data = GraphObject::Variables());
+	     GraphObject::Variables                    data = GraphObject::Variables());
 };
 
 

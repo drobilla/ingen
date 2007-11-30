@@ -23,7 +23,7 @@
 #include <string>
 #include <glibmm/module.h>
 #include <raul/SharedPtr.hpp>
-#include <raul/RDFWorld.hpp>
+#include <redlandmm/World.hpp>
 
 #ifdef HAVE_SLV2
 #include <slv2/slv2.h>
@@ -52,7 +52,7 @@ struct World {
 #ifdef HAVE_SLV2
 	SLV2World slv2_world;
 #endif
-	Raul::RDF::World* rdf_world;
+	Redland::World* rdf_world;
 
     EngineInterface* engine;
 

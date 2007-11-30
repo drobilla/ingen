@@ -97,7 +97,7 @@ App::App(Ingen::Shared::World* world)
 	glade_xml->get_widget_derived("patch_tree_win", _patch_tree_window);
 	glade_xml->get_widget("about_win", _about_dialog);
 
-	Raul::RDF::World& rdf_world = *world->rdf_world;
+	Redland::World& rdf_world = *world->rdf_world;
 
 	rdf_world.add_prefix("xsd", "http://www.w3.org/2001/XMLSchema#");
 	rdf_world.add_prefix("ingen", "http://drobilla.net/ns/ingen#");

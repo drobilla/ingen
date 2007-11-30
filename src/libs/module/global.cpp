@@ -44,7 +44,7 @@ get_world()
 
 	if (!world) {
 		world = new World();
-        world->rdf_world = new Raul::RDF::World();
+        world->rdf_world = new Redland::World();
 #ifdef HAVE_SLV2
 		world->slv2_world = slv2_world_new_using_rdf_world(world->rdf_world->world());
 		slv2_world_load_all(world->slv2_world);

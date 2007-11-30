@@ -147,7 +147,7 @@ main(int argc, char** argv)
 	/* Load a patch */
 	if (args.load_given && engine_interface) {
 		
-		Raul::RDF::World rdf_world;
+		Redland::World rdf_world;
 		rdf_world.add_prefix("xsd", "http://www.w3.org/2001/XMLSchema#");
 		rdf_world.add_prefix("ingen", "http://drobilla.net/ns/ingen#");
 		rdf_world.add_prefix("ingenuity", "http://drobilla.net/ns/ingenuity#");

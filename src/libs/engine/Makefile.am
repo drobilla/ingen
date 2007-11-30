@@ -6,11 +6,24 @@ moduledir = $(libdir)/ingen
 
 module_LTLIBRARIES = libingen_engine.la
 libingen_engine_la_CXXFLAGS = \
-	@SLV2_CFLAGS@ @RAUL_CFLAGS@ @INGEN_CFLAGS@ \
-	@JACK_CFLAGS@ @LIBLO_CFLAGS@ @LASH_CFLAGS@ @GLIBMM_CFLAGS@
+	@GLIBMM_CFLAGS@ \
+	@INGEN_CFLAGS@ \
+	@JACK_CFLAGS@ \
+	@LASH_CFLAGS@ \
+	@LIBLO_CFLAGS@ \
+	@RAUL_CFLAGS@ \
+	@REDLANDMM_CFLAGS@ \
+	@SLV2_CFLAGS@
 
 libingen_engine_la_LDFLAGS = -no-undefined -module -avoid-version
-libingen_engine_la_LIBADD = @RAUL_LIBS@ @JACK_LIBS@ @LIBLO_LIBS@ @LASH_LIBS@ @SLV2_LIBS@ @GLIBMM_LIBS@
+libingen_engine_la_LIBADD = \
+	@GLIBMM_LIBS@ \
+	@JACK_LIBS@ \
+	@LASH_LIBS@ \
+	@LIBLO_LIBS@ \
+	@RAUL_LIBS@ \
+	@REDLANDMM_LIBS@ \
+	@SLV2_LIBS@
 
 AM_CFLAGS=-std=c99
 

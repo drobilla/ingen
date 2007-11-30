@@ -32,7 +32,7 @@ SLV2World   PluginModel::_slv2_world   = NULL;
 SLV2Plugins PluginModel::_slv2_plugins = NULL;
 #endif
 
-Raul::RDF::World* PluginModel::_rdf_world = NULL;
+Redland::World* PluginModel::_rdf_world = NULL;
 	
 
 string

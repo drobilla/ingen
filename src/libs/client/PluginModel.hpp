@@ -95,11 +95,11 @@ public:
 	static string get_lv2_icon_path(SLV2Plugin plugin);
 #endif
 
-	static void set_rdf_world(Raul::RDF::World& world) {
+	static void set_rdf_world(Redland::World& world) {
 		_rdf_world = &world;
 	}
 
-	static Raul::RDF::World* rdf_world() { return _rdf_world; }
+	static Redland::World* rdf_world() { return _rdf_world; }
 
 private:
 	const Type   _type;
@@ -115,7 +115,7 @@ private:
 	mutable string _icon_path;
 #endif
 
-	static Raul::RDF::World* _rdf_world;
+	static Redland::World* _rdf_world;
 };
 
 

@@ -12,20 +12,34 @@ moduledir = $(libdir)/ingen
 module_LTLIBRARIES = libingen_gui.la
 
 libingen_gui_la_CXXFLAGS = \
-	-DPKGDATADIR=\"$(pkgdatadir)\" \
-	@SLV2_CFLAGS@ @RAUL_CFLAGS@ @FLOWCANVAS_CFLAGS@ \
-	@INGEN_CFLAGS@ \
 	-DINGEN_MODULE_DIR=\"$(libdir)/ingen\" \
-	@LIBLO_CFLAGS@ @CURL_CFLAGS@ \
-	@GTKMM_CFLAGS@ @LIBGLADEMM_CFLAGS@ @GNOMECANVASMM_CFLAGS@ 
+	-DPKGDATADIR=\"$(pkgdatadir)\" \
+	@CURL_CFLAGS@ \
+	@FLOWCANVAS_CFLAGS@ \
+	@GNOMECANVASMM_CFLAGS@ \
+	@GTKMM_CFLAGS@ \
+	@INGEN_CFLAGS@ \
+	@LIBGLADEMM_CFLAGS@ \
+	@LIBLO_CFLAGS@ \
+	@REDLANDMM_CFLAGS@ \
+	@RAUL_CFLAGS@ \
+	@SLV2_CFLAGS@
+	
 
 libingen_gui_la_LDFLAGS = -no-undefined -module -avoid-version
 
 libingen_gui_la_LIBADD = \
-	@RAUL_LIBS@ @LIBLO_LIBS@ @SLV2_LIBS@ @CURL_LIBS@ \
-	@GTKMM_LIBS@ @LIBGLADEMM_LIBS@ @FLOWCANVAS_LIBS@ @GNOMECANVASMM_LIBS@ \
+	../client/libingen_client.la \
 	../module/libingen_module.la \
-	../client/libingen_client.la
+	@CURL_LIBS@ \
+	@FLOWCANVAS_LIBS@ \
+	@GNOMECANVASMM_LIBS@ \
+	@GTKMM_LIBS@ \
+	@LIBGLADEMM_LIBS@ \
+	@LIBLO_LIBS@ \
+	@REDLANDMM_LIBS@ \
+	@RAUL_LIBS@ \
+	@SLV2_LIBS@
 
 libingen_gui_la_SOURCES = \
 	gui.hpp \

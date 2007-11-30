@@ -44,7 +44,7 @@
 
 using namespace std;
 using namespace Raul;
-using namespace Raul::RDF;
+using namespace Redland;
 using namespace Ingen;
 using namespace Ingen::Shared;
 
@@ -52,7 +52,7 @@ namespace Ingen {
 namespace Serialisation {
 
 
-Serialiser::Serialiser(Raul::RDF::World& world)
+Serialiser::Serialiser(Redland::World& world)
 	: _world(world)
 {
 }
@@ -77,10 +77,10 @@ Serialiser::to_string(SharedPtr<GraphObject>        object,
 	start_to_string(base_uri);
 	serialise(object);
 	
-	RDF::Node base_rdf_node(_model->world(), RDF::Node::RESOURCE, base_uri);
+	Redland::Node base_rdf_node(_model->world(), Redland::Node::RESOURCE, base_uri);
 	for (GraphObject::Variables::const_iterator v = extra_rdf.begin(); v != extra_rdf.end(); ++v) {
 		if (v->first.find(":") != string::npos) {
-			_model->add_statement(base_rdf_node, v->first, v->second);
+			_model->add_statement(base_rdf_node, v->first, v->second.to_rdf_node(_model->world()));
 		} else {
 			cerr << "Warning: not serialising extra RDF with key '" << v->first << "'" << endl;
 		}
@@ -100,7 +100,7 @@ Serialiser::start_to_filename(const string& filename)
 	setlocale(LC_NUMERIC, "C");
 
 	_base_uri = "file://" + filename;
-	_model = new RDF::Model(_world);
+	_model = new Redland::Model(_world);
 	_mode = TO_FILE;
 }
 
@@ -118,7 +118,7 @@ Serialiser::start_to_string(const string& base_uri)
 	setlocale(LC_NUMERIC, "C");
 
 	_base_uri = base_uri;
-	_model = new RDF::Model(_world);
+	_model = new Redland::Model(_world);
 	_mode = TO_STRING;
 }
 
@@ -147,7 +147,7 @@ Serialiser::finish()
 
 /** Convert a path to an RDF blank node ID for serializing.
  */
-RDF::Node
+Redland::Node
 Serialiser::path_to_node_id(const Path& path)
 {
 	assert(_model);
@@ -158,7 +158,7 @@ Serialiser::path_to_node_id(const Path& path)
 			ret[i] = '_';
 	}
 
-	return RDF::Node(Node::BLANK, ret);
+	return Redland::Node(Node::BLANK, ret);
 	*/
 
 	NodeMap::iterator i = _node_map.find(path);
@@ -167,7 +167,7 @@ Serialiser::path_to_node_id(const Path& path)
 		assert(i->second.get_node());
 		return i->second;
 	} else {
-		RDF::Node id = _world.blank_id(path.name());
+		Redland::Node id = _world.blank_id(path.name());
 		assert(id);
 		_node_map[path] = id;
 		return id;
@@ -255,14 +255,14 @@ Serialiser::serialise(SharedPtr<GraphObject> object) throw (std::logic_error)
 }
 
 
-RDF::Node
+Redland::Node
 Serialiser::patch_path_to_rdf_id(const Path& path)
 {
 	if (path == _root_object->path()) {
-		return RDF::Node(_model->world(), RDF::Node::RESOURCE, _base_uri);
+		return Redland::Node(_model->world(), Redland::Node::RESOURCE, _base_uri);
 	} else {
 		assert(path.length() > _root_object->path().length());
-		return RDF::Node(_model->world(), RDF::Node::RESOURCE,
+		return Redland::Node(_model->world(), Redland::Node::RESOURCE,
 				_base_uri + string("#") + path.substr(_root_object->path().length()));
 	}
 }
@@ -273,28 +273,28 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch)
 {
 	assert(_model);
 
-	const RDF::Node patch_id = patch_path_to_rdf_id(patch->path());
+	const Redland::Node patch_id = patch_path_to_rdf_id(patch->path());
 	
 	_model->add_statement(
 		patch_id,
 		"rdf:type",
-		RDF::Node(_model->world(), RDF::Node::RESOURCE, "http://drobilla.net/ns/ingen#Patch"));
+		Redland::Node(_model->world(), Redland::Node::RESOURCE, "http://drobilla.net/ns/ingen#Patch"));
 
 	if (patch->path().name().length() > 0) {
 		_model->add_statement(
 			patch_id, "ingen:name",
-			Atom(patch->path().name().c_str()));
+			Redland::Node(_model->world(), Redland::Node::LITERAL, patch->path().name()));
 	}
 
 	_model->add_statement(
 		patch_id,
 		"ingen:polyphony",
-		Atom((int)patch->internal_polyphony()));
+		Atom((int)patch->internal_polyphony()).to_rdf_node(_model->world()));
 	
 	_model->add_statement(
 		patch_id,
 		"ingen:enabled",
-		Atom(patch->enabled()));
+		Atom(patch->enabled()).to_rdf_node(_model->world()));
 	
 	serialise_variables(patch_id, patch->variables());
 
@@ -309,7 +309,7 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch)
 			_model->add_statement(patch_id, "ingen:node", patch_path_to_rdf_id(patch->path()));
 			serialise_patch(patch);
 		} else if (node) {
-			const RDF::Node node_id = path_to_node_id(n->second->path());
+			const Redland::Node node_id = path_to_node_id(n->second->path());
 			_model->add_statement(patch_id, "ingen:node", node_id);
 			serialise_node(node, node_id);
 		}
@@ -317,7 +317,7 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch)
 	
 	for (uint32_t i=0; i < patch->num_ports(); ++i) {
 		Port* p = patch->port(i);
-		const RDF::Node port_id = path_to_node_id(p->path());
+		const Redland::Node port_id = path_to_node_id(p->path());
 		_model->add_statement(patch_id, "ingen:port", port_id);
 		serialise_port(p, port_id);
 	}
@@ -334,30 +334,30 @@ Serialiser::serialise_plugin(SharedPtr<Shared::Plugin> plugin)
 {
 	assert(_model);
 
-	const RDF::Node plugin_id = RDF::Node(_model->world(), RDF::Node::RESOURCE, plugin->uri());
+	const Redland::Node plugin_id = Redland::Node(_model->world(), Redland::Node::RESOURCE, plugin->uri());
 
 	_model->add_statement(
 		plugin_id,
 		"rdf:type",
-		RDF::Node(_model->world(), RDF::Node::RESOURCE, plugin->type_uri()));
+		Redland::Node(_model->world(), Redland::Node::RESOURCE, plugin->type_uri()));
 } 
 
 
 void
-Serialiser::serialise_node(SharedPtr<Shared::Node> node, const RDF::Node& node_id)
+Serialiser::serialise_node(SharedPtr<Shared::Node> node, const Redland::Node& node_id)
 {
-	const RDF::Node plugin_id
-		= RDF::Node(_model->world(), RDF::Node::RESOURCE, node->plugin()->uri());
+	const Redland::Node plugin_id
+		= Redland::Node(_model->world(), Redland::Node::RESOURCE, node->plugin()->uri());
 
 	_model->add_statement(
 		node_id,
 		"rdf:type",
-		RDF::Node(_model->world(), RDF::Node::RESOURCE, "ingen:Node"));
+		Redland::Node(_model->world(), Redland::Node::RESOURCE, "ingen:Node"));
 	
 	_model->add_statement(
 		node_id,
 		"ingen:name",
-		node->path().name());
+		Atom(node->path().name()).to_rdf_node(_model->world()));
 	
 	_model->add_statement(
 		node_id,
@@ -367,14 +367,14 @@ Serialiser::serialise_node(SharedPtr<Shared::Node> node, const RDF::Node& node_i
 	_model->add_statement(
 		node_id,
 		"ingen:polyphonic",
-		node->polyphonic());
+		Atom(node->polyphonic()).to_rdf_node(_model->world()));
 
 	//serialise_plugin(node->plugin());
 	
 	for (uint32_t i=0; i < node->num_ports(); ++i) {
 		Port* p = node->port(i);
 		assert(p);
-		const RDF::Node port_id = path_to_node_id(p->path());
+		const Redland::Node port_id = path_to_node_id(p->path());
 		serialise_port(p, port_id);
 		_model->add_statement(node_id, "ingen:port", port_id);
 	}
@@ -388,22 +388,24 @@ Serialiser::serialise_node(SharedPtr<Shared::Node> node, const RDF::Node& node_i
  * Audio output ports with no variable will not be written, for example.
  */
 void
-Serialiser::serialise_port(const Port* port, const RDF::Node& port_id)
+Serialiser::serialise_port(const Port* port, const Redland::Node& port_id)
 {
 	if (port->is_input())
 		_model->add_statement(port_id, "rdf:type",
-				RDF::Node(_model->world(), RDF::Node::RESOURCE, "ingen:InputPort"));
+				Redland::Node(_model->world(), Redland::Node::RESOURCE, "ingen:InputPort"));
 	else
 		_model->add_statement(port_id, "rdf:type",
-				RDF::Node(_model->world(), RDF::Node::RESOURCE, "ingen:OutputPort"));
+				Redland::Node(_model->world(), Redland::Node::RESOURCE, "ingen:OutputPort"));
 
-	_model->add_statement(port_id, "ingen:name", Atom(port->path().name().c_str()));
+	_model->add_statement(port_id, "ingen:name",
+			Atom(port->path().name().c_str()).to_rdf_node(_model->world()));
 	
 	_model->add_statement(port_id, "rdf:type",
-			RDF::Node(_model->world(), RDF::Node::RESOURCE, port->type().uri()));
+			Redland::Node(_model->world(), Redland::Node::RESOURCE, port->type().uri()));
 	
 	if (port->type() == DataType::CONTROL && port->is_input())
-		_model->add_statement(port_id, "ingen:value", port->value());
+		_model->add_statement(port_id, "ingen:value",
+				Atom(port->value()).to_rdf_node(_model->world()));
 
 	serialise_variables(port_id, port->variables());
 }
@@ -415,23 +417,23 @@ Serialiser::serialise_connection(SharedPtr<Connection> connection) throw (std::l
 	if (!_model)
 		throw std::logic_error("serialise_connection called without serialization in progress");
 
-	const RDF::Node src_node = path_to_node_id(connection->src_port_path());
-	const RDF::Node dst_node = path_to_node_id(connection->dst_port_path());
+	const Redland::Node src_node = path_to_node_id(connection->src_port_path());
+	const Redland::Node dst_node = path_to_node_id(connection->dst_port_path());
 
 	_model->add_statement(dst_node, "ingen:connectedTo", src_node);
 }
 	
 
 void
-Serialiser::serialise_variables(RDF::Node subject, const GraphObject::Variables& variables)
+Serialiser::serialise_variables(Redland::Node subject, const GraphObject::Variables& variables)
 {
 	for (GraphObject::Variables::const_iterator v = variables.begin(); v != variables.end(); ++v) {
 		if (v->first.find(":") != string::npos) {
-			const RDF::Node var_id = _world.blank_id();
-			const RDF::Node key(_model->world(), RDF::Node::RESOURCE, v->first);
+			const Redland::Node var_id = _world.blank_id();
+			const Redland::Node key(_model->world(), Redland::Node::RESOURCE, v->first);
 			_model->add_statement(subject, "ingen:variable", var_id);
 			_model->add_statement(var_id, "ingen:key", key);
-			_model->add_statement(var_id, "ingen:value", v->second);
+			_model->add_statement(var_id, "ingen:value", v->second.to_rdf_node(_model->world()));
 		} else {
 			cerr << "Warning: not serialising variable with key '" << v->first << "'" << endl;
 		}

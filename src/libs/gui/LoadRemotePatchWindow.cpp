@@ -18,7 +18,7 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include <boost/optional/optional.hpp>
-#include <raul/RDFQuery.hpp>
+#include <redlandmm/Query.hpp>
 #include "client/PatchModel.hpp"
 #include "interface/EngineInterface.hpp"
 #include "module/World.hpp"
@@ -67,19 +67,19 @@ LoadRemotePatchWindow::present(SharedPtr<PatchModel> patch, GraphObject::Variabl
 	set_patch(patch);
 	_initial_data = data;
 	
-	RDF::Model model(*App::instance().world()->rdf_world,
+	Redland::Model model(*App::instance().world()->rdf_world,
 			"http://rdf.drobilla.net/ingen_patches/index.ttl",
 			"http://rdf.drobilla.net/ingen_patches/");
 
-	RDF::Query query(*App::instance().world()->rdf_world, Glib::ustring(
+	Redland::Query query(*App::instance().world()->rdf_world, Glib::ustring(
 		"SELECT DISTINCT ?name ?uri WHERE {"
 		"  ?uri a            ingen:Patch ;"
 		"       doap:name    ?name ."
 		"}"));
 
-	RDF::Query::Results results = query.run(*App::instance().world()->rdf_world, model);
+	Redland::Query::Results results = query.run(*App::instance().world()->rdf_world, model);
 	
-	for (RDF::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
+	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
 		Gtk::TreeModel::iterator iter = _liststore->append();
 		(*iter)[_columns._col_name] = (*i)["name"].to_string();
 		(*iter)[_columns._col_uri] = (*i)["uri"].to_string();

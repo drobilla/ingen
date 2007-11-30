@@ -26,8 +26,8 @@
 #include <raul/SharedPtr.hpp>
 #include <raul/Path.hpp>
 #include <raul/Atom.hpp>
-#include <raul/RDFWorld.hpp>
-#include <raul/RDFModel.hpp>
+#include <redlandmm/World.hpp>
+#include <redlandmm/Model.hpp>
 #include "interface/GraphObject.hpp"
 
 using namespace Raul;
@@ -54,7 +54,7 @@ namespace Serialisation {
 class Serialiser
 {
 public:
-	Serialiser(Raul::RDF::World& world);
+	Serialiser(Redland::World& world);
 
 	void   to_file(SharedPtr<GraphObject> object, const string& filename);
 
@@ -77,22 +77,22 @@ private:
 	void serialise_plugin(SharedPtr<Shared::Plugin> p);
 
 	void serialise_patch(SharedPtr<Shared::Patch> p);
-	void serialise_node(SharedPtr<Shared::Node> n, const Raul::RDF::Node& id);
-	void serialise_port(const Shared::Port* p, const Raul::RDF::Node& id);
+	void serialise_node(SharedPtr<Shared::Node> n, const Redland::Node& id);
+	void serialise_port(const Shared::Port* p, const Redland::Node& id);
 
-	void serialise_variables(RDF::Node subject, const GraphObject::Variables& variables);
+	void serialise_variables(Redland::Node subject, const GraphObject::Variables& variables);
 	
-	Raul::RDF::Node path_to_node_id(const Path& path);
-	Raul::RDF::Node patch_path_to_rdf_id(const Path& path);
+	Redland::Node path_to_node_id(const Path& path);
+	Redland::Node patch_path_to_rdf_id(const Path& path);
 
-	typedef std::map<Raul::Path, Raul::RDF::Node> NodeMap;
+	typedef std::map<Raul::Path, Redland::Node> NodeMap;
 
 	SharedPtr<GraphObject> _root_object;
 	Mode                   _mode;
 	NodeMap                _node_map;
 	string                 _base_uri;
-	Raul::RDF::World&      _world;
-	Raul::RDF::Model*      _model;
+	Redland::World&        _world;
+	Redland::Model*        _model;
 };
 
 
