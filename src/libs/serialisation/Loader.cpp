@@ -75,8 +75,8 @@ Loader::load(SharedPtr<EngineInterface> engine,
 	} else {
 		// FIXME: polyphony datatype?
 		Redland::Query query(*rdf_world, Glib::ustring(
-					"SELECT DISTINCT ?poly WHERE {\n") +
-				patch_uri + " ingen:polyphony ?poly\n }");
+			"SELECT DISTINCT ?poly WHERE {\n") +
+			patch_uri + " ingen:polyphony ?poly\n }");
 
 		Redland::Query::Results results = query.run(*rdf_world, model);
 
@@ -98,8 +98,8 @@ Loader::load(SharedPtr<EngineInterface> engine,
 			patch_name = patch_name.substr(0, patch_name.length()-10);
 
 		Redland::Query query(*rdf_world, Glib::ustring(
-				"SELECT DISTINCT ?name WHERE {\n") +
-				patch_uri + " ingen:name ?name\n}");
+			"SELECT DISTINCT ?name WHERE {\n") +
+			patch_uri + " ingen:name ?name\n}");
 
 		Redland::Query::Results results = query.run(*rdf_world, model);
 
@@ -116,16 +116,16 @@ Loader::load(SharedPtr<EngineInterface> engine,
 	/* Load (plugin) nodes */
 
 	Redland::Query query(*rdf_world, Glib::ustring(
-			"SELECT DISTINCT ?name ?plugin ?varkey ?varval ?poly WHERE {\n") +
-			patch_uri + " ingen:node       ?node .\n"
-			"?node        ingen:name       ?name ;\n"
-			"             ingen:plugin     ?plugin ;\n"
-			"             ingen:polyphonic ?poly .\n"
-			"OPTIONAL { ?node     ingen:variable ?variable .\n"
-			"           ?variable ingen:key      ?varkey ;\n"
-			"                     ingen:value    ?varval .\n"
-			"         }"
-			"}");
+		"SELECT DISTINCT ?name ?plugin ?varkey ?varval ?poly WHERE {\n") +
+		patch_uri + " ingen:node       ?node .\n"
+		"?node        ingen:name       ?name ;\n"
+		"             ingen:plugin     ?plugin ;\n"
+		"             ingen:polyphonic ?poly .\n"
+		"OPTIONAL { ?node     ingen:variable ?variable .\n"
+		"           ?variable ingen:key      ?varkey ;\n"
+		"                     ingen:value    ?varval .\n"
+		"         }"
+		"}");
 
 	Redland::Query::Results results = query.run(*rdf_world, model);
 
@@ -163,11 +163,11 @@ Loader::load(SharedPtr<EngineInterface> engine,
 	/* Load subpatches */
 
 	query = Redland::Query(*rdf_world, Glib::ustring(
-			"SELECT DISTINCT ?patch ?name WHERE {\n") +
-			patch_uri + " ingen:node ?patch .\n"
-			"?patch       a          ingen:Patch ;\n"
-			"             ingen:name ?name .\n"
-			"}");
+		"SELECT DISTINCT ?patch ?name WHERE {\n") +
+		patch_uri + " ingen:node ?patch .\n"
+		"?patch       a          ingen:Patch ;\n"
+		"             ingen:name ?name .\n"
+		"}");
 
 	results = query.run(*rdf_world, model);
 	
@@ -190,14 +190,14 @@ Loader::load(SharedPtr<EngineInterface> engine,
 	/* Set node port control values */
 
 	query = Redland::Query(*rdf_world, Glib::ustring(
-			"SELECT DISTINCT ?nodename ?portname ?portval WHERE {\n") +
-			patch_uri + " ingen:node   ?node .\n"
-			"?node        ingen:name   ?nodename ;\n"
-			"             ingen:port   ?port .\n"
-			"?port        ingen:name   ?portname ;\n"
-			"             ingen:value  ?portval .\n"
-			"FILTER ( datatype(?portval) = xsd:decimal )\n"
-			"}\n");
+		"SELECT DISTINCT ?nodename ?portname ?portval WHERE {\n") +
+		patch_uri + " ingen:node   ?node .\n"
+		"?node        ingen:name   ?nodename ;\n"
+		"             ingen:port   ?port .\n"
+		"?port        ingen:name   ?portname ;\n"
+		"             ingen:value  ?portval .\n"
+		"FILTER ( datatype(?portval) = xsd:decimal )\n"
+		"}\n");
 
 	results = query.run(*rdf_world, model);
 
@@ -216,19 +216,19 @@ Loader::load(SharedPtr<EngineInterface> engine,
 	/* Load this patch's ports */
 
 	query = Redland::Query(*rdf_world, Glib::ustring(
-			"SELECT DISTINCT ?port ?type ?name ?datatype ?varkey ?varval ?portval WHERE {\n") +
-			patch_uri + " ingen:port     ?port .\n"
-			"?port        a              ?type ;\n"
-			"             a              ?datatype ;\n"
-			"             ingen:name     ?name .\n"
-			" FILTER (?type != ?datatype && ((?type = ingen:InputPort) || (?type = ingen:OutputPort)))\n"
-			"OPTIONAL { ?port ingen:value ?portval . \n"
-			"           FILTER ( datatype(?portval) = xsd:decimal ) }\n"
-			"OPTIONAL { ?port     ingen:variable ?variable .\n"
-			"           ?variable ingen:key      ?varkey ;\n"
-			"                     ingen:value    ?varval .\n"
-			"         }"
-			"}");
+		"SELECT DISTINCT ?port ?type ?name ?datatype ?varkey ?varval ?portval WHERE {\n") +
+		patch_uri + " ingen:port     ?port .\n"
+		"?port        a              ?type ;\n"
+		"             a              ?datatype ;\n"
+		"             ingen:name     ?name .\n"
+		" FILTER (?type != ?datatype && ((?type = ingen:InputPort) || (?type = ingen:OutputPort)))\n"
+		"OPTIONAL { ?port ingen:value ?portval . \n"
+		"           FILTER ( datatype(?portval) = xsd:decimal ) }\n"
+		"OPTIONAL { ?port     ingen:variable ?variable .\n"
+		"           ?variable ingen:key      ?varkey ;\n"
+		"                     ingen:value    ?varval .\n"
+		"         }"
+		"}");
 
 	results = query.run(*rdf_world, model);
 
@@ -264,17 +264,17 @@ Loader::load(SharedPtr<EngineInterface> engine,
 	/* Node -> Node connections */
 
 	query = Redland::Query(*rdf_world, Glib::ustring(
-			"SELECT DISTINCT ?srcnodename ?srcname ?dstnodename ?dstname WHERE {\n") +
-			patch_uri +  "ingen:node ?srcnode ;\n"
-			"             ingen:node ?dstnode .\n"
-			"?srcnode     ingen:port ?src ;\n"
-			"             ingen:name ?srcnodename .\n"
-			"?dstnode     ingen:port ?dst ;\n"
-			"             ingen:name ?dstnodename .\n"
-			"?src         ingen:name ?srcname .\n"
-			"?dst         ingen:connectedTo ?src ;\n"
-			"             ingen:name ?dstname .\n" 
-			"}\n");
+		"SELECT DISTINCT ?srcnodename ?srcname ?dstnodename ?dstname WHERE {\n") +
+		patch_uri +  "ingen:node ?srcnode ;\n"
+		"             ingen:node ?dstnode .\n"
+		"?srcnode     ingen:port ?src ;\n"
+		"             ingen:name ?srcnodename .\n"
+		"?dstnode     ingen:port ?dst ;\n"
+		"             ingen:name ?dstnodename .\n"
+		"?src         ingen:name ?srcname .\n"
+		"?dst         ingen:connectedTo ?src ;\n"
+		"             ingen:name ?dstname .\n" 
+		"}\n");
 
 	results = query.run(*rdf_world, model);
 
@@ -293,15 +293,15 @@ Loader::load(SharedPtr<EngineInterface> engine,
 	/* This Patch -> Node connections */
 
 	query = Redland::Query(*rdf_world, Glib::ustring(
-			"SELECT DISTINCT ?srcname ?dstnodename ?dstname WHERE {\n") +
-			patch_uri + " ingen:port ?src ;\n"
-			"             ingen:node ?dstnode .\n"
-			"?dstnode     ingen:port ?dst ;\n"
-			"             ingen:name ?dstnodename .\n"
-			"?dst         ingen:connectedTo ?src ;\n"
-			"             ingen:name ?dstname .\n" 
-			"?src         ingen:name ?srcname .\n"
-			"}\n");
+		"SELECT DISTINCT ?srcname ?dstnodename ?dstname WHERE {\n") +
+		patch_uri + " ingen:port ?src ;\n"
+		"             ingen:node ?dstnode .\n"
+		"?dstnode     ingen:port ?dst ;\n"
+		"             ingen:name ?dstnodename .\n"
+		"?dst         ingen:connectedTo ?src ;\n"
+		"             ingen:name ?dstname .\n" 
+		"?src         ingen:name ?srcname .\n"
+		"}\n");
 
 	results = query.run(*rdf_world, model);
 
@@ -319,15 +319,15 @@ Loader::load(SharedPtr<EngineInterface> engine,
 	/* Node -> This Patch connections */
 
 	query = Redland::Query(*rdf_world, Glib::ustring(
-			"SELECT DISTINCT ?srcnodename ?srcname ?dstname WHERE {\n") +
-			patch_uri + " ingen:port ?dst ;\n"
-			"             ingen:node ?srcnode .\n"
-			"?srcnode     ingen:port ?src ;\n"
-			"             ingen:name ?srcnodename .\n"
-			"?dst         ingen:connectedTo ?src ;\n"
-			"             ingen:name ?dstname .\n" 
-			"?src         ingen:name ?srcname .\n"
-			"}\n");
+		"SELECT DISTINCT ?srcnodename ?srcname ?dstname WHERE {\n") +
+		patch_uri + " ingen:port ?dst ;\n"
+		"             ingen:node ?srcnode .\n"
+		"?srcnode     ingen:port ?src ;\n"
+		"             ingen:name ?srcnodename .\n"
+		"?dst         ingen:connectedTo ?src ;\n"
+		"             ingen:name ?dstname .\n" 
+		"?src         ingen:name ?srcname .\n"
+		"}\n");
 
 	results = query.run(*rdf_world, model);
 
@@ -345,17 +345,17 @@ Loader::load(SharedPtr<EngineInterface> engine,
 	/* Load variables */
 
 	query = Redland::Query(*rdf_world, Glib::ustring(
-			"SELECT DISTINCT ?varkey ?varval WHERE {\n") +
-			patch_uri + " ingen:variable ?variable .\n"
-			"?variable    ingen:key      ?varkey ;\n"
-			"             ingen:value    ?varval .\n"
-			"}");
+		"SELECT DISTINCT ?varkey ?varval WHERE {\n") +
+		patch_uri + " ingen:variable ?variable .\n"
+		"?variable    ingen:key      ?varkey ;\n"
+		"             ingen:value    ?varval .\n"
+		"}");
 
 	results = query.run(*rdf_world, model);
 
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
 
-		const string key = rdf_world->prefixes().qualify((*i)["varkey"].to_string());
+		const string key = rdf_world->prefixes().qualify(string((*i)["varkey"]));
 		Redland::Node val_node = (*i)["varval"];
 
 		if (key != "")
@@ -371,9 +371,9 @@ Loader::load(SharedPtr<EngineInterface> engine,
 	/* Enable */
 
 	query = Redland::Query(*rdf_world, Glib::ustring(
-			"SELECT DISTINCT ?enabled WHERE {\n") +
-			patch_uri + " ingen:enabled ?enabled .\n"
-			"}");
+		"SELECT DISTINCT ?enabled WHERE {\n") +
+		patch_uri + " ingen:enabled ?enabled .\n"
+		"}");
 
 	results = query.run(*rdf_world, model);
 
@@ -381,7 +381,7 @@ Loader::load(SharedPtr<EngineInterface> engine,
 
 		Redland::Node enabled_node = (*i)["enabled"];
 
-		if (enabled_node.is_bool() && enabled_node.to_bool()) {
+		if (enabled_node.is_bool() && enabled_node) {
 			engine->enable_patch(patch_path);
 			break;
 		}
