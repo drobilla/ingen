@@ -65,7 +65,7 @@ public:
 	}*/
 	
 	void build();
-	void arrange();
+	void arrange(bool use_length_hints);
 
 	void add_node(SharedPtr<NodeModel> nm);
 	void remove_node(SharedPtr<NodeModel> nm);

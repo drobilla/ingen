@@ -227,9 +227,9 @@ PatchCanvas::build()
 
 	
 void
-PatchCanvas::arrange()
+PatchCanvas::arrange(bool ingen_doesnt_use_length_hints)
 {
-	FlowCanvas::Canvas::arrange();
+	FlowCanvas::Canvas::arrange(false);
 	
 	for (list<boost::shared_ptr<Item> >::iterator i = _items.begin(); i != _items.end(); ++i)
 		(*i)->store_location();

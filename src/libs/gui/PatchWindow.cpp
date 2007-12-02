@@ -476,7 +476,7 @@ PatchWindow::event_clear()
 void
 PatchWindow::event_arrange()
 {
-	_view->canvas()->arrange();
+	_view->canvas()->arrange(false);
 }
 
 
