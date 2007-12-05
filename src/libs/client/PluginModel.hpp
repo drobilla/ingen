@@ -23,13 +23,14 @@
 #include <iostream>
 #include <raul/Path.hpp>
 #include <raul/SharedPtr.hpp>
-#include <raul/RDFWorld.hpp>
+#include <redlandmm/World.hpp>
 #ifdef HAVE_SLV2
 #include <slv2/slv2.h>
 #endif
 #include "interface/EngineInterface.hpp"
 #include "interface/Plugin.hpp"
-using std::string; using std::cerr; using std::endl;
+
+using std::string;
 
 namespace Ingen {
 namespace Client {
@@ -71,7 +72,6 @@ public:
 	
 	Type type_from_uri(const string& type_uri) {
 		if (type_uri.substr(0, 6) != "ingen:") {
-			cerr << "INVALID TYPE STRING!" << endl;
 			return Plugin::Internal; // ?
 		} else {
 			return type_from_string(type_uri.substr(6));

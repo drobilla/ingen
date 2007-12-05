@@ -16,12 +16,14 @@
  */
 
 #include <string>
+#include <iostream>
 #include "client/PatchModel.hpp"
 #include "PatchPropertiesWindow.hpp"
 
+using namespace std;
+
 namespace Ingen {
 namespace GUI {
-using std::string;
 
 
 PatchPropertiesWindow::PatchPropertiesWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml)
@@ -76,7 +78,7 @@ PatchPropertiesWindow::cancel_clicked()
 void
 PatchPropertiesWindow::ok_clicked()
 {
-	cerr << "FIXME: properties\n";
+	cerr << "FIXME: patch properties\n";
 
 	//m_patch_model->set_variable("author", Atom(_author_entry->get_text().c_str()));
 	//m_patch_model->set_variable("description", Atom(_textview->get_buffer()->get_text().c_str()));

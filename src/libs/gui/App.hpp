@@ -26,8 +26,8 @@
 #include <libgnomecanvasmm.h>
 #include <gtkmm.h>
 #include <libglademm.h>
-#include <raul/RDFWorld.hpp>
 #include <raul/SharedPtr.hpp>
+#include <redlandmm/World.hpp>
 
 using namespace std;
 

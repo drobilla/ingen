@@ -26,7 +26,7 @@
 #include <boost/optional.hpp>
 #include <glibmm/thread.h>
 #include <raul/Path.hpp>
-#include <raul/RDFWorld.hpp>
+#include <redlandmm/World.hpp>
 #include <raul/SharedPtr.hpp>
 #include "module/global.hpp"
 #include "module/Module.hpp"

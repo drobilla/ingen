@@ -28,12 +28,11 @@
 #include <utility> // pair, make_pair
 #include <vector>
 #include <raul/Atom.hpp>
-#include <raul/AtomRedland.hpp>
 #include <raul/Path.hpp>
-#include <raul/RDFModel.hpp>
-#include <raul/RDFNode.hpp>
-#include <raul/RDFWorld.hpp>
 #include <raul/TableImpl.hpp>
+#include <redlandmm/Model.hpp>
+#include <redlandmm/Node.hpp>
+#include <redlandmm/World.hpp>
 #include "interface/EngineInterface.hpp"
 #include "interface/Plugin.hpp"
 #include "interface/Patch.hpp"
