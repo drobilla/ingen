@@ -20,14 +20,14 @@
 #include <string>
 #include <signal.h>
 #include <dlfcn.h>
+#include <boost/optional.hpp>
 #include <glibmm/convert.h>
 #include <glibmm/miscutils.h>
 #include <glibmm/spawn.h>
-#include <boost/optional.hpp>
 #include <glibmm/thread.h>
 #include <raul/Path.hpp>
-#include <redlandmm/World.hpp>
 #include <raul/SharedPtr.hpp>
+#include <redlandmm/World.hpp>
 #include "module/global.hpp"
 #include "module/Module.hpp"
 #include "module/World.hpp"
