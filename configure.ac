@@ -236,10 +236,12 @@ fi
 if test "$build_ingen_client_lib" = "yes"; then
 	AC_CHECK_HEADERS([sys/time.h unistd.h])
 	PKG_CHECK_MODULES(LXML2, libxml-2.0 >= 2.6.0) # FIXME: deprecated, make optional
-	PKG_CHECK_MODULES(RAPTOR, raptor >= 1.4.14, build_raptor="yes", build_raptor="no")
-	PKG_CHECK_MODULES(RASQAL, rasqal >= 0.9.11, build_rasqal="yes", build_rasqal="no")
 	PKG_CHECK_MODULES(LSIGCPP, sigc++-2.0)
 	PKG_CHECK_MODULES(LIBLO, liblo)
+	PKG_CHECK_MODULES(REDLANDMM, [redlandmm])
+fi
+AM_CONDITIONAL(WITH_REDLANDMM, [test "$build_redlandmm" = "yes"])
+
 else
  	AC_MSG_WARN([Ingen client library/executable will not be built!])
 fi
