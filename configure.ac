@@ -239,13 +239,11 @@ if test "$build_ingen_client_lib" = "yes"; then
 	PKG_CHECK_MODULES(LSIGCPP, sigc++-2.0)
 	PKG_CHECK_MODULES(LIBLO, liblo)
 	PKG_CHECK_MODULES(REDLANDMM, [redlandmm])
-fi
-AM_CONDITIONAL(WITH_REDLANDMM, [test "$build_redlandmm" = "yes"])
-
 else
  	AC_MSG_WARN([Ingen client library/executable will not be built!])
 fi
 AM_CONDITIONAL(BUILD_INGEN_CLIENTS, [test "$build_ingen_clients" = "yes"])
+AM_CONDITIONAL(WITH_REDLANDMM, [test "$build_ingen_client_lib" = "yes"])
 
 if test "$build_ingen_gtk_client" = "yes"; then
 #	AC_CHECK_HEADERS([sys/time.h unistd.h])
