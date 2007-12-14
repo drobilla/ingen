@@ -289,11 +289,13 @@ JackAudioDriver::_process_cb(jack_nframes_t nframes)
 	// Jack can elect to not call this function for a cycle, if overloaded
 	// FIXME: this doesn't make sense, and the start time isn't used anyway
 	const jack_nframes_t start_of_current_cycle = jack_last_frame_time(_client);
-	//const jack_nframes_t start_of_last_cycle = start_of_current_cycle - nframes; // FIXME: maybe not..
-	const jack_nframes_t end_of_current_cycle = start_of_current_cycle + nframes;
 
-	// FIXME: ditto
+	const jack_nframes_t end_of_current_cycle = start_of_current_cycle + nframes;
+#ifndef NDEBUG
+	// FIXME: support changing cycle length
+	const jack_nframes_t start_of_last_cycle = start_of_current_cycle - nframes;
 	assert(start_of_current_cycle - start_of_last_cycle == nframes);
+#endif
 
 	_transport_state = jack_transport_query(_client, &_position);
 
