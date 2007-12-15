@@ -134,7 +134,7 @@ PluginModel::ui(EngineInterface* engine, NodeModel* node) const
 	
 	SLV2UIInstance ret = NULL;
 			
-	const char* gtk_gui_uri = "http://ll-plugins.nongnu.org/lv2/ext/gui/dev/1#GtkGUI";
+	const char* gtk_gui_uri = "http://ll-plugins.nongnu.org/lv2/ext/gui#";
 
 	SLV2UIs uis = slv2_plugin_get_uis(_slv2_plugin);
 	SLV2UI ui = NULL;
@@ -153,13 +153,7 @@ PluginModel::ui(EngineInterface* engine, NodeModel* node) const
 
 	if (ui) {
 		cout << "Found GTK Plugin UI " << slv2_ui_get_uri(ui) << endl;
-	
-		ret = slv2_ui_instantiate(_slv2_plugin,
-				ui,
-				lv2_ui_write, lv2_ui_command,
-				lv2_ui_program_change, lv2_ui_program_save,
-				controller, NULL);
-	
+		ret = slv2_ui_instantiate(_slv2_plugin, ui, lv2_ui_write, controller, NULL);
 		//slv2_ui_free(ui);
 	}
 
