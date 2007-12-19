@@ -134,7 +134,7 @@ PluginModel::ui(EngineInterface* engine, NodeModel* node) const
 	
 	SLV2UIInstance ret = NULL;
 			
-	const char* gtk_gui_uri = "http://ll-plugins.nongnu.org/lv2/ext/gui#";
+	const char* gtk_gui_uri = "http://ll-plugins.nongnu.org/lv2/ext/gui#GtkGUI";
 
 	SLV2UIs uis = slv2_plugin_get_uis(_slv2_plugin);
 	SLV2UI ui = NULL;

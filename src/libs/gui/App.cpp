@@ -361,8 +361,12 @@ App::icon_from_path(const string& path, int size)
 	/* If weak references to Glib::Objects are needed somewhere else it will
 	   probably be a good idea to create a proper WeakPtr class instead of
 	   using raw pointers, but for a single use this will do. */
+	
+	Glib::RefPtr<Gdk::Pixbuf> buf;
+	if (path.length() == 0)
+		return buf;
 
-	IconMap::iterator iter = _icons.find(make_pair(path, size));
+	Icons::iterator iter = _icons.find(make_pair(path, size));
 
 	if (iter != _icons.end()) {
 		// we need to reference manually since the RefPtr constructor doesn't do it
@@ -370,15 +374,14 @@ App::icon_from_path(const string& path, int size)
 		return Glib::RefPtr<Gdk::Pixbuf>(iter->second);
 	}
 
-	Glib::RefPtr<Gdk::Pixbuf> buf;
 	try {
 		buf = Gdk::Pixbuf::create_from_file(path, size, size);
 		_icons.insert(make_pair(make_pair(path, size), buf.operator->()));
 		buf->add_destroy_notify_callback(new pair<string, int>(path, size),
 				&App::icon_destroyed);
 		cerr << "Loaded icon " << path << " with size " << size << endl;
-	} catch (...) {
-		cerr << "Caught exception, failed to load icon " << path << endl;
+	} catch (Glib::Error e) {
+		cerr << "Error loading icon: " << e.what() << endl;
 	}
 	return buf;
 }
@@ -389,7 +392,7 @@ App::icon_destroyed(void* data)
 {
 	pair<string, int>* p = static_cast<pair<string, int>*>(data);
 	cerr << "Destroyed icon " << p->first << " with size " << p->second << endl;
-	IconMap::iterator iter = instance()._icons.find(*p);
+	Icons::iterator iter = instance()._icons.find(*p);
 	if (iter != instance()._icons.end())
 		instance()._icons.erase(iter);
 	

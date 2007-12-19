@@ -244,14 +244,13 @@ PatchCanvas::add_node(SharedPtr<NodeModel> nm)
 
 	SharedPtr<PatchModel> pm = PtrCast<PatchModel>(nm);
 	SharedPtr<NodeModule> module;
-	if (pm)
+	if (pm) {
 		module = SubpatchModule::create(shared_this, pm);
-	else {
+	} else {
 		module = NodeModule::create(shared_this, nm);
-		const PluginModel* plugm = 
-		  dynamic_cast<const PluginModel*>(nm->plugin());
-		if (plugm)
-		  module->set_icon(App::instance().icon_from_path(plugm->icon_path(), 100));
+		const PluginModel* plugm = dynamic_cast<const PluginModel*>(nm->plugin());
+		if (plugm && plugm->icon_path() != "")
+			module->set_icon(App::instance().icon_from_path(plugm->icon_path(), 100));
 	}
 	
 	add_item(module);

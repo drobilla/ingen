@@ -130,8 +130,8 @@ protected:
 		}
 	};
 	
-	typedef map<pair<string, int>, Gdk::Pixbuf*, LexicalCompare<string, int> > IconMap;
-	IconMap _icons;
+	typedef map<pair<string, int>, Gdk::Pixbuf*, LexicalCompare<string, int> > Icons;
+	Icons _icons;
 	
 	App(Ingen::Shared::World* world);
 	
