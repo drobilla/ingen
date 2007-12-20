@@ -89,12 +89,12 @@ public:
 	void detach();
 	
 	bool gtk_main_iteration();
+	void show_about();
 	void quit();
 
 	void port_activity(Port* port);
 
 	ConnectWindow*     connect_window()  const { return _connect_window; }
-	Gtk::AboutDialog*  about_dialog()    const { return _about_dialog; }
 	MessagesWindow*    messages_dialog() const { return _messages_window; }
 	PatchTreeWindow*   patch_tree()      const { return _patch_tree_window; }
 	Configuration*     configuration()   const { return _configuration; }

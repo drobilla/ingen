@@ -96,6 +96,7 @@ App::App(Ingen::Shared::World* world)
 	glade_xml->get_widget_derived("messages_win", _messages_window);
 	glade_xml->get_widget_derived("patch_tree_win", _patch_tree_window);
 	glade_xml->get_widget("about_win", _about_dialog);
+	_about_dialog->property_program_name() = "Ingen";
 
 	Redland::World& rdf_world = *world->rdf_world;
 
@@ -345,6 +346,14 @@ App::gtk_main_iteration()
 	animate();
 	
 	return true;
+}
+
+
+void
+App::show_about()
+{
+	_about_dialog->run();
+	_about_dialog->hide();
 }
 
 
