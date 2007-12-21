@@ -37,6 +37,7 @@ namespace Client {
 
 class PatchModel;
 class NodeModel;
+class PluginUI;
 
 
 /** Model for a plugin available for loading.
@@ -89,7 +90,8 @@ public:
 		_slv2_plugins = slv2_world_get_all_plugins(_slv2_world);
 	}
 
-	SLV2UIInstance ui(Ingen::Shared::EngineInterface* engine, NodeModel* node) const;
+	SharedPtr<PluginUI> ui(SharedPtr<Shared::EngineInterface> engine,
+	                       SharedPtr<NodeModel>               node) const;
 
 	const string& icon_path() const;
 	static string get_lv2_icon_path(SLV2Plugin plugin);

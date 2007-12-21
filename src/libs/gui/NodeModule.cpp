@@ -18,18 +18,19 @@
 #include <cassert>
 #include <raul/Atom.hpp>
 #include "interface/EngineInterface.hpp"
-#include "client/PatchModel.hpp"
 #include "client/NodeModel.hpp"
+#include "client/PatchModel.hpp"
+#include "client/PluginUI.hpp"
 #include "App.hpp"
+#include "GladeFactory.hpp"
+#include "NodeControlWindow.hpp"
 #include "NodeModule.hpp"
 #include "PatchCanvas.hpp"
-#include "Port.hpp"
-#include "GladeFactory.hpp"
-#include "RenameWindow.hpp"
 #include "PatchWindow.hpp"
-#include "WindowFactory.hpp"
+#include "Port.hpp"
+#include "RenameWindow.hpp"
 #include "SubpatchModule.hpp"
-#include "NodeControlWindow.hpp"
+#include "WindowFactory.hpp"
 
 namespace Ingen {
 namespace GUI {
@@ -38,10 +39,10 @@ namespace GUI {
 NodeModule::NodeModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeModel> node)
 	: FlowCanvas::Module(canvas, node->path().name())
 	, _node(node)
-	, _slv2_ui(NULL)
-	, _gui(NULL)
-	, _gui_item(NULL)
+	, _gui_widget(NULL)
 	, _gui_container(NULL)
+	, _gui_item(NULL)
+	, _gui_window(NULL)
 	, _last_gui_request_width(0)
 	, _last_gui_request_height(0)
 {
@@ -108,9 +109,10 @@ NodeModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeModel> n
 void
 NodeModule::control_change(uint32_t index, float control)
 {
-	if (_slv2_ui) {
-		const LV2UI_Descriptor* const ui_descriptor = slv2_ui_instance_get_descriptor(_slv2_ui);
-		LV2UI_Handle ui_handle = slv2_ui_instance_get_handle(_slv2_ui);
+	if (_plugin_ui) {
+		SLV2UIInstance inst = _plugin_ui->instance();
+		const LV2UI_Descriptor* ui_descriptor = slv2_ui_instance_get_descriptor(inst);
+		LV2UI_Handle ui_handle = slv2_ui_instance_get_handle(inst);
 		if (ui_descriptor->port_event)
 			ui_descriptor->port_event(ui_handle, index, 4, &control);
 	}
@@ -121,42 +123,34 @@ void
 NodeModule::embed_gui(bool embed)
 {
 	if (embed) {
-			
-		// FIXME: leaks?
-				
+
+		if (_gui_window) {
+			cerr << "LV2 GUI already popped up, cannot embed" << endl;
+			return;
+		}
+		
 		GtkWidget* c_widget = NULL;
 
 		if (!_gui_item) {
-			cerr << "Embedding LV2 GUI" << endl;
-
+		
 			const PluginModel* const plugin = dynamic_cast<const PluginModel*>(_node->plugin());
 			assert(plugin);
 
-			_slv2_ui = plugin->ui(App::instance().engine().get(), _node.get());
+			_plugin_ui = plugin->ui(App::instance().engine(), _node);
 
-			if (_slv2_ui) {
-				cerr << "Found UI" << endl;
-				c_widget = (GtkWidget*)slv2_ui_instance_get_widget(_slv2_ui);
-				_gui = Glib::wrap(c_widget);
-				assert(_gui);
+			if (_plugin_ui) {
+				c_widget = (GtkWidget*)slv2_ui_instance_get_widget(_plugin_ui->instance());
+				_gui_widget = Glib::wrap(c_widget);
+				assert(_gui_widget);
 			
 				if (_gui_container)
 					delete _gui_container;
 
-				//container = new Gtk::Alignment();  // transparent bg but uber slow
-				_gui_container = new Gtk::EventBox();
+				_gui_container = manage(new Gtk::EventBox());
 				_gui_container->set_name("ingen_embedded_node_gui_container");
 				_gui_container->set_border_width(2);
-				_gui_container->add(*_gui);
+				_gui_container->add(*_gui_widget);
 				_gui_container->show_all();
-				/*Gdk::Color color;
-				color.set_red((_color & 0xFF000000) >> 24);
-				color.set_green((_color & 0x00FF0000) >> 16);
-				color.set_blue((_color & 0xFF000000) >> 8);
-				container->modify_bg(Gtk::STATE_NORMAL,   color);
-				container->modify_bg(Gtk::STATE_ACTIVE,   color);
-				container->modify_bg(Gtk::STATE_PRELIGHT, color);
-				container->modify_bg(Gtk::STATE_SELECTED, color);*/
 			
 				const double y = 4 + _canvas_title.property_text_height();
 				_gui_item = new Gnome::Canvas::Widget(*this, 2.0, y, *_gui_container);
@@ -164,9 +158,9 @@ NodeModule::embed_gui(bool embed)
 		}
 
 		if (_gui_item) {
-			assert(_gui);
-			cerr << "Created canvas item" << endl;
-			_gui->show_all();
+
+			assert(_gui_widget);
+			_gui_widget->show_all();
 			_gui_item->show();
 
 			Gtk::Requisition r = _gui_container->size_request();
@@ -182,19 +176,17 @@ NodeModule::embed_gui(bool embed)
 					App::instance().engine()->enable_port_broadcasting((*p)->path());
 
 		} else {
-			cerr << "*** Failed to create canvas item" << endl;
+			cerr << "ERROR: Failed to create canvas item for LV2 UI" << endl;
 		}
 
-	} else {
+	} else { // un-embed
+
 		if (_gui_item) {
 			delete _gui_item;
 			_gui_item = NULL;
-		}
-
-		if (_slv2_ui) {
-			slv2_ui_instance_free(_slv2_ui);
-			_slv2_ui = NULL;
-			_gui = NULL;
+			_gui_container = NULL; // managed
+			_gui_widget = NULL; // managed
+			_plugin_ui.reset();
 		}
 
 		_ports_y_offset = 0;
@@ -214,7 +206,7 @@ NodeModule::embed_gui(bool embed)
 
 	resize();
 }
-	
+
 
 void
 NodeModule::gui_size_request(Gtk::Requisition* r, bool force)
@@ -279,30 +271,29 @@ NodeModule::popup_gui()
 {
 #ifdef HAVE_SLV2
 	if (_node->plugin()->type() == PluginModel::LV2) {
-		if (_slv2_ui) {
-			cerr << "LV2 GUI already embedded" << endl;
+		if (_plugin_ui) {
+			cerr << "LV2 GUI already embedded, cannot pop up" << endl;
 			return false;
 		}
 
 		const PluginModel* const plugin = dynamic_cast<const PluginModel*>(_node->plugin());
 		assert(plugin);
 
-		_slv2_ui = plugin->ui(App::instance().engine().get(), _node.get());
+		_plugin_ui = plugin->ui(App::instance().engine(), _node);
 
-		if (_slv2_ui) {
-			cerr << "Popping up LV2 GUI" << endl;
-
-			// FIXME: leaks
+		if (_plugin_ui) {
+			GtkWidget* c_widget = (GtkWidget*)slv2_ui_instance_get_widget(_plugin_ui->instance());
+			_gui_widget = Glib::wrap(c_widget);
 			
-			GtkWidget* c_widget = (GtkWidget*)slv2_ui_instance_get_widget(_slv2_ui);
-			_gui = Glib::wrap(c_widget);
-			
-			Gtk::Window* win = new Gtk::Window();
-			win->add(*_gui);
-			_gui->show_all();
+			_gui_window = new Gtk::Window();
+			_gui_window->add(*_gui_widget);
+			_gui_widget->show_all();
 			initialise_gui_values();
 
-			win->present();
+			_gui_window->signal_unmap().connect(
+					sigc::mem_fun(this, &NodeModule::on_gui_window_close));
+			_gui_window->present();
+
 			return true;
 		} else {
 			cerr << "No LV2 GUI" << endl;
@@ -312,6 +303,16 @@ NodeModule::popup_gui()
 	return false;
 }
 
+
+void
+NodeModule::on_gui_window_close()
+{
+	delete _gui_window;
+	_gui_window = NULL;
+	_plugin_ui.reset();
+	_gui_widget = NULL;
+}
+	
 
 void
 NodeModule::initialise_gui_values()

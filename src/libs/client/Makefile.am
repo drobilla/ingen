@@ -50,6 +50,8 @@ libingen_client_la_SOURCES = \
 	PatchModel.hpp \
 	PluginModel.cpp \
 	PluginModel.hpp \
+	PluginUI.hpp \
+	PluginUI.cpp \
 	PortModel.cpp \
 	PortModel.hpp \
 	PresetModel.hpp \

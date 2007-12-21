@@ -20,6 +20,7 @@
 //#include "lv2_osc_print.h"
 #include "PluginModel.hpp"
 #include "PatchModel.hpp"
+#include "PluginUI.hpp"
 
 using namespace std;
 using Ingen::Shared::EngineInterface;
@@ -91,73 +92,17 @@ lv2_ui_write(LV2UI_Controller controller,
 			port->type().uri(), buffer_size, buffer);
 }
 
-
-void
-lv2_ui_command(LV2UI_Controller   controller,
-               uint32_t           argc,
-               const char* const* argv)
-{
-	cerr << "********* LV2 UI COMMAND" << endl;
-}
-
-	
-void
-lv2_ui_program_change(LV2UI_Controller controller,
-                      unsigned char    program)
-{
-	cerr << "********* LV2 UI PROGRAM CHANGE" << endl;
-}
-
-	
-void
-lv2_ui_program_save(LV2UI_Controller controller,
-                    unsigned char    program,
-                    const char*      name)
-{
-	cerr << "********* LV2 UI PROGRAM SAVE" << endl;
-}
-
 	
 #ifdef HAVE_SLV2
-SLV2UIInstance
-PluginModel::ui(EngineInterface* engine, NodeModel* node) const
+SharedPtr<PluginUI>
+PluginModel::ui(SharedPtr<EngineInterface> engine, SharedPtr<NodeModel> node) const
 {
 	if (_type != LV2)
-		return NULL;
+		return SharedPtr<PluginUI>();
 
 	Glib::Mutex::Lock(_rdf_world->mutex());
 
-	// FIXME: leak
-	NodeController* controller = new NodeController();
-	controller->engine = engine;
-	controller->node = node;
-	
-	SLV2UIInstance ret = NULL;
-			
-	const char* gtk_gui_uri = "http://ll-plugins.nongnu.org/lv2/ext/gui#GtkGUI";
-
-	SLV2UIs uis = slv2_plugin_get_uis(_slv2_plugin);
-	SLV2UI ui = NULL;
-
-	if (slv2_values_size(uis) > 0) {
-		for (unsigned i=0; i < slv2_uis_size(uis); ++i) {
-			ui = slv2_uis_get_at(uis, i);
-
-			if (slv2_ui_is_type(ui, gtk_gui_uri)) {
-				break;
-			} else {
-				ui = NULL;
-			}
-		}
-	}
-
-	if (ui) {
-		cout << "Found GTK Plugin UI " << slv2_ui_get_uri(ui) << endl;
-		ret = slv2_ui_instantiate(_slv2_plugin, ui, lv2_ui_write, controller, NULL);
-		//slv2_ui_free(ui);
-	}
-
-	return ret;
+	return PluginUI::create(engine, node, _slv2_plugin);
 }
 
 

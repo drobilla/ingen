@@ -69,6 +69,7 @@ protected:
 	
 	void show_control_window();
 	bool popup_gui();
+	void on_gui_window_close();
 	
 	void rename();
 	void set_variable(const std::string& key, const Atom& value);
@@ -86,10 +87,11 @@ protected:
 	
 	SharedPtr<NodeModel>   _node;
 	NodeMenu*              _menu;
-	SLV2UIInstance         _slv2_ui;
-	Gtk::Widget*           _gui;
-	Gnome::Canvas::Widget* _gui_item;
+	SharedPtr<PluginUI>    _plugin_ui;
+	Gtk::Widget*           _gui_widget;
 	Gtk::Container*        _gui_container;
+	Gnome::Canvas::Widget* _gui_item; ///< iff embedded
+	Gtk::Window*           _gui_window; ///< iff popped up
 	int                    _last_gui_request_width;
 	int                    _last_gui_request_height;
 };
