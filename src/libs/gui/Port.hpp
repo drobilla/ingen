@@ -52,7 +52,7 @@ public:
 	
 private:
 	
-	void variable_change(const string& key, const Raul::Atom& value);
+	void variable_change(const std::string& key, const Raul::Atom& value);
 
 	void renamed();
 
