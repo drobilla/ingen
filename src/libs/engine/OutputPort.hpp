@@ -40,12 +40,12 @@ namespace Ingen {
 class OutputPort : virtual public PortImpl
 {
 public:
-	OutputPort(NodeImpl*     parent,
-	           const string& name,
-	           uint32_t      index,
-	           uint32_t      poly,
-	           DataType      type,
-	           size_t        buffer_size);
+	OutputPort(NodeImpl*          parent,
+	           const std::string& name,
+	           uint32_t           index,
+	           uint32_t           poly,
+	           DataType           type,
+	           size_t             buffer_size);
 
 	void pre_process(ProcessContext& context);
 	void post_process(ProcessContext& context);

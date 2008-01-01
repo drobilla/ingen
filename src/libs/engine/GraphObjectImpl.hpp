@@ -58,7 +58,7 @@ public:
 	GraphObject* graph_parent() const { return _parent; }
 	
 	inline GraphObjectImpl* parent() const { return _parent; }
-	const string name()   const { return _name; }
+	const std::string       name()   const { return _name; }
 	
 	virtual void process(ProcessContext& context) = 0;
 
@@ -69,10 +69,10 @@ public:
 		assert(_name.find("/") == string::npos);
 	}
 	
-	void set_variable(const string& key, const Atom& value)
+	void set_variable(const std::string& key, const Atom& value)
 		{ _variables[key] = value; }
 
-	const Atom& get_variable(const string& key) {
+	const Atom& get_variable(const std::string& key) {
 		static Atom null_atom;
 		Variables::iterator i = _variables.find(key);
 		return (i != _variables.end()) ? (*i).second : null_atom;
@@ -86,24 +86,24 @@ public:
 	/** Path is dynamically generated from parent to ease renaming */
 	const Path path() const {
 		if (_parent == NULL)
-			return Path(string("/").append(_name));
+			return Path(std::string("/").append(_name));
 		else if (_parent->path() == "/")
-			return Path(string("/").append(_name));
+			return Path(std::string("/").append(_name));
 		else
 			return Path(_parent->path() +"/"+ _name);
 	}
 	
 	const_iterator         children_begin() const;
 	const_iterator         children_end() const;
-	SharedPtr<GraphObject> find_child(const string& name) const;
+	SharedPtr<GraphObject> find_child(const std::string& name) const;
 
 protected:
-	GraphObjectImpl(GraphObjectImpl* parent, const string& name, bool polyphonic=false)
+	GraphObjectImpl(GraphObjectImpl* parent, const std::string& name, bool polyphonic=false)
 		: _parent(parent), _name(name), _polyphonic(polyphonic)
 	{
 		assert(parent == NULL || _name.length() > 0);
-		assert(_name.find("/") == string::npos);
-		assert(path().find("//") == string::npos);
+		assert(_name.find("/") == std::string::npos);
+		assert(path().find("//") == std::string::npos);
 	}
 	
 	GraphObjectImpl* _parent;

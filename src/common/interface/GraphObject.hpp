@@ -55,7 +55,7 @@ public:
 	
 	virtual const_iterator         children_begin() const = 0;
 	virtual const_iterator         children_end() const = 0;
-	virtual SharedPtr<GraphObject> find_child(const string& name) const = 0;
+	virtual SharedPtr<GraphObject> find_child(const std::string& name) const = 0;
 };
 
 

@@ -56,21 +56,22 @@ class Serialiser
 public:
 	Serialiser(Redland::World& world);
 
-	void   to_file(SharedPtr<GraphObject> object, const string& filename);
+	void   to_file(SharedPtr<GraphObject> object, const std::string& filename);
 
-	string to_string(SharedPtr<GraphObject>        object,
-	                 const string&                 base_uri,
-	                 const GraphObject::Variables& extra_rdf);
+	std::string to_string(SharedPtr<GraphObject>        object,
+	                      const std::string&            base_uri,
+	                      const GraphObject::Variables& extra_rdf);
 	
-	void   start_to_string(const string& base_uri);
-	void   serialise(SharedPtr<GraphObject> object) throw (std::logic_error);
-	void   serialise_connection(SharedPtr<Shared::Connection> c) throw (std::logic_error);
-	string finish();
+	void start_to_string(const std::string& base_uri);
+	void serialise(SharedPtr<GraphObject> object) throw (std::logic_error);
+	void serialise_connection(SharedPtr<Shared::Connection> c) throw (std::logic_error);
+	
+	std::string finish();
 	
 private:
 	enum Mode { TO_FILE, TO_STRING };
 	
-	void start_to_filename(const string& filename);
+	void start_to_filename(const std::string& filename);
 
 	void setup_prefixes();
 
@@ -90,7 +91,7 @@ private:
 	SharedPtr<GraphObject> _root_object;
 	Mode                   _mode;
 	NodeMap                _node_map;
-	string                 _base_uri;
+	std::string            _base_uri;
 	Redland::World&        _world;
 	Redland::Model*        _model;
 };
