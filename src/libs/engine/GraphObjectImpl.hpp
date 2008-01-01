@@ -66,7 +66,7 @@ public:
 	virtual void set_path(const Path& new_path) {
 		assert(new_path.parent() == path().parent());
 		_name = new_path.name();
-		assert(_name.find("/") == string::npos);
+		assert(_name.find("/") == std::string::npos);
 	}
 	
 	void set_variable(const std::string& key, const Atom& value)
