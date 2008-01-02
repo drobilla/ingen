@@ -56,6 +56,9 @@ PatchView::PatchView(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::X
 	xml->get_widget("patch_view_scrolledwindow", _canvas_scrolledwindow);
 
 	_toolbar->set_toolbar_style(Gtk::TOOLBAR_ICONS);
+	_canvas_scrolledwindow->property_hadjustment().get_value()->set_step_increment(10);
+	_canvas_scrolledwindow->property_vadjustment().get_value()->set_step_increment(10);
+
 }
 
 
