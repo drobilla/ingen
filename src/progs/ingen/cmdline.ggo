@@ -12,7 +12,7 @@ and many GUIs (or other things) may connect to an engine via OSC.
 option "engine" e "Run (JACK) engine" flag off
 option "engine-port" E "Engine OSC port"    int    no default="16180"
 option "connect" c "Connect to existing engine at OSC URI" string no default="osc.udp://localhost:16180"
-option "gui" g "Launch the GTK graphical interface" flag on
+option "gui" g "Launch the GTK graphical interface" flag off
 option "client-port" C "Client OSC port"    int    no
 option "load" l "Load patch" string no
 option "path" L "Target path for loaded patch" string no
