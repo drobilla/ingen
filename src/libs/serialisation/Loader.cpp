@@ -23,6 +23,7 @@
 #include <redlandmm/Query.hpp>
 #include <raul/TableImpl.hpp>
 #include <raul/Atom.hpp>
+#include <raul/AtomRDF.hpp>
 #include "interface/EngineInterface.hpp"
 #include "Loader.hpp"
 
@@ -154,7 +155,7 @@ Loader::load(SharedPtr<EngineInterface> engine,
 		Redland::Node val_node = (*i)["varval"];
 
 		if (key != "")
-			engine->set_variable(node_path, key, Atom(val_node));
+			engine->set_variable(node_path, key, AtomRDF::node_to_atom(val_node));
 	}
 	
 	rdf_world->mutex().unlock();
@@ -255,7 +256,7 @@ Loader::load(SharedPtr<EngineInterface> engine,
 		const Redland::Node var_val_node = (*i)["varval"];
 
 		if (key != "")
-			engine->set_variable(patch_path.base() + name, key, Atom(var_val_node));
+			engine->set_variable(patch_path.base() + name, key, AtomRDF::node_to_atom(var_val_node));
 	}
 
 	created.clear();
@@ -359,7 +360,7 @@ Loader::load(SharedPtr<EngineInterface> engine,
 		Redland::Node val_node = (*i)["varval"];
 
 		if (key != "")
-			engine->set_variable(patch_path, key, Atom(val_node));
+			engine->set_variable(patch_path, key, AtomRDF::node_to_atom(val_node));
 	}
 
 

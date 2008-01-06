@@ -28,6 +28,7 @@
 #include <utility> // pair, make_pair
 #include <vector>
 #include <raul/Atom.hpp>
+#include <raul/AtomRDF.hpp>
 #include <raul/Path.hpp>
 #include <raul/TableImpl.hpp>
 #include <redlandmm/Model.hpp>
@@ -79,7 +80,8 @@ Serialiser::to_string(SharedPtr<GraphObject>        object,
 	Redland::Node base_rdf_node(_model->world(), Redland::Node::RESOURCE, base_uri);
 	for (GraphObject::Variables::const_iterator v = extra_rdf.begin(); v != extra_rdf.end(); ++v) {
 		if (v->first.find(":") != string::npos) {
-			_model->add_statement(base_rdf_node, v->first, v->second.to_rdf_node(_model->world()));
+			_model->add_statement(base_rdf_node, v->first,
+					AtomRDF::atom_to_node(_model->world(), v->second));
 		} else {
 			cerr << "Warning: not serialising extra RDF with key '" << v->first << "'" << endl;
 		}
@@ -288,12 +290,12 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch)
 	_model->add_statement(
 		patch_id,
 		"ingen:polyphony",
-		Atom((int)patch->internal_polyphony()).to_rdf_node(_model->world()));
+		AtomRDF::atom_to_node(_model->world(), Atom((int)patch->internal_polyphony())));
 	
 	_model->add_statement(
 		patch_id,
 		"ingen:enabled",
-		Atom(patch->enabled()).to_rdf_node(_model->world()));
+		AtomRDF::atom_to_node(_model->world(), Atom((bool)patch->enabled())));
 	
 	serialise_variables(patch_id, patch->variables());
 
@@ -356,7 +358,7 @@ Serialiser::serialise_node(SharedPtr<Shared::Node> node, const Redland::Node& no
 	_model->add_statement(
 		node_id,
 		"ingen:name",
-		Atom(node->path().name()).to_rdf_node(_model->world()));
+		Redland::Node(_model->world(), Redland::Node::LITERAL, node->path().name()));
 	
 	_model->add_statement(
 		node_id,
@@ -366,7 +368,7 @@ Serialiser::serialise_node(SharedPtr<Shared::Node> node, const Redland::Node& no
 	_model->add_statement(
 		node_id,
 		"ingen:polyphonic",
-		Atom(node->polyphonic()).to_rdf_node(_model->world()));
+		AtomRDF::atom_to_node(_model->world(), Atom(node->polyphonic())));
 
 	//serialise_plugin(node->plugin());
 	
@@ -397,14 +399,14 @@ Serialiser::serialise_port(const Port* port, const Redland::Node& port_id)
 				Redland::Node(_model->world(), Redland::Node::RESOURCE, "ingen:OutputPort"));
 
 	_model->add_statement(port_id, "ingen:name",
-			Atom(port->path().name().c_str()).to_rdf_node(_model->world()));
+			Redland::Node(_model->world(), Redland::Node::LITERAL, port->path().name()));
 	
 	_model->add_statement(port_id, "rdf:type",
 			Redland::Node(_model->world(), Redland::Node::RESOURCE, port->type().uri()));
 	
 	if (port->type() == DataType::CONTROL && port->is_input())
 		_model->add_statement(port_id, "ingen:value",
-				Atom(port->value()).to_rdf_node(_model->world()));
+				AtomRDF::atom_to_node(_model->world(), Atom(port->value())));
 
 	serialise_variables(port_id, port->variables());
 }
@@ -432,7 +434,8 @@ Serialiser::serialise_variables(Redland::Node subject, const GraphObject::Variab
 			const Redland::Node key(_model->world(), Redland::Node::RESOURCE, v->first);
 			_model->add_statement(subject, "ingen:variable", var_id);
 			_model->add_statement(var_id, "ingen:key", key);
-			_model->add_statement(var_id, "ingen:value", v->second.to_rdf_node(_model->world()));
+			_model->add_statement(var_id, "ingen:value",
+					AtomRDF::atom_to_node(_model->world(), v->second));
 		} else {
 			cerr << "Warning: not serialising variable with key '" << v->first << "'" << endl;
 		}
