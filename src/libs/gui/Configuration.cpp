@@ -38,11 +38,11 @@ using namespace Ingen::Client;
 
 
 Configuration::Configuration()
-	// Agave FTW
-	: _audio_port_color(  0x0D597FFF)
-	, _control_port_color(0x2F7F0DFF)
-	, _midi_port_color(   0x7F240DFF)
-	, _osc_port_color(    0x5D0D7FFF)
+	// Colours from  the Tango palette with modified V and alpha
+	: _audio_port_color(  0x244678FF)
+	, _control_port_color(0x4A8A0EFF)
+	, _midi_port_color(   0x960909FF)
+	, _osc_port_color(    0x5C3566FF)
 {
 }
 
