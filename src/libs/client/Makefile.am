@@ -16,6 +16,7 @@ libingen_client_la_CXXFLAGS = \
 	@RAPTOR_CFLAGS@ \
 	@RASQAL_CFLAGS@ \
 	@RAUL_CFLAGS@ \
+	@REDLAND_CFLAGS@ \
 	@REDLANDMM_CFLAGS@ \
 	@SLV2_CFLAGS@
 
@@ -27,6 +28,7 @@ libingen_client_la_LIBADD = \
 	@RAPTOR_LIBS@ \
 	@RASQAL_LIBS@ \
 	@RAUL_LIBS@ \
+	@REDLAND_LIBS@ \
 	@REDLANDMM_LIBS@ \
 	@SLV2_LIBS@
 

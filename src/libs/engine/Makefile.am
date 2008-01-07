@@ -12,6 +12,7 @@ libingen_engine_la_CXXFLAGS = \
 	@LASH_CFLAGS@ \
 	@LIBLO_CFLAGS@ \
 	@RAUL_CFLAGS@ \
+	@REDLAND_CFLAGS@ \
 	@REDLANDMM_CFLAGS@ \
 	@SLV2_CFLAGS@
 
@@ -22,6 +23,7 @@ libingen_engine_la_LIBADD = \
 	@LASH_LIBS@ \
 	@LIBLO_LIBS@ \
 	@RAUL_LIBS@ \
+	@REDLAND_LIBS@ \
 	@REDLANDMM_LIBS@ \
 	@SLV2_LIBS@
 
