@@ -78,7 +78,7 @@ PluginUI::create(SharedPtr<EngineInterface> engine,
 {
 	SharedPtr<PluginUI> ret;
 
-	static const char* gtk_gui_uri = "http://ll-plugins.nongnu.org/lv2/ext/ui#GtkGUI";
+	static const char* gtk_gui_uri = "http://ll-plugins.nongnu.org/lv2/ext/ui#GtkUI";
 
 	SLV2UIs uis = slv2_plugin_get_uis(plugin);
 	SLV2UI  ui  = NULL;
