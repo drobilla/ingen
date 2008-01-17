@@ -78,7 +78,7 @@ PluginUI::create(SharedPtr<EngineInterface> engine,
 {
 	SharedPtr<PluginUI> ret;
 
-	static const char* gtk_gui_uri = "http://ll-plugins.nongnu.org/lv2/ext/gui#GtkGUI";
+	static const char* gtk_gui_uri = "http://ll-plugins.nongnu.org/lv2/ext/ui#GtkGUI";
 
 	SLV2UIs uis = slv2_plugin_get_uis(plugin);
 	SLV2UI  ui  = NULL;
@@ -97,7 +97,7 @@ PluginUI::create(SharedPtr<EngineInterface> engine,
 		cout << "Found GTK Plugin UI: " << slv2_ui_get_uri(ui) << endl;
 		ret = SharedPtr<PluginUI>(new PluginUI(engine, node));
 		SLV2UIInstance inst = slv2_ui_instantiate(
-				plugin, ui, lv2_ui_write, ret.get(), NULL);
+				plugin, ui, lv2_ui_write, ret.get(), NULL, NULL);
 
 		if (inst) {
 			ret->set_instance(inst);
