@@ -46,6 +46,7 @@ abs_srcdir=`pwd`
 cd $builddir
 
 PKG_CHECK_MODULES([SLV2], [libslv2])
+PKG_CHECK_MODULES([LV2_OSC], [lv2_osc])
 PKG_CHECK_MODULES([RAUL], [raul])
 PKG_CHECK_MODULES([FLOWCANVAS], [flowcanvas])
 

@@ -20,7 +20,7 @@
 
 #include "Buffer.hpp"
 #include "interface/DataType.hpp"
-#include "../../../../lv2/extensions/osc/lv2_osc.h"
+#include "lv2/osc/lv2_osc.h"
 
 namespace Ingen {
 

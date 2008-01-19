@@ -14,7 +14,8 @@ libingen_engine_la_CXXFLAGS = \
 	@RAUL_CFLAGS@ \
 	@REDLAND_CFLAGS@ \
 	@REDLANDMM_CFLAGS@ \
-	@SLV2_CFLAGS@
+	@SLV2_CFLAGS@ \
+	@LV2_OSC_CFLAGS@
 
 libingen_engine_la_LDFLAGS = -no-undefined -module -avoid-version
 libingen_engine_la_LIBADD = \
@@ -25,13 +26,12 @@ libingen_engine_la_LIBADD = \
 	@RAUL_LIBS@ \
 	@REDLAND_LIBS@ \
 	@REDLANDMM_LIBS@ \
-	@SLV2_LIBS@
+	@SLV2_LIBS@ \
+	@LV2_OSC_LIBS@
 
 AM_CFLAGS=-std=c99
 
 libingen_engine_la_SOURCES = \
-	../../../../lv2/extensions/osc/lv2_osc.c \
-	../../../../lv2/extensions/osc/lv2_osc_print.c \
 	AudioBuffer.cpp \
 	AudioBuffer.hpp \
 	AudioDriver.hpp \
