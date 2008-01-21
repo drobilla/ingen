@@ -22,8 +22,7 @@
 #include "NodeImpl.hpp"
 #include "interface/DataType.hpp"
 #include "AudioBuffer.hpp"
-#include "MidiBuffer.hpp"
-#include "OSCBuffer.hpp"
+#include "EventBuffer.hpp"
 #include "BufferFactory.hpp"
 #include "ProcessContext.hpp"
 #include "SendPortActivityEvent.hpp"
@@ -58,7 +57,7 @@ PortImpl::PortImpl(NodeImpl* const node,
 	if (node->parent() == NULL)
 		_polyphonic = false;
 	
-	if (type == DataType::MIDI || type == DataType::OSC)
+	if (type == DataType::EVENT)
 		_broadcast = true; // send activity blips
 
 	assert(_buffers->size() > 0);
@@ -180,13 +179,8 @@ PortImpl::broadcast(ProcessContext& context)
 				context.event_sink().write(sizeof(ev), &ev);
 				_last_broadcasted_value = value;
 			}
-		} else if (_type == DataType::MIDI) {
-			if (((MidiBuffer*)buffer(0))->event_count() > 0) {
-				const SendPortActivityEvent ev(context.engine(), context.start(), this);
-				context.event_sink().write(sizeof(ev), &ev);
-			}
-		} else if (_type == DataType::OSC) {
-			if (((OSCBuffer*)buffer(0))->event_count() > 0) {
+		} else if (_type == DataType::EVENT) {
+			if (((EventBuffer*)buffer(0))->event_count() > 0) {
 				const SendPortActivityEvent ev(context.engine(), context.start(), this);
 				context.event_sink().write(sizeof(ev), &ev);
 			}

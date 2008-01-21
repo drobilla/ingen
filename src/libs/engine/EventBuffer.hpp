@@ -15,22 +15,22 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef MIDIBUFFER_H
-#define MIDIBUFFER_H
+#ifndef EVENTBUFFER_H
+#define EVENTBUFFER_H
 
 #include <iostream>
-#include <lv2ext/lv2-midiport.h>
+#include <lv2ext/lv2_event.h>
 #include "Buffer.hpp"
 #include "interface/DataType.hpp"
 
 namespace Ingen {
 
 
-class MidiBuffer : public Buffer {
+class EventBuffer : public Buffer {
 public:
-	MidiBuffer(size_t capacity);
+	EventBuffer(size_t capacity);
 	
-	~MidiBuffer();
+	~EventBuffer();
 
 	void prepare_read(SampleCount nframes);
 	void prepare_write(SampleCount nframes);
@@ -44,11 +44,11 @@ public:
 	inline void*       raw_data()       { return _buf; }
 	inline const void* raw_data() const { return _buf; }
 
-	inline LV2_MIDI*       local_data() { return _local_buf; }
-	inline const LV2_MIDI* local_data() const { return _local_buf; }
+	inline LV2_Event_Buffer*       local_data() { return _local_buf; }
+	inline const LV2_Event_Buffer* local_data() const { return _local_buf; }
 
-	inline LV2_MIDI*       data()       { return _buf; }
-	inline const LV2_MIDI* data() const { return _buf; }
+	inline LV2_Event_Buffer*       data()       { return _buf; }
+	inline const LV2_Event_Buffer* data() const { return _buf; }
 	
 	void copy(const Buffer* src, size_t start_sample, size_t end_sample);
 
@@ -56,29 +56,42 @@ public:
 	inline void clear() { reset(_this_nframes); }
 	inline void reset(SampleCount nframes) {
 		//std::cerr << this << " reset" << std::endl;
-		_latest_stamp = 0;
-		_position = 0;
+		_latest_frames = 0;
+		_latest_subframes = 0;
+		_position = sizeof(LV2_Event_Buffer);
 		_buf->event_count = 0;
 		_buf->size = 0;
 	}
 
-	double increment() const;
-	double latest_stamp() const { return _latest_stamp; }
- 
-	double get_event(double* timestamp, uint32_t* size, unsigned char** data) const;
+	bool increment() const;
 
-	bool append(double timestamp, uint32_t size, const unsigned char* data);
-	bool merge(const MidiBuffer& a, const MidiBuffer& b);
+	uint32_t latest_frames()    const { return _latest_frames; }
+	uint32_t latest_subframes() const { return _latest_subframes; }
+ 
+	bool get_event(uint32_t* frames,
+	               uint32_t* subframes,
+	               uint16_t* type,
+	               uint16_t* size,
+	               uint8_t** data) const;
+
+	bool append(uint32_t       frames,
+	            uint32_t       subframes,
+	            uint16_t       type,
+	            uint16_t       size,
+	            const uint8_t* data);
+
+	bool merge(const EventBuffer& a, const EventBuffer& b);
 
 private:
-	double           _latest_stamp; ///< Highest timestamp of all events
-	uint32_t         _this_nframes; ///< Current cycle nframes
-	mutable uint32_t _position; ///< Index into _buf
-	LV2_MIDI*        _buf; ///< Contents (maybe belong to _joined_buf)
-	LV2_MIDI*        _local_buf; ///< Local contents
+	uint32_t          _latest_frames;    ///< Latest time of all events (frames)
+	uint32_t          _latest_subframes; ///< Latest time of all events (subframes)
+	uint32_t          _this_nframes;     ///< Current cycle nframes
+	mutable uint32_t  _position;         ///< Offset into _buf
+	LV2_Event_Buffer* _buf;              ///< Contents (maybe belong to _joined_buf)
+	LV2_Event_Buffer* _local_buf;        ///< Local contents
 };
 
 
 } // namespace Ingen
 
-#endif // MIDIBUFFER_H
+#endif // EVENTBUFFER_H

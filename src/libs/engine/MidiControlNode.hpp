@@ -20,7 +20,6 @@
 
 #include <string>
 #include "NodeBase.hpp"
-#include "MidiBuffer.hpp"
 
 namespace Ingen {
 	

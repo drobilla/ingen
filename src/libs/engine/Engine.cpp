@@ -26,6 +26,7 @@
 #include CONFIG_H_PATH
 #include "tuning.hpp"
 #include "Event.hpp"
+#include "common/interface/EventType.hpp"
 #include "JackAudioDriver.hpp"
 #include "NodeFactory.hpp"
 #include "ClientBroadcaster.hpp"
@@ -97,16 +98,19 @@ Engine::~Engine()
 
 
 Driver*
-Engine::driver(DataType type)
+Engine::driver(DataType type, EventType event_type)
 {
-	if (type == DataType::AUDIO)
+	if (type == DataType::AUDIO) {
 		return _audio_driver.get();
-	else if (type == DataType::MIDI)
-		return _midi_driver;
-	else if (type == DataType::OSC)
-		return _osc_driver;
-	else
-		return NULL;
+	} else if (type == DataType::EVENT) {
+		if (event_type == EventType::MIDI) {
+			return _midi_driver;
+		} else if (event_type == EventType::OSC) {
+			return _osc_driver;
+		}
+	}
+
+	return NULL;
 }
 
 

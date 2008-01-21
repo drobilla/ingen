@@ -48,6 +48,9 @@ namespace Ingen {
 NodeFactory::NodeFactory(Ingen::Shared::World* world)
 	: _world(world)
 	, _has_loaded(false)
+#ifdef HAVE_SLV2
+	, _lv2_info(new LV2Info(world->slv2_world))
+#endif
 {
 }
 
@@ -182,7 +185,7 @@ NodeFactory::load_lv2_plugins()
 		assert(_plugins.find(uri) == _plugins.end());
 #endif
 			
-		LV2Plugin* const plugin = new LV2Plugin(uri);
+		LV2Plugin* const plugin = new LV2Plugin(_lv2_info, uri);
 
 		plugin->slv2_plugin(lv2_plug);
 		plugin->library_path(slv2_uri_to_path(slv2_plugin_get_library_uri(lv2_plug)));

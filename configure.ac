@@ -79,11 +79,11 @@ if test "$debug_symbols" = "yes"; then
 fi
 
 if test "$debug_assertions" = "yes"; then
-  CFLAGS="$CFLAGS -DDEBUG -DLIBRDF_DEBUG"
-  CXXFLAGS="$CXXFLAGS -DDEBUG -DLIBRDF_DEBUG"
+  CFLAGS="$CFLAGS -DDEBUG"
+  CXXFLAGS="$CXXFLAGS -DDEBUG"
 else
-  CFLAGS="$CFLAGS -DNDEBUG -DLIBRDF_DEBUG"
-  CXXFLAGS="$CXXFLAGS -DNDEBUG -DLIBRDF_DEBUG"
+  CFLAGS="$CFLAGS -DNDEBUG"
+  CXXFLAGS="$CXXFLAGS -DNDEBUG"
 fi
 
 # Boost shared_ptr debugging

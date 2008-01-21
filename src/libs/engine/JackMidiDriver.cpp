@@ -24,7 +24,7 @@
 #include "JackMidiDriver.hpp"
 #include "ThreadManager.hpp"
 #include "AudioDriver.hpp"
-#include "MidiBuffer.hpp"
+#include "EventBuffer.hpp"
 #include "DuplexPort.hpp"
 #include "ProcessContext.hpp"
 #include "jack_compat.h"
@@ -73,7 +73,7 @@ JackMidiPort::pre_process(ProcessContext& context)
 	
 	assert(_patch_port->poly() == 1);
 
-	MidiBuffer* patch_buf = dynamic_cast<MidiBuffer*>(_patch_port->buffer(0));
+	EventBuffer* patch_buf = dynamic_cast<EventBuffer*>(_patch_port->buffer(0));
 	assert(patch_buf);
 
 	void*                jack_buffer = jack_port_get_buffer(_jack_port, context.nframes());
@@ -86,7 +86,8 @@ JackMidiPort::pre_process(ProcessContext& context)
 		jack_midi_event_t ev;
 		jack_midi_event_get(&ev, jack_buffer, i);
 
-		bool success = patch_buf->append(ev.time, ev.size, ev.buffer);
+		// FIXME: type
+		const bool success = patch_buf->append(ev.time, 0, 0, ev.size, ev.buffer);
 		if (!success)
 			cerr << "WARNING: Failed to write MIDI to port buffer, event(s) lost!" << endl;
 	}
@@ -108,7 +109,7 @@ JackMidiPort::post_process(ProcessContext& context)
 	
 	assert(_patch_port->poly() == 1);
 
-	MidiBuffer* patch_buf = dynamic_cast<MidiBuffer*>(_patch_port->buffer(0));
+	EventBuffer* patch_buf = dynamic_cast<EventBuffer*>(_patch_port->buffer(0));
 	assert(patch_buf);
 
 	void*                jack_buffer = jack_port_get_buffer(_jack_port, context.nframes());
@@ -118,14 +119,17 @@ JackMidiPort::post_process(ProcessContext& context)
 
 	jack_midi_clear_buffer(jack_buffer);
 	
-	double         time = 0;
-	uint32_t       size = 0;
-	unsigned char* data = NULL;
+	uint32_t frames = 0;
+	uint32_t subframes = 0;
+	uint16_t type = 0;
+	uint16_t size = 0;
+	uint8_t* data = NULL;
 
 	// Copy events from Jack port buffer into patch port buffer
 	for (jack_nframes_t i=0; i < event_count; ++i) {
-		patch_buf->get_event(&time, &size, &data);
-		jack_midi_event_write(jack_buffer, time, data, size);
+		patch_buf->get_event(&frames, &subframes, &type, &size, &data);
+		// FIXME: type
+		jack_midi_event_write(jack_buffer, frames, data, size);
 	}
 
 	//if (event_count)

@@ -24,7 +24,7 @@
 #include "AudioDriver.hpp"
 #include "InputPort.hpp"
 #include "InternalPlugin.hpp"
-#include "MidiBuffer.hpp"
+#include "EventBuffer.hpp"
 #include "MidiNoteNode.hpp"
 #include "OutputPort.hpp"
 #include "PatchImpl.hpp"
@@ -45,7 +45,7 @@ MidiNoteNode::MidiNoteNode(const string& path, bool polyphonic, PatchImpl* paren
 {
 	_ports = new Raul::Array<PortImpl*>(5);
 	
-	_midi_in_port = new InputPort(this, "input", 0, 1, DataType::MIDI, _buffer_size);
+	_midi_in_port = new InputPort(this, "input", 0, 1, DataType::EVENT, _buffer_size);
 	_ports->at(0) = _midi_in_port;
 
 	_freq_port = new OutputPort(this, "frequency", 1, _polyphony, DataType::AUDIO, _buffer_size);
@@ -118,19 +118,26 @@ MidiNoteNode::process(ProcessContext& context)
 {
 	NodeBase::pre_process(context);
 	
-	double         timestamp = 0;
-	uint32_t       size = 0;
+	uint32_t       frames = 0;
+	uint32_t       subframes = 0;
+	uint16_t       type = 0;
+	uint16_t       size = 0;
 	unsigned char* buffer = NULL;
 
-	MidiBuffer* const midi_in = (MidiBuffer*)_midi_in_port->buffer(0);
+	EventBuffer* const midi_in = (EventBuffer*)_midi_in_port->buffer(0);
 	assert(midi_in->this_nframes() == context.nframes());
 
 	//cerr << path() << " # input events: " << midi_in->event_count() << endl;
 
 	if (midi_in->event_count() > 0)
-	while (midi_in->get_event(&timestamp, &size, &buffer) < context.nframes()) {
+	while (midi_in->get_event(&frames, &subframes, &type, &size, &buffer) < context.nframes()) {
+
+		cout << "EVENT TYPE " << type << " @ " << frames << "." << subframes << ": ";
+		for (uint16_t i = 0; i < size; ++i)
+			cout << (int)((char)buffer[i]) << " ";
+		cout << endl;
 		
-		const FrameTime time = context.start() + (FrameTime)timestamp;
+		const FrameTime time = context.start() + (FrameTime)frames;
 
 		if (size >= 3) {
 			switch (buffer[0] & 0xF0) {

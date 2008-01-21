@@ -50,6 +50,8 @@ libingen_engine_la_SOURCES = \
 	Engine.hpp \
 	Event.cpp \
 	Event.hpp \
+	EventBuffer.cpp \
+	EventBuffer.hpp \
 	EventSink.cpp \
 	EventSink.hpp \
 	EventSource.hpp \
@@ -65,10 +67,9 @@ libingen_engine_la_SOURCES = \
 	JackMidiDriver.hpp \
 	LADSPAPlugin.cpp \
 	LADSPAPlugin.hpp \
+	LV2Info.hpp \
 	LV2Plugin.cpp \
 	LV2Plugin.hpp \
-	MidiBuffer.cpp \
-	MidiBuffer.hpp \
 	MidiControlNode.cpp \
 	MidiControlNode.hpp \
 	MidiDriver.hpp \
@@ -81,8 +82,6 @@ libingen_engine_la_SOURCES = \
 	NodeFactory.cpp \
 	NodeFactory.hpp \
 	NodeImpl.hpp \
-	OSCBuffer.cpp \
-	OSCBuffer.hpp \
 	OSCClientSender.cpp \
 	OSCClientSender.hpp \
 	OSCDriver.hpp \

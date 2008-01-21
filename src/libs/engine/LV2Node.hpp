@@ -57,7 +57,7 @@ public:
 	void set_port_buffer(uint32_t voice, uint32_t port_num, Buffer* buf);
 
 protected:
-	SLV2Plugin                 _lv2_plugin;
+	LV2Plugin*                 _lv2_plugin;
 	Raul::Array<SLV2Instance>* _instances;
 	Raul::Array<SLV2Instance>* _prepared_instances;
 };

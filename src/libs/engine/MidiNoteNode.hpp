@@ -21,8 +21,6 @@
 #include <string>
 #include "types.hpp"
 #include "NodeBase.hpp"
-#include "MidiBuffer.hpp"
-
 
 namespace Ingen {
 

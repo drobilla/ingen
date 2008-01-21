@@ -25,6 +25,7 @@
 #include <raul/SharedPtr.hpp>
 #include "module/global.hpp"
 #include "interface/DataType.hpp"
+#include "interface/EventType.hpp"
 
 template<typename T> class Queue;
 
@@ -91,7 +92,7 @@ public:
 	//LashDriver*        lash_driver()        const { return _lash_driver; }
 
 	/** Return the active driver for the given type */
-	Driver* driver(DataType type);
+	Driver* driver(DataType type, EventType event_type);
 
 	Ingen::Shared::World* world() { return _world; }
 

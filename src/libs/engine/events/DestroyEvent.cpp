@@ -154,7 +154,7 @@ DestroyEvent::execute(ProcessContext& context)
 		if ( ! _port->parent_patch()->parent()) {
 			if (_port->type() == DataType::AUDIO)
 				_driver_port = _engine.audio_driver()->remove_port(_port->path());
-			else if (_port->type() == DataType::MIDI)
+			else if (_port->type() == DataType::EVENT)
 				_driver_port = _engine.midi_driver()->remove_port(_port->path());
 		}
 	}

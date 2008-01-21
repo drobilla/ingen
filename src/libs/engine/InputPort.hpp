@@ -24,7 +24,6 @@
 #include <raul/List.hpp>
 #include <raul/SharedPtr.hpp>
 #include "PortImpl.hpp"
-#include "MidiBuffer.hpp"
 using std::string;
 
 namespace Ingen {

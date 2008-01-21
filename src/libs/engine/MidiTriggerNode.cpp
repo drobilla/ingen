@@ -23,6 +23,7 @@
 #include "OutputPort.hpp"
 #include "InternalPlugin.hpp"
 #include "ProcessContext.hpp"
+#include "EventBuffer.hpp"
 #include "util.hpp"
 
 namespace Ingen {
@@ -34,7 +35,7 @@ MidiTriggerNode::MidiTriggerNode(const string& path, bool polyphonic, PatchImpl*
 {
 	_ports = new Raul::Array<PortImpl*>(5);
 
-	_midi_in_port = new InputPort(this, "input", 0, 1, DataType::MIDI, _buffer_size);
+	_midi_in_port = new InputPort(this, "input", 0, 1, DataType::EVENT, _buffer_size);
 	_ports->at(0) = _midi_in_port;
 	
 	_note_port = new InputPort(this, "note", 1, 1, DataType::CONTROL, 1);
@@ -60,31 +61,33 @@ MidiTriggerNode::process(ProcessContext& context)
 {
 	NodeBase::pre_process(context);
 	
-	double         timestamp = 0;
-	uint32_t       size = 0;
-	unsigned char* buffer = NULL;
+	uint32_t frames = 0;
+	uint32_t subframes = 0;
+	uint16_t type = 0;
+	uint16_t size = 0;
+	uint8_t* data = NULL;
 
-	MidiBuffer* const midi_in = (MidiBuffer*)_midi_in_port->buffer(0);
+	EventBuffer* const midi_in = (EventBuffer*)_midi_in_port->buffer(0);
 	assert(midi_in->this_nframes() == context.nframes());
 
-	while (midi_in->get_event(&timestamp, &size, &buffer) < context.nframes()) {
+	while (midi_in->get_event(&frames, &subframes, &type, &size, &data) < context.nframes()) {
 		
-		const FrameTime time = context.start() + (FrameTime)timestamp;
+		const FrameTime time = context.start() + (FrameTime)frames;
 
 		if (size >= 3) {
-			switch (buffer[0] & 0xF0) {
+			switch (data[0] & 0xF0) {
 			case MIDI_CMD_NOTE_ON:
-				if (buffer[2] == 0)
-					note_off(buffer[1], time, context);
+				if (data[2] == 0)
+					note_off(data[1], time, context);
 				else
-					note_on(buffer[1], buffer[2], time, context);
+					note_on(data[1], data[2], time, context);
 				break;
 			case MIDI_CMD_NOTE_OFF:
-				note_off(buffer[1], time, context);
+				note_off(data[1], time, context);
 				break;
 			case MIDI_CMD_CONTROL:
-				if (buffer[1] == MIDI_CTL_ALL_NOTES_OFF
-						|| buffer[1] == MIDI_CTL_ALL_SOUNDS_OFF)
+				if (data[1] == MIDI_CTL_ALL_NOTES_OFF
+						|| data[1] == MIDI_CTL_ALL_SOUNDS_OFF)
 					((AudioBuffer*)_gate_port->buffer(0))->set(0.0f, time);
 			default:
 				break;

@@ -17,8 +17,7 @@
 
 #include "BufferFactory.hpp"
 #include "AudioBuffer.hpp"
-#include "MidiBuffer.hpp"
-#include "OSCBuffer.hpp"
+#include "EventBuffer.hpp"
 
 namespace Ingen {
 namespace BufferFactory {
@@ -27,12 +26,12 @@ namespace BufferFactory {
 Buffer*
 create(DataType type, size_t size)
 {
-	if (type.is_control() || type.is_audio())
+	if (type.is_control())
+		return new AudioBuffer(1);
+	else if (type.is_audio())
 		return new AudioBuffer(size);
-	else if (type.is_midi())
-		return new MidiBuffer(size);
-	else if (type.is_osc())
-		return new OSCBuffer(size);
+	else if (type.is_event())
+		return new EventBuffer(size);
 	else
 		throw;
 }

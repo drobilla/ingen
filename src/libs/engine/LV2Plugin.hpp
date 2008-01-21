@@ -31,8 +31,10 @@
 #include <string>
 #include <iostream>
 #include <slv2/slv2.h>
+#include <raul/SharedPtr.hpp>
 #include "types.hpp"
 #include "PluginImpl.hpp"
+#include "LV2Info.hpp"
 
 using std::string;
 using Ingen::Shared::Plugin;
@@ -49,8 +51,9 @@ class NodeImpl;
 class LV2Plugin : public PluginImpl
 {
 public:
-	LV2Plugin(const string& uri)
+	LV2Plugin(SharedPtr<LV2Info> lv2_info, const string& uri)
 		: PluginImpl(Plugin::LV2, uri)
+		, _lv2_info(lv2_info)
 	{}
 	
 	NodeImpl* instantiate(const string&     name,
@@ -62,11 +65,14 @@ public:
 	const string symbol() const;
 	const string name() const;
 
+	SharedPtr<LV2Info> lv2_info() const { return _lv2_info; }
+
 	SLV2Plugin slv2_plugin() const       { return _slv2_plugin; }
 	void       slv2_plugin(SLV2Plugin p) { _slv2_plugin = p; }
 
 private:
-	SLV2Plugin _slv2_plugin;
+	SLV2Plugin         _slv2_plugin;
+	SharedPtr<LV2Info> _lv2_info;
 };
 
 

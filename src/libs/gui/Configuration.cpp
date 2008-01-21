@@ -41,8 +41,9 @@ Configuration::Configuration()
 	// Colours from  the Tango palette with modified V and alpha
 	: _audio_port_color(  0x244678C0)
 	, _control_port_color(0x4A8A0EC0)
-	, _midi_port_color(   0x960909C0)
-	, _osc_port_color(    0x5C3566C0)
+	, _event_port_color(   0x960909C0)
+//	, _midi_port_color(   0x960909C0)
+//	, _osc_port_color(    0x5C3566C0)
 {
 }
 
@@ -91,11 +92,13 @@ Configuration::get_port_color(const PortModel* p)
 		return _control_port_color;
 	} else if (p->type().is_audio()) {
 		return _audio_port_color;
-	} else if (p->type().is_midi()) {
+	} else if (p->type().is_event()) {
+		return _event_port_color;
+	}/* else if (p->type().is_midi()) {
 		return _midi_port_color;
 	} else if (p->type().is_osc()) {
 		return _osc_port_color;
-	}
+	}*/
 	
 	cerr << "[Configuration] Unknown port type " << p->type().uri()
 		<< ", port will appear black." << endl;

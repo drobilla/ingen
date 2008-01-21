@@ -21,7 +21,7 @@
 #include <iostream>
 #include "types.hpp"
 #include "Driver.hpp"
-#include "MidiBuffer.hpp"
+#include "EventBuffer.hpp"
 #include "ProcessContext.hpp"
 
 namespace Ingen {
@@ -36,7 +36,7 @@ class ProcessContext;
 class MidiDriver : public Driver
 {
 public:
-	MidiDriver() : Driver(DataType::MIDI) {}
+	MidiDriver() : Driver(DataType::EVENT) {}
 
 	/** Prepare input for the specified (upcoming) cycle.
 	 *

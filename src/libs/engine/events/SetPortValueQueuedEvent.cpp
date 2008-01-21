@@ -25,7 +25,7 @@
 #include "NodeImpl.hpp"
 #include "ObjectStore.hpp"
 #include "AudioBuffer.hpp"
-#include "MidiBuffer.hpp"
+#include "EventBuffer.hpp"
 #include "ProcessContext.hpp"
 
 namespace Ingen {
@@ -111,10 +111,11 @@ SetPortValueQueuedEvent::execute(ProcessContext& context)
 			return;
 		}
 		
-		MidiBuffer* const mbuf = dynamic_cast<MidiBuffer*>(buf);
-		if (mbuf) {
-			const double stamp = std::max((double)(_time - context.start()), mbuf->latest_stamp());
-			mbuf->append(stamp, _data_size, (const unsigned char*)_data);
+		EventBuffer* const ebuf = dynamic_cast<EventBuffer*>(buf);
+		if (ebuf) {
+			const uint32_t frames = std::max((uint32_t)(_time - context.start()), ebuf->latest_frames());
+			// FIXME: type
+			ebuf->append(frames, 0, 0, _data_size, (const unsigned char*)_data);
 		}
 	}
 }

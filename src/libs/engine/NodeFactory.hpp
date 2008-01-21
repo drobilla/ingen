@@ -28,6 +28,7 @@
 #include <glibmm/module.h>
 #ifdef HAVE_SLV2
 #include <slv2/slv2.h>
+#include "LV2Info.hpp"
 #endif
 #include "types.hpp"
 
@@ -77,10 +78,12 @@ private:
 
 	void load_internal_plugins();
 	
-	Plugins _plugins;
-
+	Plugins               _plugins;
 	Ingen::Shared::World* _world;
-	bool _has_loaded;
+	bool                  _has_loaded;
+#ifdef HAVE_SLV2
+	SharedPtr<LV2Info>    _lv2_info;
+#endif
 };
 
 

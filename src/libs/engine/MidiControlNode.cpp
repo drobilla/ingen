@@ -25,6 +25,7 @@
 #include "InternalPlugin.hpp"
 #include "AudioBuffer.hpp"
 #include "ProcessContext.hpp"
+#include "EventBuffer.hpp"
 #include "util.hpp"
 
 namespace Ingen {
@@ -41,7 +42,7 @@ MidiControlNode::MidiControlNode(const string& path,
 {
 	_ports = new Raul::Array<PortImpl*>(7);
 
-	_midi_in_port = new InputPort(this, "input", 0, 1, DataType::MIDI, _buffer_size);
+	_midi_in_port = new InputPort(this, "input", 0, 1, DataType::EVENT, _buffer_size);
 	_ports->at(0) = _midi_in_port;
 	
 	_param_port = new InputPort(this, "controller", 1, 1, DataType::CONTROL, 1);
@@ -76,17 +77,20 @@ MidiControlNode::process(ProcessContext& context)
 {
 	NodeBase::pre_process(context);
 	
-	double         timestamp = 0;
-	uint32_t       size = 0;
-	unsigned char* buffer = NULL;
+	uint32_t frames = 0;
+	uint32_t subframes = 0;
+	uint16_t type = 0;
+	uint16_t size = 0;
+	uint8_t* data = NULL;
 
-	MidiBuffer* const midi_in = (MidiBuffer*)_midi_in_port->buffer(0);
+	EventBuffer* const midi_in = (EventBuffer*)_midi_in_port->buffer(0);
 	assert(midi_in->this_nframes() == context.nframes());
 
-	while (midi_in->get_event(&timestamp, &size, &buffer) < context.nframes()) {
+	while (midi_in->get_event(&frames, &subframes, &type, &size, &data) < context.nframes()) {
 
-		if (size >= 3 && (buffer[0] & 0xF0) == MIDI_CMD_CONTROL)
-			control(buffer[1], buffer[2], (SampleCount)timestamp);
+		// FIXME: type
+		if (size >= 3 && (data[0] & 0xF0) == MIDI_CMD_CONTROL)
+			control(data[1], data[2], (SampleCount)frames);
 		
 		midi_in->increment();
 	}

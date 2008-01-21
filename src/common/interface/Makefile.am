@@ -3,6 +3,7 @@ EXTRA_DIST = \
 	Connection.hpp \
 	DataType.hpp \
 	EngineInterface.hpp \
+	EventType.hpp \
 	GraphObject.hpp \
 	Node.hpp \
 	Patch.hpp \
