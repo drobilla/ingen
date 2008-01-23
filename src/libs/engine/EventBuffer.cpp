@@ -250,6 +250,7 @@ EventBuffer::merge(const EventBuffer& a, const EventBuffer& b)
 	a.rewind();
 	b.rewind();
 
+#if 0
 	uint32_t a_frames;
 	uint32_t a_subframes;
 	uint16_t a_type;
@@ -261,6 +262,7 @@ EventBuffer::merge(const EventBuffer& a, const EventBuffer& b)
 	uint16_t b_type;
 	uint16_t b_size;
 	uint8_t* b_data;
+#endif
 	
 	cout << "FIXME: merge" << endl;
 #if 0

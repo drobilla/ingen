@@ -27,6 +27,8 @@ namespace Shared {
  * This type refers to the type of the entire buffer, mirroring LV2,
  * e.g. :AudioPort and :ControlPort both are really 32-bit floating point,
  * but they are different port types.
+ *
+ * FIXME: Event/MIDI/OSC kludges.
  */
 class DataType {
 public:
@@ -45,7 +47,8 @@ public:
 			_symbol = AUDIO;
 		} else if (uri == type_uri(CONTROL)) {
 			_symbol = CONTROL;
-		} else if (uri == type_uri(EVENT)) {
+		} else if (uri == type_uri(EVENT)
+				|| (uri == "ingen:MIDIPort") || uri == "ingen:OSCPort") {
 			_symbol = EVENT;
 		}
 	}
@@ -72,6 +75,8 @@ private:
 		case 1:  return "ingen:AudioPort";
 		case 2:  return "ingen:ControlPort";
 		case 3:  return "ingen:EventPort";
+		case 4:  return "ingen:EventPort"; // MIDI
+		case 5:  return "ingen:EventPort"; // OSC
 		default: return "";
 		}
 	}
