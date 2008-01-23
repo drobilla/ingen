@@ -6,7 +6,6 @@ module_LTLIBRARIES = libingen_serialisation.la
 
 libingen_serialisation_la_CXXFLAGS = \
 	@INGEN_CFLAGS@ \
-	@REDLAND_CFLAGS@ \
 	@REDLANDMM_CFLAGS@ \
 	@RAUL_CFLAGS@ \
 	@GLIBMM_CFLAGS@ \
