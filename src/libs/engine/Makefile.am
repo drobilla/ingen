@@ -67,6 +67,7 @@ libingen_engine_la_SOURCES = \
 	JackMidiDriver.hpp \
 	LADSPAPlugin.cpp \
 	LADSPAPlugin.hpp \
+	LV2Info.cpp \
 	LV2Info.hpp \
 	LV2Plugin.cpp \
 	LV2Plugin.hpp \

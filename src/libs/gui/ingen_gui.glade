@@ -2568,6 +2568,15 @@ Contributors:
               </widget>
             </child>
             <child>
+              <widget class="GtkMenuItem" id="canvas_menu_add_event_input">
+                <property name="visible">True</property>
+                <property name="tooltip" translatable="yes">Add a generic event input to this patch</property>
+                <property name="label" translatable="yes">Event</property>
+                <property name="use_underline">True</property>
+                <signal name="activate" handler="on_canvas_menu_add_event_input_activate"/>
+              </widget>
+            </child>
+            <child>
               <widget class="GtkMenuItem" id="canvas_menu_add_osc_input">
                 <property name="visible">True</property>
                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
@@ -2619,6 +2628,15 @@ Contributors:
                 <property name="label" translatable="yes">MIDI</property>
                 <property name="use_underline">True</property>
                 <signal name="activate" handler="on_canvas_menu_add_midi_output_activate"/>
+              </widget>
+            </child>
+            <child>
+              <widget class="GtkMenuItem" id="canvas_menu_add_event_output">
+                <property name="visible">True</property>
+                <property name="tooltip" translatable="yes">Add a generic event output to this patch</property>
+                <property name="label" translatable="yes">Event</property>
+                <property name="use_underline">True</property>
+                <signal name="activate" handler="on_canvas_menu_add_event_output_activate"/>
               </widget>
             </child>
             <child>

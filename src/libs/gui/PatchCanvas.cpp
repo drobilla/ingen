@@ -68,6 +68,8 @@ PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 	xml->get_widget("canvas_menu_add_midi_output", _menu_add_midi_output);
 	xml->get_widget("canvas_menu_add_osc_input", _menu_add_osc_input);
 	xml->get_widget("canvas_menu_add_osc_output", _menu_add_osc_output);
+	xml->get_widget("canvas_menu_add_event_input", _menu_add_event_input);
+	xml->get_widget("canvas_menu_add_event_output", _menu_add_event_output);
 	xml->get_widget("canvas_menu_load_plugin", _menu_load_plugin);
 	xml->get_widget("canvas_menu_load_patch", _menu_load_patch);
 	xml->get_widget("canvas_menu_new_patch", _menu_new_patch);
@@ -97,6 +99,12 @@ PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 	_menu_add_osc_output->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
 			"osc_output", "ingen:OSCPort", true));
+	_menu_add_event_input->signal_activate().connect(
+		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
+			"event_input", "ingen:EventPort", false));
+	_menu_add_midi_output->signal_activate().connect(
+		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
+			"event_output", "ingen:EventPort", true));
 	
 	// Add control menu items
 	/*_menu_add_number_control->signal_activate().connect(

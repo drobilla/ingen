@@ -23,35 +23,40 @@
 #error "This file requires SLV2, but HAVE_SLV2 is not defined.  Please report."
 #endif
 
-#include "module/global.hpp"
+#include <map>
+#include <string>
 #include <slv2/slv2.h>
+#include "module/global.hpp"
+#include "lv2/uri_map/lv2_uri_map.h"
 	
 namespace Ingen {
 	
 
+/** Stuff that may need to be passed to an LV2 plugin (i.e. LV2 features).
+ */
 class LV2Info {
 public:
-	LV2Info(SLV2World world)
-		: input_class(slv2_value_new_uri(world, SLV2_PORT_CLASS_INPUT))
-		, output_class(slv2_value_new_uri(world, SLV2_PORT_CLASS_OUTPUT))
-		, control_class(slv2_value_new_uri(world, SLV2_PORT_CLASS_CONTROL))
-		, audio_class(slv2_value_new_uri(world, SLV2_PORT_CLASS_AUDIO))
-		, event_class(slv2_value_new_uri(world, SLV2_PORT_CLASS_EVENT))
-	{}
-
-	~LV2Info() {
-		slv2_value_free(input_class);
-		slv2_value_free(output_class);
-		slv2_value_free(control_class);
-		slv2_value_free(audio_class);
-		slv2_value_free(event_class);
-	}
+	LV2Info(SLV2World world);
+	~LV2Info();
 
 	SLV2Value input_class;
 	SLV2Value output_class;
 	SLV2Value control_class;
 	SLV2Value audio_class;
 	SLV2Value event_class;
+
+	LV2_Feature                     uri_map_feature;
+	LV2_URI_Map_Feature             uri_map_feature_data;
+	
+	typedef std::map<std::string, uint32_t> URIMap;
+	URIMap uri_map;
+	uint32_t next_uri_id;
+
+	static uint32_t uri_map_uri_to_id(LV2_URI_Map_Callback_Data callback_data,
+	                                  const char*               map,
+	                                  const char*               uri);
+
+	LV2_Feature** lv2_features;
 };
 
 

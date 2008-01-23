@@ -137,7 +137,7 @@ LV2Node::instantiate()
 	uint32_t port_buffer_size = 0;
 	
 	for (uint32_t i=0; i < _polyphony; ++i) {
-		(*_instances)[i] = slv2_plugin_instantiate(plug, _srate, NULL);
+		(*_instances)[i] = slv2_plugin_instantiate(plug, _srate, info->lv2_features);
 		if ((*_instances)[i] == NULL) {
 			cerr << "Failed to instantiate plugin!" << endl;
 			return false;
