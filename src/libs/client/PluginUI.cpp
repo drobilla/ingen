@@ -86,7 +86,7 @@ PluginUI::create(SharedPtr<EngineInterface> engine,
 	if (slv2_values_size(uis) > 0) {
 		for (unsigned i=0; i < slv2_uis_size(uis); ++i) {
 			SLV2UI this_ui = slv2_uis_get_at(uis, i);
-			if (slv2_ui_is_type(this_ui, gtk_gui_uri)) {
+			if (slv2_ui_is_a(this_ui, gtk_gui_uri)) {
 				ui = this_ui;
 				break;
 			}
