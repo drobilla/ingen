@@ -12,7 +12,7 @@ libingen_serialisation_la_CXXFLAGS = \
 	@SLV2_CFLAGS@
 
 libingen_serialisation_la_LDFLAGS = -no-undefined -module -avoid-version
-libingen_serialisation_la_LIBADD = @RAUL_LIBS@ @REDLAND_LIBS@ @REDLANDMM_LIBS@ @GLIBMM_LIBS@ @SLV2_LIBS@
+libingen_serialisation_la_LIBADD = @RAUL_LIBS@ @REDLANDMM_LIBS@ @GLIBMM_LIBS@ @SLV2_LIBS@
 
 libingen_serialisation_la_SOURCES = \
 	Loader.cpp \
