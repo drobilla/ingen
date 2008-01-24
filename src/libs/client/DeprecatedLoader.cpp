@@ -94,7 +94,14 @@ DeprecatedLoader::add_variable(GraphObject::Variables& data, string old_key, str
 			// Hack to make module-x and module-y set as floats
 			char* c_val = strdup(value.c_str());
 			char* endptr = NULL;
+	
+			// FIXME: locale kludges
+			char* locale = strdup(setlocale(LC_NUMERIC, NULL));
+			
 			float fval = strtof(c_val, &endptr);
+			
+			setlocale(LC_NUMERIC, locale);
+			free(locale);
 
 			if (endptr != c_val && *endptr == '\0')
 				data[key] = Atom(fval);
