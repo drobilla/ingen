@@ -171,20 +171,20 @@ LADSPANode::instantiate()
 		}
 		assert (LADSPA_IS_PORT_INPUT(_descriptor->PortDescriptors[j])
 			|| LADSPA_IS_PORT_OUTPUT(_descriptor->PortDescriptors[j]));
+		
+		Sample default_val, min, max;
+		get_port_limits(j, default_val, min, max);
 
 		if (LADSPA_IS_PORT_INPUT(_descriptor->PortDescriptors[j])) {
-			port = new InputPort(this, port_name, j, _polyphony, type, port_buffer_size);
+			port = new InputPort(this, port_name, j, _polyphony, type, default_val, port_buffer_size);
 			_ports->at(j) = port;
 		} else if (LADSPA_IS_PORT_OUTPUT(_descriptor->PortDescriptors[j])) {
-			port = new OutputPort(this, port_name, j, _polyphony, type, port_buffer_size);
+			port = new OutputPort(this, port_name, j, _polyphony, type, default_val, port_buffer_size);
 			_ports->at(j) = port;
 		}
 
 		assert(port);
 		assert(_ports->at(j) == port);
-		
-		Sample default_val, min, max;
-		get_port_limits(j, default_val, min, max);
 
 		// Work around broke-ass crackhead plugins
 		if (default_val < min) {

@@ -54,7 +54,9 @@ public:
 		, _name(name)
 	{
 #ifdef HAVE_SLV2
-		_slv2_plugin = slv2_plugins_get_by_uri(_slv2_plugins, uri.c_str());
+		SLV2Value plugin_uri = slv2_value_new_uri(_slv2_world, uri.c_str());
+		_slv2_plugin = slv2_plugins_get_by_uri(_slv2_plugins, plugin_uri);
+		slv2_value_free(plugin_uri);
 #endif
 	}
 	
@@ -82,8 +84,12 @@ public:
 	string default_node_name(SharedPtr<PatchModel> parent);
 
 #ifdef HAVE_SLV2
-	SLV2Plugin       slv2_plugin() { return _slv2_plugin; }
 	static SLV2World slv2_world()  { return _slv2_world; }
+	SLV2Plugin       slv2_plugin() { return _slv2_plugin; }
+
+	SLV2Port slv2_port(uint32_t index) {
+		return slv2_plugin_get_port_by_index(_slv2_plugin, index);
+	}
 
 	static void set_slv2_world(SLV2World world) {
 		_slv2_world = world; 

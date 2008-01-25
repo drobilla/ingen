@@ -153,7 +153,7 @@ LV2Node::instantiate()
 		SLV2Port id = slv2_plugin_get_port_by_index(plug, j);
 
 		// LV2 shortnames are guaranteed to be unique, valid C identifiers
-		port_name = (char*)slv2_port_get_symbol(plug, id);
+		port_name = slv2_value_as_string(slv2_port_get_symbol(plug, id));
 	
 		assert(port_name.find("/") == string::npos);
 
@@ -185,15 +185,24 @@ LV2Node::instantiate()
 			_instances = NULL;
 			return false;
 		}
+			
+		SLV2Value def, min, max;
+		slv2_port_get_range(plug, id, &def, &min, &max);
+
+		// FIXME: need nice type preserving SLV2Value -> Raul::Atom conversion
+		Atom defatm = (float)((def && slv2_value_is_float(def)) ? slv2_value_as_float(def) : 0.0f);
 
 		if (direction == INPUT)
-			port = new InputPort(this, port_name, j, _polyphony, data_type, port_buffer_size);
+			port = new InputPort(this, port_name, j, _polyphony, data_type, defatm, port_buffer_size);
 		else
-			port = new OutputPort(this, port_name, j, _polyphony, data_type, port_buffer_size);
+			port = new OutputPort(this, port_name, j, _polyphony, data_type, defatm, port_buffer_size);
 
 		if (direction == INPUT && data_type == DataType::CONTROL)
-			((AudioBuffer*)port->buffer(0))->set(
-					slv2_port_get_default_value(_lv2_plugin->slv2_plugin(), id), 0);
+			((AudioBuffer*)port->buffer(0))->set(slv2_value_as_float(def), 0);
+
+		slv2_value_free(def);
+		slv2_value_free(min);
+		slv2_value_free(max);
 
 		_ports->at(j) = port;
 	}
@@ -213,12 +222,7 @@ LV2Node::activate()
 			set_port_buffer(i, j, port->buffer(i));
 
 			if (port->type() == DataType::CONTROL) {
-
-				const float val = slv2_port_get_default_value(_lv2_plugin->slv2_plugin(),
-						slv2_plugin_get_port_by_index(_lv2_plugin->slv2_plugin(), j));
-
-				((AudioBuffer*)port->buffer(i))->set(val, 0);
-
+				((AudioBuffer*)port->buffer(i))->set(port->value().get_float(), 0);
 			} else if (port->type() == DataType::AUDIO) {
 				((AudioBuffer*)port->buffer(i))->set(0.0f, 0);
 			}

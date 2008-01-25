@@ -155,7 +155,7 @@ OSCClientReceiver::setup_callbacks()
 	lo_server_thread_add_method(_st, "/ingen/disconnection", "ss", disconnection_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/new_node", "ssTi", new_node_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/new_node", "ssFi", new_node_cb, this);
-	lo_server_thread_add_method(_st, "/ingen/new_port", "ssi", new_port_cb, this);
+	lo_server_thread_add_method(_st, "/ingen/new_port", "sisi", new_port_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/polyphonic", "sT", polyphonic_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/polyphonic", "sF", polyphonic_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/variable_change", NULL, variable_change_cb, this);
@@ -263,7 +263,7 @@ OSCClientReceiver::_new_node_cb(const char* path, const char* types, lo_arg** ar
 {
 	const char*   uri        = &argv[0]->s;
 	const char*   node_path  = &argv[1]->s;
-	bool          polyphonic = (types[2] == 'T');
+	const bool    polyphonic = (types[2] == 'T');
 	const int32_t num_ports  =  argv[3]->i;
 
 	new_node(uri, node_path, polyphonic, num_ports);
@@ -277,11 +277,12 @@ OSCClientReceiver::_new_node_cb(const char* path, const char* types, lo_arg** ar
 int
 OSCClientReceiver::_new_port_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	const char* port_path   = &argv[0]->s;
-	const char* type        = &argv[1]->s;
-	bool        is_output   = (argv[2]->i == 1);
+	const char*    port_path = &argv[0]->s;
+	const uint32_t index     =  argv[1]->i;
+	const char*    type      = &argv[2]->s;
+	const bool     is_output = (argv[3]->i == 1);
 
-	new_port(port_path, type, is_output);
+	new_port(port_path, index, type, is_output);
 	
 	return 0;	
 }

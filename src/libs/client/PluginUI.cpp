@@ -74,11 +74,13 @@ PluginUI::~PluginUI()
 SharedPtr<PluginUI>
 PluginUI::create(SharedPtr<EngineInterface> engine,
                  SharedPtr<NodeModel>       node,
+                 SLV2World                  world,
                  SLV2Plugin                 plugin)
 {
 	SharedPtr<PluginUI> ret;
 
-	static const char* gtk_gui_uri = "http://ll-plugins.nongnu.org/lv2/ext/ui#GtkUI";
+	SLV2Value gtk_gui_uri = slv2_value_new_uri(world,
+		"http://ll-plugins.nongnu.org/lv2/ext/ui#GtkUI");
 
 	SLV2UIs uis = slv2_plugin_get_uis(plugin);
 	SLV2UI  ui  = NULL;
@@ -107,6 +109,7 @@ PluginUI::create(SharedPtr<EngineInterface> engine,
 		}
 	}
 
+	slv2_value_free(gtk_gui_uri);
 	return ret;
 }
 

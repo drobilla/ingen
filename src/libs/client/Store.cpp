@@ -432,11 +432,11 @@ Store::new_node_event(const string& plugin_uri, const Path& node_path, bool is_p
 
 
 void
-Store::new_port_event(const Path& path, const string& type, bool is_output)
+Store::new_port_event(const Path& path, uint32_t index, const string& type, bool is_output)
 {
 	PortModel::Direction pdir = is_output ? PortModel::OUTPUT : PortModel::INPUT;
 
-	SharedPtr<PortModel> p(new PortModel(*this, path, type, pdir));
+	SharedPtr<PortModel> p(new PortModel(*this, path, index, type, pdir));
 	add_object(p);
 	if (p->parent())
 		resolve_connection_orphans(p);

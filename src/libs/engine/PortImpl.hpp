@@ -27,7 +27,7 @@
 #include "interface/DataType.hpp"
 #include "Buffer.hpp"
 
-namespace Raul { class Maid; }
+namespace Raul { class Maid; class Atom; }
 
 namespace Ingen {
 
@@ -68,7 +68,8 @@ public:
 	 */
 	virtual bool apply_poly(Raul::Maid& maid, uint32_t poly);
 	
-	virtual Raul::Atom value() const;
+	const Raul::Atom& value() const { return _value; }
+	void              set_value(const Raul::Atom& v) { _value = v; }
 
 	inline Buffer* buffer(uint32_t voice) const {
 		Buffer* const buf = _buffers->at(voice);
@@ -87,11 +88,11 @@ public:
 	
 	/** Empty buffer contents completely (ie silence) */
 	virtual void clear_buffers();
-	
+
 	virtual bool is_input()  const = 0;
 	virtual bool is_output() const = 0;
 
-	uint32_t     num()         const { return _index; }
+	uint32_t     index()       const { return _index; }
 	uint32_t     poly()        const { return _poly; }
 	DataType     type()        const { return _type; }
 	size_t       buffer_size() const { return _buffer_size; }
@@ -110,19 +111,21 @@ protected:
 	         uint32_t           index,
 	         uint32_t           poly,
 	         DataType           type,
+	         const Raul::Atom&  value,
 	         size_t             buffer_size);
 	
 	virtual void allocate_buffers();
 	virtual void connect_buffers();
 	virtual void broadcast(ProcessContext& context);
 
-	uint32_t _index;
-	uint32_t _poly;
-	uint32_t _buffer_size;
-	DataType _type;
-	bool     _fixed_buffers;
-	bool     _broadcast;
-	Sample   _last_broadcasted_value;
+	uint32_t   _index;
+	uint32_t   _poly;
+	uint32_t   _buffer_size;
+	DataType   _type;
+	Raul::Atom _value;
+	bool       _fixed_buffers;
+	bool       _broadcast;
+	Sample     _last_broadcasted_value;
 
 	Raul::Array<Buffer*>* _buffers;
 

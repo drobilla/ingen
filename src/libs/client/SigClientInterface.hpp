@@ -53,7 +53,7 @@ public:
 	sigc::signal<void, string, string, string, string>     signal_new_plugin; 
 	sigc::signal<void, string, uint32_t>                   signal_new_patch; 
 	sigc::signal<void, string, string, bool, uint32_t>     signal_new_node; 
-	sigc::signal<void, string, string, bool>               signal_new_port; 
+	sigc::signal<void, string, uint32_t, string, bool>     signal_new_port; 
 	sigc::signal<void, string, bool>                       signal_polyphonic; 
 	sigc::signal<void, string>                             signal_patch_enabled; 
 	sigc::signal<void, string>                             signal_patch_disabled; 
@@ -107,8 +107,8 @@ protected:
 	void new_node(const string& plugin_uri, const string& node_path, bool poly, uint32_t num_ports)
 		{ if (_enabled) signal_new_node.emit(plugin_uri, node_path, poly, num_ports); }
 	
-	void new_port(const string& path, const string& data_type, bool is_output)
-		{ if (_enabled) signal_new_port.emit(path, data_type, is_output); }
+	void new_port(const string& path, uint32_t index, const string& data_type, bool is_output)
+		{ if (_enabled) signal_new_port.emit(path, index, data_type, is_output); }
 	
 	void polyphonic(const string& path, bool polyphonic)
 		{ if (_enabled) signal_polyphonic.emit(path, polyphonic); }

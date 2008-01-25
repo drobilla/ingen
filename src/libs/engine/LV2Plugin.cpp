@@ -47,7 +47,7 @@ LV2Plugin::symbol() const
 const string
 LV2Plugin::name() const
 {
-	return slv2_plugin_get_name(_slv2_plugin);
+	return slv2_value_as_string(slv2_plugin_get_name(_slv2_plugin));
 }
 
 

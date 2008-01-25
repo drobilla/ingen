@@ -102,7 +102,7 @@ PluginModel::ui(SharedPtr<EngineInterface> engine, SharedPtr<NodeModel> node) co
 
 	Glib::Mutex::Lock(_rdf_world->mutex());
 
-	return PluginUI::create(engine, node, _slv2_plugin);
+	return PluginUI::create(engine, node, _slv2_world, _slv2_plugin);
 }
 
 
@@ -120,8 +120,10 @@ string
 PluginModel::get_lv2_icon_path(SLV2Plugin plugin)
 {
 	string result;
-	SLV2Values paths = slv2_plugin_get_value(plugin, SLV2_URI,
-			"http://ll-plugins.nongnu.org/lv2/namespace#svgIcon");
+	SLV2Value svg_icon_pred = slv2_value_new_uri(_slv2_world,
+		"http://ll-plugins.nongnu.org/lv2/namespace#svgIcon");
+
+	SLV2Values paths = slv2_plugin_get_value(plugin, svg_icon_pred);
 	
 	if (slv2_values_size(paths) > 0) {
 		SLV2Value value = slv2_values_get_at(paths, 0);
@@ -130,6 +132,7 @@ PluginModel::get_lv2_icon_path(SLV2Plugin plugin)
 		slv2_values_free(paths);
 	}
 	
+	slv2_value_free(svg_icon_pred);
 	return result;
 }
 

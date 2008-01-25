@@ -43,11 +43,12 @@ class PortModel : public ObjectModel, public Ingen::Shared::Port
 public:
 	enum Direction { INPUT, OUTPUT };
 	
-	inline DataType type()      const { return _type; }
-	inline Atom     value()     const { return Atom(_current_val); }
-	inline bool     connected() const { return (_connections > 0); }
-	inline bool     is_input()  const { return (_direction == INPUT); }
-	inline bool     is_output() const { return (_direction == OUTPUT); }
+	inline uint32_t    index()     const { return _index; } 
+	inline DataType    type()      const { return _type; }
+	inline const Atom& value()     const { return _current_val; }
+	inline bool        connected() const { return (_connections > 0); }
+	inline bool        is_input()  const { return (_direction == INPUT); }
+	inline bool        is_output() const { return (_direction == OUTPUT); }
 	
 	bool is_logarithmic() const;
 	bool is_integer()     const;
@@ -74,8 +75,9 @@ public:
 private:
 	friend class Store;
 	
-	PortModel(Store& store, const Path& path, DataType type, Direction dir)
+	PortModel(Store& store, const Path& path, uint32_t index, DataType type, Direction dir)
 	: ObjectModel(store, path, true),
+	  _index(index),
 	  _type(type),
 	  _direction(dir),
 	  _current_val(0.0f),
@@ -91,9 +93,10 @@ private:
 	void connected_to(SharedPtr<PortModel> p)      { ++_connections; signal_connection.emit(p); }
 	void disconnected_from(SharedPtr<PortModel> p) { --_connections; signal_disconnection.emit(p); }
 	
+	uint32_t  _index;
 	DataType  _type;
 	Direction _direction;
-	float     _current_val;
+	Atom      _current_val;
 	size_t    _connections;
 };
 

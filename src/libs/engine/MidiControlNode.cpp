@@ -42,33 +42,27 @@ MidiControlNode::MidiControlNode(const string& path,
 {
 	_ports = new Raul::Array<PortImpl*>(7);
 
-	_midi_in_port = new InputPort(this, "input", 0, 1, DataType::EVENT, _buffer_size);
+	_midi_in_port = new InputPort(this, "input", 0, 1, DataType::EVENT, Atom(), _buffer_size);
 	_ports->at(0) = _midi_in_port;
 	
-	_param_port = new InputPort(this, "controller", 1, 1, DataType::CONTROL, 1);
+	_param_port = new InputPort(this, "controller", 1, 1, DataType::CONTROL, 0.0f, 1);
 	_param_port->set_variable("ingen:minimum", 0.0f);
 	_param_port->set_variable("ingen:maximum", 127.0f);
-	_param_port->set_variable("ingen:default", 0.0f);
 	_param_port->set_variable("ingen:integer", 1);
 	_ports->at(1) = _param_port;
 
-	_log_port = new InputPort(this, "logarithmic", 2, 1, DataType::CONTROL, 1);
+	_log_port = new InputPort(this, "logarithmic", 2, 1, DataType::CONTROL, 0.0f, 1);
 	_log_port->set_variable("ingen:toggled", 1);
-	_log_port->set_variable("ingen:default", 0.0f);
 	_ports->at(2) = _log_port;
 	
-	_min_port = new InputPort(this, "minimum", 3, 1, DataType::CONTROL, 1);
-	_min_port->set_variable("ingen:default", 0.0f);
+	_min_port = new InputPort(this, "minimum", 3, 1, DataType::CONTROL, 0.0f, 1);
 	_ports->at(3) = _min_port;
 	
-	_max_port = new InputPort(this, "maximum", 4, 1, DataType::CONTROL, 1);
+	_max_port = new InputPort(this, "maximum", 4, 1, DataType::CONTROL, 1.0f, 1);
 	_ports->at(4) = _max_port;
 	
-	_audio_port = new OutputPort(this, "ar_output", 5, 1, DataType::AUDIO, _buffer_size);
+	_audio_port = new OutputPort(this, "ar_output", 5, 1, DataType::AUDIO, 0.0f, _buffer_size);
 	_ports->at(5) = _audio_port;
-
-	_control_port = new OutputPort(this, "cr_output", 6, 1, DataType::CONTROL, 1);
-	_ports->at(6) = _control_port;
 }
 
 
@@ -139,10 +133,8 @@ MidiControlNode::control(uchar control_num, uchar val, SampleCount offset)
 		scaled_value = ((nval) * (max_port_val - min_port_val)) + min_port_val;
 	}
 
-	if (control_num == ((AudioBuffer*)_param_port->buffer(0))->value_at(0)) {
-		((AudioBuffer*)_control_port->buffer(0))->set(scaled_value, 0);
+	if (control_num == ((AudioBuffer*)_param_port->buffer(0))->value_at(0))
 		((AudioBuffer*)_audio_port->buffer(0))->set(scaled_value, offset);
-	}
 }
 
 

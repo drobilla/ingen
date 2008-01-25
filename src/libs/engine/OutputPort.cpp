@@ -30,8 +30,9 @@ OutputPort::OutputPort(NodeImpl*     parent,
                        uint32_t      index,
                        uint32_t      poly,
                        DataType      type,
+                       const Atom&   value,
                        size_t        buffer_size)
-	: PortImpl(parent, name, index, poly, type, buffer_size)
+	: PortImpl(parent, name, index, poly, type, value, buffer_size)
 {
 	if (type == DataType::CONTROL)
 		_broadcast = true;

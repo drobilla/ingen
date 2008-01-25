@@ -39,6 +39,7 @@ public:
 	static SharedPtr<PluginUI>
 	create(SharedPtr<Shared::EngineInterface> engine,
 	       SharedPtr<NodeModel>               node,
+	       SLV2World                          world,
 	       SLV2Plugin                         plugin);
 
 	SharedPtr<Shared::EngineInterface> engine()   { return _engine; }

@@ -271,6 +271,7 @@ void OSCClientSender::new_node(const std::string&   plugin_uri,
 /** \page client_osc_namespace
  * <p> \b /ingen/new_port - Notification of a new port's creation.
  * \arg \b path (string) - Path of new port
+ * \arg \b index (integer) - Index (or sort key) of port on parent
  * \arg \b data-type (string) - Type of port (ingen:AudioPort, ingen:ControlPort, ingen:MIDIPort, or ingen:OSCPort)
  * \arg \b direction ("is-output") (integer) - Direction of data flow (Input = 0, Output = 1)
  *
@@ -284,13 +285,14 @@ void OSCClientSender::new_node(const std::string&   plugin_uri,
  */
 void
 OSCClientSender::new_port(const std::string& path,
+                          uint32_t           index,
                           const std::string& data_type,
                           bool               is_output)
 {
 	if (!_enabled)
 		return;
 
-	lo_send(_address, "/ingen/new_port", "ssi", path.c_str(), data_type.c_str(), is_output);
+	lo_send(_address, "/ingen/new_port", "sisi", path.c_str(), index, data_type.c_str(), is_output);
 }
 
 

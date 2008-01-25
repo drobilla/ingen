@@ -37,15 +37,17 @@ PortImpl::PortImpl(NodeImpl* const node,
                    uint32_t        index,
                    uint32_t        poly,
                    DataType        type,
+                   const Atom&     value,
                    size_t          buffer_size)
 	: GraphObjectImpl(node, name, (type == DataType::AUDIO || type == DataType::CONTROL))
 	, _index(index)
 	, _poly(poly)
 	, _buffer_size(buffer_size)
 	, _type(type)
+	, _value(value)
 	, _fixed_buffers(false)
 	, _broadcast(false)
-	, _last_broadcasted_value(0.0f) // default?
+	, _last_broadcasted_value(_value) // default?
 	, _buffers(new Raul::Array<Buffer*>(poly))
 {
 	assert(node != NULL);
@@ -59,6 +61,8 @@ PortImpl::PortImpl(NodeImpl* const node,
 	
 	if (type == DataType::EVENT)
 		_broadcast = true; // send activity blips
+	
+	set_variable("ingen:default", value);
 
 	assert(_buffers->size() > 0);
 }
@@ -121,14 +125,6 @@ PortImpl::apply_poly(Raul::Maid& maid, uint32_t poly)
 	return true;
 }
 	
-
-Raul::Atom
-PortImpl::value() const
-{
-	// FIXME: will need this for ingen-side serialization
-	throw;
-}
-
 
 void
 PortImpl::allocate_buffers()

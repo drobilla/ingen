@@ -156,16 +156,16 @@ NodeModel::port_value_range(SharedPtr<PortModel> port, float& min, float& max)
 	// Plugin value first
 	if (_plugin && _plugin->type() == PluginModel::LV2) {
 		Glib::Mutex::Lock(PluginModel::rdf_world()->mutex());
-		
-		min = slv2_port_get_minimum_value(
-				_plugin->slv2_plugin(),
-				slv2_plugin_get_port_by_symbol(_plugin->slv2_plugin(),
-					port->path().name().c_str()));
-		
-		max = slv2_port_get_maximum_value(
-				_plugin->slv2_plugin(),
-				slv2_plugin_get_port_by_symbol(_plugin->slv2_plugin(),
-					port->path().name().c_str()));
+
+		SLV2Value min_val, max_val;
+		slv2_port_get_range(_plugin->slv2_plugin(),
+			_plugin->slv2_port(port->index()),
+			NULL, &min_val, &max_val);
+
+		if (min_val)
+			min = slv2_value_as_float(min_val);
+		if (max_val)
+			max = slv2_value_as_float(max_val);
 	}
 #endif
 

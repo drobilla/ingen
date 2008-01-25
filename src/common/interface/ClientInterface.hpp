@@ -86,6 +86,7 @@ public:
 	                      uint32_t           num_ports) = 0;
 	
 	virtual void new_port(const std::string& path,
+	                      uint32_t           index,
 	                      const std::string& data_type,
 	                      bool               is_output) = 0;
 	

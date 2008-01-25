@@ -54,7 +54,6 @@ private:
 	InputPort*  _log_port;
 	InputPort*  _min_port;
 	InputPort*  _max_port;
-	OutputPort* _control_port;
 	OutputPort* _audio_port;
 
 	MidiLearnResponseEvent* _learn_event;

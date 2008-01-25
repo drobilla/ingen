@@ -179,7 +179,7 @@ NodeFactory::load_lv2_plugins()
 
 		SLV2Plugin lv2_plug = slv2_plugins_get_at(plugins, i);
 
-		const string uri((const char*)slv2_plugin_get_uri(lv2_plug));
+		const string uri(slv2_value_as_uri(slv2_plugin_get_uri(lv2_plug)));
 
 #ifndef NDEBUG
 		assert(_plugins.find(uri) == _plugins.end());
@@ -188,16 +188,9 @@ NodeFactory::load_lv2_plugins()
 		LV2Plugin* const plugin = new LV2Plugin(_lv2_info, uri);
 
 		plugin->slv2_plugin(lv2_plug);
-		plugin->library_path(slv2_uri_to_path(slv2_plugin_get_library_uri(lv2_plug)));
-		char* const name = slv2_plugin_get_name(lv2_plug);
-		if (name) {
-			//plugin->name(name);
-			free(name);
-			_plugins.insert(make_pair(uri, plugin));
-		} else {
-			cerr << "ERROR: LV2 Plugin " << uri << " has no name.  Ignoring." << endl;
-			continue;
-		}
+		plugin->library_path(slv2_uri_to_path(slv2_value_as_uri(
+				slv2_plugin_get_library_uri(lv2_plug))));
+		_plugins.insert(make_pair(uri, plugin));
 	}
 
 	slv2_plugins_free(_world->slv2_world, plugins);

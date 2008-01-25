@@ -35,23 +35,22 @@ MidiTriggerNode::MidiTriggerNode(const string& path, bool polyphonic, PatchImpl*
 {
 	_ports = new Raul::Array<PortImpl*>(5);
 
-	_midi_in_port = new InputPort(this, "input", 0, 1, DataType::EVENT, _buffer_size);
+	_midi_in_port = new InputPort(this, "input", 0, 1, DataType::EVENT, Atom(), _buffer_size);
 	_ports->at(0) = _midi_in_port;
 	
-	_note_port = new InputPort(this, "note", 1, 1, DataType::CONTROL, 1);
+	_note_port = new InputPort(this, "note", 1, 1, DataType::CONTROL, 60.0f, 1);
 	_note_port->set_variable("ingen:minimum", 0.0f);
 	_note_port->set_variable("ingen:maximum", 127.0f);
-	_note_port->set_variable("ingen:default", 60.0f);
 	_note_port->set_variable("ingen:integer", 1);
 	_ports->at(1) = _note_port;
 	
-	_gate_port = new OutputPort(this, "gate", 2, 1, DataType::AUDIO, _buffer_size);
+	_gate_port = new OutputPort(this, "gate", 2, 1, DataType::AUDIO, 0.0f, _buffer_size);
 	_ports->at(2) = _gate_port;
 
-	_trig_port = new OutputPort(this, "trigger", 3, 1, DataType::AUDIO, _buffer_size);
+	_trig_port = new OutputPort(this, "trigger", 3, 1, DataType::AUDIO, 0.0f, _buffer_size);
 	_ports->at(3) = _trig_port;
 	
-	_vel_port = new OutputPort(this, "velocity", 4, 1, DataType::AUDIO, _buffer_size);
+	_vel_port = new OutputPort(this, "velocity", 4, 1, DataType::AUDIO, 0.0f, _buffer_size);
 	_ports->at(4) = _vel_port;
 }
 

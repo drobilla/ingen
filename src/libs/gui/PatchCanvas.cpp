@@ -141,11 +141,11 @@ PatchCanvas::build_plugin_class_menu(Gtk::Menu* menu,
 	// Add submenus
 	for (unsigned i=0; i < slv2_plugin_classes_size(classes); ++i) {
 		SLV2PluginClass c = slv2_plugin_classes_get_at(classes, i);
-		const char* parent = slv2_plugin_class_get_parent_uri(c);
+		SLV2Value parent = slv2_plugin_class_get_parent_uri(c);
 
-		if (parent && !strcmp(parent, slv2_plugin_class_get_uri(plugin_class))) {
+		if (parent && slv2_value_equals(parent, slv2_plugin_class_get_uri(plugin_class))) {
 			Gtk::Menu_Helpers::MenuElem menu_elem = Gtk::Menu_Helpers::MenuElem(
-					slv2_plugin_class_get_label(c));
+					slv2_value_as_string(slv2_plugin_class_get_label(c)));
 
 			Gtk::Menu* submenu = Gtk::manage(new Gtk::Menu());
 			size_t sub_num_items = build_plugin_class_menu(submenu, c, classes);

@@ -116,7 +116,7 @@ ObjectSender::send_port(ClientInterface* client, const PortImpl* port)
 	
 	client->bundle_begin();
 
-	client->new_port(port->path(), port->type().uri(), port->is_output());
+	client->new_port(port->path(), port->index(), port->type().uri(), port->is_output());
 	client->polyphonic(port->path(), port->polyphonic());
 	
 	// Send variable
