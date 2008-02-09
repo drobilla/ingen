@@ -1,1 +1,1 @@
-noinst_HEADERS = lv2_event.h
+noinst_HEADERS = lv2_event.h lv2_event_helpers.h
