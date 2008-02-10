@@ -20,6 +20,7 @@
 #include <iostream>
 #include "EventBuffer.hpp"
 #include "lv2ext/lv2_event.h"
+#include "lv2ext/lv2_event_helpers.h"
 
 using namespace std;
 
@@ -70,9 +71,10 @@ EventBuffer::join(Buffer* buf)
 {
 	EventBuffer* mbuf = dynamic_cast<EventBuffer*>(buf);
 	if (mbuf) {
-		_position = mbuf->_position;
 		_buf = mbuf->local_data();
 		_joined_buf = mbuf;
+		_iter = mbuf->_iter;
+		_iter.buf = _buf;
 		return false;
 	} else {
 		return false;
@@ -134,21 +136,11 @@ EventBuffer::copy(const Buffer* src_buf, size_t start_sample, size_t end_sample)
 bool
 EventBuffer::increment() const
 {
-	if (_position + sizeof(LV2_Event) >= _buf->size) {
-		_position = _buf->size;
-		return false;
-	}
-
-	const LV2_Event* ev = (const LV2_Event*)(_buf + sizeof(LV2_Event_Buffer) + _position);
-
-	_position += sizeof(LV2_Event) + ev->size;
-
-	if (_position >= _buf->size) {
-		_position = _buf->size;
-		return false;
-	} else {
-		ev = (const LV2_Event*)(_buf + sizeof(LV2_Event_Buffer) + _position);
+	if (lv2_event_is_valid(&_iter)) {
+		lv2_event_increment(&_iter);
 		return true;
+	} else {
+		return false;
 	}
 }
 
@@ -167,36 +159,23 @@ EventBuffer::append(uint32_t       frames,
                     uint16_t       size,
                     const uint8_t* data)
 {
-	/*cerr << "Append event " << size << " bytes @ " << timestamp << ":" << endl;
-	for (uint32_t i=0; i < size; ++i) {
-		fprintf(stderr, "( %X )", *((uint8_t*)data + i));
-	}*/
+#ifndef NDEBUG
+	LV2_Event* last_event = lv2_event_get(&_iter, NULL);
+	assert(last_event->frames < frames
+		|| (last_event->frames == frames && last_event->subframes <= subframes));
+#endif
 
-	if (_buf->capacity - _buf->size < sizeof(LV2_Event) + size)
-		return false;
+	bool ret = lv2_event_is_valid(&_iter);
+	if (ret)
+		ret = lv2_event_write(&_iter, frames, subframes, type, size, data);
 	
-	assert(size > 0);
-	assert(frames > _latest_frames
-			|| (frames == _latest_frames && subframes >= _latest_subframes));
+	if (!ret)
+		cerr << "ERROR: Failed to write event." << endl;
 
-	LV2_Event* ev = (LV2_Event*)(_buf + sizeof(LV2_Event_Buffer) + _position);
-	_position += sizeof(LV2_Event) + ev->size;
-
-	ev = (LV2_Event*)(_buf + sizeof(LV2_Event_Buffer) + _position);
-	
-	ev->frames = frames;
-	ev->subframes = subframes;
-	ev->type = type;
-	ev->size = size;
-	memcpy((uint8_t*)ev + sizeof(LV2_Event), data, size);
-	
-	_buf->size += sizeof(LV2_Event) + size;
-	++_buf->event_count;
-	
 	_latest_frames = frames;
 	_latest_subframes = subframes;
-
-	return true;
+	
+	return ret;
 }
 
 
@@ -211,25 +190,16 @@ EventBuffer::get_event(uint32_t* frames,
                        uint16_t* size, 
                        uint8_t** data) const
 {
-	const LV2_Event_Buffer* const buf = this->data();
-
-	if (_position >= buf->size) {
-		_position = buf->size;
-		*size = 0;
-		*data = NULL;
+	if (lv2_event_is_valid(&_iter)) {
+		LV2_Event* ev = lv2_event_get(&_iter, data);
+		*frames = ev->frames;
+		*subframes = ev->subframes;
+		*type = ev->type;
+		*size = ev->size;
+		return true;
+	} else {
 		return false;
 	}
-	
-	const LV2_Event* const ev = (const LV2_Event*)
-		(_buf + sizeof(LV2_Event_Buffer) + _position);
-
-	*frames = ev->frames;
-	*subframes = ev->subframes;
-	*type = ev->type;
-	*size = ev->size;
-	*data = (uint8_t*)ev + sizeof(LV2_Event);
-
-	return true;
 }
 
 

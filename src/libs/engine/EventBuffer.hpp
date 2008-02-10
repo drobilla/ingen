@@ -20,6 +20,7 @@
 
 #include <iostream>
 #include <lv2ext/lv2_event.h>
+#include <lv2ext/lv2_event_helpers.h>
 #include "Buffer.hpp"
 #include "interface/DataType.hpp"
 
@@ -52,15 +53,15 @@ public:
 	
 	void copy(const Buffer* src, size_t start_sample, size_t end_sample);
 
-	inline void rewind() const { _position = 0; }
+	inline void rewind() const { lv2_event_begin(&_iter, _buf); }
 	inline void clear() { reset(_this_nframes); }
 	inline void reset(SampleCount nframes) {
 		//std::cerr << this << " reset" << std::endl;
 		_latest_frames = 0;
 		_latest_subframes = 0;
-		_position = sizeof(LV2_Event_Buffer);
 		_buf->event_count = 0;
 		_buf->size = 0;
+		rewind();
 	}
 
 	bool increment() const;
@@ -83,12 +84,16 @@ public:
 	bool merge(const EventBuffer& a, const EventBuffer& b);
 
 private:
-	uint32_t          _latest_frames;    ///< Latest time of all events (frames)
-	uint32_t          _latest_subframes; ///< Latest time of all events (subframes)
-	uint32_t          _this_nframes;     ///< Current cycle nframes
-	mutable uint32_t  _position;         ///< Offset into _buf
-	LV2_Event_Buffer* _buf;              ///< Contents (maybe belong to _joined_buf)
-	LV2_Event_Buffer* _local_buf;        ///< Local contents
+	LV2_Event_Buffer*  _buf;       ///< Contents (maybe belong to _joined_buf)
+	LV2_Event_Buffer*  _local_buf; ///< Local contents
+
+	mutable LV2_Event_Iterator _iter; ///< Iterator into _buf
+
+	uint32_t _latest_frames;    ///< Latest time of all events (frames)
+	uint32_t _latest_subframes; ///< Latest time of all events (subframes)
+	uint32_t _this_nframes;     ///< Current cycle nframes
+
+
 };
 
 
