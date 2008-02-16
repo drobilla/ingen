@@ -21,7 +21,6 @@
 #include "types.hpp"
 #include "Driver.hpp"
 #include <iostream>
-#include "OSCBuffer.hpp"
 
 namespace Ingen {
 
