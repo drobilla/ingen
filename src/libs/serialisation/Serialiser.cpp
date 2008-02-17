@@ -102,6 +102,7 @@ Serialiser::start_to_filename(const string& filename)
 
 	_base_uri = "file://" + filename;
 	_model = new Redland::Model(_world);
+    _model->set_base_uri(string("file://" + filename));
 	_mode = TO_FILE;
 }
 
@@ -120,6 +121,7 @@ Serialiser::start_to_string(const string& base_uri)
 
 	_base_uri = base_uri;
 	_model = new Redland::Model(_world);
+    _model->set_base_uri(base_uri);
 	_mode = TO_STRING;
 }
 
