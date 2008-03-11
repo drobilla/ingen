@@ -83,6 +83,7 @@ NodeFactory::plugin(const string& type, const string& lib, const string& label)
 	if (type != "LADSPA" || lib == "" || label == "")
 		return NULL;
 
+#ifdef HAVE_LADSPA
 	for (Plugins::const_iterator i = _plugins.begin(); i != _plugins.end(); ++i) {
 		LADSPAPlugin* lp = dynamic_cast<LADSPAPlugin*>(i->second);
 		if (lp && lp->type_string() == type
@@ -90,6 +91,7 @@ NodeFactory::plugin(const string& type, const string& lib, const string& label)
 				&& lp->label() == label)
 			return lp;
 	}
+#endif
 
 	cerr << "ERROR: Failed to find " << type << " plugin " << lib << " / " << label << endl;
 
