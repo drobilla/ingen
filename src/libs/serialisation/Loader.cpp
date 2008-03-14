@@ -56,14 +56,14 @@ Loader::load(SharedPtr<EngineInterface> engine,
 
 	std::set<Path> created;
 
-	Redland::Model model(*rdf_world, document_uri);
+	Redland::Model model(*rdf_world, document_uri, document_uri);
 
 	if (patch_uri == "")
 		patch_uri = string("<") + document_uri + ">";
 	else
 		patch_uri = string("<") + patch_uri + ">";
 
-	cout << "[Loader] Loading " << patch_uri;
+	cout << "[Loader] Loading " << patch_uri << endl;
 
 	size_t patch_poly = 1;
 	
@@ -208,7 +208,8 @@ Loader::load(SharedPtr<EngineInterface> engine,
 		const string port_name = (*i)["portname"].to_string();
 		const float  val       = (*i)["portval"].to_float();
 
-		const Path port_path = patch_path.base() + node_name +"/"+ port_name;
+		const Path port_path = patch_path.base() + Path::nameify(node_name)
+			+"/"+ Path::nameify(port_name);
 
 		engine->set_port_value(port_path, "ingen:control", sizeof(float), &val);
 	}
@@ -280,10 +281,10 @@ Loader::load(SharedPtr<EngineInterface> engine,
 	results = query.run(*rdf_world, model);
 
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
-		Path src_node = patch_path.base() + (*i)["srcnodename"].to_string();
-		Path src_port = src_node.base() + (*i)["srcname"].to_string();
-		Path dst_node = patch_path.base() + (*i)["dstnodename"].to_string();
-		Path dst_port = dst_node.base() + (*i)["dstname"].to_string();
+		Path src_node = patch_path.base() + Path::nameify((*i)["srcnodename"].to_string());
+		Path src_port = src_node.base() + Path::nameify((*i)["srcname"].to_string());
+		Path dst_node = patch_path.base() + Path::nameify((*i)["dstnodename"].to_string());
+		Path dst_port = dst_node.base() + Path::nameify((*i)["dstname"].to_string());
 
 		//cerr << patch_path << " 1 CONNECTION: " << src_port << " -> " << dst_port << endl;
 
@@ -307,9 +308,9 @@ Loader::load(SharedPtr<EngineInterface> engine,
 	results = query.run(*rdf_world, model);
 
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
-		Path src_port = patch_path.base() + (*i)["srcname"].to_string();
-		Path dst_node = patch_path.base() + (*i)["dstnodename"].to_string();
-		Path dst_port = dst_node.base() + (*i)["dstname"].to_string();
+		Path src_port = patch_path.base() + Path::nameify((*i)["srcname"].to_string());
+		Path dst_node = patch_path.base() + Path::nameify((*i)["dstnodename"].to_string());
+		Path dst_port = dst_node.base() + Path::nameify((*i)["dstname"].to_string());
 
 		//cerr << patch_path << " 2 CONNECTION: " << src_port << " -> " << dst_port << endl;
 
@@ -333,9 +334,9 @@ Loader::load(SharedPtr<EngineInterface> engine,
 	results = query.run(*rdf_world, model);
 
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
-		Path dst_port = patch_path.base() + (*i)["dstname"].to_string();
-		Path src_node = patch_path.base() + (*i)["srcnodename"].to_string();
-		Path src_port = src_node.base() + (*i)["srcname"].to_string();
+		Path dst_port = patch_path.base() + Path::nameify((*i)["dstname"].to_string());
+		Path src_node = patch_path.base() + Path::nameify((*i)["srcnodename"].to_string());
+		Path src_port = src_node.base() + Path::nameify((*i)["srcname"].to_string());
 
 		//cerr << patch_path << " 3 CONNECTION: " << src_port << " -> " << dst_port << endl;
 
