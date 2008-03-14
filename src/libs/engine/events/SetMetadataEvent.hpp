@@ -36,7 +36,12 @@ class GraphObjectImpl;
 class SetMetadataEvent : public QueuedEvent
 {
 public:
-	SetMetadataEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& key, const Raul::Atom& value);
+	SetMetadataEvent(Engine&              engine,
+	                 SharedPtr<Responder> responder,
+	                 SampleCount          timestamp,
+	                 const string&        path,
+	                 const string&        key,
+	                 const Raul::Atom&    value);
 	
 	void pre_process();
 	void execute(ProcessContext& context);
