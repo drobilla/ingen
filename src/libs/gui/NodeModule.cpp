@@ -114,7 +114,7 @@ NodeModule::control_change(uint32_t index, float control)
 		const LV2UI_Descriptor* ui_descriptor = slv2_ui_instance_get_descriptor(inst);
 		LV2UI_Handle ui_handle = slv2_ui_instance_get_handle(inst);
 		if (ui_descriptor->port_event)
-			ui_descriptor->port_event(ui_handle, index, 4, &control);
+		  ui_descriptor->port_event(ui_handle, index, 4, 0, &control);
 	}
 }
 

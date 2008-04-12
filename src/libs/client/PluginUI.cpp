@@ -30,6 +30,7 @@ static void
 lv2_ui_write(LV2UI_Controller controller,
              uint32_t         port_index,
              uint32_t         buffer_size,
+	     uint32_t         format,
              const void*      buffer)
 {
 	/*cerr << "********* LV2 UI WRITE:" << endl;
@@ -50,9 +51,12 @@ lv2_ui_write(LV2UI_Controller controller,
 	PluginUI* ui = (PluginUI*)controller;
 
 	SharedPtr<PortModel> port = ui->node()->ports()[port_index];
-
-	ui->engine()->set_port_value_immediate(port->path(),
-			port->type().uri(), buffer_size, buffer);
+	
+	if (format == 0) {
+	  ui->engine()->set_port_value_immediate(port->path(),
+						 port->type().uri(), 
+						 buffer_size, buffer);
+	}
 }
 
 	
@@ -80,7 +84,7 @@ PluginUI::create(SharedPtr<EngineInterface> engine,
 	SharedPtr<PluginUI> ret;
 
 	SLV2Value gtk_gui_uri = slv2_value_new_uri(world,
-		"http://ll-plugins.nongnu.org/lv2/ext/ui#GtkUI");
+		"http://lv2plug.in/ns/extensions/ui#GtkUI");
 
 	SLV2UIs uis = slv2_plugin_get_uis(plugin);
 	SLV2UI  ui  = NULL;
@@ -99,7 +103,7 @@ PluginUI::create(SharedPtr<EngineInterface> engine,
 		cout << "Found GTK Plugin UI: " << slv2_ui_get_uri(ui) << endl;
 		ret = SharedPtr<PluginUI>(new PluginUI(engine, node));
 		SLV2UIInstance inst = slv2_ui_instantiate(
-				plugin, ui, lv2_ui_write, ret.get(), NULL, NULL);
+				plugin, ui, lv2_ui_write, ret.get(), NULL);
 
 		if (inst) {
 			ret->set_instance(inst);
