@@ -86,8 +86,9 @@ JackMidiPort::pre_process(ProcessContext& context)
 		jack_midi_event_t ev;
 		jack_midi_event_get(&ev, jack_buffer, i);
 
-		// FIXME: type
-		const bool success = patch_buf->append(ev.time, 0, 0, ev.size, ev.buffer);
+		// FIXME: type is hardcoded for now, we should get it from
+		// the type map instead
+		const bool success = patch_buf->append(ev.time, 0, 1, ev.size, ev.buffer);
 		if (!success)
 			cerr << "WARNING: Failed to write MIDI to port buffer, event(s) lost!" << endl;
 	}

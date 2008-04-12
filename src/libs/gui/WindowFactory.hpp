@@ -58,9 +58,9 @@ public:
 	PatchWindow*       patch_window(SharedPtr<PatchModel> patch);
 	NodeControlWindow* control_window(SharedPtr<NodeModel> node);
 
-	void present_patch(SharedPtr<PatchModel> patch,
+	void present_patch(SharedPtr<PatchModel> model,
 	                   PatchWindow*          preferred = NULL,
-	                   SharedPtr<PatchView>  patch     = SharedPtr<PatchView>());
+	                   SharedPtr<PatchView>  view      = SharedPtr<PatchView>());
 
 	void present_controls(SharedPtr<NodeModel> node);
 

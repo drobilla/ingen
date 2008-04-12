@@ -49,6 +49,7 @@ EventBuffer::EventBuffer(size_t capacity)
 	_local_buf->event_count = 0;
 	_local_buf->capacity = (uint32_t)capacity;
 	_local_buf->size = 0;
+	_local_buf->data = reinterpret_cast<uint8_t*>(_local_buf + 1);
 	_buf = _local_buf;
 
 	reset(0);
@@ -165,9 +166,7 @@ EventBuffer::append(uint32_t       frames,
 		|| (last_event->frames == frames && last_event->subframes <= subframes));
 #endif
 
-	bool ret = lv2_event_is_valid(&_iter);
-	if (ret)
-		ret = lv2_event_write(&_iter, frames, subframes, type, size, data);
+	bool ret = lv2_event_write(&_iter, frames, subframes, type, size, data);
 	
 	if (!ret)
 		cerr << "ERROR: Failed to write event." << endl;

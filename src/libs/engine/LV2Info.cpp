@@ -41,6 +41,12 @@ LV2Info::LV2Info(SLV2World world)
 
 	lv2_features[0] = &uri_map_feature;
 	lv2_features[1] = NULL;
+
+	/* this is needed so we get a fixed type ID for MIDI, it would
+	   probably be better to make the type map accessible from any
+	   JackMidiPort. */
+	next_uri_id++;
+	uri_map.insert(make_pair(string("http://lv2plug.in/ns/ext/midi#MidiEvent"), 1));
 }
 
 
