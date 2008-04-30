@@ -432,14 +432,23 @@ Serialiser::serialise_variables(Redland::Node subject, const GraphObject::Variab
 {
 	for (GraphObject::Variables::const_iterator v = variables.begin(); v != variables.end(); ++v) {
 		if (v->first.find(":") != string::npos) {
+			if (v->second) {
 			const Redland::Node var_id = _world.blank_id();
 			const Redland::Node key(_model->world(), Redland::Node::RESOURCE, v->first);
-			_model->add_statement(subject, "ingen:variable", var_id);
-			_model->add_statement(var_id, "ingen:key", key);
-			_model->add_statement(var_id, "ingen:value",
-					AtomRDF::atom_to_node(_model->world(), v->second));
+			const Redland::Node value = AtomRDF::atom_to_node(_model->world(), v->second);
+			if (value) {
+				_model->add_statement(subject, "ingen:variable", var_id);
+				_model->add_statement(var_id, "ingen:key", key);
+				_model->add_statement(var_id, "ingen:value", value);
+			} else {
+				cerr << "Warning: can not serialise value: key '" << v->first << "', type "
+					<< (int)v->second.type() << endl;
+			}
+			} else {
+				cerr << "Warning: variable with no value: key '" << v->first << "'" << endl;
+			}
 		} else {
-			cerr << "Warning: not serialising variable with key '" << v->first << "'" << endl;
+			cerr << "Warning: not serialising variable with invalid key '" << v->first << "'" << endl;
 		}
 	}
 }
