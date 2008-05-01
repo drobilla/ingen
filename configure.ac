@@ -256,7 +256,7 @@ if test "$build_ingen_gtk_client" = "yes"; then
 #	AC_FUNC_STAT
 #	AC_CHECK_FUNCS([gettimeofday mkdir strcasecmp strchr strdup strtol])
 
-	PKG_CHECK_MODULES(GTKMM, gtkmm-2.4)
+	PKG_CHECK_MODULES(GTKMM, gtkmm-2.4 >= 2.11.12)
 	PKG_CHECK_MODULES(GNOMECANVASMM, libgnomecanvasmm-2.6)
 	PKG_CHECK_MODULES(LIBGLADEMM, libglademm-2.4)
 	#PKG_CHECK_MODULES(FLOWCANVAS, flowcanvas >= 0.1.0)
