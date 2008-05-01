@@ -28,6 +28,8 @@
 #include <slv2/slv2.h>
 #include "module/global.hpp"
 #include "lv2/uri_map/lv2_uri_map.h"
+#include "lv2/event/lv2_event.h"
+
 	
 namespace Ingen {
 	
@@ -47,6 +49,8 @@ public:
 
 	LV2_Feature                     uri_map_feature;
 	LV2_URI_Map_Feature             uri_map_feature_data;
+	LV2_Feature                     event_feature;
+	LV2_Event_Feature               event_feature_data;
 	
 	typedef std::map<std::string, uint32_t> URIMap;
 	URIMap uri_map;
@@ -55,6 +59,9 @@ public:
 	static uint32_t uri_map_uri_to_id(LV2_URI_Map_Callback_Data callback_data,
 	                                  const char*               map,
 	                                  const char*               uri);
+
+	static uint32_t event_ref(LV2_Event_Callback_Data callback_data,
+				  LV2_Event*              event);
 
 	LV2_Feature** lv2_features;
 };

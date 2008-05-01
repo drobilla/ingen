@@ -32,15 +32,22 @@ LV2Info::LV2Info(SLV2World world)
 	, audio_class(slv2_value_new_uri(world, SLV2_PORT_CLASS_AUDIO))
 	, event_class(slv2_value_new_uri(world, SLV2_PORT_CLASS_EVENT))
 	, next_uri_id(1)
-	, lv2_features(new LV2_Feature*[2])
+	, lv2_features(new LV2_Feature*[3])
 {
 	uri_map_feature_data.uri_to_id = &LV2Info::uri_map_uri_to_id;
 	uri_map_feature_data.callback_data = this;
 	uri_map_feature.URI = LV2_URI_MAP_URI;
 	uri_map_feature.data = &uri_map_feature_data;
 
+	event_feature_data.lv2_event_ref= &LV2Info::event_ref;
+	event_feature_data.lv2_event_unref= &LV2Info::event_ref;
+	event_feature_data.callback_data = this;
+	event_feature.URI = LV2_EVENT_URI;
+	event_feature.data = &event_feature_data;
+
 	lv2_features[0] = &uri_map_feature;
-	lv2_features[1] = NULL;
+	lv2_features[1] = &event_feature;
+	lv2_features[2] = NULL;
 
 	/* this is needed so we get a fixed type ID for MIDI, it would
 	   probably be better to make the type map accessible from any
@@ -84,6 +91,14 @@ LV2Info::uri_map_uri_to_id(LV2_URI_Map_Callback_Data callback_data,
 	assert(ret <= UINT16_MAX);
 	return ret;
 }
+
+
+uint32_t 
+LV2Info::event_ref(LV2_Event_Callback_Data callback_data,
+		   LV2_Event*              event) {
+
+}
+
 
 
 } // namespace Ingen
