@@ -95,8 +95,9 @@ LV2Info::uri_map_uri_to_id(LV2_URI_Map_Callback_Data callback_data,
 
 uint32_t 
 LV2Info::event_ref(LV2_Event_Callback_Data callback_data,
-		   LV2_Event*              event) {
-
+                   LV2_Event*              event)
+{
+	return 0;
 }
 
 

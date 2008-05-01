@@ -142,13 +142,14 @@ CreatePortEvent::execute(ProcessContext& context)
 		_patch->external_ports(_ports_array);
 	}
 
-	if (_driver_port)
+	if (_driver_port) {
 		if (_type == "ingen:AudioPort")
 			_engine.audio_driver()->add_port(_driver_port);
 		else if (_type == "ingen:MIDIPort")
 			_engine.midi_driver()->add_port(_driver_port);
 		else if (_type == "ingen:OSCPort")
 			cerr << "OSC DRIVER PORT" << endl;
+	}
 	
 	if (_source)
 		_source->unblock();

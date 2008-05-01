@@ -98,8 +98,8 @@ public:
 	
 	/** Transport state for this frame.
 	 * Intended to only be called from the audio thread. */
-	inline const jack_position_t* position() { return &_position; }
-	inline const jack_transport_state_t transport_state() { return _transport_state; }
+	inline const jack_position_t* position()        { return &_position; }
+	inline jack_transport_state_t transport_state() { return _transport_state; }
 	
 	bool is_realtime() const { return jack_is_realtime(_client); }
 	

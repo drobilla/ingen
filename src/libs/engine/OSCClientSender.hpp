@@ -51,7 +51,7 @@ public:
 	virtual ~OSCClientSender()
 	{ lo_address_free(_address); }
 
-	const lo_address   address() const  { return _address; }
+	lo_address address() const { return _address; }
 	
     void subscribe(Shared::EngineInterface* engine) { }
 
