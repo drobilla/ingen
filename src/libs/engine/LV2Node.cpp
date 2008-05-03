@@ -149,6 +149,9 @@ LV2Node::instantiate()
 	
 	PortImpl* port = NULL;
 	
+	float* def_values = new float[num_ports];
+	slv2_plugin_get_port_ranges(plug, 0, 0, def_values);
+	
 	for (uint32_t j=0; j < num_ports; ++j) {
 		SLV2Port id = slv2_plugin_get_port_by_index(plug, j);
 
@@ -186,11 +189,9 @@ LV2Node::instantiate()
 			return false;
 		}
 			
-		SLV2Value def, min, max;
-		slv2_port_get_range(plug, id, &def, &min, &max);
-
 		// FIXME: need nice type preserving SLV2Value -> Raul::Atom conversion
-		Atom defatm = (float)((def && slv2_value_is_float(def)) ? slv2_value_as_float(def) : 0.0f);
+		float def = isnan(def_values[j]) ? 0.0f : def_values[j];
+		Atom defatm = def;
 
 		if (direction == INPUT)
 			port = new InputPort(this, port_name, j, _polyphony, data_type, defatm, port_buffer_size);
@@ -198,14 +199,13 @@ LV2Node::instantiate()
 			port = new OutputPort(this, port_name, j, _polyphony, data_type, defatm, port_buffer_size);
 
 		if (direction == INPUT && data_type == DataType::CONTROL)
-			((AudioBuffer*)port->buffer(0))->set(slv2_value_as_float(def), 0);
-
-		slv2_value_free(def);
-		slv2_value_free(min);
-		slv2_value_free(max);
+		  ((AudioBuffer*)port->buffer(0))->set(def, 0);
 
 		_ports->at(j) = port;
 	}
+	
+	delete [] def_values;
+	
 	return true;
 }
 

@@ -85,6 +85,9 @@ protected:
 	PortModelList                   _ports;      ///< List of ports (not a Table to preserve order)
 	string                          _plugin_uri; ///< Plugin URI (if PluginModel is unknown)
 	SharedPtr<PluginModel>          _plugin;     ///< The plugin this node is an instance of
+	
+	float*                          _min_values; ///< The min values for the node ports (only used for LV2 so far)
+	float*                          _max_values; ///< The max values for the node ports (only used for LV2 so far)
 };
 
 

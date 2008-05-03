@@ -18,6 +18,7 @@
 #include CONFIG_H_PATH
 
 #include <cassert>
+#include <cmath>
 #include "interface/Port.hpp"
 #include "NodeModel.hpp"
 #include "PatchModel.hpp"
@@ -30,12 +31,16 @@ NodeModel::NodeModel(Store& store, SharedPtr<PluginModel> plugin, const Path& pa
 	: ObjectModel(store, path, polyphonic)
 	, _plugin_uri(plugin->uri())
 	, _plugin(plugin)
+	, _min_values(0)
+	, _max_values(0)
 {
 }
 
 NodeModel::NodeModel(Store& store, const string& plugin_uri, const Path& path, bool polyphonic)
 	: ObjectModel(store, path, polyphonic)
 	, _plugin_uri(plugin_uri)
+	, _min_values(0)
+	, _max_values(0)
 {
 }
 
@@ -78,6 +83,10 @@ NodeModel::clear()
 {
 	_ports.clear();
 	assert(_ports.empty());
+	delete [] _min_values;
+	delete [] _max_values;
+	_min_values = 0;
+	_max_values = 0;
 }
 
 
@@ -155,17 +164,22 @@ NodeModel::port_value_range(SharedPtr<PortModel> port, float& min, float& max)
 #ifdef HAVE_SLV2
 	// Plugin value first
 	if (_plugin && _plugin->type() == PluginModel::LV2) {
-		Glib::Mutex::Lock(PluginModel::rdf_world()->mutex());
 
-		SLV2Value min_val, max_val;
-		slv2_port_get_range(_plugin->slv2_plugin(),
-			_plugin->slv2_port(port->index()),
-			NULL, &min_val, &max_val);
+		if (!_min_values) {
+		  
+		  Glib::Mutex::Lock(PluginModel::rdf_world()->mutex());
+		  
+		  uint32_t num_lv2_ports = slv2_plugin_get_num_ports(_plugin->slv2_plugin());
+		  _min_values = new float[num_lv2_ports];
+		  _max_values = new float[num_lv2_ports];
+		  slv2_plugin_get_port_ranges(_plugin->slv2_plugin(), 
+					      _min_values, _max_values, 0);
+		}
 
-		if (min_val)
-			min = slv2_value_as_float(min_val);
-		if (max_val)
-			max = slv2_value_as_float(max_val);
+		if (!std::isnan(_min_values[port->index()]))
+		  min = _min_values[port->index()];
+		if (!std::isnan(_max_values[port->index()]))
+		  max = _max_values[port->index()];
 	}
 #endif
 

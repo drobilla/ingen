@@ -173,12 +173,13 @@ main(int argc, char** argv)
 			
 			// Assumption:  Containing ':' means URI, otherwise filename
 			string uri = args.load_arg;
-			if (uri.find(':') == string::npos) 
+			if (uri.find(':') == string::npos) {
 				if (Glib::path_is_absolute(args.load_arg))
 					uri = Glib::filename_to_uri(args.load_arg);
 				else
 					uri = Glib::filename_to_uri(Glib::build_filename(
 						Glib::get_current_dir(), args.load_arg));
+			}
 
 			loader->load(engine_interface, &rdf_world, uri, parent_path, "");
 
