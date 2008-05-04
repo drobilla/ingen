@@ -494,8 +494,11 @@ void
 Store::variable_change_event(const Path& subject_path, const string& predicate, const Atom& value)
 {
 	SharedPtr<ObjectModel> subject = object(subject_path);
-	
-	if (subject) {
+
+	if (!value) {
+		cerr << "ERROR: variable '" << predicate << "' has no type" << endl;
+	} else if (subject) {
+		cerr << "Set variable '" << predicate << "' with type " << (int)value.type() << endl;
 		subject->set_variable(predicate, value);
 	} else {
 		add_variable_orphan(subject_path, predicate, value);
