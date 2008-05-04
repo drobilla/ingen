@@ -78,12 +78,21 @@ main(int argc, char** argv)
 	SharedPtr<Glib::Module> client_module;
 	SharedPtr<Glib::Module> gui_module;
 	SharedPtr<Glib::Module> bindings_module;
+	SharedPtr<Glib::Module> serialisation_module;
 
 	SharedPtr<Shared::EngineInterface> engine_interface;
 
 	Glib::thread_init();
 
 	Ingen::Shared::World* world = Ingen::Shared::get_world();
+
+	/* Set up RDF world */
+	world->rdf_world->add_prefix("xsd", "http://www.w3.org/2001/XMLSchema#");
+	world->rdf_world->add_prefix("ingen", "http://drobilla.net/ns/ingen#");
+	world->rdf_world->add_prefix("ingenuity", "http://drobilla.net/ns/ingenuity#");
+	world->rdf_world->add_prefix("lv2", "http://lv2plug.in/ns/lv2core#");
+	world->rdf_world->add_prefix("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
+	world->rdf_world->add_prefix("doap", "http://usefulinc.com/ns/doap#");
 
 	/* Run engine */
 	if (args.engine_flag) {
@@ -147,21 +156,12 @@ main(int argc, char** argv)
 	/* Load a patch */
 	if (args.load_given && engine_interface) {
 		
-		Redland::World rdf_world;
-		rdf_world.add_prefix("xsd", "http://www.w3.org/2001/XMLSchema#");
-		rdf_world.add_prefix("ingen", "http://drobilla.net/ns/ingen#");
-		rdf_world.add_prefix("ingenuity", "http://drobilla.net/ns/ingenuity#");
-		rdf_world.add_prefix("lv2", "http://lv2plug.in/ns/lv2core#");
-		rdf_world.add_prefix("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
-		rdf_world.add_prefix("doap", "http://usefulinc.com/ns/doap#");
-
 		boost::optional<Raul::Path> parent_path;
 		if (args.path_given)
 			parent_path = args.path_arg;
 
 		bool found = false;
-		SharedPtr<Glib::Module> serialisation_module
-			= Ingen::Shared::load_module("ingen_serialisation");
+		serialisation_module = Ingen::Shared::load_module("ingen_serialisation");
 			
 		Serialisation::Loader* (*new_loader)() = NULL;
 
@@ -181,7 +181,7 @@ main(int argc, char** argv)
 						Glib::get_current_dir(), args.load_arg));
 			}
 
-			loader->load(engine_interface, &rdf_world, uri, parent_path, "");
+			loader->load(engine_interface, world->rdf_world, uri, parent_path, "");
 
 		} else {
 			cerr << "Unable to load serialisation module, aborting." << endl;
@@ -252,9 +252,10 @@ main(int argc, char** argv)
 		engine.reset();
 	}
 
-	engine_module.reset();
 	client_module.reset();
+	serialisation_module.reset();
 	gui_module.reset();
+	engine_module.reset();
 
 	Ingen::Shared::destroy_world();
 
