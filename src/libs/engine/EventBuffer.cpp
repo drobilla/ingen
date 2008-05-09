@@ -161,9 +161,11 @@ EventBuffer::append(uint32_t       frames,
                     const uint8_t* data)
 {
 #ifndef NDEBUG
-	LV2_Event* last_event = lv2_event_get(&_iter, NULL);
-	assert(last_event->frames < frames
-		|| (last_event->frames == frames && last_event->subframes <= subframes));
+	if (lv2_event_is_valid(&_iter)) {
+		LV2_Event* last_event = lv2_event_get(&_iter, NULL);
+		assert(last_event->frames < frames
+				|| (last_event->frames == frames && last_event->subframes <= subframes));
+	}
 #endif
 
 	bool ret = lv2_event_write(&_iter, frames, subframes, type, size, data);
