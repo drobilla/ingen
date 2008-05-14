@@ -27,6 +27,7 @@
 #include "PortImpl.hpp"
 #include "PatchImpl.hpp"
 #include "ObjectStore.hpp"
+#include "ThreadManager.hpp"
 
 using namespace std;
 
@@ -34,19 +35,19 @@ namespace Ingen {
 
 
 NodeBase::NodeBase(PluginImpl* plugin, const string& name, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size)
-: NodeImpl(parent, name, polyphonic),
-  _plugin(plugin),
-  _polyphony((polyphonic && parent) ? parent->internal_polyphony() : 1),
-  _srate(srate),
-  _buffer_size(buffer_size),
-  _activated(false),
-  _traversed(false),
-  _input_ready(1),
-  _process_lock(0),
-  _n_inputs_ready(0),
-  _ports(NULL),
-  _providers(new Raul::List<NodeImpl*>()),
-  _dependants(new Raul::List<NodeImpl*>())
+	: NodeImpl(parent, name, polyphonic)
+	, _plugin(plugin)
+	, _polyphony((polyphonic && parent) ? parent->internal_polyphony() : 1)
+	, _srate(srate)
+	, _buffer_size(buffer_size)
+	, _activated(false)
+	, _traversed(false)
+	, _input_ready(1)
+	, _process_lock(0)
+	, _n_inputs_ready(0)
+	, _ports(NULL)
+	, _providers(new Raul::List<NodeImpl*>())
+	, _dependants(new Raul::List<NodeImpl*>())
 {
 	assert(_plugin);
 	assert(_polyphony > 0);
@@ -56,7 +57,8 @@ NodeBase::NodeBase(PluginImpl* plugin, const string& name, bool polyphonic, Patc
 
 NodeBase::~NodeBase()
 {
-	assert(!_activated);
+	if (_activated)
+		deactivate();
 
 	delete _providers;
 	delete _dependants;
@@ -80,6 +82,7 @@ NodeBase::plugin() const
 void
 NodeBase::activate()
 {
+	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
 	assert(!_activated);
 	_activated = true;
 }
@@ -88,6 +91,7 @@ NodeBase::activate()
 void
 NodeBase::deactivate()
 {
+	assert(ThreadManager::current_thread_id() == THREAD_POST_PROCESS);
 	assert(_activated);
 	_activated = false;
 }
@@ -96,6 +100,8 @@ NodeBase::deactivate()
 bool
 NodeBase::prepare_poly(uint32_t poly)
 {
+	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
+
 	if (!_polyphonic)
 		return true;
 
@@ -110,6 +116,8 @@ NodeBase::prepare_poly(uint32_t poly)
 bool
 NodeBase::apply_poly(Raul::Maid& maid, uint32_t poly)
 {
+	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
+
 	if (!_polyphonic)
 		return true;
 
@@ -124,6 +132,8 @@ NodeBase::apply_poly(Raul::Maid& maid, uint32_t poly)
 void
 NodeBase::set_buffer_size(size_t size)
 {
+	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
+
 	_buffer_size = size;
 	
 	if (_ports)
@@ -159,6 +169,7 @@ NodeBase::process_unlock()
 void
 NodeBase::wait_for_input(size_t num_providers)
 {
+	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
 	assert(_process_lock.get() == 1);
 
 	while ((unsigned)_n_inputs_ready.get() < num_providers) {
@@ -175,6 +186,7 @@ NodeBase::wait_for_input(size_t num_providers)
 void
 NodeBase::signal_input_ready()
 {
+	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
 	//cout << path() << " SIGNAL" << endl;
 	++_n_inputs_ready;
 	_input_ready.post();
@@ -186,6 +198,8 @@ NodeBase::signal_input_ready()
 void
 NodeBase::pre_process(ProcessContext& context)
 {
+	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
+
 	// Mix down any ports with multiple inputs
 	if (_ports)
 		for (size_t i=0; i < _ports->size(); ++i)
@@ -198,6 +212,8 @@ NodeBase::pre_process(ProcessContext& context)
 void
 NodeBase::post_process(ProcessContext& context)
 {
+	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
+
 	/* Write output ports */
 	if (_ports)
 		for (size_t i=0; i < _ports->size(); ++i)

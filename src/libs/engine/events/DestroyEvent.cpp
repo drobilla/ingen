@@ -199,8 +199,7 @@ DestroyEvent::post_process()
 		_responder->respond_error("Unable to destroy object");
 	}
 
-	if (_driver_port)
-		delete _driver_port;
+	delete _driver_port;
 }
 
 

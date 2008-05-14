@@ -41,6 +41,7 @@
 #include "OSCEngineReceiver.hpp"
 #include "PostProcessor.hpp"
 #include "ProcessSlave.hpp"
+#include "ThreadManager.hpp"
 #ifdef HAVE_JACK_MIDI
 #include "JackMidiDriver.hpp"
 #endif
@@ -117,6 +118,8 @@ Engine::driver(DataType type, EventType event_type)
 int
 Engine::main()
 {
+	Thread::get().set_context(THREAD_POST_PROCESS);
+
 	// Loop until quit flag is set (by OSCReceiver)
 	while ( ! _quit_flag) {
 		nanosleep(&main_rate, NULL);

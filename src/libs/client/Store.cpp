@@ -60,7 +60,6 @@ Store::clear()
 {
 	_objects.clear();
 	_plugins.clear();
-
 }
 
 
@@ -352,8 +351,8 @@ Store::destruction_event(const Path& path)
 
 	removed.reset();
 
-	//cerr << "Store removed object " << path
-	//	<< ", count: " << removed.use_count();
+	/*cerr << "Store removed object " << path
+		<< ", count: " << removed.use_count();*/
 }
 
 void
@@ -482,11 +481,28 @@ Store::patch_polyphony_event(const Path& path, uint32_t poly)
 void
 Store::patch_cleared_event(const Path& path)
 {
-	SharedPtr<PatchModel> patch = PtrCast<PatchModel>(object(path));
-	if (patch)
-		for (ObjectModel::const_iterator i = patch->children_begin(); i != patch->children_end(); ++i)
-			if (i->second->graph_parent() == patch.get())
-				destruction_event(i->second->path());
+	Objects::iterator i = _objects.find(path);
+	if (i != _objects.end()) {
+		assert((*i).second->path() == path);
+		SharedPtr<PatchModel> patch = PtrCast<PatchModel>(i->second);
+		
+		Objects::iterator first_descendant = i;
+		++first_descendant;
+		Objects::iterator descendants_end = _objects.find_descendants_end(i);
+		SharedPtr< Table<Path, SharedPtr<Shared::GraphObject> > > removed
+				= _objects.yank(first_descendant, descendants_end);
+
+		for (Objects::iterator i = removed->begin(); i != removed->end(); ++i) {
+			SharedPtr<ObjectModel> model = PtrCast<ObjectModel>(i->second);
+			assert(model);
+			model->signal_destroyed.emit();
+			if (model->parent() == patch)
+				patch->remove_child(model);
+		}
+
+	} else {
+		cerr << "[Store] Unable to find patch " << path << " to clear." << endl;
+	}
 }
 
 
@@ -498,7 +514,6 @@ Store::variable_change_event(const Path& subject_path, const string& predicate, 
 	if (!value) {
 		cerr << "ERROR: variable '" << predicate << "' has no type" << endl;
 	} else if (subject) {
-		cerr << "Set variable '" << predicate << "' with type " << (int)value.type() << endl;
 		subject->set_variable(predicate, value);
 	} else {
 		add_variable_orphan(subject_path, predicate, value);

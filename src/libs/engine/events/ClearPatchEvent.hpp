@@ -20,13 +20,18 @@
 
 #include <string>
 #include <raul/Array.hpp>
+#include <raul/Table.hpp>
+#include <raul/Path.hpp>
 #include "QueuedEvent.hpp"
+#include "ObjectStore.hpp"
+#include "PatchImpl.hpp"
 
 using std::string;
 
 namespace Ingen {
 
 class PatchImpl;
+class DriverPort;
 
 
 /** Delete all nodes from a patch.
@@ -43,9 +48,14 @@ public:
 	void post_process();
 
 private:
-	const string _patch_path;
-	PatchImpl*   _patch;
-	bool         _process;
+	const string            _patch_path;
+	SharedPtr<PatchImpl>    _patch;
+	DriverPort*             _driver_port;
+	bool                    _process;
+	Raul::Array<PortImpl*>* _ports_array; ///< New (external) ports for Patch
+	CompiledPatch*          _compiled_patch;  ///< Patch's new process order
+	
+	SharedPtr< Table<Path, SharedPtr<Shared::GraphObject> > > _removed_table;
 };
 
 

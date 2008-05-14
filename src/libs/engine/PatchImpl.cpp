@@ -85,6 +85,8 @@ PatchImpl::deactivate()
 void
 PatchImpl::disable()
 {
+	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
+
 	_process = false;
 
 	for (List<PortImpl*>::iterator i = _output_ports.begin(); i != _output_ports.end(); ++i)
@@ -95,6 +97,8 @@ PatchImpl::disable()
 bool
 PatchImpl::prepare_internal_poly(uint32_t poly)
 {
+	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
+
 	/* TODO: ports?  internal/external poly? */
 
 	for (List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
@@ -112,6 +116,8 @@ PatchImpl::prepare_internal_poly(uint32_t poly)
 bool
 PatchImpl::apply_internal_poly(Raul::Maid& maid, uint32_t poly)
 {
+	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
+
 	/* TODO: ports?  internal/external poly? */
 
 	for (List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
@@ -239,17 +245,23 @@ PatchImpl::set_buffer_size(size_t size)
 	NodeBase::set_buffer_size(size);
 	assert(_buffer_size == size);
 	
-	for (List<NodeImpl*>::iterator j = _nodes.begin(); j != _nodes.end(); ++j)
-		(*j)->set_buffer_size(size);
+	CompiledPatch* const cp = _compiled_patch;
+
+	for (size_t i=0; i < cp->size(); ++i)
+		(*cp)[i].node()->set_buffer_size(size);
 }
 
 
 // Patch specific stuff
 
 
+/** Add a node.
+ * Preprocessing thread only.
+ */
 void
 PatchImpl::add_node(List<NodeImpl*>::Node* ln)
 {
+	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
 	assert(ln != NULL);
 	assert(ln->elem() != NULL);
 	assert(ln->elem()->parent_patch() == this);
@@ -260,11 +272,12 @@ PatchImpl::add_node(List<NodeImpl*>::Node* ln)
 
 
 /** Remove a node.
- * Realtime Safe.  Preprocessing thread.
+ * Preprocessing thread only.
  */
 PatchImpl::Nodes::Node*
 PatchImpl::remove_node(const string& name)
 {
+	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
 	for (List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		if ((*i)->name() == name)
 			return _nodes.erase(i);
@@ -273,11 +286,13 @@ PatchImpl::remove_node(const string& name)
 }
 
 
-/** Remove a connection.  Realtime safe.
+/** Remove a connection.
+ * Process thread only.
  */
 PatchImpl::Connections::Node*
 PatchImpl::remove_connection(const PortImpl* src_port, const PortImpl* dst_port)
 {
+	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
 	bool found = false;
 	Connections::Node* connection = NULL;
 	for (Connections::iterator i = _connections.begin(); i != _connections.end(); ++i) {
@@ -357,6 +372,23 @@ PatchImpl::remove_port(const string& name)
 		cerr << "WARNING:  [PatchImpl::remove_port] Port not found !" << endl;
 
 	return ret;
+}
+
+
+/** Remove all ports from ports list used in pre-processing thread.
+ *
+ * Ports are not removed from ports array for process thread (which could be
+ * simultaneously running).  Returned is a (inputs, outputs) pair.
+ *
+ * Realtime safe.  Preprocessing thread only.
+ */
+void
+PatchImpl::clear_ports()
+{
+	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
+
+	_input_ports.clear();
+	_output_ports.clear();
 }
 
 

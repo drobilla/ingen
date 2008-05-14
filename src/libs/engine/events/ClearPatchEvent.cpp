@@ -27,15 +27,19 @@
 #include "NodeImpl.hpp"
 #include "ConnectionImpl.hpp"
 #include "QueuedEventSource.hpp"
+#include "AudioDriver.hpp"
+#include "MidiDriver.hpp"
 
 namespace Ingen {
 
 
 ClearPatchEvent::ClearPatchEvent(Engine& engine, SharedPtr<Responder> responder, FrameTime time, QueuedEventSource* source, const string& patch_path)
-: QueuedEvent(engine, responder, time, true, source),
-  _patch_path(patch_path),
-  _patch(NULL),
-  _process(false)
+	: QueuedEvent(engine, responder, time, true, source)
+	, _patch_path(patch_path)
+	, _driver_port(NULL)
+	, _process(false)
+	, _ports_array(NULL)
+	, _compiled_patch(NULL)
 {
 }
 
@@ -43,18 +47,20 @@ ClearPatchEvent::ClearPatchEvent(Engine& engine, SharedPtr<Responder> responder,
 void
 ClearPatchEvent::pre_process()
 {
-	cerr << "FIXME: CLEAR PATCH\n";
-#if 0
-	_patch = _engine.object_store()->find_patch(_patch_path);
+	ObjectStore::Objects::iterator patch_iterator = _engine.object_store()->find(_patch_path);
 	
-	if (_patch != NULL) {
-	
-		_process = _patch->enabled();
-
-		for (List<Node*>::const_iterator i = _patch->nodes().begin(); i != _patch->nodes().end(); ++i)
-			(*i)->remove_from_store();
+	if (patch_iterator != _engine.object_store()->objects().end()) {
+		_patch = PtrCast<PatchImpl>(patch_iterator->second);
+		if (_patch) {
+			_process = _patch->enabled();
+			_removed_table = _engine.object_store()->remove_children(patch_iterator);
+			_patch->nodes().clear();
+			_patch->connections().clear();
+			_ports_array = _patch->build_ports_array();
+			if (_patch->enabled())
+				_compiled_patch = _patch->compile();
+		}
 	}
-#endif
 
 	QueuedEvent::pre_process();
 }
@@ -65,16 +71,30 @@ ClearPatchEvent::execute(ProcessContext& context)
 {
 	QueuedEvent::execute(context);
 
-	if (_patch != NULL) {
+	if (_patch && _removed_table) {
 		_patch->disable();
 		
-		cerr << "FIXME: CLEAR PATCH\n";
-		//for (List<Node*>::const_iterator i = _patch->nodes().begin(); i != _patch->nodes().end(); ++i)
-		//	(*i)->remove_from_patch();
-
 		if (_patch->compiled_patch() != NULL) {
 			_engine.maid()->push(_patch->compiled_patch());
 			_patch->compiled_patch(NULL);
+		}
+		
+		_patch->clear_ports();
+		_patch->connections().clear();
+		_patch->compiled_patch(_compiled_patch);
+		Raul::Array<PortImpl*>* old_ports = _patch->external_ports();
+		_patch->external_ports(_ports_array);
+		_ports_array = old_ports;
+
+		// Remove driver ports, if necessary
+		if (_patch->parent() == NULL) {
+			for (ObjectStore::Objects::iterator i = _removed_table->begin(); i != _removed_table->end(); ++i) {
+				SharedPtr<PortImpl> port = PtrCast<PortImpl>(i->second);
+				if (port && port->type() == DataType::AUDIO)
+					_driver_port = _engine.audio_driver()->remove_port(port->path());
+				else if (port && port->type() == DataType::EVENT)
+					_driver_port = _engine.midi_driver()->remove_port(port->path());
+			}
 		}
 	}
 }
@@ -84,18 +104,8 @@ void
 ClearPatchEvent::post_process()
 {	
 	if (_patch != NULL) {
-		// Delete all nodes
-		for (List<NodeImpl*>::iterator i = _patch->nodes().begin(); i != _patch->nodes().end(); ++i) {
-			(*i)->deactivate();
-			delete *i;
-		}
-		_patch->nodes().clear();
-
-		// Delete all connections
-		for (PatchImpl::Connections::iterator i = _patch->connections().begin(); i != _patch->connections().end(); ++i)
-			(*i).reset();
-
-		_patch->connections().clear();
+		delete _ports_array;
+		delete _driver_port;
 		
 		// Restore patch's run state
 		if (_process)
@@ -105,8 +115,9 @@ ClearPatchEvent::post_process()
 
 		// Make sure everything's sane
 		assert(_patch->nodes().size() == 0);
+		assert(_patch->num_ports() == 0);
 		assert(_patch->connections().size() == 0);
-		
+	
 		// Reply
 		_responder->respond_ok();
 		_engine.broadcaster()->send_patch_cleared(_patch_path);

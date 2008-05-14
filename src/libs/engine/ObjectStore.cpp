@@ -149,5 +149,43 @@ ObjectStore::remove(Objects::iterator object)
 	}
 }
 
+	
+/** Remove all children of an object from the store.
+ *
+ * Returned is a vector containing all descendants of the object removed
+ * in lexicographically sorted order by Path.
+ */
+SharedPtr< Table<Path, SharedPtr<Shared::GraphObject> > >
+ObjectStore::remove_children(const Path& path)
+{
+	return remove_children(_objects.find(path));
+}
+
+
+/** Remove all children of an object from the store.
+ *
+ * Returned is a vector containing all descendants of the object removed
+ * in lexicographically sorted order by Path.
+ */
+SharedPtr< Table<Path, SharedPtr<Shared::GraphObject> > >
+ObjectStore::remove_children(Objects::iterator object)
+{
+	if (object != _objects.end()) {
+		Objects::iterator descendants_end = _objects.find_descendants_end(object);
+
+		if (descendants_end != object) {
+			Objects::iterator first_child = object;
+			++first_child;
+			return _objects.yank(first_child, descendants_end);
+		}
+
+	} else {
+		cerr << "[ObjectStore] WARNING: Removing children of " << object->first << " failed." << endl;
+		return SharedPtr<Objects>();
+	}
+
+	return SharedPtr<Objects>();
+}
+
 
 } // namespace Ingen

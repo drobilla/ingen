@@ -60,7 +60,6 @@ public:
 private:
 	Path                                         _path;
 	ObjectStore::Objects::iterator               _store_iterator;
-	SharedPtr< Table<Path, SharedPtr<Shared::GraphObject> > > _removed_table;
 	SharedPtr<NodeImpl>                          _node;  ///< Non-NULL iff a node
 	SharedPtr<PortImpl>                          _port;  ///< Non-NULL iff a port
 	DriverPort*                                  _driver_port;
@@ -70,6 +69,8 @@ private:
 	CompiledPatch*                               _compiled_patch;  ///< Patch's new process order
 	DisconnectNodeEvent*                         _disconnect_node_event;
 	DisconnectPortEvent*                         _disconnect_port_event;
+	
+	SharedPtr< Table<Path, SharedPtr<Shared::GraphObject> > > _removed_table;
 };
 
 

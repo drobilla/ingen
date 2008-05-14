@@ -62,6 +62,8 @@ public:
 
 	SharedPtr< Table<Path, SharedPtr<Shared::GraphObject> > > remove(const Path& path);
 	SharedPtr< Table<Path, SharedPtr<Shared::GraphObject> > > remove(Objects::iterator i);
+	SharedPtr< Table<Path, SharedPtr<Shared::GraphObject> > > remove_children(const Path& path);
+	SharedPtr< Table<Path, SharedPtr<Shared::GraphObject> > > remove_children(Objects::iterator i);
 
 	const Objects& objects() const { return _objects; }
 	Objects&       objects()       { return _objects; }

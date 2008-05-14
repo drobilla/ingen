@@ -88,7 +88,7 @@ public:
 	
 	// Patch specific stuff not inherited from Node
 	
-	typedef List<NodeImpl*>                       Nodes;
+	typedef List<NodeImpl*> Nodes;
 	
 	void         add_node(Nodes::Node* tn);
 	Nodes::Node* remove_node(const string& name);
@@ -105,6 +105,7 @@ public:
 	void add_input(List<PortImpl*>::Node* port)  { _input_ports.push_back(port); } ///< Preprocesser thread
 	void add_output(List<PortImpl*>::Node* port) { _output_ports.push_back(port); } ///< Preprocessor thread
 	List<PortImpl*>::Node* remove_port(const string& name);
+	void                   clear_ports();
 	
 	void               add_connection(Connections::Node* c) { _connections.push_back(c); }
 	Connections::Node* remove_connection(const PortImpl* src_port, const PortImpl* dst_port);
