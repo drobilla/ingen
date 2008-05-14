@@ -46,7 +46,7 @@ launch_osc_engine(int port)
 		//return SharedPtr<EngineInterface>(new OSCEngineSender(
 		//			string("osc.udp://localhost:").append(port_str)));
 	} else {
-		cerr << "Failed to launch engine process." << endl;
+		std::cerr << "Failed to launch engine process." << std::endl;
 		//return SharedPtr<EngineInterface>();
 		return false;
 	}

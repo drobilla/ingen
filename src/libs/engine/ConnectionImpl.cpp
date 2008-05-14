@@ -169,7 +169,7 @@ ConnectionImpl::process(ProcessContext& context)
 
 	} else if (_must_mix && type() == DataType::EVENT) {
 
-		cerr << "WARNING: No event mixing." << endl;
+		std::cerr << "WARNING: No event mixing." << std::endl;
 	
 	}
 

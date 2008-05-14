@@ -15,9 +15,10 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef UTIL_H
-#define UTIL_H
+#ifndef UTIL_HPP
+#define UTIL_HPP
 
+#include CONFIG_H_PATH
 #include <iostream>
 #include <cstdlib>
 
@@ -26,8 +27,6 @@
 #include <xmmintrin.h>
 #endif
 
-using std::cerr; using std::endl;
-
 namespace Ingen {
 
 /** Set flags to disable denormal processing.
@@ -35,6 +34,7 @@ namespace Ingen {
 inline void
 set_denormal_flags()
 {
+#ifdef USE_ASSEMBLY
 #ifdef __SSE__
 	unsigned long a, b, c, d;
 
@@ -60,13 +60,14 @@ set_denormal_flags()
 			//cerr << "Set SSE denormal fix flag." << endl;
 		}
 	} else {
-		cerr << "This code has been built with SSE support, but your processor does"
-			<< " not support the SSE instruction set." << endl << "Exiting." << endl;
+		std::cerr << "This code has been built with SSE support, but your processor does"
+			<< " not support the SSE instruction set." << std::endl << "Exiting." << std::endl;
 		exit(EXIT_FAILURE);
 	}
+#endif
 #endif
 }
 
 } // namespace Ingen
 
-#endif // UTIL_H
+#endif // UTIL_HPP

@@ -71,7 +71,7 @@ AC_ARG_ENABLE(debug_symbols,
 
 AC_ARG_ENABLE(debug_asertions,
 	[AS_HELP_STRING(--enable-debug-assertions, [Enable debugging assertions (no)])],
-	[assertions="$enableval"])
+	[debug_assertions="$enableval"])
 
 if test "$debug_symbols" = "yes"; then
   CFLAGS="-O0 -g"
@@ -84,6 +84,14 @@ if test "$debug_assertions" = "yes"; then
 else
   CFLAGS="$CFLAGS -DNDEBUG"
   CXXFLAGS="$CXXFLAGS -DNDEBUG"
+fi
+
+assembly="yes"
+AC_ARG_ENABLE(assembly,
+	[AS_HELP_STRING(--enable-assembly, [Use assembly code to fix denormals (yes)])],
+	[assembly="$enableval"])
+if test "$assembly" = "yes"; then
+  AC_DEFINE([USE_ASSEMBLY], 1, [Defined if assembly code should be used where possible])
 fi
 
 # Boost shared_ptr debugging
@@ -312,6 +320,7 @@ AC_MSG_RESULT([LV2 Plugin support:      $build_lv2])
 AC_MSG_RESULT([LADSPA Plugin support:   $build_ladspa])
 AC_MSG_RESULT([])
 AC_MSG_RESULT([Ingen:])
+AC_MSG_RESULT([    Denormal fixes (assembly): $assembly])
 AC_MSG_RESULT([    Engine library/OSC server: $build_ingen_server])
 AC_MSG_RESULT([    JACK in-process engine:    $build_in_process_engine])
 AC_MSG_RESULT([    Client library:            $build_ingen_client_lib])
