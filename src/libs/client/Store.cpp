@@ -33,8 +33,8 @@ namespace Client {
 
 
 Store::Store(SharedPtr<EngineInterface> engine, SharedPtr<SigClientInterface> emitter)
-: _engine(engine)
-, _emitter(emitter)
+	: _engine(engine)
+	, _emitter(emitter)
 {
 	emitter->signal_object_destroyed.connect(sigc::mem_fun(this, &Store::destruction_event));
 	emitter->signal_object_renamed.connect(sigc::mem_fun(this, &Store::rename_event));

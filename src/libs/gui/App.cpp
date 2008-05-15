@@ -186,6 +186,9 @@ App::attach(SharedPtr<EngineInterface> engine, SharedPtr<SigClientInterface> cli
 	_loader = SharedPtr<ThreadedLoader>(new ThreadedLoader(engine));
 
 	_patch_tree_window->init(*_store);
+	
+	_client->signal_response_error.connect(sigc::mem_fun(this, &App::error_response));
+	_client->signal_error.connect(sigc::mem_fun(this, &App::error_message));
 }
 
 
@@ -205,11 +208,21 @@ App::detach()
 
 
 void
+App::error_response(int32_t id, const string& str)
+{
+	error_message(str);
+}
+
+
+void
 App::error_message(const string& str)
 {
 	_messages_window->post(str);
-	_messages_window->show();
-	_messages_window->raise();
+	
+	if (!_messages_window->is_visible())
+		_messages_window->present();
+
+	_messages_window->set_urgency_hint(true);
 }
 
 

@@ -136,6 +136,7 @@ protected:
 	App(Ingen::Shared::World* world);
 	
 	bool animate();
+	void error_response(int32_t id, const string& str);
 	
 	static void* icon_destroyed(void* data);
 	
