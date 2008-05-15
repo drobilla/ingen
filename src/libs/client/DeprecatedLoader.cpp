@@ -70,7 +70,11 @@ DeprecatedLoader::translate_load_path(const string& path)
 		return (*t).second;
 	} else {
 		assert(Path::is_valid(path));
-		return path;
+		// Filthy kludge to fix the change from note node "midi_in" port to "input"
+		if (path.substr(path.find_last_of("/")) == "/midi_in")
+			return path.substr(0, path.find_last_of("/")) + "/input";
+		else
+			return path;
 	}
 }
 
@@ -534,9 +538,9 @@ DeprecatedLoader::load_connection(const Path& parent, xmlDocPtr doc, const xmlNo
 
 	// Compatibility fixes for old (fundamentally broken) patches
 	source_node = nameify_if_invalid(source_node);
-	source_port = nameify_if_invalid(source_port);
+	source_port = Path::nameify(source_port);
 	dest_node = nameify_if_invalid(dest_node);
-	dest_port = nameify_if_invalid(dest_port);
+	dest_port = Path::nameify(dest_port);
 
 	_engine->connect(
 		translate_load_path(parent.base() + source_node +"/"+ source_port),
@@ -551,8 +555,6 @@ DeprecatedLoader::load_connection(const Path& parent, xmlDocPtr doc, const xmlNo
 SharedPtr<PresetModel>
 DeprecatedLoader::load_preset(const Path& parent, xmlDocPtr doc, const xmlNodePtr node)
 {
-	cerr << "LOAD PRESET" << endl;
-
 	xmlNodePtr cur = node->xmlChildrenNode;
 	xmlChar* key;
 
@@ -590,7 +592,7 @@ DeprecatedLoader::load_preset(const Path& parent, xmlDocPtr doc, const xmlNodePt
 			// Compatibility fixes for old patch files
 			if (node_name != "")
 				node_name = nameify_if_invalid(node_name);
-			port_name = nameify_if_invalid(port_name);
+			port_name = Path::nameify(port_name);
 			
 			if (port_name == "") {
 				string msg = "Unable to parse control in patch file ( node = ";
