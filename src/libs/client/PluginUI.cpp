@@ -30,11 +30,11 @@ static void
 lv2_ui_write(LV2UI_Controller controller,
              uint32_t         port_index,
              uint32_t         buffer_size,
-	     uint32_t         format,
+             uint32_t         format,
              const void*      buffer)
 {
-	/*cerr << "********* LV2 UI WRITE:" << endl;
-	lv2_osc_message_print((const LV2Message*)buffer);
+	cerr << "********* LV2 UI WRITE (FORMAT " << format << ":" << endl;
+	/*lv2_osc_message_print((const LV2Message*)buffer);*/
 
 	fprintf(stderr, "RAW:\n");
 	for (uint32_t i=0; i < buffer_size; ++i) {
@@ -44,18 +44,16 @@ lv2_ui_write(LV2UI_Controller controller,
 		else
 			fprintf(stderr, "%2X ", ((unsigned char*)buffer)[i]);
 	}
-	
 	fprintf(stderr, "\n");
-	*/
 
 	PluginUI* ui = (PluginUI*)controller;
 
 	SharedPtr<PortModel> port = ui->node()->ports()[port_index];
 	
 	if (format == 0) {
-	  ui->engine()->set_port_value_immediate(port->path(),
-						 port->type().uri(), 
-						 buffer_size, buffer);
+		ui->engine()->set_port_value_immediate(port->path(),
+				port->type().uri(), 
+				buffer_size, buffer);
 	}
 }
 
@@ -73,7 +71,7 @@ PluginUI::~PluginUI()
 {
 	slv2_ui_instance_free(_instance);
 }
-	
+
 
 SharedPtr<PluginUI>
 PluginUI::create(SharedPtr<EngineInterface> engine,

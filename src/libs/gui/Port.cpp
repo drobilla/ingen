@@ -63,7 +63,7 @@ Port::Port(boost::shared_ptr<FlowCanvas::Module> module, SharedPtr<PortModel> pm
 		set_control_max(max);
 
 		pm->signal_variable.connect(sigc::mem_fun(this, &Port::variable_change));
-		_port_model->signal_control.connect(sigc::mem_fun(this, &Port::control_changed));
+		_port_model->signal_value_changed.connect(sigc::mem_fun(this, &Port::control_changed));
 	}
 		
 	_port_model->signal_activity.connect(sigc::mem_fun(this, &Port::activity));

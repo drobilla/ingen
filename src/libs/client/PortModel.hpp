@@ -56,18 +56,16 @@ public:
 
 	inline bool operator==(const PortModel& pm) const { return (_path == pm._path); }
 	
-	inline void value(float val)
+	inline void value(const Atom& val)
 	{
 		if (val != _current_val) {
 			_current_val = val;
-			signal_control.emit(val);
+			signal_value_changed.emit(val);
 		}
 	}
 	
-	inline float value() { return _current_val; }
-
 	// Signals
-	sigc::signal<void, float>                 signal_control;  ///< Control ports
+	sigc::signal<void, const Atom&>           signal_value_changed; ///< Value ports
 	sigc::signal<void>                        signal_activity; ///< Message ports
 	sigc::signal<void, SharedPtr<PortModel> > signal_connection;
 	sigc::signal<void, SharedPtr<PortModel> > signal_disconnection;

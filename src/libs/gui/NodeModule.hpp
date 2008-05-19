@@ -77,7 +77,7 @@ protected:
 	void add_port(SharedPtr<PortModel> port, bool resize=true);
 	void remove_port(SharedPtr<PortModel> port);
 
-	void control_change(uint32_t index, float control);
+	void value_changed(uint32_t index, const Atom& value);
 
 	void embed_gui(bool embed);
 	void gui_size_request(Gtk::Requisition* req, bool force);

@@ -61,7 +61,7 @@ public:
 	                                  const char*               uri);
 
 	static uint32_t event_ref(LV2_Event_Callback_Data callback_data,
-				  LV2_Event*              event);
+	                          LV2_Event*              event);
 
 	LV2_Feature** lv2_features;
 };

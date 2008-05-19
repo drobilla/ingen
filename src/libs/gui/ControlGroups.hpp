@@ -49,7 +49,7 @@ public:
 	inline const SharedPtr<PortModel> port_model() const { return _port_model; }
 
 protected:
-	virtual void set_value(float value) = 0;
+	virtual void set_value(const Atom& value) = 0;
 	virtual void set_range(float min, float max) {}
 
 	ControlPanel*        _control_panel;
@@ -80,7 +80,7 @@ private:
 
 	bool clicked(GdkEventButton* ev);
 
-	void set_value(float value);
+	void set_value(const Atom& value);
 	void set_range(float min, float max);
 	
 	void port_variable_change(const string& key, const Raul::Atom& value);

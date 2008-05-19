@@ -64,7 +64,7 @@ ControlGroup::init(ControlPanel* panel, SharedPtr<PortModel> pm)
 	assert(_port_model);
 	assert(panel);
 
-	_control_connection = pm->signal_control.connect(sigc::mem_fun(this, &ControlGroup::set_value));
+	_control_connection = pm->signal_value_changed.connect(sigc::mem_fun(this, &ControlGroup::set_value));
 }
 
 
@@ -130,7 +130,7 @@ SliderControlGroup::init(ControlPanel* panel, SharedPtr<PortModel> pm)
 	
 	pm->signal_variable.connect(sigc::mem_fun(this, &SliderControlGroup::port_variable_change));
 
-	_slider->set_range(std::min(min, pm->value()), std::max(max, pm->value()));
+	_slider->set_range(std::min(min, pm->value().get_float()), std::max(max, pm->value().get_float()));
 	//_value_spinner->set_range(min, max);
 
 	set_value(pm->value());
@@ -165,8 +165,10 @@ SliderControlGroup::menu_properties()
 
 
 void
-SliderControlGroup::set_value(float val)
+SliderControlGroup::set_value(const Atom& atom)
 {
+	float val = atom.get_float();
+
 	if (_port_model->is_integer())
 		val = lrintf(val);
 

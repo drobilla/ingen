@@ -57,6 +57,7 @@ PluginModel::default_node_name(SharedPtr<PatchModel> parent)
 }
 
 
+#if 0
 struct NodeController {
 	EngineInterface* engine;
 	NodeModel*       node;
@@ -91,6 +92,7 @@ lv2_ui_write(LV2UI_Controller controller,
 	nc->engine->set_port_value_immediate(port->path(),
 			port->type().uri(), buffer_size, buffer);
 }
+#endif
 
 	
 #ifdef HAVE_SLV2
