@@ -102,7 +102,7 @@ PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 	_menu_add_event_input->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
 			"event_input", "ingen:EventPort", false));
-	_menu_add_midi_output->signal_activate().connect(
+	_menu_add_event_output->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
 			"event_output", "ingen:EventPort", true));
 	
