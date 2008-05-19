@@ -27,18 +27,19 @@
 #include <string>
 #include <slv2/slv2.h>
 #include "module/global.hpp"
+#include "module/World.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "lv2/uri_map/lv2_uri_map.h"
 #include "lv2/event/lv2_event.h"
-
 	
 namespace Ingen {
 	
 
 /** Stuff that may need to be passed to an LV2 plugin (i.e. LV2 features).
  */
-class LV2Info {
+class LV2Info : public Shared::LV2URIMap {
 public:
-	LV2Info(SLV2World world);
+	LV2Info(Ingen::Shared::World* world);
 	~LV2Info();
 
 	SLV2Value input_class;
@@ -47,23 +48,13 @@ public:
 	SLV2Value audio_class;
 	SLV2Value event_class;
 
-	LV2_Feature                     uri_map_feature;
-	LV2_URI_Map_Feature             uri_map_feature_data;
-	LV2_Feature                     event_feature;
-	LV2_Event_Feature               event_feature_data;
-	
-	typedef std::map<std::string, uint32_t> URIMap;
-	URIMap uri_map;
-	uint32_t next_uri_id;
-
-	static uint32_t uri_map_uri_to_id(LV2_URI_Map_Callback_Data callback_data,
-	                                  const char*               map,
-	                                  const char*               uri);
-
 	static uint32_t event_ref(LV2_Event_Callback_Data callback_data,
 	                          LV2_Event*              event);
 
-	LV2_Feature** lv2_features;
+	LV2_Feature** lv2_features() const { return _world->lv2_features->lv2_features(); }
+
+private:
+	Ingen::Shared::World* _world;
 };
 
 

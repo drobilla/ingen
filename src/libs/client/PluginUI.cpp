@@ -33,7 +33,7 @@ lv2_ui_write(LV2UI_Controller controller,
              uint32_t         format,
              const void*      buffer)
 {
-	cerr << "********* LV2 UI WRITE (FORMAT " << format << ":" << endl;
+	cerr << "********* LV2 UI WRITE (FORMAT " << format << "):" << endl;
 	/*lv2_osc_message_print((const LV2Message*)buffer);*/
 
 	fprintf(stderr, "RAW:\n");
@@ -51,16 +51,16 @@ lv2_ui_write(LV2UI_Controller controller,
 	SharedPtr<PortModel> port = ui->node()->ports()[port_index];
 	
 	if (format == 0) {
-		ui->engine()->set_port_value_immediate(port->path(),
+		ui->world()->engine->set_port_value_immediate(port->path(),
 				port->type().uri(), 
 				buffer_size, buffer);
 	}
 }
 
 	
-PluginUI::PluginUI(SharedPtr<EngineInterface> engine,
-                   SharedPtr<NodeModel>       node)
-	: _engine(engine)
+PluginUI::PluginUI(Ingen::Shared::World* world,
+                   SharedPtr<NodeModel>  node)
+	: _world(world)
 	, _node(node)
 	, _instance(NULL)
 {
@@ -74,14 +74,13 @@ PluginUI::~PluginUI()
 
 
 SharedPtr<PluginUI>
-PluginUI::create(SharedPtr<EngineInterface> engine,
-                 SharedPtr<NodeModel>       node,
-                 SLV2World                  world,
-                 SLV2Plugin                 plugin)
+PluginUI::create(Ingen::Shared::World* world,
+                 SharedPtr<NodeModel>  node,
+                 SLV2Plugin            plugin)
 {
 	SharedPtr<PluginUI> ret;
 
-	SLV2Value gtk_gui_uri = slv2_value_new_uri(world,
+	SLV2Value gtk_gui_uri = slv2_value_new_uri(world->slv2_world,
 		"http://lv2plug.in/ns/extensions/ui#GtkUI");
 
 	SLV2UIs uis = slv2_plugin_get_uis(plugin);
@@ -99,9 +98,9 @@ PluginUI::create(SharedPtr<EngineInterface> engine,
 
 	if (ui) {
 		cout << "Found GTK Plugin UI: " << slv2_ui_get_uri(ui) << endl;
-		ret = SharedPtr<PluginUI>(new PluginUI(engine, node));
+		ret = SharedPtr<PluginUI>(new PluginUI(world, node));
 		SLV2UIInstance inst = slv2_ui_instantiate(
-				plugin, ui, lv2_ui_write, ret.get(), NULL);
+				plugin, ui, lv2_ui_write, ret.get(), world->lv2_features->lv2_features());
 
 		if (inst) {
 			ret->set_instance(inst);

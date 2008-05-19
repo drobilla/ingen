@@ -49,7 +49,7 @@ NodeFactory::NodeFactory(Ingen::Shared::World* world)
 	: _world(world)
 	, _has_loaded(false)
 #ifdef HAVE_SLV2
-	, _lv2_info(new LV2Info(world->slv2_world))
+	, _lv2_info(new LV2Info(world))
 #endif
 {
 }

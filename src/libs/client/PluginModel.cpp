@@ -97,14 +97,14 @@ lv2_ui_write(LV2UI_Controller controller,
 	
 #ifdef HAVE_SLV2
 SharedPtr<PluginUI>
-PluginModel::ui(SharedPtr<EngineInterface> engine, SharedPtr<NodeModel> node) const
+PluginModel::ui(Ingen::Shared::World* world, SharedPtr<NodeModel> node) const
 {
 	if (_type != LV2)
 		return SharedPtr<PluginUI>();
 
 	Glib::Mutex::Lock(_rdf_world->mutex());
 
-	return PluginUI::create(engine, node, _slv2_world, _slv2_plugin);
+	return PluginUI::create(world, node, _slv2_plugin);
 }
 
 

@@ -29,6 +29,7 @@
 #endif
 #include "interface/EngineInterface.hpp"
 #include "interface/Plugin.hpp"
+#include "module/World.hpp"
 
 using std::string;
 
@@ -96,8 +97,8 @@ public:
 		_slv2_plugins = slv2_world_get_all_plugins(_slv2_world);
 	}
 
-	SharedPtr<PluginUI> ui(SharedPtr<Shared::EngineInterface> engine,
-	                       SharedPtr<NodeModel>               node) const;
+	SharedPtr<PluginUI> ui(Ingen::Shared::World* world,
+	                       SharedPtr<NodeModel>  node) const;
 
 	const string& icon_path() const;
 	static string get_lv2_icon_path(SLV2Plugin plugin);

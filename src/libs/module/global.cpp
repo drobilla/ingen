@@ -47,6 +47,7 @@ get_world()
         world->rdf_world = new Redland::World();
 #ifdef HAVE_SLV2
 		world->slv2_world = slv2_world_new_using_rdf_world(world->rdf_world->world());
+		world->lv2_features = new LV2Features();
 		slv2_world_load_all(world->slv2_world);
 #endif
 		world->engine = NULL;
@@ -68,6 +69,7 @@ destroy_world()
 	if (world) {
 #ifdef HAVE_SLV2
 		slv2_world_free(world->slv2_world);
+		delete world->lv2_features;
 #endif
         delete world->rdf_world;
 		delete world;

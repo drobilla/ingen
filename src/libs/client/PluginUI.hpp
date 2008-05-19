@@ -20,6 +20,7 @@
 
 #include <slv2/slv2.h>
 #include <raul/SharedPtr.hpp>
+#include "module/World.hpp"
 
 namespace Ingen {
 namespace Shared { class EngineInterface; }
@@ -36,25 +37,23 @@ class PluginUI {
 public:
 	~PluginUI();
 
-	static SharedPtr<PluginUI>
-	create(SharedPtr<Shared::EngineInterface> engine,
-	       SharedPtr<NodeModel>               node,
-	       SLV2World                          world,
-	       SLV2Plugin                         plugin);
+	static SharedPtr<PluginUI> create(Ingen::Shared::World* world,
+	                                  SharedPtr<NodeModel>  node,
+	                                  SLV2Plugin            plugin);
 
-	SharedPtr<Shared::EngineInterface> engine()   { return _engine; }
-	SharedPtr<NodeModel>               node()     { return _node; }
-	SLV2UIInstance                     instance() { return _instance; }
+	Ingen::Shared::World* world()    const { return _world; }
+	SharedPtr<NodeModel>  node()     const { return _node; }
+	SLV2UIInstance        instance() const { return _instance; }
 
 private:
-	PluginUI(SharedPtr<Ingen::Shared::EngineInterface> engine,
-	         SharedPtr<NodeModel>                      node);
+	PluginUI(Ingen::Shared::World* world,
+	         SharedPtr<NodeModel>  node);
 
 	void set_instance(SLV2UIInstance instance) { _instance = instance; }
 
-	SharedPtr<Shared::EngineInterface> _engine;
-	SharedPtr<NodeModel>               _node;
-	SLV2UIInstance                     _instance;
+	Ingen::Shared::World* _world;
+	SharedPtr<NodeModel>  _node;
+	SLV2UIInstance        _instance;
 };
 
 

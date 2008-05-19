@@ -24,6 +24,7 @@
 #include <glibmm/module.h>
 #include <raul/SharedPtr.hpp>
 #include <redlandmm/World.hpp>
+#include "shared/LV2Features.hpp"
 
 #ifdef HAVE_SLV2
 #include <slv2/slv2.h>
@@ -50,8 +51,10 @@ class EngineInterface;
  */
 struct World {
 #ifdef HAVE_SLV2
-	SLV2World slv2_world;
+	SLV2World    slv2_world;
+	LV2Features* lv2_features;
 #endif
+
 	Redland::World* rdf_world;
 
     EngineInterface* engine;

@@ -20,40 +20,32 @@
 #include <iostream>
 #include <stdint.h>
 #include "LV2Info.hpp"
+#include <module/World.hpp>
 
 using namespace std;
 
 namespace Ingen {
 	
-LV2Info::LV2Info(SLV2World world)
-	: input_class(slv2_value_new_uri(world, SLV2_PORT_CLASS_INPUT))
-	, output_class(slv2_value_new_uri(world, SLV2_PORT_CLASS_OUTPUT))
-	, control_class(slv2_value_new_uri(world, SLV2_PORT_CLASS_CONTROL))
-	, audio_class(slv2_value_new_uri(world, SLV2_PORT_CLASS_AUDIO))
-	, event_class(slv2_value_new_uri(world, SLV2_PORT_CLASS_EVENT))
-	, next_uri_id(1)
-	, lv2_features(new LV2_Feature*[3])
+LV2Info::LV2Info(Ingen::Shared::World* world)
+	: input_class(slv2_value_new_uri(world->slv2_world, SLV2_PORT_CLASS_INPUT))
+	, output_class(slv2_value_new_uri(world->slv2_world, SLV2_PORT_CLASS_OUTPUT))
+	, control_class(slv2_value_new_uri(world->slv2_world, SLV2_PORT_CLASS_CONTROL))
+	, audio_class(slv2_value_new_uri(world->slv2_world, SLV2_PORT_CLASS_AUDIO))
+	, event_class(slv2_value_new_uri(world->slv2_world, SLV2_PORT_CLASS_EVENT))
+	, _world(world)
 {
-	uri_map_feature_data.uri_to_id = &LV2Info::uri_map_uri_to_id;
-	uri_map_feature_data.callback_data = this;
-	uri_map_feature.URI = LV2_URI_MAP_URI;
-	uri_map_feature.data = &uri_map_feature_data;
+	// Client would never add the event referencing feature
+	assert( ! world->lv2_features->feature(LV2_EVENT_URI));
 
-	event_feature_data.lv2_event_ref= &LV2Info::event_ref;
-	event_feature_data.lv2_event_unref= &LV2Info::event_ref;
-	event_feature_data.callback_data = this;
-	event_feature.URI = LV2_EVENT_URI;
-	event_feature.data = &event_feature_data;
+	LV2_Event_Feature* ev_data = (LV2_Event_Feature*)malloc(sizeof(LV2_Event_Feature));
+	ev_data->lv2_event_ref = &LV2Info::event_ref;
+	ev_data->lv2_event_unref = &LV2Info::event_ref;
+	ev_data->callback_data = this;
+	LV2_Feature* ev_feature = (LV2_Feature*)malloc(sizeof(LV2_Event_Feature));
+	ev_feature->URI = LV2_EVENT_URI;
+	ev_feature->data = ev_data;
 
-	lv2_features[0] = &uri_map_feature;
-	lv2_features[1] = &event_feature;
-	lv2_features[2] = NULL;
-
-	/* this is needed so we get a fixed type ID for MIDI, it would
-	   probably be better to make the type map accessible from any
-	   JackMidiPort. */
-	next_uri_id++;
-	uri_map.insert(make_pair(string("http://lv2plug.in/ns/ext/midi#MidiEvent"), 1));
+	world->lv2_features->add_feature(LV2_EVENT_URI, ev_feature, ev_data);
 }
 
 
@@ -64,32 +56,6 @@ LV2Info::~LV2Info()
 	slv2_value_free(control_class);
 	slv2_value_free(audio_class);
 	slv2_value_free(event_class);
-}
-
-
-	
-uint32_t
-LV2Info::uri_map_uri_to_id(LV2_URI_Map_Callback_Data callback_data,
-                           const char*               map,
-                           const char*               uri)
-{
-	// TODO: map ignored, < UINT16_MAX assumed
-	
-	LV2Info* me = (LV2Info*)callback_data;
-	uint32_t ret = 0;
-
-	URIMap::iterator i = me->uri_map.find(uri);
-	if (i != me->uri_map.end()) {
-		ret = i->second;
-	} else {
-		ret = me->next_uri_id++;
-		me->uri_map.insert(make_pair(string(uri), ret));
-	}
-	
-	cout << "URI MAP (" << map << "): " << uri << " -> " << ret << endl; 
-
-	assert(ret <= UINT16_MAX);
-	return ret;
 }
 
 

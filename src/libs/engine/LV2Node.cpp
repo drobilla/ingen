@@ -75,6 +75,7 @@ LV2Node::prepare_poly(uint32_t poly)
 
 	_prepared_instances = new Raul::Array<SLV2Instance>(poly, *_instances);
 	for (uint32_t i = _polyphony; i < _prepared_instances->size(); ++i) {
+		// FIXME: features array (in NodeFactory) must be passed!
 		_prepared_instances->at(i) = slv2_plugin_instantiate(
 				_lv2_plugin->slv2_plugin(), _srate, NULL);
 
@@ -137,7 +138,7 @@ LV2Node::instantiate()
 	uint32_t port_buffer_size = 0;
 	
 	for (uint32_t i=0; i < _polyphony; ++i) {
-		(*_instances)[i] = slv2_plugin_instantiate(plug, _srate, info->lv2_features);
+		(*_instances)[i] = slv2_plugin_instantiate(plug, _srate, info->lv2_features());
 		if ((*_instances)[i] == NULL) {
 			cerr << "Failed to instantiate plugin!" << endl;
 			return false;

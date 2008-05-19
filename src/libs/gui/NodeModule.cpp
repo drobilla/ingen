@@ -138,7 +138,7 @@ NodeModule::embed_gui(bool embed)
 			const PluginModel* const plugin = dynamic_cast<const PluginModel*>(_node->plugin());
 			assert(plugin);
 
-			_plugin_ui = plugin->ui(App::instance().engine(), _node);
+			_plugin_ui = plugin->ui(App::instance().world(), _node);
 
 			if (_plugin_ui) {
 				c_widget = (GtkWidget*)slv2_ui_instance_get_widget(_plugin_ui->instance());
@@ -281,7 +281,7 @@ NodeModule::popup_gui()
 		const PluginModel* const plugin = dynamic_cast<const PluginModel*>(_node->plugin());
 		assert(plugin);
 
-		_plugin_ui = plugin->ui(App::instance().engine(), _node);
+		_plugin_ui = plugin->ui(App::instance().world(), _node);
 
 		if (_plugin_ui) {
 			GtkWidget* c_widget = (GtkWidget*)slv2_ui_instance_get_widget(_plugin_ui->instance());
