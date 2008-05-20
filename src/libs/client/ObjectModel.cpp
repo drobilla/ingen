@@ -124,7 +124,6 @@ ObjectModel::set(SharedPtr<ObjectModel> model)
 		
 		if (mine != _variables.end()) {
 			cerr << "WARNING:  " << _path << "Client/Server data mismatch: " << other->first << endl;
-			cerr << "Setting server value " << other->second;
 		}
 
 		_variables[other->first] = other->second;

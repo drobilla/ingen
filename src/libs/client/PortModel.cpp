@@ -26,7 +26,7 @@ bool
 PortModel::is_logarithmic() const
 {
 	const Atom& hint = get_variable("ingen:logarithmic");
-	return (hint && hint > 0);
+	return (hint.is_valid() && hint.get_bool() > 0);
 }
 
 
@@ -34,7 +34,7 @@ bool
 PortModel::is_integer() const
 {
 	const Atom& hint = get_variable("ingen:integer");
-	return (hint && hint > 0);
+	return (hint.is_valid() && hint.get_bool() > 0);
 }
 
 
@@ -42,7 +42,7 @@ bool
 PortModel::is_toggle() const
 {
 	const Atom& hint = get_variable("ingen:toggled");
-	return (hint && hint > 0);
+	return (hint.is_valid() && hint.get_bool() > 0);
 }
 
 } // namespace Client

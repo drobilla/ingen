@@ -432,7 +432,7 @@ Serialiser::serialise_variables(Redland::Node subject, const GraphObject::Variab
 {
 	for (GraphObject::Variables::const_iterator v = variables.begin(); v != variables.end(); ++v) {
 		if (v->first.find(":") != string::npos) {
-			if (v->second) {
+			if (v->second.is_valid()) {
 			const Redland::Node var_id = _world.blank_id();
 			const Redland::Node key(_model->world(), Redland::Node::RESOURCE, v->first);
 			const Redland::Node value = AtomRDF::atom_to_node(_model->world(), v->second);

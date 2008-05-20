@@ -62,13 +62,13 @@ Port::Port(boost::shared_ptr<FlowCanvas::Module> module, SharedPtr<PortModel> pm
 		set_control_min(min);
 		set_control_max(max);
 
-		pm->signal_variable.connect(sigc::mem_fun(this, &Port::variable_change));
-		_port_model->signal_value_changed.connect(sigc::mem_fun(this, &Port::control_changed));
+		pm->signal_variable.connect(sigc::mem_fun(this, &Port::variable_changed));
+		_port_model->signal_value_changed.connect(sigc::mem_fun(this, &Port::value_changed));
 	}
 		
 	_port_model->signal_activity.connect(sigc::mem_fun(this, &Port::activity));
 	
-	control_changed(_port_model->value());
+	value_changed(_port_model->value());
 }
 
 
@@ -92,9 +92,12 @@ Port::renamed()
 
 
 void
-Port::control_changed(float value)
+Port::value_changed(const Atom& value)
 {
-	FlowCanvas::Port::set_control(value);
+	if (value.type() == Atom::FLOAT)
+		FlowCanvas::Port::set_control(value.get_float());
+	else
+		cerr << "WARNING: Unknown port value type " << (unsigned)value.type() << endl;
 }
 
 	
@@ -120,7 +123,7 @@ Port::set_control(float value, bool signal)
 
 
 void
-Port::variable_change(const string& key, const Atom& value)
+Port::variable_changed(const string& key, const Atom& value)
 {
 	if ( (key == "ingen:minimum") && value.type() == Atom::FLOAT)
 		set_control_min(value.get_float());

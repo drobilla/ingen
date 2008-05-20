@@ -160,7 +160,7 @@ DeprecatedLoader::load_patch(const Glib::ustring&   filename,
 	/* Use parameter overridden polyphony, if given */
 	GraphObject::Variables::iterator poly_param = initial_data.find("ingen:polyphony");
 	if (poly_param != initial_data.end() && poly_param->second.type() == Atom::INT)
-		poly = poly_param->second;
+		poly = poly_param->second.get_int32();
 	
 	if (initial_data.find("filename") == initial_data.end())
 		initial_data["filename"] = Atom(filename.c_str()); // FIXME: URL?

@@ -110,7 +110,6 @@ void
 NodeModule::value_changed(uint32_t index, const Atom& value)
 {
 	float control = value.get_float();
-	cout << _node->name() << " control " << index << " = " << control << endl;
 	if (_plugin_ui) {
 		SLV2UIInstance inst = _plugin_ui->instance();
 		const LV2UI_Descriptor* ui_descriptor = slv2_ui_instance_get_descriptor(inst);

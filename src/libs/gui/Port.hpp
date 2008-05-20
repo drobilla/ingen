@@ -47,12 +47,12 @@ public:
 	void create_menu();
 	
 	virtual void set_control(float value, bool signal);
-	void control_changed(float value);
+	void value_changed(const Raul::Atom& value);
 	void activity();
 	
 private:
 	
-	void variable_change(const std::string& key, const Raul::Atom& value);
+	void variable_changed(const std::string& key, const Raul::Atom& value);
 
 	void renamed();
 

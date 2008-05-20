@@ -75,11 +75,11 @@ UploadPatchWindow::on_show()
 	Gtk::Dialog::on_show();
 
 	Raul::Atom atom = _patch->get_variable("lv2:symbol");
-	if (atom)
+	if (atom.is_valid())
 		_symbol_entry->set_text(atom.get_string());
 	
 	atom = _patch->get_variable("doap:name");
-	if (atom)
+	if (atom.is_valid())
 		_short_name_entry->set_text(atom.get_string());
 }
 

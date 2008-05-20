@@ -511,7 +511,7 @@ Store::variable_change_event(const Path& subject_path, const string& predicate, 
 {
 	SharedPtr<ObjectModel> subject = object(subject_path);
 
-	if (!value) {
+	if (!value.is_valid()) {
 		cerr << "ERROR: variable '" << predicate << "' has no type" << endl;
 	} else if (subject) {
 		subject->set_variable(predicate, value);

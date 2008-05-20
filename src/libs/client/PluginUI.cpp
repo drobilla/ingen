@@ -16,12 +16,14 @@
  */
 
 #include <iostream>
+#include "shared/LV2URIMap.hpp"
 #include "PluginUI.hpp"
 #include "NodeModel.hpp"
 #include "PortModel.hpp"
 
 using namespace std;
 using Ingen::Shared::EngineInterface;
+using Ingen::Shared::LV2URIMap;
 
 namespace Ingen {
 namespace Client {
@@ -33,6 +35,7 @@ lv2_ui_write(LV2UI_Controller controller,
              uint32_t         format,
              const void*      buffer)
 {
+#if 0
 	cerr << "********* LV2 UI WRITE (FORMAT " << format << "):" << endl;
 	/*lv2_osc_message_print((const LV2Message*)buffer);*/
 
@@ -45,16 +48,24 @@ lv2_ui_write(LV2UI_Controller controller,
 			fprintf(stderr, "%2X ", ((unsigned char*)buffer)[i]);
 	}
 	fprintf(stderr, "\n");
+#endif
 
 	PluginUI* ui = (PluginUI*)controller;
 
 	SharedPtr<PortModel> port = ui->node()->ports()[port_index];
 	
-	if (format == 0) {
-		ui->world()->engine->set_port_value_immediate(port->path(),
-				port->type().uri(), 
-				buffer_size, buffer);
+	LV2URIMap* map = (LV2URIMap*)ui->world()->lv2_features->feature(LV2_URI_MAP_URI);
+	assert(map);
+
+	if (format == 0) { // float (special case)
+		assert(buffer_size == 4);
+		if (*(float*)buffer == port->value().get_float())
+			return; // do nothing (handle stupid plugin UIs that feed back)
 	}
+		
+	ui->world()->engine->set_port_value_immediate(port->path(),
+			port->type().uri(), 
+			buffer_size, buffer);
 }
 
 	

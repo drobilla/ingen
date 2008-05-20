@@ -155,6 +155,8 @@ ConnectWindow::set_connected_to(SharedPtr<Shared::EngineInterface> engine)
 
 		_progress_label->set_text(string("Disconnected"));
 	}
+
+	App::instance().world()->engine = engine.get();
 }
 
 

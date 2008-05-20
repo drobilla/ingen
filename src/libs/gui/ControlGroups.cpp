@@ -249,7 +249,7 @@ SliderControlGroup::update_value_from_slider()
 		
 		if (_port_model->is_integer()) {
 			value = lrintf(value);
-			if (value == lrintf(_port_model->value()))
+			if (value == lrintf(_port_model->value().get_float()))
 				change = false;
 		}
 		
