@@ -47,6 +47,7 @@ PortImpl::PortImpl(NodeImpl* const node,
 	, _value(value)
 	, _fixed_buffers(false)
 	, _broadcast(false)
+	, _set_by_user(false)
 	, _last_broadcasted_value(_value.type() == Atom::FLOAT ? _value.get_float() : 0.0f) // default?
 	, _buffers(new Raul::Array<Buffer*>(poly))
 {

@@ -39,10 +39,10 @@ namespace Ingen {
 //// JackMidiPort ////
 
 JackMidiPort::JackMidiPort(JackMidiDriver* driver, DuplexPort* patch_port)
-: DriverPort(patch_port),
-  Raul::List<JackMidiPort*>::Node(this),
-  _driver(driver),
-  _jack_port(NULL)
+	: DriverPort(patch_port)
+	, Raul::List<JackMidiPort*>::Node(this)
+	, _driver(driver)
+	, _jack_port(NULL)
 {
 	assert(patch_port->poly() == 1);
 
@@ -146,9 +146,9 @@ bool JackMidiDriver::_midi_thread_exit_flag = true;
 
 
 JackMidiDriver::JackMidiDriver(jack_client_t* client)
-: _client(client),
-  _is_activated(false),
-  _is_enabled(false)
+	: _client(client)
+	, _is_activated(false)
+	, _is_enabled(false)
 {
 }
 

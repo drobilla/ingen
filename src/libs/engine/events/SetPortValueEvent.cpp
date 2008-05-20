@@ -61,14 +61,14 @@ SetPortValueEvent::SetPortValueEvent(Engine&              engine,
                                      const string&        port_path,
                                      uint32_t             data_size,
                                      const void*          data)
-: Event(engine, responder, timestamp),
-  _omni(false),
-  _voice_num(voice_num),
-  _port_path(port_path),
-  _data_size(data_size),
-  _data(malloc(data_size)),
-  _port(NULL),
-  _error(NO_ERROR)
+	: Event(engine, responder, timestamp)
+	, _omni(false)
+	, _voice_num(voice_num)
+	, _port_path(port_path)
+	, _data_size(data_size)
+	, _data(malloc(data_size))
+	, _port(NULL)
+	, _error(NO_ERROR)
 {
 	memcpy(_data, data, data_size);
 }
@@ -112,7 +112,9 @@ SetPortValueEvent::execute(ProcessContext& context)
 		if (ebuf) {
 			const uint32_t frames = std::max((uint32_t)(_time - context.start()), ebuf->latest_frames());
 			// FIXME: type
+			ebuf->prepare_write(context.nframes());
 			ebuf->append(frames, 0, 0, _data_size, (const unsigned char*)_data);
+			_port->raise_set_by_user_flag();
 			return;
 		}
 	}

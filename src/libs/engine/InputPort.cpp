@@ -155,6 +155,11 @@ InputPort::is_connected_to(const OutputPort* port) const
 void
 InputPort::pre_process(ProcessContext& context)
 {
+	// If value has been set (e.g. events pushed) by the user,
+	// don't do anything this cycle to avoid smashing the value
+	if (_set_by_user)
+		return;
+
 	bool do_mixdown = true;
 	
 	if (_connections.size() == 0) {
@@ -221,8 +226,8 @@ InputPort::pre_process(ProcessContext& context)
 		assert(_poly == 1);
 		
 		// FIXME
-		//if (_connections.size() > 1)
-		//	cerr << "WARNING: MIDI mixing not implemented, only first connection used." << endl;
+		if (_connections.size() > 1)
+			cerr << "WARNING: MIDI mixing not implemented, only first connection used." << endl;
 			
 		// Copy first connection
 		_buffers->at(0)->copy(
@@ -239,6 +244,8 @@ InputPort::post_process(ProcessContext& context)
 	// Prepare for next cycle
 	for (uint32_t i=0; i < _poly; ++i)
 		buffer(i)->prepare_write(context.nframes());
+
+	_set_by_user = false;
 	
 	/*if (_broadcast && (_type == DataType::CONTROL)) {
 		const Sample value = ((AudioBuffer*)(*_buffers)[0])->value_at(0);

@@ -57,6 +57,7 @@ EventBuffer::EventBuffer(size_t capacity)
 	//cerr << "Creating MIDI Buffer " << _buf << ", capacity = " << _buf->capacity << endl;
 }
 
+
 EventBuffer::~EventBuffer()
 {
 	free(_local_buf);

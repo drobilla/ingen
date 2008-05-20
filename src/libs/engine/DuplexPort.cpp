@@ -24,6 +24,7 @@
 #include "OutputPort.hpp"
 #include "NodeImpl.hpp"
 #include "ProcessContext.hpp"
+#include "EventBuffer.hpp"
 
 using namespace std;
 
@@ -45,14 +46,22 @@ DuplexPort::pre_process(ProcessContext& context)
 {
 	// <BrainHurt>
 		
-	/*cerr << path() << " duplex pre: fixed buffers: " << fixed_buffers() << endl;
+	/*cerr << endl << "{ duplex pre" << endl;
+	cerr << path() << " duplex pre: fixed buffers: " << fixed_buffers() << endl;
 	cerr << path() << " duplex pre: buffer: " << buffer(0) << endl;
 	cerr << path() << " duplex pre: is_output: " << _is_output << " { " << endl;*/
+	
+	/*if (type() == DataType::EVENT) 
+		for (uint32_t i=0; i < _poly; ++i)
+			cerr << path() << " (" << buffer(i) << ") # events: "
+				<< ((EventBuffer*)buffer(i))->event_count()
+				<< ", joined: " << _buffers->at(i)->is_joined() << endl;*/
 	
 	if (_is_output) {
 
 		for (uint32_t i=0; i < _poly; ++i)
-			_buffers->at(i)->prepare_write(context.nframes());
+			if (!_buffers->at(i)->is_joined())
+				_buffers->at(i)->prepare_write(context.nframes());
 
 	} else {
 
@@ -62,7 +71,7 @@ DuplexPort::pre_process(ProcessContext& context)
 		broadcast(context);
 	}
 
-	//cerr << "} pre " << path() << endl;
+	//cerr << "} duplex pre " << path() << endl;
 
 	// </BrainHurt>
 }
@@ -71,20 +80,27 @@ DuplexPort::pre_process(ProcessContext& context)
 void
 DuplexPort::post_process(ProcessContext& context)
 {
-	/*cerr << path() << " duplex post: fixed buffers: " << fixed_buffers() << endl;
-	cerr << path() << " duplex post: buffer: " << buffer(0) << endl;
-	cerr << path() << " duplex post: is_output: " << _is_output << " { " << endl;*/
-	
 	// <BrainHurt>
+	
+	/*cerr << endl << "{ duplex post" << endl;
+	cerr << path() << " duplex post: fixed buffers: " << fixed_buffers() << endl;
+	cerr << path() << " duplex post: buffer: " << buffer(0) << endl;
+	cerr << path() << " duplex post: is_output: " << _is_output << " { " << endl;
+	
+	if (type() == DataType::EVENT) 
+		for (uint32_t i=0; i < _poly; ++i)
+			cerr << path() << " (" << buffer(i) << ") # events: "
+				<< ((EventBuffer*)buffer(i))->event_count()
+				<< ", joined: " << _buffers->at(i)->is_joined() << endl;*/
+
 	if (_is_output) {
 		InputPort::pre_process(context); // Mix down inputs
 		broadcast(context);
 	}
-
-	OutputPort::pre_process(context);
-	// </BrainHurt>
 	
-	//cerr << "} post " << path() << endl;
+	//cerr << "} duplex post " << path() << endl;
+	
+	// </BrainHurt>
 }
 
 

@@ -105,6 +105,8 @@ public:
 	void broadcast(bool b) { _broadcast = b; }
 	bool broadcast()       { return _broadcast; }
 
+	void raise_set_by_user_flag() { _set_by_user = true; }
+
 protected:
 	PortImpl(NodeImpl*          node,
 	         const std::string& name,
@@ -125,6 +127,7 @@ protected:
 	Raul::Atom _value;
 	bool       _fixed_buffers;
 	bool       _broadcast;
+	bool       _set_by_user;
 	Sample     _last_broadcasted_value;
 
 	Raul::Array<Buffer*>* _buffers;

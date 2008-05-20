@@ -34,12 +34,12 @@ namespace Ingen {
 
 
 PatchImpl::PatchImpl(Engine& engine, const string& path, uint32_t poly, PatchImpl* parent, SampleRate srate, size_t buffer_size, uint32_t internal_poly) 
-: NodeBase(new PatchPlugin("http://example.org/FIXME", "patch", "Ingen Patch"),
-		path, poly, parent, srate, buffer_size),
-  _engine(engine),
-  _internal_poly(internal_poly),
-  _compiled_patch(NULL),
-  _process(false)
+	: NodeBase(new PatchPlugin("http://example.org/FIXME", "patch", "Ingen Patch"),
+		path, poly, parent, srate, buffer_size)
+	, _engine(engine)
+	, _internal_poly(internal_poly)
+	, _compiled_patch(NULL)
+	, _process(false)
 {
 	assert(internal_poly >= 1);
 }
@@ -139,7 +139,7 @@ PatchImpl::apply_internal_poly(Raul::Maid& maid, uint32_t poly)
 void
 PatchImpl::process(ProcessContext& context)
 {
-	if (_compiled_patch == NULL || _compiled_patch->size() == 0 || !_process)
+	if (!_process)
 		return;
 	
 	NodeBase::pre_process(context);
@@ -152,10 +152,12 @@ PatchImpl::process(ProcessContext& context)
 					<< ((MidiBuffer*)_ports->at(i)->buffer(0))->event_count() << endl;*/
 
 	/* Run */
-	if (_engine.process_slaves().size() > 0)
-		process_parallel(context);
-	else
-		process_single(context);
+	if (_compiled_patch && _compiled_patch->size() > 0) {
+		if (_engine.process_slaves().size() > 0)
+			process_parallel(context);
+		else
+			process_single(context);
+	}
 
 	NodeBase::post_process(context);
 }
