@@ -29,8 +29,8 @@
 #include "module/global.hpp"
 #include "module/World.hpp"
 #include "shared/LV2URIMap.hpp"
-#include "lv2/uri_map/lv2_uri_map.h"
-#include "lv2/event/lv2_event.h"
+#include "lv2ext/lv2_uri_map.h"
+#include "lv2ext/lv2_event.h"
 	
 namespace Ingen {
 	
