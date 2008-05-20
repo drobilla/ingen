@@ -102,7 +102,6 @@ void
 EventBuffer::prepare_read(SampleCount nframes)
 {
 	//cerr << "\t" << this << " prepare_read: " << event_count() << endl;
-
 	rewind();
 	_this_nframes = nframes;
 }

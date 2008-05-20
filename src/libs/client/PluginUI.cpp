@@ -16,6 +16,7 @@
  */
 
 #include <iostream>
+#include "lv2ext/lv2_event_helpers.h"
 #include "shared/LV2URIMap.hpp"
 #include "PluginUI.hpp"
 #include "NodeModel.hpp"
@@ -35,10 +36,8 @@ lv2_ui_write(LV2UI_Controller controller,
              uint32_t         format,
              const void*      buffer)
 {
-#if 0
-	cerr << "********* LV2 UI WRITE (FORMAT " << format << "):" << endl;
-	/*lv2_osc_message_print((const LV2Message*)buffer);*/
-
+	/*
+	cerr << "lv2_ui_write (format " << format << "):" << endl;
 	fprintf(stderr, "RAW:\n");
 	for (uint32_t i=0; i < buffer_size; ++i) {
 		unsigned char byte = ((unsigned char*)buffer)[i];
@@ -48,7 +47,7 @@ lv2_ui_write(LV2UI_Controller controller,
 			fprintf(stderr, "%2X ", ((unsigned char*)buffer)[i]);
 	}
 	fprintf(stderr, "\n");
-#endif
+	*/
 
 	PluginUI* ui = (PluginUI*)controller;
 
@@ -57,15 +56,35 @@ lv2_ui_write(LV2UI_Controller controller,
 	LV2URIMap* map = (LV2URIMap*)ui->world()->lv2_features->feature(LV2_URI_MAP_URI);
 	assert(map);
 
-	if (format == 0) { // float (special case)
+	// float (special case, always 0)
+	if (format == 0) {
 		assert(buffer_size == 4);
 		if (*(float*)buffer == port->value().get_float())
 			return; // do nothing (handle stupid plugin UIs that feed back)
+	
+		ui->world()->engine->set_port_value_immediate(port->path(),
+				port->type().uri(), 
+				buffer_size, buffer);
+
+	// FIXME: assumes event
+	} else {
+		LV2_Event_Buffer* buf = (LV2_Event_Buffer*)buffer;
+		LV2_Event_Iterator iter;
+		uint8_t* data;
+		lv2_event_begin(&iter, buf);
+		while (lv2_event_is_valid(&iter)) {
+			LV2_Event* const ev = lv2_event_get(&iter, &data);
+		
+			// FIXME: bundle multiple events
+			ui->world()->engine->set_port_value_immediate(port->path(),
+				port->type().uri(), 
+				ev->size, data);
+
+			lv2_event_increment(&iter);
+		}
 	}
 		
-	ui->world()->engine->set_port_value_immediate(port->path(),
-			port->type().uri(), 
-			buffer_size, buffer);
+
 }
 
 	

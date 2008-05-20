@@ -20,6 +20,7 @@
 #include <cstdlib>
 #include <cassert>
 #include "AudioBuffer.hpp"
+#include "EventBuffer.hpp"
 #include "ConnectionImpl.hpp"
 #include "OutputPort.hpp"
 #include "NodeImpl.hpp"
@@ -184,17 +185,19 @@ InputPort::pre_process(ProcessContext& context)
 	
 	/*cerr << path() << " poly = " << _poly << ", mixdown: " << do_mixdown
 		<< ", fixed buffers: " << _fixed_buffers << ", joined: " << _buffers->at(0)->is_joined()
-		<< " to " << _buffers->at(0)->joined_buffer() << endl;
+		<< " to " << _buffers->at(0)->joined_buffer() << endl;*/
 	
-	if (type() == DataType::MIDI) 
+	/*if (type() == DataType::EVENT) 
 		for (uint32_t i=0; i < _poly; ++i)
-			cerr << path() << " (" << buffer(i) << ") # events: " << ((MidiBuffer*)buffer(i))->event_count() << ", joined: " << _buffers->at(i)->is_joined() << endl;*/
+			cerr << path() << " (" << buffer(i) << ") # events: "
+				<< ((EventBuffer*)buffer(i))->event_count()
+				<< ", joined: " << _buffers->at(i)->is_joined() << endl;*/
 
 	if (!do_mixdown) {
-/*#ifndef NDEBUG
+		/*#ifndef NDEBUG
 		for (uint32_t i=0; i < _poly; ++i)
 			assert(buffer(i) == (*_connections.begin())->buffer(i));
-#endif*/
+		#endif*/
 		return;
 	}
 
