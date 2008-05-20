@@ -65,6 +65,7 @@ public:
 	}
 
 	bool increment() const;
+	bool is_valid() const;
 
 	uint32_t latest_frames()    const { return _latest_frames; }
 	uint32_t latest_subframes() const { return _latest_subframes; }

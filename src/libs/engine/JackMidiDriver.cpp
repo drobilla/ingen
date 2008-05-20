@@ -107,18 +107,15 @@ JackMidiPort::post_process(ProcessContext& context)
 {
 	if (is_input())
 		return;
-	
-	assert(_patch_port->poly() == 1);
 
 	EventBuffer* patch_buf = dynamic_cast<EventBuffer*>(_patch_port->buffer(0));
+	void*        jack_buf  = jack_port_get_buffer(_jack_port, context.nframes());
+	
+	assert(_patch_port->poly() == 1);
 	assert(patch_buf);
 
-	void*                jack_buffer = jack_port_get_buffer(_jack_port, context.nframes());
-	const jack_nframes_t event_count = patch_buf->event_count();
-
 	patch_buf->prepare_read(context.nframes());
-
-	jack_midi_clear_buffer(jack_buffer);
+	jack_midi_clear_buffer(jack_buf);
 	
 	uint32_t frames = 0;
 	uint32_t subframes = 0;
@@ -127,10 +124,9 @@ JackMidiPort::post_process(ProcessContext& context)
 	uint8_t* data = NULL;
 
 	// Copy events from Jack port buffer into patch port buffer
-	for (jack_nframes_t i=0; i < event_count; ++i) {
+	for (patch_buf->rewind(); patch_buf->is_valid(); patch_buf->increment()) {
 		patch_buf->get_event(&frames, &subframes, &type, &size, &data);
-		// FIXME: type
-		jack_midi_event_write(jack_buffer, frames, data, size);
+		jack_midi_event_write(jack_buf, frames, data, size);
 	}
 
 	//if (event_count)

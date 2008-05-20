@@ -146,6 +146,16 @@ EventBuffer::increment() const
 }
 
 
+/**
+ * \return true iff the cursor is valid (ie get_event is safe)
+ */
+bool
+EventBuffer::is_valid() const
+{
+	return lv2_event_is_valid(&_iter);
+}
+
+
 /** Append an event to the buffer.
  *
  * \a timestamp must be >= the latest event in the buffer,
