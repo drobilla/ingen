@@ -112,7 +112,8 @@ Loader::load(SharedPtr<EngineInterface> engine,
 	
 	cout << " as " << patch_path << endl;
 	
-	engine->create_patch(patch_path, patch_poly);
+	if (patch_path != "/")
+		engine->create_patch(patch_path, patch_poly);
 
 	/* Load (plugin) nodes */
 
