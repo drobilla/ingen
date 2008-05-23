@@ -56,7 +56,7 @@ LV2Features::add_feature(const std::string& uri, LV2_Feature* feature, void* con
 #endif
 	_features.insert(make_pair(uri, Feature(feature, controller)));
 
-	_lv2_features = (LV2_Feature**)realloc(_lv2_features, _features.size() + 1);
+	_lv2_features = (LV2_Feature**)realloc(_lv2_features, sizeof(LV2_Feature*) * (_features.size() + 1));
 	_lv2_features[_features.size()-1] = feature;
 	_lv2_features[_features.size()] = NULL;
 }
