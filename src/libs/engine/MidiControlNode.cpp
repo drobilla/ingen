@@ -75,16 +75,15 @@ MidiControlNode::process(ProcessContext& context)
 	uint32_t subframes = 0;
 	uint16_t type = 0;
 	uint16_t size = 0;
-	uint8_t* data = NULL;
+	uint8_t* buf = NULL;
 
 	EventBuffer* const midi_in = (EventBuffer*)_midi_in_port->buffer(0);
 	assert(midi_in->this_nframes() == context.nframes());
 
-	while (midi_in->get_event(&frames, &subframes, &type, &size, &data) < context.nframes()) {
-
+	while (midi_in->get_event(&frames, &subframes, &type, &size, &buf)) {
 		// FIXME: type
-		if (size >= 3 && (data[0] & 0xF0) == MIDI_CMD_CONTROL)
-			control(data[1], data[2], (SampleCount)frames);
+		if (size >= 3 && (buf[0] & 0xF0) == MIDI_CMD_CONTROL)
+			control(buf[1], buf[2], (SampleCount)frames);
 		
 		midi_in->increment();
 	}

@@ -64,29 +64,28 @@ MidiTriggerNode::process(ProcessContext& context)
 	uint32_t subframes = 0;
 	uint16_t type = 0;
 	uint16_t size = 0;
-	uint8_t* data = NULL;
+	uint8_t* buf = NULL;
 
 	EventBuffer* const midi_in = (EventBuffer*)_midi_in_port->buffer(0);
 	assert(midi_in->this_nframes() == context.nframes());
 
-	while (midi_in->get_event(&frames, &subframes, &type, &size, &data) < context.nframes()) {
-		
+	while (midi_in->get_event(&frames, &subframes, &type, &size, &buf)) {
 		const FrameTime time = context.start() + (FrameTime)frames;
 
 		if (size >= 3) {
-			switch (data[0] & 0xF0) {
+			switch (buf[0] & 0xF0) {
 			case MIDI_CMD_NOTE_ON:
-				if (data[2] == 0)
-					note_off(data[1], time, context);
+				if (buf[2] == 0)
+					note_off(buf[1], time, context);
 				else
-					note_on(data[1], data[2], time, context);
+					note_on(buf[1], buf[2], time, context);
 				break;
 			case MIDI_CMD_NOTE_OFF:
-				note_off(data[1], time, context);
+				note_off(buf[1], time, context);
 				break;
 			case MIDI_CMD_CONTROL:
-				if (data[1] == MIDI_CTL_ALL_NOTES_OFF
-						|| data[1] == MIDI_CTL_ALL_SOUNDS_OFF)
+				if (buf[1] == MIDI_CTL_ALL_NOTES_OFF
+						|| buf[1] == MIDI_CTL_ALL_SOUNDS_OFF)
 					((AudioBuffer*)_gate_port->buffer(0))->set(0.0f, time);
 			default:
 				break;

@@ -57,6 +57,7 @@ public:
 	inline void clear() { reset(_this_nframes); }
 	inline void reset(SampleCount nframes) {
 		//std::cerr << this << " reset" << std::endl;
+		_this_nframes = nframes;
 		_latest_frames = 0;
 		_latest_subframes = 0;
 		_buf->event_count = 0;
@@ -93,8 +94,6 @@ private:
 	uint32_t _latest_frames;    ///< Latest time of all events (frames)
 	uint32_t _latest_subframes; ///< Latest time of all events (subframes)
 	uint32_t _this_nframes;     ///< Current cycle nframes
-
-
 };
 
 

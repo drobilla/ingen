@@ -120,7 +120,7 @@ MidiNoteNode::process(ProcessContext& context)
 	uint32_t       subframes = 0;
 	uint16_t       type = 0;
 	uint16_t       size = 0;
-	unsigned char* buffer = NULL;
+	unsigned char* buf = NULL;
 
 	EventBuffer* const midi_in = (EventBuffer*)_midi_in_port->buffer(0);
 	assert(midi_in->this_nframes() == context.nframes());
@@ -128,34 +128,34 @@ MidiNoteNode::process(ProcessContext& context)
 	//cerr << path() << " # input events: " << midi_in->event_count() << endl;
 
 	if (midi_in->event_count() > 0)
-	while (midi_in->get_event(&frames, &subframes, &type, &size, &buffer) < context.nframes()) {
+	while (midi_in->get_event(&frames, &subframes, &type, &size, &buf)) {
 
-		cout << "EVENT TYPE " << type << " @ " << frames << "." << subframes << ": ";
+		/*cout << "EVENT TYPE " << type << " @ " << frames << "." << subframes << ": ";
 		for (uint16_t i = 0; i < size; ++i)
-			cout << (int)((char)buffer[i]) << " ";
-		cout << endl;
+			cout << (int)((char)buf[i]) << " ";
+		cout << endl;*/
 		
 		const FrameTime time = context.start() + (FrameTime)frames;
 
 		if (size >= 3) {
-			switch (buffer[0] & 0xF0) {
+			switch (buf[0] & 0xF0) {
 			case MIDI_CMD_NOTE_ON:
-				if (buffer[2] == 0)
-					note_off(buffer[1], time, context);
+				if (buf[2] == 0)
+					note_off(buf[1], time, context);
 				else
-					note_on(buffer[1], buffer[2], time, context);
+					note_on(buf[1], buf[2], time, context);
 				break;
 			case MIDI_CMD_NOTE_OFF:
-				note_off(buffer[1], time, context);
+				note_off(buf[1], time, context);
 				break;
 			case MIDI_CMD_CONTROL:
-				switch (buffer[1]) {
+				switch (buf[1]) {
 				case MIDI_CTL_ALL_NOTES_OFF:
 				case MIDI_CTL_ALL_SOUNDS_OFF:
 					all_notes_off(time, context);
 					break;
 				case MIDI_CTL_SUSTAIN:
-					if (buffer[2] > 63)
+					if (buf[2] > 63)
 						sustain_on(time, context);
 					else
 						sustain_off(time, context);
@@ -164,16 +164,16 @@ MidiNoteNode::process(ProcessContext& context)
 					// ?
 					break;
 				default:
-					//cerr << "Ignored controller " << buffer[1] << endl;
+					//cerr << "Ignored controller " << buf[1] << endl;
 					break;
 				}
 				break;
 			default:
-				fprintf(stderr, "Unknown (size %d) MIDI event %X\n", size, buffer[0]);
+				fprintf(stderr, "Unknown (size %d) MIDI event %X\n", size, buf[0]);
 				break;
 			}
 		} else {
-			fprintf(stderr, "Unknown (size %d) MIDI event %X\n", size, buffer[0]);
+			fprintf(stderr, "Unknown (size %d) MIDI event %X\n", size, buf[0]);
 		}
 
 		if (midi_in->increment() == midi_in->this_nframes())
@@ -196,7 +196,7 @@ MidiNoteNode::note_on(uchar note_num, uchar velocity, FrameTime time, ProcessCon
 	uint32_t voice_num = 0;
 	
 	if (key->state != Key::OFF) {
-		cerr << "[MidiNoteNode] Double note.  Who be sendin dem crazy midis?" << endl;
+		//cerr << "[MidiNoteNode] Double midi note received" << endl;
 		return;
 	}
 
