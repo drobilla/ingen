@@ -135,11 +135,10 @@ ObjectStore::remove(Objects::iterator object)
 		//cout << "[ObjectStore] Removing " << object->first << " {" << endl;
 		SharedPtr< Table<Path, SharedPtr<Shared::GraphObject> > > removed
 				= _objects.yank(object, descendants_end);
-
-		for (Objects::iterator i = removed->begin(); i != removed->end(); ++i) {
+		/*for (Objects::iterator i = removed->begin(); i != removed->end(); ++i) {
 			cout << "\t" << i->first << endl;
 		}
-		cout << "}" << endl;
+		cout << "}" << endl;*/
 	
 		return removed;
 
