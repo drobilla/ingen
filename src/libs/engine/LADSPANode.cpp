@@ -188,12 +188,14 @@ LADSPANode::instantiate()
 
 		// Work around broke-ass crackhead plugins
 		if (default_val < min) {
-			cerr << "WARNING: Broken LADSPA: Port default < minimum.  Minimum adjusted." << endl;
+			cerr << "WARNING: Broken LADSPA " << _descriptor->UniqueID
+					<< ": Port default < minimum.  Minimum adjusted." << endl;
 			min = default_val;
 		}
 		
 		if (default_val > max) {
-			cerr << "WARNING: Broken LADSPA: Port default > maximum.  Maximum adjusted." << endl;
+			cerr << "WARNING: Broken LADSPA " << _descriptor->UniqueID
+					<< ": Maximum adjusted." << endl;
 			max = default_val;
 		}
 		
