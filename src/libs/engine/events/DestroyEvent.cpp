@@ -36,16 +36,16 @@ namespace Ingen {
 
 
 DestroyEvent::DestroyEvent(Engine& engine, SharedPtr<Responder> responder, FrameTime time, QueuedEventSource* source, const string& path, bool block)
-: QueuedEvent(engine, responder, time, source, source),
-  _path(path),
-  _store_iterator(engine.object_store()->objects().end()),
-  _driver_port(NULL),
-  _patch_node_listnode(NULL),
-  _patch_port_listnode(NULL),
-  _ports_array(NULL),
-  _compiled_patch(NULL),
-  _disconnect_node_event(NULL),
-  _disconnect_port_event(NULL)
+	: QueuedEvent(engine, responder, time, source, source)
+	, _path(path)
+	, _store_iterator(engine.object_store()->objects().end())
+	, _driver_port(NULL)
+	, _patch_node_listnode(NULL)
+	, _patch_port_listnode(NULL)
+	, _ports_array(NULL)
+	, _compiled_patch(NULL)
+	, _disconnect_node_event(NULL)
+	, _disconnect_port_event(NULL)
 {
 	assert(_source);
 }
@@ -167,13 +167,15 @@ DestroyEvent::execute(ProcessContext& context)
 void
 DestroyEvent::post_process()
 {
-	if (_store_iterator != _engine.object_store()->objects().end()) {
+	if (_node || _port) {
 		_engine.broadcaster()->send_destroyed(_path);
 	} else {
-		if (_path == "/")
+		if (_path == "/") {
 			_responder->respond_error("You can not destroy the root patch (/)");
-		else
-			_responder->respond_error("Could not find object to destroy");
+		} else {
+			string msg = string("Could not find object ") + _path + " to destroy";
+			_responder->respond_error(msg);
+		}
 	}
 
 	if (_patch_node_listnode) {	
@@ -184,8 +186,6 @@ DestroyEvent::post_process()
 			_disconnect_node_event->post_process();
 		_engine.broadcaster()->send_destroyed(_path);
 		_engine.maid()->push(_patch_node_listnode);
-		//_engine.maid()->push(_node);
-		_node.reset();
 	} else if (_patch_port_listnode) {	
 		assert(_port);
 		_responder->respond_ok();
@@ -193,8 +193,6 @@ DestroyEvent::post_process()
 			_disconnect_port_event->post_process();
 		_engine.broadcaster()->send_destroyed(_path);
 		_engine.maid()->push(_patch_port_listnode);
-		//_engine.maid()->push(_port);
-		_port.reset();
 	} else {
 		_responder->respond_error("Unable to destroy object");
 	}
