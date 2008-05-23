@@ -175,15 +175,14 @@ LADSPANode::instantiate()
 		
 		boost::optional<Sample> default_val, min, max;
 		get_port_limits(j, default_val, min, max);
-
-		if (!default_val)
-			default_val = 0.0f;
+	
+		const float value = default_val ? default_val.get() : 0.0f;
 
 		if (LADSPA_IS_PORT_INPUT(_descriptor->PortDescriptors[j])) {
-			port = new InputPort(this, port_name, j, _polyphony, type, default_val.get(), port_buffer_size);
+			port = new InputPort(this, port_name, j, _polyphony, type, value, port_buffer_size);
 			_ports->at(j) = port;
 		} else if (LADSPA_IS_PORT_OUTPUT(_descriptor->PortDescriptors[j])) {
-			port = new OutputPort(this, port_name, j, _polyphony, type, default_val.get(), port_buffer_size);
+			port = new OutputPort(this, port_name, j, _polyphony, type, value, port_buffer_size);
 			_ports->at(j) = port;
 		}
 
@@ -191,22 +190,22 @@ LADSPANode::instantiate()
 		assert(_ports->at(j) == port);
 
 		// Work around broke-ass crackhead plugins
-		if (default_val < min) {
+		if (default_val && default_val.get() < min) {
 			cerr << "WARNING: Broken LADSPA " << _descriptor->UniqueID
 					<< ": Port default < minimum.  Minimum adjusted." << endl;
 			min = default_val;
 		}
 		
-		if (default_val > max) {
+		if (default_val && default_val.get() > max) {
 			cerr << "WARNING: Broken LADSPA " << _descriptor->UniqueID
 					<< ": Maximum adjusted." << endl;
 			max = default_val;
 		}
 		
-		// Set default value
+		// Set initial/default value
 		if (port->buffer_size() == 1) {
 			for (uint32_t i=0; i < _polyphony; ++i)
-				((AudioBuffer*)port->buffer(i))->set(default_val.get(), 0);
+				((AudioBuffer*)port->buffer(i))->set(value, 0);
 		}
 
 		if (port->is_input() && port->buffer_size() == 1) {
@@ -214,6 +213,8 @@ LADSPANode::instantiate()
 				port->set_variable("ingen:minimum", min.get());
 			if (max)
 				port->set_variable("ingen:maximum", max.get());
+			if (default_val)
+				port->set_variable("ingen:default", default_val.get());
 		}
 	}
 

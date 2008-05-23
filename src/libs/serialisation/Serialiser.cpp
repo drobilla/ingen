@@ -170,7 +170,7 @@ Serialiser::path_to_node_id(const Path& path)
 		assert(i->second.get_node());
 		return i->second;
 	} else {
-		Redland::Node id = _world.blank_id(path.name());
+		Redland::Node id = _world.blank_id(Path::nameify(path.substr(1)));
 		assert(id);
 		_node_map[path] = id;
 		return id;

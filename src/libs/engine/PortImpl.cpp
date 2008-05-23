@@ -62,8 +62,6 @@ PortImpl::PortImpl(NodeImpl* const node,
 	
 	if (type == DataType::EVENT)
 		_broadcast = true; // send activity blips
-	
-	set_variable("ingen:default", value);
 
 	assert(_buffers->size() > 0);
 }
