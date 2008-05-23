@@ -48,11 +48,11 @@ namespace Ingen {
 //// JackAudioPort ////
 
 JackAudioPort::JackAudioPort(JackAudioDriver* driver, DuplexPort* patch_port)
-: DriverPort(patch_port),
-  Raul::List<JackAudioPort*>::Node(this),
-  _driver(driver),
-  _jack_port(NULL),
-  _jack_buffer(NULL)
+	: DriverPort(patch_port)
+	, Raul::List<JackAudioPort*>::Node(this)
+	, _driver(driver)
+	, _jack_port(NULL)
+	, _jack_buffer(NULL)
 {
 	assert(patch_port->poly() == 1);
 
@@ -60,6 +60,11 @@ JackAudioPort::JackAudioPort(JackAudioDriver* driver, DuplexPort* patch_port)
 		patch_port->path().c_str(), JACK_DEFAULT_AUDIO_TYPE,
 		(patch_port->is_input()) ? JackPortIsInput : JackPortIsOutput,
 		0);
+
+	if (_jack_port == NULL) {
+		cerr << "[JackAudioPort] ERROR: Failed to register port " << patch_port->path() << endl;
+		throw JackAudioDriver::PortRegistrationFailedException();
+	}
 
 	patch_port->buffer(0)->clear();
 	patch_port->fixed_buffers(true);
@@ -95,15 +100,15 @@ JackAudioPort::prepare_buffer(jack_nframes_t nframes)
 JackAudioDriver::JackAudioDriver(Engine&        engine,
                                  std::string    server_name,
                                  jack_client_t* jack_client)
-: _engine(engine),
-  _jack_thread(NULL),
-  _client(jack_client),
-  _buffer_size(jack_client ? jack_get_buffer_size(jack_client) : 0),
-  _sample_rate(jack_client ? jack_get_sample_rate(jack_client) : 0),
-  _is_activated(false),
-  _local_client(true), // FIXME
-  _process_context(engine),
-  _root_patch(NULL)
+	: _engine(engine)
+	, _jack_thread(NULL)
+	, _client(jack_client)
+	, _buffer_size(jack_client ? jack_get_buffer_size(jack_client) : 0)
+	, _sample_rate(jack_client ? jack_get_sample_rate(jack_client) : 0)
+	, _is_activated(false)
+	, _local_client(true) // FIXME
+	, _process_context(engine)
+	, _root_patch(NULL)
 {
 	if (!_client) {
 		// Try supplied server name
@@ -247,10 +252,14 @@ JackAudioDriver::port(const Path& path)
 DriverPort*
 JackAudioDriver::create_port(DuplexPort* patch_port)
 {
-	if (patch_port->buffer_size() == _buffer_size)
-		return new JackAudioPort(this, patch_port);
-	else
+	try {
+		if (patch_port->buffer_size() == _buffer_size)
+			return new JackAudioPort(this, patch_port);
+		else
+			return NULL;
+	} catch (...) {
 		return NULL;
+	}
 }
 
 

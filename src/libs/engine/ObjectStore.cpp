@@ -79,7 +79,11 @@ ObjectStore::add(GraphObjectImpl* o)
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
 
-	//cerr << "[ObjectStore] Adding " << o->path() << endl;
+	if (_objects.find(o->path()) != _objects.end()) {
+		cerr << "[ObjectStore] ERROR: Attempt to add duplicate object " << o->path() << endl;
+		return;
+	}
+
 	_objects.insert(make_pair(o->path(), o));
 
 	NodeImpl* node = dynamic_cast<NodeImpl*>(o);

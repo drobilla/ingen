@@ -20,6 +20,7 @@
 #include <cmath>
 #include <stdint.h>
 #include <raul/Maid.hpp>
+#include <boost/optional.hpp>
 #include "LADSPANode.hpp"
 #include "AudioBuffer.hpp"
 #include "InputPort.hpp"
@@ -172,14 +173,17 @@ LADSPANode::instantiate()
 		assert (LADSPA_IS_PORT_INPUT(_descriptor->PortDescriptors[j])
 			|| LADSPA_IS_PORT_OUTPUT(_descriptor->PortDescriptors[j]));
 		
-		Sample default_val, min, max;
+		boost::optional<Sample> default_val, min, max;
 		get_port_limits(j, default_val, min, max);
 
+		if (!default_val)
+			default_val = 0.0f;
+
 		if (LADSPA_IS_PORT_INPUT(_descriptor->PortDescriptors[j])) {
-			port = new InputPort(this, port_name, j, _polyphony, type, default_val, port_buffer_size);
+			port = new InputPort(this, port_name, j, _polyphony, type, default_val.get(), port_buffer_size);
 			_ports->at(j) = port;
 		} else if (LADSPA_IS_PORT_OUTPUT(_descriptor->PortDescriptors[j])) {
-			port = new OutputPort(this, port_name, j, _polyphony, type, default_val, port_buffer_size);
+			port = new OutputPort(this, port_name, j, _polyphony, type, default_val.get(), port_buffer_size);
 			_ports->at(j) = port;
 		}
 
@@ -202,12 +206,14 @@ LADSPANode::instantiate()
 		// Set default value
 		if (port->buffer_size() == 1) {
 			for (uint32_t i=0; i < _polyphony; ++i)
-				((AudioBuffer*)port->buffer(i))->set(default_val, 0);
+				((AudioBuffer*)port->buffer(i))->set(default_val.get(), 0);
 		}
 
 		if (port->is_input() && port->buffer_size() == 1) {
-			port->set_variable("ingen:minimum", min);
-			port->set_variable("ingen:maximum", max);
+			if (min)
+				port->set_variable("ingen:minimum", min.get());
+			if (max)
+				port->set_variable("ingen:maximum", max.get());
 		}
 	}
 
@@ -272,7 +278,10 @@ LADSPANode::set_port_buffer(uint32_t voice, uint32_t port_num, Buffer* buf)
 
 
 void
-LADSPANode::get_port_limits(unsigned long port_index, Sample& normal, Sample& lower, Sample& upper)
+LADSPANode::get_port_limits(unsigned long            port_index,
+                            boost::optional<Sample>& normal,
+                            boost::optional<Sample>& lower,
+                            boost::optional<Sample>& upper)
 {
 	LADSPA_PortRangeHintDescriptor hint_descriptor = _descriptor->PortRangeHints[port_index].HintDescriptor;
 
@@ -299,25 +308,32 @@ LADSPANode::get_port_limits(unsigned long port_index, Sample& normal, Sample& lo
 		if (LADSPA_IS_HINT_DEFAULT_MINIMUM(hint_descriptor)) {
 			normal = lower;
 		} else if (LADSPA_IS_HINT_DEFAULT_LOW(hint_descriptor)) {
+			assert(lower);
+			assert(upper);
 			if (LADSPA_IS_HINT_LOGARITHMIC(hint_descriptor)) {
-				normal = exp(log(lower) * 0.75 + log(upper) * 0.25);
+				normal = exp(log(lower.get()) * 0.75 + log(upper.get()) * 0.25);
 			} else {
-				normal = lower * 0.75 + upper * 0.25;
+				normal = lower.get() * 0.75 + upper.get() * 0.25;
 			}
 		} else if (LADSPA_IS_HINT_DEFAULT_MIDDLE(hint_descriptor)) {
+			assert(lower);
+			assert(upper);
 			if (LADSPA_IS_HINT_LOGARITHMIC(hint_descriptor)) {
-				normal = exp(log(lower) * 0.5 + log(upper) * 0.5);
+				normal = exp(log(lower.get()) * 0.5 + log(upper.get()) * 0.5);
 			} else {
-				normal = lower * 0.5 + upper * 0.5;
+				normal = lower.get() * 0.5 + upper.get() * 0.5;
 			}
 		} else if (LADSPA_IS_HINT_DEFAULT_HIGH(hint_descriptor)) {
+			assert(lower);
+			assert(upper);
 			if (LADSPA_IS_HINT_LOGARITHMIC(hint_descriptor)) {
-				normal = exp(log(lower) * 0.25 + log(upper) * 0.75);
+				normal = exp(log(lower.get()) * 0.25 + log(upper.get()) * 0.75);
 			} else {
-				normal = lower * 0.25 + upper * 0.75;
+				normal = lower.get() * 0.25 + upper.get() * 0.75;
 			}
 		} else if (LADSPA_IS_HINT_DEFAULT_MAXIMUM(hint_descriptor)) {
-			normal = upper;
+			assert(upper);
+			normal = upper.get();
 		} else if (LADSPA_IS_HINT_DEFAULT_0(hint_descriptor)) {
 			normal = 0.0;
 		} else if (LADSPA_IS_HINT_DEFAULT_1(hint_descriptor)) {
@@ -329,9 +345,11 @@ LADSPANode::get_port_limits(unsigned long port_index, Sample& normal, Sample& lo
 		}
 	} else {  // No default hint
 		if (LADSPA_IS_HINT_BOUNDED_BELOW(hint_descriptor)) {
-			normal = lower;
+			assert(lower);
+			normal = lower.get();
 		} else if (LADSPA_IS_HINT_BOUNDED_ABOVE(hint_descriptor)) {
-			normal = upper;
+			assert(upper);
+			normal = upper.get();
 		}
 	}
 }

@@ -20,6 +20,7 @@
 
 #include <string>
 #include <ladspa.h>
+#include <boost/optional.hpp>
 #include "types.hpp"
 #include "NodeBase.hpp"
 #include "PluginImpl.hpp"
@@ -57,7 +58,10 @@ public:
 	void set_port_buffer(uint32_t voice, uint32_t port_num, Buffer* buf);
 
 protected:
-	void get_port_limits(unsigned long port_index, Sample& default_value, Sample& lower_bound, Sample& upper_bound);
+	void get_port_limits(unsigned long            port_index,
+	                     boost::optional<Sample>& default_value,
+	                     boost::optional<Sample>& lower_bound,
+	                     boost::optional<Sample>& upper_bound);
 	
 	const LADSPA_Descriptor* _descriptor;
 	Raul::Array<LADSPA_Handle>* _instances;

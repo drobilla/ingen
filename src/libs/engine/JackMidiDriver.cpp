@@ -22,6 +22,7 @@
 #include <raul/midi_events.h>
 #include "types.hpp"
 #include "JackMidiDriver.hpp"
+#include "JackAudioDriver.hpp"
 #include "ThreadManager.hpp"
 #include "AudioDriver.hpp"
 #include "EventBuffer.hpp"
@@ -50,6 +51,11 @@ JackMidiPort::JackMidiPort(JackMidiDriver* driver, DuplexPort* patch_port)
 		patch_port->path().c_str(), JACK_DEFAULT_MIDI_TYPE,
 		(patch_port->is_input()) ? JackPortIsInput : JackPortIsOutput,
 		0);
+	
+	if (_jack_port == NULL) {
+		cerr << "[JackMidiPort] ERROR: Failed to register port " << patch_port->path() << endl;
+		throw JackAudioDriver::PortRegistrationFailedException();
+	}
 
 	patch_port->buffer(0)->clear();
 }

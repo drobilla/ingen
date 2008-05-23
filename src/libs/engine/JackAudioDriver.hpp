@@ -110,6 +110,8 @@ public:
 	
 	inline SampleCount frame_time() const { return jack_frame_time(_client); }
 
+	class PortRegistrationFailedException : public std::exception {};
+
 private:
 	friend class JackAudioPort;
 
