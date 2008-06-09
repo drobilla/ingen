@@ -112,6 +112,8 @@ PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 	_menu_add_button_control->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_control), BUTTON));*/
 
+	build_internal_menu();
+
 #ifdef HAVE_SLV2
 	build_plugin_menu();
 #endif
@@ -128,6 +130,31 @@ PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 	_menu_load_plugin->signal_activate().connect(sigc::mem_fun(this, &PatchCanvas::menu_load_plugin));
 	_menu_load_patch->signal_activate().connect(sigc::mem_fun(this, &PatchCanvas::menu_load_patch));
 	_menu_new_patch->signal_activate().connect(sigc::mem_fun(this, &PatchCanvas::menu_new_patch));
+}
+
+
+void
+PatchCanvas::build_internal_menu()
+{
+	_menu->items().push_back(Gtk::Menu_Helpers::ImageMenuElem("Internal",
+			*(manage(new Gtk::Image(Gtk::Stock::EXECUTE, Gtk::ICON_SIZE_MENU)))));
+
+	Gtk::MenuItem* internal_menu_item = &(_menu->items().back());
+	Gtk::Menu* internal_menu = Gtk::manage(new Gtk::Menu());
+	internal_menu_item->set_submenu(*internal_menu);
+	
+	const Store::Plugins& plugins = App::instance().store()->plugins();
+
+	// Add LV2 plugins
+	for (Store::Plugins::const_iterator i = plugins.begin(); i != plugins.end(); ++i) {
+		SharedPtr<PluginModel> p = i->second;
+		if (p->type() == Plugin::Internal) {
+			internal_menu->items().push_back(Gtk::Menu_Helpers::MenuElem(p->name(),
+					sigc::bind(sigc::mem_fun(this, &PatchCanvas::load_plugin), p)));
+		}
+	}
+	
+	_menu->reorder_child(*internal_menu_item, 2);
 }
 
 
@@ -162,7 +189,7 @@ PatchCanvas::build_plugin_class_menu(Gtk::Menu* menu,
 
 	const Store::Plugins& plugins = App::instance().store()->plugins();
 
-	// Add plugins
+	// Add LV2 plugins
 	for (Store::Plugins::const_iterator i = plugins.begin(); i != plugins.end(); ++i) {
 		SLV2Plugin p = i->second->slv2_plugin();
 
@@ -196,7 +223,7 @@ PatchCanvas::build_plugin_menu()
 	Gtk::MenuItem* plugin_menu_item = &(_menu->items().back());
 	Gtk::Menu* plugin_menu = Gtk::manage(new Gtk::Menu());
 	plugin_menu_item->set_submenu(*plugin_menu);
-	_menu->reorder_child(*plugin_menu_item, 2);
+	_menu->reorder_child(*plugin_menu_item, 3);
 
 	SLV2PluginClass lv2_plugin = slv2_world_get_plugin_class(PluginModel::slv2_world());
 	SLV2PluginClasses classes = slv2_world_get_plugin_classes(PluginModel::slv2_world());

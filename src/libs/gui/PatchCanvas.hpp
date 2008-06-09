@@ -94,6 +94,7 @@ private:
 	void menu_load_patch();
 	void load_plugin(SharedPtr<PluginModel> plugin);
 
+	void build_internal_menu();
 #ifdef HAVE_SLV2
 	void build_plugin_menu();
 	size_t build_plugin_class_menu(Gtk::Menu* menu,
