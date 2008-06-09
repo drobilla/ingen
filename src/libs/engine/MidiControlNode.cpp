@@ -40,7 +40,7 @@ MidiControlNode::MidiControlNode(const string& path,
 			, path, false, parent, srate, buffer_size)
 	, _learning(false)
 {
-	_ports = new Raul::Array<PortImpl*>(7);
+	_ports = new Raul::Array<PortImpl*>(6);
 
 	_midi_in_port = new InputPort(this, "input", 0, 1, DataType::EVENT, Atom(), _buffer_size);
 	_ports->at(0) = _midi_in_port;
