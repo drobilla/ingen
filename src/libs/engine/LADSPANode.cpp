@@ -300,7 +300,7 @@ LADSPANode::get_port_limits(unsigned long            port_index,
 		 * float greater than 1.0.  So, if lower is < FLT_EPSILON, it will be 1.0
 		 * and the logarithmic control will have a base of 1 and thus not change
 		 */
-		if (lower < FLT_EPSILON) lower = FLT_EPSILON;
+		if (lower.get() < FLT_EPSILON) lower = FLT_EPSILON;
 	}
 
 
