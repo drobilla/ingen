@@ -40,8 +40,8 @@ namespace GUI {
 // ////////////////////// ControlGroup ///////////////////////////////// //
 
 ControlGroup::ControlGroup(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml)
-	: Gtk::VBox(cobject),
-	, _control_panel(NULL),
+	: Gtk::VBox(cobject)
+	, _control_panel(NULL)
 	, _enable_signal(false)
 {
 }
@@ -168,7 +168,7 @@ void
 SliderControlGroup::set_value(const Atom& atom)
 {
 	float val = atom.get_float();
-
+	
 	if (_port_model->is_integer())
 		val = lrintf(val);
 
