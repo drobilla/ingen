@@ -54,7 +54,7 @@ public:
 		_view = view;
 	}
 
-	const Path&           path() const { return _path; }
+	const Path&          path() const { return _path; }
 	SharedPtr<PatchView> view() const { return _view; }
 	
 	void set_path(const Path& path)

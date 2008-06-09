@@ -94,8 +94,6 @@ Port::renamed()
 void
 Port::value_changed(const Atom& value)
 {
-	cout << "PORT VALUE CHANGED" << endl;
-
 	if (value.type() == Atom::FLOAT)
 		FlowCanvas::Port::set_control(value.get_float());
 	else

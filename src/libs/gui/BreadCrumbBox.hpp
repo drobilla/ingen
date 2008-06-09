@@ -55,7 +55,7 @@ private:
 
 	void breadcrumb_clicked(BreadCrumb* crumb);
 	
-	void object_removed(const Path& path);
+	void object_destroyed(const Path& path);
 	void object_renamed(const Path& old_path, const Path& new_path);
 
 	Path                   _active_path;

@@ -17,16 +17,20 @@
 
 #include "BreadCrumbBox.hpp"
 #include "BreadCrumb.hpp"
+#include "App.hpp"
+#include "client/SigClientInterface.hpp"
 namespace Ingen {
 namespace GUI {
 
 
 BreadCrumbBox::BreadCrumbBox()
-: Gtk::HBox()
-, _active_path("/")
-, _full_path("/")
-, _enable_signal(true)
+	: Gtk::HBox()
+	, _active_path("/")
+	, _full_path("/")
+	, _enable_signal(true)
 {
+	App::instance().client()->signal_object_destroyed.connect(
+			sigc::mem_fun(this, &BreadCrumbBox::object_destroyed));
 }
 
 
@@ -175,7 +179,7 @@ BreadCrumbBox::breadcrumb_clicked(BreadCrumb* crumb)
 
 
 void
-BreadCrumbBox::object_removed(const Path& path)
+BreadCrumbBox::object_destroyed(const Path& path)
 {
 	for (std::list<BreadCrumb*>::iterator i = _breadcrumbs.begin(); i != _breadcrumbs.end(); ++i) {
 		if ((*i)->path() == path) {

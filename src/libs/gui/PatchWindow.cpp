@@ -44,12 +44,12 @@ namespace GUI {
 
 
 PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
-: Gtk::Window(cobject),
-  _enable_signal(true),
-  _position_stored(false),
-  _x(0),
-  _y(0),
-  _breadcrumb_box(NULL)
+	: Gtk::Window(cobject)
+	, _enable_signal(true)
+	, _position_stored(false)
+	, _x(0)
+	, _y(0)
+	, _breadcrumb_box(NULL)
 {
 	property_visible() = false;
 
