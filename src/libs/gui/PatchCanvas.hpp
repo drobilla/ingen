@@ -82,6 +82,8 @@ public:
 	void show_menu(GdkEvent* event)
 	{ _menu->popup(event->button.button, event->button.time); }
 	
+	bool canvas_key_event(GdkEventKey* event);
+	
 private:
 	enum ControlType { NUMBER, BUTTON };
 	void menu_add_control(ControlType type);

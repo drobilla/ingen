@@ -447,7 +447,7 @@ PatchCanvas::canvas_event(GdkEvent* event)
 {
 	assert(event);
 	
-	static bool control_modded = false;
+	bool ret = false;
 
 	switch (event->type) {
 
@@ -456,34 +456,58 @@ PatchCanvas::canvas_event(GdkEvent* event)
 			_last_click_x = (int)event->button.x;
 			_last_click_y = (int)event->button.y;
 			show_menu(event);
+			ret = true;
 		}
 		break;
 	
 	case GDK_KEY_PRESS:
-		if (event->key.keyval == GDK_Delete) {
-			destroy_selection();
-		} else if (event->key.keyval == GDK_Control_L || event->key.keyval == GDK_Control_R) {
-			if (_patch->get_editable() == true) {
-				control_modded = true;
-				_patch->set_editable(false);
-			}
-		}
-		break;
-	
 	case GDK_KEY_RELEASE:
-		if (event->key.keyval == GDK_Control_L || event->key.keyval == GDK_Control_R) {
-			if (_patch->get_editable() == false &&control_modded) {
-				control_modded = false;
-				_patch->set_editable(true);
-			}
-		}
-		break;
+		ret = canvas_key_event(&event->key);
 		
 	default:
 		break;
 	}
 
-	return Canvas::canvas_event(event);
+	return (ret ? true : Canvas::canvas_event(event));
+}
+
+	
+bool
+PatchCanvas::canvas_key_event(GdkEventKey* event)
+{
+	static bool control_modded = false;
+
+	switch (event->type) {
+	case GDK_KEY_PRESS:
+		switch (event->keyval) {
+		case GDK_Delete:
+			destroy_selection();
+			return true;
+		case GDK_Control_L:
+		case GDK_Control_R:
+			if (_patch->get_editable() == true) {
+				control_modded = true;
+				_patch->set_editable(false);
+			}
+			return true;
+		default:
+			return false;
+		}
+	case GDK_KEY_RELEASE:
+		switch (event->keyval) {
+		case GDK_Control_L:
+		case GDK_Control_R:
+			if (_patch->get_editable() == false && control_modded) {
+				control_modded = false;
+				_patch->set_editable(true);
+			}
+			return true;
+		default:
+			return false;
+		}
+	default:
+		return false;
+	}
 }
 
 

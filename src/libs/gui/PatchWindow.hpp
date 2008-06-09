@@ -77,6 +77,7 @@ protected:
 	void on_show();
 	void on_hide();
 	bool on_key_press_event(GdkEventKey* event);
+	bool on_key_release_event(GdkEventKey* event);
 	
 private:
 

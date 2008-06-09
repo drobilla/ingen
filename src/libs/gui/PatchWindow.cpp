@@ -419,17 +419,31 @@ PatchWindow::on_hide()
 bool
 PatchWindow::on_key_press_event(GdkEventKey* event)
 {
-	if (event->keyval == GDK_Delete) {
-		if (_view) {
-			_view->canvas()->destroy_selection();
-		}
-		return true;
-	} else {
-		return Gtk::Window::on_key_press_event(event);
-	}
+	bool ret = false;
+
+	ret = _view->canvas()->canvas_key_event(event);
+	
+	if (!ret)
+		ret = Gtk::Window::on_key_press_event(event);
+	
+	return ret;
 }
 
+	
+bool
+PatchWindow::on_key_release_event(GdkEventKey* event)
+{
+	bool ret = false;
 
+	ret = _view->canvas()->canvas_key_event(event);
+	
+	if (!ret)
+		ret = Gtk::Window::on_key_release_event(event);
+	
+	return ret;
+}
+
+	
 void
 PatchWindow::event_quit()
 {
