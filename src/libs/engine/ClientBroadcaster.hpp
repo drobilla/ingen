@@ -60,6 +60,9 @@ public:
 	
 	//void send_client_registration(const string& url, int client_id);
 	
+	void bundle_begin();
+	void bundle_end();
+	
 	// Error that isn't the direct result of a request
 	void send_error(const string& msg);
 

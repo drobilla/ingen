@@ -182,16 +182,20 @@ DestroyEvent::post_process()
 		assert(_node);
 		_node->deactivate();
 		_responder->respond_ok();
+		_engine.broadcaster()->bundle_begin();
 		if (_disconnect_node_event)
 			_disconnect_node_event->post_process();
 		_engine.broadcaster()->send_destroyed(_path);
+		_engine.broadcaster()->bundle_end();
 		_engine.maid()->push(_patch_node_listnode);
 	} else if (_patch_port_listnode) {	
 		assert(_port);
 		_responder->respond_ok();
+		_engine.broadcaster()->bundle_begin();
 		if (_disconnect_port_event)
 			_disconnect_port_event->post_process();
 		_engine.broadcaster()->send_destroyed(_path);
+		_engine.broadcaster()->bundle_end();
 		_engine.maid()->push(_patch_port_listnode);
 	} else {
 		_responder->respond_error("Unable to destroy object");

@@ -31,9 +31,9 @@ namespace Client {
 
 	
 OSCClientReceiver::OSCClientReceiver(int listen_port)
-: ClientInterface("localhost"),
-  _listen_port(listen_port),
-  _st(NULL)
+	: ClientInterface("localhost")
+	, _listen_port(listen_port)
+	, _st(NULL)
 {
 	start(false); // true = dump, false = shutup
 }

@@ -134,11 +134,16 @@ public:
 	                            uint32_t           program);
 
 private:
+	int  send(const char *path, const char *types, ...);
+	void send_message(const char* path, lo_message m);
+
+	enum SendState { Immediate, SendingBundle, SendingTransfer };
+
+	string     _url;
 	lo_address _address;
-
-	lo_bundle _transfer;
-
-	bool _enabled;
+	SendState  _send_state;
+	lo_bundle  _transfer;
+	bool       _enabled;
 };
 
 

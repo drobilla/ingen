@@ -38,14 +38,15 @@ namespace Ingen {
 void
 OSCClientSender::bundle_begin()
 {
-	// FIXME: Don't split bundles as for 'transfers'
+	assert(!_transfer);
 	_transfer = lo_bundle_new(LO_TT_IMMEDIATE);
+	_send_state = SendingBundle;
+
 }
 
 void
 OSCClientSender::bundle_end()
 {
-	// FIXME: Don't split bundles as for 'transfers'
 	transfer_end();
 }
 
@@ -53,18 +54,70 @@ OSCClientSender::bundle_end()
 void
 OSCClientSender::transfer_begin()
 {
+	//cerr << "TRANSFER {" << endl;
+	assert(!_transfer);
 	_transfer = lo_bundle_new(LO_TT_IMMEDIATE);
+	_send_state = SendingTransfer;
 }
 
 
 void
 OSCClientSender::transfer_end()
 {
+	//cerr << "} TRANSFER" << endl;
 	assert(_transfer);
 	lo_send_bundle(_address, _transfer);
 	lo_bundle_free(_transfer);
 	_transfer = NULL;
+	_send_state = Immediate;
 }
+
+
+int
+OSCClientSender::send(const char *path, const char *types, ...)
+{
+	if (!_enabled)
+		return 0;
+
+	va_list args;
+	va_start(args, types);
+	
+	lo_message msg = lo_message_new();
+	int ret = lo_message_add_varargs(msg, types, args);
+    
+	if (!ret)
+		send_message(path, msg);
+    
+	va_end(args);
+
+	return ret;
+}
+
+
+void
+OSCClientSender::send_message(const char* path, lo_message msg)
+{
+	// FIXME: size?  liblo doesn't export this.
+	// Don't want to exceed max UDP packet size (1500 bytes?})
+	static const size_t MAX_BUNDLE_SIZE = 1500 - 32*5;
+
+	if (!_enabled)
+		return;
+		
+	if (_transfer) {
+		if (lo_bundle_length(_transfer) + lo_message_length(msg, path) > MAX_BUNDLE_SIZE) {
+			if (_send_state == SendingBundle)
+				cerr << "WARNING: Maximum bundle size reached, bundle split" << endl;
+			lo_send_bundle(_address, _transfer);
+			_transfer = lo_bundle_new(LO_TT_IMMEDIATE);
+		}
+		lo_bundle_add_message(_transfer, path, msg);
+
+	} else {
+		lo_send_message(_address, path, msg);
+	}
+}
+
 
 
 /*! \page client_osc_namespace Client OSC Namespace Documentation
@@ -149,10 +202,7 @@ OSCClientSender::response_error(int32_t id, const std::string& msg)
 void
 OSCClientSender::error(const std::string& msg)
 {
-	if (!_enabled)
-		return;
-
-	lo_send(_address, "/ingen/error", "s", msg.c_str());
+	send("/ingen/error", "s", msg.c_str(), LO_ARGS_END);
 }
 
 
@@ -173,12 +223,7 @@ OSCClientSender::error(const std::string& msg)
 void
 OSCClientSender::num_plugins(uint32_t num)
 {
-	if (!_enabled)
-		return;
-
-	lo_message m = lo_message_new();
-	lo_message_add_int32(m, num);
-	lo_send_message(_address, "/ingen/num_plugins", m);
+	send("/ingen/num_plugins", "i", num, LO_ARGS_END);
 }
 
 
@@ -255,15 +300,12 @@ void OSCClientSender::new_node(const std::string&   plugin_uri,
                                bool                 is_polyphonic,
                                uint32_t             num_ports)
 {
-	if (!_enabled)
-		return;
-
 	if (is_polyphonic)
-		lo_send(_address, "/ingen/new_node", "ssTi", plugin_uri.c_str(),
-		        node_path.c_str(), num_ports);
+		send("/ingen/new_node", "ssTi", plugin_uri.c_str(),
+		        node_path.c_str(), num_ports, LO_ARGS_END);
 	else
-		lo_send(_address, "/ingen/new_node", "ssFi", plugin_uri.c_str(),
-		        node_path.c_str(), num_ports);
+		send("/ingen/new_node", "ssFi", plugin_uri.c_str(),
+		        node_path.c_str(), num_ports, LO_ARGS_END);
 }
 
 
@@ -289,10 +331,7 @@ OSCClientSender::new_port(const std::string& path,
                           const std::string& data_type,
                           bool               is_output)
 {
-	if (!_enabled)
-		return;
-
-	lo_send(_address, "/ingen/new_port", "sisi", path.c_str(), index, data_type.c_str(), is_output);
+	send("/ingen/new_port", "sisi", path.c_str(), index, data_type.c_str(), is_output, LO_ARGS_END);
 }
 
 
@@ -327,12 +366,9 @@ OSCClientSender::polyphonic(const std::string& path,
 void
 OSCClientSender::object_destroyed(const std::string& path)
 {
-	if (!_enabled)
-		return;
-
 	assert(path != "/");
 	
-	lo_send(_address, "/ingen/destroyed", "s", path.c_str());
+	send("/ingen/destroyed", "s", path.c_str(), LO_ARGS_END);
 }
 
 
@@ -343,10 +379,7 @@ OSCClientSender::object_destroyed(const std::string& path)
 void
 OSCClientSender::patch_cleared(const std::string& patch_path)
 {
-	if (!_enabled)
-		return;
-
-	lo_send(_address, "/ingen/patch_cleared", "s", patch_path.c_str());
+	send("/ingen/patch_cleared", "s", patch_path.c_str(), LO_ARGS_END);
 }
 
 
@@ -357,10 +390,7 @@ OSCClientSender::patch_cleared(const std::string& patch_path)
 void
 OSCClientSender::patch_enabled(const std::string& patch_path)
 {
-	if (!_enabled)
-		return;
-
-	lo_send(_address, "/ingen/patch_enabled", "s", patch_path.c_str());
+	send("/ingen/patch_enabled", "s", patch_path.c_str(), LO_ARGS_END);
 }
 
 
@@ -371,10 +401,7 @@ OSCClientSender::patch_enabled(const std::string& patch_path)
 void
 OSCClientSender::patch_disabled(const std::string& patch_path)
 {
-	if (!_enabled)
-		return;
-
-	lo_send(_address, "/ingen/patch_disabled", "s", patch_path.c_str());
+	send("/ingen/patch_disabled", "s", patch_path.c_str(), LO_ARGS_END);
 }
 
 
@@ -401,10 +428,7 @@ OSCClientSender::patch_polyphony(const std::string& patch_path, uint32_t poly)
 void
 OSCClientSender::connection(const std::string& src_port_path, const std::string& dst_port_path)
 {
-	if (!_enabled)
-		return;
-
-	lo_send(_address, "/ingen/new_connection", "ss", src_port_path.c_str(), dst_port_path.c_str());
+	send("/ingen/new_connection", "ss", src_port_path.c_str(), dst_port_path.c_str(), LO_ARGS_END);
 }
 
 
@@ -416,10 +440,7 @@ OSCClientSender::connection(const std::string& src_port_path, const std::string&
 void
 OSCClientSender::disconnection(const std::string& src_port_path, const std::string& dst_port_path)
 {
-	if (!_enabled)
-		return;
-
-	lo_send(_address, "/ingen/disconnection", "ss", src_port_path.c_str(), dst_port_path.c_str());
+	send("/ingen/disconnection", "ss", src_port_path.c_str(), dst_port_path.c_str(), LO_ARGS_END);
 }
 
 
@@ -432,14 +453,11 @@ OSCClientSender::disconnection(const std::string& src_port_path, const std::stri
 void
 OSCClientSender::variable_change(const std::string& path, const std::string& key, const Atom& value)
 {
-	if (!_enabled)
-		return;
-
 	lo_message m = lo_message_new();
 	lo_message_add_string(m, path.c_str());
 	lo_message_add_string(m, key.c_str());
 	Raul::AtomLiblo::lo_message_add_atom(m, value);
-	lo_send_message(_address, "/ingen/variable_change", m);
+	send_message("/ingen/variable_change", m);
 }
 
 
@@ -451,10 +469,7 @@ OSCClientSender::variable_change(const std::string& path, const std::string& key
 void
 OSCClientSender::control_change(const std::string& port_path, float value)
 {
-	if (!_enabled)
-		return;
-
-	lo_send(_address, "/ingen/control_change", "sf", port_path.c_str(), value);
+	send("/ingen/control_change", "sf", port_path.c_str(), value, LO_ARGS_END);
 }
 
 
@@ -485,9 +500,6 @@ OSCClientSender::new_plugin(const std::string& uri,
                             const std::string& symbol,
                             const std::string& name)
 {
-	if (!_enabled)
-		return;
-
 	// FIXME: size?  liblo doesn't export this.
 	// Don't want to exceed max UDP packet size (1500 bytes)
 	static const size_t MAX_BUNDLE_SIZE = 1500 - 32*5;
@@ -521,10 +533,7 @@ OSCClientSender::new_plugin(const std::string& uri,
 void
 OSCClientSender::new_patch(const std::string& path, uint32_t poly)
 {
-	if (!_enabled)
-		return;
-
-	lo_send(_address, "/ingen/new_patch", "si", path.c_str(), poly);
+	send("/ingen/new_patch", "si", path.c_str(), poly, LO_ARGS_END);
 	
 	/*
 	if (p->process())
@@ -547,10 +556,7 @@ OSCClientSender::new_patch(const std::string& path, uint32_t poly)
 void
 OSCClientSender::object_renamed(const std::string& old_path, const std::string& new_path)
 {
-	if (!_enabled)
-		return;
-
-	lo_send(_address, "/ingen/object_renamed", "ss", old_path.c_str(), new_path.c_str());
+	send("/ingen/object_renamed", "ss", old_path.c_str(), new_path.c_str(), LO_ARGS_END);
 }
 
 
@@ -559,10 +565,7 @@ OSCClientSender::object_renamed(const std::string& old_path, const std::string& 
 void
 OSCClientSender::program_add(const std::string& node_path, uint32_t bank, uint32_t program, const std::string& name)
 {
-	if (!_enabled)
-		return;
-
-	lo_send(_address, "/ingen/program_add", "siis", 
+	send("/ingen/program_add", "siis", 
 		node_path.c_str(), bank, program, name.c_str());
 }
 
@@ -570,10 +573,7 @@ OSCClientSender::program_add(const std::string& node_path, uint32_t bank, uint32
 void
 OSCClientSender::program_remove(const std::string& node_path, uint32_t bank, uint32_t program)
 {
-	if (!_enabled)
-		return;
-
-	lo_send(_address, "/ingen/program_remove", "sii", 
+	send("/ingen/program_remove", "sii", 
 		node_path.c_str(), bank, program);
 }
 

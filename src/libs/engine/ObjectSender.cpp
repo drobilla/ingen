@@ -33,8 +33,20 @@ namespace Ingen {
 void
 ObjectSender::send_patch(ClientInterface* client, const PatchImpl* patch, bool recursive)
 {
+	client->bundle_begin();
+
 	client->new_patch(patch->path(), patch->internal_polyphony());
 	client->polyphonic(patch->path(), patch->polyphonic());
+	
+	// Send variable
+	const GraphObjectImpl::Variables& data = patch->variables();
+	for (GraphObjectImpl::Variables::const_iterator j = data.begin(); j != data.end(); ++j)
+		client->variable_change(patch->path(), (*j).first, (*j).second);
+	
+	if (patch->enabled())
+		client->patch_enabled(patch->path());
+
+	client->bundle_end();
 	
 	if (recursive) {
 
@@ -60,14 +72,6 @@ ObjectSender::send_patch(ClientInterface* client, const PatchImpl* patch, bool r
 			client->connection((*j)->src_port_path(), (*j)->dst_port_path());
 
 	}
-
-	// Send variable
-	const GraphObjectImpl::Variables& data = patch->variables();
-	for (GraphObjectImpl::Variables::const_iterator j = data.begin(); j != data.end(); ++j)
-		client->variable_change(patch->path(), (*j).first, (*j).second);
-	
-	if (patch->enabled())
-		client->patch_enabled(patch->path());
 }
 
 

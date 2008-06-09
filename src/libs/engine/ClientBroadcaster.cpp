@@ -91,6 +91,22 @@ ClientBroadcaster::client(const string& uri)
 	}
 }
 
+	
+void
+ClientBroadcaster::bundle_begin()
+{
+	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
+		(*i).second->bundle_begin();
+}
+
+	
+void
+ClientBroadcaster::bundle_end()
+{
+	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
+		(*i).second->bundle_end();
+}
+
 
 void
 ClientBroadcaster::send_error(const string& msg)
