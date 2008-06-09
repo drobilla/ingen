@@ -40,9 +40,9 @@ namespace GUI {
 // ////////////////////// ControlGroup ///////////////////////////////// //
 
 ControlGroup::ControlGroup(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml)
-: Gtk::VBox(cobject),
-  _control_panel(NULL),
-  _enable_signal(false)
+	: Gtk::VBox(cobject),
+	, _control_panel(NULL),
+	, _enable_signal(false)
 {
 }
 	
@@ -72,8 +72,8 @@ ControlGroup::init(ControlPanel* panel, SharedPtr<PortModel> pm)
 
 
 SliderControlGroup::SliderControlGroup(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
-: ControlGroup(cobject, xml),
-  _enabled(true)
+	: ControlGroup(cobject, xml)
+	, _enabled(true)
 {
 	xml->get_widget("control_strip_name_label", _name_label);
 	xml->get_widget("control_strip_slider", _slider);
