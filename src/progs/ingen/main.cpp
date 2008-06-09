@@ -93,6 +93,7 @@ main(int argc, char** argv)
 	world->rdf_world->add_prefix("lv2", "http://lv2plug.in/ns/lv2core#");
 	world->rdf_world->add_prefix("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
 	world->rdf_world->add_prefix("doap", "http://usefulinc.com/ns/doap#");
+	world->rdf_world->add_prefix("dc", "http://purl.org/dc/elements/1.1/");
 
 	/* Run engine */
 	if (args.engine_flag) {

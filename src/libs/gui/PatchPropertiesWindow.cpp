@@ -19,6 +19,7 @@
 #include <iostream>
 #include "client/PatchModel.hpp"
 #include "PatchPropertiesWindow.hpp"
+#include "App.hpp"
 
 using namespace std;
 
@@ -50,11 +51,11 @@ PatchPropertiesWindow::set_patch(SharedPtr<PatchModel> patch_model)
 	property_title() = patch_model->path() + " Properties";
 	_patch_model = patch_model;
 	
-	const Atom& author_atom = _patch_model->get_variable("author");
+	const Atom& author_atom = _patch_model->get_variable("dc:creator");
 	_author_entry->set_text(
 		(author_atom.type() == Atom::STRING) ? author_atom.get_string() : "" );
 
-	const Atom& desc_atom = _patch_model->get_variable("description");
+	const Atom& desc_atom = _patch_model->get_variable("dc:description");
 	_textview->get_buffer()->set_text(
 		(desc_atom.type() == Atom::STRING) ? desc_atom.get_string() : "" );
 }
@@ -63,11 +64,11 @@ PatchPropertiesWindow::set_patch(SharedPtr<PatchModel> patch_model)
 void
 PatchPropertiesWindow::cancel_clicked()
 {
-	const Atom& author_atom = _patch_model->get_variable("author");
+	const Atom& author_atom = _patch_model->get_variable("dc:creator");
 	_author_entry->set_text(
 		(author_atom.type() == Atom::STRING) ? author_atom.get_string() : "" );
 
-	const Atom& desc_atom = _patch_model->get_variable("description");
+	const Atom& desc_atom = _patch_model->get_variable("dc:description");
 	_textview->get_buffer()->set_text(
 		(desc_atom.type() == Atom::STRING) ? desc_atom.get_string() : "" );
 	
@@ -78,10 +79,10 @@ PatchPropertiesWindow::cancel_clicked()
 void
 PatchPropertiesWindow::ok_clicked()
 {
-	cerr << "FIXME: patch properties\n";
-
-	//m_patch_model->set_variable("author", Atom(_author_entry->get_text().c_str()));
-	//m_patch_model->set_variable("description", Atom(_textview->get_buffer()->get_text().c_str()));
+	App::instance().engine()->set_variable(_patch_model->path(), "dc:creator",
+		Atom(_author_entry->get_text()));
+	App::instance().engine()->set_variable(_patch_model->path(), "dc:description",
+		Atom(_textview->get_buffer()->get_text()));
 	hide();
 }
 
