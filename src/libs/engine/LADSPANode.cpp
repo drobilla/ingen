@@ -190,13 +190,13 @@ LADSPANode::instantiate()
 		assert(_ports->at(j) == port);
 
 		// Work around broke-ass crackhead plugins
-		if (default_val && default_val.get() < min) {
+		if (default_val && default_val.get() < min.get()) {
 			cerr << "WARNING: Broken LADSPA " << _descriptor->UniqueID
 					<< ": Port default < minimum.  Minimum adjusted." << endl;
 			min = default_val;
 		}
 		
-		if (default_val && default_val.get() > max) {
+		if (default_val && default_val.get() > max.get()) {
 			cerr << "WARNING: Broken LADSPA " << _descriptor->UniqueID
 					<< ": Maximum adjusted." << endl;
 			max = default_val;
