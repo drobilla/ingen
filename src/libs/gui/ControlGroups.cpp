@@ -167,6 +167,8 @@ SliderControlGroup::menu_properties()
 void
 SliderControlGroup::set_value(const Atom& atom)
 {
+	cout << "CONTROL VALUE CHANGED" << endl;
+
 	float val = atom.get_float();
 	
 	if (_port_model->is_integer())

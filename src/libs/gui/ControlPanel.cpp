@@ -231,10 +231,6 @@ void
 ControlPanel::value_changed(SharedPtr<PortModel> port, float val)
 {
 	if (_callback_enabled) {
-		App::instance().engine()->disable_responses();
-
-		/* Send the message, but set the client-side model's value to the new
-		 * setting right away (so the value doesn't need to be echoed back) */
 	
 		if (_all_voices_radio->get_active()) {
 			App::instance().engine()->set_port_value_immediate(port->path(), "ingen:control",
@@ -247,7 +243,6 @@ ControlPanel::value_changed(SharedPtr<PortModel> port, float val)
 			port->value(val);
 		}
 
-		App::instance().engine()->set_next_response_id(rand()); // FIXME: inefficient, probably not good
 	}
 }
 
