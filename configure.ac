@@ -139,6 +139,9 @@ if test "$build_jack" = "yes"; then
 	AC_DEFINE(HAVE_JACK_MIDI, 1, [Has Jack MIDI])
 fi
 
+# OSC support (mandatory for now due to laziness)
+PKG_CHECK_MODULES(LIBLO, liblo)
+
 # LV2 support
 build_lv2="yes"
 AC_ARG_ENABLE(lv2,
@@ -251,7 +254,6 @@ if test "$build_ingen_client_lib" = "yes"; then
 	AC_CHECK_HEADERS([sys/time.h unistd.h])
 	PKG_CHECK_MODULES(LXML2, libxml-2.0 >= 2.6.0) # FIXME: deprecated, make optional
 	PKG_CHECK_MODULES(LSIGCPP, sigc++-2.0)
-	PKG_CHECK_MODULES(LIBLO, liblo)
 	PKG_CHECK_MODULES(REDLANDMM, [redlandmm])
 else
  	AC_MSG_WARN([Ingen client library/executable will not be built!])
