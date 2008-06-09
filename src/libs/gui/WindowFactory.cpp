@@ -260,6 +260,7 @@ WindowFactory::present_load_plugin(SharedPtr<PatchModel> patch, GraphObject::Var
 	if (w != _patch_windows.end())
 		_load_plugin_win->set_transient_for(*w->second);
 
+	_load_plugin_win->set_modal(false);
 	_load_plugin_win->present(patch, data);
 }
 
