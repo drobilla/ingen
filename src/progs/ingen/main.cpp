@@ -253,6 +253,7 @@ main(int argc, char** argv)
 		engine.reset();
 	}
 
+	engine_interface.reset();
 	client_module.reset();
 	serialisation_module.reset();
 	gui_module.reset();
