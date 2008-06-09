@@ -27,6 +27,14 @@
 #include <xmmintrin.h>
 #endif
 
+#ifdef USE_ASSEMBLY
+# if SIZEOF_VOID_P==8
+#  define cpuid(a,b,c,d,n) asm("xchgq %%rbx, %1; cpuid; xchgq %%rbx, %1": "=a" (a), "=r" (b), "=c" (c), "=d" (d) : "a" (n));
+# else
+#  define cpuid(a,b,c,d,n) asm("xchgl %%ebx, %1; cpuid; xchgl %%ebx, %1": "=a" (a), "=r" (b), "=c" (c), "=d" (d) : "a" (n));
+# endif
+#endif
+
 namespace Ingen {
 
 /** Set flags to disable denormal processing.
@@ -36,27 +44,24 @@ set_denormal_flags()
 {
 #ifdef USE_ASSEMBLY
 #ifdef __SSE__
-	unsigned long a, b, c, d;
+	unsigned long a, b, c, d0, d1;
+	int stepping, model, family, extfamily;
 
-	asm("cpuid": "=a" (a), "=b" (b), "=c" (c), "=d" (d) : "a" (1));
-	if (d & 1<<25) { /* It has SSE support */
+	cpuid(a,b,c,d1,1);
+	if (d1 & 1<<25) { /* It has SSE support */
 		_MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);
-
-		asm("cpuid": "=a" (a), "=b" (b), "=c" (c), "=d" (d) : "a" (0));
+		family = (a >> 8) & 0xf;
+		extfamily = (a >> 20) & 0xff;
+		model = (a >> 4) & 0xf;
+		stepping = a & 0xf;
+		cpuid(a,b,c,d0,0);
 		if (b == 0x756e6547) { /* It's an Intel */
-			int stepping, model, family, extfamily;
-
-			family = (a >> 8) & 0xf;
-			extfamily = (a >> 20) & 0xff;
-			model = (a >> 4) & 0xf;
-			stepping = a & 0xf;
 			if (family == 15 && extfamily == 0 && model == 0 && stepping < 7) {
 				return;
 			}
 		}
-		asm("cpuid": "=a" (a), "=b" (b), "=c" (c), "=d" (d) : "a" (1));
-		if (d & 1<<26) { /* bit 26, SSE2 support */
-			_mm_setcsr(_mm_getcsr() | 0x40);
+		if (d1 & 1<<26) { /* bit 26, SSE2 support */
+			_mm_setcsr(_mm_getcsr() | 0x8040); // set DAZ and FZ bits of MXCSR
 			//cerr << "Set SSE denormal fix flag." << endl;
 		}
 	} else {

@@ -56,6 +56,10 @@ CONFIG_H_PATH="$builddir/config/config.h"
 INGEN_CFLAGS="-I$abs_srcdir/src/common -I$abs_srcdir/src/libs -I$abs_srcdir/src/libs/engine/events -I$abs_srcdir/src"
 AC_SUBST(INGEN_CFLAGS)
 
+# Check for 64-bit platform
+AC_CHECK_SIZEOF([void *])
+
+
 #################### COMMAND LINE PARAMETERS
 
 AC_ARG_ENABLE(debug,
