@@ -366,8 +366,6 @@ PatchWindow::event_save_as()
 		
 		if (confirm) {
 			App::instance().loader()->save_patch(_patch, filename);
-			App::instance().engine()->set_variable(_patch->path(), "ingen:document",
-					Atom(Glib::filename_to_uri(filename).c_str()));
 		}
 	}
 	App::instance().configuration()->set_patch_folder(dialog.get_current_folder());

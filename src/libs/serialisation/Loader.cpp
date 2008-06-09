@@ -114,6 +114,10 @@ Loader::load(SharedPtr<EngineInterface> engine,
 	
 	if (patch_path != "/")
 		engine->create_patch(patch_path, patch_poly);
+	
+	/* Set document metadata (so File->Save doesn't prompt)
+	 * FIXME: This needs some thinking for multiple clients... */
+	engine->set_variable(patch_path, "ingen:document", Atom(document_uri.c_str()));
 
 	/* Load (plugin) nodes */
 
