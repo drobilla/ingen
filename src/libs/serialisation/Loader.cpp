@@ -343,6 +343,29 @@ Loader::load(SharedPtr<EngineInterface> engine,
 
 		engine->connect(src_port, dst_port);
 	}
+	
+	
+	/* This Patch -> This Patch connections */
+
+	query = Redland::Query(*rdf_world, Glib::ustring(
+		"SELECT DISTINCT ?srcname ?dstname WHERE {\n") +
+		patch_uri + " ingen:port ?src ;\n"
+		"             ingen:port ?dst .\n"
+		"?dst         ingen:connectedTo ?src ;\n"
+		"             ingen:name ?dstname .\n" 
+		"?src         ingen:name ?srcname .\n"
+		"}\n");
+
+	results = query.run(*rdf_world, model);
+
+	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
+		Path src_port = patch_path.base() + Path::nameify((*i)["srcname"].to_string());
+		Path dst_port = patch_path.base() + Path::nameify((*i)["dstname"].to_string());
+
+		//cerr << patch_path << " 4 CONNECTION: " << src_port << " -> " << dst_port << endl;
+
+		engine->connect(src_port, dst_port);
+	}
 
 
 	/* Load variables */
