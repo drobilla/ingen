@@ -154,15 +154,6 @@ Redland::Node
 Serialiser::path_to_node_id(const Path& path)
 {
 	assert(_model);
-	/*string ret = path.substr(1);
-
-	for (size_t i=0; i < ret.length(); ++i) {
-		if (ret[i] == '/')
-			ret[i] = '_';
-	}
-
-	return Redland::Node(Node::BLANK, ret);
-	*/
 
 	NodeMap::iterator i = _node_map.find(path);
 	if (i != _node_map.end()) {
@@ -423,6 +414,13 @@ Serialiser::serialise_connection(SharedPtr<Connection> connection) throw (std::l
 	const Redland::Node src_node = path_to_node_id(connection->src_port_path());
 	const Redland::Node dst_node = path_to_node_id(connection->dst_port_path());
 
+	/* This would allow associating data with the connection... */
+	/*const Redland::Node connection_node = _world.blank_id();
+	_model->add_statement(connection_node, "ingen:hasSource", src_node);
+	_model->add_statement(dst_node, "ingen:hasConnection", connection_node);
+	*/
+
+	/* ... but this is cleaner */
 	_model->add_statement(dst_node, "ingen:connectedTo", src_node);
 }
 	
