@@ -246,7 +246,7 @@ NodeModule::rename()
 void
 NodeModule::add_port(SharedPtr<PortModel> port, bool resize_to_fit)
 {
-	uint32_t index = _ports.size(); // FIXME: kluge, engine needs to tell us this
+	uint32_t index = _ports.size(); // FIXME: kludge, engine needs to tell us this
 	
 	Module::add_port(boost::shared_ptr<Port>(
 			new Port(PtrCast<NodeModule>(shared_from_this()), port)));
