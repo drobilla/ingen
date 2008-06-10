@@ -25,8 +25,7 @@
 #include "PluginImpl.hpp"
 #include "AudioDriver.hpp"
 #include "MidiDriver.hpp"
-#include "DisconnectNodeEvent.hpp"
-#include "DisconnectPortEvent.hpp"
+#include "DisconnectAllEvent.hpp"
 #include "ClientBroadcaster.hpp"
 #include "ObjectStore.hpp"
 #include "QueuedEventSource.hpp"
@@ -44,8 +43,7 @@ DestroyEvent::DestroyEvent(Engine& engine, SharedPtr<Responder> responder, Frame
 	, _patch_port_listnode(NULL)
 	, _ports_array(NULL)
 	, _compiled_patch(NULL)
-	, _disconnect_node_event(NULL)
-	, _disconnect_port_event(NULL)
+	, _disconnect_event(NULL)
 {
 	assert(_source);
 }
@@ -53,8 +51,7 @@ DestroyEvent::DestroyEvent(Engine& engine, SharedPtr<Responder> responder, Frame
 
 DestroyEvent::~DestroyEvent()
 {
-	delete _disconnect_node_event;
-	delete _disconnect_port_event;
+	delete _disconnect_event;
 }
 
 
@@ -80,8 +77,8 @@ DestroyEvent::pre_process()
 		if (_patch_node_listnode) {
 			assert(_patch_node_listnode->elem() == _node.get());
 			
-			_disconnect_node_event = new DisconnectNodeEvent(_engine, _node.get());
-			_disconnect_node_event->pre_process();
+			_disconnect_event = new DisconnectAllEvent(_engine, _node->parent_patch(), _node.get());
+			_disconnect_event->pre_process();
 			
 			if (_node->parent_patch()->enabled()) {
 				// FIXME: is this called multiple times?
@@ -101,10 +98,8 @@ DestroyEvent::pre_process()
 		if (_patch_port_listnode) {
 			assert(_patch_port_listnode->elem() == _port.get());
 			
-			//_port->remove_from_store();
-
-			_disconnect_port_event = new DisconnectPortEvent(_engine, _port->parent_patch(), _port.get());
-			_disconnect_port_event->pre_process();
+			_disconnect_event = new DisconnectAllEvent(_engine, _port->parent_patch(), _port.get());
+			_disconnect_event->pre_process();
 			
 			if (_port->parent_patch()->enabled()) {
 				// FIXME: is this called multiple times?
@@ -128,8 +123,8 @@ DestroyEvent::execute(ProcessContext& context)
 	if (_patch_node_listnode) {
 		assert(_node);
 
-		if (_disconnect_node_event)
-			_disconnect_node_event->execute(context);
+		if (_disconnect_event)
+			_disconnect_event->execute(context);
 		
 		if (_node->parent_patch()->compiled_patch())
 			_engine.maid()->push(_node->parent_patch()->compiled_patch());
@@ -138,8 +133,8 @@ DestroyEvent::execute(ProcessContext& context)
 	} else if (_patch_port_listnode) {
 		assert(_port);
 
-		if (_disconnect_port_event)
-			_disconnect_port_event->execute(context);
+		if (_disconnect_event)
+			_disconnect_event->execute(context);
 		
 		if (_port->parent_patch()->compiled_patch())
 			_engine.maid()->push(_port->parent_patch()->compiled_patch());
@@ -183,8 +178,8 @@ DestroyEvent::post_process()
 		_node->deactivate();
 		_responder->respond_ok();
 		_engine.broadcaster()->bundle_begin();
-		if (_disconnect_node_event)
-			_disconnect_node_event->post_process();
+		if (_disconnect_event)
+			_disconnect_event->post_process();
 		_engine.broadcaster()->send_destroyed(_path);
 		_engine.broadcaster()->bundle_end();
 		_engine.maid()->push(_patch_node_listnode);
@@ -192,8 +187,8 @@ DestroyEvent::post_process()
 		assert(_port);
 		_responder->respond_ok();
 		_engine.broadcaster()->bundle_begin();
-		if (_disconnect_port_event)
-			_disconnect_port_event->post_process();
+		if (_disconnect_event)
+			_disconnect_event->post_process();
 		_engine.broadcaster()->send_destroyed(_path);
 		_engine.broadcaster()->bundle_end();
 		_engine.maid()->push(_patch_port_listnode);

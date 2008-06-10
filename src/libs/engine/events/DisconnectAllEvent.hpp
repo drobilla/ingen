@@ -40,26 +40,36 @@ class OutputPort;
  *
  * \ingroup engine
  */
-class DisconnectNodeEvent : public QueuedEvent
+class DisconnectAllEvent : public QueuedEvent
 {
 public:
-	DisconnectNodeEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& node_path);
-	DisconnectNodeEvent(Engine& engine, NodeImpl* node);
-	~DisconnectNodeEvent();
+	DisconnectAllEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& parent_path, const string& node_path);
+	DisconnectAllEvent(Engine& engine, PatchImpl* parent, GraphObjectImpl* object);
+	~DisconnectAllEvent();
 
 	void pre_process();
 	void execute(ProcessContext& context);
 	void post_process();
 
 private:
-	Raul::Path                      _node_path;
-	PatchImpl*                      _patch;
+	enum ErrorType { 
+		NO_ERROR,
+		INVALID_PARENT_PATH,
+		PARENT_NOT_FOUND,
+		OBJECT_NOT_FOUND,
+	};
+
+	Raul::Path                      _parent_path;
+	Raul::Path                      _path;
+	PatchImpl*                      _parent;
 	NodeImpl*                       _node;
+	PortImpl*                       _port;
 	Raul::List<DisconnectionEvent*> _disconnection_events;
 	
-	bool _succeeded;
 	bool _lookup;
 	bool _disconnect_parent;
+
+	ErrorType _error;
 };
 
 

@@ -125,6 +125,13 @@ NodeMenu::on_menu_learn()
 	App::instance().engine()->midi_learn(_object->path());
 }
 
+	
+void
+NodeMenu::on_menu_disconnect()
+{
+	App::instance().engine()->disconnect_all(_object->parent()->path(), _object->path());
+}
+
 
 bool
 NodeMenu::has_control_inputs()

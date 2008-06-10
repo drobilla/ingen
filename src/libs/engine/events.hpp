@@ -28,7 +28,7 @@
 #include "CreatePortEvent.hpp"
 #include "DeactivateEvent.hpp"
 #include "DestroyEvent.hpp"
-#include "DisconnectNodeEvent.hpp"
+#include "DisconnectAllEvent.hpp"
 #include "DisconnectionEvent.hpp"
 #include "EnablePatchEvent.hpp"
 #include "EnablePortBroadcastingEvent.hpp"

@@ -90,7 +90,7 @@ PatchPortModule::create_menu()
 {
 	Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference();
 	xml->get_widget_derived("object_menu", _menu);
-	_menu->init(_port);
+	_menu->init(_port, true);
 	
 	set_menu(_menu);
 }

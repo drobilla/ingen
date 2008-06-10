@@ -101,7 +101,7 @@ OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t
 	lo_server_add_method(_server, "/ingen/rename", "iss", rename_cb, this);
 	lo_server_add_method(_server, "/ingen/connect", "iss", connect_cb, this);
 	lo_server_add_method(_server, "/ingen/disconnect", "iss", disconnect_cb, this);
-	lo_server_add_method(_server, "/ingen/disconnect_all", "is", disconnect_all_cb, this);
+	lo_server_add_method(_server, "/ingen/disconnect_all", "iss", disconnect_all_cb, this);
 	lo_server_add_method(_server, "/ingen/set_port_value", NULL, set_port_value_cb, this);
 	lo_server_add_method(_server, "/ingen/set_port_value_immediate", NULL, set_port_value_immediate_cb, this);
 	lo_server_add_method(_server, "/ingen/enable_port_broadcasting", NULL, enable_port_broadcasting_cb, this);
@@ -594,16 +594,18 @@ OSCEngineReceiver::_disconnect_cb(const char* path, const char* types, lo_arg** 
 
 
 /** \page engine_osc_namespace
- * <p> \b /ingen/disconnect_all - Disconnect all connections to/from a node.
+ * <p> \b /ingen/disconnect_all - Disconnect all connections to/from a node/port.
  * \arg \b response-id (integer)
- * \arg \b node-path (string) - Full path of node. </p> \n \n
+ * \arg \b patch-path (string) - The (parent) patch in which to disconnect object. </p> \n \n
+ * \arg \b node-path (string) - Full path of object. </p> \n \n
  */
 int
 OSCEngineReceiver::_disconnect_all_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	const char* node_path = &argv[1]->s;
+	const char* patch_path = &argv[1]->s;
+	const char* object_path = &argv[2]->s;
 
-	disconnect_all(node_path);
+	disconnect_all(patch_path, object_path);
 	return 0;
 }
 

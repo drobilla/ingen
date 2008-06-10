@@ -135,10 +135,8 @@ libingen_engine_la_SOURCES = \
 	events/DeactivateEvent.hpp \
 	events/DestroyEvent.cpp \
 	events/DestroyEvent.hpp \
-	events/DisconnectNodeEvent.cpp \
-	events/DisconnectNodeEvent.hpp \
-	events/DisconnectPortEvent.cpp \
-	events/DisconnectPortEvent.hpp \
+	events/DisconnectAllEvent.cpp \
+	events/DisconnectAllEvent.hpp \
 	events/DisconnectionEvent.cpp \
 	events/DisconnectionEvent.hpp \
 	events/EnablePatchEvent.cpp \

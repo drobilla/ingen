@@ -46,10 +46,10 @@ public:
 
 protected:
 
-	void on_menu_polyphonic();
-	void on_menu_disconnect();
-	void on_menu_destroy();
-	void on_menu_properties();
+	virtual void on_menu_disconnect() = 0;
+	void         on_menu_polyphonic();
+	void         on_menu_destroy();
+	void         on_menu_properties();
 
 	void polyphonic_changed(bool polyphonic);
 

@@ -92,13 +92,6 @@ ObjectMenu::polyphonic_changed(bool polyphonic)
 
 
 void
-ObjectMenu::on_menu_disconnect()
-{
-	App::instance().engine()->disconnect_all(_object->path());
-}
-
-	
-void
 ObjectMenu::on_menu_destroy()
 {
 	App::instance().engine()->destroy(_object->path());

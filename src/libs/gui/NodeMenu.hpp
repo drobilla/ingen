@@ -55,6 +55,7 @@ protected:
 	virtual void enable_controls_menuitem();
 	virtual void disable_controls_menuitem();
 
+	void on_menu_disconnect();
 	void on_menu_clone();
 	void on_menu_learn();
 	void on_menu_embed_gui();

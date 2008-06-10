@@ -30,14 +30,16 @@ namespace GUI {
 
 PortMenu::PortMenu(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 	: ObjectMenu(cobject, xml)
+	, _patch_port(NULL)
 {
 }
 
 
 void
-PortMenu::init(SharedPtr<PortModel> port)
+PortMenu::init(SharedPtr<PortModel> port, bool patch_port)
 {
 	ObjectMenu::init(port);
+	_patch_port = patch_port;
 	
 	if ( ! PtrCast<PatchModel>(port->parent()) ) {
 		_polyphonic_menuitem->set_sensitive(false);
@@ -46,6 +48,19 @@ PortMenu::init(SharedPtr<PortModel> port)
 	}
 		
 	_enable_signal = true;
+}
+
+	
+void
+PortMenu::on_menu_disconnect()
+{
+	if (_patch_port) {
+		App::instance().engine()->disconnect_all(
+				_object->parent()->path(), _object->path());
+	} else {
+		App::instance().engine()->disconnect_all(
+				_object->parent()->path().parent(), _object->path());
+	}
 }
 
 

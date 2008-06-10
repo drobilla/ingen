@@ -340,11 +340,13 @@ OSCEngineSender::disconnect(const string& src_port_path,
 
 
 void
-OSCEngineSender::disconnect_all(const string& node_path)
+OSCEngineSender::disconnect_all(const string& parent_patch_path,
+                                const string& node_path)
 {
 	assert(_engine_addr);
-	lo_send(_engine_addr, "/ingen/disconnect_all", "is",
+	lo_send(_engine_addr, "/ingen/disconnect_all", "iss",
 		next_id(),
+		parent_patch_path.c_str(),
 		node_path.c_str());
 }
 

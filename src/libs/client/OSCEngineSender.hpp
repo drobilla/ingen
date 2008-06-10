@@ -109,7 +109,8 @@ public:
 	void disconnect(const string& src_port_path,
 	                const string& dst_port_path);
 
-	void disconnect_all(const string& node_path);
+	void disconnect_all(const string& parent_patch_path,
+	                    const string& node_path);
 
 	void set_port_value(const string& port_path,
 	                    const string& type_uri,

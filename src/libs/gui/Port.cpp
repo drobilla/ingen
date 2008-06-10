@@ -42,6 +42,7 @@ Port::Port(boost::shared_ptr<FlowCanvas::Module> module, SharedPtr<PortModel> pm
 			flip ? (!pm->is_input()) : pm->is_input(),
 			App::instance().configuration()->get_port_color(pm.get()))
 	, _port_model(pm)
+	, _flipped(flip)
 {
 	assert(module);
 	assert(_port_model);
@@ -78,7 +79,7 @@ Port::create_menu()
 	PortMenu* menu = NULL;
 	Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference();
 	xml->get_widget_derived("object_menu", menu);
-	menu->init(_port_model);
+	menu->init(_port_model, _flipped);
 	set_menu(menu);
 }
 

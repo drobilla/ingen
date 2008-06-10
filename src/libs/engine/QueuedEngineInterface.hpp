@@ -116,7 +116,8 @@ public:
 	virtual void disconnect(const string& src_port_path,
 	                        const string& dst_port_path);
 
-	virtual void disconnect_all(const string& node_path);
+	virtual void disconnect_all(const string& patch_path,
+	                            const string& node_path);
 
 	virtual void set_port_value(const string& port_path,
 	                            const string& type_uri,

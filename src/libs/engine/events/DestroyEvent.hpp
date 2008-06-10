@@ -38,8 +38,7 @@ class GraphObjectImpl;
 class NodeImpl;
 class PortImpl;
 class DriverPort;
-class DisconnectNodeEvent;
-class DisconnectPortEvent;
+class DisconnectAllEvent;
 class CompiledPatch;
 
 
@@ -67,8 +66,7 @@ private:
 	Raul::List<PortImpl*>::Node*                 _patch_port_listnode;
 	Raul::Array<PortImpl*>*                      _ports_array; ///< New (external) ports for Patch
 	CompiledPatch*                               _compiled_patch;  ///< Patch's new process order
-	DisconnectNodeEvent*                         _disconnect_node_event;
-	DisconnectPortEvent*                         _disconnect_port_event;
+	DisconnectAllEvent*                          _disconnect_event;
 	
 	SharedPtr< Table<Path, SharedPtr<Shared::GraphObject> > > _removed_table;
 };

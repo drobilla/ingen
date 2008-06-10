@@ -30,12 +30,7 @@ template<typename T> class ListNode;
 
 namespace Ingen {
 
-class GraphObjectImpl;
 class PatchImpl;
-class NodeImpl;
-class Plugin;
-class DisconnectNodeEvent;
-class DisconnectPortEvent;
 
 
 /** An event to change the name of an GraphObjectImpl.

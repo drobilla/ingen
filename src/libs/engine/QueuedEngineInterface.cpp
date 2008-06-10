@@ -227,9 +227,10 @@ QueuedEngineInterface::disconnect(const string& src_port_path,
 
 
 void
-QueuedEngineInterface::disconnect_all(const string& node_path)
+QueuedEngineInterface::disconnect_all(const string& patch_path,
+                                      const string& node_path)
 {
-	push_queued(new DisconnectNodeEvent(_engine, _responder, now(), node_path));
+	push_queued(new DisconnectAllEvent(_engine, _responder, now(), patch_path, node_path));
 }
 
 

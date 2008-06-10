@@ -17,10 +17,8 @@ EXTRA_DIST = \
 	DeactivateEvent.hpp \
 	DestroyEvent.cpp \
 	DestroyEvent.hpp \
-	DisconnectNodeEvent.cpp \
-	DisconnectNodeEvent.hpp \
-	DisconnectPortEvent.cpp \
-	DisconnectPortEvent.hpp \
+	DisconnectAllEvent.cpp \
+	DisconnectAllEvent.hpp \
 	DisconnectionEvent.cpp \
 	DisconnectionEvent.hpp \
 	EnablePatchEvent.cpp \

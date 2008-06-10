@@ -97,7 +97,8 @@ public:
 	virtual void disconnect(const string& src_port_path,
 	                        const string& dst_port_path) = 0;
 	
-	virtual void disconnect_all(const string& path) = 0;
+	virtual void disconnect_all(const string& parent_patch_path,
+	                            const string& path) = 0;
 	
 	virtual void set_port_value(const string& port_path,
 	                            const string& type_uri,

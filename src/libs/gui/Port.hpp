@@ -57,6 +57,7 @@ private:
 	void renamed();
 
 	SharedPtr<PortModel> _port_model;
+	bool                 _flipped;
 };
 
 
