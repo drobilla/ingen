@@ -108,11 +108,7 @@ public:
 	SampleCount    sample_rate() const  { return _sample_rate; }
 	bool           is_activated() const { return _is_activated; }
 	
-	inline SampleCount frame_time() const { 
-		const SampleCount t = jack_frame_time(_client);
-		std::cerr << "Frame time: " << t << std::endl;
-		return t;
-	}
+	inline SampleCount frame_time() const { return jack_frame_time(_client); }
 
 	class PortRegistrationFailedException : public std::exception {};
 
