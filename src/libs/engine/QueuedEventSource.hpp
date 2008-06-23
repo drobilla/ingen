@@ -57,11 +57,8 @@ public:
 	void unblock();
 
 protected:
-	void push_queued(QueuedEvent* const ev);
-	inline void push_stamped(Event* const ev) { 
-		std::cerr << "[QueuedEventSource] Pushing stamped @ " << ev->time() << std::endl;
-		_stamped_queue.push(ev); }
-	
+	void          push_queued(QueuedEvent* const ev);
+	inline void   push_stamped(Event* const ev) { _stamped_queue.push(ev); } 
 	Event*        pop_earliest_queued_before(const SampleCount time);
 	inline Event* pop_earliest_stamped_before(const SampleCount time);
 
@@ -101,11 +98,7 @@ QueuedEventSource::pop_earliest_stamped_before(const SampleCount time)
 	if (!_stamped_queue.empty()) {
 		if (_stamped_queue.front()->time() < time) {
 			ret = _stamped_queue.front();
-			std::cerr << "[QueuedEventSource] Popping event @ " << _stamped_queue.front()->time() << std::endl;
 			_stamped_queue.pop();
-		} else {
-			std::cerr << "[QueuedEventSource] Next event is past " << time
-				<< " (@ " << _stamped_queue.front()->time() << ")" << std::endl;
 		}
 	}
 
