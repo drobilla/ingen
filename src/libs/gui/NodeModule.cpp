@@ -40,11 +40,7 @@ NodeModule::NodeModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeMode
 	: FlowCanvas::Module(canvas, node->path().name())
 	, _node(node)
 	, _gui_widget(NULL)
-	, _gui_container(NULL)
-	, _gui_item(NULL)
 	, _gui_window(NULL)
-	, _last_gui_request_width(0)
-	, _last_gui_request_height(0)
 {
 	assert(_node);
 
@@ -129,76 +125,46 @@ NodeModule::embed_gui(bool embed)
 			cerr << "LV2 GUI already popped up, cannot embed" << endl;
 			return;
 		}
-		
-		GtkWidget* c_widget = NULL;
 
-		if (!_gui_item) {
-		
-			const PluginModel* const plugin = dynamic_cast<const PluginModel*>(_node->plugin());
-			assert(plugin);
-
-			_plugin_ui = plugin->ui(App::instance().world(), _node);
-
-			if (_plugin_ui) {
-				c_widget = (GtkWidget*)slv2_ui_instance_get_widget(_plugin_ui->instance());
-				_gui_widget = Glib::wrap(c_widget);
-				assert(_gui_widget);
-			
-				if (_gui_container)
-					delete _gui_container;
-
-				_gui_container = manage(new Gtk::EventBox());
-				_gui_container->set_name("ingen_embedded_node_gui_container");
-				_gui_container->set_border_width(2);
-				_gui_container->add(*_gui_widget);
-				_gui_container->show_all();
-			
-				const double y = 4 + _canvas_title.property_text_height();
-				_gui_item = new Gnome::Canvas::Widget(*this, 2.0, y, *_gui_container);
-			}
+		if (!_plugin_ui) {
+			const PluginModel* const pm = dynamic_cast<const PluginModel*>(_node->plugin());
+			assert(pm);
+			_plugin_ui = pm->ui(App::instance().world(), _node);
 		}
 
-		if (_gui_item) {
-
+		if (_plugin_ui) {
+			GtkWidget* c_widget = (GtkWidget*)slv2_ui_instance_get_widget(_plugin_ui->instance());
+			_gui_widget = Glib::wrap(c_widget);
 			assert(_gui_widget);
+
+			Gtk::Container* container = new Gtk::EventBox();
+			container->set_name("ingen_embedded_node_gui_container");
+			container->add(*_gui_widget);
+			FlowCanvas::Module::embed(container);
+		} else {
+			cerr << "ERROR: Failed to create LV2 UI" << endl;
+		}
+
+		if (_gui_widget) {
 			_gui_widget->show_all();
-			_gui_item->show();
 
-			Gtk::Requisition r = _gui_container->size_request();
-			gui_size_request(&r, true);
-
-			_gui_item->raise_to_top();
-
-			_gui_container->signal_size_request().connect(sigc::bind(
-					sigc::mem_fun(this, &NodeModule::gui_size_request), false));
-		
-			for (PortModelList::const_iterator p = _node->ports().begin(); p != _node->ports().end(); ++p)
+			for (PortModelList::const_iterator p = _node->ports().begin();
+					p != _node->ports().end(); ++p)
 				if ((*p)->type().is_control() && (*p)->is_output())
 					App::instance().engine()->enable_port_broadcasting((*p)->path());
-
-		} else {
-			cerr << "ERROR: Failed to create canvas item for LV2 UI" << endl;
 		}
 
 	} else { // un-embed
 
-		if (_gui_item) {
-			delete _gui_item;
-			_gui_item = NULL;
-			_gui_container = NULL; // managed
-			_gui_widget = NULL; // managed
-			_plugin_ui.reset();
-		}
-
-		_ports_y_offset = 0;
-		_minimum_width = 0; // resize() takes care of it..
+		FlowCanvas::Module::embed(NULL);
+		_plugin_ui.reset();
 
 		for (PortModelList::const_iterator p = _node->ports().begin(); p != _node->ports().end(); ++p)
 			if ((*p)->type().is_control() && (*p)->is_output())
 				App::instance().engine()->disable_port_broadcasting((*p)->path());
 	}
 			
-	if (embed && _gui_item) {
+	if (embed && _embed_item) {
 		initialise_gui_values();
 		set_base_color(0x212222FF);
 	} else {
@@ -206,32 +172,6 @@ NodeModule::embed_gui(bool embed)
 	}
 
 	resize();
-}
-
-
-void
-NodeModule::gui_size_request(Gtk::Requisition* r, bool force)
-{
-	if (!force && _last_gui_request_width == r->width && _last_gui_request_height == r->height)
-		return;
-
-	if (r->width + 4 > _width)
-		set_minimum_width(r->width + 4);
-	
-	_ports_y_offset = r->height + 2;
-	
-	resize();
-
-	Gtk::Allocation allocation;
-	allocation.set_width(r->width + 4);
-	allocation.set_height(r->height + 4);
-
-	_gui_container->size_allocate(allocation);
-	_gui_item->property_width() = _width - 4;
-	_gui_item->property_height() = r->height;
-
-	_last_gui_request_width = r->width;
-	_last_gui_request_height = r->height;
 }
 
 

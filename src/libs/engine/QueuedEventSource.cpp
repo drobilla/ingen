@@ -62,6 +62,8 @@ QueuedEventSource::push_queued(QueuedEvent* const ev)
 {
 	assert(!ev->is_prepared());
 
+	cerr << "[QueuedEventSource] Pushing queued @ " << ev->time() << endl;
+
 	if (_events[_back] != NULL) {
 		cerr << "[QueuedEventSource] Error: Queue is full!  Event is lost, please report!" << endl;
 		delete ev;

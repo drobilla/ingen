@@ -68,6 +68,7 @@ protected:
 	void on_double_click(GdkEventButton* ev);
 	
 	void show_control_window();
+	void embed_gui(bool embed);
 	bool popup_gui();
 	void on_gui_window_close();
 	
@@ -78,9 +79,6 @@ protected:
 	void remove_port(SharedPtr<PortModel> port);
 
 	void value_changed(uint32_t index, const Atom& value);
-
-	void embed_gui(bool embed);
-	void gui_size_request(Gtk::Requisition* req, bool force);
 	void initialise_gui_values();
 
 	void create_menu();
@@ -89,11 +87,7 @@ protected:
 	NodeMenu*              _menu;
 	SharedPtr<PluginUI>    _plugin_ui;
 	Gtk::Widget*           _gui_widget;
-	Gtk::Container*        _gui_container;
-	Gnome::Canvas::Widget* _gui_item; ///< iff embedded
 	Gtk::Window*           _gui_window; ///< iff popped up
-	int                    _last_gui_request_width;
-	int                    _last_gui_request_height;
 };
 
 
