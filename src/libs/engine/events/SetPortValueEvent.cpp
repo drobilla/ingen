@@ -34,20 +34,20 @@ namespace Ingen {
 
 
 /** Omni (all voices) control setting */
-SetPortValueEvent::SetPortValueEvent(Engine&          engine,
+SetPortValueEvent::SetPortValueEvent(Engine&              engine,
                                      SharedPtr<Responder> responder,
                                      SampleCount          timestamp,
                                      const string&        port_path,
                                      uint32_t             data_size,
                                      const void*          data)
-: Event(engine, responder, timestamp),
-  _omni(true),
-  _voice_num(0),
-  _port_path(port_path),
-  _data_size(data_size),
-  _data(malloc(data_size)),
-  _port(NULL),
-  _error(NO_ERROR)
+	: Event(engine, responder, timestamp)
+	, _omni(true)
+	, _voice_num(0)
+	, _port_path(port_path)
+	, _data_size(data_size)
+	, _data(malloc(data_size))
+	, _port(NULL)
+	, _error(NO_ERROR)
 {
 	memcpy(_data, data, data_size);
 }
