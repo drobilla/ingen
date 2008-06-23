@@ -197,15 +197,13 @@ OSCEngineReceiver::ReceiveThread::_run()
  * This is based on the fact that the current responder is stored in a ref
  * counted pointer, and events just take a reference to that.  Thus, events
  * may delete their responder if we've since switched to a new one, or the
- * same one can stay around and serve a series of events.  Reference counting
- * is pretty sweet, eh?
+ * same one can stay around and serve a series of events.
+ * Hooray for reference counting.
  *
  * If this message came from the same source as the last message, no allocation
  * of responders or lo_addresses or any of it needs to be done.  Unfortunately
  * the only way to check is by comparing URLs, because liblo addresses suck.
- *
- * Really, this entire thing is a basically just a crafty way of partially
- * working around the fact that liblo addresses really suck.  Oh well.
+ * Lack of a fast liblo address comparison really sucks here, in any case.
  */
 int
 OSCEngineReceiver::set_response_address_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg, void* user_data)
@@ -231,8 +229,6 @@ OSCEngineReceiver::set_response_address_cb(const char* path, const char* types, 
 		me->set_next_response_id(id);
 	} else {
 		me->disable_responses();
-		if (me->_responder->client())
-			me->_responder->client()->disable();
 	}
 
 	// If this returns 0 no OSC commands will work
@@ -614,14 +610,14 @@ OSCEngineReceiver::_disconnect_all_cb(const char* path, const char* types, lo_ar
  * <p> \b /ingen/set_port_value_immediate - Sets the value of a port for all voices (both AR and CR)
  * \arg \b response-id (integer)
  * \arg \b port-path (string) - Name of port
- * \arg \b value (float) - Value to set port to </p> \n \n
+ * \arg \b value (float or blob) - Value to set port to </p> \n \n
  */
 /** \page engine_osc_namespace
  * <p> \b /ingen/set_port_value_immediate - Sets the value of a port for a specific voice (both AR and CR)
  * \arg \b response-id (integer)
  * \arg \b port-path (string) - Name of port
  * \arg \b voice (integer) - Voice to set port value for
- * \arg \b value (float) - Value to set port to </p> \n \n
+ * \arg \b value (float or blob) - Value to set port to </p> \n \n
  *
  * See documentation for set_port_value for the distinction between these two messages.
  */
