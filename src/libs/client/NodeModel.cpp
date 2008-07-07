@@ -172,7 +172,7 @@ NodeModel::port_value_range(SharedPtr<PortModel> port, float& min, float& max)
 		  uint32_t num_lv2_ports = slv2_plugin_get_num_ports(_plugin->slv2_plugin());
 		  _min_values = new float[num_lv2_ports];
 		  _max_values = new float[num_lv2_ports];
-		  slv2_plugin_get_port_ranges(_plugin->slv2_plugin(), 
+		  slv2_plugin_get_port_ranges_float(_plugin->slv2_plugin(), 
 					      _min_values, _max_values, 0);
 		}
 

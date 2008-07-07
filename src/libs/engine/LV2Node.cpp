@@ -151,7 +151,7 @@ LV2Node::instantiate()
 	PortImpl* port = NULL;
 	
 	float* def_values = new float[num_ports];
-	slv2_plugin_get_port_ranges(plug, 0, 0, def_values);
+	slv2_plugin_get_port_ranges_float(plug, 0, 0, def_values);
 	
 	for (uint32_t j=0; j < num_ports; ++j) {
 		SLV2Port id = slv2_plugin_get_port_by_index(plug, j);
