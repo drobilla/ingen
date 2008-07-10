@@ -130,7 +130,7 @@ CFLAGS="$CFLAGS -std=c99 -pipe -fmessage-length=999 -DCONFIG_H_PATH=\\\"$CONFIG_
 
 # Jack support
 build_jack="yes"
-AC_ARG_ENABLE(enable-jack,
+AC_ARG_ENABLE(jack,
 	[AS_HELP_STRING(--enable-jack, [Enable Jack support (yes)])],
 	[ if test x$enable_jack = xno ; then build_jack=no ; fi ])
 if test "$build_jack" = "yes"; then
