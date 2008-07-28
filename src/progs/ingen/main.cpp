@@ -109,8 +109,7 @@ main(int argc, char** argv)
 				engine_module.reset();
 			}
 		} else {
-			cerr << "Unable to load engine module, engine not loaded." << endl;
-			cerr << "Try using src/set_dev_environment.sh, or setting INGEN_MODULE_PATH." << endl;
+			cerr << "Unable to load engine module." << endl;
 		}
 
 	}
@@ -132,7 +131,6 @@ main(int argc, char** argv)
 			use_osc = true;
 		} else {
 			cerr << "Unable to load ingen_client module, aborting." << endl;
-			cerr << "Try using src/set_dev_environment.sh, or setting INGEN_MODULE_PATH." << endl;
 			return -1;
 		}
 	}
@@ -186,7 +184,6 @@ main(int argc, char** argv)
 
 		} else {
 			cerr << "Unable to load serialisation module, aborting." << endl;
-			cerr << "Try using src/set_dev_environment.sh, or setting INGEN_MODULE_PATH." << endl;
 			return -1;
 		}
 	}
@@ -204,7 +201,6 @@ main(int argc, char** argv)
 			run(argc, argv, world);
 		} else {
 			cerr << "Unable to find GUI module, GUI not loaded." << endl;
-			cerr << "Try using src/set_dev_environment.sh, or setting INGEN_MODULE_PATH." << endl;
 		}
 	}
 

@@ -78,7 +78,8 @@ load_module(const string& name)
 		cerr << "Loaded module \"" <<  name << "\" from " << INGEN_MODULE_DIR << endl;
 		return SharedPtr<Glib::Module>(module);
 	} else {
-		cerr << "Unable to load module \"" <<  name << "\" (try setting INGEN_MODULE_PATH)." << endl;
+		cerr << "Unable to load module \"" <<  name << "\", is Ingen installed?" << endl
+			<< "Use ./ingen.dev to run from the source tree." << endl;
 		return SharedPtr<Glib::Module>();
 	}
 }
