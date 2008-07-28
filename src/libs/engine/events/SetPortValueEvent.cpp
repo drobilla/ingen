@@ -38,12 +38,14 @@ SetPortValueEvent::SetPortValueEvent(Engine&              engine,
                                      SharedPtr<Responder> responder,
                                      SampleCount          timestamp,
                                      const string&        port_path,
+                                     const string&        data_type,
                                      uint32_t             data_size,
                                      const void*          data)
 	: Event(engine, responder, timestamp)
 	, _omni(true)
 	, _voice_num(0)
 	, _port_path(port_path)
+	, _data_type(data_type)
 	, _data_size(data_size)
 	, _data(malloc(data_size))
 	, _port(NULL)
@@ -59,12 +61,13 @@ SetPortValueEvent::SetPortValueEvent(Engine&              engine,
                                      SampleCount          timestamp,
                                      uint32_t             voice_num,
                                      const string&        port_path,
+                                     const string&        data_type,
                                      uint32_t             data_size,
                                      const void*          data)
 	: Event(engine, responder, timestamp)
 	, _omni(false)
 	, _voice_num(voice_num)
-	, _port_path(port_path)
+	, _data_type(data_type)
 	, _data_size(data_size)
 	, _data(malloc(data_size))
 	, _port(NULL)
@@ -109,14 +112,23 @@ SetPortValueEvent::execute(ProcessContext& context)
 		}
 		
 		EventBuffer* const ebuf = dynamic_cast<EventBuffer*>(buf);
-		if (ebuf) {
+		// FIXME: eliminate string comparisons
+		if (ebuf && _data_type == "lv2_midi:MidiEvent") {
+			const LV2Features::Feature* f = _engine.world()->lv2_features->feature(LV2_URI_MAP_URI);
+			LV2URIMap* map = (LV2URIMap*)f->controller;
+			const uint32_t type_id = map->uri_to_id(NULL, "http://lv2plug.in/ns/ext/midi#MidiEvent");
 			const uint32_t frames = std::max((uint32_t)(_time - context.start()), ebuf->latest_frames());
-			// FIXME: type
 			ebuf->prepare_write(context.nframes());
-			ebuf->append(frames, 0, 0, _data_size, (const unsigned char*)_data);
+			// FIXME: how should this work? binary over OSC, ick
+			// Message is an event:
+			ebuf->append(frames, 0, type_id, _data_size, (const unsigned char*)_data);
+			// Message is an event buffer:
+			//ebuf->append((LV2_Event_Buffer*)_data);
 			_port->raise_set_by_user_flag();
 			return;
 		}
+
+		cerr << "WARNING: Unknown value type " << _data_type << ", ignoring" << endl;
 	}
 }
 

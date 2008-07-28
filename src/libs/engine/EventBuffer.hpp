@@ -83,6 +83,8 @@ public:
 	            uint16_t       size,
 	            const uint8_t* data);
 
+	bool append(const LV2_Event_Buffer* buf);
+
 	bool merge(const EventBuffer& a, const EventBuffer& b);
 
 private:

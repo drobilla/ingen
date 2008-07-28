@@ -31,7 +31,7 @@ LV2Features::LV2Features()
 	_lv2_features[0] = NULL;
 
 	LV2URIMap* controller = new LV2URIMap();
-	add_feature(LV2_URI_MAP_URI, &controller->uri_map_feature, controller);
+	add_feature(LV2_URI_MAP_URI, controller->feature(), controller);
 }
 
 

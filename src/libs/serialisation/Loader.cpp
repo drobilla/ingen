@@ -42,13 +42,12 @@ namespace Serialisation {
  * @return whether or not load was successful.
  */
 bool
-Loader::load(SharedPtr<EngineInterface> engine,
-		Redland::World*                 rdf_world,
-		const Glib::ustring&            document_uri,
-		boost::optional<Path>           parent,
-		string                          patch_name,
-		Glib::ustring                   patch_uri,
-		GraphObject::Variables          data)
+Loader::load(Ingen::Shared::World*       world,
+             const Glib::ustring&        document_uri,
+	         boost::optional<Raul::Path> parent,
+	         std::string                 patch_name,
+	         Glib::ustring               patch_uri,
+             GraphObject::Variables      data)
 {
 	setlocale(LC_NUMERIC, "C");
 
@@ -56,7 +55,7 @@ Loader::load(SharedPtr<EngineInterface> engine,
 
 	std::set<Path> created;
 
-	Redland::Model model(*rdf_world, document_uri, document_uri);
+	Redland::Model model(*world->rdf_world, document_uri, document_uri);
 
 	if (patch_uri == "")
 		patch_uri = string("<") + document_uri + ">";
@@ -75,11 +74,11 @@ Loader::load(SharedPtr<EngineInterface> engine,
 	/* Get polyphony from file (mandatory if not specified in parameters) */
 	} else {
 		// FIXME: polyphony datatype?
-		Redland::Query query(*rdf_world, Glib::ustring(
+		Redland::Query query(*world->rdf_world, Glib::ustring(
 			"SELECT DISTINCT ?poly WHERE {\n") +
 			patch_uri + " ingen:polyphony ?poly\n }");
 
-		Redland::Query::Results results = query.run(*rdf_world, model);
+		Redland::Query::Results results = query.run(*world->rdf_world, model);
 
 		if (results.size() == 0) {
 			cerr << "[Loader] ERROR: No polyphony found!" << endl;
@@ -98,11 +97,11 @@ Loader::load(SharedPtr<EngineInterface> engine,
 		if (patch_name.substr(patch_name.length()-10) == ".ingen.ttl")
 			patch_name = patch_name.substr(0, patch_name.length()-10);
 
-		Redland::Query query(*rdf_world, Glib::ustring(
+		Redland::Query query(*world->rdf_world, Glib::ustring(
 			"SELECT DISTINCT ?name WHERE {\n") +
 			patch_uri + " ingen:name ?name\n}");
 
-		Redland::Query::Results results = query.run(*rdf_world, model);
+		Redland::Query::Results results = query.run(*world->rdf_world, model);
 
 		if (results.size() > 0)
 			patch_name = (*results.begin())["name"].to_string();
@@ -113,15 +112,15 @@ Loader::load(SharedPtr<EngineInterface> engine,
 	cout << " as " << patch_path << endl;
 	
 	if (patch_path != "/")
-		engine->create_patch(patch_path, patch_poly);
+		world->engine->create_patch(patch_path, patch_poly);
 	
 	/* Set document metadata (so File->Save doesn't prompt)
 	 * FIXME: This needs some thinking for multiple clients... */
-	engine->set_variable(patch_path, "ingen:document", Atom(document_uri.c_str()));
+	world->engine->set_variable(patch_path, "ingen:document", Atom(document_uri.c_str()));
 
 	/* Load (plugin) nodes */
 
-	Redland::Query query(*rdf_world, Glib::ustring(
+	Redland::Query query(*world->rdf_world, Glib::ustring(
 		"SELECT DISTINCT ?name ?plugin ?varkey ?varval ?poly WHERE {\n") +
 		patch_uri + " ingen:node       ?node .\n"
 		"?node        ingen:name       ?name ;\n"
@@ -133,11 +132,11 @@ Loader::load(SharedPtr<EngineInterface> engine,
 		"         }"
 		"}");
 
-	Redland::Query::Results results = query.run(*rdf_world, model);
+	Redland::Query::Results results = query.run(*world->rdf_world, model);
 
 	map<const string, const Atom> variable;
 
-	rdf_world->mutex().lock();
+	world->rdf_world->mutex().lock();
 	
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
 
@@ -145,37 +144,37 @@ Loader::load(SharedPtr<EngineInterface> engine,
 		const Path   node_path = patch_path.base() + node_name;
 
 		if (created.find(node_path) == created.end()) {
-			const string node_plugin     = rdf_world->qualify((*i)["plugin"].to_string());
+			const string node_plugin     = world->rdf_world->qualify((*i)["plugin"].to_string());
 			bool         node_polyphonic = false;
 
 			Redland::Node poly_node = (*i)["poly"];
 			if (poly_node.is_bool() && poly_node.to_bool() == true)
 				node_polyphonic = true;
 		
-			engine->create_node(node_path, node_plugin, node_polyphonic);
+			world->engine->create_node(node_path, node_plugin, node_polyphonic);
 			created.insert(node_path);
 		}
 
-		const string key = rdf_world->prefixes().qualify((*i)["varkey"].to_string());
+		const string key = world->rdf_world->prefixes().qualify((*i)["varkey"].to_string());
 		Redland::Node val_node = (*i)["varval"];
 
 		if (key != "")
-			engine->set_variable(node_path, key, AtomRDF::node_to_atom(val_node));
+			world->engine->set_variable(node_path, key, AtomRDF::node_to_atom(val_node));
 	}
 	
-	rdf_world->mutex().unlock();
+	world->rdf_world->mutex().unlock();
 		
 
 	/* Load subpatches */
 
-	query = Redland::Query(*rdf_world, Glib::ustring(
+	query = Redland::Query(*world->rdf_world, Glib::ustring(
 		"SELECT DISTINCT ?patch ?name WHERE {\n") +
 		patch_uri + " ingen:node ?patch .\n"
 		"?patch       a          ingen:Patch ;\n"
 		"             ingen:name ?name .\n"
 		"}");
 
-	results = query.run(*rdf_world, model);
+	results = query.run(*world->rdf_world, model);
 	
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
 
@@ -186,7 +185,7 @@ Loader::load(SharedPtr<EngineInterface> engine,
 
 		if (created.find(subpatch_path) == created.end()) {
 			created.insert(subpatch_path);
-			load(engine, rdf_world, document_uri, patch_path, name, patch);
+			load(world, document_uri, patch_path, name, patch);
 		}
 	}
 
@@ -195,7 +194,7 @@ Loader::load(SharedPtr<EngineInterface> engine,
 
 	/* Set node port control values */
 
-	query = Redland::Query(*rdf_world, Glib::ustring(
+	query = Redland::Query(*world->rdf_world, Glib::ustring(
 		"SELECT DISTINCT ?nodename ?portname ?portval WHERE {\n") +
 		patch_uri + " ingen:node   ?node .\n"
 		"?node        ingen:name   ?nodename ;\n"
@@ -205,7 +204,7 @@ Loader::load(SharedPtr<EngineInterface> engine,
 		"FILTER ( datatype(?portval) = xsd:decimal )\n"
 		"}\n");
 
-	results = query.run(*rdf_world, model);
+	results = query.run(*world->rdf_world, model);
 
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
 
@@ -216,13 +215,13 @@ Loader::load(SharedPtr<EngineInterface> engine,
 		const Path port_path = patch_path.base() + Path::nameify(node_name)
 			+"/"+ Path::nameify(port_name);
 
-		engine->set_port_value(port_path, "ingen:control", sizeof(float), &val);
+		world->engine->set_port_value(port_path, "ingen:Float", sizeof(float), &val);
 	}
 
 
 	/* Load this patch's ports */
 
-	query = Redland::Query(*rdf_world, Glib::ustring(
+	query = Redland::Query(*world->rdf_world, Glib::ustring(
 		"SELECT DISTINCT ?port ?type ?name ?datatype ?varkey ?varval ?portval WHERE {\n") +
 		patch_uri + " ingen:port     ?port .\n"
 		"?port        a              ?type ;\n"
@@ -237,32 +236,32 @@ Loader::load(SharedPtr<EngineInterface> engine,
 		"         }"
 		"}");
 
-	results = query.run(*rdf_world, model);
+	results = query.run(*world->rdf_world, model);
 
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
 		const string name     = (*i)["name"].to_string();
-		const string type     = rdf_world->qualify((*i)["type"].to_string());
-		const string datatype = rdf_world->qualify((*i)["datatype"].to_string());
+		const string type     = world->rdf_world->qualify((*i)["type"].to_string());
+		const string datatype = world->rdf_world->qualify((*i)["datatype"].to_string());
 
 		const Path port_path = patch_path.base() + (string)name;
 			
 		if (created.find(port_path) == created.end()) {
 			bool is_output = (type == "ingen:OutputPort"); // FIXME: check validity
-			engine->create_port(port_path, datatype, is_output);
+			world->engine->create_port(port_path, datatype, is_output);
 			created.insert(port_path);
 		}
 
 		const Redland::Node val_node = (*i)["portval"];
 		if (val_node.is_float()) {
 			const float val = val_node.to_float();
-			engine->set_port_value(patch_path.base() + name, "ingen:control", sizeof(float), &val);
+			world->engine->set_port_value(patch_path.base() + name, "ingen:Float", sizeof(float), &val);
 		}
 
-		const string key = rdf_world->prefixes().qualify((*i)["varkey"].to_string());
+		const string key = world->rdf_world->prefixes().qualify((*i)["varkey"].to_string());
 		const Redland::Node var_val_node = (*i)["varval"];
 
 		if (key != "")
-			engine->set_variable(patch_path.base() + name, key, AtomRDF::node_to_atom(var_val_node));
+			world->engine->set_variable(patch_path.base() + name, key, AtomRDF::node_to_atom(var_val_node));
 	}
 
 	created.clear();
@@ -270,7 +269,7 @@ Loader::load(SharedPtr<EngineInterface> engine,
 
 	/* Node -> Node connections */
 
-	query = Redland::Query(*rdf_world, Glib::ustring(
+	query = Redland::Query(*world->rdf_world, Glib::ustring(
 		"SELECT DISTINCT ?srcnodename ?srcname ?dstnodename ?dstname WHERE {\n") +
 		patch_uri +  "ingen:node ?srcnode ;\n"
 		"             ingen:node ?dstnode .\n"
@@ -283,7 +282,7 @@ Loader::load(SharedPtr<EngineInterface> engine,
 		"             ingen:name ?dstname .\n" 
 		"}\n");
 
-	results = query.run(*rdf_world, model);
+	results = query.run(*world->rdf_world, model);
 
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
 		Path src_node = patch_path.base() + Path::nameify((*i)["srcnodename"].to_string());
@@ -293,13 +292,13 @@ Loader::load(SharedPtr<EngineInterface> engine,
 
 		//cerr << patch_path << " 1 CONNECTION: " << src_port << " -> " << dst_port << endl;
 
-		engine->connect(src_port, dst_port);
+		world->engine->connect(src_port, dst_port);
 	}
 
 
 	/* This Patch -> Node connections */
 
-	query = Redland::Query(*rdf_world, Glib::ustring(
+	query = Redland::Query(*world->rdf_world, Glib::ustring(
 		"SELECT DISTINCT ?srcname ?dstnodename ?dstname WHERE {\n") +
 		patch_uri + " ingen:port ?src ;\n"
 		"             ingen:node ?dstnode .\n"
@@ -310,7 +309,7 @@ Loader::load(SharedPtr<EngineInterface> engine,
 		"?src         ingen:name ?srcname .\n"
 		"}\n");
 
-	results = query.run(*rdf_world, model);
+	results = query.run(*world->rdf_world, model);
 
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
 		Path src_port = patch_path.base() + Path::nameify((*i)["srcname"].to_string());
@@ -319,13 +318,13 @@ Loader::load(SharedPtr<EngineInterface> engine,
 
 		//cerr << patch_path << " 2 CONNECTION: " << src_port << " -> " << dst_port << endl;
 
-		engine->connect(src_port, dst_port);
+		world->engine->connect(src_port, dst_port);
 	}
 
 
 	/* Node -> This Patch connections */
 
-	query = Redland::Query(*rdf_world, Glib::ustring(
+	query = Redland::Query(*world->rdf_world, Glib::ustring(
 		"SELECT DISTINCT ?srcnodename ?srcname ?dstname WHERE {\n") +
 		patch_uri + " ingen:port ?dst ;\n"
 		"             ingen:node ?srcnode .\n"
@@ -336,7 +335,7 @@ Loader::load(SharedPtr<EngineInterface> engine,
 		"?src         ingen:name ?srcname .\n"
 		"}\n");
 
-	results = query.run(*rdf_world, model);
+	results = query.run(*world->rdf_world, model);
 
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
 		Path dst_port = patch_path.base() + Path::nameify((*i)["dstname"].to_string());
@@ -345,13 +344,13 @@ Loader::load(SharedPtr<EngineInterface> engine,
 
 		//cerr << patch_path << " 3 CONNECTION: " << src_port << " -> " << dst_port << endl;
 
-		engine->connect(src_port, dst_port);
+		world->engine->connect(src_port, dst_port);
 	}
 	
 	
 	/* This Patch -> This Patch connections */
 
-	query = Redland::Query(*rdf_world, Glib::ustring(
+	query = Redland::Query(*world->rdf_world, Glib::ustring(
 		"SELECT DISTINCT ?srcname ?dstname WHERE {\n") +
 		patch_uri + " ingen:port ?src ;\n"
 		"             ingen:port ?dst .\n"
@@ -360,7 +359,7 @@ Loader::load(SharedPtr<EngineInterface> engine,
 		"?src         ingen:name ?srcname .\n"
 		"}\n");
 
-	results = query.run(*rdf_world, model);
+	results = query.run(*world->rdf_world, model);
 
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
 		Path src_port = patch_path.base() + Path::nameify((*i)["srcname"].to_string());
@@ -368,51 +367,51 @@ Loader::load(SharedPtr<EngineInterface> engine,
 
 		//cerr << patch_path << " 4 CONNECTION: " << src_port << " -> " << dst_port << endl;
 
-		engine->connect(src_port, dst_port);
+		world->engine->connect(src_port, dst_port);
 	}
 
 
 	/* Load variables */
 
-	query = Redland::Query(*rdf_world, Glib::ustring(
+	query = Redland::Query(*world->rdf_world, Glib::ustring(
 		"SELECT DISTINCT ?varkey ?varval WHERE {\n") +
 		patch_uri + " ingen:variable ?variable .\n"
 		"?variable    ingen:key      ?varkey ;\n"
 		"             ingen:value    ?varval .\n"
 		"}");
 
-	results = query.run(*rdf_world, model);
+	results = query.run(*world->rdf_world, model);
 
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
 
-		const string key = rdf_world->prefixes().qualify(string((*i)["varkey"]));
+		const string key = world->rdf_world->prefixes().qualify(string((*i)["varkey"]));
 		Redland::Node val_node = (*i)["varval"];
 
 		if (key != "")
-			engine->set_variable(patch_path, key, AtomRDF::node_to_atom(val_node));
+			world->engine->set_variable(patch_path, key, AtomRDF::node_to_atom(val_node));
 	}
 
 
 	// Set passed variables last to override any loaded values
 	for (GraphObject::Variables::const_iterator i = data.begin(); i != data.end(); ++i)
-		engine->set_variable(patch_path, i->first, i->second);
+		world->engine->set_variable(patch_path, i->first, i->second);
 
 
 	/* Enable */
 
-	query = Redland::Query(*rdf_world, Glib::ustring(
+	query = Redland::Query(*world->rdf_world, Glib::ustring(
 		"SELECT DISTINCT ?enabled WHERE {\n") +
 		patch_uri + " ingen:enabled ?enabled .\n"
 		"}");
 
-	results = query.run(*rdf_world, model);
+	results = query.run(*world->rdf_world, model);
 
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
 
 		Redland::Node enabled_node = (*i)["enabled"];
 
 		if (enabled_node.is_bool() && enabled_node) {
-			engine->enable_patch(patch_path);
+			world->engine->enable_patch(patch_path);
 			break;
 		}
 	}

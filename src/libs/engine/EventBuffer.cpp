@@ -178,6 +178,9 @@ EventBuffer::append(uint32_t       frames,
 	}
 #endif
 
+	/*cout << "Appending event type " << type << ", size " << size
+		<< " @ " << frames << "." << subframes << endl;*/
+
 	bool ret = lv2_event_write(&_iter, frames, subframes, type, size, data);
 	
 	if (!ret)
@@ -185,6 +188,43 @@ EventBuffer::append(uint32_t       frames,
 
 	_latest_frames = frames;
 	_latest_subframes = subframes;
+	
+	return ret;
+}
+
+
+/** Append a buffer of events to the buffer.
+ *
+ * \a timestamp must be >= the latest event in the buffer,
+ * and < this_nframes()
+ *
+ * \return true on success
+ */
+bool
+EventBuffer::append(const LV2_Event_Buffer* buf)
+{
+	uint8_t** data;
+	bool      ret = true;
+
+	LV2_Event_Iterator iter;
+	for (lv2_event_begin(&iter, _buf); lv2_event_is_valid(&iter); lv2_event_increment(&iter)) {
+		LV2_Event* ev = lv2_event_get(&iter, data);
+
+#ifndef NDEBUG
+		assert((ev->frames > _latest_frames)
+				|| (ev->frames == _latest_frames
+					&& ev->subframes >= _latest_subframes));
+#endif
+
+		if (!(ret = append(ev->frames, ev->subframes, ev->type, ev->size, *data))) {
+			cerr << "ERROR: Failed to write event." << endl;
+			break;
+		} else {
+		}
+
+		_latest_frames = ev->frames;
+		_latest_subframes = ev->subframes;
+	}
 	
 	return ret;
 }

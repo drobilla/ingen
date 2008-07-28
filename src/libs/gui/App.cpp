@@ -104,6 +104,7 @@ App::App(Ingen::Shared::World* world)
 	rdf_world.add_prefix("ingen", "http://drobilla.net/ns/ingen#");
 	rdf_world.add_prefix("ingenuity", "http://drobilla.net/ns/ingenuity#");
 	rdf_world.add_prefix("lv2", "http://lv2plug.in/ns/lv2core#");
+	rdf_world.add_prefix("lv2_midi", "http://lv2plug.in/ns/ext/midi");
 	rdf_world.add_prefix("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
 	rdf_world.add_prefix("doap", "http://usefulinc.com/ns/doap#");
 	rdf_world.add_prefix("dc", "http://purl.org/dc/elements/1.1/");
@@ -121,10 +122,7 @@ App::~App()
 }
 
 void
-App::run(int argc, char** argv,
-		Ingen::Shared::World* world,
-		SharedPtr<Engine> engine,
-		SharedPtr<Shared::EngineInterface> interface)
+App::run(int argc, char** argv, Ingen::Shared::World* world)
 {
 	Gnome::Canvas::init();
 	Gtk::Main main(argc, argv);
@@ -163,7 +161,7 @@ App::run(int argc, char** argv,
  	
 	Gtk::RC::parse_string(rc_style);
 	
-	App::instance().connect_window()->start(engine, interface);
+	App::instance().connect_window()->start(world);
 	
 	main.run();
 
@@ -172,19 +170,17 @@ App::run(int argc, char** argv,
 
 
 void
-App::attach(SharedPtr<EngineInterface> engine, SharedPtr<SigClientInterface> client)
+App::attach(SharedPtr<SigClientInterface> client)
 {
-	assert( ! _engine);
 	assert( ! _client);
 	assert( ! _store);
 	assert( ! _loader);
 
-	engine->register_client(client.get());
+	_world->engine->register_client(client.get());
 	
-	_engine = engine;
 	_client = client;
-	_store = SharedPtr<Store>(new Store(engine, client));
-	_loader = SharedPtr<ThreadedLoader>(new ThreadedLoader(engine));
+	_store = SharedPtr<Store>(new Store(_world->engine, client));
+	_loader = SharedPtr<ThreadedLoader>(new ThreadedLoader(_world->engine));
 
 	_patch_tree_window->init(*_store);
 	
@@ -196,14 +192,14 @@ App::attach(SharedPtr<EngineInterface> engine, SharedPtr<SigClientInterface> cli
 void
 App::detach()
 {
-	if (_engine) {
+	if (_world->engine) {
 		_window_factory->clear();
 		_store->clear();
 
 		_loader.reset();
 		_store.reset();
 		_client.reset();
-		_engine.reset();
+		_world->engine.reset();
 	}
 }
 

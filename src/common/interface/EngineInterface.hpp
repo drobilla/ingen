@@ -49,12 +49,15 @@ public:
 	virtual void register_client(ClientInterface* client) = 0;
 	virtual void unregister_client(const string& uri) = 0;
 	
-	
 	// Engine commands
 	virtual void load_plugins() = 0;
 	virtual void activate() = 0;
 	virtual void deactivate() = 0;
 	virtual void quit() = 0;
+	
+	// Bundles
+	virtual void bundle_begin() = 0;
+	virtual void bundle_end()   = 0;
 	
 	// Object commands
 	
@@ -136,7 +139,7 @@ public:
 	                          const string&     predicate,
 	                          const Raul::Atom& value) = 0;
 	
-	// Requests //
+	// Requests
 	
 	virtual void ping() = 0;
 	

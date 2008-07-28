@@ -32,7 +32,8 @@ run(Ingen::Shared::World* world, const char* filename)
 
 
 void
-script_iteration(Ingen::Shared::World* world) {
+script_iteration(Ingen::Shared::World* world)
+{
     if (world->local_engine)
         world->local_engine->main_iteration();
 }

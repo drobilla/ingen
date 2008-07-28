@@ -57,9 +57,8 @@ struct World {
 
 	Redland::World* rdf_world;
 
-    EngineInterface* engine;
-
-    Engine* local_engine;
+    SharedPtr<EngineInterface> engine;
+    SharedPtr<Engine>          local_engine;
 };
 
 

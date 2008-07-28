@@ -106,15 +106,14 @@ ConnectWindow::ConnectWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::
 
 
 void
-ConnectWindow::start(SharedPtr<Ingen::Engine> engine, SharedPtr<Shared::EngineInterface> interface)
+ConnectWindow::start(Ingen::Shared::World* world)
 {
-	set_connected_to(interface);
-
-	if (engine) {
-		_engine = engine;
+	if (world->local_engine) {
 		_mode = INTERNAL;
 		_internal_radio->set_active(true);
 	}
+	
+	set_connected_to(world->engine);
 
 	show();
 	connect();
@@ -156,7 +155,7 @@ ConnectWindow::set_connected_to(SharedPtr<Shared::EngineInterface> engine)
 		_progress_label->set_text(string("Disconnected"));
 	}
 
-	App::instance().world()->engine = engine.get();
+	App::instance().world()->engine = engine;
 }
 
 
@@ -169,7 +168,6 @@ void
 ConnectWindow::connect()
 {
 	assert(!_attached);
-	assert(!App::instance().engine());
 	assert(!App::instance().client());
 
 	_connect_button->set_sensitive(false);
@@ -184,14 +182,16 @@ ConnectWindow::connect()
     _port_spinbutton->set_sensitive(false);
 
 	_connect_stage = 0;
+		
+	Ingen::Shared::World* world = App::instance().world();
 
 	if (_mode == CONNECT_REMOTE) {
-		SharedPtr<EngineInterface> engine(
-			new OSCEngineSender(_url_entry->get_text()));
+		world->engine = SharedPtr<EngineInterface>(
+				new OSCEngineSender(_url_entry->get_text()));
 
 		OSCSigEmitter* ose = new OSCSigEmitter(1024, 16181); // FIXME: args
 		SharedPtr<ThreadedSigClientInterface> client(ose);
-		App::instance().attach(engine, client);
+		App::instance().attach(client);
 		
 		Glib::signal_timeout().connect(
 			sigc::mem_fun(App::instance(), &App::gtk_main_iteration), 40, G_PRIORITY_DEFAULT);
@@ -207,36 +207,38 @@ ConnectWindow::connect()
 		const string cmd = string("ingen -e --engine-port=").append(port_str);
 
 		if (Raul::Process::launch(cmd)) {
-		SharedPtr<EngineInterface> engine(
-				new OSCEngineSender(string("osc.udp://localhost:").append(port_str)));
+			world->engine = SharedPtr<EngineInterface>(
+					new OSCEngineSender(string("osc.udp://localhost:").append(port_str)));
 
-		OSCSigEmitter* ose = new OSCSigEmitter(1024, 16181); // FIXME: args
-		SharedPtr<ThreadedSigClientInterface> client(ose);
-		App::instance().attach(engine, client);
-		
-		Glib::signal_timeout().connect(
-			sigc::mem_fun(App::instance(), &App::gtk_main_iteration), 40, G_PRIORITY_DEFAULT);
+			OSCSigEmitter* ose = new OSCSigEmitter(1024, 16181); // FIXME: args
+			SharedPtr<ThreadedSigClientInterface> client(ose);
+			App::instance().attach(client);
 
-		Glib::signal_timeout().connect(
-				sigc::mem_fun(this, &ConnectWindow::gtk_callback), 100);
+			Glib::signal_timeout().connect(
+					sigc::mem_fun(App::instance(), &App::gtk_main_iteration), 40, G_PRIORITY_DEFAULT);
+
+			Glib::signal_timeout().connect(
+					sigc::mem_fun(this, &ConnectWindow::gtk_callback), 100);
 
 		} else {
 			cerr << "Failed to launch ingen process." << endl;
 		}
 
 	} else if (_mode == INTERNAL) {
+		Ingen::Shared::World* world = App::instance().world();
 		assert(_new_engine);
-		_engine = SharedPtr<Ingen::Engine>(_new_engine(App::instance().world()));
-		App::instance().world()->local_engine = _engine.get();
+		if ( ! world->local_engine)
+			world->local_engine = SharedPtr<Engine>(_new_engine(world));
 		
-		SharedPtr<Ingen::EngineInterface> engine_interface = _engine->new_queued_interface();
-
+		if ( ! world->engine)
+			world->engine = world->local_engine->new_queued_interface();
+		
 		SharedPtr<SigClientInterface> client(new SigClientInterface());
 		
-		_engine->start_jack_driver();
-		_engine->activate(1); // FIXME: parallelism
+		world->local_engine->start_jack_driver();
+		world->local_engine->activate(1); // FIXME: parallelism
 		
-		App::instance().attach(engine_interface, client);
+		App::instance().attach(client);
 
 		Glib::signal_timeout().connect(
 			sigc::mem_fun(App::instance(), &App::gtk_main_iteration), 40, G_PRIORITY_DEFAULT);
@@ -258,8 +260,7 @@ ConnectWindow::disconnect()
 	_disconnect_button->set_sensitive(false);
 
 	App::instance().detach();
-
-	set_connected_to();
+	set_connected_to(SharedPtr<Ingen::Shared::EngineInterface>());
 	
 	_connect_button->set_sensitive(true);
 	_disconnect_button->set_sensitive(false);

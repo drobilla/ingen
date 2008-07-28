@@ -610,12 +610,14 @@ OSCEngineReceiver::_disconnect_all_cb(const char* path, const char* types, lo_ar
  * <p> \b /ingen/set_port_value_immediate - Sets the value of a port for all voices (both AR and CR)
  * \arg \b response-id (integer)
  * \arg \b port-path (string) - Name of port
+ * \arg \b type (string (URI or QName)) - Type of value being set (ingen:Float or ingen:EventBuffer)
  * \arg \b value (float or blob) - Value to set port to </p> \n \n
  */
 /** \page engine_osc_namespace
  * <p> \b /ingen/set_port_value_immediate - Sets the value of a port for a specific voice (both AR and CR)
  * \arg \b response-id (integer)
  * \arg \b port-path (string) - Name of port
+ * \arg \b type (string (URI or QName)) - Type of value being set (ingen:Float or ingen:Event)
  * \arg \b voice (integer) - Voice to set port value for
  * \arg \b value (float or blob) - Value to set port to </p> \n \n
  *
@@ -624,39 +626,29 @@ OSCEngineReceiver::_disconnect_all_cb(const char* path, const char* types, lo_ar
 int
 OSCEngineReceiver::_set_port_value_immediate_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	if (argc < 3 || argc > 4 || strncmp(types, "is", 2))
+	if (argc < 3 || argc > 5 || strncmp(types, "is", 2))
 		return 1;
 	
 	const char* port_path = &argv[1]->s;
 
-	if (argc == 3) {
-		if (types[2] == 'f') {
-			const float value = argv[2]->f;
-			set_port_value_immediate(port_path, "", sizeof(float), &value);
-			return 0;
-		} else if (types[2] == 'b') {
-			lo_blob b = argv[2];
-			size_t data_size = lo_blob_datasize(b);
-			void* data = lo_blob_dataptr(b);
-			set_port_value_immediate(port_path, "", data_size, data);
-			return 0;
-		} else {
-			return 1;
-		}
+	if (!strcmp(types, "isf")) { // float, all voices
+		const float value = argv[2]->f;
+		set_port_value_immediate(port_path, "ingen:Float", sizeof(float), &value);
+	} else if (!strcmp(types, "isif")) { // float, specific voice
+		const float value = argv[3]->f;
+		set_port_value_immediate(port_path, "ingen:Float", argv[2]->i, sizeof(float), &value);
+	} else if (!strcmp(types, "issb")) { // blob (event), all voices
+		lo_blob b = argv[3];
+		size_t data_size = lo_blob_datasize(b);
+		void* data = lo_blob_dataptr(b);
+		set_port_value_immediate(port_path, &argv[2]->s, data_size, data);
+	} else if (!strcmp(types, "isisb")) { // blob (event), specific voice
+		lo_blob b = argv[4];
+		size_t data_size = lo_blob_datasize(b);
+		void* data = lo_blob_dataptr(b);
+		set_port_value_immediate(port_path, &argv[3]->s, argv[2]->i, data_size, data);
 	} else {
-		if (types[3] == 'f') {
-			const float value = argv[3]->f;
-			set_port_value_immediate(port_path, "", argv[2]->i, sizeof(float), &value);
-			return 0;
-		} else if (types[3] == 'b') {
-			lo_blob b = argv[3];
-			size_t data_size = lo_blob_datasize(b);
-			void* data = lo_blob_dataptr(b);
-			set_port_value_immediate(port_path, "", argv[2]->i, data_size, data);
-			return 0;
-		} else {
-			return 1;
-		}
+		return 1;
 	}
 
 	return 0;
@@ -694,39 +686,29 @@ OSCEngineReceiver::_set_port_value_immediate_cb(const char* path, const char* ty
 int
 OSCEngineReceiver::_set_port_value_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	if (argc < 3 || argc > 4 || strncmp(types, "is", 2))
+	if (argc < 3 || argc > 5 || strncmp(types, "is", 2))
 		return 1;
 	
 	const char* port_path = &argv[1]->s;
 
-	if (argc == 3) {
-		if (types[2] == 'f') {
-			const float value = argv[2]->f;
-			set_port_value(port_path, "who cares", sizeof(float), &value);
-			return 0;
-		} else if (types[2] == 'b') {
-			lo_blob b = argv[2];
-			size_t data_size = lo_blob_datasize(b);
-			void* data = lo_blob_dataptr(b);
-			set_port_value(port_path, "who cares", data_size, data);
-			return 0;
-		} else {
-			return 1;
-		}
+	if (!strcmp(types, "isf")) { // float, all voices
+		const float value = argv[2]->f;
+		set_port_value_immediate(port_path, "ingen:Float", sizeof(float), &value);
+	} else if (!strcmp(types, "isif")) { // float, specific voice
+		const float value = argv[3]->f;
+		set_port_value_immediate(port_path, "ingen:Float", argv[2]->i, sizeof(float), &value);
+	} else if (!strcmp(types, "issb")) { // blob (event), all voices
+		lo_blob b = argv[3];
+		size_t data_size = lo_blob_datasize(b);
+		void* data = lo_blob_dataptr(b);
+		set_port_value_immediate(port_path, &argv[2]->s, data_size, data);
+	} else if (!strcmp(types, "isisb")) { // blob (event), specific voice
+		lo_blob b = argv[4];
+		size_t data_size = lo_blob_datasize(b);
+		void* data = lo_blob_dataptr(b);
+		set_port_value_immediate(port_path, &argv[3]->s, argv[2]->i, data_size, data);
 	} else {
-		if (types[3] == 'f') {
-			const float value = argv[3]->f;
-			set_port_value(port_path, "who cares", argv[2]->i, sizeof(float), &value);
-			return 0;
-		} else if (types[3] == 'b') {
-			lo_blob b = argv[3];
-			size_t data_size = lo_blob_datasize(b);
-			void* data = lo_blob_dataptr(b);
-			set_port_value(port_path, "who cares", argv[2]->i, data_size, data);
-			return 0;
-		} else {
-			return 1;
-		}
+		return 1;
 	}
 
 	return 0;

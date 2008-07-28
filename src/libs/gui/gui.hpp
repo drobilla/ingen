@@ -33,10 +33,7 @@ namespace GUI {
 
 extern "C" {
 
-	void run(int argc, char** argv,
-			Ingen::Shared::World* world,
-			SharedPtr<Ingen::Engine> engine,
-			SharedPtr<Shared::EngineInterface> interface);
+	void run(int argc, char** argv, Ingen::Shared::World* world);
 
 }
 

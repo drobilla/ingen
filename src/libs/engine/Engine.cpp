@@ -177,7 +177,10 @@ Engine::start_osc_driver(int port)
 SharedPtr<QueuedEngineInterface>
 Engine::new_queued_interface()
 {
-	assert(!_event_source);
+	if (_event_source) {
+		cerr << "WARNING: Replacing event source" << endl;
+		_event_source.reset();
+	}
 
 	SharedPtr<QueuedEngineInterface> result(new QueuedEngineInterface(
 			*this, Ingen::event_queue_size, Ingen::event_queue_size));

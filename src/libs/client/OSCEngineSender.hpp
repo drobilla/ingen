@@ -61,14 +61,16 @@ public:
 	void register_client(ClientInterface* client);
 	void unregister_client(const string& uri);
 
-	
 	// Engine commands
 	void load_plugins();
 	void activate();
 	void deactivate();
 	void quit();
-
 	
+	// Bundles
+	void bundle_begin();
+	void bundle_end();
+
 	// Object commands
 	
 	void create_patch(const string& path,
@@ -165,6 +167,7 @@ public:
 	void request_all_objects();
 
 protected:
+	lo_bundle  _bundle;
 	string     _engine_url;
 	lo_address _engine_addr;
 	int        _client_port;

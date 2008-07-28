@@ -95,8 +95,7 @@ ThreadedLoader::load_patch(bool                    merge,
 	} else {
 		_events.push_back(sigc::hide_return(sigc::bind(
 				sigc::mem_fun(_loader.get(), &Ingen::Serialisation::Loader::load),
-				App::instance().engine(),
-				App::instance().world()->rdf_world,
+				App::instance().world(),
 				data_base_uri,
 				engine_parent,
 				(engine_name) ? engine_name.get() : "",

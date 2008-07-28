@@ -124,6 +124,28 @@ OSCEngineSender::unregister_client(const string& uri)
 }
 
 
+// Bundles
+
+void
+OSCEngineSender::bundle_begin()
+{
+	//cerr << "BUNDLE {" << endl;
+	/*assert(!_bundle);
+	_bundle = lo_bundle_new(LO_TT_IMMEDIATE);*/
+}
+
+
+void
+OSCEngineSender::bundle_end()
+{
+	//cerr << "} BUNDLE" << endl;
+	/*assert(_bundle);
+	lo_send_bundle(_address, _bundle);
+	lo_bundle_free(_bundle);
+	_bundle = NULL;*/
+}
+
+
 
 // Engine commands
 void
@@ -358,19 +380,23 @@ OSCEngineSender::set_port_value(const string& port_path,
                                 const void*   data)
 {
 	assert(_engine_addr);
-	if (type_uri == "ingen:control") {
+	if (type_uri == "ingen:Float") {
 		assert(data_size == 4);
 		lo_send(_engine_addr, "/ingen/set_port_value", "isf",
 				next_id(),
 				port_path.c_str(),
 				*(float*)data);
-	} else {
+	} else if (type_uri == "lv2_midi:MidiEvent") {
 		lo_blob b = lo_blob_new(data_size, (void*)data);
-		lo_send(_engine_addr, "/ingen/set_port_value", "isb",
+		lo_send(_engine_addr, "/ingen/set_port_value", "issb",
 				next_id(),
 				port_path.c_str(),
+				type_uri.c_str(),
 				b);
 		lo_blob_free(b);
+	// FIXME: support atomic bundles of events here
+	} else {
+		cerr << "ERROR: Unknown value type '" << type_uri << "', ignoring" << endl;
 	}
 }
 
@@ -383,19 +409,22 @@ OSCEngineSender::set_port_value(const string& port_path,
                                 const void*   data)
 {
 	assert(_engine_addr);
-	if (type_uri == "ingen:control") {
+	if (type_uri == "ingen:Float") {
 		assert(data_size == 4);
 		lo_send(_engine_addr, "/ingen/set_port_value", "isf",
 				next_id(),
 				port_path.c_str(),
 				*(float*)data);
-	} else {
+	} else if (type_uri == "lv2_midi:MidiEvent") {
 		lo_blob b = lo_blob_new(data_size, (void*)data);
-		lo_send(_engine_addr, "/ingen/set_port_value", "isb",
+		lo_send(_engine_addr, "/ingen/set_port_value", "issb",
 				next_id(),
 				port_path.c_str(),
+				type_uri.c_str(),
 				b);
 		lo_blob_free(b);
+	} else {
+		cerr << "ERROR: Unknown value type '" << type_uri << "', ignoring" << endl;
 	}
 }
 
@@ -408,19 +437,22 @@ OSCEngineSender::set_port_value_immediate(const string& port_path,
 {
 	assert(_engine_addr);
 
-	if (type_uri == "ingen:control") {
+	if (type_uri == "ingen:Float") {
 		assert(data_size == 4);
 		lo_send(_engine_addr, "/ingen/set_port_value_immediate", "isf",
 				next_id(),
 				port_path.c_str(),
 				*(float*)data);
-	} else {
+	} else if (type_uri == "lv2_midi:MidiEvent") {
 		lo_blob b = lo_blob_new(data_size, (void*)data);
-		lo_send(_engine_addr, "/ingen/set_port_value_immediate", "isb",
+		lo_send(_engine_addr, "/ingen/set_port_value_immediate", "issb",
 				next_id(),
 				port_path.c_str(),
+				type_uri.c_str(),
 				b);
 		lo_blob_free(b);
+	} else {
+		cerr << "ERROR: Unknown value type '" << type_uri << "', ignoring" << endl;
 	}
 }
 
@@ -434,21 +466,24 @@ OSCEngineSender::set_port_value_immediate(const string& port_path,
 {
 	assert(_engine_addr);
 	
-	if (type_uri == "ingen:control") {
+	if (type_uri == "ingen:Float") {
 		assert(data_size == 4);
 		lo_send(_engine_addr, "/ingen/set_port_value_immediate", "isif",
 				next_id(),
 				port_path.c_str(),
 				voice,
 				*(float*)data);
-	} else {
+	} else if (type_uri == "lv2_midi:MidiEvent") {
 		lo_blob b = lo_blob_new(data_size, (void*)data);
-		lo_send(_engine_addr, "/ingen/set_port_value_immediate", "isib",
+		lo_send(_engine_addr, "/ingen/set_port_value_immediate", "isisb",
 				next_id(),
 				port_path.c_str(),
 				voice,
+				type_uri.c_str(),
 				b);
 		lo_blob_free(b);
+	} else {
+		cerr << "ERROR: Unknown value type '" << type_uri << "', ignoring" << endl;
 	}
 }
 

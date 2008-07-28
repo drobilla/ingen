@@ -25,6 +25,7 @@
 using namespace std;
 using Ingen::Shared::EngineInterface;
 using Ingen::Shared::LV2URIMap;
+using Ingen::Shared::LV2Features;
 
 namespace Ingen {
 namespace Client {
@@ -53,7 +54,8 @@ lv2_ui_write(LV2UI_Controller controller,
 
 	SharedPtr<PortModel> port = ui->node()->ports()[port_index];
 	
-	LV2URIMap* map = (LV2URIMap*)ui->world()->lv2_features->feature(LV2_URI_MAP_URI);
+	const LV2Features::Feature* f = ui->world()->lv2_features->feature(LV2_URI_MAP_URI);
+	LV2URIMap* map = (LV2URIMap*)f->controller;
 	assert(map);
 
 	// float (special case, always 0)
@@ -66,25 +68,31 @@ lv2_ui_write(LV2UI_Controller controller,
 				port->type().uri(), 
 				buffer_size, buffer);
 
-	// FIXME: assumes event
-	} else {
+	// FIXME: slow, need to cache ID
+	} else if (format == map->uri_to_id(NULL, "http://lv2plug.in/ns/extensions/ui#Events")) {
+		uint32_t midi_event_type = map->uri_to_id(NULL, "http://lv2plug.in/ns/ext/midi#MidiEvent");
 		LV2_Event_Buffer* buf = (LV2_Event_Buffer*)buffer;
 		LV2_Event_Iterator iter;
 		uint8_t* data;
 		lv2_event_begin(&iter, buf);
 		while (lv2_event_is_valid(&iter)) {
 			LV2_Event* const ev = lv2_event_get(&iter, &data);
-		
-			// FIXME: bundle multiple events
-			ui->world()->engine->set_port_value_immediate(port->path(),
-				port->type().uri(), 
-				ev->size, data);
+			if (ev->type == midi_event_type) {
+				// FIXME: bundle multiple events by writing an entire buffer here
+				ui->world()->engine->set_port_value_immediate(port->path(),
+					"lv2_midi:MidiEvent", ev->size, data);
+			} else {
+				cerr << "WARNING: Unable to send event type " << ev->type << 
+					" over OSC, ignoring event" << endl;
+			}
 
 			lv2_event_increment(&iter);
 		}
+	} else {
+		cerr << "WARNING: Unknown value format " << format
+			<< ", either plugin " << ui->node()->plugin()->uri() << " is broken"
+			<< " or this is an Ingen bug" << endl;
 	}
-		
-
 }
 
 	

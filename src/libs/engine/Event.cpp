@@ -40,7 +40,8 @@ Event::execute(ProcessContext& context)
 void
 Event::post_process()
 {
-	assert(ThreadManager::current_thread_id() == THREAD_POST_PROCESS);
+	// FIXME: Not true witn monolithic GUI/engine
+	//assert(ThreadManager::current_thread_id() == THREAD_POST_PROCESS);
 }
 
 

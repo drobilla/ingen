@@ -116,7 +116,7 @@ Port::set_control(float value, bool signal)
 		return;
 
 	if (signal)
-		App::instance().engine()->set_port_value_immediate(_port_model->path(), "ingen:control",
+		App::instance().engine()->set_port_value_immediate(_port_model->path(), "ingen:Float",
 				sizeof(float), &value);
 
 	FlowCanvas::Port::set_control(value);

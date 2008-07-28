@@ -24,12 +24,9 @@ namespace Ingen {
 namespace GUI {
 
 
-void run(int argc, char** argv,
-		Ingen::Shared::World* world,
-		SharedPtr<Ingen::Engine> engine,
-		SharedPtr<Shared::EngineInterface> interface)
+void run(int argc, char** argv, Ingen::Shared::World* world)
 {
-	App::run(argc, argv, world, engine, interface);
+	App::run(argc, argv, world);
 }
 
 

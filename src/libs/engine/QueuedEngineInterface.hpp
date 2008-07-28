@@ -74,6 +74,10 @@ public:
 	virtual void activate();
 	virtual void deactivate();
 	virtual void quit();
+	
+	// Bundles
+	virtual void bundle_begin();
+	virtual void bundle_end();
 			
 	// Object commands
 	
@@ -177,6 +181,7 @@ protected:
 
 	SharedPtr<Responder> _responder; ///< NULL if responding disabled
 	Engine&              _engine;
+	bool                 _in_bundle; ///< True iff a bundle is currently being received
 
 private:
 	SampleCount now() const;

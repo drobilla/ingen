@@ -36,6 +36,14 @@ LV2URIMap::LV2URIMap()
 	uri_map_feature.data = &uri_map_feature_data;
 }
 
+	
+uint32_t
+LV2URIMap::uri_to_id(const char* map,
+                     const char* uri)
+{
+	return uri_map_uri_to_id(this, map, uri);
+}
+
 
 uint32_t
 LV2URIMap::uri_map_uri_to_id(LV2_URI_Map_Callback_Data callback_data,
@@ -55,7 +63,8 @@ LV2URIMap::uri_map_uri_to_id(LV2_URI_Map_Callback_Data callback_data,
 		me->uri_map.insert(make_pair(string(uri), ret));
 	}
 	
-	cout << "URI MAP (" << map << "): " << uri << " -> " << ret << endl; 
+	/*cout << "URI MAP (" << (map ? (void*)map : NULL)
+		<< "): " << uri << " -> " << ret << endl;*/
 
 	assert(ret <= UINT16_MAX);
 	return ret;

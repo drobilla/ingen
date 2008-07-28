@@ -39,6 +39,7 @@ public:
 	                  SharedPtr<Responder> responder,
 	                  SampleCount          timestamp,
 	                  const string&        port_path,
+	                  const string&        data_type,
 	                  uint32_t             data_size,
 	                  const void*          data);
 	
@@ -47,6 +48,7 @@ public:
 	                  SampleCount          timestamp,
 	                  uint32_t             voice_num,
 	                  const string&        port_path,
+	                  const string&        data_type,
 	                  uint32_t             data_size,
 	                  const void*          data);
 
@@ -61,6 +63,7 @@ private:
 	bool         _omni;
 	uint32_t     _voice_num;
 	const string _port_path;
+	const string _data_type;
 	uint32_t     _data_size;
 	void*        _data;
 	PortImpl*    _port;

@@ -233,12 +233,12 @@ ControlPanel::value_changed(SharedPtr<PortModel> port, float val)
 	if (_callback_enabled) {
 	
 		if (_all_voices_radio->get_active()) {
-			App::instance().engine()->set_port_value_immediate(port->path(), "ingen:control",
+			App::instance().engine()->set_port_value_immediate(port->path(), "ingen:Float",
 					sizeof(float), &val);
 			port->value(val);
 		} else {
 			int voice = _voice_spinbutton->get_value_as_int();
-			App::instance().engine()->set_port_value_immediate(port->path(), "ingen:control",
+			App::instance().engine()->set_port_value_immediate(port->path(), "ingen:Float",
 					voice, sizeof(float), &val);
 			port->value(val);
 		}

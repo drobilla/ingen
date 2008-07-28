@@ -50,8 +50,8 @@ get_world()
 		world->lv2_features = new LV2Features();
 		slv2_world_load_all(world->slv2_world);
 #endif
-		world->engine = NULL;
-		world->local_engine = NULL;
+		world->engine.reset();
+		world->local_engine.reset();
 	}
 
 	return world;

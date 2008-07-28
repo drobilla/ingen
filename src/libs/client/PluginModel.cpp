@@ -57,44 +57,6 @@ PluginModel::default_node_name(SharedPtr<PatchModel> parent)
 }
 
 
-#if 0
-struct NodeController {
-	EngineInterface* engine;
-	NodeModel*       node;
-};
-
-
-void
-lv2_ui_write(LV2UI_Controller controller,
-             uint32_t         port_index,
-             uint32_t         buffer_size,
-             const void*      buffer)
-{
-	/*cerr << "********* LV2 UI WRITE:" << endl;
-	lv2_osc_message_print((const LV2Message*)buffer);
-
-	fprintf(stderr, "RAW:\n");
-	for (uint32_t i=0; i < buffer_size; ++i) {
-		unsigned char byte = ((unsigned char*)buffer)[i];
-		if (byte >= 32 && byte <= 126)
-			fprintf(stderr, "%c  ", ((unsigned char*)buffer)[i]);
-		else
-			fprintf(stderr, "%2X ", ((unsigned char*)buffer)[i]);
-	}
-	
-	fprintf(stderr, "\n");
-	*/
-
-	NodeController* nc = (NodeController*)controller;
-
-	SharedPtr<PortModel> port = nc->node->ports()[port_index];
-
-	nc->engine->set_port_value_immediate(port->path(),
-			port->type().uri(), buffer_size, buffer);
-}
-#endif
-
-	
 #ifdef HAVE_SLV2
 SharedPtr<PluginUI>
 PluginModel::ui(Ingen::Shared::World* world, SharedPtr<NodeModel> node) const

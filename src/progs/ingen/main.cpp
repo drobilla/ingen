@@ -104,7 +104,7 @@ main(int argc, char** argv)
 			Engine* (*new_engine)(Ingen::Shared::World* world) = NULL;
 			if (engine_module->get_symbol("new_engine", (void*&)new_engine)) {
 				engine = SharedPtr<Engine>(new_engine(world));
-				world->local_engine = engine.get();
+				world->local_engine = engine;
 			} else {
 				engine_module.reset();
 			}
@@ -152,7 +152,7 @@ main(int argc, char** argv)
 		engine->activate(args.parallelism_arg);
 	}
             
-	world->engine = engine_interface.get();
+	world->engine = engine_interface;
 
 	/* Load a patch */
 	if (args.load_given && engine_interface) {
@@ -182,7 +182,7 @@ main(int argc, char** argv)
 						Glib::get_current_dir(), args.load_arg));
 			}
 
-			loader->load(engine_interface, world->rdf_world, uri, parent_path, "");
+			loader->load(world, uri, parent_path, "");
 
 		} else {
 			cerr << "Unable to load serialisation module, aborting." << endl;
@@ -196,12 +196,12 @@ main(int argc, char** argv)
 	bool ran_gui = false;
 	if (args.gui_given) {
 		gui_module = Ingen::Shared::load_module("ingen_gui");
-		void (*run)(int, char**, Ingen::Shared::World*, SharedPtr<Ingen::Engine>, SharedPtr<Shared::EngineInterface>) = NULL;
+		void (*run)(int, char**, Ingen::Shared::World*);
 		bool found = gui_module->get_symbol("run", (void*&)run);
 
 		if (found) {
 			ran_gui = true;
-			run(argc, argv, world, engine, engine_interface);
+			run(argc, argv, world);
 		} else {
 			cerr << "Unable to find GUI module, GUI not loaded." << endl;
 			cerr << "Try using src/set_dev_environment.sh, or setting INGEN_MODULE_PATH." << endl;

@@ -85,7 +85,7 @@ CreatePortEvent::pre_process()
 		assert(_patch->path() == _path.parent());
 		
 		size_t buffer_size = 1;
-		if (_type != "ingen:control")
+		if (_type != "ingen:Float")
 			buffer_size = _engine.audio_driver()->buffer_size();
 	
 		const uint32_t old_num_ports = _patch->num_ports();

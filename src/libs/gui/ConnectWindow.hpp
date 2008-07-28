@@ -51,8 +51,8 @@ class ConnectWindow : public Gtk::Dialog
 public:
 	ConnectWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml);
 	
-	void set_connected_to(SharedPtr<Shared::EngineInterface> e=SharedPtr<Shared::EngineInterface>());
-	void start(SharedPtr<Ingen::Engine> engine, SharedPtr<Shared::EngineInterface> interface);
+	void set_connected_to(SharedPtr<Shared::EngineInterface> engine);
+	void start(Ingen::Shared::World* world);
 	void response_ok_received(int32_t id) { if ((id) == _ping_id) _attached = true; }
 
 private:
@@ -76,8 +76,6 @@ private:
 
 	SharedPtr<Glib::Module> _engine_module;
 	Ingen::Engine* (*_new_engine)(Ingen::Shared::World* world);
-
-    SharedPtr<Ingen::Engine> _engine;
 
 	Gtk::Image*        _icon;
 	Gtk::ProgressBar*  _progress_bar;

@@ -28,6 +28,7 @@
 #include <libglademm.h>
 #include <raul/SharedPtr.hpp>
 #include <redlandmm/World.hpp>
+#include <module/World.hpp>
 
 using namespace std;
 
@@ -83,9 +84,7 @@ public:
 
 	void error_message(const string& msg);
 
-	void attach(SharedPtr<EngineInterface>    engine,
-	            SharedPtr<SigClientInterface> client);
-	
+	void attach(SharedPtr<SigClientInterface> client);
 	void detach();
 	
 	bool gtk_main_iteration();
@@ -102,7 +101,7 @@ public:
 	
 	Glib::RefPtr<Gdk::Pixbuf>            icon_from_path(const string& path, int size);
 
-	const SharedPtr<EngineInterface>&    engine()     const { return _engine; }
+	const SharedPtr<EngineInterface>     engine()     const { return _world->engine; }
 	const SharedPtr<SigClientInterface>& client()     const { return _client; }
 	const SharedPtr<Store>&              store()      const { return _store; }
 	const SharedPtr<ThreadedLoader>&     loader()     const { return _loader; }
@@ -112,10 +111,7 @@ public:
 
 	static inline App& instance() { assert(_instance); return *_instance; }
 
-	static void run(int argc, char** argv,
-			Ingen::Shared::World* world,
-			SharedPtr<Ingen::Engine> engine,
-			SharedPtr<Shared::EngineInterface> interface);
+	static void run(int argc, char** argv, Ingen::Shared::World* world);
 
 	Ingen::Shared::World* world() { return _world; }
 
@@ -144,7 +140,6 @@ protected:
 	
 	SharedPtr<Glib::Module> _serialisation_module;
 	
-	SharedPtr<EngineInterface>    _engine;
 	SharedPtr<SigClientInterface> _client;
 	SharedPtr<Store>              _store;
 	SharedPtr<ThreadedLoader>     _loader;
