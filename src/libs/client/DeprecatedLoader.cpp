@@ -383,7 +383,6 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 
 	// Compatibility hacks for old patches that represent patch ports as nodes
 	if (plugin_uri == "") {
-		cerr << "WARNING: Loading deprecated Node.  Resave! " << path << endl;
 		bool is_port = false;
 
 		if (plugin_type == "Internal") {

@@ -97,32 +97,39 @@ main(int argc, char** argv)
 
 	/* Run engine */
 	if (args.engine_flag) {
-
 		engine_module = Ingen::Shared::load_module("ingen_engine");
-
 		if (engine_module) {
 			Engine* (*new_engine)(Ingen::Shared::World* world) = NULL;
 			if (engine_module->get_symbol("new_engine", (void*&)new_engine)) {
 				engine = SharedPtr<Engine>(new_engine(world));
 				world->local_engine = engine;
+				/* Load queued (direct in-process) engine interface */
+				if (!args.connect_given) {
+					engine_interface = engine->new_queued_interface();
+					world->engine = engine_interface;
+				}
 			} else {
 				engine_module.reset();
 			}
 		} else {
 			cerr << "Unable to load engine module." << endl;
 		}
-
 	}
 	
 	bool use_osc = false;
 
+	/* Load client library */
+	if (args.connect_given || args.load_given) {
+		client_module = Ingen::Shared::load_module("ingen_client");
+		if (!client_module)
+			cerr << "Unable to load client module." << endl;
+	}
+
 	/* Connect to remote engine */
 	if (args.connect_given || (args.load_given && !engine_interface)) {
-		bool found = false;
-		client_module = Ingen::Shared::load_module("ingen_client");
-
 		SharedPtr<Shared::EngineInterface> (*new_osc_interface)(const std::string&) = NULL;
 
+		bool found = false;
 		if (client_module)
 			found = client_module->get_symbol("new_osc_interface", (void*&)new_osc_interface);
 
@@ -135,10 +142,6 @@ main(int argc, char** argv)
 		}
 	}
 	
-	/* Load queued (direct in-process) engine interface */
-	if (engine && !engine_interface && (args.load_given || args.gui_given || args.run_given)) {
-		engine_interface = engine->new_queued_interface();
-    }
 
 	if (engine && engine_interface) {
 
@@ -180,6 +183,8 @@ main(int argc, char** argv)
 						Glib::get_current_dir(), args.load_arg));
 			}
 
+
+			engine_interface->load_plugins();
 			loader->load(world, uri, parent_path, "");
 
 		} else {

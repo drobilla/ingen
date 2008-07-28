@@ -103,6 +103,8 @@ void
 NodeFactory::load_plugins()
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
+			
+	_world->rdf_world->mutex().lock();
 
 	// Only load if we havn't already, so every client connecting doesn't cause
 	// this (expensive!) stuff to happen.  Not the best solution - would be nice
@@ -123,21 +125,8 @@ NodeFactory::load_plugins()
 		_has_loaded = true;
 	}
 	
-#if 0
-	for (Plugins::const_iterator i = _plugins.begin(); i != _plugins.end(); ++i) {
-		assert(Path::is_valid_name(i->second->symbol()));
-		cerr << "PLUGIN: " << i->second->uri() << " - " << i->second->symbol()
-			<< " (" << i->second->name() << ")" << endl;
-		PatchImpl* parent = new PatchImpl(*_world->local_engine, "dummy", 1, NULL, 1, 1, 1);
-		NodeImpl* node = i->second->instantiate("foo", 0, parent, 48000, 512);
-		if (node)
-		for (uint32_t i=0; i < node->num_ports(); ++i) {
-			cerr << "\t" << node->port(i)->name() << endl;
-		}
-		cerr << endl;
-	}
-#endif
-
+	_world->rdf_world->mutex().unlock();
+	
 	//cerr << "[NodeFactory] # Plugins: " << _plugins.size() << endl;
 }
 
