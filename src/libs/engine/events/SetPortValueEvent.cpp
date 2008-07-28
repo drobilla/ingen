@@ -36,12 +36,14 @@ namespace Ingen {
 /** Omni (all voices) control setting */
 SetPortValueEvent::SetPortValueEvent(Engine&              engine,
                                      SharedPtr<Responder> responder,
+                                     bool                 queued,
                                      SampleCount          timestamp,
                                      const string&        port_path,
                                      const string&        data_type,
                                      uint32_t             data_size,
                                      const void*          data)
-	: Event(engine, responder, timestamp)
+	: QueuedEvent(engine, responder, timestamp)
+	, _queued(queued)
 	, _omni(true)
 	, _voice_num(0)
 	, _port_path(port_path)
@@ -51,6 +53,9 @@ SetPortValueEvent::SetPortValueEvent(Engine&              engine,
 	, _port(NULL)
 	, _error(NO_ERROR)
 {
+	if (_queued)
+		pre_process();
+
 	memcpy(_data, data, data_size);
 }
 
@@ -58,13 +63,15 @@ SetPortValueEvent::SetPortValueEvent(Engine&              engine,
 /** Voice-specific control setting */
 SetPortValueEvent::SetPortValueEvent(Engine&              engine,
                                      SharedPtr<Responder> responder,
+                                     bool                 queued,
                                      SampleCount          timestamp,
                                      uint32_t             voice_num,
                                      const string&        port_path,
                                      const string&        data_type,
                                      uint32_t             data_size,
                                      const void*          data)
-	: Event(engine, responder, timestamp)
+	: QueuedEvent(engine, responder, timestamp)
+	, _queued(queued)
 	, _omni(false)
 	, _voice_num(voice_num)
 	, _data_type(data_type)
@@ -73,6 +80,9 @@ SetPortValueEvent::SetPortValueEvent(Engine&              engine,
 	, _port(NULL)
 	, _error(NO_ERROR)
 {
+	if (_queued)
+		pre_process();
+
 	memcpy(_data, data, data_size);
 }
 
@@ -80,6 +90,21 @@ SetPortValueEvent::SetPortValueEvent(Engine&              engine,
 SetPortValueEvent::~SetPortValueEvent()
 {
 	free(_data);
+}
+
+	
+void
+SetPortValueEvent::pre_process()
+{
+	if (_queued) {
+		if (_port == NULL)
+			_port = _engine.object_store()->find_port(_port_path);
+
+		if (_port == NULL)
+			_error = PORT_NOT_FOUND;
+	}
+	
+	QueuedEvent::pre_process();
 }
 
 
@@ -94,7 +119,7 @@ SetPortValueEvent::execute(ProcessContext& context)
 
 	if (_port == NULL) {
 		_error = PORT_NOT_FOUND;
-/*	} else if (_port->buffer(0)->size() < _data_size) {
+	/*} else if (_port->buffer(0)->capacity() < _data_size) {
 		_error = NO_SPACE;*/
 	} else {
 		Buffer* const buf = _port->buffer(0);

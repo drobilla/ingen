@@ -19,7 +19,7 @@
 #define SETPORTVALUEEVENT_H
 
 #include <string>
-#include "Event.hpp"
+#include "QueuedEvent.hpp"
 #include "types.hpp"
 using std::string;
 
@@ -29,14 +29,20 @@ class PortImpl;
 
 
 /** An event to change the value of a port.
+ * 
+ * This event can either be queued or immediate, depending on the queued
+ * parameter passed to the constructor.  It must be passed to the appropriate
+ * place (ie queued event passed to the event queue and non-queued event
+ * processed in the audio thread) or nasty things will happen.
  *
  * \ingroup engine
  */
-class SetPortValueEvent : public Event
+class SetPortValueEvent : public QueuedEvent
 {
 public:
 	SetPortValueEvent(Engine&              engine,
 	                  SharedPtr<Responder> responder,
+	                  bool                 queued,
 	                  SampleCount          timestamp,
 	                  const string&        port_path,
 	                  const string&        data_type,
@@ -45,6 +51,7 @@ public:
 	
 	SetPortValueEvent(Engine&              engine,
 	                  SharedPtr<Responder> responder,
+	                  bool                 queued,
 	                  SampleCount          timestamp,
 	                  uint32_t             voice_num,
 	                  const string&        port_path,
@@ -54,12 +61,14 @@ public:
 
 	~SetPortValueEvent();
 
+	void pre_process();
 	void execute(ProcessContext& context);
 	void post_process();
 
 private:
 	enum ErrorType { NO_ERROR, PORT_NOT_FOUND, NO_SPACE };
 	
+	bool         _queued;
 	bool         _omni;
 	uint32_t     _voice_num;
 	const string _port_path;

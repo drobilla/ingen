@@ -60,8 +60,6 @@ EXTRA_DIST = \
 	SetPolyphonyEvent.hpp \
 	SetPortValueEvent.cpp \
 	SetPortValueEvent.hpp \
-	SetPortValueQueuedEvent.cpp \
-	SetPortValueQueuedEvent.hpp \
 	UnregisterClientEvent.cpp \
 	UnregisterClientEvent.hpp
 

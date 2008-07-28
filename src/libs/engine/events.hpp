@@ -48,7 +48,6 @@
 #include "SetPolyphonicEvent.hpp"
 #include "SetPolyphonyEvent.hpp"
 #include "SetPortValueEvent.hpp"
-#include "SetPortValueQueuedEvent.hpp"
 #include "UnregisterClientEvent.hpp"
 
 #endif // EVENTS_H

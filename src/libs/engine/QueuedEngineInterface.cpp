@@ -255,7 +255,7 @@ QueuedEngineInterface::set_port_value(const string& port_path,
                                       uint32_t      data_size,
                                       const void*   data)
 {
-	push_queued(new SetPortValueQueuedEvent(_engine, _responder, now(), port_path, type_uri, data_size, data));
+	push_queued(new SetPortValueEvent(_engine, _responder, true, now(), port_path, type_uri, data_size, data));
 }
 
 
@@ -266,7 +266,7 @@ QueuedEngineInterface::set_port_value(const string& port_path,
                                       uint32_t      data_size,
                                       const void*   data)
 {
-	push_queued(new SetPortValueQueuedEvent(_engine, _responder, now(), voice, port_path, type_uri, data_size, data));
+	push_queued(new SetPortValueEvent(_engine, _responder, true, now(), voice, port_path, type_uri, data_size, data));
 }
 
 
@@ -276,7 +276,7 @@ QueuedEngineInterface::set_port_value_immediate(const string& port_path,
                                                 uint32_t      data_size,
                                                 const void*   data)
 {
-	push_stamped(new SetPortValueEvent(_engine, _responder, now(), port_path, type_uri, data_size, data));
+	push_stamped(new SetPortValueEvent(_engine, _responder, false, now(), port_path, type_uri, data_size, data));
 }
 
 
@@ -287,7 +287,7 @@ QueuedEngineInterface::set_port_value_immediate(const string& port_path,
                                                 uint32_t      data_size,
                                                 const void*   data)
 {
-	push_stamped(new SetPortValueEvent(_engine, _responder, now(), voice, port_path, type_uri, data_size, data));
+	push_stamped(new SetPortValueEvent(_engine, _responder, false, now(), voice, port_path, type_uri, data_size, data));
 }
 
 

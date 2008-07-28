@@ -178,8 +178,6 @@ libingen_engine_la_SOURCES = \
 	events/SetPolyphonyEvent.hpp \
 	events/SetPortValueEvent.cpp \
 	events/SetPortValueEvent.hpp \
-	events/SetPortValueQueuedEvent.cpp \
-	events/SetPortValueQueuedEvent.hpp \
 	events/UnregisterClientEvent.cpp \
 	events/UnregisterClientEvent.hpp \
 	jack_compat.h \
