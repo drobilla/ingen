@@ -42,9 +42,12 @@ public:
 	/** Add a control value to this preset.  An empty string for a node_name
 	 * means the port is on the patch itself (not a node in the patch).
 	 */
-	void add_control(const string& node_name,
-	                 const string& port_name, float value)
+	void add_control(const string& node_name, string port_name, float value)
 	{
+		// FIXME: filthy, filthy kludge for old Om patches
+		if (port_name == "note_number")
+			port_name = "note";
+
 		if (node_name != "")
 			_controls.push_back(ControlModel(_base_path + node_name +"/"+ port_name, value));
 		else

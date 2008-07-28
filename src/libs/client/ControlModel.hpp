@@ -33,8 +33,8 @@ class ControlModel
 {
 public:
 	ControlModel(const Path& port_path, float value)
-	: _port_path(port_path),
-	  _value(value)
+		: _port_path(port_path)
+		, _value(value)
 	{
 		assert(_port_path.find("//") == string::npos);
 	}

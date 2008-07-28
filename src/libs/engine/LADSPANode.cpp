@@ -104,6 +104,22 @@ LADSPANode::apply_poly(Raul::Maid& maid, uint32_t poly)
 	return true;
 }
 
+	
+static string
+nameify_if_invalid(const string& name)
+{
+	if (Path::is_valid_name(name)) {
+		return name;
+	} else {
+		const string new_name = Path::nameify(name);
+		assert(Path::is_valid_name(new_name));
+		if (new_name != name)
+			cerr << "WARNING: Illegal LADSPA port name '"
+				<< name << "' converted to '" << new_name << "'" << endl;
+		return new_name;
+	}
+}
+
 
 /** Instantiate self from LADSPA plugin descriptor.
  *
@@ -137,7 +153,7 @@ LADSPANode::instantiate()
 	PortImpl* port = NULL;
 	
 	for (size_t j=0; j < _descriptor->PortCount; ++j) {
-		port_name = Path::nameify(_descriptor->PortNames[j]);
+		port_name = nameify_if_invalid(_descriptor->PortNames[j]);
 
 		string::size_type slash_index;
 		

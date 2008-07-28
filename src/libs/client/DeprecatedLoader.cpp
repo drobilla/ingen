@@ -68,13 +68,24 @@ DeprecatedLoader::translate_load_path(const string& path)
 	if (t != _load_path_translations.end()) {
 		assert(Path::is_valid((*t).second));
 		return (*t).second;
-	} else {
+	// Filthy, filthy kludges
+	// (FIXME: apply these less heavy handedly, only when it's an internal module)
+	} else if (path.find("midi") != string::npos) {
 		assert(Path::is_valid(path));
-		// Filthy kludge to fix the change from note node "midi_in" port to "input"
 		if (path.substr(path.find_last_of("/")) == "/midi_in")
 			return path.substr(0, path.find_last_of("/")) + "/input";
+		else if (path.substr(path.find_last_of("/")) == "/note_number")
+			return path.substr(0, path.find_last_of("/")) + "/note";
+		else if (path.substr(path.find_last_of("/")) == "/Gate")
+			return path.substr(0, path.find_last_of("/")) + "/gate";
+		else if (path.substr(path.find_last_of("/")) == "/Trigger")
+			return path.substr(0, path.find_last_of("/")) + "/trigger";
+		else if (path.substr(path.find_last_of("/")) == "/Velocity")
+			return path.substr(0, path.find_last_of("/")) + "/velocity";
 		else
 			return path;
+	} else {
+		return path;
 	}
 }
 
@@ -410,6 +421,10 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 		if (is_port) {
 			const string old_path = path;
 			const string new_path = (Path::is_valid(old_path) ? old_path : Path::pathify(old_path));
+			
+			if (!Path::is_valid(old_path))
+				cerr << "WARNING: Translating invalid port path \"" << old_path << "\" => \""
+					<< new_path << "\"" << endl;
 
 			// Set up translations (for connections etc) to alias both the old
 			// module path and the old module/port path to the new port path
@@ -537,9 +552,9 @@ DeprecatedLoader::load_connection(const Path& parent, xmlDocPtr doc, const xmlNo
 
 	// Compatibility fixes for old (fundamentally broken) patches
 	source_node = nameify_if_invalid(source_node);
-	source_port = Path::nameify(source_port);
+	source_port = nameify_if_invalid(source_port);
 	dest_node = nameify_if_invalid(dest_node);
-	dest_port = Path::nameify(dest_port);
+	dest_port = nameify_if_invalid(dest_port);
 
 	_engine->connect(
 		translate_load_path(parent.base() + source_node +"/"+ source_port),
@@ -591,7 +606,7 @@ DeprecatedLoader::load_preset(const Path& parent, xmlDocPtr doc, const xmlNodePt
 			// Compatibility fixes for old patch files
 			if (node_name != "")
 				node_name = nameify_if_invalid(node_name);
-			port_name = Path::nameify(port_name);
+			port_name = nameify_if_invalid(port_name);
 			
 			if (port_name == "") {
 				string msg = "Unable to parse control in patch file ( node = ";
