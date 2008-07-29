@@ -24,6 +24,7 @@
 #include <raul/SharedPtr.hpp>
 #include <raul/AtomLiblo.hpp>
 #include "interface/ClientInterface.hpp"
+#include "engine/ThreadManager.hpp"
 #include "OSCEngineReceiver.hpp"
 #include "QueuedEventSource.hpp"
 #include "OSCClientSender.hpp"
@@ -168,6 +169,8 @@ OSCEngineReceiver::deactivate()
 void
 OSCEngineReceiver::ReceiveThread::_run()
 {
+	Thread::get().set_context(THREAD_PRE_PROCESS);
+
 	/* get a timestamp here and stamp all the events with the same time so
 	 * they all get executed in the same cycle */
 

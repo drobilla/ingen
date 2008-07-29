@@ -53,9 +53,6 @@ SetPortValueEvent::SetPortValueEvent(Engine&              engine,
 	, _port(NULL)
 	, _error(NO_ERROR)
 {
-	if (!_queued)
-		pre_process();
-
 	memcpy(_data, data, data_size);
 }
 
@@ -80,9 +77,6 @@ SetPortValueEvent::SetPortValueEvent(Engine&              engine,
 	, _port(NULL)
 	, _error(NO_ERROR)
 {
-	if (!_queued)
-		pre_process();
-
 	memcpy(_data, data, data_size);
 }
 
