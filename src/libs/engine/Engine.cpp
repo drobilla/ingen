@@ -166,11 +166,13 @@ Engine::start_jack_driver()
 void
 Engine::start_osc_driver(int port)
 {
-	if ( ! _event_source)
-		_event_source = SharedPtr<EventSource>(new OSCEngineReceiver(
-				*this, pre_processor_queue_size, port));
-	else
-		cerr << "[Engine::start_osc_driver] Event source already running" << endl;
+	if (_event_source) {
+		cerr << "WARNING: Replacing event source" << endl;
+		_event_source.reset();
+	}
+
+	_event_source = SharedPtr<EventSource>(new OSCEngineReceiver(
+			*this, pre_processor_queue_size, port));
 }
 	
 

@@ -104,7 +104,7 @@ main(int argc, char** argv)
 				engine = SharedPtr<Engine>(new_engine(world));
 				world->local_engine = engine;
 				/* Load queued (direct in-process) engine interface */
-				if (!args.connect_given) {
+				if (!args.connect_given && args.gui_given) {
 					engine_interface = engine->new_queued_interface();
 					world->engine = engine_interface;
 				}
@@ -116,8 +116,6 @@ main(int argc, char** argv)
 		}
 	}
 	
-	bool use_osc = false;
-
 	/* Load client library */
 	if (args.connect_given || args.load_given) {
 		client_module = Ingen::Shared::load_module("ingen_client");
@@ -126,16 +124,11 @@ main(int argc, char** argv)
 	}
 
 	/* Connect to remote engine */
-	if (args.connect_given || (args.load_given && !engine_interface)) {
+	if (client_module && (args.connect_given || (args.load_given && !engine_interface))) {
 		SharedPtr<Shared::EngineInterface> (*new_osc_interface)(const std::string&) = NULL;
 
-		bool found = false;
-		if (client_module)
-			found = client_module->get_symbol("new_osc_interface", (void*&)new_osc_interface);
-
-		if (client_module && found) {
+		if (client_module->get_symbol("new_osc_interface", (void*&)new_osc_interface)) {
 			engine_interface = new_osc_interface(args.connect_arg);
-			use_osc = true;
 		} else {
 			cerr << "Unable to load ingen_client module, aborting." << endl;
 			return -1;
@@ -144,12 +137,7 @@ main(int argc, char** argv)
 	
 
 	if (engine && engine_interface) {
-
-		if (use_osc)
-			engine->start_osc_driver(args.engine_port_arg);
-
 		engine->start_jack_driver();
-
 		engine->activate(args.parallelism_arg);
 	}
             
