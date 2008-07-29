@@ -340,8 +340,6 @@ PatchWindow::event_save_as()
 	int result = dialog.run();
 	//bool recursive = recursive_checkbutton.get_active();
 	
-	assert(result == Gtk::RESPONSE_OK || result == Gtk::RESPONSE_CANCEL || result == Gtk::RESPONSE_NONE);
-	
 	if (result == Gtk::RESPONSE_OK) {	
 		string filename = dialog.get_filename();
 		if (filename.length() < 11 || filename.substr(filename.length()-10) != ".ingen.ttl")

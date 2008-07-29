@@ -113,7 +113,7 @@ CreatePortEvent::pre_process()
 				if (_type == "ingen:AudioPort")
 					_driver_port = _engine.audio_driver()->create_port(
 							dynamic_cast<DuplexPort*>(_patch_port));
-				else if (_type == "ingen:MIDIPort")
+				else if (_type == "ingen:MIDIPort" || _type == "ingen:EventPort")
 					_driver_port = _engine.midi_driver()->create_port(
 							dynamic_cast<DuplexPort*>(_patch_port));
 				else if (_type == "ingen:OSCPort" && _engine.osc_driver())
@@ -145,7 +145,7 @@ CreatePortEvent::execute(ProcessContext& context)
 	if (_driver_port) {
 		if (_type == "ingen:AudioPort")
 			_engine.audio_driver()->add_port(_driver_port);
-		else if (_type == "ingen:MIDIPort")
+		else if (_type == "ingen:MIDIPort" || _type == "ingen:EventPort")
 			_engine.midi_driver()->add_port(_driver_port);
 		else if (_type == "ingen:OSCPort")
 			cerr << "OSC DRIVER PORT" << endl;

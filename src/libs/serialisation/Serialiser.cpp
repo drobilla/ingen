@@ -100,8 +100,6 @@ Serialiser::start_to_filename(const string& filename)
 {
 	setlocale(LC_NUMERIC, "C");
 
-	cout << "STARTING SERIALIZATION TO FILENAME: " << filename << endl;
-
 	assert(filename.find(":") == string::npos || filename.substr(0, 5) == "file:");
 	if (filename.find(":") == string::npos)
 		_base_uri = "file://" + filename;

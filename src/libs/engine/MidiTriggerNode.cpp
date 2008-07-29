@@ -107,19 +107,14 @@ MidiTriggerNode::note_on(ProcessContext& context, uchar note_num, uchar velocity
 	assert(time >= context.start() && time <= context.end());
 	assert(time - context.start() < _buffer_size);
 
-	cerr << "[MidiTriggerNode] " << path() << " Note " << (int)note_num << " on @ " << time << endl;
+	/*cerr << "[MidiTriggerNode] " << path() << " Note " << (int)note_num << " on @ " << time << endl;*/
 
 	Sample filter_note = ((AudioBuffer*)_note_port->buffer(0))->value_at(0);
-	cerr << "note: " << (int)note_num << ", filter: " << filter_note << endl;
 	if (filter_note >= 0.0 && filter_note < 127.0 && (note_num == (uchar)filter_note)) {
-			
-		cerr << "!\n";
-
 		((AudioBuffer*)_gate_port->buffer(0))->set_value(1.0f, context.start(), time);
 		((AudioBuffer*)_trig_port->buffer(0))->set_value(1.0f, context.start(), time);
 		((AudioBuffer*)_trig_port->buffer(0))->set_value(0.0f, context.start(), time + 1);
 		((AudioBuffer*)_vel_port->buffer(0))->set_value(velocity / 127.0f, context.start(), time);
-		
 		assert(((AudioBuffer*)_trig_port->buffer(0))->data()[time - context.start()] == 1.0f);
 	}
 }

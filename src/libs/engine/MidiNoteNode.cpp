@@ -225,8 +225,8 @@ MidiNoteNode::note_on(ProcessContext& context, uchar note_num, uchar velocity, F
 	assert(voice != NULL);
 	assert(voice == &(*_voices)[voice_num]);
 
-	cerr << "[MidiNoteNode] Note " << (int)note_num << " on @ " << time
-		<< ". Voice " << voice_num << " / " << _polyphony << endl;
+	/*cerr << "[MidiNoteNode] Note " << (int)note_num << " on @ " << time
+		<< ". Voice " << voice_num << " / " << _polyphony << endl;*/
 	
 	// Update stolen key, if applicable
 	if (voice->state == Voice::Voice::ACTIVE) {

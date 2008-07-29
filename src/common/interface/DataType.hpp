@@ -48,7 +48,7 @@ public:
 		} else if (uri == type_uri(CONTROL)) {
 			_symbol = CONTROL;
 		} else if (uri == type_uri(EVENT)
-				|| (uri == "ingen:MIDIPort") || uri == "ingen:OSCPort") {
+				|| (uri == "ingen:MIDIPort") || uri == "ingen:OSCPort" || uri == "ingen:EventPort") {
 			_symbol = EVENT;
 		}
 	}

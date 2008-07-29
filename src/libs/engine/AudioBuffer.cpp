@@ -129,8 +129,11 @@ AudioBuffer::clear()
 void
 AudioBuffer::set_value(Sample val, FrameTime cycle_start, FrameTime time)
 {
+	if (_size == 1)
+		time = cycle_start;
+
 	FrameTime offset = time - cycle_start;
-	assert(offset < _size);
+	assert(offset <= _size);
 
 	set_block(val, offset, _size - 1);
 	
