@@ -160,9 +160,11 @@ DeprecatedLoader::load_patch(const Glib::ustring&   filename,
                              GraphObject::Variables initial_data,
                              bool                   existing)
 {
-	cerr << "[DeprecatedLoader] Loading patch " << filename << "" << endl;
+	cerr << "[DeprecatedLoader] Loading patch " << filename << " under "
+		<< parent_path << " / " << name << endl;
 
-	Path path = "/"; // path of the new patch
+	Path path = parent_path ? (parent_path.get().base() + name)
+	                        : "/" + name;
 
 	const bool load_name = (name == "");
 	
@@ -235,6 +237,8 @@ DeprecatedLoader::load_patch(const Glib::ustring&   filename,
 	if (poly == 0)
 		poly = 1;
 
+	cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!! LOADING " << path << endl;
+
 	// Create it, if we're not merging
 	if (!existing && path != "/") {
 		_engine->create_patch(path, poly);
@@ -255,7 +259,7 @@ DeprecatedLoader::load_patch(const Glib::ustring&   filename,
 	cur = xmlDocGetRootElement(doc)->xmlChildrenNode;
 	while (cur != NULL) {
 		if ((!xmlStrcmp(cur->name, (const xmlChar*)"subpatch"))) {
-			load_subpatch(path, doc, cur);
+			load_subpatch(filename.substr(0, filename.find_last_of("/")), path, doc, cur);
 		}
 		cur = cur->next;
 	}
@@ -415,6 +419,8 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 			} else if (plugin_label == "midi_output" ) {
 				_engine->create_port(path, "ingen:MIDIPort", true);
 				is_port = true;
+			} else {
+				cerr << "WARNING: Unknown internal plugin label \"" << plugin_label << "\"" << endl;
 			}
 		}
 
@@ -477,7 +483,7 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 
 
 bool
-DeprecatedLoader::load_subpatch(const Path& parent, xmlDocPtr doc, const xmlNodePtr subpatch)
+DeprecatedLoader::load_subpatch(const string& base_filename, const Path& parent, xmlDocPtr doc, const xmlNodePtr subpatch)
 {
 	xmlChar *key;
 	xmlNodePtr cur = subpatch->xmlChildrenNode;
@@ -496,7 +502,7 @@ DeprecatedLoader::load_subpatch(const Path& parent, xmlDocPtr doc, const xmlNode
 		} else if ((!xmlStrcmp(cur->name, (const xmlChar*)"polyphony"))) {
 			initial_data.insert(make_pair("ingen::polyphony", (int)poly));
 		} else if ((!xmlStrcmp(cur->name, (const xmlChar*)"filename"))) {
-			filename = (const char*)key;
+			filename = base_filename + "/" + (const char*)key;
 		} else {  // Don't know what this tag is, add it as variable
 			if (key != NULL && strlen((const char*)key) > 0)
 				add_variable(initial_data, (const char*)cur->name, (const char*)key);
@@ -507,6 +513,7 @@ DeprecatedLoader::load_subpatch(const Path& parent, xmlDocPtr doc, const xmlNode
 		cur = cur->next;
 	}
 
+	cout << "Loading subpatch " << filename << " under " << parent << endl;
 	// load_patch sets the passed variable last, so values stored in the parent
 	// will override values stored in the child patch file
 	/*string path = */load_patch(filename, parent, name, initial_data, false);

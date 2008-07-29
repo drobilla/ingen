@@ -82,7 +82,7 @@ private:
 
 	bool load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr cur);
 	bool load_connection(const Path& parent, xmlDocPtr doc, const xmlNodePtr cur);
-	bool load_subpatch(const Path& parent, xmlDocPtr doc, const xmlNodePtr cur);
+	bool load_subpatch(const string& base_filename, const Path& parent, xmlDocPtr doc, const xmlNodePtr cur);
 	
 	SharedPtr<PresetModel> load_preset(const Path& parent, xmlDocPtr doc, const xmlNodePtr cur);
 };
