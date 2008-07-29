@@ -72,9 +72,9 @@ DeprecatedLoader::translate_load_path(const string& path)
 	// (FIXME: apply these less heavy handedly, only when it's an internal module)
 	} else if (path.find("midi") != string::npos) {
 		assert(Path::is_valid(path));
-		if (path.substr(path.find_last_of("/")) == "/midi_in")
+		if (path.substr(path.find_last_of("/")) == "/MIDI_In")
 			return path.substr(0, path.find_last_of("/")) + "/input";
-		else if (path.substr(path.find_last_of("/")) == "/note_number")
+		else if (path.substr(path.find_last_of("/")) == "/Note_Number")
 			return path.substr(0, path.find_last_of("/")) + "/note";
 		else if (path.substr(path.find_last_of("/")) == "/Gate")
 			return path.substr(0, path.find_last_of("/")) + "/gate";
@@ -284,7 +284,8 @@ DeprecatedLoader::load_patch(const Glib::ustring&   filename,
 				list<ControlModel>::const_iterator i = pm->controls().begin();
 				for ( ; i != pm->controls().end(); ++i) {
 					const float value = i->value();
-					_engine->set_port_value(i->port_path(), "ingen:Float", sizeof(float), &value);
+					_engine->set_port_value(translate_load_path(i->port_path()),
+							"ingen:Float", sizeof(float), &value);
 				}
 			} else {
 				cerr << "WARNING: Unknown preset: \"" << pm->name() << endl;

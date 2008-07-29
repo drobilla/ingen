@@ -26,6 +26,8 @@
 #include "EventBuffer.hpp"
 #include "util.hpp"
 
+using namespace std;
+
 namespace Ingen {
 
 
@@ -41,7 +43,7 @@ MidiTriggerNode::MidiTriggerNode(const string& path, bool polyphonic, PatchImpl*
 	_note_port = new InputPort(this, "note", 1, 1, DataType::CONTROL, 60.0f, 1);
 	_note_port->set_variable("ingen:minimum", 0.0f);
 	_note_port->set_variable("ingen:maximum", 127.0f);
-	_note_port->set_variable("ingen:integer", 1);
+	_note_port->set_variable("ingen:integer", true);
 	_ports->at(1) = _note_port;
 	
 	_gate_port = new OutputPort(this, "gate", 2, 1, DataType::AUDIO, 0.0f, _buffer_size);
@@ -105,11 +107,14 @@ MidiTriggerNode::note_on(uchar note_num, uchar velocity, FrameTime time, Process
 	assert(time >= context.start() && time <= context.end());
 	assert(time - context.start() < _buffer_size);
 
-	//std::cerr << "Note on starting at sample " << offset << std::endl;
+	cerr << "[MidiTriggerNode] " << path() << " Note " << (int)note_num << " on @ " << time << endl;
 
-	const Sample filter_note = ((AudioBuffer*)_note_port->buffer(0))->value_at(0);
-	if (filter_note >= 0.0 && filter_note < 127.0 && (note_num == (uchar)filter_note)){
+	Sample filter_note = ((AudioBuffer*)_note_port->buffer(0))->value_at(0);
+	cerr << "note: " << (int)note_num << ", filter: " << filter_note << endl;
+	if (filter_note >= 0.0 && filter_note < 127.0 && (note_num == (uchar)filter_note)) {
 			
+		cerr << "!\n";
+
 		// FIXME FIXME FIXME
 		SampleCount offset = time - context.start();
 

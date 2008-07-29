@@ -48,11 +48,11 @@ MidiControlNode::MidiControlNode(const string& path,
 	_param_port = new InputPort(this, "controller", 1, 1, DataType::CONTROL, 0.0f, 1);
 	_param_port->set_variable("ingen:minimum", 0.0f);
 	_param_port->set_variable("ingen:maximum", 127.0f);
-	_param_port->set_variable("ingen:integer", 1);
+	_param_port->set_variable("ingen:integer", true);
 	_ports->at(1) = _param_port;
 
 	_log_port = new InputPort(this, "logarithmic", 2, 1, DataType::CONTROL, 0.0f, 1);
-	_log_port->set_variable("ingen:toggled", 1);
+	_log_port->set_variable("ingen:toggled", true);
 	_ports->at(2) = _log_port;
 	
 	_min_port = new InputPort(this, "minimum", 3, 1, DataType::CONTROL, 0.0f, 1);

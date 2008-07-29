@@ -254,7 +254,9 @@ if test "$build_ingen_client_lib" = "yes"; then
 	AC_CHECK_HEADERS([sys/time.h unistd.h])
 	PKG_CHECK_MODULES(LXML2, libxml-2.0 >= 2.6.0) # FIXME: deprecated, make optional
 	PKG_CHECK_MODULES(LSIGCPP, sigc++-2.0)
-	PKG_CHECK_MODULES(REDLANDMM, [redlandmm])
+	PKG_CHECK_MODULES(REDLANDMM, redlandmm)
+	# Explicitly check for a more recent librdf than redlandmm itself needs
+	PKG_CHECK_MODULES(REDLANDMM, redland >= 1.0.8)
 else
  	AC_MSG_WARN([Ingen client library/executable will not be built!])
 fi

@@ -57,11 +57,11 @@ MidiNoteNode::MidiNoteNode(const string& path, bool polyphonic, PatchImpl* paren
 	_ports->at(2) = _vel_port;
 	
 	_gate_port = new OutputPort(this, "gate", 3, _polyphony, DataType::AUDIO, 0.0f, _buffer_size);
-	_gate_port->set_variable("ingen:toggled", 1);
+	_gate_port->set_variable("ingen:toggled", true);
 	_ports->at(3) = _gate_port;
 	
 	_trig_port = new OutputPort(this, "trigger", 4, _polyphony, DataType::AUDIO, 0.0f, _buffer_size);
-	_trig_port->set_variable("ingen:toggled", 1);
+	_trig_port->set_variable("ingen:toggled", true);
 	_ports->at(4) = _trig_port;
 }
 
@@ -225,8 +225,8 @@ MidiNoteNode::note_on(uchar note_num, uchar velocity, FrameTime time, ProcessCon
 	assert(voice != NULL);
 	assert(voice == &(*_voices)[voice_num]);
 
-	//cerr << "[MidiNoteNode] Note " << (int)note_num << " on @ " << time
-	//	<< ". Voice " << voice_num << " / " << _polyphony << endl;
+	cerr << "[MidiNoteNode] Note " << (int)note_num << " on @ " << time
+		<< ". Voice " << voice_num << " / " << _polyphony << endl;
 	
 	// Update stolen key, if applicable
 	if (voice->state == Voice::Voice::ACTIVE) {

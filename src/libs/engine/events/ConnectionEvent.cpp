@@ -15,20 +15,22 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "ConnectionEvent.hpp"
+
 #include <string>
+#include <boost/format.hpp>
 #include <raul/Maid.hpp>
 #include <raul/Path.hpp>
-#include "Responder.hpp"
-#include "types.hpp"
-#include "Engine.hpp"
+#include "ClientBroadcaster.hpp"
+#include "ConnectionEvent.hpp"
 #include "ConnectionImpl.hpp"
+#include "Engine.hpp"
 #include "InputPort.hpp"
+#include "ObjectStore.hpp"
 #include "OutputPort.hpp"
 #include "PatchImpl.hpp"
-#include "ClientBroadcaster.hpp"
 #include "PortImpl.hpp"
-#include "ObjectStore.hpp"
+#include "Responder.hpp"
+#include "types.hpp"
 
 using std::string;
 namespace Ingen {
@@ -164,15 +166,33 @@ ConnectionEvent::execute(ProcessContext& context)
 void
 ConnectionEvent::post_process()
 {
+	std::ostringstream ss;
 	if (_error == NO_ERROR) {
 		_responder->respond_ok();
 		_engine.broadcaster()->send_connection(_connection);
-	} else {
-		// FIXME: better error messages
-		string msg = "Unable to make connection ";
-		msg.append(_src_port_path + " -> " + _dst_port_path);
-		_responder->respond_error(msg);
+		return;
 	}
+
+	ss << boost::format("Unable to make connection %1% -> %2% (") % _src_port_path % _dst_port_path;
+
+	switch (_error) {
+	case PARENT_PATCH_DIFFERENT:
+		ss << "Ports have mismatched parents"; break;
+	case PORT_NOT_FOUND:
+		ss << "Port not found"; break;
+	case TYPE_MISMATCH:
+		ss << "Type mismatch"; break;
+	case DIRECTION_MISMATCH:
+		ss << "Direction mismatch"; break;
+	case ALREADY_CONNECTED:
+		ss << "Already connected"; break;
+	case PARENTS_NOT_FOUND:
+		ss << "Parents not found"; break;
+	default:
+		ss << "Unknown error";
+	}
+	ss << ")";
+	_responder->respond_error(ss.str());
 }
 
 

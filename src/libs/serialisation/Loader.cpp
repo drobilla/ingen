@@ -212,8 +212,9 @@ Loader::load(Ingen::Shared::World*       world,
 		const string port_name = (*i)["portname"].to_string();
 		const float  val       = (*i)["portval"].to_float();
 
-		const Path port_path = patch_path.base() + Path::nameify(node_name)
-			+"/"+ Path::nameify(port_name);
+		assert(Path::is_valid_name(node_name));
+		assert(Path::is_valid_name(port_name));
+		const Path port_path = patch_path.base() + node_name + "/" + port_name;
 
 		world->engine->set_port_value(port_path, "ingen:Float", sizeof(float), &val);
 	}
@@ -243,7 +244,8 @@ Loader::load(Ingen::Shared::World*       world,
 		const string type     = world->rdf_world->qualify((*i)["type"].to_string());
 		const string datatype = world->rdf_world->qualify((*i)["datatype"].to_string());
 
-		const Path port_path = patch_path.base() + (string)name;
+		assert(Path::is_valid_name(name));
+		const Path port_path = patch_path.base() + name;
 			
 		if (created.find(port_path) == created.end()) {
 			bool is_output = (type == "ingen:OutputPort"); // FIXME: check validity

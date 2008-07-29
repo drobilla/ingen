@@ -100,9 +100,15 @@ Serialiser::start_to_filename(const string& filename)
 {
 	setlocale(LC_NUMERIC, "C");
 
-	_base_uri = "file://" + filename;
+	cout << "STARTING SERIALIZATION TO FILENAME: " << filename << endl;
+
+	assert(filename.find(":") == string::npos || filename.substr(0, 5) == "file:");
+	if (filename.find(":") == string::npos)
+		_base_uri = "file://" + filename;
+	else
+		_base_uri = filename;
 	_model = new Redland::Model(_world);
-    _model->set_base_uri(string("file://" + filename));
+    _model->set_base_uri(_base_uri);
 	_mode = TO_FILE;
 }
 
@@ -429,19 +435,19 @@ void
 Serialiser::serialise_variables(Redland::Node subject, const GraphObject::Variables& variables)
 {
 	for (GraphObject::Variables::const_iterator v = variables.begin(); v != variables.end(); ++v) {
-		if (v->first.find(":") != string::npos) {
+		if (v->first.find(":") != string::npos && v->first != "ingen:document") {
 			if (v->second.is_valid()) {
-			const Redland::Node var_id = _world.blank_id();
-			const Redland::Node key(_model->world(), Redland::Node::RESOURCE, v->first);
-			const Redland::Node value = AtomRDF::atom_to_node(_model->world(), v->second);
-			if (value) {
-				_model->add_statement(subject, "ingen:variable", var_id);
-				_model->add_statement(var_id, "ingen:key", key);
-				_model->add_statement(var_id, "ingen:value", value);
-			} else {
-				cerr << "Warning: can not serialise value: key '" << v->first << "', type "
-					<< (int)v->second.type() << endl;
-			}
+				const Redland::Node var_id = _world.blank_id();
+				const Redland::Node key(_model->world(), Redland::Node::RESOURCE, v->first);
+				const Redland::Node value = AtomRDF::atom_to_node(_model->world(), v->second);
+				if (value) {
+					_model->add_statement(subject, "ingen:variable", var_id);
+					_model->add_statement(var_id, "ingen:key", key);
+					_model->add_statement(var_id, "ingen:value", value);
+				} else {
+					cerr << "Warning: can not serialise value: key '" << v->first << "', type "
+						<< (int)v->second.type() << endl;
+				}
 			} else {
 				cerr << "Warning: variable with no value: key '" << v->first << "'" << endl;
 			}
