@@ -85,7 +85,7 @@ JackMidiPort::pre_process(ProcessContext& context)
 	void*                jack_buffer = jack_port_get_buffer(_jack_port, context.nframes());
 	const jack_nframes_t event_count = jack_midi_get_event_count(jack_buffer);
 
-	patch_buf->prepare_write(context.nframes());
+	patch_buf->prepare_write(context.start(), context.nframes());
 	
 	// Copy events from Jack port buffer into patch port buffer
 	for (jack_nframes_t i=0; i < event_count; ++i) {
@@ -120,7 +120,7 @@ JackMidiPort::post_process(ProcessContext& context)
 	assert(_patch_port->poly() == 1);
 	assert(patch_buf);
 
-	patch_buf->prepare_read(context.nframes());
+	patch_buf->prepare_read(context.start(), context.nframes());
 	jack_midi_clear_buffer(jack_buf);
 	
 	uint32_t frames = 0;

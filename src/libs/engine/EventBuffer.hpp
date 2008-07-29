@@ -33,8 +33,8 @@ public:
 	
 	~EventBuffer();
 
-	void prepare_read(SampleCount nframes);
-	void prepare_write(SampleCount nframes);
+	void prepare_read(FrameTime start, SampleCount nframes);
+	void prepare_write(FrameTime start, SampleCount nframes);
 
 	bool join(Buffer* buf);
 	void unjoin();

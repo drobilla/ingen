@@ -46,8 +46,8 @@ public:
 	/** Rewing (ie reset read pointer), but leave contents unchanged */
 	virtual void rewind() const = 0;
 
-	virtual void prepare_read(SampleCount nframes) = 0;
-	virtual void prepare_write(SampleCount nframes) = 0;
+	virtual void prepare_read(FrameTime start, SampleCount nframes) = 0;
+	virtual void prepare_write(FrameTime start, SampleCount nframes) = 0;
 	
 	bool is_joined() const { return (_joined_buf != NULL); }
 	Buffer* joined_buffer() const { return _joined_buf; }

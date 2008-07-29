@@ -200,7 +200,7 @@ LV2Node::instantiate()
 			port = new OutputPort(this, port_name, j, _polyphony, data_type, defatm, port_buffer_size);
 
 		if (direction == INPUT && data_type == DataType::CONTROL)
-		  ((AudioBuffer*)port->buffer(0))->set(def, 0);
+		  ((AudioBuffer*)port->buffer(0))->set_value(def, 0, 0);
 
 		_ports->at(j) = port;
 	}
@@ -223,9 +223,9 @@ LV2Node::activate()
 			set_port_buffer(i, j, port->buffer(i));
 
 			if (port->type() == DataType::CONTROL) {
-				((AudioBuffer*)port->buffer(i))->set(port->value().get_float(), 0);
+				((AudioBuffer*)port->buffer(i))->set_value(port->value().get_float(), 0, 0);
 			} else if (port->type() == DataType::AUDIO) {
-				((AudioBuffer*)port->buffer(i))->set(0.0f, 0);
+				((AudioBuffer*)port->buffer(i))->set_value(0.0f, 0, 0);
 			}
 		}
 		slv2_instance_activate((*_instances)[i]);

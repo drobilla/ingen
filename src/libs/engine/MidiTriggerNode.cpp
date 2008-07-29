@@ -78,17 +78,17 @@ MidiTriggerNode::process(ProcessContext& context)
 			switch (buf[0] & 0xF0) {
 			case MIDI_CMD_NOTE_ON:
 				if (buf[2] == 0)
-					note_off(buf[1], time, context);
+					note_off(context, buf[1], time);
 				else
-					note_on(buf[1], buf[2], time, context);
+					note_on(context, buf[1], buf[2], time);
 				break;
 			case MIDI_CMD_NOTE_OFF:
-				note_off(buf[1], time, context);
+				note_off(context, buf[1], time);
 				break;
 			case MIDI_CMD_CONTROL:
 				if (buf[1] == MIDI_CTL_ALL_NOTES_OFF
 						|| buf[1] == MIDI_CTL_ALL_SOUNDS_OFF)
-					((AudioBuffer*)_gate_port->buffer(0))->set(0.0f, time);
+					((AudioBuffer*)_gate_port->buffer(0))->set_value(0.0f, context.start(), time);
 			default:
 				break;
 			}
@@ -102,7 +102,7 @@ MidiTriggerNode::process(ProcessContext& context)
 
 
 void
-MidiTriggerNode::note_on(uchar note_num, uchar velocity, FrameTime time, ProcessContext& context)
+MidiTriggerNode::note_on(ProcessContext& context, uchar note_num, uchar velocity, FrameTime time)
 {
 	assert(time >= context.start() && time <= context.end());
 	assert(time - context.start() < _buffer_size);
@@ -115,29 +115,24 @@ MidiTriggerNode::note_on(uchar note_num, uchar velocity, FrameTime time, Process
 			
 		cerr << "!\n";
 
-		// FIXME FIXME FIXME
-		SampleCount offset = time - context.start();
-
-		// See comments in MidiNoteNode::note_on (FIXME)
-		if (offset == (SampleCount)(_buffer_size-1))
-			--offset;
+		((AudioBuffer*)_gate_port->buffer(0))->set_value(1.0f, context.start(), time);
+		((AudioBuffer*)_trig_port->buffer(0))->set_value(1.0f, context.start(), time);
+		((AudioBuffer*)_trig_port->buffer(0))->set_value(0.0f, context.start(), time + 1);
+		((AudioBuffer*)_vel_port->buffer(0))->set_value(velocity / 127.0f, context.start(), time);
 		
-		((AudioBuffer*)_gate_port->buffer(0))->set(1.0f, offset);
-		((AudioBuffer*)_trig_port->buffer(0))->set(1.0f, offset, offset);
-		((AudioBuffer*)_trig_port->buffer(0))->set(0.0f, offset+1);
-		((AudioBuffer*)_vel_port->buffer(0))->set(velocity/127.0f, offset);
+		assert(((AudioBuffer*)_trig_port->buffer(0))->data()[time - context.start()] == 1.0f);
 	}
 }
 
 
 void
-MidiTriggerNode::note_off(uchar note_num, FrameTime time, ProcessContext& context)
+MidiTriggerNode::note_off(ProcessContext& context, uchar note_num, FrameTime time)
 {
 	assert(time >= context.start() && time <= context.end());
 	assert(time - context.start() < _buffer_size);
 
 	if (note_num == lrintf(((AudioBuffer*)_note_port->buffer(0))->value_at(0)))
-		((AudioBuffer*)_gate_port->buffer(0))->set(0.0f, time - context.start());
+		((AudioBuffer*)_gate_port->buffer(0))->set_value(0.0f, context.start(), time);
 }
 
 

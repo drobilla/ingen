@@ -125,13 +125,11 @@ SetPortValueEvent::execute(ProcessContext& context)
 		Buffer* const buf = _port->buffer(0);
 		AudioBuffer* const abuf = dynamic_cast<AudioBuffer*>(buf);
 		if (abuf) {
-			const uint32_t offset = (buf->size() == 1) ? 0 : _time - context.start();
-
 			if (_omni)
 				for (uint32_t i=0; i < _port->poly(); ++i)
-					((AudioBuffer*)_port->buffer(i))->set(*(float*)_data, offset);
+					((AudioBuffer*)_port->buffer(i))->set_value(*(float*)_data, context.start(), _time);
 			else
-				((AudioBuffer*)_port->buffer(_voice_num))->set(*(float*)_data, offset);
+				((AudioBuffer*)_port->buffer(_voice_num))->set_value(*(float*)_data, context.start(), _time);
 
 			return;
 		}
@@ -143,7 +141,7 @@ SetPortValueEvent::execute(ProcessContext& context)
 			LV2URIMap* map = (LV2URIMap*)f->controller;
 			const uint32_t type_id = map->uri_to_id(NULL, "http://lv2plug.in/ns/ext/midi#MidiEvent");
 			const uint32_t frames = std::max((uint32_t)(_time - context.start()), ebuf->latest_frames());
-			ebuf->prepare_write(context.nframes());
+			ebuf->prepare_write(context.start(), context.nframes());
 			// FIXME: how should this work? binary over OSC, ick
 			// Message is an event:
 			ebuf->append(frames, 0, type_id, _data_size, (const unsigned char*)_data);

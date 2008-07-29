@@ -33,8 +33,8 @@ public:
 	AudioBuffer(size_t capacity);
 
 	void clear();
-	void set(Sample val, size_t start_sample);
-	void set(Sample val, size_t start_sample, size_t end_sample);
+	void set_value(Sample val, FrameTime cycle_start, FrameTime time);
+	void set_block(Sample val, size_t start_offset, size_t end_offset);
 	void scale(Sample val, size_t start_sample, size_t end_sample);
 	void copy(const Buffer* src, size_t start_sample, size_t end_sample);
 	void accumulate(const AudioBuffer* src, size_t start_sample, size_t end_sample);
@@ -53,8 +53,8 @@ public:
 	inline Sample& value_at(size_t offset) const
 		{ assert(offset < _size); return data()[offset]; }
 	
-	void prepare_read(SampleCount nframes);
-	void prepare_write(SampleCount nframes) {}
+	void prepare_read(FrameTime start, SampleCount nframes);
+	void prepare_write(FrameTime start, SampleCount nframes) {}
 	
 	void rewind() const {}
 	void resize(size_t size);
@@ -75,6 +75,7 @@ private:
 	size_t       _filled_size; ///< Usable buffer size (for MIDI ports etc)
 	State        _state;       ///< State of buffer for setting values next cycle
 	Sample       _set_value;   ///< Value set by @ref set (may need to be set next cycle)
+	FrameTime    _set_time;    ///< Time _set_value was set (to reset next cycle)
 };
 
 

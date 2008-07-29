@@ -61,12 +61,12 @@ DuplexPort::pre_process(ProcessContext& context)
 
 		for (uint32_t i=0; i < _poly; ++i)
 			if (!_buffers->at(i)->is_joined())
-				_buffers->at(i)->prepare_write(context.nframes());
+				_buffers->at(i)->prepare_write(context.start(), context.nframes());
 
 	} else {
 
 		for (uint32_t i=0; i < _poly; ++i)
-			_buffers->at(i)->prepare_read(context.nframes());
+			_buffers->at(i)->prepare_read(context.start(), context.nframes());
 
 		broadcast(context);
 	}

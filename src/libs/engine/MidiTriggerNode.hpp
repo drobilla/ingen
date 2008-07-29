@@ -44,8 +44,8 @@ public:
 
 	void process(ProcessContext& context);
 	
-	void note_on(uchar note_num, uchar velocity, FrameTime time, ProcessContext& context);
-	void note_off(uchar note_num, FrameTime time, ProcessContext& context);
+	void note_on(ProcessContext& context, uchar note_num, uchar velocity, FrameTime time);
+	void note_off(ProcessContext& context, uchar note_num, FrameTime time);
 
 private:
 	InputPort*  _midi_in_port;

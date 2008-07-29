@@ -43,7 +43,7 @@ void
 OutputPort::pre_process(ProcessContext& context)
 {
 	for (uint32_t i=0; i < _poly; ++i)
-		buffer(i)->prepare_write(context.nframes());
+		buffer(i)->prepare_write(context.start(), context.nframes());
 }
 
 
@@ -51,7 +51,7 @@ void
 OutputPort::post_process(ProcessContext& context)
 {
 	for (uint32_t i=0; i < _poly; ++i)
-		buffer(i)->prepare_read(context.nframes());
+		buffer(i)->prepare_read(context.start(), context.nframes());
 
 	//cerr << path() << " output post: buffer: " << buffer(0) << endl;
 

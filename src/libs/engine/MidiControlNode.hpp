@@ -42,7 +42,7 @@ public:
 	
 	void process(ProcessContext& context);
 	
-	void control(uchar control_num, uchar val, SampleCount offset);
+	void control(ProcessContext& context, uchar control_num, uchar val, FrameTime time);
 
 	void learn(MidiLearnResponseEvent* ev) { _learning = true; _learn_event = ev; }
 

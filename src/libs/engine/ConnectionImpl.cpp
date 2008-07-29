@@ -146,7 +146,7 @@ ConnectionImpl::process(ProcessContext& context)
 
 		// Write last value of src buffer to remainder of dst buffer, if necessary
 		if (copy_size < mix_buf->size())
-			mix_buf->set(src_buffer->value_at(copy_size-1), copy_size, mix_buf->size()-1);
+			mix_buf->set_block(src_buffer->value_at(copy_size-1), copy_size, mix_buf->size()-1);
 	
 		// Accumulate the source's voices into local buffer starting at the second
 		// voice (buffer is already set to first voice above)
@@ -160,7 +160,7 @@ ConnectionImpl::process(ProcessContext& context)
 			for (uint32_t j=1; j < src_port()->poly(); ++j)
 				src_value += ((AudioBuffer*)src_port()->buffer(j))->value_at(copy_size-1);
 
-			mix_buf->set(src_value, copy_size, mix_buf->size()-1);
+			mix_buf->set_block(src_value, copy_size, mix_buf->size()-1);
 		}
 
 		// Scale the buffer down.

@@ -36,6 +36,7 @@ AudioBuffer::AudioBuffer(size_t size)
 	, _filled_size(0)
 	, _state(OK)
 	, _set_value(0)
+	, _set_time(0)
 {
 	assert(_size > 0);
 	allocate();
@@ -68,7 +69,7 @@ AudioBuffer::resize(size_t size)
 	else
 		_data = old_data;
 
-	set(0, 0, _size-1);
+	set_block(0, 0, _size-1);
 }
 
 
@@ -92,7 +93,7 @@ AudioBuffer::allocate()
 
 	_data = _local_data;
 
-	set(0, 0, _size-1);
+	set_block(0, 0, _size-1);
 }
 
 
@@ -113,7 +114,7 @@ AudioBuffer::deallocate()
 void
 AudioBuffer::clear()
 {
-	set(0, 0, _size-1);
+	set_block(0, 0, _size-1);
 	_state = OK;
 	_filled_size = 0;
 }
@@ -126,15 +127,17 @@ AudioBuffer::clear()
  * long as pre_process() is called every cycle.
  */
 void
-AudioBuffer::set(Sample val, size_t start_sample)
+AudioBuffer::set_value(Sample val, FrameTime cycle_start, FrameTime time)
 {
-	assert(start_sample < _size);
+	FrameTime offset = time - cycle_start;
+	assert(offset < _size);
 
-	set(val, start_sample, _size-1);
+	set_block(val, offset, _size - 1);
 	
-	if (start_sample > 0)
+	if (offset > 0)
 		_state = HALF_SET_CYCLE_1;
 
+	_set_time = time;
 	_set_value = val;
 }
 
@@ -144,15 +147,15 @@ AudioBuffer::set(Sample val, size_t start_sample)
  * @a start_sample and @a end_sample define the inclusive range to be set.
  */
 void
-AudioBuffer::set(Sample val, size_t start_sample, size_t end_sample)
+AudioBuffer::set_block(Sample val, size_t start_offset, size_t end_offset)
 {
-	assert(end_sample >= start_sample);
-	assert(end_sample < _size);
+	assert(end_offset >= start_offset);
+	assert(end_offset < _size);
 	
 	Sample* const buf = data();
 	assert(buf);
 
-	for (size_t i=start_sample; i <= end_sample; ++i)
+	for (size_t i = start_offset; i <= end_offset; ++i)
 		buf[i] = val;
 }
 
@@ -254,7 +257,7 @@ AudioBuffer::unjoin()
 
 
 void
-AudioBuffer::prepare_read(SampleCount nframes)
+AudioBuffer::prepare_read(FrameTime start, SampleCount nframes)
 {
 	// FIXME: nframes parameter doesn't actually work,
 	// writing starts from 0 every time
@@ -262,10 +265,11 @@ AudioBuffer::prepare_read(SampleCount nframes)
 
 	switch (_state) {
 	case HALF_SET_CYCLE_1:
-		_state = HALF_SET_CYCLE_2;
+		if (start > _set_time)
+			_state = HALF_SET_CYCLE_2;
 		break;
 	case HALF_SET_CYCLE_2:
-		set(_set_value, 0, _size-1);
+		set_block(_set_value, 0, _size-1);
 		_state = OK;
 		break;
 	default:

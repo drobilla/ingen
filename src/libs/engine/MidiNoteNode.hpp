@@ -45,12 +45,12 @@ public:
 
 	void process(ProcessContext& context);
 	
-	void note_on(uchar note_num, uchar velocity, FrameTime time, ProcessContext& context);
-	void note_off(uchar note_num, FrameTime time, ProcessContext& context);
-	void all_notes_off(FrameTime time, ProcessContext& context);
+	void note_on(ProcessContext& context, uchar note_num, uchar velocity, FrameTime time);
+	void note_off(ProcessContext& context, uchar note_num, FrameTime time);
+	void all_notes_off(ProcessContext& context, FrameTime time);
 
-	void sustain_on(FrameTime time, ProcessContext& context);
-	void sustain_off(FrameTime time, ProcessContext& context);
+	void sustain_on(ProcessContext& context, FrameTime time);
+	void sustain_off(ProcessContext& context, FrameTime time);
 
 private:
 	/** Key, one for each key on the keyboard */
@@ -68,7 +68,7 @@ private:
 	};
 
 	float note_to_freq(int num);
-	void free_voice(uint32_t voice, FrameTime time, ProcessContext& context);
+	void free_voice(ProcessContext& context, uint32_t voice, FrameTime time);
 
 	Raul::Array<Voice>* _voices;
 	Raul::Array<Voice>* _prepared_voices;

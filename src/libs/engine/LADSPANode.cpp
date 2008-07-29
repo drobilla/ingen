@@ -221,7 +221,7 @@ LADSPANode::instantiate()
 		// Set initial/default value
 		if (port->buffer_size() == 1) {
 			for (uint32_t i=0; i < _polyphony; ++i)
-				((AudioBuffer*)port->buffer(i))->set(value, 0);
+				((AudioBuffer*)port->buffer(i))->set_value(value, 0, 0);
 		}
 
 		if (port->is_input() && port->buffer_size() == 1) {

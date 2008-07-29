@@ -141,24 +141,24 @@ MidiNoteNode::process(ProcessContext& context)
 			switch (buf[0] & 0xF0) {
 			case MIDI_CMD_NOTE_ON:
 				if (buf[2] == 0)
-					note_off(buf[1], time, context);
+					note_off(context, buf[1], time);
 				else
-					note_on(buf[1], buf[2], time, context);
+					note_on(context, buf[1], buf[2], time);
 				break;
 			case MIDI_CMD_NOTE_OFF:
-				note_off(buf[1], time, context);
+				note_off(context, buf[1], time);
 				break;
 			case MIDI_CMD_CONTROL:
 				switch (buf[1]) {
 				case MIDI_CTL_ALL_NOTES_OFF:
 				case MIDI_CTL_ALL_SOUNDS_OFF:
-					all_notes_off(time, context);
+					all_notes_off(context, time);
 					break;
 				case MIDI_CTL_SUSTAIN:
 					if (buf[2] > 63)
-						sustain_on(time, context);
+						sustain_on(context, time);
 					else
-						sustain_off(time, context);
+						sustain_off(context, time);
 					break;
 				case MIDI_CMD_BENDER:
 					// ?
@@ -185,7 +185,7 @@ MidiNoteNode::process(ProcessContext& context)
 
 
 void
-MidiNoteNode::note_on(uchar note_num, uchar velocity, FrameTime time, ProcessContext& context)
+MidiNoteNode::note_on(ProcessContext& context, uchar note_num, uchar velocity, FrameTime time)
 {
 	assert(time >= context.start() && time <= context.end());
 	assert(time - context.start() < _buffer_size);
@@ -249,21 +249,13 @@ MidiNoteNode::note_on(uchar note_num, uchar velocity, FrameTime time, ProcessCon
 	assert(_keys[voice->note].state == Key::Key::ON_ASSIGNED);
 	assert(_keys[voice->note].voice == voice_num);
 	
-	// FIXME FIXME FIXME
-	
-	SampleCount offset = time - context.start();
-
-	// one-sample jitter hack to avoid having to deal with trigger sample "next time"
-	if (offset == (SampleCount)(_buffer_size-1))
-		--offset;
-	
-	((AudioBuffer*)_freq_port->buffer(voice_num))->set(note_to_freq(note_num), offset);
-	((AudioBuffer*)_vel_port->buffer(voice_num))->set(velocity/127.0, offset);
-	((AudioBuffer*)_gate_port->buffer(voice_num))->set(1.0f, offset);
+	((AudioBuffer*)_freq_port->buffer(voice_num))->set_value(note_to_freq(note_num), context.start(), time);
+	((AudioBuffer*)_vel_port->buffer(voice_num))->set_value(velocity/127.0, context.start(), time);
+	((AudioBuffer*)_gate_port->buffer(voice_num))->set_value(1.0f, context.start(), time);
 	
 	// trigger (one sample)
-	((AudioBuffer*)_trig_port->buffer(voice_num))->set(1.0f, offset, offset);
-	((AudioBuffer*)_trig_port->buffer(voice_num))->set(0.0f, offset+1);
+	((AudioBuffer*)_trig_port->buffer(voice_num))->set_value(1.0f, context.start(), time);
+	((AudioBuffer*)_trig_port->buffer(voice_num))->set_value(0.0f, context.start(), time + 1);
 
 	assert(key->state == Key::Key::ON_ASSIGNED);
 	assert(voice->state == Voice::Voice::ACTIVE);
@@ -273,7 +265,7 @@ MidiNoteNode::note_on(uchar note_num, uchar velocity, FrameTime time, ProcessCon
 
 
 void
-MidiNoteNode::note_off(uchar note_num, FrameTime time, ProcessContext& context)
+MidiNoteNode::note_off(ProcessContext& context, uchar note_num, FrameTime time)
 {
 	assert(time >= context.start() && time <= context.end());
 	assert(time - context.start() < _buffer_size);
@@ -289,7 +281,7 @@ MidiNoteNode::note_off(uchar note_num, FrameTime time, ProcessContext& context)
 
 			if ( ! _sustain) {
 				//cerr << "... free voice " << key->voice << endl;
-				free_voice(key->voice, time, context);
+				free_voice(context, key->voice, time);
 			} else {
 				//cerr << "... hold voice " << key->voice << endl;
 				(*_voices)[key->voice].state = Voice::HOLDING;
@@ -307,7 +299,7 @@ MidiNoteNode::note_off(uchar note_num, FrameTime time, ProcessContext& context)
 
 	
 void
-MidiNoteNode::free_voice(uint32_t voice, FrameTime time, ProcessContext& context)
+MidiNoteNode::free_voice(ProcessContext& context, uint32_t voice, FrameTime time)
 {
 	assert(time >= context.start() && time <= context.end());
 	assert(time - context.start() < _buffer_size);
@@ -330,7 +322,7 @@ MidiNoteNode::free_voice(uint32_t voice, FrameTime time, ProcessContext& context
 		assert(replace_key->state == Key::ON_UNASSIGNED);
 		
 		// Change the freq but leave the gate high and don't retrigger
-		((AudioBuffer*)_freq_port->buffer(voice))->set(note_to_freq(replace_key_num), time - context.start());
+		((AudioBuffer*)_freq_port->buffer(voice))->set_value(note_to_freq(replace_key_num), context.start(), time);
 
 		replace_key->state = Key::ON_ASSIGNED;
 		replace_key->voice = voice;
@@ -340,14 +332,14 @@ MidiNoteNode::free_voice(uint32_t voice, FrameTime time, ProcessContext& context
 	} else {
 		// No new note for voice, deactivate (set gate low)
 		//cerr << "[MidiNoteNode] Note off. Key " << (int)note_num << ", Voice " << voice << " Killed" << endl;
-		((AudioBuffer*)_gate_port->buffer(voice))->set(0.0f, time - context.start());
+		((AudioBuffer*)_gate_port->buffer(voice))->set_value(0.0f, context.start(), time);
 		(*_voices)[voice].state = Voice::FREE;
 	}
 }
 
 
 void
-MidiNoteNode::all_notes_off(FrameTime time, ProcessContext& context)
+MidiNoteNode::all_notes_off(ProcessContext& context, FrameTime time)
 {
 	assert(time >= context.start() && time <= context.end());
 	assert(time - context.start() < _buffer_size);
@@ -356,8 +348,8 @@ MidiNoteNode::all_notes_off(FrameTime time, ProcessContext& context)
 
 	// FIXME: set all keys to Key::OFF?
 	
-	for (uint32_t i=0; i < _polyphony; ++i) {
-		((AudioBuffer*)_gate_port->buffer(i))->set(0.0f, time - context.start());
+	for (uint32_t i = 0; i < _polyphony; ++i) {
+		((AudioBuffer*)_gate_port->buffer(i))->set_value(0.0f, context.start(), time);
 		(*_voices)[i].state = Voice::FREE;
 	}
 }
@@ -374,14 +366,14 @@ MidiNoteNode::note_to_freq(int num)
 
 
 void
-MidiNoteNode::sustain_on(FrameTime time, ProcessContext& context)
+MidiNoteNode::sustain_on(ProcessContext& context, FrameTime time)
 {
 	_sustain = true;
 }
 
 
 void
-MidiNoteNode::sustain_off(FrameTime time, ProcessContext& context)
+MidiNoteNode::sustain_off(ProcessContext& context, FrameTime time)
 {
 	assert(time >= context.start() && time <= context.end());
 	assert(time - context.start() < _buffer_size);
@@ -390,7 +382,7 @@ MidiNoteNode::sustain_off(FrameTime time, ProcessContext& context)
 	
 	for (uint32_t i=0; i < _polyphony; ++i)
 		if ((*_voices)[i].state == Voice::HOLDING)
-			free_voice(i, time, context);
+			free_voice(context, i, time);
 }
 
 

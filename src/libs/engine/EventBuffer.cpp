@@ -100,7 +100,7 @@ EventBuffer::unjoin()
 
 
 void
-EventBuffer::prepare_read(SampleCount nframes)
+EventBuffer::prepare_read(FrameTime start, SampleCount nframes)
 {
 	//cerr << "\t" << this << " prepare_read: " << event_count() << endl;
 	rewind();
@@ -109,7 +109,7 @@ EventBuffer::prepare_read(SampleCount nframes)
 
 
 void
-EventBuffer::prepare_write(SampleCount nframes)
+EventBuffer::prepare_write(FrameTime start, SampleCount nframes)
 {
 	//cerr << "\t" << this << " prepare_write: " << event_count() << endl;
 	reset(nframes);

@@ -164,7 +164,7 @@ InputPort::pre_process(ProcessContext& context)
 	
 	if (_connections.size() == 0) {
 		for (uint32_t i=0; i < _poly; ++i)
-			buffer(i)->prepare_read(context.nframes());
+			buffer(i)->prepare_read(context.start(), context.nframes());
 		return;
 	}
 
@@ -186,7 +186,7 @@ InputPort::pre_process(ProcessContext& context)
 	}
 
 	for (uint32_t i=0; i < _poly; ++i)
-		buffer(i)->prepare_read(context.nframes());
+		buffer(i)->prepare_read(context.start(), context.nframes());
 	
 	/*cerr << path() << " poly = " << _poly << ", mixdown: " << do_mixdown
 		<< ", fixed buffers: " << _fixed_buffers << ", joined: " << _buffers->at(0)->is_joined()
@@ -243,7 +243,7 @@ InputPort::post_process(ProcessContext& context)
 
 	// Prepare for next cycle
 	for (uint32_t i=0; i < _poly; ++i)
-		buffer(i)->prepare_write(context.nframes());
+		buffer(i)->prepare_write(context.start(), context.nframes());
 
 	_set_by_user = false;
 	

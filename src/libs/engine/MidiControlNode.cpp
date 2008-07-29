@@ -83,7 +83,7 @@ MidiControlNode::process(ProcessContext& context)
 	while (midi_in->get_event(&frames, &subframes, &type, &size, &buf)) {
 		// FIXME: type
 		if (size >= 3 && (buf[0] & 0xF0) == MIDI_CMD_CONTROL)
-			control(buf[1], buf[2], (SampleCount)frames);
+			control(context, buf[1], buf[2], frames + context.start());
 		
 		midi_in->increment();
 	}
@@ -93,9 +93,9 @@ MidiControlNode::process(ProcessContext& context)
 
 
 void
-MidiControlNode::control(uchar control_num, uchar val, SampleCount offset)
+MidiControlNode::control(ProcessContext& context, uchar control_num, uchar val, FrameTime time)
 {
-	assert(offset < _buffer_size);
+	assert(time - context.start() < _buffer_size);
 
 	Sample scaled_value;
 	
@@ -125,15 +125,15 @@ MidiControlNode::control(uchar control_num, uchar val, SampleCount offset)
 		Sample log_offset = 0;
 		if (min_port_val < 0)
 			log_offset = fabs(min_port_val);
-		const Sample min = log(min_port_val+1+log_offset);
-		const Sample max = log(max_port_val+1+log_offset);
+		const Sample min = log(min_port_val + 1 + log_offset);
+		const Sample max = log(max_port_val + 1 + log_offset);
 		scaled_value = expf(nval * (max - min) + min) - 1 - log_offset;
 	} else {
 		scaled_value = ((nval) * (max_port_val - min_port_val)) + min_port_val;
 	}
 
 	if (control_num == ((AudioBuffer*)_param_port->buffer(0))->value_at(0))
-		((AudioBuffer*)_audio_port->buffer(0))->set(scaled_value, offset);
+		((AudioBuffer*)_audio_port->buffer(0))->set_value(scaled_value, context.start(), time);
 }
 
 
