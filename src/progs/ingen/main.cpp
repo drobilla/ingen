@@ -66,12 +66,17 @@ main(int argc, char** argv)
 		return 1;
 
 	if (argc <= 1) {
-		cout << "No arguments provided.  Try something like:" << endl << endl;
-		cout << "Run an engine: ingen -e" << endl;
-		cout << "Run the GUI:   ingen -g" << endl;
-		cout << "Print full help: ingen -h" << endl << endl;
+		cerr << "No arguments provided.  Try something like:" << endl << endl;
+		cerr << "Run an engine: ingen -e" << endl;
+		cerr << "Run the GUI:   ingen -g" << endl;
+		cerr << "Print full help: ingen -h" << endl << endl;
 		cmdline_parser_print_help();
-		return 0;
+		return 1;
+	} else if (args.connect_given && args.engine_flag) {
+		cerr << "Nonsense arguments, can't both run a local engine "
+				<< "and connect to a remote one." << endl
+				<< "(Run separate instances if that is what you want)" << endl;
+		return 1;
 	}
 
 	SharedPtr<Glib::Module> engine_module;
@@ -104,9 +109,11 @@ main(int argc, char** argv)
 				engine = SharedPtr<Engine>(new_engine(world));
 				world->local_engine = engine;
 				/* Load queued (direct in-process) engine interface */
-				if (!args.connect_given && args.gui_given) {
+				if (args.gui_given) {
 					engine_interface = engine->new_queued_interface();
 					world->engine = engine_interface;
+				} else {
+					engine->start_osc_driver(args.engine_port_arg);
 				}
 			} else {
 				engine_module.reset();
@@ -117,26 +124,27 @@ main(int argc, char** argv)
 	}
 	
 	/* Load client library */
-	if (args.connect_given || args.load_given) {
+	if (args.load_given || args.gui_given) {
 		client_module = Ingen::Shared::load_module("ingen_client");
 		if (!client_module)
 			cerr << "Unable to load client module." << endl;
 	}
-
-	/* Connect to remote engine */
-	if (client_module && (args.connect_given || (args.load_given && !engine_interface))) {
+				
+	/* If we don't have a local engine interface (for GUI), use OSC */
+	if ( ! engine_interface) {
 		SharedPtr<Shared::EngineInterface> (*new_osc_interface)(const std::string&) = NULL;
 
 		if (client_module->get_symbol("new_osc_interface", (void*&)new_osc_interface)) {
 			engine_interface = new_osc_interface(args.connect_arg);
 		} else {
-			cerr << "Unable to load ingen_client module, aborting." << endl;
+			cerr << "Unable to find symbol 'new_osc_interface' in "
+					"ingen_client module, aborting." << endl;
 			return -1;
 		}
 	}
 	
-
-	if (engine && engine_interface) {
+	/* Activate the engine, if we have one */
+	if (engine) {
 		engine->start_jack_driver();
 		engine->activate(args.parallelism_arg);
 	}
@@ -222,16 +230,8 @@ main(int argc, char** argv)
 	
 	/* Listen to OSC and do our own main thing. */
     } else if (engine && !ran_gui) {
-
-		size_t parallelism = args.parallelism_arg;
-
 		signal(SIGINT, catch_int);
 		signal(SIGTERM, catch_int);
-		
-		engine->start_osc_driver(args.engine_port_arg);
-		engine->start_jack_driver();
-		engine->activate(parallelism);
-
 		engine->main();
 	}
 		
