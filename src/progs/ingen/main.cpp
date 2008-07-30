@@ -66,16 +66,14 @@ main(int argc, char** argv)
 		return 1;
 
 	if (argc <= 1) {
-		cerr << "No arguments provided.  Try something like:" << endl << endl;
-		cerr << "Run an engine: ingen -e" << endl;
-		cerr << "Run the GUI:   ingen -g" << endl;
-		cerr << "Print full help: ingen -h" << endl << endl;
 		cmdline_parser_print_help();
+		cerr << endl << "*** Ingen requires at least one command line parameter" << endl;
+		cerr << "*** Just want to use a graphical app?  Try 'ingen -eg'" << endl;
 		return 1;
 	} else if (args.connect_given && args.engine_flag) {
-		cerr << "Nonsense arguments, can't both run a local engine "
+		cerr << "\n*** Nonsense arguments, can't both run a local engine "
 				<< "and connect to a remote one." << endl
-				<< "(Run separate instances if that is what you want)" << endl;
+				<< "*** Run separate instances if that is what you want" << endl;
 		return 1;
 	}
 

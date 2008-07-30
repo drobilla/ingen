@@ -3,10 +3,25 @@
 package "ingen"
 purpose "A modular realtime audio processing system"
 
-description "This executable can be used to launch any configuration of Ingen.
-Ingen can run as a stand-alone server controlled by OSC, or internal to
-another process.  The GUI can communicate with the engine via either method,
-and many GUIs (or other things) may connect to an engine via OSC.
+description "Ingen can be run in various configurations. The engine can
+run as a stand-alone server controlled by OSC, or internal to
+another process (e.g. the GUI).  The GUI can communicate with the engine
+via either method, and many GUIs (or other things) may connect to an
+engine via OSC.
+
+Examples:
+
+  ingen -e                     - Run an engine, listen for OSC           
+  ingen -g                     - Run a GUI, connect via OSC            
+  ingen -eg                    - Run an engine and a GUI in one process
+
+The -l (load) option can be used in all cases:
+	
+  ingen -el patch.ingen.ttl    - Run an engine and load a patch
+  ingen -gl patch.ingen.ttl    - Run a GUI and load a patch
+  ingen -egl patch.ingen.ttl   - Run an engine and a GUI and load a patch
+
+Options:
 "
 
 option "engine" e "Run (JACK) engine" flag off
