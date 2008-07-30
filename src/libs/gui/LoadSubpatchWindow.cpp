@@ -60,6 +60,8 @@ LoadSubpatchWindow::LoadSubpatchWindow(BaseObjectType* cobject, const Glib::RefP
 	filt.add_pattern("*.ingen.ttl");
 	filt.set_name("Ingen patch files (RDF, *.ingen.ttl)");
 	set_filter(filt);
+
+	property_select_multiple() = true;
 	
 	// Add global examples directory to "shortcut folders" (bookmarks)
 	string examples_dir = PKGDATADIR;
@@ -158,8 +160,16 @@ LoadSubpatchWindow::ok_clicked()
 		_initial_data.insert(make_pair("ingen:polyphony", (int)_patch->poly()));
 	}
 
-	App::instance().loader()->load_patch(false, get_uri(), "/",
-		_initial_data, _patch->path(), name);
+	std::list<Glib::ustring> uris = get_uris();
+	for (std::list<Glib::ustring>::iterator i = uris.begin(); i != uris.end(); ++i) {
+		// Cascade
+		Atom& x = _initial_data["ingenuity:canvas-x"];
+		x = Atom(x.get_float() + 20.0f);
+		Atom& y = _initial_data["ingenuity:canvas-y"];
+		y = Atom(y.get_float() + 20.0f);
+
+		App::instance().loader()->load_patch(false, *i, "/", _initial_data, _patch->path(), name);
+	}
 
 	hide();
 }			
