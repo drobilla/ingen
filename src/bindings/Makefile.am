@@ -1,4 +1,4 @@
-FLAGS = @RAUL_CFLAGS@ @GLIBMM_CFLAGS@ -I$(top_srcdir)/ingen/src/common
+FLAGS = @INGEN_CFLAGS@ @RAUL_CFLAGS@ @GLIBMM_CFLAGS@ -I$(top_srcdir)/ingen/src/common
 LIBS = @RAUL_LIBS@ @GLIBMM_LIBS@ -lpython2.4
 AM_CXXFLAGS = -I/usr/include/python2.4 $(FLAGS)
 

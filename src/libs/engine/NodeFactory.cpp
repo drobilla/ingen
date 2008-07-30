@@ -21,6 +21,7 @@
 #include <dirent.h>
 #include <float.h>
 #include <cmath>
+#include <redlandmm/World.hpp>
 #include "module/World.hpp"
 #include "NodeFactory.hpp"
 #include "ThreadManager.hpp"

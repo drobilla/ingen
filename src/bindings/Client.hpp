@@ -42,6 +42,7 @@ public:
 	
 	virtual void new_plugin(const std::string& uri,
 	                        const std::string& type_uri,
+	                        const std::string& symbol,
 	                        const std::string& name)  {}
 	
 	virtual void new_patch(const std::string& path, uint32_t poly)  {}
@@ -52,6 +53,7 @@ public:
 	                      uint32_t           num_ports)  {}
 	
 	virtual void new_port(const std::string& path,
+	                      uint32_t           index,
 	                      const std::string& data_type,
 	                      bool               is_output)  {}
 	

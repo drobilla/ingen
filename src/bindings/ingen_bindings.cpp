@@ -1,7 +1,8 @@
 #include <iostream>
 #include "python2.4/Python.h"
 #include "ingen_bindings.hpp"
-#include "../libs/engine/Engine.hpp"
+#include "engine/Engine.hpp"
+#include "module/World.hpp"
 
 using namespace std;
 

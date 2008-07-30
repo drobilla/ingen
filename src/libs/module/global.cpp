@@ -16,6 +16,7 @@
  */
 
 #include <iostream>
+#include <redlandmm/World.hpp>
 #include "global.hpp"
 #include "World.hpp"
 
@@ -37,11 +38,6 @@ get_world()
 {
     static World* world = NULL;
 
-    if (&world == NULL) {
-        cerr << "ERROR: Ingen::Shared::world undefined." << endl;
-        return NULL;
-    }
-
 	if (!world) {
 		world = new World();
         world->rdf_world = new Redland::World();
@@ -61,11 +57,6 @@ get_world()
 void
 destroy_world()
 {
-    if (&world == NULL) {
-        cerr << "ERROR: Ingen::Shared::world undefined." << endl;
-        return;
-    }
-
 	if (world) {
 #ifdef HAVE_SLV2
 		slv2_world_free(world->slv2_world);

@@ -23,19 +23,18 @@
 #include <string>
 #include <glibmm/module.h>
 #include <raul/SharedPtr.hpp>
-#include <redlandmm/World.hpp>
 #include "shared/LV2Features.hpp"
 
 #ifdef HAVE_SLV2
 #include <slv2/slv2.h>
 #endif
 
-namespace Ingen {
+namespace Redland { class World; }
 
+namespace Ingen {
 class Engine;
 
 namespace Shared {
-
 class EngineInterface;
 
 

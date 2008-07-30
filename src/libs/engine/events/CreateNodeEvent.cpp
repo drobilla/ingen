@@ -18,6 +18,7 @@
 #include <raul/Maid.hpp>
 #include <raul/Path.hpp>
 #include <raul/Path.hpp>
+#include <redlandmm/World.hpp>
 #include "module/World.hpp"
 #include "CreateNodeEvent.hpp"
 #include "Responder.hpp"
