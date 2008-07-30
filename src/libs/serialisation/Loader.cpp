@@ -99,7 +99,7 @@ Loader::load(Ingen::Shared::World*       world,
 
 		Redland::Query query(*world->rdf_world, Glib::ustring(
 			"SELECT DISTINCT ?name WHERE {\n") +
-			patch_uri + " ingen:name ?name\n}");
+			patch_uri + " ingen:symbol ?name\n}");
 
 		Redland::Query::Results results = query.run(*world->rdf_world, model);
 
@@ -123,7 +123,7 @@ Loader::load(Ingen::Shared::World*       world,
 	Redland::Query query(*world->rdf_world, Glib::ustring(
 		"SELECT DISTINCT ?name ?plugin ?varkey ?varval ?poly WHERE {\n") +
 		patch_uri + " ingen:node       ?node .\n"
-		"?node        ingen:name       ?name ;\n"
+		"?node        ingen:symbol     ?name ;\n"
 		"             ingen:plugin     ?plugin ;\n"
 		"             ingen:polyphonic ?poly .\n"
 		"OPTIONAL { ?node     ingen:variable ?variable .\n"
@@ -169,9 +169,9 @@ Loader::load(Ingen::Shared::World*       world,
 
 	query = Redland::Query(*world->rdf_world, Glib::ustring(
 		"SELECT DISTINCT ?patch ?name WHERE {\n") +
-		patch_uri + " ingen:node ?patch .\n"
-		"?patch       a          ingen:Patch ;\n"
-		"             ingen:name ?name .\n"
+		patch_uri + " ingen:node   ?patch .\n"
+		"?patch       a            ingen:Patch ;\n"
+		"             ingen:symbol ?name .\n"
 		"}");
 
 	results = query.run(*world->rdf_world, model);
@@ -197,9 +197,9 @@ Loader::load(Ingen::Shared::World*       world,
 	query = Redland::Query(*world->rdf_world, Glib::ustring(
 		"SELECT DISTINCT ?nodename ?portname ?portval WHERE {\n") +
 		patch_uri + " ingen:node   ?node .\n"
-		"?node        ingen:name   ?nodename ;\n"
+		"?node        ingen:symbol ?nodename ;\n"
 		"             ingen:port   ?port .\n"
-		"?port        ingen:name   ?portname ;\n"
+		"?port        ingen:symbol ?portname ;\n"
 		"             ingen:value  ?portval .\n"
 		"FILTER ( datatype(?portval) = xsd:decimal )\n"
 		"}\n");
@@ -227,7 +227,7 @@ Loader::load(Ingen::Shared::World*       world,
 		patch_uri + " ingen:port     ?port .\n"
 		"?port        a              ?type ;\n"
 		"             a              ?datatype ;\n"
-		"             ingen:name     ?name .\n"
+		"             ingen:symbol   ?name .\n"
 		" FILTER (?type != ?datatype && ((?type = ingen:InputPort) || (?type = ingen:OutputPort)))\n"
 		"OPTIONAL { ?port ingen:value ?portval . \n"
 		"           FILTER ( datatype(?portval) = xsd:decimal ) }\n"
@@ -276,12 +276,12 @@ Loader::load(Ingen::Shared::World*       world,
 		patch_uri +  "ingen:node ?srcnode ;\n"
 		"             ingen:node ?dstnode .\n"
 		"?srcnode     ingen:port ?src ;\n"
-		"             ingen:name ?srcnodename .\n"
+		"             ingen:symbol ?srcnodename .\n"
 		"?dstnode     ingen:port ?dst ;\n"
-		"             ingen:name ?dstnodename .\n"
-		"?src         ingen:name ?srcname .\n"
+		"             ingen:symbol ?dstnodename .\n"
+		"?src         ingen:symbol ?srcname .\n"
 		"?dst         ingen:connectedTo ?src ;\n"
-		"             ingen:name ?dstname .\n" 
+		"             ingen:symbol ?dstname .\n" 
 		"}\n");
 
 	results = query.run(*world->rdf_world, model);
@@ -305,10 +305,10 @@ Loader::load(Ingen::Shared::World*       world,
 		patch_uri + " ingen:port ?src ;\n"
 		"             ingen:node ?dstnode .\n"
 		"?dstnode     ingen:port ?dst ;\n"
-		"             ingen:name ?dstnodename .\n"
+		"             ingen:symbol ?dstnodename .\n"
 		"?dst         ingen:connectedTo ?src ;\n"
-		"             ingen:name ?dstname .\n" 
-		"?src         ingen:name ?srcname .\n"
+		"             ingen:symbol ?dstname .\n" 
+		"?src         ingen:symbol ?srcname .\n"
 		"}\n");
 
 	results = query.run(*world->rdf_world, model);
@@ -331,10 +331,10 @@ Loader::load(Ingen::Shared::World*       world,
 		patch_uri + " ingen:port ?dst ;\n"
 		"             ingen:node ?srcnode .\n"
 		"?srcnode     ingen:port ?src ;\n"
-		"             ingen:name ?srcnodename .\n"
+		"             ingen:symbol ?srcnodename .\n"
 		"?dst         ingen:connectedTo ?src ;\n"
-		"             ingen:name ?dstname .\n" 
-		"?src         ingen:name ?srcname .\n"
+		"             ingen:symbol ?dstname .\n" 
+		"?src         ingen:symbol ?srcname .\n"
 		"}\n");
 
 	results = query.run(*world->rdf_world, model);
@@ -357,8 +357,8 @@ Loader::load(Ingen::Shared::World*       world,
 		patch_uri + " ingen:port ?src ;\n"
 		"             ingen:port ?dst .\n"
 		"?dst         ingen:connectedTo ?src ;\n"
-		"             ingen:name ?dstname .\n" 
-		"?src         ingen:name ?srcname .\n"
+		"             ingen:symbol ?dstname .\n" 
+		"?src         ingen:symbol ?srcname .\n"
 		"}\n");
 
 	results = query.run(*world->rdf_world, model);

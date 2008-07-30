@@ -11,11 +11,11 @@
 <>
     ingen:enabled true ;
     ingen:node [
-        ingen:name "adenv_0" ;
+        ingen:symbol "adenv_0" ;
         ingen:plugin <ladspa:2661> ;
         ingen:polyphonic true ;
         ingen:port [
-            ingen:name "Attack_Time" ;
+            ingen:symbol "Attack_Time" ;
             ingen:value 0.0049999998882412910461 ;
             ingen:variable [
                 ingen:key ingen:default ;
@@ -30,7 +30,7 @@
             a ingen:ControlPort, ingen:InputPort
         ], [
             ingen:connectedTo _:CH_Decay ;
-            ingen:name "Decay_Time" ;
+            ingen:symbol "Decay_Time" ;
             ingen:value 0.17389599978923797607 ;
             ingen:variable [
                 ingen:key ingen:default ;
@@ -44,11 +44,11 @@
             ] ;
             a ingen:ControlPort, ingen:InputPort
         ], _:adenv_0_Envelope_Out, [
-            ingen:name "Gate" ;
+            ingen:symbol "Gate" ;
             a ingen:AudioPort, ingen:InputPort
         ], [
             ingen:connectedTo _:midi_trigger_in1_trigger ;
-            ingen:name "Trigger" ;
+            ingen:symbol "Trigger" ;
             a ingen:AudioPort, ingen:InputPort
         ] ;
         ingen:variable [
@@ -60,11 +60,11 @@
         ] ;
         a ingen:Node
     ], [
-        ingen:name "adenv_1" ;
+        ingen:symbol "adenv_1" ;
         ingen:plugin <ladspa:2661> ;
         ingen:polyphonic true ;
         ingen:port [
-            ingen:name "Attack_Time" ;
+            ingen:symbol "Attack_Time" ;
             ingen:value 0.00030000001424923539162 ;
             ingen:variable [
                 ingen:key ingen:default ;
@@ -79,7 +79,7 @@
             a ingen:ControlPort, ingen:InputPort
         ], [
             ingen:connectedTo _:OH_Decay ;
-            ingen:name "Decay_Time" ;
+            ingen:symbol "Decay_Time" ;
             ingen:value 0.89710700511932373047 ;
             ingen:variable [
                 ingen:key ingen:default ;
@@ -93,11 +93,11 @@
             ] ;
             a ingen:ControlPort, ingen:InputPort
         ], _:adenv_1_Envelope_Out, [
-            ingen:name "Gate" ;
+            ingen:symbol "Gate" ;
             a ingen:AudioPort, ingen:InputPort
         ], [
             ingen:connectedTo _:midi_trigger_in0_trigger ;
-            ingen:name "Trigger" ;
+            ingen:symbol "Trigger" ;
             a ingen:AudioPort, ingen:InputPort
         ] ;
         ingen:variable [
@@ -109,11 +109,11 @@
         ] ;
         a ingen:Node
     ], [
-        ingen:name "adenv_lvl_0" ;
+        ingen:symbol "adenv_lvl_0" ;
         ingen:plugin <ladspa:2662> ;
         ingen:polyphonic true ;
         ingen:port [
-            ingen:name "Attack_Time" ;
+            ingen:symbol "Attack_Time" ;
             ingen:value 9.9999997473787516356e-06 ;
             ingen:variable [
                 ingen:key ingen:default ;
@@ -127,7 +127,7 @@
             ] ;
             a ingen:ControlPort, ingen:InputPort
         ], [
-            ingen:name "Attack_to_Level" ;
+            ingen:symbol "Attack_to_Level" ;
             ingen:value 1.0 ;
             ingen:variable [
                 ingen:key ingen:default ;
@@ -141,7 +141,7 @@
             ] ;
             a ingen:ControlPort, ingen:InputPort
         ], [
-            ingen:name "Decay_Time" ;
+            ingen:symbol "Decay_Time" ;
             ingen:value 0.0075369998812675476074 ;
             ingen:variable [
                 ingen:key ingen:default ;
@@ -155,7 +155,7 @@
             ] ;
             a ingen:ControlPort, ingen:InputPort
         ], [
-            ingen:name "Decay_to_Level" ;
+            ingen:symbol "Decay_to_Level" ;
             ingen:value 0.0 ;
             ingen:variable [
                 ingen:key ingen:default ;
@@ -169,10 +169,10 @@
             ] ;
             a ingen:ControlPort, ingen:InputPort
         ], _:adenv_lvl_0_Envelope_Out, [
-            ingen:name "Gate" ;
+            ingen:symbol "Gate" ;
             a ingen:AudioPort, ingen:InputPort
         ], [
-            ingen:name "Initial_Level" ;
+            ingen:symbol "Initial_Level" ;
             ingen:value 1.0 ;
             ingen:variable [
                 ingen:key ingen:default ;
@@ -187,11 +187,11 @@
             a ingen:ControlPort, ingen:InputPort
         ], [
             ingen:connectedTo _:midi_trigger_in0_trigger ;
-            ingen:name "Reset_Level" ;
+            ingen:symbol "Reset_Level" ;
             a ingen:AudioPort, ingen:InputPort
         ], [
             ingen:connectedTo _:midi_trigger_in1_trigger ;
-            ingen:name "Trigger" ;
+            ingen:symbol "Trigger" ;
             a ingen:AudioPort, ingen:InputPort
         ] ;
         ingen:variable [
@@ -203,11 +203,11 @@
         ] ;
         a ingen:Node
     ], [
-        ingen:name "adenv_lvl_1" ;
+        ingen:symbol "adenv_lvl_1" ;
         ingen:plugin <ladspa:2662> ;
         ingen:polyphonic true ;
         ingen:port [
-            ingen:name "Attack_Time" ;
+            ingen:symbol "Attack_Time" ;
             ingen:value 1.9999999494757503271e-05 ;
             ingen:variable [
                 ingen:key ingen:default ;
@@ -221,7 +221,7 @@
             ] ;
             a ingen:ControlPort, ingen:InputPort
         ], [
-            ingen:name "Attack_to_Level" ;
+            ingen:symbol "Attack_to_Level" ;
             ingen:value 1.0 ;
             ingen:variable [
                 ingen:key ingen:default ;
@@ -235,7 +235,7 @@
             ] ;
             a ingen:ControlPort, ingen:InputPort
         ], [
-            ingen:name "Decay_Time" ;
+            ingen:symbol "Decay_Time" ;
             ingen:value 0.0053500002250075340271 ;
             ingen:variable [
                 ingen:key ingen:default ;
@@ -249,7 +249,7 @@
             ] ;
             a ingen:ControlPort, ingen:InputPort
         ], [
-            ingen:name "Decay_to_Level" ;
+            ingen:symbol "Decay_to_Level" ;
             ingen:value 0.0 ;
             ingen:variable [
                 ingen:key ingen:default ;
@@ -263,10 +263,10 @@
             ] ;
             a ingen:ControlPort, ingen:InputPort
         ], _:adenv_lvl_1_Envelope_Out, [
-            ingen:name "Gate" ;
+            ingen:symbol "Gate" ;
             a ingen:AudioPort, ingen:InputPort
         ], [
-            ingen:name "Initial_Level" ;
+            ingen:symbol "Initial_Level" ;
             ingen:value 1.0 ;
             ingen:variable [
                 ingen:key ingen:default ;
@@ -281,11 +281,11 @@
             a ingen:ControlPort, ingen:InputPort
         ], [
             ingen:connectedTo _:midi_trigger_in1_trigger ;
-            ingen:name "Reset_Level" ;
+            ingen:symbol "Reset_Level" ;
             a ingen:AudioPort, ingen:InputPort
         ], [
             ingen:connectedTo _:midi_trigger_in0_trigger ;
-            ingen:name "Trigger" ;
+            ingen:symbol "Trigger" ;
             a ingen:AudioPort, ingen:InputPort
         ] ;
         ingen:variable [
@@ -297,11 +297,11 @@
         ] ;
         a ingen:Node
     ], [
-        ingen:name "amp_gcia_oa0" ;
+        ingen:symbol "amp_gcia_oa0" ;
         ingen:plugin <ladspa:1655> ;
         ingen:polyphonic true ;
         ingen:port [
-            ingen:name "Gain" ;
+            ingen:symbol "Gain" ;
             ingen:value -4.7407879829406738281 ;
             ingen:variable [
                 ingen:key ingen:default ;
@@ -316,7 +316,7 @@
             a ingen:ControlPort, ingen:InputPort
         ], [
             ingen:connectedTo _:mixer3_Output ;
-            ingen:name "Input" ;
+            ingen:symbol "Input" ;
             a ingen:AudioPort, ingen:InputPort
         ], _:amp_gcia_oa0_Output ;
         ingen:variable [
@@ -328,11 +328,11 @@
         ] ;
         a ingen:Node
     ], [
-        ingen:name "amp_gcia_oa1" ;
+        ingen:symbol "amp_gcia_oa1" ;
         ingen:plugin <ladspa:1655> ;
         ingen:polyphonic true ;
         ingen:port [
-            ingen:name "Gain" ;
+            ingen:symbol "Gain" ;
             ingen:value -4.2985548973083496094 ;
             ingen:variable [
                 ingen:key ingen:default ;
@@ -347,7 +347,7 @@
             a ingen:ControlPort, ingen:InputPort
         ], [
             ingen:connectedTo _:mixer2_Output ;
-            ingen:name "Input" ;
+            ingen:symbol "Input" ;
             a ingen:AudioPort, ingen:InputPort
         ], _:amp_gcia_oa1_Output ;
         ingen:variable [
@@ -359,11 +359,11 @@
         ] ;
         a ingen:Node
     ], [
-        ingen:name "amp_gcia_oa2" ;
+        ingen:symbol "amp_gcia_oa2" ;
         ingen:plugin <ladspa:1655> ;
         ingen:polyphonic true ;
         ingen:port [
-            ingen:name "Gain" ;
+            ingen:symbol "Gain" ;
             ingen:value -3.3684689998626708984 ;
             ingen:variable [
                 ingen:key ingen:default ;
@@ -378,7 +378,7 @@
             a ingen:ControlPort, ingen:InputPort
         ], [
             ingen:connectedTo _:mixer4_Output ;
-            ingen:name "Input" ;
+            ingen:symbol "Input" ;
             a ingen:AudioPort, ingen:InputPort
         ], _:amp_gcia_oa2_Output ;
         ingen:variable [
@@ -390,12 +390,12 @@
         ] ;
         a ingen:Node
     ], [
-        ingen:name "amp_mono_0" ;
+        ingen:symbol "amp_mono_0" ;
         ingen:plugin <ladspa:1067> ;
         ingen:polyphonic true ;
         ingen:port [
             ingen:connectedTo _:volume ;
-            ingen:name "Gain" ;
+            ingen:symbol "Gain" ;
             ingen:value 1.0 ;
             ingen:variable [
                 ingen:key ingen:default ;
@@ -410,7 +410,7 @@
             a ingen:ControlPort, ingen:InputPort
         ], [
             ingen:connectedTo _:mixer5_Output ;
-            ingen:name "Input" ;
+            ingen:symbol "Input" ;
             a ingen:AudioPort, ingen:InputPort
         ], _:amp_mono_0_Output ;
         ingen:variable [
@@ -422,11 +422,11 @@
         ] ;
         a ingen:Node
     ], [
-        ingen:name "bandpass_a_iir0" ;
+        ingen:symbol "bandpass_a_iir0" ;
         ingen:plugin <ladspa:1893> ;
         ingen:polyphonic true ;
         ingen:port [
-            ingen:name "Bandwidth" ;
+            ingen:symbol "Bandwidth" ;
             ingen:value 697.53106689453125 ;
             ingen:variable [
                 ingen:key ingen:default ;
@@ -441,7 +441,7 @@
             a ingen:ControlPort, ingen:InputPort
         ], [
             ingen:connectedTo _:Tune ;
-            ingen:name "Center_Frequency" ;
+            ingen:symbol "Center_Frequency" ;
             ingen:value 9751.4248046875 ;
             ingen:variable [
                 ingen:key ingen:default ;
@@ -456,7 +456,7 @@
             a ingen:ControlPort, ingen:InputPort
         ], [
             ingen:connectedTo _:mixer0_Output ;
-            ingen:name "Input" ;
+            ingen:symbol "Input" ;
             a ingen:AudioPort, ingen:InputPort
         ], _:bandpass_a_iir0_Output ;
         ingen:variable [
@@ -468,11 +468,11 @@
         ] ;
         a ingen:Node
     ], [
-        ingen:name "highpass_iir0" ;
+        ingen:symbol "highpass_iir0" ;
         ingen:plugin <ladspa:1890> ;
         ingen:polyphonic true ;
         ingen:port [
-            ingen:name "Cutoff_Frequency" ;
+            ingen:symbol "Cutoff_Frequency" ;
             ingen:value 7570.08251953125 ;
             ingen:variable [
                 ingen:key ingen:default ;
@@ -487,10 +487,10 @@
             a ingen:ControlPort, ingen:InputPort
         ], [
             ingen:connectedTo _:product_iaia_oa0_Product_Output ;
-            ingen:name "Input" ;
+            ingen:symbol "Input" ;
             a ingen:AudioPort, ingen:InputPort
         ], _:highpass_iir0_Output, [
-            ingen:name "Stages" ;
+            ingen:symbol "Stages" ;
             ingen:value 2.5058200359344482422 ;
             ingen:variable [
                 ingen:key ingen:default ;
@@ -513,11 +513,11 @@
         ] ;
         a ingen:Node
     ], [
-        ingen:name "highpass_iir1" ;
+        ingen:symbol "highpass_iir1" ;
         ingen:plugin <ladspa:1890> ;
         ingen:polyphonic true ;
         ingen:port [
-            ingen:name "Cutoff_Frequency" ;
+            ingen:symbol "Cutoff_Frequency" ;
             ingen:value 9402.5830078125 ;
             ingen:variable [
                 ingen:key ingen:default ;
@@ -532,10 +532,10 @@
             a ingen:ControlPort, ingen:InputPort
         ], [
             ingen:connectedTo _:product_iaia_oa1_Product_Output ;
-            ingen:name "Input" ;
+            ingen:symbol "Input" ;
             a ingen:AudioPort, ingen:InputPort
         ], _:highpass_iir1_Output, [
-            ingen:name "Stages" ;
+            ingen:symbol "Stages" ;
             ingen:value 1.0 ;
             ingen:variable [
                 ingen:key ingen:default ;
@@ -558,18 +558,18 @@
         ] ;
         a ingen:Node
     ], [
-        ingen:name "midi_trigger_in0" ;
+        ingen:symbol "midi_trigger_in0" ;
         ingen:plugin ingen:trigger_node ;
         ingen:polyphonic false ;
         ingen:port [
-            ingen:name "gate" ;
+            ingen:symbol "gate" ;
             a ingen:AudioPort, ingen:OutputPort
         ], [
             ingen:connectedTo _:OH_trigger ;
-            ingen:name "input" ;
+            ingen:symbol "input" ;
             a ingen:EventPort, ingen:InputPort
         ], [
-            ingen:name "note" ;
+            ingen:symbol "note" ;
             ingen:value 42.048000335693359375 ;
             ingen:variable [
                 ingen:key ingen:integer ;
@@ -592,18 +592,18 @@
         ] ;
         a ingen:Node
     ], [
-        ingen:name "midi_trigger_in1" ;
+        ingen:symbol "midi_trigger_in1" ;
         ingen:plugin ingen:trigger_node ;
         ingen:polyphonic false ;
         ingen:port [
-            ingen:name "gate" ;
+            ingen:symbol "gate" ;
             a ingen:AudioPort, ingen:OutputPort
         ], [
             ingen:connectedTo _:CH_trigger ;
-            ingen:name "input" ;
+            ingen:symbol "input" ;
             a ingen:EventPort, ingen:InputPort
         ], [
-            ingen:name "note" ;
+            ingen:symbol "note" ;
             ingen:value 60.063999176025390625 ;
             ingen:variable [
                 ingen:key ingen:integer ;
@@ -626,16 +626,16 @@
         ] ;
         a ingen:Node
     ], [
-        ingen:name "mixer0" ;
+        ingen:symbol "mixer0" ;
         ingen:plugin <ladspa:1071> ;
         ingen:polyphonic true ;
         ingen:port [
             ingen:connectedTo _:amp_gcia_oa2_Output ;
-            ingen:name "Input_1" ;
+            ingen:symbol "Input_1" ;
             a ingen:AudioPort, ingen:InputPort
         ], [
             ingen:connectedTo _:mixer1_Output ;
-            ingen:name "Input_2" ;
+            ingen:symbol "Input_2" ;
             a ingen:AudioPort, ingen:InputPort
         ], _:mixer0_Output ;
         ingen:variable [
@@ -647,16 +647,16 @@
         ] ;
         a ingen:Node
     ], [
-        ingen:name "mixer1" ;
+        ingen:symbol "mixer1" ;
         ingen:plugin <ladspa:1071> ;
         ingen:polyphonic true ;
         ingen:port [
             ingen:connectedTo _:amp_gcia_oa0_Output ;
-            ingen:name "Input_1" ;
+            ingen:symbol "Input_1" ;
             a ingen:AudioPort, ingen:InputPort
         ], [
             ingen:connectedTo _:amp_gcia_oa1_Output ;
-            ingen:name "Input_2" ;
+            ingen:symbol "Input_2" ;
             a ingen:AudioPort, ingen:InputPort
         ], _:mixer1_Output ;
         ingen:variable [
@@ -668,16 +668,16 @@
         ] ;
         a ingen:Node
     ], [
-        ingen:name "mixer2" ;
+        ingen:symbol "mixer2" ;
         ingen:plugin <ladspa:1071> ;
         ingen:polyphonic true ;
         ingen:port [
             ingen:connectedTo _:square_fc_oa4_Output ;
-            ingen:name "Input_1" ;
+            ingen:symbol "Input_1" ;
             a ingen:AudioPort, ingen:InputPort
         ], [
             ingen:connectedTo _:square_fc_oa5_Output ;
-            ingen:name "Input_2" ;
+            ingen:symbol "Input_2" ;
             a ingen:AudioPort, ingen:InputPort
         ], _:mixer2_Output ;
         ingen:variable [
@@ -689,16 +689,16 @@
         ] ;
         a ingen:Node
     ], [
-        ingen:name "mixer3" ;
+        ingen:symbol "mixer3" ;
         ingen:plugin <ladspa:1071> ;
         ingen:polyphonic true ;
         ingen:port [
             ingen:connectedTo _:square_fc_oa2_Output ;
-            ingen:name "Input_1" ;
+            ingen:symbol "Input_1" ;
             a ingen:AudioPort, ingen:InputPort
         ], [
             ingen:connectedTo _:square_fc_oa3_Output ;
-            ingen:name "Input_2" ;
+            ingen:symbol "Input_2" ;
             a ingen:AudioPort, ingen:InputPort
         ], _:mixer3_Output ;
         ingen:variable [
@@ -710,16 +710,16 @@
         ] ;
         a ingen:Node
     ], [
-        ingen:name "mixer4" ;
+        ingen:symbol "mixer4" ;
         ingen:plugin <ladspa:1071> ;
         ingen:polyphonic true ;
         ingen:port [
             ingen:connectedTo _:square_fc_oa0_Output ;
-            ingen:name "Input_1" ;
+            ingen:symbol "Input_1" ;
             a ingen:AudioPort, ingen:InputPort
         ], [
             ingen:connectedTo _:square_fc_oa1_Output ;
-            ingen:name "Input_2" ;
+            ingen:symbol "Input_2" ;
             a ingen:AudioPort, ingen:InputPort
         ], _:mixer4_Output ;
         ingen:variable [
@@ -731,16 +731,16 @@
         ] ;
         a ingen:Node
     ], [
-        ingen:name "mixer5" ;
+        ingen:symbol "mixer5" ;
         ingen:plugin <ladspa:1071> ;
         ingen:polyphonic true ;
         ingen:port [
             ingen:connectedTo _:product_iaia_oa_0_Product_Output ;
-            ingen:name "Input_1" ;
+            ingen:symbol "Input_1" ;
             a ingen:AudioPort, ingen:InputPort
         ], [
             ingen:connectedTo _:product_iaia_oa_1_Product_Output ;
-            ingen:name "Input_2" ;
+            ingen:symbol "Input_2" ;
             a ingen:AudioPort, ingen:InputPort
         ], _:mixer5_Output ;
         ingen:variable [
@@ -752,16 +752,16 @@
         ] ;
         a ingen:Node
     ], [
-        ingen:name "product_iaia_oa0" ;
+        ingen:symbol "product_iaia_oa0" ;
         ingen:plugin <ladspa:1668> ;
         ingen:polyphonic true ;
         ingen:port [
             ingen:connectedTo _:adenv_1_Envelope_Out ;
-            ingen:name "First_Input" ;
+            ingen:symbol "First_Input" ;
             a ingen:AudioPort, ingen:InputPort
         ], _:product_iaia_oa0_Product_Output, [
             ingen:connectedTo _:bandpass_a_iir0_Output ;
-            ingen:name "Second_Input" ;
+            ingen:symbol "Second_Input" ;
             a ingen:AudioPort, ingen:InputPort
         ] ;
         ingen:variable [
@@ -773,16 +773,16 @@
         ] ;
         a ingen:Node
     ], [
-        ingen:name "product_iaia_oa1" ;
+        ingen:symbol "product_iaia_oa1" ;
         ingen:plugin <ladspa:1668> ;
         ingen:polyphonic true ;
         ingen:port [
             ingen:connectedTo _:adenv_0_Envelope_Out ;
-            ingen:name "First_Input" ;
+            ingen:symbol "First_Input" ;
             a ingen:AudioPort, ingen:InputPort
         ], _:product_iaia_oa1_Product_Output, [
             ingen:connectedTo _:bandpass_a_iir0_Output ;
-            ingen:name "Second_Input" ;
+            ingen:symbol "Second_Input" ;
             a ingen:AudioPort, ingen:InputPort
         ] ;
         ingen:variable [
@@ -794,16 +794,16 @@
         ] ;
         a ingen:Node
     ], [
-        ingen:name "product_iaia_oa_0" ;
+        ingen:symbol "product_iaia_oa_0" ;
         ingen:plugin <ladspa:1668> ;
         ingen:polyphonic true ;
         ingen:port [
             ingen:connectedTo _:midi_trigger_in0_velocity ;
-            ingen:name "First_Input" ;
+            ingen:symbol "First_Input" ;
             a ingen:AudioPort, ingen:InputPort
         ], _:product_iaia_oa_0_Product_Output, [
             ingen:connectedTo _:product_iaia_oa_3_Product_Output ;
-            ingen:name "Second_Input" ;
+            ingen:symbol "Second_Input" ;
             a ingen:AudioPort, ingen:InputPort
         ] ;
         ingen:variable [
@@ -815,16 +815,16 @@
         ] ;
         a ingen:Node
     ], [
-        ingen:name "product_iaia_oa_1" ;
+        ingen:symbol "product_iaia_oa_1" ;
         ingen:plugin <ladspa:1668> ;
         ingen:polyphonic true ;
         ingen:port [
             ingen:connectedTo _:midi_trigger_in1_velocity ;
-            ingen:name "First_Input" ;
+            ingen:symbol "First_Input" ;
             a ingen:AudioPort, ingen:InputPort
         ], _:product_iaia_oa_1_Product_Output, [
             ingen:connectedTo _:product_iaia_oa_4_Product_Output ;
-            ingen:name "Second_Input" ;
+            ingen:symbol "Second_Input" ;
             a ingen:AudioPort, ingen:InputPort
         ] ;
         ingen:variable [
@@ -836,16 +836,16 @@
         ] ;
         a ingen:Node
     ], [
-        ingen:name "product_iaia_oa_3" ;
+        ingen:symbol "product_iaia_oa_3" ;
         ingen:plugin <ladspa:1668> ;
         ingen:polyphonic true ;
         ingen:port [
             ingen:connectedTo _:highpass_iir0_Output ;
-            ingen:name "First_Input" ;
+            ingen:symbol "First_Input" ;
             a ingen:AudioPort, ingen:InputPort
         ], _:product_iaia_oa_3_Product_Output, [
             ingen:connectedTo _:adenv_lvl_0_Envelope_Out ;
-            ingen:name "Second_Input" ;
+            ingen:symbol "Second_Input" ;
             a ingen:AudioPort, ingen:InputPort
         ] ;
         ingen:variable [
@@ -857,16 +857,16 @@
         ] ;
         a ingen:Node
     ], [
-        ingen:name "product_iaia_oa_4" ;
+        ingen:symbol "product_iaia_oa_4" ;
         ingen:plugin <ladspa:1668> ;
         ingen:polyphonic true ;
         ingen:port [
             ingen:connectedTo _:highpass_iir1_Output ;
-            ingen:name "First_Input" ;
+            ingen:symbol "First_Input" ;
             a ingen:AudioPort, ingen:InputPort
         ], _:product_iaia_oa_4_Product_Output, [
             ingen:connectedTo _:adenv_lvl_1_Envelope_Out ;
-            ingen:name "Second_Input" ;
+            ingen:symbol "Second_Input" ;
             a ingen:AudioPort, ingen:InputPort
         ] ;
         ingen:variable [
@@ -878,11 +878,11 @@
         ] ;
         a ingen:Node
     ], [
-        ingen:name "square_fc_oa0" ;
+        ingen:symbol "square_fc_oa0" ;
         ingen:plugin <ladspa:1644> ;
         ingen:polyphonic true ;
         ingen:port [
-            ingen:name "Frequency" ;
+            ingen:symbol "Frequency" ;
             ingen:value 11840.5029296875 ;
             ingen:variable [
                 ingen:key ingen:default ;
@@ -905,11 +905,11 @@
         ] ;
         a ingen:Node
     ], [
-        ingen:name "square_fc_oa1" ;
+        ingen:symbol "square_fc_oa1" ;
         ingen:plugin <ladspa:1644> ;
         ingen:polyphonic true ;
         ingen:port [
-            ingen:name "Frequency" ;
+            ingen:symbol "Frequency" ;
             ingen:value 9530.23046875 ;
             ingen:variable [
                 ingen:key ingen:default ;
@@ -932,11 +932,11 @@
         ] ;
         a ingen:Node
     ], [
-        ingen:name "square_fc_oa2" ;
+        ingen:symbol "square_fc_oa2" ;
         ingen:plugin <ladspa:1644> ;
         ingen:polyphonic true ;
         ingen:port [
-            ingen:name "Frequency" ;
+            ingen:symbol "Frequency" ;
             ingen:value 17164.123046875 ;
             ingen:variable [
                 ingen:key ingen:default ;
@@ -959,11 +959,11 @@
         ] ;
         a ingen:Node
     ], [
-        ingen:name "square_fc_oa3" ;
+        ingen:symbol "square_fc_oa3" ;
         ingen:plugin <ladspa:1644> ;
         ingen:polyphonic true ;
         ingen:port [
-            ingen:name "Frequency" ;
+            ingen:symbol "Frequency" ;
             ingen:value 11749.078125 ;
             ingen:variable [
                 ingen:key ingen:default ;
@@ -986,11 +986,11 @@
         ] ;
         a ingen:Node
     ], [
-        ingen:name "square_fc_oa4" ;
+        ingen:symbol "square_fc_oa4" ;
         ingen:plugin <ladspa:1644> ;
         ingen:polyphonic true ;
         ingen:port [
-            ingen:name "Frequency" ;
+            ingen:symbol "Frequency" ;
             ingen:value 16200.244140625 ;
             ingen:variable [
                 ingen:key ingen:default ;
@@ -1013,11 +1013,11 @@
         ] ;
         a ingen:Node
     ], [
-        ingen:name "square_fc_oa5" ;
+        ingen:symbol "square_fc_oa5" ;
         ingen:plugin <ladspa:1644> ;
         ingen:polyphonic true ;
         ingen:port [
-            ingen:name "Frequency" ;
+            ingen:symbol "Frequency" ;
             ingen:value 8874.3291015625 ;
             ingen:variable [
                 ingen:key ingen:default ;
@@ -1043,7 +1043,7 @@
     ingen:polyphony 1 ;
     ingen:port _:CH_Decay, _:CH_trigger, _:OH_Decay, _:OH_trigger, _:Tune, [
         ingen:connectedTo _:amp_mono_0_Output ;
-        ingen:name "output0" ;
+        ingen:symbol "output0" ;
         ingen:variable [
             ingen:key ingenuity:canvas-x ;
             ingen:value 2984.596435546875
@@ -1056,7 +1056,7 @@
     a ingen:Patch .
 
 _:CH_Decay
-    ingen:name "CH_Decay" ;
+    ingen:symbol "CH_Decay" ;
     ingen:value 0.17000000178813934326 ;
     ingen:variable [
         ingen:key ingenuity:canvas-x ;
@@ -1068,7 +1068,7 @@ _:CH_Decay
     a ingen:ControlPort, ingen:InputPort .
 
 _:CH_trigger
-    ingen:name "CH_trigger" ;
+    ingen:symbol "CH_trigger" ;
     ingen:variable [
         ingen:key ingenuity:canvas-x ;
         ingen:value 895.3004150390625
@@ -1079,7 +1079,7 @@ _:CH_trigger
     a ingen:EventPort, ingen:InputPort .
 
 _:OH_Decay
-    ingen:name "OH_Decay" ;
+    ingen:symbol "OH_Decay" ;
     ingen:value 0.88999998569488525391 ;
     ingen:variable [
         ingen:key ingenuity:canvas-x ;
@@ -1091,7 +1091,7 @@ _:OH_Decay
     a ingen:ControlPort, ingen:InputPort .
 
 _:OH_trigger
-    ingen:name "OH_trigger" ;
+    ingen:symbol "OH_trigger" ;
     ingen:variable [
         ingen:key ingenuity:canvas-x ;
         ingen:value 894.34735107421875
@@ -1102,7 +1102,7 @@ _:OH_trigger
     a ingen:EventPort, ingen:InputPort .
 
 _:Tune
-    ingen:name "Tune" ;
+    ingen:symbol "Tune" ;
     ingen:value 9751.0 ;
     ingen:variable [
         ingen:key ingenuity:canvas-x ;
@@ -1114,139 +1114,139 @@ _:Tune
     a ingen:ControlPort, ingen:InputPort .
 
 _:adenv_0_Envelope_Out
-    ingen:name "Envelope_Out" ;
+    ingen:symbol "Envelope_Out" ;
     a ingen:AudioPort, ingen:OutputPort .
 
 _:adenv_1_Envelope_Out
-    ingen:name "Envelope_Out" ;
+    ingen:symbol "Envelope_Out" ;
     a ingen:AudioPort, ingen:OutputPort .
 
 _:adenv_lvl_0_Envelope_Out
-    ingen:name "Envelope_Out" ;
+    ingen:symbol "Envelope_Out" ;
     a ingen:AudioPort, ingen:OutputPort .
 
 _:adenv_lvl_1_Envelope_Out
-    ingen:name "Envelope_Out" ;
+    ingen:symbol "Envelope_Out" ;
     a ingen:AudioPort, ingen:OutputPort .
 
 _:amp_gcia_oa0_Output
-    ingen:name "Output" ;
+    ingen:symbol "Output" ;
     a ingen:AudioPort, ingen:OutputPort .
 
 _:amp_gcia_oa1_Output
-    ingen:name "Output" ;
+    ingen:symbol "Output" ;
     a ingen:AudioPort, ingen:OutputPort .
 
 _:amp_gcia_oa2_Output
-    ingen:name "Output" ;
+    ingen:symbol "Output" ;
     a ingen:AudioPort, ingen:OutputPort .
 
 _:amp_mono_0_Output
-    ingen:name "Output" ;
+    ingen:symbol "Output" ;
     a ingen:AudioPort, ingen:OutputPort .
 
 _:bandpass_a_iir0_Output
-    ingen:name "Output" ;
+    ingen:symbol "Output" ;
     a ingen:AudioPort, ingen:OutputPort .
 
 _:highpass_iir0_Output
-    ingen:name "Output" ;
+    ingen:symbol "Output" ;
     a ingen:AudioPort, ingen:OutputPort .
 
 _:highpass_iir1_Output
-    ingen:name "Output" ;
+    ingen:symbol "Output" ;
     a ingen:AudioPort, ingen:OutputPort .
 
 _:midi_trigger_in0_trigger
-    ingen:name "trigger" ;
+    ingen:symbol "trigger" ;
     a ingen:AudioPort, ingen:OutputPort .
 
 _:midi_trigger_in0_velocity
-    ingen:name "velocity" ;
+    ingen:symbol "velocity" ;
     a ingen:AudioPort, ingen:OutputPort .
 
 _:midi_trigger_in1_trigger
-    ingen:name "trigger" ;
+    ingen:symbol "trigger" ;
     a ingen:AudioPort, ingen:OutputPort .
 
 _:midi_trigger_in1_velocity
-    ingen:name "velocity" ;
+    ingen:symbol "velocity" ;
     a ingen:AudioPort, ingen:OutputPort .
 
 _:mixer0_Output
-    ingen:name "Output" ;
+    ingen:symbol "Output" ;
     a ingen:AudioPort, ingen:OutputPort .
 
 _:mixer1_Output
-    ingen:name "Output" ;
+    ingen:symbol "Output" ;
     a ingen:AudioPort, ingen:OutputPort .
 
 _:mixer2_Output
-    ingen:name "Output" ;
+    ingen:symbol "Output" ;
     a ingen:AudioPort, ingen:OutputPort .
 
 _:mixer3_Output
-    ingen:name "Output" ;
+    ingen:symbol "Output" ;
     a ingen:AudioPort, ingen:OutputPort .
 
 _:mixer4_Output
-    ingen:name "Output" ;
+    ingen:symbol "Output" ;
     a ingen:AudioPort, ingen:OutputPort .
 
 _:mixer5_Output
-    ingen:name "Output" ;
+    ingen:symbol "Output" ;
     a ingen:AudioPort, ingen:OutputPort .
 
 _:product_iaia_oa0_Product_Output
-    ingen:name "Product_Output" ;
+    ingen:symbol "Product_Output" ;
     a ingen:AudioPort, ingen:OutputPort .
 
 _:product_iaia_oa1_Product_Output
-    ingen:name "Product_Output" ;
+    ingen:symbol "Product_Output" ;
     a ingen:AudioPort, ingen:OutputPort .
 
 _:product_iaia_oa_0_Product_Output
-    ingen:name "Product_Output" ;
+    ingen:symbol "Product_Output" ;
     a ingen:AudioPort, ingen:OutputPort .
 
 _:product_iaia_oa_1_Product_Output
-    ingen:name "Product_Output" ;
+    ingen:symbol "Product_Output" ;
     a ingen:AudioPort, ingen:OutputPort .
 
 _:product_iaia_oa_3_Product_Output
-    ingen:name "Product_Output" ;
+    ingen:symbol "Product_Output" ;
     a ingen:AudioPort, ingen:OutputPort .
 
 _:product_iaia_oa_4_Product_Output
-    ingen:name "Product_Output" ;
+    ingen:symbol "Product_Output" ;
     a ingen:AudioPort, ingen:OutputPort .
 
 _:square_fc_oa0_Output
-    ingen:name "Output" ;
+    ingen:symbol "Output" ;
     a ingen:AudioPort, ingen:OutputPort .
 
 _:square_fc_oa1_Output
-    ingen:name "Output" ;
+    ingen:symbol "Output" ;
     a ingen:AudioPort, ingen:OutputPort .
 
 _:square_fc_oa2_Output
-    ingen:name "Output" ;
+    ingen:symbol "Output" ;
     a ingen:AudioPort, ingen:OutputPort .
 
 _:square_fc_oa3_Output
-    ingen:name "Output" ;
+    ingen:symbol "Output" ;
     a ingen:AudioPort, ingen:OutputPort .
 
 _:square_fc_oa4_Output
-    ingen:name "Output" ;
+    ingen:symbol "Output" ;
     a ingen:AudioPort, ingen:OutputPort .
 
 _:square_fc_oa5_Output
-    ingen:name "Output" ;
+    ingen:symbol "Output" ;
     a ingen:AudioPort, ingen:OutputPort .
 
 _:volume
-    ingen:name "volume" ;
+    ingen:symbol "volume" ;
     ingen:value 0.77594798803329467773 ;
     ingen:variable [
         ingen:key ingenuity:canvas-x ;

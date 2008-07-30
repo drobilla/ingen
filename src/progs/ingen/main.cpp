@@ -129,7 +129,7 @@ main(int argc, char** argv)
 	}
 				
 	/* If we don't have a local engine interface (for GUI), use OSC */
-	if ( ! engine_interface) {
+	if (client_module && ! engine_interface) {
 		SharedPtr<Shared::EngineInterface> (*new_osc_interface)(const std::string&) = NULL;
 
 		if (client_module->get_symbol("new_osc_interface", (void*&)new_osc_interface)) {

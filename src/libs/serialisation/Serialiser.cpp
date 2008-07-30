@@ -280,7 +280,7 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch)
 
 	if (patch->path().name().length() > 0) {
 		_model->add_statement(
-			patch_id, "ingen:name",
+			patch_id, "ingen:symbol",
 			Redland::Node(_model->world(), Redland::Node::LITERAL, patch->path().name()));
 	}
 
@@ -354,7 +354,7 @@ Serialiser::serialise_node(SharedPtr<Shared::Node> node, const Redland::Node& no
 	
 	_model->add_statement(
 		node_id,
-		"ingen:name",
+		"ingen:symbol",
 		Redland::Node(_model->world(), Redland::Node::LITERAL, node->path().name()));
 	
 	_model->add_statement(
@@ -395,7 +395,7 @@ Serialiser::serialise_port(const Port* port, const Redland::Node& port_id)
 		_model->add_statement(port_id, "rdf:type",
 				Redland::Node(_model->world(), Redland::Node::RESOURCE, "ingen:OutputPort"));
 
-	_model->add_statement(port_id, "ingen:name",
+	_model->add_statement(port_id, "ingen:symbol",
 			Redland::Node(_model->world(), Redland::Node::LITERAL, port->path().name()));
 	
 	_model->add_statement(port_id, "rdf:type",
