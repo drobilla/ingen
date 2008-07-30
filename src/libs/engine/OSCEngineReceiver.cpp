@@ -70,7 +70,7 @@ OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t
 	}
 
 	// For debugging, print all incoming OSC messages
-	//lo_server_add_method(_server, NULL, NULL, generic_cb, NULL);
+	lo_server_add_method(_server, NULL, NULL, generic_cb, NULL);
 
 	// Set response address for this message.
 	// It's important this is first and returns nonzero.
@@ -224,9 +224,13 @@ OSCEngineReceiver::set_response_address_cb(const char* path, const char* types, 
 	const SharedPtr<Responder> r = me->_responder;
 
 	/* Different address than last time, have to do a lookup */
-	if (!r || !r->client() || strcmp(url, r->client()->uri().c_str()))
-		me->_responder = SharedPtr<Responder>(
-				new Responder(me->_engine.broadcaster()->client(url), id));
+	if (!r || !r->client() || strcmp(url, r->client()->uri().c_str())) {
+		ClientInterface* client = me->_engine.broadcaster()->client(url);
+		if (client)
+			me->_responder = SharedPtr<Responder>(new Responder(client, id));
+		else
+			me->_responder = SharedPtr<Responder>(new Responder());
+	}
 	
 	if (id != -1) {
 		me->set_next_response_id(id);

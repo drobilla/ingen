@@ -86,7 +86,6 @@ ClientBroadcaster::client(const string& uri)
 	if (i != _clients.end()) {
 		return (*i).second;
 	} else {
-		cerr << "[ClientBroadcaster] Failed to find client: " << uri << endl;
 		return NULL;
 	}
 }
