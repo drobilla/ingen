@@ -74,7 +74,7 @@ AC_ARG_ENABLE(debug_symbols,
 	[AS_HELP_STRING(--enable-debug-symbols, [Enable debugging symbols - overrides CXXFLAGS (no)])],
 	[debug_symbols="$enableval"])
 
-AC_ARG_ENABLE(debug_asertions,
+AC_ARG_ENABLE(debug_assertions,
 	[AS_HELP_STRING(--enable-debug-assertions, [Enable debugging assertions (no)])],
 	[debug_assertions="$enableval"])
 
