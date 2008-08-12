@@ -298,7 +298,11 @@ LoadPluginWindow::generate_module_name(int offset)
 	if (iter) {
 		Gtk::TreeModel::Row row = *iter;
 		SharedPtr<PluginModel> plugin = row.get_value(_plugins_columns._col_plugin_model);
-		return plugin->default_node_name(_patch);
+		std::stringstream ss;
+		ss << plugin->default_node_name(_patch);
+		if (offset != 0)
+			ss << "_" << offset + 1;
+		name = ss.str();
 	}
 
 	return name;
@@ -329,13 +333,13 @@ LoadPluginWindow::add_clicked()
 			App::instance().engine()->create_node(path, plugin->uri(), polyphonic);
 			for (GraphObject::Variables::const_iterator i = _initial_data.begin(); i != _initial_data.end(); ++i)
 				App::instance().engine()->set_variable(path, i->first, i->second);
-			++_plugin_name_offset;
-			_node_name_entry->set_text(generate_module_name(_plugin_name_offset));
-			
-			// Set the next module location 20 over, for a cascade effect
-			cerr << "FIXME: cascade\n";
-			//m_new_module_x += 20;
-			//m_new_module_y += 20;
+			_node_name_entry->set_text(generate_module_name(++_plugin_name_offset));
+		
+			// Cascade
+			Atom& x = _initial_data["ingenuity:canvas-x"];
+			x = Atom(x.get_float() + 20.0f);
+			Atom& y = _initial_data["ingenuity:canvas-y"];
+			y = Atom(y.get_float() + 20.0f);
 		}
 	}
 }

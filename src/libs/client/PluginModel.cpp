@@ -39,7 +39,8 @@ Redland::World* PluginModel::_rdf_world = NULL;
 string
 PluginModel::default_node_name(SharedPtr<PatchModel> parent)
 {
-	string default_name = Raul::Path::nameify(_symbol);
+	return Raul::Path::nameify(_symbol);
+	/*string default_name = Raul::Path::nameify(_symbol);
 	string name;
 
 	char num_buf[3];
@@ -53,7 +54,7 @@ PluginModel::default_node_name(SharedPtr<PatchModel> parent)
 			break;
 	}
 
-	return name;
+	return name;*/
 }
 
 
