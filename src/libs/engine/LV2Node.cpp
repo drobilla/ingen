@@ -79,13 +79,13 @@ LV2Node::prepare_poly(uint32_t poly)
 		_prepared_instances->at(i) = slv2_plugin_instantiate(
 				_lv2_plugin->slv2_plugin(), _srate, NULL);
 
-		if ((*_prepared_instances)[i] == NULL) {
+		if (_prepared_instances->at(i) == NULL) {
 			cerr << "Failed to instantiate plugin!" << endl;
 			return false;
 		}
 
 		if (_activated)
-			slv2_instance_activate((*_prepared_instances)[i]);
+			slv2_instance_activate(_prepared_instances->at(i));
 	}
 	
 	return true;

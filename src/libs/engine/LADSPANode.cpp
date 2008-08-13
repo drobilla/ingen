@@ -70,13 +70,13 @@ LADSPANode::prepare_poly(uint32_t poly)
 	_prepared_instances = new Raul::Array<LADSPA_Handle>(poly, *_instances);
 	for (uint32_t i = _polyphony; i < _prepared_instances->size(); ++i) {
 		_prepared_instances->at(i) = _descriptor->instantiate(_descriptor, _srate);
-		if ((*_prepared_instances)[i] == NULL) {
+		if (_prepared_instances->at(i) == NULL) {
 			cerr << "Failed to instantiate plugin!" << endl;
 			return false;
 		}
 
-		if (_activated)
-			_descriptor->activate((*_prepared_instances)[i]);
+		if (_activated && _descriptor->activate)
+			_descriptor->activate(_prepared_instances->at(i));
 	}
 	
 	return true;
