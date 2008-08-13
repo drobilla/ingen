@@ -592,7 +592,15 @@ PatchCanvas::menu_add_port(const string& name, const string& type, bool is_outpu
 void
 PatchCanvas::load_plugin(SharedPtr<PluginModel> plugin)
 {
-	const Path& path = _patch->path().base() + plugin->default_node_name(_patch);
+	string name = plugin->default_node_name();
+	unsigned offset = _patch->child_name_offset(name);
+	if (offset != 0) {
+		std::stringstream ss;
+		ss << name << "_" << offset;
+		name = ss.str();
+	}
+		
+	const Path path = _patch->path().base() + name;
 	// FIXME: polyphony?
 	App::instance().engine()->create_node(path, plugin->uri(), false);
 	GraphObject::Variables data = get_initial_data();

@@ -61,6 +61,8 @@ public:
 		_editable = e;
 		signal_editable.emit(e);
 	} }
+
+	unsigned child_name_offset(const string& base_name) const;
 	
 	// Signals
 	sigc::signal<void, SharedPtr<NodeModel> >       signal_new_node; 

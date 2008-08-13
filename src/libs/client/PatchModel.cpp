@@ -188,5 +188,28 @@ PatchModel::polyphonic() const
 }
 
 
+unsigned
+PatchModel::child_name_offset(const string& base_name) const
+{
+	assert(Path::is_valid_name(base_name));
+	unsigned offset = 0;
+
+	while (true) {
+		std::stringstream ss;
+		ss << base_name;
+		if (offset > 0)
+			ss << "_" << offset;
+		if (!find_child(ss.str()))
+			break;
+		else if (offset == 0)
+			offset = 2;
+		else
+			++offset;
+	}
+
+	return offset;
+}
+
+
 } // namespace Client
 } // namespace Ingen

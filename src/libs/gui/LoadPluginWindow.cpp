@@ -148,7 +148,12 @@ LoadPluginWindow::name_changed()
 void
 LoadPluginWindow::set_patch(SharedPtr<PatchModel> patch)
 {
-	_patch = patch;
+	if (_patch) {
+		_patch = patch;
+		plugin_selection_changed();
+	} else {
+		_patch = patch;
+	}
 
 	/*if (patch->poly() <= 1)
 		_polyphonic_checkbutton->property_sensitive() = false;
@@ -272,13 +277,11 @@ LoadPluginWindow::plugin_activated(const Gtk::TreeModel::Path& path, Gtk::TreeVi
 void
 LoadPluginWindow::plugin_selection_changed()
 {
-	_plugin_name_offset = 0;
-
-	_node_name_entry->set_text(generate_module_name());
-	
-	//Gtk::TreeModel::iterator iter = _selection->get_selected();
-	//Gtk::TreeModel::Row row = *iter;
-	//const PluginModel* plugin = row.get_value(_plugins_columns._col_plugin_model);
+	Gtk::TreeModel::iterator iter = _selection->get_selected();
+	Gtk::TreeModel::Row row = *iter;
+	boost::shared_ptr<PluginModel> p = row.get_value(_plugins_columns._col_plugin_model);
+	_plugin_name_offset = _patch->child_name_offset(p->default_node_name());
+	_node_name_entry->set_text(generate_module_name(_plugin_name_offset));
 }
 
 
@@ -299,7 +302,7 @@ LoadPluginWindow::generate_module_name(int offset)
 		Gtk::TreeModel::Row row = *iter;
 		SharedPtr<PluginModel> plugin = row.get_value(_plugins_columns._col_plugin_model);
 		std::stringstream ss;
-		ss << plugin->default_node_name(_patch);
+		ss << plugin->default_node_name();
 		if (offset != 0)
 			ss << "_" << offset + 1;
 		name = ss.str();

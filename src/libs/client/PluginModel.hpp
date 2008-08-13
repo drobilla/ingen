@@ -82,7 +82,7 @@ public:
 		}
 	}
 
-	string default_node_name(SharedPtr<PatchModel> parent);
+	string default_node_name();
 
 #ifdef HAVE_SLV2
 	static SLV2World slv2_world()  { return _slv2_world; }
