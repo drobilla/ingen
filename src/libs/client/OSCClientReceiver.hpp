@@ -29,7 +29,6 @@ namespace Ingen {
 namespace Client {
 
 //class NodeModel;
-//class PresetModel;
 
 /* Some boilerplate killing macros... */
 #define LO_HANDLER_ARGS const char* path, const char* types, lo_arg** argv, int argc, lo_message msg

@@ -29,7 +29,6 @@ using std::string;
 
 namespace Ingen { namespace Client {
 	class PortModel;
-	class ControlModel;
 	class MetadataModel;
 } }
 using namespace Ingen::Client;

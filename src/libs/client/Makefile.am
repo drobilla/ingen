@@ -30,7 +30,6 @@ libingen_client_la_SOURCES = \
 	$(top_srcdir)/ingen/src/common/interface/ClientInterface.hpp \
 	$(top_srcdir)/ingen/src/common/interface/EngineInterface.hpp \
 	ConnectionModel.hpp \
-	ControlModel.hpp \
 	DeprecatedLoader.cpp \
 	DeprecatedLoader.hpp \
 	NodeModel.cpp \
@@ -49,7 +48,6 @@ libingen_client_la_SOURCES = \
 	PluginUI.cpp \
 	PortModel.cpp \
 	PortModel.hpp \
-	PresetModel.hpp \
 	SigClientInterface.hpp \
 	Store.cpp \
 	Store.hpp \

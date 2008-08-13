@@ -21,7 +21,6 @@
 #include "flowcanvas/Module.hpp"
 #include "client/PatchModel.hpp"
 #include "client/PortModel.hpp"
-#include "client/ControlModel.hpp"
 #include "Configuration.hpp"
 #include "App.hpp"
 #include "Port.hpp"

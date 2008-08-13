@@ -29,7 +29,6 @@ class Atom;
 namespace Ingen { namespace Client {
 	class PortModel;
 	class NodeModel;
-	class ControlModel;
 } }
 using namespace Ingen::Client;
 

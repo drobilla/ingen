@@ -35,7 +35,6 @@ using std::string; using std::list;
 namespace Ingen { namespace Client {
 	class PatchModel;
 	class PortModel;
-	class ControlModel;
 	class MetadataModel;
 } }
 using namespace Ingen::Client;

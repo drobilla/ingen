@@ -35,7 +35,6 @@
 #include "NodeModel.hpp"
 #include "ConnectionModel.hpp"
 #include "PortModel.hpp"
-#include "PresetModel.hpp"
 #include "PluginModel.hpp"
 #include "DeprecatedLoader.hpp"
 
@@ -43,6 +42,65 @@ using namespace std;
 
 namespace Ingen {
 namespace Client {
+
+	
+/** A single port's control setting (in a preset).
+ *
+ * \ingroup IngenClient
+ */
+class ControlModel
+{
+public:
+	ControlModel(const Path& port_path, float value)
+		: _port_path(port_path)
+		, _value(value)
+	{
+		assert(_port_path.find("//") == string::npos);
+	}
+	
+	const Path&   port_path() const          { return _port_path; }
+	void          port_path(const string& p) { _port_path = p; }
+	float         value() const              { return _value; }
+	void          value(float v)             { _value = v; }
+
+private:
+	Path  _port_path;
+	float _value;
+};
+
+
+/** Model of a preset (a collection of control settings).
+ *
+ * \ingroup IngenClient
+ */
+class PresetModel
+{
+public:
+	PresetModel(const string& base_path) : _base_path(base_path) {}
+
+	/** Add a control value to this preset.  An empty string for a node_name
+	 * means the port is on the patch itself (not a node in the patch). */
+	void add_control(const string& node_name, string port_name, float value) {
+		if (port_name == "note_number") // FIXME: filthy kludge
+			port_name = "note";
+
+		if (node_name != "")
+			_controls.push_back(ControlModel(_base_path + node_name +"/"+ port_name, value));
+		else
+			_controls.push_back(ControlModel(_base_path + port_name, value));
+	}
+
+	const string& name() const          { return _name; }
+	void          name(const string& n) { _name = n; }
+
+	const list<ControlModel>& controls() const { return _controls; }
+
+private:
+	string             _name;
+	string             _base_path;
+	list<ControlModel> _controls;
+};
+
 
 string
 DeprecatedLoader::nameify_if_invalid(const string& name)

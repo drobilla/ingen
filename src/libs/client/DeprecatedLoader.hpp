@@ -41,7 +41,7 @@ namespace Client {
 class PatchModel;
 class NodeModel;
 class ConnectionModel;
-class PresetModel;
+class PresetModel; // defined in DeprecatedLoader.cpp
 
 	
 /** Loads deprecated (XML) patch files (from the Om days).
