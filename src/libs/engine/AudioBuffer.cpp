@@ -135,10 +135,12 @@ AudioBuffer::set_value(Sample val, FrameTime cycle_start, FrameTime time)
 	FrameTime offset = time - cycle_start;
 	assert(offset <= _size);
 
-	set_block(val, offset, _size - 1);
-	
-	if (offset > 0)
-		_state = HALF_SET_CYCLE_1;
+	if (offset < _size) {
+		set_block(val, offset, _size - 1);
+
+		if (offset > 0)
+			_state = HALF_SET_CYCLE_1;
+	} // else trigger at very end of block
 
 	_set_time = time;
 	_set_value = val;
