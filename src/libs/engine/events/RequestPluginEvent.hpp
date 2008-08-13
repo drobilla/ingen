@@ -29,7 +29,7 @@ namespace Ingen {
 class PluginImpl;
 
 
-/** A request from a client to send the value of a port.
+/** A request from a client to send information about a plugin.
  *
  * \ingroup engine
  */

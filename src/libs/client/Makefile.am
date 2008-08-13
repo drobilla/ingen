@@ -33,7 +33,6 @@ libingen_client_la_SOURCES = \
 	ControlModel.hpp \
 	DeprecatedLoader.cpp \
 	DeprecatedLoader.hpp \
-	DirectSigClientInterface.hpp \
 	NodeModel.cpp \
 	NodeModel.hpp \
 	OSCClientReceiver.cpp \

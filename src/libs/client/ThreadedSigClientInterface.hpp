@@ -69,12 +69,13 @@ public:
 	, program_remove_slot(signal_program_remove.make_slot())
 	{}
 
-    virtual void subscribe(Shared::EngineInterface* engine) { throw; } // FIXME
+    virtual void subscribe(Shared::EngineInterface* engine) { throw; }
 
-	// TODO: make this insert bundle-boundary-events, where the GTK thread
-	// process all events between start and finish in one (GTK) "cycle", guaranteed
-	void bundle_begin() {}
-	void bundle_end()   {}
+	void bundle_begin()
+		{ push_sig(bundle_begin_slot); }
+
+	void bundle_end()
+		{ push_sig(bundle_end_slot); }
 	
 	void transfer_begin() {}
 	void transfer_end()   {}

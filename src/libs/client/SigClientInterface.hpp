@@ -81,9 +81,12 @@ protected:
 	void enable()  { _enabled = true; }
 	void disable() { _enabled = false ; }
 
-	void bundle_begin() {}
-	void bundle_end()   {}
+	void bundle_begin()
+		{ if (_enabled) signal_bundle_begin.emit(); }
 	
+	void bundle_end()
+		{ if (_enabled) signal_bundle_end.emit(); }
+
 	void transfer_begin() {}
 	void transfer_end()   {}
 

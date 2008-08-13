@@ -15,23 +15,12 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef INTERNALPLUGIN_H
-#define INTERNALPLUGIN_H
+#ifndef PATCHPLUGIN_H
+#define PATCHPLUGIN_H
 
 #include CONFIG_H_PATH
 
-#ifndef HAVE_SLV2
-#error "This file requires SLV2, but HAVE_SLV2 is not defined.  Please report."
-#endif
-
-#include <cstdlib>
-#include <glibmm/module.h>
-#include <boost/utility.hpp>
-#include <dlfcn.h>
 #include <string>
-#include <iostream>
-#include <slv2/slv2.h>
-#include "types.hpp"
 #include "PluginImpl.hpp"
 
 namespace Ingen {
@@ -52,8 +41,6 @@ public:
 		: PluginImpl(Plugin::Patch, uri)
 	{}
 	
-	//PatchPlugin(const PatchPlugin* const copy);
-
 	NodeImpl* instantiate(const std::string& name,
 	                      bool               polyphonic,
 	                      Ingen::PatchImpl*  parent,
@@ -74,5 +61,5 @@ private:
 
 } // namespace Ingen
 
-#endif // INTERNALPLUGIN_H
+#endif // PATCHPLUGIN_H
 
