@@ -45,9 +45,6 @@
 #ifdef HAVE_JACK_MIDI
 #include "JackMidiDriver.hpp"
 #endif
-/*#ifdef HAVE_LASH
-#include "LashDriver.hpp"
-#endif*/
 using namespace std;
 
 namespace Ingen {
@@ -62,13 +59,6 @@ Engine::Engine(Ingen::Shared::World* world)
 	, _broadcaster(new ClientBroadcaster())
 	, _object_store(new ObjectStore())
 	, _node_factory(new NodeFactory(world))
-#if 0
-#ifdef HAVE_LASH
-	, _lash_driver(new LashDriver())
-#else
-	, _lash_driver(NULL)
-#endif
-#endif
 	, _quit_flag(false)
 	, _activated(false)
 {

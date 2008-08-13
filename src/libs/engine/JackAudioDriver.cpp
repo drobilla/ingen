@@ -36,9 +36,6 @@
 #include "EventSource.hpp"
 #include "AudioBuffer.hpp"
 #include "ProcessSlave.hpp"
-/*#ifdef HAVE_LASH
-#include "LashDriver.hpp"
-#endif*/
 
 using namespace std;
 

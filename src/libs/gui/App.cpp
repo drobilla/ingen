@@ -46,9 +46,6 @@
 #include "ThreadedLoader.hpp"
 #include "WindowFactory.hpp"
 #include "Port.hpp"
-/*#ifdef HAVE_LASH
-#include "LashController.hpp"
-#endif*/
 #ifdef HAVE_SLV2
 #include <slv2/slv2.h>
 #endif

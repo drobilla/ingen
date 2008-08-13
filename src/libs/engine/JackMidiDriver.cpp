@@ -29,9 +29,6 @@
 #include "DuplexPort.hpp"
 #include "ProcessContext.hpp"
 #include "jack_compat.h"
-/*#ifdef HAVE_LASH
-#include "LashDriver.hpp"
-#endif*/
 using namespace std;
 
 namespace Ingen {

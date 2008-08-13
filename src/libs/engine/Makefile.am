@@ -196,9 +196,3 @@ libingen_engine_la_SOURCES += \
 	LV2Node.cpp
 endif
 
-#if WITH_LASH
-#libingen_engine_la_SOURCES += \
-#	LashDriver.hpp \
-#	LashDriver.cpp
-#endif
-

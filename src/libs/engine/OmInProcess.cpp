@@ -22,9 +22,6 @@
 #include "Engine.hpp"
 #include "OSCReceiver.hpp"
 #include "JackAudioDriver.hpp"
-/*#ifdef HAVE_LASH
-#include "LashDriver.hpp"
-#endif*/
 
 extern "C"
 {
