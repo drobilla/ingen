@@ -24,6 +24,9 @@
 #include "AudioBuffer.hpp"
 #include "ProcessContext.hpp"
 
+#include <iostream>
+using namespace std;
+
 namespace Ingen {
 
 

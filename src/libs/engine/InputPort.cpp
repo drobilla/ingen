@@ -55,6 +55,19 @@ InputPort::set_buffer_size(size_t size)
 	
 }
 
+	
+bool
+InputPort::apply_poly(Raul::Maid& maid, uint32_t poly)
+{
+	if (!_polyphonic || !_parent->polyphonic())
+		return true;
+	
+	for (Connections::iterator c = _connections.begin(); c != _connections.end(); ++c)
+		((ConnectionImpl*)c->get())->apply_poly(maid, poly);
+
+	return PortImpl::apply_poly(maid, poly);
+}
+
 
 /** Add a connection.  Realtime safe.
  *
@@ -138,7 +151,7 @@ InputPort::remove_connection(const OutputPort* src_port)
 
 /** Returns whether this port is connected to the passed port.
  */
-bool
+/*bool
 InputPort::is_connected_to(const OutputPort* port) const
 {
 	for (Connections::const_iterator i = _connections.begin(); i != _connections.end(); ++i)
@@ -146,7 +159,7 @@ InputPort::is_connected_to(const OutputPort* port) const
 			return true;
 	
 	return false;
-}
+}*/
 
 
 /** Prepare buffer for access, mixing if necessary.  Realtime safe.

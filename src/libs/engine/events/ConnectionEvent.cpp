@@ -88,12 +88,6 @@ ConnectionEvent::pre_process()
 		return;
 	}
 
-	if (_dst_input_port->is_connected_to(_src_output_port)) {
-		_error = ALREADY_CONNECTED;
-		QueuedEvent::pre_process();
-		return;
-	}
-
 	NodeImpl* const src_node = _src_port->parent_node();
 	NodeImpl* const dst_node = _dst_port->parent_node();
 
@@ -116,6 +110,13 @@ ConnectionEvent::pre_process()
 	}
 
 	assert(_patch);
+	
+	//if (_dst_input_port->is_connected_to(_src_output_port)) {
+	if (_patch->has_connection(_src_output_port, _dst_input_port)) {
+		_error = ALREADY_CONNECTED;
+		QueuedEvent::pre_process();
+		return;
+	}
 
 	if (src_node == NULL || dst_node == NULL) {
 		_error = PARENTS_NOT_FOUND;
@@ -139,6 +140,8 @@ ConnectionEvent::pre_process()
 		dst_node->providers()->push_back(new Raul::List<NodeImpl*>::Node(src_node));
 		src_node->dependants()->push_back(new Raul::List<NodeImpl*>::Node(dst_node));
 	}
+		
+	_patch->add_connection(_patch_listnode);
 
 	if (_patch->enabled())
 		_compiled_patch = _patch->compile();
@@ -153,9 +156,8 @@ ConnectionEvent::execute(ProcessContext& context)
 	QueuedEvent::execute(context);
 
 	if (_error == NO_ERROR) {
-		// These must be inserted here, since they're actually used by the audio thread
+		// This must be inserted here, since they're actually used by the audio thread
 		_dst_input_port->add_connection(_port_listnode);
-		_patch->add_connection(_patch_listnode);
 		if (_patch->compiled_patch() != NULL)
 			_engine.maid()->push(_patch->compiled_patch());
 		_patch->compiled_patch(_compiled_patch);

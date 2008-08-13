@@ -22,6 +22,7 @@
 #include <raul/Path.hpp>
 #include "QueuedEvent.hpp"
 #include "types.hpp"
+#include "PatchImpl.hpp"
 using std::string;
 
 namespace Raul {
@@ -31,7 +32,6 @@ namespace Raul {
 
 namespace Ingen {
 	
-class PatchImpl;
 class NodeImpl;
 class ConnectionImpl;
 class MidiMessage;
@@ -76,8 +76,9 @@ private:
 	OutputPort* _src_output_port;
 	InputPort*  _dst_input_port;
 
-	bool   _lookup;
-	
+	bool _lookup;
+			
+	PatchImpl::Connections::Node* _patch_connection;
 	CompiledPatch* _compiled_patch; ///< New process order for Patch
 	
 	ErrorType _error;

@@ -63,12 +63,14 @@ public:
 	Connections::Node* remove_connection(const OutputPort* src_port);
 
 	const Connections& connections() { return _connections; }
+	
+	bool apply_poly(Raul::Maid& maid, uint32_t poly);
 
 	void pre_process(ProcessContext& context);
 	void post_process(ProcessContext& context);
 	
 	bool is_connected() const { return (_connections.size() > 0); }
-	bool is_connected_to(const OutputPort* port) const;
+	//bool is_connected_to(const OutputPort* port) const;
 	
 	bool is_input()  const { return true; }
 	bool is_output() const { return false; }

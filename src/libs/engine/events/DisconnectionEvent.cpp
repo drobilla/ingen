@@ -44,6 +44,7 @@ DisconnectionEvent::DisconnectionEvent(Engine& engine, SharedPtr<Responder> resp
   _src_port(NULL),
   _dst_port(NULL),
   _lookup(true),
+  _patch_connection(NULL),
   _compiled_patch(NULL),
   _error(NO_ERROR)
 {
@@ -97,12 +98,6 @@ DisconnectionEvent::pre_process()
 	assert(_src_output_port);
 	assert(_dst_input_port);
 
-	if (!_dst_input_port->is_connected_to(_src_output_port)) {
-		_error = NOT_CONNECTED;
-		QueuedEvent::pre_process();
-		return;
-	}
-	
 	NodeImpl* const src_node = _src_port->parent_node();
 	NodeImpl* const dst_node = _dst_port->parent_node();
 
@@ -125,6 +120,13 @@ DisconnectionEvent::pre_process()
 	}
 
 	assert(_patch);
+	
+	//if (_dst_input_port->is_connected_to(_src_output_port)) {
+	if (!_patch->has_connection(_src_output_port, _dst_input_port)) {
+		_error = NOT_CONNECTED;
+		QueuedEvent::pre_process();
+		return;
+	}
 
 	if (src_node == NULL || dst_node == NULL) {
 		_error = PARENTS_NOT_FOUND;
@@ -143,6 +145,8 @@ DisconnectionEvent::pre_process()
 			delete src_node->dependants()->erase(i);
 			break;
 		}
+			
+	_patch_connection = _patch->remove_connection(_src_port, _dst_port);
 	
 	if (_patch->enabled())
 		_compiled_patch = _patch->compile();
@@ -161,15 +165,23 @@ DisconnectionEvent::execute(ProcessContext& context)
 			= _dst_input_port->remove_connection(_src_output_port);
 		
 		if (port_connection != NULL) {
-			PatchImpl::Connections::Node* const patch_connection
-				= _patch->remove_connection(_src_port, _dst_port);
-			
-			assert(patch_connection);
-			assert(port_connection->elem() == patch_connection->elem());
+			assert(_patch_connection);
+
+			if (port_connection->elem() != _patch_connection->elem()) {
+				cerr << "ERROR: Corrupt connections:" << endl;
+				cerr << "\t" << port_connection->elem() << ": "
+					<< port_connection->elem()->src_port_path()
+					<< " -> " << port_connection->elem()->dst_port_path() << endl
+					<< "!=" << endl
+					<< "\t" << _patch_connection->elem() << ": "
+					<< _patch_connection->elem()->src_port_path()
+					<< " -> " << _patch_connection->elem()->dst_port_path() << endl;
+			}
+			assert(port_connection->elem() == _patch_connection->elem());
 			
 			// Destroy list node, which will drop reference to connection itself
 			_engine.maid()->push(port_connection);
-			_engine.maid()->push(patch_connection);
+			_engine.maid()->push(_patch_connection);
 	
 			if (_patch->compiled_patch() != NULL)
 				_engine.maid()->push(_patch->compiled_patch());

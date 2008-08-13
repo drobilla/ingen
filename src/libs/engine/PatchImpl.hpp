@@ -110,6 +110,8 @@ public:
 	void               add_connection(Connections::Node* c) { _connections.push_back(c); }
 	Connections::Node* remove_connection(const PortImpl* src_port, const PortImpl* dst_port);
 	
+	bool has_connection(const PortImpl* src_port, const PortImpl* dst_port) const;
+	
 	CompiledPatch* compiled_patch()                  { return _compiled_patch; }
 	void           compiled_patch(CompiledPatch* cp) { _compiled_patch = cp; }
 	
@@ -134,7 +136,7 @@ private:
 	Engine&         _engine;
 	uint32_t        _internal_poly;
 	CompiledPatch*  _compiled_patch; ///< Accessed in audio thread only
-	Connections     _connections;    ///< Accessed in audio thread only
+	Connections     _connections;    ///< Accessed in preprocessing thread only
 	List<PortImpl*> _input_ports;    ///< Accessed in preprocessing thread only
 	List<PortImpl*> _output_ports;   ///< Accessed in preprocessing thread only
 	Nodes           _nodes;          ///< Accessed in preprocessing thread only

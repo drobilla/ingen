@@ -289,12 +289,12 @@ PatchImpl::remove_node(const string& name)
 
 
 /** Remove a connection.
- * Process thread only.
+ * Preprocessing thread only.
  */
 PatchImpl::Connections::Node*
 PatchImpl::remove_connection(const PortImpl* src_port, const PortImpl* dst_port)
 {
-	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
+	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
 	bool found = false;
 	Connections::Node* connection = NULL;
 	for (Connections::iterator i = _connections.begin(); i != _connections.end(); ++i) {
@@ -310,6 +310,20 @@ PatchImpl::remove_connection(const PortImpl* src_port, const PortImpl* dst_port)
 		cerr << "WARNING:  [PatchImpl::remove_connection] Connection not found !" << endl;
 
 	return connection;
+}
+	
+
+bool
+PatchImpl::has_connection(const PortImpl* src_port, const PortImpl* dst_port) const
+{
+	// FIXME: Doesn't scale
+	for (Connections::const_iterator i = _connections.begin(); i != _connections.end(); ++i) {
+		ConnectionImpl* const c = (ConnectionImpl*)i->get();
+		if (c->src_port() == src_port && c->dst_port() == dst_port)
+			return true;
+	}
+
+	return false;
 }
 
 
