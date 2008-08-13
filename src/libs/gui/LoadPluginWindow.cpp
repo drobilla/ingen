@@ -278,10 +278,15 @@ void
 LoadPluginWindow::plugin_selection_changed()
 {
 	Gtk::TreeModel::iterator iter = _selection->get_selected();
-	Gtk::TreeModel::Row row = *iter;
-	boost::shared_ptr<PluginModel> p = row.get_value(_plugins_columns._col_plugin_model);
-	_plugin_name_offset = _patch->child_name_offset(p->default_node_name());
-	_node_name_entry->set_text(generate_module_name(_plugin_name_offset));
+	if (iter) {
+		Gtk::TreeModel::Row row = *iter;
+		boost::shared_ptr<PluginModel> p = row.get_value(_plugins_columns._col_plugin_model);
+		_plugin_name_offset = _patch->child_name_offset(p->default_node_name());
+		_node_name_entry->set_text(generate_module_name(_plugin_name_offset));
+	} else {
+		_plugin_name_offset = 0;
+		_node_name_entry->set_text("");
+	}
 }
 
 
