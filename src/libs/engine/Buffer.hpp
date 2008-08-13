@@ -36,6 +36,8 @@ public:
 		, _size(size)
 		, _joined_buf(NULL)
 	{}
+	
+	static Buffer* create(Shared::DataType type, size_t size);
 
 	/** Clear contents and reset state */
 	virtual void clear() = 0;
@@ -43,7 +45,7 @@ public:
 	virtual void*       raw_data()       = 0;
 	virtual const void* raw_data() const = 0;
 
-	/** Rewing (ie reset read pointer), but leave contents unchanged */
+	/** Rewind (ie reset read pointer), but leave contents unchanged */
 	virtual void rewind() const = 0;
 
 	virtual void prepare_read(FrameTime start, SampleCount nframes) = 0;

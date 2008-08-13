@@ -15,16 +15,14 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "BufferFactory.hpp"
 #include "AudioBuffer.hpp"
 #include "EventBuffer.hpp"
 
 namespace Ingen {
-namespace BufferFactory {
 
 
 Buffer*
-create(DataType type, size_t size)
+Buffer::create(DataType type, size_t size)
 {
 	if (type.is_control())
 		return new AudioBuffer(1);
@@ -37,5 +35,4 @@ create(DataType type, size_t size)
 }
 
 
-} // namespace BufferFactory
 } // namespace Ingen

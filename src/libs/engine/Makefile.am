@@ -34,9 +34,8 @@ libingen_engine_la_SOURCES = \
 	AudioBuffer.cpp \
 	AudioBuffer.hpp \
 	AudioDriver.hpp \
+	Buffer.cpp \
 	Buffer.hpp \
-	BufferFactory.cpp \
-	BufferFactory.hpp \
 	ClientBroadcaster.cpp \
 	ClientBroadcaster.hpp \
 	CompiledPatch.hpp \

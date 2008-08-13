@@ -23,7 +23,6 @@
 #include "interface/DataType.hpp"
 #include "AudioBuffer.hpp"
 #include "EventBuffer.hpp"
-#include "BufferFactory.hpp"
 #include "ProcessContext.hpp"
 #include "SendPortActivityEvent.hpp"
 
@@ -96,7 +95,7 @@ PortImpl::prepare_poly(uint32_t poly)
 	if (poly > _poly) {
 		_prepared_buffers = new Raul::Array<Buffer*>(poly, *_buffers);
 		for (uint32_t i = _poly; i < _prepared_buffers->size(); ++i)
-			_prepared_buffers->at(i) = BufferFactory::create(_type, _buffer_size);
+			_prepared_buffers->at(i) = Buffer::create(_type, _buffer_size);
 	}
 
 	return true;
@@ -131,7 +130,7 @@ PortImpl::allocate_buffers()
 	_buffers->alloc(_poly);
 
 	for (uint32_t i=0; i < _poly; ++i)
-		_buffers->at(i) = BufferFactory::create(_type, _buffer_size);
+		_buffers->at(i) = Buffer::create(_type, _buffer_size);
 }
 
 

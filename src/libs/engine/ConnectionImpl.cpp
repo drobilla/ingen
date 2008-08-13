@@ -21,7 +21,6 @@
 #include "ConnectionImpl.hpp"
 #include "NodeImpl.hpp"
 #include "PortImpl.hpp"
-#include "BufferFactory.hpp"
 #include "AudioBuffer.hpp"
 #include "ProcessContext.hpp"
 
@@ -60,7 +59,7 @@ ConnectionImpl::ConnectionImpl(PortImpl* src_port, PortImpl* dst_port)
 		_must_mix = false; // FIXME: kludge
 
 	if (_must_mix)
-		_local_buffer = BufferFactory::create(dst_port->type(), dst_port->buffer(0)->size());
+		_local_buffer = Buffer::create(dst_port->type(), dst_port->buffer(0)->size());
 
 	/* FIXME: 1->1 connections with a destination with fixed buffers copies unecessarily */
 	//cerr << src_port->path() << " -> " << dst_port->path() << " must mix: " << _must_mix << endl;
@@ -80,7 +79,7 @@ ConnectionImpl::set_buffer_size(size_t size)
 		assert(_local_buffer);
 		delete _local_buffer;
 
-		_local_buffer = BufferFactory::create(_dst_port->type(), _dst_port->buffer(0)->size());
+		_local_buffer = Buffer::create(_dst_port->type(), _dst_port->buffer(0)->size());
 	}
 	
 	_buffer_size = size;
@@ -101,7 +100,7 @@ ConnectionImpl::prepare_poly(uint32_t poly)
 			<< "\t\tmust mix: " << _must_mix << " at poly " << poly << endl;*/
 
 	if (_must_mix && ! _local_buffer)
-		_local_buffer = BufferFactory::create(_dst_port->type(), _dst_port->buffer(0)->size());
+		_local_buffer = Buffer::create(_dst_port->type(), _dst_port->buffer(0)->size());
 }
 
 
