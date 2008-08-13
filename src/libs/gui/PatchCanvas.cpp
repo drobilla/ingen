@@ -475,32 +475,17 @@ PatchCanvas::canvas_event(GdkEvent* event)
 bool
 PatchCanvas::canvas_key_event(GdkEventKey* event)
 {
-	static bool control_modded = false;
-
 	switch (event->type) {
 	case GDK_KEY_PRESS:
 		switch (event->keyval) {
 		case GDK_Delete:
 			destroy_selection();
 			return true;
-		case GDK_Control_L:
-		case GDK_Control_R:
-			if (_patch->get_editable() == true) {
-				control_modded = true;
+		case GDK_e:
+			if (_patch->get_editable() == true)
 				_patch->set_editable(false);
-			}
-			return true;
-		default:
-			return false;
-		}
-	case GDK_KEY_RELEASE:
-		switch (event->keyval) {
-		case GDK_Control_L:
-		case GDK_Control_R:
-			if (_patch->get_editable() == false && control_modded) {
-				control_modded = false;
+			else
 				_patch->set_editable(true);
-			}
 			return true;
 		default:
 			return false;
