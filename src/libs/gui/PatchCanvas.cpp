@@ -186,7 +186,6 @@ PatchCanvas::build_plugin_class_menu(Gtk::Menu* menu,
 		}
 	}
 	
-
 	const Store::Plugins& plugins = App::instance().store()->plugins();
 
 	// Add LV2 plugins
@@ -216,8 +215,6 @@ PatchCanvas::build_plugin_class_menu(Gtk::Menu* menu,
 void
 PatchCanvas::build_plugin_menu()
 {
-	Glib::Mutex::Lock lock(PluginModel::rdf_world()->mutex());
-
 	_menu->items().push_back(Gtk::Menu_Helpers::ImageMenuElem("Plugin",
 			*(manage(new Gtk::Image(Gtk::Stock::EXECUTE, Gtk::ICON_SIZE_MENU)))));
 	Gtk::MenuItem* plugin_menu_item = &(_menu->items().back());
@@ -225,6 +222,7 @@ PatchCanvas::build_plugin_menu()
 	plugin_menu_item->set_submenu(*plugin_menu);
 	_menu->reorder_child(*plugin_menu_item, 3);
 
+	Glib::Mutex::Lock lock(PluginModel::rdf_world()->mutex());
 	SLV2PluginClass lv2_plugin = slv2_world_get_plugin_class(PluginModel::slv2_world());
 	SLV2PluginClasses classes = slv2_world_get_plugin_classes(PluginModel::slv2_world());
 
