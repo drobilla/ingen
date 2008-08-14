@@ -115,7 +115,6 @@ ConnectWindow::start(Ingen::Shared::World* world)
 	
 	set_connected_to(world->engine);
 
-	show();
 	connect();
 }
 
@@ -197,7 +196,7 @@ ConnectWindow::connect()
 			sigc::mem_fun(App::instance(), &App::gtk_main_iteration), 40, G_PRIORITY_DEFAULT);
 
 		Glib::signal_timeout().connect(
-			sigc::mem_fun(this, &ConnectWindow::gtk_callback), 100);
+			sigc::mem_fun(this, &ConnectWindow::gtk_callback), 40);
 
 	} else if (_mode == LAUNCH_REMOTE) {
 
@@ -218,7 +217,7 @@ ConnectWindow::connect()
 					sigc::mem_fun(App::instance(), &App::gtk_main_iteration), 40, G_PRIORITY_DEFAULT);
 
 			Glib::signal_timeout().connect(
-					sigc::mem_fun(this, &ConnectWindow::gtk_callback), 100);
+					sigc::mem_fun(this, &ConnectWindow::gtk_callback), 40);
 
 		} else {
 			cerr << "Failed to launch ingen process." << endl;
@@ -244,7 +243,7 @@ ConnectWindow::connect()
 			sigc::mem_fun(App::instance(), &App::gtk_main_iteration), 40, G_PRIORITY_DEFAULT);
 		
 		Glib::signal_timeout().connect(
-			sigc::mem_fun(this, &ConnectWindow::gtk_callback), 100);
+			sigc::mem_fun(this, &ConnectWindow::gtk_callback), 10);
 	}
 }
 
@@ -264,6 +263,15 @@ ConnectWindow::disconnect()
 	
 	_connect_button->set_sensitive(true);
 	_disconnect_button->set_sensitive(false);
+}
+
+
+void
+ConnectWindow::on_hide()
+{
+	Gtk::Dialog::on_hide();
+	if (!_attached)
+		Gtk::Main::quit();
 }
 
 
@@ -330,20 +338,18 @@ ConnectWindow::gtk_callback()
 		assert(App::instance().engine());
 		assert(App::instance().client());
 
-		_progress_label->set_text("Connecting to engine...");
-		present();
-
 		App::instance().client()->signal_response_ok.connect(
 				sigc::mem_fun(this, &ConnectWindow::response_ok_received));
 		
-		_ping_id = rand();
-		while (_ping_id == -1)
-			_ping_id = rand();
-
+		_ping_id = rand() * 2;
 		App::instance().engine()->set_next_response_id(_ping_id);
 		App::instance().engine()->ping();
-		++_connect_stage;
+		
+		_progress_label->set_text("Connecting to engine...");
+		_progress_bar->set_pulse_step(0.01);
+		present();
 
+		++_connect_stage;
 
 	} else if (_connect_stage == 1) {
 		if (_attached) {
@@ -359,8 +365,8 @@ ConnectWindow::gtk_callback()
 			}
 		}
 	} else if (_connect_stage == 2) {
-		_progress_label->set_text(string("Requesting root patch..."));
 		App::instance().engine()->request_all_objects();
+		_progress_label->set_text(string("Requesting root patch..."));
 		++_connect_stage;
 	} else if (_connect_stage == 3) {
 		if (App::instance().store()->objects().size() > 0) {
@@ -368,20 +374,16 @@ ConnectWindow::gtk_callback()
 			if (root) {
 				set_connected_to(App::instance().engine());
 				App::instance().window_factory()->present_patch(root);
+				App::instance().engine()->load_plugins();
+				_progress_label->set_text(string("Loading plugins..."));
 				++_connect_stage;
 			}
 		}
 	} else if (_connect_stage == 4) {
-		_progress_label->set_text(string("Loading plugins..."));
-		App::instance().engine()->load_plugins();
-		++_connect_stage;
-	} else if (_connect_stage == 5) {
 		App::instance().engine()->request_plugins();
-		++_connect_stage;
-	} else if (_connect_stage == 6) {
+		hide();
 		_progress_label->set_text("Connected to engine");
 		_connect_stage = 0; // set ourselves up for next time (if there is one)
-		hide();
 		return false; // deregister this callback
 	}
 	
