@@ -66,7 +66,7 @@ public:
 	void post_process();
 
 private:
-	enum ErrorType { NO_ERROR, PORT_NOT_FOUND, NO_SPACE, ILLEGAL_PATH };
+	enum ErrorType { NO_ERROR, PORT_NOT_FOUND, NO_SPACE, ILLEGAL_PATH, ILLEGAL_VOICE };
 	
 	bool         _queued;
 	bool         _omni;

@@ -71,6 +71,7 @@ SetPortValueEvent::SetPortValueEvent(Engine&              engine,
 	, _queued(queued)
 	, _omni(false)
 	, _voice_num(voice_num)
+	, _port_path(port_path)
 	, _data_type(data_type)
 	, _data_size(data_size)
 	, _data(malloc(data_size))
@@ -128,12 +129,16 @@ SetPortValueEvent::execute(ProcessContext& context)
 		Buffer* const buf = _port->buffer(0);
 		AudioBuffer* const abuf = dynamic_cast<AudioBuffer*>(buf);
 		if (abuf) {
-			if (_omni)
+			if (_omni) {
 				for (uint32_t i=0; i < _port->poly(); ++i)
 					((AudioBuffer*)_port->buffer(i))->set_value(*(float*)_data, context.start(), _time);
-			else
-				((AudioBuffer*)_port->buffer(_voice_num))->set_value(*(float*)_data, context.start(), _time);
-
+			} else {
+				if (_voice_num < _port->poly())
+					((AudioBuffer*)_port->buffer(_voice_num))->set_value(
+							*(float*)_data, context.start(), _time);
+				else
+					_error = ILLEGAL_VOICE;
+			}
 			return;
 		}
 		
@@ -171,6 +176,11 @@ SetPortValueEvent::post_process()
 		string msg = "Illegal port path \"";
 		msg.append(_port_path).append("\"");
 		_responder->respond_error(msg);
+	
+	} else if (_error == ILLEGAL_VOICE) {
+		std::ostringstream ss;
+		ss << "Illegal voice number " << _voice_num;
+		_responder->respond_error(ss.str());
 		
 	} else if (_error == PORT_NOT_FOUND) {
 		string msg = "Unable to find port ";
