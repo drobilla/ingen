@@ -359,57 +359,33 @@ ConnectWindow::gtk_callback()
 			}
 		}
 	} else if (_connect_stage == 2) {
+		_progress_label->set_text(string("Requesting root patch..."));
+		App::instance().engine()->request_all_objects();
+		++_connect_stage;
+	} else if (_connect_stage == 3) {
+		if (App::instance().store()->objects().size() > 0) {
+			SharedPtr<PatchModel> root = PtrCast<PatchModel>(App::instance().store()->object("/"));
+			if (root) {
+				set_connected_to(App::instance().engine());
+				App::instance().window_factory()->present_patch(root);
+				++_connect_stage;
+			}
+		}
+	} else if (_connect_stage == 4) {
 		_progress_label->set_text(string("Loading plugins..."));
 		App::instance().engine()->load_plugins();
 		++_connect_stage;
-	} else if (_connect_stage == 3) {
-		//_progress_label->set_text(string("Requesting plugins..."));
+	} else if (_connect_stage == 5) {
 		App::instance().engine()->request_plugins();
 		++_connect_stage;
-	} else if (_connect_stage == 4) {
-		// Wait for first plugin message
-		if (App::instance().store()->plugins().size() > 0) {
-			_progress_label->set_text(string("Receiving plugins..."));
-			++_connect_stage;
-		}
-	} else if (_connect_stage == 5) {
-		// FIXME
-		/*if (App::instance().store().plugins().size() < _client->num_plugins()) {
-			static char buf[32];
-			snprintf(buf, 32, "%zu/%zu", App::instance().store().plugins().size(),
-				ThreadedSigClientInterface::instance()->num_plugins());
-			_progress_bar->set_text(Glib::ustring(buf));
-			_progress_bar->set_fraction(
-				App::instance().store().plugins().size() / (double)_client->num_plugins());
-		} else {*/
-			_progress_bar->set_text("");
-			++_connect_stage;
-		//}
 	} else if (_connect_stage == 6) {
-		_progress_label->set_text(string("Waiting for root patch..."));
-		App::instance().engine()->request_all_objects();
-		++_connect_stage;
-	} else if (_connect_stage == 7) {
-		if (App::instance().store()->objects().size() > 0) {
-			SharedPtr<PatchModel> root = PtrCast<PatchModel>(App::instance().store()->object("/"));
-			assert(root);
-			App::instance().window_factory()->present_patch(root);
-			++_connect_stage;
-		}
-	} else if (_connect_stage == 8) {
 		_progress_label->set_text("Connected to engine");
-		++_connect_stage;
-	} else if (_connect_stage == 9) {
-		++_connect_stage;
-		hide();
-	} else if (_connect_stage == 10) {
-		set_connected_to(App::instance().engine());
 		_connect_stage = 0; // set ourselves up for next time (if there is one)
+		hide();
 		return false; // deregister this callback
 	}
 	
-	if (_connect_stage != 5) // yeah, ew
-		_progress_bar->pulse();
+	_progress_bar->pulse();
 	
 	if (_connect_stage == -1) { // we were cancelled
 		_icon->set(Gtk::Stock::DISCONNECT, Gtk::ICON_SIZE_LARGE_TOOLBAR);
