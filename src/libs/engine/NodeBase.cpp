@@ -209,19 +209,6 @@ NodeBase::pre_process(ProcessContext& context)
 	// Mix down any ports with multiple inputs
 	for (size_t i=0; i < num_ports(); ++i)
 		_ports->at(i)->pre_process(context);
-	
-	// Connect port buffers (FIXME: NOT NECESSARY!)
-	if (polyphonic()) {
-		for (uint32_t i=0; i < _polyphony; ++i) {
-			for (uint32_t j=0; j < num_ports(); ++j) {
-				assert(_ports->at(j)->poly() == _polyphony);
-				set_port_buffer(i, j, _ports->at(j)->buffer(i));
-			}
-		}
-	} else {
-		for (uint32_t j=0; j < num_ports(); ++j)
-			set_port_buffer(0, j, _ports->at(j)->buffer(0));
-	}
 }
 
 
