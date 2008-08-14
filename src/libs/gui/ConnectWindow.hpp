@@ -65,15 +65,22 @@ private:
 	void disconnect();
 	void connect();
 	void quit();
+	void on_show();
 	void on_hide();
 
+	void load_widgets();
+	void set_connecting_widget_states();
+
 	bool gtk_callback();
+
+	const Glib::RefPtr<Gnome::Glade::Xml> _xml;
 
 	Mode    _mode;
 	int32_t _ping_id;
 	bool    _attached;
 	
-	int _connect_stage;
+	bool _widgets_loaded;
+	int  _connect_stage;
 
 	SharedPtr<Glib::Module> _engine_module;
 	Ingen::Engine* (*_new_engine)(Ingen::Shared::World* world);

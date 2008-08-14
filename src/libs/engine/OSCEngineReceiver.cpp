@@ -257,7 +257,9 @@ OSCEngineReceiver::error_cb(int num, const char* msg, const char* path)
 int
 OSCEngineReceiver::_ping_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	_responder->respond_ok();
+	const lo_address addr = lo_message_get_source(msg);
+	if (lo_send(addr, "/ingen/ok", "i", argv[0]->i) < 0)
+		cerr << "WARNING: Unable to send response: " << lo_address_errstr(addr) << endl;
 	return 0;
 }
 
