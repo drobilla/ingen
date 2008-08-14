@@ -52,6 +52,7 @@ Port::Port(boost::shared_ptr<FlowCanvas::Module> module, SharedPtr<PortModel> pm
 	_port_model->signal_renamed.connect(sigc::mem_fun(this, &Port::renamed));
 
 	if (pm->type().is_control()) {
+		set_toggled(pm->is_toggle());
 		show_control();
 		
 		float min = 0.0f, max = 1.0f;
@@ -129,6 +130,8 @@ Port::variable_changed(const string& key, const Atom& value)
 		set_control_min(value.get_float());
 	else if ( (key == "ingen:maximum") && value.type() == Atom::FLOAT)
 		set_control_max(value.get_float());
+	else if ( (key == "ingen:toggled") && value.type() == Atom::BOOL)
+		set_toggled(value.get_bool());
 }
 
 
