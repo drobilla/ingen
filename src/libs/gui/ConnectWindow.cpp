@@ -70,19 +70,6 @@ ConnectWindow::ConnectWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::
 	, _connect_stage(0)
 	, _new_engine(NULL)
 {
-	_engine_module = Ingen::Shared::load_module("ingen_engine");
-
-	if (!_engine_module) {
-		cerr << "Unable to load ingen_engine module, internal engine unavailable." << endl;
-		cerr << "If you are running from the source tree, run ingenuity_dev." << endl;
-	}
-
-	bool found = _engine_module->get_symbol("new_engine", (void*&)_new_engine);
-
-	if (!found) {
-		cerr << "Unable to find module entry point, internal engine unavailable." << endl;
-		_engine_module.reset();
-	}
 }
 
 
@@ -218,9 +205,10 @@ ConnectWindow::connect()
 
 	} else if (_mode == INTERNAL) {
 		Ingen::Shared::World* world = App::instance().world();
-		assert(_new_engine);
-		if ( ! world->local_engine)
+		if ( ! world->local_engine) {
+			assert(_new_engine);
 			world->local_engine = SharedPtr<Engine>(_new_engine(world));
+		}
 		
 		if ( ! world->engine)
 			world->engine = world->local_engine->new_queued_interface();
@@ -297,9 +285,18 @@ ConnectWindow::load_widgets()
 	_connect_button->signal_clicked().connect(sigc::mem_fun(this, &ConnectWindow::connect));
 	_quit_button->signal_clicked().connect(sigc::mem_fun(this, &ConnectWindow::quit));
 	
-	_widgets_loaded = true;
-			
 	_progress_bar->set_pulse_step(0.01);
+	_widgets_loaded = true;
+	
+	_engine_module = Ingen::Shared::load_module("ingen_engine");
+	if (!_engine_module)
+		cerr << "Unable to load ingen_engine module, internal engine unavailable." << endl;
+	bool found = _engine_module->get_symbol("new_engine", (void*&)_new_engine);
+	if (!found) {
+		cerr << "Unable to find module entry point, internal engine unavailable." << endl;
+		_engine_module.reset();
+	}
+
     server_toggled();
 }
 

@@ -268,7 +268,7 @@ NodeFactory::load_ladspa_plugins()
 					_plugins.insert(make_pair(uri, plugin));
 
 				} else {
-					cerr << "Warning: Duplicate LADSPA plugin" << uri
+					cerr << "Warning: Duplicate " << uri
 					     << " - Using " << i->second->library_path()
 					     << " over " << lib_path << endl;
 				}
