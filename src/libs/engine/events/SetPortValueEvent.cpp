@@ -91,10 +91,14 @@ void
 SetPortValueEvent::pre_process()
 {
 	if (_queued) {
-		if (_port == NULL)
-			_port = _engine.object_store()->find_port(_port_path);
+		if (_port == NULL) {
+			if (Path::is_valid(_port_path))
+				_port = _engine.object_store()->find_port(_port_path);
+			else
+				_error = ILLEGAL_PATH;
+		}
 
-		if (_port == NULL)
+		if (_port == NULL && _error == NO_ERROR)
 			_error = PORT_NOT_FOUND;
 	}
 	
@@ -108,11 +112,16 @@ SetPortValueEvent::execute(ProcessContext& context)
 	Event::execute(context);
 	assert(_time >= context.start() && _time <= context.end());
 
-	if (_port == NULL)
-		_port = _engine.object_store()->find_port(_port_path);
+	if (_error == NO_ERROR && _port == NULL) {
+		if (Path::is_valid(_port_path))
+			_port = _engine.object_store()->find_port(_port_path);
+		else
+			_error = ILLEGAL_PATH;
+	}
 
 	if (_port == NULL) {
-		_error = PORT_NOT_FOUND;
+		if (_error == NO_ERROR)
+			_error = PORT_NOT_FOUND;
 	/*} else if (_port->buffer(0)->capacity() < _data_size) {
 		_error = NO_SPACE;*/
 	} else {
@@ -155,9 +164,13 @@ SetPortValueEvent::post_process()
 {
 	if (_error == NO_ERROR) {
 		assert(_port != NULL);
-		
 		_responder->respond_ok();
 		_engine.broadcaster()->send_control_change(_port_path, *(float*)_data);
+	
+	} else if (_error == ILLEGAL_PATH) {
+		string msg = "Illegal port path \"";
+		msg.append(_port_path).append("\"");
+		_responder->respond_error(msg);
 		
 	} else if (_error == PORT_NOT_FOUND) {
 		string msg = "Unable to find port ";
