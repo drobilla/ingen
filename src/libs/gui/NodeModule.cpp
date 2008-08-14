@@ -210,7 +210,7 @@ bool
 NodeModule::popup_gui()
 {
 #ifdef HAVE_SLV2
-	if (_node->plugin()->type() == PluginModel::LV2) {
+	if (_node->plugin() && _node->plugin()->type() == PluginModel::LV2) {
 		if (_plugin_ui) {
 			cerr << "LV2 GUI already embedded, cannot pop up" << endl;
 			return false;
