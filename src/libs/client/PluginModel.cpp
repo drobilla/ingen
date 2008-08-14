@@ -50,9 +50,9 @@ PluginModel::ui(Ingen::Shared::World* world, SharedPtr<NodeModel> node) const
 	if (_type != LV2)
 		return SharedPtr<PluginUI>();
 
-	Glib::Mutex::Lock(_rdf_world->mutex());
-
-	return PluginUI::create(world, node, _slv2_plugin);
+	Glib::Mutex::Lock lock(_rdf_world->mutex());
+	SharedPtr<PluginUI> ret = PluginUI::create(world, node, _slv2_plugin);
+	return ret;
 }
 
 
@@ -69,6 +69,8 @@ PluginModel::icon_path() const
 string
 PluginModel::get_lv2_icon_path(SLV2Plugin plugin)
 {
+	Glib::Mutex::Lock lock(_rdf_world->mutex());
+
 	string result;
 	SLV2Value svg_icon_pred = slv2_value_new_uri(_slv2_world,
 		"http://ll-plugins.nongnu.org/lv2/namespace#svgIcon");

@@ -216,7 +216,7 @@ PatchCanvas::build_plugin_class_menu(Gtk::Menu* menu,
 void
 PatchCanvas::build_plugin_menu()
 {
-	Glib::Mutex::Lock(PluginModel::rdf_world()->mutex());
+	Glib::Mutex::Lock lock(PluginModel::rdf_world()->mutex());
 
 	_menu->items().push_back(Gtk::Menu_Helpers::ImageMenuElem("Plugin",
 			*(manage(new Gtk::Image(Gtk::Stock::EXECUTE, Gtk::ICON_SIZE_MENU)))));

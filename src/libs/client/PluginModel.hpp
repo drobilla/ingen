@@ -55,6 +55,7 @@ public:
 		, _name(name)
 	{
 #ifdef HAVE_SLV2
+		Glib::Mutex::Lock lock(_rdf_world->mutex());
 		SLV2Value plugin_uri = slv2_value_new_uri(_slv2_world, uri.c_str());
 		_slv2_plugin = slv2_plugins_get_by_uri(_slv2_plugins, plugin_uri);
 		slv2_value_free(plugin_uri);
@@ -89,10 +90,12 @@ public:
 	SLV2Plugin       slv2_plugin() { return _slv2_plugin; }
 
 	SLV2Port slv2_port(uint32_t index) {
+		Glib::Mutex::Lock lock(_rdf_world->mutex());
 		return slv2_plugin_get_port_by_index(_slv2_plugin, index);
 	}
 
 	static void set_slv2_world(SLV2World world) {
+		Glib::Mutex::Lock lock(_rdf_world->mutex());
 		_slv2_world = world; 
 		_slv2_plugins = slv2_world_get_all_plugins(_slv2_world);
 	}

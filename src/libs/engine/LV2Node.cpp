@@ -108,9 +108,7 @@ LV2Node::apply_poly(Raul::Maid& maid, uint32_t poly)
 	assert(poly <= _instances->size());
 	_polyphony = poly;
 	
-	NodeBase::apply_poly(maid, poly);
-
-	return true;
+	return NodeBase::apply_poly(maid, poly);
 }
 
 

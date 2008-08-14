@@ -122,9 +122,14 @@ NodeBase::apply_poly(Raul::Maid& maid, uint32_t poly)
 	if (!_polyphonic)
 		return true;
 
-	if (_ports)
-		for (size_t i=0; i < _ports->size(); ++i)
-			_ports->at(i)->apply_poly(maid, poly);
+	for (size_t i=0; i < num_ports(); ++i) {
+		_ports->at(i)->apply_poly(maid, poly);
+		assert(_ports->at(i)->poly() == poly);
+	}
+	
+	for (uint32_t i=0; i < num_ports(); ++i)
+		for (uint32_t j=0; j < _polyphony; ++j)
+			set_port_buffer(j, i, _ports->at(i)->buffer(j));
 		
 	return true;
 }
@@ -202,9 +207,21 @@ NodeBase::pre_process(ProcessContext& context)
 	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
 
 	// Mix down any ports with multiple inputs
-	if (_ports)
-		for (size_t i=0; i < _ports->size(); ++i)
-			_ports->at(i)->pre_process(context);
+	for (size_t i=0; i < num_ports(); ++i)
+		_ports->at(i)->pre_process(context);
+	
+	// Connect port buffers (FIXME: NOT NECESSARY!)
+	if (polyphonic()) {
+		for (uint32_t i=0; i < _polyphony; ++i) {
+			for (uint32_t j=0; j < num_ports(); ++j) {
+				assert(_ports->at(j)->poly() == _polyphony);
+				set_port_buffer(i, j, _ports->at(j)->buffer(i));
+			}
+		}
+	} else {
+		for (uint32_t j=0; j < num_ports(); ++j)
+			set_port_buffer(0, j, _ports->at(j)->buffer(0));
+	}
 }
 
 

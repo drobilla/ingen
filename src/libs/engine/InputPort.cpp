@@ -57,6 +57,19 @@ InputPort::set_buffer_size(size_t size)
 
 	
 bool
+InputPort::prepare_poly(uint32_t poly)
+{
+	PortImpl::prepare_poly(poly);
+
+	for (Connections::iterator c = _connections.begin(); c != _connections.end(); ++c)
+		((ConnectionImpl*)c->get())->prepare_poly(poly);
+
+	connect_buffers();
+	return true;
+}
+	
+
+bool
 InputPort::apply_poly(Raul::Maid& maid, uint32_t poly)
 {
 	if (!_polyphonic || !_parent->polyphonic())
@@ -65,7 +78,18 @@ InputPort::apply_poly(Raul::Maid& maid, uint32_t poly)
 	for (Connections::iterator c = _connections.begin(); c != _connections.end(); ++c)
 		((ConnectionImpl*)c->get())->apply_poly(maid, poly);
 
-	return PortImpl::apply_poly(maid, poly);
+	PortImpl::apply_poly(maid, poly);
+	assert(this->poly() == poly);
+		
+	if (_connections.size() == 1) {
+		ConnectionImpl* c = _connections.begin()->get();
+		for (uint32_t i=0; i < _poly; ++i)
+			_buffers->at(i)->join(c->buffer(i));
+	}
+		
+	connect_buffers();
+
+	return true;
 }
 
 

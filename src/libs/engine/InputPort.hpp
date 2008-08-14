@@ -64,6 +64,7 @@ public:
 
 	const Connections& connections() { return _connections; }
 	
+	bool prepare_poly(uint32_t poly);
 	bool apply_poly(Raul::Maid& maid, uint32_t poly);
 
 	void pre_process(ProcessContext& context);

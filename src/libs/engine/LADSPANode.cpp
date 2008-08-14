@@ -99,9 +99,7 @@ LADSPANode::apply_poly(Raul::Maid& maid, uint32_t poly)
 	assert(poly <= _instances->size());
 	_polyphony = poly;
 	
-	NodeBase::apply_poly(maid, poly);
-
-	return true;
+	return NodeBase::apply_poly(maid, poly);
 }
 
 	
@@ -272,7 +270,7 @@ void
 LADSPANode::process(ProcessContext& context)
 {
 	NodeBase::pre_process(context);
-
+	
 	for (uint32_t i=0; i < _polyphony; ++i) 
 		_descriptor->run((*_instances)[i], context.nframes());
 	

@@ -167,7 +167,7 @@ NodeModel::port_value_range(SharedPtr<PortModel> port, float& min, float& max)
 
 		if (!_min_values) {
 		  
-		  Glib::Mutex::Lock(PluginModel::rdf_world()->mutex());
+		  Glib::Mutex::Lock lock(PluginModel::rdf_world()->mutex());
 		  
 		  uint32_t num_lv2_ports = slv2_plugin_get_num_ports(_plugin->slv2_plugin());
 		  _min_values = new float[num_lv2_ports];

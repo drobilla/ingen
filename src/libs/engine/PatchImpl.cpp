@@ -123,9 +123,6 @@ PatchImpl::apply_internal_poly(Raul::Maid& maid, uint32_t poly)
 	for (List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		(*i)->apply_poly(maid, poly);
 	
-	for (Connections::iterator i = _connections.begin(); i != _connections.end(); ++i)
-		PtrCast<ConnectionImpl>(*i)->apply_poly(maid, poly);
-
 	_internal_poly = poly;
 	
 	return true;

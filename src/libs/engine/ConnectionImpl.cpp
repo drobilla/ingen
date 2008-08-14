@@ -92,6 +92,8 @@ ConnectionImpl::set_buffer_size(size_t size)
 void
 ConnectionImpl::prepare_poly(uint32_t poly)
 {
+	_src_port->prepare_poly(poly);
+
 	if (type() == DataType::CONTROL || type() == DataType::AUDIO)
 		_must_mix = (poly > 1) && (
 				   (_src_port->poly() != _dst_port->poly())
@@ -110,6 +112,7 @@ ConnectionImpl::prepare_poly(uint32_t poly)
 void
 ConnectionImpl::apply_poly(Raul::Maid& maid, uint32_t poly)
 {
+	_src_port->apply_poly(maid, poly);
 	if (poly == 1 && _local_buffer && !_must_mix) {
 		maid.push(_local_buffer);
 		_local_buffer = NULL;

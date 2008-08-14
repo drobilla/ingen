@@ -58,6 +58,8 @@ PortImpl::PortImpl(NodeImpl* const node,
 
 	if (node->parent() == NULL)
 		_polyphonic = false;
+	else
+		_polyphonic = true;
 	
 	if (type == DataType::EVENT)
 		_broadcast = true; // send activity blips
@@ -117,8 +119,8 @@ PortImpl::apply_poly(Raul::Maid& maid, uint32_t poly)
 	}
 
 	_poly = poly;
-
-	connect_buffers();
+	assert(_buffers->size() >= poly);
+	assert(this->poly() == poly);
 
 	return true;
 }
