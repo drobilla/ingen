@@ -50,7 +50,6 @@ PluginModel::ui(Ingen::Shared::World* world, SharedPtr<NodeModel> node) const
 	if (_type != LV2)
 		return SharedPtr<PluginUI>();
 
-	Glib::Mutex::Lock lock(_rdf_world->mutex());
 	SharedPtr<PluginUI> ret = PluginUI::create(world, node, _slv2_plugin);
 	return ret;
 }
