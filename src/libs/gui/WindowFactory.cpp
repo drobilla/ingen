@@ -225,7 +225,7 @@ WindowFactory::new_control_window(SharedPtr<NodeModel> node)
 {
 	uint32_t poly = 1;
 	if (node->polyphonic() && node->parent())
-		poly = ((PatchModel*)node->parent().get())->poly();
+		poly = ((PatchModel*)node->parent().get())->internal_polyphony();
 
 	NodeControlWindow* win = new NodeControlWindow(node, poly);
 

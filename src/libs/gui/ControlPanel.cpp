@@ -62,10 +62,14 @@ ControlPanel::init(SharedPtr<NodeModel> node, uint32_t poly)
 	assert(node != NULL);
 	assert(poly > 0);
 	
+	cout << "CONTROL PANEL " << poly << endl;
+
 	if (node->polyphonic()) {
+		cout << "POLY" << endl;
 		_voice_spinbutton->set_range(0, poly - 1);
 		_voice_control_box->show();
 	} else {
+		cout << "NO POLY" << endl;
 		//remove(*_voice_control_box);
 		_voice_control_box->hide();
 	}
@@ -73,12 +77,16 @@ ControlPanel::init(SharedPtr<NodeModel> node, uint32_t poly)
 	for (PortModelList::const_iterator i = node->ports().begin(); i != node->ports().end(); ++i) {
 		add_port(*i);
 	}
+		
+	node->signal_polyphonic.connect(
+		sigc::mem_fun(this, &ControlPanel::polyphonic_changed));
 
-	if (node->parent())
+	if (node->parent()) {
 		((PatchModel*)node->parent().get())->signal_polyphony.connect(
 				sigc::mem_fun(this, &ControlPanel::polyphony_changed));
-	else
+	} else {
 		cerr << "[ControlPanel] No parent, polyphonic controls disabled" << endl;
+	}
 	
 	_callback_enabled = true;
 }
@@ -237,7 +245,7 @@ ControlPanel::value_changed(SharedPtr<PortModel> port, float val)
 					sizeof(float), &val);
 			port->value(val);
 		} else {
-			int voice = _voice_spinbutton->get_value_as_int();
+			int voice = _voice_spinbutton->get_value_as_int() - 1;
 			App::instance().engine()->set_port_value_immediate(port->path(), "ingen:Float",
 					voice, sizeof(float), &val);
 			port->value(val);
@@ -263,8 +271,17 @@ ControlPanel::specific_voice_selected()
 void
 ControlPanel::polyphony_changed(uint32_t poly)
 {
-	cerr << "POLY CHANGED" << endl;
 	_voice_spinbutton->set_range(0, poly - 1);
+}
+
+
+void
+ControlPanel::polyphonic_changed(bool poly)
+{
+	if (poly)
+		_voice_control_box->show();
+	else
+		_voice_control_box->hide();
 }
 
 	

@@ -50,11 +50,12 @@ NodeControlWindow::NodeControlWindow(SharedPtr<NodeModel> node, uint32_t poly)
 	Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference("warehouse_win");
 	xml->get_widget_derived("control_panel_vbox", _control_panel);
 	
-	_control_panel->reparent(*this);
-	
-	_control_panel->init(_node, poly);
-	
 	show_all_children();
+	
+	_control_panel->reparent(*this);
+	_control_panel->init(_node, poly);
+	_control_panel->show();
+
 	resize();
 	
 	_callback_enabled = true;

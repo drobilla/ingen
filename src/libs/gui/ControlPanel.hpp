@@ -74,6 +74,7 @@ private:
 	void all_voices_selected();
 	void specific_voice_selected();
 	void polyphony_changed(uint32_t poly);
+	void polyphonic_changed(bool poly);
 
 	bool _callback_enabled;
 	
