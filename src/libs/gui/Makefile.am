@@ -54,10 +54,10 @@ libingen_gui_la_SOURCES = \
 	ConnectWindow.cpp \
 	ConnectWindow.hpp \
 	Connection.hpp \
-	ControlGroups.cpp \
-	ControlGroups.hpp \
 	ControlPanel.cpp \
 	ControlPanel.hpp \
+	Controls.cpp \
+	Controls.hpp \
 	GladeFactory.cpp \
 	GladeFactory.hpp \
 	LoadPatchWindow.cpp \

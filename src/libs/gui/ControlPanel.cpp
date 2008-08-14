@@ -22,7 +22,7 @@
 #include "client/PluginModel.hpp"
 #include "App.hpp"
 #include "ControlPanel.hpp"
-#include "ControlGroups.hpp"
+#include "Controls.hpp"
 #include "GladeFactory.hpp"
 
 namespace Ingen {
@@ -30,8 +30,8 @@ namespace GUI {
 
 	
 ControlPanel::ControlPanel(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
-: Gtk::HBox(cobject),
-  _callback_enabled(true)
+	: Gtk::HBox(cobject)
+	, _callback_enabled(true)
 {
 	xml->get_widget("control_panel_controls_box", _control_box);
 	xml->get_widget("control_panel_voice_controls_box", _voice_control_box);
@@ -51,7 +51,7 @@ ControlPanel::ControlPanel(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Gl
 
 ControlPanel::~ControlPanel()
 {
-	for (vector<ControlGroup*>::iterator i = _controls.begin(); i != _controls.end(); ++i)
+	for (vector<Control*>::iterator i = _controls.begin(); i != _controls.end(); ++i)
 		delete (*i);
 }
 
@@ -62,15 +62,10 @@ ControlPanel::init(SharedPtr<NodeModel> node, uint32_t poly)
 	assert(node != NULL);
 	assert(poly > 0);
 	
-	cout << "CONTROL PANEL " << poly << endl;
-
 	if (node->polyphonic()) {
-		cout << "POLY" << endl;
 		_voice_spinbutton->set_range(0, poly - 1);
 		_voice_control_box->show();
 	} else {
-		cout << "NO POLY" << endl;
-		//remove(*_voice_control_box);
 		_voice_control_box->hide();
 	}
 
@@ -92,10 +87,10 @@ ControlPanel::init(SharedPtr<NodeModel> node, uint32_t poly)
 }
 
 
-ControlGroup*
+Control*
 ControlPanel::find_port(const Path& path) const
 {
-	for (vector<ControlGroup*>::const_iterator cg = _controls.begin(); cg != _controls.end(); ++cg)
+	for (vector<Control*>::const_iterator cg = _controls.begin(); cg != _controls.end(); ++cg)
 		if ((*cg)->port_model()->path() == path)
 			return (*cg);
 
@@ -116,40 +111,30 @@ ControlPanel::add_port(SharedPtr<PortModel> pm)
 	
 	// Add port
 	if (pm->type().is_control() && pm->is_input()) {
-		SliderControlGroup* cg = NULL;
-#if 0
-		if (pm->is_integer())
-			cerr << "FIXME: integer\n";
-			//cg = new IntegerControlGroup(this, pm);
-		else if (pm->is_toggle())
-			cerr << "FIXME: toggle\n";
-			//cg = new ToggleControlGroup(this, pm);
-		else {
-#endif
+		Control* control = NULL;
+			
+		if (pm->is_toggle()) {
+			ToggleControl* tc;
+			Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference("toggle_control");
+			xml->get_widget_derived("toggle_control", tc);
+			control = tc;
+		} else {
+			SliderControl* sc;
 			Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference("control_strip");
-			xml->get_widget_derived("control_strip", cg);
-			cg->init(this, pm);
-#if 0
+			xml->get_widget_derived("control_strip", sc);
+			control = sc;
 		}
-#endif
+			
+		control->init(this, pm);
 	
 		if (_controls.size() > 0)
 			_control_box->pack_start(*Gtk::manage(new Gtk::HSeparator()), false, false, 4);
 		
-		_controls.push_back(cg);
-		_control_box->pack_start(*cg, false, false, 0);
+		_controls.push_back(control);
+		_control_box->pack_start(*control, false, false, 0);
 
-		cg->enable();
-		/*if (pm->connected())
-			cg->disable();
-		else
-			cg->enable();*/
-
-		cg->show();
-
-		cerr << "FIXME: control panel connected port tracking\n";
-		//	pm->connection_sig.connect(bind(sigc::mem_fun(this, &ControlPanel::connection), pm))
-		//	pm->disconnection_sig.connect(bind(sigc::mem_fun(this, &ControlPanel::disconnection), pm))
+		control->enable();
+		control->show();
 	}
 
 	Gtk::Requisition controls_size;
@@ -173,7 +158,7 @@ void
 ControlPanel::remove_port(const Path& path)
 {
 	bool was_first = false;
-	for (vector<ControlGroup*>::iterator cg = _controls.begin(); cg != _controls.end(); ++cg) {
+	for (vector<Control*>::iterator cg = _controls.begin(); cg != _controls.end(); ++cg) {
 		if ((*cg)->port_model()->path() == path) {
 			_control_box->remove(**cg);
 			if (cg == _controls.begin())
@@ -191,7 +176,7 @@ ControlPanel::remove_port(const Path& path)
 void
 ControlPanel::rename_port(const Path& old_path, const Path& new_path)
 {
-	for (vector<ControlGroup*>::iterator cg = _controls.begin(); cg != _controls.end(); ++cg) {
+	for (vector<Control*>::iterator cg = _controls.begin(); cg != _controls.end(); ++cg) {
 		if ((*cg)->port_model()->path() == old_path) {
 			(*cg)->set_name(new_path.name());
 			return;
@@ -208,7 +193,7 @@ ControlPanel::rename_port(const Path& old_path, const Path& new_path)
 void
 ControlPanel::enable_port(const Path& path)
 {
-	for (vector<ControlGroup*>::iterator i = _controls.begin(); i != _controls.end(); ++i) {
+	for (vector<Control*>::iterator i = _controls.begin(); i != _controls.end(); ++i) {
 		if ((*i)->port_model()->path() == path) {
 			(*i)->enable();
 			return;
@@ -224,7 +209,7 @@ ControlPanel::enable_port(const Path& path)
 void
 ControlPanel::disable_port(const Path& path)
 {
-	for (vector<ControlGroup*>::iterator i = _controls.begin(); i != _controls.end(); ++i) {
+	for (vector<Control*>::iterator i = _controls.begin(); i != _controls.end(); ++i) {
 		if ((*i)->port_model()->path() == path) {
 			(*i)->disable();
 			return;
@@ -233,7 +218,7 @@ ControlPanel::disable_port(const Path& path)
 }
 #endif
 
-/** Callback for ControlGroups to notify this of a change.
+/** Callback for Controls to notify this of a change.
  */
 void
 ControlPanel::value_changed(SharedPtr<PortModel> port, float val)

@@ -24,7 +24,7 @@
 #include "client/PluginModel.hpp"
 #include "client/NodeModel.hpp"
 #include "client/PortModel.hpp"
-#include "ControlGroups.hpp"
+#include "Controls.hpp"
 #include "ControlPanel.hpp"
 #include "PortPropertiesWindow.hpp"
 #include "GladeFactory.hpp"
@@ -37,17 +37,23 @@ namespace Ingen {
 namespace GUI {
 
 
-// ////////////////////// ControlGroup ///////////////////////////////// //
+// ////////////////////// Control ///////////////////////////////// //
 
-ControlGroup::ControlGroup(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml)
+Control::Control(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml)
 	: Gtk::VBox(cobject)
 	, _control_panel(NULL)
 	, _enable_signal(false)
 {
+	Glib::RefPtr<Gnome::Glade::Xml> menu_xml = GladeFactory::new_glade_reference("port_control_menu");
+	menu_xml->get_widget("port_control_menu", _menu);
+	menu_xml->get_widget("port_control_menu_properties", _menu_properties);
+	
+	_menu_properties->signal_activate().connect(
+		sigc::mem_fun(this, &SliderControl::menu_properties));
 }
 	
 
-ControlGroup::~ControlGroup()
+Control::~Control()
 {
 	_enable_signal = false;
 	_control_connection.disconnect();
@@ -56,7 +62,7 @@ ControlGroup::~ControlGroup()
 
 
 void
-ControlGroup::init(ControlPanel* panel, SharedPtr<PortModel> pm)
+Control::init(ControlPanel* panel, SharedPtr<PortModel> pm)
 {
 	_control_panel = panel;
 	_port_model = pm,
@@ -64,37 +70,41 @@ ControlGroup::init(ControlPanel* panel, SharedPtr<PortModel> pm)
 	assert(_port_model);
 	assert(panel);
 
-	_control_connection = pm->signal_value_changed.connect(sigc::mem_fun(this, &ControlGroup::set_value));
+	_control_connection = pm->signal_value_changed.connect(sigc::mem_fun(this, &Control::set_value));
+}
+
+	
+void
+Control::menu_properties()
+{
+	Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference();
+
+	PortPropertiesWindow* window;
+	xml->get_widget_derived("port_properties_win", window);
+	window->present(_port_model);
 }
 
 
-// ////////////////// SliderControlGroup ////////////////////// //
+// ////////////////// SliderControl ////////////////////// //
 
 
-SliderControlGroup::SliderControlGroup(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
-	: ControlGroup(cobject, xml)
+SliderControl::SliderControl(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
+	: Control(cobject, xml)
 	, _enabled(true)
 {
 	xml->get_widget("control_strip_name_label", _name_label);
 	xml->get_widget("control_strip_slider", _slider);
 	xml->get_widget("control_strip_spinner", _value_spinner);
-	
-	Glib::RefPtr<Gnome::Glade::Xml> menu_xml = GladeFactory::new_glade_reference("port_control_menu");
-	menu_xml->get_widget("port_control_menu", _menu);
-	menu_xml->get_widget("port_control_menu_properties", _menu_properties);
-	
-	_menu_properties->signal_activate().connect(
-		sigc::mem_fun(this, &SliderControlGroup::menu_properties));
 }
 
 
 void
-SliderControlGroup::init(ControlPanel* panel, SharedPtr<PortModel> pm)
+SliderControl::init(ControlPanel* panel, SharedPtr<PortModel> pm)
 {
 	_enable_signal = false;
 	_enabled = true;
 
-	ControlGroup::init(panel, pm);
+	Control::init(panel, pm);
 
 	assert(_name_label);
 	assert(_slider);
@@ -103,17 +113,17 @@ SliderControlGroup::init(ControlPanel* panel, SharedPtr<PortModel> pm)
 	
 	_slider->set_draw_value(false);
 
-	signal_button_press_event().connect(sigc::mem_fun(*this, &SliderControlGroup::clicked));
-	_slider->signal_button_press_event().connect(sigc::mem_fun(*this, &SliderControlGroup::clicked));
+	signal_button_press_event().connect(sigc::mem_fun(*this, &SliderControl::clicked));
+	_slider->signal_button_press_event().connect(sigc::mem_fun(*this, &SliderControl::clicked));
 
 	_slider->signal_event().connect(
-			sigc::mem_fun(*this, &SliderControlGroup::slider_pressed));
+			sigc::mem_fun(*this, &SliderControl::slider_pressed));
 
 	_slider->signal_value_changed().connect(
-			sigc::mem_fun(*this, &SliderControlGroup::update_value_from_slider));
+			sigc::mem_fun(*this, &SliderControl::update_value_from_slider));
 	
 	_value_spinner->signal_value_changed().connect(
-			sigc::mem_fun(*this, &SliderControlGroup::update_value_from_spinner));
+			sigc::mem_fun(*this, &SliderControl::update_value_from_spinner));
 
 	float min = 0.0f, max = 1.0f;
 	
@@ -128,7 +138,7 @@ SliderControlGroup::init(ControlPanel* panel, SharedPtr<PortModel> pm)
 		_slider->set_increments(0, 0);
 	}
 	
-	pm->signal_variable.connect(sigc::mem_fun(this, &SliderControlGroup::port_variable_change));
+	pm->signal_variable.connect(sigc::mem_fun(this, &SliderControl::port_variable_change));
 
 	_slider->set_range(std::min(min, pm->value().get_float()), std::max(max, pm->value().get_float()));
 	//_value_spinner->set_range(min, max);
@@ -142,7 +152,7 @@ SliderControlGroup::init(ControlPanel* panel, SharedPtr<PortModel> pm)
 
 
 bool
-SliderControlGroup::clicked(GdkEventButton* ev)
+SliderControl::clicked(GdkEventButton* ev)
 {
 	if (ev->button == 3) {
 		_menu->popup(ev->button, ev->time);
@@ -154,18 +164,7 @@ SliderControlGroup::clicked(GdkEventButton* ev)
 
 
 void
-SliderControlGroup::menu_properties()
-{
-	Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference();
-
-	PortPropertiesWindow* window;
-	xml->get_widget_derived("port_properties_win", window);
-	window->present(_port_model);
-}
-
-
-void
-SliderControlGroup::set_value(const Atom& atom)
+SliderControl::set_value(const Atom& atom)
 {
 	float val = atom.get_float();
 	
@@ -190,7 +189,7 @@ SliderControlGroup::set_value(const Atom& atom)
 
 	
 void
-SliderControlGroup::port_variable_change(const string& key, const Atom& value)
+SliderControl::port_variable_change(const string& key, const Atom& value)
 {
 	if ( (key == "ingen:minimum") && value.type() == Atom::FLOAT)
 		set_range(value.get_float(), _slider->get_adjustment()->get_upper());
@@ -200,7 +199,7 @@ SliderControlGroup::port_variable_change(const string& key, const Atom& value)
 
 
 void
-SliderControlGroup::set_range(float min, float max)
+SliderControl::set_range(float min, float max)
 {
 	_slider->set_range(min, max);
 	//_value_spinner->set_range(min, max);
@@ -208,7 +207,7 @@ SliderControlGroup::set_range(float min, float max)
 
 
 void
-SliderControlGroup::set_name(const string& name)
+SliderControl::set_name(const string& name)
 {
 	string name_label = "<span weight=\"bold\">";
 	name_label += name + "</span>";
@@ -217,7 +216,7 @@ SliderControlGroup::set_name(const string& name)
 
 
 void
-SliderControlGroup::enable()
+SliderControl::enable()
 {
 	_slider->property_sensitive() = true;
 	//_min_spinner->property_sensitive() = true;
@@ -228,7 +227,7 @@ SliderControlGroup::enable()
 
 
 void
-SliderControlGroup::disable()
+SliderControl::disable()
 {
 	_slider->property_sensitive() = false;
 	//_min_spinner->property_sensitive() = false;
@@ -239,7 +238,7 @@ SliderControlGroup::disable()
 
 
 void
-SliderControlGroup::update_value_from_slider()
+SliderControl::update_value_from_slider()
 {
 	if (_enable_signal) {
 		float value = _slider->get_value();
@@ -264,7 +263,7 @@ SliderControlGroup::update_value_from_slider()
 
 
 void
-SliderControlGroup::update_value_from_spinner()
+SliderControl::update_value_from_spinner()
 {
 	if (_enable_signal) {
 		_enable_signal = false;
@@ -284,7 +283,7 @@ SliderControlGroup::update_value_from_spinner()
  * events for this port (and avoid nasty feedback issues).
  */
 bool
-SliderControlGroup::slider_pressed(GdkEvent* ev)
+SliderControl::slider_pressed(GdkEvent* ev)
 {
 	//cerr << "Pressed: " << ev->type << endl;
 	if (ev->type == GDK_BUTTON_PRESS) {
@@ -299,11 +298,11 @@ SliderControlGroup::slider_pressed(GdkEvent* ev)
 }
 
 
-// ///////////// IntegerControlGroup ////////////// //
+// ///////////// IntegerControl ////////////// //
 
 #if 0
-IntegerControlGroup::IntegerControlGroup(ControlPanel* panel, SharedPtr<PortModel> pm)
-: ControlGroup(panel, pm),
+IntegerControl::IntegerControl(ControlPanel* panel, SharedPtr<PortModel> pm)
+: Control(panel, pm),
   _enable_signal(false),
   _alignment(0.5, 0.5, 0.0, 0.0),
   _name_label(pm->path().name()),
@@ -314,7 +313,7 @@ IntegerControlGroup::IntegerControlGroup(ControlPanel* panel, SharedPtr<PortMode
 	_spinner.set_range(-99999, 99999);
 	_spinner.set_value(_port_model->value());
 	_spinner.signal_value_changed().connect(
-		sigc::mem_fun(*this, &IntegerControlGroup::update_value));
+		sigc::mem_fun(*this, &IntegerControl::update_value));
 	_spinner.set_increments(1, 10);
 	
 	_alignment.add(_spinner);
@@ -328,7 +327,7 @@ IntegerControlGroup::IntegerControlGroup(ControlPanel* panel, SharedPtr<PortMode
 
 
 void
-IntegerControlGroup::set_name(const string& name)
+IntegerControl::set_name(const string& name)
 {
 	string name_label = "<span weight=\"bold\">";
 	name_label += name + "</span>";
@@ -337,9 +336,9 @@ IntegerControlGroup::set_name(const string& name)
 
 
 void
-IntegerControlGroup::set_value(float val)
+IntegerControl::set_value(float val)
 {
-	//cerr << "[IntegerControlGroup] Setting value to " << val << endl;
+	//cerr << "[IntegerControl] Setting value to " << val << endl;
 	_enable_signal = false;
 	_spinner.set_value(val);
 	_enable_signal = true;
@@ -347,7 +346,7 @@ IntegerControlGroup::set_value(float val)
 
 
 void
-IntegerControlGroup::enable()
+IntegerControl::enable()
 {
 	_spinner.property_sensitive() = true;
 	_name_label->property_sensitive() = true;
@@ -355,7 +354,7 @@ IntegerControlGroup::enable()
 
 
 void
-IntegerControlGroup::disable()
+IntegerControl::disable()
 {
 	_spinner.property_sensitive() = false;
 	_name_label->property_sensitive() = false;
@@ -363,7 +362,7 @@ IntegerControlGroup::disable()
 
 
 void
-IntegerControlGroup::update_value()
+IntegerControl::update_value()
 {
 	if (_enable_signal) {
 		float value = _spinner.get_value();
@@ -371,35 +370,42 @@ IntegerControlGroup::update_value()
 		//m_port_model->value(value);
 	}
 }
+#endif
 
 
-// ///////////// ToggleControlGroup ////////////// //
+// ///////////// ToggleControl ////////////// //
 
 
-ToggleControlGroup::ToggleControlGroup(ControlPanel* panel, SharedPtr<PortModel> pm)
-: ControlGroup(panel, pm),
-  _enable_signal(false),
-  _alignment(0.5, 0.5, 0.0, 0.0),
-  _name_label(pm->path().name())
+ToggleControl::ToggleControl(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
+	: Control(cobject, xml)
 {
+	xml->get_widget("toggle_control_name_label", _name_label);
+	xml->get_widget("toggle_control_check", _checkbutton);
+}
+
+	
+void
+ToggleControl::init(ControlPanel* panel, SharedPtr<PortModel> pm)
+{
+	_enable_signal = false;
+
+	Control::init(panel, pm);
+
+	assert(_name_label);
+	assert(_checkbutton);
+
 	set_name(pm->path().name());
 
-	set_value(_port_model->value());
-	_checkbutton.signal_toggled().connect(
-		sigc::mem_fun(*this, &ToggleControlGroup::update_value));
-	
-	_alignment.add(_checkbutton);
-	pack_start(_name_label);
-	pack_start(_alignment);
+	_checkbutton->signal_toggled().connect(sigc::mem_fun(*this, &ToggleControl::toggled));
+	set_value(pm->value());
 
 	_enable_signal = true;
-
 	show_all();
 }
 
 
 void
-ToggleControlGroup::set_name(const string& name)
+ToggleControl::set_name(const string& name)
 {
 	string name_label = "<span weight=\"bold\">";
 	name_label += name + "</span>";
@@ -408,41 +414,54 @@ ToggleControlGroup::set_name(const string& name)
 
 
 void
-ToggleControlGroup::set_value(float val)
+ToggleControl::set_value(const Atom& val)
 {
-	//cerr << "[ToggleControlGroup] Setting value to " << val << endl;
+	bool enable = false;
+	switch (val.type()) {
+		case Atom::FLOAT:
+			enable = (val.get_float() != 0.0f);
+			break;
+		case Atom::INT:
+			enable = (val.get_int32() != 0);
+			break;
+		case Atom::BOOL:
+			enable = (val.get_bool());
+		default:
+			cerr << "Unsupported value type for toggle control" << endl;
+	}
+	
 	_enable_signal = false;
-	_checkbutton.set_active( (val > 0.0f) );
+	_checkbutton->set_active(enable);
 	_enable_signal = true;
 }
 
 
 void
-ToggleControlGroup::enable()
+ToggleControl::enable()
 {
-	_checkbutton.property_sensitive() = true;
+	_checkbutton->property_sensitive() = true;
 	_name_label->property_sensitive() = true;
 }
 
 
 void
-ToggleControlGroup::disable()
+ToggleControl::disable()
 {
-	_checkbutton.property_sensitive() = false;
+	_checkbutton->property_sensitive() = false;
 	_name_label->property_sensitive() = false;
 }
 
 
 void
-ToggleControlGroup::update_value()
+ToggleControl::toggled()
 {
 	if (_enable_signal) {
-		float value = _checkbutton.get_active() ? 1.0f : 0.0f;
+		float value = _checkbutton->get_active() ? 1.0f : 0.0f;
 		_control_panel->value_changed(_port_model, value);
 		//m_port_model->value(value);
 	}
 }
-#endif
+
 
 } // namespace GUI
 } // namespace Ingen

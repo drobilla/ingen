@@ -27,11 +27,7 @@
 #include <libglademm/xml.h>
 #include <libglademm.h>
 #include <raul/Path.hpp>
-#include "ControlGroups.hpp"
-
-
-using std::vector; using std::string; using std::pair;
-using std::cerr; using std::cout; using std::endl;
+#include "Controls.hpp"
 
 namespace Ingen { namespace Client {
 	class PortModel;
@@ -56,7 +52,7 @@ public:
 	
 	void init(SharedPtr<NodeModel> node, uint32_t poly);
 
-	ControlGroup* find_port(const Path& path) const;
+	Control* find_port(const Path& path) const;
 
 	void add_port(SharedPtr<PortModel> port);
 	void remove_port(const Path& path);
@@ -64,10 +60,10 @@ public:
 	void enable_port(const Path& path);
 	void disable_port(const Path& path);
 	
-	size_t        num_controls() const { return _controls.size(); }
-	pair<int,int> ideal_size()   const { return _ideal_size; }
+	size_t             num_controls() const { return _controls.size(); }
+	std::pair<int,int> ideal_size()   const { return _ideal_size; }
 	
-	// Callback for ControlGroup
+	// Callback for Control
 	void value_changed(SharedPtr<PortModel> port_path, float val);
 	
 private:
@@ -78,14 +74,14 @@ private:
 
 	bool _callback_enabled;
 	
-	pair<int,int> _ideal_size;
+	std::pair<int,int> _ideal_size;
 
-	vector<ControlGroup*>    _controls;
-	Gtk::VBox*               _control_box;
-	Gtk::Box*                _voice_control_box;
-	Gtk::RadioButton*        _all_voices_radio;
-	Gtk::RadioButton*        _specific_voice_radio;
-	Gtk::SpinButton*         _voice_spinbutton;
+	std::vector<Control*> _controls;
+	Gtk::VBox*            _control_box;
+	Gtk::Box*             _voice_control_box;
+	Gtk::RadioButton*     _all_voices_radio;
+	Gtk::RadioButton*     _specific_voice_radio;
+	Gtk::SpinButton*      _voice_spinbutton;
 };
 
 

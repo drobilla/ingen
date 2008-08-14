@@ -22,7 +22,7 @@
 #include "App.hpp"
 #include "NodeControlWindow.hpp"
 #include "GladeFactory.hpp"
-#include "ControlGroups.hpp"
+#include "Controls.hpp"
 #include "ControlPanel.hpp"
 #include "PatchWindow.hpp"
 

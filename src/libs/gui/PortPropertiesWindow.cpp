@@ -21,7 +21,7 @@
 #include "client/NodeModel.hpp"
 #include "client/PluginModel.hpp"
 #include "App.hpp"
-#include "ControlGroups.hpp"
+#include "Controls.hpp"
 #include "PortPropertiesWindow.hpp"
 
 using std::string;

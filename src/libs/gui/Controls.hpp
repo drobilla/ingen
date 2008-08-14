@@ -34,28 +34,36 @@ namespace GUI {
 class ControlPanel;
 
 
-/** A group of controls (for a single Port) in a NodeControlWindow.
+/** A group of controls (for a single Port) in a ControlPanel.
  *
  * \ingroup GUI
  */
-class ControlGroup : public Gtk::VBox
+class Control : public Gtk::VBox
 {
 public:
-	ControlGroup(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml);
-	virtual ~ControlGroup();
+	Control(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml);
+	virtual ~Control();
 	
-	void init(ControlPanel* panel, SharedPtr<PortModel> pm);
+	virtual void init(ControlPanel* panel, SharedPtr<PortModel> pm);
+	
+	virtual void enable()  = 0;
+	virtual void disable() = 0;
 	
 	inline const SharedPtr<PortModel> port_model() const { return _port_model; }
 
 protected:
 	virtual void set_value(const Atom& value) = 0;
 	virtual void set_range(float min, float max) {}
+	
+	void menu_properties();
 
 	ControlPanel*        _control_panel;
 	SharedPtr<PortModel> _port_model;
 	sigc::connection     _control_connection;
 	bool                 _enable_signal;
+	
+	Gtk::Menu*     _menu;
+	Gtk::MenuItem* _menu_properties;
 };
 
 
@@ -63,10 +71,10 @@ protected:
  *
  * \ingroup GUI
  */
-class SliderControlGroup : public ControlGroup
+class SliderControl : public Control
 {
 public:
-	SliderControlGroup(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml);
+	SliderControl(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml);
 	void init(ControlPanel* panel, SharedPtr<PortModel> pm);
 
 	void enable();
@@ -77,9 +85,6 @@ public:
 
 private:
 	void set_name(const string& name);
-
-	bool clicked(GdkEventButton* ev);
-
 	void set_value(const Atom& value);
 	void set_range(float min, float max);
 	
@@ -88,19 +93,15 @@ private:
 	void update_range();
 	void update_value_from_slider();
 	void update_value_from_spinner();
-
-	void menu_properties();
 	
 	bool slider_pressed(GdkEvent* ev);
+	bool clicked(GdkEventButton* ev);
 
 	bool _enabled;
 	
 	Gtk::Label*      _name_label;
 	Gtk::SpinButton* _value_spinner;
 	Gtk::HScale*     _slider;
-	
-	Gtk::Menu*      _menu;
-	Gtk::MenuItem*  _menu_properties;
 };
 
 
@@ -110,10 +111,10 @@ private:
  * 
  * \ingroup GUI
  */
-class IntegerControlGroup : public ControlGroup
+class IntegerControl : public Control
 {
 public:
-	IntegerControlGroup(ControlPanel* panel, SharedPtr<PortModel> pm);
+	IntegerControl(ControlPanel* panel, SharedPtr<PortModel> pm);
 	
 	void enable();
 	void disable();
@@ -129,32 +130,33 @@ private:
 	Gtk::Label      _name_label;
 	Gtk::SpinButton _spinner;
 };
+#endif
 
 
 /** A radio button for toggle controls.
  * 
  * \ingroup GUI
  */
-class ToggleControlGroup : public ControlGroup
+class ToggleControl : public Control
 {
 public:
-	ToggleControlGroup(ControlPanel* panel, SharedPtr<PortModel> pm);
+	ToggleControl(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml);
+	
+	void init(ControlPanel* panel, SharedPtr<PortModel> pm);
 	
 	void enable();
 	void disable();
 	
 private:
 	void set_name(const string& name);
-	void set_value(float val);
+	void set_value(const Atom& value);
 
-	void update_value();
+	void toggled();
 	
-	bool             _enable_signal;
-	Gtk::Alignment   _alignment;
-	Gtk::Label       _name_label;
-	Gtk::CheckButton _checkbutton;
+	Gtk::Label*       _name_label;
+	Gtk::CheckButton* _checkbutton;
 };
-#endif
+
 
 } // namespace GUI
 } // namespace Ingen
