@@ -64,7 +64,11 @@ NodeMenu::init(SharedPtr<NodeModel> node)
 	_embed_gui_menuitem->signal_toggled().connect(sigc::mem_fun(this,
 			&NodeMenu::on_menu_embed_gui));
 
-	if ((!node->plugin()) || node->plugin()->type() != PluginModel::LV2) {
+	const PluginModel* plugin = dynamic_cast<const PluginModel*>(node->plugin());
+	if (plugin && plugin->type() == PluginModel::LV2 && plugin->has_ui()) {
+		_popup_gui_menuitem->show();
+		_embed_gui_menuitem->show();
+	} else {
 		_popup_gui_menuitem->hide();
 		_embed_gui_menuitem->hide();
 	}

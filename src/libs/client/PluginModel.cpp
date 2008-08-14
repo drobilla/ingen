@@ -44,6 +44,25 @@ PluginModel::default_node_name()
 
 
 #ifdef HAVE_SLV2
+bool
+PluginModel::has_ui() const
+{
+	Glib::Mutex::Lock lock(_rdf_world->mutex());
+
+	SLV2Value gtk_gui_uri = slv2_value_new_uri(_slv2_world,
+		"http://lv2plug.in/ns/extensions/ui#GtkUI");
+
+	SLV2UIs uis = slv2_plugin_get_uis(_slv2_plugin);
+
+	if (slv2_values_size(uis) > 0)
+		for (unsigned i=0; i < slv2_uis_size(uis); ++i)
+			if (slv2_ui_is_a(slv2_uis_get_at(uis, i), gtk_gui_uri))
+				return true;
+
+	return false;
+}
+
+
 SharedPtr<PluginUI>
 PluginModel::ui(Ingen::Shared::World* world, SharedPtr<NodeModel> node) const
 {
@@ -87,7 +106,6 @@ PluginModel::get_lv2_icon_path(SLV2Plugin plugin)
 	slv2_value_free(svg_icon_pred);
 	return result;
 }
-
 #endif
 
 } // namespace Client

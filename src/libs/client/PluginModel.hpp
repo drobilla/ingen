@@ -100,6 +100,8 @@ public:
 		_slv2_plugins = slv2_world_get_all_plugins(_slv2_world);
 	}
 
+	bool has_ui() const;
+
 	SharedPtr<PluginUI> ui(Ingen::Shared::World* world,
 	                       SharedPtr<NodeModel>  node) const;
 
