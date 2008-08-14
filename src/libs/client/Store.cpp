@@ -336,6 +336,7 @@ Store::add_plugin(SharedPtr<PluginModel> pm)
 	// FIXME: dupes?  merge, like with objects?
 	
 	_plugins[pm->uri()] = pm;
+	signal_new_plugin(pm);
 	//cerr << "Plugin: " << pm->uri() << ", # plugins: " << _plugins.size() << endl;
 }
 

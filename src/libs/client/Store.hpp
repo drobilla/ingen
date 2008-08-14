@@ -70,6 +70,7 @@ public:
 	const Objects& objects() const { return _objects; }
 
 	sigc::signal<void, SharedPtr<ObjectModel> > signal_new_object; 
+	sigc::signal<void, SharedPtr<PluginModel> > signal_new_plugin; 
 
 private:
 

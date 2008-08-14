@@ -67,6 +67,7 @@ public:
 	void build();
 	void arrange(bool use_length_hints);
 
+	void add_plugin(SharedPtr<PluginModel> pm);
 	void add_node(SharedPtr<NodeModel> nm);
 	void remove_node(SharedPtr<NodeModel> nm);
 	void add_port(SharedPtr<PortModel> pm);
@@ -79,8 +80,7 @@ public:
 	void destroy_selection();
 	void copy_selection();
 
-	void show_menu(GdkEvent* event)
-	{ _menu->popup(event->button.button, event->button.time); }
+	void show_menu(GdkEvent* event);
 	
 	bool canvas_key_event(GdkEventKey* event);
 	
@@ -123,7 +123,10 @@ private:
 	int _last_click_x;
 	int _last_click_y;
 	
+	bool            _refresh_menu;
 	Gtk::Menu*      _menu;
+	Gtk::Menu*      _internal_menu;
+	Gtk::Menu*      _plugin_menu;
 	/*Gtk::MenuItem*  _menu_add_number_control;
 	Gtk::MenuItem*  _menu_add_button_control;*/
 	Gtk::MenuItem*  _menu_add_audio_input;

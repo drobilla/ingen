@@ -96,7 +96,6 @@ public:
 	void set_plugins(const Raul::Table<string, SharedPtr<PluginModel> >& m);
 
 	void add_plugin(SharedPtr<PluginModel> plugin);
-	bool has_shown() const { return _has_shown; }
 
 	void present(SharedPtr<PatchModel> patch, GraphObject::Variables data);
 
@@ -111,6 +110,8 @@ private:
 	void filter_changed();
 	void clear_clicked();
 	void name_changed();
+	
+	void new_plugin(SharedPtr<PluginModel> plugin);
 
 	int plugin_compare(const Gtk::TreeModel::iterator& a,
 	                   const Gtk::TreeModel::iterator& b);
@@ -123,8 +124,6 @@ private:
 
 	SharedPtr<PatchModel> _patch;
 
-	bool _has_shown; // plugin list only populated on show to speed patch window creation
-
 	Glib::RefPtr<Gtk::ListStore> _plugins_liststore;
 	ModelColumns                 _plugins_columns;
 
@@ -135,6 +134,8 @@ private:
 	
 	int _plugin_name_offset; // see comments for generate_plugin_name
 	
+	bool              _has_shown;
+	bool              _refresh_list;
 	Gtk::TreeView*    _plugins_treeview;
 	Gtk::CheckButton* _polyphonic_checkbutton;
 	Gtk::Entry*       _node_name_entry;

@@ -50,10 +50,12 @@ namespace GUI {
 
 
 PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
-:Canvas(width, height),
-  _patch(patch),
-  _last_click_x(0),
-  _last_click_y(0)
+	: Canvas(width, height)
+	, _patch(patch)
+	, _last_click_x(0)
+	, _last_click_y(0)
+	, _refresh_menu(false)
+	, _internal_menu(NULL)
 {
 	Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference();
 	xml->get_widget("canvas_menu", _menu);
@@ -112,12 +114,6 @@ PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 	_menu_add_button_control->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_control), BUTTON));*/
 
-	build_internal_menu();
-
-#ifdef HAVE_SLV2
-	build_plugin_menu();
-#endif
-
 	// Connect to model signals to track state
 	_patch->signal_new_node.connect(sigc::mem_fun(this, &PatchCanvas::add_node));
 	_patch->signal_removed_node.connect(sigc::mem_fun(this, &PatchCanvas::remove_node));
@@ -125,6 +121,8 @@ PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 	_patch->signal_removed_port.connect(sigc::mem_fun(this, &PatchCanvas::remove_port));
 	_patch->signal_new_connection.connect(sigc::mem_fun(this, &PatchCanvas::connection));
 	_patch->signal_removed_connection.connect(sigc::mem_fun(this, &PatchCanvas::disconnection));
+	
+	App::instance().store()->signal_new_plugin.connect(sigc::mem_fun(this, &PatchCanvas::add_plugin));
 	
 	// Connect widget signals to do things
 	_menu_load_plugin->signal_activate().connect(sigc::mem_fun(this, &PatchCanvas::menu_load_plugin));
@@ -134,27 +132,43 @@ PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 
 
 void
+PatchCanvas::show_menu(GdkEvent* event)
+{
+	if (!_internal_menu || !_plugin_menu || _refresh_menu) {
+		build_internal_menu();
+#ifdef HAVE_SLV2
+		build_plugin_menu();
+#endif
+		_refresh_menu = false;
+	}
+	_menu->popup(event->button.button, event->button.time);
+}
+
+
+void
 PatchCanvas::build_internal_menu()
 {
-	_menu->items().push_back(Gtk::Menu_Helpers::ImageMenuElem("Internal",
-			*(manage(new Gtk::Image(Gtk::Stock::EXECUTE, Gtk::ICON_SIZE_MENU)))));
-
-	Gtk::MenuItem* internal_menu_item = &(_menu->items().back());
-	Gtk::Menu* internal_menu = Gtk::manage(new Gtk::Menu());
-	internal_menu_item->set_submenu(*internal_menu);
+	if (_internal_menu) {
+		_internal_menu->items().clear();
+	} else {
+		_menu->items().push_back(Gtk::Menu_Helpers::ImageMenuElem("Internal",
+				*(manage(new Gtk::Image(Gtk::Stock::EXECUTE, Gtk::ICON_SIZE_MENU)))));
+		Gtk::MenuItem* internal_menu_item = &(_menu->items().back());
+		_internal_menu = Gtk::manage(new Gtk::Menu());
+		internal_menu_item->set_submenu(*_internal_menu);
+		_menu->reorder_child(*internal_menu_item, 2);
+	}
 	
 	const Store::Plugins& plugins = App::instance().store()->plugins();
 
-	// Add LV2 plugins
+	// Add Internal plugins
 	for (Store::Plugins::const_iterator i = plugins.begin(); i != plugins.end(); ++i) {
 		SharedPtr<PluginModel> p = i->second;
 		if (p->type() == Plugin::Internal) {
-			internal_menu->items().push_back(Gtk::Menu_Helpers::MenuElem(p->name(),
+			_internal_menu->items().push_back(Gtk::Menu_Helpers::MenuElem(p->name(),
 					sigc::bind(sigc::mem_fun(this, &PatchCanvas::load_plugin), p)));
 		}
 	}
-	
-	_menu->reorder_child(*internal_menu_item, 2);
 }
 
 
@@ -215,18 +229,22 @@ PatchCanvas::build_plugin_class_menu(Gtk::Menu* menu,
 void
 PatchCanvas::build_plugin_menu()
 {
-	_menu->items().push_back(Gtk::Menu_Helpers::ImageMenuElem("Plugin",
-			*(manage(new Gtk::Image(Gtk::Stock::EXECUTE, Gtk::ICON_SIZE_MENU)))));
-	Gtk::MenuItem* plugin_menu_item = &(_menu->items().back());
-	Gtk::Menu* plugin_menu = Gtk::manage(new Gtk::Menu());
-	plugin_menu_item->set_submenu(*plugin_menu);
-	_menu->reorder_child(*plugin_menu_item, 3);
+	if (_plugin_menu) {
+		_plugin_menu->items().clear();
+	} else {
+		_menu->items().push_back(Gtk::Menu_Helpers::ImageMenuElem("Plugin",
+				*(manage(new Gtk::Image(Gtk::Stock::EXECUTE, Gtk::ICON_SIZE_MENU)))));
+		Gtk::MenuItem* plugin_menu_item = &(_menu->items().back());
+		_plugin_menu = Gtk::manage(new Gtk::Menu());
+		plugin_menu_item->set_submenu(*_plugin_menu);
+		_menu->reorder_child(*plugin_menu_item, 3);
+	}
 
 	Glib::Mutex::Lock lock(PluginModel::rdf_world()->mutex());
 	SLV2PluginClass lv2_plugin = slv2_world_get_plugin_class(PluginModel::slv2_world());
 	SLV2PluginClasses classes = slv2_world_get_plugin_classes(PluginModel::slv2_world());
 
-	build_plugin_class_menu(plugin_menu, lv2_plugin, classes);
+	build_plugin_class_menu(_plugin_menu, lv2_plugin, classes);
 }
 #endif
 
@@ -266,6 +284,13 @@ PatchCanvas::arrange(bool ingen_doesnt_use_length_hints)
 	
 	for (list<boost::shared_ptr<Item> >::iterator i = _items.begin(); i != _items.end(); ++i)
 		(*i)->store_location();
+}
+
+	
+void
+PatchCanvas::add_plugin(SharedPtr<PluginModel> pm)
+{
+	_refresh_menu = true;
 }
 
 
@@ -540,10 +565,11 @@ PatchCanvas::copy_selection()
 	Glib::RefPtr<Gtk::Clipboard> clipboard = Gtk::Clipboard::get();
 	clipboard->set_text(result);
 }
-
+	
 
 string
-PatchCanvas::generate_port_name(const string& base) {
+PatchCanvas::generate_port_name(const string& base)
+{
 	string name = base;
 
 	char num_buf[5];

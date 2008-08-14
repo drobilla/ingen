@@ -36,9 +36,10 @@ namespace Ingen {
 namespace GUI {
 
 LoadPluginWindow::LoadPluginWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
-: Gtk::Window(cobject),
-  _has_shown(false),
-  _plugin_name_offset(0)
+	: Gtk::Window(cobject)
+	, _plugin_name_offset(0)
+	, _has_shown(false)
+	, _refresh_list(true)
 {
 	xml->get_widget("load_plugin_plugins_treeview", _plugins_treeview);
 	xml->get_widget("load_plugin_polyphonic_checkbutton", _polyphonic_checkbutton);
@@ -173,20 +174,16 @@ void
 LoadPluginWindow::on_show()
 {
 	if (!_has_shown) {
-		set_plugins(App::instance().store()->plugins());
-	
-		// Center on patch window
-		/*int _w, _h;
-		get_size(_w, _h);
-		
-		int parent_x, parent_y, parent_w, parent_h;
-		_patch_controller->window()->get_position(parent_x, parent_y);
-		_patch_controller->window()->get_size(parent_w, parent_h);
-		
-		move(parent_x + parent_w/2 - _w/2, parent_y + parent_h/2 - _h/2);
-		*/
+		App::instance().store()->signal_new_plugin.connect(
+				sigc::mem_fun(this, &LoadPluginWindow::add_plugin));
 		_has_shown = true;
 	}
+
+	if (_refresh_list) {
+		set_plugins(App::instance().store()->plugins());
+		_refresh_list = false;
+	}
+
 	Gtk::Window::on_show();
 }
 
@@ -244,6 +241,16 @@ LoadPluginWindow::set_plugins(const Raul::Table<string, SharedPtr<PluginModel> >
 	_plugins_liststore->set_sort_column(Gtk::TreeSortable::DEFAULT_SORT_COLUMN_ID, Gtk::SORT_ASCENDING);
 
 	_plugins_treeview->columns_autosize();
+}
+
+
+void
+LoadPluginWindow::new_plugin(SharedPtr<PluginModel> pm)
+{
+	if (is_visible())
+		add_plugin(pm);
+	else
+		_refresh_list = true;
 }
 
 
