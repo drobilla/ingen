@@ -73,7 +73,7 @@ private:
 		ReceiveThread(OSCEngineReceiver& receiver) : _receiver(receiver) {}
 		virtual void _run();
 	private:
-			OSCEngineReceiver& _receiver;
+		OSCEngineReceiver& _receiver;
 	};
 
 	friend class ReceiveThread;

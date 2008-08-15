@@ -11,10 +11,11 @@ libingen_engine_la_CXXFLAGS = \
 	@JACK_CFLAGS@ \
 	@LASH_CFLAGS@ \
 	@LIBLO_CFLAGS@ \
+	@LV2_OSC_CFLAGS@ \
 	@RAUL_CFLAGS@ \
 	@REDLANDMM_CFLAGS@ \
 	@SLV2_CFLAGS@ \
-	@LV2_OSC_CFLAGS@
+	@SOUP_CFLAGS@
 
 libingen_engine_la_LDFLAGS = -no-undefined -module -avoid-version
 libingen_engine_la_LIBADD = \
@@ -23,10 +24,11 @@ libingen_engine_la_LIBADD = \
 	@JACK_LIBS@ \
 	@LASH_LIBS@ \
 	@LIBLO_LIBS@ \
+	@LV2_OSC_LIBS@ \
 	@RAUL_LIBS@ \
 	@REDLANDMM_LIBS@ \
 	@SLV2_LIBS@ \
-	@LV2_OSC_LIBS@
+	@SOUP_LIBS@
 
 AM_CFLAGS=-std=c99
 
@@ -195,4 +197,12 @@ libingen_engine_la_SOURCES += \
 	LV2Node.hpp \
 	LV2Node.cpp
 endif
+
+if WITH_SOUP
+libingen_engine_la_SOURCES += \
+	HTTPEngineReceiver.cpp \
+	HTTPEngineReceiver.hpp
+endif
+
+
 

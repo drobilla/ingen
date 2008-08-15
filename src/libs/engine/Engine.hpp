@@ -46,6 +46,7 @@ class QueuedEvent;
 class QueuedEngineInterface;
 class Driver;
 class ProcessSlave;
+class ProcessContext;
 
 
 /** The main class for the Engine.
@@ -71,11 +72,14 @@ public:
 
 	virtual void start_jack_driver();
 	virtual void start_osc_driver(int port);
+	virtual void start_http_driver(int port);
 	
 	virtual SharedPtr<QueuedEngineInterface> new_queued_interface();
 
 	virtual bool activate(size_t parallelism);
 	virtual void deactivate();
+
+	void process_events(ProcessContext& context);
 
 	virtual bool activated() { return _activated; }
 

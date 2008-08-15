@@ -39,6 +39,7 @@
 #include "CreatePatchEvent.hpp"
 #include "EnablePatchEvent.hpp"
 #include "OSCEngineReceiver.hpp"
+#include "HTTPEngineReceiver.hpp"
 #include "PostProcessor.hpp"
 #include "ProcessSlave.hpp"
 #include "ThreadManager.hpp"
@@ -164,6 +165,17 @@ Engine::start_osc_driver(int port)
 	_event_source = SharedPtr<EventSource>(new OSCEngineReceiver(
 			*this, pre_processor_queue_size, port));
 }
+
+	
+void
+Engine::start_http_driver(int port)
+{
+#ifdef HAVE_SOUP
+	// FIXE: leak
+	HTTPEngineReceiver* server = new HTTPEngineReceiver(*this, port);
+	server->activate();
+#endif
+}
 	
 
 SharedPtr<QueuedEngineInterface>
@@ -275,6 +287,14 @@ Engine::deactivate()
 	_event_source.reset();
 	
 	_activated = false;
+}
+	
+
+void
+Engine::process_events(ProcessContext& context)
+{
+	if (_event_source)
+		_event_source->process(*_post_processor, context);
 }
 
 

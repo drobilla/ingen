@@ -86,6 +86,9 @@ main(int argc, char** argv)
 	SharedPtr<Shared::EngineInterface> engine_interface;
 
 	Glib::thread_init();
+#if HAVE_SOUP
+	g_type_init();
+#endif
 
 	Ingen::Shared::World* world = Ingen::Shared::get_world();
 
@@ -112,6 +115,7 @@ main(int argc, char** argv)
 					world->engine = engine_interface;
 				} else {
 					engine->start_osc_driver(args.engine_port_arg);
+					engine->start_http_driver(args.engine_port_arg);
 				}
 			} else {
 				engine_module.reset();

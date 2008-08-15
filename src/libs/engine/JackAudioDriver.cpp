@@ -314,8 +314,7 @@ JackAudioDriver::_process_cb(jack_nframes_t nframes)
 	
 	// Process events that came in during the last cycle
 	// (Aiming for jitter-free 1 block event latency, ideally)
-	if (_engine.event_source())
-		_engine.event_source()->process(*_engine.post_processor(), _process_context);
+	_engine.process_events(_process_context);
 	
 	// Set buffers of patch ports to Jack port buffers (zero-copy processing)
 	for (Raul::List<JackAudioPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i) {
