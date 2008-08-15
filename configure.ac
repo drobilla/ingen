@@ -142,6 +142,19 @@ fi
 # OSC support (mandatory for now due to laziness)
 PKG_CHECK_MODULES(LIBLO, liblo >= 0.25)
 
+# HTTP support
+build_http="yes"
+AC_ARG_ENABLE(http,
+	[AS_HELP_STRING(--enable-http, [Build Ingen HTTP interface - Requires: libsoup])],
+	[ if test x$enable_http = xno ; then build_http=no ; fi ])
+if test "$build_http" = "yes"; then
+	PKG_CHECK_MODULES(SOUP, libsoup-2.4 >= 2.4.0, [build_http="yes"], [build_http="no"])
+	if test "x$build_http" = "xyes"; then
+		AC_DEFINE([HAVE_SOUP], 1, [Defined if libsoup is available for HTTP support])
+	fi
+fi
+AM_CONDITIONAL(WITH_SOUP, [test "$build_http" = "yes"])
+
 # LV2 support
 build_lv2="yes"
 AC_ARG_ENABLE(lv2,
