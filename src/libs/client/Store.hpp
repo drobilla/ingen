@@ -28,6 +28,7 @@
 #include <raul/PathTable.hpp>
 #include <raul/TableImpl.hpp>
 #include "interface/EngineInterface.hpp"
+#include "interface/Store.hpp"
 using std::string; using std::list;
 using Ingen::Shared::EngineInterface;
 using Raul::Path;
@@ -52,9 +53,9 @@ class ConnectionModel;
  *
  * \ingroup IngenClient
  */
-class Store : public sigc::trackable { // FIXME: is trackable necessary?
+class ClientStore : public Shared::Store, public sigc::trackable { // FIXME: is trackable necessary?
 public:
-	Store(SharedPtr<EngineInterface> engine, SharedPtr<SigClientInterface> emitter);
+	ClientStore(SharedPtr<EngineInterface> engine, SharedPtr<SigClientInterface> emitter);
 
 	SharedPtr<PluginModel> plugin(const string& uri);
 	SharedPtr<ObjectModel> object(const Path& path);
@@ -63,16 +64,27 @@ public:
 
 	size_t num_object() { return _objects.size(); }
 	
+	Objects::iterator find(const Path& path) { return _objects.find(path); }
+	
 	typedef Raul::Table<string, SharedPtr<PluginModel> > Plugins;
 	const Plugins& plugins() const { return _plugins; }
 
 	typedef Raul::PathTable< SharedPtr<Shared::GraphObject> > Objects;
 	const Objects& objects() const { return _objects; }
+	Objects& objects() { return _objects; }
+
+	Objects::const_iterator children_begin(SharedPtr<Shared::GraphObject> o) const;
+	Objects::const_iterator children_end(SharedPtr<Shared::GraphObject> o) const;
+
+	SharedPtr<Shared::GraphObject> find_child(SharedPtr<Shared::GraphObject> parent,
+	                                          const string& child_name) const;
 
 	sigc::signal<void, SharedPtr<ObjectModel> > signal_new_object; 
 	sigc::signal<void, SharedPtr<PluginModel> > signal_new_plugin; 
 
 private:
+
+	void add(Shared::GraphObject* o) { throw; }
 
 	void add_object(SharedPtr<ObjectModel> object);
 	SharedPtr<ObjectModel> remove_object(const Path& path);

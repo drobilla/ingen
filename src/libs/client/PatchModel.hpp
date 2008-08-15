@@ -33,7 +33,7 @@ using std::list; using std::string;
 namespace Ingen {
 namespace Client {
 
-class Store;
+class ClientStore;
 
 
 /** Client's model of a patch.
@@ -62,7 +62,9 @@ public:
 		signal_editable.emit(e);
 	} }
 
-	unsigned child_name_offset(const string& base_name) const;
+	static unsigned child_name_offset(ClientStore& store,
+	                                  SharedPtr<PatchModel> parent,
+	                                  const string& base_name);
 	
 	// Signals
 	sigc::signal<void, SharedPtr<NodeModel> >       signal_new_node; 
@@ -75,10 +77,10 @@ public:
 	sigc::signal<void, bool>                        signal_editable;
 
 private:
-	friend class Store;
+	friend class ClientStore;
 
-	PatchModel(Store& store, const Path& patch_path, size_t internal_poly)
-		: NodeModel(store, "ingen:Patch", patch_path, false) // FIXME
+	PatchModel(const Path& patch_path, size_t internal_poly)
+		: NodeModel("ingen:Patch", patch_path, false) // FIXME
 		, _enabled(false)
 		, _poly(internal_poly)
 		, _editable(true)

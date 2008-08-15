@@ -29,7 +29,7 @@
 namespace Ingen {
 namespace Client {
 
-class Store;
+class ClientStore;
 
 
 /** Class to represent a port->port connection in the engine.
@@ -52,7 +52,7 @@ public:
 	const Path dst_port_path() const { return _dst_port->path(); }
 	
 private:
-	friend class Store;
+	friend class ClientStore;
 
 	ConnectionModel(SharedPtr<PortModel> src, SharedPtr<PortModel> dst)
 		: _src_port(src)

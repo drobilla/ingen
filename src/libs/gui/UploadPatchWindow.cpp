@@ -247,7 +247,7 @@ UploadPatchWindow::upload_clicked()
 	_upload_progress->set_fraction(0.0);
 	_upload_progress->set_text("");
 
-	Serialiser s(*App::instance().world()->rdf_world);
+	Serialiser s(*App::instance().world());
 
 	const string uri = string("http://rdf.drobilla.net/ingen_patches/")
 		.append(symbol).append(".ingen.ttl");

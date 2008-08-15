@@ -41,7 +41,7 @@ using Raul::Symbol;
 namespace Ingen {
 namespace Client {
 
-class Store;
+class ClientStore;
 
 
 /** Base class for all GraphObject models (NodeModel, PatchModel, PortModel).
@@ -72,10 +72,6 @@ public:
 	
 	GraphObject* graph_parent() const { return _parent.get(); }
 
-	const_iterator                 children_begin() const;
-	const_iterator                 children_end() const;
-	SharedPtr<Shared::GraphObject> find_child(const string& name) const;
-
 	// Signals
 	sigc::signal<void, SharedPtr<ObjectModel> >    signal_new_child; 
 	sigc::signal<void, SharedPtr<ObjectModel> >    signal_removed_child; 
@@ -85,9 +81,9 @@ public:
 	sigc::signal<void>                             signal_renamed; 
 
 protected:
-	friend class Store;
+	friend class ClientStore;
 	
-	ObjectModel(Store& store,  const Path& path, bool polyphonic);
+	ObjectModel(const Path& path, bool polyphonic);
 	
 	virtual void set_path(const Path& p) { _path = p; signal_renamed.emit(); }
 	virtual void set_parent(SharedPtr<ObjectModel> p) { assert(p); _parent = p; }
@@ -99,7 +95,6 @@ protected:
 	
 	virtual void set(SharedPtr<ObjectModel> model);
 
-	Store&                 _store;
 	Path                   _path;
 	bool                   _polyphonic;
 	SharedPtr<ObjectModel> _parent;

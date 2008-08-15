@@ -27,8 +27,8 @@ namespace Ingen {
 namespace Client {
 
 
-NodeModel::NodeModel(Store& store, SharedPtr<PluginModel> plugin, const Path& path, bool polyphonic)
-	: ObjectModel(store, path, polyphonic)
+NodeModel::NodeModel(SharedPtr<PluginModel> plugin, const Path& path, bool polyphonic)
+	: ObjectModel(path, polyphonic)
 	, _plugin_uri(plugin->uri())
 	, _plugin(plugin)
 	, _min_values(0)
@@ -36,8 +36,8 @@ NodeModel::NodeModel(Store& store, SharedPtr<PluginModel> plugin, const Path& pa
 {
 }
 
-NodeModel::NodeModel(Store& store, const string& plugin_uri, const Path& path, bool polyphonic)
-	: ObjectModel(store, path, polyphonic)
+NodeModel::NodeModel(const string& plugin_uri, const Path& path, bool polyphonic)
+	: ObjectModel(path, polyphonic)
 	, _plugin_uri(plugin_uri)
 	, _min_values(0)
 	, _max_values(0)

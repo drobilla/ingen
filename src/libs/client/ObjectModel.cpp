@@ -26,9 +26,8 @@ namespace Ingen {
 namespace Client {
 
 
-ObjectModel::ObjectModel(Store& store, const Path& path, bool polyphonic)
-	: _store(store)
-	, _path(path)
+ObjectModel::ObjectModel(const Path& path, bool polyphonic)
+	: _path(path)
 	, _polyphonic(polyphonic)
 {
 }
@@ -38,39 +37,6 @@ ObjectModel::~ObjectModel()
 {
 }
 	
-
-ObjectModel::const_iterator
-ObjectModel::children_begin() const
-{
-	Store::Objects::const_iterator me = _store.objects().find(_path);
-	assert(me != _store.objects().end());
-	++me;
-	return me;
-}
-
-
-ObjectModel::const_iterator
-ObjectModel::children_end() const
-{
-	Store::Objects::const_iterator me = _store.objects().find(_path);
-	assert(me != _store.objects().end());
-	return _store.objects().find_descendants_end(me);
-}
-
-
-SharedPtr<Shared::GraphObject>
-ObjectModel::find_child(const string& name) const
-{
-	const_iterator me = _store.objects().find(_path);
-	assert(me != _store.objects().end());
-	const_iterator children_end = _store.objects().find_descendants_end(me);
-	const_iterator child = _store.objects().find(me, children_end, _path.base() + name);
-	if (child != _store.objects().end())
-		return PtrCast<ObjectModel>(child->second);
-	else
-		return SharedPtr<ObjectModel>();
-}
-
 
 /** Get a piece of variable for this object.
  *

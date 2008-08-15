@@ -23,9 +23,9 @@
 #include <raul/Path.hpp>
 
 namespace Ingen { namespace Client {
-	class Store;
+	class ClientStore;
 } }
-using Ingen::Client::Store;
+using Ingen::Client::ClientStore;
 
 namespace Ingen {
 namespace GUI {
@@ -43,7 +43,7 @@ class PatchTreeWindow : public Gtk::Window
 public:
 	PatchTreeWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& refGlade);
 
-	void init(Store& store);
+	void init(ClientStore& store);
 
 	void new_object(SharedPtr<ObjectModel> object);
 

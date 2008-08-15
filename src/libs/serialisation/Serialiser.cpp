@@ -34,6 +34,7 @@
 #include <redlandmm/Model.hpp>
 #include <redlandmm/Node.hpp>
 #include <redlandmm/World.hpp>
+#include "module/World.hpp"
 #include "interface/EngineInterface.hpp"
 #include "interface/Plugin.hpp"
 #include "interface/Patch.hpp"
@@ -52,8 +53,9 @@ namespace Ingen {
 namespace Serialisation {
 
 
-Serialiser::Serialiser(Redland::World& world)
-	: _world(world)
+Serialiser::Serialiser(Shared::World& world)
+	: _store(world.store)
+	, _world(*world.rdf_world)
 {
 }
 	
@@ -296,7 +298,9 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch)
 	
 	serialise_variables(patch_id, patch->variables());
 
-	for (GraphObject::const_iterator n = patch->children_begin(); n != patch->children_end(); ++n) {
+	//for (GraphObject::const_iterator n = patch->children_begin(); n != patch->children_end(); ++n) {
+	for (GraphObject::const_iterator n = _store->children_begin(patch);
+			n != _store->children_end(patch); ++n) {
 		
 		if (n->second->graph_parent() != patch.get())
 			continue;

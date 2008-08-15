@@ -72,11 +72,33 @@ ObjectStore::find_object(const Path& path)
 }
 
 
+ObjectStore::Objects::const_iterator
+ObjectStore::children_begin(SharedPtr<Shared::GraphObject> o) const
+{
+	Objects::const_iterator parent = _objects.find(o->path());
+	assert(parent != _objects.end());
+	++parent;
+	return parent;
+}
+
+
+ObjectStore::Objects::const_iterator
+ObjectStore::children_end(SharedPtr<Shared::GraphObject> o) const
+{
+	Objects::const_iterator parent = _objects.find(o->path());
+	assert(parent != _objects.end());
+	return _objects.find_descendants_end(parent);
+}
+
+
 /** Add an object to the store. Not realtime safe.
  */
 void
-ObjectStore::add(GraphObjectImpl* o)
+ObjectStore::add(GraphObject* obj)
 {
+	GraphObjectImpl* o = dynamic_cast<GraphObjectImpl*>(obj);
+	assert(o);
+
 	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
 
 	if (_objects.find(o->path()) != _objects.end()) {

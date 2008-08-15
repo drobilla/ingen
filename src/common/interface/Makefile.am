@@ -9,4 +9,5 @@ EXTRA_DIST = \
 	Patch.hpp \
 	Plugin.hpp \
 	Port.hpp \
-	README
+	README \
+	Store.hpp

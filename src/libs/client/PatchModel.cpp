@@ -189,7 +189,9 @@ PatchModel::polyphonic() const
 
 
 unsigned
-PatchModel::child_name_offset(const string& base_name) const
+PatchModel::child_name_offset(ClientStore& store,
+	                          SharedPtr<PatchModel> parent,
+	                          const string& base_name)
 {
 	assert(Path::is_valid_name(base_name));
 	unsigned offset = 0;
@@ -199,7 +201,7 @@ PatchModel::child_name_offset(const string& base_name) const
 		ss << base_name;
 		if (offset > 0)
 			ss << "_" << offset;
-		if (!find_child(ss.str()))
+		if (store.find(parent->path().base() + ss.str()) == store.objects().end())
 			break;
 		else if (offset == 0)
 			offset = 2;

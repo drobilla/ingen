@@ -29,6 +29,7 @@
 #include <raul/SharedPtr.hpp>
 #include <redlandmm/World.hpp>
 #include <module/World.hpp>
+#include <interface/Store.hpp>
 
 using namespace std;
 
@@ -41,7 +42,7 @@ namespace Ingen {
 	namespace Client {
 		class PatchModel;
 		class PluginModel;
-		class Store;
+		class ClientStore;
 		class SigClientInterface;
 	}
 	namespace Serialisation {
@@ -103,12 +104,10 @@ public:
 
 	const SharedPtr<EngineInterface>     engine()     const { return _world->engine; }
 	const SharedPtr<SigClientInterface>& client()     const { return _client; }
-	const SharedPtr<Store>&              store()      const { return _store; }
+	const SharedPtr<ClientStore>&        store()      const { return _store; }
 	const SharedPtr<ThreadedLoader>&     loader()     const { return _loader; }
-	const SharedPtr<Serialiser>&         serialiser() const { return _serialiser; }
+	const SharedPtr<Serialiser>&         serialiser() const { return _world->serialiser; }
 	
-	SharedPtr<Glib::Module> serialisation_module() { return _serialisation_module; }
-
 	static inline App& instance() { assert(_instance); return *_instance; }
 
 	static void run(int argc, char** argv, Ingen::Shared::World* world);
@@ -138,12 +137,9 @@ protected:
 	
 	static App* _instance;
 	
-	SharedPtr<Glib::Module> _serialisation_module;
-	
 	SharedPtr<SigClientInterface> _client;
-	SharedPtr<Store>              _store;
+	SharedPtr<ClientStore>        _store;
 	SharedPtr<ThreadedLoader>     _loader;
-	SharedPtr<Serialiser>         _serialiser;
 
 	Configuration*    _configuration;
 

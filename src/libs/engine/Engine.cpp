@@ -27,6 +27,7 @@
 #include "tuning.hpp"
 #include "Event.hpp"
 #include "common/interface/EventType.hpp"
+#include "common/interface/Store.hpp"
 #include "JackAudioDriver.hpp"
 #include "NodeFactory.hpp"
 #include "ClientBroadcaster.hpp"
@@ -58,11 +59,15 @@ Engine::Engine(Ingen::Shared::World* world)
 	, _maid(new Raul::Maid(maid_queue_size))
 	, _post_processor(new PostProcessor(*this, /**_maid, */post_processor_queue_size))
 	, _broadcaster(new ClientBroadcaster())
-	, _object_store(new ObjectStore())
 	, _node_factory(new NodeFactory(world))
 	, _quit_flag(false)
 	, _activated(false)
 {
+	if (world->store) {
+		assert(PtrCast<ObjectStore>(world->store));
+	} else {
+		world->store = SharedPtr<Store>(new ObjectStore());
+	}
 }
 
 
@@ -70,13 +75,12 @@ Engine::~Engine()
 {
 	deactivate();
 
-	for (ObjectStore::Objects::iterator i = _object_store->objects().begin();
-			i != _object_store->objects().end(); ++i) {
+	for (ObjectStore::Objects::iterator i = object_store()->objects().begin();
+			i != object_store()->objects().end(); ++i) {
 		if ( ! PtrCast<GraphObjectImpl>(i->second)->parent() )
 			i->second.reset();
 	}
 
-	delete _object_store;
 	delete _broadcaster;
 	delete _node_factory;
 	delete _osc_driver;
@@ -86,6 +90,13 @@ Engine::~Engine()
 	delete _maid;
 	
 	munlockall();
+}
+	
+
+ObjectStore*
+Engine::object_store() const
+{
+	 return dynamic_cast<ObjectStore*>(_world->store.get());
 }
 
 
@@ -228,7 +239,7 @@ Engine::activate(size_t parallelism)
 	PatchImpl* root_patch = new PatchImpl(*this, "", 1, NULL,
 			_audio_driver->sample_rate(), _audio_driver->buffer_size(), 1);
 	root_patch->activate();
-	_object_store->add(root_patch);
+	_world->store->add(root_patch);
 	root_patch->compiled_patch(root_patch->compile());
 
 	assert(_audio_driver->root_patch() == NULL);

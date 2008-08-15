@@ -1,5 +1,5 @@
 /* This file is part of Ingen.
- * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
+ * Copyright (C) 2008 Dave Robillard <http://drobilla.net>
  * 
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
@@ -15,32 +15,33 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include CONFIG_H_PATH
-#include "module/World.hpp"
-#include "serialisation.hpp"
-#include "Loader.hpp"
-#include "Serialiser.hpp"
+#ifndef COMMON_STORE_H
+#define COMMON_STORE_H
+
+#include <raul/PathTable.hpp>
+#include "interface/GraphObject.hpp"
+
+using Raul::PathTable;
+using Raul::Path;
 
 namespace Ingen {
-namespace Serialisation {
+namespace Shared {
 
 
-Ingen::Serialisation::Loader*
-new_loader()
-{
-	return new Loader();
-}
-
+class Store {
+public:
+	typedef Raul::PathTable< SharedPtr<Shared::GraphObject> > Objects;
+	virtual const Objects& objects() const = 0;
 	
-Ingen::Serialisation::Serialiser*
-new_serialiser(Ingen::Shared::World* world)
-{
-	assert(world->rdf_world);
-	return new Serialiser(*world);
-}
+	virtual Objects::iterator find(const Path& path) = 0;
+	virtual void add(GraphObject* o) = 0;
+
+	virtual Objects::const_iterator children_begin(SharedPtr<Shared::GraphObject> o) const = 0;
+	virtual Objects::const_iterator children_end(SharedPtr<Shared::GraphObject> o) const = 0;
+};
 
 
-
-} // namespace Serialisation
+} // namespace Shared
 } // namespace Ingen
 
+#endif // COMMON_STORE_H

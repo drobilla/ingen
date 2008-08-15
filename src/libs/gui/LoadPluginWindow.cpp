@@ -129,7 +129,7 @@ LoadPluginWindow::name_changed()
 	if (!Path::is_valid_name(name)) {
 		//m_message_label->set_text("Name contains invalid characters.");
 		_add_button->property_sensitive() = false;
-	} else if (_patch->find_child(name)) {
+	} else if (App::instance().store()->find_child(_patch, name)) {
 		//m_message_label->set_text("An object already exists with that name.");
 		_add_button->property_sensitive() = false;
 	} else if (name.length() == 0) {
@@ -288,7 +288,7 @@ LoadPluginWindow::plugin_selection_changed()
 	if (iter) {
 		Gtk::TreeModel::Row row = *iter;
 		boost::shared_ptr<PluginModel> p = row.get_value(_plugins_columns._col_plugin_model);
-		_plugin_name_offset = _patch->child_name_offset(p->default_node_name());
+		_plugin_name_offset = PatchModel::child_name_offset(*App::instance().store().get(), _patch, p->default_node_name());
 		_node_name_entry->set_text(generate_module_name(_plugin_name_offset));
 	} else {
 		_plugin_name_offset = 0;

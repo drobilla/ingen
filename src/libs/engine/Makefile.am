@@ -20,6 +20,7 @@ libingen_engine_la_CXXFLAGS = \
 libingen_engine_la_LDFLAGS = -no-undefined -module -avoid-version
 libingen_engine_la_LIBADD = \
 	../shared/libingen_shared.la \
+	../module/libingen_module.la \
 	@GLIBMM_LIBS@ \
 	@JACK_LIBS@ \
 	@LASH_LIBS@ \

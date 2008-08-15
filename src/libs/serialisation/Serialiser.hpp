@@ -29,6 +29,7 @@
 #include <redlandmm/World.hpp>
 #include <redlandmm/Model.hpp>
 #include "interface/GraphObject.hpp"
+#include "interface/Store.hpp"
 
 using namespace Raul;
 using namespace Ingen::Shared;
@@ -42,6 +43,7 @@ namespace Shared {
 	class Node;
 	class Port;
 	class Connection;
+	class World;
 }
 
 namespace Serialisation {
@@ -54,9 +56,9 @@ namespace Serialisation {
 class Serialiser
 {
 public:
-	Serialiser(Redland::World& world);
+	Serialiser(Shared::World& world);
 
-	void   to_file(SharedPtr<GraphObject> object, const std::string& filename);
+	void to_file(SharedPtr<GraphObject> object, const std::string& filename);
 
 	std::string to_string(SharedPtr<GraphObject>        object,
 	                      const std::string&            base_uri,
@@ -88,12 +90,13 @@ private:
 
 	typedef std::map<Raul::Path, Redland::Node> NodeMap;
 
-	SharedPtr<GraphObject> _root_object;
-	Mode                   _mode;
-	NodeMap                _node_map;
-	std::string            _base_uri;
-	Redland::World&        _world;
-	Redland::Model*        _model;
+	SharedPtr<GraphObject>   _root_object;
+	SharedPtr<Shared::Store> _store;
+	Mode                     _mode;
+	NodeMap                  _node_map;
+	std::string              _base_uri;
+	Redland::World&          _world;
+	Redland::Model*          _model;
 };
 
 

@@ -41,7 +41,7 @@
 #include "SubpatchModule.hpp"
 #include "GladeFactory.hpp"
 #include "WindowFactory.hpp"
-using Ingen::Client::Store;
+using Ingen::Client::ClientStore;
 using Ingen::Serialisation::Serialiser;
 using Ingen::Client::PluginModel;
 
@@ -159,10 +159,10 @@ PatchCanvas::build_internal_menu()
 		_menu->reorder_child(*internal_menu_item, 2);
 	}
 	
-	const Store::Plugins& plugins = App::instance().store()->plugins();
+	const ClientStore::Plugins& plugins = App::instance().store()->plugins();
 
 	// Add Internal plugins
-	for (Store::Plugins::const_iterator i = plugins.begin(); i != plugins.end(); ++i) {
+	for (ClientStore::Plugins::const_iterator i = plugins.begin(); i != plugins.end(); ++i) {
 		SharedPtr<PluginModel> p = i->second;
 		if (p->type() == Plugin::Internal) {
 			_internal_menu->items().push_back(Gtk::Menu_Helpers::MenuElem(p->name(),
@@ -200,10 +200,10 @@ PatchCanvas::build_plugin_class_menu(Gtk::Menu* menu,
 		}
 	}
 	
-	const Store::Plugins& plugins = App::instance().store()->plugins();
+	const ClientStore::Plugins& plugins = App::instance().store()->plugins();
 
 	// Add LV2 plugins
-	for (Store::Plugins::const_iterator i = plugins.begin(); i != plugins.end(); ++i) {
+	for (ClientStore::Plugins::const_iterator i = plugins.begin(); i != plugins.end(); ++i) {
 		SLV2Plugin p = i->second->slv2_plugin();
 
 		if (p && slv2_plugin_get_class(p) == plugin_class) {
@@ -256,8 +256,8 @@ PatchCanvas::build()
 		boost::dynamic_pointer_cast<PatchCanvas>(shared_from_this());
 	
 	// Create modules for nodes
-	for (ObjectModel::const_iterator i = _patch->children_begin();
-			i != _patch->children_end(); ++i) {
+	for (ObjectModel::const_iterator i = App::instance().store()->children_begin(_patch);
+			i != App::instance().store()->children_end(_patch); ++i) {
 		SharedPtr<NodeModel> node = PtrCast<NodeModel>(i->second);
 		if (node && node->parent() == _patch)
 			add_node(node);
@@ -539,7 +539,7 @@ PatchCanvas::destroy_selection()
 void
 PatchCanvas::copy_selection()
 {
-	Serialiser serialiser(*App::instance().world()->rdf_world);
+	Serialiser serialiser(*App::instance().world());
 	serialiser.start_to_string("");
 
 	for (list<boost::shared_ptr<Item> >::iterator m = _selected_items.begin(); m != _selected_items.end(); ++m) {
@@ -617,7 +617,7 @@ void
 PatchCanvas::load_plugin(SharedPtr<PluginModel> plugin)
 {
 	string name = plugin->default_node_name();
-	unsigned offset = _patch->child_name_offset(name);
+	unsigned offset = PatchModel::child_name_offset(*App::instance().store().get(), _patch, name);
 	if (offset != 0) {
 		std::stringstream ss;
 		ss << name << "_" << offset;

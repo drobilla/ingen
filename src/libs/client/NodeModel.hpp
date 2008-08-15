@@ -38,7 +38,7 @@ namespace Ingen {
 namespace Client {
 
 class PluginModel;
-class Store;
+class ClientStore;
 
 	
 /** Node model class, used by the client to store engine's state.
@@ -66,10 +66,10 @@ public:
 	sigc::signal<void, SharedPtr<PortModel> > signal_removed_port; 
 	
 protected:
-	friend class Store;
+	friend class ClientStore;
 	
-	NodeModel(Store& store, const string& plugin_uri, const Path& path, bool polyphonic);
-	NodeModel(Store& store, SharedPtr<PluginModel> plugin, const Path& path, bool polyphonic);
+	NodeModel(const string& plugin_uri, const Path& path, bool polyphonic);
+	NodeModel(SharedPtr<PluginModel> plugin, const Path& path, bool polyphonic);
 
 	NodeModel(const Path& path);
 	void add_child(SharedPtr<ObjectModel> c);

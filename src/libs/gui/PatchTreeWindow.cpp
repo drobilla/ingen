@@ -66,7 +66,7 @@ PatchTreeWindow::PatchTreeWindow(BaseObjectType* cobject,
 
 
 void
-PatchTreeWindow::init(Store& store)
+PatchTreeWindow::init(ClientStore& store)
 {
 	store.signal_new_object.connect(sigc::mem_fun(this, &PatchTreeWindow::new_object));
 }

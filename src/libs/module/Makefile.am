@@ -9,7 +9,6 @@ libingen_module_la_CXXFLAGS = \
 	-DINGEN_MODULE_DIR=\"$(libdir)/ingen\"
 
 libingen_module_la_LIBADD = \
-	../shared/libingen_shared.la \
 	@GLIBMM_LIBS@ \
 	@REDLANDMM_LIBS@ \
 	@RAUL_LIBS@ \

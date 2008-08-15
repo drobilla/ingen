@@ -22,6 +22,9 @@
 #include <raul/SharedPtr.hpp>
 #include <raul/AtomLiblo.hpp>
 #include "interface/ClientInterface.hpp"
+#include "module/Module.hpp"
+#include "serialisation/serialisation.hpp"
+#include "serialisation/Serialiser.hpp"
 #include "engine/ThreadManager.hpp"
 #include "HTTPEngineReceiver.hpp"
 #include "QueuedEventSource.hpp"
@@ -43,6 +46,17 @@ HTTPEngineReceiver::HTTPEngineReceiver(Engine& engine, uint16_t port)
 
 	cout << "Started HTTP server on port " << soup_server_get_port(_server) << endl;
 	Thread::set_name("HTTP receiver");
+	
+	if (!engine.world()->serialisation_module)
+		engine.world()->serialisation_module = Ingen::Shared::load_module("ingen_serialisation");
+
+	if (engine.world()->serialisation_module)
+		if (!engine.world()->serialiser)
+			engine.world()->serialiser = SharedPtr<Serialiser>(
+					Ingen::Serialisation::new_serialiser(engine.world()));
+
+	if (!engine.world()->serialiser)
+		cerr << "WARNING: Failed to load ingen_serialisation module, HTTP disabled." << endl;
 }
 
 
@@ -86,26 +100,37 @@ HTTPEngineReceiver::message_callback(SoupServer* server, SoupMessage* msg, const
 		return;
 	}
 	
+	SharedPtr<Serialiser> serialiser = me->_engine.world()->serialiser;
+	if (!serialiser) {
+		soup_message_set_status (msg, SOUP_STATUS_INTERNAL_SERVER_ERROR);
+		return;
+	}
+
 	// FIXME: not thread safe!
 
-	ObjectStore* store = me->_engine.object_store();
+	SharedPtr<Store> store = me->_engine.world()->store;
+	assert(store);
 	if (!Path::is_valid(path)) {
 		soup_message_set_status (msg, SOUP_STATUS_BAD_REQUEST);
 		return;
 	}
 	
-	ObjectStore::Objects::iterator start = store->find(path);
+	Store::Objects::const_iterator start = store->find(path);
 	if (start == store->objects().end()) {
 		soup_message_set_status (msg, SOUP_STATUS_NOT_FOUND);
 		return;
 	}
 
+#if 0
 	ObjectStore::Objects::iterator end = store->objects().find_descendants_end(start);
 
 	string response;
 	for (ObjectStore::Objects::iterator i = start; i != end; ++i)
 		response.append(i->first).append("\n");
+#endif
 
+	const string response = serialiser->to_string(start->second,
+			"http://example.org/whatever", GraphObject::Variables());
 	soup_message_set_status (msg, SOUP_STATUS_OK);
 	soup_message_set_response (msg, "text/plain", SOUP_MEMORY_COPY,
 			response.c_str(), response.length());

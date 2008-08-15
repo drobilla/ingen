@@ -36,10 +36,10 @@ ThreadedLoader::ThreadedLoader(SharedPtr<EngineInterface> engine)
 	set_name("Loader");
 
 	// FIXME: rework this so the thread is only present when it's doing something (save mem)
-	if (App::instance().serialisation_module()) {
+	if (App::instance().world()->serialisation_module) {
 		Loader* (*new_loader)() = NULL;
 
-		bool found = App::instance().serialisation_module()->get_symbol(
+		bool found = App::instance().world()->serialisation_module->get_symbol(
 				"new_loader", (void*&)new_loader);
 
 		if (found)

@@ -71,15 +71,15 @@ public:
 	sigc::signal<void, SharedPtr<PortModel> > signal_disconnection;
 
 private:
-	friend class Store;
+	friend class ClientStore;
 	
-	PortModel(Store& store, const Path& path, uint32_t index, DataType type, Direction dir)
-	: ObjectModel(store, path, true),
-	  _index(index),
-	  _type(type),
-	  _direction(dir),
-	  _current_val(0.0f),
-	  _connections(0)
+	PortModel(const Path& path, uint32_t index, DataType type, Direction dir)
+		: ObjectModel(path, true)
+		, _index(index)
+		, _type(type)
+		, _direction(dir)
+		, _current_val(0.0f)
+		, _connections(0)
 	{
 		if (_type == DataType::UNKNOWN)
 			std::cerr << "[PortModel] Warning: Unknown port type" << std::endl;

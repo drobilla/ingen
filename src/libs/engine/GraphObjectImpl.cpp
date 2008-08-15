@@ -29,20 +29,6 @@ GraphObjectImpl::parent_patch() const
 }
 	
 
-GraphObjectImpl::const_iterator
-GraphObjectImpl::children_begin() const
-{
-	throw;
-}
-
-
-GraphObjectImpl::const_iterator
-GraphObjectImpl::children_end() const
-{
-	throw;
-}
-
-
 SharedPtr<GraphObject>
 GraphObjectImpl::find_child(const string& name) const
 {

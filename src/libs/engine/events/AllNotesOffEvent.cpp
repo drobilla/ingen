@@ -19,6 +19,8 @@
 #include "Responder.hpp"
 #include "Engine.hpp"
 #include "ObjectStore.hpp"
+#include "module/World.hpp"
+#include "interface/Store.hpp"
 
 namespace Ingen {
 

@@ -90,8 +90,9 @@ public:
 	OSCDriver*         osc_driver()         const { return _osc_driver; }
 	PostProcessor*     post_processor()     const { return _post_processor; }
 	ClientBroadcaster* broadcaster()        const { return _broadcaster; }
-	ObjectStore*       object_store()       const { return _object_store; }
 	NodeFactory*       node_factory()       const { return _node_factory; }
+
+	ObjectStore* object_store() const;
 
 	/** Return the active driver for the given type */
 	Driver* driver(DataType type, EventType event_type);
@@ -114,7 +115,6 @@ private:
 	Raul::Maid*            _maid;
 	PostProcessor*         _post_processor;
 	ClientBroadcaster*     _broadcaster;
-	ObjectStore*           _object_store;
 	NodeFactory*           _node_factory;
 	
 	bool _quit_flag;

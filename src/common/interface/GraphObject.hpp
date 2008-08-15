@@ -53,10 +53,6 @@ public:
 	
 	// FIXME: return WeakPtr, and stupid name
 	virtual GraphObject* graph_parent() const = 0;
-	
-	virtual const_iterator         children_begin() const = 0;
-	virtual const_iterator         children_end() const = 0;
-	virtual SharedPtr<GraphObject> find_child(const std::string& name) const = 0;
 };
 
 

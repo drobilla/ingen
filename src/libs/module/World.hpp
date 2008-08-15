@@ -34,8 +34,12 @@ namespace Redland { class World; }
 namespace Ingen {
 class Engine;
 
+namespace Serialisation { class Serialiser; }
+using Serialisation::Serialiser;
+
 namespace Shared {
 class EngineInterface;
+class Store;
 
 
 /** The "world" all Ingen modules may share.
@@ -58,6 +62,10 @@ struct World {
 
     SharedPtr<EngineInterface> engine;
     SharedPtr<Engine>          local_engine;
+    SharedPtr<Serialiser>      serialiser;
+    SharedPtr<Store>           store;
+	
+	SharedPtr<Glib::Module> serialisation_module;
 };
 
 

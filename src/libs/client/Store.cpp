@@ -32,31 +32,31 @@ namespace Ingen {
 namespace Client {
 
 
-Store::Store(SharedPtr<EngineInterface> engine, SharedPtr<SigClientInterface> emitter)
+ClientStore::ClientStore(SharedPtr<EngineInterface> engine, SharedPtr<SigClientInterface> emitter)
 	: _engine(engine)
 	, _emitter(emitter)
 {
-	emitter->signal_object_destroyed.connect(sigc::mem_fun(this, &Store::destruction_event));
-	emitter->signal_object_renamed.connect(sigc::mem_fun(this, &Store::rename_event));
-	emitter->signal_new_plugin.connect(sigc::mem_fun(this, &Store::new_plugin_event));
-	emitter->signal_new_patch.connect(sigc::mem_fun(this, &Store::new_patch_event));
-	emitter->signal_new_node.connect(sigc::mem_fun(this, &Store::new_node_event));
-	emitter->signal_new_port.connect(sigc::mem_fun(this, &Store::new_port_event));
-	emitter->signal_polyphonic.connect(sigc::mem_fun(this, &Store::polyphonic_event));
-	emitter->signal_patch_enabled.connect(sigc::mem_fun(this, &Store::patch_enabled_event));
-	emitter->signal_patch_disabled.connect(sigc::mem_fun(this, &Store::patch_disabled_event));
-	emitter->signal_patch_polyphony.connect(sigc::mem_fun(this, &Store::patch_polyphony_event));
-	emitter->signal_patch_cleared.connect(sigc::mem_fun(this, &Store::patch_cleared_event));
-	emitter->signal_connection.connect(sigc::mem_fun(this, &Store::connection_event));
-	emitter->signal_disconnection.connect(sigc::mem_fun(this, &Store::disconnection_event));
-	emitter->signal_variable_change.connect(sigc::mem_fun(this, &Store::variable_change_event));
-	emitter->signal_control_change.connect(sigc::mem_fun(this, &Store::control_change_event));
-	emitter->signal_port_activity.connect(sigc::mem_fun(this, &Store::port_activity_event));
+	emitter->signal_object_destroyed.connect(sigc::mem_fun(this, &ClientStore::destruction_event));
+	emitter->signal_object_renamed.connect(sigc::mem_fun(this, &ClientStore::rename_event));
+	emitter->signal_new_plugin.connect(sigc::mem_fun(this, &ClientStore::new_plugin_event));
+	emitter->signal_new_patch.connect(sigc::mem_fun(this, &ClientStore::new_patch_event));
+	emitter->signal_new_node.connect(sigc::mem_fun(this, &ClientStore::new_node_event));
+	emitter->signal_new_port.connect(sigc::mem_fun(this, &ClientStore::new_port_event));
+	emitter->signal_polyphonic.connect(sigc::mem_fun(this, &ClientStore::polyphonic_event));
+	emitter->signal_patch_enabled.connect(sigc::mem_fun(this, &ClientStore::patch_enabled_event));
+	emitter->signal_patch_disabled.connect(sigc::mem_fun(this, &ClientStore::patch_disabled_event));
+	emitter->signal_patch_polyphony.connect(sigc::mem_fun(this, &ClientStore::patch_polyphony_event));
+	emitter->signal_patch_cleared.connect(sigc::mem_fun(this, &ClientStore::patch_cleared_event));
+	emitter->signal_connection.connect(sigc::mem_fun(this, &ClientStore::connection_event));
+	emitter->signal_disconnection.connect(sigc::mem_fun(this, &ClientStore::disconnection_event));
+	emitter->signal_variable_change.connect(sigc::mem_fun(this, &ClientStore::variable_change_event));
+	emitter->signal_control_change.connect(sigc::mem_fun(this, &ClientStore::control_change_event));
+	emitter->signal_port_activity.connect(sigc::mem_fun(this, &ClientStore::port_activity_event));
 }
 
 
 void
-Store::clear()
+ClientStore::clear()
 {
 	_objects.clear();
 	_plugins.clear();
@@ -64,7 +64,7 @@ Store::clear()
 
 
 void
-Store::add_plugin_orphan(SharedPtr<NodeModel> node)
+ClientStore::add_plugin_orphan(SharedPtr<NodeModel> node)
 {
 	cerr << "WARNING: Node " << node->path() << " received, but plugin "
 		<< node->plugin_uri() << " unknown." << endl;
@@ -85,7 +85,7 @@ Store::add_plugin_orphan(SharedPtr<NodeModel> node)
 
 
 void
-Store::resolve_plugin_orphans(SharedPtr<PluginModel> plugin)
+ClientStore::resolve_plugin_orphans(SharedPtr<PluginModel> plugin)
 {
 	Raul::Table<string, list<SharedPtr<NodeModel> > >::iterator n
 		= _plugin_orphans.find(plugin->uri());
@@ -107,7 +107,7 @@ Store::resolve_plugin_orphans(SharedPtr<PluginModel> plugin)
 
 
 void
-Store::add_connection_orphan(std::pair<Path, Path> orphan)
+ClientStore::add_connection_orphan(std::pair<Path, Path> orphan)
 {
 	cerr << "WARNING: Orphan connection " << orphan.first
 		<< " -> " << orphan.second << " received." << endl;
@@ -117,7 +117,7 @@ Store::add_connection_orphan(std::pair<Path, Path> orphan)
 
 
 void
-Store::resolve_connection_orphans(SharedPtr<PortModel> port)
+ClientStore::resolve_connection_orphans(SharedPtr<PortModel> port)
 {
 	assert(port->parent());
 
@@ -140,7 +140,7 @@ Store::resolve_connection_orphans(SharedPtr<PortModel> port)
 
 
 void
-Store::add_orphan(SharedPtr<ObjectModel> child)
+ClientStore::add_orphan(SharedPtr<ObjectModel> child)
 {
 	cerr << "WARNING: Orphan object " << child->path() << " received." << endl;
 
@@ -160,7 +160,7 @@ Store::add_orphan(SharedPtr<ObjectModel> child)
 
 
 void
-Store::add_variable_orphan(const Path& subject_path, const string& predicate, const Atom& value)
+ClientStore::add_variable_orphan(const Path& subject_path, const string& predicate, const Atom& value)
 {
 	Raul::PathTable<list<std::pair<string, Atom> > >::iterator orphans
 		= _variable_orphans.find(subject_path);
@@ -178,7 +178,7 @@ Store::add_variable_orphan(const Path& subject_path, const string& predicate, co
 
 
 void
-Store::resolve_variable_orphans(SharedPtr<ObjectModel> subject)
+ClientStore::resolve_variable_orphans(SharedPtr<ObjectModel> subject)
 {
 	Raul::PathTable<list<std::pair<string, Atom> > >::iterator v
 		= _variable_orphans.find(subject->path());
@@ -199,7 +199,7 @@ Store::resolve_variable_orphans(SharedPtr<ObjectModel> subject)
 
 
 void
-Store::resolve_orphans(SharedPtr<ObjectModel> parent)
+ClientStore::resolve_orphans(SharedPtr<ObjectModel> parent)
 {
 	Raul::PathTable<list<SharedPtr<ObjectModel> > >::iterator c
 		= _orphans.find(parent->path());
@@ -219,7 +219,7 @@ Store::resolve_orphans(SharedPtr<ObjectModel> parent)
 
 
 void
-Store::add_object(SharedPtr<ObjectModel> object)
+ClientStore::add_object(SharedPtr<ObjectModel> object)
 {
 	// If we already have "this" object, merge the existing one into the new
 	// one (with precedence to the new values).
@@ -265,7 +265,7 @@ Store::add_object(SharedPtr<ObjectModel> object)
 
 
 SharedPtr<ObjectModel>
-Store::remove_object(const Path& path)
+ClientStore::remove_object(const Path& path)
 {
 	Objects::iterator i = _objects.find(path);
 
@@ -308,7 +308,7 @@ Store::remove_object(const Path& path)
 
 
 SharedPtr<PluginModel>
-Store::plugin(const string& uri)
+ClientStore::plugin(const string& uri)
 {
 	assert(uri.length() > 0);
 	Plugins::iterator i = _plugins.find(uri);
@@ -320,7 +320,7 @@ Store::plugin(const string& uri)
 
 
 SharedPtr<ObjectModel>
-Store::object(const Path& path)
+ClientStore::object(const Path& path)
 {
 	assert(path.length() > 0);
 	Objects::iterator i = _objects.find(path);
@@ -335,7 +335,7 @@ Store::object(const Path& path)
 }
 
 void
-Store::add_plugin(SharedPtr<PluginModel> pm)
+ClientStore::add_plugin(SharedPtr<PluginModel> pm)
 {
 	// FIXME: dupes?  merge, like with objects?
 	
@@ -343,14 +343,46 @@ Store::add_plugin(SharedPtr<PluginModel> pm)
 	signal_new_plugin(pm);
 	//cerr << "Plugin: " << pm->uri() << ", # plugins: " << _plugins.size() << endl;
 }
+	
 
+ClientStore::Objects::const_iterator
+ClientStore::children_begin(SharedPtr<Shared::GraphObject> o) const
+{
+	Objects::const_iterator parent = _objects.find(o->path());
+	assert(parent != _objects.end());
+	++parent;
+	return parent;
+}
+
+
+ClientStore::Objects::const_iterator
+ClientStore::children_end(SharedPtr<Shared::GraphObject> o) const
+{
+	Objects::const_iterator parent = _objects.find(o->path());
+	assert(parent != _objects.end());
+	return _objects.find_descendants_end(parent);
+}
+
+
+SharedPtr<Shared::GraphObject>
+ClientStore::find_child(SharedPtr<Shared::GraphObject> parent, const string& child_name) const
+{
+	Objects::const_iterator pi = _objects.find(parent->path());
+	assert(pi != _objects.end());
+	Objects::const_iterator children_end = _objects.find_descendants_end(pi);
+	Objects::const_iterator child = _objects.find(pi, children_end, parent->path().base() + child_name);
+	if (child != _objects.end())
+		return PtrCast<ObjectModel>(child->second);
+	else
+		return SharedPtr<ObjectModel>();
+}
 
 
 /* ****** Signal Handlers ******** */
 
 
 void
-Store::destruction_event(const Path& path)
+ClientStore::destruction_event(const Path& path)
 {
 	SharedPtr<ObjectModel> removed = remove_object(path);
 
@@ -361,7 +393,7 @@ Store::destruction_event(const Path& path)
 }
 
 void
-Store::rename_event(const Path& old_path, const Path& new_path)
+ClientStore::rename_event(const Path& old_path, const Path& new_path)
 {
 	Objects::iterator parent = _objects.find(old_path);
 	if (parent == _objects.end()) {
@@ -403,7 +435,7 @@ Store::rename_event(const Path& old_path, const Path& new_path)
 }
 
 void
-Store::new_plugin_event(const string& uri, const string& type_uri, const string& symbol, const string& name)
+ClientStore::new_plugin_event(const string& uri, const string& type_uri, const string& symbol, const string& name)
 {
 	SharedPtr<PluginModel> p(new PluginModel(uri, type_uri, symbol, name));
 	add_plugin(p);
@@ -412,35 +444,35 @@ Store::new_plugin_event(const string& uri, const string& type_uri, const string&
 
 
 void
-Store::new_patch_event(const Path& path, uint32_t poly)
+ClientStore::new_patch_event(const Path& path, uint32_t poly)
 {
-	SharedPtr<PatchModel> p(new PatchModel(*this, path, poly));
+	SharedPtr<PatchModel> p(new PatchModel(path, poly));
 	add_object(p);
 }
 
 
 void
-Store::new_node_event(const string& plugin_uri, const Path& node_path, bool is_polyphonic, uint32_t num_ports)
+ClientStore::new_node_event(const string& plugin_uri, const Path& node_path, bool is_polyphonic, uint32_t num_ports)
 {
 	// FIXME: num_ports unused
 	
 	SharedPtr<PluginModel> plug = plugin(plugin_uri);
 	if (!plug) {
-		SharedPtr<NodeModel> n(new NodeModel(*this, plugin_uri, node_path, is_polyphonic));
+		SharedPtr<NodeModel> n(new NodeModel(plugin_uri, node_path, is_polyphonic));
 		add_plugin_orphan(n);
 	} else {
-		SharedPtr<NodeModel> n(new NodeModel(*this, plug, node_path, is_polyphonic));
+		SharedPtr<NodeModel> n(new NodeModel(plug, node_path, is_polyphonic));
 		add_object(n);
 	}
 }
 
 
 void
-Store::new_port_event(const Path& path, uint32_t index, const string& type, bool is_output)
+ClientStore::new_port_event(const Path& path, uint32_t index, const string& type, bool is_output)
 {
 	PortModel::Direction pdir = is_output ? PortModel::OUTPUT : PortModel::INPUT;
 
-	SharedPtr<PortModel> p(new PortModel(*this, path, index, type, pdir));
+	SharedPtr<PortModel> p(new PortModel(path, index, type, pdir));
 	add_object(p);
 	if (p->parent())
 		resolve_connection_orphans(p);
@@ -448,7 +480,7 @@ Store::new_port_event(const Path& path, uint32_t index, const string& type, bool
 
 	
 void
-Store::polyphonic_event(const Path& path, bool polyphonic)
+ClientStore::polyphonic_event(const Path& path, bool polyphonic)
 {
 	SharedPtr<ObjectModel> object = this->object(path);
 	if (object)
@@ -457,7 +489,7 @@ Store::polyphonic_event(const Path& path, bool polyphonic)
 
 
 void
-Store::patch_enabled_event(const Path& path)
+ClientStore::patch_enabled_event(const Path& path)
 {
 	SharedPtr<PatchModel> patch = PtrCast<PatchModel>(object(path));
 	if (patch)
@@ -466,7 +498,7 @@ Store::patch_enabled_event(const Path& path)
 
 
 void
-Store::patch_disabled_event(const Path& path)
+ClientStore::patch_disabled_event(const Path& path)
 {
 	SharedPtr<PatchModel> patch = PtrCast<PatchModel>(object(path));
 	if (patch)
@@ -475,7 +507,7 @@ Store::patch_disabled_event(const Path& path)
 
 	
 void
-Store::patch_polyphony_event(const Path& path, uint32_t poly)
+ClientStore::patch_polyphony_event(const Path& path, uint32_t poly)
 {
 	SharedPtr<PatchModel> patch = PtrCast<PatchModel>(object(path));
 	if (patch)
@@ -484,7 +516,7 @@ Store::patch_polyphony_event(const Path& path, uint32_t poly)
 
 
 void
-Store::patch_cleared_event(const Path& path)
+ClientStore::patch_cleared_event(const Path& path)
 {
 	Objects::iterator i = _objects.find(path);
 	if (i != _objects.end()) {
@@ -512,7 +544,7 @@ Store::patch_cleared_event(const Path& path)
 
 
 void
-Store::variable_change_event(const Path& subject_path, const string& predicate, const Atom& value)
+ClientStore::variable_change_event(const Path& subject_path, const string& predicate, const Atom& value)
 {
 	SharedPtr<ObjectModel> subject = object(subject_path);
 
@@ -528,7 +560,7 @@ Store::variable_change_event(const Path& subject_path, const string& predicate, 
 
 
 void
-Store::control_change_event(const Path& port_path, float value)
+ClientStore::control_change_event(const Path& port_path, float value)
 {
 	SharedPtr<PortModel> port = PtrCast<PortModel>(object(port_path));
 	if (port)
@@ -539,7 +571,7 @@ Store::control_change_event(const Path& port_path, float value)
 
 	
 void
-Store::port_activity_event(const Path& port_path)
+ClientStore::port_activity_event(const Path& port_path)
 {
 	SharedPtr<PortModel> port = PtrCast<PortModel>(object(port_path));
 	if (port)
@@ -550,7 +582,7 @@ Store::port_activity_event(const Path& port_path)
 
 
 SharedPtr<PatchModel>
-Store::connection_patch(const Path& src_port_path, const Path& dst_port_path)
+ClientStore::connection_patch(const Path& src_port_path, const Path& dst_port_path)
 {
 	SharedPtr<PatchModel> patch;
 
@@ -575,7 +607,7 @@ Store::connection_patch(const Path& src_port_path, const Path& dst_port_path)
 
 
 bool
-Store::attempt_connection(const Path& src_port_path, const Path& dst_port_path, bool add_orphan)
+ClientStore::attempt_connection(const Path& src_port_path, const Path& dst_port_path, bool add_orphan)
 {
 	SharedPtr<PortModel> src_port = PtrCast<PortModel>(object(src_port_path));
 	SharedPtr<PortModel> dst_port = PtrCast<PortModel>(object(dst_port_path));
@@ -608,14 +640,14 @@ Store::attempt_connection(const Path& src_port_path, const Path& dst_port_path, 
 
 	
 void
-Store::connection_event(const Path& src_port_path, const Path& dst_port_path)
+ClientStore::connection_event(const Path& src_port_path, const Path& dst_port_path)
 {
 	attempt_connection(src_port_path, dst_port_path, true);
 }
 
 
 void
-Store::disconnection_event(const Path& src_port_path, const Path& dst_port_path)
+ClientStore::disconnection_event(const Path& src_port_path, const Path& dst_port_path)
 {
 	// Find the ports and create a ConnectionModel just to get at the parent path
 	// finding logic in ConnectionModel.  So I'm lazy.

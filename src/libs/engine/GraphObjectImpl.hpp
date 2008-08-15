@@ -94,8 +94,6 @@ public:
 			return Path(_parent->path() +"/"+ _name);
 	}
 	
-	const_iterator         children_begin() const;
-	const_iterator         children_end() const;
 	SharedPtr<GraphObject> find_child(const std::string& name) const;
 
 protected:

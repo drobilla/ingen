@@ -21,6 +21,7 @@
 #include <string>
 #include <raul/PathTable.hpp>
 #include <raul/SharedPtr.hpp>
+#include "interface/Store.hpp"
 
 using std::string;
 using namespace Raul;
@@ -44,7 +45,7 @@ class GraphObjectImpl;
  * Searching with find*() is fast (O(log(n)) binary search on contiguous
  * memory) and realtime safe, but modification (add or remove) are neither.
  */
-class ObjectStore
+class ObjectStore : public Shared::Store
 {
 public:
 	typedef Raul::PathTable< SharedPtr<Shared::GraphObject> > Objects;
@@ -56,7 +57,10 @@ public:
 	
 	Objects::iterator find(const Path& path) { return _objects.find(path); }
 	
-	void add(GraphObjectImpl* o);
+	Objects::const_iterator children_begin(SharedPtr<Shared::GraphObject> o) const;
+	Objects::const_iterator children_end(SharedPtr<Shared::GraphObject> o) const;
+	
+	void add(Shared::GraphObject* o);
 	void add(const Table<Path, SharedPtr<Shared::GraphObject> >& family);
 	//void add(TreeNode<GraphObjectImpl*>* o);
 
