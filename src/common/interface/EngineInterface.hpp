@@ -80,7 +80,7 @@ public:
 	                         bool          polyphonic) = 0;
 	
 	virtual void rename(const string& old_path,
-	                    const string& new_name) = 0;
+	                    const string& new_symbol) = 0;
 	
 	virtual void destroy(const string& path) = 0;
 	

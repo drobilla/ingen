@@ -30,6 +30,7 @@
 
 using Raul::Atom;
 using Raul::Path;
+using Raul::Symbol;
 
 namespace Raul { class Maid; }
 
@@ -58,7 +59,7 @@ public:
 	GraphObject* graph_parent() const { return _parent; }
 	
 	inline GraphObjectImpl* parent() const { return _parent; }
-	const std::string       name()   const { return _name; }
+	const Symbol            symbol() const { return _name; }
 	
 	virtual void process(ProcessContext& context) = 0;
 

@@ -176,9 +176,9 @@ QueuedEngineInterface::create_node(const string& path,
 
 void
 QueuedEngineInterface::rename(const string& old_path,
-                              const string& new_name)
+                              const string& new_symbol)
 {
-	push_queued(new RenameEvent(_engine, _responder, now(), old_path, new_name));
+	push_queued(new RenameEvent(_engine, _responder, now(), old_path, new_symbol));
 }
 
 

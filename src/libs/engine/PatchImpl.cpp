@@ -274,11 +274,11 @@ PatchImpl::add_node(List<NodeImpl*>::Node* ln)
  * Preprocessing thread only.
  */
 PatchImpl::Nodes::Node*
-PatchImpl::remove_node(const string& name)
+PatchImpl::remove_node(const string& symbol)
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
 	for (List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
-		if ((*i)->name() == name)
+		if ((*i)->symbol() == symbol)
 			return _nodes.erase(i);
 	
 	return NULL;
@@ -360,14 +360,14 @@ PatchImpl::create_port(const string& name, DataType type, size_t buffer_size, bo
  * Realtime safe.  Preprocessing thread only.
  */
 List<PortImpl*>::Node*
-PatchImpl::remove_port(const string& name)
+PatchImpl::remove_port(const string& symbol)
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
 
 	bool found = false;
 	List<PortImpl*>::Node* ret = NULL;
 	for (List<PortImpl*>::iterator i = _input_ports.begin(); i != _input_ports.end(); ++i) {
-		if ((*i)->name() == name) {
+		if ((*i)->symbol() == symbol) {
 			ret = _input_ports.erase(i);
 			found = true;
 		}
@@ -375,7 +375,7 @@ PatchImpl::remove_port(const string& name)
 
 	if (!found)
 	for (List<PortImpl*>::iterator i = _output_ports.begin(); i != _output_ports.end(); ++i) {
-		if ((*i)->name() == name) {
+		if ((*i)->symbol() == symbol) {
 			ret = _output_ports.erase(i);
 			found = true;
 		}

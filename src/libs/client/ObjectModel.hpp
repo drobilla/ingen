@@ -36,6 +36,7 @@ using Raul::PathTable;
 using std::string;
 using Raul::Atom;
 using Raul::Path;
+using Raul::Symbol;
 
 namespace Ingen {
 namespace Client {
@@ -65,7 +66,7 @@ public:
 
 	const Variables&       variables()  const { return _variables; }
 	const Path             path()       const { return _path; }
-	const string           name()       const { return _path.name(); }
+	const Symbol           symbol()     const { return _path.name(); }
 	SharedPtr<ObjectModel> parent()     const { return _parent; }
 	bool                   polyphonic() const { return _polyphonic; }
 	

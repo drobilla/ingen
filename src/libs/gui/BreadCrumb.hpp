@@ -60,7 +60,7 @@ public:
 	void set_path(const Path& path)
 	{
 		remove();
-		const string text = (path == "/") ? "/" : path.name();
+		const string text = (path == "/") ? "/" : path.name().c_str();
 		Gtk::Label* lab = manage(new Gtk::Label(text));
 		lab->set_padding(0, 0);
 		lab->show();

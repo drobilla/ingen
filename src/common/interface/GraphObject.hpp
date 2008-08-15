@@ -22,6 +22,7 @@
 #include <map>
 #include <raul/Deletable.hpp>
 #include <raul/PathTable.hpp>
+#include <raul/Symbol.hpp>
 #include <raul/Atom.hpp>
 #include <raul/SharedPtr.hpp>
 #include <raul/WeakPtr.hpp>
@@ -46,7 +47,7 @@ public:
 	typedef PathTable< SharedPtr<GraphObject> >::const_iterator const_iterator;
 	
 	virtual const Raul::Path   path()       const = 0;
-	virtual const std::string  name()       const = 0;
+	virtual const Raul::Symbol symbol()     const = 0;
 	virtual const Variables&   variables()  const = 0;
 	virtual bool               polyphonic() const = 0;
 	

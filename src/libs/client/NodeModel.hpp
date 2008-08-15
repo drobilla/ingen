@@ -57,7 +57,7 @@ public:
 	const string&         plugin_uri() const { return _plugin_uri; }
 	const Shared::Plugin* plugin()     const { return _plugin.get(); }
 	uint32_t              num_ports()  const { return _ports.size(); }
-	const PortModelList&  ports()     const { return _ports; }
+	const PortModelList&  ports()      const { return _ports; }
 	
 	void port_value_range(SharedPtr<PortModel> port, float& min, float& max);
 	
