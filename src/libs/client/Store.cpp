@@ -93,11 +93,13 @@ Store::resolve_plugin_orphans(SharedPtr<PluginModel> plugin)
 	if (n != _plugin_orphans.end()) {
 	
 		list<SharedPtr<NodeModel> > spawn = n->second; // take a copy
+		cerr << "Missing dependant " << plugin->uri() << " received" << endl;
 
 		_plugin_orphans.erase(plugin->uri()); // prevent infinite recursion
 		
 		for (list<SharedPtr<NodeModel> >::iterator i = spawn.begin();
 				i != spawn.end(); ++i) {
+			(*i)->_plugin = plugin;
 			add_object(*i);
 		}
 	}
@@ -126,6 +128,7 @@ Store::resolve_connection_orphans(SharedPtr<PortModel> port)
 		++next;
 		
 		if (c->first == port->path() || c->second == port->path()) {
+			cerr << "Missing dependant (" << c->first << " -> " << c->second << ") received" << endl;
 			bool success = attempt_connection(c->first, c->second);
 			if (success)
 				_connection_orphans.erase(c);
@@ -185,6 +188,7 @@ Store::resolve_variable_orphans(SharedPtr<ObjectModel> subject)
 		list<std::pair<string, Atom> > values = v->second; // take a copy
 
 		_variable_orphans.erase(subject->path());
+		cerr << "Missing dependant " << subject->path() << " received" << endl;
 		
 		for (list<std::pair<string, Atom> >::iterator i = values.begin();
 				i != values.end(); ++i) {

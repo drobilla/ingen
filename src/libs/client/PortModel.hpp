@@ -91,6 +91,8 @@ private:
 	void connected_to(SharedPtr<PortModel> p)      { ++_connections; signal_connection.emit(p); }
 	void disconnected_from(SharedPtr<PortModel> p) { --_connections; signal_disconnection.emit(p); }
 	
+	void set(SharedPtr<ObjectModel> model);
+	
 	uint32_t  _index;
 	DataType  _type;
 	Direction _direction;

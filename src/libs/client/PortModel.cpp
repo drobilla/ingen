@@ -45,5 +45,18 @@ PortModel::is_toggle() const
 	return (hint.is_valid() && hint.get_bool() > 0);
 }
 
+	
+void
+PortModel::set(SharedPtr<ObjectModel> model)
+{
+	SharedPtr<PortModel> port = PtrCast<PortModel>(model);
+	if (port) {
+		_current_val = port->_current_val;
+		signal_value_changed.emit(_current_val);
+	}
+
+	ObjectModel::set(model);
+}
+
 } // namespace Client
 } // namespace Ingen

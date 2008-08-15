@@ -192,6 +192,16 @@ NodeModel::port_value_range(SharedPtr<PortModel> port, float& min, float& max)
 		max = max_atom.get_float();
 }
 
+	
+void
+NodeModel::set(SharedPtr<ObjectModel> model)
+{
+	SharedPtr<NodeModel> node = PtrCast<NodeModel>(model);
+	if (node)
+		_plugin = node->_plugin;
+
+	ObjectModel::set(model);
+}
 
 
 } // namespace Client

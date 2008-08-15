@@ -79,6 +79,7 @@ protected:
 	void remove_port(const Path& port_path);
 	void add_program(int bank, int program, const string& name);
 	void remove_program(int bank, int program);
+	void set(SharedPtr<ObjectModel> model);
 
 	virtual void clear();
 	

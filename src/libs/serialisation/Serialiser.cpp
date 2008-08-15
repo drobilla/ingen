@@ -278,7 +278,7 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch)
 		"rdf:type",
 		Redland::Node(_model->world(), Redland::Node::RESOURCE, "http://drobilla.net/ns/ingen#Patch"));
 
-	if (patch->path().name().length() > 0) {
+	if (patch->path() != "/") {
 		_model->add_statement(
 			patch_id, "ingen:symbol",
 			Redland::Node(_model->world(), Redland::Node::LITERAL, patch->path().name()));

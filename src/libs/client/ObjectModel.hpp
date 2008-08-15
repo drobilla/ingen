@@ -97,7 +97,7 @@ protected:
 	void add_variable(const Variables& data);
 	void set_polyphonic(bool);
 	
-	void set(SharedPtr<ObjectModel> model);
+	virtual void set(SharedPtr<ObjectModel> model);
 
 	Store&                 _store;
 	Path                   _path;
