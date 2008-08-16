@@ -46,12 +46,10 @@ ThreadedLoader::ThreadedLoader(SharedPtr<EngineInterface> engine)
 			_loader = SharedPtr<Loader>(new_loader());
 	}
 
-	if (_loader) {
+	if (_loader)
 		start();
-	} else {
+	else
 		cerr << "WARNING: Failed to load ingen_serialisation module, load disabled." << endl;
-		cerr << "(If you are running from the source tree, source set_dev_environment.sh)" << endl;
-	}
 }
 
 
