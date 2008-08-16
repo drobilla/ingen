@@ -160,7 +160,8 @@ main(int argc, char** argv)
 			parent_path = args.path_arg;
 
 		bool found = false;
-		world->serialisation_module = Ingen::Shared::load_module("ingen_serialisation");
+		if (!world->serialisation_module)
+			world->serialisation_module = Ingen::Shared::load_module("ingen_serialisation");
 			
 		Serialisation::Loader* (*new_loader)() = NULL;
 

@@ -25,6 +25,7 @@
 #include "module/Module.hpp"
 #include "serialisation/serialisation.hpp"
 #include "serialisation/Serialiser.hpp"
+#include "serialisation/Loader.hpp"
 #include "engine/ThreadManager.hpp"
 #include "HTTPEngineReceiver.hpp"
 #include "QueuedEventSource.hpp"
@@ -32,6 +33,7 @@
 #include "EngineStore.hpp"
 
 using namespace std;
+using namespace Ingen::Shared;
 
 namespace Ingen {
 
@@ -50,13 +52,17 @@ HTTPEngineReceiver::HTTPEngineReceiver(Engine& engine, uint16_t port)
 	if (!engine.world()->serialisation_module)
 		engine.world()->serialisation_module = Ingen::Shared::load_module("ingen_serialisation");
 
-	if (engine.world()->serialisation_module)
+	if (engine.world()->serialisation_module) {
 		if (!engine.world()->serialiser)
 			engine.world()->serialiser = SharedPtr<Serialiser>(
 					Ingen::Serialisation::new_serialiser(engine.world()));
-
-	if (!engine.world()->serialiser)
+		
+		if (!engine.world()->loader)
+			engine.world()->loader = SharedPtr<Loader>(
+					Ingen::Serialisation::new_loader());
+	} else {
 		cerr << "WARNING: Failed to load ingen_serialisation module, HTTP disabled." << endl;
+	}
 }
 
 
@@ -95,13 +101,12 @@ HTTPEngineReceiver::message_callback(SoupServer* server, SoupMessage* msg, const
 {
 	HTTPEngineReceiver* me = (HTTPEngineReceiver*)data;
 
-	if (msg->method != SOUP_METHOD_GET && msg->method != SOUP_METHOD_PUT) {
-		soup_message_set_status (msg, SOUP_STATUS_NOT_IMPLEMENTED);
+	SharedPtr<Store> store = me->_engine.world()->store;
+	if (!store) {
+		soup_message_set_status (msg, SOUP_STATUS_INTERNAL_SERVER_ERROR);
 		return;
 	}
-	
-	SharedPtr<Store> store = me->_engine.world()->store;
-	assert(store);
+
 	if (!Path::is_valid(path)) {
 		soup_message_set_status (msg, SOUP_STATUS_BAD_REQUEST);
 		return;
@@ -126,8 +131,7 @@ HTTPEngineReceiver::message_callback(SoupServer* server, SoupMessage* msg, const
 
 		// Serialise object
 		string base_uri = string("ingen:").append(start->second->path());
-		const string response = serialiser->to_string(start->second, base_uri,
-				GraphObject::Variables());
+		const string response = serialiser->to_string(start->second, base_uri, GraphObject::Variables());
 		soup_message_set_status (msg, SOUP_STATUS_OK);
 		soup_message_set_response (msg, "text/plain", SOUP_MEMORY_COPY,
 				response.c_str(), response.length());
@@ -142,6 +146,16 @@ HTTPEngineReceiver::message_callback(SoupServer* server, SoupMessage* msg, const
 			return;
 		}
 		
+		// Get loader
+		SharedPtr<Loader> loader = me->_engine.world()->loader;
+		if (!loader) {
+			soup_message_set_status (msg, SOUP_STATUS_INTERNAL_SERVER_ERROR);
+			return;
+		}
+
+		// Load object
+		soup_message_set_status (msg, SOUP_STATUS_NOT_IMPLEMENTED);
+	} else {
 		soup_message_set_status (msg, SOUP_STATUS_NOT_IMPLEMENTED);
 	}
 }

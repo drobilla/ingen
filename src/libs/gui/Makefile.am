@@ -29,8 +29,9 @@ libingen_gui_la_CXXFLAGS = \
 libingen_gui_la_LDFLAGS = -no-undefined -module -avoid-version
 
 libingen_gui_la_LIBADD = \
-	../client/libingen_client.la \
 	../module/libingen_module.la \
+	../shared/libingen_shared.la \
+	../client/libingen_client.la \
 	@CURL_LIBS@ \
 	@FLOWCANVAS_LIBS@ \
 	@GNOMECANVASMM_LIBS@ \
