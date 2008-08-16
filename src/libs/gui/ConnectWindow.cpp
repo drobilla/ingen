@@ -84,7 +84,7 @@ ConnectWindow::start(Ingen::Shared::World* world)
 	
 	set_connected_to(world->engine);
 
-	connect();
+	connect(true);
 }
 
 
@@ -154,7 +154,7 @@ ConnectWindow::set_connecting_widget_states()
  * the App with them.
  */
 void
-ConnectWindow::connect()
+ConnectWindow::connect(bool existing)
 {
 	assert(!_attached);
 	assert(!App::instance().client());
@@ -165,8 +165,10 @@ ConnectWindow::connect()
 	Ingen::Shared::World* world = App::instance().world();
 
 	if (_mode == CONNECT_REMOTE) {
-		const string url = (_widgets_loaded ? _url_entry->get_text() : "osc.udp://localhost:16180");
-		world->engine = SharedPtr<EngineInterface>(new OSCEngineSender(url));
+		if (!existing) {
+			const string url = (_widgets_loaded ? _url_entry->get_text() : "osc.udp://localhost:16180");
+			world->engine = SharedPtr<EngineInterface>(new OSCEngineSender(url));
+		}
 
 		OSCSigEmitter* ose = new OSCSigEmitter(1024, 16181); // FIXME: args
 		SharedPtr<ThreadedSigClientInterface> client(ose);
@@ -282,7 +284,8 @@ ConnectWindow::load_widgets()
 	_launch_radio->signal_toggled().connect(sigc::mem_fun(this, &ConnectWindow::launch_toggled));
 	_internal_radio->signal_clicked().connect(sigc::mem_fun(this, &ConnectWindow::internal_toggled));
 	_disconnect_button->signal_clicked().connect(sigc::mem_fun(this, &ConnectWindow::disconnect));
-	_connect_button->signal_clicked().connect(sigc::mem_fun(this, &ConnectWindow::connect));
+	_connect_button->signal_clicked().connect(sigc::bind(
+			sigc::mem_fun(this, &ConnectWindow::connect), false));
 	_quit_button->signal_clicked().connect(sigc::mem_fun(this, &ConnectWindow::quit));
 	
 	_progress_bar->set_pulse_step(0.01);

@@ -15,15 +15,15 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <fstream>
-#include <cassert>
+#include <iostream>
 #include <string>
 #include "module/global.hpp"
 #include "module/World.hpp"
 #include "client/PatchModel.hpp"
 #include "App.hpp"
 #include "ThreadedLoader.hpp"
-using std::cout; using std::endl;
+
+using namespace std;
 
 namespace Ingen {
 namespace GUI {

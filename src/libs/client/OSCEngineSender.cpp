@@ -55,7 +55,6 @@ OSCEngineSender::~OSCEngineSender()
 void
 OSCEngineSender::attach(int32_t ping_id, bool block)
 {
-	cerr << "FIXME: attach\n";
 	//start_listen_thread(_client_port);
 	
 	/*if (engine_url == "") {
@@ -70,7 +69,7 @@ OSCEngineSender::attach(int32_t ping_id, bool block)
 	_engine_addr = lo_address_new_from_url(_engine_url.c_str());
 
 	if (_engine_addr == NULL) {
-		cerr << "Unable to connect, aborting." << endl;
+		cerr << "Aborting: Unable to connect to " << _engine_url << endl;
 		exit(EXIT_FAILURE);
 	}
 

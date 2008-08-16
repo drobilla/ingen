@@ -63,7 +63,7 @@ private:
 	void internal_toggled();
 	
 	void disconnect();
-	void connect();
+	void connect(bool existing);
 	void quit();
 	void on_show();
 	void on_hide();
