@@ -92,7 +92,7 @@ public:
 	ClientBroadcaster* broadcaster()        const { return _broadcaster; }
 	NodeFactory*       node_factory()       const { return _node_factory; }
 
-	EngineStore* object_store() const;
+	SharedPtr<EngineStore> engine_store() const;
 
 	/** Return the active driver for the given type */
 	Driver* driver(DataType type, EventType event_type);

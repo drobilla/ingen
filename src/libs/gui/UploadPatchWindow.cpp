@@ -24,6 +24,7 @@
 #include <redlandmm/Query.hpp>
 #include "module/global.hpp"
 #include "module/World.hpp"
+#include "client/ClientStore.hpp"
 #include "interface/EngineInterface.hpp"
 #include "serialisation/Serialiser.hpp"
 #include "client/PatchModel.hpp"
@@ -247,7 +248,7 @@ UploadPatchWindow::upload_clicked()
 	_upload_progress->set_fraction(0.0);
 	_upload_progress->set_text("");
 
-	Serialiser s(*App::instance().world());
+	Serialiser s(*App::instance().world(), App::instance().store());
 
 	const string uri = string("http://rdf.drobilla.net/ingen_patches/")
 		.append(symbol).append(".ingen.ttl");

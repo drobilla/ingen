@@ -73,13 +73,13 @@ CreateNodeEvent::CreateNodeEvent(Engine& engine, SharedPtr<Responder> responder,
 void
 CreateNodeEvent::pre_process()
 {
-	if (_engine.object_store()->find_object(_path) != NULL) {
+	if (_engine.engine_store()->find_object(_path) != NULL) {
 		_node_already_exists = true;
 		QueuedEvent::pre_process();
 		return;
 	}
 
-	_patch = _engine.object_store()->find_patch(_path.parent());
+	_patch = _engine.engine_store()->find_patch(_path.parent());
 
 	PluginImpl* const plugin = (_plugin_uri != "")
 			? _engine.node_factory()->plugin(_plugin_uri)
@@ -98,8 +98,8 @@ CreateNodeEvent::pre_process()
 			// This can be done here because the audio thread doesn't touch the
 			// node tree - just the process order array
 			_patch->add_node(new PatchImpl::Nodes::Node(_node));
-			//_node->add_to_store(_engine.object_store());
-			_engine.object_store()->add(_node);
+			//_node->add_to_store(_engine.engine_store());
+			_engine.engine_store()->add(_node);
 			
 			// FIXME: not really necessary to build process order since it's not connected,
 			// just append to the list

@@ -17,6 +17,7 @@
 
 #include <iostream>
 #include <cstdlib>
+#include <cstdio>
 #include <string>
 #include "types.hpp"
 #include <raul/SharedPtr.hpp>
@@ -55,7 +56,7 @@ HTTPEngineReceiver::HTTPEngineReceiver(Engine& engine, uint16_t port)
 	if (engine.world()->serialisation_module) {
 		if (!engine.world()->serialiser)
 			engine.world()->serialiser = SharedPtr<Serialiser>(
-					Ingen::Serialisation::new_serialiser(engine.world()));
+					Ingen::Serialisation::new_serialiser(engine.world(), engine.engine_store()));
 		
 		if (!engine.world()->loader)
 			engine.world()->loader = SharedPtr<Loader>(
@@ -129,9 +130,27 @@ HTTPEngineReceiver::message_callback(SoupServer* server, SoupMessage* msg, const
 			return;
 		}
 
+#if 0
+		SoupMessageHeaders* in_head = msg->request_headers;
+		const char* str = soup_message_headers_get(in_head, "Accept");
+		cout << "Accept: " << str << endl;
+#endif
+
 		// Serialise object
-		string base_uri = string("ingen:").append(start->second->path());
-		const string response = serialiser->to_string(start->second, base_uri, GraphObject::Variables());
+		const string response = serialiser->to_string(start->second, "http://example.org",
+				GraphObject::Variables());
+
+#if 0
+		FILE* xhtml_file = fopen("/home/dave/ingen_ui.xhtml", "r");
+		string response;
+		while (!feof(xhtml_file)) {
+			int c = fgetc(xhtml_file);
+			if (c != EOF)
+				response += (char)c;
+		}
+		fclose(xhtml_file);
+#endif
+		
 		soup_message_set_status (msg, SOUP_STATUS_OK);
 		soup_message_set_response (msg, "text/plain", SOUP_MEMORY_COPY,
 				response.c_str(), response.length());
@@ -152,8 +171,13 @@ HTTPEngineReceiver::message_callback(SoupServer* server, SoupMessage* msg, const
 			soup_message_set_status (msg, SOUP_STATUS_INTERNAL_SERVER_ERROR);
 			return;
 		}
+		
+		//cout << "POST: " << msg->request_body->data << endl;
 
 		// Load object
+		soup_message_set_status (msg, SOUP_STATUS_NOT_IMPLEMENTED);
+	} else if (msg->method == SOUP_METHOD_POST) {
+		//cout << "PUT: " << msg->request_body->data << endl;
 		soup_message_set_status (msg, SOUP_STATUS_NOT_IMPLEMENTED);
 	} else {
 		soup_message_set_status (msg, SOUP_STATUS_NOT_IMPLEMENTED);

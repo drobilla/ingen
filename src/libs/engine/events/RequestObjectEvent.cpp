@@ -44,7 +44,7 @@ RequestObjectEvent::RequestObjectEvent(Engine& engine, SharedPtr<Responder> resp
 void
 RequestObjectEvent::pre_process()
 {
-	_object = _engine.object_store()->find_object(_path);
+	_object = _engine.engine_store()->find_object(_path);
 
 	QueuedEvent::pre_process();
 }

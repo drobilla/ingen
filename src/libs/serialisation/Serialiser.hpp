@@ -56,7 +56,7 @@ namespace Serialisation {
 class Serialiser
 {
 public:
-	Serialiser(Shared::World& world);
+	Serialiser(Shared::World& world, SharedPtr<Shared::Store> store);
 
 	void to_file(SharedPtr<GraphObject> object, const std::string& filename);
 
@@ -85,18 +85,20 @@ private:
 
 	void serialise_variables(Redland::Node subject, const GraphObject::Variables& variables);
 	
-	Redland::Node path_to_node_id(const Path& path);
-	Redland::Node patch_path_to_rdf_id(const Path& path);
-
-	typedef std::map<Raul::Path, Redland::Node> NodeMap;
+	Redland::Node path_to_rdf_node(const Path& path);
+	Redland::Node patch_path_to_rdf_node(const Path& path);
 
 	SharedPtr<GraphObject>   _root_object;
 	SharedPtr<Shared::Store> _store;
 	Mode                     _mode;
-	NodeMap                  _node_map;
 	std::string              _base_uri;
 	Redland::World&          _world;
 	Redland::Model*          _model;
+
+#ifdef USE_BLANK_NODES
+	typedef std::map<Raul::Path, Redland::Node> NodeMap;
+	NodeMap _node_map;
+#endif
 };
 
 

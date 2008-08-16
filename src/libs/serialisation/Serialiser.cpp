@@ -53,8 +53,8 @@ namespace Ingen {
 namespace Serialisation {
 
 
-Serialiser::Serialiser(Shared::World& world)
-	: _store(world.store)
+Serialiser::Serialiser(Shared::World& world, SharedPtr<Shared::Store> store)
+	: _store(store)
 	, _world(*world.rdf_world)
 {
 }
@@ -148,22 +148,37 @@ Serialiser::finish()
 		ret = _model->serialise_to_string();
 
 	_base_uri = "";
+#ifdef USE_BLANK_NODES
 	_node_map.clear();
-	
+#endif
 	return ret;
 }
+
+	
+Redland::Node
+Serialiser::patch_path_to_rdf_node(const Path& path)
+{
+#ifdef USE_BLANK_NODES
+	if (path == _root_object->path()) {
+		return Redland::Node(_model->world(), Redland::Node::RESOURCE, _base_uri);
+	} else {
+		assert(path.length() > _root_object->path().length());
+		return Redland::Node(_model->world(), Redland::Node::RESOURCE,
+				_base_uri + string("#") + path.substr(_root_object->path().length()));
+	}
+#else
+	return path_to_rdf_node(path);
+#endif
+}
+
 
 
 /** Convert a path to an RDF blank node ID for serializing.
  */
 Redland::Node
-Serialiser::path_to_node_id(const Path& path)
+Serialiser::path_to_rdf_node(const Path& path)
 {
-	assert(_model);
-	
-	if (path == _root_object->path())
-		return Redland::Node(_model->world(), Redland::Node::RESOURCE, _base_uri);
-
+#if USE_BLANK_NODES
 	NodeMap::iterator i = _node_map.find(path);
 	if (i != _node_map.end()) {
 		assert(i->second);
@@ -175,6 +190,16 @@ Serialiser::path_to_node_id(const Path& path)
 		_node_map[path] = id;
 		return id;
 	}
+#else
+	assert(_model);
+	assert(path.substr(0, _root_object->path().length()) == _root_object->path());
+	
+	if (path == _root_object->path())
+		return Redland::Node(_model->world(), Redland::Node::RESOURCE, _base_uri);
+	else
+		return Redland::Node(_model->world(), Redland::Node::RESOURCE,
+				path.substr(_root_object->path().base().length()-1));
+#endif
 }
 
 
@@ -243,13 +268,13 @@ Serialiser::serialise(SharedPtr<GraphObject> object) throw (std::logic_error)
 	
 	SharedPtr<Shared::Node> node = PtrCast<Shared::Node>(object);
 	if (node) {
-		serialise_node(node, path_to_node_id(node->path()));
+		serialise_node(node, path_to_rdf_node(node->path()));
 		return;
 	}
 	
 	SharedPtr<Shared::Port> port = PtrCast<Shared::Port>(object);
 	if (port) {
-		serialise_port(port.get(), path_to_node_id(port->path()));
+		serialise_port(port.get(), path_to_rdf_node(port->path()));
 		return;
 	}
 
@@ -258,25 +283,12 @@ Serialiser::serialise(SharedPtr<GraphObject> object) throw (std::logic_error)
 }
 
 
-Redland::Node
-Serialiser::patch_path_to_rdf_id(const Path& path)
-{
-	if (path == _root_object->path()) {
-		return Redland::Node(_model->world(), Redland::Node::RESOURCE, _base_uri);
-	} else {
-		assert(path.length() > _root_object->path().length());
-		return Redland::Node(_model->world(), Redland::Node::RESOURCE,
-				_base_uri + string("#") + path.substr(_root_object->path().length()));
-	}
-}
-
-
 void
 Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch)
 {
 	assert(_model);
 
-	const Redland::Node patch_id = patch_path_to_rdf_id(patch->path());
+	const Redland::Node patch_id = patch_path_to_rdf_node(patch->path());
 	
 	_model->add_statement(
 		patch_id,
@@ -301,7 +313,6 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch)
 	
 	serialise_variables(patch_id, patch->variables());
 
-	//for (GraphObject::const_iterator n = patch->children_begin(); n != patch->children_end(); ++n) {
 	for (GraphObject::const_iterator n = _store->children_begin(patch);
 			n != _store->children_end(patch); ++n) {
 		
@@ -311,10 +322,10 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch)
 		SharedPtr<Shared::Patch> patch = PtrCast<Shared::Patch>(n->second);
 		SharedPtr<Shared::Node>  node  = PtrCast<Shared::Node>(n->second);
 		if (patch) {
-			_model->add_statement(patch_id, "ingen:node", patch_path_to_rdf_id(patch->path()));
+			_model->add_statement(patch_id, "ingen:node", patch_path_to_rdf_node(patch->path()));
 			serialise_patch(patch);
 		} else if (node) {
-			const Redland::Node node_id = path_to_node_id(n->second->path());
+			const Redland::Node node_id = path_to_rdf_node(n->second->path());
 			_model->add_statement(patch_id, "ingen:node", node_id);
 			serialise_node(node, node_id);
 		}
@@ -322,7 +333,7 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch)
 	
 	for (uint32_t i=0; i < patch->num_ports(); ++i) {
 		Port* p = patch->port(i);
-		const Redland::Node port_id = path_to_node_id(p->path());
+		const Redland::Node port_id = path_to_rdf_node(p->path());
 		_model->add_statement(patch_id, "ingen:port", port_id);
 		serialise_port(p, port_id);
 	}
@@ -379,7 +390,7 @@ Serialiser::serialise_node(SharedPtr<Shared::Node> node, const Redland::Node& no
 	for (uint32_t i=0; i < node->num_ports(); ++i) {
 		Port* p = node->port(i);
 		assert(p);
-		const Redland::Node port_id = path_to_node_id(p->path());
+		const Redland::Node port_id = path_to_rdf_node(p->path());
 		serialise_port(p, port_id);
 		_model->add_statement(node_id, "ingen:port", port_id);
 	}
@@ -422,8 +433,8 @@ Serialiser::serialise_connection(SharedPtr<Connection> connection) throw (std::l
 	if (!_model)
 		throw std::logic_error("serialise_connection called without serialization in progress");
 
-	const Redland::Node src_node = path_to_node_id(connection->src_port_path());
-	const Redland::Node dst_node = path_to_node_id(connection->dst_port_path());
+	const Redland::Node src_node = path_to_rdf_node(connection->src_port_path());
+	const Redland::Node dst_node = path_to_rdf_node(connection->dst_port_path());
 
 	/* This would allow associating data with the connection... */
 	/*const Redland::Node connection_node = _world.blank_id();

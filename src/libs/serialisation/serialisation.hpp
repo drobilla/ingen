@@ -20,7 +20,7 @@
 
 namespace Ingen {
 
-namespace Shared { class World; }
+namespace Shared { class World; class Store; }
 
 namespace Serialisation {
 
@@ -31,7 +31,8 @@ class Serialiser;
 extern "C" {
 
 	extern Loader*     new_loader();
-	extern Serialiser* new_serialiser(Ingen::Shared::World* world);
+	extern Serialiser* new_serialiser(Ingen::Shared::World*    world,
+	                                  SharedPtr<Shared::Store> store);
 
 }
 

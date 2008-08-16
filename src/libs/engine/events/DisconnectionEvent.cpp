@@ -83,8 +83,8 @@ DisconnectionEvent::pre_process()
 			return;
 		}
 
-		_src_port = _engine.object_store()->find_port(_src_port_path);
-		_dst_port = _engine.object_store()->find_port(_dst_port_path);
+		_src_port = _engine.engine_store()->find_port(_src_port_path);
+		_dst_port = _engine.engine_store()->find_port(_dst_port_path);
 	}
 	
 	if (_src_port == NULL || _dst_port == NULL) {

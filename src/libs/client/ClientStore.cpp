@@ -58,7 +58,7 @@ ClientStore::ClientStore(SharedPtr<EngineInterface> engine, SharedPtr<SigClientI
 void
 ClientStore::clear()
 {
-	clear();
+	Store::clear();
 	_plugins.clear();
 }
 

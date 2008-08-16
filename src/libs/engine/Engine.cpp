@@ -75,8 +75,8 @@ Engine::~Engine()
 {
 	deactivate();
 
-	for (EngineStore::iterator i = object_store()->begin();
-			i != object_store()->end(); ++i) {
+	for (EngineStore::iterator i = engine_store()->begin();
+			i != engine_store()->end(); ++i) {
 		if ( ! PtrCast<GraphObjectImpl>(i->second)->parent() )
 			i->second.reset();
 	}
@@ -93,10 +93,10 @@ Engine::~Engine()
 }
 	
 
-EngineStore*
-Engine::object_store() const
+SharedPtr<EngineStore>
+Engine::engine_store() const
 {
-	 return dynamic_cast<EngineStore*>(_world->store.get());
+	 return PtrCast<EngineStore>(_world->store);
 }
 
 
@@ -270,8 +270,8 @@ Engine::deactivate()
 	
 	_event_source->deactivate();
 
-	/*for (Tree<GraphObject*>::iterator i = _object_store->objects().begin();
-			i != _object_store->objects().end(); ++i)
+	/*for (Tree<GraphObject*>::iterator i = _engine_store->objects().begin();
+			i != _engine_store->objects().end(); ++i)
 		if ((*i)->as_node() != NULL && (*i)->as_node()->parent() == NULL)
 			(*i)->as_node()->deactivate();*/
 	

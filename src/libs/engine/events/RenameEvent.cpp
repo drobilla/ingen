@@ -37,7 +37,7 @@ RenameEvent::RenameEvent(Engine& engine, SharedPtr<Responder> responder, SampleC
   _name(name),
   _new_path("/"),
   _parent_patch(NULL),
-  _store_iterator(engine.object_store()->end()),
+  _store_iterator(engine.engine_store()->end()),
   _error(NO_ERROR)
 {
 	/*
@@ -64,21 +64,21 @@ RenameEvent::pre_process()
 
 	_new_path = _old_path.parent().base() + _name;
 
-	_store_iterator = _engine.object_store()->find(_old_path);
-	if (_store_iterator == _engine.object_store()->end())  {
+	_store_iterator = _engine.engine_store()->find(_old_path);
+	if (_store_iterator == _engine.engine_store()->end())  {
 		_error = OBJECT_NOT_FOUND;
 		QueuedEvent::pre_process();
 		return;
 	}
 
-	if (_engine.object_store()->find_object(_new_path))  {
+	if (_engine.engine_store()->find_object(_new_path))  {
 		_error = OBJECT_EXISTS;
 		QueuedEvent::pre_process();
 		return;
 	}
 
 	SharedPtr< Table<Path, SharedPtr<Shared::GraphObject> > > removed
-			= _engine.object_store()->remove(_store_iterator);
+			= _engine.engine_store()->remove(_store_iterator);
 
 	assert(removed->size() > 0);
 	
@@ -96,7 +96,7 @@ RenameEvent::pre_process()
 		i->first = child_new_path;
 	}
 
-	_engine.object_store()->add(*removed.get());
+	_engine.engine_store()->add(*removed.get());
 
 	QueuedEvent::pre_process();
 }

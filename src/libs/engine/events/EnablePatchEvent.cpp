@@ -39,7 +39,7 @@ EnablePatchEvent::EnablePatchEvent(Engine& engine, SharedPtr<Responder> responde
 void
 EnablePatchEvent::pre_process()
 {
-	_patch = _engine.object_store()->find_patch(_patch_path);
+	_patch = _engine.engine_store()->find_patch(_patch_path);
 	
 	if (_enable && _patch) {
 		/* Any event that requires a new process order will set the patch's

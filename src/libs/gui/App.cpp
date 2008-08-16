@@ -73,18 +73,6 @@ App::App(Ingen::Shared::World* world)
 	, _world(world)
 	, _enable_signal(true)
 {
-	// FIXME: defer loading of serialisation module until needed
-	if (!world->serialisation_module)
-		world->serialisation_module = Ingen::Shared::load_module("ingen_serialisation");
-
-	if (world->serialisation_module)
-		if (!world->serialiser)
-			world->serialiser = SharedPtr<Serialiser>(
-					Ingen::Serialisation::new_serialiser(world));
-
-	if (!world->serialiser)
-		cerr << "WARNING: Failed to load ingen_serialisation module, save disabled." << endl;
-
 	Glib::RefPtr<Gnome::Glade::Xml> glade_xml = GladeFactory::new_glade_reference();
 
 	glade_xml->get_widget_derived("connect_win", _connect_window);
@@ -93,18 +81,7 @@ App::App(Ingen::Shared::World* world)
 	glade_xml->get_widget("about_win", _about_dialog);
 	_about_dialog->property_program_name() = "Ingen";
 
-	Redland::World& rdf_world = *world->rdf_world;
-
-	rdf_world.add_prefix("xsd", "http://www.w3.org/2001/XMLSchema#");
-	rdf_world.add_prefix("ingen", "http://drobilla.net/ns/ingen#");
-	rdf_world.add_prefix("ingenuity", "http://drobilla.net/ns/ingenuity#");
-	rdf_world.add_prefix("lv2", "http://lv2plug.in/ns/lv2core#");
-	rdf_world.add_prefix("lv2_midi", "http://lv2plug.in/ns/ext/midi");
-	rdf_world.add_prefix("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
-	rdf_world.add_prefix("doap", "http://usefulinc.com/ns/doap#");
-	rdf_world.add_prefix("dc", "http://purl.org/dc/elements/1.1/");
-	
-	PluginModel::set_rdf_world(rdf_world);
+	PluginModel::set_rdf_world(*world->rdf_world);
 
 #ifdef HAVE_SLV2
 	PluginModel::set_slv2_world(world->slv2_world);
@@ -196,6 +173,23 @@ App::detach()
 		_client.reset();
 		_world->engine.reset();
 	}
+}
+	
+
+const SharedPtr<Serialiser>&
+App::serialiser()
+{
+	if (!_serialiser) {
+		if (!_world->serialisation_module)
+			_world->serialisation_module = Ingen::Shared::load_module("ingen_serialisation");
+
+		if (_world->serialisation_module)
+			_serialiser = SharedPtr<Serialiser>(Ingen::Serialisation::new_serialiser(_world, _store));
+
+		if (!_serialiser)
+			cerr << "WARNING: Failed to load ingen_serialisation module, save disabled." << endl;
+	}
+	return _serialiser;
 }
 
 

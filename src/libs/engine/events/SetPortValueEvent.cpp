@@ -94,7 +94,7 @@ SetPortValueEvent::pre_process()
 	if (_queued) {
 		if (_port == NULL) {
 			if (Path::is_valid(_port_path))
-				_port = _engine.object_store()->find_port(_port_path);
+				_port = _engine.engine_store()->find_port(_port_path);
 			else
 				_error = ILLEGAL_PATH;
 		}
@@ -115,7 +115,7 @@ SetPortValueEvent::execute(ProcessContext& context)
 
 	if (_error == NO_ERROR && _port == NULL) {
 		if (Path::is_valid(_port_path))
-			_port = _engine.object_store()->find_port(_port_path);
+			_port = _engine.engine_store()->find_port(_port_path);
 		else
 			_error = ILLEGAL_PATH;
 	}

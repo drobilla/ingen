@@ -51,7 +51,7 @@ MidiLearnEvent::MidiLearnEvent(Engine& engine, SharedPtr<Responder> responder, S
 void
 MidiLearnEvent::pre_process()
 {
-	_node = _engine.object_store()->find_node(_node_path);
+	_node = _engine.engine_store()->find_node(_node_path);
 	_response_event = new MidiLearnResponseEvent(_engine, _node_path + "/Controller_Number", _time);
 	
 	QueuedEvent::pre_process();

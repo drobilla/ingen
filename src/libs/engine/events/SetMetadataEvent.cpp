@@ -41,7 +41,7 @@ SetMetadataEvent::SetMetadataEvent(Engine& engine, SharedPtr<Responder> responde
 void
 SetMetadataEvent::pre_process()
 {
-	_object = _engine.object_store()->find_object(_path);
+	_object = _engine.engine_store()->find_object(_path);
 	if (_object == NULL) {
 		QueuedEvent::pre_process();
 		return;

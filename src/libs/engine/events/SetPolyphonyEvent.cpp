@@ -43,7 +43,7 @@ SetPolyphonyEvent::SetPolyphonyEvent(Engine& engine, SharedPtr<Responder> respon
 void
 SetPolyphonyEvent::pre_process()
 {
-	_patch = _engine.object_store()->find_patch(_patch_path);
+	_patch = _engine.engine_store()->find_patch(_patch_path);
 	 if (_patch && _poly > _patch->internal_polyphony())
 		 _patch->prepare_internal_poly(_poly);
 

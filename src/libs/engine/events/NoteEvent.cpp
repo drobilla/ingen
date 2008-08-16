@@ -65,7 +65,7 @@ NoteEvent::execute(ProcessContext& context)
 
 	// Lookup if neccessary
 	if (!_node)
-		_node = _engine.object_store()->find_node(_node_path);
+		_node = _engine.engine_store()->find_node(_node_path);
 		
 	// FIXME: barf
 	

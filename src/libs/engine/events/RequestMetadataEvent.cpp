@@ -41,7 +41,7 @@ void
 RequestMetadataEvent::pre_process()
 {
 	if (_responder->client()) {
-		_object = _engine.object_store()->find_object(_path);
+		_object = _engine.engine_store()->find_object(_path);
 		if (_object == NULL) {
 			QueuedEvent::pre_process();
 			return;

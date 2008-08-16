@@ -539,7 +539,7 @@ PatchCanvas::destroy_selection()
 void
 PatchCanvas::copy_selection()
 {
-	Serialiser serialiser(*App::instance().world());
+	Serialiser serialiser(*App::instance().world(), App::instance().store());
 	serialiser.start_to_string("");
 
 	for (list<boost::shared_ptr<Item> >::iterator m = _selected_items.begin(); m != _selected_items.end(); ++m) {

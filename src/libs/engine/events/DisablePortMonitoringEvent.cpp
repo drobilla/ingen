@@ -44,7 +44,7 @@ DisablePortMonitoringEvent::DisablePortMonitoringEvent(Engine&              engi
 void
 DisablePortMonitoringEvent::pre_process()
 {
-	_port = _engine.object_store()->find_port(_port_path);
+	_port = _engine.engine_store()->find_port(_port_path);
 
 	QueuedEvent::pre_process();
 }

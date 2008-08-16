@@ -47,13 +47,13 @@ ClearPatchEvent::ClearPatchEvent(Engine& engine, SharedPtr<Responder> responder,
 void
 ClearPatchEvent::pre_process()
 {
-	EngineStore::Objects::iterator patch_iterator = _engine.object_store()->find(_patch_path);
+	EngineStore::Objects::iterator patch_iterator = _engine.engine_store()->find(_patch_path);
 	
-	if (patch_iterator != _engine.object_store()->end()) {
+	if (patch_iterator != _engine.engine_store()->end()) {
 		_patch = PtrCast<PatchImpl>(patch_iterator->second);
 		if (_patch) {
 			_process = _patch->enabled();
-			_removed_table = _engine.object_store()->remove_children(patch_iterator);
+			_removed_table = _engine.engine_store()->remove_children(patch_iterator);
 			_patch->nodes().clear();
 			_patch->connections().clear();
 			_ports_array = _patch->build_ports_array();

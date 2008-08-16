@@ -76,7 +76,7 @@ void
 DisconnectAllEvent::pre_process()
 {
 	if (_lookup) {
-		_parent = _engine.object_store()->find_patch(_parent_path);
+		_parent = _engine.engine_store()->find_patch(_parent_path);
 	
 		if (_parent == NULL) {
 			_error = PARENT_NOT_FOUND;
@@ -84,7 +84,7 @@ DisconnectAllEvent::pre_process()
 			return;
 		}
 		
-		GraphObjectImpl* object = _engine.object_store()->find_object(_path);
+		GraphObjectImpl* object = _engine.engine_store()->find_object(_path);
 		
 		if (object == NULL) {
 			_error = OBJECT_NOT_FOUND;

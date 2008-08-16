@@ -43,7 +43,7 @@ RequestPortValueEvent::RequestPortValueEvent(Engine& engine, SharedPtr<Responder
 void
 RequestPortValueEvent::pre_process()
 {
-	_port = _engine.object_store()->find_port(_port_path);
+	_port = _engine.engine_store()->find_port(_port_path);
 
 	QueuedEvent::pre_process();
 }

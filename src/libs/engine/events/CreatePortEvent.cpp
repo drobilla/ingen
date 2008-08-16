@@ -72,14 +72,14 @@ CreatePortEvent::CreatePortEvent(Engine&              engine,
 void
 CreatePortEvent::pre_process()
 {
-	if (_error == UNKNOWN_TYPE || _engine.object_store()->find_object(_path)) {
+	if (_error == UNKNOWN_TYPE || _engine.engine_store()->find_object(_path)) {
 		QueuedEvent::pre_process();
 		return;
 	}
 
 	// FIXME: this is just a mess :/
 	
-	_patch = _engine.object_store()->find_patch(_path.parent());
+	_patch = _engine.engine_store()->find_patch(_path.parent());
 
 	if (_patch != NULL) {
 		assert(_patch->path() == _path.parent());
@@ -106,8 +106,8 @@ CreatePortEvent::pre_process()
 
 
 			_ports_array->at(_patch->num_ports()-1) = _patch_port;
-			//_patch_port->add_to_store(_engine.object_store());
-			_engine.object_store()->add(_patch_port);
+			//_patch_port->add_to_store(_engine.engine_store());
+			_engine.engine_store()->add(_patch_port);
 
 			if (!_patch->parent()) {
 				if (_type == "ingen:AudioPort")

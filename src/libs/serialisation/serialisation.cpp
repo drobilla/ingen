@@ -33,10 +33,10 @@ new_loader()
 
 	
 Ingen::Serialisation::Serialiser*
-new_serialiser(Ingen::Shared::World* world)
+new_serialiser(Ingen::Shared::World* world, SharedPtr<Store> store)
 {
 	assert(world->rdf_world);
-	return new Serialiser(*world);
+	return new Serialiser(*world, store);
 }
 
 

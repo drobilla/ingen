@@ -106,7 +106,8 @@ public:
 	const SharedPtr<SigClientInterface>& client()     const { return _client; }
 	const SharedPtr<ClientStore>&        store()      const { return _store; }
 	const SharedPtr<ThreadedLoader>&     loader()     const { return _loader; }
-	const SharedPtr<Serialiser>&         serialiser() const { return _world->serialiser; }
+	
+	const SharedPtr<Serialiser>& serialiser();
 	
 	static inline App& instance() { assert(_instance); return *_instance; }
 
@@ -139,6 +140,7 @@ protected:
 	
 	SharedPtr<SigClientInterface> _client;
 	SharedPtr<ClientStore>        _store;
+	SharedPtr<Serialiser>         _serialiser;
 	SharedPtr<ThreadedLoader>     _loader;
 
 	Configuration*    _configuration;
