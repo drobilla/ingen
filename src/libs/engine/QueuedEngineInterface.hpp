@@ -81,8 +81,8 @@ public:
 			
 	// Object commands
 	
-	virtual void create_patch(const string& path,
-	                          uint32_t      poly);
+	virtual void new_patch(const string& path,
+	                       uint32_t      poly);
 
 	virtual void create_port(const string& path,
 	                         const string& data_type,

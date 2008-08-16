@@ -138,8 +138,8 @@ QueuedEngineInterface::bundle_end()
 // Object commands
 
 void
-QueuedEngineInterface::create_patch(const string& path,
-                                    uint32_t      poly)
+QueuedEngineInterface::new_patch(const string& path,
+                                 uint32_t      poly)
 {
 	push_queued(new CreatePatchEvent(_engine, _responder, now(), path, poly));
 }

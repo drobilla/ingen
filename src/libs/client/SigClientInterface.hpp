@@ -116,7 +116,7 @@ protected:
 	void polyphonic(const string& path, bool polyphonic)
 		{ if (_enabled) signal_polyphonic.emit(path, polyphonic); }
 
-	void connection(const string& src_port_path, const string& dst_port_path)
+	void connect(const string& src_port_path, const string& dst_port_path)
 		{ if (_enabled) signal_connection.emit(src_port_path, dst_port_path); }
 
 	void object_destroyed(const string& path)
@@ -137,7 +137,7 @@ protected:
 	void object_renamed(const string& old_path, const string& new_path)
 		{ if (_enabled) signal_object_renamed.emit(old_path, new_path); }
 	
-	void disconnection(const string& src_port_path, const string& dst_port_path)
+	void disconnect(const string& src_port_path, const string& dst_port_path)
 		{ if (_enabled) signal_disconnection.emit(src_port_path, dst_port_path); }
 	
 	void variable_change(const string& path, const string& key, const Raul::Atom& value)

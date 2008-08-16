@@ -299,7 +299,7 @@ DeprecatedLoader::load_patch(const Glib::ustring&   filename,
 
 	// Create it, if we're not merging
 	if (!existing && path != "/") {
-		_engine->create_patch(path, poly);
+		_engine->new_patch(path, poly);
 		for (GraphObject::Variables::const_iterator i = initial_data.begin(); i != initial_data.end(); ++i)
 			_engine->set_variable(path, i->first, i->second);
 	}

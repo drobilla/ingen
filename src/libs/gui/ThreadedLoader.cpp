@@ -19,6 +19,7 @@
 #include <string>
 #include "module/global.hpp"
 #include "module/World.hpp"
+#include "module/Module.hpp"
 #include "client/PatchModel.hpp"
 #include "App.hpp"
 #include "ThreadedLoader.hpp"
@@ -34,9 +35,15 @@ ThreadedLoader::ThreadedLoader(SharedPtr<EngineInterface> engine)
 	, _deprecated_loader(engine)
 {
 	set_name("Loader");
-
+	
 	// FIXME: rework this so the thread is only present when it's doing something (save mem)
-	if (App::instance().world()->serialisation_module) {
+	// and module isn't loaded until required
+
+	World* world = App::instance().world();
+	if (!world->serialisation_module)
+		world->serialisation_module = Ingen::Shared::load_module("ingen_serialisation");
+
+	if (world->serialisation_module) {
 		Loader* (*new_loader)() = NULL;
 
 		bool found = App::instance().world()->serialisation_module->get_symbol(

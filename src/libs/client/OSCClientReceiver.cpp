@@ -238,7 +238,7 @@ OSCClientReceiver::_connection_cb(const char* path, const char* types, lo_arg** 
 	const char* const src_port_path = &argv[0]->s;
 	const char* const dst_port_path = &argv[1]->s;
 	
-	connection(src_port_path, dst_port_path);
+	connect(src_port_path, dst_port_path);
 
 	return 0;
 }
@@ -250,7 +250,7 @@ OSCClientReceiver::_disconnection_cb(const char* path, const char* types, lo_arg
 	const char* src_port_path = &argv[0]->s;
 	const char* dst_port_path = &argv[1]->s;
 
-	disconnection(src_port_path, dst_port_path);
+	disconnect(src_port_path, dst_port_path);
 
 	return 0;
 }

@@ -183,11 +183,11 @@ OSCEngineSender::quit()
 // Object commands
 
 void
-OSCEngineSender::create_patch(const string& path,
-                              uint32_t      poly)
+OSCEngineSender::new_patch(const string& path,
+                           uint32_t      poly)
 {
 	assert(_engine_addr);
-	lo_send(_engine_addr, "/ingen/create_patch", "isi",
+	lo_send(_engine_addr, "/ingen/new_patch", "isi",
 		next_id(),
 		path.c_str(),
 		poly);

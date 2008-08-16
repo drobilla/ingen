@@ -180,7 +180,7 @@ void
 ClientBroadcaster::send_connection(const SharedPtr<const ConnectionImpl> c)
 {
 	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
-		(*i).second->connection(c->src_port()->path(), c->dst_port()->path());
+		(*i).second->connect(c->src_port()->path(), c->dst_port()->path());
 }
 
 
@@ -188,7 +188,7 @@ void
 ClientBroadcaster::send_disconnection(const string& src_port_path, const string& dst_port_path)
 {
 	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
-		(*i).second->disconnection(src_port_path, dst_port_path);
+		(*i).second->disconnect(src_port_path, dst_port_path);
 }
 
 

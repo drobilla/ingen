@@ -112,7 +112,7 @@ Loader::load(Ingen::Shared::World*       world,
 	cout << " as " << patch_path << endl;
 	
 	if (patch_path != "/")
-		world->engine->create_patch(patch_path, patch_poly);
+		world->engine->new_patch(patch_path, patch_poly);
 	
 	/* Set document metadata (so File->Save doesn't prompt)
 	 * FIXME: This needs some thinking for multiple clients... */

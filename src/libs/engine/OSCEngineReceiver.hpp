@@ -93,7 +93,7 @@ private:
 	LO_HANDLER(load_plugins);
 	LO_HANDLER(engine_activate);
 	LO_HANDLER(engine_deactivate);
-	LO_HANDLER(create_patch);
+	LO_HANDLER(new_patch);
 	LO_HANDLER(rename);
 	LO_HANDLER(create_port);
 	LO_HANDLER(create_node);

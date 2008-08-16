@@ -30,7 +30,6 @@ class EngineInterface;
 
 
 /** The (only) interface the engine uses to communicate with clients.
- *
  * Purely virtual (except for the destructor).
  *
  * \ingroup interface
@@ -106,11 +105,11 @@ public:
 	
 	virtual void object_destroyed(const std::string& path) = 0;
 	
-	virtual void connection(const std::string& src_port_path,
-	                        const std::string& dst_port_path) = 0;
+	virtual void connect(const std::string& src_port_path,
+	                     const std::string& dst_port_path) = 0;
 	
-	virtual void disconnection(const std::string& src_port_path,
-	                           const std::string& dst_port_path) = 0;
+	virtual void disconnect(const std::string& src_port_path,
+	                        const std::string& dst_port_path) = 0;
 	
 	virtual void variable_change(const std::string& subject_path,
 	                             const std::string& predicate,

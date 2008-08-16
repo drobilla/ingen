@@ -426,7 +426,7 @@ OSCClientSender::patch_polyphony(const std::string& patch_path, uint32_t poly)
  * \arg \b dst-path (string) - Path of the destination port</p> \n \n
  */
 void
-OSCClientSender::connection(const std::string& src_port_path, const std::string& dst_port_path)
+OSCClientSender::connect(const std::string& src_port_path, const std::string& dst_port_path)
 {
 	send("/ingen/new_connection", "ss", src_port_path.c_str(), dst_port_path.c_str(), LO_ARGS_END);
 }
@@ -438,7 +438,7 @@ OSCClientSender::connection(const std::string& src_port_path, const std::string&
  * \arg \b dst-path (string) - Path of the destination port</p> \n \n
  */
 void
-OSCClientSender::disconnection(const std::string& src_port_path, const std::string& dst_port_path)
+OSCClientSender::disconnect(const std::string& src_port_path, const std::string& dst_port_path)
 {
 	send("/ingen/disconnection", "ss", src_port_path.c_str(), dst_port_path.c_str(), LO_ARGS_END);
 }

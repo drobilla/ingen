@@ -69,7 +69,7 @@ ObjectSender::send_patch(ClientInterface* client, const PatchImpl* patch, bool r
 		// Send connections
 		for (PatchImpl::Connections::const_iterator j = patch->connections().begin();
 				j != patch->connections().end(); ++j)
-			client->connection((*j)->src_port_path(), (*j)->dst_port_path());
+			client->connect((*j)->src_port_path(), (*j)->dst_port_path());
 
 	}
 }

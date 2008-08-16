@@ -92,7 +92,7 @@ NewSubpatchWindow::ok_clicked()
 	const Path path = _patch->path().base() + Path::nameify(_name_entry->get_text());
 	const uint32_t poly = _poly_spinbutton->get_value_as_int();
 
-	App::instance().engine()->create_patch(path, poly);
+	App::instance().engine()->new_patch(path, poly);
 	for (GraphObject::Variables::const_iterator i = _initial_data.begin(); i != _initial_data.end(); ++i)
 		App::instance().engine()->set_variable(path, i->first, i->second);
 

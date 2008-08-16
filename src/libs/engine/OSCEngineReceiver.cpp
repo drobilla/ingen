@@ -86,7 +86,7 @@ OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t
 	lo_server_add_method(_server, "/ingen/load_plugins", "i", load_plugins_cb, this);
 	lo_server_add_method(_server, "/ingen/activate", "i", engine_activate_cb, this);
 	lo_server_add_method(_server, "/ingen/deactivate", "i", engine_deactivate_cb, this);
-	lo_server_add_method(_server, "/ingen/create_patch", "isi", create_patch_cb, this);
+	lo_server_add_method(_server, "/ingen/new_patch", "isi", new_patch_cb, this);
 	lo_server_add_method(_server, "/ingen/enable_patch", "is", enable_patch_cb, this);
 	lo_server_add_method(_server, "/ingen/disable_patch", "is", disable_patch_cb, this);
 	lo_server_add_method(_server, "/ingen/clear_patch", "is", clear_patch_cb, this);
@@ -373,18 +373,18 @@ OSCEngineReceiver::_engine_deactivate_cb(const char* path, const char* types, lo
 
 
 /** \page engine_osc_namespace
- * <p> \b /ingen/create_patch - Creates a new, empty, toplevel patch.
+ * <p> \b /ingen/new_patch - Creates a new, empty, toplevel patch.
  * \arg \b response-id  (integer)
  * \arg \b patch-path  (string) - Patch path (complete, ie /master/parent/new_patch)
  * \arg \b poly        (integer) - Patch's (internal) polyphony </p> \n \n
  */
 int
-OSCEngineReceiver::_create_patch_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCEngineReceiver::_new_patch_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	const char*   patch_path  = &argv[1]->s;
 	const int32_t poly        =  argv[2]->i;
 
-	create_patch(patch_path, poly);
+	new_patch(patch_path, poly);
 	return 0;
 }
 

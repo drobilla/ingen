@@ -22,21 +22,18 @@
 #include <string>
 #include <raul/SharedPtr.hpp>
 #include "interface/ClientInterface.hpp"
-using std::string;
-using Ingen::Shared::ClientInterface;
+#include "interface/CommonInterface.hpp"
 
 namespace Ingen {
-/** Shared code used on both client side and engine side (abstract interfaces). */
 namespace Shared {
 
 
 /** The (only) interface clients use to communicate with the engine.
- *
  * Purely virtual (except for the destructor).
  *
  * \ingroup interface
  */
-class EngineInterface
+class EngineInterface : public CommonInterface
 {
 public:
 	virtual ~EngineInterface() {}
@@ -47,7 +44,7 @@ public:
 	
 	// Client registration
 	virtual void register_client(ClientInterface* client) = 0;
-	virtual void unregister_client(const string& uri) = 0;
+	virtual void unregister_client(const std::string& uri) = 0;
 	
 	// Engine commands
 	virtual void load_plugins() = 0;
@@ -61,95 +58,96 @@ public:
 	
 	// Object commands
 	
-	virtual void create_patch(const string& path,
-	                          uint32_t      poly) = 0;
+	virtual void new_patch(const std::string& path,
+	                       uint32_t           poly) = 0;
 	
-	virtual void create_port(const string& path,
-	                         const string& data_type,
-	                         bool          is_output) = 0;
+	virtual void create_port(const std::string& path,
+	                         const std::string& data_type,
+	                         bool               is_output) = 0;
 	
-	virtual void create_node(const string& path,
-	                         const string& plugin_uri,
-	                         bool          polyphonic) = 0;
+	virtual void create_node(const std::string& path,
+	                         const std::string& plugin_uri,
+	                         bool               polyphonic) = 0;
 	
 	/** DEPRECATED */
-	virtual void create_node(const string& path,
-	                         const string& plugin_type,
-	                         const string& library_name,
-	                         const string& plugin_label,
-	                         bool          polyphonic) = 0;
+	virtual void create_node(const std::string& path,
+	                         const std::string& plugin_type,
+	                         const std::string& library_name,
+	                         const std::string& plugin_label,
+	                         bool               polyphonic) = 0;
 	
-	virtual void rename(const string& old_path,
-	                    const string& new_symbol) = 0;
+	virtual void rename(const std::string& old_path,
+	                    const std::string& new_symbol) = 0;
 	
-	virtual void destroy(const string& path) = 0;
+	virtual void destroy(const std::string& path) = 0;
 	
-	virtual void clear_patch(const string& patch_path) = 0;
+	virtual void clear_patch(const std::string& patch_path) = 0;
 
-	virtual void set_polyphony(const string& patch_path, uint32_t poly) = 0;
+	virtual void set_polyphony(const std::string& patch_path, uint32_t poly) = 0;
 	
-	virtual void set_polyphonic(const string& path, bool poly) = 0;
+	virtual void set_polyphonic(const std::string& path, bool poly) = 0;
 	
-	virtual void enable_patch(const string& patch_path) = 0;
+	virtual void enable_patch(const std::string& patch_path) = 0;
 	
-	virtual void disable_patch(const string& patch_path) = 0;
+	virtual void disable_patch(const std::string& patch_path) = 0;
 	
-	virtual void connect(const string& src_port_path,
-	                     const string& dst_port_path) = 0;
+	virtual void connect(const std::string& src_port_path,
+	                     const std::string& dst_port_path) = 0;
 	
-	virtual void disconnect(const string& src_port_path,
-	                        const string& dst_port_path) = 0;
+	virtual void disconnect(const std::string& src_port_path,
+	                        const std::string& dst_port_path) = 0;
 	
-	virtual void disconnect_all(const string& parent_patch_path,
-	                            const string& path) = 0;
+	virtual void disconnect_all(const std::string& parent_patch_path,
+	                            const std::string& path) = 0;
 	
-	virtual void set_port_value(const string& port_path,
-	                            const string& type_uri,
-	                            uint32_t      data_size,
-	                            const void*   data) = 0;
+	virtual void set_port_value(const std::string& port_path,
+	                            const std::string& type_uri,
+	                            uint32_t           data_size,
+	                            const void*        data) = 0;
 	
-	virtual void set_port_value(const string& port_path,
-	                            const string& type_uri,
-	                            uint32_t      voice,
-	                            uint32_t      data_size,
-	                            const void*   data) = 0;
+	virtual void set_port_value(const std::string& port_path,
+	                            const std::string& type_uri,
+	                            uint32_t           voice,
+	                            uint32_t           data_size,
+	                            const void*        data) = 0;
 	
-	virtual void set_port_value_immediate(const string& port_path,
-	                                      const string& type_uri,
-	                                      uint32_t      data_size,
-	                                      const void*   data) = 0;
+	virtual void set_port_value_immediate(const std::string& port_path,
+	                                      const std::string& type_uri,
+	                                      uint32_t           data_size,
+	                                      const void*        data) = 0;
 	
-	virtual void set_port_value_immediate(const string& port_path,
-	                                      const string& type_uri,
-	                                      uint32_t      voice,
-	                                      uint32_t      data_size,
-	                                      const void*   data) = 0;
+	virtual void set_port_value_immediate(const std::string& port_path,
+	                                      const std::string& type_uri,
+	                                      uint32_t           voice,
+	                                      uint32_t           data_size,
+	                                      const void*        data) = 0;
 	
-	virtual void enable_port_broadcasting(const string& port_path) = 0;
+	virtual void enable_port_broadcasting(const std::string& port_path) = 0;
 	
-	virtual void disable_port_broadcasting(const string& port_path) = 0;
+	virtual void disable_port_broadcasting(const std::string& port_path) = 0;
 	
-	virtual void set_program(const string& node_path,
-	                         uint32_t      bank,
-	                         uint32_t      program) = 0;
+	virtual void set_program(const std::string& node_path,
+	                         uint32_t           bank,
+	                         uint32_t           program) = 0;
 	
-	virtual void midi_learn(const string& node_path) = 0;
+	virtual void midi_learn(const std::string& node_path) = 0;
 	
-	virtual void set_variable(const string&     path,
-	                          const string&     predicate,
-	                          const Raul::Atom& value) = 0;
+	virtual void set_variable(const std::string& subject_path,
+	                          const std::string& predicate,
+	                          const Raul::Atom&  value) = 0;
 	
 	// Requests
 	
 	virtual void ping() = 0;
 	
-	virtual void request_plugin(const string& uri) = 0;
+	virtual void request_plugin(const std::string& uri) = 0;
 
-	virtual void request_object(const string& path) = 0;
+	virtual void request_object(const std::string& path) = 0;
 
-	virtual void request_port_value(const string& port_path) = 0;
+	virtual void request_port_value(const std::string& port_path) = 0;
 	
-	virtual void request_variable(const string& path, const string& key) = 0;
+	virtual void request_variable(const std::string& path,
+	                              const std::string& key) = 0;
 
 	virtual void request_plugins() = 0;
 	
