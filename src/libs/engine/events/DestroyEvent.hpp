@@ -58,7 +58,7 @@ public:
 
 private:
 	Path                                         _path;
-	EngineStore::Objects::iterator               _store_iterator;
+	EngineStore::iterator                        _store_iterator;
 	SharedPtr<NodeImpl>                          _node;  ///< Non-NULL iff a node
 	SharedPtr<PortImpl>                          _port;  ///< Non-NULL iff a port
 	DriverPort*                                  _driver_port;

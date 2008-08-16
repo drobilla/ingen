@@ -58,7 +58,7 @@ ClientStore::ClientStore(SharedPtr<EngineInterface> engine, SharedPtr<SigClientI
 void
 ClientStore::clear()
 {
-	_objects.clear();
+	clear();
 	_plugins.clear();
 }
 
@@ -223,8 +223,8 @@ ClientStore::add_object(SharedPtr<ObjectModel> object)
 {
 	// If we already have "this" object, merge the existing one into the new
 	// one (with precedence to the new values).
-	Objects::iterator existing = _objects.find(object->path());
-	if (existing != _objects.end()) {
+	iterator existing = find(object->path());
+	if (existing != end()) {
 		PtrCast<ObjectModel>(existing->second)->set(object);
 	} else {
 
@@ -236,7 +236,7 @@ ClientStore::add_object(SharedPtr<ObjectModel> object)
 				parent->add_child(object);
 				assert(parent && (object->parent() == parent));
 				
-				_objects[object->path()] = object;
+				(*this)[object->path()] = object;
 				signal_new_object.emit(object);
 				
 				resolve_variable_orphans(parent);
@@ -250,14 +250,14 @@ ClientStore::add_object(SharedPtr<ObjectModel> object)
 				add_orphan(object);
 			}
 		} else {
-			_objects[object->path()] = object;
+			(*this)[object->path()] = object;
 			signal_new_object.emit(object);
 		}
 
 	}
 
 	/*cout << "[Store] Added " << object->path() << " {" << endl;
-	for (Objects::iterator i = _objects.begin(); i != _objects.end(); ++i) {
+	for (iterator i = begin(); i != end(); ++i) {
 		cout << "\t" << i->first << endl;
 	}
 	cout << "}" << endl;*/
@@ -267,19 +267,18 @@ ClientStore::add_object(SharedPtr<ObjectModel> object)
 SharedPtr<ObjectModel>
 ClientStore::remove_object(const Path& path)
 {
-	Objects::iterator i = _objects.find(path);
+	iterator i = find(path);
 
-	if (i != _objects.end()) {
+	if (i != end()) {
 		assert((*i).second->path() == path);
 		SharedPtr<ObjectModel> result = PtrCast<ObjectModel>((*i).second);
 		assert(result);
-		//_objects.erase(i);
-		Objects::iterator descendants_end = _objects.find_descendants_end(i);
-		SharedPtr< Table<Path, SharedPtr<Shared::GraphObject> > > removed
-				= _objects.yank(i, descendants_end);
+		//erase(i);
+		iterator descendants_end = find_descendants_end(i);
+		SharedPtr<Store::Objects> removed = yank(i, descendants_end);
 
 		/*cout << "[Store] Removing " << i->first << " {" << endl;
-		for (Objects::iterator i = removed.begin(); i != removed.end(); ++i) {
+		for (iterator i = removed.begin(); i != removed.end(); ++i) {
 			cout << "\t" << i->first << endl;
 		}
 		cout << "}" << endl;*/
@@ -323,8 +322,8 @@ SharedPtr<ObjectModel>
 ClientStore::object(const Path& path)
 {
 	assert(path.length() > 0);
-	Objects::iterator i = _objects.find(path);
-	if (i == _objects.end()) {
+	iterator i = find(path);
+	if (i == end()) {
 		return SharedPtr<ObjectModel>();
 	} else {
 		SharedPtr<ObjectModel> model = PtrCast<ObjectModel>(i->second);
@@ -342,39 +341,6 @@ ClientStore::add_plugin(SharedPtr<PluginModel> pm)
 	_plugins[pm->uri()] = pm;
 	signal_new_plugin(pm);
 	//cerr << "Plugin: " << pm->uri() << ", # plugins: " << _plugins.size() << endl;
-}
-	
-
-ClientStore::Objects::const_iterator
-ClientStore::children_begin(SharedPtr<Shared::GraphObject> o) const
-{
-	Objects::const_iterator parent = _objects.find(o->path());
-	assert(parent != _objects.end());
-	++parent;
-	return parent;
-}
-
-
-ClientStore::Objects::const_iterator
-ClientStore::children_end(SharedPtr<Shared::GraphObject> o) const
-{
-	Objects::const_iterator parent = _objects.find(o->path());
-	assert(parent != _objects.end());
-	return _objects.find_descendants_end(parent);
-}
-
-
-SharedPtr<Shared::GraphObject>
-ClientStore::find_child(SharedPtr<Shared::GraphObject> parent, const string& child_name) const
-{
-	Objects::const_iterator pi = _objects.find(parent->path());
-	assert(pi != _objects.end());
-	Objects::const_iterator children_end = _objects.find_descendants_end(pi);
-	Objects::const_iterator child = _objects.find(pi, children_end, parent->path().base() + child_name);
-	if (child != _objects.end())
-		return PtrCast<ObjectModel>(child->second);
-	else
-		return SharedPtr<ObjectModel>();
 }
 
 
@@ -395,16 +361,16 @@ ClientStore::destruction_event(const Path& path)
 void
 ClientStore::rename_event(const Path& old_path, const Path& new_path)
 {
-	Objects::iterator parent = _objects.find(old_path);
-	if (parent == _objects.end()) {
+	iterator parent = find(old_path);
+	if (parent == end()) {
 		cerr << "[Store] Failed to find object " << old_path << " to rename." << endl;
 		return;
 	}
 
-	Objects::iterator descendants_end = _objects.find_descendants_end(parent);
+	iterator descendants_end = find_descendants_end(parent);
 	
 	SharedPtr< Table<Path, SharedPtr<Shared::GraphObject> > > removed
-			= _objects.yank(parent, descendants_end);
+			= yank(parent, descendants_end);
 	
 	assert(removed->size() > 0);
 
@@ -423,13 +389,13 @@ ClientStore::rename_event(const Path& old_path, const Path& new_path)
 		i->first = child_new_path;
 	}
 
-	_objects.cram(*removed.get());
+	cram(*removed.get());
 
 	//cerr << "[Store] Table:" << endl;
 	//for (size_t i=0; i < removed.size(); ++i) {
 	//	cerr << removed[i].first << "\t\t: " << removed[i].second << endl;
 	//}
-	/*for (Objects::iterator i = _objects.begin(); i != _objects.end(); ++i) {
+	/*for (iterator i = begin(); i != end(); ++i) {
 		cerr << i->first << "\t\t: " << i->second << endl;
 	}*/
 }
@@ -518,18 +484,18 @@ ClientStore::patch_polyphony_event(const Path& path, uint32_t poly)
 void
 ClientStore::patch_cleared_event(const Path& path)
 {
-	Objects::iterator i = _objects.find(path);
-	if (i != _objects.end()) {
+	iterator i = find(path);
+	if (i != end()) {
 		assert((*i).second->path() == path);
 		SharedPtr<PatchModel> patch = PtrCast<PatchModel>(i->second);
 		
-		Objects::iterator first_descendant = i;
+		iterator first_descendant = i;
 		++first_descendant;
-		Objects::iterator descendants_end = _objects.find_descendants_end(i);
+		iterator descendants_end = find_descendants_end(i);
 		SharedPtr< Table<Path, SharedPtr<Shared::GraphObject> > > removed
-				= _objects.yank(first_descendant, descendants_end);
+				= yank(first_descendant, descendants_end);
 
-		for (Objects::iterator i = removed->begin(); i != removed->end(); ++i) {
+		for (iterator i = removed->begin(); i != removed->end(); ++i) {
 			SharedPtr<ObjectModel> model = PtrCast<ObjectModel>(i->second);
 			assert(model);
 			model->signal_destroyed.emit();

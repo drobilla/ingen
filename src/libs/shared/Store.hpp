@@ -18,26 +18,27 @@
 #ifndef COMMON_STORE_H
 #define COMMON_STORE_H
 
+#include <string>
 #include <raul/PathTable.hpp>
 #include "interface/GraphObject.hpp"
 
 using Raul::PathTable;
-using Raul::Path;
 
 namespace Ingen {
 namespace Shared {
 
 
-class Store {
+class Store : public Raul::PathTable< SharedPtr<Shared::GraphObject> > {
 public:
-	typedef Raul::PathTable< SharedPtr<Shared::GraphObject> > Objects;
-	virtual const Objects& objects() const = 0;
-	
-	virtual Objects::iterator find(const Path& path) = 0;
 	virtual void add(GraphObject* o) = 0;
+	
+	typedef Raul::Table< Raul::Path, SharedPtr<Shared::GraphObject> > Objects;
 
-	virtual Objects::const_iterator children_begin(SharedPtr<Shared::GraphObject> o) const = 0;
-	virtual Objects::const_iterator children_end(SharedPtr<Shared::GraphObject> o) const = 0;
+	const_iterator children_begin(SharedPtr<Shared::GraphObject> o) const;
+	const_iterator children_end(SharedPtr<Shared::GraphObject> o) const;
+	
+	SharedPtr<Shared::GraphObject> find_child(SharedPtr<Shared::GraphObject> parent,
+	                                          const std::string& child_name) const;
 };
 
 

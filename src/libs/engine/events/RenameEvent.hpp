@@ -54,7 +54,7 @@ private:
 	string                         _name;
 	Path                           _new_path;
 	PatchImpl*                     _parent_patch;
-	EngineStore::Objects::iterator _store_iterator;
+	EngineStore::iterator          _store_iterator;
 	ErrorType                      _error;
 };
 

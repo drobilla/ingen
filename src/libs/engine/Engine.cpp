@@ -75,8 +75,8 @@ Engine::~Engine()
 {
 	deactivate();
 
-	for (EngineStore::Objects::iterator i = object_store()->objects().begin();
-			i != object_store()->objects().end(); ++i) {
+	for (EngineStore::iterator i = object_store()->begin();
+			i != object_store()->end(); ++i) {
 		if ( ! PtrCast<GraphObjectImpl>(i->second)->parent() )
 			i->second.reset();
 	}

@@ -67,27 +67,8 @@ EngineStore::find_port(const Path& path)
 GraphObjectImpl*
 EngineStore::find_object(const Path& path)
 {
-	Objects::iterator i = _objects.find(path);
-	return ((i == _objects.end()) ? NULL : dynamic_cast<GraphObjectImpl*>(i->second.get()));
-}
-
-
-EngineStore::Objects::const_iterator
-EngineStore::children_begin(SharedPtr<Shared::GraphObject> o) const
-{
-	Objects::const_iterator parent = _objects.find(o->path());
-	assert(parent != _objects.end());
-	++parent;
-	return parent;
-}
-
-
-EngineStore::Objects::const_iterator
-EngineStore::children_end(SharedPtr<Shared::GraphObject> o) const
-{
-	Objects::const_iterator parent = _objects.find(o->path());
-	assert(parent != _objects.end());
-	return _objects.find_descendants_end(parent);
+	iterator i = find(path);
+	return ((i == end()) ? NULL : dynamic_cast<GraphObjectImpl*>(i->second.get()));
 }
 
 
@@ -101,12 +82,12 @@ EngineStore::add(GraphObject* obj)
 
 	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
 
-	if (_objects.find(o->path()) != _objects.end()) {
+	if (find(o->path()) != end()) {
 		cerr << "[EngineStore] ERROR: Attempt to add duplicate object " << o->path() << endl;
 		return;
 	}
 
-	_objects.insert(make_pair(o->path(), o));
+	insert(make_pair(o->path(), o));
 
 	NodeImpl* node = dynamic_cast<NodeImpl*>(o);
 	if (node) {
@@ -120,15 +101,15 @@ EngineStore::add(GraphObject* obj)
 /** Add a family of objects to the store. Not realtime safe.
  */
 void
-EngineStore::add(const Table<Path, SharedPtr<Shared::GraphObject> >& table)
+EngineStore::add(const Objects& table)
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
 
 	//cerr << "[EngineStore] Adding " << o[0].second->path() << endl;
-	_objects.cram(table);
+	cram(table);
 	
 	/*cerr << "[EngineStore] Adding Table:" << endl;
-	for (Objects::const_iterator i = table.begin(); i != table.end(); ++i) {
+	for (const_iterator i = table.begin(); i != table.end(); ++i) {
 		cerr << i->first << " = " << i->second->path() << endl;
 	}*/
 }
@@ -139,10 +120,10 @@ EngineStore::add(const Table<Path, SharedPtr<Shared::GraphObject> >& table)
  * Returned is a vector containing all descendants of the object removed
  * including the object itself, in lexicographically sorted order by Path.
  */
-SharedPtr< Table<Path, SharedPtr<Shared::GraphObject> > >
+SharedPtr<EngineStore::Objects>
 EngineStore::remove(const Path& path)
 {
-	return remove(_objects.find(path));
+	return remove(find(path));
 }
 
 
@@ -151,17 +132,16 @@ EngineStore::remove(const Path& path)
  * Returned is a vector containing all descendants of the object removed
  * including the object itself, in lexicographically sorted order by Path.
  */
-SharedPtr< Table<Path, SharedPtr<Shared::GraphObject> > >
-EngineStore::remove(Objects::iterator object)
+SharedPtr<EngineStore::Objects>
+EngineStore::remove(iterator object)
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
 	
-	if (object != _objects.end()) {
-		Objects::iterator descendants_end = _objects.find_descendants_end(object);
+	if (object != end()) {
+		iterator descendants_end = find_descendants_end(object);
 		//cout << "[EngineStore] Removing " << object->first << " {" << endl;
-		SharedPtr< Table<Path, SharedPtr<Shared::GraphObject> > > removed
-				= _objects.yank(object, descendants_end);
-		/*for (Objects::iterator i = removed->begin(); i != removed->end(); ++i) {
+		SharedPtr<Objects> removed = yank(object, descendants_end);
+		/*for (iterator i = removed->begin(); i != removed->end(); ++i) {
 			cout << "\t" << i->first << endl;
 		}
 		cout << "}" << endl;*/
@@ -170,7 +150,7 @@ EngineStore::remove(Objects::iterator object)
 
 	} else {
 		cerr << "[EngineStore] WARNING: Removing " << object->first << " failed." << endl;
-		return SharedPtr<Objects>();
+		return SharedPtr<EngineStore>();
 	}
 }
 
@@ -180,10 +160,10 @@ EngineStore::remove(Objects::iterator object)
  * Returned is a vector containing all descendants of the object removed
  * in lexicographically sorted order by Path.
  */
-SharedPtr< Table<Path, SharedPtr<Shared::GraphObject> > >
+SharedPtr<EngineStore::Objects>
 EngineStore::remove_children(const Path& path)
 {
-	return remove_children(_objects.find(path));
+	return remove_children(find(path));
 }
 
 
@@ -192,24 +172,22 @@ EngineStore::remove_children(const Path& path)
  * Returned is a vector containing all descendants of the object removed
  * in lexicographically sorted order by Path.
  */
-SharedPtr< Table<Path, SharedPtr<Shared::GraphObject> > >
-EngineStore::remove_children(Objects::iterator object)
+SharedPtr<EngineStore::Objects>
+EngineStore::remove_children(iterator object)
 {
-	if (object != _objects.end()) {
-		Objects::iterator descendants_end = _objects.find_descendants_end(object);
-
+	if (object != end()) {
+		iterator descendants_end = find_descendants_end(object);
 		if (descendants_end != object) {
-			Objects::iterator first_child = object;
+			iterator first_child = object;
 			++first_child;
-			return _objects.yank(first_child, descendants_end);
+			return yank(first_child, descendants_end);
 		}
-
 	} else {
 		cerr << "[EngineStore] WARNING: Removing children of " << object->first << " failed." << endl;
-		return SharedPtr<Objects>();
+		return SharedPtr<EngineStore::Objects>();
 	}
 
-	return SharedPtr<Objects>();
+	return SharedPtr<EngineStore::Objects>();
 }
 
 

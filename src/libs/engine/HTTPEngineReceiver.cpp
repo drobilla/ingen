@@ -115,17 +115,17 @@ HTTPEngineReceiver::message_callback(SoupServer* server, SoupMessage* msg, const
 		return;
 	}
 	
-	Store::Objects::const_iterator start = store->find(path);
-	if (start == store->objects().end()) {
+	Store::const_iterator start = store->find(path);
+	if (start == store->end()) {
 		soup_message_set_status (msg, SOUP_STATUS_NOT_FOUND);
 		return;
 	}
 
 #if 0
-	EngineStore::Objects::iterator end = store->objects().find_descendants_end(start);
+	EngineStore::iterator end = store->find_descendants_end(start);
 
 	string response;
-	for (EngineStore::Objects::iterator i = start; i != end; ++i)
+	for (EngineStore::iterator i = start; i != end; ++i)
 		response.append(i->first).append("\n");
 #endif
 

@@ -37,7 +37,7 @@ RenameEvent::RenameEvent(Engine& engine, SharedPtr<Responder> responder, SampleC
   _name(name),
   _new_path("/"),
   _parent_patch(NULL),
-  _store_iterator(engine.object_store()->objects().end()),
+  _store_iterator(engine.object_store()->end()),
   _error(NO_ERROR)
 {
 	/*
@@ -65,7 +65,7 @@ RenameEvent::pre_process()
 	_new_path = _old_path.parent().base() + _name;
 
 	_store_iterator = _engine.object_store()->find(_old_path);
-	if (_store_iterator == _engine.object_store()->objects().end())  {
+	if (_store_iterator == _engine.object_store()->end())  {
 		_error = OBJECT_NOT_FOUND;
 		QueuedEvent::pre_process();
 		return;

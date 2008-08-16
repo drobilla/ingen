@@ -73,7 +73,7 @@ NewSubpatchWindow::name_changed()
 		_message_label->set_text("Name contains invalid characters.");
 		_ok_button->property_sensitive() = false;
 	} else if (App::instance().store()->find(_patch->path().base() + name)
-			!= App::instance().store()->objects().end()) {
+			!= App::instance().store()->end()) {
 		_message_label->set_text("An object already exists with that name.");
 		_ok_button->property_sensitive() = false;
 	} else if (name.length() == 0) {

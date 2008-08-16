@@ -417,7 +417,7 @@ ConnectWindow::gtk_callback()
 			_progress_label->set_text(string("Requesting root patch..."));
 		++_connect_stage;
 	} else if (_connect_stage == 3) {
-		if (App::instance().store()->objects().size() > 0) {
+		if (App::instance().store()->size() > 0) {
 			SharedPtr<PatchModel> root = PtrCast<PatchModel>(App::instance().store()->object("/"));
 			if (root) {
 				set_connected_to(App::instance().engine());

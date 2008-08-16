@@ -202,7 +202,7 @@ PatchModel::child_name_offset(ClientStore& store,
 		ss << base_name;
 		if (offset > 0)
 			ss << "_" << offset;
-		if (store.find(parent->path().base() + ss.str()) == store.objects().end())
+		if (store.find(parent->path().base() + ss.str()) == store.end())
 			break;
 		else if (offset == 0)
 			offset = 2;

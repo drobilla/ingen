@@ -49,7 +49,7 @@ ClearPatchEvent::pre_process()
 {
 	EngineStore::Objects::iterator patch_iterator = _engine.object_store()->find(_patch_path);
 	
-	if (patch_iterator != _engine.object_store()->objects().end()) {
+	if (patch_iterator != _engine.object_store()->end()) {
 		_patch = PtrCast<PatchImpl>(patch_iterator->second);
 		if (_patch) {
 			_process = _patch->enabled();

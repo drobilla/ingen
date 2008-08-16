@@ -37,7 +37,7 @@ namespace Ingen {
 DestroyEvent::DestroyEvent(Engine& engine, SharedPtr<Responder> responder, FrameTime time, QueuedEventSource* source, const string& path, bool block)
 	: QueuedEvent(engine, responder, time, source, source)
 	, _path(path)
-	, _store_iterator(engine.object_store()->objects().end())
+	, _store_iterator(engine.object_store()->end())
 	, _driver_port(NULL)
 	, _patch_node_listnode(NULL)
 	, _patch_port_listnode(NULL)
@@ -60,14 +60,14 @@ DestroyEvent::pre_process()
 {
 	_store_iterator = _engine.object_store()->find(_path);
 
-	if (_store_iterator != _engine.object_store()->objects().end())  {
+	if (_store_iterator != _engine.object_store()->end())  {
 		_node = PtrCast<NodeImpl>(_store_iterator->second);
 
 		if (!_node)
 			_port = PtrCast<PortImpl>(_store_iterator->second);
 	}
 			
-	if (_store_iterator != _engine.object_store()->objects().end()) {
+	if (_store_iterator != _engine.object_store()->end()) {
 		_removed_table = _engine.object_store()->remove(_store_iterator);
 	}
 

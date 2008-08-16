@@ -62,22 +62,8 @@ public:
 
 	void clear();
 
-	size_t num_object() { return _objects.size(); }
-	
-	Objects::iterator find(const Path& path) { return _objects.find(path); }
-	
 	typedef Raul::Table<string, SharedPtr<PluginModel> > Plugins;
 	const Plugins& plugins() const { return _plugins; }
-
-	typedef Raul::PathTable< SharedPtr<Shared::GraphObject> > Objects;
-	const Objects& objects() const { return _objects; }
-	Objects& objects() { return _objects; }
-
-	Objects::const_iterator children_begin(SharedPtr<Shared::GraphObject> o) const;
-	Objects::const_iterator children_end(SharedPtr<Shared::GraphObject> o) const;
-
-	SharedPtr<Shared::GraphObject> find_child(SharedPtr<Shared::GraphObject> parent,
-	                                          const string& child_name) const;
 
 	sigc::signal<void, SharedPtr<ObjectModel> > signal_new_object; 
 	sigc::signal<void, SharedPtr<PluginModel> > signal_new_plugin; 
@@ -130,7 +116,6 @@ private:
 	SharedPtr<EngineInterface>    _engine;
 	SharedPtr<SigClientInterface> _emitter;
 
-	Objects _objects; ///< Map, keyed by Ingen path
 	Plugins _plugins; ///< Map, keyed by plugin URI
 
 	/** Objects we've received, but depend on the existance of another unknown object.
