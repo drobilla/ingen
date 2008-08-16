@@ -95,45 +95,55 @@ HTTPEngineReceiver::message_callback(SoupServer* server, SoupMessage* msg, const
 {
 	HTTPEngineReceiver* me = (HTTPEngineReceiver*)data;
 
-	if (msg->method != SOUP_METHOD_GET) {
+	if (msg->method != SOUP_METHOD_GET && msg->method != SOUP_METHOD_PUT) {
 		soup_message_set_status (msg, SOUP_STATUS_NOT_IMPLEMENTED);
 		return;
 	}
 	
-	SharedPtr<Serialiser> serialiser = me->_engine.world()->serialiser;
-	if (!serialiser) {
-		soup_message_set_status (msg, SOUP_STATUS_INTERNAL_SERVER_ERROR);
-		return;
-	}
-
-	// FIXME: not thread safe!
-
 	SharedPtr<Store> store = me->_engine.world()->store;
 	assert(store);
 	if (!Path::is_valid(path)) {
 		soup_message_set_status (msg, SOUP_STATUS_BAD_REQUEST);
 		return;
 	}
+
+	if (msg->method == SOUP_METHOD_GET) {
+		Glib::RWLock::ReaderLock lock(store->lock());
+		
+		// Find object
+		Store::const_iterator start = store->find(path);
+		if (start == store->end()) {
+			soup_message_set_status (msg, SOUP_STATUS_NOT_FOUND);
+			return;
+		}
+		
+		// Get serialiser
+		SharedPtr<Serialiser> serialiser = me->_engine.world()->serialiser;
+		if (!serialiser) {
+			soup_message_set_status (msg, SOUP_STATUS_INTERNAL_SERVER_ERROR);
+			return;
+		}
+
+		// Serialise object
+		string base_uri = string("ingen:").append(start->second->path());
+		const string response = serialiser->to_string(start->second, base_uri,
+				GraphObject::Variables());
+		soup_message_set_status (msg, SOUP_STATUS_OK);
+		soup_message_set_response (msg, "text/plain", SOUP_MEMORY_COPY,
+				response.c_str(), response.length());
 	
-	Store::const_iterator start = store->find(path);
-	if (start == store->end()) {
-		soup_message_set_status (msg, SOUP_STATUS_NOT_FOUND);
-		return;
+	} else if (msg->method == SOUP_METHOD_PUT) {
+		Glib::RWLock::WriterLock lock(store->lock());
+		
+		// Be sure object doesn't exist
+		Store::const_iterator start = store->find(path);
+		if (start != store->end()) {
+			soup_message_set_status (msg, SOUP_STATUS_CONFLICT);
+			return;
+		}
+		
+		soup_message_set_status (msg, SOUP_STATUS_NOT_IMPLEMENTED);
 	}
-
-#if 0
-	EngineStore::iterator end = store->find_descendants_end(start);
-
-	string response;
-	for (EngineStore::iterator i = start; i != end; ++i)
-		response.append(i->first).append("\n");
-#endif
-
-	const string response = serialiser->to_string(start->second,
-			"http://example.org/whatever", GraphObject::Variables());
-	soup_message_set_status (msg, SOUP_STATUS_OK);
-	soup_message_set_response (msg, "text/plain", SOUP_MEMORY_COPY,
-			response.c_str(), response.length());
 }
 
 

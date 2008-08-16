@@ -81,7 +81,6 @@ main(int argc, char** argv)
 	SharedPtr<Glib::Module> client_module;
 	SharedPtr<Glib::Module> gui_module;
 	SharedPtr<Glib::Module> bindings_module;
-	SharedPtr<Glib::Module> serialisation_module;
 
 	SharedPtr<Shared::EngineInterface> engine_interface;
 
@@ -161,14 +160,14 @@ main(int argc, char** argv)
 			parent_path = args.path_arg;
 
 		bool found = false;
-		serialisation_module = Ingen::Shared::load_module("ingen_serialisation");
+		world->serialisation_module = Ingen::Shared::load_module("ingen_serialisation");
 			
 		Serialisation::Loader* (*new_loader)() = NULL;
 
-		if (serialisation_module)
-			found = serialisation_module->get_symbol("new_loader", (void*&)new_loader);
+		if (world->serialisation_module)
+			found = world->serialisation_module->get_symbol("new_loader", (void*&)new_loader);
 		
-		if (serialisation_module && found) {
+		if (world->serialisation_module && found) {
 			SharedPtr<Serialisation::Loader> loader(new_loader());
 			
 			// Assumption:  Containing ':' means URI, otherwise filename
@@ -246,7 +245,7 @@ main(int argc, char** argv)
 
 	engine_interface.reset();
 	client_module.reset();
-	serialisation_module.reset();
+	world->serialisation_module.reset();
 	gui_module.reset();
 	engine_module.reset();
 

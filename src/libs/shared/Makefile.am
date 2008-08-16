@@ -1,6 +1,11 @@
 noinst_LTLIBRARIES = libingen_shared.la
 
-libingen_shared_la_CXXFLAGS = @INGEN_CFLAGS@ @REDLANDMM_CFLAGS@ @SLV2_CFLAGS@ @RAUL_CFLAGS@
+libingen_shared_la_CXXFLAGS = \
+	@GLIBMM_CFLAGS@ \
+	@INGEN_CFLAGS@ \
+	@RAUL_CFLAGS@ \
+	@REDLANDMM_CFLAGS@ \
+	@SLV2_CFLAGS@
 
 libingen_shared_la_SOURCES = \
 	LV2Features.cpp \

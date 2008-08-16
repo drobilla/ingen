@@ -19,6 +19,7 @@
 #define COMMON_STORE_H
 
 #include <string>
+#include <glibmm/thread.h>
 #include <raul/PathTable.hpp>
 #include "interface/GraphObject.hpp"
 
@@ -39,6 +40,11 @@ public:
 	
 	SharedPtr<Shared::GraphObject> find_child(SharedPtr<Shared::GraphObject> parent,
 	                                          const std::string& child_name) const;
+	
+	Glib::RWLock& lock() { return _lock; }
+
+private:
+	Glib::RWLock _lock;
 };
 
 
