@@ -40,7 +40,9 @@
 #include "CreatePatchEvent.hpp"
 #include "EnablePatchEvent.hpp"
 #include "OSCEngineReceiver.hpp"
+#ifdef HAVE_SOUP
 #include "HTTPEngineReceiver.hpp"
+#endif
 #include "PostProcessor.hpp"
 #include "ProcessSlave.hpp"
 #include "ThreadManager.hpp"
