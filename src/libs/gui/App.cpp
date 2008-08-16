@@ -32,7 +32,7 @@
 #include "serialisation/serialisation.hpp"
 #include "client/ObjectModel.hpp"
 #include "client/PatchModel.hpp"
-#include "client/Store.hpp"
+#include "client/ClientStore.hpp"
 #include "engine/Engine.hpp"
 #include "NodeModule.hpp"
 #include "ControlPanel.hpp"

@@ -29,7 +29,7 @@
 #include <redlandmm/World.hpp>
 #include <redlandmm/Model.hpp>
 #include "interface/GraphObject.hpp"
-#include "interface/Store.hpp"
+#include "shared/Store.hpp"
 
 using namespace Raul;
 using namespace Ingen::Shared;

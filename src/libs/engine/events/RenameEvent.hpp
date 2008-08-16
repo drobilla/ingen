@@ -21,7 +21,7 @@
 #include <string>
 #include <raul/Path.hpp>
 #include "QueuedEvent.hpp"
-#include "ObjectStore.hpp"
+#include "EngineStore.hpp"
 
 using std::string;
 
@@ -54,7 +54,7 @@ private:
 	string                         _name;
 	Path                           _new_path;
 	PatchImpl*                     _parent_patch;
-	ObjectStore::Objects::iterator _store_iterator;
+	EngineStore::Objects::iterator _store_iterator;
 	ErrorType                      _error;
 };
 

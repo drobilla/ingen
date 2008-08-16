@@ -32,7 +32,7 @@ namespace Ingen {
 
 class PluginImpl;
 class PatchImpl;
-class ObjectStore;
+class EngineStore;
 
 namespace Shared {
 	class ClientInterface;

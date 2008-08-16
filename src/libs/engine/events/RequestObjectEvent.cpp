@@ -20,7 +20,7 @@
 #include "interface/ClientInterface.hpp"
 #include "Responder.hpp"
 #include "Engine.hpp"
-#include "ObjectStore.hpp"
+#include "EngineStore.hpp"
 #include "ClientBroadcaster.hpp"
 #include "PatchImpl.hpp"
 #include "NodeImpl.hpp"

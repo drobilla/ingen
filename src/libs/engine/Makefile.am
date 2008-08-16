@@ -91,8 +91,8 @@ libingen_engine_la_SOURCES = \
 	OSCEngineReceiver.hpp \
 	ObjectSender.cpp \
 	ObjectSender.hpp \
-	ObjectStore.cpp \
-	ObjectStore.hpp \
+	EngineStore.cpp \
+	EngineStore.hpp \
 	OutputPort.cpp \
 	OutputPort.hpp \
 	PatchImpl.cpp \

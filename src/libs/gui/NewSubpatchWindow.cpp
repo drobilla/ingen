@@ -19,6 +19,7 @@
 #include "interface/EngineInterface.hpp"
 #include "client/NodeModel.hpp"
 #include "client/PatchModel.hpp"
+#include "client/ClientStore.hpp"
 #include "NewSubpatchWindow.hpp"
 #include "PatchView.hpp"
 

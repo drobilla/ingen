@@ -26,7 +26,7 @@
 #include "ClientBroadcaster.hpp"
 #include "PortImpl.hpp"
 #include "PatchImpl.hpp"
-#include "ObjectStore.hpp"
+#include "EngineStore.hpp"
 #include "ThreadManager.hpp"
 
 using namespace std;

@@ -19,7 +19,7 @@
 #include "ClientBroadcaster.hpp"
 #include "Engine.hpp"
 #include "NodeImpl.hpp"
-#include "ObjectStore.hpp"
+#include "EngineStore.hpp"
 #include "PatchImpl.hpp"
 #include "RenameEvent.hpp"
 #include "Responder.hpp"

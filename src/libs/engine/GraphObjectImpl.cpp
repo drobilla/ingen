@@ -17,7 +17,7 @@
 
 #include "GraphObjectImpl.hpp"
 #include "PatchImpl.hpp"
-#include "ObjectStore.hpp"
+#include "EngineStore.hpp"
 
 namespace Ingen {
 

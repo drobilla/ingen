@@ -28,7 +28,7 @@
 #include <raul/PathTable.hpp>
 #include <raul/TableImpl.hpp>
 #include "interface/EngineInterface.hpp"
-#include "interface/Store.hpp"
+#include "shared/Store.hpp"
 using std::string; using std::list;
 using Ingen::Shared::EngineInterface;
 using Raul::Path;

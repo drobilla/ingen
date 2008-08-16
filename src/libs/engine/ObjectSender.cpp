@@ -17,7 +17,7 @@
 
 #include "ObjectSender.hpp"
 #include "interface/ClientInterface.hpp"
-#include "ObjectStore.hpp"
+#include "EngineStore.hpp"
 #include "PatchImpl.hpp"
 #include "NodeImpl.hpp"
 #include "PortImpl.hpp"

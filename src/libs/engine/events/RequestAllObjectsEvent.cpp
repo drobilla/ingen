@@ -20,7 +20,7 @@
 #include "Engine.hpp"
 #include "ObjectSender.hpp"
 #include "ClientBroadcaster.hpp"
-#include "ObjectStore.hpp"
+#include "EngineStore.hpp"
 
 namespace Ingen {
 

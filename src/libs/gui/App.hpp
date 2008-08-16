@@ -29,7 +29,7 @@
 #include <raul/SharedPtr.hpp>
 #include <redlandmm/World.hpp>
 #include <module/World.hpp>
-#include <interface/Store.hpp>
+#include <shared/Store.hpp>
 
 using namespace std;
 

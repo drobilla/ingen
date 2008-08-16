@@ -31,7 +31,7 @@
 #include "client/OSCClientReceiver.hpp"
 #include "client/OSCEngineSender.hpp"
 #include "client/ThreadedSigClientInterface.hpp"
-#include "client/Store.hpp"
+#include "client/ClientStore.hpp"
 #include "client/PatchModel.hpp"
 #include "module/Module.hpp"
 #include "App.hpp"

@@ -18,7 +18,7 @@
 #include <raul/Path.hpp>
 #include "interface/EngineInterface.hpp"
 #include "client/OSCEngineSender.hpp"
-#include "client/Store.hpp"
+#include "client/ClientStore.hpp"
 #include "client/PatchModel.hpp"
 #include "App.hpp"
 #include "PatchTreeWindow.hpp"

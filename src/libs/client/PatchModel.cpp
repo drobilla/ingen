@@ -18,6 +18,7 @@
 #include "PatchModel.hpp"
 #include "NodeModel.hpp"
 #include "ConnectionModel.hpp"
+#include "ClientStore.hpp"
 #include <cassert>
 #include <iostream>
 

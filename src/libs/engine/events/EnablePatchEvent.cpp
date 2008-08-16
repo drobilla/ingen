@@ -21,7 +21,7 @@
 #include "PatchImpl.hpp"
 #include "util.hpp"
 #include "ClientBroadcaster.hpp"
-#include "ObjectStore.hpp"
+#include "EngineStore.hpp"
 
 namespace Ingen {
 

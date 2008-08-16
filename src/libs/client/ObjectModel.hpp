@@ -30,7 +30,6 @@
 #include <raul/SharedPtr.hpp>
 #include <raul/PathTable.hpp>
 #include "interface/GraphObject.hpp"
-#include "Store.hpp"
 
 using Raul::PathTable;
 using std::string;

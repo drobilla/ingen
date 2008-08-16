@@ -26,7 +26,7 @@
 #include "Engine.hpp"
 #include "PatchImpl.hpp"
 #include "QueuedEventSource.hpp"
-#include "ObjectStore.hpp"
+#include "EngineStore.hpp"
 #include "ClientBroadcaster.hpp"
 #include "PortImpl.hpp"
 #include "AudioDriver.hpp"

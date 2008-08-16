@@ -25,7 +25,7 @@
 #include "ConnectionImpl.hpp"
 #include "Engine.hpp"
 #include "InputPort.hpp"
-#include "ObjectStore.hpp"
+#include "EngineStore.hpp"
 #include "OutputPort.hpp"
 #include "PatchImpl.hpp"
 #include "PortImpl.hpp"

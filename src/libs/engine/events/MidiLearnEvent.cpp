@@ -18,7 +18,7 @@
 #include "MidiLearnEvent.hpp"
 #include "Responder.hpp"
 #include "Engine.hpp"
-#include "ObjectStore.hpp"
+#include "EngineStore.hpp"
 #include "NodeImpl.hpp"
 #include "MidiControlNode.hpp"
 #include "ClientBroadcaster.hpp"

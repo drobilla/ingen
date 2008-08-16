@@ -27,7 +27,7 @@
 #include "MidiDriver.hpp"
 #include "DisconnectAllEvent.hpp"
 #include "ClientBroadcaster.hpp"
-#include "ObjectStore.hpp"
+#include "EngineStore.hpp"
 #include "QueuedEventSource.hpp"
 #include "PortImpl.hpp"
 

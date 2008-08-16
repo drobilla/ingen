@@ -27,12 +27,12 @@
 #include "tuning.hpp"
 #include "Event.hpp"
 #include "common/interface/EventType.hpp"
-#include "common/interface/Store.hpp"
+#include "shared/Store.hpp"
 #include "JackAudioDriver.hpp"
 #include "NodeFactory.hpp"
 #include "ClientBroadcaster.hpp"
 #include "PatchImpl.hpp"
-#include "ObjectStore.hpp"
+#include "EngineStore.hpp"
 #include "MidiDriver.hpp"
 #include "OSCDriver.hpp"
 #include "QueuedEventSource.hpp"
@@ -64,9 +64,9 @@ Engine::Engine(Ingen::Shared::World* world)
 	, _activated(false)
 {
 	if (world->store) {
-		assert(PtrCast<ObjectStore>(world->store));
+		assert(PtrCast<EngineStore>(world->store));
 	} else {
-		world->store = SharedPtr<Store>(new ObjectStore());
+		world->store = SharedPtr<Store>(new EngineStore());
 	}
 }
 
@@ -75,7 +75,7 @@ Engine::~Engine()
 {
 	deactivate();
 
-	for (ObjectStore::Objects::iterator i = object_store()->objects().begin();
+	for (EngineStore::Objects::iterator i = object_store()->objects().begin();
 			i != object_store()->objects().end(); ++i) {
 		if ( ! PtrCast<GraphObjectImpl>(i->second)->parent() )
 			i->second.reset();
@@ -93,10 +93,10 @@ Engine::~Engine()
 }
 	
 
-ObjectStore*
+EngineStore*
 Engine::object_store() const
 {
-	 return dynamic_cast<ObjectStore*>(_world->store.get());
+	 return dynamic_cast<EngineStore*>(_world->store.get());
 }
 
 

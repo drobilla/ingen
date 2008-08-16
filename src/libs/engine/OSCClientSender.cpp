@@ -20,7 +20,7 @@
 #include <iostream>
 #include <unistd.h>
 #include <raul/AtomLiblo.hpp>
-#include "ObjectStore.hpp"
+#include "EngineStore.hpp"
 #include "NodeFactory.hpp"
 #include "util.hpp"
 #include "PatchImpl.hpp"

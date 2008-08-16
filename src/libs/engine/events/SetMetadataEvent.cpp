@@ -21,7 +21,7 @@
 #include "Engine.hpp"
 #include "ClientBroadcaster.hpp"
 #include "GraphObjectImpl.hpp"
-#include "ObjectStore.hpp"
+#include "EngineStore.hpp"
 
 using std::string;
 

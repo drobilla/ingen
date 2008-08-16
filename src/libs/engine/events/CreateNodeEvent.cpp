@@ -29,7 +29,7 @@
 #include "PatchImpl.hpp"
 #include "NodeFactory.hpp"
 #include "ClientBroadcaster.hpp"
-#include "ObjectStore.hpp"
+#include "EngineStore.hpp"
 #include "PortImpl.hpp"
 #include "AudioDriver.hpp"
 

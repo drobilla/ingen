@@ -18,7 +18,7 @@
 #include "NoteEvent.hpp"
 #include "Responder.hpp"
 #include "Engine.hpp"
-#include "ObjectStore.hpp"
+#include "EngineStore.hpp"
 #include "NodeImpl.hpp"
 #include "MidiNoteNode.hpp"
 #include "MidiTriggerNode.hpp"

@@ -23,7 +23,7 @@
 #include "PortImpl.hpp"
 #include "ClientBroadcaster.hpp"
 #include "NodeImpl.hpp"
-#include "ObjectStore.hpp"
+#include "EngineStore.hpp"
 #include "AudioBuffer.hpp"
 #include "EventBuffer.hpp"
 #include "ProcessContext.hpp"

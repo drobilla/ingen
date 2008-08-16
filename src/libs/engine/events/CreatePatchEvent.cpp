@@ -25,7 +25,7 @@
 #include "Engine.hpp"
 #include "ClientBroadcaster.hpp"
 #include "AudioDriver.hpp"
-#include "ObjectStore.hpp"
+#include "EngineStore.hpp"
 
 namespace Ingen {
 
@@ -79,7 +79,7 @@ CreatePatchEvent::pre_process()
 	
 	_patch->activate();
 	
-	// Insert into ObjectStore
+	// Insert into EngineStore
 	//_patch->add_to_store(_engine.object_store());
 	_engine.object_store()->add(_patch);
 	

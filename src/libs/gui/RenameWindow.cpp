@@ -19,7 +19,7 @@
 #include <string>
 #include "interface/EngineInterface.hpp"
 #include "client/ObjectModel.hpp"
-#include "client/Store.hpp"
+#include "client/ClientStore.hpp"
 #include "App.hpp"
 #include "RenameWindow.hpp"
 

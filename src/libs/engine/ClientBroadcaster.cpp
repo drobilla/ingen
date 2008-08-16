@@ -20,7 +20,7 @@
 #include <unistd.h>
 #include "interface/ClientInterface.hpp"
 #include "ClientBroadcaster.hpp"
-#include "ObjectStore.hpp"
+#include "EngineStore.hpp"
 #include "NodeFactory.hpp"
 #include "util.hpp"
 #include "PatchImpl.hpp"

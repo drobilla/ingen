@@ -22,7 +22,7 @@
 #include "interface/EngineInterface.hpp"
 #include "client/NodeModel.hpp"
 #include "client/PatchModel.hpp"
-#include "client/Store.hpp"
+#include "client/ClientStore.hpp"
 #include "App.hpp"
 #include "LoadPluginWindow.hpp"
 #include "PatchWindow.hpp"

@@ -22,7 +22,7 @@
 #include "PatchImpl.hpp"
 #include "ClientBroadcaster.hpp"
 #include "util.hpp"
-#include "ObjectStore.hpp"
+#include "EngineStore.hpp"
 #include "PortImpl.hpp"
 #include "NodeImpl.hpp"
 #include "ConnectionImpl.hpp"
@@ -47,7 +47,7 @@ ClearPatchEvent::ClearPatchEvent(Engine& engine, SharedPtr<Responder> responder,
 void
 ClearPatchEvent::pre_process()
 {
-	ObjectStore::Objects::iterator patch_iterator = _engine.object_store()->find(_patch_path);
+	EngineStore::Objects::iterator patch_iterator = _engine.object_store()->find(_patch_path);
 	
 	if (patch_iterator != _engine.object_store()->objects().end()) {
 		_patch = PtrCast<PatchImpl>(patch_iterator->second);
@@ -88,7 +88,7 @@ ClearPatchEvent::execute(ProcessContext& context)
 
 		// Remove driver ports, if necessary
 		if (_patch->parent() == NULL) {
-			for (ObjectStore::Objects::iterator i = _removed_table->begin(); i != _removed_table->end(); ++i) {
+			for (EngineStore::Objects::iterator i = _removed_table->begin(); i != _removed_table->end(); ++i) {
 				SharedPtr<PortImpl> port = PtrCast<PortImpl>(i->second);
 				if (port && port->type() == DataType::AUDIO)
 					_driver_port = _engine.audio_driver()->remove_port(port->path());

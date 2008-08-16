@@ -49,8 +49,8 @@ libingen_client_la_SOURCES = \
 	PortModel.cpp \
 	PortModel.hpp \
 	SigClientInterface.hpp \
-	Store.cpp \
-	Store.hpp \
+	ClientStore.cpp \
+	ClientStore.hpp \
 	ThreadedSigClientInterface.cpp \
 	ThreadedSigClientInterface.hpp \
 	client.cpp \

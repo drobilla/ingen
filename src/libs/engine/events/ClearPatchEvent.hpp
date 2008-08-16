@@ -23,7 +23,7 @@
 #include <raul/Table.hpp>
 #include <raul/Path.hpp>
 #include "QueuedEvent.hpp"
-#include "ObjectStore.hpp"
+#include "EngineStore.hpp"
 #include "PatchImpl.hpp"
 
 using std::string;

@@ -21,7 +21,7 @@
 #include <string>
 #include <raul/PathTable.hpp>
 #include <raul/SharedPtr.hpp>
-#include "interface/Store.hpp"
+#include "shared/Store.hpp"
 
 using std::string;
 using namespace Raul;
@@ -45,7 +45,7 @@ class GraphObjectImpl;
  * Searching with find*() is fast (O(log(n)) binary search on contiguous
  * memory) and realtime safe, but modification (add or remove) are neither.
  */
-class ObjectStore : public Shared::Store
+class EngineStore : public Shared::Store
 {
 public:
 	typedef Raul::PathTable< SharedPtr<Shared::GraphObject> > Objects;

@@ -27,7 +27,7 @@
 #include "PatchImpl.hpp"
 #include "ClientBroadcaster.hpp"
 #include "PortImpl.hpp"
-#include "ObjectStore.hpp"
+#include "EngineStore.hpp"
 
 using std::string;
 namespace Ingen {

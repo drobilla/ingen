@@ -20,7 +20,7 @@
 #include <raul/List.hpp>
 #include <raul/PathTable.hpp>
 #include <raul/TableImpl.hpp>
-#include "ObjectStore.hpp"
+#include "EngineStore.hpp"
 #include "PatchImpl.hpp"
 #include "NodeImpl.hpp"
 #include "PortImpl.hpp"
@@ -35,7 +35,7 @@ namespace Ingen {
 /** Find the Patch at the given path.
  */
 PatchImpl*
-ObjectStore::find_patch(const Path& path) 
+EngineStore::find_patch(const Path& path) 
 {
 	GraphObjectImpl* const object = find_object(path);
 	return dynamic_cast<PatchImpl*>(object);
@@ -45,7 +45,7 @@ ObjectStore::find_patch(const Path& path)
 /** Find the Node at the given path.
  */
 NodeImpl*
-ObjectStore::find_node(const Path& path) 
+EngineStore::find_node(const Path& path) 
 {
 	GraphObjectImpl* const object = find_object(path);
 	return dynamic_cast<NodeImpl*>(object);
@@ -55,7 +55,7 @@ ObjectStore::find_node(const Path& path)
 /** Find the Port at the given path.
  */
 PortImpl*
-ObjectStore::find_port(const Path& path) 
+EngineStore::find_port(const Path& path) 
 {
 	GraphObjectImpl* const object = find_object(path);
 	return dynamic_cast<PortImpl*>(object);
@@ -65,15 +65,15 @@ ObjectStore::find_port(const Path& path)
 /** Find the Object at the given path.
  */
 GraphObjectImpl*
-ObjectStore::find_object(const Path& path)
+EngineStore::find_object(const Path& path)
 {
 	Objects::iterator i = _objects.find(path);
 	return ((i == _objects.end()) ? NULL : dynamic_cast<GraphObjectImpl*>(i->second.get()));
 }
 
 
-ObjectStore::Objects::const_iterator
-ObjectStore::children_begin(SharedPtr<Shared::GraphObject> o) const
+EngineStore::Objects::const_iterator
+EngineStore::children_begin(SharedPtr<Shared::GraphObject> o) const
 {
 	Objects::const_iterator parent = _objects.find(o->path());
 	assert(parent != _objects.end());
@@ -82,8 +82,8 @@ ObjectStore::children_begin(SharedPtr<Shared::GraphObject> o) const
 }
 
 
-ObjectStore::Objects::const_iterator
-ObjectStore::children_end(SharedPtr<Shared::GraphObject> o) const
+EngineStore::Objects::const_iterator
+EngineStore::children_end(SharedPtr<Shared::GraphObject> o) const
 {
 	Objects::const_iterator parent = _objects.find(o->path());
 	assert(parent != _objects.end());
@@ -94,7 +94,7 @@ ObjectStore::children_end(SharedPtr<Shared::GraphObject> o) const
 /** Add an object to the store. Not realtime safe.
  */
 void
-ObjectStore::add(GraphObject* obj)
+EngineStore::add(GraphObject* obj)
 {
 	GraphObjectImpl* o = dynamic_cast<GraphObjectImpl*>(obj);
 	assert(o);
@@ -102,7 +102,7 @@ ObjectStore::add(GraphObject* obj)
 	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
 
 	if (_objects.find(o->path()) != _objects.end()) {
-		cerr << "[ObjectStore] ERROR: Attempt to add duplicate object " << o->path() << endl;
+		cerr << "[EngineStore] ERROR: Attempt to add duplicate object " << o->path() << endl;
 		return;
 	}
 
@@ -120,14 +120,14 @@ ObjectStore::add(GraphObject* obj)
 /** Add a family of objects to the store. Not realtime safe.
  */
 void
-ObjectStore::add(const Table<Path, SharedPtr<Shared::GraphObject> >& table)
+EngineStore::add(const Table<Path, SharedPtr<Shared::GraphObject> >& table)
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
 
-	//cerr << "[ObjectStore] Adding " << o[0].second->path() << endl;
+	//cerr << "[EngineStore] Adding " << o[0].second->path() << endl;
 	_objects.cram(table);
 	
-	/*cerr << "[ObjectStore] Adding Table:" << endl;
+	/*cerr << "[EngineStore] Adding Table:" << endl;
 	for (Objects::const_iterator i = table.begin(); i != table.end(); ++i) {
 		cerr << i->first << " = " << i->second->path() << endl;
 	}*/
@@ -140,7 +140,7 @@ ObjectStore::add(const Table<Path, SharedPtr<Shared::GraphObject> >& table)
  * including the object itself, in lexicographically sorted order by Path.
  */
 SharedPtr< Table<Path, SharedPtr<Shared::GraphObject> > >
-ObjectStore::remove(const Path& path)
+EngineStore::remove(const Path& path)
 {
 	return remove(_objects.find(path));
 }
@@ -152,13 +152,13 @@ ObjectStore::remove(const Path& path)
  * including the object itself, in lexicographically sorted order by Path.
  */
 SharedPtr< Table<Path, SharedPtr<Shared::GraphObject> > >
-ObjectStore::remove(Objects::iterator object)
+EngineStore::remove(Objects::iterator object)
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
 	
 	if (object != _objects.end()) {
 		Objects::iterator descendants_end = _objects.find_descendants_end(object);
-		//cout << "[ObjectStore] Removing " << object->first << " {" << endl;
+		//cout << "[EngineStore] Removing " << object->first << " {" << endl;
 		SharedPtr< Table<Path, SharedPtr<Shared::GraphObject> > > removed
 				= _objects.yank(object, descendants_end);
 		/*for (Objects::iterator i = removed->begin(); i != removed->end(); ++i) {
@@ -169,7 +169,7 @@ ObjectStore::remove(Objects::iterator object)
 		return removed;
 
 	} else {
-		cerr << "[ObjectStore] WARNING: Removing " << object->first << " failed." << endl;
+		cerr << "[EngineStore] WARNING: Removing " << object->first << " failed." << endl;
 		return SharedPtr<Objects>();
 	}
 }
@@ -181,7 +181,7 @@ ObjectStore::remove(Objects::iterator object)
  * in lexicographically sorted order by Path.
  */
 SharedPtr< Table<Path, SharedPtr<Shared::GraphObject> > >
-ObjectStore::remove_children(const Path& path)
+EngineStore::remove_children(const Path& path)
 {
 	return remove_children(_objects.find(path));
 }
@@ -193,7 +193,7 @@ ObjectStore::remove_children(const Path& path)
  * in lexicographically sorted order by Path.
  */
 SharedPtr< Table<Path, SharedPtr<Shared::GraphObject> > >
-ObjectStore::remove_children(Objects::iterator object)
+EngineStore::remove_children(Objects::iterator object)
 {
 	if (object != _objects.end()) {
 		Objects::iterator descendants_end = _objects.find_descendants_end(object);
@@ -205,7 +205,7 @@ ObjectStore::remove_children(Objects::iterator object)
 		}
 
 	} else {
-		cerr << "[ObjectStore] WARNING: Removing children of " << object->first << " failed." << endl;
+		cerr << "[EngineStore] WARNING: Removing children of " << object->first << " failed." << endl;
 		return SharedPtr<Objects>();
 	}
 

@@ -29,7 +29,7 @@
 #include "HTTPEngineReceiver.hpp"
 #include "QueuedEventSource.hpp"
 #include "ClientBroadcaster.hpp"
-#include "ObjectStore.hpp"
+#include "EngineStore.hpp"
 
 using namespace std;
 
@@ -122,10 +122,10 @@ HTTPEngineReceiver::message_callback(SoupServer* server, SoupMessage* msg, const
 	}
 
 #if 0
-	ObjectStore::Objects::iterator end = store->objects().find_descendants_end(start);
+	EngineStore::Objects::iterator end = store->objects().find_descendants_end(start);
 
 	string response;
-	for (ObjectStore::Objects::iterator i = start; i != end; ++i)
+	for (EngineStore::Objects::iterator i = start; i != end; ++i)
 		response.append(i->first).append("\n");
 #endif
 

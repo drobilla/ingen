@@ -27,7 +27,7 @@
 #include "client/PluginModel.hpp"
 #include "client/PatchModel.hpp"
 #include "client/NodeModel.hpp"
-#include "client/Store.hpp"
+#include "client/ClientStore.hpp"
 #include "App.hpp"
 #include "PatchCanvas.hpp"
 #include "PatchWindow.hpp"

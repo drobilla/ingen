@@ -38,7 +38,7 @@ class MidiDriver;
 class OSCDriver;
 class NodeFactory;
 class ClientBroadcaster;
-class ObjectStore;
+class EngineStore;
 class EventSource;
 class PostProcessor;
 class Event;
@@ -92,7 +92,7 @@ public:
 	ClientBroadcaster* broadcaster()        const { return _broadcaster; }
 	NodeFactory*       node_factory()       const { return _node_factory; }
 
-	ObjectStore* object_store() const;
+	EngineStore* object_store() const;
 
 	/** Return the active driver for the given type */
 	Driver* driver(DataType type, EventType event_type);

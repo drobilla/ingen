@@ -18,9 +18,9 @@
 #include "AllNotesOffEvent.hpp"
 #include "Responder.hpp"
 #include "Engine.hpp"
-#include "ObjectStore.hpp"
+#include "EngineStore.hpp"
 #include "module/World.hpp"
-#include "interface/Store.hpp"
+#include "shared/Store.hpp"
 
 namespace Ingen {
 

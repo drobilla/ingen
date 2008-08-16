@@ -22,7 +22,7 @@
 #include "PatchImpl.hpp"
 #include "ClientBroadcaster.hpp"
 #include "util.hpp"
-#include "ObjectStore.hpp"
+#include "EngineStore.hpp"
 #include "PortImpl.hpp"
 #include "NodeImpl.hpp"
 #include "ConnectionImpl.hpp"
