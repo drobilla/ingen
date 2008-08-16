@@ -544,7 +544,7 @@ OSCEngineReceiver::_new_node_cb(const char* path, const char* types, lo_arg** ar
 	const char* plug_label  = &argv[4]->s;
 	bool        polyphonic = (types[5] == 'T');
 	
-	new_node(node_path, type, lib_name, plug_label, polyphonic);
+	new_node_deprecated(node_path, type, lib_name, plug_label, polyphonic);
 	return 0;
 }
 

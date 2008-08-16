@@ -98,8 +98,8 @@ public:
 	void new_patch(const string& path, uint32_t poly)
 		{ push_sig(sigc::bind(new_patch_slot, path, poly)); }
 	
-	void new_node(const string& plugin_uri, const string& node_path, bool is_polyphonic, uint32_t num_ports)
-		{ push_sig(sigc::bind(new_node_slot, plugin_uri, node_path, is_polyphonic, num_ports)); }
+	void new_node(const string& path, const string& plugin_uri, bool polyphonic)
+		{ push_sig(sigc::bind(new_node_slot, path, plugin_uri, polyphonic)); }
 	
 	void new_port(const string& path, uint32_t index,  const string& data_type, bool is_output)
 		{ push_sig(sigc::bind(new_port_slot, path, index, data_type, is_output)); }
@@ -163,7 +163,7 @@ private:
 	sigc::slot<void, string>                             error_slot; 
 	sigc::slot<void, string, string, string, string>     new_plugin_slot; 
 	sigc::slot<void, string, uint32_t>                   new_patch_slot; 
-	sigc::slot<void, string, string, bool, int>          new_node_slot; 
+	sigc::slot<void, string, string, bool>               new_node_slot; 
 	sigc::slot<void, string, uint32_t, string, bool>     new_port_slot;
 	sigc::slot<void, string, bool>                       polyphonic_slot;
 	sigc::slot<void, string, string>                     connection_slot;

@@ -164,11 +164,11 @@ QueuedEngineInterface::new_node(const string& path,
 
 
 void
-QueuedEngineInterface::new_node(const string& path,
-                                const string& plugin_type,
-                                const string& plugin_lib,
-                                const string& plugin_label,
-                                bool          polyphonic)
+QueuedEngineInterface::new_node_deprecated(const string& path,
+                                           const string& plugin_type,
+                                           const string& plugin_lib,
+                                           const string& plugin_label,
+                                           bool          polyphonic)
 {
 	push_queued(new CreateNodeEvent(_engine, _responder, now(),
 		path, plugin_type, plugin_lib, plugin_label, polyphonic));

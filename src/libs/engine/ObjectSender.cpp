@@ -95,7 +95,7 @@ ObjectSender::send_node(ClientInterface* client, const NodeImpl* node, bool recu
 	
 	client->bundle_begin();
 	
-	client->new_node(node->plugin()->uri(), node->path(), node->polyphonic(), node->num_ports());
+	client->new_node(node->path(), node->plugin()->uri(), node->polyphonic());
 	client->polyphonic(node->path(), node->polyphonic());
 	
 	// Send variable

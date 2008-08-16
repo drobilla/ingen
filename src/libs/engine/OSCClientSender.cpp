@@ -289,23 +289,21 @@ OSCClientSender::plugins()
  * <p> \b /ingen/new_node - Notification of a new node's creation.
  * \arg \b plug-uri (string) - URI of the plugin new node is an instance of
  * \arg \b path (string) - Path of the new node
- * \arg \b polyphonic (boolean) - Node is polyphonic
- * \arg \b num-ports (integer) - Number of ports (number of new_port messages to expect)\n\n
+ * \arg \b polyphonic (boolean) - Node is polyphonic\n\n
  * \li New nodes are sent as a bundle.  The first message in the bundle will be
  * this one (/ingen/new_node), followed by a series of /ingen/new_port commands,
  * followed by /ingen/new_node_end. </p> \n \n
  */
-void OSCClientSender::new_node(const std::string&   plugin_uri,
-                               const std::string&   node_path,
-                               bool                 is_polyphonic,
-                               uint32_t             num_ports)
+void OSCClientSender::new_node(const std::string& node_path,
+                               const std::string& plugin_uri,
+                               bool               is_polyphonic)
 {
 	if (is_polyphonic)
-		send("/ingen/new_node", "ssTi", plugin_uri.c_str(),
-		        node_path.c_str(), num_ports, LO_ARGS_END);
+		send("/ingen/new_node", "ssT", node_path.c_str(),
+				plugin_uri.c_str(), LO_ARGS_END);
 	else
-		send("/ingen/new_node", "ssFi", plugin_uri.c_str(),
-		        node_path.c_str(), num_ports, LO_ARGS_END);
+		send("/ingen/new_node", "ssF", node_path.c_str(),
+				plugin_uri.c_str(), LO_ARGS_END);
 }
 
 

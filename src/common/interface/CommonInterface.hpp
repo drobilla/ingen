@@ -47,6 +47,10 @@ public:
 	virtual void new_patch(const std::string& path,
 	                       uint32_t           poly) = 0;
 	
+	virtual void new_node(const std::string& path,
+	                      const std::string& plugin_uri,
+	                      bool               polyphonic) = 0;
+	
 	virtual void connect(const std::string& src_port_path,
 	                     const std::string& dst_port_path) = 0;
 	

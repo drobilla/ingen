@@ -93,11 +93,11 @@ public:
 	                      bool          polyphonic);
 	
 	/** FIXME: DEPRECATED, REMOVE */
-	virtual void new_node(const string& path,
-	                      const string& plugin_type,
-	                      const string& lib_path,
-	                      const string& plug_label,
-	                      bool          polyphonic);
+	virtual void new_node_deprecated(const string& path,
+	                                 const string& plugin_type,
+	                                 const string& lib_path,
+	                                 const string& plug_label,
+	                                 bool          polyphonic);
 
 	virtual void rename(const string& old_path,
 	                    const string& new_name);

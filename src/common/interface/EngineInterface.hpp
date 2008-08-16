@@ -58,20 +58,16 @@ public:
 	
 	// Object commands
 	
-	virtual void new_node(const std::string& path,
-	                      const std::string& plugin_uri,
-	                      bool               polyphonic) = 0;
-	
 	virtual void new_port(const std::string& path,
 	                      const std::string& data_type,
 	                      bool               is_output) = 0;
 	
 	/** DEPRECATED */
-	virtual void new_node(const std::string& path,
-	                      const std::string& plugin_type,
-	                      const std::string& library_name,
-	                      const std::string& plugin_label,
-	                      bool               polyphonic) = 0;
+	virtual void new_node_deprecated(const std::string& path,
+	                                 const std::string& plugin_type,
+	                                 const std::string& library_name,
+	                                 const std::string& plugin_label,
+	                                 bool               polyphonic) = 0;
 	
 	virtual void rename(const std::string& old_path,
 	                    const std::string& new_symbol) = 0;

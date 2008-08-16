@@ -418,16 +418,14 @@ ClientStore::new_patch_event(const Path& path, uint32_t poly)
 
 
 void
-ClientStore::new_node_event(const string& plugin_uri, const Path& node_path, bool is_polyphonic, uint32_t num_ports)
+ClientStore::new_node_event(const Path& path, const string& plugin_uri, bool polyphonic)
 {
-	// FIXME: num_ports unused
-	
 	SharedPtr<PluginModel> plug = plugin(plugin_uri);
 	if (!plug) {
-		SharedPtr<NodeModel> n(new NodeModel(plugin_uri, node_path, is_polyphonic));
+		SharedPtr<NodeModel> n(new NodeModel(plugin_uri, path, polyphonic));
 		add_plugin_orphan(n);
 	} else {
-		SharedPtr<NodeModel> n(new NodeModel(plug, node_path, is_polyphonic));
+		SharedPtr<NodeModel> n(new NodeModel(plug, path, polyphonic));
 		add_object(n);
 	}
 }

@@ -75,11 +75,6 @@ public:
 	                        const std::string& symbol,
 	                        const std::string& name) = 0;
 	
-	virtual void new_node(const std::string& plugin_uri,
-	                      const std::string& node_path,
-	                      bool               is_polyphonic,
-	                      uint32_t           num_ports) = 0;
-	
 	virtual void new_port(const std::string& path,
 	                      uint32_t           index,
 	                      const std::string& data_type,

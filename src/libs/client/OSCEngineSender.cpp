@@ -233,11 +233,11 @@ OSCEngineSender::new_node(const string& path,
  * DO NOT USE THIS.
  */
 void
-OSCEngineSender::new_node(const string& path,
-                          const string& plugin_type,
-                          const string& library_name,
-                          const string& plugin_label,
-                          bool          polyphonic)
+OSCEngineSender::new_node_deprecated(const string& path,
+                                     const string& plugin_type,
+                                     const string& library_name,
+                                     const string& plugin_label,
+                                     bool          polyphonic)
 {
 	assert(_engine_addr);
 	if (polyphonic)
