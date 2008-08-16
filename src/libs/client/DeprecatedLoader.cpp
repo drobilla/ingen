@@ -461,22 +461,22 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 
 		if (plugin_type == "Internal") {
 			if (plugin_label == "audio_input") {
-				_engine->create_port(path, "ingen:AudioPort", false);
+				_engine->new_port(path, "ingen:AudioPort", false);
 				is_port = true;
 			} else if (plugin_label == "audio_output") {
-				_engine->create_port(path, "ingen:AudioPort", true);
+				_engine->new_port(path, "ingen:AudioPort", true);
 				is_port = true;
 			} else if (plugin_label == "control_input") {
-				_engine->create_port(path, "ingen:ControlPort", false);
+				_engine->new_port(path, "ingen:ControlPort", false);
 				is_port = true;
 			} else if (plugin_label == "control_output" ) {
-				_engine->create_port(path, "ingen:ControlPort", true);
+				_engine->new_port(path, "ingen:ControlPort", true);
 				is_port = true;
 			} else if (plugin_label == "midi_input") {
-				_engine->create_port(path, "ingen:MIDIPort", false);
+				_engine->new_port(path, "ingen:MIDIPort", false);
 				is_port = true;
 			} else if (plugin_label == "midi_output" ) {
-				_engine->create_port(path, "ingen:MIDIPort", true);
+				_engine->new_port(path, "ingen:MIDIPort", true);
 				is_port = true;
 			} else {
 				cerr << "WARNING: Unknown internal plugin label \"" << plugin_label << "\"" << endl;
@@ -519,9 +519,9 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 			}
 
 			if (plugin_uri != "")
-				_engine->create_node(path, plugin_uri, polyphonic);
+				_engine->new_node(path, plugin_uri, polyphonic);
 			else
-				_engine->create_node(path, plugin_type, library_name, plugin_label, polyphonic);
+				_engine->new_node(path, plugin_type, library_name, plugin_label, polyphonic);
 		
 			for (GraphObject::Variables::const_iterator i = initial_data.begin(); i != initial_data.end(); ++i)
 				_engine->set_variable(path, i->first, i->second);
@@ -531,7 +531,7 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 
 	// Not deprecated
 	} else {
-		_engine->create_node(path, plugin_uri, polyphonic);
+		_engine->new_node(path, plugin_uri, polyphonic);
 		for (GraphObject::Variables::const_iterator i = initial_data.begin(); i != initial_data.end(); ++i)
 			_engine->set_variable(path, i->first, i->second);
 		return true;

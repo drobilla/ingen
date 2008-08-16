@@ -76,19 +76,19 @@ public:
 	void new_patch(const string& path,
 	               uint32_t      poly);
 
-	void create_port(const string& path,
-	                 const string& data_type,
-	                 bool          is_output);
+	void new_port(const string& path,
+	              const string& data_type,
+	              bool          is_output);
 
-	void create_node(const string& path,
-	                 const string& plugin_uri,
-	                 bool          polyphonic);
+	void new_node(const string& path,
+	              const string& plugin_uri,
+	              bool          polyphonic);
 	
-	void create_node(const string& path,
-	                 const string& plugin_type,
-	                 const string& library_name,
-	                 const string& plugin_label,
-	                 bool          polyphonic);
+	void new_node(const string& path,
+	              const string& plugin_type,
+	              const string& library_name,
+	              const string& plugin_label,
+	              bool          polyphonic);
 
 	void rename(const string& old_path,
 	            const string& new_name);

@@ -64,7 +64,7 @@ RequestMetadataEvent::post_process()
 			_responder->respond_error(msg);
 		} else {
 			_responder->respond_ok();
-			_responder->client()->variable_change(_path, _key, _value);
+			_responder->client()->set_variable(_path, _key, _value);
 		}
 	} else {
 		_responder->respond_error("Unknown client");

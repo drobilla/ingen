@@ -53,6 +53,10 @@ public:
 	virtual void disconnect(const std::string& src_port_path,
 	                        const std::string& dst_port_path) = 0;
 	
+	virtual void set_variable(const std::string& subject_path,
+	                          const std::string& predicate,
+	                          const Raul::Atom&  value) = 0;
+	
 protected:
 	CommonInterface() {}
 };

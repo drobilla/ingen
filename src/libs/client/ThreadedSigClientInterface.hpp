@@ -31,6 +31,7 @@ using std::string;
 typedef sigc::slot<void> Closure;
 
 namespace Ingen {
+namespace Shared { class EngineInterface; }
 namespace Client {
 
 
@@ -130,7 +131,7 @@ public:
 	void disconnect(const string& src_port_path, const string& dst_port_path)
 		{ push_sig(sigc::bind(disconnection_slot, src_port_path, dst_port_path)); }
 	
-	void variable_change(const string& path, const string& key, const Raul::Atom& value)
+	void set_variable(const string& path, const string& key, const Raul::Atom& value)
 		{ push_sig(sigc::bind(variable_change_slot, path, key, value)); }
 
 	void control_change(const string& port_path, float value)

@@ -151,7 +151,7 @@ Loader::load(Ingen::Shared::World*       world,
 			if (poly_node.is_bool() && poly_node.to_bool() == true)
 				node_polyphonic = true;
 		
-			world->engine->create_node(node_path, node_plugin, node_polyphonic);
+			world->engine->new_node(node_path, node_plugin, node_polyphonic);
 			created.insert(node_path);
 		}
 
@@ -249,7 +249,7 @@ Loader::load(Ingen::Shared::World*       world,
 			
 		if (created.find(port_path) == created.end()) {
 			bool is_output = (type == "ingen:OutputPort"); // FIXME: check validity
-			world->engine->create_port(port_path, datatype, is_output);
+			world->engine->new_port(port_path, datatype, is_output);
 			created.insert(port_path);
 		}
 

@@ -224,7 +224,7 @@ void
 ClientBroadcaster::send_variable_change(const string& node_path, const string& key, const Atom& value)
 {
 	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
-		(*i).second->variable_change(node_path, key, value);
+		(*i).second->set_variable(node_path, key, value);
 }
 
 

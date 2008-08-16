@@ -58,23 +58,20 @@ public:
 	
 	// Object commands
 	
-	virtual void new_patch(const std::string& path,
-	                       uint32_t           poly) = 0;
+	virtual void new_node(const std::string& path,
+	                      const std::string& plugin_uri,
+	                      bool               polyphonic) = 0;
 	
-	virtual void create_port(const std::string& path,
-	                         const std::string& data_type,
-	                         bool               is_output) = 0;
-	
-	virtual void create_node(const std::string& path,
-	                         const std::string& plugin_uri,
-	                         bool               polyphonic) = 0;
+	virtual void new_port(const std::string& path,
+	                      const std::string& data_type,
+	                      bool               is_output) = 0;
 	
 	/** DEPRECATED */
-	virtual void create_node(const std::string& path,
-	                         const std::string& plugin_type,
-	                         const std::string& library_name,
-	                         const std::string& plugin_label,
-	                         bool               polyphonic) = 0;
+	virtual void new_node(const std::string& path,
+	                      const std::string& plugin_type,
+	                      const std::string& library_name,
+	                      const std::string& plugin_label,
+	                      bool               polyphonic) = 0;
 	
 	virtual void rename(const std::string& old_path,
 	                    const std::string& new_symbol) = 0;
@@ -90,12 +87,6 @@ public:
 	virtual void enable_patch(const std::string& patch_path) = 0;
 	
 	virtual void disable_patch(const std::string& patch_path) = 0;
-	
-	virtual void connect(const std::string& src_port_path,
-	                     const std::string& dst_port_path) = 0;
-	
-	virtual void disconnect(const std::string& src_port_path,
-	                        const std::string& dst_port_path) = 0;
 	
 	virtual void disconnect_all(const std::string& parent_patch_path,
 	                            const std::string& path) = 0;
@@ -131,10 +122,6 @@ public:
 	                         uint32_t           program) = 0;
 	
 	virtual void midi_learn(const std::string& node_path) = 0;
-	
-	virtual void set_variable(const std::string& subject_path,
-	                          const std::string& predicate,
-	                          const Raul::Atom&  value) = 0;
 	
 	// Requests
 	

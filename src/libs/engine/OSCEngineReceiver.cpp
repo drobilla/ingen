@@ -93,11 +93,11 @@ OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t
 	lo_server_add_method(_server, "/ingen/set_polyphony", "isi", set_polyphony_cb, this);
 	lo_server_add_method(_server, "/ingen/set_polyphonic", "isT", set_polyphonic_cb, this);
 	lo_server_add_method(_server, "/ingen/set_polyphonic", "isF", set_polyphonic_cb, this);
-	lo_server_add_method(_server, "/ingen/create_port", "issi", create_port_cb, this);
-	lo_server_add_method(_server, "/ingen/create_node", "issssT", create_node_cb, this);
-	lo_server_add_method(_server, "/ingen/create_node", "issssF", create_node_cb, this);
-	lo_server_add_method(_server, "/ingen/create_node", "issT", create_node_by_uri_cb, this);
-	lo_server_add_method(_server, "/ingen/create_node", "issF", create_node_by_uri_cb, this);
+	lo_server_add_method(_server, "/ingen/new_port", "issi", new_port_cb, this);
+	lo_server_add_method(_server, "/ingen/new_node", "issssT", new_node_cb, this);
+	lo_server_add_method(_server, "/ingen/new_node", "issssF", new_node_cb, this);
+	lo_server_add_method(_server, "/ingen/new_node", "issT", new_node_by_uri_cb, this);
+	lo_server_add_method(_server, "/ingen/new_node", "issF", new_node_by_uri_cb, this);
 	lo_server_add_method(_server, "/ingen/destroy", "is", destroy_cb, this);
 	lo_server_add_method(_server, "/ingen/rename", "iss", rename_cb, this);
 	lo_server_add_method(_server, "/ingen/connect", "iss", connect_cb, this);
@@ -486,44 +486,44 @@ OSCEngineReceiver::_set_polyphonic_cb(const char* path, const char* types, lo_ar
 
 
 /** \page engine_osc_namespace
- * <p> \b /ingen/create_port - Add a port into a given patch (load a plugin by URI)
+ * <p> \b /ingen/new_port - Add a port into a given patch (load a plugin by URI)
  * \arg \b response-id (integer)
  * \arg \b path (string) - Full path of the new port (ie. /patch2/subpatch/newport)
  * \arg \b data-type (string) - Type of port (ingen:AudioPort, ingen:ControlPort, ingen:MIDIPort, or ingen:OSCPort)
  * \arg \b direction ("is-output") (integer) - Direction of data flow (Input = 0, Output = 1) </p> \n \n
  */
 int
-OSCEngineReceiver::_create_port_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCEngineReceiver::_new_port_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	const char*   port_path   = &argv[1]->s;
 	const char*   data_type   = &argv[2]->s;
 	const int32_t direction   =  argv[3]->i;
 	
-	create_port(port_path, data_type, (direction == 1));
+	new_port(port_path, data_type, (direction == 1));
 	return 0;
 }
 
 /** \page engine_osc_namespace
- * <p> \b /ingen/create_node - Add a node into a given patch (load a plugin by URI)
+ * <p> \b /ingen/new_node - Add a node into a given patch (load a plugin by URI)
  * \arg \b response-id (integer)
  * \arg \b node-path (string) - Full path of the new node (ie. /patch2/subpatch/newnode)
  * \arg \b plug-uri (string) - URI of the plugin to load
  * \arg \b polyphonic (boolean) - Whether node is polyphonic </p> \n \n
  */
 int
-OSCEngineReceiver::_create_node_by_uri_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCEngineReceiver::_new_node_by_uri_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	const char* node_path  = &argv[1]->s;
 	const char* plug_uri   = &argv[2]->s;
 	bool        polyphonic = (types[3] == 'T');
 	
-	create_node(node_path, plug_uri, polyphonic);
+	new_node(node_path, plug_uri, polyphonic);
 	return 0;
 }
 
 
 /** \page engine_osc_namespace
- * <p> \b /ingen/create_node - Add a node into a given patch (load a plugin by libname, label) \b DEPRECATED
+ * <p> \b /ingen/new_node - Add a node into a given patch (load a plugin by libname, label) \b DEPRECATED
  * \arg \b response-id (integer)
  * \arg \b node-path (string) - Full path of the new node (ie. /patch2/subpatch/newnode)
  * \arg \b type (string) - Plugin type ("LADSPA" or "Internal")
@@ -536,7 +536,7 @@ OSCEngineReceiver::_create_node_by_uri_cb(const char* path, const char* types, l
  * </p> \n \n
  */
 int
-OSCEngineReceiver::_create_node_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCEngineReceiver::_new_node_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	const char* node_path   = &argv[1]->s;
 	const char* type        = &argv[2]->s;
@@ -544,7 +544,7 @@ OSCEngineReceiver::_create_node_cb(const char* path, const char* types, lo_arg**
 	const char* plug_label  = &argv[4]->s;
 	bool        polyphonic = (types[5] == 'T');
 	
-	create_node(node_path, type, lib_name, plug_label, polyphonic);
+	new_node(node_path, type, lib_name, plug_label, polyphonic);
 	return 0;
 }
 

@@ -80,9 +80,9 @@ public:
 	virtual void disconnect(const std::string& src_port_path,
 	                        const std::string& dst_port_path)  {}
 	
-	virtual void variable_change(const std::string& subject_path,
-	                             const std::string& predicate,
-	                             const Raul::Atom&  value)  {}
+	virtual void set_variable(const std::string& subject_path,
+	                          const std::string& predicate,
+	                          const Raul::Atom&  value)  {}
 	
 	virtual void control_change(const std::string& port_path,
 	                            float              value)  {}

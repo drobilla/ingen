@@ -95,9 +95,9 @@ private:
 	LO_HANDLER(engine_deactivate);
 	LO_HANDLER(new_patch);
 	LO_HANDLER(rename);
-	LO_HANDLER(create_port);
-	LO_HANDLER(create_node);
-	LO_HANDLER(create_node_by_uri);
+	LO_HANDLER(new_port);
+	LO_HANDLER(new_node);
+	LO_HANDLER(new_node_by_uri);
 	LO_HANDLER(enable_patch);
 	LO_HANDLER(disable_patch);
 	LO_HANDLER(clear_patch);

@@ -78,26 +78,26 @@ public:
 	// Bundles
 	virtual void bundle_begin();
 	virtual void bundle_end();
-			
+	
 	// Object commands
 	
 	virtual void new_patch(const string& path,
 	                       uint32_t      poly);
 
-	virtual void create_port(const string& path,
-	                         const string& data_type,
-	                         bool          direction);
+	virtual void new_port(const string& path,
+	                      const string& data_type,
+	                      bool          direction);
 
-	virtual void create_node(const string& path,
-	                         const string& plugin_uri,
-				        	 bool          polyphonic);
+	virtual void new_node(const string& path,
+	                      const string& plugin_uri,
+	                      bool          polyphonic);
 	
 	/** FIXME: DEPRECATED, REMOVE */
-	virtual void create_node(const string& path,
-	                         const string& plugin_type,
-	                         const string& lib_path,
-	                         const string& plug_label,
-				        	 bool          polyphonic);
+	virtual void new_node(const string& path,
+	                      const string& plugin_type,
+	                      const string& lib_path,
+	                      const string& plug_label,
+	                      bool          polyphonic);
 
 	virtual void rename(const string& old_path,
 	                    const string& new_name);

@@ -22,11 +22,10 @@
 #include <string>
 #include <inttypes.h>
 #include <raul/Atom.hpp>
+#include "interface/CommonInterface.hpp"
 
 namespace Ingen {
 namespace Shared {
-
-class EngineInterface;
 
 
 /** The (only) interface the engine uses to communicate with clients.
@@ -34,7 +33,7 @@ class EngineInterface;
  *
  * \ingroup interface
  */
-class ClientInterface
+class ClientInterface : public CommonInterface
 {
 public:
 	
@@ -76,8 +75,6 @@ public:
 	                        const std::string& symbol,
 	                        const std::string& name) = 0;
 	
-	virtual void new_patch(const std::string& path, uint32_t poly) = 0;
-	
 	virtual void new_node(const std::string& plugin_uri,
 	                      const std::string& node_path,
 	                      bool               is_polyphonic,
@@ -104,16 +101,6 @@ public:
 	                            const std::string& new_path) = 0;
 	
 	virtual void object_destroyed(const std::string& path) = 0;
-	
-	virtual void connect(const std::string& src_port_path,
-	                     const std::string& dst_port_path) = 0;
-	
-	virtual void disconnect(const std::string& src_port_path,
-	                        const std::string& dst_port_path) = 0;
-	
-	virtual void variable_change(const std::string& subject_path,
-	                             const std::string& predicate,
-	                             const Raul::Atom&  value) = 0;
 	
 	virtual void control_change(const std::string& port_path,
 	                            float              value) = 0;

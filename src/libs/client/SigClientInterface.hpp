@@ -140,7 +140,7 @@ protected:
 	void disconnect(const string& src_port_path, const string& dst_port_path)
 		{ if (_enabled) signal_disconnection.emit(src_port_path, dst_port_path); }
 	
-	void variable_change(const string& path, const string& key, const Raul::Atom& value)
+	void set_variable(const string& path, const string& key, const Raul::Atom& value)
 		{ if (_enabled) signal_variable_change.emit(path, key, value); }
 
 	void control_change(const string& port_path, float value)

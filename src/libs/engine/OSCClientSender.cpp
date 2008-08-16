@@ -445,19 +445,19 @@ OSCClientSender::disconnect(const std::string& src_port_path, const std::string&
 
 
 /** \page client_osc_namespace
- * <p> \b /ingen/variable_change - Notification of a piece of variable.
+ * <p> \b /ingen/set_variable - Notification of a piece of variable.
  * \arg \b path (string) - Path of the object associated with variable (can be a node, patch, or port)
  * \arg \b key (string)
  * \arg \b value (string)</p> \n \n
  */
 void
-OSCClientSender::variable_change(const std::string& path, const std::string& key, const Atom& value)
+OSCClientSender::set_variable(const std::string& path, const std::string& key, const Atom& value)
 {
 	lo_message m = lo_message_new();
 	lo_message_add_string(m, path.c_str());
 	lo_message_add_string(m, key.c_str());
 	Raul::AtomLiblo::lo_message_add_atom(m, value);
-	send_message("/ingen/variable_change", m);
+	send_message("/ingen/set_variable", m);
 }
 
 
@@ -542,7 +542,7 @@ OSCClientSender::new_patch(const std::string& path, uint32_t poly)
 	// Send variables
 	const map<const std::string&, const std::string&>& data = p->variable();
 	for (map<const std::string&, const std::string&>::const_iterator i = data.begin(); i != data.end(); ++i) {
-		variable_change(p->path(), (*i).first, (*i).second);
+		set_variable(p->path(), (*i).first, (*i).second);
 	}
 	*/
 }

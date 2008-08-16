@@ -41,7 +41,7 @@ ObjectSender::send_patch(ClientInterface* client, const PatchImpl* patch, bool r
 	// Send variable
 	const GraphObjectImpl::Variables& data = patch->variables();
 	for (GraphObjectImpl::Variables::const_iterator j = data.begin(); j != data.end(); ++j)
-		client->variable_change(patch->path(), (*j).first, (*j).second);
+		client->set_variable(patch->path(), (*j).first, (*j).second);
 	
 	if (patch->enabled())
 		client->patch_enabled(patch->path());
@@ -101,7 +101,7 @@ ObjectSender::send_node(ClientInterface* client, const NodeImpl* node, bool recu
 	// Send variable
 	const GraphObjectImpl::Variables& data = node->variables();
 	for (GraphObjectImpl::Variables::const_iterator j = data.begin(); j != data.end(); ++j)
-		client->variable_change(node->path(), (*j).first, (*j).second);
+		client->set_variable(node->path(), (*j).first, (*j).second);
 	
 	client->bundle_end();
 	
@@ -126,7 +126,7 @@ ObjectSender::send_port(ClientInterface* client, const PortImpl* port)
 	// Send variable
 	const GraphObjectImpl::Variables& data = port->variables();
 	for (GraphObjectImpl::Variables::const_iterator j = data.begin(); j != data.end(); ++j)
-		client->variable_change(port->path(), (*j).first, (*j).second);
+		client->set_variable(port->path(), (*j).first, (*j).second);
 	
 	// Send control value
 	if (port->type() == DataType::CONTROL) {

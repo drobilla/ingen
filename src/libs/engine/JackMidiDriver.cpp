@@ -201,7 +201,7 @@ JackMidiDriver::post_process(ProcessContext& context)
  * Realtime safe, this is to be called at the beginning of a process cycle to
  * insert (and actually begin using) a new port.
  * 
- * See create_port() and remove_port().
+ * See new_port() and remove_port().
  */
 void
 JackMidiDriver::add_port(DriverPort* port)

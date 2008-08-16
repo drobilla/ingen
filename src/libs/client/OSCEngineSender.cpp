@@ -195,12 +195,12 @@ OSCEngineSender::new_patch(const string& path,
 
 
 void
-OSCEngineSender::create_port(const string& path,
-                             const string& data_type,
-                             bool          is_output)
+OSCEngineSender::new_port(const string& path,
+                          const string& data_type,
+                          bool          is_output)
 {
 	assert(_engine_addr);
-	lo_send(_engine_addr, "/ingen/create_port",  "issi",
+	lo_send(_engine_addr, "/ingen/new_port",  "issi",
 		next_id(),
 		path.c_str(),
 		data_type.c_str(),
@@ -209,19 +209,19 @@ OSCEngineSender::create_port(const string& path,
 
 
 void
-OSCEngineSender::create_node(const string& path,
-                             const string& plugin_uri,
-                             bool          polyphonic)
+OSCEngineSender::new_node(const string& path,
+                          const string& plugin_uri,
+                          bool          polyphonic)
 {
 	assert(_engine_addr);
 
 	if (polyphonic)
-		lo_send(_engine_addr, "/ingen/create_node",  "issT",
+		lo_send(_engine_addr, "/ingen/new_node",  "issT",
 			next_id(),
 			path.c_str(),
 			plugin_uri.c_str());
 	else
-		lo_send(_engine_addr, "/ingen/create_node",  "issF",
+		lo_send(_engine_addr, "/ingen/new_node",  "issF",
 			next_id(),
 			path.c_str(),
 			plugin_uri.c_str());
@@ -233,22 +233,22 @@ OSCEngineSender::create_node(const string& path,
  * DO NOT USE THIS.
  */
 void
-OSCEngineSender::create_node(const string& path,
-                             const string& plugin_type,
-                             const string& library_name,
-                             const string& plugin_label,
-                             bool          polyphonic)
+OSCEngineSender::new_node(const string& path,
+                          const string& plugin_type,
+                          const string& library_name,
+                          const string& plugin_label,
+                          bool          polyphonic)
 {
 	assert(_engine_addr);
 	if (polyphonic)
-		lo_send(_engine_addr, "/ingen/create_node",  "issssT",
+		lo_send(_engine_addr, "/ingen/new_node",  "issssT",
 			next_id(),
 			path.c_str(),
 			plugin_type.c_str(),
 			library_name.c_str(),
 			plugin_label.c_str());
 	else
-		lo_send(_engine_addr, "/ingen/create_node",  "issssF",
+		lo_send(_engine_addr, "/ingen/new_node",  "issssF",
 			next_id(),
 			path.c_str(),
 			plugin_type.c_str(),
