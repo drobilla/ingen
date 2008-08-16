@@ -160,6 +160,9 @@ Redland::Node
 Serialiser::path_to_node_id(const Path& path)
 {
 	assert(_model);
+	
+	if (path == _root_object->path())
+		return Redland::Node(_model->world(), Redland::Node::RESOURCE, _base_uri);
 
 	NodeMap::iterator i = _node_map.find(path);
 	if (i != _node_map.end()) {
