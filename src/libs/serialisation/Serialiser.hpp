@@ -64,7 +64,7 @@ public:
 	                      const std::string&            base_uri,
 	                      const GraphObject::Variables& extra_rdf);
 	
-	void start_to_string(const std::string& base_uri);
+	void start_to_string(const Raul::Path& root, const std::string& base_uri);
 	void serialise(SharedPtr<GraphObject> object) throw (std::logic_error);
 	void serialise_connection(SharedPtr<Shared::Connection> c) throw (std::logic_error);
 	
@@ -88,7 +88,7 @@ private:
 	Redland::Node path_to_rdf_node(const Path& path);
 	Redland::Node patch_path_to_rdf_node(const Path& path);
 
-	SharedPtr<GraphObject>   _root_object;
+	Raul::Path               _root_path;
 	SharedPtr<Shared::Store> _store;
 	Mode                     _mode;
 	std::string              _base_uri;

@@ -20,6 +20,7 @@
 #include <locale.h>
 #include <glibmm/ustring.h>
 #include <redlandmm/Model.hpp>
+#include <redlandmm/Node.hpp>
 #include <redlandmm/Query.hpp>
 #include <raul/TableImpl.hpp>
 #include <raul/Atom.hpp>
@@ -34,6 +35,8 @@ using namespace Ingen::Shared;
 namespace Ingen {
 namespace Serialisation {
 
+#define NS_INGEN "http://drobilla.net/ns/ingen#"
+
 
 /** Parse a patch from RDF into a CommonInterface (engine or client).
  *
@@ -42,42 +45,145 @@ namespace Serialisation {
  * @return whether or not load was successful.
  */
 bool
-Parser::parse(Ingen::Shared::World*           world,
-              Ingen::Shared::CommonInterface* target,
-              const Glib::ustring&            document_uri,
-              boost::optional<Raul::Path>     parent,
-              std::string                     patch_name,
-              Glib::ustring                   patch_uri,
-              GraphObject::Variables          data)
+Parser::parse_document(
+		Ingen::Shared::World*                   world,
+		Ingen::Shared::CommonInterface*         target,
+		const Glib::ustring&                    document_uri,
+		Glib::ustring                           object_uri,
+		boost::optional<Raul::Path>             parent,
+		boost::optional<Raul::Symbol>           symbol,
+		boost::optional<GraphObject::Variables> data)
 {
-	setlocale(LC_NUMERIC, "C");
-
-	// FIXME: this whole thing is a mess
-
-	std::set<Path> created;
-
 	Redland::Model model(*world->rdf_world, document_uri, document_uri);
 
-	if (patch_uri == "")
-		patch_uri = string("<") + document_uri + ">";
-	else
-		patch_uri = string("<") + patch_uri + ">";
+	if (object_uri == "") {
+		object_uri = string("<") + document_uri + ">";
+		cout << "[Parser] Parsing document " << object_uri << endl;
+	} else {
+		object_uri = string("<") + object_uri + ">";
+		cout << "[Parser] Parsing " << object_uri << " from " << document_uri << endl;
+	}
 
-	cout << "[Parser] Loading " << patch_uri << endl;
+	return parse(world, target, model, document_uri, object_uri, parent, symbol, data);;
+}
 
-	size_t patch_poly = 1;
+
+bool
+Parser::parse_string(
+		Ingen::Shared::World*                   world,
+		Ingen::Shared::CommonInterface*         target,
+		const Glib::ustring&                    str,
+		const Glib::ustring&                    base_uri,
+		Glib::ustring                           object_uri,
+		boost::optional<Raul::Path>             parent,
+		boost::optional<Raul::Symbol>           symbol,
+		boost::optional<GraphObject::Variables> data)
+{
+	Redland::Model model(*world->rdf_world, str.c_str(), str.length(), base_uri);
+
+	if (object_uri == "") {
+		object_uri = string("<") + base_uri + ">";
+		cout << "[Parser] Parsing document " << object_uri << endl;
+	} else {
+		object_uri = string("<") + object_uri + ">";
+		cout << "[Parser] Parsing " << object_uri << " from string" << endl;
+	}
+
+	return parse(world, target, model, base_uri, object_uri, parent, symbol, data);;
+}
+
+
+bool
+Parser::parse(
+		Ingen::Shared::World*                   world,
+		Ingen::Shared::CommonInterface*         target,
+		Redland::Model&                         model,
+		const Glib::ustring&                    base_uri,
+		Glib::ustring                           object_uri,
+		boost::optional<Raul::Path>             parent,
+		boost::optional<Raul::Symbol>           symbol,
+		boost::optional<GraphObject::Variables> data)
+{
+	Redland::Query query(*world->rdf_world, Glib::ustring(
+		"SELECT DISTINCT ?class WHERE { ") + object_uri + " a ?class . }");
 	
+	Redland::Query::Results results = query.run(*world->rdf_world, model);
+	
+	const Redland::Node patch_class(*world->rdf_world, Redland::Node::RESOURCE, NS_INGEN "Patch");
+	const Redland::Node node_class(*world->rdf_world, Redland::Node::RESOURCE, NS_INGEN "Node");
+	const Redland::Node port_class(*world->rdf_world, Redland::Node::RESOURCE, NS_INGEN "Port");
+
+	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
+		const Redland::Node rdf_class = (*i)["class"];
+		if (rdf_class == patch_class || rdf_class == node_class || rdf_class == port_class) {
+			Path path = parse_path(world, model, base_uri, object_uri, parent, symbol);
+			bool ret = false;
+			if (rdf_class == patch_class) {
+				ret = parse_patch(world, target, model, object_uri, path, data);
+				if (ret)
+					target->set_variable(path, "ingen:document", Atom(base_uri.c_str()));
+			} else if (rdf_class == node_class) {
+				cout << "NODE" << endl;
+			} else if (rdf_class == port_class) {
+				cout << "PORT" << endl;
+			}
+			return ret;
+		}
+	}
+
+	return false;
+}
+
+
+Path
+Parser::parse_path(Ingen::Shared::World*          world,
+                   Redland::Model&                model,
+                   const Glib::ustring&           base_uri,
+                   const Glib::ustring&           object_uri,
+                   boost::optional<Raul::Path>&   parent,
+                   boost::optional<Raul::Symbol>& symbol)
+{
+	Redland::Query query(*world->rdf_world, Glib::ustring(
+		"SELECT DISTINCT ?sym WHERE { ") + object_uri + " ingen:symbol ?sym }");
+	
+	Redland::Query::Results results = query.run(*world->rdf_world, model);
+	if (results.size() > 0) {
+		symbol = (*results.begin())["sym"].to_string();
+	} else {
+		const string sym = base_uri.substr(base_uri.find_last_of("/")+1);
+		symbol = sym.substr(0, sym.find("."));
+	}
+
+	Path ret = (parent ? (parent.get().base() + symbol.get()) : Path("/"));
+	cout << "Parsing " << object_uri << " from " << base_uri << " as " << ret << endl;
+	return ret;
+}
+
+
+bool
+Parser::parse_patch(
+		Ingen::Shared::World*                   world,
+		Ingen::Shared::CommonInterface*         target,
+		Redland::Model&                         model,
+		const Glib::ustring&                    object_uri,
+		Raul::Path                              patch_path,
+		boost::optional<GraphObject::Variables> data=boost::optional<GraphObject::Variables>())
+{
+	std::set<Path> created;
+	uint32_t       patch_poly = 0;
+
 	/* Use parameter overridden polyphony, if given */
-	GraphObject::Variables::iterator poly_param = data.find("ingen:polyphony");
-	if (poly_param != data.end() && poly_param->second.type() == Atom::INT) {
-		patch_poly = poly_param->second.get_int32();
+	if (data) {
+		GraphObject::Variables::iterator poly_param = data.get().find("ingen:polyphony");
+		if (poly_param != data.get().end() && poly_param->second.type() == Atom::INT)
+			patch_poly = poly_param->second.get_int32();
+	}
 	
 	/* Get polyphony from file (mandatory if not specified in parameters) */
-	} else {
-		// FIXME: polyphony datatype?
+	if (patch_poly == 0) {
 		Redland::Query query(*world->rdf_world, Glib::ustring(
 			"SELECT DISTINCT ?poly WHERE {\n") +
-			patch_uri + " ingen:polyphony ?poly\n }");
+			object_uri + " ingen:polyphony ?poly\n }");
 
 		Redland::Query::Results results = query.run(*world->rdf_world, model);
 
@@ -88,42 +194,21 @@ Parser::parse(Ingen::Shared::World*           world,
 
 		const Redland::Node& poly_node = (*results.begin())["poly"];
 		assert(poly_node.is_int());
-		patch_poly = static_cast<size_t>(poly_node.to_int());
+		patch_poly = static_cast<uint32_t>(poly_node.to_int());
 	}
 
-	/* Get name (if available/necessary) */
-
-	if (patch_name == "") {	
-		patch_name = string(document_uri.substr(document_uri.find_last_of("/")+1));
-		if (patch_name.substr(patch_name.length()-10) == ".ingen.ttl")
-			patch_name = patch_name.substr(0, patch_name.length()-10);
-
-		Redland::Query query(*world->rdf_world, Glib::ustring(
-			"SELECT DISTINCT ?name WHERE {\n") +
-			patch_uri + " ingen:symbol ?name\n}");
-
-		Redland::Query::Results results = query.run(*world->rdf_world, model);
-
-		if (results.size() > 0)
-			patch_name = (*results.begin())["name"].to_string();
-	}
-
-	const Path patch_path = ( parent ? (parent.get().base() + patch_name) : Path("/") );
-	
-	cout << " as " << patch_path << endl;
-	
 	if (patch_path != "/")
 		target->new_patch(patch_path, patch_poly);
 	
 	/* Set document metadata (so File->Save doesn't prompt)
 	 * FIXME: This needs some thinking for multiple clients... */
-	target->set_variable(patch_path, "ingen:document", Atom(document_uri.c_str()));
+
 
 	/* Load (plugin) nodes */
 
 	Redland::Query query(*world->rdf_world, Glib::ustring(
 		"SELECT DISTINCT ?name ?plugin ?varkey ?varval ?poly WHERE {\n") +
-		patch_uri + " ingen:node       ?node .\n"
+		object_uri + " ingen:node       ?node .\n"
 		"?node        ingen:symbol     ?name ;\n"
 		"             ingen:plugin     ?plugin ;\n"
 		"             ingen:polyphonic ?poly .\n"
@@ -170,24 +255,24 @@ Parser::parse(Ingen::Shared::World*           world,
 	/* Load subpatches */
 
 	query = Redland::Query(*world->rdf_world, Glib::ustring(
-		"SELECT DISTINCT ?patch ?name WHERE {\n") +
-		patch_uri + " ingen:node   ?patch .\n"
+		"SELECT DISTINCT ?patch ?symbol WHERE {\n") +
+		object_uri + " ingen:node   ?patch .\n"
 		"?patch       a            ingen:Patch ;\n"
-		"             ingen:symbol ?name .\n"
+		"             ingen:symbol ?symbol .\n"
 		"}");
 
 	results = query.run(*world->rdf_world, model);
 	
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
 
-		const string name  = (*i)["name"].to_string();
-		const string patch = (*i)["patch"].to_string();
+		const string symbol = (*i)["symbol"].to_string();
+		const string patch  = (*i)["patch"].to_string();
 
-		const Path subpatch_path = patch_path.base() + (string)name;
+		const Path subpatch_path = patch_path.base() + symbol;
 
 		if (created.find(subpatch_path) == created.end()) {
 			created.insert(subpatch_path);
-			parse(world, target, document_uri, patch_path, name, patch);
+			parse_patch(world, target, model, Glib::ustring(object_uri + subpatch_path), subpatch_path);
 		}
 	}
 
@@ -198,7 +283,7 @@ Parser::parse(Ingen::Shared::World*           world,
 
 	query = Redland::Query(*world->rdf_world, Glib::ustring(
 		"SELECT DISTINCT ?nodename ?portname ?portval WHERE {\n") +
-		patch_uri + " ingen:node   ?node .\n"
+		object_uri + " ingen:node   ?node .\n"
 		"?node        ingen:symbol ?nodename ;\n"
 		"             ingen:port   ?port .\n"
 		"?port        ingen:symbol ?portname ;\n"
@@ -225,7 +310,7 @@ Parser::parse(Ingen::Shared::World*           world,
 
 	query = Redland::Query(*world->rdf_world, Glib::ustring(
 		"SELECT DISTINCT ?port ?type ?name ?datatype ?varkey ?varval ?portval WHERE {\n") +
-		patch_uri + " ingen:port     ?port .\n"
+		object_uri + " ingen:port     ?port .\n"
 		"?port        a              ?type ;\n"
 		"             a              ?datatype ;\n"
 		"             ingen:symbol   ?name .\n"
@@ -272,7 +357,7 @@ Parser::parse(Ingen::Shared::World*           world,
 
 	query = Redland::Query(*world->rdf_world, Glib::ustring(
 		"SELECT DISTINCT ?srcnodename ?srcname ?dstnodename ?dstname WHERE {\n") +
-		patch_uri +  "ingen:node ?srcnode ;\n"
+		object_uri +  "ingen:node ?srcnode ;\n"
 		"             ingen:node ?dstnode .\n"
 		"?srcnode     ingen:port ?src ;\n"
 		"             ingen:symbol ?srcnodename .\n"
@@ -301,7 +386,7 @@ Parser::parse(Ingen::Shared::World*           world,
 
 	query = Redland::Query(*world->rdf_world, Glib::ustring(
 		"SELECT DISTINCT ?srcname ?dstnodename ?dstname WHERE {\n") +
-		patch_uri + " ingen:port ?src ;\n"
+		object_uri + " ingen:port ?src ;\n"
 		"             ingen:node ?dstnode .\n"
 		"?dstnode     ingen:port ?dst ;\n"
 		"             ingen:symbol ?dstnodename .\n"
@@ -327,7 +412,7 @@ Parser::parse(Ingen::Shared::World*           world,
 
 	query = Redland::Query(*world->rdf_world, Glib::ustring(
 		"SELECT DISTINCT ?srcnodename ?srcname ?dstname WHERE {\n") +
-		patch_uri + " ingen:port ?dst ;\n"
+		object_uri + " ingen:port ?dst ;\n"
 		"             ingen:node ?srcnode .\n"
 		"?srcnode     ingen:port ?src ;\n"
 		"             ingen:symbol ?srcnodename .\n"
@@ -353,7 +438,7 @@ Parser::parse(Ingen::Shared::World*           world,
 
 	query = Redland::Query(*world->rdf_world, Glib::ustring(
 		"SELECT DISTINCT ?srcname ?dstname WHERE {\n") +
-		patch_uri + " ingen:port ?src ;\n"
+		object_uri + " ingen:port ?src ;\n"
 		"             ingen:port ?dst .\n"
 		"?dst         ingen:connectedTo ?src ;\n"
 		"             ingen:symbol ?dstname .\n" 
@@ -376,7 +461,7 @@ Parser::parse(Ingen::Shared::World*           world,
 
 	query = Redland::Query(*world->rdf_world, Glib::ustring(
 		"SELECT DISTINCT ?varkey ?varval WHERE {\n") +
-		patch_uri + " ingen:variable ?variable .\n"
+		object_uri + " ingen:variable ?variable .\n"
 		"?variable    ingen:key      ?varkey ;\n"
 		"             ingen:value    ?varval .\n"
 		"}");
@@ -394,15 +479,16 @@ Parser::parse(Ingen::Shared::World*           world,
 
 
 	// Set passed variables last to override any loaded values
-	for (GraphObject::Variables::const_iterator i = data.begin(); i != data.end(); ++i)
-		target->set_variable(patch_path, i->first, i->second);
+	if (data)
+		for (GraphObject::Variables::const_iterator i = data.get().begin(); i != data.get().end(); ++i)
+			target->set_variable(patch_path, i->first, i->second);
 
 
 	/* Enable */
 
 	query = Redland::Query(*world->rdf_world, Glib::ustring(
 		"SELECT DISTINCT ?enabled WHERE {\n") +
-		patch_uri + " ingen:enabled ?enabled .\n"
+		object_uri + " ingen:enabled ?enabled .\n"
 		"}");
 
 	results = query.run(*world->rdf_world, model);

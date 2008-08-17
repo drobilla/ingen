@@ -27,7 +27,7 @@
 #include "interface/GraphObject.hpp"
 #include "module/World.hpp"
 
-namespace Redland { class World; }
+namespace Redland { class World; class Model; }
 namespace Ingen { namespace Shared { class CommonInterface; } }
 
 using namespace Ingen::Shared;
@@ -40,13 +40,51 @@ class Parser {
 public:
 	virtual ~Parser() {}
 	
-	virtual bool parse(Ingen::Shared::World*           world,
-	                   Ingen::Shared::CommonInterface* target,
-	                   const Glib::ustring&            uri,
-	                   boost::optional<Raul::Path>     parent,
-	                   std::string                     patch_name,
-	                   Glib::ustring                   patch_uri = "",
-	                   GraphObject::Variables          data = GraphObject::Variables());
+	virtual bool parse_document(
+			Ingen::Shared::World*                   world,
+			Shared::CommonInterface*                target,
+			const Glib::ustring&                    document_uri,
+			Glib::ustring                           object_uri,
+			boost::optional<Raul::Path>             parent=boost::optional<Raul::Path>(),
+			boost::optional<Raul::Symbol>           symbol=boost::optional<Raul::Symbol>(),
+			boost::optional<GraphObject::Variables> data=boost::optional<GraphObject::Variables>());
+	
+	virtual bool parse_string(
+			Ingen::Shared::World*                   world,
+			Shared::CommonInterface*                target,
+			const Glib::ustring&                    str,
+			const Glib::ustring&                    base_uri,
+			Glib::ustring                           object_uri,
+			boost::optional<Raul::Path>             parent=boost::optional<Raul::Path>(),
+			boost::optional<Raul::Symbol>           symbol=boost::optional<Raul::Symbol>(),
+			boost::optional<GraphObject::Variables> data=boost::optional<GraphObject::Variables>());
+
+private:
+	bool parse(
+			Ingen::Shared::World*                   world,
+			Shared::CommonInterface*                target,
+			Redland::Model&                         model,
+			const Glib::ustring&                    base_uri,
+			Glib::ustring                           object_uri,
+			boost::optional<Raul::Path>             parent=boost::optional<Raul::Path>(),
+			boost::optional<Raul::Symbol>           symbol=boost::optional<Raul::Symbol>(),
+			boost::optional<GraphObject::Variables> data=boost::optional<GraphObject::Variables>());
+
+	Raul::Path parse_path(
+			Ingen::Shared::World*          world,
+			Redland::Model&                model,
+			const Glib::ustring&           base_uri,
+			const Glib::ustring&           object_uri,
+			boost::optional<Raul::Path>&   parent,
+			boost::optional<Raul::Symbol>& symbol);
+
+	bool parse_patch(
+			Ingen::Shared::World*                   world,
+			Ingen::Shared::CommonInterface*         target,
+			Redland::Model&                         model,
+			const Glib::ustring&                    object_uri,
+			Raul::Path                              path,
+			boost::optional<GraphObject::Variables> data);
 };
 
 

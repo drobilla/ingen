@@ -136,9 +136,8 @@ LoadRemotePatchWindow::open_clicked()
 	cerr << "OPEN URI: " << uri << endl;
 	
 	// If unset load_patch will load values
-	optional<const string&> name;
-	
-	optional<Path> parent;
+	optional<Path>   parent;
+	optional<Symbol> symbol;
 	
 	if (_replace)
 		App::instance().engine()->clear_patch(_patch->path());
@@ -147,7 +146,7 @@ LoadRemotePatchWindow::open_clicked()
 		parent = _patch->path().parent();
 
 	App::instance().loader()->load_patch(true, uri, "/",
-		_initial_data, parent, name);
+		_initial_data, parent, symbol);
 	
 	hide();
 }			

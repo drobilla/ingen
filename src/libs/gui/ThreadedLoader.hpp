@@ -62,11 +62,11 @@ public:
 	// (same core interface as Loader/Serialiser)
 	
 	void load_patch(bool                    merge,
-	                const string&           data_base_uri,
+	                const Glib::ustring&    data_base_uri,
 	                const Path&             data_path,
 	                GraphObject::Variables  engine_data,
-	                optional<Path>          engine_parent,
-	                optional<const string&> engine_name = optional<const string&>());
+	                optional<Path>          engine_parent = optional<Path>(),
+	                optional<Symbol>        engine_symbol = optional<Symbol>());
 	
 	void save_patch(SharedPtr<PatchModel> model, const string& filename);
 

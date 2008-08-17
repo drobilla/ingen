@@ -80,11 +80,11 @@ ThreadedLoader::_whipped()
 
 void
 ThreadedLoader::load_patch(bool                    merge,
-                           const string&           data_base_uri,
+                           const Glib::ustring&    data_base_uri,
                            const Path&             data_path,
                            GraphObject::Variables  engine_data,
                            optional<Path>          engine_parent,
-                           optional<const string&> engine_name)
+                           optional<Symbol>        engine_symbol)
 {
 	_mutex.lock();
 
@@ -94,18 +94,18 @@ ThreadedLoader::load_patch(bool                    merge,
 				sigc::mem_fun(_deprecated_loader, &DeprecatedLoader::load_patch),
 				data_base_uri,
 				engine_parent,
-				(engine_name) ? engine_name.get() : "",
+				(engine_symbol) ? engine_symbol.get() : "",
 				engine_data,
 				false)));
 	} else {
 		_events.push_back(sigc::hide_return(sigc::bind(
-				sigc::mem_fun(_parser.get(), &Ingen::Serialisation::Parser::parse),
+				sigc::mem_fun(_parser.get(), &Ingen::Serialisation::Parser::parse_document),
 				App::instance().world(),
 				App::instance().world()->engine.get(),
-				data_base_uri,
+				data_base_uri, // document
+				data_base_uri, // patch (root of document)
 				engine_parent,
-				(engine_name) ? engine_name.get() : "",
-				"",
+				engine_symbol,
 				engine_data)));
 	}
 	

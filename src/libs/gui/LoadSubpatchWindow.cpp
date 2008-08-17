@@ -145,12 +145,12 @@ LoadSubpatchWindow::ok_clicked()
 	assert(_patch);
 	
 	// If unset load_patch will load values
-	optional<const string&> name;
+	optional<Symbol> symbol;
 	string name_str = "";
 	
 	if (_name_from_user_radio->get_active()) {
 		name_str = _name_entry->get_text();
-		name = name_str;
+		symbol = Symbol::symbolify(name_str);
 	}
 
 	if (_poly_from_user_radio->get_active()) {
@@ -168,7 +168,7 @@ LoadSubpatchWindow::ok_clicked()
 		Atom& y = _initial_data["ingenuity:canvas-y"];
 		y = Atom(y.get_float() + 20.0f);
 
-		App::instance().loader()->load_patch(false, *i, "/", _initial_data, _patch->path(), name);
+		App::instance().loader()->load_patch(false, *i, "/", _initial_data, _patch->path(), symbol);
 	}
 
 	hide();

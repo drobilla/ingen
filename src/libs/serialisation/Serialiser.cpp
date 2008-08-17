@@ -54,15 +54,17 @@ namespace Serialisation {
 
 
 Serialiser::Serialiser(Shared::World& world, SharedPtr<Shared::Store> store)
-	: _store(store)
+	: _root_path("/")
+	, _store(store)
 	, _world(*world.rdf_world)
 {
 }
 	
+
 void
 Serialiser::to_file(SharedPtr<GraphObject> object, const string& filename)
 {
-	_root_object = object;
+	_root_path = object->path();
 	start_to_filename(filename);
 	serialise(object);
 	finish();
@@ -75,8 +77,8 @@ Serialiser::to_string(SharedPtr<GraphObject>        object,
 	                  const string&                 base_uri,
 	                  const GraphObject::Variables& extra_rdf)
 {
-	_root_object = object;
-	start_to_string(base_uri);
+	_root_path = object->path();
+	start_to_string(object->path(), base_uri);
 	serialise(object);
 	
 	Redland::Node base_rdf_node(_model->world(), Redland::Node::RESOURCE, base_uri);
@@ -121,7 +123,7 @@ Serialiser::start_to_filename(const string& filename)
  * the desired objects have been serialised.
  */
 void
-Serialiser::start_to_string(const string& base_uri)
+Serialiser::start_to_string(const Raul::Path& root, const string& base_uri)
 {
 	setlocale(LC_NUMERIC, "C");
 
@@ -141,11 +143,13 @@ string
 Serialiser::finish()
 {
 	string ret = "";
-
-	if (_mode == TO_FILE)
+	if (_mode == TO_FILE) {
 		_model->serialise_to_file(_base_uri);
-	else
-		ret = _model->serialise_to_string();
+	} else {
+		char* c_str = _model->serialise_to_string();
+		ret = c_str;
+		free(c_str);
+	}
 
 	_base_uri = "";
 #ifdef USE_BLANK_NODES
@@ -159,12 +163,12 @@ Redland::Node
 Serialiser::patch_path_to_rdf_node(const Path& path)
 {
 #ifdef USE_BLANK_NODES
-	if (path == _root_object->path()) {
+	if (path == _root_path) {
 		return Redland::Node(_model->world(), Redland::Node::RESOURCE, _base_uri);
 	} else {
-		assert(path.length() > _root_object->path().length());
+		assert(path.length() > _root_path.length());
 		return Redland::Node(_model->world(), Redland::Node::RESOURCE,
-				_base_uri + string("#") + path.substr(_root_object->path().length()));
+				_base_uri + string("#") + path.substr(_root_path.length()));
 	}
 #else
 	return path_to_rdf_node(path);
@@ -192,13 +196,13 @@ Serialiser::path_to_rdf_node(const Path& path)
 	}
 #else
 	assert(_model);
-	assert(path.substr(0, _root_object->path().length()) == _root_object->path());
+	assert(path.substr(0, _root_path.length()) == _root_path);
 	
-	if (path == _root_object->path())
+	if (path == _root_path)
 		return Redland::Node(_model->world(), Redland::Node::RESOURCE, _base_uri);
 	else
 		return Redland::Node(_model->world(), Redland::Node::RESOURCE,
-				path.substr(_root_object->path().base().length()-1));
+				path.substr(_root_path.base().length()));
 #endif
 }
 

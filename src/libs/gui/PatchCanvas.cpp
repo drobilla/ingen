@@ -540,7 +540,7 @@ void
 PatchCanvas::copy_selection()
 {
 	Serialiser serialiser(*App::instance().world(), App::instance().store());
-	serialiser.start_to_string("");
+	serialiser.start_to_string(_patch->path(), "");
 
 	for (list<boost::shared_ptr<Item> >::iterator m = _selected_items.begin(); m != _selected_items.end(); ++m) {
 		boost::shared_ptr<NodeModule> module = boost::dynamic_pointer_cast<NodeModule>(*m);
