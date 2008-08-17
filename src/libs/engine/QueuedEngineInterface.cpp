@@ -332,8 +332,6 @@ QueuedEngineInterface::set_property(const string& path,
 	} else {
 		push_queued(new SetMetadataEvent(_engine, _responder, now(), true, path, predicate, value));
 	}
-
-	cerr << "WARNING: Unknown property (or bad type) \"" << predicate << "\"" << endl;
 }
 
 // Requests //

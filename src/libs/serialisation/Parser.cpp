@@ -135,7 +135,6 @@ Parser::parse(
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
 		const Redland::Node subject = (object_uri ? subject_uri : (*i)["subject"]);
 		const Redland::Node rdf_class = (*i)["class"];
-		cout << subject.to_c_string() << " :: " << rdf_class.to_c_string() << endl;
 		if (rdf_class == patch_class || rdf_class == node_class || rdf_class == port_class) {
 			Path path = parse_path(world, model, base_uri, subject.to_c_string(), parent, symbol);
 			if (rdf_class == patch_class) {
@@ -146,7 +145,7 @@ Parser::parse(
 				ret = parse_node(world, target, model,
 						base_uri, Glib::ustring("<") + subject.to_c_string() + ">", path, data);
 			} else if (rdf_class == port_class) {
-				cout << "PORT" << endl;
+				cout << "*** TODO: PARSE PORT" << endl;
 			}
 			if (ret == false) {
 				cerr << "Failed to parse object " << object_uri << endl;
@@ -434,12 +433,6 @@ Parser::parse_node(
 		return false;
 	}
 	
-	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
-		const Redland::Node& s_node = (*i)["s"];
-		const Redland::Node& plug_node = (*i)["plug"];
-		cout << s_node.to_c_string() << " :: " << plug_node.to_c_string() << endl;
-	}
-
 	const Redland::Node& plugin_node = (*results.begin())["plug"];
 	if (plugin_node.type() != Redland::Node::RESOURCE) {
 		cerr << "[Parser] ERROR: node's ingen:plugin property is not a resource" << endl;

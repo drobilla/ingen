@@ -579,12 +579,16 @@ PatchCanvas::paste()
 		return;
 	}
 
+	clear_selection();
+
 	Builder builder(*App::instance().engine());
 	ClientStore clipboard;
 	clipboard.new_patch("/", _patch->poly());
 	clipboard.set_plugins(App::instance().store()->plugins());
 	parser->parse_string(App::instance().world(), &clipboard, str, "/");
 	for (Store::iterator i = clipboard.begin(); i != clipboard.end(); ++i) {
+		if (i->first == "/")
+			continue;
 		/*GraphObject::Properties::iterator s = i->second->properties().find("ingen:symbol");
 		const string sym = string(s->second.get_string()) + "_copy";
 		s->second = sym;*/
@@ -594,6 +598,11 @@ PatchCanvas::paste()
 		GraphObject::Variables::iterator y = i->second->variables().find("ingenuity:canvas-y");
 		if (y != i->second->variables().end())
 			y->second = y->second.get_float() + 20.0f;
+		GraphObject::Properties::iterator s = i->second->properties().find("ingen:selected");
+		if (s != i->second->properties().end())
+			s->second = true;
+		else
+			i->second->properties().insert(make_pair("ingen:selected", true));
 		builder.build(i->second);
 	}
 }

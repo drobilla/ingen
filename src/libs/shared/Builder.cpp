@@ -41,7 +41,7 @@ Builder::build(SharedPtr<const GraphObject> object)
 	SharedPtr<const Patch> patch = PtrCast<const Patch>(object);
 	if (patch) {
 		if (patch->path() != "/")
-		_interface.new_patch(patch->path() + "_copy", patch->internal_polyphony());
+			_interface.new_patch(patch->path() + "_copy", patch->internal_polyphony());
 		build_object(object);
 		for (Patch::Connections::const_iterator i = patch->connections().begin();
 				i != patch->connections().end(); ++i)
