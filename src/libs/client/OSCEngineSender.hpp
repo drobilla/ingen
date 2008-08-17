@@ -86,14 +86,12 @@ public:
 	              bool          is_output);
 
 	void new_node(const string& path,
-	              const string& plugin_uri,
-	              bool          polyphonic);
+	              const string& plugin_uri);
 	
 	void new_node_deprecated(const string& path,
 	                         const string& plugin_type,
 	                         const string& library_name,
-	                         const string& plugin_label,
-	                         bool          polyphonic);
+	                         const string& plugin_label);
 
 	void rename(const string& old_path,
 	            const string& new_name);
@@ -148,19 +146,13 @@ public:
 	                  const Raul::Atom& value);
 	
 	// Requests //
-	
 	void ping();
-
 	void request_plugin(const string& uri);
-
 	void request_object(const string& path);
-
 	void request_port_value(const string& port_path);
-	
 	void request_variable(const string& path, const string& key);
-
+	void request_property(const string& path, const string& key);
 	void request_plugins();
-
 	void request_all_objects();
 
 protected:

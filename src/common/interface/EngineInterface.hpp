@@ -63,8 +63,7 @@ public:
 	virtual void new_node_deprecated(const std::string& path,
 	                                 const std::string& plugin_type,
 	                                 const std::string& library_name,
-	                                 const std::string& plugin_label,
-	                                 bool               polyphonic) = 0;
+	                                 const std::string& plugin_label) = 0;
 	
 	virtual void rename(const std::string& old_path,
 	                    const std::string& new_symbol) = 0;
@@ -108,6 +107,9 @@ public:
 	virtual void request_port_value(const std::string& port_path) = 0;
 	
 	virtual void request_variable(const std::string& path,
+	                              const std::string& key) = 0;
+	
+	virtual void request_property(const std::string& path,
 	                              const std::string& key) = 0;
 
 	virtual void request_plugins() = 0;

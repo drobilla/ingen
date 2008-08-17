@@ -69,8 +69,8 @@ public:
 private:
 	void all_voices_selected();
 	void specific_voice_selected();
-	void polyphony_changed(uint32_t poly);
-	void polyphonic_changed(bool poly);
+	
+	void property_changed(const std::string& predicate, const Raul::Atom& value, bool parent);
 
 	bool _callback_enabled;
 	

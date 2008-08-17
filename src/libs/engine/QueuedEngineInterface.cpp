@@ -157,11 +157,10 @@ void QueuedEngineInterface::new_port(const string& path,
 
 void
 QueuedEngineInterface::new_node(const string& path,
-                                const string& plugin_uri,
-                                bool          polyphonic)
+                                const string& plugin_uri)
 {
 	push_queued(new CreateNodeEvent(_engine, _responder, now(),
-		path, plugin_uri, polyphonic));
+		path, plugin_uri, true)); // FIXME: polyphonic by default
 }
 
 
@@ -169,11 +168,10 @@ void
 QueuedEngineInterface::new_node_deprecated(const string& path,
                                            const string& plugin_type,
                                            const string& plugin_lib,
-                                           const string& plugin_label,
-                                           bool          polyphonic)
+                                           const string& plugin_label)
 {
 	push_queued(new CreateNodeEvent(_engine, _responder, now(),
-		path, plugin_type, plugin_lib, plugin_label, polyphonic));
+		path, plugin_type, plugin_lib, plugin_label, true)); // FIXME: polyphonic by default
 }
 
 void
@@ -359,11 +357,20 @@ QueuedEngineInterface::request_port_value(const string& port_path)
 	push_queued(new RequestPortValueEvent(_engine, _responder, now(), port_path));
 }
 
+
 void
 QueuedEngineInterface::request_variable(const string& object_path, const string& key)
 {
-	push_queued(new RequestMetadataEvent(_engine, _responder, now(), object_path, key));
+	push_queued(new RequestMetadataEvent(_engine, _responder, now(), false, object_path, key));
 }
+
+
+void
+QueuedEngineInterface::request_property(const string& object_path, const string& key)
+{
+	push_queued(new RequestMetadataEvent(_engine, _responder, now(), true, object_path, key));
+}
+
 
 void
 QueuedEngineInterface::request_plugins()

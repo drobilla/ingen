@@ -152,7 +152,8 @@ Parser::parse(Ingen::Shared::World*           world,
 			if (poly_node.is_bool() && poly_node.to_bool() == true)
 				node_polyphonic = true;
 		
-			target->new_node(node_path, node_plugin, node_polyphonic);
+			target->new_node(node_path, node_plugin);
+			target->set_property(node_path, "ingen:polyphonic", node_polyphonic);
 			created.insert(node_path);
 		}
 

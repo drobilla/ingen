@@ -92,10 +92,10 @@ OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t
 	lo_server_add_method(_server, "/ingen/set_polyphonic", "isT", set_polyphonic_cb, this);
 	lo_server_add_method(_server, "/ingen/set_polyphonic", "isF", set_polyphonic_cb, this);
 	lo_server_add_method(_server, "/ingen/new_port", "issi", new_port_cb, this);
-	lo_server_add_method(_server, "/ingen/new_node", "issssT", new_node_cb, this);
-	lo_server_add_method(_server, "/ingen/new_node", "issssF", new_node_cb, this);
-	lo_server_add_method(_server, "/ingen/new_node", "issT", new_node_by_uri_cb, this);
-	lo_server_add_method(_server, "/ingen/new_node", "issF", new_node_by_uri_cb, this);
+	lo_server_add_method(_server, "/ingen/new_node", "issss", new_node_cb, this);
+	lo_server_add_method(_server, "/ingen/new_node", "issss", new_node_cb, this);
+	lo_server_add_method(_server, "/ingen/new_node", "iss", new_node_by_uri_cb, this);
+	lo_server_add_method(_server, "/ingen/new_node", "iss", new_node_by_uri_cb, this);
 	lo_server_add_method(_server, "/ingen/destroy", "is", destroy_cb, this);
 	lo_server_add_method(_server, "/ingen/rename", "iss", rename_cb, this);
 	lo_server_add_method(_server, "/ingen/connect", "iss", connect_cb, this);
@@ -477,17 +477,15 @@ OSCEngineReceiver::_new_port_cb(const char* path, const char* types, lo_arg** ar
  * <p> \b /ingen/new_node - Add a node into a given patch (load a plugin by URI)
  * \arg \b response-id (integer)
  * \arg \b node-path (string) - Full path of the new node (ie. /patch2/subpatch/newnode)
- * \arg \b plug-uri (string) - URI of the plugin to load
- * \arg \b polyphonic (boolean) - Whether node is polyphonic </p> \n \n
+ * \arg \b plug-uri (string) - URI of the plugin to load \n \n
  */
 int
 OSCEngineReceiver::_new_node_by_uri_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	const char* node_path  = &argv[1]->s;
 	const char* plug_uri   = &argv[2]->s;
-	bool        polyphonic = (types[3] == 'T');
 	
-	new_node(node_path, plug_uri, polyphonic);
+	new_node(node_path, plug_uri);
 	return 0;
 }
 
@@ -498,8 +496,7 @@ OSCEngineReceiver::_new_node_by_uri_cb(const char* path, const char* types, lo_a
  * \arg \b node-path (string) - Full path of the new node (ie. /patch2/subpatch/newnode)
  * \arg \b type (string) - Plugin type ("LADSPA" or "Internal")
  * \arg \b lib-name (string) - Name of library where plugin resides (eg "cmt.so")
- * \arg \b plug-label (string) - Label (ID) of plugin (eg "sine_fcaa")
- * \arg \b poly (boolean) - Whether node is polyphonic
+ * \arg \b plug-label (string) - Label (ID) of plugin (eg "sine_fcaa") \n \n
  *
  * \li This is only here to provide backwards compatibility for old patches that store LADSPA plugin
  * references as libname, label.  It is to be removed ASAP, don't use it.
@@ -512,9 +509,8 @@ OSCEngineReceiver::_new_node_cb(const char* path, const char* types, lo_arg** ar
 	const char* type        = &argv[2]->s;
 	const char* lib_name    = &argv[3]->s;
 	const char* plug_label  = &argv[4]->s;
-	bool        polyphonic = (types[5] == 'T');
 	
-	new_node_deprecated(node_path, type, lib_name, plug_label, polyphonic);
+	new_node_deprecated(node_path, type, lib_name, plug_label);
 	return 0;
 }
 

@@ -627,7 +627,7 @@ PatchCanvas::load_plugin(SharedPtr<PluginModel> plugin)
 		
 	const Path path = _patch->path().base() + name;
 	// FIXME: polyphony?
-	App::instance().engine()->new_node(path, plugin->uri(), false);
+	App::instance().engine()->new_node(path, plugin->uri());
 	GraphObject::Variables data = get_initial_data();
 	for (GraphObject::Variables::const_iterator i = data.begin(); i != data.end(); ++i)
 		App::instance().engine()->set_variable(path, i->first, i->second);

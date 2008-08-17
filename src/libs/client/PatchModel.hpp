@@ -48,7 +48,7 @@ public:
 	SharedPtr<ConnectionModel> get_connection(const string& src_port_path,
 	                                          const string& dst_port_path) const;
 	
-	size_t   poly()               const { return _poly; }
+	uint32_t poly()               const { return _poly; }
 	uint32_t internal_polyphony() const { return _poly; }
 	bool     enabled()            const;
 	bool     polyphonic()         const;
@@ -61,6 +61,8 @@ public:
 		_editable = e;
 		signal_editable.emit(e);
 	} }
+	
+	virtual void set_property(const string& key, const Atom& value);
 
 	static unsigned child_name_offset(ClientStore& store,
 	                                  SharedPtr<PatchModel> parent,
@@ -71,20 +73,18 @@ public:
 	sigc::signal<void, SharedPtr<NodeModel> >       signal_removed_node; 
 	sigc::signal<void, SharedPtr<ConnectionModel> > signal_new_connection; 
 	sigc::signal<void, SharedPtr<ConnectionModel> > signal_removed_connection;
-	sigc::signal<void, uint32_t>                    signal_polyphony;
 	sigc::signal<void, bool>                        signal_editable;
 
 private:
 	friend class ClientStore;
 
 	PatchModel(const Path& patch_path, size_t internal_poly)
-		: NodeModel("ingen:Patch", patch_path, false) // FIXME
+		: NodeModel("ingen:Patch", patch_path)
 		, _poly(internal_poly)
 		, _editable(true)
 	{
 	}
 	
-	void poly(size_t p) { _poly = p; signal_polyphony.emit(p); }
 	void clear();
 	void add_child(SharedPtr<ObjectModel> c);
 	bool remove_child(SharedPtr<ObjectModel> c);

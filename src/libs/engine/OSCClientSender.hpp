@@ -79,19 +79,12 @@ public:
 	virtual void new_patch(const std::string& path, uint32_t poly);
 	
 	virtual void new_node(const std::string&   path,
-	                      const std::string&   plugin_uri,
-	                      bool                 is_polyphonic);
+	                      const std::string&   plugin_uri);
 	
 	virtual void new_port(const std::string& path,
 	                      uint32_t           index,
 	                      const std::string& data_type,
 	                      bool               is_output);
-	
-	virtual void polyphonic(const std::string& path,
-	                        bool               polyphonic);
-	
-	virtual void patch_polyphony(const std::string& path,
-	                             uint32_t           poly);
 	
 	virtual void patch_cleared(const std::string& path);
 	

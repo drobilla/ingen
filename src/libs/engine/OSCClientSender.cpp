@@ -211,15 +211,9 @@ OSCClientSender::plugins()
  * followed by /ingen/new_node_end. </p> \n \n
  */
 void OSCClientSender::new_node(const std::string& node_path,
-                               const std::string& plugin_uri,
-                               bool               is_polyphonic)
+                               const std::string& plugin_uri)
 {
-	if (is_polyphonic)
-		send("/ingen/new_node", "ssT", node_path.c_str(),
-				plugin_uri.c_str(), LO_ARGS_END);
-	else
-		send("/ingen/new_node", "ssF", node_path.c_str(),
-				plugin_uri.c_str(), LO_ARGS_END);
+	send("/ingen/new_node", "ss", node_path.c_str(), plugin_uri.c_str());
 }
 
 
@@ -250,30 +244,6 @@ OSCClientSender::new_port(const std::string& path,
 
 
 /** \page client_osc_namespace
- * <p> \b /ingen/polyphonic - Notification an object's polyphonic property has changed.
- * \arg \b path (string) - Path of object
- * \arg \b polyphonic (bool) - Whether or not object is polyphonic (from it's parent's perspective).
- *
- * \li This is a notification that the object is <em>externally</em> polyphonic,
- * i.e. its parent sees several independent buffers for a single port, one for each voice.
- * An object can be internally polyphonic but externally not if the voices are mixed down;
- * this is true of some instruments and subpatches with mismatched polyphony. </p> \n \n
- */
-void
-OSCClientSender::polyphonic(const std::string& path,
-                            bool               polyphonic)
-{
-	if (!_enabled)
-		return;
-
-	if (polyphonic)
-		lo_send(_address, "/ingen/polyphonic", "sT", path.c_str());
-	else
-		lo_send(_address, "/ingen/polyphonic", "sF", path.c_str());
-}
-
-
-/** \page client_osc_namespace
  * <p> \b /ingen/destroyed - Notification an object has been destroyed
  * \arg \b path (string) - Path of object (which no longer exists) </p> \n \n
  */
@@ -295,21 +265,6 @@ OSCClientSender::patch_cleared(const std::string& patch_path)
 {
 	send("/ingen/patch_cleared", "s", patch_path.c_str(), LO_ARGS_END);
 }
-
-
-/** \page client_osc_namespace
- * <p> \b /ingen/patch_polyphony - Notification a patch's DSP processing has been polyphony.
- * \arg \b path (string) - Path of polyphony patch</p> \n \n
- */
-void
-OSCClientSender::patch_polyphony(const std::string& patch_path, uint32_t poly)
-{
-	if (!_enabled)
-		return;
-
-	lo_send(_address, "/ingen/patch_polyphony", "si", patch_path.c_str(), poly);
-}
-
 
 
 /** \page client_osc_namespace

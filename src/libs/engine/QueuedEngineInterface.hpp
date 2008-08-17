@@ -90,15 +90,13 @@ public:
 	                      bool          direction);
 
 	virtual void new_node(const string& path,
-	                      const string& plugin_uri,
-	                      bool          polyphonic);
+	                      const string& plugin_uri);
 	
 	/** FIXME: DEPRECATED, REMOVE */
 	virtual void new_node_deprecated(const string& path,
 	                                 const string& plugin_type,
 	                                 const string& lib_path,
-	                                 const string& plug_label,
-	                                 bool          polyphonic);
+	                                 const string& plug_label);
 
 	virtual void rename(const string& old_path,
 	                    const string& new_name);
@@ -155,17 +153,12 @@ public:
 	// Requests //
 	
 	virtual void ping();
-
 	virtual void request_plugin(const string& uri);
-
 	virtual void request_object(const string& path);
-	
 	virtual void request_port_value(const string& port_path);
-	
 	virtual void request_variable(const string& object_path, const string& key);
-
+	virtual void request_property(const string& object_path, const string& key);
 	virtual void request_plugins();
-
 	virtual void request_all_objects();
 
 protected:

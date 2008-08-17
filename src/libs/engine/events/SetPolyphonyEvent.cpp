@@ -68,7 +68,7 @@ SetPolyphonyEvent::post_process()
 {	
 	if (_patch) {
 		_responder->respond_ok();
-		_engine.broadcaster()->send_patch_polyphony(_patch_path, _poly);
+		_engine.broadcaster()->send_property_change(_patch_path, "ingen:polyphony", (int32_t)_poly);
 	} else {
 		_responder->respond_error("Unable to find patch");
 	}

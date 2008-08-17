@@ -74,7 +74,7 @@ private:
 	friend class ClientStore;
 	
 	PortModel(const Path& path, uint32_t index, DataType type, Direction dir)
-		: ObjectModel(path, true)
+		: ObjectModel(path)
 		, _index(index)
 		, _type(type)
 		, _direction(dir)

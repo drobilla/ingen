@@ -71,12 +71,10 @@ public:
 	void send_node(const NodeImpl* node, bool recursive);
 	void send_port(const PortImpl* port);
 	void send_destroyed(const string& path);
-	void send_polyphonic(const string& path, bool polyphonic);
 	void send_patch_cleared(const string& patch_path);
 	void send_connection(const SharedPtr<const ConnectionImpl> connection);
 	void send_disconnection(const string& src_port_path, const string& dst_port_path);
 	void send_rename(const string& old_path, const string& new_path);
-	void send_patch_polyphony(const string& patch_path, uint32_t poly);
 	void send_variable_change(const string& node_path, const string& key, const Raul::Atom& value);
 	void send_property_change(const string& node_path, const string& key, const Raul::Atom& value);
 	void send_port_value(const string& port_path, const Raul::Atom& value);

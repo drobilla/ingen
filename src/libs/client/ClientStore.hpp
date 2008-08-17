@@ -98,10 +98,8 @@ private:
 	void rename_event(const Path& old_path, const Path& new_path);
 	void new_plugin_event(const string& uri, const string& type_uri, const string& symbol, const string& name);
 	void new_patch_event(const Path& path, uint32_t poly);
-	void new_node_event(const Path& path, const string& plugin_uri, bool polyphonic);
+	void new_node_event(const Path& path, const string& plugin_uri);
 	void new_port_event(const Path& path, uint32_t index, const string& data_type, bool is_output);
-	void polyphonic_event(const Path& path, bool polyphonic);
-	void patch_polyphony_event(const Path& path, uint32_t poly);
 	void patch_cleared_event(const Path& path);
 	void variable_change_event(const Path& subject_path, const string& predicate, const Atom& value);
 	void property_change_event(const Path& subject_path, const string& predicate, const Atom& value);

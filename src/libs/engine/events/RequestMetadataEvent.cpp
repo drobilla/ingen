@@ -28,11 +28,17 @@ using std::string;
 namespace Ingen {
 
 
-RequestMetadataEvent::RequestMetadataEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& node_path, const string& key)
-: QueuedEvent(engine, responder, timestamp),
-  _path(node_path),
-  _key(key),
-  _object(NULL)
+RequestMetadataEvent::RequestMetadataEvent(Engine&              engine,
+	                                       SharedPtr<Responder> responder,
+	                                       SampleCount          timestamp,
+	                                       bool                 property,
+	                                       const string&        node_path,
+	                                       const string&        key)
+	: QueuedEvent(engine, responder, timestamp)
+	, _path(node_path)
+	, _property(property)
+	, _key(key)
+	, _object(NULL)
 {
 }
 
@@ -48,7 +54,10 @@ RequestMetadataEvent::pre_process()
 		}
 	}
 
-	_value = _object->get_variable(_key);
+	if (_property)
+		_value = _object->get_property(_key);
+	else
+		_value = _object->get_variable(_key);
 	
 	QueuedEvent::pre_process();
 }

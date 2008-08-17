@@ -68,8 +68,8 @@ public:
 protected:
 	friend class ClientStore;
 	
-	NodeModel(const string& plugin_uri, const Path& path, bool polyphonic);
-	NodeModel(SharedPtr<PluginModel> plugin, const Path& path, bool polyphonic);
+	NodeModel(const string& plugin_uri, const Path& path);
+	NodeModel(SharedPtr<PluginModel> plugin, const Path& path);
 
 	NodeModel(const Path& path);
 	void add_child(SharedPtr<ObjectModel> c);

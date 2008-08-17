@@ -58,8 +58,8 @@ PatchPortModule::PatchPortModule(boost::shared_ptr<PatchCanvas> canvas, SharedPt
 	
 	set_stacked_border(port->polyphonic());
 
-	port->signal_variable.connect(sigc::mem_fun(this, &PatchPortModule::variable_change));
-	port->signal_polyphonic.connect(sigc::mem_fun(this, &PatchPortModule::set_stacked_border));
+	port->signal_variable.connect(sigc::mem_fun(this, &PatchPortModule::set_variable));
+	port->signal_property.connect(sigc::mem_fun(this, &PatchPortModule::set_property));
 }
 
 
@@ -77,7 +77,10 @@ PatchPortModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<PortMod
 	ret->set_menu(ret->_patch_port->menu());
 	
 	for (GraphObject::Variables::const_iterator m = port->variables().begin(); m != port->variables().end(); ++m)
-		ret->variable_change(m->first, m->second);
+		ret->set_variable(m->first, m->second);
+	
+	for (GraphObject::Variables::const_iterator m = port->properties().begin(); m != port->properties().end(); ++m)
+		ret->set_property(m->first, m->second);
 	
 	ret->resize();
 
@@ -114,12 +117,20 @@ PatchPortModule::store_location()
 
 
 void
-PatchPortModule::variable_change(const string& key, const Atom& value)
+PatchPortModule::set_variable(const string& key, const Atom& value)
 {
 	if (key == "ingenuity:canvas-x" && value.type() == Atom::FLOAT)
 		move_to(value.get_float(), property_y());
 	else if (key == "ingenuity:canvas-y" && value.type() == Atom::FLOAT)
 		move_to(property_x(), value.get_float());
+}
+
+
+void
+PatchPortModule::set_property(const string& key, const Atom& value)
+{
+	if (key == "ingen:polyphonic" && value.type() == Atom::BOOL)
+		set_stacked_border(value.get_bool());
 }
 
 

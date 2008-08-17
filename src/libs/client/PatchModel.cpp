@@ -166,6 +166,15 @@ PatchModel::enabled() const
 	Variables::const_iterator i = _properties.find("ingen:enabled");
 	return (i != _properties.end() && i->second.type() == Atom::BOOL && i->second.get_bool());
 }
+	
+
+void
+PatchModel::set_property(const string& key, const Atom& value)
+{
+	ObjectModel::set_property(key, value);
+	if (key == "ingen:polyphony")
+		_poly = value.get_int32();
+}
 
 
 bool

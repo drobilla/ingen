@@ -519,9 +519,11 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 			}
 
 			if (plugin_uri != "")
-				_engine->new_node(path, plugin_uri, polyphonic);
+				_engine->new_node(path, plugin_uri);
 			else
-				_engine->new_node_deprecated(path, plugin_type, library_name, plugin_label, polyphonic);
+				_engine->new_node_deprecated(path, plugin_type, library_name, plugin_label);
+
+			_engine->set_property(path, "ingen:polyphonic", polyphonic);
 		
 			for (GraphObject::Variables::const_iterator i = initial_data.begin(); i != initial_data.end(); ++i)
 				_engine->set_variable(path, i->first, i->second);
@@ -531,7 +533,8 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 
 	// Not deprecated
 	} else {
-		_engine->new_node(path, plugin_uri, polyphonic);
+		_engine->new_node(path, plugin_uri);
+		_engine->set_property(path, "ingen:polyphonic", polyphonic);
 		for (GraphObject::Variables::const_iterator i = initial_data.begin(); i != initial_data.end(); ++i)
 			_engine->set_variable(path, i->first, i->second);
 		return true;

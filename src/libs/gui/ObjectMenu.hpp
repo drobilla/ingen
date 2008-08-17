@@ -51,7 +51,7 @@ protected:
 	void         on_menu_destroy();
 	void         on_menu_properties();
 
-	void polyphonic_changed(bool polyphonic);
+	void property_changed(const std::string& predicate, const Raul::Atom& value);
 
 	bool                   _enable_signal;
 	SharedPtr<ObjectModel> _object;

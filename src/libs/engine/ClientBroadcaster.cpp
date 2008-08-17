@@ -162,14 +162,6 @@ ClientBroadcaster::send_destroyed(const string& path)
 
 
 void
-ClientBroadcaster::send_polyphonic(const string& path, bool polyphonic)
-{
-	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
-		(*i).second->polyphonic(path, polyphonic);
-}
-
-
-void
 ClientBroadcaster::send_patch_cleared(const string& patch_path)
 {
 	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
@@ -189,14 +181,6 @@ ClientBroadcaster::send_disconnection(const string& src_port_path, const string&
 {
 	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
 		(*i).second->disconnect(src_port_path, dst_port_path);
-}
-
-
-void
-ClientBroadcaster::send_patch_polyphony(const string& patch_path, uint32_t poly)
-{
-	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
-		(*i).second->patch_polyphony(patch_path, poly);
 }
 
 

@@ -74,12 +74,6 @@ public:
 	                        const std::string& symbol,
 	                        const std::string& name) = 0;
 	
-	virtual void polyphonic(const std::string& path,
-	                        bool               polyphonic) = 0;
-	
-	virtual void patch_polyphony(const std::string& path,
-	                             uint32_t           poly) = 0;
-	
 	virtual void patch_cleared(const std::string& path) = 0;
 	
 	virtual void object_renamed(const std::string& old_path,

@@ -54,10 +54,8 @@ public:
 	sigc::signal<void, uint32_t>                           signal_num_plugins; 
 	sigc::signal<void, string, string, string, string>     signal_new_plugin; 
 	sigc::signal<void, string, uint32_t>                   signal_new_patch; 
-	sigc::signal<void, string, string, bool>               signal_new_node; 
+	sigc::signal<void, string, string>                     signal_new_node; 
 	sigc::signal<void, string, uint32_t, string, bool>     signal_new_port; 
-	sigc::signal<void, string, bool>                       signal_polyphonic; 
-	sigc::signal<void, string, uint32_t>                   signal_patch_polyphony; 
 	sigc::signal<void, string>                             signal_patch_cleared; 
 	sigc::signal<void, string, string>                     signal_object_renamed; 
 	sigc::signal<void, string>                             signal_object_destroyed; 
@@ -109,24 +107,18 @@ protected:
 	void new_patch(const string& path, uint32_t poly)
 		{ if (_enabled) signal_new_patch.emit(path, poly); }
 	
-	void new_node(const string& path, const string& plugin_uri, bool poly)
-		{ if (_enabled) signal_new_node.emit(path, plugin_uri, poly); }
+	void new_node(const string& path, const string& plugin_uri)
+		{ if (_enabled) signal_new_node.emit(path, plugin_uri); }
 	
 	void new_port(const string& path, uint32_t index, const string& data_type, bool is_output)
 		{ if (_enabled) signal_new_port.emit(path, index, data_type, is_output); }
 	
-	void polyphonic(const string& path, bool polyphonic)
-		{ if (_enabled) signal_polyphonic.emit(path, polyphonic); }
-
 	void connect(const string& src_port_path, const string& dst_port_path)
 		{ if (_enabled) signal_connection.emit(src_port_path, dst_port_path); }
 
 	void object_destroyed(const string& path)
 		{ if (_enabled) signal_object_destroyed.emit(path); }
 	
-	void patch_polyphony(const string& path, uint32_t poly)
-		{ if (_enabled) signal_patch_polyphony.emit(path, poly); }
-
 	void patch_cleared(const string& path)
 		{ if (_enabled) signal_patch_cleared.emit(path); }
 

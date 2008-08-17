@@ -36,7 +36,7 @@ ObjectSender::send_patch(ClientInterface* client, const PatchImpl* patch, bool r
 	client->bundle_begin();
 
 	client->new_patch(patch->path(), patch->internal_polyphony());
-	client->polyphonic(patch->path(), patch->polyphonic());
+	client->set_property(patch->path(), "ingen:polyphonic", patch->polyphonic());
 	
 	// Send variable
 	const GraphObjectImpl::Variables& data = patch->variables();
@@ -94,8 +94,8 @@ ObjectSender::send_node(ClientInterface* client, const NodeImpl* node, bool recu
 	
 	client->bundle_begin();
 	
-	client->new_node(node->path(), node->plugin()->uri(), node->polyphonic());
-	client->polyphonic(node->path(), node->polyphonic());
+	client->new_node(node->path(), node->plugin()->uri());
+	client->set_property(node->path(), "ingen:polyphonic", node->polyphonic());
 	
 	// Send variable
 	const GraphObjectImpl::Variables& data = node->variables();
@@ -120,7 +120,7 @@ ObjectSender::send_port(ClientInterface* client, const PortImpl* port)
 	client->bundle_begin();
 
 	client->new_port(port->path(), port->index(), port->type().uri(), port->is_output());
-	client->polyphonic(port->path(), port->polyphonic());
+	client->set_property(port->path(), "ingen:polyphonic", port->polyphonic());
 	
 	// Send variable
 	const GraphObjectImpl::Variables& data = port->variables();

@@ -26,9 +26,8 @@ namespace Ingen {
 namespace Client {
 
 
-ObjectModel::ObjectModel(const Path& path, bool polyphonic)
+ObjectModel::ObjectModel(const Path& path)
 	: _path(path)
-	, _polyphonic(polyphonic)
 {
 }
 
@@ -38,7 +37,7 @@ ObjectModel::~ObjectModel()
 }
 	
 
-/** Get a piece of variable for this object.
+/** Get a variable for this object.
  *
  * @return Metadata value with key @a key, empty string otherwise.
  */
@@ -55,11 +54,28 @@ ObjectModel::get_variable(const string& key) const
 }
 
 
-void
-ObjectModel::set_polyphonic(bool polyphonic)
+/** Get a property of this object.
+ *
+ * @return Metadata value with key @a key, empty string otherwise.
+ */
+const Atom&
+ObjectModel::get_property(const string& key) const
 {
-	_polyphonic = polyphonic;
-	signal_polyphonic.emit(polyphonic);
+	static const Atom null_atom;
+
+	Variables::const_iterator i = _properties.find(key);
+	if (i != _properties.end())
+		return i->second;
+	else
+		return null_atom;
+}
+
+
+bool
+ObjectModel::polyphonic() const
+{
+	Variables::const_iterator i = _properties.find("ingen:polyphonic");
+	return (i != _properties.end() && i->second.type() == Atom::BOOL && i->second.get_bool());
 }
 
 

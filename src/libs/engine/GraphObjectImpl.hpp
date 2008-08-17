@@ -78,8 +78,15 @@ public:
 		Variables::iterator i = _variables.find(key);
 		return (i != _variables.end()) ? (*i).second : null_atom;
 	}
+	
+	const Atom& get_property(const std::string& key) {
+		static Atom null_atom;
+		Variables::iterator i = _properties.find(key);
+		return (i != _properties.end()) ? (*i).second : null_atom;
+	}
 
-	const Variables& variables() const { return _variables; }
+	const Variables& variables()  const { return _variables; }
+	const Variables& properties() const { return _properties; }
 
 	/** The Patch this object is a child of. */
 	virtual PatchImpl* parent_patch() const;
@@ -111,6 +118,7 @@ protected:
 
 private:	
 	Variables _variables;
+	Variables _properties;
 };
 
 

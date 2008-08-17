@@ -48,8 +48,7 @@ public:
 	                       uint32_t           poly) = 0;
 	
 	virtual void new_node(const std::string& path,
-	                      const std::string& plugin_uri,
-	                      bool               polyphonic) = 0;
+	                      const std::string& plugin_uri) = 0;
 	
 	virtual void new_port(const std::string& path,
 	                      uint32_t           index,

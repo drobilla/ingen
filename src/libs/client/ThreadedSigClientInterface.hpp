@@ -54,9 +54,7 @@ public:
 	, new_patch_slot(signal_new_patch.make_slot())
 	, new_node_slot(signal_new_node.make_slot())
 	, new_port_slot(signal_new_port.make_slot())
-	, polyphonic_slot(signal_polyphonic.make_slot())
 	, connection_slot(signal_connection.make_slot())
-	, patch_polyphony_slot(signal_patch_polyphony.make_slot())
 	, patch_cleared_slot(signal_patch_cleared.make_slot())
 	, object_destroyed_slot(signal_object_destroyed.make_slot())
 	, object_renamed_slot(signal_object_renamed.make_slot())
@@ -99,24 +97,18 @@ public:
 	void new_patch(const string& path, uint32_t poly)
 		{ push_sig(sigc::bind(new_patch_slot, path, poly)); }
 	
-	void new_node(const string& path, const string& plugin_uri, bool polyphonic)
-		{ push_sig(sigc::bind(new_node_slot, path, plugin_uri, polyphonic)); }
+	void new_node(const string& path, const string& plugin_uri)
+		{ push_sig(sigc::bind(new_node_slot, path, plugin_uri)); }
 	
 	void new_port(const string& path, uint32_t index,  const string& data_type, bool is_output)
 		{ push_sig(sigc::bind(new_port_slot, path, index, data_type, is_output)); }
 	
-	void polyphonic(const string& path, bool polyphonic)
-		{ push_sig(sigc::bind(polyphonic_slot, path, polyphonic)); }
-
 	void connect(const string& src_port_path, const string& dst_port_path)
 		{ push_sig(sigc::bind(connection_slot, src_port_path, dst_port_path)); }
 
 	void object_destroyed(const string& path)
 		{ push_sig(sigc::bind(object_destroyed_slot, path)); }
 	
-	void patch_polyphony(const string& path, uint32_t poly)
-		{ push_sig(sigc::bind(patch_polyphony_slot, path, poly)); }
-
 	void patch_cleared(const string& path)
 		{ push_sig(sigc::bind(patch_cleared_slot, path)); }
 
@@ -164,11 +156,9 @@ private:
 	sigc::slot<void, string>                             error_slot; 
 	sigc::slot<void, string, string, string, string>     new_plugin_slot; 
 	sigc::slot<void, string, uint32_t>                   new_patch_slot; 
-	sigc::slot<void, string, string, bool>               new_node_slot; 
+	sigc::slot<void, string, string>                     new_node_slot; 
 	sigc::slot<void, string, uint32_t, string, bool>     new_port_slot;
-	sigc::slot<void, string, bool>                       polyphonic_slot;
 	sigc::slot<void, string, string>                     connection_slot;
-	sigc::slot<void, string, uint32_t>                   patch_polyphony_slot; 
 	sigc::slot<void, string>                             patch_cleared_slot; 
 	sigc::slot<void, string>                             object_destroyed_slot; 
 	sigc::slot<void, string, string>                     object_renamed_slot; 

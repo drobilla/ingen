@@ -345,7 +345,8 @@ LoadPluginWindow::add_clicked()
 			dialog.run();
 		} else {
 			Path path = _patch->path().base() + Path::nameify(name);
-			App::instance().engine()->new_node(path, plugin->uri(), polyphonic);
+			App::instance().engine()->new_node(path, plugin->uri());
+			App::instance().engine()->set_property(path, "ingen:polyphonic", polyphonic);
 			for (GraphObject::Variables::const_iterator i = _initial_data.begin(); i != _initial_data.end(); ++i)
 				App::instance().engine()->set_variable(path, i->first, i->second);
 			_node_name_entry->set_text(generate_module_name(++_plugin_name_offset));

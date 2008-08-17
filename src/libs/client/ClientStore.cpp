@@ -42,8 +42,6 @@ ClientStore::ClientStore(SharedPtr<EngineInterface> engine, SharedPtr<SigClientI
 	emitter->signal_new_patch.connect(sigc::mem_fun(this, &ClientStore::new_patch_event));
 	emitter->signal_new_node.connect(sigc::mem_fun(this, &ClientStore::new_node_event));
 	emitter->signal_new_port.connect(sigc::mem_fun(this, &ClientStore::new_port_event));
-	emitter->signal_polyphonic.connect(sigc::mem_fun(this, &ClientStore::polyphonic_event));
-	emitter->signal_patch_polyphony.connect(sigc::mem_fun(this, &ClientStore::patch_polyphony_event));
 	emitter->signal_patch_cleared.connect(sigc::mem_fun(this, &ClientStore::patch_cleared_event));
 	emitter->signal_connection.connect(sigc::mem_fun(this, &ClientStore::connection_event));
 	emitter->signal_disconnection.connect(sigc::mem_fun(this, &ClientStore::disconnection_event));
@@ -417,14 +415,14 @@ ClientStore::new_patch_event(const Path& path, uint32_t poly)
 
 
 void
-ClientStore::new_node_event(const Path& path, const string& plugin_uri, bool polyphonic)
+ClientStore::new_node_event(const Path& path, const string& plugin_uri)
 {
 	SharedPtr<PluginModel> plug = plugin(plugin_uri);
 	if (!plug) {
-		SharedPtr<NodeModel> n(new NodeModel(plugin_uri, path, polyphonic));
+		SharedPtr<NodeModel> n(new NodeModel(plugin_uri, path));
 		add_plugin_orphan(n);
 	} else {
-		SharedPtr<NodeModel> n(new NodeModel(plug, path, polyphonic));
+		SharedPtr<NodeModel> n(new NodeModel(plug, path));
 		add_object(n);
 	}
 }
@@ -439,24 +437,6 @@ ClientStore::new_port_event(const Path& path, uint32_t index, const string& type
 	add_object(p);
 	if (p->parent())
 		resolve_connection_orphans(p);
-}
-
-	
-void
-ClientStore::polyphonic_event(const Path& path, bool polyphonic)
-{
-	SharedPtr<ObjectModel> object = this->object(path);
-	if (object)
-		object->set_polyphonic(polyphonic);
-}
-
-
-void
-ClientStore::patch_polyphony_event(const Path& path, uint32_t poly)
-{
-	SharedPtr<PatchModel> patch = PtrCast<PatchModel>(object(path));
-	if (patch)
-		patch->poly(poly);
 }
 
 

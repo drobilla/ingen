@@ -145,16 +145,12 @@ OSCClientReceiver::setup_callbacks()
 	lo_server_thread_add_method(_st, "/ingen/plugin", "ssss", plugin_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/new_patch", "si", new_patch_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/destroyed", "s", destroyed_cb, this);
-	lo_server_thread_add_method(_st, "/ingen/patch_polyphony", "si", patch_polyphony_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/patch_cleared", "s", patch_cleared_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/object_renamed", "ss", object_renamed_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/new_connection", "ss", connection_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/disconnection", "ss", disconnection_cb, this);
-	lo_server_thread_add_method(_st, "/ingen/new_node", "ssT", new_node_cb, this);
-	lo_server_thread_add_method(_st, "/ingen/new_node", "ssF", new_node_cb, this);
+	lo_server_thread_add_method(_st, "/ingen/new_node", "ss", new_node_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/new_port", "sisi", new_port_cb, this);
-	lo_server_thread_add_method(_st, "/ingen/polyphonic", "sT", polyphonic_cb, this);
-	lo_server_thread_add_method(_st, "/ingen/polyphonic", "sF", polyphonic_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/set_variable", NULL, set_variable_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/set_property", NULL, set_property_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/set_port_value", "sf", set_port_value_cb, this);
@@ -187,14 +183,6 @@ int
 OSCClientReceiver::_destroyed_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	object_destroyed((const char*)&argv[0]->s);
-	return 0;
-}
-
-
-int
-OSCClientReceiver::_patch_polyphony_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
-{
-	patch_polyphony((const char*)&argv[0]->s, argv[1]->i);
 	return 0;
 }
 
@@ -246,9 +234,8 @@ OSCClientReceiver::_new_node_cb(const char* path, const char* types, lo_arg** ar
 {
 	const char*   uri        = &argv[0]->s;
 	const char*   node_path  = &argv[1]->s;
-	const bool    polyphonic = (types[2] == 'T');
 
-	new_node(uri, node_path, polyphonic);
+	new_node(uri, node_path);
 
 	return 0;
 }
@@ -266,20 +253,6 @@ OSCClientReceiver::_new_port_cb(const char* path, const char* types, lo_arg** ar
 
 	new_port(port_path, index, type, is_output);
 	
-	return 0;	
-}
-
-
-/** Notification of an object's polyphonic flag
- */
-int
-OSCClientReceiver::_polyphonic_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
-{
-	const char* obj_path = &argv[0]->s;
-	const bool  poly     = (types[1] == 'T');
-
-	polyphonic(obj_path, poly);
-
 	return 0;	
 }
 

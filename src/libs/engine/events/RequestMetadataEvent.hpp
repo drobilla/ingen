@@ -38,13 +38,19 @@ namespace Shared {
 class RequestMetadataEvent : public QueuedEvent
 {
 public:
-	RequestMetadataEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& key);
+	RequestMetadataEvent(Engine&              engine,
+	                     SharedPtr<Responder> responder,
+	                     SampleCount          timestamp,
+	                     bool                 property,
+	                     const string&        path,
+	                     const string&        key);
 
 	void pre_process();
 	void post_process();
 
 private:
 	string           _path;
+	bool             _property;
 	string           _key;
 	Raul::Atom       _value; 
 	GraphObjectImpl* _object;

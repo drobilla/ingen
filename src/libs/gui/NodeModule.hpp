@@ -73,6 +73,7 @@ protected:
 	
 	void rename();
 	void set_variable(const std::string& key, const Atom& value);
+	void set_property(const std::string& predicate, const Raul::Atom& value);
 	
 	void add_port(SharedPtr<PortModel> port, bool resize=true);
 	void remove_port(SharedPtr<PortModel> port);

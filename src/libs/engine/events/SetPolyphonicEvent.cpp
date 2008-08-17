@@ -68,7 +68,7 @@ SetPolyphonicEvent::post_process()
 	if (_object) {
 		if (_success) {
 			_responder->respond_ok();
-			_engine.broadcaster()->send_polyphonic(_path, _poly);
+			_engine.broadcaster()->send_property_change(_path, "ingen:polyphonic", _poly);
 		} else {
 			_responder->respond_error("Unable to set object as polyphonic");
 		}

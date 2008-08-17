@@ -156,22 +156,14 @@ OSCEngineSender::new_port(const string& path,
 
 void
 OSCEngineSender::new_node(const string& path,
-                          const string& plugin_uri,
-                          bool          polyphonic)
+                          const string& plugin_uri)
 {
 
-	if (polyphonic)
-		send("/ingen/new_node",  "issT",
-			next_id(),
-			path.c_str(),
-			plugin_uri.c_str(),
-			LO_ARGS_END);
-	else
-		send("/ingen/new_node",  "issF",
-			next_id(),
-			path.c_str(),
-			plugin_uri.c_str(),
-			LO_ARGS_END);
+	send("/ingen/new_node",  "iss",
+		next_id(),
+		path.c_str(),
+		plugin_uri.c_str(),
+		LO_ARGS_END);
 }
 
 
@@ -183,25 +175,15 @@ void
 OSCEngineSender::new_node_deprecated(const string& path,
                                      const string& plugin_type,
                                      const string& library_name,
-                                     const string& plugin_label,
-                                     bool          polyphonic)
+                                     const string& plugin_label)
 {
-	if (polyphonic)
-		send("/ingen/new_node",  "issssT",
-			next_id(),
-			path.c_str(),
-			plugin_type.c_str(),
-			library_name.c_str(),
-			plugin_label.c_str(),
-			LO_ARGS_END);
-	else
-		send("/ingen/new_node",  "issssF",
-			next_id(),
-			path.c_str(),
-			plugin_type.c_str(),
-			library_name.c_str(),
-			plugin_label.c_str(),
-			LO_ARGS_END);
+	send("/ingen/new_node",  "issss",
+		next_id(),
+		path.c_str(),
+		plugin_type.c_str(),
+		library_name.c_str(),
+		plugin_label.c_str(),
+		LO_ARGS_END);
 }
 
 
@@ -459,10 +441,22 @@ OSCEngineSender::request_port_value(const string& port_path)
 		LO_ARGS_END);
 }
 
+
 void
 OSCEngineSender::request_variable(const string& object_path, const string& key)
 {
 	send("/ingen/request_variable", "iss",
+		next_id(),
+		object_path.c_str(),
+		key.c_str(),
+		LO_ARGS_END);
+}
+
+	
+void
+OSCEngineSender::request_property(const string& object_path, const string& key)
+{
+	send("/ingen/request_property", "iss",
 		next_id(),
 		object_path.c_str(),
 		key.c_str(),

@@ -47,7 +47,7 @@ NodeModule::NodeModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeMode
 	node->signal_new_port.connect(sigc::bind(sigc::mem_fun(this, &NodeModule::add_port), true));
 	node->signal_removed_port.connect(sigc::mem_fun(this, &NodeModule::remove_port));
 	node->signal_variable.connect(sigc::mem_fun(this, &NodeModule::set_variable));
-	node->signal_polyphonic.connect(sigc::mem_fun(this, &NodeModule::set_stacked_border));
+	node->signal_property.connect(sigc::mem_fun(this, &NodeModule::set_property));
 	node->signal_renamed.connect(sigc::mem_fun(this, &NodeModule::rename));
 }
 
@@ -305,6 +305,14 @@ NodeModule::set_variable(const string& key, const Atom& value)
 		move_to(value.get_float(), property_y());
 	else if (key == "ingenuity:canvas-y" && value.type() == Atom::FLOAT)
 		move_to(property_x(), value.get_float());
+}
+
+
+void
+NodeModule::set_property(const string& key, const Atom& value)
+{
+	if (key == "ingen:polyphonic" && value.type() == Atom::BOOL)
+		set_stacked_border(value.get_bool());
 }
 
 
