@@ -163,7 +163,7 @@ PatchModel::remove_connection(const string& src_port_path, const string& dst_por
 bool
 PatchModel::enabled() const
 {
-	Variables::const_iterator i = _properties.find("ingen:enabled");
+	Properties::const_iterator i = _properties.find("ingen:enabled");
 	return (i != _properties.end() && i->second.type() == Atom::BOOL && i->second.get_bool());
 }
 	

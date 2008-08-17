@@ -31,7 +31,7 @@ void
 PluginImpl::load()
 {
 	if (!_module) {
-		cerr << "Loading " << _library_path << " library" << endl;
+		//cerr << "Loading " << _library_path << " library" << endl;
 		_module = new Glib::Module(_library_path, Glib::MODULE_BIND_LOCAL);
 		if (!(*_module))
 			delete _module;
@@ -43,7 +43,7 @@ void
 PluginImpl::unload()
 {
 	if (_module) {
-		cerr << "Unloading " << _library_path << endl;
+		//cerr << "Unloading " << _library_path << endl;
 		delete _module;
 		_module = NULL;
 	}

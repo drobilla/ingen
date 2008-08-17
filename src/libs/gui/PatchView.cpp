@@ -80,7 +80,7 @@ PatchView::set_patch(SharedPtr<PatchModel> patch)
 	_poly_spin->set_value(patch->poly());
 	_destroy_but->set_sensitive(patch->path() != "/");
 
-	for (GraphObject::Variables::const_iterator i = patch->properties().begin();
+	for (GraphObject::Properties::const_iterator i = patch->properties().begin();
 			i != patch->properties().end(); ++i)
 		property_changed(i->first, i->second);
 

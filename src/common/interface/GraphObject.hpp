@@ -43,12 +43,14 @@ class GraphObject : public Raul::Deletable
 {
 public:
 	typedef std::map<std::string, Raul::Atom> Variables;
+	typedef std::map<std::string, Raul::Atom> Properties;
 
 	typedef PathTable< SharedPtr<GraphObject> >::const_iterator const_iterator;
 	
 	virtual const Raul::Path   path()       const = 0;
 	virtual const Raul::Symbol symbol()     const = 0;
 	virtual const Variables&   variables()  const = 0;
+	virtual const Properties&  properties() const = 0;
 	virtual bool               polyphonic() const = 0;
 	
 	// FIXME: return WeakPtr, and stupid name

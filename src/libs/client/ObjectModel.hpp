@@ -69,7 +69,7 @@ public:
 		{ _properties[key] = value; signal_property.emit(key, value); }
 
 	const Variables&       variables()  const { return _variables; }
-	const Variables&       properties() const { return _properties; }
+	const Properties&      properties() const { return _properties; }
 	const Path             path()       const { return _path; }
 	const Symbol           symbol()     const { return _path.name(); }
 	SharedPtr<ObjectModel> parent()     const { return _parent; }
@@ -100,8 +100,8 @@ protected:
 	Path                   _path;
 	SharedPtr<ObjectModel> _parent;
 	
-	Variables _variables;
-	Variables _properties;
+	Variables  _variables;
+	Properties _properties;
 };
 
 

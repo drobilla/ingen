@@ -81,12 +81,12 @@ public:
 	
 	const Atom& get_property(const std::string& key) {
 		static Atom null_atom;
-		Variables::iterator i = _properties.find(key);
+		Properties::iterator i = _properties.find(key);
 		return (i != _properties.end()) ? (*i).second : null_atom;
 	}
 
-	const Variables& variables()  const { return _variables; }
-	const Variables& properties() const { return _properties; }
+	const Variables&  variables()  const { return _variables; }
+	const Properties& properties() const { return _properties; }
 
 	/** The Patch this object is a child of. */
 	virtual PatchImpl* parent_patch() const;
@@ -117,8 +117,8 @@ protected:
 	bool             _polyphonic;
 
 private:	
-	Variables _variables;
-	Variables _properties;
+	Variables  _variables;
+	Properties _properties;
 };
 
 

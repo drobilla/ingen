@@ -63,7 +63,7 @@ ObjectModel::get_property(const string& key) const
 {
 	static const Atom null_atom;
 
-	Variables::const_iterator i = _properties.find(key);
+	Properties::const_iterator i = _properties.find(key);
 	if (i != _properties.end())
 		return i->second;
 	else
@@ -74,7 +74,7 @@ ObjectModel::get_property(const string& key) const
 bool
 ObjectModel::polyphonic() const
 {
-	Variables::const_iterator i = _properties.find("ingen:polyphonic");
+	Properties::const_iterator i = _properties.find("ingen:polyphonic");
 	return (i != _properties.end() && i->second.type() == Atom::BOOL && i->second.get_bool());
 }
 

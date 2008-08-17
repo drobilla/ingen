@@ -79,7 +79,7 @@ PatchPortModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<PortMod
 	for (GraphObject::Variables::const_iterator m = port->variables().begin(); m != port->variables().end(); ++m)
 		ret->set_variable(m->first, m->second);
 	
-	for (GraphObject::Variables::const_iterator m = port->properties().begin(); m != port->properties().end(); ++m)
+	for (GraphObject::Properties::const_iterator m = port->properties().begin(); m != port->properties().end(); ++m)
 		ret->set_property(m->first, m->second);
 	
 	ret->resize();
