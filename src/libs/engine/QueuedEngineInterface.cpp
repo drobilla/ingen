@@ -304,7 +304,7 @@ QueuedEngineInterface::set_variable(const string& path,
                                     const string& predicate,
                                     const Atom&   value)
 {
-	push_queued(new SetMetadataEvent(_engine, _responder, now(), path, predicate, value));
+	push_queued(new SetMetadataEvent(_engine, _responder, now(), false, path, predicate, value));
 }
 
 	
@@ -329,6 +329,8 @@ QueuedEngineInterface::set_property(const string& path,
 			push_queued(new SetPolyphonyEvent(_engine, _responder, now(), this, path, value.get_int32()));
 			return;
 		}
+	} else {
+		push_queued(new SetMetadataEvent(_engine, _responder, now(), true, path, predicate, value));
 	}
 
 	cerr << "WARNING: Unknown property (or bad type) \"" << predicate << "\"" << endl;

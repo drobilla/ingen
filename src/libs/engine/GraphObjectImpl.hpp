@@ -72,6 +72,9 @@ public:
 	
 	void set_variable(const std::string& key, const Atom& value)
 		{ _variables[key] = value; }
+	
+	void set_property(const std::string& key, const Atom& value)
+		{ _properties[key] = value; }
 
 	const Atom& get_variable(const std::string& key) {
 		static Atom null_atom;

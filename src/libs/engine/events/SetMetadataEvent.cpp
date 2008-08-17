@@ -28,12 +28,20 @@ using std::string;
 namespace Ingen {
 
 
-SetMetadataEvent::SetMetadataEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& key, const Atom& value)
-: QueuedEvent(engine, responder, timestamp),
-  _path(path),
-  _key(key),
-  _value(value),
-  _object(NULL)
+SetMetadataEvent::SetMetadataEvent(
+		Engine&              engine,
+		SharedPtr<Responder> responder,
+		SampleCount          timestamp,
+		bool                 property,
+		const string&        path,
+		const string&        key,
+		const Atom&          value)
+	: QueuedEvent(engine, responder, timestamp)
+	, _property(property)
+	, _path(path)
+	, _key(key)
+	, _value(value)
+	, _object(NULL)
 {
 }
 
@@ -47,7 +55,10 @@ SetMetadataEvent::pre_process()
 		return;
 	}
 
-	_object->set_variable(_key, _value);
+	if (_property)
+		_object->set_property(_key, _value);
+	else
+		_object->set_variable(_key, _value);
 
 	QueuedEvent::pre_process();
 }
@@ -70,7 +81,10 @@ SetMetadataEvent::post_process()
 		_responder->respond_error(msg);
 	} else {
 		_responder->respond_ok();
-		_engine.broadcaster()->send_variable_change(_path, _key, _value);
+		if (_property)
+			_engine.broadcaster()->send_property_change(_path, _key, _value);
+		else
+			_engine.broadcaster()->send_variable_change(_path, _key, _value);
 	}
 }
 

@@ -134,7 +134,6 @@ Parser::parse(
 
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
 		const Redland::Node subject = (object_uri ? subject_uri : (*i)["subject"]);
-		cout << "SUBJECT FROM RDF: " << subject.to_string() << endl;
 		const Redland::Node rdf_class = (*i)["class"];
 		cout << subject.to_c_string() << " :: " << rdf_class.to_c_string() << endl;
 		if (rdf_class == patch_class || rdf_class == node_class || rdf_class == port_class) {
@@ -420,7 +419,7 @@ Parser::parse_node(
 		Ingen::Shared::CommonInterface*         target,
 		Redland::Model&                         model,
 		const Glib::ustring&                    base_uri,
-		Glib::ustring                           subject,
+		const Glib::ustring&                    subject,
 		Raul::Path                              path,
 		boost::optional<GraphObject::Variables> data=boost::optional<GraphObject::Variables>())
 {

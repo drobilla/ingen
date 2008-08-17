@@ -97,10 +97,15 @@ ObjectSender::send_node(ClientInterface* client, const NodeImpl* node, bool recu
 	client->new_node(node->path(), node->plugin()->uri());
 	client->set_property(node->path(), "ingen:polyphonic", node->polyphonic());
 	
-	// Send variable
+	// Send variables
 	const GraphObjectImpl::Variables& data = node->variables();
 	for (GraphObjectImpl::Variables::const_iterator j = data.begin(); j != data.end(); ++j)
 		client->set_variable(node->path(), (*j).first, (*j).second);
+	
+	// Send properties
+	const GraphObjectImpl::Properties& prop = node->properties();
+	for (GraphObjectImpl::Properties::const_iterator j = prop.begin(); j != prop.end(); ++j)
+		client->set_property(node->path(), (*j).first, (*j).second);
 	
 	client->bundle_end();
 	
@@ -126,6 +131,11 @@ ObjectSender::send_port(ClientInterface* client, const PortImpl* port)
 	const GraphObjectImpl::Variables& data = port->variables();
 	for (GraphObjectImpl::Variables::const_iterator j = data.begin(); j != data.end(); ++j)
 		client->set_variable(port->path(), (*j).first, (*j).second);
+	
+	// Send properties
+	const GraphObjectImpl::Properties& prop = port->properties();
+	for (GraphObjectImpl::Properties::const_iterator j = prop.begin(); j != prop.end(); ++j)
+		client->set_property(port->path(), (*j).first, (*j).second);
 	
 	// Send control value
 	if (port->type() == DataType::CONTROL) {

@@ -95,7 +95,7 @@ private:
 			Ingen::Shared::CommonInterface*         target,
 			Redland::Model&                         model,
 			const Glib::ustring&                    base_uri,
-			Glib::ustring                           subject,
+			const Glib::ustring&                    subject,
 			Raul::Path                              path,
 			boost::optional<GraphObject::Variables> data);
 	

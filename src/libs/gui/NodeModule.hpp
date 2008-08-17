@@ -70,6 +70,7 @@ protected:
 	void embed_gui(bool embed);
 	bool popup_gui();
 	void on_gui_window_close();
+	void set_selected(bool b);
 	
 	void rename();
 	void set_variable(const std::string& key, const Atom& value);

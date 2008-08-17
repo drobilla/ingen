@@ -39,6 +39,7 @@ public:
 	SetMetadataEvent(Engine&              engine,
 	                 SharedPtr<Responder> responder,
 	                 SampleCount          timestamp,
+	                 bool                 property,
 	                 const string&        path,
 	                 const string&        key,
 	                 const Raul::Atom&    value);
@@ -48,9 +49,10 @@ public:
 	void post_process();
 
 private:
-	string       _path;
-	string       _key;
-	Raul::Atom   _value;
+	bool             _property;
+	string           _path;
+	string           _key;
+	Raul::Atom       _value;
 	GraphObjectImpl* _object;
 };
 
