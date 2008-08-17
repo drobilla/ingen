@@ -54,7 +54,7 @@ class ClientStore;
  *
  * \ingroup IngenClient
  */
-class ObjectModel : virtual public Ingen::Shared::GraphObject, public boost::noncopyable
+class ObjectModel : virtual public Ingen::Shared::GraphObject
 {
 public:
 	virtual ~ObjectModel();

@@ -48,6 +48,7 @@ class ClientStore;
 class NodeModel : public ObjectModel, virtual public Ingen::Shared::Node
 {
 public:
+	NodeModel(const NodeModel& copy);
 	virtual ~NodeModel();
 
 	SharedPtr<PortModel> get_port(const string& port_name) const;
@@ -83,12 +84,12 @@ protected:
 
 	virtual void clear();
 	
-	PortModelList                   _ports;      ///< List of ports (not a Table to preserve order)
-	string                          _plugin_uri; ///< Plugin URI (if PluginModel is unknown)
-	SharedPtr<PluginModel>          _plugin;     ///< The plugin this node is an instance of
-	
-	float*                          _min_values; ///< The min values for the node ports (only used for LV2 so far)
-	float*                          _max_values; ///< The max values for the node ports (only used for LV2 so far)
+	PortModelList          _ports;      ///< List of ports (not a Table to preserve order)
+	string                 _plugin_uri; ///< Plugin URI (if PluginModel is unknown)
+	SharedPtr<PluginModel> _plugin;     ///< The plugin this node is an instance of
+	uint32_t               _num_values; ///< Size of _min_values and _max_values
+	float*                 _min_values; ///< Port min values (cached for LV2)
+	float*                 _max_values; ///< Port max values (cached for LV2)
 };
 
 

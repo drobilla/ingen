@@ -31,6 +31,7 @@ NodeModel::NodeModel(SharedPtr<PluginModel> plugin, const Path& path)
 	: ObjectModel(path)
 	, _plugin_uri(plugin->uri())
 	, _plugin(plugin)
+	, _num_values(0)
 	, _min_values(0)
 	, _max_values(0)
 {
@@ -39,9 +40,22 @@ NodeModel::NodeModel(SharedPtr<PluginModel> plugin, const Path& path)
 NodeModel::NodeModel(const string& plugin_uri, const Path& path)
 	: ObjectModel(path)
 	, _plugin_uri(plugin_uri)
+	, _num_values(0)
 	, _min_values(0)
 	, _max_values(0)
 {
+}
+
+
+NodeModel::NodeModel(const NodeModel& copy)
+	: ObjectModel(copy)
+	, _plugin_uri(copy._plugin_uri)
+	, _num_values(copy._num_values)
+	, _min_values((float*)malloc(sizeof(float) * _num_values))
+	, _max_values((float*)malloc(sizeof(float) * _num_values))
+{
+	memcpy(_min_values, copy._min_values, sizeof(float) * _num_values);
+	memcpy(_max_values, copy._max_values, sizeof(float) * _num_values);
 }
 
 
@@ -83,8 +97,8 @@ NodeModel::clear()
 {
 	_ports.clear();
 	assert(_ports.empty());
-	delete [] _min_values;
-	delete [] _max_values;
+	delete[] _min_values;
+	delete[] _max_values;
 	_min_values = 0;
 	_max_values = 0;
 }
@@ -166,20 +180,20 @@ NodeModel::port_value_range(SharedPtr<PortModel> port, float& min, float& max)
 	if (_plugin && _plugin->type() == PluginModel::LV2) {
 
 		if (!_min_values) {
-		  
-		  Glib::Mutex::Lock lock(PluginModel::rdf_world()->mutex());
-		  
-		  uint32_t num_lv2_ports = slv2_plugin_get_num_ports(_plugin->slv2_plugin());
-		  _min_values = new float[num_lv2_ports];
-		  _max_values = new float[num_lv2_ports];
-		  slv2_plugin_get_port_ranges_float(_plugin->slv2_plugin(), 
-					      _min_values, _max_values, 0);
+
+			Glib::Mutex::Lock lock(PluginModel::rdf_world()->mutex());
+
+			_num_values = slv2_plugin_get_num_ports(_plugin->slv2_plugin());
+			_min_values = new float[_num_values];
+			_max_values = new float[_num_values];
+			slv2_plugin_get_port_ranges_float(_plugin->slv2_plugin(), 
+					_min_values, _max_values, 0);
 		}
 
 		if (!std::isnan(_min_values[port->index()]))
-		  min = _min_values[port->index()];
+			min = _min_values[port->index()];
 		if (!std::isnan(_max_values[port->index()]))
-		  max = _max_values[port->index()];
+			max = _max_values[port->index()];
 	}
 #endif
 

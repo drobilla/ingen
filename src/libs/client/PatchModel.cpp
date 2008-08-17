@@ -57,7 +57,7 @@ PatchModel::remove_child(SharedPtr<ObjectModel> o)
 	
 	// Remove any connections which referred to this object,
 	// since they can't possibly exist anymore
-	for (Connections::iterator j = _connections.begin(); j != _connections.end() ; ) {
+	for (Connections::iterator j = _connections->begin(); j != _connections->end() ; ) {
 
 		Connections::iterator next = j;
 		++next;
@@ -70,7 +70,7 @@ PatchModel::remove_child(SharedPtr<ObjectModel> o)
 				|| cm->dst_port_path().parent() == o->path()
 				|| cm->dst_port_path() == o->path()) {
 			signal_removed_connection.emit(cm);
-			_connections.erase(j); // cuts our reference
+			_connections->erase(j); // cuts our reference
 			assert(!get_connection(cm->src_port_path(), cm->dst_port_path())); // no duplicates
 		}
 		j = next;
@@ -87,11 +87,11 @@ PatchModel::remove_child(SharedPtr<ObjectModel> o)
 void
 PatchModel::clear()
 {
-	_connections.clear();
+	_connections->clear();
 
 	NodeModel::clear();
 
-	assert(_connections.empty());
+	assert(_connections->empty());
 	assert(_ports.empty());
 }
 
@@ -99,7 +99,7 @@ PatchModel::clear()
 SharedPtr<ConnectionModel>
 PatchModel::get_connection(const string& src_port_path, const string& dst_port_path) const
 {
-	for (Connections::const_iterator i = _connections.begin(); i != _connections.end(); ++i)
+	for (Connections::const_iterator i = _connections->begin(); i != _connections->end(); ++i)
 		if ((*i)->src_port_path() == src_port_path && (*i)->dst_port_path() == dst_port_path)
 			return PtrCast<ConnectionModel>(*i);
 
@@ -135,7 +135,7 @@ PatchModel::add_connection(SharedPtr<ConnectionModel> cm)
 		assert(cm->src_port() == existing->src_port());
 		assert(cm->dst_port() == existing->dst_port());
 	} else {
-		_connections.push_back(new Connections::Node(cm));
+		_connections->push_back(new Connections::Node(cm));
 		signal_new_connection.emit(cm);
 	}
 }
@@ -144,12 +144,12 @@ PatchModel::add_connection(SharedPtr<ConnectionModel> cm)
 void
 PatchModel::remove_connection(const string& src_port_path, const string& dst_port_path)
 {
-	for (Connections::iterator i = _connections.begin(); i != _connections.end(); ++i) {
+	for (Connections::iterator i = _connections->begin(); i != _connections->end(); ++i) {
 		SharedPtr<ConnectionModel> cm = PtrCast<ConnectionModel>(*i);
 		assert(cm);
 		if (cm->src_port_path() == src_port_path && cm->dst_port_path() == dst_port_path) {
 			signal_removed_connection.emit(cm);
-			delete _connections.erase(i); // cuts our reference
+			delete _connections->erase(i); // cuts our reference
 			assert(!get_connection(src_port_path, dst_port_path)); // no duplicates
 			return;
 		}

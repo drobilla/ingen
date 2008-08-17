@@ -43,7 +43,9 @@ class ClientStore;
 class PatchModel : public NodeModel, public Ingen::Shared::Patch
 {
 public:
-	const Connections& connections() const { return _connections; }
+	/* WARNING: Copy constructor creates a shallow copy WRT connections */
+
+	const Connections& connections() const { return *_connections.get(); }
 	
 	SharedPtr<ConnectionModel> get_connection(const string& src_port_path,
 	                                          const string& dst_port_path) const;
@@ -80,6 +82,7 @@ private:
 
 	PatchModel(const Path& patch_path, size_t internal_poly)
 		: NodeModel("ingen:Patch", patch_path)
+		, _connections(new Connections())
 		, _poly(internal_poly)
 		, _editable(true)
 	{
@@ -92,9 +95,9 @@ private:
 	void add_connection(SharedPtr<ConnectionModel> cm);
 	void remove_connection(const string& src_port_path, const string& dst_port_path);
 	
-	Connections _connections;
-	uint32_t    _poly;
-	bool        _editable;
+	SharedPtr<Connections> _connections;
+	uint32_t               _poly;
+	bool                   _editable;
 };
 
 typedef Table<string, SharedPtr<PatchModel> > PatchModelMap;
