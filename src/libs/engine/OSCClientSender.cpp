@@ -213,7 +213,7 @@ OSCClientSender::plugins()
 void OSCClientSender::new_node(const std::string& node_path,
                                const std::string& plugin_uri)
 {
-	send("/ingen/new_node", "ss", node_path.c_str(), plugin_uri.c_str());
+	send("/ingen/new_node", "ss", node_path.c_str(), plugin_uri.c_str(), LO_ARGS_END);
 }
 
 
@@ -366,7 +366,7 @@ OSCClientSender::port_activity(const std::string& port_path)
 	if (!_enabled)
 		return;
 
-	lo_send(_address, "/ingen/port_activity", "s", port_path.c_str());
+	lo_send(_address, "/ingen/port_activity", "s", port_path.c_str(), LO_ARGS_END);
 }
 
 
@@ -438,7 +438,7 @@ void
 OSCClientSender::program_add(const std::string& node_path, uint32_t bank, uint32_t program, const std::string& name)
 {
 	send("/ingen/program_add", "siis", 
-		node_path.c_str(), bank, program, name.c_str());
+		node_path.c_str(), bank, program, name.c_str(), LO_ARGS_END);
 }
 
 
@@ -446,7 +446,7 @@ void
 OSCClientSender::program_remove(const std::string& node_path, uint32_t bank, uint32_t program)
 {
 	send("/ingen/program_remove", "sii", 
-		node_path.c_str(), bank, program);
+		node_path.c_str(), bank, program, LO_ARGS_END);
 }
 
 
