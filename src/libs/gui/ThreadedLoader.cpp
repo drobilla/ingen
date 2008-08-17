@@ -36,8 +36,18 @@ ThreadedLoader::ThreadedLoader(SharedPtr<EngineInterface> engine)
 {
 	set_name("Loader");
 	
-	// FIXME: rework this so the thread is only present when it's doing something (save mem)
-	// and module isn't loaded until required
+	if (parser())
+		start();
+	else
+		cerr << "WARNING: Failed to load ingen_serialisation module, load disabled." << endl;
+}
+
+
+SharedPtr<Parser>
+ThreadedLoader::parser()
+{
+	if (_parser)
+		return _parser;
 
 	World* world = App::instance().world();
 	if (!world->serialisation_module)
@@ -53,15 +63,7 @@ ThreadedLoader::ThreadedLoader(SharedPtr<EngineInterface> engine)
 			_parser = SharedPtr<Parser>(new_parser());
 	}
 
-	if (_parser)
-		start();
-	else
-		cerr << "WARNING: Failed to load ingen_serialisation module, load disabled." << endl;
-}
-
-
-ThreadedLoader::~ThreadedLoader()
-{
+	return _parser;
 }
 
 

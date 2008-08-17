@@ -15,42 +15,39 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef COMMON_STORE_H
-#define COMMON_STORE_H
+#ifndef BUILDER_H
+#define BUILDER_H
 
-#include <string>
-#include <glibmm/thread.h>
-#include <raul/PathTable.hpp>
-#include "interface/GraphObject.hpp"
-
-using Raul::PathTable;
+#include <raul/SharedPtr.hpp>
 
 namespace Ingen {
 namespace Shared {
 
+class GraphObject;
+class CommonInterface;
 
-class Store : public Raul::PathTable< SharedPtr<Shared::GraphObject> > {
+
+/** Wrapper for CommonInterface to create existing objects/models.
+ *
+ * \ingroup interface
+ */
+class Builder
+{
 public:
-	virtual ~Store() {}
-	
-	virtual void add(Shared::GraphObject* o);
+	Builder(CommonInterface& interface);
+	virtual ~Builder() {}
 
-	typedef Raul::Table< Raul::Path, SharedPtr<Shared::GraphObject> > Objects;
-
-	const_iterator children_begin(SharedPtr<Shared::GraphObject> o) const;
-	const_iterator children_end(SharedPtr<Shared::GraphObject> o) const;
-	
-	SharedPtr<Shared::GraphObject> find_child(SharedPtr<Shared::GraphObject> parent,
-	                                          const std::string& child_name) const;
-	
-	Glib::RWLock& lock() { return _lock; }
+	void build(SharedPtr<const GraphObject> object);
 
 private:
-	Glib::RWLock _lock;
+	void build_object(SharedPtr<const GraphObject> object);
+
+	CommonInterface& _interface;
 };
 
 
 } // namespace Shared
 } // namespace Ingen
 
-#endif // COMMON_STORE_H
+#endif // BUILDER_H
+

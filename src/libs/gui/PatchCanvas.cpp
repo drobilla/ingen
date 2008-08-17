@@ -23,6 +23,7 @@
 #include <flowcanvas/Canvas.hpp>
 #include <flowcanvas/Ellipse.hpp>
 #include "interface/EngineInterface.hpp"
+#include "shared/Builder.hpp"
 #include "serialisation/Serialiser.hpp"
 #include "client/PluginModel.hpp"
 #include "client/PatchModel.hpp"
@@ -41,6 +42,7 @@
 #include "SubpatchModule.hpp"
 #include "GladeFactory.hpp"
 #include "WindowFactory.hpp"
+#include "ThreadedLoader.hpp"
 using Ingen::Client::ClientStore;
 using Ingen::Serialisation::Serialiser;
 using Ingen::Client::PluginModel;
@@ -159,10 +161,10 @@ PatchCanvas::build_internal_menu()
 		_menu->reorder_child(*internal_menu_item, 2);
 	}
 	
-	const ClientStore::Plugins& plugins = App::instance().store()->plugins();
+	SharedPtr<const ClientStore::Plugins> plugins = App::instance().store()->plugins();
 
 	// Add Internal plugins
-	for (ClientStore::Plugins::const_iterator i = plugins.begin(); i != plugins.end(); ++i) {
+	for (ClientStore::Plugins::const_iterator i = plugins->begin(); i != plugins->end(); ++i) {
 		SharedPtr<PluginModel> p = i->second;
 		if (p->type() == Plugin::Internal) {
 			_internal_menu->items().push_back(Gtk::Menu_Helpers::MenuElem(p->name(),
@@ -200,10 +202,10 @@ PatchCanvas::build_plugin_class_menu(Gtk::Menu* menu,
 		}
 	}
 	
-	const ClientStore::Plugins& plugins = App::instance().store()->plugins();
+	SharedPtr<const ClientStore::Plugins> plugins = App::instance().store()->plugins();
 
 	// Add LV2 plugins
-	for (ClientStore::Plugins::const_iterator i = plugins.begin(); i != plugins.end(); ++i) {
+	for (ClientStore::Plugins::const_iterator i = plugins->begin(); i != plugins->end(); ++i) {
 		SLV2Plugin p = i->second->slv2_plugin();
 
 		if (p && slv2_plugin_get_class(p) == plugin_class) {
@@ -564,6 +566,36 @@ PatchCanvas::copy_selection()
 	
 	Glib::RefPtr<Gtk::Clipboard> clipboard = Gtk::Clipboard::get();
 	clipboard->set_text(result);
+}
+
+	
+void
+PatchCanvas::paste()
+{
+	Glib::ustring str = Gtk::Clipboard::get()->wait_for_text();
+	SharedPtr<Parser> parser = App::instance().loader()->parser();
+	if (!parser) {
+		cerr << "Unable to load parser, paste unavailable" << endl;
+		return;
+	}
+
+	Builder builder(*App::instance().engine());
+	ClientStore clipboard;
+	clipboard.new_patch("/", _patch->poly());
+	clipboard.set_plugins(App::instance().store()->plugins());
+	parser->parse_string(App::instance().world(), &clipboard, str, "/");
+	for (Store::iterator i = clipboard.begin(); i != clipboard.end(); ++i) {
+		/*GraphObject::Properties::iterator s = i->second->properties().find("ingen:symbol");
+		const string sym = string(s->second.get_string()) + "_copy";
+		s->second = sym;*/
+		GraphObject::Variables::iterator x = i->second->variables().find("ingenuity:canvas-x");
+		if (x != i->second->variables().end())
+			x->second = x->second.get_float() + 20.0f;
+		GraphObject::Variables::iterator y = i->second->variables().find("ingenuity:canvas-y");
+		if (y != i->second->variables().end())
+			y->second = y->second.get_float() + 20.0f;
+		builder.build(i->second);
+	}
 }
 	
 

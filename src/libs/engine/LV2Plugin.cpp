@@ -47,9 +47,8 @@ LV2Plugin::symbol() const
 const string
 LV2Plugin::name() const
 {
-	SLV2Value name = slv2_plugin_get_name(_slv2_plugin);
-	if (name)
-		return slv2_value_as_string(name);
+	if (_name)
+		return slv2_value_as_string(_name);
 	else
 		return "(no name)";
 }
@@ -70,8 +69,20 @@ LV2Plugin::instantiate(const string&     name,
 		delete n;
 		n = NULL;
 	}
+	
+
 
 	return n;
+}
+	
+
+void
+LV2Plugin::slv2_plugin(SLV2Plugin p)
+{
+	_slv2_plugin = p;
+	if (_name)
+		slv2_value_free(_name);
+	_name = slv2_plugin_get_name(_slv2_plugin);
 }
 
 

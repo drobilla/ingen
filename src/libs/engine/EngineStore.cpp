@@ -82,19 +82,7 @@ EngineStore::add(GraphObject* obj)
 
 	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
 
-	if (find(o->path()) != end()) {
-		cerr << "[EngineStore] ERROR: Attempt to add duplicate object " << o->path() << endl;
-		return;
-	}
-
-	insert(make_pair(o->path(), o));
-
-	NodeImpl* node = dynamic_cast<NodeImpl*>(o);
-	if (node) {
-		for (uint32_t i=0; i < node->num_ports(); ++i) {
-			add(node->port_impl(i));
-		}
-	}
+	Store::add(obj);
 }
 
 

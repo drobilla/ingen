@@ -98,6 +98,8 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 		sigc::mem_fun(this, &PatchWindow::event_upload));
 	_menu_copy->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_copy));
+	_menu_paste->signal_activate().connect(
+		sigc::mem_fun(this, &PatchWindow::event_paste));
 	_menu_delete->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_delete));
 	_menu_quit->signal_activate().connect(
@@ -130,6 +132,9 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 #ifndef HAVE_CURL
 	_menu_upload->hide();
 #endif
+	
+	Glib::RefPtr<Gtk::Clipboard> clipboard = Gtk::Clipboard::get();
+	clipboard->signal_owner_change().connect(sigc::mem_fun(this, &PatchWindow::event_clipboard_changed));
 }
 
 
@@ -274,6 +279,14 @@ PatchWindow::event_show_engine()
 
 
 void
+PatchWindow::event_clipboard_changed(GdkEventOwnerChange* ev)
+{
+	Glib::RefPtr<Gtk::Clipboard> clipboard = Gtk::Clipboard::get();
+	_menu_paste->set_sensitive(clipboard->wait_is_text_available());
+}
+
+
+void
 PatchWindow::event_show_controls()
 {
 	App::instance().window_factory()->present_controls(_patch);
@@ -382,6 +395,14 @@ PatchWindow::event_copy()
 {
 	if (_view)
 		_view->canvas()->copy_selection();
+}
+
+
+void
+PatchWindow::event_paste()
+{
+	if (_view)
+		_view->canvas()->paste();
 }
 
 

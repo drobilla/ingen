@@ -89,6 +89,7 @@ private:
 	void event_save_as();
 	void event_upload();
 	void event_copy();
+	void event_paste();
 	void event_delete();
 	void event_quit();
 	void event_destroy();
@@ -98,6 +99,7 @@ private:
 	void event_show_properties();
 	void event_show_controls();
 	void event_show_engine();
+	void event_clipboard_changed(GdkEventOwnerChange* ev);
 
 	SharedPtr<PatchModel> _patch;
 	SharedPtr<PatchView>  _view;

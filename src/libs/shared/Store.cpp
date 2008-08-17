@@ -17,6 +17,8 @@
 
 #include <raul/PathTable.hpp>
 #include <raul/TableImpl.hpp>
+#include "common/interface/Node.hpp"
+#include "common/interface/Port.hpp"
 #include "Store.hpp"
 
 using namespace std;
@@ -24,6 +26,25 @@ using namespace Raul;
 
 namespace Ingen {
 namespace Shared {
+
+
+void
+Store::add(GraphObject* o)
+{
+	if (find(o->path()) != end()) {
+		cerr << "[Store] ERROR: Attempt to add duplicate object " << o->path() << endl;
+		return;
+	}
+
+	insert(make_pair(o->path(), o));
+
+	Node* node = dynamic_cast<Node*>(o);
+	if (node) {
+		for (uint32_t i=0; i < node->num_ports(); ++i) {
+			add(node->port(i));
+		}
+	}
+}
 
 
 Store::const_iterator

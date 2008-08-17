@@ -54,6 +54,23 @@ ObjectModel::get_variable(const string& key) const
 }
 
 
+/** Get a variable for this object.
+ *
+ * @return Metadata value with key @a key, empty string otherwise.
+ */
+Atom&
+ObjectModel::get_variable( string& key)
+{
+	static Atom null_atom;
+
+	Variables::iterator i = _variables.find(key);
+	if (i != _variables.end())
+		return i->second;
+	else
+		return null_atom;
+}
+
+
 /** Get a property of this object.
  *
  * @return Metadata value with key @a key, empty string otherwise.
@@ -64,6 +81,23 @@ ObjectModel::get_property(const string& key) const
 	static const Atom null_atom;
 
 	Properties::const_iterator i = _properties.find(key);
+	if (i != _properties.end())
+		return i->second;
+	else
+		return null_atom;
+}
+
+
+/** Get a property of this object.
+ *
+ * @return Metadata value with key @a key, empty string otherwise.
+ */
+Atom&
+ObjectModel::get_property(const string& key)
+{
+	static Atom null_atom;
+
+	Properties::iterator i = _properties.find(key);
 	if (i != _properties.end())
 		return i->second;
 	else

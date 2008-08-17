@@ -56,16 +56,21 @@ public:
 
 	inline bool operator==(const PortModel& pm) const { return (_path == pm._path); }
 	
-	inline void value(const Atom& val)
-	{
+	inline void value(const Atom& val) {
 		if (val != _current_val) {
 			_current_val = val;
 			signal_value_changed.emit(val);
 		}
 	}
 	
+	inline void value(uint32_t voice, const Atom& val) {
+		// FIXME: implement properly
+		signal_voice_changed.emit(voice, val);
+	}
+	
 	// Signals
 	sigc::signal<void, const Atom&>           signal_value_changed; ///< Value ports
+	sigc::signal<void, uint32_t, const Atom&> signal_voice_changed; ///< Polyphonic value ports
 	sigc::signal<void>                        signal_activity; ///< Message ports
 	sigc::signal<void, SharedPtr<PortModel> > signal_connection;
 	sigc::signal<void, SharedPtr<PortModel> > signal_disconnection;

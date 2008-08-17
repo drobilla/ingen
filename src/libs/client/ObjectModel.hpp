@@ -60,7 +60,9 @@ public:
 	virtual ~ObjectModel();
 
 	const Atom& get_variable(const string& key) const;
+	Atom&       get_variable( string& key);
 	const Atom& get_property(const string& key) const;
+	Atom&       get_property(const string& key);
 	
 	virtual void set_variable(const string& key, const Atom& value)
 		{ _variables[key] = value; signal_variable.emit(key, value); }
@@ -70,6 +72,8 @@ public:
 
 	const Variables&       variables()  const { return _variables; }
 	const Properties&      properties() const { return _properties; }
+	Variables&             variables()        { return _variables; }
+	Properties&            properties()       { return _properties; }
 	const Path             path()       const { return _path; }
 	const Symbol           symbol()     const { return _path.name(); }
 	SharedPtr<ObjectModel> parent()     const { return _parent; }

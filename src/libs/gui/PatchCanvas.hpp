@@ -79,6 +79,7 @@ public:
 
 	void destroy_selection();
 	void copy_selection();
+	void paste();
 
 	void show_menu(GdkEvent* event);
 	

@@ -8,6 +8,8 @@ libingen_shared_la_CXXFLAGS = \
 	@SLV2_CFLAGS@
 
 libingen_shared_la_SOURCES = \
+	Builder.cpp \
+	Builder.hpp \
 	LV2Features.cpp \
 	LV2Features.hpp \
 	LV2URIMap.cpp \

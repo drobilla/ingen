@@ -26,6 +26,7 @@
 #include "interface/GraphObject.hpp"
 #include "client/PatchModel.hpp"
 #include "client/PluginModel.hpp"
+#include "client/ClientStore.hpp"
 using Ingen::Client::PluginModel;
 using Ingen::Client::PatchModel;
 using namespace Ingen::Shared;
@@ -93,7 +94,7 @@ public:
 	LoadPluginWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml);
 
 	void set_patch(SharedPtr<PatchModel> patch);
-	void set_plugins(const Raul::Table<string, SharedPtr<PluginModel> >& m);
+	void set_plugins(SharedPtr<const ClientStore::Plugins> plugins);
 
 	void add_plugin(SharedPtr<PluginModel> plugin);
 

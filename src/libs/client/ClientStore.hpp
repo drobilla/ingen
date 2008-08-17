@@ -53,9 +53,10 @@ class ConnectionModel;
  *
  * \ingroup IngenClient
  */
-class ClientStore : public Shared::Store, public sigc::trackable { // FIXME: is trackable necessary?
+class ClientStore : public Shared::Store, public Shared::CommonInterface, public sigc::trackable {
 public:
-	ClientStore(SharedPtr<EngineInterface> engine, SharedPtr<SigClientInterface> emitter);
+	ClientStore(SharedPtr<EngineInterface> engine=SharedPtr<EngineInterface>(),
+	            SharedPtr<SigClientInterface> emitter=SharedPtr<SigClientInterface>());
 
 	SharedPtr<PluginModel> plugin(const string& uri);
 	SharedPtr<ObjectModel> object(const Path& path);
@@ -63,7 +64,21 @@ public:
 	void clear();
 
 	typedef Raul::Table<string, SharedPtr<PluginModel> > Plugins;
-	const Plugins& plugins() const { return _plugins; }
+	SharedPtr<const Plugins> plugins() const                   { return _plugins; }
+	SharedPtr<Plugins>       plugins()                         { return _plugins; }
+	void                     set_plugins(SharedPtr<Plugins> p) { _plugins = p; }
+	
+	// CommonInterface
+	void new_plugin(const string& uri, const string& type_uri, const string& symbol, const string& name);
+	void new_patch(const string& path, uint32_t poly);
+	void new_node(const string& path, const string& plugin_uri);
+	void new_port(const string& path, uint32_t index, const string& data_type, bool is_output);
+	void set_variable(const string& subject_path, const string& predicate, const Atom& value);
+	void set_property(const string& subject_path, const string& predicate, const Atom& value);
+	void set_port_value(const string& port_path, const Raul::Atom& value);
+	void set_voice_value(const string& port_path, uint32_t voice, const Raul::Atom& value);
+	void connect(const string& src_port_path, const string& dst_port_path);
+	void disconnect(const string& src_port_path, const string& dst_port_path);
 
 	sigc::signal<void, SharedPtr<ObjectModel> > signal_new_object; 
 	sigc::signal<void, SharedPtr<PluginModel> > signal_new_plugin; 
@@ -92,28 +107,24 @@ private:
 	
 	void add_variable_orphan(const Path& subject, const string& predicate, const Atom& value);
 	void resolve_variable_orphans(SharedPtr<ObjectModel> subject);
+	
+	void bundle_begin() {}
+	void bundle_end()   {}
 
 	// Slots for SigClientInterface signals
-	void destruction_event(const Path& path);
-	void rename_event(const Path& old_path, const Path& new_path);
-	void new_plugin_event(const string& uri, const string& type_uri, const string& symbol, const string& name);
-	void new_patch_event(const Path& path, uint32_t poly);
-	void new_node_event(const Path& path, const string& plugin_uri);
-	void new_port_event(const Path& path, uint32_t index, const string& data_type, bool is_output);
-	void patch_cleared_event(const Path& path);
-	void variable_change_event(const Path& subject_path, const string& predicate, const Atom& value);
-	void property_change_event(const Path& subject_path, const string& predicate, const Atom& value);
-	void port_value_event(const Path& port_path, const Raul::Atom& value);
-	void port_activity_event(const Path& port_path);
-	void connection_event(const Path& src_port_path, const Path& dst_port_path);
-	void disconnection_event(const Path& src_port_path, const Path& dst_port_path);
+	void destruction(const Path& path);
+	void rename(const Path& old_path, const Path& new_path);
+	void patch_cleared(const Path& path);
+	void port_activity(const Path& port_path);
 	
 	bool attempt_connection(const Path& src_port_path, const Path& dst_port_path, bool add_orphan=false);
 	
+	bool _handle_orphans;
+
 	SharedPtr<EngineInterface>    _engine;
 	SharedPtr<SigClientInterface> _emitter;
 
-	Plugins _plugins; ///< Map, keyed by plugin URI
+	SharedPtr<Plugins> _plugins; ///< Map, keyed by plugin URI
 
 	/** Objects we've received, but depend on the existance of another unknown object.
 	 * Keyed by the path of the depended-on object (for tolerance of orderless comms) */

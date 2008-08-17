@@ -50,7 +50,9 @@ public:
 	virtual const Raul::Path   path()       const = 0;
 	virtual const Raul::Symbol symbol()     const = 0;
 	virtual const Variables&   variables()  const = 0;
+	virtual Variables&         variables()        = 0;
 	virtual const Properties&  properties() const = 0;
+	virtual Properties&        properties()       = 0;
 	virtual bool               polyphonic() const = 0;
 	
 	// FIXME: return WeakPtr, and stupid name

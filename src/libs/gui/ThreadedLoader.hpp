@@ -56,11 +56,7 @@ class ThreadedLoader : public Raul::Slave
 {
 public:
 	ThreadedLoader(SharedPtr<EngineInterface> engine);
-	~ThreadedLoader();
 
-	// FIXME: there's a pattern here....
-	// (same core interface as Loader/Serialiser)
-	
 	void load_patch(bool                    merge,
 	                const Glib::ustring&    data_base_uri,
 	                const Path&             data_path,
@@ -69,6 +65,8 @@ public:
 	                optional<Symbol>        engine_symbol = optional<Symbol>());
 	
 	void save_patch(SharedPtr<PatchModel> model, const string& filename);
+
+	SharedPtr<Parser> parser();
 
 private:	
 

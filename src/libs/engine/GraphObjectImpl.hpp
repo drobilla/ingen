@@ -87,6 +87,8 @@ public:
 
 	const Variables&  variables()  const { return _variables; }
 	const Properties& properties() const { return _properties; }
+	Variables&  variables()   { return _variables; }
+	Properties& properties()  { return _properties; }
 
 	/** The Patch this object is a child of. */
 	virtual PatchImpl* parent_patch() const;

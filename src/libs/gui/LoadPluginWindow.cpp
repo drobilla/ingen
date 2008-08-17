@@ -211,11 +211,11 @@ LoadPluginWindow::plugin_compare(const Gtk::TreeModel::iterator& a_i,
 
 
 void
-LoadPluginWindow::set_plugins(const Raul::Table<string, SharedPtr<PluginModel> >& m)
+LoadPluginWindow::set_plugins(SharedPtr<const ClientStore::Plugins> m)
 {
 	_plugins_liststore->clear();
 
-	for (Raul::Table<string, SharedPtr<PluginModel> >::const_iterator i = m.begin(); i != m.end(); ++i) {
+	for (ClientStore::Plugins::const_iterator i = m->begin(); i != m->end(); ++i) {
 		SharedPtr<PluginModel> plugin = (*i).second;
 
 		Gtk::TreeModel::iterator iter = _plugins_liststore->append();
@@ -396,8 +396,8 @@ LoadPluginWindow::filter_changed()
 	size_t                   num_visible = 0;
 	
 
-	for (Raul::Table<string, SharedPtr<PluginModel> >::const_iterator i = App::instance().store()->plugins().begin();
-			i != App::instance().store()->plugins().end(); ++i) {
+	for (ClientStore::Plugins::const_iterator i = App::instance().store()->plugins()->begin();
+			i != App::instance().store()->plugins()->end(); ++i) {
 	
 		const SharedPtr<PluginModel> plugin = (*i).second;
 

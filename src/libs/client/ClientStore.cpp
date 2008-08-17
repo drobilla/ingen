@@ -35,20 +35,27 @@ namespace Client {
 ClientStore::ClientStore(SharedPtr<EngineInterface> engine, SharedPtr<SigClientInterface> emitter)
 	: _engine(engine)
 	, _emitter(emitter)
+	, _plugins(new Plugins())
 {
-	emitter->signal_object_destroyed.connect(sigc::mem_fun(this, &ClientStore::destruction_event));
-	emitter->signal_object_renamed.connect(sigc::mem_fun(this, &ClientStore::rename_event));
-	emitter->signal_new_plugin.connect(sigc::mem_fun(this, &ClientStore::new_plugin_event));
-	emitter->signal_new_patch.connect(sigc::mem_fun(this, &ClientStore::new_patch_event));
-	emitter->signal_new_node.connect(sigc::mem_fun(this, &ClientStore::new_node_event));
-	emitter->signal_new_port.connect(sigc::mem_fun(this, &ClientStore::new_port_event));
-	emitter->signal_patch_cleared.connect(sigc::mem_fun(this, &ClientStore::patch_cleared_event));
-	emitter->signal_connection.connect(sigc::mem_fun(this, &ClientStore::connection_event));
-	emitter->signal_disconnection.connect(sigc::mem_fun(this, &ClientStore::disconnection_event));
-	emitter->signal_variable_change.connect(sigc::mem_fun(this, &ClientStore::variable_change_event));
-	emitter->signal_property_change.connect(sigc::mem_fun(this, &ClientStore::property_change_event));
-	emitter->signal_port_value.connect(sigc::mem_fun(this, &ClientStore::port_value_event));
-	emitter->signal_port_activity.connect(sigc::mem_fun(this, &ClientStore::port_activity_event));
+	_handle_orphans = (engine && emitter);
+
+	if (!emitter)
+		return;
+
+	emitter->signal_object_destroyed.connect(sigc::mem_fun(this, &ClientStore::destruction));
+	emitter->signal_object_renamed.connect(sigc::mem_fun(this, &ClientStore::rename));
+	emitter->signal_new_plugin.connect(sigc::mem_fun(this, &ClientStore::new_plugin));
+	emitter->signal_new_patch.connect(sigc::mem_fun(this, &ClientStore::new_patch));
+	emitter->signal_new_node.connect(sigc::mem_fun(this, &ClientStore::new_node));
+	emitter->signal_new_port.connect(sigc::mem_fun(this, &ClientStore::new_port));
+	emitter->signal_patch_cleared.connect(sigc::mem_fun(this, &ClientStore::patch_cleared));
+	emitter->signal_connection.connect(sigc::mem_fun(this, &ClientStore::connect));
+	emitter->signal_disconnection.connect(sigc::mem_fun(this, &ClientStore::disconnect));
+	emitter->signal_variable_change.connect(sigc::mem_fun(this, &ClientStore::set_variable));
+	emitter->signal_property_change.connect(sigc::mem_fun(this, &ClientStore::set_property));
+	emitter->signal_port_value.connect(sigc::mem_fun(this, &ClientStore::set_port_value));
+	emitter->signal_voice_value.connect(sigc::mem_fun(this, &ClientStore::set_voice_value));
+	emitter->signal_port_activity.connect(sigc::mem_fun(this, &ClientStore::port_activity));
 }
 
 
@@ -56,13 +63,15 @@ void
 ClientStore::clear()
 {
 	Store::clear();
-	_plugins.clear();
+	_plugins->clear();
 }
 
 
 void
 ClientStore::add_plugin_orphan(SharedPtr<NodeModel> node)
 {
+	if (!_handle_orphans)
+		return;
 	cerr << "WARNING: Node " << node->path() << " received, but plugin "
 		<< node->plugin_uri() << " unknown." << endl;
 
@@ -84,6 +93,8 @@ ClientStore::add_plugin_orphan(SharedPtr<NodeModel> node)
 void
 ClientStore::resolve_plugin_orphans(SharedPtr<PluginModel> plugin)
 {
+	if (!_handle_orphans)
+		return;
 	Raul::Table<string, list<SharedPtr<NodeModel> > >::iterator n
 		= _plugin_orphans.find(plugin->uri());
 
@@ -106,6 +117,8 @@ ClientStore::resolve_plugin_orphans(SharedPtr<PluginModel> plugin)
 void
 ClientStore::add_connection_orphan(std::pair<Path, Path> orphan)
 {
+	if (!_handle_orphans)
+		return;
 	cerr << "WARNING: Orphan connection " << orphan.first
 		<< " -> " << orphan.second << " received." << endl;
 	
@@ -116,6 +129,8 @@ ClientStore::add_connection_orphan(std::pair<Path, Path> orphan)
 void
 ClientStore::resolve_connection_orphans(SharedPtr<PortModel> port)
 {
+	if (!_handle_orphans)
+		return;
 	assert(port->parent());
 
 	for (list< pair<Path, Path> >::iterator c = _connection_orphans.begin();
@@ -139,6 +154,8 @@ ClientStore::resolve_connection_orphans(SharedPtr<PortModel> port)
 void
 ClientStore::add_orphan(SharedPtr<ObjectModel> child)
 {
+	if (!_handle_orphans)
+		return;
 	cerr << "WARNING: Orphan object " << child->path() << " received." << endl;
 
 	Raul::PathTable<list<SharedPtr<ObjectModel> > >::iterator children
@@ -159,6 +176,8 @@ ClientStore::add_orphan(SharedPtr<ObjectModel> child)
 void
 ClientStore::add_variable_orphan(const Path& subject_path, const string& predicate, const Atom& value)
 {
+	if (!_handle_orphans)
+		return;
 	Raul::PathTable<list<std::pair<string, Atom> > >::iterator orphans
 		= _variable_orphans.find(subject_path);
 
@@ -177,6 +196,8 @@ ClientStore::add_variable_orphan(const Path& subject_path, const string& predica
 void
 ClientStore::resolve_variable_orphans(SharedPtr<ObjectModel> subject)
 {
+	if (!_handle_orphans)
+		return;
 	Raul::PathTable<list<std::pair<string, Atom> > >::iterator v
 		= _variable_orphans.find(subject->path());
 
@@ -198,6 +219,8 @@ ClientStore::resolve_variable_orphans(SharedPtr<ObjectModel> subject)
 void
 ClientStore::resolve_orphans(SharedPtr<ObjectModel> parent)
 {
+	if (!_handle_orphans)
+		return;
 	Raul::PathTable<list<SharedPtr<ObjectModel> > >::iterator c
 		= _orphans.find(parent->path());
 
@@ -222,6 +245,7 @@ ClientStore::add_object(SharedPtr<ObjectModel> object)
 	// one (with precedence to the new values).
 	iterator existing = find(object->path());
 	if (existing != end()) {
+		cout << "WARNING: Object " << object->path() << " already exists in store" << endl;
 		PtrCast<ObjectModel>(existing->second)->set(object);
 	} else {
 
@@ -307,8 +331,8 @@ SharedPtr<PluginModel>
 ClientStore::plugin(const string& uri)
 {
 	assert(uri.length() > 0);
-	Plugins::iterator i = _plugins.find(uri);
-	if (i == _plugins.end())
+	Plugins::iterator i = _plugins->find(uri);
+	if (i == _plugins->end())
 		return SharedPtr<PluginModel>();
 	else
 		return (*i).second;
@@ -335,9 +359,9 @@ ClientStore::add_plugin(SharedPtr<PluginModel> pm)
 {
 	// FIXME: dupes?  merge, like with objects?
 	
-	_plugins[pm->uri()] = pm;
+	(*_plugins)[pm->uri()] = pm;
 	signal_new_plugin(pm);
-	//cerr << "Plugin: " << pm->uri() << ", # plugins: " << _plugins.size() << endl;
+	//cerr << "Plugin: " << pm->uri() << ", # plugins: " << _plugins->size() << endl;
 }
 
 
@@ -345,7 +369,7 @@ ClientStore::add_plugin(SharedPtr<PluginModel> pm)
 
 
 void
-ClientStore::destruction_event(const Path& path)
+ClientStore::destruction(const Path& path)
 {
 	SharedPtr<ObjectModel> removed = remove_object(path);
 
@@ -356,7 +380,7 @@ ClientStore::destruction_event(const Path& path)
 }
 
 void
-ClientStore::rename_event(const Path& old_path, const Path& new_path)
+ClientStore::rename(const Path& old_path, const Path& new_path)
 {
 	iterator parent = find(old_path);
 	if (parent == end()) {
@@ -398,7 +422,7 @@ ClientStore::rename_event(const Path& old_path, const Path& new_path)
 }
 
 void
-ClientStore::new_plugin_event(const string& uri, const string& type_uri, const string& symbol, const string& name)
+ClientStore::new_plugin(const string& uri, const string& type_uri, const string& symbol, const string& name)
 {
 	SharedPtr<PluginModel> p(new PluginModel(uri, type_uri, symbol, name));
 	add_plugin(p);
@@ -407,7 +431,7 @@ ClientStore::new_plugin_event(const string& uri, const string& type_uri, const s
 
 
 void
-ClientStore::new_patch_event(const Path& path, uint32_t poly)
+ClientStore::new_patch(const string& path, uint32_t poly)
 {
 	SharedPtr<PatchModel> p(new PatchModel(path, poly));
 	add_object(p);
@@ -415,7 +439,7 @@ ClientStore::new_patch_event(const Path& path, uint32_t poly)
 
 
 void
-ClientStore::new_node_event(const Path& path, const string& plugin_uri)
+ClientStore::new_node(const string& path, const string& plugin_uri)
 {
 	SharedPtr<PluginModel> plug = plugin(plugin_uri);
 	if (!plug) {
@@ -429,7 +453,7 @@ ClientStore::new_node_event(const Path& path, const string& plugin_uri)
 
 
 void
-ClientStore::new_port_event(const Path& path, uint32_t index, const string& type, bool is_output)
+ClientStore::new_port(const string& path, uint32_t index, const string& type, bool is_output)
 {
 	PortModel::Direction pdir = is_output ? PortModel::OUTPUT : PortModel::INPUT;
 
@@ -441,7 +465,7 @@ ClientStore::new_port_event(const Path& path, uint32_t index, const string& type
 
 
 void
-ClientStore::patch_cleared_event(const Path& path)
+ClientStore::patch_cleared(const Path& path)
 {
 	iterator i = find(path);
 	if (i != end()) {
@@ -469,7 +493,7 @@ ClientStore::patch_cleared_event(const Path& path)
 
 
 void
-ClientStore::variable_change_event(const Path& subject_path, const string& predicate, const Atom& value)
+ClientStore::set_variable(const string& subject_path, const string& predicate, const Atom& value)
 {
 	SharedPtr<ObjectModel> subject = object(subject_path);
 
@@ -485,7 +509,7 @@ ClientStore::variable_change_event(const Path& subject_path, const string& predi
 
 	
 void
-ClientStore::property_change_event(const Path& subject_path, const string& predicate, const Atom& value)
+ClientStore::set_property(const string& subject_path, const string& predicate, const Atom& value)
 {
 	SharedPtr<ObjectModel> subject = object(subject_path);
 
@@ -501,7 +525,7 @@ ClientStore::property_change_event(const Path& subject_path, const string& predi
 
 
 void
-ClientStore::port_value_event(const Path& port_path, const Raul::Atom& value)
+ClientStore::set_port_value(const string& port_path, const Raul::Atom& value)
 {
 	SharedPtr<PortModel> port = PtrCast<PortModel>(object(port_path));
 	if (port)
@@ -510,9 +534,20 @@ ClientStore::port_value_event(const Path& port_path, const Raul::Atom& value)
 		cerr << "ERROR: control change for nonexistant port " << port_path << endl;
 }
 
+
+void
+ClientStore::set_voice_value(const string& port_path, uint32_t voice, const Raul::Atom& value)
+{
+	SharedPtr<PortModel> port = PtrCast<PortModel>(object(port_path));
+	if (port)
+		port->value(voice, value);
+	else
+		cerr << "ERROR: poly control change for nonexistant port " << port_path << endl;
+}
+
 	
 void
-ClientStore::port_activity_event(const Path& port_path)
+ClientStore::port_activity(const Path& port_path)
 {
 	SharedPtr<PortModel> port = PtrCast<PortModel>(object(port_path));
 	if (port)
@@ -581,14 +616,14 @@ ClientStore::attempt_connection(const Path& src_port_path, const Path& dst_port_
 
 	
 void
-ClientStore::connection_event(const Path& src_port_path, const Path& dst_port_path)
+ClientStore::connect(const string& src_port_path, const string& dst_port_path)
 {
 	attempt_connection(src_port_path, dst_port_path, true);
 }
 
 
 void
-ClientStore::disconnection_event(const Path& src_port_path, const Path& dst_port_path)
+ClientStore::disconnect(const string& src_port_path, const string& dst_port_path)
 {
 	// Find the ports and create a ConnectionModel just to get at the parent path
 	// finding logic in ConnectionModel.  So I'm lazy.
