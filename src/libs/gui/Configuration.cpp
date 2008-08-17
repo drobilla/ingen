@@ -23,13 +23,10 @@
 #include <map>
 #include "client/PortModel.hpp"
 #include "client/PluginModel.hpp"
-#include "client/PatchModel.hpp"
-#include "serialisation/Loader.hpp"
+#include "serialisation/Parser.hpp"
 #include "App.hpp"
 
-using std::cerr; using std::cout; using std::endl;
-using std::map; using std::string;
-using Ingen::Client::PatchModel;
+using namespace std;
 
 namespace Ingen {
 namespace GUI {

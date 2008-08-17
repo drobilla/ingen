@@ -15,8 +15,8 @@ libingen_serialisation_la_LDFLAGS = -no-undefined -module -avoid-version
 libingen_serialisation_la_LIBADD = @RAUL_LIBS@ @REDLANDMM_LIBS@ @GLIBMM_LIBS@ @SLV2_LIBS@
 
 libingen_serialisation_la_SOURCES = \
-	Loader.cpp \
-	Loader.hpp \
+	Parser.cpp \
+	Parser.hpp \
 	Serialiser.cpp \
 	Serialiser.hpp \
 	serialisation.cpp \

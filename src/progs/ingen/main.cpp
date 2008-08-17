@@ -33,7 +33,7 @@
 #include "module/World.hpp"
 #include "engine/Engine.hpp"
 #include "engine/QueuedEngineInterface.hpp"
-#include "serialisation/Loader.hpp"
+#include "serialisation/Parser.hpp"
 #include "cmdline.h"
 
 #ifdef WITH_BINDINGS
@@ -164,13 +164,13 @@ main(int argc, char** argv)
 		if (!world->serialisation_module)
 			world->serialisation_module = Ingen::Shared::load_module("ingen_serialisation");
 			
-		Serialisation::Loader* (*new_loader)() = NULL;
+		Serialisation::Parser* (*new_parser)() = NULL;
 
 		if (world->serialisation_module)
-			found = world->serialisation_module->get_symbol("new_loader", (void*&)new_loader);
+			found = world->serialisation_module->get_symbol("new_parser", (void*&)new_parser);
 		
 		if (world->serialisation_module && found) {
-			SharedPtr<Serialisation::Loader> loader(new_loader());
+			SharedPtr<Serialisation::Parser> parser(new_parser());
 			
 			// Assumption:  Containing ':' means URI, otherwise filename
 			string uri = args.load_arg;
@@ -184,7 +184,7 @@ main(int argc, char** argv)
 
 
 			engine_interface->load_plugins();
-			loader->load(world, engine_interface.get(), uri, parent_path, "");
+			parser->parse(world, engine_interface.get(), uri, parent_path, "");
 
 		} else {
 			cerr << "Unable to load serialisation module, aborting." << endl;

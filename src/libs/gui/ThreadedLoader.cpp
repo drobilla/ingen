@@ -44,16 +44,16 @@ ThreadedLoader::ThreadedLoader(SharedPtr<EngineInterface> engine)
 		world->serialisation_module = Ingen::Shared::load_module("ingen_serialisation");
 
 	if (world->serialisation_module) {
-		Loader* (*new_loader)() = NULL;
+		Parser* (*new_parser)() = NULL;
 
 		bool found = App::instance().world()->serialisation_module->get_symbol(
-				"new_loader", (void*&)new_loader);
+				"new_parser", (void*&)new_parser);
 
 		if (found)
-			_loader = SharedPtr<Loader>(new_loader());
+			_parser = SharedPtr<Parser>(new_parser());
 	}
 
-	if (_loader)
+	if (_parser)
 		start();
 	else
 		cerr << "WARNING: Failed to load ingen_serialisation module, load disabled." << endl;
@@ -99,7 +99,7 @@ ThreadedLoader::load_patch(bool                    merge,
 				false)));
 	} else {
 		_events.push_back(sigc::hide_return(sigc::bind(
-				sigc::mem_fun(_loader.get(), &Ingen::Serialisation::Loader::load),
+				sigc::mem_fun(_parser.get(), &Ingen::Serialisation::Parser::parse),
 				App::instance().world(),
 				App::instance().world()->engine.get(),
 				data_base_uri,

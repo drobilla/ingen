@@ -24,13 +24,13 @@ namespace Shared { class World; class Store; }
 
 namespace Serialisation {
 
-class Loader;
+class Parser;
 class Serialiser;
 
 
 extern "C" {
 
-	extern Loader*     new_loader();
+	extern Parser*     new_parser();
 	extern Serialiser* new_serialiser(Ingen::Shared::World*    world,
 	                                  SharedPtr<Shared::Store> store);
 

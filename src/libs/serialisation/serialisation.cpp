@@ -18,17 +18,17 @@
 #include CONFIG_H_PATH
 #include "module/World.hpp"
 #include "serialisation.hpp"
-#include "Loader.hpp"
+#include "Parser.hpp"
 #include "Serialiser.hpp"
 
 namespace Ingen {
 namespace Serialisation {
 
 
-Ingen::Serialisation::Loader*
-new_loader()
+Ingen::Serialisation::Parser*
+new_parser()
 {
-	return new Loader();
+	return new Parser();
 }
 
 	

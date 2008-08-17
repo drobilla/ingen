@@ -29,7 +29,7 @@
 #include "client/PatchModel.hpp"
 #include "client/DeprecatedLoader.hpp"
 #include "serialisation/Serialiser.hpp"
-#include "serialisation/Loader.hpp"
+#include "serialisation/Parser.hpp"
 using std::string;
 using std::list;
 using boost::optional;
@@ -80,7 +80,7 @@ private:
 	void _whipped();
 
 	SharedPtr<EngineInterface> _engine;
-	SharedPtr<Loader>          _loader;
+	SharedPtr<Parser>          _parser;
 
 	DeprecatedLoader _deprecated_loader;
 	Glib::Mutex      _mutex;

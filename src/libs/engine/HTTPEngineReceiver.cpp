@@ -26,7 +26,7 @@
 #include "module/Module.hpp"
 #include "serialisation/serialisation.hpp"
 #include "serialisation/Serialiser.hpp"
-#include "serialisation/Loader.hpp"
+#include "serialisation/Parser.hpp"
 #include "engine/ThreadManager.hpp"
 #include "HTTPEngineReceiver.hpp"
 #include "QueuedEventSource.hpp"
@@ -58,9 +58,9 @@ HTTPEngineReceiver::HTTPEngineReceiver(Engine& engine, uint16_t port)
 			engine.world()->serialiser = SharedPtr<Serialiser>(
 					Ingen::Serialisation::new_serialiser(engine.world(), engine.engine_store()));
 		
-		if (!engine.world()->loader)
-			engine.world()->loader = SharedPtr<Loader>(
-					Ingen::Serialisation::new_loader());
+		if (!engine.world()->parser)
+			engine.world()->parser = SharedPtr<Parser>(
+					Ingen::Serialisation::new_parser());
 	} else {
 		cerr << "WARNING: Failed to load ingen_serialisation module, HTTP disabled." << endl;
 	}
@@ -165,9 +165,9 @@ HTTPEngineReceiver::message_callback(SoupServer* server, SoupMessage* msg, const
 			return;
 		}
 		
-		// Get loader
-		SharedPtr<Loader> loader = me->_engine.world()->loader;
-		if (!loader) {
+		// Get parser
+		SharedPtr<Parser> parser = me->_engine.world()->parser;
+		if (!parser) {
 			soup_message_set_status (msg, SOUP_STATUS_INTERNAL_SERVER_ERROR);
 			return;
 		}

@@ -36,17 +36,17 @@ namespace Ingen {
 namespace Serialisation {
 
 
-class Loader {
+class Parser {
 public:
-	virtual ~Loader() {}
+	virtual ~Parser() {}
 	
-	virtual bool load(Ingen::Shared::World*           world,
-	                  Ingen::Shared::CommonInterface* target,
-	                  const Glib::ustring&            uri,
-	                  boost::optional<Raul::Path>     parent,
-	                  std::string                     patch_name,
-	                  Glib::ustring                   patch_uri = "",
-	                  GraphObject::Variables          data = GraphObject::Variables());
+	virtual bool parse(Ingen::Shared::World*           world,
+	                   Ingen::Shared::CommonInterface* target,
+	                   const Glib::ustring&            uri,
+	                   boost::optional<Raul::Path>     parent,
+	                   std::string                     patch_name,
+	                   Glib::ustring                   patch_uri = "",
+	                   GraphObject::Variables          data = GraphObject::Variables());
 };
 
 

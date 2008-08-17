@@ -25,7 +25,7 @@
 #include <raul/Atom.hpp>
 #include <raul/AtomRDF.hpp>
 #include "interface/EngineInterface.hpp"
-#include "Loader.hpp"
+#include "Parser.hpp"
 
 using namespace std;
 using namespace Raul;
@@ -35,20 +35,20 @@ namespace Ingen {
 namespace Serialisation {
 
 
-/** Load (create) a patch from RDF into the engine.
+/** Parse a patch from RDF into a CommonInterface (engine or client).
  *
  * @param document_uri URI of file to load objects from.
  * @param parent Path of parent under which to load objects.
  * @return whether or not load was successful.
  */
 bool
-Loader::load(Ingen::Shared::World*           world,
-             Ingen::Shared::CommonInterface* target,
-             const Glib::ustring&            document_uri,
-	         boost::optional<Raul::Path>     parent,
-	         std::string                     patch_name,
-	         Glib::ustring                   patch_uri,
-             GraphObject::Variables          data)
+Parser::parse(Ingen::Shared::World*           world,
+              Ingen::Shared::CommonInterface* target,
+              const Glib::ustring&            document_uri,
+              boost::optional<Raul::Path>     parent,
+              std::string                     patch_name,
+              Glib::ustring                   patch_uri,
+              GraphObject::Variables          data)
 {
 	setlocale(LC_NUMERIC, "C");
 
@@ -63,7 +63,7 @@ Loader::load(Ingen::Shared::World*           world,
 	else
 		patch_uri = string("<") + patch_uri + ">";
 
-	cout << "[Loader] Loading " << patch_uri << endl;
+	cout << "[Parser] Loading " << patch_uri << endl;
 
 	size_t patch_poly = 1;
 	
@@ -82,7 +82,7 @@ Loader::load(Ingen::Shared::World*           world,
 		Redland::Query::Results results = query.run(*world->rdf_world, model);
 
 		if (results.size() == 0) {
-			cerr << "[Loader] ERROR: No polyphony found!" << endl;
+			cerr << "[Parser] ERROR: No polyphony found!" << endl;
 			return false;
 		}
 
@@ -186,7 +186,7 @@ Loader::load(Ingen::Shared::World*           world,
 
 		if (created.find(subpatch_path) == created.end()) {
 			created.insert(subpatch_path);
-			load(world, target, document_uri, patch_path, name, patch);
+			parse(world, target, document_uri, patch_path, name, patch);
 		}
 	}
 
