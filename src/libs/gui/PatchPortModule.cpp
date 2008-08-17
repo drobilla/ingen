@@ -129,9 +129,28 @@ PatchPortModule::set_variable(const string& key, const Atom& value)
 void
 PatchPortModule::set_property(const string& key, const Atom& value)
 {
-	if (key == "ingen:polyphonic" && value.type() == Atom::BOOL)
+	if (key == "ingen:polyphonic" && value.type() == Atom::BOOL) {
 		set_stacked_border(value.get_bool());
+	} else if (key == "ingen:selected" && value.type() == Atom::BOOL) {
+		if (value.get_bool() != selected()) {
+			if (value.get_bool())
+				_canvas.lock()->select_item(shared_from_this());
+			else
+				_canvas.lock()->unselect_item(shared_from_this());
+		}
+	}
 }
+
+
+void
+PatchPortModule::set_selected(bool b)
+{
+	if (b != selected()) {
+		Module::set_selected(b);
+		App::instance().engine()->set_property(_port->path(), "ingen:selected", b);
+	}
+}
+
 
 
 } // namespace GUI

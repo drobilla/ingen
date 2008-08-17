@@ -62,6 +62,7 @@ protected:
 	PatchPortModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<PortModel> port);
 
 	void create_menu();
+	void set_selected(bool b);
 	
 	void set_variable(const std::string& predicate, const Raul::Atom& value);
 	void set_property(const std::string& predicate, const Raul::Atom& value);

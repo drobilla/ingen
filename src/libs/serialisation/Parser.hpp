@@ -98,6 +98,15 @@ private:
 			const Glib::ustring&                    subject,
 			Raul::Path                              path,
 			boost::optional<GraphObject::Variables> data);
+
+	bool parse_port(
+			Ingen::Shared::World*                   world,
+			Ingen::Shared::CommonInterface*         target,
+			Redland::Model&                         model,
+			const Glib::ustring&                    base_uri,
+			const Glib::ustring&                    subject,
+			Raul::Path                              path,
+			boost::optional<GraphObject::Variables> data=boost::optional<GraphObject::Variables>());
 	
 	bool parse_variables(
 			Ingen::Shared::World*                   world,

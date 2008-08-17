@@ -120,6 +120,7 @@ Parser::parse(
 	//if (object_uri)
 	//	object_uri = uri_relative_to_base(base_uri, object_uri.get());
 
+	const Redland::Node::Type res = Redland::Node::RESOURCE;
 	Glib::ustring query_str;
 	if (object_uri)
 		query_str = Glib::ustring("SELECT DISTINCT ?class WHERE { <") + object_uri.get() + "> a ?class . }";
@@ -129,11 +130,12 @@ Parser::parse(
 	Redland::Query query(*world->rdf_world, query_str);
 	Redland::Query::Results results = query.run(*world->rdf_world, model, base_uri);
 	
-	const Redland::Node patch_class(*world->rdf_world, Redland::Node::RESOURCE, NS_INGEN "Patch");
-	const Redland::Node node_class(*world->rdf_world, Redland::Node::RESOURCE, NS_INGEN "Node");
-	const Redland::Node port_class(*world->rdf_world, Redland::Node::RESOURCE, NS_INGEN "Port");
+	const Redland::Node patch_class(*world->rdf_world, res, NS_INGEN "Patch");
+	const Redland::Node node_class(*world->rdf_world, res, NS_INGEN "Node");
+	const Redland::Node in_port_class(*world->rdf_world, res, NS_INGEN "InputPort");
+	const Redland::Node out_port_class(*world->rdf_world, res, NS_INGEN "OutputPort");
 	
-	const Redland::Node subject_uri(*world->rdf_world, Redland::Node::RESOURCE,
+	const Redland::Node subject_uri(*world->rdf_world, res,
 			(object_uri ? object_uri.get() : "http://example.org"));
 
 	bool ret = false;
@@ -141,7 +143,8 @@ Parser::parse(
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
 		const Redland::Node subject = (object_uri ? subject_uri : (*i)["subject"]);
 		const Redland::Node rdf_class = (*i)["class"];
-		if (rdf_class == patch_class || rdf_class == node_class || rdf_class == port_class) {
+		if (rdf_class == patch_class || rdf_class == node_class ||
+				rdf_class == in_port_class || rdf_class == out_port_class) {
 			Path path = parse_path(world, model, base_uri, subject.to_c_string(), parent, symbol);
 			if (rdf_class == patch_class) {
 				ret = parse_patch(world, target, model, base_uri, subject.to_c_string(), path, data);
@@ -150,8 +153,9 @@ Parser::parse(
 			} else if (rdf_class == node_class) {
 				ret = parse_node(world, target, model,
 						base_uri, Glib::ustring("<") + subject.to_c_string() + ">", path, data);
-			} else if (rdf_class == port_class) {
-				cout << "*** TODO: PARSE PORT" << endl;
+			} else if (rdf_class == in_port_class || rdf_class == out_port_class) {
+				ret = parse_port(world, target, model,
+						base_uri, Glib::ustring("<") + subject.to_c_string() + ">", path, data);
 			}
 			if (ret == false) {
 				cerr << "Failed to parse object " << object_uri << endl;
@@ -425,6 +429,45 @@ Parser::parse_node(
 	parse_variables(world, target, model, base_uri, subject, path, data);
 
 	return true;
+}
+
+
+bool
+Parser::parse_port(
+		Ingen::Shared::World*                   world,
+		Ingen::Shared::CommonInterface*         target,
+		Redland::Model&                         model,
+		const Glib::ustring&                    base_uri,
+		const Glib::ustring&                    subject,
+		Raul::Path                              path,
+		boost::optional<GraphObject::Variables> data)
+{
+	Redland::Query query(*world->rdf_world, Glib::ustring(
+		"SELECT DISTINCT ?type ?datatype ?value WHERE {\n") +
+		subject + " a ?type ;\n"
+		"           a ?datatype .\n"
+		" FILTER (?type != ?datatype && ((?type = ingen:InputPort) || (?type = ingen:OutputPort)))\n"
+		"OPTIONAL { " + subject + " ingen:value ?value . }\n"
+		"}");
+	
+	Redland::Query::Results results = query.run(*world->rdf_world, model, base_uri);
+	world->rdf_world->mutex().lock();
+
+	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
+		const string type     = world->rdf_world->qualify((*i)["type"].to_string());
+		const string datatype = world->rdf_world->qualify((*i)["datatype"].to_string());
+
+		bool is_output = (type == "ingen:OutputPort");
+		// FIXME: read index
+		target->new_port(path, 0, datatype, is_output);
+		
+		const Redland::Node& val_node = (*i)["value"];
+		if (val_node.to_string() != "")
+			target->set_port_value(path, AtomRDF::node_to_atom(val_node));
+	}
+	world->rdf_world->mutex().unlock();
+	
+	return parse_variables(world, target, model, base_uri, subject, path, data);
 }
 
 

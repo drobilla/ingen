@@ -38,7 +38,6 @@ ClashAvoider::map_path(const Raul::Path& in)
 		// No clash, use symbol unmodified
 		if (s == _store.end()) {
 			InsertRecord i = _symbol_map.insert(make_pair(in, in));
-			cout << i.first->second << endl;
 			return i.first->second;
 		} else {
 
@@ -66,7 +65,6 @@ ClashAvoider::map_path(const Raul::Path& in)
 			ss << in << "_" << offset;
 			InsertRecord i = _symbol_map.insert(make_pair(in, ss.str()));
 			assert(_store.find(i.first->second) == _store.end());
-			cout << i.first->second << endl;
 			return i.first->second;
 		}
 	}
