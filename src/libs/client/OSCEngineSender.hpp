@@ -100,10 +100,6 @@ public:
 
 	void clear_patch(const string& patch_path);
 	
-	void set_polyphony(const string& patch_path, uint32_t poly);
-	
-	void set_polyphonic(const string& path, bool poly);
-
 	void connect(const string& src_port_path,
 	             const string& dst_port_path);
 

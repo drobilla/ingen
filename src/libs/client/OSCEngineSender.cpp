@@ -220,34 +220,6 @@ OSCEngineSender::clear_patch(const string& patch_path)
 
 	
 void
-OSCEngineSender::set_polyphony(const string& patch_path, uint32_t poly)
-{
-	send("/ingen/set_polyphony", "isi",
-		next_id(),
-		patch_path.c_str(),
-		poly,
-		LO_ARGS_END);
-}
-
-	
-void
-OSCEngineSender::set_polyphonic(const string& path, bool poly)
-{
-	if (poly) {
-		send("/ingen/set_polyphonic", "isT",
-				next_id(),
-				path.c_str(),
-				LO_ARGS_END);
-	} else {
-		send("/ingen/set_polyphonic", "isF",
-				next_id(),
-				path.c_str(),
-				LO_ARGS_END);
-	}
-}
-
-
-void
 OSCEngineSender::connect(const string& src_port_path,
                          const string& dst_port_path)
 {

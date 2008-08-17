@@ -91,7 +91,7 @@ LoadSubpatchWindow::set_patch(SharedPtr<PatchModel> patch)
 	_patch = patch;
 
 	char temp_buf[4];
-	snprintf(temp_buf, 4, "%zd", patch->poly());
+	snprintf(temp_buf, 4, "%u", patch->poly());
 	Glib::ustring txt = "Same as parent (";
 	txt.append(temp_buf).append(")");
 	_poly_from_parent_radio->set_label(txt);

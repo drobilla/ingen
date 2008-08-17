@@ -161,7 +161,8 @@ PatchView::process_toggled()
 void
 PatchView::poly_changed()
 {
-	App::instance().engine()->set_polyphony(_patch->path(), _poly_spin->get_value_as_int());
+	App::instance().engine()->set_property(_patch->path(), "ingen:polyphony",
+			_poly_spin->get_value_as_int());
 }
 
 

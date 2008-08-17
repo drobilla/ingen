@@ -319,10 +319,20 @@ QueuedEngineInterface::set_property(const string& path,
 			push_queued(new EnablePatchEvent(_engine, _responder, now(), path, value.get_bool()));
 			return;
 		}
+	} else if (predicate == "ingen:polyphonic") {
+		if (value.type() == Atom::BOOL) {
+			push_queued(new SetPolyphonicEvent(_engine, _responder, now(), this, path, value.get_bool()));
+			return;
+		}
+	} else if (predicate == "ingen:polyphony") {
+		if (value.type() == Atom::INT) {
+			push_queued(new SetPolyphonyEvent(_engine, _responder, now(), this, path, value.get_int32()));
+			return;
+		}
 	}
-	cerr << "WARNING: Unknown property \"" << predicate << "\" ignored" << endl;
-}
 
+	cerr << "WARNING: Unknown property (or bad type) \"" << predicate << "\"" << endl;
+}
 
 // Requests //
 

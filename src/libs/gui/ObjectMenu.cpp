@@ -78,7 +78,8 @@ void
 ObjectMenu::on_menu_polyphonic()
 {
 	if (_enable_signal)
-		App::instance().engine()->set_polyphonic(_object->path(), _polyphonic_menuitem->get_active());
+		App::instance().engine()->set_property(
+				_object->path(), "ingen:polyphonic", _polyphonic_menuitem->get_active());
 }
 
 

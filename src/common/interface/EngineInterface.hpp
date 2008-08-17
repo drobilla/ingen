@@ -72,10 +72,6 @@ public:
 	
 	virtual void clear_patch(const std::string& patch_path) = 0;
 
-	virtual void set_polyphony(const std::string& patch_path, uint32_t poly) = 0;
-	
-	virtual void set_polyphonic(const std::string& path, bool poly) = 0;
-	
 	virtual void disconnect_all(const std::string& parent_patch_path,
 	                            const std::string& path) = 0;
 	
