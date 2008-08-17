@@ -380,11 +380,6 @@ Serialiser::serialise_node(SharedPtr<Shared::Node> node, const Redland::Node& no
 		Redland::Node(_model->world(), Redland::Node::LITERAL, node->path().name()));
 	
 	_model->add_statement(
-		plugin_id,
-		"rdf:type",
-		Redland::Node(_model->world(), Redland::Node::RESOURCE, "ingen:Plugin"));
-
-	_model->add_statement(
 		node_id,
 		"ingen:plugin",
 		plugin_id);
