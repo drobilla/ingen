@@ -21,11 +21,12 @@
 #include <inttypes.h>
 #include <string>
 #include <raul/SharedPtr.hpp>
-#include "interface/ClientInterface.hpp"
 #include "interface/CommonInterface.hpp"
 
 namespace Ingen {
 namespace Shared {
+
+class ClientInterface;
 
 
 /** The (only) interface clients use to communicate with the engine.
@@ -87,27 +88,12 @@ public:
 	virtual void disconnect_all(const std::string& parent_patch_path,
 	                            const std::string& path) = 0;
 	
-	virtual void set_port_value(const std::string& port_path,
-	                            const std::string& type_uri,
-	                            uint32_t           data_size,
-	                            const void*        data) = 0;
-	
-	virtual void set_port_value(const std::string& port_path,
-	                            const std::string& type_uri,
-	                            uint32_t           voice,
-	                            uint32_t           data_size,
-	                            const void*        data) = 0;
-	
 	virtual void set_port_value_immediate(const std::string& port_path,
-	                                      const std::string& type_uri,
-	                                      uint32_t           data_size,
-	                                      const void*        data) = 0;
+	                                      const Raul::Atom&  value) = 0;
 	
-	virtual void set_port_value_immediate(const std::string& port_path,
-	                                      const std::string& type_uri,
-	                                      uint32_t           voice,
-	                                      uint32_t           data_size,
-	                                      const void*        data) = 0;
+	virtual void set_voice_value_immediate(const std::string& port_path,
+	                                       uint32_t           voice,
+	                                       const Raul::Atom&  value) = 0;
 	
 	virtual void enable_port_broadcasting(const std::string& port_path) = 0;
 	
@@ -135,9 +121,6 @@ public:
 	virtual void request_plugins() = 0;
 	
 	virtual void request_all_objects() = 0;
-	
-protected:
-	EngineInterface() {}
 };
 
 

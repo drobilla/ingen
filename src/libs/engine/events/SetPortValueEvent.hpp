@@ -45,9 +45,7 @@ public:
 	                  bool                 queued,
 	                  SampleCount          timestamp,
 	                  const string&        port_path,
-	                  const string&        data_type,
-	                  uint32_t             data_size,
-	                  const void*          data);
+	                  const Raul::Atom&    value);
 	
 	SetPortValueEvent(Engine&              engine,
 	                  SharedPtr<Responder> responder,
@@ -55,9 +53,7 @@ public:
 	                  SampleCount          timestamp,
 	                  uint32_t             voice_num,
 	                  const string&        port_path,
-	                  const string&        data_type,
-	                  uint32_t             data_size,
-	                  const void*          data);
+	                  const Raul::Atom&    value);
 
 	~SetPortValueEvent();
 
@@ -66,17 +62,16 @@ public:
 	void post_process();
 
 private:
-	enum ErrorType { NO_ERROR, PORT_NOT_FOUND, NO_SPACE, ILLEGAL_PATH, ILLEGAL_VOICE };
+	enum ErrorType { NO_ERROR, PORT_NOT_FOUND, NO_SPACE,
+		ILLEGAL_PATH, ILLEGAL_VOICE, TYPE_MISMATCH };
 	
-	bool         _queued;
-	bool         _omni;
-	uint32_t     _voice_num;
-	const string _port_path;
-	const string _data_type;
-	uint32_t     _data_size;
-	void*        _data;
-	PortImpl*    _port;
-	ErrorType    _error;
+	bool             _queued;
+	bool             _omni;
+	uint32_t         _voice_num;
+	const string     _port_path;
+	const Raul::Atom _value;
+	PortImpl*        _port;
+	ErrorType        _error;
 };
 
 

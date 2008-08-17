@@ -64,11 +64,13 @@ public:
 	, object_renamed_slot(signal_object_renamed.make_slot())
 	, disconnection_slot(signal_disconnection.make_slot())
 	, variable_change_slot(signal_variable_change.make_slot())
-	, control_change_slot(signal_control_change.make_slot())
+	, port_value_slot(signal_port_value.make_slot())
 	, port_activity_slot(signal_port_activity.make_slot())
 	, program_add_slot(signal_program_add.make_slot())
 	, program_remove_slot(signal_program_remove.make_slot())
 	{}
+
+	virtual std::string uri() const { return "(internal)"; }
 
     virtual void subscribe(Shared::EngineInterface* engine) { throw; }
 
@@ -134,8 +136,11 @@ public:
 	void set_variable(const string& path, const string& key, const Raul::Atom& value)
 		{ push_sig(sigc::bind(variable_change_slot, path, key, value)); }
 
-	void control_change(const string& port_path, float value)
-		{ push_sig(sigc::bind(control_change_slot, port_path, value)); }
+	void set_port_value(const string& port_path, const Raul::Atom& value)
+		{ push_sig(sigc::bind(port_value_slot, port_path, value)); }
+	
+	void set_voice_value(const string& port_path, uint32_t voice, const Raul::Atom& value)
+		{ push_sig(sigc::bind(voice_value_slot, port_path, voice, value)); }
 	
 	void port_activity(const string& port_path)
 		{ push_sig(sigc::bind(port_activity_slot, port_path)); }
@@ -175,7 +180,8 @@ private:
 	sigc::slot<void, string, string>                     object_renamed_slot; 
 	sigc::slot<void, string, string>                     disconnection_slot; 
 	sigc::slot<void, string, string, Raul::Atom>         variable_change_slot; 
-	sigc::slot<void, string, float>                      control_change_slot; 
+	sigc::slot<void, string, Raul::Atom>                 port_value_slot; 
+	sigc::slot<void, string, uint32_t, Raul::Atom>       voice_value_slot; 
 	sigc::slot<void, string>                             port_activity_slot; 
 	sigc::slot<void, string, uint32_t, uint32_t, string> program_add_slot; 
 	sigc::slot<void, string, uint32_t, uint32_t>         program_remove_slot; 

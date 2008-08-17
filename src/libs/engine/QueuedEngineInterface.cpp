@@ -250,44 +250,36 @@ QueuedEngineInterface::disconnect_all(const string& patch_path,
 
 
 void
-QueuedEngineInterface::set_port_value(const string& port_path,
-	                                  const string& type_uri,
-                                      uint32_t      data_size,
-                                      const void*   data)
+QueuedEngineInterface::set_port_value(const string&     port_path,
+                                      const Raul::Atom& value)
 {
-	push_queued(new SetPortValueEvent(_engine, _responder, true, now(), port_path, type_uri, data_size, data));
+	push_queued(new SetPortValueEvent(_engine, _responder, true, now(), port_path, value));
 }
 
 
 void
-QueuedEngineInterface::set_port_value(const string& port_path,
-	                                  const string& type_uri,
-                                      uint32_t      voice,
-                                      uint32_t      data_size,
-                                      const void*   data)
+QueuedEngineInterface::set_voice_value(const string&     port_path,
+                                       uint32_t          voice,
+                                       const Raul::Atom& value)
 {
-	push_queued(new SetPortValueEvent(_engine, _responder, true, now(), voice, port_path, type_uri, data_size, data));
+	push_queued(new SetPortValueEvent(_engine, _responder, true, now(), voice, port_path, value));
 }
 
 
 void
-QueuedEngineInterface::set_port_value_immediate(const string& port_path,
-	                                            const string& type_uri,
-                                                uint32_t      data_size,
-                                                const void*   data)
+QueuedEngineInterface::set_port_value_immediate(const string&     port_path,
+                                                const Raul::Atom& value)
 {
-	push_stamped(new SetPortValueEvent(_engine, _responder, false, now(), port_path, type_uri, data_size, data));
+	push_stamped(new SetPortValueEvent(_engine, _responder, false, now(), port_path, value));
 }
 
 
 void
-QueuedEngineInterface::set_port_value_immediate(const string& port_path,
-	                                            const string& type_uri,
-                                                uint32_t      voice,
-                                                uint32_t      data_size,
-                                                const void*   data)
+QueuedEngineInterface::set_voice_value_immediate(const string&     port_path,
+                                                 uint32_t          voice,
+                                                 const Raul::Atom& value)
 {
-	push_stamped(new SetPortValueEvent(_engine, _responder, false, now(), voice, port_path, type_uri, data_size, data));
+	push_stamped(new SetPortValueEvent(_engine, _responder, false, now(), voice, port_path, value));
 }
 
 

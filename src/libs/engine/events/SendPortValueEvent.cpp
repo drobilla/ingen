@@ -32,9 +32,9 @@ SendPortValueEvent::post_process()
 	// FIXME...
 	
 	if (_omni) {
-		_engine.broadcaster()->send_control_change(_port->path(), _value);
+		_engine.broadcaster()->send_port_value(_port->path(), _value);
 	} else {
-		_engine.broadcaster()->send_control_change(_port->path(), _value);
+		_engine.broadcaster()->send_port_value(_port->path(), _value);
 	}
 }
 

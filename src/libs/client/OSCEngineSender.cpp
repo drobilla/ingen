@@ -24,21 +24,22 @@ using namespace std;
 namespace Ingen {
 namespace Client {
 
+
 /** Note the sending port is implicitly set by liblo, lo_send by default sends
  * from the most recently created server, so create the OSC listener before
  * this to have it all happen on the same port.  Yeah, this is a big magic :/
  */
 OSCEngineSender::OSCEngineSender(const string& engine_url)
-: _engine_url(engine_url)
-, _engine_addr(lo_address_new_from_url(engine_url.c_str()))
-, _id(0)
+	: _engine_url(engine_url)
+	, _id(0)
 {
+	_address = lo_address_new_from_url(engine_url.c_str());
 }
 
 
 OSCEngineSender::~OSCEngineSender()
 {
-	lo_address_free(_engine_addr);
+	lo_address_free(_address);
 }
 
 
@@ -55,20 +56,10 @@ OSCEngineSender::~OSCEngineSender()
 void
 OSCEngineSender::attach(int32_t ping_id, bool block)
 {
-	//start_listen_thread(_client_port);
-	
-	/*if (engine_url == "") {
-		string local_url = _osc_listener->listen_url().substr(
-			0, _osc_listener->listen_url().find_last_of(":"));
-		local_url.append(":16180");
-		_engine_addr = lo_address_new_from_url(local_url.c_str());
-	} else {
-		_engine_addr = lo_address_new_from_url(engine_url.c_str());
-	}
-	*/
-	_engine_addr = lo_address_new_from_url(_engine_url.c_str());
+	if (!_address)
+		_address = lo_address_new_from_url(_engine_url.c_str());
 
-	if (_engine_addr == NULL) {
+	if (_address == NULL) {
 		cerr << "Aborting: Unable to connect to " << _engine_url << endl;
 		exit(EXIT_FAILURE);
 	}
@@ -77,24 +68,6 @@ OSCEngineSender::attach(int32_t ping_id, bool block)
 
 	_id = ping_id;
 	this->ping();
-
-	/*if (block) {
-		set_wait_response_id(request_id);	
-
-		while (1) {	
-			if (_response_semaphore.try_wait() != 0) {
-				cout << ".";
-				cout.flush();
-				ping(request_id);
-				usleep(100000);
-			} else {
-				cout << " connected." << endl;
-				_waiting_for_response = false;
-				break;
-			}
-		}
-	}
-	*/
 }
 
 /* *** EngineInterface implementation below here *** */
@@ -110,72 +83,43 @@ void
 OSCEngineSender::register_client(ClientInterface* client)
 {
 	// FIXME: use parameters.. er, somehow.
-	assert(_engine_addr);
-	lo_send(_engine_addr, "/ingen/register_client", "i", next_id());
+	send("/ingen/register_client", "i", next_id(), LO_ARGS_END, LO_ARGS_END);
 }
 
 
 void
 OSCEngineSender::unregister_client(const string& uri)
 {
-	assert(_engine_addr);
-	lo_send(_engine_addr, "/ingen/unregister_client", "i", next_id());
+	send("/ingen/unregister_client", "i", next_id(), LO_ARGS_END);
 }
-
-
-// Bundles
-
-void
-OSCEngineSender::bundle_begin()
-{
-	//cerr << "BUNDLE {" << endl;
-	/*assert(!_bundle);
-	_bundle = lo_bundle_new(LO_TT_IMMEDIATE);*/
-}
-
-
-void
-OSCEngineSender::bundle_end()
-{
-	//cerr << "} BUNDLE" << endl;
-	/*assert(_bundle);
-	lo_send_bundle(_address, _bundle);
-	lo_bundle_free(_bundle);
-	_bundle = NULL;*/
-}
-
 
 
 // Engine commands
 void
 OSCEngineSender::load_plugins()
 {
-	assert(_engine_addr);
-	lo_send(_engine_addr, "/ingen/load_plugins", "i", next_id());
+	send("/ingen/load_plugins", "i", next_id(), LO_ARGS_END);
 }
 
 
 void
 OSCEngineSender::activate()    
 {
-	assert(_engine_addr);
-	lo_send(_engine_addr, "/ingen/activate", "i", next_id());
+	send("/ingen/activate", "i", next_id(), LO_ARGS_END);
 }
 
 
 void
 OSCEngineSender::deactivate()  
 {
-	assert(_engine_addr);
-	lo_send(_engine_addr, "/ingen/deactivate", "i", next_id());
+	send("/ingen/deactivate", "i", next_id(), LO_ARGS_END);
 }
 
 
 void
 OSCEngineSender::quit()        
 {
-	assert(_engine_addr);
-	lo_send(_engine_addr, "/ingen/quit", "i", next_id());
+	send("/ingen/quit", "i", next_id(), LO_ARGS_END);
 }
 
 
@@ -186,11 +130,11 @@ void
 OSCEngineSender::new_patch(const string& path,
                            uint32_t      poly)
 {
-	assert(_engine_addr);
-	lo_send(_engine_addr, "/ingen/new_patch", "isi",
+	send("/ingen/new_patch", "isi",
 		next_id(),
 		path.c_str(),
-		poly);
+		poly,
+		LO_ARGS_END);
 }
 
 
@@ -199,12 +143,12 @@ OSCEngineSender::new_port(const string& path,
                           const string& data_type,
                           bool          is_output)
 {
-	assert(_engine_addr);
-	lo_send(_engine_addr, "/ingen/new_port",  "issi",
+	send("/ingen/new_port",  "issi",
 		next_id(),
 		path.c_str(),
 		data_type.c_str(),
-		(is_output ? 1 : 0));
+		(is_output ? 1 : 0),
+		LO_ARGS_END);
 }
 
 
@@ -213,18 +157,19 @@ OSCEngineSender::new_node(const string& path,
                           const string& plugin_uri,
                           bool          polyphonic)
 {
-	assert(_engine_addr);
 
 	if (polyphonic)
-		lo_send(_engine_addr, "/ingen/new_node",  "issT",
+		send("/ingen/new_node",  "issT",
 			next_id(),
 			path.c_str(),
-			plugin_uri.c_str());
+			plugin_uri.c_str(),
+			LO_ARGS_END);
 	else
-		lo_send(_engine_addr, "/ingen/new_node",  "issF",
+		send("/ingen/new_node",  "issF",
 			next_id(),
 			path.c_str(),
-			plugin_uri.c_str());
+			plugin_uri.c_str(),
+			LO_ARGS_END);
 }
 
 
@@ -239,21 +184,22 @@ OSCEngineSender::new_node_deprecated(const string& path,
                                      const string& plugin_label,
                                      bool          polyphonic)
 {
-	assert(_engine_addr);
 	if (polyphonic)
-		lo_send(_engine_addr, "/ingen/new_node",  "issssT",
+		send("/ingen/new_node",  "issssT",
 			next_id(),
 			path.c_str(),
 			plugin_type.c_str(),
 			library_name.c_str(),
-			plugin_label.c_str());
+			plugin_label.c_str(),
+			LO_ARGS_END);
 	else
-		lo_send(_engine_addr, "/ingen/new_node",  "issssF",
+		send("/ingen/new_node",  "issssF",
 			next_id(),
 			path.c_str(),
 			plugin_type.c_str(),
 			library_name.c_str(),
-			plugin_label.c_str());
+			plugin_label.c_str(),
+			LO_ARGS_END);
 }
 
 
@@ -261,57 +207,58 @@ void
 OSCEngineSender::rename(const string& old_path,
                         const string& new_name)
 {
-	assert(_engine_addr);
-	lo_send(_engine_addr, "/ingen/rename", "iss",
+	send("/ingen/rename", "iss",
 		next_id(),
 		old_path.c_str(),
-		new_name.c_str());
+		new_name.c_str(),
+		LO_ARGS_END);
 }
 
 
 void
 OSCEngineSender::destroy(const string& path)
 {
-	assert(_engine_addr);
-	lo_send(_engine_addr, "/ingen/destroy", "is",
+	send("/ingen/destroy", "is",
 		next_id(),
-		path.c_str());
+		path.c_str(),
+		LO_ARGS_END);
 }
 
 
 void
 OSCEngineSender::clear_patch(const string& patch_path)
 {
-	assert(_engine_addr);
-	lo_send(_engine_addr, "/ingen/clear_patch", "is",
+	send("/ingen/clear_patch", "is",
 		next_id(),
-		patch_path.c_str());
+		patch_path.c_str(),
+		LO_ARGS_END);
 }
 
 	
 void
 OSCEngineSender::set_polyphony(const string& patch_path, uint32_t poly)
 {
-	assert(_engine_addr);
-	lo_send(_engine_addr, "/ingen/set_polyphony", "isi",
+	send("/ingen/set_polyphony", "isi",
 		next_id(),
 		patch_path.c_str(),
-		poly);
+		poly,
+		LO_ARGS_END);
 }
 
 	
 void
 OSCEngineSender::set_polyphonic(const string& path, bool poly)
 {
-	assert(_engine_addr);
 	if (poly) {
-		lo_send(_engine_addr, "/ingen/set_polyphonic", "isT",
+		send("/ingen/set_polyphonic", "isT",
 				next_id(),
-				path.c_str());
+				path.c_str(),
+				LO_ARGS_END);
 	} else {
-		lo_send(_engine_addr, "/ingen/set_polyphonic", "isF",
+		send("/ingen/set_polyphonic", "isF",
 				next_id(),
-				path.c_str());
+				path.c_str(),
+				LO_ARGS_END);
 	}
 }
 
@@ -319,20 +266,20 @@ OSCEngineSender::set_polyphonic(const string& path, bool poly)
 void
 OSCEngineSender::enable_patch(const string& patch_path)
 {
-	assert(_engine_addr);
-	lo_send(_engine_addr, "/ingen/enable_patch", "is",
+	send("/ingen/enable_patch", "is",
 		next_id(),
-		patch_path.c_str());
+		patch_path.c_str(),
+		LO_ARGS_END);
 }
 
 
 void
 OSCEngineSender::disable_patch(const string& patch_path)
 {
-	assert(_engine_addr);
-	lo_send(_engine_addr, "/ingen/disable_patch", "is",
+	send("/ingen/disable_patch", "is",
 		next_id(),
-		patch_path.c_str());
+		patch_path.c_str(),
+		LO_ARGS_END);
 }
 
 
@@ -340,11 +287,11 @@ void
 OSCEngineSender::connect(const string& src_port_path,
                          const string& dst_port_path)
 {
-	assert(_engine_addr);
-	lo_send(_engine_addr, "/ingen/connect", "iss",
+	send("/ingen/connect", "iss",
 		next_id(),
 		src_port_path.c_str(),
-		dst_port_path.c_str());
+		dst_port_path.c_str(),
+		LO_ARGS_END);
 }
 
 
@@ -352,11 +299,11 @@ void
 OSCEngineSender::disconnect(const string& src_port_path,
                             const string& dst_port_path)
 {
-	assert(_engine_addr);
-	lo_send(_engine_addr, "/ingen/disconnect", "iss",
+	send("/ingen/disconnect", "iss",
 		next_id(),
 		src_port_path.c_str(),
-		dst_port_path.c_str());
+		dst_port_path.c_str(),
+		LO_ARGS_END);
 }
 
 
@@ -364,144 +311,79 @@ void
 OSCEngineSender::disconnect_all(const string& parent_patch_path,
                                 const string& node_path)
 {
-	assert(_engine_addr);
-	lo_send(_engine_addr, "/ingen/disconnect_all", "iss",
+	send("/ingen/disconnect_all", "iss",
 		next_id(),
 		parent_patch_path.c_str(),
-		node_path.c_str());
+		node_path.c_str(),
+		LO_ARGS_END);
 }
 
 
 void
-OSCEngineSender::set_port_value(const string& port_path,
-                                const string& type_uri,
-                                uint32_t      data_size,
-                                const void*   data)
+OSCEngineSender::set_port_value(const string&     port_path,
+                                const Raul::Atom& value)
 {
-	assert(_engine_addr);
-	if (type_uri == "ingen:Float") {
-		assert(data_size == 4);
-		lo_send(_engine_addr, "/ingen/set_port_value", "isf",
-				next_id(),
-				port_path.c_str(),
-				*(float*)data);
-	} else if (type_uri == "lv2_midi:MidiEvent") {
-		lo_blob b = lo_blob_new(data_size, (void*)data);
-		lo_send(_engine_addr, "/ingen/set_port_value", "issb",
-				next_id(),
-				port_path.c_str(),
-				type_uri.c_str(),
-				b);
-		lo_blob_free(b);
-	// FIXME: support atomic bundles of events here
-	} else {
-		cerr << "ERROR: Unknown value type '" << type_uri << "', ignoring" << endl;
-	}
+	lo_message m = lo_message_new();
+	lo_message_add_string(m, port_path.c_str());
+	Raul::AtomLiblo::lo_message_add_atom(m, value);
+	send_message("/ingen/set_port_value", m);
 }
 
 
 void
-OSCEngineSender::set_port_value(const string& port_path,
-                                const string& type_uri,
-                                uint32_t      voice,
-                                uint32_t      data_size,
-                                const void*   data)
+OSCEngineSender::set_voice_value(const string&     port_path,
+                                 uint32_t          voice,
+                                 const Raul::Atom& value)
 {
-	assert(_engine_addr);
-	if (type_uri == "ingen:Float") {
-		assert(data_size == 4);
-		lo_send(_engine_addr, "/ingen/set_port_value", "isf",
-				next_id(),
-				port_path.c_str(),
-				*(float*)data);
-	} else if (type_uri == "lv2_midi:MidiEvent") {
-		lo_blob b = lo_blob_new(data_size, (void*)data);
-		lo_send(_engine_addr, "/ingen/set_port_value", "issb",
-				next_id(),
-				port_path.c_str(),
-				type_uri.c_str(),
-				b);
-		lo_blob_free(b);
-	} else {
-		cerr << "ERROR: Unknown value type '" << type_uri << "', ignoring" << endl;
-	}
+	lo_message m = lo_message_new();
+	lo_message_add_string(m, port_path.c_str());
+	lo_message_add_int32(m, voice);
+	Raul::AtomLiblo::lo_message_add_atom(m, value);
+	send_message("/ingen/set_port_value", m);
 }
 
 
 void
-OSCEngineSender::set_port_value_immediate(const string& port_path,
-                                          const string& type_uri,
-                                          uint32_t      data_size,
-                                          const void*   data)
+OSCEngineSender::set_port_value_immediate(const string&     port_path,
+                                          const Raul::Atom& value)
 {
-	assert(_engine_addr);
-
-	if (type_uri == "ingen:Float") {
-		assert(data_size == 4);
-		lo_send(_engine_addr, "/ingen/set_port_value_immediate", "isf",
-				next_id(),
-				port_path.c_str(),
-				*(float*)data);
-	} else if (type_uri == "lv2_midi:MidiEvent") {
-		lo_blob b = lo_blob_new(data_size, (void*)data);
-		lo_send(_engine_addr, "/ingen/set_port_value_immediate", "issb",
-				next_id(),
-				port_path.c_str(),
-				type_uri.c_str(),
-				b);
-		lo_blob_free(b);
-	} else {
-		cerr << "ERROR: Unknown value type '" << type_uri << "', ignoring" << endl;
-	}
+	lo_message m = lo_message_new();
+	lo_message_add_string(m, port_path.c_str());
+	Raul::AtomLiblo::lo_message_add_atom(m, value);
+	send_message("/ingen/set_port_value_immediate", m);
 }
 
 
 void
-OSCEngineSender::set_port_value_immediate(const string& port_path,
-                                          const string& type_uri,
-                                          uint32_t      voice,
-                                          uint32_t      data_size,
-                                          const void*   data)
+OSCEngineSender::set_voice_value_immediate(const string&     port_path,
+                                           uint32_t          voice,
+                                           const Raul::Atom& value)
 {
-	assert(_engine_addr);
-	
-	if (type_uri == "ingen:Float") {
-		assert(data_size == 4);
-		lo_send(_engine_addr, "/ingen/set_port_value_immediate", "isif",
-				next_id(),
-				port_path.c_str(),
-				voice,
-				*(float*)data);
-	} else if (type_uri == "lv2_midi:MidiEvent") {
-		lo_blob b = lo_blob_new(data_size, (void*)data);
-		lo_send(_engine_addr, "/ingen/set_port_value_immediate", "isisb",
-				next_id(),
-				port_path.c_str(),
-				voice,
-				type_uri.c_str(),
-				b);
-		lo_blob_free(b);
-	} else {
-		cerr << "ERROR: Unknown value type '" << type_uri << "', ignoring" << endl;
-	}
+	lo_message m = lo_message_new();
+	lo_message_add_string(m, port_path.c_str());
+	lo_message_add_int32(m, voice);
+	Raul::AtomLiblo::lo_message_add_atom(m, value);
+	send_message("/ingen/set_port_value_immediate", m);
 }
 
 	
 void
 OSCEngineSender::enable_port_broadcasting(const string& port_path)
 {
-	lo_send(_engine_addr, "/ingen/enable_port_broadcasting", "is",
+	send("/ingen/enable_port_broadcasting", "is",
 			next_id(),
-			port_path.c_str());
+			port_path.c_str(),
+			LO_ARGS_END);
 }
 
 
 void
 OSCEngineSender::disable_port_broadcasting(const string& port_path)
 {
-	lo_send(_engine_addr, "/ingen/disable_port_broadcasting", "is",
+	send("/ingen/disable_port_broadcasting", "is",
 			next_id(),
-			port_path.c_str());
+			port_path.c_str(),
+			LO_ARGS_END);
 }
 
 
@@ -510,22 +392,21 @@ OSCEngineSender::set_program(const string& node_path,
                              uint32_t      bank,
                              uint32_t      program)
 {
-	assert(_engine_addr);
-	lo_send(_engine_addr,
-			(string("/dssi") + node_path + "/program").c_str(),
+	send((string("/dssi") + node_path + "/program").c_str(),
 			"ii",
 			bank,
-			program);
+			program,
+			LO_ARGS_END);
 }
 
 
 void
 OSCEngineSender::midi_learn(const string& node_path)
 {
-	assert(_engine_addr);
-	lo_send(_engine_addr, "/ingen/midi_learn", "is",
+	send("/ingen/midi_learn", "is",
 		next_id(),
-		node_path.c_str());
+		node_path.c_str(),
+		LO_ARGS_END);
 }
 
 
@@ -535,13 +416,12 @@ OSCEngineSender::set_variable(const string&     obj_path,
                               const Raul::Atom& value)
 {
 	
-	assert(_engine_addr);
 	lo_message m = lo_message_new();
 	lo_message_add_int32(m, next_id());
 	lo_message_add_string(m, obj_path.c_str());
 	lo_message_add_string(m, predicate.c_str());
 	Raul::AtomLiblo::lo_message_add_atom(m, value);
-	lo_send_message(_engine_addr, "/ingen/set_variable", m);
+	send_message("/ingen/set_variable", m);
 }
 
 
@@ -550,64 +430,61 @@ OSCEngineSender::set_variable(const string&     obj_path,
 void
 OSCEngineSender::ping()
 {
-	assert(_engine_addr);
-	lo_send(_engine_addr, "/ingen/ping", "i", next_id());
+	send("/ingen/ping", "i", next_id(), LO_ARGS_END);
 }
 
 
 void
 OSCEngineSender::request_plugin(const string& uri)
 {
-	assert(_engine_addr);
-	lo_send(_engine_addr, "/ingen/request_plugin", "is",
+	send("/ingen/request_plugin", "is",
 		next_id(),
-		uri.c_str());
+		uri.c_str(),
+		LO_ARGS_END);
 }
 
 
 void
 OSCEngineSender::request_object(const string& path)
 {
-	assert(_engine_addr);
-	lo_send(_engine_addr, "/ingen/request_object", "is",
+	send("/ingen/request_object", "is",
 		next_id(),
-		path.c_str());
+		path.c_str(),
+		LO_ARGS_END);
 }
 
 
 void
 OSCEngineSender::request_port_value(const string& port_path)
 {
-	assert(_engine_addr);
-	lo_send(_engine_addr, "/ingen/request_port_value", "is",
+	send("/ingen/request_port_value", "is",
 		next_id(),
-		port_path.c_str());
+		port_path.c_str(),
+		LO_ARGS_END);
 }
 
 void
 OSCEngineSender::request_variable(const string& object_path, const string& key)
 {
-	assert(_engine_addr);
-	lo_send(_engine_addr, "/ingen/request_variable", "iss",
+	send("/ingen/request_variable", "iss",
 		next_id(),
 		object_path.c_str(),
-		key.c_str());
+		key.c_str(),
+		LO_ARGS_END);
 }
 
 
 void
 OSCEngineSender::request_plugins()
 {
-	assert(_engine_addr);
-	lo_send(_engine_addr, "/ingen/request_plugins", "i", next_id());
+	send("/ingen/request_plugins", "i", next_id(), LO_ARGS_END);
 }
 
 
 void
 OSCEngineSender::request_all_objects()
 {
-	assert(_engine_addr);
-	lo_send(_engine_addr, "/ingen/request_all_objects", "i", next_id());
+	send("/ingen/request_all_objects", "i", next_id(), LO_ARGS_END);
 }
 
 

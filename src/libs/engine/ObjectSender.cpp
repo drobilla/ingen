@@ -132,7 +132,7 @@ ObjectSender::send_port(ClientInterface* client, const PortImpl* port)
 	if (port->type() == DataType::CONTROL) {
 		const Sample value = dynamic_cast<const AudioBuffer*>(port->buffer(0))->value_at(0);
 		//cerr << port->path() << " sending default value " << default_value << endl;
-		client->control_change(port->path(), value);
+		client->set_port_value(port->path(), value);
 	}
 	
 	client->bundle_end();

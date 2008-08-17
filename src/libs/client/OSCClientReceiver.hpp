@@ -97,7 +97,8 @@ private:
 	LO_HANDLER(new_port);
 	LO_HANDLER(polyphonic);
 	LO_HANDLER(set_variable);
-	LO_HANDLER(control_change);
+	LO_HANDLER(set_port_value);
+	LO_HANDLER(set_voice_value);
 	LO_HANDLER(port_activity);
 	LO_HANDLER(program_add);
 	LO_HANDLER(program_remove);

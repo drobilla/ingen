@@ -21,15 +21,11 @@
 #include <cassert>
 #include <string>
 #include <iostream>
-#include <list>
 #include <lo/lo.h>
 #include <pthread.h>
 #include "types.hpp"
 #include "interface/ClientInterface.hpp"
-
-using std::list;
-using std::string;
-using std::cerr;
+#include "shared/OSCSender.hpp"
 
 namespace Ingen {
 
@@ -40,35 +36,33 @@ namespace Shared { class EngineInterface; }
  *
  * \ingroup engine
  */
-class OSCClientSender : public Shared::ClientInterface
+class OSCClientSender : public Shared::ClientInterface, public Shared::OSCSender
 {
 public:
 	OSCClientSender(const std::string& url)
-		: Shared::ClientInterface(url)
-		, _address(lo_address_new_from_url(url.c_str()))
-		, _transfer(NULL)
-		, _enabled(true)
-	{}
+		: _url(url)
+	{
+		_address = lo_address_new_from_url(url.c_str());
+	}
 
 	virtual ~OSCClientSender()
 	{ lo_address_free(_address); }
-
-	lo_address address() const { return _address; }
+	
+	void enable()  { _enabled = true; }
+	void disable() { _enabled = false; }
+	
+	void bundle_begin()   { OSCSender::bundle_begin(); }
+	void bundle_end()     { OSCSender::bundle_end(); }
+	void transfer_begin() { OSCSender::transfer_begin(); }
+	void transfer_end()   { OSCSender::transfer_end(); }
+	
+	std::string uri() const { return lo_address_get_url(_address); }
 	
     void subscribe(Shared::EngineInterface* engine) { }
 
 	/* *** ClientInterface Implementation Below *** */
 
 	//void client_registration(const std::string& url, int client_id);
-	
-	void enable()  { _enabled = true; }
-	void disable() { _enabled = false; }
-
-	void bundle_begin();
-	void bundle_end();
-	
-	void transfer_begin();
-	void transfer_end();
 
 	void response_ok(int32_t id);
 	void response_error(int32_t id, const std::string& msg);
@@ -120,8 +114,12 @@ public:
 	                          const std::string& predicate,
 	                          const Raul::Atom&  value);
 	
-	virtual void control_change(const std::string& port_path,
-	                            float              value);
+	virtual void set_port_value(const std::string& port_path,
+	                            const Raul::Atom&  value);
+	
+	virtual void set_voice_value(const std::string& port_path,
+	                             uint32_t           voice,
+	                             const Raul::Atom&  value);
 	
 	virtual void port_activity(const std::string& port_path);
 	
@@ -135,16 +133,7 @@ public:
 	                            uint32_t           program);
 
 private:
-	int  send(const char *path, const char *types, ...);
-	void send_message(const char* path, lo_message m);
-
-	enum SendState { Immediate, SendingBundle, SendingTransfer };
-
-	string     _url;
-	lo_address _address;
-	SendState  _send_state;
-	lo_bundle  _transfer;
-	bool       _enabled;
+	std::string _url;
 };
 
 

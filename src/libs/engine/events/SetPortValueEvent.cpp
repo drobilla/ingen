@@ -39,21 +39,16 @@ SetPortValueEvent::SetPortValueEvent(Engine&              engine,
                                      bool                 queued,
                                      SampleCount          timestamp,
                                      const string&        port_path,
-                                     const string&        data_type,
-                                     uint32_t             data_size,
-                                     const void*          data)
+                                     const Raul::Atom&    value)
 	: QueuedEvent(engine, responder, timestamp)
 	, _queued(queued)
 	, _omni(true)
 	, _voice_num(0)
 	, _port_path(port_path)
-	, _data_type(data_type)
-	, _data_size(data_size)
-	, _data(malloc(data_size))
+    , _value(value) 
 	, _port(NULL)
 	, _error(NO_ERROR)
 {
-	memcpy(_data, data, data_size);
 }
 
 
@@ -64,27 +59,21 @@ SetPortValueEvent::SetPortValueEvent(Engine&              engine,
                                      SampleCount          timestamp,
                                      uint32_t             voice_num,
                                      const string&        port_path,
-                                     const string&        data_type,
-                                     uint32_t             data_size,
-                                     const void*          data)
+                                     const Raul::Atom&    value)
 	: QueuedEvent(engine, responder, timestamp)
 	, _queued(queued)
 	, _omni(false)
 	, _voice_num(voice_num)
 	, _port_path(port_path)
-	, _data_type(data_type)
-	, _data_size(data_size)
-	, _data(malloc(data_size))
+    , _value(value) 
 	, _port(NULL)
 	, _error(NO_ERROR)
 {
-	memcpy(_data, data, data_size);
 }
 
 
 SetPortValueEvent::~SetPortValueEvent()
 {
-	free(_data);
 }
 
 	
@@ -129,13 +118,19 @@ SetPortValueEvent::execute(ProcessContext& context)
 		Buffer* const buf = _port->buffer(0);
 		AudioBuffer* const abuf = dynamic_cast<AudioBuffer*>(buf);
 		if (abuf) {
+			if (_value.type() != Atom::FLOAT) {
+				_error = TYPE_MISMATCH;
+				return;
+			}
+
 			if (_omni) {
 				for (uint32_t i=0; i < _port->poly(); ++i)
-					((AudioBuffer*)_port->buffer(i))->set_value(*(float*)_data, context.start(), _time);
+					((AudioBuffer*)_port->buffer(i))->set_value(
+							_value.get_float(), context.start(), _time);
 			} else {
 				if (_voice_num < _port->poly())
 					((AudioBuffer*)_port->buffer(_voice_num))->set_value(
-							*(float*)_data, context.start(), _time);
+							_value.get_float(), context.start(), _time);
 				else
 					_error = ILLEGAL_VOICE;
 			}
@@ -144,7 +139,8 @@ SetPortValueEvent::execute(ProcessContext& context)
 		
 		EventBuffer* const ebuf = dynamic_cast<EventBuffer*>(buf);
 		// FIXME: eliminate string comparisons
-		if (ebuf && _data_type == "lv2_midi:MidiEvent") {
+		if (ebuf && _value.type() == Atom::BLOB
+				&& !strcmp(_value.get_blob_type(), "lv2_midi:MidiEvent")) {
 			const LV2Features::Feature* f = _engine.world()->lv2_features->feature(LV2_URI_MAP_URI);
 			LV2URIMap* map = (LV2URIMap*)f->controller;
 			const uint32_t type_id = map->uri_to_id(NULL, "http://lv2plug.in/ns/ext/midi#MidiEvent");
@@ -152,14 +148,18 @@ SetPortValueEvent::execute(ProcessContext& context)
 			ebuf->prepare_write(context.start(), context.nframes());
 			// FIXME: how should this work? binary over OSC, ick
 			// Message is an event:
-			ebuf->append(frames, 0, type_id, _data_size, (const unsigned char*)_data);
+			ebuf->append(frames, 0, type_id, _value.data_size(), (const uint8_t*)_value.get_blob());
 			// Message is an event buffer:
 			//ebuf->append((LV2_Event_Buffer*)_data);
 			_port->raise_set_by_user_flag();
 			return;
 		}
 
-		cerr << "WARNING: Unknown value type " << _data_type << ", ignoring" << endl;
+
+		if (_value.type() == Atom::BLOB)
+			cerr << "WARNING: Unknown value blob type " << _value.get_blob_type() << endl;
+		else
+			cerr << "WARNING: Unknown value type " << (int)_value.type() << endl;
 	}
 }
 
@@ -170,7 +170,7 @@ SetPortValueEvent::post_process()
 	if (_error == NO_ERROR) {
 		assert(_port != NULL);
 		_responder->respond_ok();
-		_engine.broadcaster()->send_control_change(_port_path, *(float*)_data);
+		_engine.broadcaster()->send_port_value(_port_path, _value);
 	
 	} else if (_error == ILLEGAL_PATH) {
 		string msg = "Illegal port path \"";
@@ -189,7 +189,7 @@ SetPortValueEvent::post_process()
 	
 	} else if (_error == NO_SPACE) {
 		std::ostringstream msg("Attempt to write ");
-		msg << _data_size << " bytes to " << _port_path << ", with capacity "
+		msg << _value.data_size() << " bytes to " << _port_path << ", with capacity "
 			<< _port->buffer_size() << endl;
 		_responder->respond_error(msg.str());
 	}

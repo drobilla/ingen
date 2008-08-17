@@ -31,8 +31,7 @@ namespace Client {
 
 	
 OSCClientReceiver::OSCClientReceiver(int listen_port)
-	: ClientInterface("localhost")
-	, _listen_port(listen_port)
+	: _listen_port(listen_port)
 	, _st(NULL)
 {
 	start(false); // true = dump, false = shutup
@@ -159,7 +158,8 @@ OSCClientReceiver::setup_callbacks()
 	lo_server_thread_add_method(_st, "/ingen/polyphonic", "sT", polyphonic_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/polyphonic", "sF", polyphonic_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/set_variable", NULL, set_variable_cb, this);
-	lo_server_thread_add_method(_st, "/ingen/control_change", "sf", control_change_cb, this);
+	lo_server_thread_add_method(_st, "/ingen/set_port_value", "sf", set_port_value_cb, this);
+	lo_server_thread_add_method(_st, "/ingen/set_voice_value", "sif", set_voice_value_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/port_activity", "s", port_activity_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/program_add", "siis", program_add_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/program_remove", "sii", program_remove_cb, this);
@@ -321,12 +321,25 @@ OSCClientReceiver::_set_variable_cb(const char* path, const char* types, lo_arg*
 
 
 int
-OSCClientReceiver::_control_change_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCClientReceiver::_set_port_value_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	const char* const port_path  = &argv[0]->s;
 	const float       value      =  argv[1]->f;
 
-	control_change(port_path, value);
+	set_port_value(port_path, value);
+
+	return 0;	
+}
+
+	
+int
+OSCClientReceiver::_set_voice_value_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+{
+	const char* const port_path  = &argv[0]->s;
+	const int         voice      =  argv[1]->i;
+	const float       value      =  argv[2]->f;
+
+	set_voice_value(port_path, voice, value);
 
 	return 0;	
 }

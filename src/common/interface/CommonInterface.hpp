@@ -21,7 +21,7 @@
 #include <inttypes.h>
 #include <string>
 #include <raul/SharedPtr.hpp>
-#include "interface/ClientInterface.hpp"
+#include <raul/Atom.hpp>
 #include "interface/CommonInterface.hpp"
 
 namespace Ingen {
@@ -61,8 +61,12 @@ public:
 	                          const std::string& predicate,
 	                          const Raul::Atom&  value) = 0;
 	
-protected:
-	CommonInterface() {}
+	virtual void set_port_value(const std::string& port_path,
+								const Raul::Atom&  value) = 0;
+	
+	virtual void set_voice_value(const std::string& port_path,
+	                             uint32_t           voice,
+	                             const Raul::Atom&  value) = 0;
 };
 
 

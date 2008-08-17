@@ -50,7 +50,7 @@ ClientStore::ClientStore(SharedPtr<EngineInterface> engine, SharedPtr<SigClientI
 	emitter->signal_connection.connect(sigc::mem_fun(this, &ClientStore::connection_event));
 	emitter->signal_disconnection.connect(sigc::mem_fun(this, &ClientStore::disconnection_event));
 	emitter->signal_variable_change.connect(sigc::mem_fun(this, &ClientStore::variable_change_event));
-	emitter->signal_control_change.connect(sigc::mem_fun(this, &ClientStore::control_change_event));
+	emitter->signal_port_value.connect(sigc::mem_fun(this, &ClientStore::port_value_event));
 	emitter->signal_port_activity.connect(sigc::mem_fun(this, &ClientStore::port_activity_event));
 }
 
@@ -524,7 +524,7 @@ ClientStore::variable_change_event(const Path& subject_path, const string& predi
 
 
 void
-ClientStore::control_change_event(const Path& port_path, float value)
+ClientStore::port_value_event(const Path& port_path, const Raul::Atom& value)
 {
 	SharedPtr<PortModel> port = PtrCast<PortModel>(object(port_path));
 	if (port)

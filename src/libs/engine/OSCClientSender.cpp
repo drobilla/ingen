@@ -35,90 +35,6 @@ using namespace std;
 
 namespace Ingen {
 
-void
-OSCClientSender::bundle_begin()
-{
-	assert(!_transfer);
-	_transfer = lo_bundle_new(LO_TT_IMMEDIATE);
-	_send_state = SendingBundle;
-
-}
-
-void
-OSCClientSender::bundle_end()
-{
-	transfer_end();
-}
-
-
-void
-OSCClientSender::transfer_begin()
-{
-	//cerr << "TRANSFER {" << endl;
-	assert(!_transfer);
-	_transfer = lo_bundle_new(LO_TT_IMMEDIATE);
-	_send_state = SendingTransfer;
-}
-
-
-void
-OSCClientSender::transfer_end()
-{
-	//cerr << "} TRANSFER" << endl;
-	assert(_transfer);
-	lo_send_bundle(_address, _transfer);
-	lo_bundle_free(_transfer);
-	_transfer = NULL;
-	_send_state = Immediate;
-}
-
-
-int
-OSCClientSender::send(const char *path, const char *types, ...)
-{
-	if (!_enabled)
-		return 0;
-
-	va_list args;
-	va_start(args, types);
-	
-	lo_message msg = lo_message_new();
-	int ret = lo_message_add_varargs(msg, types, args);
-    
-	if (!ret)
-		send_message(path, msg);
-    
-	va_end(args);
-
-	return ret;
-}
-
-
-void
-OSCClientSender::send_message(const char* path, lo_message msg)
-{
-	// FIXME: size?  liblo doesn't export this.
-	// Don't want to exceed max UDP packet size (1500 bytes?)
-	static const size_t MAX_BUNDLE_SIZE = 1500 - 32*5;
-
-	if (!_enabled)
-		return;
-		
-	if (_transfer) {
-		if (lo_bundle_length(_transfer) + lo_message_length(msg, path) > MAX_BUNDLE_SIZE) {
-			if (_send_state == SendingBundle)
-				cerr << "WARNING: Maximum bundle size reached, bundle split" << endl;
-			lo_send_bundle(_address, _transfer);
-			_transfer = lo_bundle_new(LO_TT_IMMEDIATE);
-		}
-		lo_bundle_add_message(_transfer, path, msg);
-
-	} else {
-		lo_send_message(_address, path, msg);
-	}
-}
-
-
 
 /*! \page client_osc_namespace Client OSC Namespace Documentation
  *
@@ -460,14 +376,33 @@ OSCClientSender::set_variable(const std::string& path, const std::string& key, c
 
 
 /** \page client_osc_namespace
- * <p> \b /ingen/control_change - Notification the value of a port has changed
+ * <p> \b /ingen/set_port_value - Notification the value of a port has changed
  * \arg \b path (string) - Path of port
- * \arg \b value (float) - New value of port </p> \n \n
+ * \arg \b value (any) - New value of port </p> \n \n
  */
 void
-OSCClientSender::control_change(const std::string& port_path, float value)
+OSCClientSender::set_port_value(const std::string& port_path, const Raul::Atom& value)
 {
-	send("/ingen/control_change", "sf", port_path.c_str(), value, LO_ARGS_END);
+	lo_message m = lo_message_new();
+	lo_message_add_string(m, port_path.c_str());
+	Raul::AtomLiblo::lo_message_add_atom(m, value);
+	send_message("/ingen/set_port_value", m);
+}
+
+
+/** \page client_osc_namespace
+ * <p> \b /ingen/set_port_value - Notification the value of a port has changed
+ * \arg \b path (string) - Path of port
+ * \arg \b voice (int) - Voice which is set to this value
+ * \arg \b value (any) - New value of port </p> \n \n
+ */
+void
+OSCClientSender::set_voice_value(const std::string& port_path, uint32_t voice, const Raul::Atom& value)
+{
+	lo_message m = lo_message_new();
+	lo_message_add_string(m, port_path.c_str());
+	Raul::AtomLiblo::lo_message_add_atom(m, value);
+	send_message("/ingen/set_port_value", m);
 }
 
 

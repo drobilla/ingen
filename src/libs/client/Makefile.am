@@ -18,6 +18,7 @@ libingen_client_la_CXXFLAGS = \
 	@SLV2_CFLAGS@
 
 libingen_client_la_LIBADD = \
+	../shared/libingen_shared.la \
 	@GLIBMM_LIBS@ \
 	@LIBLO_LIBS@ \
 	@LSIGCPP_LIBS@ \

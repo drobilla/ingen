@@ -106,7 +106,7 @@ private:
 	void patch_polyphony_event(const Path& path, uint32_t poly);
 	void patch_cleared_event(const Path& path);
 	void variable_change_event(const Path& subject_path, const string& predicate, const Atom& value);
-	void control_change_event(const Path& port_path, float value);
+	void port_value_event(const Path& port_path, const Raul::Atom& value);
 	void port_activity_event(const Path& port_path);
 	void connection_event(const Path& src_port_path, const Path& dst_port_path);
 	void disconnection_event(const Path& src_port_path, const Path& dst_port_path);

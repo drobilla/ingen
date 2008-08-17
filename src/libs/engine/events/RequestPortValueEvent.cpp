@@ -70,7 +70,7 @@ RequestPortValueEvent::post_process()
 		_responder->respond_error("Unable to find port for get_value responder.");
 	} else if (_responder->client()) {
 		_responder->respond_ok();
-		_responder->client()->control_change(_port_path, _value);
+		_responder->client()->set_port_value(_port_path, _value);
 	} else {
 		_responder->respond_error("Unable to find client to send port value");
 	}

@@ -36,10 +36,9 @@ namespace Shared {
 class ClientInterface : public CommonInterface
 {
 public:
-	
 	virtual ~ClientInterface() {}
 
-	inline const std::string& uri() const { return _uri; }
+	virtual std::string uri() const = 0;
 
 	virtual void response_ok(int32_t id) = 0;
 	virtual void response_error(int32_t id, const std::string& msg) = 0;
@@ -97,9 +96,6 @@ public:
 	
 	virtual void object_destroyed(const std::string& path) = 0;
 	
-	virtual void control_change(const std::string& port_path,
-	                            float              value) = 0;
-	
 	virtual void port_activity(const std::string& port_path) = 0;
 	
 	virtual void program_add(const std::string& node_path,
@@ -110,16 +106,6 @@ public:
 	virtual void program_remove(const std::string& node_path,
 	                            uint32_t           bank,
 	                            uint32_t           program) = 0;
-	
-protected:
-	ClientInterface(const std::string& uri) : _uri(uri) {}
-	ClientInterface() {
-		static char uri_buf[20];
-		snprintf(uri_buf, 127, "%p", this);
-		_uri = uri_buf;
-	}
-
-	std::string _uri;
 };
 
 

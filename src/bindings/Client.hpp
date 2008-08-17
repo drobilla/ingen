@@ -84,8 +84,16 @@ public:
 	                          const std::string& predicate,
 	                          const Raul::Atom&  value)  {}
 	
-	virtual void control_change(const std::string& port_path,
-	                            float              value)  {}
+	virtual void set_port_value(const std::string& port_path,
+	                            const std::string& type_uri,
+	                            uint32_t           data_size,
+	                            const void*        data) {}
+	
+	virtual void set_port_value(const std::string& port_path,
+	                            const std::string& type_uri,
+	                            uint32_t           voice,
+	                            uint32_t           data_size,
+	                            const void*        data) {}
 	
 	virtual void program_add(const std::string& node_path,
 	                         uint32_t           bank,

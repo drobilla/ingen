@@ -210,13 +210,12 @@ Loader::load(Ingen::Shared::World*       world,
 
 		const string node_name = (*i)["nodename"].to_string();
 		const string port_name = (*i)["portname"].to_string();
-		const float  val       = (*i)["portval"].to_float();
 
 		assert(Path::is_valid_name(node_name));
 		assert(Path::is_valid_name(port_name));
 		const Path port_path = patch_path.base() + node_name + "/" + port_name;
 
-		world->engine->set_port_value(port_path, "ingen:Float", sizeof(float), &val);
+		world->engine->set_port_value(port_path, AtomRDF::node_to_atom((*i)["portval"]));
 	}
 
 
@@ -254,10 +253,7 @@ Loader::load(Ingen::Shared::World*       world,
 		}
 
 		const Redland::Node val_node = (*i)["portval"];
-		if (val_node.is_float()) {
-			const float val = val_node.to_float();
-			world->engine->set_port_value(patch_path.base() + name, "ingen:Float", sizeof(float), &val);
-		}
+		world->engine->set_port_value(patch_path.base() + name, AtomRDF::node_to_atom(val_node));
 
 		const string key = world->rdf_world->prefixes().qualify((*i)["varkey"].to_string());
 		const Redland::Node var_val_node = (*i)["varval"];

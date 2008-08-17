@@ -235,10 +235,10 @@ ClientBroadcaster::send_variable_change(const string& node_path, const string& k
  * forcing clients to ignore things to avoid feedback loops etc).
  */
 void
-ClientBroadcaster::send_control_change(const string& port_path, float value)
+ClientBroadcaster::send_port_value(const string& port_path, const Raul::Atom& value)
 {
 	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
-		(*i).second->control_change(port_path, value);
+		(*i).second->set_port_value(port_path, value);
 }
 
 

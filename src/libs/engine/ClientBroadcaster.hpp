@@ -80,7 +80,7 @@ public:
 	void send_patch_disable(const string& patch_path);
 	void send_patch_polyphony(const string& patch_path, uint32_t poly);
 	void send_variable_change(const string& node_path, const string& key, const Raul::Atom& value);
-	void send_control_change(const string& port_path, float value);
+	void send_port_value(const string& port_path, const Raul::Atom& value);
 	void send_port_activity(const string& port_path);
 	void send_program_add(const string& node_path, int bank, int program, const string& name);
 	void send_program_remove(const string& node_path, int bank, int program);

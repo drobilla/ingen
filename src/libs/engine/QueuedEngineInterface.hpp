@@ -123,27 +123,19 @@ public:
 	virtual void disconnect_all(const string& patch_path,
 	                            const string& node_path);
 
-	virtual void set_port_value(const string& port_path,
-	                            const string& type_uri,
-	                            uint32_t      data_size,
-	                            const void*   data);
+	virtual void set_port_value(const string&     port_path,
+	                            const Raul::Atom& value);
 	
-	virtual void set_port_value(const string& port_path,
-	                            const string& type_uri,
-	                            uint32_t      voice,
-	                            uint32_t      data_size,
-	                            const void*   data);
+	virtual void set_voice_value(const string&     port_path,
+	                             uint32_t          voice,
+	                             const Raul::Atom& value);
 	
 	virtual void set_port_value_immediate(const string& port_path,
-	                                      const string& type_uri,
-	                                      uint32_t      data_size,
-	                                      const void*   data);
+	                                      const Raul::Atom& value);
 	
-	virtual void set_port_value_immediate(const string& port_path,
-	                                      const string& type_uri,
-	                                      uint32_t      voice,
-	                                      uint32_t      data_size,
-	                                      const void*   data);
+	virtual void set_voice_value_immediate(const string&     port_path,
+	                                       uint32_t          voice,
+	                                       const Raul::Atom& value);
 	
 	virtual void enable_port_broadcasting(const string& port_path);
 	

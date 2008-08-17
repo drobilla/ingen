@@ -12,5 +12,7 @@ libingen_shared_la_SOURCES = \
 	LV2Features.hpp \
 	LV2URIMap.cpp \
 	LV2URIMap.hpp \
+	OSCSender.cpp \
+	OSCSender.hpp \
 	Store.cpp \
 	Store.hpp

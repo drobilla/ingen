@@ -22,6 +22,7 @@
 #include <string>
 #include <lo/lo.h>
 #include "interface/EngineInterface.hpp"
+#include "shared/OSCSender.hpp"
 using std::string;
 using Ingen::Shared::EngineInterface;
 using Ingen::Shared::ClientInterface;
@@ -37,8 +38,7 @@ namespace Client {
  *
  * \ingroup IngenClient
  */
-class OSCEngineSender : public EngineInterface
-{
+class OSCEngineSender : public EngineInterface, public Shared::OSCSender {
 public:
 	OSCEngineSender(const string& engine_url);
 
@@ -46,7 +46,7 @@ public:
 	
 	string engine_url() { return _engine_url; }
 	
-	inline size_t next_id()
+	inline int32_t next_id()
 	{ int32_t ret = (_id == -1) ? -1 : _id++; return ret; }
 
 	void set_next_response_id(int32_t id) { _id = id; }
@@ -56,6 +56,14 @@ public:
 
 
 	/* *** EngineInterface implementation below here *** */
+	
+	void enable()  { _enabled = true; }
+	void disable() { _enabled = false; }
+	
+	void bundle_begin()   { OSCSender::bundle_begin(); }
+	void bundle_end()     { OSCSender::bundle_end(); }
+	void transfer_begin() { OSCSender::transfer_begin(); }
+	void transfer_end()   { OSCSender::transfer_end(); }
 
 	// Client registration
 	void register_client(ClientInterface* client);
@@ -67,10 +75,6 @@ public:
 	void deactivate();
 	void quit();
 	
-	// Bundles
-	void bundle_begin();
-	void bundle_end();
-
 	// Object commands
 	
 	void new_patch(const string& path,
@@ -114,27 +118,19 @@ public:
 	void disconnect_all(const string& parent_patch_path,
 	                    const string& node_path);
 
-	void set_port_value(const string& port_path,
-	                    const string& type_uri,
-	                    uint32_t      data_size,
-	                    const void*   data);
+	void set_port_value(const string&     port_path,
+	                    const Raul::Atom& value);
 
-	void set_port_value(const string& port_path,
-	                    const string& type_uri,
-	                    uint32_t      voice,
-	                    uint32_t      data_size,
-	                    const void*   data);
+	void set_voice_value(const string&     port_path,
+	                     uint32_t          voice,
+	                     const Raul::Atom& value);
 	
-	void set_port_value_immediate(const string& port_path,
-	                              const string& type_uri,
-	                              uint32_t      data_size,
-	                              const void*   data);
+	void set_port_value_immediate(const string&     port_path,
+	        const Raul::Atom& value);
 	
-	void set_port_value_immediate(const string& port_path,
-	                              const string& type_uri,
-	                              uint32_t      voice,
-	                              uint32_t      data_size,
-	                              const void*   data);
+	void set_voice_value_immediate(const string&     port_path,
+	                               uint32_t          voice,
+	                               const Raul::Atom& value);
 	
 	void enable_port_broadcasting(const string& port_path);
 	
@@ -167,9 +163,7 @@ public:
 	void request_all_objects();
 
 protected:
-	lo_bundle  _bundle;
 	string     _engine_url;
-	lo_address _engine_addr;
 	int        _client_port;
 	int32_t    _id;
 };

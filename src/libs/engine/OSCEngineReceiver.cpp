@@ -639,23 +639,26 @@ OSCEngineReceiver::_set_port_value_immediate_cb(const char* path, const char* ty
 		return 1;
 	
 	const char* port_path = &argv[1]->s;
+	using Raul::Atom;
 
 	if (!strcmp(types, "isf")) { // float, all voices
 		const float value = argv[2]->f;
-		set_port_value_immediate(port_path, "ingen:Float", sizeof(float), &value);
+		set_port_value_immediate(port_path, Atom(value));
 	} else if (!strcmp(types, "isif")) { // float, specific voice
 		const float value = argv[3]->f;
-		set_port_value_immediate(port_path, "ingen:Float", argv[2]->i, sizeof(float), &value);
+		set_voice_value_immediate(port_path, argv[2]->i, Atom(value));
 	} else if (!strcmp(types, "issb")) { // blob (event), all voices
+		const char* type = &argv[2]->s;
 		lo_blob b = argv[3];
 		size_t data_size = lo_blob_datasize(b);
 		void* data = lo_blob_dataptr(b);
-		set_port_value_immediate(port_path, &argv[2]->s, data_size, data);
+		set_port_value_immediate(port_path, Atom(type, data_size, data));
 	} else if (!strcmp(types, "isisb")) { // blob (event), specific voice
+		const char* type = &argv[3]->s;
 		lo_blob b = argv[4];
 		size_t data_size = lo_blob_datasize(b);
 		void* data = lo_blob_dataptr(b);
-		set_port_value_immediate(port_path, &argv[3]->s, argv[2]->i, data_size, data);
+		set_voice_value_immediate(port_path, argv[2]->i, Atom(type, data_size, data));
 	} else {
 		return 1;
 	}
@@ -700,22 +703,26 @@ OSCEngineReceiver::_set_port_value_cb(const char* path, const char* types, lo_ar
 	
 	const char* port_path = &argv[1]->s;
 
+	using Raul::Atom;
+
 	if (!strcmp(types, "isf")) { // float, all voices
 		const float value = argv[2]->f;
-		set_port_value_immediate(port_path, "ingen:Float", sizeof(float), &value);
+		set_port_value_immediate(port_path, Atom(value));
 	} else if (!strcmp(types, "isif")) { // float, specific voice
 		const float value = argv[3]->f;
-		set_port_value_immediate(port_path, "ingen:Float", argv[2]->i, sizeof(float), &value);
+		set_voice_value_immediate(port_path, argv[2]->i, Atom(value));
 	} else if (!strcmp(types, "issb")) { // blob (event), all voices
+		const char* type = &argv[2]->s;
 		lo_blob b = argv[3];
 		size_t data_size = lo_blob_datasize(b);
 		void* data = lo_blob_dataptr(b);
-		set_port_value_immediate(port_path, &argv[2]->s, data_size, data);
+		set_port_value_immediate(port_path, Atom(type, data_size, data));
 	} else if (!strcmp(types, "isisb")) { // blob (event), specific voice
+		const char* type = &argv[3]->s;
 		lo_blob b = argv[4];
 		size_t data_size = lo_blob_datasize(b);
 		void* data = lo_blob_dataptr(b);
-		set_port_value_immediate(port_path, &argv[3]->s, argv[2]->i, data_size, data);
+		set_voice_value_immediate(port_path, argv[2]->i, Atom(type, data_size, data));
 	} else {
 		return 1;
 	}

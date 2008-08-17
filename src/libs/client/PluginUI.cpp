@@ -64,9 +64,7 @@ lv2_ui_write(LV2UI_Controller controller,
 		if (*(float*)buffer == port->value().get_float())
 			return; // do nothing (handle stupid plugin UIs that feed back)
 	
-		ui->world()->engine->set_port_value_immediate(port->path(),
-				port->type().uri(), 
-				buffer_size, buffer);
+		ui->world()->engine->set_port_value_immediate(port->path(), Atom(*(float*)buffer));
 
 	// FIXME: slow, need to cache ID
 	} else if (format == map->uri_to_id(NULL, "http://lv2plug.in/ns/extensions/ui#Events")) {
@@ -80,7 +78,7 @@ lv2_ui_write(LV2UI_Controller controller,
 			if (ev->type == midi_event_type) {
 				// FIXME: bundle multiple events by writing an entire buffer here
 				ui->world()->engine->set_port_value_immediate(port->path(),
-					"lv2_midi:MidiEvent", ev->size, data);
+					Atom("lv2_midi:MidiEvent", ev->size, data));
 			} else {
 				cerr << "WARNING: Unable to send event type " << ev->type << 
 					" over OSC, ignoring event" << endl;
