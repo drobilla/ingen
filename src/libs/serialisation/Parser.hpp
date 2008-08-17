@@ -61,7 +61,7 @@ public:
 
 private:
 
-	Glib::ustring uri_relative_to_base(const Glib::ustring base, const Glib::ustring uri);
+	Glib::ustring uri_relative_to_base(Glib::ustring base, const Glib::ustring uri);
 
 	bool parse(
 			Ingen::Shared::World*                   world,

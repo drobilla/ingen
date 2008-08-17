@@ -344,7 +344,7 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch)
 
 	for (Shared::Patch::Connections::const_iterator c = patch->connections().begin();
 			c != patch->connections().end(); ++c) {
-		serialise_connection(*c);
+		serialise_connection(patch, *c);
 	}
 }
 
@@ -437,7 +437,8 @@ Serialiser::serialise_port(const Port* port, const Redland::Node& port_id)
 
 
 void
-Serialiser::serialise_connection(SharedPtr<Connection> connection) throw (std::logic_error)
+Serialiser::serialise_connection(SharedPtr<GraphObject> parent,
+                                 SharedPtr<Connection>  connection) throw (std::logic_error)
 {
 	if (!_model)
 		throw std::logic_error("serialise_connection called without serialization in progress");
@@ -446,13 +447,19 @@ Serialiser::serialise_connection(SharedPtr<Connection> connection) throw (std::l
 	const Redland::Node dst_node = path_to_rdf_node(connection->dst_port_path());
 
 	/* This would allow associating data with the connection... */
-	/*const Redland::Node connection_node = _world.blank_id();
-	_model->add_statement(connection_node, "ingen:hasSource", src_node);
-	_model->add_statement(dst_node, "ingen:hasConnection", connection_node);
-	*/
+	const Redland::Node connection_node = _world.blank_id();
+	_model->add_statement(connection_node, "ingen:source", src_node);
+	_model->add_statement(connection_node, "ingen:destination", dst_node);
+	if (parent) {
+		const Redland::Node parent_node = path_to_rdf_node(parent->path());
+		_model->add_statement(parent_node, "ingen:connection", connection_node);
+	} else {
+		_model->add_statement(connection_node, "rdf:type",
+				Redland::Node(_model->world(), Redland::Node::RESOURCE, "ingen:Connection"));
+	}
 
 	/* ... but this is cleaner */
-	_model->add_statement(dst_node, "ingen:connectedTo", src_node);
+	//_model->add_statement(dst_node, "ingen:connectedTo", src_node);
 }
 	
 

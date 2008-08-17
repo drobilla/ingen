@@ -39,8 +39,9 @@ namespace Serialisation {
 
 
 Glib::ustring
-Parser::uri_relative_to_base(const Glib::ustring base, const Glib::ustring uri)
+Parser::uri_relative_to_base(Glib::ustring base, const Glib::ustring uri)
 {
+	base = base.substr(0, base.find_last_of("/")+1);
 	Glib::ustring ret;
 	if (uri.length() > base.length() && uri.substr(0, base.length()) == base)
 		ret = uri.substr(base.length());
@@ -234,7 +235,7 @@ Parser::parse_patch(
 	if (patch_path != "/")
 		target->new_patch(patch_path, patch_poly);
 	
-	/* Load (plugin) nodes */
+	/* Plugin nodes */
 	Redland::Query query(*world->rdf_world, Glib::ustring(
 		"SELECT DISTINCT ?name ?plugin ?varkey ?varval ?poly WHERE {\n") +
 		subject + " ingen:node       ?node .\n"
@@ -248,11 +249,8 @@ Parser::parse_patch(
 		"}");
 
 	Redland::Query::Results results = query.run(*world->rdf_world, model, base_uri);
-
 	world->rdf_world->mutex().lock();
-	
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
-
 		const string node_name = (*i)["name"].to_string();
 		const Path   node_path = patch_path.base() + node_name;
 
@@ -260,7 +258,7 @@ Parser::parse_patch(
 			const string node_plugin     = world->rdf_world->qualify((*i)["plugin"].to_string());
 			bool         node_polyphonic = false;
 
-			Redland::Node poly_node = (*i)["poly"];
+			const Redland::Node& poly_node = (*i)["poly"];
 			if (poly_node.is_bool() && poly_node.to_bool() == true)
 				node_polyphonic = true;
 		
@@ -270,12 +268,11 @@ Parser::parse_patch(
 		}
 
 		const string key = world->rdf_world->prefixes().qualify((*i)["varkey"].to_string());
-		Redland::Node val_node = (*i)["varval"];
+		const Redland::Node& val_node = (*i)["varval"];
 
 		if (key != "")
 			target->set_variable(node_path, key, AtomRDF::node_to_atom(val_node));
 	}
-	
 	world->rdf_world->mutex().unlock();
 		
 
@@ -289,7 +286,6 @@ Parser::parse_patch(
 
 	results = query.run(*world->rdf_world, model, base_uri);
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
-
 		const string symbol = (*i)["symbol"].to_string();
 		const string patch  = (*i)["patch"].to_string();
 
@@ -300,8 +296,6 @@ Parser::parse_patch(
 			parse_patch(world, target, model, base_uri, Glib::ustring(object_uri + subpatch_path), subpatch_path);
 		}
 	}
-
-	//created.clear();
 
 
 	/* Set node port control values */
@@ -317,7 +311,6 @@ Parser::parse_patch(
 
 	results = query.run(*world->rdf_world, model, base_uri);
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
-
 		const string node_name = (*i)["nodename"].to_string();
 		const string port_name = (*i)["portname"].to_string();
 
@@ -346,6 +339,7 @@ Parser::parse_patch(
 		"}");
 
 	results = query.run(*world->rdf_world, model, base_uri);
+	world->rdf_world->mutex().lock();
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
 		const string name     = (*i)["name"].to_string();
 		const string type     = world->rdf_world->qualify((*i)["type"].to_string());
@@ -361,112 +355,42 @@ Parser::parse_patch(
 			created.insert(port_path);
 		}
 
-		const Redland::Node val_node = (*i)["portval"];
+		const Redland::Node& val_node = (*i)["portval"];
 		target->set_port_value(patch_path.base() + name, AtomRDF::node_to_atom(val_node));
 
 		const string key = world->rdf_world->prefixes().qualify((*i)["varkey"].to_string());
-		const Redland::Node var_val_node = (*i)["varval"];
+		const Redland::Node& var_val_node = (*i)["varval"];
 
 		if (key != "")
 			target->set_variable(patch_path.base() + name, key, AtomRDF::node_to_atom(var_val_node));
 	}
+	world->rdf_world->mutex().unlock();
 
 	created.clear();
-
-
-	/* Node -> Node connections */
-	query = Redland::Query(*world->rdf_world, Glib::ustring(
-		"SELECT DISTINCT ?srcnodename ?srcname ?dstnodename ?dstname WHERE {\n") +
-		subject +  "ingen:node ?srcnode ;\n"
-		"           ingen:node ?dstnode .\n"
-		"?srcnode   ingen:port ?src ;\n"
-		"           ingen:symbol ?srcnodename .\n"
-		"?dstnode   ingen:port ?dst ;\n"
-		"           ingen:symbol ?dstnodename .\n"
-		"?src       ingen:symbol ?srcname .\n"
-		"?dst       ingen:connectedTo ?src ;\n"
-		"           ingen:symbol ?dstname .\n" 
-		"}");
-
-	results = query.run(*world->rdf_world, model, base_uri);
-	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
-		Path src_node = patch_path.base() + Path::nameify((*i)["srcnodename"].to_string());
-		Path src_port = src_node.base() + Path::nameify((*i)["srcname"].to_string());
-		Path dst_node = patch_path.base() + Path::nameify((*i)["dstnodename"].to_string());
-		Path dst_port = dst_node.base() + Path::nameify((*i)["dstname"].to_string());
-
-		//cerr << patch_path << " 1 CONNECTION: " << src_port << " -> " << dst_port << endl;
-
-		target->connect(src_port, dst_port);
-	}
-
-
-	/* This Patch -> Node connections */
-	query = Redland::Query(*world->rdf_world, Glib::ustring(
-		"SELECT DISTINCT ?srcname ?dstnodename ?dstname WHERE {\n") +
-		subject + " ingen:port ?src ;\n"
-		"           ingen:node ?dstnode .\n"
-		"?dstnode   ingen:port ?dst ;\n"
-		"           ingen:symbol ?dstnodename .\n"
-		"?dst       ingen:connectedTo ?src ;\n"
-		"           ingen:symbol ?dstname .\n" 
-		"?src       ingen:symbol ?srcname .\n"
-		"}");
-
-	results = query.run(*world->rdf_world, model, base_uri);
-	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
-		Path src_port = patch_path.base() + Path::nameify((*i)["srcname"].to_string());
-		Path dst_node = patch_path.base() + Path::nameify((*i)["dstnodename"].to_string());
-		Path dst_port = dst_node.base() + Path::nameify((*i)["dstname"].to_string());
-
-		//cerr << patch_path << " 2 CONNECTION: " << src_port << " -> " << dst_port << endl;
-
-		target->connect(src_port, dst_port);
-	}
-
-
-	/* Node -> This Patch connections */
-	query = Redland::Query(*world->rdf_world, Glib::ustring(
-		"SELECT DISTINCT ?srcnodename ?srcname ?dstname WHERE {\n") +
-		subject + " ingen:port ?dst ;\n"
-		"           ingen:node ?srcnode .\n"
-		"?srcnode   ingen:port ?src ;\n"
-		"           ingen:symbol ?srcnodename .\n"
-		"?dst       ingen:connectedTo ?src ;\n"
-		"           ingen:symbol ?dstname .\n" 
-		"?src       ingen:symbol ?srcname .\n"
-		"}");
-
-	results = query.run(*world->rdf_world, model, base_uri);
-	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
-		Path dst_port = patch_path.base() + Path::nameify((*i)["dstname"].to_string());
-		Path src_node = patch_path.base() + Path::nameify((*i)["srcnodename"].to_string());
-		Path src_port = src_node.base() + Path::nameify((*i)["srcname"].to_string());
-
-		//cerr << patch_path << " 3 CONNECTION: " << src_port << " -> " << dst_port << endl;
-
-		target->connect(src_port, dst_port);
-	}
 	
-	
-	/* This Patch -> This Patch connections */
+	/* Connections */
 	query = Redland::Query(*world->rdf_world, Glib::ustring(
-		"SELECT DISTINCT ?srcname ?dstname WHERE {\n") +
-		subject + " ingen:port ?src ;\n"
-		"           ingen:port ?dst .\n"
-		"?dst       ingen:connectedTo ?src ;\n"
-		"           ingen:symbol ?dstname .\n" 
-		"?src       ingen:symbol ?srcname .\n"
+		"SELECT DISTINCT ?src ?dst WHERE {\n") +
+		subject +  " ingen:connection ?connection .\n"
+		"?connection ingen:source ?src ;\n"
+		"            ingen:destination ?dst .\n"
 		"}");
 
 	results = query.run(*world->rdf_world, model, base_uri);
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
-		Path src_port = patch_path.base() + Path::nameify((*i)["srcname"].to_string());
-		Path dst_port = patch_path.base() + Path::nameify((*i)["dstname"].to_string());
+		string src_path = patch_path.base() + uri_relative_to_base(base_uri, (*i)["src"].to_string());
+		if (!Path::is_valid(src_path)) {
+			cerr << "ERROR: Invalid path in connection: " << src_path << endl;
+			continue;
+		}
+		
+		string dst_path = patch_path.base() + uri_relative_to_base(base_uri, (*i)["dst"].to_string());
+		if (!Path::is_valid(dst_path)) {
+			cerr << "ERROR: Invalid path in connection: " << dst_path << endl;
+			continue;
+		}
 
-		//cerr << patch_path << " 4 CONNECTION: " << src_port << " -> " << dst_port << endl;
-
-		target->connect(src_port, dst_port);
+		target->connect(src_path, dst_path);
 	}
 
 	parse_variables(world, target, model, base_uri, subject, patch_path, data);
@@ -477,8 +401,7 @@ Parser::parse_patch(
 
 	results = query.run(*world->rdf_world, model, base_uri);
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
-		Redland::Node enabled_node = (*i)["enabled"];
-
+		const Redland::Node& enabled_node = (*i)["enabled"];
 		if (enabled_node.is_bool() && enabled_node) {
 			target->set_property(patch_path, "ingen:enabled", (bool)true);
 			break;
@@ -513,8 +436,8 @@ Parser::parse_node(
 	}
 	
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
-		Redland::Node s_node = (*i)["s"];
-		Redland::Node plug_node = (*i)["plug"];
+		const Redland::Node& s_node = (*i)["s"];
+		const Redland::Node& plug_node = (*i)["plug"];
 		cout << s_node.to_c_string() << " :: " << plug_node.to_c_string() << endl;
 	}
 
@@ -553,7 +476,7 @@ Parser::parse_variables(
 	Redland::Query::Results results = query.run(*world->rdf_world, model, base_uri);
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
 		const string key = world->rdf_world->prefixes().qualify(string((*i)["varkey"]));
-		Redland::Node val_node = (*i)["varval"];
+		const Redland::Node& val_node = (*i)["varval"];
 		if (key != "")
 			target->set_variable(path, key, AtomRDF::node_to_atom(val_node));
 	}

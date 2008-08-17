@@ -559,7 +559,7 @@ PatchCanvas::copy_selection()
 			c != _selected_connections.end(); ++c) {
 		boost::shared_ptr<Connection> connection = boost::dynamic_pointer_cast<Connection>(*c);
 		if (connection)
-			serialiser.serialise_connection(connection->model());
+			serialiser.serialise_connection(_patch, connection->model());
 	}
 	
 	string result = serialiser.finish();

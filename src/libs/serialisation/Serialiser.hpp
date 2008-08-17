@@ -66,7 +66,8 @@ public:
 	
 	void start_to_string(const Raul::Path& root, const std::string& base_uri);
 	void serialise(SharedPtr<GraphObject> object) throw (std::logic_error);
-	void serialise_connection(SharedPtr<Shared::Connection> c) throw (std::logic_error);
+	void serialise_connection(SharedPtr<GraphObject>        parent,
+	                          SharedPtr<Shared::Connection> c) throw (std::logic_error);
 	
 	std::string finish();
 	
