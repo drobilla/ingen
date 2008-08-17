@@ -38,8 +38,6 @@ Builder::Builder(CommonInterface& interface)
 void
 Builder::build(SharedPtr<const GraphObject> object)
 {
-	cout << "BUILDING: " << object->path() << endl;
-
 	SharedPtr<const Patch> patch = PtrCast<const Patch>(object);
 	if (patch) {
 		if (patch->path() != "/")
@@ -71,16 +69,12 @@ void
 Builder::build_object(SharedPtr<const GraphObject> object)
 {
 	for (GraphObject::Variables::const_iterator i = object->variables().begin();
-			i != object->variables().end(); ++i) {
-		cout << "SETTING " << object->path() << " . " << i->first << endl;
+			i != object->variables().end(); ++i)
 		_interface.set_variable(object->path() + "_copy", i->first, i->second);
-	}
 
 	for (GraphObject::Properties::const_iterator i = object->properties().begin();
-			i != object->properties().end(); ++i) {
-		cout << "SETTING " << object->path() << " . " << i->first << endl;
+			i != object->properties().end(); ++i)
 		_interface.set_property(object->path() + "_copy", i->first, i->second);
-	}
 }
 
 
