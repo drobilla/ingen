@@ -10,6 +10,8 @@ libingen_shared_la_CXXFLAGS = \
 libingen_shared_la_SOURCES = \
 	Builder.cpp \
 	Builder.hpp \
+	ClashAvoider.cpp \
+	ClashAvoider.hpp \
 	LV2Features.cpp \
 	LV2Features.hpp \
 	LV2URIMap.cpp \

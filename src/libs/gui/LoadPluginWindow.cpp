@@ -288,7 +288,8 @@ LoadPluginWindow::plugin_selection_changed()
 	if (iter) {
 		Gtk::TreeModel::Row row = *iter;
 		boost::shared_ptr<PluginModel> p = row.get_value(_plugins_columns._col_plugin_model);
-		_plugin_name_offset = PatchModel::child_name_offset(*App::instance().store().get(), _patch, p->default_node_name());
+		_plugin_name_offset = App::instance().store()->child_name_offset(
+				_patch->path(), p->default_node_name());
 		_node_name_entry->set_text(generate_module_name(_plugin_name_offset));
 	} else {
 		_plugin_name_offset = 0;

@@ -107,6 +107,15 @@ private:
 			const Glib::ustring&                    subject,
 			Raul::Path                              path,
 			boost::optional<GraphObject::Variables> data);
+
+	bool parse_connections(
+			Ingen::Shared::World*                   world,
+			Ingen::Shared::CommonInterface*         target,
+			Redland::Model&                         model,
+			const Glib::ustring&                    base_uri,
+			const Glib::ustring&                    subject,
+			const Raul::Path&                       parent);
+
 };
 
 

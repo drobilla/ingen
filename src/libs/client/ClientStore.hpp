@@ -79,6 +79,9 @@ public:
 	void set_voice_value(const string& port_path, uint32_t voice, const Raul::Atom& value);
 	void connect(const string& src_port_path, const string& dst_port_path);
 	void disconnect(const string& src_port_path, const string& dst_port_path);
+	
+	typedef list< std::pair<Path, Path> > ConnectionRecords;
+	const ConnectionRecords& connection_records() { return _connection_orphans; }
 
 	sigc::signal<void, SharedPtr<ObjectModel> > signal_new_object; 
 	sigc::signal<void, SharedPtr<PluginModel> > signal_new_plugin; 
@@ -138,7 +141,7 @@ private:
 	Raul::PathTable<list<std::pair<string, Atom> > > _variable_orphans;
 	
 	/** Ditto */
-	list<std::pair<Path, Path> > _connection_orphans;
+	ConnectionRecords _connection_orphans;
 };
 
 

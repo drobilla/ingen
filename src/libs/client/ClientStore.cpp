@@ -117,10 +117,13 @@ ClientStore::resolve_plugin_orphans(SharedPtr<PluginModel> plugin)
 void
 ClientStore::add_connection_orphan(std::pair<Path, Path> orphan)
 {
-	if (!_handle_orphans)
-		return;
-	cerr << "WARNING: Orphan connection " << orphan.first
-		<< " -> " << orphan.second << " received." << endl;
+	// Do this anyway, it's needed to get the connections for copy&paste
+	//if (!_handle_orphans)
+		//return;
+	
+	if (_handle_orphans)
+		cerr << "WARNING: Orphan connection " << orphan.first
+			<< " -> " << orphan.second << " received." << endl;
 	
 	_connection_orphans.push_back(orphan);
 }
@@ -587,9 +590,8 @@ ClientStore::attempt_connection(const Path& src_port_path, const Path& dst_port_
 {
 	SharedPtr<PortModel> src_port = PtrCast<PortModel>(object(src_port_path));
 	SharedPtr<PortModel> dst_port = PtrCast<PortModel>(object(dst_port_path));
-
-	if (src_port && dst_port) { 
 	
+	if (src_port && dst_port) { 
 		assert(src_port->parent());
 		assert(dst_port->parent());
 
@@ -602,13 +604,9 @@ ClientStore::attempt_connection(const Path& src_port_path, const Path& dst_port_
 		dst_port->connected_to(src_port);
 
 		patch->add_connection(cm);
-
 		return true;
-	
 	} else if (add_orphan) {
-
 		add_connection_orphan(make_pair(src_port_path, dst_port_path));
-
 	}
 
 	return false;

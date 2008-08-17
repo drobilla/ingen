@@ -41,24 +41,27 @@ Builder::build(SharedPtr<const GraphObject> object)
 	SharedPtr<const Patch> patch = PtrCast<const Patch>(object);
 	if (patch) {
 		if (patch->path() != "/")
-			_interface.new_patch(patch->path() + "_copy", patch->internal_polyphony());
+			_interface.new_patch(patch->path(), patch->internal_polyphony());
 		build_object(object);
 		for (Patch::Connections::const_iterator i = patch->connections().begin();
-				i != patch->connections().end(); ++i)
+				i != patch->connections().end(); ++i) {
+			cout << "BUILDER CONNECTION: " <<(*i)->src_port_path()
+				<< " -> " << (*i)->dst_port_path() << endl;
 			_interface.connect((*i)->src_port_path(), (*i)->dst_port_path());
+		}
 		return;
 	}
 
 	SharedPtr<const Node> node = PtrCast<const Node>(object);
 	if (node) {
-		_interface.new_node(node->path() + "_copy", node->plugin()->uri());
+		_interface.new_node(node->path(), node->plugin()->uri());
 		build_object(object);
 		return;
 	}
 
 	SharedPtr<const Port> port = PtrCast<const Port>(object);
 	if (port) {
-		_interface.new_port(port->path() + "_copy", port->index(), port->type().uri(), !port->is_input());
+		_interface.new_port(port->path(), port->index(), port->type().uri(), !port->is_input());
 		build_object(object);
 		return;
 	}
@@ -70,11 +73,11 @@ Builder::build_object(SharedPtr<const GraphObject> object)
 {
 	for (GraphObject::Variables::const_iterator i = object->variables().begin();
 			i != object->variables().end(); ++i)
-		_interface.set_variable(object->path() + "_copy", i->first, i->second);
+		_interface.set_variable(object->path(), i->first, i->second);
 
 	for (GraphObject::Properties::const_iterator i = object->properties().begin();
 			i != object->properties().end(); ++i)
-		_interface.set_property(object->path() + "_copy", i->first, i->second);
+		_interface.set_property(object->path(), i->first, i->second);
 }
 
 

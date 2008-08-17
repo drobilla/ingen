@@ -42,6 +42,9 @@ public:
 	
 	SharedPtr<Shared::GraphObject> find_child(SharedPtr<Shared::GraphObject> parent,
 	                                          const std::string& child_name) const;
+
+	unsigned child_name_offset(const Raul::Path&   parent,
+	                           const Raul::Symbol& symbol);
 	
 	Glib::RWLock& lock() { return _lock; }
 

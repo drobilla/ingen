@@ -78,6 +78,29 @@ Store::find_child(SharedPtr<Shared::GraphObject> parent, const string& child_nam
 	else
 		return SharedPtr<Shared::GraphObject>();
 }
+	
+
+unsigned
+Store::child_name_offset(const Raul::Path&   parent,
+                         const Raul::Symbol& symbol)
+{
+	unsigned offset = 0;
+
+	while (true) {
+		std::stringstream ss;
+		ss << symbol;
+		if (offset > 0)
+			ss << "_" << offset;
+		if (find(parent.base() + ss.str()) == end())
+			break;
+		else if (offset == 0)
+			offset = 2;
+		else
+			++offset;
+	}
+
+	return offset;
+}
 
 
 } // namespace Shared

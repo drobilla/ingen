@@ -24,6 +24,7 @@
 #include <flowcanvas/Ellipse.hpp>
 #include "interface/EngineInterface.hpp"
 #include "shared/Builder.hpp"
+#include "shared/ClashAvoider.hpp"
 #include "serialisation/Serialiser.hpp"
 #include "client/PluginModel.hpp"
 #include "client/PatchModel.hpp"
@@ -583,15 +584,14 @@ PatchCanvas::paste()
 
 	Builder builder(*App::instance().engine());
 	ClientStore clipboard;
+	ClashAvoider avoider(*App::instance().store().get(), clipboard);
 	clipboard.new_patch("/", _patch->poly());
 	clipboard.set_plugins(App::instance().store()->plugins());
-	parser->parse_string(App::instance().world(), &clipboard, str, "/");
+	parser->parse_string(App::instance().world(), &avoider, str, "/");
+	
 	for (Store::iterator i = clipboard.begin(); i != clipboard.end(); ++i) {
 		if (i->first == "/")
 			continue;
-		/*GraphObject::Properties::iterator s = i->second->properties().find("ingen:symbol");
-		const string sym = string(s->second.get_string()) + "_copy";
-		s->second = sym;*/
 		GraphObject::Variables::iterator x = i->second->variables().find("ingenuity:canvas-x");
 		if (x != i->second->variables().end())
 			x->second = x->second.get_float() + 20.0f;
@@ -605,6 +605,10 @@ PatchCanvas::paste()
 			i->second->properties().insert(make_pair("ingen:selected", true));
 		builder.build(i->second);
 	}
+
+	for (ClientStore::ConnectionRecords::const_iterator i = clipboard.connection_records().begin();
+			i != clipboard.connection_records().end(); ++i)
+		App::instance().engine()->connect(i->first, i->second);
 }
 	
 
@@ -659,7 +663,7 @@ void
 PatchCanvas::load_plugin(SharedPtr<PluginModel> plugin)
 {
 	string name = plugin->default_node_name();
-	unsigned offset = PatchModel::child_name_offset(*App::instance().store().get(), _patch, name);
+	unsigned offset = App::instance().store()->child_name_offset(_patch->path(), name);
 	if (offset != 0) {
 		std::stringstream ss;
 		ss << name << "_" << offset;

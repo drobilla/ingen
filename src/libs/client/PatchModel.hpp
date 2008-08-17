@@ -66,10 +66,6 @@ public:
 	
 	virtual void set_property(const string& key, const Atom& value);
 
-	static unsigned child_name_offset(ClientStore& store,
-	                                  SharedPtr<PatchModel> parent,
-	                                  const string& base_name);
-	
 	// Signals
 	sigc::signal<void, SharedPtr<NodeModel> >       signal_new_node; 
 	sigc::signal<void, SharedPtr<NodeModel> >       signal_removed_node; 

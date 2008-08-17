@@ -96,7 +96,13 @@ Parser::parse_string(
 	else
 		cout << "[Parser] Parsing all objects found in string (base " << base_uri << ")" << endl;
 	
-	return parse(world, target, model, base_uri, object_uri, parent, symbol, data);;
+	bool ret = parse(world, target, model, base_uri, object_uri, parent, symbol, data);;
+	if (ret) {
+		const Glib::ustring subject = Glib::ustring("<") + base_uri + Glib::ustring(">");
+		parse_connections(world, target, model, base_uri, subject, parent ? parent.get() : "/");
+	}
+
+	return ret;
 }
 
 
@@ -366,31 +372,7 @@ Parser::parse_patch(
 
 	created.clear();
 	
-	/* Connections */
-	query = Redland::Query(*world->rdf_world, Glib::ustring(
-		"SELECT DISTINCT ?src ?dst WHERE {\n") +
-		subject +  " ingen:connection ?connection .\n"
-		"?connection ingen:source ?src ;\n"
-		"            ingen:destination ?dst .\n"
-		"}");
-
-	results = query.run(*world->rdf_world, model, base_uri);
-	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
-		string src_path = patch_path.base() + uri_relative_to_base(base_uri, (*i)["src"].to_string());
-		if (!Path::is_valid(src_path)) {
-			cerr << "ERROR: Invalid path in connection: " << src_path << endl;
-			continue;
-		}
-		
-		string dst_path = patch_path.base() + uri_relative_to_base(base_uri, (*i)["dst"].to_string());
-		if (!Path::is_valid(dst_path)) {
-			cerr << "ERROR: Invalid path in connection: " << dst_path << endl;
-			continue;
-		}
-
-		target->connect(src_path, dst_path);
-	}
-
+	parse_connections(world, target, model, base_uri, subject, patch_path);
 	parse_variables(world, target, model, base_uri, subject, patch_path, data);
 
 	/* Enable */
@@ -446,6 +428,42 @@ Parser::parse_node(
 }
 
 
+bool
+Parser::parse_connections(
+		Ingen::Shared::World*                   world,
+		Ingen::Shared::CommonInterface*         target,
+		Redland::Model&                         model,
+		const Glib::ustring&                    base_uri,
+		const Glib::ustring&                    subject,
+		const Raul::Path&                       parent)
+{
+	Redland::Query query(*world->rdf_world, Glib::ustring(
+		"SELECT DISTINCT ?src ?dst WHERE {\n")
+		/*+ subject*/ + /*"?foo ingen:connection  ?connection .\n"*/
+		"?connection  ingen:source      ?src ;\n"
+		"             ingen:destination ?dst .\n"
+		"}");
+
+	Redland::Query::Results results = query.run(*world->rdf_world, model, base_uri);
+	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
+		string src_path = parent.base() + uri_relative_to_base(base_uri, (*i)["src"].to_string());
+		if (!Path::is_valid(src_path)) {
+			cerr << "ERROR: Invalid path in connection: " << src_path << endl;
+			continue;
+		}
+		
+		string dst_path = parent.base() + uri_relative_to_base(base_uri, (*i)["dst"].to_string());
+		if (!Path::is_valid(dst_path)) {
+			cerr << "ERROR: Invalid path in connection: " << dst_path << endl;
+			continue;
+		}
+
+		target->connect(src_path, dst_path);
+	}
+
+	return true;
+}
+
 
 bool
 Parser::parse_variables(
@@ -457,7 +475,6 @@ Parser::parse_variables(
 		Raul::Path                              path,
 		boost::optional<GraphObject::Variables> data=boost::optional<GraphObject::Variables>())
 {
-	/* Parse variables */
 	Redland::Query query = Redland::Query(*world->rdf_world, Glib::ustring(
 		"SELECT DISTINCT ?varkey ?varval WHERE {\n") +
 		subject + " ingen:variable ?variable .\n"
