@@ -98,8 +98,6 @@ private:
 	LO_HANDLER(new_port);
 	LO_HANDLER(new_node);
 	LO_HANDLER(new_node_by_uri);
-	LO_HANDLER(enable_patch);
-	LO_HANDLER(disable_patch);
 	LO_HANDLER(clear_patch);
 	LO_HANDLER(set_polyphony);
 	LO_HANDLER(set_polyphonic);
@@ -117,6 +115,7 @@ private:
 	LO_HANDLER(midi_learn);
 	LO_HANDLER(variable_get);
 	LO_HANDLER(variable_set);
+	LO_HANDLER(property_set);
 	LO_HANDLER(request_plugin);
 	LO_HANDLER(request_object);
 	LO_HANDLER(request_port_value);

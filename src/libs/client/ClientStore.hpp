@@ -101,11 +101,10 @@ private:
 	void new_node_event(const Path& path, const string& plugin_uri, bool polyphonic);
 	void new_port_event(const Path& path, uint32_t index, const string& data_type, bool is_output);
 	void polyphonic_event(const Path& path, bool polyphonic);
-	void patch_enabled_event(const Path& path);
-	void patch_disabled_event(const Path& path);
 	void patch_polyphony_event(const Path& path, uint32_t poly);
 	void patch_cleared_event(const Path& path);
 	void variable_change_event(const Path& subject_path, const string& predicate, const Atom& value);
+	void property_change_event(const Path& subject_path, const string& predicate, const Atom& value);
 	void port_value_event(const Path& port_path, const Raul::Atom& value);
 	void port_activity_event(const Path& port_path);
 	void connection_event(const Path& src_port_path, const Path& dst_port_path);

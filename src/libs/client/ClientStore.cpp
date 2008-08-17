@@ -43,13 +43,12 @@ ClientStore::ClientStore(SharedPtr<EngineInterface> engine, SharedPtr<SigClientI
 	emitter->signal_new_node.connect(sigc::mem_fun(this, &ClientStore::new_node_event));
 	emitter->signal_new_port.connect(sigc::mem_fun(this, &ClientStore::new_port_event));
 	emitter->signal_polyphonic.connect(sigc::mem_fun(this, &ClientStore::polyphonic_event));
-	emitter->signal_patch_enabled.connect(sigc::mem_fun(this, &ClientStore::patch_enabled_event));
-	emitter->signal_patch_disabled.connect(sigc::mem_fun(this, &ClientStore::patch_disabled_event));
 	emitter->signal_patch_polyphony.connect(sigc::mem_fun(this, &ClientStore::patch_polyphony_event));
 	emitter->signal_patch_cleared.connect(sigc::mem_fun(this, &ClientStore::patch_cleared_event));
 	emitter->signal_connection.connect(sigc::mem_fun(this, &ClientStore::connection_event));
 	emitter->signal_disconnection.connect(sigc::mem_fun(this, &ClientStore::disconnection_event));
 	emitter->signal_variable_change.connect(sigc::mem_fun(this, &ClientStore::variable_change_event));
+	emitter->signal_property_change.connect(sigc::mem_fun(this, &ClientStore::property_change_event));
 	emitter->signal_port_value.connect(sigc::mem_fun(this, &ClientStore::port_value_event));
 	emitter->signal_port_activity.connect(sigc::mem_fun(this, &ClientStore::port_activity_event));
 }
@@ -453,24 +452,6 @@ ClientStore::polyphonic_event(const Path& path, bool polyphonic)
 
 
 void
-ClientStore::patch_enabled_event(const Path& path)
-{
-	SharedPtr<PatchModel> patch = PtrCast<PatchModel>(object(path));
-	if (patch)
-		patch->enable();
-}
-
-
-void
-ClientStore::patch_disabled_event(const Path& path)
-{
-	SharedPtr<PatchModel> patch = PtrCast<PatchModel>(object(path));
-	if (patch)
-		patch->disable();
-}
-
-	
-void
 ClientStore::patch_polyphony_event(const Path& path, uint32_t poly)
 {
 	SharedPtr<PatchModel> patch = PtrCast<PatchModel>(object(path));
@@ -519,6 +500,22 @@ ClientStore::variable_change_event(const Path& subject_path, const string& predi
 	} else {
 		add_variable_orphan(subject_path, predicate, value);
 		cerr << "WARNING: variable for unknown object " << subject_path << endl;
+	}
+}
+
+	
+void
+ClientStore::property_change_event(const Path& subject_path, const string& predicate, const Atom& value)
+{
+	SharedPtr<ObjectModel> subject = object(subject_path);
+
+	if (!value.is_valid()) {
+		cerr << "ERROR: property '" << predicate << "' has no type" << endl;
+	} else if (subject) {
+		subject->set_property(predicate, value);
+	} else {
+		cerr << "WARNING: property for unknown object " << subject_path
+				<< " lost.  Client must refresh!" << endl;
 	}
 }
 

@@ -160,23 +160,11 @@ PatchModel::remove_connection(const string& src_port_path, const string& dst_por
 }
 
 
-void
-PatchModel::enable()
+bool
+PatchModel::enabled() const
 {
-	if (!_enabled) {
-		_enabled = true;
-		signal_enabled.emit();
-	}
-}
-
-
-void
-PatchModel::disable()
-{
-	if (_enabled) {
-		_enabled = false;
-		signal_disabled.emit();
-	}
+	Variables::const_iterator i = _properties.find("ingen:enabled");
+	return (i != _properties.end() && i->second.type() == Atom::BOOL && i->second.get_bool());
 }
 
 

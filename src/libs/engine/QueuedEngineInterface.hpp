@@ -85,6 +85,7 @@ public:
 	                       uint32_t      poly);
 
 	virtual void new_port(const string& path,
+	                      uint32_t      index,
 	                      const string& data_type,
 	                      bool          direction);
 
@@ -109,10 +110,6 @@ public:
 	virtual void set_polyphony(const string& patch_path, uint32_t poly);
 	
 	virtual void set_polyphonic(const string& path, bool poly);
-
-	virtual void enable_patch(const string& patch_path);
-
-	virtual void disable_patch(const string& patch_path);
 
 	virtual void connect(const string& src_port_path,
 	                     const string& dst_port_path);
@@ -148,6 +145,10 @@ public:
 	virtual void midi_learn(const string& node_path);
 
 	virtual void set_variable(const string&     path,
+	                          const string&     predicate,
+	                          const Raul::Atom& value);
+	
+	virtual void set_property(const string&     path,
 	                          const string&     predicate,
 	                          const Raul::Atom& value);
 	

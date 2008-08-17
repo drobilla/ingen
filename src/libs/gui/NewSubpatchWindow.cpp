@@ -96,7 +96,7 @@ NewSubpatchWindow::ok_clicked()
 	for (GraphObject::Variables::const_iterator i = _initial_data.begin(); i != _initial_data.end(); ++i)
 		App::instance().engine()->set_variable(path, i->first, i->second);
 
-	App::instance().engine()->enable_patch(path);
+	App::instance().engine()->set_property(_patch->path(), "ingen:enabled", (bool)true);
 	
 	hide();
 }			

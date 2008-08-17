@@ -359,7 +359,7 @@ DeprecatedLoader::load_patch(const Glib::ustring&   filename,
 	//	_engine->set_variable(subject, i->first, i->second);
 
 	if (!existing)
-		_engine->enable_patch(path);
+		_engine->set_property(path, "ingen:enabled", (bool)true);
 
 	_load_path_translations.clear();
 
@@ -459,23 +459,24 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 		bool is_port = false;
 
 		if (plugin_type == "Internal") {
+			// FIXME: indices
 			if (plugin_label == "audio_input") {
-				_engine->new_port(path, "ingen:AudioPort", false);
+				_engine->new_port(path, 0, "ingen:AudioPort", false);
 				is_port = true;
 			} else if (plugin_label == "audio_output") {
-				_engine->new_port(path, "ingen:AudioPort", true);
+				_engine->new_port(path, 0, "ingen:AudioPort", true);
 				is_port = true;
 			} else if (plugin_label == "control_input") {
-				_engine->new_port(path, "ingen:ControlPort", false);
+				_engine->new_port(path, 0, "ingen:ControlPort", false);
 				is_port = true;
 			} else if (plugin_label == "control_output" ) {
-				_engine->new_port(path, "ingen:ControlPort", true);
+				_engine->new_port(path, 0, "ingen:ControlPort", true);
 				is_port = true;
 			} else if (plugin_label == "midi_input") {
-				_engine->new_port(path, "ingen:MIDIPort", false);
+				_engine->new_port(path, 0, "ingen:MIDIPort", false);
 				is_port = true;
 			} else if (plugin_label == "midi_output" ) {
-				_engine->new_port(path, "ingen:MIDIPort", true);
+				_engine->new_port(path, 0, "ingen:MIDIPort", true);
 				is_port = true;
 			} else {
 				cerr << "WARNING: Unknown internal plugin label \"" << plugin_label << "\"" << endl;

@@ -140,9 +140,11 @@ OSCEngineSender::new_patch(const string& path,
 
 void
 OSCEngineSender::new_port(const string& path,
+                          uint32_t      index,
                           const string& data_type,
                           bool          is_output)
 {
+	// FIXME: use index
 	send("/ingen/new_port",  "issi",
 		next_id(),
 		path.c_str(),
@@ -260,26 +262,6 @@ OSCEngineSender::set_polyphonic(const string& path, bool poly)
 				path.c_str(),
 				LO_ARGS_END);
 	}
-}
-
-
-void
-OSCEngineSender::enable_patch(const string& patch_path)
-{
-	send("/ingen/enable_patch", "is",
-		next_id(),
-		patch_path.c_str(),
-		LO_ARGS_END);
-}
-
-
-void
-OSCEngineSender::disable_patch(const string& patch_path)
-{
-	send("/ingen/disable_patch", "is",
-		next_id(),
-		patch_path.c_str(),
-		LO_ARGS_END);
 }
 
 
@@ -415,7 +397,6 @@ OSCEngineSender::set_variable(const string&     obj_path,
                               const string&     predicate,
                               const Raul::Atom& value)
 {
-	
 	lo_message m = lo_message_new();
 	lo_message_add_int32(m, next_id());
 	lo_message_add_string(m, obj_path.c_str());
@@ -423,6 +404,21 @@ OSCEngineSender::set_variable(const string&     obj_path,
 	Raul::AtomLiblo::lo_message_add_atom(m, value);
 	send_message("/ingen/set_variable", m);
 }
+
+	
+void
+OSCEngineSender::set_property(const string&     obj_path,
+                              const string&     predicate,
+                              const Raul::Atom& value)
+{
+	lo_message m = lo_message_new();
+	lo_message_add_int32(m, next_id());
+	lo_message_add_string(m, obj_path.c_str());
+	lo_message_add_string(m, predicate.c_str());
+	Raul::AtomLiblo::lo_message_add_atom(m, value);
+	send_message("/ingen/set_property", m);
+}
+
 
 
 // Requests //

@@ -75,10 +75,7 @@ EnablePatchEvent::post_process()
 {
 	if (_patch != NULL) {
 		_responder->respond_ok();
-		if (_enable)
-			_engine.broadcaster()->send_patch_enable(_patch_path);
-		else
-			_engine.broadcaster()->send_patch_disable(_patch_path);
+		_engine.broadcaster()->send_property_change(_patch_path, "ingen:enabled", (bool)_enable);
 	} else {
 		_responder->respond_error(string("Patch ") + _patch_path + " not found");
 	}

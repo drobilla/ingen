@@ -81,6 +81,7 @@ public:
 	               uint32_t      poly);
 
 	void new_port(const string& path,
+	              uint32_t      index,
 	              const string& data_type,
 	              bool          is_output);
 
@@ -104,10 +105,6 @@ public:
 	void set_polyphony(const string& patch_path, uint32_t poly);
 	
 	void set_polyphonic(const string& path, bool poly);
-
-	void enable_patch(const string& patch_path);
-
-	void disable_patch(const string& patch_path);
 
 	void connect(const string& src_port_path,
 	             const string& dst_port_path);
@@ -143,6 +140,10 @@ public:
 	void midi_learn(const string& node_path);
 
 	void set_variable(const string&     obj_path,
+	                  const string&     predicate,
+	                  const Raul::Atom& value);
+	
+	void set_property(const string&     obj_path,
 	                  const string&     predicate,
 	                  const Raul::Atom& value);
 	

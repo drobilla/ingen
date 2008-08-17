@@ -79,11 +79,13 @@ PatchView::set_patch(SharedPtr<PatchModel> patch)
 
 	_poly_spin->set_value(patch->poly());
 	_destroy_but->set_sensitive(patch->path() != "/");
-	patch->enabled() ? enable() : disable();
+
+	for (GraphObject::Variables::const_iterator i = patch->properties().begin();
+			i != patch->properties().end(); ++i)
+		property_changed(i->first, i->second);
 
 	// Connect model signals to track state
-	patch->signal_enabled.connect(sigc::mem_fun(this, &PatchView::enable));
-	patch->signal_disabled.connect(sigc::mem_fun(this, &PatchView::disable));
+	patch->signal_property.connect(sigc::mem_fun(this, &PatchView::property_changed));
 
 	// Connect widget signals to do things
 	_process_but->signal_toggled().connect(sigc::mem_fun(this, &PatchView::process_toggled));
@@ -151,13 +153,8 @@ PatchView::process_toggled()
 	if (!_enable_signal)
 		return;
 
-	if (_process_but->get_active()) {
-		App::instance().engine()->enable_patch(_patch->path());
-		App::instance().patch_tree()->patch_enabled(_patch->path());
-	} else {
-		App::instance().engine()->disable_patch(_patch->path());
-		App::instance().patch_tree()->patch_disabled(_patch->path());
-	}
+	App::instance().engine()->set_property(_patch->path(), "ingen:enabled",
+			(bool)_process_but->get_active());
 }
 
 
@@ -183,19 +180,11 @@ PatchView::refresh_clicked()
 
 
 void
-PatchView::enable()
+PatchView::property_changed(const std::string& predicate, const Raul::Atom& value)
 {
 	_enable_signal = false;
-	_process_but->set_active(true);
-	_enable_signal = true;
-}
-
-
-void
-PatchView::disable()
-{
-	_enable_signal = false;
-	_process_but->set_active(false);
+	if (predicate == "ingen:enabled" && value.type() == Atom::BOOL)
+		_process_but->set_active(value.get_bool());
 	_enable_signal = true;
 }
 

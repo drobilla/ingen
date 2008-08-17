@@ -606,7 +606,8 @@ PatchCanvas::menu_add_port(const string& name, const string& type, bool is_outpu
 {
 	// FIXME: bundleify
 	const Path& path = _patch->path().base() + generate_port_name(name);
-	App::instance().engine()->new_port(path, type, is_output);
+	// FIXME: index
+	App::instance().engine()->new_port(path, 0, type, is_output);
 	GraphObject::Variables data = get_initial_data();
 	for (GraphObject::Variables::const_iterator i = data.begin(); i != data.end(); ++i)
 		App::instance().engine()->set_variable(path, i->first, i->second);

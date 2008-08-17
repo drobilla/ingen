@@ -101,11 +101,12 @@ ThreadedLoader::load_patch(bool                    merge,
 		_events.push_back(sigc::hide_return(sigc::bind(
 				sigc::mem_fun(_loader.get(), &Ingen::Serialisation::Loader::load),
 				App::instance().world(),
+				App::instance().world()->engine.get(),
 				data_base_uri,
 				engine_parent,
 				(engine_name) ? engine_name.get() : "",
 				"",
-				engine_data )));
+				engine_data)));
 	}
 	
 	whip();

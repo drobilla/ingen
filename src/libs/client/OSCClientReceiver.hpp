@@ -86,8 +86,6 @@ private:
 	LO_HANDLER(plugin_list_end);
 	LO_HANDLER(new_patch);
 	LO_HANDLER(destroyed);
-	LO_HANDLER(patch_enabled);
-	LO_HANDLER(patch_disabled);
 	LO_HANDLER(patch_polyphony);
 	LO_HANDLER(patch_cleared);
 	LO_HANDLER(object_renamed);
@@ -97,6 +95,7 @@ private:
 	LO_HANDLER(new_port);
 	LO_HANDLER(polyphonic);
 	LO_HANDLER(set_variable);
+	LO_HANDLER(set_property);
 	LO_HANDLER(set_port_value);
 	LO_HANDLER(set_voice_value);
 	LO_HANDLER(port_activity);

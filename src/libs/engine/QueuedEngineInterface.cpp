@@ -145,7 +145,9 @@ QueuedEngineInterface::new_patch(const string& path,
 }
 
 
+// FIXME: use index
 void QueuedEngineInterface::new_port(const string& path,
+                                     uint32_t      index,
                                      const string& data_type,
                                      bool          direction)
 {
@@ -207,20 +209,6 @@ void
 QueuedEngineInterface::set_polyphonic(const string& path, bool poly)
 {
 	push_queued(new SetPolyphonicEvent(_engine, _responder, now(), this, path, poly));
-}
-
-
-void
-QueuedEngineInterface::enable_patch(const string& patch_path)
-{
-	push_queued(new EnablePatchEvent(_engine, _responder, now(), patch_path, true));
-}
-
-
-void
-QueuedEngineInterface::disable_patch(const string& patch_path)
-{
-	push_queued(new EnablePatchEvent(_engine, _responder, now(), patch_path, false));
 }
 
 
@@ -319,6 +307,22 @@ QueuedEngineInterface::set_variable(const string& path,
                                     const Atom&   value)
 {
 	push_queued(new SetMetadataEvent(_engine, _responder, now(), path, predicate, value));
+}
+
+	
+void
+QueuedEngineInterface::set_property(const string& path,
+                                    const string& predicate,
+                                    const Atom&   value)
+{
+	// FIXME: implement generically
+	if (predicate == "ingen:enabled") {
+		if (value.type() == Atom::BOOL) {
+			push_queued(new EnablePatchEvent(_engine, _responder, now(), path, value.get_bool()));
+			return;
+		}
+	}
+	cerr << "WARNING: Unknown property \"" << predicate << "\" ignored" << endl;
 }
 
 

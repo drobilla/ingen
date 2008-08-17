@@ -28,7 +28,7 @@
 #include "module/World.hpp"
 
 namespace Redland { class World; }
-namespace Ingen { namespace Shared { class EngineInterface; } }
+namespace Ingen { namespace Shared { class CommonInterface; } }
 
 using namespace Ingen::Shared;
 
@@ -40,12 +40,13 @@ class Loader {
 public:
 	virtual ~Loader() {}
 	
-	virtual bool load(Ingen::Shared::World*       world,
-	                  const Glib::ustring&        uri,
-	                  boost::optional<Raul::Path> parent,
-	                  std::string                 patch_name,
-	                  Glib::ustring               patch_uri = "",
-	                  GraphObject::Variables      data = GraphObject::Variables());
+	virtual bool load(Ingen::Shared::World*           world,
+	                  Ingen::Shared::CommonInterface* target,
+	                  const Glib::ustring&            uri,
+	                  boost::optional<Raul::Path>     parent,
+	                  std::string                     patch_name,
+	                  Glib::ustring                   patch_uri = "",
+	                  GraphObject::Variables          data = GraphObject::Variables());
 };
 
 

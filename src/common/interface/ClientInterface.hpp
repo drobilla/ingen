@@ -74,17 +74,8 @@ public:
 	                        const std::string& symbol,
 	                        const std::string& name) = 0;
 	
-	virtual void new_port(const std::string& path,
-	                      uint32_t           index,
-	                      const std::string& data_type,
-	                      bool               is_output) = 0;
-	
 	virtual void polyphonic(const std::string& path,
 	                        bool               polyphonic) = 0;
-	
-	virtual void patch_enabled(const std::string& path) = 0;
-	
-	virtual void patch_disabled(const std::string& path) = 0;
 	
 	virtual void patch_polyphony(const std::string& path,
 	                             uint32_t           poly) = 0;

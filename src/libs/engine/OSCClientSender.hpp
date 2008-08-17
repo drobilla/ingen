@@ -90,10 +90,6 @@ public:
 	virtual void polyphonic(const std::string& path,
 	                        bool               polyphonic);
 	
-	virtual void patch_enabled(const std::string& path);
-	
-	virtual void patch_disabled(const std::string& path);
-	
 	virtual void patch_polyphony(const std::string& path,
 	                             uint32_t           poly);
 	
@@ -111,6 +107,10 @@ public:
 	                        const std::string& dst_port_path);
 	
 	virtual void set_variable(const std::string& subject_path,
+	                          const std::string& predicate,
+	                          const Raul::Atom&  value);
+	
+	virtual void set_property(const std::string& subject_path,
 	                          const std::string& predicate,
 	                          const Raul::Atom&  value);
 	

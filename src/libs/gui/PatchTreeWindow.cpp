@@ -29,10 +29,10 @@ namespace Ingen {
 namespace GUI {
 	
 
-PatchTreeWindow::PatchTreeWindow(BaseObjectType* cobject,
-	const Glib::RefPtr<Gnome::Glade::Xml>& xml)
-: Gtk::Window(cobject),
-  _enable_signal(true)
+PatchTreeWindow::PatchTreeWindow(BaseObjectType*                        cobject,
+                                 const Glib::RefPtr<Gnome::Glade::Xml>& xml)
+	: Gtk::Window(cobject)
+	, _enable_signal(true)
 {
 	xml->get_widget_derived("patches_treeview", _patches_treeview);
 	
@@ -115,8 +115,7 @@ PatchTreeWindow::add_patch(SharedPtr<PatchModel> pm)
 		}
 	}
 
-	pm->signal_enabled.connect(sigc::bind(sigc::mem_fun(this, &PatchTreeWindow::patch_enabled), pm->path()));
-	pm->signal_disabled.connect(sigc::bind(sigc::mem_fun(this, &PatchTreeWindow::patch_disabled), pm->path()));
+	pm->signal_property.connect(sigc::bind(sigc::mem_fun(this, &PatchTreeWindow::patch_property_changed), pm->path()));
 }
 
 
@@ -197,52 +196,24 @@ PatchTreeWindow::event_patch_enabled_toggled(const Glib::ustring& path_str)
 	
 	assert(pm);
 	
-	if ( ! pm->enabled()) {
-		if (_enable_signal)
-			App::instance().engine()->enable_patch(patch_path);
-		//row[_patch_tree_columns.enabled_col] = true;
-	} else {
-		if (_enable_signal)
-			App::instance().engine()->disable_patch(patch_path);
-		//row[_patch_tree_columns.enabled_col] = false;
-	}
+	if (_enable_signal)
+		App::instance().engine()->set_property(patch_path, "ingen:enabled", (bool)!pm->enabled());
 }
 
 
 void
-PatchTreeWindow::patch_enabled(const Path& path)
+PatchTreeWindow::patch_property_changed(const string& key, const Raul::Atom& value, const Path& path)
 {
 	_enable_signal = false;
-
-	Gtk::TreeModel::iterator i
-		= find_patch(_patch_treestore->children(), path);
-	
-	if (i != _patch_treestore->children().end()) {
-		Gtk::TreeModel::Row row = *i;
-		row[_patch_tree_columns.enabled_col] = true;
-	} else {
-		cerr << "[PatchTreeWindow] Unable to find patch " << path << endl;
+	if (key == "ingen:enabled" && value.type() == Atom::BOOL) {
+		Gtk::TreeModel::iterator i = find_patch(_patch_treestore->children(), path);
+		if (i != _patch_treestore->children().end()) {
+			Gtk::TreeModel::Row row = *i;
+			row[_patch_tree_columns.enabled_col] = value.get_bool();
+		} else {
+			cerr << "[PatchTreeWindow] Unable to find patch " << path << endl;
+		}
 	}
-	
-	_enable_signal = true;
-}
-
-
-void
-PatchTreeWindow::patch_disabled(const Path& path)
-{
-	_enable_signal = false;
-
-	Gtk::TreeModel::iterator i
-		= find_patch(_patch_treestore->children(), path);
-	
-	if (i != _patch_treestore->children().end()) {
-		Gtk::TreeModel::Row row = *i;
-		row[_patch_tree_columns.enabled_col] = false;
-	} else {
-		cerr << "[PatchTreeWindow] Unable to find patch " << path << endl;
-	}
-	
 	_enable_signal = true;
 }
 

@@ -48,10 +48,10 @@ public:
 	SharedPtr<ConnectionModel> get_connection(const string& src_port_path,
 	                                          const string& dst_port_path) const;
 	
-	size_t        poly()               const { return _poly; }
-	bool          enabled()            const { return _enabled; }
-	uint32_t      internal_polyphony() const { return _poly; }
-	bool          polyphonic()         const;
+	size_t   poly()               const { return _poly; }
+	uint32_t internal_polyphony() const { return _poly; }
+	bool     enabled()            const;
+	bool     polyphonic()         const;
 
 	/** "editable" = arranging,connecting,adding,deleting,etc
 	 * not editable (control mode) you can just change controllers (performing)
@@ -71,8 +71,6 @@ public:
 	sigc::signal<void, SharedPtr<NodeModel> >       signal_removed_node; 
 	sigc::signal<void, SharedPtr<ConnectionModel> > signal_new_connection; 
 	sigc::signal<void, SharedPtr<ConnectionModel> > signal_removed_connection;
-	sigc::signal<void>                              signal_enabled;
-	sigc::signal<void>                              signal_disabled;
 	sigc::signal<void, uint32_t>                    signal_polyphony;
 	sigc::signal<void, bool>                        signal_editable;
 
@@ -81,15 +79,12 @@ private:
 
 	PatchModel(const Path& patch_path, size_t internal_poly)
 		: NodeModel("ingen:Patch", patch_path, false) // FIXME
-		, _enabled(false)
 		, _poly(internal_poly)
 		, _editable(true)
 	{
 	}
 	
 	void poly(size_t p) { _poly = p; signal_polyphony.emit(p); }
-	void enable();
-	void disable();
 	void clear();
 	void add_child(SharedPtr<ObjectModel> c);
 	bool remove_child(SharedPtr<ObjectModel> c);
@@ -98,7 +93,6 @@ private:
 	void remove_connection(const string& src_port_path, const string& dst_port_path);
 	
 	Connections _connections;
-	bool        _enabled;
 	uint32_t    _poly;
 	bool        _editable;
 };

@@ -298,28 +298,6 @@ OSCClientSender::patch_cleared(const std::string& patch_path)
 
 
 /** \page client_osc_namespace
- * <p> \b /ingen/patch_enabled - Notification a patch's DSP processing has been enabled.
- * \arg \b path (string) - Path of enabled patch</p> \n \n
- */
-void
-OSCClientSender::patch_enabled(const std::string& patch_path)
-{
-	send("/ingen/patch_enabled", "s", patch_path.c_str(), LO_ARGS_END);
-}
-
-
-/** \page client_osc_namespace
- * <p> \b /ingen/patch_disabled - Notification a patch's DSP processing has been disabled.
- * \arg \b path (string) - Path of disabled patch</p> \n \n
- */
-void
-OSCClientSender::patch_disabled(const std::string& patch_path)
-{
-	send("/ingen/patch_disabled", "s", patch_path.c_str(), LO_ARGS_END);
-}
-
-
-/** \page client_osc_namespace
  * <p> \b /ingen/patch_polyphony - Notification a patch's DSP processing has been polyphony.
  * \arg \b path (string) - Path of polyphony patch</p> \n \n
  */
@@ -359,8 +337,8 @@ OSCClientSender::disconnect(const std::string& src_port_path, const std::string&
 
 
 /** \page client_osc_namespace
- * <p> \b /ingen/set_variable - Notification of a piece of variable.
- * \arg \b path (string) - Path of the object associated with variable (can be a node, patch, or port)
+ * <p> \b /ingen/set_variable - Notification of a variable.
+ * \arg \b path (string) - Path of the object associated with variable (node, patch, or port)
  * \arg \b key (string)
  * \arg \b value (string)</p> \n \n
  */
@@ -372,6 +350,23 @@ OSCClientSender::set_variable(const std::string& path, const std::string& key, c
 	lo_message_add_string(m, key.c_str());
 	Raul::AtomLiblo::lo_message_add_atom(m, value);
 	send_message("/ingen/set_variable", m);
+}
+
+
+/** \page client_osc_namespace
+ * <p> \b /ingen/set_property - Notification of a property.
+ * \arg \b path (string) - Path of the object associated with property (node, patch, or port)
+ * \arg \b key (string)
+ * \arg \b value (string)</p> \n \n
+ */
+void
+OSCClientSender::set_property(const std::string& path, const std::string& key, const Atom& value)
+{
+	lo_message m = lo_message_new();
+	lo_message_add_string(m, path.c_str());
+	lo_message_add_string(m, key.c_str());
+	Raul::AtomLiblo::lo_message_add_atom(m, value);
+	send_message("/ingen/set_property", m);
 }
 
 
@@ -467,17 +462,6 @@ void
 OSCClientSender::new_patch(const std::string& path, uint32_t poly)
 {
 	send("/ingen/new_patch", "si", path.c_str(), poly, LO_ARGS_END);
-	
-	/*
-	if (p->process())
-		patch_enabled(p->path());
-	
-	// Send variables
-	const map<const std::string&, const std::string&>& data = p->variable();
-	for (map<const std::string&, const std::string&>::const_iterator i = data.begin(); i != data.end(); ++i) {
-		set_variable(p->path(), (*i).first, (*i).second);
-	}
-	*/
 }
 
 

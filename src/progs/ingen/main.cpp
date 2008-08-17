@@ -184,7 +184,7 @@ main(int argc, char** argv)
 
 
 			engine_interface->load_plugins();
-			loader->load(world, uri, parent_path, "");
+			loader->load(world, engine_interface.get(), uri, parent_path, "");
 
 		} else {
 			cerr << "Unable to load serialisation module, aborting." << endl;

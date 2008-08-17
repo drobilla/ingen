@@ -62,8 +62,12 @@ public:
 	const Atom& get_variable(const string& key) const;
 	void set_variable(const string& key, const Atom& value)
 		{ _variables[key] = value; signal_variable.emit(key, value); }
+	
+	void set_property(const string& key, const Atom& value)
+		{ _properties[key] = value; signal_property.emit(key, value); }
 
 	const Variables&       variables()  const { return _variables; }
+	const Variables&       properties() const { return _properties; }
 	const Path             path()       const { return _path; }
 	const Symbol           symbol()     const { return _path.name(); }
 	SharedPtr<ObjectModel> parent()     const { return _parent; }
@@ -75,6 +79,7 @@ public:
 	sigc::signal<void, SharedPtr<ObjectModel> >    signal_new_child; 
 	sigc::signal<void, SharedPtr<ObjectModel> >    signal_removed_child; 
 	sigc::signal<void, const string&, const Atom&> signal_variable; 
+	sigc::signal<void, const string&, const Atom&> signal_property; 
 	sigc::signal<void, bool>                       signal_polyphonic; 
 	sigc::signal<void>                             signal_destroyed; 
 	sigc::signal<void>                             signal_renamed; 
@@ -89,7 +94,6 @@ protected:
 	virtual void add_child(SharedPtr<ObjectModel> c) {}
 	virtual bool remove_child(SharedPtr<ObjectModel> c) { return true; }
 
-	void add_variable(const Variables& data);
 	void set_polyphonic(bool);
 	
 	virtual void set(SharedPtr<ObjectModel> model);
@@ -99,6 +103,7 @@ protected:
 	SharedPtr<ObjectModel> _parent;
 	
 	Variables _variables;
+	Variables _properties;
 };
 
 

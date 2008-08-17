@@ -87,8 +87,6 @@ OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t
 	lo_server_add_method(_server, "/ingen/activate", "i", engine_activate_cb, this);
 	lo_server_add_method(_server, "/ingen/deactivate", "i", engine_deactivate_cb, this);
 	lo_server_add_method(_server, "/ingen/new_patch", "isi", new_patch_cb, this);
-	lo_server_add_method(_server, "/ingen/enable_patch", "is", enable_patch_cb, this);
-	lo_server_add_method(_server, "/ingen/disable_patch", "is", disable_patch_cb, this);
 	lo_server_add_method(_server, "/ingen/clear_patch", "is", clear_patch_cb, this);
 	lo_server_add_method(_server, "/ingen/set_polyphony", "isi", set_polyphony_cb, this);
 	lo_server_add_method(_server, "/ingen/set_polyphonic", "isT", set_polyphonic_cb, this);
@@ -112,6 +110,7 @@ OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t
 	lo_server_add_method(_server, "/ingen/all_notes_off", "isi", all_notes_off_cb, this);
 	lo_server_add_method(_server, "/ingen/midi_learn", "is", midi_learn_cb, this);
 	lo_server_add_method(_server, "/ingen/set_variable", NULL, variable_set_cb, this);
+	lo_server_add_method(_server, "/ingen/set_property", NULL, property_set_cb, this);
 
 	// Queries
 	lo_server_add_method(_server, "/ingen/request_variable", "iss", variable_get_cb, this);
@@ -407,36 +406,6 @@ OSCEngineReceiver::_rename_cb(const char* path, const char* types, lo_arg** argv
 
 
 /** \page engine_osc_namespace
- * <p> \b /ingen/enable_patch - Enable DSP processing of a patch
- * \arg \b response-id (integer)
- * \arg \b patch-path - Patch's path </p> \n \n
- */
-int
-OSCEngineReceiver::_enable_patch_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
-{
-	const char* patch_path  = &argv[1]->s;
-	
-	enable_patch(patch_path);
-	return 0;
-}
-
-
-/** \page engine_osc_namespace
- * <p> \b /ingen/disable_patch - Disable DSP processing of a patch
- * \arg \b response-id (integer)
- * \arg \b patch-path - Patch's path </p> \n \n
- */
-int
-OSCEngineReceiver::_disable_patch_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
-{
-	const char* patch_path  = &argv[1]->s;
-	
-	disable_patch(patch_path);
-	return 0;
-}
-
-
-/** \page engine_osc_namespace
  * <p> \b /ingen/clear_patch - Remove all nodes from a patch
  * \arg \b response-id (integer)
  * \arg \b patch-path - Patch's path </p> \n \n
@@ -485,6 +454,7 @@ OSCEngineReceiver::_set_polyphonic_cb(const char* path, const char* types, lo_ar
 }
 
 
+// FIXME: add index
 /** \page engine_osc_namespace
  * <p> \b /ingen/new_port - Add a port into a given patch (load a plugin by URI)
  * \arg \b response-id (integer)
@@ -499,7 +469,7 @@ OSCEngineReceiver::_new_port_cb(const char* path, const char* types, lo_arg** ar
 	const char*   data_type   = &argv[2]->s;
 	const int32_t direction   =  argv[3]->i;
 	
-	new_port(port_path, data_type, (direction == 1));
+	new_port(port_path, 0, data_type, (direction == 1));
 	return 0;
 }
 
@@ -840,11 +810,11 @@ OSCEngineReceiver::_midi_learn_cb(const char* path, const char* types, lo_arg** 
 
 
 /** \page engine_osc_namespace
- * <p> \b /ingen/set_variable - Sets a piece of variable, associated with a synth-space object (node, etc)
+ * <p> \b /ingen/set_variable - Set a variable, associated with a synth-space object (node, etc)
  * \arg \b response-id (integer)
  * \arg \b object-path (string) - Full path of object to associate variable with
- * \arg \b key (string) - Key (index) for new piece of variable
- * \arg \b value (string) - Value of new piece of variable </p> \n \n
+ * \arg \b key (string) - Key (index/predicate/ID) for new variable
+ * \arg \b value (string) - Value of new variable </p> \n \n
  */
 int
 OSCEngineReceiver::_variable_set_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -858,6 +828,29 @@ OSCEngineReceiver::_variable_set_cb(const char* path, const char* types, lo_arg*
 	Raul::Atom value = Raul::AtomLiblo::lo_arg_to_atom(types[3], argv[3]);
 	
 	set_variable(object_path, key, value);
+	return 0;
+}
+
+
+/** \page engine_osc_namespace
+ * <p> \b /ingen/set_property - Set an (RDF) property, associated with a synth-space object (node, etc)
+ * \arg \b response-id (integer)
+ * \arg \b object-path (string) - Full path of object to associate variable with
+ * \arg \b key (string) - URI/QName for predicate of this property (e.g. "ingen:enabled")
+ * \arg \b value (string) - Value of property </p> \n \n
+ */
+int
+OSCEngineReceiver::_property_set_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+{
+	if (argc != 4 || types[0] != 'i' || types[1] != 's' || types[2] != 's')
+		return 1;
+
+	const char* object_path = &argv[1]->s;
+	const char* key         = &argv[2]->s;
+	
+	Raul::Atom value = Raul::AtomLiblo::lo_arg_to_atom(types[3], argv[3]);
+	
+	set_property(object_path, key, value);
 	return 0;
 }
 

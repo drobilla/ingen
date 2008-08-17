@@ -56,14 +56,13 @@ public:
 	, new_port_slot(signal_new_port.make_slot())
 	, polyphonic_slot(signal_polyphonic.make_slot())
 	, connection_slot(signal_connection.make_slot())
-	, patch_enabled_slot(signal_patch_enabled.make_slot())
-	, patch_disabled_slot(signal_patch_disabled.make_slot())
 	, patch_polyphony_slot(signal_patch_polyphony.make_slot())
 	, patch_cleared_slot(signal_patch_cleared.make_slot())
 	, object_destroyed_slot(signal_object_destroyed.make_slot())
 	, object_renamed_slot(signal_object_renamed.make_slot())
 	, disconnection_slot(signal_disconnection.make_slot())
 	, variable_change_slot(signal_variable_change.make_slot())
+	, property_change_slot(signal_property_change.make_slot())
 	, port_value_slot(signal_port_value.make_slot())
 	, port_activity_slot(signal_port_activity.make_slot())
 	, program_add_slot(signal_program_add.make_slot())
@@ -115,12 +114,6 @@ public:
 	void object_destroyed(const string& path)
 		{ push_sig(sigc::bind(object_destroyed_slot, path)); }
 	
-	void patch_enabled(const string& path)
-		{ push_sig(sigc::bind(patch_enabled_slot, path)); }
-	
-	void patch_disabled(const string& path)
-		{ push_sig(sigc::bind(patch_disabled_slot, path)); }
-	
 	void patch_polyphony(const string& path, uint32_t poly)
 		{ push_sig(sigc::bind(patch_polyphony_slot, path, poly)); }
 
@@ -135,6 +128,9 @@ public:
 	
 	void set_variable(const string& path, const string& key, const Raul::Atom& value)
 		{ push_sig(sigc::bind(variable_change_slot, path, key, value)); }
+	
+	void set_property(const string& path, const string& key, const Raul::Atom& value)
+		{ push_sig(sigc::bind(property_change_slot, path, key, value)); }
 
 	void set_port_value(const string& port_path, const Raul::Atom& value)
 		{ push_sig(sigc::bind(port_value_slot, port_path, value)); }
@@ -172,14 +168,13 @@ private:
 	sigc::slot<void, string, uint32_t, string, bool>     new_port_slot;
 	sigc::slot<void, string, bool>                       polyphonic_slot;
 	sigc::slot<void, string, string>                     connection_slot;
-	sigc::slot<void, string>                             patch_enabled_slot; 
-	sigc::slot<void, string>                             patch_disabled_slot; 
 	sigc::slot<void, string, uint32_t>                   patch_polyphony_slot; 
 	sigc::slot<void, string>                             patch_cleared_slot; 
 	sigc::slot<void, string>                             object_destroyed_slot; 
 	sigc::slot<void, string, string>                     object_renamed_slot; 
 	sigc::slot<void, string, string>                     disconnection_slot; 
 	sigc::slot<void, string, string, Raul::Atom>         variable_change_slot; 
+	sigc::slot<void, string, string, Raul::Atom>         property_change_slot; 
 	sigc::slot<void, string, Raul::Atom>                 port_value_slot; 
 	sigc::slot<void, string, uint32_t, Raul::Atom>       voice_value_slot; 
 	sigc::slot<void, string>                             port_activity_slot; 

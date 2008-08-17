@@ -43,8 +43,7 @@ ObjectSender::send_patch(ClientInterface* client, const PatchImpl* patch, bool r
 	for (GraphObjectImpl::Variables::const_iterator j = data.begin(); j != data.end(); ++j)
 		client->set_variable(patch->path(), (*j).first, (*j).second);
 	
-	if (patch->enabled())
-		client->patch_enabled(patch->path());
+	client->set_property(patch->path(), "ingen:enabled", (bool)patch->enabled());
 
 	client->bundle_end();
 	

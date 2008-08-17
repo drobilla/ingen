@@ -56,16 +56,6 @@ ObjectModel::get_variable(const string& key) const
 
 
 void
-ObjectModel::add_variable(const Variables& data)
-{
-	for (Variables::const_iterator i = data.begin(); i != data.end(); ++i) {
-		_variables[i->first] = i->second;
-		signal_variable.emit(i->first, i->second);
-	}
-}
-
-
-void
 ObjectModel::set_polyphonic(bool polyphonic)
 {
 	_polyphonic = polyphonic;

@@ -51,6 +51,11 @@ public:
 	                      const std::string& plugin_uri,
 	                      bool               polyphonic) = 0;
 	
+	virtual void new_port(const std::string& path,
+	                      uint32_t           index,
+	                      const std::string& data_type,
+	                      bool               is_output) = 0;
+	
 	virtual void connect(const std::string& src_port_path,
 	                     const std::string& dst_port_path) = 0;
 	
@@ -58,6 +63,10 @@ public:
 	                        const std::string& dst_port_path) = 0;
 	
 	virtual void set_variable(const std::string& subject_path,
+	                          const std::string& predicate,
+	                          const Raul::Atom&  value) = 0;
+	
+	virtual void set_property(const std::string& subject_path,
 	                          const std::string& predicate,
 	                          const Raul::Atom&  value) = 0;
 	

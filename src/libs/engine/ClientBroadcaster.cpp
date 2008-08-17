@@ -193,22 +193,6 @@ ClientBroadcaster::send_disconnection(const string& src_port_path, const string&
 
 
 void
-ClientBroadcaster::send_patch_enable(const string& patch_path)
-{
-	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
-		(*i).second->patch_enabled(patch_path);
-}
-
-
-void
-ClientBroadcaster::send_patch_disable(const string& patch_path)
-{
-	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
-		(*i).second->patch_disabled(patch_path);
-}
-
-
-void
 ClientBroadcaster::send_patch_polyphony(const string& patch_path, uint32_t poly)
 {
 	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
@@ -225,6 +209,18 @@ ClientBroadcaster::send_variable_change(const string& node_path, const string& k
 {
 	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
 		(*i).second->set_variable(node_path, key, value);
+}
+
+
+/** Send notification of a property update.
+ *
+ * Like control changes, does not send update to client that set the property, if applicable.
+ */
+void
+ClientBroadcaster::send_property_change(const string& node_path, const string& key, const Atom& value)
+{
+	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
+		(*i).second->set_property(node_path, key, value);
 }
 
 

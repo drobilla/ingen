@@ -59,10 +59,6 @@ public:
 	
 	// Object commands
 	
-	virtual void new_port(const std::string& path,
-	                      const std::string& data_type,
-	                      bool               is_output) = 0;
-	
 	/** DEPRECATED */
 	virtual void new_node_deprecated(const std::string& path,
 	                                 const std::string& plugin_type,
@@ -80,10 +76,6 @@ public:
 	virtual void set_polyphony(const std::string& patch_path, uint32_t poly) = 0;
 	
 	virtual void set_polyphonic(const std::string& path, bool poly) = 0;
-	
-	virtual void enable_patch(const std::string& patch_path) = 0;
-	
-	virtual void disable_patch(const std::string& patch_path) = 0;
 	
 	virtual void disconnect_all(const std::string& parent_patch_path,
 	                            const std::string& path) = 0;

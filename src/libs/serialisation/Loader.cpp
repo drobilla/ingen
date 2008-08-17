@@ -42,12 +42,13 @@ namespace Serialisation {
  * @return whether or not load was successful.
  */
 bool
-Loader::load(Ingen::Shared::World*       world,
-             const Glib::ustring&        document_uri,
-	         boost::optional<Raul::Path> parent,
-	         std::string                 patch_name,
-	         Glib::ustring               patch_uri,
-             GraphObject::Variables      data)
+Loader::load(Ingen::Shared::World*           world,
+             Ingen::Shared::CommonInterface* target,
+             const Glib::ustring&            document_uri,
+	         boost::optional<Raul::Path>     parent,
+	         std::string                     patch_name,
+	         Glib::ustring                   patch_uri,
+             GraphObject::Variables          data)
 {
 	setlocale(LC_NUMERIC, "C");
 
@@ -112,11 +113,11 @@ Loader::load(Ingen::Shared::World*       world,
 	cout << " as " << patch_path << endl;
 	
 	if (patch_path != "/")
-		world->engine->new_patch(patch_path, patch_poly);
+		target->new_patch(patch_path, patch_poly);
 	
 	/* Set document metadata (so File->Save doesn't prompt)
 	 * FIXME: This needs some thinking for multiple clients... */
-	world->engine->set_variable(patch_path, "ingen:document", Atom(document_uri.c_str()));
+	target->set_variable(patch_path, "ingen:document", Atom(document_uri.c_str()));
 
 	/* Load (plugin) nodes */
 
@@ -151,7 +152,7 @@ Loader::load(Ingen::Shared::World*       world,
 			if (poly_node.is_bool() && poly_node.to_bool() == true)
 				node_polyphonic = true;
 		
-			world->engine->new_node(node_path, node_plugin, node_polyphonic);
+			target->new_node(node_path, node_plugin, node_polyphonic);
 			created.insert(node_path);
 		}
 
@@ -159,7 +160,7 @@ Loader::load(Ingen::Shared::World*       world,
 		Redland::Node val_node = (*i)["varval"];
 
 		if (key != "")
-			world->engine->set_variable(node_path, key, AtomRDF::node_to_atom(val_node));
+			target->set_variable(node_path, key, AtomRDF::node_to_atom(val_node));
 	}
 	
 	world->rdf_world->mutex().unlock();
@@ -185,7 +186,7 @@ Loader::load(Ingen::Shared::World*       world,
 
 		if (created.find(subpatch_path) == created.end()) {
 			created.insert(subpatch_path);
-			load(world, document_uri, patch_path, name, patch);
+			load(world, target, document_uri, patch_path, name, patch);
 		}
 	}
 
@@ -215,7 +216,7 @@ Loader::load(Ingen::Shared::World*       world,
 		assert(Path::is_valid_name(port_name));
 		const Path port_path = patch_path.base() + node_name + "/" + port_name;
 
-		world->engine->set_port_value(port_path, AtomRDF::node_to_atom((*i)["portval"]));
+		target->set_port_value(port_path, AtomRDF::node_to_atom((*i)["portval"]));
 	}
 
 
@@ -248,18 +249,19 @@ Loader::load(Ingen::Shared::World*       world,
 			
 		if (created.find(port_path) == created.end()) {
 			bool is_output = (type == "ingen:OutputPort"); // FIXME: check validity
-			world->engine->new_port(port_path, datatype, is_output);
+			// FIXME: read index
+			target->new_port(port_path, 0, datatype, is_output);
 			created.insert(port_path);
 		}
 
 		const Redland::Node val_node = (*i)["portval"];
-		world->engine->set_port_value(patch_path.base() + name, AtomRDF::node_to_atom(val_node));
+		target->set_port_value(patch_path.base() + name, AtomRDF::node_to_atom(val_node));
 
 		const string key = world->rdf_world->prefixes().qualify((*i)["varkey"].to_string());
 		const Redland::Node var_val_node = (*i)["varval"];
 
 		if (key != "")
-			world->engine->set_variable(patch_path.base() + name, key, AtomRDF::node_to_atom(var_val_node));
+			target->set_variable(patch_path.base() + name, key, AtomRDF::node_to_atom(var_val_node));
 	}
 
 	created.clear();
@@ -290,7 +292,7 @@ Loader::load(Ingen::Shared::World*       world,
 
 		//cerr << patch_path << " 1 CONNECTION: " << src_port << " -> " << dst_port << endl;
 
-		world->engine->connect(src_port, dst_port);
+		target->connect(src_port, dst_port);
 	}
 
 
@@ -316,7 +318,7 @@ Loader::load(Ingen::Shared::World*       world,
 
 		//cerr << patch_path << " 2 CONNECTION: " << src_port << " -> " << dst_port << endl;
 
-		world->engine->connect(src_port, dst_port);
+		target->connect(src_port, dst_port);
 	}
 
 
@@ -342,7 +344,7 @@ Loader::load(Ingen::Shared::World*       world,
 
 		//cerr << patch_path << " 3 CONNECTION: " << src_port << " -> " << dst_port << endl;
 
-		world->engine->connect(src_port, dst_port);
+		target->connect(src_port, dst_port);
 	}
 	
 	
@@ -365,7 +367,7 @@ Loader::load(Ingen::Shared::World*       world,
 
 		//cerr << patch_path << " 4 CONNECTION: " << src_port << " -> " << dst_port << endl;
 
-		world->engine->connect(src_port, dst_port);
+		target->connect(src_port, dst_port);
 	}
 
 
@@ -386,13 +388,13 @@ Loader::load(Ingen::Shared::World*       world,
 		Redland::Node val_node = (*i)["varval"];
 
 		if (key != "")
-			world->engine->set_variable(patch_path, key, AtomRDF::node_to_atom(val_node));
+			target->set_variable(patch_path, key, AtomRDF::node_to_atom(val_node));
 	}
 
 
 	// Set passed variables last to override any loaded values
 	for (GraphObject::Variables::const_iterator i = data.begin(); i != data.end(); ++i)
-		world->engine->set_variable(patch_path, i->first, i->second);
+		target->set_variable(patch_path, i->first, i->second);
 
 
 	/* Enable */
@@ -409,8 +411,10 @@ Loader::load(Ingen::Shared::World*       world,
 		Redland::Node enabled_node = (*i)["enabled"];
 
 		if (enabled_node.is_bool() && enabled_node) {
-			world->engine->enable_patch(patch_path);
+			target->set_property(patch_path, "ingen:enabled", (bool)true);
 			break;
+		} else {
+			cerr << "WARNING: Unknown type for property ingen:enabled" << endl;
 		}
 	}
 

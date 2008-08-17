@@ -74,8 +74,7 @@ private:
 	void on_editable_sig(bool locked);
 	void editable_toggled();
 	
-	void enable();
-	void disable();
+	void property_changed(const std::string& predicate, const Raul::Atom& value);
 
 	void zoom_full();
 

@@ -57,8 +57,6 @@ public:
 	sigc::signal<void, string, string, bool>               signal_new_node; 
 	sigc::signal<void, string, uint32_t, string, bool>     signal_new_port; 
 	sigc::signal<void, string, bool>                       signal_polyphonic; 
-	sigc::signal<void, string>                             signal_patch_enabled; 
-	sigc::signal<void, string>                             signal_patch_disabled; 
 	sigc::signal<void, string, uint32_t>                   signal_patch_polyphony; 
 	sigc::signal<void, string>                             signal_patch_cleared; 
 	sigc::signal<void, string, string>                     signal_object_renamed; 
@@ -66,6 +64,7 @@ public:
 	sigc::signal<void, string, string>                     signal_connection; 
 	sigc::signal<void, string, string>                     signal_disconnection; 
 	sigc::signal<void, string, string, Raul::Atom>         signal_variable_change; 
+	sigc::signal<void, string, string, Raul::Atom>         signal_property_change; 
 	sigc::signal<void, string, Raul::Atom>                 signal_port_value; 
 	sigc::signal<void, string, uint32_t, Raul::Atom>       signal_voice_value; 
 	sigc::signal<void, string>                             signal_port_activity; 
@@ -125,12 +124,6 @@ protected:
 	void object_destroyed(const string& path)
 		{ if (_enabled) signal_object_destroyed.emit(path); }
 	
-	void patch_enabled(const string& path)
-		{ if (_enabled) signal_patch_enabled.emit(path); }
-	
-	void patch_disabled(const string& path)
-		{ if (_enabled) signal_patch_disabled.emit(path); }
-	
 	void patch_polyphony(const string& path, uint32_t poly)
 		{ if (_enabled) signal_patch_polyphony.emit(path, poly); }
 
@@ -145,6 +138,9 @@ protected:
 	
 	void set_variable(const string& path, const string& key, const Raul::Atom& value)
 		{ if (_enabled) signal_variable_change.emit(path, key, value); }
+	
+	void set_property(const string& path, const string& key, const Raul::Atom& value)
+		{ if (_enabled) signal_property_change.emit(path, key, value); }
 
 	void set_port_value(const string& port_path, const Raul::Atom& value)
 		{ if (_enabled) signal_port_value.emit(port_path, value); }

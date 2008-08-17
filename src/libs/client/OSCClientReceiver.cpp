@@ -145,8 +145,6 @@ OSCClientReceiver::setup_callbacks()
 	lo_server_thread_add_method(_st, "/ingen/plugin", "ssss", plugin_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/new_patch", "si", new_patch_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/destroyed", "s", destroyed_cb, this);
-	lo_server_thread_add_method(_st, "/ingen/patch_enabled", "s", patch_enabled_cb, this);
-	lo_server_thread_add_method(_st, "/ingen/patch_disabled", "s", patch_disabled_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/patch_polyphony", "si", patch_polyphony_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/patch_cleared", "s", patch_cleared_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/object_renamed", "ss", object_renamed_cb, this);
@@ -158,6 +156,7 @@ OSCClientReceiver::setup_callbacks()
 	lo_server_thread_add_method(_st, "/ingen/polyphonic", "sT", polyphonic_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/polyphonic", "sF", polyphonic_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/set_variable", NULL, set_variable_cb, this);
+	lo_server_thread_add_method(_st, "/ingen/set_property", NULL, set_property_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/set_port_value", "sf", set_port_value_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/set_voice_value", "sif", set_voice_value_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/port_activity", "s", port_activity_cb, this);
@@ -188,22 +187,6 @@ int
 OSCClientReceiver::_destroyed_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	object_destroyed((const char*)&argv[0]->s);
-	return 0;
-}
-
-
-int
-OSCClientReceiver::_patch_enabled_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
-{
-	patch_enabled((const char*)&argv[0]->s);
-	return 0;
-}
-
-
-int
-OSCClientReceiver::_patch_disabled_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
-{
-	patch_disabled((const char*)&argv[0]->s);
 	return 0;
 }
 
@@ -301,7 +284,7 @@ OSCClientReceiver::_polyphonic_cb(const char* path, const char* types, lo_arg** 
 }
 
 
-/** Notification of a new or updated piece of variable.
+/** Notification of a new or updated variable.
  */
 int
 OSCClientReceiver::_set_variable_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -315,6 +298,25 @@ OSCClientReceiver::_set_variable_cb(const char* path, const char* types, lo_arg*
 	Atom value = AtomLiblo::lo_arg_to_atom(types[2], argv[2]);
 
 	set_variable(obj_path, key, value);
+
+	return 0;	
+}
+
+
+/** Notification of a new or updated property.
+ */
+int
+OSCClientReceiver::_set_property_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+{
+	if (argc != 3 || types[0] != 's' || types[1] != 's')
+		return 1;
+
+	const char* obj_path  = &argv[0]->s;
+	const char* key       = &argv[1]->s;
+
+	Atom value = AtomLiblo::lo_arg_to_atom(types[2], argv[2]);
+
+	set_property(obj_path, key, value);
 
 	return 0;	
 }
