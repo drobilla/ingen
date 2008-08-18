@@ -45,7 +45,7 @@ public:
 			Shared::CommonInterface*                target,
 			const Glib::ustring&                    document_uri,
 			Glib::ustring                           object_uri,
-			boost::optional<Raul::Path>             parent=boost::optional<Raul::Path>(),
+			boost::optional<Glib::ustring>          engine_base=boost::optional<Glib::ustring>(),
 			boost::optional<Raul::Symbol>           symbol=boost::optional<Raul::Symbol>(),
 			boost::optional<GraphObject::Variables> data=boost::optional<GraphObject::Variables>());
 	
@@ -55,7 +55,7 @@ public:
 			const Glib::ustring&                    str,
 			const Glib::ustring&                    base_uri,
 			boost::optional<Glib::ustring>          object_uri=boost::optional<Glib::ustring>(),
-			boost::optional<Raul::Path>             parent=boost::optional<Raul::Path>(),
+			boost::optional<Glib::ustring>          engine_base=boost::optional<Glib::ustring>(),
 			boost::optional<Raul::Symbol>           symbol=boost::optional<Raul::Symbol>(),
 			boost::optional<GraphObject::Variables> data=boost::optional<GraphObject::Variables>());
 
@@ -69,7 +69,7 @@ private:
 			Redland::Model&                         model,
 			Glib::ustring                           base_uri,
 			boost::optional<Glib::ustring>          object_uri=boost::optional<Glib::ustring>(),
-			boost::optional<Raul::Path>             parent=boost::optional<Raul::Path>(),
+			boost::optional<Glib::ustring>          engine_base=boost::optional<Glib::ustring>(),
 			boost::optional<Raul::Symbol>           symbol=boost::optional<Raul::Symbol>(),
 			boost::optional<GraphObject::Variables> data=boost::optional<GraphObject::Variables>());
 
@@ -79,7 +79,7 @@ private:
 			Redland::Model&                         model,
 			const Glib::ustring&                    base_uri,
 			const Glib::ustring&                    object_uri,
-			Raul::Path                              path,
+			Glib::ustring                           engine_base,
 			boost::optional<GraphObject::Variables> data);
 	
 	bool parse_node(
@@ -88,7 +88,7 @@ private:
 			Redland::Model&                         model,
 			const Glib::ustring&                    base_uri,
 			const Glib::ustring&                    subject,
-			Raul::Path                              path,
+			const Raul::Path&                       path,
 			boost::optional<GraphObject::Variables> data);
 
 	bool parse_port(
@@ -97,7 +97,7 @@ private:
 			Redland::Model&                         model,
 			const Glib::ustring&                    base_uri,
 			const Glib::ustring&                    subject,
-			Raul::Path                              path,
+			const Raul::Path&                       path,
 			boost::optional<GraphObject::Variables> data=boost::optional<GraphObject::Variables>());
 	
 	bool parse_variables(
@@ -106,7 +106,7 @@ private:
 			Redland::Model&                         model,
 			const Glib::ustring&                    base_uri,
 			const Glib::ustring&                    subject,
-			Raul::Path                              path,
+			const Raul::Path&                       path,
 			boost::optional<GraphObject::Variables> data);
 
 	bool parse_connections(

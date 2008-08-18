@@ -156,9 +156,9 @@ main(int argc, char** argv)
 	/* Load a patch */
 	if (args.load_given && engine_interface) {
 		
-		boost::optional<Raul::Path> parent_path;
+		boost::optional<Glib::ustring> engine_base;
 		if (args.path_given)
-			parent_path = args.path_arg;
+			engine_base = string(args.path_arg) + "/";
 
 		bool found = false;
 		if (!world->serialisation_module)
@@ -184,7 +184,7 @@ main(int argc, char** argv)
 
 
 			engine_interface->load_plugins();
-			parser->parse_document(world, engine_interface.get(), uri, uri, parent_path);
+			parser->parse_document(world, engine_interface.get(), uri, uri, engine_base);
 
 		} else {
 			cerr << "Unable to load serialisation module, aborting." << endl;

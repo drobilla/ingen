@@ -129,8 +129,9 @@ LoadPatchWindow::ok_clicked()
 	if (_replace)
 		App::instance().engine()->clear_patch(_patch->path());
 
-	if (_patch->path() != "/")
-		parent = _patch->path().parent();
+	//if (_patch->path() != "/")
+	//	parent = _patch->path().parent();
+	parent = _patch->path();
 	
 	_patch.reset();
 	hide();

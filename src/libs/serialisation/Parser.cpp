@@ -63,7 +63,7 @@ Parser::parse_document(
 		Ingen::Shared::CommonInterface*         target,
 		const Glib::ustring&                    document_uri,
 		Glib::ustring                           object_uri,
-		boost::optional<Raul::Path>             parent,
+		boost::optional<Glib::ustring>          engine_base,
 		boost::optional<Raul::Symbol>           symbol,
 		boost::optional<GraphObject::Variables> data)
 {
@@ -74,7 +74,7 @@ Parser::parse_document(
 	else
 		cout << "Parsing " << object_uri << " from " << document_uri << endl;
 
-	return parse(world, target, model, document_uri, object_uri, parent, symbol, data);;
+	return parse(world, target, model, document_uri, object_uri, engine_base, symbol, data);;
 }
 
 
@@ -85,7 +85,7 @@ Parser::parse_string(
 		const Glib::ustring&                    str,
 		const Glib::ustring&                    base_uri,
 		boost::optional<Glib::ustring>          object_uri,
-		boost::optional<Raul::Path>             parent,
+		boost::optional<Glib::ustring>          engine_base,
 		boost::optional<Raul::Symbol>           symbol,
 		boost::optional<GraphObject::Variables> data)
 {
@@ -96,10 +96,10 @@ Parser::parse_string(
 	else
 		cout << "Parsing all objects found in string (base " << base_uri << ")" << endl;
 
-	bool ret = parse(world, target, model, base_uri, object_uri, parent, symbol, data);
+	bool ret = parse(world, target, model, base_uri, object_uri, engine_base, symbol, data);
 	if (ret) {
 		const Glib::ustring subject = Glib::ustring("<") + base_uri + Glib::ustring(">");
-		parse_connections(world, target, model, base_uri, subject, parent ? parent.get() : "/");
+		parse_connections(world, target, model, base_uri, subject, (engine_base ? (string)engine_base.get() : "/"));
 	}
 
 	return ret;
@@ -113,7 +113,7 @@ Parser::parse(
 		Redland::Model&                         model,
 		Glib::ustring                           base_uri,
 		boost::optional<Glib::ustring>          object_uri,
-		boost::optional<Raul::Path>             parent,
+		boost::optional<Glib::ustring>          engine_base,
 		boost::optional<Raul::Symbol>           symbol,
 		boost::optional<GraphObject::Variables> data)
 {
@@ -164,7 +164,7 @@ Parser::parse(
 				continue;
 
 			if (rdf_class == patch_class) {
-				ret = parse_patch(world, target, model, base_uri, subject.to_c_string(), path, data);
+				ret = parse_patch(world, target, model, base_uri, subject.to_c_string(), engine_base.get(), data);
 				if (ret)
 					target->set_variable(path, "ingen:document", Atom(base_uri.c_str()));
 			} else if (rdf_class == node_class) {
@@ -193,11 +193,13 @@ Parser::parse_patch(
 		Redland::Model&                         model,
 		const Glib::ustring&                    base_uri,
 		const Glib::ustring&                    object_uri,
-		Raul::Path                              patch_path,
+		Glib::ustring                           engine_base,
 		boost::optional<GraphObject::Variables> data=boost::optional<GraphObject::Variables>())
 {
 	std::set<Path> created;
 	uint32_t       patch_poly = 0;
+
+	cout << "PARSE PATCH: " << base_uri << " - " << object_uri << " - " << engine_base << endl;
 
 	/* Use parameter overridden polyphony, if given */
 	if (data) {
@@ -226,7 +228,23 @@ Parser::parse_patch(
 		patch_poly = static_cast<uint32_t>(poly_node.to_int());
 	}
 
-	if (patch_path != "/")
+	cout << "XXXXXXXXXX " << engine_base << endl;
+	cout << "YYYYYYYYYY " << uri_relative_to_base(base_uri, object_uri) << endl;
+	string symbol = uri_relative_to_base(base_uri, object_uri);
+	symbol = symbol.substr(0, symbol.find("."));
+	cout << "SSSSSSSSSS " << symbol << endl;
+	cout << "BBBBBBBBBBB " << engine_base << endl;
+	Path patch_path("/");
+	if (engine_base == "")
+		patch_path = "/";
+	else if (engine_base[engine_base.length()-1] == '/')
+		patch_path = Path(engine_base + symbol);
+	else
+		patch_path = (Path)engine_base;
+
+	cout << "!!!!!!!!!!!!!!!!!!! PATCH PATH: " << patch_path << endl;
+
+	if (patch_path != engine_base && patch_path != "/")
 		target->new_patch(patch_path, patch_poly);
 	
 	/* Plugin nodes */
@@ -391,7 +409,7 @@ Parser::parse_node(
 		Redland::Model&                         model,
 		const Glib::ustring&                    base_uri,
 		const Glib::ustring&                    subject,
-		Raul::Path                              path,
+		const Raul::Path&                       path,
 		boost::optional<GraphObject::Variables> data=boost::optional<GraphObject::Variables>())
 {
 	/* Get plugin */
@@ -425,7 +443,7 @@ Parser::parse_port(
 		Redland::Model&                         model,
 		const Glib::ustring&                    base_uri,
 		const Glib::ustring&                    subject,
-		Raul::Path                              path,
+		const Raul::Path&                       path,
 		boost::optional<GraphObject::Variables> data)
 {
 	Redland::Query query(*world->rdf_world, Glib::ustring(
@@ -501,7 +519,7 @@ Parser::parse_variables(
 		Redland::Model&                         model,
 		const Glib::ustring&                    base_uri,
 		const Glib::ustring&                    subject,
-		Raul::Path                              path,
+		const Raul::Path&                       path,
 		boost::optional<GraphObject::Variables> data=boost::optional<GraphObject::Variables>())
 {
 	Redland::Query query(*world->rdf_world, Glib::ustring(

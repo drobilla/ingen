@@ -58,7 +58,9 @@ PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 	, _last_click_x(0)
 	, _last_click_y(0)
 	, _refresh_menu(false)
+	, _menu(NULL)
 	, _internal_menu(NULL)
+	, _plugin_menu(NULL)
 {
 	Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference();
 	xml->get_widget("canvas_menu", _menu);
@@ -590,7 +592,7 @@ PatchCanvas::paste()
 	ClashAvoider avoider(*App::instance().store().get(), _patch->path(), clipboard);
 	//parser->parse_string(App::instance().world(), &avoider, str, _patch->path().base());
 	parser->parse_string(App::instance().world(), &avoider, str, "/",
-			boost::optional<Glib::ustring>(), _patch->path());
+			boost::optional<Glib::ustring>(), (Glib::ustring)_patch->path());
 	
 	for (Store::iterator i = clipboard.begin(); i != clipboard.end(); ++i) {
 		if (_patch->path() == "/" && i->first == "/") {
@@ -616,9 +618,13 @@ PatchCanvas::paste()
 		builder.build(_patch->path(), i->second);
 	}
 
+	//avoider.set_target(*App::instance().engine());
+
 	for (ClientStore::ConnectionRecords::const_iterator i = clipboard.connection_records().begin();
-			i != clipboard.connection_records().end(); ++i)
+			i != clipboard.connection_records().end(); ++i) {
+		cout << "CONNECTING " << i->first << " -> " << i->second << endl;
 		App::instance().engine()->connect(i->first, i->second);
+	}
 }
 	
 

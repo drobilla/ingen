@@ -39,6 +39,8 @@ class ClashAvoider : public CommonInterface
 public:
 	ClashAvoider(Store& store, const Raul::Path& prefix, CommonInterface& target)
 		: _prefix(prefix), _store(store), _target(target) {}
+
+	void set_target(CommonInterface& target) { _target = target; }
 	
 	// Bundles
 	void bundle_begin() { _target.bundle_begin(); }
@@ -79,7 +81,7 @@ public:
 	                     const Raul::Atom&  value);
 
 private:
-	const Raul::Path& map_path(const Raul::Path& in);
+	const Raul::Path map_path(const Raul::Path& in);
 
 	const Raul::Path& _prefix;
 	Store&            _store;

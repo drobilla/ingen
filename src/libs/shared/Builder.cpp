@@ -41,7 +41,7 @@ Builder::build(const Raul::Path& prefix, SharedPtr<const GraphObject> object)
 	SharedPtr<const Patch> patch = PtrCast<const Patch>(object);
 	if (patch) {
 		if (object->path() != "/") {
-			const std::string path_str = prefix + object->path();
+			const std::string path_str = prefix.base() + object->path().substr(1);
 			//cout << "BUILDING PATCH " << path_str << endl;
 			_interface.new_patch(path_str, patch->internal_polyphony());
 		}
@@ -49,8 +49,10 @@ Builder::build(const Raul::Path& prefix, SharedPtr<const GraphObject> object)
 		build_object(prefix, object);
 		for (Patch::Connections::const_iterator i = patch->connections().begin();
 				i != patch->connections().end(); ++i) {
-			_interface.connect(prefix.base() + (*i)->src_port_path().substr(1),
-			                   prefix.base() + (*i)->dst_port_path().substr(1));
+			string base = prefix.base() + object->path().substr(1);
+			cout << "*********** BASE: " << base << endl;
+			_interface.connect(base + (*i)->src_port_path().substr(1),
+			                   base + (*i)->dst_port_path().substr(1));
 		}
 		return;
 	}

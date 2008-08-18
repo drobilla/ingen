@@ -25,9 +25,11 @@ namespace Ingen {
 namespace Shared {
 
 
-const Raul::Path&
+const Raul::Path
 ClashAvoider::map_path(const Raul::Path& in)
 {
+	cout << "MAP PATH: " << in << endl;
+
 	unsigned offset = 0;
 	bool has_offset = false;
 	size_t pos = in.find_last_of("_");
@@ -56,9 +58,15 @@ ClashAvoider::map_path(const Raul::Path& in)
 				if (p != _symbol_map.end()) {
 					const Path mapped = p->second.base() + in.substr(parent.base().length());
 					InsertRecord i = _symbol_map.insert(make_pair(in, mapped));
-					return i.first->second;
+					return _prefix.base() + i.first->second.substr(1);
 				}
+				parent = parent.parent();
 			} while (parent != "/");
+
+			cout << "????????????????????????????????? " << in << endl;
+
+			if (in.parent() != "/")
+				cout << "!!!!!!!!!!!!!!!!!!!!!! NOT ROOT PARENT " << endl;
 
 			// Append _2 _3 etc until an unused symbol is found
 			string base_name = in.name();
@@ -70,10 +78,12 @@ ClashAvoider::map_path(const Raul::Path& in)
 				if (o != _offsets.end()) {
 					offset = ++o->second;
 				} else {
-					offset = _store.child_name_offset(
-							_prefix.base() + in.parent().base().substr(1),
-							base_name,
-							false);
+					string parent_str = _prefix.base() + in.parent().base().substr(1);
+					parent_str = parent_str.substr(0, parent_str.find_last_of("/"));
+					if (parent_str == "")
+						parent_str = "/";
+					cout << "***** PARENT: " << parent_str << endl;
+					offset = _store.child_name_offset(parent_str, base_name, false);
 					_offsets.insert(make_pair(base_name, offset));
 				}
 
@@ -81,7 +91,9 @@ ClashAvoider::map_path(const Raul::Path& in)
 				std::stringstream ss;
 				ss << in.parent().base() << base_name  << "_" << offset;
 				if (_store.find(ss.str()) == _store.end()) {
-					InsertRecord i = _symbol_map.insert(make_pair(in, ss.str()));
+					string str = _prefix.base() + ss.str().substr(1);
+					InsertRecord i = _symbol_map.insert(make_pair(in, str));
+					cout << "HIT: offset = " << offset << ", str = " << str << endl;
 					return i.first->second;
 				} else {
 					cout << "MISSED OFFSET: " << in << " => " << ss.str() << endl;
