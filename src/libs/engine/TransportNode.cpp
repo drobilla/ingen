@@ -28,7 +28,7 @@ namespace Ingen {
 
 
 TransportNode::TransportNode(const string& path, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size)
-: NodeBase(new InternalPlugin("ingen:transport_node", "transport", "Transport Follower"),
+: NodeBase(new InternalPlugin(NS_INGEN "transport_node", "transport", "Transport Follower"),
 		path, false, parent, srate, buffer_size)
 {
 #if 0

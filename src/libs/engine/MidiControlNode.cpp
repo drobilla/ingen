@@ -36,7 +36,7 @@ MidiControlNode::MidiControlNode(const string& path,
                                  PatchImpl*    parent,
                                  SampleRate    srate,
                                  size_t        buffer_size)
-	: NodeBase(new InternalPlugin("ingen:control_node", "controller", "MIDI Controller")
+	: NodeBase(new InternalPlugin(NS_INGEN "control_node", "controller", "MIDI Controller")
 			, path, false, parent, srate, buffer_size)
 	, _learning(false)
 {

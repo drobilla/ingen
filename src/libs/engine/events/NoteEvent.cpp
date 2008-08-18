@@ -23,6 +23,7 @@
 #include "MidiNoteNode.hpp"
 #include "MidiTriggerNode.hpp"
 #include "PluginImpl.hpp"
+#include "InternalPlugin.hpp"
 #include "ProcessContext.hpp"
 
 namespace Ingen {
@@ -71,14 +72,14 @@ NoteEvent::execute(ProcessContext& context)
 	
 	if (_node != NULL && _node->plugin()->type() == Plugin::Internal) {
 		if (_on) {
-			if (_node->plugin_impl()->uri() == "ingen:note_node")
+			if (_node->plugin_impl()->uri() == NS_INGEN "note_node")
 				((MidiNoteNode*)_node)->note_on(context, _note_num, _velocity, _time);
-			else if (_node->plugin_impl()->uri() == "ingen:trigger_node")
+			else if (_node->plugin_impl()->uri() == NS_INGEN "trigger_node")
 				((MidiTriggerNode*)_node)->note_on(context, _note_num, _velocity, _time);
 		} else  {
-			if (_node->plugin_impl()->uri() == "ingen:note_node")
+			if (_node->plugin_impl()->uri() == NS_INGEN "note_node")
 				((MidiNoteNode*)_node)->note_off(context, _note_num, _time);
-			else if (_node->plugin_impl()->uri() == "ingen:trigger_node")
+			else if (_node->plugin_impl()->uri() == NS_INGEN "trigger_node")
 				((MidiTriggerNode*)_node)->note_off(context, _note_num, _time);
 		}
 	}

@@ -37,7 +37,7 @@ namespace Ingen {
 
 
 MidiNoteNode::MidiNoteNode(const string& path, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size)
-	: NodeBase(new InternalPlugin("ingen:note_node", "note", "MIDI Note"),
+	: NodeBase(new InternalPlugin(NS_INGEN "note_node", "note", "MIDI Note"),
 			path, polyphonic, parent, srate, buffer_size)
 	, _voices(new Raul::Array<Voice>(_polyphony))
 	, _prepared_voices(NULL)

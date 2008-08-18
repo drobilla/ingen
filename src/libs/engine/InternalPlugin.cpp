@@ -49,13 +49,13 @@ InternalPlugin::instantiate(const string&     name,
 {
 	assert(_type == Internal);
 
-	if (_uri == "ingen:note_node") {
+	if (_uri == NS_INGEN "note_node") {
 		return new MidiNoteNode(name, polyphonic, parent, srate, buffer_size);
-	} else if (_uri == "ingen:trigger_node") {
+	} else if (_uri == NS_INGEN "trigger_node") {
 		return new MidiTriggerNode(name, polyphonic, parent, srate, buffer_size);
-	} else if (_uri == "ingen:control_node") {
+	} else if (_uri == NS_INGEN "control_node") {
 		return new MidiControlNode(name, polyphonic, parent, srate, buffer_size);
-	} else if (_uri == "ingen:transport_node") {
+	} else if (_uri == NS_INGEN "transport_node") {
 		return new TransportNode(name, polyphonic, parent, srate, buffer_size);
 	} else {
 		return NULL;

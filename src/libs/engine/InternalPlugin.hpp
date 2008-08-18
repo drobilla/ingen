@@ -34,6 +34,8 @@
 #include "types.hpp"
 #include "PluginImpl.hpp"
 
+#define NS_INGEN "http://drobilla.net/ns/ingen#"
+
 namespace Ingen {
 
 class NodeImpl;

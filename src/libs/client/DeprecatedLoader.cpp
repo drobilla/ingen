@@ -38,6 +38,8 @@
 #include "PluginModel.hpp"
 #include "DeprecatedLoader.hpp"
 
+#define NS_INGEN "http://drobilla.net/ns/ingen#"
+
 using namespace std;
 
 namespace Ingen {
@@ -506,13 +508,13 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 
 		} else {
 			if (plugin_label  == "note_in") {
-				plugin_uri = "ingen:note_node";
+				plugin_uri = NS_INGEN "note_node";
 			} else if (plugin_label == "control_input") {
-				plugin_uri = "ingen:control_node";
+				plugin_uri = NS_INGEN "control_node";
 			} else if (plugin_label == "transport") {
-				plugin_uri = "ingen:transport_node";
+				plugin_uri = NS_INGEN "transport_node";
 			} else if (plugin_label == "trigger_in") {
-				plugin_uri = "ingen:trigger_node";
+				plugin_uri = NS_INGEN "trigger_node";
 			} else {
 				cerr << "WARNING: Unknown deprecated node (label " << plugin_label
 					<< ")." << endl;
