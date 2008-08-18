@@ -77,7 +77,6 @@ Serialiser::to_string(SharedPtr<GraphObject>        object,
 	                  const string&                 base_uri,
 	                  const GraphObject::Variables& extra_rdf)
 {
-	_root_path = object->path();
 	start_to_string(object->path(), base_uri);
 	serialise(object);
 	
@@ -121,12 +120,16 @@ Serialiser::start_to_filename(const string& filename)
  *
  * The results of the serialization will be returned by the finish() method after
  * the desired objects have been serialised.
+ *
+ * All serialized paths will have the root path chopped from their prefix
+ * (therefore all serialized paths must be descendants of the root)
  */
 void
 Serialiser::start_to_string(const Raul::Path& root, const string& base_uri)
 {
 	setlocale(LC_NUMERIC, "C");
 
+	_root_path = root;
 	_base_uri = base_uri;
 	_model = new Redland::Model(_world);
     _model->set_base_uri(base_uri);

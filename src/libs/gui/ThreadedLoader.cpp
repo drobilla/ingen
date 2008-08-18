@@ -108,12 +108,9 @@ ThreadedLoader::load_patch(bool                    merge,
 				engine_base = engine_parent.get().base();
 		}
 		
-		cout << "ENGINE BASE 1: " << engine_base << endl;
-		if (merge && engine_parent.get() == "/" || !engine_parent)
+		if (merge && (engine_parent.get() == "/" || !engine_parent))
 			engine_base = engine_base.substr(0, engine_base.find_last_of("/"));
 		
-		cout << "ENGINE BASE: " << engine_base << endl;
-		cout << "PARENT: " << (engine_parent ? (string)engine_parent.get() : "NONE") << endl;
 		_events.push_back(sigc::hide_return(sigc::bind(
 				sigc::mem_fun(_parser.get(), &Ingen::Serialisation::Parser::parse_document),
 				App::instance().world(),

@@ -589,17 +589,17 @@ PatchCanvas::paste()
 	clipboard.set_plugins(App::instance().store()->plugins());
 	clipboard.new_patch("/", _patch->poly());
 	
-	ClashAvoider avoider(*App::instance().store().get(), _patch->path(), clipboard);
-	//parser->parse_string(App::instance().world(), &avoider, str, _patch->path().base());
+	ClashAvoider avoider(*App::instance().store().get(), _patch->path(), clipboard, &clipboard);
 	parser->parse_string(App::instance().world(), &avoider, str, "/",
 			boost::optional<Glib::ustring>(), (Glib::ustring)_patch->path());
 	
 	for (Store::iterator i = clipboard.begin(); i != clipboard.end(); ++i) {
+		cout << "************ OBJECT: " << i->first << endl;
 		if (_patch->path() == "/" && i->first == "/") {
-			//cout << "SKIPPING ROOT " << _patch->path() << " :: " << i->first << endl;
+			cout << "SKIPPING ROOT " << _patch->path() << " :: " << i->first << endl;
 			continue;
 		} else if (i->first.parent() != "/") {
-			//cout << "SKIPPING NON ROOTED OBJECT " << i->first << endl;
+			cout << "SKIPPING NON ROOTED OBJECT " << i->first << endl;
 			continue;
 		}
 		GraphObject::Variables::iterator x = i->second->variables().find("ingenuity:canvas-x");

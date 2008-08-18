@@ -28,8 +28,8 @@ namespace Shared {
 const Raul::Path
 ClashAvoider::map_path(const Raul::Path& in)
 {
-	cout << "MAP PATH: " << in << endl;
-
+	//cout << "MAP PATH: " << in << endl;
+	
 	unsigned offset = 0;
 	bool has_offset = false;
 	size_t pos = in.find_last_of("_");
@@ -38,43 +38,47 @@ ClashAvoider::map_path(const Raul::Path& in)
 		has_offset = (sscanf(trailing.c_str(), "%u", &offset) > 0);
 	}
 
+	//cout << "HAS OFFSET: " << offset << endl;
+		
+	// Path without _n suffix
+	Path base_path = in;
+	if (has_offset)
+		base_path = base_path.substr(0, base_path.find_last_of("_"));
+
+	//cout << "\tBASE: " << base_path << endl;
+
 	SymbolMap::iterator m = _symbol_map.find(in);
 	if (m != _symbol_map.end()) {
+		//cout << " (1) " << m->second << endl;
 		return m->second;
 	} else {
 		typedef std::pair<SymbolMap::iterator, bool> InsertRecord;
-		Store::iterator s = _store.find(_prefix.base() + in.substr(1));
 
 		// No clash, use symbol unmodified
-		if (s == _store.end()) {
+		if (!exists(in) && _symbol_map.find(in) == _symbol_map.end()) {
 			InsertRecord i = _symbol_map.insert(make_pair(in, in));
+			assert(i.second);
+			//cout << " (2) " << i.first->second << endl;;
 			return i.first->second;
 		} else {
 
 			// See if the parent is mapped
+			// FIXME: do this the other way around
 			Path parent = in.parent();
 			do {
 				SymbolMap::iterator p = _symbol_map.find(parent);
 				if (p != _symbol_map.end()) {
 					const Path mapped = p->second.base() + in.substr(parent.base().length());
 					InsertRecord i = _symbol_map.insert(make_pair(in, mapped));
-					return _prefix.base() + i.first->second.substr(1);
+					//cout << " (3) " << _prefix.base() + i.first->second.substr(1) << endl;
+					return i.first->second;
 				}
 				parent = parent.parent();
 			} while (parent != "/");
 
-			cout << "????????????????????????????????? " << in << endl;
-
-			if (in.parent() != "/")
-				cout << "!!!!!!!!!!!!!!!!!!!!!! NOT ROOT PARENT " << endl;
-
 			// Append _2 _3 etc until an unused symbol is found
-			string base_name = in.name();
-			if (has_offset)
-				base_name = base_name.substr(0, base_name.find_last_of("_"));
-
 			while (true) {
-				Offsets::iterator o = _offsets.find(base_name);
+				Offsets::iterator o = _offsets.find(base_path);
 				if (o != _offsets.end()) {
 					offset = ++o->second;
 				} else {
@@ -82,25 +86,43 @@ ClashAvoider::map_path(const Raul::Path& in)
 					parent_str = parent_str.substr(0, parent_str.find_last_of("/"));
 					if (parent_str == "")
 						parent_str = "/";
-					cout << "***** PARENT: " << parent_str << endl;
-					offset = _store.child_name_offset(parent_str, base_name, false);
-					_offsets.insert(make_pair(base_name, offset));
+					//cout << "***** PARENT: " << parent_str << endl;
 				}
 
-				assert(offset != 0); // shouldn't have been a clash, then...
 				std::stringstream ss;
-				ss << in.parent().base() << base_name  << "_" << offset;
-				if (_store.find(ss.str()) == _store.end()) {
-					string str = _prefix.base() + ss.str().substr(1);
+				ss << base_path << "_" << offset;
+				if (!exists(ss.str())) {
+					string str = ss.str();
 					InsertRecord i = _symbol_map.insert(make_pair(in, str));
-					cout << "HIT: offset = " << offset << ", str = " << str << endl;
+					//cout << "HIT: offset = " << offset << ", str = " << str << endl;
+					offset = _store.child_name_offset(in.parent(), base_path.name(), false);
+					_offsets.insert(make_pair(base_path, offset));
+					//cout << " (4) " << i.first->second << endl;;
 					return i.first->second;
 				} else {
-					cout << "MISSED OFFSET: " << in << " => " << ss.str() << endl;
+					//cout << "MISSED OFFSET: " << in << " => " << ss.str() << endl;
+					if (o != _offsets.end())
+						offset = ++o->second;
+					else
+						++offset;
 				}
 			}
 		}
 	}
+}
+
+
+bool
+ClashAvoider::exists(const Raul::Path& path) const
+{
+	bool exists = (_store.find(_prefix.base() + path.substr(1)) != _store.end());
+	if (exists)
+		return true;
+
+	if (_also_avoid)
+		return (_also_avoid->find(path) != _also_avoid->end());
+	else
+		return false;
 }
 
 
@@ -116,6 +138,7 @@ void
 ClashAvoider::new_node(const std::string& path,
                        const std::string& plugin_uri)
 {
+	cout << "NEW NODE: " << path << " -> " << map_path(path) << endl;
 	_target.new_node(map_path(path), plugin_uri);
 }
 

@@ -228,12 +228,8 @@ Parser::parse_patch(
 		patch_poly = static_cast<uint32_t>(poly_node.to_int());
 	}
 
-	cout << "XXXXXXXXXX " << engine_base << endl;
-	cout << "YYYYYYYYYY " << uri_relative_to_base(base_uri, object_uri) << endl;
 	string symbol = uri_relative_to_base(base_uri, object_uri);
 	symbol = symbol.substr(0, symbol.find("."));
-	cout << "SSSSSSSSSS " << symbol << endl;
-	cout << "BBBBBBBBBBB " << engine_base << endl;
 	Path patch_path("/");
 	if (engine_base == "")
 		patch_path = "/";
@@ -241,8 +237,6 @@ Parser::parse_patch(
 		patch_path = Path(engine_base + symbol);
 	else
 		patch_path = (Path)engine_base;
-
-	cout << "!!!!!!!!!!!!!!!!!!! PATCH PATH: " << patch_path << endl;
 
 	if (patch_path != engine_base && patch_path != "/")
 		target->new_patch(patch_path, patch_poly);

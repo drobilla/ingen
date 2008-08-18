@@ -37,8 +37,9 @@ class Store;
 class ClashAvoider : public CommonInterface
 {
 public:
-	ClashAvoider(Store& store, const Raul::Path& prefix, CommonInterface& target)
-		: _prefix(prefix), _store(store), _target(target) {}
+	ClashAvoider(Store& store, const Raul::Path& prefix, CommonInterface& target,
+			Store* also_avoid=NULL)
+		: _prefix(prefix), _store(store), _target(target), _also_avoid(also_avoid) {}
 
 	void set_target(CommonInterface& target) { _target = target; }
 	
@@ -87,7 +88,10 @@ private:
 	Store&            _store;
 	CommonInterface&  _target;
 
-	typedef std::map<Raul::Symbol, unsigned> Offsets;
+	Store* _also_avoid;
+	bool exists(const Raul::Path& path) const;
+
+	typedef std::map<Raul::Path, unsigned> Offsets;
 	Offsets _offsets;
 
 	typedef std::map<Raul::Path, Raul::Path> SymbolMap;
