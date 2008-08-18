@@ -302,9 +302,15 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch)
 		"rdf:type",
 		Redland::Node(_model->world(), Redland::Node::RESOURCE, "http://drobilla.net/ns/ingen#Patch"));
 
-	if (patch->path() != "/") {
+	GraphObject::Variables::const_iterator s = patch->variables().find("lv2:symbol");
+	// If symbol is stored as a variable, write that
+	if (s != patch->variables().end()) {
+		_model->add_statement(patch_id, "lv2:symbol",
+			Redland::Node(_model->world(), Redland::Node::LITERAL, s->second.get_string()));
+	// Otherwise take the one from our path (if possible)
+	} else if (patch->path() != "/") {
 		_model->add_statement(
-			patch_id, "ingen:symbol",
+			patch_id, "lv2:symbol",
 			Redland::Node(_model->world(), Redland::Node::LITERAL, patch->path().name()));
 	}
 
@@ -379,7 +385,7 @@ Serialiser::serialise_node(SharedPtr<Shared::Node> node, const Redland::Node& no
 	
 	_model->add_statement(
 		node_id,
-		"ingen:symbol",
+		"lv2:symbol",
 		Redland::Node(_model->world(), Redland::Node::LITERAL, node->path().name()));
 	
 	_model->add_statement(
@@ -419,8 +425,11 @@ Serialiser::serialise_port(const Port* port, const Redland::Node& port_id)
 	else
 		_model->add_statement(port_id, "rdf:type",
 				Redland::Node(_model->world(), Redland::Node::RESOURCE, "ingen:OutputPort"));
+	
+	_model->add_statement(port_id, "lv2:index",
+			AtomRDF::atom_to_node(_model->world(), Atom((int)port->index())));
 
-	_model->add_statement(port_id, "ingen:symbol",
+	_model->add_statement(port_id, "lv2:symbol",
 			Redland::Node(_model->world(), Redland::Node::LITERAL, port->path().name()));
 	
 	_model->add_statement(port_id, "rdf:type",
@@ -471,9 +480,9 @@ Serialiser::serialise_variables(Redland::Node subject, const GraphObject::Variab
 				const Redland::Node key(_model->world(), Redland::Node::RESOURCE, v->first);
 				const Redland::Node value = AtomRDF::atom_to_node(_model->world(), v->second);
 				if (value) {
-					_model->add_statement(subject, "ingen:variable", var_id);
-					_model->add_statement(var_id, "ingen:key", key);
-					_model->add_statement(var_id, "ingen:value", value);
+					_model->add_statement(subject, "lv2var:variable", var_id);
+					_model->add_statement(var_id, "rdf:predicate", key);
+					_model->add_statement(var_id, "rdf:value", value);
 				} else {
 					cerr << "Warning: can not serialise value: key '" << v->first << "', type "
 						<< (int)v->second.type() << endl;

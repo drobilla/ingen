@@ -247,12 +247,12 @@ Parser::parse_patch(
 	Redland::Query query(*world->rdf_world, Glib::ustring(
 		"SELECT DISTINCT ?name ?plugin ?varkey ?varval ?poly WHERE {\n") +
 		subject + " ingen:node       ?node .\n"
-		"?node      ingen:symbol     ?name ;\n"
+		"?node      lv2:symbol       ?name ;\n"
 		"           ingen:plugin     ?plugin ;\n"
 		"           ingen:polyphonic ?poly .\n"
-		"OPTIONAL { ?node     ingen:variable ?variable .\n"
-		"           ?variable ingen:key      ?varkey ;\n"
-		"                     ingen:value    ?varval .\n"
+		"OPTIONAL { ?node     lv2var:variable ?variable .\n"
+		"           ?variable rdf:predicate   ?varkey ;\n"
+		"                     rdf:value       ?varval .\n"
 		"         }"
 		"}");
 
@@ -289,7 +289,7 @@ Parser::parse_patch(
 		"SELECT DISTINCT ?subpatch ?symbol WHERE {\n") +
 		subject + " ingen:node   ?subpatch .\n"
 		"?subpatch  a            ingen:Patch ;\n"
-		"           ingen:symbol ?symbol .\n"
+		"           lv2:symbol   ?symbol .\n"
 		"}");
 
 	results = query.run(*world->rdf_world, model, base_uri);
@@ -315,9 +315,9 @@ Parser::parse_patch(
 	query = Redland::Query(*world->rdf_world, Glib::ustring(
 		"SELECT DISTINCT ?nodename ?portname ?portval WHERE {\n") +
 		subject + " ingen:node   ?node .\n"
-		"?node      ingen:symbol ?nodename ;\n"
+		"?node      lv2:symbol   ?nodename ;\n"
 		"           ingen:port   ?port .\n"
-		"?port      ingen:symbol ?portname ;\n"
+		"?port      lv2:symbol   ?portname ;\n"
 		"           ingen:value  ?portval .\n"
 		"FILTER ( datatype(?portval) = xsd:decimal )\n"
 		"}");
@@ -341,13 +341,13 @@ Parser::parse_patch(
 		subject + " ingen:port     ?port .\n"
 		"?port      a              ?type ;\n"
 		"           a              ?datatype ;\n"
-		"           ingen:symbol   ?name .\n"
+		"           lv2:symbol     ?name .\n"
 		" FILTER (?type != ?datatype && ((?type = ingen:InputPort) || (?type = ingen:OutputPort)))\n"
 		"OPTIONAL { ?port ingen:value ?portval . \n"
 		"           FILTER ( datatype(?portval) = xsd:decimal ) }\n"
-		"OPTIONAL { ?port     ingen:variable ?variable .\n"
-		"           ?variable ingen:key      ?varkey ;\n"
-		"                     ingen:value    ?varval .\n"
+		"OPTIONAL { ?port     lv2var:variable ?variable .\n"
+		"           ?variable rdf:predicate   ?varkey ;\n"
+		"                     rdf:value       ?varval .\n"
 		"         }"
 		"}");
 
@@ -525,9 +525,9 @@ Parser::parse_variables(
 {
 	Redland::Query query(*world->rdf_world, Glib::ustring(
 		"SELECT DISTINCT ?varkey ?varval WHERE {\n") +
-		subject + " ingen:variable ?variable .\n"
-		"?variable  ingen:key      ?varkey ;\n"
-		"           ingen:value    ?varval .\n"
+		subject + " lv2var:variable ?variable .\n"
+		"?variable  rdf:predicate   ?varkey ;\n"
+		"           rdf:value       ?varval .\n"
 		"}");
 
 	Redland::Query::Results results = query.run(*world->rdf_world, model, base_uri);
@@ -541,8 +541,8 @@ Parser::parse_variables(
 	query = Redland::Query(*world->rdf_world, Glib::ustring(
 		"SELECT DISTINCT ?key ?val WHERE {\n") +
 		subject + " ingen:property ?property .\n"
-		"?property  ingen:key      ?key ;\n"
-		"           ingen:value    ?val .\n"
+		"?property  rdf:predicate  ?key ;\n"
+		"           rdf:value      ?val .\n"
 		"}");
 
 	results = query.run(*world->rdf_world, model, base_uri);
