@@ -138,7 +138,6 @@ void
 ClashAvoider::new_node(const std::string& path,
                        const std::string& plugin_uri)
 {
-	cout << "NEW NODE: " << path << " -> " << map_path(path) << endl;
 	_target.new_node(map_path(path), plugin_uri);
 }
 
