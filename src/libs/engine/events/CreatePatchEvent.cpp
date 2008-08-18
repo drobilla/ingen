@@ -134,9 +134,10 @@ CreatePatchEvent::post_process()
 			msg.append(_path);
 			_responder->respond_error(msg);
 		} else if (_error == OBJECT_EXISTS) {
-			string msg = "Unable to create patch: ";
+			_responder->respond_ok();
+			/*string msg = "Unable to create patch: ";
 			msg.append(_path).append(" already exists.");
-			_responder->respond_error(msg);
+			_responder->respond_error(msg);*/
 		} else if (_error == PARENT_NOT_FOUND) {
 			string msg = "Unable to create patch: Parent ";
 			msg.append(Path(_path).parent()).append(" not found.");

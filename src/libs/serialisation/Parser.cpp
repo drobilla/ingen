@@ -164,7 +164,8 @@ Parser::parse(
 				continue;
 
 			if (rdf_class == patch_class) {
-				ret = parse_patch(world, target, model, base_uri, subject.to_c_string(), engine_base.get(), data);
+				ret = parse_patch(world, target, model, base_uri, subject.to_c_string(),
+						engine_base.get(), data);
 				if (ret)
 					target->set_variable(path, "ingen:document", Atom(base_uri.c_str()));
 			} else if (rdf_class == node_class) {
@@ -205,10 +206,13 @@ Parser::parse_patch(
 		if (poly_param != data.get().end() && poly_param->second.type() == Atom::INT)
 			patch_poly = poly_param->second.get_int32();
 	}
-
+	
 	const Glib::ustring subject = ((object_uri[0] == '<')
 			? object_uri : Glib::ustring("<") + object_uri + ">");
 	
+	//cout << "**** LOADING PATCH URI " << object_uri << ", SUBJ " << subject
+	//	<< ", ENG BASE " << engine_base << endl;
+
 	/* Get polyphony from file (mandatory if not specified in parameters) */
 	if (patch_poly == 0) {
 		Redland::Query query(*world->rdf_world, Glib::ustring(
@@ -236,9 +240,9 @@ Parser::parse_patch(
 	else
 		patch_path = (Path)engine_base;
 
-	if (patch_path != engine_base && patch_path != "/")
+	if (patch_path != "/")
 		target->new_patch(patch_path, patch_poly);
-	
+
 	/* Plugin nodes */
 	Redland::Query query(*world->rdf_world, Glib::ustring(
 		"SELECT DISTINCT ?name ?plugin ?varkey ?varval ?poly WHERE {\n") +
@@ -282,22 +286,27 @@ Parser::parse_patch(
 
 	/* Load subpatches */
 	query = Redland::Query(*world->rdf_world, Glib::ustring(
-		"SELECT DISTINCT ?patch ?symbol WHERE {\n") +
-		subject + " ingen:node   ?patch .\n"
-		"?patch     a            ingen:Patch ;\n"
+		"SELECT DISTINCT ?subpatch ?symbol WHERE {\n") +
+		subject + " ingen:node   ?subpatch .\n"
+		"?subpatch  a            ingen:Patch ;\n"
 		"           ingen:symbol ?symbol .\n"
 		"}");
 
 	results = query.run(*world->rdf_world, model, base_uri);
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
 		const string symbol = (*i)["symbol"].to_string();
-		const string patch  = (*i)["patch"].to_string();
+		const string subpatch  = (*i)["subpatch"].to_string();
 
 		const Path subpatch_path = patch_path.base() + symbol;
 
 		if (created.find(subpatch_path) == created.end()) {
+			string subpatch_rel =  uri_relative_to_base(base_uri, subpatch);
+			string sub_base = engine_base;
+			if (sub_base[sub_base.length()-1] == '/')
+				sub_base = sub_base.substr(sub_base.length()-1);
+			sub_base.append("/").append(symbol);
 			created.insert(subpatch_path);
-			parse_patch(world, target, model, base_uri, Glib::ustring(object_uri + subpatch_path), subpatch_path);
+			parse_patch(world, target, model, base_uri, subpatch_rel, sub_base);
 		}
 	}
 
