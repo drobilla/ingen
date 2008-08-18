@@ -45,6 +45,12 @@ CreatePatchEvent::CreatePatchEvent(Engine& engine, SharedPtr<Responder> responde
 void
 CreatePatchEvent::pre_process()
 {
+	if (!Path::is_valid(_path)) {
+		_error = INVALID_PATH;
+		QueuedEvent::pre_process();
+		return;
+	}
+
 	if (_path == "/" || _engine.engine_store()->find_object(_path) != NULL) {
 		_error = OBJECT_EXISTS;
 		QueuedEvent::pre_process();
@@ -57,7 +63,9 @@ CreatePatchEvent::pre_process()
 		return;
 	}
 	
-	_parent = _engine.engine_store()->find_patch(_path.parent());
+	const Path& path = (const Path&)_path;
+
+	_parent = _engine.engine_store()->find_patch(path.parent());
 	if (_parent == NULL) {
 		_error = PARENT_NOT_FOUND;
 		QueuedEvent::pre_process();
@@ -68,7 +76,7 @@ CreatePatchEvent::pre_process()
 	if (_parent != NULL && _poly > 1 && _poly == static_cast<int>(_parent->internal_polyphony()))
 		poly = _poly;
 	
-	_patch = new PatchImpl(_engine, _path.name(), poly, _parent, _engine.audio_driver()->sample_rate(), _engine.audio_driver()->buffer_size(), _poly);
+	_patch = new PatchImpl(_engine, path.name(), poly, _parent, _engine.audio_driver()->sample_rate(), _engine.audio_driver()->buffer_size(), _poly);
 		
 	if (_parent != NULL) {
 		_parent->add_node(new PatchImpl::Nodes::Node(_patch));
@@ -121,13 +129,17 @@ CreatePatchEvent::post_process()
 			// (otherwise they would be sent twice)
 			_engine.broadcaster()->send_patch(_patch, false);
 			
+		} else if (_error == INVALID_PATH) {
+			string msg = "Attempt to create patch with illegal path ";
+			msg.append(_path);
+			_responder->respond_error(msg);
 		} else if (_error == OBJECT_EXISTS) {
 			string msg = "Unable to create patch: ";
-			msg += _path += " already exists.";
+			msg.append(_path).append(" already exists.");
 			_responder->respond_error(msg);
 		} else if (_error == PARENT_NOT_FOUND) {
 			string msg = "Unable to create patch: Parent ";
-			msg += _path.parent() += " not found.";
+			msg.append(Path(_path).parent()).append(" not found.");
 			_responder->respond_error(msg);
 		} else if (_error == INVALID_POLY) {
 			string msg = "Unable to create patch ";

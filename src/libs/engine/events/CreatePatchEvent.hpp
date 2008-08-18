@@ -47,14 +47,14 @@ public:
 	void post_process();
 
 private:
-	enum ErrorType { NO_ERROR, OBJECT_EXISTS, PARENT_NOT_FOUND, INVALID_POLY };
+	enum ErrorType { NO_ERROR, OBJECT_EXISTS, PARENT_NOT_FOUND, INVALID_POLY, INVALID_PATH };
 	
-	Raul::Path     _path;
-	PatchImpl*     _patch;
-	PatchImpl*     _parent;
-	CompiledPatch* _compiled_patch;
-	int            _poly;
-	ErrorType      _error;
+	const std::string _path;
+	PatchImpl*        _patch;
+	PatchImpl*        _parent;
+	CompiledPatch*    _compiled_patch;
+	int               _poly;
+	ErrorType         _error;
 };
 
 
