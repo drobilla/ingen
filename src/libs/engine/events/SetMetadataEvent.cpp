@@ -17,6 +17,7 @@
 
 #include "SetMetadataEvent.hpp"
 #include <string>
+#include <boost/format.hpp>
 #include "Responder.hpp"
 #include "Engine.hpp"
 #include "ClientBroadcaster.hpp"
@@ -37,6 +38,7 @@ SetMetadataEvent::SetMetadataEvent(
 		const string&        key,
 		const Atom&          value)
 	: QueuedEvent(engine, responder, timestamp)
+	, _error(NO_ERROR)
 	, _property(property)
 	, _path(path)
 	, _key(key)
@@ -49,6 +51,12 @@ SetMetadataEvent::SetMetadataEvent(
 void
 SetMetadataEvent::pre_process()
 {
+	if (!Path::is_valid(_path)) {
+		_error = INVALID_PATH;
+		QueuedEvent::pre_process();
+		return;
+	}
+	
 	_object = _engine.engine_store()->find_object(_path);
 	if (_object == NULL) {
 		QueuedEvent::pre_process();
@@ -75,7 +83,9 @@ SetMetadataEvent::execute(ProcessContext& context)
 void
 SetMetadataEvent::post_process()
 {
-	if (_object == NULL) {
+	if (_error == INVALID_PATH) {
+		_responder->respond_error((boost::format("Invalid path %1% setting %2%") % _path % _key).str());
+	} else if (_object == NULL) {
 		string msg = "Unable to find object ";
 		msg += _path;
 		_responder->respond_error(msg);

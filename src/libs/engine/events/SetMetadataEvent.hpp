@@ -49,6 +49,8 @@ public:
 	void post_process();
 
 private:
+	enum { NO_ERROR, INVALID_PATH } _error;
+
 	bool             _property;
 	string           _path;
 	string           _key;

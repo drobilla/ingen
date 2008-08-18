@@ -91,8 +91,12 @@ public:
 	bool gtk_main_iteration();
 	void show_about();
 	void quit();
-
+	
 	void port_activity(Port* port);
+
+	bool signal() const { return _enable_signal; }
+	void enable_signals()  { _enable_signal = true; }
+	void disable_signals() { _enable_signal = false; }
 
 	ConnectWindow*     connect_window()  const { return _connect_window; }
 	MessagesWindow*    messages_dialog() const { return _messages_window; }
@@ -157,11 +161,6 @@ protected:
 	typedef std::map<Port*, bool> ActivityPorts;
 	ActivityPorts _activity_ports;
 
-	/** Used to avoid feedback loops with (eg) process checkbutton
-	 * FIXME: This should probably be implemented globally:
-	 * disable all command sending while handling events to avoid feedback
-	 * issues with widget event callbacks?  This same pattern is duplicated
-	 * too much... */
 	bool _enable_signal;
 };
 

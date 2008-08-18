@@ -37,8 +37,8 @@ class Store;
 class ClashAvoider : public CommonInterface
 {
 public:
-	ClashAvoider(Store& store, CommonInterface& target)
-		: _store(store), _target(target) {}
+	ClashAvoider(Store& store, const Raul::Path& prefix, CommonInterface& target)
+		: _prefix(prefix), _store(store), _target(target) {}
 	
 	// Bundles
 	void bundle_begin() { _target.bundle_begin(); }
@@ -81,8 +81,12 @@ public:
 private:
 	const Raul::Path& map_path(const Raul::Path& in);
 
-	Store&           _store;
-	CommonInterface& _target;
+	const Raul::Path& _prefix;
+	Store&            _store;
+	CommonInterface&  _target;
+
+	typedef std::map<Raul::Symbol, unsigned> Offsets;
+	Offsets _offsets;
 
 	typedef std::map<Raul::Path, Raul::Path> SymbolMap;
 	SymbolMap _symbol_map;

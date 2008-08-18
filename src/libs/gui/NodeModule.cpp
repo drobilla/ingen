@@ -333,7 +333,8 @@ NodeModule::set_selected(bool b)
 {
 	if (b != selected()) {
 		Module::set_selected(b);
-		App::instance().engine()->set_property(_node->path(), "ingen:selected", b);
+		if (App::instance().signal())
+			App::instance().engine()->set_property(_node->path(), "ingen:selected", b);
 	}
 }
 

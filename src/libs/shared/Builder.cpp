@@ -36,46 +36,59 @@ Builder::Builder(CommonInterface& interface)
 
 
 void
-Builder::build(SharedPtr<const GraphObject> object)
+Builder::build(const Raul::Path& prefix, SharedPtr<const GraphObject> object)
 {
 	SharedPtr<const Patch> patch = PtrCast<const Patch>(object);
 	if (patch) {
-		if (patch->path() != "/")
-			_interface.new_patch(patch->path(), patch->internal_polyphony());
-		build_object(object);
+		if (object->path() != "/") {
+			const std::string path_str = prefix + object->path();
+			//cout << "BUILDING PATCH " << path_str << endl;
+			_interface.new_patch(path_str, patch->internal_polyphony());
+		}
+
+		build_object(prefix, object);
 		for (Patch::Connections::const_iterator i = patch->connections().begin();
 				i != patch->connections().end(); ++i) {
-			_interface.connect((*i)->src_port_path(), (*i)->dst_port_path());
+			_interface.connect(prefix.base() + (*i)->src_port_path().substr(1),
+			                   prefix.base() + (*i)->dst_port_path().substr(1));
 		}
 		return;
 	}
 
 	SharedPtr<const Node> node = PtrCast<const Node>(object);
 	if (node) {
-		_interface.new_node(node->path(), node->plugin()->uri());
-		build_object(object);
+		Raul::Path path = prefix.base() + node->path().substr(1);
+		//cout << "BUILDING NODE " << path << endl;
+		_interface.new_node(path, node->plugin()->uri());
+		build_object(prefix, object);
 		return;
 	}
 
 	SharedPtr<const Port> port = PtrCast<const Port>(object);
 	if (port) {
-		_interface.new_port(port->path(), port->index(), port->type().uri(), !port->is_input());
-		build_object(object);
+		Raul::Path path = prefix.base() + port->path().substr(1);
+		//cout << "BUILDING PORT " << path << endl;
+		_interface.new_port(path, port->index(), port->type().uri(), !port->is_input());
+		build_object(prefix, object);
 		return;
 	}
 }
 
 
 void
-Builder::build_object(SharedPtr<const GraphObject> object)
+Builder::build_object(const Raul::Path& prefix, SharedPtr<const GraphObject> object)
 {
 	for (GraphObject::Variables::const_iterator i = object->variables().begin();
 			i != object->variables().end(); ++i)
-		_interface.set_variable(object->path(), i->first, i->second);
+		_interface.set_variable(prefix.base() + object->path().substr(1), i->first, i->second);
 
 	for (GraphObject::Properties::const_iterator i = object->properties().begin();
-			i != object->properties().end(); ++i)
-		_interface.set_property(object->path(), i->first, i->second);
+			i != object->properties().end(); ++i) {
+		if (object->path() == "/")
+			continue;
+		string path_str = prefix.base() + object->path().substr(1);
+		_interface.set_property(prefix.base() + object->path().substr(1), i->first, i->second);
+	}
 }
 
 

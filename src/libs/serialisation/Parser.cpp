@@ -70,9 +70,9 @@ Parser::parse_document(
 	Redland::Model model(*world->rdf_world, document_uri, document_uri);
 
 	if (object_uri == document_uri || object_uri == "")
-		cout << "[Parser] Parsing document " << object_uri << endl;
+		cout << "Parsing document " << object_uri << " (base " << document_uri << ")" << endl;
 	else
-		cout << "[Parser] Parsing " << object_uri << " from " << document_uri << endl;
+		cout << "Parsing " << object_uri << " from " << document_uri << endl;
 
 	return parse(world, target, model, document_uri, object_uri, parent, symbol, data);;
 }
@@ -92,11 +92,11 @@ Parser::parse_string(
 	Redland::Model model(*world->rdf_world, str.c_str(), str.length(), base_uri);
 	
 	if (object_uri)
-		cout << "[Parser] Parsing " << object_uri.get() << " (base " << base_uri << ")" <<  endl;
+		cout << "Parsing " << object_uri.get() << " (base " << base_uri << ")" <<  endl;
 	else
-		cout << "[Parser] Parsing all objects found in string (base " << base_uri << ")" << endl;
-	
-	bool ret = parse(world, target, model, base_uri, object_uri, parent, symbol, data);;
+		cout << "Parsing all objects found in string (base " << base_uri << ")" << endl;
+
+	bool ret = parse(world, target, model, base_uri, object_uri, parent, symbol, data);
 	if (ret) {
 		const Glib::ustring subject = Glib::ustring("<") + base_uri + Glib::ustring(">");
 		parse_connections(world, target, model, base_uri, subject, parent ? parent.get() : "/");
@@ -117,9 +117,6 @@ Parser::parse(
 		boost::optional<Raul::Symbol>           symbol,
 		boost::optional<GraphObject::Variables> data)
 {
-	//if (object_uri)
-	//	object_uri = uri_relative_to_base(base_uri, object_uri.get());
-
 	const Redland::Node::Type res = Redland::Node::RESOURCE;
 	Glib::ustring query_str;
 	if (object_uri)
@@ -143,9 +140,29 @@ Parser::parse(
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
 		const Redland::Node subject = (object_uri ? subject_uri : (*i)["subject"]);
 		const Redland::Node rdf_class = (*i)["class"];
+		if (!object_uri) {
+			std::string path_str = "/" + uri_relative_to_base(base_uri, subject.to_c_string());
+			if (Path(path_str).parent() != "/")
+				continue;
+		}
+		
 		if (rdf_class == patch_class || rdf_class == node_class ||
 				rdf_class == in_port_class || rdf_class == out_port_class) {
-			Path path = parse_path(world, model, base_uri, subject.to_c_string(), parent, symbol);
+			Raul::Path path("/");
+			if (base_uri != subject.to_c_string()) {
+				string path_str = string("/") + (string)uri_relative_to_base(
+						base_uri, subject.to_c_string());
+				if (Path::is_valid(path_str)) {
+					path = path_str;
+				} else {
+					cerr << "[Parser] ERROR: Invalid path " << path << endl;
+					continue;
+				}
+			}
+			
+			if (path.parent() != "/")
+				continue;
+
 			if (rdf_class == patch_class) {
 				ret = parse_patch(world, target, model, base_uri, subject.to_c_string(), path, data);
 				if (ret)
@@ -165,37 +182,6 @@ Parser::parse(
 
 	}
 
-	return ret;
-}
-
-
-Path
-Parser::parse_path(Ingen::Shared::World*          world,
-                   Redland::Model&                model,
-                   const Glib::ustring&           base_uri,
-                   const Glib::ustring&           object_uri,
-                   boost::optional<Raul::Path>&   parent,
-                   boost::optional<Raul::Symbol>& symbol)
-{
-	string subject = string("</") + uri_relative_to_base(base_uri, object_uri) + ">";
-
-	Redland::Query query(*world->rdf_world, Glib::ustring(
-		"SELECT DISTINCT ?sym WHERE { ") + subject + " ingen:symbol ?sym }");
-	
-	Redland::Query::Results results = query.run(*world->rdf_world, model, base_uri);
-	if (results.size() > 0) {
-		symbol = (*results.begin())["sym"].to_string();
-	} else {
-		const string sym = object_uri.substr(base_uri.find_last_of("/")+1);
-		symbol = Symbol::symbolify(sym.substr(0, sym.find(".")));
-	}
-	
-	Path ret;
-	if (base_uri == object_uri)
-		ret = (parent ? parent.get().base() : Path("/"));
-	else
-		ret = (parent ? parent.get().base() : Path("/")) + symbol.get();
-	cout << "Parsing " << object_uri << " (base " << base_uri << ") to " << ret << endl;
 	return ret;
 }
 
@@ -518,7 +504,7 @@ Parser::parse_variables(
 		Raul::Path                              path,
 		boost::optional<GraphObject::Variables> data=boost::optional<GraphObject::Variables>())
 {
-	Redland::Query query = Redland::Query(*world->rdf_world, Glib::ustring(
+	Redland::Query query(*world->rdf_world, Glib::ustring(
 		"SELECT DISTINCT ?varkey ?varval WHERE {\n") +
 		subject + " ingen:variable ?variable .\n"
 		"?variable  ingen:key      ?varkey ;\n"
@@ -531,6 +517,21 @@ Parser::parse_variables(
 		const Redland::Node& val_node = (*i)["varval"];
 		if (key != "")
 			target->set_variable(path, key, AtomRDF::node_to_atom(val_node));
+	}
+	
+	query = Redland::Query(*world->rdf_world, Glib::ustring(
+		"SELECT DISTINCT ?key ?val WHERE {\n") +
+		subject + " ingen:property ?property .\n"
+		"?property  ingen:key      ?key ;\n"
+		"           ingen:value    ?val .\n"
+		"}");
+
+	results = query.run(*world->rdf_world, model, base_uri);
+	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
+		const string key = world->rdf_world->prefixes().qualify(string((*i)["key"]));
+		const Redland::Node& val_node = (*i)["val"];
+		if (key != "")
+			target->set_property(path, key, AtomRDF::node_to_atom(val_node));
 	}
 
 	// Set passed variables last to override any loaded values

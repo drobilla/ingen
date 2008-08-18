@@ -339,7 +339,9 @@ App::gtk_main_iteration()
 	if (_world->local_engine) {
 		_world->local_engine->main_iteration();
 	} else {
+		_enable_signal = false;
 		_client->emit_signals();
+		_enable_signal = true;
 	}
 		
 	animate();

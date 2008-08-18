@@ -44,7 +44,8 @@ public:
 	                                          const std::string& child_name) const;
 
 	unsigned child_name_offset(const Raul::Path&   parent,
-	                           const Raul::Symbol& symbol);
+	                           const Raul::Symbol& symbol,
+	                           bool                allow_zero=true);
 	
 	Glib::RWLock& lock() { return _lock; }
 

@@ -73,14 +73,6 @@ private:
 			boost::optional<Raul::Symbol>           symbol=boost::optional<Raul::Symbol>(),
 			boost::optional<GraphObject::Variables> data=boost::optional<GraphObject::Variables>());
 
-	Raul::Path parse_path(
-			Ingen::Shared::World*          world,
-			Redland::Model&                model,
-			const Glib::ustring&           base_uri,
-			const Glib::ustring&           object_uri,
-			boost::optional<Raul::Path>&   parent,
-			boost::optional<Raul::Symbol>& symbol);
-
 	bool parse_patch(
 			Ingen::Shared::World*                   world,
 			Ingen::Shared::CommonInterface*         target,

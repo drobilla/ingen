@@ -20,6 +20,8 @@
 
 #include <raul/SharedPtr.hpp>
 
+namespace Raul { class Path; }
+
 namespace Ingen {
 namespace Shared {
 
@@ -37,10 +39,12 @@ public:
 	Builder(CommonInterface& interface);
 	virtual ~Builder() {}
 
-	void build(SharedPtr<const GraphObject> object);
+	void build(const Raul::Path&            prefix,
+	           SharedPtr<const GraphObject> object);
 
 private:
-	void build_object(SharedPtr<const GraphObject> object);
+	void build_object(const Raul::Path&            prefix,
+	                  SharedPtr<const GraphObject> object);
 
 	CommonInterface& _interface;
 };

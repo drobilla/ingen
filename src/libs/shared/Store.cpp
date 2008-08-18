@@ -82,7 +82,8 @@ Store::find_child(SharedPtr<Shared::GraphObject> parent, const string& child_nam
 
 unsigned
 Store::child_name_offset(const Raul::Path&   parent,
-                         const Raul::Symbol& symbol)
+                         const Raul::Symbol& symbol,
+                         bool                allow_zero)
 {
 	unsigned offset = 0;
 
@@ -91,7 +92,7 @@ Store::child_name_offset(const Raul::Path&   parent,
 		ss << symbol;
 		if (offset > 0)
 			ss << "_" << offset;
-		if (find(parent.base() + ss.str()) == end())
+		if (find(parent.base() + ss.str()) == end() && (allow_zero || offset > 0))
 			break;
 		else if (offset == 0)
 			offset = 2;

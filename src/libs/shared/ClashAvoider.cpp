@@ -28,12 +28,20 @@ namespace Shared {
 const Raul::Path&
 ClashAvoider::map_path(const Raul::Path& in)
 {
+	unsigned offset = 0;
+	bool has_offset = false;
+	size_t pos = in.find_last_of("_");
+	if (pos != string::npos && pos != (in.length()-1)) {
+		const std::string trailing = in.substr(in.find_last_of("_")+1);
+		has_offset = (sscanf(trailing.c_str(), "%u", &offset) > 0);
+	}
+
 	SymbolMap::iterator m = _symbol_map.find(in);
 	if (m != _symbol_map.end()) {
 		return m->second;
 	} else {
 		typedef std::pair<SymbolMap::iterator, bool> InsertRecord;
-		Store::iterator s = _store.find(in);
+		Store::iterator s = _store.find(_prefix.base() + in.substr(1));
 
 		// No clash, use symbol unmodified
 		if (s == _store.end()) {
@@ -54,18 +62,31 @@ ClashAvoider::map_path(const Raul::Path& in)
 
 			// Append _2 _3 etc until an unused symbol is found
 			string base_name = in.name();
-			unsigned offset = 0;
-			if (sscanf(base_name.c_str(), "%*s_%u", &offset) == 1)
+			if (has_offset)
 				base_name = base_name.substr(0, base_name.find_last_of("_"));
-			else
-				offset = _store.child_name_offset(in.parent(), in.name());
 
-			assert(offset != 0); // shouldn't have been a clash, then...
-			std::stringstream ss;
-			ss << in << "_" << offset;
-			InsertRecord i = _symbol_map.insert(make_pair(in, ss.str()));
-			assert(_store.find(i.first->second) == _store.end());
-			return i.first->second;
+			while (true) {
+				Offsets::iterator o = _offsets.find(base_name);
+				if (o != _offsets.end()) {
+					offset = ++o->second;
+				} else {
+					offset = _store.child_name_offset(
+							_prefix.base() + in.parent().base().substr(1),
+							base_name,
+							false);
+					_offsets.insert(make_pair(base_name, offset));
+				}
+
+				assert(offset != 0); // shouldn't have been a clash, then...
+				std::stringstream ss;
+				ss << in.parent().base() << base_name  << "_" << offset;
+				if (_store.find(ss.str()) == _store.end()) {
+					InsertRecord i = _symbol_map.insert(make_pair(in, ss.str()));
+					return i.first->second;
+				} else {
+					cout << "MISSED OFFSET: " << in << " => " << ss.str() << endl;
+				}
+			}
 		}
 	}
 }

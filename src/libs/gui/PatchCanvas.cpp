@@ -584,26 +584,36 @@ PatchCanvas::paste()
 
 	Builder builder(*App::instance().engine());
 	ClientStore clipboard;
-	ClashAvoider avoider(*App::instance().store().get(), clipboard);
-	clipboard.new_patch("/", _patch->poly());
 	clipboard.set_plugins(App::instance().store()->plugins());
-	parser->parse_string(App::instance().world(), &avoider, str, "/");
+	clipboard.new_patch("/", _patch->poly());
+	
+	ClashAvoider avoider(*App::instance().store().get(), _patch->path(), clipboard);
+	//parser->parse_string(App::instance().world(), &avoider, str, _patch->path().base());
+	parser->parse_string(App::instance().world(), &avoider, str, "/",
+			boost::optional<Glib::ustring>(), _patch->path());
 	
 	for (Store::iterator i = clipboard.begin(); i != clipboard.end(); ++i) {
-		if (i->first == "/")
+		if (_patch->path() == "/" && i->first == "/") {
+			//cout << "SKIPPING ROOT " << _patch->path() << " :: " << i->first << endl;
 			continue;
+		} else if (i->first.parent() != "/") {
+			//cout << "SKIPPING NON ROOTED OBJECT " << i->first << endl;
+			continue;
+		}
 		GraphObject::Variables::iterator x = i->second->variables().find("ingenuity:canvas-x");
 		if (x != i->second->variables().end())
 			x->second = x->second.get_float() + 20.0f;
 		GraphObject::Variables::iterator y = i->second->variables().find("ingenuity:canvas-y");
 		if (y != i->second->variables().end())
 			y->second = y->second.get_float() + 20.0f;
-		GraphObject::Properties::iterator s = i->second->properties().find("ingen:selected");
-		if (s != i->second->properties().end())
-			s->second = true;
-		else
-			i->second->properties().insert(make_pair("ingen:selected", true));
-		builder.build(i->second);
+		if (i->first.parent() == "/") {
+			GraphObject::Properties::iterator s = i->second->properties().find("ingen:selected");
+			if (s != i->second->properties().end())
+				s->second = true;
+			else
+				i->second->properties().insert(make_pair("ingen:selected", true));
+		}
+		builder.build(_patch->path(), i->second);
 	}
 
 	for (ClientStore::ConnectionRecords::const_iterator i = clipboard.connection_records().begin();
