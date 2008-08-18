@@ -162,9 +162,7 @@ DestroyEvent::execute(ProcessContext& context)
 void
 DestroyEvent::post_process()
 {
-	if (_node || _port) {
-		_engine.broadcaster()->send_destroyed(_path);
-	} else {
+	if (!_node && !_port) {
 		if (_path == "/") {
 			_responder->respond_error("You can not destroy the root patch (/)");
 		} else {
