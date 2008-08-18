@@ -199,8 +199,6 @@ Parser::parse_patch(
 	std::set<Path> created;
 	uint32_t       patch_poly = 0;
 
-	cout << "PARSE PATCH: " << base_uri << " - " << object_uri << " - " << engine_base << endl;
-
 	/* Use parameter overridden polyphony, if given */
 	if (data) {
 		GraphObject::Variables::iterator poly_param = data.get().find("ingen:polyphony");
@@ -261,7 +259,7 @@ Parser::parse_patch(
 		const Path   node_path = patch_path.base() + node_name;
 
 		if (created.find(node_path) == created.end()) {
-			const string node_plugin     = world->rdf_world->qualify((*i)["plugin"].to_string());
+			const string node_plugin     = (*i)["plugin"].to_string();
 			bool         node_polyphonic = false;
 
 			const Redland::Node& poly_node = (*i)["poly"];
@@ -423,7 +421,7 @@ Parser::parse_node(
 		return false;
 	}
 
-	target->new_node(path, plugin_node.to_c_string());
+	target->new_node(path, world->rdf_world->expand_uri(plugin_node.to_c_string()));
 	parse_variables(world, target, model, base_uri, subject, path, data);
 
 	return true;
