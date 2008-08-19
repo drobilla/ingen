@@ -154,7 +154,7 @@ NodeModule::embed_gui(bool embed)
 			for (PortModelList::const_iterator p = _node->ports().begin();
 					p != _node->ports().end(); ++p)
 				if ((*p)->type().is_control() && (*p)->is_output())
-					App::instance().engine()->enable_port_broadcasting((*p)->path());
+					App::instance().engine()->set_property((*p)->path(), "ingen:broadcast", true);
 		}
 
 	} else { // un-embed
@@ -164,7 +164,7 @@ NodeModule::embed_gui(bool embed)
 
 		for (PortModelList::const_iterator p = _node->ports().begin(); p != _node->ports().end(); ++p)
 			if ((*p)->type().is_control() && (*p)->is_output())
-				App::instance().engine()->disable_port_broadcasting((*p)->path());
+				App::instance().engine()->set_property((*p)->path(), "ingen:broadcast", false);
 	}
 			
 	if (embed && _embed_item) {

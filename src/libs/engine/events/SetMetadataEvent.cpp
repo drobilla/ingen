@@ -20,6 +20,7 @@
 #include <boost/format.hpp>
 #include "Responder.hpp"
 #include "Engine.hpp"
+#include "PortImpl.hpp"
 #include "ClientBroadcaster.hpp"
 #include "GraphObjectImpl.hpp"
 #include "EngineStore.hpp"
@@ -39,6 +40,7 @@ SetMetadataEvent::SetMetadataEvent(
 		const Atom&          value)
 	: QueuedEvent(engine, responder, timestamp)
 	, _error(NO_ERROR)
+	, _special_type(NONE)
 	, _property(property)
 	, _path(path)
 	, _key(key)
@@ -67,6 +69,11 @@ SetMetadataEvent::pre_process()
 		_object->set_property(_key, _value);
 	else
 		_object->set_variable(_key, _value);
+	
+	if (_key == "ingen:broadcast") {
+		std::cout << "BROADCAST" << std::endl;
+		_special_type = ENABLE_BROADCAST;
+	}
 
 	QueuedEvent::pre_process();
 }
@@ -75,6 +82,12 @@ SetMetadataEvent::pre_process()
 void
 SetMetadataEvent::execute(ProcessContext& context)
 {
+	if (_special_type == ENABLE_BROADCAST) {
+		PortImpl* port = dynamic_cast<PortImpl*>(_object);
+		if (port)
+			port->broadcast(_value.get_bool());
+	}
+
 	QueuedEvent::execute(context);
 	// Do nothing
 }

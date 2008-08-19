@@ -31,7 +31,6 @@
 #include "DisconnectAllEvent.hpp"
 #include "DisconnectionEvent.hpp"
 #include "EnablePatchEvent.hpp"
-#include "EnablePortBroadcastingEvent.hpp"
 #include "LoadPluginsEvent.hpp"
 #include "MidiLearnEvent.hpp"
 #include "NoteEvent.hpp"

@@ -50,6 +50,7 @@ public:
 
 private:
 	enum { NO_ERROR, INVALID_PATH } _error;
+	enum { NONE, ENABLE_BROADCAST } _special_type;
 
 	bool             _property;
 	string           _path;

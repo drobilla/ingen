@@ -304,26 +304,6 @@ OSCEngineSender::set_voice_value_immediate(const string&     port_path,
 
 	
 void
-OSCEngineSender::enable_port_broadcasting(const string& port_path)
-{
-	send("/ingen/enable_port_broadcasting", "is",
-			next_id(),
-			port_path.c_str(),
-			LO_ARGS_END);
-}
-
-
-void
-OSCEngineSender::disable_port_broadcasting(const string& port_path)
-{
-	send("/ingen/disable_port_broadcasting", "is",
-			next_id(),
-			port_path.c_str(),
-			LO_ARGS_END);
-}
-
-
-void
 OSCEngineSender::set_program(const string& node_path,
                              uint32_t      bank,
                              uint32_t      program)

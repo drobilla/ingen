@@ -123,10 +123,6 @@ public:
 	                               uint32_t          voice,
 	                               const Raul::Atom& value);
 	
-	void enable_port_broadcasting(const string& port_path);
-	
-	void disable_port_broadcasting(const string& port_path);
-
 	void set_program(const string& node_path,
 	                 uint32_t      bank,
 	                 uint32_t      program);

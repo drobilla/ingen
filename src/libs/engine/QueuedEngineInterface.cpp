@@ -270,20 +270,6 @@ QueuedEngineInterface::set_voice_value_immediate(const string&     port_path,
 
 
 void
-QueuedEngineInterface::enable_port_broadcasting(const string& port_path)
-{
-	push_queued(new EnablePortBroadcastingEvent(_engine, _responder, now(), port_path, true));
-}
-
-
-void
-QueuedEngineInterface::disable_port_broadcasting(const string& port_path)
-{
-	push_queued(new EnablePortBroadcastingEvent(_engine, _responder, now(), port_path, false));
-}
-
-
-void
 QueuedEngineInterface::set_program(const string& node_path,
                                    uint32_t      bank,
                                    uint32_t      program)

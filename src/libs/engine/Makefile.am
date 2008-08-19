@@ -143,8 +143,6 @@ libingen_engine_la_SOURCES = \
 	events/DisconnectionEvent.hpp \
 	events/EnablePatchEvent.cpp \
 	events/EnablePatchEvent.hpp \
-	events/EnablePortBroadcastingEvent.cpp \
-	events/EnablePortBroadcastingEvent.hpp \
 	events/LoadPluginsEvent.cpp \
 	events/LoadPluginsEvent.hpp \
 	events/MidiLearnEvent.cpp \

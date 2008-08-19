@@ -82,10 +82,6 @@ public:
 	                                       uint32_t           voice,
 	                                       const Raul::Atom&  value) = 0;
 	
-	virtual void enable_port_broadcasting(const std::string& port_path) = 0;
-	
-	virtual void disable_port_broadcasting(const std::string& port_path) = 0;
-	
 	virtual void set_program(const std::string& node_path,
 	                         uint32_t           bank,
 	                         uint32_t           program) = 0;
