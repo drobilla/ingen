@@ -29,9 +29,10 @@ using namespace Raul;
 namespace Ingen {
 namespace Client {
 
-	
-OSCClientReceiver::OSCClientReceiver(int listen_port)
-	: _listen_port(listen_port)
+
+OSCClientReceiver::OSCClientReceiver(int listen_port, SharedPtr<Shared::ClientInterface> target)
+	: _target(target)
+	, _listen_port(listen_port)
 	, _st(NULL)
 {
 	start(false); // true = dump, false = shutup
@@ -165,7 +166,7 @@ OSCClientReceiver::setup_callbacks()
 int
 OSCClientReceiver::_error_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	error((char*)argv[0]);
+	_target->error((char*)argv[0]);
 	return 0;
 }
  
@@ -173,7 +174,7 @@ OSCClientReceiver::_error_cb(const char* path, const char* types, lo_arg** argv,
 int
 OSCClientReceiver::_new_patch_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	new_patch(&argv[0]->s, argv[1]->i); // path, poly
+	_target->new_patch(&argv[0]->s, argv[1]->i); // path, poly
 	return 0;
 }
 
@@ -181,7 +182,7 @@ OSCClientReceiver::_new_patch_cb(const char* path, const char* types, lo_arg** a
 int
 OSCClientReceiver::_destroyed_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	destroy((const char*)&argv[0]->s);
+	_target->destroy((const char*)&argv[0]->s);
 	return 0;
 }
 
@@ -189,7 +190,7 @@ OSCClientReceiver::_destroyed_cb(const char* path, const char* types, lo_arg** a
 int
 OSCClientReceiver::_patch_cleared_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	patch_cleared((const char*)&argv[0]->s);
+	_target->patch_cleared((const char*)&argv[0]->s);
 	return 0;
 }
 
@@ -197,7 +198,7 @@ OSCClientReceiver::_patch_cleared_cb(const char* path, const char* types, lo_arg
 int
 OSCClientReceiver::_object_renamed_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	object_renamed((const char*)&argv[0]->s, (const char*)&argv[1]->s);
+	_target->object_renamed((const char*)&argv[0]->s, (const char*)&argv[1]->s);
 	return 0;
 }
 
@@ -208,7 +209,7 @@ OSCClientReceiver::_connection_cb(const char* path, const char* types, lo_arg** 
 	const char* const src_port_path = &argv[0]->s;
 	const char* const dst_port_path = &argv[1]->s;
 	
-	connect(src_port_path, dst_port_path);
+	_target->connect(src_port_path, dst_port_path);
 
 	return 0;
 }
@@ -220,7 +221,7 @@ OSCClientReceiver::_disconnection_cb(const char* path, const char* types, lo_arg
 	const char* src_port_path = &argv[0]->s;
 	const char* dst_port_path = &argv[1]->s;
 
-	disconnect(src_port_path, dst_port_path);
+	_target->disconnect(src_port_path, dst_port_path);
 
 	return 0;
 }
@@ -234,7 +235,7 @@ OSCClientReceiver::_new_node_cb(const char* path, const char* types, lo_arg** ar
 	const char*   uri        = &argv[0]->s;
 	const char*   node_path  = &argv[1]->s;
 
-	new_node(uri, node_path);
+	_target->new_node(uri, node_path);
 
 	return 0;
 }
@@ -250,7 +251,7 @@ OSCClientReceiver::_new_port_cb(const char* path, const char* types, lo_arg** ar
 	const char*    type      = &argv[2]->s;
 	const bool     is_output = (argv[3]->i == 1);
 
-	new_port(port_path, index, type, is_output);
+	_target->new_port(port_path, index, type, is_output);
 	
 	return 0;	
 }
@@ -269,7 +270,7 @@ OSCClientReceiver::_set_variable_cb(const char* path, const char* types, lo_arg*
 
 	Atom value = AtomLiblo::lo_arg_to_atom(types[2], argv[2]);
 
-	set_variable(obj_path, key, value);
+	_target->set_variable(obj_path, key, value);
 
 	return 0;	
 }
@@ -288,7 +289,7 @@ OSCClientReceiver::_set_property_cb(const char* path, const char* types, lo_arg*
 
 	Atom value = AtomLiblo::lo_arg_to_atom(types[2], argv[2]);
 
-	set_property(obj_path, key, value);
+	_target->set_property(obj_path, key, value);
 
 	return 0;	
 }
@@ -300,7 +301,7 @@ OSCClientReceiver::_set_port_value_cb(const char* path, const char* types, lo_ar
 	const char* const port_path  = &argv[0]->s;
 	const float       value      =  argv[1]->f;
 
-	set_port_value(port_path, value);
+	_target->set_port_value(port_path, value);
 
 	return 0;	
 }
@@ -313,7 +314,7 @@ OSCClientReceiver::_set_voice_value_cb(const char* path, const char* types, lo_a
 	const int         voice      =  argv[1]->i;
 	const float       value      =  argv[2]->f;
 
-	set_voice_value(port_path, voice, value);
+	_target->set_voice_value(port_path, voice, value);
 
 	return 0;	
 }
@@ -324,7 +325,7 @@ OSCClientReceiver::_port_activity_cb(const char* path, const char* types, lo_arg
 {
 	const char* const port_path = &argv[0]->s;
 
-	port_activity(port_path);
+	_target->port_activity(port_path);
 
 	return 0;	
 }
@@ -334,7 +335,7 @@ int
 OSCClientReceiver::_response_ok_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	assert(!strcmp(types, "i"));
-	response_ok(argv[0]->i);
+	_target->response_ok(argv[0]->i);
 
 	return 0;
 }
@@ -344,7 +345,7 @@ int
 OSCClientReceiver::_response_error_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	assert(!strcmp(types, "is"));
-	response_error(argv[0]->i, &argv[1]->s);
+	_target->response_error(argv[0]->i, &argv[1]->s);
 
 	return 0;
 }
@@ -356,7 +357,7 @@ int
 OSCClientReceiver::_plugin_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	assert(argc == 4 && !strcmp(types, "ssss"));
-	new_plugin(&argv[0]->s, &argv[1]->s, &argv[2]->s, &argv[3]->s); // uri, type, symbol, name
+	_target->new_plugin(&argv[0]->s, &argv[1]->s, &argv[2]->s, &argv[3]->s); // uri, type, symbol, name
 
 	return 0;	
 }
@@ -370,7 +371,7 @@ OSCClientReceiver::_program_add_cb(const char* path, const char* types, lo_arg**
 	int32_t     program    =  argv[2]->i;
 	const char* name       = &argv[3]->s;
 
-	program_add(node_path, bank, program, name);
+	_target->program_add(node_path, bank, program, name);
 
 	return 0;	
 }
@@ -383,7 +384,7 @@ OSCClientReceiver::_program_remove_cb(const char* path, const char* types, lo_ar
 	int32_t     bank       =  argv[1]->i;
 	int32_t     program    =  argv[2]->i;
 
-	program_remove(node_path, bank, program);
+	_target->program_remove(node_path, bank, program);
 
 	return 0;	
 }

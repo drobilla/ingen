@@ -22,6 +22,7 @@
 #include <boost/utility.hpp>
 #include <lo/lo.h>
 #include "interface/ClientInterface.hpp"
+#include "raul/Deletable.hpp"
 
 namespace Ingen {
 
@@ -55,10 +56,10 @@ inline static int name##_cb(LO_HANDLER_ARGS, void* osc_listener)\
  *
  * \ingroup IngenClient
  */
-class OSCClientReceiver : boost::noncopyable, virtual public Ingen::Shared::ClientInterface
+class OSCClientReceiver : public boost::noncopyable, public Raul::Deletable
 {
 public:
-	OSCClientReceiver(int listen_port);
+	OSCClientReceiver(int listen_port, SharedPtr<Shared::ClientInterface> target);
 	~OSCClientReceiver();
 
 	void start(bool dump_osc);
@@ -75,6 +76,8 @@ private:
 	static int  generic_cb(const char* path, const char* types, lo_arg** argv, int argc, void* data, void* user_data);
 	static int  unknown_cb(const char* path, const char* types, lo_arg** argv, int argc, void* data, void* osc_receiver);
 	
+	SharedPtr<Shared::ClientInterface> _target;
+
 	int              _listen_port;
 	lo_server_thread _st;
 

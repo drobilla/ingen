@@ -37,7 +37,7 @@ namespace Client {
  * The signals here match the calls to ClientInterface exactly.  See the
  * documentation for ClientInterface for meanings of signal parameters.
  */
-class SigClientInterface : virtual public Ingen::Shared::ClientInterface, public sigc::trackable
+class SigClientInterface : public Ingen::Shared::ClientInterface, public sigc::trackable
 {
 public:
 	SigClientInterface() : _enabled(true) {}

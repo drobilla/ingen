@@ -44,19 +44,6 @@ namespace Ingen {
 namespace GUI {
 
 
-// Paste together some interfaces to get the combination we want
-
-
-struct OSCSigEmitter : public OSCClientReceiver, public ThreadedSigClientInterface {
-	OSCSigEmitter(size_t queue_size, int listen_port)
-		: Ingen::Shared::ClientInterface()
-		, OSCClientReceiver(listen_port)
-		, ThreadedSigClientInterface(queue_size)
-	{
-	}
-};
-
-
 // ConnectWindow
 
 
@@ -170,9 +157,10 @@ ConnectWindow::connect(bool existing)
 			world->engine = SharedPtr<EngineInterface>(new OSCEngineSender(url));
 		}
 
-		OSCSigEmitter* ose = new OSCSigEmitter(1024, 16181); // FIXME: args
-		SharedPtr<ThreadedSigClientInterface> client(ose);
-		App::instance().attach(client);
+		// FIXME: static args
+		SharedPtr<ThreadedSigClientInterface> tsci(new ThreadedSigClientInterface(1024));
+		SharedPtr<OSCClientReceiver> client(new OSCClientReceiver(16181, tsci));
+		App::instance().attach(tsci, client);
 		
 		Glib::signal_timeout().connect(
 			sigc::mem_fun(App::instance(), &App::gtk_main_iteration), 40, G_PRIORITY_DEFAULT);
@@ -191,9 +179,10 @@ ConnectWindow::connect(bool existing)
 			world->engine = SharedPtr<EngineInterface>(
 					new OSCEngineSender(string("osc.udp://localhost:").append(port_str)));
 
-			OSCSigEmitter* ose = new OSCSigEmitter(1024, 16181); // FIXME: args
-			SharedPtr<ThreadedSigClientInterface> client(ose);
-			App::instance().attach(client);
+			// FIXME: static args
+			SharedPtr<ThreadedSigClientInterface> tsci(new ThreadedSigClientInterface(1024));
+			SharedPtr<OSCClientReceiver> client(new OSCClientReceiver(16181, tsci));
+			App::instance().attach(tsci, client);
 
 			Glib::signal_timeout().connect(
 					sigc::mem_fun(App::instance(), &App::gtk_main_iteration), 40, G_PRIORITY_DEFAULT);

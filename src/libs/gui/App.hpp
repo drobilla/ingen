@@ -37,6 +37,7 @@ namespace Ingen {
 	class Engine;
 	namespace Shared {
 		class EngineInterface;
+		class ClientInterface;
 		class World;
 	}
 	namespace Client {
@@ -85,7 +86,9 @@ public:
 
 	void error_message(const string& msg);
 
-	void attach(SharedPtr<SigClientInterface> client);
+	void attach(SharedPtr<SigClientInterface> client,
+	            SharedPtr<Raul::Deletable>    handle=SharedPtr<Raul::Deletable>());
+
 	void detach();
 	
 	bool gtk_main_iteration();
@@ -106,7 +109,7 @@ public:
 	
 	Glib::RefPtr<Gdk::Pixbuf>            icon_from_path(const string& path, int size);
 
-	const SharedPtr<EngineInterface>     engine()     const { return _world->engine; }
+	const SharedPtr<EngineInterface>&    engine()     const { return _world->engine; }
 	const SharedPtr<SigClientInterface>& client()     const { return _client; }
 	const SharedPtr<ClientStore>&        store()      const { return _store; }
 	const SharedPtr<ThreadedLoader>&     loader()     const { return _loader; }
@@ -143,6 +146,7 @@ protected:
 	static App* _instance;
 	
 	SharedPtr<SigClientInterface> _client;
+	SharedPtr<Raul::Deletable>    _handle;
 	SharedPtr<ClientStore>        _store;
 	SharedPtr<Serialiser>         _serialiser;
 	SharedPtr<ThreadedLoader>     _loader;
