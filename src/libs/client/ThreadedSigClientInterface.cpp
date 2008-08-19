@@ -17,7 +17,8 @@
 
 #include "ThreadedSigClientInterface.hpp"
 #include <iostream>
-using std::cerr; using std::endl;
+
+using namespace std;
 
 namespace Ingen {
 namespace Client {
@@ -28,23 +29,19 @@ namespace Client {
 void
 ThreadedSigClientInterface::push_sig(Closure ev)
 {
+	_attached = true;
 	if (!_enabled)
 		return;
 
 	bool success = false;
-	bool first   = true;
-	
-	// (Very) slow busy-wait if the queue is full
-	// FIXME: Make this wait on a signal from process_sigs iff this happens
 	while (!success) {
-		//printf("push %zu\n", _sigs.fill());
 		success = _sigs.push(ev);
 		if (!success) {
-			if (first) {
-				cerr << "[ThreadedSigClientInterface] WARNING:  (Client) event queue full.  Waiting to try again..." << endl;
-				first = false;
-			}
-			usleep(200000); // 100 milliseconds (2* rate process_sigs is called)
+			cerr << "WARNING: Client event queue full.  Waiting..." << endl;
+			_mutex.lock();
+			_cond.wait(_mutex);
+			_mutex.unlock();
+			cerr << "Queue drained, continuing" << endl;
 		}
 	}
 }
@@ -58,17 +55,20 @@ ThreadedSigClientInterface::push_sig(Closure ev)
 bool
 ThreadedSigClientInterface::emit_signals()
 {
-	// Process a maximum of queue-size events, to prevent locking the GTK
+	// Process a limited number of events, to prevent locking the GTK
 	// thread indefinitely while processing continually arriving events
-	const size_t limit = _sigs.capacity();
+
 	size_t num_processed = 0;
-	while (!_sigs.empty() && num_processed++ < limit) {
-		//printf("emit %zu\n", _sigs.fill());
+	while (!_sigs.empty() && num_processed++ < (_sigs.capacity() * 3 / 4)) {
 		Closure& ev = _sigs.front();
-		_sigs.pop();
 		ev();
 		ev.disconnect();
+		_sigs.pop();
 	}
+
+	_mutex.lock();
+	_cond.broadcast();
+	_mutex.unlock();
 
 	return true;
 }

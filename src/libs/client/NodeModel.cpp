@@ -69,7 +69,7 @@ void
 NodeModel::remove_port(SharedPtr<PortModel> port)
 {
 	// FIXME: slow
-	for (PortModelList::iterator i = _ports.begin(); i != _ports.end(); ++i) {
+	for (Ports::iterator i = _ports.begin(); i != _ports.end(); ++i) {
 		if ((*i) == port) {
 			_ports.erase(i);
 			break;
@@ -83,7 +83,7 @@ void
 NodeModel::remove_port(const Path& port_path)
 {
 	// FIXME: slow
-	for (PortModelList::iterator i = _ports.begin(); i != _ports.end(); ++i) {
+	for (Ports::iterator i = _ports.begin(); i != _ports.end(); ++i) {
 		if ((*i)->path() == port_path) {
 			_ports.erase(i);
 			break;
@@ -141,7 +141,7 @@ NodeModel::add_port(SharedPtr<PortModel> pm)
 	assert(pm->path().is_child_of(_path));
 	assert(pm->parent().get() == this);
 
-	PortModelList::iterator existing = find(_ports.begin(), _ports.end(), pm);
+	Ports::iterator existing = find(_ports.begin(), _ports.end(), pm);
 	
 	// Store should have handled this by merging the two
 	assert(existing == _ports.end());
@@ -155,7 +155,7 @@ SharedPtr<PortModel>
 NodeModel::get_port(const string& port_name) const
 {
 	assert(port_name.find("/") == string::npos);
-	for (PortModelList::const_iterator i = _ports.begin(); i != _ports.end(); ++i)
+	for (Ports::const_iterator i = _ports.begin(); i != _ports.end(); ++i)
 		if ((*i)->path().name() == port_name)
 			return (*i);
 	return SharedPtr<PortModel>();
@@ -211,8 +211,10 @@ void
 NodeModel::set(SharedPtr<ObjectModel> model)
 {
 	SharedPtr<NodeModel> node = PtrCast<NodeModel>(model);
-	if (node)
+	if (node) {
+		_plugin_uri = node->_plugin_uri;
 		_plugin = node->_plugin;
+	}
 
 	ObjectModel::set(model);
 }

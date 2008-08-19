@@ -133,14 +133,14 @@ main(int argc, char** argv)
 			cerr << "Unable to load client module." << endl;
 	}
 				
-	/* If we don't have a local engine interface (for GUI), use OSC */
+	/* If we don't have a local engine interface (for GUI), use network */
 	if (client_module && ! engine_interface) {
-		SharedPtr<Shared::EngineInterface> (*new_osc_interface)(const std::string&) = NULL;
+		SharedPtr<Shared::EngineInterface> (*new_remote_interface)(const std::string&) = NULL;
 
-		if (client_module->get_symbol("new_osc_interface", (void*&)new_osc_interface)) {
-			engine_interface = new_osc_interface(args.connect_arg);
+		if (client_module->get_symbol("new_remote_interface", (void*&)new_remote_interface)) {
+			engine_interface = new_remote_interface(args.connect_arg);
 		} else {
-			cerr << "Unable to find symbol 'new_osc_interface' in "
+			cerr << "Unable to find symbol 'new_remote_interface' in "
 					"ingen_client module, aborting." << endl;
 			return -1;
 		}
@@ -157,7 +157,7 @@ main(int argc, char** argv)
 	/* Load a patch */
 	if (args.load_given && engine_interface) {
 		
-		boost::optional<Glib::ustring> engine_base;
+		Glib::ustring engine_base = "/";
 		if (args.path_given)
 			engine_base = string(args.path_arg) + "/";
 
@@ -185,7 +185,7 @@ main(int argc, char** argv)
 
 
 			engine_interface->load_plugins();
-			parser->parse_document(world, engine_interface.get(), uri, uri, engine_base);
+			parser->parse_document(world, engine_interface.get(), uri, engine_base, uri);
 
 		} else {
 			cerr << "Unable to load serialisation module, aborting." << endl;

@@ -210,7 +210,7 @@ PatchWindow::set_patch(SharedPtr<PatchModel> patch, SharedPtr<PatchView> view)
 	
 	_menu_view_control_window->property_sensitive() = false;
 
-	for (PortModelList::const_iterator p = patch->ports().begin();
+	for (NodeModel::Ports::const_iterator p = patch->ports().begin();
 			p != patch->ports().end(); ++p) {
 		if ((*p)->type().is_control() && (*p)->is_input()) {
 			_menu_view_control_window->property_sensitive() = true;
@@ -257,7 +257,7 @@ PatchWindow::patch_port_removed(SharedPtr<PortModel> port)
 		
 		bool found_control = false;
 
-		for (PortModelList::const_iterator i = _patch->ports().begin(); i != _patch->ports().end(); ++i) {
+		for (NodeModel::Ports::const_iterator i = _patch->ports().begin(); i != _patch->ports().end(); ++i) {
 			if ((*i)->type().is_control() && (*i)->is_input()) {
 				found_control = true;
 				break;

@@ -15,20 +15,36 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <iostream>
 #include "client.hpp"
 #include "OSCEngineSender.hpp"
+#include "HTTPEngineSender.hpp"
+
+using namespace std;
 
 namespace Ingen {
 namespace Client {
 	
 
 SharedPtr<Ingen::Shared::EngineInterface>
-new_osc_interface(const std::string& url)
+new_remote_interface(const std::string& url)
 {
-	OSCEngineSender* oes = new OSCEngineSender(url);
-	oes->attach(rand(), true);
-	return SharedPtr<Shared::EngineInterface>(oes);
+	const string scheme = url.substr(0, url.find(":"));
+	cout << "SCHEME: " << scheme << endl;
+	if (scheme == "osc.udp" || scheme == "osc.tcp") {
+		OSCEngineSender* oes = new OSCEngineSender(url);
+		oes->attach(rand(), true);
+		return SharedPtr<Shared::EngineInterface>(oes);
+	} else if (scheme == "http") {
+		HTTPEngineSender* hes = new HTTPEngineSender(url);
+		hes->attach(rand(), true);
+		return SharedPtr<Shared::EngineInterface>(hes);
+	} else {
+		cerr << "WARNING: Unknown URI scheme '" << scheme << "'" << endl;
+		return SharedPtr<Shared::EngineInterface>();
+	}
 }
+
 
 } // namespace Client
 } // namespace Ingen

@@ -50,6 +50,8 @@ class NodeModel : public ObjectModel, virtual public Ingen::Shared::Node
 public:
 	NodeModel(const NodeModel& copy);
 	virtual ~NodeModel();
+	
+	typedef vector<SharedPtr<PortModel> > Ports;
 
 	SharedPtr<PortModel> get_port(const string& port_name) const;
 	
@@ -58,7 +60,7 @@ public:
 	const string&         plugin_uri() const { return _plugin_uri; }
 	const Shared::Plugin* plugin()     const { return _plugin.get(); }
 	uint32_t              num_ports()  const { return _ports.size(); }
-	const PortModelList&  ports()      const { return _ports; }
+	const Ports&          ports()      const { return _ports; }
 	
 	void port_value_range(SharedPtr<PortModel> port, float& min, float& max);
 	
@@ -84,16 +86,13 @@ protected:
 
 	virtual void clear();
 	
-	PortModelList          _ports;      ///< List of ports (not a Table to preserve order)
+	Ports                  _ports;      ///< Vector of ports (not a Table to preserve order)
 	string                 _plugin_uri; ///< Plugin URI (if PluginModel is unknown)
 	SharedPtr<PluginModel> _plugin;     ///< The plugin this node is an instance of
 	uint32_t               _num_values; ///< Size of _min_values and _max_values
 	float*                 _min_values; ///< Port min values (cached for LV2)
 	float*                 _max_values; ///< Port max values (cached for LV2)
 };
-
-
-typedef Table<string, SharedPtr<NodeModel> > NodeModelMap;
 
 
 } // namespace Client

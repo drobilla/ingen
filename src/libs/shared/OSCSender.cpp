@@ -94,8 +94,8 @@ void
 OSCSender::send_message(const char* path, lo_message msg)
 {
 	// FIXME: size?  liblo doesn't export this.
-	// Don't want to exceed max UDP packet size (1500 bytes?)
-	static const size_t MAX_BUNDLE_SIZE = 1500 - 32*5;
+	// Don't want to exceed max UDP packet size (good default value?)
+	static const size_t MAX_BUNDLE_SIZE = 1024;
 
 	if (!_enabled)
 		return;

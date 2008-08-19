@@ -105,8 +105,6 @@ private:
 	size_t    _connections;
 };
 
-typedef vector<SharedPtr<PortModel> > PortModelList;
-
 
 } // namespace Client
 } // namespace Ingen

@@ -1,5 +1,5 @@
 /* This file is part of Ingen.
- * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
+ * Copyright (C) 2008 Dave Robillard <http://drobilla.net>
  * 
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
@@ -15,14 +15,13 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef OSCENGINESENDER_H
-#define OSCENGINESENDER_H
+#ifndef HTTPENGINESENDER_H
+#define HTTPENGINESENDER_H
 
 #include <inttypes.h>
 #include <string>
-#include <lo/lo.h>
+#include <libsoup/soup.h>
 #include "interface/EngineInterface.hpp"
-#include "shared/OSCSender.hpp"
 using std::string;
 using Ingen::Shared::EngineInterface;
 using Ingen::Shared::ClientInterface;
@@ -31,20 +30,19 @@ namespace Ingen {
 namespace Client {
 
 
-/* OSC (via liblo) interface to the engine.
+/* HTTP (via libsoup) interface to the engine.
  *
- * Clients can use this opaquely as an EngineInterface* to control the engine
- * over OSC (whether over a network or not, etc).
+ * Clients can use this opaquely as an EngineInterface to control the engine
+ * over HTTP (whether over a network or not).
  *
  * \ingroup IngenClient
  */
-class OSCEngineSender : public EngineInterface, public Shared::OSCSender {
+class HTTPEngineSender : public EngineInterface {
 public:
-	OSCEngineSender(const string& engine_url);
-
-	~OSCEngineSender();
+	HTTPEngineSender(const string& engine_url);
+	~HTTPEngineSender();
 	
-	std::string uri() const { return _engine_url; }
+	string uri() const { return _engine_url; }
 	
 	inline int32_t next_id()
 	{ int32_t ret = (_id == -1) ? -1 : _id++; return ret; }
@@ -60,10 +58,11 @@ public:
 	void enable()  { _enabled = true; }
 	void disable() { _enabled = false; }
 	
-	void bundle_begin()   { OSCSender::bundle_begin(); }
-	void bundle_end()     { OSCSender::bundle_end(); }
-	void transfer_begin() { OSCSender::transfer_begin(); }
-	void transfer_end()   { OSCSender::transfer_end(); }
+	void bundle_begin()   { transfer_begin(); }
+	void bundle_end()     { transfer_end(); }
+	
+	void transfer_begin();
+	void transfer_end();
 
 	// Client registration
 	void register_client(ClientInterface* client);
@@ -117,7 +116,7 @@ public:
 	                     const Raul::Atom& value);
 	
 	void set_port_value_immediate(const string&     port_path,
-	        const Raul::Atom& value);
+	                              const Raul::Atom& value);
 	
 	void set_voice_value_immediate(const string&     port_path,
 	                               uint32_t          voice,
@@ -148,14 +147,16 @@ public:
 	void request_all_objects();
 
 protected:
+	SoupSession* _session;
 	const string _engine_url;
 	int          _client_port;
 	int32_t      _id;
+	bool         _enabled;
 };
 
 
 } // namespace Client
 } // namespace Ingen
 
-#endif // OSCENGINESENDER_H
+#endif // HTTPENGINESENDER_H
 

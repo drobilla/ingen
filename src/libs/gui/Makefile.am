@@ -23,7 +23,8 @@ libingen_gui_la_CXXFLAGS = \
 	@LIBLO_CFLAGS@ \
 	@REDLANDMM_CFLAGS@ \
 	@RAUL_CFLAGS@ \
-	@SLV2_CFLAGS@
+	@SLV2_CFLAGS@ \
+	@SOUP_CFLAGS@
 	
 
 libingen_gui_la_LDFLAGS = -no-undefined -module -avoid-version
@@ -40,7 +41,8 @@ libingen_gui_la_LIBADD = \
 	@LIBLO_LIBS@ \
 	@REDLANDMM_LIBS@ \
 	@RAUL_LIBS@ \
-	@SLV2_LIBS@
+	@SLV2_LIBS@ \
+	@SOUP_LIBS@
 
 libingen_gui_la_SOURCES = \
 	gui.hpp \

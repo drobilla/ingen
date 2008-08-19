@@ -114,7 +114,7 @@ NodeControlWindow::resize()
 void
 NodeControlWindow::on_show()
 {
-	for (PortModelList::const_iterator i = _node->ports().begin();
+	for (NodeModel::Ports::const_iterator i = _node->ports().begin();
 			i != _node->ports().end(); ++i)
 		if ((*i)->type().is_control() && (*i)->is_input())
 			App::instance().engine()->request_port_value((*i)->path());

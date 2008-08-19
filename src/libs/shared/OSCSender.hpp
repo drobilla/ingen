@@ -27,7 +27,7 @@ namespace Shared {
 class OSCSender {
 public:
 	OSCSender();
-	~OSCSender();
+	virtual ~OSCSender() {}
 
 	lo_address address() const { return _address; }
 	

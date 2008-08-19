@@ -62,12 +62,13 @@ public:
 	QueuedEngineInterface(Engine& engine, size_t queued_size, size_t stamped_size);
 	virtual ~QueuedEngineInterface() {}
 	
+	std::string uri() const { return "ingen:internal"; }
+	
 	void set_next_response_id(int32_t id);
 
 	// Client registration
 	virtual void register_client(ClientInterface* client);
 	virtual void unregister_client(const string& uri);
-	
 
 	// Engine commands
 	virtual void load_plugins();

@@ -48,6 +48,8 @@ public:
 	virtual ~OSCClientSender()
 	{ lo_address_free(_address); }
 	
+	bool enabled() const { return _enabled; }
+
 	void enable()  { _enabled = true; }
 	void disable() { _enabled = false; }
 	

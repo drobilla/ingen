@@ -90,7 +90,7 @@ NodeModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeModel> n
 	for (GraphObject::Variables::const_iterator m = node->variables().begin(); m != node->variables().end(); ++m)
 		ret->set_variable(m->first, m->second);
 
-	for (PortModelList::const_iterator p = node->ports().begin(); p != node->ports().end(); ++p) {
+	for (NodeModel::Ports::const_iterator p = node->ports().begin(); p != node->ports().end(); ++p) {
 		ret->add_port(*p, false);
 	}
 
@@ -151,7 +151,7 @@ NodeModule::embed_gui(bool embed)
 		if (_gui_widget) {
 			_gui_widget->show_all();
 
-			for (PortModelList::const_iterator p = _node->ports().begin();
+			for (NodeModel::Ports::const_iterator p = _node->ports().begin();
 					p != _node->ports().end(); ++p)
 				if ((*p)->type().is_control() && (*p)->is_output())
 					App::instance().engine()->set_property((*p)->path(), "ingen:broadcast", true);
@@ -162,7 +162,7 @@ NodeModule::embed_gui(bool embed)
 		FlowCanvas::Module::embed(NULL);
 		_plugin_ui.reset();
 
-		for (PortModelList::const_iterator p = _node->ports().begin(); p != _node->ports().end(); ++p)
+		for (NodeModel::Ports::const_iterator p = _node->ports().begin(); p != _node->ports().end(); ++p)
 			if ((*p)->type().is_control() && (*p)->is_output())
 				App::instance().engine()->set_property((*p)->path(), "ingen:broadcast", false);
 	}
@@ -262,7 +262,7 @@ void
 NodeModule::initialise_gui_values()
 {
 	uint32_t index=0;
-	for (PortModelList::const_iterator p = _node->ports().begin(); p != _node->ports().end(); ++p) {
+	for (NodeModel::Ports::const_iterator p = _node->ports().begin(); p != _node->ports().end(); ++p) {
 		if ((*p)->type().is_control())
 			value_changed(index, (*p)->value());
 		++index;

@@ -141,7 +141,7 @@ bool
 NodeMenu::has_control_inputs()
 {
 	const NodeModel* const nm = (NodeModel*)_object.get();
-	for (PortModelList::const_iterator i = nm->ports().begin(); i != nm->ports().end(); ++i)
+	for (NodeModel::Ports::const_iterator i = nm->ports().begin(); i != nm->ports().end(); ++i)
 		if ((*i)->is_input() && (*i)->type().is_control())
 			return true;
 	

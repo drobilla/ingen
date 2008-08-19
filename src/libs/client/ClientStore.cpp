@@ -72,17 +72,15 @@ ClientStore::add_plugin_orphan(SharedPtr<NodeModel> node)
 {
 	if (!_handle_orphans)
 		return;
-	cerr << "WARNING: Node " << node->path() << " received, but plugin "
-		<< node->plugin_uri() << " unknown." << endl;
 
 	Raul::Table<string, list<SharedPtr<NodeModel> > >::iterator spawn
 		= _plugin_orphans.find(node->plugin_uri());
 
-	_engine->request_plugin(node->plugin_uri());
-
 	if (spawn != _plugin_orphans.end()) {
 		spawn->second.push_back(node);
 	} else {
+		cerr << "WARNING: Orphans of plugin " << node->plugin_uri() << " received" << endl;
+		_engine->request_plugin(node->plugin_uri());
 		list<SharedPtr<NodeModel> > l;
 		l.push_back(node);
 		_plugin_orphans[node->plugin_uri()] = l;
@@ -108,7 +106,7 @@ ClientStore::resolve_plugin_orphans(SharedPtr<PluginModel> plugin)
 		for (list<SharedPtr<NodeModel> >::iterator i = spawn.begin();
 				i != spawn.end(); ++i) {
 			(*i)->_plugin = plugin;
-			add_object(*i);
+			//add_object(*i);
 		}
 	}
 }
@@ -248,7 +246,6 @@ ClientStore::add_object(SharedPtr<ObjectModel> object)
 	// one (with precedence to the new values).
 	iterator existing = find(object->path());
 	if (existing != end()) {
-		cout << "WARNING: Object " << object->path() << " already exists in store" << endl;
 		PtrCast<ObjectModel>(existing->second)->set(object);
 	} else {
 
@@ -444,6 +441,7 @@ ClientStore::new_node(const string& path, const string& plugin_uri)
 	if (!plug) {
 		SharedPtr<NodeModel> n(new NodeModel(plugin_uri, path));
 		add_plugin_orphan(n);
+		add_object(n);
 	} else {
 		SharedPtr<NodeModel> n(new NodeModel(plug, path));
 		add_object(n);

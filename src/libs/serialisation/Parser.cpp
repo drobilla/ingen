@@ -63,7 +63,7 @@ Parser::parse_document(
 		Ingen::Shared::CommonInterface*         target,
 		const Glib::ustring&                    document_uri,
 		Glib::ustring                           object_uri,
-		boost::optional<Glib::ustring>          engine_base,
+		Glib::ustring                           engine_base,
 		boost::optional<Raul::Symbol>           symbol,
 		boost::optional<GraphObject::Variables> data)
 {
@@ -74,7 +74,7 @@ Parser::parse_document(
 	else
 		cout << "Parsing " << object_uri << " from " << document_uri << endl;
 
-	return parse(world, target, model, document_uri, object_uri, engine_base, symbol, data);;
+	return parse(world, target, model, document_uri, engine_base, object_uri, symbol, data);;
 }
 
 
@@ -84,8 +84,8 @@ Parser::parse_string(
 		Ingen::Shared::CommonInterface*         target,
 		const Glib::ustring&                    str,
 		const Glib::ustring&                    base_uri,
+		Glib::ustring                           engine_base,
 		boost::optional<Glib::ustring>          object_uri,
-		boost::optional<Glib::ustring>          engine_base,
 		boost::optional<Raul::Symbol>           symbol,
 		boost::optional<GraphObject::Variables> data)
 {
@@ -96,10 +96,11 @@ Parser::parse_string(
 	else
 		cout << "Parsing all objects found in string (base " << base_uri << ")" << endl;
 
-	bool ret = parse(world, target, model, base_uri, object_uri, engine_base, symbol, data);
+	bool ret = parse(world, target, model, base_uri, engine_base, object_uri, symbol, data);
 	if (ret) {
 		const Glib::ustring subject = Glib::ustring("<") + base_uri + Glib::ustring(">");
-		parse_connections(world, target, model, base_uri, subject, (engine_base ? (string)engine_base.get() : "/"));
+		parse_connections(world, target, model, base_uri, subject,
+				Path((engine_base == "") ? "/" : engine_base));
 	}
 
 	return ret;
@@ -112,13 +113,16 @@ Parser::parse(
 		Ingen::Shared::CommonInterface*         target,
 		Redland::Model&                         model,
 		Glib::ustring                           base_uri,
+		Glib::ustring                           engine_base,
 		boost::optional<Glib::ustring>          object_uri,
-		boost::optional<Glib::ustring>          engine_base,
 		boost::optional<Raul::Symbol>           symbol,
 		boost::optional<GraphObject::Variables> data)
 {
 	const Redland::Node::Type res = Redland::Node::RESOURCE;
 	Glib::ustring query_str;
+	if (object_uri && object_uri.get()[0] == '/')
+		object_uri = object_uri.get().substr(1);
+
 	if (object_uri)
 		query_str = Glib::ustring("SELECT DISTINCT ?class WHERE { <") + object_uri.get() + "> a ?class . }";
 	else
@@ -132,8 +136,13 @@ Parser::parse(
 	const Redland::Node in_port_class(*world->rdf_world, res, NS_INGEN "InputPort");
 	const Redland::Node out_port_class(*world->rdf_world, res, NS_INGEN "OutputPort");
 	
-	const Redland::Node subject_uri(*world->rdf_world, res,
-			(object_uri ? object_uri.get() : "http://example.org"));
+	string subject_str = ((object_uri && object_uri.get() != "") ? object_uri.get() : base_uri);
+	if (subject_str[0] == '/')
+		subject_str = subject_str.substr(1);
+	if (subject_str == "")
+		subject_str = base_uri;
+	
+	const Redland::Node subject_uri(*world->rdf_world, res, subject_str);
 
 	bool ret = false;
 
@@ -141,7 +150,9 @@ Parser::parse(
 		const Redland::Node subject = (object_uri ? subject_uri : (*i)["subject"]);
 		const Redland::Node rdf_class = (*i)["class"];
 		if (!object_uri) {
-			std::string path_str = "/" + uri_relative_to_base(base_uri, subject.to_c_string());
+			std::string path_str = uri_relative_to_base(base_uri, subject.to_c_string());
+			if (path_str[0] != '/')
+				path_str = string("/").append(path_str);
 			if (Path(path_str).parent() != "/")
 				continue;
 		}
@@ -150,12 +161,13 @@ Parser::parse(
 				rdf_class == in_port_class || rdf_class == out_port_class) {
 			Raul::Path path("/");
 			if (base_uri != subject.to_c_string()) {
-				string path_str = string("/") + (string)uri_relative_to_base(
-						base_uri, subject.to_c_string());
+				string path_str = (string)uri_relative_to_base(base_uri, subject.to_c_string());
+				if (path_str[0] != '/')
+					path_str = string("/").append(path_str);
 				if (Path::is_valid(path_str)) {
 					path = path_str;
 				} else {
-					cerr << "[Parser] ERROR: Invalid path " << path << endl;
+					cerr << "[Parser] ERROR: Invalid path '" << path << "'" << endl;
 					continue;
 				}
 			}
@@ -164,8 +176,8 @@ Parser::parse(
 				continue;
 
 			if (rdf_class == patch_class) {
-				ret = parse_patch(world, target, model, base_uri, subject.to_c_string(),
-						engine_base.get(), data);
+				ret = parse_patch(world, target, model, base_uri, engine_base,
+						subject.to_c_string(), data);
 				if (ret)
 					target->set_variable(path, "ingen:document", Atom(base_uri.c_str()));
 			} else if (rdf_class == node_class) {
@@ -193,8 +205,8 @@ Parser::parse_patch(
 		Ingen::Shared::CommonInterface*         target,
 		Redland::Model&                         model,
 		const Glib::ustring&                    base_uri,
-		const Glib::ustring&                    object_uri,
 		Glib::ustring                           engine_base,
+		const Glib::ustring&                    object_uri,
 		boost::optional<GraphObject::Variables> data=boost::optional<GraphObject::Variables>())
 {
 	std::set<Path> created;
@@ -222,6 +234,7 @@ Parser::parse_patch(
 
 		if (results.size() == 0) {
 			cerr << "[Parser] ERROR: No polyphony found!" << endl;
+			cerr << "Query was:" << endl << query.string() << endl;
 			return false;
 		}
 
@@ -237,10 +250,12 @@ Parser::parse_patch(
 		patch_path = "/";
 	else if (engine_base[engine_base.length()-1] == '/')
 		patch_path = Path(engine_base + symbol);
-	else
+	else if (Path::is_valid(engine_base))
 		patch_path = (Path)engine_base;
+	else
+		cerr << "WARNING: Illegal engine base path '" << engine_base << "', loading patch to root" << endl;	
 
-	if (patch_path != "/")
+	//if (patch_path != "/")
 		target->new_patch(patch_path, patch_poly);
 
 	/* Plugin nodes */

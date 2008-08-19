@@ -119,21 +119,26 @@ ObjectModel::polyphonic() const
  * @a model as correct.  The paths of the two models MUST be equal.
  */
 void
-ObjectModel::set(SharedPtr<ObjectModel> model)
+ObjectModel::set(SharedPtr<ObjectModel> o)
 {
-	assert(_path == model->path());
+	assert(_path == o->path());
+	if (o->_parent)
+		_parent = o->_parent;
 
-	for (Variables::const_iterator other = model->variables().begin();
-			other != model->variables().end(); ++other) {
-		
-		Variables::const_iterator mine = _variables.find(other->first);
-		
-		if (mine != _variables.end()) {
-			cerr << "WARNING:  " << _path << "Client/Server data mismatch: " << other->first << endl;
-		}
-
-		_variables[other->first] = other->second;
-		signal_variable.emit(other->first, other->second);
+	for (Variables::const_iterator v = o->variables().begin(); v != o->variables().end(); ++v) {
+		Variables::const_iterator mine = _variables.find(v->first);
+		if (mine != _variables.end())
+			cerr << "WARNING:  " << _path << "Client/Server variable mismatch: " << v->first << endl;
+		_variables[v->first] = v->second;
+		signal_variable.emit(v->first, v->second);
+	}
+	
+	for (Properties::const_iterator v = o->properties().begin(); v != o->properties().end(); ++v) {
+		Properties::const_iterator mine = _properties.find(v->first);
+		if (mine != _properties.end())
+			cerr << "WARNING:  " << _path << "Client/Server property mismatch: " << v->first << endl;
+		_properties[v->first] = v->second;
+		signal_variable.emit(v->first, v->second);
 	}
 }
 

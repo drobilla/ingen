@@ -269,7 +269,7 @@ PatchCanvas::build()
 	}
 
 	// Create pseudo modules for ports (ports on this canvas, not on our module)
-	for (PortModelList::const_iterator i = _patch->ports().begin();
+	for (NodeModel::Ports::const_iterator i = _patch->ports().begin();
 			i != _patch->ports().end(); ++i) {
 		add_port(*i);
 	}
@@ -590,8 +590,7 @@ PatchCanvas::paste()
 	clipboard.new_patch("/", _patch->poly());
 	
 	ClashAvoider avoider(*App::instance().store().get(), _patch->path(), clipboard, &clipboard);
-	parser->parse_string(App::instance().world(), &avoider, str, "/",
-			boost::optional<Glib::ustring>(), (Glib::ustring)_patch->path());
+	parser->parse_string(App::instance().world(), &avoider, str, "/", _patch->path());
 	
 	for (Store::iterator i = clipboard.begin(); i != clipboard.end(); ++i) {
 		cout << "************ OBJECT: " << i->first << endl;

@@ -41,6 +41,8 @@ class SigClientInterface : public Ingen::Shared::ClientInterface, public sigc::t
 {
 public:
 	SigClientInterface() : _enabled(true) {}
+	
+	bool enabled() const { return _enabled; }
 
 	std::string uri() const { return "(internal)"; }
 

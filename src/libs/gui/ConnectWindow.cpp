@@ -29,6 +29,7 @@
 #include "engine/Engine.hpp"
 #include "engine/QueuedEngineInterface.hpp"
 #include "client/OSCClientReceiver.hpp"
+#include "client/HTTPClientReceiver.hpp"
 #include "client/OSCEngineSender.hpp"
 #include "client/ThreadedSigClientInterface.hpp"
 #include "client/ClientStore.hpp"
@@ -143,7 +144,9 @@ ConnectWindow::set_connecting_widget_states()
 void
 ConnectWindow::connect(bool existing)
 {
-	assert(!_attached);
+	if (_attached)
+		_attached = false;
+
 	assert(!App::instance().client());
 
 	_connect_stage = 0;
@@ -153,15 +156,22 @@ ConnectWindow::connect(bool existing)
 
 	if (_mode == CONNECT_REMOTE) {
 		if (!existing) {
-			const string url = (_widgets_loaded ? _url_entry->get_text() : "osc.udp://localhost:16180");
+			const string url = (_widgets_loaded ? (string)_url_entry->get_text() : world->engine->uri());
 			world->engine = SharedPtr<EngineInterface>(new OSCEngineSender(url));
 		}
-
-		// FIXME: static args
+	
 		SharedPtr<ThreadedSigClientInterface> tsci(new ThreadedSigClientInterface(1024));
-		SharedPtr<OSCClientReceiver> client(new OSCClientReceiver(16181, tsci));
-		App::instance().attach(tsci, client);
+		SharedPtr<Raul::Deletable> client;
 		
+		const string& uri = world->engine->uri();
+		const string& scheme = uri.substr(0, uri.find(":"));
+		if (scheme == "osc.udp" || scheme == "osc.tcp")
+			client = SharedPtr<OSCClientReceiver>(new OSCClientReceiver(16181, tsci)); // FIXME: port
+		else if (scheme == "http")
+			client = SharedPtr<HTTPClientReceiver>(new HTTPClientReceiver(world, uri, tsci));
+		
+		App::instance().attach(tsci, client);
+
 		Glib::signal_timeout().connect(
 			sigc::mem_fun(App::instance(), &App::gtk_main_iteration), 40, G_PRIORITY_DEFAULT);
 
@@ -377,7 +387,7 @@ ConnectWindow::gtk_callback()
 		assert(App::instance().client());
 
 		App::instance().client()->signal_response_ok.connect(
-				sigc::mem_fun(this, &ConnectWindow::response_ok_received));
+				sigc::mem_fun(this, &ConnectWindow::on_response));
 		
 		_ping_id = abs(rand()) / 2 * 2; // avoid -1
 		App::instance().engine()->set_next_response_id(_ping_id);
@@ -391,7 +401,7 @@ ConnectWindow::gtk_callback()
 		++_connect_stage;
 
 	} else if (_connect_stage == 1) {
-		if (_attached) {
+		if (_attached || App::instance().client()->enabled()) {
 			App::instance().engine()->activate();
 			++_connect_stage;
 		} else {

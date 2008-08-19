@@ -25,18 +25,13 @@
 #include "raul/Deletable.hpp"
 
 namespace Ingen {
-
-/** Client library */
 namespace Client {
 
-//class NodeModel;
-
-/* Some boilerplate killing macros... */
+/** Arguments to a liblo handler */
 #define LO_HANDLER_ARGS const char* path, const char* types, lo_arg** argv, int argc, lo_message msg
 
-/* Defines a static handler to be passed to lo_add_method, which is a trivial
- * wrapper around a non-static method that does the real work.  Makes a whoole
- * lot of ugly boiler plate go away */
+/** Define a static handler to be passed to lo_add_method, which is a trivial
+ * wrapper around a non-static method that does the real work. */
 #define LO_HANDLER(name) \
 int _##name##_cb (LO_HANDLER_ARGS);\
 inline static int name##_cb(LO_HANDLER_ARGS, void* osc_listener)\
@@ -61,6 +56,8 @@ class OSCClientReceiver : public boost::noncopyable, public Raul::Deletable
 public:
 	OSCClientReceiver(int listen_port, SharedPtr<Shared::ClientInterface> target);
 	~OSCClientReceiver();
+
+	std::string uri() const { return lo_server_thread_get_url(_st); }
 
 	void start(bool dump_osc);
 	void stop();
@@ -105,7 +102,6 @@ private:
 
 
 } // namespace Client
-
 } // namespace Ingen
 
 #endif // OSCCLIENTRECEIVER_H

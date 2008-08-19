@@ -30,7 +30,7 @@ namespace Client {
 
 extern "C" {
 
-	SharedPtr<Shared::EngineInterface> new_osc_interface(const std::string& url);
+	SharedPtr<Shared::EngineInterface> new_remote_interface(const std::string& url);
 	SharedPtr<Shared::EngineInterface> new_queued_interface(SharedPtr<Ingen::Engine> engine);
 
 }

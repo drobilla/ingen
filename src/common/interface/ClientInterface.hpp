@@ -42,6 +42,8 @@ public:
 
 	virtual void response_ok(int32_t id) = 0;
 	virtual void response_error(int32_t id, const std::string& msg) = 0;
+
+	virtual bool enabled() const = 0;
 	
 	virtual void enable() = 0;
 	

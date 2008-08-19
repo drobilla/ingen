@@ -15,7 +15,8 @@ libingen_client_la_CXXFLAGS = \
 	@LXML2_CFLAGS@ \
 	@RAUL_CFLAGS@ \
 	@REDLANDMM_CFLAGS@ \
-	@SLV2_CFLAGS@
+	@SLV2_CFLAGS@ \
+	@SOUP_CFLAGS@
 
 libingen_client_la_LIBADD = \
 	../shared/libingen_shared.la \
@@ -25,14 +26,21 @@ libingen_client_la_LIBADD = \
 	@LXML2_LIBS@ \
 	@RAUL_LIBS@ \
 	@REDLANDMM_LIBS@ \
-	@SLV2_LIBS@
+	@SLV2_LIBS@ \
+	@SOUP_LIBS@
 
 libingen_client_la_SOURCES = \
 	$(top_srcdir)/ingen/src/common/interface/ClientInterface.hpp \
 	$(top_srcdir)/ingen/src/common/interface/EngineInterface.hpp \
+	ClientStore.cpp \
+	ClientStore.hpp \
 	ConnectionModel.hpp \
 	DeprecatedLoader.cpp \
 	DeprecatedLoader.hpp \
+	HTTPClientReceiver.cpp \
+	HTTPClientReceiver.hpp \
+	HTTPEngineSender.cpp \
+	HTTPEngineSender.hpp \
 	NodeModel.cpp \
 	NodeModel.hpp \
 	OSCClientReceiver.cpp \
@@ -45,13 +53,11 @@ libingen_client_la_SOURCES = \
 	PatchModel.hpp \
 	PluginModel.cpp \
 	PluginModel.hpp \
-	PluginUI.hpp \
 	PluginUI.cpp \
+	PluginUI.hpp \
 	PortModel.cpp \
 	PortModel.hpp \
 	SigClientInterface.hpp \
-	ClientStore.cpp \
-	ClientStore.hpp \
 	ThreadedSigClientInterface.cpp \
 	ThreadedSigClientInterface.hpp \
 	client.cpp \

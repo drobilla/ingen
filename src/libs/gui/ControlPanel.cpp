@@ -69,7 +69,7 @@ ControlPanel::init(SharedPtr<NodeModel> node, uint32_t poly)
 		_voice_control_box->hide();
 	}
 
-	for (PortModelList::const_iterator i = node->ports().begin(); i != node->ports().end(); ++i) {
+	for (NodeModel::Ports::const_iterator i = node->ports().begin(); i != node->ports().end(); ++i) {
 		add_port(*i);
 	}
 		

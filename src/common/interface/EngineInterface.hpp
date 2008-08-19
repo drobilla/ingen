@@ -38,6 +38,8 @@ class EngineInterface : public CommonInterface
 {
 public:
 	virtual ~EngineInterface() {}
+
+	virtual std::string uri() const = 0;
 	
 	// Responses
 	virtual void set_next_response_id(int32_t id) = 0;

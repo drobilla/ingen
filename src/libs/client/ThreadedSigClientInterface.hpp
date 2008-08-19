@@ -21,10 +21,12 @@
 #include <inttypes.h>
 #include <string>
 #include <sigc++/sigc++.h>
+#include <glibmm/thread.h>
 #include "interface/ClientInterface.hpp"
 #include "SigClientInterface.hpp"
-#include <raul/SRSWQueue.hpp>
 #include <raul/Atom.hpp>
+#include <raul/SRSWQueue.hpp>
+
 using std::string;
 
 /** Returns nothing and takes no parameters (because they have all been bound) */
@@ -65,11 +67,14 @@ public:
 	, port_activity_slot(signal_port_activity.make_slot())
 	, program_add_slot(signal_program_add.make_slot())
 	, program_remove_slot(signal_program_remove.make_slot())
-	{}
+	{
+	}
 
 	virtual std::string uri() const { return "(internal)"; }
 
     virtual void subscribe(Shared::EngineInterface* engine) { throw; }
+
+	bool enabled() const { return _attached; }
 
 	void bundle_begin()
 		{ push_sig(bundle_begin_slot); }
@@ -143,7 +148,11 @@ public:
 private:
 	void push_sig(Closure ev);
 	
+	Glib::Mutex _mutex;
+	Glib::Cond  _cond;
+
 	Raul::SRSWQueue<Closure> _sigs;
+	bool                     _attached;
 
 	sigc::slot<void>                                     bundle_begin_slot; 
 	sigc::slot<void>                                     bundle_end_slot; 

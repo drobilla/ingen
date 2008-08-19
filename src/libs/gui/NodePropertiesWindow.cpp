@@ -53,8 +53,6 @@ NodePropertiesWindow::set_node(SharedPtr<NodeModel> node_model)
 	_node_polyphonic_toggle->set_active(node_model->polyphonic());
 
 	const PluginModel* pm = dynamic_cast<const PluginModel*>(node_model->plugin());
-	assert(pm);
-	
 	if (pm) {
 		_plugin_type_label->set_text(pm->type_uri());
 		_plugin_uri_label->set_text(pm->uri());

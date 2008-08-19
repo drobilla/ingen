@@ -89,7 +89,7 @@ PatchTreeWindow::add_patch(SharedPtr<PatchModel> pm)
 		Gtk::TreeModel::Row row = *iter;
 		if (pm->path() == "/") {
 			SharedPtr<OSCEngineSender> osc_sender = PtrCast<OSCEngineSender>(App::instance().engine());
-			string root_name = osc_sender ? osc_sender->engine_url() : "Internal";
+			string root_name = osc_sender ? osc_sender->uri() : "Internal";
 			// Hack off trailing '/' if it's there (ugly)
 			//if (root_name.substr(root_name.length()-1,1) == "/")
 			//	root_name = root_name.substr(0, root_name.length()-1);
