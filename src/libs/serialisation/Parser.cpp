@@ -219,8 +219,11 @@ Parser::parse_patch(
 			patch_poly = poly_param->second.get_int32();
 	}
 	
-	const Glib::ustring subject = ((object_uri[0] == '<')
+	Glib::ustring subject = ((object_uri[0] == '<')
 			? object_uri : Glib::ustring("<") + object_uri + ">");
+
+	if (subject[0] == '<' && subject[1] == '/')
+		subject = string("<").append(subject.substr(2));
 	
 	//cout << "**** LOADING PATCH URI " << object_uri << ", SUBJ " << subject
 	//	<< ", ENG BASE " << engine_base << endl;
@@ -252,6 +255,8 @@ Parser::parse_patch(
 		patch_path = Path(engine_base + symbol);
 	else if (Path::is_valid(engine_base))
 		patch_path = (Path)engine_base;
+	else if (Path::is_valid(string("/").append(engine_base)))
+		patch_path = (Path)(string("/").append(engine_base));
 	else
 		cerr << "WARNING: Illegal engine base path '" << engine_base << "', loading patch to root" << endl;	
 
