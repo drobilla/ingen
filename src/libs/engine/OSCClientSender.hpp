@@ -67,8 +67,6 @@ public:
 	void response_ok(int32_t id);
 	void response_error(int32_t id, const std::string& msg);
 
-	void num_plugins(uint32_t num);
-
 	void error(const std::string& msg);
 
 	virtual void new_plugin(const std::string& uri,

@@ -81,7 +81,6 @@ private:
 	LO_HANDLER(error);
 	LO_HANDLER(response_ok);
 	LO_HANDLER(response_error);
-	LO_HANDLER(num_plugins);
 	LO_HANDLER(plugin);
 	LO_HANDLER(plugin_list_end);
 	LO_HANDLER(new_patch);

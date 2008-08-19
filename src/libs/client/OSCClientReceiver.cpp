@@ -141,7 +141,6 @@ OSCClientReceiver::setup_callbacks()
 {
 	lo_server_thread_add_method(_st, "/ingen/ok", "i", response_ok_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/error", "is", response_error_cb, this);
-	lo_server_thread_add_method(_st, "/ingen/num_plugins", "i", num_plugins_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/plugin", "ssss", plugin_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/new_patch", "si", new_patch_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/destroyed", "s", destroyed_cb, this);
@@ -346,18 +345,6 @@ OSCClientReceiver::_response_error_cb(const char* path, const char* types, lo_ar
 {
 	assert(!strcmp(types, "is"));
 	response_error(argv[0]->i, &argv[1]->s);
-
-	return 0;
-}
-
-
-/** Number of plugins in engine, should precede /ingen/plugin messages in response
- * to a /ingen/send_plugins
- */
-int
-OSCClientReceiver::_num_plugins_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
-{
-	num_plugins(argv[0]->i);
 
 	return 0;
 }

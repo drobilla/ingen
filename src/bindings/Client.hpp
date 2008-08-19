@@ -38,8 +38,6 @@ public:
 	
 	virtual void error(const std::string& msg)  {}
 	
-	virtual void num_plugins(uint32_t num_plugins)  {}
-	
 	virtual void new_plugin(const std::string& uri,
 	                        const std::string& type_uri,
 	                        const std::string& symbol,

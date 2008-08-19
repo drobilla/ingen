@@ -51,7 +51,6 @@ public:
 	sigc::signal<void>                                     signal_bundle_begin; 
 	sigc::signal<void>                                     signal_bundle_end; 
 	sigc::signal<void, string>                             signal_error; 
-	sigc::signal<void, uint32_t>                           signal_num_plugins; 
 	sigc::signal<void, string, string, string, string>     signal_new_plugin; 
 	sigc::signal<void, string, uint32_t>                   signal_new_patch; 
 	sigc::signal<void, string, string>                     signal_new_node; 
@@ -89,8 +88,6 @@ protected:
 
 	void transfer_begin() {}
 	void transfer_end()   {}
-
-	void num_plugins(uint32_t num) { signal_num_plugins.emit(num); }
 
 	void response_ok(int32_t id)
 		{ if (_enabled) signal_response_ok.emit(id); }

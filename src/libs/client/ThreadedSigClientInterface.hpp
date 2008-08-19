@@ -80,8 +80,6 @@ public:
 	void transfer_begin() {}
 	void transfer_end()   {}
 
-	void num_plugins(uint32_t num) { _num_plugins = num; }
-
 	void response_ok(int32_t id)
 		{ push_sig(sigc::bind(response_ok_slot, id)); }
 	
@@ -146,11 +144,9 @@ private:
 	void push_sig(Closure ev);
 	
 	Raul::SRSWQueue<Closure> _sigs;
-	uint32_t                 _num_plugins;
 
 	sigc::slot<void>                                     bundle_begin_slot; 
 	sigc::slot<void>                                     bundle_end_slot; 
-	sigc::slot<void, uint32_t>                           num_plugins_slot; 
 	sigc::slot<void, int32_t>                            response_ok_slot; 
 	sigc::slot<void, int32_t, string>                    response_error_slot; 
 	sigc::slot<void, string>                             error_slot; 
