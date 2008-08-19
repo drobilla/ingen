@@ -38,11 +38,11 @@ class CommonInterface
 public:
 	virtual ~CommonInterface() {}
 	
-	// Bundles
+	/** Begin an atomic bundle */
 	virtual void bundle_begin() = 0;
-	virtual void bundle_end()   = 0;
-	
-	// Object commands
+
+	/** End (and send) an atomic bundle */
+	virtual void bundle_end() = 0;
 	
 	virtual void new_patch(const std::string& path,
 	                       uint32_t           poly) = 0;

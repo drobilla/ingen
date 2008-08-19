@@ -50,13 +50,6 @@ public:
 	 */
 	virtual void disable() = 0;
 
-	/** Bundles are a group of messages that are guaranteed to be in an
-	 * atomic unit with guaranteed order (eg a packet).  For datagram
-	 * protocols (like UDP) there is likely an upper limit on bundle size.
-	 */
-	virtual void bundle_begin() = 0;
-	virtual void bundle_end()   = 0;
-	
 	/** Transfers are 'weak' bundles.  These are used to break a large group
 	 * of similar/related messages into larger chunks (solely for communication
 	 * efficiency).  A bunch of messages in a transfer will arrive as 1 or more
