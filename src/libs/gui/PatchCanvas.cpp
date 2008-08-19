@@ -665,13 +665,13 @@ PatchCanvas::menu_add_control(ControlType type)
 void
 PatchCanvas::menu_add_port(const string& name, const string& type, bool is_output)
 {
-	// FIXME: bundleify
 	const Path& path = _patch->path().base() + generate_port_name(name);
-	// FIXME: index
-	App::instance().engine()->new_port(path, 0, type, is_output);
+	App::instance().engine()->bundle_begin();
+	App::instance().engine()->new_port(path, _patch->num_ports(), type, is_output);
 	GraphObject::Variables data = get_initial_data();
 	for (GraphObject::Variables::const_iterator i = data.begin(); i != data.end(); ++i)
 		App::instance().engine()->set_variable(path, i->first, i->second);
+	App::instance().engine()->bundle_end();
 }
 
 

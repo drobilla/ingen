@@ -348,7 +348,7 @@ PatchImpl::create_port(const string& name, DataType type, size_t buffer_size, bo
 
 	assert( !(type == DataType::UNKNOWN) );
 
-	return new DuplexPort(this, name, 0, _polyphony, type, Atom(), buffer_size, is_output);
+	return new DuplexPort(this, name, num_ports(), _polyphony, type, Atom(), buffer_size, is_output);
 }
 
 
