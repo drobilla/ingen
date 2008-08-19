@@ -304,28 +304,12 @@ OSCClientSender::new_plugin(const std::string& uri,
                             const std::string& symbol,
                             const std::string& name)
 {
-	// FIXME: size?  liblo doesn't export this.
-	// Don't want to exceed max UDP packet size (1500 bytes)
-	static const size_t MAX_BUNDLE_SIZE = 1500 - 32*5;
-		
 	lo_message m = lo_message_new();
 	lo_message_add_string(m, uri.c_str());
 	lo_message_add_string(m, type_uri.c_str());
 	lo_message_add_string(m, symbol.c_str());
 	lo_message_add_string(m, name.c_str());
-	
-	if (_transfer) {
-
-		if (lo_bundle_length(_transfer) + lo_message_length(m, "/ingen/plugin")
-				> MAX_BUNDLE_SIZE) {
-			lo_send_bundle(_address, _transfer);
-			_transfer = lo_bundle_new(LO_TT_IMMEDIATE);
-		}
-		lo_bundle_add_message(_transfer, "/ingen/plugin", m);
-
-	} else {
-		lo_send_message(_address, "/ingen/plugin", m);
-	}
+	send_message("/ingen/plugin", m);
 }
 
 

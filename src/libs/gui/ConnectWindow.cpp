@@ -171,9 +171,7 @@ ConnectWindow::connect(bool existing)
 			client = SharedPtr<HTTPClientReceiver>(new HTTPClientReceiver(world, uri, tsci));
 		
 		App::instance().attach(tsci, client);
-
-		Glib::signal_timeout().connect(
-			sigc::mem_fun(App::instance(), &App::gtk_main_iteration), 40, G_PRIORITY_DEFAULT);
+		App::instance().register_callbacks();
 
 		Glib::signal_timeout().connect(
 			sigc::mem_fun(this, &ConnectWindow::gtk_callback), 40);
@@ -192,10 +190,9 @@ ConnectWindow::connect(bool existing)
 			// FIXME: static args
 			SharedPtr<ThreadedSigClientInterface> tsci(new ThreadedSigClientInterface(1024));
 			SharedPtr<OSCClientReceiver> client(new OSCClientReceiver(16181, tsci));
+		
 			App::instance().attach(tsci, client);
-
-			Glib::signal_timeout().connect(
-					sigc::mem_fun(App::instance(), &App::gtk_main_iteration), 40, G_PRIORITY_DEFAULT);
+			App::instance().register_callbacks();
 
 			Glib::signal_timeout().connect(
 					sigc::mem_fun(this, &ConnectWindow::gtk_callback), 40);
@@ -220,9 +217,7 @@ ConnectWindow::connect(bool existing)
 		world->local_engine->activate(1); // FIXME: parallelism
 		
 		App::instance().attach(client);
-
-		Glib::signal_timeout().connect(
-			sigc::mem_fun(App::instance(), &App::gtk_main_iteration), 40, G_PRIORITY_DEFAULT);
+		App::instance().register_callbacks();
 		
 		Glib::signal_timeout().connect(
 			sigc::mem_fun(this, &ConnectWindow::gtk_callback), 10);

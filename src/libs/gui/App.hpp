@@ -91,7 +91,9 @@ public:
 
 	void detach();
 	
+	void register_callbacks();
 	bool gtk_main_iteration();
+
 	void show_about();
 	void quit();
 	

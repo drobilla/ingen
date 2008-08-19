@@ -18,6 +18,7 @@
 #include "OSCSender.hpp"
 #include <cassert>
 #include <iostream>
+#include <unistd.h>
 
 using namespace std;
 
@@ -37,7 +38,9 @@ void
 OSCSender::bundle_begin()
 {
 	assert(!_transfer);
-	_transfer = lo_bundle_new(LO_TT_IMMEDIATE);
+	lo_timetag t;
+	lo_timetag_now(&t);
+	_transfer = lo_bundle_new(t);
 	_send_state = SendingBundle;
 }
 
@@ -53,7 +56,9 @@ void
 OSCSender::transfer_begin()
 {
 	assert(!_transfer);
-	_transfer = lo_bundle_new(LO_TT_IMMEDIATE);
+	lo_timetag t;
+	lo_timetag_now(&t);
+	_transfer = lo_bundle_new(t);
 	_send_state = SendingTransfer;
 }
 
@@ -99,13 +104,15 @@ OSCSender::send_message(const char* path, lo_message msg)
 
 	if (!_enabled)
 		return;
-		
+			
 	if (_transfer) {
+		lo_timetag t;
 		if (lo_bundle_length(_transfer) + lo_message_length(msg, path) > MAX_BUNDLE_SIZE) {
-			if (_send_state == SendingBundle)
+			//if (_send_state == SendingBundle)
 				cerr << "WARNING: Maximum bundle size reached, bundle split" << endl;
 			lo_send_bundle(_address, _transfer);
-			_transfer = lo_bundle_new(LO_TT_IMMEDIATE);
+			lo_timetag_now(&t);
+			_transfer = lo_bundle_new(t);
 		}
 		lo_bundle_add_message(_transfer, path, msg);
 

@@ -52,24 +52,22 @@ ObjectSender::send_patch(ClientInterface* client, const PatchImpl* patch, bool r
 		// Send nodes
 		for (List<NodeImpl*>::const_iterator j = patch->nodes().begin();
 				j != patch->nodes().end(); ++j) {
-
 			const NodeImpl* const node = (*j); 
 			send_node(client, node, true);
 		}
 
 		// Send ports
 		for (uint32_t i=0; i < patch->num_ports(); ++i) {
-
 			PortImpl* const port = patch->port_impl(i);
 			send_port(client, port);
-
 		}
 
 		// Send connections
+		client->transfer_begin();
 		for (PatchImpl::Connections::const_iterator j = patch->connections().begin();
 				j != patch->connections().end(); ++j)
 			client->connect((*j)->src_port_path(), (*j)->dst_port_path());
-
+		client->transfer_end();
 	}
 }
 

@@ -333,6 +333,17 @@ App::event_save_session_as()
 #endif
 
 
+void
+App::register_callbacks()
+{
+	Glib::signal_timeout().connect(
+		sigc::mem_fun(App::instance(), &App::gtk_main_iteration), 25, G_PRIORITY_DEFAULT);
+	
+	Glib::signal_timeout().connect(
+		sigc::mem_fun(App::instance(), &App::animate), 50, G_PRIORITY_DEFAULT);
+}
+
+
 bool
 App::gtk_main_iteration()
 {
@@ -347,8 +358,6 @@ App::gtk_main_iteration()
 		_enable_signal = true;
 	}
 		
-	animate();
-	
 	return true;
 }
 
