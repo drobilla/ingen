@@ -19,6 +19,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <string>
+#include <boost/format.hpp>
 #include "types.hpp"
 #include <raul/SharedPtr.hpp>
 #include <raul/AtomLiblo.hpp>
@@ -110,6 +111,9 @@ HTTPEngineReceiver::message_callback(SoupServer* server, SoupMessage* msg, const
 
 	if (!Path::is_valid(path)) {
 		soup_message_set_status (msg, SOUP_STATUS_BAD_REQUEST);
+		const string& err = (boost::format("Bad path: %1%") % path).str();
+		soup_message_set_response (msg, "text/plain", SOUP_MEMORY_COPY,
+				err.c_str(), err.length());
 		return;
 	}
 
@@ -120,6 +124,9 @@ HTTPEngineReceiver::message_callback(SoupServer* server, SoupMessage* msg, const
 		Store::const_iterator start = store->find(path);
 		if (start == store->end()) {
 			soup_message_set_status (msg, SOUP_STATUS_NOT_FOUND);
+			const string& err = (boost::format("No such object: %1%") % path).str();
+			soup_message_set_response (msg, "text/plain", SOUP_MEMORY_COPY,
+					err.c_str(), err.length());
 			return;
 		}
 		
@@ -127,6 +134,8 @@ HTTPEngineReceiver::message_callback(SoupServer* server, SoupMessage* msg, const
 		SharedPtr<Serialiser> serialiser = me->_engine.world()->serialiser;
 		if (!serialiser) {
 			soup_message_set_status (msg, SOUP_STATUS_INTERNAL_SERVER_ERROR);
+			soup_message_set_response (msg, "text/plain", SOUP_MEMORY_STATIC,
+					"No serialiser available\n", 24);
 			return;
 		}
 
@@ -137,8 +146,8 @@ HTTPEngineReceiver::message_callback(SoupServer* server, SoupMessage* msg, const
 #endif
 
 		// Serialise object
-		const string response = serialiser->to_string(start->second, "http://example.org",
-				GraphObject::Variables());
+		const string response = serialiser->to_string(start->second,
+				"http://example.org", GraphObject::Variables());
 
 #if 0
 		FILE* xhtml_file = fopen("/home/dave/ingen_ui.xhtml", "r");
