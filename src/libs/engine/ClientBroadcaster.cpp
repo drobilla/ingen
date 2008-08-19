@@ -157,7 +157,7 @@ ClientBroadcaster::send_destroyed(const string& path)
 {
 	assert(path != "/");
 	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
-		(*i).second->object_destroyed(path);
+		(*i).second->destroy(path);
 }
 
 

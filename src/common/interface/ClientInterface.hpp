@@ -77,8 +77,6 @@ public:
 	virtual void object_renamed(const std::string& old_path,
 	                            const std::string& new_path) = 0;
 	
-	virtual void object_destroyed(const std::string& path) = 0;
-	
 	virtual void port_activity(const std::string& port_path) = 0;
 	
 	virtual void program_add(const std::string& node_path,

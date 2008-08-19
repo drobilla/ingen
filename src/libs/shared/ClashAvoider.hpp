@@ -80,6 +80,8 @@ public:
 	void set_voice_value(const std::string& port_path,
 	                     uint32_t           voice,
 	                     const Raul::Atom&  value);
+	
+	void destroy(const std::string& path);
 
 private:
 	const Raul::Path map_path(const Raul::Path& in);

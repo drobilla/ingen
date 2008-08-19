@@ -60,8 +60,6 @@ public:
 	virtual void object_renamed(const std::string& old_path,
 	                            const std::string& new_path)  {}
 	
-	virtual void object_destroyed(const std::string& path)  {}
-	
 	virtual void connect(const std::string& src_port_path,
 	                     const std::string& dst_port_path)  {}
 	

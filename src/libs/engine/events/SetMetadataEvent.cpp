@@ -99,8 +99,7 @@ SetMetadataEvent::post_process()
 	if (_error == INVALID_PATH) {
 		_responder->respond_error((boost::format("Invalid path %1% setting %2%") % _path % _key).str());
 	} else if (_object == NULL) {
-		string msg = "Unable to find object ";
-		msg += _path;
+		string msg = (boost::format("Unable to find object %1% to set %2%") % _path % _key).str();
 		_responder->respond_error(msg);
 	} else {
 		_responder->respond_ok();

@@ -68,8 +68,6 @@ public:
 	virtual void rename(const std::string& old_path,
 	                    const std::string& new_symbol) = 0;
 	
-	virtual void destroy(const std::string& path) = 0;
-	
 	virtual void clear_patch(const std::string& patch_path) = 0;
 
 	virtual void disconnect_all(const std::string& parent_patch_path,

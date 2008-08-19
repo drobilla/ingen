@@ -169,7 +169,7 @@ OSCClientSender::new_port(const std::string& path,
  * \arg \b path (string) - Path of object (which no longer exists) </p> \n \n
  */
 void
-OSCClientSender::object_destroyed(const std::string& path)
+OSCClientSender::destroy(const std::string& path)
 {
 	assert(path != "/");
 	

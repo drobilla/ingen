@@ -42,7 +42,7 @@ ClientStore::ClientStore(SharedPtr<EngineInterface> engine, SharedPtr<SigClientI
 	if (!emitter)
 		return;
 
-	emitter->signal_object_destroyed.connect(sigc::mem_fun(this, &ClientStore::destruction));
+	emitter->signal_object_destroyed.connect(sigc::mem_fun(this, &ClientStore::destroy));
 	emitter->signal_object_renamed.connect(sigc::mem_fun(this, &ClientStore::rename));
 	emitter->signal_new_plugin.connect(sigc::mem_fun(this, &ClientStore::new_plugin));
 	emitter->signal_new_patch.connect(sigc::mem_fun(this, &ClientStore::new_patch));
@@ -324,7 +324,6 @@ ClientStore::remove_object(const Path& path)
 		return result;
 
 	} else {
-		cerr << "[Store] Unable to find object " << path << " to remove." << endl;
 		return SharedPtr<ObjectModel>();
 	}
 }
@@ -372,14 +371,11 @@ ClientStore::add_plugin(SharedPtr<PluginModel> pm)
 
 
 void
-ClientStore::destruction(const Path& path)
+ClientStore::destroy(const std::string& path)
 {
 	SharedPtr<ObjectModel> removed = remove_object(path);
-
 	removed.reset();
-
-	/*cerr << "Store removed object " << path
-		<< ", count: " << removed.use_count();*/
+	//cerr << "[ClientStore] removed object " << path << ", count: " << removed.use_count();
 }
 
 void

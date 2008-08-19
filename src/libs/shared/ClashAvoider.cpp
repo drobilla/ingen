@@ -203,5 +203,12 @@ ClashAvoider::set_voice_value(const std::string& port_path,
 }
 
 
+void
+ClashAvoider::destroy(const std::string& path)
+{
+	_target.destroy(map_path(path));
+}
+
+
 } // namespace Shared
 } // namespace Ingen

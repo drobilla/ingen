@@ -104,7 +104,7 @@ public:
 	void connect(const string& src_port_path, const string& dst_port_path)
 		{ push_sig(sigc::bind(connection_slot, src_port_path, dst_port_path)); }
 
-	void object_destroyed(const string& path)
+	void destroy(const string& path)
 		{ push_sig(sigc::bind(object_destroyed_slot, path)); }
 	
 	void patch_cleared(const string& path)

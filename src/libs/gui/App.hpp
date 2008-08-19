@@ -95,8 +95,8 @@ public:
 	void port_activity(Port* port);
 
 	bool signal() const { return _enable_signal; }
-	void enable_signals()  { _enable_signal = true; }
-	void disable_signals() { _enable_signal = false; }
+	bool disable_signals()  { bool old = _enable_signal; _enable_signal = false; return old; }
+	void enable_signals(bool b) { _enable_signal = b; }
 
 	ConnectWindow*     connect_window()  const { return _connect_window; }
 	MessagesWindow*    messages_dialog() const { return _messages_window; }

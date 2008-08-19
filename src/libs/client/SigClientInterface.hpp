@@ -113,7 +113,7 @@ protected:
 	void connect(const string& src_port_path, const string& dst_port_path)
 		{ if (_enabled) signal_connection.emit(src_port_path, dst_port_path); }
 
-	void object_destroyed(const string& path)
+	void destroy(const string& path)
 		{ if (_enabled) signal_object_destroyed.emit(path); }
 	
 	void patch_cleared(const string& path)

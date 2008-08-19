@@ -73,7 +73,7 @@ SetPolyphonicEvent::post_process()
 			_responder->respond_error("Unable to set object as polyphonic");
 		}
 	} else {
-		_responder->respond_error("Unable to find object");
+		_responder->respond_error("Unable to find object to set polyphonic");
 	}
 }
 

@@ -79,6 +79,7 @@ public:
 	void set_voice_value(const string& port_path, uint32_t voice, const Raul::Atom& value);
 	void connect(const string& src_port_path, const string& dst_port_path);
 	void disconnect(const string& src_port_path, const string& dst_port_path);
+	void destroy(const string& path);
 	
 	typedef list< std::pair<Path, Path> > ConnectionRecords;
 	const ConnectionRecords& connection_records() { return _connection_orphans; }
@@ -115,7 +116,6 @@ private:
 	void bundle_end()   {}
 
 	// Slots for SigClientInterface signals
-	void destruction(const Path& path);
 	void rename(const Path& old_path, const Path& new_path);
 	void patch_cleared(const Path& path);
 	void port_activity(const Path& port_path);

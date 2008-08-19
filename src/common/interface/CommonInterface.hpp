@@ -75,6 +75,8 @@ public:
 	virtual void set_voice_value(const std::string& port_path,
 	                             uint32_t           voice,
 	                             const Raul::Atom&  value) = 0;
+	
+	virtual void destroy(const std::string& path) = 0;
 };
 
 

@@ -181,7 +181,7 @@ OSCClientReceiver::_new_patch_cb(const char* path, const char* types, lo_arg** a
 int
 OSCClientReceiver::_destroyed_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	object_destroyed((const char*)&argv[0]->s);
+	destroy((const char*)&argv[0]->s);
 	return 0;
 }
 

@@ -86,7 +86,7 @@ public:
 	
 	virtual void patch_cleared(const std::string& path);
 	
-	virtual void object_destroyed(const std::string& path);
+	virtual void destroy(const std::string& path);
 	
 	virtual void object_renamed(const std::string& old_path,
 	                            const std::string& new_path);
