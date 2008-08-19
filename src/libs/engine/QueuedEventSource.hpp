@@ -22,10 +22,13 @@
 #include <pthread.h>
 #include "types.hpp"
 #include <raul/Semaphore.hpp>
+#include <raul/AtomicInt.hpp>
 #include <raul/SRSWQueue.hpp>
 #include <raul/Slave.hpp>
 #include "Event.hpp"
 #include "EventSource.hpp"
+
+using Raul::AtomicInt;
 
 namespace Ingen {
 
@@ -62,7 +65,7 @@ protected:
 	Event*        pop_earliest_queued_before(const SampleCount time);
 	inline Event* pop_earliest_stamped_before(const SampleCount time);
 
-	inline bool unprepared_events() { return (_prepared_back != _back); }
+	inline bool unprepared_events() { return (_prepared_back.get() != _back.get()); }
 	
 	virtual void _whipped(); ///< Prepare 1 event
 
@@ -72,12 +75,14 @@ private:
 	
 	//(FIXME: make this a separate class?)
 	// 2-part queue for events that require pre-processing: 
-	size_t          _front;         ///< Front of queue
-	size_t          _back;          ///< Back of entire queue (1 past index of back element)
-	size_t          _prepared_back; ///< Back of prepared section (1 past index of back prepared element)
+	AtomicInt       _front;         ///< Front of queue
+	AtomicInt       _back;          ///< Back of entire queue (1 past index of back element)
+	AtomicInt       _prepared_back; ///< Back of prepared section (1 past index of back prepared element)
 	const size_t    _size;
 	QueuedEvent**   _events;
 	Raul::Semaphore _blocking_semaphore;
+
+	Raul::Semaphore _full_semaphore;
 
 	/** Queue for timestamped events (no pre-processing). */
 	Raul::SRSWQueue<Event*> _stamped_queue;

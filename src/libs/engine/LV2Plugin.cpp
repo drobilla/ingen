@@ -70,8 +70,6 @@ LV2Plugin::instantiate(const string&     name,
 		n = NULL;
 	}
 	
-
-
 	return n;
 }
 	
