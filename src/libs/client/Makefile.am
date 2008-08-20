@@ -35,10 +35,6 @@ libingen_client_la_SOURCES = \
 	ConnectionModel.hpp \
 	DeprecatedLoader.cpp \
 	DeprecatedLoader.hpp \
-	HTTPClientReceiver.cpp \
-	HTTPClientReceiver.hpp \
-	HTTPEngineSender.cpp \
-	HTTPEngineSender.hpp \
 	NodeModel.cpp \
 	NodeModel.hpp \
 	OSCClientReceiver.cpp \
@@ -60,6 +56,14 @@ libingen_client_la_SOURCES = \
 	ThreadedSigClientInterface.hpp \
 	client.cpp \
 	client.hpp
+
+if WITH_SOUP
+libingen_client_la_SOURCES += \
+	HTTPClientReceiver.cpp \
+	HTTPClientReceiver.hpp \
+	HTTPEngineSender.cpp \
+	HTTPEngineSender.hpp
+endif
 
 endif # BUILD_CLIENT_LIB
 
