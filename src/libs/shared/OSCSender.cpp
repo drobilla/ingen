@@ -107,7 +107,7 @@ OSCSender::send_message(const char* path, lo_message msg)
 			
 	if (_transfer) {
 		if (lo_bundle_length(_transfer) + lo_message_length(msg, path) > MAX_BUNDLE_SIZE) {
-			//if (_send_state == SendingBundle)
+			if (_send_state == SendingBundle)
 				cerr << "WARNING: Maximum bundle size reached, bundle split" << endl;
 			lo_send_bundle(_address, _transfer);
 			lo_timetag t;
