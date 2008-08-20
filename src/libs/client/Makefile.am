@@ -30,8 +30,6 @@ libingen_client_la_LIBADD = \
 	@SOUP_LIBS@
 
 libingen_client_la_SOURCES = \
-	$(top_srcdir)/ingen/src/common/interface/ClientInterface.hpp \
-	$(top_srcdir)/ingen/src/common/interface/EngineInterface.hpp \
 	ClientStore.cpp \
 	ClientStore.hpp \
 	ConnectionModel.hpp \
