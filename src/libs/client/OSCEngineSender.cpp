@@ -20,6 +20,7 @@
 #include "OSCEngineSender.hpp"
 
 using namespace std;
+using Raul::Atom;
 
 namespace Ingen {
 namespace Client {
@@ -260,7 +261,10 @@ OSCEngineSender::set_port_value(const string&     port_path,
                                 const Raul::Atom& value)
 {
 	lo_message m = lo_message_new();
+	lo_message_add_int32(m, next_id());
 	lo_message_add_string(m, port_path.c_str());
+	if (value.type() == Atom::BLOB)
+		lo_message_add_string(m, value.get_blob_type());
 	Raul::AtomLiblo::lo_message_add_atom(m, value);
 	send_message("/ingen/set_port_value", m);
 }
@@ -272,8 +276,11 @@ OSCEngineSender::set_voice_value(const string&     port_path,
                                  const Raul::Atom& value)
 {
 	lo_message m = lo_message_new();
+	lo_message_add_int32(m, next_id());
 	lo_message_add_string(m, port_path.c_str());
 	lo_message_add_int32(m, voice);
+	if (value.type() == Atom::BLOB)
+		lo_message_add_string(m, value.get_blob_type());
 	Raul::AtomLiblo::lo_message_add_atom(m, value);
 	send_message("/ingen/set_port_value", m);
 }
@@ -284,7 +291,10 @@ OSCEngineSender::set_port_value_immediate(const string&     port_path,
                                           const Raul::Atom& value)
 {
 	lo_message m = lo_message_new();
+	lo_message_add_int32(m, next_id());
 	lo_message_add_string(m, port_path.c_str());
+	if (value.type() == Atom::BLOB)
+		lo_message_add_string(m, value.get_blob_type());
 	Raul::AtomLiblo::lo_message_add_atom(m, value);
 	send_message("/ingen/set_port_value_immediate", m);
 }
@@ -296,8 +306,11 @@ OSCEngineSender::set_voice_value_immediate(const string&     port_path,
                                            const Raul::Atom& value)
 {
 	lo_message m = lo_message_new();
+	lo_message_add_int32(m, next_id());
 	lo_message_add_string(m, port_path.c_str());
 	lo_message_add_int32(m, voice);
+	if (value.type() == Atom::BLOB)
+		lo_message_add_string(m, value.get_blob_type());
 	Raul::AtomLiblo::lo_message_add_atom(m, value);
 	send_message("/ingen/set_port_value_immediate", m);
 }
