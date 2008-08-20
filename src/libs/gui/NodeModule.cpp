@@ -104,8 +104,10 @@ NodeModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeModel> n
 void
 NodeModule::value_changed(uint32_t index, const Atom& value)
 {
-	if (value.type() == Atom::FLOAT) {
-		float control = value.get_float();
+	float control = 0.0f;
+	switch (value.type()) {
+	case Atom::FLOAT:
+		control = value.get_float();
 		if (_plugin_ui) {
 			SLV2UIInstance inst = _plugin_ui->instance();
 			const LV2UI_Descriptor* ui_descriptor = slv2_ui_instance_get_descriptor(inst);
@@ -113,8 +115,12 @@ NodeModule::value_changed(uint32_t index, const Atom& value)
 			if (ui_descriptor->port_event)
 				ui_descriptor->port_event(ui_handle, index, 4, 0, &control);
 		}
-	} else {
-		cerr << "WARNING: Unknown value type " << (int)value.type() << endl;
+		break;
+	case Atom::STRING:
+		cout << "Port value type is a string? (\"" << value.get_string() << "\")" << endl;
+		break;
+	default:
+		break;
 	}
 }
 

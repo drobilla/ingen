@@ -181,7 +181,7 @@ EventBuffer::append(uint32_t       frames,
 	/*cout << "Appending event type " << type << ", size " << size
 		<< " @ " << frames << "." << subframes << endl;*/
 
-	bool ret = lv2_event_write(&_iter, frames, subframes, type, size, data);
+	const bool ret = lv2_event_write(&_iter, frames, subframes, type, size, data);
 	
 	if (!ret)
 		cerr << "ERROR: Failed to write event." << endl;
@@ -219,7 +219,6 @@ EventBuffer::append(const LV2_Event_Buffer* buf)
 		if (!(ret = append(ev->frames, ev->subframes, ev->type, ev->size, *data))) {
 			cerr << "ERROR: Failed to write event." << endl;
 			break;
-		} else {
 		}
 
 		_latest_frames = ev->frames;
