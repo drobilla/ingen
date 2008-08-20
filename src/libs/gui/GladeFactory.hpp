@@ -21,8 +21,6 @@
 #include <string>
 #include <libglademm/xml.h>
 
-using std::string;
-
 namespace Ingen {
 namespace GUI {
 
@@ -35,11 +33,9 @@ namespace GUI {
 class GladeFactory {
 public:
 	static Glib::RefPtr<Gnome::Glade::Xml>
-	new_glade_reference(const string& toplevel_widget = "");
+	new_glade_reference(const std::string& toplevel_widget = "");
 
 private:
-	GladeFactory() {}
-
 	static void find_glade_file();
 	static Glib::ustring glade_filename;
 };

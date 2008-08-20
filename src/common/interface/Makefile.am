@@ -1,5 +1,6 @@
 EXTRA_DIST = \
 	ClientInterface.hpp \
+	CommonInterface.hpp \
 	Connection.hpp \
 	DataType.hpp \
 	EngineInterface.hpp \
@@ -9,5 +10,4 @@ EXTRA_DIST = \
 	Patch.hpp \
 	Plugin.hpp \
 	Port.hpp \
-	README \
-	Store.hpp
+	README

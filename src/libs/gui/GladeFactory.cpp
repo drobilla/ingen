@@ -18,8 +18,8 @@
 #include "GladeFactory.hpp"
 #include <iostream>
 #include <fstream>
-using std::cout; using std::cerr; using std::endl;
-using std::ifstream;
+
+using namespace std;
 
 namespace Ingen {
 namespace GUI {
