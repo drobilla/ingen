@@ -9,7 +9,6 @@ libingen_engine_la_CXXFLAGS = \
 	@GLIBMM_CFLAGS@ \
 	@INGEN_CFLAGS@ \
 	@JACK_CFLAGS@ \
-	@LASH_CFLAGS@ \
 	@LIBLO_CFLAGS@ \
 	@LV2_OSC_CFLAGS@ \
 	@RAUL_CFLAGS@ \
@@ -23,7 +22,6 @@ libingen_engine_la_LIBADD = \
 	../module/libingen_module.la \
 	@GLIBMM_LIBS@ \
 	@JACK_LIBS@ \
-	@LASH_LIBS@ \
 	@LIBLO_LIBS@ \
 	@LV2_OSC_LIBS@ \
 	@RAUL_LIBS@ \
