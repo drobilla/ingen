@@ -15,10 +15,10 @@
     ingen:port <amp/gain>, <amp/input>, <amp/output> ;
     lv2var:variable [
         rdf:predicate ingenuity:canvas-x ;
-        rdf:value 2000.0
+        rdf:value 1913.75
     ], [
         rdf:predicate ingenuity:canvas-y ;
-        rdf:value 1291.25
+        rdf:value 1203.75
     ] ;
     lv2:symbol "amp" ;
     a ingen:Node .
@@ -45,10 +45,10 @@
     ingen:port <amp_env/Attack_Time>, <amp_env/Decay_Time>, <amp_env/Delay_Time>, <amp_env/Envelope_Out>, <amp_env/Gate>, <amp_env/Hold_Time>, <amp_env/Release_Time>, <amp_env/Sustain_Level>, <amp_env/Trigger> ;
     lv2var:variable [
         rdf:predicate ingenuity:canvas-x ;
-        rdf:value 1364.75
+        rdf:value 1451.0
     ], [
         rdf:predicate ingenuity:canvas-y ;
-        rdf:value 1065.25
+        rdf:value 867.75
     ] ;
     lv2:symbol "amp_env" ;
     a ingen:Node .
@@ -167,10 +167,10 @@
 <audio_output_1>
     lv2var:variable [
         rdf:predicate ingenuity:canvas-x ;
-        rdf:value 2100.0
+        rdf:value 2013.75
     ], [
         rdf:predicate ingenuity:canvas-y ;
-        rdf:value 1316.5
+        rdf:value 1229.0
     ] ;
     lv2:index 0 ;
     lv2:symbol "audio_output_1" ;
@@ -186,10 +186,10 @@
         rdf:value 100.0
     ], [
         rdf:predicate ingenuity:canvas-x ;
-        rdf:value 1379.25
+        rdf:value 1465.5
     ], [
         rdf:predicate ingenuity:canvas-y ;
-        rdf:value 840.25
+        rdf:value 1420.25
     ] ;
     lv2:index 1 ;
     lv2:symbol "cutoff" ;
@@ -201,10 +201,10 @@
     ingen:port <detune/First_Input>, <detune/Second_Input>, <detune/Summed_Output> ;
     lv2var:variable [
         rdf:predicate ingenuity:canvas-x ;
-        rdf:value 1355.75
+        rdf:value 1442.0
     ], [
         rdf:predicate ingenuity:canvas-y ;
-        rdf:value 1251.25
+        rdf:value 1053.75
     ] ;
     lv2:symbol "detune" ;
     a ingen:Node .
@@ -238,10 +238,10 @@
     ingen:port <detune_0/First_Input>, <detune_0/Second_Input>, <detune_0/Summed_Output> ;
     lv2var:variable [
         rdf:predicate ingenuity:canvas-x ;
-        rdf:value 1355.75
+        rdf:value 1442.0
     ], [
         rdf:predicate ingenuity:canvas-y ;
-        rdf:value 1338.75
+        rdf:value 1141.25
     ] ;
     lv2:symbol "detune_0" ;
     a ingen:Node .
@@ -269,43 +269,6 @@
     lv2:symbol "Summed_Output" ;
     a ingen:AudioPort, ingen:OutputPort .
 
-<detune_1>
-    ingen:plugin <ladspa:1666> ;
-    ingen:polyphonic true ;
-    ingen:port <detune_1/First_Input>, <detune_1/Second_Input>, <detune_1/Summed_Output> ;
-    lv2var:variable [
-        rdf:predicate ingenuity:canvas-x ;
-        rdf:value 1355.75
-    ], [
-        rdf:predicate ingenuity:canvas-y ;
-        rdf:value 1426.25
-    ] ;
-    lv2:symbol "detune_1" ;
-    a ingen:Node .
-
-<detune_1/First_Input>
-    lv2:index 0 ;
-    lv2:symbol "First_Input" ;
-    a ingen:AudioPort, ingen:InputPort .
-
-<detune_1/Second_Input>
-    ingen:value 0.31593406 ;
-    lv2var:variable [
-        rdf:predicate ingen:maximum ;
-        rdf:value 0.0
-    ], [
-        rdf:predicate ingen:minimum ;
-        rdf:value 0.0
-    ] ;
-    lv2:index 1 ;
-    lv2:symbol "Second_Input" ;
-    a ingen:ControlPort, ingen:InputPort .
-
-<detune_1/Summed_Output>
-    lv2:index 2 ;
-    lv2:symbol "Summed_Output" ;
-    a ingen:AudioPort, ingen:OutputPort .
-
 <>
     ingen:connection [
         ingen:destination <audio_output_1> ;
@@ -317,44 +280,14 @@
         ingen:destination <amp_env/Trigger> ;
         ingen:source <note/trigger>
     ], [
-        ingen:destination <sawtooth_fa_oa/Frequency> ;
-        ingen:source <note/frequency>
-    ], [
         ingen:destination <note/input> ;
         ingen:source <midi_input_1>
-    ], [
-        ingen:destination <product_iaia_oa/First_Input> ;
-        ingen:source <amp_env/Envelope_Out>
-    ], [
-        ingen:destination <product_iaia_oa/Second_Input> ;
-        ingen:source <sawtooth_fa_oa/Output>
-    ], [
-        ingen:destination <sawtooth_fa_oa_0/Frequency> ;
-        ingen:source <detune/Summed_Output>
     ], [
         ingen:destination <detune/First_Input> ;
         ingen:source <note/frequency>
     ], [
-        ingen:destination <product_iaia_oa/Second_Input> ;
-        ingen:source <sawtooth_fa_oa_0/Output>
-    ], [
-        ingen:destination <sawtooth_fa_oa_1/Frequency> ;
-        ingen:source <detune_0/Summed_Output>
-    ], [
-        ingen:destination <sawtooth_fa_oa_2/Frequency> ;
-        ingen:source <detune_1/Summed_Output>
-    ], [
         ingen:destination <detune_0/First_Input> ;
         ingen:source <note/frequency>
-    ], [
-        ingen:destination <detune_1/First_Input> ;
-        ingen:source <note/frequency>
-    ], [
-        ingen:destination <product_iaia_oa/Second_Input> ;
-        ingen:source <sawtooth_fa_oa_2/Output>
-    ], [
-        ingen:destination <product_iaia_oa/Second_Input> ;
-        ingen:source <sawtooth_fa_oa_1/Output>
     ], [
         ingen:destination <filter_env/Gate> ;
         ingen:source <note/gate>
@@ -371,18 +304,33 @@
         ingen:destination <lp4pole_faraia_oa/Resonance> ;
         ingen:source <resonance>
     ], [
-        ingen:destination <lp4pole_faraia_oa/Input> ;
-        ingen:source <product_iaia_oa/Product_Output>
-    ], [
         ingen:destination <amp/input> ;
         ingen:source <lp4pole_faraia_oa/Output>
     ], [
         ingen:destination <range_trans_cr/Output_Max> ;
         ingen:source <cutoff>
+    ], [
+        ingen:destination <sine_faaa/Frequency> ;
+        ingen:source <note/frequency>
+    ], [
+        ingen:destination <sine_faaa_0/Frequency> ;
+        ingen:source <detune_0/Summed_Output>
+    ], [
+        ingen:destination <sine_faaa/Amplitude> ;
+        ingen:source <amp_env/Envelope_Out>
+    ], [
+        ingen:destination <sine_faaa_0/Amplitude> ;
+        ingen:source <amp_env/Envelope_Out>
+    ], [
+        ingen:destination <lp4pole_faraia_oa/Input> ;
+        ingen:source <sine_faaa/Output>
+    ], [
+        ingen:destination <lp4pole_faraia_oa/Input> ;
+        ingen:source <sine_faaa_0/Output>
     ] ;
     ingen:enabled true ;
-    ingen:node <amp>, <amp_env>, <detune>, <detune_0>, <detune_1>, <filter_env>, <lp4pole_faraia_oa>, <note>, <product_iaia_oa>, <range_trans_cr>, <sawtooth_fa_oa>, <sawtooth_fa_oa_0>, <sawtooth_fa_oa_1>, <sawtooth_fa_oa_2> ;
-    ingen:polyphony 4 ;
+    ingen:node <amp>, <amp_env>, <detune>, <detune_0>, <filter_env>, <lp4pole_faraia_oa>, <note>, <range_trans_cr>, <sine_faaa>, <sine_faaa_0> ;
+    ingen:polyphony 1 ;
     ingen:port <audio_output_1>, <cutoff>, <midi_input_1>, <resonance> ;
     a ingen:Patch .
 
@@ -392,10 +340,10 @@
     ingen:port <filter_env/Attack_Time>, <filter_env/Decay_Time>, <filter_env/Delay_Time>, <filter_env/Envelope_Out>, <filter_env/Gate>, <filter_env/Hold_Time>, <filter_env/Release_Time>, <filter_env/Sustain_Level>, <filter_env/Trigger> ;
     lv2var:variable [
         rdf:predicate ingenuity:canvas-x ;
-        rdf:value 1364.75
+        rdf:value 1451.0
     ], [
         rdf:predicate ingenuity:canvas-y ;
-        rdf:value 882.75
+        rdf:value 1225.25
     ] ;
     lv2:symbol "filter_env" ;
     a ingen:Node .
@@ -517,10 +465,10 @@
     ingen:port <lp4pole_faraia_oa/Cutoff_Frequency>, <lp4pole_faraia_oa/Input>, <lp4pole_faraia_oa/Output>, <lp4pole_faraia_oa/Resonance> ;
     lv2var:variable [
         rdf:predicate ingenuity:canvas-x ;
-        rdf:value 1833.25
+        rdf:value 1747.0
     ], [
         rdf:predicate ingenuity:canvas-y ;
-        rdf:value 1282.75
+        rdf:value 1195.25
     ] ;
     lv2:symbol "lp4pole_faraia_oa" ;
     a ingen:Node .
@@ -548,10 +496,10 @@
 <midi_input_1>
     lv2var:variable [
         rdf:predicate ingenuity:canvas-x ;
-        rdf:value 1082.5
+        rdf:value 1168.75
     ], [
         rdf:predicate ingenuity:canvas-y ;
-        rdf:value 1209.0
+        rdf:value 1079.0
     ] ;
     lv2:index 2 ;
     lv2:symbol "midi_input_1" ;
@@ -563,10 +511,10 @@
     ingen:port <note/frequency>, <note/gate>, <note/input>, <note/trigger>, <note/velocity> ;
     lv2var:variable [
         rdf:predicate ingenuity:canvas-x ;
-        rdf:value 1236.25
+        rdf:value 1322.5
     ], [
         rdf:predicate ingenuity:canvas-y ;
-        rdf:value 1166.75
+        rdf:value 1036.75
     ] ;
     lv2:symbol "note" ;
     a ingen:Node .
@@ -611,45 +559,16 @@
     lv2:symbol "velocity" ;
     a ingen:AudioPort, ingen:OutputPort .
 
-<product_iaia_oa>
-    ingen:plugin <ladspa:1668> ;
-    ingen:polyphonic true ;
-    ingen:port <product_iaia_oa/First_Input>, <product_iaia_oa/Product_Output>, <product_iaia_oa/Second_Input> ;
-    lv2var:variable [
-        rdf:predicate ingenuity:canvas-x ;
-        rdf:value 1678.25
-    ], [
-        rdf:predicate ingenuity:canvas-y ;
-        rdf:value 1291.25
-    ] ;
-    lv2:symbol "product_iaia_oa" ;
-    a ingen:Node .
-
-<product_iaia_oa/First_Input>
-    lv2:index 0 ;
-    lv2:symbol "First_Input" ;
-    a ingen:AudioPort, ingen:InputPort .
-
-<product_iaia_oa/Product_Output>
-    lv2:index 2 ;
-    lv2:symbol "Product_Output" ;
-    a ingen:AudioPort, ingen:OutputPort .
-
-<product_iaia_oa/Second_Input>
-    lv2:index 1 ;
-    lv2:symbol "Second_Input" ;
-    a ingen:AudioPort, ingen:InputPort .
-
 <range_trans_cr>
     ingen:plugin <ladspa:4210> ;
     ingen:polyphonic true ;
     ingen:port <range_trans_cr/Input>, <range_trans_cr/Input_Max>, <range_trans_cr/Input_Min>, <range_trans_cr/Output>, <range_trans_cr/Output_Max>, <range_trans_cr/Output_Min> ;
     lv2var:variable [
         rdf:predicate ingenuity:canvas-x ;
-        rdf:value 1524.5
+        rdf:value 1602.0
     ], [
         rdf:predicate ingenuity:canvas-y ;
-        rdf:value 908.25
+        rdf:value 1239.5
     ] ;
     lv2:symbol "range_trans_cr" ;
     a ingen:Node .
@@ -735,108 +654,70 @@
         rdf:value 4.0
     ], [
         rdf:predicate ingenuity:canvas-x ;
-        rdf:value 1683.75
+        rdf:value 1602.5
     ], [
         rdf:predicate ingenuity:canvas-y ;
-        rdf:value 1387.75
+        rdf:value 1385.25
     ] ;
     lv2:index 3 ;
     lv2:symbol "resonance" ;
     a ingen:ControlPort, ingen:InputPort .
 
-<sawtooth_fa_oa>
-    ingen:plugin <ladspa:1641> ;
+<sine_faaa>
+    ingen:plugin <ladspa:1063> ;
     ingen:polyphonic true ;
-    ingen:port <sawtooth_fa_oa/Frequency>, <sawtooth_fa_oa/Output> ;
+    ingen:port <sine_faaa/Amplitude>, <sine_faaa/Frequency>, <sine_faaa/Output> ;
     lv2var:variable [
         rdf:predicate ingenuity:canvas-x ;
-        rdf:value 1522.5
+        rdf:value 1613.5
     ], [
         rdf:predicate ingenuity:canvas-y ;
-        rdf:value 1498.5
+        rdf:value 918.75
     ] ;
-    lv2:symbol "sawtooth_fa_oa" ;
+    lv2:symbol "sine_faaa" ;
     a ingen:Node .
 
-<sawtooth_fa_oa/Frequency>
+<sine_faaa/Amplitude>
+    lv2:index 1 ;
+    lv2:symbol "Amplitude" ;
+    a ingen:AudioPort, ingen:InputPort .
+
+<sine_faaa/Frequency>
     lv2:index 0 ;
     lv2:symbol "Frequency" ;
     a ingen:AudioPort, ingen:InputPort .
 
-<sawtooth_fa_oa/Output>
-    lv2:index 1 ;
+<sine_faaa/Output>
+    lv2:index 2 ;
     lv2:symbol "Output" ;
     a ingen:AudioPort, ingen:OutputPort .
 
-<sawtooth_fa_oa_0>
-    ingen:plugin <ladspa:1641> ;
+<sine_faaa_0>
+    ingen:plugin <ladspa:1063> ;
     ingen:polyphonic true ;
-    ingen:port <sawtooth_fa_oa_0/Frequency>, <sawtooth_fa_oa_0/Output> ;
+    ingen:port <sine_faaa_0/Amplitude>, <sine_faaa_0/Frequency>, <sine_faaa_0/Output> ;
     lv2var:variable [
         rdf:predicate ingenuity:canvas-x ;
-        rdf:value 1515.5
+        rdf:value 1612.0
     ], [
         rdf:predicate ingenuity:canvas-y ;
-        rdf:value 1267.25
+        rdf:value 1141.25
     ] ;
-    lv2:symbol "sawtooth_fa_oa_0" ;
+    lv2:symbol "sine_faaa_0" ;
     a ingen:Node .
 
-<sawtooth_fa_oa_0/Frequency>
+<sine_faaa_0/Amplitude>
+    lv2:index 1 ;
+    lv2:symbol "Amplitude" ;
+    a ingen:AudioPort, ingen:InputPort .
+
+<sine_faaa_0/Frequency>
     lv2:index 0 ;
     lv2:symbol "Frequency" ;
     a ingen:AudioPort, ingen:InputPort .
 
-<sawtooth_fa_oa_0/Output>
-    lv2:index 1 ;
-    lv2:symbol "Output" ;
-    a ingen:AudioPort, ingen:OutputPort .
-
-<sawtooth_fa_oa_1>
-    ingen:plugin <ladspa:1641> ;
-    ingen:polyphonic true ;
-    ingen:port <sawtooth_fa_oa_1/Frequency>, <sawtooth_fa_oa_1/Output> ;
-    lv2var:variable [
-        rdf:predicate ingenuity:canvas-x ;
-        rdf:value 1515.5
-    ], [
-        rdf:predicate ingenuity:canvas-y ;
-        rdf:value 1343.5
-    ] ;
-    lv2:symbol "sawtooth_fa_oa_1" ;
-    a ingen:Node .
-
-<sawtooth_fa_oa_1/Frequency>
-    lv2:index 0 ;
-    lv2:symbol "Frequency" ;
-    a ingen:AudioPort, ingen:InputPort .
-
-<sawtooth_fa_oa_1/Output>
-    lv2:index 1 ;
-    lv2:symbol "Output" ;
-    a ingen:AudioPort, ingen:OutputPort .
-
-<sawtooth_fa_oa_2>
-    ingen:plugin <ladspa:1641> ;
-    ingen:polyphonic true ;
-    ingen:port <sawtooth_fa_oa_2/Frequency>, <sawtooth_fa_oa_2/Output> ;
-    lv2var:variable [
-        rdf:predicate ingenuity:canvas-x ;
-        rdf:value 1515.5
-    ], [
-        rdf:predicate ingenuity:canvas-y ;
-        rdf:value 1421.0
-    ] ;
-    lv2:symbol "sawtooth_fa_oa_2" ;
-    a ingen:Node .
-
-<sawtooth_fa_oa_2/Frequency>
-    lv2:index 0 ;
-    lv2:symbol "Frequency" ;
-    a ingen:AudioPort, ingen:InputPort .
-
-<sawtooth_fa_oa_2/Output>
-    lv2:index 1 ;
+<sine_faaa_0/Output>
+    lv2:index 2 ;
     lv2:symbol "Output" ;
     a ingen:AudioPort, ingen:OutputPort .
 

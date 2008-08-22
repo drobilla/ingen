@@ -1,6 +1,8 @@
 MAINTAINERCLEANFILES = Makefile.in
 EXTRA_DIST = ingen_gui.gladep
 
+if BUILD_GTK_CLIENT
+
 globalpixmapsdir = $(datadir)/pixmaps
 dist_globalpixmaps_DATA = ingen.svg ingen-icon.svg
 
@@ -118,5 +120,6 @@ libingen_gui_la_SOURCES += \
 	UploadPatchWindow.hpp
 endif
 
+endif
 
 
