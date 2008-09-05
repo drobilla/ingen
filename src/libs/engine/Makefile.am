@@ -10,7 +10,6 @@ libingen_engine_la_CXXFLAGS = \
 	@INGEN_CFLAGS@ \
 	@JACK_CFLAGS@ \
 	@LIBLO_CFLAGS@ \
-	@LV2_OSC_CFLAGS@ \
 	@RAUL_CFLAGS@ \
 	@REDLANDMM_CFLAGS@ \
 	@SLV2_CFLAGS@ \
@@ -23,7 +22,6 @@ libingen_engine_la_LIBADD = \
 	@GLIBMM_LIBS@ \
 	@JACK_LIBS@ \
 	@LIBLO_LIBS@ \
-	@LV2_OSC_LIBS@ \
 	@RAUL_LIBS@ \
 	@REDLANDMM_LIBS@ \
 	@SLV2_LIBS@ \
