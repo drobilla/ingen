@@ -47,11 +47,16 @@ abs_srcdir=`pwd`
 cd $builddir
 
 PKG_CHECK_MODULES([SLV2], [slv2])
-PKG_CHECK_MODULES([LV2_OSC], [lv2_osc])
 PKG_CHECK_MODULES([RAUL], [raul])
 PKG_CHECK_MODULES([FLOWCANVAS], [flowcanvas])
 
 CONFIG_H_PATH="$builddir/config/config.h"
+
+LV2_OSC_CFLAGS="$LV2CORE_CFLAGS -I$abs_srcdir/../lv2 -I$abs_srcdir/../lv2/lv2/event"
+LV2_OSC_LIBS="$builddir/../lv2/lv2/osc/.libs/liblv2_osc.la"
+AC_SUBST(LV2_OSC_CFLAGS)
+AC_SUBST(LV2_OSC_LIBS)
+
 	
 INGEN_CFLAGS="-I$abs_srcdir/src/common -I$abs_srcdir/src/libs -I$abs_srcdir/src/libs/engine/events -I$abs_srcdir/src"
 AC_SUBST(INGEN_CFLAGS)
