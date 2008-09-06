@@ -147,8 +147,8 @@ Parser::parse(
 	bool ret = false;
 
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
-		const Redland::Node subject = (object_uri ? subject_uri : (*i)["subject"]);
-		const Redland::Node rdf_class = (*i)["class"];
+		const Redland::Node& subject = (object_uri ? subject_uri : (*i)["subject"]);
+		const Redland::Node& rdf_class = (*i)["class"];
 		if (!object_uri) {
 			std::string path_str = uri_relative_to_base(base_uri, subject.to_c_string());
 			if (path_str[0] != '/')
