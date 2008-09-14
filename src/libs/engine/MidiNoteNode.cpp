@@ -169,11 +169,11 @@ MidiNoteNode::process(ProcessContext& context)
 				}
 				break;
 			default:
-				fprintf(stderr, "Unknown (size %d) MIDI event %X\n", size, buf[0]);
+				//fprintf(stderr, "Unknown (size %d) MIDI event %X\n", size, buf[0]);
 				break;
 			}
 		} else {
-			fprintf(stderr, "Unknown (size %d) MIDI event %X\n", size, buf[0]);
+			//fprintf(stderr, "Unknown (size %d) MIDI event %X\n", size, buf[0]);
 		}
 
 		if (midi_in->increment() == midi_in->this_nframes())
