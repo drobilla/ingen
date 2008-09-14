@@ -108,7 +108,7 @@ ThreadedLoader::load_patch(bool                    merge,
 				engine_base = engine_parent.get().base();
 		}
 		
-		if (merge && (engine_parent.get() == "/" || !engine_parent))
+		if (merge && (!engine_parent || engine_parent.get() == "/"))
 			engine_base = engine_base.substr(0, engine_base.find_last_of("/"));
 		
 		_events.push_back(sigc::hide_return(sigc::bind(
