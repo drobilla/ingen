@@ -66,6 +66,7 @@ public:
 	
 	void build();
 	void arrange(bool use_length_hints);
+	void show_human_names(bool show);
 
 	void add_plugin(SharedPtr<PluginModel> pm);
 	void add_node(SharedPtr<NodeModel> nm);
@@ -125,6 +126,7 @@ private:
 	int _last_click_y;
 	
 	bool            _refresh_menu;
+	bool            _human_names;
 	Gtk::Menu*      _menu;
 	Gtk::Menu*      _internal_menu;
 	Gtk::Menu*      _plugin_menu;

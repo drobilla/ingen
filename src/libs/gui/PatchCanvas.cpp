@@ -58,6 +58,7 @@ PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 	, _last_click_x(0)
 	, _last_click_y(0)
 	, _refresh_menu(false)
+	, _human_names(true)
 	, _menu(NULL)
 	, _internal_menu(NULL)
 	, _plugin_menu(NULL)
@@ -291,6 +292,18 @@ PatchCanvas::arrange(bool ingen_doesnt_use_length_hints)
 		(*i)->store_location();
 }
 
+
+void
+PatchCanvas::show_human_names(bool b)
+{
+	_human_names = b;
+	for (ItemList::iterator m = _items.begin(); m != _items.end(); ++m) {
+		boost::shared_ptr<NodeModule> mod = boost::dynamic_pointer_cast<NodeModule>(*m);
+		if (mod)
+			mod->show_human_names(b);
+	}
+}
+
 	
 void
 PatchCanvas::add_plugin(SharedPtr<PluginModel> pm)
@@ -308,9 +321,9 @@ PatchCanvas::add_node(SharedPtr<NodeModel> nm)
 	SharedPtr<PatchModel> pm = PtrCast<PatchModel>(nm);
 	SharedPtr<NodeModule> module;
 	if (pm) {
-		module = SubpatchModule::create(shared_this, pm);
+		module = SubpatchModule::create(shared_this, pm, _human_names);
 	} else {
-		module = NodeModule::create(shared_this, nm);
+		module = NodeModule::create(shared_this, nm, _human_names);
 		const PluginModel* plugm = dynamic_cast<const PluginModel*>(nm->plugin());
 		if (plugm && plugm->icon_path() != "")
 			module->set_icon(App::instance().icon_from_path(plugm->icon_path(), 100));
@@ -537,7 +550,6 @@ PatchCanvas::destroy_selection()
 				App::instance().engine()->destroy(port_module->port()->path());
 		}
 	}
-
 }
 
 
@@ -677,7 +689,7 @@ PatchCanvas::menu_add_port(const string& name, const string& type, bool is_outpu
 void
 PatchCanvas::load_plugin(SharedPtr<PluginModel> plugin)
 {
-	string name = plugin->default_node_name();
+	string name = plugin->default_node_symbol();
 	unsigned offset = App::instance().store()->child_name_offset(_patch->path(), name);
 	if (offset != 0) {
 		std::stringstream ss;

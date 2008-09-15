@@ -95,6 +95,7 @@ private:
 	void event_destroy();
 	void event_clear();
 	void event_fullscreen_toggled();
+	void event_human_names_toggled();
 	void event_arrange();
 	void event_show_properties();
 	void event_show_controls();
@@ -123,6 +124,7 @@ private:
 	Gtk::MenuItem*      _menu_delete;
 	Gtk::MenuItem*      _menu_close;
 	Gtk::MenuItem*      _menu_quit;
+	Gtk::CheckMenuItem* _menu_human_names;
 	Gtk::MenuItem*      _menu_fullscreen;
 	Gtk::MenuItem*      _menu_clear;
 	Gtk::MenuItem*      _menu_destroy_patch;

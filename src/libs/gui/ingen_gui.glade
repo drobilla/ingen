@@ -296,11 +296,12 @@
                       </widget>
                     </child>
                     <child>
-                      <widget class="GtkCheckMenuItem" id="human_names">
+                      <widget class="GtkCheckMenuItem" id="patch_human_names_menuitem">
                         <property name="visible">True</property>
                         <property name="tooltip" translatable="yes">Show human readable names instead of identifiers</property>
                         <property name="label" translatable="yes">_Human names</property>
                         <property name="use_underline">True</property>
+                        <property name="active">True</property>
                         <accelerator key="H" modifiers="GDK_CONTROL_MASK" signal="activate"/>
                       </widget>
                     </child>

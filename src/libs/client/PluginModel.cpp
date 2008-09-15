@@ -36,9 +36,40 @@ Redland::World* PluginModel::_rdf_world = NULL;
 	
 
 string
-PluginModel::default_node_name()
+PluginModel::default_node_symbol()
 {
 	return Raul::Path::nameify(_symbol);
+}
+
+
+string
+PluginModel::human_name()
+{
+#ifdef HAVE_SLV2
+	if (_slv2_plugin) {
+		SLV2Value name = slv2_plugin_get_name(_slv2_plugin);
+		string ret = slv2_value_as_string(name);
+		slv2_value_free(name);
+		return ret;
+	}
+#endif
+	return default_node_symbol();
+}
+
+
+string
+PluginModel::port_human_name(uint32_t index)
+{
+#ifdef HAVE_SLV2
+	if (_slv2_plugin) {
+		SLV2Port port = slv2_port(index);
+		SLV2Value name = slv2_port_get_name(_slv2_plugin, port);
+		string ret = slv2_value_as_string(name);
+		slv2_value_free(name);
+		return ret;
+	}
+#endif
+	return "";
 }
 
 

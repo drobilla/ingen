@@ -48,7 +48,10 @@ class Port;
 class NodeModule : public FlowCanvas::Module
 {
 public:
-	static boost::shared_ptr<NodeModule> create (boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeModel> node);
+	static boost::shared_ptr<NodeModule> create (
+			boost::shared_ptr<PatchCanvas> canvas,
+			SharedPtr<NodeModel> node,
+			bool human_names);
 
 	virtual ~NodeModule();
 
@@ -58,6 +61,7 @@ public:
 	}
 
 	virtual void store_location();
+	void show_human_names(bool b);
 
 	SharedPtr<NodeModel> node() const { return _node; }
 
@@ -65,7 +69,7 @@ protected:
 	NodeModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeModel> node);
 
 	void on_double_click(GdkEventButton* ev);
-	
+
 	void show_control_window();
 	void embed_gui(bool embed);
 	bool popup_gui();

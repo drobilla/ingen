@@ -77,7 +77,7 @@ NodeModule::create_menu()
 
 
 boost::shared_ptr<NodeModule>
-NodeModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeModel> node)
+NodeModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeModel> node, bool human)
 {
 	boost::shared_ptr<NodeModule> ret;
 
@@ -94,10 +94,40 @@ NodeModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeModel> n
 		ret->add_port(*p, false);
 	}
 
+	if (human)
+		ret->show_human_names(human);
+
 	ret->resize();
 	ret->set_stacked_border(node->polyphonic());
 
 	return ret;
+}
+
+
+void
+NodeModule::show_human_names(bool b)
+{
+	if (b && node()->plugin())
+		set_name(((PluginModel*)node()->plugin())->human_name());
+	else
+		b = false;
+	
+	if (!b)
+		set_name(node()->symbol());
+
+	uint32_t index = 0;
+	for (PortVector::const_iterator i = ports().begin(); i != ports().end(); ++i) {
+		if (b) {
+			string hn = ((PluginModel*)node()->plugin())->port_human_name(index);
+			if (hn != "")
+				(*i)->set_name(hn);
+		} else {
+			(*i)->set_name(node()->port(index)->symbol());
+		}
+		++index;
+	}
+
+	resize();
 }
 
 	

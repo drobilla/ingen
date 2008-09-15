@@ -73,6 +73,7 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 	xml->get_widget("patch_view_engine_window_menuitem", _menu_view_engine_window);
 	xml->get_widget("patch_properties_menuitem", _menu_view_patch_properties);
 	xml->get_widget("patch_fullscreen_menuitem", _menu_fullscreen);
+	xml->get_widget("patch_human_names_menuitem", _menu_human_names);
 	xml->get_widget("patch_arrange_menuitem", _menu_arrange);
 	xml->get_widget("patch_clear_menuitem", _menu_clear);
 	xml->get_widget("patch_destroy_menuitem", _menu_destroy_patch);
@@ -106,6 +107,8 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 		sigc::mem_fun(this, &PatchWindow::event_quit));
 	_menu_fullscreen->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_fullscreen_toggled));
+	_menu_human_names->signal_activate().connect(
+		sigc::mem_fun(this, &PatchWindow::event_human_names_toggled));
 	_menu_arrange->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_arrange));
 	_menu_view_engine_window->signal_activate().connect(
@@ -524,6 +527,13 @@ PatchWindow::event_fullscreen_toggled()
 		unfullscreen();
 		is_fullscreen = false;
 	}
+}
+
+
+void
+PatchWindow::event_human_names_toggled()
+{
+	_view->canvas()->show_human_names(_menu_human_names->get_active());
 }
 
 

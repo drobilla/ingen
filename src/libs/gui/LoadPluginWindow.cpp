@@ -289,7 +289,7 @@ LoadPluginWindow::plugin_selection_changed()
 		Gtk::TreeModel::Row row = *iter;
 		boost::shared_ptr<PluginModel> p = row.get_value(_plugins_columns._col_plugin_model);
 		_plugin_name_offset = App::instance().store()->child_name_offset(
-				_patch->path(), p->default_node_name());
+				_patch->path(), p->default_node_symbol());
 		_node_name_entry->set_text(generate_module_name(_plugin_name_offset));
 	} else {
 		_plugin_name_offset = 0;
@@ -315,7 +315,7 @@ LoadPluginWindow::generate_module_name(int offset)
 		Gtk::TreeModel::Row row = *iter;
 		SharedPtr<PluginModel> plugin = row.get_value(_plugins_columns._col_plugin_model);
 		std::stringstream ss;
-		ss << plugin->default_node_name();
+		ss << plugin->default_node_symbol();
 		if (offset != 0)
 			ss << "_" << offset + 1;
 		name = ss.str();

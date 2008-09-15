@@ -83,7 +83,9 @@ public:
 		}
 	}
 
-	string default_node_name();
+	string default_node_symbol();
+	string human_name();
+	string port_human_name(uint32_t index);
 
 #ifdef HAVE_SLV2
 	static SLV2World slv2_world()  { return _slv2_world; }
