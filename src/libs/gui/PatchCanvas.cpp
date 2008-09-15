@@ -528,11 +528,15 @@ PatchCanvas::canvas_key_event(GdkEventKey* event)
 			destroy_selection();
 			return true;
 		case GDK_e:
-			if (_patch->get_editable() == true)
-				_patch->set_editable(false);
-			else
-				_patch->set_editable(true);
-			return true;
+			if (event->state == 0) {
+				if (_patch->get_editable() == true)
+					_patch->set_editable(false);
+				else
+					_patch->set_editable(true);
+				return true;
+			} else {
+				return false;
+			}
 		default:
 			return false;
 		}
