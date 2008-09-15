@@ -144,21 +144,6 @@
                 <child>
                   <widget class="GtkMenu" id="edit2_menu">
                     <child>
-                      <widget class="GtkImageMenuItem" id="patch_clear_menuitem">
-                        <property name="visible">True</property>
-                        <property name="tooltip" translatable="yes">Remove all objects from patch</property>
-                        <property name="label">gtk-clear</property>
-                        <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
-                        <signal name="activate" handler="on_patch_clear_menuitem_activate"/>
-                      </widget>
-                    </child>
-                    <child>
-                      <widget class="GtkSeparatorMenuItem" id="separator99">
-                        <property name="visible">True</property>
-                      </widget>
-                    </child>
-                    <child>
                       <widget class="GtkImageMenuItem" id="patch_cut_menuitem">
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
@@ -217,6 +202,16 @@
                             <property name="icon_size">1</property>
                           </widget>
                         </child>
+                      </widget>
+                    </child>
+                    <child>
+                      <widget class="GtkImageMenuItem" id="patch_clear_menuitem">
+                        <property name="visible">True</property>
+                        <property name="tooltip" translatable="yes">Remove all objects from patch</property>
+                        <property name="label">gtk-clear</property>
+                        <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
+                        <signal name="activate" handler="on_patch_clear_menuitem_activate"/>
                       </widget>
                     </child>
                     <child>
