@@ -375,21 +375,26 @@ PatchCanvas::remove_port(SharedPtr<PortModel> pm)
 SharedPtr<FlowCanvas::Port>
 PatchCanvas::get_port_view(SharedPtr<PortModel> port)
 {
-	SharedPtr<FlowCanvas::Port> ret;
 	SharedPtr<FlowCanvas::Module> module = _views[port];
 	
 	// Port on this patch
 	if (module) {
-		ret = (PtrCast<PatchPortModule>(module))
+		return (PtrCast<PatchPortModule>(module))
 			? *(PtrCast<PatchPortModule>(module)->ports().begin())
 			: PtrCast<FlowCanvas::Port>(module);
 	} else {
 		module = PtrCast<NodeModule>(_views[port->parent()]);
-		if (module)
-			ret = module->get_port(port->path().name());
+		if (module) {
+			for (PortVector::const_iterator p = module->ports().begin();
+					p != module->ports().end(); ++p) {
+				boost::shared_ptr<GUI::Port> pv = boost::dynamic_pointer_cast<GUI::Port>(*p);
+				if (pv && pv->model() == port)
+					return pv;
+			}
+		}
 	}
 	
-	return ret;
+	return SharedPtr<FlowCanvas::Port>();
 }
 
 
