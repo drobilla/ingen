@@ -15,10 +15,14 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include CONFIG_H_PATH
+
 #include <iostream>
 #include "client.hpp"
 #include "OSCEngineSender.hpp"
+#ifdef WITH_SOUP
 #include "HTTPEngineSender.hpp"
+#endif
 
 using namespace std;
 
@@ -35,10 +39,12 @@ new_remote_interface(const std::string& url)
 		OSCEngineSender* oes = new OSCEngineSender(url);
 		oes->attach(rand(), true);
 		return SharedPtr<Shared::EngineInterface>(oes);
+#ifdef WITH_SOUP
 	} else if (scheme == "http") {
 		HTTPEngineSender* hes = new HTTPEngineSender(url);
 		hes->attach(rand(), true);
 		return SharedPtr<Shared::EngineInterface>(hes);
+#endif
 	} else {
 		cerr << "WARNING: Unknown URI scheme '" << scheme << "'" << endl;
 		return SharedPtr<Shared::EngineInterface>();
