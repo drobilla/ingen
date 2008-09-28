@@ -545,6 +545,10 @@ void
 PatchWindow::event_human_names_toggled()
 {
 	_view->canvas()->show_human_names(_menu_human_names->get_active());
+	if (_menu_human_names->get_active())
+		App::instance().configuration()->set_name_style(Configuration::HUMAN);
+	else
+		App::instance().configuration()->set_name_style(Configuration::PATH);
 }
 
 
