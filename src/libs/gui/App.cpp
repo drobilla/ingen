@@ -234,6 +234,17 @@ App::port_activity(Port* port)
 }
 
 
+void
+App::activity_port_destroyed(Port* port)
+{
+	ActivityPorts::iterator i = _activity_ports.find(port);
+	if (i != _activity_ports.end())
+		_activity_ports.erase(i);
+	
+	return;
+}
+
+
 bool
 App::animate()
 {

@@ -73,6 +73,12 @@ Port::Port(boost::shared_ptr<FlowCanvas::Module> module, SharedPtr<PortModel> pm
 }
 
 
+Port::~Port()
+{
+	App::instance().activity_port_destroyed(this);
+}
+
+
 void
 Port::create_menu()
 {

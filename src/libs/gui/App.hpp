@@ -98,6 +98,7 @@ public:
 	void quit();
 	
 	void port_activity(Port* port);
+	void activity_port_destroyed(Port* port);
 
 	bool signal() const { return _enable_signal; }
 	bool disable_signals()  { bool old = _enable_signal; _enable_signal = false; return old; }
@@ -163,7 +164,6 @@ protected:
 	
 	Ingen::Shared::World* _world;
 
-	/// <Port, whether it has been seen in gtk callback yet>
 	typedef std::map<Port*, bool> ActivityPorts;
 	ActivityPorts _activity_ports;
 

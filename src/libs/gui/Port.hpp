@@ -39,8 +39,7 @@ class Port : public FlowCanvas::Port
 {
 public:
 	Port(boost::shared_ptr<FlowCanvas::Module> module, SharedPtr<PortModel> pm, bool flip=false);
-
-	virtual ~Port() {}
+	~Port();
 
 	SharedPtr<PortModel> model() const { return _port_model; }
 
