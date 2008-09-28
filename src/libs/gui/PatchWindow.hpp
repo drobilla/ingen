@@ -91,6 +91,7 @@ private:
 	void event_copy();
 	void event_paste();
 	void event_delete();
+	void event_select_all();
 	void event_quit();
 	void event_destroy();
 	void event_clear();
@@ -122,6 +123,7 @@ private:
 	Gtk::MenuItem*      _menu_copy;
 	Gtk::MenuItem*      _menu_paste;
 	Gtk::MenuItem*      _menu_delete;
+	Gtk::MenuItem*      _menu_select_all;
 	Gtk::MenuItem*      _menu_close;
 	Gtk::MenuItem*      _menu_quit;
 	Gtk::CheckMenuItem* _menu_human_names;

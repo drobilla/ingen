@@ -561,6 +561,15 @@ PatchCanvas::destroy_selection()
 	}
 }
 
+void
+PatchCanvas::select_all()
+{
+	unselect_ports();
+	for (list<boost::shared_ptr<Item> >::iterator m = _items.begin(); m != _items.end(); ++m)
+		if (boost::dynamic_pointer_cast<FlowCanvas::Module>(*m))
+			if (!(*m)->selected())
+				select_item(*m);
+}
 
 void
 PatchCanvas::copy_selection()

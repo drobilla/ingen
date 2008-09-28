@@ -184,6 +184,17 @@
                       </widget>
                     </child>
                     <child>
+                      <widget class="GtkImageMenuItem" id="patch_select_all_menuitem">
+                        <property name="visible">True</property>
+                        <property name="tooltip" translatable="yes">Select all objects in a patch</property>
+                        <property name="label">gtk-select-all</property>
+                        <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
+                        <signal name="activate" handler="on_patch_select_all_menuitem_activate"/>
+                        <accelerator key="A" modifiers="GDK_CONTROL_MASK" signal="activate"/>
+                      </widget>
+                    </child>
+                    <child>
                       <widget class="GtkSeparatorMenuItem" id="menuitem1">
                         <property name="visible">True</property>
                       </widget>

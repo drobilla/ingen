@@ -67,6 +67,7 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 	xml->get_widget("patch_copy_menuitem", _menu_copy);
 	xml->get_widget("patch_paste_menuitem", _menu_paste);
 	xml->get_widget("patch_delete_menuitem", _menu_delete);
+	xml->get_widget("patch_select_all_menuitem", _menu_select_all);
 	xml->get_widget("patch_close_menuitem", _menu_close);
 	xml->get_widget("patch_quit_menuitem", _menu_quit);
 	xml->get_widget("patch_view_control_window_menuitem", _menu_view_control_window);
@@ -103,6 +104,8 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 		sigc::mem_fun(this, &PatchWindow::event_paste));
 	_menu_delete->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_delete));
+	_menu_select_all->signal_activate().connect(
+		sigc::mem_fun(this, &PatchWindow::event_select_all));
 	_menu_quit->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_quit));
 	_menu_fullscreen->signal_activate().connect(
@@ -414,6 +417,14 @@ PatchWindow::event_delete()
 {
 	if (_view)
 		_view->canvas()->destroy_selection();
+}
+
+
+void
+PatchWindow::event_select_all()
+{
+	if (_view)
+		_view->canvas()->select_all();
 }
 
 
