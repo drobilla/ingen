@@ -45,6 +45,8 @@ libingen_engine_la_SOURCES = \
 	DuplexPort.hpp \
 	Engine.cpp \
 	Engine.hpp \
+	EngineStore.cpp \
+	EngineStore.hpp \
 	Event.cpp \
 	Event.hpp \
 	EventBuffer.cpp \
@@ -68,6 +70,8 @@ libingen_engine_la_SOURCES = \
 	LV2Info.hpp \
 	LV2Plugin.cpp \
 	LV2Plugin.hpp \
+	MessageContext.cpp \
+	MessageContext.hpp \
 	MidiControlNode.cpp \
 	MidiControlNode.hpp \
 	MidiDriver.hpp \
@@ -87,8 +91,6 @@ libingen_engine_la_SOURCES = \
 	OSCEngineReceiver.hpp \
 	ObjectSender.cpp \
 	ObjectSender.hpp \
-	EngineStore.cpp \
-	EngineStore.hpp \
 	OutputPort.cpp \
 	OutputPort.hpp \
 	PatchImpl.cpp \
@@ -100,7 +102,6 @@ libingen_engine_la_SOURCES = \
 	PortImpl.hpp \
 	PostProcessor.cpp \
 	PostProcessor.hpp \
-	ProcessContext.cpp \
 	ProcessContext.hpp \
 	ProcessSlave.cpp \
 	ProcessSlave.hpp \

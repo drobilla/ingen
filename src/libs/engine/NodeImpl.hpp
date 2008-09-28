@@ -36,6 +36,7 @@ class Buffer;
 class PluginImpl;
 class PatchImpl;
 class PortImpl;
+class MessageContext;
 
 
 /** A Node (or "module") in a Patch (which is also a Node).
@@ -112,6 +113,10 @@ public:
 	/** Parallelism: Return the number of providers that have signalled.
 	 */
 	virtual unsigned n_inputs_ready() const = 0;
+	
+	/** Run the node for one instant in the message thread.
+	 */
+	virtual void message_process(MessageContext& context, uint32_t* output) = 0;
 
 	/** Run the node for @a nframes input/output.
 	 *

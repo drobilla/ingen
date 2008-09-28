@@ -69,6 +69,8 @@ public:
 	virtual void     process_unlock();
 	virtual void     wait_for_input(size_t num_providers);
 	virtual unsigned n_inputs_ready() const { return _n_inputs_ready.get(); }
+	
+	virtual void message_process(MessageContext& context, uint32_t* output) {}
 
 	virtual void pre_process(ProcessContext& context);
 	virtual void process(ProcessContext& context) = 0;

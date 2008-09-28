@@ -241,6 +241,14 @@ LV2Node::deactivate()
 
 
 void
+LV2Node::message_process(MessageContext& context, uint32_t* output)
+{
+	*output = 0;
+	/* MESSAGE PROCESS */
+}
+
+
+void
 LV2Node::process(ProcessContext& context)
 {
 	NodeBase::pre_process(context);

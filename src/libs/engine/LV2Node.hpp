@@ -52,6 +52,8 @@ public:
 	void activate();
 	void deactivate();
 	
+	void message_process(MessageContext& context, uint32_t* output);
+	
 	void process(ProcessContext& context);
 	
 	void set_port_buffer(uint32_t voice, uint32_t port_num, Buffer* buf);
