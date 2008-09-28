@@ -60,6 +60,8 @@ PluginModel::human_name()
 string
 PluginModel::port_human_name(uint32_t index)
 {
+	Glib::Mutex::Lock lock(_rdf_world->mutex());
+
 #ifdef HAVE_SLV2
 	if (_slv2_plugin) {
 		SLV2Port port = slv2_port(index);
