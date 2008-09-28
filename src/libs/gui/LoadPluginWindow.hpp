@@ -94,7 +94,7 @@ public:
 	LoadPluginWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml);
 
 	void set_patch(SharedPtr<PatchModel> patch);
-	void set_plugins(SharedPtr<const ClientStore::Plugins> plugins);
+	void set_plugins(SharedPtr<const Client::ClientStore::Plugins> plugins);
 
 	void add_plugin(SharedPtr<PluginModel> plugin);
 

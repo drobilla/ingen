@@ -25,6 +25,8 @@
 #include "SubpatchModule.hpp"
 #include "WindowFactory.hpp"
 
+using namespace std;
+
 namespace Ingen {
 namespace GUI {
 	

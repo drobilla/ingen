@@ -54,8 +54,7 @@ public:
 	NodeImpl* instantiate(const std::string& name,
 	                      bool               polyphonic,
 	                      Ingen::PatchImpl*  parent,
-	                      SampleRate         srate,
-	                      size_t             buffer_size);
+	                      Engine&            engine);
 	
 	const std::string& label()  const { return _label; }
 	unsigned long      id()     const { return _id; }

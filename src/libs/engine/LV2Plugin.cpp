@@ -16,9 +16,13 @@
  */
 
 #include <cassert>
+#include <glibmm.h>
+#include <redlandmm/World.hpp>
 #include "LV2Plugin.hpp"
 #include "LV2Node.hpp"
 #include "NodeImpl.hpp"
+#include "Engine.hpp"
+#include "AudioDriver.hpp"
 
 namespace Ingen {
 
@@ -58,11 +62,14 @@ NodeImpl*
 LV2Plugin::instantiate(const string&     name,
                        bool              polyphonic,
                        Ingen::PatchImpl* parent,
-                       SampleRate        srate,
-                       size_t            buffer_size)
+                       Engine&           engine)
 {
+	SampleCount srate       = engine.audio_driver()->sample_rate();
+	SampleCount buffer_size = engine.audio_driver()->buffer_size();
+	
 	load(); // FIXME: unload at some point
 	
+	Glib::Mutex::Lock lock(engine.world()->rdf_world->mutex());
 	LV2Node* n = new LV2Node(this, name, polyphonic, parent, srate, buffer_size);
 
 	if ( ! n->instantiate() ) {

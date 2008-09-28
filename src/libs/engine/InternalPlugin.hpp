@@ -54,13 +54,10 @@ public:
 		, _name(name)
 	{}
 	
-	//InternalPlugin(const InternalPlugin* const copy);
-
 	NodeImpl* instantiate(const std::string& name,
 	                      bool               polyphonic,
 	                      Ingen::PatchImpl*  parent,
-	                      SampleRate         srate,
-	                      size_t             buffer_size);
+	                      Engine&            engine);
 	
 	const string symbol() const { return _symbol; }
 	const string name()   const { return _name; }

@@ -15,23 +15,20 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef APP_H
-#define APP_H
+#ifndef INGEN_APP_HPP
+#define INGEN_APP_HPP
 
 #include <cassert>
 #include <string>
 #include <map>
-#include <list>
+#include <utility>
 #include <iostream>
 #include <libgnomecanvasmm.h>
 #include <gtkmm.h>
 #include <libglademm.h>
 #include <raul/SharedPtr.hpp>
-#include <redlandmm/World.hpp>
+#include <raul/Deletable.hpp>
 #include <module/World.hpp>
-#include <shared/Store.hpp>
-
-using namespace std;
 
 namespace Ingen { 
 	class Engine;
@@ -50,10 +47,6 @@ namespace Ingen {
 		class Serialiser;
 	}
 }
-
-using namespace Ingen::Shared;
-using namespace Ingen::Serialisation;
-using namespace Ingen::Client;
 
 /** \defgroup GUI GTK GUI
  */
@@ -84,10 +77,10 @@ class App
 public:
 	~App();
 
-	void error_message(const string& msg);
+	void error_message(const std::string& msg);
 
-	void attach(SharedPtr<SigClientInterface> client,
-	            SharedPtr<Raul::Deletable>    handle=SharedPtr<Raul::Deletable>());
+	void attach(SharedPtr<Client::SigClientInterface> client,
+	            SharedPtr<Raul::Deletable>            handle=SharedPtr<Raul::Deletable>());
 
 	void detach();
 	
@@ -110,14 +103,14 @@ public:
 	Configuration*     configuration()   const { return _configuration; }
 	WindowFactory*     window_factory()  const { return _window_factory; }
 	
-	Glib::RefPtr<Gdk::Pixbuf>            icon_from_path(const string& path, int size);
+	Glib::RefPtr<Gdk::Pixbuf>            icon_from_path(const std::string& path, int size);
 
-	const SharedPtr<EngineInterface>&    engine()     const { return _world->engine; }
-	const SharedPtr<SigClientInterface>& client()     const { return _client; }
-	const SharedPtr<ClientStore>&        store()      const { return _store; }
-	const SharedPtr<ThreadedLoader>&     loader()     const { return _loader; }
+	const SharedPtr<Shared::EngineInterface>&    engine() const { return _world->engine; }
+	const SharedPtr<Client::SigClientInterface>& client() const { return _client; }
+	const SharedPtr<Client::ClientStore>&        store()  const { return _store; }
+	const SharedPtr<ThreadedLoader>&             loader() const { return _loader; }
 	
-	const SharedPtr<Serialiser>& serialiser();
+	const SharedPtr<Serialisation::Serialiser>& serialiser();
 	
 	static inline App& instance() { assert(_instance); return *_instance; }
 
@@ -130,29 +123,31 @@ protected:
 	/** This is needed for the icon map. */
 	template <typename A, typename B>
 	struct LexicalCompare {
-		bool operator()(const pair<A, B>& p1, const pair<A, B>& p2) {
+		bool operator()(const std::pair<A, B>& p1, const std::pair<A, B>& p2) {
 			return (p1.first < p2.first) || 
 				((p1.first == p2.first) && (p1.second < p2.second));
 		}
 	};
 	
-	typedef map<pair<string, int>, Gdk::Pixbuf*, LexicalCompare<string, int> > Icons;
+	typedef std::map< std::pair<std::string, int>,
+	                  Gdk::Pixbuf*,
+	                  LexicalCompare<std::string, int> > Icons;
 	Icons _icons;
 	
 	App(Ingen::Shared::World* world);
 	
 	bool animate();
-	void error_response(int32_t id, const string& str);
+	void error_response(int32_t id, const std::string& str);
 	
 	static void* icon_destroyed(void* data);
 	
 	static App* _instance;
 	
-	SharedPtr<SigClientInterface> _client;
-	SharedPtr<Raul::Deletable>    _handle;
-	SharedPtr<ClientStore>        _store;
-	SharedPtr<Serialiser>         _serialiser;
-	SharedPtr<ThreadedLoader>     _loader;
+	SharedPtr<Client::SigClientInterface> _client;
+	SharedPtr<Raul::Deletable>            _handle;
+	SharedPtr<Client::ClientStore>        _store;
+	SharedPtr<Serialisation::Serialiser>  _serialiser;
+	SharedPtr<ThreadedLoader>             _loader;
 
 	Configuration*    _configuration;
 
@@ -174,5 +169,5 @@ protected:
 } // namespace GUI
 } // namespace Ingen
 
-#endif // APP_H
+#endif // INGEN_APP_HPP
 

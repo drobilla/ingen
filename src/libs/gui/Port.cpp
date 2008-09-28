@@ -28,6 +28,7 @@
 #include "GladeFactory.hpp"
 
 using namespace Ingen::Client;
+using namespace std;
 
 namespace Ingen {
 namespace GUI {
@@ -35,9 +36,12 @@ namespace GUI {
 
 /** @param flip Make an input port appear as an output port, and vice versa.
  */
-Port::Port(boost::shared_ptr<FlowCanvas::Module> module, SharedPtr<PortModel> pm, bool flip)
-	: FlowCanvas::Port(module,
-			pm->path().name(),
+Port::Port(
+		boost::shared_ptr<FlowCanvas::Module> module,
+		SharedPtr<PortModel>                  pm,
+		const string&                         name,
+		bool                                  flip)
+	: FlowCanvas::Port(module, name,
 			flip ? (!pm->is_input()) : pm->is_input(),
 			App::instance().configuration()->get_port_color(pm.get()))
 	, _port_model(pm)

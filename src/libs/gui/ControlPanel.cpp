@@ -25,6 +25,8 @@
 #include "Controls.hpp"
 #include "GladeFactory.hpp"
 
+using namespace std;
+
 namespace Ingen {
 namespace GUI {
 

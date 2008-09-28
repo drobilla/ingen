@@ -36,6 +36,7 @@ namespace Ingen {
 
 class PatchImpl;
 class NodeImpl;
+class Engine;
 
 
 /** Implementation of a plugin (internal code, or a loaded shared library).
@@ -55,8 +56,7 @@ public:
 	virtual NodeImpl* instantiate(const std::string& name,
 	                              bool               polyphonic,
 	                              Ingen::PatchImpl*  parent,
-	                              SampleRate         srate,
-	                              size_t             buffer_size) = 0;
+	                              Engine&            engine) = 0;
 	
 	virtual const string symbol() const = 0;
 	virtual const string name() const = 0;

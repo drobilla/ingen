@@ -21,33 +21,22 @@
 #include "MidiTriggerNode.hpp"
 #include "MidiControlNode.hpp"
 #include "TransportNode.hpp"
+#include "Engine.hpp"
+#include "AudioDriver.hpp"
 
 namespace Ingen {
-
-
-#if 0
-InternalPlugin::InternalPlugin(const InternalPlugin* const copy)
-{
-	_type = copy->_type;
-	_uri = copy->_uri;
-	_lib_path = copy->_lib_path;
-	_lib_name = copy->_lib_name;
-	_plug_label = copy->_plug_label;
-	_name = copy->_name;
-	_id = _id;
-	_module = copy->_module;
-}
-#endif
 
 
 NodeImpl*
 InternalPlugin::instantiate(const string&     name,
                             bool              polyphonic,
                             Ingen::PatchImpl* parent,
-                            SampleRate        srate,
-                            size_t            buffer_size)
+                            Engine&           engine)
 {
 	assert(_type == Internal);
+	
+	SampleCount srate       = engine.audio_driver()->sample_rate();
+	SampleCount buffer_size = engine.audio_driver()->buffer_size();
 
 	if (_uri == NS_INGEN "note_node") {
 		return new MidiNoteNode(name, polyphonic, parent, srate, buffer_size);

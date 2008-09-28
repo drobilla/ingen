@@ -31,6 +31,9 @@
 #include "RenameWindow.hpp"
 #include "SubpatchModule.hpp"
 #include "WindowFactory.hpp"
+#include "Configuration.hpp"
+
+using namespace std;
 
 namespace Ingen {
 namespace GUI {
@@ -227,8 +230,12 @@ NodeModule::add_port(SharedPtr<PortModel> port, bool resize_to_fit)
 {
 	uint32_t index = _ports.size(); // FIXME: kludge, engine needs to tell us this
 	
+	string name = (App::instance().configuration()->name_style() == Configuration::PATH)
+			? port->path().name()
+			: ((PluginModel*)node()->plugin())->port_human_name(index);
+
 	Module::add_port(boost::shared_ptr<Port>(
-			new Port(PtrCast<NodeModule>(shared_from_this()), port)));
+			new Port(PtrCast<NodeModule>(shared_from_this()), port, name)));
 		
 	port->signal_value_changed.connect(sigc::bind<0>(
 			sigc::mem_fun(this, &NodeModule::value_changed), index));

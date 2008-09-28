@@ -87,8 +87,7 @@ CreateNodeEvent::pre_process()
 
 	if (_patch && plugin) {
 			
-		_node = plugin->instantiate(_path.name(), _polyphonic, _patch,
-				_engine.audio_driver()->sample_rate(), _engine.audio_driver()->buffer_size());
+		_node = plugin->instantiate(_path.name(), _polyphonic, _patch, _engine);
 		
 		if (_node != NULL) {
 			_node->activate();

@@ -27,6 +27,7 @@
 
 using namespace Ingen::Serialisation;
 using boost::optional;
+using namespace std;
 
 namespace Ingen {
 namespace GUI {

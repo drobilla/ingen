@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef STORE_H
-#define STORE_H
+#ifndef CLIENT_STORE_HPP
+#define CLIENT_STORE_HPP
 
 #include <cassert>
 #include <string>
@@ -148,4 +148,4 @@ private:
 } // namespace Client
 } // namespace Ingen
 
-#endif // STORE_H
+#endif // CLIENT_STORE_HPP

@@ -21,6 +21,8 @@
 #include "LADSPAPlugin.hpp"
 #include "LADSPANode.hpp"
 #include "NodeImpl.hpp"
+#include "Engine.hpp"
+#include "AudioDriver.hpp"
 
 using namespace std;
 
@@ -31,10 +33,12 @@ NodeImpl*
 LADSPAPlugin::instantiate(const string&     name,
                           bool              polyphonic,
                           Ingen::PatchImpl* parent,
-                          SampleRate        srate,
-                          size_t            buffer_size)
+                          Engine&           engine)
 {
 	assert(_id != 0);
+	
+	SampleCount srate       = engine.audio_driver()->sample_rate();
+	SampleCount buffer_size = engine.audio_driver()->buffer_size();
 	
 	LADSPA_Descriptor_Function df = NULL;
 	LADSPANode* n = NULL;

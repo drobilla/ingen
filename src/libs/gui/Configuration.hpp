@@ -52,10 +52,17 @@ public:
 	void          set_patch_folder(const string& f) { _patch_folder = f; }
 	
 	uint32_t get_port_color(const PortModel* pi);
+	
+	enum NameStyle { PATH, HUMAN };
+
+	NameStyle name_style() const          { return _name_style; }
+	void      set_name_style(NameStyle s) { _name_style = s; }
 
 private:
 	/** Most recent patch folder shown in open dialog */
 	string _patch_folder;
+	
+	NameStyle _name_style;
 	
 	uint32_t _audio_port_color;
 	uint32_t _control_port_color;

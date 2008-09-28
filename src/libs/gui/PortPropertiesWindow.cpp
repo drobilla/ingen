@@ -24,7 +24,7 @@
 #include "Controls.hpp"
 #include "PortPropertiesWindow.hpp"
 
-using std::string;
+using namespace std;
 
 namespace Ingen {
 namespace GUI {

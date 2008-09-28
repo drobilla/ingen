@@ -40,6 +40,7 @@
 #include "ConnectWindow.hpp"
 using Ingen::QueuedEngineInterface;
 using Ingen::Client::ThreadedSigClientInterface;
+using namespace std;
 
 namespace Ingen {
 namespace GUI {

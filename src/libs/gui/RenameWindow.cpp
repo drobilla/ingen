@@ -91,7 +91,6 @@ RenameWindow::name_changed()
 void
 RenameWindow::cancel_clicked()
 {
-	cout << "cancel\n";
 	_name_entry->set_text("");
 	hide();
 }

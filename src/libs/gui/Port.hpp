@@ -38,7 +38,11 @@ namespace GUI {
 class Port : public FlowCanvas::Port
 {
 public:
-	Port(boost::shared_ptr<FlowCanvas::Module> module, SharedPtr<PortModel> pm, bool flip=false);
+	Port(boost::shared_ptr<FlowCanvas::Module> module,
+	     SharedPtr<PortModel>                  pm,
+	     const std::string&                    name,
+	     bool                                  flip=false);
+
 	~Port();
 
 	SharedPtr<PortModel> model() const { return _port_model; }

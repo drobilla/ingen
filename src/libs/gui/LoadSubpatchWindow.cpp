@@ -28,6 +28,7 @@
 #include "Configuration.hpp"
 #include "ThreadedLoader.hpp"
 using boost::optional;
+using namespace std;
 
 namespace Ingen {
 namespace GUI {

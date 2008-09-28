@@ -30,6 +30,7 @@
 
 using boost::optional;
 using namespace Raul;
+using namespace std;
 
 namespace Ingen {
 namespace GUI {

@@ -44,8 +44,7 @@ public:
 	NodeImpl* instantiate(const std::string& name,
 	                      bool               polyphonic,
 	                      Ingen::PatchImpl*  parent,
-	                      SampleRate         srate,
-	                      size_t             buffer_size)
+	                      Engine&            engine)
 	{
 		return NULL;
 	}

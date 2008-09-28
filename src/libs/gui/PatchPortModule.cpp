@@ -70,7 +70,7 @@ PatchPortModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<PortMod
 		new PatchPortModule(canvas, port));
 	assert(ret);
 
-	ret->_patch_port = boost::shared_ptr<Port>(new Port(ret, port, true));
+	ret->_patch_port = boost::shared_ptr<Port>(new Port(ret, port, port->symbol(), true));
 
 	ret->add_port(ret->_patch_port);
 

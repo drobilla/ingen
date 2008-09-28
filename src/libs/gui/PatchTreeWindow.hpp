@@ -45,12 +45,12 @@ public:
 
 	void init(ClientStore& store);
 
-	void new_object(SharedPtr<ObjectModel> object);
+	void new_object(SharedPtr<Client::ObjectModel> object);
 
 	void patch_property_changed(const string& key, const Raul::Atom& value, const Path& path);
 	void patch_renamed(const Path& old_path, const Path& new_path);
 
-	void add_patch(SharedPtr<PatchModel> pm);
+	void add_patch(SharedPtr<Client::PatchModel> pm);
 	void remove_patch(const Path& path);
 	void show_patch_menu(GdkEventButton* ev);
 
@@ -68,9 +68,9 @@ protected:
 		PatchTreeModelColumns()
 		{ add(name_col); add(enabled_col); add(patch_model_col); }
 		
-		Gtk::TreeModelColumn<Glib::ustring>                name_col;
-		Gtk::TreeModelColumn<bool>                         enabled_col;
-		Gtk::TreeModelColumn<SharedPtr<PatchModel> > patch_model_col;
+		Gtk::TreeModelColumn<Glib::ustring>                  name_col;
+		Gtk::TreeModelColumn<bool>                           enabled_col;
+		Gtk::TreeModelColumn<SharedPtr<Client::PatchModel> > patch_model_col;
 	};
 
 	bool                             _enable_signal;

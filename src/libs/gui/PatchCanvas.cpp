@@ -47,6 +47,7 @@
 using Ingen::Client::ClientStore;
 using Ingen::Serialisation::Serialiser;
 using Ingen::Client::PluginModel;
+using namespace std;
 
 namespace Ingen {
 namespace GUI {
