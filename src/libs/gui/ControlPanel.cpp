@@ -226,16 +226,14 @@ void
 ControlPanel::value_changed(SharedPtr<PortModel> port, float val)
 {
 	if (_callback_enabled) {
-	
 		if (_all_voices_radio->get_active()) {
-			App::instance().engine()->set_port_value_immediate(port->path(), Atom(val));
+			App::instance().engine()->set_port_value(port->path(), Atom(val));
 			port->value(val);
 		} else {
 			int voice = _voice_spinbutton->get_value_as_int() - 1;
-			App::instance().engine()->set_voice_value_immediate(port->path(), voice, Atom(val));
+			App::instance().engine()->set_voice_value(port->path(), voice, Atom(val));
 			port->value(val);
 		}
-
 	}
 }
 

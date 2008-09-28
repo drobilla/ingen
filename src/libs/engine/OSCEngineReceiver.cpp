@@ -70,7 +70,7 @@ OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t
 	}
 
 	// For debugging, print all incoming OSC messages
-	//lo_server_add_method(_server, NULL, NULL, generic_cb, NULL);
+	lo_server_add_method(_server, NULL, NULL, generic_cb, NULL);
 
 	// Set response address for this message.
 	// It's important this is first and returns nonzero.
@@ -102,7 +102,6 @@ OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t
 	lo_server_add_method(_server, "/ingen/disconnect", "iss", disconnect_cb, this);
 	lo_server_add_method(_server, "/ingen/disconnect_all", "iss", disconnect_all_cb, this);
 	lo_server_add_method(_server, "/ingen/set_port_value", NULL, set_port_value_cb, this);
-	lo_server_add_method(_server, "/ingen/set_port_value_immediate", NULL, set_port_value_immediate_cb, this);
 	lo_server_add_method(_server, "/ingen/note_on", "isii", note_on_cb, this);
 	lo_server_add_method(_server, "/ingen/note_off", "isi", note_off_cb, this);
 	lo_server_add_method(_server, "/ingen/all_notes_off", "isi", all_notes_off_cb, this);
@@ -580,84 +579,10 @@ OSCEngineReceiver::_disconnect_all_cb(const char* path, const char* types, lo_ar
 
 
 /** \page engine_osc_namespace
- * <p> \b /ingen/set_port_value_immediate - Sets the value of a port for all voices (both AR and CR)
- * \arg \b response-id (integer)
- * \arg \b port-path (string) - Name of port
- * \arg \b type (string (URI or QName)) - Type of value being set (ingen:Float or ingen:EventBuffer)
- * \arg \b value (float or blob) - Value to set port to </p> \n \n
- */
-/** \page engine_osc_namespace
- * <p> \b /ingen/set_port_value_immediate - Sets the value of a port for a specific voice (both AR and CR)
- * \arg \b response-id (integer)
- * \arg \b port-path (string) - Name of port
- * \arg \b type (string (URI or QName)) - Type of value being set (ingen:Float or ingen:Event)
- * \arg \b voice (integer) - Voice to set port value for
- * \arg \b value (float or blob) - Value to set port to </p> \n \n
- *
- * See documentation for set_port_value for the distinction between these two messages.
- */
-int
-OSCEngineReceiver::_set_port_value_immediate_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
-{
-	if (argc < 3 || argc > 5 || strncmp(types, "is", 2))
-		return 1;
-	
-	const char* port_path = &argv[1]->s;
-	using Raul::Atom;
-
-	if (!strcmp(types, "isf")) { // float, all voices
-		const float value = argv[2]->f;
-		set_port_value_immediate(port_path, Atom(value));
-	} else if (!strcmp(types, "isif")) { // float, specific voice
-		const float value = argv[3]->f;
-		set_voice_value_immediate(port_path, argv[2]->i, Atom(value));
-	} else if (!strcmp(types, "issb")) { // blob (event), all voices
-		const char* type = &argv[2]->s;
-		lo_blob b = argv[3];
-		size_t data_size = lo_blob_datasize(b);
-		void* data = lo_blob_dataptr(b);
-		set_port_value_immediate(port_path, Atom(type, data_size, data));
-	} else if (!strcmp(types, "isisb")) { // blob (event), specific voice
-		const char* type = &argv[3]->s;
-		lo_blob b = argv[4];
-		size_t data_size = lo_blob_datasize(b);
-		void* data = lo_blob_dataptr(b);
-		set_voice_value_immediate(port_path, argv[2]->i, Atom(type, data_size, data));
-	} else {
-		return 1;
-	}
-
-	return 0;
-}
-
-
-/** \page engine_osc_namespace
  * <p> \b /ingen/set_port_value - Sets the value of a port for all voices (as a QueuedEvent)
  * \arg \b response-id (integer)
  * \arg \b port-path (string) - Name of port
- * \arg \b value (float) - Value to set port to
- *
- * \li This is the queued way to set a port value (it is in the same threading class as e.g.
- * node creation).  This way the client can stream a sequence of events which depend on each
- * other (e.g. a node creation followed by several set_port_value messages to set the node's
- * controls) without needing to wait on a response to the first (node creation) message.
- *
- * There is also a fast "immediate" version of this message, set_port_value_immediate, which
- * does not have this ordering guarantee.</p> \n \n
- */
-/** \page engine_osc_namespace
- * <p> \b /ingen/set_port_value - Sets the value of a port for all voices (as a QueuedEvent)
- * \arg \b response-id (integer)
- * \arg \b port-path (string) - Name of port
- * \arg \b value (float) - Value to set port to
- *
- * \li This is the queued way to set a port value (it is in the same threading class as e.g.
- * node creation).  This way the client can stream a sequence of events which depend on each
- * other (e.g. a node creation followed by several set_port_value messages to set the node's
- * controls) without needing to wait on a response to the first (node creation) message.
- *
- * There is also a fast "immediate" version of this message, set_port_value_immediate, which
- * does not have this ordering guarantee.</p> \n \n
+ * \arg \b value (float) - Value to set port to.</p> \n \n
  */
 int
 OSCEngineReceiver::_set_port_value_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -671,22 +596,22 @@ OSCEngineReceiver::_set_port_value_cb(const char* path, const char* types, lo_ar
 
 	if (!strcmp(types, "isf")) { // float, all voices
 		const float value = argv[2]->f;
-		set_port_value_immediate(port_path, Atom(value));
+		set_port_value(port_path, Atom(value));
 	} else if (!strcmp(types, "isif")) { // float, specific voice
 		const float value = argv[3]->f;
-		set_voice_value_immediate(port_path, argv[2]->i, Atom(value));
+		set_voice_value(port_path, argv[2]->i, Atom(value));
 	} else if (!strcmp(types, "issb")) { // blob (event), all voices
 		const char* type = &argv[2]->s;
 		lo_blob b = argv[3];
 		size_t data_size = lo_blob_datasize(b);
 		void* data = lo_blob_dataptr(b);
-		set_port_value_immediate(port_path, Atom(type, data_size, data));
+		set_port_value(port_path, Atom(type, data_size, data));
 	} else if (!strcmp(types, "isisb")) { // blob (event), specific voice
 		const char* type = &argv[3]->s;
 		lo_blob b = argv[4];
 		size_t data_size = lo_blob_datasize(b);
 		void* data = lo_blob_dataptr(b);
-		set_voice_value_immediate(port_path, argv[2]->i, Atom(type, data_size, data));
+		set_voice_value(port_path, argv[2]->i, Atom(type, data_size, data));
 	} else {
 		return 1;
 	}

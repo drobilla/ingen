@@ -122,11 +122,13 @@ Port::activity()
 void
 Port::set_control(float value, bool signal)
 {
-	if (_port_model->type() != DataType::CONTROL && _port_model->type() != DataType::AUDIO)
-		return;
-
-	if (signal)
-		App::instance().engine()->set_port_value_immediate(_port_model->path(), Atom(value));
+	if (signal) {
+		if (_port_model->type() == DataType::CONTROL) {
+			App::instance().engine()->set_port_value(_port_model->path(), Atom(value));
+		} else if (_port_model->type() == DataType::EVENT) {
+			cout << "EVENT CONTROL" << endl;
+		}
+	}
 
 	FlowCanvas::Port::set_control(value);
 }

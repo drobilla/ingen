@@ -126,13 +126,6 @@ public:
 	                             uint32_t          voice,
 	                             const Raul::Atom& value);
 	
-	virtual void set_port_value_immediate(const string& port_path,
-	                                      const Raul::Atom& value);
-	
-	virtual void set_voice_value_immediate(const string&     port_path,
-	                                       uint32_t          voice,
-	                                       const Raul::Atom& value);
-	
 	virtual void set_program(const string& node_path,
 	                         uint32_t      bank,
 	                         uint32_t      program);
