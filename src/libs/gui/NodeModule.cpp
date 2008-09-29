@@ -230,9 +230,9 @@ NodeModule::add_port(SharedPtr<PortModel> port, bool resize_to_fit)
 {
 	uint32_t index = _ports.size(); // FIXME: kludge, engine needs to tell us this
 	
-	string name = (App::instance().configuration()->name_style() == Configuration::PATH)
-			? port->path().name()
-			: ((PluginModel*)node()->plugin())->port_human_name(index);
+	string name = port->path().name();
+	if (App::instance().configuration()->name_style() == Configuration::HUMAN && node()->plugin())
+		name = ((PluginModel*)node()->plugin())->port_human_name(index);
 
 	Module::add_port(boost::shared_ptr<Port>(
 			new Port(PtrCast<NodeModule>(shared_from_this()), port, name)));
