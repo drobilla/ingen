@@ -26,6 +26,7 @@
 #include "GraphObjectImpl.hpp"
 #include "interface/DataType.hpp"
 #include "Buffer.hpp"
+#include "Context.hpp"
 
 namespace Raul { class Maid; class Atom; }
 
@@ -107,6 +108,9 @@ public:
 
 	void raise_set_by_user_flag() { _set_by_user = true; }
 
+	Context::ID context() const            { return _context; }
+	void        set_context(Context::ID c) { _context = c; }
+
 protected:
 	PortImpl(NodeImpl*          node,
 	         const std::string& name,
@@ -130,6 +134,7 @@ protected:
 	bool       _set_by_user;
 	Sample     _last_broadcasted_value;
 
+	Context::ID           _context;
 	Raul::Array<Buffer*>* _buffers;
 
 	// Dynamic polyphony

@@ -1,5 +1,5 @@
 /* This file is part of Ingen.
- * Copyright (C) 2007-2008 Dave Robillard <http://drobilla.net>
+ * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
  * 
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
@@ -15,37 +15,37 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef MESSAGECONTEXT_H
-#define MESSAGECONTEXT_H
-
-#include "EventSink.hpp"
-#include "Context.hpp"
+#ifndef CONTEXT_H
+#define CONTEXT_H
 
 namespace Ingen {
 
-class NodeImpl;
+class Engine;
 
-/** Context of a message_process() call.
- *
- * The message context is a non-hard-realtime thread used to execute things
- * that can take too long to execute in an audio thread, and do sloppy timed
- * event propagation and scheduling.  Interface to plugins via the
- * LV2 contexts extension.
- *
- * \ingroup engine
- */
-class MessageContext : public Context
+class Context
 {
 public:
-	MessageContext(Engine& engine)
-		: Context(engine, MESSAGE)
+	enum ID {
+		AUDIO,
+		MESSAGE
+	};
+
+	Context(Engine& engine, ID id)
+		: _id(id)
+		, _engine(engine)
 	{}
 
-	void run(NodeImpl* node);
+	virtual ~Context() {}
+
+	inline Engine& engine() const { return _engine; }
+
+protected:
+	ID      _id;     ///< Fast ID for this context
+	Engine& _engine; ///< Engine we're running in
 };
 
 
 } // namespace Ingen
 
-#endif // MESSAGECONTEXT_H
+#endif // CONTEXT_H
 

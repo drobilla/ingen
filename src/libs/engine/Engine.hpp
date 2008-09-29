@@ -47,6 +47,7 @@ class QueuedEngineInterface;
 class Driver;
 class ProcessSlave;
 class ProcessContext;
+class MessageContext;
 
 
 /** The main class for the Engine.
@@ -91,6 +92,7 @@ public:
 	PostProcessor*     post_processor()     const { return _post_processor; }
 	ClientBroadcaster* broadcaster()        const { return _broadcaster; }
 	NodeFactory*       node_factory()       const { return _node_factory; }
+	MessageContext*    message_context()    const { return _message_context; }
 
 	SharedPtr<EngineStore> engine_store() const;
 
@@ -104,7 +106,7 @@ public:
 	inline ProcessSlaves& process_slaves() { return _process_slaves; }
 	
 private:
-	ProcessSlaves _process_slaves;
+	ProcessSlaves         _process_slaves;
 
 	Ingen::Shared::World* _world;
 
@@ -116,6 +118,7 @@ private:
 	PostProcessor*         _post_processor;
 	ClientBroadcaster*     _broadcaster;
 	NodeFactory*           _node_factory;
+	MessageContext*        _message_context;
 	
 	bool _quit_flag;
 	bool _activated;

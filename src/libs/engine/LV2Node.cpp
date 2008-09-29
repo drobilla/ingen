@@ -28,6 +28,7 @@
 #include "EventBuffer.hpp"
 #include "OutputPort.hpp"
 #include "ProcessContext.hpp"
+#include "lv2_contexts.h"
 
 using namespace std;
 
@@ -49,6 +50,7 @@ LV2Node::LV2Node(LV2Plugin*    plugin,
 	, _lv2_plugin(plugin)
 	, _instances(NULL)
 	, _prepared_instances(NULL)
+	, _message_run(NULL)
 {
 	assert(_lv2_plugin);
 }
@@ -140,6 +142,17 @@ LV2Node::instantiate()
 			cerr << "Failed to instantiate plugin!" << endl;
 			return false;
 		}
+		
+		const void* ctx_ext = slv2_instance_get_extension_data(
+				(*_instances)[i], LV2_CONTEXT_MESSAGE);
+	
+		if (ctx_ext) {
+			cerr << "HAS CONTEXT EXTENSION" << endl;
+			if (_message_run == NULL)
+				_message_run = new MessageRunFuncs(_polyphony, NULL);
+			LV2MessageContext* mc = (LV2MessageContext*)ctx_ext;
+			(*_message_run)[i] = mc->message_run;
+		}
 	}
 	
 	string port_name;
@@ -202,8 +215,17 @@ LV2Node::instantiate()
 		SLV2Value pred = slv2_value_new_uri(info->lv2_world(),
 				"http://lv2plug.in/ns/dev/contexts#context");
 		SLV2Values contexts = slv2_port_get_value(plug, id, pred);
-		if (slv2_values_size(contexts) > 0) {
-			cout << "PORT HAS CONTEXT!" << endl;
+		for (uint32_t i = 0; i < slv2_values_size(contexts); ++i) {
+			SLV2Value c = slv2_values_get_at(contexts, i);
+			const char* context = slv2_value_as_string(c);
+			if (!strcmp("http://lv2plug.in/ns/dev/contexts#MessageContext", context)) {
+				cout << "MESSAGE CONTEXT!" << endl;
+				port->set_context(Context::MESSAGE);
+			} else {
+				cout << "UNKNOWN CONTEXT: "
+					<< slv2_value_as_string(slv2_values_get_at(contexts, i))
+					<< endl;
+			}
 		}
 
 		_ports->at(j) = port;
@@ -250,7 +272,10 @@ LV2Node::deactivate()
 void
 LV2Node::message_process(MessageContext& context, uint32_t* output)
 {
-	*output = 0;
+	// FIXME: voice
+	if (_message_run)
+		(*_message_run)[0]((*_instances)[0], output);
+
 	/* MESSAGE PROCESS */
 }
 

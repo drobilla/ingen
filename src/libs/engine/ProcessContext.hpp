@@ -19,6 +19,7 @@
 #define PROCESSCONTEXT_H
 
 #include "EventSink.hpp"
+#include "Context.hpp"
 
 namespace Ingen {
 
@@ -35,11 +36,11 @@ namespace Ingen {
  *
  * \ingroup engine
  */
-class ProcessContext
+class ProcessContext : public Context
 {
 public:
 	ProcessContext(Engine& engine)
-		: _engine(engine)
+		: Context(engine, AUDIO)
 		, _event_sink(engine, 1024) // FIXME: size?
 	{}
 
@@ -49,7 +50,6 @@ public:
 		_end = end;
 	}
 
-	inline Engine&           engine()     const { return _engine; }
 	inline SampleCount       nframes()    const { return _nframes; }
 	inline FrameTime         start()      const { return _start; }
 	inline FrameTime         end()        const { return _end; }
@@ -57,7 +57,6 @@ public:
 	inline EventSink&        event_sink()       { return _event_sink; }
 
 private:
-	Engine&     _engine;     ///< Engine we're running in
 	SampleCount _nframes;    ///< Number of actual time (Jack) frames this cycle
 	FrameTime   _start;      ///< Start frame of this cycle, timeline relative
 	FrameTime   _end;        ///< End frame of this cycle, timeline relative

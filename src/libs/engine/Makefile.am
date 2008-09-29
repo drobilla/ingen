@@ -178,6 +178,7 @@ libingen_engine_la_SOURCES = \
 	events/UnregisterClientEvent.cpp \
 	events/UnregisterClientEvent.hpp \
 	jack_compat.h \
+	lv2_contexts.h \
 	tuning.hpp \
 	types.hpp \
 	util.hpp

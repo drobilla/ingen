@@ -62,6 +62,10 @@ protected:
 	LV2Plugin*                 _lv2_plugin;
 	Raul::Array<SLV2Instance>* _instances;
 	Raul::Array<SLV2Instance>* _prepared_instances;
+
+	typedef bool (*MessageRunFunc)(LV2_Handle, uint32_t*);
+	typedef Raul::Array<MessageRunFunc> MessageRunFuncs;
+	MessageRunFuncs* _message_run;
 };
 
 

@@ -27,6 +27,7 @@
 #include "AudioBuffer.hpp"
 #include "EventBuffer.hpp"
 #include "ProcessContext.hpp"
+#include "MessageContext.hpp"
 
 using namespace std;
 
@@ -76,7 +77,7 @@ SetPortValueEvent::~SetPortValueEvent()
 {
 }
 
-	
+
 void
 SetPortValueEvent::pre_process()
 {
@@ -91,6 +92,12 @@ SetPortValueEvent::pre_process()
 		if (_port == NULL && _error == NO_ERROR)
 			_error = PORT_NOT_FOUND;
 	}
+
+	// Port is a message context port, set its value and
+	// call the plugin's message run function once
+	if (_port && _port->context() == Context::MESSAGE) {
+		_engine.message_context()->run(_port->parent_node());
+	}
 	
 	QueuedEvent::pre_process();
 }
@@ -101,6 +108,9 @@ SetPortValueEvent::execute(ProcessContext& context)
 {
 	Event::execute(context);
 	assert(_time >= context.start() && _time <= context.end());
+	
+	if (_port && _port->context() == Context::MESSAGE)
+		return;
 
 	if (_error == NO_ERROR && _port == NULL) {
 		if (Path::is_valid(_port_path))

@@ -61,7 +61,7 @@ public:
 	NodeImpl* instantiate(const string&     name,
 	                      bool              polyphonic,
 	                      Ingen::PatchImpl* parent,
-	                      Engine&            engine);
+	                      Engine&           engine);
 	
 	const string symbol() const;
 	const string name() const;

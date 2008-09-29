@@ -48,6 +48,7 @@ PortImpl::PortImpl(NodeImpl* const node,
 	, _broadcast(false)
 	, _set_by_user(false)
 	, _last_broadcasted_value(_value.type() == Atom::FLOAT ? _value.get_float() : 0.0f) // default?
+	, _context(Context::AUDIO)
 	, _buffers(new Raul::Array<Buffer*>(poly))
 {
 	assert(node != NULL);

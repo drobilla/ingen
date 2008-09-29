@@ -45,6 +45,8 @@
 #endif
 #include "PostProcessor.hpp"
 #include "ProcessSlave.hpp"
+#include "ProcessContext.hpp"
+#include "MessageContext.hpp"
 #include "ThreadManager.hpp"
 #ifdef HAVE_JACK_MIDI
 #include "JackMidiDriver.hpp"
@@ -62,6 +64,7 @@ Engine::Engine(Ingen::Shared::World* world)
 	, _post_processor(new PostProcessor(*this, /**_maid, */post_processor_queue_size))
 	, _broadcaster(new ClientBroadcaster())
 	, _node_factory(new NodeFactory(world))
+	, _message_context(new MessageContext(*this))
 	, _quit_flag(false)
 	, _activated(false)
 {
