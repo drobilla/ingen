@@ -138,21 +138,36 @@ SetPortValueEvent::execute(ProcessContext& context)
 		}
 		
 		EventBuffer* const ebuf = dynamic_cast<EventBuffer*>(buf);
-		// FIXME: eliminate string comparisons
-		if (ebuf && _value.type() == Atom::BLOB
-				&& !strcmp(_value.get_blob_type(), "lv2_midi:MidiEvent")) {
-			const LV2Features::Feature* f = _engine.world()->lv2_features->feature(LV2_URI_MAP_URI);
-			LV2URIMap* map = (LV2URIMap*)f->controller;
-			const uint32_t type_id = map->uri_to_id(NULL, "http://lv2plug.in/ns/ext/midi#MidiEvent");
-			const uint32_t frames = std::max((uint32_t)(_time - context.start()), ebuf->latest_frames());
-			ebuf->prepare_write(context.start(), context.nframes());
-			// FIXME: how should this work? binary over OSC, ick
-			// Message is an event:
-			ebuf->append(frames, 0, type_id, _value.data_size(), (const uint8_t*)_value.get_blob());
-			// Message is an event buffer:
-			//ebuf->append((LV2_Event_Buffer*)_data);
-			_port->raise_set_by_user_flag();
-			return;
+
+		const LV2Features::Feature* f = _engine.world()->lv2_features->feature(LV2_URI_MAP_URI);
+		LV2URIMap* map = (LV2URIMap*)f->controller;
+		
+		// FIXME: eliminate lookups
+		// FIXME: need a proper prefix system
+		if (ebuf && _value.type() == Atom::BLOB) {
+			const uint32_t frames = std::max(
+					(uint32_t)(_time - context.start()),
+					ebuf->latest_frames());
+			
+			// Size 0 event, pass it along to the plugin as a typed but empty event
+			if (_value.data_size() == 0) {
+				cout << "BANG!" << endl;
+				const uint32_t type_id = map->uri_to_id(NULL, _value.get_blob_type());
+				ebuf->append(frames, 0, type_id, 0, NULL);
+				_port->raise_set_by_user_flag();
+				return;
+
+			} else if (!strcmp(_value.get_blob_type(), "lv2_midi:MidiEvent")) {
+				const uint32_t type_id = map->uri_to_id(NULL,
+						"http://lv2plug.in/ns/ext/midi#MidiEvent");
+
+				ebuf->prepare_write(context.start(), context.nframes());
+				// FIXME: use OSC midi type? avoid MIDI over OSC entirely?
+				ebuf->append(frames, 0, type_id, _value.data_size(),
+						(const uint8_t*)_value.get_blob());
+				_port->raise_set_by_user_flag();
+				return;
+			}
 		}
 
 

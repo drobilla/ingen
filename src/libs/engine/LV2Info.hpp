@@ -47,6 +47,9 @@ public:
 	SLV2Value control_class;
 	SLV2Value audio_class;
 	SLV2Value event_class;
+	
+	Ingen::Shared::World& world()     { return *_world; }
+	SLV2World             lv2_world() { return _world->slv2_world; }
 
 	static uint32_t event_ref(LV2_Event_Callback_Data callback_data,
 	                          LV2_Event*              event);

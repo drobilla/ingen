@@ -36,9 +36,10 @@ using namespace Ingen::Client;
 
 Configuration::Configuration()
 	// Colours from  the Tango palette with modified V and alpha
-	: _audio_port_color(  0x244678C0)
+	: _name_style(HUMAN)
+	, _audio_port_color(  0x244678C0)
 	, _control_port_color(0x4A8A0EC0)
-	, _event_port_color(   0x960909C0)
+	, _event_port_color(  0x960909C0)
 //	, _midi_port_color(   0x960909C0)
 //	, _osc_port_color(    0x5C3566C0)
 {

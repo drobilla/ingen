@@ -198,6 +198,13 @@ LV2Node::instantiate()
 
 		if (direction == INPUT && data_type == DataType::CONTROL)
 		  ((AudioBuffer*)port->buffer(0))->set_value(def, 0, 0);
+		
+		SLV2Value pred = slv2_value_new_uri(info->lv2_world(),
+				"http://lv2plug.in/ns/dev/contexts#context");
+		SLV2Values contexts = slv2_port_get_value(plug, id, pred);
+		if (slv2_values_size(contexts) > 0) {
+			cout << "PORT HAS CONTEXT!" << endl;
+		}
 
 		_ports->at(j) = port;
 	}

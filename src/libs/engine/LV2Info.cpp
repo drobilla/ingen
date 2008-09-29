@@ -34,6 +34,8 @@ LV2Info::LV2Info(Ingen::Shared::World* world)
 	, event_class(slv2_value_new_uri(world->slv2_world, SLV2_PORT_CLASS_EVENT))
 	, _world(world)
 {
+	assert(world);
+
 	LV2_Event_Feature* ev_data = (LV2_Event_Feature*)malloc(sizeof(LV2_Event_Feature));
 	ev_data->lv2_event_ref = &LV2Info::event_ref;
 	ev_data->lv2_event_unref = &LV2Info::event_ref;

@@ -612,6 +612,12 @@ OSCEngineReceiver::_set_port_value_cb(const char* path, const char* types, lo_ar
 		size_t data_size = lo_blob_datasize(b);
 		void* data = lo_blob_dataptr(b);
 		set_voice_value(port_path, argv[2]->i, Atom(type, data_size, data));
+	} else if (!strcmp(types, "issN")) { // empty event (type only), all voices
+		const char* type = &argv[2]->s;
+		set_port_value(port_path, Atom(type, 0, NULL));
+	} else if (!strcmp(types, "isisN")) { // empty event (type only), specific voice
+		const char* type = &argv[3]->s;
+		set_voice_value(port_path, argv[2]->i, Atom(type, 0, NULL));
 	} else {
 		return 1;
 	}
