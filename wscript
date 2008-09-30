@@ -2,9 +2,12 @@
 import os
 import Params
 
+# Version of this package (even if built as a child)
+INGEN_VERSION = '0.5.1'
+
 # Variables for 'waf dist'
 VERSION = '0.0.0'
-APPNAME = 'ingen'
+VERSION = INGEN_VERSION
 
 # Mandatory variables
 srcdir = '.'
@@ -58,3 +61,4 @@ def build(bld):
 	bld.add_subdirs('src/client')
 	bld.add_subdirs('src/gui')
 	bld.add_subdirs('src/ingen')
+
