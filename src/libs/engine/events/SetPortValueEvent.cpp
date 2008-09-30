@@ -180,7 +180,6 @@ SetPortValueEvent::execute(ProcessContext& context)
 			}
 		}
 
-
 		if (_value.type() == Atom::BLOB)
 			cerr << "WARNING: Unknown value blob type " << _value.get_blob_type() << endl;
 		else
