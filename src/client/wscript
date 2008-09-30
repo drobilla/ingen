@@ -27,7 +27,7 @@ def build(bld):
 	if bld.env()['HAVE_LIBLO']:
 		obj.source += ' OSCClientReceiver.cpp OSCEngineSender.cpp '
 
-	obj.includes = ['..', '../../common', '../..']
+	obj.includes = ['..', '../common']
 	obj.name     = 'libingen_client'
 	obj.target   = 'ingen_client'
 	obj.uselib   = 'GLIBMM SLV2 RAUL REDLANDMM SOUP XML2 SIGCPP'

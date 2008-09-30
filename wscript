@@ -48,10 +48,10 @@ def configure(conf):
 	conf.env.append_value('CXXFLAGS', '-DCONFIG_H_PATH=\\\"waf-config.h\\\"')
 
 def build(bld):
-	bld.add_subdirs('src/libs/engine')
-	bld.add_subdirs('src/libs/serialisation')
-	bld.add_subdirs('src/libs/module')
-	bld.add_subdirs('src/libs/shared')
-	bld.add_subdirs('src/libs/client')
-	bld.add_subdirs('src/libs/gui')
-	bld.add_subdirs('src/progs/ingen')
+	bld.add_subdirs('src/engine')
+	bld.add_subdirs('src/serialisation')
+	bld.add_subdirs('src/module')
+	bld.add_subdirs('src/shared')
+	bld.add_subdirs('src/client')
+	bld.add_subdirs('src/gui')
+	bld.add_subdirs('src/ingen')

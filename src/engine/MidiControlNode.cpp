@@ -19,7 +19,7 @@
 #include <raul/midi_events.h>
 #include "MidiControlNode.hpp"
 #include "PostProcessor.hpp"
-#include "MidiLearnEvent.hpp"
+#include "events/MidiLearnEvent.hpp"
 #include "InputPort.hpp"
 #include "OutputPort.hpp"
 #include "InternalPlugin.hpp"

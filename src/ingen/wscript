@@ -4,7 +4,7 @@ def build(bld):
 	obj = bld.create_obj('cpp', 'program')
 	obj.target       = 'ingen'
 	obj.source       = 'main.cpp cmdline.c'
-	obj.includes     = ['.', '../../common', '../..', '../../libs']
+	obj.includes     = ['../common', '../']
 	obj.defines      = 'VERSION=\\\"' + bld.env()['INGEN_VERSION'] + '\\\"'
 	obj.uselib       = 'GTHREAD GLIBMM REDLANDMM RAUL SLV2 INGEN LIBLO'
 	obj.uselib_local = 'libingen_module libingen_shared'

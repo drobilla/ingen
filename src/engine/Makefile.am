@@ -27,8 +27,6 @@ libingen_engine_la_LIBADD = \
 	@SLV2_LIBS@ \
 	@SOUP_LIBS@
 
-AM_CFLAGS=-std=c99
-
 libingen_engine_la_SOURCES = \
 	AudioBuffer.cpp \
 	AudioBuffer.hpp \

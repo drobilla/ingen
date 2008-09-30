@@ -14,15 +14,15 @@ dist_desktopfiles_DATA = ingen.desktop
 
 bin_PROGRAMS = ingen
 ingen_LDADD = \
-	../../libs/module/libingen_module.la \
-	../../libs/shared/libingen_shared.la \
+	../module/libingen_module.la \
+	../shared/libingen_shared.la \
 	@SLV2_LIBS@ \
 	@REDLANDMM_LIBS@ \
 	@RAUL_LIBS@ \
 	@GTHREAD_LIBS@ \
 	@GLIBMM_LIBS@
 
-ingen_DEPENDENCIES = ../../libs/module/libingen_module.la
+ingen_DEPENDENCIES = ../module/libingen_module.la
 
 ingen_SOURCES = \
 	main.cpp \

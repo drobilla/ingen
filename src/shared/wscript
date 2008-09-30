@@ -11,7 +11,7 @@ def build(bld):
 		OSCSender.cpp
 		Store.cpp
 	'''
-	obj.includes = ['..', '../../common', '../..']
+	obj.includes = ['../', '../common']
 	obj.name     = 'libingen_shared'
 	obj.target   = 'ingen_shared'
 	obj.uselib   = 'GLIBMM SLV2 RAUL REDLANDMM'

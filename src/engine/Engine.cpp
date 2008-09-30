@@ -37,8 +37,8 @@
 #include "OSCDriver.hpp"
 #include "QueuedEventSource.hpp"
 #include "PostProcessor.hpp"
-#include "CreatePatchEvent.hpp"
-#include "EnablePatchEvent.hpp"
+#include "events/CreatePatchEvent.hpp"
+#include "events/EnablePatchEvent.hpp"
 #include "OSCEngineReceiver.hpp"
 #ifdef HAVE_SOUP
 #include "HTTPEngineReceiver.hpp"

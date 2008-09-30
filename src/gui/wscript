@@ -43,7 +43,7 @@ def build(bld):
 
 	dir = Params.g_options.moduledir or bld.env()['PREFIX'] + 'lib/ingen'
 
-	obj.includes       = ['..', '../../common', '../..']
+	obj.includes       = ['..', '../common']
 	obj.defines        = 'INGEN_DATA_DIR=\\\"' + dir + '\\\"'
 	obj.name           = 'libingen_gui'
 	obj.target         = 'ingen_gui'

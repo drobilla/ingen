@@ -1,23 +1,25 @@
-Thanks goes to, in no particular order:
+Thanks goes to (in alphabetical order):
 
-Steve Harris (swh), for liblo and good networking ideas, helpful suggestions
-in general.
+Krzysztof Foltman (kfoltman), for much needed modularey plugins, and testing.
 
 Lachlan Davis (LFactor), for driving development forward through being a nuisance. :)
 (And somehow tolerating the dodgiest early stages of development and actually
 building some neat patches, being 100% of the existing userbase for a time...)
 
-Thorsten Wilms (thorwil), for much UI input, mockups and glade widgets.
+Lars Luthman (larsl), lots of DSSI improvements and useful plugins.
 
-Lars Luthman (larsl), lots of DSSI improvements.
+Leonard Ritter (paniq), Old Python bindings
 
 Mario Lang (delYsid), SuperCollider bindings
 
-Leonard Ritter (paniq), Python bindings
-
 Paul Davis and friends, for Jack.
+
+Steve Harris (swh), for liblo and good networking ideas, helpful suggestions
+in general.
+
+Thorsten Wilms (thorwil), for much UI input, mockups and glade widgets.
 
 Everyone in #lad who puts up with my idiocy on a daily basis.
 
-Everyone who's ever written a LADSPA/DSSI plugin.
+Everyone who's ever written a Free plugin.
 

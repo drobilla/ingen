@@ -65,7 +65,7 @@ def build(bld):
 		events/SetPortValueEvent.cpp
 		events/UnregisterClientEvent.cpp
 	'''
-	obj.includes = ['..', '../../common', '../..', './events']
+	obj.includes = ['..', '../common', './events']
 	obj.name     = 'libingen_engine'
 	obj.target   = 'ingen_engine'
 	obj.uselib   = 'GLIBMM GTHREAD SLV2 JACK LIBLO RAUL REDLANDMM SOUP'
