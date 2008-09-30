@@ -3,7 +3,7 @@ import os
 import Params
 
 # Variables for 'waf dist'
-VERSION = 'svn'
+VERSION = '0.0.0'
 APPNAME = 'ingen'
 
 # Mandatory variables

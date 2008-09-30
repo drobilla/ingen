@@ -14,6 +14,7 @@ def build(bld):
 		Event.cpp
 		EventBuffer.cpp
 		EventSink.cpp
+		GraphObjectImpl.cpp
 		InputPort.cpp
 		InternalPlugin.cpp
 		JackAudioDriver.cpp
@@ -31,6 +32,7 @@ def build(bld):
 		OSCEngineReceiver.cpp
 		ObjectSender.cpp
 		OutputPort.cpp
+		PatchImpl.cpp
 		PluginImpl.cpp
 		PortImpl.cpp
 		PostProcessor.cpp
@@ -41,13 +43,16 @@ def build(bld):
 		TransportNode.cpp
 		engine.cpp
 		events/AllNotesOffEvent.cpp
+		events/ClearPatchEvent.cpp
 		events/ConnectionEvent.cpp
 		events/CreateNodeEvent.cpp
+		events/CreatePatchEvent.cpp
 		events/CreatePortEvent.cpp
 		events/DeactivateEvent.cpp
 		events/DestroyEvent.cpp
 		events/DisconnectAllEvent.cpp
 		events/DisconnectionEvent.cpp
+		events/EnablePatchEvent.cpp
 		events/LoadPluginsEvent.cpp
 		events/MidiLearnEvent.cpp
 		events/NoteEvent.cpp
@@ -62,6 +67,8 @@ def build(bld):
 		events/SendPortActivityEvent.cpp
 		events/SendPortValueEvent.cpp
 		events/SetMetadataEvent.cpp
+		events/SetPolyphonicEvent.cpp
+		events/SetPolyphonyEvent.cpp
 		events/SetPortValueEvent.cpp
 		events/UnregisterClientEvent.cpp
 	'''

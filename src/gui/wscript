@@ -41,7 +41,7 @@ def build(bld):
 	if bld.env()['HAVE_CURL']:
 		obj.source += 'UploadPatchWindow.cpp'
 
-	dir = Params.g_options.moduledir or bld.env()['PREFIX'] + 'lib/ingen'
+	dir = Params.g_options.datadir or bld.env()['PREFIX'] + 'share/ingen'
 
 	obj.includes       = ['..', '../common']
 	obj.defines        = 'INGEN_DATA_DIR=\\\"' + dir + '\\\"'
@@ -63,3 +63,9 @@ def build(bld):
 		SOUP
 		XML2
 	'''
+	
+	# GUI runtime files
+	install_files(dir, '', 'ingen_gui.glade')
+	install_files(dir, '', 'ingen.svg')
+
+

@@ -2,7 +2,7 @@
 import Params
 
 def build(bld):
-	dir = Params.g_options.moduledir or bld.env()['PREFIX'] + 'lib/ingen'
+	dir = Params.g_options.moduledir or bld.env()['PREFIX'] + 'lib'
 	obj = bld.create_obj('cpp', 'shlib')
 	obj.source = '''
 		Module.cpp
