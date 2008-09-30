@@ -76,5 +76,5 @@ def build(bld):
 	obj.name     = 'libingen_engine'
 	obj.target   = 'ingen_engine'
 	obj.uselib   = 'GLIBMM GTHREAD SLV2 JACK LIBLO RAUL REDLANDMM SOUP'
-	obj.vnum     = '0.0.0'
+	obj.inst_dir = 'lib/ingen'
 

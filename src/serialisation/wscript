@@ -12,5 +12,5 @@ def build(bld):
 	obj.name     = 'libingen_serialisation'
 	obj.target   = 'ingen_serialisation'
 	obj.uselib   = 'GLIBMM SLV2 RAUL REDLANDMM'
-	obj.vnum     = '0.0.0'
+	obj.inst_dir = 'lib/ingen'
 

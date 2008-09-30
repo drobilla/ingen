@@ -41,14 +41,12 @@ def build(bld):
 	if bld.env()['HAVE_CURL']:
 		obj.source += 'UploadPatchWindow.cpp'
 
-	dir = Params.g_options.datadir or bld.env()['PREFIX'] + 'share/ingen'
-
 	obj.includes       = ['..', '../common']
-	obj.defines        = 'INGEN_DATA_DIR=\\\"' + dir + '\\\"'
+	obj.defines        = 'INGEN_DATA_DIR=\\\"' + Params.g_options.datadir + '\\\"'
 	obj.name           = 'libingen_gui'
 	obj.target         = 'ingen_gui'
-	obj.vnum           = '0.0.0'
-	obj.uselib_local   = 'libingen_client libingen_shared'
+	obj.inst_dir       = 'lib/ingen'
+	obj.uselib_local   = 'libingen_shared'
 	obj.uselib         = '''
 		CURL
 		FLOWCANVAS
@@ -65,7 +63,7 @@ def build(bld):
 	'''
 	
 	# GUI runtime files
-	install_files(dir, '', 'ingen_gui.glade')
-	install_files(dir, '', 'ingen.svg')
+	install_files(Params.g_options.datadir, '', 'ingen_gui.glade')
+	install_files(Params.g_options.datadir, '', 'ingen.svg')
 
 

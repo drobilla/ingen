@@ -14,6 +14,6 @@ def build(bld):
 	obj.includes = ['../', '../common']
 	obj.name     = 'libingen_shared'
 	obj.target   = 'ingen_shared'
-	obj.uselib   = 'GLIBMM SLV2 RAUL REDLANDMM'
 	obj.vnum     = '0.0.0'
+	obj.uselib   = 'GLIBMM SLV2 RAUL REDLANDMM'
 

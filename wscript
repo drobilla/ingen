@@ -48,6 +48,9 @@ def configure(conf):
 	conf.env.append_value('CXXFLAGS', '-DCONFIG_H_PATH=\\\"waf-config.h\\\"')
 
 def build(bld):
+	opts = Params.g_options
+	opts.datadir   = opts.datadir   or bld.env()['PREFIX'] + 'share'
+	opts.moduledir = opts.moduledir or bld.env()['PREFIX'] + 'lib/ingen'
 	bld.add_subdirs('src/engine')
 	bld.add_subdirs('src/serialisation')
 	bld.add_subdirs('src/module')
