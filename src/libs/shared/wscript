@@ -1,0 +1,19 @@
+#!/usr/bin/env python
+import Params
+
+def build(bld):
+	obj = bld.create_obj('cpp', 'shlib')
+	obj.source = '''
+		Builder.cpp
+		ClashAvoider.cpp
+		LV2Features.cpp
+		LV2URIMap.cpp
+		OSCSender.cpp
+		Store.cpp
+	'''
+	obj.includes = ['..', '../../common', '../..']
+	obj.name     = 'libingen_shared'
+	obj.target   = 'ingen_shared'
+	obj.uselib   = 'GLIBMM SLV2 RAUL REDLANDMM'
+	obj.vnum     = '0.0.0'
+

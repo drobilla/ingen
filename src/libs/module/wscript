@@ -1,0 +1,17 @@
+#!/usr/bin/env python
+import Params
+
+def build(bld):
+	dir = Params.g_options.moduledir or bld.env()['PREFIX'] + 'lib/ingen'
+	obj = bld.create_obj('cpp', 'shlib')
+	obj.source = '''
+		Module.cpp
+		global.cpp
+	'''
+	obj.includes = ['..', '../../common', '../..']
+	obj.defines  = 'INGEN_MODULE_DIR=\\\"' + dir + '\\\"'
+	obj.name     = 'libingen_module'
+	obj.target   = 'ingen_module'
+	obj.uselib   = 'GLIBMM SLV2 RAUL REDLANDMM'
+	obj.vnum     = '0.0.0'
+

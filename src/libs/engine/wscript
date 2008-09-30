@@ -1,0 +1,73 @@
+#!/usr/bin/env python
+import Params
+
+def build(bld):
+	obj = bld.create_obj('cpp', 'shlib')
+	obj.source = '''
+		AudioBuffer.cpp
+		Buffer.cpp
+		ClientBroadcaster.cpp
+		ConnectionImpl.cpp
+		DuplexPort.cpp
+		Engine.cpp
+		EngineStore.cpp
+		Event.cpp
+		EventBuffer.cpp
+		EventSink.cpp
+		InputPort.cpp
+		InternalPlugin.cpp
+		JackAudioDriver.cpp
+		JackMidiDriver.cpp
+		LADSPAPlugin.cpp
+		LV2Info.cpp
+		LV2Plugin.cpp
+		MessageContext.cpp
+		MidiControlNode.cpp
+		MidiNoteNode.cpp
+		MidiTriggerNode.cpp
+		NodeBase.cpp
+		NodeFactory.cpp
+		OSCClientSender.cpp
+		OSCEngineReceiver.cpp
+		ObjectSender.cpp
+		OutputPort.cpp
+		PluginImpl.cpp
+		PortImpl.cpp
+		PostProcessor.cpp
+		ProcessSlave.cpp
+		QueuedEngineInterface.cpp
+		QueuedEvent.cpp
+		QueuedEventSource.cpp
+		TransportNode.cpp
+		engine.cpp
+		events/AllNotesOffEvent.cpp
+		events/ConnectionEvent.cpp
+		events/CreateNodeEvent.cpp
+		events/CreatePortEvent.cpp
+		events/DeactivateEvent.cpp
+		events/DestroyEvent.cpp
+		events/DisconnectAllEvent.cpp
+		events/DisconnectionEvent.cpp
+		events/LoadPluginsEvent.cpp
+		events/MidiLearnEvent.cpp
+		events/NoteEvent.cpp
+		events/RegisterClientEvent.cpp
+		events/RenameEvent.cpp
+		events/RequestAllObjectsEvent.cpp
+		events/RequestMetadataEvent.cpp
+		events/RequestObjectEvent.cpp
+		events/RequestPluginEvent.cpp
+		events/RequestPluginsEvent.cpp
+		events/RequestPortValueEvent.cpp
+		events/SendPortActivityEvent.cpp
+		events/SendPortValueEvent.cpp
+		events/SetMetadataEvent.cpp
+		events/SetPortValueEvent.cpp
+		events/UnregisterClientEvent.cpp
+	'''
+	obj.includes = ['..', '../../common', '../..', './events']
+	obj.name     = 'libingen_engine'
+	obj.target   = 'ingen_engine'
+	obj.uselib   = 'GLIBMM GTHREAD SLV2 JACK LIBLO RAUL REDLANDMM SOUP'
+	obj.vnum     = '0.0.0'
+

@@ -60,7 +60,7 @@ LoadPatchWindow::LoadPatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gno
 	set_filter(filt);
 
 	// Add global examples directory to "shortcut folders" (bookmarks)
-	string examples_dir = PKGDATADIR;
+	string examples_dir = INGEN_DATA_DIR;
 	examples_dir.append("/patches");
 	DIR* d = opendir(examples_dir.c_str());
 	if (d != NULL)

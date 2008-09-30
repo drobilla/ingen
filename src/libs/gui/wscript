@@ -1,0 +1,65 @@
+#!/usr/bin/env python
+import Params
+
+def build(bld):
+	obj = bld.create_obj('cpp', 'shlib')
+	obj.source = '''
+		App.cpp
+		BreadCrumbBox.cpp
+		Configuration.cpp
+		ConnectWindow.cpp
+		ControlPanel.cpp
+		Controls.cpp
+		GladeFactory.cpp
+		LoadPatchWindow.cpp
+		LoadPluginWindow.cpp
+		LoadRemotePatchWindow.cpp
+		LoadSubpatchWindow.cpp
+		MessagesWindow.cpp
+		NewSubpatchWindow.cpp
+		NodeControlWindow.cpp
+		NodeMenu.cpp
+		NodeModule.cpp
+		NodePropertiesWindow.cpp
+		ObjectMenu.cpp
+		PatchCanvas.cpp
+		PatchPortModule.cpp
+		PatchPropertiesWindow.cpp
+		PatchTreeWindow.cpp
+		PatchView.cpp
+		PatchWindow.cpp
+		Port.cpp
+		PortMenu.cpp
+		PortPropertiesWindow.cpp
+		RenameWindow.cpp
+		SubpatchModule.cpp
+		ThreadedLoader.cpp
+		WindowFactory.cpp
+		gui.cpp
+	'''
+
+	if bld.env()['HAVE_CURL']:
+		obj.source += 'UploadPatchWindow.cpp'
+
+	dir = Params.g_options.moduledir or bld.env()['PREFIX'] + 'lib/ingen'
+
+	obj.includes       = ['..', '../../common', '../..']
+	obj.defines        = 'INGEN_DATA_DIR=\\\"' + dir + '\\\"'
+	obj.name           = 'libingen_gui'
+	obj.target         = 'ingen_gui'
+	obj.vnum           = '0.0.0'
+	obj.uselib_local   = 'libingen_client libingen_shared'
+	obj.uselib         = '''
+		CURL
+		FLOWCANVAS
+		GLADEMM
+		GLIBMM
+		GNOMECANVASMM
+		GTKMM
+		RAUL
+		REDLANDMM
+		SIGCPP
+		SLV2
+		SOUP
+		XML2
+	'''

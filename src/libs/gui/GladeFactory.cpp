@@ -38,14 +38,14 @@ GladeFactory::find_glade_file()
 		glade_filename = "./ingen_gui.glade";
 
 	ifstream fs(glade_filename.c_str());
-	if (fs.fail()) { // didn't find it, check PKGDATADIR
+	if (fs.fail()) { // didn't find it, check INGEN_DATA_DIR
 		fs.clear();
-		glade_filename = PKGDATADIR;
+		glade_filename = INGEN_DATA_DIR;
 		glade_filename += "/ingen_gui.glade";
 	
 		fs.open(glade_filename.c_str());
 		if (fs.fail()) {
-			cerr << "[GladeFactory] Unable to find ingen_gui.glade in current directory or " << PKGDATADIR << "." << endl;
+			cerr << "[GladeFactory] Unable to find ingen_gui.glade in current directory or " << INGEN_DATA_DIR << "." << endl;
 			throw;
 		}
 		fs.close();

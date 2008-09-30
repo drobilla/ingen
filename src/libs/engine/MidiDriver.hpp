@@ -80,9 +80,13 @@ public:
 	void enable()  {}
 	void disable() {}
 	
+	DriverPort* create_port(DuplexPort* patch_port) { return NULL; }
+	
+	DriverPort* driver_port(const Raul::Path& path) { return NULL; }
+	
 	DriverPort* new_port(DuplexPort* patch_port) { return NULL; }
 	
-	void        add_port(DriverPort* port)    {}
+	void        add_port(DriverPort* port) {}
 	DriverPort* remove_port(const Raul::Path& path) { return NULL; }
 	
 	void pre_process(ProcessContext& context) {}

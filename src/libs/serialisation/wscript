@@ -1,0 +1,16 @@
+#!/usr/bin/env python
+import Params
+
+def build(bld):
+	obj = bld.create_obj('cpp', 'shlib')
+	obj.source = '''
+		Parser.cpp
+		Serialiser.cpp
+		serialisation.cpp
+	'''
+	obj.includes = ['..', '../../common', '../..']
+	obj.name     = 'libingen_serialisation'
+	obj.target   = 'ingen_serialisation'
+	obj.uselib   = 'GLIBMM SLV2 RAUL REDLANDMM'
+	obj.vnum     = '0.0.0'
+

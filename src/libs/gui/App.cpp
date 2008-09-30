@@ -107,7 +107,7 @@ App::run(int argc, char** argv, Ingen::Shared::World* world)
 	_instance->configuration()->apply_settings();
 	
 	// Set default window icon
-	const Glib::ustring icon_path = PKGDATADIR "/ingen.svg";
+	const Glib::ustring icon_path = INGEN_DATA_DIR "/ingen.svg";
 	try {
 		if (Glib::file_test(icon_path, Glib::FILE_TEST_EXISTS))
 			Gtk::Window::set_default_icon_from_file(icon_path);

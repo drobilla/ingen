@@ -1,0 +1,35 @@
+#!/usr/bin/env python
+import Params
+
+def build(bld):
+	obj = bld.create_obj('cpp', 'shlib')
+	obj.source = '''
+		ClientStore.cpp
+		NodeModel.cpp
+		ObjectModel.cpp
+		PatchModel.cpp
+		PluginModel.cpp
+		PluginUI.cpp
+		PortModel.cpp
+		ThreadedSigClientInterface.cpp
+		client.cpp
+	'''
+
+	if bld.env()['HAVE_SOUP']:
+		obj.source += '''
+			HTTPClientReceiver.cpp
+			HTTPEngineSender.cpp
+		'''
+
+	if bld.env()['HAVE_XML2']:
+		obj.source += ' DeprecatedLoader.cpp '
+
+	if bld.env()['HAVE_LIBLO']:
+		obj.source += ' OSCClientReceiver.cpp OSCEngineSender.cpp '
+
+	obj.includes = ['..', '../../common', '../..']
+	obj.name     = 'libingen_client'
+	obj.target   = 'ingen_client'
+	obj.uselib   = 'GLIBMM SLV2 RAUL REDLANDMM SOUP XML2 SIGCPP'
+	obj.vnum     = '0.0.0'
+

@@ -15,7 +15,7 @@ module_LTLIBRARIES = libingen_gui.la
 
 libingen_gui_la_CXXFLAGS = \
 	-DINGEN_MODULE_DIR=\"$(libdir)/ingen\" \
-	-DPKGDATADIR=\"$(pkgdatadir)\" \
+	-DINGEN_DATA_DIR=\"$(pkgdatadir)\" \
 	@CURL_CFLAGS@ \
 	@FLOWCANVAS_CFLAGS@ \
 	@GNOMECANVASMM_CFLAGS@ \
