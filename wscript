@@ -6,7 +6,7 @@ import Params
 INGEN_VERSION = '0.5.1'
 
 # Variables for 'waf dist'
-VERSION = '0.0.0'
+APPNAME = 'ingen'
 VERSION = INGEN_VERSION
 
 # Mandatory variables
@@ -27,6 +27,8 @@ def configure(conf):
 		conf.check_pkg('glibmm-2.4', destvar='GLIBMM', vnum='2.16.0', mandatory=True)
 	if not conf.env['HAVE_GTHREAD']:
 		conf.check_pkg('gthread-2.0', destvar='GTHREAD', vnum='2.16.0', mandatory=True)
+	if not conf.env['HAVE_GTKMM']:
+		conf.check_pkg('gtkmm-2.4', destvar='GTKMM', vnum='2.11.12', mandatory=False)
 	if not conf.env['HAVE_JACK']:
 		conf.check_pkg('jack', destvar='JACK', vnum='0.107.0', mandatory=True)
 	if not conf.env['HAVE_SLV2']:
@@ -45,7 +47,7 @@ def configure(conf):
 		conf.check_pkg('liblo', destvar='LIBLO', vnum='0.25', mandatory=False)
 	if not conf.env['HAVE_REDLANDMM']:
 		conf.check_pkg('redlandmm', destvar='REDLANDMM', vnum='0.0.0', mandatory=False)
-	conf.env['INGEN_VERSION'] = VERSION
+	conf.env['INGEN_VERSION'] = INGEN_VERSION
 	conf.write_config_header('waf-config.h')
 	conf.env.append_value('CCFLAGS', '-DCONFIG_H_PATH=\\\"waf-config.h\\\"')
 	conf.env.append_value('CXXFLAGS', '-DCONFIG_H_PATH=\\\"waf-config.h\\\"')
