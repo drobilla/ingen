@@ -48,9 +48,9 @@ def configure(conf):
 	if not conf.env['HAVE_REDLANDMM']:
 		conf.check_pkg('redlandmm', destvar='REDLANDMM', vnum='0.0.0', mandatory=False)
 	conf.env['INGEN_VERSION'] = INGEN_VERSION
-	conf.write_config_header('waf-config.h')
 	conf.env.append_value('CCFLAGS', '-DCONFIG_H_PATH=\\\"waf-config.h\\\"')
 	conf.env.append_value('CXXFLAGS', '-DCONFIG_H_PATH=\\\"waf-config.h\\\"')
+	conf.write_config_header('waf-config.h')
 
 def build(bld):
 	opts = Params.g_options

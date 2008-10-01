@@ -203,8 +203,8 @@ EventBuffer::append(uint32_t       frames,
 bool
 EventBuffer::append(const LV2_Event_Buffer* buf)
 {
-	uint8_t** data;
-	bool      ret = true;
+	uint8_t** data = NULL;
+	bool      ret  = true;
 
 	LV2_Event_Iterator iter;
 	for (lv2_event_begin(&iter, _buf); lv2_event_is_valid(&iter); lv2_event_increment(&iter)) {

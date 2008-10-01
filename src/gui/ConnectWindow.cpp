@@ -28,9 +28,13 @@
 #include "engine/tuning.hpp"
 #include "engine/Engine.hpp"
 #include "engine/QueuedEngineInterface.hpp"
-#include "client/OSCClientReceiver.hpp"
+#ifdef HAVE_SOUP
 #include "client/HTTPClientReceiver.hpp"
+#endif
+#ifdef HAVE_LIBLO
+#include "client/OSCClientReceiver.hpp"
 #include "client/OSCEngineSender.hpp"
+#endif
 #include "client/ThreadedSigClientInterface.hpp"
 #include "client/ClientStore.hpp"
 #include "client/PatchModel.hpp"
@@ -155,6 +159,7 @@ ConnectWindow::connect(bool existing)
 		
 	Ingen::Shared::World* world = App::instance().world();
 
+#ifdef HAVE_LIBLO
 	if (_mode == CONNECT_REMOTE) {
 		if (!existing) {
 			const string url = (_widgets_loaded ? (string)_url_entry->get_text() : world->engine->uri());
@@ -168,8 +173,10 @@ ConnectWindow::connect(bool existing)
 		const string& scheme = uri.substr(0, uri.find(":"));
 		if (scheme == "osc.udp" || scheme == "osc.tcp")
 			client = SharedPtr<OSCClientReceiver>(new OSCClientReceiver(16181, tsci)); // FIXME: port
+#ifdef HAVE_SOUP
 		else if (scheme == "http")
 			client = SharedPtr<HTTPClientReceiver>(new HTTPClientReceiver(world, uri, tsci));
+#endif
 		
 		App::instance().attach(tsci, client);
 		App::instance().register_callbacks();
@@ -202,7 +209,9 @@ ConnectWindow::connect(bool existing)
 			cerr << "Failed to launch ingen process." << endl;
 		}
 
-	} else if (_mode == INTERNAL) {
+	} else
+#endif
+	if (_mode == INTERNAL) {
 		Ingen::Shared::World* world = App::instance().world();
 		if ( ! world->local_engine) {
 			assert(_new_engine);

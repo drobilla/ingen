@@ -38,7 +38,7 @@ def build(bld):
 		gui.cpp
 	'''
 
-	if bld.env()['HAVE_CURL']:
+	if bld.env()['HAVE_CURL'] != 0:
 		obj.source += 'UploadPatchWindow.cpp'
 
 	obj.includes       = ['..', '../common']

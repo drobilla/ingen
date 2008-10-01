@@ -77,11 +77,7 @@ EngineStore::find_object(const Path& path)
 void
 EngineStore::add(GraphObject* obj)
 {
-	GraphObjectImpl* o = dynamic_cast<GraphObjectImpl*>(obj);
-	assert(o);
-
 	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
-
 	Store::add(obj);
 }
 

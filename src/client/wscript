@@ -15,16 +15,16 @@ def build(bld):
 		client.cpp
 	'''
 
-	if bld.env()['HAVE_SOUP']:
+	if bld.env()['HAVE_SOUP'] == 1:
 		obj.source += '''
 			HTTPClientReceiver.cpp
 			HTTPEngineSender.cpp
 		'''
-
-	if bld.env()['HAVE_XML2']:
+	
+	if bld.env()['HAVE_XML2'] == 1:
 		obj.source += ' DeprecatedLoader.cpp '
 
-	if bld.env()['HAVE_LIBLO']:
+	if bld.env()['HAVE_LIBLO'] == 1:
 		obj.source += ' OSCClientReceiver.cpp OSCEngineSender.cpp '
 
 	obj.includes = ['..', '../common']
