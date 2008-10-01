@@ -15,5 +15,5 @@ def build(bld):
 	obj.name     = 'libingen_shared'
 	obj.target   = 'ingen_shared'
 	obj.vnum     = '0.0.0'
-	obj.uselib   = 'GLIBMM SLV2 RAUL REDLANDMM'
+	obj.uselib   = 'GLIBMM LV2CORE SLV2 RAUL REDLANDMM'
 

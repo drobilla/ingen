@@ -75,6 +75,6 @@ def build(bld):
 	obj.includes = ['..', '../common', './events']
 	obj.name     = 'libingen_engine'
 	obj.target   = 'ingen_engine'
-	obj.uselib   = 'GLIBMM GTHREAD SLV2 JACK LIBLO RAUL REDLANDMM SOUP'
+	obj.uselib   = 'GLIBMM GTHREAD LV2CORE SLV2 JACK LIBLO RAUL REDLANDMM SOUP'
 	obj.inst_dir = 'lib/ingen'
 

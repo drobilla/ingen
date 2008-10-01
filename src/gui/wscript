@@ -57,6 +57,7 @@ def build(bld):
 		RAUL
 		REDLANDMM
 		SIGCPP
+		LV2CORE
 		SLV2
 		SOUP
 		XML2
