@@ -313,7 +313,7 @@ AM_CONDITIONAL(BUILD_CLIENT_LIB, [test "$build_ingen_clients" = "yes" -o "$build
 
 # Ingen
 AC_CONFIG_FILES([Makefile])
-AC_CONFIG_FILES([doc/Doxyfile])
+AC_CONFIG_FILES([doc/reference.doxygen])
 AC_CONFIG_FILES([patches/Makefile])
 AC_CONFIG_FILES([src/Makefile])
 AC_CONFIG_FILES([src/bindings/Makefile])

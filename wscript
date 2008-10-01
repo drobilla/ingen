@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import os
 import Params
+import autowaf
 
 # Version of this package (even if built as a child)
 INGEN_VERSION = '0.5.1'
@@ -56,11 +57,19 @@ def build(bld):
 	opts = Params.g_options
 	opts.datadir   = opts.datadir   or bld.env()['PREFIX'] + 'share'
 	opts.moduledir = opts.moduledir or bld.env()['PREFIX'] + 'lib/ingen'
+	
+	# Modules
 	bld.add_subdirs('src/engine')
 	bld.add_subdirs('src/serialisation')
 	bld.add_subdirs('src/module')
 	bld.add_subdirs('src/shared')
 	bld.add_subdirs('src/client')
 	bld.add_subdirs('src/gui')
+
+	# Program
 	bld.add_subdirs('src/ingen')
+	
+	# Documentation
+	autowaf.build_dox(bld, 'INGEN', INGEN_VERSION, srcdir, blddir)
+	install_files('PREFIX', 'share/doc/ingen', blddir + '/default/doc/html/*')
 
