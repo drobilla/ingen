@@ -33,7 +33,7 @@ def configure(conf):
 	if not conf.env['HAVE_GTKMM']:
 		conf.check_pkg('gtkmm-2.4', destvar='GTKMM', vnum='2.11.12', mandatory=False)
 	if not conf.env['HAVE_JACK']:
-		conf.check_pkg('jack', destvar='JACK', vnum='0.107.0', mandatory=True)
+		conf.check_pkg('jack', destvar='JACK', vnum='0.109.0', mandatory=True)
 	if not conf.env['HAVE_SLV2']:
 		conf.check_pkg('slv2', destvar='SLV2', vnum='0.6.0', mandatory=True)
 	if not conf.env['HAVE_RAUL']:
@@ -55,6 +55,8 @@ def configure(conf):
 	conf.env['INGEN_VERSION'] = INGEN_VERSION
 	conf.env['BUILD_GUI'] = bool(conf.env['GLADEMM'])
 	conf.write_config_header('waf-config.h')
+	
+	conf.define('HAVE_JACK_MIDI', conf.env['HAVE_JACK'] or conf.env['HAVE_JACK_DBUS'])
 	
 	autowaf.print_summary(conf)
 	autowaf.display_header('Ingen Configuration')
