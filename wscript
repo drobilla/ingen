@@ -24,39 +24,25 @@ def set_options(opt):
 
 def configure(conf):
 	autowaf.configure(conf)
-	if not conf.env['CXX']:
-		conf.check_tool('compiler_cxx')
-	if not conf.env['HAVE_GLIBMM']:
-		conf.check_pkg('glibmm-2.4', destvar='GLIBMM', vnum='2.16.0', mandatory=True)
-	if not conf.env['HAVE_GTHREAD']:
-		conf.check_pkg('gthread-2.0', destvar='GTHREAD', vnum='2.16.0', mandatory=True)
-	if not conf.env['HAVE_GTKMM']:
-		conf.check_pkg('gtkmm-2.4', destvar='GTKMM', vnum='2.11.12', mandatory=False)
-	if not conf.env['HAVE_JACK']:
-		conf.check_pkg('jack', destvar='JACK', vnum='0.109.0', mandatory=True)
-	if not conf.env['HAVE_SLV2']:
-		conf.check_pkg('slv2', destvar='SLV2', vnum='0.6.0', mandatory=True)
-	if not conf.env['HAVE_RAUL']:
-		conf.check_pkg('raul', destvar='RAUL', vnum='0.5.1', mandatory=True)
-	if not conf.env['HAVE_FLOWCANVAS']:
-		conf.check_pkg('flowcanvas', destvar='FLOWCANVAS', vnum='0.5.1', mandatory=True)
-	if not conf.env['HAVE_XML2']:
-		conf.check_pkg('libxml-2.0', destvar='XML2', vnum='2.6.0', mandatory=False)
-	if not conf.env['HAVE_GLADEMM']:
-		conf.check_pkg('libglademm-2.4', destvar='GLADEMM', vnum='2.6.0', mandatory=False)
-	if not conf.env['HAVE_SOUP']:
-		conf.check_pkg('libsoup-2.4', destvar='SOUP', vnum='2.4.0', mandatory=False)
-	if not conf.env['HAVE_LADSPA']:
-		conf.check_header('ladspa.h', 'HAVE_LADSPA', mandatory=False)
-	if not conf.env['HAVE_LIBLO']:
-		conf.check_pkg('liblo', destvar='LIBLO', vnum='0.25', mandatory=False)
-	if not conf.env['HAVE_REDLANDMM']:
-		conf.check_pkg('redlandmm', destvar='REDLANDMM', vnum='0.0.0', mandatory=False)
-	conf.env['INGEN_VERSION'] = INGEN_VERSION
-	conf.env['BUILD_GUI'] = bool(conf.env['GLADEMM'])
-	conf.write_config_header('waf-config.h')
+	autowaf.check_tool(conf, 'compiler_cxx')
+	autowaf.check_pkg(conf, 'glibmm-2.4', destvar='GLIBMM', vnum='2.16.0', mandatory=True)
+	autowaf.check_pkg(conf, 'gthread-2.0', destvar='GTHREAD', vnum='2.16.0', mandatory=True)
+	autowaf.check_pkg(conf, 'gtkmm-2.4', destvar='GTKMM', vnum='2.11.12', mandatory=False)
+	autowaf.check_pkg(conf, 'jack', destvar='JACK', vnum='0.109.0', mandatory=True)
+	autowaf.check_pkg(conf, 'slv2', destvar='SLV2', vnum='0.6.0', mandatory=True)
+	autowaf.check_pkg(conf, 'raul', destvar='RAUL', vnum='0.5.1', mandatory=True)
+	autowaf.check_pkg(conf, 'flowcanvas', destvar='FLOWCANVAS', vnum='0.5.1', mandatory=True)
+	autowaf.check_pkg(conf, 'libxml-2.0', destvar='XML2', vnum='2.6.0', mandatory=False)
+	autowaf.check_pkg(conf, 'libglademm-2.4', destvar='GLADEMM', vnum='2.6.0', mandatory=False)
+	autowaf.check_pkg(conf, 'libsoup-2.4', destvar='SOUP', vnum='2.4.0', mandatory=False)
+	autowaf.check_header(conf, 'ladspa.h', 'HAVE_LADSPA', mandatory=False)
+	autowaf.check_pkg(conf, 'liblo', destvar='LIBLO', vnum='0.25', mandatory=False)
+	autowaf.check_pkg(conf, 'redlandmm', destvar='REDLANDMM', vnum='0.0.0', mandatory=False)
 	
+	conf.define('INGEN_VERSION', INGEN_VERSION)
+	conf.define('BUILD_GUI', bool(conf.env['GLADEMM']))
 	conf.define('HAVE_JACK_MIDI', conf.env['HAVE_JACK'] or conf.env['HAVE_JACK_DBUS'])
+	conf.write_config_header('waf-config.h')
 	
 	autowaf.print_summary(conf)
 	autowaf.display_header('Ingen Configuration')
@@ -68,7 +54,7 @@ def configure(conf):
 	print
 
 def build(bld):
-	opts = Params.g_options
+	opts           = Params.g_options
 	opts.datadir   = opts.datadir   or bld.env()['PREFIX'] + 'share'
 	opts.moduledir = opts.moduledir or bld.env()['PREFIX'] + 'lib/ingen'
 	
