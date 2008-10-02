@@ -46,6 +46,8 @@ def configure(conf):
 		conf.check_pkg('libglademm-2.4', destvar='GLADEMM', vnum='2.6.0', mandatory=False)
 	if not conf.env['HAVE_SOUP']:
 		conf.check_pkg('libsoup-2.4', destvar='SOUP', vnum='2.4.0', mandatory=False)
+	if not conf.env['HAVE_LADSPA']:
+		conf.check_header('ladspa.h', 'HAVE_LADSPA', mandatory=False)
 	if not conf.env['HAVE_LIBLO']:
 		conf.check_pkg('liblo', destvar='LIBLO', vnum='0.25', mandatory=False)
 	if not conf.env['HAVE_REDLANDMM']:
@@ -59,7 +61,8 @@ def configure(conf):
 	autowaf.display_msg("Jack", str(bool(conf.env['HAVE_JACK_DBUS'])), 'YELLOW')
 	autowaf.display_msg("OSC", str(bool(conf.env['HAVE_LIBLO'])), 'YELLOW')
 	autowaf.display_msg("HTTP", str(bool(conf.env['HAVE_SOUP'])), 'YELLOW')
-	autowaf.display_msg("LV2", str(bool(conf.env['HAVE_SOUP'])), 'YELLOW')
+	autowaf.display_msg("LV2", str(bool(conf.env['HAVE_SLV2'])), 'YELLOW')
+	autowaf.display_msg("LADSPA", str(bool(conf.env['HAVE_LADSPA'])), 'YELLOW')
 	print
 
 def build(bld):
