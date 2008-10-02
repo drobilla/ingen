@@ -72,9 +72,15 @@ def build(bld):
 		events/SetPortValueEvent.cpp
 		events/UnregisterClientEvent.cpp
 	'''
-	obj.includes = ['..', '../common', './events']
-	obj.name     = 'libingen_engine'
-	obj.target   = 'ingen_engine'
-	obj.uselib   = 'GLIBMM GTHREAD LV2CORE SLV2 JACK LIBLO RAUL REDLANDMM SOUP'
-	obj.inst_dir = 'lib/ingen'
+	if bld.env()['HAVE_LADSPA']:
+		obj.source += ' LADSPANode.cpp '
+	if bld.env()['HAVE_SLV2']:
+		obj.source += ' LV2Node.cpp '
+	if bld.env()['HAVE_SOUP']:
+		obj.source += ' HTTPEngineReceiver.cpp '
+	obj.includes     = ['..', '../common', './events']
+	obj.name         = 'libingen_engine'
+	obj.target       = 'ingen_engine'
+	obj.uselib       = 'GLIBMM GTHREAD LV2CORE SLV2 JACK LIBLO RAUL REDLANDMM SOUP'
+	obj.inst_dir     = 'lib/ingen'
 
