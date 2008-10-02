@@ -52,9 +52,6 @@ Parser::uri_relative_to_base(Glib::ustring base, const Glib::ustring uri)
 
 
 /** Parse a patch from RDF into a CommonInterface (engine or client).
- *
- * @param document_uri URI of file to load objects from.
- * @param parent Path of parent under which to load objects.
  * @return whether or not load was successful.
  */
 bool

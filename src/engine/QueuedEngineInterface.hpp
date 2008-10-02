@@ -41,20 +41,10 @@ class Engine;
  * This is the bridge between the EngineInterface presented to the client, and
  * the EventSource that needs to be presented to the AudioDriver.
  *
- * This is sort of a state machine, \ref set_responder sets the Responder that
- * will be used to send the response from all future function calls.  Stateless
- * protocols like UDP/OSC can use this to set a different response address for
- * each event (eg incoming UDP port), but engine/client interfaces that don't
- * need to change an 'address' constantly can just set it once on initialisation.
- * Blocking control interfaces can be made by setting a Responder which signals
- * the caller when the 'response' is 'sent'.
- *
+ * Responses occur through the event mechanism (which notified clients in
+ * event post_process methods) and are related to an event by an integer ID.
  * If you do not register a responder, you have no way of knowing if your calls
  * are successful.
- *
- * FIXME: this isn't really "queued" entirely, since some events aren't queued
- * events and get pushed directly into the realtime event queue.  Should that
- * be separated into a different interface/client?
  */
 class QueuedEngineInterface : public QueuedEventSource, public EngineInterface
 {

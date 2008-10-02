@@ -34,7 +34,7 @@ namespace Ingen {
 namespace GUI {
 
 
-/** @param flip Make an input port appear as an output port, and vice versa.
+/** @a flip Make an input port appear as an output port, and vice versa.
  */
 Port::Port(
 		boost::shared_ptr<FlowCanvas::Module> module,

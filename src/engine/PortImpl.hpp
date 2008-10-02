@@ -65,7 +65,7 @@ public:
 	 *
 	 * Audio thread.
 	 *
-	 * \param poly Must be < the most recent value passed to prepare_poly.
+	 * \a poly Must be < the most recent value passed to prepare_poly.
 	 */
 	virtual bool apply_poly(Raul::Maid& maid, uint32_t poly);
 	

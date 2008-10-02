@@ -202,7 +202,6 @@ DeprecatedLoader::add_variable(GraphObject::Variables& data, string old_key, str
  * to the root patch)
  *
  * @param name Name of this patch (loaded/generated if the empty string)
- * @param poly Polyphony of this patch (loaded/generated if 0)
  *
  * @param initial_data will be set last, so values passed there will override
  * any values loaded from the patch file.
