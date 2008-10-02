@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import Params
+import autowaf
 
 def build(bld):
 	obj = bld.create_obj('cpp', 'shlib')
@@ -12,5 +13,5 @@ def build(bld):
 	obj.name     = 'libingen_module'
 	obj.target   = 'ingen_module'
 	obj.vnum     = '0.0.0'
-	obj.uselib   = 'GLIBMM LV2CORE SLV2 RAUL REDLANDMM'
+	autowaf.use_lib(bld, obj, 'GLIBMM LV2CORE SLV2 RAUL REDLANDMM')
 

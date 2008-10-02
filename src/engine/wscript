@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import Params
+import autowaf
 
 def build(bld):
 	obj = bld.create_obj('cpp', 'shlib')
@@ -81,6 +82,6 @@ def build(bld):
 	obj.includes     = ['..', '../common', './events']
 	obj.name         = 'libingen_engine'
 	obj.target       = 'ingen_engine'
-	obj.uselib       = 'GLIBMM GTHREAD LV2CORE SLV2 JACK LIBLO RAUL REDLANDMM SOUP'
 	obj.inst_dir     = 'lib/ingen'
+	autowaf.use_lib(bld, obj, 'GLIBMM GTHREAD LV2CORE SLV2 JACK LIBLO RAUL REDLANDMM SOUP')
 
