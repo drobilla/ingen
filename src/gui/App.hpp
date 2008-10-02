@@ -48,9 +48,6 @@ namespace Ingen {
 	}
 }
 
-/** \defgroup GUI GTK GUI
- */
-
 namespace Ingen {
 namespace GUI {
 
