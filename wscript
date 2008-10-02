@@ -55,7 +55,7 @@ def configure(conf):
 	conf.write_config_header('waf-config.h')
 	
 	autowaf.print_summary(conf)
-	print '= Ingen Configuration ='
+	autowaf.display_header('Ingen Configuration')
 	autowaf.display_msg("Jack", str(bool(conf.env['HAVE_JACK_DBUS'])), 'YELLOW')
 	autowaf.display_msg("OSC", str(bool(conf.env['HAVE_LIBLO'])), 'YELLOW')
 	autowaf.display_msg("HTTP", str(bool(conf.env['HAVE_SOUP'])), 'YELLOW')
