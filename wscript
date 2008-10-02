@@ -15,6 +15,7 @@ srcdir = '.'
 blddir = 'build'
 
 def set_options(opt):
+	autowaf.set_options(opt)
 	opt.tool_options('compiler_cxx')
 	opt.add_option('--data-dir', type='string', dest='datadir',
 			help="Ingen data install directory [Default: PREFIX/share/ingen]")
@@ -22,6 +23,7 @@ def set_options(opt):
 			help="Ingen module install directory [Default: PREFIX/lib/ingen]")
 
 def configure(conf):
+	autowaf.configure(conf)
 	if not conf.env['CXX']:
 		conf.check_tool('compiler_cxx')
 	if not conf.env['HAVE_GLIBMM']:
@@ -49,9 +51,16 @@ def configure(conf):
 	if not conf.env['HAVE_REDLANDMM']:
 		conf.check_pkg('redlandmm', destvar='REDLANDMM', vnum='0.0.0', mandatory=False)
 	conf.env['INGEN_VERSION'] = INGEN_VERSION
-	conf.env.append_value('CCFLAGS', '-DCONFIG_H_PATH=\\\"waf-config.h\\\"')
-	conf.env.append_value('CXXFLAGS', '-DCONFIG_H_PATH=\\\"waf-config.h\\\"')
+	conf.env['BUILD_GUI'] = bool(conf.env['GLADEMM'])
 	conf.write_config_header('waf-config.h')
+	
+	autowaf.print_summary(conf)
+	print '= Ingen Configuration ='
+	autowaf.display_msg("Jack", str(bool(conf.env['HAVE_JACK_DBUS'])), 'YELLOW')
+	autowaf.display_msg("OSC", str(bool(conf.env['HAVE_LIBLO'])), 'YELLOW')
+	autowaf.display_msg("HTTP", str(bool(conf.env['HAVE_SOUP'])), 'YELLOW')
+	autowaf.display_msg("LV2", str(bool(conf.env['HAVE_SOUP'])), 'YELLOW')
+	print
 
 def build(bld):
 	opts = Params.g_options
