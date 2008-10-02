@@ -135,6 +135,7 @@ LV2Node::instantiate()
 	_instances = new Raul::Array<SLV2Instance>(_polyphony, NULL);
 	
 	uint32_t port_buffer_size = 0;
+	SLV2Value ctx_ext_uri = slv2_value_new_uri(info->lv2_world(), LV2_CONTEXT_MESSAGE);
 	
 	for (uint32_t i=0; i < _polyphony; ++i) {
 		(*_instances)[i] = slv2_plugin_instantiate(plug, _srate, info->lv2_features());
@@ -143,6 +144,9 @@ LV2Node::instantiate()
 			return false;
 		}
 		
+		if (!slv2_plugin_has_feature(plug, ctx_ext_uri))
+			continue;
+
 		const void* ctx_ext = slv2_instance_get_extension_data(
 				(*_instances)[i], LV2_CONTEXT_MESSAGE);
 	
@@ -154,6 +158,8 @@ LV2Node::instantiate()
 			(*_message_run)[i] = mc->message_run;
 		}
 	}
+	
+	slv2_value_free(ctx_ext_uri);
 	
 	string port_name;
 	string port_path;

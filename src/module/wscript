@@ -9,7 +9,7 @@ def build(bld):
 		global.cpp
 	'''
 	obj.includes = ['..', '../common']
-	obj.defines  = 'INGEN_MODULE_DIR=\\\"' + bld.env()['PREFIX'] + 'lib/ingen/\\\"'
+	obj.defines  = 'INGEN_MODULE_DIR=\\\"' + bld.env()['PREFIX'] + 'lib/ingen\\\"'
 	obj.name     = 'libingen_module'
 	obj.target   = 'ingen_module'
 	obj.vnum     = '0.0.0'
