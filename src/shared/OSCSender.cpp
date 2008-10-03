@@ -19,6 +19,7 @@
 #include <cassert>
 #include <iostream>
 #include <unistd.h>
+#include <stdarg.h>
 
 using namespace std;
 
