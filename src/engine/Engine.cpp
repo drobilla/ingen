@@ -39,7 +39,9 @@
 #include "PostProcessor.hpp"
 #include "events/CreatePatchEvent.hpp"
 #include "events/EnablePatchEvent.hpp"
+#ifdef HAVE_LIBLO
 #include "OSCEngineReceiver.hpp"
+#endif
 #ifdef HAVE_SOUP
 #include "HTTPEngineReceiver.hpp"
 #endif
@@ -173,6 +175,7 @@ Engine::start_jack_driver()
 void
 Engine::start_osc_driver(int port)
 {
+#ifdef HAVE_LIBLO
 	if (_event_source) {
 		cerr << "WARNING: Replacing event source" << endl;
 		_event_source.reset();
@@ -180,6 +183,7 @@ Engine::start_osc_driver(int port)
 
 	_event_source = SharedPtr<EventSource>(new OSCEngineReceiver(
 			*this, pre_processor_queue_size, port));
+#endif
 }
 
 	

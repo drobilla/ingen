@@ -9,9 +9,10 @@ def build(bld):
 		ClashAvoider.cpp
 		LV2Features.cpp
 		LV2URIMap.cpp
-		OSCSender.cpp
 		Store.cpp
 	'''
+	if bld.env()['HAVE_LIBLO']:
+		obj.source += ' OSCSender.cpp '
 	obj.includes = ['../', '../common']
 	obj.name     = 'libingen_shared'
 	obj.target   = 'ingen_shared'

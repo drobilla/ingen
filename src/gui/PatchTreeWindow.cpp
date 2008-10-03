@@ -17,7 +17,6 @@
 
 #include <raul/Path.hpp>
 #include "interface/EngineInterface.hpp"
-#include "client/OSCEngineSender.hpp"
 #include "client/ClientStore.hpp"
 #include "client/PatchModel.hpp"
 #include "App.hpp"
@@ -90,13 +89,7 @@ PatchTreeWindow::add_patch(SharedPtr<PatchModel> pm)
 		Gtk::TreeModel::iterator iter = _patch_treestore->append();
 		Gtk::TreeModel::Row row = *iter;
 		if (pm->path() == "/") {
-			SharedPtr<OSCEngineSender> osc_sender = PtrCast<OSCEngineSender>(App::instance().engine());
-			string root_name = osc_sender ? osc_sender->uri() : "Internal";
-			// Hack off trailing '/' if it's there (ugly)
-			//if (root_name.substr(root_name.length()-1,1) == "/")
-			//	root_name = root_name.substr(0, root_name.length()-1);
-			//root_name.append(":/");
-			row[_patch_tree_columns.name_col] = root_name;
+			row[_patch_tree_columns.name_col] = App::instance().engine()->uri();
 		} else {
 			row[_patch_tree_columns.name_col] = pm->path().name();
 		}

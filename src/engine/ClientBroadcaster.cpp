@@ -30,7 +30,6 @@
 #include "ConnectionImpl.hpp"
 #include "AudioDriver.hpp"
 #include "ObjectSender.hpp"
-#include "OSCClientSender.hpp"
 
 using namespace std;
 using Ingen::Shared::ClientInterface;

@@ -21,7 +21,6 @@
 #include <string>
 #include <list>
 #include <map>
-#include <lo/lo.h>
 #include <pthread.h>
 #include <raul/SharedPtr.hpp>
 #include "interface/ClientInterface.hpp"

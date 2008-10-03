@@ -29,8 +29,6 @@ def build(bld):
 		MidiTriggerNode.cpp
 		NodeBase.cpp
 		NodeFactory.cpp
-		OSCClientSender.cpp
-		OSCEngineReceiver.cpp
 		ObjectSender.cpp
 		OutputPort.cpp
 		PatchImpl.cpp
@@ -79,6 +77,8 @@ def build(bld):
 		obj.source += ' LV2Node.cpp '
 	if bld.env()['HAVE_SOUP']:
 		obj.source += ' HTTPEngineReceiver.cpp '
+	if bld.env()['HAVE_LIBLO']:
+		obj.source += ' OSCEngineReceiver.cpp OSCClientSender.cpp '
 	obj.includes     = ['..', '../common', './events']
 	obj.name         = 'libingen_engine'
 	obj.target       = 'ingen_engine'

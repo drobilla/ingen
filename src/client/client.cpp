@@ -19,7 +19,9 @@
 
 #include <iostream>
 #include "client.hpp"
+#ifdef WITH_LIBLO
 #include "OSCEngineSender.hpp"
+#endif
 #ifdef WITH_SOUP
 #include "HTTPEngineSender.hpp"
 #endif
@@ -34,21 +36,25 @@ SharedPtr<Ingen::Shared::EngineInterface>
 new_remote_interface(const std::string& url)
 {
 	const string scheme = url.substr(0, url.find(":"));
-	cout << "SCHEME: " << scheme << endl;
+
+#ifdef WITH_LIBLO
 	if (scheme == "osc.udp" || scheme == "osc.tcp") {
 		OSCEngineSender* oes = new OSCEngineSender(url);
 		oes->attach(rand(), true);
 		return SharedPtr<Shared::EngineInterface>(oes);
+	}
+#endif
+
 #ifdef WITH_SOUP
-	} else if (scheme == "http") {
+	if (scheme == "http") {
 		HTTPEngineSender* hes = new HTTPEngineSender(url);
 		hes->attach(rand(), true);
 		return SharedPtr<Shared::EngineInterface>(hes);
-#endif
-	} else {
-		cerr << "WARNING: Unknown URI scheme '" << scheme << "'" << endl;
-		return SharedPtr<Shared::EngineInterface>();
 	}
+#endif
+
+	cerr << "WARNING: Unknown URI scheme '" << scheme << "'" << endl;
+	return SharedPtr<Shared::EngineInterface>();
 }
 
 
