@@ -42,7 +42,7 @@ def configure(conf):
 	conf.define('INGEN_VERSION', INGEN_VERSION)
 	conf.define('BUILD_GUI', bool(conf.env['GLADEMM']))
 	conf.define('HAVE_JACK_MIDI', conf.env['HAVE_JACK'] or conf.env['HAVE_JACK_DBUS'])
-	conf.write_config_header('waf-config.h')
+	conf.write_config_header('config.h')
 	
 	autowaf.print_summary(conf)
 	autowaf.display_header('Ingen Configuration')

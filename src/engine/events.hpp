@@ -18,7 +18,7 @@
 #ifndef EVENTS_H
 #define EVENTS_H
 
-#include CONFIG_H_PATH
+#include "config.h"
 
 #include "events/AllNotesOffEvent.hpp"
 #include "events/ClearPatchEvent.hpp"

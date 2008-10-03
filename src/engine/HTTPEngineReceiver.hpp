@@ -18,7 +18,7 @@
 #ifndef HTTPENGINERECEIVER_H
 #define HTTPENGINERECEIVER_H
 
-#include CONFIG_H_PATH
+#include "config.h"
 #include <string>
 #include <stdint.h>
 #include <libsoup/soup.h>

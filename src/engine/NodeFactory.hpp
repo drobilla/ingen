@@ -18,7 +18,7 @@
 #ifndef NODEFACTORY_H
 #define NODEFACTORY_H
 
-#include CONFIG_H_PATH
+#include "config.h"
 #include "module/global.hpp"
 
 #include <list>

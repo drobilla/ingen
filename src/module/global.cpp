@@ -20,7 +20,7 @@
 #include "global.hpp"
 #include "World.hpp"
 
-#include CONFIG_H_PATH
+#include "config.h"
 #ifdef HAVE_SLV2
 #include <slv2/slv2.h>
 #endif

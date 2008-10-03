@@ -23,7 +23,7 @@
 #include <raul/Maid.hpp>
 #include <raul/SharedPtr.hpp>
 #include "Engine.hpp"	
-#include CONFIG_H_PATH
+#include "config.h"
 #include "tuning.hpp"
 #include "Event.hpp"
 #include "common/interface/EventType.hpp"

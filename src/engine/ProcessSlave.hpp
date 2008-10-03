@@ -18,7 +18,7 @@
 #ifndef PROCESS_SLAVE_HPP
 #define PROCESS_SLAVE_HPP
 
-#include CONFIG_H_PATH
+#include "config.h"
 
 #include <sstream>
 #include <raul/Slave.hpp>

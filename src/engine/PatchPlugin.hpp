@@ -18,7 +18,7 @@
 #ifndef PATCHPLUGIN_H
 #define PATCHPLUGIN_H
 
-#include CONFIG_H_PATH
+#include "config.h"
 
 #include <string>
 #include "PluginImpl.hpp"

@@ -18,7 +18,7 @@
 #ifndef LV2PLUGIN_H
 #define LV2PLUGIN_H
 
-#include CONFIG_H_PATH
+#include "config.h"
 
 #ifndef HAVE_SLV2
 #error "This file requires SLV2, but HAVE_SLV2 is not defined.  Please report."

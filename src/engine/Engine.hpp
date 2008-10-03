@@ -18,7 +18,7 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
-#include CONFIG_H_PATH
+#include "config.h"
 #include <cassert>
 #include <vector>
 #include <boost/utility.hpp>

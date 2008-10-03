@@ -18,7 +18,7 @@
 #ifndef INGEN_GUI_H
 #define INGEN_GUI_H
 
-#include CONFIG_H_PATH
+#include "config.h"
 #include "module/global.hpp"
 #include <raul/SharedPtr.hpp>
 

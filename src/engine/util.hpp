@@ -18,7 +18,7 @@
 #ifndef UTIL_HPP
 #define UTIL_HPP
 
-#include CONFIG_H_PATH
+#include "config.h"
 #include <iostream>
 #include <cstdlib>
 

@@ -22,7 +22,7 @@
 #include <sys/time.h>
 #include <sys/resource.h>
 #include <raul/Process.hpp>
-#include CONFIG_H_PATH
+#include "config.h"
 #include "interface/EngineInterface.hpp"
 #include "module/World.hpp"
 #include "engine/tuning.hpp"

@@ -16,7 +16,7 @@
  */
 
 #include "JackAudioDriver.hpp"
-#include CONFIG_H_PATH
+#include "config.h"
 #include "tuning.hpp"
 #include <iostream>
 #include <cstdlib>

@@ -18,7 +18,7 @@
 #ifndef PATCHCANVAS_H
 #define PATCHCANVAS_H
 
-#include CONFIG_H_PATH
+#include "config.h"
 
 #include <string>
 #include <map>

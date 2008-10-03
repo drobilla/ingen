@@ -19,7 +19,7 @@
 #define DUPLEXPORT_H
 
 #include <string>
-#include <raul/Array.hpp>
+#include "raul/Array.hpp"
 #include "types.hpp"
 #include "Buffer.hpp"
 #include "InputPort.hpp"
