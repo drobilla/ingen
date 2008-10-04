@@ -20,6 +20,7 @@
 
 #include <string>
 #include <slv2/slv2.h>
+#include "lv2_contexts.h" 
 #include "types.hpp"
 #include "NodeBase.hpp"
 
@@ -63,9 +64,7 @@ protected:
 	Raul::Array<SLV2Instance>* _instances;
 	Raul::Array<SLV2Instance>* _prepared_instances;
 
-	typedef bool (*MessageRunFunc)(LV2_Handle, uint32_t*);
-	typedef Raul::Array<MessageRunFunc> MessageRunFuncs;
-	MessageRunFuncs* _message_run;
+	LV2MessageContext* _message_funcs;
 };
 
 

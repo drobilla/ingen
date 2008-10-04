@@ -28,7 +28,6 @@
 #include "EventBuffer.hpp"
 #include "OutputPort.hpp"
 #include "ProcessContext.hpp"
-#include "lv2_contexts.h"
 
 using namespace std;
 
@@ -50,7 +49,7 @@ LV2Node::LV2Node(LV2Plugin*    plugin,
 	, _lv2_plugin(plugin)
 	, _instances(NULL)
 	, _prepared_instances(NULL)
-	, _message_run(NULL)
+	, _message_funcs(NULL)
 {
 	assert(_lv2_plugin);
 }
@@ -150,12 +149,10 @@ LV2Node::instantiate()
 		const void* ctx_ext = slv2_instance_get_extension_data(
 				(*_instances)[i], LV2_CONTEXT_MESSAGE);
 	
-		if (ctx_ext) {
+		if (i == 0 && ctx_ext) {
 			cerr << "HAS CONTEXT EXTENSION" << endl;
-			if (_message_run == NULL)
-				_message_run = new MessageRunFuncs(_polyphony, NULL);
-			LV2MessageContext* mc = (LV2MessageContext*)ctx_ext;
-			(*_message_run)[i] = mc->message_run;
+			assert(!_message_funcs);
+			_message_funcs = (LV2MessageContext*)ctx_ext;
 		}
 	}
 	
@@ -226,6 +223,10 @@ LV2Node::instantiate()
 			const char* context = slv2_value_as_string(c);
 			if (!strcmp("http://lv2plug.in/ns/dev/contexts#MessageContext", context)) {
 				cout << "MESSAGE CONTEXT!" << endl;
+				if (!_message_funcs) {
+					cerr << "Plugin " << _lv2_plugin->name()
+						<< " has a message port, but no context extension data." << endl;
+				}
 				port->set_context(Context::MESSAGE);
 			} else {
 				cout << "UNKNOWN CONTEXT: "
@@ -279,8 +280,8 @@ void
 LV2Node::message_process(MessageContext& context, uint32_t* output)
 {
 	// FIXME: voice
-	if (_message_run)
-		(*_message_run)[0]((*_instances)[0], output);
+	if (_message_funcs)
+		(*_message_funcs->message_run)((*_instances)[0], output);
 
 	/* MESSAGE PROCESS */
 }
@@ -304,6 +305,13 @@ LV2Node::set_port_buffer(uint32_t voice, uint32_t port_num, Buffer* buf)
 	assert(voice < _polyphony);
 	
 	slv2_instance_connect_port((*_instances)[voice], port_num, buf->raw_data());
+	if ((*_ports).at(port_num)->context() == Context::MESSAGE) {
+		assert(_message_funcs);
+		assert(_message_funcs->message_connect_port);
+		(*_message_funcs->message_connect_port)((*_instances)[voice], port_num, buf->raw_data());
+	} else {
+		slv2_instance_connect_port((*_instances)[voice], port_num, buf->raw_data());
+	}
 }
 
 
