@@ -18,7 +18,7 @@
 #include "config.h"
 
 #include <raul/Process.hpp>
-#include "engine.hpp"
+#include "ingen_engine.hpp"
 #include "Engine.hpp"
 #include "QueuedEngineInterface.hpp"
 #include "tuning.hpp"
