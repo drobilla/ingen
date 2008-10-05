@@ -50,6 +50,7 @@ PortImpl::PortImpl(NodeImpl* const node,
 	, _last_broadcasted_value(_value.type() == Atom::FLOAT ? _value.get_float() : 0.0f) // default?
 	, _context(Context::AUDIO)
 	, _buffers(new Raul::Array<Buffer*>(poly))
+	, _prepared_buffers(NULL)
 {
 	assert(node != NULL);
 	assert(_poly > 0);
@@ -134,6 +135,8 @@ PortImpl::allocate_buffers()
 
 	for (uint32_t i=0; i < _poly; ++i)
 		_buffers->at(i) = Buffer::create(_type, _buffer_size);
+
+	_prepared_buffers = _buffers;
 }
 
 
