@@ -173,19 +173,6 @@ InputPort::remove_connection(const OutputPort* src_port)
 }
 
 
-/** Returns whether this port is connected to the passed port.
- */
-/*bool
-InputPort::is_connected_to(const OutputPort* port) const
-{
-	for (Connections::const_iterator i = _connections.begin(); i != _connections.end(); ++i)
-		if ((*i)->src_port() == port)
-			return true;
-	
-	return false;
-}*/
-
-
 /** Prepare buffer for access, mixing if necessary.  Realtime safe.
  *  FIXME: nframes parameter not used,
  */

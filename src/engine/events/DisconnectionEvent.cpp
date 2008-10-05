@@ -121,7 +121,6 @@ DisconnectionEvent::pre_process()
 
 	assert(_patch);
 	
-	//if (_dst_input_port->is_connected_to(_src_output_port)) {
 	if (!_patch->has_connection(_src_output_port, _dst_input_port)) {
 		_error = NOT_CONNECTED;
 		QueuedEvent::pre_process();

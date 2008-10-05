@@ -71,7 +71,6 @@ public:
 	void post_process(ProcessContext& context);
 	
 	bool is_connected() const { return (_connections.size() > 0); }
-	//bool is_connected_to(const OutputPort* port) const;
 	
 	bool is_input()  const { return true; }
 	bool is_output() const { return false; }
