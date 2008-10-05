@@ -96,6 +96,7 @@ SetPortValueEvent::pre_process()
 	// Port is a message context port, set its value and
 	// call the plugin's message run function once
 	if (_port && _port->context() == Context::MESSAGE) {
+		apply(0, 0);
 		_engine.message_context()->run(_port->parent_node());
 	}
 	
@@ -111,7 +112,14 @@ SetPortValueEvent::execute(ProcessContext& context)
 	
 	if (_port && _port->context() == Context::MESSAGE)
 		return;
+	
+	apply(context.start(), context.nframes());
+}
 
+
+void
+SetPortValueEvent::apply(uint32_t start, uint32_t nframes)
+{
 	if (_error == NO_ERROR && _port == NULL) {
 		if (Path::is_valid(_port_path))
 			_port = _engine.engine_store()->find_port(_port_path);
@@ -136,11 +144,11 @@ SetPortValueEvent::execute(ProcessContext& context)
 			if (_omni) {
 				for (uint32_t i=0; i < _port->poly(); ++i)
 					((AudioBuffer*)_port->buffer(i))->set_value(
-							_value.get_float(), context.start(), _time);
+							_value.get_float(), start, _time);
 			} else {
 				if (_voice_num < _port->poly())
 					((AudioBuffer*)_port->buffer(_voice_num))->set_value(
-							_value.get_float(), context.start(), _time);
+							_value.get_float(), start, _time);
 				else
 					_error = ILLEGAL_VOICE;
 			}
@@ -156,7 +164,7 @@ SetPortValueEvent::execute(ProcessContext& context)
 		// FIXME: need a proper prefix system
 		if (ebuf && _value.type() == Atom::BLOB) {
 			const uint32_t frames = std::max(
-					(uint32_t)(_time - context.start()),
+					(uint32_t)(_time - start),
 					ebuf->latest_frames());
 			
 			// Size 0 event, pass it along to the plugin as a typed but empty event
@@ -171,7 +179,7 @@ SetPortValueEvent::execute(ProcessContext& context)
 				const uint32_t type_id = map->uri_to_id(NULL,
 						"http://lv2plug.in/ns/ext/midi#MidiEvent");
 
-				ebuf->prepare_write(context.start(), context.nframes());
+				ebuf->prepare_write(start, nframes);
 				// FIXME: use OSC midi type? avoid MIDI over OSC entirely?
 				ebuf->append(frames, 0, type_id, _value.data_size(),
 						(const uint8_t*)_value.get_blob());

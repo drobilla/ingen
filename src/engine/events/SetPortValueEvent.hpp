@@ -65,6 +65,8 @@ private:
 	enum ErrorType { NO_ERROR, PORT_NOT_FOUND, NO_SPACE,
 		ILLEGAL_PATH, ILLEGAL_VOICE, TYPE_MISMATCH };
 	
+	void apply(uint32_t start, uint32_t nframes);
+	
 	bool             _queued;
 	bool             _omni;
 	uint32_t         _voice_num;
