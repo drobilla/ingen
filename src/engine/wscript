@@ -40,7 +40,7 @@ def build(bld):
 		QueuedEvent.cpp
 		QueuedEventSource.cpp
 		TransportNode.cpp
-		engine.cpp
+		ingen_engine.cpp
 		events/AllNotesOffEvent.cpp
 		events/ClearPatchEvent.cpp
 		events/ConnectionEvent.cpp
