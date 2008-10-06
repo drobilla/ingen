@@ -42,6 +42,13 @@ InputPort::InputPort(NodeImpl*     parent,
 	: PortImpl(parent, name, index, poly, type, value, buffer_size)
 {
 }
+	
+
+bool
+InputPort::can_direct() const
+{
+	return _connections.size() == 1 && _connections.front()->can_direct();
+}
 
 
 void
@@ -64,10 +71,9 @@ InputPort::prepare_poly(uint32_t poly)
 	for (Connections::iterator c = _connections.begin(); c != _connections.end(); ++c)
 		((ConnectionImpl*)c->get())->prepare_poly(poly);
 
-	connect_buffers();
 	return true;
 }
-	
+
 
 bool
 InputPort::apply_poly(Raul::Maid& maid, uint32_t poly)
@@ -81,13 +87,14 @@ InputPort::apply_poly(Raul::Maid& maid, uint32_t poly)
 	PortImpl::apply_poly(maid, poly);
 	assert(this->poly() == poly);
 		
-	if (_connections.size() == 1) {
+	if (can_direct()) {
 		ConnectionImpl* c = _connections.begin()->get();
-		for (uint32_t i=0; i < _poly; ++i)
+		for (uint32_t i=_poly; i < poly; ++i)
 			_buffers->at(i)->join(c->buffer(i));
 	}
 		
-	connect_buffers();
+	for (uint32_t i=0; i < _poly; ++i)
+		PortImpl::parent_node()->set_port_buffer(i, _index, buffer(i));
 
 	return true;
 }
@@ -106,7 +113,7 @@ InputPort::add_connection(Connections::Node* const c)
 	bool modify_buffers = !_fixed_buffers;
 	
 	if (modify_buffers) {
-		if (_connections.size() == 1) {
+		if (can_direct()) {
 			// Use buffer directly to avoid copying
 			for (uint32_t i=0; i < _poly; ++i) {
 				_buffers->at(i)->join(c->elem()->buffer(i));
@@ -157,7 +164,7 @@ InputPort::remove_connection(const OutputPort* src_port)
 		} else if (modify_buffers && _connections.size() == 1) {
 			// Share a buffer
 			for (uint32_t i=0; i < _poly; ++i) {
-				_buffers->at(i)->join((*_connections.begin())->buffer(i));
+				_buffers->at(i)->join(_connections.front()->buffer(i));
 			}
 		}	
 	}
@@ -197,10 +204,9 @@ InputPort::pre_process(ProcessContext& context)
 
 	if ( ! _fixed_buffers) {
 		// If only one connection, try to use buffer directly (zero copy)
-		if (_connections.size() == 1) {
+		if (can_direct()) {
 			for (uint32_t i=0; i < _poly; ++i) {
-				//cerr << path() << " joining to " << (*_connections.begin())->buffer(i) << endl;
-				_buffers->at(i)->join((*_connections.begin())->buffer(i));
+				_buffers->at(i)->join(_connections.front()->buffer(i));
 			}
 			do_mixdown = false;
 		}
@@ -225,7 +231,7 @@ InputPort::pre_process(ProcessContext& context)
 	if (!do_mixdown) {
 		/*#ifndef NDEBUG
 		for (uint32_t i=0; i < _poly; ++i)
-			assert(buffer(i) == (*_connections.begin())->buffer(i));
+			assert(buffer(i) == _connections.front()->buffer(i));
 		#endif*/
 		return;
 	}
@@ -234,7 +240,7 @@ InputPort::pre_process(ProcessContext& context)
 		for (uint32_t voice=0; voice < _poly; ++voice) {
 			// Copy first connection
 			buffer(voice)->copy(
-				(*_connections.begin())->buffer(voice), 0, _buffer_size-1);
+				_connections.front()->buffer(voice), 0, _buffer_size-1);
 
 			// Accumulate the rest
 			if (_connections.size() > 1) {
@@ -254,8 +260,7 @@ InputPort::pre_process(ProcessContext& context)
 			cerr << "WARNING: MIDI mixing not implemented, only first connection used." << endl;
 			
 		// Copy first connection
-		_buffers->at(0)->copy(
-			(*_connections.begin())->buffer(0), 0, _buffer_size-1);
+		_buffers->at(0)->copy(_connections.front()->buffer(0), 0, _buffer_size-1);
 	}
 }
 

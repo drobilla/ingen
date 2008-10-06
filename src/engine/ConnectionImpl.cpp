@@ -24,8 +24,8 @@
 #include "AudioBuffer.hpp"
 #include "ProcessContext.hpp"
 
-#include <iostream>
-using namespace std;
+/*#include <iostream>
+using namespace std;*/
 
 namespace Ingen {
 
@@ -36,15 +36,11 @@ namespace Ingen {
  * user (InputPort).
  */
 ConnectionImpl::ConnectionImpl(PortImpl* src_port, PortImpl* dst_port)
-	: _src_port(src_port)
+	: _mode(DIRECT)
+	, _src_port(src_port)
 	, _dst_port(dst_port)
 	, _local_buffer(NULL)
 	, _buffer_size(dst_port->buffer_size())
-	/*, _must_mix( (src_port->poly() != dst_port->poly())
-			|| (src_port->buffer(0)->size() < dst_port->buffer(0)->size()) )*/
-	, _must_mix( (src_port->polyphonic() && (! dst_port->polyphonic()))
-			|| (src_port->poly() != dst_port->poly() )
-			|| (src_port->buffer(0)->size() < dst_port->buffer(0)->size()) )
 	, _pending_disconnection(false)
 {
 	assert(src_port);
@@ -58,11 +54,9 @@ ConnectionImpl::ConnectionImpl(PortImpl* src_port, PortImpl* dst_port)
 	/*assert((src_port->parent_node()->poly() == dst_port->parent_node()->poly())
 		|| (src_port->parent_node()->poly() == 1 || dst_port->parent_node()->poly() == 1));*/
 
-	if (type() == DataType::EVENT)
-		_must_mix = false; // FIXME: kludge
-
-	if (_must_mix)
-		_local_buffer = Buffer::create(dst_port->type(), dst_port->buffer(0)->size());
+	set_mode();
+	if (need_buffer())
+		_local_buffer = Buffer::create(dst_port->type(), _buffer_size);
 
 	/* FIXME: 1->1 connections with a destination with fixed buffers copies unecessarily */
 	//cerr << src_port->path() << " -> " << dst_port->path() << " must mix: " << _must_mix << endl;
@@ -76,9 +70,22 @@ ConnectionImpl::~ConnectionImpl()
 	
 
 void
+ConnectionImpl::set_mode()
+{
+	if (must_mix())
+		_mode = MIX;
+	else if (must_extend())
+		_mode = EXTEND;
+	
+	if (type() == DataType::EVENT)
+		_mode = DIRECT; // FIXME: kludge
+}
+
+
+void
 ConnectionImpl::set_buffer_size(size_t size)
 {
-	if (_must_mix) {
+	if (_mode == MIX || _mode == EXTEND) {
 		assert(_local_buffer);
 		delete _local_buffer;
 
@@ -89,22 +96,34 @@ ConnectionImpl::set_buffer_size(size_t size)
 }
 
 
+bool
+ConnectionImpl::must_mix() const
+{
+	bool mix = (   /*(_src_port->poly() != _dst_port->poly())
+				||*/ (_src_port->polyphonic() && !_dst_port->polyphonic())
+				|| (_src_port->parent()->polyphonic() && !_dst_port->parent()->polyphonic()) );
+
+	return mix;
+}
+
+
+bool
+ConnectionImpl::must_extend() const
+{
+	return (_src_port->buffer_size() != _dst_port->buffer_size());
+}
+
+
 void
 ConnectionImpl::prepare_poly(uint32_t poly)
 {
 	_src_port->prepare_poly(poly);
 
-	if (type() == DataType::CONTROL || type() == DataType::AUDIO)
-		_must_mix = (poly > 1) && (
-				   (_src_port->poly() != _dst_port->poly())
-				|| (_src_port->polyphonic() && !_dst_port->polyphonic())
-				|| (_src_port->parent()->polyphonic() && !_dst_port->parent()->polyphonic()) );
-
-	/*cerr << src_port()->path() << " * " << src_port()->poly()
+	/*cerr << "CONNECTION PREPARE: " << src_port()->path() << " * " << src_port()->poly()
 			<< " -> " << dst_port()->path() << " * " << dst_port()->poly()
-			<< "\t\tmust mix: " << _must_mix << " at poly " << poly << endl;*/
+			<< "\t\tmust mix: " << must_mix() << " at poly " << poly << endl;*/
 
-	if (_must_mix && ! _local_buffer)
+	if (need_buffer() && !_local_buffer)
 		_local_buffer = Buffer::create(_dst_port->type(), _dst_port->buffer(0)->size());
 }
 
@@ -113,7 +132,15 @@ void
 ConnectionImpl::apply_poly(Raul::Maid& maid, uint32_t poly)
 {
 	_src_port->apply_poly(maid, poly);
-	if (poly == 1 && _local_buffer && !_must_mix) {
+	set_mode();
+	
+	/*cerr << "CONNECTION APPLY: " << src_port()->path() << " * " << src_port()->poly()
+			<< " -> " << dst_port()->path() << " * " << dst_port()->poly()
+			<< "\t\tmust mix: " << must_mix() << ", extend: " << must_extend()
+			<< ", poly " << poly << endl;*/
+
+	// Recycle buffer if it's no longer needed
+	if (_local_buffer && !need_buffer()) {
 		maid.push(_local_buffer);
 		_local_buffer = NULL;
 	}
@@ -135,9 +162,10 @@ ConnectionImpl::process(ProcessContext& context)
 
 	/*cerr << src_port()->path() << " * " << src_port()->poly()
 			<< " -> " << dst_port()->path() << " * " << dst_port()->poly()
-			<< "\t\tmust mix: " << _must_mix << endl;*/
+			<< "\t\tmode: " << (int)_mode << endl;*/
 	
-	if (_must_mix && (type() == DataType::CONTROL || type() == DataType::AUDIO)) {
+	if (_mode == MIX) {
+		assert(type() == DataType::AUDIO || type() == DataType::CONTROL);
 
 		const AudioBuffer* const src_buffer = (AudioBuffer*)src_port()->buffer(0);
 		AudioBuffer*             mix_buf    = (AudioBuffer*)_local_buffer;
@@ -171,11 +199,27 @@ ConnectionImpl::process(ProcessContext& context)
 		// Scale the buffer down.
 		if (src_port()->poly() > 1)
 			mix_buf->scale(1.0f/(float)src_port()->poly(), 0, _buffer_size-1);
-
-	} else if (_must_mix && type() == DataType::EVENT) {
-
-		std::cerr << "WARNING: No event mixing." << std::endl;
 	
+	} else if (_mode == EXTEND) {
+		assert(type() == DataType::AUDIO || type() == DataType::CONTROL);
+		assert(src_port()->poly() == dst_port()->poly()); // otherwise we should be mixing
+
+		const size_t poly = src_port()->poly();
+		
+		const size_t copy_size = std::min(src_port()->buffer(0)->size(),
+		                                  dst_port()->buffer(0)->size());
+		
+		for (size_t i = 0; i < poly; ++i) {
+			AudioBuffer* src_buf = (AudioBuffer*)src_port()->buffer(0);
+			AudioBuffer* dst_buf = (AudioBuffer*)dst_port()->buffer(0);
+
+			// Copy src to start of dst
+			dst_buf->copy(src_buf, 0, copy_size-1);
+		
+			// Write last value of src buffer to remainder of dst buffer, if necessary
+			if (copy_size < dst_buf->size())
+				dst_buf->set_block(src_buf->value_at(copy_size - 1), copy_size, dst_buf->size() - 1);
+		}
 	}
 
 }

@@ -74,6 +74,19 @@ LADSPANode::prepare_poly(uint32_t poly)
 			cerr << "Failed to instantiate plugin!" << endl;
 			return false;
 		}
+		
+		// Initialize the values of new ports
+		for (unsigned long j=0; j < num_ports(); ++j) {
+			PortImpl* const port = _ports->at(j);
+			Buffer *buffer = port->prepared_buffer(i);
+
+			// FIXME: Preserve individual voice values
+			if (port->type() == DataType::CONTROL) {
+				((AudioBuffer*)buffer)->set_value(port->value().get_float(), 0, 0);
+			} else if (port->type() == DataType::AUDIO) {
+				((AudioBuffer*)buffer)->set_value(0.0f, 0, 0);
+			}
+		}
 
 		if (_activated && _descriptor->activate)
 			_descriptor->activate(_prepared_instances->at(i));

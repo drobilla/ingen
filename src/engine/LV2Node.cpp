@@ -74,15 +74,29 @@ LV2Node::prepare_poly(uint32_t poly)
 		return true;
 	}
 
+	SharedPtr<LV2Info> info = _lv2_plugin->lv2_info();
 	_prepared_instances = new Raul::Array<SLV2Instance>(poly, *_instances);
 	for (uint32_t i = _polyphony; i < _prepared_instances->size(); ++i) {
 		// FIXME: features array (in NodeFactory) must be passed!
 		_prepared_instances->at(i) = slv2_plugin_instantiate(
-				_lv2_plugin->slv2_plugin(), _srate, NULL);
+				_lv2_plugin->slv2_plugin(), _srate, info->lv2_features());
 
 		if (_prepared_instances->at(i) == NULL) {
 			cerr << "Failed to instantiate plugin!" << endl;
 			return false;
+		}
+
+		// Initialize the values of new ports
+		for (unsigned long j=0; j < num_ports(); ++j) {
+			PortImpl* const port = _ports->at(j);
+			Buffer *buffer = port->prepared_buffer(i);
+
+			// FIXME: Preserve individual voice values
+			if (port->type() == DataType::CONTROL) {
+				((AudioBuffer*)buffer)->set_value(port->value().get_float(), 0, 0);
+			} else if (port->type() == DataType::AUDIO) {
+				((AudioBuffer*)buffer)->set_value(0.0f, 0, 0);
+			}
 		}
 
 		if (_activated)
@@ -166,6 +180,9 @@ LV2Node::instantiate()
 	float* def_values = new float[num_ports];
 	slv2_plugin_get_port_ranges_float(plug, 0, 0, def_values);
 	
+	SLV2Value pred = slv2_value_new_uri(info->lv2_world(),
+			"http://lv2plug.in/ns/dev/contexts#context");
+			
 	for (uint32_t j=0; j < num_ports; ++j) {
 		SLV2Port id = slv2_plugin_get_port_by_index(plug, j);
 
@@ -215,8 +232,6 @@ LV2Node::instantiate()
 		if (direction == INPUT && data_type == DataType::CONTROL)
 		  ((AudioBuffer*)port->buffer(0))->set_value(def, 0, 0);
 		
-		SLV2Value pred = slv2_value_new_uri(info->lv2_world(),
-				"http://lv2plug.in/ns/dev/contexts#context");
 		SLV2Values contexts = slv2_port_get_value(plug, id, pred);
 		for (uint32_t i = 0; i < slv2_values_size(contexts); ++i) {
 			SLV2Value c = slv2_values_get_at(contexts, i);

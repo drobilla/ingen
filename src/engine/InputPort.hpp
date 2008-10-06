@@ -74,10 +74,12 @@ public:
 	
 	bool is_input()  const { return true; }
 	bool is_output() const { return false; }
-	
+
 	virtual void set_buffer_size(size_t size);
 	
 private:
+	bool can_direct() const;
+
 	Connections _connections;
 };
 

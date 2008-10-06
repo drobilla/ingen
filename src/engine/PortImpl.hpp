@@ -81,6 +81,9 @@ public:
 			return buf;
 		}
 	}
+	inline Buffer* prepared_buffer(uint32_t voice) const {
+		return _prepared_buffers->at(voice);
+	}
 
 	/** Called once per process cycle */
 	virtual void pre_process(ProcessContext& context) = 0;

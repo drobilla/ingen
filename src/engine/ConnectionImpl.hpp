@@ -66,19 +66,29 @@ public:
 	 * in a mono->poly connection).
 	 */
 	inline Buffer* buffer(size_t voice) const;
+
+	inline size_t buffer_size() const { return _buffer_size; }
 	
 	void set_buffer_size(size_t size);
 	void prepare_poly(uint32_t poly);
 	void apply_poly(Raul::Maid& maid, uint32_t poly);
 
+	bool must_mix() const;
+	bool must_extend() const;
+
+	inline bool need_buffer() const { return must_mix(); }
+	inline bool can_direct() const { return _mode == DIRECT; }
+
 	DataType type() const { return _src_port->type(); }
 
 protected:
+	enum { DIRECT, MIX, EXTEND } _mode;
+	void set_mode();
+
 	PortImpl* const _src_port;
 	PortImpl* const _dst_port;
 	Buffer*         _local_buffer;
 	size_t          _buffer_size;
-	bool            _must_mix;
 	bool            _pending_disconnection;
 };
 
@@ -86,7 +96,7 @@ protected:
 inline Buffer*
 ConnectionImpl::buffer(size_t voice) const
 {
-	if (_must_mix) {
+	if (_mode == MIX) {
 		return _local_buffer;
 	} else if ( ! _src_port->polyphonic()) {
 		return _src_port->buffer(0);

@@ -129,7 +129,7 @@ NodeBase::apply_poly(Raul::Maid& maid, uint32_t poly)
 	
 	for (uint32_t i=0; i < num_ports(); ++i)
 		for (uint32_t j=0; j < _polyphony; ++j)
-			set_port_buffer(j, i, _ports->at(i)->buffer(j));
+			set_port_buffer(j, i, _ports->at(i)->prepared_buffer(j));
 		
 	return true;
 }
