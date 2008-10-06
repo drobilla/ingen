@@ -50,6 +50,7 @@
 #include "ProcessContext.hpp"
 #include "MessageContext.hpp"
 #include "ThreadManager.hpp"
+#include "QueuedEngineInterface.hpp"
 #ifdef HAVE_JACK_MIDI
 #include "JackMidiDriver.hpp"
 #endif
