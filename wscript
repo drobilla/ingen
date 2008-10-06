@@ -21,6 +21,8 @@ def set_options(opt):
 			help="Ingen data install directory [Default: PREFIX/share/ingen]")
 	opt.add_option('--module-dir', type='string', dest='moduledir',
 			help="Ingen module install directory [Default: PREFIX/lib/ingen]")
+	opt.add_option('--no-liblo', action='store_true', default=False, dest='no_liblo',
+			help="Do not build OSC via liblo support, even if liblo exists")
 
 def configure(conf):
 	autowaf.configure(conf)
@@ -36,7 +38,8 @@ def configure(conf):
 	autowaf.check_pkg(conf, 'libglademm-2.4', destvar='GLADEMM', vnum='2.6.0', mandatory=False)
 	autowaf.check_pkg(conf, 'libsoup-2.4', destvar='SOUP', vnum='2.4.0', mandatory=False)
 	autowaf.check_header(conf, 'ladspa.h', 'HAVE_LADSPA', mandatory=False)
-	autowaf.check_pkg(conf, 'liblo', destvar='LIBLO', vnum='0.25', mandatory=False)
+	if not Params.g_options.no_liblo:
+		autowaf.check_pkg(conf, 'liblo', destvar='LIBLO', vnum='0.25', mandatory=False)
 	autowaf.check_pkg(conf, 'redlandmm', destvar='REDLANDMM', vnum='0.0.0', mandatory=False)
 	
 	conf.define('INGEN_VERSION', INGEN_VERSION)
