@@ -55,6 +55,9 @@ class MessageContext;
  * This is a (GoF) facade for the engine.  Pointers to all components are
  * available for more advanced control than this facade allows.
  *
+ * Most objects in the engine have (directly or indirectly) a pointer to the
+ * Engine they are a part of.
+ *
  * \ingroup engine
  */
 class Engine : boost::noncopyable
@@ -106,10 +109,8 @@ public:
 	inline ProcessSlaves& process_slaves() { return _process_slaves; }
 	
 private:
-	ProcessSlaves         _process_slaves;
-
-	Ingen::Shared::World* _world;
-
+	ProcessSlaves          _process_slaves;
+	Ingen::Shared::World*  _world;
 	SharedPtr<EventSource> _event_source;
 	SharedPtr<AudioDriver> _audio_driver;
 	MidiDriver*            _midi_driver;

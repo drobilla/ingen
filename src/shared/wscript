@@ -13,7 +13,7 @@ def build(bld):
 	'''
 	if bld.env()['HAVE_LIBLO']:
 		obj.source += ' OSCSender.cpp '
-	obj.includes = ['../', '../common']
+	obj.includes = ['.', '../', '../common']
 	obj.name     = 'libingen_shared'
 	obj.target   = 'ingen_shared'
 	obj.vnum     = '0.0.0'

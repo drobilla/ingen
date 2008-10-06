@@ -79,7 +79,7 @@ def build(bld):
 		obj.source += ' HTTPEngineReceiver.cpp '
 	if bld.env()['HAVE_LIBLO']:
 		obj.source += ' OSCEngineReceiver.cpp OSCClientSender.cpp '
-	obj.includes     = ['..', '../common', './events']
+	obj.includes     = ['.', '..', '../common', './events']
 	obj.name         = 'libingen_engine'
 	obj.target       = 'ingen_engine'
 	obj.inst_dir     = 'lib/ingen'

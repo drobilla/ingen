@@ -9,7 +9,7 @@ def build(bld):
 		Serialiser.cpp
 		serialisation.cpp
 	'''
-	obj.includes = ['..', '../common']
+	obj.includes = ['.', '..', '../common']
 	obj.name     = 'libingen_serialisation'
 	obj.target   = 'ingen_serialisation'
 	obj.inst_dir = 'lib/ingen'

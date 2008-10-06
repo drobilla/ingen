@@ -8,7 +8,7 @@ def build(bld):
 		Module.cpp
 		global.cpp
 	'''
-	obj.includes = ['..', '../common']
+	obj.includes = ['.', '..', '../common']
 	obj.defines  = 'INGEN_MODULE_DIR=\\\"' + bld.env()['PREFIX'] + 'lib/ingen\\\"'
 	obj.name     = 'libingen_module'
 	obj.target   = 'ingen_module'
