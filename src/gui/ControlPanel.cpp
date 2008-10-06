@@ -230,7 +230,7 @@ ControlPanel::value_changed(SharedPtr<PortModel> port, float val)
 			App::instance().engine()->set_port_value(port->path(), Atom(val));
 			port->value(val);
 		} else {
-			int voice = _voice_spinbutton->get_value_as_int() - 1;
+			int voice = _voice_spinbutton->get_value_as_int();
 			App::instance().engine()->set_voice_value(port->path(), voice, Atom(val));
 			port->value(val);
 		}
