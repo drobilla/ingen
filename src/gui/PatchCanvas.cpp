@@ -62,6 +62,7 @@ PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 	, _human_names(true)
 	, _menu(NULL)
 	, _internal_menu(NULL)
+	, _classless_menu(NULL)
 	, _plugin_menu(NULL)
 {
 	Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference();
@@ -141,20 +142,17 @@ PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 void
 PatchCanvas::show_menu(GdkEvent* event)
 {
-	if (!_internal_menu || !_plugin_menu || _refresh_menu) {
-		build_internal_menu();
-#ifdef HAVE_SLV2
-		build_plugin_menu();
-#endif
-		_refresh_menu = false;
-	}
+	if (!_internal_menu || !_classless_menu || !_plugin_menu || _refresh_menu)
+		build_menus();
+	
 	_menu->popup(event->button.button, event->button.time);
 }
 
 
 void
-PatchCanvas::build_internal_menu()
+PatchCanvas::build_menus()
 {
+	// Build (or clear existing) internal plugin menu
 	if (_internal_menu) {
 		_internal_menu->items().clear();
 	} else {
@@ -165,27 +163,45 @@ PatchCanvas::build_internal_menu()
 		internal_menu_item->set_submenu(*_internal_menu);
 		_menu->reorder_child(*internal_menu_item, 2);
 	}
-	
-	SharedPtr<const ClientStore::Plugins> plugins = App::instance().store()->plugins();
 
-	// Add Internal plugins
+	// Build skeleton LV2 plugin class heirarchy for 'Plugin' menu
+#ifdef HAVE_SLV2
+	if (!_plugin_menu)
+	   build_plugin_menu();
+	
+	// Build (or clear existing) uncategorized (classless, heh) plugins menu
+	if (_classless_menu) {
+		_classless_menu->items().clear();
+	} else {
+		_plugin_menu->items().push_back(Gtk::Menu_Helpers::MenuElem("Uncategorized"));
+		Gtk::MenuItem* classless_menu_item = &(_plugin_menu->items().back());
+		_classless_menu = Gtk::manage(new Gtk::Menu());
+		classless_menu_item->set_submenu(*_classless_menu);
+		_classless_menu->hide();
+	}
+#endif
+	
+	// Add known plugins to menu heirarchy
+	SharedPtr<const ClientStore::Plugins> plugins = App::instance().store()->plugins();
 	for (ClientStore::Plugins::const_iterator i = plugins->begin(); i != plugins->end(); ++i) {
-		SharedPtr<PluginModel> p = i->second;
-		if (p->type() == Plugin::Internal) {
-			_internal_menu->items().push_back(Gtk::Menu_Helpers::MenuElem(p->name(),
-					sigc::bind(sigc::mem_fun(this, &PatchCanvas::load_plugin), p)));
-		}
+		add_plugin(i->second);
 	}
 }
 
 
 #ifdef HAVE_SLV2
+/** Recursively build the plugin class menu heirarchy rooted at
+ * @a plugin class into @a menu
+ */
 size_t
 PatchCanvas::build_plugin_class_menu(Gtk::Menu* menu,
 		SLV2PluginClass plugin_class, SLV2PluginClasses classes)
 {
 	size_t num_items = 0;
 
+	SLV2Value class_uri = slv2_plugin_class_get_uri(plugin_class);
+	_class_menus[slv2_value_as_string(class_uri)] = menu;
+	
 	// Add submenus
 	for (unsigned i=0; i < slv2_plugin_classes_size(classes); ++i) {
 		SLV2PluginClass c = slv2_plugin_classes_get_at(classes, i);
@@ -194,38 +210,18 @@ PatchCanvas::build_plugin_class_menu(Gtk::Menu* menu,
 		if (parent && slv2_value_equals(parent, slv2_plugin_class_get_uri(plugin_class))) {
 			Gtk::Menu_Helpers::MenuElem menu_elem = Gtk::Menu_Helpers::MenuElem(
 					slv2_value_as_string(slv2_plugin_class_get_label(c)));
+			
+			menu->items().push_back(menu_elem);
+			Gtk::MenuItem* menu_item = &(menu->items().back());
 
 			Gtk::Menu* submenu = Gtk::manage(new Gtk::Menu());
-			size_t sub_num_items = build_plugin_class_menu(submenu, c, classes);
+			size_t num_items = build_plugin_class_menu(submenu, c, classes);
+			
+			// TODO: store items in map as well and do this to hide empty classes
+			//(num_items > 0) ? submenu->show() :	submenu->hide();
 
-			if (sub_num_items > 0) {
-				menu->items().push_back(menu_elem);
-				Gtk::MenuItem* menu_item = &(menu->items().back());
-				menu_item->set_submenu(*submenu);
-				++num_items;
-			}
-		}
-	}
-	
-	SharedPtr<const ClientStore::Plugins> plugins = App::instance().store()->plugins();
-
-	// Add LV2 plugins
-	for (ClientStore::Plugins::const_iterator i = plugins->begin(); i != plugins->end(); ++i) {
-		SLV2Plugin p = i->second->slv2_plugin();
-
-		if (p && slv2_plugin_get_class(p) == plugin_class) {
-			Glib::RefPtr<Gdk::Pixbuf> icon
-					= App::instance().icon_from_path(PluginModel::get_lv2_icon_path(p), 16);
-			if (icon) {
-				Gtk::Image* image = new Gtk::Image(icon);
-				menu->items().push_back(Gtk::Menu_Helpers::ImageMenuElem(i->second->name(),
-							*image,
-							sigc::bind(sigc::mem_fun(this, &PatchCanvas::load_plugin), i->second)));
-			} else {
-				menu->items().push_back(Gtk::Menu_Helpers::MenuElem(i->second->name(),
-							sigc::bind(sigc::mem_fun(this, &PatchCanvas::load_plugin), i->second)));
-				++num_items;
-			}
+			menu_item->set_submenu(*submenu);
+			++num_items;
 		}
 	}
 
@@ -307,9 +303,37 @@ PatchCanvas::show_human_names(bool b)
 
 	
 void
-PatchCanvas::add_plugin(SharedPtr<PluginModel> pm)
+PatchCanvas::add_plugin(SharedPtr<PluginModel> p)
 {
-	_refresh_menu = true;
+	if (_internal_menu && p->type() == Plugin::Internal) {
+		_internal_menu->items().push_back(Gtk::Menu_Helpers::MenuElem(p->name(),
+				sigc::bind(sigc::mem_fun(this, &PatchCanvas::load_plugin), p)));
+	} else if (_plugin_menu && p->type() == Plugin::LV2) {
+		SLV2PluginClass pc = slv2_plugin_get_class(p->slv2_plugin());
+		SLV2Value class_uri = slv2_plugin_class_get_uri(pc);
+		ClassMenus::iterator i = _class_menus.find(slv2_value_as_string(class_uri));
+		if (i != _class_menus.end() && i->second != _plugin_menu) {
+			Gtk::Menu* menu = i->second;
+			Glib::RefPtr<Gdk::Pixbuf> icon = App::instance().icon_from_path(
+					PluginModel::get_lv2_icon_path(p->slv2_plugin()), 16);
+			if (icon) {
+				Gtk::Image* image = new Gtk::Image(icon);
+				menu->items().push_back(Gtk::Menu_Helpers::ImageMenuElem(p->human_name(),
+						*image,
+						sigc::bind(sigc::mem_fun(this, &PatchCanvas::load_plugin), p)));
+			} else {
+				menu->items().push_back(Gtk::Menu_Helpers::MenuElem(p->human_name(),
+						sigc::bind(sigc::mem_fun(this, &PatchCanvas::load_plugin), p)));
+				menu->show();
+			}
+		} else {
+			_classless_menu->items().push_back(Gtk::Menu_Helpers::MenuElem(p->human_name(),
+					sigc::bind(sigc::mem_fun(this, &PatchCanvas::load_plugin), p)));
+			_classless_menu->show();
+		}
+	}
+
+	_refresh_menu = true; // Refresh next time on show
 }
 
 
@@ -705,8 +729,12 @@ PatchCanvas::menu_add_port(const string& name, const string& type, bool is_outpu
 
 
 void
-PatchCanvas::load_plugin(SharedPtr<PluginModel> plugin)
+PatchCanvas::load_plugin(WeakPtr<PluginModel> weak_plugin)
 {
+	SharedPtr<PluginModel> plugin = weak_plugin.lock();
+	if (!plugin)
+		return;
+
 	string name = plugin->default_node_symbol();
 	unsigned offset = App::instance().store()->child_name_offset(_patch->path(), name);
 	if (offset != 0) {

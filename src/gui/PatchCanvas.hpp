@@ -97,13 +97,19 @@ private:
 	void menu_load_plugin();
 	void menu_new_patch();
 	void menu_load_patch();
-	void load_plugin(SharedPtr<PluginModel> plugin);
+	void load_plugin(WeakPtr<PluginModel> plugin);
+
+	void build_menus();
 
 	void build_internal_menu();
+	void build_classless_menu();
+
 #ifdef HAVE_SLV2
 	void build_plugin_menu();
-	size_t build_plugin_class_menu(Gtk::Menu* menu,
-		SLV2PluginClass plugin_class, SLV2PluginClasses classes);
+	size_t build_plugin_class_menu(
+			Gtk::Menu*        menu,
+			SLV2PluginClass   plugin_class,
+			SLV2PluginClasses classes);
 #endif
 	
 	GraphObject::Variables get_initial_data();
@@ -125,11 +131,15 @@ private:
 
 	int _last_click_x;
 	int _last_click_y;
+
+	typedef std::map<const std::string, Gtk::Menu*> ClassMenus;
+	ClassMenus _class_menus;
 	
 	bool            _refresh_menu;
 	bool            _human_names;
 	Gtk::Menu*      _menu;
 	Gtk::Menu*      _internal_menu;
+	Gtk::Menu*      _classless_menu;
 	Gtk::Menu*      _plugin_menu;
 	/*Gtk::MenuItem*  _menu_add_number_control;
 	Gtk::MenuItem*  _menu_add_button_control;*/
