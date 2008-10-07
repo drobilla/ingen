@@ -132,7 +132,7 @@ private:
 	int _last_click_x;
 	int _last_click_y;
 
-	typedef std::map<const std::string, Gtk::Menu*> ClassMenus;
+	typedef std::multimap<const std::string, Gtk::Menu*> ClassMenus;
 	ClassMenus _class_menus;
 	
 	bool            _refresh_menu;

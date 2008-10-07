@@ -200,7 +200,7 @@ PatchCanvas::build_plugin_class_menu(Gtk::Menu* menu,
 	size_t num_items = 0;
 
 	SLV2Value class_uri = slv2_plugin_class_get_uri(plugin_class);
-	_class_menus[slv2_value_as_string(class_uri)] = menu;
+	_class_menus.insert(make_pair(slv2_value_as_string(class_uri), menu));
 	
 	// Add submenus
 	for (unsigned i=0; i < slv2_plugin_classes_size(classes); ++i) {
@@ -311,21 +311,26 @@ PatchCanvas::add_plugin(SharedPtr<PluginModel> p)
 	} else if (_plugin_menu && p->type() == Plugin::LV2) {
 		SLV2PluginClass pc = slv2_plugin_get_class(p->slv2_plugin());
 		SLV2Value class_uri = slv2_plugin_class_get_uri(pc);
-		ClassMenus::iterator i = _class_menus.find(slv2_value_as_string(class_uri));
+		const char* class_uri_str = slv2_value_as_string(class_uri);
+		ClassMenus::iterator i = _class_menus.find(class_uri_str);
 		if (i != _class_menus.end() && i->second != _plugin_menu) {
-			Gtk::Menu* menu = i->second;
 			Glib::RefPtr<Gdk::Pixbuf> icon = App::instance().icon_from_path(
 					PluginModel::get_lv2_icon_path(p->slv2_plugin()), 16);
-			if (icon) {
-				Gtk::Image* image = new Gtk::Image(icon);
-				menu->items().push_back(Gtk::Menu_Helpers::ImageMenuElem(p->human_name(),
-						*image,
-						sigc::bind(sigc::mem_fun(this, &PatchCanvas::load_plugin), p)));
-			} else {
-				menu->items().push_back(Gtk::Menu_Helpers::MenuElem(p->human_name(),
-						sigc::bind(sigc::mem_fun(this, &PatchCanvas::load_plugin), p)));
-				menu->show();
-			}
+			// For every menu that represents plugin's class (possibly several)
+			do {
+				Gtk::Menu* menu = i->second;
+				if (icon) {
+					Gtk::Image* image = new Gtk::Image(icon);
+					menu->items().push_back(Gtk::Menu_Helpers::ImageMenuElem(p->human_name(),
+								*image,
+								sigc::bind(sigc::mem_fun(this, &PatchCanvas::load_plugin), p)));
+				} else {
+					menu->items().push_back(Gtk::Menu_Helpers::MenuElem(p->human_name(),
+								sigc::bind(sigc::mem_fun(this, &PatchCanvas::load_plugin), p)));
+					menu->show();
+				}
+				i++;
+			} while (i != _class_menus.end() && i->first == class_uri_str);
 		} else {
 			_classless_menu->items().push_back(Gtk::Menu_Helpers::MenuElem(p->human_name(),
 					sigc::bind(sigc::mem_fun(this, &PatchCanvas::load_plugin), p)));
