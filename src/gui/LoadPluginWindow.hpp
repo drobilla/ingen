@@ -50,8 +50,6 @@ public:
 	  add(_col_type);
 	  add(_col_uri);
 	  add(_col_label);
-	  //add(_col_library);
-	  //add(_col_label);
 	  add(_col_plugin_model);
   }
 

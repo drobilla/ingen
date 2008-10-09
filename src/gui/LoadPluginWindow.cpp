@@ -59,8 +59,6 @@ LoadPluginWindow::LoadPluginWindow(BaseObjectType* cobject, const Glib::RefPtr<G
 	_plugins_treeview->append_column("Name", _plugins_columns._col_name);
 	_plugins_treeview->append_column("Type", _plugins_columns._col_type);
 	_plugins_treeview->append_column("URI", _plugins_columns._col_uri);
-	//m_plugins_treeview->append_column("Library", _plugins_columns._col_library);
-	//m_plugins_treeview->append_column("Label", _plugins_columns._col_label);
 		
 	// This could be nicer.. store the TreeViewColumns locally maybe?
 	_plugins_treeview->get_column(1)->set_sort_column(_plugins_columns._col_name);
@@ -87,12 +85,6 @@ LoadPluginWindow::LoadPluginWindow(BaseObjectType* cobject, const Glib::RefPtr<G
 	iter = _criteria_liststore->append(); row = *iter;
 	row[_criteria_columns._col_label] = "URI contains";
 	row[_criteria_columns._col_criteria] = CriteriaColumns::URI;
-	/*iter = _criteria_liststore->append(); row = *iter;
-	row[_criteria_columns._col_label] = "Library contains: ";
-	row[_criteria_columns._col_criteria] = CriteriaColumns::LIBRARY;
-	iter = _criteria_liststore->append(); row = *iter;
-	row[_criteria_columns._col_label] = "Label contains: ";
-	row[_criteria_columns._col_criteria] = CriteriaColumns::LABEL;*/
 
 	_clear_button->signal_clicked().connect(          sigc::mem_fun(this, &LoadPluginWindow::clear_clicked));
 	_add_button->signal_clicked().connect(            sigc::mem_fun(this, &LoadPluginWindow::add_clicked));
@@ -223,7 +215,6 @@ LoadPluginWindow::set_plugins(SharedPtr<const ClientStore::Plugins> m)
 		
 		row[_plugins_columns._col_icon] = App::instance().icon_from_path(plugin->icon_path(), 20);
 		row[_plugins_columns._col_name] = plugin->name();
-		//row[_plugins_columns._col_label] = plugin->plug_label();
 		if (!strcmp(plugin->type_uri(), "ingen:Internal"))
 			row[_plugins_columns._col_type] = "Internal";
 		else if (!strcmp(plugin->type_uri(), "ingen:LV2"))
@@ -234,7 +225,6 @@ LoadPluginWindow::set_plugins(SharedPtr<const ClientStore::Plugins> m)
 			row[_plugins_columns._col_type] = plugin->type_uri();
 		row[_plugins_columns._col_uri] = plugin->uri();
 		row[_plugins_columns._col_label] = plugin->name();
-		//row[_plugins_columns._col_library] = plugin->lib_name();
 		row[_plugins_columns._col_plugin_model] = plugin;
 	}
 
@@ -261,11 +251,9 @@ LoadPluginWindow::add_plugin(SharedPtr<PluginModel> plugin)
 	Gtk::TreeModel::Row row = *iter;
 	
 	row[_plugins_columns._col_name] = plugin->name();
-	//row[_plugins_columns._col_label] = plugin->plug_label();
 	row[_plugins_columns._col_type] = plugin->type_uri();
 	row[_plugins_columns._col_uri] = plugin->uri();
 	row[_plugins_columns._col_label] = plugin->name();
-	//row[_plugins_columns._col_library] = plugin->lib_name();
 	row[_plugins_columns._col_plugin_model] = plugin;
 }
 
@@ -424,7 +412,6 @@ LoadPluginWindow::filter_changed()
 			model_row = *model_iter;
 		
 			model_row[_plugins_columns._col_name] = plugin->name();
-			//model_row[_plugins_columns._col_label] = plugin->plug_label();
 			model_row[_plugins_columns._col_type] = plugin->type_uri();
 			model_row[_plugins_columns._col_uri] = plugin->uri();
 			model_row[_plugins_columns._col_plugin_model] = plugin;
