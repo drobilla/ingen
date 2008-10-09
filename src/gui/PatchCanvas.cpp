@@ -142,7 +142,7 @@ PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 void
 PatchCanvas::show_menu(GdkEvent* event)
 {
-	if (!_internal_menu || !_classless_menu || !_plugin_menu || _refresh_menu)
+	if (!_internal_menu)
 		build_menus();
 	
 	_menu->popup(event->button.button, event->button.time);
