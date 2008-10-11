@@ -110,12 +110,12 @@ NodeModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeModel> n
 void
 NodeModule::show_human_names(bool b)
 {
-	Glib::Mutex::Lock lock(App::instance().world()->rdf_world->mutex());
-
-	if (b && node()->plugin())
+	if (b && node()->plugin()) {
+		Glib::Mutex::Lock lock(App::instance().world()->rdf_world->mutex());
 		set_name(((PluginModel*)node()->plugin())->human_name());
-	else
+	} else {
 		b = false;
+	}
 	
 	if (!b)
 		set_name(node()->symbol());
