@@ -202,16 +202,16 @@ ConnectionImpl::process(ProcessContext& context)
 	
 	} else if (_mode == EXTEND) {
 		assert(type() == DataType::AUDIO || type() == DataType::CONTROL);
-		assert(src_port()->poly() == dst_port()->poly()); // otherwise we should be mixing
+		assert(src_port()->poly() == 1 || src_port()->poly() == dst_port()->poly());
 
-		const size_t poly = src_port()->poly();
+		const uint32_t poly      = dst_port()->poly();
+		const uint32_t copy_size = std::min(src_port()->buffer(0)->size(),
+		                                    dst_port()->buffer(0)->size());
 		
-		const size_t copy_size = std::min(src_port()->buffer(0)->size(),
-		                                  dst_port()->buffer(0)->size());
-		
-		for (size_t i = 0; i < poly; ++i) {
-			AudioBuffer* src_buf = (AudioBuffer*)src_port()->buffer(0);
-			AudioBuffer* dst_buf = (AudioBuffer*)dst_port()->buffer(0);
+		for (uint32_t i = 0; i < poly; ++i) {
+			uint32_t     src_voice = std::min(i, src_port()->poly() - 1);
+			AudioBuffer* src_buf   = (AudioBuffer*)src_port()->buffer(src_voice);
+			AudioBuffer* dst_buf   = (AudioBuffer*)dst_port()->buffer(i);
 
 			// Copy src to start of dst
 			dst_buf->copy(src_buf, 0, copy_size-1);
