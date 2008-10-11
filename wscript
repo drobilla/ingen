@@ -16,6 +16,7 @@ blddir = 'build'
 
 def set_options(opt):
 	autowaf.set_options(opt)
+	opt.tool_options('compiler_cc')
 	opt.tool_options('compiler_cxx')
 	opt.add_option('--data-dir', type='string', dest='datadir',
 			help="Ingen data install directory [Default: PREFIX/share/ingen]")
