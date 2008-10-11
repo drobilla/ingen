@@ -192,7 +192,6 @@ void
 AudioBuffer::copy(const Buffer* src, size_t start_sample, size_t end_sample)
 {
 	assert(end_sample >= start_sample);
-	assert(end_sample < _size);
 	assert(src);
 	assert(src->type() == DataType::CONTROL || DataType::AUDIO);
 	
@@ -202,7 +201,8 @@ AudioBuffer::copy(const Buffer* src, size_t start_sample, size_t end_sample)
 	const Sample* const src_buf = ((AudioBuffer*)src)->data();
 	assert(src_buf);
 
-	for (size_t i=start_sample; i <= end_sample; ++i)
+	const size_t to_copy = std::min(end_sample, _size);
+	for (size_t i=start_sample; i <= to_copy; ++i)
 		buf[i] = src_buf[i];
 }
 
