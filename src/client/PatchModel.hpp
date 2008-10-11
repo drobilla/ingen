@@ -96,7 +96,7 @@ private:
 	bool                   _editable;
 };
 
-typedef Table<string, SharedPtr<PatchModel> > PatchModelMap;
+typedef Raul::Table<string, SharedPtr<PatchModel> > PatchModelMap;
 
 
 } // namespace Client

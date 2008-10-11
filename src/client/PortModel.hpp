@@ -21,14 +21,11 @@
 #include <cstdlib>
 #include <iostream>
 #include <string>
-#include <vector>
 #include <sigc++/sigc++.h>
 #include <raul/SharedPtr.hpp>
 #include <raul/Path.hpp>
 #include "interface/Port.hpp"
 #include "ObjectModel.hpp"
-
-using std::string; using std::vector;
 
 namespace Ingen {
 namespace Client {
@@ -50,9 +47,11 @@ public:
 	inline bool        is_input()  const { return (_direction == INPUT); }
 	inline bool        is_output() const { return (_direction == OUTPUT); }
 	
-	bool is_logarithmic() const;
-	bool is_integer()     const;
-	bool is_toggle()      const;
+	bool has_hint(const std::string& qname) const;
+
+	bool is_logarithmic() const { return has_hint("ingen:logarithmic"); }
+	bool is_integer()     const { return has_hint("ingen:integer"); }
+	bool is_toggle()      const { return has_hint("ingen:toggled"); }
 
 	inline bool operator==(const PortModel& pm) const { return (_path == pm._path); }
 	

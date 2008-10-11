@@ -21,30 +21,12 @@
 namespace Ingen {
 namespace Client {
 
-
 bool
-PortModel::is_logarithmic() const
+PortModel::has_hint(const std::string& qname) const
 {
-	const Atom& hint = get_variable("ingen:logarithmic");
+	const Atom& hint = get_variable(qname);
 	return (hint.is_valid() && hint.get_bool() > 0);
 }
-
-
-bool
-PortModel::is_integer() const
-{
-	const Atom& hint = get_variable("ingen:integer");
-	return (hint.is_valid() && hint.get_bool() > 0);
-}
-
-
-bool
-PortModel::is_toggle() const
-{
-	const Atom& hint = get_variable("ingen:toggled");
-	return (hint.is_valid() && hint.get_bool() > 0);
-}
-
 	
 void
 PortModel::set(SharedPtr<ObjectModel> model)

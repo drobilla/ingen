@@ -22,7 +22,6 @@
 #include <iostream>
 #include <string>
 #include <sigc++/sigc++.h>
-#include <raul/Table.hpp>
 #include <raul/Path.hpp>
 #include <raul/SharedPtr.hpp>
 #include "interface/Node.hpp"
@@ -30,9 +29,6 @@
 #include "ObjectModel.hpp"
 #include "PortModel.hpp"
 #include "PluginModel.hpp"
-
-using std::string;
-using Raul::Table;
 
 namespace Ingen {
 namespace Client {
@@ -51,13 +47,13 @@ public:
 	NodeModel(const NodeModel& copy);
 	virtual ~NodeModel();
 	
-	typedef vector<SharedPtr<PortModel> > Ports;
+	typedef std::vector< SharedPtr<PortModel> > Ports;
 
-	SharedPtr<PortModel> get_port(const string& port_name) const;
+	SharedPtr<PortModel> get_port(const std::string& port_name) const;
 	
 	Shared::Port* port(uint32_t index) const;
 	
-	const string&         plugin_uri() const { return _plugin_uri; }
+	const std::string&    plugin_uri() const { return _plugin_uri; }
 	const Shared::Plugin* plugin()     const { return _plugin.get(); }
 	uint32_t              num_ports()  const { return _ports.size(); }
 	const Ports&          ports()      const { return _ports; }
@@ -71,7 +67,7 @@ public:
 protected:
 	friend class ClientStore;
 	
-	NodeModel(const string& plugin_uri, const Path& path);
+	NodeModel(const std::string& plugin_uri, const Path& path);
 	NodeModel(SharedPtr<PluginModel> plugin, const Path& path);
 
 	NodeModel(const Path& path);
@@ -80,14 +76,14 @@ protected:
 	void add_port(SharedPtr<PortModel> pm);
 	void remove_port(SharedPtr<PortModel> pm);
 	void remove_port(const Path& port_path);
-	void add_program(int bank, int program, const string& name);
+	void add_program(int bank, int program, const std::string& name);
 	void remove_program(int bank, int program);
 	void set(SharedPtr<ObjectModel> model);
 
 	virtual void clear();
 	
 	Ports                  _ports;      ///< Vector of ports (not a Table to preserve order)
-	string                 _plugin_uri; ///< Plugin URI (if PluginModel is unknown)
+	std::string            _plugin_uri; ///< Plugin URI (if PluginModel is unknown)
 	SharedPtr<PluginModel> _plugin;     ///< The plugin this node is an instance of
 
 private:
