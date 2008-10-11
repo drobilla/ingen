@@ -31,13 +31,13 @@ namespace Ingen {
 
 
 CreatePatchEvent::CreatePatchEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path, int poly)
-: QueuedEvent(engine, responder, timestamp),
-  _path(path),
-  _patch(NULL),
-  _parent(NULL),
-  _compiled_patch(NULL),
-  _poly(poly),
-  _error(NO_ERROR)
+	: QueuedEvent(engine, responder, timestamp)
+	, _path(Raul::Path::pathify(path))
+	, _patch(NULL)
+	, _parent(NULL)
+	, _compiled_patch(NULL)
+	, _poly(poly)
+	, _error(NO_ERROR)
 {
 }
 
