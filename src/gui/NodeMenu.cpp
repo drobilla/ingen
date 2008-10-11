@@ -39,10 +39,14 @@ NodeMenu::NodeMenu(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml
 	xml->get_widget("node_controls_menuitem", _controls_menuitem);
 	xml->get_widget("node_popup_gui_menuitem", _popup_gui_menuitem);
 	xml->get_widget("node_embed_gui_menuitem", _embed_gui_menuitem);
+	xml->get_widget("node_randomize_menuitem", _randomize_menuitem);
 
 	node_menu->remove(*_controls_menuitem);
 	node_menu->remove(*_popup_gui_menuitem);
 	node_menu->remove(*_embed_gui_menuitem);
+	node_menu->remove(*_randomize_menuitem);
+	
+	insert(*_randomize_menuitem, 0);
 	items().push_front(Gtk::Menu_Helpers::SeparatorElem());
 	insert(*_controls_menuitem, 0);
 	insert(*_popup_gui_menuitem, 0);
@@ -63,6 +67,8 @@ NodeMenu::init(SharedPtr<NodeModel> node)
 			&sigc::signal<void>::emit));
 	_embed_gui_menuitem->signal_toggled().connect(sigc::mem_fun(this,
 			&NodeMenu::on_menu_embed_gui));
+	_randomize_menuitem->signal_activate().connect(sigc::mem_fun(this,
+			&NodeMenu::on_menu_randomize));
 
 	const PluginModel* plugin = dynamic_cast<const PluginModel*>(node->plugin());
 	if (plugin && plugin->type() == PluginModel::LV2 && plugin->has_ui()) {
@@ -72,6 +78,11 @@ NodeMenu::init(SharedPtr<NodeModel> node)
 		_popup_gui_menuitem->hide();
 		_embed_gui_menuitem->hide();
 	}
+
+	if (has_control_inputs())
+		_randomize_menuitem->show();
+	else
+		_randomize_menuitem->hide();
 
 	_enable_signal = true;
 }
@@ -85,41 +96,21 @@ NodeMenu::on_menu_embed_gui()
 
 
 void
-NodeMenu::on_menu_clone()
+NodeMenu::on_menu_randomize()
 {
-	cerr << "[NodeMenu] FIXME: clone broken\n";
-	/*
-	assert(_node);
-	//assert(_parent != NULL);
-	//assert(_parent->model() != NULL);
-	
-	string clone_name = _node->name();
-	int i = 2; // postfix number (ie oldname_2)
-	
-	// Check if name already has a number postfix
-	if (clone_name.find_last_of("_") != string::npos) {
-		string name_postfix = clone_name.substr(clone_name.find_last_of("_")+1);
-		clone_name = clone_name.substr(0, clone_name.find_last_of("_"));
-		if (sscanf(name_postfix.c_str(), "%d", &i))
-			++i;
+	App::instance().engine()->bundle_begin();
+
+	const NodeModel* const nm = (NodeModel*)_object.get();
+	for (NodeModel::Ports::const_iterator i = nm->ports().begin(); i != nm->ports().end(); ++i) {
+		if ((*i)->is_input() && (*i)->type().is_control()) {
+			float min = 0.0f, max = 1.0f;
+			nm->port_value_range(*i, min, max);
+			const float val = ((rand() / (float)RAND_MAX) * (max - min) + min);
+			App::instance().engine()->set_port_value((*i)->path(), val);
+		}
 	}
-	
-	char clone_postfix[4];
-	for ( ; i < 100; ++i) {
-		snprintf(clone_postfix, 4, "_%d", i);
-		if (_node->parent_patch()->get_node(clone_name + clone_postfix) == NULL)
-			break;
-	}
-	
-	clone_name = clone_name + clone_postfix;
-	
-	const string path = _node->parent_patch()->base() + clone_name;
-	NodeModel* nm = new NodeModel(_node->plugin(), path);
-	nm->polyphonic(_node->polyphonic());
-	nm->x(_node->x() + 20);
-	nm->y(_node->y() + 20);
-	App::instance().engine()->create_node_from_model(nm);
-	*/
+
+	App::instance().engine()->bundle_end();
 }
 
 

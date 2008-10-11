@@ -22,7 +22,6 @@
 #include <flowcanvas/Module.hpp>
 #include <raul/SharedPtr.hpp>
 #include "Port.hpp"
-#include "NodeMenu.hpp"
 
 class Atom;
 
@@ -37,6 +36,7 @@ namespace GUI {
 	
 class PatchCanvas;
 class Port;
+class NodeMenu;
 
 
 /** A module in a patch.

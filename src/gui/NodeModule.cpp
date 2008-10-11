@@ -32,6 +32,7 @@
 #include "SubpatchModule.hpp"
 #include "WindowFactory.hpp"
 #include "Configuration.hpp"
+#include "NodeMenu.hpp"
 
 using namespace std;
 

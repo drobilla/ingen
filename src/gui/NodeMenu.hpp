@@ -56,13 +56,14 @@ protected:
 	virtual void disable_controls_menuitem();
 
 	void on_menu_disconnect();
-	void on_menu_clone();
 	void on_menu_learn();
 	void on_menu_embed_gui();
+	void on_menu_randomize();
 
 	Gtk::MenuItem*      _controls_menuitem;
 	Gtk::MenuItem*      _popup_gui_menuitem;
 	Gtk::CheckMenuItem* _embed_gui_menuitem;
+	Gtk::MenuItem*      _randomize_menuitem;
 };
 
 

@@ -62,7 +62,7 @@ public:
 	uint32_t              num_ports()  const { return _ports.size(); }
 	const Ports&          ports()      const { return _ports; }
 	
-	void port_value_range(SharedPtr<PortModel> port, float& min, float& max);
+	void port_value_range(SharedPtr<PortModel> port, float& min, float& max) const;
 	
 	// Signals
 	sigc::signal<void, SharedPtr<PortModel> > signal_new_port; 
@@ -89,9 +89,11 @@ protected:
 	Ports                  _ports;      ///< Vector of ports (not a Table to preserve order)
 	string                 _plugin_uri; ///< Plugin URI (if PluginModel is unknown)
 	SharedPtr<PluginModel> _plugin;     ///< The plugin this node is an instance of
-	uint32_t               _num_values; ///< Size of _min_values and _max_values
-	float*                 _min_values; ///< Port min values (cached for LV2)
-	float*                 _max_values; ///< Port max values (cached for LV2)
+
+private:
+	mutable uint32_t       _num_values; ///< Size of _min_values and _max_values
+	mutable float*         _min_values; ///< Port min values (cached for LV2)
+	mutable float*         _max_values; ///< Port max values (cached for LV2)
 };
 
 

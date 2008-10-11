@@ -171,7 +171,7 @@ NodeModel::port(uint32_t index) const
 
 
 void
-NodeModel::port_value_range(SharedPtr<PortModel> port, float& min, float& max)
+NodeModel::port_value_range(SharedPtr<PortModel> port, float& min, float& max) const
 {
 	assert(port->parent().get() == this);
 	
