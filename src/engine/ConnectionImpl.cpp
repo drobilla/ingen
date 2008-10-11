@@ -198,7 +198,7 @@ ConnectionImpl::process(ProcessContext& context)
 
 		// Scale the buffer down.
 		if (src_port()->poly() > 1)
-			mix_buf->scale(1.0f/(float)src_port()->poly(), 0, _buffer_size-1);
+			mix_buf->scale(1.0f/(float)src_port()->poly(), 0, mix_buf->size()-1);
 	
 	} else if (_mode == EXTEND) {
 		assert(type() == DataType::AUDIO || type() == DataType::CONTROL);
