@@ -212,7 +212,6 @@ ConnectWindow::connect(bool existing)
 	} else
 #endif
 	if (_mode == INTERNAL) {
-		Ingen::Shared::World* world = App::instance().world();
 		if ( ! world->local_engine) {
 			assert(_new_engine);
 			world->local_engine = SharedPtr<Engine>(_new_engine(world));
