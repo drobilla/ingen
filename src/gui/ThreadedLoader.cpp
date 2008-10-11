@@ -96,7 +96,7 @@ ThreadedLoader::load_patch(bool                    merge,
 				sigc::mem_fun(_deprecated_loader, &DeprecatedLoader::load_patch),
 				data_base_uri,
 				engine_parent,
-				(engine_symbol) ? engine_symbol.get() : "",
+				engine_symbol ? (string)engine_symbol.get() : string(""),
 				engine_data,
 				false)));
 	} else {
