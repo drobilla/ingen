@@ -50,7 +50,7 @@ def configure(conf):
 	
 	autowaf.print_summary(conf)
 	autowaf.display_header('Ingen Configuration')
-	autowaf.display_msg("Jack", str(bool(conf.env['HAVE_JACK_DBUS'])), 'YELLOW')
+	autowaf.display_msg("Jack", str(bool(conf.env['HAVE_JACK'])), 'YELLOW')
 	autowaf.display_msg("OSC", str(bool(conf.env['HAVE_LIBLO'])), 'YELLOW')
 	autowaf.display_msg("HTTP", str(bool(conf.env['HAVE_SOUP'])), 'YELLOW')
 	autowaf.display_msg("LV2", str(bool(conf.env['HAVE_SLV2'])), 'YELLOW')
