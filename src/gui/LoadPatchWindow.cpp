@@ -34,8 +34,8 @@ namespace GUI {
 
 
 LoadPatchWindow::LoadPatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
-: Gtk::FileChooserDialog(cobject),
-  _replace(true)
+	: Gtk::FileChooserDialog(cobject)
+	, _replace(true)
 {
 	xml->get_widget("load_patch_poly_from_current_radio", _poly_from_current_radio);
 	xml->get_widget("load_patch_poly_from_file_radio", _poly_from_file_radio);
