@@ -99,7 +99,7 @@ NodeModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeModel> n
 	}
 
 	if (human)
-		ret->show_human_names(human);
+		ret->show_human_names(human); // FIXME: double port iteration
 
 	ret->resize();
 	ret->set_stacked_border(node->polyphonic());
@@ -123,13 +123,13 @@ NodeModule::show_human_names(bool b)
 
 	uint32_t index = 0;
 	for (PortVector::const_iterator i = ports().begin(); i != ports().end(); ++i) {
+		string name = node()->port(index)->symbol();
 		if (b) {
 			string hn = ((PluginModel*)node()->plugin())->port_human_name(index);
 			if (hn != "")
-				(*i)->set_name(hn);
-		} else {
-			(*i)->set_name(node()->port(index)->symbol());
+				name = hn;
 		}
+		(*i)->set_name(name);
 		++index;
 	}
 
@@ -234,8 +234,11 @@ NodeModule::add_port(SharedPtr<PortModel> port, bool resize_to_fit)
 	uint32_t index = _ports.size(); // FIXME: kludge, engine needs to tell us this
 	
 	string name = port->path().name();
-	if (App::instance().configuration()->name_style() == Configuration::HUMAN && node()->plugin())
-		name = ((PluginModel*)node()->plugin())->port_human_name(index);
+	if (App::instance().configuration()->name_style() == Configuration::HUMAN && node()->plugin()) {
+		string hn = ((PluginModel*)node()->plugin())->port_human_name(index);
+		if (hn != "")
+			name = hn;
+	}
 
 	Module::add_port(boost::shared_ptr<Port>(
 			new Port(PtrCast<NodeModule>(shared_from_this()), port, name)));
