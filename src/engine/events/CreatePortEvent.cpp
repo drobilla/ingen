@@ -106,15 +106,13 @@ CreatePortEvent::pre_process()
 			_engine.engine_store()->add(_patch_port);
 
 			if (!_patch->parent()) {
-				if (_type == "lv2:AudioPort")
+				if (_type == "lv2:AudioPort") {
 					_driver_port = _engine.audio_driver()->create_port(
 							dynamic_cast<DuplexPort*>(_patch_port));
-				else if (_type == "ingen:MIDIPort" || _type == "lv2ev:EventPort")
+				} else if (_type == "lv2ev:EventPort") {
 					_driver_port = _engine.midi_driver()->create_port(
 							dynamic_cast<DuplexPort*>(_patch_port));
-				else if (_type == "ingen:OSCPort" && _engine.osc_driver())
-					_driver_port = _engine.osc_driver()->create_port(
-							dynamic_cast<DuplexPort*>(_patch_port));
+				}
 			}
 
 			assert(_ports_array->size() == _patch->num_ports());
@@ -134,14 +132,13 @@ CreatePortEvent::execute(ProcessContext& context)
 		_engine.maid()->push(_patch->external_ports());
 		_patch->external_ports(_ports_array);
 	}
-
+			
 	if (_driver_port) {
-		if (_type == "lv2:AudioPort")
+		if (_type == "lv2:AudioPort") {
 			_engine.audio_driver()->add_port(_driver_port);
-		else if (_type == "ingen:MIDIPort" || _type == "lv2ev:EventPort")
+		} else if (_type == "lv2ev:EventPort") {
 			_engine.midi_driver()->add_port(_driver_port);
-		else if (_type == "ingen:OSCPort")
-			cerr << "OSC DRIVER PORT" << endl;
+		}
 	}
 	
 	if (_source)

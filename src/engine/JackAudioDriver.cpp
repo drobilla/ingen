@@ -176,7 +176,7 @@ JackAudioDriver::activate()
 #endif*/
 	}
 
-	if (!_engine.midi_driver())
+	if (!_engine.midi_driver() || dynamic_cast<DummyMidiDriver*>(_engine.midi_driver()))
 		_engine.set_midi_driver(new JackMidiDriver(_client));
 }
 

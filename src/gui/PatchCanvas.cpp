@@ -74,10 +74,6 @@ PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 	xml->get_widget("canvas_menu_add_audio_output", _menu_add_audio_output);
 	xml->get_widget("canvas_menu_add_control_input", _menu_add_control_input);
 	xml->get_widget("canvas_menu_add_control_output", _menu_add_control_output);
-	xml->get_widget("canvas_menu_add_midi_input", _menu_add_midi_input);
-	xml->get_widget("canvas_menu_add_midi_output", _menu_add_midi_output);
-	xml->get_widget("canvas_menu_add_osc_input", _menu_add_osc_input);
-	xml->get_widget("canvas_menu_add_osc_output", _menu_add_osc_output);
 	xml->get_widget("canvas_menu_add_event_input", _menu_add_event_input);
 	xml->get_widget("canvas_menu_add_event_output", _menu_add_event_output);
 	xml->get_widget("canvas_menu_load_plugin", _menu_load_plugin);
@@ -97,18 +93,6 @@ PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 	_menu_add_control_output->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
 			"control_output", "lv2:ControlPort", true));
-	_menu_add_midi_input->signal_activate().connect(
-		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
-			"midi_input", "ingen:MIDIPort", false));
-	_menu_add_midi_output->signal_activate().connect(
-		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
-			"midi_output", "ingen:MIDIPort", true));
-	_menu_add_osc_input->signal_activate().connect(
-		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
-			"osc_input", "ingen:OSCPort", false));
-	_menu_add_osc_output->signal_activate().connect(
-		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
-			"osc_output", "ingen:OSCPort", true));
 	_menu_add_event_input->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
 			"event_input", "lv2ev:EventPort", false));

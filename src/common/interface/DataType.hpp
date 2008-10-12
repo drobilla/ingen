@@ -47,8 +47,7 @@ public:
 			_symbol = AUDIO;
 		} else if (uri == type_uri(CONTROL)) {
 			_symbol = CONTROL;
-		} else if (uri == type_uri(EVENT)
-				|| (uri == "ingen:MIDIPort") || uri == "ingen:OSCPort" || uri == "lv2ev:EventPort") {
+		} else if (uri == type_uri(EVENT) || uri == "lv2ev:EventPort") {
 			_symbol = EVENT;
 		}
 	}

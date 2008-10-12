@@ -470,10 +470,10 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 				_engine->new_port(path, 0, "lv2:ControlPort", true);
 				is_port = true;
 			} else if (plugin_label == "midi_input") {
-				_engine->new_port(path, 0, "ingen:MIDIPort", false);
+				_engine->new_port(path, 0, "ingen:EventPort", false);
 				is_port = true;
 			} else if (plugin_label == "midi_output" ) {
-				_engine->new_port(path, 0, "ingen:MIDIPort", true);
+				_engine->new_port(path, 0, "ingen:EventPort", true);
 				is_port = true;
 			} else {
 				cerr << "WARNING: Unknown internal plugin label \"" << plugin_label << "\"" << endl;
