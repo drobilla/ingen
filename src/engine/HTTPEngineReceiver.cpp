@@ -202,5 +202,16 @@ HTTPEngineReceiver::ReceiveThread::_run()
 	soup_server_run(_receiver._server);
 }
 
-
 } // namespace Ingen
+
+
+extern "C" {
+
+Ingen::HTTPEngineReceiver*
+new_http_receiver(Ingen::Engine& engine, uint16_t port)
+{
+	return new Ingen::HTTPEngineReceiver(engine, port);
+}
+
+} // extern "C"
+

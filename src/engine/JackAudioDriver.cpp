@@ -36,6 +36,7 @@
 #include "EventSource.hpp"
 #include "AudioBuffer.hpp"
 #include "ProcessSlave.hpp"
+#include "JackMidiDriver.hpp"
 
 using namespace std;
 
@@ -173,6 +174,9 @@ JackAudioDriver::activate()
 	_engine.lash_driver()->set_jack_client_name(jack_client_get_name(_client));
 #endif*/
 	}
+
+	if (!_engine.midi_driver())
+		_engine.set_midi_driver(new JackMidiDriver(_client));
 }
 
 
@@ -381,4 +385,13 @@ JackAudioDriver::_buffer_size_cb(jack_nframes_t nframes)
 
 
 } // namespace Ingen
+
+Ingen::JackAudioDriver*
+new_jack_audio_driver(
+		Ingen::Engine& engine,
+		std::string    server_name,
+		jack_client_t* jack_client)
+{
+	return new Ingen::JackAudioDriver(engine, server_name, jack_client);
+}
 

@@ -19,8 +19,8 @@
 #define SENDPORTVALUEEVENT_H
 
 #include <string>
-#include "Event.hpp"
-#include "types.hpp"
+#include "engine/Event.hpp"
+#include "engine/types.hpp"
 using std::string;
 
 namespace Ingen {

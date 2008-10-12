@@ -882,3 +882,14 @@ OSCEngineReceiver::unknown_cb(const char* path, const char* types, lo_arg** argv
 
 
 } // namespace Ingen
+
+
+extern "C" {
+
+Ingen::OSCEngineReceiver*
+new_osc_receiver(Ingen::Engine& engine, size_t queue_size, uint16_t port)
+{
+	return new Ingen::OSCEngineReceiver(engine, queue_size, port);
+}
+
+} // extern "C"

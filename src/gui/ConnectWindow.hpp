@@ -83,6 +83,7 @@ private:
 	int  _connect_stage;
 
 	SharedPtr<Glib::Module> _engine_module;
+	SharedPtr<Glib::Module> _engine_jack_module;
 	Ingen::Engine* (*_new_engine)(Ingen::Shared::World* world);
 
 	Gtk::Image*        _icon;

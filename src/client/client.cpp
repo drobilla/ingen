@@ -6,7 +6,7 @@
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
  * 
- * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
+ * Ingen is distributed in the hope that it will be useful, but HAVEOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
  * 
@@ -19,10 +19,10 @@
 
 #include <iostream>
 #include "client.hpp"
-#ifdef WITH_LIBLO
+#ifdef HAVE_LIBLO
 #include "OSCEngineSender.hpp"
 #endif
-#ifdef WITH_SOUP
+#ifdef HAVE_SOUP
 #include "HTTPEngineSender.hpp"
 #endif
 
@@ -37,15 +37,15 @@ new_remote_interface(const std::string& url)
 {
 	const string scheme = url.substr(0, url.find(":"));
 
-#ifdef WITH_LIBLO
+#ifdef HAVE_LIBLO
 	if (scheme == "osc.udp" || scheme == "osc.tcp") {
-		OSCEngineSender* oes = new OSCEngineSender(url);
+		OSCEngineSender* oes = OSCEngineSender::create(url);
 		oes->attach(rand(), true);
 		return SharedPtr<Shared::EngineInterface>(oes);
 	}
 #endif
 
-#ifdef WITH_SOUP
+#ifdef HAVE_SOUP
 	if (scheme == "http") {
 		HTTPEngineSender* hes = new HTTPEngineSender(url);
 		hes->attach(rand(), true);

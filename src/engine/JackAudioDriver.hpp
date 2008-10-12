@@ -182,4 +182,12 @@ inline int JackAudioDriver::sample_rate_cb(jack_nframes_t nframes, void* jack_dr
 
 } // namespace Ingen
 
+extern "C" {
+	/// Module interface
+	extern Ingen::JackAudioDriver* new_jack_audio_driver(
+			Ingen::Engine& engine,
+	        std::string    server_name = "",
+	        jack_client_t* jack_client = 0);
+}
+
 #endif // JACKAUDIODRIVER_H

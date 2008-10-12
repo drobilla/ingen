@@ -17,10 +17,10 @@
 
 #include "config.h"
 
+#include <string>
 #include <raul/Process.hpp>
 #include "ingen_engine.hpp"
 #include "Engine.hpp"
-#include "QueuedEngineInterface.hpp"
 #include "tuning.hpp"
 #include "util.hpp"
 
@@ -39,18 +39,16 @@ launch_osc_engine(int port)
 {
 	char port_str[6];
 	snprintf(port_str, 6, "%u", port);
-	const string cmd = string("ingen -e --engine-port=").append(port_str);
+	const std::string cmd = std::string("ingen -e --engine-port=").append(port_str);
 
 	if (Raul::Process::launch(cmd)) {
 		return true;
-		//return SharedPtr<EngineInterface>(new OSCEngineSender(
-		//			string("osc.udp://localhost:").append(port_str)));
 	} else {
 		std::cerr << "Failed to launch engine process." << std::endl;
-		//return SharedPtr<EngineInterface>();
 		return false;
 	}
 }
+
 
 } // namespace Ingen
 

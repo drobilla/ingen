@@ -28,6 +28,7 @@
 #include "engine/tuning.hpp"
 #include "engine/Engine.hpp"
 #include "engine/QueuedEngineInterface.hpp"
+#include "engine/Driver.hpp"
 #ifdef HAVE_SOUP
 #include "client/HTTPClientReceiver.hpp"
 #endif
@@ -217,12 +218,30 @@ ConnectWindow::connect(bool existing)
 			world->local_engine = SharedPtr<Engine>(_new_engine(world));
 		}
 		
-		if ( ! world->engine)
-			world->engine = world->local_engine->new_queued_interface();
+		if ( ! world->engine) {
+			SharedPtr<QueuedEngineInterface> interface(
+				   new QueuedEngineInterface(*world->local_engine,
+					   Ingen::event_queue_size, Ingen::event_queue_size));
+			world->engine = interface;
+			world->local_engine->set_event_source(interface);
+		}
 		
 		SharedPtr<SigClientInterface> client(new SigClientInterface());
 		
-		world->local_engine->start_jack_driver();
+		Ingen::Driver* (*new_driver)(
+				Ingen::Engine& engine,
+				std::string    server_name,
+				jack_client_t* jack_client) = NULL;
+        
+		if (!world->local_engine->audio_driver()) {
+			bool found = _engine_jack_module->get_symbol(
+					"new_jack_audio_driver", (void*&)(new_driver));
+			if (found) {
+				world->local_engine->set_driver(DataType::AUDIO,
+						SharedPtr<Driver>(new_driver(*world->local_engine, "default", 0)));
+			}
+		}
+
 		world->local_engine->activate(1); // FIXME: parallelism
 		
 		App::instance().attach(client);
@@ -302,6 +321,8 @@ ConnectWindow::load_widgets()
 		cerr << "Unable to find module entry point, internal engine unavailable." << endl;
 		_engine_module.reset();
 	}
+	
+	_engine_jack_module = Ingen::Shared::load_module("ingen_engine_jack");
 
     server_toggled();
 }

@@ -32,5 +32,5 @@ def build(bld):
 	obj.name     = 'libingen_client'
 	obj.target   = 'ingen_client'
 	obj.inst_dir = 'lib/ingen'
-	autowaf.use_lib(bld, obj, 'GLIBMM LV2CORE SLV2 RAUL REDLANDMM SOUP XML2 SIGCPP')
+	autowaf.use_lib(bld, obj, 'GLIBMM LV2CORE SLV2 RAUL REDLANDMM SOUP XML2 SIGCPP LIBLO SOUP')
 

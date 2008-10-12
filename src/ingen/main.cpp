@@ -31,10 +31,19 @@
 #include "module/global.hpp"
 #include "module/Module.hpp"
 #include "module/World.hpp"
+#include "engine/tuning.hpp"
 #include "engine/Engine.hpp"
 #include "engine/QueuedEngineInterface.hpp"
+#include "engine/JackAudioDriver.hpp"
 #include "serialisation/Parser.hpp"
 #include "cmdline.h"
+
+#ifdef HAVE_LIBLO
+#include "engine/OSCEngineReceiver.hpp"
+#endif
+#ifdef HAVE_SOUP
+#include "engine/HTTPEngineReceiver.hpp"
+#endif
 
 #ifdef WITH_BINDINGS
 #include "bindings/ingen_bindings.hpp"
@@ -78,6 +87,10 @@ main(int argc, char** argv)
 	}
 
 	SharedPtr<Glib::Module> engine_module;
+	SharedPtr<Glib::Module> engine_http_module;
+	SharedPtr<Glib::Module> engine_osc_module;
+	SharedPtr<Glib::Module> engine_queued_module;
+	SharedPtr<Glib::Module> engine_jack_module;
 	SharedPtr<Glib::Module> client_module;
 	SharedPtr<Glib::Module> gui_module;
 	SharedPtr<Glib::Module> bindings_module;
@@ -105,18 +118,47 @@ main(int argc, char** argv)
 	/* Run engine */
 	if (args.engine_flag) {
 		engine_module = Ingen::Shared::load_module("ingen_engine");
+		engine_http_module = Ingen::Shared::load_module("ingen_engine_http");
+		engine_osc_module = Ingen::Shared::load_module("ingen_engine_osc");
+		engine_queued_module = Ingen::Shared::load_module("ingen_engine_queued");
+		engine_jack_module = Ingen::Shared::load_module("ingen_engine_jack");
 		if (engine_module) {
 			Engine* (*new_engine)(Ingen::Shared::World* world) = NULL;
 			if (engine_module->get_symbol("new_engine", (void*&)new_engine)) {
 				engine = SharedPtr<Engine>(new_engine(world));
 				world->local_engine = engine;
 				/* Load queued (direct in-process) engine interface */
-				if (args.gui_given) {
-					engine_interface = engine->new_queued_interface();
-					world->engine = engine_interface;
+				if (args.gui_given && engine_queued_module) {
+					Ingen::QueuedEngineInterface* (*new_interface)(Ingen::Engine& engine);
+					if (engine_osc_module->get_symbol("new_queued_interface", (void*&)new_interface)) {
+						SharedPtr<QueuedEngineInterface> interface(new_interface(*engine));
+						world->local_engine->set_event_source(interface);
+						engine_interface = interface;
+						world->engine = engine_interface;
+					}
 				} else {
-					engine->start_osc_driver(args.engine_port_arg);
-					engine->start_http_driver(args.engine_port_arg);
+					#ifdef HAVE_LIBLO
+					if (engine_osc_module) {
+						Ingen::OSCEngineReceiver* (*new_receiver)(
+								Ingen::Engine& engine, size_t queue_size, uint16_t port);
+						if (engine_osc_module->get_symbol("new_osc_receiver", (void*&)new_receiver)) {
+							SharedPtr<EventSource> source(new_receiver(*engine,
+										pre_processor_queue_size, args.engine_port_arg));
+							world->local_engine->set_event_source(source);
+						}
+					}
+					#endif
+					#ifdef HAVE_SOUP
+					if (engine_http_module) {
+						// FIXE: leak
+						Ingen::HTTPEngineReceiver* (*new_receiver)(Ingen::Engine& engine, uint16_t port);
+						if (engine_http_module->get_symbol("new_http_receiver", (void*&)new_receiver)) {
+							HTTPEngineReceiver* receiver = new_receiver(
+									*world->local_engine, args.engine_port_arg);
+							receiver->activate();
+						}
+					}
+					#endif
 				}
 			} else {
 				engine_module.reset();
@@ -148,7 +190,13 @@ main(int argc, char** argv)
 	
 	/* Activate the engine, if we have one */
 	if (engine) {
-		engine->start_jack_driver();
+		Ingen::JackAudioDriver* (*new_driver)(
+				Ingen::Engine& engine,
+				std::string    server_name,
+				jack_client_t* jack_client) = NULL;
+		if (engine_jack_module->get_symbol("new_jack_audio_driver", (void*&)new_driver))
+			engine->set_driver(DataType::AUDIO, SharedPtr<Driver>(new_driver(*engine, "default", 0)));
+
 		engine->activate(args.parallelism_arg);
 	}
             
@@ -221,8 +269,6 @@ main(int argc, char** argv)
 
         bool found = bindings_module->get_symbol("run", (void*&)(run_script));
         if (found) {
-			cerr << "WORLD: " << world << endl;
-			cerr << "ENGINE: " << world->engine << endl;
 			setenv("PYTHONPATH", "../../bindings", 1);
 			run_script(world, args.run_arg);
         } else {

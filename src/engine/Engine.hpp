@@ -43,7 +43,6 @@ class EventSource;
 class PostProcessor;
 class Event;
 class QueuedEvent;
-class QueuedEngineInterface;
 class Driver;
 class ProcessSlave;
 class ProcessContext;
@@ -74,12 +73,6 @@ public:
 	 * Note that it will take some time. */
 	virtual void quit() { _quit_flag = true; }
 
-	virtual void start_jack_driver();
-	virtual void start_osc_driver(int port);
-	virtual void start_http_driver(int port);
-	
-	virtual SharedPtr<QueuedEngineInterface> new_queued_interface();
-
 	virtual bool activate(size_t parallelism);
 	virtual void deactivate();
 
@@ -101,6 +94,12 @@ public:
 
 	/** Return the active driver for the given type */
 	Driver* driver(DataType type, EventType event_type);
+
+	/** Set the driver for the given data type (replacing the old) */
+	virtual void set_driver(DataType type, SharedPtr<Driver> driver);
+
+	virtual void set_event_source(SharedPtr<EventSource> source);
+	virtual void set_midi_driver(MidiDriver* driver);
 
 	Ingen::Shared::World* world() { return _world; }
 

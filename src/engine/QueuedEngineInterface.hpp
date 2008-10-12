@@ -22,6 +22,7 @@
 #include <string>
 #include <memory>
 #include <raul/SharedPtr.hpp>
+#include "tuning.hpp"
 #include "interface/EngineInterface.hpp"
 #include "interface/ClientInterface.hpp"
 #include "Responder.hpp"
@@ -155,6 +156,10 @@ private:
 
 
 } // namespace Ingen
+
+extern "C" {
+	extern Ingen::QueuedEngineInterface* new_queued_interface(Ingen::Engine& engine);
+}
 
 #endif // QUEUEDENGINEINTERFACE_H
 

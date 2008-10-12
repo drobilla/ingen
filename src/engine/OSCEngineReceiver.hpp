@@ -126,4 +126,10 @@ private:
 
 } // namespace Ingen
 
+extern "C" {
+	/// Module interface
+	extern Ingen::OSCEngineReceiver* new_osc_receiver(
+			Ingen::Engine& engine, size_t queue_size, uint16_t port);
+}
+
 #endif // OSCENGINERECEIVER_H

@@ -18,8 +18,6 @@ def build(bld):
 		GraphObjectImpl.cpp
 		InputPort.cpp
 		InternalPlugin.cpp
-		JackAudioDriver.cpp
-		JackMidiDriver.cpp
 		LADSPAPlugin.cpp
 		LV2Info.cpp
 		LV2Plugin.cpp
@@ -36,7 +34,6 @@ def build(bld):
 		PortImpl.cpp
 		PostProcessor.cpp
 		ProcessSlave.cpp
-		QueuedEngineInterface.cpp
 		QueuedEvent.cpp
 		QueuedEventSource.cpp
 		TransportNode.cpp
@@ -75,13 +72,41 @@ def build(bld):
 		obj.source += ' LADSPANode.cpp '
 	if bld.env()['HAVE_SLV2']:
 		obj.source += ' LV2Node.cpp '
-	if bld.env()['HAVE_SOUP']:
-		obj.source += ' HTTPEngineReceiver.cpp '
-	if bld.env()['HAVE_LIBLO']:
-		obj.source += ' OSCEngineReceiver.cpp OSCClientSender.cpp '
 	obj.includes     = ['.', '..', '../common', './events']
 	obj.name         = 'libingen_engine'
 	obj.target       = 'ingen_engine'
 	obj.inst_dir     = 'lib/ingen'
-	autowaf.use_lib(bld, obj, 'GLIBMM GTHREAD LV2CORE SLV2 JACK LIBLO RAUL REDLANDMM SOUP')
+	core_libs = 'GLIBMM GTHREAD LV2CORE SLV2 RAUL REDLANDMM'
+	autowaf.use_lib(bld, obj, core_libs)
+	
+	if bld.env()['HAVE_SOUP'] or bld.env()['HAVE_LIBLO']:
+		obj.source += ' QueuedEngineInterface.cpp '
+	
+	if bld.env()['HAVE_SOUP']:
+		obj = bld.create_obj('cpp', 'shlib')
+		obj.source = 'HTTPEngineReceiver.cpp'
+		obj.includes     = ['.', '..', '../common', './events', '../engine']
+		obj.name         = 'libingen_engine_http'
+		obj.target       = 'ingen_engine_http'
+		obj.inst_dir     = 'lib/ingen'
+		autowaf.use_lib(bld, obj, core_libs + ' SOUP')
+	
+	if bld.env()['HAVE_LIBLO']:
+		obj = bld.create_obj('cpp', 'shlib')
+		obj.source = 'OSCClientSender.cpp OSCEngineReceiver.cpp'
+		obj.includes     = ['.', '..', '../common', './events', '../engine']
+		obj.name         = 'libingen_engine_osc'
+		obj.target       = 'ingen_engine_osc'
+		obj.inst_dir     = 'lib/ingen'
+		autowaf.use_lib(bld, obj, core_libs + ' LIBLO')
+	
+	if bld.env()['HAVE_JACK']:
+		obj = bld.create_obj('cpp', 'shlib')
+		obj.source = 'JackAudioDriver.cpp JackMidiDriver.cpp'
+		obj.includes     = ['.', '..', '../common', './events', '../engine']
+		obj.name         = 'libingen_engine_jack'
+		obj.target       = 'ingen_engine_jack'
+		obj.inst_dir     = 'lib/ingen'
+		autowaf.use_lib(bld, obj, core_libs + ' JACK')
+
 

@@ -41,8 +41,11 @@ namespace Client {
 class OSCEngineSender : public EngineInterface, public Shared::OSCSender {
 public:
 	OSCEngineSender(const string& engine_url);
-
 	~OSCEngineSender();
+	
+	static OSCEngineSender* create(const std::string& engine_url) {
+		return new OSCEngineSender(engine_url);
+	}
 	
 	std::string uri() const { return _engine_url; }
 	

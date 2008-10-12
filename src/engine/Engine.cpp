@@ -28,7 +28,6 @@
 #include "Event.hpp"
 #include "common/interface/EventType.hpp"
 #include "shared/Store.hpp"
-#include "JackAudioDriver.hpp"
 #include "NodeFactory.hpp"
 #include "ClientBroadcaster.hpp"
 #include "PatchImpl.hpp"
@@ -39,21 +38,12 @@
 #include "PostProcessor.hpp"
 #include "events/CreatePatchEvent.hpp"
 #include "events/EnablePatchEvent.hpp"
-#ifdef HAVE_LIBLO
-#include "OSCEngineReceiver.hpp"
-#endif
-#ifdef HAVE_SOUP
-#include "HTTPEngineReceiver.hpp"
-#endif
 #include "PostProcessor.hpp"
+#include "AudioDriver.hpp"
 #include "ProcessSlave.hpp"
 #include "ProcessContext.hpp"
 #include "MessageContext.hpp"
 #include "ThreadManager.hpp"
-#include "QueuedEngineInterface.hpp"
-#ifdef HAVE_JACK_MIDI
-#include "JackMidiDriver.hpp"
-#endif
 using namespace std;
 
 namespace Ingen {
@@ -125,6 +115,17 @@ Engine::driver(DataType type, EventType event_type)
 }
 
 
+void
+Engine::set_driver(DataType type, SharedPtr<Driver> driver)
+{
+	if (type == DataType::AUDIO) {
+		_audio_driver = PtrCast<AudioDriver>(driver);
+	} else {
+		cerr << "WARNING: Unable to set driver for type " << type.uri() << endl;
+	}
+}
+
+
 int
 Engine::main()
 {
@@ -164,59 +165,6 @@ Engine::main_iteration()
 
 
 void
-Engine::start_jack_driver()
-{
-	if ( ! _audio_driver)
-		_audio_driver = SharedPtr<AudioDriver>(new JackAudioDriver(*this));
-	else
-		cerr << "[Engine::start_jack_driver] Audio driver already running" << endl;
-}
-
-
-void
-Engine::start_osc_driver(int port)
-{
-#ifdef HAVE_LIBLO
-	if (_event_source) {
-		cerr << "WARNING: Replacing event source" << endl;
-		_event_source.reset();
-	}
-
-	_event_source = SharedPtr<EventSource>(new OSCEngineReceiver(
-			*this, pre_processor_queue_size, port));
-#endif
-}
-
-	
-void
-Engine::start_http_driver(int port)
-{
-#ifdef HAVE_SOUP
-	// FIXE: leak
-	HTTPEngineReceiver* server = new HTTPEngineReceiver(*this, port);
-	server->activate();
-#endif
-}
-	
-
-SharedPtr<QueuedEngineInterface>
-Engine::new_queued_interface()
-{
-	if (_event_source) {
-		cerr << "WARNING: Replacing event source" << endl;
-		_event_source.reset();
-	}
-
-	SharedPtr<QueuedEngineInterface> result(new QueuedEngineInterface(
-			*this, Ingen::event_queue_size, Ingen::event_queue_size));
-	
-	_event_source = result;
-
-	return result;
-}
-
-/*
-void
 Engine::set_event_source(SharedPtr<EventSource> source)
 {
 	if (_event_source)
@@ -224,7 +172,13 @@ Engine::set_event_source(SharedPtr<EventSource> source)
 
 	_event_source = source;
 }
-*/
+
+
+void
+Engine::set_midi_driver(MidiDriver* driver)
+{
+	_midi_driver = driver;
+}
 
 
 bool
@@ -234,15 +188,12 @@ Engine::activate(size_t parallelism)
 		return false;
 
 	assert(_audio_driver);
-	assert(_event_source);
 
-#ifdef HAVE_JACK_MIDI
-	_midi_driver = new JackMidiDriver(((JackAudioDriver*)_audio_driver.get())->jack_client());
-#else
-	_midi_driver = new DummyMidiDriver();
-#endif
+	if (!_midi_driver)
+		_midi_driver = new DummyMidiDriver();
 	
-	_event_source->activate();
+	if (_event_source)
+		_event_source->activate();
 
 	// Create root patch
 
@@ -278,7 +229,8 @@ Engine::deactivate()
 	if (!_activated)
 		return;
 	
-	_event_source->deactivate();
+	if (_event_source)
+		_event_source->deactivate();
 
 	/*for (Tree<GraphObject*>::iterator i = _engine_store->objects().begin();
 			i != _engine_store->objects().end(); ++i)
