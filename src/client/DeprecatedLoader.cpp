@@ -210,19 +210,21 @@ DeprecatedLoader::add_variable(GraphObject::Variables& data, string old_key, str
  * Returns the path of the newly created patch.
  */
 string
-DeprecatedLoader::load_patch(const Glib::ustring&   filename,
-                             boost::optional<Path>  parent_path,
-                             string                 name,
-                             GraphObject::Variables initial_data,
-                             bool                   existing)
+DeprecatedLoader::load_patch(const Glib::ustring&    filename,
+                             bool                    merge,
+                             boost::optional<Path>   parent_path,
+                             boost::optional<Symbol> name,
+                             GraphObject::Variables  initial_data,
+                             bool                    existing)
 {
 	cerr << "[DeprecatedLoader] Loading patch " << filename << " under "
 		<< parent_path << " / " << name << endl;
 
-	Path path = parent_path ? (parent_path.get().base() + name)
-	                        : "/" + name;
-
-	const bool load_name = (name == "");
+	Path path("/");
+	if (parent_path)
+		path = *parent_path;
+	if (name)
+		path = path.base() + *name;
 	
 	size_t poly = 0;
 	
@@ -263,7 +265,7 @@ DeprecatedLoader::load_patch(const Glib::ustring&   filename,
 		key = xmlNodeListGetString(doc, cur->xmlChildrenNode, 1);
 		
 		if ((!xmlStrcmp(cur->name, (const xmlChar*)"name"))) {
-			if (load_name && key) {
+			if (!merge && parent_path && !name && key) {
 				if (parent_path)
 					path = Path(parent_path.get()).base() + nameify_if_invalid((char*)key);
 				else
@@ -570,7 +572,7 @@ DeprecatedLoader::load_subpatch(const string& base_filename, const Path& parent,
 	cout << "Loading subpatch " << filename << " under " << parent << endl;
 	// load_patch sets the passed variable last, so values stored in the parent
 	// will override values stored in the child patch file
-	/*string path = */load_patch(filename, parent, name, initial_data, false);
+	/*string path = */load_patch(filename, false, parent, Symbol(name), initial_data, false);
 	
 	return false;
 }

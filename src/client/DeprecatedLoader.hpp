@@ -62,11 +62,12 @@ public:
 	
 	string find_file(const string& filename, const string& additional_path = "");
 	
-	string load_patch(const Glib::ustring&   filename,
-	                  boost::optional<Path>  parent_path,
-	                  string                 name,
-	                  GraphObject::Variables initial_data,
-	                  bool                   existing = false);
+	string load_patch(const Glib::ustring&    filename,
+	                  bool                    merge,
+	                  boost::optional<Path>   parent_path,
+	                  boost::optional<Symbol> name,
+	                  GraphObject::Variables  initial_data,
+	                  bool                    existing = false);
 
 private:
 	void add_variable(GraphObject::Variables& data, string key, string value);

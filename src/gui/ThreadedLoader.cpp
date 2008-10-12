@@ -90,27 +90,31 @@ ThreadedLoader::load_patch(bool                    merge,
 {
 	_mutex.lock();
 
-	// FIXME: Filthy hack to load deprecated patches based on file extension
+	Glib::ustring engine_base = "";
+	if (engine_parent) {
+		cout << "A " << merge << endl;
+		if (merge)
+			engine_base = engine_parent.get();
+		else
+			engine_base = engine_parent.get().base();
+	}
+		
+
+	
+	// Filthy hack to load deprecated patches based on file extension
 	if (data_base_uri.substr(data_base_uri.length()-3) == ".om") {
 		_events.push_back(sigc::hide_return(sigc::bind(
 				sigc::mem_fun(_deprecated_loader, &DeprecatedLoader::load_patch),
 				data_base_uri,
+				merge,
 				engine_parent,
-				engine_symbol ? (string)engine_symbol.get() : string(""),
+				engine_symbol,
 				engine_data,
 				false)));
 	} else {
-		Glib::ustring engine_base = "";
-		if (engine_parent) {
-			if (merge)
-				engine_base = engine_parent.get();
-			else
-				engine_base = engine_parent.get().base();
-		}
-		
 		if (merge && (!engine_parent || engine_parent.get() == "/"))
 			engine_base = engine_base.substr(0, engine_base.find_last_of("/"));
-		
+
 		_events.push_back(sigc::hide_return(sigc::bind(
 				sigc::mem_fun(_parser.get(), &Ingen::Serialisation::Parser::parse_document),
 				App::instance().world(),
