@@ -37,9 +37,8 @@ def build(bld):
 		QueuedEvent.cpp
 		TransportNode.cpp
 		ingen_engine.cpp
-			events/SendPortActivityEvent.cpp
-			events/SendPortValueEvent.cpp
-
+		events/SendPortActivityEvent.cpp
+		events/SendPortValueEvent.cpp
 	'''
 	if bld.env()['HAVE_LADSPA']:
 		obj.source += ' LADSPANode.cpp '
@@ -79,7 +78,6 @@ def build(bld):
 			events/RequestPluginEvent.cpp
 			events/RequestPluginsEvent.cpp
 			events/RequestPortValueEvent.cpp
-
 			events/SetMetadataEvent.cpp
 			events/SetPolyphonicEvent.cpp
 			events/SetPolyphonyEvent.cpp
