@@ -3,8 +3,7 @@ import Params
 import autowaf
 
 def build(bld):
-	obj = bld.create_obj('cpp', 'shlib')
-	obj.source = '''
+	core_source = '''
 		AudioBuffer.cpp
 		Buffer.cpp
 		ClientBroadcaster.cpp
@@ -40,6 +39,9 @@ def build(bld):
 		events/SendPortActivityEvent.cpp
 		events/SendPortValueEvent.cpp
 	'''
+
+	obj = bld.create_obj('cpp', 'shlib')
+	obj.source = core_source
 	if bld.env()['HAVE_LADSPA']:
 		obj.source += ' LADSPANode.cpp '
 	if bld.env()['HAVE_SLV2']:
@@ -56,6 +58,7 @@ def build(bld):
 		obj.source = '''
 			events/SetPortValueEvent.cpp
 			QueuedEventSource.cpp
+			QueuedEngineInterface.cpp
 			events/AllNotesOffEvent.cpp
 			events/ClearPatchEvent.cpp
 			events/ConnectionEvent.cpp
@@ -91,7 +94,7 @@ def build(bld):
 	
 	if bld.env()['HAVE_SOUP']:
 		obj = bld.create_obj('cpp', 'shlib')
-		obj.source = 'HTTPEngineReceiver.cpp'
+		obj.source = 'QueuedEventSource.cpp QueuedEngineInterface.cpp HTTPEngineReceiver.cpp'
 		obj.includes     = ['.', '..', '../common', './events', '../engine']
 		obj.name         = 'libingen_engine_http'
 		obj.target       = 'ingen_engine_http'
@@ -100,7 +103,7 @@ def build(bld):
 	
 	if bld.env()['HAVE_LIBLO']:
 		obj = bld.create_obj('cpp', 'shlib')
-		obj.source = 'QueuedEngineInterface.cpp OSCClientSender.cpp OSCEngineReceiver.cpp'
+		obj.source = 'QueuedEventSource.cpp QueuedEngineInterface.cpp OSCClientSender.cpp OSCEngineReceiver.cpp'
 		obj.includes     = ['.', '..', '../common', './events', '../engine']
 		obj.name         = 'libingen_engine_osc'
 		obj.target       = 'ingen_engine_osc'
@@ -115,5 +118,19 @@ def build(bld):
 		obj.target       = 'ingen_engine_jack'
 		obj.inst_dir     = 'lib/ingen'
 		autowaf.use_lib(bld, obj, core_libs + ' JACK')
+
+	# Lightweight ingen/lv2 wrapper
+	obj = bld.create_obj('cpp', 'shlib')
+	obj.source = core_source
+	if bld.env()['HAVE_LADSPA']:
+		obj.source += ' LADSPANode.cpp '
+	if bld.env()['HAVE_SLV2']:
+		obj.source += ' LV2Node.cpp '
+	obj.includes     = ['.', '..', '../common', './events']
+	obj.name         = 'ingen_lv2'
+	obj.target       = 'ingen_lv2'
+	obj.inst_dir     = 'lib/lv2/ingen.lv2'
+	core_libs = 'GLIBMM GTHREAD LV2CORE SLV2 RAUL REDLANDMM'
+	autowaf.use_lib(bld, obj, core_libs)
 
 
