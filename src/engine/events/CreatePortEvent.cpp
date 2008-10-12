@@ -38,28 +38,28 @@ namespace Ingen {
 
 
 CreatePortEvent::CreatePortEvent(Engine&              engine,
-                           SharedPtr<Responder> responder,
-                           SampleCount          timestamp,
-                           const string&        path,
-                           const string&        type,
-                           bool                 is_output,
-                           QueuedEventSource*   source)
-: QueuedEvent(engine, responder, timestamp, true, source),
-  _error(NO_ERROR),
-  _path(path),
-  _type(type),
-  _is_output(is_output),
-  _data_type(type),
-  _patch(NULL),
-  _patch_port(NULL),
-  _driver_port(NULL)
+                                 SharedPtr<Responder> responder,
+                                 SampleCount          timestamp,
+                                 const string&        path,
+                                 const string&        type,
+                                 bool                 is_output,
+                                 QueuedEventSource*   source)
+	: QueuedEvent(engine, responder, timestamp, true, source)
+	, _error(NO_ERROR)
+	, _path(path)
+	, _type(type)
+	, _is_output(is_output)
+	, _data_type(type)
+	, _patch(NULL)
+	, _patch_port(NULL)
+	, _driver_port(NULL)
 {
 	/* This is blocking because of the two different sets of Patch ports, the array used in the
 	 * audio thread (inherited from NodeBase), and the arrays used in the pre processor thread.
 	 * If two add port events arrive in the same cycle and the second pre processes before the
 	 * first executes, bad things happen (ports are lost).
 	 *
-	 * FIXME: fix this using RCU
+	 * TODO: fix this using RCU?
 	 */
 
 	if (_data_type == DataType::UNKNOWN) {
@@ -77,8 +77,6 @@ CreatePortEvent::pre_process()
 		return;
 	}
 
-	// FIXME: this is just a mess :/
-	
 	_patch = _engine.engine_store()->find_patch(_path.parent());
 
 	if (_patch != NULL) {
@@ -104,9 +102,7 @@ CreatePortEvent::pre_process()
 			else
 				_ports_array = new Raul::Array<PortImpl*>(old_num_ports + 1, NULL);
 
-
 			_ports_array->at(_patch->num_ports()-1) = _patch_port;
-			//_patch_port->add_to_store(_engine.engine_store());
 			_engine.engine_store()->add(_patch_port);
 
 			if (!_patch->parent()) {
@@ -135,10 +131,7 @@ CreatePortEvent::execute(ProcessContext& context)
 	QueuedEvent::execute(context);
 
 	if (_patch_port) {
-
 		_engine.maid()->push(_patch->external_ports());
-		//_patch->add_port(_port);
-
 		_patch->external_ports(_ports_array);
 	}
 
