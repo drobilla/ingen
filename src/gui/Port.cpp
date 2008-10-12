@@ -138,11 +138,11 @@ Port::set_control(float value, bool signal)
 void
 Port::variable_changed(const string& key, const Atom& value)
 {
-	if ( (key == "ingen:minimum") && value.type() == Atom::FLOAT)
+	if ( (key == "lv2:minimum") && value.type() == Atom::FLOAT)
 		set_control_min(value.get_float());
-	else if ( (key == "ingen:maximum") && value.type() == Atom::FLOAT)
+	else if ( (key == "lv2:maximum") && value.type() == Atom::FLOAT)
 		set_control_max(value.get_float());
-	else if ( (key == "ingen:toggled") && value.type() == Atom::BOOL)
+	else if ( (key == "lv2:toggled") && value.type() == Atom::BOOL)
 		set_toggled(value.get_bool());
 }
 

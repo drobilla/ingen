@@ -94,9 +94,9 @@ PortPropertiesWindow::variable_change(const string& key, const Atom& value)
 {
 	_enable_signal = false;
 
-	if ( (key == "ingen:minimum") && value.type() == Atom::FLOAT)
+	if ( (key == "lv2:minimum") && value.type() == Atom::FLOAT)
 		_min_spinner->set_value(value.get_float());
-	else if ( (key == "ingen:maximum") && value.type() == Atom::FLOAT)
+	else if ( (key == "lv2:maximum") && value.type() == Atom::FLOAT)
 		_max_spinner->set_value(value.get_float());
 	
 	_enable_signal = true;
@@ -115,7 +115,7 @@ PortPropertiesWindow::min_changed()
 	}
 
 	if (_enable_signal)
-		App::instance().engine()->set_variable(_port_model->path(), "ingen:minimum", min);
+		App::instance().engine()->set_variable(_port_model->path(), "lv2:minimum", min);
 }
 
 
@@ -131,15 +131,15 @@ PortPropertiesWindow::max_changed()
 	}
 
 	if (_enable_signal)
-		App::instance().engine()->set_variable(_port_model->path(), "ingen:maximum", max);
+		App::instance().engine()->set_variable(_port_model->path(), "lv2:maximum", max);
 }
 
 
 void
 PortPropertiesWindow::cancel()
 {
-	App::instance().engine()->set_variable(_port_model->path(), "ingen:minimum", _initial_min);
-	App::instance().engine()->set_variable(_port_model->path(), "ingen:maximum", _initial_max);
+	App::instance().engine()->set_variable(_port_model->path(), "lv2:minimum", _initial_min);
+	App::instance().engine()->set_variable(_port_model->path(), "lv2:maximum", _initial_max);
 	hide();
 }
 

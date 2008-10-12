@@ -87,16 +87,16 @@ PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 	// Add port menu items
 	_menu_add_audio_input->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
-			"audio_input", "ingen:AudioPort", false));
+			"audio_input", "lv2:AudioPort", false));
 	_menu_add_audio_output->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
-			"audio_output", "ingen:AudioPort", true));
+			"audio_output", "lv2:AudioPort", true));
 	_menu_add_control_input->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
-			"control_input", "ingen:ControlPort", false));
+			"control_input", "lv2:ControlPort", false));
 	_menu_add_control_output->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
-			"control_output", "ingen:ControlPort", true));
+			"control_output", "lv2:ControlPort", true));
 	_menu_add_midi_input->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
 			"midi_input", "ingen:MIDIPort", false));
@@ -111,10 +111,10 @@ PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 			"osc_output", "ingen:OSCPort", true));
 	_menu_add_event_input->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
-			"event_input", "ingen:EventPort", false));
+			"event_input", "lv2ev:EventPort", false));
 	_menu_add_event_output->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
-			"event_output", "ingen:EventPort", true));
+			"event_output", "lv2ev:EventPort", true));
 	
 	// Add control menu items
 	/*_menu_add_number_control->signal_activate().connect(

@@ -462,16 +462,16 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 		if (plugin_type == "Internal") {
 			// FIXME: indices
 			if (plugin_label == "audio_input") {
-				_engine->new_port(path, 0, "ingen:AudioPort", false);
+				_engine->new_port(path, 0, "lv2:AudioPort", false);
 				is_port = true;
 			} else if (plugin_label == "audio_output") {
-				_engine->new_port(path, 0, "ingen:AudioPort", true);
+				_engine->new_port(path, 0, "lv2:AudioPort", true);
 				is_port = true;
 			} else if (plugin_label == "control_input") {
-				_engine->new_port(path, 0, "ingen:ControlPort", false);
+				_engine->new_port(path, 0, "lv2:ControlPort", false);
 				is_port = true;
 			} else if (plugin_label == "control_output" ) {
-				_engine->new_port(path, 0, "ingen:ControlPort", true);
+				_engine->new_port(path, 0, "lv2:ControlPort", true);
 				is_port = true;
 			} else if (plugin_label == "midi_input") {
 				_engine->new_port(path, 0, "ingen:MIDIPort", false);

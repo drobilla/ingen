@@ -48,7 +48,7 @@ public:
 		} else if (uri == type_uri(CONTROL)) {
 			_symbol = CONTROL;
 		} else if (uri == type_uri(EVENT)
-				|| (uri == "ingen:MIDIPort") || uri == "ingen:OSCPort" || uri == "ingen:EventPort") {
+				|| (uri == "ingen:MIDIPort") || uri == "ingen:OSCPort" || uri == "lv2ev:EventPort") {
 			_symbol = EVENT;
 		}
 	}
@@ -72,11 +72,11 @@ private:
 	
 	static inline const char* type_uri(unsigned symbol_num)  {
 		switch (symbol_num) {
-		case 1:  return "ingen:AudioPort";
-		case 2:  return "ingen:ControlPort";
-		case 3:  return "ingen:EventPort";
-		case 4:  return "ingen:EventPort"; // MIDI
-		case 5:  return "ingen:EventPort"; // OSC
+		case 1:  return "lv2:AudioPort";
+		case 2:  return "lv2:ControlPort";
+		case 3:  return "lv2ev:EventPort";
+		case 4:  return "lv2ev:EventPort"; // MIDI
+		case 5:  return "lv2ev:EventPort"; // OSC
 		default: return "";
 		}
 	}

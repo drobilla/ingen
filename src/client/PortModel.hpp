@@ -50,8 +50,8 @@ public:
 	bool has_hint(const std::string& qname) const;
 
 	bool is_logarithmic() const { return has_hint("ingen:logarithmic"); }
-	bool is_integer()     const { return has_hint("ingen:integer"); }
-	bool is_toggle()      const { return has_hint("ingen:toggled"); }
+	bool is_integer()     const { return has_hint("lv2:integer"); }
+	bool is_toggle()      const { return has_hint("lv2:toggled"); }
 
 	inline bool operator==(const PortModel& pm) const { return (_path == pm._path); }
 	

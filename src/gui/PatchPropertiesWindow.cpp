@@ -30,6 +30,7 @@ namespace GUI {
 PatchPropertiesWindow::PatchPropertiesWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml)
 : Gtk::Window(cobject)
 {
+	glade_xml->get_widget("properties_name_entry", _name_entry);
 	glade_xml->get_widget("properties_author_entry", _author_entry);
 	glade_xml->get_widget("properties_description_textview", _textview);
 	glade_xml->get_widget("properties_cancel_button", _cancel_button);
@@ -51,11 +52,15 @@ PatchPropertiesWindow::set_patch(SharedPtr<PatchModel> patch_model)
 	property_title() = patch_model->path() + " Properties";
 	_patch_model = patch_model;
 	
-	const Atom& author_atom = _patch_model->get_variable("dc:creator");
+	const Atom& name_atom = _patch_model->get_property("doap:name");
+	_name_entry->set_text(
+		(name_atom.type() == Atom::STRING) ? name_atom.get_string() : "" );
+	
+	const Atom& author_atom = _patch_model->get_property("dc:creator");
 	_author_entry->set_text(
 		(author_atom.type() == Atom::STRING) ? author_atom.get_string() : "" );
 
-	const Atom& desc_atom = _patch_model->get_variable("dc:description");
+	const Atom& desc_atom = _patch_model->get_property("dc:description");
 	_textview->get_buffer()->set_text(
 		(desc_atom.type() == Atom::STRING) ? desc_atom.get_string() : "" );
 }
@@ -64,11 +69,15 @@ PatchPropertiesWindow::set_patch(SharedPtr<PatchModel> patch_model)
 void
 PatchPropertiesWindow::cancel_clicked()
 {
-	const Atom& author_atom = _patch_model->get_variable("dc:creator");
+	const Atom& name_atom = _patch_model->get_property("doap:name");
+	_name_entry->set_text(
+		(name_atom.type() == Atom::STRING) ? name_atom.get_string() : "" );
+
+	const Atom& author_atom = _patch_model->get_property("dc:creator");
 	_author_entry->set_text(
 		(author_atom.type() == Atom::STRING) ? author_atom.get_string() : "" );
 
-	const Atom& desc_atom = _patch_model->get_variable("dc:description");
+	const Atom& desc_atom = _patch_model->get_property("dc:description");
 	_textview->get_buffer()->set_text(
 		(desc_atom.type() == Atom::STRING) ? desc_atom.get_string() : "" );
 	
@@ -79,9 +88,11 @@ PatchPropertiesWindow::cancel_clicked()
 void
 PatchPropertiesWindow::ok_clicked()
 {
-	App::instance().engine()->set_variable(_patch_model->path(), "dc:creator",
+	App::instance().engine()->set_property(_patch_model->path(), "doap:name",
+		Atom(_name_entry->get_text()));
+	App::instance().engine()->set_property(_patch_model->path(), "dc:creator",
 		Atom(_author_entry->get_text()));
-	App::instance().engine()->set_variable(_patch_model->path(), "dc:description",
+	App::instance().engine()->set_property(_patch_model->path(), "dc:description",
 		Atom(_textview->get_buffer()->get_text()));
 	hide();
 }

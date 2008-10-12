@@ -84,6 +84,7 @@ private:
 	void serialise_node(SharedPtr<Shared::Node> n, const Redland::Node& id);
 	void serialise_port(const Shared::Port* p, const Redland::Node& id);
 
+	void serialise_properties(Redland::Node subject, const GraphObject::Variables& properties);
 	void serialise_variables(Redland::Node subject, const GraphObject::Variables& variables);
 	
 	Redland::Node path_to_rdf_node(const Path& path);

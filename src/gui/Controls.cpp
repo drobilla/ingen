@@ -191,9 +191,9 @@ SliderControl::set_value(const Atom& atom)
 void
 SliderControl::port_variable_change(const string& key, const Atom& value)
 {
-	if ( (key == "ingen:minimum") && value.type() == Atom::FLOAT)
+	if ( (key == "lv2:minimum") && value.type() == Atom::FLOAT)
 		set_range(value.get_float(), _slider->get_adjustment()->get_upper());
-	else if ( (key == "ingen:maximum") && value.type() == Atom::FLOAT)
+	else if ( (key == "lv2:maximum") && value.type() == Atom::FLOAT)
 		set_range(_slider->get_adjustment()->get_lower(), value.get_float());
 }
 

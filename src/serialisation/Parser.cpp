@@ -36,7 +36,8 @@ namespace Ingen {
 namespace Serialisation {
 
 #define NS_INGEN "http://drobilla.net/ns/ingen#"
-
+#define NS_LV2   "http://lv2plug.in/ns/lv2core#"
+#define NS_LV2EV "http://lv2plug.in/ns/ext/event#"
 
 Glib::ustring
 Parser::uri_relative_to_base(Glib::ustring base, const Glib::ustring uri)
@@ -130,8 +131,8 @@ Parser::parse(
 	
 	const Redland::Node patch_class(*world->rdf_world, res, NS_INGEN "Patch");
 	const Redland::Node node_class(*world->rdf_world, res, NS_INGEN "Node");
-	const Redland::Node in_port_class(*world->rdf_world, res, NS_INGEN "InputPort");
-	const Redland::Node out_port_class(*world->rdf_world, res, NS_INGEN "OutputPort");
+	const Redland::Node in_port_class(*world->rdf_world, res, NS_LV2 "InputPort");
+	const Redland::Node out_port_class(*world->rdf_world, res, NS_LV2 "OutputPort");
 	
 	string subject_str = ((object_uri && object_uri.get() != "") ? object_uri.get() : base_uri);
 	if (subject_str[0] == '/')
@@ -333,7 +334,7 @@ Parser::parse_patch(
 		"SELECT DISTINCT ?nodename ?portname ?portval WHERE {\n") +
 		subject + " ingen:node   ?node .\n"
 		"?node      lv2:symbol   ?nodename ;\n"
-		"           ingen:port   ?port .\n"
+		"           lv2:port     ?port .\n"
 		"?port      lv2:symbol   ?portname ;\n"
 		"           ingen:value  ?portval .\n"
 		"FILTER ( datatype(?portval) = xsd:decimal )\n"
@@ -355,11 +356,11 @@ Parser::parse_patch(
 	/* Load this patch's ports */
 	query = Redland::Query(*world->rdf_world, Glib::ustring(
 		"SELECT DISTINCT ?port ?type ?name ?datatype ?varkey ?varval ?portval WHERE {\n") +
-		subject + " ingen:port     ?port .\n"
+		subject + " lv2:port       ?port .\n"
 		"?port      a              ?type ;\n"
 		"           a              ?datatype ;\n"
 		"           lv2:symbol     ?name .\n"
-		" FILTER (?type != ?datatype && ((?type = ingen:InputPort) || (?type = ingen:OutputPort)))\n"
+		" FILTER (?type != ?datatype && ((?type = lv2:InputPort) || (?type = lv2:OutputPort)))\n"
 		"OPTIONAL { ?port ingen:value ?portval . \n"
 		"           FILTER ( datatype(?portval) = xsd:decimal ) }\n"
 		"OPTIONAL { ?port     lv2var:variable ?variable .\n"
@@ -379,7 +380,7 @@ Parser::parse_patch(
 		const Path port_path = patch_path.base() + name;
 			
 		if (created.find(port_path) == created.end()) {
-			bool is_output = (type == "ingen:OutputPort"); // FIXME: check validity
+			bool is_output = (type == "lv2:OutputPort"); // FIXME: check validity
 			// FIXME: read index
 			target->new_port(port_path, 0, datatype, is_output);
 			created.insert(port_path);
@@ -468,7 +469,7 @@ Parser::parse_port(
 		"SELECT DISTINCT ?type ?datatype ?value WHERE {\n") +
 		subject + " a ?type ;\n"
 		"           a ?datatype .\n"
-		" FILTER (?type != ?datatype && ((?type = ingen:InputPort) || (?type = ingen:OutputPort)))\n"
+		" FILTER (?type != ?datatype && ((?type = lv2:InputPort) || (?type = lv2:OutputPort)))\n"
 		"OPTIONAL { " + subject + " ingen:value ?value . }\n"
 		"}");
 	
@@ -479,7 +480,7 @@ Parser::parse_port(
 		const string type     = world->rdf_world->qualify((*i)["type"].to_string());
 		const string datatype = world->rdf_world->qualify((*i)["datatype"].to_string());
 
-		bool is_output = (type == "ingen:OutputPort");
+		bool is_output = (type == "lv2:OutputPort");
 		// FIXME: read index
 		target->new_port(path, 0, datatype, is_output);
 		

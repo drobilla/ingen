@@ -301,6 +301,11 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch)
 		patch_id,
 		"rdf:type",
 		Redland::Node(_model->world(), Redland::Node::RESOURCE, "http://drobilla.net/ns/ingen#Patch"));
+	
+	_model->add_statement(
+		patch_id,
+		"rdf:type",
+		Redland::Node(_model->world(), Redland::Node::RESOURCE, "http://lv2plug.in/ns/lv2core#Plugin"));
 
 	GraphObject::Variables::const_iterator s = patch->variables().find("lv2:symbol");
 	// If symbol is stored as a variable, write that
@@ -324,6 +329,7 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch)
 		"ingen:enabled",
 		AtomRDF::atom_to_node(_model->world(), Atom((bool)patch->enabled())));
 	
+	serialise_properties(patch_id, patch->properties());
 	serialise_variables(patch_id, patch->variables());
 
 	for (GraphObject::const_iterator n = _store->children_begin(patch);
@@ -347,7 +353,12 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch)
 	for (uint32_t i=0; i < patch->num_ports(); ++i) {
 		Port* p = patch->port(i);
 		const Redland::Node port_id = path_to_rdf_node(p->path());
-		_model->add_statement(patch_id, "ingen:port", port_id);
+	
+		// Ensure lv2:name always exists so Patch is a valid LV2 plugin
+		if (p->properties().find("lv2:name") == p->properties().end())
+			p->properties()["lv2:name"] = p->symbol(); // FIXME: use human name
+
+		_model->add_statement(patch_id, "lv2:port", port_id);
 		serialise_port(p, port_id);
 	}
 
@@ -405,9 +416,10 @@ Serialiser::serialise_node(SharedPtr<Shared::Node> node, const Redland::Node& no
 		assert(p);
 		const Redland::Node port_id = path_to_rdf_node(p->path());
 		serialise_port(p, port_id);
-		_model->add_statement(node_id, "ingen:port", port_id);
+		_model->add_statement(node_id, "lv2:port", port_id);
 	}
 
+	serialise_properties(node_id, node->properties());
 	serialise_variables(node_id, node->variables());
 }
 
@@ -421,10 +433,10 @@ Serialiser::serialise_port(const Port* port, const Redland::Node& port_id)
 {
 	if (port->is_input())
 		_model->add_statement(port_id, "rdf:type",
-				Redland::Node(_model->world(), Redland::Node::RESOURCE, "ingen:InputPort"));
+				Redland::Node(_model->world(), Redland::Node::RESOURCE, "lv2:InputPort"));
 	else
 		_model->add_statement(port_id, "rdf:type",
-				Redland::Node(_model->world(), Redland::Node::RESOURCE, "ingen:OutputPort"));
+				Redland::Node(_model->world(), Redland::Node::RESOURCE, "lv2:OutputPort"));
 	
 	_model->add_statement(port_id, "lv2:index",
 			AtomRDF::atom_to_node(_model->world(), Atom((int)port->index())));
@@ -439,6 +451,7 @@ Serialiser::serialise_port(const Port* port, const Redland::Node& port_id)
 		_model->add_statement(port_id, "ingen:value",
 				AtomRDF::atom_to_node(_model->world(), Atom(port->value())));
 
+	serialise_properties(port_id, port->properties());
 	serialise_variables(port_id, port->variables());
 }
 
@@ -468,13 +481,27 @@ Serialiser::serialise_connection(SharedPtr<GraphObject> parent,
 	/* ... but this is cleaner */
 	//_model->add_statement(dst_node, "ingen:connectedTo", src_node);
 }
+
+
+void
+Serialiser::serialise_properties(Redland::Node subject, const GraphObject::Variables& properties)
+{
+	for (GraphObject::Variables::const_iterator v = properties.begin(); v != properties.end(); ++v) {
+		if (v->first.find(":") && v->second.is_valid()) {
+			const Redland::Node value = AtomRDF::atom_to_node(_model->world(), v->second);
+			_model->add_statement(subject, v->first, value);
+		} else {
+			cerr << "Warning: unable to serialize property \'" << v->first << "\'" << endl;
+		}
+	}
+}
 	
 
 void
 Serialiser::serialise_variables(Redland::Node subject, const GraphObject::Variables& variables)
 {
 	for (GraphObject::Variables::const_iterator v = variables.begin(); v != variables.end(); ++v) {
-		if (v->first.find(":") != string::npos && v->first != "ingen:document") {
+		if (v->first.find(":") && v->first != "ingen:document") {
 			if (v->second.is_valid()) {
 				const Redland::Node var_id = _world.blank_id();
 				const Redland::Node key(_model->world(), Redland::Node::RESOURCE, v->first);

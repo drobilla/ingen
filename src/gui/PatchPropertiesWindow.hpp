@@ -51,6 +51,7 @@ public:
 private:
 	SharedPtr<PatchModel> _patch_model;
 
+	Gtk::Entry*    _name_entry;
 	Gtk::Entry*    _author_entry;
 	Gtk::TextView* _textview;
 	Gtk::Button*   _cancel_button;
