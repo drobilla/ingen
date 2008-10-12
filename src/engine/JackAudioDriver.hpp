@@ -73,7 +73,8 @@ class JackAudioDriver : public AudioDriver
 {
 public:	
 	JackAudioDriver(Engine&        engine,
-	                std::string    server_name = "",
+	                std::string    server_name = "default",
+	                std::string    client_name = "ingen",
 	                jack_client_t* jack_client = 0);
 
 	~JackAudioDriver();
@@ -187,6 +188,7 @@ extern "C" {
 	extern Ingen::JackAudioDriver* new_jack_audio_driver(
 			Ingen::Engine& engine,
 	        std::string    server_name = "",
+	        std::string    client_name = "",
 	        jack_client_t* jack_client = 0);
 }
 

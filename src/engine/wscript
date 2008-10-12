@@ -35,38 +35,11 @@ def build(bld):
 		PostProcessor.cpp
 		ProcessSlave.cpp
 		QueuedEvent.cpp
-		QueuedEventSource.cpp
 		TransportNode.cpp
 		ingen_engine.cpp
-		events/AllNotesOffEvent.cpp
-		events/ClearPatchEvent.cpp
-		events/ConnectionEvent.cpp
-		events/CreateNodeEvent.cpp
-		events/CreatePatchEvent.cpp
-		events/CreatePortEvent.cpp
-		events/DeactivateEvent.cpp
-		events/DestroyEvent.cpp
-		events/DisconnectAllEvent.cpp
-		events/DisconnectionEvent.cpp
-		events/EnablePatchEvent.cpp
-		events/LoadPluginsEvent.cpp
-		events/MidiLearnEvent.cpp
-		events/NoteEvent.cpp
-		events/RegisterClientEvent.cpp
-		events/RenameEvent.cpp
-		events/RequestAllObjectsEvent.cpp
-		events/RequestMetadataEvent.cpp
-		events/RequestObjectEvent.cpp
-		events/RequestPluginEvent.cpp
-		events/RequestPluginsEvent.cpp
-		events/RequestPortValueEvent.cpp
-		events/SendPortActivityEvent.cpp
-		events/SendPortValueEvent.cpp
-		events/SetMetadataEvent.cpp
-		events/SetPolyphonicEvent.cpp
-		events/SetPolyphonyEvent.cpp
-		events/SetPortValueEvent.cpp
-		events/UnregisterClientEvent.cpp
+			events/SendPortActivityEvent.cpp
+			events/SendPortValueEvent.cpp
+
 	'''
 	if bld.env()['HAVE_LADSPA']:
 		obj.source += ' LADSPANode.cpp '
@@ -80,7 +53,43 @@ def build(bld):
 	autowaf.use_lib(bld, obj, core_libs)
 	
 	if bld.env()['HAVE_SOUP'] or bld.env()['HAVE_LIBLO']:
-		obj.source += ' QueuedEngineInterface.cpp '
+		obj = bld.create_obj('cpp', 'shlib')
+		obj.source = '''
+			events/SetPortValueEvent.cpp
+			QueuedEventSource.cpp
+			events/AllNotesOffEvent.cpp
+			events/ClearPatchEvent.cpp
+			events/ConnectionEvent.cpp
+			events/CreateNodeEvent.cpp
+			events/CreatePatchEvent.cpp
+			events/CreatePortEvent.cpp
+			events/DeactivateEvent.cpp
+			events/DestroyEvent.cpp
+			events/DisconnectAllEvent.cpp
+			events/DisconnectionEvent.cpp
+			events/EnablePatchEvent.cpp
+			events/LoadPluginsEvent.cpp
+			events/MidiLearnEvent.cpp
+			events/NoteEvent.cpp
+			events/RegisterClientEvent.cpp
+			events/RenameEvent.cpp
+			events/RequestAllObjectsEvent.cpp
+			events/RequestMetadataEvent.cpp
+			events/RequestObjectEvent.cpp
+			events/RequestPluginEvent.cpp
+			events/RequestPluginsEvent.cpp
+			events/RequestPortValueEvent.cpp
+
+			events/SetMetadataEvent.cpp
+			events/SetPolyphonicEvent.cpp
+			events/SetPolyphonyEvent.cpp
+			events/UnregisterClientEvent.cpp
+		'''
+		obj.includes     = ['.', '..', '../common', './events', '../engine']
+		obj.name         = 'libingen_engine_queued'
+		obj.target       = 'ingen_engine_queued'
+		obj.inst_dir     = 'lib/ingen'
+		autowaf.use_lib(bld, obj, core_libs)
 	
 	if bld.env()['HAVE_SOUP']:
 		obj = bld.create_obj('cpp', 'shlib')
@@ -93,7 +102,7 @@ def build(bld):
 	
 	if bld.env()['HAVE_LIBLO']:
 		obj = bld.create_obj('cpp', 'shlib')
-		obj.source = 'OSCClientSender.cpp OSCEngineReceiver.cpp'
+		obj.source = 'QueuedEngineInterface.cpp OSCClientSender.cpp OSCEngineReceiver.cpp'
 		obj.includes     = ['.', '..', '../common', './events', '../engine']
 		obj.name         = 'libingen_engine_osc'
 		obj.target       = 'ingen_engine_osc'

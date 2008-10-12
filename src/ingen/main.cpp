@@ -77,7 +77,7 @@ main(int argc, char** argv)
 	if (argc <= 1) {
 		cmdline_parser_print_help();
 		cerr << endl << "*** Ingen requires at least one command line parameter" << endl;
-		cerr << "*** Just want to use a graphical app?  Try 'ingen -eg'" << endl;
+		cerr << "*** Just want a graphical application?  Try 'ingen -eg'" << endl;
 		return 1;
 	} else if (args.connect_given && args.engine_flag) {
 		cerr << "\n*** Nonsense arguments, can't both run a local engine "
@@ -109,6 +109,7 @@ main(int argc, char** argv)
 	world->rdf_world->add_prefix("ingen", "http://drobilla.net/ns/ingen#");
 	world->rdf_world->add_prefix("ingenuity", "http://drobilla.net/ns/ingenuity#");
 	world->rdf_world->add_prefix("lv2", "http://lv2plug.in/ns/lv2core#");
+	world->rdf_world->add_prefix("lv2ev", "http://lv2plug.in/ns/ext/event#");
 	world->rdf_world->add_prefix("lv2var", "http://lv2plug.in/ns/ext/instance-var#");
 	world->rdf_world->add_prefix("lv2_midi", "http://lv2plug.in/ns/ext/midi");
 	world->rdf_world->add_prefix("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
@@ -193,9 +194,11 @@ main(int argc, char** argv)
 		Ingen::JackAudioDriver* (*new_driver)(
 				Ingen::Engine& engine,
 				std::string    server_name,
+				std::string    client_name,
 				jack_client_t* jack_client) = NULL;
 		if (engine_jack_module->get_symbol("new_jack_audio_driver", (void*&)new_driver))
-			engine->set_driver(DataType::AUDIO, SharedPtr<Driver>(new_driver(*engine, "default", 0)));
+			engine->set_driver(DataType::AUDIO, SharedPtr<Driver>(new_driver(
+					*engine, "default", args.jack_name_arg, NULL)));
 
 		engine->activate(args.parallelism_arg);
 	}

@@ -97,6 +97,7 @@ JackAudioPort::prepare_buffer(jack_nframes_t nframes)
 
 JackAudioDriver::JackAudioDriver(Engine&        engine,
                                  std::string    server_name,
+                                 std::string    client_name,
                                  jack_client_t* jack_client)
 	: _engine(engine)
 	, _jack_thread(NULL)
@@ -111,7 +112,7 @@ JackAudioDriver::JackAudioDriver(Engine&        engine,
 	if (!_client) {
 		// Try supplied server name
 		if (server_name != "") {
-			_client = jack_client_open("Ingen", JackServerName, NULL, server_name.c_str());
+			_client = jack_client_open(client_name.c_str(), JackServerName, NULL, server_name.c_str());
 			if (_client)
 				cerr << "[JackAudioDriver] Connected to JACK server '" <<
 					server_name << "'" << endl;
@@ -120,7 +121,7 @@ JackAudioDriver::JackAudioDriver(Engine&        engine,
 		// Either server name not specified, or supplied server name does not exist
 		// Connect to default server
 		if (!_client) {
-			_client = jack_client_open("Ingen", JackNullOption, NULL);
+			_client = jack_client_open(client_name.c_str(), JackNullOption, NULL);
 			
 			if (_client)
 				cerr << "[JackAudioDriver] Connected to default JACK server." << endl;
@@ -390,8 +391,9 @@ Ingen::JackAudioDriver*
 new_jack_audio_driver(
 		Ingen::Engine& engine,
 		std::string    server_name,
+		std::string    client_name,
 		jack_client_t* jack_client)
 {
-	return new Ingen::JackAudioDriver(engine, server_name, jack_client);
+	return new Ingen::JackAudioDriver(engine, server_name, client_name, jack_client);
 }
 

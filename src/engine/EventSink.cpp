@@ -16,7 +16,6 @@
  */
 
 #include <iostream>
-#include "events/SendPortValueEvent.hpp"
 #include "EventSink.hpp"
 #include "PortImpl.hpp"
 
@@ -24,15 +23,6 @@ using namespace std;
 
 namespace Ingen {
 	
-#if 0
-void
-EventSink::control_change(Port* port, FrameTime time, float val)
-{
-	//cerr << "CONTROL CHANGE: " << port->path() << " == " << val << endl;
-	SendPortValueEvent ev(_engine, time, port, false, 0, val);
-	_events.write(sizeof(ev), (uchar*)&ev);
-}
-#endif
 
 /** \a size is not size_t because an event will never be even remotely close
  * to UINT32_MAX in size, so uint32_t saves wasted space on 64-bit.

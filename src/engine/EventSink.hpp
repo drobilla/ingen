@@ -21,14 +21,13 @@
 #include <list>
 #include <utility>
 #include <raul/RingBuffer.hpp>
-#include "events/SendPortValueEvent.hpp"
 #include "types.hpp"
 
 namespace Ingen {
 
 class PortImpl;
 class Engine;
-class SendPortValueEvent;
+class Event;
 
 
 /** Sink for events generated in the audio thread.

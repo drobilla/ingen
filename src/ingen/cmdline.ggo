@@ -24,13 +24,14 @@ The -l (load) option can be used in all cases:
 Options:
 "
 
+option "client-port" C "Client OSC port"    int    no
+option "connect" c "Connect to existing engine at OSC URI" string no default="osc.udp://localhost:16180"
 option "engine" e "Run (JACK) engine" flag off
 option "engine-port" E "Engine OSC port"    int    no default="16180"
-option "connect" c "Connect to existing engine at OSC URI" string no default="osc.udp://localhost:16180"
 option "gui" g "Launch the GTK graphical interface" flag off
-option "client-port" C "Client OSC port"    int    no
+option "jack-name" n "JACK client name" string no default="ingen"
 option "load" l "Load patch" string no
+option "parallelism" p "Number of concurrent process threads" int no default="1"
 option "path" L "Target path for loaded patch" string no
 option "run" r "Run script" string no
-option "parallelism" p "Number of concurrent process threads" int no default="1"
 
