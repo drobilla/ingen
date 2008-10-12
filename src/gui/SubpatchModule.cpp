@@ -34,8 +34,8 @@ namespace GUI {
 
 
 SubpatchModule::SubpatchModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<PatchModel> patch)
-: NodeModule(canvas, patch),
-  _patch(patch)
+	: NodeModule(canvas, patch)
+	, _patch(patch)
 {
 	assert(canvas);
 	assert(patch);
