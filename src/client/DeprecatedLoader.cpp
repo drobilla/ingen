@@ -112,9 +112,6 @@ DeprecatedLoader::nameify_if_invalid(const string& name)
 	} else {
 		const string new_name = Path::nameify(name);
 		assert(Path::is_valid_name(new_name));
-		if (new_name != name)
-			cerr << "WARNING: Illegal name '" << name << "' converted to '"
-				<< new_name << "'" << endl;
 		return new_name;
 	}
 }
@@ -130,8 +127,8 @@ DeprecatedLoader::translate_load_path(const string& path)
 		return (*t).second;
 	// Filthy, filthy kludges
 	// (FIXME: apply these less heavy handedly, only when it's an internal module)
-	} else if (path.find("midi") != string::npos) {
-		assert(Path::is_valid(path));
+	} else /* if (path.find("midi") != string::npos) {
+		assert(Path::is_valid(path));*/
 		if (path.substr(path.find_last_of("/")) == "/MIDI_In")
 			return path.substr(0, path.find_last_of("/")) + "/input";
 		else if (path.substr(path.find_last_of("/")) == "/Note_Number")
@@ -144,9 +141,9 @@ DeprecatedLoader::translate_load_path(const string& path)
 			return path.substr(0, path.find_last_of("/")) + "/velocity";
 		else
 			return path;
-	} else {
+	/*} else {
 		return path;
-	}
+	}*/
 }
 
 
@@ -296,8 +293,6 @@ DeprecatedLoader::load_patch(const Glib::ustring&   filename,
 	if (poly == 0)
 		poly = 1;
 
-	cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!! LOADING " << path << endl;
-
 	// Create it, if we're not merging
 	if (!existing && path != "/") {
 		_engine->new_patch(path, poly);
@@ -403,7 +398,6 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 		} else if ((!xmlStrcmp(cur->name, (const xmlChar*)"plugin-uri"))) {
 			plugin_uri = (char*)key;
 		} else if ((!xmlStrcmp(cur->name, (const xmlChar*)"port"))) {
-			cerr << "FIXME: load port\n";
 #if 0
 			xmlNodePtr child = cur->xmlChildrenNode;
 			
@@ -514,9 +508,6 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 				plugin_uri = NS_INGEN "transport_node";
 			} else if (plugin_label == "trigger_in") {
 				plugin_uri = NS_INGEN "trigger_node";
-			} else {
-				cerr << "WARNING: Unknown deprecated node (label " << plugin_label
-					<< ")." << endl;
 			}
 
 			if (plugin_uri != "")

@@ -124,8 +124,6 @@ nameify_if_invalid(const string& name)
 	} else {
 		const string new_name = Path::nameify(name);
 		assert(Path::is_valid_name(new_name));
-		if (new_name != name)
-			cerr << "Symbol '" << new_name << "' generated from LADSPA name '" << name << endl;
 		return new_name;
 	}
 }
