@@ -569,10 +569,10 @@ DeprecatedLoader::load_subpatch(const string& base_filename, const Path& parent,
 		cur = cur->next;
 	}
 
-	cout << "Loading subpatch " << filename << " under " << parent << endl;
+	cout << "[DeprecatedLoader] Loading subpatch " << filename << " under " << parent << endl;
 	// load_patch sets the passed variable last, so values stored in the parent
 	// will override values stored in the child patch file
-	/*string path = */load_patch(filename, false, parent, Symbol(name), initial_data, false);
+	load_patch(filename, false, parent, Symbol(Symbol::symbolify(name)), initial_data, false);
 	
 	return false;
 }
