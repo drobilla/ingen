@@ -37,16 +37,16 @@ namespace Ingen {
 
 
 DisconnectionEvent::DisconnectionEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& src_port_path, const string& dst_port_path)
-: QueuedEvent(engine, responder, timestamp),
-  _src_port_path(src_port_path),
-  _dst_port_path(dst_port_path),
-  _patch(NULL),
-  _src_port(NULL),
-  _dst_port(NULL),
-  _lookup(true),
-  _patch_connection(NULL),
-  _compiled_patch(NULL),
-  _error(NO_ERROR)
+	: QueuedEvent(engine, responder, timestamp)
+	, _src_port_path(src_port_path)
+	, _dst_port_path(dst_port_path)
+	, _patch(NULL)
+	, _src_port(NULL)
+	, _dst_port(NULL)
+	, _lookup(true)
+	, _patch_connection(NULL)
+	, _compiled_patch(NULL)
+	, _error(NO_ERROR)
 {
 }
 

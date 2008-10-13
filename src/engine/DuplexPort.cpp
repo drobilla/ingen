@@ -38,6 +38,7 @@ DuplexPort::DuplexPort(NodeImpl* parent, const string& name, uint32_t index, uin
 	, _is_output(is_output)
 {
 	assert(PortImpl::_parent == parent);
+	_fixed_buffers = true;
 }
 
 
@@ -57,6 +58,9 @@ DuplexPort::pre_process(ProcessContext& context)
 				<< ((EventBuffer*)buffer(i))->event_count()
 				<< ", joined: " << _buffers->at(i)->is_joined() << endl;*/
 	
+	for (Connections::iterator c = _connections.begin(); c != _connections.end(); ++c)
+		(*c)->process(context);
+
 	if (_is_output) {
 
 		for (uint32_t i=0; i < _poly; ++i)

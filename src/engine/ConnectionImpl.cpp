@@ -72,7 +72,9 @@ ConnectionImpl::~ConnectionImpl()
 void
 ConnectionImpl::set_mode()
 {
-	if (must_mix())
+	if (must_copy())
+		_mode = COPY;
+	else if (must_mix())
 		_mode = MIX;
 	else if (must_extend())
 		_mode = EXTEND;
@@ -97,13 +99,18 @@ ConnectionImpl::set_buffer_size(size_t size)
 
 
 bool
+ConnectionImpl::must_copy() const
+{
+	return (_dst_port->fixed_buffers() && (_src_port->poly() == _dst_port->poly()));
+}
+
+
+bool
 ConnectionImpl::must_mix() const
 {
-	bool mix = (   /*(_src_port->poly() != _dst_port->poly())
-				||*/ (_src_port->polyphonic() && !_dst_port->polyphonic())
-				|| (_src_port->parent()->polyphonic() && !_dst_port->parent()->polyphonic()) );
-
-	return mix;
+	return (   (_src_port->polyphonic() && !_dst_port->polyphonic())
+	        || (_src_port->parent()->polyphonic() && !_dst_port->parent()->polyphonic())
+	        || (_dst_port->fixed_buffers()) );
 }
 
 
@@ -164,7 +171,13 @@ ConnectionImpl::process(ProcessContext& context)
 			<< " -> " << dst_port()->path() << " * " << dst_port()->poly()
 			<< "\t\tmode: " << (int)_mode << endl;*/
 	
-	if (_mode == MIX) {
+	if (_mode == COPY) {
+		assert(src_port()->poly() == dst_port()->poly());
+		const size_t copy_size = std::min(src_port()->buffer_size(), dst_port()->buffer_size());
+		for (uint32_t i=0; i < src_port()->poly(); ++i) {
+			dst_port()->buffer(i)->copy(src_port()->buffer(i), 0, copy_size);
+		}
+	} else if (_mode == MIX) {
 		assert(type() == DataType::AUDIO || type() == DataType::CONTROL);
 
 		const AudioBuffer* const src_buffer = (AudioBuffer*)src_port()->buffer(0);

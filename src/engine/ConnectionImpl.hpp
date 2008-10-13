@@ -65,7 +65,7 @@ public:
 	 * buffer, and will return accordingly (ie the same buffer for every voice
 	 * in a mono->poly connection).
 	 */
-	inline Buffer* buffer(size_t voice) const;
+	inline Buffer* buffer(uint32_t voice) const;
 
 	inline size_t buffer_size() const { return _buffer_size; }
 	
@@ -73,6 +73,7 @@ public:
 	void prepare_poly(uint32_t poly);
 	void apply_poly(Raul::Maid& maid, uint32_t poly);
 
+	bool must_copy() const;
 	bool must_mix() const;
 	bool must_extend() const;
 
@@ -82,7 +83,7 @@ public:
 	DataType type() const { return _src_port->type(); }
 
 protected:
-	enum { DIRECT, MIX, EXTEND } _mode;
+	enum { DIRECT, MIX, COPY, EXTEND } _mode;
 	void set_mode();
 
 	PortImpl* const _src_port;
@@ -94,7 +95,7 @@ protected:
 
 
 inline Buffer*
-ConnectionImpl::buffer(size_t voice) const
+ConnectionImpl::buffer(uint32_t voice) const
 {
 	if (_mode == MIX) {
 		return _local_buffer;

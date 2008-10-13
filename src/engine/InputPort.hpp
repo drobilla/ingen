@@ -77,7 +77,7 @@ public:
 
 	virtual void set_buffer_size(size_t size);
 	
-private:
+protected:
 	bool can_direct() const;
 
 	Connections _connections;
