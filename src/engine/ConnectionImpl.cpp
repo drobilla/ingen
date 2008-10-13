@@ -175,7 +175,7 @@ ConnectionImpl::process(ProcessContext& context)
 		assert(src_port()->poly() == dst_port()->poly());
 		const size_t copy_size = std::min(src_port()->buffer_size(), dst_port()->buffer_size());
 		for (uint32_t i=0; i < src_port()->poly(); ++i) {
-			dst_port()->buffer(i)->copy(src_port()->buffer(i), 0, copy_size);
+			dst_port()->buffer(i)->copy(src_port()->buffer(i), 0, copy_size-1);
 		}
 	} else if (_mode == MIX) {
 		assert(type() == DataType::AUDIO || type() == DataType::CONTROL);
