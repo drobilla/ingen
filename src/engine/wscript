@@ -129,7 +129,8 @@ def build(bld):
 	obj.includes     = ['.', '..', '../common', './events']
 	obj.name         = 'ingen_lv2'
 	obj.target       = 'ingen.lv2/ingen_lv2'
-	obj.inst_dir     = 'lib/lv2/ingen.lv2'
+	#obj.inst_dir     = 'lib/lv2/ingen.lv2'
+	obj.inst_var     = 0
 	core_libs = 'GLIBMM GTHREAD LV2CORE SLV2 RAUL REDLANDMM'
 	autowaf.use_lib(bld, obj, core_libs)
 
