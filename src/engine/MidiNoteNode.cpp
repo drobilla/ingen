@@ -213,7 +213,7 @@ MidiNoteNode::note_on(ProcessContext& context, uchar note_num, uchar velocity, F
 	if (voice == NULL) {
 		voice_num = 0;
 		voice = &(*_voices)[0];
-		jack_nframes_t oldest_time = (*_voices)[0].time;
+		FrameTime oldest_time = (*_voices)[0].time;
 		for (uint32_t i=1; i < _polyphony; ++i) {
 			if ((*_voices)[i].time < oldest_time) {
 				voice = &(*_voices)[i];

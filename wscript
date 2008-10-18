@@ -28,13 +28,13 @@ def set_options(opt):
 def configure(conf):
 	autowaf.configure(conf)
 	autowaf.check_tool(conf, 'compiler_cxx')
-	autowaf.check_pkg(conf, 'glibmm-2.4', destvar='GLIBMM', vnum='2.16.0', mandatory=True)
-	autowaf.check_pkg(conf, 'gthread-2.0', destvar='GTHREAD', vnum='2.16.0', mandatory=True)
+	autowaf.check_pkg(conf, 'glibmm-2.4', destvar='GLIBMM', vnum='2.14.0', mandatory=True)
+	autowaf.check_pkg(conf, 'gthread-2.0', destvar='GTHREAD', vnum='2.14.0', mandatory=True)
 	autowaf.check_pkg(conf, 'gtkmm-2.4', destvar='GTKMM', vnum='2.11.12', mandatory=False)
 	autowaf.check_pkg(conf, 'jack', destvar='JACK', vnum='0.109.0', mandatory=True)
 	autowaf.check_pkg(conf, 'slv2', destvar='SLV2', vnum='0.6.0', mandatory=True)
 	autowaf.check_pkg(conf, 'raul', destvar='RAUL', vnum='0.5.1', mandatory=True)
-	autowaf.check_pkg(conf, 'flowcanvas', destvar='FLOWCANVAS', vnum='0.5.1', mandatory=True)
+	autowaf.check_pkg(conf, 'flowcanvas', destvar='FLOWCANVAS', vnum='0.5.1', mandatory=False)
 	autowaf.check_pkg(conf, 'libxml-2.0', destvar='XML2', vnum='2.6.0', mandatory=False)
 	autowaf.check_pkg(conf, 'libglademm-2.4', destvar='GLADEMM', vnum='2.6.0', mandatory=False)
 	autowaf.check_pkg(conf, 'libsoup-2.4', destvar='SOUP', vnum='2.4.0', mandatory=False)
@@ -42,19 +42,27 @@ def configure(conf):
 	if not Params.g_options.no_liblo:
 		autowaf.check_pkg(conf, 'liblo', destvar='LIBLO', vnum='0.25', mandatory=False)
 	autowaf.check_pkg(conf, 'redlandmm', destvar='REDLANDMM', vnum='0.0.0', mandatory=False)
-	
+
+	# Check for posix_memalign (OSX, amazingly, doesn't have it)
+	fe = conf.create_function_enumerator()
+	fe.function = 'posix_memalign'
+	fe.define = 'HAVE_POSIX_MEMALIGN'
+	fe.run()
+
+	build_gui = conf.env['GLADEMM'] == 1 and conf.env['FLOWCANVAS'] == 1
+
 	conf.define('INGEN_VERSION', INGEN_VERSION)
-	conf.define('BUILD_GUI', bool(conf.env['GLADEMM']))
-	conf.define('HAVE_JACK_MIDI', conf.env['HAVE_JACK'] or conf.env['HAVE_JACK_DBUS'])
+	conf.define('BUILD_GUI', build_gui)
+	conf.define('HAVE_JACK_MIDI', conf.env['HAVE_JACK'] == 1)
 	conf.write_config_header('config.h')
 	
 	autowaf.print_summary(conf)
 	autowaf.display_header('Ingen Configuration')
-	autowaf.display_msg("Jack", str(bool(conf.env['HAVE_JACK'])), 'YELLOW')
-	autowaf.display_msg("OSC", str(bool(conf.env['HAVE_LIBLO'])), 'YELLOW')
-	autowaf.display_msg("HTTP", str(bool(conf.env['HAVE_SOUP'])), 'YELLOW')
-	autowaf.display_msg("LV2", str(bool(conf.env['HAVE_SLV2'])), 'YELLOW')
-	autowaf.display_msg("LADSPA", str(bool(conf.env['HAVE_LADSPA'])), 'YELLOW')
+	autowaf.display_msg("Jack", str(conf.env['HAVE_JACK'] == 1), 'YELLOW')
+	autowaf.display_msg("OSC", str(conf.env['HAVE_LIBLO'] == 1), 'YELLOW')
+	autowaf.display_msg("HTTP", str(conf.env['HAVE_SOUP'] == 1), 'YELLOW')
+	autowaf.display_msg("LV2", str(conf.env['HAVE_SLV2'] == 1), 'YELLOW')
+	autowaf.display_msg("LADSPA", str(conf.env['HAVE_LADSPA'] == 1), 'YELLOW')
 	print
 
 def build(bld):
@@ -68,7 +76,9 @@ def build(bld):
 	bld.add_subdirs('src/module')
 	bld.add_subdirs('src/shared')
 	bld.add_subdirs('src/client')
-	bld.add_subdirs('src/gui')
+
+	if bld.env()['BUILD_GUI']:
+		bld.add_subdirs('src/gui')
 
 	# Program
 	bld.add_subdirs('src/ingen')

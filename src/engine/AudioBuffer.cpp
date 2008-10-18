@@ -45,6 +45,21 @@ AudioBuffer::AudioBuffer(size_t size)
 
 
 void
+AudioBuffer::alloc_local_data(size_t size)
+{
+#ifdef POSIX_MEMALIGN
+	const int ret = posix_memalign((void**)&_local_data, 16, size * sizeof(Sample));
+#else
+	_local_data = (Sample*)malloc(size * sizeof(Sample));
+	int ret = (_local_data != NULL);
+#endif
+	if (ret != 0) {
+		cerr << "[Buffer] Failed to allocate buffer.  Aborting." << endl;
+		exit(EXIT_FAILURE);
+	}
+}
+
+void
 AudioBuffer::resize(size_t size)
 {
 	_size = size;
@@ -54,14 +69,7 @@ AudioBuffer::resize(size_t size)
 	const bool using_local_data = (_data == _local_data);
 
 	deallocate();
-
-	const int ret = posix_memalign((void**)&_local_data, 16, _size * sizeof(Sample));
-	if (ret != 0) {
-		cerr << "[Buffer] Failed to allocate buffer.  Aborting." << endl;
-		exit(EXIT_FAILURE);
-	}
-		
-	assert(ret == 0);
+	alloc_local_data(_size * sizeof(Sample));
 	assert(_local_data);
 	
 	if (using_local_data)
@@ -82,13 +90,7 @@ AudioBuffer::allocate()
 	assert(_local_data == NULL);
 	assert(_size > 0);
 
-	const int ret = posix_memalign((void**)&_local_data, 16, _size * sizeof(Sample));
-	if (ret != 0) {
-		cerr << "[Buffer] Failed to allocate buffer.  Aborting." << endl;
-		exit(EXIT_FAILURE);
-	}
-		
-	assert(ret == 0);
+	alloc_local_data(_size * sizeof(Sample));
 	assert(_local_data);
 
 	_data = _local_data;

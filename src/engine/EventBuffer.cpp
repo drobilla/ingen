@@ -40,7 +40,13 @@ EventBuffer::EventBuffer(size_t capacity)
 		throw std::bad_alloc();
 	}
 
+#ifdef HAVE_POSIX_MEMALIGN
 	int ret = posix_memalign((void**)&_local_buf, 16, sizeof(LV2_Event_Buffer) + capacity);
+#else
+	_local_buf = (LV2_Event_Buffer*)malloc(sizeof(LV2_Event_Buffer) + capacity);
+	int ret = (_local_buf == NULL);
+#endif
+
 	if (ret) {
 		cerr << "Failed to allocate event buffer.  Aborting." << endl;
 		exit(EXIT_FAILURE);

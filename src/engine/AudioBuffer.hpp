@@ -66,6 +66,7 @@ public:
 private:
 	enum State { OK, HALF_SET_CYCLE_1, HALF_SET_CYCLE_2 };
 
+	void alloc_local_data(size_t size);
 	void allocate();
 	void deallocate();
 

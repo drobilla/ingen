@@ -18,7 +18,8 @@
 #ifndef TYPES_HPP
 #define TYPES_HPP
 
-#include <cstddef> // for NULL, size_t, etc
+#include <stdint.h>
+#include <cstddef>
 
 typedef unsigned char uchar;
 typedef unsigned int  uint;

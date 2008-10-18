@@ -36,6 +36,8 @@ public:
 		, _size(size)
 		, _joined_buf(NULL)
 	{}
+
+	virtual ~Buffer() {}
 	
 	static Buffer* create(Shared::DataType type, size_t size);
 
