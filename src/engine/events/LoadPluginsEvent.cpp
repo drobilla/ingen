@@ -22,9 +22,6 @@
 #include "ClientBroadcaster.hpp"
 #include "QueuedEventSource.hpp"
 
-#include <iostream>
-using std::cerr;
-
 namespace Ingen {
 
 

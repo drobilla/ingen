@@ -20,7 +20,7 @@
 #include <iostream>
 #include <stdint.h>
 #include "LV2Info.hpp"
-#include <module/World.hpp>
+#include "module/World.hpp"
 
 using namespace std;
 

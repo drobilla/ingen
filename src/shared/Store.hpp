@@ -20,7 +20,7 @@
 
 #include <string>
 #include <glibmm/thread.h>
-#include <raul/PathTable.hpp>
+#include "raul/PathTable.hpp"
 #include "interface/GraphObject.hpp"
 
 using Raul::PathTable;

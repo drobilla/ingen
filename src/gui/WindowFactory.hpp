@@ -20,7 +20,7 @@
 
 #include <map>
 #include <gtkmm.h>
-#include <raul/SharedPtr.hpp>
+#include "raul/SharedPtr.hpp"
 #include "interface/GraphObject.hpp"
 #include "client/PatchModel.hpp"
 #include "PatchView.hpp"

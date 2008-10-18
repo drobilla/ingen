@@ -25,9 +25,9 @@
 #include <glibmm/miscutils.h>
 #include <glibmm/spawn.h>
 #include <glibmm/thread.h>
-#include <raul/Path.hpp>
-#include <raul/SharedPtr.hpp>
-#include <redlandmm/World.hpp>
+#include "raul/Path.hpp"
+#include "raul/SharedPtr.hpp"
+#include "redlandmm/World.hpp"
 #include "module/global.hpp"
 #include "module/Module.hpp"
 #include "module/World.hpp"

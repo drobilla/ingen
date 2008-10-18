@@ -20,7 +20,7 @@
 
 #include <list>
 #include <utility>
-#include <raul/RingBuffer.hpp>
+#include "raul/RingBuffer.hpp"
 #include "types.hpp"
 
 namespace Ingen {

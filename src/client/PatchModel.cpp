@@ -15,14 +15,14 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <cassert>
+#include <iostream>
 #include "PatchModel.hpp"
 #include "NodeModel.hpp"
 #include "ConnectionModel.hpp"
 #include "ClientStore.hpp"
-#include <cassert>
-#include <iostream>
 
-using std::cerr; using std::cout; using std::endl;
+using namespace std;
 
 namespace Ingen {
 namespace Client {

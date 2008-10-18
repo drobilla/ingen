@@ -19,12 +19,12 @@
 #include <set>
 #include <locale.h>
 #include <glibmm/ustring.h>
-#include <redlandmm/Model.hpp>
-#include <redlandmm/Node.hpp>
-#include <redlandmm/Query.hpp>
-#include <raul/TableImpl.hpp>
-#include <raul/Atom.hpp>
-#include <raul/AtomRDF.hpp>
+#include "redlandmm/Model.hpp"
+#include "redlandmm/Node.hpp"
+#include "redlandmm/Query.hpp"
+#include "raul/TableImpl.hpp"
+#include "raul/Atom.hpp"
+#include "raul/AtomRDF.hpp"
 #include "interface/EngineInterface.hpp"
 #include "Parser.hpp"
 

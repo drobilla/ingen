@@ -15,10 +15,9 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "config.h"
-
 #include <cassert>
 #include <cmath>
+#include "config.h"
 #include "interface/Port.hpp"
 #include "NodeModel.hpp"
 #include "PatchModel.hpp"

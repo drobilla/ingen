@@ -15,14 +15,15 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+//#define ENABLE_AVAHI 1
+
 #include <iostream>
 #include <cstdlib>
 #include <string>
-//#define ENABLE_AVAHI 1
 #include <lo/lo.h>
+#include "raul/SharedPtr.hpp"
+#include "raul/AtomLiblo.hpp"
 #include "types.hpp"
-#include <raul/SharedPtr.hpp>
-#include <raul/AtomLiblo.hpp>
 #include "interface/ClientInterface.hpp"
 #include "engine/ThreadManager.hpp"
 #include "OSCEngineReceiver.hpp"

@@ -21,7 +21,7 @@
 #include <dirent.h>
 #include <boost/optional/optional.hpp>
 #include <curl/curl.h>
-#include <redlandmm/Query.hpp>
+#include "redlandmm/Query.hpp"
 #include "module/global.hpp"
 #include "module/World.hpp"
 #include "client/ClientStore.hpp"

@@ -19,7 +19,7 @@
 #include <cassert>
 #include <cmath>
 #include <stdint.h>
-#include <raul/Maid.hpp>
+#include "raul/Maid.hpp"
 #include <boost/optional.hpp>
 #include "LADSPANode.hpp"
 #include "AudioBuffer.hpp"

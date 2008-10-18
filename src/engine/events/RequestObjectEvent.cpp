@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "RequestObjectEvent.hpp"
 #include <string>
+#include "RequestObjectEvent.hpp"
 #include "interface/ClientInterface.hpp"
 #include "Responder.hpp"
 #include "Engine.hpp"

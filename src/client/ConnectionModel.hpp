@@ -21,8 +21,8 @@
 #include <cassert>
 #include <string>
 #include <list>
-#include <raul/Path.hpp>
-#include <raul/SharedPtr.hpp>
+#include "raul/Path.hpp"
+#include "raul/SharedPtr.hpp"
 #include "interface/Connection.hpp"
 #include "PortModel.hpp"
 

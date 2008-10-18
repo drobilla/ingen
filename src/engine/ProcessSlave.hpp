@@ -21,9 +21,9 @@
 #include "config.h"
 
 #include <sstream>
-#include <raul/Slave.hpp>
-#include <raul/Array.hpp>
-#include <raul/AtomicInt.hpp>
+#include "raul/Slave.hpp"
+#include "raul/Array.hpp"
+#include "raul/AtomicInt.hpp"
 #include "ProcessContext.hpp"
 #include "types.hpp"
 

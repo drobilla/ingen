@@ -22,11 +22,11 @@
 
 #include <string>
 #include <glibmm/module.h>
-#include <raul/SharedPtr.hpp>
+#include "raul/SharedPtr.hpp"
 #include "shared/LV2Features.hpp"
 
 #ifdef HAVE_SLV2
-#include <slv2/slv2.h>
+#include "slv2/slv2.h"
 #endif
 
 namespace Redland { class World; }

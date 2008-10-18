@@ -23,8 +23,8 @@
 #include <libgnomecanvasmm.h>
 #include <time.h>
 #include <sys/time.h>
-#include <raul/Path.hpp>
-#include <flowcanvas/Connection.hpp>
+#include "raul/Path.hpp"
+#include "flowcanvas/Connection.hpp"
 #include "module/global.hpp"
 #include "module/Module.hpp"
 #include "module/World.hpp"
@@ -48,7 +48,7 @@
 #include "WindowFactory.hpp"
 #include "Port.hpp"
 #ifdef HAVE_SLV2
-#include <slv2/slv2.h>
+#include "slv2/slv2.h"
 #endif
 
 using namespace std;

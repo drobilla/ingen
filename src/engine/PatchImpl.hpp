@@ -20,8 +20,8 @@
 
 #include <cstdlib>
 #include <string>
-#include <raul/List.hpp>
-#include <raul/SharedPtr.hpp>
+#include "raul/List.hpp"
+#include "raul/SharedPtr.hpp"
 #include "interface/DataType.hpp"
 #include "interface/Patch.hpp"
 #include "NodeBase.hpp"

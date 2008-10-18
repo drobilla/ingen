@@ -19,7 +19,7 @@
 #define CREATENODEEVENT_H
 
 #include "QueuedEvent.hpp"
-#include <raul/Path.hpp>
+#include "raul/Path.hpp"
 #include <string>
 using std::string;
 

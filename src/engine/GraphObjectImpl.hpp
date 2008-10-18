@@ -22,9 +22,9 @@
 #include <map>
 #include <cstddef>
 #include <cassert>
-#include <raul/Deletable.hpp>
-#include <raul/Path.hpp>
-#include <raul/Atom.hpp>
+#include "raul/Deletable.hpp"
+#include "raul/Path.hpp"
+#include "raul/Atom.hpp"
 #include "interface/GraphObject.hpp"
 #include "types.hpp"
 

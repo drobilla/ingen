@@ -22,8 +22,8 @@
 #include <list>
 #include <cassert>
 #include <boost/optional/optional.hpp>
-#include <raul/Thread.hpp>
-#include <raul/Slave.hpp>
+#include "raul/Thread.hpp"
+#include "raul/Slave.hpp"
 #include <glibmm/thread.h>
 #include "interface/EngineInterface.hpp"
 #include "client/PatchModel.hpp"

@@ -26,7 +26,7 @@
 #include <map>
 #include <string>
 #include <boost/utility.hpp>
-#include <slv2/slv2.h>
+#include "slv2/slv2.h"
 #include "common/lv2ext/lv2_uri_map.h"
 	
 namespace Ingen {

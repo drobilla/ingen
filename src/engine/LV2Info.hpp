@@ -25,7 +25,7 @@
 
 #include <map>
 #include <string>
-#include <slv2/slv2.h>
+#include "slv2/slv2.h"
 #include "module/global.hpp"
 #include "module/World.hpp"
 #include "shared/LV2URIMap.hpp"

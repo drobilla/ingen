@@ -20,8 +20,8 @@
 #include "module/World.hpp"
 
 #include <cassert>
-#include <flowcanvas/Canvas.hpp>
-#include <flowcanvas/Ellipse.hpp>
+#include "flowcanvas/Canvas.hpp"
+#include "flowcanvas/Ellipse.hpp"
 #include "interface/EngineInterface.hpp"
 #include "shared/Builder.hpp"
 #include "shared/ClashAvoider.hpp"

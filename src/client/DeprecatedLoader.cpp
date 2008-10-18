@@ -15,7 +15,6 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -29,7 +28,7 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 #include <libxml/xpath.h>
-#include <raul/Path.hpp>
+#include "raul/Path.hpp"
 #include "interface/EngineInterface.hpp"
 #include "PatchModel.hpp"
 #include "NodeModel.hpp"

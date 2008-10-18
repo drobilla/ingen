@@ -25,7 +25,7 @@
 
 #include <map>
 #include <string>
-#include <slv2/slv2.h>
+#include "slv2/slv2.h"
 	
 namespace Ingen {
 namespace Shared {

@@ -16,7 +16,7 @@
  */
 
 #include "OSCClientReceiver.hpp"
-#include <raul/AtomLiblo.hpp>
+#include "raul/AtomLiblo.hpp"
 #include <list>
 #include <cassert>
 #include <cstring>

@@ -20,7 +20,7 @@
 
 #include <cstdlib>
 #include <string>
-#include <raul/Array.hpp>
+#include "raul/Array.hpp"
 #include "interface/Port.hpp"
 #include "types.hpp"
 #include "GraphObjectImpl.hpp"

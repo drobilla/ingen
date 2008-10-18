@@ -25,10 +25,10 @@
 #include <cassert>
 #include <boost/utility.hpp>
 #include <sigc++/sigc++.h>
-#include <raul/Atom.hpp>
-#include <raul/Path.hpp>
-#include <raul/SharedPtr.hpp>
-#include <raul/PathTable.hpp>
+#include "raul/Atom.hpp"
+#include "raul/Path.hpp"
+#include "raul/SharedPtr.hpp"
+#include "raul/PathTable.hpp"
 #include "interface/GraphObject.hpp"
 
 using Raul::PathTable;

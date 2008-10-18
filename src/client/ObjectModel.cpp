@@ -16,7 +16,7 @@
  */
 
 #include <iostream>
-#include <raul/TableImpl.hpp>
+#include "raul/TableImpl.hpp"
 #include "interface/GraphObject.hpp"
 #include "ObjectModel.hpp"
 

@@ -20,8 +20,8 @@
 
 #include <cassert>
 #include <string>
-#include <flowcanvas/Connection.hpp>
-#include <raul/SharedPtr.hpp>
+#include "flowcanvas/Connection.hpp"
+#include "raul/SharedPtr.hpp"
 #include "client/ConnectionModel.hpp"
 using Ingen::Client::ConnectionModel;
 

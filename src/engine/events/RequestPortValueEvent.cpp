@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "RequestPortValueEvent.hpp"
 #include <string>
+#include "RequestPortValueEvent.hpp"
 #include "interface/ClientInterface.hpp"
 #include "Responder.hpp"
 #include "Engine.hpp"

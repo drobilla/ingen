@@ -20,9 +20,9 @@
 
 #include <cassert>
 #include <string>
-#include <flowcanvas/Port.hpp>
-#include <raul/SharedPtr.hpp>
-#include <raul/Atom.hpp>
+#include "flowcanvas/Port.hpp"
+#include "raul/SharedPtr.hpp"
+#include "raul/Atom.hpp"
 
 namespace Ingen { namespace Client { class PortModel; } }
 using Ingen::Client::PortModel;

@@ -19,8 +19,8 @@
 
 #include <string>
 #include <libgnomecanvasmm.h>
-#include <flowcanvas/Module.hpp>
-#include <raul/SharedPtr.hpp>
+#include "flowcanvas/Module.hpp"
+#include "raul/SharedPtr.hpp"
 #include "Port.hpp"
 
 class Atom;

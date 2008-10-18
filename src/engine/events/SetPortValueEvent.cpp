@@ -16,7 +16,7 @@
  */
 
 #include <sstream>
-#include <lv2ext/lv2_event.h>
+#include "lv2ext/lv2_event.h"
 #include "Responder.hpp"
 #include "SetPortValueEvent.hpp"
 #include "Engine.hpp"

@@ -21,8 +21,8 @@
 #include "types.hpp"
 #include <string>
 #include <cstdlib>
-#include <raul/Semaphore.hpp>
-#include <raul/AtomicInt.hpp>
+#include "raul/Semaphore.hpp"
+#include "raul/AtomicInt.hpp"
 #include "interface/Port.hpp"
 #include "NodeImpl.hpp"
 

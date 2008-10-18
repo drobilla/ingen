@@ -19,7 +19,7 @@
 #define CONNECTIONEVENT_H
 
 #include <string>
-#include <raul/Path.hpp>
+#include "raul/Path.hpp"
 #include "QueuedEvent.hpp"
 #include "PatchImpl.hpp"
 #include "InputPort.hpp"

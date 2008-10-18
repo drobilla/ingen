@@ -19,9 +19,9 @@
 #define CLEARPATCHEVENT_H
 
 #include <string>
-#include <raul/Array.hpp>
-#include <raul/Table.hpp>
-#include <raul/Path.hpp>
+#include "raul/Array.hpp"
+#include "raul/Table.hpp"
+#include "raul/Path.hpp"
 #include "QueuedEvent.hpp"
 #include "EngineStore.hpp"
 #include "PatchImpl.hpp"

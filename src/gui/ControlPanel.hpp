@@ -26,7 +26,7 @@
 #include <gtkmm.h>
 #include <libglademm/xml.h>
 #include <libglademm.h>
-#include <raul/Path.hpp>
+#include "raul/Path.hpp"
 #include "Controls.hpp"
 
 namespace Ingen { namespace Client {

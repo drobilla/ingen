@@ -15,7 +15,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <raul/Path.hpp>
+#include "raul/Path.hpp"
 #include "interface/EngineInterface.hpp"
 #include "client/ClientStore.hpp"
 #include "client/PatchModel.hpp"

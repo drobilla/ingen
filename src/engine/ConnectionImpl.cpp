@@ -16,7 +16,7 @@
  */
 
 #include <algorithm>
-#include <raul/Maid.hpp>
+#include "raul/Maid.hpp"
 #include "util.hpp"
 #include "ConnectionImpl.hpp"
 #include "NodeImpl.hpp"

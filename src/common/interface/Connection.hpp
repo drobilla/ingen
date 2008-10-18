@@ -18,7 +18,7 @@
 #ifndef CONNECTION_H
 #define CONNECTION_H
 
-#include <raul/Path.hpp>
+#include "raul/Path.hpp"
 
 namespace Ingen {
 namespace Shared {

@@ -21,8 +21,8 @@
 #include <libglademm/xml.h>
 #include <libglademm.h>
 #include <gtkmm.h>
-#include <raul/SharedPtr.hpp>
-#include <raul/Table.hpp>
+#include "raul/SharedPtr.hpp"
+#include "raul/Table.hpp"
 #include "interface/GraphObject.hpp"
 #include "client/PatchModel.hpp"
 #include "client/PluginModel.hpp"

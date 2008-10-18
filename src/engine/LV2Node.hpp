@@ -19,7 +19,7 @@
 #define LV2NODE_H
 
 #include <string>
-#include <slv2/slv2.h>
+#include "slv2/slv2.h"
 #include "lv2_contexts.h" 
 #include "types.hpp"
 #include "NodeBase.hpp"

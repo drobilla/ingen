@@ -18,8 +18,8 @@
 #include <iostream>
 #include <cstdlib>
 #include <pthread.h>
-#include <raul/Maid.hpp>
-#include <raul/midi_events.h>
+#include "raul/Maid.hpp"
+#include "raul/midi_events.h"
 #include "types.hpp"
 #include "JackMidiDriver.hpp"
 #include "JackAudioDriver.hpp"

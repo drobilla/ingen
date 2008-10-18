@@ -19,8 +19,8 @@
 #define BREADCRUMB_H
 
 #include <gtkmm.h>
-#include <raul/Path.hpp>
-#include <raul/SharedPtr.hpp>
+#include "raul/Path.hpp"
+#include "raul/SharedPtr.hpp"
 #include "PatchView.hpp"
 
 namespace Ingen {

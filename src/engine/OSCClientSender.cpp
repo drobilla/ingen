@@ -19,7 +19,7 @@
 #include <cassert>
 #include <iostream>
 #include <unistd.h>
-#include <raul/AtomLiblo.hpp>
+#include "raul/AtomLiblo.hpp"
 #include "EngineStore.hpp"
 #include "NodeFactory.hpp"
 #include "util.hpp"

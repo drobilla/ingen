@@ -25,8 +25,8 @@
 #include <boost/optional.hpp>
 #include <glibmm/ustring.h>
 #include <libxml/tree.h>
-#include <raul/SharedPtr.hpp>
-#include <raul/Path.hpp>
+#include "raul/SharedPtr.hpp"
+#include "raul/Path.hpp"
 #include "interface/EngineInterface.hpp"
 #include "interface/GraphObject.hpp"
 #include "ObjectModel.hpp"

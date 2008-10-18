@@ -23,10 +23,10 @@
 #include <string>
 #include <map>
 #include <boost/shared_ptr.hpp>
-#include <flowcanvas/Canvas.hpp>
-#include <flowcanvas/Module.hpp>
-#include <raul/SharedPtr.hpp>
-#include <raul/Path.hpp>
+#include "flowcanvas/Canvas.hpp"
+#include "flowcanvas/Module.hpp"
+#include "raul/SharedPtr.hpp"
+#include "raul/Path.hpp"
 #include "client/ConnectionModel.hpp"
 #include "client/PatchModel.hpp"
 #include "interface/GraphObject.hpp"

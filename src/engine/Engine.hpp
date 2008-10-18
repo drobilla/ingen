@@ -22,7 +22,7 @@
 #include <cassert>
 #include <vector>
 #include <boost/utility.hpp>
-#include <raul/SharedPtr.hpp>
+#include "raul/SharedPtr.hpp"
 #include "module/global.hpp"
 #include "interface/DataType.hpp"
 #include "interface/EventType.hpp"

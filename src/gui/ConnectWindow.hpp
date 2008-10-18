@@ -21,13 +21,13 @@
 #include "config.h"
 
 #ifdef HAVE_SLV2
-#include <slv2/slv2.h>
+#include "slv2/slv2.h"
 #endif
 
 #include <gtkmm.h>
 #include <libglademm/xml.h>
 #include <libglademm.h>
-#include <raul/SharedPtr.hpp>
+#include "raul/SharedPtr.hpp"
 #include "client/ThreadedSigClientInterface.hpp"
 using Ingen::Client::SigClientInterface;
 

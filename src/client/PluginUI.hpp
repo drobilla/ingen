@@ -18,8 +18,8 @@
 #ifndef PLUGINUI_H
 #define PLUGINUI_H
 
-#include <slv2/slv2.h>
-#include <raul/SharedPtr.hpp>
+#include "slv2/slv2.h"
+#include "raul/SharedPtr.hpp"
 #include "module/World.hpp"
 
 namespace Ingen {

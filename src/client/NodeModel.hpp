@@ -22,8 +22,8 @@
 #include <iostream>
 #include <string>
 #include <sigc++/sigc++.h>
-#include <raul/Path.hpp>
-#include <raul/SharedPtr.hpp>
+#include "raul/Path.hpp"
+#include "raul/SharedPtr.hpp"
 #include "interface/Node.hpp"
 #include "interface/Port.hpp"
 #include "ObjectModel.hpp"

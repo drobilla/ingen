@@ -30,7 +30,7 @@
 #include <dlfcn.h>
 #include <string>
 #include <iostream>
-#include <slv2/slv2.h>
+#include "slv2/slv2.h"
 #include "types.hpp"
 #include "PluginImpl.hpp"
 

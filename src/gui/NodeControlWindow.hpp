@@ -23,7 +23,7 @@
 #include <gtkmm.h>
 #include <libglademm.h>
 #include <sigc++/sigc++.h>
-#include <raul/SharedPtr.hpp>
+#include "raul/SharedPtr.hpp"
 using std::string; using std::vector;
 
 namespace Ingen { namespace Client {

@@ -21,7 +21,7 @@
 #include <stdlib.h>
 #include <sys/time.h>
 #include <sys/resource.h>
-#include <raul/Process.hpp>
+#include "raul/Process.hpp"
 #include "config.h"
 #include "interface/EngineInterface.hpp"
 #include "module/World.hpp"

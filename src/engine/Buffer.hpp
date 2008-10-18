@@ -21,7 +21,7 @@
 #include <cstddef>
 #include <cassert>
 #include <boost/utility.hpp>
-#include <raul/Deletable.hpp>
+#include "raul/Deletable.hpp"
 #include "types.hpp"
 #include "interface/DataType.hpp"
 

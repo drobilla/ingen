@@ -26,8 +26,8 @@
 #include <libgnomecanvasmm.h>
 #include <gtkmm.h>
 #include <libglademm.h>
-#include <raul/SharedPtr.hpp>
-#include <raul/Deletable.hpp>
+#include "raul/SharedPtr.hpp"
+#include "raul/Deletable.hpp"
 #include <module/World.hpp>
 
 namespace Ingen { 

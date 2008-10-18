@@ -19,8 +19,8 @@
 #define OBJECTSTORE_H
 
 #include <string>
-#include <raul/PathTable.hpp>
-#include <raul/SharedPtr.hpp>
+#include "raul/PathTable.hpp"
+#include "raul/SharedPtr.hpp"
 #include "shared/Store.hpp"
 
 using std::string;

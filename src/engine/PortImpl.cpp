@@ -16,8 +16,8 @@
  */
 
 #include <iostream>
-#include <raul/Array.hpp>
-#include <raul/Maid.hpp>
+#include "raul/Array.hpp"
+#include "raul/Maid.hpp"
 #include "PortImpl.hpp"
 #include "NodeImpl.hpp"
 #include "interface/DataType.hpp"

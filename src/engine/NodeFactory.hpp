@@ -27,7 +27,7 @@
 #include <pthread.h>
 #include <glibmm/module.h>
 #ifdef HAVE_SLV2
-#include <slv2/slv2.h>
+#include "slv2/slv2.h"
 #include "LV2Info.hpp"
 #endif
 #include "types.hpp"

@@ -18,7 +18,7 @@
 #ifndef BUILDER_H
 #define BUILDER_H
 
-#include <raul/SharedPtr.hpp>
+#include "raul/SharedPtr.hpp"
 
 namespace Raul { class Path; }
 

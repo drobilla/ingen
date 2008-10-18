@@ -21,9 +21,9 @@
 #include <string>
 #include <glibmm/ustring.h>
 #include <boost/optional.hpp>
-#include <raul/SharedPtr.hpp>
-#include <raul/Path.hpp>
-#include <raul/Table.hpp>
+#include "raul/SharedPtr.hpp"
+#include "raul/Path.hpp"
+#include "raul/Table.hpp"
 #include "interface/GraphObject.hpp"
 #include "module/World.hpp"
 

@@ -16,7 +16,7 @@
  */
 
 #include <cmath>
-#include <raul/midi_events.h>
+#include "raul/midi_events.h"
 #include "MidiTriggerNode.hpp"
 #include "AudioBuffer.hpp"
 #include "InputPort.hpp"

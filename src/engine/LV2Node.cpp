@@ -20,7 +20,7 @@
 #include <float.h>
 #include <stdint.h>
 #include <cmath>
-#include <raul/Maid.hpp>
+#include "raul/Maid.hpp"
 #include "AudioBuffer.hpp"
 #include "InputPort.hpp"
 #include "LV2Node.hpp"

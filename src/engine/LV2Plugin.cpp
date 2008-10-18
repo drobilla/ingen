@@ -17,7 +17,7 @@
 
 #include <cassert>
 #include <glibmm.h>
-#include <redlandmm/World.hpp>
+#include "redlandmm/World.hpp"
 #include "LV2Plugin.hpp"
 #include "LV2Node.hpp"
 #include "NodeImpl.hpp"

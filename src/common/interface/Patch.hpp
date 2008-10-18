@@ -18,8 +18,8 @@
 #ifndef PATCH_H
 #define PATCH_H
 
-#include <raul/SharedPtr.hpp>
-#include <raul/List.hpp>
+#include "raul/SharedPtr.hpp"
+#include "raul/List.hpp"
 #include "interface/Node.hpp"
 
 namespace Ingen {

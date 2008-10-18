@@ -17,7 +17,7 @@
 
 #include <string>
 #include <glibmm/module.h>
-#include <raul/SharedPtr.hpp>
+#include "raul/SharedPtr.hpp"
 
 namespace Ingen {
 namespace Shared {

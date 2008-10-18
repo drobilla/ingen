@@ -16,13 +16,13 @@
  */
 
 #include <iostream>
-#include <redlandmm/World.hpp>
+#include "redlandmm/World.hpp"
 #include "global.hpp"
 #include "World.hpp"
 
 #include "config.h"
 #ifdef HAVE_SLV2
-#include <slv2/slv2.h>
+#include "slv2/slv2.h"
 #endif
 
 using namespace std;

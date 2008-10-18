@@ -22,7 +22,7 @@
 #include "common/interface/Port.hpp"
 #include "common/interface/Connection.hpp"
 #include "common/interface/Plugin.hpp"
-#include <iostream>
+
 using namespace std;
 
 namespace Ingen {
@@ -41,8 +41,7 @@ Builder::build(const Raul::Path& prefix, SharedPtr<const GraphObject> object)
 	SharedPtr<const Patch> patch = PtrCast<const Patch>(object);
 	if (patch) {
 		if (object->path() != "/") {
-			const std::string path_str = prefix.base() + object->path().substr(1);
-			//cout << "BUILDING PATCH " << path_str << endl;
+			const string path_str = prefix.base() + object->path().substr(1);
 			_interface.new_patch(path_str, patch->internal_polyphony());
 		}
 
@@ -50,7 +49,6 @@ Builder::build(const Raul::Path& prefix, SharedPtr<const GraphObject> object)
 		for (Patch::Connections::const_iterator i = patch->connections().begin();
 				i != patch->connections().end(); ++i) {
 			string base = prefix.base() + object->path().substr(1);
-			cout << "*********** BASE: " << base << endl;
 			_interface.connect(base + (*i)->src_port_path().substr(1),
 			                   base + (*i)->dst_port_path().substr(1));
 		}
@@ -60,7 +58,6 @@ Builder::build(const Raul::Path& prefix, SharedPtr<const GraphObject> object)
 	SharedPtr<const Node> node = PtrCast<const Node>(object);
 	if (node) {
 		Raul::Path path = prefix.base() + node->path().substr(1);
-		//cout << "BUILDING NODE " << path << endl;
 		_interface.new_node(path, node->plugin()->uri());
 		build_object(prefix, object);
 		return;
@@ -69,7 +66,6 @@ Builder::build(const Raul::Path& prefix, SharedPtr<const GraphObject> object)
 	SharedPtr<const Port> port = PtrCast<const Port>(object);
 	if (port) {
 		Raul::Path path = prefix.base() + port->path().substr(1);
-		//cout << "BUILDING PORT " << path << endl;
 		_interface.new_port(path, port->index(), port->type().uri(), !port->is_input());
 		build_object(prefix, object);
 		return;

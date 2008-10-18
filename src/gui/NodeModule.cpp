@@ -16,7 +16,7 @@
  */
 
 #include <cassert>
-#include <raul/Atom.hpp>
+#include "raul/Atom.hpp"
 #include "interface/EngineInterface.hpp"
 #include "client/NodeModel.hpp"
 #include "client/PatchModel.hpp"

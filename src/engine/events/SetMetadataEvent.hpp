@@ -20,7 +20,7 @@
 
 #include <string>
 #include "QueuedEvent.hpp"
-#include <raul/Atom.hpp>
+#include "raul/Atom.hpp"
 
 using std::string;
 

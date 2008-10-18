@@ -19,7 +19,7 @@
 #define CREATEPATCHEVENT_H
 
 #include <string>
-#include <raul/Path.hpp>
+#include "raul/Path.hpp"
 #include "QueuedEvent.hpp"
 
 using std::string;

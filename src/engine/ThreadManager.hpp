@@ -18,7 +18,7 @@
 #ifndef THREADMANAGER_H
 #define THREADMANAGER_H
 
-#include <raul/Thread.hpp>
+#include "raul/Thread.hpp"
 
 using Raul::Thread;
 

@@ -15,10 +15,10 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "DisconnectionEvent.hpp"
 #include <string>
-#include <raul/Maid.hpp>
-#include <raul/Path.hpp>
+#include "raul/Maid.hpp"
+#include "raul/Path.hpp"
+#include "DisconnectionEvent.hpp"
 #include "Responder.hpp"
 #include "Engine.hpp"
 #include "ConnectionImpl.hpp"
@@ -30,6 +30,7 @@
 #include "EngineStore.hpp"
 
 using std::string;
+
 namespace Ingen {
 
 

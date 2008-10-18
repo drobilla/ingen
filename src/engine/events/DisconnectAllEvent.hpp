@@ -19,8 +19,8 @@
 #define DISCONNECTNODEEVENT_H
 
 #include <string>
-#include <raul/List.hpp>
-#include <raul/Path.hpp>
+#include "raul/List.hpp"
+#include "raul/Path.hpp"
 #include "QueuedEvent.hpp"
 
 using std::string;

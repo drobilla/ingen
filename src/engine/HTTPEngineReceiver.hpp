@@ -22,7 +22,7 @@
 #include <string>
 #include <stdint.h>
 #include <libsoup/soup.h>
-#include <raul/SharedPtr.hpp>
+#include "raul/SharedPtr.hpp"
 #include "QueuedEngineInterface.hpp"
 
 namespace Ingen {

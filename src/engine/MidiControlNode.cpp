@@ -16,7 +16,7 @@
  */
 
 #include <math.h>
-#include <raul/midi_events.h>
+#include "raul/midi_events.h"
 #include "MidiControlNode.hpp"
 #include "PostProcessor.hpp"
 #include "events/MidiLearnEvent.hpp"

@@ -30,8 +30,8 @@
 #include <dlfcn.h>
 #include <string>
 #include <iostream>
-#include <slv2/slv2.h>
-#include <raul/SharedPtr.hpp>
+#include "slv2/slv2.h"
+#include "raul/SharedPtr.hpp"
 #include "types.hpp"
 #include "PluginImpl.hpp"
 #include "LV2Info.hpp"

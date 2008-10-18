@@ -21,7 +21,7 @@
 #include <dirent.h>
 #include <float.h>
 #include <cmath>
-#include <redlandmm/World.hpp>
+#include "redlandmm/World.hpp"
 #include "module/World.hpp"
 #include "NodeFactory.hpp"
 #include "ThreadManager.hpp"
@@ -36,7 +36,7 @@
 #include "LADSPAPlugin.hpp"
 #endif
 #ifdef HAVE_SLV2
-#include <slv2/slv2.h>
+#include "slv2/slv2.h"
 #include "LV2Plugin.hpp"
 #include "LV2Node.hpp"
 #endif

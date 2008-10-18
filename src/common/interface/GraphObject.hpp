@@ -20,12 +20,12 @@
 
 #include <string>
 #include <map>
-#include <raul/Deletable.hpp>
-#include <raul/PathTable.hpp>
-#include <raul/Symbol.hpp>
-#include <raul/Atom.hpp>
-#include <raul/SharedPtr.hpp>
-#include <raul/WeakPtr.hpp>
+#include "raul/Deletable.hpp"
+#include "raul/PathTable.hpp"
+#include "raul/Symbol.hpp"
+#include "raul/Atom.hpp"
+#include "raul/SharedPtr.hpp"
+#include "raul/WeakPtr.hpp"
 
 using Raul::PathTable;
 

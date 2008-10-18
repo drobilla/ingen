@@ -15,9 +15,9 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <raul/Array.hpp>
-#include <raul/Maid.hpp>
-#include <raul/midi_events.h>
+#include "raul/Array.hpp"
+#include "raul/Maid.hpp"
+#include "raul/midi_events.h"
 #include <cmath>
 #include <iostream>
 #include "AudioBuffer.hpp"

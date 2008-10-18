@@ -21,7 +21,7 @@
 #include <inttypes.h>
 #include <string>
 #include <memory>
-#include <raul/SharedPtr.hpp>
+#include "raul/SharedPtr.hpp"
 #include "tuning.hpp"
 #include "interface/EngineInterface.hpp"
 #include "interface/ClientInterface.hpp"

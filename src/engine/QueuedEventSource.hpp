@@ -21,10 +21,10 @@
 #include <cstdlib>
 #include <pthread.h>
 #include "types.hpp"
-#include <raul/Semaphore.hpp>
-#include <raul/AtomicInt.hpp>
-#include <raul/SRSWQueue.hpp>
-#include <raul/Slave.hpp>
+#include "raul/Semaphore.hpp"
+#include "raul/AtomicInt.hpp"
+#include "raul/SRSWQueue.hpp"
+#include "raul/Slave.hpp"
 #include "Event.hpp"
 #include "EventSource.hpp"
 

@@ -16,7 +16,7 @@
  */
 
 #include <sstream>
-#include <raul/Path.hpp>
+#include "raul/Path.hpp"
 #include "PluginModel.hpp"
 #include "PatchModel.hpp"
 #include "PluginUI.hpp"

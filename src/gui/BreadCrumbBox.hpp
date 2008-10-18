@@ -22,8 +22,8 @@
 #include <gtkmm.h>
 #include <libglademm/xml.h>
 #include <libglademm.h>
-#include <raul/Path.hpp>
-#include <raul/SharedPtr.hpp>
+#include "raul/Path.hpp"
+#include "raul/SharedPtr.hpp"
 #include "PatchView.hpp"
 
 namespace Ingen {

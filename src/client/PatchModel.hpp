@@ -22,7 +22,7 @@
 #include <list>
 #include <string>
 #include <sigc++/sigc++.h>
-#include <raul/SharedPtr.hpp>
+#include "raul/SharedPtr.hpp"
 #include "interface/Patch.hpp"
 #include "NodeModel.hpp"
 

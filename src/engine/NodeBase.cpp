@@ -19,8 +19,8 @@
 #include <cassert>
 #include <iostream>
 #include <stdint.h>
-#include <raul/List.hpp>
-#include <raul/Array.hpp>
+#include "raul/List.hpp"
+#include "raul/Array.hpp"
 #include "util.hpp"
 #include "PluginImpl.hpp"
 #include "ClientBroadcaster.hpp"

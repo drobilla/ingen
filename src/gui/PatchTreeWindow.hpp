@@ -20,7 +20,7 @@
 
 #include <gtkmm.h>
 #include <libglademm.h>
-#include <raul/Path.hpp>
+#include "raul/Path.hpp"
 
 namespace Ingen { namespace Client {
 	class ClientStore;

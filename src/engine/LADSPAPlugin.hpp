@@ -26,7 +26,7 @@
 #include <dlfcn.h>
 #include <string>
 #include <iostream>
-#include <raul/Path.hpp>
+#include "raul/Path.hpp"
 #include "types.hpp"
 #include "PluginImpl.hpp"
 

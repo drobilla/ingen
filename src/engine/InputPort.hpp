@@ -21,8 +21,8 @@
 #include <string>
 #include <cstdlib>
 #include <cassert>
-#include <raul/List.hpp>
-#include <raul/SharedPtr.hpp>
+#include "raul/List.hpp"
+#include "raul/SharedPtr.hpp"
 #include "PortImpl.hpp"
 using std::string;
 

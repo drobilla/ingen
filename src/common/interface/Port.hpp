@@ -18,7 +18,7 @@
 #ifndef PORT_H
 #define PORT_H
 
-#include <raul/Atom.hpp>
+#include "raul/Atom.hpp"
 #include "GraphObject.hpp"
 #include "DataType.hpp"
 

@@ -22,7 +22,7 @@
 #include <gtkmm.h>
 #include <libglademm/xml.h>
 #include <libglademm.h>
-#include <raul/SharedPtr.hpp>
+#include "raul/SharedPtr.hpp"
 #include "client/PatchModel.hpp"
 
 using std::string;

@@ -21,7 +21,7 @@
 
 #include <string>
 #include <libgnomecanvasmm.h>
-#include <raul/SharedPtr.hpp>
+#include "raul/SharedPtr.hpp"
 #include "client/PatchModel.hpp"
 #include "PatchPortModule.hpp"
 #include "NodeModule.hpp"

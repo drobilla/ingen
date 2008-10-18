@@ -19,7 +19,7 @@
 #define DISCONNECTIONEVENT_H
 
 #include <string>
-#include <raul/Path.hpp>
+#include "raul/Path.hpp"
 #include "QueuedEvent.hpp"
 #include "types.hpp"
 #include "PatchImpl.hpp"

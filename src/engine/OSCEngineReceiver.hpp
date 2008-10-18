@@ -22,7 +22,7 @@
 #include <string>
 #include <stdint.h>
 #include <lo/lo.h>
-#include <raul/SharedPtr.hpp>
+#include "raul/SharedPtr.hpp"
 #include "QueuedEngineInterface.hpp"
 #include "Responder.hpp"
 using std::string;

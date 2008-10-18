@@ -24,8 +24,8 @@
 #include <glibmm/thread.h>
 #include "interface/ClientInterface.hpp"
 #include "SigClientInterface.hpp"
-#include <raul/Atom.hpp>
-#include <raul/SRSWQueue.hpp>
+#include "raul/Atom.hpp"
+#include "raul/SRSWQueue.hpp"
 
 using std::string;
 

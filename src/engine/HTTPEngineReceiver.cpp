@@ -20,8 +20,8 @@
 #include <cstdio>
 #include <string>
 #include <boost/format.hpp>
+#include "raul/SharedPtr.hpp"
 #include "types.hpp"
-#include <raul/SharedPtr.hpp>
 #include "interface/ClientInterface.hpp"
 #include "module/Module.hpp"
 #include "serialisation/serialisation.hpp"

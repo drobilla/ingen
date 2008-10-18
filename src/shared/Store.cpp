@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <raul/PathTable.hpp>
-#include <raul/TableImpl.hpp>
+#include "raul/PathTable.hpp"
+#include "raul/TableImpl.hpp"
 #include "common/interface/Node.hpp"
 #include "common/interface/Port.hpp"
 #include "Store.hpp"

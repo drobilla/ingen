@@ -15,14 +15,15 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "RequestMetadataEvent.hpp"
 #include <string>
+#include "interface/ClientInterface.hpp"
+#include "RequestMetadataEvent.hpp"
 #include "Responder.hpp"
 #include "Engine.hpp"
 #include "GraphObjectImpl.hpp"
 #include "EngineStore.hpp"
-#include "interface/ClientInterface.hpp"
 #include "ClientBroadcaster.hpp"
+
 using std::string;
 
 namespace Ingen {

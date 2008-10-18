@@ -22,9 +22,9 @@
 #include <libglademm/xml.h>
 #include <gtkmm.h>
 #include <curl/curl.h>
-#include <raul/SharedPtr.hpp>
-#include <raul/Thread.hpp>
-#include <raul/AtomicInt.hpp>
+#include "raul/SharedPtr.hpp"
+#include "raul/Thread.hpp"
+#include "raul/AtomicInt.hpp"
 #include "client/PatchModel.hpp"
 #include "client/PluginModel.hpp"
 using Ingen::Client::PatchModel;

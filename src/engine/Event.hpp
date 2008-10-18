@@ -19,8 +19,8 @@
 #define EVENT_H
 
 #include <cassert>
-#include <raul/SharedPtr.hpp>
-#include <raul/Deletable.hpp>
+#include "raul/SharedPtr.hpp"
+#include "raul/Deletable.hpp"
 #include "types.hpp"
 
 namespace Ingen {	

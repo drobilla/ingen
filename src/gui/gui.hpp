@@ -20,7 +20,7 @@
 
 #include "config.h"
 #include "module/global.hpp"
-#include <raul/SharedPtr.hpp>
+#include "raul/SharedPtr.hpp"
 
 namespace Ingen {
 

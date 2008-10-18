@@ -20,7 +20,7 @@
 
 #include <inttypes.h>
 #include <string>
-#include <raul/SharedPtr.hpp>
+#include "raul/SharedPtr.hpp"
 #include "interface/CommonInterface.hpp"
 
 namespace Ingen {

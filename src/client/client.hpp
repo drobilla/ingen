@@ -18,7 +18,7 @@
 #ifndef INGEN_CLIENT_H
 #define INGEN_CLIENT_H
 
-#include <raul/SharedPtr.hpp>
+#include "raul/SharedPtr.hpp"
 
 namespace Ingen {
 

@@ -19,7 +19,7 @@
 #define SETPOLYPHONYEVENT_H
 
 #include <string>
-#include <raul/Array.hpp>
+#include "raul/Array.hpp"
 #include "QueuedEvent.hpp"
 
 using std::string;

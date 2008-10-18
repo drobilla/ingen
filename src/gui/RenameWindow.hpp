@@ -20,7 +20,7 @@
 
 #include <gtkmm.h>
 #include <libglademm.h>
-#include <raul/SharedPtr.hpp>
+#include "raul/SharedPtr.hpp"
 #include "client/ObjectModel.hpp"
 using Ingen::Client::ObjectModel;
 

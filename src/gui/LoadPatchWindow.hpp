@@ -20,7 +20,7 @@
 
 #include <libglademm/xml.h>
 #include <gtkmm.h>
-#include <raul/SharedPtr.hpp>
+#include "raul/SharedPtr.hpp"
 #include "interface/GraphObject.hpp"
 #include "client/PluginModel.hpp"
 #include "client/PatchModel.hpp"

@@ -21,8 +21,8 @@
 #include <inttypes.h>
 #include <string>
 #include <map>
-#include <raul/Atom.hpp>
-#include <raul/Path.hpp>
+#include "raul/Atom.hpp"
+#include "raul/Path.hpp"
 #include "interface/CommonInterface.hpp"
 
 namespace Ingen {
