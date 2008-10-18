@@ -19,15 +19,14 @@
 #define TYPES_HPP
 
 #include <cstddef> // for NULL, size_t, etc
-#include <jack/jack.h>
 
 typedef unsigned char uchar;
 typedef unsigned int  uint;
 typedef unsigned long ulong;
 
-typedef jack_default_audio_sample_t Sample;
-typedef jack_nframes_t              SampleCount;
-typedef jack_nframes_t              SampleRate;
-typedef jack_nframes_t              FrameTime;
+typedef float    Sample;
+typedef uint32_t SampleCount;
+typedef uint32_t SampleRate;
+typedef uint32_t FrameTime;
 
 #endif // TYPES_HPP
