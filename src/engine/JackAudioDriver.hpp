@@ -189,7 +189,7 @@ extern "C" {
 			Ingen::Engine& engine,
 	        std::string    server_name = "",
 	        std::string    client_name = "",
-	        jack_client_t* jack_client = 0);
+	        void*          jack_client = 0);
 }
 
 #endif // JACKAUDIODRIVER_H

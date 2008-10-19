@@ -18,6 +18,7 @@
 #include "GladeFactory.hpp"
 #include <iostream>
 #include <fstream>
+#include "config.h"
 
 using namespace std;
 

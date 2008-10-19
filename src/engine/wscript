@@ -97,7 +97,6 @@ def build(bld):
 		obj.name         = 'libingen_engine_http'
 		obj.target       = 'ingen_engine_http'
 		obj.inst_dir     = 'lib/ingen'
-		obj.uselib_local = 'libingen_engine'
 		autowaf.use_lib(bld, obj, core_libs + ' SOUP')
 	
 	if bld.env()['HAVE_LIBLO'] == 1:
@@ -107,7 +106,6 @@ def build(bld):
 		obj.name         = 'libingen_engine_osc'
 		obj.target       = 'ingen_engine_osc'
 		obj.inst_dir     = 'lib/ingen'
-		obj.uselib_local = 'libingen_engine'
 		autowaf.use_lib(bld, obj, core_libs + ' LIBLO')
 	
 	if bld.env()['HAVE_JACK'] == 1:
@@ -117,7 +115,6 @@ def build(bld):
 		obj.name         = 'libingen_engine_jack'
 		obj.target       = 'ingen_engine_jack'
 		obj.inst_dir     = 'lib/ingen'
-		obj.uselib_local = 'libingen_engine'
 		autowaf.use_lib(bld, obj, core_libs + ' JACK')
 
 	# Lightweight ingen/lv2 wrapper
@@ -132,7 +129,6 @@ def build(bld):
 	obj.target       = 'ingen.lv2/ingen_lv2'
 	#obj.inst_dir     = 'lib/lv2/ingen.lv2'
 	obj.inst_var     = 0
-	obj.uselib_local = 'libingen_engine'
 	core_libs = 'GLIBMM GTHREAD LV2CORE SLV2 RAUL REDLANDMM'
 	autowaf.use_lib(bld, obj, core_libs)
 

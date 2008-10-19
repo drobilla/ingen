@@ -387,13 +387,16 @@ JackAudioDriver::_buffer_size_cb(jack_nframes_t nframes)
 
 } // namespace Ingen
 
+extern "C" {
+
 Ingen::JackAudioDriver*
 new_jack_audio_driver(
-		Ingen::Engine& engine,
-		std::string    server_name,
-		std::string    client_name,
-		jack_client_t* jack_client)
+		Ingen::Engine&    engine,
+		const std::string server_name,
+		const std::string client_name,
+		void*             jack_client)
 {
-	return new Ingen::JackAudioDriver(engine, server_name, client_name, jack_client);
+	return new Ingen::JackAudioDriver(engine, server_name, client_name, (jack_client_t*)jack_client);
 }
 
+}

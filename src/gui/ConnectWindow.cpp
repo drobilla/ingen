@@ -229,16 +229,17 @@ ConnectWindow::connect(bool existing)
 		SharedPtr<SigClientInterface> client(new SigClientInterface());
 		
 		Ingen::Driver* (*new_driver)(
-				Ingen::Engine& engine,
-				std::string    server_name,
-				jack_client_t* jack_client) = NULL;
+				Ingen::Engine&    engine,
+				const std::string server_name,
+				const std::string client_name,
+				void*             jack_client) = NULL;
         
 		if (!world->local_engine->audio_driver()) {
 			bool found = _engine_jack_module->get_symbol(
 					"new_jack_audio_driver", (void*&)(new_driver));
 			if (found) {
 				world->local_engine->set_driver(DataType::AUDIO,
-						SharedPtr<Driver>(new_driver(*world->local_engine, "default", 0)));
+						SharedPtr<Driver>(new_driver(*world->local_engine, "default", "", 0)));
 			}
 		}
 

@@ -19,6 +19,7 @@
 #include <cassert>
 #include <stdlib.h>
 #include "AudioBuffer.hpp"
+//#include "config.h"
 
 using namespace std;
 
@@ -51,7 +52,7 @@ AudioBuffer::alloc_local_data(size_t size)
 	const int ret = posix_memalign((void**)&_local_data, 16, size * sizeof(Sample));
 #else
 	_local_data = (Sample*)malloc(size * sizeof(Sample));
-	int ret = (_local_data != NULL);
+	int ret = (_local_data != NULL) ? 0 : -1;
 #endif
 	if (ret != 0) {
 		cerr << "[Buffer] Failed to allocate buffer.  Aborting." << endl;

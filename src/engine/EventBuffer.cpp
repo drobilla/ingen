@@ -21,6 +21,7 @@
 #include "EventBuffer.hpp"
 #include "lv2ext/lv2_event.h"
 #include "lv2ext/lv2_event_helpers.h"
+//#include "config.h"
 
 using namespace std;
 
@@ -44,10 +45,10 @@ EventBuffer::EventBuffer(size_t capacity)
 	int ret = posix_memalign((void**)&_local_buf, 16, sizeof(LV2_Event_Buffer) + capacity);
 #else
 	_local_buf = (LV2_Event_Buffer*)malloc(sizeof(LV2_Event_Buffer) + capacity);
-	int ret = (_local_buf == NULL);
+	int ret = (_local_buf != NULL) ? 0 : -1;
 #endif
 
-	if (ret) {
+	if (ret != 0) {
 		cerr << "Failed to allocate event buffer.  Aborting." << endl;
 		exit(EXIT_FAILURE);
 	}

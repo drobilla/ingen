@@ -53,11 +53,9 @@ load_module(const string& name)
 		string dir;
 		istringstream iss(module_path);
 		while (getline(iss, dir, ':')) {
-			
 			string filename = Glib::Module::build_path(dir, name);
 			if (Glib::file_test(filename, Glib::FILE_TEST_EXISTS)) {
 				module = new Glib::Module(filename, Glib::MODULE_BIND_LAZY);
-
 				if (*module) {
 					cerr << "Loaded module \"" <<  name << "\" from " << filename << endl;
 					return SharedPtr<Glib::Module>(module);

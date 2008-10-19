@@ -43,7 +43,6 @@ def build(bld):
 		obj.source += 'UploadPatchWindow.cpp'
 
 	obj.includes       = ['.', '..', '../common']
-	obj.defines        = 'INGEN_DATA_DIR=\\\"' + Params.g_options.datadir + '\\\"'
 	obj.name           = 'libingen_gui'
 	obj.target         = 'ingen_gui'
 	obj.inst_dir       = 'lib/ingen'
@@ -65,7 +64,7 @@ def build(bld):
 	''')
 	
 	# GUI runtime files
-	install_files(Params.g_options.datadir, '', 'ingen_gui.glade')
-	install_files(Params.g_options.datadir, '', 'ingen.svg')
+	install_files(bld.env()['DATADIR'], 'ingen', 'ingen_gui.glade')
+	install_files(bld.env()['DATADIR'], 'ingen', 'ingen.svg')
 
 

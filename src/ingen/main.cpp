@@ -192,13 +192,16 @@ main(int argc, char** argv)
 	/* Activate the engine, if we have one */
 	if (engine) {
 		Ingen::JackAudioDriver* (*new_driver)(
-				Ingen::Engine& engine,
-				std::string    server_name,
-				std::string    client_name,
-				jack_client_t* jack_client) = NULL;
-		if (engine_jack_module->get_symbol("new_jack_audio_driver", (void*&)new_driver))
+				Ingen::Engine&    engine,
+				const std::string server_name,
+				const std::string client_name,
+				void*             jack_client) = NULL;
+		if (engine_jack_module->get_symbol("new_jack_audio_driver", (void*&)new_driver)) {
 			engine->set_driver(DataType::AUDIO, SharedPtr<Driver>(new_driver(
 					*engine, "default", args.jack_name_arg, NULL)));
+		} else {
+			cerr << Glib::Module::get_last_error() << endl;
+		}
 
 		engine->activate(args.parallelism_arg);
 	}

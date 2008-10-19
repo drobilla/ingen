@@ -50,11 +50,12 @@ def configure(conf):
 	fe.define = 'HAVE_POSIX_MEMALIGN'
 	fe.run()
 
-	build_gui = conf.env['GLADEMM'] == 1 and conf.env['FLOWCANVAS'] == 1
+	build_gui = conf.env['HAVE_GLADEMM'] == 1 and conf.env['HAVE_FLOWCANVAS'] == 1
 
 	conf.define('INGEN_VERSION', INGEN_VERSION)
 	conf.define('BUILD_GUI', build_gui)
 	conf.define('HAVE_JACK_MIDI', conf.env['HAVE_JACK'] == 1)
+	conf.define('INGEN_DATA_DIR', os.path.normpath(conf.env['DATADIR'] + 'ingen'))
 	conf.write_config_header('config.h')
 	
 	autowaf.print_summary(conf)
@@ -64,6 +65,7 @@ def configure(conf):
 	autowaf.display_msg("HTTP", str(conf.env['HAVE_SOUP'] == 1), 'YELLOW')
 	autowaf.display_msg("LV2", str(conf.env['HAVE_SLV2'] == 1), 'YELLOW')
 	autowaf.display_msg("LADSPA", str(conf.env['HAVE_LADSPA'] == 1), 'YELLOW')
+	autowaf.display_msg("Build GUI", str(conf.env['BUILD_GUI'] == 1), 'YELLOW')
 	print
 
 def build(bld):
