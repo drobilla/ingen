@@ -45,6 +45,7 @@ def configure(conf):
 
 	# Check for posix_memalign (OSX, amazingly, doesn't have it)
 	fe = conf.create_function_enumerator()
+	fe.headers = ['stdlib.h']
 	fe.function = 'posix_memalign'
 	fe.define = 'HAVE_POSIX_MEMALIGN'
 	fe.run()
