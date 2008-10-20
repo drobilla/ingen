@@ -8,5 +8,6 @@ def build(bld):
 	obj.includes     = ['../common', '../']
 	obj.defines      = 'VERSION=\\\"' + bld.env()['INGEN_VERSION'] + '\\\"'
 	obj.uselib_local = 'libingen_module libingen_shared'
+	obj.inst_dir     = bld.env()['BINDIRNAME']
 	autowaf.use_lib(bld, obj, 'GTHREAD GLIBMM REDLANDMM RAUL LV2CORE SLV2 INGEN LIBLO SOUP')
 

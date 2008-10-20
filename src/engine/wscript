@@ -46,7 +46,7 @@ def build(bld):
 	obj.includes     = ['.', '..', '../common', './events']
 	obj.name         = 'libingen_engine'
 	obj.target       = 'ingen_engine'
-	obj.inst_dir     = 'lib/ingen'
+	obj.inst_dir     = bld.env()['LIBDIRNAME'] + 'ingen'
 	obj.uselib_local = 'libingen_shared'
 	core_libs = 'GLIBMM GTHREAD LV2CORE SLV2 RAUL REDLANDMM'
 	autowaf.use_lib(bld, obj, core_libs)
@@ -87,7 +87,7 @@ def build(bld):
 		obj.includes     = ['.', '..', '../common', './events', '../engine']
 		obj.name         = 'libingen_engine_queued'
 		obj.target       = 'ingen_engine_queued'
-		obj.inst_dir     = 'lib/ingen'
+		obj.inst_dir     = bld.env()['LIBDIRNAME'] + 'ingen'
 		autowaf.use_lib(bld, obj, core_libs)
 	
 	if bld.env()['HAVE_SOUP'] == 1:
@@ -96,7 +96,7 @@ def build(bld):
 		obj.includes     = ['.', '..', '../common', './events', '../engine']
 		obj.name         = 'libingen_engine_http'
 		obj.target       = 'ingen_engine_http'
-		obj.inst_dir     = 'lib/ingen'
+		obj.inst_dir     = bld.env()['LIBDIRNAME'] + 'ingen'
 		autowaf.use_lib(bld, obj, core_libs + ' SOUP')
 	
 	if bld.env()['HAVE_LIBLO'] == 1:
@@ -105,7 +105,7 @@ def build(bld):
 		obj.includes     = ['.', '..', '../common', './events', '../engine']
 		obj.name         = 'libingen_engine_osc'
 		obj.target       = 'ingen_engine_osc'
-		obj.inst_dir     = 'lib/ingen'
+		obj.inst_dir     = bld.env()['LIBDIRNAME'] + 'ingen'
 		autowaf.use_lib(bld, obj, core_libs + ' LIBLO')
 	
 	if bld.env()['HAVE_JACK'] == 1:
@@ -114,7 +114,7 @@ def build(bld):
 		obj.includes     = ['.', '..', '../common', './events', '../engine']
 		obj.name         = 'libingen_engine_jack'
 		obj.target       = 'ingen_engine_jack'
-		obj.inst_dir     = 'lib/ingen'
+		obj.inst_dir     = bld.env()['LIBDIRNAME'] + 'ingen'
 		autowaf.use_lib(bld, obj, core_libs + ' JACK')
 
 	# Lightweight ingen/lv2 wrapper

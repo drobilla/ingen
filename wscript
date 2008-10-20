@@ -16,8 +16,6 @@ blddir = 'build'
 
 def set_options(opt):
 	autowaf.set_options(opt)
-	opt.tool_options('compiler_cc')
-	opt.tool_options('compiler_cxx')
 	opt.add_option('--data-dir', type='string', dest='datadir',
 			help="Ingen data install directory [Default: PREFIX/share/ingen]")
 	opt.add_option('--module-dir', type='string', dest='moduledir',
@@ -56,6 +54,7 @@ def configure(conf):
 	conf.define('BUILD_GUI', build_gui)
 	conf.define('HAVE_JACK_MIDI', conf.env['HAVE_JACK'] == 1)
 	conf.define('INGEN_DATA_DIR', os.path.normpath(conf.env['DATADIR'] + 'ingen'))
+	conf.define('INGEN_MODULE_DIR', os.path.normpath(conf.env['LIBDIR'] + 'ingen'))
 	conf.write_config_header('config.h')
 	
 	autowaf.print_summary(conf)
@@ -88,5 +87,5 @@ def build(bld):
 	
 	# Documentation
 	autowaf.build_dox(bld, 'INGEN', INGEN_VERSION, srcdir, blddir)
-	install_files('PREFIX', 'share/doc/ingen', blddir + '/default/doc/html/*')
+	install_files('HTMLDIR', '', blddir + '/default/doc/html/*')
 

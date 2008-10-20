@@ -17,5 +17,6 @@ def build(bld):
 	obj.name     = 'libingen_shared'
 	obj.target   = 'ingen_shared'
 	obj.vnum     = '0.0.0'
+	obj.inst_dir = bld.env()['LIBDIRNAME']
 	autowaf.use_lib(bld, obj, 'GLIBMM LV2CORE SLV2 RAUL REDLANDMM')
 

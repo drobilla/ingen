@@ -12,7 +12,7 @@ def build(bld):
 	obj.includes     = ['.', '..', '../common']
 	obj.name         = 'libingen_serialisation'
 	obj.target       = 'ingen_serialisation'
-	obj.inst_dir     = 'lib/ingen'
+	obj.inst_dir     = bld.env()['LIBDIRNAME'] + 'ingen'
 	obj.uselib_local = 'libingen_shared'
 	autowaf.use_lib(bld, obj, 'GLIBMM LV2CORE SLV2 RAUL REDLANDMM')
 

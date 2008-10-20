@@ -22,10 +22,7 @@
 #include <glibmm/miscutils.h>
 #include <glibmm/fileutils.h>
 #include "raul/SharedPtr.hpp"
-
-#ifndef INGEN_MODULE_DIR
-#error This file expects INGEN_MODULE_DIR to be defined.
-#endif
+#include "config.h"
 
 using namespace std;
 

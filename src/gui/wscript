@@ -45,7 +45,7 @@ def build(bld):
 	obj.includes       = ['.', '..', '../common']
 	obj.name           = 'libingen_gui'
 	obj.target         = 'ingen_gui'
-	obj.inst_dir       = 'lib/ingen'
+	obj.inst_dir       = bld.env()['LIBDIRNAME'] + 'ingen'
 	obj.uselib_local   = 'libingen_shared'
 	autowaf.use_lib(bld, obj, '''
 		CURL
@@ -64,7 +64,7 @@ def build(bld):
 	''')
 	
 	# GUI runtime files
-	install_files(bld.env()['DATADIR'], 'ingen', 'ingen_gui.glade')
-	install_files(bld.env()['DATADIR'], 'ingen', 'ingen.svg')
+	install_files('DATADIR', 'ingen', 'ingen_gui.glade')
+	install_files('DATADIR', 'ingen', 'ingen.svg')
 
 
