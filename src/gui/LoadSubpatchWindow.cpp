@@ -22,6 +22,7 @@
 #include "interface/EngineInterface.hpp"
 #include "client/NodeModel.hpp"
 #include "client/PatchModel.hpp"
+#include "shared/runtime_paths.hpp"
 #include "App.hpp"
 #include "LoadSubpatchWindow.hpp"
 #include "PatchView.hpp"
@@ -65,8 +66,7 @@ LoadSubpatchWindow::LoadSubpatchWindow(BaseObjectType* cobject, const Glib::RefP
 	property_select_multiple() = true;
 	
 	// Add global examples directory to "shortcut folders" (bookmarks)
-	string examples_dir = INGEN_DATA_DIR;
-	examples_dir.append("/patches");
+	const string examples_dir = Shared::data_file_path("patches");
 	DIR* d = opendir(examples_dir.c_str());
 	if (d != NULL)
 		add_shortcut_folder(examples_dir);

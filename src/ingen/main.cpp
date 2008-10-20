@@ -28,6 +28,7 @@
 #include "raul/Path.hpp"
 #include "raul/SharedPtr.hpp"
 #include "redlandmm/World.hpp"
+#include "shared/runtime_paths.hpp"
 #include "module/global.hpp"
 #include "module/Module.hpp"
 #include "module/World.hpp"
@@ -85,6 +86,9 @@ main(int argc, char** argv)
 				<< "*** Run separate instances if that is what you want" << endl;
 		return 1;
 	}
+
+	/* Set bundle path from executable location so resources/modules can be found */
+	Shared::set_bundle_path_from_code((void*)&main);
 
 	SharedPtr<Glib::Module> engine_module;
 	SharedPtr<Glib::Module> engine_http_module;

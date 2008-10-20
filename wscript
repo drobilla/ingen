@@ -53,8 +53,17 @@ def configure(conf):
 	conf.define('INGEN_VERSION', INGEN_VERSION)
 	conf.define('BUILD_GUI', build_gui)
 	conf.define('HAVE_JACK_MIDI', conf.env['HAVE_JACK'] == 1)
-	conf.define('INGEN_DATA_DIR', os.path.normpath(conf.env['DATADIR'] + 'ingen'))
-	conf.define('INGEN_MODULE_DIR', os.path.normpath(conf.env['LIBDIR'] + 'ingen'))
+	if conf.env['BUNDLE']:
+		conf.define('INGEN_DATA_DIR', os.path.normpath(
+				conf.env['DATADIRNAME'] + 'ingen'))
+		conf.define('INGEN_MODULE_DIR', os.path.normpath(
+				conf.env['LIBDIRNAME'] + 'ingen'))
+	else:
+		conf.define('INGEN_DATA_DIR', os.path.normpath(
+				conf.env['DATADIR'] + 'ingen'))
+		conf.define('INGEN_MODULE_DIR', os.path.normpath(
+				conf.env['LIBDIR'] + 'ingen'))
+	
 	conf.write_config_header('config.h')
 	
 	autowaf.print_summary(conf)

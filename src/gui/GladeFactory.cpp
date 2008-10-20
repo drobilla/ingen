@@ -19,6 +19,7 @@
 #include <iostream>
 #include <fstream>
 #include "config.h"
+#include "shared/runtime_paths.hpp"
 
 using namespace std;
 
@@ -36,21 +37,15 @@ GladeFactory::find_glade_file()
 	if (env_path)
 		glade_filename = env_path;
 	else
-		glade_filename = "./ingen_gui.glade";
+		glade_filename = Shared::data_file_path("ingen_gui.glade");
 
 	ifstream fs(glade_filename.c_str());
-	if (fs.fail()) { // didn't find it, check INGEN_DATA_DIR
-		fs.clear();
-		glade_filename = INGEN_DATA_DIR;
-		glade_filename += "/ingen_gui.glade";
-	
-		fs.open(glade_filename.c_str());
-		if (fs.fail()) {
-			cerr << "[GladeFactory] Unable to find ingen_gui.glade in current directory or " << INGEN_DATA_DIR << "." << endl;
-			throw;
-		}
-		fs.close();
+	if (fs.fail()) {
+		cerr << "Unable to find ingen_gui.glade in " << INGEN_DATA_DIR << endl;
+		throw;
 	}
+	
+	fs.close();
 	cerr << "[GladeFactory] Loading widgets from " << glade_filename.c_str() << endl;
 }
 

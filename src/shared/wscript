@@ -10,6 +10,7 @@ def build(bld):
 		LV2Features.cpp
 		LV2URIMap.cpp
 		Store.cpp
+		runtime_paths.cpp
 	'''
 	if bld.env()['HAVE_LIBLO']:
 		obj.source += ' OSCSender.cpp '

@@ -118,6 +118,8 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 {
 	IngenPlugin* plugin = (IngenPlugin*)malloc(sizeof(IngenPlugin));
 
+	Shared::bundle_path = bundle_path;
+
 	plugin->world = Ingen::Shared::get_world();
 	plugin->engine = SharedPtr<Engine>(new Engine(plugin->world));
 	plugin->world->local_engine = plugin->engine;

@@ -22,6 +22,7 @@
 #include <glibmm/miscutils.h>
 #include <glibmm/fileutils.h>
 #include "raul/SharedPtr.hpp"
+#include "shared/runtime_paths.hpp"
 #include "config.h"
 
 using namespace std;
@@ -66,7 +67,7 @@ load_module(const string& name)
 
 	// Try default directory if not found
 	module = new Glib::Module(
-			Glib::Module::build_path(INGEN_MODULE_DIR, name),
+			Shared::module_path(name),
             Glib::MODULE_BIND_LAZY);
 
 	if (*module) {

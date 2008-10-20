@@ -34,6 +34,7 @@
 #include "client/PatchModel.hpp"
 #include "client/ClientStore.hpp"
 #include "engine/Engine.hpp"
+#include "shared/runtime_paths.hpp"
 #include "NodeModule.hpp"
 #include "ControlPanel.hpp"
 #include "SubpatchModule.hpp"
@@ -107,7 +108,7 @@ App::run(int argc, char** argv, Ingen::Shared::World* world)
 	_instance->configuration()->apply_settings();
 	
 	// Set default window icon
-	const Glib::ustring icon_path = INGEN_DATA_DIR "/ingen.svg";
+	const Glib::ustring icon_path = Shared::data_file_path("ingen.svg");
 	try {
 		if (Glib::file_test(icon_path, Glib::FILE_TEST_EXISTS))
 			Gtk::Window::set_default_icon_from_file(icon_path);
