@@ -150,8 +150,10 @@ Serialiser::finish()
 		_model->serialise_to_file(_base_uri);
 	} else {
 		char* c_str = _model->serialise_to_string();
-		ret = c_str;
-		free(c_str);
+		if (c_str != NULL) {
+			ret = c_str;
+			free(c_str);
+		}
 	}
 
 	_base_uri = "";
