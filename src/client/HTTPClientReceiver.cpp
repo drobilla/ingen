@@ -53,16 +53,13 @@ void
 HTTPClientReceiver::message_callback(SoupSession* session, SoupMessage* msg, void* ptr)
 {
 	HTTPClientReceiver* me = (HTTPClientReceiver*)ptr;
-	//cout << "RECEIVED ASYNC MESSAGE: " << msg->response_body->data << endl;
 	const string path = soup_message_get_uri(msg)->path;
 	if (path == "/") {
-		cout << "RECEIVED ROOT" << endl;
 		me->_target->response_ok(0);
 		me->_target->enable();
 	} else if (path == "/plugins") {
-		cout << "RECIEVED PLUGINS" << endl;
 		if (msg->response_body->data == NULL) {
-			cout << "NO RESPONSE?!" << endl;
+			cout << "ERROR: Empty response" << endl;
 		} else {
 			me->_target->response_ok(0);
 			me->_target->enable();
@@ -71,9 +68,8 @@ HTTPClientReceiver::message_callback(SoupSession* session, SoupMessage* msg, voi
 					Glib::ustring("."), Glib::ustring(""));
 		}
 	} else if (path == "/patch") {
-		cout << "RECEIVED OBJECTS" << endl;
 		if (msg->response_body->data == NULL) {
-			cout << "NO RESPONSE?!" << endl;
+			cout << "ERROR: Empty response" << endl;
 		} else {
 			me->_target->response_ok(0);
 			me->_target->enable();

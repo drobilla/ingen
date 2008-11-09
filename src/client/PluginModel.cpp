@@ -35,6 +35,21 @@ SLV2Plugins PluginModel::_slv2_plugins = NULL;
 Redland::World* PluginModel::_rdf_world = NULL;
 	
 
+PluginModel::PluginModel(const string& uri, const string& type_uri)
+	: ResourceImpl(uri)
+	, _type(type_from_uri(_rdf_world->prefixes().qualify(type_uri)))
+{
+	Glib::Mutex::Lock lock(_rdf_world->mutex());
+	assert(_rdf_world);
+	set_property("rdf:type", Raul::Atom(Raul::Atom::URI, this->type_uri()));
+#ifdef HAVE_SLV2
+	SLV2Value plugin_uri = slv2_value_new_uri(_slv2_world, uri.c_str());
+	_slv2_plugin = slv2_plugins_get_by_uri(_slv2_plugins, plugin_uri);
+	slv2_value_free(plugin_uri);
+#endif
+}
+	
+
 string
 PluginModel::default_node_symbol()
 {
@@ -45,14 +60,20 @@ PluginModel::default_node_symbol()
 string
 PluginModel::human_name()
 {
+	const Atom& name_atom = get_property("doap:name");
+	if (name_atom.type() == Atom::STRING)
+		return name_atom.get_string();
+
 #ifdef HAVE_SLV2
 	if (_slv2_plugin) {
 		SLV2Value name = slv2_plugin_get_name(_slv2_plugin);
 		string ret = slv2_value_as_string(name);
 		slv2_value_free(name);
+		set_property("doap:name", Raul::Atom(Raul::Atom::STRING, ret.c_str()));
 		return ret;
 	}
 #endif
+
 	return default_node_symbol();
 }
 

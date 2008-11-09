@@ -28,6 +28,7 @@
 #include <iostream>
 #include "types.hpp"
 #include "interface/Plugin.hpp"
+#include "shared/ResourceImpl.hpp"
 
 using std::string;
 using Ingen::Shared::Plugin;
@@ -43,12 +44,14 @@ class Engine;
  *
  * Conceptually, a Node is an instance of this.
  */
-class PluginImpl : public Ingen::Shared::Plugin, public boost::noncopyable
+class PluginImpl : public Ingen::Shared::Plugin
+                 , public Ingen::Shared::ResourceImpl
+                 , public boost::noncopyable
 {
 public:
 	PluginImpl(Type type, const string& uri, const string library_path="")
-		: _type(type)
-		, _uri(uri)
+		: ResourceImpl(uri)
+		, _type(type)
 		, _library_path(library_path)
 		, _module(NULL)
 	{}
@@ -69,13 +72,11 @@ public:
 	
 	Plugin::Type  type() const                 { return _type; }
 	void          type(Plugin::Type t)         { _type = t; }
-	const string& uri() const                  { return _uri; }
 	Glib::Module* module() const               { return _module; }
 	void          module(Glib::Module* module) { _module = module; }
 
 protected:
 	Plugin::Type  _type;
-	const string  _uri;
 	string        _library_path;
 	Glib::Module* _module;
 };

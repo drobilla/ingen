@@ -27,7 +27,8 @@ namespace Client {
 
 
 ObjectModel::ObjectModel(const Path& path)
-	: _path(path)
+	: ResourceImpl(string("patch/") + path)
+	, _path(path)
 {
 }
 
@@ -71,45 +72,11 @@ ObjectModel::get_variable( string& key)
 }
 
 
-/** Get a property of this object.
- *
- * @return Metadata value with key @a key, empty string otherwise.
- */
-const Atom&
-ObjectModel::get_property(const string& key) const
-{
-	static const Atom null_atom;
-
-	Properties::const_iterator i = _properties.find(key);
-	if (i != _properties.end())
-		return i->second;
-	else
-		return null_atom;
-}
-
-
-/** Get a property of this object.
- *
- * @return Metadata value with key @a key, empty string otherwise.
- */
-Atom&
-ObjectModel::get_property(const string& key)
-{
-	static Atom null_atom;
-
-	Properties::iterator i = _properties.find(key);
-	if (i != _properties.end())
-		return i->second;
-	else
-		return null_atom;
-}
-
-
 bool
 ObjectModel::polyphonic() const
 {
-	Properties::const_iterator i = _properties.find("ingen:polyphonic");
-	return (i != _properties.end() && i->second.type() == Atom::BOOL && i->second.get_bool());
+	const Raul::Atom& polyphonic = get_property("ingen:polyphonic");
+	return (polyphonic.is_valid() && polyphonic.get_bool());
 }
 
 
@@ -134,10 +101,10 @@ ObjectModel::set(SharedPtr<ObjectModel> o)
 	}
 	
 	for (Properties::const_iterator v = o->properties().begin(); v != o->properties().end(); ++v) {
-		Properties::const_iterator mine = _properties.find(v->first);
-		if (mine != _properties.end())
+		const Raul::Atom& mine = get_property(v->first);
+		if (mine.is_valid())
 			cerr << "WARNING:  " << _path << "Client/Server property mismatch: " << v->first << endl;
-		_properties[v->first] = v->second;
+		ResourceImpl::set_property(v->first, v->second);
 		signal_variable.emit(v->first, v->second);
 	}
 }

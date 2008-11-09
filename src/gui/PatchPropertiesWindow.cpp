@@ -89,11 +89,11 @@ void
 PatchPropertiesWindow::ok_clicked()
 {
 	App::instance().engine()->set_property(_patch_model->path(), "doap:name",
-		Atom(_name_entry->get_text()));
+		Atom(Atom::STRING, _name_entry->get_text()));
 	App::instance().engine()->set_property(_patch_model->path(), "dc:creator",
-		Atom(_author_entry->get_text()));
+		Atom(Atom::STRING, _author_entry->get_text()));
 	App::instance().engine()->set_property(_patch_model->path(), "dc:description",
-		Atom(_textview->get_buffer()->get_text()));
+		Atom(Atom::STRING, _textview->get_buffer()->get_text()));
 	hide();
 }
 

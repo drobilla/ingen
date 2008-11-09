@@ -30,6 +30,7 @@
 #include "raul/SharedPtr.hpp"
 #include "raul/PathTable.hpp"
 #include "interface/GraphObject.hpp"
+#include "shared/ResourceImpl.hpp"
 
 using Raul::PathTable;
 using std::string;
@@ -55,25 +56,19 @@ class ClientStore;
  * \ingroup IngenClient
  */
 class ObjectModel : virtual public Ingen::Shared::GraphObject
+                  , public Ingen::Shared::ResourceImpl
 {
 public:
 	virtual ~ObjectModel();
 
 	const Atom& get_variable(const string& key) const;
 	Atom&       get_variable( string& key);
-	const Atom& get_property(const string& key) const;
-	Atom&       get_property(const string& key);
 	
 	virtual void set_variable(const string& key, const Atom& value)
 		{ _variables[key] = value; signal_variable.emit(key, value); }
-	
-	virtual void set_property(const string& key, const Atom& value)
-		{ _properties[key] = value; signal_property.emit(key, value); }
 
 	const Variables&       variables()  const { return _variables; }
-	const Properties&      properties() const { return _properties; }
 	Variables&             variables()        { return _variables; }
-	Properties&            properties()       { return _properties; }
 	const Path             path()       const { return _path; }
 	const Symbol           symbol()     const { return _path.name(); }
 	SharedPtr<ObjectModel> parent()     const { return _parent; }
@@ -105,7 +100,6 @@ protected:
 	SharedPtr<ObjectModel> _parent;
 	
 	Variables  _variables;
-	Properties _properties;
 };
 
 

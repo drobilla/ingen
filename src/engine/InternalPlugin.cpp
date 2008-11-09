@@ -38,13 +38,13 @@ InternalPlugin::instantiate(const string&     name,
 	SampleCount srate       = engine.audio_driver()->sample_rate();
 	SampleCount buffer_size = engine.audio_driver()->buffer_size();
 
-	if (_uri == NS_INGEN "note_node") {
+	if (uri() == NS_INGEN "note_node") {
 		return new MidiNoteNode(name, polyphonic, parent, srate, buffer_size);
-	} else if (_uri == NS_INGEN "trigger_node") {
+	} else if (uri() == NS_INGEN "trigger_node") {
 		return new MidiTriggerNode(name, polyphonic, parent, srate, buffer_size);
-	} else if (_uri == NS_INGEN "control_node") {
+	} else if (uri() == NS_INGEN "control_node") {
 		return new MidiControlNode(name, polyphonic, parent, srate, buffer_size);
-	} else if (_uri == NS_INGEN "transport_node") {
+	} else if (uri() == NS_INGEN "transport_node") {
 		return new TransportNode(name, polyphonic, parent, srate, buffer_size);
 	} else {
 		return NULL;

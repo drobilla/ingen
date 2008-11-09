@@ -26,6 +26,7 @@
 #include "raul/Path.hpp"
 #include "raul/Atom.hpp"
 #include "interface/GraphObject.hpp"
+#include "shared/ResourceImpl.hpp"
 #include "types.hpp"
 
 using Raul::Atom;
@@ -49,6 +50,7 @@ class ProcessContext;
  * \ingroup engine
  */
 class GraphObjectImpl : virtual public Ingen::Shared::GraphObject
+                      , public Ingen::Shared::ResourceImpl
 {
 public:
 	virtual ~GraphObjectImpl() {}
@@ -58,6 +60,8 @@ public:
 	
 	GraphObject* graph_parent() const { return _parent; }
 	
+	const std::string uri() const { return std::string("patch") + path(); }
+
 	inline GraphObjectImpl* parent() const { return _parent; }
 	const Symbol            symbol() const { return _name; }
 	
@@ -73,25 +77,14 @@ public:
 	void set_variable(const std::string& key, const Atom& value)
 		{ _variables[key] = value; }
 	
-	void set_property(const std::string& key, const Atom& value)
-		{ _properties[key] = value; }
-
 	const Atom& get_variable(const std::string& key) {
 		static Atom null_atom;
 		Variables::iterator i = _variables.find(key);
 		return (i != _variables.end()) ? (*i).second : null_atom;
 	}
 	
-	const Atom& get_property(const std::string& key) {
-		static Atom null_atom;
-		Properties::iterator i = _properties.find(key);
-		return (i != _properties.end()) ? (*i).second : null_atom;
-	}
-
 	const Variables&  variables()  const { return _variables; }
-	const Properties& properties() const { return _properties; }
-	Variables&  variables()   { return _variables; }
-	Properties& properties()  { return _properties; }
+	Variables&        variables()        { return _variables; }
 
 	/** The Patch this object is a child of. */
 	virtual PatchImpl* parent_patch() const;
@@ -110,7 +103,10 @@ public:
 
 protected:
 	GraphObjectImpl(GraphObjectImpl* parent, const std::string& name, bool polyphonic=false)
-		: _parent(parent), _name(name), _polyphonic(polyphonic)
+		: ResourceImpl(std::string("patch/") + (parent ? parent->path().base() : "/") + name)
+		, _parent(parent)
+		, _name(name)
+		, _polyphonic(polyphonic)
 	{
 		assert(parent == NULL || _name.length() > 0);
 		assert(_name.find("/") == std::string::npos);
@@ -123,7 +119,6 @@ protected:
 
 private:	
 	Variables  _variables;
-	Properties _properties;
 };
 
 

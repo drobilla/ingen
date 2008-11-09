@@ -64,7 +64,7 @@ public:
 		signal_editable.emit(e);
 	} }
 	
-	virtual void set_property(const string& key, const Atom& value);
+	virtual void set(const string& key, const Atom& value);
 
 	// Signals
 	sigc::signal<void, SharedPtr<NodeModel> >       signal_new_node; 

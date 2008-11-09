@@ -56,7 +56,11 @@ NodePropertiesWindow::set_node(SharedPtr<NodeModel> node_model)
 	if (pm) {
 		_plugin_type_label->set_text(pm->type_uri());
 		_plugin_uri_label->set_text(pm->uri());
-		_plugin_name_label->set_text(pm->name());
+		const Atom& name = pm->get_property("doap:name");
+		if (name.is_valid())
+			_plugin_name_label->set_text(pm->get_property("doap:name").get_string());
+		else
+			_plugin_name_label->set_text("(Unknown)");
 	}
 }
 

@@ -182,7 +182,7 @@ ClientStore::add_variable_orphan(const Path& subject_path, const string& predica
 	Raul::PathTable<list<std::pair<string, Atom> > >::iterator orphans
 		= _variable_orphans.find(subject_path);
 
-	_engine->request_object(subject_path);
+	//_engine->request_object(subject_path);
 
 	if (orphans != _variable_orphans.end()) {
 		orphans->second.push_back(std::pair<string, Atom>(predicate, value));
@@ -420,7 +420,9 @@ ClientStore::rename(const Path& old_path, const Path& new_path)
 void
 ClientStore::new_plugin(const string& uri, const string& type_uri, const string& symbol, const string& name)
 {
-	SharedPtr<PluginModel> p(new PluginModel(uri, type_uri, symbol, name));
+	SharedPtr<PluginModel> p(new PluginModel(uri, type_uri));
+	p->set_property("lv2:symbol", Atom(Atom::STRING, symbol));
+	p->set_property("doap:name", Atom(Atom::STRING, name));
 	add_plugin(p);
 	resolve_plugin_orphans(p);
 }
@@ -508,15 +510,26 @@ ClientStore::set_variable(const string& subject_path, const string& predicate, c
 void
 ClientStore::set_property(const string& subject_path, const string& predicate, const Atom& value)
 {
-	SharedPtr<ObjectModel> subject = object(subject_path);
+	if (!value.is_valid())
+		cerr << "WARNING: property '" << predicate << "' is NULL" << endl;
 
-	if (!value.is_valid()) {
-		cerr << "ERROR: property '" << predicate << "' has no type" << endl;
-	} else if (subject) {
-		subject->set_property(predicate, value);
+	if (Path::is_valid(subject_path)) {
+		SharedPtr<ObjectModel> obj = object(subject_path);
+		if (obj)
+			obj->set_property(predicate, value);
+		else
+			cerr << "WARNING: property for unknown object " << subject_path
+					<< ".  Refresh!" << endl;
 	} else {
-		cerr << "WARNING: property for unknown object " << subject_path
-				<< " lost.  Client must refresh!" << endl;
+		if (subject_path.find(":") != string::npos
+			   && predicate == "rdf:type" && value.type() == Atom::URI) {
+			const std::string& type = value.get_uri();
+			if (   (type == "http://drobilla.net/ns/ingen#LADSPAPlugin")
+			    || (type == "http://drobilla.net/ns/ingen#Internal")
+			    || (type == "http://lv2plug.in/ns/lv2core#Plugin")) {
+				add_plugin(SharedPtr<PluginModel>(new PluginModel(subject_path, type)));
+			}
+		}
 	}
 }
 

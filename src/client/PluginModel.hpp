@@ -30,6 +30,7 @@
 #include "interface/EngineInterface.hpp"
 #include "interface/Plugin.hpp"
 #include "module/World.hpp"
+#include "shared/ResourceImpl.hpp"
 
 using std::string;
 
@@ -46,11 +47,12 @@ class PluginUI;
  * \ingroup IngenClient
  */
 class PluginModel : public Ingen::Shared::Plugin
+                  , public Ingen::Shared::ResourceImpl
 {
 public:
-	PluginModel(const string& uri, const string& type_uri, const string& symbol, const string& name)
-		: _type(type_from_uri(type_uri))
-		, _uri(uri)
+	/*PluginModel(const string& uri, const string& type_uri, const string& symbol, const string& name)
+		: ResourceImpl(uri)
+		, _type(type_from_uri(type_uri))
 		, _symbol(symbol)
 		, _name(name)
 	{
@@ -60,12 +62,19 @@ public:
 		_slv2_plugin = slv2_plugins_get_by_uri(_slv2_plugins, plugin_uri);
 		slv2_value_free(plugin_uri);
 #endif
+	}*/
+	PluginModel(const string& uri, const string& type_uri);
+	
+	Type type() const { return _type; }
+	
+	const string name() const {
+		const Raul::Atom& name_atom = get_property("doap:name");
+		if (name_atom.type() == Raul::Atom::STRING)
+			return name_atom.get_string();
+		else
+			return "";
 	}
-	
-	Type          type() const { return _type; }
-	const string& uri()  const { return _uri; }
-	const string& name() const { return _name; }
-	
+
 	string default_node_symbol();
 	string human_name();
 	string port_human_name(uint32_t index);
@@ -102,7 +111,6 @@ public:
 
 private:
 	const Type   _type;
-	const string _uri;
 	const string _symbol;
 	const string _name;
 

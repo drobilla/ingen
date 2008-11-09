@@ -177,7 +177,7 @@ DeprecatedLoader::add_variable(GraphObject::Variables& data, string old_key, str
 			if (endptr != c_val && *endptr == '\0')
 				data[key] = Atom(fval);
 			else
-				data[key] = Atom(value);
+				data[key] = Atom(Atom::STRING, value);
 			
 			free(c_val);
 		}

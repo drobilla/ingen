@@ -129,8 +129,6 @@ Parser::parse(
 	else
 		query_str = Glib::ustring("SELECT DISTINCT ?subject ?class WHERE { ?subject a ?class . }");
 
-	cout << "QUERY: " << query_str << endl;
-
 	Redland::Query query(*world->rdf_world, query_str);
 	Redland::Query::Results results = query.run(*world->rdf_world, model, base_uri);
 	
@@ -204,7 +202,7 @@ Parser::parse(
 		} else if (is_plugin) {
 			if (path_str.length() > 0) {
 				const string uri = path_str.substr(1);
-				cout << "PLUGIN: " << uri << endl;
+				target->set_property(uri, "rdf:type", Atom(Atom::URI, rdf_class.to_c_string()));
 			} else {
 				cout << "ERROR: Plugin with no URI parsed, ignoring" << endl;
 			}

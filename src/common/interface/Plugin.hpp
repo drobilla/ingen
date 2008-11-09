@@ -19,18 +19,19 @@
 #define PLUGIN_H
 
 #include <string>
+#include <iostream>
+#include "interface/Resource.hpp"
 
 namespace Ingen {
 namespace Shared {
 
 
-class Plugin
+class Plugin : virtual public Resource
 {
 public:
 	enum Type { LV2, LADSPA, Internal, Patch };
 
-	virtual Type               type()           const = 0;
-	virtual const std::string& uri()            const = 0;
+	virtual Type type() const = 0;
 	
 	inline const char* type_uri() const {
 		switch (type()) {
@@ -52,7 +53,8 @@ public:
 		else if (uri == "ingen:Patch")
 			return Patch;
 		else
-			return Internal;
+			std::cerr << "WARNING: Unknown plugin type " << uri << std::endl;
+		return Internal;
 	}
 };
 

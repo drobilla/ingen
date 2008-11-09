@@ -358,7 +358,7 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch)
 	
 		// Ensure lv2:name always exists so Patch is a valid LV2 plugin
 		if (p->properties().find("lv2:name") == p->properties().end())
-			p->properties()["lv2:name"] = p->symbol(); // FIXME: use human name
+			p->set_property("lv2:name", Atom(Atom::STRING, p->symbol())); // FIXME: use human name
 
 		_model->add_statement(patch_id, "lv2:port", port_id);
 		serialise_port(p, port_id);

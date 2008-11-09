@@ -30,7 +30,7 @@ namespace Ingen {
 const string
 LV2Plugin::symbol() const
 {
-	string working = _uri;
+	string working = uri();
 	if (working[working.length()-1] == '/')
 		working = working.substr(0, working.length()-1);
 
