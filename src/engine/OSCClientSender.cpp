@@ -294,7 +294,7 @@ OSCClientSender::port_activity(const std::string& port_path)
 /** \page client_osc_namespace
  * <p> \b /ingen/plugin - Notification of the existance of a plugin
  * \arg \b uri (string) - URI of plugin (e.g. http://example.org/filtermatic)
- * \arg \b type (string) - Type of plugin (e.g. "ingen:LV2Plugin")
+ * \arg \b type (string) - Type of plugin (e.g. "lv2:Plugin", "ingen:LADSPAPlugin")
  * \arg \b symbol (string) - Valid symbol for plugin (default symbol for nodes) (e.g. "adsr")
  * \arg \b name (string) - Descriptive human-readable name of plugin (e.g. "ADSR Envelope")
  */

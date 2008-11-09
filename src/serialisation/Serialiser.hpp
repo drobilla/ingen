@@ -66,6 +66,7 @@ public:
 	
 	void start_to_string(const Raul::Path& root, const std::string& base_uri);
 	void serialise(SharedPtr<GraphObject> object) throw (std::logic_error);
+	void serialise_plugin(const Shared::Plugin& p);
 	void serialise_connection(SharedPtr<GraphObject>        parent,
 	                          SharedPtr<Shared::Connection> c) throw (std::logic_error);
 	
@@ -77,8 +78,6 @@ private:
 	void start_to_filename(const std::string& filename);
 
 	void setup_prefixes();
-
-	void serialise_plugin(SharedPtr<Shared::Plugin> p);
 
 	void serialise_patch(SharedPtr<Shared::Patch> p);
 	void serialise_node(SharedPtr<Shared::Node> n, const Redland::Node& id);

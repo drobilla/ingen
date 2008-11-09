@@ -29,15 +29,30 @@ class Plugin
 public:
 	enum Type { LV2, LADSPA, Internal, Patch };
 
-	virtual Type               type() const = 0;
-	virtual const std::string& uri()  const = 0;
+	virtual Type               type()           const = 0;
+	virtual const std::string& uri()            const = 0;
 	
 	inline const char* type_uri() const {
-		if (type() == LV2) return "ingen:LV2";
-		else if (type() == LADSPA) return "ingen:LADSPA";
-		else if (type() == Internal) return "ingen:Internal";
-		else if (type() == Patch) return "ingen:Patch";
-		else return "";
+		switch (type()) {
+		case LV2:      return "lv2:Plugin";
+		case LADSPA:   return "ingen:LADSPAPlugin";
+		case Internal: return "ingen:Internal";
+		case Patch:    return "ingen:Patch";
+		default:       return "";
+		}
+	}
+	
+	static inline Type type_from_uri(const std::string& uri) {
+		if (uri == "lv2:Plugin")
+			return LV2;
+		else if (uri == "ingen:LADSPAPlugin")
+			return LADSPA;
+		else if (uri == "ingen:Internal")
+			return Internal;
+		else if (uri == "ingen:Patch")
+			return Patch;
+		else
+			return Internal;
 	}
 };
 

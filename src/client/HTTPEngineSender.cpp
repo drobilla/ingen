@@ -63,14 +63,12 @@ HTTPEngineSender::attach(int32_t ping_id, bool block)
 void
 HTTPEngineSender::register_client(ClientInterface* client)
 {
-
 }
 
 
 void
 HTTPEngineSender::unregister_client(const string& uri)
 {
-
 }
 
 
@@ -78,28 +76,24 @@ HTTPEngineSender::unregister_client(const string& uri)
 void
 HTTPEngineSender::load_plugins()
 {
-
 }
 
 
 void
 HTTPEngineSender::activate()    
 {
-
 }
 
 
 void
 HTTPEngineSender::deactivate()  
 {
-
 }
 
 
 void
 HTTPEngineSender::quit()        
 {
-
 }
 
 
@@ -108,23 +102,23 @@ HTTPEngineSender::quit()
 
 void
 HTTPEngineSender::new_patch(const string& path,
-                           uint32_t      poly)
+                            uint32_t      poly)
 {
 }
 
 
 void
 HTTPEngineSender::new_port(const string& path,
-                          uint32_t      index,
-                          const string& data_type,
-                          bool          is_output)
+                           uint32_t      index,
+                           const string& data_type,
+                           bool          is_output)
 {
 }
 
 
 void
 HTTPEngineSender::new_node(const string& path,
-                          const string& plugin_uri)
+                           const string& plugin_uri)
 {
 }
 
@@ -135,16 +129,16 @@ HTTPEngineSender::new_node(const string& path,
  */
 void
 HTTPEngineSender::new_node_deprecated(const string& path,
-                                     const string& plugin_type,
-                                     const string& library_name,
-                                     const string& plugin_label)
+                                      const string& plugin_type,
+                                      const string& library_name,
+                                      const string& plugin_label)
 {
 }
 
 
 void
 HTTPEngineSender::rename(const string& old_path,
-                        const string& new_name)
+                         const string& new_name)
 {
 }
 
@@ -163,44 +157,44 @@ HTTPEngineSender::clear_patch(const string& patch_path)
 
 void
 HTTPEngineSender::connect(const string& src_port_path,
-                         const string& dst_port_path)
+                          const string& dst_port_path)
 {
 }
 
 
 void
 HTTPEngineSender::disconnect(const string& src_port_path,
-                            const string& dst_port_path)
+                             const string& dst_port_path)
 {
 }
 
 
 void
 HTTPEngineSender::disconnect_all(const string& parent_patch_path,
-                                const string& node_path)
+                                 const string& node_path)
 {
 }
 
 
 void
 HTTPEngineSender::set_port_value(const string&     port_path,
-                                const Raul::Atom& value)
-{
-}
-
-
-void
-HTTPEngineSender::set_voice_value(const string&     port_path,
-                                 uint32_t          voice,
                                  const Raul::Atom& value)
 {
 }
 
 
 void
+HTTPEngineSender::set_voice_value(const string&     port_path,
+                                  uint32_t          voice,
+                                  const Raul::Atom& value)
+{
+}
+
+
+void
 HTTPEngineSender::set_program(const string& node_path,
-                             uint32_t      bank,
-                             uint32_t      program)
+                              uint32_t      bank,
+                              uint32_t      program)
 {
 }
 
@@ -213,8 +207,8 @@ HTTPEngineSender::midi_learn(const string& node_path)
 
 void
 HTTPEngineSender::set_variable(const string&     obj_path,
-                              const string&     predicate,
-                              const Raul::Atom& value)
+                               const string&     predicate,
+                               const Raul::Atom& value)
 {
 }
 

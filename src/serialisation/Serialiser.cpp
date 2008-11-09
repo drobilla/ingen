@@ -372,16 +372,16 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch)
 
 
 void
-Serialiser::serialise_plugin(SharedPtr<Shared::Plugin> plugin)
+Serialiser::serialise_plugin(const Shared::Plugin& plugin)
 {
 	assert(_model);
 
-	const Redland::Node plugin_id = Redland::Node(_model->world(), Redland::Node::RESOURCE, plugin->uri());
+	const Redland::Node plugin_id = Redland::Node(_model->world(), Redland::Node::RESOURCE, plugin.uri());
 
 	_model->add_statement(
 		plugin_id,
 		"rdf:type",
-		Redland::Node(_model->world(), Redland::Node::RESOURCE, plugin->type_uri()));
+		Redland::Node(_model->world(), Redland::Node::RESOURCE, plugin.type_uri()));
 } 
 
 

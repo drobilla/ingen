@@ -87,8 +87,7 @@ NodeFactory::plugin(const string& type, const string& lib, const string& label)
 #ifdef HAVE_LADSPA
 	for (Plugins::const_iterator i = _plugins.begin(); i != _plugins.end(); ++i) {
 		LADSPAPlugin* lp = dynamic_cast<LADSPAPlugin*>(i->second);
-		if (lp && lp->type_string() == type
-				&& lp->library_name() == lib
+		if (lp && lp->library_name() == lib
 				&& lp->label() == label)
 			return lp;
 	}

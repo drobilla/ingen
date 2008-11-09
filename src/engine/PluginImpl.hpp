@@ -67,25 +67,6 @@ public:
 	void load();
 	void unload();
 	
-	const char* type_string() const {
-		if (_type == LADSPA) return "LADSPA";
-		else if (_type == LV2) return "LV2";
-		else if (_type == Internal) return "Internal";
-		else if (_type == Patch) return "Patch";
-		else return "";
-	}
-	
-	const string type_uri() const {
-		return string("ingen:").append(type_string());
-	}
-
-	void set_type(const string& type_string) {
-		if      (type_string == "LADSPA")   _type = LADSPA;
-		else if (type_string == "LV2")      _type = LV2;
-		else if (type_string == "Internal") _type = Internal;
-		else if (type_string == "Patch")    _type = Patch;
-	}
-	
 	Plugin::Type  type() const                 { return _type; }
 	void          type(Plugin::Type t)         { _type = t; }
 	const string& uri() const                  { return _uri; }

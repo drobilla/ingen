@@ -48,7 +48,7 @@ HTTPEngineReceiver::HTTPEngineReceiver(Engine& engine, uint16_t port)
 	soup_server_add_handler(_server, NULL, message_callback, this, NULL);
 
 	cout << "Started HTTP server on port " << soup_server_get_port(_server) << endl;
-	Thread::set_name("HTTP receiver");
+	Thread::set_name("HTTP Receiver");
 	
 	if (!engine.world()->serialisation_module)
 		engine.world()->serialisation_module = Ingen::Shared::load_module("ingen_serialisation");
@@ -64,12 +64,17 @@ HTTPEngineReceiver::HTTPEngineReceiver(Engine& engine, uint16_t port)
 	} else {
 		cerr << "WARNING: Failed to load ingen_serialisation module, HTTP disabled." << endl;
 	}
+
+	Thread::set_name("HTTP Receiver");
 }
 
 
 HTTPEngineReceiver::~HTTPEngineReceiver()
 {
 	deactivate();
+	stop();
+	_receive_thread->stop();
+	delete _receive_thread;
 
 	if (_server != NULL)  {
 		soup_server_quit(_server);
@@ -97,7 +102,7 @@ HTTPEngineReceiver::deactivate()
 
 
 void
-HTTPEngineReceiver::message_callback(SoupServer* server, SoupMessage* msg, const char* path,
+HTTPEngineReceiver::message_callback(SoupServer* server, SoupMessage* msg, const char* path_str,
 			GHashTable *query, SoupClientContext* client, void* data)
 {
 	HTTPEngineReceiver* me = (HTTPEngineReceiver*)data;
@@ -108,10 +113,51 @@ HTTPEngineReceiver::message_callback(SoupServer* server, SoupMessage* msg, const
 		return;
 	}
 
+	string path = path_str;
+	if (path[path.length()-1] == '/') {
+		path = path.substr(0, path.length()-1);
+	}
+		
+	SharedPtr<Serialiser> serialiser = me->_engine.world()->serialiser;
+
+	const string base_uri = "";
+	const char* mime_type = "text/plain";
+	
+	if (path == "/" || path == "") {
+		const string r = string("@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n")
+			.append("\n<> rdfs:seeAlso <plugins> ;")
+			.append("\n   rdfs:seeAlso <patch>   .");
+		soup_message_set_status(msg, SOUP_STATUS_OK);
+		soup_message_set_response(msg, mime_type, SOUP_MEMORY_COPY, r.c_str(), r.length());
+		return;
+
+	} else if (path.substr(0, 8) == "/plugins") {
+		// FIXME: kludge
+		me->load_plugins();
+		me->_receive_thread->whip();
+		
+		serialiser->start_to_string("/", base_uri);
+		for (NodeFactory::Plugins::const_iterator p = me->_engine.node_factory()->plugins().begin();
+				p != me->_engine.node_factory()->plugins().end(); ++p)
+			serialiser->serialise_plugin(*(Shared::Plugin*)p->second);
+		const string r = serialiser->finish();
+		soup_message_set_status(msg, SOUP_STATUS_OK);
+		soup_message_set_response(msg, mime_type, SOUP_MEMORY_COPY, r.c_str(), r.length());
+		return;
+	} else if (path.substr(0, 6) == "/patch") {
+		path = '/' + path.substr(6);
+	} else {
+		cout << "UNKNOWN PATH: " << path << endl;
+		soup_message_set_status(msg, SOUP_STATUS_NOT_FOUND);
+		soup_message_set_response(msg, "text/plain", SOUP_MEMORY_STATIC,
+				"Unknown path\n\n", 14);
+		return;
+	}
+
 	if (!Path::is_valid(path)) {
 		soup_message_set_status (msg, SOUP_STATUS_BAD_REQUEST);
 		const string& err = (boost::format("Bad path: %1%") % path).str();
-		soup_message_set_response (msg, "text/plain", SOUP_MEMORY_COPY,
+		soup_message_set_response(msg, "text/plain", SOUP_MEMORY_COPY,
 				err.c_str(), err.length());
 		return;
 	}
@@ -122,9 +168,9 @@ HTTPEngineReceiver::message_callback(SoupServer* server, SoupMessage* msg, const
 		// Find object
 		Store::const_iterator start = store->find(path);
 		if (start == store->end()) {
-			soup_message_set_status (msg, SOUP_STATUS_NOT_FOUND);
+			soup_message_set_status(msg, SOUP_STATUS_NOT_FOUND);
 			const string& err = (boost::format("No such object: %1%") % path).str();
-			soup_message_set_response (msg, "text/plain", SOUP_MEMORY_COPY,
+			soup_message_set_response(msg, "text/plain", SOUP_MEMORY_COPY,
 					err.c_str(), err.length());
 			return;
 		}
@@ -132,35 +178,22 @@ HTTPEngineReceiver::message_callback(SoupServer* server, SoupMessage* msg, const
 		// Get serialiser
 		SharedPtr<Serialiser> serialiser = me->_engine.world()->serialiser;
 		if (!serialiser) {
-			soup_message_set_status (msg, SOUP_STATUS_INTERNAL_SERVER_ERROR);
-			soup_message_set_response (msg, "text/plain", SOUP_MEMORY_STATIC,
+			soup_message_set_status(msg, SOUP_STATUS_INTERNAL_SERVER_ERROR);
+			soup_message_set_response(msg, "text/plain", SOUP_MEMORY_STATIC,
 					"No serialiser available\n", 24);
 			return;
 		}
 
-#if 0
-		SoupMessageHeaders* in_head = msg->request_headers;
+		/*SoupMessageHeaders* in_head = msg->request_headers;
 		const char* str = soup_message_headers_get(in_head, "Accept");
-		cout << "Accept: " << str << endl;
-#endif
+		cout << "Accept: " << str << endl;*/
 
 		// Serialise object
 		const string response = serialiser->to_string(start->second,
-				"http://example.org", GraphObject::Variables());
+				"http://localhost:16180/patch", GraphObject::Variables());
 
-#if 0
-		FILE* xhtml_file = fopen("/home/dave/ingen_ui.xhtml", "r");
-		string response;
-		while (!feof(xhtml_file)) {
-			int c = fgetc(xhtml_file);
-			if (c != EOF)
-				response += (char)c;
-		}
-		fclose(xhtml_file);
-#endif
-		
-		soup_message_set_status (msg, SOUP_STATUS_OK);
-		soup_message_set_response (msg, "text/plain", SOUP_MEMORY_COPY,
+		soup_message_set_status(msg, SOUP_STATUS_OK);
+		soup_message_set_response(msg, mime_type, SOUP_MEMORY_COPY,
 				response.c_str(), response.length());
 	
 	} else if (msg->method == SOUP_METHOD_PUT) {
@@ -169,26 +202,26 @@ HTTPEngineReceiver::message_callback(SoupServer* server, SoupMessage* msg, const
 		// Be sure object doesn't exist
 		Store::const_iterator start = store->find(path);
 		if (start != store->end()) {
-			soup_message_set_status (msg, SOUP_STATUS_CONFLICT);
+			soup_message_set_status(msg, SOUP_STATUS_CONFLICT);
 			return;
 		}
 		
 		// Get parser
 		SharedPtr<Parser> parser = me->_engine.world()->parser;
 		if (!parser) {
-			soup_message_set_status (msg, SOUP_STATUS_INTERNAL_SERVER_ERROR);
+			soup_message_set_status(msg, SOUP_STATUS_INTERNAL_SERVER_ERROR);
 			return;
 		}
 		
 		//cout << "POST: " << msg->request_body->data << endl;
 
 		// Load object
-		soup_message_set_status (msg, SOUP_STATUS_NOT_IMPLEMENTED);
+		soup_message_set_status(msg, SOUP_STATUS_NOT_IMPLEMENTED);
 	} else if (msg->method == SOUP_METHOD_POST) {
 		//cout << "PUT: " << msg->request_body->data << endl;
-		soup_message_set_status (msg, SOUP_STATUS_NOT_IMPLEMENTED);
+		soup_message_set_status(msg, SOUP_STATUS_NOT_IMPLEMENTED);
 	} else {
-		soup_message_set_status (msg, SOUP_STATUS_NOT_IMPLEMENTED);
+		soup_message_set_status(msg, SOUP_STATUS_NOT_IMPLEMENTED);
 	}
 }
 

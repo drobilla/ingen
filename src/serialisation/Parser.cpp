@@ -42,12 +42,15 @@ namespace Serialisation {
 Glib::ustring
 Parser::uri_relative_to_base(Glib::ustring base, const Glib::ustring uri)
 {
+	//cout << "BASE: " << base << endl;
 	base = base.substr(0, base.find_last_of("/")+1);
+	//cout << uri << " RELATIVE TO " << base << endl;
 	Glib::ustring ret;
-	if (uri.length() > base.length() && uri.substr(0, base.length()) == base)
+	if (uri.length() >= base.length() && uri.substr(0, base.length()) == base)
 		ret = uri.substr(base.length());
 	else
 		ret = uri;
+	//cout << " => " << ret << endl;
 	return ret;
 }
 
@@ -126,13 +129,18 @@ Parser::parse(
 	else
 		query_str = Glib::ustring("SELECT DISTINCT ?subject ?class WHERE { ?subject a ?class . }");
 
+	cout << "QUERY: " << query_str << endl;
+
 	Redland::Query query(*world->rdf_world, query_str);
 	Redland::Query::Results results = query.run(*world->rdf_world, model, base_uri);
 	
 	const Redland::Node patch_class(*world->rdf_world, res, NS_INGEN "Patch");
 	const Redland::Node node_class(*world->rdf_world, res, NS_INGEN "Node");
+	const Redland::Node internal_class(*world->rdf_world, res, NS_INGEN "Internal");
+	const Redland::Node ladspa_class(*world->rdf_world, res, NS_INGEN "LADSPAPlugin");
 	const Redland::Node in_port_class(*world->rdf_world, res, NS_LV2 "InputPort");
 	const Redland::Node out_port_class(*world->rdf_world, res, NS_LV2 "OutputPort");
+	const Redland::Node lv2_class(*world->rdf_world, res, NS_LV2 "Plugin");
 	
 	string subject_str = ((object_uri && object_uri.get() != "") ? object_uri.get() : base_uri);
 	if (subject_str[0] == '/')
@@ -143,39 +151,43 @@ Parser::parse(
 	const Redland::Node subject_uri(*world->rdf_world, res, subject_str);
 
 	bool ret = false;
+	std::string path_str;
 
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
 		const Redland::Node& subject = (object_uri ? subject_uri : (*i)["subject"]);
 		const Redland::Node& rdf_class = (*i)["class"];
+		//cout << "SUBJECT: " << subject.to_c_string() << endl;
 		if (!object_uri) {
-			std::string path_str = uri_relative_to_base(base_uri, subject.to_c_string());
+			path_str = uri_relative_to_base(base_uri, subject.to_c_string());
+			//cout << "BASE: " << base_uri.c_str() << endl;
+			//cout << "PATH: " << path_str.c_str() << endl;
 			if (path_str[0] != '/')
 				path_str = string("/").append(path_str);
-			if (Path(path_str).parent() != "/")
+			if (!Path::is_valid(path_str)) {
+				//cerr << "INVALID PATH: " << path_str << endl;
+			} else if (Path(path_str).parent() != "/") {
 				continue;
+			}
 		}
 		
-		if (rdf_class == patch_class || rdf_class == node_class ||
-				rdf_class == in_port_class || rdf_class == out_port_class) {
-			Raul::Path path("/");
-			if (base_uri != subject.to_c_string()) {
-				string path_str = (string)uri_relative_to_base(base_uri, subject.to_c_string());
-				if (path_str[0] != '/')
-					path_str = string("/").append(path_str);
-				if (Path::is_valid(path_str)) {
-					path = path_str;
-				} else {
-					cerr << "[Parser] ERROR: Invalid path '" << path << "'" << endl;
-					continue;
-				}
-			}
+		const bool is_plugin =    (rdf_class == ladspa_class)
+		                       || (rdf_class == lv2_class)
+		                       || (rdf_class == internal_class);
+		
+		const bool is_object =    (rdf_class == patch_class)
+		                       || (rdf_class == node_class)
+		                       || (rdf_class == in_port_class)
+		                       || (rdf_class == out_port_class);
+
+		if (is_object) {
+			Raul::Path path(path_str == "" ? "/" : path_str);
 			
 			if (path.parent() != "/")
 				continue;
 
 			if (rdf_class == patch_class) {
 				ret = parse_patch(world, target, model, base_uri, engine_base,
-						subject.to_c_string(), data);
+						path_str, data);
 				if (ret)
 					target->set_variable(path, "ingen:document", Atom(base_uri.c_str()));
 			} else if (rdf_class == node_class) {
@@ -184,10 +196,17 @@ Parser::parse(
 			} else if (rdf_class == in_port_class || rdf_class == out_port_class) {
 				ret = parse_port(world, target, model,
 						base_uri, Glib::ustring("<") + subject.to_c_string() + ">", path, data);
-			}
+			} else if (rdf_class == ladspa_class || rdf_class == lv2_class || rdf_class == internal_class)
 			if (ret == false) {
 				cerr << "Failed to parse object " << object_uri << endl;
 				return ret;
+			}
+		} else if (is_plugin) {
+			if (path_str.length() > 0) {
+				const string uri = path_str.substr(1);
+				cout << "PLUGIN: " << uri << endl;
+			} else {
+				cout << "ERROR: Plugin with no URI parsed, ignoring" << endl;
 			}
 		}
 

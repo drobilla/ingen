@@ -66,23 +66,6 @@ public:
 	const string& uri()  const { return _uri; }
 	const string& name() const { return _name; }
 	
-	/** DEPRECATED */
-	Type type_from_string(const string& type_string) {
-		if (type_string == "LV2") return LV2;
-		else if (type_string == "LADSPA") return LADSPA;
-		else if (type_string == "Internal") return Internal;
-		else if (type_string == "Patch") return Patch;
-		else return Internal; // ?
-	}
-	
-	Type type_from_uri(const string& type_uri) {
-		if (type_uri.substr(0, 6) != "ingen:") {
-			return Plugin::Internal; // ?
-		} else {
-			return type_from_string(type_uri.substr(6));
-		}
-	}
-
 	string default_node_symbol();
 	string human_name();
 	string port_human_name(uint32_t index);

@@ -120,7 +120,7 @@ OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t
 
 	lo_server_add_method(_server, NULL, NULL, unknown_cb, NULL);
 
-	Thread::set_name("OSC Pre-Processor");
+	Thread::set_name("OSC Receiver");
 }
 
 

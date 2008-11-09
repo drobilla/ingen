@@ -116,7 +116,6 @@ private:
 			const Glib::ustring&                    base_uri,
 			const Glib::ustring&                    subject,
 			const Raul::Path&                       parent);
-
 };
 
 

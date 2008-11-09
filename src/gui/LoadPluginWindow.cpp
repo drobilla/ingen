@@ -217,7 +217,7 @@ LoadPluginWindow::set_plugins(SharedPtr<const ClientStore::Plugins> m)
 		row[_plugins_columns._col_name] = plugin->name();
 		if (!strcmp(plugin->type_uri(), "ingen:Internal"))
 			row[_plugins_columns._col_type] = "Internal";
-		else if (!strcmp(plugin->type_uri(), "ingen:LV2"))
+		else if (!strcmp(plugin->type_uri(), "lv2:Plugin"))
 			row[_plugins_columns._col_type] = "LV2";
 		else if (!strcmp(plugin->type_uri(), "ingen:LADSPA"))
 			row[_plugins_columns._col_type] = "LADSPA";

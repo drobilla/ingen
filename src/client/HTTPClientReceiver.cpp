@@ -53,11 +53,35 @@ void
 HTTPClientReceiver::message_callback(SoupSession* session, SoupMessage* msg, void* ptr)
 {
 	HTTPClientReceiver* me = (HTTPClientReceiver*)ptr;
-	cout << "RECEIVED ASYNC MESSAGE: " << msg->response_body->data << endl;
-	me->_target->response_ok(0);
-	me->_target->enable();
-	me->_parser->parse_string(me->_world, me->_target.get(), Glib::ustring(msg->response_body->data),
-			Glib::ustring("/"), Glib::ustring(""));
+	//cout << "RECEIVED ASYNC MESSAGE: " << msg->response_body->data << endl;
+	const string path = soup_message_get_uri(msg)->path;
+	if (path == "/") {
+		cout << "RECEIVED ROOT" << endl;
+		me->_target->response_ok(0);
+		me->_target->enable();
+	} else if (path == "/plugins") {
+		cout << "RECIEVED PLUGINS" << endl;
+		if (msg->response_body->data == NULL) {
+			cout << "NO RESPONSE?!" << endl;
+		} else {
+			me->_target->response_ok(0);
+			me->_target->enable();
+			me->_parser->parse_string(me->_world, me->_target.get(),
+					Glib::ustring(msg->response_body->data),
+					Glib::ustring("."), Glib::ustring(""));
+		}
+	} else if (path == "/patch") {
+		cout << "RECEIVED OBJECTS" << endl;
+		if (msg->response_body->data == NULL) {
+			cout << "NO RESPONSE?!" << endl;
+		} else {
+			me->_target->response_ok(0);
+			me->_target->enable();
+			me->_parser->parse_string(me->_world, me->_target.get(),
+					Glib::ustring(msg->response_body->data),
+					Glib::ustring("/patch/"), Glib::ustring(""));
+		}
+	}
 }
 
 
@@ -75,8 +99,17 @@ HTTPClientReceiver::start(bool dump)
 				_parser = SharedPtr<Parser>(new_parser());
 		}
 	}
+	
 	_session = soup_session_async_new();
-	SoupMessage* msg = soup_message_new("GET", _url.c_str());
+	SoupMessage* msg;
+	
+	msg = soup_message_new("GET", _url.c_str());
+	soup_session_queue_message (_session, msg, message_callback, this);
+	
+	msg = soup_message_new("GET", (_url + "/plugins").c_str());
+	soup_session_queue_message (_session, msg, message_callback, this);
+	
+	msg = soup_message_new("GET", (_url + "/patch").c_str());
 	soup_session_queue_message (_session, msg, message_callback, this);
 }
 
