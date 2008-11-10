@@ -50,30 +50,12 @@ class PluginModel : public Ingen::Shared::Plugin
                   , public Ingen::Shared::ResourceImpl
 {
 public:
-	/*PluginModel(const string& uri, const string& type_uri, const string& symbol, const string& name)
-		: ResourceImpl(uri)
-		, _type(type_from_uri(type_uri))
-		, _symbol(symbol)
-		, _name(name)
-	{
-#ifdef HAVE_SLV2
-		Glib::Mutex::Lock lock(_rdf_world->mutex());
-		SLV2Value plugin_uri = slv2_value_new_uri(_slv2_world, uri.c_str());
-		_slv2_plugin = slv2_plugins_get_by_uri(_slv2_plugins, plugin_uri);
-		slv2_value_free(plugin_uri);
-#endif
-	}*/
 	PluginModel(const string& uri, const string& type_uri);
 	
 	Type type() const { return _type; }
 	
-	const string name() const {
-		const Raul::Atom& name_atom = get_property("doap:name");
-		if (name_atom.type() == Raul::Atom::STRING)
-			return name_atom.get_string();
-		else
-			return "";
-	}
+	const string symbol() const { return string_property("lv2:symbol"); }
+	const string name()   const { return string_property("doap:name"); }
 
 	string default_node_symbol();
 	string human_name();
@@ -111,8 +93,14 @@ public:
 
 private:
 	const Type   _type;
-	const string _symbol;
-	const string _name;
+	
+	const string string_property(const std::string& name) const {
+		const Raul::Atom& atom = get_property(name);
+		if (atom.type() == Raul::Atom::STRING)
+			return atom.get_string();
+		else
+			return "";
+	}
 
 #ifdef HAVE_SLV2
 	static SLV2World   _slv2_world;

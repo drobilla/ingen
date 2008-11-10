@@ -53,7 +53,7 @@ PluginModel::PluginModel(const string& uri, const string& type_uri)
 string
 PluginModel::default_node_symbol()
 {
-	return Raul::Path::nameify(_symbol);
+	return Raul::Path::nameify(symbol());
 }
 
 
