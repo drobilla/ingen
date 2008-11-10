@@ -399,7 +399,7 @@ Parser::parse_patch(
 		if (created.find(port_path) == created.end()) {
 			bool is_output = (type == "lv2:OutputPort"); // FIXME: check validity
 			// FIXME: read index
-			target->new_port(port_path, 0, datatype, is_output);
+			target->new_port(port_path, datatype, 0, is_output);
 			created.insert(port_path);
 		}
 
@@ -499,7 +499,7 @@ Parser::parse_port(
 
 		bool is_output = (type == "lv2:OutputPort");
 		// FIXME: read index
-		target->new_port(path, 0, datatype, is_output);
+		target->new_port(path, datatype, 0, is_output);
 		
 		const Redland::Node& val_node = (*i)["value"];
 		if (val_node.to_string() != "")

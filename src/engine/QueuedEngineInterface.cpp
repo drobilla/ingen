@@ -148,11 +148,11 @@ QueuedEngineInterface::new_patch(const string& path,
 
 // FIXME: use index
 void QueuedEngineInterface::new_port(const string& path,
+                                     const string& type,
                                      uint32_t      index,
-                                     const string& data_type,
                                      bool          direction)
 {
-	push_queued(new CreatePortEvent(_engine, _responder, now(), path, data_type, direction, this));
+	push_queued(new CreatePortEvent(_engine, _responder, now(), path, type, direction, this));
 }
 
 

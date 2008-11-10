@@ -156,11 +156,11 @@ void OSCClientSender::new_node(const std::string& node_path,
  */
 void
 OSCClientSender::new_port(const std::string& path,
+                          const std::string& type,
                           uint32_t           index,
-                          const std::string& data_type,
                           bool               is_output)
 {
-	send("/ingen/new_port", "sisi", path.c_str(), index, data_type.c_str(), is_output, LO_ARGS_END);
+	send("/ingen/new_port", "sisi", path.c_str(), index, type.c_str(), is_output, LO_ARGS_END);
 }
 
 

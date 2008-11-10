@@ -251,7 +251,7 @@ OSCClientReceiver::_new_port_cb(const char* path, const char* types, lo_arg** ar
 	const char*    type      = &argv[2]->s;
 	const bool     is_output = (argv[3]->i == 1);
 
-	_target->new_port(port_path, index, type, is_output);
+	_target->new_port(port_path, type, index, is_output);
 	
 	return 0;	
 }

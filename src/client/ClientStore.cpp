@@ -452,7 +452,7 @@ ClientStore::new_node(const string& path, const string& plugin_uri)
 
 
 void
-ClientStore::new_port(const string& path, uint32_t index, const string& type, bool is_output)
+ClientStore::new_port(const string& path, const string& type, uint32_t index, bool is_output)
 {
 	PortModel::Direction pdir = is_output ? PortModel::OUTPUT : PortModel::INPUT;
 

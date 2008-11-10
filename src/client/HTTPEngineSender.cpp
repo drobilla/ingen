@@ -109,8 +109,8 @@ HTTPEngineSender::new_patch(const string& path,
 
 void
 HTTPEngineSender::new_port(const string& path,
+                           const string& type,
                            uint32_t      index,
-                           const string& data_type,
                            bool          is_output)
 {
 }

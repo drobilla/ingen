@@ -71,7 +71,7 @@ OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t
 	}
 
 	// For debugging, print all incoming OSC messages
-	lo_server_add_method(_server, NULL, NULL, generic_cb, NULL);
+	//lo_server_add_method(_server, NULL, NULL, generic_cb, NULL);
 
 	// Set response address for this message.
 	// It's important this is first and returns nonzero.
@@ -467,7 +467,7 @@ OSCEngineReceiver::_new_port_cb(const char* path, const char* types, lo_arg** ar
 	const char*   data_type   = &argv[2]->s;
 	const int32_t direction   =  argv[3]->i;
 	
-	new_port(port_path, 0, data_type, (direction == 1));
+	new_port(port_path, data_type, 0, (direction == 1));
 	return 0;
 }
 

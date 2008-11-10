@@ -141,15 +141,15 @@ OSCEngineSender::new_patch(const string& path,
 
 void
 OSCEngineSender::new_port(const string& path,
+                          const string& type,
                           uint32_t      index,
-                          const string& data_type,
                           bool          is_output)
 {
 	// FIXME: use index
 	send("/ingen/new_port",  "issi",
 		next_id(),
 		path.c_str(),
-		data_type.c_str(),
+		type.c_str(),
 		(is_output ? 1 : 0),
 		LO_ARGS_END);
 }

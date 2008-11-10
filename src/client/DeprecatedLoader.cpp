@@ -457,22 +457,22 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 		if (plugin_type == "Internal") {
 			// FIXME: indices
 			if (plugin_label == "audio_input") {
-				_engine->new_port(path, 0, "lv2:AudioPort", false);
+				_engine->new_port(path, "lv2:AudioPort", 0, false);
 				is_port = true;
 			} else if (plugin_label == "audio_output") {
-				_engine->new_port(path, 0, "lv2:AudioPort", true);
+				_engine->new_port(path, "lv2:AudioPort", 0, true);
 				is_port = true;
 			} else if (plugin_label == "control_input") {
-				_engine->new_port(path, 0, "lv2:ControlPort", false);
+				_engine->new_port(path, "lv2:ControlPort", 0, false);
 				is_port = true;
 			} else if (plugin_label == "control_output" ) {
-				_engine->new_port(path, 0, "lv2:ControlPort", true);
+				_engine->new_port(path, "lv2:ControlPort", 0, true);
 				is_port = true;
 			} else if (plugin_label == "midi_input") {
-				_engine->new_port(path, 0, "ingen:EventPort", false);
+				_engine->new_port(path, "ingen:EventPort", 0, false);
 				is_port = true;
 			} else if (plugin_label == "midi_output" ) {
-				_engine->new_port(path, 0, "ingen:EventPort", true);
+				_engine->new_port(path, "ingen:EventPort", 0, true);
 				is_port = true;
 			} else {
 				cerr << "WARNING: Unknown internal plugin label \"" << plugin_label << "\"" << endl;

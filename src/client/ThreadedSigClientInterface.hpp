@@ -103,8 +103,8 @@ public:
 	void new_node(const string& path, const string& plugin_uri)
 		{ push_sig(sigc::bind(new_node_slot, path, plugin_uri)); }
 	
-	void new_port(const string& path, uint32_t index,  const string& data_type, bool is_output)
-		{ push_sig(sigc::bind(new_port_slot, path, index, data_type, is_output)); }
+	void new_port(const string& path, const string& type, uint32_t index, bool is_output)
+		{ push_sig(sigc::bind(new_port_slot, path, type, index, is_output)); }
 	
 	void connect(const string& src_port_path, const string& dst_port_path)
 		{ push_sig(sigc::bind(connection_slot, src_port_path, dst_port_path)); }
@@ -162,7 +162,7 @@ private:
 	sigc::slot<void, string, string, string, string>     new_plugin_slot; 
 	sigc::slot<void, string, uint32_t>                   new_patch_slot; 
 	sigc::slot<void, string, string>                     new_node_slot; 
-	sigc::slot<void, string, uint32_t, string, bool>     new_port_slot;
+	sigc::slot<void, string, string, uint32_t, bool>     new_port_slot;
 	sigc::slot<void, string, string>                     connection_slot;
 	sigc::slot<void, string>                             patch_cleared_slot; 
 	sigc::slot<void, string>                             object_destroyed_slot; 

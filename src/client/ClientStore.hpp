@@ -72,7 +72,7 @@ public:
 	void new_plugin(const string& uri, const string& type_uri, const string& symbol, const string& name);
 	void new_patch(const string& path, uint32_t poly);
 	void new_node(const string& path, const string& plugin_uri);
-	void new_port(const string& path, uint32_t index, const string& data_type, bool is_output);
+	void new_port(const string& path, const string& type, uint32_t index, bool is_output);
 	void set_variable(const string& subject_path, const string& predicate, const Atom& value);
 	void set_property(const string& subject_path, const string& predicate, const Atom& value);
 	void set_port_value(const string& port_path, const Raul::Atom& value);

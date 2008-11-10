@@ -144,11 +144,11 @@ ClashAvoider::new_node(const std::string& path,
 
 void
 ClashAvoider::new_port(const std::string& path,
+                       const std::string& type,
                        uint32_t           index,
-                       const std::string& data_type,
                        bool               is_output)
 {
-	_target.new_port(map_path(path), index, data_type, is_output);
+	_target.new_port(map_path(path), type, index, is_output);
 }
 
 

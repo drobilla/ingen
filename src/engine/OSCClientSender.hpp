@@ -82,8 +82,8 @@ public:
 	                      const std::string&   plugin_uri);
 	
 	virtual void new_port(const std::string& path,
+	                      const std::string& type,
 	                      uint32_t           index,
-	                      const std::string& data_type,
 	                      bool               is_output);
 	
 	virtual void patch_cleared(const std::string& path);

@@ -56,7 +56,7 @@ public:
 	sigc::signal<void, string, string, string, string>     signal_new_plugin; 
 	sigc::signal<void, string, uint32_t>                   signal_new_patch; 
 	sigc::signal<void, string, string>                     signal_new_node; 
-	sigc::signal<void, string, uint32_t, string, bool>     signal_new_port; 
+	sigc::signal<void, string, string, uint32_t, bool>     signal_new_port; 
 	sigc::signal<void, string>                             signal_patch_cleared; 
 	sigc::signal<void, string, string>                     signal_object_renamed; 
 	sigc::signal<void, string>                             signal_object_destroyed; 
@@ -109,8 +109,8 @@ protected:
 	void new_node(const string& path, const string& plugin_uri)
 		{ if (_enabled) signal_new_node.emit(path, plugin_uri); }
 	
-	void new_port(const string& path, uint32_t index, const string& data_type, bool is_output)
-		{ if (_enabled) signal_new_port.emit(path, index, data_type, is_output); }
+	void new_port(const string& path, const string& type, uint32_t index, bool is_output)
+		{ if (_enabled) signal_new_port.emit(path, type, index, is_output); }
 	
 	void connect(const string& src_port_path, const string& dst_port_path)
 		{ if (_enabled) signal_connection.emit(src_port_path, dst_port_path); }

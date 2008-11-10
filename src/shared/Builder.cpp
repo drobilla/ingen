@@ -66,7 +66,7 @@ Builder::build(const Raul::Path& prefix, SharedPtr<const GraphObject> object)
 	SharedPtr<const Port> port = PtrCast<const Port>(object);
 	if (port) {
 		Raul::Path path = prefix.base() + port->path().substr(1);
-		_interface.new_port(path, port->index(), port->type().uri(), !port->is_input());
+		_interface.new_port(path, port->type().uri(), port->index(), !port->is_input());
 		build_object(prefix, object);
 		return;
 	}
