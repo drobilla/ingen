@@ -32,6 +32,7 @@
 #include "QueuedEventSource.hpp"
 #include "ClientBroadcaster.hpp"
 #include "EngineStore.hpp"
+#include "HTTPClientSender.hpp"
 
 using namespace std;
 using namespace Ingen::Shared;
@@ -126,6 +127,7 @@ HTTPEngineReceiver::message_callback(SoupServer* server, SoupMessage* msg, const
 	if (path == "/" || path == "") {
 		const string r = string("@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n")
 			.append("\n<> rdfs:seeAlso <plugins> ;")
+			.append("\n   rdfs:seeAlso <stream>  ;")
 			.append("\n   rdfs:seeAlso <patch>   .");
 		soup_message_set_status(msg, SOUP_STATUS_OK);
 		soup_message_set_response(msg, mime_type, SOUP_MEMORY_COPY, r.c_str(), r.length());
@@ -146,6 +148,14 @@ HTTPEngineReceiver::message_callback(SoupServer* server, SoupMessage* msg, const
 		return;
 	} else if (path.substr(0, 6) == "/patch") {
 		path = '/' + path.substr(6);
+	} else if (path.substr(0, 7) == "/stream") {
+		cout << "REGISTERING CLIENT" << endl;
+		// FIXME: memory leak
+		ClientInterface* client = new HTTPClientSender(me->_server, msg);
+		soup_message_headers_set_encoding(msg->response_headers, SOUP_ENCODING_CHUNKED);
+		me->register_client(client);
+		return;
+		
 	} else {
 		cout << "UNKNOWN PATH: " << path << endl;
 		soup_message_set_status(msg, SOUP_STATUS_NOT_FOUND);

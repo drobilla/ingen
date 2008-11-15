@@ -12,8 +12,11 @@ def build(bld):
 		Store.cpp
 		runtime_paths.cpp
 	'''
-	if bld.env()['HAVE_LIBLO']:
+	if bld.env()['HAVE_LIBLO'] == 1:
 		obj.source += ' OSCSender.cpp '
+	if bld.env()['HAVE_SOUP'] == 1:
+		autowaf.use_lib(bld, obj, 'SOUP')
+		obj.source += ' HTTPSender.cpp '
 	obj.includes = ['.', '../', '../common']
 	obj.name     = 'libingen_shared'
 	obj.target   = 'ingen_shared'

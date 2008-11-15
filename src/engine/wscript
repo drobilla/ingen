@@ -92,7 +92,12 @@ def build(bld):
 	
 	if bld.env()['HAVE_SOUP'] == 1:
 		obj = bld.create_obj('cpp', 'shlib')
-		obj.source = 'QueuedEventSource.cpp QueuedEngineInterface.cpp HTTPEngineReceiver.cpp'
+		obj.source = '''
+			QueuedEventSource.cpp
+			QueuedEngineInterface.cpp
+			HTTPClientSender.cpp
+			HTTPEngineReceiver.cpp
+		'''
 		obj.includes     = ['.', '..', '../common', './events', '../engine']
 		obj.name         = 'libingen_engine_http'
 		obj.target       = 'ingen_engine_http'
@@ -101,7 +106,12 @@ def build(bld):
 	
 	if bld.env()['HAVE_LIBLO'] == 1:
 		obj = bld.create_obj('cpp', 'shlib')
-		obj.source = 'QueuedEventSource.cpp QueuedEngineInterface.cpp OSCClientSender.cpp OSCEngineReceiver.cpp'
+		obj.source = '''
+			QueuedEventSource.cpp
+			QueuedEngineInterface.cpp
+			OSCClientSender.cpp
+			OSCEngineReceiver.cpp
+		'''
 		obj.includes     = ['.', '..', '../common', './events', '../engine']
 		obj.name         = 'libingen_engine_osc'
 		obj.target       = 'ingen_engine_osc'

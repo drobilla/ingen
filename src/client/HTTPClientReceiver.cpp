@@ -50,10 +50,41 @@ HTTPClientReceiver::~HTTPClientReceiver()
 
 
 void
+HTTPClientReceiver::Listener::_run()
+{
+#if 0
+	cout << "LISTENER RUN" << endl;
+	/*const string uri = "http://localhost:16180";
+	SoupMessage* msg = soup_message_new("GET", (uri + "/stream").c_str());
+	soup_message_headers_set_encoding(msg->response_headers, SOUP_ENCODING_CHUNKED);
+	soup_session_send_message(_session, msg);*/
+	
+	size_t offset = 0;
+	soup_message_body_set_accumulate(_msg->response_body, false);
+	while (true) {
+		SoupBuffer* chunk = soup_message_body_get_chunk(_msg->response_body, offset);
+		if (chunk == NULL) {
+			//cout << "WAITING FOR DATA" << endl;
+		} else if (chunk->length == 0) {
+			cout << "CHUNKED TRANSFER COMPLETED" << endl;
+			break;
+		} else {
+			cout << "RECEIVED CHUNK: " << (char*)chunk->data << endl;
+			offset += chunk->length;
+		}
+	}
+
+	cout << "LISTENER FINISHED" << endl;
+#endif
+}
+
+
+void
 HTTPClientReceiver::message_callback(SoupSession* session, SoupMessage* msg, void* ptr)
 {
 	HTTPClientReceiver* me = (HTTPClientReceiver*)ptr;
 	const string path = soup_message_get_uri(msg)->path;
+	cout << "MESSAGE: " << path << endl;
 	if (path == "/") {
 		me->_target->response_ok(0);
 		me->_target->enable();
@@ -77,6 +108,12 @@ HTTPClientReceiver::message_callback(SoupSession* session, SoupMessage* msg, voi
 					Glib::ustring(msg->response_body->data),
 					Glib::ustring("/patch/"), Glib::ustring(""));
 		}
+	} else if (path == "/stream") {
+		cout << "STREAM" << endl;
+		//me->_listener = boost::shared_ptr<Listener>(new Listener(me->_session, msg));
+		//me->_listener->start();
+	} else {
+		cerr << "UNKNOWN MESSAGE: " << path << endl;
 	}
 }
 
@@ -96,17 +133,20 @@ HTTPClientReceiver::start(bool dump)
 		}
 	}
 	
-	_session = soup_session_async_new();
+	_session = soup_session_sync_new();
 	SoupMessage* msg;
 	
 	msg = soup_message_new("GET", _url.c_str());
-	soup_session_queue_message (_session, msg, message_callback, this);
+	soup_session_queue_message(_session, msg, message_callback, this);
 	
 	msg = soup_message_new("GET", (_url + "/plugins").c_str());
-	soup_session_queue_message (_session, msg, message_callback, this);
+	soup_session_queue_message(_session, msg, message_callback, this);
 	
 	msg = soup_message_new("GET", (_url + "/patch").c_str());
-	soup_session_queue_message (_session, msg, message_callback, this);
+	soup_session_queue_message(_session, msg, message_callback, this);
+	
+	msg = soup_message_new("GET", (_url + "/stream").c_str());
+	soup_session_queue_message(_session, msg, message_callback, this);
 }
 
 

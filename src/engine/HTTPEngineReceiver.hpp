@@ -54,7 +54,7 @@ private:
 			GHashTable *query, SoupClientContext* client, void* data);
 
 	ReceiveThread* _receive_thread;
-	SoupServer* _server;
+	SoupServer*    _server;
 };
 
 

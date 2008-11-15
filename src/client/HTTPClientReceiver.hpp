@@ -21,10 +21,11 @@
 #include <cstdlib>
 #include <boost/utility.hpp>
 #include <libsoup/soup.h>
-#include "interface/ClientInterface.hpp"
-#include "serialisation/Parser.hpp"
 #include "redlandmm/World.hpp"
 #include "raul/Deletable.hpp"
+#include "raul/Thread.hpp"
+#include "interface/ClientInterface.hpp"
+#include "serialisation/Parser.hpp"
 
 namespace Ingen {
 namespace Client {
@@ -46,7 +47,19 @@ public:
 	
 private:
 	static void message_callback(SoupSession* session, SoupMessage* msg, void* ptr);
+
+	class Listener : public Raul::Thread {
+	public:
+		Listener(SoupSession* session, SoupMessage* msg) : _session(session), _msg(msg) {}
+		void _run();
+	private:
+		SoupSession* _session;
+		SoupMessage* _msg;
+	};
 	
+	friend class Listener;
+	SharedPtr<Listener> _listener;
+
 	SharedPtr<Shared::ClientInterface> _target;
 
 	Shared::World*    _world;
