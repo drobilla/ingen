@@ -99,7 +99,7 @@ public:
 	uint32_t     index()       const { return _index; }
 	uint32_t     poly()        const { return _poly; }
 	DataType     type()        const { return _type; }
-	size_t       buffer_size() const { return _buffer_size; }
+	size_t       buffer_size() const { return (_type == DataType::CONTROL) ? 1 : _buffer_size; }
 
 	virtual void set_buffer_size(size_t size);
 	
