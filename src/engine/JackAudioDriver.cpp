@@ -185,18 +185,11 @@ void
 JackAudioDriver::deactivate()
 {
 	if (_is_activated) {
-		
-		//for (Raul::List<JackAudioPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
-		//	jack_port_unregister(_client, (*i)->jack_port());
-
-		jack_deactivate(_client);
 		_is_activated = false;
-	
+		jack_deactivate(_client);
+		_jack_thread->stop();
 		_ports.clear();
-	
 		cout << "[JackAudioDriver] Deactivated Jack client." << endl;
-		
-		//_engine.post_processor()->stop();
 	}
 }
 
@@ -327,14 +320,15 @@ JackAudioDriver::_process_cb(jack_nframes_t nframes)
 		(*i)->prepare_buffer(nframes);
 	}
 
-	assert(_engine.midi_driver());
-	_engine.midi_driver()->pre_process(_process_context);
+	if (_engine.midi_driver())
+		_engine.midi_driver()->pre_process(_process_context);
 	
 	// Run root patch
 	if (_root_patch)
 		_root_patch->process(_process_context);
 	
-	_engine.midi_driver()->post_process(_process_context);
+	if (_engine.midi_driver())
+		_engine.midi_driver()->post_process(_process_context);
 
 	_engine.post_processor()->set_end_time(_process_context.end());
 

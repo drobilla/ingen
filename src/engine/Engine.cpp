@@ -234,13 +234,13 @@ Engine::deactivate()
 		if ((*i)->as_node() != NULL && (*i)->as_node()->parent() == NULL)
 			(*i)->as_node()->deactivate();*/
 	
+	_audio_driver->deactivate();
+	
 	if (_midi_driver != NULL) {
 		_midi_driver->deactivate();
 		delete _midi_driver;
 		_midi_driver = NULL;
 	}
-	
-	_audio_driver->deactivate();
 
 	_audio_driver->root_patch()->deactivate();
 	
