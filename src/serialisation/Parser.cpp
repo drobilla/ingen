@@ -94,8 +94,8 @@ Parser::parse_string(
 	
 	if (object_uri)
 		cout << "Parsing " << object_uri.get() << " (base " << base_uri << ")" <<  endl;
-	else
-		cout << "Parsing all objects found in string (base " << base_uri << ")" << endl;
+	//else
+	//	cout << "Parsing all objects found in string (base " << base_uri << ")" << endl;
 
 	bool ret = parse(world, target, model, base_uri, engine_base, object_uri, symbol, data);
 	if (ret) {
@@ -149,15 +149,12 @@ Parser::parse(
 		const string key = world->rdf_world->prefixes().qualify((*i)["varkey"].to_string());
 		const Redland::Node& val_node = (*i)["varval"];
 
-		cout << "VALUE: " << val_node.to_string() << endl;
-		cout << "TYPE: " << AtomRDF::node_to_atom(val_node).type() << endl;
-		cout << "ATOM: " << AtomRDF::node_to_atom(val_node).get_float() << endl;
-
 		if (key != "")
 			target->set_variable(obj_path, key, AtomRDF::node_to_atom(val_node));
 	}
 	world->rdf_world->mutex().unlock();
 
+	parse_connections(world, target, model, base_uri, "", "/");
 
 	if (object_uri)
 		query_str = Glib::ustring("SELECT DISTINCT ?class WHERE { <") + object_uri.get() + "> a ?class . }";

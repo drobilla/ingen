@@ -84,7 +84,14 @@ HTTPClientSender::patch_cleared(const std::string& patch_path)
 void
 HTTPClientSender::connect(const std::string& src_path, const std::string& dst_path)
 {
-	//send("/ingen/new_connection", "ss", src_path.c_str(), dst_path.c_str(), LO_ARGS_END);
+	string msg = string(
+			"@prefix rdf:       <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n" 
+			"@prefix ingen:     <http://drobilla.net/ns/ingen#> .\n"
+			"@prefix lv2var:    <http://lv2plug.in/ns/ext/instance-var#> .\n\n<").append(
+			"<> ingen:connection [\n"
+			"\tingen:destination <").append(dst_path).append("> ;\n"
+			"\tingen:source <").append(src_path).append(">\n] .\n");
+	send_chunk(msg);
 }
 
 
@@ -99,7 +106,6 @@ void
 HTTPClientSender::set_variable(const std::string& path, const std::string& key, const Atom& value)
 {
 	Redland::Node node = AtomRDF::atom_to_node(*_engine.world()->rdf_world, value);
-
 	string msg = string(
 			"@prefix rdf:       <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n" 
 			"@prefix ingenuity: <http://drobilla.net/ns/ingenuity#> .\n"
@@ -107,7 +113,6 @@ HTTPClientSender::set_variable(const std::string& path, const std::string& key, 
 			path).append("> lv2var:variable [\n"
 			"rdf:predicate ").append(key).append(" ;\n"
 			"rdf:value     ").append(node.to_string()).append("\n] .\n");
-
 	send_chunk(msg);
 }
 
@@ -115,21 +120,28 @@ HTTPClientSender::set_variable(const std::string& path, const std::string& key, 
 void
 HTTPClientSender::set_property(const std::string& path, const std::string& key, const Atom& value)
 {
-	/*lo_message m = lo_message_new();
-	lo_message_add_string(m, path.c_str());
-	lo_message_add_string(m, key.c_str());
-	Raul::AtomLiblo::lo_message_add_atom(m, value);
-	send_message("/ingen/set_property", m);*/
+	Redland::Node node = AtomRDF::atom_to_node(*_engine.world()->rdf_world, value);
+	string msg = string(
+			"@prefix rdf:       <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n" 
+			"@prefix ingen:     <http://drobilla.net/ns/ingen#> .\n"
+			"@prefix ingenuity: <http://drobilla.net/ns/ingenuity#> .\n"
+			"@prefix lv2var:    <http://lv2plug.in/ns/ext/instance-var#> .\n\n<").append(
+			path).append("> ingen:property [\n"
+			"rdf:predicate ").append(key).append(" ;\n"
+			"rdf:value     ").append(node.to_string()).append("\n] .\n");
+	send_chunk(msg);
 }
 
 
 void
 HTTPClientSender::set_port_value(const std::string& port_path, const Raul::Atom& value)
 {
-	/*lo_message m = lo_message_new();
-	lo_message_add_string(m, port_path.c_str());
-	Raul::AtomLiblo::lo_message_add_atom(m, value);
-	send_message("/ingen/set_port_value", m);*/
+	Redland::Node node = AtomRDF::atom_to_node(*_engine.world()->rdf_world, value);
+	string msg = string(
+			"@prefix rdf:       <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n" 
+			"@prefix ingen:     <http://drobilla.net/ns/ingen#> .\n\n<").append(
+			port_path).append("> ingen:value ").append(node.to_string()).append(" .\n");
+	send_chunk(msg);
 }
 
 
@@ -189,7 +201,11 @@ HTTPClientSender::new_patch(const std::string& path, uint32_t poly)
 void
 HTTPClientSender::object_renamed(const std::string& old_path, const std::string& new_path)
 {
-	//send("/ingen/object_renamed", "ss", old_path.c_str(), new_path.c_str(), LO_ARGS_END);
+	string msg = string(
+			"@prefix rdf:       <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n" 
+			"@prefix ingen:     <http://drobilla.net/ns/ingen#> .\n\n<").append(
+			old_path).append("> rdf:subject <").append(new_path).append("> .\n");
+	send_chunk(msg);
 }
 
 
