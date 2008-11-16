@@ -256,10 +256,8 @@ NodeModule::port(boost::shared_ptr<PortModel> model)
 {
 	for (PortVector::const_iterator p = ports().begin(); p != ports().end(); ++p) {
 		SharedPtr<Port> port = PtrCast<Port>(*p);
-		if (port->model() == model) {
-			cout << "FOUND: " << model->path() << endl;
+		if (port->model() == model)
 			return port;
-		}
 	}
 	return boost::shared_ptr<Port>();
 }
