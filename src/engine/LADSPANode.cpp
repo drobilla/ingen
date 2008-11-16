@@ -18,6 +18,7 @@
 #include <iostream>
 #include <cassert>
 #include <cmath>
+#include <map>
 #include <stdint.h>
 #include "raul/Maid.hpp"
 #include <boost/optional.hpp>
@@ -155,35 +156,38 @@ LADSPANode::instantiate()
 		}
 	}
 	
-	string port_name;
-	string port_path;
-	
 	PortImpl* port = NULL;
-	
-	for (size_t j=0; j < _descriptor->PortCount; ++j) {
-		port_name = nameify_if_invalid(_descriptor->PortNames[j]);
+	std::map<std::string, uint32_t> names;
 
-		string::size_type slash_index;
-		
-		// Name mangling, to guarantee port names are unique
-		for (size_t k=0; k < _descriptor->PortCount; ++k) {
-			assert(_descriptor->PortNames[k] != NULL);
-			if (k != j && port_name == _descriptor->PortNames[k]) { // clash
-				if (LADSPA_IS_PORT_CONTROL(_descriptor->PortDescriptors[j]))
-					port_name += "(CR)";
-				else
-					port_name += "(AR)";
+	for (uint32_t j=0; j < _descriptor->PortCount; ++j) {
+		string port_name = nameify_if_invalid(_descriptor->PortNames[j]);
+
+		string name = port_name;
+		std::map<std::string, uint32_t>::iterator existing = names.find(port_name);
+		uint32_t offset = 2;
+		bool type_clash = false;
+		while (existing != names.end()) {
+			const uint32_t e = existing->second;
+			if (!type_clash && LADSPA_IS_PORT_CONTROL(_descriptor->PortDescriptors[j])
+					&& LADSPA_IS_PORT_AUDIO(_descriptor->PortDescriptors[e])) {
+				name = port_name + "_CR";
+				type_clash = true;
+			} else if (!type_clash && LADSPA_IS_PORT_AUDIO(_descriptor->PortDescriptors[j])
+					&& LADSPA_IS_PORT_CONTROL(_descriptor->PortDescriptors[e])) {
+				name = port_name + "_AR";
+				type_clash = true;
+			} else {
+				std::ostringstream ss;
+				ss << port_name << "_" << offset;
+				name = ss.str();
 			}
-			// Replace all slashes with "-" (so they don't screw up paths)
-			while ((slash_index = port_name.find("/")) != string::npos)
-				port_name[slash_index] = '-';
+			existing = names.find(name);
 		}
-		
-		/*if (_descriptor->PortNames[j] != port_name)
-			cerr << "NOTICE: Translated LADSPA port name: " <<
-				_descriptor->PortNames[j] << " -> " << port_name << endl;*/
 
-		port_path = path() + "/" + port_name;
+		port_name = name;
+		names.insert(make_pair(port_name, j));
+		
+		string port_path = path() + "/" + port_name;
 
 		DataType type = DataType::AUDIO;
 		port_buffer_size = _buffer_size;
