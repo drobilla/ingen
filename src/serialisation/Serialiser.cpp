@@ -520,7 +520,7 @@ Serialiser::serialise_variables(Redland::Node subject, const GraphObject::Variab
 				cerr << "Warning: variable with no value: key '" << v->first << "'" << endl;
 			}
 		} else {
-			cerr << "Warning: not serialising variable with invalid key '" << v->first << "'" << endl;
+			cerr << "Not serialising special variable '" << v->first << "'" << endl;
 		}
 	}
 }

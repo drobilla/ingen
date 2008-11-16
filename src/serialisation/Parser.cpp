@@ -250,10 +250,9 @@ Parser::parse(
 			//	continue;
 
 			if (rdf_class == patch_class) {
-				ret = parse_patch(world, target, model, base_uri, engine_base,
-						path_str, data);
-				if (ret)
-					target->set_variable(path, "ingen:document", Atom(base_uri.c_str()));
+				ret = parse_patch(world, target, model, base_uri, engine_base, path_str, data);
+				//if (ret)
+				//	target->set_variable(path, "ingen:document", Atom(base_uri.c_str()));
 			} else if (rdf_class == node_class) {
 				ret = parse_node(world, target, model,
 						base_uri, Glib::ustring("<") + subject.to_c_string() + ">", path, data);

@@ -324,10 +324,12 @@ void
 PatchWindow::event_save()
 {
 	GraphObject::Variables::const_iterator doc = _patch->variables().find("ingen:document");
-	if (doc == _patch->variables().end())
+	if (doc == _patch->variables().end()) {
 		event_save_as();
-	else
-		App::instance().loader()->save_patch(_patch, doc->second.get_string());
+	} else {
+		const Glib::ustring& filename = Glib::filename_from_uri(doc->second.get_string());
+		App::instance().loader()->save_patch(_patch, filename);
+	}
 }
 
 
@@ -336,15 +338,6 @@ PatchWindow::event_save_as()
 {
 	Gtk::FileChooserDialog dialog(*this, "Save Patch", Gtk::FILE_CHOOSER_ACTION_SAVE);
 	
-	/*Gtk::VBox* box = dialog.get_vbox();
-	Gtk::Label warning("Warning:  Recursively saving will overwrite any subpatch files \
-		without confirmation.");
-	box->pack_start(warning, false, false, 2);
-	Gtk::CheckButton recursive_checkbutton("Recursively save all subpatches");
-	box->pack_start(recursive_checkbutton, false, false, 0);
-	recursive_checkbutton.show();
-	*/
-			
 	dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
 	Gtk::Button* save_button = dialog.add_button(Gtk::Stock::SAVE, Gtk::RESPONSE_OK);	
 	save_button->property_has_default() = true;
@@ -363,7 +356,7 @@ PatchWindow::event_save_as()
 		string filename = dialog.get_filename();
 		if (filename.length() < 11 || filename.substr(filename.length()-10) != ".ingen.ttl")
 			filename += ".ingen.ttl";
-			
+
 		bool confirm = false;
 		std::fstream fin;
 		fin.open(filename.c_str(), std::ios::in);
@@ -383,6 +376,7 @@ PatchWindow::event_save_as()
 		
 		if (confirm) {
 			App::instance().loader()->save_patch(_patch, filename);
+			_patch->set_variable("ingen:document", Atom(Glib::filename_to_uri(filename).c_str()));
 		}
 	}
 	App::instance().configuration()->set_patch_folder(dialog.get_current_folder());
