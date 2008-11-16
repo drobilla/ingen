@@ -58,6 +58,16 @@ public:
 			boost::optional<Glib::ustring>          object_uri=boost::optional<Glib::ustring>(),
 			boost::optional<Raul::Symbol>           symbol=boost::optional<Raul::Symbol>(),
 			boost::optional<GraphObject::Variables> data=boost::optional<GraphObject::Variables>());
+	
+	virtual bool parse_update(
+			Ingen::Shared::World*                   world,
+			Shared::CommonInterface*                target,
+			const Glib::ustring&                    str,
+			const Glib::ustring&                    base_uri,
+			Glib::ustring                           engine_base,
+			boost::optional<Glib::ustring>          object_uri=boost::optional<Glib::ustring>(),
+			boost::optional<Raul::Symbol>           symbol=boost::optional<Raul::Symbol>(),
+			boost::optional<GraphObject::Variables> data=boost::optional<GraphObject::Variables>());
 
 private:
 

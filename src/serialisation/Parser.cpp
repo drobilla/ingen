@@ -109,25 +109,20 @@ Parser::parse_string(
 
 
 bool
-Parser::parse(
+Parser::parse_update(
 		Ingen::Shared::World*                   world,
-		Ingen::Shared::CommonInterface*         target,
-		Redland::Model&                         model,
-		Glib::ustring                           base_uri,
+		Shared::CommonInterface*                target,
+		const Glib::ustring&                    str,
+		const Glib::ustring&                    base_uri,
 		Glib::ustring                           engine_base,
 		boost::optional<Glib::ustring>          object_uri,
 		boost::optional<Raul::Symbol>           symbol,
 		boost::optional<GraphObject::Variables> data)
 {
-	const Redland::Node::Type res = Redland::Node::RESOURCE;
-	Glib::ustring query_str;
-	if (object_uri && object_uri.get()[0] == '/')
-		object_uri = object_uri.get().substr(1);
-	
-	/* **** First query out global information (top-level info) **** */
-		
+	Redland::Model model(*world->rdf_world, str.c_str(), str.length(), base_uri);
+
 	// Delete anything explicitly declared to not exist
-	query_str = Glib::ustring("SELECT DISTINCT ?o WHERE { ?o a owl:Nothing }");
+	Glib::ustring query_str = Glib::ustring("SELECT DISTINCT ?o WHERE { ?o a owl:Nothing }");
 	Redland::Query query(*world->rdf_world, query_str);
 	Redland::Query::Results results = query.run(*world->rdf_world, model, base_uri);
 	
@@ -173,16 +168,33 @@ Parser::parse(
 	}
 	world->rdf_world->mutex().unlock();
 
+	return parse(world, target, model, base_uri, engine_base, object_uri, symbol, data);
+}
 
-	/* **** Now query out objects **** */
+
+bool
+Parser::parse(
+		Ingen::Shared::World*                   world,
+		Ingen::Shared::CommonInterface*         target,
+		Redland::Model&                         model,
+		Glib::ustring                           base_uri,
+		Glib::ustring                           engine_base,
+		boost::optional<Glib::ustring>          object_uri,
+		boost::optional<Raul::Symbol>           symbol,
+		boost::optional<GraphObject::Variables> data)
+{
+	const Redland::Node::Type res = Redland::Node::RESOURCE;
+	Glib::ustring query_str;
+	if (object_uri && object_uri.get()[0] == '/')
+		object_uri = object_uri.get().substr(1);
 	
 	if (object_uri)
 		query_str = Glib::ustring("SELECT DISTINCT ?class WHERE { <") + object_uri.get() + "> a ?class . }";
 	else
 		query_str = Glib::ustring("SELECT DISTINCT ?subject ?class WHERE { ?subject a ?class . }");
 
-	query = Redland::Query(*world->rdf_world, query_str);
-	results = Redland::Query::Results(query.run(*world->rdf_world, model, base_uri));
+	Redland::Query query(*world->rdf_world, query_str);
+	Redland::Query::Results results(query.run(*world->rdf_world, model, base_uri));
 	
 	const Redland::Node patch_class(*world->rdf_world, res, NS_INGEN "Patch");
 	const Redland::Node node_class(*world->rdf_world, res, NS_INGEN "Node");

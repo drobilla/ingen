@@ -97,7 +97,7 @@ HTTPClientReceiver::Listener::Listener(HTTPClientReceiver* receiver, const std::
 void
 HTTPClientReceiver::update(const std::string& str)
 {
-	cout << _parser->parse_string(_world, _target.get(), str, "/", "/");
+	cout << _parser->parse_update(_world, _target.get(), str, "/", "/");
 }
 
 void
