@@ -20,14 +20,15 @@
 
 #include <stdint.h>
 #include <string>
-#include <libsoup/soup.h>
+#include <glibmm/thread.h>
+#include "raul/Thread.hpp"
 
 namespace Ingen {
 namespace Shared {
 
-class HTTPSender {
+class HTTPSender : public Raul::Thread {
 public:
-	HTTPSender(SoupServer* server, SoupMessage* msg);
+	HTTPSender();
 	virtual ~HTTPSender();
 
 	// Message bundling
@@ -38,13 +39,21 @@ public:
 	void transfer_begin() { bundle_begin(); }
 	void transfer_end()   { bundle_end(); }
 
-protected:
-	void send_chunk(const std::string& buf);
+	int listen_port() const { return _listen_port; }
 
+protected:
+	void _run();
+
+	void send_chunk(const std::string& buf);
+	
 	enum SendState { Immediate, SendingBundle };
 
-	SoupServer*  _server;
-	SoupMessage* _msg;
+	Glib::Mutex _mutex;
+	Glib::Cond  _signal;
+
+	int          _listen_port;
+	int          _listen_sock;
+	int          _client_sock;
 	SendState    _send_state;
 	std::string  _transfer;
 };

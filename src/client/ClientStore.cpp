@@ -55,7 +55,7 @@ ClientStore::ClientStore(SharedPtr<EngineInterface> engine, SharedPtr<SigClientI
 	emitter->signal_property_change.connect(sigc::mem_fun(this, &ClientStore::set_property));
 	emitter->signal_port_value.connect(sigc::mem_fun(this, &ClientStore::set_port_value));
 	emitter->signal_voice_value.connect(sigc::mem_fun(this, &ClientStore::set_voice_value));
-	emitter->signal_port_activity.connect(sigc::mem_fun(this, &ClientStore::port_activity));
+	emitter->signal_activity.connect(sigc::mem_fun(this, &ClientStore::activity));
 }
 
 
@@ -557,13 +557,13 @@ ClientStore::set_voice_value(const string& port_path, uint32_t voice, const Raul
 
 	
 void
-ClientStore::port_activity(const Path& port_path)
+ClientStore::activity(const Path& path)
 {
-	SharedPtr<PortModel> port = PtrCast<PortModel>(object(port_path));
+	SharedPtr<PortModel> port = PtrCast<PortModel>(object(path));
 	if (port)
 		port->signal_activity.emit();
 	else
-		cerr << "ERROR: activity for nonexistant port " << port_path << endl;
+		cerr << "ERROR: activity for nonexistant port " << path << endl;
 }
 
 

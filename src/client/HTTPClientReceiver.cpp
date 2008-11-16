@@ -20,6 +20,8 @@
 #include <cstring>
 #include <iostream>
 #include <sstream>
+#include <sys/socket.h>
+#include <errno.h>
 #include "module/Module.hpp"
 #include "HTTPClientReceiver.hpp"
 
@@ -49,33 +51,73 @@ HTTPClientReceiver::~HTTPClientReceiver()
 }
 
 
+HTTPClientReceiver::Listener::~Listener()
+{
+	close(_sock);
+}
+
+HTTPClientReceiver::Listener::Listener(SoupSession* session, const std::string uri)
+	: _uri(uri)
+	, _session(session)
+{
+	string port_str = uri.substr(uri.find_last_of(":")+1);
+	int port = atoi(port_str.c_str());
+
+	cout << "HTTP listen URI: " << uri << " port: " << port << endl;
+
+	struct sockaddr_in servaddr;
+	
+	// Create listen address
+	memset(&servaddr, 0, sizeof(servaddr));
+	servaddr.sin_family      = AF_INET;
+	servaddr.sin_port        = htons(port);
+	
+	// Create listen socket
+	if ((_sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+		cerr << "Error creating listening socket: %s" << strerror(errno) << endl;
+		_sock = -1;
+		return;
+	}
+
+	// Set remote address (FIXME: always localhost)
+	if (inet_aton("127.0.0.1", &servaddr.sin_addr) <= 0) {
+		cerr << "Invalid remote IP address" << endl;
+		_sock = -1;
+		return;
+	}
+
+	// Connect to server
+	if (connect(_sock, (struct sockaddr*)&servaddr, sizeof(servaddr)) < 0) {
+		cerr << "Error calling connect: " << strerror(errno) << endl;
+		_sock = -1;
+		return;
+	}
+}
+
+
 void
 HTTPClientReceiver::Listener::_run()
 {
-#if 0
-	cout << "LISTENER RUN" << endl;
-	/*const string uri = "http://localhost:16180";
-	SoupMessage* msg = soup_message_new("GET", (uri + "/stream").c_str());
-	soup_message_headers_set_encoding(msg->response_headers, SOUP_ENCODING_CHUNKED);
-	soup_session_send_message(_session, msg);*/
-	
-	size_t offset = 0;
-	soup_message_body_set_accumulate(_msg->response_body, false);
+	char   in   = '\0';
+	char   last = '\0';
+	string recv = "";
+
 	while (true) {
-		SoupBuffer* chunk = soup_message_body_get_chunk(_msg->response_body, offset);
-		if (chunk == NULL) {
-			//cout << "WAITING FOR DATA" << endl;
-		} else if (chunk->length == 0) {
-			cout << "CHUNKED TRANSFER COMPLETED" << endl;
-			break;
-		} else {
-			cout << "RECEIVED CHUNK: " << (char*)chunk->data << endl;
-			offset += chunk->length;
+		while (read(_sock, &in, 1) > 0 ) {
+			recv += in;
+			if (last == '\n' && in == '\n') {
+				if (recv != "") {
+					cout << "RECEIVED UPDATE:\n" << recv << endl;
+					recv = "";
+					last = '\0';
+				}
+				break;
+			}
+			last = in;
 		}
 	}
 
-	cout << "LISTENER FINISHED" << endl;
-#endif
+	cout << "HTTP listener finished" << endl;
 }
 
 
@@ -84,10 +126,10 @@ HTTPClientReceiver::message_callback(SoupSession* session, SoupMessage* msg, voi
 {
 	HTTPClientReceiver* me = (HTTPClientReceiver*)ptr;
 	const string path = soup_message_get_uri(msg)->path;
-	cout << "MESSAGE: " << path << endl;
 	if (path == "/") {
 		me->_target->response_ok(0);
 		me->_target->enable();
+	
 	} else if (path == "/plugins") {
 		if (msg->response_body->data == NULL) {
 			cout << "ERROR: Empty response" << endl;
@@ -98,6 +140,7 @@ HTTPClientReceiver::message_callback(SoupSession* session, SoupMessage* msg, voi
 					Glib::ustring(msg->response_body->data),
 					Glib::ustring("."), Glib::ustring(""));
 		}
+
 	} else if (path == "/patch") {
 		if (msg->response_body->data == NULL) {
 			cout << "ERROR: Empty response" << endl;
@@ -108,10 +151,19 @@ HTTPClientReceiver::message_callback(SoupSession* session, SoupMessage* msg, voi
 					Glib::ustring(msg->response_body->data),
 					Glib::ustring("/patch/"), Glib::ustring(""));
 		}
+
 	} else if (path == "/stream") {
-		cout << "STREAM" << endl;
-		//me->_listener = boost::shared_ptr<Listener>(new Listener(me->_session, msg));
-		//me->_listener->start();
+		if (msg->response_body->data == NULL) {
+			cout << "ERROR: Empty response" << endl;
+		} else {
+			string uri = string(soup_uri_to_string(soup_message_get_uri(msg), false));
+			uri = uri.substr(0, uri.find_last_of(":"));
+			uri += string(":") + msg->response_body->data;
+			cout << "Stream URI: " << uri << endl;
+			me->_listener = boost::shared_ptr<Listener>(new Listener(me->_session, uri));
+			me->_listener->start();
+		}
+
 	} else {
 		cerr << "UNKNOWN MESSAGE: " << path << endl;
 	}
@@ -163,3 +215,4 @@ HTTPClientReceiver::stop()
 
 } // namespace Client
 } // namespace Ingen
+

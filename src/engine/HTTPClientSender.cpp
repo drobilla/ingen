@@ -135,9 +135,9 @@ HTTPClientSender::set_voice_value(const std::string& port_path, uint32_t voice, 
 
 
 void
-HTTPClientSender::port_activity(const std::string& port_path)
+HTTPClientSender::activity(const std::string& path)
 {
-	//lo_send(_address, "/ingen/port_activity", "s", port_path.c_str(), LO_ARGS_END);
+	//lo_send(_address, "/ingen/activity", "s", port_path.c_str(), LO_ARGS_END);
 }
 
 
@@ -159,9 +159,7 @@ HTTPClientSender::new_plugin(const std::string& uri,
 void
 HTTPClientSender::new_patch(const std::string& path, uint32_t poly)
 {
-	cout << "HTTP NEW PATCH" << endl;
 	send_chunk(string("<").append(path).append("> a ingen:Patch"));
-	//send("/ingen/new_patch", "si", path.c_str(), poly, LO_ARGS_END);
 }
 
 

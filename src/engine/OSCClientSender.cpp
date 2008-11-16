@@ -278,16 +278,16 @@ OSCClientSender::set_voice_value(const std::string& port_path, uint32_t voice, c
 
 
 /** \page client_osc_namespace
- * <p> \b /ingen/port_activity - Notification of activity for a port (e.g. MIDI messages)
- * \arg \b path (string) - Path of port </p> \n \n
+ * <p> \b /ingen/activity - Notification of "activity" (e.g. port message blinkenlights)
+ * \arg \b path (string) - Path of object </p> \n \n
  */
 void
-OSCClientSender::port_activity(const std::string& port_path)
+OSCClientSender::activity(const std::string& path)
 {
 	if (!_enabled)
 		return;
 
-	lo_send(_address, "/ingen/port_activity", "s", port_path.c_str(), LO_ARGS_END);
+	lo_send(_address, "/ingen/activity", "s", path.c_str(), LO_ARGS_END);
 }
 
 

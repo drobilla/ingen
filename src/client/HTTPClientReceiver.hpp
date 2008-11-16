@@ -50,11 +50,13 @@ private:
 
 	class Listener : public Raul::Thread {
 	public:
-		Listener(SoupSession* session, SoupMessage* msg) : _session(session), _msg(msg) {}
+		Listener(SoupSession* session, const std::string uri);
+		~Listener();
 		void _run();
 	private:
+		std::string  _uri;
+		int          _sock;
 		SoupSession* _session;
-		SoupMessage* _msg;
 	};
 	
 	friend class Listener;

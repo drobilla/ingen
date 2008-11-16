@@ -26,7 +26,7 @@ namespace Ingen {
 void
 SendPortActivityEvent::post_process()
 {
-	_engine.broadcaster()->send_port_activity(_port->path());
+	_engine.broadcaster()->send_activity(_port->path());
 }
 
 

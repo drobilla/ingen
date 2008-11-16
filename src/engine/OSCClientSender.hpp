@@ -114,7 +114,7 @@ public:
 	                             uint32_t           voice,
 	                             const Raul::Atom&  value);
 	
-	virtual void port_activity(const std::string& port_path);
+	virtual void activity(const std::string& path);
 	
 	virtual void program_add(const std::string& node_path,
 	                         uint32_t           bank,

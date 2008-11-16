@@ -64,7 +64,7 @@ public:
 	, variable_change_slot(signal_variable_change.make_slot())
 	, property_change_slot(signal_property_change.make_slot())
 	, port_value_slot(signal_port_value.make_slot())
-	, port_activity_slot(signal_port_activity.make_slot())
+	, activity_slot(signal_activity.make_slot())
 	, program_add_slot(signal_program_add.make_slot())
 	, program_remove_slot(signal_program_remove.make_slot())
 	{
@@ -133,8 +133,8 @@ public:
 	void set_voice_value(const string& port_path, uint32_t voice, const Raul::Atom& value)
 		{ push_sig(sigc::bind(voice_value_slot, port_path, voice, value)); }
 	
-	void port_activity(const string& port_path)
-		{ push_sig(sigc::bind(port_activity_slot, port_path)); }
+	void activity(const string& port_path)
+		{ push_sig(sigc::bind(activity_slot, port_path)); }
 
 	void program_add(const string& path, uint32_t bank, uint32_t program, const string& name)
 		{ push_sig(sigc::bind(program_add_slot, path, bank, program, name)); }
@@ -172,7 +172,7 @@ private:
 	sigc::slot<void, string, string, Raul::Atom>         property_change_slot; 
 	sigc::slot<void, string, Raul::Atom>                 port_value_slot; 
 	sigc::slot<void, string, uint32_t, Raul::Atom>       voice_value_slot; 
-	sigc::slot<void, string>                             port_activity_slot; 
+	sigc::slot<void, string>                             activity_slot; 
 	sigc::slot<void, string, uint32_t, uint32_t, string> program_add_slot; 
 	sigc::slot<void, string, uint32_t, uint32_t>         program_remove_slot; 
 };

@@ -137,7 +137,7 @@ main(int argc, char** argv)
 					Ingen::QueuedEngineInterface* (*new_interface)(Ingen::Engine& engine);
 					if (engine_osc_module->get_symbol("new_queued_interface", (void*&)new_interface)) {
 						SharedPtr<QueuedEngineInterface> interface(new_interface(*engine));
-						world->local_engine->set_event_source(interface);
+						world->local_engine->add_event_source(interface);
 						engine_interface = interface;
 						world->engine = engine_interface;
 					}
@@ -149,7 +149,7 @@ main(int argc, char** argv)
 						if (engine_osc_module->get_symbol("new_osc_receiver", (void*&)new_receiver)) {
 							SharedPtr<EventSource> source(new_receiver(*engine,
 										pre_processor_queue_size, args.engine_port_arg));
-							world->local_engine->set_event_source(source);
+							world->local_engine->add_event_source(source);
 						}
 					}
 					#endif
@@ -158,8 +158,9 @@ main(int argc, char** argv)
 						// FIXE: leak
 						Ingen::HTTPEngineReceiver* (*new_receiver)(Ingen::Engine& engine, uint16_t port);
 						if (engine_http_module->get_symbol("new_http_receiver", (void*&)new_receiver)) {
-							HTTPEngineReceiver* receiver = new_receiver(
-									*world->local_engine, args.engine_port_arg);
+							boost::shared_ptr<HTTPEngineReceiver> receiver(new_receiver(
+									*world->local_engine, args.engine_port_arg));
+							world->local_engine->add_event_source(receiver);
 							receiver->activate();
 						}
 					}

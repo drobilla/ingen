@@ -165,12 +165,9 @@ Engine::main_iteration()
 
 
 void
-Engine::set_event_source(SharedPtr<EventSource> source)
+Engine::add_event_source(SharedPtr<EventSource> source)
 {
-	if (_event_source)
-		cerr << "Warning:  Dropped event source (engine interface)" << endl;
-
-	_event_source = source;
+	_event_sources.insert(source);
 }
 
 
@@ -192,8 +189,8 @@ Engine::activate(size_t parallelism)
 	if (!_midi_driver)
 		_midi_driver = new DummyMidiDriver();
 	
-	if (_event_source)
-		_event_source->activate();
+	for (EventSources::iterator i = _event_sources.begin(); i != _event_sources.end(); ++i)
+		(*i)->activate();
 
 	// Create root patch
 
@@ -229,8 +226,8 @@ Engine::deactivate()
 	if (!_activated)
 		return;
 	
-	if (_event_source)
-		_event_source->deactivate();
+	for (EventSources::iterator i = _event_sources.begin(); i != _event_sources.end(); ++i)
+		(*i)->deactivate();
 
 	/*for (Tree<GraphObject*>::iterator i = _engine_store->objects().begin();
 			i != _engine_store->objects().end(); ++i)
@@ -257,7 +254,7 @@ Engine::deactivate()
 	_post_processor->process();
 
 	_audio_driver.reset();
-	_event_source.reset();
+	_event_sources.clear();
 	
 	_activated = false;
 }
@@ -266,8 +263,8 @@ Engine::deactivate()
 void
 Engine::process_events(ProcessContext& context)
 {
-	if (_event_source)
-		_event_source->process(*_post_processor, context);
+	for (EventSources::iterator i = _event_sources.begin(); i != _event_sources.end(); ++i)
+		(*i)->process(*_post_processor, context);
 }
 
 

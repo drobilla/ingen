@@ -66,7 +66,7 @@ public:
 	sigc::signal<void, string, string, Raul::Atom>         signal_property_change; 
 	sigc::signal<void, string, Raul::Atom>                 signal_port_value; 
 	sigc::signal<void, string, uint32_t, Raul::Atom>       signal_voice_value; 
-	sigc::signal<void, string>                             signal_port_activity; 
+	sigc::signal<void, string>                             signal_activity; 
 	sigc::signal<void, string, uint32_t, uint32_t, string> signal_program_add; 
 	sigc::signal<void, string, uint32_t, uint32_t>         signal_program_remove; 
 	
@@ -139,8 +139,8 @@ protected:
 	void set_voice_value(const string& port_path, uint32_t voice, const Raul::Atom& value)
 		{ if (_enabled) signal_voice_value.emit(port_path, voice, value); }
 	
-	void port_activity(const string& port_path)
-		{ if (_enabled) signal_port_activity.emit(port_path); }
+	void activity(const string& port_path)
+		{ if (_enabled) signal_activity.emit(port_path); }
 
 	void program_add(const string& path, uint32_t bank, uint32_t program, const string& name)
 		{ if (_enabled) signal_program_add.emit(path, bank, program, name); }

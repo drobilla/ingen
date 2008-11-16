@@ -155,7 +155,7 @@ OSCClientReceiver::setup_callbacks()
 	lo_server_thread_add_method(_st, "/ingen/set_property", NULL, set_property_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/set_port_value", "sf", set_port_value_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/set_voice_value", "sif", set_voice_value_cb, this);
-	lo_server_thread_add_method(_st, "/ingen/port_activity", "s", port_activity_cb, this);
+	lo_server_thread_add_method(_st, "/ingen/activity", "s", activity_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/program_add", "siis", program_add_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/program_remove", "sii", program_remove_cb, this);
 }
@@ -321,11 +321,11 @@ OSCClientReceiver::_set_voice_value_cb(const char* path, const char* types, lo_a
 
 
 int
-OSCClientReceiver::_port_activity_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCClientReceiver::_activity_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	const char* const port_path = &argv[0]->s;
 
-	_target->port_activity(port_path);
+	_target->activity(port_path);
 
 	return 0;	
 }

@@ -222,10 +222,10 @@ ClientBroadcaster::send_port_value(const string& port_path, const Raul::Atom& va
 
 
 void
-ClientBroadcaster::send_port_activity(const string& port_path)
+ClientBroadcaster::send_activity(const string& path)
 {
 	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
-		(*i).second->port_activity(port_path);
+		(*i).second->activity(path);
 }
 
 

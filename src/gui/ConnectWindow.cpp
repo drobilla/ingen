@@ -223,7 +223,7 @@ ConnectWindow::connect(bool existing)
 				   new QueuedEngineInterface(*world->local_engine,
 					   Ingen::event_queue_size, Ingen::event_queue_size));
 			world->engine = interface;
-			world->local_engine->set_event_source(interface);
+			world->local_engine->add_event_source(interface);
 		}
 		
 		SharedPtr<SigClientInterface> client(new SigClientInterface());

@@ -21,6 +21,7 @@
 #include "config.h"
 #include <cassert>
 #include <vector>
+#include <set>
 #include <boost/utility.hpp>
 #include "raul/SharedPtr.hpp"
 #include "module/global.hpp"
@@ -81,7 +82,6 @@ public:
 	virtual bool activated() { return _activated; }
 
 	Raul::Maid*        maid()               const { return _maid; }
-	EventSource*       event_source()       const { return _event_source.get(); }
 	AudioDriver*       audio_driver()       const { return _audio_driver.get(); }
 	MidiDriver*        midi_driver()        const { return _midi_driver; }
 	OSCDriver*         osc_driver()         const { return _osc_driver; }
@@ -97,9 +97,9 @@ public:
 
 	/** Set the driver for the given data type (replacing the old) */
 	virtual void set_driver(DataType type, SharedPtr<Driver> driver);
-
-	virtual void set_event_source(SharedPtr<EventSource> source);
 	virtual void set_midi_driver(MidiDriver* driver);
+
+	virtual void add_event_source(SharedPtr<EventSource> source);
 
 	Ingen::Shared::World* world() { return _world; }
 
@@ -108,9 +108,11 @@ public:
 	inline ProcessSlaves& process_slaves() { return _process_slaves; }
 	
 private:
+	typedef std::set< SharedPtr<EventSource> > EventSources;
+	EventSources _event_sources;
+
 	ProcessSlaves          _process_slaves;
 	Ingen::Shared::World*  _world;
-	SharedPtr<EventSource> _event_source;
 	SharedPtr<AudioDriver> _audio_driver;
 	MidiDriver*            _midi_driver;
 	OSCDriver*             _osc_driver;

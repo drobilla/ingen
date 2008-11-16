@@ -118,7 +118,7 @@ private:
 	// Slots for SigClientInterface signals
 	void rename(const Path& old_path, const Path& new_path);
 	void patch_cleared(const Path& path);
-	void port_activity(const Path& port_path);
+	void activity(const Path& path);
 	
 	bool attempt_connection(const Path& src_port_path, const Path& dst_port_path, bool add_orphan=false);
 	

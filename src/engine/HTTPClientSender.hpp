@@ -41,12 +41,10 @@ namespace Shared { class EngineInterface; }
  */
 class HTTPClientSender
 	: public Shared::ClientInterface
-	, public Raul::Thread
 	, public Shared::HTTPSender
 {
 public:
-	HTTPClientSender(SoupServer* s, SoupMessage* m)
-		: Shared::HTTPSender(s, m)
+	HTTPClientSender()
 	{}
 
 	bool enabled() const { return _enabled; }
@@ -58,7 +56,7 @@ public:
 	void bundle_end()     { HTTPSender::bundle_end(); }
 	void transfer_begin() { HTTPSender::transfer_begin(); }
 	void transfer_end()   { HTTPSender::transfer_end(); }
-	
+
 	std::string uri() const { return "http://example.org/"; }
 	
     void subscribe(Shared::EngineInterface* engine) { }
@@ -115,7 +113,7 @@ public:
 	                             uint32_t           voice,
 	                             const Raul::Atom&  value);
 	
-	virtual void port_activity(const std::string& port_path);
+	virtual void activity(const std::string& path);
 	
 	virtual void program_add(const std::string& node_path,
 	                         uint32_t           bank,

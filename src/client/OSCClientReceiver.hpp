@@ -95,7 +95,7 @@ private:
 	LO_HANDLER(set_property);
 	LO_HANDLER(set_port_value);
 	LO_HANDLER(set_voice_value);
-	LO_HANDLER(port_activity);
+	LO_HANDLER(activity);
 	LO_HANDLER(program_add);
 	LO_HANDLER(program_remove);
 };

@@ -148,16 +148,20 @@ HTTPEngineReceiver::message_callback(SoupServer* server, SoupMessage* msg, const
 		return;
 	} else if (path.substr(0, 6) == "/patch") {
 		path = '/' + path.substr(6);
+	
 	} else if (path.substr(0, 7) == "/stream") {
-		cout << "REGISTERING CLIENT" << endl;
-		// FIXME: memory leak
-		ClientInterface* client = new HTTPClientSender(me->_server, msg);
-		soup_message_headers_set_encoding(msg->response_headers, SOUP_ENCODING_CHUNKED);
+		HTTPClientSender* client = new HTTPClientSender();
 		me->register_client(client);
+
+		// Respond with port number of stream for client
+		const int port = client->listen_port();
+		char buf[32];
+		snprintf(buf, 32, "%d", port);
+		soup_message_set_status(msg, SOUP_STATUS_OK);
+		soup_message_set_response(msg, mime_type, SOUP_MEMORY_COPY, buf, strlen(buf));
 		return;
 		
 	} else {
-		cout << "UNKNOWN PATH: " << path << endl;
 		soup_message_set_status(msg, SOUP_STATUS_NOT_FOUND);
 		soup_message_set_response(msg, "text/plain", SOUP_MEMORY_STATIC,
 				"Unknown path\n\n", 14);
