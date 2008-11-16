@@ -48,32 +48,32 @@ Port::Port(
 	, _flipped(flip)
 {
 	assert(module);
-	assert(_port_model);
+	assert(pm);
 
 	delete _menu;
 	_menu = NULL;
 	
-	_port_model->signal_renamed.connect(sigc::mem_fun(this, &Port::renamed));
+	pm->signal_renamed.connect(sigc::mem_fun(this, &Port::renamed));
 
 	if (pm->type().is_control()) {
 		set_toggled(pm->is_toggle());
 		show_control();
 		
 		float min = 0.0f, max = 1.0f;
-		boost::shared_ptr<NodeModel> parent = PtrCast<NodeModel>(_port_model->parent());
+		boost::shared_ptr<NodeModel> parent = PtrCast<NodeModel>(pm->parent());
 		if (parent)
-			parent->port_value_range(_port_model, min, max);
+			parent->port_value_range(pm, min, max);
 
 		set_control_min(min);
 		set_control_max(max);
 
 		pm->signal_variable.connect(sigc::mem_fun(this, &Port::variable_changed));
-		_port_model->signal_value_changed.connect(sigc::mem_fun(this, &Port::value_changed));
+		pm->signal_value_changed.connect(sigc::mem_fun(this, &Port::value_changed));
 	}
 		
-	_port_model->signal_activity.connect(sigc::mem_fun(this, &Port::activity));
+	pm->signal_activity.connect(sigc::mem_fun(this, &Port::activity));
 	
-	value_changed(_port_model->value());
+	value_changed(pm->value());
 }
 
 
@@ -89,7 +89,7 @@ Port::create_menu()
 	PortMenu* menu = NULL;
 	Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference();
 	xml->get_widget_derived("object_menu", menu);
-	menu->init(_port_model, _flipped);
+	menu->init(model(), _flipped);
 	set_menu(menu);
 }
 
@@ -97,7 +97,7 @@ Port::create_menu()
 void
 Port::renamed()
 {
-	set_name(_port_model->path().name());
+	set_name(model()->path().name());
 	module().lock()->resize();
 }
 
@@ -123,10 +123,10 @@ void
 Port::set_control(float value, bool signal)
 {
 	if (signal) {
-		if (_port_model->type() == DataType::CONTROL) {
-			App::instance().engine()->set_port_value(_port_model->path(), Atom(value));
-		} else if (_port_model->type() == DataType::EVENT) {
-			App::instance().engine()->set_port_value(_port_model->path(),
+		if (model()->type() == DataType::CONTROL) {
+			App::instance().engine()->set_port_value(model()->path(), Atom(value));
+		} else if (model()->type() == DataType::EVENT) {
+			App::instance().engine()->set_port_value(model()->path(),
 					Atom("<http://example.org/ev#BangEvent>", 0, NULL));
 		}
 	}

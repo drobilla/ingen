@@ -379,10 +379,20 @@ PatchCanvas::remove_port(SharedPtr<PortModel> pm)
 {
 	Views::iterator i = _views.find(pm);
 
+	// Port on this patch
 	if (i != _views.end()) {
-		remove_item(i->second);
 		_views.erase(i);
+		bool ret = remove_item(i->second);
+		if (!ret)
+			cerr << "WARNING: Failed to remove port item: " << pm->path() << endl;
+		i->second.reset();
+	
+	} else {
+		SharedPtr<NodeModule> module = PtrCast<NodeModule>(_views[pm->parent()]);
+		module->remove_port(pm);
 	}
+	
+	assert(_views.find(pm) == _views.end());
 }
 
 

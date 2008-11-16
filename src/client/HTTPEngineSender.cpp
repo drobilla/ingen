@@ -100,6 +100,13 @@ HTTPEngineSender::quit()
 
 // Object commands
 
+bool
+HTTPEngineSender::new_object(const Shared::GraphObject* object)
+{
+	return false;
+}
+
+
 void
 HTTPEngineSender::new_patch(const string& path,
                             uint32_t      poly)

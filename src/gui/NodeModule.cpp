@@ -49,7 +49,7 @@ NodeModule::NodeModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeMode
 	assert(_node);
 
 	node->signal_new_port.connect(sigc::bind(sigc::mem_fun(this, &NodeModule::add_port), true));
-	node->signal_removed_port.connect(sigc::mem_fun(this, &NodeModule::remove_port));
+	node->signal_removed_port.connect(sigc::hide_return(sigc::mem_fun(this, &NodeModule::remove_port)));
 	node->signal_variable.connect(sigc::mem_fun(this, &NodeModule::set_variable));
 	node->signal_property.connect(sigc::mem_fun(this, &NodeModule::set_property));
 	node->signal_renamed.connect(sigc::mem_fun(this, &NodeModule::rename));
@@ -250,12 +250,31 @@ NodeModule::add_port(SharedPtr<PortModel> port, bool resize_to_fit)
 		resize();
 }
 
+	
+boost::shared_ptr<Port>
+NodeModule::port(boost::shared_ptr<PortModel> model)
+{
+	for (PortVector::const_iterator p = ports().begin(); p != ports().end(); ++p) {
+		SharedPtr<Port> port = PtrCast<Port>(*p);
+		if (port->model() == model) {
+			cout << "FOUND: " << model->path() << endl;
+			return port;
+		}
+	}
+	return boost::shared_ptr<Port>();
+}
+
 
 void
-NodeModule::remove_port(SharedPtr<PortModel> port)
+NodeModule::remove_port(SharedPtr<PortModel> model)
 {
-	SharedPtr<FlowCanvas::Port> p = Module::remove_port(port->path().name());
-	p.reset();
+	SharedPtr<Port> p = port(model);
+	if (p) {
+		Module::remove_port(p);
+		p.reset();
+	} else {
+		cerr << "WARNING: Failed to find port on module: " << model->path() << endl;
+	}
 }
 
 

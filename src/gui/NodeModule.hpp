@@ -54,11 +54,10 @@ public:
 			bool human_names);
 
 	virtual ~NodeModule();
-
-	boost::shared_ptr<Port> port(const std::string& port_name) {
-		return boost::dynamic_pointer_cast<Ingen::GUI::Port>(
-			Module::get_port(port_name));
-	}
+	
+	boost::shared_ptr<Port> port(boost::shared_ptr<PortModel> model);
+	
+	void remove_port(SharedPtr<PortModel> port);
 
 	virtual void store_location();
 	void show_human_names(bool b);
@@ -81,7 +80,6 @@ protected:
 	void set_property(const std::string& predicate, const Raul::Atom& value);
 	
 	void add_port(SharedPtr<PortModel> port, bool resize=true);
-	void remove_port(SharedPtr<PortModel> port);
 
 	void value_changed(uint32_t index, const Atom& value);
 	void initialise_gui_values();

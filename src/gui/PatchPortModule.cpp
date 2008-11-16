@@ -42,20 +42,6 @@ PatchPortModule::PatchPortModule(boost::shared_ptr<PatchCanvas> canvas, SharedPt
 
 	assert(PtrCast<PatchModel>(port->parent()));
 
-	/*resize();
-
-	const Atom& x_atom = port->get_variable("ingenuity:canvas-x");
-	const Atom& y_atom = port->get_variable("ingenuity:canvas-y");
-
-	if (x_atom && y_atom && x_atom.type() == Atom::FLOAT && y_atom.type() == Atom::FLOAT) {
-		move_to(x_atom.get_float(), y_atom.get_float());
-	} else {
-		double default_x;
-		double default_y;
-		canvas->get_new_module_location(default_x, default_y);
-		move_to(default_x, default_y);
-	}*/
-	
 	set_stacked_border(port->polyphonic());
 
 	port->signal_variable.connect(sigc::mem_fun(this, &PatchPortModule::set_variable));
@@ -70,11 +56,9 @@ PatchPortModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<PortMod
 		new PatchPortModule(canvas, port));
 	assert(ret);
 
-	ret->_patch_port = boost::shared_ptr<Port>(new Port(ret, port, port->symbol(), true));
-
-	ret->add_port(ret->_patch_port);
-
-	ret->set_menu(ret->_patch_port->menu());
+	boost::shared_ptr<Port> view(new Port(ret, port, port->symbol(), true));
+	ret->add_port(view);
+	ret->set_menu(view->menu());
 	
 	for (GraphObject::Variables::const_iterator m = port->variables().begin(); m != port->variables().end(); ++m)
 		ret->set_variable(m->first, m->second);

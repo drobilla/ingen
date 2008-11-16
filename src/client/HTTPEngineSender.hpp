@@ -76,6 +76,8 @@ public:
 	
 	// Object commands
 	
+	bool new_object(const Shared::GraphObject* object);
+
 	void new_patch(const string& path,
 	               uint32_t      poly);
 

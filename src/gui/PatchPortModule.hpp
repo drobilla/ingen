@@ -51,8 +51,6 @@ class PatchPortModule : public FlowCanvas::Module
 public:
 	static boost::shared_ptr<PatchPortModule> create(boost::shared_ptr<PatchCanvas> canvas,
 	                                                 SharedPtr<PortModel>          port);
-
-	virtual ~PatchPortModule() {}
 	
 	virtual void store_location();
 
@@ -69,7 +67,6 @@ protected:
 
 	SharedPtr<PortModel> _port;
 	PortMenu*            _menu;
-	SharedPtr<Port>      _patch_port; ///< Port on this 'anonymous' module
 };
 
 

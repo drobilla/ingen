@@ -22,6 +22,7 @@
 #include <string>
 #include "flowcanvas/Port.hpp"
 #include "raul/SharedPtr.hpp"
+#include "raul/WeakPtr.hpp"
 #include "raul/Atom.hpp"
 
 namespace Ingen { namespace Client { class PortModel; } }
@@ -45,7 +46,7 @@ public:
 
 	~Port();
 
-	SharedPtr<PortModel> model() const { return _port_model; }
+	SharedPtr<PortModel> model() const { return _port_model.lock(); }
 
 	void create_menu();
 	
@@ -59,8 +60,8 @@ private:
 
 	void renamed();
 
-	SharedPtr<PortModel> _port_model;
-	bool                 _flipped;
+	WeakPtr<PortModel> _port_model;
+	bool               _flipped;
 };
 
 
