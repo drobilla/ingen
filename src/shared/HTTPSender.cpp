@@ -109,7 +109,7 @@ HTTPSender::_run()
 		_signal.wait(_mutex);
 
 		write(_client_sock, _transfer.c_str(), _transfer.length());
-		write(_client_sock, "\n\n\n", 2);
+		write(_client_sock, "\n\n\n", 3);
 
 		_signal.broadcast();
 		_mutex.unlock();

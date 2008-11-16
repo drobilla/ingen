@@ -17,6 +17,7 @@
 
 #include <string>
 #include "raul/Atom.hpp"
+#include "raul/AtomRDF.hpp"
 #include "serialisation/Serialiser.hpp"
 #include "module/World.hpp"
 #include "HTTPClientSender.hpp"
@@ -69,8 +70,7 @@ void
 HTTPClientSender::destroy(const std::string& path)
 {
 	assert(path != "/");
-	
-	//send("/ingen/destroyed", "s", path.c_str(), LO_ARGS_END);
+	send_chunk(string("<").append(path).append("> a <http://www.w3.org/2002/07/owl#Nothing> ."));
 }
 
 
@@ -78,7 +78,6 @@ void
 HTTPClientSender::patch_cleared(const std::string& patch_path)
 {
 	send_chunk(string("<").append(patch_path).append("> ingen:empty true ."));
-	//send("/ingen/patch_cleared", "s", patch_path.c_str(), LO_ARGS_END);
 }
 
 
@@ -99,11 +98,17 @@ HTTPClientSender::disconnect(const std::string& src_path, const std::string& dst
 void
 HTTPClientSender::set_variable(const std::string& path, const std::string& key, const Atom& value)
 {
-	/*lo_message m = lo_message_new();
-	lo_message_add_string(m, path.c_str());
-	lo_message_add_string(m, key.c_str());
-	Raul::AtomLiblo::lo_message_add_atom(m, value);
-	send_message("/ingen/set_variable", m);*/
+	Redland::Node node = AtomRDF::atom_to_node(*_engine.world()->rdf_world, value);
+
+	string msg = string(
+			"@prefix rdf:       <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n" 
+			"@prefix ingenuity: <http://drobilla.net/ns/ingenuity#> .\n"
+			"@prefix lv2var:    <http://lv2plug.in/ns/ext/instance-var#> .\n\n<").append(
+			path).append("> lv2var:variable [\n"
+			"rdf:predicate ").append(key).append(" ;\n"
+			"rdf:value     ").append(node.to_string()).append("\n] .\n");
+
+	send_chunk(msg);
 }
 
 

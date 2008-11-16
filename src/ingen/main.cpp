@@ -117,6 +117,7 @@ main(int argc, char** argv)
 	world->rdf_world->add_prefix("lv2var", "http://lv2plug.in/ns/ext/instance-var#");
 	world->rdf_world->add_prefix("lv2_midi", "http://lv2plug.in/ns/ext/midi");
 	world->rdf_world->add_prefix("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
+	world->rdf_world->add_prefix("owl", "http://www.w3.org/2002/07/owl#");
 	world->rdf_world->add_prefix("doap", "http://usefulinc.com/ns/doap#");
 	world->rdf_world->add_prefix("dc", "http://purl.org/dc/elements/1.1/");
 

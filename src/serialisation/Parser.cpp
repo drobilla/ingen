@@ -123,14 +123,49 @@ Parser::parse(
 	Glib::ustring query_str;
 	if (object_uri && object_uri.get()[0] == '/')
 		object_uri = object_uri.get().substr(1);
+		
+	// Delete anything explicitly declared to not exist
+	query_str = Glib::ustring("SELECT DISTINCT ?o WHERE { ?o a owl:Nothing }");
+	Redland::Query query(*world->rdf_world, query_str);
+	Redland::Query::Results results = query.run(*world->rdf_world, model, base_uri);
+	
+	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
+		const Redland::Node& object = (*i)["o"];
+		target->destroy(object.to_string());
+	}
+	
+	// Variable settings
+	query = Redland::Query(*world->rdf_world,
+		"SELECT DISTINCT ?path ?varkey ?varval WHERE {\n"
+		"?path     lv2var:variable ?variable .\n"
+		"?variable rdf:predicate   ?varkey ;\n"
+		"          rdf:value       ?varval .\n"
+		"}");
+	
+	results = Redland::Query::Results(query.run(*world->rdf_world, model, base_uri));
+	world->rdf_world->mutex().lock();
+	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
+		const string obj_path = (*i)["path"].to_string();
+		const string key = world->rdf_world->prefixes().qualify((*i)["varkey"].to_string());
+		const Redland::Node& val_node = (*i)["varval"];
+
+		cout << "VALUE: " << val_node.to_string() << endl;
+		cout << "TYPE: " << AtomRDF::node_to_atom(val_node).type() << endl;
+		cout << "ATOM: " << AtomRDF::node_to_atom(val_node).get_float() << endl;
+
+		if (key != "")
+			target->set_variable(obj_path, key, AtomRDF::node_to_atom(val_node));
+	}
+	world->rdf_world->mutex().unlock();
+
 
 	if (object_uri)
 		query_str = Glib::ustring("SELECT DISTINCT ?class WHERE { <") + object_uri.get() + "> a ?class . }";
 	else
 		query_str = Glib::ustring("SELECT DISTINCT ?subject ?class WHERE { ?subject a ?class . }");
 
-	Redland::Query query(*world->rdf_world, query_str);
-	Redland::Query::Results results = query.run(*world->rdf_world, model, base_uri);
+	query = Redland::Query(*world->rdf_world, query_str);
+	results = Redland::Query::Results(query.run(*world->rdf_world, model, base_uri));
 	
 	const Redland::Node patch_class(*world->rdf_world, res, NS_INGEN "Patch");
 	const Redland::Node node_class(*world->rdf_world, res, NS_INGEN "Node");
@@ -277,6 +312,7 @@ Parser::parse_patch(
 
 	//if (patch_path != "/")
 		target->new_patch(patch_path, patch_poly);
+	
 
 	/* Plugin nodes */
 	Redland::Query query(*world->rdf_world, Glib::ustring(
