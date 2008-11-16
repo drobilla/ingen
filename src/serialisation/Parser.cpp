@@ -123,6 +123,9 @@ Parser::parse(
 	Glib::ustring query_str;
 	if (object_uri && object_uri.get()[0] == '/')
 		object_uri = object_uri.get().substr(1);
+	
+
+	/* **** First query out global information (top-level info) **** */
 		
 	// Delete anything explicitly declared to not exist
 	query_str = Glib::ustring("SELECT DISTINCT ?o WHERE { ?o a owl:Nothing }");
@@ -148,14 +151,32 @@ Parser::parse(
 		const string obj_path = (*i)["path"].to_string();
 		const string key = world->rdf_world->prefixes().qualify((*i)["varkey"].to_string());
 		const Redland::Node& val_node = (*i)["varval"];
-
 		if (key != "")
 			target->set_variable(obj_path, key, AtomRDF::node_to_atom(val_node));
 	}
 	world->rdf_world->mutex().unlock();
 
+	// Connections
 	parse_connections(world, target, model, base_uri, "", "/");
+	
+	// Port values
+	query = Redland::Query(*world->rdf_world,
+		"SELECT DISTINCT ?path ?value WHERE {\n"
+		"?path ingen:value ?value .\n"
+		"}");
+	
+	results = Redland::Query::Results(query.run(*world->rdf_world, model, base_uri));
+	world->rdf_world->mutex().lock();
+	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
+		const string obj_path = (*i)["path"].to_string();
+		const Redland::Node& val_node = (*i)["value"];
+		target->set_port_value(obj_path, AtomRDF::node_to_atom(val_node));
+	}
+	world->rdf_world->mutex().unlock();
 
+
+	/* **** Now query out objects **** */
+	
 	if (object_uri)
 		query_str = Glib::ustring("SELECT DISTINCT ?class WHERE { <") + object_uri.get() + "> a ?class . }";
 	else

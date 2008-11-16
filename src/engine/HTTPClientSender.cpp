@@ -158,7 +158,11 @@ HTTPClientSender::set_voice_value(const std::string& port_path, uint32_t voice, 
 void
 HTTPClientSender::activity(const std::string& path)
 {
-	//lo_send(_address, "/ingen/activity", "s", port_path.c_str(), LO_ARGS_END);
+	string msg = string(
+			"@prefix rdf:       <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n" 
+			"@prefix ingen:     <http://drobilla.net/ns/ingen#> .\n\n<").append(
+			path).append("> ingen:activity true .\n");
+	send_chunk(msg);
 }
 
 static void null_deleter(const Shared::GraphObject*) {}
