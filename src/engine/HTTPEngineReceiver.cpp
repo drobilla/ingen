@@ -150,7 +150,7 @@ HTTPEngineReceiver::message_callback(SoupServer* server, SoupMessage* msg, const
 		path = '/' + path.substr(6);
 	
 	} else if (path.substr(0, 7) == "/stream") {
-		HTTPClientSender* client = new HTTPClientSender();
+		HTTPClientSender* client = new HTTPClientSender(me->_engine);
 		me->register_client(client);
 
 		// Respond with port number of stream for client

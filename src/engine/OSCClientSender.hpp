@@ -25,6 +25,7 @@
 #include <pthread.h>
 #include "types.hpp"
 #include "interface/ClientInterface.hpp"
+#include "interface/GraphObject.hpp"
 #include "shared/OSCSender.hpp"
 
 namespace Ingen {
@@ -75,6 +76,8 @@ public:
 	                        const std::string& type_uri,
 	                        const std::string& symbol,
 	                        const std::string& name);
+	
+	virtual void new_object(const Shared::GraphObject* object);
 	
 	virtual void new_patch(const std::string& path, uint32_t poly);
 	

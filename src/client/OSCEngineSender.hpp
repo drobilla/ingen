@@ -80,6 +80,8 @@ public:
 	
 	// Object commands
 	
+	void new_object(const Shared::GraphObject* object);
+	
 	void new_patch(const string& path,
 	               uint32_t      poly);
 

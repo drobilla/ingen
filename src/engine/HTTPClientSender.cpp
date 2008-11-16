@@ -17,7 +17,10 @@
 
 #include <string>
 #include "raul/Atom.hpp"
+#include "serialisation/Serialiser.hpp"
+#include "module/World.hpp"
 #include "HTTPClientSender.hpp"
+#include "Engine.hpp"
 
 using namespace std;
 using namespace Raul;
@@ -74,6 +77,7 @@ HTTPClientSender::destroy(const std::string& path)
 void
 HTTPClientSender::patch_cleared(const std::string& patch_path)
 {
+	send_chunk(string("<").append(patch_path).append("> ingen:empty true ."));
 	//send("/ingen/patch_cleared", "s", patch_path.c_str(), LO_ARGS_END);
 }
 
@@ -140,6 +144,20 @@ HTTPClientSender::activity(const std::string& path)
 	//lo_send(_address, "/ingen/activity", "s", port_path.c_str(), LO_ARGS_END);
 }
 
+static void null_deleter(const Shared::GraphObject*) {}
+
+void
+HTTPClientSender::new_object(const Shared::GraphObject* object)
+{
+	SharedPtr<Serialisation::Serialiser> serialiser = _engine.world()->serialiser;
+	serialiser->start_to_string("/", "");
+	// FIXME
+	boost::shared_ptr<Shared::GraphObject> obj((Shared::GraphObject*)object, null_deleter);
+	serialiser->serialise(obj);
+	string str = serialiser->finish();
+	send_chunk(str);
+}
+
 
 void
 HTTPClientSender::new_plugin(const std::string& uri,
@@ -159,7 +177,7 @@ HTTPClientSender::new_plugin(const std::string& uri,
 void
 HTTPClientSender::new_patch(const std::string& path, uint32_t poly)
 {
-	send_chunk(string("<").append(path).append("> a ingen:Patch"));
+	//send_chunk(string("<").append(path).append("> a ingen:Patch"));
 }
 
 

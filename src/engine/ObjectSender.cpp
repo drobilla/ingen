@@ -31,6 +31,31 @@ namespace Ingen {
 
 
 void
+ObjectSender::send_object(ClientInterface* client, const GraphObjectImpl* object, bool recursive)
+{
+	client->new_object(object);
+
+	const PatchImpl* patch = dynamic_cast<const PatchImpl*>(object);
+	if (patch) {
+		send_patch(client, patch, recursive);
+		return;
+	}
+	
+	const NodeImpl* node = dynamic_cast<const NodeImpl*>(object);
+	if (node) {
+		send_node(client, node, recursive);
+		return;
+	}
+
+	const PortImpl* port = dynamic_cast<const PortImpl*>(object);
+	if (port) {
+		send_port(client, port);
+		return;
+	}
+}
+
+
+void
 ObjectSender::send_patch(ClientInterface* client, const PatchImpl* patch, bool recursive)
 {
 	client->bundle_begin();

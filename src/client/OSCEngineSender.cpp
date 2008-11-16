@@ -18,6 +18,9 @@
 #include <iostream>
 #include "raul/AtomLiblo.hpp"
 #include "OSCEngineSender.hpp"
+#include "common/interface/Patch.hpp"
+#include "common/interface/Port.hpp"
+#include "common/interface/Plugin.hpp"
 
 using namespace std;
 using Raul::Atom;
@@ -126,6 +129,32 @@ OSCEngineSender::quit()
 
 		
 // Object commands
+
+
+void
+OSCEngineSender::new_object(const Shared::GraphObject* object)
+{
+	using namespace Shared;
+
+	const Patch* patch = dynamic_cast<const Patch*>(object);
+	if (patch) {
+		new_patch(patch->path(), patch->internal_polyphony());
+		return;
+	}
+	
+	const Node* node = dynamic_cast<const Node*>(object);
+	if (node) {
+		new_node(node->path(), node->plugin()->uri());
+		return;
+	}
+
+	const Port* port = dynamic_cast<const Port*>(object);
+	if (port) {
+		new_port(port->path(), port->type().uri(), port->index(), !port->is_input());
+		return;
+	}
+}
+
 
 void
 OSCEngineSender::new_patch(const string& path,

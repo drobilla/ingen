@@ -21,6 +21,7 @@
 #include <cstdlib>
 #include <boost/utility.hpp>
 #include <libsoup/soup.h>
+#include <glibmm/thread.h>
 #include "redlandmm/World.hpp"
 #include "raul/Deletable.hpp"
 #include "raul/Thread.hpp"
@@ -48,20 +49,23 @@ public:
 private:
 	static void message_callback(SoupSession* session, SoupMessage* msg, void* ptr);
 
+	void update(const std::string& str);
+
 	class Listener : public Raul::Thread {
 	public:
-		Listener(SoupSession* session, const std::string uri);
+		Listener(HTTPClientReceiver* receiver, const std::string uri);
 		~Listener();
 		void _run();
 	private:
-		std::string  _uri;
-		int          _sock;
-		SoupSession* _session;
+		std::string         _uri;
+		int                 _sock;
+		HTTPClientReceiver* _receiver;
 	};
 	
 	friend class Listener;
 	SharedPtr<Listener> _listener;
 
+	Glib::Mutex _mutex;
 	SharedPtr<Shared::ClientInterface> _target;
 
 	Shared::World*    _world;

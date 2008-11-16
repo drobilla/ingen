@@ -142,7 +142,7 @@ CreateNodeEvent::post_process()
 		_responder->respond_error(msg);
 	} else {
 		_responder->respond_ok();
-		_engine.broadcaster()->send_node(_node, true); // yes, send ports
+		_engine.broadcaster()->send_object(_node, true); // yes, send ports
 	}
 }
 

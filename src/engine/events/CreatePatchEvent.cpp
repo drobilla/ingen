@@ -127,7 +127,8 @@ CreatePatchEvent::post_process()
 			
 			// Don't send ports/nodes that have been added since prepare()
 			// (otherwise they would be sent twice)
-			_engine.broadcaster()->send_patch(_patch, false);
+			//_engine.broadcaster()->send_patch(_patch, false);
+			_engine.broadcaster()->send_object(_patch, false);
 			
 		} else if (_error == INVALID_PATH) {
 			string msg = "Attempt to create patch with illegal path ";

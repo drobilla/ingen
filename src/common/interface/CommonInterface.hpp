@@ -23,6 +23,7 @@
 #include "raul/SharedPtr.hpp"
 #include "raul/Atom.hpp"
 #include "interface/CommonInterface.hpp"
+#include "interface/GraphObject.hpp"
 
 namespace Ingen {
 namespace Shared {
@@ -44,6 +45,8 @@ public:
 	/** End (and send) an atomic bundle */
 	virtual void bundle_end() = 0;
 	
+	virtual void new_object(const GraphObject* object) = 0;
+
 	virtual void new_patch(const std::string& path,
 	                       uint32_t           poly) = 0;
 	

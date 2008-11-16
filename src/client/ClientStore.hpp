@@ -70,6 +70,7 @@ public:
 	
 	// CommonInterface
 	void new_plugin(const string& uri, const string& type_uri, const string& symbol, const string& name);
+	void new_object(const Shared::GraphObject* object);
 	void new_patch(const string& path, uint32_t poly);
 	void new_node(const string& path, const string& plugin_uri);
 	void new_port(const string& path, const string& type, uint32_t index, bool is_output);

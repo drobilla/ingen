@@ -109,8 +109,9 @@ HTTPSender::_run()
 		_signal.wait(_mutex);
 
 		write(_client_sock, _transfer.c_str(), _transfer.length());
-		write(_client_sock, "\n\n", 2);
+		write(_client_sock, "\n\n\n", 2);
 
+		_signal.broadcast();
 		_mutex.unlock();
 	}
 
@@ -125,16 +126,15 @@ HTTPSender::bundle_begin()
 	_mutex.lock();
 	_send_state = SendingBundle;
 	_transfer = "";
-	_mutex.unlock();
 }
 
 
 void
 HTTPSender::bundle_end()
 {
-	_mutex.lock();
 	assert(_send_state == SendingBundle);
 	_signal.broadcast();
+	_signal.wait(_mutex);
 	_send_state = Immediate;
 	_mutex.unlock();
 }
@@ -143,16 +143,15 @@ HTTPSender::bundle_end()
 void
 HTTPSender::send_chunk(const std::string& buf)
 {
-	_mutex.lock();
-	
 	if (_send_state == Immediate) {
-		_transfer = "";
+		_mutex.lock();
+		_transfer = buf;
 		_signal.broadcast();
+		_signal.wait(_mutex);
+		_mutex.unlock();
 	} else {
 		_transfer.append(buf);
 	}
-	
-	_mutex.unlock();
 }
 
 

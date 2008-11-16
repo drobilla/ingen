@@ -31,6 +31,7 @@ using std::string;
 
 namespace Ingen {
 
+class GraphObjectImpl;
 class NodeImpl;
 class PortImpl;
 class PluginImpl;
@@ -61,11 +62,12 @@ public:
 	
 	void bundle_begin();
 	void bundle_end();
-	
+
 	// Error that isn't the direct result of a request
 	void send_error(const string& msg);
-
+	
 	void send_plugins(const NodeFactory::Plugins& plugin_list);
+	void send_object(const GraphObjectImpl* p, bool recursive);
 	void send_patch(const PatchImpl* p, bool recursive);
 	void send_node(const NodeImpl* node, bool recursive);
 	void send_port(const PortImpl* port);

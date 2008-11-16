@@ -15,8 +15,11 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "ThreadedSigClientInterface.hpp"
 #include <iostream>
+#include "common/interface/Patch.hpp"
+#include "common/interface/Plugin.hpp"
+#include "common/interface/Port.hpp"
+#include "ThreadedSigClientInterface.hpp"
 
 using namespace std;
 
@@ -71,6 +74,30 @@ ThreadedSigClientInterface::emit_signals()
 	_mutex.unlock();
 
 	return true;
+}
+
+
+void
+ThreadedSigClientInterface::new_object(const Shared::GraphObject* object)
+{
+	using namespace Shared;
+	const Patch* patch = dynamic_cast<const Patch*>(object);
+	if (patch) {
+		new_patch(patch->path(), patch->internal_polyphony());
+		return;
+	}
+
+	const Node* node = dynamic_cast<const Node*>(object);
+	if (node) {
+		new_node(node->path(), node->plugin()->uri());
+		return;
+	}
+
+	const Port* port = dynamic_cast<const Port*>(object);
+	if (port) {
+		new_port(port->path(), port->type().uri(), port->index(), !port->is_input());
+		return;
+	}
 }
 
 

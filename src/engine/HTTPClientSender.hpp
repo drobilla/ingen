@@ -30,6 +30,8 @@
 
 namespace Ingen {
 
+class Engine;
+
 namespace Shared { class EngineInterface; }
 
 
@@ -44,7 +46,8 @@ class HTTPClientSender
 	, public Shared::HTTPSender
 {
 public:
-	HTTPClientSender()
+	HTTPClientSender(Engine& engine)
+		: _engine(engine)
 	{}
 
 	bool enabled() const { return _enabled; }
@@ -69,6 +72,8 @@ public:
 	void response_error(int32_t id, const std::string& msg);
 
 	void error(const std::string& msg);
+	
+	virtual void new_object(const Shared::GraphObject* object);
 
 	virtual void new_plugin(const std::string& uri,
 	                        const std::string& type_uri,
@@ -125,6 +130,7 @@ public:
 	                            uint32_t           program);
 
 private:
+	Engine&     _engine;
 	std::string _url;
 	bool        _enabled;
 };

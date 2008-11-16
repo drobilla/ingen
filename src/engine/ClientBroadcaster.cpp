@@ -245,9 +245,21 @@ ClientBroadcaster::send_program_remove(const string& node_path, int bank, int pr
 }
 
 
+/** Send an object.
+ *
+ * @param recursive If true send all children of object
+ */
+void
+ClientBroadcaster::send_object(const GraphObjectImpl* p, bool recursive)
+{
+	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
+		ObjectSender::send_object((*i).second, p, recursive);
+}
+
+
 /** Send a patch.
  *
- * Sends all objects underneath Patch - contained Nodes, etc.
+ * @param recursive If true send all children of object
  */
 void
 ClientBroadcaster::send_patch(const PatchImpl* p, bool recursive)

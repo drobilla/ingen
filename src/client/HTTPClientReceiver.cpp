@@ -56,9 +56,9 @@ HTTPClientReceiver::Listener::~Listener()
 	close(_sock);
 }
 
-HTTPClientReceiver::Listener::Listener(SoupSession* session, const std::string uri)
+HTTPClientReceiver::Listener::Listener(HTTPClientReceiver* receiver, const std::string uri)
 	: _uri(uri)
-	, _session(session)
+	, _receiver(receiver)
 {
 	string port_str = uri.substr(uri.find_last_of(":")+1);
 	int port = atoi(port_str.c_str());
@@ -94,25 +94,34 @@ HTTPClientReceiver::Listener::Listener(SoupSession* session, const std::string u
 	}
 }
 
+void
+HTTPClientReceiver::update(const std::string& str)
+{
+	cout << "UPDATE: " << str << endl;
+	cout << _parser->parse_string(_world, _target.get(), str, "/", "/");
+}
 
 void
 HTTPClientReceiver::Listener::_run()
 {
-	char   in   = '\0';
-	char   last = '\0';
-	string recv = "";
+	char   in    = '\0';
+	char   last  = '\0';
+	char   llast = '\0';
+	string recv  = "";
 
 	while (true) {
 		while (read(_sock, &in, 1) > 0 ) {
 			recv += in;
-			if (last == '\n' && in == '\n') {
+			if (in == '\n' && last == '\n' && llast == '\n') {
 				if (recv != "") {
-					cout << "RECEIVED UPDATE:\n" << recv << endl;
+					_receiver->update(recv);
 					recv = "";
 					last = '\0';
+					llast = '\0';
 				}
 				break;
 			}
+			llast = last;
 			last = in;
 		}
 	}
@@ -129,11 +138,13 @@ HTTPClientReceiver::message_callback(SoupSession* session, SoupMessage* msg, voi
 	if (path == "/") {
 		me->_target->response_ok(0);
 		me->_target->enable();
+
 	
 	} else if (path == "/plugins") {
 		if (msg->response_body->data == NULL) {
 			cout << "ERROR: Empty response" << endl;
 		} else {
+			Glib::Mutex::Lock lock(me->_mutex);
 			me->_target->response_ok(0);
 			me->_target->enable();
 			me->_parser->parse_string(me->_world, me->_target.get(),
@@ -145,6 +156,7 @@ HTTPClientReceiver::message_callback(SoupSession* session, SoupMessage* msg, voi
 		if (msg->response_body->data == NULL) {
 			cout << "ERROR: Empty response" << endl;
 		} else {
+			Glib::Mutex::Lock lock(me->_mutex);
 			me->_target->response_ok(0);
 			me->_target->enable();
 			me->_parser->parse_string(me->_world, me->_target.get(),
@@ -156,11 +168,12 @@ HTTPClientReceiver::message_callback(SoupSession* session, SoupMessage* msg, voi
 		if (msg->response_body->data == NULL) {
 			cout << "ERROR: Empty response" << endl;
 		} else {
+			Glib::Mutex::Lock lock(me->_mutex);
 			string uri = string(soup_uri_to_string(soup_message_get_uri(msg), false));
 			uri = uri.substr(0, uri.find_last_of(":"));
 			uri += string(":") + msg->response_body->data;
 			cout << "Stream URI: " << uri << endl;
-			me->_listener = boost::shared_ptr<Listener>(new Listener(me->_session, uri));
+			me->_listener = boost::shared_ptr<Listener>(new Listener(me, uri));
 			me->_listener->start();
 		}
 

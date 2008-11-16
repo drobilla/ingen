@@ -154,7 +154,7 @@ CreatePortEvent::post_process()
 		_responder->respond_error(msg);
 	} else {
 		_responder->respond_ok();
-		_engine.broadcaster()->send_port(_patch_port);
+		_engine.broadcaster()->send_object(_patch_port, true);
 	}
 }
 

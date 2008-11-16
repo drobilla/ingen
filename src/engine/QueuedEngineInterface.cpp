@@ -139,6 +139,13 @@ QueuedEngineInterface::bundle_end()
 // Object commands
 
 void
+QueuedEngineInterface::new_object(const GraphObject* object)
+{
+	cout << "NEW OBJECT" << endl;
+}
+
+
+void
 QueuedEngineInterface::new_patch(const string& path,
                                  uint32_t      poly)
 {
