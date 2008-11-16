@@ -64,6 +64,11 @@ public:
 	const Atom& get_variable(const string& key) const;
 	Atom&       get_variable( string& key);
 	
+	virtual void set_property(const string& key, const Atom& value) {
+		ResourceImpl::set_property(key, value);
+		signal_property.emit(key, value);
+	}
+	
 	virtual void set_variable(const string& key, const Atom& value)
 		{ _variables[key] = value; signal_variable.emit(key, value); }
 

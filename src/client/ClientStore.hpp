@@ -29,7 +29,8 @@
 #include "raul/TableImpl.hpp"
 #include "interface/EngineInterface.hpp"
 #include "shared/Store.hpp"
-using std::string; using std::list;
+
+using namespace std;
 using Ingen::Shared::EngineInterface;
 using Raul::Path;
 using Raul::Atom;

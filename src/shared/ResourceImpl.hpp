@@ -37,7 +37,7 @@ public:
 	const Properties& properties() const { return _properties; }
 	Properties&       properties()       { return _properties; }
 
-	void set_property(const std::string& uri, const Raul::Atom& value) {
+	virtual void set_property(const std::string& uri, const Raul::Atom& value) {
 		_properties[uri] = value;
 	}
 
