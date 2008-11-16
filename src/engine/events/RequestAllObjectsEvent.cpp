@@ -21,6 +21,7 @@
 #include "ObjectSender.hpp"
 #include "ClientBroadcaster.hpp"
 #include "EngineStore.hpp"
+#include "PatchImpl.hpp"
 
 namespace Ingen {
 
@@ -47,7 +48,7 @@ RequestAllObjectsEvent::post_process()
 		// Everything is a child of the root patch, so this sends it all
 		PatchImpl* root = _engine.engine_store()->find_patch("/");
 		if (root && _responder->client())
-			ObjectSender::send_patch(_responder->client(), root, true);
+			ObjectSender::send_object(_responder->client(), root, true);
 
 	} else {
 		_responder->respond_error("Unable to find client to send all objects");

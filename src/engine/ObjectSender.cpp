@@ -33,8 +33,6 @@ namespace Ingen {
 void
 ObjectSender::send_object(ClientInterface* client, const GraphObjectImpl* object, bool recursive)
 {
-	cout << "SEND OBJECT " << object->path() << " RECURSIVE: " << recursive << endl;
-
 	if (client->new_object(object))
 		return;
 

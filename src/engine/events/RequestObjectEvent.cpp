@@ -63,31 +63,8 @@ RequestObjectEvent::post_process()
 {
 	if (!_object) {
 		_responder->respond_error("Unable to find object requested.");
-	
 	} else if (_responder->client()) {	
-		PatchImpl* const patch = dynamic_cast<PatchImpl*>(_object);
-		if (patch) {
-			_responder->respond_ok();
-			ObjectSender::send_patch(_responder->client(), patch, true);
-			return;
-		}
-		
-		NodeImpl* const node = dynamic_cast<NodeImpl*>(_object);
-		if (node) {
-			_responder->respond_ok();
-			ObjectSender::send_node(_responder->client(), node, true);
-			return;
-		}
-		
-		PortImpl* const port = dynamic_cast<PortImpl*>(_object);
-		if (port) {
-			_responder->respond_ok();
-			ObjectSender::send_port(_responder->client(), port);
-			return;
-		}
-		
-		_responder->respond_error("Object of unknown type requested.");
-
+		ObjectSender::send_object(_responder->client(), _object, true);
 	} else {
 		_responder->respond_error("Unable to find client to send object.");
 	}

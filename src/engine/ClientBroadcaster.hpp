@@ -68,9 +68,6 @@ public:
 	
 	void send_plugins(const NodeFactory::Plugins& plugin_list);
 	void send_object(const GraphObjectImpl* p, bool recursive);
-	void send_patch(const PatchImpl* p, bool recursive);
-	void send_node(const NodeImpl* node, bool recursive);
-	void send_port(const PortImpl* port);
 	void send_destroyed(const string& path);
 	void send_patch_cleared(const string& patch_path);
 	void send_connection(const SharedPtr<const ConnectionImpl> connection);

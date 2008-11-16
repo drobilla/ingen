@@ -136,22 +136,6 @@ ClientBroadcaster::send_plugins(const NodeFactory::Plugins& plugins)
 
 
 void
-ClientBroadcaster::send_node(const NodeImpl* node, bool recursive)
-{
-	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
-		ObjectSender::send_node((*i).second, node, recursive);
-}
-
-
-void
-ClientBroadcaster::send_port(const PortImpl* port)
-{
-	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
-		ObjectSender::send_port((*i).second, port);
-}
-
-
-void
 ClientBroadcaster::send_destroyed(const string& path)
 {
 	assert(path != "/");
@@ -254,18 +238,6 @@ ClientBroadcaster::send_object(const GraphObjectImpl* p, bool recursive)
 {
 	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
 		ObjectSender::send_object((*i).second, p, recursive);
-}
-
-
-/** Send a patch.
- *
- * @param recursive If true send all children of object
- */
-void
-ClientBroadcaster::send_patch(const PatchImpl* p, bool recursive)
-{
-	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
-		ObjectSender::send_patch((*i).second, p, recursive);
 }
 
 
