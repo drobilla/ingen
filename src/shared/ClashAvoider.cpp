@@ -126,12 +126,10 @@ ClashAvoider::exists(const Raul::Path& path) const
 }
 
 
-void
+bool
 ClashAvoider::new_object(const GraphObject* object)
 {
-	// FIXME:
-	((GraphObject*)object)->set_path(map_path(object->path()));
-	_target.new_object(object);
+	return false;
 }
 
 

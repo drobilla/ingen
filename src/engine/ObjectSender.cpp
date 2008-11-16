@@ -33,7 +33,10 @@ namespace Ingen {
 void
 ObjectSender::send_object(ClientInterface* client, const GraphObjectImpl* object, bool recursive)
 {
-	client->new_object(object);
+	cout << "SEND OBJECT " << object->path() << " RECURSIVE: " << recursive << endl;
+
+	if (client->new_object(object))
+		return;
 
 	const PatchImpl* patch = dynamic_cast<const PatchImpl*>(object);
 	if (patch) {
@@ -56,9 +59,10 @@ ObjectSender::send_object(ClientInterface* client, const GraphObjectImpl* object
 
 
 void
-ObjectSender::send_patch(ClientInterface* client, const PatchImpl* patch, bool recursive)
+ObjectSender::send_patch(ClientInterface* client, const PatchImpl* patch, bool recursive, bool bundle)
 {
-	client->bundle_begin();
+	if (bundle)
+		client->transfer_begin();
 
 	client->new_patch(patch->path(), patch->internal_polyphony());
 	client->set_property(patch->path(), "ingen:polyphonic", patch->polyphonic());
@@ -70,36 +74,35 @@ ObjectSender::send_patch(ClientInterface* client, const PatchImpl* patch, bool r
 	
 	client->set_property(patch->path(), "ingen:enabled", (bool)patch->enabled());
 
-	client->bundle_end();
-	
 	if (recursive) {
 
 		// Send nodes
 		for (List<NodeImpl*>::const_iterator j = patch->nodes().begin();
 				j != patch->nodes().end(); ++j) {
 			const NodeImpl* const node = (*j); 
-			send_node(client, node, true);
+			send_node(client, node, true, false);
 		}
 
 		// Send ports
 		for (uint32_t i=0; i < patch->num_ports(); ++i) {
 			PortImpl* const port = patch->port_impl(i);
-			send_port(client, port);
+			send_port(client, port, false);
 		}
 
 		// Send connections
-		client->transfer_begin();
 		for (PatchImpl::Connections::const_iterator j = patch->connections().begin();
 				j != patch->connections().end(); ++j)
 			client->connect((*j)->src_port_path(), (*j)->dst_port_path());
-		client->transfer_end();
 	}
+	
+	if (bundle)
+		client->transfer_end();
 }
 
 
 /** Sends a node or a patch */
 void
-ObjectSender::send_node(ClientInterface* client, const NodeImpl* node, bool recursive)
+ObjectSender::send_node(ClientInterface* client, const NodeImpl* node, bool recursive, bool bundle)
 {
 	PluginImpl* const plugin = node->plugin_impl();
 
@@ -115,7 +118,8 @@ ObjectSender::send_node(ClientInterface* client, const NodeImpl* node, bool recu
 		return;
 	}
 	
-	client->bundle_begin();
+	if (bundle)
+		client->transfer_begin();
 	
 	client->new_node(node->path(), node->plugin()->uri());
 	client->set_property(node->path(), "ingen:polyphonic", node->polyphonic());
@@ -130,22 +134,24 @@ ObjectSender::send_node(ClientInterface* client, const NodeImpl* node, bool recu
 	for (GraphObjectImpl::Properties::const_iterator j = prop.begin(); j != prop.end(); ++j)
 		client->set_property(node->path(), (*j).first, (*j).second);
 	
-	client->bundle_end();
-	
 	if (recursive) {
 		// Send ports
 		for (size_t j=0; j < node->num_ports(); ++j)
-			send_port(client, node->port_impl(j));
+			send_port(client, node->port_impl(j), false);
 	}
+	
+	if (bundle)
+		client->transfer_end();
 }
 
 
 void
-ObjectSender::send_port(ClientInterface* client, const PortImpl* port)
+ObjectSender::send_port(ClientInterface* client, const PortImpl* port, bool bundle)
 {
 	assert(port);
 	
-	client->bundle_begin();
+	if (bundle)
+		client->bundle_begin();
 
 	client->new_port(port->path(), port->type().uri(), port->index(), port->is_output());
 	client->set_property(port->path(), "ingen:polyphonic", port->polyphonic());
@@ -167,7 +173,8 @@ ObjectSender::send_port(ClientInterface* client, const PortImpl* port)
 		client->set_port_value(port->path(), value);
 	}
 	
-	client->bundle_end();
+	if (bundle)
+		client->bundle_end();
 }
 
 

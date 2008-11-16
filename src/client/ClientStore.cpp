@@ -44,6 +44,7 @@ ClientStore::ClientStore(SharedPtr<EngineInterface> engine, SharedPtr<SigClientI
 
 	emitter->signal_object_destroyed.connect(sigc::mem_fun(this, &ClientStore::destroy));
 	emitter->signal_object_renamed.connect(sigc::mem_fun(this, &ClientStore::rename));
+	emitter->signal_new_object.connect(sigc::mem_fun(this, &ClientStore::new_object));
 	emitter->signal_new_plugin.connect(sigc::mem_fun(this, &ClientStore::new_plugin));
 	emitter->signal_new_patch.connect(sigc::mem_fun(this, &ClientStore::new_patch));
 	emitter->signal_new_node.connect(sigc::mem_fun(this, &ClientStore::new_node));
@@ -428,7 +429,7 @@ ClientStore::new_plugin(const string& uri, const string& type_uri, const string&
 }
 
 
-void
+bool
 ClientStore::new_object(const Shared::GraphObject* object)
 {
 	using namespace Shared;
@@ -436,20 +437,22 @@ ClientStore::new_object(const Shared::GraphObject* object)
 	const Patch* patch = dynamic_cast<const Patch*>(object);
 	if (patch) {
 		new_patch(patch->path(), patch->internal_polyphony());
-		return;
+		return true;
 	}
 	
 	const Node* node = dynamic_cast<const Node*>(object);
 	if (node) {
 		new_node(node->path(), node->plugin()->uri());
-		return;
+		return true;
 	}
 
 	const Port* port = dynamic_cast<const Port*>(object);
 	if (port) {
 		new_port(port->path(), port->type().uri(), port->index(), !port->is_input());
-		return;
+		return true;
 	}
+
+	return false;
 }
 
 

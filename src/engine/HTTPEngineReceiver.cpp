@@ -124,6 +124,10 @@ HTTPEngineReceiver::message_callback(SoupServer* server, SoupMessage* msg, const
 	const string base_uri = "";
 	const char* mime_type = "text/plain";
 	
+	if (!strcmp(msg->method, SOUP_METHOD_PUT)) {
+		cout << "PUT " << path << ":\n" << msg->request_body->data << endl;
+	}
+	
 	if (path == "/" || path == "") {
 		const string r = string("@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n")
 			.append("\n<> rdfs:seeAlso <plugins> ;")

@@ -73,7 +73,7 @@ public:
 
 	void error(const std::string& msg);
 	
-	virtual void new_object(const Shared::GraphObject* object);
+	virtual bool new_object(const Shared::GraphObject* object);
 
 	virtual void new_plugin(const std::string& uri,
 	                        const std::string& type_uri,

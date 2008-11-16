@@ -96,7 +96,7 @@ Parser::parse_string(
 		cout << "Parsing " << object_uri.get() << " (base " << base_uri << ")" <<  endl;
 	//else
 	//	cout << "Parsing all objects found in string (base " << base_uri << ")" << endl;
-
+	
 	bool ret = parse(world, target, model, base_uri, engine_base, object_uri, symbol, data);
 	if (ret) {
 		const Glib::ustring subject = Glib::ustring("<") + base_uri + Glib::ustring(">");
@@ -124,7 +124,6 @@ Parser::parse(
 	if (object_uri && object_uri.get()[0] == '/')
 		object_uri = object_uri.get().substr(1);
 	
-
 	/* **** First query out global information (top-level info) **** */
 		
 	// Delete anything explicitly declared to not exist
@@ -208,6 +207,7 @@ Parser::parse(
 		const Redland::Node& subject = (object_uri ? subject_uri : (*i)["subject"]);
 		const Redland::Node& rdf_class = (*i)["class"];
 		//cout << "SUBJECT: " << subject.to_c_string() << endl;
+		//cout << "CLASS: " << rdf_class.to_c_string() << endl;
 		if (!object_uri) {
 			path_str = uri_relative_to_base(base_uri, subject.to_c_string());
 			//cout << "BASE: " << base_uri.c_str() << endl;
@@ -217,7 +217,8 @@ Parser::parse(
 			if (!Path::is_valid(path_str)) {
 				//cerr << "INVALID PATH: " << path_str << endl;
 			} else if (Path(path_str).parent() != "/") {
-				continue;
+				cout << "Non-root parent object " << path_str << endl;
+				//continue;
 			}
 		}
 		
@@ -233,8 +234,8 @@ Parser::parse(
 		if (is_object) {
 			Raul::Path path(path_str == "" ? "/" : path_str);
 			
-			if (path.parent() != "/")
-				continue;
+			//if (path.parent() != "/")
+			//	continue;
 
 			if (rdf_class == patch_class) {
 				ret = parse_patch(world, target, model, base_uri, engine_base,
@@ -350,7 +351,7 @@ Parser::parse_patch(
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
 		const string node_name = (*i)["name"].to_string();
 		const Path   node_path = patch_path.base() + node_name;
-
+		
 		if (created.find(node_path) == created.end()) {
 			const string node_plugin     = (*i)["plugin"].to_string();
 			bool         node_polyphonic = false;
@@ -543,7 +544,7 @@ Parser::parse_port(
 		" FILTER (?type != ?datatype && ((?type = lv2:InputPort) || (?type = lv2:OutputPort)))\n"
 		"OPTIONAL { " + subject + " ingen:value ?value . }\n"
 		"}");
-	
+
 	Redland::Query::Results results = query.run(*world->rdf_world, model, base_uri);
 	world->rdf_world->mutex().lock();
 

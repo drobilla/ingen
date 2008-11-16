@@ -45,9 +45,9 @@ class PluginImpl;
 class ObjectSender {
 public:
 	static void send_object(ClientInterface* client, const GraphObjectImpl* object, bool recursive);
-	static void send_patch(ClientInterface* client, const PatchImpl* patch, bool recursive);
-	static void send_node(ClientInterface* client, const NodeImpl* node, bool recursive);
-	static void send_port(ClientInterface* client, const PortImpl* port);
+	static void send_patch(ClientInterface* client, const PatchImpl* patch, bool recursive, bool bundle=true);
+	static void send_node(ClientInterface* client, const NodeImpl* node, bool recursive, bool bundle=true);
+	static void send_port(ClientInterface* client, const PortImpl* port, bool bundle=true);
 };
 
 } // namespace Ingen

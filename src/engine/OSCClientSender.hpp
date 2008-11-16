@@ -77,7 +77,7 @@ public:
 	                        const std::string& symbol,
 	                        const std::string& name);
 	
-	virtual void new_object(const Shared::GraphObject* object);
+	virtual bool new_object(const Shared::GraphObject* object);
 	
 	virtual void new_patch(const std::string& path, uint32_t poly);
 	

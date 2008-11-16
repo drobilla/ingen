@@ -97,7 +97,7 @@ public:
 	void new_plugin(const string& uri, const string& type_uri, const string& symbol, const string& name)
 		{ push_sig(sigc::bind(new_plugin_slot, uri, type_uri, symbol, name)); }
 	
-	void new_object(const Shared::GraphObject* object);
+	bool new_object(const Shared::GraphObject* object);
 	
 	void new_patch(const string& path, uint32_t poly)
 		{ push_sig(sigc::bind(new_patch_slot, path, poly)); }

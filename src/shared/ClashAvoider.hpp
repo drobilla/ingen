@@ -49,7 +49,7 @@ public:
 	
 	// Object commands
 	
-	void new_object(const GraphObject* object);
+	bool new_object(const GraphObject* object);
 
 	void new_patch(const std::string& path,
 	               uint32_t           poly);

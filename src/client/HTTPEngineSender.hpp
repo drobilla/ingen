@@ -61,8 +61,8 @@ public:
 	void bundle_begin()   { transfer_begin(); }
 	void bundle_end()     { transfer_end(); }
 	
-	void transfer_begin();
-	void transfer_end();
+	void transfer_begin() {}
+	void transfer_end()   {}
 
 	// Client registration
 	void register_client(ClientInterface* client);

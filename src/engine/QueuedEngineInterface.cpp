@@ -138,10 +138,10 @@ QueuedEngineInterface::bundle_end()
 		
 // Object commands
 
-void
+bool
 QueuedEngineInterface::new_object(const GraphObject* object)
 {
-	cout << "NEW OBJECT" << endl;
+	return false;
 }
 
 

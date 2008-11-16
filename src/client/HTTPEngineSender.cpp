@@ -113,6 +113,13 @@ HTTPEngineSender::new_port(const string& path,
                            uint32_t      index,
                            bool          is_output)
 {
+	const string uri = _engine_url + "/patch" + path;
+	cout << "HTTP " << uri << " NEW PORT: " << path << endl;
+	SoupMessage* msg = soup_message_new("PUT", uri.c_str());
+	string str = string("NEW PORT").append(path).append(type);
+	soup_message_set_request(msg, "application/x-turtle",
+			SOUP_MEMORY_COPY, str.c_str(), str.length());
+	soup_session_send_message(_session, msg);
 }
 
 

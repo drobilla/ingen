@@ -77,27 +77,29 @@ ThreadedSigClientInterface::emit_signals()
 }
 
 
-void
+bool
 ThreadedSigClientInterface::new_object(const Shared::GraphObject* object)
 {
 	using namespace Shared;
 	const Patch* patch = dynamic_cast<const Patch*>(object);
 	if (patch) {
 		new_patch(patch->path(), patch->internal_polyphony());
-		return;
+		return true;
 	}
 
 	const Node* node = dynamic_cast<const Node*>(object);
 	if (node) {
 		new_node(node->path(), node->plugin()->uri());
-		return;
+		return true;
 	}
 
 	const Port* port = dynamic_cast<const Port*>(object);
 	if (port) {
 		new_port(port->path(), port->type().uri(), port->index(), !port->is_input());
-		return;
+		return true;
 	}
+	
+	return false;
 }
 
 

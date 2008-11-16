@@ -138,8 +138,7 @@ HTTPClientSender::set_port_value(const std::string& port_path, const Raul::Atom&
 {
 	Redland::Node node = AtomRDF::atom_to_node(*_engine.world()->rdf_world, value);
 	string msg = string(
-			"@prefix rdf:       <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n" 
-			"@prefix ingen:     <http://drobilla.net/ns/ingen#> .\n\n<").append(
+			"@prefix ingen: <http://drobilla.net/ns/ingen#> .\n\n<").append(
 			port_path).append("> ingen:value ").append(node.to_string()).append(" .\n");
 	send_chunk(msg);
 }
@@ -159,15 +158,14 @@ void
 HTTPClientSender::activity(const std::string& path)
 {
 	string msg = string(
-			"@prefix rdf:       <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n" 
-			"@prefix ingen:     <http://drobilla.net/ns/ingen#> .\n\n<").append(
+			"@prefix ingen: <http://drobilla.net/ns/ingen#> .\n\n<").append(
 			path).append("> ingen:activity true .\n");
 	send_chunk(msg);
 }
 
 static void null_deleter(const Shared::GraphObject*) {}
 
-void
+bool
 HTTPClientSender::new_object(const Shared::GraphObject* object)
 {
 	SharedPtr<Serialisation::Serialiser> serialiser = _engine.world()->serialiser;
@@ -177,6 +175,7 @@ HTTPClientSender::new_object(const Shared::GraphObject* object)
 	serialiser->serialise(obj);
 	string str = serialiser->finish();
 	send_chunk(str);
+	return true;
 }
 
 

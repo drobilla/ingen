@@ -45,7 +45,7 @@ public:
 	/** End (and send) an atomic bundle */
 	virtual void bundle_end() = 0;
 	
-	virtual void new_object(const GraphObject* object) = 0;
+	virtual bool new_object(const GraphObject* object) = 0;
 
 	virtual void new_patch(const std::string& path,
 	                       uint32_t           poly) = 0;

@@ -47,7 +47,7 @@ public:
 	std::string uri() const { return "(internal)"; }
 
 	// Signal parameters match up directly with ClientInterface calls
-	sigc::signal<void, const Shared::GraphObject*> signal_new_object;
+	sigc::signal<bool, const Shared::GraphObject*> signal_new_object;
 	
 	sigc::signal<void, int32_t>                            signal_response_ok;
 	sigc::signal<void, int32_t, string>                    signal_response_error;
@@ -104,8 +104,8 @@ protected:
 	void new_plugin(const string& uri, const string& type_uri, const string& symbol, const string& name)
 		{ if (_enabled) signal_new_plugin.emit(uri, type_uri, symbol, name); }
 	
-	void new_object(const Shared::GraphObject* object)
-		{ if (_enabled) signal_new_object.emit(object); }
+	bool new_object(const Shared::GraphObject* object)
+		{ if (_enabled) signal_new_object.emit(object); return false; }
 
 	void new_patch(const string& path, uint32_t poly)
 		{ if (_enabled) signal_new_patch.emit(path, poly); }
