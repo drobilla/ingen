@@ -171,13 +171,10 @@ JackAudioDriver::activate()
 		exit(EXIT_FAILURE);
 	} else {
 		cout << "[JackAudioDriver] Activated Jack client." << endl;
-/*#ifdef HAVE_LASH
-	_engine.lash_driver()->set_jack_client_name(jack_client_get_name(_client));
-#endif*/
 	}
 
 	if (!_engine.midi_driver() || dynamic_cast<DummyMidiDriver*>(_engine.midi_driver()))
-		_engine.set_midi_driver(new JackMidiDriver(_client));
+		_engine.set_midi_driver(new JackMidiDriver(_engine, _client));
 }
 
 

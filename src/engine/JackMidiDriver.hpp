@@ -63,7 +63,7 @@ private:
 class JackMidiDriver : public MidiDriver
 {
 public:
-	JackMidiDriver(jack_client_t* client);
+	JackMidiDriver(Engine& engine, jack_client_t* client);
 	~JackMidiDriver();
 
 	void activate();
@@ -88,6 +88,9 @@ public:
 	jack_client_t* jack_client()        { return _client; }
 
 private:
+	Engine&  _engine;
+	uint32_t _midi_event_type;
+
 	Raul::List<JackMidiPort*> _in_ports;
 	Raul::List<JackMidiPort*> _out_ports;
 	

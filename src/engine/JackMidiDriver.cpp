@@ -20,6 +20,9 @@
 #include <pthread.h>
 #include "raul/Maid.hpp"
 #include "raul/midi_events.h"
+#include "module/World.hpp"
+#include "lv2ext/lv2_event_helpers.h"
+#include "shared/LV2URIMap.hpp"
 #include "types.hpp"
 #include "JackMidiDriver.hpp"
 #include "JackAudioDriver.hpp"
@@ -28,6 +31,7 @@
 #include "EventBuffer.hpp"
 #include "DuplexPort.hpp"
 #include "ProcessContext.hpp"
+#include "Engine.hpp"
 #include "jack_compat.h"
 using namespace std;
 
@@ -89,9 +93,8 @@ JackMidiPort::pre_process(ProcessContext& context)
 		jack_midi_event_t ev;
 		jack_midi_event_get(&ev, jack_buffer, i);
 
-		// FIXME: type is hardcoded for now, we should get it from
-		// the type map instead
-		const bool success = patch_buf->append(ev.time, 0, 1, ev.size, ev.buffer);
+		const bool success = patch_buf->append(ev.time, 0, _driver->_midi_event_type,
+				ev.size, ev.buffer);
 		if (!success)
 			cerr << "WARNING: Failed to write MIDI to port buffer, event(s) lost!" << endl;
 	}
@@ -144,11 +147,15 @@ JackMidiPort::post_process(ProcessContext& context)
 bool JackMidiDriver::_midi_thread_exit_flag = true;
 
 
-JackMidiDriver::JackMidiDriver(jack_client_t* client)
-	: _client(client)
+JackMidiDriver::JackMidiDriver(Engine& engine, jack_client_t* client)
+	: _engine(engine)
+	, _client(client)
 	, _is_activated(false)
 	, _is_enabled(false)
 {
+	const Shared::LV2Features::Feature* f = engine.world()->lv2_features->feature(LV2_URI_MAP_URI);
+	Shared::LV2URIMap* map = (Shared::LV2URIMap*)f->controller;
+	_midi_event_type = map->uri_to_id(NULL, "http://lv2plug.in/ns/ext/midi#MidiEvent");
 }
 
 
