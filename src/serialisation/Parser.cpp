@@ -588,7 +588,7 @@ Parser::parse_connections(
 {
 	Redland::Query query(*world->rdf_world, Glib::ustring(
 		"SELECT DISTINCT ?src ?dst WHERE {\n")
-		/*+ subject*/ + /*"?foo ingen:connection  ?connection .\n"*/
+		+ subject + " ingen:connection  ?connection .\n"
 		"?connection  ingen:source      ?src ;\n"
 		"             ingen:destination ?dst .\n"
 		"}");
@@ -606,6 +606,9 @@ Parser::parse_connections(
 			cerr << "ERROR: Invalid path in connection: " << dst_path << endl;
 			continue;
 		}
+
+		src_path = src_path.substr(parent.base().length()-1);
+		dst_path = dst_path.substr(parent.base().length()-1);
 
 		target->connect(src_path, dst_path);
 	}
