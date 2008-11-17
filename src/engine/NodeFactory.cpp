@@ -237,10 +237,8 @@ NodeFactory::load_ladspa_plugins()
 			}
 			
 			Glib::Module* plugin_library = new Glib::Module(lib_path, Glib::MODULE_BIND_LOCAL);
-			if (!plugin_library || !(*plugin_library)) {
-				cerr << "WARNING: Failed to load LADSPA library " << lib_path << endl;
+			if (!plugin_library || !(*plugin_library))
 				continue;
-			}
 			
 			bool found = plugin_library->get_symbol("ladspa_descriptor", (void*&)df);
 			if (!found || !df) {
