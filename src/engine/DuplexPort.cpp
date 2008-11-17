@@ -69,6 +69,8 @@ DuplexPort::pre_process(ProcessContext& context)
 
 	} else {
 
+		InputPort::pre_process(context);
+
 		for (uint32_t i=0; i < _poly; ++i)
 			_buffers->at(i)->prepare_read(context.start(), context.nframes());
 
