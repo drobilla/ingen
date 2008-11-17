@@ -184,8 +184,12 @@ void
 PatchView::property_changed(const std::string& predicate, const Raul::Atom& value)
 {
 	_enable_signal = false;
-	if (predicate == "ingen:enabled" && value.type() == Atom::BOOL)
-		_process_but->set_active(value.get_bool());
+	if (predicate == "ingen:enabled") {
+	   if (value.type() == Atom::BOOL)
+		   _process_but->set_active(value.get_bool());
+	   else
+		   cerr << "WARNING: Bad type for ingen:enabled property: " << value.type() << endl;
+	}
 	_enable_signal = true;
 }
 
