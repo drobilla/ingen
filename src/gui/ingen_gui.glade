@@ -2358,7 +2358,7 @@
   <widget class="GtkAboutDialog" id="about_win">
     <property name="destroy_with_parent">True</property>
     <property name="type_hint">GDK_WINDOW_TYPE_HINT_NORMAL</property>
-    <property name="copyright" translatable="yes">Copyright (C) 2005-2007 Dave Robillard &lt;http://drobilla.net&gt;</property>
+    <property name="copyright" translatable="yes">Copyright (C) 2005-2008 Dave Robillard &lt;http://drobilla.net&gt;</property>
     <property name="website">http://drobilla.net/software/ingen</property>
     <property name="license" translatable="yes">Licensed under the GNU GPL, Version 2.
 
