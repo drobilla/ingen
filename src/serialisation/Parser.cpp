@@ -71,7 +71,7 @@ Parser::parse_document(
 	Redland::Model model(*world->rdf_world, document_uri, document_uri);
 
 	if (object_uri == document_uri || object_uri == "")
-		cout << "Parsing document " << object_uri << " (base " << document_uri << ")" << endl;
+		cout << "Parsing document " << object_uri << endl;
 	else
 		cout << "Parsing " << object_uri << " from " << document_uri << endl;
 
@@ -268,8 +268,6 @@ Parser::parse(
 			if (path_str.length() > 0) {
 				const string uri = path_str.substr(1);
 				target->set_property(uri, "rdf:type", Atom(Atom::URI, rdf_class.to_c_string()));
-			} else {
-				cout << "ERROR: Plugin with no URI parsed, ignoring" << endl;
 			}
 		}
 
