@@ -92,7 +92,6 @@ ThreadedLoader::load_patch(bool                    merge,
 
 	Glib::ustring engine_base = "";
 	if (engine_parent) {
-		cout << "A " << merge << endl;
 		if (merge)
 			engine_base = engine_parent.get();
 		else

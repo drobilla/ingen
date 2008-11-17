@@ -413,7 +413,7 @@ App::icon_from_path(const string& path, int size)
 		_icons.insert(make_pair(make_pair(path, size), buf.operator->()));
 		buf->add_destroy_notify_callback(new pair<string, int>(path, size),
 				&App::icon_destroyed);
-		cerr << "Loaded icon " << path << " with size " << size << endl;
+		//cerr << "Loaded icon " << path << " with size " << size << endl;
 	} catch (Glib::Error e) {
 		cerr << "Error loading icon: " << e.what() << endl;
 	}

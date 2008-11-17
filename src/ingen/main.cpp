@@ -297,8 +297,6 @@ main(int argc, char** argv)
 		engine->main();
 	}
 		
-	cout << "Exiting." << endl;
-
 	if (engine) {
 		engine->deactivate();
 		engine.reset();
