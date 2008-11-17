@@ -101,7 +101,7 @@ ConnectionImpl::set_buffer_size(size_t size)
 bool
 ConnectionImpl::must_copy() const
 {
-	return (_dst_port->fixed_buffers() && (_src_port->poly() == _dst_port->poly()));
+	return (_dst_port->fixed_buffers() || (_src_port->poly() != _dst_port->poly()));
 }
 
 
