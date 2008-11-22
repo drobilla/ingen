@@ -186,9 +186,8 @@ LV2Node::instantiate()
 	for (uint32_t j=0; j < num_ports; ++j) {
 		SLV2Port id = slv2_plugin_get_port_by_index(plug, j);
 
-		// LV2 shortnames are guaranteed to be unique, valid C identifiers
+		// LV2 port symbols are guaranteed to be unique, valid C identifiers
 		port_name = slv2_value_as_string(slv2_port_get_symbol(plug, id));
-	
 		assert(port_name.find("/") == string::npos);
 
 		port_path = path() + "/" + port_name;
@@ -221,8 +220,8 @@ LV2Node::instantiate()
 		}
 			
 		// FIXME: need nice type preserving SLV2Value -> Raul::Atom conversion
-		float def = isnan(def_values[j]) ? 0.0f : def_values[j];
-		Atom defatm = def;
+		const float def = isnan(def_values[j]) ? 0.0f : def_values[j];
+		const Atom defatm = def;
 
 		if (direction == INPUT)
 			port = new InputPort(this, port_name, j, _polyphony, data_type, defatm, port_buffer_size);
@@ -253,7 +252,7 @@ LV2Node::instantiate()
 		_ports->at(j) = port;
 	}
 	
-	delete [] def_values;
+	delete[] def_values;
 	
 	return true;
 }

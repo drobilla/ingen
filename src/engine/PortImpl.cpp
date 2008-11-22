@@ -57,7 +57,6 @@ PortImpl::PortImpl(NodeImpl* const node,
 	assert(_poly > 0);
 
 	allocate_buffers();
-	clear_buffers();
 
 	if (node->parent() == NULL)
 		_polyphonic = false;

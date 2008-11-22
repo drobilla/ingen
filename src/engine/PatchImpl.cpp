@@ -439,7 +439,7 @@ PatchImpl::compile() const
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
 
-	//cerr << "*********** Building process order for " << path() << endl;
+	//cerr << "*********** Compiling " << path() << endl;
 
 	CompiledPatch* const compiled_patch = new CompiledPatch();//_nodes.size());
 	
