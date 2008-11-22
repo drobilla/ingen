@@ -75,6 +75,7 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 	xml->get_widget("patch_properties_menuitem", _menu_view_patch_properties);
 	xml->get_widget("patch_fullscreen_menuitem", _menu_fullscreen);
 	xml->get_widget("patch_human_names_menuitem", _menu_human_names);
+	xml->get_widget("patch_show_port_names_menuitem", _menu_show_port_names);
 	xml->get_widget("patch_arrange_menuitem", _menu_arrange);
 	xml->get_widget("patch_clear_menuitem", _menu_clear);
 	xml->get_widget("patch_destroy_menuitem", _menu_destroy_patch);
@@ -112,6 +113,8 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 		sigc::mem_fun(this, &PatchWindow::event_fullscreen_toggled));
 	_menu_human_names->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_human_names_toggled));
+	_menu_show_port_names->signal_activate().connect(
+		sigc::mem_fun(this, &PatchWindow::event_port_names_toggled));
 	_menu_arrange->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_arrange));
 	_menu_view_engine_window->signal_activate().connect(
@@ -543,6 +546,21 @@ PatchWindow::event_human_names_toggled()
 		App::instance().configuration()->set_name_style(Configuration::HUMAN);
 	else
 		App::instance().configuration()->set_name_style(Configuration::PATH);
+}
+
+
+void
+PatchWindow::event_port_names_toggled()
+{
+	_view->canvas()->show_port_names(_menu_show_port_names->get_active());
+	if (_menu_show_port_names->get_active()) {
+		App::instance().configuration()->set_name_style(Configuration::NONE);
+	} else {
+		if (_menu_human_names->get_active())
+			App::instance().configuration()->set_name_style(Configuration::HUMAN);
+		else
+			App::instance().configuration()->set_name_style(Configuration::PATH);
+	}
 }
 
 

@@ -40,7 +40,6 @@ Configuration::Configuration()
 	, _audio_port_color(  0x244678C0)
 	, _control_port_color(0x4A8A0EC0)
 	, _event_port_color(  0x960909C0)
-//	, _midi_port_color(   0x960909C0)
 //	, _osc_port_color(    0x5C3566C0)
 {
 }
@@ -92,9 +91,7 @@ Configuration::get_port_color(const PortModel* p)
 		return _audio_port_color;
 	} else if (p->type().is_event()) {
 		return _event_port_color;
-	}/* else if (p->type().is_midi()) {
-		return _midi_port_color;
-	} else if (p->type().is_osc()) {
+	} /*else if (p->type().is_osc()) {
 		return _osc_port_color;
 	}*/
 	

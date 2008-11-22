@@ -60,6 +60,7 @@ PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 	, _last_click_y(0)
 	, _refresh_menu(false)
 	, _human_names(true)
+	, _show_port_names(true)
 	, _menu(NULL)
 	, _internal_menu(NULL)
 	, _classless_menu(NULL)
@@ -282,6 +283,18 @@ PatchCanvas::show_human_names(bool b)
 		boost::shared_ptr<NodeModule> mod = boost::dynamic_pointer_cast<NodeModule>(*m);
 		if (mod)
 			mod->show_human_names(b);
+	}
+}
+
+
+void
+PatchCanvas::show_port_names(bool b)
+{
+	_show_port_names = b;
+	for (ItemList::iterator m = _items.begin(); m != _items.end(); ++m) {
+		boost::shared_ptr<NodeModule> mod = boost::dynamic_pointer_cast<NodeModule>(*m);
+		if (mod)
+			mod->show_port_labels(b);
 	}
 }
 

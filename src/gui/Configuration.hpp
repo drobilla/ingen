@@ -53,7 +53,7 @@ public:
 	
 	uint32_t get_port_color(const PortModel* pi);
 	
-	enum NameStyle { PATH, HUMAN };
+	enum NameStyle { PATH, HUMAN, NONE };
 
 	NameStyle name_style() const          { return _name_style; }
 	void      set_name_style(NameStyle s) { _name_style = s; }
@@ -67,8 +67,6 @@ private:
 	uint32_t _audio_port_color;
 	uint32_t _control_port_color;
 	uint32_t _event_port_color;
-	//uint32_t _midi_port_color;
-	//uint32_t _osc_port_color;
 };
 
 

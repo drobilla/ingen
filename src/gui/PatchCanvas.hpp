@@ -59,14 +59,10 @@ public:
 	
 	virtual ~PatchCanvas() {}
 
-	/*boost::shared_ptr<NodeModule> find_module(const string& name) {
-		return boost::dynamic_pointer_cast<NodeModule>(
-		Canvas::get_item(name));
-	}*/
-	
 	void build();
 	void arrange(bool use_length_hints);
 	void show_human_names(bool show);
+	void show_port_names(bool show);
 
 	void add_plugin(SharedPtr<PluginModel> pm);
 	void add_node(SharedPtr<NodeModel> nm);
@@ -137,6 +133,7 @@ private:
 	
 	bool            _refresh_menu;
 	bool            _human_names;
+	bool            _show_port_names;
 	Gtk::Menu*      _menu;
 	Gtk::Menu*      _internal_menu;
 	Gtk::Menu*      _classless_menu;

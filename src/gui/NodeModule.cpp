@@ -136,7 +136,7 @@ NodeModule::show_human_names(bool b)
 	resize();
 }
 
-	
+
 void
 NodeModule::value_changed(uint32_t index, const Atom& value)
 {
