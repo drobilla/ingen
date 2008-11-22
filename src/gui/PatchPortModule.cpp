@@ -34,8 +34,8 @@ namespace GUI {
 
 
 PatchPortModule::PatchPortModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<PortModel> port)
-: FlowCanvas::Module(canvas, port->path().name(), 0, 0, false), // FIXME: coords?
-  _port(port)
+	: FlowCanvas::Module(canvas, port->path().name(), 0, 0, false) // FIXME: coords?
+	, _port(port)
 {
 	assert(canvas);
 	assert(port);

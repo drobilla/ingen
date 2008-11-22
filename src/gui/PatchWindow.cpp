@@ -602,14 +602,12 @@ PatchWindow::event_human_names_toggled()
 void
 PatchWindow::event_port_names_toggled()
 {
-	_view->canvas()->show_port_names(_menu_show_port_names->get_active());
 	if (_menu_show_port_names->get_active()) {
-		App::instance().configuration()->set_name_style(Configuration::NONE);
+		_view->canvas()->set_direction(Canvas::HORIZONTAL);
+		_view->canvas()->show_port_names(true);
 	} else {
-		if (_menu_human_names->get_active())
-			App::instance().configuration()->set_name_style(Configuration::HUMAN);
-		else
-			App::instance().configuration()->set_name_style(Configuration::PATH);
+		_view->canvas()->set_direction(Canvas::VERTICAL);
+		_view->canvas()->show_port_names(false);
 	}
 }
 

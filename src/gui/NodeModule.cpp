@@ -41,7 +41,7 @@ namespace GUI {
 
 
 NodeModule::NodeModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeModel> node)
-	: FlowCanvas::Module(canvas, node->path().name())
+	: FlowCanvas::Module(canvas, node->path().name(), 0, 0, true, canvas->show_port_names())
 	, _node(node)
 	, _gui_widget(NULL)
 	, _gui_window(NULL)

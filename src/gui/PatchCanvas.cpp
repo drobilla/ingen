@@ -291,10 +291,10 @@ void
 PatchCanvas::show_port_names(bool b)
 {
 	_show_port_names = b;
-	for (ItemList::iterator m = _items.begin(); m != _items.end(); ++m) {
-		boost::shared_ptr<NodeModule> mod = boost::dynamic_pointer_cast<NodeModule>(*m);
-		if (mod)
-			mod->show_port_labels(b);
+	for (ItemList::iterator i = _items.begin(); i != _items.end(); ++i) {
+		boost::shared_ptr<Module> m = boost::dynamic_pointer_cast<Module>(*i);
+		if (m)
+			m->set_show_port_labels(b);
 	}
 }
 

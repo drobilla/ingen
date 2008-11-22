@@ -63,6 +63,7 @@ public:
 	void arrange(bool use_length_hints);
 	void show_human_names(bool show);
 	void show_port_names(bool show);
+	bool show_port_names() const { return _show_port_names; }
 
 	void add_plugin(SharedPtr<PluginModel> pm);
 	void add_node(SharedPtr<NodeModel> nm);
