@@ -646,7 +646,7 @@ PatchCanvas::paste()
 	parser->parse_string(App::instance().world(), &avoider, str, "/", _patch->path());
 	
 	for (Store::iterator i = clipboard.begin(); i != clipboard.end(); ++i) {
-		cout << "************ OBJECT: " << i->first << endl;
+		//cout << "************ OBJECT: " << i->first << endl;
 		if (_patch->path() == "/" && i->first == "/") {
 			//cout << "SKIPPING ROOT " << _patch->path() << " :: " << i->first << endl;
 			continue;
@@ -670,11 +670,17 @@ PatchCanvas::paste()
 		builder.build(_patch->path(), i->second);
 	}
 
-	//avoider.set_target(*App::instance().engine());
+	// Successful connections
+	SharedPtr<PatchModel> root = PtrCast<PatchModel>(clipboard.object("/"));
+	assert(root);
+	for (Patch::Connections::const_iterator i = root->connections().begin();
+			i != root->connections().end(); ++i) {
+		App::instance().engine()->connect((*i)->src_port_path(), (*i)->dst_port_path());
+	}
 
+	// Orphan connections (just in case...)
 	for (ClientStore::ConnectionRecords::const_iterator i = clipboard.connection_records().begin();
 			i != clipboard.connection_records().end(); ++i) {
-		cout << "CONNECTING " << i->first << " -> " << i->second << endl;
 		App::instance().engine()->connect(i->first, i->second);
 	}
 }

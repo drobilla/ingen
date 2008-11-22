@@ -114,13 +114,9 @@ QueuedEventSource::process(PostProcessor& dest, ProcessContext& context)
 		++num_events_processed;
 	}
 
-	if (_full_semaphore.has_waiter() && num_events_processed > 0)
-		_full_semaphore.post();
-
-	/*if (num_events_processed > 0)
-	    dest.whip();*/
-	//else
-	//	cerr << "NO PROC: queued: " << unprepared_events() << ", stamped: " << !_stamped_queue.empty() << endl;
+	if (num_events_processed > 0)
+		while (_full_semaphore.has_waiter())
+			_full_semaphore.post();
 }
 
 

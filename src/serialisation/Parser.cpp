@@ -143,15 +143,18 @@ Parser::parse_update(
 		"}");
 	
 	results = Redland::Query::Results(query.run(*world->rdf_world, model, base_uri));
-	world->rdf_world->mutex().lock();
+
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
+		world->rdf_world->mutex().lock();
 		const string obj_path = (*i)["path"].to_string();
 		const string key = world->rdf_world->prefixes().qualify((*i)["varkey"].to_string());
 		const Redland::Node& val_node = (*i)["varval"];
+		const Atom a(AtomRDF::node_to_atom(val_node));
+		world->rdf_world->mutex().unlock();
 		if (key != "")
-			target->set_variable(obj_path, key, AtomRDF::node_to_atom(val_node));
+			target->set_variable(obj_path, key, a);
 	}
-	world->rdf_world->mutex().unlock();
+
 
 	// Connections
 	parse_connections(world, target, model, base_uri, "", "/");
@@ -163,13 +166,15 @@ Parser::parse_update(
 		"}");
 	
 	results = Redland::Query::Results(query.run(*world->rdf_world, model, base_uri));
-	world->rdf_world->mutex().lock();
+
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
+		world->rdf_world->mutex().lock();
 		const string obj_path = (*i)["path"].to_string();
 		const Redland::Node& val_node = (*i)["value"];
-		target->set_port_value(obj_path, AtomRDF::node_to_atom(val_node));
+		const Atom a(AtomRDF::node_to_atom(val_node));
+		world->rdf_world->mutex().unlock();
+		target->set_port_value(obj_path, a);
 	}
-	world->rdf_world->mutex().unlock();
 
 	return parse(world, target, model, base_uri, engine_base, object_uri, symbol, data);
 }
@@ -365,8 +370,9 @@ Parser::parse_patch(
 		"}");
 
 	Redland::Query::Results results = query.run(*world->rdf_world, model, base_uri);
-	world->rdf_world->mutex().lock();
+
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
+		world->rdf_world->mutex().lock();
 		const string node_name = (*i)["name"].to_string();
 		const Path   node_path = patch_path.base() + node_name;
 		
@@ -377,19 +383,25 @@ Parser::parse_patch(
 			const Redland::Node& poly_node = (*i)["poly"];
 			if (poly_node.is_bool() && poly_node.to_bool() == true)
 				node_polyphonic = true;
+			
+			world->rdf_world->mutex().unlock();
 		
 			target->new_node(node_path, node_plugin);
 			target->set_property(node_path, "ingen:polyphonic", node_polyphonic);
 			created.insert(node_path);
+			
+			world->rdf_world->mutex().lock();
 		}
 
 		const string key = world->rdf_world->prefixes().qualify((*i)["varkey"].to_string());
 		const Redland::Node& val_node = (*i)["varval"];
+		
+		world->rdf_world->mutex().unlock();
 
 		if (key != "")
 			target->set_variable(node_path, key, AtomRDF::node_to_atom(val_node));
 	}
-	world->rdf_world->mutex().unlock();
+
 		
 
 	/* Load subpatches */
@@ -402,8 +414,10 @@ Parser::parse_patch(
 
 	results = query.run(*world->rdf_world, model, base_uri);
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
+		world->rdf_world->mutex().lock();
 		const string symbol = (*i)["symbol"].to_string();
 		const string subpatch  = (*i)["subpatch"].to_string();
+		world->rdf_world->mutex().unlock();
 
 		const Path subpatch_path = patch_path.base() + symbol;
 
@@ -432,8 +446,10 @@ Parser::parse_patch(
 
 	results = query.run(*world->rdf_world, model, base_uri);
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
+		world->rdf_world->mutex().lock();
 		const string node_name = (*i)["nodename"].to_string();
 		const string port_name = (*i)["portname"].to_string();
+		world->rdf_world->mutex().unlock();
 
 		assert(Path::is_valid_name(node_name));
 		assert(Path::is_valid_name(port_name));
@@ -460,11 +476,13 @@ Parser::parse_patch(
 		"}");
 
 	results = query.run(*world->rdf_world, model, base_uri);
-	world->rdf_world->mutex().lock();
+
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
+		world->rdf_world->mutex().lock();
 		const string name     = (*i)["name"].to_string();
 		const string type     = world->rdf_world->qualify((*i)["type"].to_string());
 		const string datatype = world->rdf_world->qualify((*i)["datatype"].to_string());
+		world->rdf_world->mutex().unlock();
 
 		assert(Path::is_valid_name(name));
 		const Path port_path = patch_path.base() + name;
@@ -476,16 +494,21 @@ Parser::parse_patch(
 			created.insert(port_path);
 		}
 
+		world->rdf_world->mutex().lock();
 		const Redland::Node& val_node = (*i)["portval"];
+		world->rdf_world->mutex().unlock();
+
 		target->set_port_value(patch_path.base() + name, AtomRDF::node_to_atom(val_node));
 
+		world->rdf_world->mutex().lock();
 		const string key = world->rdf_world->prefixes().qualify((*i)["varkey"].to_string());
 		const Redland::Node& var_val_node = (*i)["varval"];
+		world->rdf_world->mutex().unlock();
 
 		if (key != "")
 			target->set_variable(patch_path.base() + name, key, AtomRDF::node_to_atom(var_val_node));
 	}
-	world->rdf_world->mutex().unlock();
+
 
 	created.clear();
 	
@@ -498,7 +521,9 @@ Parser::parse_patch(
 
 	results = query.run(*world->rdf_world, model, base_uri);
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
+		world->rdf_world->mutex().lock();
 		const Redland::Node& enabled_node = (*i)["enabled"];
+		world->rdf_world->mutex().unlock();
 		if (enabled_node.is_bool() && enabled_node) {
 			target->set_property(patch_path, "ingen:enabled", (bool)true);
 			break;
