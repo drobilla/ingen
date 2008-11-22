@@ -97,8 +97,6 @@ ThreadedLoader::load_patch(bool                    merge,
 		else
 			engine_base = engine_parent.get().base();
 	}
-		
-
 	
 	// Filthy hack to load deprecated patches based on file extension
 	if (data_base_uri.substr(data_base_uri.length()-3) == ".om") {

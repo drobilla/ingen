@@ -104,9 +104,9 @@ public:
 	
 	bool is_realtime() const { return jack_is_realtime(_client); }
 	
-	jack_client_t* jack_client() const  { return _client; }
-	SampleCount    buffer_size() const  { return _buffer_size; }
-	SampleCount    sample_rate() const  { return _sample_rate; }
+	jack_client_t* jack_client()  const { return _client; }
+	SampleCount    buffer_size()  const { return _buffer_size; }
+	SampleCount    sample_rate()  const { return _sample_rate; }
 	bool           is_activated() const { return _is_activated; }
 	
 	inline SampleCount frame_time() const { return jack_frame_time(_client); }

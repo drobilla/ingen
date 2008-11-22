@@ -70,10 +70,13 @@ Parser::parse_document(
 {
 	Redland::Model model(*world->rdf_world, document_uri, document_uri);
 
-	if (object_uri == document_uri || object_uri == "")
-		cout << "Parsing document " << object_uri << endl;
-	else
+	if (object_uri == document_uri || object_uri == "") {
 		cout << "Parsing " << object_uri << " from " << document_uri << endl;
+		cout << "Base: " << engine_base;
+		cout << ", Symbol: " << ((bool)symbol ? symbol.get() : "_") << endl;
+	} else {
+		cout << "Parsing " << object_uri << " from " << document_uri << endl;
+	}
 
 	return parse(world, target, model, document_uri, engine_base, object_uri, symbol, data);;
 }
@@ -324,13 +327,19 @@ Parser::parse_patch(
 		patch_poly = static_cast<uint32_t>(poly_node.to_int());
 	}
 
-	string symbol = uri_relative_to_base(base_uri, object_uri);
-	symbol = symbol.substr(0, symbol.find("."));
+	string symbol;
+	if (object_uri != "") {
+		symbol = uri_relative_to_base(base_uri, object_uri);
+	} else {
+		symbol = base_uri.substr(base_uri.find_last_of("/") + 1);
+		symbol = symbol.substr(0, symbol.find("."));
+	}
+
 	Path patch_path("/");
 	if (engine_base == "")
 		patch_path = "/";
 	else if (engine_base[engine_base.length()-1] == '/')
-		patch_path = Path(engine_base + symbol);
+		patch_path = Path(engine_base + Path::nameify(symbol));
 	else if (Path::is_valid(engine_base))
 		patch_path = (Path)engine_base;
 	else if (Path::is_valid(string("/").append(engine_base)))
@@ -604,9 +613,6 @@ Parser::parse_connections(
 			cerr << "ERROR: Invalid path in connection: " << dst_path << endl;
 			continue;
 		}
-
-		src_path = src_path.substr(parent.base().length()-1);
-		dst_path = dst_path.substr(parent.base().length()-1);
 
 		target->connect(src_path, dst_path);
 	}

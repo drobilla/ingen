@@ -78,9 +78,8 @@ JackAudioPort::~JackAudioPort()
 void
 JackAudioPort::prepare_buffer(jack_nframes_t nframes)
 {
-	jack_sample_t* jack_buf = (jack_sample_t*)jack_port_get_buffer(_jack_port, nframes);
-
-	AudioBuffer* patch_buf = (AudioBuffer*)_patch_port->buffer(0);
+	jack_sample_t* jack_buf  = (jack_sample_t*)jack_port_get_buffer(_jack_port, nframes);
+	AudioBuffer*   patch_buf = (AudioBuffer*)_patch_port->buffer(0);
 
 	//cerr << "[JACK] " << _patch_port->path() << " buffer: " << patch_buf << endl;
 
