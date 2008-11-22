@@ -43,23 +43,23 @@ class BreadCrumbBox : public Gtk::HBox
 public:
 	BreadCrumbBox();
 	
-	SharedPtr<PatchView> view(const Path& path);
+	SharedPtr<PatchView> view(const Raul::Path& path);
 
-	void build(Path path, SharedPtr<PatchView> view);
+	void build(Raul::Path path, SharedPtr<PatchView> view);
 
-	sigc::signal<void, const Path&, SharedPtr<PatchView> > signal_patch_selected;
+	sigc::signal<void, const Raul::Path&, SharedPtr<PatchView> > signal_patch_selected;
 
 private:
-	BreadCrumb* create_crumb(const Path&           path,
+	BreadCrumb* create_crumb(const Raul::Path&    path,
                              SharedPtr<PatchView> view = SharedPtr<PatchView>());
 
 	void breadcrumb_clicked(BreadCrumb* crumb);
 	
-	void object_destroyed(const Path& path);
-	void object_renamed(const Path& old_path, const Path& new_path);
+	void object_destroyed(const Raul::Path& path);
+	void object_renamed(const Raul::Path& old_path, const Raul::Path& new_path);
 
-	Path                   _active_path;
-	Path                   _full_path;
+	Raul::Path             _active_path;
+	Raul::Path             _full_path;
 	bool                   _enable_signal;
 	std::list<BreadCrumb*> _breadcrumbs;
 };

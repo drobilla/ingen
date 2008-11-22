@@ -22,6 +22,7 @@
 #include "raul/Path.hpp"
 #include "raul/SharedPtr.hpp"
 #include "PatchView.hpp"
+#include "client/PatchModel.hpp"
 
 namespace Ingen {
 namespace GUI {
@@ -39,7 +40,7 @@ namespace GUI {
 class BreadCrumb : public Gtk::ToggleButton
 {
 public:
-	BreadCrumb(const Path& path, SharedPtr<PatchView> view = SharedPtr<PatchView>())
+	BreadCrumb(const Raul::Path& path, SharedPtr<PatchView> view = SharedPtr<PatchView>())
 		: _path(path)
 		, _view(view)
 	{
@@ -54,10 +55,10 @@ public:
 		_view = view;
 	}
 
-	const Path&          path() const { return _path; }
+	const Raul::Path&    path() const { return _path; }
 	SharedPtr<PatchView> view() const { return _view; }
 	
-	void set_path(const Path& path)
+	void set_path(const Raul::Path& path)
 	{
 		remove();
 		const string text = (path == "/") ? "/" : path.name().c_str();
@@ -71,7 +72,7 @@ public:
 	}
 
 private:
-	Path                 _path;
+	Raul::Path           _path;
 	SharedPtr<PatchView> _view;
 };
 

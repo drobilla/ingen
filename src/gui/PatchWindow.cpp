@@ -19,6 +19,7 @@
 #include <iostream>
 #include <cassert>
 #include <fstream>
+#include "raul/AtomRDF.hpp"
 #include "interface/EngineInterface.hpp"
 #include "client/PatchModel.hpp"
 #include "client/ClientStore.hpp"
@@ -55,6 +56,7 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 
 	xml->get_widget("patch_win_vbox", _vbox);
 	xml->get_widget("patch_win_viewport", _viewport);
+	xml->get_widget("patch_win_status_bar", _status_bar);
 	//xml->get_widget("patch_win_status_bar", _status_bar);
 	//xml->get_widget("patch_open_menuitem", _menu_open);
 	xml->get_widget("patch_import_menuitem", _menu_import);
@@ -76,6 +78,7 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 	xml->get_widget("patch_fullscreen_menuitem", _menu_fullscreen);
 	xml->get_widget("patch_human_names_menuitem", _menu_human_names);
 	xml->get_widget("patch_show_port_names_menuitem", _menu_show_port_names);
+	xml->get_widget("patch_status_bar_menuitem", _menu_show_status_bar);
 	xml->get_widget("patch_arrange_menuitem", _menu_arrange);
 	xml->get_widget("patch_clear_menuitem", _menu_clear);
 	xml->get_widget("patch_destroy_menuitem", _menu_destroy_patch);
@@ -113,6 +116,8 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 		sigc::mem_fun(this, &PatchWindow::event_fullscreen_toggled));
 	_menu_human_names->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_human_names_toggled));
+	_menu_show_status_bar->signal_activate().connect(
+		sigc::mem_fun(this, &PatchWindow::event_status_bar_toggled));
 	_menu_show_port_names->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_port_names_toggled));
 	_menu_arrange->signal_activate().connect(
@@ -186,6 +191,7 @@ PatchWindow::set_patch(SharedPtr<PatchModel> patch, SharedPtr<PatchView> view)
 	
 	new_port_connection.disconnect();
 	removed_port_connection.disconnect();
+	_entered_connection.disconnect();
 
 	_patch = patch;
 
@@ -246,6 +252,8 @@ PatchWindow::set_patch(SharedPtr<PatchModel> patch, SharedPtr<PatchView> view)
 	removed_port_connection = patch->signal_removed_port.connect(sigc::mem_fun(this, &PatchWindow::patch_port_removed));
 	show_all();
 
+	_view->signal_object_entered.connect(sigc::mem_fun(this, &PatchWindow::object_entered));
+
 	_enable_signal = true;
 }
 
@@ -277,6 +285,37 @@ PatchWindow::patch_port_removed(SharedPtr<PortModel> port)
 	}
 }
 
+
+void
+PatchWindow::object_entered(ObjectModel* model)
+{
+	_status_bar->pop();
+	string msg = model->path();
+	NodeModel* node = dynamic_cast<NodeModel*>(model);
+	if (node) {
+		PluginModel* plugin = (PluginModel*)node->plugin();
+		msg.append(" \"").append(plugin->human_name()).append("\"");
+	}
+	
+	PortModel* port = dynamic_cast<PortModel*>(model);
+	if (port) {
+		NodeModel* parent = dynamic_cast<NodeModel*>(port->parent().get());
+		if (parent) {
+			const PluginModel* plugin = dynamic_cast<const PluginModel*>(parent->plugin());
+			if (plugin) {
+				msg.append(" \"").append(plugin->port_human_name(port->index())).append("\"");
+				const Atom& value = port->value();
+				if (value.is_valid()) {
+					const Redland::Node node = AtomRDF::atom_to_node(
+							*App::instance().world()->rdf_world, value);
+					msg.append(" = ").append(node.to_string());
+				}
+			}
+		}
+	}
+
+	_status_bar->push(msg);
+}
 
 
 void
@@ -536,6 +575,17 @@ PatchWindow::event_fullscreen_toggled()
 		is_fullscreen = false;
 	}
 }
+
+
+void
+PatchWindow::event_status_bar_toggled()
+{
+	if (_menu_show_status_bar->get_active())
+		_status_bar->show();
+	else
+		_status_bar->hide();
+}
+
 
 
 void

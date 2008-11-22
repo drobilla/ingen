@@ -25,17 +25,11 @@
 #include <libglademm.h>
 #include "raul/Path.hpp"
 #include "raul/SharedPtr.hpp"
-#include "client/PatchModel.hpp"
-#include "PatchView.hpp"
-using Ingen::Client::PatchModel;
-
-using std::string; using std::list;
-
 
 namespace Ingen { namespace Client {
 	class PatchModel;
 	class PortModel;
-	class MetadataModel;
+	class ObjectModel;
 } }
 using namespace Ingen::Client;
 
@@ -51,8 +45,8 @@ class NewSubpatchWindow;
 class NodeControlWindow;
 class PatchDescriptionWindow;
 class SubpatchModule;
-class OmPort;
 class BreadCrumbBox;
+class PatchView;
 
 
 /** A window for a patch.
@@ -65,7 +59,7 @@ public:
 	PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml);
 	~PatchWindow();
 	
-	void set_patch_from_path(const Path& path, SharedPtr<PatchView> view);
+	void set_patch_from_path(const Raul::Path& path, SharedPtr<PatchView> view);
 	void set_patch(SharedPtr<PatchModel> pc, SharedPtr<PatchView> view);
 
 	SharedPtr<PatchModel> patch() const { return _patch; }
@@ -82,6 +76,7 @@ private:
 
 	void patch_port_added(SharedPtr<PortModel> port);
 	void patch_port_removed(SharedPtr<PortModel> port);
+	void object_entered(ObjectModel* model);
 
 	void event_import();
 	void event_import_location();
@@ -96,6 +91,7 @@ private:
 	void event_destroy();
 	void event_clear();
 	void event_fullscreen_toggled();
+	void event_status_bar_toggled();
 	void event_human_names_toggled();
 	void event_port_names_toggled();
 	void event_arrange();
@@ -129,6 +125,7 @@ private:
 	Gtk::MenuItem*      _menu_quit;
 	Gtk::CheckMenuItem* _menu_human_names;
 	Gtk::CheckMenuItem* _menu_show_port_names;
+	Gtk::CheckMenuItem* _menu_show_status_bar;
 	Gtk::MenuItem*      _menu_fullscreen;
 	Gtk::MenuItem*      _menu_clear;
 	Gtk::MenuItem*      _menu_destroy_patch;
@@ -139,13 +136,14 @@ private:
 	Gtk::MenuItem*      _menu_view_messages_window;
 	Gtk::MenuItem*      _menu_view_patch_tree_window;
 	Gtk::MenuItem*      _menu_help_about;
-	
+
 	Gtk::VBox*          _vbox;
 	Gtk::Viewport*      _viewport;
 	BreadCrumbBox*      _breadcrumb_box;
-	
-	//Gtk::Statusbar*   _status_bar;
-	
+	Gtk::Statusbar*     _status_bar;
+
+	sigc::connection _entered_connection;
+
 	/** Invisible bin used to store breadcrumbs when not shown by a view */
 	Gtk::Alignment _breadcrumb_bin;
 };

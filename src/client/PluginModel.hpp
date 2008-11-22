@@ -57,9 +57,9 @@ public:
 	const string symbol() const { return string_property("lv2:symbol"); }
 	const string name()   const { return string_property("doap:name"); }
 
-	string default_node_symbol();
+	string default_node_symbol() const;
 	string human_name();
-	string port_human_name(uint32_t index);
+	string port_human_name(uint32_t index) const;
 
 #ifdef HAVE_SLV2
 	static SLV2World slv2_world()  { return _slv2_world; }

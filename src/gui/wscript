@@ -42,7 +42,7 @@ def build(bld):
 	if bld.env()['HAVE_CURL'] != 0:
 		obj.source += 'UploadPatchWindow.cpp'
 
-	obj.includes       = ['.', '..', '../common']
+	obj.includes       = ['.', '..', '../common', '../client', '../module']
 	obj.name           = 'libingen_gui'
 	obj.target         = 'ingen_gui'
 	obj.inst_dir       = bld.env()['LIBDIRNAME'] + 'ingen'

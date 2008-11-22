@@ -51,7 +51,7 @@ PluginModel::PluginModel(const string& uri, const string& type_uri)
 	
 
 string
-PluginModel::default_node_symbol()
+PluginModel::default_node_symbol() const
 {
 	return Raul::Path::nameify(symbol());
 }
@@ -79,7 +79,7 @@ PluginModel::human_name()
 
 
 string
-PluginModel::port_human_name(uint32_t index)
+PluginModel::port_human_name(uint32_t index) const
 {
 #ifdef HAVE_SLV2
 	if (_slv2_plugin) {

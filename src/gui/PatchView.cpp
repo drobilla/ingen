@@ -107,6 +107,12 @@ PatchView::set_patch(SharedPtr<PatchModel> patch)
 	_poly_spin->signal_value_changed().connect(
 			sigc::mem_fun(*this, &PatchView::poly_changed));
 
+	_canvas->signal_port_entered.connect(
+			sigc::mem_fun(*this, &PatchView::canvas_port_entered));
+	
+	_canvas->signal_item_entered.connect(
+			sigc::mem_fun(*this, &PatchView::canvas_item_entered));
+
 	_canvas->grab_focus();
 }
 
@@ -121,7 +127,8 @@ SharedPtr<PatchView>
 PatchView::create(SharedPtr<PatchModel> patch)
 
 {
-	const Glib::RefPtr<Gnome::Glade::Xml>& xml = GladeFactory::new_glade_reference("patch_view_box");
+	
+const Glib::RefPtr<Gnome::Glade::Xml>& xml = GladeFactory::new_glade_reference("patch_view_box");
 	PatchView* result = NULL;
 	xml->get_widget_derived("patch_view_box", result);
 	assert(result);
@@ -144,6 +151,24 @@ PatchView::editable_toggled()
 	const bool editable = _edit_mode_but->get_active();
 	_patch->set_editable(editable);
 	_canvas->lock(!editable);
+}
+
+
+void
+PatchView::canvas_port_entered(FlowCanvas::Port* port)
+{
+	Port* p = dynamic_cast<Port*>(port);
+	if (p)
+		signal_object_entered.emit(p->model().get());
+}
+
+
+void
+PatchView::canvas_item_entered(FlowCanvas::Item* item)
+{
+	NodeModule* m = dynamic_cast<NodeModule*>(item);
+	if (m)
+		signal_object_entered.emit(m->node().get());
 }
 
 

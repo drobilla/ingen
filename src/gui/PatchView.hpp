@@ -23,16 +23,17 @@
 #include <libglademm/xml.h>
 #include <libglademm.h>
 #include "raul/SharedPtr.hpp"
-#include "client/PatchModel.hpp"
-
-using std::string;
+#include "raul/Atom.hpp"
 
 namespace Ingen { namespace Client {
 	class PortModel;
 	class MetadataModel;
+	class PatchModel;
+	class ObjectModel;
 } }
 using namespace Ingen::Client;
 
+namespace FlowCanvas { class Port; class Item; }
 
 namespace Ingen {
 namespace GUI {
@@ -45,7 +46,6 @@ class NewSubpatchWindow;
 class NodeControlWindow;
 class PatchDescriptionWindow;
 class SubpatchModule;
-class OmPort;
 
 
 /** The patch specific contents of a PatchWindow (ie the canvas and whatever else).
@@ -64,6 +64,8 @@ public:
 
 	static SharedPtr<PatchView> create(SharedPtr<PatchModel> patch);
 
+	sigc::signal<void, ObjectModel*> signal_object_entered;
+
 private:
 	void set_patch(SharedPtr<PatchModel> patch);
 
@@ -73,6 +75,8 @@ private:
 	void refresh_clicked();
 	void on_editable_sig(bool locked);
 	void editable_toggled();
+	void canvas_port_entered(FlowCanvas::Port* port);
+	void canvas_item_entered(FlowCanvas::Item* item);
 	
 	void property_changed(const std::string& predicate, const Raul::Atom& value);
 
