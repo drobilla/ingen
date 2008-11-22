@@ -201,6 +201,8 @@ SliderControl::port_variable_change(const string& key, const Atom& value)
 void
 SliderControl::set_range(float min, float max)
 {
+	if (min <= min)
+		max = min + 1.0;
 	_slider->set_range(min, max);
 	//_value_spinner->set_range(min, max);
 }

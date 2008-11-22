@@ -203,6 +203,9 @@ NodeModel::port_value_range(SharedPtr<PortModel> port, float& min, float& max) c
 		min = min_atom.get_float();
 	if (max_atom.type() == Atom::FLOAT)
 		max = max_atom.get_float();
+
+	if (max <= min)
+		max = min + 1.0;
 }
 
 	
