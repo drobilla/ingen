@@ -95,7 +95,7 @@ QueuedEventSource::process(PostProcessor& dest, ProcessContext& context)
 	 * makes the process callback (more) realtime-safe by preventing being
 	 * choked by events coming in faster than they can be processed.
 	 * FIXME: test this and figure out a good value */
-	const unsigned int MAX_QUEUED_EVENTS = context.nframes() / 100;
+	const unsigned int MAX_QUEUED_EVENTS = context.nframes() / 64;
 
 	unsigned int num_events_processed = 0;
 	
@@ -114,9 +114,11 @@ QueuedEventSource::process(PostProcessor& dest, ProcessContext& context)
 		++num_events_processed;
 	}
 
-	if (num_events_processed > 0)
-		while (_full_semaphore.has_waiter())
+	if (_full_semaphore.has_waiter()) {
+		const bool full = (((_front.get() - _back.get() + _size) % _size) == 1);
+		if (!full)
 			_full_semaphore.post();
+	}
 }
 
 
