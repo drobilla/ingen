@@ -100,6 +100,7 @@ EventBuffer::join(Buffer* buf)
 void
 EventBuffer::unjoin()
 {
+	//cout << this << " unjoin" << endl;
 	_joined_buf = NULL;
 	_buf = _local_buf;
 	reset(_this_nframes);
@@ -109,7 +110,6 @@ EventBuffer::unjoin()
 void
 EventBuffer::prepare_read(FrameTime start, SampleCount nframes)
 {
-	//cerr << "\t" << this << " prepare_read: " << event_count() << endl;
 	rewind();
 	_this_nframes = nframes;
 }
@@ -134,6 +134,7 @@ EventBuffer::copy(const Buffer* src_buf, size_t start_sample, size_t end_sample)
 	src->rewind();
 
 	memcpy(_buf, src->_buf, src->_buf->size);
+	_this_nframes = end_sample - start_sample;
 }
 
 

@@ -18,7 +18,6 @@
 #ifndef EVENTBUFFER_H
 #define EVENTBUFFER_H
 
-#include <iostream>
 #include <lv2ext/lv2_event.h>
 #include <lv2ext/lv2_event_helpers.h>
 #include "Buffer.hpp"
@@ -56,7 +55,6 @@ public:
 	inline void rewind() const { lv2_event_begin(&_iter, _buf); }
 	inline void clear() { reset(_this_nframes); }
 	inline void reset(SampleCount nframes) {
-		//std::cerr << this << " reset" << std::endl;
 		_this_nframes = nframes;
 		_latest_frames = 0;
 		_latest_subframes = 0;

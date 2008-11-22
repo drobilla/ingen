@@ -207,6 +207,8 @@ InputPort::pre_process(ProcessContext& context)
 		if (can_direct()) {
 			for (uint32_t i=0; i < _poly; ++i) {
 				_buffers->at(i)->join(_connections.front()->buffer(i));
+				_connections.front()->buffer(i)->prepare_read(context.start(), context.nframes());
+				_buffers->at(i)->prepare_read(context.start(), context.nframes());
 			}
 			do_mixdown = false;
 		}
@@ -224,9 +226,10 @@ InputPort::pre_process(ProcessContext& context)
 	
 	/*if (type() == DataType::EVENT) 
 		for (uint32_t i=0; i < _poly; ++i)
-			cerr << path() << " (" << buffer(i) << ") # events: "
-				<< ((EventBuffer*)buffer(i))->event_count()
-				<< ", joined: " << _buffers->at(i)->is_joined() << endl;*/
+			if (((EventBuffer*)buffer(i))->event_count() > 0)
+				cerr << path() << " (" << buffer(i) << ") # events: "
+					<< ((EventBuffer*)buffer(i))->event_count()
+					<< ", joined: " << _buffers->at(i)->is_joined() << endl;*/
 
 	if (!do_mixdown) {
 		/*#ifndef NDEBUG
@@ -270,9 +273,10 @@ InputPort::post_process(ProcessContext& context)
 {
 	broadcast(context);
 
-	// Prepare for next cycle
-	for (uint32_t i=0; i < _poly; ++i)
-		buffer(i)->prepare_write(context.start(), context.nframes());
+	// Prepare buffers for next cycle
+	if (!can_direct())
+		for (uint32_t i=0; i < _poly; ++i)
+			buffer(i)->prepare_write(context.start(), context.nframes());
 
 	_set_by_user = false;
 	

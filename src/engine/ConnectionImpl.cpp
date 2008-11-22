@@ -233,8 +233,10 @@ ConnectionImpl::process(ProcessContext& context)
 			if (copy_size < dst_buf->size())
 				dst_buf->set_block(src_buf->value_at(copy_size - 1), copy_size, dst_buf->size() - 1);
 		}
+	} else if (_mode == DIRECT) {
+		for (uint32_t j=0; j < src_port()->poly(); ++j)
+			src_port()->buffer(j)->prepare_read(context.start(), context.nframes());
 	}
-
 }
 
 
