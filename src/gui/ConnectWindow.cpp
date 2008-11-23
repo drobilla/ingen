@@ -220,8 +220,7 @@ ConnectWindow::connect(bool existing)
 		
 		if ( ! world->engine) {
 			SharedPtr<QueuedEngineInterface> interface(
-				   new QueuedEngineInterface(*world->local_engine,
-					   Ingen::event_queue_size, Ingen::event_queue_size));
+				   new QueuedEngineInterface(*world->local_engine, Ingen::event_queue_size));
 			world->engine = interface;
 			world->local_engine->add_event_source(interface);
 		}

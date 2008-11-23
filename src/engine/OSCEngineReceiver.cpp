@@ -48,7 +48,7 @@ namespace Ingen {
 
 
 OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t port)
-	: QueuedEngineInterface(engine, queue_size, queue_size) // FIXME
+	: QueuedEngineInterface(engine, queue_size) // FIXME
 	, _server(NULL)
 {
 	_receive_thread = new ReceiveThread(*this);

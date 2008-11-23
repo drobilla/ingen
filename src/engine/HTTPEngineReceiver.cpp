@@ -41,7 +41,7 @@ namespace Ingen {
 
 
 HTTPEngineReceiver::HTTPEngineReceiver(Engine& engine, uint16_t port)
-	: QueuedEngineInterface(engine, 2, 2)
+	: QueuedEngineInterface(engine, 64) // FIXME
 	, _server(soup_server_new(SOUP_SERVER_PORT, port, NULL))
 {
 	_receive_thread = new ReceiveThread(*this);

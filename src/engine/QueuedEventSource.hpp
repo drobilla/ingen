@@ -49,7 +49,7 @@ class PostProcessor;
 class QueuedEventSource : public EventSource, protected Raul::Slave
 {
 public:
-	QueuedEventSource(size_t queued_size, size_t stamped_size);
+	QueuedEventSource(size_t queue_size);
 	~QueuedEventSource();
 
 	void activate()   { Slave::start(); }
@@ -57,70 +57,31 @@ public:
 
 	void process(PostProcessor& dest, ProcessContext& context);
 
-	void unblock();
+	/** Signal that the blocking event is finished.
+	 * When this is called preparing will resume.  This MUST be called by
+	 * blocking events in their post_process() method. */
+	inline void unblock() { _blocking_semaphore.post(); }
 
 protected:
-	void          push_queued(QueuedEvent* const ev);
-	inline void   push_stamped(Event* const ev) { _stamped_queue.push(ev); } 
-	Event*        pop_earliest_queued_before(const SampleCount time);
-	inline Event* pop_earliest_stamped_before(const SampleCount time);
+	void   push_queued(QueuedEvent* const ev);
+	Event* pop_earliest_queued_before(const SampleCount time);
 
 	inline bool unprepared_events() { return (_prepared_back.get() != _back.get()); }
 	
 	virtual void _whipped(); ///< Prepare 1 event
 
 private:
-	// Note that it's crucially important which functions access which of these
-	// variables, to maintain threadsafeness.
+	// Note it's important which functions access which variables for thread safety
 	
-	//(FIXME: make this a separate class?)
 	// 2-part queue for events that require pre-processing: 
 	AtomicInt       _front;         ///< Front of queue
-	AtomicInt       _back;          ///< Back of entire queue (1 past index of back element)
-	AtomicInt       _prepared_back; ///< Back of prepared section (1 past index of back prepared element)
+	AtomicInt       _back;          ///< Back of entire queue (index of back event + 1)
+	AtomicInt       _prepared_back; ///< Back of prepared events (index of back prepared event + 1)
 	const size_t    _size;
 	QueuedEvent**   _events;
 	Raul::Semaphore _blocking_semaphore;
-
 	Raul::Semaphore _full_semaphore;
-
-	/** Queue for timestamped events (no pre-processing). */
-	Raul::SRSWQueue<Event*> _stamped_queue;
 };
-
-
-/** Pops the realtime (timestamped, not preprocessed) event off the realtime queue.
- *
- * Engine will use the sample timestamps of returned events directly and execute the
- * event with sample accuracy.  Timestamps in the past will be bumped forward to
- * the beginning of the cycle (offset 0), when eg. skipped cycles occur.
- */
-inline Event*
-QueuedEventSource::pop_earliest_stamped_before(const SampleCount time)
-{
-	Event* ret = NULL;
-
-	if (!_stamped_queue.empty()) {
-		if (_stamped_queue.front()->time() < time) {
-			ret = _stamped_queue.front();
-			_stamped_queue.pop();
-		}
-	}
-
-	return ret;
-}
-
-
-/** Signal that the blocking event is finished.
- *
- * When this is called preparing will resume.  This MUST be called by
- * blocking events in their post_process() method.
- */
-inline void
-QueuedEventSource::unblock()
-{
-	_blocking_semaphore.post();
-}
 
 
 } // namespace Ingen

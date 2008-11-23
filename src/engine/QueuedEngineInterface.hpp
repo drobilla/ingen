@@ -50,7 +50,7 @@ class Engine;
 class QueuedEngineInterface : public QueuedEventSource, public EngineInterface
 {
 public:
-	QueuedEngineInterface(Engine& engine, size_t queued_size, size_t stamped_size);
+	QueuedEngineInterface(Engine& engine, size_t queue_size);
 	virtual ~QueuedEngineInterface() {}
 	
 	std::string uri() const { return "ingen:internal"; }

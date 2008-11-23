@@ -28,14 +28,13 @@ using namespace std;
 namespace Ingen {
 
 
-QueuedEventSource::QueuedEventSource(size_t queued_size, size_t stamped_size)
+QueuedEventSource::QueuedEventSource(size_t queue_size)
 	: _front(0)
 	, _back(0)
 	, _prepared_back(0)
-	, _size(queued_size+1)
+	, _size(queue_size+1)
 	, _blocking_semaphore(0)
 	, _full_semaphore(0)
-	, _stamped_queue(stamped_size)
 {
 	_events = (QueuedEvent**)calloc(_size, sizeof(QueuedEvent*));
 
@@ -99,8 +98,6 @@ QueuedEventSource::process(PostProcessor& dest, ProcessContext& context)
 
 	unsigned int num_events_processed = 0;
 	
-	/* FIXME: Merge these next two loops into one */
-
 	while ((ev = pop_earliest_queued_before(context.end()))) {
 		ev->execute(context);
 		dest.push(ev);
@@ -108,12 +105,6 @@ QueuedEventSource::process(PostProcessor& dest, ProcessContext& context)
 			break;
 	}
 	
-	while ((ev = pop_earliest_stamped_before(context.end()))) {
-		ev->execute(context);
-		dest.push(ev);
-		++num_events_processed;
-	}
-
 	if (_full_semaphore.has_waiter()) {
 		const bool full = (((_front.get() - _back.get() + _size) % _size) == 1);
 		if (!full)
@@ -122,16 +113,11 @@ QueuedEventSource::process(PostProcessor& dest, ProcessContext& context)
 }
 
 
-/** Pops the prepared event at the front of the prepare queue, if it exists.
+/** Pop the prepared event at the front of the prepare queue, if it exists.
  *
- * This method will only pop events that have been prepared, and are
- * stamped before the time passed.  In other words, it may return NULL
- * even if there are events pending in the queue.  The events returned are
- * actually QueuedEvents, but after this they are "normal" events and the
- * engine deals with them just like a realtime in-band event.  The engine will
- * not use the timestamps of the returned events in any way, since it is free
- * to execute these non-time-stamped events whenever it wants (at whatever rate
- * it wants).
+ * This method will only pop events that are prepared and have time stamp
+ * less than @a time. It may return NULL even if there are events pending in
+ * the queue, if they are unprepared or stamped in the future.
  */
 Event*
 QueuedEventSource::pop_earliest_queued_before(const SampleCount time)

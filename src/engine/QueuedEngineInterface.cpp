@@ -26,8 +26,8 @@
 
 namespace Ingen {
 
-QueuedEngineInterface::QueuedEngineInterface(Engine& engine, size_t queued_size, size_t stamped_size)
-	: QueuedEventSource(queued_size, stamped_size)
+QueuedEngineInterface::QueuedEngineInterface(Engine& engine, size_t queue_size)
+	: QueuedEventSource(queue_size)
 	, _responder(new Responder(NULL, 0))
 	, _engine(engine)
 	, _in_bundle(false)
@@ -381,7 +381,7 @@ extern "C" {
 Ingen::QueuedEngineInterface*
 new_queued_interface(Ingen::Engine& engine)
 {
-	return new Ingen::QueuedEngineInterface(engine, Ingen::event_queue_size, Ingen::event_queue_size);
+	return new Ingen::QueuedEngineInterface(engine, Ingen::event_queue_size);
 }
 
 } // extern "C"
