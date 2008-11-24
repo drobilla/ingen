@@ -625,15 +625,17 @@ Parser::parse_connections(
 		"             ingen:destination ?dst .\n"
 		"}");
 
+	const string parent_base = (subject != "<>") ? "/" : parent.base();
+
 	Redland::Query::Results results = query.run(*world->rdf_world, model, base_uri);
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
-		string src_path = parent.base() + uri_relative_to_base(base_uri, (*i)["src"].to_string());
+		const string src_path = parent_base + uri_relative_to_base(base_uri, (*i)["src"].to_string());
 		if (!Path::is_valid(src_path)) {
 			cerr << "ERROR: Invalid path in connection: " << src_path << endl;
 			continue;
 		}
 		
-		string dst_path = parent.base() + uri_relative_to_base(base_uri, (*i)["dst"].to_string());
+		const string dst_path = parent_base + uri_relative_to_base(base_uri, (*i)["dst"].to_string());
 		if (!Path::is_valid(dst_path)) {
 			cerr << "ERROR: Invalid path in connection: " << dst_path << endl;
 			continue;
