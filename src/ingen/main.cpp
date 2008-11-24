@@ -126,8 +126,15 @@ main(int argc, char** argv)
 		engine_module = Ingen::Shared::load_module("ingen_engine");
 		engine_http_module = Ingen::Shared::load_module("ingen_engine_http");
 		engine_osc_module = Ingen::Shared::load_module("ingen_engine_osc");
-		engine_queued_module = Ingen::Shared::load_module("ingen_engine_queued");
 		engine_jack_module = Ingen::Shared::load_module("ingen_engine_jack");
+		engine_queued_module = Ingen::Shared::load_module("ingen_engine_queued");
+
+		if (!engine_queued_module) {
+			cerr << "ERROR: Unable to load (queued) engine interface module" << endl;
+			Ingen::Shared::destroy_world();
+			return 1;
+		}
+
 		if (engine_module) {
 			Engine* (*new_engine)(Ingen::Shared::World* world) = NULL;
 			if (engine_module->get_symbol("new_engine", (void*&)new_engine)) {
