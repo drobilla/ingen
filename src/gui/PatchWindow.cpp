@@ -294,7 +294,8 @@ PatchWindow::object_entered(ObjectModel* model)
 	NodeModel* node = dynamic_cast<NodeModel*>(model);
 	if (node) {
 		PluginModel* plugin = (PluginModel*)node->plugin();
-		msg.append(" \"").append(plugin->human_name()).append("\"");
+		if (plugin)
+			msg.append(" \"").append(plugin->human_name()).append("\"");
 	}
 	
 	PortModel* port = dynamic_cast<PortModel*>(model);
