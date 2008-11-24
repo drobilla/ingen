@@ -256,12 +256,16 @@ LADSPANode::activate()
 	NodeBase::activate();
 
 	for (uint32_t i=0; i < _polyphony; ++i) {
-		for (unsigned long j=0; j < _descriptor->PortCount; ++j) {
-			set_port_buffer(i, j, _ports->at(j)->buffer(i));
-			/*	if (port->type() == DataType::FLOAT && port->buffer_size() == 1)
-					port->set_value(0.0f, 0); // FIXME
-				else if (port->type() == DataType::FLOAT && port->buffer_size() > 1)
-					port->set_value(0.0f, 0);*/
+		for (unsigned long j=0; j < num_ports(); ++j) {
+			PortImpl* const port = _ports->at(j);
+
+			set_port_buffer(i, j, port->buffer(i));
+
+			if (port->type() == DataType::CONTROL) {
+				((AudioBuffer*)port->buffer(i))->set_value(port->value().get_float(), 0, 0);
+			} else if (port->type() == DataType::AUDIO) {
+				((AudioBuffer*)port->buffer(i))->set_value(0.0f, 0, 0);
+			}
 		}
 		if (_descriptor->activate != NULL)
 			_descriptor->activate((*_instances)[i]);

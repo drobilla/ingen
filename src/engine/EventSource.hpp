@@ -49,9 +49,6 @@ public:
 	virtual void deactivate() = 0;
 
 	virtual void process(PostProcessor& dest, ProcessContext& context) = 0;
-
-protected:
-	size_t _capacity;
 };
 
 
