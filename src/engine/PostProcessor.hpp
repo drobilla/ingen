@@ -21,9 +21,7 @@
 #include <pthread.h>
 #include "types.hpp"
 #include "raul/SRSWQueue.hpp"
-//#include "raul/Slave.hpp"
-
-//namespace Raul { class Maid; }
+#include "raul/List.hpp"
 
 namespace Ingen {
 
@@ -42,13 +40,13 @@ class Engine;
  *
  * \ingroup engine
  */
-class PostProcessor //: public Raul::Slave
+class PostProcessor
 {
 public:
-	PostProcessor(Engine& engine, /*Raul::Maid& maid, */size_t queue_size);
+	PostProcessor(Engine& engine, size_t queue_size);
 
-	/** Push an event on to the process queue, realtime-safe, not thread-safe. */
-	inline void push(Event* const ev) { _events.push(ev); }
+	/** Push a list of events on to the process queue, realtime-safe, not thread-safe. */
+	inline void append(Raul::List<Event*>* l) { _events.append(*l); }
 
     /** Post-process and delete all pending events */
     void process();
@@ -57,14 +55,11 @@ public:
 	void set_end_time(FrameTime time) { _max_time = time; }
 
 private:
-	Engine&                 _engine;
-	Raul::AtomicInt         _max_time;
-	//Raul::Maid&             _maid;
-	Raul::SRSWQueue<Event*> _events;
-	uint32_t                _event_buffer_size;
-	uint8_t*                _event_buffer;
-
-	//virtual void            _whipped();
+	Engine&            _engine;
+	Raul::AtomicInt    _max_time;
+	Raul::List<Event*> _events;
+	uint32_t           _event_buffer_size;
+	uint8_t*           _event_buffer;
 };
 
 

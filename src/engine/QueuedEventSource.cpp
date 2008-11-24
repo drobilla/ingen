@@ -1,5 +1,5 @@
 /* This file is part of Ingen.
- * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
+ * Copyright (C) 2008 Dave Robillard <http://drobilla.net>
  * 
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
@@ -29,20 +29,10 @@ namespace Ingen {
 
 
 QueuedEventSource::QueuedEventSource(size_t queue_size)
-	: _front(0)
-	, _back(0)
-	, _prepared_back(0)
-	, _size(queue_size+1)
-	, _blocking_semaphore(0)
-	, _full_semaphore(0)
+	: _blocking_semaphore(0)
 {
-	_events = (QueuedEvent**)calloc(_size, sizeof(QueuedEvent*));
-
-	mlock(_events, _size * sizeof(QueuedEvent*));
-
 	Thread::set_context(THREAD_PRE_PROCESS);
 	assert(context() == THREAD_PRE_PROCESS);
-
 	set_name("QueuedEventSource");
 }
 
@@ -50,8 +40,6 @@ QueuedEventSource::QueuedEventSource(size_t queue_size)
 QueuedEventSource::~QueuedEventSource()
 {
 	Thread::stop();
-	
-	free(_events);
 }
 
 
@@ -61,20 +49,11 @@ void
 QueuedEventSource::push_queued(QueuedEvent* const ev)
 {
 	assert(!ev->is_prepared());
+	Raul::List<Event*>::Node* node = new Raul::List<Event*>::Node(ev);
+	_events.push_back(node);
+	if (_prepared_back.get() == NULL)
+		_prepared_back = node;
 
-	unsigned back = _back.get();
-	bool full = (((_front.get() - back + _size) % _size) == 1);
-	while (full) {
-		whip();
-		cerr << "WARNING: Event queue full.  Waiting..." << endl;
-		_full_semaphore.wait();
-		back = _back.get();
-		full = (((_front.get() - back + _size) % _size) == 1);
-	}
-		
-	assert(_events[back] == NULL);
-	_events[back] = ev;
-	_back = (back + 1) % _size;
 	whip();
 }
 
@@ -87,53 +66,33 @@ void
 QueuedEventSource::process(PostProcessor& dest, ProcessContext& context)
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
-
-	Event* ev = NULL;
+	
+	if (_events.empty())
+		return;
 
 	/* Limit the maximum number of queued events to process per cycle.  This
 	 * makes the process callback (more) realtime-safe by preventing being
 	 * choked by events coming in faster than they can be processed.
 	 * FIXME: test this and figure out a good value */
-	const unsigned int MAX_QUEUED_EVENTS = context.nframes() / 64;
-
-	unsigned int num_events_processed = 0;
+	const size_t MAX_QUEUED_EVENTS = context.nframes() / 32;
 	
-	while ((ev = pop_earliest_queued_before(context.end()))) {
+	size_t num_events_processed = 0;
+
+	QueuedEvent*              ev       = (QueuedEvent*)_events.front();
+	Raul::List<Event*>::Node* new_head = _events.head();
+
+	while (ev && ev->is_prepared() && ev->time() < context.end()) {
 		ev->execute(context);
-		dest.push(ev);
+		new_head = new_head->next();
 		if (++num_events_processed > MAX_QUEUED_EVENTS)
 			break;
+		ev = (new_head ? (QueuedEvent*)new_head->elem() : NULL);
 	}
-	
-	if (_full_semaphore.has_waiter()) {
-		const bool full = (((_front.get() - _back.get() + _size) % _size) == 1);
-		if (!full)
-			_full_semaphore.post();
-	}
-}
 
-
-/** Pop the prepared event at the front of the prepare queue, if it exists.
- *
- * This method will only pop events that are prepared and have time stamp
- * less than @a time. It may return NULL even if there are events pending in
- * the queue, if they are unprepared or stamped in the future.
- */
-Event*
-QueuedEventSource::pop_earliest_queued_before(const SampleCount time)
-{
-	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
-
-	const unsigned front = _front.get();
-	QueuedEvent* const front_event = _events[front];
-	
-	// Pop
-	if (front_event && front_event->is_prepared() && front_event->time() < time) {
-		_events[front] = NULL;
-		_front = (front + 1) % _size;
-		return front_event;
-	} else {
-		return NULL;
+	if (num_events_processed > 0) {
+		Raul::List<Event*> front;
+		_events.chop_front(front, num_events_processed, new_head);
+		dest.append(&front);
 	}
 }
 
@@ -145,8 +104,12 @@ QueuedEventSource::pop_earliest_queued_before(const SampleCount time)
 void
 QueuedEventSource::_whipped()
 {
-	const unsigned prepared_back = _prepared_back.get();
-	QueuedEvent* const ev = _events[prepared_back];
+	Raul::List<Event*>::Node* pb = _prepared_back.get();
+	if (!pb)
+		return;
+
+	QueuedEvent* const ev = (QueuedEvent*)pb->elem();
+	assert(ev);
 	if (!ev)
 		return;
 	
@@ -154,7 +117,8 @@ QueuedEventSource::_whipped()
 	ev->pre_process();
 	assert(ev->is_prepared());
 
-	_prepared_back = (prepared_back + 1) % _size;
+	assert(_prepared_back.get() == pb);
+	_prepared_back = pb->next();
 
 	// If event was blocking, wait for event to being run through the
 	// process thread before preparing the next event

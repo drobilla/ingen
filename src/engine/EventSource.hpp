@@ -25,6 +25,7 @@ namespace Ingen {
 class Event;
 class QueuedEvent;
 class PostProcessor;
+class ProcessContext;
 
 
 /** Source for events to run in the audio thread.

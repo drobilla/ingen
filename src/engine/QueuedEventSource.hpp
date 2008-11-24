@@ -1,5 +1,5 @@
 /* This file is part of Ingen.
- * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
+ * Copyright (C) 2008 Dave Robillard <http://drobilla.net>
  * 
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
@@ -15,23 +15,20 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef QUEUEDEVENTSOURCE_H
-#define QUEUEDEVENTSOURCE_H
+#ifndef INGEN_QUEUED_EVENT_SOURCE_HPP
+#define INGEN_QUEUED_EVENT_SOURCE_HPP
 
 #include <cstdlib>
 #include <pthread.h>
 #include "types.hpp"
 #include "raul/Semaphore.hpp"
-#include "raul/AtomicInt.hpp"
-#include "raul/SRSWQueue.hpp"
 #include "raul/Slave.hpp"
-#include "Event.hpp"
+#include "raul/List.hpp"
 #include "EventSource.hpp"
-
-using Raul::AtomicInt;
 
 namespace Ingen {
 
+class Event;
 class QueuedEvent;
 class PostProcessor;
 
@@ -56,34 +53,27 @@ public:
 	void deactivate() { Slave::stop(); }
 
 	void process(PostProcessor& dest, ProcessContext& context);
-
+	
 	/** Signal that the blocking event is finished.
 	 * When this is called preparing will resume.  This MUST be called by
 	 * blocking events in their post_process() method. */
 	inline void unblock() { _blocking_semaphore.post(); }
 
 protected:
-	void   push_queued(QueuedEvent* const ev);
-	Event* pop_earliest_queued_before(const SampleCount time);
+	void push_queued(QueuedEvent* const ev);
 
-	inline bool unprepared_events() { return (_prepared_back.get() != _back.get()); }
+	inline bool unprepared_events() { return (_prepared_back.get() != NULL); }
 	
 	virtual void _whipped(); ///< Prepare 1 event
 
 private:
-	// Note it's important which functions access which variables for thread safety
-	
-	// 2-part queue for events that require pre-processing: 
-	AtomicInt       _front;         ///< Front of queue
-	AtomicInt       _back;          ///< Back of entire queue (index of back event + 1)
-	AtomicInt       _prepared_back; ///< Back of prepared events (index of back prepared event + 1)
-	const size_t    _size;
-	QueuedEvent**   _events;
-	Raul::Semaphore _blocking_semaphore;
-	Raul::Semaphore _full_semaphore;
+	Raul::List<Event*>                        _events;
+	Raul::AtomicPtr<Raul::List<Event*>::Node> _prepared_back;
+	Raul::Semaphore                           _blocking_semaphore;
 };
 
 
 } // namespace Ingen
 
-#endif // QUEUEDEVENTSOURCE_H
+#endif // INGEN_QUEUED_EVENT_SOURCE_HPP
+

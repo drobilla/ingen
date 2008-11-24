@@ -57,14 +57,16 @@ PostProcessor::process()
 	}
 
 	/* Process normal events */
-	while ( ! _events.empty()) {
-		Event* const ev = _events.front();
-		if (ev->time() > end_time)
+	Raul::List<Event*>::Node* n = _events.head();
+	while (n) {
+		if (n->elem()->time() > end_time)
 			break;
-		_events.pop();
-		assert(ev);
-		ev->post_process();
-        delete ev;
+		Raul::List<Event*>::Node* next = n->next();
+		n->elem()->post_process();
+		_events.erase(_events.begin());
+		delete n->elem();
+		delete n;
+		n = next;
 	}
 }
 
