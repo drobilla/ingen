@@ -295,7 +295,7 @@ LV2Node::message_process(MessageContext& context, uint32_t* output)
 {
 	// FIXME: voice
 	if (_message_funcs)
-		(*_message_funcs->message_run)((*_instances)[0], output);
+		(*_message_funcs->message_run)((*_instances)[0]->lv2_handle, output);
 
 	/* MESSAGE PROCESS */
 }
@@ -322,7 +322,7 @@ LV2Node::set_port_buffer(uint32_t voice, uint32_t port_num, Buffer* buf)
 	if ((*_ports).at(port_num)->context() == Context::MESSAGE) {
 		assert(_message_funcs);
 		assert(_message_funcs->message_connect_port);
-		(*_message_funcs->message_connect_port)((*_instances)[voice], port_num, buf->raw_data());
+		(*_message_funcs->message_connect_port)((*_instances)[voice]->lv2_handle, port_num, buf->raw_data());
 	} else {
 		slv2_instance_connect_port((*_instances)[voice], port_num, buf->raw_data());
 	}
