@@ -51,44 +51,43 @@ def build(bld):
 	core_libs = 'GLIBMM GTHREAD LV2CORE SLV2 RAUL REDLANDMM'
 	autowaf.use_lib(bld, obj, core_libs)
 	
-	if bld.env()['HAVE_SOUP'] == 1 or bld.env()['HAVE_LIBLO'] == 1:
-		obj = bld.create_obj('cpp', 'shlib')
-		obj.source = '''
-			events/SetPortValueEvent.cpp
-			QueuedEventSource.cpp
-			QueuedEngineInterface.cpp
-			events/AllNotesOffEvent.cpp
-			events/ClearPatchEvent.cpp
-			events/ConnectionEvent.cpp
-			events/CreateNodeEvent.cpp
-			events/CreatePatchEvent.cpp
-			events/CreatePortEvent.cpp
-			events/DeactivateEvent.cpp
-			events/DestroyEvent.cpp
-			events/DisconnectAllEvent.cpp
-			events/DisconnectionEvent.cpp
-			events/EnablePatchEvent.cpp
-			events/LoadPluginsEvent.cpp
-			events/MidiLearnEvent.cpp
-			events/NoteEvent.cpp
-			events/RegisterClientEvent.cpp
-			events/RenameEvent.cpp
-			events/RequestAllObjectsEvent.cpp
-			events/RequestMetadataEvent.cpp
-			events/RequestObjectEvent.cpp
-			events/RequestPluginEvent.cpp
-			events/RequestPluginsEvent.cpp
-			events/RequestPortValueEvent.cpp
-			events/SetMetadataEvent.cpp
-			events/SetPolyphonicEvent.cpp
-			events/SetPolyphonyEvent.cpp
-			events/UnregisterClientEvent.cpp
-		'''
-		obj.includes     = ['.', '..', '../common', './events', '../engine']
-		obj.name         = 'libingen_engine_queued'
-		obj.target       = 'ingen_engine_queued'
-		obj.inst_dir     = bld.env()['LIBDIRNAME'] + 'ingen'
-		autowaf.use_lib(bld, obj, core_libs)
+	obj = bld.create_obj('cpp', 'shlib')
+	obj.source = '''
+		events/SetPortValueEvent.cpp
+		QueuedEventSource.cpp
+		QueuedEngineInterface.cpp
+		events/AllNotesOffEvent.cpp
+		events/ClearPatchEvent.cpp
+		events/ConnectionEvent.cpp
+		events/CreateNodeEvent.cpp
+		events/CreatePatchEvent.cpp
+		events/CreatePortEvent.cpp
+		events/DeactivateEvent.cpp
+		events/DestroyEvent.cpp
+		events/DisconnectAllEvent.cpp
+		events/DisconnectionEvent.cpp
+		events/EnablePatchEvent.cpp
+		events/LoadPluginsEvent.cpp
+		events/MidiLearnEvent.cpp
+		events/NoteEvent.cpp
+		events/RegisterClientEvent.cpp
+		events/RenameEvent.cpp
+		events/RequestAllObjectsEvent.cpp
+		events/RequestMetadataEvent.cpp
+		events/RequestObjectEvent.cpp
+		events/RequestPluginEvent.cpp
+		events/RequestPluginsEvent.cpp
+		events/RequestPortValueEvent.cpp
+		events/SetMetadataEvent.cpp
+		events/SetPolyphonicEvent.cpp
+		events/SetPolyphonyEvent.cpp
+		events/UnregisterClientEvent.cpp
+	'''
+	obj.includes     = ['.', '..', '../common', './events', '../engine']
+	obj.name         = 'libingen_engine_queued'
+	obj.target       = 'ingen_engine_queued'
+	obj.inst_dir     = bld.env()['LIBDIRNAME'] + 'ingen'
+	autowaf.use_lib(bld, obj, core_libs)
 	
 	if bld.env()['HAVE_SOUP'] == 1:
 		obj = bld.create_obj('cpp', 'shlib')
