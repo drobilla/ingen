@@ -125,9 +125,7 @@ DeprecatedLoader::translate_load_path(const string& path)
 		assert(Path::is_valid((*t).second));
 		return (*t).second;
 	// Filthy, filthy kludges
-	// (FIXME: apply these less heavy handedly, only when it's an internal module)
-	} else /* if (path.find("midi") != string::npos) {
-		assert(Path::is_valid(path));*/
+	} else if (path.find("midi_") != string::npos) {
 		if (path.substr(path.find_last_of("/")) == "/MIDI_In")
 			return path.substr(0, path.find_last_of("/")) + "/input";
 		else if (path.substr(path.find_last_of("/")) == "/Note_Number")
@@ -140,9 +138,9 @@ DeprecatedLoader::translate_load_path(const string& path)
 			return path.substr(0, path.find_last_of("/")) + "/velocity";
 		else
 			return path;
-	/*} else {
+	} else {
 		return path;
-	}*/
+	}
 }
 
 
@@ -469,10 +467,10 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 				_engine->new_port(path, "lv2:ControlPort", 0, true);
 				is_port = true;
 			} else if (plugin_label == "midi_input") {
-				_engine->new_port(path, "ingen:EventPort", 0, false);
+				_engine->new_port(path, "lv2ev:EventPort", 0, false);
 				is_port = true;
 			} else if (plugin_label == "midi_output" ) {
-				_engine->new_port(path, "ingen:EventPort", 0, true);
+				_engine->new_port(path, "lv2ev:EventPort", 0, true);
 				is_port = true;
 			} else {
 				cerr << "WARNING: Unknown internal plugin label \"" << plugin_label << "\"" << endl;
@@ -501,7 +499,7 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 			return SharedPtr<NodeModel>();
 
 		} else {
-			if (plugin_label  == "note_in") {
+			if (plugin_label == "note_in") {
 				plugin_uri = NS_INGEN "note_node";
 			} else if (plugin_label == "control_input") {
 				plugin_uri = NS_INGEN "control_node";
@@ -617,7 +615,7 @@ DeprecatedLoader::load_connection(const Path& parent, xmlDocPtr doc, const xmlNo
 	source_port = nameify_if_invalid(source_port);
 	dest_node = nameify_if_invalid(dest_node);
 	dest_port = nameify_if_invalid(dest_port);
-
+	
 	_engine->connect(
 		translate_load_path(parent.base() + source_node +"/"+ source_port),
 		translate_load_path(parent.base() + dest_node +"/"+ dest_port));
