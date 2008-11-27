@@ -21,6 +21,7 @@
 #include <string>
 #include <fstream>
 #include <libgnomecanvasmm.h>
+#include <gtk/gtkwindow.h>
 #include <time.h>
 #include <sys/time.h>
 #include "raul/Path.hpp"
@@ -76,12 +77,16 @@ App::App(Ingen::Shared::World* world)
 	, _enable_signal(true)
 {
 	Glib::RefPtr<Gnome::Glade::Xml> glade_xml = GladeFactory::new_glade_reference();
+	
+	Glib::set_application_name("Ingen");
+	gtk_window_set_default_icon_name("ingen");
 
 	glade_xml->get_widget_derived("connect_win", _connect_window);
 	glade_xml->get_widget_derived("messages_win", _messages_window);
 	glade_xml->get_widget_derived("patch_tree_win", _patch_tree_window);
 	glade_xml->get_widget("about_win", _about_dialog);
 	_about_dialog->property_program_name() = "Ingen";
+	_about_dialog->property_logo_icon_name() = "ingen";
 
 	PluginModel::set_rdf_world(*world->rdf_world);
 

@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="64"
+   height="64"
+   id="svg3135"
+   sodipodi:version="0.32"
+   inkscape:version="0.46"
+   sodipodi:docbase="/mnt/first/logos/ingen/process"
+   sodipodi:docname="ingen.svg"
+   version="1.0"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   sodipodi:modified="true">
+  <defs
+     id="defs3137">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 372.04724 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="1052.3622 : 372.04724 : 1"
+       inkscape:persp3d-origin="526.18109 : 248.03149 : 1"
+       id="perspective45" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     gridtolerance="50"
+     guidetolerance="10"
+     objecttolerance="10"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="3.8037469"
+     inkscape:cx="0.96548336"
+     inkscape:cy="18.903953"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     inkscape:window-width="1678"
+     inkscape:window-height="1033"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     showguides="false"
+     inkscape:guide-bbox="false"
+     inkscape:grid-bbox="false"
+     inkscape:object-paths="false"
+     showborder="false"
+     showgrid="false">
+    <sodipodi:guide
+       orientation="horizontal"
+       position="300.60877"
+       id="guide3035" />
+    <sodipodi:guide
+       orientation="horizontal"
+       position="412.5625"
+       id="guide3130" />
+    <sodipodi:guide
+       orientation="horizontal"
+       position="387.5608"
+       id="guide3132" />
+    <sodipodi:guide
+       orientation="horizontal"
+       position="328.00916"
+       id="guide3158" />
+    <sodipodi:guide
+       orientation="horizontal"
+       position="160.0271"
+       id="guide3210" />
+    <sodipodi:guide
+       orientation="horizontal"
+       position="745.0625"
+       id="guide2388" />
+    <sodipodi:guide
+       orientation="horizontal"
+       position="718.375"
+       id="guide2390" />
+    <sodipodi:guide
+       orientation="horizontal"
+       position="731.75"
+       id="guide2392" />
+    <sodipodi:guide
+       orientation="vertical"
+       position="522.48438"
+       id="guide2398" />
+    <sodipodi:guide
+       orientation="horizontal"
+       position="791.78282"
+       id="guide3457" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata3140">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-1687.4288,157.09066)">
+    <g
+       id="g3875"
+       transform="matrix(0.8250038,0,0,0.8249995,294.85986,-49.29089)"
+       inkscape:export-filename="/home/dave/files/code/lad/trunk/ingen/icons/32x32/ingen.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90">
+      <rect
+         inkscape:export-ydpi="117.03309"
+         inkscape:export-xdpi="117.03309"
+         inkscape:export-filename="/mnt/first/logos/ingen/ingen_10.png"
+         y="-62.787628"
+         x="1707.3484"
+         height="9.6969738"
+         width="9.6969757"
+         id="rect3877"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.2;stroke-linecap:round;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible" />
+      <rect
+         inkscape:export-ydpi="117.03309"
+         inkscape:export-xdpi="117.03309"
+         inkscape:export-filename="/mnt/first/logos/ingen/ingen_10.png"
+         y="-82.18158"
+         x="1707.3484"
+         height="9.6969738"
+         width="9.6969757"
+         id="rect3879"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.2;stroke-linecap:round;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible" />
+      <rect
+         inkscape:export-ydpi="117.03309"
+         inkscape:export-xdpi="117.03309"
+         inkscape:export-filename="/mnt/first/logos/ingen/ingen_10.png"
+         y="-72.484589"
+         x="1687.9546"
+         height="9.6969738"
+         width="9.6969757"
+         id="rect3881"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.2;stroke-linecap:round;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible" />
+      <path
+         inkscape:export-ydpi="117.03309"
+         inkscape:export-xdpi="117.03309"
+         inkscape:export-filename="/mnt/first/logos/ingen/ingen_10.png"
+         sodipodi:nodetypes="cc"
+         id="path3883"
+         d="M 1697.4598,-67.69507 C 1702.5366,-67.69507 1702.5456,-77.27457 1707.4686,-77.27457"
+         style="fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <path
+         inkscape:export-ydpi="117.03309"
+         inkscape:export-xdpi="117.03309"
+         inkscape:export-filename="/mnt/first/logos/ingen/ingen_10.png"
+         sodipodi:nodetypes="cc"
+         id="path3885"
+         d="M 1697.4598,-67.63974 C 1702.4536,-67.63974 1702.4971,-57.98264 1707.4686,-57.98264"
+         style="fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    </g>
+  </g>
+</svg>

@@ -97,4 +97,12 @@ def build(bld):
 	# Documentation
 	autowaf.build_dox(bld, 'INGEN', INGEN_VERSION, srcdir, blddir)
 	install_files('HTMLDIR', '', blddir + '/default/doc/html/*')
+	
+	# Icons
+	icon_sizes = ['16x16', '22x22', '24x24', '32x32', '48x48']
+	for s in icon_sizes:
+		install_as(
+			os.path.normpath(bld.env()['DATADIR'] + '/icons/hicolor/' + s + '/apps/'),
+			'ingen.png',
+			'icons/' + s + '/ingen.png')
 

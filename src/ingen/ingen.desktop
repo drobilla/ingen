@@ -4,6 +4,6 @@ Name=Ingen
 Comment=Create synthesizers and effects processors in a modular environment
 Exec=ingen -eg
 Terminal=false
-Icon=ingen-icon.svg
+Icon=ingen
 Type=Application
 Categories=Application;AudioVideo;Sound;Audio
