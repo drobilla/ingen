@@ -109,6 +109,8 @@ public:
 	void broadcast(bool b) { _broadcast = b; }
 	bool broadcast()       { return _broadcast; }
 
+	void broadcast_value(ProcessContext& context, bool force=false);
+
 	void raise_set_by_user_flag() { _set_by_user = true; }
 
 	Context::ID context() const            { return _context; }

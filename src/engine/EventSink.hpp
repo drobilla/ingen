@@ -52,7 +52,7 @@ public:
 
 private:
 	Engine& _engine;
-	Raul::RingBuffer<uchar> _events;
+	Raul::RingBuffer<uint8_t> _events;
 };
 
 

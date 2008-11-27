@@ -20,12 +20,14 @@
 #include "MidiControlNode.hpp"
 #include "PostProcessor.hpp"
 #include "events/MidiLearnEvent.hpp"
+#include "events/SendPortValueEvent.hpp"
 #include "InputPort.hpp"
 #include "OutputPort.hpp"
 #include "InternalPlugin.hpp"
 #include "AudioBuffer.hpp"
 #include "ProcessContext.hpp"
 #include "EventBuffer.hpp"
+#include "Engine.hpp"
 #include "util.hpp"
 
 namespace Ingen {
@@ -102,18 +104,13 @@ MidiControlNode::control(ProcessContext& context, uchar control_num, uchar val, 
 	const Sample nval = (val / 127.0f); // normalized [0, 1]
 	
 	if (_learning) {
-		assert(false); // FIXME FIXME FIXME
-#if 0
 		assert(_learn_event != NULL);
-		_param_port->set_value(control_num, offset);
-		assert(_param_port->buffer(0)->value_at(0) == control_num);
-		_learn_event->set_value(control_num);
-		_learn_event->execute(offset);
-		//Engine::instance().post_processor()->push(_learn_event);
-		//Engine::instance().post_processor()->whip();
+		_param_port->set_value(control_num);
+		((AudioBuffer*)_param_port->buffer(0))->set_value(
+				(float)control_num, context.start(), context.end());
+		_param_port->broadcast_value(context, true);
 		_learning = false;
 		_learn_event = NULL;
-#endif
 	}
 
 	const Sample min_port_val = ((AudioBuffer*)_min_port->buffer(0))->value_at(0);

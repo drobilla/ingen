@@ -169,23 +169,29 @@ PortImpl::clear_buffers()
 	
 
 void
-PortImpl::broadcast(ProcessContext& context)
+PortImpl::broadcast_value(ProcessContext& context, bool force)
 {
-	if (_broadcast) {
-		if (_type == DataType::CONTROL || _type == DataType::AUDIO) {
-			const Sample value = ((AudioBuffer*)buffer(0))->value_at(0);
-			if (value != _last_broadcasted_value) {
-				const SendPortValueEvent ev(context.engine(), context.start(), this, false, 0, value);
-				context.event_sink().write(sizeof(ev), &ev);
-				_last_broadcasted_value = value;
-			}
-		} else if (_type == DataType::EVENT) {
-			if (((EventBuffer*)buffer(0))->event_count() > 0) {
-				const SendPortActivityEvent ev(context.engine(), context.start(), this);
-				context.event_sink().write(sizeof(ev), &ev);
-			}
+	if (_type == DataType::CONTROL || _type == DataType::AUDIO) {
+		const Sample value = ((AudioBuffer*)buffer(0))->value_at(0);
+		if (force || value != _last_broadcasted_value) {
+			const SendPortValueEvent ev(context.engine(), context.start(), this, false, 0, value);
+			context.event_sink().write(sizeof(ev), &ev);
+			_last_broadcasted_value = value;
+		}
+	} else if (_type == DataType::EVENT) {
+		if (((EventBuffer*)buffer(0))->event_count() > 0) {
+			const SendPortActivityEvent ev(context.engine(), context.start(), this);
+			context.event_sink().write(sizeof(ev), &ev);
 		}
 	}
+}
+
+
+void
+PortImpl::broadcast(ProcessContext& context)
+{
+	if (_broadcast)
+		broadcast_value(context);
 }
 
 

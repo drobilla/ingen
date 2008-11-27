@@ -72,6 +72,12 @@ public:
 	void post_process();
 
 private:
+	enum ErrorType { 
+		NO_ERROR,
+		INVALID_NODE_TYPE
+	};
+
+	ErrorType    _error;
 	const string _node_path;
 	NodeImpl*    _node;
 	

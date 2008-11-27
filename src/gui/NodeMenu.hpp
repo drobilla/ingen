@@ -60,6 +60,7 @@ protected:
 	void on_menu_embed_gui();
 	void on_menu_randomize();
 
+	Gtk::MenuItem*      _learn_menuitem;
 	Gtk::MenuItem*      _controls_menuitem;
 	Gtk::MenuItem*      _popup_gui_menuitem;
 	Gtk::CheckMenuItem* _embed_gui_menuitem;

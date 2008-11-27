@@ -40,10 +40,11 @@ MidiLearnResponseEvent::post_process()
 // MidiLearnEvent
 
 MidiLearnEvent::MidiLearnEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& node_path)
-: QueuedEvent(engine, responder, timestamp),
-  _node_path(node_path),
-  _node(NULL),
-  _response_event(NULL)
+	: QueuedEvent(engine, responder, timestamp)
+	, _error(NO_ERROR)
+	, _node_path(node_path)
+	, _node(NULL)
+	, _response_event(NULL)
 {
 }
 
@@ -63,10 +64,14 @@ MidiLearnEvent::execute(ProcessContext& context)
 {	
 	QueuedEvent::execute(context);
 	
-	// FIXME: this isn't very good at all.
-	if (_node != NULL && _node->plugin_impl()->type() == Plugin::Internal
-			&& _node->plugin_impl()->uri() == "ingen:control_node") {
+	if (_node != NULL) {
+	   if (_node->plugin_impl()->type() == Plugin::Internal
+				&& _node->plugin_impl()->uri() == "http://drobilla.net/ns/ingen#control_node") {
 			((MidiControlNode*)_node)->learn(_response_event);
+	   } else {
+		   std::cout << "NOT CAPABLE: " << _node->plugin_impl()->uri() << std::endl;
+		   _error = INVALID_NODE_TYPE;
+	   }
 	}
 }
 
@@ -74,11 +79,14 @@ MidiLearnEvent::execute(ProcessContext& context)
 void
 MidiLearnEvent::post_process()
 {
-	if (_node != NULL) {
+	if (_error == NO_ERROR) {
 		_responder->respond_ok();
-	} else {
+	} else if (_node == NULL) {
 		string msg = "Did not find node '";
 		msg.append(_node_path).append("' for MIDI learn.");
+		_responder->respond_error(msg);
+	} else {
+		const string msg = string("Node '") + _node_path + "' is not capable of MIDI learn.";
 		_responder->respond_error(msg);
 	}
 }

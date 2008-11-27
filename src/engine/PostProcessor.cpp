@@ -70,8 +70,11 @@ PostProcessor::process()
 	/* Process audio thread generated events */
 	while (_engine.audio_driver()->context().event_sink().read(
 				_event_buffer_size, _event_buffer)) {
-		if (((Event*)_event_buffer)->time() > end_time)
-			break; // FIXME: loses event?
+		if (((Event*)_event_buffer)->time() > end_time) {
+			cerr << "WARNING: Lost event with time "
+				<< ((Event*)_event_buffer)->time() << " > " << end_time << endl;
+			break;
+		}
 		((Event*)_event_buffer)->post_process();
 	}
 

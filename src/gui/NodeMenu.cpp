@@ -36,11 +36,13 @@ NodeMenu::NodeMenu(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml
 {
 	Gtk::Menu* node_menu = NULL;
 	xml->get_widget("node_menu", node_menu);
+	xml->get_widget("node_learn_menuitem", _learn_menuitem);
 	xml->get_widget("node_controls_menuitem", _controls_menuitem);
 	xml->get_widget("node_popup_gui_menuitem", _popup_gui_menuitem);
 	xml->get_widget("node_embed_gui_menuitem", _embed_gui_menuitem);
 	xml->get_widget("node_randomize_menuitem", _randomize_menuitem);
 
+	node_menu->remove(*_learn_menuitem);
 	node_menu->remove(*_controls_menuitem);
 	node_menu->remove(*_popup_gui_menuitem);
 	node_menu->remove(*_embed_gui_menuitem);
@@ -51,6 +53,7 @@ NodeMenu::NodeMenu(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml
 	insert(*_controls_menuitem, 0);
 	insert(*_popup_gui_menuitem, 0);
 	insert(*_embed_gui_menuitem, 0);
+	insert(*_learn_menuitem, 0);
 }
 
 
@@ -59,6 +62,9 @@ NodeMenu::init(SharedPtr<NodeModel> node)
 {
 	ObjectMenu::init(node);
 			
+	_learn_menuitem->signal_activate().connect(sigc::mem_fun(this,
+			&NodeMenu::on_menu_learn));
+
 	_controls_menuitem->signal_activate().connect(sigc::bind(
 			sigc::mem_fun(App::instance().window_factory(), &WindowFactory::present_controls),
 			node));
@@ -83,6 +89,11 @@ NodeMenu::init(SharedPtr<NodeModel> node)
 		_randomize_menuitem->show();
 	else
 		_randomize_menuitem->hide();
+
+	if (plugin->uri() == "http://drobilla.net/ns/ingen#control_node")
+		_learn_menuitem->show();
+	else
+		_learn_menuitem->hide();
 
 	_enable_signal = true;
 }
