@@ -335,10 +335,8 @@ PatchWindow::object_left(ObjectModel* model)
 void
 PatchWindow::editable_changed(bool editable)
 {
-	//const Atom& enabled = _patch->get_variable("ingen:enabled");
 	_menu_edit_controls->set_active(editable);
 }
-
 
 
 void
