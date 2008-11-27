@@ -221,9 +221,14 @@ NodeFactory::load_ladspa_plugins()
 
 		struct dirent* pfile;
 		while ((pfile = readdir(pdir))) {
-	
-			LADSPA_Descriptor_Function df         = NULL;
-			LADSPA_Descriptor*         descriptor = NULL;
+			union {
+				void*                      dp;
+				LADSPA_Descriptor_Function fp;
+			} df;
+			df.dp = NULL;
+			df.fp = NULL;
+
+			LADSPA_Descriptor* descriptor = NULL;
 			
 			if (!strcmp(pfile->d_name, ".") || !strcmp(pfile->d_name, ".."))
 				continue;
@@ -240,8 +245,8 @@ NodeFactory::load_ladspa_plugins()
 			if (!plugin_library || !(*plugin_library))
 				continue;
 			
-			bool found = plugin_library->get_symbol("ladspa_descriptor", (void*&)df);
-			if (!found || !df) {
+			bool found = plugin_library->get_symbol("ladspa_descriptor", df.dp);
+			if (!found || !df.dp) {
 				cerr << "WARNING: Non-LADSPA library found in LADSPA path: " <<
 					lib_path << endl;
 				// Not a LADSPA plugin library
@@ -249,7 +254,7 @@ NodeFactory::load_ladspa_plugins()
 				continue;
 			}
 
-			for (unsigned long i=0; (descriptor = (LADSPA_Descriptor*)df(i)) != NULL; ++i) {
+			for (unsigned long i=0; (descriptor = (LADSPA_Descriptor*)df.fp(i)) != NULL; ++i) {
 				char id_str[11];
 				snprintf(id_str, 11, "%lu", descriptor->UniqueID);
 				const string uri = string("ladspa:").append(id_str);

@@ -40,21 +40,27 @@ LADSPAPlugin::instantiate(const string&     name,
 	SampleCount srate       = engine.audio_driver()->sample_rate();
 	SampleCount buffer_size = engine.audio_driver()->buffer_size();
 	
-	LADSPA_Descriptor_Function df = NULL;
+	union {
+		void*                      dp;
+		LADSPA_Descriptor_Function fp;
+	} df;
+	df.dp = NULL;
+	df.fp = NULL;
+	
 	LADSPANode* n = NULL;
 
 	load(); // FIXME: unload at some point
 	assert(_module);
 	assert(*_module);
 	
-	if (!_module->get_symbol("ladspa_descriptor", (void*&)df)) {
+	if (!_module->get_symbol("ladspa_descriptor", df.dp)) {
 		cerr << "Looks like this isn't a LADSPA plugin." << endl;
 		return NULL;
 	}
 
 	// Attempt to find the plugin in library
 	LADSPA_Descriptor* descriptor = NULL;
-	for (unsigned long i=0; (descriptor = (LADSPA_Descriptor*)df(i)) != NULL; ++i) {
+	for (unsigned long i=0; (descriptor = (LADSPA_Descriptor*)df.fp(i)) != NULL; ++i) {
 		if (descriptor->UniqueID == _id) {
 			break;
 		}
