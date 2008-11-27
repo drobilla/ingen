@@ -220,6 +220,24 @@ main(int argc, char** argv)
 	}
             
 	world->engine = engine_interface;
+	
+	void (*gui_run)() = NULL;
+
+	/* Load GUI */
+	bool run_gui = false;
+	if (args.gui_given) {
+		gui_module = Ingen::Shared::load_module("ingen_gui");
+		void (*init)(int, char**, Ingen::Shared::World*);
+		
+		bool found = gui_module->get_symbol("init", (void*&)init);
+		found = found && gui_module->get_symbol("run", (void*&)gui_run);
+		if (found) {
+			run_gui = true;
+			init(argc, argv, world);
+		} else {
+			cerr << "Unable to find hooks in GUI module, GUI not loaded." << endl;
+		}
+	}
 
 	/* Load a patch */
 	if (args.load_given && engine_interface) {
@@ -250,7 +268,6 @@ main(int argc, char** argv)
 						Glib::get_current_dir(), args.load_arg));
 			}
 
-
 			engine_interface->load_plugins();
 			parser->parse_document(world, engine_interface.get(), uri, engine_base, uri);
 
@@ -260,21 +277,9 @@ main(int argc, char** argv)
 		}
 	}
 	
-
-	/* Run GUI */
-	bool ran_gui = false;
-	if (args.gui_given) {
-		gui_module = Ingen::Shared::load_module("ingen_gui");
-		void (*run)(int, char**, Ingen::Shared::World*);
-		bool found = gui_module->get_symbol("run", (void*&)run);
-
-		if (found) {
-			ran_gui = true;
-			run(argc, argv, world);
-		} else {
-			cerr << "Unable to find GUI module, GUI not loaded." << endl;
-		}
-	}
+	/* Run GUI (if applicable) */
+	if (run_gui)
+		gui_run();
 
     /* Run a script */
     if (args.run_given) {
@@ -298,7 +303,7 @@ main(int argc, char** argv)
 #endif
 	
 	/* Listen to OSC and do our own main thing. */
-    } else if (engine && !ran_gui) {
+    } else if (engine && !run_gui) {
 		signal(SIGINT, catch_int);
 		signal(SIGTERM, catch_int);
 		engine->main();

@@ -55,6 +55,8 @@ public:
 	void start(Ingen::Shared::World* world);
 	void on_response(int32_t id) { _attached = true; }
 
+	bool attached() const { return _finished_connecting; }
+
 private:
 	enum Mode { CONNECT_REMOTE, LAUNCH_REMOTE, INTERNAL };
 
@@ -78,9 +80,9 @@ private:
 	Mode    _mode;
 	int32_t _ping_id;
 	bool    _attached;
-	
-	bool _widgets_loaded;
-	int  _connect_stage;
+	bool    _finished_connecting;
+	bool    _widgets_loaded;
+	int     _connect_stage;
 
 	SharedPtr<Glib::Module> _engine_module;
 	SharedPtr<Glib::Module> _engine_jack_module;

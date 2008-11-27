@@ -111,7 +111,8 @@ public:
 	
 	static inline App& instance() { assert(_instance); return *_instance; }
 
-	static void run(int argc, char** argv, Ingen::Shared::World* world);
+	static void init(int argc, char** argv, Ingen::Shared::World* world);
+	static void run();
 
 	Ingen::Shared::World* world() { return _world; }
 
@@ -138,7 +139,8 @@ protected:
 	
 	static void* icon_destroyed(void* data);
 	
-	static App* _instance;
+	static Gtk::Main* _main;
+	static App*       _instance;
 	
 	SharedPtr<Client::SigClientInterface> _client;
 	SharedPtr<Raul::Deletable>            _handle;

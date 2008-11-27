@@ -33,7 +33,8 @@ namespace GUI {
 
 extern "C" {
 
-	void run(int argc, char** argv, Ingen::Shared::World* world);
+	void init(int argc, char** argv, Ingen::Shared::World* world);
+	void run();
 
 }
 

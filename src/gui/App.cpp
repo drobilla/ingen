@@ -62,6 +62,7 @@ namespace GUI {
 
 class Port;
 
+Gtk::Main* App::_main = 0;
 
 /// Singleton instance
 App* App::_instance = 0;
@@ -95,10 +96,10 @@ App::~App()
 }
 
 void
-App::run(int argc, char** argv, Ingen::Shared::World* world)
+App::init(int argc, char** argv, Ingen::Shared::World* world)
 {
 	Gnome::Canvas::init();
-	Gtk::Main main(argc, argv);
+	_main = new Gtk::Main(argc, argv);
 
 	if (!_instance)
 		_instance = new App(world);
@@ -135,9 +136,20 @@ App::run(int argc, char** argv, Ingen::Shared::World* world)
 	Gtk::RC::parse_string(rc_style);
 	
 	App::instance().connect_window()->start(world);
-	
-	main.run();
 
+	// Run main iterations here until we're attached to the engine
+	// (otherwise with 'ingen -egl' we'll get a bunch of notifications about load immediately
+	// before even knowing about the root patch or plugins)
+	while (!App::instance().connect_window()->attached())
+		_main->iteration();
+}
+
+
+void
+App::run()
+{
+	assert(_main);
+	_main->run();
 	cout << "Gtk exiting." << endl;
 }
 

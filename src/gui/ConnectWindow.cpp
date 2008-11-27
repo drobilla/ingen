@@ -60,6 +60,7 @@ ConnectWindow::ConnectWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::
 	, _mode(CONNECT_REMOTE)
 	, _ping_id(-1)
 	, _attached(false)
+	, _finished_connecting(false)
 	, _widgets_loaded(false)
 	, _connect_stage(0)
 	, _new_engine(NULL)
@@ -461,6 +462,7 @@ ConnectWindow::gtk_callback()
 		if (_widgets_loaded)
 			_progress_label->set_text("Connected to engine");
 		_connect_stage = 0; // set ourselves up for next time (if there is one)
+		_finished_connecting = true;
 		return false; // deregister this callback
 	}
 	

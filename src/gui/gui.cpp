@@ -24,9 +24,17 @@ namespace Ingen {
 namespace GUI {
 
 
-void run(int argc, char** argv, Ingen::Shared::World* world)
+void
+init(int argc, char** argv, Ingen::Shared::World* world)
 {
-	App::run(argc, argv, world);
+	App::init(argc, argv, world);
+}
+
+
+void
+run()
+{
+	App::run();
 }
 
 

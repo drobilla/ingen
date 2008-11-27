@@ -530,7 +530,7 @@ ClientStore::set_variable(const string& subject_path, const string& predicate, c
 		subject->set_variable(predicate, value);
 	} else {
 		add_variable_orphan(subject_path, predicate, value);
-		cerr << "WARNING: variable for unknown object " << subject_path << endl;
+		cerr << "WARNING: variable '" << predicate << "' for unknown object " << subject_path << endl;
 	}
 }
 
@@ -546,8 +546,7 @@ ClientStore::set_property(const string& subject_path, const string& predicate, c
 		if (obj)
 			obj->set_property(predicate, value);
 		else
-			cerr << "WARNING: property for unknown object " << subject_path
-					<< ".  Refresh!" << endl;
+		cerr << "WARNING: property '" << predicate << "' for unknown object " << subject_path << endl;
 	} else {
 		if (subject_path.find(":") != string::npos
 			   && predicate == "rdf:type" && value.type() == Atom::URI) {
