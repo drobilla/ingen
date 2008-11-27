@@ -46,15 +46,13 @@ PostProcessor::process()
 {
 	const FrameTime end_time = _max_time.get();
 
-	/* Process any audio thread generated events */
+	/* Note the normal (pre-processed client originated) events must
+	 * be sent first, since they could have e.g. created a port which
+	 * is by now inserted, running, and may broadcast something to
+	 * the client.  If the broadcast happened first the client would
+	 * not yet know about the port's existance. */
+	
 	/* FIXME: process events from all threads if parallel */
-
-	while (_engine.audio_driver()->context().event_sink().read(
-				_event_buffer_size, _event_buffer)) {
-		if (((Event*)_event_buffer)->time() > end_time)
-			break; // FIXME: loses event?
-		((Event*)_event_buffer)->post_process();
-	}
 
 	/* Process normal events */
 	Raul::List<Event*>::Node* n = _events.head();
@@ -68,6 +66,15 @@ PostProcessor::process()
 		delete n;
 		n = next;
 	}
+	
+	/* Process audio thread generated events */
+	while (_engine.audio_driver()->context().event_sink().read(
+				_event_buffer_size, _event_buffer)) {
+		if (((Event*)_event_buffer)->time() > end_time)
+			break; // FIXME: loses event?
+		((Event*)_event_buffer)->post_process();
+	}
+
 }
 
 

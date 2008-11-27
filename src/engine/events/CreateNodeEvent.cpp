@@ -38,14 +38,14 @@ namespace Ingen {
 
 CreateNodeEvent::CreateNodeEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path,
 		const string& plugin_uri, bool polyphonic)
-: QueuedEvent(engine, responder, timestamp),
-  _path(path),
-  _plugin_uri(plugin_uri),
-  _polyphonic(polyphonic),
-  _patch(NULL),
-  _node(NULL),
-  _compiled_patch(NULL),
-  _node_already_exists(false)
+	: QueuedEvent(engine, responder, timestamp)
+	, _path(path)
+	, _plugin_uri(plugin_uri)
+	, _polyphonic(polyphonic)
+	, _patch(NULL)
+	, _node(NULL)
+	, _compiled_patch(NULL)
+	, _node_already_exists(false)
 {
 }
 
