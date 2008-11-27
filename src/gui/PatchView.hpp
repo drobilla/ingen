@@ -61,7 +61,7 @@ public:
 
 	SharedPtr<PatchCanvas> canvas()               const { return _canvas; }
 	SharedPtr<PatchModel>  patch()                const { return _patch; }
-	Gtk::Viewport*         breadcrumb_container() const { return _breadcrumb_container; }
+	Gtk::ToolItem*         breadcrumb_container() const { return _breadcrumb_container; }
 	
 	void set_editable(bool editable);
 
@@ -101,7 +101,7 @@ private:
 	Gtk::ToolButton*        _zoom_normal_but;
 	Gtk::ToolButton*        _zoom_full_but;
 	Gtk::ToggleToolButton*  _edit_mode_but;
-	Gtk::Viewport*          _breadcrumb_container;
+	Gtk::ToolItem*          _breadcrumb_container;
 
 	bool _enable_signal;
 };

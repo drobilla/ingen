@@ -36,9 +36,9 @@ namespace GUI {
 
 
 PatchView::PatchView(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
-: Gtk::Box(cobject),
-  _breadcrumb_container(NULL),
-  _enable_signal(true)
+	: Gtk::Box(cobject)
+	, _breadcrumb_container(NULL)
+	, _enable_signal(true)
 {
 	property_visible() = false;
 
