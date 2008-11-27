@@ -22,7 +22,6 @@
 #include "MidiControlNode.hpp"
 #include "types.hpp"
 #include <string>
-using std::string;
 
 namespace Ingen {
 
@@ -30,42 +29,14 @@ class NodeImpl;
 class ControlChangeEvent;
 
 
-/** Response event for a MIDI learn.
- *
- * This is a trivial event that sends a control change in it's post_process
- * method (used by MidiLearnEvent to notify clients when the learn happens)
- */
-class MidiLearnResponseEvent : public Event
-{
-public:
-	MidiLearnResponseEvent(Engine& engine, const string& port_path, SampleCount timestamp)
-	: Event(engine, SharedPtr<Responder>(), timestamp),
-	  _port_path(port_path),
-	  _value(0.0f)
-	{}
-	
-	void set_value(Sample val) { _value = val; }
-	void post_process();
-	
-private:
-	string _port_path;
-	Sample _value;
-};
-
-
-
-/** A MIDI learn event.
- *
- * This creates a MidiLearnResponseEvent and passes it to the learning node, which
- * will push it to the post-processor once the learn happens in order to reply
- * to the client with the new port (learned controller) value.
+/** A MIDI learn event (used by control node to learn controller number).
  *
  * \ingroup engine
  */
 class MidiLearnEvent : public QueuedEvent
 {
 public:
-	MidiLearnEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& node_path);
+	MidiLearnEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const std::string& node_path);
 	
 	void pre_process();
 	void execute(ProcessContext& context);
@@ -77,12 +48,9 @@ private:
 		INVALID_NODE_TYPE
 	};
 
-	ErrorType    _error;
-	const string _node_path;
-	NodeImpl*    _node;
-	
-	/// Event to respond with when learned
-	MidiLearnResponseEvent* _response_event;
+	ErrorType         _error;
+	const std::string _node_path;
+	NodeImpl*         _node;
 };
 
 

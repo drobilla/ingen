@@ -23,7 +23,6 @@
 
 namespace Ingen {
 	
-class MidiLearnResponseEvent;
 class InputPort;
 class OutputPort;
 
@@ -44,7 +43,7 @@ public:
 	
 	void control(ProcessContext& context, uchar control_num, uchar val, FrameTime time);
 
-	void learn(MidiLearnResponseEvent* ev) { _learning = true; _learn_event = ev; }
+	void learn() { _learning = true; }
 
 private:
 	bool _learning;
@@ -55,8 +54,6 @@ private:
 	InputPort*  _min_port;
 	InputPort*  _max_port;
 	OutputPort* _audio_port;
-
-	MidiLearnResponseEvent* _learn_event;
 };
 
 

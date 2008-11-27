@@ -104,13 +104,11 @@ MidiControlNode::control(ProcessContext& context, uchar control_num, uchar val, 
 	const Sample nval = (val / 127.0f); // normalized [0, 1]
 	
 	if (_learning) {
-		assert(_learn_event != NULL);
 		_param_port->set_value(control_num);
 		((AudioBuffer*)_param_port->buffer(0))->set_value(
 				(float)control_num, context.start(), context.end());
 		_param_port->broadcast_value(context, true);
 		_learning = false;
-		_learn_event = NULL;
 	}
 
 	const Sample min_port_val = ((AudioBuffer*)_min_port->buffer(0))->value_at(0);

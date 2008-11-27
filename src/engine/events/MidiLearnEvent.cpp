@@ -27,24 +27,11 @@
 namespace Ingen {
 
 
-// MidiLearnResponseEvent
-
-void
-MidiLearnResponseEvent::post_process()
-{
-	_engine.broadcaster()->send_port_value(_port_path, _value);
-}
-
-
-
-// MidiLearnEvent
-
 MidiLearnEvent::MidiLearnEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& node_path)
 	: QueuedEvent(engine, responder, timestamp)
 	, _error(NO_ERROR)
 	, _node_path(node_path)
 	, _node(NULL)
-	, _response_event(NULL)
 {
 }
 
@@ -53,7 +40,6 @@ void
 MidiLearnEvent::pre_process()
 {
 	_node = _engine.engine_store()->find_node(_node_path);
-	_response_event = new MidiLearnResponseEvent(_engine, _node_path + "/Controller_Number", _time);
 	
 	QueuedEvent::pre_process();
 }
@@ -67,7 +53,7 @@ MidiLearnEvent::execute(ProcessContext& context)
 	if (_node != NULL) {
 	   if (_node->plugin_impl()->type() == Plugin::Internal
 				&& _node->plugin_impl()->uri() == "http://drobilla.net/ns/ingen#control_node") {
-			((MidiControlNode*)_node)->learn(_response_event);
+			((MidiControlNode*)_node)->learn();
 	   } else {
 		   std::cout << "NOT CAPABLE: " << _node->plugin_impl()->uri() << std::endl;
 		   _error = INVALID_NODE_TYPE;
