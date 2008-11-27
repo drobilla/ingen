@@ -88,17 +88,19 @@ Parser::parse_document(
 	if (symbol)
 		cout << "[Parser] Symbol: " << symbol.get() << endl;
 
-	bool ret = parse(world, target, model, document_uri, engine_base, object_uri, symbol, data);
+	boost::optional<Path> parsed_path
+		= parse(world, target, model, document_uri, engine_base, object_uri, symbol, data);
 	
 	const string object_path = (document_uri == object_uri) ? "/"
 		: uri_relative_to_base(document_uri, object_uri);
 
-	if (Path::is_valid(object_path))
-		target->set_variable(object_path, "ingen:document", Atom(document_uri.c_str()));
-	else
+	if (parsed_path) {
+		target->set_variable(*parsed_path, "ingen:document", Atom(document_uri.c_str()));
+	} else {
 		cerr << "WARNING: " << object_path << " is not a valid path, document URI lost" << endl;
+	}
 		
-	return ret;
+	return parsed_path;
 }
 
 
@@ -200,7 +202,7 @@ Parser::parse_update(
 }
 
 
-bool
+boost::optional<Path>
 Parser::parse(
 		Ingen::Shared::World*                   world,
 		Ingen::Shared::CommonInterface*         target,
@@ -240,8 +242,9 @@ Parser::parse(
 	
 	const Redland::Node subject_uri(*world->rdf_world, res, subject_str);
 
-	bool ret = false;
 	std::string path_str;
+	boost::optional<Path> ret;
+	boost::optional<Path> root_path;
 
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
 		const Redland::Node& subject = (object_uri ? subject_uri : (*i)["subject"]);
@@ -286,10 +289,14 @@ Parser::parse(
 				ret = parse_port(world, target, model,
 						base_uri, Glib::ustring("<") + subject.to_c_string() + ">", path, data);
 			} else if (rdf_class == ladspa_class || rdf_class == lv2_class || rdf_class == internal_class)
-			if (ret == false) {
+			if (!ret) {
 				cerr << "Failed to parse object " << object_uri << endl;
-				return ret;
+				return boost::optional<Path>();
 			}
+				
+			if (object_uri && subject.to_string() == *object_uri)
+				root_path = ret;
+
 		} else if (is_plugin) {
 			if (path_str.length() > 0) {
 				const string uri = path_str.substr(1);
@@ -298,12 +305,12 @@ Parser::parse(
 		}
 
 	}
-
-	return ret;
+	
+	return root_path;
 }
 
 
-bool
+boost::optional<Path>
 Parser::parse_patch(
 		Ingen::Shared::World*                   world,
 		Ingen::Shared::CommonInterface*         target,
@@ -342,7 +349,7 @@ Parser::parse_patch(
 		if (results.size() == 0) {
 			cerr << "[Parser] ERROR: No polyphony found!" << endl;
 			cerr << "Query was:" << endl << query.string() << endl;
-			return false;
+			return boost::optional<Path>();
 		}
 
 		const Redland::Node& poly_node = (*results.begin())["poly"];
@@ -550,11 +557,11 @@ Parser::parse_patch(
 		}
 	}
 
-	return true;
+	return patch_path;
 }
 
 
-bool
+boost::optional<Path>
 Parser::parse_node(
 		Ingen::Shared::World*                   world,
 		Ingen::Shared::CommonInterface*         target,
@@ -572,23 +579,22 @@ Parser::parse_node(
 
 	if (results.size() == 0) {
 		cerr << "[Parser] ERROR: Node missing mandatory ingen:plugin property" << endl;
-		return false;
+		return boost::optional<Path>();
 	}
 	
 	const Redland::Node& plugin_node = (*results.begin())["plug"];
 	if (plugin_node.type() != Redland::Node::RESOURCE) {
 		cerr << "[Parser] ERROR: node's ingen:plugin property is not a resource" << endl;
-		return false;
+		return boost::optional<Path>();
 	}
 
 	target->new_node(path, world->rdf_world->expand_uri(plugin_node.to_c_string()));
 	parse_variables(world, target, model, base_uri, subject, path, data);
-
-	return true;
+	return path;
 }
 
 
-bool
+boost::optional<Path>
 Parser::parse_port(
 		Ingen::Shared::World*                   world,
 		Ingen::Shared::CommonInterface*         target,
@@ -623,7 +629,8 @@ Parser::parse_port(
 	}
 	world->rdf_world->mutex().unlock();
 	
-	return parse_variables(world, target, model, base_uri, subject, path, data);
+	parse_variables(world, target, model, base_uri, subject, path, data);
+	return path;
 }
 
 

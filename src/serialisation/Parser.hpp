@@ -73,7 +73,7 @@ private:
 
 	Glib::ustring uri_relative_to_base(Glib::ustring base, const Glib::ustring uri);
 
-	bool parse(
+	boost::optional<Raul::Path> parse(
 			Ingen::Shared::World*                   world,
 			Shared::CommonInterface*                target,
 			Redland::Model&                         model,
@@ -83,7 +83,7 @@ private:
 			boost::optional<Raul::Symbol>           symbol=boost::optional<Raul::Symbol>(),
 			boost::optional<GraphObject::Variables> data=boost::optional<GraphObject::Variables>());
 
-	bool parse_patch(
+	boost::optional<Raul::Path> parse_patch(
 			Ingen::Shared::World*                   world,
 			Ingen::Shared::CommonInterface*         target,
 			Redland::Model&                         model,
@@ -92,7 +92,7 @@ private:
 			const Glib::ustring&                    object_uri,
 			boost::optional<GraphObject::Variables> data);
 	
-	bool parse_node(
+	boost::optional<Raul::Path> parse_node(
 			Ingen::Shared::World*                   world,
 			Ingen::Shared::CommonInterface*         target,
 			Redland::Model&                         model,
@@ -101,7 +101,7 @@ private:
 			const Raul::Path&                       path,
 			boost::optional<GraphObject::Variables> data);
 
-	bool parse_port(
+	boost::optional<Raul::Path> parse_port(
 			Ingen::Shared::World*                   world,
 			Ingen::Shared::CommonInterface*         target,
 			Redland::Model&                         model,
