@@ -88,7 +88,17 @@ Parser::parse_document(
 	if (symbol)
 		cout << "[Parser] Symbol: " << symbol.get() << endl;
 
-	return parse(world, target, model, document_uri, engine_base, object_uri, symbol, data);;
+	bool ret = parse(world, target, model, document_uri, engine_base, object_uri, symbol, data);
+	
+	const string object_path = (document_uri == object_uri) ? "/"
+		: uri_relative_to_base(document_uri, object_uri);
+
+	if (Path::is_valid(object_path))
+		target->set_variable(object_path, "ingen:document", Atom(document_uri.c_str()));
+	else
+		cerr << "WARNING: " << object_path << " is not a valid path, document URI lost" << endl;
+		
+	return ret;
 }
 
 
@@ -269,8 +279,6 @@ Parser::parse(
 
 			if (rdf_class == patch_class) {
 				ret = parse_patch(world, target, model, base_uri, engine_base, path_str, data);
-				//if (ret)
-				//	target->set_variable(path, "ingen:document", Atom(base_uri.c_str()));
 			} else if (rdf_class == node_class) {
 				ret = parse_node(world, target, model,
 						base_uri, Glib::ustring("<") + subject.to_c_string() + ">", path, data);
