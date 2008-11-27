@@ -77,6 +77,7 @@ private:
 	void patch_port_added(SharedPtr<PortModel> port);
 	void patch_port_removed(SharedPtr<PortModel> port);
 	void object_entered(ObjectModel* model);
+	void object_left(ObjectModel* model);
 
 	void event_import();
 	void event_import_location();
@@ -143,6 +144,7 @@ private:
 	Gtk::Statusbar*     _status_bar;
 
 	sigc::connection _entered_connection;
+	sigc::connection _left_connection;
 
 	/** Invisible bin used to store breadcrumbs when not shown by a view */
 	Gtk::Alignment _breadcrumb_bin;

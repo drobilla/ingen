@@ -62,7 +62,7 @@ public:
 	virtual ~ObjectModel();
 
 	const Atom& get_variable(const string& key) const;
-	Atom&       get_variable( string& key);
+	Atom&       get_variable(string& key);
 	
 	virtual void set_property(const string& key, const Atom& value) {
 		ResourceImpl::set_property(key, value);

@@ -19,6 +19,7 @@
 #include <iostream>
 #include <cassert>
 #include <fstream>
+#include <boost/format.hpp>
 #include "raul/AtomRDF.hpp"
 #include "interface/EngineInterface.hpp"
 #include "client/PatchModel.hpp"
@@ -43,6 +44,9 @@
 namespace Ingen {
 namespace GUI {
 
+static const int STATUS_CONTEXT_ENGINE = 0;
+static const int STATUS_CONTEXT_PATCH = 1;
+static const int STATUS_CONTEXT_HOVER = 2;
 
 PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 	: Gtk::Window(cobject)
@@ -87,11 +91,11 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 	xml->get_widget("patch_help_about_menuitem", _menu_help_about);
 
 	_menu_view_control_window->property_sensitive() = false;
-	//m_status_bar->push(App::instance().engine()->engine_url());
-	//m_status_bar->pack_start(*Gtk::manage(new Gtk::Image(Gtk::Stock::CONNECT, Gtk::ICON_SIZE_MENU)), false, false);
+	string engine_name = App::instance().engine()->uri();
+	if (engine_name == "ingen:internal")
+		engine_name = "internal engine";
+	_status_bar->push(string("Connected to ") + engine_name, STATUS_CONTEXT_ENGINE);
 	
-	/*_menu_open->signal_activate().connect(
-		sigc::mem_fun(this, &PatchWindow::event_open));*/
 	_menu_import->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_import));
 	_menu_import_location->signal_activate().connect(
@@ -192,10 +196,12 @@ PatchWindow::set_patch(SharedPtr<PatchModel> patch, SharedPtr<PatchView> view)
 	new_port_connection.disconnect();
 	removed_port_connection.disconnect();
 	_entered_connection.disconnect();
+	_left_connection.disconnect();
+
+	_status_bar->pop(STATUS_CONTEXT_PATCH);
 
 	_patch = patch;
-
-	_view = view;
+	_view  = view;
 
 	if (!_view)
 		_view = _breadcrumb_box->view(patch->path());
@@ -253,6 +259,7 @@ PatchWindow::set_patch(SharedPtr<PatchModel> patch, SharedPtr<PatchView> view)
 	show_all();
 
 	_view->signal_object_entered.connect(sigc::mem_fun(this, &PatchWindow::object_entered));
+	_view->signal_object_left.connect(sigc::mem_fun(this, &PatchWindow::object_left));
 
 	_enable_signal = true;
 }
@@ -289,13 +296,12 @@ PatchWindow::patch_port_removed(SharedPtr<PortModel> port)
 void
 PatchWindow::object_entered(ObjectModel* model)
 {
-	_status_bar->pop();
 	string msg = model->path();
 	NodeModel* node = dynamic_cast<NodeModel*>(model);
 	if (node) {
 		PluginModel* plugin = (PluginModel*)node->plugin();
 		if (plugin)
-			msg.append(" \"").append(plugin->human_name()).append("\"");
+			msg.append((boost::format(" (%1%)") % plugin->human_name()).str());
 	}
 	
 	PortModel* port = dynamic_cast<PortModel*>(model);
@@ -304,7 +310,8 @@ PatchWindow::object_entered(ObjectModel* model)
 		if (parent) {
 			const PluginModel* plugin = dynamic_cast<const PluginModel*>(parent->plugin());
 			if (plugin) {
-				msg.append(" \"").append(plugin->port_human_name(port->index())).append("\"");
+				msg.append((boost::format(" (%1%)")
+						% plugin->port_human_name(port->index())).str());
 				const Atom& value = port->value();
 				if (value.is_valid()) {
 					const Redland::Node node = AtomRDF::atom_to_node(
@@ -315,7 +322,14 @@ PatchWindow::object_entered(ObjectModel* model)
 		}
 	}
 
-	_status_bar->push(msg);
+	_status_bar->push(msg, STATUS_CONTEXT_HOVER);
+}
+
+
+void
+PatchWindow::object_left(ObjectModel* model)
+{
+	_status_bar->pop(STATUS_CONTEXT_HOVER);
 }
 
 
@@ -372,6 +386,9 @@ PatchWindow::event_save()
 	} else {
 		const Glib::ustring& filename = Glib::filename_from_uri(doc->second.get_string());
 		App::instance().loader()->save_patch(_patch, filename);
+		_status_bar->push(
+				(boost::format("Wrote %1% to %2%") % _patch->path() % filename).str(),
+				STATUS_CONTEXT_PATCH);
 	}
 }
 
@@ -420,6 +437,9 @@ PatchWindow::event_save_as()
 		if (confirm) {
 			App::instance().loader()->save_patch(_patch, filename);
 			_patch->set_variable("ingen:document", Atom(Glib::filename_to_uri(filename).c_str()));
+			_status_bar->push(
+					(boost::format("Wrote %1% to %2%") % _patch->path() % filename).str(),
+					STATUS_CONTEXT_PATCH);
 		}
 	}
 	App::instance().configuration()->set_patch_folder(dialog.get_current_folder());

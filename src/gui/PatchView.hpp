@@ -22,6 +22,7 @@
 #include <gtkmm.h>
 #include <libglademm/xml.h>
 #include <libglademm.h>
+#include <libgnomecanvasmm.h>
 #include "raul/SharedPtr.hpp"
 #include "raul/Atom.hpp"
 
@@ -65,6 +66,7 @@ public:
 	static SharedPtr<PatchView> create(SharedPtr<PatchModel> patch);
 
 	sigc::signal<void, ObjectModel*> signal_object_entered;
+	sigc::signal<void, ObjectModel*> signal_object_left;
 
 private:
 	void set_patch(SharedPtr<PatchModel> patch);
@@ -75,8 +77,8 @@ private:
 	void refresh_clicked();
 	void on_editable_sig(bool locked);
 	void editable_toggled();
-	void canvas_port_entered(FlowCanvas::Port* port);
-	void canvas_item_entered(FlowCanvas::Item* item);
+	void canvas_item_entered(Gnome::Canvas::Item* item);
+	void canvas_item_left(Gnome::Canvas::Item* item);
 	
 	void property_changed(const std::string& predicate, const Raul::Atom& value);
 

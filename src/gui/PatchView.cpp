@@ -107,11 +107,11 @@ PatchView::set_patch(SharedPtr<PatchModel> patch)
 	_poly_spin->signal_value_changed().connect(
 			sigc::mem_fun(*this, &PatchView::poly_changed));
 
-	_canvas->signal_port_entered.connect(
-			sigc::mem_fun(*this, &PatchView::canvas_port_entered));
-	
 	_canvas->signal_item_entered.connect(
 			sigc::mem_fun(*this, &PatchView::canvas_item_entered));
+	
+	_canvas->signal_item_left.connect(
+			sigc::mem_fun(*this, &PatchView::canvas_item_left));
 
 	_canvas->grab_focus();
 }
@@ -155,20 +155,32 @@ PatchView::editable_toggled()
 
 
 void
-PatchView::canvas_port_entered(FlowCanvas::Port* port)
+PatchView::canvas_item_entered(Gnome::Canvas::Item* item)
 {
-	Port* p = dynamic_cast<Port*>(port);
+	NodeModule* m = dynamic_cast<NodeModule*>(item);
+	if (m) {
+		signal_object_entered.emit(m->node().get());
+		return;
+	}
+	
+	Port* p = dynamic_cast<Port*>(item);
 	if (p)
 		signal_object_entered.emit(p->model().get());
 }
 
 
 void
-PatchView::canvas_item_entered(FlowCanvas::Item* item)
+PatchView::canvas_item_left(Gnome::Canvas::Item* item)
 {
 	NodeModule* m = dynamic_cast<NodeModule*>(item);
-	if (m)
-		signal_object_entered.emit(m->node().get());
+	if (m) {
+		signal_object_left.emit(m->node().get());
+		return;
+	}
+	
+	Port* p = dynamic_cast<Port*>(item);
+	if (p)
+		signal_object_left.emit(p->model().get());
 }
 
 
