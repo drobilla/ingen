@@ -78,18 +78,19 @@ private:
 	void patch_port_removed(SharedPtr<PortModel> port);
 	void object_entered(ObjectModel* model);
 	void object_left(ObjectModel* model);
+	void editable_changed(bool editable);
 
 	void event_import();
 	void event_import_location();
 	void event_save();
 	void event_save_as();
 	void event_upload();
+	void event_edit_controls();
 	void event_copy();
 	void event_paste();
 	void event_delete();
 	void event_select_all();
 	void event_quit();
-	void event_destroy();
 	void event_clear();
 	void event_fullscreen_toggled();
 	void event_status_bar_toggled();
@@ -106,6 +107,7 @@ private:
 	
 	sigc::connection new_port_connection;
 	sigc::connection removed_port_connection;
+	sigc::connection edit_mode_connection;
 
 	bool _enable_signal;
 	bool _position_stored;
@@ -117,6 +119,7 @@ private:
 	Gtk::MenuItem*      _menu_save;
 	Gtk::MenuItem*      _menu_save_as;
 	Gtk::MenuItem*      _menu_upload;
+	Gtk::CheckMenuItem* _menu_edit_controls;
 	Gtk::MenuItem*      _menu_cut;
 	Gtk::MenuItem*      _menu_copy;
 	Gtk::MenuItem*      _menu_paste;
@@ -129,7 +132,6 @@ private:
 	Gtk::CheckMenuItem* _menu_show_status_bar;
 	Gtk::MenuItem*      _menu_fullscreen;
 	Gtk::MenuItem*      _menu_clear;
-	Gtk::MenuItem*      _menu_destroy_patch;
 	Gtk::MenuItem*      _menu_arrange;
 	Gtk::MenuItem*      _menu_view_engine_window;
 	Gtk::MenuItem*      _menu_view_control_window;

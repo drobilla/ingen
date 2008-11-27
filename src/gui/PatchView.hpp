@@ -62,6 +62,8 @@ public:
 	SharedPtr<PatchCanvas> canvas()               const { return _canvas; }
 	SharedPtr<PatchModel>  patch()                const { return _patch; }
 	Gtk::Viewport*         breadcrumb_container() const { return _breadcrumb_container; }
+	
+	void set_editable(bool editable);
 
 	static SharedPtr<PatchView> create(SharedPtr<PatchModel> patch);
 
@@ -77,6 +79,7 @@ private:
 	void refresh_clicked();
 	void on_editable_sig(bool locked);
 	void editable_toggled();
+
 	void canvas_item_entered(Gnome::Canvas::Item* item);
 	void canvas_item_left(Gnome::Canvas::Item* item);
 	
@@ -93,7 +96,6 @@ private:
 	Gtk::ToggleToolButton*  _process_but;
 	Gtk::SpinButton*        _poly_spin;
 	Gtk::ToolButton*        _clear_but;
-	Gtk::ToolButton*        _destroy_but;
 	Gtk::ToolButton*        _refresh_but;
 	Gtk::ToolButton*        _save_but;
 	Gtk::ToolButton*        _zoom_normal_but;

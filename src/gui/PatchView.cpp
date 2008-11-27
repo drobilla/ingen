@@ -47,7 +47,6 @@ PatchView::PatchView(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::X
 	xml->get_widget("patch_view_process_but", _process_but);
 	xml->get_widget("patch_view_poly_spin", _poly_spin);
 	xml->get_widget("patch_view_clear_but", _clear_but);
-	xml->get_widget("patch_view_destroy_but", _destroy_but);
 	xml->get_widget("patch_view_refresh_but", _refresh_but);
 	xml->get_widget("patch_view_save_but", _save_but);
 	xml->get_widget("patch_view_zoom_full_but", _zoom_full_but);
@@ -78,7 +77,6 @@ PatchView::set_patch(SharedPtr<PatchModel> patch)
 	_canvas_scrolledwindow->add(*_canvas);
 
 	_poly_spin->set_value(patch->poly());
-	_destroy_but->set_sensitive(patch->path() != "/");
 
 	for (GraphObject::Properties::const_iterator i = patch->properties().begin();
 			i != patch->properties().end(); ++i)
@@ -149,6 +147,13 @@ void
 PatchView::editable_toggled()
 {
 	const bool editable = _edit_mode_but->get_active();
+	set_editable(editable);
+}
+
+
+void
+PatchView::set_editable(bool editable)
+{
 	_patch->set_editable(editable);
 	_canvas->lock(!editable);
 }

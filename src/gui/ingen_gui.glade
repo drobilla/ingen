@@ -144,6 +144,21 @@
                 <child>
                   <widget class="GtkMenu" id="edit2_menu">
                     <child>
+                      <widget class="GtkCheckMenuItem" id="patch_edit_controls_menuitem">
+                        <property name="visible">True</property>
+                        <property name="tooltip" translatable="yes">Enable editing of connections and dragging of nodes (disable to manipulate controls)</property>
+                        <property name="label" translatable="yes">_Edit connections</property>
+                        <property name="use_underline">True</property>
+                        <property name="active">True</property>
+                        <accelerator key="e" modifiers="" signal="activate"/>
+                      </widget>
+                    </child>
+                    <child>
+                      <widget class="GtkSeparatorMenuItem" id="menuitem4">
+                        <property name="visible">True</property>
+                      </widget>
+                    </child>
+                    <child>
                       <widget class="GtkImageMenuItem" id="patch_cut_menuitem">
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
@@ -226,22 +241,6 @@
                       </widget>
                     </child>
                     <child>
-                      <widget class="GtkImageMenuItem" id="patch_destroy_menuitem">
-                        <property name="visible">True</property>
-                        <property name="tooltip" translatable="yes">Destoy this patch (remove it from the engine)</property>
-                        <property name="label" translatable="yes">_Destroy Patch</property>
-                        <property name="use_underline">True</property>
-                        <signal name="activate" handler="on_patch_destroy_menuitem_activate"/>
-                        <child internal-child="image">
-                          <widget class="GtkImage" id="image2131">
-                            <property name="visible">True</property>
-                            <property name="stock">gtk-delete</property>
-                            <property name="icon_size">1</property>
-                          </widget>
-                        </child>
-                      </widget>
-                    </child>
-                    <child>
                       <widget class="GtkSeparatorMenuItem" id="menuitem2">
                         <property name="visible">True</property>
                       </widget>
@@ -267,7 +266,7 @@
                       <widget class="GtkImageMenuItem" id="patch_properties_menuitem">
                         <property name="visible">True</property>
                         <property name="tooltip" translatable="yes">View/Edit properties for this patch</property>
-                        <property name="label" translatable="yes">_Properties...</property>
+                        <property name="label" translatable="yes">P_roperties...</property>
                         <property name="use_underline">True</property>
                         <signal name="activate" handler="on_patch_properties_menuitem_activate"/>
                         <accelerator key="P" modifiers="GDK_CONTROL_MASK" signal="activate"/>
@@ -1475,7 +1474,7 @@
                     <child>
                       <widget class="GtkToggleToolButton" id="patch_view_process_but">
                         <property name="visible">True</property>
-                        <property name="tooltip" translatable="yes">Enable DSP processing</property>
+                        <property name="tooltip" translatable="yes">Enable patch</property>
                         <property name="use_underline">True</property>
                         <property name="stock_id">gtk-execute</property>
                         <property name="active">True</property>
@@ -1503,10 +1502,12 @@
                     <child>
                       <widget class="GtkToolItem" id="toolitem10">
                         <property name="visible">True</property>
+                        <property name="tooltip" translatable="yes">Polyphony</property>
                         <child>
                           <widget class="GtkSpinButton" id="patch_view_poly_spin">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
+                            <property name="tooltip" translatable="yes">Patch polyphony</property>
                             <property name="adjustment">1 1 512 1 10 10</property>
                             <property name="climb_rate">1</property>
                             <property name="numeric">True</property>
@@ -1538,30 +1539,11 @@
                       </packing>
                     </child>
                     <child>
-                      <widget class="GtkSeparatorToolItem" id="separatortoolitem19">
-                        <property name="visible">True</property>
-                      </widget>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="homogeneous">False</property>
-                      </packing>
-                    </child>
-                    <child>
                       <widget class="GtkToolButton" id="patch_view_clear_but">
                         <property name="visible">True</property>
-                        <property name="tooltip" translatable="yes">Clear (Destroy all children)</property>
+                        <property name="tooltip" translatable="yes">Clear patch contents</property>
                         <property name="use_underline">True</property>
                         <property name="stock_id">gtk-clear</property>
-                      </widget>
-                      <packing>
-                        <property name="expand">False</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="GtkToolButton" id="patch_view_destroy_but">
-                        <property name="visible">True</property>
-                        <property name="tooltip" translatable="yes">Destroy this patch</property>
-                        <property name="stock_id">gtk-delete</property>
                       </widget>
                       <packing>
                         <property name="expand">False</property>
@@ -1600,7 +1582,7 @@
                     <child>
                       <widget class="GtkToolButton" id="patch_view_zoom_full_but">
                         <property name="visible">True</property>
-                        <property name="tooltip" translatable="yes">Fit patch to window</property>
+                        <property name="tooltip" translatable="yes">Zoom to contents</property>
                         <property name="use_underline">True</property>
                         <property name="stock_id">gtk-zoom-fit</property>
                       </widget>
@@ -1622,9 +1604,9 @@
                       <widget class="GtkToggleToolButton" id="patch_view_edit_mode_but">
                         <property name="visible">True</property>
                         <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                        <property name="tooltip" translatable="yes">Enable edit mode to move objects and make connections, disable to play controls ('e' to toggle)</property>
+                        <property name="tooltip" translatable="yes">Edit connections</property>
                         <property name="label" translatable="yes">Edit</property>
-                        <property name="stock_id">gtk-edit</property>
+                        <property name="stock_id">gtk-connect</property>
                         <property name="active">True</property>
                       </widget>
                       <packing>
