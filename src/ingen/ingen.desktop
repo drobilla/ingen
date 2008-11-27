@@ -2,7 +2,7 @@
 Encoding=UTF-8
 Name=Ingen
 Comment=Create synthesizers and effects processors in a modular environment
-Exec=ingen -g
+Exec=ingen -eg
 Terminal=false
 Icon=ingen-icon.svg
 Type=Application
