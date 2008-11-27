@@ -141,7 +141,7 @@ PatchCanvas::build_menus()
 	if (_internal_menu) {
 		_internal_menu->items().clear();
 	} else {
-		_menu->items().push_back(Gtk::Menu_Helpers::ImageMenuElem("Internal",
+		_menu->items().push_back(Gtk::Menu_Helpers::ImageMenuElem("I_nternal",
 				*(manage(new Gtk::Image(Gtk::Stock::EXECUTE, Gtk::ICON_SIZE_MENU)))));
 		Gtk::MenuItem* internal_menu_item = &(_menu->items().back());
 		_internal_menu = Gtk::manage(new Gtk::Menu());
@@ -220,7 +220,7 @@ PatchCanvas::build_plugin_menu()
 	if (_plugin_menu) {
 		_plugin_menu->items().clear();
 	} else {
-		_menu->items().push_back(Gtk::Menu_Helpers::ImageMenuElem("Plugin",
+		_menu->items().push_back(Gtk::Menu_Helpers::ImageMenuElem("_Plugin",
 				*(manage(new Gtk::Image(Gtk::Stock::EXECUTE, Gtk::ICON_SIZE_MENU)))));
 		Gtk::MenuItem* plugin_menu_item = &(_menu->items().back());
 		_plugin_menu = Gtk::manage(new Gtk::Menu());
