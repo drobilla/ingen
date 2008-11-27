@@ -70,10 +70,8 @@ SetMetadataEvent::pre_process()
 	else
 		_object->set_variable(_key, _value);
 	
-	if (_key == "ingen:broadcast") {
-		std::cout << "BROADCAST" << std::endl;
+	if (_key == "ingen:broadcast")
 		_special_type = ENABLE_BROADCAST;
-	}
 
 	QueuedEvent::pre_process();
 }
