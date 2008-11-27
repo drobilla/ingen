@@ -43,7 +43,7 @@ public:
 	virtual bool parse_document(
 			Ingen::Shared::World*                   world,
 			Shared::CommonInterface*                target,
-			const Glib::ustring&                    document_uri,
+			Glib::ustring                           document_uri,
 			Glib::ustring                           engine_base,
 			Glib::ustring                           object_uri,
 			boost::optional<Raul::Symbol>           symbol=boost::optional<Raul::Symbol>(),

@@ -55,6 +55,15 @@ Parser::uri_relative_to_base(Glib::ustring base, const Glib::ustring uri)
 }
 
 
+static void
+normalise_uri(Glib::ustring& uri)
+{
+	size_t dotslash = string::npos;
+	while ((dotslash = uri.find("./")) != string::npos)
+		uri = uri.substr(0, dotslash) + uri.substr(dotslash + 2);
+}
+
+
 /** Parse a patch from RDF into a CommonInterface (engine or client).
  * @return whether or not load was successful.
  */
@@ -62,21 +71,22 @@ bool
 Parser::parse_document(
 		Ingen::Shared::World*                   world,
 		Ingen::Shared::CommonInterface*         target,
-		const Glib::ustring&                    document_uri,
+		Glib::ustring                           document_uri,
 		Glib::ustring                           object_uri,
 		Glib::ustring                           engine_base,
 		boost::optional<Raul::Symbol>           symbol,
 		boost::optional<GraphObject::Variables> data)
 {
+	normalise_uri(document_uri);
+	normalise_uri(object_uri);
+	normalise_uri(engine_base);
+	
 	Redland::Model model(*world->rdf_world, document_uri, document_uri);
 
-	if (object_uri == document_uri || object_uri == "") {
-		cout << "Parsing " << object_uri << " from " << document_uri << endl;
-		cout << "Base: " << engine_base;
-		cout << ", Symbol: " << ((bool)symbol ? symbol.get() : "_") << endl;
-	} else {
-		cout << "Parsing " << object_uri << " from " << document_uri << endl;
-	}
+	cout << "[Parser] Parsing " << object_uri << " from " << document_uri << endl;
+	cout << "[Parser] Base: " << engine_base << endl;
+	if (symbol)
+		cout << "[Parser] Symbol: " << symbol.get() << endl;
 
 	return parse(world, target, model, document_uri, engine_base, object_uri, symbol, data);;
 }
@@ -317,7 +327,7 @@ Parser::parse_patch(
 	/* Get polyphony from file (mandatory if not specified in parameters) */
 	if (patch_poly == 0) {
 		Redland::Query query(*world->rdf_world, Glib::ustring(
-			"SELECT DISTINCT ?poly WHERE { ") + subject + " ingen:polyphony ?poly\n }");
+			"SELECT DISTINCT ?poly WHERE { ") + subject + " ingen:polyphony ?poly }");
 
 		Redland::Query::Results results = query.run(*world->rdf_world, model, base_uri);
 
@@ -339,7 +349,7 @@ Parser::parse_patch(
 		symbol = base_uri.substr(base_uri.find_last_of("/") + 1);
 		symbol = symbol.substr(0, symbol.find("."));
 	}
-
+	
 	Path patch_path("/");
 	if (engine_base == "")
 		patch_path = "/";
