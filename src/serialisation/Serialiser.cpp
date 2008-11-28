@@ -403,7 +403,7 @@ Serialiser::serialise_node(SharedPtr<Shared::Node> node, const Redland::Node& no
 	
 	_model->add_statement(
 		node_id,
-		"ingen:plugin",
+		"rdf:instanceOf",
 		plugin_id);
 	
 	_model->add_statement(

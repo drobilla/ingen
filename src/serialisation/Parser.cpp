@@ -293,10 +293,8 @@ Parser::parse(
 				root_path = ret;
 
 		} else if (is_plugin) {
-			if (path_str.length() > 0) {
-				const string uri = path_str.substr(1);
-				target->set_property(uri, "rdf:type", Atom(Atom::URI, rdf_class.to_c_string()));
-			}
+			if (path_str.length() > 0)
+				target->set_property(path_str, "rdf:type", Atom(Atom::URI, rdf_class.to_c_string()));
 		}
 
 	}
@@ -381,7 +379,7 @@ Parser::parse_patch(
 		"SELECT DISTINCT ?name ?plugin ?varkey ?varval ?poly WHERE {\n") +
 		subject + " ingen:node       ?node .\n"
 		"?node      lv2:symbol       ?name ;\n"
-		"           ingen:plugin     ?plugin ;\n"
+		"           rdf:instanceOf   ?plugin ;\n"
 		"           ingen:polyphonic ?poly .\n"
 		"OPTIONAL { ?node     lv2var:variable ?variable .\n"
 		"           ?variable rdf:predicate   ?varkey ;\n"
@@ -568,18 +566,18 @@ Parser::parse_node(
 {
 	/* Get plugin */
 	Redland::Query query(*world->rdf_world, Glib::ustring(
-			"SELECT DISTINCT ?plug WHERE { ") + subject + " ingen:plugin ?plug }");
+			"SELECT DISTINCT ?plug WHERE { ") + subject + " rdf:instanceOf ?plug }");
 
 	Redland::Query::Results results = query.run(*world->rdf_world, model, base_uri);
 
 	if (results.size() == 0) {
-		cerr << "[Parser] ERROR: Node missing mandatory ingen:plugin property" << endl;
+		cerr << "[Parser] ERROR: Node missing mandatory rdf:instanceOf property" << endl;
 		return boost::optional<Path>();
 	}
 	
 	const Redland::Node& plugin_node = (*results.begin())["plug"];
 	if (plugin_node.type() != Redland::Node::RESOURCE) {
-		cerr << "[Parser] ERROR: node's ingen:plugin property is not a resource" << endl;
+		cerr << "[Parser] ERROR: node's rdf:instanceOf property is not a resource" << endl;
 		return boost::optional<Path>();
 	}
 
