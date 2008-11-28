@@ -123,11 +123,10 @@ Parser::parse_string(
 	//	cout << "Parsing all objects found in string (base " << base_uri << ")" << endl;
 	
 	bool ret = parse(world, target, model, base_uri, engine_base, object_uri, symbol, data);
-	if (ret) {
-		const Glib::ustring subject = Glib::ustring("<") + base_uri + Glib::ustring(">");
-		parse_connections(world, target, model, base_uri, subject,
-				Path((engine_base == "") ? "/" : engine_base));
-	}
+	const Glib::ustring subject = Glib::ustring("<") + base_uri + Glib::ustring(">");
+	//const Glib::ustring subject("<>");
+	parse_connections(world, target, model, base_uri, subject,
+			Path((engine_base == "") ? "/" : engine_base));
 
 	return ret;
 }
@@ -273,7 +272,7 @@ Parser::parse(
 		                       || (rdf_class == node_class)
 		                       || (rdf_class == in_port_class)
 		                       || (rdf_class == out_port_class);
-
+		
 		if (is_object) {
 			Raul::Path path(path_str == "" ? "/" : path_str);
 			
