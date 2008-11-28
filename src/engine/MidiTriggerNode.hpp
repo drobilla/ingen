@@ -46,8 +46,12 @@ public:
 	
 	void note_on(ProcessContext& context, uchar note_num, uchar velocity, FrameTime time);
 	void note_off(ProcessContext& context, uchar note_num, FrameTime time);
+	
+	void learn() { _learning = true; }
 
 private:
+	bool _learning;
+
 	InputPort*  _midi_in_port;
 	InputPort*  _note_port;
 	OutputPort* _gate_port;

@@ -34,6 +34,7 @@ namespace Ingen {
 MidiTriggerNode::MidiTriggerNode(const string& path, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size)
 	: NodeBase(new InternalPlugin(NS_INGEN "trigger_node", "trigger", "Trigger"),
 			path, false, parent, srate, buffer_size)
+	, _learning(false)
 {
 	_ports = new Raul::Array<PortImpl*>(5);
 
@@ -106,6 +107,14 @@ MidiTriggerNode::note_on(ProcessContext& context, uchar note_num, uchar velocity
 {
 	assert(time >= context.start() && time <= context.end());
 	assert(time - context.start() < _buffer_size);
+	
+	if (_learning) {
+		_note_port->set_value(note_num);
+		((AudioBuffer*)_note_port->buffer(0))->set_value(
+				(float)note_num, context.start(), context.end());
+		_note_port->broadcast_value(context, true);
+		_learning = false;
+	}
 
 	/*cerr << "[MidiTriggerNode] " << path() << " Note " << (int)note_num << " on @ " << time << endl;*/
 

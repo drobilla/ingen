@@ -51,11 +51,9 @@ MidiLearnEvent::execute(ProcessContext& context)
 	QueuedEvent::execute(context);
 	
 	if (_node != NULL) {
-	   if (_node->plugin_impl()->type() == Plugin::Internal
-				&& _node->plugin_impl()->uri() == "http://drobilla.net/ns/ingen#control_node") {
-			((MidiControlNode*)_node)->learn();
+	   if (_node->plugin_impl()->type() == Plugin::Internal) {
+		   ((NodeBase*)_node)->learn();
 	   } else {
-		   std::cout << "NOT CAPABLE: " << _node->plugin_impl()->uri() << std::endl;
 		   _error = INVALID_NODE_TYPE;
 	   }
 	}
