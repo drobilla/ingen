@@ -258,8 +258,8 @@ Parser::parse(
 				path_str = string("/").append(path_str);
 			if (!Path::is_valid(path_str)) {
 				//cerr << "INVALID PATH: " << path_str << endl;
-			} else if (Path(path_str).parent() != "/") {
-				cout << "Non-root parent object " << path_str << endl;
+			//} else if (Path(path_str).parent() != "/") {
+				//cout << "Non-root parent object " << path_str << endl;
 				//continue;
 			}
 		}
