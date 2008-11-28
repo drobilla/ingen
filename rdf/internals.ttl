@@ -25,28 +25,29 @@
 # ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 
-@prefix :     <http://drobilla.net/ns/ingen#> .
-@prefix doap: <http://usefulinc.com/ns/doap#> .
-@prefix foaf: <http://xmlns.com/foaf/0.1/> .
-@prefix lv2:  <http://lv2plug.in/ns/lv2core#> .
-@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix xsd:  <http://www.w3.org/2001/XMLSchema> .
+@prefix :      <http://drobilla.net/ns/ingen-internals#> .
+@prefix ingen: <http://drobilla.net/ns/ingen#> .
+@prefix doap:  <http://usefulinc.com/ns/doap#> .
+@prefix foaf:  <http://xmlns.com/foaf/0.1/> .
+@prefix lv2:   <http://lv2plug.in/ns/lv2core#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema> .
 
-:ControlPlugin a :Plugin ;
+:Controller a ingen:Plugin ;
     rdfs:label "Controller" ;
     rdfs:comment """
 Receives events and outputs signals for some specific controller
 (e.g. MIDI CC).
 """ .
 
-:TriggerPlugin a :Plugin ;
+:Trigger a ingen:Plugin ;
     rdfs:label "Trigger" ;
     rdfs:comment """
 Receives events and outputs a trigger signal when a specific note is received.
 """ .
 
-:NotePlugin a :Plugin ;
+:Note a ingen:Plugin ;
     rdfs:label "Note" ;
     rdfs:comment """
 Receives events and outputs signals for the individual properties of the
@@ -54,7 +55,7 @@ received notes.  This plugin is special because it is internally aware of
 Ingen's polyphony and controls voice allocation.
 """ .
 
-:TransportPlugin a :Plugin ;
+:Transport a ingen:Plugin ;
     rdfs:label "Transport" ;
     rdfs:comment """
 Listens to system transport information  (when available) and outputs signals

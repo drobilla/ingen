@@ -38,6 +38,7 @@
 #include "DeprecatedLoader.hpp"
 
 #define NS_INGEN "http://drobilla.net/ns/ingen#"
+#define NS_INTERNALS "http://drobilla.net/ns/ingen-internals#"
 
 using namespace std;
 
@@ -500,13 +501,13 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 
 		} else {
 			if (plugin_label == "note_in") {
-				plugin_uri = NS_INGEN "note_node";
+				plugin_uri = NS_INTERNALS "Note";
 			} else if (plugin_label == "control_input") {
-				plugin_uri = NS_INGEN "control_node";
+				plugin_uri = NS_INTERNALS "Controller";
 			} else if (plugin_label == "transport") {
-				plugin_uri = NS_INGEN "transport_node";
+				plugin_uri = NS_INTERNALS "Transport";
 			} else if (plugin_label == "trigger_in") {
-				plugin_uri = NS_INGEN "trigger_node";
+				plugin_uri = NS_INTERNALS "Trigger";
 			}
 
 			if (plugin_uri != "")

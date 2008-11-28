@@ -32,14 +32,14 @@
 
 namespace Ingen {
 
+static InternalPlugin controller_plugin(NS_INTERNALS "Controller", "controller", "Controller");
 	
 MidiControlNode::MidiControlNode(const string& path,
                                  bool          polyphonic,
                                  PatchImpl*    parent,
                                  SampleRate    srate,
                                  size_t        buffer_size)
-	: NodeBase(new InternalPlugin(NS_INGEN "control_node", "controller", "Controller")
-			, path, false, parent, srate, buffer_size)
+	: NodeBase(&controller_plugin, path, false, parent, srate, buffer_size)
 	, _learning(false)
 {
 	_ports = new Raul::Array<PortImpl*>(6);

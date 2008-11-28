@@ -90,8 +90,8 @@ NodeMenu::init(SharedPtr<NodeModel> node)
 	else
 		_randomize_menuitem->hide();
 
-	if (plugin->uri() == "http://drobilla.net/ns/ingen#control_node"
-			|| plugin->uri() == "http://drobilla.net/ns/ingen#trigger_node")
+	if (plugin->uri() == "http://drobilla.net/ns/ingen-internals#Controller"
+			|| plugin->uri() == "http://drobilla.net/ns/ingen-internals#Trigger")
 		_learn_menuitem->show();
 	else
 		_learn_menuitem->hide();

@@ -72,14 +72,14 @@ NoteEvent::execute(ProcessContext& context)
 	
 	if (_node != NULL && _node->plugin()->type() == Plugin::Internal) {
 		if (_on) {
-			if (_node->plugin_impl()->uri() == NS_INGEN "note_node")
+			if (_node->plugin_impl()->uri() == NS_INTERNALS "Note")
 				((MidiNoteNode*)_node)->note_on(context, _note_num, _velocity, _time);
-			else if (_node->plugin_impl()->uri() == NS_INGEN "trigger_node")
+			else if (_node->plugin_impl()->uri() == NS_INTERNALS "Trigger")
 				((MidiTriggerNode*)_node)->note_on(context, _note_num, _velocity, _time);
 		} else  {
-			if (_node->plugin_impl()->uri() == NS_INGEN "note_node")
+			if (_node->plugin_impl()->uri() == NS_INTERNALS "Note")
 				((MidiNoteNode*)_node)->note_off(context, _note_num, _time);
-			else if (_node->plugin_impl()->uri() == NS_INGEN "trigger_node")
+			else if (_node->plugin_impl()->uri() == NS_INTERNALS "Trigger")
 				((MidiTriggerNode*)_node)->note_off(context, _note_num, _time);
 		}
 	}
@@ -93,7 +93,7 @@ NoteEvent::post_process()
 		if (_node)
 			_responder->respond_ok();
 		else
-			_responder->respond_error("Did not find node for note_on");
+			_responder->respond_error("Did not find node for note on event");
 	}
 }
 

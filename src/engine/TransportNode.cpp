@@ -26,10 +26,10 @@
 
 namespace Ingen {
 
+static InternalPlugin transport_plugin(NS_INTERNALS "Transport", "transport", "Transport");
 
 TransportNode::TransportNode(const string& path, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size)
-: NodeBase(new InternalPlugin(NS_INGEN "transport_node", "transport", "Transport Follower"),
-		path, false, parent, srate, buffer_size)
+	: NodeBase(&transport_plugin, path, false, parent, srate, buffer_size)
 {
 #if 0
 	_num_ports = 10;

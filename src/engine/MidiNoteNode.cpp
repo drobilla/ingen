@@ -35,10 +35,10 @@ using namespace std;
 
 namespace Ingen {
 
+static InternalPlugin note_plugin(NS_INTERNALS "Note", "note", "Note");
 
 MidiNoteNode::MidiNoteNode(const string& path, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size)
-	: NodeBase(new InternalPlugin(NS_INGEN "note_node", "note", "Note"),
-			path, polyphonic, parent, srate, buffer_size)
+	: NodeBase(&note_plugin, path, polyphonic, parent, srate, buffer_size)
 	, _voices(new Raul::Array<Voice>(_polyphony))
 	, _prepared_voices(NULL)
 	, _sustain(false)

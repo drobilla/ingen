@@ -30,10 +30,10 @@ using namespace std;
 
 namespace Ingen {
 
+static InternalPlugin trigger_plugin(NS_INTERNALS "Trigger", "trigger", "Trigger");
 
 MidiTriggerNode::MidiTriggerNode(const string& path, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size)
-	: NodeBase(new InternalPlugin(NS_INGEN "trigger_node", "trigger", "Trigger"),
-			path, false, parent, srate, buffer_size)
+	: NodeBase(&trigger_plugin, path, false, parent, srate, buffer_size)
 	, _learning(false)
 {
 	_ports = new Raul::Array<PortImpl*>(5);
