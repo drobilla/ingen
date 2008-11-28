@@ -69,6 +69,7 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 	xml->get_widget("patch_save_menuitem", _menu_save);
 	xml->get_widget("patch_save_as_menuitem", _menu_save_as);
 	xml->get_widget("patch_upload_menuitem", _menu_upload);
+	xml->get_widget("patch_draw_menuitem", _menu_draw);
 	xml->get_widget("patch_edit_controls_menuitem", _menu_edit_controls);
 	xml->get_widget("patch_cut_menuitem", _menu_cut);
 	xml->get_widget("patch_copy_menuitem", _menu_copy);
@@ -106,6 +107,8 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 		sigc::mem_fun(this, &PatchWindow::event_save_as));
 	_menu_upload->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_upload));
+	_menu_draw->signal_activate().connect(
+		sigc::mem_fun(this, &PatchWindow::event_draw));
 	_menu_edit_controls->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_edit_controls));
 	_menu_copy->signal_activate().connect(
@@ -456,6 +459,49 @@ void
 PatchWindow::event_upload()
 {
 	App::instance().window_factory()->present_upload_patch(_patch);
+}
+
+
+void
+PatchWindow::event_draw()
+{
+	Gtk::FileChooserDialog dialog(*this, "Draw to DOT", Gtk::FILE_CHOOSER_ACTION_SAVE);
+	
+	dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
+	Gtk::Button* save_button = dialog.add_button(Gtk::Stock::SAVE, Gtk::RESPONSE_OK);	
+	save_button->property_has_default() = true;
+	
+	int result = dialog.run();
+	
+	if (result == Gtk::RESPONSE_OK) {	
+		string filename = dialog.get_filename();
+		if (filename.find(".") == string::npos)
+			filename += ".dot";
+
+		bool confirm = false;
+		std::fstream fin;
+		fin.open(filename.c_str(), std::ios::in);
+		if (fin.is_open()) {  // File exists
+			const string msg = string("File exists!\n")
+				+ "Are you sure you want to overwrite " + filename + "?";
+			Gtk::MessageDialog confirm_dialog(*this,
+				msg, false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO, true);
+			if (confirm_dialog.run() == Gtk::RESPONSE_YES)
+				confirm = true;
+			else
+				confirm = false;
+		} else {  // File doesn't exist
+			confirm = true;
+		}
+		fin.close();
+		
+		if (confirm) {
+			_view->canvas()->render_to_dot(filename);
+			_status_bar->push(
+					(boost::format("Rendered %1% to %2%") % _patch->path() % filename).str(),
+					STATUS_CONTEXT_PATCH);
+		}
+	}
 }
 
 

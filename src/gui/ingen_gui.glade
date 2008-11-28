@@ -103,6 +103,22 @@
                       </widget>
                     </child>
                     <child>
+                      <widget class="GtkImageMenuItem" id="patch_draw_menuitem">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">_Draw...</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="on_patch_draw_menuitem_activate"/>
+                        <accelerator key="P" modifiers="GDK_CONTROL_MASK" signal="activate"/>
+                        <child internal-child="image">
+                          <widget class="GtkImage" id="image2127">
+                            <property name="visible">True</property>
+                            <property name="stock">gtk-print</property>
+                            <property name="icon_size">1</property>
+                          </widget>
+                        </child>
+                      </widget>
+                    </child>
+                    <child>
                       <widget class="GtkSeparatorMenuItem" id="separator11">
                         <property name="visible">True</property>
                       </widget>
