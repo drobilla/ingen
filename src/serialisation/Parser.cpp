@@ -248,20 +248,19 @@ Parser::parse(
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
 		const Redland::Node& subject = (object_uri ? subject_uri : (*i)["subject"]);
 		const Redland::Node& rdf_class = (*i)["class"];
+
 		//cout << "SUBJECT: " << subject.to_c_string() << endl;
 		//cout << "CLASS: " << rdf_class.to_c_string() << endl;
-		if (!object_uri) {
+
+		if (!object_uri)
 			path_str = uri_relative_to_base(base_uri, subject.to_c_string());
-			//cout << "BASE: " << base_uri.c_str() << endl;
-			//cout << "PATH: " << path_str.c_str() << endl;
-			if (path_str[0] != '/')
-				path_str = string("/").append(path_str);
-			if (!Path::is_valid(path_str)) {
-				//cerr << "INVALID PATH: " << path_str << endl;
-			//} else if (Path(path_str).parent() != "/") {
-				//cout << "Non-root parent object " << path_str << endl;
-				//continue;
-			}
+			
+		if (path_str[0] != '/')
+			path_str = string("/").append(path_str);
+
+		if (!Path::is_valid(path_str)) {
+			cerr << "WARNING: Invalid path '" << path_str << "', object skipped" << endl;
+			continue;
 		}
 		
 		const bool is_plugin =    (rdf_class == ladspa_class)
@@ -276,9 +275,6 @@ Parser::parse(
 		if (is_object) {
 			Raul::Path path(path_str == "" ? "/" : path_str);
 			
-			//if (path.parent() != "/")
-			//	continue;
-
 			if (rdf_class == patch_class) {
 				ret = parse_patch(world, target, model, base_uri, engine_base, path_str, data);
 			} else if (rdf_class == node_class) {
@@ -335,8 +331,8 @@ Parser::parse_patch(
 	if (subject[0] == '<' && subject[1] == '/')
 		subject = string("<").append(subject.substr(2));
 	
-	//cout << "**** LOADING PATCH URI " << object_uri << ", SUBJ " << subject
-	//	<< ", ENG BASE " << engine_base << endl;
+	//cout << "Parse patch URI: " << object_uri << ", Subject: " << subject
+	//	<< ", Engine Base: " << engine_base << endl;
 
 	/* Get polyphony from file (mandatory if not specified in parameters) */
 	if (patch_poly == 0) {
