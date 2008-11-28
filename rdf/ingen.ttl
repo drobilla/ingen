@@ -1,0 +1,189 @@
+# Ingen Ontology
+# Copyright (C) 2008 David Robillard <http://drobilla.net>
+#
+# This document describes classes and properties that define a "patch" or
+# "graph" representing a dataflow program or system.  It borrows heavily
+# from the LV2 specification <http://lv2plug.in> which describes plugins
+# for signal processing.
+# 
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+# 
+# The above copyright notice and this permission notice shall be included
+# in all copies or substantial portions of the Software.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+# OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+# ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+# OTHER DEALINGS IN THE SOFTWARE.
+
+@prefix :     <http://drobilla.net/ns/ingen#> .
+@prefix doap: <http://usefulinc.com/ns/doap#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix lv2:  <http://lv2plug.in/ns/lv2core#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema> .
+
+<> a lv2:Specification ;
+    doap:name     "Ingen" ;
+    doap:homepage <http://drobilla.net/software/ingen> ;
+    doap:maintainer [ a foaf:Person ;
+        foaf:name     "David Robillard" ;
+        foaf:homepage <http://drobilla.net/> ;
+        rdfs:seeAlso  <http://drobilla.net/drobilla.rdf>
+    ] .
+
+
+############
+## Plugin ##
+############
+
+:Plugin a rdfs:Class ;
+    rdfs:label "Plugin" ;
+    rdfs:comment """
+A class which can be instantiated into a :Node.  A plugin has a set of input
+and output "ports".  In practise this class is semantically equivalent to
+lv2:Plugin, it only exists to allow the ingen ontology to be useful for
+"plugins" that aren't semantically LV2 plugins.  See the LV2 specification
+for details about the required properties (rdf:type, doap:name, doap:license,
+and lv2:port).
+""" .
+
+lv2:Plugin rdfs:subClassOf :Plugin .
+
+
+###########
+## Patch ##
+###########
+
+:Patch a rdfs:Class ;
+    rdfs:subClassOf :Plugin ;
+    rdfs:label "Patch" ;
+    rdfs:comment """
+A collection of Nodes connected together form a Patch, which is itself
+a :Plugin (and thus can be part of another patch, and so on)
+""" .
+
+:node a rdf:Property ;
+    rdfs:domain  :Patch ;
+    rdfs:range   :Node ;
+    rdfs:label   "node" ;
+    rdfs:comment "Signifies a patch contains some node." .
+
+:polyphony a rdf:Property ;
+    rdfs:domain  :Patch ;
+    rdfs:range   xsd:integer ;
+    rdfs:label   "Polyphony" ;
+    rdfs:comment """
+The amount of polyphony in a Patch.  This defines the number of voices
+present on all :polyphonic children of this patch.  Because a Patch is
+also a Node, a Patch may have both :polyphony and :polyphonic properties.
+These specify different things: :polyphony specifies the voice count
+of the Patch's children, and :polyphonic specifies whether the patch is
+seen as polyphonic to the Patch's parent.
+""" .
+
+
+############
+## Object ##
+############
+
+:Object a rdfs:Class ;
+    rdfs:label "Ingen Object" ;
+    rdfs:comment """
+A signal processing object which is part of a Patch.  An Object MUST have
+exactly one lv2:symbol property.  This MAY be inferred from the URI where
+possible (e.g. in a system which publishes node URIs in a heirarchial way
+such that the parent can be 'chopped' to get a legal symbol).
+""" .
+
+:polyphonic a rdf:Property ;
+    rdfs:domain  :Object ;
+    rdfs:range   xsd:boolean ;
+    rdfs:label   "Polyphonic" ;
+    rdfs:comment """
+Signifies this object should be replicated when it is part of a polyphonic
+patch.  The amount of polyphony (i.e. the number of voices) is determined
+by the :polyphony property of the containing patch.  This is a boolean
+property which defines whether the parent can access each voice individuall:
+All objects within a patch are either polyphonic or not from their parent's
+perspective.  An Object may itself have "internal" polyphony but not be
+polyphonic according to this property, if those voices are mixed down.
+""" .
+
+
+##########
+## Node ##
+##########
+
+:Node a rdfs:Class ;
+    rdfs:subClassOf :Object ;
+    rdfs:label      "Node" ;
+    rdfs:comment """
+An instance of a Plugin.  Since a Patch is a Plugin, an instance of a Patch
+is also a Node.  A Node inherits all the properties of the plugin of which
+it is an instance, but may have properties of its own: any properties of
+the node take precedence over properties of the node's plugin.  This way a
+node can be expressed as a lightweight set of changes (e.g. input values)
+from its plugin or patch which may be defined elsewhere.
+
+A node MUST have at least one rdf:instanceOf property which is a subclass
+of :Plugin.  When there are many such properties, an applications SHOULD
+use the most specific class it understands.
+""" .
+
+:enabled a rdf:Property ;
+    rdfs:domain  :Node ;
+    rdfs:range   xsd:boolean ;
+    rdfs:label   "Enabled" ;
+    rdfs:comment "Signifies the node is or should be running." .
+
+
+##########
+## Port ##
+##########
+
+:Port a rdfs:Class ;
+    rdfs:subClassOf :Object ;
+    rdfs:label      "Port" ;
+    rdfs:comment """
+A Port is an input or output on a Node.  It is implicitly an instance of the
+corresponding port on that Node's plugin (specified with rdf:instanceOf).
+A Port MUST have a legal lv2:symbol in the exact way a Node must, see :Node
+documentation for details.  Ports inherit properties from the Port on their
+parent's Plugin in the exact way Nodes inherit properties from their Plugin.
+""" .
+
+
+################
+## Connection ##
+################
+
+:Connection a rdfs:Class ;
+    rdfs:label   "Connection" ;
+    rdfs:comment """
+A connection between two ports.  Patches have a set of connections which
+define how its component nodes and ports are connected.  A Connection MUST
+have exactly one :source property and exactly one :destination property.
+""" .
+
+:source a rdf:Property ;
+    rdfs:domain  :Connection ;
+    rdfs:range   :Port ;
+    rdfs:label   "Source" ;
+    rdfs:comment "The source/sending port of this connection" .
+
+:destination a rdf:Property ;
+    rdfs:domain  :Connection ;
+    rdfs:range   :Port ;
+    rdfs:label   "Destination" ;
+    rdfs:comment "The destination/receiving/sink port of this connection" .
+
