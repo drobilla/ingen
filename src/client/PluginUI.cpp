@@ -78,7 +78,7 @@ lv2_ui_write(LV2UI_Controller controller,
 			if (ev->type == midi_event_type) {
 				// FIXME: bundle multiple events by writing an entire buffer here
 				ui->world()->engine->set_port_value(port->path(),
-					Atom("lv2_midi:MidiEvent", ev->size, data));
+					Atom("lv2midi:MidiEvent", ev->size, data));
 			} else {
 				cerr << "WARNING: Unable to send event type " << ev->type << 
 					" over OSC, ignoring event" << endl;

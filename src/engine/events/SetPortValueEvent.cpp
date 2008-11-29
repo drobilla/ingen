@@ -175,7 +175,7 @@ SetPortValueEvent::apply(uint32_t start, uint32_t nframes)
 				_port->raise_set_by_user_flag();
 				return;
 
-			} else if (!strcmp(_value.get_blob_type(), "lv2_midi:MidiEvent")) {
+			} else if (!strcmp(_value.get_blob_type(), "lv2midi:MidiEvent")) {
 				const uint32_t type_id = map->uri_to_id(NULL,
 						"http://lv2plug.in/ns/ext/midi#MidiEvent");
 
