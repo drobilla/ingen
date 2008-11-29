@@ -25,7 +25,7 @@
 #include "InputPort.hpp"
 #include "InternalPlugin.hpp"
 #include "EventBuffer.hpp"
-#include "MidiNoteNode.hpp"
+#include "InternalNote.hpp"
 #include "OutputPort.hpp"
 #include "PatchImpl.hpp"
 #include "ProcessContext.hpp"
@@ -37,7 +37,7 @@ namespace Ingen {
 
 static InternalPlugin note_plugin(NS_INTERNALS "Note", "note", "Note");
 
-MidiNoteNode::MidiNoteNode(const string& path, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size)
+NoteNode::NoteNode(const string& path, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size)
 	: NodeBase(&note_plugin, path, polyphonic, parent, srate, buffer_size)
 	, _voices(new Raul::Array<Voice>(_polyphony))
 	, _prepared_voices(NULL)
@@ -66,14 +66,14 @@ MidiNoteNode::MidiNoteNode(const string& path, bool polyphonic, PatchImpl* paren
 }
 
 
-MidiNoteNode::~MidiNoteNode()
+NoteNode::~NoteNode()
 {
 	delete _voices;
 }
 
 
 bool
-MidiNoteNode::prepare_poly(uint32_t poly)
+NoteNode::prepare_poly(uint32_t poly)
 {
 	if (!_polyphonic)
 		return true;
@@ -90,7 +90,7 @@ MidiNoteNode::prepare_poly(uint32_t poly)
 
 
 bool
-MidiNoteNode::apply_poly(Raul::Maid& maid, uint32_t poly)
+NoteNode::apply_poly(Raul::Maid& maid, uint32_t poly)
 {
 	if (!_polyphonic)
 		return true;
@@ -112,7 +112,7 @@ MidiNoteNode::apply_poly(Raul::Maid& maid, uint32_t poly)
 
 
 void
-MidiNoteNode::process(ProcessContext& context)
+NoteNode::process(ProcessContext& context)
 {
 	NodeBase::pre_process(context);
 	
@@ -185,7 +185,7 @@ MidiNoteNode::process(ProcessContext& context)
 
 
 void
-MidiNoteNode::note_on(ProcessContext& context, uchar note_num, uchar velocity, FrameTime time)
+NoteNode::note_on(ProcessContext& context, uchar note_num, uchar velocity, FrameTime time)
 {
 	assert(time >= context.start() && time <= context.end());
 	assert(time - context.start() < _buffer_size);
@@ -196,7 +196,7 @@ MidiNoteNode::note_on(ProcessContext& context, uchar note_num, uchar velocity, F
 	uint32_t voice_num = 0;
 	
 	if (key->state != Key::OFF) {
-		//cerr << "[MidiNoteNode] Double midi note received" << endl;
+		//cerr << "[NoteNode] Double midi note received" << endl;
 		return;
 	}
 
@@ -225,7 +225,7 @@ MidiNoteNode::note_on(ProcessContext& context, uchar note_num, uchar velocity, F
 	assert(voice != NULL);
 	assert(voice == &(*_voices)[voice_num]);
 
-	/*cerr << "[MidiNoteNode] Note " << (int)note_num << " on @ " << time
+	/*cerr << "[NoteNode] Note " << (int)note_num << " on @ " << time
 		<< ". Voice " << voice_num << " / " << _polyphony << endl;*/
 	
 	// Update stolen key, if applicable
@@ -233,7 +233,7 @@ MidiNoteNode::note_on(ProcessContext& context, uchar note_num, uchar velocity, F
 		assert(_keys[voice->note].state == Key::ON_ASSIGNED);
 		assert(_keys[voice->note].voice == voice_num);
 		_keys[voice->note].state = Key::Key::ON_UNASSIGNED;
-		//cerr << "[MidiNoteNode] Stole voice " << voice_num << endl;
+		//cerr << "[NoteNode] Stole voice " << voice_num << endl;
 	}
 	
 	// Store key information for later reallocation on note off
@@ -265,14 +265,14 @@ MidiNoteNode::note_on(ProcessContext& context, uchar note_num, uchar velocity, F
 
 
 void
-MidiNoteNode::note_off(ProcessContext& context, uchar note_num, FrameTime time)
+NoteNode::note_off(ProcessContext& context, uchar note_num, FrameTime time)
 {
 	assert(time >= context.start() && time <= context.end());
 	assert(time - context.start() < _buffer_size);
 
 	Key* key = &_keys[note_num];
 	
-	//cerr << "[MidiNoteNode] Note " << (int)note_num << " off @ " << time << endl;
+	//cerr << "[NoteNode] Note " << (int)note_num << " off @ " << time << endl;
 
 	if (key->state == Key::ON_ASSIGNED) {
 		// Assigned key, turn off voice and key
@@ -299,7 +299,7 @@ MidiNoteNode::note_off(ProcessContext& context, uchar note_num, FrameTime time)
 
 	
 void
-MidiNoteNode::free_voice(ProcessContext& context, uint32_t voice, FrameTime time)
+NoteNode::free_voice(ProcessContext& context, uint32_t voice, FrameTime time)
 {
 	assert(time >= context.start() && time <= context.end());
 	assert(time - context.start() < _buffer_size);
@@ -331,7 +331,7 @@ MidiNoteNode::free_voice(ProcessContext& context, uint32_t voice, FrameTime time
 		(*_voices)[voice].state = Voice::ACTIVE;
 	} else {
 		// No new note for voice, deactivate (set gate low)
-		//cerr << "[MidiNoteNode] Note off. Key " << (int)note_num << ", Voice " << voice << " Killed" << endl;
+		//cerr << "[NoteNode] Note off. Key " << (int)note_num << ", Voice " << voice << " Killed" << endl;
 		((AudioBuffer*)_gate_port->buffer(voice))->set_value(0.0f, context.start(), time);
 		(*_voices)[voice].state = Voice::FREE;
 	}
@@ -339,7 +339,7 @@ MidiNoteNode::free_voice(ProcessContext& context, uint32_t voice, FrameTime time
 
 
 void
-MidiNoteNode::all_notes_off(ProcessContext& context, FrameTime time)
+NoteNode::all_notes_off(ProcessContext& context, FrameTime time)
 {
 	assert(time >= context.start() && time <= context.end());
 	assert(time - context.start() < _buffer_size);
@@ -356,7 +356,7 @@ MidiNoteNode::all_notes_off(ProcessContext& context, FrameTime time)
 
 
 float
-MidiNoteNode::note_to_freq(int num)
+NoteNode::note_to_freq(int num)
 {
 	static const float A4 = 440.0f;
 	if (num >= 0 && num <= 119)
@@ -366,14 +366,14 @@ MidiNoteNode::note_to_freq(int num)
 
 
 void
-MidiNoteNode::sustain_on(ProcessContext& context, FrameTime time)
+NoteNode::sustain_on(ProcessContext& context, FrameTime time)
 {
 	_sustain = true;
 }
 
 
 void
-MidiNoteNode::sustain_off(ProcessContext& context, FrameTime time)
+NoteNode::sustain_off(ProcessContext& context, FrameTime time)
 {
 	assert(time >= context.start() && time <= context.end());
 	assert(time - context.start() < _buffer_size);

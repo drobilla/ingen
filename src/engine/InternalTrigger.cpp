@@ -17,7 +17,7 @@
 
 #include <cmath>
 #include "raul/midi_events.h"
-#include "MidiTriggerNode.hpp"
+#include "InternalTrigger.hpp"
 #include "AudioBuffer.hpp"
 #include "InputPort.hpp"
 #include "OutputPort.hpp"
@@ -32,7 +32,7 @@ namespace Ingen {
 
 static InternalPlugin trigger_plugin(NS_INTERNALS "Trigger", "trigger", "Trigger");
 
-MidiTriggerNode::MidiTriggerNode(const string& path, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size)
+TriggerNode::TriggerNode(const string& path, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size)
 	: NodeBase(&trigger_plugin, path, false, parent, srate, buffer_size)
 	, _learning(false)
 {
@@ -59,7 +59,7 @@ MidiTriggerNode::MidiTriggerNode(const string& path, bool polyphonic, PatchImpl*
 
 
 void
-MidiTriggerNode::process(ProcessContext& context)
+TriggerNode::process(ProcessContext& context)
 {
 	NodeBase::pre_process(context);
 	
@@ -103,7 +103,7 @@ MidiTriggerNode::process(ProcessContext& context)
 
 
 void
-MidiTriggerNode::note_on(ProcessContext& context, uchar note_num, uchar velocity, FrameTime time)
+TriggerNode::note_on(ProcessContext& context, uchar note_num, uchar velocity, FrameTime time)
 {
 	assert(time >= context.start() && time <= context.end());
 	assert(time - context.start() < _buffer_size);
@@ -116,7 +116,7 @@ MidiTriggerNode::note_on(ProcessContext& context, uchar note_num, uchar velocity
 		_learning = false;
 	}
 
-	/*cerr << "[MidiTriggerNode] " << path() << " Note " << (int)note_num << " on @ " << time << endl;*/
+	/*cerr << "[TriggerNode] " << path() << " Note " << (int)note_num << " on @ " << time << endl;*/
 
 	Sample filter_note = ((AudioBuffer*)_note_port->buffer(0))->value_at(0);
 	if (filter_note >= 0.0 && filter_note < 127.0 && (note_num == (uchar)filter_note)) {
@@ -130,7 +130,7 @@ MidiTriggerNode::note_on(ProcessContext& context, uchar note_num, uchar velocity
 
 
 void
-MidiTriggerNode::note_off(ProcessContext& context, uchar note_num, FrameTime time)
+TriggerNode::note_off(ProcessContext& context, uchar note_num, FrameTime time)
 {
 	assert(time >= context.start() && time <= context.end());
 	assert(time - context.start() < _buffer_size);

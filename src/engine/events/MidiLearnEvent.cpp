@@ -20,7 +20,7 @@
 #include "Engine.hpp"
 #include "EngineStore.hpp"
 #include "NodeImpl.hpp"
-#include "MidiControlNode.hpp"
+#include "InternalController.hpp"
 #include "ClientBroadcaster.hpp"
 #include "PluginImpl.hpp"
 

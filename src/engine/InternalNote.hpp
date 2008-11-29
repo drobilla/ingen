@@ -34,11 +34,11 @@ class OutputPort;
  *
  * \ingroup engine
  */
-class MidiNoteNode : public NodeBase
+class NoteNode : public NodeBase
 {
 public:
-	MidiNoteNode(const std::string& path, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size);
-	~MidiNoteNode();
+	NoteNode(const std::string& path, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size);
+	~NoteNode();
 	
 	bool prepare_poly(uint32_t poly);
 	bool apply_poly(Raul::Maid& maid, uint32_t poly);

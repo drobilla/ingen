@@ -17,10 +17,10 @@
 
 #include <iostream>
 #include "PluginImpl.hpp"
-#include "MidiNoteNode.hpp"
-#include "MidiTriggerNode.hpp"
-#include "MidiControlNode.hpp"
-#include "TransportNode.hpp"
+#include "InternalNote.hpp"
+#include "InternalTrigger.hpp"
+#include "InternalController.hpp"
+#include "InternalTransport.hpp"
 
 using namespace std;
 

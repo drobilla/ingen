@@ -20,8 +20,8 @@
 #include "Engine.hpp"
 #include "EngineStore.hpp"
 #include "NodeImpl.hpp"
-#include "MidiNoteNode.hpp"
-#include "MidiTriggerNode.hpp"
+#include "InternalNote.hpp"
+#include "InternalTrigger.hpp"
 #include "PluginImpl.hpp"
 #include "InternalPlugin.hpp"
 #include "ProcessContext.hpp"
@@ -73,14 +73,14 @@ NoteEvent::execute(ProcessContext& context)
 	if (_node != NULL && _node->plugin()->type() == Plugin::Internal) {
 		if (_on) {
 			if (_node->plugin_impl()->uri() == NS_INTERNALS "Note")
-				((MidiNoteNode*)_node)->note_on(context, _note_num, _velocity, _time);
+				((NoteNode*)_node)->note_on(context, _note_num, _velocity, _time);
 			else if (_node->plugin_impl()->uri() == NS_INTERNALS "Trigger")
-				((MidiTriggerNode*)_node)->note_on(context, _note_num, _velocity, _time);
+				((TriggerNode*)_node)->note_on(context, _note_num, _velocity, _time);
 		} else  {
 			if (_node->plugin_impl()->uri() == NS_INTERNALS "Note")
-				((MidiNoteNode*)_node)->note_off(context, _note_num, _time);
+				((NoteNode*)_node)->note_off(context, _note_num, _time);
 			else if (_node->plugin_impl()->uri() == NS_INTERNALS "Trigger")
-				((MidiTriggerNode*)_node)->note_off(context, _note_num, _time);
+				((TriggerNode*)_node)->note_off(context, _note_num, _time);
 		}
 	}
 }

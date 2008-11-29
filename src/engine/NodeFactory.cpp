@@ -25,10 +25,10 @@
 #include "module/World.hpp"
 #include "NodeFactory.hpp"
 #include "ThreadManager.hpp"
-#include "MidiNoteNode.hpp"
-#include "MidiTriggerNode.hpp"
-#include "MidiControlNode.hpp"
-#include "TransportNode.hpp"
+#include "InternalNote.hpp"
+#include "InternalTrigger.hpp"
+#include "InternalController.hpp"
+#include "InternalTransport.hpp"
 #include "PatchImpl.hpp"
 #include "InternalPlugin.hpp"
 #ifdef HAVE_LADSPA
@@ -139,13 +139,13 @@ NodeFactory::load_internal_plugins()
 	PatchImpl* parent = new PatchImpl(*_world->local_engine, "dummy", 1, NULL, 1, 1, 1);
 
 	NodeImpl* n = NULL;
-	n = new MidiNoteNode("foo", 1, parent, 1, 1);
+	n = new NoteNode("foo", 1, parent, 1, 1);
 	_plugins.insert(make_pair(n->plugin_impl()->uri(), n->plugin_impl()));
 	delete n;
-	n = new MidiTriggerNode("foo", 1, parent, 1, 1);
+	n = new TriggerNode("foo", 1, parent, 1, 1);
 	_plugins.insert(make_pair(n->plugin_impl()->uri(), n->plugin_impl()));
 	delete n;
-	n = new MidiControlNode("foo", 1, parent, 1, 1);
+	n = new ControllerNode("foo", 1, parent, 1, 1);
 	_plugins.insert(make_pair(n->plugin_impl()->uri(), n->plugin_impl()));
 	delete n;
 	n = new TransportNode("foo", 1, parent, 1, 1);

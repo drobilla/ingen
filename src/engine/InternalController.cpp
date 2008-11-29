@@ -17,7 +17,7 @@
 
 #include <math.h>
 #include "raul/midi_events.h"
-#include "MidiControlNode.hpp"
+#include "InternalController.hpp"
 #include "PostProcessor.hpp"
 #include "events/MidiLearnEvent.hpp"
 #include "events/SendPortValueEvent.hpp"
@@ -34,11 +34,11 @@ namespace Ingen {
 
 static InternalPlugin controller_plugin(NS_INTERNALS "Controller", "controller", "Controller");
 	
-MidiControlNode::MidiControlNode(const string& path,
-                                 bool          polyphonic,
-                                 PatchImpl*    parent,
-                                 SampleRate    srate,
-                                 size_t        buffer_size)
+ControllerNode::ControllerNode(const string& path,
+                               bool          polyphonic,
+                               PatchImpl*    parent,
+                               SampleRate    srate,
+                               size_t        buffer_size)
 	: NodeBase(&controller_plugin, path, false, parent, srate, buffer_size)
 	, _learning(false)
 {
@@ -69,7 +69,7 @@ MidiControlNode::MidiControlNode(const string& path,
 
 
 void
-MidiControlNode::process(ProcessContext& context)
+ControllerNode::process(ProcessContext& context)
 {
 	NodeBase::pre_process(context);
 	
@@ -95,7 +95,7 @@ MidiControlNode::process(ProcessContext& context)
 
 
 void
-MidiControlNode::control(ProcessContext& context, uchar control_num, uchar val, FrameTime time)
+ControllerNode::control(ProcessContext& context, uchar control_num, uchar val, FrameTime time)
 {
 	assert(time - context.start() < _buffer_size);
 

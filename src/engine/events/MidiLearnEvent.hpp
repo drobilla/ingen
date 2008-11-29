@@ -19,7 +19,7 @@
 #define MIDILEARNEVENT_H
 
 #include "QueuedEvent.hpp"
-#include "MidiControlNode.hpp"
+#include "InternalController.hpp"
 #include "types.hpp"
 #include <string>
 

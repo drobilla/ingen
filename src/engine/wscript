@@ -16,11 +16,12 @@ def build(bld):
 		EventSink.cpp
 		GraphObjectImpl.cpp
 		InputPort.cpp
+		InternalController.cpp
+		InternalNote.cpp
 		InternalPlugin.cpp
+		InternalTransport.cpp
+		InternalTrigger.cpp
 		MessageContext.cpp
-		MidiControlNode.cpp
-		MidiNoteNode.cpp
-		MidiTriggerNode.cpp
 		NodeBase.cpp
 		NodeFactory.cpp
 		ObjectSender.cpp
@@ -31,10 +32,9 @@ def build(bld):
 		PostProcessor.cpp
 		ProcessSlave.cpp
 		QueuedEvent.cpp
-		TransportNode.cpp
-		ingen_engine.cpp
 		events/SendPortActivityEvent.cpp
 		events/SendPortValueEvent.cpp
+		ingen_engine.cpp
 	'''
 
 	obj = bld.create_obj('cpp', 'shlib')
