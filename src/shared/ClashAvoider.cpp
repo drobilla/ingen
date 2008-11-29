@@ -88,6 +88,9 @@ ClashAvoider::map_path(const Raul::Path& in)
 						parent_str = "/";
 					//cout << "***** PARENT: " << parent_str << endl;
 				}
+				
+				if (offset == 0)
+					offset = 2;
 
 				std::stringstream ss;
 				ss << base_path << "_" << offset;
