@@ -37,7 +37,7 @@ class RenameWindow : public Gtk::Window
 public:
 	RenameWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& refGlade);
 
-	void present(SharedPtr<ObjectModel> object) { set_object(object); Gtk::Window::present(); }
+	void present(SharedPtr<ObjectModel> object);
 
 private:
 	void set_object(SharedPtr<ObjectModel> object);

@@ -56,6 +56,15 @@ RenameWindow::set_object(SharedPtr<ObjectModel> object)
 }
 
 
+void
+RenameWindow::present(SharedPtr<ObjectModel> object)
+{
+	set_object(object);
+	_name_entry->grab_focus();
+	Gtk::Window::present();
+}
+
+
 /** Called every time the user types into the name input box.
  * Used to display warning messages, and enable/disable the rename button.
  */
