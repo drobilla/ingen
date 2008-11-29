@@ -440,8 +440,9 @@ Serialiser::serialise_port(const Port* port, const Redland::Node& port_id)
 		_model->add_statement(port_id, "rdf:type",
 				Redland::Node(_model->world(), Redland::Node::RESOURCE, "lv2:OutputPort"));
 	
-	_model->add_statement(port_id, "lv2:index",
-			AtomRDF::atom_to_node(_model->world(), Atom((int)port->index())));
+	if (dynamic_cast<Patch*>(port->graph_parent()))
+		_model->add_statement(port_id, "lv2:index",
+				AtomRDF::atom_to_node(_model->world(), Atom((int)port->index())));
 
 	_model->add_statement(port_id, "lv2:symbol",
 			Redland::Node(_model->world(), Redland::Node::LITERAL, port->path().name()));
