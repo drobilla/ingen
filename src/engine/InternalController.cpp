@@ -48,13 +48,13 @@ ControllerNode::ControllerNode(const string& path,
 	_ports->at(0) = _midi_in_port;
 	
 	_param_port = new InputPort(this, "controller", 1, 1, DataType::CONTROL, 0.0f, 1);
-	_param_port->set_variable("lv2:minimum", 0.0f);
-	_param_port->set_variable("lv2:maximum", 127.0f);
-	_param_port->set_variable("lv2:integer", true);
+	_param_port->set_property("lv2:minimum", 0.0f);
+	_param_port->set_property("lv2:maximum", 127.0f);
+	_param_port->set_property("lv2:integer", true);
 	_ports->at(1) = _param_port;
 
 	_log_port = new InputPort(this, "logarithmic", 2, 1, DataType::CONTROL, 0.0f, 1);
-	_log_port->set_variable("lv2:toggled", true);
+	_log_port->set_property("lv2:toggled", true);
 	_ports->at(2) = _log_port;
 	
 	_min_port = new InputPort(this, "minimum", 3, 1, DataType::CONTROL, 0.0f, 1);

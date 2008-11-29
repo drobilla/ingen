@@ -42,18 +42,22 @@ TriggerNode::TriggerNode(const string& path, bool polyphonic, PatchImpl* parent,
 	_ports->at(0) = _midi_in_port;
 	
 	_note_port = new InputPort(this, "note", 1, 1, DataType::CONTROL, 60.0f, 1);
-	_note_port->set_variable("lv2:minimum", 0.0f);
-	_note_port->set_variable("lv2:maximum", 127.0f);
-	_note_port->set_variable("lv2:integer", true);
+	_note_port->set_property("lv2:minimum", 0.0f);
+	_note_port->set_property("lv2:maximum", 127.0f);
+	_note_port->set_property("lv2:integer", true);
 	_ports->at(1) = _note_port;
 	
 	_gate_port = new OutputPort(this, "gate", 2, 1, DataType::AUDIO, 0.0f, _buffer_size);
+	_gate_port->set_property("lv2:toggled", true);
 	_ports->at(2) = _gate_port;
 
 	_trig_port = new OutputPort(this, "trigger", 3, 1, DataType::AUDIO, 0.0f, _buffer_size);
+	_trig_port->set_property("lv2:toggled", true);
 	_ports->at(3) = _trig_port;
 	
 	_vel_port = new OutputPort(this, "velocity", 4, 1, DataType::AUDIO, 0.0f, _buffer_size);
+	_vel_port->set_property("lv2:minimum", 0.0f);
+	_vel_port->set_property("lv2:maximum", 1.0f);
 	_ports->at(4) = _vel_port;
 }
 
