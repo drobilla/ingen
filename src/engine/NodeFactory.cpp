@@ -31,7 +31,7 @@
 #include "InternalTransport.hpp"
 #include "PatchImpl.hpp"
 #include "InternalPlugin.hpp"
-#ifdef HAVE_LADSPA
+#ifdef HAVE_LADSPA_H
 #include "LADSPANode.hpp"
 #include "LADSPAPlugin.hpp"
 #endif
@@ -84,7 +84,7 @@ NodeFactory::plugin(const string& type, const string& lib, const string& label)
 	if (type != "LADSPA" || lib == "" || label == "")
 		return NULL;
 
-#ifdef HAVE_LADSPA
+#ifdef HAVE_LADSPA_H
 	for (Plugins::const_iterator i = _plugins.begin(); i != _plugins.end(); ++i) {
 		LADSPAPlugin* lp = dynamic_cast<LADSPAPlugin*>(i->second);
 		if (lp && lp->library_name() == lib
@@ -118,7 +118,7 @@ NodeFactory::load_plugins()
 		load_lv2_plugins();
 #endif
 
-#ifdef HAVE_LADSPA
+#ifdef HAVE_LADSPA_H
 		load_ladspa_plugins();
 #endif
 		
@@ -189,7 +189,7 @@ NodeFactory::load_lv2_plugins()
 #endif // HAVE_SLV2
 
 
-#ifdef HAVE_LADSPA
+#ifdef HAVE_LADSPA_H
 /** Loads information about all LADSPA plugins into internal plugin database.
  */
 void
@@ -281,7 +281,7 @@ NodeFactory::load_ladspa_plugins()
 		closedir(pdir);
 	}
 }
-#endif // HAVE_LADSPA
+#endif // HAVE_LADSPA_H
 
 
 } // namespace Ingen

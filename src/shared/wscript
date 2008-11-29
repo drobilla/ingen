@@ -1,9 +1,8 @@
 #!/usr/bin/env python
-import Params
 import autowaf
 
 def build(bld):
-	obj = bld.create_obj('cpp', 'shlib')
+	obj = bld.new_task_gen('cxx', 'shlib')
 	obj.source = '''
 		Builder.cpp
 		ClashAvoider.cpp
@@ -12,15 +11,15 @@ def build(bld):
 		Store.cpp
 		runtime_paths.cpp
 	'''
-	if bld.env()['HAVE_LIBLO'] == 1:
+	if bld.env['HAVE_LIBLO'] == 1:
 		obj.source += ' OSCSender.cpp '
-	if bld.env()['HAVE_SOUP'] == 1:
+	if bld.env['HAVE_SOUP'] == 1:
 		autowaf.use_lib(bld, obj, 'SOUP')
 		obj.source += ' HTTPSender.cpp '
-	obj.includes = ['.', '../', '../common']
-	obj.name     = 'libingen_shared'
-	obj.target   = 'ingen_shared'
-	obj.vnum     = '0.0.0'
-	obj.inst_dir = bld.env()['LIBDIRNAME']
+	obj.includes     = ['.', '../', '../common']
+	obj.name         = 'libingen_shared'
+	obj.target       = 'ingen_shared'
+	obj.vnum         = '0.0.0'
+	obj.install_path = '${LIBDIR}'
 	autowaf.use_lib(bld, obj, 'GLIBMM LV2CORE SLV2 RAUL REDLANDMM')
 

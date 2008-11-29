@@ -1,9 +1,8 @@
 #!/usr/bin/env python
-import Params
 import autowaf
 
 def build(bld):
-	obj = bld.create_obj('cpp', 'shlib')
+	obj = bld.new_task_gen('cxx', 'shlib')
 	obj.source = '''
 		ClientStore.cpp
 		NodeModel.cpp
@@ -16,22 +15,22 @@ def build(bld):
 		client.cpp
 	'''
 
-	if bld.env()['HAVE_SOUP'] == 1:
+	if bld.env['HAVE_SOUP'] == 1:
 		obj.source += '''
 			HTTPClientReceiver.cpp
 			HTTPEngineSender.cpp
 		'''
 	
-	if bld.env()['HAVE_XML2'] == 1:
+	if bld.env['HAVE_XML2'] == 1:
 		obj.source += ' DeprecatedLoader.cpp '
 
-	if bld.env()['HAVE_LIBLO'] == 1:
+	if bld.env['HAVE_LIBLO'] == 1:
 		obj.source += ' OSCClientReceiver.cpp OSCEngineSender.cpp '
 
 	obj.includes     = ['.', '..', '../common']
 	obj.name         = 'libingen_client'
 	obj.target       = 'ingen_client'
-	obj.inst_dir     = bld.env()['LIBDIRNAME'] + 'ingen'
+	obj.install_path = '${LIBDIR}/ingen'
 	obj.uselib_local = 'libingen_shared'
 	autowaf.use_lib(bld, obj, 'GLIBMM LV2CORE SLV2 RAUL REDLANDMM SOUP XML2 SIGCPP LIBLO SOUP')
 

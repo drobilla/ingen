@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-import Params
 import autowaf
 
 def build(bld):
@@ -37,21 +36,21 @@ def build(bld):
 		ingen_engine.cpp
 	'''
 
-	obj = bld.create_obj('cpp', 'shlib')
+	obj = bld.new_task_gen('cxx', 'shlib')
 	obj.source = core_source
-	if bld.env()['HAVE_LADSPA'] == 1:
+	if bld.env['HAVE_LADSPA_H'] == 1:
 		obj.source += ' LADSPAPlugin.cpp LADSPANode.cpp '
-	if bld.env()['HAVE_SLV2'] == 1:
+	if bld.env['HAVE_SLV2'] == 1:
 		obj.source += ' LV2Info.cpp LV2Plugin.cpp LV2Node.cpp '
 	obj.includes     = ['.', '..', '../common', './events']
 	obj.name         = 'libingen_engine'
 	obj.target       = 'ingen_engine'
-	obj.inst_dir     = bld.env()['LIBDIRNAME'] + 'ingen'
+	obj.install_path = '${LIBDIR}/ingen'
 	obj.uselib_local = 'libingen_shared'
 	core_libs = 'GLIBMM GTHREAD LV2CORE SLV2 RAUL REDLANDMM'
 	autowaf.use_lib(bld, obj, core_libs)
 	
-	obj = bld.create_obj('cpp', 'shlib')
+	obj = bld.new_task_gen('cxx', 'shlib')
 	obj.source = '''
 		events/SetPortValueEvent.cpp
 		QueuedEventSource.cpp
@@ -86,11 +85,11 @@ def build(bld):
 	obj.includes     = ['.', '..', '../common', './events', '../engine']
 	obj.name         = 'libingen_engine_queued'
 	obj.target       = 'ingen_engine_queued'
-	obj.inst_dir     = bld.env()['LIBDIRNAME'] + 'ingen'
+	obj.install_path = '${LIBDIR}/ingen'
 	autowaf.use_lib(bld, obj, core_libs)
 	
-	if bld.env()['HAVE_SOUP'] == 1:
-		obj = bld.create_obj('cpp', 'shlib')
+	if bld.env['HAVE_SOUP'] == 1:
+		obj = bld.new_task_gen('cxx', 'shlib')
 		obj.source = '''
 			QueuedEventSource.cpp
 			QueuedEngineInterface.cpp
@@ -100,11 +99,11 @@ def build(bld):
 		obj.includes     = ['.', '..', '../common', './events', '../engine']
 		obj.name         = 'libingen_engine_http'
 		obj.target       = 'ingen_engine_http'
-		obj.inst_dir     = bld.env()['LIBDIRNAME'] + 'ingen'
+		obj.install_path = '${LIBDIR}/ingen'
 		autowaf.use_lib(bld, obj, core_libs + ' SOUP')
 	
-	if bld.env()['HAVE_LIBLO'] == 1:
-		obj = bld.create_obj('cpp', 'shlib')
+	if bld.env['HAVE_LIBLO'] == 1:
+		obj = bld.new_task_gen('cxx', 'shlib')
 		obj.source = '''
 			QueuedEventSource.cpp
 			QueuedEngineInterface.cpp
@@ -114,30 +113,29 @@ def build(bld):
 		obj.includes     = ['.', '..', '../common', './events', '../engine']
 		obj.name         = 'libingen_engine_osc'
 		obj.target       = 'ingen_engine_osc'
-		obj.inst_dir     = bld.env()['LIBDIRNAME'] + 'ingen'
+		obj.install_path = '${LIBDIR}/ingen'
 		autowaf.use_lib(bld, obj, core_libs + ' LIBLO')
 	
-	if bld.env()['HAVE_JACK'] == 1:
-		obj = bld.create_obj('cpp', 'shlib')
+	if bld.env['HAVE_JACK'] == 1:
+		obj = bld.new_task_gen('cxx', 'shlib')
 		obj.source = 'JackAudioDriver.cpp JackMidiDriver.cpp'
 		obj.includes     = ['.', '..', '../common', './events', '../engine']
 		obj.name         = 'libingen_engine_jack'
 		obj.target       = 'ingen_engine_jack'
-		obj.inst_dir     = bld.env()['LIBDIRNAME'] + 'ingen'
+		obj.install_path = '${LIBDIR}/ingen'
 		autowaf.use_lib(bld, obj, core_libs + ' JACK')
 
 	# Lightweight ingen/lv2 wrapper
-	obj = bld.create_obj('cpp', 'shlib')
+	obj = bld.new_task_gen('cxx', 'shlib')
 	obj.source = core_source
-	if bld.env()['HAVE_LADSPA'] == 1:
+	if bld.env['HAVE_LADSPA_H'] == 1:
 		obj.source += ' LADSPAPlugin.cpp LADSPANode.cpp '
-	if bld.env()['HAVE_SLV2'] == 1:
+	if bld.env['HAVE_SLV2'] == 1:
 		obj.source += ' LV2Plugin.cpp LV2Node.cpp '
 	obj.includes     = ['.', '..', '../common', './events']
 	obj.name         = 'ingen_lv2'
 	obj.target       = 'ingen.lv2/ingen_lv2'
-	#obj.inst_dir     = 'lib/lv2/ingen.lv2'
-	obj.inst_var     = 0
+	obj.install_path = ''
 	core_libs = 'GLIBMM GTHREAD LV2CORE SLV2 RAUL REDLANDMM'
 	autowaf.use_lib(bld, obj, core_libs)
 

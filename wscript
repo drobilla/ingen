@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import os
-import Params
 import autowaf
+import Options
 
 # Version of this package (even if built as a child)
 INGEN_VERSION = '0.5.1'
@@ -36,17 +36,16 @@ def configure(conf):
 	autowaf.check_pkg(conf, 'libxml-2.0', destvar='XML2', vnum='2.6.0', mandatory=False)
 	autowaf.check_pkg(conf, 'libglademm-2.4', destvar='GLADEMM', vnum='2.6.0', mandatory=False)
 	autowaf.check_pkg(conf, 'libsoup-2.4', destvar='SOUP', vnum='2.4.0', mandatory=False)
-	autowaf.check_header(conf, 'ladspa.h', 'HAVE_LADSPA', mandatory=False)
-	if not Params.g_options.no_liblo:
+	autowaf.check_header(conf, 'ladspa.h', 'HAVE_LADSPA_H', mandatory=False)
+	if not Options.options.no_liblo:
 		autowaf.check_pkg(conf, 'liblo', destvar='LIBLO', vnum='0.25', mandatory=False)
 	autowaf.check_pkg(conf, 'redlandmm', destvar='REDLANDMM', vnum='0.0.0', mandatory=False)
 
 	# Check for posix_memalign (OSX, amazingly, doesn't have it)
-	fe = conf.create_function_enumerator()
-	fe.headers = ['stdlib.h']
-	fe.function = 'posix_memalign'
-	fe.define = 'HAVE_POSIX_MEMALIGN'
-	fe.run()
+	conf.check(
+			function_name='posix_memalign',
+			header_name='stdlib.h',
+			define_name='HAVE_POSIX_MEMALIGN')
 
 	build_gui = conf.env['HAVE_GLADEMM'] == 1 and conf.env['HAVE_FLOWCANVAS'] == 1
 
@@ -68,18 +67,18 @@ def configure(conf):
 	
 	autowaf.print_summary(conf)
 	autowaf.display_header('Ingen Configuration')
-	autowaf.display_msg("Jack", str(conf.env['HAVE_JACK'] == 1), 'YELLOW')
-	autowaf.display_msg("OSC", str(conf.env['HAVE_LIBLO'] == 1), 'YELLOW')
-	autowaf.display_msg("HTTP", str(conf.env['HAVE_SOUP'] == 1), 'YELLOW')
-	autowaf.display_msg("LV2", str(conf.env['HAVE_SLV2'] == 1), 'YELLOW')
-	autowaf.display_msg("LADSPA", str(conf.env['HAVE_LADSPA'] == 1), 'YELLOW')
-	autowaf.display_msg("Build GUI", str(conf.env['BUILD_GUI'] == 1), 'YELLOW')
+	autowaf.display_msg(conf, "Jack", str(conf.env['HAVE_JACK'] == 1))
+	autowaf.display_msg(conf, "OSC", str(conf.env['HAVE_LIBLO'] == 1))
+	autowaf.display_msg(conf, "HTTP", str(conf.env['HAVE_SOUP'] == 1))
+	autowaf.display_msg(conf, "LV2", str(conf.env['HAVE_SLV2'] == 1))
+	autowaf.display_msg(conf, "LADSPA", str(conf.env['HAVE_LADSPA_H'] == 1))
+	autowaf.display_msg(conf, "Build GUI", str(conf.env['BUILD_GUI'] == 1))
 	print
 
 def build(bld):
-	opts           = Params.g_options
-	opts.datadir   = opts.datadir   or bld.env()['PREFIX'] + 'share'
-	opts.moduledir = opts.moduledir or bld.env()['PREFIX'] + 'lib/ingen'
+	opts           = Options.options
+	opts.datadir   = opts.datadir   or bld.env['PREFIX'] + 'share'
+	opts.moduledir = opts.moduledir or bld.env['PREFIX'] + 'lib/ingen'
 	
 	# Modules
 	bld.add_subdirs('src/engine')
@@ -88,7 +87,7 @@ def build(bld):
 	bld.add_subdirs('src/shared')
 	bld.add_subdirs('src/client')
 
-	if bld.env()['BUILD_GUI']:
+	if bld.env['BUILD_GUI']:
 		bld.add_subdirs('src/gui')
 
 	# Program
@@ -96,13 +95,12 @@ def build(bld):
 	
 	# Documentation
 	autowaf.build_dox(bld, 'INGEN', INGEN_VERSION, srcdir, blddir)
-	install_files('HTMLDIR', '', blddir + '/default/doc/html/*')
+	bld.install_files('${HTMLDIR}', blddir + '/default/doc/html/*')
 	
 	# Icons
 	icon_sizes = ['16x16', '22x22', '24x24', '32x32', '48x48']
 	for s in icon_sizes:
-		install_as(
-			os.path.normpath(bld.env()['DATADIR'] + '/icons/hicolor/' + s + '/apps/'),
-			'ingen.png',
+		bld.install_as(
+			os.path.normpath(bld.env['DATADIR'] + '/icons/hicolor/' + s + '/apps/ingen.png'),
 			'icons/' + s + '/ingen.png')
 

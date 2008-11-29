@@ -68,7 +68,7 @@ public:
 	PluginImpl* plugin(const string& type, const string& lib, const string& label);
 
 private:
-#ifdef HAVE_LADSPA
+#ifdef HAVE_LADSPA_H
 	void load_ladspa_plugins();
 #endif
 
