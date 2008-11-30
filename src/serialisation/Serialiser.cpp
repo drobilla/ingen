@@ -27,6 +27,9 @@
 #include <string>
 #include <utility> // pair, make_pair
 #include <vector>
+#include <glib.h>
+#include <glib/gstdio.h>
+#include <glibmm/convert.h>
 #include "raul/Atom.hpp"
 #include "raul/AtomRDF.hpp"
 #include "raul/Path.hpp"
@@ -62,14 +65,77 @@ Serialiser::Serialiser(Shared::World& world, SharedPtr<Shared::Store> store)
 	
 
 void
-Serialiser::to_file(SharedPtr<GraphObject> object, const string& filename)
+Serialiser::to_file(const Record& record)
 {
+	SharedPtr<GraphObject> object = record.object;
+	const string& filename = record.uri;
+
 	_root_path = object->path();
 	start_to_filename(filename);
 	serialise(object);
 	finish();
 }
 
+
+static
+std::string
+uri_to_symbol(const std::string& uri)
+{
+	string symbol = uri;
+	symbol = symbol.substr(symbol.find_last_of("/") + 1);
+	symbol = symbol.substr(0, symbol.find("."));
+	symbol = Path::nameify(symbol);
+	return symbol;
+}
+
+
+void
+Serialiser::write_manifest(const std::string& bundle_uri,
+                           const Records&     records)
+{
+
+	cout << "WRITE MANIFEST BUNDLE URI: " << bundle_uri << endl;
+	const string filename = Glib::filename_from_uri(bundle_uri) + "manifest.ttl";
+	cout << "FILENAME: " << filename << endl;
+	start_to_filename(filename);
+    _model->set_base_uri(bundle_uri);
+	for (Records::const_iterator i = records.begin(); i != records.end(); ++i) {
+		SharedPtr<Patch> patch = PtrCast<Patch>(i->object);
+		if (patch) {
+			const Redland::Node subject(_model->world(), Redland::Node::RESOURCE,
+					uri_to_symbol(i->uri));
+			_model->add_statement(subject, "rdf:type",
+				Redland::Node(_model->world(), Redland::Node::RESOURCE, "ingen:Patch"));
+			_model->add_statement(subject, "rdf:type",
+				Redland::Node(_model->world(), Redland::Node::RESOURCE, "lv2:Plugin"));
+			_model->add_statement(subject, "rdfs:seeAlso",
+				Redland::Node(_model->world(), Redland::Node::RESOURCE, i->uri));
+		}
+	}
+	finish();
+}
+
+
+void
+Serialiser::write_bundle(const Record& record)
+{
+	SharedPtr<GraphObject> object = record.object;
+	string bundle_uri = record.uri;
+	if (bundle_uri[bundle_uri.length()-1] != '/')
+		bundle_uri.append("/");
+
+	g_mkdir_with_parents(Glib::filename_from_uri(bundle_uri).c_str(), 0744);
+	Records records;
+
+	string symbol = uri_to_symbol(record.uri);
+
+	const string root_file = bundle_uri + symbol + ".ingen.ttl";
+	start_to_filename(root_file);
+	serialise(object);
+	finish();
+	records.push_back(Record(object, bundle_uri + symbol + ".ingen.ttl"));
+	write_manifest(bundle_uri, records);
+}
 
 	
 string

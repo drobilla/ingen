@@ -45,19 +45,26 @@ LoadPatchWindow::LoadPatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gno
 	xml->get_widget("load_patch_ok_button", _ok_button);
 	xml->get_widget("load_patch_cancel_button", _cancel_button);
 	
-	_poly_from_current_radio->signal_toggled().connect(sigc::mem_fun(this, &LoadPatchWindow::poly_from_file_selected));
-	_poly_from_file_radio->signal_toggled().connect(sigc::mem_fun(this, &LoadPatchWindow::poly_from_file_selected));
-	_poly_from_user_radio->signal_toggled().connect(sigc::mem_fun(this, &LoadPatchWindow::poly_from_user_selected));
-	_ok_button->signal_clicked().connect(sigc::mem_fun(this, &LoadPatchWindow::ok_clicked));
-	_cancel_button->signal_clicked().connect(sigc::mem_fun(this, &LoadPatchWindow::cancel_clicked));
+	_poly_from_current_radio->signal_toggled().connect(
+			sigc::mem_fun(this, &LoadPatchWindow::poly_from_file_selected));
+	_poly_from_file_radio->signal_toggled().connect(
+			sigc::mem_fun(this, &LoadPatchWindow::poly_from_file_selected));
+	_poly_from_user_radio->signal_toggled().connect(
+			sigc::mem_fun(this, &LoadPatchWindow::poly_from_user_selected));
+	_ok_button->signal_clicked().connect(
+			sigc::mem_fun(this, &LoadPatchWindow::ok_clicked));
+	_cancel_button->signal_clicked().connect(
+			sigc::mem_fun(this, &LoadPatchWindow::cancel_clicked));
 	
 	_poly_from_current_radio->set_active(true);
 
 	Gtk::FileFilter filt;
 	filt.add_pattern("*.om");
 	filt.set_name("Om patch files (XML, DEPRECATED) (*.om)");
+	filt.add_pattern("*.ingen.lv2");
+	filt.set_name("Ingen bundles (*.ingen.lv2)");
 	filt.add_pattern("*.ingen.ttl");
-	filt.set_name("Ingen patch files (RDF, *.ingen.ttl)");
+	filt.set_name("Ingen patch files (*.ingen.ttl)");
 	set_filter(filt);
 
 	// Add global examples directory to "shortcut folders" (bookmarks)

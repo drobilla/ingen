@@ -393,10 +393,10 @@ PatchWindow::event_save()
 	if (doc == _patch->variables().end()) {
 		event_save_as();
 	} else {
-		const Glib::ustring& filename = Glib::filename_from_uri(doc->second.get_string());
-		App::instance().loader()->save_patch(_patch, filename);
+		const Glib::ustring& document_uri = doc->second.get_string();
+		App::instance().loader()->save_patch(_patch, document_uri);
 		_status_bar->push(
-				(boost::format("Wrote %1% to %2%") % _patch->path() % filename).str(),
+				(boost::format("Wrote %1% to %2%") % _patch->path() % document_uri).str(),
 				STATUS_CONTEXT_PATCH);
 	}
 }
@@ -411,6 +411,13 @@ PatchWindow::event_save_as()
 	Gtk::Button* save_button = dialog.add_button(Gtk::Stock::SAVE, Gtk::RESPONSE_OK);	
 	save_button->property_has_default() = true;
 	
+	Gtk::FileFilter filt;
+	filt.add_pattern("*.ingen.ttl");
+	filt.set_name("Ingen patches");
+	filt.add_pattern("*.ingen.lv2");
+	filt.set_name("Ingen bundles");
+	dialog.set_filter(filt);
+	
 	// Set current folder to most sensible default
 	GraphObject::Variables::const_iterator doc = _patch->variables().find("ingen:document");
 	if (doc != _patch->variables().end())
@@ -423,10 +430,14 @@ PatchWindow::event_save_as()
 	
 	if (result == Gtk::RESPONSE_OK) {	
 		string filename = dialog.get_filename();
-		if (filename.length() < 11 || filename.substr(filename.length()-10) != ".ingen.ttl")
+		const bool is_bundle = filename.find(".ingen.lv2") != string::npos;
+		const bool is_patch = filename.find(".ingen.ttl") != string::npos;
+		
+		// Save a bundle by default
+		if (!is_bundle && !is_patch)
 			filename += ".ingen.ttl";
 
-		bool confirm = false;
+		bool confirm = true;
 		std::fstream fin;
 		fin.open(filename.c_str(), std::ios::in);
 		if (fin.is_open()) {  // File exists
@@ -434,20 +445,16 @@ PatchWindow::event_save_as()
 			msg += filename + "?";
 			Gtk::MessageDialog confirm_dialog(*this,
 				msg, false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO, true);
-			if (confirm_dialog.run() == Gtk::RESPONSE_YES)
-				confirm = true;
-			else
-				confirm = false;
-		} else {  // File doesn't exist
-			confirm = true;
+			confirm = (confirm_dialog.run() == Gtk::RESPONSE_YES);
 		}
 		fin.close();
 		
 		if (confirm) {
-			App::instance().loader()->save_patch(_patch, filename);
-			_patch->set_variable("ingen:document", Atom(Glib::filename_to_uri(filename).c_str()));
+			const Glib::ustring uri = Glib::filename_to_uri(filename);
+			App::instance().loader()->save_patch(_patch, uri);
+			_patch->set_variable("ingen:document", Atom(uri.c_str()));
 			_status_bar->push(
-					(boost::format("Wrote %1% to %2%") % _patch->path() % filename).str(),
+					(boost::format("Wrote %1% to %2%") % _patch->path() % uri).str(),
 					STATUS_CONTEXT_PATCH);
 		}
 	}
@@ -478,7 +485,7 @@ PatchWindow::event_draw()
 		if (filename.find(".") == string::npos)
 			filename += ".dot";
 
-		bool confirm = false;
+		bool confirm = true;
 		std::fstream fin;
 		fin.open(filename.c_str(), std::ios::in);
 		if (fin.is_open()) {  // File exists
@@ -486,12 +493,7 @@ PatchWindow::event_draw()
 				+ "Are you sure you want to overwrite " + filename + "?";
 			Gtk::MessageDialog confirm_dialog(*this,
 				msg, false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO, true);
-			if (confirm_dialog.run() == Gtk::RESPONSE_YES)
-				confirm = true;
-			else
-				confirm = false;
-		} else {  // File doesn't exist
-			confirm = true;
+			confirm = (confirm_dialog.run() == Gtk::RESPONSE_YES);
 		}
 		fin.close();
 		

@@ -58,7 +58,23 @@ class Serialiser
 public:
 	Serialiser(Shared::World& world, SharedPtr<Shared::Store> store);
 
-	void to_file(SharedPtr<GraphObject> object, const std::string& filename);
+	struct Record {
+		Record(SharedPtr<GraphObject> o, const std::string& u)
+			: object(o), uri(u)
+		{}
+
+		const SharedPtr<GraphObject> object;
+		const std::string            uri;
+	};
+
+	typedef std::list<Record> Records;
+
+	void to_file(const Record& record);
+	
+	void write_bundle(const Record& record);
+
+	void write_manifest(const std::string& bundle_uri,
+	                    const Records&     records);
 
 	std::string to_string(SharedPtr<GraphObject>        object,
 	                      const std::string&            base_uri,
