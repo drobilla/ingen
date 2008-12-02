@@ -269,8 +269,7 @@ Parser::parse(
 			if (parent && symbol) {
 				path = parent->base() + *symbol;
 			} else {
-				const string parent_base = parent ? parent->base() : "/";
-				path = parent_base + path_str.substr(1);
+				path = (parent ? parent->base() : "/") + path_str.substr(1);
 			}
 
 			if (!Path::is_valid(path)) {
@@ -327,7 +326,7 @@ Parser::parse_patch(
 	
 	const Glib::ustring subject = subject_node.to_turtle_token();
 
-	cout << "Parse patch " << subject << endl;
+	//cout << "Parse patch " << subject << endl;
 
 	/* Get polyphony from file (mandatory if not specified in parameters) */
 	if (patch_poly == 0) {
@@ -352,19 +351,11 @@ Parser::parse_patch(
 	string symbol;
 	if (a_symbol) {
 		symbol = *a_symbol;
-	} else {
-		// Guess symbol from base URI (filename) if we need one
+	} else { // Guess symbol from base URI (filename) if we need to
 		symbol = base_uri.substr(base_uri.find_last_of("/") + 1);
 		symbol = symbol.substr(0, symbol.find("."));
 		if (symbol != "")
 			symbol = Path::nameify(symbol);
-
-		/*if (symbol == "" && engine_base != "") {
-			size_t l = base_uri.find_last_of("/");
-			l = (l == string::npos) ? 0 : l + 1;
-			symbol = base_uri.substr(l);
-			symbol = symbol.substr(0, symbol.find("."));
-		}*/
 	}
 		
 	const Path patch_path(parent ? parent->base() + symbol : "/");
@@ -417,7 +408,6 @@ Parser::parse_patch(
 			target->set_variable(node_path, key, AtomRDF::node_to_atom(val_node));
 	}
 
-		
 
 	/* Load subpatches */
 	query = Redland::Query(*world->rdf_world, Glib::ustring(
@@ -640,10 +630,8 @@ Parser::parse_connections(
 		"             ingen:destination ?dst .\n"
 		"}");
 
-	const string         parent_base = (parent == "/") ? "" : parent.base().substr(1);
-	const Glib::ustring& base_uri    = model.base_uri().to_string();
-	
-	const Glib::ustring& base = base_uri.substr(0, base_uri.find_last_of("/") + 1) + parent_base;
+	const Glib::ustring& base_uri = model.base_uri().to_string();
+	const Glib::ustring& base = base_uri.substr(0, base_uri.find_last_of("/") + 1);
 
 	Redland::Query::Results results = query.run(*world->rdf_world, model);
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
