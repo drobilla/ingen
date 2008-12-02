@@ -39,8 +39,8 @@ namespace Serialisation {
 #define NS_LV2   "http://lv2plug.in/ns/lv2core#"
 #define NS_LV2EV "http://lv2plug.in/ns/ext/event#"
 
-Glib::ustring
-Parser::relative_uri(Glib::ustring base, const Glib::ustring uri, bool leading_slash)
+static Glib::ustring
+relative_uri(Glib::ustring base, const Glib::ustring uri, bool leading_slash)
 {
 	base = base.substr(0, base.find_last_of("/")+1);
 	Glib::ustring ret;
@@ -55,6 +55,50 @@ Parser::relative_uri(Glib::ustring base, const Glib::ustring uri, bool leading_s
 		ret = ret.substr(1);
 
 	return ret;
+}
+
+
+static Glib::ustring
+chop_uri_scheme(const Glib::ustring in)
+{
+	Glib::ustring out = in;
+
+	// Remove scheme
+	size_t scheme_end = out.find(":");
+	if (scheme_end != string::npos)
+		out = out.substr(scheme_end + 1);
+
+	// Chop leading double slashes
+	while (out.length() > 1 && out[0] == '/' && out[1] == '/')
+		out = out.substr(1);
+
+	return out;
+}
+
+
+static Glib::ustring
+uri_child(const Glib::ustring base, const Glib::ustring child, bool trailing_slash)
+{
+	Glib::ustring ret = (base[base.length()-1] == '/' || child[0] == '/')
+		? base + child
+		: base + '/' + child;
+	
+	if (trailing_slash && (ret == "" || ret[ret.length()-1] != '/'))
+		ret = ret + "/";
+	else if (!trailing_slash && ret != "" && ret[ret.length()-1] == '/')
+		ret = ret.substr(0, ret.length()-1);
+	
+	return ret;
+}
+
+
+static Glib::ustring
+dequote_uri(const Glib::ustring in)
+{
+	Glib::ustring out = in;
+	if (out[0] == '<' && out[out.length()-1] == '>')
+		out = out.substr(1, out.length()-2);
+	return out;
 }
 
 
@@ -118,10 +162,11 @@ Parser::parse_string(
 {
 	Redland::Model model(*world->rdf_world, str.c_str(), str.length(), base_uri);
 	
-	cout << "Parsing " << (data_path ? (string)*data_path : "*")
-		<< " from string (base " << base_uri << ")" <<  endl;
+	cout << "Parsing " << (data_path ? (string)*data_path : "*") << " from string";
+	if (base_uri != "")
+		cout << "(base " << base_uri << ")";
+	cout << endl;
 	
-	cout << "Parent: " << (parent ? *parent : "/no/bo/dy") << endl;;
 	bool ret = parse(world, target, model, base_uri, data_path, parent, symbol, data);
 	const Glib::ustring subject = Glib::ustring("<") + base_uri + Glib::ustring(">");
 	parse_connections(world, target, model, subject, parent ? *parent : "/");
@@ -630,8 +675,15 @@ Parser::parse_connections(
 		"             ingen:destination ?dst .\n"
 		"}");
 
-	const Glib::ustring& base_uri = model.base_uri().to_string();
-	const Glib::ustring& base = base_uri.substr(0, base_uri.find_last_of("/") + 1);
+	const Glib::ustring& full_base_uri = model.base_uri().to_string();
+	const Glib::ustring& base_uri      = full_base_uri.substr(0, full_base_uri.find_last_of("/"));
+	const Glib::ustring& subject_uri   = dequote_uri(subject);
+
+	const Glib::ustring& subject_base = (subject_uri == full_base_uri)
+		? ""
+		: chop_uri_scheme(relative_uri(full_base_uri, subject_uri, false));
+
+	const Glib::ustring& base = uri_child(base_uri, subject_base, true);
 
 	Redland::Query::Results results = query.run(*world->rdf_world, model);
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {

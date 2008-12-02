@@ -70,9 +70,6 @@ public:
 			boost::optional<GraphObject::Variables> data=boost::optional<GraphObject::Variables>());
 
 private:
-
-	Glib::ustring relative_uri(Glib::ustring base, const Glib::ustring uri, bool leading_slash);
-
 	boost::optional<Raul::Path> parse(
 			Ingen::Shared::World*                   world,
 			Shared::CommonInterface*                target,
