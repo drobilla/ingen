@@ -71,7 +71,7 @@ public:
 
 private:
 
-	Glib::ustring relative_uri(Glib::ustring base, const Glib::ustring uri);
+	Glib::ustring relative_uri(Glib::ustring base, const Glib::ustring uri, bool leading_slash);
 
 	boost::optional<Raul::Path> parse(
 			Ingen::Shared::World*                   world,

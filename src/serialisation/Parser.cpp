@@ -40,17 +40,20 @@ namespace Serialisation {
 #define NS_LV2EV "http://lv2plug.in/ns/ext/event#"
 
 Glib::ustring
-Parser::relative_uri(Glib::ustring base, const Glib::ustring uri)
+Parser::relative_uri(Glib::ustring base, const Glib::ustring uri, bool leading_slash)
 {
-	//cout << base;
 	base = base.substr(0, base.find_last_of("/")+1);
-	//cout << " # " << uri;
 	Glib::ustring ret;
 	if (uri.length() >= base.length() && uri.substr(0, base.length()) == base)
 		ret = uri.substr(base.length());
 	else
 		ret = uri;
-	//cout << " = " << ret << endl;
+
+	if (leading_slash && (ret == "" || ret[0] != '/'))
+		ret = "/" + ret;
+	else if (!leading_slash && ret != "" && ret[0] == '/')
+		ret = ret.substr(1);
+
 	return ret;
 }
 
@@ -240,11 +243,10 @@ Parser::parse(
 		//cout << "CLASS:   " << rdf_class.to_c_string() << endl;
 
 		if (!data_path)
-			path_str = relative_uri(document_uri, subject.to_c_string());
-			
-		if (path_str[0] != '/')
+			path_str = relative_uri(document_uri, subject.to_c_string(), true);
+		else if (path_str == "" || path_str[0] != '/')
 			path_str = "/" + path_str;
-
+			
 		if (!Path::is_valid(path_str)) {
 			cerr << "WARNING: Invalid path '" << path_str << "', object skipped" << endl;
 			continue;
@@ -427,25 +429,22 @@ Parser::parse_patch(
 
 	results = query.run(*world->rdf_world, model, base_uri);
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
-		cout << "FIXME: SUBPATCH" << endl;
-#if 0
 		world->rdf_world->mutex().lock();
-		const string symbol = (*i)["symbol"].to_string();
-		const string subpatch  = (*i)["subpatch"].to_string();
+		const string symbol   = (*i)["symbol"].to_string();
+		const string subpatch = (*i)["subpatch"].to_string();
 		world->rdf_world->mutex().unlock();
 
 		const Path subpatch_path = patch_path.base() + symbol;
 
 		if (created.find(subpatch_path) == created.end()) {
-			const string subpatch_rel = relative_uri(base_uri, subpatch);
+			/*const string subpatch_rel = relative_uri(base_uri, subpatch);
 			string sub_base = engine_base;
 			if (sub_base[sub_base.length()-1] == '/')
 				sub_base = sub_base.substr(sub_base.length()-1);
-			sub_base.append("/").append(symbol);
+			sub_base.append("/").append(symbol);*/
 			created.insert(subpatch_path);
-			parse_patch(world, target, model, base_uri, subpatch_rel, sub_base);
+			parse_patch(world, target, model, (*i)["subpatch"], patch_path, Symbol(symbol));
 		}
-#endif
 	}
 
 
@@ -643,16 +642,18 @@ Parser::parse_connections(
 
 	const string         parent_base = (parent == "/") ? "" : parent.base().substr(1);
 	const Glib::ustring& base_uri    = model.base_uri().to_string();
+	
+	const Glib::ustring& base = base_uri.substr(0, base_uri.find_last_of("/") + 1) + parent_base;
 
 	Redland::Query::Results results = query.run(*world->rdf_world, model);
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
-		const string src_path = parent.base() + relative_uri(base_uri, (*i)["src"].to_string());
+		const string src_path = parent.base() + relative_uri(base, (*i)["src"].to_string(), false);
 		if (!Path::is_valid(src_path)) {
 			cerr << "ERROR: Invalid path in connection: " << src_path << endl;
 			continue;
 		}
 		
-		const string dst_path = parent.base() + relative_uri(base_uri, (*i)["dst"].to_string());
+		const string dst_path = parent.base() + relative_uri(base, (*i)["dst"].to_string(), false);
 		if (!Path::is_valid(dst_path)) {
 			cerr << "ERROR: Invalid path in connection: " << dst_path << endl;
 			continue;
