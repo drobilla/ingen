@@ -57,13 +57,13 @@ class ThreadedLoader : public Raul::Slave
 public:
 	ThreadedLoader(SharedPtr<EngineInterface> engine);
 
-	void load_patch(bool                    merge,
-	                const Glib::ustring&    data_base_uri,
-	                const Path&             data_path,
-	                GraphObject::Variables  engine_data,
-	                optional<Path>          engine_parent = optional<Path>(),
-	                optional<Symbol>        engine_symbol = optional<Symbol>());
-	
+	void load_patch(bool                             merge,
+                    const Glib::ustring&             document_uri,
+                    optional<Path>                   data_path,
+                    optional<Path>                   engine_parent,
+                    optional<Symbol>                 engine_symbol,
+                    optional<GraphObject::Variables> engine_data);
+
 	void save_patch(SharedPtr<PatchModel> model, const string& filename);
 
 	SharedPtr<Parser> parser();

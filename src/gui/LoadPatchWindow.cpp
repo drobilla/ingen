@@ -137,15 +137,16 @@ LoadPatchWindow::ok_clicked()
 	if (_replace)
 		App::instance().engine()->clear_patch(_patch->path());
 
-	//if (_patch->path() != "/")
-	//	parent = _patch->path().parent();
-	parent = _patch->path();
-	
+	if (_patch->path() != "/") {
+		parent = _patch->path().parent();
+		symbol = _patch->symbol();
+	}
+
 	_patch.reset();
 	hide();
-
-	App::instance().loader()->load_patch(true, get_uri(), "/",
-		_initial_data, parent, symbol);
+	
+	App::instance().loader()->load_patch(true, get_uri(), Path("/"),
+			parent, symbol, _initial_data);
 }			
 
 

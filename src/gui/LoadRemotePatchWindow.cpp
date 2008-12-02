@@ -134,8 +134,6 @@ LoadRemotePatchWindow::open_clicked()
 {
 	Glib::ustring uri = _uri_entry->get_text();
 
-	cerr << "OPEN URI: " << uri << endl;
-	
 	// If unset load_patch will load values
 	optional<Path>   parent;
 	optional<Symbol> symbol;
@@ -146,8 +144,8 @@ LoadRemotePatchWindow::open_clicked()
 	if (_patch->path() != "/")
 		parent = _patch->path().parent();
 
-	App::instance().loader()->load_patch(true, uri, "/",
-		_initial_data, parent, symbol);
+	App::instance().loader()->load_patch(true, uri, Path("/"),
+			parent, symbol, _initial_data);
 	
 	hide();
 }			

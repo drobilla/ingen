@@ -169,7 +169,8 @@ LoadSubpatchWindow::ok_clicked()
 		Atom& y = _initial_data["ingenuity:canvas-y"];
 		y = Atom(y.get_float() + 20.0f);
 
-		App::instance().loader()->load_patch(false, *i, "/", _initial_data, _patch->path(), symbol);
+		App::instance().loader()->load_patch(false, *i, Path("/"),
+				_patch->path(), symbol, _initial_data);
 	}
 
 	hide();

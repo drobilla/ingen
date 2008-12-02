@@ -58,6 +58,7 @@ PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 	, _patch(patch)
 	, _last_click_x(0)
 	, _last_click_y(0)
+	, _paste_count(0)
 	, _refresh_menu(false)
 	, _human_names(true)
 	, _show_port_names(true)
@@ -632,6 +633,7 @@ PatchCanvas::copy_selection()
 	}
 	
 	string result = serialiser.finish();
+	_paste_count = 0;
 	
 	Glib::RefPtr<Gtk::Clipboard> clipboard = Gtk::Clipboard::get();
 	clipboard->set_text(result);
@@ -649,30 +651,51 @@ PatchCanvas::paste()
 	}
 
 	clear_selection();
+	++_paste_count;
 
 	Builder builder(*App::instance().engine());
 	ClientStore clipboard;
 	clipboard.set_plugins(App::instance().store()->plugins());
+
+	// mkdir -p
+	string to_create = _patch->path().substr(1);
+	string created = "/";
 	clipboard.new_patch("/", _patch->poly());
+	size_t first_slash;
+	while (to_create != "/" && to_create != ""
+			&& (first_slash = to_create.find("/")) != string::npos) {
+		created += to_create.substr(0, first_slash);
+		assert(Path::is_valid(created));
+		clipboard.new_patch(created, _patch->poly());
+		to_create = to_create.substr(first_slash + 1);
+	}
+
+	if (_patch->path() != "/")
+		clipboard.new_patch(_patch->path(), _patch->poly());
 	
-	ClashAvoider avoider(*App::instance().store().get(), _patch->path(), clipboard, &clipboard);
-	parser->parse_string(App::instance().world(), &avoider, str, "/", _patch->path());
+	boost::optional<Raul::Path>   data_path;
+	boost::optional<Raul::Path>   parent;
+	boost::optional<Raul::Symbol> symbol;
+
+	if (_patch->path() != "/") {
+		parent = _patch->path();
+	}
+
+	ClashAvoider avoider(*App::instance().store().get(), clipboard, &clipboard);
+	parser->parse_string(App::instance().world(), &avoider, str, "", data_path,
+			parent, symbol);
 	
 	for (Store::iterator i = clipboard.begin(); i != clipboard.end(); ++i) {
-		//cout << "************ OBJECT: " << i->first << endl;
 		if (_patch->path() == "/" && i->first == "/") {
-			//cout << "SKIPPING ROOT " << _patch->path() << " :: " << i->first << endl;
-			continue;
-		} else if (i->first.parent() != "/") {
-			//cout << "SKIPPING NON ROOTED OBJECT " << i->first << endl;
+			//cout << "Skipping root" << endl;
 			continue;
 		}
 		GraphObject::Variables::iterator x = i->second->variables().find("ingenuity:canvas-x");
 		if (x != i->second->variables().end())
-			x->second = x->second.get_float() + 20.0f;
+			x->second = x->second.get_float() + (20.0f * _paste_count);
 		GraphObject::Variables::iterator y = i->second->variables().find("ingenuity:canvas-y");
 		if (y != i->second->variables().end())
-			y->second = y->second.get_float() + 20.0f;
+			y->second = y->second.get_float() + (20.0f * _paste_count);
 		if (i->first.parent() == "/") {
 			GraphObject::Properties::iterator s = i->second->properties().find("ingen:selected");
 			if (s != i->second->properties().end())
@@ -680,11 +703,11 @@ PatchCanvas::paste()
 			else
 				i->second->properties().insert(make_pair("ingen:selected", true));
 		}
-		builder.build(_patch->path(), i->second);
+		builder.build(i->second);
 	}
 
 	// Successful connections
-	SharedPtr<PatchModel> root = PtrCast<PatchModel>(clipboard.object("/"));
+	SharedPtr<PatchModel> root = PtrCast<PatchModel>(clipboard.object(_patch->path()));
 	assert(root);
 	for (Patch::Connections::const_iterator i = root->connections().begin();
 			i != root->connections().end(); ++i) {
@@ -694,6 +717,7 @@ PatchCanvas::paste()
 	// Orphan connections (just in case...)
 	for (ClientStore::ConnectionRecords::const_iterator i = clipboard.connection_records().begin();
 			i != clipboard.connection_records().end(); ++i) {
+		cout << "WARNING: Orphan connection paste: " << i->first << " -> " << i->second << endl;
 		App::instance().engine()->connect(i->first, i->second);
 	}
 }

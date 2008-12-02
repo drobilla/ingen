@@ -51,7 +51,8 @@ private:
 	
 	enum ErrorType { 
 		NO_ERROR,
-		UNKNOWN_TYPE
+		UNKNOWN_TYPE,
+		CREATION_FAILED
 	};
 
 	ErrorType               _error;

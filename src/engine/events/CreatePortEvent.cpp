@@ -117,6 +117,8 @@ CreatePortEvent::pre_process()
 
 			assert(_ports_array->size() == _patch->num_ports());
 
+		} else {
+			_error = CREATION_FAILED;
 		}
 	}
 	QueuedEvent::pre_process();
@@ -149,12 +151,20 @@ CreatePortEvent::execute(ProcessContext& context)
 void
 CreatePortEvent::post_process()
 {
-	if (_error != NO_ERROR || !_patch_port) {
-		const string msg = string("Could not create port - ").append(_path);
-		_responder->respond_error(msg);
-	} else {
+	string msg;
+	switch (_error) {
+	case NO_ERROR:
 		_responder->respond_ok();
 		_engine.broadcaster()->send_object(_patch_port, true);
+		break;
+	case UNKNOWN_TYPE:
+		msg = string("Could not create port ") + _path + " (Unknown type)";
+		_responder->respond_error(msg);
+		break;
+	case CREATION_FAILED:
+		msg = string("Could not create port ") + _path + " (Creation failed)";
+		_responder->respond_error(msg);
+		break;
 	}
 }
 

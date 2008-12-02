@@ -39,12 +39,11 @@ public:
 	Builder(CommonInterface& interface);
 	virtual ~Builder() {}
 
-	void build(const Raul::Path&            prefix,
-	           SharedPtr<const GraphObject> object);
+	void build(SharedPtr<const GraphObject> object);
+	void connect(SharedPtr<const GraphObject> object);
 
 private:
-	void build_object(const Raul::Path&            prefix,
-	                  SharedPtr<const GraphObject> object);
+	void build_object(SharedPtr<const GraphObject> object);
 
 	CommonInterface& _interface;
 };

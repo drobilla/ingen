@@ -37,9 +37,8 @@ class Store;
 class ClashAvoider : public CommonInterface
 {
 public:
-	ClashAvoider(Store& store, const Raul::Path& prefix, CommonInterface& target,
-			Store* also_avoid=NULL)
-		: _prefix(prefix), _store(store), _target(target), _also_avoid(also_avoid) {}
+	ClashAvoider(Store& store, CommonInterface& target, Store* also_avoid=NULL)
+		: _store(store), _target(target), _also_avoid(also_avoid) {}
 
 	void set_target(CommonInterface& target) { _target = target; }
 	
@@ -88,7 +87,6 @@ public:
 private:
 	const Raul::Path map_path(const Raul::Path& in);
 
-	const Raul::Path& _prefix;
 	Store&            _store;
 	CommonInterface&  _target;
 

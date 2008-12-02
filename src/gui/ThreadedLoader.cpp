@@ -81,12 +81,12 @@ ThreadedLoader::_whipped()
 }
 
 void
-ThreadedLoader::load_patch(bool                    merge,
-                           const Glib::ustring&    data_base_uri,
-                           const Path&             data_path,
-                           GraphObject::Variables  engine_data,
-                           optional<Path>          engine_parent,
-                           optional<Symbol>        engine_symbol)
+ThreadedLoader::load_patch(bool                             merge,
+                           const Glib::ustring&             document_uri,
+                           optional<Path>                   data_path,
+                           optional<Path>                   engine_parent,
+                           optional<Symbol>                 engine_symbol,
+                           optional<GraphObject::Variables> engine_data)
 {
 	_mutex.lock();
 
@@ -99,26 +99,23 @@ ThreadedLoader::load_patch(bool                    merge,
 	}
 	
 	// Filthy hack to load deprecated patches based on file extension
-	if (data_base_uri.substr(data_base_uri.length()-3) == ".om") {
+	if (document_uri.substr(document_uri.length()-3) == ".om") {
 		_events.push_back(sigc::hide_return(sigc::bind(
 				sigc::mem_fun(_deprecated_loader, &DeprecatedLoader::load_patch),
-				data_base_uri,
+				document_uri,
 				merge,
 				engine_parent,
 				engine_symbol,
-				engine_data,
+				*engine_data,
 				false)));
 	} else {
-		if (merge && (!engine_parent || engine_parent.get() == "/"))
-			engine_base = engine_base.substr(0, engine_base.find_last_of("/"));
-
 		_events.push_back(sigc::hide_return(sigc::bind(
 				sigc::mem_fun(_parser.get(), &Ingen::Serialisation::Parser::parse_document),
 				App::instance().world(),
 				App::instance().world()->engine.get(),
-				data_base_uri, // document
-				data_base_uri + data_path.substr(1), // object URI document
-				engine_base,
+				document_uri,
+				data_path,
+				engine_parent,
 				engine_symbol,
 				engine_data)));
 	}

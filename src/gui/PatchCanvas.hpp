@@ -128,6 +128,7 @@ private:
 
 	int _last_click_x;
 	int _last_click_y;
+	int _paste_count;
 
 	typedef std::multimap<const std::string, Gtk::Menu*> ClassMenus;
 	ClassMenus _class_menus;

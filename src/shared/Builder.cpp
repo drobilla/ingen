@@ -36,56 +36,68 @@ Builder::Builder(CommonInterface& interface)
 
 
 void
-Builder::build(const Raul::Path& prefix, SharedPtr<const GraphObject> object)
+Builder::build(SharedPtr<const GraphObject> object)
 {
 	SharedPtr<const Patch> patch = PtrCast<const Patch>(object);
 	if (patch) {
 		if (object->path() != "/") {
-			const string path_str = prefix.base() + object->path().substr(1);
+			const string path_str = object->path();
 			_interface.new_patch(path_str, patch->internal_polyphony());
 		}
 
-		build_object(prefix, object);
-		for (Patch::Connections::const_iterator i = patch->connections().begin();
+		build_object(object);
+		/*for (Patch::Connections::const_iterator i = patch->connections().begin();
 				i != patch->connections().end(); ++i) {
-			string base = prefix.base() + object->path().substr(1);
-			_interface.connect(base + (*i)->src_port_path().substr(1),
-			                   base + (*i)->dst_port_path().substr(1));
-		}
+			_interface.connect((*i)->src_port_path(), (*i)->dst_port_path());
+		}*/
 		return;
 	}
 
 	SharedPtr<const Node> node = PtrCast<const Node>(object);
 	if (node) {
-		Raul::Path path = prefix.base() + node->path().substr(1);
+		Raul::Path path = node->path();
 		_interface.new_node(path, node->plugin()->uri());
-		build_object(prefix, object);
+		build_object(object);
 		return;
 	}
 
 	SharedPtr<const Port> port = PtrCast<const Port>(object);
 	if (port) {
-		Raul::Path path = prefix.base() + port->path().substr(1);
+		Raul::Path path = port->path();
 		_interface.new_port(path, port->type().uri(), port->index(), !port->is_input());
-		build_object(prefix, object);
+		build_object(object);
 		return;
 	}
 }
 
 
 void
-Builder::build_object(const Raul::Path& prefix, SharedPtr<const GraphObject> object)
+Builder::connect(SharedPtr<const GraphObject> object)
+{
+	SharedPtr<const Patch> patch = PtrCast<const Patch>(object);
+	if (patch) {
+		for (Patch::Connections::const_iterator i = patch->connections().begin();
+				i != patch->connections().end(); ++i) {
+			_interface.connect((*i)->src_port_path(), (*i)->dst_port_path());
+		}
+		return;
+	}
+}
+
+
+void
+Builder::build_object(SharedPtr<const GraphObject> object)
 {
 	for (GraphObject::Variables::const_iterator i = object->variables().begin();
 			i != object->variables().end(); ++i)
-		_interface.set_variable(prefix.base() + object->path().substr(1), i->first, i->second);
+		_interface.set_variable(object->path(), i->first, i->second);
 
 	for (GraphObject::Properties::const_iterator i = object->properties().begin();
 			i != object->properties().end(); ++i) {
 		if (object->path() == "/")
 			continue;
-		string path_str = prefix.base() + object->path().substr(1);
-		_interface.set_property(prefix.base() + object->path().substr(1), i->first, i->second);
+		string path_str = object->path();
+		_interface.set_property(object->path(), i->first, i->second);
 	}
 }
 

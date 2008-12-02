@@ -242,9 +242,18 @@ main(int argc, char** argv)
 	/* Load a patch */
 	if (args.load_given && engine_interface) {
 		
-		Glib::ustring engine_base = "/";
-		if (args.path_given)
-			engine_base = string(args.path_arg) + "/";
+		boost::optional<Path>   data_path;
+		boost::optional<Path>   parent;
+		boost::optional<Symbol> symbol;
+		
+		const Glib::ustring path = (args.path_given ? args.path_arg : "/");
+		if (Path::is_valid(path)) {
+			const Path p(path);
+			parent = p.parent();
+			symbol = p.name();
+		} else {
+			 cerr << "Invalid path: '" << path << endl;
+		}
 
 		bool found = false;
 		if (!world->serialisation_module)
@@ -269,7 +278,7 @@ main(int argc, char** argv)
 			}
 
 			engine_interface->load_plugins();
-			parser->parse_document(world, engine_interface.get(), uri, engine_base, uri);
+			parser->parse_document(world, engine_interface.get(), uri, data_path, parent, symbol);
 
 		} else {
 			cerr << "Unable to load serialisation module, aborting." << endl;
