@@ -148,7 +148,7 @@ HTTPClientReceiver::message_callback(SoupSession* session, SoupMessage* msg, voi
 			me->_target->enable();
 			me->_parser->parse_string(me->_world, me->_target.get(),
 					Glib::ustring(msg->response_body->data),
-					Glib::ustring("."), Glib::ustring(""));
+					Glib::ustring("."));
 		}
 
 	} else if (path == "/patch") {
@@ -160,7 +160,7 @@ HTTPClientReceiver::message_callback(SoupSession* session, SoupMessage* msg, voi
 			me->_target->enable();
 			me->_parser->parse_string(me->_world, me->_target.get(),
 					Glib::ustring(msg->response_body->data),
-					Glib::ustring("/patch/"), Glib::ustring(""));
+					Glib::ustring("/patch/"));
 		}
 
 	} else if (path == "/stream") {
