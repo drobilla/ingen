@@ -241,7 +241,6 @@ main(int argc, char** argv)
 
 	/* Load a patch */
 	if (args.load_given && engine_interface) {
-		
 		boost::optional<Path>   data_path;
 		boost::optional<Path>   parent;
 		boost::optional<Symbol> symbol;
@@ -250,7 +249,9 @@ main(int argc, char** argv)
 		if (Path::is_valid(path)) {
 			const Path p(path);
 			parent = p.parent();
-			symbol = p.name();
+			const string s = p.name();
+			if (Symbol::is_valid(s))
+				symbol = s;
 		} else {
 			 cerr << "Invalid path: '" << path << endl;
 		}
