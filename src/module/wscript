@@ -7,6 +7,7 @@ def build(bld):
 		Module.cpp
 		global.cpp
 	'''
+	obj.export_incdirs = ['.']
 	obj.includes     = ['.', '..', '../common']
 	obj.name         = 'libingen_module'
 	obj.target       = 'ingen_module'

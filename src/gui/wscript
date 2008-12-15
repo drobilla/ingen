@@ -41,11 +41,12 @@ def build(bld):
 	if bld.env['HAVE_CURL'] != 0:
 		obj.source += 'UploadPatchWindow.cpp'
 
+	obj.export_incdirs = ['.']
 	obj.includes       = ['.', '..', '../common', '../client', '../module']
 	obj.name           = 'libingen_gui'
 	obj.target         = 'ingen_gui'
 	obj.install_path   = '${LIBDIR}/ingen'
-	obj.uselib_local   = 'libingen_shared'
+	obj.uselib_local   = 'libingen_shared libingen_client libingen_module'
 	autowaf.use_lib(bld, obj, '''
 		CURL
 		FLOWCANVAS
