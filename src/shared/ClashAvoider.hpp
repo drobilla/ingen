@@ -21,9 +21,9 @@
 #include <inttypes.h>
 #include <string>
 #include <map>
-#include "raul/Atom.hpp"
-#include "raul/Path.hpp"
 #include "interface/CommonInterface.hpp"
+
+namespace Raul { class Atom; class Path; }
 
 namespace Ingen {
 namespace Shared {
@@ -85,7 +85,7 @@ public:
 	void destroy(const std::string& path);
 
 private:
-	const Raul::Path map_path(const Raul::Path& in);
+	const std::string map_path(const Raul::Path& in);
 
 	Store&            _store;
 	CommonInterface&  _target;

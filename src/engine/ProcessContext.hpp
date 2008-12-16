@@ -18,6 +18,7 @@
 #ifndef PROCESSCONTEXT_H
 #define PROCESSCONTEXT_H
 
+#include "types.hpp"
 #include "EventSink.hpp"
 #include "Context.hpp"
 

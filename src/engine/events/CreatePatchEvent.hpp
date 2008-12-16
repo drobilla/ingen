@@ -19,10 +19,7 @@
 #define CREATEPATCHEVENT_H
 
 #include <string>
-#include "raul/Path.hpp"
 #include "QueuedEvent.hpp"
-
-using std::string;
 
 namespace Raul { template<typename T> class Array; }
 template<typename T> class TreeNode;
@@ -40,7 +37,7 @@ class CompiledPatch;
 class CreatePatchEvent : public QueuedEvent
 {
 public:
-	CreatePatchEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path, int poly);
+	CreatePatchEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const std::string& path, int poly);
 
 	void pre_process();
 	void execute(ProcessContext& context);

@@ -44,8 +44,8 @@ public:
 
 	void process(ProcessContext& context);
 	
-	void note_on(ProcessContext& context, uchar note_num, uchar velocity, FrameTime time);
-	void note_off(ProcessContext& context, uchar note_num, FrameTime time);
+	void note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity, FrameTime time);
+	void note_off(ProcessContext& context, uint8_t note_num, FrameTime time);
 	
 	void learn() { _learning = true; }
 

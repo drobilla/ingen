@@ -24,7 +24,6 @@
 #include "interface/DataType.hpp"
 #include "interface/Connection.hpp"
 #include "PortImpl.hpp"
-#include "types.hpp"
 
 namespace Ingen {
 

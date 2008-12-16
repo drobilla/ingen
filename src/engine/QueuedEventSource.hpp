@@ -20,7 +20,6 @@
 
 #include <cstdlib>
 #include <pthread.h>
-#include "types.hpp"
 #include "raul/Semaphore.hpp"
 #include "raul/Slave.hpp"
 #include "raul/List.hpp"

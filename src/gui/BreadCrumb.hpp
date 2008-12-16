@@ -21,8 +21,8 @@
 #include <gtkmm.h>
 #include "raul/Path.hpp"
 #include "raul/SharedPtr.hpp"
-#include "PatchView.hpp"
 #include "client/PatchModel.hpp"
+#include "PatchView.hpp"
 
 namespace Ingen {
 namespace GUI {

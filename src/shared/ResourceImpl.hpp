@@ -37,18 +37,8 @@ public:
 	const Properties& properties() const { return _properties; }
 	Properties&       properties()       { return _properties; }
 
-	virtual void set_property(const std::string& uri, const Raul::Atom& value) {
-		_properties[uri] = value;
-	}
-
-	const Raul::Atom& get_property(const std::string& uri) const {
-		static const Raul::Atom nil;
-		Properties::const_iterator i = _properties.find(uri);
-		if (i == _properties.end())
-			return nil;
-		else
-			return i->second;
-	}
+	const Raul::Atom& get_property(const std::string& uri) const;
+	void              set_property(const std::string& uri, const Raul::Atom& value);
 
 private:
 	std::string _uri;

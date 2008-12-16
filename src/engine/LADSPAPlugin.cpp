@@ -20,7 +20,6 @@
 #include <iostream>
 #include "LADSPAPlugin.hpp"
 #include "LADSPANode.hpp"
-#include "NodeImpl.hpp"
 #include "Engine.hpp"
 #include "AudioDriver.hpp"
 

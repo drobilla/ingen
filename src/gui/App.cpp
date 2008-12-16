@@ -29,12 +29,12 @@
 #include "module/global.hpp"
 #include "module/Module.hpp"
 #include "module/World.hpp"
+#include "engine/Engine.hpp"
 #include "interface/EngineInterface.hpp"
 #include "serialisation/serialisation.hpp"
 #include "client/ObjectModel.hpp"
 #include "client/PatchModel.hpp"
 #include "client/ClientStore.hpp"
-#include "engine/Engine.hpp"
 #include "shared/runtime_paths.hpp"
 #include "NodeModule.hpp"
 #include "ControlPanel.hpp"
@@ -55,6 +55,8 @@
 
 using namespace std;
 using namespace Ingen::Client;
+
+namespace Raul { class Deletable; }
 
 namespace Ingen { namespace Client { class PluginModel; } }
 

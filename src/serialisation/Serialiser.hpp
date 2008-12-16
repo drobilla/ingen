@@ -25,7 +25,6 @@
 #include <cassert>
 #include "raul/SharedPtr.hpp"
 #include "raul/Path.hpp"
-#include "raul/Atom.hpp"
 #include "redlandmm/World.hpp"
 #include "redlandmm/Model.hpp"
 #include "interface/GraphObject.hpp"

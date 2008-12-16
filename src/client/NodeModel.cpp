@@ -20,7 +20,6 @@
 #include "config.h"
 #include "interface/Port.hpp"
 #include "NodeModel.hpp"
-#include "PatchModel.hpp"
 
 namespace Ingen {
 namespace Client {

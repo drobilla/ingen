@@ -8,8 +8,9 @@ def build(bld):
 		ClashAvoider.cpp
 		LV2Features.cpp
 		LV2URIMap.cpp
-		Store.cpp
+		ResourceImpl.cpp
 		runtime_paths.cpp
+		Store.cpp
 	'''
 	if bld.env['HAVE_LIBLO'] == 1:
 		obj.source += ' OSCSender.cpp '

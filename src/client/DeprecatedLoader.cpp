@@ -30,11 +30,6 @@
 #include <libxml/xpath.h>
 #include "raul/Path.hpp"
 #include "interface/EngineInterface.hpp"
-#include "PatchModel.hpp"
-#include "NodeModel.hpp"
-#include "ConnectionModel.hpp"
-#include "PortModel.hpp"
-#include "PluginModel.hpp"
 #include "DeprecatedLoader.hpp"
 
 #define NS_INGEN "http://drobilla.net/ns/ingen#"

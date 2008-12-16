@@ -24,14 +24,16 @@
 #include "raul/SharedPtr.hpp"
 #include "raul/Table.hpp"
 #include "interface/GraphObject.hpp"
-#include "client/PatchModel.hpp"
-#include "client/PluginModel.hpp"
 #include "client/ClientStore.hpp"
-using Ingen::Client::PluginModel;
-using Ingen::Client::PatchModel;
+
 using namespace Ingen::Shared;
 
 namespace Ingen {
+
+namespace Client { class PatchModel; class PluginModel; }
+using Ingen::Client::PluginModel;
+using Ingen::Client::PatchModel;
+
 namespace GUI {
 	
 

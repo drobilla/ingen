@@ -18,8 +18,6 @@
 #ifndef LADSPAPLUGIN_H
 #define LADSPAPLUGIN_H
 
-#include "config.h"
-
 #include <cstdlib>
 #include <glibmm/module.h>
 #include <boost/utility.hpp>
@@ -27,7 +25,6 @@
 #include <string>
 #include <iostream>
 #include "raul/Path.hpp"
-#include "types.hpp"
 #include "PluginImpl.hpp"
 
 namespace Ingen {

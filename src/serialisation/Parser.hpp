@@ -21,14 +21,13 @@
 #include <string>
 #include <glibmm/ustring.h>
 #include <boost/optional.hpp>
-#include "raul/SharedPtr.hpp"
-#include "raul/Path.hpp"
-#include "raul/Table.hpp"
 #include "interface/GraphObject.hpp"
 #include "module/World.hpp"
 
+namespace Raul { class Path; }
 namespace Redland { class World; class Model; class Node; }
 namespace Ingen { namespace Shared { class CommonInterface; } }
+
 
 using namespace Ingen::Shared;
 

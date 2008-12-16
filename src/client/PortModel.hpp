@@ -23,9 +23,10 @@
 #include <string>
 #include <sigc++/sigc++.h>
 #include "raul/SharedPtr.hpp"
-#include "raul/Path.hpp"
 #include "interface/Port.hpp"
 #include "ObjectModel.hpp"
+
+namespace Raul { class Path; }
 
 namespace Ingen {
 namespace Client {

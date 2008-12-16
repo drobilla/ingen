@@ -19,8 +19,6 @@
 #define DUPLEXPORT_H
 
 #include <string>
-#include "raul/Array.hpp"
-#include "types.hpp"
 #include "Buffer.hpp"
 #include "InputPort.hpp"
 #include "OutputPort.hpp"
@@ -46,7 +44,7 @@ public:
 	           uint32_t           index,
 	           uint32_t           poly,
 	           DataType           type,
-	           const Atom&        value,
+	           const Raul::Atom&  value,
 	           size_t             buffer_size,
 	           bool               is_output);
 

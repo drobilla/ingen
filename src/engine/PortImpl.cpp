@@ -32,13 +32,13 @@ using namespace std;
 namespace Ingen {
 
 
-PortImpl::PortImpl(NodeImpl* const node,
-                   const string&   name,
-                   uint32_t        index,
-                   uint32_t        poly,
-                   DataType        type,
-                   const Atom&     value,
-                   size_t          buffer_size)
+PortImpl::PortImpl(NodeImpl* const   node,
+                   const string&     name,
+                   uint32_t          index,
+                   uint32_t          poly,
+                   DataType          type,
+                   const Raul::Atom& value,
+                   size_t            buffer_size)
 	: GraphObjectImpl(node, name, (type == DataType::AUDIO || type == DataType::CONTROL))
 	, _index(index)
 	, _poly(poly)
@@ -48,7 +48,7 @@ PortImpl::PortImpl(NodeImpl* const node,
 	, _fixed_buffers(false)
 	, _broadcast(false)
 	, _set_by_user(false)
-	, _last_broadcasted_value(_value.type() == Atom::FLOAT ? _value.get_float() : 0.0f) // default?
+	, _last_broadcasted_value(_value.type() == Raul::Atom::FLOAT ? _value.get_float() : 0.0f) // default?
 	, _context(Context::AUDIO)
 	, _buffers(new Raul::Array<Buffer*>(poly))
 	, _prepared_buffers(NULL)

@@ -27,7 +27,6 @@
 #include "PatchCanvas.hpp"
 #include "Port.hpp"
 #include "WindowFactory.hpp"
-using std::cerr; using std::cout; using std::endl;
 
 namespace Ingen {
 namespace GUI {
@@ -80,7 +79,7 @@ SubpatchModule::browse_to_patch()
 void
 SubpatchModule::show_dialog()
 {
-	cerr << "FIXME: dialog\n";
+	std::cerr << "FIXME: dialog" << std::endl;
 	//m_patch->show_control_window();
 }
 

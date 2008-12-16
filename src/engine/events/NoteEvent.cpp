@@ -33,7 +33,7 @@ namespace Ingen {
  *
  * Used to be triggered by MIDI.  Not used anymore.
  */
-NoteEvent::NoteEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, NodeImpl* node, bool on, uchar note_num, uchar velocity)
+NoteEvent::NoteEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, NodeImpl* node, bool on, uint8_t note_num, uint8_t velocity)
 : Event(engine, responder, timestamp),
   _node(node),
   _on(on),
@@ -47,7 +47,7 @@ NoteEvent::NoteEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount
  *
  * Triggered by OSC.
  */
-NoteEvent::NoteEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& node_path, bool on, uchar note_num, uchar velocity)
+NoteEvent::NoteEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& node_path, bool on, uint8_t note_num, uint8_t velocity)
 : Event(engine, responder, timestamp),
   _node(NULL),
   _node_path(node_path),

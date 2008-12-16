@@ -18,15 +18,12 @@
 #ifndef PLUGINIMPL_H
 #define PLUGINIMPL_H
 
-#include "config.h"
-
 #include <cstdlib>
 #include <glibmm/module.h>
 #include <boost/utility.hpp>
 #include <dlfcn.h>
 #include <string>
 #include <iostream>
-#include "types.hpp"
 #include "interface/Plugin.hpp"
 #include "shared/ResourceImpl.hpp"
 

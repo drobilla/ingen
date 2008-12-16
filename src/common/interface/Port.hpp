@@ -15,12 +15,13 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef PORT_H
-#define PORT_H
+#ifndef INGEN_INTERFACE_PORT_HPP
+#define INGEN_INTERFACE_PORT_HPP
 
-#include "raul/Atom.hpp"
 #include "GraphObject.hpp"
 #include "DataType.hpp"
+
+namespace Raul { class Atom; }
 
 namespace Ingen {
 namespace Shared {
@@ -45,4 +46,4 @@ public:
 } // namespace Shared
 } // namespace Ingen
 
-#endif // PORT_H
+#endif // INGEN_INTERFACE_PORT_HPP

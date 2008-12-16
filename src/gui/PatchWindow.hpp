@@ -23,18 +23,19 @@
 #include <gtkmm.h>
 #include <libglademm/xml.h>
 #include <libglademm.h>
-#include "raul/Path.hpp"
 #include "raul/SharedPtr.hpp"
 
-namespace Ingen { namespace Client {
+namespace Raul { class Path; }
+
+namespace Ingen {
+
+namespace Client {
 	class PatchModel;
 	class PortModel;
 	class ObjectModel;
-} }
+}
 using namespace Ingen::Client;
 
-
-namespace Ingen {
 namespace GUI {
 	
 class LoadPluginWindow;

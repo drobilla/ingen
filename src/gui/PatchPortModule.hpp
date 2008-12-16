@@ -22,9 +22,9 @@
 #include <boost/enable_shared_from_this.hpp>
 #include <libgnomecanvasmm.h>
 #include "flowcanvas/Module.hpp"
-#include "raul/Atom.hpp"
 #include "Port.hpp"
-using std::string;
+
+namespace Raul { class Atom; }
 
 namespace Ingen { namespace Client {
 	class PortModel;

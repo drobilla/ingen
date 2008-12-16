@@ -22,9 +22,9 @@
 #include <string>
 #include <sigc++/sigc++.h>
 #include <glibmm/thread.h>
+#include "raul/Atom.hpp"
 #include "interface/ClientInterface.hpp"
 #include "SigClientInterface.hpp"
-#include "raul/Atom.hpp"
 #include "raul/SRSWQueue.hpp"
 
 using std::string;

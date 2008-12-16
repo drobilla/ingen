@@ -20,16 +20,11 @@
 #include <unistd.h>
 #include "interface/ClientInterface.hpp"
 #include "ClientBroadcaster.hpp"
-#include "EngineStore.hpp"
-#include "NodeFactory.hpp"
-#include "util.hpp"
-#include "PatchImpl.hpp"
-#include "NodeImpl.hpp"
 #include "PluginImpl.hpp"
-#include "PortImpl.hpp"
 #include "ConnectionImpl.hpp"
-#include "AudioDriver.hpp"
+#include "EngineStore.hpp"
 #include "ObjectSender.hpp"
+#include "util.hpp"
 
 using namespace std;
 using Ingen::Shared::ClientInterface;

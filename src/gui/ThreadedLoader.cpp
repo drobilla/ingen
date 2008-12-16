@@ -20,9 +20,9 @@
 #include "module/global.hpp"
 #include "module/World.hpp"
 #include "module/Module.hpp"
-#include "client/PatchModel.hpp"
 #include "App.hpp"
 #include "ThreadedLoader.hpp"
+#include "client/PatchModel.hpp"
 
 using namespace std;
 

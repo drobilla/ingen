@@ -23,7 +23,6 @@
 #include <iostream>
 #include <lo/lo.h>
 #include <pthread.h>
-#include "types.hpp"
 #include "interface/ClientInterface.hpp"
 #include "interface/GraphObject.hpp"
 #include "shared/OSCSender.hpp"

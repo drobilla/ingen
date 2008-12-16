@@ -28,7 +28,6 @@
 #include "QueuedEvent.hpp"
 #include "EventSource.hpp"
 #include "PostProcessor.hpp"
-#include "NodeImpl.hpp"
 #include "PatchImpl.hpp"
 #include "PortImpl.hpp"
 #include "MidiDriver.hpp"

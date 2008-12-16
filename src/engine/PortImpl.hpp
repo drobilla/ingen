@@ -21,6 +21,7 @@
 #include <cstdlib>
 #include <string>
 #include "raul/Array.hpp"
+#include "raul/Atom.hpp"
 #include "interface/Port.hpp"
 #include "types.hpp"
 #include "GraphObjectImpl.hpp"
@@ -28,7 +29,7 @@
 #include "Buffer.hpp"
 #include "Context.hpp"
 
-namespace Raul { class Maid; class Atom; }
+namespace Raul { class Maid; }
 
 namespace Ingen {
 

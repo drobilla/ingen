@@ -21,7 +21,6 @@
 #include "PatchImpl.hpp"
 #include "NodeImpl.hpp"
 #include "PortImpl.hpp"
-#include "PortImpl.hpp"
 #include "ConnectionImpl.hpp"
 #include "NodeFactory.hpp"
 #include "interface/DataType.hpp"

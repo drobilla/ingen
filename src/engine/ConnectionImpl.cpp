@@ -19,7 +19,6 @@
 #include "raul/Maid.hpp"
 #include "util.hpp"
 #include "ConnectionImpl.hpp"
-#include "NodeImpl.hpp"
 #include "PortImpl.hpp"
 #include "AudioBuffer.hpp"
 #include "ProcessContext.hpp"

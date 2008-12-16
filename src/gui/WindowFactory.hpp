@@ -22,24 +22,33 @@
 #include <gtkmm.h>
 #include "raul/SharedPtr.hpp"
 #include "interface/GraphObject.hpp"
-#include "client/PatchModel.hpp"
-#include "PatchView.hpp"
 
-using Ingen::Client::PatchModel;
 using namespace Ingen::Shared;
 
+namespace Raul { class Path; }
+
 namespace Ingen {
+
+namespace Client { class PatchModel; class NodeModel; class ObjectModel; }
+using Ingen::Client::PatchModel;
+using Ingen::Client::NodeModel;
+using Ingen::Client::ObjectModel;
+
 namespace GUI {
 
-class PatchWindow;
-class NodeControlWindow;
-class PatchPropertiesWindow;
-class NodePropertiesWindow;
-class PortPropertiesWindow;
 class LoadPatchWindow;
+class LoadPluginWindow;
 class LoadRemotePatchWindow;
-class UploadPatchWindow;
+class LoadSubpatchWindow;
+class NewSubpatchWindow;
+class NodeControlWindow;
+class NodePropertiesWindow;
+class PatchPropertiesWindow;
+class PatchView;
+class PatchWindow;
+class PortPropertiesWindow;
 class RenameWindow;
+class UploadPatchWindow;
 
 
 /** Manager/Factory for all windows.
@@ -78,8 +87,8 @@ public:
 	void clear();
 
 private:
-	typedef std::map<Path, PatchWindow*>       PatchWindowMap;
-	typedef std::map<Path, NodeControlWindow*> ControlWindowMap;
+	typedef std::map<Raul::Path, PatchWindow*>       PatchWindowMap;
+	typedef std::map<Raul::Path, NodeControlWindow*> ControlWindowMap;
 
 	PatchWindow* new_patch_window(SharedPtr<PatchModel> patch, SharedPtr<PatchView> view);
 

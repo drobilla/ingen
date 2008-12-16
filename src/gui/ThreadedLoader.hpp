@@ -26,7 +26,6 @@
 #include "raul/Slave.hpp"
 #include <glibmm/thread.h>
 #include "interface/EngineInterface.hpp"
-#include "client/PatchModel.hpp"
 #include "client/DeprecatedLoader.hpp"
 #include "serialisation/Serialiser.hpp"
 #include "serialisation/Parser.hpp"

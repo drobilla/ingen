@@ -19,6 +19,7 @@
 #define SETPORTVALUEEVENT_H
 
 #include <string>
+#include "raul/Atom.hpp"
 #include "QueuedEvent.hpp"
 #include "types.hpp"
 using std::string;

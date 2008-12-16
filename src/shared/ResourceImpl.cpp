@@ -16,18 +16,30 @@
  */
 
 #include "raul/Atom.hpp"
-#include "MessageContext.hpp"
-#include "NodeImpl.hpp"
+#include "ResourceImpl.hpp"
 
 namespace Ingen {
+namespace Shared {
+
 
 void
-MessageContext::run(NodeImpl* node)
+ResourceImpl::set_property(const std::string& uri, const Raul::Atom& value)
 {
-	uint32_t outputs;
-	node->message_process(*this, &outputs);
-
-	// Don't care what the plugin output, yet...
+	_properties[uri] = value;
 }
 
+
+const Raul::Atom&
+ResourceImpl::get_property(const std::string& uri) const
+{
+	static const Raul::Atom nil;
+	Properties::const_iterator i = _properties.find(uri);
+	if (i == _properties.end())
+		return nil;
+	else
+		return i->second;
+}
+
+
+} // namespace Shared
 } // namespace Ingen

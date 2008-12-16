@@ -15,11 +15,27 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include "raul/Atom.hpp"
 #include "GraphObjectImpl.hpp"
 #include "PatchImpl.hpp"
 #include "EngineStore.hpp"
 
 namespace Ingen {
+
+void
+GraphObjectImpl::set_variable(const std::string& key, const Atom& value)
+{
+	_variables[key] = value;
+}
+
+	
+const Atom&
+GraphObjectImpl::get_variable(const std::string& key)
+{
+	static const Atom null_atom;
+	Variables::iterator i = _variables.find(key);
+	return (i != _variables.end()) ? (*i).second : null_atom;
+}
 
 
 PatchImpl*

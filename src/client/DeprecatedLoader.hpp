@@ -26,7 +26,6 @@
 #include <glibmm/ustring.h>
 #include <libxml/tree.h>
 #include "raul/SharedPtr.hpp"
-#include "raul/Path.hpp"
 #include "interface/EngineInterface.hpp"
 #include "interface/GraphObject.hpp"
 #include "ObjectModel.hpp"
@@ -34,6 +33,8 @@
 using std::string;
 using Ingen::Shared::EngineInterface;
 using Ingen::Shared::GraphObject;
+
+namespace Raul { class Path; }
 
 namespace Ingen {
 namespace Client {

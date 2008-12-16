@@ -20,7 +20,8 @@
 
 #include <string>
 #include <map>
-#include "raul/Atom.hpp"
+
+namespace Raul { class Atom; }
 
 namespace Ingen {
 namespace Shared {

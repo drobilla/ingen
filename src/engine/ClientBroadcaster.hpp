@@ -24,7 +24,6 @@
 #include <pthread.h>
 #include "raul/SharedPtr.hpp"
 #include "interface/ClientInterface.hpp"
-#include "types.hpp"
 #include "NodeFactory.hpp"
 
 using std::string;

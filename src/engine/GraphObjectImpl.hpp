@@ -24,12 +24,9 @@
 #include <cassert>
 #include "raul/Deletable.hpp"
 #include "raul/Path.hpp"
-#include "raul/Atom.hpp"
 #include "interface/GraphObject.hpp"
 #include "shared/ResourceImpl.hpp"
-#include "types.hpp"
 
-using Raul::Atom;
 using Raul::Path;
 using Raul::Symbol;
 
@@ -74,14 +71,8 @@ public:
 		assert(_name.find("/") == std::string::npos);
 	}
 	
-	void set_variable(const std::string& key, const Atom& value)
-		{ _variables[key] = value; }
-	
-	const Atom& get_variable(const std::string& key) {
-		static Atom null_atom;
-		Variables::iterator i = _variables.find(key);
-		return (i != _variables.end()) ? (*i).second : null_atom;
-	}
+	const Raul::Atom& get_variable(const std::string& key);
+	void              set_variable(const std::string& key, const Raul::Atom& value);
 	
 	const Variables&  variables()  const { return _variables; }
 	Variables&        variables()        { return _variables; }
@@ -117,7 +108,7 @@ protected:
 	std::string      _name;
 	bool             _polyphonic;
 
-private:	
+private:
 	Variables  _variables;
 };
 

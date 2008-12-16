@@ -27,7 +27,6 @@
 #include "AudioBuffer.hpp"
 #include "ProcessContext.hpp"
 #include "EventBuffer.hpp"
-#include "Engine.hpp"
 #include "util.hpp"
 
 namespace Ingen {
@@ -44,7 +43,7 @@ ControllerNode::ControllerNode(const string& path,
 {
 	_ports = new Raul::Array<PortImpl*>(6);
 
-	_midi_in_port = new InputPort(this, "input", 0, 1, DataType::EVENT, Atom(), _buffer_size);
+	_midi_in_port = new InputPort(this, "input", 0, 1, DataType::EVENT, Raul::Atom(), _buffer_size);
 	_ports->at(0) = _midi_in_port;
 	
 	_param_port = new InputPort(this, "controller", 1, 1, DataType::CONTROL, 0.0f, 1);
@@ -95,7 +94,7 @@ ControllerNode::process(ProcessContext& context)
 
 
 void
-ControllerNode::control(ProcessContext& context, uchar control_num, uchar val, FrameTime time)
+ControllerNode::control(ProcessContext& context, uint8_t control_num, uint8_t val, FrameTime time)
 {
 	assert(time - context.start() < _buffer_size);
 

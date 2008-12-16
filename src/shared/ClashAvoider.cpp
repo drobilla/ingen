@@ -25,7 +25,8 @@ namespace Ingen {
 namespace Shared {
 
 
-const Raul::Path
+/** Always returns a valid Raul::Path */
+const std::string
 ClashAvoider::map_path(const Raul::Path& in)
 {
 	//cout << "MAP PATH: " << in;

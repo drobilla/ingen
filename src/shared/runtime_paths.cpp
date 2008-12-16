@@ -16,6 +16,7 @@
  */
 
 #include <iostream>
+#include "config.h"
 #include "runtime_paths.hpp"
 #include <glibmm/module.h>
 

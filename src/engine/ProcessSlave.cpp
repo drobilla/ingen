@@ -16,6 +16,7 @@
  */
 
 #include <iostream>
+#include "raul/Atom.hpp"
 #include "ProcessSlave.hpp"
 #include "NodeImpl.hpp"
 #include "CompiledPatch.hpp"

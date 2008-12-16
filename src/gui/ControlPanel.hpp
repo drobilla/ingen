@@ -26,16 +26,18 @@
 #include <gtkmm.h>
 #include <libglademm/xml.h>
 #include <libglademm.h>
-#include "raul/Path.hpp"
 #include "Controls.hpp"
 
-namespace Ingen { namespace Client {
-	class PortModel;
-	class NodeModel;
-} }
-using namespace Ingen::Client;
+namespace Raul { class Path; }
 
 namespace Ingen {
+
+namespace Client {
+	class PortModel;
+	class NodeModel;
+}
+using namespace Ingen::Client;
+
 namespace GUI {
 
 

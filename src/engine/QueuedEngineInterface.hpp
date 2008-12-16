@@ -22,12 +22,12 @@
 #include <string>
 #include <memory>
 #include "raul/SharedPtr.hpp"
+#include "types.hpp"
 #include "tuning.hpp"
 #include "interface/EngineInterface.hpp"
 #include "interface/ClientInterface.hpp"
 #include "Responder.hpp"
 #include "QueuedEventSource.hpp"
-#include "Engine.hpp"
 using std::string;
 
 namespace Ingen {

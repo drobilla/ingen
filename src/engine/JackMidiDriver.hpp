@@ -21,7 +21,6 @@
 #include <jack/jack.h>
 #include <jack/midiport.h>
 #include "raul/List.hpp"
-#include "config.h"
 #include "MidiDriver.hpp"
 
 namespace Ingen {

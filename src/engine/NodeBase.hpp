@@ -23,6 +23,8 @@
 #include <cstdlib>
 #include "raul/Semaphore.hpp"
 #include "raul/AtomicInt.hpp"
+#include "raul/Array.hpp"
+#include "raul/Atom.hpp"
 #include "interface/Port.hpp"
 #include "NodeImpl.hpp"
 

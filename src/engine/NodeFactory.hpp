@@ -30,7 +30,6 @@
 #include "slv2/slv2.h"
 #include "LV2Info.hpp"
 #endif
-#include "types.hpp"
 
 using std::string;
 

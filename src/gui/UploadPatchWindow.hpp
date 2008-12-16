@@ -25,11 +25,13 @@
 #include "raul/SharedPtr.hpp"
 #include "raul/Thread.hpp"
 #include "raul/AtomicInt.hpp"
-#include "client/PatchModel.hpp"
 #include "client/PluginModel.hpp"
-using Ingen::Client::PatchModel;
 
 namespace Ingen {
+
+namespace Client { class PatchModel; }
+using Ingen::Client::PatchModel;
+
 namespace GUI {
 
 class UploadPatchWindow;

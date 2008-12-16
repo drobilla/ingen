@@ -15,8 +15,6 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "config.h"
-
 #include <string>
 #include "raul/Process.hpp"
 #include "ingen_engine.hpp"

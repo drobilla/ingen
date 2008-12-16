@@ -28,11 +28,9 @@
 #include "raul/Atom.hpp"
 #include "raul/Path.hpp"
 #include "raul/SharedPtr.hpp"
-#include "raul/PathTable.hpp"
 #include "interface/GraphObject.hpp"
 #include "shared/ResourceImpl.hpp"
 
-using Raul::PathTable;
 using std::string;
 using Raul::Atom;
 using Raul::Path;

@@ -27,8 +27,6 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <string>
-#include "config.h"
-#include "shared/runtime_paths.hpp"
 
 namespace Ingen {
 namespace Shared {

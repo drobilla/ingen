@@ -23,11 +23,12 @@
 #include "raul/SharedPtr.hpp"
 #include "Port.hpp"
 
-class Atom;
+namespace Raul { class Atom; }
 
 namespace Ingen { namespace Client {
-	class PortModel;
 	class NodeModel;
+	class PluginUI;
+	class PortModel;
 } }
 using namespace Ingen::Client;
 
@@ -76,12 +77,12 @@ protected:
 	void set_selected(bool b);
 	
 	void rename();
-	void set_variable(const std::string& key, const Atom& value);
+	void set_variable(const std::string& key, const Raul::Atom& value);
 	void set_property(const std::string& predicate, const Raul::Atom& value);
 	
 	void add_port(SharedPtr<PortModel> port, bool resize=true);
 
-	void value_changed(uint32_t index, const Atom& value);
+	void value_changed(uint32_t index, const Raul::Atom& value);
 	void initialise_gui_values();
 
 	void create_menu();

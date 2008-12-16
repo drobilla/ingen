@@ -24,21 +24,22 @@
 #include <libglademm.h>
 #include <libgnomecanvasmm.h>
 #include "raul/SharedPtr.hpp"
-#include "raul/Atom.hpp"
 
-namespace Ingen { namespace Client {
+namespace Raul { class Atom; }
+namespace FlowCanvas { class Port; class Item; }
+
+namespace Ingen {
+
+namespace Client {
 	class PortModel;
 	class MetadataModel;
 	class PatchModel;
 	class ObjectModel;
-} }
+}
 using namespace Ingen::Client;
 
-namespace FlowCanvas { class Port; class Item; }
-
-namespace Ingen {
 namespace GUI {
-	
+
 class PatchCanvas;
 class LoadPluginWindow;
 class NewSubpatchWindow;

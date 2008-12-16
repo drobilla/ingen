@@ -21,7 +21,6 @@
 #include <string>
 #include <gtkmm.h>
 #include <libglademm/xml.h>
-#include "raul/Path.hpp"
 #include "raul/SharedPtr.hpp"
 #include "client/ObjectModel.hpp"
 using Ingen::Client::ObjectModel;

@@ -23,12 +23,11 @@
 #include "raul/Deletable.hpp"
 #include "raul/PathTable.hpp"
 #include "raul/Symbol.hpp"
-#include "raul/Atom.hpp"
 #include "raul/SharedPtr.hpp"
 #include "raul/WeakPtr.hpp"
 #include "interface/Resource.hpp"
 
-using Raul::PathTable;
+namespace Raul { class Atom; }
 
 namespace Ingen {
 namespace Shared {
@@ -46,7 +45,7 @@ class GraphObject : public Raul::Deletable
 public:
 	typedef std::map<std::string, Raul::Atom> Variables;
 
-	typedef PathTable< SharedPtr<GraphObject> >::const_iterator const_iterator;
+	typedef Raul::PathTable< SharedPtr<GraphObject> >::const_iterator const_iterator;
 		
 	virtual void set_path(const Raul::Path& path) = 0;
 

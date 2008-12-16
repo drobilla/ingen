@@ -16,10 +16,11 @@
  */
 
 #include <cassert>
+#include "config.h"
 #include "raul/Atom.hpp"
 #include "interface/EngineInterface.hpp"
-#include "client/NodeModel.hpp"
 #include "client/PatchModel.hpp"
+#include "client/NodeModel.hpp"
 #include "client/PluginUI.hpp"
 #include "App.hpp"
 #include "GladeFactory.hpp"

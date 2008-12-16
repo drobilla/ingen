@@ -21,15 +21,16 @@
 #include <cstdlib>
 #include <string>
 #include <lo/lo.h>
+#include "config.h"
 #include "raul/SharedPtr.hpp"
 #include "raul/AtomLiblo.hpp"
-#include "types.hpp"
 #include "interface/ClientInterface.hpp"
-#include "engine/ThreadManager.hpp"
+#include "ClientBroadcaster.hpp"
+#include "Engine.hpp"
+#include "OSCClientSender.hpp"
 #include "OSCEngineReceiver.hpp"
 #include "QueuedEventSource.hpp"
-#include "OSCClientSender.hpp"
-#include "ClientBroadcaster.hpp"
+#include "ThreadManager.hpp"
 
 using namespace std;
 
@@ -638,10 +639,9 @@ int
 OSCEngineReceiver::_note_on_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	/*
-
 	const char* node_path   = &argv[1]->s;
-	const uchar note_num    =  argv[2]->i;
-	const uchar velocity    =  argv[3]->i;
+	const uint8_t note_num    =  argv[2]->i;
+	const uint8_t velocity    =  argv[3]->i;
 	*/
 	cerr << "FIXME: OSC note on\n";
 	//note_on(node_path, note_num, velocity);
@@ -659,9 +659,8 @@ int
 OSCEngineReceiver::_note_off_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	/*
-
 	const char* patch_path  = &argv[1]->s;
-	const uchar note_num    =  argv[2]->i;
+	const uint8_t note_num    =  argv[2]->i;
 	*/
 	cerr << "FIXME: OSC note off\n";
 	//note_off(patch_path, note_num);

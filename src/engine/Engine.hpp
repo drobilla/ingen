@@ -18,7 +18,6 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
-#include "config.h"
 #include <cassert>
 #include <vector>
 #include <set>

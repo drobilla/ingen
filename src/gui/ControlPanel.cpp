@@ -16,7 +16,6 @@
  */
 
 #include "interface/EngineInterface.hpp"
-#include "client/PatchModel.hpp"
 #include "client/NodeModel.hpp"
 #include "client/PortModel.hpp"
 #include "client/PluginModel.hpp"

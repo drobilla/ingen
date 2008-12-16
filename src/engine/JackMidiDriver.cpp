@@ -23,7 +23,6 @@
 #include "module/World.hpp"
 #include "lv2ext/lv2_event_helpers.h"
 #include "shared/LV2URIMap.hpp"
-#include "types.hpp"
 #include "JackMidiDriver.hpp"
 #include "JackAudioDriver.hpp"
 #include "ThreadManager.hpp"

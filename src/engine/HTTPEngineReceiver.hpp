@@ -18,11 +18,9 @@
 #ifndef HTTPENGINERECEIVER_H
 #define HTTPENGINERECEIVER_H
 
-#include "config.h"
 #include <string>
 #include <stdint.h>
 #include <libsoup/soup.h>
-#include "raul/SharedPtr.hpp"
 #include "QueuedEngineInterface.hpp"
 
 namespace Ingen {

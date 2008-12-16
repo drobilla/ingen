@@ -38,7 +38,7 @@ TriggerNode::TriggerNode(const string& path, bool polyphonic, PatchImpl* parent,
 {
 	_ports = new Raul::Array<PortImpl*>(5);
 
-	_midi_in_port = new InputPort(this, "input", 0, 1, DataType::EVENT, Atom(), _buffer_size);
+	_midi_in_port = new InputPort(this, "input", 0, 1, DataType::EVENT, Raul::Atom(), _buffer_size);
 	_ports->at(0) = _midi_in_port;
 	
 	_note_port = new InputPort(this, "note", 1, 1, DataType::CONTROL, 60.0f, 1);
@@ -107,7 +107,7 @@ TriggerNode::process(ProcessContext& context)
 
 
 void
-TriggerNode::note_on(ProcessContext& context, uchar note_num, uchar velocity, FrameTime time)
+TriggerNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity, FrameTime time)
 {
 	assert(time >= context.start() && time <= context.end());
 	assert(time - context.start() < _buffer_size);
@@ -123,7 +123,7 @@ TriggerNode::note_on(ProcessContext& context, uchar note_num, uchar velocity, Fr
 	/*cerr << "[TriggerNode] " << path() << " Note " << (int)note_num << " on @ " << time << endl;*/
 
 	Sample filter_note = ((AudioBuffer*)_note_port->buffer(0))->value_at(0);
-	if (filter_note >= 0.0 && filter_note < 127.0 && (note_num == (uchar)filter_note)) {
+	if (filter_note >= 0.0 && filter_note < 127.0 && (note_num == (uint8_t)filter_note)) {
 		((AudioBuffer*)_gate_port->buffer(0))->set_value(1.0f, context.start(), time);
 		((AudioBuffer*)_trig_port->buffer(0))->set_value(1.0f, context.start(), time);
 		((AudioBuffer*)_trig_port->buffer(0))->set_value(0.0f, context.start(), time + 1);
@@ -134,7 +134,7 @@ TriggerNode::note_on(ProcessContext& context, uchar note_num, uchar velocity, Fr
 
 
 void
-TriggerNode::note_off(ProcessContext& context, uchar note_num, FrameTime time)
+TriggerNode::note_off(ProcessContext& context, uint8_t note_num, FrameTime time)
 {
 	assert(time >= context.start() && time <= context.end());
 	assert(time - context.start() < _buffer_size);

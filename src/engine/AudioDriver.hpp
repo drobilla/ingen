@@ -18,11 +18,12 @@
 #ifndef AUDIODRIVER_H
 #define AUDIODRIVER_H
 
-#include "raul/List.hpp"
 #include "raul/Path.hpp"
 #include "Driver.hpp"
 #include "types.hpp"
 #include "interface/DataType.hpp"
+
+namespace Raul { class Path; }
 
 namespace Ingen {
 

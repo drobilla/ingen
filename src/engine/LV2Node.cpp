@@ -221,7 +221,7 @@ LV2Node::instantiate()
 			
 		// FIXME: need nice type preserving SLV2Value -> Raul::Atom conversion
 		const float def = isnan(def_values[j]) ? 0.0f : def_values[j];
-		const Atom defatm = def;
+		const Raul::Atom defatm = def;
 
 		if (direction == INPUT)
 			port = new InputPort(this, port_name, j, _polyphony, data_type, defatm, port_buffer_size);

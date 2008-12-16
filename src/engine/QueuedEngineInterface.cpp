@@ -17,7 +17,6 @@
 
 #include <iostream>
 #include "QueuedEngineInterface.hpp"
-#include "config.h"
 #include "tuning.hpp"
 #include "QueuedEventSource.hpp"
 #include "events.hpp"

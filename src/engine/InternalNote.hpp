@@ -45,8 +45,8 @@ public:
 
 	void process(ProcessContext& context);
 	
-	void note_on(ProcessContext& context, uchar note_num, uchar velocity, FrameTime time);
-	void note_off(ProcessContext& context, uchar note_num, FrameTime time);
+	void note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity, FrameTime time);
+	void note_off(ProcessContext& context, uint8_t note_num, FrameTime time);
 	void all_notes_off(ProcessContext& context, FrameTime time);
 
 	void sustain_on(ProcessContext& context, FrameTime time);
@@ -64,7 +64,7 @@ private:
 	struct Voice {
 		enum State { FREE, ACTIVE, HOLDING };
 		Voice() : state(FREE), note(0) {}
-		State state; uchar note; SampleCount time;
+		State state; uint8_t note; SampleCount time;
 	};
 
 	float note_to_freq(int num);

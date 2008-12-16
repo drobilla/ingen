@@ -20,10 +20,10 @@
 
 #include <inttypes.h>
 #include <string>
-#include "raul/SharedPtr.hpp"
-#include "raul/Atom.hpp"
 #include "interface/CommonInterface.hpp"
 #include "interface/GraphObject.hpp"
+
+namespace Raul { class Atom; }
 
 namespace Ingen {
 namespace Shared {

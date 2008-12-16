@@ -40,16 +40,16 @@ public:
 	          SampleCount          timestamp,
 	          NodeImpl*            node,
 			  bool                 on,
-	          uchar                note_num,
-	          uchar                velocity);
+	          uint8_t              note_num,
+	          uint8_t              velocity);
 
 	NoteEvent(Engine&              engine,
 	          SharedPtr<Responder> responder,
 	          SampleCount          timestamp,
 	          const string&        node_path,
 			  bool                 on,
-	          uchar                note_num,
-	          uchar                velocity);
+	          uint8_t              note_num,
+	          uint8_t              velocity);
 	
 	void execute(ProcessContext& context);
 	void post_process();
@@ -58,8 +58,8 @@ private:
 	NodeImpl*    _node;
 	const string _node_path;
 	bool         _on;
-	uchar        _note_num;
-	uchar        _velocity;
+	uint8_t      _note_num;
+	uint8_t      _velocity;
 };
 
 

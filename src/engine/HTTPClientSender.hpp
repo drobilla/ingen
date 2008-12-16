@@ -23,7 +23,6 @@
 #include <iostream>
 #include <lo/lo.h>
 #include <pthread.h>
-#include "types.hpp"
 #include "raul/Thread.hpp"
 #include "interface/ClientInterface.hpp"
 #include "shared/HTTPSender.hpp"

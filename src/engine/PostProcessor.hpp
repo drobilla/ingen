@@ -19,7 +19,6 @@
 #define POSTPROCESSOR_H
 
 #include <pthread.h>
-#include "types.hpp"
 #include "raul/SRSWQueue.hpp"
 #include "raul/List.hpp"
 

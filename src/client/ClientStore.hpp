@@ -24,11 +24,12 @@
 #include "raul/SharedPtr.hpp"
 #include <sigc++/sigc++.h>
 #include "raul/Path.hpp"
-#include "raul/Atom.hpp"
 #include "raul/PathTable.hpp"
 #include "raul/TableImpl.hpp"
 #include "interface/EngineInterface.hpp"
 #include "shared/Store.hpp"
+
+namespace Raul { class Atom; }
 
 using namespace std;
 using Ingen::Shared::EngineInterface;

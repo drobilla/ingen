@@ -22,6 +22,7 @@
 #include <sstream>
 #include <sys/socket.h>
 #include <errno.h>
+#include "raul/Atom.hpp"
 #include "module/Module.hpp"
 #include "HTTPClientReceiver.hpp"
 

@@ -19,9 +19,7 @@
 #define NODEIMPL_H
 
 #include <string>
-#include "raul/Array.hpp"
 #include "interface/Node.hpp"
-#include "types.hpp"
 #include "GraphObjectImpl.hpp"
 
 namespace Raul { template <typename T> class List; class Maid; }

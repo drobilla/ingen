@@ -16,7 +16,9 @@
  */
 
 #include <sstream>
+#include "config.h"
 #include "raul/Path.hpp"
+#include "raul/Atom.hpp"
 #include "PluginModel.hpp"
 #include "PatchModel.hpp"
 #include "PluginUI.hpp"
@@ -159,6 +161,17 @@ PluginModel::get_lv2_icon_path(SLV2Plugin plugin)
 	return result;
 }
 #endif
+
+
+const string
+PluginModel::string_property(const std::string& name) const
+{
+	const Raul::Atom& atom = get_property(name);
+	if (atom.type() == Raul::Atom::STRING)
+		return atom.get_string();
+	else
+		return "";
+}
 
 } // namespace Client
 } // namespace Ingen

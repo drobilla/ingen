@@ -18,11 +18,9 @@
 #ifndef OSCENGINERECEIVER_H
 #define OSCENGINERECEIVER_H
 
-#include "config.h"
 #include <string>
 #include <stdint.h>
 #include <lo/lo.h>
-#include "raul/SharedPtr.hpp"
 #include "QueuedEngineInterface.hpp"
 #include "Responder.hpp"
 using std::string;

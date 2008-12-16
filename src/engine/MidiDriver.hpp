@@ -19,7 +19,6 @@
 #define MIDIDRIVER_H
 
 #include <iostream>
-#include "types.hpp"
 #include "Driver.hpp"
 #include "EventBuffer.hpp"
 #include "ProcessContext.hpp"

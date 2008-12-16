@@ -41,7 +41,7 @@ public:
 	
 	void process(ProcessContext& context);
 	
-	void control(ProcessContext& context, uchar control_num, uchar val, FrameTime time);
+	void control(ProcessContext& context, uint8_t control_num, uint8_t val, FrameTime time);
 
 	void learn() { _learning = true; }
 

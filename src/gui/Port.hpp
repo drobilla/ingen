@@ -23,12 +23,14 @@
 #include "flowcanvas/Port.hpp"
 #include "raul/SharedPtr.hpp"
 #include "raul/WeakPtr.hpp"
-#include "raul/Atom.hpp"
 
-namespace Ingen { namespace Client { class PortModel; } }
-using Ingen::Client::PortModel;
+namespace Raul { class Atom; }
 
 namespace Ingen {
+
+namespace Client { class PortModel; }
+using Ingen::Client::PortModel;
+
 namespace GUI {
 
 

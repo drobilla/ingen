@@ -21,11 +21,12 @@
 #include <jack/jack.h>
 #include <jack/transport.h>
 #include "raul/Thread.hpp"
-#include "raul/Path.hpp"
 #include "raul/List.hpp"
 #include "AudioDriver.hpp"
 #include "Buffer.hpp"
 #include "ProcessContext.hpp"
+
+namespace Raul { class Path; }
 
 namespace Ingen {
 

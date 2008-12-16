@@ -18,8 +18,6 @@
 #ifndef EVENTSOURCE_H
 #define EVENTSOURCE_H
 
-#include "types.hpp"
-
 namespace Ingen {
 
 class Event;

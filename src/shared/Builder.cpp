@@ -15,6 +15,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include "raul/Atom.hpp"
 #include "Builder.hpp"
 #include "common/interface/CommonInterface.hpp"
 #include "common/interface/Patch.hpp"

@@ -20,7 +20,6 @@
 
 #include <string>
 #include <gtkmm.h>
-#include "raul/Path.hpp"
 #include "raul/SharedPtr.hpp"
 #include "client/NodeModel.hpp"
 #include "ObjectMenu.hpp"

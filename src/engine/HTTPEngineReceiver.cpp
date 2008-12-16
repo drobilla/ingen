@@ -20,19 +20,20 @@
 #include <cstdio>
 #include <string>
 #include <boost/format.hpp>
+#include "raul/Atom.hpp"
 #include "raul/SharedPtr.hpp"
-#include "types.hpp"
 #include "interface/ClientInterface.hpp"
 #include "module/Module.hpp"
+#include "serialisation/Parser.hpp"
 #include "serialisation/serialisation.hpp"
 #include "serialisation/Serialiser.hpp"
-#include "serialisation/Parser.hpp"
-#include "engine/ThreadManager.hpp"
-#include "HTTPEngineReceiver.hpp"
-#include "QueuedEventSource.hpp"
 #include "ClientBroadcaster.hpp"
+#include "Engine.hpp"
 #include "EngineStore.hpp"
 #include "HTTPClientSender.hpp"
+#include "HTTPEngineReceiver.hpp"
+#include "QueuedEventSource.hpp"
+#include "ThreadManager.hpp"
 
 using namespace std;
 using namespace Ingen::Shared;

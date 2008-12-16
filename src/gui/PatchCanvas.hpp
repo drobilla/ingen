@@ -18,17 +18,15 @@
 #ifndef PATCHCANVAS_H
 #define PATCHCANVAS_H
 
-#include "config.h"
-
 #include <string>
 #include <map>
 #include <boost/shared_ptr.hpp>
+#include "config.h"
 #include "flowcanvas/Canvas.hpp"
 #include "flowcanvas/Module.hpp"
 #include "raul/SharedPtr.hpp"
 #include "raul/Path.hpp"
 #include "client/ConnectionModel.hpp"
-#include "client/PatchModel.hpp"
 #include "interface/GraphObject.hpp"
 #include "NodeModule.hpp"
 
@@ -38,11 +36,14 @@ using namespace Ingen::Shared;
 using std::string;
 using FlowCanvas::Port;
 using Ingen::Client::ConnectionModel;
-using Ingen::Client::PatchModel;
 using Ingen::Client::NodeModel;
 using Ingen::Client::PortModel;
 
 namespace Ingen {
+
+namespace Client { class PatchModel; }
+using Ingen::Client::PatchModel;
+
 namespace GUI {
 	
 class NodeModule;

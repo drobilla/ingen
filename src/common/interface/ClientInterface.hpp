@@ -21,7 +21,6 @@
 #include <stdio.h>
 #include <string>
 #include <inttypes.h>
-#include "raul/Atom.hpp"
 #include "interface/CommonInterface.hpp"
 
 namespace Ingen {

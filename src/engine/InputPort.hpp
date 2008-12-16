@@ -47,13 +47,13 @@ class NodeImpl;
 class InputPort : virtual public PortImpl
 {
 public:
-	InputPort(NodeImpl*     parent,
-	          const string& name,
-	          uint32_t      index,
-	          uint32_t      poly,
-	          DataType      type,
-	          const Atom&   value,
-	          size_t        buffer_size);
+	InputPort(NodeImpl*         parent,
+	          const string&     name,
+	          uint32_t          index,
+	          uint32_t          poly,
+	          DataType          type,
+	          const Raul::Atom& value,
+	          size_t            buffer_size);
 
 	virtual ~InputPort() {}
 	

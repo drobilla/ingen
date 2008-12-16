@@ -22,12 +22,13 @@
 #include <gtkmm.h>
 #include "raul/SharedPtr.hpp"
 #include "interface/GraphObject.hpp"
-#include "client/PatchModel.hpp"
-#include "client/PluginModel.hpp"
 using namespace Ingen::Shared;
-using Ingen::Client::PatchModel;
 
 namespace Ingen {
+
+namespace Client { class PatchModel; }
+using Ingen::Client::PatchModel;
+
 namespace GUI {
 
 

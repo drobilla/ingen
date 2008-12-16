@@ -20,14 +20,16 @@
 
 #include <gtkmm.h>
 #include <libglademm.h>
-#include "raul/Path.hpp"
 
-namespace Ingen { namespace Client {
-	class ClientStore;
-} }
-using Ingen::Client::ClientStore;
+namespace Raul { class Path; }
 
 namespace Ingen {
+
+namespace Client {
+	class ClientStore;
+}
+using Ingen::Client::ClientStore;
+
 namespace GUI {
 
 class PatchWindow;

@@ -19,6 +19,7 @@
 #include <gtkmm.h>
 #include "raul/SharedPtr.hpp"
 #include "interface/EngineInterface.hpp"
+#include "client/PatchModel.hpp"
 #include "client/PortModel.hpp"
 #include "App.hpp"
 #include "PortMenu.hpp"

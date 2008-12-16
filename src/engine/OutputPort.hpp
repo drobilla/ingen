@@ -21,7 +21,6 @@
 #include <string>
 #include <cstdlib>
 #include "PortImpl.hpp"
-#include "types.hpp"
 
 namespace Ingen {
 
@@ -45,7 +44,7 @@ public:
 	           uint32_t           index,
 	           uint32_t           poly,
 	           DataType           type,
-	           const Atom&        value,
+	           const Raul::Atom&  value,
 	           size_t             buffer_size);
 
 	void pre_process(ProcessContext& context);

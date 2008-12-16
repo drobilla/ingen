@@ -36,16 +36,19 @@
 #include "client/OSCClientReceiver.hpp"
 #include "client/OSCEngineSender.hpp"
 #endif
-#include "client/ThreadedSigClientInterface.hpp"
 #include "client/ClientStore.hpp"
 #include "client/PatchModel.hpp"
+#include "client/ThreadedSigClientInterface.hpp"
 #include "module/Module.hpp"
 #include "App.hpp"
 #include "WindowFactory.hpp"
 #include "ConnectWindow.hpp"
+
 using Ingen::QueuedEngineInterface;
-using Ingen::Client::ThreadedSigClientInterface;
+using namespace Ingen::Client;
 using namespace std;
+
+namespace Raul { class Deletable; }
 
 namespace Ingen {
 namespace GUI {

@@ -20,7 +20,6 @@
 #include <algorithm>
 #include <ctype.h>
 #include "interface/EngineInterface.hpp"
-#include "client/NodeModel.hpp"
 #include "client/PatchModel.hpp"
 #include "client/ClientStore.hpp"
 #include "App.hpp"

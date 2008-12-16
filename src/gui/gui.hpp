@@ -18,9 +18,7 @@
 #ifndef INGEN_GUI_H
 #define INGEN_GUI_H
 
-#include "config.h"
 #include "module/global.hpp"
-#include "raul/SharedPtr.hpp"
 
 namespace Ingen {
 

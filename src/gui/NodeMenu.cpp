@@ -19,12 +19,13 @@
 #include <gtkmm.h>
 #include "interface/EngineInterface.hpp"
 #include "client/NodeModel.hpp"
+#include "client/PluginModel.hpp"
 #include "App.hpp"
 #include "NodeMenu.hpp"
 #include "WindowFactory.hpp"
 
 using namespace std;
-using std::cerr; using std::endl;
+using namespace Ingen::Client;
 
 namespace Ingen {
 namespace GUI {

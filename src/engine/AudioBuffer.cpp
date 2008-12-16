@@ -18,8 +18,8 @@
 #include <iostream>
 #include <cassert>
 #include <stdlib.h>
+#include "config.h"
 #include "AudioBuffer.hpp"
-//#include "config.h"
 
 using namespace std;
 
@@ -48,7 +48,7 @@ AudioBuffer::AudioBuffer(size_t size)
 void
 AudioBuffer::alloc_local_data(size_t size)
 {
-#ifdef POSIX_MEMALIGN
+#ifdef HAVE_POSIX_MEMALIGN
 	const int ret = posix_memalign((void**)&_local_data, 16, size * sizeof(Sample));
 #else
 	_local_data = (Sample*)malloc(size * sizeof(Sample));

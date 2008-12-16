@@ -21,10 +21,6 @@
 #include <stdint.h>
 #include <cstddef>
 
-typedef unsigned char uchar;
-typedef unsigned int  uint;
-typedef unsigned long ulong;
-
 typedef float    Sample;
 typedef uint32_t SampleCount;
 typedef uint32_t SampleRate;

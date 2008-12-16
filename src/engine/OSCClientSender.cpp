@@ -15,21 +15,18 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "OSCClientSender.hpp"
 #include <cassert>
 #include <iostream>
 #include <unistd.h>
 #include "raul/AtomLiblo.hpp"
+#include "interface/ClientInterface.hpp"
 #include "EngineStore.hpp"
-#include "NodeFactory.hpp"
-#include "util.hpp"
-#include "PatchImpl.hpp"
 #include "NodeImpl.hpp"
+#include "OSCClientSender.hpp"
+#include "PatchImpl.hpp"
 #include "PluginImpl.hpp"
 #include "PortImpl.hpp"
-#include "ConnectionImpl.hpp"
-#include "AudioDriver.hpp"
-#include "interface/ClientInterface.hpp"
+#include "util.hpp"
 
 using namespace std;
 

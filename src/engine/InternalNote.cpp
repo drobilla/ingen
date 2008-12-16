@@ -45,7 +45,7 @@ NoteNode::NoteNode(const string& path, bool polyphonic, PatchImpl* parent, Sampl
 {
 	_ports = new Raul::Array<PortImpl*>(5);
 	
-	_midi_in_port = new InputPort(this, "input", 0, 1, DataType::EVENT, Atom(), _buffer_size);
+	_midi_in_port = new InputPort(this, "input", 0, 1, DataType::EVENT, Raul::Atom(), _buffer_size);
 	_ports->at(0) = _midi_in_port;
 
 	_freq_port = new OutputPort(this, "frequency", 1, _polyphony, DataType::AUDIO, 440.0f, _buffer_size);
@@ -185,7 +185,7 @@ NoteNode::process(ProcessContext& context)
 
 
 void
-NoteNode::note_on(ProcessContext& context, uchar note_num, uchar velocity, FrameTime time)
+NoteNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity, FrameTime time)
 {
 	assert(time >= context.start() && time <= context.end());
 	assert(time - context.start() < _buffer_size);
@@ -265,7 +265,7 @@ NoteNode::note_on(ProcessContext& context, uchar note_num, uchar velocity, Frame
 
 
 void
-NoteNode::note_off(ProcessContext& context, uchar note_num, FrameTime time)
+NoteNode::note_off(ProcessContext& context, uint8_t note_num, FrameTime time)
 {
 	assert(time >= context.start() && time <= context.end());
 	assert(time - context.start() < _buffer_size);
@@ -305,10 +305,10 @@ NoteNode::free_voice(ProcessContext& context, uint32_t voice, FrameTime time)
 	assert(time - context.start() < _buffer_size);
 
 	// Find a key to reassign to the freed voice (the newest, if there is one)
-	Key*  replace_key     = NULL;
-	uchar replace_key_num = 0;
+	Key*    replace_key     = NULL;
+	uint8_t replace_key_num = 0;
 
-	for (uchar i = 0; i <= 127; ++i) {
+	for (uint8_t i = 0; i <= 127; ++i) {
 		if (_keys[i].state == Key::ON_UNASSIGNED) {
 			if (replace_key == NULL || _keys[i].time > replace_key->time) {
 				replace_key = &_keys[i];

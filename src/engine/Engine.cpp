@@ -23,7 +23,6 @@
 #include "raul/Maid.hpp"
 #include "raul/SharedPtr.hpp"
 #include "Engine.hpp"	
-#include "config.h"
 #include "tuning.hpp"
 #include "Event.hpp"
 #include "common/interface/EventType.hpp"
@@ -151,11 +150,6 @@ Engine::main()
 bool
 Engine::main_iteration()
 {
-/*#ifdef HAVE_LASH
-	// Process any pending LASH events
-	if (lash_driver->enabled())
-		lash_driver->process_events();
-#endif*/
 	// Run the maid (garbage collector)
     _post_processor->process();
 	_maid->cleanup();
