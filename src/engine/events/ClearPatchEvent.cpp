@@ -39,6 +39,7 @@ ClearPatchEvent::ClearPatchEvent(Engine& engine, SharedPtr<Responder> responder,
 	, _process(false)
 	, _ports_array(NULL)
 	, _compiled_patch(NULL)
+	, _driver_ports(NULL)
 {
 }
 
@@ -59,6 +60,19 @@ ClearPatchEvent::pre_process()
 			_ports_array = _patch->build_ports_array();
 			if (_patch->enabled())
 				_compiled_patch = _patch->compile();
+		
+			// Remove driver ports
+			if (_patch->parent() == NULL) {
+				size_t port_count = 0;
+				for (EngineStore::Objects::iterator i = _removed_table->begin();
+						i != _removed_table->end(); ++i) {
+					SharedPtr<PortImpl> port = PtrCast<PortImpl>(i->second);
+					if (port)
+						++port_count;
+				}
+
+				_driver_ports = new DriverPorts(port_count, NULL);
+			}
 		}
 	}
 
@@ -84,26 +98,18 @@ ClearPatchEvent::execute(ProcessContext& context)
 		Raul::Array<PortImpl*>* old_ports = _patch->external_ports();
 		_patch->external_ports(_ports_array);
 		_ports_array = old_ports;
-
-		// Remove driver ports, if necessary
+		
+		// Remove driver ports
 		if (_patch->parent() == NULL) {
 			for (EngineStore::Objects::iterator i = _removed_table->begin();
 					i != _removed_table->end(); ++i) {
 				SharedPtr<PortImpl> port = PtrCast<PortImpl>(i->second);
 				if (port && port->type() == DataType::AUDIO) {
-					List<DriverPort*>::Node* ln
-							= _engine.audio_driver()->remove_port(port->path());
-					assert(ln);
-					ln->elem()->unregister();
-					_engine.maid()->push(ln->elem());
-					_engine.maid()->push(ln);
+					_driver_ports->push_back(
+							_engine.audio_driver()->remove_port(port->path()));
 				} else if (port && port->type() == DataType::EVENT) {
-					List<DriverPort*>::Node* ln
-							= _engine.midi_driver()->remove_port(port->path());
-					assert(ln);
-					ln->elem()->unregister();
-					_engine.maid()->push(ln->elem());
-					_engine.maid()->push(ln);
+					_driver_ports->push_back(
+							_engine.midi_driver()->remove_port(port->path()));
 				}
 			}
 		}
@@ -131,6 +137,19 @@ ClearPatchEvent::post_process()
 		// Reply
 		_responder->respond_ok();
 		_engine.broadcaster()->send_patch_cleared(_patch_path);
+
+		// Unregister and destroy driver ports
+		if (_driver_ports) {
+			for (size_t i = 0; i < _driver_ports->size(); ++i) {
+				Raul::List<DriverPort*>::Node* ln = _driver_ports->at(i);
+				if (ln) {
+					ln->elem()->unregister();
+					_engine.maid()->push(ln);
+				}
+			}
+			delete _driver_ports;
+		}
+
 	} else {
 		_responder->respond_error(string("Patch ") + _patch_path + " not found");
 	}

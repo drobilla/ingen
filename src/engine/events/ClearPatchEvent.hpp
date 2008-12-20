@@ -54,6 +54,9 @@ private:
 	Raul::Array<PortImpl*>* _ports_array; ///< New (external) ports for Patch
 	CompiledPatch*          _compiled_patch;  ///< Patch's new process order
 	
+	typedef Raul::Array<Raul::List<DriverPort*>::Node*> DriverPorts;
+	DriverPorts* _driver_ports;
+	
 	SharedPtr< Table<Path, SharedPtr<Shared::GraphObject> > > _removed_table;
 };
 
