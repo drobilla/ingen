@@ -56,6 +56,7 @@ ClearPatchEvent::pre_process()
 			_removed_table = _engine.engine_store()->remove_children(patch_iterator);
 			_patch->nodes().clear();
 			_patch->connections().clear();
+			_patch->clear_ports();
 			_ports_array = _patch->build_ports_array();
 			if (_patch->enabled())
 				_compiled_patch = _patch->compile();
@@ -79,7 +80,6 @@ ClearPatchEvent::execute(ProcessContext& context)
 			_patch->compiled_patch(NULL);
 		}
 		
-		_patch->clear_ports();
 		_patch->connections().clear();
 		_patch->compiled_patch(_compiled_patch);
 		Raul::Array<PortImpl*>* old_ports = _patch->external_ports();

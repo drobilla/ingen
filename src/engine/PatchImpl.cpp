@@ -304,7 +304,7 @@ PatchImpl::remove_connection(const PortImpl* src_port, const PortImpl* dst_port)
 	}
 
 	if ( ! found)
-		cerr << "WARNING:  [PatchImpl::remove_connection] Connection not found !" << endl;
+		cerr << "WARNING: [PatchImpl::remove_connection] Connection not found" << endl;
 
 	return connection;
 }
@@ -382,7 +382,7 @@ PatchImpl::remove_port(const string& symbol)
 	}
 
 	if ( ! found)
-		cerr << "WARNING:  [PatchImpl::remove_port] Port not found !" << endl;
+		cerr << "WARNING: [PatchImpl::remove_port] Port not found!" << endl;
 
 	return ret;
 }
@@ -398,7 +398,7 @@ PatchImpl::remove_port(const string& symbol)
 void
 PatchImpl::clear_ports()
 {
-	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
+	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
 
 	_input_ports.clear();
 	_output_ports.clear();

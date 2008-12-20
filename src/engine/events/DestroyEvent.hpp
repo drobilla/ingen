@@ -49,7 +49,7 @@ class CompiledPatch;
 class DestroyEvent : public QueuedEvent
 {
 public:
-	DestroyEvent(Engine& engine, SharedPtr<Responder> responder, FrameTime timestamp, QueuedEventSource* source, const string& path, bool block = true);
+	DestroyEvent(Engine& engine, SharedPtr<Responder> responder, FrameTime timestamp, QueuedEventSource* source, const string& path);
 	~DestroyEvent();
 
 	void pre_process();

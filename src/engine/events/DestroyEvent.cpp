@@ -34,8 +34,8 @@
 namespace Ingen {
 
 
-DestroyEvent::DestroyEvent(Engine& engine, SharedPtr<Responder> responder, FrameTime time, QueuedEventSource* source, const string& path, bool block)
-	: QueuedEvent(engine, responder, time, source, source)
+DestroyEvent::DestroyEvent(Engine& engine, SharedPtr<Responder> responder, FrameTime time, QueuedEventSource* source, const string& path)
+	: QueuedEvent(engine, responder, time, true, source)
 	, _path(path)
 	, _store_iterator(engine.engine_store()->end())
 	, _driver_port(NULL)
