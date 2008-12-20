@@ -119,6 +119,8 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 		sigc::mem_fun(this, &PatchWindow::event_delete));
 	_menu_select_all->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_select_all));
+	_menu_close->signal_activate().connect(
+		sigc::mem_fun(this, &PatchWindow::event_close));
 	_menu_quit->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_quit));
 	_menu_fullscreen->signal_activate().connect(
@@ -593,33 +595,54 @@ PatchWindow::on_key_release_event(GdkEventKey* event)
 	return ret;
 }
 
-	
+
+void
+PatchWindow::event_close()
+{
+	App::instance().window_factory()->remove_patch_window(this);
+}
+
+
 void
 PatchWindow::event_quit()
 {
-	Gtk::MessageDialog d(*this, "Would you like to quit just this GUI\nor kill the engine as well?",
-			true, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE, true);
-	d.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
+	Gtk::Widget* kill_img = Gtk::manage(
+			new Gtk::Image(Gtk::Stock::CLOSE, Gtk::ICON_SIZE_BUTTON));
 	
-	Gtk::Button* b = d.add_button(Gtk::Stock::REMOVE, 2); // kill
-	b->set_label("_Kill Engine");
-	Gtk::Widget* kill_img = Gtk::manage(new Gtk::Image(Gtk::Stock::CLOSE, Gtk::ICON_SIZE_BUTTON));
-	b->set_image(*kill_img);
+	Gtk::Widget* close_img = Gtk::manage(
+			new Gtk::Image(Gtk::Stock::QUIT, Gtk::ICON_SIZE_BUTTON));
 
-	b = d.add_button(Gtk::Stock::QUIT, 1); // just exit
+	const char* msg = (App::instance().world()->local_engine)
+		? "This will kill the engine as well.\nAre you sure you want to quit?"
+		: "Would you like to quit just the GUI,\nor kill the engine as well?";
+
+	Gtk::MessageDialog d(*this, msg,
+			true, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE, true);
+	
+	d.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
+
+	if (!App::instance().world()->local_engine) {
+		Gtk::Button* b = d.add_button(Gtk::Stock::REMOVE, 2);
+		b->set_label("_Kill Engine");
+		b->set_image(*kill_img);
+	}
+
+	Gtk::Button* b = d.add_button(Gtk::Stock::QUIT, 1);
 	b->set_label("_Quit");
-	Gtk::Widget* close_img = Gtk::manage(new Gtk::Image(Gtk::Stock::QUIT, Gtk::ICON_SIZE_BUTTON));
 	b->set_image(*close_img);
 	b->grab_default();
-	
-	int ret = d.run();
-	if (ret == 1) {
+
+	switch (d.run()) {
+	case 1:
 		App::instance().quit();
-	} else if (ret == 2) {
+		break;
+	case 2:
 		App::instance().engine()->quit();
 		App::instance().quit();
+		break;
+	default:
+		break;
 	}
-	// Otherwise cancelled, do nothing
 }
 
 

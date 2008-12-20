@@ -184,9 +184,10 @@ bool
 WindowFactory::remove_patch_window(PatchWindow* win, GdkEventAny* ignored)
 {
 	if (_patch_windows.size() <= 1) {
-		Gtk::MessageDialog d(*win, "This is the last remaining open patch "
-			"window.  Closing this window will exit the GUI (the engine will "
-			"remain running).\n\nAre you sure you want to quit?",
+		Gtk::MessageDialog d(*win,
+			"Closing the only open patch window will exit the GUI\n"
+			"(If the engine is remote it will remain running)\n\n"
+			"Are you sure you want to quit?",
 			true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_NONE, true);
 			d.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
 			d.add_button(Gtk::Stock::QUIT, Gtk::RESPONSE_CLOSE);

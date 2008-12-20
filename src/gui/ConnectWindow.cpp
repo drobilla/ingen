@@ -350,8 +350,7 @@ ConnectWindow::quit()
 			true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_NONE, true);
 			d.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
 			d.add_button(Gtk::Stock::QUIT, Gtk::RESPONSE_CLOSE);
-		int ret = d.run();
-		if (ret == Gtk::RESPONSE_CLOSE)
+		if (d.run() == Gtk::RESPONSE_CLOSE)
 			Gtk::Main::quit();
 	} else {
 		Gtk::Main::quit();

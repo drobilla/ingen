@@ -92,6 +92,7 @@ private:
 	void event_paste();
 	void event_delete();
 	void event_select_all();
+	void event_close();
 	void event_quit();
 	void event_clear();
 	void event_fullscreen_toggled();
