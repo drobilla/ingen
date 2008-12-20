@@ -291,11 +291,11 @@ LV2Node::deactivate()
 
 
 void
-LV2Node::message_process(MessageContext& context, uint32_t* output)
+LV2Node::message_process(MessageContext& context, uint32_t* inputs, uint32_t* outputs)
 {
 	// FIXME: voice
 	if (_message_funcs)
-		(*_message_funcs->message_run)((*_instances)[0]->lv2_handle, output);
+		(*_message_funcs->message_run)((*_instances)[0]->lv2_handle, inputs, outputs);
 
 	/* MESSAGE PROCESS */
 }

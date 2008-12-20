@@ -53,7 +53,7 @@ public:
 	void activate();
 	void deactivate();
 	
-	void message_process(MessageContext& context, uint32_t* output);
+	void message_process(MessageContext& context, uint32_t* inputs, uint32_t* outputs);
 	
 	void process(ProcessContext& context);
 	
