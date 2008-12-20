@@ -61,7 +61,7 @@ private:
 	EngineStore::iterator                        _store_iterator;
 	SharedPtr<NodeImpl>                          _node;  ///< Non-NULL iff a node
 	SharedPtr<PortImpl>                          _port;  ///< Non-NULL iff a port
-	DriverPort*                                  _driver_port;
+	Raul::List<DriverPort*>::Node*               _driver_port;
 	PatchImpl::Nodes::Node*                      _patch_node_listnode;
 	Raul::List<PortImpl*>::Node*                 _patch_port_listnode;
 	Raul::Array<PortImpl*>*                      _ports_array; ///< New (external) ports for Patch

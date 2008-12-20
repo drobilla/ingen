@@ -41,6 +41,8 @@ public:
 	JackMidiPort(JackMidiDriver* driver, DuplexPort* port);
 	virtual ~JackMidiPort();
 
+	void unregister();
+
 	void pre_process(ProcessContext& context);
 	void post_process(ProcessContext& context);
 	
@@ -80,18 +82,17 @@ public:
 	{ return new JackMidiPort(this, patch_port); }
 	
 	void        add_port(DriverPort* port);
-	DriverPort* remove_port(const Raul::Path& path);
-	
 	DriverPort* driver_port(const Raul::Path& path);
+	
+	Raul::List<DriverPort*>::Node* remove_port(const Raul::Path& path);
 
-	jack_client_t* jack_client()        { return _client; }
+	jack_client_t* jack_client() { return _client; }
 
 private:
 	Engine&  _engine;
 	uint32_t _midi_event_type;
 
-	Raul::List<JackMidiPort*> _in_ports;
-	Raul::List<JackMidiPort*> _out_ports;
+	Raul::List<JackMidiPort*> _ports;
 	
 	friend class JackMidiPort;
 	

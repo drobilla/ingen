@@ -63,7 +63,18 @@ JackMidiPort::JackMidiPort(JackMidiDriver* driver, DuplexPort* patch_port)
 
 JackMidiPort::~JackMidiPort()
 {
-	jack_port_unregister(_driver->jack_client(), _jack_port);
+	assert(_jack_port == NULL);
+}
+
+
+void
+JackMidiPort::unregister()
+{
+	assert(_jack_port);
+	if (jack_port_unregister(_driver->jack_client(), _jack_port))
+		cerr << "[JackMidiPort] ERROR: Unable to unregister port" << endl;
+
+	_jack_port = NULL;
 }
 
 
@@ -187,8 +198,9 @@ JackMidiDriver::deactivate()
 void
 JackMidiDriver::pre_process(ProcessContext& context)
 {
-	for (Raul::List<JackMidiPort*>::iterator i = _in_ports.begin(); i != _in_ports.end(); ++i)
-		(*i)->pre_process(context);
+	for (Raul::List<JackMidiPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
+		if ((*i)->is_input())
+			(*i)->pre_process(context);
 }
 
 
@@ -197,8 +209,9 @@ JackMidiDriver::pre_process(ProcessContext& context)
 void
 JackMidiDriver::post_process(ProcessContext& context)
 {
-	for (Raul::List<JackMidiPort*>::iterator i = _out_ports.begin(); i != _out_ports.end(); ++i)
-		(*i)->post_process(context);
+	for (Raul::List<JackMidiPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
+		if (!(*i)->is_input())
+			(*i)->post_process(context);
 }
 
 
@@ -214,15 +227,11 @@ JackMidiDriver::add_port(DriverPort* port)
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
 	assert(dynamic_cast<JackMidiPort*>(port));
-
-	if (port->is_input())
-		_in_ports.push_back((JackMidiPort*)port);
-	else
-		_out_ports.push_back((JackMidiPort*)port);
+	_ports.push_back((JackMidiPort*)port);
 }
 
 
-/** Remove an Jack MIDI port.
+/** Remove a Jack MIDI port.
  *
  * Realtime safe.  This is to be called at the beginning of a process cycle to
  * remove the port from the lists read by the audio thread, so the port
@@ -230,22 +239,16 @@ JackMidiDriver::add_port(DriverPort* port)
  *
  * It is the callers responsibility to delete the returned port.
  */
-DriverPort*
+Raul::List<DriverPort*>::Node*
 JackMidiDriver::remove_port(const Path& path)
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
 
-	// FIXME: duplex?
-
-	for (Raul::List<JackMidiPort*>::iterator i = _in_ports.begin(); i != _in_ports.end(); ++i)
+	for (Raul::List<JackMidiPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
 		if ((*i)->patch_port()->path() == path)
-			return _in_ports.erase(i)->elem(); // FIXME: LEAK
-
-	for (Raul::List<JackMidiPort*>::iterator i = _out_ports.begin(); i != _out_ports.end(); ++i)
-		if ((*i)->patch_port()->path() == path)
-			return _out_ports.erase(i)->elem(); // FIXME: LEAK
-
-	cerr << "[JackMidiDriver::remove_input] WARNING: Unable to find Jack port " << path << endl;
+			return (Raul::List<DriverPort*>::Node*)_ports.erase(i);
+	
+	cerr << "[JackMidiDriver::remove_port] WARNING: Unable to find port " << path << endl;
 	return NULL;
 }
 
@@ -255,13 +258,7 @@ JackMidiDriver::driver_port(const Path& path)
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
 
-	// FIXME: duplex?
-
-	for (Raul::List<JackMidiPort*>::iterator i = _in_ports.begin(); i != _in_ports.end(); ++i)
-		if ((*i)->patch_port()->path() == path)
-			return (*i);
-
-	for (Raul::List<JackMidiPort*>::iterator i = _out_ports.begin(); i != _out_ports.end(); ++i)
+	for (Raul::List<JackMidiPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
 		if ((*i)->patch_port()->path() == path)
 			return (*i);
 

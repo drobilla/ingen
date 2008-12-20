@@ -20,6 +20,7 @@
 
 #include <string>
 #include <boost/utility.hpp>
+#include "raul/Deletable.hpp"
 #include "interface/DataType.hpp"
 #include "DuplexPort.hpp"
 
@@ -38,12 +39,14 @@ class DuplexPort;
  *
  * \ingroup engine
  */
-class DriverPort : boost::noncopyable {
+class DriverPort : boost::noncopyable, public Raul::Deletable {
 public:
 	virtual ~DriverPort() {}
 
 	/** Set the name of the system port */
 	virtual void set_name(const std::string& name) = 0;
+
+	virtual void unregister() = 0;
 	
 	bool        is_input()   const { return _patch_port->is_input(); }
 	DuplexPort* patch_port() const { return _patch_port; }
@@ -86,8 +89,9 @@ public:
 	
 	virtual DriverPort* driver_port(const Raul::Path& path) = 0;
 	
-	virtual void        add_port(DriverPort* port)          = 0;
-	virtual DriverPort* remove_port(const Raul::Path& path) = 0;
+	virtual void add_port(DriverPort* port) = 0;
+
+	virtual Raul::List<DriverPort*>::Node* remove_port(const Raul::Path& path) = 0;
 
 protected:
 	DataType _type;

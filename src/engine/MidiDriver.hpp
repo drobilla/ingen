@@ -85,8 +85,9 @@ public:
 	
 	DriverPort* new_port(DuplexPort* patch_port) { return NULL; }
 	
-	void        add_port(DriverPort* port) {}
-	DriverPort* remove_port(const Raul::Path& path) { return NULL; }
+	void add_port(DriverPort* port) {}
+	
+	Raul::List<DriverPort*>::Node* remove_port(const Raul::Path& path) { return NULL; }
 	
 	void pre_process(ProcessContext& context) {}
 	void post_process(ProcessContext& context) {}

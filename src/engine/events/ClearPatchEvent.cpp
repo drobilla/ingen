@@ -36,7 +36,6 @@ namespace Ingen {
 ClearPatchEvent::ClearPatchEvent(Engine& engine, SharedPtr<Responder> responder, FrameTime time, QueuedEventSource* source, const string& patch_path)
 	: QueuedEvent(engine, responder, time, true, source)
 	, _patch_path(patch_path)
-	, _driver_port(NULL)
 	, _process(false)
 	, _ports_array(NULL)
 	, _compiled_patch(NULL)
@@ -88,12 +87,24 @@ ClearPatchEvent::execute(ProcessContext& context)
 
 		// Remove driver ports, if necessary
 		if (_patch->parent() == NULL) {
-			for (EngineStore::Objects::iterator i = _removed_table->begin(); i != _removed_table->end(); ++i) {
+			for (EngineStore::Objects::iterator i = _removed_table->begin();
+					i != _removed_table->end(); ++i) {
 				SharedPtr<PortImpl> port = PtrCast<PortImpl>(i->second);
-				if (port && port->type() == DataType::AUDIO)
-					_driver_port = _engine.audio_driver()->remove_port(port->path());
-				else if (port && port->type() == DataType::EVENT)
-					_driver_port = _engine.midi_driver()->remove_port(port->path());
+				if (port && port->type() == DataType::AUDIO) {
+					List<DriverPort*>::Node* ln
+							= _engine.audio_driver()->remove_port(port->path());
+					assert(ln);
+					ln->elem()->unregister();
+					_engine.maid()->push(ln->elem());
+					_engine.maid()->push(ln);
+				} else if (port && port->type() == DataType::EVENT) {
+					List<DriverPort*>::Node* ln
+							= _engine.midi_driver()->remove_port(port->path());
+					assert(ln);
+					ln->elem()->unregister();
+					_engine.maid()->push(ln->elem());
+					_engine.maid()->push(ln);
+				}
 			}
 		}
 	}
@@ -105,7 +116,6 @@ ClearPatchEvent::post_process()
 {	
 	if (_patch != NULL) {
 		delete _ports_array;
-		delete _driver_port;
 		
 		// Restore patch's run state
 		if (_process)

@@ -50,7 +50,6 @@ public:
 private:
 	const string            _patch_path;
 	SharedPtr<PatchImpl>    _patch;
-	DriverPort*             _driver_port;
 	bool                    _process;
 	Raul::Array<PortImpl*>* _ports_array; ///< New (external) ports for Patch
 	CompiledPatch*          _compiled_patch;  ///< Patch's new process order

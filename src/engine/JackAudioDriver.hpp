@@ -48,6 +48,8 @@ public:
 	JackAudioPort(JackAudioDriver* driver, DuplexPort* patch_port);
 	~JackAudioPort();
 	
+	void unregister();
+	
 	void set_name(const std::string& name) { jack_port_set_name(_jack_port, name.c_str()); };
 	
 	void prepare_buffer(jack_nframes_t nframes);
@@ -89,9 +91,9 @@ public:
 	DriverPort* create_port(DuplexPort* patch_port);
 	
 	void        add_port(DriverPort* port);
-	DriverPort* remove_port(const Raul::Path& path);
-	
 	DriverPort* driver_port(const Raul::Path& path);
+	
+	Raul::List<DriverPort*>::Node* remove_port(const Raul::Path& path);
 	
 	PatchImpl* root_patch()                     { return _root_patch; }
 	void       set_root_patch(PatchImpl* patch) { _root_patch = patch; }

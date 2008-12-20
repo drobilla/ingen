@@ -128,6 +128,7 @@ DestroyEvent::execute(ProcessContext& context)
 		
 		if (_node->parent_patch()->compiled_patch())
 			_engine.maid()->push(_node->parent_patch()->compiled_patch());
+
 		_node->parent_patch()->compiled_patch(_compiled_patch);
 	
 	} else if (_patch_port_listnode) {
@@ -151,6 +152,10 @@ DestroyEvent::execute(ProcessContext& context)
 				_driver_port = _engine.audio_driver()->remove_port(_port->path());
 			else if (_port->type() == DataType::EVENT)
 				_driver_port = _engine.midi_driver()->remove_port(_port->path());
+
+			// Apparently this needs to be called in post_process??
+			//if (_driver_port)
+			//	_driver_port->elem()->unregister();
 		}
 	}
 	
@@ -194,7 +199,10 @@ DestroyEvent::post_process()
 		_responder->respond_error("Unable to destroy object");
 	}
 
-	delete _driver_port;
+	if (_driver_port) {
+		_driver_port->elem()->unregister();
+		_engine.maid()->push(_driver_port);
+	}
 }
 
 

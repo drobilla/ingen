@@ -72,8 +72,9 @@ PortImpl::PortImpl(NodeImpl* const   node,
 
 PortImpl::~PortImpl()
 {
-	for (uint32_t i=0; i < _poly; ++i)
-		delete _buffers->at(i);
+	if (!_fixed_buffers)
+		for (uint32_t i=0; i < _poly; ++i)
+			delete _buffers->at(i);
 
 	delete _buffers;
 }

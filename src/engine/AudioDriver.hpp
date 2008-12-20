@@ -45,12 +45,13 @@ public:
 	virtual void       set_root_patch(PatchImpl* patch) = 0;
 	virtual PatchImpl* root_patch()                     = 0;
 	
-	virtual void        add_port(DriverPort* port)          = 0;
-	virtual DriverPort* remove_port(const Raul::Path& path) = 0;
+	virtual void add_port(DriverPort* port) = 0;
 	
-	virtual SampleCount buffer_size()  const = 0;
-	virtual SampleCount sample_rate()  const = 0;
-	virtual SampleCount frame_time()   const = 0;
+	virtual Raul::List<DriverPort*>::Node* remove_port(const Raul::Path& path) = 0;
+	
+	virtual SampleCount buffer_size() const = 0;
+	virtual SampleCount sample_rate() const = 0;
+	virtual SampleCount frame_time()  const = 0;
 
 	virtual bool is_realtime() const = 0;
 

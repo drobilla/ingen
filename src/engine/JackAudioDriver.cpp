@@ -70,7 +70,17 @@ JackAudioPort::JackAudioPort(JackAudioDriver* driver, DuplexPort* patch_port)
 
 JackAudioPort::~JackAudioPort()
 {
-	jack_port_unregister(_driver->jack_client(), _jack_port);
+	assert(_jack_port == NULL);
+}
+
+
+void
+JackAudioPort::unregister()
+{
+	assert(_jack_port);
+	if (jack_port_unregister(_driver->jack_client(), _jack_port))
+		cerr << "[JackMidiPort] ERROR: Unable to unregister port" << endl;
+	_jack_port = NULL;
 }
 
 
@@ -200,7 +210,6 @@ void
 JackAudioDriver::add_port(DriverPort* port)
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
-
 	assert(dynamic_cast<JackAudioPort*>(port));
 	_ports.push_back((JackAudioPort*)port);
 }
@@ -214,16 +223,16 @@ JackAudioDriver::add_port(DriverPort* port)
  *
  * It is the callers responsibility to delete the returned port.
  */
-DriverPort*
+Raul::List<DriverPort*>::Node*
 JackAudioDriver::remove_port(const Path& path)
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
 
 	for (Raul::List<JackAudioPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
 		if ((*i)->patch_port()->path() == path)
-			return _ports.erase(i)->elem(); // FIXME: LEAK
+			return (Raul::List<DriverPort*>::Node*)(_ports.erase(i));
 	
-	cerr << "[JackAudioDriver::remove_port] WARNING: Unable to find Jack port " << path << endl;
+	cerr << "[JackAudioDriver::remove_port] WARNING: Unable to find port " << path << endl;
 	return NULL;
 }
 
