@@ -6,7 +6,6 @@
     <property name="title" translatable="yes">Ingen</property>
     <property name="default_width">640</property>
     <property name="default_height">480</property>
-    <property name="icon">ingen.svg</property>
     <child>
       <widget class="GtkVBox" id="patch_win_vbox">
         <property name="visible">True</property>
@@ -511,7 +510,6 @@
     <property name="window_position">GTK_WIN_POS_CENTER_ON_PARENT</property>
     <property name="default_width">640</property>
     <property name="default_height">480</property>
-    <property name="icon">ingen.svg</property>
     <child>
       <widget class="GtkVBox" id="vbox9">
         <property name="visible">True</property>
@@ -704,7 +702,6 @@
     <property name="title" translatable="yes">Create Subpatch</property>
     <property name="resizable">False</property>
     <property name="window_position">GTK_WIN_POS_CENTER_ON_PARENT</property>
-    <property name="icon">ingen.svg</property>
     <property name="type_hint">GDK_WINDOW_TYPE_HINT_DIALOG</property>
     <child>
       <widget class="GtkVBox" id="vbox4">
@@ -857,7 +854,6 @@
   <widget class="GtkFileChooserDialog" id="load_subpatch_win">
     <property name="title" translatable="yes">Load Subpatch</property>
     <property name="window_position">GTK_WIN_POS_CENTER_ON_PARENT</property>
-    <property name="icon">ingen.svg</property>
     <property name="type_hint">GDK_WINDOW_TYPE_HINT_DIALOG</property>
     <child internal-child="vbox">
       <widget class="GtkVBox" id="dialog-vbox1">
@@ -1095,7 +1091,6 @@
   <widget class="GtkFileChooserDialog" id="load_patch_win">
     <property name="title" translatable="yes">Load Patch</property>
     <property name="window_position">GTK_WIN_POS_CENTER_ON_PARENT</property>
-    <property name="icon">ingen.svg</property>
     <property name="type_hint">GDK_WINDOW_TYPE_HINT_DIALOG</property>
     <child internal-child="vbox">
       <widget class="GtkVBox" id="vbox11">
@@ -1734,7 +1729,6 @@
     <property name="height_request">180</property>
     <property name="border_width">8</property>
     <property name="title" translatable="yes">Messages - Ingen</property>
-    <property name="icon">ingen.svg</property>
     <child>
       <widget class="GtkVBox" id="vbox12">
         <property name="visible">True</property>
@@ -1803,7 +1797,6 @@
   <widget class="GtkWindow" id="config_win">
     <property name="border_width">8</property>
     <property name="title" translatable="yes">Configuration - Ingen</property>
-    <property name="icon">ingen.svg</property>
     <child>
       <widget class="GtkVBox" id="vbox13">
         <property name="visible">True</property>
@@ -1923,7 +1916,6 @@
     <property name="border_width">8</property>
     <property name="title" translatable="yes">Patch Description</property>
     <property name="window_position">GTK_WIN_POS_CENTER_ON_PARENT</property>
-    <property name="icon">ingen.svg</property>
     <child>
       <widget class="GtkVBox" id="vbox14">
         <property name="visible">True</property>
@@ -2047,7 +2039,6 @@
     <property name="width_request">250</property>
     <property name="title" translatable="yes">Rename</property>
     <property name="window_position">GTK_WIN_POS_CENTER_ON_PARENT</property>
-    <property name="icon">ingen.svg</property>
     <child>
       <widget class="GtkVBox" id="vbox15">
         <property name="visible">True</property>
@@ -2164,7 +2155,6 @@
     <property name="border_width">8</property>
     <property name="title" translatable="yes">Node Properties - Ingen</property>
     <property name="window_position">GTK_WIN_POS_MOUSE</property>
-    <property name="icon">ingen.svg</property>
     <child>
       <widget class="GtkVBox" id="vbox17">
         <property name="visible">True</property>
@@ -2367,7 +2357,6 @@ Contributors:
     <property name="translator_credits" translatable="yes" comments="TRANSLATORS: Replace this string with your names, one name per line.">translator-credits</property>
     <property name="artists">Usability / UI Design:
 	Thorsten Wilms</property>
-    <property name="logo">ingen.svg</property>
     <property name="wrap_license">True</property>
     <child internal-child="vbox">
       <widget class="GtkVBox" id="dialog-vbox3">
@@ -2387,7 +2376,6 @@ Contributors:
     <property name="height_request">340</property>
     <property name="border_width">8</property>
     <property name="title" translatable="yes">Patches - Ingen</property>
-    <property name="icon">ingen.svg</property>
     <child>
       <widget class="GtkScrolledWindow" id="scrolledwindow8">
         <property name="visible">True</property>
@@ -2411,7 +2399,6 @@ Contributors:
     <property name="border_width">6</property>
     <property name="title" translatable="yes">Engine - Ingen</property>
     <property name="resizable">False</property>
-    <property name="icon">ingen.svg</property>
     <property name="type_hint">GDK_WINDOW_TYPE_HINT_DIALOG</property>
     <child internal-child="vbox">
       <widget class="GtkVBox" id="dialog-vbox4">

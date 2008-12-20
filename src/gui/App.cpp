@@ -440,7 +440,7 @@ void*
 App::icon_destroyed(void* data)
 {
 	pair<string, int>* p = static_cast<pair<string, int>*>(data);
-	cerr << "Destroyed icon " << p->first << " with size " << p->second << endl;
+	//cerr << "Destroyed icon " << p->first << " with size " << p->second << endl;
 	Icons::iterator iter = instance()._icons.find(*p);
 	if (iter != instance()._icons.end())
 		instance()._icons.erase(iter);

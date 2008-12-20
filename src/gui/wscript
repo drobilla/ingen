@@ -65,6 +65,5 @@ def build(bld):
 	
 	# GUI runtime files
 	bld.install_files('${DATADIR}/ingen', 'ingen_gui.glade')
-	bld.install_files('${DATADIR}/ingen', 'ingen.svg')
 
 
