@@ -116,13 +116,9 @@ App::init(int argc, char** argv, Ingen::Shared::World* world)
 	_instance->configuration()->apply_settings();
 	
 	// Set default window icon
-	const Glib::ustring icon_path = Shared::data_file_path("ingen.svg");
-	try {
-		if (Glib::file_test(icon_path, Glib::FILE_TEST_EXISTS))
-			Gtk::Window::set_default_icon_from_file(icon_path);
-	} catch (Gdk::PixbufError err) {
-		cerr << "Unable to load window icon " << icon_path << ": " << err.what() << endl;
-	}
+	_instance->_about_dialog->property_program_name() = "Ingen";
+	_instance->_about_dialog->property_logo_icon_name() = "ingen";
+	gtk_window_set_default_icon_name("ingen");
 	
 	// Set style for embedded node GUIs
 	const string rc_style =
