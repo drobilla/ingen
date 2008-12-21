@@ -106,9 +106,15 @@ PortPropertiesWindow::variable_change(const string& key, const Atom& value)
 void
 PortPropertiesWindow::min_changed()
 {
-	const float min = _min_spinner->get_value();
-	float max       = _max_spinner->get_value();
+	const float val = _port_model->value().get_float();
+	float       min = _min_spinner->get_value();
+	float       max = _max_spinner->get_value();
 	
+	if (min > val) {
+		_min_spinner->set_value(val);
+		return; // avoid recursion
+	}
+
 	if (max <= min) {
 		max = min + 1.0;
 		_max_spinner->set_value(max);
@@ -122,9 +128,15 @@ PortPropertiesWindow::min_changed()
 void
 PortPropertiesWindow::max_changed()
 {
-	float min       = _min_spinner->get_value();
-	const float max = _max_spinner->get_value();
+	const float val = _port_model->value().get_float();
+	float       min = _min_spinner->get_value();
+	float       max = _max_spinner->get_value();
 	
+	if (max < val) {
+		_max_spinner->set_value(val);
+		return; // avoid recursion
+	}
+
 	if (min >= max) {
 		min = max - 1.0;
 		_min_spinner->set_value(min);
