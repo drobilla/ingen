@@ -16,7 +16,7 @@
  */
 
 #include <sstream>
-#include "config.h"
+#include "wafconfig.h"
 #include "raul/Path.hpp"
 #include "raul/Atom.hpp"
 #include "PluginModel.hpp"

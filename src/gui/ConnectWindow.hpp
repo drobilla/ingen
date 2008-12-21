@@ -18,7 +18,7 @@
 #ifndef CONNECT_WINDOW_H
 #define CONNECT_WINDOW_H
 
-#include "config.h"
+#include "wafconfig.h"
 
 #ifdef HAVE_SLV2
 #include "slv2/slv2.h"

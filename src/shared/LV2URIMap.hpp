@@ -18,7 +18,7 @@
 #ifndef LV2URIMAP_HPP
 #define LV2URIMAP_HPP
 
-#include "config.h"
+#include "wafconfig.h"
 #ifndef HAVE_SLV2
 #error "This file requires SLV2, but HAVE_SLV2 is not defined.  Please report."
 #endif

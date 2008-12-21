@@ -18,7 +18,7 @@
 #include <iostream>
 #include <cassert>
 #include <stdlib.h>
-#include "config.h"
+#include "wafconfig.h"
 #include "AudioBuffer.hpp"
 
 using namespace std;

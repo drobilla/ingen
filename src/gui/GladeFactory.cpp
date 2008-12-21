@@ -18,7 +18,7 @@
 #include "GladeFactory.hpp"
 #include <iostream>
 #include <fstream>
-#include "config.h"
+#include "wafconfig.h"
 #include "shared/runtime_paths.hpp"
 
 using namespace std;

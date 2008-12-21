@@ -18,7 +18,7 @@
 #define __STDC_LIMIT_MACROS 1
 #include <stdint.h>
 #include <iostream>
-#include "config.h"
+#include "wafconfig.h"
 #include "EventBuffer.hpp"
 #include "lv2ext/lv2_event.h"
 #include "lv2ext/lv2_event_helpers.h"

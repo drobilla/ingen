@@ -16,7 +16,7 @@
  */
 
 #include "JackAudioDriver.hpp"
-#include "config.h"
+#include "wafconfig.h"
 #include "tuning.hpp"
 #include <iostream>
 #include <cstdlib>

@@ -21,7 +21,7 @@
 #include <cstdlib>
 #include <string>
 #include <lo/lo.h>
-#include "config.h"
+#include "wafconfig.h"
 #include "raul/SharedPtr.hpp"
 #include "raul/AtomLiblo.hpp"
 #include "interface/ClientInterface.hpp"

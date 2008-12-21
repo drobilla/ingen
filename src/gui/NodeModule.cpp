@@ -16,7 +16,7 @@
  */
 
 #include <cassert>
-#include "config.h"
+#include "wafconfig.h"
 #include "raul/Atom.hpp"
 #include "interface/EngineInterface.hpp"
 #include "client/PatchModel.hpp"

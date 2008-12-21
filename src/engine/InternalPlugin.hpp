@@ -18,7 +18,7 @@
 #ifndef INTERNALPLUGIN_H
 #define INTERNALPLUGIN_H
 
-#include "config.h"
+#include "wafconfig.h"
 
 #ifndef HAVE_SLV2
 #error "This file requires SLV2, but HAVE_SLV2 is not defined.  Please report."

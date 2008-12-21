@@ -17,7 +17,7 @@
 
 #include <cassert>
 #include <cmath>
-#include "config.h"
+#include "wafconfig.h"
 #include "interface/Port.hpp"
 #include "NodeModel.hpp"
 

@@ -18,7 +18,7 @@
 #ifndef NODEFACTORY_H
 #define NODEFACTORY_H
 
-#include "config.h"
+#include "wafconfig.h"
 #include "module/global.hpp"
 
 #include <list>

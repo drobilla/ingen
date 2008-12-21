@@ -18,7 +18,7 @@
 #ifndef INGEN_WORLD_HPP
 #define INGEN_WORLD_HPP
 
-#include "config.h"
+#include "wafconfig.h"
 
 #include <string>
 #include <glibmm/module.h>
