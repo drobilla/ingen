@@ -110,7 +110,13 @@ PatchTreeWindow::add_patch(SharedPtr<PatchModel> pm)
 		}
 	}
 
-	pm->signal_property.connect(sigc::bind(sigc::mem_fun(this, &PatchTreeWindow::patch_property_changed), pm->path()));
+	pm->signal_property.connect(sigc::bind(
+			sigc::mem_fun(this, &PatchTreeWindow::patch_property_changed),
+			pm->path()));
+
+	pm->signal_destroyed.connect(sigc::bind(
+		sigc::mem_fun(this, &PatchTreeWindow::remove_patch),
+		pm->path()));
 }
 
 
