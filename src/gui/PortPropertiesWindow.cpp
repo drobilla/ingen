@@ -32,7 +32,7 @@ namespace GUI {
 
 PortPropertiesWindow::PortPropertiesWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 	: Gtk::Window(cobject)
-	, _enable_signal(false)
+	//, _enable_signal(false)
 {
 	xml->get_widget("port_properties_min_spinner", _min_spinner);
 	xml->get_widget("port_properties_max_spinner", _max_spinner);
@@ -83,7 +83,7 @@ PortPropertiesWindow::present(SharedPtr<PortModel> pm)
 	_connections.push_back(pm->signal_variable.connect(
 			sigc::mem_fun(this, &PortPropertiesWindow::variable_change)));
 
-	_enable_signal = true;
+	//_enable_signal = true;
 
 	Gtk::Window::present();
 }
@@ -92,14 +92,14 @@ PortPropertiesWindow::present(SharedPtr<PortModel> pm)
 void
 PortPropertiesWindow::variable_change(const string& key, const Atom& value)
 {
-	_enable_signal = false;
+	//_enable_signal = false;
 
-	if ( (key == "lv2:minimum") && value.type() == Atom::FLOAT)
+	if (key == "lv2:minimum" && value.type() == Atom::FLOAT)
 		_min_spinner->set_value(value.get_float());
-	else if ( (key == "lv2:maximum") && value.type() == Atom::FLOAT)
+	else if (key == "lv2:maximum" && value.type() == Atom::FLOAT)
 		_max_spinner->set_value(value.get_float());
 	
-	_enable_signal = true;
+	//_enable_signal = true;
 }
 
 
@@ -114,8 +114,8 @@ PortPropertiesWindow::min_changed()
 		_max_spinner->set_value(max);
 	}
 
-	if (_enable_signal)
-		App::instance().engine()->set_variable(_port_model->path(), "lv2:minimum", min);
+	//if (_enable_signal)
+	//	App::instance().engine()->set_variable(_port_model->path(), "lv2:minimum", min);
 }
 
 
@@ -130,16 +130,14 @@ PortPropertiesWindow::max_changed()
 		_min_spinner->set_value(min);
 	}
 
-	if (_enable_signal)
-		App::instance().engine()->set_variable(_port_model->path(), "lv2:maximum", max);
+	//if (_enable_signal)
+	//	App::instance().engine()->set_variable(_port_model->path(), "lv2:maximum", max);
 }
 
 
 void
 PortPropertiesWindow::cancel()
 {
-	App::instance().engine()->set_variable(_port_model->path(), "lv2:minimum", _initial_min);
-	App::instance().engine()->set_variable(_port_model->path(), "lv2:maximum", _initial_max);
 	hide();
 }
 
@@ -147,6 +145,11 @@ PortPropertiesWindow::cancel()
 void
 PortPropertiesWindow::ok()
 {
+	const float min = _min_spinner->get_value();
+	const float max = _max_spinner->get_value();
+
+	App::instance().engine()->set_variable(_port_model->path(), "lv2:minimum", min);
+	App::instance().engine()->set_variable(_port_model->path(), "lv2:maximum", max);
 	hide();
 }
 

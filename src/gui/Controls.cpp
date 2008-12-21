@@ -189,18 +189,23 @@ SliderControl::set_value(const Atom& atom)
 void
 SliderControl::port_variable_change(const string& key, const Atom& value)
 {
-	if ( (key == "lv2:minimum") && value.type() == Atom::FLOAT)
+	_enable_signal = false;
+	
+	if (key == "lv2:minimum" && value.type() == Atom::FLOAT)
 		set_range(value.get_float(), _slider->get_adjustment()->get_upper());
-	else if ( (key == "lv2:maximum") && value.type() == Atom::FLOAT)
+	else if (key == "lv2:maximum" && value.type() == Atom::FLOAT)
 		set_range(_slider->get_adjustment()->get_lower(), value.get_float());
+	
+	_enable_signal = true;
 }
 
 
 void
 SliderControl::set_range(float min, float max)
 {
-	if (min <= min)
+	if (max <= min)
 		max = min + 1.0;
+	
 	_slider->set_range(min, max);
 	//_value_spinner->set_range(min, max);
 }

@@ -49,7 +49,7 @@ private:
 	void ok();
 	void cancel();
 
-	bool _enable_signal;
+	//bool _enable_signal;
 
 	float _initial_min;
 	float _initial_max;
