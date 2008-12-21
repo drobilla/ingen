@@ -204,13 +204,13 @@ AudioBuffer::copy(const Buffer* src, size_t start_sample, size_t end_sample)
 	const Sample* const src_buf = ((AudioBuffer*)src)->data();
 	assert(src_buf);
 
-	const size_t to_copy = std::min(end_sample, _size);
-	for (size_t i=start_sample; i <= to_copy; ++i)
+	const size_t to_copy = std::min(end_sample, _size - 1);
+	for (size_t i = start_sample; i <= to_copy; ++i)
 		buf[i] = src_buf[i];
 }
 
 
-/** Accumulate a block of @a src into @a dst.
+/** Accumulate a block of @a src into buffer.
  *
  * @a start_sample and @a end_sample define the inclusive range to be accumulated.
  * This function only adds the same range in one buffer to another.
@@ -219,16 +219,17 @@ void
 AudioBuffer::accumulate(const AudioBuffer* const src, size_t start_sample, size_t end_sample)
 {
 	assert(end_sample >= start_sample);
-	assert(end_sample < _size);
 	assert(src);
-	
+	assert(src->type() == DataType::CONTROL || DataType::AUDIO);
+
 	Sample* const buf = data();
 	assert(buf);
 	
 	const Sample* const src_buf = src->data();
 	assert(src_buf);
 
-	for (size_t i=start_sample; i <= end_sample; ++i)
+	const size_t to_copy = std::min(end_sample, _size - 1);
+	for (size_t i = start_sample; i <= to_copy; ++i)
 		buf[i] += src_buf[i];
 	
 }

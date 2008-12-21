@@ -247,9 +247,7 @@ InputPort::pre_process(ProcessContext& context)
 
 			// Accumulate the rest
 			if (_connections.size() > 1) {
-
 				Connections::iterator c = _connections.begin();
-
 				for (++c; c != _connections.end(); ++c)
 					((AudioBuffer*)buffer(voice))->accumulate(
 					((AudioBuffer*)(*c)->buffer(voice)), 0, _buffer_size-1);
