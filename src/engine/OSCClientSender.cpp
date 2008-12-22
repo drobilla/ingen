@@ -313,6 +313,7 @@ OSCClientSender::new_plugin(const std::string& uri,
 bool
 OSCClientSender::new_object(const Shared::GraphObject* object)
 {
+#if 0
 	using namespace Shared;
 
 	const Patch* patch = dynamic_cast<const Patch*>(object);
@@ -332,6 +333,7 @@ OSCClientSender::new_object(const Shared::GraphObject* object)
 		new_port(port->path(), port->type().uri(), port->index(), !port->is_input());
 		return true;
 	}
+#endif
 
 	return false;
 }
