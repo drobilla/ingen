@@ -241,19 +241,23 @@ main(int argc, char** argv)
 
 	/* Load a patch */
 	if (args.load_given && engine_interface) {
-		boost::optional<Path>   data_path;
+		boost::optional<Path>   data_path = Path("/");
 		boost::optional<Path>   parent;
 		boost::optional<Symbol> symbol;
 		
-		const Glib::ustring path = (args.path_given ? args.path_arg : "/");
-		if (Path::is_valid(path)) {
-			const Path p(path);
-			parent = p.parent();
-			const string s = p.name();
-			if (Symbol::is_valid(s))
-				symbol = s;
-		} else {
-			 cerr << "Invalid path: '" << path << endl;
+		if (args.path_given) {
+			const Glib::ustring path = args.path_arg;
+			if (Path::is_valid(path)) {
+				const Path p(path);
+				if (p != "/") {
+					parent = p.parent();
+					const string s = p.name();
+					if (Symbol::is_valid(s))
+						symbol = s;
+				}
+			} else {
+				cerr << "Invalid path given: '" << path << endl;
+			}
 		}
 
 		bool found = false;

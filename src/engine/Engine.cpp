@@ -150,8 +150,7 @@ Engine::main()
 bool
 Engine::main_iteration()
 {
-	// Run the maid (garbage collector)
-    _post_processor->process();
+	_post_processor->process();
 	_maid->cleanup();
 	
 	return !_quit_flag;
