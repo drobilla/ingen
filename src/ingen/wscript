@@ -11,7 +11,5 @@ def build(bld):
 	obj.install_path = '${BINDIR}'
 	autowaf.use_lib(bld, obj, 'GTHREAD GLIBMM REDLANDMM RAUL LV2CORE SLV2 INGEN LIBLO SOUP')
 	
-	autowaf.build_wrapper(bld, 'ingen.in', obj)
-	
 	bld.install_files('${DATADIR}/applications', 'ingen.desktop')
 
