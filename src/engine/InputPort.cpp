@@ -161,7 +161,7 @@ InputPort::remove_connection(const OutputPort* src_port)
 					_buffers->at(i)->unjoin();
 				_buffers->at(i)->clear(); // Write silence
 			}
-		} else if (modify_buffers && _connections.size() == 1) {
+		} else if (modify_buffers && _connections.size() == 1 && can_direct()) {
 			// Share a buffer
 			for (uint32_t i=0; i < _poly; ++i) {
 				_buffers->at(i)->join(_connections.front()->buffer(i));
