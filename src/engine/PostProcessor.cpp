@@ -46,13 +46,24 @@ PostProcessor::process()
 {
 	const FrameTime end_time = _max_time.get();
 
-	/* Note the normal (pre-processed client originated) events must
-	 * be sent first, since they could have e.g. created a port which
-	 * is by now inserted, running, and may broadcast something to
-	 * the client.  If the broadcast happened first the client would
-	 * not yet know about the port's existance. */
+	/* FIXME: The order here is a bit tricky: if the normal events are
+	 * processed first, then a deleted port may still have a pending
+	 * broadcast event which will segfault if executed afterwards.
+	 * If it's the other way around, broadcasts will be sent for
+	 * ports the client doesn't even know about yet... */
 	
 	/* FIXME: process events from all threads if parallel */
+
+	/* Process audio thread generated events */
+	while (_engine.audio_driver()->context().event_sink().read(
+				_event_buffer_size, _event_buffer)) {
+		if (((Event*)_event_buffer)->time() > end_time) {
+			cerr << "WARNING: Lost event with time "
+				<< ((Event*)_event_buffer)->time() << " > " << end_time << endl;
+			break;
+		}
+		((Event*)_event_buffer)->post_process();
+	}
 
 	/* Process normal events */
 	Raul::List<Event*>::Node* n = _events.head();
@@ -66,18 +77,6 @@ PostProcessor::process()
 		delete n;
 		n = next;
 	}
-	
-	/* Process audio thread generated events */
-	while (_engine.audio_driver()->context().event_sink().read(
-				_event_buffer_size, _event_buffer)) {
-		if (((Event*)_event_buffer)->time() > end_time) {
-			cerr << "WARNING: Lost event with time "
-				<< ((Event*)_event_buffer)->time() << " > " << end_time << endl;
-			break;
-		}
-		((Event*)_event_buffer)->post_process();
-	}
-
 }
 
 
