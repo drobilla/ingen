@@ -227,15 +227,19 @@ main(int argc, char** argv)
 	bool run_gui = false;
 	if (args.gui_given) {
 		gui_module = Ingen::Shared::load_module("ingen_gui");
-		void (*init)(int, char**, Ingen::Shared::World*);
-		
-		bool found = gui_module->get_symbol("init", (void*&)init);
-		found = found && gui_module->get_symbol("run", (void*&)gui_run);
-		if (found) {
-			run_gui = true;
-			init(argc, argv, world);
+		if (gui_module) {
+			void (*init)(int, char**, Ingen::Shared::World*);
+
+			bool found = gui_module->get_symbol("init", (void*&)init);
+			found = found && gui_module->get_symbol("run", (void*&)gui_run);
+			if (found) {
+				run_gui = true;
+				init(argc, argv, world);
+			} else {
+				cerr << "Unable to find hooks in GUI module, GUI not loaded." << endl;
+			}
 		} else {
-			cerr << "Unable to find hooks in GUI module, GUI not loaded." << endl;
+			cerr << "Unable to load GUI module." << endl;
 		}
 	}
 
@@ -300,18 +304,19 @@ main(int argc, char** argv)
 #ifdef WITH_BINDINGS
         bool (*run_script)(Ingen::Shared::World*, const char*) = NULL;
 		SharedPtr<Glib::Module> bindings_module = Ingen::Shared::load_module("ingen_bindings");
-        if (!bindings_module)
-            cerr << Glib::Module::get_last_error() << endl;
-       
-        bindings_module->make_resident();
+		if (bindings_module) {
+			bindings_module->make_resident();
 
-        bool found = bindings_module->get_symbol("run", (void*&)(run_script));
-        if (found) {
-			setenv("PYTHONPATH", "../../bindings", 1);
-			run_script(world, args.run_arg);
-        } else {
-			cerr << "FAILED: " << Glib::Module::get_last_error() << endl;
-        }
+			bool found = bindings_module->get_symbol("run", (void*&)(run_script));
+			if (found) {
+				setenv("PYTHONPATH", "../../bindings", 1);
+				run_script(world, args.run_arg);
+			} else {
+				cerr << "FAILED: " << Glib::Module::get_last_error() << endl;
+			}
+		} else {
+            cerr << Glib::Module::get_last_error() << endl;
+		}
 #else
 		cerr << "This build of ingen does not support scripting." << endl;
 #endif
