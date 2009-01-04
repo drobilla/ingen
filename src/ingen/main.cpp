@@ -143,7 +143,7 @@ main(int argc, char** argv)
 				/* Load queued (direct in-process) engine interface */
 				if (args.gui_given && engine_queued_module) {
 					Ingen::QueuedEngineInterface* (*new_interface)(Ingen::Engine& engine);
-					if (engine_osc_module->get_symbol("new_queued_interface", (void*&)new_interface)) {
+					if (engine_queued_module->get_symbol("new_queued_interface", (void*&)new_interface)) {
 						SharedPtr<QueuedEngineInterface> interface(new_interface(*engine));
 						world->local_engine->add_event_source(interface);
 						engine_interface = interface;
