@@ -38,7 +38,7 @@ def configure(conf):
 	autowaf.check_pkg(conf, 'libsoup-2.4', uselib_store='SOUP', atleast_version='2.4.0', mandatory=False)
 	autowaf.check_header(conf, 'ladspa.h', 'HAVE_LADSPA_H', mandatory=False)
 	if not Options.options.no_liblo:
-		autowaf.check_pkg(conf, 'liblo', uselib_store='LIBLO', atleast_version='0.25.0', mandatory=False)
+		autowaf.check_pkg(conf, 'liblo', uselib_store='LIBLO', atleast_version='0.25', mandatory=False)
 	autowaf.check_pkg(conf, 'redlandmm', uselib_store='REDLANDMM', atleast_version='0.0.0', mandatory=False)
 
 	# Check for posix_memalign (OSX, amazingly, doesn't have it)
