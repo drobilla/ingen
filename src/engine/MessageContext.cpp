@@ -24,8 +24,8 @@ namespace Ingen {
 void
 MessageContext::run(NodeImpl* node)
 {
-	uint32_t outputs;
-	node->message_process(*this, &outputs);
+	uint32_t inputs, outputs;
+	node->message_process(*this, &inputs, &outputs);
 
 	// Don't care what the plugin output, yet...
 }

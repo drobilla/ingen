@@ -168,7 +168,7 @@ PatchModel::enabled() const
 }
 	
 void
-PatchModel::set(const string& key, const Atom& value)
+PatchModel::set_property(const std::string& key, const Atom& value)
 {
 	ResourceImpl::set_property(key, value);
 	if (key == "ingen:polyphony")

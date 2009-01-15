@@ -114,7 +114,7 @@ public:
 	
 	/** Run the node for one instant in the message thread.
 	 */
-	virtual void message_process(MessageContext& context, uint32_t* output) = 0;
+	virtual void message_process(MessageContext& context, uint32_t* ins, uint32_t* outs) = 0;
 
 	/** Run the node for @a nframes input/output.
 	 *

@@ -74,7 +74,7 @@ public:
 
 	virtual void learn() {}
 	
-	virtual void message_process(MessageContext& context, uint32_t* output) {}
+	virtual void message_process(MessageContext& context, uint32_t* ins, uint32_t* outs) {}
 
 	virtual void pre_process(ProcessContext& context);
 	virtual void process(ProcessContext& context) = 0;
