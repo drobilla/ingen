@@ -94,13 +94,13 @@ public:
 	bool disable_signals()  { bool old = _enable_signal; _enable_signal = false; return old; }
 	void enable_signals(bool b) { _enable_signal = b; }
 
-	ConnectWindow*     connect_window()  const { return _connect_window; }
-	MessagesWindow*    messages_dialog() const { return _messages_window; }
-	PatchTreeWindow*   patch_tree()      const { return _patch_tree_window; }
-	Configuration*     configuration()   const { return _configuration; }
-	WindowFactory*     window_factory()  const { return _window_factory; }
+	ConnectWindow*   connect_window()  const { return _connect_window; }
+	MessagesWindow*  messages_dialog() const { return _messages_window; }
+	PatchTreeWindow* patch_tree()      const { return _patch_tree_window; }
+	Configuration*   configuration()   const { return _configuration; }
+	WindowFactory*   window_factory()  const { return _window_factory; }
 	
-	Glib::RefPtr<Gdk::Pixbuf>            icon_from_path(const std::string& path, int size);
+	Glib::RefPtr<Gdk::Pixbuf> icon_from_path(const std::string& path, int size);
 
 	const SharedPtr<Shared::EngineInterface>&    engine() const { return _world->engine; }
 	const SharedPtr<Client::SigClientInterface>& client() const { return _client; }
