@@ -170,7 +170,8 @@ HTTPClientSender::new_object(const Shared::GraphObject* object)
 {
 	SharedPtr<Serialisation::Serialiser> serialiser = _engine.world()->serialiser;
 	serialiser->start_to_string("/", "");
-	// FIXME
+	// FIXME: kludge
+	// FIXME: engine boost dependency?
 	boost::shared_ptr<Shared::GraphObject> obj((Shared::GraphObject*)object, null_deleter);
 	serialiser->serialise(obj);
 	string str = serialiser->finish();
