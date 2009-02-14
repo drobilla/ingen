@@ -58,12 +58,14 @@ protected:
 	void on_menu_learn();
 	void on_menu_embed_gui();
 	void on_menu_randomize();
+	void on_preset_activated(const std::string uri);
 
 	Gtk::MenuItem*      _learn_menuitem;
 	Gtk::MenuItem*      _controls_menuitem;
 	Gtk::MenuItem*      _popup_gui_menuitem;
 	Gtk::CheckMenuItem* _embed_gui_menuitem;
 	Gtk::MenuItem*      _randomize_menuitem;
+	Gtk::Menu*          _presets_menu;
 };
 
 

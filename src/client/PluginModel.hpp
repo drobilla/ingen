@@ -61,8 +61,8 @@ public:
 	string port_human_name(uint32_t index) const;
 
 #ifdef HAVE_SLV2
-	static SLV2World slv2_world()  { return _slv2_world; }
-	SLV2Plugin       slv2_plugin() { return _slv2_plugin; }
+	static SLV2World slv2_world()        { return _slv2_world; }
+	SLV2Plugin       slv2_plugin() const { return _slv2_plugin; }
 
 	SLV2Port slv2_port(uint32_t index) {
 		Glib::Mutex::Lock lock(_rdf_world->mutex());

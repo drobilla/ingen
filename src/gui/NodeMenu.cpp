@@ -34,6 +34,7 @@ namespace GUI {
 NodeMenu::NodeMenu(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 	: ObjectMenu(cobject, xml)
 	, _controls_menuitem(NULL)
+	, _presets_menu(NULL)
 {
 	Gtk::Menu* node_menu = NULL;
 	xml->get_widget("node_menu", node_menu);
@@ -65,11 +66,9 @@ NodeMenu::init(SharedPtr<NodeModel> node)
 			
 	_learn_menuitem->signal_activate().connect(sigc::mem_fun(this,
 			&NodeMenu::on_menu_learn));
-
 	_controls_menuitem->signal_activate().connect(sigc::bind(
 			sigc::mem_fun(App::instance().window_factory(), &WindowFactory::present_controls),
 			node));
-	
 	_popup_gui_menuitem->signal_activate().connect(sigc::mem_fun(signal_popup_gui,
 			&sigc::signal<void>::emit));
 	_embed_gui_menuitem->signal_toggled().connect(sigc::mem_fun(this,
@@ -85,6 +84,34 @@ NodeMenu::init(SharedPtr<NodeModel> node)
 		_popup_gui_menuitem->hide();
 		_embed_gui_menuitem->hide();
 	}
+	
+#ifdef HAVE_SLV2
+	if (plugin && plugin->type() == PluginModel::LV2) {
+		SLV2Results presets = slv2_plugin_query_sparql(plugin->slv2_plugin(),
+				"PREFIX lv2p: <http://lv2plug.in/ns/dev/presets#>\n"
+				"PREFIX dc:  <http://dublincore.org/documents/dcmi-namespace/>\n"
+				"SELECT ?p ?name WHERE { <> lv2p:hasPreset ?p . ?p dc:title ?name }\n");
+		if (!slv2_results_finished(presets)) {
+			items().push_front(Gtk::Menu_Helpers::SeparatorElem());
+			items().push_front(Gtk::Menu_Helpers::ImageMenuElem("_Presets",
+					*(manage(new Gtk::Image(Gtk::Stock::INDEX, Gtk::ICON_SIZE_MENU)))));
+			Gtk::MenuItem* presets_menu_item = &(items().front());
+			_presets_menu = Gtk::manage(new Gtk::Menu());
+			presets_menu_item->set_submenu(*_presets_menu);
+			for (; !slv2_results_finished(presets); slv2_results_next(presets)) {
+				SLV2Value uri  = slv2_results_get_binding_value(presets, 0);
+				SLV2Value name = slv2_results_get_binding_value(presets, 1);
+				Gtk::MenuItem* item = Gtk::manage(new Gtk::MenuItem(slv2_value_as_string(name)));
+				_presets_menu->items().push_back(*item);
+				item->show();
+				item->signal_activate().connect(
+						sigc::bind(sigc::mem_fun(this, &NodeMenu::on_preset_activated),
+								string(slv2_value_as_string(uri))), false);
+			}
+		}
+		slv2_results_free(presets);
+	}
+#endif
 
 	if (has_control_inputs())
 		_randomize_menuitem->show();
@@ -141,6 +168,33 @@ NodeMenu::on_menu_disconnect()
 }
 
 
+void
+NodeMenu::on_preset_activated(const std::string uri)
+{
+#ifdef HAVE_SLV2
+	const NodeModel* const   node   = (NodeModel*)_object.get();
+	const PluginModel* const plugin = dynamic_cast<const PluginModel*>(node->plugin());
+	const string query = string(
+			"PREFIX lv2p: <http://lv2plug.in/ns/dev/presets#>\n"
+			"PREFIX dc:  <http://dublincore.org/documents/dcmi-namespace/>\n"
+			"SELECT ?sym ?val WHERE { <") + uri + "> lv2:port ?port . "
+				" ?port lv2:symbol ?sym ; lv2p:value ?val . }";
+	SLV2Results values = slv2_plugin_query_sparql(plugin->slv2_plugin(), query.c_str());
+	App::instance().engine()->bundle_begin();
+	for (; !slv2_results_finished(values); slv2_results_next(values)) {
+		SLV2Value sym  = slv2_results_get_binding_value(values, 0);
+		SLV2Value val = slv2_results_get_binding_value(values, 1);
+		App::instance().engine()->set_port_value(
+				node->path().base() + slv2_value_as_string(sym),
+				slv2_value_as_float(val));
+
+	}
+	App::instance().engine()->bundle_end();
+	slv2_results_free(values);
+#endif
+}
+
+
 bool
 NodeMenu::has_control_inputs()
 {
@@ -165,7 +219,6 @@ NodeMenu::disable_controls_menuitem()
 {
 	_controls_menuitem->property_sensitive() = false;
 }
-
 
 
 } // namespace GUI
