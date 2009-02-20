@@ -72,10 +72,6 @@ public:
 	void prepare_poly(uint32_t poly);
 	void apply_poly(Raul::Maid& maid, uint32_t poly);
 
-	bool must_copy() const;
-	bool must_mix() const;
-	bool must_extend() const;
-
 	inline bool need_buffer() const { return must_mix(); }
 	inline bool can_direct() const { return _mode == DIRECT; }
 
@@ -84,6 +80,10 @@ public:
 protected:
 	enum { DIRECT, MIX, COPY, EXTEND } _mode;
 	void set_mode();
+	
+	bool must_copy() const;
+	bool must_mix() const;
+	bool must_extend() const;
 
 	PortImpl* const _src_port;
 	PortImpl* const _dst_port;

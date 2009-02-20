@@ -71,10 +71,10 @@ ConnectionImpl::~ConnectionImpl()
 void
 ConnectionImpl::set_mode()
 {
-	if (must_copy())
-		_mode = COPY;
-	else if (must_mix())
+	if (must_mix())
 		_mode = MIX;
+	else if (must_copy())
+		_mode = COPY;
 	else if (must_extend())
 		_mode = EXTEND;
 	
