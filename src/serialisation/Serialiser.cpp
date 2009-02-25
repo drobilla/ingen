@@ -253,7 +253,7 @@ Serialiser::patch_path_to_rdf_node(const Path& path)
 Redland::Node
 Serialiser::path_to_rdf_node(const Path& path)
 {
-#if USE_BLANK_NODES
+#ifdef USE_BLANK_NODES
 	NodeMap::iterator i = _node_map.find(path);
 	if (i != _node_map.end()) {
 		assert(i->second);
