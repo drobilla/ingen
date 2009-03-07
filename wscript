@@ -53,15 +53,15 @@ def configure(conf):
 	conf.define('BUILD_INGEN_GUI', int(build_gui))
 	conf.define('HAVE_JACK_MIDI', int(conf.env['HAVE_JACK'] == 1))
 	if conf.env['BUNDLE']:
-		conf.define('INGEN_DATA_DIR', os.path.normpath(
-				conf.env['DATADIRNAME'] + 'ingen'))
-		conf.define('INGEN_MODULE_DIR', os.path.normpath(
-				conf.env['LIBDIRNAME'] + 'ingen'))
+		conf.define('INGEN_DATA_DIR', os.path.join(
+				conf.env['DATADIRNAME'], 'ingen'))
+		conf.define('INGEN_MODULE_DIR', os.path.join(
+				conf.env['LIBDIRNAME'], 'ingen'))
 	else:
-		conf.define('INGEN_DATA_DIR', os.path.normpath(
-				conf.env['DATADIR'] + 'ingen'))
-		conf.define('INGEN_MODULE_DIR', os.path.normpath(
-				conf.env['LIBDIR'] + 'ingen'))
+		conf.define('INGEN_DATA_DIR', os.path.join(
+				conf.env['DATADIR'], 'ingen'))
+		conf.define('INGEN_MODULE_DIR', os.path.join(
+				conf.env['LIBDIR'], 'ingen'))
 	
 	conf.write_config_header('wafconfig.h')
 	
@@ -101,6 +101,6 @@ def build(bld):
 	icon_sizes = ['16x16', '22x22', '24x24', '32x32', '48x48']
 	for s in icon_sizes:
 		bld.install_as(
-			os.path.normpath(bld.env['DATADIR'] + '/icons/hicolor/' + s + '/apps/ingen.png'),
+			os.path.join(bld.env['DATADIR'], 'icons', 'hicolor', 'apps', 'ingen.png'),
 			'icons/' + s + '/ingen.png')
 
