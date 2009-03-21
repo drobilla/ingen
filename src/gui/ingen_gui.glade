@@ -741,7 +741,7 @@
               <widget class="GtkSpinButton" id="new_subpatch_polyphony_spinbutton">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="adjustment">1 0 100 1 10 10</property>
+                <property name="adjustment">1 0 100 1 10 0</property>
                 <property name="climb_rate">1</property>
               </widget>
               <packing>
@@ -955,7 +955,7 @@
                     <property name="sensitive">False</property>
                     <property name="can_focus">True</property>
                     <property name="tooltip" translatable="yes">Specify a custom polyphony value for new patch</property>
-                    <property name="adjustment">1 0 1000 1 10 10</property>
+                    <property name="adjustment">1 0 1000 1 10 0</property>
                     <property name="climb_rate">1</property>
                   </widget>
                   <packing>
@@ -1174,7 +1174,7 @@
                     <property name="sensitive">False</property>
                     <property name="can_focus">True</property>
                     <property name="tooltip" translatable="yes">Specify a custom polyphony value for new patch</property>
-                    <property name="adjustment">1 0 100 1 10 10</property>
+                    <property name="adjustment">1 0 100 1 10 0</property>
                     <property name="climb_rate">1</property>
                   </widget>
                   <packing>
@@ -1395,7 +1395,7 @@
                         <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                         <property name="tooltip" translatable="yes">Voice control changes are applied to</property>
-                        <property name="adjustment">1 1 100 1 10 10</property>
+                        <property name="adjustment">1 1 100 1 10 0</property>
                         <property name="climb_rate">1</property>
                         <property name="numeric">True</property>
                       </widget>
@@ -1485,7 +1485,7 @@
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="tooltip" translatable="yes">Patch polyphony</property>
-                            <property name="adjustment">1 1 512 1 10 10</property>
+                            <property name="adjustment">1 1 512 1 10 0</property>
                             <property name="climb_rate">1</property>
                             <property name="numeric">True</property>
                           </widget>
@@ -1685,7 +1685,7 @@
                     <property name="can_focus">True</property>
                     <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                     <property name="width_chars">12</property>
-                    <property name="adjustment">0 -9.9999999999999999e+45 1.0000000000000001e+63 1 10 10</property>
+                    <property name="adjustment">0 -9.9999999999999999e+45 1.0000000000000001e+63 1 10 0</property>
                     <property name="digits">4</property>
                     <property name="numeric">True</property>
                   </widget>
@@ -2482,7 +2482,7 @@ Contributors:
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
-                        <property name="adjustment">16180 1 65535 1 10 10</property>
+                        <property name="adjustment">16180 1 65535 1 10 0</property>
                         <property name="climb_rate">1</property>
                         <property name="numeric">True</property>
                       </widget>
@@ -3104,7 +3104,7 @@ Thank you for contributing.</property>
               <widget class="GtkSpinButton" id="port_properties_min_spinner">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="adjustment">0 -100000000 100000000 1 10 10</property>
+                <property name="adjustment">0 -100000000 100000000 1 10 0</property>
                 <property name="climb_rate">1</property>
                 <property name="digits">5</property>
                 <property name="numeric">True</property>
@@ -3119,7 +3119,7 @@ Thank you for contributing.</property>
               <widget class="GtkSpinButton" id="port_properties_max_spinner">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="adjustment">1 -99999 99999 1 10 10</property>
+                <property name="adjustment">1 -99999 99999 1 10 0</property>
                 <property name="climb_rate">1</property>
                 <property name="digits">5</property>
                 <property name="numeric">True</property>
