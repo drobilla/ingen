@@ -18,7 +18,7 @@
 #define __STDC_LIMIT_MACROS 1
 #include <stdint.h>
 #include <iostream>
-#include "wafconfig.h"
+#include "ingen-config.h"
 #include "EventBuffer.hpp"
 #include "lv2ext/lv2_event.h"
 #include "lv2ext/lv2_event_helpers.h"
@@ -33,41 +33,12 @@ namespace Ingen {
  */
 EventBuffer::EventBuffer(size_t capacity)
 	: Buffer(DataType(DataType::EVENT), capacity)
-	, _latest_frames(0)
-	, _latest_subframes(0)
+	, _local_buf(new LV2EventBuffer(capacity))
 {
-	if (capacity > UINT32_MAX) {
-		cerr << "Event buffer size " << capacity << " too large, aborting." << endl;
-		throw std::bad_alloc();
-	}
-
-#ifdef HAVE_POSIX_MEMALIGN
-	int ret = posix_memalign((void**)&_local_buf, 16, sizeof(LV2_Event_Buffer) + capacity);
-#else
-	_local_buf = (LV2_Event_Buffer*)malloc(sizeof(LV2_Event_Buffer) + capacity);
-	int ret = (_local_buf != NULL) ? 0 : -1;
-#endif
-
-	if (ret != 0) {
-		cerr << "Failed to allocate event buffer.  Aborting." << endl;
-		exit(EXIT_FAILURE);
-	}
-
-	_local_buf->event_count = 0;
-	_local_buf->capacity = (uint32_t)capacity;
-	_local_buf->size = 0;
-	_local_buf->data = reinterpret_cast<uint8_t*>(_local_buf + 1);
 	_buf = _local_buf;
-
 	reset(0);
 
 	//cerr << "Creating MIDI Buffer " << _buf << ", capacity = " << _buf->capacity << endl;
-}
-
-
-EventBuffer::~EventBuffer()
-{
-	free(_local_buf);
 }
 
 
@@ -78,20 +49,18 @@ EventBuffer::~EventBuffer()
 bool
 EventBuffer::join(Buffer* buf)
 {
-	EventBuffer* mbuf = dynamic_cast<EventBuffer*>(buf);
-	if (mbuf) {
-		_buf = mbuf->local_data();
-		_joined_buf = mbuf;
-		_iter = mbuf->_iter;
-		_iter.buf = _buf;
+	EventBuffer* ebuf = dynamic_cast<EventBuffer*>(buf);
+	if (ebuf) {
+		_buf = ebuf->_local_buf;
+		_joined_buf = ebuf;
+		_iter = ebuf->_iter;
+		_iter.buf = _buf->data();
 		return false;
 	} else {
 		return false;
 	}
 
-	//assert(mbuf->size() == _size);
-	
-	_joined_buf = mbuf;
+	_joined_buf = ebuf;
 
 	return true;
 }
@@ -100,7 +69,6 @@ EventBuffer::join(Buffer* buf)
 void
 EventBuffer::unjoin()
 {
-	//cout << this << " unjoin" << endl;
 	_joined_buf = NULL;
 	_buf = _local_buf;
 	reset(_this_nframes);
@@ -118,7 +86,6 @@ EventBuffer::prepare_read(FrameTime start, SampleCount nframes)
 void
 EventBuffer::prepare_write(FrameTime start, SampleCount nframes)
 {
-	//cerr << "\t" << this << " prepare_write: " << event_count() << endl;
 	reset(nframes);
 }
 	
@@ -128,136 +95,13 @@ EventBuffer::copy(const Buffer* src_buf, size_t start_sample, size_t end_sample)
 {
 	const EventBuffer* src = dynamic_cast<const EventBuffer*>(src_buf);
 	assert(src);
-	assert(_buf->capacity >= src->_buf->capacity);
+	assert(_buf->capacity() >= src->_buf->capacity());
 	
 	clear();
 	src->rewind();
 
-	memcpy(_buf, src->_buf, src->_buf->size);
+	memcpy(_buf, src->_buf, src->_buf->size());
 	_this_nframes = end_sample - start_sample;
-}
-
-
-/** Increment the read position by one event.
- *
- * \return true if increment was successful, or false if end of buffer reached.
- */
-bool
-EventBuffer::increment() const
-{
-	if (lv2_event_is_valid(&_iter)) {
-		lv2_event_increment(&_iter);
-		return true;
-	} else {
-		return false;
-	}
-}
-
-
-/**
- * \return true iff the cursor is valid (ie get_event is safe)
- */
-bool
-EventBuffer::is_valid() const
-{
-	return lv2_event_is_valid(&_iter);
-}
-
-
-/** Append an event to the buffer.
- *
- * \a timestamp must be >= the latest event in the buffer,
- * and < this_nframes()
- *
- * \return true on success
- */
-bool
-EventBuffer::append(uint32_t       frames,
-                    uint32_t       subframes,
-                    uint16_t       type,
-                    uint16_t       size,
-                    const uint8_t* data)
-{
-#ifndef NDEBUG
-	if (lv2_event_is_valid(&_iter)) {
-		LV2_Event* last_event = lv2_event_get(&_iter, NULL);
-		assert(last_event->frames < frames
-				|| (last_event->frames == frames && last_event->subframes <= subframes));
-	}
-#endif
-
-	/*cout << "Appending event type " << type << ", size " << size
-		<< " @ " << frames << "." << subframes << endl;*/
-
-	const bool ret = lv2_event_write(&_iter, frames, subframes, type, size, data);
-	
-	if (!ret)
-		cerr << "ERROR: Failed to write event." << endl;
-
-	_latest_frames = frames;
-	_latest_subframes = subframes;
-	
-	return ret;
-}
-
-
-/** Append a buffer of events to the buffer.
- *
- * \a timestamp must be >= the latest event in the buffer,
- * and < this_nframes()
- *
- * \return true on success
- */
-bool
-EventBuffer::append(const LV2_Event_Buffer* buf)
-{
-	uint8_t** data = NULL;
-	bool      ret  = true;
-
-	LV2_Event_Iterator iter;
-	for (lv2_event_begin(&iter, _buf); lv2_event_is_valid(&iter); lv2_event_increment(&iter)) {
-		LV2_Event* ev = lv2_event_get(&iter, data);
-
-#ifndef NDEBUG
-		assert((ev->frames > _latest_frames)
-				|| (ev->frames == _latest_frames
-					&& ev->subframes >= _latest_subframes));
-#endif
-
-		if (!(ret = append(ev->frames, ev->subframes, ev->type, ev->size, *data))) {
-			cerr << "ERROR: Failed to write event." << endl;
-			break;
-		}
-
-		_latest_frames = ev->frames;
-		_latest_subframes = ev->subframes;
-	}
-	
-	return ret;
-}
-
-
-/** Read an event from the current position in the buffer
- * 
- * \return true if read was successful, or false if end of buffer reached
- */
-bool
-EventBuffer::get_event(uint32_t* frames,
-                       uint32_t* subframes, 
-                       uint16_t* type, 
-                       uint16_t* size, 
-                       uint8_t** data) const
-{
-	if (lv2_event_is_valid(&_iter)) {
-		LV2_Event* ev = lv2_event_get(&_iter, data);
-		*frames = ev->frames;
-		*subframes = ev->subframes;
-		*type = ev->type;
-		*size = ev->size;
-		return true;
-	} else {
-		return false;
-	}
 }
 
 

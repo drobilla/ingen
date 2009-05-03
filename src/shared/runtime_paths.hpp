@@ -22,10 +22,6 @@
 	#define _GNU_SOURCE
 #endif
 
-#include <dlfcn.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <limits.h>
 #include <string>
 
 namespace Ingen {

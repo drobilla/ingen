@@ -63,7 +63,7 @@ def configure(conf):
 		conf.define('INGEN_MODULE_DIR', os.path.join(
 				conf.env['LIBDIR'], 'ingen'))
 	
-	conf.write_config_header('wafconfig.h')
+	conf.write_config_header('ingen-config.h')
 	
 	autowaf.print_summary(conf)
 	autowaf.display_header('Ingen Configuration')

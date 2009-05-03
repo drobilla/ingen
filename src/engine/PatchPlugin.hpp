@@ -18,7 +18,7 @@
 #ifndef PATCHPLUGIN_H
 #define PATCHPLUGIN_H
 
-#include "wafconfig.h"
+#include "ingen-config.h"
 
 #include <string>
 #include "PluginImpl.hpp"

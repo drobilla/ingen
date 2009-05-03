@@ -15,7 +15,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "wafconfig.h"
+#include "ingen-config.h"
 #include "module/global.hpp"
 #include "module/World.hpp"
 

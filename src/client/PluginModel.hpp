@@ -18,7 +18,7 @@
 #ifndef PLUGINMODEL_H
 #define PLUGINMODEL_H
 
-#include "wafconfig.h"
+#include "ingen-config.h"
 #include <string>
 #include <iostream>
 #include "raul/SharedPtr.hpp"

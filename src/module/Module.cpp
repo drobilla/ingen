@@ -21,7 +21,7 @@
 #include <glibmm/module.h>
 #include <glibmm/miscutils.h>
 #include <glibmm/fileutils.h>
-#include "wafconfig.h"
+#include "ingen-config.h"
 #include "raul/SharedPtr.hpp"
 #include "shared/runtime_paths.hpp"
 

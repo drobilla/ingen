@@ -15,10 +15,12 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <iostream>
-#include "wafconfig.h"
-#include "runtime_paths.hpp"
+#include <dlfcn.h>
+#include <limits.h>
+#include <stdlib.h>
 #include <glibmm/module.h>
+#include "ingen-config.h"
+#include "runtime_paths.hpp"
 
 using namespace std;
 

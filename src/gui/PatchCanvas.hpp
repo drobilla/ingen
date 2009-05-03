@@ -21,7 +21,7 @@
 #include <string>
 #include <map>
 #include <boost/shared_ptr.hpp>
-#include "wafconfig.h"
+#include "ingen-config.h"
 #include "flowcanvas/Canvas.hpp"
 #include "flowcanvas/Module.hpp"
 #include "raul/SharedPtr.hpp"

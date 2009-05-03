@@ -20,8 +20,9 @@
 
 #include "lv2ext/lv2_event.h"
 #include "lv2ext/lv2_event_helpers.h"
-#include "Buffer.hpp"
 #include "interface/DataType.hpp"
+#include "Buffer.hpp"
+#include "LV2EventBuffer.hpp"
 
 namespace Ingen {
 
@@ -30,70 +31,61 @@ class EventBuffer : public Buffer {
 public:
 	EventBuffer(size_t capacity);
 	
-	~EventBuffer();
-
 	void prepare_read(FrameTime start, SampleCount nframes);
 	void prepare_write(FrameTime start, SampleCount nframes);
 
 	bool join(Buffer* buf);
 	void unjoin();
-
-	inline uint32_t this_nframes() const { return _this_nframes; }
-	inline uint32_t event_count() const { return _buf->event_count; }
 	
-	inline void*       raw_data()       { return _buf; }
-	inline const void* raw_data() const { return _buf; }
+	void*       raw_data()       { return _buf; }
+	const void* raw_data() const { return _buf; }
 
-	inline LV2_Event_Buffer*       local_data() { return _local_buf; }
-	inline const LV2_Event_Buffer* local_data() const { return _local_buf; }
-
-	inline LV2_Event_Buffer*       data()       { return _buf; }
-	inline const LV2_Event_Buffer* data() const { return _buf; }
-	
 	void copy(const Buffer* src, size_t start_sample, size_t end_sample);
-
-	inline void rewind() const { lv2_event_begin(&_iter, _buf); }
-	inline void clear() { reset(_this_nframes); }
-	inline void reset(SampleCount nframes) {
-		_this_nframes = nframes;
-		_latest_frames = 0;
-		_latest_subframes = 0;
-		_buf->event_count = 0;
-		_buf->size = 0;
-		rewind();
-	}
-
+	
+	bool merge(const EventBuffer& a, const EventBuffer& b);
+	
 	bool increment() const;
 	bool is_valid() const;
 
-	uint32_t latest_frames()    const { return _latest_frames; }
-	uint32_t latest_subframes() const { return _latest_subframes; }
- 
-	bool get_event(uint32_t* frames,
-	               uint32_t* subframes,
-	               uint16_t* type,
-	               uint16_t* size,
-	               uint8_t** data) const;
+	inline uint32_t latest_frames()    const { return _buf->latest_frames(); }
+	inline uint32_t latest_subframes() const { return _buf->latest_subframes(); }
+	inline uint32_t this_nframes()     const { return _this_nframes; }
+	inline uint32_t event_count()      const { return _buf->event_count(); }
 
-	bool append(uint32_t       frames,
-	            uint32_t       subframes,
-	            uint16_t       type,
-	            uint16_t       size,
-	            const uint8_t* data);
+	inline void rewind() const { _buf->rewind(); }
+	
+	inline void clear() { reset(_this_nframes); }
+	
+	inline void reset(SampleCount nframes) {
+		_this_nframes = nframes;
+		_buf->reset();
+	}
+	
+	inline bool get_event(uint32_t* frames,
+	                      uint32_t* subframes,
+	                      uint16_t* type,
+	                      uint16_t* size,
+	                      uint8_t** data) const {
+		return _buf->get_event(frames, subframes, type, size, data);
+	}
 
-	bool append(const LV2_Event_Buffer* buf);
+	inline bool append(uint32_t       frames,
+	                   uint32_t       subframes,
+	                   uint16_t       type,
+	                   uint16_t       size,
+	                   const uint8_t* data) {
+		return _buf->append(frames, subframes, type, size, data);
+	}
 
-	bool merge(const EventBuffer& a, const EventBuffer& b);
+	inline bool append(const LV2_Event_Buffer* buf) {
+		return _buf->append(buf);
+	}
 
 private:
-	LV2_Event_Buffer*  _buf;       ///< Contents (maybe belong to _joined_buf)
-	LV2_Event_Buffer*  _local_buf; ///< Local contents
-
-	mutable LV2_Event_Iterator _iter; ///< Iterator into _buf
-
-	uint32_t _latest_frames;    ///< Latest time of all events (frames)
-	uint32_t _latest_subframes; ///< Latest time of all events (subframes)
-	uint32_t _this_nframes;     ///< Current cycle nframes
+	LV2EventBuffer*            _buf;          ///< Contents (maybe belong to _joined_buf)
+	LV2EventBuffer*            _local_buf;    ///< Local contents
+	mutable LV2_Event_Iterator _iter;         ///< Iterator into _buf
+	uint32_t                   _this_nframes; ///< Current cycle nframes
 };
 
 

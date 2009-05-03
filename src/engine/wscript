@@ -20,6 +20,7 @@ def build(bld):
 		InternalPlugin.cpp
 		InternalTransport.cpp
 		InternalTrigger.cpp
+		LV2EventBuffer.cpp
 		MessageContext.cpp
 		NodeBase.cpp
 		NodeFactory.cpp
@@ -43,7 +44,7 @@ def build(bld):
 	if bld.env['HAVE_SLV2'] == 1:
 		obj.source += ' LV2Info.cpp LV2Plugin.cpp LV2Node.cpp '
 	obj.export_incdirs = ['.']
-	obj.includes     = ['.', '..', '../common', './events']
+	obj.includes     = ['.', '..', '../..', '../common', './events']
 	obj.name         = 'libingen_engine'
 	obj.target       = 'ingen_engine'
 	obj.install_path = '${LIBDIR}/ingen'
@@ -84,7 +85,7 @@ def build(bld):
 		events/UnregisterClientEvent.cpp
 	'''
 	obj.export_incdirs = ['.']
-	obj.includes     = ['.', '..', '../common', './events', '../engine']
+	obj.includes     = ['.', '..', '../..', '../common', './events', '../engine']
 	obj.name         = 'libingen_engine_queued'
 	obj.target       = 'ingen_engine_queued'
 	obj.install_path = '${LIBDIR}/ingen'
@@ -98,7 +99,7 @@ def build(bld):
 			HTTPClientSender.cpp
 			HTTPEngineReceiver.cpp
 		'''
-		obj.includes     = ['.', '..', '../common', './events', '../engine']
+		obj.includes     = ['.', '..', '../..', '../common', './events', '../engine']
 		obj.name         = 'libingen_engine_http'
 		obj.target       = 'ingen_engine_http'
 		obj.install_path = '${LIBDIR}/ingen'
@@ -113,7 +114,7 @@ def build(bld):
 			OSCEngineReceiver.cpp
 		'''
 		obj.export_incdirs = ['.']
-		obj.includes     = ['.', '..', '../common', './events', '../engine']
+		obj.includes     = ['.', '..', '../..', '../common', './events', '../engine']
 		obj.name         = 'libingen_engine_osc'
 		obj.target       = 'ingen_engine_osc'
 		obj.install_path = '${LIBDIR}/ingen'
@@ -123,7 +124,7 @@ def build(bld):
 		obj = bld.new_task_gen('cxx', 'shlib')
 		obj.source = 'JackAudioDriver.cpp JackMidiDriver.cpp'
 		obj.export_incdirs = ['.']
-		obj.includes     = ['.', '..', '../common', './events', '../engine']
+		obj.includes     = ['.', '..', '../..', '../common', './events', '../engine']
 		obj.name         = 'libingen_engine_jack'
 		obj.target       = 'ingen_engine_jack'
 		obj.install_path = '${LIBDIR}/ingen'

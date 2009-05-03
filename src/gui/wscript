@@ -42,7 +42,7 @@ def build(bld):
 		obj.source += 'UploadPatchWindow.cpp'
 
 	obj.export_incdirs = ['.']
-	obj.includes       = ['.', '..', '../common', '../client', '../module']
+	obj.includes       = ['.', '..', '../..', '../common', '../client', '../module']
 	obj.name           = 'libingen_gui'
 	obj.target         = 'ingen_gui'
 	obj.install_path   = '${LIBDIR}/ingen'

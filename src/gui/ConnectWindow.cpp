@@ -22,7 +22,7 @@
 #include <sys/time.h>
 #include <sys/resource.h>
 #include "raul/Process.hpp"
-#include "wafconfig.h"
+#include "ingen-config.h"
 #include "interface/EngineInterface.hpp"
 #include "module/World.hpp"
 #include "engine/tuning.hpp"

@@ -18,7 +18,7 @@
 #ifndef UTIL_HPP
 #define UTIL_HPP
 
-#include "wafconfig.h"
+#include "ingen-config.h"
 #include <iostream>
 #include <cstdlib>
 

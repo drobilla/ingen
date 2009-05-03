@@ -18,7 +18,7 @@ def build(bld):
 		autowaf.use_lib(bld, obj, 'SOUP')
 		obj.source += ' HTTPSender.cpp '
 	obj.export_incdirs = ['.']
-	obj.includes     = ['.', '../', '../common']
+	obj.includes     = ['.', '..', '../..', '../common']
 	obj.name         = 'libingen_shared'
 	obj.target       = 'ingen_shared'
 	obj.vnum         = '0.0.0'

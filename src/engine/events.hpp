@@ -18,7 +18,7 @@
 #ifndef EVENTS_H
 #define EVENTS_H
 
-#include "wafconfig.h"
+#include "ingen-config.h"
 
 #include "events/AllNotesOffEvent.hpp"
 #include "events/ClearPatchEvent.hpp"
