@@ -85,8 +85,7 @@ LV2EventBuffer::increment() const
 }
 
 
-/**
- * \return true iff the cursor is valid (ie get_event is safe)
+/** \return true iff the cursor is valid (ie get_event is safe)
  */
 bool
 LV2EventBuffer::is_valid() const
@@ -143,15 +142,14 @@ LV2EventBuffer::append(uint32_t       frames,
 	/*cout << "Appending event type " << type << ", size " << size
 		<< " @ " << frames << "." << subframes << endl;*/
 
-	const bool ret = lv2_event_write(&_iter, frames, subframes, type, size, data);
-	
-	if (!ret)
+	if (!lv2_event_write(&_iter, frames, subframes, type, size, data)) {
 		cerr << "ERROR: Failed to write event." << endl;
-
-	_latest_frames = frames;
-	_latest_subframes = subframes;
-	
-	return ret;
+		return false;
+	} else {
+		_latest_frames = frames;
+		_latest_subframes = subframes;
+		return true;
+	}
 }
 
 

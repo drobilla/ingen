@@ -67,7 +67,7 @@ public:
 	bool append(const LV2_Event_Buffer* buf);
 
 private:
-	LV2_Event_Buffer*          _data;              ///< Contents
+	LV2_Event_Buffer*          _data;             ///< Contents
 	mutable LV2_Event_Iterator _iter;             ///< Iterator into _data
 	uint32_t                   _latest_frames;    ///< Latest time of all events (frames)
 	uint32_t                   _latest_subframes; ///< Latest time of all events (subframes)
