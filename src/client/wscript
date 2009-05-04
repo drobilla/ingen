@@ -20,7 +20,7 @@ def build(bld):
 			HTTPClientReceiver.cpp
 			HTTPEngineSender.cpp
 		'''
-	
+
 	if bld.env['HAVE_XML2'] == 1:
 		obj.source += ' DeprecatedLoader.cpp '
 

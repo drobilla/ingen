@@ -62,9 +62,9 @@ def configure(conf):
 				conf.env['DATADIR'], 'ingen'))
 		conf.define('INGEN_MODULE_DIR', os.path.join(
 				conf.env['LIBDIR'], 'ingen'))
-	
+
 	conf.write_config_header('ingen-config.h')
-	
+
 	autowaf.print_summary(conf)
 	autowaf.display_header('Ingen Configuration')
 	autowaf.display_msg(conf, "Jack", str(conf.env['HAVE_JACK'] == 1))
@@ -79,7 +79,7 @@ def build(bld):
 	opts           = Options.options
 	opts.datadir   = opts.datadir   or bld.env['PREFIX'] + 'share'
 	opts.moduledir = opts.moduledir or bld.env['PREFIX'] + 'lib/ingen'
-	
+
 	# Modules
 	bld.add_subdirs('src/engine')
 	bld.add_subdirs('src/serialisation')
@@ -92,11 +92,11 @@ def build(bld):
 
 	# Program
 	bld.add_subdirs('src/ingen')
-	
+
 	# Documentation
 	autowaf.build_dox(bld, 'INGEN', INGEN_VERSION, srcdir, blddir)
 	bld.install_files('${HTMLDIR}', blddir + '/default/doc/html/*')
-	
+
 	# Icons
 	icon_sizes = ['16x16', '22x22', '24x24', '32x32', '48x48']
 	for s in icon_sizes:

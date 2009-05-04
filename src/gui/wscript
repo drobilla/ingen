@@ -62,7 +62,7 @@ def build(bld):
 		SOUP
 		XML2
 	''')
-	
+
 	# GUI runtime files
 	bld.install_files('${DATADIR}/ingen', 'ingen_gui.glade')
 
