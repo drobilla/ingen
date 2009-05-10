@@ -163,10 +163,8 @@ void
 PatchView::canvas_item_entered(Gnome::Canvas::Item* item)
 {
 	NodeModule* m = dynamic_cast<NodeModule*>(item);
-	if (m) {
+	if (m)
 		signal_object_entered.emit(m->node().get());
-		return;
-	}
 	
 	Port* p = dynamic_cast<Port*>(item);
 	if (p)

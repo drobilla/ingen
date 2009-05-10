@@ -313,16 +313,19 @@ PatchWindow::object_entered(ObjectModel* model)
 		NodeModel* parent = dynamic_cast<NodeModel*>(port->parent().get());
 		if (parent) {
 			const PluginModel* plugin = dynamic_cast<const PluginModel*>(parent->plugin());
+
 			if (plugin) {
-				msg.append((boost::format(" (%1%)")
-						% plugin->port_human_name(port->index())).str());
-				const Atom& value = port->value();
-				if (value.is_valid()) {
-					const Redland::Node node = AtomRDF::atom_to_node(
-							*App::instance().world()->rdf_world, value);
-					msg.append(" = ").append(node.to_string());
-				}
+				const string human_name = plugin->port_human_name(port->index());
+				if (human_name != "")
+					msg.append((boost::format(" (%1%)") % human_name).str());
 			}
+		}
+		
+		const Atom& value = port->value();
+		if (value.is_valid()) {
+			const Redland::Node node = AtomRDF::atom_to_node(
+					*App::instance().world()->rdf_world, value);
+			msg.append(" = ").append(node.to_string());
 		}
 	}
 
