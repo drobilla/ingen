@@ -50,23 +50,31 @@ class PatchPortModule : public FlowCanvas::Module
 {
 public:
 	static boost::shared_ptr<PatchPortModule> create(boost::shared_ptr<PatchCanvas> canvas,
-	                                                 SharedPtr<PortModel>          port);
+	                                                 SharedPtr<PortModel>           model,
+	                                                 bool                           human);
 	
 	virtual void store_location();
+	void show_human_names(bool b);
+	
+	void set_name(const std::string& n);
 
-	SharedPtr<PortModel> port() const { return _port; }
+	SharedPtr<PortModel> port() const { return _model; }
 
 protected:
-	PatchPortModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<PortModel> port);
+	PatchPortModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<PortModel> model);
 
 	void create_menu();
 	void set_selected(bool b);
+
+	void set_port(SharedPtr<Port> port) { _port = port; }
 	
 	void set_variable(const std::string& predicate, const Raul::Atom& value);
 	void set_property(const std::string& predicate, const Raul::Atom& value);
 
-	SharedPtr<PortModel> _port;
+	SharedPtr<PortModel> _model;
+	SharedPtr<Port>      _port;
 	PortMenu*            _menu;
+	bool                 _human_name_visible;
 };
 
 

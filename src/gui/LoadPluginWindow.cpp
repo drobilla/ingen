@@ -102,7 +102,7 @@ LoadPluginWindow::LoadPluginWindow(BaseObjectType* cobject, const Glib::RefPtr<G
 
 
 void
-LoadPluginWindow::present(SharedPtr<PatchModel> patch, GraphObject::Variables data)
+LoadPluginWindow::present(SharedPtr<PatchModel> patch, GraphObject::Properties data)
 {
 	set_patch(patch);
 	_initial_data = data;
@@ -334,8 +334,8 @@ LoadPluginWindow::add_clicked()
 		} else {
 			Path path = _patch->path().base() + Path::nameify(name);
 			App::instance().engine()->new_node(path, plugin->uri());
-			App::instance().engine()->set_property(path, "ingen:polyphonic", polyphonic);
-			for (GraphObject::Variables::const_iterator i = _initial_data.begin();
+			App::instance().engine()->set_variable(path, "ingen:polyphonic", bool(polyphonic));
+			for (GraphObject::Properties::const_iterator i = _initial_data.begin();
 					i != _initial_data.end(); ++i)
 				App::instance().engine()->set_variable(path, i->first, i->second);
 			_node_name_entry->set_text(generate_module_name(++_plugin_name_offset));

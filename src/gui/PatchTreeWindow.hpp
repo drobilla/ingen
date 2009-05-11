@@ -49,7 +49,7 @@ public:
 
 	void new_object(SharedPtr<Client::ObjectModel> object);
 
-	void patch_property_changed(const string& key, const Raul::Atom& value, const Path& path);
+	void patch_variable_changed(const string& key, const Raul::Atom& value, const Path& path);
 	void patch_renamed(const Path& old_path, const Path& new_path);
 
 	void add_patch(SharedPtr<Client::PatchModel> pm);

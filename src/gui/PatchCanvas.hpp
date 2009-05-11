@@ -89,8 +89,13 @@ private:
 	enum ControlType { NUMBER, BUTTON };
 	void menu_add_control(ControlType type);
 	
-	string generate_port_name(const string& base);
-	void menu_add_port(const string& name, const string& type, bool is_output);
+	void generate_port_name(
+			const string& sym_base,  string& sym,
+			const string& name_base, string& name);
+
+	void menu_add_port(
+			const string& sym_base, const string& name_base,
+			const string& type, bool is_output);
 	
 	void menu_load_plugin();
 	void menu_new_patch();
@@ -110,7 +115,7 @@ private:
 			SLV2PluginClasses classes);
 #endif
 	
-	GraphObject::Variables get_initial_data();
+	GraphObject::Properties get_initial_data();
 
 	bool canvas_event(GdkEvent* event);
 	

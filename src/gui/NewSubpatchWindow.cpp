@@ -43,7 +43,7 @@ NewSubpatchWindow::NewSubpatchWindow(BaseObjectType* cobject, const Glib::RefPtr
 }
 
 void
-NewSubpatchWindow::present(SharedPtr<PatchModel> patch, GraphObject::Variables data)
+NewSubpatchWindow::present(SharedPtr<PatchModel> patch, GraphObject::Properties data)
 {
 	set_patch(patch);
 	_initial_data = data;
@@ -92,10 +92,10 @@ NewSubpatchWindow::ok_clicked()
 	const uint32_t poly = _poly_spinbutton->get_value_as_int();
 
 	App::instance().engine()->new_patch(path, poly);
-	for (GraphObject::Variables::const_iterator i = _initial_data.begin(); i != _initial_data.end(); ++i)
+	for (GraphObject::Properties::const_iterator i = _initial_data.begin(); i != _initial_data.end(); ++i)
 		App::instance().engine()->set_variable(path, i->first, i->second);
 
-	App::instance().engine()->set_property(path, "ingen:enabled", (bool)true);
+	App::instance().engine()->set_variable(path, "ingen:enabled", (bool)true);
 	
 	hide();
 }			

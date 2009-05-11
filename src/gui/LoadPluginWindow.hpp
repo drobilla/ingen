@@ -98,7 +98,7 @@ public:
 
 	void add_plugin(SharedPtr<PluginModel> plugin);
 
-	void present(SharedPtr<PatchModel> patch, GraphObject::Variables data);
+	void present(SharedPtr<PatchModel> patch, GraphObject::Properties data);
 
 protected:
 	void on_show();
@@ -121,7 +121,7 @@ private:
 	void plugin_selection_changed();
 	string generate_module_name(int offset = 0);
 
-	GraphObject::Variables _initial_data;
+	GraphObject::Properties _initial_data;
 
 	SharedPtr<PatchModel> _patch;
 

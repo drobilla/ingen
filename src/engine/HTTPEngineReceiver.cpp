@@ -209,7 +209,7 @@ HTTPEngineReceiver::message_callback(SoupServer* server, SoupMessage* msg, const
 
 		// Serialise object
 		const string response = serialiser->to_string(start->second,
-				"http://localhost:16180/patch", GraphObject::Variables());
+				"http://localhost:16180/patch", GraphObject::Properties());
 
 		soup_message_set_status(msg, SOUP_STATUS_OK);
 		soup_message_set_response(msg, mime_type, SOUP_MEMORY_COPY,

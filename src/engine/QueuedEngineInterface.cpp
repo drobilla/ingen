@@ -204,20 +204,6 @@ QueuedEngineInterface::clear_patch(const string& patch_path)
 
 	
 void
-QueuedEngineInterface::set_polyphony(const string& patch_path, uint32_t poly)
-{
-	push_queued(new SetPolyphonyEvent(_engine, _responder, now(), this, patch_path, poly));
-}
-
-	
-void
-QueuedEngineInterface::set_polyphonic(const string& path, bool poly)
-{
-	push_queued(new SetPolyphonicEvent(_engine, _responder, now(), this, path, poly));
-}
-
-
-void
 QueuedEngineInterface::connect(const string& src_port_path,
                                const string& dst_port_path)
 {
@@ -289,25 +275,7 @@ QueuedEngineInterface::set_property(const string& path,
                                     const string& predicate,
                                     const Atom&   value)
 {
-	// FIXME: implement generically
-	if (predicate == "ingen:enabled") {
-		if (value.type() == Atom::BOOL) {
-			push_queued(new EnablePatchEvent(_engine, _responder, now(), path, value.get_bool()));
-			return;
-		}
-	} else if (predicate == "ingen:polyphonic") {
-		if (value.type() == Atom::BOOL) {
-			push_queued(new SetPolyphonicEvent(_engine, _responder, now(), this, path, value.get_bool()));
-			return;
-		}
-	} else if (predicate == "ingen:polyphony") {
-		if (value.type() == Atom::INT) {
-			push_queued(new SetPolyphonyEvent(_engine, _responder, now(), this, path, value.get_int32()));
-			return;
-		}
-	} else {
-		push_queued(new SetMetadataEvent(_engine, _responder, now(), true, path, predicate, value));
-	}
+	push_queued(new SetMetadataEvent(_engine, _responder, now(), true, path, predicate, value));
 }
 
 // Requests //

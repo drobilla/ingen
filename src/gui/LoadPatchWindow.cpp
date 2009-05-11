@@ -76,7 +76,7 @@ LoadPatchWindow::LoadPatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gno
 
 
 void
-LoadPatchWindow::present(SharedPtr<PatchModel> patch, GraphObject::Variables data)
+LoadPatchWindow::present(SharedPtr<PatchModel> patch, GraphObject::Properties data)
 {
 	set_patch(patch);
 	_initial_data = data;

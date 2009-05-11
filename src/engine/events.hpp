@@ -30,7 +30,6 @@
 #include "events/DestroyEvent.hpp"
 #include "events/DisconnectAllEvent.hpp"
 #include "events/DisconnectionEvent.hpp"
-#include "events/EnablePatchEvent.hpp"
 #include "events/LoadPluginsEvent.hpp"
 #include "events/MidiLearnEvent.hpp"
 #include "events/NoteEvent.hpp"
@@ -44,8 +43,6 @@
 #include "events/RequestPluginsEvent.hpp"
 #include "events/RequestPortValueEvent.hpp"
 #include "events/SetMetadataEvent.hpp"
-#include "events/SetPolyphonicEvent.hpp"
-#include "events/SetPolyphonyEvent.hpp"
 #include "events/SetPortValueEvent.hpp"
 #include "events/UnregisterClientEvent.hpp"
 

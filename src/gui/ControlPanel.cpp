@@ -74,12 +74,12 @@ ControlPanel::init(SharedPtr<NodeModel> node, uint32_t poly)
 		add_port(*i);
 	}
 		
-	node->signal_property.connect(bind(
-			sigc::mem_fun(this, &ControlPanel::property_changed), false));
+	node->signal_property.connect(
+			sigc::mem_fun(this, &ControlPanel::variable_changed));
 
 	if (node->parent()) {
-		node->signal_property.connect(bind(
-			sigc::mem_fun(this, &ControlPanel::property_changed), true));
+		node->signal_property.connect(
+			sigc::mem_fun(this, &ControlPanel::parent_property_changed));
 	} else {
 		cerr << "[ControlPanel] No parent, polyphonic controls disabled" << endl;
 	}
@@ -251,15 +251,21 @@ ControlPanel::specific_voice_selected()
 
 
 void
-ControlPanel::property_changed(const std::string& predicate, const Raul::Atom& value, bool parent)
+ControlPanel::parent_property_changed(const std::string& predicate, const Raul::Atom& value)
 {
-	if (!parent && predicate == "ingen:polyphonic" && value.type() == Atom::BOOL) {
+	if (predicate == "ingen:polyphony" && value.type() == Atom::INT)
+		_voice_spinbutton->set_range(0, value.get_int32() - 1);
+}
+
+
+void
+ControlPanel::variable_changed(const std::string& predicate, const Raul::Atom& value)
+{
+	if (predicate == "ingen:polyphonic" && value.type() == Atom::BOOL) {
 		if (value.get_bool())
 			_voice_control_box->show();
 		else
 			_voice_control_box->hide();
-	} else if (parent && predicate == "ingen:polyphony" && value.type() == Atom::INT) {
-		_voice_spinbutton->set_range(0, value.get_int32() - 1);
 	}
 }
 

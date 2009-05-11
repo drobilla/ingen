@@ -68,7 +68,7 @@ ObjectMenu::init(SharedPtr<ObjectModel> object)
 	_properties_menuitem->signal_activate().connect(
 			sigc::mem_fun(this, &ObjectMenu::on_menu_properties));
 
-	object->signal_property.connect(sigc::mem_fun(this, &ObjectMenu::property_changed));
+	object->signal_variable.connect(sigc::mem_fun(this, &ObjectMenu::variable_changed));
 
 	_enable_signal = true;
 }
@@ -78,13 +78,13 @@ void
 ObjectMenu::on_menu_polyphonic()
 {
 	if (_enable_signal)
-		App::instance().engine()->set_property(
-				_object->path(), "ingen:polyphonic", _polyphonic_menuitem->get_active());
+		App::instance().engine()->set_variable(
+				_object->path(), "ingen:polyphonic", bool(_polyphonic_menuitem->get_active()));
 }
 
 
 void
-ObjectMenu::property_changed(const std::string& predicate, const Raul::Atom& value)
+ObjectMenu::variable_changed(const std::string& predicate, const Raul::Atom& value)
 {
 	_enable_signal = false;
 	if (predicate == "ingen:polyphonic" && value.type() == Atom::BOOL)

@@ -67,7 +67,6 @@ def build(bld):
 		events/DestroyEvent.cpp
 		events/DisconnectAllEvent.cpp
 		events/DisconnectionEvent.cpp
-		events/EnablePatchEvent.cpp
 		events/LoadPluginsEvent.cpp
 		events/MidiLearnEvent.cpp
 		events/NoteEvent.cpp
@@ -80,8 +79,6 @@ def build(bld):
 		events/RequestPluginsEvent.cpp
 		events/RequestPortValueEvent.cpp
 		events/SetMetadataEvent.cpp
-		events/SetPolyphonicEvent.cpp
-		events/SetPolyphonyEvent.cpp
 		events/UnregisterClientEvent.cpp
 	'''
 	obj.export_incdirs = ['.']

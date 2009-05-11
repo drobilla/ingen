@@ -45,7 +45,7 @@ public:
 
 	void set_patch(SharedPtr<PatchModel> patch);
 	
-	void present(SharedPtr<PatchModel> patch, GraphObject::Variables data);
+	void present(SharedPtr<PatchModel> patch, GraphObject::Properties data);
 
 protected:
 	void on_show();
@@ -59,7 +59,7 @@ private:
 	void ok_clicked();
 	void cancel_clicked();
 
-	GraphObject::Variables _initial_data;
+	GraphObject::Properties _initial_data;
 
 	SharedPtr<PatchModel> _patch;
 	

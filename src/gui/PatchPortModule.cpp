@@ -16,6 +16,7 @@
  */
 
 #include <cassert>
+#include <iostream>
 #include "PatchPortModule.hpp"
 #include "interface/EngineInterface.hpp"
 #include "client/PatchModel.hpp"
@@ -33,40 +34,45 @@ namespace Ingen {
 namespace GUI {
 
 
-PatchPortModule::PatchPortModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<PortModel> port)
-	: FlowCanvas::Module(canvas, port->path().name(), 0, 0, false) // FIXME: coords?
-	, _port(port)
+PatchPortModule::PatchPortModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<PortModel> model)
+	: FlowCanvas::Module(canvas, model->path().name(), 0, 0, false) // FIXME: coords?
+	, _model(model)
+	, _human_name_visible(false)
 {
 	assert(canvas);
-	assert(port);
+	assert(model);
 
-	assert(PtrCast<PatchModel>(port->parent()));
+	assert(PtrCast<PatchModel>(model->parent()));
 
-	set_stacked_border(port->polyphonic());
+	set_stacked_border(model->polyphonic());
 
-	port->signal_variable.connect(sigc::mem_fun(this, &PatchPortModule::set_variable));
-	port->signal_property.connect(sigc::mem_fun(this, &PatchPortModule::set_property));
+	model->signal_variable.connect(sigc::mem_fun(this, &PatchPortModule::set_variable));
+	model->signal_property.connect(sigc::mem_fun(this, &PatchPortModule::set_property));
 }
 
 
 boost::shared_ptr<PatchPortModule>
-PatchPortModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<PortModel> port)
+PatchPortModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<PortModel> model, bool human)
 {
-	boost::shared_ptr<PatchPortModule> ret = boost::shared_ptr<PatchPortModule>(
-		new PatchPortModule(canvas, port));
-	assert(ret);
+	boost::shared_ptr<PatchPortModule> ret(new PatchPortModule(canvas, model));
+	boost::shared_ptr<Port> port(new Port(ret, model, model->symbol(), true));
 
-	boost::shared_ptr<Port> view(new Port(ret, port, port->symbol(), true));
-	ret->add_port(view);
-	ret->set_menu(view->menu());
+	ret->add_port(port);
+	ret->set_port(port);
+	ret->set_menu(port->menu());
 	
-	for (GraphObject::Variables::const_iterator m = port->variables().begin(); m != port->variables().end(); ++m)
+	for (GraphObject::Properties::const_iterator m = model->variables().begin();
+			m != model->variables().end(); ++m)
 		ret->set_variable(m->first, m->second);
 	
-	for (GraphObject::Properties::const_iterator m = port->properties().begin(); m != port->properties().end(); ++m)
+	for (GraphObject::Properties::const_iterator m = model->properties().begin();
+			m != model->properties().end(); ++m)
 		ret->set_property(m->first, m->second);
-	
-	ret->resize();
+
+	if (human)
+		ret->show_human_names(human);
+	else
+		ret->resize();
 
 	return ret;
 }
@@ -77,7 +83,7 @@ PatchPortModule::create_menu()
 {
 	Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference();
 	xml->get_widget_derived("object_menu", _menu);
-	_menu->init(_port, true);
+	_menu->init(_model, true);
 	
 	set_menu(_menu);
 }
@@ -89,29 +95,42 @@ PatchPortModule::store_location()
 	const float x = static_cast<float>(property_x());
 	const float y = static_cast<float>(property_y());
 	
-	const Atom& existing_x = _port->get_variable("ingenuity:canvas-x");
-	const Atom& existing_y = _port->get_variable("ingenuity:canvas-y");
+	const Atom& existing_x = _model->get_property("ingenuity:canvas-x");
+	const Atom& existing_y = _model->get_property("ingenuity:canvas-y");
 	
 	if (existing_x.type() != Atom::FLOAT || existing_y.type() != Atom::FLOAT
 			|| existing_x.get_float() != x || existing_y.get_float() != y) {
-		App::instance().engine()->set_variable(_port->path(), "ingenuity:canvas-x", Atom(x));
-		App::instance().engine()->set_variable(_port->path(), "ingenuity:canvas-y", Atom(y));
+		App::instance().engine()->set_property(_model->path(), "ingenuity:canvas-x", Atom(x));
+		App::instance().engine()->set_property(_model->path(), "ingenuity:canvas-y", Atom(y));
 	}
 }
 
 
 void
-PatchPortModule::set_variable(const string& key, const Atom& value)
+PatchPortModule::show_human_names(bool b)
 {
-	if (key == "ingenuity:canvas-x" && value.type() == Atom::FLOAT)
-		move_to(value.get_float(), property_y());
-	else if (key == "ingenuity:canvas-y" && value.type() == Atom::FLOAT)
-		move_to(property_x(), value.get_float());
+	using namespace std;
+	_human_name_visible = b;
+	const Atom& name = _model->get_property("lv2:name");
+	if (b && name.is_valid())
+		set_name(name.get_string());
+	else
+		set_name(_model->symbol());
+	
+	resize();
 }
 
 
 void
-PatchPortModule::set_property(const string& key, const Atom& value)
+PatchPortModule::set_name(const std::string& n)
+{
+	_port->set_name(n);
+	Module::resize();
+}
+
+
+void
+PatchPortModule::set_variable(const string& key, const Atom& value)
 {
 	if (key == "ingen:polyphonic" && value.type() == Atom::BOOL) {
 		set_stacked_border(value.get_bool());
@@ -127,12 +146,27 @@ PatchPortModule::set_property(const string& key, const Atom& value)
 
 
 void
+PatchPortModule::set_property(const string& key, const Atom& value)
+{
+	if (key == "ingenuity:canvas-x" && value.type() == Atom::FLOAT) {
+		move_to(value.get_float(), property_y());
+	} else if (key == "ingenuity:canvas-y" && value.type() == Atom::FLOAT) {
+		move_to(property_x(), value.get_float());
+	} else if (key == "lv2:name" && value.type() == Atom::STRING && _human_name_visible) {
+		set_name(value.get_string());
+	} else if (key == "lv2:symbol" && value.type() == Atom::STRING && !_human_name_visible) {
+		set_name(value.get_string());
+	}
+}
+
+
+void
 PatchPortModule::set_selected(bool b)
 {
 	if (b != selected()) {
 		Module::set_selected(b);
 		if (App::instance().signal())
-			App::instance().engine()->set_property(_port->path(), "ingen:selected", b);
+			App::instance().engine()->set_variable(_model->path(), "ingen:selected", b);
 	}
 }
 

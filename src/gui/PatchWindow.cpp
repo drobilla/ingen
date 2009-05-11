@@ -394,7 +394,7 @@ PatchWindow::event_import_location()
 void
 PatchWindow::event_save()
 {
-	GraphObject::Variables::const_iterator doc = _patch->variables().find("ingen:document");
+	GraphObject::Properties::const_iterator doc = _patch->variables().find("ingen:document");
 	if (doc == _patch->variables().end()) {
 		event_save_as();
 	} else {
@@ -410,37 +410,55 @@ PatchWindow::event_save()
 void
 PatchWindow::event_save_as()
 {
-	Gtk::FileChooserDialog dialog(*this, "Save Patch", Gtk::FILE_CHOOSER_ACTION_SAVE);
-	
-	dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
-	Gtk::Button* save_button = dialog.add_button(Gtk::Stock::SAVE, Gtk::RESPONSE_OK);	
-	save_button->property_has_default() = true;
-	
-	Gtk::FileFilter filt;
-	filt.add_pattern("*.ingen.ttl");
-	filt.set_name("Ingen patches");
-	filt.add_pattern("*.ingen.lv2");
-	filt.set_name("Ingen bundles");
-	dialog.set_filter(filt);
-	
-	// Set current folder to most sensible default
-	GraphObject::Variables::const_iterator doc = _patch->variables().find("ingen:document");
-	if (doc != _patch->variables().end())
-		dialog.set_uri(doc->second.get_string());
-	else if (App::instance().configuration()->patch_folder().length() > 0)
-		dialog.set_current_folder(App::instance().configuration()->patch_folder());
-	
-	int result = dialog.run();
-	//bool recursive = recursive_checkbutton.get_active();
-	
-	if (result == Gtk::RESPONSE_OK) {	
+	while (true) {
+		Gtk::FileChooserDialog dialog(*this, "Save Patch", Gtk::FILE_CHOOSER_ACTION_SAVE);
+
+		dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
+		Gtk::Button* save_button = dialog.add_button(Gtk::Stock::SAVE, Gtk::RESPONSE_OK);	
+		save_button->property_has_default() = true;
+
+		Gtk::FileFilter filt;
+		filt.add_pattern("*.ingen.ttl");
+		filt.set_name("Ingen patches");
+		filt.add_pattern("*.ingen.lv2");
+		filt.set_name("Ingen bundles");
+		dialog.set_filter(filt);
+
+		// Set current folder to most sensible default
+		GraphObject::Properties::const_iterator doc = _patch->variables().find("ingen:document");
+		if (doc != _patch->variables().end())
+			dialog.set_uri(doc->second.get_string());
+		else if (App::instance().configuration()->patch_folder().length() > 0)
+			dialog.set_current_folder(App::instance().configuration()->patch_folder());
+
+		if (dialog.run() != Gtk::RESPONSE_OK)
+			break;
+
 		string filename = dialog.get_filename();
+
+		string base = filename.substr(0, filename.find("."));
+		if (base.find("/") != string::npos)
+			base = base.substr(base.find_last_of("/") + 1);
+		
+		if (!Symbol::is_valid(base)) {
+			Gtk::MessageDialog error_dialog(*this,
+					"<b>Ingen patch file names must be valid symbols</b>", true,
+					Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+			error_dialog.set_secondary_text(
+				"The first character must be _, a-z, or A-Z, and "
+				"subsequent characters must be _, a-z, A-Z, or 0-9.");
+			error_dialog.run();
+			continue;
+		}
+
 		const bool is_bundle = filename.find(".ingen.lv2") != string::npos;
 		const bool is_patch = filename.find(".ingen.ttl") != string::npos;
-		
+
 		// Save a bundle by default
 		if (!is_bundle && !is_patch)
 			filename += ".ingen.ttl";
+
+		_patch->set_property("lv2:symbol", Atom(base.c_str()));
 
 		bool confirm = true;
 		std::fstream fin;
@@ -449,11 +467,11 @@ PatchWindow::event_save_as()
 			string msg = "File already exists!  Are you sure you want to overwrite ";
 			msg += filename + "?";
 			Gtk::MessageDialog confirm_dialog(*this,
-				msg, false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO, true);
+					msg, false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO, true);
 			confirm = (confirm_dialog.run() == Gtk::RESPONSE_YES);
 		}
 		fin.close();
-		
+
 		if (confirm) {
 			const Glib::ustring uri = Glib::filename_to_uri(filename);
 			App::instance().loader()->save_patch(_patch, uri);
@@ -462,8 +480,10 @@ PatchWindow::event_save_as()
 					(boost::format("Wrote %1% to %2%") % _patch->path() % uri).str(),
 					STATUS_CONTEXT_PATCH);
 		}
+
+		App::instance().configuration()->set_patch_folder(dialog.get_current_folder());
+		break;
 	}
-	App::instance().configuration()->set_patch_folder(dialog.get_current_folder());
 }
 
 

@@ -47,7 +47,7 @@ ObjectModel::get_variable(const string& key) const
 {
 	static const Atom null_atom;
 
-	Variables::const_iterator i = _variables.find(key);
+	Properties::const_iterator i = _variables.find(key);
 	if (i != _variables.end())
 		return i->second;
 	else
@@ -64,7 +64,7 @@ ObjectModel::get_variable( string& key)
 {
 	static Atom null_atom;
 
-	Variables::iterator i = _variables.find(key);
+	Properties::iterator i = _variables.find(key);
 	if (i != _variables.end())
 		return i->second;
 	else
@@ -75,7 +75,7 @@ ObjectModel::get_variable( string& key)
 bool
 ObjectModel::polyphonic() const
 {
-	const Raul::Atom& polyphonic = get_property("ingen:polyphonic");
+	const Raul::Atom& polyphonic = get_variable("ingen:polyphonic");
 	return (polyphonic.is_valid() && polyphonic.get_bool());
 }
 
@@ -91,20 +91,20 @@ ObjectModel::set(SharedPtr<ObjectModel> o)
 	assert(_path == o->path());
 	if (o->_parent)
 		_parent = o->_parent;
-
-	for (Variables::const_iterator v = o->variables().begin(); v != o->variables().end(); ++v) {
-		Variables::const_iterator mine = _variables.find(v->first);
-		if (mine != _variables.end())
-			cerr << "WARNING:  " << _path << "Client/Server variable mismatch: " << v->first << endl;
-		_variables[v->first] = v->second;
-		signal_variable.emit(v->first, v->second);
-	}
 	
 	for (Properties::const_iterator v = o->properties().begin(); v != o->properties().end(); ++v) {
 		const Raul::Atom& mine = get_property(v->first);
 		if (mine.is_valid())
 			cerr << "WARNING:  " << _path << "Client/Server property mismatch: " << v->first << endl;
 		ResourceImpl::set_property(v->first, v->second);
+		signal_variable.emit(v->first, v->second);
+	}
+
+	for (Properties::const_iterator v = o->variables().begin(); v != o->variables().end(); ++v) {
+		Properties::const_iterator mine = _variables.find(v->first);
+		if (mine != _variables.end())
+			cerr << "WARNING:  " << _path << "Client/Server variable mismatch: " << v->first << endl;
+		_variables[v->first] = v->second;
 		signal_variable.emit(v->first, v->second);
 	}
 }

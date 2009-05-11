@@ -61,7 +61,7 @@ public:
                     optional<Path>                   data_path,
                     optional<Path>                   engine_parent,
                     optional<Symbol>                 engine_symbol,
-                    optional<GraphObject::Variables> engine_data);
+                    optional<GraphObject::Properties> engine_data);
 
 	void save_patch(SharedPtr<PatchModel> model, const string& filename);
 

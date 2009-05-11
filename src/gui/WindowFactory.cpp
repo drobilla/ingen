@@ -256,7 +256,7 @@ WindowFactory::remove_control_window(NodeControlWindow* win, GdkEventAny* ignore
 
 
 void
-WindowFactory::present_load_plugin(SharedPtr<PatchModel> patch, GraphObject::Variables data)
+WindowFactory::present_load_plugin(SharedPtr<PatchModel> patch, GraphObject::Properties data)
 {
 	PatchWindowMap::iterator w = _patch_windows.find(patch->path());
 
@@ -269,7 +269,7 @@ WindowFactory::present_load_plugin(SharedPtr<PatchModel> patch, GraphObject::Var
 
 
 void
-WindowFactory::present_load_patch(SharedPtr<PatchModel> patch, GraphObject::Variables data)
+WindowFactory::present_load_patch(SharedPtr<PatchModel> patch, GraphObject::Properties data)
 {
 	PatchWindowMap::iterator w = _patch_windows.find(patch->path());
 
@@ -283,7 +283,7 @@ WindowFactory::present_load_patch(SharedPtr<PatchModel> patch, GraphObject::Vari
 
 	
 void
-WindowFactory::present_load_remote_patch(SharedPtr<PatchModel> patch, GraphObject::Variables data)
+WindowFactory::present_load_remote_patch(SharedPtr<PatchModel> patch, GraphObject::Properties data)
 {
 	PatchWindowMap::iterator w = _patch_windows.find(patch->path());
 
@@ -310,7 +310,7 @@ WindowFactory::present_upload_patch(SharedPtr<PatchModel> patch)
 }
 
 void
-WindowFactory::present_new_subpatch(SharedPtr<PatchModel> patch, GraphObject::Variables data)
+WindowFactory::present_new_subpatch(SharedPtr<PatchModel> patch, GraphObject::Properties data)
 {
 	PatchWindowMap::iterator w = _patch_windows.find(patch->path());
 
@@ -322,7 +322,7 @@ WindowFactory::present_new_subpatch(SharedPtr<PatchModel> patch, GraphObject::Va
 
 
 void
-WindowFactory::present_load_subpatch(SharedPtr<PatchModel> patch, GraphObject::Variables data)
+WindowFactory::present_load_subpatch(SharedPtr<PatchModel> patch, GraphObject::Properties data)
 {
 	PatchWindowMap::iterator w = _patch_windows.find(patch->path());
 

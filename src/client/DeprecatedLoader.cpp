@@ -140,12 +140,12 @@ DeprecatedLoader::translate_load_path(const string& path)
 }
 
 
-/** Add a piece of data to a Variables, translating from deprecated unqualified keys
+/** Add a piece of data to a Properties, translating from deprecated unqualified keys
  *
  * Adds a namespace prefix for known keys, and ignores the rest.
  */
 void
-DeprecatedLoader::add_variable(GraphObject::Variables& data, string old_key, string value)
+DeprecatedLoader::add_variable(GraphObject::Properties& data, string old_key, string value)
 {
 	string key = "";
 	if (old_key == "module-x")
@@ -207,7 +207,7 @@ DeprecatedLoader::load_patch(const Glib::ustring&    filename,
                              bool                    merge,
                              boost::optional<Path>   parent_path,
                              boost::optional<Symbol> name,
-                             GraphObject::Variables  initial_data,
+                             GraphObject::Properties  initial_data,
                              bool                    existing)
 {
 	cerr << "[DeprecatedLoader] Loading patch " << filename << " under "
@@ -222,7 +222,7 @@ DeprecatedLoader::load_patch(const Glib::ustring&    filename,
 	size_t poly = 0;
 	
 	/* Use parameter overridden polyphony, if given */
-	GraphObject::Variables::iterator poly_param = initial_data.find("ingen:polyphony");
+	GraphObject::Properties::iterator poly_param = initial_data.find("ingen:polyphony");
 	if (poly_param != initial_data.end() && poly_param->second.type() == Atom::INT)
 		poly = poly_param->second.get_int32();
 	
@@ -291,7 +291,7 @@ DeprecatedLoader::load_patch(const Glib::ustring&    filename,
 	// Create it, if we're not merging
 	if (!existing && path != "/") {
 		_engine->new_patch(path, poly);
-		for (GraphObject::Variables::const_iterator i = initial_data.begin(); i != initial_data.end(); ++i)
+		for (GraphObject::Properties::const_iterator i = initial_data.begin(); i != initial_data.end(); ++i)
 			_engine->set_variable(path, i->first, i->second);
 	}
 
@@ -346,11 +346,11 @@ DeprecatedLoader::load_patch(const Glib::ustring&    filename,
 	xmlCleanupParser();
 
 	// Done above.. late enough?
-	//for (Variables::const_iterator i = data.begin(); i != data.end(); ++i)
+	//for (Properties::const_iterator i = data.begin(); i != data.end(); ++i)
 	//	_engine->set_variable(subject, i->first, i->second);
 
 	if (!existing)
-		_engine->set_property(path, "ingen:enabled", (bool)true);
+		_engine->set_variable(path, "ingen:enabled", (bool)true);
 
 	_load_path_translations.clear();
 
@@ -375,7 +375,7 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 	string library_name; // deprecated
 	string plugin_label; // deprecated
 
-	GraphObject::Variables initial_data;
+	GraphObject::Properties initial_data;
 
 	while (cur != NULL) {
 		key = xmlNodeListGetString(doc, cur->xmlChildrenNode, 1);
@@ -489,7 +489,7 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 
 			path = new_path;
 
-			for (GraphObject::Variables::const_iterator i = initial_data.begin(); i != initial_data.end(); ++i)
+			for (GraphObject::Properties::const_iterator i = initial_data.begin(); i != initial_data.end(); ++i)
 				_engine->set_variable(path, i->first, i->second);
 
 			return SharedPtr<NodeModel>();
@@ -510,9 +510,9 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 			else
 				_engine->new_node_deprecated(path, plugin_type, library_name, plugin_label);
 
-			_engine->set_property(path, "ingen:polyphonic", polyphonic);
+			_engine->set_variable(path, "ingen:polyphonic", bool(polyphonic));
 		
-			for (GraphObject::Variables::const_iterator i = initial_data.begin(); i != initial_data.end(); ++i)
+			for (GraphObject::Properties::const_iterator i = initial_data.begin(); i != initial_data.end(); ++i)
 				_engine->set_variable(path, i->first, i->second);
 
 			return true;
@@ -521,8 +521,8 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 	// Not deprecated
 	} else {
 		_engine->new_node(path, plugin_uri);
-		_engine->set_property(path, "ingen:polyphonic", polyphonic);
-		for (GraphObject::Variables::const_iterator i = initial_data.begin(); i != initial_data.end(); ++i)
+		_engine->set_variable(path, "ingen:polyphonic", bool(polyphonic));
+		for (GraphObject::Properties::const_iterator i = initial_data.begin(); i != initial_data.end(); ++i)
 			_engine->set_variable(path, i->first, i->second);
 		return true;
 	}
@@ -541,7 +541,7 @@ DeprecatedLoader::load_subpatch(const string& base_filename, const Path& parent,
 	string filename = "";
 	size_t poly     = 0;
 	
-	GraphObject::Variables initial_data;
+	GraphObject::Properties initial_data;
 
 	while (cur != NULL) {
 		key = xmlNodeListGetString(doc, cur->xmlChildrenNode, 1);

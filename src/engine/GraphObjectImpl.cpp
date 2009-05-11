@@ -33,7 +33,7 @@ const Atom&
 GraphObjectImpl::get_variable(const std::string& key)
 {
 	static const Atom null_atom;
-	Variables::iterator i = _variables.find(key);
+	Properties::iterator i = _variables.find(key);
 	return (i != _variables.end()) ? (*i).second : null_atom;
 }
 

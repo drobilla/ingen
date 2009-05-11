@@ -77,8 +77,7 @@ protected:
 	void set_selected(bool b);
 	
 	void rename();
-	void set_variable(const std::string& key, const Raul::Atom& value);
-	void set_property(const std::string& predicate, const Raul::Atom& value);
+	void set_variable(const std::string& predicate, const Raul::Atom& value);
 	
 	void add_port(SharedPtr<PortModel> port, bool resize=true);
 

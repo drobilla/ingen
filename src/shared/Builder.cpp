@@ -89,7 +89,7 @@ Builder::connect(SharedPtr<const GraphObject> object)
 void
 Builder::build_object(SharedPtr<const GraphObject> object)
 {
-	for (GraphObject::Variables::const_iterator i = object->variables().begin();
+	for (GraphObject::Properties::const_iterator i = object->variables().begin();
 			i != object->variables().end(); ++i)
 		_interface.set_variable(object->path(), i->first, i->second);
 

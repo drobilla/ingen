@@ -34,10 +34,7 @@ ResourceImpl::get_property(const std::string& uri) const
 {
 	static const Raul::Atom nil;
 	Properties::const_iterator i = _properties.find(uri);
-	if (i == _properties.end())
-		return nil;
-	else
-		return i->second;
+	return (i != _properties.end()) ? i->second : nil;
 }
 
 

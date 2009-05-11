@@ -419,40 +419,6 @@ OSCEngineReceiver::_clear_patch_cb(const char* path, const char* types, lo_arg**
 }
 
 
-/** \page engine_osc_namespace
- * <p> \b /ingen/set_polyphony - Set the polyphony of a patch
- * \arg \b response-id (integer)
- * \arg \b patch-path - Patch's path
- * \arg \b poly (integer) </p> \n \n
- */
-int
-OSCEngineReceiver::_set_polyphony_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
-{
-	const char*    patch_path = &argv[1]->s;
-	const uint32_t poly       = argv[2]->i;
-	
-	set_polyphony(patch_path, poly);
-	return 0;
-}
-
-
-/** \page engine_osc_namespace
- * <p> \b /ingen/set_polyphonic - Toggle a node's or port's polyphonic mode
- * \arg \b response-id (integer)
- * \arg \b path - Object's path
- * \arg \b polyphonic (bool) </p> \n \n
- */
-int
-OSCEngineReceiver::_set_polyphonic_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
-{
-	const char* object_path = &argv[1]->s;
-	bool        polyphonic  = (types[2] == 'T');
-	
-	set_polyphonic(object_path, polyphonic);
-	return 0;
-}
-
-
 // FIXME: add index
 /** \page engine_osc_namespace
  * <p> \b /ingen/new_port - Add a port into a given patch (load a plugin by URI)

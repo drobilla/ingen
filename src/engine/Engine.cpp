@@ -36,7 +36,6 @@
 #include "QueuedEventSource.hpp"
 #include "PostProcessor.hpp"
 #include "events/CreatePatchEvent.hpp"
-#include "events/EnablePatchEvent.hpp"
 #include "PostProcessor.hpp"
 #include "AudioDriver.hpp"
 #include "ProcessSlave.hpp"

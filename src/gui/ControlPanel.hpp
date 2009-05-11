@@ -72,7 +72,8 @@ private:
 	void all_voices_selected();
 	void specific_voice_selected();
 	
-	void property_changed(const std::string& predicate, const Raul::Atom& value, bool parent);
+	void variable_changed(const std::string& predicate, const Raul::Atom& value);
+	void parent_property_changed(const std::string& predicate, const Raul::Atom& value);
 
 	bool _callback_enabled;
 	

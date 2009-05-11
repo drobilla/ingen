@@ -44,8 +44,8 @@ public:
 	
 	bool merge(const EventBuffer& a, const EventBuffer& b);
 	
-	bool increment() const;
-	bool is_valid() const;
+	bool increment() const { return _buf->increment(); }
+	bool is_valid()  const { return _buf->is_valid(); }
 
 	inline uint32_t latest_frames()    const { return _buf->latest_frames(); }
 	inline uint32_t latest_subframes() const { return _buf->latest_subframes(); }

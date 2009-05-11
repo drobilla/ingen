@@ -67,11 +67,11 @@ public:
 	                  bool                    merge,
 	                  boost::optional<Path>   parent_path,
 	                  boost::optional<Symbol> name,
-	                  GraphObject::Variables  initial_data,
+	                  GraphObject::Properties  initial_data,
 	                  bool                    existing = false);
 
 private:
-	void add_variable(GraphObject::Variables& data, string key, string value);
+	void add_variable(GraphObject::Properties& data, string key, string value);
 
 	string nameify_if_invalid(const string& name);
 	string translate_load_path(const string& path);

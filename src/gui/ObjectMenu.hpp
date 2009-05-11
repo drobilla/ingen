@@ -50,7 +50,7 @@ protected:
 	void         on_menu_destroy();
 	void         on_menu_properties();
 
-	void property_changed(const std::string& predicate, const Raul::Atom& value);
+	void variable_changed(const std::string& predicate, const Raul::Atom& value);
 
 	bool                   _enable_signal;
 	SharedPtr<ObjectModel> _object;

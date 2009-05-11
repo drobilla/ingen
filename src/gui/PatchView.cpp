@@ -81,8 +81,13 @@ PatchView::set_patch(SharedPtr<PatchModel> patch)
 	for (GraphObject::Properties::const_iterator i = patch->properties().begin();
 			i != patch->properties().end(); ++i)
 		property_changed(i->first, i->second);
+	
+	for (GraphObject::Properties::const_iterator i = patch->variables().begin();
+			i != patch->variables().end(); ++i)
+		variable_changed(i->first, i->second);
 
 	// Connect model signals to track state
+	patch->signal_variable.connect(sigc::mem_fun(this, &PatchView::variable_changed));
 	patch->signal_property.connect(sigc::mem_fun(this, &PatchView::property_changed));
 
 	// Connect widget signals to do things
@@ -193,7 +198,7 @@ PatchView::process_toggled()
 	if (!_enable_signal)
 		return;
 
-	App::instance().engine()->set_property(_patch->path(), "ingen:enabled",
+	App::instance().engine()->set_variable(_patch->path(), "ingen:enabled",
 			(bool)_process_but->get_active());
 }
 
@@ -223,12 +228,18 @@ PatchView::refresh_clicked()
 void
 PatchView::property_changed(const std::string& predicate, const Raul::Atom& value)
 {
+}
+
+
+void
+PatchView::variable_changed(const std::string& predicate, const Raul::Atom& value)
+{
 	_enable_signal = false;
 	if (predicate == "ingen:enabled") {
 	   if (value.type() == Atom::BOOL)
 		   _process_but->set_active(value.get_bool());
 	   else
-		   cerr << "WARNING: Bad type for ingen:enabled property: " << value.type() << endl;
+		   cerr << "WARNING: Bad type for ingen:enabled variable: " << value.type() << endl;
 	}
 	_enable_signal = true;
 }

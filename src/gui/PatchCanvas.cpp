@@ -85,22 +85,22 @@ PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 	// Add port menu items
 	_menu_add_audio_input->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
-			"audio_input", "lv2:AudioPort", false));
+			"audio_in", "Audio In", "lv2:AudioPort", false));
 	_menu_add_audio_output->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
-			"audio_output", "lv2:AudioPort", true));
+			"audio_out", "Audio Out", "lv2:AudioPort", true));
 	_menu_add_control_input->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
-			"control_input", "lv2:ControlPort", false));
+			"control_in", "Control In", "lv2:ControlPort", false));
 	_menu_add_control_output->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
-			"control_output", "lv2:ControlPort", true));
+			"control_out", "Control Out", "lv2:ControlPort", true));
 	_menu_add_event_input->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
-			"event_input", "lv2ev:EventPort", false));
+			"event_in", "Event In", "lv2ev:EventPort", false));
 	_menu_add_event_output->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
-			"event_output", "lv2ev:EventPort", true));
+			"event_out", "Event Out", "lv2ev:EventPort", true));
 	
 	// Add control menu items
 	/*_menu_add_number_control->signal_activate().connect(
@@ -284,6 +284,10 @@ PatchCanvas::show_human_names(bool b)
 		boost::shared_ptr<NodeModule> mod = boost::dynamic_pointer_cast<NodeModule>(*m);
 		if (mod)
 			mod->show_human_names(b);
+		
+		boost::shared_ptr<PatchPortModule> pmod = boost::dynamic_pointer_cast<PatchPortModule>(*m);
+		if (pmod)
+			pmod->show_human_names(b);
 	}
 }
 
@@ -381,7 +385,7 @@ PatchCanvas::add_port(SharedPtr<PortModel> pm)
 	boost::shared_ptr<PatchCanvas> shared_this =
 		boost::dynamic_pointer_cast<PatchCanvas>(shared_from_this());
 
-	SharedPtr<PatchPortModule> view = PatchPortModule::create(shared_this, pm);
+	SharedPtr<PatchPortModule> view = PatchPortModule::create(shared_this, pm, _human_names);
 	_views.insert(std::make_pair(pm, view));
 	add_item(view);
 	view->show();
@@ -690,18 +694,18 @@ PatchCanvas::paste()
 			//cout << "Skipping root" << endl;
 			continue;
 		}
-		GraphObject::Variables::iterator x = i->second->variables().find("ingenuity:canvas-x");
+		GraphObject::Properties::iterator x = i->second->variables().find("ingenuity:canvas-x");
 		if (x != i->second->variables().end())
 			x->second = x->second.get_float() + (20.0f * _paste_count);
-		GraphObject::Variables::iterator y = i->second->variables().find("ingenuity:canvas-y");
+		GraphObject::Properties::iterator y = i->second->variables().find("ingenuity:canvas-y");
 		if (y != i->second->variables().end())
 			y->second = y->second.get_float() + (20.0f * _paste_count);
 		if (i->first.parent() == "/") {
-			GraphObject::Properties::iterator s = i->second->properties().find("ingen:selected");
-			if (s != i->second->properties().end())
+			GraphObject::Properties::iterator s = i->second->variables().find("ingen:selected");
+			if (s != i->second->variables().end())
 				s->second = true;
 			else
-				i->second->properties().insert(make_pair("ingen:selected", true));
+				i->second->variables().insert(make_pair("ingen:selected", true));
 		}
 		builder.build(i->second);
 	}
@@ -723,23 +727,27 @@ PatchCanvas::paste()
 }
 	
 
-string
-PatchCanvas::generate_port_name(const string& base)
+void
+PatchCanvas::generate_port_name(
+		const string& sym_base,  string& symbol,
+		const string& name_base, string& name)
 {
-	string name = base;
+	symbol = sym_base;
+	name   = name_base;
 
 	char num_buf[5];
-	for (uint i=1; i < 9999; ++i) {
+	uint32_t i = 1;
+	for ( ; i < 9999; ++i) {
 		snprintf(num_buf, 5, "%u", i);
-		name = base + "_";
-		name += num_buf;
-		if (!_patch->get_port(name))
+		symbol = sym_base + "_";
+		symbol += num_buf;
+		if (!_patch->get_port(symbol))
 			break;
 	}
 
-	assert(Path::is_valid(string("/") + name));
+	assert(Path::is_valid(string("/") + symbol));
 
-	return name;
+	name.append(" ").append(num_buf);
 }
 
 void
@@ -747,7 +755,7 @@ PatchCanvas::menu_add_control(ControlType type)
 {
 	// FIXME: bundleify
 
-	GraphObject::Variables data = get_initial_data();
+	GraphObject::Properties data = get_initial_data();
 	float x = data["ingenuity:canvas-x"].get_float();
 	float y = data["ingenuity:canvas-y"].get_float();
 	
@@ -758,14 +766,18 @@ PatchCanvas::menu_add_control(ControlType type)
 }
 
 void
-PatchCanvas::menu_add_port(const string& name, const string& type, bool is_output)
+PatchCanvas::menu_add_port(const string& sym_base, const string& name_base,
+		const string& type, bool is_output)
 {
-	const Path& path = _patch->path().base() + generate_port_name(name);
+	string sym, name;
+	generate_port_name(sym_base, sym, name_base, name);
+	const Path& path = _patch->path().base() + sym;
 	App::instance().engine()->bundle_begin();
 	App::instance().engine()->new_port(path, type, _patch->num_ports(), is_output);
-	GraphObject::Variables data = get_initial_data();
-	for (GraphObject::Variables::const_iterator i = data.begin(); i != data.end(); ++i)
-		App::instance().engine()->set_variable(path, i->first, i->second);
+	GraphObject::Properties data = get_initial_data();
+	App::instance().engine()->set_property(path, "lv2:name", Atom(name.c_str()));
+	for (GraphObject::Properties::const_iterator i = data.begin(); i != data.end(); ++i)
+		App::instance().engine()->set_property(path, i->first, i->second);
 	App::instance().engine()->bundle_end();
 }
 
@@ -788,8 +800,8 @@ PatchCanvas::load_plugin(WeakPtr<PluginModel> weak_plugin)
 	const Path path = _patch->path().base() + name;
 	// FIXME: polyphony?
 	App::instance().engine()->new_node(path, plugin->uri());
-	GraphObject::Variables data = get_initial_data();
-	for (GraphObject::Variables::const_iterator i = data.begin(); i != data.end(); ++i)
+	GraphObject::Properties data = get_initial_data();
+	for (GraphObject::Properties::const_iterator i = data.begin(); i != data.end(); ++i)
 		App::instance().engine()->set_variable(path, i->first, i->second);
 }
 
@@ -807,10 +819,10 @@ PatchCanvas::get_new_module_location(double& x, double& y)
 }
 
 
-GraphObject::Variables
+GraphObject::Properties
 PatchCanvas::get_initial_data()
 {
-	GraphObject::Variables result;
+	GraphObject::Properties result;
 	
 	result["ingenuity:canvas-x"] = Atom((float)_last_click_x);
 	result["ingenuity:canvas-y"] = Atom((float)_last_click_y);

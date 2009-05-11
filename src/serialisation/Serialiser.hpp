@@ -77,7 +77,7 @@ public:
 
 	std::string to_string(SharedPtr<GraphObject>        object,
 	                      const std::string&            base_uri,
-	                      const GraphObject::Variables& extra_rdf);
+	                      const GraphObject::Properties& extra_rdf);
 	
 	void start_to_string(const Raul::Path& root, const std::string& base_uri);
 	void serialise(SharedPtr<GraphObject> object) throw (std::logic_error);
@@ -94,15 +94,17 @@ private:
 
 	void setup_prefixes();
 
-	void serialise_patch(SharedPtr<Shared::Patch> p);
-	void serialise_node(SharedPtr<Shared::Node> n, const Redland::Node& id);
+	void serialise_patch(SharedPtr<Shared::Patch> p, const Redland::Node& id);
+	void serialise_node(SharedPtr<Shared::Node> n,
+			const Redland::Node& class_id, const Redland::Node& id);
 	void serialise_port(const Shared::Port* p, const Redland::Node& id);
+	void serialise_port_class(const Shared::Port* p, const Redland::Node& id);
 
-	void serialise_properties(Redland::Node subject, const GraphObject::Variables& properties);
-	void serialise_variables(Redland::Node subject, const GraphObject::Variables& variables);
+	void serialise_properties(Redland::Node subject, const GraphObject::Properties& properties);
+	void serialise_variables(Redland::Node subject, const GraphObject::Properties& variables);
 	
-	Redland::Node path_to_rdf_node(const Path& path);
-	Redland::Node patch_path_to_rdf_node(const Path& path);
+	Redland::Node instance_rdf_node(const Path& path);
+	Redland::Node class_rdf_node(const Path& path);
 
 	Raul::Path               _root_path;
 	SharedPtr<Shared::Store> _store;

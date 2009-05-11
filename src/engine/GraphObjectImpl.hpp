@@ -74,8 +74,8 @@ public:
 	const Raul::Atom& get_variable(const std::string& key);
 	void              set_variable(const std::string& key, const Raul::Atom& value);
 	
-	const Variables&  variables()  const { return _variables; }
-	Variables&        variables()        { return _variables; }
+	const Properties&  variables()  const { return _variables; }
+	Properties&        variables()        { return _variables; }
 
 	/** The Patch this object is a child of. */
 	virtual PatchImpl* parent_patch() const;
@@ -109,7 +109,7 @@ protected:
 	bool             _polyphonic;
 
 private:
-	Variables  _variables;
+	Properties  _variables;
 };
 
 

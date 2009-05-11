@@ -46,7 +46,7 @@ public:
 			boost::optional<Raul::Path>             data_path=boost::optional<Raul::Path>(),
 			boost::optional<Raul::Path>             parent=boost::optional<Raul::Path>(),
 			boost::optional<Raul::Symbol>           symbol=boost::optional<Raul::Symbol>(),
-			boost::optional<GraphObject::Variables> data=boost::optional<GraphObject::Variables>());
+			boost::optional<GraphObject::Properties> data=boost::optional<GraphObject::Properties>());
 	
 	virtual bool parse_string(
 			Ingen::Shared::World*                   world,
@@ -56,7 +56,7 @@ public:
 			boost::optional<Raul::Path>             data_path=boost::optional<Raul::Path>(),
 			boost::optional<Raul::Path>             parent=boost::optional<Raul::Path>(),
 			boost::optional<Raul::Symbol>           symbol=boost::optional<Raul::Symbol>(),
-			boost::optional<GraphObject::Variables> data=boost::optional<GraphObject::Variables>());
+			boost::optional<GraphObject::Properties> data=boost::optional<GraphObject::Properties>());
 	
 	virtual bool parse_update(
 			Ingen::Shared::World*                   world,
@@ -66,7 +66,7 @@ public:
 			boost::optional<Raul::Path>             data_path=boost::optional<Raul::Path>(),
 			boost::optional<Raul::Path>             parent=boost::optional<Raul::Path>(),
 			boost::optional<Raul::Symbol>           symbol=boost::optional<Raul::Symbol>(),
-			boost::optional<GraphObject::Variables> data=boost::optional<GraphObject::Variables>());
+			boost::optional<GraphObject::Properties> data=boost::optional<GraphObject::Properties>());
 
 private:
 	boost::optional<Raul::Path> parse(
@@ -77,7 +77,7 @@ private:
 			boost::optional<Raul::Path>             data_path=boost::optional<Raul::Path>(),
 			boost::optional<Raul::Path>             parent=boost::optional<Raul::Path>(),
 			boost::optional<Raul::Symbol>           symbol=boost::optional<Raul::Symbol>(),
-			boost::optional<GraphObject::Variables> data=boost::optional<GraphObject::Variables>());
+			boost::optional<GraphObject::Properties> data=boost::optional<GraphObject::Properties>());
 
 	boost::optional<Raul::Path> parse_patch(
 			Ingen::Shared::World*                   world,
@@ -86,7 +86,7 @@ private:
 			const Redland::Node&                    subject,
 			boost::optional<Raul::Path>             parent=boost::optional<Raul::Path>(),
 			boost::optional<Raul::Symbol>           symbol=boost::optional<Raul::Symbol>(),
-			boost::optional<GraphObject::Variables> data=boost::optional<GraphObject::Variables>());
+			boost::optional<GraphObject::Properties> data=boost::optional<GraphObject::Properties>());
 	
 	boost::optional<Raul::Path> parse_node(
 			Ingen::Shared::World*                   world,
@@ -94,7 +94,7 @@ private:
 			Redland::Model&                         model,
 			const Redland::Node&                    subject,
 			const Raul::Path&                       path,
-			boost::optional<GraphObject::Variables> data=boost::optional<GraphObject::Variables>());
+			boost::optional<GraphObject::Properties> data=boost::optional<GraphObject::Properties>());
 
 	boost::optional<Raul::Path> parse_port(
 			Ingen::Shared::World*                   world,
@@ -102,7 +102,7 @@ private:
 			Redland::Model&                         model,
 			const Redland::Node&                    subject,
 			const Raul::Path&                       path,
-			boost::optional<GraphObject::Variables> data=boost::optional<GraphObject::Variables>());
+			boost::optional<GraphObject::Properties> data=boost::optional<GraphObject::Properties>());
 	
 	bool parse_variables(
 			Ingen::Shared::World*                   world,
@@ -110,7 +110,7 @@ private:
 			Redland::Model&                         model,
 			const Redland::Node&                    subject,
 			const Raul::Path&                       path,
-			boost::optional<GraphObject::Variables> data=boost::optional<GraphObject::Variables>());
+			boost::optional<GraphObject::Properties> data=boost::optional<GraphObject::Properties>());
 
 	bool parse_connections(
 			Ingen::Shared::World*                   world,

@@ -70,8 +70,8 @@ public:
 	virtual void set_variable(const string& key, const Atom& value)
 		{ _variables[key] = value; signal_variable.emit(key, value); }
 
-	const Variables&       variables()  const { return _variables; }
-	Variables&             variables()        { return _variables; }
+	const Properties&       variables()  const { return _variables; }
+	Properties&             variables()        { return _variables; }
 	const Path             path()       const { return _path; }
 	const Symbol           symbol()     const { return _path.name(); }
 	SharedPtr<ObjectModel> parent()     const { return _parent; }
@@ -102,7 +102,7 @@ protected:
 	Path                   _path;
 	SharedPtr<ObjectModel> _parent;
 	
-	Variables  _variables;
+	Properties  _variables;
 };
 
 

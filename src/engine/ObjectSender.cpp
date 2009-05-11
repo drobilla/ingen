@@ -62,14 +62,14 @@ ObjectSender::send_patch(ClientInterface* client, const PatchImpl* patch, bool r
 		client->transfer_begin();
 
 	client->new_patch(patch->path(), patch->internal_polyphony());
-	client->set_property(patch->path(), "ingen:polyphonic", patch->polyphonic());
+	client->set_variable(patch->path(), "ingen:polyphonic", bool(patch->polyphonic()));
 	
 	// Send variable
-	const GraphObjectImpl::Variables& data = patch->variables();
-	for (GraphObjectImpl::Variables::const_iterator j = data.begin(); j != data.end(); ++j)
+	const GraphObjectImpl::Properties& data = patch->variables();
+	for (GraphObjectImpl::Properties::const_iterator j = data.begin(); j != data.end(); ++j)
 		client->set_variable(patch->path(), (*j).first, (*j).second);
 	
-	client->set_property(patch->path(), "ingen:enabled", (bool)patch->enabled());
+	client->set_variable(patch->path(), "ingen:enabled", (bool)patch->enabled());
 
 	if (recursive) {
 
@@ -119,11 +119,11 @@ ObjectSender::send_node(ClientInterface* client, const NodeImpl* node, bool recu
 		client->transfer_begin();
 	
 	client->new_node(node->path(), node->plugin()->uri());
-	client->set_property(node->path(), "ingen:polyphonic", node->polyphonic());
+	client->set_variable(node->path(), "ingen:polyphonic", bool(node->polyphonic()));
 	
 	// Send variables
-	const GraphObjectImpl::Variables& data = node->variables();
-	for (GraphObjectImpl::Variables::const_iterator j = data.begin(); j != data.end(); ++j)
+	const GraphObjectImpl::Properties& data = node->variables();
+	for (GraphObjectImpl::Properties::const_iterator j = data.begin(); j != data.end(); ++j)
 		client->set_variable(node->path(), (*j).first, (*j).second);
 	
 	// Send properties
@@ -151,11 +151,13 @@ ObjectSender::send_port(ClientInterface* client, const PortImpl* port, bool bund
 		client->bundle_begin();
 
 	client->new_port(port->path(), port->type().uri(), port->index(), port->is_output());
-	client->set_property(port->path(), "ingen:polyphonic", port->polyphonic());
+	PatchImpl* graph_parent = dynamic_cast<PatchImpl*>(port->parent_node());
+	if (graph_parent && graph_parent->internal_polyphony() > 1)
+		client->set_variable(port->path(), "ingen:polyphonic", bool(port->polyphonic()));
 	
 	// Send variable
-	const GraphObjectImpl::Variables& data = port->variables();
-	for (GraphObjectImpl::Variables::const_iterator j = data.begin(); j != data.end(); ++j)
+	const GraphObjectImpl::Properties& data = port->variables();
+	for (GraphObjectImpl::Properties::const_iterator j = data.begin(); j != data.end(); ++j)
 		client->set_variable(port->path(), (*j).first, (*j).second);
 	
 	// Send properties

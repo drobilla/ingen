@@ -52,7 +52,6 @@ NodeModule::NodeModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeMode
 	node->signal_new_port.connect(sigc::bind(sigc::mem_fun(this, &NodeModule::add_port), true));
 	node->signal_removed_port.connect(sigc::hide_return(sigc::mem_fun(this, &NodeModule::remove_port)));
 	node->signal_variable.connect(sigc::mem_fun(this, &NodeModule::set_variable));
-	node->signal_property.connect(sigc::mem_fun(this, &NodeModule::set_property));
 	node->signal_renamed.connect(sigc::mem_fun(this, &NodeModule::rename));
 }
 
@@ -92,18 +91,19 @@ NodeModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeModel> n
 	else
 		ret = boost::shared_ptr<NodeModule>(new NodeModule(canvas, node));
 
-	for (GraphObject::Variables::const_iterator m = node->variables().begin(); m != node->variables().end(); ++m)
+	for (GraphObject::Properties::const_iterator m = node->variables().begin(); m != node->variables().end(); ++m)
 		ret->set_variable(m->first, m->second);
 
 	for (NodeModel::Ports::const_iterator p = node->ports().begin(); p != node->ports().end(); ++p) {
 		ret->add_port(*p, false);
 	}
+	
+	ret->set_stacked_border(node->polyphonic());
 
 	if (human)
 		ret->show_human_names(human); // FIXME: double port iteration
-
-	ret->resize();
-	ret->set_stacked_border(node->polyphonic());
+	else
+		ret->resize();
 
 	return ret;
 }
@@ -372,17 +372,11 @@ NodeModule::store_location()
 void
 NodeModule::set_variable(const string& key, const Atom& value)
 {
-	if (key == "ingenuity:canvas-x" && value.type() == Atom::FLOAT)
+	if (key == "ingenuity:canvas-x" && value.type() == Atom::FLOAT) {
 		move_to(value.get_float(), property_y());
-	else if (key == "ingenuity:canvas-y" && value.type() == Atom::FLOAT)
+	} else if (key == "ingenuity:canvas-y" && value.type() == Atom::FLOAT) {
 		move_to(property_x(), value.get_float());
-}
-
-
-void
-NodeModule::set_property(const string& key, const Atom& value)
-{
-	if (key == "ingen:polyphonic" && value.type() == Atom::BOOL) {
+	} else if (key == "ingen:polyphonic" && value.type() == Atom::BOOL) {
 		set_stacked_border(value.get_bool());
 	} else if (key == "ingen:selected" && value.type() == Atom::BOOL) {
 		if (value.get_bool() != selected()) {
@@ -401,7 +395,7 @@ NodeModule::set_selected(bool b)
 	if (b != selected()) {
 		Module::set_selected(b);
 		if (App::instance().signal())
-			App::instance().engine()->set_property(_node->path(), "ingen:selected", b);
+			App::instance().engine()->set_variable(_node->path(), "ingen:selected", b);
 	}
 }
 

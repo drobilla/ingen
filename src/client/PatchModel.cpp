@@ -163,14 +163,15 @@ PatchModel::remove_connection(const string& src_port_path, const string& dst_por
 bool
 PatchModel::enabled() const
 {
-	const Raul::Atom& enabled = get_property("ingen:enabled");
+	const Raul::Atom& enabled = get_variable("ingen:enabled");
 	return (enabled.is_valid() && enabled.get_bool());
 }
-	
+
+
 void
-PatchModel::set_property(const std::string& key, const Atom& value)
+PatchModel::set_variable(const std::string& key, const Atom& value)
 {
-	ResourceImpl::set_property(key, value);
+	NodeModel::set_variable(key, value);
 	if (key == "ingen:polyphony")
 		_poly = value.get_int32();
 }

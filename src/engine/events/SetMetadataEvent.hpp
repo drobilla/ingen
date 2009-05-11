@@ -27,6 +27,8 @@ using std::string;
 namespace Ingen {
 
 class GraphObjectImpl;
+class PatchImpl;
+class CompiledPatch;
 
 
 /** An event to set a piece of variable for an GraphObjectImpl.
@@ -49,14 +51,23 @@ public:
 	void post_process();
 
 private:
-	enum { NO_ERROR, INVALID_PATH } _error;
-	enum { NONE, ENABLE_BROADCAST } _special_type;
+	enum { NO_ERROR, NOT_FOUND, INTERNAL, INVALID_PATH, BAD_TYPE } _error;
+	enum {
+		NONE,
+		ENABLE,
+		ENABLE_BROADCAST,
+		POLYPHONY,
+		POLYPHONIC
+	} _special_type;
 
 	bool             _property;
+	bool             _success;
 	string           _path;
 	string           _key;
 	Raul::Atom       _value;
 	GraphObjectImpl* _object;
+	PatchImpl*       _patch;
+	CompiledPatch*   _compiled_patch;
 };
 
 

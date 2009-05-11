@@ -75,7 +75,7 @@ UploadPatchWindow::on_show()
 {
 	Gtk::Dialog::on_show();
 
-	Raul::Atom atom = _patch->get_variable("lv2:symbol");
+	Raul::Atom atom = _patch->get_property("lv2:symbol");
 	if (atom.is_valid())
 		_symbol_entry->set_text(atom.get_string());
 	
@@ -238,7 +238,7 @@ UploadPatchWindow::upload_clicked()
 	Glib::ustring symbol = _symbol_entry->get_text();
 	Glib::ustring short_name = _short_name_entry->get_text();
 
-	GraphObject::Variables extra_rdf;
+	GraphObject::Properties extra_rdf;
 	extra_rdf["lv2:symbol"] = Atom(Atom::STRING, symbol);
 	extra_rdf["doap:name"] =  Atom(Atom::STRING, short_name);
 
