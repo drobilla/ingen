@@ -108,11 +108,13 @@ private:
 	void build_classless_menu();
 
 #ifdef HAVE_SLV2
+	typedef std::multimap<const std::string, SLV2PluginClass> LV2Children;
 	void build_plugin_menu();
 	size_t build_plugin_class_menu(
-			Gtk::Menu*        menu,
-			SLV2PluginClass   plugin_class,
-			SLV2PluginClasses classes);
+			Gtk::Menu*         menu,
+			SLV2PluginClass    plugin_class,
+			SLV2PluginClasses  classes,
+			const LV2Children& children);
 #endif
 	
 	GraphObject::Properties get_initial_data();

@@ -20,6 +20,8 @@
 #include "module/World.hpp"
 
 #include <cassert>
+#include <map>
+#include <string>
 #include "flowcanvas/Canvas.hpp"
 #include "flowcanvas/Ellipse.hpp"
 #include "interface/EngineInterface.hpp"
@@ -153,7 +155,7 @@ PatchCanvas::build_menus()
 	// Build skeleton LV2 plugin class heirarchy for 'Plugin' menu
 #ifdef HAVE_SLV2
 	if (!_plugin_menu)
-	   build_plugin_menu();
+		build_plugin_menu();
 	
 	// Build (or clear existing) uncategorized (classless, heh) plugins menu
 	if (_classless_menu) {
@@ -181,34 +183,34 @@ PatchCanvas::build_menus()
  */
 size_t
 PatchCanvas::build_plugin_class_menu(Gtk::Menu* menu,
-		SLV2PluginClass plugin_class, SLV2PluginClasses classes)
+		SLV2PluginClass plugin_class, SLV2PluginClasses classes, const LV2Children& children)
 {
-	size_t num_items = 0;
+	size_t      num_items     = 0;
+	SLV2Value   class_uri     = slv2_plugin_class_get_uri(plugin_class);
+	const char* class_uri_str = slv2_value_as_string(class_uri);
 
-	SLV2Value class_uri = slv2_plugin_class_get_uri(plugin_class);
-	_class_menus.insert(make_pair(slv2_value_as_string(class_uri), menu));
+	_class_menus.insert(make_pair(class_uri_str, menu));
 	
+	LV2Children::const_iterator kids_begin = children.find(class_uri_str);
+	if (kids_begin == children.end())
+		return 0;
+	
+	LV2Children::const_iterator kids_end = children.upper_bound(class_uri_str);
+
 	// Add submenus
-	for (unsigned i=0; i < slv2_plugin_classes_size(classes); ++i) {
-		SLV2PluginClass c = slv2_plugin_classes_get_at(classes, i);
-		SLV2Value parent = slv2_plugin_class_get_parent_uri(c);
+	for (LV2Children::const_iterator i = kids_begin; i != kids_end; ++i) {
+		SLV2PluginClass c = i->second;
+		Gtk::Menu_Helpers::MenuElem menu_elem = Gtk::Menu_Helpers::MenuElem(
+				slv2_value_as_string(slv2_plugin_class_get_label(c)));
 
-		if (parent && slv2_value_equals(parent, slv2_plugin_class_get_uri(plugin_class))) {
-			Gtk::Menu_Helpers::MenuElem menu_elem = Gtk::Menu_Helpers::MenuElem(
-					slv2_value_as_string(slv2_plugin_class_get_label(c)));
-			
-			menu->items().push_back(menu_elem);
-			Gtk::MenuItem* menu_item = &(menu->items().back());
+		menu->items().push_back(menu_elem);
+		Gtk::MenuItem* menu_item = &(menu->items().back());
 
-			Gtk::Menu* submenu = Gtk::manage(new Gtk::Menu());
-			size_t num_items = build_plugin_class_menu(submenu, c, classes);
-			
-			// TODO: store items in map as well and do this to hide empty classes
-			//(num_items > 0) ? submenu->show() :	submenu->hide();
+		Gtk::Menu* submenu = Gtk::manage(new Gtk::Menu());
+		size_t num_items = build_plugin_class_menu(submenu, c, classes, children);
 
-			menu_item->set_submenu(*submenu);
-			++num_items;
-		}
+		menu_item->set_submenu(*submenu);
+		++num_items;
 	}
 
 	return num_items;
@@ -233,7 +235,13 @@ PatchCanvas::build_plugin_menu()
 	SLV2PluginClass lv2_plugin = slv2_world_get_plugin_class(PluginModel::slv2_world());
 	SLV2PluginClasses classes = slv2_world_get_plugin_classes(PluginModel::slv2_world());
 
-	build_plugin_class_menu(_plugin_menu, lv2_plugin, classes);
+	LV2Children children;
+	for (unsigned i=0; i < slv2_plugin_classes_size(classes); ++i) {
+		SLV2PluginClass c = slv2_plugin_classes_get_at(classes, i);
+		SLV2Value       p = slv2_plugin_class_get_parent_uri(c);
+		children.insert(make_pair(slv2_value_as_string(p), c));
+	}
+	build_plugin_class_menu(_plugin_menu, lv2_plugin, classes, children);
 }
 #endif
 
@@ -311,9 +319,9 @@ PatchCanvas::add_plugin(SharedPtr<PluginModel> p)
 		_internal_menu->items().push_back(Gtk::Menu_Helpers::MenuElem(p->name(),
 				sigc::bind(sigc::mem_fun(this, &PatchCanvas::load_plugin), p)));
 	} else if (_plugin_menu && p->type() == Plugin::LV2) {
-		SLV2PluginClass pc = slv2_plugin_get_class(p->slv2_plugin());
-		SLV2Value class_uri = slv2_plugin_class_get_uri(pc);
-		const char* class_uri_str = slv2_value_as_string(class_uri);
+		SLV2PluginClass pc            = slv2_plugin_get_class(p->slv2_plugin());
+		SLV2Value       class_uri     = slv2_plugin_class_get_uri(pc);
+		const char*     class_uri_str = slv2_value_as_string(class_uri);
 		ClassMenus::iterator i = _class_menus.find(class_uri_str);
 		if (i != _class_menus.end() && i->second != _plugin_menu) {
 			Glib::RefPtr<Gdk::Pixbuf> icon = App::instance().icon_from_path(
