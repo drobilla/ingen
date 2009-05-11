@@ -183,8 +183,7 @@ HTTPClientSender::new_object(const Shared::GraphObject* object)
 void
 HTTPClientSender::new_plugin(const std::string& uri,
                              const std::string& type_uri,
-                             const std::string& symbol,
-                             const std::string& name)
+                             const std::string& symbol)
 {
 	/*lo_message m = lo_message_new();
 	lo_message_add_string(m, uri.c_str());

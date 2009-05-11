@@ -48,16 +48,6 @@ LV2Plugin::symbol() const
 }
 
 
-const string
-LV2Plugin::name() const
-{
-	if (_name)
-		return slv2_value_as_string(_name);
-	else
-		return "(no name)";
-}
-
-
 NodeImpl*
 LV2Plugin::instantiate(const string&     name,
                        bool              polyphonic,
@@ -85,9 +75,17 @@ void
 LV2Plugin::slv2_plugin(SLV2Plugin p)
 {
 	_slv2_plugin = p;
-	if (_name)
-		slv2_value_free(_name);
-	_name = slv2_plugin_get_name(_slv2_plugin);
+}
+
+
+const std::string&
+LV2Plugin::library_path() const
+{
+	if (_library_path == "")
+		_library_path = slv2_uri_to_path(slv2_value_as_uri(
+				slv2_plugin_get_library_uri(_slv2_plugin)));
+
+	return _library_path;
 }
 
 

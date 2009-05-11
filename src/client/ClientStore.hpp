@@ -71,7 +71,7 @@ public:
 	void                     set_plugins(SharedPtr<Plugins> p) { _plugins = p; }
 	
 	// CommonInterface
-	void new_plugin(const string& uri, const string& type_uri, const string& symbol, const string& name);
+	void new_plugin(const string& uri, const string& type_uri, const string& symbol);
 	bool new_object(const Shared::GraphObject* object);
 	void new_patch(const string& path, uint32_t poly);
 	void new_node(const string& path, const string& plugin_uri);

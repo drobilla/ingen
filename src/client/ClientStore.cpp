@@ -419,11 +419,10 @@ ClientStore::rename(const Path& old_path, const Path& new_path)
 }
 
 void
-ClientStore::new_plugin(const string& uri, const string& type_uri, const string& symbol, const string& name)
+ClientStore::new_plugin(const string& uri, const string& type_uri, const string& symbol)
 {
 	SharedPtr<PluginModel> p(new PluginModel(uri, type_uri));
 	p->set_property("lv2:symbol", Atom(Atom::STRING, symbol));
-	p->set_property("doap:name", Atom(Atom::STRING, name));
 	add_plugin(p);
 	resolve_plugin_orphans(p);
 }

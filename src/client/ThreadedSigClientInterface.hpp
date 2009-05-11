@@ -94,8 +94,8 @@ public:
 	void error(const string& msg)
 		{ push_sig(sigc::bind(error_slot, msg)); }
 	
-	void new_plugin(const string& uri, const string& type_uri, const string& symbol, const string& name)
-		{ push_sig(sigc::bind(new_plugin_slot, uri, type_uri, symbol, name)); }
+	void new_plugin(const string& uri, const string& type_uri, const string& symbol)
+		{ push_sig(sigc::bind(new_plugin_slot, uri, type_uri, symbol)); }
 	
 	bool new_object(const Shared::GraphObject* object);
 	
@@ -161,7 +161,7 @@ private:
 	sigc::slot<void, int32_t>                            response_ok_slot; 
 	sigc::slot<void, int32_t, string>                    response_error_slot; 
 	sigc::slot<void, string>                             error_slot; 
-	sigc::slot<void, string, string, string, string>     new_plugin_slot; 
+	sigc::slot<void, string, string, string>             new_plugin_slot; 
 	sigc::slot<void, string, uint32_t>                   new_patch_slot; 
 	sigc::slot<void, string, string>                     new_node_slot; 
 	sigc::slot<void, string, string, uint32_t, bool>     new_port_slot;

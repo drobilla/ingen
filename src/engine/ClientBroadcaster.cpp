@@ -115,7 +115,7 @@ ClientBroadcaster::send_plugins_to(ClientInterface* client, const NodeFactory::P
 
 	for (NodeFactory::Plugins::const_iterator i = plugins.begin(); i != plugins.end(); ++i) {
 		const PluginImpl* const plugin = i->second;
-		client->new_plugin(plugin->uri(), plugin->type_uri(), plugin->symbol(), plugin->name());
+		client->new_plugin(plugin->uri(), plugin->type_uri(), plugin->symbol());
 	}
 
 	client->transfer_end();

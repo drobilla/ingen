@@ -52,7 +52,6 @@ class LV2Plugin : public PluginImpl
 public:
 	LV2Plugin(SharedPtr<LV2Info> lv2_info, const string& uri)
 		: PluginImpl(Plugin::LV2, uri)
-		, _name(NULL)
 		, _slv2_plugin(NULL)
 		, _lv2_info(lv2_info)
 	{}
@@ -63,15 +62,15 @@ public:
 	                      Engine&           engine);
 	
 	const string symbol() const;
-	const string name() const;
 
 	SharedPtr<LV2Info> lv2_info() const { return _lv2_info; }
+	
+	const std::string& library_path() const;
 
 	SLV2Plugin slv2_plugin() const       { return _slv2_plugin; }
 	void       slv2_plugin(SLV2Plugin p);
 
 private:
-	SLV2Value          _name;
 	SLV2Plugin         _slv2_plugin;
 	SharedPtr<LV2Info> _lv2_info;
 };

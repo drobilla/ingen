@@ -298,14 +298,12 @@ OSCClientSender::activity(const std::string& path)
 void
 OSCClientSender::new_plugin(const std::string& uri,
                             const std::string& type_uri,
-                            const std::string& symbol,
-                            const std::string& name)
+                            const std::string& symbol)
 {
 	lo_message m = lo_message_new();
 	lo_message_add_string(m, uri.c_str());
 	lo_message_add_string(m, type_uri.c_str());
 	lo_message_add_string(m, symbol.c_str());
-	lo_message_add_string(m, name.c_str());
 	send_message("/ingen/plugin", m);
 }
 

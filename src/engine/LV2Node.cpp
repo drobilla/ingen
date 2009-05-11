@@ -238,7 +238,7 @@ LV2Node::instantiate()
 			if (!strcmp("http://lv2plug.in/ns/dev/contexts#MessageContext", context)) {
 				cout << "MESSAGE CONTEXT!" << endl;
 				if (!_message_funcs) {
-					cerr << "Plugin " << _lv2_plugin->name()
+					cerr << "Plugin " << _lv2_plugin->uri()
 						<< " has a message port, but no context extension data." << endl;
 				}
 				port->set_context(Context::MESSAGE);

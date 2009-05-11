@@ -59,10 +59,8 @@ public:
 	                              Engine&            engine) = 0;
 	
 	virtual const string symbol() const = 0;
-	virtual const string name() const = 0;
 	
-	const std::string& library_path() const               { return _library_path; }
-	void               library_path(const std::string& s) { _library_path = s;}
+	virtual const std::string& library_path() const { return _library_path; }
 	
 	void load();
 	void unload();
@@ -73,9 +71,9 @@ public:
 	void          module(Glib::Module* module) { _module = module; }
 
 protected:
-	Plugin::Type  _type;
-	string        _library_path;
-	Glib::Module* _module;
+	Plugin::Type   _type;
+	mutable string _library_path;
+	Glib::Module*  _module;
 };
 
 

@@ -180,8 +180,6 @@ NodeFactory::load_lv2_plugins()
 		LV2Plugin* const plugin = new LV2Plugin(_lv2_info, uri);
 
 		plugin->slv2_plugin(lv2_plug);
-		plugin->library_path(slv2_uri_to_path(slv2_value_as_uri(
-				slv2_plugin_get_library_uri(lv2_plug))));
 		_plugins.insert(make_pair(uri, plugin));
 	}
 
