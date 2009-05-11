@@ -142,7 +142,7 @@ OSCClientReceiver::setup_callbacks()
 {
 	lo_server_thread_add_method(_st, "/ingen/ok", "i", response_ok_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/error", "is", response_error_cb, this);
-	lo_server_thread_add_method(_st, "/ingen/plugin", "ssss", plugin_cb, this);
+	lo_server_thread_add_method(_st, "/ingen/plugin", "sss", plugin_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/new_patch", "si", new_patch_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/destroyed", "s", destroyed_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/patch_cleared", "s", patch_cleared_cb, this);
@@ -356,8 +356,8 @@ OSCClientReceiver::_response_error_cb(const char* path, const char* types, lo_ar
 int
 OSCClientReceiver::_plugin_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	assert(argc == 4 && !strcmp(types, "ssss"));
-	_target->new_plugin(&argv[0]->s, &argv[1]->s, &argv[2]->s, &argv[3]->s); // uri, type, symbol, name
+	assert(argc == 3 && !strcmp(types, "sss"));
+	_target->new_plugin(&argv[0]->s, &argv[1]->s, &argv[2]->s); // uri, type, symbol
 
 	return 0;	
 }
