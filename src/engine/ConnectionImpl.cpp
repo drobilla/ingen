@@ -23,9 +23,6 @@
 #include "AudioBuffer.hpp"
 #include "ProcessContext.hpp"
 
-/*#include <iostream>
-using namespace std;*/
-
 namespace Ingen {
 
 
@@ -77,9 +74,9 @@ ConnectionImpl::set_mode()
 		_mode = COPY;
 	else if (must_extend())
 		_mode = EXTEND;
-	
-	if (type() == DataType::EVENT)
-		_mode = DIRECT; // FIXME: kludge
+
+	if (_mode == MIX && type() == DataType::EVENT)
+		_mode = COPY;
 }
 
 
@@ -166,16 +163,15 @@ ConnectionImpl::process(ProcessContext& context)
 	 * would avoid having to mix multiple times.  Probably not a very common
 	 * case, but it would be faster anyway. */
 
-	/*cerr << src_port()->path() << " * " << src_port()->poly()
+	/*std::cerr << src_port()->path() << " * " << src_port()->poly()
 			<< " -> " << dst_port()->path() << " * " << dst_port()->poly()
-			<< "\t\tmode: " << (int)_mode << endl;*/
+			<< "\t\tmode: " << (int)_mode << std::endl;*/
 	
 	if (_mode == COPY) {
 		assert(src_port()->poly() == dst_port()->poly());
 		const size_t copy_size = std::min(src_port()->buffer_size(), dst_port()->buffer_size());
-		for (uint32_t i=0; i < src_port()->poly(); ++i) {
+		for (uint32_t i=0; i < src_port()->poly(); ++i)
 			dst_port()->buffer(i)->copy(src_port()->buffer(i), 0, copy_size-1);
-		}
 	} else if (_mode == MIX) {
 		assert(type() == DataType::AUDIO || type() == DataType::CONTROL);
 

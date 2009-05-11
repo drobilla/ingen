@@ -189,7 +189,10 @@ JackMidiDriver::activate()
 void
 JackMidiDriver::deactivate() 
 {
+	for (Raul::List<JackMidiPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
+		(*i)->unregister();
 	_is_activated = false;
+	_ports.clear();
 }
 
 

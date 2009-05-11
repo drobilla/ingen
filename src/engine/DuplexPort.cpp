@@ -32,7 +32,7 @@ namespace Ingen {
 
 
 DuplexPort::DuplexPort(
-		NodeImpl*          parent,
+		NodeImpl*         parent,
 		const string&     name,
 		uint32_t          index,
 		uint32_t          poly,
@@ -60,15 +60,9 @@ DuplexPort::pre_process(ProcessContext& context)
 	cerr << path() << " duplex pre: buffer: " << buffer(0) << endl;
 	cerr << path() << " duplex pre: is_output: " << _is_output << " { " << endl;*/
 	
-	/*if (type() == DataType::EVENT) 
-		for (uint32_t i=0; i < _poly; ++i)
-			cerr << path() << " (" << buffer(i) << ") # events: "
-				<< ((EventBuffer*)buffer(i))->event_count()
-				<< ", joined: " << _buffers->at(i)->is_joined() << endl;*/
-	
 	for (Connections::iterator c = _connections.begin(); c != _connections.end(); ++c)
 		(*c)->process(context);
-
+	
 	if (_is_output) {
 
 		for (uint32_t i=0; i < _poly; ++i)
@@ -84,7 +78,14 @@ DuplexPort::pre_process(ProcessContext& context)
 
 		broadcast(context);
 	}
-
+	
+	/*if (type() == DataType::EVENT) 
+		for (uint32_t i=0; i < _poly; ++i)
+			cerr << path() << " (" << buffer(i) << ") # events: "
+				<< ((EventBuffer*)buffer(i))->event_count()
+				<< ", joined: " << _buffers->at(i)->is_joined()
+				<< ", is_output: " << _is_output << endl;*/
+	
 	//cerr << "} duplex pre " << path() << endl;
 
 	// </BrainHurt>

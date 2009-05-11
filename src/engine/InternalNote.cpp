@@ -114,18 +114,18 @@ NoteNode::apply_poly(Raul::Maid& maid, uint32_t poly)
 void
 NoteNode::process(ProcessContext& context)
 {
+	EventBuffer* const midi_in = (EventBuffer*)_midi_in_port->buffer(0);
 	NodeBase::pre_process(context);
 	
-	uint32_t       frames = 0;
-	uint32_t       subframes = 0;
-	uint16_t       type = 0;
-	uint16_t       size = 0;
-	unsigned char* buf = NULL;
+	uint32_t frames    = 0;
+	uint32_t subframes = 0;
+	uint16_t type      = 0;
+	uint16_t size      = 0;
+	uint8_t* buf       = NULL;
 
-	EventBuffer* const midi_in = (EventBuffer*)_midi_in_port->buffer(0);
-	assert(midi_in->this_nframes() == context.nframes());
+	//assert(midi_in->this_nframes() == context.nframes());
 
-	//cerr << path() << " # input events: " << midi_in->event_count() << endl;
+	midi_in->rewind();
 
 	if (midi_in->event_count() > 0)
 	while (midi_in->get_event(&frames, &subframes, &type, &size, &buf)) {

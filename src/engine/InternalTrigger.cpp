@@ -74,7 +74,9 @@ TriggerNode::process(ProcessContext& context)
 	uint8_t* buf = NULL;
 
 	EventBuffer* const midi_in = (EventBuffer*)_midi_in_port->buffer(0);
-	assert(midi_in->this_nframes() == context.nframes());
+	//assert(midi_in->this_nframes() == context.nframes());
+	
+	midi_in->rewind();
 
 	while (midi_in->get_event(&frames, &subframes, &type, &size, &buf)) {
 		const FrameTime time = context.start() + (FrameTime)frames;
