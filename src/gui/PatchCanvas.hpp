@@ -141,7 +141,6 @@ private:
 	typedef std::multimap<const std::string, Gtk::Menu*> ClassMenus;
 	ClassMenus _class_menus;
 	
-	bool            _refresh_menu;
 	bool            _human_names;
 	bool            _show_port_names;
 	Gtk::Menu*      _menu;

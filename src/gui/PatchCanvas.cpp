@@ -61,7 +61,6 @@ PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 	, _last_click_x(0)
 	, _last_click_y(0)
 	, _paste_count(0)
-	, _refresh_menu(false)
 	, _human_names(true)
 	, _show_port_names(true)
 	, _menu(NULL)
@@ -347,8 +346,6 @@ PatchCanvas::add_plugin(SharedPtr<PluginModel> p)
 			_classless_menu->show();
 		}
 	}
-
-	_refresh_menu = true; // Refresh next time on show
 }
 
 
