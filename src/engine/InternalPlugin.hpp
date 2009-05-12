@@ -47,11 +47,9 @@ class InternalPlugin : public PluginImpl
 {
 public:
 	InternalPlugin(const std::string& uri,
-	               const std::string& symbol,
-	               const std::string& name)
+	               const std::string& symbol)
 		: PluginImpl(Plugin::Internal, uri)
 		, _symbol(symbol)
-		, _name(name)
 	{}
 	
 	NodeImpl* instantiate(const std::string& name,
@@ -60,11 +58,9 @@ public:
 	                      Engine&            engine);
 	
 	const string symbol() const { return _symbol; }
-	const string name()   const { return _name; }
 
 private:
 	const string _symbol;
-	const string _name;
 };
 
 

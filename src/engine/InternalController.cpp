@@ -31,7 +31,7 @@
 
 namespace Ingen {
 
-static InternalPlugin controller_plugin(NS_INTERNALS "Controller", "controller", "Controller");
+static InternalPlugin controller_plugin(NS_INTERNALS "Controller", "controller");
 	
 ControllerNode::ControllerNode(const string& path,
                                bool          polyphonic,

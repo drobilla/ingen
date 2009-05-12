@@ -49,6 +49,8 @@ PluginModel::PluginModel(const string& uri, const string& type_uri)
 	_slv2_plugin = slv2_plugins_get_by_uri(_slv2_plugins, plugin_uri);
 	slv2_value_free(plugin_uri);
 #endif
+	if (_type == Internal)
+		set_property("doap:name", Raul::Atom(uri.substr(uri.find_last_of("#") + 1).c_str()));
 }
 	
 

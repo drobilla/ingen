@@ -26,7 +26,7 @@
 
 namespace Ingen {
 
-static InternalPlugin transport_plugin(NS_INTERNALS "Transport", "transport", "Transport");
+static InternalPlugin transport_plugin(NS_INTERNALS "Transport", "transport");
 
 TransportNode::TransportNode(const string& path, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size)
 	: NodeBase(&transport_plugin, path, false, parent, srate, buffer_size)

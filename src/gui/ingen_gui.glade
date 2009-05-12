@@ -25,9 +25,15 @@
                         <property name="visible">True</property>
                         <property name="tooltip" translatable="yes">Load a patch into the current patch (merge with existing contents).</property>
                         <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
+                        <property name="use_stock">False</property>
                         <signal name="activate" handler="on_patch_import_menuitem_activate"/>
                         <accelerator key="I" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+                        <child internal-child="image">
+                          <widget class="GtkImage" id="image1">
+                            <property name="visible">True</property>
+                            <property name="stock">gtk-open</property>
+                          </widget>
+                        </child>
                       </widget>
                     </child>
                     <child>
@@ -36,9 +42,15 @@
                         <property name="visible">True</property>
                         <property name="tooltip" translatable="yes">Import a patch from a URI</property>
                         <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
+                        <property name="use_stock">False</property>
                         <signal name="activate" handler="on_import_location1_activate"/>
                         <accelerator key="L" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+                        <child internal-child="image">
+                          <widget class="GtkImage" id="image2">
+                            <property name="visible">True</property>
+                            <property name="stock">gtk-open</property>
+                          </widget>
+                        </child>
                       </widget>
                     </child>
                     <child>
@@ -62,9 +74,15 @@
                         <property name="visible">True</property>
                         <property name="tooltip" translatable="yes">Save this patch to a specific file name</property>
                         <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
+                        <property name="use_stock">False</property>
                         <signal name="activate" handler="on_patch_save_as_menuitem_activate"/>
                         <accelerator key="S" signal="activate" modifiers="GDK_SHIFT_MASK | GDK_CONTROL_MASK"/>
+                        <child internal-child="image">
+                          <widget class="GtkImage" id="image3">
+                            <property name="visible">True</property>
+                            <property name="stock">gtk-save-as</property>
+                          </widget>
+                        </child>
                       </widget>
                     </child>
                     <child>
@@ -72,7 +90,7 @@
                         <property name="label">_Upload...</property>
                         <property name="visible">True</property>
                         <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
+                        <property name="use_stock">False</property>
                         <signal name="activate" handler="on_patch_upload_menuitem_activate"/>
                         <accelerator key="U" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                       </widget>
@@ -82,7 +100,7 @@
                         <property name="label">_Draw...</property>
                         <property name="visible">True</property>
                         <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
+                        <property name="use_stock">False</property>
                         <signal name="activate" handler="on_patch_draw_menuitem_activate"/>
                         <accelerator key="P" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                       </widget>
@@ -205,7 +223,7 @@
                         <property name="visible">True</property>
                         <property name="tooltip" translatable="yes">Automatically arrange canvas</property>
                         <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
+                        <property name="use_stock">False</property>
                         <accelerator key="G" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                       </widget>
                     </child>
@@ -230,14 +248,14 @@
                         <property name="visible">True</property>
                         <property name="tooltip" translatable="yes">View/Edit controls for this patch</property>
                         <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
+                        <property name="use_stock">False</property>
                         <signal name="activate" handler="on_patch_view_control_window_menuitem_activate"/>
                         <accelerator key="O" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                       </widget>
                     </child>
                     <child>
                       <widget class="GtkImageMenuItem" id="patch_properties_menuitem">
-                        <property name="label">P_roperties...</property>
+                        <property name="label">gtk-properties</property>
                         <property name="visible">True</property>
                         <property name="tooltip" translatable="yes">View/Edit properties for this patch</property>
                         <property name="use_underline">True</property>
@@ -310,35 +328,53 @@
                   <widget class="GtkMenu" id="view1_menu">
                     <child>
                       <widget class="GtkImageMenuItem" id="patch_view_engine_window_menuitem">
-                        <property name="label">_Engine...</property>
+                        <property name="label">_Engine</property>
                         <property name="visible">True</property>
                         <property name="tooltip" translatable="yes">Connect to, Disconnect from, or Launch Engine</property>
                         <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
+                        <property name="use_stock">False</property>
                         <signal name="activate" handler="on_patch_view_engine_window_menuitem_activate"/>
                         <accelerator key="E" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+                        <child internal-child="image">
+                          <widget class="GtkImage" id="image6">
+                            <property name="visible">True</property>
+                            <property name="stock">gtk-execute</property>
+                          </widget>
+                        </child>
                       </widget>
                     </child>
                     <child>
                       <widget class="GtkImageMenuItem" id="patch_view_patch_tree_window_menuitem">
-                        <property name="label">_Patch Tree...</property>
+                        <property name="label">_Patch Tree</property>
                         <property name="visible">True</property>
                         <property name="tooltip" translatable="yes">View all patches in the engine as a heirarchial list</property>
                         <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
+                        <property name="use_stock">False</property>
                         <signal name="activate" handler="on_patch_view_tree_window_menuitem_activate"/>
                         <accelerator key="T" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+                        <child internal-child="image">
+                          <widget class="GtkImage" id="image5">
+                            <property name="visible">True</property>
+                            <property name="stock">gtk-index</property>
+                          </widget>
+                        </child>
                       </widget>
                     </child>
                     <child>
                       <widget class="GtkImageMenuItem" id="patch_view_messages_window_menuitem">
-                        <property name="label">_Messages...</property>
+                        <property name="label">_Messages</property>
                         <property name="visible">True</property>
                         <property name="tooltip" translatable="yes">View error messages from the engine</property>
                         <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
+                        <property name="use_stock">False</property>
                         <signal name="activate" handler="on_patch_view_messages_window_menuitem_activate"/>
                         <accelerator key="M" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+                        <child internal-child="image">
+                          <widget class="GtkImage" id="image4">
+                            <property name="visible">True</property>
+                            <property name="stock">gtk-info</property>
+                          </widget>
+                        </child>
                       </widget>
                     </child>
                   </widget>
@@ -358,7 +394,7 @@
                         <property name="label">Right-click the canvas to add objects</property>
                         <property name="visible">True</property>
                         <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
+                        <property name="use_stock">False</property>
                       </widget>
                     </child>
                     <child>
@@ -366,7 +402,7 @@
                         <property name="label">Press 'e' to toggle edit mode</property>
                         <property name="visible">True</property>
                         <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
+                        <property name="use_stock">False</property>
                       </widget>
                     </child>
                     <child>
@@ -1379,6 +1415,7 @@
                   <widget class="GtkToolbar" id="toolbar6">
                     <property name="visible">True</property>
                     <property name="toolbar_style">icons</property>
+                    <property name="icon_size">1</property>
                     <child>
                       <widget class="GtkToolItem" id="patch_view_breadcrumb_container">
                         <property name="visible">True</property>
@@ -1400,6 +1437,7 @@
                     <property name="visible">True</property>
                     <property name="toolbar_style">icons</property>
                     <property name="show_arrow">False</property>
+                    <property name="icon_size">1</property>
                     <child>
                       <widget class="GtkToggleToolButton" id="patch_view_process_but">
                         <property name="visible">True</property>
@@ -2729,7 +2767,7 @@ Contributors:
         <property name="label">_Input</property>
         <property name="visible">True</property>
         <property name="use_underline">True</property>
-        <property name="use_stock">True</property>
+        <property name="use_stock">False</property>
         <child>
           <widget class="GtkMenu" id="input1_menu">
             <child>
@@ -2768,7 +2806,7 @@ Contributors:
         <property name="label">_Output</property>
         <property name="visible">True</property>
         <property name="use_underline">True</property>
-        <property name="use_stock">True</property>
+        <property name="use_stock">False</property>
         <child>
           <widget class="GtkMenu" id="output1_menu">
             <child>
@@ -2808,7 +2846,7 @@ Contributors:
         <property name="visible">True</property>
         <property name="tooltip" translatable="yes">Load a plugin as a child of this patch</property>
         <property name="use_underline">True</property>
-        <property name="use_stock">True</property>
+        <property name="use_stock">False</property>
         <signal name="activate" handler="on_canvas_menu_add_plugin_activate"/>
       </widget>
     </child>
@@ -2818,7 +2856,7 @@ Contributors:
         <property name="visible">True</property>
         <property name="tooltip" translatable="yes">Load a patch as a child of this patch</property>
         <property name="use_underline">True</property>
-        <property name="use_stock">True</property>
+        <property name="use_stock">False</property>
         <signal name="activate" handler="on_canvas_menu_load_patch_activate"/>
       </widget>
     </child>
@@ -2828,7 +2866,7 @@ Contributors:
         <property name="visible">True</property>
         <property name="tooltip" translatable="yes">Create a new (empty) patch as a child of this patch</property>
         <property name="use_underline">True</property>
-        <property name="use_stock">True</property>
+        <property name="use_stock">False</property>
         <signal name="activate" handler="on_canvas_menu_new_patch_activate"/>
       </widget>
     </child>
@@ -3136,10 +3174,10 @@ Thank you for contributing.</property>
   <widget class="GtkMenu" id="port_control_menu">
     <child>
       <widget class="GtkImageMenuItem" id="port_control_menu_properties">
-        <property name="label">_Properties...</property>
+        <property name="label">gtk-properties</property>
         <property name="visible">True</property>
         <property name="use_underline">True</property>
-        <property name="use_stock">True</property>
+        <property name="use_stock">False</property>
         <signal name="activate" handler="on_port_control_menu_properties_activate"/>
       </widget>
     </child>
@@ -3285,7 +3323,7 @@ Thank you for contributing.</property>
         <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
         <property name="tooltip" translatable="yes">Disconnect all connections</property>
         <property name="use_underline">True</property>
-        <property name="use_stock">True</property>
+        <property name="use_stock">False</property>
       </widget>
     </child>
     <child>
@@ -3295,7 +3333,7 @@ Thank you for contributing.</property>
         <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
         <property name="tooltip" translatable="yes">Rename this object</property>
         <property name="use_underline">True</property>
-        <property name="use_stock">True</property>
+        <property name="use_stock">False</property>
       </widget>
     </child>
     <child>
@@ -3334,7 +3372,7 @@ Thank you for contributing.</property>
         <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
         <property name="tooltip" translatable="yes">Learn from the next received event</property>
         <property name="use_underline">True</property>
-        <property name="use_stock">True</property>
+        <property name="use_stock">False</property>
       </widget>
     </child>
     <child>
@@ -3344,7 +3382,7 @@ Thank you for contributing.</property>
         <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
         <property name="tooltip" translatable="yes">Manipulate controls in a separate window</property>
         <property name="use_underline">True</property>
-        <property name="use_stock">True</property>
+        <property name="use_stock">False</property>
       </widget>
     </child>
     <child>
@@ -3354,7 +3392,7 @@ Thank you for contributing.</property>
         <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
         <property name="tooltip" translatable="yes">Show this node's custom graphical interface in a separate window</property>
         <property name="use_underline">True</property>
-        <property name="use_stock">True</property>
+        <property name="use_stock">False</property>
       </widget>
     </child>
     <child>
@@ -3372,7 +3410,7 @@ Thank you for contributing.</property>
         <property name="visible">True</property>
         <property name="tooltip" translatable="yes">Set all controls on this node to random values</property>
         <property name="use_underline">True</property>
-        <property name="use_stock">True</property>
+        <property name="use_stock">False</property>
       </widget>
     </child>
   </widget>

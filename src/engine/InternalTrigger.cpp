@@ -30,7 +30,7 @@ using namespace std;
 
 namespace Ingen {
 
-static InternalPlugin trigger_plugin(NS_INTERNALS "Trigger", "trigger", "Trigger");
+static InternalPlugin trigger_plugin(NS_INTERNALS "Trigger", "trigger");
 
 TriggerNode::TriggerNode(const string& path, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size)
 	: NodeBase(&trigger_plugin, path, false, parent, srate, buffer_size)
