@@ -137,19 +137,6 @@ HTTPEngineSender::new_node(const string& path,
 }
 
 
-/** Create a node using library name and plugin label (DEPRECATED).
- *
- * DO NOT USE THIS.
- */
-void
-HTTPEngineSender::new_node_deprecated(const string& path,
-                                      const string& plugin_type,
-                                      const string& library_name,
-                                      const string& plugin_label)
-{
-}
-
-
 void
 HTTPEngineSender::rename(const string& old_path,
                          const string& new_name)

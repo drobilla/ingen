@@ -174,20 +174,9 @@ void
 QueuedEngineInterface::new_node(const string& path,
                                 const string& plugin_uri)
 {
-	push_queued(new CreateNodeEvent(_engine, _responder, now(),
-		path, plugin_uri, true)); // FIXME: polyphonic by default
+	push_queued(new CreateNodeEvent(_engine, _responder, now(), path, plugin_uri, true));
 }
 
-
-void
-QueuedEngineInterface::new_node_deprecated(const string& path,
-                                           const string& plugin_type,
-                                           const string& plugin_lib,
-                                           const string& plugin_label)
-{
-	push_queued(new CreateNodeEvent(_engine, _responder, now(),
-		path, plugin_type, plugin_lib, plugin_label, true)); // FIXME: polyphonic by default
-}
 
 void
 QueuedEngineInterface::rename(const string& old_path,

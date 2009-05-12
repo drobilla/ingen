@@ -199,26 +199,6 @@ OSCEngineSender::new_node(const string& path,
 }
 
 
-/** Create a node using library name and plugin label (DEPRECATED).
- *
- * DO NOT USE THIS.
- */
-void
-OSCEngineSender::new_node_deprecated(const string& path,
-                                     const string& plugin_type,
-                                     const string& library_name,
-                                     const string& plugin_label)
-{
-	send("/ingen/new_node",  "issss",
-		next_id(),
-		path.c_str(),
-		plugin_type.c_str(),
-		library_name.c_str(),
-		plugin_label.c_str(),
-		LO_ARGS_END);
-}
-
-
 void
 OSCEngineSender::rename(const string& old_path,
                         const string& new_name)

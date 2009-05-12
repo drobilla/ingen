@@ -89,11 +89,6 @@ public:
 	void new_node(const string& path,
 	              const string& plugin_uri);
 	
-	void new_node_deprecated(const string& path,
-	                         const string& plugin_type,
-	                         const string& library_name,
-	                         const string& plugin_label);
-
 	void rename(const string& old_path,
 	            const string& new_name);
 

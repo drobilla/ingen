@@ -47,16 +47,6 @@ public:
 	                 const string&        plugin_uri,
 	                 bool                 poly);
 	
-	// DEPRECATED
-	CreateNodeEvent(Engine&              engine,
-	                SharedPtr<Responder> responder,
-	                SampleCount          timestamp,
-	                const string&        node_path,
-	                const string&        plugin_type,
-	                const string&        lib_name,
-	                const string&        plugin_label,
-	                bool                 poly);
-
 	void pre_process();
 	void execute(ProcessContext& context);
 	void post_process();

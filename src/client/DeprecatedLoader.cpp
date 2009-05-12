@@ -505,10 +505,10 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 				plugin_uri = NS_INTERNALS "Trigger";
 			}
 
-			if (plugin_uri != "")
-				_engine->new_node(path, plugin_uri);
-			else
-				_engine->new_node_deprecated(path, plugin_type, library_name, plugin_label);
+			if (plugin_uri == "")
+				plugin_uri = "om:" + plugin_type + ":" + library_name + ":" + plugin_label;
+
+			_engine->new_node(path, plugin_uri);
 
 			_engine->set_variable(path, "ingen:polyphonic", bool(polyphonic));
 		

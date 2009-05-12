@@ -56,12 +56,6 @@ public:
 	
 	// Object commands
 	
-	/** DEPRECATED */
-	virtual void new_node_deprecated(const std::string& path,
-	                                 const std::string& plugin_type,
-	                                 const std::string& library_name,
-	                                 const std::string& plugin_label) = 0;
-
 	virtual void disconnect_all(const std::string& parent_patch_path,
 	                            const std::string& path) = 0;
 	

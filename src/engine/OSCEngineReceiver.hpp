@@ -94,7 +94,6 @@ private:
 	LO_HANDLER(new_patch);
 	LO_HANDLER(rename);
 	LO_HANDLER(new_port);
-	LO_HANDLER(new_node);
 	LO_HANDLER(new_node_by_uri);
 	LO_HANDLER(clear_patch);
 	LO_HANDLER(set_polyphony);

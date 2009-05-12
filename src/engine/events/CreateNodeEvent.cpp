@@ -47,26 +47,15 @@ CreateNodeEvent::CreateNodeEvent(Engine& engine, SharedPtr<Responder> responder,
 	, _compiled_patch(NULL)
 	, _node_already_exists(false)
 {
-}
-
-
-/** DEPRECATED: Construct from type, library name, and plugin label.
- *
- * Do not use.
- */
-CreateNodeEvent::CreateNodeEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path,
-		const string& plugin_type, const string& plugin_lib, const string& plugin_label, bool polyphonic)
-: QueuedEvent(engine, responder, timestamp),
-  _path(path),
-  _plugin_type(plugin_type),
-  _plugin_lib(plugin_lib),
-  _plugin_label(plugin_label),
-  _polyphonic(polyphonic),
-  _patch(NULL),
-  _node(NULL),
-  _compiled_patch(NULL),
-  _node_already_exists(false)
-{
+	if (_plugin_uri.substr(0, 3) == "om:") {
+		size_t colon = 2;
+		_plugin_uri = _plugin_uri.substr(colon + 1);
+		if ((colon = _plugin_uri.find(":")) == string::npos)
+			return;
+		_plugin_type = _plugin_uri.substr(0, colon + 1);
+		_plugin_label = _plugin_uri.substr(colon + 1);
+		_plugin_uri = "";
+	}
 }
 
 

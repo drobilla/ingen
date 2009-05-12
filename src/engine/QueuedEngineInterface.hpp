@@ -86,12 +86,6 @@ public:
 	virtual void new_node(const string& path,
 	                      const string& plugin_uri);
 	
-	/** FIXME: DEPRECATED, REMOVE */
-	virtual void new_node_deprecated(const string& path,
-	                                 const string& plugin_type,
-	                                 const string& lib_path,
-	                                 const string& plug_label);
-
 	virtual void rename(const string& old_path,
 	                    const string& new_name);
 
