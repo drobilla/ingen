@@ -26,10 +26,6 @@
 #include <string>
 #include <pthread.h>
 #include <glibmm/module.h>
-#ifdef HAVE_SLV2
-#include "slv2/slv2.h"
-#include "LV2Info.hpp"
-#endif
 
 using std::string;
 
@@ -38,6 +34,9 @@ namespace Ingen {
 class NodeImpl;
 class PatchImpl;
 class PluginImpl;
+#ifdef HAVE_SLV2
+class LV2Info;
+#endif
 
 
 /** Loads plugins and creates Nodes from them.

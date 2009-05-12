@@ -17,6 +17,9 @@
 
 #include <sstream>
 #include "lv2ext/lv2_event.h"
+#include "shared/LV2URIMap.hpp"
+#include "shared/LV2Features.hpp"
+#include "module/World.hpp"
 #include "Responder.hpp"
 #include "SetPortValueEvent.hpp"
 #include "Engine.hpp"

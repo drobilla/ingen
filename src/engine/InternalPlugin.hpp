@@ -30,7 +30,6 @@
 #include <dlfcn.h>
 #include <string>
 #include <iostream>
-#include "slv2/slv2.h"
 #include "PluginImpl.hpp"
 
 #define NS_INGEN "http://drobilla.net/ns/ingen#"

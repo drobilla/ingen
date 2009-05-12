@@ -22,6 +22,9 @@
 #include "raul/Deletable.hpp"
 #include "raul/Maid.hpp"
 #include "raul/SharedPtr.hpp"
+#include "common/interface/EventType.hpp"
+#include "events/CreatePatchEvent.hpp"
+#include "module/World.hpp"
 #include "AudioDriver.hpp"
 #include "ClientBroadcaster.hpp"
 #include "Engine.hpp"	
@@ -38,8 +41,6 @@
 #include "ProcessSlave.hpp"
 #include "QueuedEventSource.hpp"
 #include "ThreadManager.hpp"
-#include "common/interface/EventType.hpp"
-#include "events/CreatePatchEvent.hpp"
 #include "shared/Store.hpp"
 #include "tuning.hpp"
 using namespace std;
