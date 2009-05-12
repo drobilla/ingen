@@ -73,7 +73,7 @@ public:
 	                          const Raul::Atom&  value) = 0;
 	
 	virtual void set_port_value(const std::string& port_path,
-								const Raul::Atom&  value) = 0;
+	                            const Raul::Atom&  value) = 0;
 	
 	virtual void set_voice_value(const std::string& port_path,
 	                             uint32_t           voice,
