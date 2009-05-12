@@ -191,9 +191,9 @@ QueuedEngineInterface::new_node_deprecated(const string& path,
 
 void
 QueuedEngineInterface::rename(const string& old_path,
-                              const string& new_symbol)
+                              const string& new_path)
 {
-	push_queued(new RenameEvent(_engine, _responder, now(), old_path, new_symbol));
+	push_queued(new RenameEvent(_engine, _responder, now(), old_path, new_path));
 }
 
 
@@ -230,9 +230,9 @@ QueuedEngineInterface::disconnect(const string& src_port_path,
 
 void
 QueuedEngineInterface::disconnect_all(const string& patch_path,
-                                      const string& node_path)
+                                      const string& path)
 {
-	push_queued(new DisconnectAllEvent(_engine, _responder, now(), patch_path, node_path));
+	push_queued(new DisconnectAllEvent(_engine, _responder, now(), patch_path, path));
 }
 
 

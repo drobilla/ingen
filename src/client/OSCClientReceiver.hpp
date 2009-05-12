@@ -85,8 +85,8 @@ private:
 	LO_HANDLER(plugin_list_end);
 	LO_HANDLER(new_patch);
 	LO_HANDLER(destroyed);
-	LO_HANDLER(patch_cleared);
-	LO_HANDLER(object_renamed);
+	LO_HANDLER(clear_patch);
+	LO_HANDLER(rename);
 	LO_HANDLER(connection);
 	LO_HANDLER(disconnection);
 	LO_HANDLER(new_node);

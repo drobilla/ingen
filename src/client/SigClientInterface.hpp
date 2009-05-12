@@ -58,7 +58,7 @@ public:
 	sigc::signal<void, string, uint32_t>                   signal_new_patch; 
 	sigc::signal<void, string, string>                     signal_new_node; 
 	sigc::signal<void, string, string, uint32_t, bool>     signal_new_port; 
-	sigc::signal<void, string>                             signal_patch_cleared; 
+	sigc::signal<void, string>                             signal_clear_patch; 
 	sigc::signal<void, string, string>                     signal_object_renamed; 
 	sigc::signal<void, string>                             signal_object_destroyed; 
 	sigc::signal<void, string, string>                     signal_connection; 
@@ -122,10 +122,10 @@ protected:
 	void destroy(const string& path)
 		{ if (_enabled) signal_object_destroyed.emit(path); }
 	
-	void patch_cleared(const string& path)
-		{ if (_enabled) signal_patch_cleared.emit(path); }
+	void clear_patch(const string& path)
+		{ if (_enabled) signal_clear_patch.emit(path); }
 
-	void object_renamed(const string& old_path, const string& new_path)
+	void rename(const string& old_path, const string& new_path)
 		{ if (_enabled) signal_object_renamed.emit(old_path, new_path); }
 	
 	void disconnect(const string& src_port_path, const string& dst_port_path)

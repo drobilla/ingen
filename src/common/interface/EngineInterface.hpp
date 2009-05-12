@@ -54,10 +54,6 @@ public:
 	virtual void deactivate() = 0;
 	virtual void quit() = 0;
 	
-	// Bundles
-	virtual void bundle_begin() = 0;
-	virtual void bundle_end()   = 0;
-	
 	// Object commands
 	
 	/** DEPRECATED */
@@ -65,21 +61,9 @@ public:
 	                                 const std::string& plugin_type,
 	                                 const std::string& library_name,
 	                                 const std::string& plugin_label) = 0;
-	
-	virtual void rename(const std::string& old_path,
-	                    const std::string& new_symbol) = 0;
-	
-	virtual void clear_patch(const std::string& patch_path) = 0;
 
 	virtual void disconnect_all(const std::string& parent_patch_path,
 	                            const std::string& path) = 0;
-	
-	virtual void set_port_value(const std::string& port_path,
-	                            const Raul::Atom&  value) = 0;
-	
-	virtual void set_voice_value(const std::string& port_path,
-	                             uint32_t           voice,
-	                             const Raul::Atom&  value) = 0;
 	
 	virtual void set_program(const std::string& node_path,
 	                         uint32_t           bank,

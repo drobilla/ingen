@@ -40,7 +40,7 @@ class PatchImpl;
 class RenameEvent : public QueuedEvent
 {
 public:
-	RenameEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& name);
+	RenameEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& old_path, const string& new_path);
 	~RenameEvent();
 
 	void pre_process();
@@ -48,11 +48,16 @@ public:
 	void post_process();
 
 private:
-	enum ErrorType { NO_ERROR, OBJECT_NOT_FOUND, OBJECT_EXISTS, OBJECT_NOT_RENAMABLE, INVALID_NAME };
+	enum ErrorType {
+		NO_ERROR,
+		OBJECT_NOT_FOUND,
+		OBJECT_EXISTS,
+		OBJECT_NOT_RENAMABLE,
+		BAD_PATH
+	};
 
 	Path                           _old_path;
-	string                         _name;
-	Path                           _new_path;
+	string                         _new_path;
 	PatchImpl*                     _parent_patch;
 	EngineStore::iterator          _store_iterator;
 	ErrorType                      _error;

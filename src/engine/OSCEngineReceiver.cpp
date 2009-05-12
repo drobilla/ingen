@@ -390,16 +390,16 @@ OSCEngineReceiver::_new_patch_cb(const char* path, const char* types, lo_arg** a
 /** \page engine_osc_namespace
  * <p> \b /ingen/rename - Rename an Object (only Nodes, for now)
  * \arg \b response-id (integer)
- * \arg \b path - Object's path
- * \arg \b name - New name for object </p> \n \n
+ * \arg \b old-path - Object's path
+ * \arg \b new-path - Object's new path </p> \n \n
  */
 int
 OSCEngineReceiver::_rename_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	const char* object_path  = &argv[1]->s;
-	const char* name         = &argv[2]->s;
+	const char* old_path = &argv[1]->s;
+	const char* new_path = &argv[2]->s;
 	
-	rename(object_path, name);
+	rename(old_path, new_path);
 	return 0;
 }
 
@@ -412,7 +412,7 @@ OSCEngineReceiver::_rename_cb(const char* path, const char* types, lo_arg** argv
 int
 OSCEngineReceiver::_clear_patch_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	const char* patch_path  = &argv[1]->s;
+	const char* patch_path = &argv[1]->s;
 	
 	clear_patch(patch_path);
 	return 0;
@@ -533,7 +533,7 @@ OSCEngineReceiver::_disconnect_cb(const char* path, const char* types, lo_arg** 
  * <p> \b /ingen/disconnect_all - Disconnect all connections to/from a node/port.
  * \arg \b response-id (integer)
  * \arg \b patch-path (string) - The (parent) patch in which to disconnect object. </p> \n \n
- * \arg \b node-path (string) - Full path of object. </p> \n \n
+ * \arg \b object-path (string) - Full path of object. </p> \n \n
  */
 int
 OSCEngineReceiver::_disconnect_all_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)

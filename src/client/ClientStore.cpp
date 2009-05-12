@@ -49,7 +49,7 @@ ClientStore::ClientStore(SharedPtr<EngineInterface> engine, SharedPtr<SigClientI
 	emitter->signal_new_patch.connect(sigc::mem_fun(this, &ClientStore::new_patch));
 	emitter->signal_new_node.connect(sigc::mem_fun(this, &ClientStore::new_node));
 	emitter->signal_new_port.connect(sigc::mem_fun(this, &ClientStore::new_port));
-	emitter->signal_patch_cleared.connect(sigc::mem_fun(this, &ClientStore::patch_cleared));
+	emitter->signal_clear_patch.connect(sigc::mem_fun(this, &ClientStore::clear_patch));
 	emitter->signal_connection.connect(sigc::mem_fun(this, &ClientStore::connect));
 	emitter->signal_disconnection.connect(sigc::mem_fun(this, &ClientStore::disconnect));
 	emitter->signal_variable_change.connect(sigc::mem_fun(this, &ClientStore::set_variable));
@@ -377,8 +377,16 @@ ClientStore::destroy(const std::string& path)
 }
 
 void
-ClientStore::rename(const Path& old_path, const Path& new_path)
+ClientStore::rename(const std::string& old_path_str, const std::string& new_path_str)
 {
+	if (!Path::is_valid(old_path_str) || !Path::is_valid(new_path_str)) {
+		cerr << "[Store] Bad path renaming " << old_path_str << " to " << new_path_str << endl;
+		return;
+	}
+	
+	Path old_path(old_path_str);
+	Path new_path(new_path_str);
+	
 	iterator parent = find(old_path);
 	if (parent == end()) {
 		cerr << "[Store] Failed to find object " << old_path << " to rename." << endl;
@@ -491,8 +499,15 @@ ClientStore::new_port(const string& path, const string& type, uint32_t index, bo
 
 
 void
-ClientStore::patch_cleared(const Path& path)
+ClientStore::clear_patch(const std::string& path_str)
 {
+	if (!Path::is_valid(path_str)) {
+		cerr << "[Store] Illegal path in clear: " << path_str << endl;
+		return;
+	}
+
+	Path path(path_str);
+
 	iterator i = find(path);
 	if (i != end()) {
 		assert((*i).second->path() == path);

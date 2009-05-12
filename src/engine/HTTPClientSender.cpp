@@ -75,7 +75,7 @@ HTTPClientSender::destroy(const std::string& path)
 
 
 void
-HTTPClientSender::patch_cleared(const std::string& patch_path)
+HTTPClientSender::clear_patch(const std::string& patch_path)
 {
 	send_chunk(string("<").append(patch_path).append("> ingen:empty true ."));
 }
@@ -202,7 +202,7 @@ HTTPClientSender::new_patch(const std::string& path, uint32_t poly)
 
 
 void
-HTTPClientSender::object_renamed(const std::string& old_path, const std::string& new_path)
+HTTPClientSender::rename(const std::string& old_path, const std::string& new_path)
 {
 	string msg = string(
 			"@prefix rdf:       <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n" 

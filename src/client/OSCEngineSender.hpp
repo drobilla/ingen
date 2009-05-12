@@ -112,7 +112,7 @@ public:
 	                const string& dst_port_path);
 
 	void disconnect_all(const string& parent_patch_path,
-	                    const string& node_path);
+	                    const string& path);
 
 	void set_port_value(const string&     port_path,
 	                    const Raul::Atom& value);

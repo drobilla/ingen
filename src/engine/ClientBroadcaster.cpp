@@ -140,10 +140,10 @@ ClientBroadcaster::send_destroyed(const string& path)
 
 
 void
-ClientBroadcaster::send_patch_cleared(const string& patch_path)
+ClientBroadcaster::send_clear_patch(const string& patch_path)
 {
 	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
-		(*i).second->patch_cleared(patch_path);
+		(*i).second->clear_patch(patch_path);
 }
 
 void
@@ -242,7 +242,7 @@ void
 ClientBroadcaster::send_rename(const string& old_path, const string& new_path)
 {
 	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
-		(*i).second->object_renamed(old_path, new_path);
+		(*i).second->rename(old_path, new_path);
 }
 
 

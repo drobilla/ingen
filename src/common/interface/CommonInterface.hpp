@@ -58,6 +58,9 @@ public:
 	                      uint32_t           index,
 	                      bool               is_output) = 0;
 	
+	virtual void rename(const std::string& old_path,
+	                    const std::string& new_path) = 0;
+	
 	virtual void connect(const std::string& src_port_path,
 	                     const std::string& dst_port_path) = 0;
 	
@@ -80,6 +83,8 @@ public:
 	                             const Raul::Atom&  value) = 0;
 	
 	virtual void destroy(const std::string& path) = 0;
+	
+	virtual void clear_patch(const std::string& patch_path) = 0;
 };
 
 

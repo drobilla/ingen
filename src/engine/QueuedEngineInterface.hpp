@@ -106,7 +106,7 @@ public:
 	                        const string& dst_port_path);
 
 	virtual void disconnect_all(const string& patch_path,
-	                            const string& node_path);
+	                            const string& path);
 
 	virtual void set_port_value(const string&     port_path,
 	                            const Raul::Atom& value);

@@ -76,6 +76,7 @@ public:
 	void new_patch(const string& path, uint32_t poly);
 	void new_node(const string& path, const string& plugin_uri);
 	void new_port(const string& path, const string& type, uint32_t index, bool is_output);
+	void rename(const string& old_path, const string& new_path);
 	void set_variable(const string& subject_path, const string& predicate, const Atom& value);
 	void set_property(const string& subject_path, const string& predicate, const Atom& value);
 	void set_port_value(const string& port_path, const Raul::Atom& value);
@@ -119,8 +120,8 @@ private:
 	void bundle_end()   {}
 
 	// Slots for SigClientInterface signals
-	void rename(const Path& old_path, const Path& new_path);
-	void patch_cleared(const Path& path);
+	void object_renamed(const Path& old_path, const Path& new_path);
+	void clear_patch(const std::string& path);
 	void activity(const Path& path);
 	
 	bool attempt_connection(const Path& src_port_path, const Path& dst_port_path, bool add_orphan=false);

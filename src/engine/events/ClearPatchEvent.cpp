@@ -136,7 +136,7 @@ ClearPatchEvent::post_process()
 	
 		// Reply
 		_responder->respond_ok();
-		_engine.broadcaster()->send_patch_cleared(_patch_path);
+		_engine.broadcaster()->send_clear_patch(_patch_path);
 
 		// Unregister and destroy driver ports
 		if (_driver_ports) {

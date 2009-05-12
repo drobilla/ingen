@@ -57,7 +57,7 @@ public:
 	, new_node_slot(signal_new_node.make_slot())
 	, new_port_slot(signal_new_port.make_slot())
 	, connection_slot(signal_connection.make_slot())
-	, patch_cleared_slot(signal_patch_cleared.make_slot())
+	, clear_patch_slot(signal_clear_patch.make_slot())
 	, object_destroyed_slot(signal_object_destroyed.make_slot())
 	, object_renamed_slot(signal_object_renamed.make_slot())
 	, disconnection_slot(signal_disconnection.make_slot())
@@ -114,10 +114,10 @@ public:
 	void destroy(const string& path)
 		{ push_sig(sigc::bind(object_destroyed_slot, path)); }
 	
-	void patch_cleared(const string& path)
-		{ push_sig(sigc::bind(patch_cleared_slot, path)); }
+	void clear_patch(const string& path)
+		{ push_sig(sigc::bind(clear_patch_slot, path)); }
 
-	void object_renamed(const string& old_path, const string& new_path)
+	void rename(const string& old_path, const string& new_path)
 		{ push_sig(sigc::bind(object_renamed_slot, old_path, new_path)); }
 	
 	void disconnect(const string& src_port_path, const string& dst_port_path)
@@ -166,7 +166,7 @@ private:
 	sigc::slot<void, string, string>                     new_node_slot; 
 	sigc::slot<void, string, string, uint32_t, bool>     new_port_slot;
 	sigc::slot<void, string, string>                     connection_slot;
-	sigc::slot<void, string>                             patch_cleared_slot; 
+	sigc::slot<void, string>                             clear_patch_slot; 
 	sigc::slot<void, string>                             object_destroyed_slot; 
 	sigc::slot<void, string, string>                     object_renamed_slot; 
 	sigc::slot<void, string, string>                     disconnection_slot; 

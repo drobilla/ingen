@@ -61,6 +61,9 @@ public:
 	              uint32_t           index,
 	              bool               is_output);
 	
+	void rename(const std::string& old_path,
+	            const std::string& new_path);
+	
 	void connect(const std::string& src_port_path,
 	             const std::string& dst_port_path);
 	
@@ -83,6 +86,8 @@ public:
 	                     const Raul::Atom&  value);
 	
 	void destroy(const std::string& path);
+	
+	void clear_patch(const std::string& path);
 
 private:
 	const std::string map_path(const Raul::Path& in);

@@ -175,13 +175,13 @@ OSCClientSender::destroy(const std::string& path)
 
 
 /** \page client_osc_namespace
- * <p> \b /ingen/patch_cleared - Notification a patch has been cleared (all children destroyed)
+ * <p> \b /ingen/clear_patch - Notification a patch has been cleared (all children destroyed)
  * \arg \b path (string) - Path of patch (which is now empty)</p> \n \n
  */
 void
-OSCClientSender::patch_cleared(const std::string& patch_path)
+OSCClientSender::clear_patch(const std::string& patch_path)
 {
-	send("/ingen/patch_cleared", "s", patch_path.c_str(), LO_ARGS_END);
+	send("/ingen/clear_patch", "s", patch_path.c_str(), LO_ARGS_END);
 }
 
 
@@ -350,14 +350,14 @@ OSCClientSender::new_patch(const std::string& path, uint32_t poly)
 
 
 /** \page client_osc_namespace
- * <p> \b /ingen/object_renamed - Notification of an object's renaming
+ * <p> \b /ingen/rename - Notification of an object's renaming
  * \arg \b old-path (string) - Old path of object
  * \arg \b new-path (string) - New path of object </p> \n \n
  */
 void
-OSCClientSender::object_renamed(const std::string& old_path, const std::string& new_path)
+OSCClientSender::rename(const std::string& old_path, const std::string& new_path)
 {
-	send("/ingen/object_renamed", "ss", old_path.c_str(), new_path.c_str(), LO_ARGS_END);
+	send("/ingen/rename", "ss", old_path.c_str(), new_path.c_str(), LO_ARGS_END);
 }
 
 

@@ -277,12 +277,12 @@ OSCEngineSender::disconnect(const string& src_port_path,
 
 void
 OSCEngineSender::disconnect_all(const string& parent_patch_path,
-                                const string& node_path)
+                                const string& path)
 {
 	send("/ingen/disconnect_all", "iss",
 		next_id(),
 		parent_patch_path.c_str(),
-		node_path.c_str(),
+		path.c_str(),
 		LO_ARGS_END);
 }
 

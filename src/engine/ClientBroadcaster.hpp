@@ -68,7 +68,7 @@ public:
 	void send_plugins(const NodeFactory::Plugins& plugin_list);
 	void send_object(const GraphObjectImpl* p, bool recursive);
 	void send_destroyed(const string& path);
-	void send_patch_cleared(const string& patch_path);
+	void send_clear_patch(const string& patch_path);
 	void send_connection(const SharedPtr<const ConnectionImpl> connection);
 	void send_disconnection(const string& src_port_path, const string& dst_port_path);
 	void send_rename(const string& old_path, const string& new_path);

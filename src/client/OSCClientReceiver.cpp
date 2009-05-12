@@ -145,8 +145,8 @@ OSCClientReceiver::setup_callbacks()
 	lo_server_thread_add_method(_st, "/ingen/plugin", "sss", plugin_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/new_patch", "si", new_patch_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/destroyed", "s", destroyed_cb, this);
-	lo_server_thread_add_method(_st, "/ingen/patch_cleared", "s", patch_cleared_cb, this);
-	lo_server_thread_add_method(_st, "/ingen/object_renamed", "ss", object_renamed_cb, this);
+	lo_server_thread_add_method(_st, "/ingen/clear_patch", "s", clear_patch_cb, this);
+	lo_server_thread_add_method(_st, "/ingen/rename", "ss", rename_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/new_connection", "ss", connection_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/disconnection", "ss", disconnection_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/new_node", "ss", new_node_cb, this);
@@ -188,17 +188,17 @@ OSCClientReceiver::_destroyed_cb(const char* path, const char* types, lo_arg** a
 
 
 int
-OSCClientReceiver::_patch_cleared_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCClientReceiver::_clear_patch_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	_target->patch_cleared((const char*)&argv[0]->s);
+	_target->clear_patch((const char*)&argv[0]->s);
 	return 0;
 }
 
 
 int
-OSCClientReceiver::_object_renamed_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCClientReceiver::_rename_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	_target->object_renamed((const char*)&argv[0]->s, (const char*)&argv[1]->s);
+	_target->rename((const char*)&argv[0]->s, (const char*)&argv[1]->s);
 	return 0;
 }
 

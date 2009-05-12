@@ -87,12 +87,12 @@ public:
 	                      uint32_t           index,
 	                      bool               is_output);
 	
-	virtual void patch_cleared(const std::string& path);
+	virtual void clear_patch(const std::string& path);
 	
 	virtual void destroy(const std::string& path);
 	
-	virtual void object_renamed(const std::string& old_path,
-	                            const std::string& new_path);
+	virtual void rename(const std::string& old_path,
+	                    const std::string& new_path);
 	
 	virtual void connect(const std::string& src_port_path,
 	                     const std::string& dst_port_path);

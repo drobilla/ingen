@@ -31,20 +31,14 @@ using namespace std;
 namespace Ingen {
 
 
-RenameEvent::RenameEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& name)
-: QueuedEvent(engine, responder, timestamp),
-  _old_path(path),
-  _name(name),
-  _new_path("/"),
-  _parent_patch(NULL),
-  _store_iterator(engine.engine_store()->end()),
-  _error(NO_ERROR)
+RenameEvent::RenameEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& new_path)
+	: QueuedEvent(engine, responder, timestamp)
+	, _old_path(path)
+	, _new_path(new_path)
+	, _parent_patch(NULL)
+	, _store_iterator(engine.engine_store()->end())
+	, _error(NO_ERROR)
 {
-	/*
-	if (_old_path.parent() == "/")
-		_new_path = string("/") + _name;
-	else
-		_new_path = _old_path.parent() +"/"+ _name;*/
 }
 
 
@@ -56,13 +50,11 @@ RenameEvent::~RenameEvent()
 void
 RenameEvent::pre_process()
 {
-	if ((!Raul::Path::is_valid_name(_name)) || _name.find("/") != string::npos) {
-		_error = INVALID_NAME;
+	if ((!Raul::Path::is_valid(_new_path) || !_old_path.parent().is_parent_of(_new_path))) {
+		_error = BAD_PATH;
 		QueuedEvent::pre_process();
 		return;
 	}
-
-	_new_path = _old_path.parent().base() + _name;
 
 	_store_iterator = _engine.engine_store()->find(_old_path);
 	if (_store_iterator == _engine.engine_store()->end())  {
@@ -90,7 +82,7 @@ RenameEvent::pre_process()
 		if (child_old_path == _old_path)
 			child_new_path = _new_path;
 		else
-			child_new_path = _new_path.base() + child_old_path.substr(_old_path.length()+1);
+			child_new_path = Path(_new_path).base() + child_old_path.substr(_old_path.length()+1);
 
 		PtrCast<GraphObjectImpl>(i->second)->set_path(child_new_path);
 		i->first = child_new_path;
@@ -116,12 +108,8 @@ RenameEvent::execute(ProcessContext& context)
 		else if (port->type() == DataType::EVENT)
 			driver_port = _engine.midi_driver()->driver_port(_new_path);
 
-		if (driver_port) {
-			cerr << "DRIVER PORT :)!" << endl;
+		if (driver_port)
 			driver_port->set_name(_new_path);
-		} else {
-			cerr << "NO DRIVER PORT :(" << endl;
-		}
 	}
 }
 
@@ -141,8 +129,8 @@ RenameEvent::post_process()
 			msg.append("Could not find object ").append(_old_path);
 		else if (_error == OBJECT_NOT_RENAMABLE)
 			msg.append(_old_path).append(" is not renamable");
-		else if (_error == INVALID_NAME)
-			msg.append(_name).append(" is not a valid name");
+		else if (_error == BAD_PATH)
+			msg.append(_new_path).append(" is not a valid target path");
 
 		_responder->respond_error(msg);
 	}

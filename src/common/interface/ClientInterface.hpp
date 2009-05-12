@@ -65,11 +65,6 @@ public:
 	                        const std::string& type_uri,
 	                        const std::string& symbol) = 0;
 	
-	virtual void patch_cleared(const std::string& path) = 0;
-	
-	virtual void object_renamed(const std::string& old_path,
-	                            const std::string& new_path) = 0;
-	
 	virtual void activity(const std::string& path) = 0;
 	
 	virtual void program_add(const std::string& node_path,

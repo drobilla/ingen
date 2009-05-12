@@ -168,6 +168,14 @@ ClashAvoider::new_port(const std::string& path,
 
 
 void
+ClashAvoider::rename(const std::string& old_path,
+                     const std::string& new_path)
+{
+	_target.rename(map_path(old_path), map_path(new_path));
+}
+
+
+void
 ClashAvoider::connect(const std::string& src_port_path,
                       const std::string& dst_port_path)
 {
@@ -222,6 +230,13 @@ void
 ClashAvoider::destroy(const std::string& path)
 {
 	_target.destroy(map_path(path));
+}
+
+
+void
+ClashAvoider::clear_patch(const std::string& path)
+{
+	_target.clear_patch(map_path(path));
 }
 
 

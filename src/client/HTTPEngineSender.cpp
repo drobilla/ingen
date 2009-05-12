@@ -185,7 +185,7 @@ HTTPEngineSender::disconnect(const string& src_port_path,
 
 void
 HTTPEngineSender::disconnect_all(const string& parent_patch_path,
-                                 const string& node_path)
+                                 const string& path)
 {
 }
 
