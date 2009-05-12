@@ -47,15 +47,7 @@ JackMidiPort::JackMidiPort(JackMidiDriver* driver, DuplexPort* patch_port)
 {
 	assert(patch_port->poly() == 1);
 
-	_jack_port = jack_port_register(_driver->jack_client(),
-		patch_port->path().c_str(), JACK_DEFAULT_MIDI_TYPE,
-		(patch_port->is_input()) ? JackPortIsInput : JackPortIsOutput,
-		0);
-	
-	if (_jack_port == NULL) {
-		cerr << "[JackMidiPort] ERROR: Failed to register port " << patch_port->path() << endl;
-		throw JackAudioDriver::PortRegistrationFailedException();
-	}
+	create();
 
 	patch_port->buffer(0)->clear();
 }
@@ -68,7 +60,22 @@ JackMidiPort::~JackMidiPort()
 
 
 void
-JackMidiPort::unregister()
+JackMidiPort::create()
+{
+	_jack_port = jack_port_register(_driver->jack_client(),
+		_patch_port->path().c_str(), JACK_DEFAULT_MIDI_TYPE,
+		(_patch_port->is_input()) ? JackPortIsInput : JackPortIsOutput,
+		0);
+	
+	if (_jack_port == NULL) {
+		cerr << "[JackMidiPort] ERROR: Failed to register port " << _patch_port->path() << endl;
+		throw JackAudioDriver::PortRegistrationFailedException();
+	}
+}
+
+
+void
+JackMidiPort::destroy()
 {
 	assert(_jack_port);
 	if (jack_port_unregister(_driver->jack_client(), _jack_port))
@@ -157,9 +164,9 @@ JackMidiPort::post_process(ProcessContext& context)
 bool JackMidiDriver::_midi_thread_exit_flag = true;
 
 
-JackMidiDriver::JackMidiDriver(Engine& engine, jack_client_t* client)
+JackMidiDriver::JackMidiDriver(Engine& engine)
 	: _engine(engine)
-	, _client(client)
+	, _client(NULL)
 	, _is_activated(false)
 	, _is_enabled(false)
 {
@@ -172,6 +179,17 @@ JackMidiDriver::JackMidiDriver(Engine& engine, jack_client_t* client)
 JackMidiDriver::~JackMidiDriver()
 {
 	deactivate();
+}
+
+
+void
+JackMidiDriver::attach(AudioDriver& driver)
+{
+	JackAudioDriver* jad = dynamic_cast<JackAudioDriver*>(&driver);
+	assert(jad);
+	_client = jad->jack_client();
+	for (Raul::List<JackMidiPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
+		(*i)->create();
 }
 
 
@@ -190,9 +208,8 @@ void
 JackMidiDriver::deactivate() 
 {
 	for (Raul::List<JackMidiPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
-		(*i)->unregister();
+		(*i)->destroy();
 	_is_activated = false;
-	_ports.clear();
 }
 
 

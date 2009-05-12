@@ -269,12 +269,26 @@ ConnectWindow::disconnect()
 	if (!_widgets_loaded)
 		return;
 
+	_activate_button->set_sensitive(false);
+	_deactivate_button->set_sensitive(false);
+
 	_progress_bar->set_fraction(0.0);
-	_connect_button->set_sensitive(false);
-	_disconnect_button->set_sensitive(false);
-	
 	_connect_button->set_sensitive(true);
 	_disconnect_button->set_sensitive(false);
+}
+
+
+void
+ConnectWindow::activate()
+{
+	App::instance().engine()->activate();
+}
+
+
+void
+ConnectWindow::deactivate()
+{
+	App::instance().engine()->deactivate();
 }
 
 
@@ -302,6 +316,8 @@ ConnectWindow::load_widgets()
 	_xml->get_widget("connect_launch_radiobutton",   _launch_radio);
 	_xml->get_widget("connect_port_spinbutton",      _port_spinbutton);
 	_xml->get_widget("connect_internal_radiobutton", _internal_radio);
+	_xml->get_widget("connect_activate_button",      _activate_button);
+	_xml->get_widget("connect_deactivate_button",    _deactivate_button);
 	_xml->get_widget("connect_disconnect_button",    _disconnect_button);
 	_xml->get_widget("connect_connect_button",       _connect_button);
 	_xml->get_widget("connect_quit_button",          _quit_button);
@@ -309,6 +325,8 @@ ConnectWindow::load_widgets()
 	_server_radio->signal_toggled().connect(sigc::mem_fun(this, &ConnectWindow::server_toggled));
 	_launch_radio->signal_toggled().connect(sigc::mem_fun(this, &ConnectWindow::launch_toggled));
 	_internal_radio->signal_clicked().connect(sigc::mem_fun(this, &ConnectWindow::internal_toggled));
+	_activate_button->signal_clicked().connect(sigc::mem_fun(this, &ConnectWindow::activate));
+	_deactivate_button->signal_clicked().connect(sigc::mem_fun(this, &ConnectWindow::deactivate));
 	_disconnect_button->signal_clicked().connect(sigc::mem_fun(this, &ConnectWindow::disconnect));
 	_connect_button->signal_clicked().connect(sigc::bind(
 			sigc::mem_fun(this, &ConnectWindow::connect), false));

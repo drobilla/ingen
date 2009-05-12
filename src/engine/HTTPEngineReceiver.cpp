@@ -86,20 +86,20 @@ HTTPEngineReceiver::~HTTPEngineReceiver()
 
 
 void
-HTTPEngineReceiver::activate()
+HTTPEngineReceiver::activate_source()
 {
-	QueuedEventSource::activate();
+	QueuedEventSource::activate_source();
 	_receive_thread->set_name("HTTP Receiver");
 	_receive_thread->start();
 }
 
 
 void
-HTTPEngineReceiver::deactivate()
+HTTPEngineReceiver::deactivate_source()
 {
 	cout << "[HTTPEngineReceiver] Stopped HTTP listening thread" << endl;
 	_receive_thread->stop();
-	QueuedEventSource::deactivate();
+	QueuedEventSource::deactivate_source();
 }
 
 

@@ -19,6 +19,7 @@
 #define DEACTIVATEEVENT_H
 
 #include "QueuedEvent.hpp"
+#include "Engine.hpp"
 
 namespace Ingen {
 
@@ -30,11 +31,14 @@ namespace Ingen {
 class DeactivateEvent : public QueuedEvent
 {
 public:
-	DeactivateEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp);
+	DeactivateEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp)
+		: QueuedEvent(engine, responder, timestamp)
+	{}
 	
-	void pre_process();
-	void execute(ProcessContext& context);
-	void post_process();
+	void post_process() {
+		_responder->respond_ok();
+		_engine.deactivate();
+	}
 };
 
 

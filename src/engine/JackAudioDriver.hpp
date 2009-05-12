@@ -20,8 +20,10 @@
 
 #include <jack/jack.h>
 #include <jack/transport.h>
-#include "raul/Thread.hpp"
+#include "raul/AtomicInt.hpp"
 #include "raul/List.hpp"
+#include "raul/Semaphore.hpp"
+#include "raul/Thread.hpp"
 #include "AudioDriver.hpp"
 #include "Buffer.hpp"
 #include "ProcessContext.hpp"
@@ -48,7 +50,8 @@ public:
 	JackAudioPort(JackAudioDriver* driver, DuplexPort* patch_port);
 	~JackAudioPort();
 	
-	void unregister();
+	void create();
+	void destroy();
 	
 	void set_name(const std::string& name) { jack_port_set_name(_jack_port, name.c_str()); };
 	
@@ -75,12 +78,12 @@ private:
 class JackAudioDriver : public AudioDriver
 {
 public:	
-	JackAudioDriver(Engine&        engine,
-	                std::string    server_name = "default",
-	                std::string    client_name = "ingen",
-	                jack_client_t* jack_client = 0);
-
+	JackAudioDriver(Engine& engine);
 	~JackAudioDriver();
+
+	bool attach(const std::string& server_name,
+	            const std::string& client_name,
+	            void*              jack_client);
 
 	void activate();
 	void deactivate();
@@ -112,7 +115,7 @@ public:
 	SampleCount    sample_rate()  const { return _sample_rate; }
 	bool           is_activated() const { return _is_activated; }
 	
-	inline SampleCount frame_time() const { return jack_frame_time(_client); }
+	inline SampleCount frame_time() const { return _client ? jack_frame_time(_client) : 0; }
 
 	class PortRegistrationFailedException : public std::exception {};
 
@@ -136,6 +139,8 @@ private:
 
 	Engine&                _engine;
 	Raul::Thread*          _jack_thread;
+	Raul::Semaphore        _sem;
+	Raul::AtomicInt        _flag;
 	jack_client_t*         _client;
 	jack_nframes_t         _buffer_size;
 	jack_nframes_t         _sample_rate;

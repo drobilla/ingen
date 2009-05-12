@@ -143,7 +143,7 @@ ClearPatchEvent::post_process()
 			for (size_t i = 0; i < _driver_ports->size(); ++i) {
 				Raul::List<DriverPort*>::Node* ln = _driver_ports->at(i);
 				if (ln) {
-					ln->elem()->unregister();
+					ln->elem()->destroy();
 					_engine.maid()->push(ln);
 				}
 			}

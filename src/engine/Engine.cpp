@@ -22,26 +22,26 @@
 #include "raul/Deletable.hpp"
 #include "raul/Maid.hpp"
 #include "raul/SharedPtr.hpp"
-#include "Engine.hpp"	
-#include "tuning.hpp"
-#include "Event.hpp"
-#include "common/interface/EventType.hpp"
-#include "shared/Store.hpp"
-#include "NodeFactory.hpp"
-#include "ClientBroadcaster.hpp"
-#include "PatchImpl.hpp"
-#include "EngineStore.hpp"
-#include "MidiDriver.hpp"
-#include "OSCDriver.hpp"
-#include "QueuedEventSource.hpp"
-#include "PostProcessor.hpp"
-#include "events/CreatePatchEvent.hpp"
-#include "PostProcessor.hpp"
 #include "AudioDriver.hpp"
-#include "ProcessSlave.hpp"
-#include "ProcessContext.hpp"
+#include "ClientBroadcaster.hpp"
+#include "Engine.hpp"	
+#include "EngineStore.hpp"
+#include "Event.hpp"
 #include "MessageContext.hpp"
+#include "MidiDriver.hpp"
+#include "NodeFactory.hpp"
+#include "OSCDriver.hpp"
+#include "PatchImpl.hpp"
+#include "PostProcessor.hpp"
+#include "PostProcessor.hpp"
+#include "ProcessContext.hpp"
+#include "ProcessSlave.hpp"
+#include "QueuedEventSource.hpp"
 #include "ThreadManager.hpp"
+#include "common/interface/EventType.hpp"
+#include "events/CreatePatchEvent.hpp"
+#include "shared/Store.hpp"
+#include "tuning.hpp"
 using namespace std;
 
 namespace Ingen {
@@ -182,20 +182,21 @@ Engine::activate(size_t parallelism)
 		_midi_driver = new DummyMidiDriver();
 	
 	for (EventSources::iterator i = _event_sources.begin(); i != _event_sources.end(); ++i)
-		(*i)->activate();
+		(*i)->activate_source();
 
 	// Create root patch
-
-	PatchImpl* root_patch = new PatchImpl(*this, "", 1, NULL,
-			_audio_driver->sample_rate(), _audio_driver->buffer_size(), 1);
-	root_patch->activate();
-	_world->store->add(root_patch);
-	root_patch->compiled_patch(root_patch->compile());
-
-	assert(_audio_driver->root_patch() == NULL);
-	_audio_driver->set_root_patch(root_patch);
+	PatchImpl* root_patch = _audio_driver->root_patch();
+	if (!root_patch) {
+		root_patch = new PatchImpl(*this, "", 1, NULL,
+				_audio_driver->sample_rate(), _audio_driver->buffer_size(), 1);
+		root_patch->activate();
+		_world->store->add(root_patch);
+		root_patch->compiled_patch(root_patch->compile());
+		_audio_driver->set_root_patch(root_patch);
+	}
 
 	_audio_driver->activate();
+	_midi_driver->attach(*_audio_driver.get());
 
 	_process_slaves.clear();
 	_process_slaves.reserve(parallelism);
@@ -219,34 +220,31 @@ Engine::deactivate()
 		return;
 	
 	for (EventSources::iterator i = _event_sources.begin(); i != _event_sources.end(); ++i)
-		(*i)->deactivate();
+		(*i)->deactivate_source();
 
 	/*for (Tree<GraphObject*>::iterator i = _engine_store->objects().begin();
 			i != _engine_store->objects().end(); ++i)
 		if ((*i)->as_node() != NULL && (*i)->as_node()->parent() == NULL)
 			(*i)->as_node()->deactivate();*/
 	
-	_audio_driver->deactivate();
-	
-	if (_midi_driver != NULL) {
+	if (_midi_driver)
 		_midi_driver->deactivate();
-		delete _midi_driver;
-		_midi_driver = NULL;
-	}
+
+	_audio_driver->deactivate();
 
 	_audio_driver->root_patch()->deactivate();
 	
-	for (size_t i=0; i < _process_slaves.size(); ++i) {
+	/*for (size_t i=0; i < _process_slaves.size(); ++i) {
 		delete _process_slaves[i];
-	}
+	}*/
 	
-	_process_slaves.clear();
+	//_process_slaves.clear();
 
 	// Finalize any lingering events (unlikely)
-	_post_processor->process();
+	//_post_processor->process();
 
-	_audio_driver.reset();
-	_event_sources.clear();
+	//_audio_driver.reset();
+	//_event_sources.clear();
 	
 	_activated = false;
 }

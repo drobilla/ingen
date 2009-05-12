@@ -46,7 +46,8 @@ public:
 	/** Set the name of the system port */
 	virtual void set_name(const std::string& name) = 0;
 
-	virtual void unregister() = 0;
+	virtual void create()  = 0;
+	virtual void destroy() = 0;
 	
 	bool        is_input()   const { return _patch_port->is_input(); }
 	DuplexPort* patch_port() const { return _patch_port; }

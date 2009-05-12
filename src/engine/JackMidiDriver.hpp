@@ -41,7 +41,8 @@ public:
 	JackMidiPort(JackMidiDriver* driver, DuplexPort* port);
 	virtual ~JackMidiPort();
 
-	void unregister();
+	void create();
+	void destroy();
 
 	void pre_process(ProcessContext& context);
 	void post_process(ProcessContext& context);
@@ -64,8 +65,10 @@ private:
 class JackMidiDriver : public MidiDriver
 {
 public:
-	JackMidiDriver(Engine& engine, jack_client_t* client);
+	JackMidiDriver(Engine& engine);
 	~JackMidiDriver();
+
+	void attach(AudioDriver& driver);
 
 	void activate();
 	void deactivate();

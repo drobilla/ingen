@@ -48,8 +48,8 @@ public:
 	QueuedEventSource(size_t queue_size);
 	~QueuedEventSource();
 
-	void activate()   { Slave::start(); }
-	void deactivate() { Slave::stop(); }
+	void activate_source()   { Slave::start(); }
+	void deactivate_source() { Slave::stop(); }
 
 	void process(PostProcessor& dest, ProcessContext& context);
 	

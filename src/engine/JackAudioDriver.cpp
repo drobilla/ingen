@@ -53,15 +53,7 @@ JackAudioPort::JackAudioPort(JackAudioDriver* driver, DuplexPort* patch_port)
 {
 	assert(patch_port->poly() == 1);
 
-	_jack_port = jack_port_register(_driver->jack_client(),
-		patch_port->path().c_str(), JACK_DEFAULT_AUDIO_TYPE,
-		(patch_port->is_input()) ? JackPortIsInput : JackPortIsOutput,
-		0);
-
-	if (_jack_port == NULL) {
-		cerr << "[JackAudioPort] ERROR: Failed to register port " << patch_port->path() << endl;
-		throw JackAudioDriver::PortRegistrationFailedException();
-	}
+	create();
 
 	patch_port->buffer(0)->clear();
 	patch_port->fixed_buffers(true);
@@ -75,7 +67,22 @@ JackAudioPort::~JackAudioPort()
 
 
 void
-JackAudioPort::unregister()
+JackAudioPort::create()
+{
+	_jack_port = jack_port_register(_driver->jack_client(),
+		_patch_port->path().c_str(), JACK_DEFAULT_AUDIO_TYPE,
+		(_patch_port->is_input()) ? JackPortIsInput : JackPortIsOutput,
+		0);
+
+	if (_jack_port == NULL) {
+		cerr << "[JackAudioPort] ERROR: Failed to register port " << _patch_port->path() << endl;
+		throw JackAudioDriver::PortRegistrationFailedException();
+	}
+}
+
+
+void
+JackAudioPort::destroy()
 {
 	assert(_jack_port);
 	if (jack_port_unregister(_driver->jack_client(), _jack_port))
@@ -103,24 +110,42 @@ JackAudioPort::prepare_buffer(jack_nframes_t nframes)
 	
 //// JackAudioDriver ////
 
-JackAudioDriver::JackAudioDriver(Engine&        engine,
-                                 std::string    server_name,
-                                 std::string    client_name,
-                                 jack_client_t* jack_client)
+JackAudioDriver::JackAudioDriver(Engine& engine)
 	: _engine(engine)
 	, _jack_thread(NULL)
-	, _client(jack_client)
-	, _buffer_size(jack_client ? jack_get_buffer_size(jack_client) : 0)
-	, _sample_rate(jack_client ? jack_get_sample_rate(jack_client) : 0)
+	, _sem(0)
+	, _flag(0)
+	, _client(NULL)
+	, _buffer_size(0)
+	, _sample_rate(0)
 	, _is_activated(false)
-	, _local_client(true) // FIXME
+	, _local_client(true)
 	, _process_context(engine)
 	, _root_patch(NULL)
 {
-	if (!_client) {
+}
+
+
+JackAudioDriver::~JackAudioDriver()
+{
+	deactivate();
+	
+	if (_local_client)
+		jack_client_close(_client);
+}
+
+
+bool
+JackAudioDriver::attach(const std::string& server_name,
+                        const std::string& client_name,
+                        void*              jack_client)
+{
+	assert(!_client);
+	if (!jack_client) {
 		// Try supplied server name
 		if (server_name != "") {
-			_client = jack_client_open(client_name.c_str(), JackServerName, NULL, server_name.c_str());
+			_client = jack_client_open(client_name.c_str(),
+					JackServerName, NULL, server_name.c_str());
 			if (_client)
 				cerr << "[JackAudioDriver] Connected to JACK server '" <<
 					server_name << "'" << endl;
@@ -138,27 +163,27 @@ JackAudioDriver::JackAudioDriver(Engine&        engine,
 		// Still failed
 		if (!_client) {
 			cerr << "[JackAudioDriver] Unable to connect to Jack.  Exiting." << endl;
-			exit(EXIT_FAILURE);
+			return false;
 		}
-
-		_buffer_size = jack_get_buffer_size(_client);
-		_sample_rate = jack_get_sample_rate(_client);
+	} else {
+		_client = (jack_client_t*)jack_client;
 	}
 
+	_local_client = (jack_client == NULL);
+
+	_buffer_size = jack_get_buffer_size(_client);
+	_sample_rate = jack_get_sample_rate(_client);
+	
 	jack_on_shutdown(_client, shutdown_cb, this);
 
 	jack_set_thread_init_callback(_client, thread_init_cb, this);
 	jack_set_sample_rate_callback(_client, sample_rate_cb, this);
 	jack_set_buffer_size_callback(_client, buffer_size_cb, this);
-}
-
-
-JackAudioDriver::~JackAudioDriver()
-{
-	deactivate();
 	
-	if (_local_client)
-		jack_client_close(_client);
+	for (Raul::List<JackAudioPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
+		(*i)->create();
+
+	return true;
 }
 
 
@@ -169,6 +194,9 @@ JackAudioDriver::activate()
 		cerr << "[JackAudioDriver] Jack driver already activated." << endl;
 		return;
 	}
+
+	if (!_client)
+		attach("", "ingen", NULL);
 
 	jack_set_process_callback(_client, process_cb, this);
 
@@ -181,8 +209,11 @@ JackAudioDriver::activate()
 		cout << "[JackAudioDriver] Activated Jack client." << endl;
 	}
 
-	if (!_engine.midi_driver() || dynamic_cast<DummyMidiDriver*>(_engine.midi_driver()))
-		_engine.set_midi_driver(new JackMidiDriver(_engine, _client));
+	if (!_engine.midi_driver() || dynamic_cast<DummyMidiDriver*>(_engine.midi_driver())) {
+		JackMidiDriver* midi_driver = new JackMidiDriver(_engine);
+		midi_driver->attach(*this);
+		_engine.set_midi_driver(midi_driver);
+	}
 }
 
 
@@ -190,12 +221,17 @@ void
 JackAudioDriver::deactivate()
 {
 	if (_is_activated) {
-		for (Raul::List<JackAudioPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
-			(*i)->unregister();
+		_flag = 1;
 		_is_activated = false;
+		_sem.wait();
+		for (Raul::List<JackAudioPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
+			(*i)->destroy();
 		jack_deactivate(_client);
+		if (_local_client) {
+			jack_client_close(_client);
+			_client = NULL;
+		}
 		_jack_thread->stop();
-		_ports.clear();
 		cout << "[JackAudioDriver] Deactivated Jack client." << endl;
 	}
 }
@@ -288,8 +324,11 @@ JackAudioDriver::driver_port(const Path& path)
 int
 JackAudioDriver::_process_cb(jack_nframes_t nframes) 
 {
-	if (nframes == 0 || ! _is_activated)
+	if (nframes == 0 || ! _is_activated) {
+		if (_flag == 1)
+			_sem.post();
 		return 0;
+	}
 
 	// FIXME: all of this time stuff is screwy
 	
@@ -396,7 +435,9 @@ new_jack_audio_driver(
 		const std::string client_name,
 		void*             jack_client)
 {
-	return new Ingen::JackAudioDriver(engine, server_name, client_name, (jack_client_t*)jack_client);
+	Ingen::JackAudioDriver* driver = new Ingen::JackAudioDriver(engine);
+	driver->attach(server_name, client_name, jack_client);
+	return driver;
 }
 
 }

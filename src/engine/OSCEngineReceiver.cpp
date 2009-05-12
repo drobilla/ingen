@@ -143,9 +143,9 @@ OSCEngineReceiver::~OSCEngineReceiver()
 
 
 void
-OSCEngineReceiver::activate()
+OSCEngineReceiver::activate_source()
 {
-	QueuedEventSource::activate();
+	QueuedEventSource::activate_source();
 	_receive_thread->set_name("OSC Receiver");
 	_receive_thread->start();
 	_receive_thread->set_scheduling(SCHED_FIFO, 5); // Jack default appears to be 10
@@ -153,11 +153,11 @@ OSCEngineReceiver::activate()
 
 
 void
-OSCEngineReceiver::deactivate()
+OSCEngineReceiver::deactivate_source()
 {
 	cout << "[OSCEngineReceiver] Stopped OSC listening thread" << endl;
 	_receive_thread->stop();
-	QueuedEventSource::deactivate();
+	QueuedEventSource::deactivate_source();
 }
 
 

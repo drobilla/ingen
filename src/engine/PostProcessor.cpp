@@ -55,14 +55,18 @@ PostProcessor::process()
 	/* FIXME: process events from all threads if parallel */
 
 	/* Process audio thread generated events */
-	while (_engine.audio_driver()->context().event_sink().read(
-				_event_buffer_size, _event_buffer)) {
-		if (((Event*)_event_buffer)->time() > end_time) {
-			cerr << "WARNING: Lost event with time "
-				<< ((Event*)_event_buffer)->time() << " > " << end_time << endl;
+	while (true) {
+		AudioDriver* driver = _engine.audio_driver();
+		if (driver && driver->context().event_sink().read(_event_buffer_size, _event_buffer)) {
+			if (((Event*)_event_buffer)->time() > end_time) {
+				cerr << "WARNING: Lost event with time "
+					<< ((Event*)_event_buffer)->time() << " > " << end_time << endl;
+				break;
+			}
+			((Event*)_event_buffer)->post_process();
+		} else {
 			break;
 		}
-		((Event*)_event_buffer)->post_process();
 	}
 
 	/* Process normal events */

@@ -63,7 +63,6 @@ def build(bld):
 		events/CreateNodeEvent.cpp
 		events/CreatePatchEvent.cpp
 		events/CreatePortEvent.cpp
-		events/DeactivateEvent.cpp
 		events/DestroyEvent.cpp
 		events/DisconnectAllEvent.cpp
 		events/DisconnectionEvent.cpp

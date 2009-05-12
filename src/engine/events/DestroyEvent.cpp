@@ -200,7 +200,7 @@ DestroyEvent::post_process()
 	}
 
 	if (_driver_port) {
-		_driver_port->elem()->unregister();
+		_driver_port->elem()->destroy();
 		_engine.maid()->push(_driver_port);
 	}
 }

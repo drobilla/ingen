@@ -66,6 +66,8 @@ private:
 	
 	void disconnect();
 	void connect(bool existing);
+	void activate();
+	void deactivate();
 	void quit();
 	void on_show();
 	void on_hide();
@@ -96,6 +98,8 @@ private:
 	Gtk::SpinButton*   _port_spinbutton;
 	Gtk::RadioButton*  _launch_radio;
 	Gtk::RadioButton*  _internal_radio;
+	Gtk::Button*       _activate_button;
+	Gtk::Button*       _deactivate_button;
 	Gtk::Button*       _disconnect_button;
 	Gtk::Button*       _connect_button;
 	Gtk::Button*       _quit_button;

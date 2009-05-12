@@ -26,6 +26,7 @@
 namespace Ingen {
 
 class ProcessContext;
+class AudioDriver;
 
 
 /** Midi driver abstract base class.
@@ -36,6 +37,8 @@ class MidiDriver : public Driver
 {
 public:
 	MidiDriver() : Driver(DataType::EVENT) {}
+
+	virtual void attach(AudioDriver& master) {}
 
 	/** Prepare input for the specified (upcoming) cycle.
 	 *

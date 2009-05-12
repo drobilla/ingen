@@ -43,8 +43,8 @@ class EventSource
 public:
 	virtual ~EventSource() {}
 
-	virtual void activate()   = 0;
-	virtual void deactivate() = 0;
+	virtual void activate_source()   = 0;
+	virtual void deactivate_source() = 0;
 
 	virtual void process(PostProcessor& dest, ProcessContext& context) = 0;
 };
