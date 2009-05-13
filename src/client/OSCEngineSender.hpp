@@ -132,7 +132,6 @@ public:
 	void ping();
 	void request_plugin(const Raul::URI& uri);
 	void request_object(const Raul::Path& path);
-	void request_port_value(const Raul::Path& port_path);
 	void request_variable(const Raul::Path& path, const Raul::URI& key);
 	void request_property(const Raul::Path& path, const Raul::URI& key);
 	void request_plugins();

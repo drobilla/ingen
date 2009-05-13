@@ -76,7 +76,6 @@ def build(bld):
 		events/RequestObjectEvent.cpp
 		events/RequestPluginEvent.cpp
 		events/RequestPluginsEvent.cpp
-		events/RequestPortValueEvent.cpp
 		events/SetMetadataEvent.cpp
 		events/UnregisterClientEvent.cpp
 	'''

@@ -41,7 +41,6 @@
 #include "events/RequestObjectEvent.hpp"
 #include "events/RequestPluginEvent.hpp"
 #include "events/RequestPluginsEvent.hpp"
-#include "events/RequestPortValueEvent.hpp"
 #include "events/SetMetadataEvent.hpp"
 #include "events/SetPortValueEvent.hpp"
 #include "events/UnregisterClientEvent.hpp"

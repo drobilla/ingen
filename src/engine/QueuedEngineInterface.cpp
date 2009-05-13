@@ -307,13 +307,6 @@ QueuedEngineInterface::request_object(const Path& path)
 
 
 void
-QueuedEngineInterface::request_port_value(const Path& port_path)
-{
-	push_queued(new RequestPortValueEvent(_engine, _responder, now(), port_path));
-}
-
-
-void
 QueuedEngineInterface::request_variable(const Path& object_path, const URI& key)
 {
 	push_queued(new RequestMetadataEvent(_engine, _responder, now(), false, object_path, key));

@@ -127,7 +127,6 @@ public:
 	virtual void ping();
 	virtual void request_plugin(const Raul::URI& uri);
 	virtual void request_object(const Raul::Path& path);
-	virtual void request_port_value(const Raul::Path& port_path);
 	virtual void request_variable(const Raul::Path& object_path, const Raul::URI& key);
 	virtual void request_property(const Raul::Path& object_path, const Raul::URI& key);
 	virtual void request_plugins();

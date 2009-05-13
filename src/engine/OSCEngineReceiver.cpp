@@ -112,7 +112,6 @@ OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t
 	lo_server_add_method(_server, "/ingen/request_variable", "iss", variable_get_cb, this);
 	lo_server_add_method(_server, "/ingen/request_plugin", "is", request_plugin_cb, this);
 	lo_server_add_method(_server, "/ingen/request_object", "is", request_object_cb, this);
-	lo_server_add_method(_server, "/ingen/request_port_value", "is", request_port_value_cb, this);
 	lo_server_add_method(_server, "/ingen/request_plugins", "i", request_plugins_cb, this);
 	lo_server_add_method(_server, "/ingen/request_all_objects", "i", request_all_objects_cb, this);
 
@@ -737,22 +736,6 @@ OSCEngineReceiver::_request_object_cb(const char* path, const char* types, lo_ar
 	const char* object_path = &argv[1]->s;
 
 	request_object(object_path);
-	return 0;
-}
-
-
-/** \page engine_osc_namespace
- * <p> \b /ingen/request_port_value - Requests the engine send the value of a port.
- * \arg \b response-id (integer)
- * \arg \b port-path (string) - Full path of port to send the value of \n\n
- * \li Reply will be sent to client registered with the source address of this message.</p>\n\n
- */
-int
-OSCEngineReceiver::_request_port_value_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
-{
-	const char* port_path = &argv[1]->s;
-
-	request_port_value(port_path);
 	return 0;
 }
 

@@ -72,8 +72,6 @@ public:
 
 	virtual void request_object(const Raul::Path& path) = 0;
 
-	virtual void request_port_value(const Raul::Path& port_path) = 0;
-	
 	virtual void request_variable(const Raul::Path& path,
 	                              const Raul::URI&  key) = 0;
 	

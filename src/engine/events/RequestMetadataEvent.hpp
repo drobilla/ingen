@@ -42,9 +42,15 @@ public:
 	                     const Raul::URI&     key);
 
 	void pre_process();
+	void execute(ProcessContext& context);
 	void post_process();
 
 private:
+	enum {
+		NONE,
+		PORT_VALUE
+	} _special_type;
+	
 	Raul::Path       _path;
 	bool             _property;
 	Raul::URI        _key;

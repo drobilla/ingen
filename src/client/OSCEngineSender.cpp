@@ -380,16 +380,6 @@ OSCEngineSender::request_object(const Path& path)
 
 
 void
-OSCEngineSender::request_port_value(const Path& port_path)
-{
-	send("/ingen/request_port_value", "is",
-		next_id(),
-		port_path.c_str(),
-		LO_ARGS_END);
-}
-
-
-void
 OSCEngineSender::request_variable(const Path& object_path, const URI& key)
 {
 	send("/ingen/request_variable", "iss",

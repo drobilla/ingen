@@ -22,11 +22,15 @@
 #include "GraphObjectImpl.hpp"
 #include "EngineStore.hpp"
 #include "ClientBroadcaster.hpp"
+#include "PortImpl.hpp"
+#include "AudioBuffer.hpp"
 
 using namespace std;
 using namespace Raul;
 
 namespace Ingen {
+
+using namespace Shared;
 
 
 RequestMetadataEvent::RequestMetadataEvent(Engine&              engine,
@@ -36,6 +40,7 @@ RequestMetadataEvent::RequestMetadataEvent(Engine&              engine,
 	                                       const Path&          node_path,
 	                                       const URI&           key)
 	: QueuedEvent(engine, responder, timestamp)
+	, _special_type(NONE)
 	, _path(node_path)
 	, _property(property)
 	, _key(key)
@@ -55,7 +60,9 @@ RequestMetadataEvent::pre_process()
 		}
 	}
 
-	if (_property)
+	if (_key.str() == "ingen:value")
+		_special_type = PORT_VALUE;
+	else if (_property)
 		_value = _object->get_property(_key);
 	else
 		_value = _object->get_variable(_key);
@@ -65,10 +72,34 @@ RequestMetadataEvent::pre_process()
 
 
 void
+RequestMetadataEvent::execute(ProcessContext& context)
+{
+	QueuedEvent::execute(context);
+	if (_special_type == PORT_VALUE) {
+		PortImpl* port = dynamic_cast<PortImpl*>(_object);
+		if (port) {
+			if (port->type() == DataType::CONTROL || port->type() == DataType::AUDIO)
+				_value = ((AudioBuffer*)port->buffer(0))->value_at(0); // TODO: offset
+		} else {
+			_object = 0;
+		}
+	}
+}
+
+
+void
 RequestMetadataEvent::post_process()
 {
 	if (_responder->client()) {
-		if (!_object) {
+		if (_special_type == PORT_VALUE) {
+			if (_object) {
+				_responder->respond_ok();
+				_responder->client()->set_port_value(_path, _value);
+			} else {
+				const string msg = "Get value for non-port " + _path.str();
+				_responder->respond_error(msg);
+			}
+		} else if (!_object) {
 			const string msg = "Unable to find variable subject " + _path.str();
 			_responder->respond_error(msg);
 		} else {

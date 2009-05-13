@@ -246,12 +246,6 @@ HTTPEngineSender::request_object(const Path& path)
 
 
 void
-HTTPEngineSender::request_port_value(const Path& port_path)
-{
-}
-
-
-void
 HTTPEngineSender::request_variable(const Path& object_path, const URI& key)
 {
 }
