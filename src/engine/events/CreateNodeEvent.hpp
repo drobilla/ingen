@@ -18,13 +18,8 @@
 #ifndef CREATENODEEVENT_H
 #define CREATENODEEVENT_H
 
-#include "QueuedEvent.hpp"
-#include "raul/Path.hpp"
 #include <string>
-using std::string;
-
-namespace Raul { template <typename T> class Array; }
-template<typename T> class TreeNode;
+#include "QueuedEvent.hpp"
 
 namespace Ingen {
 
@@ -43,8 +38,8 @@ public:
 	CreateNodeEvent(Engine&               engine,
 	                 SharedPtr<Responder> responder,
 	                 SampleCount          timestamp,
-	                 const string&        node_path,
-	                 const string&        plugin_uri,
+	                 const Raul::Path&    node_path,
+	                 const Raul::URI&     plugin_uri,
 	                 bool                 poly);
 	
 	void pre_process();
@@ -52,12 +47,11 @@ public:
 	void post_process();
 
 private:
-	string         _patch_name;
 	Raul::Path     _path;
-	string         _plugin_uri; ///< If nonempty then type, library, label, are ignored
-	string         _plugin_type;
-	string         _plugin_lib;
-	string         _plugin_label;
+	Raul::URI      _plugin_uri; ///< If nonempty then type, library, label, are ignored
+	std::string    _plugin_type;
+	std::string    _plugin_lib;
+	std::string    _plugin_label;
 	bool           _polyphonic;
 	PatchImpl*     _patch;
 	NodeImpl*      _node;

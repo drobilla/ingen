@@ -33,7 +33,7 @@
 namespace Ingen {
 
 
-ClearPatchEvent::ClearPatchEvent(Engine& engine, SharedPtr<Responder> responder, FrameTime time, QueuedEventSource* source, const string& patch_path)
+ClearPatchEvent::ClearPatchEvent(Engine& engine, SharedPtr<Responder> responder, FrameTime time, QueuedEventSource* source, const Path& patch_path)
 	: QueuedEvent(engine, responder, time, true, source)
 	, _patch_path(patch_path)
 	, _process(false)
@@ -151,7 +151,7 @@ ClearPatchEvent::post_process()
 		}
 
 	} else {
-		_responder->respond_error(string("Patch ") + _patch_path + " not found");
+		_responder->respond_error(string("Patch ") + _patch_path.str() + " not found");
 	}
 	
 	_source->unblock(); // FIXME: can be done earlier in execute?

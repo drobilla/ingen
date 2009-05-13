@@ -18,15 +18,9 @@
 #ifndef RENAMEEVENT_H
 #define RENAMEEVENT_H
 
-#include <string>
 #include "raul/Path.hpp"
 #include "QueuedEvent.hpp"
 #include "EngineStore.hpp"
-
-using std::string;
-
-template<typename T> class TreeNode;
-template<typename T> class ListNode;
 
 namespace Ingen {
 
@@ -40,7 +34,7 @@ class PatchImpl;
 class RenameEvent : public QueuedEvent
 {
 public:
-	RenameEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& old_path, const string& new_path);
+	RenameEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Raul::Path& old_path, const Raul::Path& new_path);
 	~RenameEvent();
 
 	void pre_process();
@@ -53,14 +47,14 @@ private:
 		OBJECT_NOT_FOUND,
 		OBJECT_EXISTS,
 		OBJECT_NOT_RENAMABLE,
-		BAD_PATH
+		PARENT_DIFFERS
 	};
 
-	Path                           _old_path;
-	string                         _new_path;
-	PatchImpl*                     _parent_patch;
-	EngineStore::iterator          _store_iterator;
-	ErrorType                      _error;
+	Raul::Path            _old_path;
+	Raul::Path            _new_path;
+	PatchImpl*            _parent_patch;
+	EngineStore::iterator _store_iterator;
+	ErrorType             _error;
 };
 
 

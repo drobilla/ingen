@@ -187,7 +187,7 @@ LADSPANode::instantiate()
 		port_name = name;
 		names.insert(make_pair(port_name, j));
 		
-		string port_path = path() + "/" + port_name;
+		Path port_path(path().child(port_name));
 
 		DataType type = DataType::AUDIO;
 		port_buffer_size = _buffer_size;

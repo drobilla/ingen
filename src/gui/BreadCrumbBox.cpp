@@ -19,9 +19,12 @@
 #include "BreadCrumb.hpp"
 #include "App.hpp"
 #include "client/SigClientInterface.hpp"
+
 namespace Ingen {
 namespace GUI {
 
+using namespace std;
+using namespace Raul;
 
 BreadCrumbBox::BreadCrumbBox()
 	: Gtk::HBox()
@@ -120,7 +123,7 @@ BreadCrumbBox::build(Path path, SharedPtr<PatchView> view)
 		root_but->set_active(root_but->path() == _active_path);
 
 		Path working_path = "/";
-		string suffix = path.substr(1);
+		string suffix = path.chop_scheme().substr(1);
 		while (suffix.length() > 0) {
 			if (suffix[0] == '/')
 				suffix = suffix.substr(1);

@@ -21,13 +21,14 @@
 #include "ObjectModel.hpp"
 
 using namespace std;
+using namespace Raul;
 
 namespace Ingen {
 namespace Client {
 
 
 ObjectModel::ObjectModel(const Path& path)
-	: ResourceImpl(string("patch/") + path)
+	: ResourceImpl(path)
 	, _path(path)
 {
 }
@@ -43,7 +44,7 @@ ObjectModel::~ObjectModel()
  * @return Metadata value with key @a key, empty string otherwise.
  */
 const Atom&
-ObjectModel::get_variable(const string& key) const
+ObjectModel::get_variable(const URI& key) const
 {
 	static const Atom null_atom;
 
@@ -60,7 +61,7 @@ ObjectModel::get_variable(const string& key) const
  * @return Metadata value with key @a key, empty string otherwise.
  */
 Atom&
-ObjectModel::get_variable( string& key)
+ObjectModel::get_variable(URI& key)
 {
 	static Atom null_atom;
 

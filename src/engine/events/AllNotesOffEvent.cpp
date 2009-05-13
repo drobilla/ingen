@@ -36,7 +36,7 @@ AllNotesOffEvent::AllNotesOffEvent(Engine& engine, SharedPtr<Responder> responde
 
 /** Note off event with lookup - triggered by OSC.
  */
-AllNotesOffEvent::AllNotesOffEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& patch_path)
+AllNotesOffEvent::AllNotesOffEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Path& patch_path)
 : Event(engine, responder, timestamp),
   _patch_path(patch_path),
   _patch(NULL)
@@ -49,7 +49,7 @@ AllNotesOffEvent::execute(ProcessContext& context)
 {
 	Event::execute(context);
 
-	if (_patch == NULL && _patch_path != "")
+	if (!_patch)
 		_patch = _engine.engine_store()->find_patch(_patch_path);
 		
 	//if (_patch != NULL)

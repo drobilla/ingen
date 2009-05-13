@@ -25,6 +25,7 @@
 #include "WindowFactory.hpp"
 
 using namespace std;
+using namespace Raul;
 
 namespace Ingen {
 namespace GUI {
@@ -88,8 +89,8 @@ PatchTreeWindow::add_patch(SharedPtr<PatchModel> pm)
 	if (!pm->parent()) {
 		Gtk::TreeModel::iterator iter = _patch_treestore->append();
 		Gtk::TreeModel::Row row = *iter;
-		if (pm->path() == "/") {
-			row[_patch_tree_columns.name_col] = App::instance().engine()->uri();
+		if (pm->path().is_root()) {
+			row[_patch_tree_columns.name_col] = App::instance().engine()->uri().str();
 		} else {
 			row[_patch_tree_columns.name_col] = pm->path().name();
 		}
@@ -193,20 +194,18 @@ PatchTreeWindow::event_patch_enabled_toggled(const Glib::ustring& path_str)
 	Gtk::TreeModel::Row row = *active;
 	
 	SharedPtr<PatchModel> pm = row[_patch_tree_columns.patch_model_col];
-	Glib::ustring patch_path = pm->path();
-	
 	assert(pm);
 	
 	if (_enable_signal)
-		App::instance().engine()->set_variable(patch_path, "ingen:enabled", (bool)!pm->enabled());
+		App::instance().engine()->set_variable(pm->path(), "ingen:enabled", (bool)!pm->enabled());
 }
 
 
 void
-PatchTreeWindow::patch_variable_changed(const string& key, const Raul::Atom& value, const Path& path)
+PatchTreeWindow::patch_variable_changed(const URI& key, const Atom& value, const Path& path)
 {
 	_enable_signal = false;
-	if (key == "ingen:enabled" && value.type() == Atom::BOOL) {
+	if (key.str() == "ingen:enabled" && value.type() == Atom::BOOL) {
 		Gtk::TreeModel::iterator i = find_patch(_patch_treestore->children(), path);
 		if (i != _patch_treestore->children().end()) {
 			Gtk::TreeModel::Row row = *i;

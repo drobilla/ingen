@@ -31,7 +31,7 @@ using namespace std;
 namespace Ingen {
 
 
-RenameEvent::RenameEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& new_path)
+RenameEvent::RenameEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Path& path, const Path& new_path)
 	: QueuedEvent(engine, responder, timestamp)
 	, _old_path(path)
 	, _new_path(new_path)
@@ -50,12 +50,11 @@ RenameEvent::~RenameEvent()
 void
 RenameEvent::pre_process()
 {
-	if ((!Raul::Path::is_valid(_new_path) || !_old_path.parent().is_parent_of(_new_path))) {
-		_error = BAD_PATH;
+	if (!_old_path.parent().is_parent_of(_new_path)) {
+		_error = PARENT_DIFFERS;
 		QueuedEvent::pre_process();
 		return;
 	}
-
 	_store_iterator = _engine.engine_store()->find(_old_path);
 	if (_store_iterator == _engine.engine_store()->end())  {
 		_error = OBJECT_NOT_FOUND;
@@ -109,7 +108,7 @@ RenameEvent::execute(ProcessContext& context)
 			driver_port = _engine.midi_driver()->driver_port(_new_path);
 
 		if (driver_port)
-			driver_port->set_name(_new_path);
+			driver_port->set_name(_new_path.str());
 	}
 }
 
@@ -124,13 +123,13 @@ RenameEvent::post_process()
 		_engine.broadcaster()->send_rename(_old_path, _new_path);
 	} else {
 		if (_error == OBJECT_EXISTS)
-			msg.append("Object already exists at ").append(_new_path);
+			msg.append("Object already exists at ").append(_new_path.str());
 		else if (_error == OBJECT_NOT_FOUND)
-			msg.append("Could not find object ").append(_old_path);
+			msg.append("Could not find object ").append(_old_path.str());
 		else if (_error == OBJECT_NOT_RENAMABLE)
-			msg.append(_old_path).append(" is not renamable");
-		else if (_error == BAD_PATH)
-			msg.append(_new_path).append(" is not a valid target path");
+			msg.append(_old_path.str()).append(" is not renamable");
+		else if (_error == PARENT_DIFFERS)
+			msg.append(_new_path.str()).append(" is a child of a different patch");
 
 		_responder->respond_error(msg);
 	}

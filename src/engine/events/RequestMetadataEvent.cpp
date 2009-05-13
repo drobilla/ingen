@@ -15,7 +15,6 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <string>
 #include "interface/ClientInterface.hpp"
 #include "RequestMetadataEvent.hpp"
 #include "Responder.hpp"
@@ -24,8 +23,6 @@
 #include "EngineStore.hpp"
 #include "ClientBroadcaster.hpp"
 
-using std::string;
-
 namespace Ingen {
 
 
@@ -33,8 +30,8 @@ RequestMetadataEvent::RequestMetadataEvent(Engine&              engine,
 	                                       SharedPtr<Responder> responder,
 	                                       SampleCount          timestamp,
 	                                       bool                 property,
-	                                       const string&        node_path,
-	                                       const string&        key)
+	                                       const Path&          node_path,
+	                                       const URI&           key)
 	: QueuedEvent(engine, responder, timestamp)
 	, _path(node_path)
 	, _property(property)
@@ -69,8 +66,7 @@ RequestMetadataEvent::post_process()
 {
 	if (_responder->client()) {
 		if (!_object) {
-			string msg = "Unable to find variable subject ";
-			msg += _path;
+			const string msg = "Unable to find variable subject " + _path.str();
 			_responder->respond_error(msg);
 		} else {
 			_responder->respond_ok();

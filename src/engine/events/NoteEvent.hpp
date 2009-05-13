@@ -20,8 +20,6 @@
 
 #include "Event.hpp"
 #include "types.hpp"
-#include <string>
-using std::string;
 
 namespace Ingen {
 
@@ -46,7 +44,7 @@ public:
 	NoteEvent(Engine&              engine,
 	          SharedPtr<Responder> responder,
 	          SampleCount          timestamp,
-	          const string&        node_path,
+	          const Raul::Path&    node_path,
 			  bool                 on,
 	          uint8_t              note_num,
 	          uint8_t              velocity);
@@ -55,11 +53,11 @@ public:
 	void post_process();
 
 private:
-	NodeImpl*    _node;
-	const string _node_path;
-	bool         _on;
-	uint8_t      _note_num;
-	uint8_t      _velocity;
+	NodeImpl*        _node;
+	const Raul::Path _node_path;
+	bool             _on;
+	uint8_t          _note_num;
+	uint8_t          _velocity;
 };
 
 

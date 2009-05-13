@@ -21,6 +21,7 @@
 #include <cassert>
 #include "raul/SharedPtr.hpp"
 #include "raul/Deletable.hpp"
+#include "raul/Path.hpp"
 #include "types.hpp"
 
 namespace Ingen {	
@@ -57,10 +58,10 @@ public:
 		
 protected:
 	Event(Engine& engine, SharedPtr<Responder> responder, FrameTime time)
-	: _engine(engine)
-	, _responder(responder)
-	, _time(time)
-	, _executed(false)
+		: _engine(engine)
+		, _responder(responder)
+		, _time(time)
+		, _executed(false)
 	{}
 	
 	Engine&              _engine;

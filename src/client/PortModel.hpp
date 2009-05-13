@@ -41,12 +41,12 @@ class PortModel : public ObjectModel, public Ingen::Shared::Port
 public:
 	enum Direction { INPUT, OUTPUT };
 	
-	inline uint32_t    index()     const { return _index; } 
-	inline DataType    type()      const { return _type; }
-	inline const Atom& value()     const { return _current_val; }
-	inline bool        connected() const { return (_connections > 0); }
-	inline bool        is_input()  const { return (_direction == INPUT); }
-	inline bool        is_output() const { return (_direction == OUTPUT); }
+	inline uint32_t          index()     const { return _index; } 
+	inline DataType          type()      const { return _type; }
+	inline const Raul::Atom& value()     const { return _current_val; }
+	inline bool              connected() const { return (_connections > 0); }
+	inline bool              is_input()  const { return (_direction == INPUT); }
+	inline bool              is_output() const { return (_direction == OUTPUT); }
 	
 	bool has_hint(const std::string& qname) const;
 
@@ -56,29 +56,29 @@ public:
 
 	inline bool operator==(const PortModel& pm) const { return (_path == pm._path); }
 	
-	inline void value(const Atom& val) {
+	inline void value(const Raul::Atom& val) {
 		if (val != _current_val) {
 			_current_val = val;
 			signal_value_changed.emit(val);
 		}
 	}
 	
-	inline void value(uint32_t voice, const Atom& val) {
+	inline void value(uint32_t voice, const Raul::Atom& val) {
 		// FIXME: implement properly
 		signal_voice_changed.emit(voice, val);
 	}
 	
 	// Signals
-	sigc::signal<void, const Atom&>           signal_value_changed; ///< Value ports
-	sigc::signal<void, uint32_t, const Atom&> signal_voice_changed; ///< Polyphonic value ports
-	sigc::signal<void>                        signal_activity; ///< Message ports
-	sigc::signal<void, SharedPtr<PortModel> > signal_connection;
-	sigc::signal<void, SharedPtr<PortModel> > signal_disconnection;
+	sigc::signal<void, const Raul::Atom&>           signal_value_changed; ///< Value ports
+	sigc::signal<void, uint32_t, const Raul::Atom&> signal_voice_changed; ///< Polyphonic value ports
+	sigc::signal<void>                              signal_activity; ///< Message ports
+	sigc::signal<void, SharedPtr<PortModel> >       signal_connection;
+	sigc::signal<void, SharedPtr<PortModel> >       signal_disconnection;
 
 private:
 	friend class ClientStore;
 	
-	PortModel(const Path& path, uint32_t index, DataType type, Direction dir)
+	PortModel(const Raul::Path& path, uint32_t index, DataType type, Direction dir)
 		: ObjectModel(path)
 		, _index(index)
 		, _type(type)
@@ -98,11 +98,11 @@ private:
 	
 	void set(SharedPtr<ObjectModel> model);
 	
-	uint32_t  _index;
-	DataType  _type;
-	Direction _direction;
-	Atom      _current_val;
-	size_t    _connections;
+	uint32_t   _index;
+	DataType   _type;
+	Direction  _direction;
+	Raul::Atom _current_val;
+	size_t     _connections;
 };
 
 

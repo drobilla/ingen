@@ -27,7 +27,7 @@
 namespace Ingen {
 
 
-MidiLearnEvent::MidiLearnEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& node_path)
+MidiLearnEvent::MidiLearnEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Raul::Path& node_path)
 	: QueuedEvent(engine, responder, timestamp)
 	, _error(NO_ERROR)
 	, _node_path(node_path)
@@ -67,10 +67,10 @@ MidiLearnEvent::post_process()
 		_responder->respond_ok();
 	} else if (_node == NULL) {
 		string msg = "Did not find node '";
-		msg.append(_node_path).append("' for MIDI learn.");
+		msg.append(_node_path.str()).append("' for MIDI learn.");
 		_responder->respond_error(msg);
 	} else {
-		const string msg = string("Node '") + _node_path + "' is not capable of MIDI learn.";
+		const string msg = string("Node '") + _node_path.str() + "' is not capable of MIDI learn.";
 		_responder->respond_error(msg);
 	}
 }

@@ -25,8 +25,10 @@
 #include "PortPropertiesWindow.hpp"
 
 using namespace std;
+using namespace Raul;
 
 namespace Ingen {
+using namespace Client;
 namespace GUI {
 
 
@@ -62,7 +64,7 @@ PortPropertiesWindow::present(SharedPtr<PortModel> pm)
 
 	_port_model = pm;
 
-	set_title(pm->path() + " Properties");
+	set_title(pm->path().str() + " Properties");
 	
 	float min = 0.0f, max = 1.0f;
 	boost::shared_ptr<NodeModel> parent = PtrCast<NodeModel>(_port_model->parent());
@@ -90,14 +92,16 @@ PortPropertiesWindow::present(SharedPtr<PortModel> pm)
 
 
 void
-PortPropertiesWindow::variable_change(const string& key, const Atom& value)
+PortPropertiesWindow::variable_change(const URI& key, const Atom& value)
 {
 	//_enable_signal = false;
 
-	if (key == "lv2:minimum" && value.type() == Atom::FLOAT)
-		_min_spinner->set_value(value.get_float());
-	else if (key == "lv2:maximum" && value.type() == Atom::FLOAT)
-		_max_spinner->set_value(value.get_float());
+	if (value.type() == Atom::FLOAT) {
+		if (key.str() == "lv2:minimum")
+			_min_spinner->set_value(value.get_float());
+		else if (key.str() == "lv2:maximum")
+			_max_spinner->set_value(value.get_float());
+	}
 	
 	//_enable_signal = true;
 }

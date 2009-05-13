@@ -24,9 +24,9 @@
 namespace Ingen {
 
 
-UnregisterClientEvent::UnregisterClientEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& uri)
-: QueuedEvent(engine, responder, timestamp)
-, _uri(uri)
+UnregisterClientEvent::UnregisterClientEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const URI& uri)
+	: QueuedEvent(engine, responder, timestamp)
+	, _uri(uri)
 {
 }
 

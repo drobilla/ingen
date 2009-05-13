@@ -27,8 +27,6 @@
 #include "SigClientInterface.hpp"
 #include "raul/SRSWQueue.hpp"
 
-using std::string;
-
 /** Returns nothing and takes no parameters (because they have all been bound) */
 typedef sigc::slot<void> Closure;
 
@@ -70,7 +68,7 @@ public:
 	{
 	}
 
-	virtual std::string uri() const { return "(internal)"; }
+	virtual Raul::URI uri() const { return "ingen:internal"; }
 
     virtual void subscribe(Shared::EngineInterface* engine) { throw; }
 
@@ -88,60 +86,60 @@ public:
 	void response_ok(int32_t id)
 		{ push_sig(sigc::bind(response_ok_slot, id)); }
 	
-	void response_error(int32_t id, const string& msg)
+	void response_error(int32_t id, const std::string& msg)
 		{ push_sig(sigc::bind(response_error_slot, id, msg)); }
 
-	void error(const string& msg)
+	void error(const std::string& msg)
 		{ push_sig(sigc::bind(error_slot, msg)); }
 	
-	void new_plugin(const string& uri, const string& type_uri, const string& symbol)
+	void new_plugin(const Raul::URI& uri, const Raul::URI& type_uri, const Raul::Symbol& symbol)
 		{ push_sig(sigc::bind(new_plugin_slot, uri, type_uri, symbol)); }
 	
 	bool new_object(const Shared::GraphObject* object);
 	
-	void new_patch(const string& path, uint32_t poly)
+	void new_patch(const Raul::Path& path, uint32_t poly)
 		{ push_sig(sigc::bind(new_patch_slot, path, poly)); }
 	
-	void new_node(const string& path, const string& plugin_uri)
+	void new_node(const Raul::Path& path, const Raul::URI& plugin_uri)
 		{ push_sig(sigc::bind(new_node_slot, path, plugin_uri)); }
 	
-	void new_port(const string& path, const string& type, uint32_t index, bool is_output)
+	void new_port(const Raul::Path& path, const Raul::URI& type, uint32_t index, bool is_output)
 		{ push_sig(sigc::bind(new_port_slot, path, type, index, is_output)); }
 	
-	void connect(const string& src_port_path, const string& dst_port_path)
+	void connect(const Raul::Path& src_port_path, const Raul::Path& dst_port_path)
 		{ push_sig(sigc::bind(connection_slot, src_port_path, dst_port_path)); }
 
-	void destroy(const string& path)
+	void destroy(const Raul::Path& path)
 		{ push_sig(sigc::bind(object_destroyed_slot, path)); }
 	
-	void clear_patch(const string& path)
+	void clear_patch(const Raul::Path& path)
 		{ push_sig(sigc::bind(clear_patch_slot, path)); }
 
-	void rename(const string& old_path, const string& new_path)
+	void rename(const Raul::Path& old_path, const Raul::Path& new_path)
 		{ push_sig(sigc::bind(object_renamed_slot, old_path, new_path)); }
 	
-	void disconnect(const string& src_port_path, const string& dst_port_path)
+	void disconnect(const Raul::Path& src_port_path, const Raul::Path& dst_port_path)
 		{ push_sig(sigc::bind(disconnection_slot, src_port_path, dst_port_path)); }
 	
-	void set_variable(const string& path, const string& key, const Raul::Atom& value)
+	void set_variable(const Raul::Path& path, const Raul::URI& key, const Raul::Atom& value)
 		{ push_sig(sigc::bind(variable_change_slot, path, key, value)); }
 	
-	void set_property(const string& path, const string& key, const Raul::Atom& value)
+	void set_property(const Raul::Path& path, const Raul::URI& key, const Raul::Atom& value)
 		{ push_sig(sigc::bind(property_change_slot, path, key, value)); }
 
-	void set_port_value(const string& port_path, const Raul::Atom& value)
+	void set_port_value(const Raul::Path& port_path, const Raul::Atom& value)
 		{ push_sig(sigc::bind(port_value_slot, port_path, value)); }
 	
-	void set_voice_value(const string& port_path, uint32_t voice, const Raul::Atom& value)
+	void set_voice_value(const Raul::Path& port_path, uint32_t voice, const Raul::Atom& value)
 		{ push_sig(sigc::bind(voice_value_slot, port_path, voice, value)); }
 	
-	void activity(const string& port_path)
+	void activity(const Raul::Path& port_path)
 		{ push_sig(sigc::bind(activity_slot, port_path)); }
 
-	void program_add(const string& path, uint32_t bank, uint32_t program, const string& name)
+	void program_add(const Raul::Path& path, uint32_t bank, uint32_t program, const std::string& name)
 		{ push_sig(sigc::bind(program_add_slot, path, bank, program, name)); }
 	
-	void program_remove(const string& path, uint32_t bank, uint32_t program)
+	void program_remove(const Raul::Path& path, uint32_t bank, uint32_t program)
 		{ push_sig(sigc::bind(program_remove_slot, path, bank, program)); }
 
 	/** Process all queued events - Called from GTK thread to emit signals. */
@@ -156,27 +154,27 @@ private:
 	Raul::SRSWQueue<Closure> _sigs;
 	bool                     _attached;
 
-	sigc::slot<void>                                     bundle_begin_slot; 
-	sigc::slot<void>                                     bundle_end_slot; 
-	sigc::slot<void, int32_t>                            response_ok_slot; 
-	sigc::slot<void, int32_t, string>                    response_error_slot; 
-	sigc::slot<void, string>                             error_slot; 
-	sigc::slot<void, string, string, string>             new_plugin_slot; 
-	sigc::slot<void, string, uint32_t>                   new_patch_slot; 
-	sigc::slot<void, string, string>                     new_node_slot; 
-	sigc::slot<void, string, string, uint32_t, bool>     new_port_slot;
-	sigc::slot<void, string, string>                     connection_slot;
-	sigc::slot<void, string>                             clear_patch_slot; 
-	sigc::slot<void, string>                             object_destroyed_slot; 
-	sigc::slot<void, string, string>                     object_renamed_slot; 
-	sigc::slot<void, string, string>                     disconnection_slot; 
-	sigc::slot<void, string, string, Raul::Atom>         variable_change_slot; 
-	sigc::slot<void, string, string, Raul::Atom>         property_change_slot; 
-	sigc::slot<void, string, Raul::Atom>                 port_value_slot; 
-	sigc::slot<void, string, uint32_t, Raul::Atom>       voice_value_slot; 
-	sigc::slot<void, string>                             activity_slot; 
-	sigc::slot<void, string, uint32_t, uint32_t, string> program_add_slot; 
-	sigc::slot<void, string, uint32_t, uint32_t>         program_remove_slot; 
+	sigc::slot<void>                                              bundle_begin_slot; 
+	sigc::slot<void>                                              bundle_end_slot; 
+	sigc::slot<void, int32_t>                                     response_ok_slot; 
+	sigc::slot<void, int32_t, std::string>                        response_error_slot; 
+	sigc::slot<void, std::string>                                 error_slot; 
+	sigc::slot<void, Raul::URI, Raul::URI, Raul::Symbol>          new_plugin_slot; 
+	sigc::slot<void, Raul::Path, uint32_t>                        new_patch_slot; 
+	sigc::slot<void, Raul::Path, Raul::URI>                       new_node_slot; 
+	sigc::slot<void, Raul::Path, Raul::URI, uint32_t, bool>       new_port_slot;
+	sigc::slot<void, Raul::Path, Raul::Path>                      connection_slot;
+	sigc::slot<void, Raul::Path>                                  clear_patch_slot; 
+	sigc::slot<void, Raul::Path>                                  object_destroyed_slot; 
+	sigc::slot<void, Raul::Path, Raul::Path>                      object_renamed_slot; 
+	sigc::slot<void, Raul::Path, Raul::Path>                      disconnection_slot; 
+	sigc::slot<void, Raul::Path, Raul::URI, Raul::Atom>           variable_change_slot; 
+	sigc::slot<void, Raul::Path, Raul::URI, Raul::Atom>           property_change_slot; 
+	sigc::slot<void, Raul::Path, Raul::Atom>                      port_value_slot; 
+	sigc::slot<void, Raul::Path, uint32_t, Raul::Atom>            voice_value_slot; 
+	sigc::slot<void, Raul::Path>                                  activity_slot; 
+	sigc::slot<void, Raul::Path, uint32_t, uint32_t, std::string> program_add_slot; 
+	sigc::slot<void, Raul::Path, uint32_t, uint32_t>              program_remove_slot; 
 };
 
 

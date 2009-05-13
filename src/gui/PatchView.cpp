@@ -31,6 +31,9 @@
 #include "PatchTreeWindow.hpp"
 #include "GladeFactory.hpp"
 
+using namespace std;
+using namespace Raul;
+
 namespace Ingen {
 namespace GUI {
 
@@ -226,16 +229,16 @@ PatchView::refresh_clicked()
 
 
 void
-PatchView::property_changed(const std::string& predicate, const Raul::Atom& value)
+PatchView::property_changed(const Raul::URI& predicate, const Raul::Atom& value)
 {
 }
 
 
 void
-PatchView::variable_changed(const std::string& predicate, const Raul::Atom& value)
+PatchView::variable_changed(const Raul::URI& predicate, const Raul::Atom& value)
 {
 	_enable_signal = false;
-	if (predicate == "ingen:enabled") {
+	if (predicate.str() == "ingen:enabled") {
 	   if (value.type() == Atom::BOOL)
 		   _process_but->set_active(value.get_bool());
 	   else

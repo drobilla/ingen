@@ -30,9 +30,9 @@
 namespace Ingen {
 
 
-CreatePatchEvent::CreatePatchEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path, int poly)
+CreatePatchEvent::CreatePatchEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Raul::Path& path, int poly)
 	: QueuedEvent(engine, responder, timestamp)
-	, _path(Raul::Path::pathify(path))
+	, _path(path)
 	, _patch(NULL)
 	, _parent(NULL)
 	, _compiled_patch(NULL)
@@ -45,13 +45,7 @@ CreatePatchEvent::CreatePatchEvent(Engine& engine, SharedPtr<Responder> responde
 void
 CreatePatchEvent::pre_process()
 {
-	if (!Path::is_valid(_path)) {
-		_error = INVALID_PATH;
-		QueuedEvent::pre_process();
-		return;
-	}
-
-	if (_path == "/" || _engine.engine_store()->find_object(_path) != NULL) {
+	if (_path.is_root() || _engine.engine_store()->find_object(_path) != NULL) {
 		_error = OBJECT_EXISTS;
 		QueuedEvent::pre_process();
 		return;
@@ -102,13 +96,12 @@ CreatePatchEvent::execute(ProcessContext& context)
 
 	if (_patch != NULL) {
 		if (_parent == NULL) {
-			assert(_path == "/");
+			assert(_path.is_root());
 			assert(_patch->parent_patch() == NULL);
 			_engine.audio_driver()->set_root_patch(_patch);
 		} else {
 			assert(_parent != NULL);
-			assert(_path != "/");
-			
+			assert(!_path.is_root());
 			if (_parent->compiled_patch() != NULL)
 				_engine.maid()->push(_parent->compiled_patch());
 			_parent->compiled_patch(_compiled_patch);
@@ -120,34 +113,32 @@ CreatePatchEvent::execute(ProcessContext& context)
 void
 CreatePatchEvent::post_process()
 {
-	if (_responder.get()) {
-		if (_error == NO_ERROR) {
-			
+	string msg;
+	if (_responder) {
+		switch (_error) {
+		case NO_ERROR:
 			_responder->respond_ok();
-			
 			// Don't send ports/nodes that have been added since prepare()
 			// (otherwise they would be sent twice)
-			//_engine.broadcaster()->send_patch(_patch, false);
 			_engine.broadcaster()->send_object(_patch, false);
-			
-		} else if (_error == INVALID_PATH) {
-			string msg = "Attempt to create patch with illegal path ";
-			msg.append(_path);
-			_responder->respond_error(msg);
-		} else if (_error == OBJECT_EXISTS) {
+			break;
+		case OBJECT_EXISTS:
 			_responder->respond_ok();
 			/*string msg = "Unable to create patch: ";
 			msg.append(_path).append(" already exists.");
 			_responder->respond_error(msg);*/
-		} else if (_error == PARENT_NOT_FOUND) {
-			string msg = "Unable to create patch: Parent ";
-			msg.append(Path(_path).parent()).append(" not found.");
+			break;
+		case PARENT_NOT_FOUND:
+			msg = "Unable to create patch: Parent ";
+			msg.append(Path(_path).parent().str()).append(" not found.");
 			_responder->respond_error(msg);
-		} else if (_error == INVALID_POLY) {
-			string msg = "Unable to create patch ";
-			msg.append(_path).append(": ").append("Invalid polyphony respondered.");
+			break;
+		case INVALID_POLY:
+			msg = "Unable to create patch ";
+			msg.append(_path.str()).append(": ").append("Invalid polyphony respondered.");
 			_responder->respond_error(msg);
-		} else {
+			break;
+		default:
 			_responder->respond_error("Unable to load patch.");
 		}
 	}

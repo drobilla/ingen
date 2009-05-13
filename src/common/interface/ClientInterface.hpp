@@ -23,6 +23,8 @@
 #include <inttypes.h>
 #include "interface/CommonInterface.hpp"
 
+namespace Raul { class Path; class URI; }
+
 namespace Ingen {
 namespace Shared {
 
@@ -37,7 +39,7 @@ class ClientInterface : public CommonInterface
 public:
 	virtual ~ClientInterface() {}
 
-	virtual std::string uri() const = 0;
+	virtual Raul::URI uri() const = 0;
 
 	virtual void response_ok(int32_t id) = 0;
 	virtual void response_error(int32_t id, const std::string& msg) = 0;
@@ -61,20 +63,20 @@ public:
 	
 	virtual void error(const std::string& msg) = 0;
 	
-	virtual void new_plugin(const std::string& uri,
-	                        const std::string& type_uri,
-	                        const std::string& symbol) = 0;
+	virtual void new_plugin(const Raul::URI&    uri,
+	                        const Raul::URI&    type_uri,
+	                        const Raul::Symbol& symbol) = 0;
 	
-	virtual void activity(const std::string& path) = 0;
+	virtual void activity(const Raul::Path& path) = 0;
 	
-	virtual void program_add(const std::string& node_path,
+	virtual void program_add(const Raul::Path&  node_path,
 	                         uint32_t           bank,
 	                         uint32_t           program,
 	                         const std::string& program_name) = 0;
 	
-	virtual void program_remove(const std::string& node_path,
-	                            uint32_t           bank,
-	                            uint32_t           program) = 0;
+	virtual void program_remove(const Raul::Path& node_path,
+	                            uint32_t          bank,
+	                            uint32_t          program) = 0;
 };
 
 

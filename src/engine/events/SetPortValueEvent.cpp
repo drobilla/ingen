@@ -42,7 +42,7 @@ SetPortValueEvent::SetPortValueEvent(Engine&              engine,
                                      SharedPtr<Responder> responder,
                                      bool                 queued,
                                      SampleCount          timestamp,
-                                     const string&        port_path,
+                                     const Raul::Path&    port_path,
                                      const Raul::Atom&    value)
 	: QueuedEvent(engine, responder, timestamp)
 	, _queued(queued)
@@ -62,7 +62,7 @@ SetPortValueEvent::SetPortValueEvent(Engine&              engine,
                                      bool                 queued,
                                      SampleCount          timestamp,
                                      uint32_t             voice_num,
-                                     const string&        port_path,
+                                     const Raul::Path&    port_path,
                                      const Raul::Atom&    value)
 	: QueuedEvent(engine, responder, timestamp)
 	, _queued(queued)
@@ -85,14 +85,9 @@ void
 SetPortValueEvent::pre_process()
 {
 	if (_queued) {
-		if (_port == NULL) {
-			if (Path::is_valid(_port_path))
-				_port = _engine.engine_store()->find_port(_port_path);
-			else
-				_error = ILLEGAL_PATH;
-		}
-
-		if (_port == NULL && _error == NO_ERROR)
+		if (_port == NULL)
+			_port = _engine.engine_store()->find_port(_port_path);
+		if (_port == NULL)
 			_error = PORT_NOT_FOUND;
 	}
 
@@ -123,14 +118,10 @@ SetPortValueEvent::execute(ProcessContext& context)
 void
 SetPortValueEvent::apply(uint32_t start, uint32_t nframes)
 {
-	if (_error == NO_ERROR && _port == NULL) {
-		if (Path::is_valid(_port_path))
-			_port = _engine.engine_store()->find_port(_port_path);
-		else
-			_error = ILLEGAL_PATH;
-	}
+	if (_error == NO_ERROR && !_port)
+		_port = _engine.engine_store()->find_port(_port_path);
 
-	if (_port == NULL) {
+	if (!_port) {
 		if (_error == NO_ERROR)
 			_error = PORT_NOT_FOUND;
 	/*} else if (_port->buffer(0)->capacity() < _data_size) {
@@ -202,31 +193,32 @@ SetPortValueEvent::apply(uint32_t start, uint32_t nframes)
 void
 SetPortValueEvent::post_process()
 {
-	if (_error == NO_ERROR) {
+	string msg;
+	std::ostringstream ss;
+	switch (_error) {
+	case NO_ERROR:
 		assert(_port != NULL);
 		_responder->respond_ok();
 		_engine.broadcaster()->send_port_value(_port_path, _value);
-	
-	} else if (_error == ILLEGAL_PATH) {
-		string msg = "Illegal port path \"";
-		msg.append(_port_path).append("\"");
-		_responder->respond_error(msg);
-	
-	} else if (_error == ILLEGAL_VOICE) {
-		std::ostringstream ss;
+		break;
+	case TYPE_MISMATCH:
+		_responder->respond_error("type mismatch");
+		break;
+	case ILLEGAL_VOICE:
 		ss << "Illegal voice number " << _voice_num;
 		_responder->respond_error(ss.str());
-		
-	} else if (_error == PORT_NOT_FOUND) {
-		string msg = "Unable to find port ";
-		msg.append(_port_path).append(" for set_port_value");
+		break;
+	case PORT_NOT_FOUND:
+		msg = "Unable to find port ";
+		msg.append(_port_path.str()).append(" for set_port_value");
 		_responder->respond_error(msg);
-	
-	} else if (_error == NO_SPACE) {
-		std::ostringstream msg("Attempt to write ");
-		msg << _value.data_size() << " bytes to " << _port_path << ", with capacity "
+		break;
+	case NO_SPACE:
+		ss << "Attempt to write " << _value.data_size() << " bytes to "
+			<< _port_path.str() << ", with capacity "
 			<< _port->buffer_size() << endl;
-		_responder->respond_error(msg.str());
+		_responder->respond_error(ss.str());
+		break;
 	}
 }
 

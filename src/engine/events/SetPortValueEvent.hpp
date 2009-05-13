@@ -18,11 +18,9 @@
 #ifndef SETPORTVALUEEVENT_H
 #define SETPORTVALUEEVENT_H
 
-#include <string>
 #include "raul/Atom.hpp"
 #include "QueuedEvent.hpp"
 #include "types.hpp"
-using std::string;
 
 namespace Ingen {
 
@@ -45,7 +43,7 @@ public:
 	                  SharedPtr<Responder> responder,
 	                  bool                 queued,
 	                  SampleCount          timestamp,
-	                  const string&        port_path,
+	                  const Raul::Path&    port_path,
 	                  const Raul::Atom&    value);
 	
 	SetPortValueEvent(Engine&              engine,
@@ -53,7 +51,7 @@ public:
 	                  bool                 queued,
 	                  SampleCount          timestamp,
 	                  uint32_t             voice_num,
-	                  const string&        port_path,
+	                  const Raul::Path&    port_path,
 	                  const Raul::Atom&    value);
 
 	~SetPortValueEvent();
@@ -63,15 +61,20 @@ public:
 	void post_process();
 
 private:
-	enum ErrorType { NO_ERROR, PORT_NOT_FOUND, NO_SPACE,
-		ILLEGAL_PATH, ILLEGAL_VOICE, TYPE_MISMATCH };
+	enum ErrorType {
+		NO_ERROR,
+		PORT_NOT_FOUND,
+		NO_SPACE,
+		ILLEGAL_VOICE,
+		TYPE_MISMATCH
+	};
 	
 	void apply(uint32_t start, uint32_t nframes);
 	
 	bool             _queued;
 	bool             _omni;
 	uint32_t         _voice_num;
-	const string     _port_path;
+	const Raul::Path _port_path;
 	const Raul::Atom _value;
 	PortImpl*        _port;
 	ErrorType        _error;

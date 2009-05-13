@@ -40,8 +40,8 @@ class UploadPatchWindow;
 class UploadThread : public Raul::Thread {
 public:
 	UploadThread(UploadPatchWindow* win,
-			const string& str,
-			const string& url);
+			const std::string& str,
+			const std::string& url);
 
 private:
 	static size_t curl_read_cb(void* ptr, size_t size, size_t nmemb, void *stream);

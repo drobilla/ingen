@@ -36,8 +36,8 @@ SetMetadataEvent::SetMetadataEvent(
 		SharedPtr<Responder> responder,
 		SampleCount          timestamp,
 		bool                 property,
-		const string&        path,
-		const string&        key,
+		const Path&          path,
+		const URI&           key,
 		const Atom&          value)
 	: QueuedEvent(engine, responder, timestamp)
 	, _error(NO_ERROR)
@@ -56,12 +56,6 @@ SetMetadataEvent::SetMetadataEvent(
 void
 SetMetadataEvent::pre_process()
 {
-	if (!Path::is_valid(_path)) {
-		_error = INVALID_PATH;
-		QueuedEvent::pre_process();
-		return;
-	}
-	
 	_object = _engine.engine_store()->find_object(_path);
 	if (_object == NULL) {
 		_error = NOT_FOUND;
@@ -79,10 +73,10 @@ SetMetadataEvent::pre_process()
 	
 	_patch = dynamic_cast<PatchImpl*>(_object);
 
-	if (_key == "ingen:broadcast") {
+	if (_key.str() == "ingen:broadcast") {
 		_special_type = ENABLE_BROADCAST;
 	} else if (_patch) {
-		if (!_property && _key == "ingen:enabled") {
+		if (!_property && _key.str() == "ingen:enabled") {
 			if (_value.type() == Atom::BOOL) {
 				_special_type = ENABLE;
 				if (_value.get_bool() && !_patch->compiled_patch())
@@ -90,13 +84,13 @@ SetMetadataEvent::pre_process()
 			} else {
 				_error = BAD_TYPE;
 			}
-		} else if (!_property && _key == "ingen:polyphonic") {
+		} else if (!_property && _key.str() == "ingen:polyphonic") {
 			if (_value.type() == Atom::BOOL) {
 				_special_type = POLYPHONIC;
 			} else {
 				_error = BAD_TYPE;
 			}
-		} else if (_property && _key == "ingen:polyphony") {
+		} else if (_property && _key.str() == "ingen:polyphony") {
 			if (_value.type() == Atom::INT) {
 				_special_type = POLYPHONY;
 				_patch->prepare_internal_poly(_value.get_int32());
@@ -164,11 +158,6 @@ SetMetadataEvent::post_process()
 				% _path % _key).str());
 	case INTERNAL:
 		_responder->respond_error("Internal error");
-		break;
-	case INVALID_PATH:
-		_responder->respond_error((boost::format(
-				"Invalid path '%1%' setting '%2%'")
-				% _path % _key).str());
 		break;
 	case BAD_TYPE:
 		_responder->respond_error((boost::format("Bad type for '%1%'") % _key).str());

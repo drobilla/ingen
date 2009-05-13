@@ -22,6 +22,9 @@
 #include "NewSubpatchWindow.hpp"
 #include "PatchView.hpp"
 
+using namespace std;
+using namespace Raul;
+
 namespace Ingen {
 namespace GUI {
 

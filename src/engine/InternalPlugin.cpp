@@ -38,13 +38,14 @@ InternalPlugin::instantiate(const string&     name,
 	SampleCount srate       = engine.audio_driver()->sample_rate();
 	SampleCount buffer_size = engine.audio_driver()->buffer_size();
 
-	if (uri() == NS_INTERNALS "Note") {
+	const string uri_str = uri().str();
+	if (uri_str == NS_INTERNALS "Note") {
 		return new NoteNode(name, polyphonic, parent, srate, buffer_size);
-	} else if (uri() == NS_INTERNALS "Trigger") {
+	} else if (uri_str == NS_INTERNALS "Trigger") {
 		return new TriggerNode(name, polyphonic, parent, srate, buffer_size);
-	} else if (uri() == NS_INTERNALS "Controller") {
+	} else if (uri_str == NS_INTERNALS "Controller") {
 		return new ControllerNode(name, polyphonic, parent, srate, buffer_size);
-	} else if (uri() == NS_INTERNALS "Transport") {
+	} else if (uri_str == NS_INTERNALS "Transport") {
 		return new TransportNode(name, polyphonic, parent, srate, buffer_size);
 	} else {
 		return NULL;

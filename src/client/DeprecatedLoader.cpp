@@ -36,8 +36,10 @@
 #define NS_INTERNALS "http://drobilla.net/ns/ingen-internals#"
 
 using namespace std;
+using namespace Raul;
 
 namespace Ingen {
+using namespace Shared;
 namespace Client {
 
 	
@@ -48,21 +50,21 @@ namespace Client {
 class ControlModel
 {
 public:
-	ControlModel(const Path& port_path, float value)
+	ControlModel(const Raul::Path& port_path, float value)
 		: _port_path(port_path)
 		, _value(value)
 	{
 		assert(_port_path.find("//") == string::npos);
 	}
 	
-	const Path&   port_path() const          { return _port_path; }
-	void          port_path(const string& p) { _port_path = p; }
-	float         value() const              { return _value; }
-	void          value(float v)             { _value = v; }
+	const Raul::Path& port_path() const          { return _port_path; }
+	void              port_path(const string& p) { _port_path = p; }
+	float             value() const              { return _value; }
+	void              value(float v)             { _value = v; }
 
 private:
-	Path  _port_path;
-	float _value;
+	Raul::Path _port_path;
+	float      _value;
 };
 
 
@@ -289,7 +291,7 @@ DeprecatedLoader::load_patch(const Glib::ustring&    filename,
 		poly = 1;
 
 	// Create it, if we're not merging
-	if (!existing && path != "/") {
+	if (!existing && !path.is_root()) {
 		_engine->new_patch(path, poly);
 		for (GraphObject::Properties::const_iterator i = initial_data.begin(); i != initial_data.end(); ++i)
 			_engine->set_variable(path, i->first, i->second);
@@ -333,7 +335,7 @@ DeprecatedLoader::load_patch(const Glib::ustring&    filename,
 				list<ControlModel>::const_iterator i = pm->controls().begin();
 				for ( ; i != pm->controls().end(); ++i) {
 					const float value = i->value();
-					_engine->set_port_value(translate_load_path(i->port_path()), Atom(value));
+					_engine->set_port_value(translate_load_path(i->port_path().str()), Atom(value));
 				}
 			} else {
 				cerr << "WARNING: Unknown preset: \"" << pm->name() << endl;
@@ -354,7 +356,7 @@ DeprecatedLoader::load_patch(const Glib::ustring&    filename,
 
 	_load_path_translations.clear();
 
-	return path;
+	return path.str();
 }
 
 

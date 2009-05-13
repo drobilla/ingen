@@ -61,7 +61,7 @@ public:
 	void set_path(const Raul::Path& path)
 	{
 		remove();
-		const string text = (path == "/") ? "/" : path.name().c_str();
+		const std::string text = (path.is_root()) ? "/" : path.name().c_str();
 		Gtk::Label* lab = manage(new Gtk::Label(text));
 		lab->set_padding(0, 0);
 		lab->show();

@@ -19,15 +19,12 @@
 #define PATCHMODEL_H
 
 #include <cassert>
-#include <string>
 #include <sigc++/sigc++.h>
 #include "raul/SharedPtr.hpp"
 #include "interface/Patch.hpp"
 #include "NodeModel.hpp"
 
 #include "ConnectionModel.hpp"
-
-using std::string;
 
 namespace Ingen {
 namespace Client {
@@ -46,8 +43,8 @@ public:
 
 	const Connections& connections() const { return *_connections.get(); }
 	
-	SharedPtr<ConnectionModel> get_connection(const string& src_port_path,
-	                                          const string& dst_port_path) const;
+	SharedPtr<ConnectionModel> get_connection(const Raul::Path& src_port_path,
+	                                          const Raul::Path& dst_port_path) const;
 	
 	uint32_t poly()               const { return _poly; }
 	uint32_t internal_polyphony() const { return _poly; }
@@ -63,7 +60,7 @@ public:
 		signal_editable.emit(e);
 	} }
 	
-	virtual void set_variable(const string& key, const Atom& value);
+	virtual void set_variable(const Raul::URI& key, const Raul::Atom& value);
 
 	// Signals
 	sigc::signal<void, SharedPtr<NodeModel> >       signal_new_node; 
@@ -75,7 +72,7 @@ public:
 private:
 	friend class ClientStore;
 
-	PatchModel(const Path& patch_path, size_t internal_poly)
+	PatchModel(const Raul::Path& patch_path, size_t internal_poly)
 		: NodeModel("ingen:Patch", patch_path)
 		, _connections(new Connections())
 		, _poly(internal_poly)
@@ -88,14 +85,12 @@ private:
 	bool remove_child(SharedPtr<ObjectModel> c);
 	
 	void add_connection(SharedPtr<ConnectionModel> cm);
-	void remove_connection(const string& src_port_path, const string& dst_port_path);
+	void remove_connection(const Raul::Path& src_port_path, const Raul::Path& dst_port_path);
 	
 	SharedPtr<Connections> _connections;
 	uint32_t               _poly;
 	bool                   _editable;
 };
-
-typedef Raul::Table<string, SharedPtr<PatchModel> > PatchModelMap;
 
 
 } // namespace Client

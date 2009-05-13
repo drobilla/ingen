@@ -23,6 +23,7 @@
 #include "ClientStore.hpp"
 
 using namespace std;
+using namespace Raul;
 
 namespace Ingen {
 namespace Client {
@@ -97,7 +98,7 @@ PatchModel::clear()
 
 
 SharedPtr<ConnectionModel>
-PatchModel::get_connection(const string& src_port_path, const string& dst_port_path) const
+PatchModel::get_connection(const Path& src_port_path, const Path& dst_port_path) const
 {
 	for (Connections::const_iterator i = _connections->begin(); i != _connections->end(); ++i)
 		if ((*i)->src_port_path() == src_port_path && (*i)->dst_port_path() == dst_port_path)
@@ -142,7 +143,7 @@ PatchModel::add_connection(SharedPtr<ConnectionModel> cm)
 
 
 void
-PatchModel::remove_connection(const string& src_port_path, const string& dst_port_path)
+PatchModel::remove_connection(const Path& src_port_path, const Path& dst_port_path)
 {
 	for (Connections::iterator i = _connections->begin(); i != _connections->end(); ++i) {
 		SharedPtr<ConnectionModel> cm = PtrCast<ConnectionModel>(*i);
@@ -169,10 +170,10 @@ PatchModel::enabled() const
 
 
 void
-PatchModel::set_variable(const std::string& key, const Atom& value)
+PatchModel::set_variable(const Raul::URI& key, const Atom& value)
 {
 	NodeModel::set_variable(key, value);
-	if (key == "ingen:polyphony")
+	if (key.str() == "ingen:polyphony")
 		_poly = value.get_int32();
 }
 

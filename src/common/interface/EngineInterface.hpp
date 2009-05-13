@@ -19,7 +19,6 @@
 #define ENGINEINTERFACE_H
 
 #include <inttypes.h>
-#include <string>
 #include "interface/CommonInterface.hpp"
 
 namespace Ingen {
@@ -38,7 +37,7 @@ class EngineInterface : public CommonInterface
 public:
 	virtual ~EngineInterface() {}
 
-	virtual std::string uri() const = 0;
+	virtual Raul::URI uri() const = 0;
 	
 	// Responses
 	virtual void set_next_response_id(int32_t id) = 0;
@@ -46,7 +45,7 @@ public:
 	
 	// Client registration
 	virtual void register_client(ClientInterface* client) = 0;
-	virtual void unregister_client(const std::string& uri) = 0;
+	virtual void unregister_client(const Raul::URI& uri) = 0;
 	
 	// Engine commands
 	virtual void load_plugins() = 0;
@@ -56,30 +55,30 @@ public:
 	
 	// Object commands
 	
-	virtual void disconnect_all(const std::string& parent_patch_path,
-	                            const std::string& path) = 0;
+	virtual void disconnect_all(const Raul::Path& parent_patch_path,
+	                            const Raul::Path& path) = 0;
 	
-	virtual void set_program(const std::string& node_path,
-	                         uint32_t           bank,
-	                         uint32_t           program) = 0;
+	virtual void set_program(const Raul::Path& node_path,
+	                         uint32_t          bank,
+	                         uint32_t          program) = 0;
 	
-	virtual void midi_learn(const std::string& node_path) = 0;
+	virtual void midi_learn(const Raul::Path& node_path) = 0;
 	
 	// Requests
 	
 	virtual void ping() = 0;
 	
-	virtual void request_plugin(const std::string& uri) = 0;
+	virtual void request_plugin(const Raul::URI& uri) = 0;
 
-	virtual void request_object(const std::string& path) = 0;
+	virtual void request_object(const Raul::Path& path) = 0;
 
-	virtual void request_port_value(const std::string& port_path) = 0;
+	virtual void request_port_value(const Raul::Path& port_path) = 0;
 	
-	virtual void request_variable(const std::string& path,
-	                              const std::string& key) = 0;
+	virtual void request_variable(const Raul::Path& path,
+	                              const Raul::URI&  key) = 0;
 	
-	virtual void request_property(const std::string& path,
-	                              const std::string& key) = 0;
+	virtual void request_property(const Raul::Path& path,
+	                              const Raul::URI&  key) = 0;
 
 	virtual void request_plugins() = 0;
 	

@@ -103,8 +103,6 @@ ObjectSender::send_node(ClientInterface* client, const NodeImpl* node, bool recu
 {
 	PluginImpl* const plugin = node->plugin_impl();
 
-	assert(node->path().length() > 0);
-	
 	if (plugin->type() == Plugin::Patch) {
 		send_patch(client, (PatchImpl*)node, recursive);
 		return;

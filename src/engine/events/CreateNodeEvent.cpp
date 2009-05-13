@@ -36,8 +36,7 @@
 namespace Ingen {
 
 
-CreateNodeEvent::CreateNodeEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path,
-		const string& plugin_uri, bool polyphonic)
+CreateNodeEvent::CreateNodeEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Path& path, const URI& plugin_uri, bool polyphonic)
 	: QueuedEvent(engine, responder, timestamp)
 	, _path(path)
 	, _plugin_uri(plugin_uri)
@@ -47,14 +46,15 @@ CreateNodeEvent::CreateNodeEvent(Engine& engine, SharedPtr<Responder> responder,
 	, _compiled_patch(NULL)
 	, _node_already_exists(false)
 {
-	if (_plugin_uri.substr(0, 3) == "om:") {
+	string uri = _plugin_uri.str();
+	if (uri.substr(0, 3) == "om:") {
 		size_t colon = 2;
-		_plugin_uri = _plugin_uri.substr(colon + 1);
-		if ((colon = _plugin_uri.find(":")) == string::npos)
+		uri = uri.substr(colon + 1);
+		if ((colon = uri.find(":")) == string::npos)
 			return;
-		_plugin_type = _plugin_uri.substr(0, colon + 1);
-		_plugin_label = _plugin_uri.substr(colon + 1);
-		_plugin_uri = "";
+		_plugin_type = uri.substr(0, colon + 1);
+		_plugin_label = uri.substr(colon + 1);
+		uri = "";
 	}
 }
 
@@ -70,8 +70,8 @@ CreateNodeEvent::pre_process()
 
 	_patch = _engine.engine_store()->find_patch(_path.parent());
 
-	PluginImpl* const plugin = (_plugin_uri != "")
-			? _engine.node_factory()->plugin(_plugin_uri)
+	PluginImpl* const plugin = (_plugin_label == "")
+			? _engine.node_factory()->plugin(_plugin_uri.str())
 			: _engine.node_factory()->plugin(_plugin_type, _plugin_lib, _plugin_label);
 
 	if (_patch && plugin) {
@@ -115,19 +115,14 @@ CreateNodeEvent::post_process()
 {
 	string msg;
 	if (_node_already_exists) {
-		msg = string("Could not create node - ").append(_path);// + " already exists.";
+		msg = string("Could not create node - ").append(_path.str());// + " already exists.";
 		_responder->respond_error(msg);
 	} else if (_patch == NULL) {
-		msg = "Could not find patch '" + _path.parent() +"' for add_node.";
+		msg = "Could not find patch '" + _path.parent().str() +"' to add node.";
 		_responder->respond_error(msg);
 	} else if (_node == NULL) {
 		msg = "Unable to load node ";
-		msg += _path + " (you're missing the plugin ";
-		if (_plugin_uri != "")
-			msg += _plugin_uri;
-		else
-			msg += _plugin_lib + ":" + _plugin_label + " (" + _plugin_type + ")";
-		msg += ")";
+		msg += _path.str() + " (you're missing the plugin " + _plugin_uri.str() + ")";
 		_responder->respond_error(msg);
 	} else {
 		_responder->respond_ok();

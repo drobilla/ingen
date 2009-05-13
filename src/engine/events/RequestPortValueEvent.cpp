@@ -15,7 +15,6 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <string>
 #include "RequestPortValueEvent.hpp"
 #include "interface/ClientInterface.hpp"
 #include "Responder.hpp"
@@ -26,16 +25,14 @@
 #include "AudioBuffer.hpp"
 #include "ProcessContext.hpp"
 
-using std::string;
-
 namespace Ingen {
 
 
-RequestPortValueEvent::RequestPortValueEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& port_path)
-: QueuedEvent(engine, responder, timestamp),
-  _port_path(port_path),
-  _port(NULL),
-  _value(0.0)
+RequestPortValueEvent::RequestPortValueEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Path& port_path)
+	: QueuedEvent(engine, responder, timestamp)
+	, _port_path(port_path)
+	, _port(NULL)
+	, _value(0.0)
 {
 }
 

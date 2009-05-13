@@ -54,13 +54,13 @@ public:
 	
 	void init(SharedPtr<NodeModel> node, uint32_t poly);
 
-	Control* find_port(const Path& path) const;
+	Control* find_port(const Raul::Path& path) const;
 
 	void add_port(SharedPtr<PortModel> port);
-	void remove_port(const Path& path);
+	void remove_port(const Raul::Path& path);
 
-	void enable_port(const Path& path);
-	void disable_port(const Path& path);
+	void enable_port(const Raul::Path& path);
+	void disable_port(const Raul::Path& path);
 	
 	size_t             num_controls() const { return _controls.size(); }
 	std::pair<int,int> ideal_size()   const { return _ideal_size; }
@@ -72,8 +72,8 @@ private:
 	void all_voices_selected();
 	void specific_voice_selected();
 	
-	void variable_changed(const std::string& predicate, const Raul::Atom& value);
-	void parent_property_changed(const std::string& predicate, const Raul::Atom& value);
+	void variable_changed(const Raul::URI& predicate, const Raul::Atom& value);
+	void parent_property_changed(const Raul::URI& predicate, const Raul::Atom& value);
 
 	bool _callback_enabled;
 	

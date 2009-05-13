@@ -20,12 +20,14 @@
 #include "HTTPEngineSender.hpp"
 
 using namespace std;
+using namespace Raul;
 
 namespace Ingen {
+using namespace Shared;
 namespace Client {
 
 
-HTTPEngineSender::HTTPEngineSender(const string& engine_url)
+HTTPEngineSender::HTTPEngineSender(const URI& engine_url)
 	: _engine_url(engine_url)
 	, _id(0)
 	, _enabled(true)
@@ -67,7 +69,7 @@ HTTPEngineSender::register_client(ClientInterface* client)
 
 
 void
-HTTPEngineSender::unregister_client(const string& uri)
+HTTPEngineSender::unregister_client(const URI& uri)
 {
 }
 
@@ -108,22 +110,22 @@ HTTPEngineSender::new_object(const Shared::GraphObject* object)
 
 
 void
-HTTPEngineSender::new_patch(const string& path,
-                            uint32_t      poly)
+HTTPEngineSender::new_patch(const Path& path,
+                            uint32_t    poly)
 {
 }
 
 
 void
-HTTPEngineSender::new_port(const string& path,
-                           const string& type,
-                           uint32_t      index,
-                           bool          is_output)
+HTTPEngineSender::new_port(const Path& path,
+                           const URI&  type,
+                           uint32_t    index,
+                           bool        is_output)
 {
-	const string uri = _engine_url + "/patch" + path;
+	const string uri = _engine_url.str() + "/patch" + path.str();
 	cout << "HTTP " << uri << " NEW PORT: " << path << endl;
 	SoupMessage* msg = soup_message_new("PUT", uri.c_str());
-	string str = string("NEW PORT").append(path).append(type);
+	string str = string("NEW PORT").append(path.str()).append(type.str());
 	soup_message_set_request(msg, "application/x-turtle",
 			SOUP_MEMORY_COPY, str.c_str(), str.length());
 	soup_session_send_message(_session, msg);
@@ -131,93 +133,93 @@ HTTPEngineSender::new_port(const string& path,
 
 
 void
-HTTPEngineSender::new_node(const string& path,
-                           const string& plugin_uri)
+HTTPEngineSender::new_node(const Path& path,
+                           const URI& plugin_uri)
 {
 }
 
 
 void
-HTTPEngineSender::rename(const string& old_path,
-                         const string& new_name)
+HTTPEngineSender::rename(const Path& old_path,
+                         const Path& new_path)
 {
 }
 
 
 void
-HTTPEngineSender::destroy(const string& path)
+HTTPEngineSender::destroy(const Path& path)
 {
 }
 
 
 void
-HTTPEngineSender::clear_patch(const string& patch_path)
+HTTPEngineSender::clear_patch(const Path& patch_path)
 {
 }
 
 
 void
-HTTPEngineSender::connect(const string& src_port_path,
-                          const string& dst_port_path)
+HTTPEngineSender::connect(const Path& src_port_path,
+                          const Path& dst_port_path)
 {
 }
 
 
 void
-HTTPEngineSender::disconnect(const string& src_port_path,
-                             const string& dst_port_path)
+HTTPEngineSender::disconnect(const Path& src_port_path,
+                             const Path& dst_port_path)
 {
 }
 
 
 void
-HTTPEngineSender::disconnect_all(const string& parent_patch_path,
-                                 const string& path)
+HTTPEngineSender::disconnect_all(const Path& parent_patch_path,
+                                 const Path& path)
 {
 }
 
 
 void
-HTTPEngineSender::set_port_value(const string&     port_path,
-                                 const Raul::Atom& value)
+HTTPEngineSender::set_port_value(const Path& port_path,
+                                 const Atom& value)
 {
 }
 
 
 void
-HTTPEngineSender::set_voice_value(const string&     port_path,
-                                  uint32_t          voice,
-                                  const Raul::Atom& value)
+HTTPEngineSender::set_voice_value(const Path& port_path,
+                                  uint32_t    voice,
+                                  const Atom& value)
 {
 }
 
 
 void
-HTTPEngineSender::set_program(const string& node_path,
-                              uint32_t      bank,
-                              uint32_t      program)
+HTTPEngineSender::set_program(const Path& node_path,
+                              uint32_t    bank,
+                              uint32_t    program)
 {
 }
 
 
 void
-HTTPEngineSender::midi_learn(const string& node_path)
+HTTPEngineSender::midi_learn(const Path& node_path)
 {
 }
 
 
 void
-HTTPEngineSender::set_variable(const string&     obj_path,
-                               const string&     predicate,
-                               const Raul::Atom& value)
+HTTPEngineSender::set_variable(const Path& path,
+                               const URI&  predicate,
+                               const Atom& value)
 {
 }
 
 
 void
-HTTPEngineSender::set_property(const string&    obj_path,
-                               const string&     predicate,
-                               const Raul::Atom& value)
+HTTPEngineSender::set_property(const Path& path,
+                               const URI&  predicate,
+                               const Atom& value)
 {
 }
 
@@ -232,31 +234,31 @@ HTTPEngineSender::ping()
 
 
 void
-HTTPEngineSender::request_plugin(const string& uri)
+HTTPEngineSender::request_plugin(const URI& uri)
 {
 }
 
 
 void
-HTTPEngineSender::request_object(const string& path)
+HTTPEngineSender::request_object(const Path& path)
 {
 }
 
 
 void
-HTTPEngineSender::request_port_value(const string& port_path)
+HTTPEngineSender::request_port_value(const Path& port_path)
 {
 }
 
 
 void
-HTTPEngineSender::request_variable(const string& object_path, const string& key)
+HTTPEngineSender::request_variable(const Path& object_path, const URI& key)
 {
 }
 
 
 void
-HTTPEngineSender::request_property(const string& object_path, const string& key)
+HTTPEngineSender::request_property(const Path& object_path, const URI& key)
 {
 }
 

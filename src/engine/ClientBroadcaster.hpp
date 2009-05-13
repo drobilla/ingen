@@ -26,7 +26,8 @@
 #include "interface/ClientInterface.hpp"
 #include "NodeFactory.hpp"
 
-using std::string;
+using Raul::URI;
+using Raul::Path;
 
 namespace Ingen {
 
@@ -52,10 +53,10 @@ using Shared::ClientInterface;
 class ClientBroadcaster
 {
 public:
-	void register_client(const string& uri, ClientInterface* client);
-	bool unregister_client(const string& uri);
+	void register_client(const URI& uri, ClientInterface* client);
+	bool unregister_client(const URI& uri);
 	
-	ClientInterface* client(const string& uri);
+	ClientInterface* client(const URI& uri);
 	
 	//void send_client_registration(const string& url, int client_id);
 	
@@ -63,26 +64,26 @@ public:
 	void bundle_end();
 
 	// Error that isn't the direct result of a request
-	void send_error(const string& msg);
+	void send_error(const std::string& msg);
 	
 	void send_plugins(const NodeFactory::Plugins& plugin_list);
 	void send_object(const GraphObjectImpl* p, bool recursive);
-	void send_destroyed(const string& path);
-	void send_clear_patch(const string& patch_path);
+	void send_destroyed(const Path& path);
+	void send_clear_patch(const Path& patch_path);
 	void send_connection(const SharedPtr<const ConnectionImpl> connection);
-	void send_disconnection(const string& src_port_path, const string& dst_port_path);
-	void send_rename(const string& old_path, const string& new_path);
-	void send_variable_change(const string& node_path, const string& key, const Raul::Atom& value);
-	void send_property_change(const string& node_path, const string& key, const Raul::Atom& value);
-	void send_port_value(const string& port_path, const Raul::Atom& value);
-	void send_activity(const string& path);
-	void send_program_add(const string& node_path, int bank, int program, const string& name);
-	void send_program_remove(const string& node_path, int bank, int program);
+	void send_disconnection(const Path& src_port_path, const Path& dst_port_path);
+	void send_rename(const Path& old_path, const Path& new_path);
+	void send_variable_change(const Path& node_path, const URI& key, const Raul::Atom& value);
+	void send_property_change(const Path& node_path, const URI& key, const Raul::Atom& value);
+	void send_port_value(const Path& port_path, const Raul::Atom& value);
+	void send_activity(const Path& path);
+	void send_program_add(const Path& node_path, int bank, int program, const std::string& name);
+	void send_program_remove(const Path& node_path, int bank, int program);
 	
 	void send_plugins_to(ClientInterface*, const NodeFactory::Plugins& plugin_list);
 
 private:
-	typedef std::map<string, ClientInterface*> Clients;
+	typedef std::map<URI, ClientInterface*> Clients;
 	Clients _clients;
 };
 

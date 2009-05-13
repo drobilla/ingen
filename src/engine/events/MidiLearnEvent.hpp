@@ -21,7 +21,6 @@
 #include "QueuedEvent.hpp"
 #include "InternalController.hpp"
 #include "types.hpp"
-#include <string>
 
 namespace Ingen {
 
@@ -36,7 +35,7 @@ class ControlChangeEvent;
 class MidiLearnEvent : public QueuedEvent
 {
 public:
-	MidiLearnEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const std::string& node_path);
+	MidiLearnEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Raul::Path& node_path);
 	
 	void pre_process();
 	void execute(ProcessContext& context);
@@ -48,9 +47,9 @@ private:
 		INVALID_NODE_TYPE
 	};
 
-	ErrorType         _error;
-	const std::string _node_path;
-	NodeImpl*         _node;
+	ErrorType        _error;
+	const Raul::Path _node_path;
+	NodeImpl*        _node;
 };
 
 

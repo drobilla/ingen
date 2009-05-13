@@ -54,7 +54,7 @@ public:
 	
 	Shared::Port* port(uint32_t index) const;
 	
-	const std::string&    plugin_uri() const { return _plugin_uri; }
+	const Raul::URI&      plugin_uri() const { return _plugin_uri; }
 	const Shared::Plugin* plugin()     const { return _plugin.get(); }
 	uint32_t              num_ports()  const { return _ports.size(); }
 	const Ports&          ports()      const { return _ports; }
@@ -68,15 +68,15 @@ public:
 protected:
 	friend class ClientStore;
 	
-	NodeModel(const std::string& plugin_uri, const Path& path);
-	NodeModel(SharedPtr<PluginModel> plugin, const Path& path);
+	NodeModel(const Raul::URI& plugin_uri, const Raul::Path& path);
+	NodeModel(SharedPtr<PluginModel> plugin, const Raul::Path& path);
 
-	NodeModel(const Path& path);
+	NodeModel(const Raul::Path& path);
 	void add_child(SharedPtr<ObjectModel> c);
 	bool remove_child(SharedPtr<ObjectModel> c);
 	void add_port(SharedPtr<PortModel> pm);
 	void remove_port(SharedPtr<PortModel> pm);
-	void remove_port(const Path& port_path);
+	void remove_port(const Raul::Path& port_path);
 	void add_program(int bank, int program, const std::string& name);
 	void remove_program(int bank, int program);
 	void set(SharedPtr<ObjectModel> model);
@@ -84,7 +84,7 @@ protected:
 	virtual void clear();
 	
 	Ports                  _ports;      ///< Vector of ports (not a Table to preserve order)
-	std::string            _plugin_uri; ///< Plugin URI (if PluginModel is unknown)
+	Raul::URI              _plugin_uri; ///< Plugin URI (if PluginModel is unknown)
 	SharedPtr<PluginModel> _plugin;     ///< The plugin this node is an instance of
 
 private:

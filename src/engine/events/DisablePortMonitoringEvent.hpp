@@ -15,21 +15,14 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef DISABLEPORTNOTIFICATIONEVENT_H
-#define DISABLEPORTNOTIFICATIONEVENT_H
+#ifndef DISABLEPORTMONITORINGEVENT_H
+#define DISABLEPORTMONITORINGEVENT_H
 
-#include <string>
 #include "QueuedEvent.hpp"
 #include "types.hpp"
 
-using std::string;
-
 namespace Ingen {
 	
-class PortImpl;
-namespace Shared { class ClientInterface; }
-using Shared::ClientInterface;
-
 
 /** Disable sending of dynamic value change notifications for a port.
  *
@@ -41,18 +34,18 @@ public:
 	DisablePortMonitoringEvent(Engine&              engine,
 	                           SharedPtr<Responder> responder,
 	                           SampleCount          timestamp,
-	                           const std::string&   port_path);
+	                           const Raul::Path&    port_path);
 
 	void pre_process();
 	void execute(ProcessContext& context);
 	void post_process();
 
 private:
-	const std::string _port_path;
-	Port*             _port;
+	const Raul::Path _port_path;
+	Port*            _port;
 };
 
 
 } // namespace Ingen
 
-#endif // DISABLEPORTNOTIFICATIONEVENT_H
+#endif // DISABLEPORTMONITORINGEVENT_H

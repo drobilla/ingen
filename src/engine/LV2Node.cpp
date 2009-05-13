@@ -173,7 +173,7 @@ LV2Node::instantiate()
 	slv2_value_free(ctx_ext_uri);
 	
 	string port_name;
-	string port_path;
+	Path   port_path;
 	
 	PortImpl* port = NULL;
 	
@@ -190,7 +190,7 @@ LV2Node::instantiate()
 		port_name = slv2_value_as_string(slv2_port_get_symbol(plug, id));
 		assert(port_name.find("/") == string::npos);
 
-		port_path = path() + "/" + port_name;
+		port_path = path().child(port_name);
 		
 		DataType data_type = DataType::UNKNOWN;
 		if (slv2_port_is_a(plug, id, info->control_class)) {

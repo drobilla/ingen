@@ -15,7 +15,6 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <string>
 #include "RequestObjectEvent.hpp"
 #include "interface/ClientInterface.hpp"
 #include "Responder.hpp"
@@ -28,15 +27,13 @@
 #include "ObjectSender.hpp"
 #include "ProcessContext.hpp"
 
-using std::string;
-
 namespace Ingen {
 
 
-RequestObjectEvent::RequestObjectEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path)
-: QueuedEvent(engine, responder, timestamp),
-  _path(path),
-  _object(NULL)
+RequestObjectEvent::RequestObjectEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Path& path)
+	: QueuedEvent(engine, responder, timestamp)
+	, _path(path)
+	, _object(NULL)
 {
 }
 

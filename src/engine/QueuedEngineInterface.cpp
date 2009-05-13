@@ -79,7 +79,7 @@ QueuedEngineInterface::register_client(ClientInterface* client)
 
 
 void
-QueuedEngineInterface::unregister_client(const string& uri)
+QueuedEngineInterface::unregister_client(const URI& uri)
 {
 	push_queued(new UnregisterClientEvent(_engine, _responder, now(), uri));
 	if (_responder && _responder->client() && _responder->client()->uri() == uri) {
@@ -153,56 +153,56 @@ QueuedEngineInterface::new_object(const GraphObject* object)
 
 
 void
-QueuedEngineInterface::new_patch(const string& path,
-                                 uint32_t      poly)
+QueuedEngineInterface::new_patch(const Path& path,
+                                 uint32_t    poly)
 {
 	push_queued(new CreatePatchEvent(_engine, _responder, now(), path, poly));
 }
 
 
 // FIXME: use index
-void QueuedEngineInterface::new_port(const string& path,
-                                     const string& type,
-                                     uint32_t      index,
-                                     bool          direction)
+void QueuedEngineInterface::new_port(const Path& path,
+                                     const URI&  type,
+                                     uint32_t    index,
+                                     bool        direction)
 {
 	push_queued(new CreatePortEvent(_engine, _responder, now(), path, type, direction, this));
 }
 
 
 void
-QueuedEngineInterface::new_node(const string& path,
-                                const string& plugin_uri)
+QueuedEngineInterface::new_node(const Path& path,
+                                const URI&  plugin_uri)
 {
 	push_queued(new CreateNodeEvent(_engine, _responder, now(), path, plugin_uri, true));
 }
 
 
 void
-QueuedEngineInterface::rename(const string& old_path,
-                              const string& new_path)
+QueuedEngineInterface::rename(const Path& old_path,
+                              const Path& new_path)
 {
 	push_queued(new RenameEvent(_engine, _responder, now(), old_path, new_path));
 }
 
 
 void
-QueuedEngineInterface::destroy(const string& path)
+QueuedEngineInterface::destroy(const Path& path)
 {
 	push_queued(new DestroyEvent(_engine, _responder, now(), this, path));
 }
 
 
 void
-QueuedEngineInterface::clear_patch(const string& patch_path)
+QueuedEngineInterface::clear_patch(const Path& patch_path)
 {
 	push_queued(new ClearPatchEvent(_engine, _responder, now(), this, patch_path));
 }
 
 	
 void
-QueuedEngineInterface::connect(const string& src_port_path,
-                               const string& dst_port_path)
+QueuedEngineInterface::connect(const Path& src_port_path,
+                               const Path& dst_port_path)
 {
 	push_queued(new ConnectionEvent(_engine, _responder, now(), src_port_path, dst_port_path));
 
@@ -210,23 +210,23 @@ QueuedEngineInterface::connect(const string& src_port_path,
 
 
 void
-QueuedEngineInterface::disconnect(const string& src_port_path,
-                                  const string& dst_port_path)
+QueuedEngineInterface::disconnect(const Path& src_port_path,
+                                  const Path& dst_port_path)
 {
 	push_queued(new DisconnectionEvent(_engine, _responder, now(), src_port_path, dst_port_path));
 }
 
 
 void
-QueuedEngineInterface::disconnect_all(const string& patch_path,
-                                      const string& path)
+QueuedEngineInterface::disconnect_all(const Path& patch_path,
+                                      const Path& path)
 {
 	push_queued(new DisconnectAllEvent(_engine, _responder, now(), patch_path, path));
 }
 
 
 void
-QueuedEngineInterface::set_port_value(const string&     port_path,
+QueuedEngineInterface::set_port_value(const Path&       port_path,
                                       const Raul::Atom& value)
 {
 	push_queued(new SetPortValueEvent(_engine, _responder, true, now(), port_path, value));
@@ -234,7 +234,7 @@ QueuedEngineInterface::set_port_value(const string&     port_path,
 
 
 void
-QueuedEngineInterface::set_voice_value(const string&     port_path,
+QueuedEngineInterface::set_voice_value(const Path&       port_path,
                                        uint32_t          voice,
                                        const Raul::Atom& value)
 {
@@ -243,34 +243,34 @@ QueuedEngineInterface::set_voice_value(const string&     port_path,
 
 
 void
-QueuedEngineInterface::set_program(const string& node_path,
-                                   uint32_t      bank,
-                                   uint32_t      program)
+QueuedEngineInterface::set_program(const Path& node_path,
+                                   uint32_t    bank,
+                                   uint32_t    program)
 {
 	std::cerr << "FIXME: set program" << std::endl;
 }
 
 
 void
-QueuedEngineInterface::midi_learn(const string& node_path)
+QueuedEngineInterface::midi_learn(const Path& node_path)
 {
 	push_queued(new MidiLearnEvent(_engine, _responder, now(), node_path));
 }
 
 
 void
-QueuedEngineInterface::set_variable(const string& path,
-                                    const string& predicate,
-                                    const Atom&   value)
+QueuedEngineInterface::set_variable(const Path& path,
+                                    const URI&  predicate,
+                                    const Atom& value)
 {
 	push_queued(new SetMetadataEvent(_engine, _responder, now(), false, path, predicate, value));
 }
 
 	
 void
-QueuedEngineInterface::set_property(const string& path,
-                                    const string& predicate,
-                                    const Atom&   value)
+QueuedEngineInterface::set_property(const Path& path,
+                                    const URI&  predicate,
+                                    const Atom& value)
 {
 	push_queued(new SetMetadataEvent(_engine, _responder, now(), true, path, predicate, value));
 }
@@ -289,35 +289,35 @@ QueuedEngineInterface::ping()
 
 
 void
-QueuedEngineInterface::request_plugin(const string& uri)
+QueuedEngineInterface::request_plugin(const URI& uri)
 {
 	push_queued(new RequestPluginEvent(_engine, _responder, now(), uri));
 }
 
 
 void
-QueuedEngineInterface::request_object(const string& path)
+QueuedEngineInterface::request_object(const Path& path)
 {
 	push_queued(new RequestObjectEvent(_engine, _responder, now(), path));
 }
 
 
 void
-QueuedEngineInterface::request_port_value(const string& port_path)
+QueuedEngineInterface::request_port_value(const Path& port_path)
 {
 	push_queued(new RequestPortValueEvent(_engine, _responder, now(), port_path));
 }
 
 
 void
-QueuedEngineInterface::request_variable(const string& object_path, const string& key)
+QueuedEngineInterface::request_variable(const Path& object_path, const URI& key)
 {
 	push_queued(new RequestMetadataEvent(_engine, _responder, now(), false, object_path, key));
 }
 
 
 void
-QueuedEngineInterface::request_property(const string& object_path, const string& key)
+QueuedEngineInterface::request_property(const Path& object_path, const URI& key)
 {
 	push_queued(new RequestMetadataEvent(_engine, _responder, now(), true, object_path, key));
 }

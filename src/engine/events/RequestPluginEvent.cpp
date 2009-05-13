@@ -15,7 +15,6 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <string>
 #include "interface/ClientInterface.hpp"
 #include "RequestPluginEvent.hpp"
 #include "Responder.hpp"
@@ -27,15 +26,13 @@
 #include "PluginImpl.hpp"
 #include "ProcessContext.hpp"
 
-using std::string;
-
 namespace Ingen {
 
 
-RequestPluginEvent::RequestPluginEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& uri)
-: QueuedEvent(engine, responder, timestamp),
-  _uri(uri),
-  _plugin(NULL)
+RequestPluginEvent::RequestPluginEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const URI& uri)
+	: QueuedEvent(engine, responder, timestamp)
+	, _uri(uri)
+	, _plugin(NULL)
 {
 }
 

@@ -18,16 +18,14 @@
 #ifndef NODEFACTORY_H
 #define NODEFACTORY_H
 
-#include "ingen-config.h"
-#include "module/global.hpp"
-
 #include <list>
 #include <map>
 #include <string>
 #include <pthread.h>
 #include <glibmm/module.h>
-
-using std::string;
+#include "ingen-config.h"
+#include "module/global.hpp"
+#include "raul/URI.hpp"
 
 namespace Ingen {
 
@@ -57,13 +55,15 @@ public:
 
 	void load_plugins();
 	
-	typedef std::map<std::string,PluginImpl*> Plugins;
+	typedef std::map<Raul::URI, PluginImpl*> Plugins;
 	const Plugins& plugins() const { return _plugins; }
 	
-	PluginImpl* plugin(const string& uri);
+	PluginImpl* plugin(const Raul::URI& uri);
 
 	/** DEPRECATED */
-	PluginImpl* plugin(const string& type, const string& lib, const string& label);
+	PluginImpl* plugin(const std::string& type,
+	                   const std::string& lib,
+	                   const std::string& label);
 
 private:
 #ifdef HAVE_LADSPA_H

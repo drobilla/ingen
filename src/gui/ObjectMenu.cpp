@@ -22,6 +22,8 @@
 #include "ObjectMenu.hpp"
 #include "WindowFactory.hpp"
 
+using namespace Raul;
+
 namespace Ingen {
 namespace GUI {
 
@@ -84,10 +86,10 @@ ObjectMenu::on_menu_polyphonic()
 
 
 void
-ObjectMenu::variable_changed(const std::string& predicate, const Raul::Atom& value)
+ObjectMenu::variable_changed(const URI& predicate, const Atom& value)
 {
 	_enable_signal = false;
-	if (predicate == "ingen:polyphonic" && value.type() == Atom::BOOL)
+	if (predicate.str() == "ingen:polyphonic" && value.type() == Atom::BOOL)
 		_polyphonic_menuitem->set_active(value.get_bool());
 	_enable_signal = true;
 }

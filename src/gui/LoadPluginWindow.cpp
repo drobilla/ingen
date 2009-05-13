@@ -29,7 +29,7 @@
 #include "PatchCanvas.hpp"
 
 using namespace std;
-
+using namespace Raul;
 
 namespace Ingen {
 namespace GUI {
@@ -222,7 +222,7 @@ LoadPluginWindow::set_plugins(SharedPtr<const ClientStore::Plugins> m)
 			row[_plugins_columns._col_type] = "LADSPA";
 		else
 			row[_plugins_columns._col_type] = plugin->type_uri();
-		row[_plugins_columns._col_uri] = plugin->uri();
+		row[_plugins_columns._col_uri] = plugin->uri().str();
 		row[_plugins_columns._col_label] = plugin->name();
 		row[_plugins_columns._col_plugin_model] = plugin;
 	}
@@ -251,7 +251,7 @@ LoadPluginWindow::add_plugin(SharedPtr<PluginModel> plugin)
 	
 	row[_plugins_columns._col_name] = plugin->name();
 	row[_plugins_columns._col_type] = plugin->type_uri();
-	row[_plugins_columns._col_uri] = plugin->uri();
+	row[_plugins_columns._col_uri] = plugin->uri().str();
 	row[_plugins_columns._col_label] = plugin->name();
 	row[_plugins_columns._col_plugin_model] = plugin;
 }
@@ -396,11 +396,7 @@ LoadPluginWindow::filter_changed()
 		case CriteriaColumns::TYPE:
 			field = plugin->type_uri(); break;
 		case CriteriaColumns::URI:
-			field = plugin->uri(); break;
-		/*case CriteriaColumns::LIBRARY:
-			field = plugin->lib_name(); break;
-		case CriteriaColumns::LABEL:
-			field = plugin->plug_label(); break;*/
+			field = plugin->uri().str(); break;
 		default:
 			throw;
 		}
@@ -413,7 +409,7 @@ LoadPluginWindow::filter_changed()
 		
 			model_row[_plugins_columns._col_name] = plugin->name();
 			model_row[_plugins_columns._col_type] = plugin->type_uri();
-			model_row[_plugins_columns._col_uri] = plugin->uri();
+			model_row[_plugins_columns._col_uri] = plugin->uri().str();
 			model_row[_plugins_columns._col_plugin_model] = plugin;
 
 			++num_visible;

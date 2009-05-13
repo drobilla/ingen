@@ -18,19 +18,14 @@
 #ifndef DESTROYEVENT_H
 #define DESTROYEVENT_H
 
-#include <string>
-#include "raul/Path.hpp"
 #include "QueuedEvent.hpp"
 #include "EngineStore.hpp"
 #include "PatchImpl.hpp"
-
-using std::string;
 
 namespace Raul {
 	template<typename T> class Array;
 	template<typename T> class ListNode;
 }
-template<typename T> class TreeNode;
 
 namespace Ingen {
 
@@ -49,7 +44,7 @@ class CompiledPatch;
 class DestroyEvent : public QueuedEvent
 {
 public:
-	DestroyEvent(Engine& engine, SharedPtr<Responder> responder, FrameTime timestamp, QueuedEventSource* source, const string& path);
+	DestroyEvent(Engine& engine, SharedPtr<Responder> responder, FrameTime timestamp, QueuedEventSource* source, const Raul::Path& path);
 	~DestroyEvent();
 
 	void pre_process();
@@ -57,16 +52,16 @@ public:
 	void post_process();
 
 private:
-	Path                                         _path;
-	EngineStore::iterator                        _store_iterator;
-	SharedPtr<NodeImpl>                          _node;  ///< Non-NULL iff a node
-	SharedPtr<PortImpl>                          _port;  ///< Non-NULL iff a port
-	Raul::List<DriverPort*>::Node*               _driver_port;
-	PatchImpl::Nodes::Node*                      _patch_node_listnode;
-	Raul::List<PortImpl*>::Node*                 _patch_port_listnode;
-	Raul::Array<PortImpl*>*                      _ports_array; ///< New (external) ports for Patch
-	CompiledPatch*                               _compiled_patch;  ///< Patch's new process order
-	DisconnectAllEvent*                          _disconnect_event;
+	Raul::Path                     _path;
+	EngineStore::iterator          _store_iterator;
+	SharedPtr<NodeImpl>            _node;                ///< Non-NULL iff a node
+	SharedPtr<PortImpl>            _port;                ///< Non-NULL iff a port
+	Raul::List<DriverPort*>::Node* _driver_port;
+	PatchImpl::Nodes::Node*        _patch_node_listnode;
+	Raul::List<PortImpl*>::Node*   _patch_port_listnode;
+	Raul::Array<PortImpl*>*        _ports_array;         ///< New (external) ports for Patch
+	CompiledPatch*                 _compiled_patch;      ///< Patch's new process order
+	DisconnectAllEvent*            _disconnect_event;
 	
 	SharedPtr< Table<Path, SharedPtr<Shared::GraphObject> > > _removed_table;
 };

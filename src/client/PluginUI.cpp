@@ -23,7 +23,7 @@
 #include "PortModel.hpp"
 
 using namespace std;
-using Ingen::Shared::EngineInterface;
+using namespace Raul;
 using Ingen::Shared::LV2URIMap;
 using Ingen::Shared::LV2Features;
 

@@ -253,7 +253,7 @@ main(int argc, char** argv)
 			const Glib::ustring path = args.path_arg;
 			if (Path::is_valid(path)) {
 				const Path p(path);
-				if (p != "/") {
+				if (!p.is_root()) {
 					parent = p.parent();
 					const string s = p.name();
 					if (Symbol::is_valid(s))

@@ -68,7 +68,7 @@ NodeFactory::~NodeFactory()
 
 
 PluginImpl*
-NodeFactory::plugin(const string& uri)
+NodeFactory::plugin(const Raul::URI& uri)
 {
 	const Plugins::const_iterator i = _plugins.find(uri);
 	return ((i != _plugins.end()) ? i->second : NULL);

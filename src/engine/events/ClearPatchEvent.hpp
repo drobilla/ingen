@@ -18,15 +18,12 @@
 #ifndef CLEARPATCHEVENT_H
 #define CLEARPATCHEVENT_H
 
-#include <string>
 #include "raul/Array.hpp"
 #include "raul/Table.hpp"
 #include "raul/Path.hpp"
 #include "QueuedEvent.hpp"
 #include "EngineStore.hpp"
 #include "PatchImpl.hpp"
-
-using std::string;
 
 namespace Ingen {
 
@@ -41,18 +38,18 @@ class DriverPort;
 class ClearPatchEvent : public QueuedEvent
 {
 public:
-	ClearPatchEvent(Engine& engine, SharedPtr<Responder> responder, FrameTime time, QueuedEventSource* source, const string& patch_path);
+	ClearPatchEvent(Engine& engine, SharedPtr<Responder> responder, FrameTime time, QueuedEventSource* source, const Raul::Path& patch_path);
 	
 	void pre_process();
 	void execute(ProcessContext& context);
 	void post_process();
 
 private:
-	const string            _patch_path;
+	const Raul::Path        _patch_path;
 	SharedPtr<PatchImpl>    _patch;
 	bool                    _process;
-	Raul::Array<PortImpl*>* _ports_array; ///< New (external) ports for Patch
-	CompiledPatch*          _compiled_patch;  ///< Patch's new process order
+	Raul::Array<PortImpl*>* _ports_array;    ///< New (external) ports for Patch
+	CompiledPatch*          _compiled_patch; ///< Patch's new process order
 	
 	typedef Raul::Array<Raul::List<DriverPort*>::Node*> DriverPorts;
 	DriverPorts* _driver_ports;

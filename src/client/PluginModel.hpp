@@ -19,7 +19,6 @@
 #define PLUGINMODEL_H
 
 #include "ingen-config.h"
-#include <string>
 #include <iostream>
 #include "raul/SharedPtr.hpp"
 #include "redlandmm/World.hpp"
@@ -30,8 +29,6 @@
 #include "interface/Plugin.hpp"
 #include "module/World.hpp"
 #include "shared/ResourceImpl.hpp"
-
-using std::string;
 
 namespace Ingen {
 namespace Client {
@@ -49,16 +46,16 @@ class PluginModel : public Ingen::Shared::Plugin
                   , public Ingen::Shared::ResourceImpl
 {
 public:
-	PluginModel(const string& uri, const string& type_uri);
+	PluginModel(const Raul::URI& uri, const Raul::URI& type_uri);
 	
 	Type type() const { return _type; }
 	
-	const string symbol() const { return string_property("lv2:symbol"); }
-	const string name()   const { return string_property("doap:name"); }
+	const std::string symbol() const { return string_property("lv2:symbol"); }
+	const std::string name()   const { return string_property("doap:name"); }
 
-	string default_node_symbol() const;
-	string human_name();
-	string port_human_name(uint32_t index) const;
+	std::string default_node_symbol() const;
+	std::string human_name();
+	std::string port_human_name(uint32_t index) const;
 
 #ifdef HAVE_SLV2
 	static SLV2World slv2_world()        { return _slv2_world; }
@@ -80,8 +77,8 @@ public:
 	SharedPtr<PluginUI> ui(Ingen::Shared::World* world,
 	                       SharedPtr<NodeModel>  node) const;
 
-	const string& icon_path() const;
-	static string get_lv2_icon_path(SLV2Plugin plugin);
+	const std::string& icon_path() const;
+	static std::string get_lv2_icon_path(SLV2Plugin plugin);
 #endif
 
 	static void set_rdf_world(Redland::World& world) {
@@ -93,14 +90,14 @@ public:
 private:
 	const Type _type;
 	
-	const string string_property(const std::string& name) const;
+	const std::string string_property(const std::string& name) const;
 
 #ifdef HAVE_SLV2
 	static SLV2World   _slv2_world;
 	static SLV2Plugins _slv2_plugins;
 
-	SLV2Plugin _slv2_plugin;
-	mutable string _icon_path;
+	SLV2Plugin          _slv2_plugin;
+	mutable std::string _icon_path;
 #endif
 
 	static Redland::World* _rdf_world;

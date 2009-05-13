@@ -36,6 +36,7 @@
 #include "NodeMenu.hpp"
 
 using namespace std;
+using namespace Raul;
 
 namespace Ingen {
 namespace GUI {
@@ -370,21 +371,28 @@ NodeModule::store_location()
 
 
 void
-NodeModule::set_variable(const string& key, const Atom& value)
+NodeModule::set_variable(const URI& key, const Atom& value)
 {
-	if (key == "ingenuity:canvas-x" && value.type() == Atom::FLOAT) {
-		move_to(value.get_float(), property_y());
-	} else if (key == "ingenuity:canvas-y" && value.type() == Atom::FLOAT) {
-		move_to(property_x(), value.get_float());
-	} else if (key == "ingen:polyphonic" && value.type() == Atom::BOOL) {
-		set_stacked_border(value.get_bool());
-	} else if (key == "ingen:selected" && value.type() == Atom::BOOL) {
-		if (value.get_bool() != selected()) {
-			if (value.get_bool())
-				_canvas.lock()->select_item(shared_from_this());
-			else
-				_canvas.lock()->unselect_item(shared_from_this());
+	switch (value.type()) {
+	case Atom::FLOAT:
+		if (key.str() == "ingenuity:canvas-x") {
+			move_to(value.get_float(), property_y());
+		} else if (key.str() == "ingenuity:canvas-y") {
+			move_to(property_x(), value.get_float());
 		}
+		break;
+	case Atom::BOOL:
+		if (key.str() == "ingen:polyphonic") {
+			set_stacked_border(value.get_bool());
+		} else if (key.str() == "ingen:selected") {
+			if (value.get_bool() != selected()) {
+				if (value.get_bool())
+					_canvas.lock()->select_item(shared_from_this());
+				else
+					_canvas.lock()->unselect_item(shared_from_this());
+			}
+		}
+	default: break;
 	}
 }
 

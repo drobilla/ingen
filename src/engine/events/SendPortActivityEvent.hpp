@@ -18,10 +18,8 @@
 #ifndef SENDPORTACTIVITYEVENT_H
 #define SENDPORTACTIVITYEVENT_H
 
-#include <string>
 #include "Event.hpp"
 #include "types.hpp"
-using std::string;
 
 namespace Ingen {
 

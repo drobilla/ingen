@@ -15,7 +15,6 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <string>
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
 #include "DisconnectionEvent.hpp"
@@ -29,15 +28,13 @@
 #include "PortImpl.hpp"
 #include "EngineStore.hpp"
 
-using std::string;
-
 namespace Ingen {
 
 
 //// DisconnectionEvent ////
 
 
-DisconnectionEvent::DisconnectionEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& src_port_path, const string& dst_port_path)
+DisconnectionEvent::DisconnectionEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Raul::Path& src_port_path, const Raul::Path& dst_port_path)
 	: QueuedEvent(engine, responder, timestamp)
 	, _src_port_path(src_port_path)
 	, _dst_port_path(dst_port_path)
@@ -202,7 +199,7 @@ DisconnectionEvent::post_process()
 	} else {
 		// FIXME: better error messages
 		string msg = "Unable to disconnect ";
-		msg.append(_src_port_path + " -> " + _dst_port_path);
+		msg.append(_src_port_path.str() + " -> " + _dst_port_path.str());
 		cerr << "DISCONNECTION ERROR " << (unsigned)_error << endl;
 		_responder->respond_error(msg);
 	}

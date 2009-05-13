@@ -48,8 +48,8 @@ public:
 	SharedPtr<PortModel> src_port() const { return _src_port; }
 	SharedPtr<PortModel> dst_port() const { return _dst_port; }
 
-	const Path src_port_path() const { return _src_port->path(); }
-	const Path dst_port_path() const { return _dst_port->path(); }
+	const Raul::Path src_port_path() const { return _src_port->path(); }
+	const Raul::Path dst_port_path() const { return _dst_port->path(); }
 	
 private:
 	friend class ClientStore;

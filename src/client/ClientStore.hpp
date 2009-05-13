@@ -31,11 +31,6 @@
 
 namespace Raul { class Atom; }
 
-using namespace std;
-using Ingen::Shared::EngineInterface;
-using Raul::Path;
-using Raul::Atom;
-
 namespace Ingen {
 
 namespace Shared { class GraphObject; }
@@ -57,37 +52,34 @@ class ConnectionModel;
  */
 class ClientStore : public Shared::Store, public Shared::CommonInterface, public sigc::trackable {
 public:
-	ClientStore(SharedPtr<EngineInterface> engine=SharedPtr<EngineInterface>(),
+	ClientStore(SharedPtr<Shared::EngineInterface> engine=SharedPtr<Shared::EngineInterface>(),
 	            SharedPtr<SigClientInterface> emitter=SharedPtr<SigClientInterface>());
 
-	SharedPtr<PluginModel> plugin(const string& uri);
-	SharedPtr<ObjectModel> object(const Path& path);
+	SharedPtr<PluginModel> plugin(const Raul::URI& uri);
+	SharedPtr<ObjectModel> object(const Raul::Path& path);
 
 	void clear();
 
-	typedef Raul::Table<string, SharedPtr<PluginModel> > Plugins;
+	typedef Raul::Table<Raul::URI, SharedPtr<PluginModel> > Plugins;
 	SharedPtr<const Plugins> plugins() const                   { return _plugins; }
 	SharedPtr<Plugins>       plugins()                         { return _plugins; }
 	void                     set_plugins(SharedPtr<Plugins> p) { _plugins = p; }
 	
 	// CommonInterface
-	void new_plugin(const string& uri, const string& type_uri, const string& symbol);
+	void new_plugin(const Raul::URI& uri, const Raul::URI& type_uri, const Raul::Symbol& symbol);
 	bool new_object(const Shared::GraphObject* object);
-	void new_patch(const string& path, uint32_t poly);
-	void new_node(const string& path, const string& plugin_uri);
-	void new_port(const string& path, const string& type, uint32_t index, bool is_output);
-	void rename(const string& old_path, const string& new_path);
-	void set_variable(const string& subject_path, const string& predicate, const Atom& value);
-	void set_property(const string& subject_path, const string& predicate, const Atom& value);
-	void set_port_value(const string& port_path, const Raul::Atom& value);
-	void set_voice_value(const string& port_path, uint32_t voice, const Raul::Atom& value);
-	void connect(const string& src_port_path, const string& dst_port_path);
-	void disconnect(const string& src_port_path, const string& dst_port_path);
-	void destroy(const string& path);
+	void new_patch(const Raul::Path& path, uint32_t poly);
+	void new_node(const Raul::Path& path, const Raul::URI& plugin_uri);
+	void new_port(const Raul::Path& path, const Raul::URI& type, uint32_t index, bool is_output);
+	void rename(const Raul::Path& old_path, const Raul::Path& new_path);
+	void set_variable(const Raul::Path& subject_path, const Raul::URI& predicate, const Raul::Atom& value);
+	void set_property(const Raul::Path& subject_path, const Raul::URI& predicate, const Raul::Atom& value);
+	void set_port_value(const Raul::Path& port_path, const Raul::Atom& value);
+	void set_voice_value(const Raul::Path& port_path, uint32_t voice, const Raul::Atom& value);
+	void connect(const Raul::Path& src_port_path, const Raul::Path& dst_port_path);
+	void disconnect(const Raul::Path& src_port_path, const Raul::Path& dst_port_path);
+	void destroy(const Raul::Path& path);
 	
-	typedef list< std::pair<Path, Path> > ConnectionRecords;
-	const ConnectionRecords& connection_records() { return _connection_orphans; }
-
 	sigc::signal<void, SharedPtr<ObjectModel> > signal_new_object; 
 	sigc::signal<void, SharedPtr<PluginModel> > signal_new_plugin; 
 
@@ -96,56 +88,28 @@ private:
 	void add(Shared::GraphObject* o) { throw; }
 
 	void add_object(SharedPtr<ObjectModel> object);
-	SharedPtr<ObjectModel> remove_object(const Path& path);
+	SharedPtr<ObjectModel> remove_object(const Raul::Path& path);
 	
 	void add_plugin(SharedPtr<PluginModel> plugin);
 
-	SharedPtr<PatchModel> connection_patch(const Path& src_port_path, const Path& dst_port_path);
+	SharedPtr<PatchModel> connection_patch(const Raul::Path& src_port_path, const Raul::Path& dst_port_path);
 
-	// It would be nice to integrate these somehow..
-	
-	void add_orphan(SharedPtr<ObjectModel> orphan);
-	void resolve_orphans(SharedPtr<ObjectModel> parent);
-	
-	void add_connection_orphan(std::pair<Path, Path> orphan);
-	void resolve_connection_orphans(SharedPtr<PortModel> port);
-	
-	void add_plugin_orphan(SharedPtr<NodeModel> orphan);
-	void resolve_plugin_orphans(SharedPtr<PluginModel> plugin);
-	
-	void add_variable_orphan(const Path& subject, const string& predicate, const Atom& value);
-	void resolve_variable_orphans(SharedPtr<ObjectModel> subject);
-	
 	void bundle_begin() {}
 	void bundle_end()   {}
 
 	// Slots for SigClientInterface signals
-	void object_renamed(const Path& old_path, const Path& new_path);
-	void clear_patch(const std::string& path);
-	void activity(const Path& path);
+	void object_renamed(const Raul::Path& old_path, const Raul::Path& new_path);
+	void clear_patch(const Raul::Path& path);
+	void activity(const Raul::Path& path);
 	
-	bool attempt_connection(const Path& src_port_path, const Path& dst_port_path, bool add_orphan=false);
+	bool attempt_connection(const Raul::Path& src_port_path, const Raul::Path& dst_port_path, bool add_orphan=false);
 	
 	bool _handle_orphans;
 
-	SharedPtr<EngineInterface>    _engine;
-	SharedPtr<SigClientInterface> _emitter;
+	SharedPtr<Shared::EngineInterface> _engine;
+	SharedPtr<SigClientInterface>      _emitter;
 
 	SharedPtr<Plugins> _plugins; ///< Map, keyed by plugin URI
-
-	/** Objects we've received, but depend on the existance of another unknown object.
-	 * Keyed by the path of the depended-on object (for tolerance of orderless comms) */
-	Raul::PathTable<list<SharedPtr<ObjectModel> > > _orphans;
-	
-	/** Same idea, except with plugins instead of parents.
-	 * It's unfortunate everything doesn't just have a URI and this was the same.. ahem.. */
-	Raul::Table<string, list<SharedPtr<NodeModel> > > _plugin_orphans;
-	
-	/** Not orphans OF variable like the above, but orphans which are variable */
-	Raul::PathTable<list<std::pair<string, Atom> > > _variable_orphans;
-	
-	/** Ditto */
-	ConnectionRecords _connection_orphans;
 };
 
 

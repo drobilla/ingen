@@ -22,6 +22,7 @@
 #include <boost/enable_shared_from_this.hpp>
 #include <libgnomecanvasmm.h>
 #include "flowcanvas/Module.hpp"
+#include "raul/URI.hpp"
 #include "Port.hpp"
 
 namespace Raul { class Atom; }
@@ -68,8 +69,8 @@ protected:
 
 	void set_port(SharedPtr<Port> port) { _port = port; }
 	
-	void set_variable(const std::string& predicate, const Raul::Atom& value);
-	void set_property(const std::string& predicate, const Raul::Atom& value);
+	void set_variable(const Raul::URI& predicate, const Raul::Atom& value);
+	void set_property(const Raul::URI& predicate, const Raul::Atom& value);
 
 	SharedPtr<PortModel> _model;
 	SharedPtr<Port>      _port;

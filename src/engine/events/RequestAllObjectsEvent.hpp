@@ -18,17 +18,11 @@
 #ifndef REQUESTALLOBJECTSEVENT_H
 #define REQUESTALLOBJECTSEVENT_H
 
-#include <string>
 #include "QueuedEvent.hpp"
-using std::string;
 
 namespace Ingen {
 
-namespace Shared {
-	class ClientInterface;
-} using Shared::ClientInterface;
 
-	
 /** A request from a client to send notification of all objects (ie refresh).
  *
  * \ingroup engine

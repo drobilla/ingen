@@ -27,7 +27,7 @@ namespace Shared {
 
 
 /** Always returns a valid Raul::Path */
-const std::string
+const Path
 ClashAvoider::map_path(const Raul::Path& in)
 {
 	//cout << "MAP PATH: " << in;
@@ -69,7 +69,7 @@ ClashAvoider::map_path(const Raul::Path& in)
 				return i.first->second;
 			}
 			parent = parent.parent();
-		} while (parent != "/");
+		} while (!parent.is_root());
 
 		// No clash, use symbol unmodified
 		if (!exists(in) && _symbol_map.find(in) == _symbol_map.end()) {
@@ -141,100 +141,100 @@ ClashAvoider::new_object(const GraphObject* object)
 
 
 void
-ClashAvoider::new_patch(const std::string& path,
-                        uint32_t           poly)
+ClashAvoider::new_patch(const Raul::Path& path,
+                        uint32_t          poly)
 {
-	if (path != "/")
+	if (!path.is_root())
 		_target.new_patch(map_path(path), poly);
 }
 
 
 void
-ClashAvoider::new_node(const std::string& path,
-                       const std::string& plugin_uri)
+ClashAvoider::new_node(const Raul::Path& path,
+                       const Raul::URI&  plugin_uri)
 {
 	_target.new_node(map_path(path), plugin_uri);
 }
 
 
 void
-ClashAvoider::new_port(const std::string& path,
-                       const std::string& type,
-                       uint32_t           index,
-                       bool               is_output)
+ClashAvoider::new_port(const Raul::Path& path,
+                       const Raul::URI&  type,
+                       uint32_t          index,
+                       bool              is_output)
 {
 	_target.new_port(map_path(path), type, index, is_output);
 }
 
 
 void
-ClashAvoider::rename(const std::string& old_path,
-                     const std::string& new_path)
+ClashAvoider::rename(const Raul::Path& old_path,
+                     const Raul::Path& new_path)
 {
 	_target.rename(map_path(old_path), map_path(new_path));
 }
 
 
 void
-ClashAvoider::connect(const std::string& src_port_path,
-                      const std::string& dst_port_path)
+ClashAvoider::connect(const Raul::Path& src_port_path,
+                      const Raul::Path& dst_port_path)
 {
 	_target.connect(map_path(src_port_path), map_path(dst_port_path));
 }
 
 
 void
-ClashAvoider::disconnect(const std::string& src_port_path,
-                         const std::string& dst_port_path)
+ClashAvoider::disconnect(const Raul::Path& src_port_path,
+                         const Raul::Path& dst_port_path)
 {
 	_target.disconnect(map_path(src_port_path), map_path(dst_port_path));
 }
 
 
 void
-ClashAvoider::set_variable(const std::string& subject_path,
-                           const std::string& predicate,
-                           const Raul::Atom&  value)
+ClashAvoider::set_variable(const Raul::Path& subject_path,
+                           const Raul::URI&  predicate,
+                           const Raul::Atom& value)
 {
 	_target.set_variable(map_path(subject_path), predicate, value);
 }
 
 
 void
-ClashAvoider::set_property(const std::string& subject_path,
-                           const std::string& predicate,
-                           const Raul::Atom&  value)
+ClashAvoider::set_property(const Raul::Path& subject_path,
+                           const Raul::URI&  predicate,
+                           const Raul::Atom& value)
 {
 	_target.set_property(map_path(subject_path), predicate, value);
 }
 
 
 void
-ClashAvoider::set_port_value(const std::string& port_path,
-                             const Raul::Atom&  value)
+ClashAvoider::set_port_value(const Raul::Path& port_path,
+                             const Raul::Atom& value)
 {
 	_target.set_port_value(map_path(port_path), value);
 }
 
 
 void
-ClashAvoider::set_voice_value(const std::string& port_path,
-                              uint32_t           voice,
-                              const Raul::Atom&  value)
+ClashAvoider::set_voice_value(const Raul::Path& port_path,
+                              uint32_t          voice,
+                              const Raul::Atom& value)
 {
 	_target.set_voice_value(map_path(port_path), voice, value);
 }
 
 
 void
-ClashAvoider::destroy(const std::string& path)
+ClashAvoider::destroy(const Raul::Path& path)
 {
 	_target.destroy(map_path(path));
 }
 
 
 void
-ClashAvoider::clear_patch(const std::string& path)
+ClashAvoider::clear_patch(const Raul::Path& path)
 {
 	_target.clear_patch(map_path(path));
 }

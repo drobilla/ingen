@@ -23,14 +23,14 @@ namespace Shared {
 
 
 void
-ResourceImpl::set_property(const std::string& uri, const Raul::Atom& value)
+ResourceImpl::set_property(const Raul::URI& uri, const Raul::Atom& value)
 {
 	_properties[uri] = value;
 }
 
 
 const Raul::Atom&
-ResourceImpl::get_property(const std::string& uri) const
+ResourceImpl::get_property(const Raul::URI& uri) const
 {
 	static const Raul::Atom nil;
 	Properties::const_iterator i = _properties.find(uri);

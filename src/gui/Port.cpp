@@ -29,6 +29,7 @@
 
 using namespace Ingen::Client;
 using namespace std;
+using namespace Raul;
 
 namespace Ingen {
 namespace GUI {
@@ -136,14 +137,17 @@ Port::set_control(float value, bool signal)
 
 
 void
-Port::variable_changed(const string& key, const Atom& value)
+Port::variable_changed(const URI& key, const Atom& value)
 {
-	if ( (key == "lv2:minimum") && value.type() == Atom::FLOAT)
-		set_control_min(value.get_float());
-	else if ( (key == "lv2:maximum") && value.type() == Atom::FLOAT)
-		set_control_max(value.get_float());
-	else if ( (key == "lv2:toggled") && value.type() == Atom::BOOL)
-		set_toggled(value.get_bool());
+	if (value.type() == Atom::FLOAT) {
+		if ((key.str() == "lv2:minimum"))
+			set_control_min(value.get_float());
+		else if ((key.str() == "lv2:maximum"))
+			set_control_max(value.get_float());
+	} else if (value.type() == Atom::BOOL) {
+		if ((key.str() == "lv2:toggled"))
+			set_toggled(value.get_bool());
+	}
 }
 
 

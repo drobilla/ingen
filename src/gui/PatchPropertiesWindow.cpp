@@ -22,6 +22,7 @@
 #include "App.hpp"
 
 using namespace std;
+using namespace Raul;
 
 namespace Ingen {
 namespace GUI {
@@ -49,7 +50,7 @@ PatchPropertiesWindow::PatchPropertiesWindow(BaseObjectType* cobject, const Glib
 void
 PatchPropertiesWindow::set_patch(SharedPtr<PatchModel> patch_model)
 {
-	property_title() = patch_model->path() + " Properties";
+	property_title() = patch_model->path().str() + " Properties";
 	_patch_model = patch_model;
 	
 	const Atom& name_atom = _patch_model->get_property("doap:name");

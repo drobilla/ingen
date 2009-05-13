@@ -18,12 +18,9 @@
 #ifndef REGISTERCLIENTEVENT_H
 #define REGISTERCLIENTEVENT_H
 
-#include "QueuedEvent.hpp"
+#include "raul/URI.hpp"
 #include "interface/ClientInterface.hpp"
-#include <string>
-using std::string;
-using Ingen::Shared::ClientInterface;
-using Ingen::Responder;
+#include "QueuedEvent.hpp"
 
 namespace Ingen {
 
@@ -35,18 +32,18 @@ namespace Ingen {
 class RegisterClientEvent : public QueuedEvent
 {
 public:
-	RegisterClientEvent(Engine&                      engine,
-	                    SharedPtr<Responder> responder,
-	                    SampleCount                  timestamp,
-	                    const string&                uri,
-	                    ClientInterface*             client);
+	RegisterClientEvent(Engine&                  engine,
+	                    SharedPtr<Responder>     responder,
+	                    SampleCount              timestamp,
+	                    const Raul::URI&         uri,
+	                    Shared::ClientInterface* client);
 
 	void pre_process();
 	void post_process();
 
 private:
-	string           _uri;
-	ClientInterface* _client;
+	Raul::URI                _uri;
+	Shared::ClientInterface* _client;
 };
 
 

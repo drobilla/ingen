@@ -35,7 +35,7 @@ namespace Ingen {
 /** Register a client to receive messages over the notification band.
  */
 void
-ClientBroadcaster::register_client(const string& uri, ClientInterface* client)
+ClientBroadcaster::register_client(const URI& uri, ClientInterface* client)
 {
 	Clients::iterator i = _clients.find(uri);
 
@@ -53,7 +53,7 @@ ClientBroadcaster::register_client(const string& uri, ClientInterface* client)
  * @return true if client was found and removed.
  */
 bool
-ClientBroadcaster::unregister_client(const string& uri)
+ClientBroadcaster::unregister_client(const URI& uri)
 {
 	size_t erased = _clients.erase(uri);
 	
@@ -74,7 +74,7 @@ ClientBroadcaster::unregister_client(const string& uri)
  * events, in anticipation of libom and multiple ways of responding to clients).
  */
 ClientInterface*
-ClientBroadcaster::client(const string& uri)
+ClientBroadcaster::client(const URI& uri)
 {
 	Clients::iterator i = _clients.find(uri);
 	if (i != _clients.end()) {
@@ -131,16 +131,15 @@ ClientBroadcaster::send_plugins(const NodeFactory::Plugins& plugins)
 
 
 void
-ClientBroadcaster::send_destroyed(const string& path)
+ClientBroadcaster::send_destroyed(const Path& path)
 {
-	assert(path != "/");
 	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
 		(*i).second->destroy(path);
 }
 
 
 void
-ClientBroadcaster::send_clear_patch(const string& patch_path)
+ClientBroadcaster::send_clear_patch(const Path& patch_path)
 {
 	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
 		(*i).second->clear_patch(patch_path);
@@ -150,12 +149,12 @@ void
 ClientBroadcaster::send_connection(const SharedPtr<const ConnectionImpl> c)
 {
 	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
-		(*i).second->connect(c->src_port()->path(), c->dst_port()->path());
+		(*i).second->connect(c->src_port()->path().str(), c->dst_port()->path().str());
 }
 
 
 void
-ClientBroadcaster::send_disconnection(const string& src_port_path, const string& dst_port_path)
+ClientBroadcaster::send_disconnection(const Path& src_port_path, const Path& dst_port_path)
 {
 	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
 		(*i).second->disconnect(src_port_path, dst_port_path);
@@ -167,7 +166,7 @@ ClientBroadcaster::send_disconnection(const string& src_port_path, const string&
  * Like control changes, does not send update to client that set the variable, if applicable.
  */
 void
-ClientBroadcaster::send_variable_change(const string& node_path, const string& key, const Atom& value)
+ClientBroadcaster::send_variable_change(const Path& node_path, const URI& key, const Atom& value)
 {
 	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
 		(*i).second->set_variable(node_path, key, value);
@@ -179,7 +178,7 @@ ClientBroadcaster::send_variable_change(const string& node_path, const string& k
  * Like control changes, does not send update to client that set the property, if applicable.
  */
 void
-ClientBroadcaster::send_property_change(const string& node_path, const string& key, const Atom& value)
+ClientBroadcaster::send_property_change(const Path& node_path, const URI& key, const Atom& value)
 {
 	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
 		(*i).second->set_property(node_path, key, value);
@@ -193,7 +192,7 @@ ClientBroadcaster::send_property_change(const string& node_path, const string& k
  * forcing clients to ignore things to avoid feedback loops etc).
  */
 void
-ClientBroadcaster::send_port_value(const string& port_path, const Raul::Atom& value)
+ClientBroadcaster::send_port_value(const Path& port_path, const Raul::Atom& value)
 {
 	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
 		(*i).second->set_port_value(port_path, value);
@@ -201,7 +200,7 @@ ClientBroadcaster::send_port_value(const string& port_path, const Raul::Atom& va
 
 
 void
-ClientBroadcaster::send_activity(const string& path)
+ClientBroadcaster::send_activity(const Path& path)
 {
 	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
 		(*i).second->activity(path);
@@ -209,7 +208,7 @@ ClientBroadcaster::send_activity(const string& path)
 
 
 void
-ClientBroadcaster::send_program_add(const string& node_path, int bank, int program, const string& name)
+ClientBroadcaster::send_program_add(const Path& node_path, int bank, int program, const string& name)
 {
 	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
 		(*i).second->program_add(node_path, bank, program, name);
@@ -217,7 +216,7 @@ ClientBroadcaster::send_program_add(const string& node_path, int bank, int progr
 
 
 void
-ClientBroadcaster::send_program_remove(const string& node_path, int bank, int program)
+ClientBroadcaster::send_program_remove(const Path& node_path, int bank, int program)
 {
 	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
 		(*i).second->program_remove(node_path, bank, program);
@@ -239,7 +238,7 @@ ClientBroadcaster::send_object(const GraphObjectImpl* p, bool recursive)
 /** Sends notification of an GraphObject's renaming
  */
 void
-ClientBroadcaster::send_rename(const string& old_path, const string& new_path)
+ClientBroadcaster::send_rename(const Path& old_path, const Path& new_path)
 {
 	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
 		(*i).second->rename(old_path, new_path);

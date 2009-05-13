@@ -22,8 +22,6 @@
 #include "raul/Path.hpp"
 #include "raul/Array.hpp"
 #include "interface/DataType.hpp"
-#include <string>
-using std::string;
 
 template <typename T> class Array;
 
@@ -41,7 +39,7 @@ class DriverPort;
 class CreatePortEvent : public QueuedEvent
 {
 public:
-	CreatePortEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& path, const string& type, bool is_output, QueuedEventSource* source);
+	CreatePortEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Raul::Path& path, const Raul::URI& type, bool is_output, QueuedEventSource* source);
 
 	void pre_process();
 	void execute(ProcessContext& context);
@@ -57,7 +55,7 @@ private:
 
 	ErrorType               _error;
 	Raul::Path              _path;
-	string                  _type;
+	Raul::URI               _type;
 	bool                    _is_output;
 	DataType                _data_type;
 	PatchImpl*              _patch;

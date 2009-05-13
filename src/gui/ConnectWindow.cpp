@@ -167,14 +167,19 @@ ConnectWindow::connect(bool existing)
 #ifdef HAVE_LIBLO
 	if (_mode == CONNECT_REMOTE) {
 		if (!existing) {
-			const string url = (_widgets_loaded ? (string)_url_entry->get_text() : world->engine->uri());
-			world->engine = SharedPtr<EngineInterface>(new OSCEngineSender(url));
+			Raul::URI engine_url("http://localhost:16180");
+			if (_widgets_loaded) {
+				const std::string& url_str = _url_entry->get_text();
+				if (Raul::URI::is_valid(url_str))
+					engine_url = url_str;
+			}
+			world->engine = SharedPtr<EngineInterface>(new OSCEngineSender(engine_url));
 		}
 	
 		SharedPtr<ThreadedSigClientInterface> tsci(new ThreadedSigClientInterface(1024));
 		SharedPtr<Raul::Deletable> client;
 		
-		const string& uri = world->engine->uri();
+		const string& uri = world->engine->uri().str();
 		const string& scheme = uri.substr(0, uri.find(":"));
 		if (scheme == "osc.udp" || scheme == "osc.tcp")
 			client = SharedPtr<OSCClientReceiver>(new OSCClientReceiver(16181, tsci)); // FIXME: port

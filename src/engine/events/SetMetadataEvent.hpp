@@ -18,11 +18,9 @@
 #ifndef SETMETADATAEVENT_H
 #define SETMETADATAEVENT_H
 
-#include <string>
-#include "QueuedEvent.hpp"
+#include "raul/URI.hpp"
 #include "raul/Atom.hpp"
-
-using std::string;
+#include "QueuedEvent.hpp"
 
 namespace Ingen {
 
@@ -42,8 +40,8 @@ public:
 	                 SharedPtr<Responder> responder,
 	                 SampleCount          timestamp,
 	                 bool                 property,
-	                 const string&        path,
-	                 const string&        key,
+	                 const Raul::Path&    path,
+	                 const Raul::URI&     key,
 	                 const Raul::Atom&    value);
 	
 	void pre_process();
@@ -51,7 +49,7 @@ public:
 	void post_process();
 
 private:
-	enum { NO_ERROR, NOT_FOUND, INTERNAL, INVALID_PATH, BAD_TYPE } _error;
+	enum { NO_ERROR, NOT_FOUND, INTERNAL, BAD_TYPE } _error;
 	enum {
 		NONE,
 		ENABLE,
@@ -62,8 +60,8 @@ private:
 
 	bool             _property;
 	bool             _success;
-	string           _path;
-	string           _key;
+	Raul::Path       _path;
+	Raul::URI        _key;
 	Raul::Atom       _value;
 	GraphObjectImpl* _object;
 	PatchImpl*       _patch;

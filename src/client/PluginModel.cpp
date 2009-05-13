@@ -24,7 +24,7 @@
 #include "PluginUI.hpp"
 
 using namespace std;
-using Ingen::Shared::EngineInterface;
+using namespace Raul;
 
 namespace Ingen {
 namespace Client {
@@ -37,9 +37,9 @@ SLV2Plugins PluginModel::_slv2_plugins = NULL;
 Redland::World* PluginModel::_rdf_world = NULL;
 	
 
-PluginModel::PluginModel(const string& uri, const string& type_uri)
+PluginModel::PluginModel(const URI& uri, const URI& type_uri)
 	: ResourceImpl(uri)
-	, _type(type_from_uri(_rdf_world->prefixes().qualify(type_uri)))
+	, _type(type_from_uri(_rdf_world->prefixes().qualify(type_uri.str())))
 {
 	Glib::Mutex::Lock lock(_rdf_world->mutex());
 	assert(_rdf_world);

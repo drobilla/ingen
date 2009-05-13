@@ -128,8 +128,8 @@ OSCClientSender::error(const std::string& msg)
  * this one (/ingen/new_node), followed by a series of /ingen/new_port commands,
  * followed by /ingen/new_node_end. </p> \n \n
  */
-void OSCClientSender::new_node(const std::string& node_path,
-                               const std::string& plugin_uri)
+void OSCClientSender::new_node(const Raul::Path& node_path,
+                               const Raul::URI&  plugin_uri)
 {
 	send("/ingen/new_node", "ss", node_path.c_str(), plugin_uri.c_str(), LO_ARGS_END);
 }
@@ -152,10 +152,10 @@ void OSCClientSender::new_node(const std::string& node_path,
  * as variable.</p> \n \n
  */
 void
-OSCClientSender::new_port(const std::string& path,
-                          const std::string& type,
-                          uint32_t           index,
-                          bool               is_output)
+OSCClientSender::new_port(const Raul::Path& path,
+                          const Raul::URI&  type,
+                          uint32_t          index,
+                          bool              is_output)
 {
 	send("/ingen/new_port", "sisi", path.c_str(), index, type.c_str(), is_output, LO_ARGS_END);
 }
@@ -166,10 +166,8 @@ OSCClientSender::new_port(const std::string& path,
  * \arg \b path (string) - Path of object (which no longer exists) </p> \n \n
  */
 void
-OSCClientSender::destroy(const std::string& path)
+OSCClientSender::destroy(const Raul::Path& path)
 {
-	assert(path != "/");
-	
 	send("/ingen/destroyed", "s", path.c_str(), LO_ARGS_END);
 }
 
@@ -179,7 +177,7 @@ OSCClientSender::destroy(const std::string& path)
  * \arg \b path (string) - Path of patch (which is now empty)</p> \n \n
  */
 void
-OSCClientSender::clear_patch(const std::string& patch_path)
+OSCClientSender::clear_patch(const Raul::Path& patch_path)
 {
 	send("/ingen/clear_patch", "s", patch_path.c_str(), LO_ARGS_END);
 }
@@ -191,7 +189,7 @@ OSCClientSender::clear_patch(const std::string& patch_path)
  * \arg \b dst-path (string) - Path of the destination port</p> \n \n
  */
 void
-OSCClientSender::connect(const std::string& src_port_path, const std::string& dst_port_path)
+OSCClientSender::connect(const Raul::Path& src_port_path, const Raul::Path& dst_port_path)
 {
 	send("/ingen/new_connection", "ss", src_port_path.c_str(), dst_port_path.c_str(), LO_ARGS_END);
 }
@@ -203,7 +201,7 @@ OSCClientSender::connect(const std::string& src_port_path, const std::string& ds
  * \arg \b dst-path (string) - Path of the destination port</p> \n \n
  */
 void
-OSCClientSender::disconnect(const std::string& src_port_path, const std::string& dst_port_path)
+OSCClientSender::disconnect(const Raul::Path& src_port_path, const Raul::Path& dst_port_path)
 {
 	send("/ingen/disconnection", "ss", src_port_path.c_str(), dst_port_path.c_str(), LO_ARGS_END);
 }
@@ -216,7 +214,7 @@ OSCClientSender::disconnect(const std::string& src_port_path, const std::string&
  * \arg \b value (string)</p> \n \n
  */
 void
-OSCClientSender::set_variable(const std::string& path, const std::string& key, const Atom& value)
+OSCClientSender::set_variable(const Raul::Path& path, const Raul::URI& key, const Atom& value)
 {
 	lo_message m = lo_message_new();
 	lo_message_add_string(m, path.c_str());
@@ -233,7 +231,7 @@ OSCClientSender::set_variable(const std::string& path, const std::string& key, c
  * \arg \b value (string)</p> \n \n
  */
 void
-OSCClientSender::set_property(const std::string& path, const std::string& key, const Atom& value)
+OSCClientSender::set_property(const Raul::Path& path, const Raul::URI& key, const Atom& value)
 {
 	lo_message m = lo_message_new();
 	lo_message_add_string(m, path.c_str());
@@ -249,7 +247,7 @@ OSCClientSender::set_property(const std::string& path, const std::string& key, c
  * \arg \b value (any) - New value of port </p> \n \n
  */
 void
-OSCClientSender::set_port_value(const std::string& port_path, const Raul::Atom& value)
+OSCClientSender::set_port_value(const Raul::Path& port_path, const Raul::Atom& value)
 {
 	lo_message m = lo_message_new();
 	lo_message_add_string(m, port_path.c_str());
@@ -265,7 +263,7 @@ OSCClientSender::set_port_value(const std::string& port_path, const Raul::Atom& 
  * \arg \b value (any) - New value of port </p> \n \n
  */
 void
-OSCClientSender::set_voice_value(const std::string& port_path, uint32_t voice, const Raul::Atom& value)
+OSCClientSender::set_voice_value(const Raul::Path& port_path, uint32_t voice, const Raul::Atom& value)
 {
 	lo_message m = lo_message_new();
 	lo_message_add_string(m, port_path.c_str());
@@ -279,7 +277,7 @@ OSCClientSender::set_voice_value(const std::string& port_path, uint32_t voice, c
  * \arg \b path (string) - Path of object </p> \n \n
  */
 void
-OSCClientSender::activity(const std::string& path)
+OSCClientSender::activity(const Raul::Path& path)
 {
 	if (!_enabled)
 		return;
@@ -296,9 +294,9 @@ OSCClientSender::activity(const std::string& path)
  * \arg \b name (string) - Descriptive human-readable name of plugin (e.g. "ADSR Envelope")
  */
 void
-OSCClientSender::new_plugin(const std::string& uri,
-                            const std::string& type_uri,
-                            const std::string& symbol)
+OSCClientSender::new_plugin(const Raul::URI&    uri,
+                            const Raul::URI&    type_uri,
+                            const Raul::Symbol& symbol)
 {
 	lo_message m = lo_message_new();
 	lo_message_add_string(m, uri.c_str());
@@ -343,7 +341,7 @@ OSCClientSender::new_object(const Shared::GraphObject* object)
  * \arg \b poly (int) - Polyphony of new patch (\em not a boolean like new_node) </p> \n \n
  */
 void
-OSCClientSender::new_patch(const std::string& path, uint32_t poly)
+OSCClientSender::new_patch(const Raul::Path& path, uint32_t poly)
 {
 	send("/ingen/new_patch", "si", path.c_str(), poly, LO_ARGS_END);
 }
@@ -355,7 +353,7 @@ OSCClientSender::new_patch(const std::string& path, uint32_t poly)
  * \arg \b new-path (string) - New path of object </p> \n \n
  */
 void
-OSCClientSender::rename(const std::string& old_path, const std::string& new_path)
+OSCClientSender::rename(const Raul::Path& old_path, const Raul::Path& new_path)
 {
 	send("/ingen/rename", "ss", old_path.c_str(), new_path.c_str(), LO_ARGS_END);
 }
@@ -364,7 +362,7 @@ OSCClientSender::rename(const std::string& old_path, const std::string& new_path
 /** Sends information about a program associated with a node.
  */
 void
-OSCClientSender::program_add(const std::string& node_path, uint32_t bank, uint32_t program, const std::string& name)
+OSCClientSender::program_add(const Raul::Path& node_path, uint32_t bank, uint32_t program, const std::string& name)
 {
 	send("/ingen/program_add", "siis", 
 		node_path.c_str(), bank, program, name.c_str(), LO_ARGS_END);
@@ -372,7 +370,7 @@ OSCClientSender::program_add(const std::string& node_path, uint32_t bank, uint32
 
 
 void
-OSCClientSender::program_remove(const std::string& node_path, uint32_t bank, uint32_t program)
+OSCClientSender::program_remove(const Raul::Path& node_path, uint32_t bank, uint32_t program)
 {
 	send("/ingen/program_remove", "sii", 
 		node_path.c_str(), bank, program, LO_ARGS_END);

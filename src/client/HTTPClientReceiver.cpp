@@ -135,7 +135,7 @@ HTTPClientReceiver::message_callback(SoupSession* session, SoupMessage* msg, voi
 {
 	HTTPClientReceiver* me = (HTTPClientReceiver*)ptr;
 	const string path = soup_message_get_uri(msg)->path;
-	if (path == "/") {
+	if (path == Path::root_uri) {
 		me->_target->response_ok(0);
 		me->_target->enable();
 

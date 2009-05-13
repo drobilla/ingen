@@ -57,7 +57,7 @@ public:
 	
 	GraphObject* graph_parent() const { return _parent; }
 	
-	const std::string uri() const { return std::string("patch") + path(); }
+	const Raul::URI uri() const { return path(); }
 
 	inline GraphObjectImpl* parent() const { return _parent; }
 	const Symbol            symbol() const { return _name; }
@@ -71,8 +71,8 @@ public:
 		assert(_name.find("/") == std::string::npos);
 	}
 	
-	const Raul::Atom& get_variable(const std::string& key);
-	void              set_variable(const std::string& key, const Raul::Atom& value);
+	const Raul::Atom& get_variable(const Raul::URI& key);
+	void              set_variable(const Raul::URI& key, const Raul::Atom& value);
 	
 	const Properties&  variables()  const { return _variables; }
 	Properties&        variables()        { return _variables; }
@@ -84,24 +84,23 @@ public:
 	const Path path() const {
 		if (_parent == NULL)
 			return Path(std::string("/").append(_name));
-		else if (_parent->path() == "/")
+		else if (_parent->path().is_root())
 			return Path(std::string("/").append(_name));
 		else
-			return Path(_parent->path() +"/"+ _name);
+			return Path(_parent->path().child(_name));
 	}
 	
 	SharedPtr<GraphObject> find_child(const std::string& name) const;
 
 protected:
 	GraphObjectImpl(GraphObjectImpl* parent, const std::string& name, bool polyphonic=false)
-		: ResourceImpl(std::string("patch/") + (parent ? parent->path().base() : "/") + name)
+		: ResourceImpl((parent ? parent->path().base() : Path::root_uri) + name)
 		, _parent(parent)
 		, _name(name)
 		, _polyphonic(polyphonic)
 	{
 		assert(parent == NULL || _name.length() > 0);
 		assert(_name.find("/") == std::string::npos);
-		assert(path().find("//") == std::string::npos);
 	}
 	
 	GraphObjectImpl* _parent;
@@ -109,7 +108,7 @@ protected:
 	bool             _polyphonic;
 
 private:
-	Properties  _variables;
+	Properties _variables;
 };
 
 

@@ -180,7 +180,7 @@ Parser::parse_string(
 {
 	Redland::Model model(*world->rdf_world, str.c_str(), str.length(), base_uri);
 	
-	cout << "Parsing " << (data_path ? (string)*data_path : "*") << " from string";
+	cout << "Parsing " << (data_path ? data_path->str() : "*") << " from string";
 	if (base_uri != "")
 		cout << "(base " << base_uri << ")";
 	cout << endl;
@@ -274,7 +274,7 @@ Parser::parse(
 	const Redland::Node::Type res = Redland::Node::RESOURCE;
 	
 	const Glib::ustring query_str = data_path
-		? Glib::ustring("SELECT DISTINCT ?t WHERE { <") + data_path->substr(1) + "> a ?t . }"
+		? Glib::ustring("SELECT DISTINCT ?t WHERE { <") + data_path->chop_start("/") + "> a ?t . }"
 		: Glib::ustring("SELECT DISTINCT ?s ?t WHERE { ?s a ?t . }");
 
 	Redland::Query query(*world->rdf_world, query_str);
@@ -288,8 +288,8 @@ Parser::parse(
 	const Redland::Node out_port_class (*world->rdf_world, res, NS_LV2   "OutputPort");
 	const Redland::Node lv2_class      (*world->rdf_world, res, NS_LV2   "Plugin");
 	
-	const Redland::Node subject_node = (data_path && *data_path != "/")
-		? Redland::Node(*world->rdf_world, res, data_path->substr(1))
+	const Redland::Node subject_node = (data_path && !data_path->is_root())
+		? Redland::Node(*world->rdf_world, res, data_path->chop_start("/"))
 		: model.base_uri();
 
 	std::string           path_str;
@@ -325,7 +325,7 @@ Parser::parse(
 
 			string path = (parent && symbol)
 					? parent->base() + *symbol
-					: (parent ? parent->base() : "/") + path_str.substr(1);
+					: (parent ? parent->base() : "/") + path_str.substr(path_str.find("/")+1);
 
 			if (!Path::is_valid(path)) {
 				cerr << "WARNING: Invalid path '" << path << "' transformed to /" << endl;
@@ -345,7 +345,7 @@ Parser::parse(
 				return boost::optional<Path>();
 			}
 				
-			if (data_path && subject.to_string() == *data_path)
+			if (data_path && subject.to_string() == data_path->str())
 				root_path = ret;
 
 		} else if (is_plugin) {

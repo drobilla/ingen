@@ -17,13 +17,14 @@
 
 #include <iostream>
 #include "raul/AtomLiblo.hpp"
+#include "raul/Path.hpp"
 #include "OSCEngineSender.hpp"
 #include "common/interface/Patch.hpp"
 #include "common/interface/Port.hpp"
 #include "common/interface/Plugin.hpp"
 
 using namespace std;
-using Raul::Atom;
+using namespace Raul;
 
 namespace Ingen {
 namespace Client {
@@ -33,7 +34,7 @@ namespace Client {
  * from the most recently created server, so create the OSC listener before
  * this to have it all happen on the same port.  Yeah, this is a big magic :/
  */
-OSCEngineSender::OSCEngineSender(const string& engine_url)
+OSCEngineSender::OSCEngineSender(const URI& engine_url)
 	: _engine_url(engine_url)
 	, _id(0)
 {
@@ -84,7 +85,7 @@ OSCEngineSender::attach(int32_t ping_id, bool block)
  * traversal.  It is a parameter to remain compatible with EngineInterface.
  */
 void
-OSCEngineSender::register_client(ClientInterface* client)
+OSCEngineSender::register_client(Shared::ClientInterface* client)
 {
 	// FIXME: use parameters.. er, somehow.
 	send("/ingen/register_client", "i", next_id(), LO_ARGS_END, LO_ARGS_END);
@@ -92,7 +93,7 @@ OSCEngineSender::register_client(ClientInterface* client)
 
 
 void
-OSCEngineSender::unregister_client(const string& uri)
+OSCEngineSender::unregister_client(const URI& uri)
 {
 	send("/ingen/unregister_client", "i", next_id(), LO_ARGS_END);
 }
@@ -159,8 +160,8 @@ OSCEngineSender::new_object(const Shared::GraphObject* object)
 
 
 void
-OSCEngineSender::new_patch(const string& path,
-                           uint32_t      poly)
+OSCEngineSender::new_patch(const Path& path,
+                           uint32_t    poly)
 {
 	send("/ingen/new_patch", "isi",
 		next_id(),
@@ -171,10 +172,10 @@ OSCEngineSender::new_patch(const string& path,
 
 
 void
-OSCEngineSender::new_port(const string& path,
-                          const string& type,
-                          uint32_t      index,
-                          bool          is_output)
+OSCEngineSender::new_port(const Path& path,
+                          const URI&  type,
+                          uint32_t    index,
+                          bool        is_output)
 {
 	// FIXME: use index
 	send("/ingen/new_port",  "issi",
@@ -187,8 +188,8 @@ OSCEngineSender::new_port(const string& path,
 
 
 void
-OSCEngineSender::new_node(const string& path,
-                          const string& plugin_uri)
+OSCEngineSender::new_node(const Path& path,
+                          const URI&  plugin_uri)
 {
 
 	send("/ingen/new_node",  "iss",
@@ -200,19 +201,19 @@ OSCEngineSender::new_node(const string& path,
 
 
 void
-OSCEngineSender::rename(const string& old_path,
-                        const string& new_name)
+OSCEngineSender::rename(const Path& old_path,
+                        const Path& new_path)
 {
 	send("/ingen/rename", "iss",
 		next_id(),
 		old_path.c_str(),
-		new_name.c_str(),
+		new_path.c_str(),
 		LO_ARGS_END);
 }
 
 
 void
-OSCEngineSender::destroy(const string& path)
+OSCEngineSender::destroy(const Path& path)
 {
 	send("/ingen/destroy", "is",
 		next_id(),
@@ -222,7 +223,7 @@ OSCEngineSender::destroy(const string& path)
 
 
 void
-OSCEngineSender::clear_patch(const string& patch_path)
+OSCEngineSender::clear_patch(const Path& patch_path)
 {
 	send("/ingen/clear_patch", "is",
 		next_id(),
@@ -232,8 +233,8 @@ OSCEngineSender::clear_patch(const string& patch_path)
 
 	
 void
-OSCEngineSender::connect(const string& src_port_path,
-                         const string& dst_port_path)
+OSCEngineSender::connect(const Path& src_port_path,
+                         const Path& dst_port_path)
 {
 	send("/ingen/connect", "iss",
 		next_id(),
@@ -244,8 +245,8 @@ OSCEngineSender::connect(const string& src_port_path,
 
 
 void
-OSCEngineSender::disconnect(const string& src_port_path,
-                            const string& dst_port_path)
+OSCEngineSender::disconnect(const Path& src_port_path,
+                            const Path& dst_port_path)
 {
 	send("/ingen/disconnect", "iss",
 		next_id(),
@@ -256,8 +257,8 @@ OSCEngineSender::disconnect(const string& src_port_path,
 
 
 void
-OSCEngineSender::disconnect_all(const string& parent_patch_path,
-                                const string& path)
+OSCEngineSender::disconnect_all(const Path& parent_patch_path,
+                                const Path& path)
 {
 	send("/ingen/disconnect_all", "iss",
 		next_id(),
@@ -268,8 +269,8 @@ OSCEngineSender::disconnect_all(const string& parent_patch_path,
 
 
 void
-OSCEngineSender::set_port_value(const string&     port_path,
-                                const Raul::Atom& value)
+OSCEngineSender::set_port_value(const Path& port_path,
+                                const Atom& value)
 {
 	lo_message m = lo_message_new();
 	lo_message_add_int32(m, next_id());
@@ -282,9 +283,9 @@ OSCEngineSender::set_port_value(const string&     port_path,
 
 
 void
-OSCEngineSender::set_voice_value(const string&     port_path,
-                                 uint32_t          voice,
-                                 const Raul::Atom& value)
+OSCEngineSender::set_voice_value(const Path& port_path,
+                                 uint32_t    voice,
+                                 const Atom& value)
 {
 	lo_message m = lo_message_new();
 	lo_message_add_int32(m, next_id());
@@ -298,11 +299,11 @@ OSCEngineSender::set_voice_value(const string&     port_path,
 
 
 void
-OSCEngineSender::set_program(const string& node_path,
-                             uint32_t      bank,
-                             uint32_t      program)
+OSCEngineSender::set_program(const Path& node_path,
+                             uint32_t    bank,
+                             uint32_t    program)
 {
-	send((string("/dssi") + node_path + "/program").c_str(),
+	send((string("/dssi") + node_path.str() + "/program").c_str(),
 			"ii",
 			bank,
 			program,
@@ -311,7 +312,7 @@ OSCEngineSender::set_program(const string& node_path,
 
 
 void
-OSCEngineSender::midi_learn(const string& node_path)
+OSCEngineSender::midi_learn(const Path& node_path)
 {
 	send("/ingen/midi_learn", "is",
 		next_id(),
@@ -321,9 +322,9 @@ OSCEngineSender::midi_learn(const string& node_path)
 
 
 void
-OSCEngineSender::set_variable(const string&     obj_path,
-                              const string&     predicate,
-                              const Raul::Atom& value)
+OSCEngineSender::set_variable(const Path& obj_path,
+                              const URI&  predicate,
+                              const Atom& value)
 {
 	lo_message m = lo_message_new();
 	lo_message_add_int32(m, next_id());
@@ -335,9 +336,9 @@ OSCEngineSender::set_variable(const string&     obj_path,
 
 	
 void
-OSCEngineSender::set_property(const string&     obj_path,
-                              const string&     predicate,
-                              const Raul::Atom& value)
+OSCEngineSender::set_property(const Path& obj_path,
+                              const URI&  predicate,
+                              const Atom& value)
 {
 	lo_message m = lo_message_new();
 	lo_message_add_int32(m, next_id());
@@ -359,7 +360,7 @@ OSCEngineSender::ping()
 
 
 void
-OSCEngineSender::request_plugin(const string& uri)
+OSCEngineSender::request_plugin(const URI& uri)
 {
 	send("/ingen/request_plugin", "is",
 		next_id(),
@@ -369,7 +370,7 @@ OSCEngineSender::request_plugin(const string& uri)
 
 
 void
-OSCEngineSender::request_object(const string& path)
+OSCEngineSender::request_object(const Path& path)
 {
 	send("/ingen/request_object", "is",
 		next_id(),
@@ -379,7 +380,7 @@ OSCEngineSender::request_object(const string& path)
 
 
 void
-OSCEngineSender::request_port_value(const string& port_path)
+OSCEngineSender::request_port_value(const Path& port_path)
 {
 	send("/ingen/request_port_value", "is",
 		next_id(),
@@ -389,7 +390,7 @@ OSCEngineSender::request_port_value(const string& port_path)
 
 
 void
-OSCEngineSender::request_variable(const string& object_path, const string& key)
+OSCEngineSender::request_variable(const Path& object_path, const URI& key)
 {
 	send("/ingen/request_variable", "iss",
 		next_id(),
@@ -400,7 +401,7 @@ OSCEngineSender::request_variable(const string& object_path, const string& key)
 
 	
 void
-OSCEngineSender::request_property(const string& object_path, const string& key)
+OSCEngineSender::request_property(const Path& object_path, const URI& key)
 {
 	send("/ingen/request_property", "iss",
 		next_id(),
@@ -422,7 +423,6 @@ OSCEngineSender::request_all_objects()
 {
 	send("/ingen/request_all_objects", "i", next_id(), LO_ARGS_END);
 }
-
 
 
 } // namespace Client

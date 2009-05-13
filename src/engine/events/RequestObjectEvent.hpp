@@ -18,17 +18,12 @@
 #ifndef REQUESTOBJECTEVENT_H
 #define REQUESTOBJECTEVENT_H
 
-#include <string>
 #include "QueuedEvent.hpp"
 #include "types.hpp"
-
-using std::string;
 
 namespace Ingen {
 	
 class GraphObjectImpl;
-namespace Shared { class ClientInterface; }
-using Shared::ClientInterface;
 
 
 /** A request from a client to send the value of a port.
@@ -38,14 +33,14 @@ using Shared::ClientInterface;
 class RequestObjectEvent : public QueuedEvent
 {
 public:
-	RequestObjectEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& port_path);
+	RequestObjectEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Raul::Path& port_path);
 
 	void pre_process();
 	void execute(ProcessContext& context);
 	void post_process();
 
 private:
-	const string     _path;
+	const Raul::Path _path;
 	GraphObjectImpl* _object;
 };
 

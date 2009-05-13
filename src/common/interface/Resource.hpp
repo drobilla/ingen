@@ -21,7 +21,7 @@
 #include <string>
 #include <map>
 
-namespace Raul { class Atom; }
+namespace Raul { class Atom; class URI; }
 
 namespace Ingen {
 namespace Shared {
@@ -30,16 +30,16 @@ namespace Shared {
 class Resource
 {
 public:
-	typedef std::map<std::string, Raul::Atom> Properties;
+	typedef std::map<Raul::URI, Raul::Atom> Properties;
 
-	virtual const std::string  uri()        const = 0;
+	virtual const Raul::URI    uri()        const = 0;
 	virtual const Properties&  properties() const = 0;
 	virtual Properties&        properties()       = 0;
 
-	virtual void set_property(const std::string& uri,
-	                          const Raul::Atom&  value) = 0;
+	virtual void set_property(const Raul::URI&  uri,
+	                          const Raul::Atom& value) = 0;
 
-	virtual const Raul::Atom& get_property(const std::string& uri) const = 0;
+	virtual const Raul::Atom& get_property(const Raul::URI& uri) const = 0;
 };
 
 

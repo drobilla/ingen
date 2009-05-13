@@ -137,7 +137,7 @@ LoadPatchWindow::ok_clicked()
 	if (_replace)
 		App::instance().engine()->clear_patch(_patch->path());
 
-	if (_patch->path() != "/") {
+	if (!_patch->path().is_root()) {
 		parent = _patch->path().parent();
 		symbol = _patch->symbol();
 	}

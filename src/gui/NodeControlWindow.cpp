@@ -45,7 +45,7 @@ NodeControlWindow::NodeControlWindow(SharedPtr<NodeModel> node, uint32_t poly)
 	property_resizable() = true;
 	set_border_width(5);
 
-	set_title(_node->path() + " Controls");
+	set_title(_node->path().str() + " Controls");
 
 	Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference("warehouse_win");
 	xml->get_widget_derived("control_panel_vbox", _control_panel);
@@ -73,7 +73,7 @@ NodeControlWindow::NodeControlWindow(SharedPtr<NodeModel> node, ControlPanel* pa
 	property_resizable() = true;
 	set_border_width(5);
 
-	set_title(_node->path() + " Controls");
+	set_title(_node->path().str() + " Controls");
 
 	_control_panel->reparent(*this);
 

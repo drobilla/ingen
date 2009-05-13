@@ -23,7 +23,8 @@
 #include "App.hpp"
 #include "RenameWindow.hpp"
 
-using std::string;
+using namespace std;
+using namespace Raul;
 
 namespace Ingen {
 namespace GUI {

@@ -30,10 +30,6 @@
 #include "interface/GraphObject.hpp"
 #include "ObjectModel.hpp"
 
-using std::string;
-using Ingen::Shared::EngineInterface;
-using Ingen::Shared::GraphObject;
-
 namespace Raul { class Path; }
 
 namespace Ingen {
@@ -52,41 +48,35 @@ class PresetModel; // defined in DeprecatedLoader.cpp
 class DeprecatedLoader
 {
 public:
-	DeprecatedLoader(SharedPtr<EngineInterface> engine)
-	: /*_patch_search_path(".")*/ _engine(engine)
+	DeprecatedLoader(SharedPtr<Shared::EngineInterface> engine)
+		: _engine(engine)
 	{
 		assert(_engine);
 	}
 
-	/*void          path(const string& path) { _patch_search_path = path; }
-	const string& path()                   { return _patch_search_path; }*/
-	
-	string find_file(const string& filename, const string& additional_path = "");
-	
-	string load_patch(const Glib::ustring&    filename,
-	                  bool                    merge,
-	                  boost::optional<Path>   parent_path,
-	                  boost::optional<Symbol> name,
-	                  GraphObject::Properties  initial_data,
-	                  bool                    existing = false);
+	std::string load_patch(const Glib::ustring&            filename,
+	                       bool                            merge,
+	                       boost::optional<Raul::Path>     parent_path,
+	                       boost::optional<Raul::Symbol>   name,
+	                       Shared::GraphObject::Properties initial_data,
+	                       bool                            existing = false);
 
 private:
-	void add_variable(GraphObject::Properties& data, string key, string value);
+	void add_variable(Shared::GraphObject::Properties& data, std::string key, std::string value);
 
-	string nameify_if_invalid(const string& name);
-	string translate_load_path(const string& path);
+	std::string nameify_if_invalid(const std::string& name);
+	std::string translate_load_path(const std::string& path);
 
-	//string                          _patch_search_path;
-	SharedPtr<EngineInterface> _engine;
+	SharedPtr<Shared::EngineInterface> _engine;
 
 	/// Translations of paths from the loading file to actual paths (for deprecated patches)
-	std::map<string, string> _load_path_translations;
+	std::map<std::string, std::string> _load_path_translations;
 
-	bool load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr cur);
-	bool load_connection(const Path& parent, xmlDocPtr doc, const xmlNodePtr cur);
-	bool load_subpatch(const string& base_filename, const Path& parent, xmlDocPtr doc, const xmlNodePtr cur);
+	bool load_node(const Raul::Path& parent, xmlDocPtr doc, const xmlNodePtr cur);
+	bool load_connection(const Raul::Path& parent, xmlDocPtr doc, const xmlNodePtr cur);
+	bool load_subpatch(const std::string& base_filename, const Raul::Path& parent, xmlDocPtr doc, const xmlNodePtr cur);
 	
-	SharedPtr<PresetModel> load_preset(const Path& parent, xmlDocPtr doc, const xmlNodePtr cur);
+	SharedPtr<PresetModel> load_preset(const Raul::Path& parent, xmlDocPtr doc, const xmlNodePtr cur);
 };
 
 

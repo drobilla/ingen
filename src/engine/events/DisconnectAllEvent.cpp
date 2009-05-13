@@ -37,7 +37,7 @@
 namespace Ingen {
 
 
-DisconnectAllEvent::DisconnectAllEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& parent_path, const string& node_path)
+DisconnectAllEvent::DisconnectAllEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Path& parent_path, const Path& node_path)
 	: QueuedEvent(engine, responder, timestamp)
 	, _parent_path(parent_path)
 	, _path(node_path)
@@ -163,10 +163,10 @@ DisconnectAllEvent::post_process()
 			fmt % _path;
 			switch (_error) {
 				case INVALID_PARENT_PATH:
-					fmt % string("Invalid parent path: ").append(_parent_path);
+					fmt % string("Invalid parent path: ").append(_parent_path.str());
 					break;
 				case PARENT_NOT_FOUND:
-					fmt % string("Unable to find parent: ").append(_parent_path);
+					fmt % string("Unable to find parent: ").append(_parent_path.str());
 					break;
 				case OBJECT_NOT_FOUND:
 					fmt % string("Unable to find object");

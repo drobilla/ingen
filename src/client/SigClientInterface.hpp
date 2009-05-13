@@ -19,10 +19,9 @@
 #define SIGCLIENTINTERFACE_H
 
 #include <inttypes.h>
-#include <string>
 #include <sigc++/sigc++.h>
+#include "raul/Path.hpp"
 #include "interface/ClientInterface.hpp"
-using std::string;
 
 namespace Ingen {
 namespace Client {
@@ -44,32 +43,32 @@ public:
 	
 	bool enabled() const { return _enabled; }
 
-	std::string uri() const { return "(internal)"; }
+	Raul::URI uri() const { return "ingen:internal"; }
 
 	// Signal parameters match up directly with ClientInterface calls
 	sigc::signal<bool, const Shared::GraphObject*> signal_new_object;
 	
-	sigc::signal<void, int32_t>                            signal_response_ok;
-	sigc::signal<void, int32_t, string>                    signal_response_error;
-	sigc::signal<void>                                     signal_bundle_begin; 
-	sigc::signal<void>                                     signal_bundle_end; 
-	sigc::signal<void, string>                             signal_error; 
-	sigc::signal<void, string, string, string>             signal_new_plugin; 
-	sigc::signal<void, string, uint32_t>                   signal_new_patch; 
-	sigc::signal<void, string, string>                     signal_new_node; 
-	sigc::signal<void, string, string, uint32_t, bool>     signal_new_port; 
-	sigc::signal<void, string>                             signal_clear_patch; 
-	sigc::signal<void, string, string>                     signal_object_renamed; 
-	sigc::signal<void, string>                             signal_object_destroyed; 
-	sigc::signal<void, string, string>                     signal_connection; 
-	sigc::signal<void, string, string>                     signal_disconnection; 
-	sigc::signal<void, string, string, Raul::Atom>         signal_variable_change; 
-	sigc::signal<void, string, string, Raul::Atom>         signal_property_change; 
-	sigc::signal<void, string, Raul::Atom>                 signal_port_value; 
-	sigc::signal<void, string, uint32_t, Raul::Atom>       signal_voice_value; 
-	sigc::signal<void, string>                             signal_activity; 
-	sigc::signal<void, string, uint32_t, uint32_t, string> signal_program_add; 
-	sigc::signal<void, string, uint32_t, uint32_t>         signal_program_remove; 
+	sigc::signal<void, int32_t>                                     signal_response_ok;
+	sigc::signal<void, int32_t, std::string>                        signal_response_error;
+	sigc::signal<void>                                              signal_bundle_begin; 
+	sigc::signal<void>                                              signal_bundle_end; 
+	sigc::signal<void, std::string>                                 signal_error; 
+	sigc::signal<void, Raul::URI, Raul::URI, Raul::Symbol>          signal_new_plugin; 
+	sigc::signal<void, Raul::Path, uint32_t>                        signal_new_patch; 
+	sigc::signal<void, Raul::Path, Raul::URI>                       signal_new_node; 
+	sigc::signal<void, Raul::Path, Raul::URI, uint32_t, bool>       signal_new_port; 
+	sigc::signal<void, Raul::Path>                                  signal_clear_patch; 
+	sigc::signal<void, Raul::Path, Raul::Path>                      signal_object_renamed; 
+	sigc::signal<void, Raul::Path>                                  signal_object_destroyed; 
+	sigc::signal<void, Raul::Path, Raul::Path>                      signal_connection; 
+	sigc::signal<void, Raul::Path, Raul::Path>                      signal_disconnection; 
+	sigc::signal<void, Raul::Path, Raul::URI, Raul::Atom>           signal_variable_change; 
+	sigc::signal<void, Raul::Path, Raul::URI, Raul::Atom>           signal_property_change; 
+	sigc::signal<void, Raul::Path, Raul::Atom>                      signal_port_value; 
+	sigc::signal<void, Raul::Path, uint32_t, Raul::Atom>            signal_voice_value; 
+	sigc::signal<void, Raul::Path>                                  signal_activity; 
+	sigc::signal<void, Raul::Path, uint32_t, uint32_t, std::string> signal_program_add; 
+	sigc::signal<void, Raul::Path, uint32_t, uint32_t>              signal_program_remove; 
 	
 	/** Fire pending signals.  Only does anything on derived classes (that may queue) */
 	virtual bool emit_signals() { return false; }
@@ -95,61 +94,61 @@ protected:
 	void response_ok(int32_t id)
 		{ if (_enabled) signal_response_ok.emit(id); }
 
-	void response_error(int32_t id, const string& msg)
+	void response_error(int32_t id, const std::string& msg)
 		{ if (_enabled) signal_response_error.emit(id, msg); }
 	
-	void error(const string& msg)
+	void error(const std::string& msg)
 		{ if (_enabled) signal_error.emit(msg); }
 	
-	void new_plugin(const string& uri, const string& type_uri, const string& symbol)
+	void new_plugin(const Raul::URI& uri, const Raul::URI& type_uri, const Raul::Symbol& symbol)
 		{ if (_enabled) signal_new_plugin.emit(uri, type_uri, symbol); }
 	
 	bool new_object(const Shared::GraphObject* object)
 		{ if (_enabled) signal_new_object.emit(object); return false; }
 
-	void new_patch(const string& path, uint32_t poly)
+	void new_patch(const Raul::Path& path, uint32_t poly)
 		{ if (_enabled) signal_new_patch.emit(path, poly); }
 	
-	void new_node(const string& path, const string& plugin_uri)
+	void new_node(const Raul::Path& path, const Raul::URI& plugin_uri)
 		{ if (_enabled) signal_new_node.emit(path, plugin_uri); }
 	
-	void new_port(const string& path, const string& type, uint32_t index, bool is_output)
+	void new_port(const Raul::Path& path, const Raul::URI& type, uint32_t index, bool is_output)
 		{ if (_enabled) signal_new_port.emit(path, type, index, is_output); }
 	
-	void connect(const string& src_port_path, const string& dst_port_path)
+	void connect(const Raul::Path& src_port_path, const Raul::Path& dst_port_path)
 		{ if (_enabled) signal_connection.emit(src_port_path, dst_port_path); }
 
-	void destroy(const string& path)
+	void destroy(const Raul::Path& path)
 		{ if (_enabled) signal_object_destroyed.emit(path); }
 	
-	void clear_patch(const string& path)
+	void clear_patch(const Raul::Path& path)
 		{ if (_enabled) signal_clear_patch.emit(path); }
 
-	void rename(const string& old_path, const string& new_path)
+	void rename(const Raul::Path& old_path, const Raul::Path& new_path)
 		{ if (_enabled) signal_object_renamed.emit(old_path, new_path); }
 	
-	void disconnect(const string& src_port_path, const string& dst_port_path)
+	void disconnect(const Raul::Path& src_port_path, const Raul::Path& dst_port_path)
 		{ if (_enabled) signal_disconnection.emit(src_port_path, dst_port_path); }
 	
-	void set_variable(const string& path, const string& key, const Raul::Atom& value)
+	void set_variable(const Raul::Path& path, const Raul::URI& key, const Raul::Atom& value)
 		{ if (_enabled) signal_variable_change.emit(path, key, value); }
 	
-	void set_property(const string& path, const string& key, const Raul::Atom& value)
+	void set_property(const Raul::Path& path, const Raul::URI& key, const Raul::Atom& value)
 		{ if (_enabled) signal_property_change.emit(path, key, value); }
 
-	void set_port_value(const string& port_path, const Raul::Atom& value)
+	void set_port_value(const Raul::Path& port_path, const Raul::Atom& value)
 		{ if (_enabled) signal_port_value.emit(port_path, value); }
 	
-	void set_voice_value(const string& port_path, uint32_t voice, const Raul::Atom& value)
+	void set_voice_value(const Raul::Path& port_path, uint32_t voice, const Raul::Atom& value)
 		{ if (_enabled) signal_voice_value.emit(port_path, voice, value); }
 	
-	void activity(const string& port_path)
+	void activity(const Raul::Path& port_path)
 		{ if (_enabled) signal_activity.emit(port_path); }
 
-	void program_add(const string& path, uint32_t bank, uint32_t program, const string& name)
+	void program_add(const Raul::Path& path, uint32_t bank, uint32_t program, const std::string& name)
 		{ if (_enabled) signal_program_add.emit(path, bank, program, name); }
 	
-	void program_remove(const string& path, uint32_t bank, uint32_t program)
+	void program_remove(const Raul::Path& path, uint32_t bank, uint32_t program)
 		{ if (_enabled) signal_program_remove.emit(path, bank, program); }
 };
 

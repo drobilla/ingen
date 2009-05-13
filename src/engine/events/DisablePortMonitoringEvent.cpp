@@ -15,7 +15,6 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <string>
 #include "interface/ClientInterface.hpp"
 #include "events/DisablePortMonitoringEvent.hpp"
 #include "Responder.hpp"
@@ -25,18 +24,16 @@
 #include "ClientBroadcaster.hpp"
 #include "AudioBuffer.hpp"
 
-using std::string;
-
 namespace Ingen {
 
 
-DisablePortMonitoringEvent::DisablePortMonitoringEvent(Engine&              engine,
+DisablePortMonitoringEvent::DisablePortMonitoringEvent(Engine&            engine,
                                                      SharedPtr<Responder> responder,
                                                      SampleCount          timestamp,
-                                                     const std::string&   port_path)
-: QueuedEvent(engine, responder, timestamp),
-  _port_path(port_path),
-  _port(NULL)
+                                                     const Raul::Path&    port_path)
+	: QueuedEvent(engine, responder, timestamp)
+	, _port_path(port_path)
+	, _port(NULL)
 {
 }
 

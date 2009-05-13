@@ -41,10 +41,8 @@ Builder::build(SharedPtr<const GraphObject> object)
 {
 	SharedPtr<const Patch> patch = PtrCast<const Patch>(object);
 	if (patch) {
-		if (object->path() != "/") {
-			const string path_str = object->path();
-			_interface.new_patch(path_str, patch->internal_polyphony());
-		}
+		if (!object->path().is_root())
+			_interface.new_patch(object->path(), patch->internal_polyphony());
 
 		build_object(object);
 		/*for (Patch::Connections::const_iterator i = patch->connections().begin();
@@ -95,9 +93,8 @@ Builder::build_object(SharedPtr<const GraphObject> object)
 
 	for (GraphObject::Properties::const_iterator i = object->properties().begin();
 			i != object->properties().end(); ++i) {
-		if (object->path() == "/")
+		if (object->path().is_root())
 			continue;
-		string path_str = object->path();
 		_interface.set_property(object->path(), i->first, i->second);
 	}
 }

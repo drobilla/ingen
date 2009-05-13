@@ -18,12 +18,9 @@
 #ifndef DISCONNECTNODEEVENT_H
 #define DISCONNECTNODEEVENT_H
 
-#include <string>
 #include "raul/List.hpp"
 #include "raul/Path.hpp"
 #include "QueuedEvent.hpp"
-
-using std::string;
 
 namespace Ingen {
 
@@ -43,7 +40,7 @@ class OutputPort;
 class DisconnectAllEvent : public QueuedEvent
 {
 public:
-	DisconnectAllEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& parent_path, const string& node_path);
+	DisconnectAllEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Raul::Path& parent_path, const Raul::Path& node_path);
 	DisconnectAllEvent(Engine& engine, PatchImpl* parent, GraphObjectImpl* object);
 	~DisconnectAllEvent();
 

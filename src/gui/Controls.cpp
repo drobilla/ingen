@@ -29,9 +29,10 @@
 #include "App.hpp"
 
 using namespace std;
-using namespace Ingen::Client;
+using namespace Raul;
 
 namespace Ingen {
+using namespace Client;
 namespace GUI {
 
 
@@ -187,13 +188,13 @@ SliderControl::set_value(const Atom& atom)
 
 	
 void
-SliderControl::port_variable_change(const string& key, const Atom& value)
+SliderControl::port_variable_change(const URI& key, const Atom& value)
 {
 	_enable_signal = false;
 	
-	if (key == "lv2:minimum" && value.type() == Atom::FLOAT)
+	if (key.str() == "lv2:minimum" && value.type() == Atom::FLOAT)
 		set_range(value.get_float(), _slider->get_adjustment()->get_upper());
-	else if (key == "lv2:maximum" && value.type() == Atom::FLOAT)
+	else if (key.str() == "lv2:maximum" && value.type() == Atom::FLOAT)
 		set_range(_slider->get_adjustment()->get_lower(), value.get_float());
 	
 	_enable_signal = true;

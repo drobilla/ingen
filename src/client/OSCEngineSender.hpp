@@ -23,9 +23,6 @@
 #include <lo/lo.h>
 #include "interface/EngineInterface.hpp"
 #include "shared/OSCSender.hpp"
-using std::string;
-using Ingen::Shared::EngineInterface;
-using Ingen::Shared::ClientInterface;
 
 namespace Ingen {
 namespace Client {
@@ -38,16 +35,16 @@ namespace Client {
  *
  * \ingroup IngenClient
  */
-class OSCEngineSender : public EngineInterface, public Shared::OSCSender {
+class OSCEngineSender : public Shared::EngineInterface, public Shared::OSCSender {
 public:
-	OSCEngineSender(const string& engine_url);
+	OSCEngineSender(const Raul::URI& engine_url);
 	~OSCEngineSender();
 	
-	static OSCEngineSender* create(const std::string& engine_url) {
+	static OSCEngineSender* create(const Raul::URI& engine_url) {
 		return new OSCEngineSender(engine_url);
 	}
 	
-	std::string uri() const { return _engine_url; }
+	Raul::URI uri() const { return _engine_url; }
 	
 	inline int32_t next_id()
 	{ int32_t ret = (_id == -1) ? -1 : _id++; return ret; }
@@ -69,8 +66,8 @@ public:
 	void transfer_end()   { OSCSender::transfer_end(); }
 
 	// Client registration
-	void register_client(ClientInterface* client);
-	void unregister_client(const string& uri);
+	void register_client(Shared::ClientInterface* client);
+	void unregister_client(const Raul::URI& uri);
 
 	// Engine commands
 	void load_plugins();
@@ -80,70 +77,71 @@ public:
 	
 	// Object commands
 	
-	bool new_object(const Shared::GraphObject* object);
+	virtual bool new_object(const Shared::GraphObject* object);
+
+	virtual void new_patch(const Raul::Path& path,
+	                       uint32_t          poly);
 	
-	void new_patch(const string& path,
-	               uint32_t      poly);
-
-	void new_port(const string& path,
-	              const string& type,
-	              uint32_t      index,
-	              bool          is_output);
-
-	void new_node(const string& path,
-	              const string& plugin_uri);
+	virtual void new_node(const Raul::Path& path,
+	                      const Raul::URI&  plugin_uri);
 	
-	void rename(const string& old_path,
-	            const string& new_name);
-
-	void destroy(const string& path);
-
-	void clear_patch(const string& patch_path);
+	virtual void new_port(const Raul::Path& path,
+	                      const Raul::URI&  type,
+	                      uint32_t          index,
+	                      bool              is_output);
 	
-	void connect(const string& src_port_path,
-	             const string& dst_port_path);
-
-	void disconnect(const string& src_port_path,
-	                const string& dst_port_path);
-
-	void disconnect_all(const string& parent_patch_path,
-	                    const string& path);
-
-	void set_port_value(const string&     port_path,
-	                    const Raul::Atom& value);
-
-	void set_voice_value(const string&     port_path,
-	                     uint32_t          voice,
-	                     const Raul::Atom& value);
+	virtual void clear_patch(const Raul::Path& path);
 	
-	void set_program(const string& node_path,
-	                 uint32_t      bank,
-	                 uint32_t      program);
-
-	void midi_learn(const string& node_path);
-
-	void set_variable(const string&     obj_path,
-	                  const string&     predicate,
-	                  const Raul::Atom& value);
+	virtual void destroy(const Raul::Path& path);
 	
-	void set_property(const string&     obj_path,
-	                  const string&     predicate,
-	                  const Raul::Atom& value);
+	virtual void rename(const Raul::Path& old_path,
+	                    const Raul::Path& new_path);
+	
+	virtual void connect(const Raul::Path& src_port_path,
+	                     const Raul::Path& dst_port_path);
+	
+	virtual void disconnect(const Raul::Path& src_port_path,
+	                        const Raul::Path& dst_port_path);
+	
+	virtual void disconnect_all(const Raul::Path& parent_patch_path,
+	                            const Raul::Path& path);
+	
+	virtual void set_variable(const Raul::Path& subject_path,
+	                          const Raul::URI&  predicate,
+	                          const Raul::Atom& value);
+	
+	virtual void set_property(const Raul::Path& subject_path,
+	                          const Raul::URI&  predicate,
+	                          const Raul::Atom& value);
+	
+	virtual void set_port_value(const Raul::Path& port_path,
+	                            const Raul::Atom& value);
+	
+	virtual void set_voice_value(const Raul::Path& port_path,
+	                             uint32_t          voice,
+	                             const Raul::Atom& value);
+	
+	virtual void set_program(const Raul::Path& node_path,
+	                         uint32_t          bank,
+	                         uint32_t          program);
+
+	virtual void midi_learn(const Raul::Path& node_path);
+
 	
 	// Requests //
 	void ping();
-	void request_plugin(const string& uri);
-	void request_object(const string& path);
-	void request_port_value(const string& port_path);
-	void request_variable(const string& path, const string& key);
-	void request_property(const string& path, const string& key);
+	void request_plugin(const Raul::URI& uri);
+	void request_object(const Raul::Path& path);
+	void request_port_value(const Raul::Path& port_path);
+	void request_variable(const Raul::Path& path, const Raul::URI& key);
+	void request_property(const Raul::Path& path, const Raul::URI& key);
 	void request_plugins();
 	void request_all_objects();
 
 protected:
-	const string _engine_url;
-	int          _client_port;
-	int32_t      _id;
+	const Raul::URI _engine_url;
+	int             _client_port;
+	int32_t         _id;
 };
 
 

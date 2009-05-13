@@ -18,17 +18,12 @@
 #ifndef REQUESTPORTVALUEEVENT_H
 #define REQUESTPORTVALUEEVENT_H
 
-#include <string>
 #include "QueuedEvent.hpp"
 #include "types.hpp"
-
-using std::string;
 
 namespace Ingen {
 	
 class PortImpl;
-namespace Shared { class ClientInterface; }
-using Shared::ClientInterface;
 
 
 /** A request from a client to send the value of a port.
@@ -38,16 +33,16 @@ using Shared::ClientInterface;
 class RequestPortValueEvent : public QueuedEvent
 {
 public:
-	RequestPortValueEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& port_path);
+	RequestPortValueEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Raul::Path& port_path);
 
 	void pre_process();
 	void execute(ProcessContext& context);
 	void post_process();
 
 private:
-	const string _port_path;
-	PortImpl*    _port;
-	Sample       _value;
+	const Raul::Path _port_path;
+	PortImpl*        _port;
+	Sample           _value;
 };
 
 

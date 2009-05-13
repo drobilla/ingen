@@ -18,11 +18,9 @@
 #ifndef REQUESTPLUGINEVENT_H
 #define REQUESTPLUGINEVENT_H
 
-#include <string>
+#include "raul/URI.hpp"
 #include "QueuedEvent.hpp"
 #include "types.hpp"
-
-using std::string;
 
 namespace Ingen {
 	
@@ -36,14 +34,14 @@ class PluginImpl;
 class RequestPluginEvent : public QueuedEvent
 {
 public:
-	RequestPluginEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& uri);
+	RequestPluginEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Raul::URI& uri);
 
 	void pre_process();
 	void execute(ProcessContext& context);
 	void post_process();
 
 private:
-	const string      _uri;
+	const Raul::URI   _uri;
 	const PluginImpl* _plugin;
 };
 

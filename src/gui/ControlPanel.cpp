@@ -25,6 +25,7 @@
 #include "GladeFactory.hpp"
 
 using namespace std;
+using namespace Raul;
 
 namespace Ingen {
 namespace GUI {
@@ -251,17 +252,17 @@ ControlPanel::specific_voice_selected()
 
 
 void
-ControlPanel::parent_property_changed(const std::string& predicate, const Raul::Atom& value)
+ControlPanel::parent_property_changed(const Raul::URI& predicate, const Raul::Atom& value)
 {
-	if (predicate == "ingen:polyphony" && value.type() == Atom::INT)
+	if (predicate.str() == "ingen:polyphony" && value.type() == Atom::INT)
 		_voice_spinbutton->set_range(0, value.get_int32() - 1);
 }
 
 
 void
-ControlPanel::variable_changed(const std::string& predicate, const Raul::Atom& value)
+ControlPanel::variable_changed(const Raul::URI& predicate, const Raul::Atom& value)
 {
-	if (predicate == "ingen:polyphonic" && value.type() == Atom::BOOL) {
+	if (predicate.str() == "ingen:polyphonic" && value.type() == Atom::BOOL) {
 		if (value.get_bool())
 			_voice_control_box->show();
 		else

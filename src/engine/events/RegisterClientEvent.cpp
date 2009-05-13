@@ -23,11 +23,11 @@
 namespace Ingen {
 
 
-RegisterClientEvent::RegisterClientEvent(Engine&                      engine,
+RegisterClientEvent::RegisterClientEvent(Engine&              engine,
                                          SharedPtr<Responder> responder,
-                                         SampleCount                  timestamp,
-                                         const string&                uri,
-                                         ClientInterface*             client)
+                                         SampleCount          timestamp,
+                                         const URI&           uri,
+                                         ClientInterface*     client)
 	: QueuedEvent(engine, responder, timestamp)
 	, _uri(uri)
 	, _client(client)

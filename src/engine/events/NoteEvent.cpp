@@ -47,7 +47,7 @@ NoteEvent::NoteEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount
  *
  * Triggered by OSC.
  */
-NoteEvent::NoteEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& node_path, bool on, uint8_t note_num, uint8_t velocity)
+NoteEvent::NoteEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Path& node_path, bool on, uint8_t note_num, uint8_t velocity)
 : Event(engine, responder, timestamp),
   _node(NULL),
   _node_path(node_path),
@@ -72,14 +72,14 @@ NoteEvent::execute(ProcessContext& context)
 	
 	if (_node != NULL && _node->plugin()->type() == Plugin::Internal) {
 		if (_on) {
-			if (_node->plugin_impl()->uri() == NS_INTERNALS "Note")
+			if (_node->plugin_impl()->uri().str() == NS_INTERNALS "Note")
 				((NoteNode*)_node)->note_on(context, _note_num, _velocity, _time);
-			else if (_node->plugin_impl()->uri() == NS_INTERNALS "Trigger")
+			else if (_node->plugin_impl()->uri().str() == NS_INTERNALS "Trigger")
 				((TriggerNode*)_node)->note_on(context, _note_num, _velocity, _time);
 		} else  {
-			if (_node->plugin_impl()->uri() == NS_INTERNALS "Note")
+			if (_node->plugin_impl()->uri().str() == NS_INTERNALS "Note")
 				((NoteNode*)_node)->note_off(context, _note_num, _time);
-			else if (_node->plugin_impl()->uri() == NS_INTERNALS "Trigger")
+			else if (_node->plugin_impl()->uri().str() == NS_INTERNALS "Trigger")
 				((TriggerNode*)_node)->note_off(context, _note_num, _time);
 		}
 	}

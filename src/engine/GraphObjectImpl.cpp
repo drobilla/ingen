@@ -23,14 +23,14 @@
 namespace Ingen {
 
 void
-GraphObjectImpl::set_variable(const std::string& key, const Atom& value)
+GraphObjectImpl::set_variable(const Raul::URI& key, const Atom& value)
 {
 	_variables[key] = value;
 }
 
 	
 const Atom&
-GraphObjectImpl::get_variable(const std::string& key)
+GraphObjectImpl::get_variable(const Raul::URI& key)
 {
 	static const Atom null_atom;
 	Properties::iterator i = _variables.find(key);

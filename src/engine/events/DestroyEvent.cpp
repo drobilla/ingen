@@ -34,7 +34,7 @@
 namespace Ingen {
 
 
-DestroyEvent::DestroyEvent(Engine& engine, SharedPtr<Responder> responder, FrameTime time, QueuedEventSource* source, const string& path)
+DestroyEvent::DestroyEvent(Engine& engine, SharedPtr<Responder> responder, FrameTime time, QueuedEventSource* source, const Raul::Path& path)
 	: QueuedEvent(engine, responder, time, true, source)
 	, _path(path)
 	, _store_iterator(engine.engine_store()->end())
@@ -71,7 +71,7 @@ DestroyEvent::pre_process()
 		_removed_table = _engine.engine_store()->remove(_store_iterator);
 	}
 
-	if (_node != NULL && _path != "/") {
+	if (_node != NULL && !_path.is_root()) {
 		assert(_node->parent_patch());
 		_patch_node_listnode = _node->parent_patch()->remove_node(_path.name());
 		if (_patch_node_listnode) {
@@ -168,10 +168,10 @@ void
 DestroyEvent::post_process()
 {
 	if (!_node && !_port) {
-		if (_path == "/") {
+		if (_path.is_root()) {
 			_responder->respond_error("You can not destroy the root patch (/)");
 		} else {
-			string msg = string("Could not find object ") + _path + " to destroy";
+			string msg = string("Could not find object ") + _path.str() + " to destroy";
 			_responder->respond_error(msg);
 		}
 	}

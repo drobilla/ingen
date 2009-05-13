@@ -40,8 +40,8 @@ namespace Ingen {
 CreatePortEvent::CreatePortEvent(Engine&              engine,
                                  SharedPtr<Responder> responder,
                                  SampleCount          timestamp,
-                                 const string&        path,
-                                 const string&        type,
+                                 const Raul::Path&    path,
+                                 const Raul::URI&     type,
                                  bool                 is_output,
                                  QueuedEventSource*   source)
 	: QueuedEvent(engine, responder, timestamp, true, source)
@@ -83,7 +83,7 @@ CreatePortEvent::pre_process()
 		assert(_patch->path() == _path.parent());
 		
 		size_t buffer_size = 1;
-		if (_type != "ingen:Float")
+		if (_type.str() != "ingen:Float")
 			buffer_size = _engine.audio_driver()->buffer_size();
 	
 		const uint32_t old_num_ports = _patch->num_ports();
@@ -106,10 +106,10 @@ CreatePortEvent::pre_process()
 			_engine.engine_store()->add(_patch_port);
 
 			if (!_patch->parent()) {
-				if (_type == "lv2:AudioPort") {
+				if (_type.str() == "lv2:AudioPort") {
 					_driver_port = _engine.audio_driver()->create_port(
 							dynamic_cast<DuplexPort*>(_patch_port));
-				} else if (_type == "lv2ev:EventPort") {
+				} else if (_type.str() == "lv2ev:EventPort") {
 					_driver_port = _engine.midi_driver()->create_port(
 							dynamic_cast<DuplexPort*>(_patch_port));
 				}
@@ -136,9 +136,9 @@ CreatePortEvent::execute(ProcessContext& context)
 	}
 			
 	if (_driver_port) {
-		if (_type == "lv2:AudioPort") {
+		if (_type.str() == "lv2:AudioPort") {
 			_engine.audio_driver()->add_port(_driver_port);
-		} else if (_type == "lv2ev:EventPort") {
+		} else if (_type.str() == "lv2ev:EventPort") {
 			_engine.midi_driver()->add_port(_driver_port);
 		}
 	}
@@ -158,11 +158,11 @@ CreatePortEvent::post_process()
 		_engine.broadcaster()->send_object(_patch_port, true);
 		break;
 	case UNKNOWN_TYPE:
-		msg = string("Could not create port ") + _path + " (Unknown type)";
+		msg = string("Could not create port ") + _path.str() + " (Unknown type)";
 		_responder->respond_error(msg);
 		break;
 	case CREATION_FAILED:
-		msg = string("Could not create port ") + _path + " (Creation failed)";
+		msg = string("Could not create port ") + _path.str() + " (Creation failed)";
 		_responder->respond_error(msg);
 		break;
 	}

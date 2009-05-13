@@ -29,6 +29,7 @@ using namespace std;
 using namespace Raul;
 
 namespace Ingen {
+using namespace Shared;
 namespace Client {
 
 
@@ -69,178 +70,6 @@ ClientStore::clear()
 
 
 void
-ClientStore::add_plugin_orphan(SharedPtr<NodeModel> node)
-{
-	if (!_handle_orphans)
-		return;
-
-	Raul::Table<string, list<SharedPtr<NodeModel> > >::iterator spawn
-		= _plugin_orphans.find(node->plugin_uri());
-
-	if (spawn != _plugin_orphans.end()) {
-		spawn->second.push_back(node);
-	} else {
-		cerr << "WARNING: Orphans of plugin " << node->plugin_uri() << " received" << endl;
-		_engine->request_plugin(node->plugin_uri());
-		list<SharedPtr<NodeModel> > l;
-		l.push_back(node);
-		_plugin_orphans[node->plugin_uri()] = l;
-	}
-}
-
-
-void
-ClientStore::resolve_plugin_orphans(SharedPtr<PluginModel> plugin)
-{
-	if (!_handle_orphans)
-		return;
-	Raul::Table<string, list<SharedPtr<NodeModel> > >::iterator n
-		= _plugin_orphans.find(plugin->uri());
-
-	if (n != _plugin_orphans.end()) {
-	
-		list<SharedPtr<NodeModel> > spawn = n->second; // take a copy
-		cerr << "Missing dependant " << plugin->uri() << " received" << endl;
-
-		_plugin_orphans.erase(plugin->uri()); // prevent infinite recursion
-		
-		for (list<SharedPtr<NodeModel> >::iterator i = spawn.begin();
-				i != spawn.end(); ++i) {
-			(*i)->_plugin = plugin;
-			//add_object(*i);
-		}
-	}
-}
-
-
-void
-ClientStore::add_connection_orphan(std::pair<Path, Path> orphan)
-{
-	// Do this anyway, it's needed to get the connections for copy&paste
-	//if (!_handle_orphans)
-		//return;
-	
-	if (_handle_orphans)
-		cerr << "WARNING: Orphan connection " << orphan.first
-			<< " -> " << orphan.second << " received." << endl;
-	
-	_connection_orphans.push_back(orphan);
-}
-
-
-void
-ClientStore::resolve_connection_orphans(SharedPtr<PortModel> port)
-{
-	if (!_handle_orphans)
-		return;
-	assert(port->parent());
-
-	for (list< pair<Path, Path> >::iterator c = _connection_orphans.begin();
-			c != _connection_orphans.end(); ) {
-		
-		list< pair<Path, Path> >::iterator next = c;
-		++next;
-		
-		if (c->first == port->path() || c->second == port->path()) {
-			cerr << "Missing dependant (" << c->first << " -> " << c->second << ") received" << endl;
-			bool success = attempt_connection(c->first, c->second);
-			if (success)
-				_connection_orphans.erase(c);
-		}
-
-		c = next;
-	}
-}
-
-
-void
-ClientStore::add_orphan(SharedPtr<ObjectModel> child)
-{
-	if (!_handle_orphans)
-		return;
-	cerr << "WARNING: Orphan object " << child->path() << " received." << endl;
-
-	Raul::PathTable<list<SharedPtr<ObjectModel> > >::iterator children
-		= _orphans.find(child->path().parent());
-
-	_engine->request_object(child->path().parent());
-
-	if (children != _orphans.end()) {
-		children->second.push_back(child);
-	} else {
-		list<SharedPtr<ObjectModel> > l;
-		l.push_back(child);
-		_orphans.insert(make_pair(child->path().parent(), l));
-	}
-}
-
-
-void
-ClientStore::add_variable_orphan(const Path& subject_path, const string& predicate, const Atom& value)
-{
-	if (!_handle_orphans)
-		return;
-	Raul::PathTable<list<std::pair<string, Atom> > >::iterator orphans
-		= _variable_orphans.find(subject_path);
-
-	//_engine->request_object(subject_path);
-
-	if (orphans != _variable_orphans.end()) {
-		orphans->second.push_back(std::pair<string, Atom>(predicate, value));
-	} else {
-		list<std::pair<string, Atom> > l;
-		l.push_back(std::pair<string, Atom>(predicate, value));
-		_variable_orphans[subject_path] = l;
-	}
-}
-
-
-void
-ClientStore::resolve_variable_orphans(SharedPtr<ObjectModel> subject)
-{
-	if (!_handle_orphans)
-		return;
-	Raul::PathTable<list<std::pair<string, Atom> > >::iterator v
-		= _variable_orphans.find(subject->path());
-
-	if (v != _variable_orphans.end()) {
-	
-		list<std::pair<string, Atom> > values = v->second; // take a copy
-
-		_variable_orphans.erase(subject->path());
-		cerr << "Missing dependant " << subject->path() << " received" << endl;
-		
-		for (list<std::pair<string, Atom> >::iterator i = values.begin();
-				i != values.end(); ++i) {
-			subject->set_variable(i->first, i->second);
-		}
-	}
-}
-
-
-void
-ClientStore::resolve_orphans(SharedPtr<ObjectModel> parent)
-{
-	if (!_handle_orphans)
-		return;
-	Raul::PathTable<list<SharedPtr<ObjectModel> > >::iterator c
-		= _orphans.find(parent->path());
-
-	if (c != _orphans.end()) {
-	
-		list<SharedPtr<ObjectModel> > children = c->second; // take a copy
-
-		_orphans.erase(parent->path()); // prevent infinite recursion
-		
-		for (list<SharedPtr<ObjectModel> >::iterator i = children.begin();
-				i != children.end(); ++i) {
-			add_object(*i);
-		}
-	}
-}
-
-
-void
 ClientStore::add_object(SharedPtr<ObjectModel> object)
 {
 	// If we already have "this" object, merge the existing one into the new
@@ -250,7 +79,7 @@ ClientStore::add_object(SharedPtr<ObjectModel> object)
 		PtrCast<ObjectModel>(existing->second)->set(object);
 	} else {
 
-		if (object->path() != "/") {
+		if (!object->path().is_root()) {
 			SharedPtr<ObjectModel> parent = this->object(object->path().parent());
 			if (parent) {
 				assert(object->path().is_child_of(parent->path()));
@@ -261,15 +90,17 @@ ClientStore::add_object(SharedPtr<ObjectModel> object)
 				(*this)[object->path()] = object;
 				signal_new_object.emit(object);
 				
+#if 0
 				resolve_variable_orphans(parent);
 				resolve_orphans(parent);
 
 				SharedPtr<PortModel> port = PtrCast<PortModel>(object);
 				if (port)
 					resolve_connection_orphans(port);
+#endif
 
 			} else {
-				add_orphan(object);
+				//add_orphan(object);
 			}
 		} else {
 			(*this)[object->path()] = object;
@@ -308,7 +139,7 @@ ClientStore::remove_object(const Path& path)
 		if (result)
 			result->signal_destroyed.emit();
 
-		if (result->path() != "/") {
+		if (!result->path().is_root()) {
 			assert(result->parent());
 
 			SharedPtr<ObjectModel> parent = this->object(result->path().parent());
@@ -328,7 +159,7 @@ ClientStore::remove_object(const Path& path)
 
 
 SharedPtr<PluginModel>
-ClientStore::plugin(const string& uri)
+ClientStore::plugin(const URI& uri)
 {
 	assert(uri.length() > 0);
 	Plugins::iterator i = _plugins->find(uri);
@@ -349,7 +180,7 @@ ClientStore::object(const Path& path)
 	} else {
 		SharedPtr<ObjectModel> model = PtrCast<ObjectModel>(i->second);
 		assert(model);
-		assert(model->path() == "/" || model->parent());
+		assert(model->path().is_root() || model->parent());
 		return model;
 	}
 }
@@ -369,7 +200,7 @@ ClientStore::add_plugin(SharedPtr<PluginModel> pm)
 
 
 void
-ClientStore::destroy(const std::string& path)
+ClientStore::destroy(const Path& path)
 {
 	SharedPtr<ObjectModel> removed = remove_object(path);
 	removed.reset();
@@ -377,13 +208,8 @@ ClientStore::destroy(const std::string& path)
 }
 
 void
-ClientStore::rename(const std::string& old_path_str, const std::string& new_path_str)
+ClientStore::rename(const Path& old_path_str, const Path& new_path_str)
 {
-	if (!Path::is_valid(old_path_str) || !Path::is_valid(new_path_str)) {
-		cerr << "[Store] Bad path renaming " << old_path_str << " to " << new_path_str << endl;
-		return;
-	}
-	
 	Path old_path(old_path_str);
 	Path new_path(new_path_str);
 	
@@ -427,12 +253,12 @@ ClientStore::rename(const std::string& old_path_str, const std::string& new_path
 }
 
 void
-ClientStore::new_plugin(const string& uri, const string& type_uri, const string& symbol)
+ClientStore::new_plugin(const URI& uri, const URI& type_uri, const Symbol& symbol)
 {
 	SharedPtr<PluginModel> p(new PluginModel(uri, type_uri));
 	p->set_property("lv2:symbol", Atom(Atom::STRING, symbol));
 	add_plugin(p);
-	resolve_plugin_orphans(p);
+	//resolve_plugin_orphans(p);
 }
 
 
@@ -464,7 +290,7 @@ ClientStore::new_object(const Shared::GraphObject* object)
 
 
 void
-ClientStore::new_patch(const string& path, uint32_t poly)
+ClientStore::new_patch(const Path& path, uint32_t poly)
 {
 	SharedPtr<PatchModel> p(new PatchModel(path, poly));
 	add_object(p);
@@ -472,12 +298,12 @@ ClientStore::new_patch(const string& path, uint32_t poly)
 
 
 void
-ClientStore::new_node(const string& path, const string& plugin_uri)
+ClientStore::new_node(const Path& path, const URI& plugin_uri)
 {
 	SharedPtr<PluginModel> plug = plugin(plugin_uri);
 	if (!plug) {
 		SharedPtr<NodeModel> n(new NodeModel(plugin_uri, path));
-		add_plugin_orphan(n);
+		//add_plugin_orphan(n);
 		add_object(n);
 	} else {
 		SharedPtr<NodeModel> n(new NodeModel(plug, path));
@@ -487,27 +313,20 @@ ClientStore::new_node(const string& path, const string& plugin_uri)
 
 
 void
-ClientStore::new_port(const string& path, const string& type, uint32_t index, bool is_output)
+ClientStore::new_port(const Path& path, const URI& type, uint32_t index, bool is_output)
 {
 	PortModel::Direction pdir = is_output ? PortModel::OUTPUT : PortModel::INPUT;
 
 	SharedPtr<PortModel> p(new PortModel(path, index, type, pdir));
 	add_object(p);
-	if (p->parent())
-		resolve_connection_orphans(p);
+	/*if (p->parent())
+		resolve_connection_orphans(p);*/
 }
 
 
 void
-ClientStore::clear_patch(const std::string& path_str)
+ClientStore::clear_patch(const Path& path)
 {
-	if (!Path::is_valid(path_str)) {
-		cerr << "[Store] Illegal path in clear: " << path_str << endl;
-		return;
-	}
-
-	Path path(path_str);
-
 	iterator i = find(path);
 	if (i != end()) {
 		assert((*i).second->path() == path);
@@ -534,7 +353,7 @@ ClientStore::clear_patch(const std::string& path_str)
 
 
 void
-ClientStore::set_variable(const string& subject_path, const string& predicate, const Atom& value)
+ClientStore::set_variable(const Path& subject_path, const URI& predicate, const Atom& value)
 {
 	SharedPtr<ObjectModel> subject = object(subject_path);
 
@@ -543,40 +362,28 @@ ClientStore::set_variable(const string& subject_path, const string& predicate, c
 	} else if (subject) {
 		subject->set_variable(predicate, value);
 	} else {
-		add_variable_orphan(subject_path, predicate, value);
+		//add_variable_orphan(subject_path, predicate, value);
 		cerr << "WARNING: variable '" << predicate << "' for unknown object " << subject_path << endl;
 	}
 }
 
 	
 void
-ClientStore::set_property(const string& subject_path, const string& predicate, const Atom& value)
+ClientStore::set_property(const Path& subject_path, const URI& predicate, const Atom& value)
 {
 	if (!value.is_valid())
 		cerr << "WARNING: property '" << predicate << "' is NULL" << endl;
 
-	if (Path::is_valid(subject_path)) {
-		SharedPtr<ObjectModel> obj = object(subject_path);
-		if (obj)
-			obj->set_property(predicate, value);
-		else
+	SharedPtr<ObjectModel> obj = object(subject_path);
+	if (obj)
+		obj->set_property(predicate, value);
+	else
 		cerr << "WARNING: property '" << predicate << "' for unknown object " << subject_path << endl;
-	} else {
-		if (subject_path.find(":") != string::npos
-			   && predicate == "rdf:type" && value.type() == Atom::URI) {
-			const std::string& type = value.get_uri();
-			if (   (type == "http://drobilla.net/ns/ingen#LADSPAPlugin")
-			    || (type == "http://drobilla.net/ns/ingen#Internal")
-			    || (type == "http://lv2plug.in/ns/lv2core#Plugin")) {
-				add_plugin(SharedPtr<PluginModel>(new PluginModel(subject_path, type)));
-			}
-		}
-	}
 }
 
 
 void
-ClientStore::set_port_value(const string& port_path, const Raul::Atom& value)
+ClientStore::set_port_value(const Path& port_path, const Atom& value)
 {
 	SharedPtr<PortModel> port = PtrCast<PortModel>(object(port_path));
 	if (port)
@@ -587,7 +394,7 @@ ClientStore::set_port_value(const string& port_path, const Raul::Atom& value)
 
 
 void
-ClientStore::set_voice_value(const string& port_path, uint32_t voice, const Raul::Atom& value)
+ClientStore::set_voice_value(const Path& port_path, uint32_t voice, const Atom& value)
 {
 	SharedPtr<PortModel> port = PtrCast<PortModel>(object(port_path));
 	if (port)
@@ -654,7 +461,7 @@ ClientStore::attempt_connection(const Path& src_port_path, const Path& dst_port_
 		patch->add_connection(cm);
 		return true;
 	} else if (add_orphan) {
-		add_connection_orphan(make_pair(src_port_path, dst_port_path));
+		//add_connection_orphan(make_pair(src_port_path, dst_port_path));
 	}
 
 	return false;
@@ -662,14 +469,14 @@ ClientStore::attempt_connection(const Path& src_port_path, const Path& dst_port_
 
 	
 void
-ClientStore::connect(const string& src_port_path, const string& dst_port_path)
+ClientStore::connect(const Path& src_port_path, const Path& dst_port_path)
 {
 	attempt_connection(src_port_path, dst_port_path, true);
 }
 
 
 void
-ClientStore::disconnect(const string& src_port_path, const string& dst_port_path)
+ClientStore::disconnect(const Path& src_port_path, const Path& dst_port_path)
 {
 	// Find the ports and create a ConnectionModel just to get at the parent path
 	// finding logic in ConnectionModel.  So I'm lazy.

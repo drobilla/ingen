@@ -19,15 +19,9 @@
 #define UNREGISTERCLIENTEVENT_H
 
 #include "QueuedEvent.hpp"
-#include <string>
-using std::string;
+#include "raul/URI.hpp"
 
 namespace Ingen {
-
-namespace Shared {
-	class ClientInterface;
-}
-using Shared::ClientInterface;
 
 
 /** Unregisters an OSC client so it no longer receives notifications.
@@ -37,15 +31,15 @@ using Shared::ClientInterface;
 class UnregisterClientEvent : public QueuedEvent
 {
 public:
-	UnregisterClientEvent(Engine&                      engine,
+	UnregisterClientEvent(Engine&              engine,
 	                      SharedPtr<Responder> responder,
-	                      SampleCount                  timestamp,
-	                      const string&                uri);
+	                      SampleCount          timestamp,
+	                      const Raul::URI&     uri);
 
 	void post_process();
 
 private:
-	string _uri;
+	Raul::URI _uri;
 };
 
 

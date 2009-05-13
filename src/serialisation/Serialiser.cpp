@@ -145,7 +145,7 @@ Serialiser::to_string(SharedPtr<GraphObject>         object,
 	Redland::Resource base_rdf_node(_model->world(), base_uri);
 	for (GraphObject::Properties::const_iterator v = extra_rdf.begin(); v != extra_rdf.end(); ++v) {
 		if (v->first.find(":") != string::npos) {
-			_model->add_statement(base_rdf_node, v->first,
+			_model->add_statement(base_rdf_node, v->first.str(),
 					AtomRDF::atom_to_node(_model->world(), v->second));
 		} else {
 			cerr << "Warning: not serialising extra RDF with key '" << v->first << "'" << endl;
@@ -227,7 +227,7 @@ Redland::Node
 Serialiser::instance_rdf_node(const Path& path)
 {
 	assert(_model);
-	assert(path.substr(0, _root_path.length()) == _root_path);
+	assert(path.is_child_of(_root_path));
 	
 	if (path == _root_path)
 		return Redland::Resource(_model->world(), _base_uri);
@@ -241,7 +241,7 @@ Redland::Node
 Serialiser::class_rdf_node(const Path& path)
 {
 	assert(_model);
-	assert(path.substr(0, _root_path.length()) == _root_path);
+	assert(path.is_child_of(_root_path));
 	
 	if (path == _root_path)
 		return Redland::Resource(_model->world(), _base_uri);
@@ -272,7 +272,7 @@ Serialiser::serialise(SharedPtr<GraphObject> object) throw (std::logic_error)
 	
 	SharedPtr<Shared::Node> node = PtrCast<Shared::Node>(object);
 	if (node) {
-		const Redland::Resource plugin_id(_model->world(), node->plugin()->uri());
+		const Redland::Resource plugin_id(_model->world(), node->plugin()->uri().str());
 		serialise_node(node, plugin_id, instance_rdf_node(node->path()));
 		return;
 	}
@@ -305,7 +305,7 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch, const Redland::Node&
 		_model->add_statement(patch_id, "lv2:symbol",
 			Redland::Literal(_model->world(), s->second.get_string()));
 	// Otherwise take the one from our path (if possible)
-	} else if (patch->path() != "/") {
+	} else if (!patch->path().is_root()) {
 		_model->add_statement(patch_id, "lv2:symbol",
 				Redland::Literal(_model->world(), patch->path().name()));
 	} else {
@@ -329,7 +329,7 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch, const Redland::Node&
 			serialise_patch(patch, class_id);
 			serialise_node(patch, class_id, node_id);
 		} else if (node) {
-			const Redland::Resource class_id(_model->world(), node->plugin()->uri());
+			const Redland::Resource class_id(_model->world(), node->plugin()->uri().str());
 			const Redland::Node     node_id(instance_rdf_node(n->second->path()));
 			_model->add_statement(patch_id, "ingen:node", node_id);
 			serialise_node(node, class_id, node_id);
@@ -364,7 +364,7 @@ Serialiser::serialise_plugin(const Shared::Plugin& plugin)
 {
 	assert(_model);
 
-	const Redland::Node plugin_id = Redland::Resource(_model->world(), plugin.uri());
+	const Redland::Node plugin_id = Redland::Resource(_model->world(), plugin.uri().str());
 
 	_model->add_statement(plugin_id, "rdf:type",
 		Redland::Resource(_model->world(), plugin.type_uri()));
@@ -480,7 +480,7 @@ Serialiser::serialise_properties(Redland::Node subject, const GraphObject::Prope
 	for (GraphObject::Properties::const_iterator v = properties.begin(); v != properties.end(); ++v) {
 		if (v->first.find(":") && v->second.is_valid()) {
 			const Redland::Node value = AtomRDF::atom_to_node(_model->world(), v->second);
-			_model->add_statement(subject, v->first, value);
+			_model->add_statement(subject, v->first.str(), value);
 		} else {
 			cerr << "Warning: unable to serialize property \'" << v->first << "\'" << endl;
 		}
@@ -492,9 +492,9 @@ void
 Serialiser::serialise_variables(Redland::Node subject, const GraphObject::Properties& variables)
 {
 	for (GraphObject::Properties::const_iterator v = variables.begin(); v != variables.end(); ++v) {
-		if (v->first.find(":") && v->first != "ingen:document") {
+		if (v->first.find(":") && v->first.str() != "ingen:document") {
 			if (v->second.is_valid()) {
-				const Redland::Resource key(_model->world(), v->first);
+				const Redland::Resource key(_model->world(), v->first.str());
 				const Redland::Node value = AtomRDF::atom_to_node(_model->world(), v->second);
 				if (value.is_valid()) {
 					_model->add_statement(subject, key, value);

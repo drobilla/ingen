@@ -25,10 +25,7 @@ namespace Raul { class Path; }
 
 namespace Ingen {
 
-namespace Client {
-	class ClientStore;
-}
-using Ingen::Client::ClientStore;
+namespace Client { class ClientStore; }
 
 namespace GUI {
 
@@ -45,15 +42,15 @@ class PatchTreeWindow : public Gtk::Window
 public:
 	PatchTreeWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& refGlade);
 
-	void init(ClientStore& store);
+	void init(Client::ClientStore& store);
 
 	void new_object(SharedPtr<Client::ObjectModel> object);
 
-	void patch_variable_changed(const string& key, const Raul::Atom& value, const Path& path);
-	void patch_renamed(const Path& old_path, const Path& new_path);
+	void patch_variable_changed(const Raul::URI& key, const Raul::Atom& value, const Raul::Path& path);
+	void patch_renamed(const Raul::Path& old_path, const Raul::Path& new_path);
 
 	void add_patch(SharedPtr<Client::PatchModel> pm);
-	void remove_patch(const Path& path);
+	void remove_patch(const Raul::Path& path);
 	void show_patch_menu(GdkEventButton* ev);
 
 protected:
@@ -61,7 +58,7 @@ protected:
 	void event_patch_activated(const Gtk::TreeModel::Path& path, Gtk::TreeView::Column* col);
 	void event_patch_enabled_toggled(const Glib::ustring& path_str);
 
-	Gtk::TreeModel::iterator find_patch(Gtk::TreeModel::Children root, const Path& path);
+	Gtk::TreeModel::iterator find_patch(Gtk::TreeModel::Children root, const Raul::Path& path);
 	
 	PatchTreeView* _patches_treeview;
 

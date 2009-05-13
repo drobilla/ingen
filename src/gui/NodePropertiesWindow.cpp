@@ -21,9 +21,11 @@
 #include "client/PluginModel.hpp"
 #include "NodePropertiesWindow.hpp"
 
+using namespace std;
+using namespace Raul;
+
 namespace Ingen {
 namespace GUI {
-using std::string;
 
 
 NodePropertiesWindow::NodePropertiesWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml)
@@ -47,15 +49,15 @@ NodePropertiesWindow::set_node(SharedPtr<NodeModel> node_model)
 	
 	_node_model = node_model;
 
-	set_title(node_model->path() + " Properties");
+	set_title(node_model->path().str() + " Properties");
 	
-	_node_path_label->set_text(node_model->path());
+	_node_path_label->set_text(node_model->path().str());
 	_node_polyphonic_toggle->set_active(node_model->polyphonic());
 
 	const PluginModel* pm = dynamic_cast<const PluginModel*>(node_model->plugin());
 	if (pm) {
 		_plugin_type_label->set_text(pm->type_uri());
-		_plugin_uri_label->set_text(pm->uri());
+		_plugin_uri_label->set_text(pm->uri().str());
 		const Atom& name = pm->get_property("doap:name");
 		if (name.is_valid())
 			_plugin_name_label->set_text(pm->get_property("doap:name").get_string());

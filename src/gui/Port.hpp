@@ -58,7 +58,7 @@ public:
 	
 private:
 	
-	void variable_changed(const std::string& key, const Raul::Atom& value);
+	void variable_changed(const Raul::URI& key, const Raul::Atom& value);
 
 	void renamed();
 

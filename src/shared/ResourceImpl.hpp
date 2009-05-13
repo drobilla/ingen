@@ -19,6 +19,7 @@
 #define RESOURCEIMPL_HPP
 
 #include <map>
+#include "raul/URI.hpp"
 #include "interface/Resource.hpp"
 
 namespace Ingen {
@@ -28,21 +29,19 @@ namespace Shared {
 class ResourceImpl : virtual public Resource
 {
 public:
-	typedef std::map<std::string, Raul::Atom> Properties;
+	ResourceImpl(const Raul::URI& uri) : _uri(uri) {}
 
-	ResourceImpl(const std::string& uri) : _uri(uri) {}
-
-	virtual const std::string uri() const { return _uri; }
+	virtual const Raul::URI uri() const { return _uri.str(); }
 
 	const Properties& properties() const { return _properties; }
 	Properties&       properties()       { return _properties; }
 
-	const Raul::Atom& get_property(const std::string& uri) const;
-	void              set_property(const std::string& uri, const Raul::Atom& value);
+	const Raul::Atom& get_property(const Raul::URI& uri) const;
+	void              set_property(const Raul::URI& uri, const Raul::Atom& value);
 
 private:
-	std::string _uri;
-	Properties  _properties;
+	Raul::URI  _uri;
+	Properties _properties;
 };
 
 

@@ -19,8 +19,6 @@
 #define ALLNOTESOFFEVENT_H
 
 #include "Event.hpp"
-#include <string>
-using std::string;
 
 namespace Ingen {
 
@@ -35,14 +33,14 @@ class AllNotesOffEvent : public Event
 {
 public:
 	AllNotesOffEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, PatchImpl* patch);
-	AllNotesOffEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& patch_path);
+	AllNotesOffEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Raul::Path& patch_path);
 	
 	void execute(ProcessContext& context);
 	void post_process();
 
 private:
-	const string _patch_path;
-	PatchImpl*   _patch;
+	const Raul::Path _patch_path;
+	PatchImpl*       _patch;
 };
 
 

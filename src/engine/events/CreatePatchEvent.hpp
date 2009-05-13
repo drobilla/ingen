@@ -18,11 +18,7 @@
 #ifndef CREATEPATCHEVENT_H
 #define CREATEPATCHEVENT_H
 
-#include <string>
 #include "QueuedEvent.hpp"
-
-namespace Raul { template<typename T> class Array; }
-template<typename T> class TreeNode;
 
 namespace Ingen {
 	
@@ -37,21 +33,21 @@ class CompiledPatch;
 class CreatePatchEvent : public QueuedEvent
 {
 public:
-	CreatePatchEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const std::string& path, int poly);
+	CreatePatchEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Raul::Path& path, int poly);
 
 	void pre_process();
 	void execute(ProcessContext& context);
 	void post_process();
 
 private:
-	enum ErrorType { NO_ERROR, OBJECT_EXISTS, PARENT_NOT_FOUND, INVALID_POLY, INVALID_PATH };
+	enum ErrorType { NO_ERROR, OBJECT_EXISTS, PARENT_NOT_FOUND, INVALID_POLY };
 	
-	const std::string _path;
-	PatchImpl*        _patch;
-	PatchImpl*        _parent;
-	CompiledPatch*    _compiled_patch;
-	int               _poly;
-	ErrorType         _error;
+	const Raul::Path _path;
+	PatchImpl*       _patch;
+	PatchImpl*       _parent;
+	CompiledPatch*   _compiled_patch;
+	int              _poly;
+	ErrorType        _error;
 };
 
 

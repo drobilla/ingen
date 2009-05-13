@@ -49,76 +49,76 @@ HTTPClientSender::error(const std::string& msg)
 }
 
 
-void HTTPClientSender::new_node(const std::string& node_path,
-                                const std::string& plugin_uri)
+void HTTPClientSender::new_node(const Raul::Path& node_path,
+                                const Raul::URI&  plugin_uri)
 {
 	//send("/ingen/new_node", "ss", node_path.c_str(), plugin_uri.c_str(), LO_ARGS_END);
 }
 
 
 void
-HTTPClientSender::new_port(const std::string& path,
-                           const std::string& type,
-                           uint32_t           index,
-                           bool               is_output)
+HTTPClientSender::new_port(const Raul::Path& path,
+                           const Raul::URI&  type,
+                           uint32_t          index,
+                           bool              is_output)
 {
 	//send("/ingen/new_port", "sisi", path.c_str(), index, type.c_str(), is_output, LO_ARGS_END);
 }
 
 
 void
-HTTPClientSender::destroy(const std::string& path)
+HTTPClientSender::destroy(const Raul::Path& path)
 {
-	assert(path != "/");
-	send_chunk(string("<").append(path).append("> a <http://www.w3.org/2002/07/owl#Nothing> ."));
+	assert(!path.is_root());
+	send_chunk(string("<").append(path.str()).append("> a <http://www.w3.org/2002/07/owl#Nothing> ."));
 }
 
 
 void
-HTTPClientSender::clear_patch(const std::string& patch_path)
+HTTPClientSender::clear_patch(const Raul::Path& patch_path)
 {
-	send_chunk(string("<").append(patch_path).append("> ingen:empty true ."));
+	send_chunk(string("<").append(patch_path.str()).append("> ingen:empty true ."));
 }
 
 
 void
-HTTPClientSender::connect(const std::string& src_path, const std::string& dst_path)
+HTTPClientSender::connect(const Raul::Path& src_path, const Raul::Path& dst_path)
 {
 	string msg = string(
 			"@prefix rdf:       <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n" 
 			"@prefix ingen:     <http://drobilla.net/ns/ingen#> .\n"
 			"@prefix lv2var:    <http://lv2plug.in/ns/ext/instance-var#> .\n\n<").append(
 			"<> ingen:connection [\n"
-			"\tingen:destination <").append(dst_path).append("> ;\n"
-			"\tingen:source <").append(src_path).append(">\n] .\n");
+			"\tingen:destination <").append(dst_path.str()).append("> ;\n"
+			"\tingen:source <").append(src_path.str()).append(">\n] .\n");
 	send_chunk(msg);
 }
 
 
 void
-HTTPClientSender::disconnect(const std::string& src_path, const std::string& dst_path)
+HTTPClientSender::disconnect(const Raul::Path& src_path, const Raul::Path& dst_path)
 {
 	//send("/ingen/disconnection", "ss", src_path.c_str(), dst_path.c_str(), LO_ARGS_END);
 }
 
 
 void
-HTTPClientSender::set_variable(const std::string& path, const std::string& key, const Atom& value)
+HTTPClientSender::set_variable(const Raul::Path& path, const Raul::URI& key, const Atom& value)
 {
 	Redland::Node node = AtomRDF::atom_to_node(*_engine.world()->rdf_world, value);
 	string msg = string(
 			"@prefix rdf:       <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n" 
 			"@prefix ingenuity: <http://drobilla.net/ns/ingenuity#> .\n"
 			"@prefix lv2var:    <http://lv2plug.in/ns/ext/instance-var#> .\n\n<").append(
-			path).append("> lv2var:variable [\n"
-			"rdf:predicate ").append(key).append(" ;\n"
+			path.str()).append("> lv2var:variable [\n"
+			"rdf:predicate ").append(key.str()).append(" ;\n"
 			"rdf:value     ").append(node.to_string()).append("\n] .\n");
 	send_chunk(msg);
 }
 
 
 void
-HTTPClientSender::set_property(const std::string& path, const std::string& key, const Atom& value)
+HTTPClientSender::set_property(const Raul::Path& path, const Raul::URI& key, const Atom& value)
 {
 	Redland::Node node = AtomRDF::atom_to_node(*_engine.world()->rdf_world, value);
 	string msg = string(
@@ -126,26 +126,26 @@ HTTPClientSender::set_property(const std::string& path, const std::string& key, 
 			"@prefix ingen:     <http://drobilla.net/ns/ingen#> .\n"
 			"@prefix ingenuity: <http://drobilla.net/ns/ingenuity#> .\n"
 			"@prefix lv2var:    <http://lv2plug.in/ns/ext/instance-var#> .\n\n<").append(
-			path).append("> ingen:property [\n"
-			"rdf:predicate ").append(key).append(" ;\n"
+			path.str()).append("> ingen:property [\n"
+			"rdf:predicate ").append(key.str()).append(" ;\n"
 			"rdf:value     ").append(node.to_string()).append("\n] .\n");
 	send_chunk(msg);
 }
 
 
 void
-HTTPClientSender::set_port_value(const std::string& port_path, const Raul::Atom& value)
+HTTPClientSender::set_port_value(const Raul::Path& port_path, const Raul::Atom& value)
 {
 	Redland::Node node = AtomRDF::atom_to_node(*_engine.world()->rdf_world, value);
 	string msg = string(
 			"@prefix ingen: <http://drobilla.net/ns/ingen#> .\n\n<").append(
-			port_path).append("> ingen:value ").append(node.to_string()).append(" .\n");
+			port_path.str()).append("> ingen:value ").append(node.to_string()).append(" .\n");
 	send_chunk(msg);
 }
 
 
 void
-HTTPClientSender::set_voice_value(const std::string& port_path, uint32_t voice, const Raul::Atom& value)
+HTTPClientSender::set_voice_value(const Raul::Path& port_path, uint32_t voice, const Raul::Atom& value)
 {
 	/*lo_message m = lo_message_new();
 	lo_message_add_string(m, port_path.c_str());
@@ -155,11 +155,11 @@ HTTPClientSender::set_voice_value(const std::string& port_path, uint32_t voice, 
 
 
 void
-HTTPClientSender::activity(const std::string& path)
+HTTPClientSender::activity(const Raul::Path& path)
 {
 	string msg = string(
 			"@prefix ingen: <http://drobilla.net/ns/ingen#> .\n\n<").append(
-			path).append("> ingen:activity true .\n");
+			path.str()).append("> ingen:activity true .\n");
 	send_chunk(msg);
 }
 
@@ -181,9 +181,9 @@ HTTPClientSender::new_object(const Shared::GraphObject* object)
 
 
 void
-HTTPClientSender::new_plugin(const std::string& uri,
-                             const std::string& type_uri,
-                             const std::string& symbol)
+HTTPClientSender::new_plugin(const Raul::URI&    uri,
+                             const Raul::URI&    type_uri,
+                             const Raul::Symbol& symbol)
 {
 	/*lo_message m = lo_message_new();
 	lo_message_add_string(m, uri.c_str());
@@ -195,25 +195,25 @@ HTTPClientSender::new_plugin(const std::string& uri,
 
 
 void
-HTTPClientSender::new_patch(const std::string& path, uint32_t poly)
+HTTPClientSender::new_patch(const Raul::Path& path, uint32_t poly)
 {
-	//send_chunk(string("<").append(path).append("> a ingen:Patch"));
+	//send_chunk(string("<").append(path.str()).append("> a ingen:Patch"));
 }
 
 
 void
-HTTPClientSender::rename(const std::string& old_path, const std::string& new_path)
+HTTPClientSender::rename(const Raul::Path& old_path, const Raul::Path& new_path)
 {
 	string msg = string(
 			"@prefix rdf:       <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n" 
 			"@prefix ingen:     <http://drobilla.net/ns/ingen#> .\n\n<").append(
-			old_path).append("> rdf:subject <").append(new_path).append("> .\n");
+			old_path.str()).append("> rdf:subject <").append(new_path.str()).append("> .\n");
 	send_chunk(msg);
 }
 
 
 void
-HTTPClientSender::program_add(const std::string& node_path, uint32_t bank, uint32_t program, const std::string& name)
+HTTPClientSender::program_add(const Raul::Path& node_path, uint32_t bank, uint32_t program, const std::string& name)
 {
 	/*send("/ingen/program_add", "siis", 
 		node_path.c_str(), bank, program, name.c_str(), LO_ARGS_END);*/
@@ -221,7 +221,7 @@ HTTPClientSender::program_add(const std::string& node_path, uint32_t bank, uint3
 
 
 void
-HTTPClientSender::program_remove(const std::string& node_path, uint32_t bank, uint32_t program)
+HTTPClientSender::program_remove(const Raul::Path& node_path, uint32_t bank, uint32_t program)
 {
 	/*send("/ingen/program_remove", "sii", 
 		node_path.c_str(), bank, program, LO_ARGS_END);*/

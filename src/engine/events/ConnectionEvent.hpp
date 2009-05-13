@@ -18,13 +18,11 @@
 #ifndef CONNECTIONEVENT_H
 #define CONNECTIONEVENT_H
 
-#include <string>
 #include "raul/Path.hpp"
 #include "QueuedEvent.hpp"
 #include "PatchImpl.hpp"
 #include "InputPort.hpp"
 #include "types.hpp"
-using std::string;
 
 namespace Raul {
 	template <typename T> class ListNode;
@@ -50,7 +48,7 @@ class CompiledPatch;
 class ConnectionEvent : public QueuedEvent
 {
 public:
-	ConnectionEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const string& src_port_path, const string& dst_port_path);
+	ConnectionEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Raul::Path& src_port_path, const Raul::Path& dst_port_path);
 
 	void pre_process();
 	void execute(ProcessContext& context);

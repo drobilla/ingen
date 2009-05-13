@@ -18,7 +18,6 @@
 #ifndef LOADPLUGINSEVENT_H
 #define LOADPLUGINSEVENT_H
 
-#include <list>
 #include "QueuedEvent.hpp"
 
 namespace Ingen {
@@ -31,10 +30,10 @@ namespace Ingen {
 class LoadPluginsEvent : public QueuedEvent
 {
 public:
-	LoadPluginsEvent(Engine&                      engine,
+	LoadPluginsEvent(Engine&              engine,
 	                 SharedPtr<Responder> responder,
-	                 SampleCount                  timestamp,
-	                 QueuedEventSource*           source);
+	                 SampleCount          timestamp,
+	                 QueuedEventSource*   source);
 	
 	void pre_process();
 	void post_process();

@@ -92,7 +92,7 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 	xml->get_widget("patch_help_about_menuitem", _menu_help_about);
 
 	_menu_view_control_window->property_sensitive() = false;
-	string engine_name = App::instance().engine()->uri();
+	string engine_name = App::instance().engine()->uri().str();
 	if (engine_name == "ingen:internal")
 		engine_name = "internal engine";
 	_status_bar->push(string("Connected to ") + engine_name, STATUS_CONTEXT_ENGINE);
@@ -251,7 +251,7 @@ PatchWindow::set_patch(SharedPtr<PatchModel> patch, SharedPtr<PatchView> view)
 			((int)_view->canvas()->width() - width)/2,
 			((int)_view->canvas()->height() - height)/2);
 
-	set_title(_patch->path() + " - Ingen");
+	set_title(_patch->path().str() + " - Ingen");
 
 	new_port_connection = patch->signal_new_port.connect(
 			sigc::mem_fun(this, &PatchWindow::patch_port_added));
@@ -300,7 +300,7 @@ PatchWindow::patch_port_removed(SharedPtr<PortModel> port)
 void
 PatchWindow::object_entered(ObjectModel* model)
 {
-	string msg = model->path();
+	string msg = model->path().str();
 	NodeModel* node = dynamic_cast<NodeModel*>(model);
 	if (node) {
 		PluginModel* plugin = (PluginModel*)node->plugin();

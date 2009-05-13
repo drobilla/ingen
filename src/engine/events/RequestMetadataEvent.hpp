@@ -18,17 +18,13 @@
 #ifndef REQUESTMETADATAEVENT_H
 #define REQUESTMETADATAEVENT_H
 
-#include <string>
 #include "QueuedEvent.hpp"
 #include "raul/Atom.hpp"
-using std::string;
+#include "raul/URI.hpp"
 
 namespace Ingen {
 	
 class GraphObjectImpl;
-namespace Shared {
-	class ClientInterface;
-} using Shared::ClientInterface;
 
 
 /** A request from a client for a piece of variable.
@@ -42,16 +38,16 @@ public:
 	                     SharedPtr<Responder> responder,
 	                     SampleCount          timestamp,
 	                     bool                 property,
-	                     const string&        path,
-	                     const string&        key);
+	                     const Raul::Path&    path,
+	                     const Raul::URI&     key);
 
 	void pre_process();
 	void post_process();
 
 private:
-	string           _path;
+	Raul::Path       _path;
 	bool             _property;
-	string           _key;
+	Raul::URI        _key;
 	Raul::Atom       _value; 
 	GraphObjectImpl* _object;
 };

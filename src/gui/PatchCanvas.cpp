@@ -667,7 +667,7 @@ PatchCanvas::paste()
 	clipboard.set_plugins(App::instance().store()->plugins());
 
 	// mkdir -p
-	string to_create = _patch->path().substr(1);
+	string to_create = _patch->path().chop_scheme().substr(1);
 	string created = "/";
 	clipboard.new_patch("/", _patch->poly());
 	size_t first_slash;
@@ -679,14 +679,14 @@ PatchCanvas::paste()
 		to_create = to_create.substr(first_slash + 1);
 	}
 
-	if (_patch->path() != "/")
+	if (!_patch->path().is_root())
 		clipboard.new_patch(_patch->path(), _patch->poly());
 	
 	boost::optional<Raul::Path>   data_path;
 	boost::optional<Raul::Path>   parent;
 	boost::optional<Raul::Symbol> symbol;
 
-	if (_patch->path() != "/") {
+	if (!_patch->path().is_root()) {
 		parent = _patch->path();
 	}
 
@@ -695,7 +695,7 @@ PatchCanvas::paste()
 			parent, symbol);
 	
 	for (Store::iterator i = clipboard.begin(); i != clipboard.end(); ++i) {
-		if (_patch->path() == "/" && i->first == "/") {
+		if (_patch->path().is_root() && i->first.is_root()) {
 			//cout << "Skipping root" << endl;
 			continue;
 		}
@@ -705,7 +705,7 @@ PatchCanvas::paste()
 		GraphObject::Properties::iterator y = i->second->variables().find("ingenuity:canvas-y");
 		if (y != i->second->variables().end())
 			y->second = y->second.get_float() + (20.0f * _paste_count);
-		if (i->first.parent() == "/") {
+		if (i->first.parent().is_root()) {
 			GraphObject::Properties::iterator s = i->second->variables().find("ingen:selected");
 			if (s != i->second->variables().end())
 				s->second = true;
@@ -724,11 +724,11 @@ PatchCanvas::paste()
 	}
 
 	// Orphan connections (just in case...)
-	for (ClientStore::ConnectionRecords::const_iterator i = clipboard.connection_records().begin();
+	/*for (ClientStore::ConnectionRecords::const_iterator i = clipboard.connection_records().begin();
 			i != clipboard.connection_records().end(); ++i) {
 		cout << "WARNING: Orphan connection paste: " << i->first << " -> " << i->second << endl;
 		App::instance().engine()->connect(i->first, i->second);
-	}
+	}*/
 }
 	
 

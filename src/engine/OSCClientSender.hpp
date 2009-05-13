@@ -39,7 +39,7 @@ namespace Shared { class EngineInterface; }
 class OSCClientSender : public Shared::ClientInterface, public Shared::OSCSender
 {
 public:
-	OSCClientSender(const std::string& url)
+	OSCClientSender(const Raul::URI& url)
 		: _url(url)
 	{
 		_address = lo_address_new_from_url(url.c_str());
@@ -58,7 +58,7 @@ public:
 	void transfer_begin() { OSCSender::transfer_begin(); }
 	void transfer_end()   { OSCSender::transfer_end(); }
 	
-	std::string uri() const { return lo_address_get_url(_address); }
+	Raul::URI uri() const { return lo_address_get_url(_address); }
 	
     void subscribe(Shared::EngineInterface* engine) { }
 
@@ -70,64 +70,65 @@ public:
 	void response_error(int32_t id, const std::string& msg);
 
 	void error(const std::string& msg);
-
-	virtual void new_plugin(const std::string& uri,
-	                        const std::string& type_uri,
-	                        const std::string& symbol);
 	
 	virtual bool new_object(const Shared::GraphObject* object);
+
+	virtual void new_plugin(const Raul::URI&    uri,
+	                        const Raul::URI&    type_uri,
+	                        const Raul::Symbol& symbol);
 	
-	virtual void new_patch(const std::string& path, uint32_t poly);
+	virtual void new_patch(const Raul::Path& path,
+	                       uint32_t          poly);
 	
-	virtual void new_node(const std::string&   path,
-	                      const std::string&   plugin_uri);
+	virtual void new_node(const Raul::Path& path,
+	                      const Raul::URI&  plugin_uri);
 	
-	virtual void new_port(const std::string& path,
-	                      const std::string& type,
-	                      uint32_t           index,
-	                      bool               is_output);
+	virtual void new_port(const Raul::Path& path,
+	                      const Raul::URI&  type,
+	                      uint32_t          index,
+	                      bool              is_output);
 	
-	virtual void clear_patch(const std::string& path);
+	virtual void clear_patch(const Raul::Path& path);
 	
-	virtual void destroy(const std::string& path);
+	virtual void destroy(const Raul::Path& path);
 	
-	virtual void rename(const std::string& old_path,
-	                    const std::string& new_path);
+	virtual void rename(const Raul::Path& old_path,
+	                    const Raul::Path& new_path);
 	
-	virtual void connect(const std::string& src_port_path,
-	                     const std::string& dst_port_path);
+	virtual void connect(const Raul::Path& src_port_path,
+	                     const Raul::Path& dst_port_path);
 	
-	virtual void disconnect(const std::string& src_port_path,
-	                        const std::string& dst_port_path);
+	virtual void disconnect(const Raul::Path& src_port_path,
+	                        const Raul::Path& dst_port_path);
 	
-	virtual void set_variable(const std::string& subject_path,
-	                          const std::string& predicate,
-	                          const Raul::Atom&  value);
+	virtual void set_variable(const Raul::Path& subject_path,
+	                          const Raul::URI&  predicate,
+	                          const Raul::Atom& value);
 	
-	virtual void set_property(const std::string& subject_path,
-	                          const std::string& predicate,
-	                          const Raul::Atom&  value);
+	virtual void set_property(const Raul::Path& subject_path,
+	                          const Raul::URI&  predicate,
+	                          const Raul::Atom& value);
 	
-	virtual void set_port_value(const std::string& port_path,
-	                            const Raul::Atom&  value);
+	virtual void set_port_value(const Raul::Path& port_path,
+	                            const Raul::Atom& value);
 	
-	virtual void set_voice_value(const std::string& port_path,
-	                             uint32_t           voice,
-	                             const Raul::Atom&  value);
+	virtual void set_voice_value(const Raul::Path& port_path,
+	                             uint32_t          voice,
+	                             const Raul::Atom& value);
 	
-	virtual void activity(const std::string& path);
+	virtual void activity(const Raul::Path& path);
 	
-	virtual void program_add(const std::string& node_path,
+	virtual void program_add(const Raul::Path&  node_path,
 	                         uint32_t           bank,
 	                         uint32_t           program,
 	                         const std::string& program_name);
 	
-	virtual void program_remove(const std::string& node_path,
-	                            uint32_t           bank,
-	                            uint32_t           program);
+	virtual void program_remove(const Raul::Path& node_path,
+	                            uint32_t          bank,
+	                            uint32_t          program);
 
 private:
-	std::string _url;
+	Raul::URI _url;
 };
 
 

@@ -18,6 +18,8 @@
 #ifndef DATATYPE_H
 #define DATATYPE_H
 
+#include <raul/URI.hpp>
+
 namespace Ingen {
 namespace Shared {
 
@@ -40,14 +42,14 @@ public:
 		EVENT   = 3
 	};
 	
-	DataType(const std::string& uri)
+	DataType(const Raul::URI& uri)
 		: _symbol(UNKNOWN)
 	{
-		if (uri == type_uri(AUDIO)) {
+		if (uri.str() == type_uri(AUDIO)) {
 			_symbol = AUDIO;
-		} else if (uri == type_uri(CONTROL)) {
+		} else if (uri.str() == type_uri(CONTROL)) {
 			_symbol = CONTROL;
-		} else if (uri == type_uri(EVENT) || uri == "lv2ev:EventPort") {
+		} else if (uri.str() == type_uri(EVENT) || uri.str() == "lv2ev:EventPort") {
 			_symbol = EVENT;
 		}
 	}

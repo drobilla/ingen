@@ -119,7 +119,7 @@ private:
 
 	void plugin_activated(const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* col);
 	void plugin_selection_changed();
-	string generate_module_name(int offset = 0);
+	std::string generate_module_name(int offset = 0);
 
 	GraphObject::Properties _initial_data;
 

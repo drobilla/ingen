@@ -48,49 +48,49 @@ public:
 	
 	// Object commands
 	
-	bool new_object(const GraphObject* object);
+	virtual bool new_object(const GraphObject* object);
 
-	void new_patch(const std::string& path,
-	               uint32_t           poly);
+	virtual void new_patch(const Raul::Path& path,
+	                       uint32_t          poly);
 	
-	void new_node(const std::string& path,
-	              const std::string& plugin_uri);
+	virtual void new_node(const Raul::Path& path,
+	                      const Raul::URI&  plugin_uri);
 	
-	void new_port(const std::string& path,
-	              const std::string& type,
-	              uint32_t           index,
-	              bool               is_output);
+	virtual void new_port(const Raul::Path& path,
+	                      const Raul::URI&  type,
+	                      uint32_t          index,
+	                      bool              is_output);
 	
-	void rename(const std::string& old_path,
-	            const std::string& new_path);
+	virtual void rename(const Raul::Path& old_path,
+	                    const Raul::Path& new_path);
 	
-	void connect(const std::string& src_port_path,
-	             const std::string& dst_port_path);
+	virtual void connect(const Raul::Path& src_port_path,
+	                     const Raul::Path& dst_port_path);
 	
-	void disconnect(const std::string& src_port_path,
-	                const std::string& dst_port_path);
+	virtual void disconnect(const Raul::Path& src_port_path,
+	                        const Raul::Path& dst_port_path);
 	
-	void set_variable(const std::string& subject_path,
-	                  const std::string& predicate,
-	                  const Raul::Atom&  value);
+	virtual void set_variable(const Raul::Path& subject_path,
+	                          const Raul::URI&  predicate,
+	                          const Raul::Atom& value);
 	
-	void set_property(const std::string& subject_path,
-	                  const std::string& predicate,
-	                  const Raul::Atom&  value);
+	virtual void set_property(const Raul::Path& subject_path,
+	                          const Raul::URI&  predicate,
+	                          const Raul::Atom& value);
 	
-	void set_port_value(const std::string& port_path,
-	                    const Raul::Atom&  value);
+	virtual void set_port_value(const Raul::Path&  port_path,
+	                            const Raul::Atom&  value);
 	
-	void set_voice_value(const std::string& port_path,
-	                     uint32_t           voice,
-	                     const Raul::Atom&  value);
+	virtual void set_voice_value(const Raul::Path& port_path,
+	                             uint32_t          voice,
+	                             const Raul::Atom& value);
 	
-	void destroy(const std::string& path);
+	virtual void destroy(const Raul::Path& path);
 	
-	void clear_patch(const std::string& path);
-
+	virtual void clear_patch(const Raul::Path& patch_path);
+	
 private:
-	const std::string map_path(const Raul::Path& in);
+	const Raul::Path map_path(const Raul::Path& in);
 
 	Store&            _store;
 	CommonInterface&  _target;

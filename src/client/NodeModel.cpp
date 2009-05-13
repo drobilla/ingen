@@ -21,6 +21,9 @@
 #include "interface/Port.hpp"
 #include "NodeModel.hpp"
 
+using namespace std;
+using namespace Raul;
+
 namespace Ingen {
 namespace Client {
 
@@ -35,7 +38,7 @@ NodeModel::NodeModel(SharedPtr<PluginModel> plugin, const Path& path)
 {
 }
 
-NodeModel::NodeModel(const string& plugin_uri, const Path& path)
+NodeModel::NodeModel(const URI& plugin_uri, const Path& path)
 	: ObjectModel(path)
 	, _plugin_uri(plugin_uri)
 	, _num_values(0)

@@ -22,7 +22,6 @@
 #include <libglademm.h>
 #include "raul/SharedPtr.hpp"
 #include "client/PortModel.hpp"
-using namespace Ingen::Client;
 
 namespace Ingen {
 namespace GUI {
@@ -39,10 +38,10 @@ class PortPropertiesWindow : public Gtk::Window
 public:
 	PortPropertiesWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& refGlade);
 
-	void present(SharedPtr<PortModel> port_model);
+	void present(SharedPtr<Client::PortModel> port_model);
 
 private:
-	void variable_change(const string& key, const Atom& value);
+	void variable_change(const Raul::URI& key, const Raul::Atom& value);
 	void min_changed();
 	void max_changed();
 	
@@ -54,12 +53,12 @@ private:
 	float _initial_min;
 	float _initial_max;
 
-	SharedPtr<PortModel>        _port_model;
-	Gtk::SpinButton*            _min_spinner;
-	Gtk::SpinButton*            _max_spinner;
-	Gtk::Button*                _cancel_button;
-	Gtk::Button*                _ok_button;
-	std::list<sigc::connection> _connections;
+	SharedPtr<Client::PortModel> _port_model;
+	Gtk::SpinButton*             _min_spinner;
+	Gtk::SpinButton*             _max_spinner;
+	Gtk::Button*                 _cancel_button;
+	Gtk::Button*                 _ok_button;
+	std::list<sigc::connection>  _connections;
 };
 
 } // namespace GUI
