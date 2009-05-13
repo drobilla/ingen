@@ -68,7 +68,8 @@ LoadPluginWindow::LoadPluginWindow(BaseObjectType* cobject, const Glib::RefPtr<G
 	for (int i=0; i < 3; ++i)
 		_plugins_treeview->get_column(i)->set_resizable(true);
 	
-	_plugins_liststore->set_default_sort_func(sigc::mem_fun(this, &LoadPluginWindow::plugin_compare));
+	_plugins_liststore->set_default_sort_func(
+			sigc::mem_fun(this, &LoadPluginWindow::plugin_compare));
 
 	// Set up the search criteria combobox
 	_criteria_liststore = Gtk::ListStore::create(_criteria_columns);
@@ -85,17 +86,26 @@ LoadPluginWindow::LoadPluginWindow(BaseObjectType* cobject, const Glib::RefPtr<G
 	row[_criteria_columns._col_label] = "URI contains";
 	row[_criteria_columns._col_criteria] = CriteriaColumns::URI;
 
-	_clear_button->signal_clicked().connect(          sigc::mem_fun(this, &LoadPluginWindow::clear_clicked));
-	_add_button->signal_clicked().connect(            sigc::mem_fun(this, &LoadPluginWindow::add_clicked));
-	//m_close_button->signal_clicked().connect(          sigc::mem_fun(this, &LoadPluginWindow::close_clicked));
-	//m_add_button->signal_clicked().connect(             sigc::mem_fun(this, &LoadPluginWindow::ok_clicked));
-	_plugins_treeview->signal_row_activated().connect(sigc::mem_fun(this, &LoadPluginWindow::plugin_activated));
-	_search_entry->signal_activate().connect(         sigc::mem_fun(this, &LoadPluginWindow::add_clicked));
-	_search_entry->signal_changed().connect(          sigc::mem_fun(this, &LoadPluginWindow::filter_changed));
-	_node_name_entry->signal_changed().connect(       sigc::mem_fun(this, &LoadPluginWindow::name_changed));
+	_clear_button->signal_clicked().connect(
+			sigc::mem_fun(this, &LoadPluginWindow::clear_clicked));
+	_add_button->signal_clicked().connect(
+			sigc::mem_fun(this, &LoadPluginWindow::add_clicked));
+	//m_close_button->signal_clicked().connect(
+	//		sigc::mem_fun(this, &LoadPluginWindow::close_clicked));
+	//m_add_button->signal_clicked().connect(
+	//		sigc::mem_fun(this, &LoadPluginWindow::ok_clicked));
+	_plugins_treeview->signal_row_activated().connect(
+			sigc::mem_fun(this, &LoadPluginWindow::plugin_activated));
+	_search_entry->signal_activate().connect(
+			sigc::mem_fun(this, &LoadPluginWindow::add_clicked));
+	_search_entry->signal_changed().connect(
+			sigc::mem_fun(this, &LoadPluginWindow::filter_changed));
+	_node_name_entry->signal_changed().connect(
+			sigc::mem_fun(this, &LoadPluginWindow::name_changed));
 
 	_selection = _plugins_treeview->get_selection();
-	_selection->signal_changed().connect(sigc::mem_fun(this, &LoadPluginWindow::plugin_selection_changed));
+	_selection->signal_changed().connect(
+			sigc::mem_fun(this, &LoadPluginWindow::plugin_selection_changed));
 
 	//m_add_button->grab_default();
 }
@@ -204,30 +214,15 @@ LoadPluginWindow::plugin_compare(const Gtk::TreeModel::iterator& a_i,
 void
 LoadPluginWindow::set_plugins(SharedPtr<const ClientStore::Plugins> m)
 {
+	_rows.clear();
 	_plugins_liststore->clear();
 
 	for (ClientStore::Plugins::const_iterator i = m->begin(); i != m->end(); ++i) {
-		SharedPtr<PluginModel> plugin = (*i).second;
-
-		Gtk::TreeModel::iterator iter = _plugins_liststore->append();
-		Gtk::TreeModel::Row row = *iter;
-		
-		row[_plugins_columns._col_icon] = App::instance().icon_from_path(plugin->icon_path(), 20);
-		row[_plugins_columns._col_name] = plugin->name();
-		if (!strcmp(plugin->type_uri(), "ingen:Internal"))
-			row[_plugins_columns._col_type] = "Internal";
-		else if (!strcmp(plugin->type_uri(), "lv2:Plugin"))
-			row[_plugins_columns._col_type] = "LV2";
-		else if (!strcmp(plugin->type_uri(), "ingen:LADSPA"))
-			row[_plugins_columns._col_type] = "LADSPA";
-		else
-			row[_plugins_columns._col_type] = plugin->type_uri();
-		row[_plugins_columns._col_uri] = plugin->uri().str();
-		row[_plugins_columns._col_label] = plugin->name();
-		row[_plugins_columns._col_plugin_model] = plugin;
+		add_plugin(i->second);
 	}
 
-	_plugins_liststore->set_sort_column(Gtk::TreeSortable::DEFAULT_SORT_COLUMN_ID, Gtk::SORT_ASCENDING);
+	_plugins_liststore->set_sort_column(
+			Gtk::TreeSortable::DEFAULT_SORT_COLUMN_ID, Gtk::SORT_ASCENDING);
 
 	_plugins_treeview->columns_autosize();
 }
@@ -248,12 +243,27 @@ LoadPluginWindow::add_plugin(SharedPtr<PluginModel> plugin)
 {
 	Gtk::TreeModel::iterator iter = _plugins_liststore->append();
 	Gtk::TreeModel::Row row = *iter;
+	_rows.insert(make_pair(plugin->uri(), iter));
 	
 	row[_plugins_columns._col_name] = plugin->name();
-	row[_plugins_columns._col_type] = plugin->type_uri();
+	if (!strcmp(plugin->type_uri(), "ingen:Internal"))
+		row[_plugins_columns._col_type] = "Internal";
+	else if (!strcmp(plugin->type_uri(), "lv2:Plugin"))
+		row[_plugins_columns._col_type] = "LV2";
+	else if (!strcmp(plugin->type_uri(), "ingen:LADSPAPlugin"))
+		row[_plugins_columns._col_type] = "LADSPA";
+	else
+		row[_plugins_columns._col_type] = plugin->type_uri();
 	row[_plugins_columns._col_uri] = plugin->uri().str();
 	row[_plugins_columns._col_label] = plugin->name();
 	row[_plugins_columns._col_plugin_model] = plugin;
+
+	plugin->signal_property.connect(sigc::bind<0>(
+			sigc::mem_fun(this, &LoadPluginWindow::plugin_property_changed),
+			plugin->uri()));
+
+	if (plugin->name() == "")
+		App::instance().engine()->request_property(plugin->uri(), "doap:name");
 }
 
 
@@ -369,6 +379,7 @@ LoadPluginWindow::ok_clicked()
 void
 LoadPluginWindow::filter_changed()
 {
+	_rows.clear();
 	_plugins_liststore->clear();
 
 	string search = _search_entry->get_text();
@@ -384,7 +395,6 @@ LoadPluginWindow::filter_changed()
 	Gtk::TreeModel::iterator model_iter;
 	size_t                   num_visible = 0;
 	
-
 	for (ClientStore::Plugins::const_iterator i = App::instance().store()->plugins()->begin();
 			i != App::instance().store()->plugins()->end(); ++i) {
 	
@@ -442,6 +452,17 @@ LoadPluginWindow::on_key_press_event(GdkEventKey* event)
 	}
 }
 
+void
+LoadPluginWindow::plugin_property_changed(const Raul::URI&  plugin,
+	                                      const Raul::URI&  predicate,
+	                                      const Raul::Atom& value)
+{
+	Rows::const_iterator i = _rows.find(plugin);
+	if (i != _rows.end() && value.type() == Atom::STRING)
+		(*i->second)[_plugins_columns._col_name] = value.get_string();
+}
+
 
 } // namespace GUI
 } // namespace Ingen
+

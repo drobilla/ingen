@@ -18,6 +18,7 @@
 #ifndef LOADPLUGINWINDOW_H
 #define LOADPLUGINWINDOW_H
 
+#include <map>
 #include <libglademm/xml.h>
 #include <libglademm.h>
 #include <gtkmm.h>
@@ -114,6 +115,10 @@ private:
 	
 	void new_plugin(SharedPtr<PluginModel> plugin);
 
+	void plugin_property_changed(const Raul::URI&  plugin,
+	                             const Raul::URI&  predicate,
+	                             const Raul::Atom& value);
+
 	int plugin_compare(const Gtk::TreeModel::iterator& a,
 	                   const Gtk::TreeModel::iterator& b);
 
@@ -125,6 +130,9 @@ private:
 
 	SharedPtr<PatchModel> _patch;
 
+	typedef std::map<Raul::URI, Gtk::TreeModel::iterator> Rows;
+	Rows _rows;
+	
 	Glib::RefPtr<Gtk::ListStore> _plugins_liststore;
 	ModelColumns                 _plugins_columns;
 

@@ -19,6 +19,7 @@
 #define RESOURCEIMPL_HPP
 
 #include <map>
+#include <sigc++/sigc++.h>
 #include "raul/URI.hpp"
 #include "interface/Resource.hpp"
 
@@ -38,6 +39,8 @@ public:
 
 	const Raul::Atom& get_property(const Raul::URI& uri) const;
 	void              set_property(const Raul::URI& uri, const Raul::Atom& value);
+
+	sigc::signal<void, const Raul::URI&, const Raul::Atom&> signal_property;
 
 private:
 	Raul::URI  _uri;

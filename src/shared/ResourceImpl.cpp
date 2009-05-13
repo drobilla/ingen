@@ -26,6 +26,7 @@ void
 ResourceImpl::set_property(const Raul::URI& uri, const Raul::Atom& value)
 {
 	_properties[uri] = value;
+	signal_property.emit(uri, value);
 }
 
 
