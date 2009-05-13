@@ -396,8 +396,10 @@ void
 JackAudioDriver::_shutdown_cb()
 {
 	cout << "[JackAudioDriver] Jack shutdown.  Exiting." << endl;
-	_engine.quit();
+	_is_activated = false;
+	delete _jack_thread;
 	_jack_thread = NULL;
+	_client = NULL;
 }
 
 

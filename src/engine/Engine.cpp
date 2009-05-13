@@ -52,7 +52,7 @@ using namespace Shared;
 
 
 Engine::Engine(Ingen::Shared::World* world)
-  	: _world(world)
+	: _world(world)
 	, _midi_driver(NULL)
 	, _osc_driver(NULL)
 	, _maid(new Raul::Maid(maid_queue_size))
