@@ -65,7 +65,7 @@ void
 JackMidiPort::create()
 {
 	_jack_port = jack_port_register(_driver->jack_client(),
-		_patch_port->path().c_str(), JACK_DEFAULT_MIDI_TYPE,
+		_patch_port->path().chop_start("/").c_str(), JACK_DEFAULT_MIDI_TYPE,
 		(_patch_port->is_input()) ? JackPortIsInput : JackPortIsOutput,
 		0);
 
