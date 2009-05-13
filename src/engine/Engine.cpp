@@ -177,9 +177,6 @@ Engine::set_midi_driver(MidiDriver* driver)
 bool
 Engine::activate(size_t parallelism)
 {
-	if (_activated)
-		return false;
-
 	assert(_audio_driver);
 
 	if (!_midi_driver)

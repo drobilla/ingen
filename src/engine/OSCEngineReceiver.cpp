@@ -151,7 +151,6 @@ OSCEngineReceiver::activate_source()
 void
 OSCEngineReceiver::deactivate_source()
 {
-	cout << "[OSCEngineReceiver] Stopped OSC listening thread" << endl;
 	_receive_thread->stop();
 	QueuedEventSource::deactivate_source();
 }
