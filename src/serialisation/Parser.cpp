@@ -349,7 +349,7 @@ Parser::parse(
 				root_path = ret;
 
 		} else if (is_plugin) {
-			if (path_str.length() > 0)
+			if (URI::is_valid(path_str))
 				target->set_property(path_str, "rdf:type", Atom(Atom::URI, rdf_class.to_c_string()));
 		}
 

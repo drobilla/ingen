@@ -42,15 +42,12 @@ class EventSink
 public:
 	EventSink(Engine& engine, size_t capacity) : _engine(engine), _events(capacity) {}
 
-	/* FIXME: Figure out variable sized event queues and make this a generic
-	 * interface (ie don't add a method for every event type, crap..) */
-
 	bool write(uint32_t size, const Event* ev);
 
 	bool read(uint32_t event_buffer_size, uint8_t* event_buffer);
 
 private:
-	Engine& _engine;
+	Engine&                   _engine;
 	Raul::RingBuffer<uint8_t> _events;
 };
 

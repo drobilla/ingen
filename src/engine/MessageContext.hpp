@@ -18,7 +18,6 @@
 #ifndef MESSAGECONTEXT_H
 #define MESSAGECONTEXT_H
 
-#include "EventSink.hpp"
 #include "Context.hpp"
 
 namespace Ingen {
