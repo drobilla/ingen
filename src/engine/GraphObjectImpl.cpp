@@ -20,7 +20,12 @@
 #include "PatchImpl.hpp"
 #include "EngineStore.hpp"
 
+using namespace std;
+using namespace Raul;
+
 namespace Ingen {
+
+using namespace Shared;
 
 void
 GraphObjectImpl::set_variable(const Raul::URI& key, const Atom& value)

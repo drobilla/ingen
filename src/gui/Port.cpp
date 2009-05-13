@@ -32,6 +32,7 @@ using namespace std;
 using namespace Raul;
 
 namespace Ingen {
+using namespace Shared;
 namespace GUI {
 
 

@@ -27,9 +27,6 @@
 #include "interface/GraphObject.hpp"
 #include "shared/ResourceImpl.hpp"
 
-using Raul::Path;
-using Raul::Symbol;
-
 namespace Raul { class Maid; }
 
 namespace Ingen {
@@ -60,12 +57,12 @@ public:
 	const Raul::URI uri() const { return path(); }
 
 	inline GraphObjectImpl* parent() const { return _parent; }
-	const Symbol            symbol() const { return _name; }
+	const Raul::Symbol      symbol() const { return _name; }
 	
 	virtual void process(ProcessContext& context) = 0;
 
 	/** Rename */
-	virtual void set_path(const Path& new_path) {
+	virtual void set_path(const Raul::Path& new_path) {
 		assert(new_path.parent() == path().parent());
 		_name = new_path.name();
 		assert(_name.find("/") == std::string::npos);
@@ -80,21 +77,21 @@ public:
 	/** The Patch this object is a child of. */
 	virtual PatchImpl* parent_patch() const;
 	
-	/** Path is dynamically generated from parent to ease renaming */
-	const Path path() const {
+	/** Raul::Path is dynamically generated from parent to ease renaming */
+	const Raul::Path path() const {
 		if (_parent == NULL)
-			return Path(std::string("/").append(_name));
+			return Raul::Path(std::string("/").append(_name));
 		else if (_parent->path().is_root())
-			return Path(std::string("/").append(_name));
+			return Raul::Path(std::string("/").append(_name));
 		else
-			return Path(_parent->path().child(_name));
+			return Raul::Path(_parent->path().child(_name));
 	}
 	
 	SharedPtr<GraphObject> find_child(const std::string& name) const;
 
 protected:
 	GraphObjectImpl(GraphObjectImpl* parent, const std::string& name, bool polyphonic=false)
-		: ResourceImpl((parent ? parent->path().base() : Path::root_uri) + name)
+		: ResourceImpl((parent ? parent->path().base() : Raul::Path::root_uri) + name)
 		, _parent(parent)
 		, _name(name)
 		, _polyphonic(polyphonic)

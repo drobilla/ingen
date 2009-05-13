@@ -89,6 +89,4 @@ private:
 } // namespace Shared
 } // namespace Ingen
 
-using Ingen::Shared::DataType;
-
 #endif // DATATYPE_H

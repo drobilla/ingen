@@ -35,8 +35,6 @@ namespace Ingen {
 class Engine;
 
 namespace Serialisation { class Serialiser; class Parser; }
-using Serialisation::Serialiser;
-using Serialisation::Parser;
 
 namespace Shared {
 class EngineInterface;
@@ -61,11 +59,11 @@ struct World {
 
 	Redland::World* rdf_world;
 
-    SharedPtr<EngineInterface> engine;
-    SharedPtr<Engine>          local_engine;
-    SharedPtr<Serialiser>      serialiser;
-    SharedPtr<Parser>          parser;
-    SharedPtr<Store>           store;
+    SharedPtr<EngineInterface>           engine;
+    SharedPtr<Engine>                    local_engine;
+    SharedPtr<Serialisation::Serialiser> serialiser;
+    SharedPtr<Serialisation::Parser>     parser;
+    SharedPtr<Store>                     store;
 	
 	SharedPtr<Glib::Module> serialisation_module;
 };

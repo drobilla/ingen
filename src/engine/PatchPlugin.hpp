@@ -49,12 +49,12 @@ public:
 		return NULL;
 	}
 	
-	const string symbol() const { return "patch"; }
-	const string name()   const { return "Ingen Patch"; }
+	const std::string symbol() const { return "patch"; }
+	const std::string name()   const { return "Ingen Patch"; }
 
 private:
-	const string _symbol;
-	const string _name;
+	const std::string _symbol;
+	const std::string _name;
 };
 
 

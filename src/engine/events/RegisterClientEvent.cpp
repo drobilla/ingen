@@ -20,14 +20,16 @@
 #include "Engine.hpp"
 #include "ClientBroadcaster.hpp"
 
+using namespace Raul;
+
 namespace Ingen {
 
 
-RegisterClientEvent::RegisterClientEvent(Engine&              engine,
-                                         SharedPtr<Responder> responder,
-                                         SampleCount          timestamp,
-                                         const URI&           uri,
-                                         ClientInterface*     client)
+RegisterClientEvent::RegisterClientEvent(Engine&                  engine,
+                                         SharedPtr<Responder>     responder,
+                                         SampleCount              timestamp,
+                                         const URI&               uri,
+                                         Shared::ClientInterface* client)
 	: QueuedEvent(engine, responder, timestamp)
 	, _uri(uri)
 	, _client(client)

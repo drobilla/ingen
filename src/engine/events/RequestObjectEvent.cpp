@@ -27,6 +27,8 @@
 #include "ObjectSender.hpp"
 #include "ProcessContext.hpp"
 
+using namespace Raul;
+
 namespace Ingen {
 
 

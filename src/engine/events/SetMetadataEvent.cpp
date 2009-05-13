@@ -26,7 +26,8 @@
 #include "PatchImpl.hpp"
 #include "EngineStore.hpp"
 
-using std::string;
+using namespace std;
+using namespace Raul;
 
 namespace Ingen {
 

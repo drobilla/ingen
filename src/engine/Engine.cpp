@@ -43,9 +43,12 @@
 #include "ThreadManager.hpp"
 #include "shared/Store.hpp"
 #include "tuning.hpp"
+
 using namespace std;
 
 namespace Ingen {
+
+using namespace Shared;
 
 
 Engine::Engine(Ingen::Shared::World* world)
@@ -63,7 +66,7 @@ Engine::Engine(Ingen::Shared::World* world)
 	if (world->store) {
 		assert(PtrCast<EngineStore>(world->store));
 	} else {
-		world->store = SharedPtr<Store>(new EngineStore());
+		world->store = SharedPtr<Shared::Store>(new EngineStore());
 	}
 }
 
@@ -128,7 +131,7 @@ Engine::set_driver(DataType type, SharedPtr<Driver> driver)
 int
 Engine::main()
 {
-	Thread::get().set_context(THREAD_POST_PROCESS);
+	Raul::Thread::get().set_context(THREAD_POST_PROCESS);
 
 	// Loop until quit flag is set (by OSCReceiver)
 	while ( ! _quit_flag) {

@@ -31,7 +31,11 @@
 #include "QueuedEventSource.hpp"
 #include "PortImpl.hpp"
 
+using namespace std;
+
 namespace Ingen {
+
+using namespace Shared;
 
 
 DestroyEvent::DestroyEvent(Engine& engine, SharedPtr<Responder> responder, FrameTime time, QueuedEventSource* source, const Raul::Path& path)

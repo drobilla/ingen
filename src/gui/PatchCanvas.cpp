@@ -46,10 +46,12 @@
 #include "GladeFactory.hpp"
 #include "WindowFactory.hpp"
 #include "ThreadedLoader.hpp"
+
 using Ingen::Client::ClientStore;
 using Ingen::Serialisation::Serialiser;
 using Ingen::Client::PluginModel;
 using namespace std;
+using namespace Raul;
 
 namespace Ingen {
 namespace GUI {

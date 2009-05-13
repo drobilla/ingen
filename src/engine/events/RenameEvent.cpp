@@ -27,8 +27,11 @@
 #include "MidiDriver.hpp"
 
 using namespace std;
+using namespace Raul;
 
 namespace Ingen {
+
+using namespace Shared;
 
 
 RenameEvent::RenameEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Path& path, const Path& new_path)

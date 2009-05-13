@@ -24,6 +24,8 @@
 #include "ClientBroadcaster.hpp"
 #include "PluginImpl.hpp"
 
+using namespace std;
+
 namespace Ingen {
 
 
@@ -51,7 +53,7 @@ MidiLearnEvent::execute(ProcessContext& context)
 	QueuedEvent::execute(context);
 	
 	if (_node != NULL) {
-	   if (_node->plugin_impl()->type() == Plugin::Internal) {
+	   if (_node->plugin_impl()->type() == Shared::Plugin::Internal) {
 		   ((NodeBase*)_node)->learn();
 	   } else {
 		   _error = INVALID_NODE_TYPE;

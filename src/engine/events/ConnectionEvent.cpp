@@ -31,8 +31,12 @@
 #include "Responder.hpp"
 #include "types.hpp"
 
-using std::string;
+using namespace std;
+using namespace Raul;
+
 namespace Ingen {
+
+using namespace Shared;
 
 
 ConnectionEvent::ConnectionEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Path& src_port_path, const Path& dst_port_path)

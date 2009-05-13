@@ -34,6 +34,9 @@
 #include "Responder.hpp"
 #include "util.hpp"
 
+using namespace std;
+using namespace Raul;
+
 namespace Ingen {
 
 

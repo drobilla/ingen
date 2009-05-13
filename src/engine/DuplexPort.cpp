@@ -30,6 +30,8 @@ using namespace std;
 
 namespace Ingen {
 
+using namespace Shared;
+
 
 DuplexPort::DuplexPort(
 		NodeImpl*         parent,

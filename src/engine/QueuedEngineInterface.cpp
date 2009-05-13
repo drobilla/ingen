@@ -23,7 +23,11 @@
 #include "Engine.hpp"
 #include "AudioDriver.hpp"
 
+using namespace Raul;
+
 namespace Ingen {
+
+using namespace Shared;
 
 QueuedEngineInterface::QueuedEngineInterface(Engine& engine, size_t queue_size)
 	: QueuedEventSource(queue_size)

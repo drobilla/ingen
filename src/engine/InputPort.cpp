@@ -31,6 +31,7 @@ using namespace std;
 
 namespace Ingen {
 
+using namespace Shared;
 
 InputPort::InputPort(NodeImpl*         parent,
                      const string&     name,

@@ -30,9 +30,6 @@
 #include "interface/GraphObject.hpp"
 #include "shared/Store.hpp"
 
-using namespace Raul;
-using namespace Ingen::Shared;
-
 namespace Ingen {
 
 namespace Shared {
@@ -56,14 +53,16 @@ class Serialiser
 {
 public:
 	Serialiser(Shared::World& world, SharedPtr<Shared::Store> store);
+	
+	typedef Shared::GraphObject::Properties Properties;
 
 	struct Record {
-		Record(SharedPtr<GraphObject> o, const std::string& u)
+		Record(SharedPtr<Shared::GraphObject> o, const std::string& u)
 			: object(o), uri(u)
 		{}
 
-		const SharedPtr<GraphObject> object;
-		const std::string            uri;
+		const SharedPtr<Shared::GraphObject> object;
+		const std::string                    uri;
 	};
 
 	typedef std::list<Record> Records;
@@ -75,15 +74,15 @@ public:
 	void write_manifest(const std::string& bundle_uri,
 	                    const Records&     records);
 
-	std::string to_string(SharedPtr<GraphObject>        object,
-	                      const std::string&            base_uri,
-	                      const GraphObject::Properties& extra_rdf);
+	std::string to_string(SharedPtr<Shared::GraphObject> object,
+	                      const std::string&             base_uri,
+	                      const Properties&              extra_rdf);
 	
 	void start_to_string(const Raul::Path& root, const std::string& base_uri);
-	void serialise(SharedPtr<GraphObject> object) throw (std::logic_error);
+	void serialise(SharedPtr<Shared::GraphObject> object) throw (std::logic_error);
 	void serialise_plugin(const Shared::Plugin& p);
-	void serialise_connection(SharedPtr<GraphObject>        parent,
-	                          SharedPtr<Shared::Connection> c) throw (std::logic_error);
+	void serialise_connection(SharedPtr<Shared::GraphObject> parent,
+	                          SharedPtr<Shared::Connection>  c) throw (std::logic_error);
 	
 	std::string finish();
 	
@@ -100,11 +99,11 @@ private:
 	void serialise_port(const Shared::Port* p, const Redland::Node& id);
 	void serialise_port_class(const Shared::Port* p, const Redland::Node& id);
 
-	void serialise_properties(Redland::Node subject, const GraphObject::Properties& properties);
-	void serialise_variables(Redland::Node subject, const GraphObject::Properties& variables);
+	void serialise_properties(Redland::Node subject, const Properties& properties);
+	void serialise_variables(Redland::Node subject, const Properties& variables);
 	
-	Redland::Node instance_rdf_node(const Path& path);
-	Redland::Node class_rdf_node(const Path& path);
+	Redland::Node instance_rdf_node(const Raul::Path& path);
+	Redland::Node class_rdf_node(const Raul::Path& path);
 
 	Raul::Path               _root_path;
 	SharedPtr<Shared::Store> _store;

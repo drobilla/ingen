@@ -30,8 +30,11 @@
 #include "ProcessContext.hpp"
 
 using namespace std;
+using namespace Raul;
 
 namespace Ingen {
+
+using namespace Shared;
 
 
 /** Partially construct a LV2Node.

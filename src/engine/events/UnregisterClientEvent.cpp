@@ -21,6 +21,8 @@
 #include "Engine.hpp"
 #include "ClientBroadcaster.hpp"
 
+using namespace Raul;
+
 namespace Ingen {
 
 

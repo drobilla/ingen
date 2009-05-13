@@ -74,6 +74,4 @@ private:
 } // namespace Shared
 } // namespace Ingen
 
-using Ingen::Shared::EventType;
-
 #endif // EVENTTYPE_H

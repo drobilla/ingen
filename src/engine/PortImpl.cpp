@@ -31,6 +31,8 @@ using namespace std;
 
 namespace Ingen {
 
+using namespace Shared;
+
 
 PortImpl::PortImpl(NodeImpl* const   node,
                    const string&     name,

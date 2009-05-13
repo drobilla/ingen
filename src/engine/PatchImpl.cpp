@@ -29,8 +29,11 @@
 #include "ProcessSlave.hpp"
 
 using namespace std;
+using namespace Raul;
 
 namespace Ingen {
+
+using namespace Shared;
 
 
 PatchImpl::PatchImpl(Engine& engine, const string& path, uint32_t poly, PatchImpl* parent, SampleRate srate, size_t buffer_size, uint32_t internal_poly) 

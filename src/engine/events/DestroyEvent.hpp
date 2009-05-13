@@ -63,7 +63,7 @@ private:
 	CompiledPatch*                 _compiled_patch;      ///< Patch's new process order
 	DisconnectAllEvent*            _disconnect_event;
 	
-	SharedPtr< Table<Path, SharedPtr<Shared::GraphObject> > > _removed_table;
+	SharedPtr< Raul::Table<Raul::Path, SharedPtr<Shared::GraphObject> > > _removed_table;
 };
 
 

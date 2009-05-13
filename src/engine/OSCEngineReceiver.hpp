@@ -18,12 +18,10 @@
 #ifndef OSCENGINERECEIVER_H
 #define OSCENGINERECEIVER_H
 
-#include <string>
 #include <stdint.h>
 #include <lo/lo.h>
 #include "QueuedEngineInterface.hpp"
 #include "Responder.hpp"
-using std::string;
 
 namespace Ingen {
 

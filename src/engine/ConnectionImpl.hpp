@@ -75,7 +75,7 @@ public:
 	inline bool need_buffer() const { return must_mix(); }
 	inline bool can_direct() const { return _mode == DIRECT; }
 
-	DataType type() const { return _src_port->type(); }
+	Shared::DataType type() const { return _src_port->type(); }
 
 protected:
 	enum { DIRECT, MIX, COPY, EXTEND } _mode;

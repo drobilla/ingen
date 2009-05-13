@@ -30,7 +30,12 @@
 #include "AudioDriver.hpp"
 #include "MidiDriver.hpp"
 
+using namespace std;
+using namespace Raul;
+
 namespace Ingen {
+
+using namespace Shared;
 
 
 ClearPatchEvent::ClearPatchEvent(Engine& engine, SharedPtr<Responder> responder, FrameTime time, QueuedEventSource* source, const Path& patch_path)

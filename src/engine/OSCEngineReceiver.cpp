@@ -220,7 +220,7 @@ OSCEngineReceiver::set_response_address_cb(const char* path, const char* types, 
 
 	/* Different address than last time, have to do a lookup */
 	if (!r || !r->client() || strcmp(url, r->client()->uri().c_str())) {
-		ClientInterface* client = me->_engine.broadcaster()->client(url);
+		Shared::ClientInterface* client = me->_engine.broadcaster()->client(url);
 		if (client)
 			me->_responder = SharedPtr<Responder>(new Responder(client, id));
 		else
@@ -303,7 +303,7 @@ OSCEngineReceiver::_register_client_cb(const char* path, const char* types, lo_a
 	lo_address addr = lo_message_get_source(msg);
 
 	char* const url = lo_address_get_url(addr);
-	ClientInterface* client = new OSCClientSender((const char*)url);
+	Shared::ClientInterface* client = new OSCClientSender((const char*)url);
 	register_client(client);
 	free(url);
 

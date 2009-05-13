@@ -28,6 +28,8 @@
 #include "PortImpl.hpp"
 #include "EngineStore.hpp"
 
+using namespace std;
+
 namespace Ingen {
 
 

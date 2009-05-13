@@ -50,10 +50,10 @@
 #include "bindings/ingen_bindings.hpp"
 #endif
 
-
 using namespace std;
 using namespace Ingen;
-
+using namespace Ingen::Shared;
+using namespace Raul;
 
 SharedPtr<Engine> engine;
 

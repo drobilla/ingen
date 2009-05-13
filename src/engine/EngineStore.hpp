@@ -22,9 +22,6 @@
 #include "raul/SharedPtr.hpp"
 #include "shared/Store.hpp"
 
-using std::string;
-using namespace Raul;
-
 namespace Ingen {
 
 namespace Shared { class GraphObject; }
@@ -47,17 +44,17 @@ class GraphObjectImpl;
 class EngineStore : public Shared::Store
 {
 public:
-	PatchImpl*       find_patch(const Path& path);
-	NodeImpl*        find_node(const Path& path);
-	PortImpl*        find_port(const Path& path);
-	GraphObjectImpl* find_object(const Path& path);
+	PatchImpl*       find_patch(const Raul::Path& path);
+	NodeImpl*        find_node(const Raul::Path& path);
+	PortImpl*        find_port(const Raul::Path& path);
+	GraphObjectImpl* find_object(const Raul::Path& path);
 	
 	void add(Shared::GraphObject* o);
 	void add(const Objects& family);
 	
-	SharedPtr<Objects> remove(const Path& path);
+	SharedPtr<Objects> remove(const Raul::Path& path);
 	SharedPtr<Objects> remove(Objects::iterator i);
-	SharedPtr<Objects> remove_children(const Path& path);
+	SharedPtr<Objects> remove_children(const Raul::Path& path);
 	SharedPtr<Objects> remove_children(Objects::iterator i);
 };
 

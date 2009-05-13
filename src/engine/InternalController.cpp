@@ -29,7 +29,11 @@
 #include "EventBuffer.hpp"
 #include "util.hpp"
 
+using namespace std;
+
 namespace Ingen {
+
+using namespace Shared;
 
 static InternalPlugin controller_plugin(NS_INTERNALS "Controller", "controller");
 	

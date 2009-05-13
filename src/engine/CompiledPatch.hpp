@@ -24,35 +24,31 @@
 #include "raul/Deletable.hpp"
 #include <boost/utility.hpp>
 
-using Raul::List;
-
-using namespace std;
-
 namespace Ingen {
 
 
 /** All information required about a node to execute it in an audio thread.
  */
 struct CompiledNode {
-	CompiledNode(NodeImpl* n, size_t np, List<NodeImpl*>* d)
+	CompiledNode(NodeImpl* n, size_t np, Raul::List<NodeImpl*>* d)
 		: _node(n), _n_providers(np)
 	{
 		// Copy to a vector for maximum iteration speed and cache optimization
 		// (Need to take a copy anyway)
 		
 		_dependants.reserve(d->size());
-		for (List<NodeImpl*>::iterator i = d->begin(); i != d->end(); ++i)
+		for (Raul::List<NodeImpl*>::iterator i = d->begin(); i != d->end(); ++i)
 			_dependants.push_back(*i);
 	}
 
-	NodeImpl*                node()        const { return _node; }
-	size_t                   n_providers() const { return _n_providers; }
-	const vector<NodeImpl*>& dependants()  const { return _dependants; }
+	NodeImpl*                     node()        const { return _node; }
+	size_t                        n_providers() const { return _n_providers; }
+	const std::vector<NodeImpl*>& dependants()  const { return _dependants; }
 
 private:
-	NodeImpl*         _node;
-	size_t            _n_providers; ///< Number of input ready signals to trigger run
-	vector<NodeImpl*> _dependants; ///< Nodes this one's output ports are connected to
+	NodeImpl*              _node;
+	size_t                 _n_providers; ///< Number of input ready signals to trigger run
+	std::vector<NodeImpl*> _dependants; ///< Nodes this one's output ports are connected to
 };
 
 

@@ -33,6 +33,9 @@
 #include "PortImpl.hpp"
 #include "AudioDriver.hpp"
 
+using namespace std;
+using namespace Raul;
+
 namespace Ingen {
 
 

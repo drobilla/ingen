@@ -43,7 +43,7 @@ public:
 	           const std::string& name,
 	           uint32_t           index,
 	           uint32_t           poly,
-	           DataType           type,
+	           Shared::DataType   type,
 	           const Raul::Atom&  value,
 	           size_t             buffer_size);
 

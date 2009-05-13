@@ -65,14 +65,14 @@ NodeBase::~NodeBase()
 }
 
 	
-Port*
+Shared::Port*
 NodeBase::port(uint32_t index) const
 {
 	return (*_ports)[index];
 }
 
 
-const Plugin*
+const Shared::Plugin*
 NodeBase::plugin() const
 {
 	return _plugin;

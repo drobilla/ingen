@@ -25,6 +25,7 @@
 
 namespace Ingen {
 
+using namespace Shared;
 
 /** Constructor for a connection from a node's output port.
  *

@@ -56,10 +56,10 @@ public:
 	                      Ingen::PatchImpl*  parent,
 	                      Engine&            engine);
 	
-	const string symbol() const { return _symbol; }
+	const std::string symbol() const { return _symbol; }
 
 private:
-	const string _symbol;
+	const std::string _symbol;
 };
 
 

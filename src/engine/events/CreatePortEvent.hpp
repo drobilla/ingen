@@ -57,7 +57,7 @@ private:
 	Raul::Path              _path;
 	Raul::URI               _type;
 	bool                    _is_output;
-	DataType                _data_type;
+	Shared::DataType        _data_type;
 	PatchImpl*              _patch;
 	PortImpl*               _patch_port;
 	Raul::Array<PortImpl*>* _ports_array; ///< New (external) ports array for Patch

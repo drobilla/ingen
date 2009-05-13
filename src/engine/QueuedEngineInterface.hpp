@@ -28,12 +28,9 @@
 #include "interface/ClientInterface.hpp"
 #include "Responder.hpp"
 #include "QueuedEventSource.hpp"
-using std::string;
 
 namespace Ingen {
 
-using Shared::ClientInterface;
-using Shared::EngineInterface;
 class Engine;
 
 
@@ -47,7 +44,7 @@ class Engine;
  * If you do not register a responder, you have no way of knowing if your calls
  * are successful.
  */
-class QueuedEngineInterface : public QueuedEventSource, public EngineInterface
+class QueuedEngineInterface : public QueuedEventSource, public Shared::EngineInterface
 {
 public:
 	QueuedEngineInterface(Engine& engine, size_t queue_size);
@@ -58,7 +55,7 @@ public:
 	void set_next_response_id(int32_t id);
 
 	// Client registration
-	virtual void register_client(ClientInterface* client);
+	virtual void register_client(Shared::ClientInterface* client);
 	virtual void unregister_client(const Raul::URI& uri);
 
 	// Engine commands

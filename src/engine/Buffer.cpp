@@ -20,6 +20,7 @@
 
 namespace Ingen {
 
+using namespace Shared;
 
 Buffer*
 Buffer::create(DataType type, size_t size)

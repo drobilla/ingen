@@ -28,17 +28,13 @@
 #include "interface/Port.hpp"
 #include "NodeImpl.hpp"
 
-using std::string;
-
 namespace Ingen {
 
 class PluginImpl;
 class PatchImpl;
 class EngineStore;
 
-namespace Shared {
-	class ClientInterface;
-} using Shared::ClientInterface;
+namespace Shared { class ClientInterface; }
 
 
 /** Common implementation stuff for Node.
@@ -50,12 +46,12 @@ namespace Shared {
 class NodeBase : public NodeImpl
 {
 public:
-	NodeBase(PluginImpl*   plugin,
-	         const string& name,
-	         bool          poly,
-	         PatchImpl*    parent,
-	         SampleRate    rate,
-	         size_t        buffer_size);
+	NodeBase(PluginImpl*        plugin,
+	         const std::string& name,
+	         bool               poly,
+	         PatchImpl*         parent,
+	         SampleRate         rate,
+	         size_t             buffer_size);
 
 	virtual ~NodeBase();
 
@@ -91,8 +87,8 @@ public:
 	bool       traversed()   const { return _traversed; }
 	void       traversed(bool b)   { _traversed = b; }
 	
-	virtual Port*     port(uint32_t index) const;
-	virtual PortImpl* port_impl(uint32_t index) const { return (*_ports)[index]; }
+	virtual Shared::Port* port(uint32_t index) const;
+	virtual PortImpl*     port_impl(uint32_t index) const { return (*_ports)[index]; }
 	
 	/* These are NOT to be used in the audio thread!
 	 * The providers and dependants in CompiledNode are for that
@@ -104,9 +100,9 @@ public:
 	Raul::List<NodeImpl*>* dependants()                         { return _dependants; }
 	void                   dependants(Raul::List<NodeImpl*>* l) { _dependants = l; }
 	
-	virtual const Plugin* plugin() const;
-	virtual PluginImpl*   plugin_impl() const    { return _plugin; }
-	virtual void          plugin(PluginImpl* pi) { _plugin = pi; }
+	virtual const Shared::Plugin* plugin() const;
+	virtual PluginImpl*           plugin_impl() const    { return _plugin; }
+	virtual void                  plugin(PluginImpl* pi) { _plugin = pi; }
 	
 	/** A node's parent is always a patch, so static cast should be safe */
 	inline PatchImpl* parent_patch() const { return (PatchImpl*)_parent; }

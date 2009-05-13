@@ -97,10 +97,12 @@ public:
 	virtual bool is_input()  const = 0;
 	virtual bool is_output() const = 0;
 
-	uint32_t     index()       const { return _index; }
-	uint32_t     poly()        const { return _poly; }
-	DataType     type()        const { return _type; }
-	size_t       buffer_size() const { return (_type == DataType::CONTROL) ? 1 : _buffer_size; }
+	uint32_t         index()       const { return _index; }
+	uint32_t         poly()        const { return _poly; }
+	Shared::DataType type()        const { return _type; }
+	size_t           buffer_size() const {
+		return (_type == Shared::DataType::CONTROL) ? 1 : _buffer_size;
+	}
 
 	virtual void set_buffer_size(size_t size);
 	
@@ -122,7 +124,7 @@ protected:
 	         const std::string& name,
 	         uint32_t           index,
 	         uint32_t           poly,
-	         DataType           type,
+	         Shared::DataType   type,
 	         const Raul::Atom&  value,
 	         size_t             buffer_size);
 	
@@ -130,15 +132,15 @@ protected:
 	virtual void connect_buffers();
 	virtual void broadcast(ProcessContext& context);
 
-	uint32_t   _index;
-	uint32_t   _poly;
-	uint32_t   _buffer_size;
-	DataType   _type;
-	Raul::Atom _value;
-	bool       _fixed_buffers;
-	bool       _broadcast;
-	bool       _set_by_user;
-	Sample     _last_broadcasted_value;
+	uint32_t         _index;
+	uint32_t         _poly;
+	uint32_t         _buffer_size;
+	Shared::DataType _type;
+	Raul::Atom       _value;
+	bool             _fixed_buffers;
+	bool             _broadcast;
+	bool             _set_by_user;
+	Sample           _last_broadcasted_value;
 
 	Context::ID           _context;
 	Raul::Array<Buffer*>* _buffers;

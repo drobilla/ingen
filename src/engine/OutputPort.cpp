@@ -24,7 +24,8 @@ using namespace std;
 
 namespace Ingen {
 
-	
+using namespace Shared;
+
 OutputPort::OutputPort(NodeImpl*         parent,
                        const string&     name,
                        uint32_t          index,

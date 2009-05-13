@@ -71,7 +71,7 @@ protected:
 class Driver : boost::noncopyable
 {
 public:
-	Driver(DataType type)
+	Driver(Shared::DataType type)
 		: _type(type)
 	{}
 
@@ -95,7 +95,7 @@ public:
 	virtual Raul::List<DriverPort*>::Node* remove_port(const Raul::Path& path) = 0;
 
 protected:
-	DataType _type;
+	Shared::DataType _type;
 };
 
 

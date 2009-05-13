@@ -24,6 +24,8 @@
 #include "Engine.hpp"
 #include "AudioDriver.hpp"
 
+using namespace std;
+
 namespace Ingen {
 
 

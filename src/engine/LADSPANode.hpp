@@ -36,7 +36,7 @@ class LADSPANode : public NodeBase
 {
 public:
 	LADSPANode(PluginImpl*              plugin,
-	           const string&            name,
+	           const std::string&       name,
 	           bool                     polyphonic,
 	           PatchImpl*               parent,
 	           const LADSPA_Descriptor* descriptor,

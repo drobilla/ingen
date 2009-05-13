@@ -30,6 +30,7 @@ using namespace std;
 using namespace Raul;
 
 namespace Ingen {
+using namespace Serialisation;
 namespace Client {
 
 

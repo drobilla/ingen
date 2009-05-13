@@ -41,6 +41,8 @@
 #include "WindowFactory.hpp"
 #include "PatchView.hpp"
 
+using namespace Raul;
+
 namespace Ingen {
 namespace GUI {
 

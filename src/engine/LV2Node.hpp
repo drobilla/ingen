@@ -36,12 +36,12 @@ class LV2Plugin;
 class LV2Node : public NodeBase
 {
 public:
-	LV2Node(LV2Plugin*    plugin,
-	        const string& name,
-	        bool          polyphonic,
-	        PatchImpl*    parent,
-	        SampleRate    srate,
-	        size_t        buffer_size);
+	LV2Node(LV2Plugin*         plugin,
+	        const std::string& name,
+	        bool               polyphonic,
+	        PatchImpl*         parent,
+	        SampleRate         srate,
+	        size_t             buffer_size);
 	
 	~LV2Node();
 

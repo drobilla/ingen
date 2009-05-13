@@ -33,10 +33,11 @@ using std::string;
 using std::list;
 using boost::optional;
 
-using namespace Ingen::Client;
-using namespace Ingen::Serialisation;
-
 namespace Ingen {
+using namespace Shared;
+using namespace Client;
+using namespace Serialisation;
+
 namespace GUI {
 
 
@@ -56,11 +57,11 @@ class ThreadedLoader : public Raul::Slave
 public:
 	ThreadedLoader(SharedPtr<EngineInterface> engine);
 
-	void load_patch(bool                             merge,
-                    const Glib::ustring&             document_uri,
-                    optional<Path>                   data_path,
-                    optional<Path>                   engine_parent,
-                    optional<Symbol>                 engine_symbol,
+	void load_patch(bool                              merge,
+                    const Glib::ustring&              document_uri,
+                    optional<Raul::Path>              data_path,
+                    optional<Raul::Path>              engine_parent,
+                    optional<Raul::Symbol>            engine_symbol,
                     optional<GraphObject::Properties> engine_data);
 
 	void save_patch(SharedPtr<PatchModel> model, const string& filename);

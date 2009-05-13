@@ -42,7 +42,7 @@ public:
 	enum Direction { INPUT, OUTPUT };
 	
 	inline uint32_t          index()     const { return _index; } 
-	inline DataType          type()      const { return _type; }
+	inline Shared::DataType  type()      const { return _type; }
 	inline const Raul::Atom& value()     const { return _current_val; }
 	inline bool              connected() const { return (_connections > 0); }
 	inline bool              is_input()  const { return (_direction == INPUT); }
@@ -78,7 +78,7 @@ public:
 private:
 	friend class ClientStore;
 	
-	PortModel(const Raul::Path& path, uint32_t index, DataType type, Direction dir)
+	PortModel(const Raul::Path& path, uint32_t index, Shared::DataType type, Direction dir)
 		: ObjectModel(path)
 		, _index(index)
 		, _type(type)
@@ -86,7 +86,7 @@ private:
 		, _current_val(0.0f)
 		, _connections(0)
 	{
-		if (_type == DataType::UNKNOWN)
+		if (_type == Shared::DataType::UNKNOWN)
 			std::cerr << "[PortModel] Warning: Unknown port type" << std::endl;
 	}
 	
@@ -98,11 +98,11 @@ private:
 	
 	void set(SharedPtr<ObjectModel> model);
 	
-	uint32_t   _index;
-	DataType   _type;
-	Direction  _direction;
-	Raul::Atom _current_val;
-	size_t     _connections;
+	uint32_t         _index;
+	Shared::DataType _type;
+	Direction        _direction;
+	Raul::Atom       _current_val;
+	size_t           _connections;
 };
 
 

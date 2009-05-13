@@ -27,6 +27,7 @@
 #include "util.hpp"
 
 using namespace std;
+using namespace Raul;
 using Ingen::Shared::ClientInterface;
 
 namespace Ingen {

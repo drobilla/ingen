@@ -34,7 +34,11 @@
 #include "OSCDriver.hpp"
 #include "DuplexPort.hpp"
 
+using namespace std;
+
 namespace Ingen {
+
+using namespace Shared;
 
 
 CreatePortEvent::CreatePortEvent(Engine&              engine,

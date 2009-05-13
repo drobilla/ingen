@@ -28,8 +28,10 @@
 #include "PatchView.hpp"
 #include "Configuration.hpp"
 #include "ThreadedLoader.hpp"
+
 using boost::optional;
 using namespace std;
+using namespace Raul;
 
 namespace Ingen {
 namespace GUI {
@@ -146,7 +148,7 @@ LoadSubpatchWindow::ok_clicked()
 	assert(_patch);
 	
 	// If unset load_patch will load values
-	optional<Symbol> symbol;
+	optional<Raul::Symbol> symbol;
 	string name_str = "";
 	
 	if (_name_from_user_radio->get_active()) {

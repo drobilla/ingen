@@ -25,6 +25,7 @@
 #include "client/PatchModel.hpp"
 
 using namespace std;
+using namespace Raul;
 
 namespace Ingen {
 namespace GUI {

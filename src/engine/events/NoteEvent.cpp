@@ -26,6 +26,8 @@
 #include "InternalPlugin.hpp"
 #include "ProcessContext.hpp"
 
+using namespace Raul;
+
 namespace Ingen {
 
 
@@ -70,7 +72,7 @@ NoteEvent::execute(ProcessContext& context)
 		
 	// FIXME: barf
 	
-	if (_node != NULL && _node->plugin()->type() == Plugin::Internal) {
+	if (_node != NULL && _node->plugin()->type() == Shared::Plugin::Internal) {
 		if (_on) {
 			if (_node->plugin_impl()->uri().str() == NS_INTERNALS "Note")
 				((NoteNode*)_node)->note_on(context, _note_num, _velocity, _time);

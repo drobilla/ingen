@@ -27,6 +27,9 @@
 #include "AudioDriver.hpp"
 #include "EngineStore.hpp"
 
+using namespace std;
+using namespace Raul;
+
 namespace Ingen {
 
 

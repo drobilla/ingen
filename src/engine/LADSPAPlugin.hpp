@@ -40,8 +40,8 @@ public:
 	LADSPAPlugin(const std::string& library_path,
 	             const std::string& uri,
 	             unsigned long      id,
-	             const string&      label,
-	             const string&      name)
+	             const std::string& label,
+	             const std::string& name)
 		: PluginImpl(Plugin::LADSPA, uri, library_path)
 		, _id(id)
 		, _label(label)
@@ -55,10 +55,10 @@ public:
 	
 	const std::string& label()  const { return _label; }
 	unsigned long      id()     const { return _id; }
-	const string       symbol() const { return Raul::Path::nameify(_label); }
-	const string       name()   const { return _name; }
+	const std::string  symbol() const { return Raul::Path::nameify(_label); }
+	const std::string  name()   const { return _name; }
 
-	const string library_name() const {
+	const std::string library_name() const {
 		return _library_path.substr(_library_path.find_last_of("/")+1);
 	}
 	

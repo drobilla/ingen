@@ -27,6 +27,7 @@ using namespace std;
 
 namespace Ingen {
 
+using namespace Shared;
 
 /** Allocate a new event buffer.
  * \a capacity is in bytes (not number of events).

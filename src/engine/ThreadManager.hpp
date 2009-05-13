@@ -20,8 +20,6 @@
 
 #include "raul/Thread.hpp"
 
-using Raul::Thread;
-
 namespace Ingen {
 
 
@@ -34,7 +32,9 @@ enum ThreadID {
 
 class ThreadManager {
 public:
-	inline static ThreadID current_thread_id() { return (ThreadID)Thread::get().context(); }
+	inline static ThreadID current_thread_id() {
+		return (ThreadID)Raul::Thread::get().context();
+	}
 };
 
 

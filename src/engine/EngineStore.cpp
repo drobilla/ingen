@@ -75,7 +75,7 @@ EngineStore::find_object(const Path& path)
 /** Add an object to the store. Not realtime safe.
  */
 void
-EngineStore::add(GraphObject* obj)
+EngineStore::add(Shared::GraphObject* obj)
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
 	Store::add(obj);

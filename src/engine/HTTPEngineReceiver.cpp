@@ -36,9 +36,12 @@
 #include "ThreadManager.hpp"
 
 using namespace std;
-using namespace Ingen::Shared;
+using namespace Raul;
 
 namespace Ingen {
+
+using namespace Shared;
+using namespace Serialisation;
 
 
 HTTPEngineReceiver::HTTPEngineReceiver(Engine& engine, uint16_t port)

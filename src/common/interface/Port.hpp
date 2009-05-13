@@ -38,7 +38,7 @@ class Port : public virtual GraphObject
 public:
 	virtual uint32_t          index()    const = 0;
 	virtual bool              is_input() const = 0;
-	virtual DataType          type()     const = 0;
+	virtual Shared::DataType  type()     const = 0;
 	virtual const Raul::Atom& value()    const = 0;
 };
 

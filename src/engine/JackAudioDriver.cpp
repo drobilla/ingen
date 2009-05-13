@@ -38,6 +38,7 @@
 #include "JackMidiDriver.hpp"
 
 using namespace std;
+using namespace Raul;
 
 namespace Ingen {
 

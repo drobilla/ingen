@@ -26,8 +26,11 @@
 #include "interface/DataType.hpp"
 #include "AudioBuffer.hpp"
 
+using namespace std;
+
 namespace Ingen {
 
+using namespace Shared;
 
 void
 ObjectSender::send_object(ClientInterface* client, const GraphObjectImpl* object, bool recursive)
@@ -74,7 +77,7 @@ ObjectSender::send_patch(ClientInterface* client, const PatchImpl* patch, bool r
 	if (recursive) {
 
 		// Send nodes
-		for (List<NodeImpl*>::const_iterator j = patch->nodes().begin();
+		for (Raul::List<NodeImpl*>::const_iterator j = patch->nodes().begin();
 				j != patch->nodes().end(); ++j) {
 			const NodeImpl* const node = (*j); 
 			send_node(client, node, true, false);

@@ -23,6 +23,9 @@
 #include "EngineStore.hpp"
 #include "ClientBroadcaster.hpp"
 
+using namespace std;
+using namespace Raul;
+
 namespace Ingen {
 
 

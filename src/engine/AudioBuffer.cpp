@@ -28,6 +28,8 @@ using namespace std;
 
 namespace Ingen {
 
+using namespace Shared;
+
 
 AudioBuffer::AudioBuffer(size_t size)
 	: Buffer((size == 1) ? DataType::CONTROL : DataType::AUDIO, size)

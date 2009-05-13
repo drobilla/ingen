@@ -35,10 +35,6 @@
 #include "PluginImpl.hpp"
 #include "LV2Info.hpp"
 
-using std::string;
-using Ingen::Shared::Plugin;
-
-
 namespace Ingen {
 
 class PatchImpl;
@@ -50,18 +46,18 @@ class NodeImpl;
 class LV2Plugin : public PluginImpl
 {
 public:
-	LV2Plugin(SharedPtr<LV2Info> lv2_info, const string& uri)
+	LV2Plugin(SharedPtr<LV2Info> lv2_info, const std::string& uri)
 		: PluginImpl(Plugin::LV2, uri)
 		, _slv2_plugin(NULL)
 		, _lv2_info(lv2_info)
 	{}
 	
-	NodeImpl* instantiate(const string&     name,
-	                      bool              polyphonic,
-	                      Ingen::PatchImpl* parent,
-	                      Engine&           engine);
+	NodeImpl* instantiate(const std::string& name,
+	                      bool               polyphonic,
+	                      Ingen::PatchImpl*  parent,
+	                      Engine&            engine);
 	
-	const string symbol() const;
+	const std::string symbol() const;
 
 	SharedPtr<LV2Info> lv2_info() const { return _lv2_info; }
 	

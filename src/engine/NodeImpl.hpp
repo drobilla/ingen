@@ -28,8 +28,6 @@ namespace Ingen {
 
 namespace Shared { class Plugin; class Node; class Port; }
 
-using namespace Shared;
-
 class Buffer;
 class PluginImpl;
 class PatchImpl;
@@ -127,8 +125,8 @@ public:
 
 	virtual uint32_t num_ports() const = 0;
 
-	virtual Port*     port(uint32_t index) const = 0;
-	virtual PortImpl* port_impl(uint32_t index) const = 0;
+	virtual Shared::Port* port(uint32_t index) const = 0;
+	virtual PortImpl*     port_impl(uint32_t index) const = 0;
 	
 	/** Used by the process order finding algorithm (ie during connections) */
 	virtual bool traversed() const  = 0;

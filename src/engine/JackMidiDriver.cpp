@@ -32,7 +32,9 @@
 #include "ProcessContext.hpp"
 #include "Engine.hpp"
 #include "jack_compat.h"
+
 using namespace std;
+using namespace Raul;
 
 namespace Ingen {
 

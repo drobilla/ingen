@@ -22,6 +22,8 @@
 #include "module/World.hpp"
 #include "shared/Store.hpp"
 
+using namespace Raul;
+
 namespace Ingen {
 
 

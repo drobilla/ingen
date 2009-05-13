@@ -40,7 +40,7 @@ class ProcessContext;
 class AudioDriver : public Driver
 {
 public:
-	AudioDriver() : Driver(DataType::AUDIO) {}
+	AudioDriver() : Driver(Shared::DataType::AUDIO) {}
 	
 	virtual void       set_root_patch(PatchImpl* patch) = 0;
 	virtual PatchImpl* root_patch()                     = 0;

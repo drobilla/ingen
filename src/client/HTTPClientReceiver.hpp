@@ -68,10 +68,10 @@ private:
 	Glib::Mutex _mutex;
 	SharedPtr<Shared::ClientInterface> _target;
 
-	Shared::World*    _world;
-	const std::string _url;
-	SoupSession*      _session;
-	SharedPtr<Parser> _parser;
+	Shared::World*                   _world;
+	const std::string                _url;
+	SoupSession*                     _session;
+	SharedPtr<Serialisation::Parser> _parser;
 };
 
 

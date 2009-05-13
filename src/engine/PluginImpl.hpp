@@ -27,9 +27,6 @@
 #include "interface/Plugin.hpp"
 #include "shared/ResourceImpl.hpp"
 
-using std::string;
-using Ingen::Shared::Plugin;
-
 namespace Ingen {
 
 class PatchImpl;
@@ -46,7 +43,7 @@ class PluginImpl : public Ingen::Shared::Plugin
                  , public boost::noncopyable
 {
 public:
-	PluginImpl(Type type, const string& uri, const string library_path="")
+	PluginImpl(Type type, const std::string& uri, const std::string library_path="")
 		: ResourceImpl(uri)
 		, _type(type)
 		, _library_path(library_path)
@@ -58,7 +55,7 @@ public:
 	                              Ingen::PatchImpl*  parent,
 	                              Engine&            engine) = 0;
 	
-	virtual const string symbol() const = 0;
+	virtual const std::string symbol() const = 0;
 	
 	virtual const std::string& library_path() const { return _library_path; }
 	
@@ -71,9 +68,9 @@ public:
 	void          module(Glib::Module* module) { _module = module; }
 
 protected:
-	Plugin::Type   _type;
-	mutable string _library_path;
-	Glib::Module*  _module;
+	Plugin::Type        _type;
+	mutable std::string _library_path;
+	Glib::Module*       _module;
 };
 
 

@@ -33,8 +33,11 @@
 #include "MessageContext.hpp"
 
 using namespace std;
+using namespace Raul;
 
 namespace Ingen {
+
+using namespace Shared;
 
 
 /** Omni (all voices) control setting */

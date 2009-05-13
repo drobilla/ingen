@@ -35,6 +35,8 @@ using namespace std;
 
 namespace Ingen {
 
+using namespace Shared;
+
 static InternalPlugin note_plugin(NS_INTERNALS "Note", "note");
 
 NoteNode::NoteNode(const string& path, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size)

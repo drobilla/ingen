@@ -25,7 +25,12 @@
 #include "AudioBuffer.hpp"
 #include "ProcessContext.hpp"
 
+using namespace std;
+using namespace Raul;
+
 namespace Ingen {
+
+using namespace Shared;
 
 
 RequestPortValueEvent::RequestPortValueEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Path& port_path)

@@ -60,7 +60,7 @@ NodeFactory::NodeFactory(Ingen::Shared::World* world)
 NodeFactory::~NodeFactory()
 {
 	for (Plugins::iterator i = _plugins.begin(); i != _plugins.end(); ++i)
-		if (i->second->type() != Plugin::Internal)
+		if (i->second->type() != Shared::Plugin::Internal)
 			delete i->second;
 
 	_plugins.clear();

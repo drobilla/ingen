@@ -24,6 +24,8 @@
 #include "util.hpp"
 //#include "Engine.hpp"
 
+using namespace std;
+
 namespace Ingen {
 
 static InternalPlugin transport_plugin(NS_INTERNALS "Transport", "transport");
