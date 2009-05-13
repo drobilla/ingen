@@ -215,7 +215,7 @@ OSCClientSender::disconnect(const Path& src_port_path, const Path& dst_port_path
  * \arg \b value (string)</p> \n \n
  */
 void
-OSCClientSender::set_variable(const Path& path, const URI& key, const Atom& value)
+OSCClientSender::set_variable(const URI& path, const URI& key, const Atom& value)
 {
 	lo_message m = lo_message_new();
 	lo_message_add_string(m, path.c_str());
@@ -232,7 +232,7 @@ OSCClientSender::set_variable(const Path& path, const URI& key, const Atom& valu
  * \arg \b value (string)</p> \n \n
  */
 void
-OSCClientSender::set_property(const Path& path, const URI& key, const Atom& value)
+OSCClientSender::set_property(const URI& path, const URI& key, const Atom& value)
 {
 	lo_message m = lo_message_new();
 	lo_message_add_string(m, path.c_str());

@@ -103,7 +103,7 @@ HTTPClientSender::disconnect(const Raul::Path& src_path, const Raul::Path& dst_p
 
 
 void
-HTTPClientSender::set_variable(const Raul::Path& path, const Raul::URI& key, const Atom& value)
+HTTPClientSender::set_variable(const Raul::URI& path, const Raul::URI& key, const Atom& value)
 {
 	Redland::Node node = AtomRDF::atom_to_node(*_engine.world()->rdf_world, value);
 	string msg = string(
@@ -118,7 +118,7 @@ HTTPClientSender::set_variable(const Raul::Path& path, const Raul::URI& key, con
 
 
 void
-HTTPClientSender::set_property(const Raul::Path& path, const Raul::URI& key, const Atom& value)
+HTTPClientSender::set_property(const Raul::URI& path, const Raul::URI& key, const Atom& value)
 {
 	Redland::Node node = AtomRDF::atom_to_node(*_engine.world()->rdf_world, value);
 	string msg = string(

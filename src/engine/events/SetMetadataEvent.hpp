@@ -20,6 +20,7 @@
 
 #include "raul/URI.hpp"
 #include "raul/Atom.hpp"
+#include "shared/ResourceImpl.hpp"
 #include "QueuedEvent.hpp"
 
 namespace Ingen {
@@ -40,7 +41,7 @@ public:
 	                 SharedPtr<Responder> responder,
 	                 SampleCount          timestamp,
 	                 bool                 property,
-	                 const Raul::Path&    path,
+	                 const Raul::URI&     subject,
 	                 const Raul::URI&     key,
 	                 const Raul::Atom&    value);
 	
@@ -58,14 +59,14 @@ private:
 		POLYPHONIC
 	} _special_type;
 
-	bool             _property;
-	bool             _success;
-	Raul::Path       _path;
-	Raul::URI        _key;
-	Raul::Atom       _value;
-	GraphObjectImpl* _object;
-	PatchImpl*       _patch;
-	CompiledPatch*   _compiled_patch;
+	bool                  _property;
+	bool                  _success;
+	Raul::URI             _subject;
+	Raul::URI             _key;
+	Raul::Atom            _value;
+	Shared::ResourceImpl* _object;
+	PatchImpl*            _patch;
+	CompiledPatch*        _compiled_patch;
 };
 
 

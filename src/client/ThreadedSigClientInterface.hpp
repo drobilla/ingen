@@ -121,10 +121,10 @@ public:
 	void disconnect(const Raul::Path& src_port_path, const Raul::Path& dst_port_path)
 		{ push_sig(sigc::bind(disconnection_slot, src_port_path, dst_port_path)); }
 	
-	void set_variable(const Raul::Path& path, const Raul::URI& key, const Raul::Atom& value)
+	void set_variable(const Raul::URI& path, const Raul::URI& key, const Raul::Atom& value)
 		{ push_sig(sigc::bind(variable_change_slot, path, key, value)); }
 	
-	void set_property(const Raul::Path& path, const Raul::URI& key, const Raul::Atom& value)
+	void set_property(const Raul::URI& path, const Raul::URI& key, const Raul::Atom& value)
 		{ push_sig(sigc::bind(property_change_slot, path, key, value)); }
 
 	void set_port_value(const Raul::Path& port_path, const Raul::Atom& value)
@@ -168,8 +168,8 @@ private:
 	sigc::slot<void, Raul::Path>                                  object_destroyed_slot; 
 	sigc::slot<void, Raul::Path, Raul::Path>                      object_renamed_slot; 
 	sigc::slot<void, Raul::Path, Raul::Path>                      disconnection_slot; 
-	sigc::slot<void, Raul::Path, Raul::URI, Raul::Atom>           variable_change_slot; 
-	sigc::slot<void, Raul::Path, Raul::URI, Raul::Atom>           property_change_slot; 
+	sigc::slot<void, Raul::URI, Raul::URI, Raul::Atom>            variable_change_slot; 
+	sigc::slot<void, Raul::URI, Raul::URI, Raul::Atom>            property_change_slot; 
 	sigc::slot<void, Raul::Path, Raul::Atom>                      port_value_slot; 
 	sigc::slot<void, Raul::Path, uint32_t, Raul::Atom>            voice_value_slot; 
 	sigc::slot<void, Raul::Path>                                  activity_slot; 

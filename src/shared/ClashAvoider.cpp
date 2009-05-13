@@ -26,7 +26,16 @@ namespace Ingen {
 namespace Shared {
 
 
-/** Always returns a valid Raul::Path */
+const URI
+ClashAvoider::map_uri(const Raul::URI& in)
+{
+	if (in.scheme() == Path::scheme && Path::is_valid(in.str()))
+		return map_path(in.str());
+	else
+		return in;
+}
+
+
 const Path
 ClashAvoider::map_path(const Raul::Path& in)
 {
@@ -192,20 +201,20 @@ ClashAvoider::disconnect(const Raul::Path& src_port_path,
 
 
 void
-ClashAvoider::set_variable(const Raul::Path& subject_path,
+ClashAvoider::set_variable(const Raul::URI&  subject_path,
                            const Raul::URI&  predicate,
                            const Raul::Atom& value)
 {
-	_target.set_variable(map_path(subject_path), predicate, value);
+	_target.set_variable(map_uri(subject_path), predicate, value);
 }
 
 
 void
-ClashAvoider::set_property(const Raul::Path& subject_path,
+ClashAvoider::set_property(const Raul::URI&  subject_path,
                            const Raul::URI&  predicate,
                            const Raul::Atom& value)
 {
-	_target.set_property(map_path(subject_path), predicate, value);
+	_target.set_property(map_uri(subject_path), predicate, value);
 }
 
 

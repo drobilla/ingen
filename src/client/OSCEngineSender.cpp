@@ -322,7 +322,7 @@ OSCEngineSender::midi_learn(const Path& node_path)
 
 
 void
-OSCEngineSender::set_variable(const Path& obj_path,
+OSCEngineSender::set_variable(const URI&  obj_path,
                               const URI&  predicate,
                               const Atom& value)
 {
@@ -336,7 +336,7 @@ OSCEngineSender::set_variable(const Path& obj_path,
 
 	
 void
-OSCEngineSender::set_property(const Path& obj_path,
+OSCEngineSender::set_property(const URI&  obj_path,
                               const URI&  predicate,
                               const Atom& value)
 {

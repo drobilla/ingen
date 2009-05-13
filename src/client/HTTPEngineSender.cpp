@@ -209,7 +209,7 @@ HTTPEngineSender::midi_learn(const Path& node_path)
 
 
 void
-HTTPEngineSender::set_variable(const Path& path,
+HTTPEngineSender::set_variable(const URI&  path,
                                const URI&  predicate,
                                const Atom& value)
 {
@@ -217,7 +217,7 @@ HTTPEngineSender::set_variable(const Path& path,
 
 
 void
-HTTPEngineSender::set_property(const Path& path,
+HTTPEngineSender::set_property(const URI&  path,
                                const URI&  predicate,
                                const Atom& value)
 {

@@ -28,6 +28,16 @@ using namespace std;
 namespace Ingen {
 
 
+const Raul::Atom&
+LADSPAPlugin::get_property(const Raul::URI& uri) const
+{
+	if (uri.str() == "doap:name")
+		return _name;
+	else
+		return ResourceImpl::get_property(uri);
+}
+
+
 NodeImpl*
 LADSPAPlugin::instantiate(const string&     name,
                           bool              polyphonic,

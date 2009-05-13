@@ -185,6 +185,15 @@ ClientStore::object(const Path& path)
 	}
 }
 
+SharedPtr<Resource>
+ClientStore::resource(const URI& uri)
+{
+	if (uri.scheme() == Path::scheme && Path::is_valid(uri.str()))
+		return object(uri.str());
+	else
+		return plugin(uri);
+}
+
 void
 ClientStore::add_plugin(SharedPtr<PluginModel> pm)
 {
@@ -353,14 +362,18 @@ ClientStore::clear_patch(const Path& path)
 
 
 void
-ClientStore::set_variable(const Path& subject_path, const URI& predicate, const Atom& value)
+ClientStore::set_variable(const URI& subject_path, const URI& predicate, const Atom& value)
 {
-	SharedPtr<ObjectModel> subject = object(subject_path);
+	SharedPtr<Resource> subject = resource(subject_path);
 
 	if (!value.is_valid()) {
-		cerr << "ERROR: variable '" << predicate << "' has no type" << endl;
+		cerr << "ERROR: variable '" << predicate << "' is invalid" << endl;
 	} else if (subject) {
-		subject->set_variable(predicate, value);
+		SharedPtr<ObjectModel> om = PtrCast<ObjectModel>(subject);
+		if (om)
+			om->set_variable(predicate, value);
+		else
+			subject->set_property(predicate, value);
 	} else {
 		//add_variable_orphan(subject_path, predicate, value);
 		cerr << "WARNING: variable '" << predicate << "' for unknown object " << subject_path << endl;
@@ -369,16 +382,16 @@ ClientStore::set_variable(const Path& subject_path, const URI& predicate, const 
 
 	
 void
-ClientStore::set_property(const Path& subject_path, const URI& predicate, const Atom& value)
+ClientStore::set_property(const URI& subject_path, const URI& predicate, const Atom& value)
 {
-	if (!value.is_valid())
-		cerr << "WARNING: property '" << predicate << "' is NULL" << endl;
-
-	SharedPtr<ObjectModel> obj = object(subject_path);
-	if (obj)
-		obj->set_property(predicate, value);
-	else
+	SharedPtr<Resource> subject = resource(subject_path);
+	if (!value.is_valid()) {
+		cerr << "ERROR: property '" << predicate << "' is invalid" << endl;
+	} else if (subject) {
+		subject->set_property(predicate, value);
+	} else {
 		cerr << "WARNING: property '" << predicate << "' for unknown object " << subject_path << endl;
+	}
 }
 
 

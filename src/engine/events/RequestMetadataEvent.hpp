@@ -23,7 +23,9 @@
 #include "raul/URI.hpp"
 
 namespace Ingen {
-	
+
+namespace Shared { class ResourceImpl; }
+
 class GraphObjectImpl;
 
 
@@ -38,7 +40,7 @@ public:
 	                     SharedPtr<Responder> responder,
 	                     SampleCount          timestamp,
 	                     bool                 property,
-	                     const Raul::Path&    path,
+	                     const Raul::URI&     path,
 	                     const Raul::URI&     key);
 
 	void pre_process();
@@ -46,16 +48,17 @@ public:
 	void post_process();
 
 private:
+	enum { NO_ERROR, NOT_FOUND } _error;
 	enum {
 		NONE,
 		PORT_VALUE
 	} _special_type;
 	
-	Raul::Path       _path;
-	bool             _property;
-	Raul::URI        _key;
-	Raul::Atom       _value; 
-	GraphObjectImpl* _object;
+	Raul::URI             _uri;
+	Raul::URI             _key;
+	Raul::Atom            _value; 
+	Shared::ResourceImpl* _resource;
+	bool                  _is_property;
 };
 
 

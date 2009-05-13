@@ -70,11 +70,11 @@ public:
 	virtual void disconnect(const Raul::Path& src_port_path,
 	                        const Raul::Path& dst_port_path);
 	
-	virtual void set_variable(const Raul::Path& subject_path,
+	virtual void set_variable(const Raul::URI&  subject_path,
 	                          const Raul::URI&  predicate,
 	                          const Raul::Atom& value);
 	
-	virtual void set_property(const Raul::Path& subject_path,
+	virtual void set_property(const Raul::URI&  subject_path,
 	                          const Raul::URI&  predicate,
 	                          const Raul::Atom& value);
 	
@@ -90,6 +90,7 @@ public:
 	virtual void clear_patch(const Raul::Path& patch_path);
 	
 private:
+	const Raul::URI  map_uri(const Raul::URI& in);
 	const Raul::Path map_path(const Raul::Path& in);
 
 	Store&            _store;

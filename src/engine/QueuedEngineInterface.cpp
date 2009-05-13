@@ -263,7 +263,7 @@ QueuedEngineInterface::midi_learn(const Path& node_path)
 
 
 void
-QueuedEngineInterface::set_variable(const Path& path,
+QueuedEngineInterface::set_variable(const URI&  path,
                                     const URI&  predicate,
                                     const Atom& value)
 {
@@ -272,7 +272,7 @@ QueuedEngineInterface::set_variable(const Path& path,
 
 	
 void
-QueuedEngineInterface::set_property(const Path& path,
+QueuedEngineInterface::set_property(const URI&  path,
                                     const URI&  predicate,
                                     const Atom& value)
 {

@@ -62,8 +62,8 @@ public:
 	sigc::signal<void, Raul::Path>                                  signal_object_destroyed; 
 	sigc::signal<void, Raul::Path, Raul::Path>                      signal_connection; 
 	sigc::signal<void, Raul::Path, Raul::Path>                      signal_disconnection; 
-	sigc::signal<void, Raul::Path, Raul::URI, Raul::Atom>           signal_variable_change; 
-	sigc::signal<void, Raul::Path, Raul::URI, Raul::Atom>           signal_property_change; 
+	sigc::signal<void, Raul::URI, Raul::URI, Raul::Atom>            signal_variable_change; 
+	sigc::signal<void, Raul::URI, Raul::URI, Raul::Atom>            signal_property_change; 
 	sigc::signal<void, Raul::Path, Raul::Atom>                      signal_port_value; 
 	sigc::signal<void, Raul::Path, uint32_t, Raul::Atom>            signal_voice_value; 
 	sigc::signal<void, Raul::Path>                                  signal_activity; 
@@ -130,10 +130,10 @@ protected:
 	void disconnect(const Raul::Path& src_port_path, const Raul::Path& dst_port_path)
 		{ if (_enabled) signal_disconnection.emit(src_port_path, dst_port_path); }
 	
-	void set_variable(const Raul::Path& path, const Raul::URI& key, const Raul::Atom& value)
+	void set_variable(const Raul::URI& path, const Raul::URI& key, const Raul::Atom& value)
 		{ if (_enabled) signal_variable_change.emit(path, key, value); }
 	
-	void set_property(const Raul::Path& path, const Raul::URI& key, const Raul::Atom& value)
+	void set_property(const Raul::URI& path, const Raul::URI& key, const Raul::Atom& value)
 		{ if (_enabled) signal_property_change.emit(path, key, value); }
 
 	void set_port_value(const Raul::Path& port_path, const Raul::Atom& value)

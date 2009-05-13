@@ -25,6 +25,7 @@
 #include <string>
 #include <iostream>
 #include "raul/Path.hpp"
+#include "raul/Atom.hpp"
 #include "PluginImpl.hpp"
 
 namespace Ingen {
@@ -45,7 +46,7 @@ public:
 		: PluginImpl(Plugin::LADSPA, uri, library_path)
 		, _id(id)
 		, _label(label)
-		, _name(name)
+		, _name(Raul::Atom::STRING, name)
 	{}
 	
 	NodeImpl* instantiate(const std::string& name,
@@ -56,16 +57,18 @@ public:
 	const std::string& label()  const { return _label; }
 	unsigned long      id()     const { return _id; }
 	const std::string  symbol() const { return Raul::Path::nameify(_label); }
-	const std::string  name()   const { return _name; }
+	const std::string  name()   const { return _name.get_string(); }
 
 	const std::string library_name() const {
 		return _library_path.substr(_library_path.find_last_of("/")+1);
 	}
 	
+	const Raul::Atom& get_property(const Raul::URI& uri) const;
+	
 private:
 	const unsigned long _id;
 	const std::string   _label;
-	const std::string   _name;
+	const Raul::Atom    _name;
 };
 
 

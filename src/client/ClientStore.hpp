@@ -55,8 +55,9 @@ public:
 	ClientStore(SharedPtr<Shared::EngineInterface> engine=SharedPtr<Shared::EngineInterface>(),
 	            SharedPtr<SigClientInterface> emitter=SharedPtr<SigClientInterface>());
 
-	SharedPtr<PluginModel> plugin(const Raul::URI& uri);
-	SharedPtr<ObjectModel> object(const Raul::Path& path);
+	SharedPtr<PluginModel>      plugin(const Raul::URI& uri);
+	SharedPtr<ObjectModel>      object(const Raul::Path& path);
+	SharedPtr<Shared::Resource> resource(const Raul::URI& uri);
 
 	void clear();
 
@@ -72,8 +73,8 @@ public:
 	void new_node(const Raul::Path& path, const Raul::URI& plugin_uri);
 	void new_port(const Raul::Path& path, const Raul::URI& type, uint32_t index, bool is_output);
 	void rename(const Raul::Path& old_path, const Raul::Path& new_path);
-	void set_variable(const Raul::Path& subject_path, const Raul::URI& predicate, const Raul::Atom& value);
-	void set_property(const Raul::Path& subject_path, const Raul::URI& predicate, const Raul::Atom& value);
+	void set_variable(const Raul::URI& subject_path, const Raul::URI& predicate, const Raul::Atom& value);
+	void set_property(const Raul::URI& subject_path, const Raul::URI& predicate, const Raul::Atom& value);
 	void set_port_value(const Raul::Path& port_path, const Raul::Atom& value);
 	void set_voice_value(const Raul::Path& port_path, uint32_t voice, const Raul::Atom& value);
 	void connect(const Raul::Path& src_port_path, const Raul::Path& dst_port_path);

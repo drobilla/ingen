@@ -24,6 +24,7 @@
 #include "ClientBroadcaster.hpp"
 #include "GraphObjectImpl.hpp"
 #include "PatchImpl.hpp"
+#include "PluginImpl.hpp"
 #include "EngineStore.hpp"
 
 using namespace std;
@@ -37,14 +38,14 @@ SetMetadataEvent::SetMetadataEvent(
 		SharedPtr<Responder> responder,
 		SampleCount          timestamp,
 		bool                 property,
-		const Path&          path,
+		const URI&           subject,
 		const URI&           key,
 		const Atom&          value)
 	: QueuedEvent(engine, responder, timestamp)
 	, _error(NO_ERROR)
 	, _special_type(NONE)
 	, _property(property)
-	, _path(path)
+	, _subject(subject)
 	, _key(key)
 	, _value(value)
 	, _object(NULL)
@@ -57,7 +58,11 @@ SetMetadataEvent::SetMetadataEvent(
 void
 SetMetadataEvent::pre_process()
 {
-	_object = _engine.engine_store()->find_object(_path);
+	if (_subject.scheme() == Path::scheme && Path::is_valid(_subject.str()))
+		_object = _engine.engine_store()->find_object(Path(_subject.str()));
+	else
+		_object = _engine.node_factory()->plugin(_subject);
+	
 	if (_object == NULL) {
 		_error = NOT_FOUND;
 		QueuedEvent::pre_process();
@@ -67,10 +72,10 @@ SetMetadataEvent::pre_process()
 	/*cerr << "SET " << _object->path() << (_property ? " PROP " : " VAR ")
 		<<	_key << " :: " << _value.type() << endl;*/
 
-	if (_property)
+	if (_property || !dynamic_cast<GraphObjectImpl*>(_object))
 		_object->set_property(_key, _value);
 	else
-		_object->set_variable(_key, _value);
+		dynamic_cast<GraphObjectImpl*>(_object)->set_variable(_key, _value);
 	
 	_patch = dynamic_cast<PatchImpl*>(_object);
 
@@ -111,7 +116,8 @@ SetMetadataEvent::execute(ProcessContext& context)
 	if (_error != NO_ERROR)
 		return;
 
-	PortImpl* port   = 0;
+	PortImpl*        port   = 0;
+	GraphObjectImpl* object = 0;
 	switch (_special_type) {
 	case ENABLE_BROADCAST:
 		if ((port = dynamic_cast<PortImpl*>(_object)))
@@ -127,8 +133,9 @@ SetMetadataEvent::execute(ProcessContext& context)
 		}
 		break;
 	case POLYPHONIC:
-		if (!_object->set_polyphonic(*_engine.maid(), _value.get_bool()))
-			_error = INTERNAL;
+		if ((object = dynamic_cast<GraphObjectImpl*>(_object)))
+			if (!object->set_polyphonic(*_engine.maid(), _value.get_bool()))
+				_error = INTERNAL;
 		break;
 	case POLYPHONY:
 		if (!_patch->apply_internal_poly(*_engine.maid(), _value.get_int32()))
@@ -149,14 +156,13 @@ SetMetadataEvent::post_process()
 	case NO_ERROR:
 		_responder->respond_ok();
 		if (_property)
-			_engine.broadcaster()->send_property_change(_path, _key, _value);
+			_engine.broadcaster()->send_property_change(_subject, _key, _value);
 		else
-			_engine.broadcaster()->send_variable_change(_path, _key, _value);
+			_engine.broadcaster()->send_variable_change(_subject, _key, _value);
 		break;
 	case NOT_FOUND:
 		_responder->respond_error((boost::format(
-				"Unable to find object '%1%' to set '%2%'")
-				% _path % _key).str());
+				"Unable to find object '%1%' to set '%2%'") % _subject % _key).str());
 	case INTERNAL:
 		_responder->respond_error("Internal error");
 		break;
