@@ -169,7 +169,6 @@ main(int argc, char** argv)
 							boost::shared_ptr<HTTPEngineReceiver> receiver(new_receiver(
 									*world->local_engine, args.engine_port_arg));
 							world->local_engine->add_event_source(receiver);
-							receiver->activate();
 						}
 					}
 					#endif
