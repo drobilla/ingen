@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -49,12 +49,12 @@ class JackAudioPort : public DriverPort, public Raul::List<JackAudioPort*>::Node
 public:
 	JackAudioPort(JackAudioDriver* driver, DuplexPort* patch_port);
 	~JackAudioPort();
-	
+
 	void create();
 	void destroy();
-	
+
 	void set_name(const std::string& name) { jack_port_set_name(_jack_port, name.c_str()); };
-	
+
 	void prepare_buffer(jack_nframes_t nframes);
 
 	jack_port_t*  jack_port() const  { return _jack_port; }
@@ -77,7 +77,7 @@ private:
  */
 class JackAudioDriver : public AudioDriver
 {
-public:	
+public:
 	JackAudioDriver(Engine& engine);
 	~JackAudioDriver();
 
@@ -92,29 +92,29 @@ public:
 
 	DriverPort* port(const Raul::Path& path);
 	DriverPort* create_port(DuplexPort* patch_port);
-	
+
 	void        add_port(DriverPort* port);
 	DriverPort* driver_port(const Raul::Path& path);
-	
+
 	Raul::List<DriverPort*>::Node* remove_port(const Raul::Path& path);
-	
+
 	PatchImpl* root_patch()                     { return _root_patch; }
 	void       set_root_patch(PatchImpl* patch) { _root_patch = patch; }
-	
+
 	ProcessContext& context() { return _process_context; }
-	
+
 	/** Transport state for this frame.
 	 * Intended to only be called from the audio thread. */
 	inline const jack_position_t* position()        { return &_position; }
 	inline jack_transport_state_t transport_state() { return _transport_state; }
-	
+
 	bool is_realtime() const { return jack_is_realtime(_client); }
-	
+
 	jack_client_t* jack_client()  const { return _client; }
 	SampleCount    buffer_size()  const { return _buffer_size; }
 	SampleCount    sample_rate()  const { return _sample_rate; }
 	bool           is_activated() const { return _is_activated; }
-	
+
 	inline SampleCount frame_time() const { return _client ? jack_frame_time(_client) : 0; }
 
 	class PortRegistrationFailedException : public std::exception {};
@@ -148,7 +148,7 @@ private:
 	bool                   _local_client; ///< Whether _client should be closed on destruction
 	jack_position_t        _position;
 	jack_transport_state_t _transport_state;
-	
+
 	Raul::List<JackAudioPort*> _ports;
 	ProcessContext             _process_context;
 
@@ -187,7 +187,7 @@ inline int JackAudioDriver::sample_rate_cb(jack_nframes_t nframes, void* jack_dr
 	assert(jack_driver);
 	return ((JackAudioDriver*)jack_driver)->_sample_rate_cb(nframes);
 }
-	
+
 
 } // namespace Ingen
 

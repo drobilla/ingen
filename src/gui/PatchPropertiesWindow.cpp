@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -52,11 +52,11 @@ PatchPropertiesWindow::set_patch(SharedPtr<PatchModel> patch_model)
 {
 	property_title() = patch_model->path().str() + " Properties";
 	_patch_model = patch_model;
-	
+
 	const Atom& name_atom = _patch_model->get_property("doap:name");
 	_name_entry->set_text(
 		(name_atom.type() == Atom::STRING) ? name_atom.get_string() : "" );
-	
+
 	const Atom& author_atom = _patch_model->get_property("dc:creator");
 	_author_entry->set_text(
 		(author_atom.type() == Atom::STRING) ? author_atom.get_string() : "" );
@@ -81,7 +81,7 @@ PatchPropertiesWindow::cancel_clicked()
 	const Atom& desc_atom = _patch_model->get_property("dc:description");
 	_textview->get_buffer()->set_text(
 		(desc_atom.type() == Atom::STRING) ? desc_atom.get_string() : "" );
-	
+
 	hide();
 }
 

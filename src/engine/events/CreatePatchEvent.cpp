@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -59,7 +59,7 @@ CreatePatchEvent::pre_process()
 		QueuedEvent::pre_process();
 		return;
 	}
-	
+
 	const Path& path = (const Path&)_path;
 
 	_parent = _engine.engine_store()->find_patch(path.parent());
@@ -68,26 +68,26 @@ CreatePatchEvent::pre_process()
 		QueuedEvent::pre_process();
 		return;
 	}
-	
+
 	uint32_t poly = 1;
 	if (_parent != NULL && _poly > 1 && _poly == static_cast<int>(_parent->internal_polyphony()))
 		poly = _poly;
-	
+
 	_patch = new PatchImpl(_engine, path.name(), poly, _parent, _engine.audio_driver()->sample_rate(), _engine.audio_driver()->buffer_size(), _poly);
-		
+
 	if (_parent != NULL) {
 		_parent->add_node(new PatchImpl::Nodes::Node(_patch));
 
 		if (_parent->enabled())
 			_compiled_patch = _parent->compile();
 	}
-	
+
 	_patch->activate();
-	
+
 	// Insert into EngineStore
 	//_patch->add_to_store(_engine.engine_store());
 	_engine.engine_store()->add(_patch);
-	
+
 	QueuedEvent::pre_process();
 }
 

@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -47,10 +47,10 @@ LoadPluginWindow::LoadPluginWindow(BaseObjectType* cobject, const Glib::RefPtr<G
 	xml->get_widget("load_plugin_add_button", _add_button);
 	//xml->get_widget("load_plugin_close_button", _close_button);
 	//xml->get_widget("load_plugin_ok_button", _add_button);
-	
+
 	xml->get_widget("load_plugin_filter_combo", _filter_combo);
 	xml->get_widget("load_plugin_search_entry", _search_entry);
-	
+
 	// Set up the plugins list
 	_plugins_liststore = Gtk::ListStore::create(_plugins_columns);
 	_plugins_treeview->set_model(_plugins_liststore);
@@ -58,7 +58,7 @@ LoadPluginWindow::LoadPluginWindow(BaseObjectType* cobject, const Glib::RefPtr<G
 	_plugins_treeview->append_column("Name", _plugins_columns._col_name);
 	_plugins_treeview->append_column("Type", _plugins_columns._col_type);
 	_plugins_treeview->append_column("URI", _plugins_columns._col_uri);
-		
+
 	// This could be nicer.. store the TreeViewColumns locally maybe?
 	_plugins_treeview->get_column(1)->set_sort_column(_plugins_columns._col_name);
 	_plugins_treeview->get_column(2)->set_sort_column(_plugins_columns._col_type);
@@ -67,7 +67,7 @@ LoadPluginWindow::LoadPluginWindow(BaseObjectType* cobject, const Glib::RefPtr<G
 	//m_plugins_treeview->get_column(4)->set_sort_column(_plugins_columns._col_label);
 	for (int i=0; i < 3; ++i)
 		_plugins_treeview->get_column(i)->set_resizable(true);
-	
+
 	_plugins_liststore->set_default_sort_func(
 			sigc::mem_fun(this, &LoadPluginWindow::plugin_compare));
 
@@ -139,7 +139,7 @@ LoadPluginWindow::name_changed()
 	} else {
 		//m_message_label->set_text("");
 		_add_button->property_sensitive() = true;
-	}	
+	}
 }
 
 
@@ -168,7 +168,7 @@ LoadPluginWindow::set_patch(SharedPtr<PatchModel> patch)
  *
  * This is done here instead of construction time as the list population is
  * really expensive and bogs down creation of a patch.  This is especially
- * important when many patch notifications are sent at one time from the 
+ * important when many patch notifications are sent at one time from the
  * engine.
  */
 void
@@ -244,7 +244,7 @@ LoadPluginWindow::add_plugin(SharedPtr<PluginModel> plugin)
 	Gtk::TreeModel::iterator iter = _plugins_liststore->append();
 	Gtk::TreeModel::Row row = *iter;
 	_rows.insert(make_pair(plugin->uri(), iter));
-	
+
 	row[_plugins_columns._col_name] = plugin->name();
 	if (!strcmp(plugin->type_uri(), "ingen:Internal"))
 		row[_plugins_columns._col_type] = "Internal";
@@ -307,7 +307,7 @@ LoadPluginWindow::generate_module_name(int offset)
 	string name = "";
 
 	Gtk::TreeModel::iterator iter = _selection->get_selected();
-	
+
 	if (iter) {
 		Gtk::TreeModel::Row row = *iter;
 		SharedPtr<PluginModel> plugin = row.get_value(_plugins_columns._col_plugin_model);
@@ -327,8 +327,8 @@ LoadPluginWindow::add_clicked()
 {
 	Gtk::TreeModel::iterator iter = _selection->get_selected();
 	bool polyphonic = _polyphonic_checkbutton->get_active();
-	
-	if (iter) { // If anything is selected			
+
+	if (iter) { // If anything is selected
 		Gtk::TreeModel::Row row = *iter;
 		SharedPtr<PluginModel> plugin = row.get_value(_plugins_columns._col_plugin_model);
 		string name = _node_name_entry->get_text();
@@ -349,7 +349,7 @@ LoadPluginWindow::add_clicked()
 					i != _initial_data.end(); ++i)
 				App::instance().engine()->set_variable(path, i->first, i->second);
 			_node_name_entry->set_text(generate_module_name(++_plugin_name_offset));
-		
+
 			// Cascade
 			Atom& x = _initial_data["ingenuity:canvas-x"];
 			x = Atom(x.get_float() + 20.0f);
@@ -388,16 +388,16 @@ LoadPluginWindow::filter_changed()
 	// Get selected criteria
 	const Gtk::TreeModel::Row row = *(_filter_combo->get_active());
 	CriteriaColumns::Criteria criteria = row[_criteria_columns._col_criteria];
-	
+
 	string field;
-	
+
 	Gtk::TreeModel::Row      model_row;
 	Gtk::TreeModel::iterator model_iter;
 	size_t                   num_visible = 0;
-	
+
 	for (ClientStore::Plugins::const_iterator i = App::instance().store()->plugins()->begin();
 			i != App::instance().store()->plugins()->end(); ++i) {
-	
+
 		const SharedPtr<PluginModel> plugin = (*i).second;
 
 		switch (criteria) {
@@ -410,13 +410,13 @@ LoadPluginWindow::filter_changed()
 		default:
 			throw;
 		}
-		
+
 		transform(field.begin(), field.end(), field.begin(), ::toupper);
-		
+
 		if (field.find(search) != string::npos) {
 			model_iter = _plugins_liststore->append();
 			model_row = *model_iter;
-		
+
 			model_row[_plugins_columns._col_name] = plugin->name();
 			model_row[_plugins_columns._col_type] = plugin->type_uri();
 			model_row[_plugins_columns._col_uri] = plugin->uri().str();

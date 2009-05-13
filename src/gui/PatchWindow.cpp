@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -98,7 +98,7 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 	if (engine_name == "ingen:internal")
 		engine_name = "internal engine";
 	_status_bar->push(string("Connected to ") + engine_name, STATUS_CONTEXT_ENGINE);
-	
+
 	_menu_import->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_import));
 	_menu_import_location->signal_activate().connect(
@@ -150,14 +150,14 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 
 	_menu_help_about->signal_activate().connect(sigc::hide_return(
 		sigc::mem_fun(App::instance(), &App::show_about)));
-	
+
 	_breadcrumb_box = new BreadCrumbBox();
 	_breadcrumb_box->signal_patch_selected.connect(sigc::mem_fun(this, &PatchWindow::set_patch_from_path));
 
 #ifndef HAVE_CURL
 	_menu_upload->hide();
 #endif
-	
+
 	Glib::RefPtr<Gtk::Clipboard> clipboard = Gtk::Clipboard::get();
 	clipboard->signal_owner_change().connect(sigc::mem_fun(this, &PatchWindow::event_clipboard_changed));
 }
@@ -174,9 +174,9 @@ PatchWindow::~PatchWindow()
 
 /** Set the patch controller from a Path (for use by eg. BreadCrumbBox)
  */
-void 
+void
 PatchWindow::set_patch_from_path(const Path& path, SharedPtr<PatchView> view)
-{	
+{
 	if (view) {
 		assert(view->patch()->path() == path);
 		App::instance().window_factory()->present_patch(view->patch(), this, view);
@@ -199,7 +199,7 @@ PatchWindow::set_patch(SharedPtr<PatchModel> patch, SharedPtr<PatchView> view)
 		return;
 
 	_enable_signal = false;
-	
+
 	new_port_connection.disconnect();
 	removed_port_connection.disconnect();
 	edit_mode_connection.disconnect();
@@ -213,10 +213,10 @@ PatchWindow::set_patch(SharedPtr<PatchModel> patch, SharedPtr<PatchView> view)
 
 	if (!_view)
 		_view = _breadcrumb_box->view(patch->path());
-	
+
 	if (!_view)
 		_view = PatchView::create(patch);
-	
+
 	assert(_view);
 
 	// Add view to our viewport
@@ -236,7 +236,7 @@ PatchWindow::set_patch(SharedPtr<PatchModel> patch, SharedPtr<PatchView> view)
 
 	_breadcrumb_box->build(patch->path(), _view);
 	_breadcrumb_box->show();
-	
+
 	_menu_view_control_window->property_sensitive() = false;
 
 	for (NodeModel::Ports::const_iterator p = patch->ports().begin();
@@ -261,7 +261,7 @@ PatchWindow::set_patch(SharedPtr<PatchModel> patch, SharedPtr<PatchView> view)
 			sigc::mem_fun(this, &PatchWindow::patch_port_removed));
 	removed_port_connection = patch->signal_editable.connect(
 			sigc::mem_fun(this, &PatchWindow::editable_changed));
-	
+
 	show_all();
 
 	_view->signal_object_entered.connect(sigc::mem_fun(this, &PatchWindow::object_entered));
@@ -284,7 +284,7 @@ void
 PatchWindow::patch_port_removed(SharedPtr<PortModel> port)
 {
 	if (port->type().is_control() && port->is_input()) {
-		
+
 		bool found_control = false;
 
 		for (NodeModel::Ports::const_iterator i = _patch->ports().begin(); i != _patch->ports().end(); ++i) {
@@ -293,7 +293,7 @@ PatchWindow::patch_port_removed(SharedPtr<PortModel> port)
 				break;
 			}
 		}
-		
+
 		_menu_view_control_window->property_sensitive() = found_control;
 	}
 }
@@ -309,7 +309,7 @@ PatchWindow::object_entered(ObjectModel* model)
 		if (plugin)
 			msg.append((boost::format(" (%1%)") % plugin->human_name()).str());
 	}
-	
+
 	PortModel* port = dynamic_cast<PortModel*>(model);
 	if (port) {
 		NodeModel* parent = dynamic_cast<NodeModel*>(port->parent().get());
@@ -322,7 +322,7 @@ PatchWindow::object_entered(ObjectModel* model)
 					msg.append((boost::format(" (%1%)") % human_name).str());
 			}
 		}
-		
+
 		const Atom& value = port->value();
 		if (value.is_valid()) {
 			const Redland::Node node = AtomRDF::atom_to_node(
@@ -416,7 +416,7 @@ PatchWindow::event_save_as()
 		Gtk::FileChooserDialog dialog(*this, "Save Patch", Gtk::FILE_CHOOSER_ACTION_SAVE);
 
 		dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
-		Gtk::Button* save_button = dialog.add_button(Gtk::Stock::SAVE, Gtk::RESPONSE_OK);	
+		Gtk::Button* save_button = dialog.add_button(Gtk::Stock::SAVE, Gtk::RESPONSE_OK);
 		save_button->property_has_default() = true;
 
 		Gtk::FileFilter filt;
@@ -441,7 +441,7 @@ PatchWindow::event_save_as()
 		string base = filename.substr(0, filename.find("."));
 		if (base.find("/") != string::npos)
 			base = base.substr(base.find_last_of("/") + 1);
-		
+
 		if (!Symbol::is_valid(base)) {
 			Gtk::MessageDialog error_dialog(*this,
 					"<b>Ingen patch file names must be valid symbols</b>", true,
@@ -500,14 +500,14 @@ void
 PatchWindow::event_draw()
 {
 	Gtk::FileChooserDialog dialog(*this, "Draw to DOT", Gtk::FILE_CHOOSER_ACTION_SAVE);
-	
+
 	dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
-	Gtk::Button* save_button = dialog.add_button(Gtk::Stock::SAVE, Gtk::RESPONSE_OK);	
+	Gtk::Button* save_button = dialog.add_button(Gtk::Stock::SAVE, Gtk::RESPONSE_OK);
 	save_button->property_has_default() = true;
-	
+
 	int result = dialog.run();
-	
-	if (result == Gtk::RESPONSE_OK) {	
+
+	if (result == Gtk::RESPONSE_OK) {
 		string filename = dialog.get_filename();
 		if (filename.find(".") == string::npos)
 			filename += ".dot";
@@ -523,7 +523,7 @@ PatchWindow::event_draw()
 			confirm = (confirm_dialog.run() == Gtk::RESPONSE_YES);
 		}
 		fin.close();
-		
+
 		if (confirm) {
 			_view->canvas()->render_to_dot(filename);
 			_status_bar->push(
@@ -599,24 +599,24 @@ PatchWindow::on_key_press_event(GdkEventKey* event)
 	bool ret = false;
 
 	ret = _view->canvas()->canvas_key_event(event);
-	
+
 	if (!ret)
 		ret = Gtk::Window::on_key_press_event(event);
-	
+
 	return ret;
 }
 
-	
+
 bool
 PatchWindow::on_key_release_event(GdkEventKey* event)
 {
 	bool ret = false;
 
 	ret = _view->canvas()->canvas_key_event(event);
-	
+
 	if (!ret)
 		ret = Gtk::Window::on_key_release_event(event);
-	
+
 	return ret;
 }
 
@@ -633,7 +633,7 @@ PatchWindow::event_quit()
 {
 	Gtk::Widget* kill_img = Gtk::manage(
 			new Gtk::Image(Gtk::Stock::CLOSE, Gtk::ICON_SIZE_BUTTON));
-	
+
 	Gtk::Widget* close_img = Gtk::manage(
 			new Gtk::Image(Gtk::Stock::QUIT, Gtk::ICON_SIZE_BUTTON));
 
@@ -643,7 +643,7 @@ PatchWindow::event_quit()
 
 	Gtk::MessageDialog d(*this, msg,
 			true, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE, true);
-	
+
 	d.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
 
 	if (!App::instance().world()->local_engine) {

@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -66,7 +66,7 @@ LoadSubpatchWindow::LoadSubpatchWindow(BaseObjectType* cobject, const Glib::RefP
 	set_filter(filt);
 
 	property_select_multiple() = true;
-	
+
 	// Add global examples directory to "shortcut folders" (bookmarks)
 	const string examples_dir = Shared::data_file_path("patches");
 	DIR* d = opendir(examples_dir.c_str());
@@ -146,11 +146,11 @@ void
 LoadSubpatchWindow::ok_clicked()
 {
 	assert(_patch);
-	
+
 	// If unset load_patch will load values
 	optional<Raul::Symbol> symbol;
 	string name_str = "";
-	
+
 	if (_name_from_user_radio->get_active()) {
 		name_str = _name_entry->get_text();
 		symbol = Symbol::symbolify(name_str);
@@ -176,7 +176,7 @@ LoadSubpatchWindow::ok_clicked()
 	}
 
 	hide();
-}			
+}
 
 
 void

@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -70,7 +70,7 @@ DestroyEvent::pre_process()
 		if (!_node)
 			_port = PtrCast<PortImpl>(_store_iterator->second);
 	}
-			
+
 	if (_store_iterator != _engine.engine_store()->end()) {
 		_removed_table = _engine.engine_store()->remove(_store_iterator);
 	}
@@ -80,10 +80,10 @@ DestroyEvent::pre_process()
 		_patch_node_listnode = _node->parent_patch()->remove_node(_path.name());
 		if (_patch_node_listnode) {
 			assert(_patch_node_listnode->elem() == _node.get());
-			
+
 			_disconnect_event = new DisconnectAllEvent(_engine, _node->parent_patch(), _node.get());
 			_disconnect_event->pre_process();
-			
+
 			if (_node->parent_patch()->enabled()) {
 				// FIXME: is this called multiple times?
 				_compiled_patch = _node->parent_patch()->compile();
@@ -101,10 +101,10 @@ DestroyEvent::pre_process()
 		_patch_port_listnode = _port->parent_patch()->remove_port(_path.name());
 		if (_patch_port_listnode) {
 			assert(_patch_port_listnode->elem() == _port.get());
-			
+
 			_disconnect_event = new DisconnectAllEvent(_engine, _port->parent_patch(), _port.get());
 			_disconnect_event->pre_process();
-			
+
 			if (_port->parent_patch()->enabled()) {
 				// FIXME: is this called multiple times?
 				_compiled_patch = _port->parent_patch()->compile();
@@ -129,28 +129,28 @@ DestroyEvent::execute(ProcessContext& context)
 
 		if (_disconnect_event)
 			_disconnect_event->execute(context);
-		
+
 		if (_node->parent_patch()->compiled_patch())
 			_engine.maid()->push(_node->parent_patch()->compiled_patch());
 
 		_node->parent_patch()->compiled_patch(_compiled_patch);
-	
+
 	} else if (_patch_port_listnode) {
 		assert(_port);
 
 		if (_disconnect_event)
 			_disconnect_event->execute(context);
-		
+
 		if (_port->parent_patch()->compiled_patch())
 			_engine.maid()->push(_port->parent_patch()->compiled_patch());
-		
+
 		_port->parent_patch()->compiled_patch(_compiled_patch);
-		
+
 		if (_port->parent_patch()->external_ports())
 			_engine.maid()->push(_port->parent_patch()->external_ports());
-		
+
 		_port->parent_patch()->external_ports(_ports_array);
-		
+
 		if ( ! _port->parent_patch()->parent()) {
 			if (_port->type() == DataType::AUDIO)
 				_driver_port = _engine.audio_driver()->remove_port(_port->path());
@@ -162,7 +162,7 @@ DestroyEvent::execute(ProcessContext& context)
 			//	_driver_port->elem()->unregister();
 		}
 	}
-	
+
 	if (_source)
 		_source->unblock();
 }
@@ -180,7 +180,7 @@ DestroyEvent::post_process()
 		}
 	}
 
-	if (_patch_node_listnode) {	
+	if (_patch_node_listnode) {
 		assert(_node);
 		_node->deactivate();
 		_responder->respond_ok();
@@ -190,7 +190,7 @@ DestroyEvent::post_process()
 		_engine.broadcaster()->send_destroyed(_path);
 		_engine.broadcaster()->bundle_end();
 		_engine.maid()->push(_patch_node_listnode);
-	} else if (_patch_port_listnode) {	
+	} else if (_patch_port_listnode) {
 		assert(_port);
 		_responder->respond_ok();
 		_engine.broadcaster()->bundle_begin();

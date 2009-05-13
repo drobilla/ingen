@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -60,7 +60,7 @@ NodeModule::NodeModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeMode
 NodeModule::~NodeModule()
 {
 	NodeControlWindow* win = App::instance().window_factory()->control_window(_node);
-	
+
 	if (win) {
 		// Should remove from window factory via signal
 		delete win;
@@ -76,7 +76,7 @@ NodeModule::create_menu()
 	_menu->init(_node);
 	_menu->signal_embed_gui.connect(sigc::mem_fun(this, &NodeModule::embed_gui));
 	_menu->signal_popup_gui.connect(sigc::hide_return(sigc::mem_fun(this, &NodeModule::popup_gui)));
-	
+
 	set_menu(_menu);
 }
 
@@ -98,7 +98,7 @@ NodeModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeModel> n
 	for (NodeModel::Ports::const_iterator p = node->ports().begin(); p != node->ports().end(); ++p) {
 		ret->add_port(*p, false);
 	}
-	
+
 	ret->set_stacked_border(node->polyphonic());
 
 	if (human)
@@ -119,7 +119,7 @@ NodeModule::show_human_names(bool b)
 	} else {
 		b = false;
 	}
-	
+
 	if (!b)
 		set_name(node()->symbol());
 
@@ -210,7 +210,7 @@ NodeModule::embed_gui(bool embed)
 			if ((*p)->type().is_control() && (*p)->is_output())
 				App::instance().engine()->set_property((*p)->path(), "ingen:broadcast", false);
 	}
-			
+
 	if (embed && _embed_item) {
 		initialise_gui_values();
 		set_base_color(0x212222FF);
@@ -234,7 +234,7 @@ void
 NodeModule::add_port(SharedPtr<PortModel> port, bool resize_to_fit)
 {
 	uint32_t index = _ports.size(); // FIXME: kludge, engine needs to tell us this
-	
+
 	string name = port->path().name();
 	if (App::instance().configuration()->name_style() == Configuration::HUMAN && node()->plugin()) {
 		string hn = ((PluginModel*)node()->plugin())->port_human_name(index);
@@ -244,7 +244,7 @@ NodeModule::add_port(SharedPtr<PortModel> port, bool resize_to_fit)
 
 	Module::add_port(boost::shared_ptr<Port>(
 			new Port(PtrCast<NodeModule>(shared_from_this()), port, name)));
-		
+
 	port->signal_value_changed.connect(sigc::bind<0>(
 			sigc::mem_fun(this, &NodeModule::value_changed), index));
 
@@ -252,7 +252,7 @@ NodeModule::add_port(SharedPtr<PortModel> port, bool resize_to_fit)
 		resize();
 }
 
-	
+
 boost::shared_ptr<Port>
 NodeModule::port(boost::shared_ptr<PortModel> model)
 {
@@ -296,7 +296,7 @@ NodeModule::popup_gui()
 		if (_plugin_ui) {
 			GtkWidget* c_widget = (GtkWidget*)slv2_ui_instance_get_widget(_plugin_ui->instance());
 			_gui_widget = Glib::wrap(c_widget);
-			
+
 			_gui_window = new Gtk::Window();
 			_gui_window->add(*_gui_widget);
 			_gui_widget->show_all();
@@ -324,7 +324,7 @@ NodeModule::on_gui_window_close()
 	_plugin_ui.reset();
 	_gui_widget = NULL;
 }
-	
+
 
 void
 NodeModule::initialise_gui_values()
@@ -343,7 +343,7 @@ NodeModule::show_control_window()
 {
 	App::instance().window_factory()->present_controls(_node);
 }
-	
+
 
 void
 NodeModule::on_double_click(GdkEventButton* ev)
@@ -358,10 +358,10 @@ NodeModule::store_location()
 {
 	const float x = static_cast<float>(property_x());
 	const float y = static_cast<float>(property_y());
-	
+
 	const Atom& existing_x = _node->get_variable("ingenuity:canvas-x");
 	const Atom& existing_y = _node->get_variable("ingenuity:canvas-y");
-	
+
 	if (existing_x.type() != Atom::FLOAT || existing_y.type() != Atom::FLOAT
 			|| existing_x.get_float() != x || existing_y.get_float() != y) {
 		App::instance().engine()->set_variable(_node->path(), "ingenuity:canvas-x", Atom(x));

@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -49,7 +49,7 @@ NodeMenu::NodeMenu(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml
 	node_menu->remove(*_popup_gui_menuitem);
 	node_menu->remove(*_embed_gui_menuitem);
 	node_menu->remove(*_randomize_menuitem);
-	
+
 	insert(*_randomize_menuitem, 0);
 	items().push_front(Gtk::Menu_Helpers::SeparatorElem());
 	insert(*_controls_menuitem, 0);
@@ -63,7 +63,7 @@ void
 NodeMenu::init(SharedPtr<NodeModel> node)
 {
 	ObjectMenu::init(node);
-			
+
 	_learn_menuitem->signal_activate().connect(sigc::mem_fun(this,
 			&NodeMenu::on_menu_learn));
 	_controls_menuitem->signal_activate().connect(sigc::bind(
@@ -84,7 +84,7 @@ NodeMenu::init(SharedPtr<NodeModel> node)
 		_popup_gui_menuitem->hide();
 		_embed_gui_menuitem->hide();
 	}
-	
+
 #ifdef HAVE_SLV2
 	if (plugin && plugin->type() == PluginModel::LV2) {
 		SLV2Results presets = slv2_plugin_query_sparql(plugin->slv2_plugin(),
@@ -160,7 +160,7 @@ NodeMenu::on_menu_learn()
 	App::instance().engine()->midi_learn(_object->path());
 }
 
-	
+
 void
 NodeMenu::on_menu_disconnect()
 {
@@ -202,7 +202,7 @@ NodeMenu::has_control_inputs()
 	for (NodeModel::Ports::const_iterator i = nm->ports().begin(); i != nm->ports().end(); ++i)
 		if ((*i)->is_input() && (*i)->type().is_control())
 			return true;
-	
+
 	return false;
 }
 

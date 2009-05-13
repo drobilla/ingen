@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -44,12 +44,12 @@ LoadRemotePatchWindow::LoadRemotePatchWindow(BaseObjectType* cobject, const Glib
 	xml->get_widget("load_remote_patch_uri_entry", _uri_entry);
 	xml->get_widget("load_remote_patch_cancel_button", _cancel_button);
 	xml->get_widget("load_remote_patch_open_button", _open_button);
-	
+
 	_liststore = Gtk::ListStore::create(_columns);
 	_treeview->set_model(_liststore);
 	_treeview->append_column("Name", _columns._col_name);
 	_treeview->append_column("URI", _columns._col_uri);
-	
+
 	_selection = _treeview->get_selection();
 	_selection->signal_changed().connect(sigc::mem_fun(this, &LoadRemotePatchWindow::patch_selected));
 	_treeview->signal_row_activated().connect(sigc::mem_fun(this, &LoadRemotePatchWindow::patch_activated));
@@ -67,7 +67,7 @@ LoadRemotePatchWindow::present(SharedPtr<PatchModel> patch, GraphObject::Propert
 
 	set_patch(patch);
 	_initial_data = data;
-	
+
 	Redland::Model model(*App::instance().world()->rdf_world,
 			"http://rdf.drobilla.net/ingen_patches/index.ttl",
 			"http://rdf.drobilla.net/ingen_patches/");
@@ -79,7 +79,7 @@ LoadRemotePatchWindow::present(SharedPtr<PatchModel> patch, GraphObject::Propert
 		"}"));
 
 	Redland::Query::Results results = query.run(*App::instance().world()->rdf_world, model);
-	
+
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
 		Gtk::TreeModel::iterator iter = _liststore->append();
 		(*iter)[_columns._col_name] = (*i)["name"].to_string();
@@ -87,7 +87,7 @@ LoadRemotePatchWindow::present(SharedPtr<PatchModel> patch, GraphObject::Propert
 	}
 
 	_treeview->columns_autosize();
-	
+
 	Gtk::Window::present();
 }
 
@@ -121,8 +121,8 @@ void
 LoadRemotePatchWindow::patch_selected()
 {
 	Gtk::TreeModel::iterator selected_i = _selection->get_selected();
-	
-	if (selected_i) { // If anything is selected			
+
+	if (selected_i) { // If anything is selected
 		const Glib::ustring uri = selected_i->get_value(_columns._col_uri);
 		_uri_entry->set_text(uri);
 	}
@@ -137,7 +137,7 @@ LoadRemotePatchWindow::open_clicked()
 	// If unset load_patch will load values
 	optional<Path>   parent;
 	optional<Symbol> symbol;
-	
+
 	if (_replace)
 		App::instance().engine()->clear_patch(_patch->path());
 
@@ -146,9 +146,9 @@ LoadRemotePatchWindow::open_clicked()
 
 	App::instance().loader()->load_patch(true, uri, Path("/"),
 			parent, symbol, _initial_data);
-	
+
 	hide();
-}			
+}
 
 
 void

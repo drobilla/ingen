@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -72,7 +72,7 @@ PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 {
 	Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference();
 	xml->get_widget("canvas_menu", _menu);
-	
+
 	/*xml->get_widget("canvas_menu_add_number_control", _menu_add_number_control);
 	xml->get_widget("canvas_menu_add_button_control", _menu_add_button_control);*/
 	xml->get_widget("canvas_menu_add_audio_input", _menu_add_audio_input);
@@ -104,7 +104,7 @@ PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 	_menu_add_event_output->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
 			"event_out", "Event Out", "lv2ev:EventPort", true));
-	
+
 	// Add control menu items
 	/*_menu_add_number_control->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_control), NUMBER));
@@ -118,9 +118,9 @@ PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 	_patch->signal_removed_port.connect(sigc::mem_fun(this, &PatchCanvas::remove_port));
 	_patch->signal_new_connection.connect(sigc::mem_fun(this, &PatchCanvas::connection));
 	_patch->signal_removed_connection.connect(sigc::mem_fun(this, &PatchCanvas::disconnection));
-	
+
 	App::instance().store()->signal_new_plugin.connect(sigc::mem_fun(this, &PatchCanvas::add_plugin));
-	
+
 	// Connect widget signals to do things
 	_menu_load_plugin->signal_activate().connect(sigc::mem_fun(this, &PatchCanvas::menu_load_plugin));
 	_menu_load_patch->signal_activate().connect(sigc::mem_fun(this, &PatchCanvas::menu_load_patch));
@@ -133,7 +133,7 @@ PatchCanvas::show_menu(GdkEvent* event)
 {
 	if (!_internal_menu)
 		build_menus();
-	
+
 	_menu->popup(event->button.button, event->button.time);
 }
 
@@ -157,7 +157,7 @@ PatchCanvas::build_menus()
 #ifdef HAVE_SLV2
 	if (!_plugin_menu)
 		build_plugin_menu();
-	
+
 	// Build (or clear existing) uncategorized (classless, heh) plugins menu
 	if (_classless_menu) {
 		_classless_menu->items().clear();
@@ -169,7 +169,7 @@ PatchCanvas::build_menus()
 		_classless_menu->hide();
 	}
 #endif
-	
+
 	// Add known plugins to menu heirarchy
 	SharedPtr<const ClientStore::Plugins> plugins = App::instance().store()->plugins();
 	for (ClientStore::Plugins::const_iterator i = plugins->begin(); i != plugins->end(); ++i) {
@@ -191,11 +191,11 @@ PatchCanvas::build_plugin_class_menu(Gtk::Menu* menu,
 	const char* class_uri_str = slv2_value_as_string(class_uri);
 
 	_class_menus.insert(make_pair(class_uri_str, menu));
-	
+
 	LV2Children::const_iterator kids_begin = children.find(class_uri_str);
 	if (kids_begin == children.end())
 		return 0;
-	
+
 	LV2Children::const_iterator kids_end = children.upper_bound(class_uri_str);
 
 	// Add submenus
@@ -252,7 +252,7 @@ PatchCanvas::build()
 {
 	boost::shared_ptr<PatchCanvas> shared_this =
 		boost::dynamic_pointer_cast<PatchCanvas>(shared_from_this());
-	
+
 	// Create modules for nodes
 	for (ObjectModel::const_iterator i = App::instance().store()->children_begin(_patch);
 			i != App::instance().store()->children_end(_patch); ++i) {
@@ -274,12 +274,12 @@ PatchCanvas::build()
 	}
 }
 
-	
+
 void
 PatchCanvas::arrange(bool ingen_doesnt_use_length_hints)
 {
 	FlowCanvas::Canvas::arrange(false);
-	
+
 	for (list<boost::shared_ptr<Item> >::iterator i = _items.begin(); i != _items.end(); ++i)
 		(*i)->store_location();
 }
@@ -293,7 +293,7 @@ PatchCanvas::show_human_names(bool b)
 		boost::shared_ptr<NodeModule> mod = boost::dynamic_pointer_cast<NodeModule>(*m);
 		if (mod)
 			mod->show_human_names(b);
-		
+
 		boost::shared_ptr<PatchPortModule> pmod = boost::dynamic_pointer_cast<PatchPortModule>(*m);
 		if (pmod)
 			pmod->show_human_names(b);
@@ -312,7 +312,7 @@ PatchCanvas::show_port_names(bool b)
 	}
 }
 
-	
+
 void
 PatchCanvas::add_plugin(SharedPtr<PluginModel> p)
 {
@@ -367,7 +367,7 @@ PatchCanvas::add_node(SharedPtr<NodeModel> nm)
 		if (plugm && plugm->icon_path() != "")
 			module->set_icon(App::instance().icon_from_path(plugm->icon_path(), 100));
 	}
-	
+
 	add_item(module);
 	module->show();
 	_views.insert(std::make_pair(nm, module));
@@ -411,12 +411,12 @@ PatchCanvas::remove_port(SharedPtr<PortModel> pm)
 			cerr << "WARNING: Failed to remove port item: " << pm->path() << endl;
 		i->second.reset();
 		_views.erase(i);
-	
+
 	} else {
 		SharedPtr<NodeModule> module = PtrCast<NodeModule>(_views[pm->parent()]);
 		module->remove_port(pm);
 	}
-	
+
 	assert(_views.find(pm) == _views.end());
 }
 
@@ -425,7 +425,7 @@ SharedPtr<FlowCanvas::Port>
 PatchCanvas::get_port_view(SharedPtr<PortModel> port)
 {
 	SharedPtr<FlowCanvas::Module> module = _views[port];
-	
+
 	// Port on this patch
 	if (module) {
 		return (PtrCast<PatchPortModule>(module))
@@ -442,7 +442,7 @@ PatchCanvas::get_port_view(SharedPtr<PortModel> port)
 			}
 		}
 	}
-	
+
 	return SharedPtr<FlowCanvas::Port>();
 }
 
@@ -451,7 +451,7 @@ void
 PatchCanvas::connection(SharedPtr<ConnectionModel> cm)
 {
 	assert(cm);
-	
+
 	const SharedPtr<FlowCanvas::Port> src = get_port_view(cm->src_port());
 	const SharedPtr<FlowCanvas::Port> dst = get_port_view(cm->dst_port());
 
@@ -470,7 +470,7 @@ PatchCanvas::disconnection(SharedPtr<ConnectionModel> cm)
 {
 	const SharedPtr<FlowCanvas::Port> src = get_port_view(cm->src_port());
 	const SharedPtr<FlowCanvas::Port> dst = get_port_view(cm->dst_port());
-		
+
 	if (src && dst)
 		remove_connection(src, dst);
 	else
@@ -488,7 +488,7 @@ PatchCanvas::connect(boost::shared_ptr<FlowCanvas::Connectable> src_port,
 
 	const boost::shared_ptr<Ingen::GUI::Port> dst
 		= boost::dynamic_pointer_cast<Ingen::GUI::Port>(dst_port);
-	
+
 	if (!src || !dst)
 		return;
 
@@ -507,9 +507,9 @@ PatchCanvas::connect(boost::shared_ptr<FlowCanvas::Connectable> src_port,
 		App::instance().engine()->connect(src->model()->path(), nm->path() + "/MIDI_In");
 		App::instance().engine()->connect(nm->path() + "/Out_(CR)", dst->model()->path());
 		App::instance().engine()->midi_learn(nm->path());
-		
+
 		// Set control node range to port's user range
-		
+
 		App::instance().engine()->set_port_value_queued(nm->path().base() + "Min",
 			dst->model()->get_variable("user-min").get_float());
 		App::instance().engine()->set_port_value_queued(nm->path().base() + "Max",
@@ -530,7 +530,7 @@ PatchCanvas::disconnect(boost::shared_ptr<FlowCanvas::Connectable> src_port,
 
 	const boost::shared_ptr<Ingen::GUI::Port> dst
 		= boost::dynamic_pointer_cast<Ingen::GUI::Port>(dst_port);
-	
+
 	App::instance().engine()->disconnect(src->model()->path(),
 	                                     dst->model()->path());
 }
@@ -540,7 +540,7 @@ bool
 PatchCanvas::canvas_event(GdkEvent* event)
 {
 	assert(event);
-	
+
 	bool ret = false;
 
 	switch (event->type) {
@@ -553,11 +553,11 @@ PatchCanvas::canvas_event(GdkEvent* event)
 			ret = true;
 		}
 		break;
-	
+
 	case GDK_KEY_PRESS:
 	case GDK_KEY_RELEASE:
 		ret = canvas_key_event(&event->key);
-		
+
 	default:
 		break;
 	}
@@ -565,7 +565,7 @@ PatchCanvas::canvas_event(GdkEvent* event)
 	return (ret ? true : Canvas::canvas_event(event));
 }
 
-	
+
 bool
 PatchCanvas::canvas_key_event(GdkEventKey* event)
 {
@@ -635,22 +635,22 @@ PatchCanvas::copy_selection()
 				serialiser.serialise(port_module->port());
 		}
 	}
-	
+
 	for (list<boost::shared_ptr<FlowCanvas::Connection> >::iterator c = _selected_connections.begin();
 			c != _selected_connections.end(); ++c) {
 		boost::shared_ptr<Connection> connection = boost::dynamic_pointer_cast<Connection>(*c);
 		if (connection)
 			serialiser.serialise_connection(_patch, connection->model());
 	}
-	
+
 	string result = serialiser.finish();
 	_paste_count = 0;
-	
+
 	Glib::RefPtr<Gtk::Clipboard> clipboard = Gtk::Clipboard::get();
 	clipboard->set_text(result);
 }
 
-	
+
 void
 PatchCanvas::paste()
 {
@@ -683,7 +683,7 @@ PatchCanvas::paste()
 
 	if (!_patch->path().is_root())
 		clipboard.new_patch(_patch->path(), _patch->poly());
-	
+
 	boost::optional<Raul::Path>   data_path;
 	boost::optional<Raul::Path>   parent;
 	boost::optional<Raul::Symbol> symbol;
@@ -695,7 +695,7 @@ PatchCanvas::paste()
 	ClashAvoider avoider(*App::instance().store().get(), clipboard, &clipboard);
 	parser->parse_string(App::instance().world(), &avoider, str, "", data_path,
 			parent, symbol);
-	
+
 	for (Store::iterator i = clipboard.begin(); i != clipboard.end(); ++i) {
 		if (_patch->path().is_root() && i->first.is_root()) {
 			//cout << "Skipping root" << endl;
@@ -732,7 +732,7 @@ PatchCanvas::paste()
 		App::instance().engine()->connect(i->first, i->second);
 	}*/
 }
-	
+
 
 void
 PatchCanvas::generate_port_name(
@@ -765,7 +765,7 @@ PatchCanvas::menu_add_control(ControlType type)
 	GraphObject::Properties data = get_initial_data();
 	float x = data["ingenuity:canvas-x"].get_float();
 	float y = data["ingenuity:canvas-y"].get_float();
-	
+
 	cerr << "ADD CONTROL: " << (unsigned)type << " @ " << x << ", " << y << endl;
 
 	add_item(boost::shared_ptr<FlowCanvas::Item>(
@@ -803,7 +803,7 @@ PatchCanvas::load_plugin(WeakPtr<PluginModel> weak_plugin)
 		ss << name << "_" << offset;
 		name = ss.str();
 	}
-		
+
 	const Path path = _patch->path().base() + name;
 	// FIXME: polyphony?
 	App::instance().engine()->new_node(path, plugin->uri());
@@ -830,10 +830,10 @@ GraphObject::Properties
 PatchCanvas::get_initial_data()
 {
 	GraphObject::Properties result;
-	
+
 	result["ingenuity:canvas-x"] = Atom((float)_last_click_x);
 	result["ingenuity:canvas-y"] = Atom((float)_last_click_y);
-	
+
 	return result;
 }
 

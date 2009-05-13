@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -40,14 +40,14 @@ class PortModel : public ObjectModel, public Ingen::Shared::Port
 {
 public:
 	enum Direction { INPUT, OUTPUT };
-	
-	inline uint32_t          index()     const { return _index; } 
+
+	inline uint32_t          index()     const { return _index; }
 	inline Shared::DataType  type()      const { return _type; }
 	inline const Raul::Atom& value()     const { return _current_val; }
 	inline bool              connected() const { return (_connections > 0); }
 	inline bool              is_input()  const { return (_direction == INPUT); }
 	inline bool              is_output() const { return (_direction == OUTPUT); }
-	
+
 	bool has_hint(const std::string& qname) const;
 
 	bool is_logarithmic() const { return has_hint("ingen:logarithmic"); }
@@ -55,19 +55,19 @@ public:
 	bool is_toggle()      const { return has_hint("lv2:toggled"); }
 
 	inline bool operator==(const PortModel& pm) const { return (_path == pm._path); }
-	
+
 	inline void value(const Raul::Atom& val) {
 		if (val != _current_val) {
 			_current_val = val;
 			signal_value_changed.emit(val);
 		}
 	}
-	
+
 	inline void value(uint32_t voice, const Raul::Atom& val) {
 		// FIXME: implement properly
 		signal_voice_changed.emit(voice, val);
 	}
-	
+
 	// Signals
 	sigc::signal<void, const Raul::Atom&>           signal_value_changed; ///< Value ports
 	sigc::signal<void, uint32_t, const Raul::Atom&> signal_voice_changed; ///< Polyphonic value ports
@@ -77,7 +77,7 @@ public:
 
 private:
 	friend class ClientStore;
-	
+
 	PortModel(const Raul::Path& path, uint32_t index, Shared::DataType type, Direction dir)
 		: ObjectModel(path)
 		, _index(index)
@@ -89,15 +89,15 @@ private:
 		if (_type == Shared::DataType::UNKNOWN)
 			std::cerr << "[PortModel] Warning: Unknown port type" << std::endl;
 	}
-	
+
 	void add_child(SharedPtr<ObjectModel> c)    { throw; }
 	bool remove_child(SharedPtr<ObjectModel> c) { throw; }
-	
+
 	void connected_to(SharedPtr<PortModel> p)      { ++_connections; signal_connection.emit(p); }
 	void disconnected_from(SharedPtr<PortModel> p) { --_connections; signal_disconnection.emit(p); }
-	
+
 	void set(SharedPtr<ObjectModel> model);
-	
+
 	uint32_t         _index;
 	Shared::DataType _type;
 	Direction        _direction;

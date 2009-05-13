@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -42,10 +42,10 @@ public:
 	/* WARNING: Copy constructor creates a shallow copy WRT connections */
 
 	const Connections& connections() const { return *_connections.get(); }
-	
+
 	SharedPtr<ConnectionModel> get_connection(const Raul::Path& src_port_path,
 	                                          const Raul::Path& dst_port_path) const;
-	
+
 	uint32_t poly()               const { return _poly; }
 	uint32_t internal_polyphony() const { return _poly; }
 	bool     enabled()            const;
@@ -59,13 +59,13 @@ public:
 		_editable = e;
 		signal_editable.emit(e);
 	} }
-	
+
 	virtual void set_variable(const Raul::URI& key, const Raul::Atom& value);
 
 	// Signals
-	sigc::signal<void, SharedPtr<NodeModel> >       signal_new_node; 
-	sigc::signal<void, SharedPtr<NodeModel> >       signal_removed_node; 
-	sigc::signal<void, SharedPtr<ConnectionModel> > signal_new_connection; 
+	sigc::signal<void, SharedPtr<NodeModel> >       signal_new_node;
+	sigc::signal<void, SharedPtr<NodeModel> >       signal_removed_node;
+	sigc::signal<void, SharedPtr<ConnectionModel> > signal_new_connection;
 	sigc::signal<void, SharedPtr<ConnectionModel> > signal_removed_connection;
 	sigc::signal<void, bool>                        signal_editable;
 
@@ -79,14 +79,14 @@ private:
 		, _editable(true)
 	{
 	}
-	
+
 	void clear();
 	void add_child(SharedPtr<ObjectModel> c);
 	bool remove_child(SharedPtr<ObjectModel> c);
-	
+
 	void add_connection(SharedPtr<ConnectionModel> cm);
 	void remove_connection(const Raul::Path& src_port_path, const Raul::Path& dst_port_path);
-	
+
 	SharedPtr<Connections> _connections;
 	uint32_t               _poly;
 	bool                   _editable;

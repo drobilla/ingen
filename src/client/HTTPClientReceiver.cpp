@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2008 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -68,12 +68,12 @@ HTTPClientReceiver::Listener::Listener(HTTPClientReceiver* receiver, const std::
 	cout << "HTTP listen URI: " << uri << " port: " << port << endl;
 
 	struct sockaddr_in servaddr;
-	
+
 	// Create listen address
 	memset(&servaddr, 0, sizeof(servaddr));
 	servaddr.sin_family      = AF_INET;
 	servaddr.sin_port        = htons(port);
-	
+
 	// Create listen socket
 	if ((_sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
 		cerr << "Error creating listening socket: %s" << strerror(errno) << endl;
@@ -138,7 +138,7 @@ HTTPClientReceiver::message_callback(SoupSession* session, SoupMessage* msg, voi
 	const string path = soup_message_get_uri(msg)->path;
 	if (path == Path::root_uri) {
 		me->_target->response_ok(0);
-	
+
 	} else if (path == "/plugins") {
 		if (msg->response_body->data == NULL) {
 			cout << "ERROR: Empty response" << endl;
@@ -194,19 +194,19 @@ HTTPClientReceiver::start(bool dump)
 				_parser = SharedPtr<Parser>(new_parser());
 		}
 	}
-	
+
 	_session = soup_session_sync_new();
 	SoupMessage* msg;
-	
+
 	msg = soup_message_new("GET", _url.c_str());
 	soup_session_queue_message(_session, msg, message_callback, this);
-	
+
 	msg = soup_message_new("GET", (_url + "/plugins").c_str());
 	soup_session_queue_message(_session, msg, message_callback, this);
-	
+
 	msg = soup_message_new("GET", (_url + "/patch").c_str());
 	soup_session_queue_message(_session, msg, message_callback, this);
-	
+
 	msg = soup_message_new("GET", (_url + "/stream").c_str());
 	soup_session_queue_message(_session, msg, message_callback, this);
 }

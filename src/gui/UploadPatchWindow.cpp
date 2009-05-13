@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -52,7 +52,7 @@ UploadPatchWindow::UploadPatchWindow(BaseObjectType* cobject, const Glib::RefPtr
 	xml->get_widget("upload_patch_progress", _upload_progress);
 	xml->get_widget("upload_patch_cancel_button", _cancel_button);
 	xml->get_widget("upload_patch_upload_button", _upload_button);
-	
+
 
 	_symbol_entry->signal_changed().connect(sigc::mem_fun(this, &UploadPatchWindow::symbol_changed));
 	_short_name_entry->signal_changed().connect(sigc::mem_fun(this, &UploadPatchWindow::short_name_changed));
@@ -65,7 +65,7 @@ void
 UploadPatchWindow::present(SharedPtr<PatchModel> patch)
 {
 	_patch = patch;
-	
+
 	Gtk::Window::present();
 }
 
@@ -78,7 +78,7 @@ UploadPatchWindow::on_show()
 	Raul::Atom atom = _patch->get_property("lv2:symbol");
 	if (atom.is_valid())
 		_symbol_entry->set_text(atom.get_string());
-	
+
 	atom = _patch->get_variable("doap:name");
 	if (atom.is_valid())
 		_short_name_entry->set_text(atom.get_string());
@@ -129,7 +129,7 @@ UploadPatchWindow::short_name_changed()
 			&& _short_name_entry->get_text().length() > 0);
 }
 
-	
+
 size_t
 UploadThread::curl_read_cb(void *ptr, size_t size, size_t nmemb, void *data)
 {
@@ -187,7 +187,7 @@ UploadThread::_run()
 
 	long response;
 	curl_easy_getinfo(_curl, CURLINFO_RESPONSE_CODE, &response);
-	
+
 	printf("Server returned %ld\n", response);
 
 	_win->set_response(response);
@@ -195,7 +195,7 @@ UploadThread::_run()
 
 	curl_slist_free_all(_headers);
 	curl_easy_cleanup(_curl);
-	
+
 	_headers = NULL;
 	_curl = NULL;
 }
@@ -208,7 +208,7 @@ UploadPatchWindow::progress_callback()
 	const int response = _response.get();
 
 	_upload_progress->set_fraction(progress / 100.0);
-	
+
 	if (progress == 100) {
 		if (response == 200) {
 			_upload_progress->set_text("Transfer completed");
@@ -252,18 +252,18 @@ UploadPatchWindow::upload_clicked()
 
 	const string uri = string("http://rdf.drobilla.net/ingen_patches/")
 		.append(symbol).append(".ingen.ttl");
-	
+
 	const string str = s.to_string(_patch, uri, extra_rdf);
 
 	_thread = new UploadThread(this, str, uri);
 
 	_thread->start();
-		
+
 	_upload_button->set_sensitive(false);
 
 	Glib::signal_timeout().connect(
 		sigc::mem_fun(this, &UploadPatchWindow::progress_callback), 100);
-}			
+}
 
 
 void

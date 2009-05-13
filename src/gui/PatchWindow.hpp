@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -37,7 +37,7 @@ namespace Client {
 using namespace Ingen::Client;
 
 namespace GUI {
-	
+
 class LoadPluginWindow;
 class LoadPatchWindow;
 class NewSubpatchWindow;
@@ -59,7 +59,7 @@ class PatchWindow : public Gtk::Window
 public:
 	PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml);
 	~PatchWindow();
-	
+
 	void set_patch_from_path(const Raul::Path& path, SharedPtr<PatchView> view);
 	void set_patch(SharedPtr<PatchModel> pc, SharedPtr<PatchView> view);
 
@@ -72,7 +72,7 @@ protected:
 	void on_hide();
 	bool on_key_press_event(GdkEventKey* event);
 	bool on_key_release_event(GdkEventKey* event);
-	
+
 private:
 
 	void patch_port_added(SharedPtr<PortModel> port);
@@ -107,7 +107,7 @@ private:
 
 	SharedPtr<PatchModel> _patch;
 	SharedPtr<PatchView>  _view;
-	
+
 	sigc::connection new_port_connection;
 	sigc::connection removed_port_connection;
 	sigc::connection edit_mode_connection;
@@ -116,7 +116,7 @@ private:
 	bool _position_stored;
 	int  _x;
 	int  _y;
-	
+
 	Gtk::MenuItem*      _menu_import;
 	Gtk::MenuItem*      _menu_import_location;
 	Gtk::MenuItem*      _menu_save;

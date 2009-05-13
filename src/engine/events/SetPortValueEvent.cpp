@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -52,7 +52,7 @@ SetPortValueEvent::SetPortValueEvent(Engine&              engine,
 	, _omni(true)
 	, _voice_num(0)
 	, _port_path(port_path)
-    , _value(value) 
+    , _value(value)
 	, _port(NULL)
 	, _error(NO_ERROR)
 {
@@ -72,7 +72,7 @@ SetPortValueEvent::SetPortValueEvent(Engine&              engine,
 	, _omni(false)
 	, _voice_num(voice_num)
 	, _port_path(port_path)
-    , _value(value) 
+    , _value(value)
 	, _port(NULL)
 	, _error(NO_ERROR)
 {
@@ -100,7 +100,7 @@ SetPortValueEvent::pre_process()
 		apply(0, 0);
 		_engine.message_context()->run(_port->parent_node());
 	}
-	
+
 	QueuedEvent::pre_process();
 }
 
@@ -110,10 +110,10 @@ SetPortValueEvent::execute(ProcessContext& context)
 {
 	Event::execute(context);
 	assert(_time >= context.start() && _time <= context.end());
-	
+
 	if (_port && _port->context() == Context::MESSAGE)
 		return;
-	
+
 	apply(context.start(), context.nframes());
 }
 
@@ -151,19 +151,19 @@ SetPortValueEvent::apply(uint32_t start, uint32_t nframes)
 			}
 			return;
 		}
-		
+
 		EventBuffer* const ebuf = dynamic_cast<EventBuffer*>(buf);
 
 		const LV2Features::Feature* f = _engine.world()->lv2_features->feature(LV2_URI_MAP_URI);
 		LV2URIMap* map = (LV2URIMap*)f->controller;
-		
+
 		// FIXME: eliminate lookups
 		// FIXME: need a proper prefix system
 		if (ebuf && _value.type() == Atom::BLOB) {
 			const uint32_t frames = std::max(
 					(uint32_t)(_time - start),
 					ebuf->latest_frames());
-			
+
 			// Size 0 event, pass it along to the plugin as a typed but empty event
 			if (_value.data_size() == 0) {
 				cout << "BANG!" << endl;

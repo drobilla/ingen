@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -56,15 +56,15 @@ void
 DuplexPort::pre_process(ProcessContext& context)
 {
 	// <BrainHurt>
-		
+
 	/*cerr << endl << "{ duplex pre" << endl;
 	cerr << path() << " duplex pre: fixed buffers: " << fixed_buffers() << endl;
 	cerr << path() << " duplex pre: buffer: " << buffer(0) << endl;
 	cerr << path() << " duplex pre: is_output: " << _is_output << " { " << endl;*/
-	
+
 	for (Connections::iterator c = _connections.begin(); c != _connections.end(); ++c)
 		(*c)->process(context);
-	
+
 	if (_is_output) {
 
 		for (uint32_t i=0; i < _poly; ++i)
@@ -80,14 +80,14 @@ DuplexPort::pre_process(ProcessContext& context)
 
 		broadcast(context);
 	}
-	
-	/*if (type() == DataType::EVENT) 
+
+	/*if (type() == DataType::EVENT)
 		for (uint32_t i=0; i < _poly; ++i)
 			cerr << path() << " (" << buffer(i) << ") # events: "
 				<< ((EventBuffer*)buffer(i))->event_count()
 				<< ", joined: " << _buffers->at(i)->is_joined()
 				<< ", is_output: " << _is_output << endl;*/
-	
+
 	//cerr << "} duplex pre " << path() << endl;
 
 	// </BrainHurt>
@@ -98,13 +98,13 @@ void
 DuplexPort::post_process(ProcessContext& context)
 {
 	// <BrainHurt>
-	
+
 	/*cerr << endl << "{ duplex post" << endl;
 	cerr << path() << " duplex post: fixed buffers: " << fixed_buffers() << endl;
 	cerr << path() << " duplex post: buffer: " << buffer(0) << endl;
 	cerr << path() << " duplex post: is_output: " << _is_output << " { " << endl;
-	
-	if (type() == DataType::EVENT) 
+
+	if (type() == DataType::EVENT)
 		for (uint32_t i=0; i < _poly; ++i)
 			cerr << path() << " (" << buffer(i) << ") # events: "
 				<< ((EventBuffer*)buffer(i))->event_count()
@@ -114,9 +114,9 @@ DuplexPort::post_process(ProcessContext& context)
 		InputPort::pre_process(context); // Mix down inputs
 		broadcast(context);
 	}
-	
+
 	//cerr << "} duplex post " << path() << endl;
-	
+
 	// </BrainHurt>
 }
 

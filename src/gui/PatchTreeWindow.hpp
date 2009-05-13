@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -59,14 +59,14 @@ protected:
 	void event_patch_enabled_toggled(const Glib::ustring& path_str);
 
 	Gtk::TreeModel::iterator find_patch(Gtk::TreeModel::Children root, const Raul::Path& path);
-	
+
 	PatchTreeView* _patches_treeview;
 
 	struct PatchTreeModelColumns : public Gtk::TreeModel::ColumnRecord
 	{
 		PatchTreeModelColumns()
 		{ add(name_col); add(enabled_col); add(patch_model_col); }
-		
+
 		Gtk::TreeModelColumn<Glib::ustring>                  name_col;
 		Gtk::TreeModelColumn<bool>                           enabled_col;
 		Gtk::TreeModelColumn<SharedPtr<Client::PatchModel> > patch_model_col;
@@ -88,22 +88,22 @@ public:
 	{}
 
 	void set_window(PatchTreeWindow* win) { _window = win; }
-	
+
 	bool on_button_press_event(GdkEventButton* ev) {
 		bool ret = Gtk::TreeView::on_button_press_event(ev);
-	
+
 		if ((ev->type == GDK_BUTTON_PRESS) && (ev->button == 3))
 			_window->show_patch_menu(ev);
 
 		return ret;
 	}
-	
+
 private:
 	PatchTreeWindow* _window;
 
 }; // struct PatchTreeView
 
-	
+
 } // namespace GUI
 } // namespace Ingen
 

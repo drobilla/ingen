@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -66,7 +66,7 @@ EventBuffer::join(Buffer* buf)
 	return true;
 }
 
-	
+
 void
 EventBuffer::unjoin()
 {
@@ -89,7 +89,7 @@ EventBuffer::prepare_write(FrameTime start, SampleCount nframes)
 {
 	reset(nframes);
 }
-	
+
 /** FIXME: parameters ignored */
 void
 EventBuffer::copy(const Buffer* src_buf, size_t start_sample, size_t end_sample)
@@ -98,7 +98,7 @@ EventBuffer::copy(const Buffer* src_buf, size_t start_sample, size_t end_sample)
 	assert(src);
 	assert(_buf->capacity() >= src->_buf->capacity());
 	assert(src->_buf != _buf);
-	
+
 	//clear();
 	src->rewind();
 
@@ -131,14 +131,14 @@ EventBuffer::merge(const EventBuffer& a, const EventBuffer& b)
 	uint16_t a_type;
 	uint16_t a_size;
 	uint8_t* a_data;
-	
+
 	uint32_t b_frames;
 	uint32_t b_subframes;
 	uint16_t b_type;
 	uint16_t b_size;
 	uint8_t* b_data;
 #endif
-	
+
 	cout << "FIXME: merge" << endl;
 #if 0
 	a.get_event(&a_frames, &a_subframes, &a_type, &a_size, &a_data);

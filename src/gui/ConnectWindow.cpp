@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -79,7 +79,7 @@ ConnectWindow::start(Ingen::Shared::World* world)
 		if (_widgets_loaded)
 			_internal_radio->set_active(true);
 	}
-	
+
 	set_connected_to(world->engine);
 
 	connect(true);
@@ -90,7 +90,7 @@ void
 ConnectWindow::set_connected_to(SharedPtr<Shared::EngineInterface> engine)
 {
 	App::instance().world()->engine = engine;
-	
+
 	if (!_widgets_loaded)
 		return;
 
@@ -132,7 +132,7 @@ ConnectWindow::set_connected_to(SharedPtr<Shared::EngineInterface> engine)
 void
 ConnectWindow::set_connecting_widget_states()
 {
-	if (!_widgets_loaded) 
+	if (!_widgets_loaded)
 		return;
 
 	_connect_button->set_sensitive(false);
@@ -161,7 +161,7 @@ ConnectWindow::connect(bool existing)
 
 	_connect_stage = 0;
 	set_connecting_widget_states();
-		
+
 	Ingen::Shared::World* world = App::instance().world();
 
 #ifdef HAVE_LIBLO
@@ -175,10 +175,10 @@ ConnectWindow::connect(bool existing)
 			}
 			world->engine = SharedPtr<EngineInterface>(new OSCEngineSender(engine_url));
 		}
-	
+
 		SharedPtr<ThreadedSigClientInterface> tsci(new ThreadedSigClientInterface(1024));
 		SharedPtr<Raul::Deletable> client;
-		
+
 		const string& uri = world->engine->uri().str();
 		const string& scheme = uri.substr(0, uri.find(":"));
 		if (scheme == "osc.udp" || scheme == "osc.tcp")
@@ -187,7 +187,7 @@ ConnectWindow::connect(bool existing)
 		else if (scheme == "http")
 			client = SharedPtr<HTTPClientReceiver>(new HTTPClientReceiver(world, uri, tsci));
 #endif
-		
+
 		App::instance().attach(tsci, client);
 		App::instance().register_callbacks();
 
@@ -208,7 +208,7 @@ ConnectWindow::connect(bool existing)
 			// FIXME: static args
 			SharedPtr<ThreadedSigClientInterface> tsci(new ThreadedSigClientInterface(1024));
 			SharedPtr<OSCClientReceiver> client(new OSCClientReceiver(16181, tsci));
-		
+
 			App::instance().attach(tsci, client);
 			App::instance().register_callbacks();
 
@@ -226,22 +226,22 @@ ConnectWindow::connect(bool existing)
 			assert(_new_engine);
 			world->local_engine = SharedPtr<Engine>(_new_engine(world));
 		}
-		
+
 		if ( ! world->engine) {
 			SharedPtr<QueuedEngineInterface> interface(
 				   new QueuedEngineInterface(*world->local_engine, Ingen::event_queue_size));
 			world->engine = interface;
 			world->local_engine->add_event_source(interface);
 		}
-		
+
 		SharedPtr<SigClientInterface> client(new SigClientInterface());
-		
+
 		Ingen::Driver* (*new_driver)(
 				Ingen::Engine&    engine,
 				const std::string server_name,
 				const std::string client_name,
 				void*             jack_client) = NULL;
-        
+
 		if (!world->local_engine->audio_driver()) {
 			bool found = _engine_jack_module->get_symbol(
 					"new_jack_audio_driver", (void*&)(new_driver));
@@ -252,10 +252,10 @@ ConnectWindow::connect(bool existing)
 		}
 
 		world->local_engine->activate(1); // FIXME: parallelism
-		
+
 		App::instance().attach(client);
 		App::instance().register_callbacks();
-		
+
 		Glib::signal_timeout().connect(
 			sigc::mem_fun(this, &ConnectWindow::gtk_callback), 10);
 	}
@@ -336,10 +336,10 @@ ConnectWindow::load_widgets()
 	_connect_button->signal_clicked().connect(sigc::bind(
 			sigc::mem_fun(this, &ConnectWindow::connect), false));
 	_quit_button->signal_clicked().connect(sigc::mem_fun(this, &ConnectWindow::quit));
-	
+
 	_progress_bar->set_pulse_step(0.01);
 	_widgets_loaded = true;
-	
+
 	_engine_module = Ingen::Shared::load_module("ingen_engine");
 	if (!_engine_module)
 		cerr << "Unable to load ingen_engine module, internal engine unavailable." << endl;
@@ -348,7 +348,7 @@ ConnectWindow::load_widgets()
 		cerr << "Unable to find module entry point, internal engine unavailable." << endl;
 		_engine_module.reset();
 	}
-	
+
 	_engine_jack_module = Ingen::Shared::load_module("ingen_engine_jack");
 
     server_toggled();
@@ -412,7 +412,7 @@ bool
 ConnectWindow::gtk_callback()
 {
 	/* If I call this a "state machine" it's not ugly code any more */
-	
+
 	// Timing stuff for repeated attach attempts
 	timeval now;
 	gettimeofday(&now, NULL);
@@ -428,7 +428,7 @@ ConnectWindow::gtk_callback()
 			set_connecting_widget_states();
 		}
 	}
-	
+
 	/* Connecting to engine */
 	if (_connect_stage == 0) {
 
@@ -439,11 +439,11 @@ ConnectWindow::gtk_callback()
 
 		App::instance().client()->signal_response_ok.connect(
 				sigc::mem_fun(this, &ConnectWindow::on_response));
-		
+
 		_ping_id = abs(rand()) / 2 * 2; // avoid -1
 		App::instance().engine()->set_next_response_id(_ping_id);
 		App::instance().engine()->ping();
-		
+
 		if (_widgets_loaded) {
 			_progress_label->set_text("Connecting to engine...");
 			_progress_bar->set_pulse_step(0.01);
@@ -490,10 +490,10 @@ ConnectWindow::gtk_callback()
 		_finished_connecting = true;
 		return false; // deregister this callback
 	}
-	
+
 	if (_widgets_loaded)
 		_progress_bar->pulse();
-	
+
 	if (_connect_stage == -1) { // we were cancelled
 		if (_widgets_loaded) {
 			_icon->set(Gtk::Stock::DISCONNECT, Gtk::ICON_SIZE_LARGE_TOOLBAR);

@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -30,7 +30,7 @@
 #include "raul/Deletable.hpp"
 #include "module/World.hpp"
 
-namespace Ingen { 
+namespace Ingen {
 	class Engine;
 	namespace Shared {
 		class EngineInterface;
@@ -80,13 +80,13 @@ public:
 	            SharedPtr<Raul::Deletable>            handle=SharedPtr<Raul::Deletable>());
 
 	void detach();
-	
+
 	void register_callbacks();
 	bool gtk_main_iteration();
 
 	void show_about();
 	void quit();
-	
+
 	void port_activity(Port* port);
 	void activity_port_destroyed(Port* port);
 
@@ -99,16 +99,16 @@ public:
 	PatchTreeWindow* patch_tree()      const { return _patch_tree_window; }
 	Configuration*   configuration()   const { return _configuration; }
 	WindowFactory*   window_factory()  const { return _window_factory; }
-	
+
 	Glib::RefPtr<Gdk::Pixbuf> icon_from_path(const std::string& path, int size);
 
 	const SharedPtr<Shared::EngineInterface>&    engine() const { return _world->engine; }
 	const SharedPtr<Client::SigClientInterface>& client() const { return _client; }
 	const SharedPtr<Client::ClientStore>&        store()  const { return _store; }
 	const SharedPtr<ThreadedLoader>&             loader() const { return _loader; }
-	
+
 	const SharedPtr<Serialisation::Serialiser>& serialiser();
-	
+
 	static inline App& instance() { assert(_instance); return *_instance; }
 
 	static void init(int argc, char** argv, Ingen::Shared::World* world);
@@ -122,26 +122,26 @@ protected:
 	template <typename A, typename B>
 	struct LexicalCompare {
 		bool operator()(const std::pair<A, B>& p1, const std::pair<A, B>& p2) {
-			return (p1.first < p2.first) || 
+			return (p1.first < p2.first) ||
 				((p1.first == p2.first) && (p1.second < p2.second));
 		}
 	};
-	
+
 	typedef std::map< std::pair<std::string, int>,
 	                  Gdk::Pixbuf*,
 	                  LexicalCompare<std::string, int> > Icons;
 	Icons _icons;
-	
+
 	App(Ingen::Shared::World* world);
-	
+
 	bool animate();
 	void error_response(int32_t id, const std::string& str);
-	
+
 	static void* icon_destroyed(void* data);
-	
+
 	static Gtk::Main* _main;
 	static App*       _instance;
-	
+
 	SharedPtr<Client::SigClientInterface> _client;
 	SharedPtr<Raul::Deletable>            _handle;
 	SharedPtr<Client::ClientStore>        _store;
@@ -155,7 +155,7 @@ protected:
 	PatchTreeWindow*  _patch_tree_window;
 	Gtk::AboutDialog* _about_dialog;
 	WindowFactory*    _window_factory;
-	
+
 	Ingen::Shared::World* _world;
 
 	typedef std::map<Port*, bool> ActivityPorts;

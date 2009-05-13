@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -30,20 +30,20 @@ namespace Ingen {
 class EventBuffer : public Buffer {
 public:
 	EventBuffer(size_t capacity);
-	
+
 	void prepare_read(FrameTime start, SampleCount nframes);
 	void prepare_write(FrameTime start, SampleCount nframes);
 
 	bool join(Buffer* buf);
 	void unjoin();
-	
+
 	void*       raw_data()       { return _buf; }
 	const void* raw_data() const { return _buf; }
 
 	void copy(const Buffer* src, size_t start_sample, size_t end_sample);
-	
+
 	bool merge(const EventBuffer& a, const EventBuffer& b);
-	
+
 	bool increment() const { return _buf->increment(); }
 	bool is_valid()  const { return _buf->is_valid(); }
 
@@ -53,14 +53,14 @@ public:
 	inline uint32_t event_count()      const { return _buf->event_count(); }
 
 	inline void rewind() const { _buf->rewind(); }
-	
+
 	inline void clear() { reset(_this_nframes); }
-	
+
 	inline void reset(SampleCount nframes) {
 		_this_nframes = nframes;
 		_buf->reset();
 	}
-	
+
 	inline bool get_event(uint32_t* frames,
 	                      uint32_t* subframes,
 	                      uint16_t* type,

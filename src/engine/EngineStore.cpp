@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -35,7 +35,7 @@ namespace Ingen {
 /** Find the Patch at the given path.
  */
 PatchImpl*
-EngineStore::find_patch(const Path& path) 
+EngineStore::find_patch(const Path& path)
 {
 	GraphObjectImpl* const object = find_object(path);
 	return dynamic_cast<PatchImpl*>(object);
@@ -45,7 +45,7 @@ EngineStore::find_patch(const Path& path)
 /** Find the Node at the given path.
  */
 NodeImpl*
-EngineStore::find_node(const Path& path) 
+EngineStore::find_node(const Path& path)
 {
 	GraphObjectImpl* const object = find_object(path);
 	return dynamic_cast<NodeImpl*>(object);
@@ -55,7 +55,7 @@ EngineStore::find_node(const Path& path)
 /** Find the Port at the given path.
  */
 PortImpl*
-EngineStore::find_port(const Path& path) 
+EngineStore::find_port(const Path& path)
 {
 	GraphObjectImpl* const object = find_object(path);
 	return dynamic_cast<PortImpl*>(object);
@@ -91,7 +91,7 @@ EngineStore::add(const Objects& table)
 
 	//cerr << "[EngineStore] Adding " << o[0].second->path() << endl;
 	cram(table);
-	
+
 	/*cerr << "[EngineStore] Adding Table:" << endl;
 	for (const_iterator i = table.begin(); i != table.end(); ++i) {
 		cerr << i->first << " = " << i->second->path() << endl;
@@ -120,7 +120,7 @@ SharedPtr<EngineStore::Objects>
 EngineStore::remove(iterator object)
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
-	
+
 	if (object != end()) {
 		iterator descendants_end = find_descendants_end(object);
 		//cout << "[EngineStore] Removing " << object->first << " {" << endl;
@@ -129,7 +129,7 @@ EngineStore::remove(iterator object)
 			cout << "\t" << i->first << endl;
 		}
 		cout << "}" << endl;*/
-	
+
 		return removed;
 
 	} else {
@@ -138,7 +138,7 @@ EngineStore::remove(iterator object)
 	}
 }
 
-	
+
 /** Remove all children of an object from the store.
  *
  * Returned is a vector containing all descendants of the object removed

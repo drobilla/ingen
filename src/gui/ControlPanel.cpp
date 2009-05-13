@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License alongCont
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -30,7 +30,7 @@ using namespace Raul;
 namespace Ingen {
 namespace GUI {
 
-	
+
 ControlPanel::ControlPanel(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 	: Gtk::HBox(cobject)
 	, _callback_enabled(true)
@@ -40,7 +40,7 @@ ControlPanel::ControlPanel(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Gl
 	xml->get_widget("control_panel_all_voices_radio", _all_voices_radio);
 	xml->get_widget("control_panel_specific_voice_radio", _specific_voice_radio);
 	xml->get_widget("control_panel_voice_spinbutton", _voice_spinbutton);
-	
+
 	_all_voices_radio->signal_toggled().connect(
 			sigc::mem_fun(this, &ControlPanel::all_voices_selected));
 
@@ -63,7 +63,7 @@ ControlPanel::init(SharedPtr<NodeModel> node, uint32_t poly)
 {
 	assert(node != NULL);
 	assert(poly > 0);
-	
+
 	if (node->polyphonic()) {
 		_voice_spinbutton->set_range(0, poly - 1);
 		_voice_control_box->show();
@@ -74,7 +74,7 @@ ControlPanel::init(SharedPtr<NodeModel> node, uint32_t poly)
 	for (NodeModel::Ports::const_iterator i = node->ports().begin(); i != node->ports().end(); ++i) {
 		add_port(*i);
 	}
-		
+
 	node->signal_property.connect(
 			sigc::mem_fun(this, &ControlPanel::variable_changed));
 
@@ -84,7 +84,7 @@ ControlPanel::init(SharedPtr<NodeModel> node, uint32_t poly)
 	} else {
 		cerr << "[ControlPanel] No parent, polyphonic controls disabled" << endl;
 	}
-	
+
 	_callback_enabled = true;
 }
 
@@ -106,15 +106,15 @@ void
 ControlPanel::add_port(SharedPtr<PortModel> pm)
 {
 	assert(pm);
-	
+
 	// Already have port, don't add another
 	if (find_port(pm->path()) != NULL)
 		return;
-	
+
 	// Add port
 	if (pm->type().is_control() && pm->is_input()) {
 		Control* control = NULL;
-			
+
 		if (pm->is_toggle()) {
 			ToggleControl* tc;
 			Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference("toggle_control");
@@ -126,12 +126,12 @@ ControlPanel::add_port(SharedPtr<PortModel> pm)
 			xml->get_widget_derived("control_strip", sc);
 			control = sc;
 		}
-			
+
 		control->init(this, pm);
-	
+
 		if (_controls.size() > 0)
 			_control_box->pack_start(*Gtk::manage(new Gtk::HSeparator()), false, false, 4);
-		
+
 		_controls.push_back(control);
 		_control_box->pack_start(*control, false, false, 0);
 
@@ -143,7 +143,7 @@ ControlPanel::add_port(SharedPtr<PortModel> pm)
 	_control_box->size_request(controls_size);
 	_ideal_size.first = controls_size.width;
 	_ideal_size.second = controls_size.height;
-	
+
 	Gtk::Requisition voice_size;
 	_voice_control_box->size_request(voice_size);
 	_ideal_size.first += voice_size.width;
@@ -270,6 +270,6 @@ ControlPanel::variable_changed(const Raul::URI& predicate, const Raul::Atom& val
 	}
 }
 
-	
+
 } // namespace GUI
 } // namespace Ingen

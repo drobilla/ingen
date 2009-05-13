@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -35,7 +35,7 @@ SLV2Plugins PluginModel::_slv2_plugins = NULL;
 #endif
 
 Redland::World* PluginModel::_rdf_world = NULL;
-	
+
 
 PluginModel::PluginModel(const URI& uri, const URI& type_uri)
 	: ResourceImpl(uri)
@@ -52,7 +52,7 @@ PluginModel::PluginModel(const URI& uri, const URI& type_uri)
 	if (_type == Internal)
 		set_property("doap:name", Raul::Atom(uri.substr(uri.find_last_of("#") + 1).c_str()));
 }
-	
+
 
 string
 PluginModel::default_node_symbol() const
@@ -137,7 +137,7 @@ PluginModel::icon_path() const
 		Glib::Mutex::Lock lock(_rdf_world->mutex());
 		_icon_path = get_lv2_icon_path(_slv2_plugin);
 	}
-	
+
 	return _icon_path;
 }
 
@@ -151,14 +151,14 @@ PluginModel::get_lv2_icon_path(SLV2Plugin plugin)
 		"http://ll-plugins.nongnu.org/lv2/namespace#svgIcon");
 
 	SLV2Values paths = slv2_plugin_get_value(plugin, svg_icon_pred);
-	
+
 	if (slv2_values_size(paths) > 0) {
 		SLV2Value value = slv2_values_get_at(paths, 0);
 		if (slv2_value_is_uri(value))
 			result = slv2_uri_to_path(slv2_value_as_string(value));
 		slv2_values_free(paths);
 	}
-	
+
 	slv2_value_free(svg_icon_pred);
 	return result;
 }

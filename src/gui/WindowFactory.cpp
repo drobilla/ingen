@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -62,7 +62,7 @@ WindowFactory::WindowFactory()
 	xml->get_widget_derived("node_properties_win", _node_properties_win);
 	xml->get_widget_derived("port_properties_win", _port_properties_win);
 	xml->get_widget_derived("rename_win", _rename_win);
-	
+
 #ifdef HAVE_CURL
 	xml->get_widget_derived("upload_patch_win", _upload_patch_win);
 #endif
@@ -73,10 +73,10 @@ WindowFactory::~WindowFactory()
 {
 	for (PatchWindowMap::iterator i = _patch_windows.begin(); i != _patch_windows.end(); ++i)
 		delete i->second;
-	
+
 	for (ControlWindowMap::iterator i = _control_windows.begin(); i != _control_windows.end(); ++i)
 		delete i->second;
-	
+
 }
 
 
@@ -85,12 +85,12 @@ WindowFactory::clear()
 {
 	for (PatchWindowMap::iterator i = _patch_windows.begin(); i != _patch_windows.end(); ++i)
 		delete i->second;
-	
+
 	_patch_windows.clear();
-	
+
 	for (ControlWindowMap::iterator i = _control_windows.begin(); i != _control_windows.end(); ++i)
 		delete i->second;
-	
+
 	_control_windows.clear();
 }
 
@@ -118,7 +118,7 @@ WindowFactory::patch_window(SharedPtr<PatchModel> patch)
 	return (w == _patch_windows.end()) ? NULL : w->second;
 }
 
-	
+
 NodeControlWindow*
 WindowFactory::control_window(SharedPtr<NodeModel> node)
 {
@@ -169,7 +169,7 @@ WindowFactory::new_patch_window(SharedPtr<PatchModel> patch, SharedPtr<PatchView
 	PatchWindow* win = NULL;
 	xml->get_widget_derived("patch_win", win);
 	assert(win);
-	
+
 	win->set_patch(patch, view);
 	_patch_windows[patch->path()] = win;
 
@@ -204,7 +204,7 @@ WindowFactory::remove_patch_window(PatchWindow* win, GdkEventAny* ignored)
 	_patch_windows.erase(w);
 
 	delete win;
-	
+
 	return false;
 }
 
@@ -250,7 +250,7 @@ WindowFactory::remove_control_window(NodeControlWindow* win, GdkEventAny* ignore
 	_control_windows.erase(w);
 
 	delete win;
-	
+
 	return true;
 }
 
@@ -281,7 +281,7 @@ WindowFactory::present_load_patch(SharedPtr<PatchModel> patch, GraphObject::Prop
 	_load_patch_win->present(patch, data);
 }
 
-	
+
 void
 WindowFactory::present_load_remote_patch(SharedPtr<PatchModel> patch, GraphObject::Properties data)
 {
@@ -328,7 +328,7 @@ WindowFactory::present_load_subpatch(SharedPtr<PatchModel> patch, GraphObject::P
 
 	if (w != _patch_windows.end())
 		_load_subpatch_win->set_transient_for(*w->second);
-	
+
 	_load_subpatch_win->present(patch, data);
 }
 
@@ -340,7 +340,7 @@ WindowFactory::present_rename(SharedPtr<ObjectModel> object)
 
 	if (w != _patch_windows.end())
 		_rename_win->set_transient_for(*w->second);
-	
+
 	_rename_win->present(object);
 }
 
@@ -357,17 +357,17 @@ WindowFactory::present_properties(SharedPtr<ObjectModel> object)
 		_patch_properties_win->present(patch);
 		return;
 	}
-	
+
 	SharedPtr<NodeModel> node = PtrCast<NodeModel>(object);
 	if (node) {
 		PatchWindowMap::iterator w = _patch_windows.find(node->path().parent());
 		if (w != _patch_windows.end())
 			_node_properties_win->set_transient_for(*w->second);
-	
+
 		_node_properties_win->present(node);
 		return;
 	}
-	
+
 	SharedPtr<PortModel> port = PtrCast<PortModel>(object);
 	if (port) {
 		PatchWindowMap::iterator w = _patch_windows.find(port->path().parent().parent());

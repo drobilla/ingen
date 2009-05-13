@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -85,22 +85,22 @@ CreatePortEvent::pre_process()
 
 	if (_patch != NULL) {
 		assert(_patch->path() == _path.parent());
-		
+
 		size_t buffer_size = 1;
 		if (_type.str() != "ingen:Float")
 			buffer_size = _engine.audio_driver()->buffer_size();
-	
+
 		const uint32_t old_num_ports = _patch->num_ports();
 
 		_patch_port = _patch->create_port(_path.name(), _data_type, buffer_size, _is_output);
-		
+
 		if (_patch_port) {
 
 			if (_is_output)
 				_patch->add_output(new Raul::List<PortImpl*>::Node(_patch_port));
 			else
 				_patch->add_input(new Raul::List<PortImpl*>::Node(_patch_port));
-			
+
 			if (_patch->external_ports())
 				_ports_array = new Raul::Array<PortImpl*>(old_num_ports + 1, *_patch->external_ports());
 			else
@@ -138,7 +138,7 @@ CreatePortEvent::execute(ProcessContext& context)
 		_engine.maid()->push(_patch->external_ports());
 		_patch->external_ports(_ports_array);
 	}
-			
+
 	if (_driver_port) {
 		if (_type.str() == "lv2:AudioPort") {
 			_engine.audio_driver()->add_port(_driver_port);
@@ -146,7 +146,7 @@ CreatePortEvent::execute(ProcessContext& context)
 			_engine.midi_driver()->add_port(_driver_port);
 		}
 	}
-	
+
 	if (_source)
 		_source->unblock();
 }

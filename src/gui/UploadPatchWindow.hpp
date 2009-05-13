@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -46,7 +46,7 @@ public:
 private:
 	static size_t curl_read_cb(void* ptr, size_t size, size_t nmemb, void *stream);
 	static int curl_progress_cb(void* thread, double dltotal, double dlnow, double ultotal, double ulnow);
-	
+
 	void _run();
 
 	CURL*              _curl;
@@ -73,7 +73,7 @@ public:
 
 	void set_response(int response) { _response = response; }
 	void set_progress(int pct)      { _progress_pct = pct; }
-	
+
 private:
 	bool is_symbol(const Glib::ustring& str);
 	void symbol_changed();
@@ -87,7 +87,7 @@ private:
 	UploadThread* _thread;
 
 	SharedPtr<PatchModel> _patch;
-	
+
 	Raul::AtomicInt _progress_pct;
 	Raul::AtomicInt _response;
 
@@ -98,7 +98,7 @@ private:
 	Gtk::Button*      _upload_button;
 
 };
- 
+
 
 } // namespace GUI
 } // namespace Ingen

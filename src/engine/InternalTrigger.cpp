@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -42,13 +42,13 @@ TriggerNode::TriggerNode(const string& path, bool polyphonic, PatchImpl* parent,
 
 	_midi_in_port = new InputPort(this, "input", 0, 1, DataType::EVENT, Raul::Atom(), _buffer_size);
 	_ports->at(0) = _midi_in_port;
-	
+
 	_note_port = new InputPort(this, "note", 1, 1, DataType::CONTROL, 60.0f, 1);
 	_note_port->set_property("lv2:minimum", 0.0f);
 	_note_port->set_property("lv2:maximum", 127.0f);
 	_note_port->set_property("lv2:integer", true);
 	_ports->at(1) = _note_port;
-	
+
 	_gate_port = new OutputPort(this, "gate", 2, 1, DataType::AUDIO, 0.0f, _buffer_size);
 	_gate_port->set_property("lv2:toggled", true);
 	_ports->at(2) = _gate_port;
@@ -56,7 +56,7 @@ TriggerNode::TriggerNode(const string& path, bool polyphonic, PatchImpl* parent,
 	_trig_port = new OutputPort(this, "trigger", 3, 1, DataType::AUDIO, 0.0f, _buffer_size);
 	_trig_port->set_property("lv2:toggled", true);
 	_ports->at(3) = _trig_port;
-	
+
 	_vel_port = new OutputPort(this, "velocity", 4, 1, DataType::AUDIO, 0.0f, _buffer_size);
 	_vel_port->set_property("lv2:minimum", 0.0f);
 	_vel_port->set_property("lv2:maximum", 1.0f);
@@ -68,7 +68,7 @@ void
 TriggerNode::process(ProcessContext& context)
 {
 	NodeBase::pre_process(context);
-	
+
 	uint32_t frames = 0;
 	uint32_t subframes = 0;
 	uint16_t type = 0;
@@ -77,7 +77,7 @@ TriggerNode::process(ProcessContext& context)
 
 	EventBuffer* const midi_in = (EventBuffer*)_midi_in_port->buffer(0);
 	//assert(midi_in->this_nframes() == context.nframes());
-	
+
 	midi_in->rewind();
 
 	while (midi_in->get_event(&frames, &subframes, &type, &size, &buf)) {
@@ -102,10 +102,10 @@ TriggerNode::process(ProcessContext& context)
 				break;
 			}
 		}
-		
+
 		midi_in->increment();
 	}
-	
+
 	NodeBase::post_process(context);
 }
 
@@ -115,7 +115,7 @@ TriggerNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity
 {
 	assert(time >= context.start() && time <= context.end());
 	assert(time - context.start() < _buffer_size);
-	
+
 	if (_learning) {
 		_note_port->set_value(note_num);
 		((AudioBuffer*)_note_port->buffer(0))->set_value(

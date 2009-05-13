@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -70,7 +70,7 @@ LADSPANode::prepare_poly(uint32_t poly)
 			|| (_prepared_instances && poly <= _prepared_instances->size()) ) {
 		return true;
 	}
-	
+
 	_prepared_instances = new Raul::Array<LADSPA_Handle>(poly, *_instances);
 	for (uint32_t i = _polyphony; i < _prepared_instances->size(); ++i) {
 		_prepared_instances->at(i) = _descriptor->instantiate(_descriptor, _srate);
@@ -78,7 +78,7 @@ LADSPANode::prepare_poly(uint32_t poly)
 			cerr << "Failed to instantiate plugin!" << endl;
 			return false;
 		}
-		
+
 		// Initialize the values of new ports
 		for (unsigned long j=0; j < num_ports(); ++j) {
 			PortImpl* const port = _ports->at(j);
@@ -95,7 +95,7 @@ LADSPANode::prepare_poly(uint32_t poly)
 		if (_activated && _descriptor->activate)
 			_descriptor->activate(_prepared_instances->at(i));
 	}
-	
+
 	return true;
 }
 
@@ -112,14 +112,14 @@ LADSPANode::apply_poly(Raul::Maid& maid, uint32_t poly)
 		_instances = _prepared_instances;
 		_prepared_instances = NULL;
 	}
-		
+
 	assert(poly <= _instances->size());
 	_polyphony = poly;
-	
+
 	return NodeBase::apply_poly(maid, poly);
 }
 
-	
+
 static string
 nameify_if_invalid(const string& name)
 {
@@ -137,7 +137,7 @@ nameify_if_invalid(const string& name)
  *
  * Implemented as a seperate function (rather than in the constructor) to
  * allow graceful error-catching of broken plugins.
- * 
+ *
  * Returns whether or not plugin was successfully instantiated.  If return
  * value is false, this object may not be used.
  */
@@ -146,11 +146,11 @@ LADSPANode::instantiate()
 {
 	if (!_ports)
 		_ports = new Raul::Array<PortImpl*>(_descriptor->PortCount);
-	
+
 	_instances = new Raul::Array<LADSPA_Handle>(_polyphony, NULL);
-	
+
 	size_t port_buffer_size = 0;
-	
+
 	for (uint32_t i=0; i < _polyphony; ++i) {
 		(*_instances)[i] = _descriptor->instantiate(_descriptor, _srate);
 		if ((*_instances)[i] == NULL) {
@@ -158,7 +158,7 @@ LADSPANode::instantiate()
 			return false;
 		}
 	}
-	
+
 	PortImpl* port = NULL;
 	std::map<std::string, uint32_t> names;
 
@@ -189,7 +189,7 @@ LADSPANode::instantiate()
 
 		port_name = name;
 		names.insert(make_pair(port_name, j));
-		
+
 		Path port_path(path().child(port_name));
 
 		DataType type = DataType::AUDIO;
@@ -203,10 +203,10 @@ LADSPANode::instantiate()
 		}
 		assert (LADSPA_IS_PORT_INPUT(_descriptor->PortDescriptors[j])
 			|| LADSPA_IS_PORT_OUTPUT(_descriptor->PortDescriptors[j]));
-		
+
 		boost::optional<Sample> default_val, min, max;
 		get_port_limits(j, default_val, min, max);
-	
+
 		const float value = default_val ? default_val.get() : 0.0f;
 
 		if (LADSPA_IS_PORT_INPUT(_descriptor->PortDescriptors[j])) {
@@ -226,13 +226,13 @@ LADSPANode::instantiate()
 					<< ": Port default < minimum.  Minimum adjusted." << endl;
 			min = default_val;
 		}
-		
+
 		if (default_val && default_val.get() > max.get()) {
 			cerr << "WARNING: Broken LADSPA " << _descriptor->UniqueID
 					<< ": Maximum adjusted." << endl;
 			max = default_val;
 		}
-		
+
 		// Set initial/default value
 		if (port->buffer_size() == 1) {
 			for (uint32_t i=0; i < _polyphony; ++i)
@@ -280,7 +280,7 @@ void
 LADSPANode::deactivate()
 {
 	NodeBase::deactivate();
-	
+
 	for (uint32_t i=0; i < _polyphony; ++i)
 		if (_descriptor->deactivate != NULL)
 			_descriptor->deactivate((*_instances)[i]);
@@ -291,10 +291,10 @@ void
 LADSPANode::process(ProcessContext& context)
 {
 	NodeBase::pre_process(context);
-	
-	for (uint32_t i=0; i < _polyphony; ++i) 
+
+	for (uint32_t i=0; i < _polyphony; ++i)
 		_descriptor->run((*_instances)[i], context.nframes());
-	
+
 	NodeBase::post_process(context);
 }
 
@@ -303,7 +303,7 @@ void
 LADSPANode::set_port_buffer(uint32_t voice, uint32_t port_num, Buffer* buf)
 {
 	assert(voice < _polyphony);
-	
+
 	AudioBuffer* audio_buffer = dynamic_cast<AudioBuffer*>(buf);
 	assert(audio_buffer);
 

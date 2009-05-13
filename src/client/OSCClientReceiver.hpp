@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -61,18 +61,18 @@ public:
 
 	void start(bool dump_osc);
 	void stop();
-	
+
 	int         listen_port() { return _listen_port; }
 	std::string listen_url()  { return lo_server_thread_get_url(_st); }
-	
+
 private:
 	void setup_callbacks();
-	
+
 	static void lo_error_cb(int num, const char* msg, const char* path);
 
 	static int  generic_cb(const char* path, const char* types, lo_arg** argv, int argc, void* data, void* user_data);
 	static int  unknown_cb(const char* path, const char* types, lo_arg** argv, int argc, void* data, void* osc_receiver);
-	
+
 	SharedPtr<Shared::ClientInterface> _target;
 
 	int              _listen_port;

@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -71,7 +71,7 @@ bool
 LV2Node::prepare_poly(uint32_t poly)
 {
 	NodeBase::prepare_poly(poly);
-	
+
 	if ( (!_polyphonic)
 			|| (_prepared_instances && poly <= _prepared_instances->size()) ) {
 		return true;
@@ -105,7 +105,7 @@ LV2Node::prepare_poly(uint32_t poly)
 		if (_activated)
 			slv2_instance_activate(_prepared_instances->at(i));
 	}
-	
+
 	return true;
 }
 
@@ -125,7 +125,7 @@ LV2Node::apply_poly(Raul::Maid& maid, uint32_t poly)
 
 	assert(poly <= _instances->size());
 	_polyphony = poly;
-	
+
 	return NodeBase::apply_poly(maid, poly);
 }
 
@@ -134,7 +134,7 @@ LV2Node::apply_poly(Raul::Maid& maid, uint32_t poly)
  *
  * Implemented as a seperate function (rather than in the constructor) to
  * allow graceful error-catching of broken plugins.
- * 
+ *
  * Returns whether or not plugin was successfully instantiated.  If return
  * value is false, this object may not be used.
  */
@@ -149,43 +149,43 @@ LV2Node::instantiate()
 
 	_ports     = new Raul::Array<PortImpl*>(num_ports, NULL);
 	_instances = new Raul::Array<SLV2Instance>(_polyphony, NULL);
-	
+
 	uint32_t port_buffer_size = 0;
 	SLV2Value ctx_ext_uri = slv2_value_new_uri(info->lv2_world(), LV2_CONTEXT_MESSAGE);
-	
+
 	for (uint32_t i=0; i < _polyphony; ++i) {
 		(*_instances)[i] = slv2_plugin_instantiate(plug, _srate, info->lv2_features());
 		if ((*_instances)[i] == NULL) {
 			cerr << "Failed to instantiate plugin!" << endl;
 			return false;
 		}
-		
+
 		if (!slv2_plugin_has_feature(plug, ctx_ext_uri))
 			continue;
 
 		const void* ctx_ext = slv2_instance_get_extension_data(
 				(*_instances)[i], LV2_CONTEXT_MESSAGE);
-	
+
 		if (i == 0 && ctx_ext) {
 			cerr << "HAS CONTEXT EXTENSION" << endl;
 			assert(!_message_funcs);
 			_message_funcs = (LV2MessageContext*)ctx_ext;
 		}
 	}
-	
+
 	slv2_value_free(ctx_ext_uri);
-	
+
 	string port_name;
 	Path   port_path;
-	
+
 	PortImpl* port = NULL;
-	
+
 	float* def_values = new float[num_ports];
 	slv2_plugin_get_port_ranges_float(plug, 0, 0, def_values);
-	
+
 	SLV2Value pred = slv2_value_new_uri(info->lv2_world(),
 			"http://lv2plug.in/ns/dev/contexts#context");
-			
+
 	for (uint32_t j=0; j < num_ports; ++j) {
 		SLV2Port id = slv2_plugin_get_port_by_index(plug, j);
 
@@ -194,7 +194,7 @@ LV2Node::instantiate()
 		assert(port_name.find("/") == string::npos);
 
 		port_path = path().child(port_name);
-		
+
 		DataType data_type = DataType::UNKNOWN;
 		if (slv2_port_is_a(plug, id, info->control_class)) {
 			data_type = DataType::CONTROL;
@@ -221,7 +221,7 @@ LV2Node::instantiate()
 			_instances = NULL;
 			return false;
 		}
-			
+
 		// FIXME: need nice type preserving SLV2Value -> Raul::Atom conversion
 		const float def = isnan(def_values[j]) ? 0.0f : def_values[j];
 		const Raul::Atom defatm = def;
@@ -233,7 +233,7 @@ LV2Node::instantiate()
 
 		if (direction == INPUT && data_type == DataType::CONTROL)
 		  ((AudioBuffer*)port->buffer(0))->set_value(def, 0, 0);
-		
+
 		SLV2Values contexts = slv2_port_get_value(plug, id, pred);
 		for (uint32_t i = 0; i < slv2_values_size(contexts); ++i) {
 			SLV2Value c = slv2_values_get_at(contexts, i);
@@ -254,9 +254,9 @@ LV2Node::instantiate()
 
 		_ports->at(j) = port;
 	}
-	
+
 	delete[] def_values;
-	
+
 	return true;
 }
 
@@ -287,7 +287,7 @@ void
 LV2Node::deactivate()
 {
 	NodeBase::deactivate();
-	
+
 	for (uint32_t i=0; i < _polyphony; ++i)
 		slv2_instance_deactivate((*_instances)[i]);
 }
@@ -309,9 +309,9 @@ LV2Node::process(ProcessContext& context)
 {
 	NodeBase::pre_process(context);
 
-	for (uint32_t i=0; i < _polyphony; ++i) 
+	for (uint32_t i=0; i < _polyphony; ++i)
 		slv2_instance_run((*_instances)[i], context.nframes());
-	
+
 	NodeBase::post_process(context);
 }
 
@@ -320,7 +320,7 @@ void
 LV2Node::set_port_buffer(uint32_t voice, uint32_t port_num, Buffer* buf)
 {
 	assert(voice < _polyphony);
-	
+
 	slv2_instance_connect_port((*_instances)[voice], port_num, buf->raw_data());
 	if ((*_ports).at(port_num)->context() == Context::MESSAGE) {
 		assert(_message_funcs);

@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -51,20 +51,20 @@ public:
 	 */
 	virtual void transfer_begin() = 0;
 	virtual void transfer_end()   = 0;
-	
+
 	virtual void error(const std::string& msg) = 0;
-	
+
 	virtual void new_plugin(const Raul::URI&    uri,
 	                        const Raul::URI&    type_uri,
 	                        const Raul::Symbol& symbol) = 0;
-	
+
 	virtual void activity(const Raul::Path& path) = 0;
-	
+
 	virtual void program_add(const Raul::Path&  node_path,
 	                         uint32_t           bank,
 	                         uint32_t           program,
 	                         const std::string& program_name) = 0;
-	
+
 	virtual void program_remove(const Raul::Path& node_path,
 	                            uint32_t          bank,
 	                            uint32_t          program) = 0;

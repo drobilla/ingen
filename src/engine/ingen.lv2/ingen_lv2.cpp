@@ -1,6 +1,6 @@
 /* Ingen.LV2 - A thin wrapper which allows Ingen to run as an LV2 plugin.
  * Copyright (C) 2008 Dave Robillard <http://drobilla.net>
- *  
+ *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option)
@@ -52,24 +52,24 @@ struct IngenLV2Driver : public Ingen::AudioDriver {
 			_root_patch->process(_context);
 		_frame_time += nframes;
 	}
-	
+
 	virtual void       set_root_patch(PatchImpl* patch) {}
 	virtual PatchImpl* root_patch()                     { return NULL; }
-	
+
 	virtual void        add_port(DriverPort* port)          {}
 	virtual DriverPort* remove_port(const Raul::Path& path) { return NULL; }
-	
+
 	virtual DriverPort* create_port(DuplexPort* patch_port) { return NULL; }
-	
+
 	virtual DriverPort* driver_port(const Raul::Path& path) { return NULL; }
-	
+
 	virtual SampleCount buffer_size()  const { return _buffer_size; }
 	virtual SampleCount sample_rate()  const { return _sample_rate; }
 	virtual SampleCount frame_time()   const { return _frame_time;}
 
 	virtual bool            is_realtime() const { return true; }
 	virtual ProcessContext& context()           { return _context; }
-	
+
 private:
 	ProcessContext _context;
 	PatchImpl*     _root_patch;
@@ -123,11 +123,11 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	plugin->world = Ingen::Shared::get_world();
 	plugin->engine = SharedPtr<Engine>(new Engine(plugin->world));
 	plugin->world->local_engine = plugin->engine;
-	
+
 	// FIXME: fixed buffer size
 	plugin->engine->set_driver(DataType::AUDIO,
 			SharedPtr<Driver>(new IngenLV2Driver(*plugin->engine, rate, 4096)));
-	
+
 	return (LV2_Handle)plugin;
 }
 

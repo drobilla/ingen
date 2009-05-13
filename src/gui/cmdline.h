@@ -45,7 +45,7 @@ struct gengetopt_args_info
   char * path_arg;	/* Target path for loaded patch.  */
   char * path_orig;	/* Target path for loaded patch original value given at command line.  */
   const char *path_help; /* Target path for loaded patch help description.  */
-  
+
   int help_given ;	/* Whether help was given.  */
   int version_given ;	/* Whether version was given.  */
   int engine_given ;	/* Whether engine was given.  */

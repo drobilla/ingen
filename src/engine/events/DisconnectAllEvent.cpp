@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -80,21 +80,21 @@ DisconnectAllEvent::pre_process()
 {
 	if (_lookup) {
 		_parent = _engine.engine_store()->find_patch(_parent_path);
-	
+
 		if (_parent == NULL) {
 			_error = PARENT_NOT_FOUND;
 			QueuedEvent::pre_process();
 			return;
 		}
-		
+
 		GraphObjectImpl* object = _engine.engine_store()->find_object(_path);
-		
+
 		if (object == NULL) {
 			_error = OBJECT_NOT_FOUND;
 			QueuedEvent::pre_process();
 			return;
 		}
-		
+
 		if (object->parent_patch() != _parent && object->parent()->parent_patch() != _parent) {
 			_error = INVALID_PARENT_PATH;
 			QueuedEvent::pre_process();
@@ -134,8 +134,8 @@ DisconnectAllEvent::pre_process()
 			}
 		}
 	}
-	
-	QueuedEvent::pre_process();	
+
+	QueuedEvent::pre_process();
 }
 
 

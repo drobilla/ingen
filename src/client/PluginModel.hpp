@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -47,9 +47,9 @@ class PluginModel : public Ingen::Shared::Plugin
 {
 public:
 	PluginModel(const Raul::URI& uri, const Raul::URI& type_uri);
-	
+
 	Type type() const { return _type; }
-	
+
 	const std::string symbol() const { return string_property("lv2:symbol"); }
 	const std::string name()   const { return string_property("doap:name"); }
 
@@ -68,7 +68,7 @@ public:
 
 	static void set_slv2_world(SLV2World world) {
 		Glib::Mutex::Lock lock(_rdf_world->mutex());
-		_slv2_world = world; 
+		_slv2_world = world;
 		_slv2_plugins = slv2_world_get_all_plugins(_slv2_world);
 	}
 
@@ -89,7 +89,7 @@ public:
 
 private:
 	const Type _type;
-	
+
 	const std::string string_property(const std::string& name) const;
 
 #ifdef HAVE_SLV2

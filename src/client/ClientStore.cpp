@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -86,10 +86,10 @@ ClientStore::add_object(SharedPtr<ObjectModel> object)
 				object->set_parent(parent);
 				parent->add_child(object);
 				assert(parent && (object->parent() == parent));
-				
+
 				(*this)[object->path()] = object;
 				signal_new_object.emit(object);
-				
+
 #if 0
 				resolve_variable_orphans(parent);
 				resolve_orphans(parent);
@@ -198,7 +198,7 @@ void
 ClientStore::add_plugin(SharedPtr<PluginModel> pm)
 {
 	// FIXME: dupes?  merge, like with objects?
-	
+
 	(*_plugins)[pm->uri()] = pm;
 	signal_new_plugin(pm);
 	//cerr << "Plugin: " << pm->uri() << ", # plugins: " << _plugins->size() << endl;
@@ -221,7 +221,7 @@ ClientStore::rename(const Path& old_path_str, const Path& new_path_str)
 {
 	Path old_path(old_path_str);
 	Path new_path(new_path_str);
-	
+
 	iterator parent = find(old_path);
 	if (parent == end()) {
 		cerr << "[Store] Failed to find object " << old_path << " to rename." << endl;
@@ -229,16 +229,16 @@ ClientStore::rename(const Path& old_path_str, const Path& new_path_str)
 	}
 
 	iterator descendants_end = find_descendants_end(parent);
-	
+
 	SharedPtr< Table<Path, SharedPtr<Shared::GraphObject> > > removed
 			= yank(parent, descendants_end);
-	
+
 	assert(removed->size() > 0);
 
 	for (Table<Path, SharedPtr<Shared::GraphObject> >::iterator i = removed->begin(); i != removed->end(); ++i) {
 		const Path& child_old_path = i->first;
 		assert(Path::descendant_comparator(old_path, child_old_path));
-		
+
 		Path child_new_path;
 		if (child_old_path == old_path)
 			child_new_path = new_path;
@@ -281,7 +281,7 @@ ClientStore::new_object(const Shared::GraphObject* object)
 		new_patch(patch->path(), patch->internal_polyphony());
 		return true;
 	}
-	
+
 	const Node* node = dynamic_cast<const Node*>(object);
 	if (node) {
 		new_node(node->path(), node->plugin()->uri());
@@ -340,7 +340,7 @@ ClientStore::clear_patch(const Path& path)
 	if (i != end()) {
 		assert((*i).second->path() == path);
 		SharedPtr<PatchModel> patch = PtrCast<PatchModel>(i->second);
-		
+
 		iterator first_descendant = i;
 		++first_descendant;
 		iterator descendants_end = find_descendants_end(i);
@@ -380,7 +380,7 @@ ClientStore::set_variable(const URI& subject_path, const URI& predicate, const A
 	}
 }
 
-	
+
 void
 ClientStore::set_property(const URI& subject_path, const URI& predicate, const Atom& value)
 {
@@ -416,7 +416,7 @@ ClientStore::set_voice_value(const Path& port_path, uint32_t voice, const Atom& 
 		cerr << "ERROR: poly control change for nonexistant port " << port_path << endl;
 }
 
-	
+
 void
 ClientStore::activity(const Path& path)
 {
@@ -435,13 +435,13 @@ ClientStore::connection_patch(const Path& src_port_path, const Path& dst_port_pa
 
 	if (src_port_path.parent() == dst_port_path.parent())
 		patch = PtrCast<PatchModel>(this->object(src_port_path.parent()));
-	
+
 	if (!patch && src_port_path.parent() == dst_port_path.parent().parent())
 		patch = PtrCast<PatchModel>(this->object(src_port_path.parent()));
 
 	if (!patch && src_port_path.parent().parent() == dst_port_path.parent())
 		patch = PtrCast<PatchModel>(this->object(dst_port_path.parent()));
-	
+
 	if (!patch)
 		patch = PtrCast<PatchModel>(this->object(src_port_path.parent().parent()));
 
@@ -458,8 +458,8 @@ ClientStore::attempt_connection(const Path& src_port_path, const Path& dst_port_
 {
 	SharedPtr<PortModel> src_port = PtrCast<PortModel>(object(src_port_path));
 	SharedPtr<PortModel> dst_port = PtrCast<PortModel>(object(dst_port_path));
-	
-	if (src_port && dst_port) { 
+
+	if (src_port && dst_port) {
 		assert(src_port->parent());
 		assert(dst_port->parent());
 
@@ -467,7 +467,7 @@ ClientStore::attempt_connection(const Path& src_port_path, const Path& dst_port_
 		assert(patch);
 
 		SharedPtr<ConnectionModel> cm(new ConnectionModel(src_port, dst_port));
-		
+
 		src_port->connected_to(dst_port);
 		dst_port->connected_to(src_port);
 
@@ -480,7 +480,7 @@ ClientStore::attempt_connection(const Path& src_port_path, const Path& dst_port_
 	return false;
 }
 
-	
+
 void
 ClientStore::connect(const Path& src_port_path, const Path& dst_port_path)
 {
@@ -493,7 +493,7 @@ ClientStore::disconnect(const Path& src_port_path, const Path& dst_port_path)
 {
 	// Find the ports and create a ConnectionModel just to get at the parent path
 	// finding logic in ConnectionModel.  So I'm lazy.
-	
+
 	SharedPtr<PortModel> src_port = PtrCast<PortModel>(object(src_port_path));
 	SharedPtr<PortModel> dst_port = PtrCast<PortModel>(object(dst_port_path));
 
@@ -501,14 +501,14 @@ ClientStore::disconnect(const Path& src_port_path, const Path& dst_port_path)
 		src_port->disconnected_from(dst_port);
 	else
 		cerr << "WARNING: Disconnection from nonexistant src port " << src_port_path << endl;
-	
+
 	if (dst_port)
 		dst_port->disconnected_from(dst_port);
 	else
 		cerr << "WARNING: Disconnection from nonexistant dst port " << dst_port_path << endl;
 
 	SharedPtr<PatchModel> patch = connection_patch(src_port_path, dst_port_path);
-	
+
 	if (patch)
 		patch->remove_connection(src_port_path, dst_port_path);
 	else

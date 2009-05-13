@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -54,13 +54,13 @@ Port::Port(
 
 	delete _menu;
 	_menu = NULL;
-	
+
 	pm->signal_renamed.connect(sigc::mem_fun(this, &Port::renamed));
 
 	if (pm->type().is_control()) {
 		set_toggled(pm->is_toggle());
 		show_control();
-		
+
 		float min = 0.0f, max = 1.0f;
 		boost::shared_ptr<NodeModel> parent = PtrCast<NodeModel>(pm->parent());
 		if (parent)
@@ -72,9 +72,9 @@ Port::Port(
 		pm->signal_variable.connect(sigc::mem_fun(this, &Port::variable_changed));
 		pm->signal_value_changed.connect(sigc::mem_fun(this, &Port::value_changed));
 	}
-		
+
 	pm->signal_activity.connect(sigc::mem_fun(this, &Port::activity));
-	
+
 	value_changed(pm->value());
 }
 
@@ -113,7 +113,7 @@ Port::value_changed(const Atom& value)
 		cerr << "WARNING: Unknown port value type " << (unsigned)value.type() << endl;
 }
 
-	
+
 void
 Port::activity()
 {

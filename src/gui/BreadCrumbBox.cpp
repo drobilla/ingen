@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -50,7 +50,7 @@ BreadCrumbBox::view(const Path& path)
 
 /** Sets up the crumbs to display @a path.
  *
- * If @a path is already part of the shown path, it will be selected and the 
+ * If @a path is already part of the shown path, it will be selected and the
  * children preserved.
  */
 void
@@ -61,7 +61,7 @@ BreadCrumbBox::build(Path path, SharedPtr<PatchView> view)
 
 	// Moving to a path we already contain, just switch the active button
 	if (_breadcrumbs.size() > 0 && (path.is_parent_of(_full_path) || path == _full_path)) {
-		
+
 		for (std::list<BreadCrumb*>::iterator i = _breadcrumbs.begin(); i != _breadcrumbs.end(); ++i) {
 			if ((*i)->path() == path) {
 				(*i)->set_active(true);
@@ -75,7 +75,7 @@ BreadCrumbBox::build(Path path, SharedPtr<PatchView> view)
 				(*i)->set_active(false);
 			}
 		}
-	
+
 		_active_path = path;
 		_enable_signal = old_enable_signal;
 
@@ -98,7 +98,7 @@ BreadCrumbBox::build(Path path, SharedPtr<PatchView> view)
 			else
 				suffix = suffix.substr(suffix.find("/")+1);
 		}
-		
+
 		for (std::list<BreadCrumb*>::iterator i = _breadcrumbs.begin(); i != _breadcrumbs.end(); ++i)
 			(*i)->set_active(false);
 		_breadcrumbs.back()->set_active(true);
@@ -140,7 +140,7 @@ BreadCrumbBox::build(Path path, SharedPtr<PatchView> view)
 				suffix = suffix.substr(suffix.find("/")+1);
 		}
 	}
-		
+
 	_enable_signal = old_enable_signal;
 }
 
@@ -154,7 +154,7 @@ BreadCrumbBox::create_crumb(const Path&           path,
 {
 	BreadCrumb* but = manage(new BreadCrumb(path,
 			(view && path == view->patch()->path()) ? view : SharedPtr<PatchView>()));
-	
+
 	but->signal_toggled().connect(sigc::bind(sigc::mem_fun(
 				this, &BreadCrumbBox::breadcrumb_clicked), but));
 

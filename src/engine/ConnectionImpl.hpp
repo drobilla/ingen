@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -46,17 +46,17 @@ class ConnectionImpl : public Raul::Deletable, public Shared::Connection
 public:
 	ConnectionImpl(PortImpl* src_port, PortImpl* dst_port);
 	virtual ~ConnectionImpl();
-	
+
 	PortImpl* src_port() const { return _src_port; }
 	PortImpl* dst_port() const { return _dst_port; }
-	
+
 	const Raul::Path src_port_path() const { return _src_port->path(); }
 	const Raul::Path dst_port_path() const { return _dst_port->path(); }
 
 	/** Used by some (recursive) events to prevent double disconnections */
 	bool pending_disconnection()       { return _pending_disconnection; }
 	void pending_disconnection(bool b) { _pending_disconnection = b; }
-	
+
 	void process(ProcessContext& context);
 
 	/** Get the buffer for a particular voice.
@@ -67,7 +67,7 @@ public:
 	inline Buffer* buffer(uint32_t voice) const;
 
 	inline size_t buffer_size() const { return _buffer_size; }
-	
+
 	void set_buffer_size(size_t size);
 	void prepare_poly(uint32_t poly);
 	void apply_poly(Raul::Maid& maid, uint32_t poly);
@@ -80,7 +80,7 @@ public:
 protected:
 	enum { DIRECT, MIX, COPY, EXTEND } _mode;
 	void set_mode();
-	
+
 	bool must_copy() const;
 	bool must_mix() const;
 	bool must_extend() const;

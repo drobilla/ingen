@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -53,7 +53,7 @@ void
 ClearPatchEvent::pre_process()
 {
 	EngineStore::Objects::iterator patch_iterator = _engine.engine_store()->find(_patch_path);
-	
+
 	if (patch_iterator != _engine.engine_store()->end()) {
 		_patch = PtrCast<PatchImpl>(patch_iterator->second);
 		if (_patch) {
@@ -65,7 +65,7 @@ ClearPatchEvent::pre_process()
 			_ports_array = _patch->build_ports_array();
 			if (_patch->enabled())
 				_compiled_patch = _patch->compile();
-		
+
 			// Remove driver ports
 			if (_patch->parent() == NULL) {
 				size_t port_count = 0;
@@ -92,18 +92,18 @@ ClearPatchEvent::execute(ProcessContext& context)
 
 	if (_patch && _removed_table) {
 		_patch->disable();
-		
+
 		if (_patch->compiled_patch() != NULL) {
 			_engine.maid()->push(_patch->compiled_patch());
 			_patch->compiled_patch(NULL);
 		}
-		
+
 		_patch->connections().clear();
 		_patch->compiled_patch(_compiled_patch);
 		Raul::Array<PortImpl*>* old_ports = _patch->external_ports();
 		_patch->external_ports(_ports_array);
 		_ports_array = old_ports;
-		
+
 		// Remove driver ports
 		if (_patch->parent() == NULL) {
 			for (EngineStore::Objects::iterator i = _removed_table->begin();
@@ -124,10 +124,10 @@ ClearPatchEvent::execute(ProcessContext& context)
 
 void
 ClearPatchEvent::post_process()
-{	
+{
 	if (_patch != NULL) {
 		delete _ports_array;
-		
+
 		// Restore patch's run state
 		if (_process)
 			_patch->enable();
@@ -138,7 +138,7 @@ ClearPatchEvent::post_process()
 		assert(_patch->nodes().size() == 0);
 		assert(_patch->num_ports() == 0);
 		assert(_patch->connections().size() == 0);
-	
+
 		// Reply
 		_responder->respond_ok();
 		_engine.broadcaster()->send_clear_patch(_patch_path);
@@ -158,7 +158,7 @@ ClearPatchEvent::post_process()
 	} else {
 		_responder->respond_error(string("Patch ") + _patch_path.str() + " not found");
 	}
-	
+
 	_source->unblock(); // FIXME: can be done earlier in execute?
 }
 

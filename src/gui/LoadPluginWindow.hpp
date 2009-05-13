@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -36,7 +36,7 @@ using Ingen::Client::PluginModel;
 using Ingen::Client::PatchModel;
 
 namespace GUI {
-	
+
 
 // Gtkmm _really_ needs to add some helper to abstract away this stupid nonsense
 
@@ -75,9 +75,9 @@ class CriteriaColumns : public Gtk::TreeModel::ColumnRecord
 {
 public:
 	enum Criteria { NAME, TYPE, URI, };
-	
+
 	CriteriaColumns() { add(_col_label); add(_col_criteria); }
-	
+
 	Gtk::TreeModelColumn<Glib::ustring> _col_label;
 	Gtk::TreeModelColumn<Criteria>      _col_criteria;
 };
@@ -104,7 +104,7 @@ public:
 protected:
 	void on_show();
 	bool on_key_press_event(GdkEventKey* event);
-	
+
 private:
 	void add_clicked();
 	//void close_clicked();
@@ -112,7 +112,7 @@ private:
 	void filter_changed();
 	void clear_clicked();
 	void name_changed();
-	
+
 	void new_plugin(SharedPtr<PluginModel> plugin);
 
 	void plugin_property_changed(const Raul::URI&  plugin,
@@ -132,17 +132,17 @@ private:
 
 	typedef std::map<Raul::URI, Gtk::TreeModel::iterator> Rows;
 	Rows _rows;
-	
+
 	Glib::RefPtr<Gtk::ListStore> _plugins_liststore;
 	ModelColumns                 _plugins_columns;
 
 	Glib::RefPtr<Gtk::ListStore> _criteria_liststore;
 	CriteriaColumns              _criteria_columns;
-	
+
 	Glib::RefPtr<Gtk::TreeSelection> _selection;
-	
+
 	int _plugin_name_offset; // see comments for generate_plugin_name
-	
+
 	bool              _has_shown;
 	bool              _refresh_list;
 	Gtk::TreeView*    _plugins_treeview;

@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2008 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -41,7 +41,7 @@ ClashAvoider::map_path(const Raul::Path& in)
 {
 	//cout << "MAP PATH: " << in;
 	//cout << endl << "**** MAP PATH: " << in << endl;
-	
+
 	unsigned offset = 0;
 	bool has_offset = false;
 	size_t pos = in.find_last_of("_");
@@ -51,7 +51,7 @@ ClashAvoider::map_path(const Raul::Path& in)
 	}
 
 	//cout << "OFFSET: " << offset << endl;
-		
+
 	// Path without _n suffix
 	Path base_path = in;
 	if (has_offset)
@@ -65,7 +65,7 @@ ClashAvoider::map_path(const Raul::Path& in)
 		return m->second;
 	} else {
 		typedef std::pair<SymbolMap::iterator, bool> InsertRecord;
-			
+
 		// See if parent is mapped
 		Path parent = in.parent();
 		do {
@@ -86,7 +86,7 @@ ClashAvoider::map_path(const Raul::Path& in)
 			assert(i.second);
 			//cout << " (3) " << i.first->second << endl;;
 			return i.first->second;
-			
+
 		// Append _2 _3 etc until an unused symbol is found
 		} else {
 			while (true) {
@@ -100,7 +100,7 @@ ClashAvoider::map_path(const Raul::Path& in)
 						parent_str = "/";
 					//cout << "***** PARENT: " << parent_str << endl;
 				}
-				
+
 				if (offset == 0)
 					offset = 2;
 

@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2008 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -85,7 +85,7 @@ void
 HTTPClientSender::connect(const Raul::Path& src_path, const Raul::Path& dst_path)
 {
 	string msg = string(
-			"@prefix rdf:       <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n" 
+			"@prefix rdf:       <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n"
 			"@prefix ingen:     <http://drobilla.net/ns/ingen#> .\n"
 			"@prefix lv2var:    <http://lv2plug.in/ns/ext/instance-var#> .\n\n<").append(
 			"<> ingen:connection [\n"
@@ -107,7 +107,7 @@ HTTPClientSender::set_variable(const Raul::URI& path, const Raul::URI& key, cons
 {
 	Redland::Node node = AtomRDF::atom_to_node(*_engine.world()->rdf_world, value);
 	string msg = string(
-			"@prefix rdf:       <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n" 
+			"@prefix rdf:       <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n"
 			"@prefix ingenuity: <http://drobilla.net/ns/ingenuity#> .\n"
 			"@prefix lv2var:    <http://lv2plug.in/ns/ext/instance-var#> .\n\n<").append(
 			path.str()).append("> lv2var:variable [\n"
@@ -122,7 +122,7 @@ HTTPClientSender::set_property(const Raul::URI& path, const Raul::URI& key, cons
 {
 	Redland::Node node = AtomRDF::atom_to_node(*_engine.world()->rdf_world, value);
 	string msg = string(
-			"@prefix rdf:       <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n" 
+			"@prefix rdf:       <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n"
 			"@prefix ingen:     <http://drobilla.net/ns/ingen#> .\n"
 			"@prefix ingenuity: <http://drobilla.net/ns/ingenuity#> .\n"
 			"@prefix lv2var:    <http://lv2plug.in/ns/ext/instance-var#> .\n\n<").append(
@@ -205,7 +205,7 @@ void
 HTTPClientSender::rename(const Raul::Path& old_path, const Raul::Path& new_path)
 {
 	string msg = string(
-			"@prefix rdf:       <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n" 
+			"@prefix rdf:       <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n"
 			"@prefix ingen:     <http://drobilla.net/ns/ingen#> .\n\n<").append(
 			old_path.str()).append("> rdf:subject <").append(new_path.str()).append("> .\n");
 	send_chunk(msg);
@@ -215,7 +215,7 @@ HTTPClientSender::rename(const Raul::Path& old_path, const Raul::Path& new_path)
 void
 HTTPClientSender::program_add(const Raul::Path& node_path, uint32_t bank, uint32_t program, const std::string& name)
 {
-	/*send("/ingen/program_add", "siis", 
+	/*send("/ingen/program_add", "siis",
 		node_path.c_str(), bank, program, name.c_str(), LO_ARGS_END);*/
 }
 
@@ -223,7 +223,7 @@ HTTPClientSender::program_add(const Raul::Path& node_path, uint32_t bank, uint32
 void
 HTTPClientSender::program_remove(const Raul::Path& node_path, uint32_t bank, uint32_t program)
 {
-	/*send("/ingen/program_remove", "sii", 
+	/*send("/ingen/program_remove", "sii",
 		node_path.c_str(), bank, program, LO_ARGS_END);*/
 }
 

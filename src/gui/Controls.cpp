@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -46,11 +46,11 @@ Control::Control(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>&
 	Glib::RefPtr<Gnome::Glade::Xml> menu_xml = GladeFactory::new_glade_reference("port_control_menu");
 	menu_xml->get_widget("port_control_menu", _menu);
 	menu_xml->get_widget("port_control_menu_properties", _menu_properties);
-	
+
 	_menu_properties->signal_activate().connect(
 		sigc::mem_fun(this, &SliderControl::menu_properties));
 }
-	
+
 
 Control::~Control()
 {
@@ -72,7 +72,7 @@ Control::init(ControlPanel* panel, SharedPtr<PortModel> pm)
 	_control_connection = pm->signal_value_changed.connect(sigc::mem_fun(this, &Control::set_value));
 }
 
-	
+
 void
 Control::menu_properties()
 {
@@ -109,7 +109,7 @@ SliderControl::init(ControlPanel* panel, SharedPtr<PortModel> pm)
 	assert(_slider);
 
 	set_name(pm->path().name());
-	
+
 	_slider->set_draw_value(false);
 
 	signal_button_press_event().connect(sigc::mem_fun(*this, &SliderControl::clicked));
@@ -120,12 +120,12 @@ SliderControl::init(ControlPanel* panel, SharedPtr<PortModel> pm)
 
 	_slider->signal_value_changed().connect(
 			sigc::mem_fun(*this, &SliderControl::update_value_from_slider));
-	
+
 	_value_spinner->signal_value_changed().connect(
 			sigc::mem_fun(*this, &SliderControl::update_value_from_spinner));
 
 	float min = 0.0f, max = 1.0f;
-	
+
 	boost::shared_ptr<NodeModel> parent = PtrCast<NodeModel>(_port_model->parent());
 	if (parent)
 		parent->port_value_range(_port_model, min, max);
@@ -136,7 +136,7 @@ SliderControl::init(ControlPanel* panel, SharedPtr<PortModel> pm)
 	} else {
 		_slider->set_increments(0, 0);
 	}
-	
+
 	pm->signal_variable.connect(sigc::mem_fun(this, &SliderControl::port_variable_change));
 
 	_slider->set_range(std::min(min, pm->value().get_float()), std::max(max, pm->value().get_float()));
@@ -166,7 +166,7 @@ void
 SliderControl::set_value(const Atom& atom)
 {
 	float val = atom.get_float();
-	
+
 	if (_port_model->is_integer())
 		val = lrintf(val);
 
@@ -186,17 +186,17 @@ SliderControl::set_value(const Atom& atom)
 	_enable_signal = true;
 }
 
-	
+
 void
 SliderControl::port_variable_change(const URI& key, const Atom& value)
 {
 	_enable_signal = false;
-	
+
 	if (key.str() == "lv2:minimum" && value.type() == Atom::FLOAT)
 		set_range(value.get_float(), _slider->get_adjustment()->get_upper());
 	else if (key.str() == "lv2:maximum" && value.type() == Atom::FLOAT)
 		set_range(_slider->get_adjustment()->get_lower(), value.get_float());
-	
+
 	_enable_signal = true;
 }
 
@@ -206,7 +206,7 @@ SliderControl::set_range(float min, float max)
 {
 	if (max <= min)
 		max = min + 1.0;
-	
+
 	_slider->set_range(min, max);
 	//_value_spinner->set_range(min, max);
 }
@@ -249,20 +249,20 @@ SliderControl::update_value_from_slider()
 	if (_enable_signal) {
 		float value = _slider->get_value();
 		bool change = true;
-			
+
 		_enable_signal = false;
-		
+
 		if (_port_model->is_integer()) {
 			value = lrintf(value);
 			if (value == lrintf(_port_model->value().get_float()))
 				change = false;
 		}
-		
+
 		if (change) {
 			_value_spinner->set_value(value);
 			_control_panel->value_changed(_port_model, value);
 		}
-		
+
 		_enable_signal = true;
 	}
 }
@@ -278,7 +278,7 @@ SliderControl::update_value_from_spinner()
 		set_value(value);
 
 		_control_panel->value_changed(_port_model, value);
-		
+
 		//m_port_model->value(value);
 		_enable_signal = true;
 	}
@@ -299,7 +299,7 @@ SliderControl::slider_pressed(GdkEvent* ev)
 		_enabled = true;
 		//GtkClientInterface::instance()->clear_ignore_port();
 	}
-	
+
 	return false;
 }
 
@@ -321,7 +321,7 @@ IntegerControl::IntegerControl(ControlPanel* panel, SharedPtr<PortModel> pm)
 	_spinner.signal_value_changed().connect(
 		sigc::mem_fun(*this, &IntegerControl::update_value));
 	_spinner.set_increments(1, 10);
-	
+
 	_alignment.add(_spinner);
 	pack_start(_name_label);
 	pack_start(_alignment);
@@ -389,7 +389,7 @@ ToggleControl::ToggleControl(BaseObjectType* cobject, const Glib::RefPtr<Gnome::
 	xml->get_widget("toggle_control_check", _checkbutton);
 }
 
-	
+
 void
 ToggleControl::init(ControlPanel* panel, SharedPtr<PortModel> pm)
 {
@@ -435,7 +435,7 @@ ToggleControl::set_value(const Atom& val)
 		default:
 			cerr << "Unsupported value type for toggle control" << endl;
 	}
-	
+
 	_enable_signal = false;
 	_checkbutton->set_active(enable);
 	_enable_signal = true;

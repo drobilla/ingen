@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -62,11 +62,11 @@ PatchPortModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<PortMod
 	ret->add_port(port);
 	ret->set_port(port);
 	ret->set_menu(port->menu());
-	
+
 	for (GraphObject::Properties::const_iterator m = model->variables().begin();
 			m != model->variables().end(); ++m)
 		ret->set_variable(m->first, m->second);
-	
+
 	for (GraphObject::Properties::const_iterator m = model->properties().begin();
 			m != model->properties().end(); ++m)
 		ret->set_property(m->first, m->second);
@@ -86,20 +86,20 @@ PatchPortModule::create_menu()
 	Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference();
 	xml->get_widget_derived("object_menu", _menu);
 	_menu->init(_model, true);
-	
+
 	set_menu(_menu);
 }
 
 
 void
 PatchPortModule::store_location()
-{	
+{
 	const float x = static_cast<float>(property_x());
 	const float y = static_cast<float>(property_y());
-	
+
 	const Atom& existing_x = _model->get_property("ingenuity:canvas-x");
 	const Atom& existing_y = _model->get_property("ingenuity:canvas-y");
-	
+
 	if (existing_x.type() != Atom::FLOAT || existing_y.type() != Atom::FLOAT
 			|| existing_x.get_float() != x || existing_y.get_float() != y) {
 		App::instance().engine()->set_property(_model->path(), "ingenuity:canvas-x", Atom(x));
@@ -118,7 +118,7 @@ PatchPortModule::show_human_names(bool b)
 		set_name(name.get_string());
 	else
 		set_name(_model->symbol());
-	
+
 	resize();
 }
 

@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -38,7 +38,7 @@ using namespace Raul;
 
 namespace Ingen {
 
-	
+
 //// JackMidiPort ////
 
 JackMidiPort::JackMidiPort(JackMidiDriver* driver, DuplexPort* patch_port)
@@ -68,7 +68,7 @@ JackMidiPort::create()
 		_patch_port->path().c_str(), JACK_DEFAULT_MIDI_TYPE,
 		(_patch_port->is_input()) ? JackPortIsInput : JackPortIsOutput,
 		0);
-	
+
 	if (_jack_port == NULL) {
 		cerr << "[JackMidiPort] ERROR: Failed to register port " << _patch_port->path() << endl;
 		throw JackAudioDriver::PortRegistrationFailedException();
@@ -96,7 +96,7 @@ JackMidiPort::pre_process(ProcessContext& context)
 {
 	if ( ! is_input() )
 		return;
-	
+
 	assert(_patch_port->poly() == 1);
 
 	EventBuffer* patch_buf = dynamic_cast<EventBuffer*>(_patch_port->buffer(0));
@@ -106,7 +106,7 @@ JackMidiPort::pre_process(ProcessContext& context)
 	const jack_nframes_t event_count = jack_midi_get_event_count(jack_buffer);
 
 	patch_buf->prepare_write(context.start(), context.nframes());
-	
+
 	// Copy events from Jack port buffer into patch port buffer
 	for (jack_nframes_t i=0; i < event_count; ++i) {
 		jack_midi_event_t ev;
@@ -135,13 +135,13 @@ JackMidiPort::post_process(ProcessContext& context)
 
 	EventBuffer* patch_buf = dynamic_cast<EventBuffer*>(_patch_port->buffer(0));
 	void*        jack_buf  = jack_port_get_buffer(_jack_port, context.nframes());
-	
+
 	assert(_patch_port->poly() == 1);
 	assert(patch_buf);
 
 	patch_buf->prepare_read(context.start(), context.nframes());
 	jack_midi_clear_buffer(jack_buf);
-	
+
 	uint32_t frames = 0;
 	uint32_t subframes = 0;
 	uint16_t type = 0;
@@ -198,7 +198,7 @@ JackMidiDriver::attach(AudioDriver& driver)
 /** Launch and start the MIDI thread.
  */
 void
-JackMidiDriver::activate() 
+JackMidiDriver::activate()
 {
 	_is_activated = true;
 }
@@ -207,7 +207,7 @@ JackMidiDriver::activate()
 /** Terminate the MIDI thread.
  */
 void
-JackMidiDriver::deactivate() 
+JackMidiDriver::deactivate()
 {
 	for (Raul::List<JackMidiPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
 		(*i)->destroy();
@@ -241,7 +241,7 @@ JackMidiDriver::post_process(ProcessContext& context)
  *
  * Realtime safe, this is to be called at the beginning of a process cycle to
  * insert (and actually begin using) a new port.
- * 
+ *
  * See new_port() and remove_port().
  */
 void
@@ -269,12 +269,12 @@ JackMidiDriver::remove_port(const Path& path)
 	for (Raul::List<JackMidiPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
 		if ((*i)->patch_port()->path() == path)
 			return (Raul::List<DriverPort*>::Node*)_ports.erase(i);
-	
+
 	cerr << "[JackMidiDriver::remove_port] WARNING: Unable to find port " << path << endl;
 	return NULL;
 }
 
-	
+
 DriverPort*
 JackMidiDriver::driver_port(const Path& path)
 {

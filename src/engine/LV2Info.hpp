@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2008 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -31,9 +31,9 @@
 #include "shared/LV2URIMap.hpp"
 #include "lv2ext/lv2_uri_map.h"
 #include "lv2ext/lv2_event.h"
-	
+
 namespace Ingen {
-	
+
 
 /** Stuff that may need to be passed to an LV2 plugin (i.e. LV2 features).
  */
@@ -47,7 +47,7 @@ public:
 	SLV2Value control_class;
 	SLV2Value audio_class;
 	SLV2Value event_class;
-	
+
 	Ingen::Shared::World& world()     { return *_world; }
 	SLV2World             lv2_world() { return _world->slv2_world; }
 

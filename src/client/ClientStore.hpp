@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -65,7 +65,7 @@ public:
 	SharedPtr<const Plugins> plugins() const                   { return _plugins; }
 	SharedPtr<Plugins>       plugins()                         { return _plugins; }
 	void                     set_plugins(SharedPtr<Plugins> p) { _plugins = p; }
-	
+
 	// CommonInterface
 	void new_plugin(const Raul::URI& uri, const Raul::URI& type_uri, const Raul::Symbol& symbol);
 	bool new_object(const Shared::GraphObject* object);
@@ -80,9 +80,9 @@ public:
 	void connect(const Raul::Path& src_port_path, const Raul::Path& dst_port_path);
 	void disconnect(const Raul::Path& src_port_path, const Raul::Path& dst_port_path);
 	void destroy(const Raul::Path& path);
-	
-	sigc::signal<void, SharedPtr<ObjectModel> > signal_new_object; 
-	sigc::signal<void, SharedPtr<PluginModel> > signal_new_plugin; 
+
+	sigc::signal<void, SharedPtr<ObjectModel> > signal_new_object;
+	sigc::signal<void, SharedPtr<PluginModel> > signal_new_plugin;
 
 private:
 
@@ -90,7 +90,7 @@ private:
 
 	void add_object(SharedPtr<ObjectModel> object);
 	SharedPtr<ObjectModel> remove_object(const Raul::Path& path);
-	
+
 	void add_plugin(SharedPtr<PluginModel> plugin);
 
 	SharedPtr<PatchModel> connection_patch(const Raul::Path& src_port_path, const Raul::Path& dst_port_path);
@@ -102,9 +102,9 @@ private:
 	void object_renamed(const Raul::Path& old_path, const Raul::Path& new_path);
 	void clear_patch(const Raul::Path& path);
 	void activity(const Raul::Path& path);
-	
+
 	bool attempt_connection(const Raul::Path& src_port_path, const Raul::Path& dst_port_path, bool add_orphan=false);
-	
+
 	bool _handle_orphans;
 
 	SharedPtr<Shared::EngineInterface> _engine;

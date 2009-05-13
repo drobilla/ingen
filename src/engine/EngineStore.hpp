@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -48,10 +48,10 @@ public:
 	NodeImpl*        find_node(const Raul::Path& path);
 	PortImpl*        find_port(const Raul::Path& path);
 	GraphObjectImpl* find_object(const Raul::Path& path);
-	
+
 	void add(Shared::GraphObject* o);
 	void add(const Objects& family);
-	
+
 	SharedPtr<Objects> remove(const Raul::Path& path);
 	SharedPtr<Objects> remove(Objects::iterator i);
 	SharedPtr<Objects> remove_children(const Raul::Path& path);

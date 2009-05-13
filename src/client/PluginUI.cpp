@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -53,7 +53,7 @@ lv2_ui_write(LV2UI_Controller controller,
 	PluginUI* ui = (PluginUI*)controller;
 
 	SharedPtr<PortModel> port = ui->node()->ports()[port_index];
-	
+
 	const LV2Features::Feature* f = ui->world()->lv2_features->feature(LV2_URI_MAP_URI);
 	LV2URIMap* map = (LV2URIMap*)f->controller;
 	assert(map);
@@ -63,7 +63,7 @@ lv2_ui_write(LV2UI_Controller controller,
 		assert(buffer_size == 4);
 		if (*(float*)buffer == port->value().get_float())
 			return; // do nothing (handle stupid plugin UIs that feed back)
-	
+
 		ui->world()->engine->set_port_value(port->path(), Atom(*(float*)buffer));
 
 	// FIXME: slow, need to cache ID
@@ -80,7 +80,7 @@ lv2_ui_write(LV2UI_Controller controller,
 				ui->world()->engine->set_port_value(port->path(),
 					Atom("lv2midi:MidiEvent", ev->size, data));
 			} else {
-				cerr << "WARNING: Unable to send event type " << ev->type << 
+				cerr << "WARNING: Unable to send event type " << ev->type <<
 					" over OSC, ignoring event" << endl;
 			}
 
@@ -93,7 +93,7 @@ lv2_ui_write(LV2UI_Controller controller,
 	}
 }
 
-	
+
 PluginUI::PluginUI(Ingen::Shared::World* world,
                    SharedPtr<NodeModel>  node)
 	: _world(world)

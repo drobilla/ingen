@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -59,7 +59,7 @@ OSCClientReceiver::start(bool dump_osc)
 	}
 
 	// Find a free port
-	if (!_st) { 
+	if (!_st) {
 		_st = lo_server_thread_new(NULL, lo_error_cb);
 		_listen_port = lo_server_thread_get_port(_st);
 	}
@@ -99,13 +99,13 @@ int
 OSCClientReceiver::generic_cb(const char* path, const char* types, lo_arg** argv, int argc, void* data, void* user_data)
 {
 	printf("[OSCMsg] %s (%s)\t", path, types);
-	
+
 	for (int i=0; i < argc; ++i) {
 		lo_arg_pp(lo_type(types[i]), argv[i]);
 		printf("\t");
     }
     printf("\n");
-    
+
 	/*for (int i=0; i < argc; ++i) {
 		printf("         '%c'  ", types[i]);
 		lo_arg_pp(lo_type(types[i]), argv[i]);
@@ -169,7 +169,7 @@ OSCClientReceiver::_error_cb(const char* path, const char* types, lo_arg** argv,
 	_target->error((char*)argv[0]);
 	return 0;
 }
- 
+
 
 int
 OSCClientReceiver::_new_patch_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -208,7 +208,7 @@ OSCClientReceiver::_connection_cb(const char* path, const char* types, lo_arg** 
 {
 	const char* const src_port_path = &argv[0]->s;
 	const char* const dst_port_path = &argv[1]->s;
-	
+
 	_target->connect(src_port_path, dst_port_path);
 
 	return 0;
@@ -252,8 +252,8 @@ OSCClientReceiver::_new_port_cb(const char* path, const char* types, lo_arg** ar
 	const bool     is_output = (argv[3]->i == 1);
 
 	_target->new_port(port_path, type, index, is_output);
-	
-	return 0;	
+
+	return 0;
 }
 
 
@@ -272,7 +272,7 @@ OSCClientReceiver::_set_variable_cb(const char* path, const char* types, lo_arg*
 
 	_target->set_variable(obj_path, key, value);
 
-	return 0;	
+	return 0;
 }
 
 
@@ -291,7 +291,7 @@ OSCClientReceiver::_set_property_cb(const char* path, const char* types, lo_arg*
 
 	_target->set_property(obj_path, key, value);
 
-	return 0;	
+	return 0;
 }
 
 
@@ -303,10 +303,10 @@ OSCClientReceiver::_set_port_value_cb(const char* path, const char* types, lo_ar
 
 	_target->set_port_value(port_path, value);
 
-	return 0;	
+	return 0;
 }
 
-	
+
 int
 OSCClientReceiver::_set_voice_value_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
@@ -316,7 +316,7 @@ OSCClientReceiver::_set_voice_value_cb(const char* path, const char* types, lo_a
 
 	_target->set_voice_value(port_path, voice, value);
 
-	return 0;	
+	return 0;
 }
 
 
@@ -327,7 +327,7 @@ OSCClientReceiver::_activity_cb(const char* path, const char* types, lo_arg** ar
 
 	_target->activity(port_path);
 
-	return 0;	
+	return 0;
 }
 
 
@@ -359,7 +359,7 @@ OSCClientReceiver::_plugin_cb(const char* path, const char* types, lo_arg** argv
 	assert(argc == 3 && !strcmp(types, "sss"));
 	_target->new_plugin(&argv[0]->s, &argv[1]->s, &argv[2]->s); // uri, type, symbol
 
-	return 0;	
+	return 0;
 }
 
 
@@ -373,7 +373,7 @@ OSCClientReceiver::_program_add_cb(const char* path, const char* types, lo_arg**
 
 	_target->program_add(node_path, bank, program, name);
 
-	return 0;	
+	return 0;
 }
 
 
@@ -386,7 +386,7 @@ OSCClientReceiver::_program_remove_cb(const char* path, const char* types, lo_ar
 
 	_target->program_remove(node_path, bank, program);
 
-	return 0;	
+	return 0;
 }
 
 

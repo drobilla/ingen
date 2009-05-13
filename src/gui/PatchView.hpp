@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -63,7 +63,7 @@ public:
 	SharedPtr<PatchCanvas> canvas()               const { return _canvas; }
 	SharedPtr<PatchModel>  patch()                const { return _patch; }
 	Gtk::ToolItem*         breadcrumb_container() const { return _breadcrumb_container; }
-	
+
 	void set_editable(bool editable);
 
 	static SharedPtr<PatchView> create(SharedPtr<PatchModel> patch);
@@ -83,7 +83,7 @@ private:
 
 	void canvas_item_entered(Gnome::Canvas::Item* item);
 	void canvas_item_left(Gnome::Canvas::Item* item);
-	
+
 	void property_changed(const Raul::URI& predicate, const Raul::Atom& value);
 	void variable_changed(const Raul::URI& predicate, const Raul::Atom& value);
 
@@ -91,7 +91,7 @@ private:
 
 	SharedPtr<PatchModel>  _patch;
 	SharedPtr<PatchCanvas> _canvas;
-	
+
 	Gtk::ScrolledWindow* _canvas_scrolledwindow;
 
 	Gtk::Toolbar*           _toolbar;

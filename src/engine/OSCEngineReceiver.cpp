@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -61,7 +61,7 @@ OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t
 #ifdef ENABLE_AVAHI
 	lo_server_avahi_init(_server, "ingen");
 #endif
-	
+
 	if (_server == NULL) {
 		cerr << "[OSC] Could not start OSC server.  Aborting." << endl;
 		exit(EXIT_FAILURE);
@@ -77,7 +77,7 @@ OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t
 	// Set response address for this message.
 	// It's important this is first and returns nonzero.
 	lo_server_add_method(_server, NULL, NULL, set_response_address_cb, this);
-	
+
 	// Commands
 	lo_server_add_method(_server, "/ingen/ping", "i", ping_cb, this);
 	lo_server_add_method(_server, "/ingen/ping_queued", "i", ping_slow_cb, this);
@@ -180,12 +180,12 @@ OSCEngineReceiver::ReceiveThread::_run()
 
 		// Enqueue every other message that is here "now"
 		// (would this provide truly atomic bundles?)
-		while (lo_server_recv_noblock(_receiver._server, 0) > 0) 
+		while (lo_server_recv_noblock(_receiver._server, 0) > 0)
 			if (_receiver.unprepared_events())
 				_receiver.whip();
 
 		// No more unprepared events
-	}	
+	}
 }
 
 
@@ -214,7 +214,7 @@ OSCEngineReceiver::set_response_address_cb(const char* path, const char* types, 
 
 	const lo_address addr = lo_message_get_source(msg);
 	char* const      url  = lo_address_get_url(addr);
-		
+
 	const SharedPtr<Responder> r = me->_responder;
 
 	/* Different address than last time, have to do a lookup */
@@ -225,7 +225,7 @@ OSCEngineReceiver::set_response_address_cb(const char* path, const char* types, 
 		else
 			me->_responder = SharedPtr<Responder>(new Responder());
 	}
-	
+
 	if (id != -1) {
 		me->set_next_response_id(id);
 	} else {
@@ -322,7 +322,7 @@ OSCEngineReceiver::_unregister_client_cb(const char* path, const char* types, lo
 	char* url = lo_address_get_url(addr);
 	unregister_client(url);
 	free(url);
-	
+
 	return 0;
 }
 
@@ -394,7 +394,7 @@ OSCEngineReceiver::_rename_cb(const char* path, const char* types, lo_arg** argv
 {
 	const char* old_path = &argv[1]->s;
 	const char* new_path = &argv[2]->s;
-	
+
 	rename(old_path, new_path);
 	return 0;
 }
@@ -409,7 +409,7 @@ int
 OSCEngineReceiver::_clear_patch_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	const char* patch_path = &argv[1]->s;
-	
+
 	clear_patch(patch_path);
 	return 0;
 }
@@ -429,7 +429,7 @@ OSCEngineReceiver::_new_port_cb(const char* path, const char* types, lo_arg** ar
 	const char*   port_path   = &argv[1]->s;
 	const char*   data_type   = &argv[2]->s;
 	const int32_t direction   =  argv[3]->i;
-	
+
 	new_port(port_path, data_type, 0, (direction == 1));
 	return 0;
 }
@@ -445,7 +445,7 @@ OSCEngineReceiver::_new_node_by_uri_cb(const char* path, const char* types, lo_a
 {
 	const char* node_path  = &argv[1]->s;
 	const char* plug_uri   = &argv[2]->s;
-	
+
 	new_node(node_path, plug_uri);
 	return 0;
 }
@@ -460,7 +460,7 @@ int
 OSCEngineReceiver::_destroy_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	const char* node_path   = &argv[1]->s;
-	
+
 	destroy(node_path);
 	return 0;
 }
@@ -528,7 +528,7 @@ OSCEngineReceiver::_set_port_value_cb(const char* path, const char* types, lo_ar
 {
 	if (argc < 3 || argc > 5 || strncmp(types, "is", 2))
 		return 1;
-	
+
 	const char* port_path = &argv[1]->s;
 
 	using Raul::Atom;
@@ -627,7 +627,7 @@ OSCEngineReceiver::_all_notes_off_cb(const char* path, const char* types, lo_arg
  * <p> \b /ingen/midi_learn - Initiate MIDI learn for a given (MIDI Control) Node
  * \arg \b response-id (integer)
  * \arg \b node-path (string) - Patch of the Node that should learn the next MIDI event.
- * 
+ *
  * \li This of course will only do anything for MIDI control nodes.  The node will learn the next MIDI
  * event that arrives at it's MIDI input port - no behind the scenes voodoo happens here.  It is planned
  * that a plugin specification supporting arbitrary OSC commands for plugins will exist one day, and this
@@ -637,7 +637,7 @@ int
 OSCEngineReceiver::_midi_learn_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	const char* patch_path  = &argv[1]->s;
-	
+
 	midi_learn(patch_path);
 	return 0;
 }
@@ -658,9 +658,9 @@ OSCEngineReceiver::_variable_set_cb(const char* path, const char* types, lo_arg*
 
 	const char* object_path = &argv[1]->s;
 	const char* key         = &argv[2]->s;
-	
+
 	Raul::Atom value = Raul::AtomLiblo::lo_arg_to_atom(types[3], argv[3]);
-	
+
 	set_variable(object_path, key, value);
 	return 0;
 }
@@ -681,9 +681,9 @@ OSCEngineReceiver::_property_set_cb(const char* path, const char* types, lo_arg*
 
 	const char* object_path = &argv[1]->s;
 	const char* key         = &argv[2]->s;
-	
+
 	Raul::Atom value = Raul::AtomLiblo::lo_arg_to_atom(types[3], argv[3]);
-	
+
 	set_property(object_path, key, value);
 	return 0;
 }
@@ -774,7 +774,7 @@ int
 OSCEngineReceiver::generic_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg, void* user_data)
 {
 	printf("[OSCMsg] %s (%s)\t", path, types);
-    
+
 	for (int i=0; i < argc; ++i) {
 		lo_arg_pp(lo_type(types[i]), argv[i]);
 		printf("\t");

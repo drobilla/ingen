@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -42,7 +42,7 @@ namespace Ingen {
 using namespace Shared;
 namespace Client {
 
-	
+
 /** A single port's control setting (in a preset).
  *
  * \ingroup IngenClient
@@ -56,7 +56,7 @@ public:
 	{
 		assert(_port_path.find("//") == string::npos);
 	}
-	
+
 	const Raul::Path& port_path() const          { return _port_path; }
 	void              port_path(const string& p) { _port_path = p; }
 	float             value() const              { return _value; }
@@ -118,7 +118,7 @@ string
 DeprecatedLoader::translate_load_path(const string& path)
 {
 	std::map<string,string>::iterator t = _load_path_translations.find(path);
-	
+
 	if (t != _load_path_translations.end()) {
 		assert(Path::is_valid((*t).second));
 		return (*t).second;
@@ -161,12 +161,12 @@ DeprecatedLoader::add_variable(GraphObject::Properties& data, string old_key, st
 			// Hack to make module-x and module-y set as floats
 			char* c_val = strdup(value.c_str());
 			char* endptr = NULL;
-	
+
 			// FIXME: locale kludges
 			char* locale = strdup(setlocale(LC_NUMERIC, NULL));
-			
+
 			float fval = strtof(c_val, &endptr);
-			
+
 			setlocale(LC_NUMERIC, locale);
 			free(locale);
 
@@ -174,7 +174,7 @@ DeprecatedLoader::add_variable(GraphObject::Properties& data, string old_key, st
 				data[key] = Atom(fval);
 			else
 				data[key] = Atom(Atom::STRING, value);
-			
+
 			free(c_val);
 		}
 	}
@@ -220,14 +220,14 @@ DeprecatedLoader::load_patch(const Glib::ustring&    filename,
 		path = *parent_path;
 	if (name)
 		path = path.base() + *name;
-	
+
 	size_t poly = 0;
-	
+
 	/* Use parameter overridden polyphony, if given */
 	GraphObject::Properties::iterator poly_param = initial_data.find("ingen:polyphony");
 	if (poly_param != initial_data.end() && poly_param->second.type() == Atom::INT)
 		poly = poly_param->second.get_int32();
-	
+
 	if (initial_data.find("filename") == initial_data.end())
 		initial_data["filename"] = Atom(filename.c_str()); // FIXME: URL?
 
@@ -258,7 +258,7 @@ DeprecatedLoader::load_patch(const Glib::ustring&    filename,
 	// Load Patch attributes
 	while (cur != NULL) {
 		key = xmlNodeListGetString(doc, cur->xmlChildrenNode, 1);
-		
+
 		if ((!xmlStrcmp(cur->name, (const xmlChar*)"name"))) {
 			if (!merge && parent_path && !name && key) {
 				if (parent_path)
@@ -280,13 +280,13 @@ DeprecatedLoader::load_patch(const Glib::ustring&    filename,
 			if (key)
 				add_variable(initial_data, (const char*)cur->name, (const char*)key);
 		}
-		
+
 		xmlFree(key);
 		key = NULL; // Avoid a (possible?) double free
 
 		cur = cur->next;
 	}
-	
+
 	if (poly == 0)
 		poly = 1;
 
@@ -302,7 +302,7 @@ DeprecatedLoader::load_patch(const Glib::ustring&    filename,
 	while (cur != NULL) {
 		if ((!xmlStrcmp(cur->name, (const xmlChar*)"node")))
 			load_node(path, doc, cur);
-			
+
 		cur = cur->next;
 	}
 
@@ -314,7 +314,7 @@ DeprecatedLoader::load_patch(const Glib::ustring&    filename,
 		}
 		cur = cur->next;
 	}
-	
+
 	// Load connections
 	cur = xmlDocGetRootElement(doc)->xmlChildrenNode;
 	while (cur != NULL) {
@@ -323,7 +323,7 @@ DeprecatedLoader::load_patch(const Glib::ustring&    filename,
 		}
 		cur = cur->next;
 	}
-	
+
 	// Load presets (control values)
 	cur = xmlDocGetRootElement(doc)->xmlChildrenNode;
 	while (cur != NULL) {
@@ -343,7 +343,7 @@ DeprecatedLoader::load_patch(const Glib::ustring&    filename,
 		}
 		cur = cur->next;
 	}
-	
+
 	xmlFreeDoc(doc);
 	xmlCleanupParser();
 
@@ -367,12 +367,12 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 {
 	xmlChar* key;
 	xmlNodePtr cur = node->xmlChildrenNode;
-	
+
 	string path = "";
 	bool   polyphonic = false;
 
 	string plugin_uri;
-	
+
 	string plugin_type;  // deprecated
 	string library_name; // deprecated
 	string plugin_label; // deprecated
@@ -381,7 +381,7 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 
 	while (cur != NULL) {
 		key = xmlNodeListGetString(doc, cur->xmlChildrenNode, 1);
-		
+
 		if ((!xmlStrcmp(cur->name, (const xmlChar*)"name"))) {
 			path = parent.base() + nameify_if_invalid((char*)key);
 		} else if ((!xmlStrcmp(cur->name, (const xmlChar*)"polyphonic"))) {
@@ -397,14 +397,14 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 		} else if ((!xmlStrcmp(cur->name, (const xmlChar*)"port"))) {
 #if 0
 			xmlNodePtr child = cur->xmlChildrenNode;
-			
+
 			string port_name;
 			float user_min = 0.0;
 			float user_max = 0.0;
-			
+
 			while (child != NULL) {
 				key = xmlNodeListGetString(doc, child->xmlChildrenNode, 1);
-				
+
 				if ((!xmlStrcmp(child->name, (const xmlChar*)"name"))) {
 					port_name = nameify_if_invalid((char*)key);
 				} else if ((!xmlStrcmp(child->name, (const xmlChar*)"user-min"))) {
@@ -412,10 +412,10 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 				} else if ((!xmlStrcmp(child->name, (const xmlChar*)"user-max"))) {
 					user_max = atof((char*)key);
 				}
-				
+
 				xmlFree(key);
 				key = NULL; // Avoid a (possible?) double free
-		
+
 				child = child->next;
 			}
 
@@ -439,7 +439,7 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 
 		cur = cur->next;
 	}
-	
+
 	if (path == "") {
 		cerr << "[DeprecatedLoader] Malformed patch file (node tag has empty children)" << endl;
 		cerr << "[DeprecatedLoader] Node ignored." << endl;
@@ -478,7 +478,7 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 		if (is_port) {
 			const string old_path = path;
 			const string new_path = (Path::is_valid(old_path) ? old_path : Path::pathify(old_path));
-			
+
 			if (!Path::is_valid(old_path))
 				cerr << "WARNING: Translating invalid port path \"" << old_path << "\" => \""
 					<< new_path << "\"" << endl;
@@ -513,7 +513,7 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 			_engine->new_node(path, plugin_uri);
 
 			_engine->set_variable(path, "ingen:polyphonic", bool(polyphonic));
-		
+
 			for (GraphObject::Properties::const_iterator i = initial_data.begin(); i != initial_data.end(); ++i)
 				_engine->set_variable(path, i->first, i->second);
 
@@ -538,16 +538,16 @@ DeprecatedLoader::load_subpatch(const string& base_filename, const Path& parent,
 {
 	xmlChar *key;
 	xmlNodePtr cur = subpatch->xmlChildrenNode;
-	
+
 	string name     = "";
 	string filename = "";
 	size_t poly     = 0;
-	
+
 	GraphObject::Properties initial_data;
 
 	while (cur != NULL) {
 		key = xmlNodeListGetString(doc, cur->xmlChildrenNode, 1);
-		
+
 		if ((!xmlStrcmp(cur->name, (const xmlChar*)"name"))) {
 			name = (const char*)key;
 		} else if ((!xmlStrcmp(cur->name, (const xmlChar*)"polyphony"))) {
@@ -568,7 +568,7 @@ DeprecatedLoader::load_subpatch(const string& base_filename, const Path& parent,
 	// load_patch sets the passed variable last, so values stored in the parent
 	// will override values stored in the child patch file
 	load_patch(filename, false, parent, Symbol(nameify_if_invalid(name)), initial_data, false);
-	
+
 	return false;
 }
 
@@ -580,12 +580,12 @@ DeprecatedLoader::load_connection(const Path& parent, xmlDocPtr doc, const xmlNo
 {
 	xmlChar *key;
 	xmlNodePtr cur = node->xmlChildrenNode;
-	
+
 	string source_node, source_port, dest_node, dest_port;
-	
+
 	while (cur != NULL) {
 		key = xmlNodeListGetString(doc, cur->xmlChildrenNode, 1);
-		
+
 		if ((!xmlStrcmp(cur->name, (const xmlChar*)"source-node"))) {
 			source_node = (char*)key;
 		} else if ((!xmlStrcmp(cur->name, (const xmlChar*)"source-port"))) {
@@ -595,7 +595,7 @@ DeprecatedLoader::load_connection(const Path& parent, xmlDocPtr doc, const xmlNo
 		} else if ((!xmlStrcmp(cur->name, (const xmlChar*)"destination-port"))) {
 			dest_port = (char*)key;
 		}
-		
+
 		xmlFree(key);
 		key = NULL; // Avoid a (possible?) double free
 
@@ -613,11 +613,11 @@ DeprecatedLoader::load_connection(const Path& parent, xmlDocPtr doc, const xmlNo
 	source_port = nameify_if_invalid(source_port);
 	dest_node = nameify_if_invalid(dest_node);
 	dest_port = nameify_if_invalid(dest_port);
-	
+
 	_engine->connect(
 		translate_load_path(parent.base() + source_node +"/"+ source_port),
 		translate_load_path(parent.base() + dest_node +"/"+ dest_port));
-	
+
 	return true;
 }
 
@@ -631,7 +631,7 @@ DeprecatedLoader::load_preset(const Path& parent, xmlDocPtr doc, const xmlNodePt
 	xmlChar* key;
 
 	SharedPtr<PresetModel> pm(new PresetModel(parent.base()));
-	
+
 	while (cur != NULL) {
 		key = xmlNodeListGetString(doc, cur->xmlChildrenNode, 1);
 
@@ -640,13 +640,13 @@ DeprecatedLoader::load_preset(const Path& parent, xmlDocPtr doc, const xmlNodePt
 			pm->name((char*)key);
 		} else if ((!xmlStrcmp(cur->name, (const xmlChar*)"control"))) {
 			xmlNodePtr child = cur->xmlChildrenNode;
-	
+
 			string node_name = "", port_name = "";
 			float val = 0.0;
-			
+
 			while (child != NULL) {
 				key = xmlNodeListGetString(doc, child->xmlChildrenNode, 1);
-				
+
 				if ((!xmlStrcmp(child->name, (const xmlChar*)"node-name"))) {
 					node_name = (char*)key;
 				} else if ((!xmlStrcmp(child->name, (const xmlChar*)"port-name"))) {
@@ -654,10 +654,10 @@ DeprecatedLoader::load_preset(const Path& parent, xmlDocPtr doc, const xmlNodePt
 				} else if ((!xmlStrcmp(child->name, (const xmlChar*)"value"))) {
 					val = atof((char*)key);
 				}
-				
+
 				xmlFree(key);
 				key = NULL; // Avoid a (possible?) double free
-		
+
 				child = child->next;
 			}
 
@@ -665,7 +665,7 @@ DeprecatedLoader::load_preset(const Path& parent, xmlDocPtr doc, const xmlNodePt
 			if (node_name != "")
 				node_name = nameify_if_invalid(node_name);
 			port_name = nameify_if_invalid(port_name);
-			
+
 			if (port_name == "") {
 				string msg = "Unable to parse control in patch file ( node = ";
 				msg.append(node_name).append(", port = ").append(port_name).append(")");

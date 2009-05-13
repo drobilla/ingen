@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2008 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -23,8 +23,8 @@ using namespace std;
 
 namespace Ingen {
 namespace Shared {
-	
-	
+
+
 LV2Features::LV2Features()
 	: _lv2_features((LV2_Feature**)malloc(sizeof(LV2_Feature*)))
 {
@@ -60,7 +60,7 @@ LV2Features::add_feature(const std::string& uri, LV2_Feature* feature, void* con
 	_lv2_features[_features.size()-1] = feature;
 	_lv2_features[_features.size()] = NULL;
 }
-	
+
 
 } // namespace Shared
 } // namespace Ingen

@@ -9,13 +9,13 @@ public:
     virtual void subscribe(Ingen::Shared::EngineInterface* engine) {
         engine->register_client(this);
     }
-	
+
 	virtual void response_ok(int32_t id) {}
-	
+
 	virtual void response_error(int32_t id, const std::string& msg) {}
-	
+
 	virtual void enable()  {}
-	
+
 	/** Signifies the client does not wish to receive any messages until
 	 * enable is called.  Useful for performance and avoiding feedback.
 	 */
@@ -27,7 +27,7 @@ public:
 	 */
 	virtual void bundle_begin()  {}
 	virtual void bundle_end()    {}
-	
+
 	/** Transfers are 'weak' bundles.  These are used to break a large group
 	 * of similar/related messages into larger chunks (solely for communication
 	 * efficiency).  A bunch of messages in a transfer will arrive as 1 or more
@@ -35,54 +35,54 @@ public:
 	 */
 	virtual void transfer_begin()  {}
 	virtual void transfer_end()    {}
-	
+
 	virtual void error(const std::string& msg)  {}
-	
+
 	virtual void new_plugin(const std::string& uri,
 	                        const std::string& type_uri,
 	                        const std::string& symbol) {}
-	
+
 	virtual void new_patch(const std::string& path, uint32_t poly)  {}
-	
+
 	virtual void new_node(const std::string& path,
 	                      const std::string& plugin_uri) {}
-	
+
 	virtual void new_port(const std::string& path,
 	                      const std::string& type,
 	                      uint32_t           index,
 	                      bool               is_output)  {}
-	
+
 	virtual void clear_patch(const std::string& path)  {}
-	
+
 	virtual void rename(const std::string& old_path,
 	                    const std::string& new_path)  {}
-	
+
 	virtual void connect(const std::string& src_port_path,
 	                     const std::string& dst_port_path)  {}
-	
+
 	virtual void disconnect(const std::string& src_port_path,
 	                        const std::string& dst_port_path)  {}
-	
+
 	virtual void set_variable(const std::string& subject_path,
 	                          const std::string& predicate,
 	                          const Raul::Atom&  value)  {}
-	
+
 	virtual void set_port_value(const std::string& port_path,
 	                            const std::string& type_uri,
 	                            uint32_t           data_size,
 	                            const void*        data) {}
-	
+
 	virtual void set_voice_value(const std::string& port_path,
 	                             const std::string& type_uri,
 	                             uint32_t           voice,
 	                             uint32_t           data_size,
 	                             const void*        data) {}
-	
+
 	virtual void program_add(const std::string& node_path,
 	                         uint32_t           bank,
 	                         uint32_t           program,
 	                         const std::string& program_name)  {}
-	
+
 	virtual void program_remove(const std::string& node_path,
 	                            uint32_t           bank,
 	                            uint32_t           program)  {}

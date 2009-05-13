@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -51,7 +51,7 @@ class ControlPanel : public Gtk::HBox {
 public:
 	ControlPanel(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml);
 	virtual ~ControlPanel();
-	
+
 	void init(SharedPtr<NodeModel> node, uint32_t poly);
 
 	Control* find_port(const Raul::Path& path) const;
@@ -61,22 +61,22 @@ public:
 
 	void enable_port(const Raul::Path& path);
 	void disable_port(const Raul::Path& path);
-	
+
 	size_t             num_controls() const { return _controls.size(); }
 	std::pair<int,int> ideal_size()   const { return _ideal_size; }
-	
+
 	// Callback for Control
 	void value_changed(SharedPtr<PortModel> port_path, float val);
-	
+
 private:
 	void all_voices_selected();
 	void specific_voice_selected();
-	
+
 	void variable_changed(const Raul::URI& predicate, const Raul::Atom& value);
 	void parent_property_changed(const Raul::URI& predicate, const Raul::Atom& value);
 
 	bool _callback_enabled;
-	
+
 	std::pair<int,int> _ideal_size;
 
 	std::vector<Control*> _controls;

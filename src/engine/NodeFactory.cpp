@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -104,7 +104,7 @@ void
 NodeFactory::load_plugins()
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
-			
+
 	_world->rdf_world->mutex().lock();
 
 	// Only load if we havn't already, so every client connecting doesn't cause
@@ -114,7 +114,7 @@ NodeFactory::load_plugins()
 		_plugins.clear(); // FIXME: assert empty?
 
 		load_internal_plugins();
-	
+
 #ifdef HAVE_SLV2
 		load_lv2_plugins();
 #endif
@@ -122,12 +122,12 @@ NodeFactory::load_plugins()
 #ifdef HAVE_LADSPA_H
 		load_ladspa_plugins();
 #endif
-		
+
 		_has_loaded = true;
 	}
-	
+
 	_world->rdf_world->mutex().unlock();
-	
+
 	//cerr << "[NodeFactory] # Plugins: " << _plugins.size() << endl;
 }
 
@@ -136,7 +136,7 @@ void
 NodeFactory::load_internal_plugins()
 {
 	// This is a touch gross...
-	
+
 	PatchImpl* parent = new PatchImpl(*_world->local_engine, "dummy", 1, NULL, 1, 1, 1);
 
 	NodeImpl* n = NULL;
@@ -152,7 +152,7 @@ NodeFactory::load_internal_plugins()
 	n = new TransportNode("foo", 1, parent, 1, 1);
 	_plugins.insert(make_pair(n->plugin_impl()->uri(), n->plugin_impl()));
 	delete n;
-	
+
 	delete parent;
 }
 
@@ -176,7 +176,7 @@ NodeFactory::load_lv2_plugins()
 #ifndef NDEBUG
 		assert(_plugins.find(uri) == _plugins.end());
 #endif
-			
+
 		LV2Plugin* const plugin = new LV2Plugin(_lv2_info, uri);
 
 		plugin->slv2_plugin(lv2_plug);
@@ -211,7 +211,7 @@ NodeFactory::load_ladspa_plugins()
 			ladspa_path = ladspa_path.substr(ladspa_path.find(':')+1);
 		else
 			ladspa_path = "";
-	
+
 		DIR* pdir = opendir(dir.c_str());
 		if (pdir == NULL) {
 			//cerr << "[NodeFactory] Unreadable directory in LADSPA_PATH: " << dir.c_str() << endl;
@@ -228,22 +228,22 @@ NodeFactory::load_ladspa_plugins()
 			df.fp = NULL;
 
 			LADSPA_Descriptor* descriptor = NULL;
-			
+
 			if (!strcmp(pfile->d_name, ".") || !strcmp(pfile->d_name, ".."))
 				continue;
-			
+
 			const string lib_path = dir +"/"+ pfile->d_name;
-			
+
 			// Ignore stupid libtool files.  Kludge alert.
 			if (lib_path.substr(lib_path.length()-3) == ".la") {
 				//cerr << "WARNING: Skipping stupid libtool file " << pfile->d_name << endl;
 				continue;
 			}
-			
+
 			Glib::Module* plugin_library = new Glib::Module(lib_path, Glib::MODULE_BIND_LOCAL);
 			if (!plugin_library || !(*plugin_library))
 				continue;
-			
+
 			bool found = plugin_library->get_symbol("ladspa_descriptor", df.dp);
 			if (!found || !df.dp) {
 				cerr << "WARNING: Non-LADSPA library found in LADSPA path: " <<
@@ -257,9 +257,9 @@ NodeFactory::load_ladspa_plugins()
 				char id_str[11];
 				snprintf(id_str, 11, "%lu", descriptor->UniqueID);
 				const string uri = string("ladspa:").append(id_str);
-				
+
 				const Plugins::const_iterator i = _plugins.find(uri);
-				
+
 				if (i == _plugins.end()) {
 					LADSPAPlugin* plugin = new LADSPAPlugin(lib_path, uri,
 						descriptor->UniqueID,

@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -55,7 +55,7 @@ relative_uri(Glib::ustring base, const Glib::ustring uri, bool leading_slash)
 	size_t last_slash = base.find_last_of("/");
 	if (last_slash != string::npos)
 		base = base.substr(0, last_slash + 1);
-	
+
 	size_t last_hash = base.find_last_of("#");
 	if (last_hash != string::npos)
 		base = base.substr(0, last_hash + 1);
@@ -99,12 +99,12 @@ uri_child(const Glib::ustring base, const Glib::ustring child, bool trailing_sla
 	Glib::ustring ret = (base[base.length()-1] == '/' || child[0] == '/')
 		? base + child
 		: base + '/' + child;
-	
+
 	if (trailing_slash && (ret == "" || ret[ret.length()-1] != '/'))
 		ret = ret + "/";
 	else if (!trailing_slash && ret != "" && ret[ret.length()-1] == '/')
 		ret = ret.substr(0, ret.length()-1);
-	
+
 	return ret;
 }
 
@@ -143,7 +143,7 @@ Parser::parse_document(
 		boost::optional<GraphObject::Properties> data)
 {
 	normalise_uri(document_uri);
-	
+
 	Redland::Model model(*world->rdf_world, document_uri, document_uri);
 
 	cout << "[Parser] Parsing document " << document_uri << endl;
@@ -156,13 +156,13 @@ Parser::parse_document(
 
 	boost::optional<Path> parsed_path
 		= parse(world, target, model, document_uri, data_path, parent, symbol, data);
-	
+
 	if (parsed_path) {
 		target->set_variable(*parsed_path, "ingen:document", Atom(document_uri.c_str()));
 	} else {
 		cerr << "WARNING: document URI lost" << endl;
 	}
-		
+
 	return parsed_path;
 }
 
@@ -179,12 +179,12 @@ Parser::parse_string(
 		boost::optional<GraphObject::Properties> data)
 {
 	Redland::Model model(*world->rdf_world, str.c_str(), str.length(), base_uri);
-	
+
 	cout << "Parsing " << (data_path ? data_path->str() : "*") << " from string";
 	if (base_uri != "")
 		cout << "(base " << base_uri << ")";
 	cout << endl;
-	
+
 	bool ret = parse(world, target, model, base_uri, data_path, parent, symbol, data);
 	const Glib::ustring subject = Glib::ustring("<") + base_uri + Glib::ustring(">");
 	parse_connections(world, target, model, subject, parent ? *parent : "/");
@@ -210,12 +210,12 @@ Parser::parse_update(
 	Glib::ustring query_str = Glib::ustring("SELECT DISTINCT ?o WHERE { ?o a owl:Nothing }");
 	Redland::Query query(*world->rdf_world, query_str);
 	Redland::Query::Results results = query.run(*world->rdf_world, model, base_uri);
-	
+
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
 		const Redland::Node& object = (*i)["o"];
 		target->destroy(object.to_string());
 	}
-	
+
 	// Variable settings
 	query = Redland::Query(*world->rdf_world,
 		"SELECT DISTINCT ?path ?varkey ?varval WHERE {\n"
@@ -223,7 +223,7 @@ Parser::parse_update(
 		"?variable rdf:predicate   ?varkey ;\n"
 		"          rdf:value       ?varval .\n"
 		"}");
-	
+
 	results = Redland::Query::Results(query.run(*world->rdf_world, model, base_uri));
 
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
@@ -239,13 +239,13 @@ Parser::parse_update(
 
 	// Connections
 	parse_connections(world, target, model, base_uri, "/");
-	
+
 	// Port values
 	query = Redland::Query(*world->rdf_world,
 		"SELECT DISTINCT ?path ?value WHERE {\n"
 		"?path ingen:value ?value .\n"
 		"}");
-	
+
 	results = Redland::Query::Results(query.run(*world->rdf_world, model, base_uri));
 
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
@@ -272,14 +272,14 @@ Parser::parse(
 		boost::optional<GraphObject::Properties> data)
 {
 	const Redland::Node::Type res = Redland::Node::RESOURCE;
-	
+
 	const Glib::ustring query_str = data_path
 		? Glib::ustring("SELECT DISTINCT ?t WHERE { <") + data_path->chop_start("/") + "> a ?t . }"
 		: Glib::ustring("SELECT DISTINCT ?s ?t WHERE { ?s a ?t . }");
 
 	Redland::Query query(*world->rdf_world, query_str);
 	Redland::Query::Results results(query.run(*world->rdf_world, model, document_uri));
-	
+
 	const Redland::Node patch_class    (*world->rdf_world, res, NS_INGEN "Patch");
 	const Redland::Node node_class     (*world->rdf_world, res, NS_INGEN "Node");
 	const Redland::Node internal_class (*world->rdf_world, res, NS_INGEN "Internal");
@@ -287,7 +287,7 @@ Parser::parse(
 	const Redland::Node in_port_class  (*world->rdf_world, res, NS_LV2   "InputPort");
 	const Redland::Node out_port_class (*world->rdf_world, res, NS_LV2   "OutputPort");
 	const Redland::Node lv2_class      (*world->rdf_world, res, NS_LV2   "Plugin");
-	
+
 	const Redland::Node subject_node = (data_path && !data_path->is_root())
 		? Redland::Node(*world->rdf_world, res, data_path->chop_start("/"))
 		: model.base_uri();
@@ -304,21 +304,21 @@ Parser::parse(
 			path_str = relative_uri(document_uri, subject.to_c_string(), true);
 		else if (path_str == "" || path_str[0] != '/')
 			path_str = "/" + path_str;
-			
+
 		if (!Path::is_valid(path_str)) {
 			cerr << "WARNING: Invalid path '" << path_str << "', object skipped" << endl;
 			continue;
 		}
-		
+
 		const bool is_plugin =    (rdf_class == ladspa_class)
 		                       || (rdf_class == lv2_class)
 		                       || (rdf_class == internal_class);
-		
+
 		const bool is_object =    (rdf_class == patch_class)
 		                       || (rdf_class == node_class)
 		                       || (rdf_class == in_port_class)
 		                       || (rdf_class == out_port_class);
-		
+
 		const Glib::ustring subject_uri_tok = Glib::ustring("<").append(subject).append(">");
 
 		if (is_object) {
@@ -331,7 +331,7 @@ Parser::parse(
 				cerr << "WARNING: Invalid path '" << path << "' transformed to /" << endl;
 				path = "/";
 			}
-			
+
 			if (rdf_class == patch_class) {
 				ret = parse_patch(world, target, model, subject, parent, symbol, data);
 			} else if (rdf_class == node_class) {
@@ -344,7 +344,7 @@ Parser::parse(
 				cerr << "Failed to parse object " << path << endl;
 				return boost::optional<Path>();
 			}
-				
+
 			if (data_path && subject.to_string() == data_path->str())
 				root_path = ret;
 
@@ -354,7 +354,7 @@ Parser::parse(
 		}
 
 	}
-	
+
 	return root_path;
 }
 
@@ -379,7 +379,7 @@ Parser::parse_patch(
 		if (poly_param != data.get().end() && poly_param->second.type() == Atom::INT)
 			patch_poly = poly_param->second.get_int32();
 	}
-	
+
 	const Glib::ustring subject = subject_node.to_turtle_token();
 
 	//cout << "**** Parse patch " << subject << endl;
@@ -398,11 +398,11 @@ Parser::parse_patch(
 				cerr << "WARNING: Patch has non-integer polyphony, assuming 1" << endl;
 		}
 	}
-	
+
 	/* No polyphony value anywhere, 1 it is */
 	if (patch_poly == 0)
 		patch_poly = 1;
-	
+
 	const Glib::ustring base_uri = model.base_uri().to_string();
 
 	string symbol;
@@ -425,7 +425,7 @@ Parser::parse_patch(
 	/* Create patch */
 	Path patch_path(patch_path_str);
 	target->new_patch(patch_path, patch_poly);
-	
+
 
 	/* Find patches in document */
 	Redland::Query query(*world->rdf_world, Glib::ustring(
@@ -438,7 +438,7 @@ Parser::parse_patch(
 		Glib::Mutex::Lock lock(world->rdf_world->mutex());
 		patches.insert((*i)["patch"].to_string());
 	}
-	
+
 	typedef multimap<std::string, Redland::Node> Properties;
 	typedef map<string, Redland::Node>           Resources;
 	typedef map<string, Properties>              Objects;
@@ -514,7 +514,7 @@ Parser::parse_patch(
 			target->set_variable(node_path, key, AtomRDF::node_to_atom(j->second));
 		}
 	}
-	
+
 	/* Create plugin nodes */
 	for (Objects::iterator i = plugin_nodes.begin(); i != plugin_nodes.end(); ++i) {
 		Types::iterator type_i = types.find(i->first);
@@ -528,7 +528,7 @@ Parser::parse_patch(
 			target->set_variable(node_path, key, AtomRDF::node_to_atom(j->second));
 		}
 	}
-	
+
 
 	/* Load node ports */
 	query = Redland::Query(*world->rdf_world, Glib::ustring(
@@ -557,7 +557,7 @@ Parser::parse_patch(
 			target->set_variable(port_path, key, AtomRDF::node_to_atom((*i)["val"]));
 		}
 	}
-	
+
 
 	/* Find ports on this patch */
 	query = Redland::Query(*world->rdf_world, Glib::ustring(
@@ -576,7 +576,7 @@ Parser::parse_patch(
 			patch_ports.insert(make_pair(port.to_string(), Properties()));
 		}
 	}
-	
+
 
 	/* Load patch ports */
 	query = Redland::Query(*world->rdf_world, Glib::ustring(
@@ -633,8 +633,8 @@ Parser::parse_patch(
 
 	parse_connections(world, target, model, subject, "/");
 	parse_variables(world, target, model, subject_node, patch_path, data);
-	
-	
+
+
 	/* Enable */
 	query = Redland::Query(*world->rdf_world, Glib::ustring(
 		"SELECT DISTINCT ?enabled WHERE {\n")
@@ -678,7 +678,7 @@ Parser::parse_node(
 		cerr << "[Parser] ERROR: Node missing mandatory rdf:instanceOf property" << endl;
 		return boost::optional<Path>();
 	}
-	
+
 	const Redland::Node& plugin_node = (*results.begin())["plug"];
 	if (plugin_node.type() != Redland::Node::RESOURCE) {
 		cerr << "[Parser] ERROR: node's rdf:instanceOf property is not a resource" << endl;
@@ -725,7 +725,7 @@ Parser::parse_port(
 		if (val_node.to_string() != "")
 			target->set_port_value(path, AtomRDF::node_to_atom(val_node));
 	}
-	
+
 	parse_variables(world, target, model, subject_node, path, data);
 	return path;
 }
@@ -789,7 +789,7 @@ Parser::parse_variables(
 		if (key != "")
 			target->set_variable(path, key, AtomRDF::node_to_atom(val));
 	}
-	
+
 	// Set passed variables last to override any loaded values
 	if (data)
 		for (GraphObject::Properties::const_iterator i = data.get().begin();

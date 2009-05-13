@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -34,14 +34,14 @@ namespace Shared {
  */
 class DataType {
 public:
-	
+
 	enum Symbol {
 		UNKNOWN = 0,
 		AUDIO   = 1,
 		CONTROL = 2,
 		EVENT   = 3
 	};
-	
+
 	DataType(const Raul::URI& uri)
 		: _symbol(UNKNOWN)
 	{
@@ -70,7 +70,7 @@ public:
 	inline bool is_event()   { return _symbol == EVENT; }
 
 private:
-	
+
 	static inline const char* type_uri(unsigned symbol_num)  {
 		switch (symbol_num) {
 		case 1:  return "lv2:AudioPort";

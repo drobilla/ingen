@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License alongCont
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -41,7 +41,7 @@ NodeControlWindow::NodeControlWindow(SharedPtr<NodeModel> node, uint32_t poly)
 	, _y(0)
 {
 	assert(_node != NULL);
-	
+
 	property_resizable() = true;
 	set_border_width(5);
 
@@ -49,15 +49,15 @@ NodeControlWindow::NodeControlWindow(SharedPtr<NodeModel> node, uint32_t poly)
 
 	Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference("warehouse_win");
 	xml->get_widget_derived("control_panel_vbox", _control_panel);
-	
+
 	show_all_children();
-	
+
 	_control_panel->reparent(*this);
 	_control_panel->init(_node, poly);
 	_control_panel->show();
 
 	resize();
-	
+
 	_callback_enabled = true;
 }
 
@@ -69,7 +69,7 @@ NodeControlWindow::NodeControlWindow(SharedPtr<NodeModel> node, ControlPanel* pa
 	, _control_panel(panel)
 {
 	assert(_node);
-	
+
 	property_resizable() = true;
 	set_border_width(5);
 
@@ -79,7 +79,7 @@ NodeControlWindow::NodeControlWindow(SharedPtr<NodeModel> node, ControlPanel* pa
 
 	show_all_children();
 	resize();
-	
+
 	_callback_enabled = true;
 }
 

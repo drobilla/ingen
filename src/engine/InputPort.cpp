@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -43,7 +43,7 @@ InputPort::InputPort(NodeImpl*         parent,
 	: PortImpl(parent, name, index, poly, type, value, buffer_size)
 {
 }
-	
+
 
 bool
 InputPort::can_direct() const
@@ -60,10 +60,10 @@ InputPort::set_buffer_size(size_t size)
 
 	for (Connections::iterator c = _connections.begin(); c != _connections.end(); ++c)
 		((ConnectionImpl*)c->get())->set_buffer_size(size);
-	
+
 }
 
-	
+
 bool
 InputPort::prepare_poly(uint32_t poly)
 {
@@ -81,19 +81,19 @@ InputPort::apply_poly(Raul::Maid& maid, uint32_t poly)
 {
 	if (!_polyphonic || !_parent->polyphonic())
 		return true;
-	
+
 	for (Connections::iterator c = _connections.begin(); c != _connections.end(); ++c)
 		((ConnectionImpl*)c->get())->apply_poly(maid, poly);
 
 	PortImpl::apply_poly(maid, poly);
 	assert(this->poly() == poly);
-		
+
 	if (can_direct()) {
 		ConnectionImpl* c = _connections.begin()->get();
 		for (uint32_t i=_poly; i < poly; ++i)
 			_buffers->at(i)->join(c->buffer(i));
 	}
-		
+
 	for (uint32_t i=0; i < _poly; ++i)
 		PortImpl::parent_node()->set_port_buffer(i, _index, buffer(i));
 
@@ -112,7 +112,7 @@ InputPort::add_connection(Connections::Node* const c)
 	_connections.push_back(c);
 
 	bool modify_buffers = !_fixed_buffers;
-	
+
 	if (modify_buffers) {
 		if (can_direct()) {
 			// Use buffer directly to avoid copying
@@ -141,7 +141,7 @@ InputPort::Connections::Node*
 InputPort::remove_connection(const OutputPort* src_port)
 {
 	bool modify_buffers = !_fixed_buffers;
-	
+
 	bool found = false;
 	Connections::Node* connection = NULL;
 	for (Connections::iterator i = _connections.begin(); i != _connections.end(); ++i) {
@@ -167,12 +167,12 @@ InputPort::remove_connection(const OutputPort* src_port)
 			for (uint32_t i=0; i < _poly; ++i) {
 				_buffers->at(i)->join(_connections.front()->buffer(i));
 			}
-		}	
+		}
 	}
 
 	if (modify_buffers)
 		PortImpl::connect_buffers();
-	
+
 	// Turn off broadcasting if we're not connected any more (FIXME: not quite right..)
 	if (_type == DataType::CONTROL && _connections.size() == 0)
 		_broadcast = false;
@@ -193,7 +193,7 @@ InputPort::pre_process(ProcessContext& context)
 		return;
 
 	bool do_mixdown = true;
-	
+
 	if (_connections.size() == 0) {
 		for (uint32_t i=0; i < _poly; ++i)
 			buffer(i)->prepare_read(context.start(), context.nframes());
@@ -220,12 +220,12 @@ InputPort::pre_process(ProcessContext& context)
 
 	for (uint32_t i=0; i < _poly; ++i)
 		buffer(i)->prepare_read(context.start(), context.nframes());
-	
+
 	/*cerr << path() << " poly = " << _poly << ", mixdown: " << do_mixdown
 		<< ", fixed buffers: " << _fixed_buffers << ", joined: " << _buffers->at(0)->is_joined()
 		<< " to " << _buffers->at(0)->joined_buffer() << endl;*/
-	
-	/*if (type() == DataType::EVENT) 
+
+	/*if (type() == DataType::EVENT)
 		for (uint32_t i=0; i < _poly; ++i)
 			if (((EventBuffer*)buffer(i))->event_count() > 0)
 				cerr << path() << " (" << buffer(i) << ") # events: "
@@ -256,11 +256,11 @@ InputPort::pre_process(ProcessContext& context)
 		}
 	} else {
 		assert(_poly == 1);
-		
+
 		// FIXME
 		if (_connections.size() > 1)
 			cerr << "WARNING: MIDI mixing not implemented, only first connection used." << endl;
-			
+
 		// Copy first connection
 		_buffers->at(0)->copy(_connections.front()->buffer(0), 0, _buffer_size-1);
 	}
@@ -278,7 +278,7 @@ InputPort::post_process(ProcessContext& context)
 			buffer(i)->prepare_write(context.start(), context.nframes());
 
 	_set_by_user = false;
-	
+
 	/*if (_broadcast && (_type == DataType::CONTROL)) {
 		const Sample value = ((AudioBuffer*)(*_buffers)[0])->value_at(0);
 

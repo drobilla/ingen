@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -46,22 +46,22 @@ NoteNode::NoteNode(const string& path, bool polyphonic, PatchImpl* parent, Sampl
 	, _sustain(false)
 {
 	_ports = new Raul::Array<PortImpl*>(5);
-	
+
 	_midi_in_port = new InputPort(this, "input", 0, 1, DataType::EVENT, Raul::Atom(), _buffer_size);
 	_ports->at(0) = _midi_in_port;
 
 	_freq_port = new OutputPort(this, "frequency", 1, _polyphony, DataType::AUDIO, 440.0f, _buffer_size);
 	_ports->at(1) = _freq_port;
-	
+
 	_vel_port = new OutputPort(this, "velocity", 2, _polyphony, DataType::AUDIO, 0.0f, _buffer_size);
 	_vel_port->set_property("lv2:minimum", 0.0f);
 	_vel_port->set_property("lv2:maximum", 1.0f);
 	_ports->at(2) = _vel_port;
-	
+
 	_gate_port = new OutputPort(this, "gate", 3, _polyphony, DataType::AUDIO, 0.0f, _buffer_size);
 	_gate_port->set_property("lv2:toggled", true);
 	_ports->at(3) = _gate_port;
-	
+
 	_trig_port = new OutputPort(this, "trigger", 4, _polyphony, DataType::AUDIO, 0.0f, _buffer_size);
 	_trig_port->set_property("lv2:toggled", true);
 	_ports->at(4) = _trig_port;
@@ -118,7 +118,7 @@ NoteNode::process(ProcessContext& context)
 {
 	EventBuffer* const midi_in = (EventBuffer*)_midi_in_port->buffer(0);
 	NodeBase::pre_process(context);
-	
+
 	uint32_t frames    = 0;
 	uint32_t subframes = 0;
 	uint16_t type      = 0;
@@ -136,7 +136,7 @@ NoteNode::process(ProcessContext& context)
 		for (uint16_t i = 0; i < size; ++i)
 			cout << (int)((char)buf[i]) << " ";
 		cout << endl;*/
-		
+
 		const FrameTime time = context.start() + (FrameTime)frames;
 
 		if (size >= 3) {
@@ -181,7 +181,7 @@ NoteNode::process(ProcessContext& context)
 		if (midi_in->increment() == midi_in->this_nframes())
 			break;
 	}
-	
+
 	NodeBase::post_process(context);
 }
 
@@ -196,7 +196,7 @@ NoteNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity, F
 	Key*   key         = &_keys[note_num];
 	Voice* voice       = NULL;
 	uint32_t voice_num = 0;
-	
+
 	if (key->state != Key::OFF) {
 		//cerr << "[NoteNode] Double midi note received" << endl;
 		return;
@@ -223,13 +223,13 @@ NoteNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity, F
 				oldest_time = voice->time;
 			}
 		}
-	}		
+	}
 	assert(voice != NULL);
 	assert(voice == &(*_voices)[voice_num]);
 
 	/*cerr << "[NoteNode] Note " << (int)note_num << " on @ " << time
 		<< ". Voice " << voice_num << " / " << _polyphony << endl;*/
-	
+
 	// Update stolen key, if applicable
 	if (voice->state == Voice::Voice::ACTIVE) {
 		assert(_keys[voice->note].state == Key::ON_ASSIGNED);
@@ -237,7 +237,7 @@ NoteNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity, F
 		_keys[voice->note].state = Key::Key::ON_UNASSIGNED;
 		//cerr << "[NoteNode] Stole voice " << voice_num << endl;
 	}
-	
+
 	// Store key information for later reallocation on note off
 	key->state = Key::Key::ON_ASSIGNED;
 	key->voice = voice_num;
@@ -247,14 +247,14 @@ NoteNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity, F
 	voice->state = Voice::Voice::ACTIVE;
 	voice->note  = note_num;
 	voice->time  = time;
-	
+
 	assert(_keys[voice->note].state == Key::Key::ON_ASSIGNED);
 	assert(_keys[voice->note].voice == voice_num);
-	
+
 	((AudioBuffer*)_freq_port->buffer(voice_num))->set_value(note_to_freq(note_num), context.start(), time);
 	((AudioBuffer*)_vel_port->buffer(voice_num))->set_value(velocity/127.0, context.start(), time);
 	((AudioBuffer*)_gate_port->buffer(voice_num))->set_value(1.0f, context.start(), time);
-	
+
 	// trigger (one sample)
 	((AudioBuffer*)_trig_port->buffer(voice_num))->set_value(1.0f, context.start(), time);
 	((AudioBuffer*)_trig_port->buffer(voice_num))->set_value(0.0f, context.start(), time + 1);
@@ -273,7 +273,7 @@ NoteNode::note_off(ProcessContext& context, uint8_t note_num, FrameTime time)
 	assert(time - context.start() < _buffer_size);
 
 	Key* key = &_keys[note_num];
-	
+
 	//cerr << "[NoteNode] Note " << (int)note_num << " off @ " << time << endl;
 
 	if (key->state == Key::ON_ASSIGNED) {
@@ -299,7 +299,7 @@ NoteNode::note_off(ProcessContext& context, uint8_t note_num, FrameTime time)
 	key->state = Key::OFF;
 }
 
-	
+
 void
 NoteNode::free_voice(ProcessContext& context, uint32_t voice, FrameTime time)
 {
@@ -322,7 +322,7 @@ NoteNode::free_voice(ProcessContext& context, uint32_t voice, FrameTime time)
 	if (replace_key != NULL) {  // Found a key to assign to freed voice
 		assert(&_keys[replace_key_num] == replace_key);
 		assert(replace_key->state == Key::ON_UNASSIGNED);
-		
+
 		// Change the freq but leave the gate high and don't retrigger
 		((AudioBuffer*)_freq_port->buffer(voice))->set_value(note_to_freq(replace_key_num), context.start(), time);
 
@@ -349,7 +349,7 @@ NoteNode::all_notes_off(ProcessContext& context, FrameTime time)
 	//cerr << "All notes off @ " << offset << endl;
 
 	// FIXME: set all keys to Key::OFF?
-	
+
 	for (uint32_t i = 0; i < _polyphony; ++i) {
 		((AudioBuffer*)_gate_port->buffer(i))->set_value(0.0f, context.start(), time);
 		(*_voices)[i].state = Voice::FREE;
@@ -381,7 +381,7 @@ NoteNode::sustain_off(ProcessContext& context, FrameTime time)
 	assert(time - context.start() < _buffer_size);
 
 	_sustain = false;
-	
+
 	for (uint32_t i=0; i < _polyphony; ++i)
 		if ((*_voices)[i].state == Voice::HOLDING)
 			free_voice(context, i, time);

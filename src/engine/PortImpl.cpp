@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -64,7 +64,7 @@ PortImpl::PortImpl(NodeImpl* const   node,
 		_polyphonic = false;
 	else
 		_polyphonic = true;
-	
+
 	if (type == DataType::EVENT)
 		_broadcast = true; // send activity blips
 
@@ -81,7 +81,7 @@ PortImpl::~PortImpl()
 	delete _buffers;
 }
 
-	
+
 bool
 PortImpl::set_polyphonic(Raul::Maid& maid, bool p)
 {
@@ -129,7 +129,7 @@ PortImpl::apply_poly(Raul::Maid& maid, uint32_t poly)
 
 	return true;
 }
-	
+
 
 void
 PortImpl::allocate_buffers()
@@ -162,14 +162,14 @@ PortImpl::connect_buffers()
 		PortImpl::parent_node()->set_port_buffer(i, _index, buffer(i));
 }
 
-	
+
 void
 PortImpl::clear_buffers()
 {
 	for (uint32_t i=0; i < _poly; ++i)
 		buffer(i)->clear();
 }
-	
+
 
 void
 PortImpl::broadcast_value(ProcessContext& context, bool force)

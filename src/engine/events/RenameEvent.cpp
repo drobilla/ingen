@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -75,11 +75,11 @@ RenameEvent::pre_process()
 			= _engine.engine_store()->remove(_store_iterator);
 
 	assert(removed->size() > 0);
-	
+
 	for (Table<Path, SharedPtr<Shared::GraphObject> >::iterator i = removed->begin(); i != removed->end(); ++i) {
 		const Path& child_old_path = i->first;
 		assert(Path::descendant_comparator(_old_path, child_old_path));
-		
+
 		Path child_new_path;
 		if (child_old_path == _old_path)
 			child_new_path = _new_path;
@@ -100,7 +100,7 @@ void
 RenameEvent::execute(ProcessContext& context)
 {
 	QueuedEvent::execute(context);
-	
+
 	SharedPtr<PortImpl> port = PtrCast<PortImpl>(_store_iterator->second);
 	if (port && port->parent()->parent() == NULL) {
 		DriverPort* driver_port = NULL;
@@ -120,7 +120,7 @@ void
 RenameEvent::post_process()
 {
 	string msg = "Unable to rename object - ";
-	
+
 	if (_error == NO_ERROR) {
 		_responder->respond_ok();
 		_engine.broadcaster()->send_rename(_old_path, _new_path);

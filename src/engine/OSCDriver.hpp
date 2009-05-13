@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -55,24 +55,24 @@ public:
 	DummyOSCDriver() {
 		std::cout << "[DummyOSCDriver] Started Dummy OSC driver." << std::endl;
 	}
-	
+
 	~DummyOSCDriver() {}
 
 	void activate()   {}
 	void deactivate() {}
-	
+
 	bool is_activated() const { return false; }
 	bool is_enabled()   const { return false; }
-	
+
 	void enable()  {}
 	void disable() {}
-	
+
 	DriverPort* create_port(DuplexPort* patch_port) { return NULL; }
-	
+
 	void add_port(DriverPort* port) {}
-	
+
 	Raul::List<DriverPort*>::Node* remove_port(const Raul::Path& path) { return NULL; }
-	
+
 	void prepare_block(const SampleCount block_start, const SampleCount block_end) {}
 };
 

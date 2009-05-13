@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2008 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -38,52 +38,52 @@ class CommonInterface
 {
 public:
 	virtual ~CommonInterface() {}
-	
+
 	/** Begin an atomic bundle */
 	virtual void bundle_begin() = 0;
 
 	/** End (and send) an atomic bundle */
 	virtual void bundle_end() = 0;
-	
+
 	virtual bool new_object(const GraphObject* object) = 0;
 
 	virtual void new_patch(const Raul::Path& path,
 	                       uint32_t          poly) = 0;
-	
+
 	virtual void new_node(const Raul::Path& path,
 	                      const Raul::URI&  plugin_uri) = 0;
-	
+
 	virtual void new_port(const Raul::Path& path,
 	                      const Raul::URI&  type,
 	                      uint32_t          index,
 	                      bool              is_output) = 0;
-	
+
 	virtual void rename(const Raul::Path& old_path,
 	                    const Raul::Path& new_path) = 0;
-	
+
 	virtual void connect(const Raul::Path& src_port_path,
 	                     const Raul::Path& dst_port_path) = 0;
-	
+
 	virtual void disconnect(const Raul::Path& src_port_path,
 	                        const Raul::Path& dst_port_path) = 0;
-	
+
 	virtual void set_variable(const Raul::URI&  subject_path,
 	                          const Raul::URI&  predicate,
 	                          const Raul::Atom& value) = 0;
-	
+
 	virtual void set_property(const Raul::URI&  subject_path,
 	                          const Raul::URI&  predicate,
 	                          const Raul::Atom& value) = 0;
-	
+
 	virtual void set_port_value(const Raul::Path&  port_path,
 	                            const Raul::Atom&  value) = 0;
-	
+
 	virtual void set_voice_value(const Raul::Path& port_path,
 	                             uint32_t          voice,
 	                             const Raul::Atom& value) = 0;
-	
+
 	virtual void destroy(const Raul::Path& path) = 0;
-	
+
 	virtual void clear_patch(const Raul::Path& patch_path) = 0;
 };
 

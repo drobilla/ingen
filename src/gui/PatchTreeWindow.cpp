@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -29,7 +29,7 @@ using namespace Raul;
 
 namespace Ingen {
 namespace GUI {
-	
+
 
 PatchTreeWindow::PatchTreeWindow(BaseObjectType*                        cobject,
                                  const Glib::RefPtr<Gnome::Glade::Xml>& xml)
@@ -37,7 +37,7 @@ PatchTreeWindow::PatchTreeWindow(BaseObjectType*                        cobject,
 	, _enable_signal(true)
 {
 	xml->get_widget_derived("patches_treeview", _patches_treeview);
-	
+
 	_patch_treestore = Gtk::TreeStore::create(_patch_tree_columns);
 	_patches_treeview->set_window(this);
 	_patches_treeview->set_model(_patch_treestore);
@@ -53,16 +53,16 @@ PatchTreeWindow::PatchTreeWindow(BaseObjectType*                        cobject,
 	Gtk::CellRendererToggle* enabled_renderer = dynamic_cast<Gtk::CellRendererToggle*>(
 		_patches_treeview->get_column_cell_renderer(1));
 	enabled_renderer->property_activatable() = true;
-	
+
 	_patch_tree_selection = _patches_treeview->get_selection();
-	
+
 	//m_patch_tree_selection->signal_changed().connect(
-	//	sigc::mem_fun(this, &PatchTreeWindow::event_patch_selected));   
+	//	sigc::mem_fun(this, &PatchTreeWindow::event_patch_selected));
 	_patches_treeview->signal_row_activated().connect(
 		sigc::mem_fun(this, &PatchTreeWindow::event_patch_activated));
 	enabled_renderer->signal_toggled().connect(
 		sigc::mem_fun(this, &PatchTreeWindow::event_patch_enabled_toggled));
-	
+
 	_patches_treeview->columns_autosize();
 }
 
@@ -100,7 +100,7 @@ PatchTreeWindow::add_patch(SharedPtr<PatchModel> pm)
 	} else {
 		Gtk::TreeModel::Children children = _patch_treestore->children();
 		Gtk::TreeModel::iterator c = find_patch(children, pm->parent()->path());
-		
+
 		if (c != children.end()) {
 			Gtk::TreeModel::iterator iter = _patch_treestore->append(c->children());
 			Gtk::TreeModel::Row row = *iter;
@@ -181,7 +181,7 @@ PatchTreeWindow::event_patch_activated(const Gtk::TreeModel::Path& path, Gtk::Tr
 	Gtk::TreeModel::iterator active = _patch_treestore->get_iter(path);
 	Gtk::TreeModel::Row row = *active;
 	SharedPtr<PatchModel> pm = row[_patch_tree_columns.patch_model_col];
-	
+
 	App::instance().window_factory()->present_patch(pm);
 }
 
@@ -192,10 +192,10 @@ PatchTreeWindow::event_patch_enabled_toggled(const Glib::ustring& path_str)
 	Gtk::TreeModel::Path path(path_str);
 	Gtk::TreeModel::iterator active = _patch_treestore->get_iter(path);
 	Gtk::TreeModel::Row row = *active;
-	
+
 	SharedPtr<PatchModel> pm = row[_patch_tree_columns.patch_model_col];
 	assert(pm);
-	
+
 	if (_enable_signal)
 		App::instance().engine()->set_variable(pm->path(), "ingen:enabled", (bool)!pm->enabled());
 }
@@ -225,17 +225,17 @@ PatchTreeWindow::patch_renamed(const Path& old_path, const Path& new_path)
 
 	Gtk::TreeModel::iterator i
 		= find_patch(_patch_treestore->children(), old_path);
-	
+
 	if (i != _patch_treestore->children().end()) {
 		Gtk::TreeModel::Row row = *i;
 		row[_patch_tree_columns.name_col] = new_path.name();
 	} else {
 		cerr << "[PatchTreeWindow] Unable to find patch " << old_path << endl;
 	}
-	
+
 	_enable_signal = true;
 }
 
-	
+
 } // namespace GUI
 } // namespace Ingen

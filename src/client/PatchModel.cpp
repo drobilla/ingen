@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -39,7 +39,7 @@ PatchModel::add_child(SharedPtr<ObjectModel> c)
 		add_port(pm);
 		return;
 	}
-	
+
 	SharedPtr<NodeModel> nm = PtrCast<NodeModel>(c);
 	if (nm)
 		signal_new_node.emit(nm);
@@ -55,7 +55,7 @@ PatchModel::remove_child(SharedPtr<ObjectModel> o)
 	SharedPtr<PortModel> pm = PtrCast<PortModel>(o);
 	if (pm)
 		remove_port(pm);
-	
+
 	// Remove any connections which referred to this object,
 	// since they can't possibly exist anymore
 	for (Connections::iterator j = _connections->begin(); j != _connections->end() ; ) {
@@ -78,9 +78,9 @@ PatchModel::remove_child(SharedPtr<ObjectModel> o)
 	}
 
 	SharedPtr<NodeModel> nm = PtrCast<NodeModel>(o);
-	if (nm) 
+	if (nm)
 		signal_removed_node.emit(nm);
-		
+
 	return true;
 }
 
@@ -129,7 +129,7 @@ PatchModel::add_connection(SharedPtr<ConnectionModel> cm)
 	       || cm->src_port()->parent()->parent().get() == this);
 	assert(cm->dst_port()->parent().get() == this
 	       || cm->dst_port()->parent()->parent().get() == this);
-	
+
 	SharedPtr<ConnectionModel> existing = get_connection(cm->src_port_path(), cm->dst_port_path());
 
 	if (existing) {

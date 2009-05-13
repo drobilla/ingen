@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -24,7 +24,7 @@
 #include "raul/Path.hpp"
 #include "types.hpp"
 
-namespace Ingen {	
+namespace Ingen {
 
 class Engine;
 class Responder;
@@ -49,13 +49,13 @@ public:
 
 	/** Execute this event in the audio thread (MUST be realtime safe). */
 	virtual void execute(ProcessContext& context);
-	
+
 	/** Perform any actions after execution (ie send replies to commands)
 	 * (no realtime requirements). */
 	virtual void post_process();
-	
+
 	inline SampleCount time() const { return _time; }
-		
+
 protected:
 	Event(Engine& engine, SharedPtr<Responder> responder, FrameTime time)
 		: _engine(engine)
@@ -63,7 +63,7 @@ protected:
 		, _time(time)
 		, _executed(false)
 	{}
-	
+
 	Engine&              _engine;
 	SharedPtr<Responder> _responder;
 	FrameTime            _time;

@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -54,7 +54,7 @@ HTTPEngineReceiver::HTTPEngineReceiver(Engine& engine, uint16_t port)
 
 	cout << "Started HTTP server on port " << soup_server_get_port(_server) << endl;
 	Thread::set_name("HTTP Receiver");
-	
+
 	if (!engine.world()->serialisation_module)
 		engine.world()->serialisation_module = Ingen::Shared::load_module("ingen_serialisation");
 
@@ -62,7 +62,7 @@ HTTPEngineReceiver::HTTPEngineReceiver(Engine& engine, uint16_t port)
 		if (!engine.world()->serialiser)
 			engine.world()->serialiser = SharedPtr<Serialiser>(
 					Ingen::Serialisation::new_serialiser(engine.world(), engine.engine_store()));
-		
+
 		if (!engine.world()->parser)
 			engine.world()->parser = SharedPtr<Parser>(
 					Ingen::Serialisation::new_parser());
@@ -122,16 +122,16 @@ HTTPEngineReceiver::message_callback(SoupServer* server, SoupMessage* msg, const
 	if (path[path.length()-1] == '/') {
 		path = path.substr(0, path.length()-1);
 	}
-		
+
 	SharedPtr<Serialiser> serialiser = me->_engine.world()->serialiser;
 
 	const string base_uri = "";
 	const char* mime_type = "text/plain";
-	
+
 	if (!strcmp(msg->method, SOUP_METHOD_PUT)) {
 		cout << "PUT " << path << ":\n" << msg->request_body->data << endl;
 	}
-	
+
 	if (path == Path::root_uri || path == "") {
 		const string r = string("@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n")
 			.append("\n<> rdfs:seeAlso <plugins> ;")
@@ -145,7 +145,7 @@ HTTPEngineReceiver::message_callback(SoupServer* server, SoupMessage* msg, const
 		// FIXME: kludge
 		me->load_plugins();
 		me->_receive_thread->whip();
-		
+
 		serialiser->start_to_string("/", base_uri);
 		for (NodeFactory::Plugins::const_iterator p = me->_engine.node_factory()->plugins().begin();
 				p != me->_engine.node_factory()->plugins().end(); ++p)
@@ -156,7 +156,7 @@ HTTPEngineReceiver::message_callback(SoupServer* server, SoupMessage* msg, const
 		return;
 	} else if (path.substr(0, 6) == "/patch") {
 		path = '/' + path.substr(6);
-	
+
 	} else if (path.substr(0, 7) == "/stream") {
 		HTTPClientSender* client = new HTTPClientSender(me->_engine);
 		me->register_client(client);
@@ -168,7 +168,7 @@ HTTPEngineReceiver::message_callback(SoupServer* server, SoupMessage* msg, const
 		soup_message_set_status(msg, SOUP_STATUS_OK);
 		soup_message_set_response(msg, mime_type, SOUP_MEMORY_COPY, buf, strlen(buf));
 		return;
-		
+
 	} else {
 		soup_message_set_status(msg, SOUP_STATUS_NOT_FOUND);
 		soup_message_set_response(msg, "text/plain", SOUP_MEMORY_STATIC,
@@ -186,7 +186,7 @@ HTTPEngineReceiver::message_callback(SoupServer* server, SoupMessage* msg, const
 
 	if (msg->method == SOUP_METHOD_GET) {
 		Glib::RWLock::ReaderLock lock(store->lock());
-		
+
 		// Find object
 		Store::const_iterator start = store->find(path);
 		if (start == store->end()) {
@@ -196,7 +196,7 @@ HTTPEngineReceiver::message_callback(SoupServer* server, SoupMessage* msg, const
 					err.c_str(), err.length());
 			return;
 		}
-		
+
 		// Get serialiser
 		SharedPtr<Serialiser> serialiser = me->_engine.world()->serialiser;
 		if (!serialiser) {
@@ -217,24 +217,24 @@ HTTPEngineReceiver::message_callback(SoupServer* server, SoupMessage* msg, const
 		soup_message_set_status(msg, SOUP_STATUS_OK);
 		soup_message_set_response(msg, mime_type, SOUP_MEMORY_COPY,
 				response.c_str(), response.length());
-	
+
 	} else if (msg->method == SOUP_METHOD_PUT) {
 		Glib::RWLock::WriterLock lock(store->lock());
-		
+
 		// Be sure object doesn't exist
 		Store::const_iterator start = store->find(path);
 		if (start != store->end()) {
 			soup_message_set_status(msg, SOUP_STATUS_CONFLICT);
 			return;
 		}
-		
+
 		// Get parser
 		SharedPtr<Parser> parser = me->_engine.world()->parser;
 		if (!parser) {
 			soup_message_set_status(msg, SOUP_STATUS_INTERNAL_SERVER_ERROR);
 			return;
 		}
-		
+
 		//cout << "POST: " << msg->request_body->data << endl;
 
 		// Load object

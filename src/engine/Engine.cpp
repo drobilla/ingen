@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -27,7 +27,7 @@
 #include "module/World.hpp"
 #include "AudioDriver.hpp"
 #include "ClientBroadcaster.hpp"
-#include "Engine.hpp"	
+#include "Engine.hpp"
 #include "EngineStore.hpp"
 #include "Event.hpp"
 #include "MessageContext.hpp"
@@ -88,10 +88,10 @@ Engine::~Engine()
 	//delete _lash_driver;
 
 	delete _maid;
-	
+
 	munlockall();
 }
-	
+
 
 SharedPtr<EngineStore>
 Engine::engine_store() const
@@ -139,7 +139,7 @@ Engine::main()
 		main_iteration();
 	}
 	cout << "[Main] Done main loop." << endl;
-	
+
 	deactivate();
 
 	return 0;
@@ -155,7 +155,7 @@ Engine::main_iteration()
 {
 	_post_processor->process();
 	_maid->cleanup();
-	
+
 	return !_quit_flag;
 }
 
@@ -184,7 +184,7 @@ Engine::activate(size_t parallelism)
 
 	if (!_midi_driver)
 		_midi_driver = new DummyMidiDriver();
-	
+
 	for (EventSources::iterator i = _event_sources.begin(); i != _event_sources.end(); ++i)
 		(*i)->activate_source();
 
@@ -206,13 +206,13 @@ Engine::activate(size_t parallelism)
 	_process_slaves.reserve(parallelism);
 	for (size_t i=0; i < parallelism - 1; ++i)
 		_process_slaves.push_back(new ProcessSlave(*this, _audio_driver->is_realtime()));
-	
+
 	root_patch->enable();
-	
+
 	//_post_processor->start();
 
 	_activated = true;
-	
+
 	return true;
 }
 
@@ -222,7 +222,7 @@ Engine::deactivate()
 {
 	if (!_activated)
 		return;
-	
+
 	for (EventSources::iterator i = _event_sources.begin(); i != _event_sources.end(); ++i)
 		(*i)->deactivate_source();
 
@@ -230,18 +230,18 @@ Engine::deactivate()
 			i != _engine_store->objects().end(); ++i)
 		if ((*i)->as_node() != NULL && (*i)->as_node()->parent() == NULL)
 			(*i)->as_node()->deactivate();*/
-	
+
 	if (_midi_driver)
 		_midi_driver->deactivate();
 
 	_audio_driver->deactivate();
 
 	_audio_driver->root_patch()->deactivate();
-	
+
 	/*for (size_t i=0; i < _process_slaves.size(); ++i) {
 		delete _process_slaves[i];
 	}*/
-	
+
 	//_process_slaves.clear();
 
 	// Finalize any lingering events (unlikely)
@@ -249,10 +249,10 @@ Engine::deactivate()
 
 	//_audio_driver.reset();
 	//_event_sources.clear();
-	
+
 	_activated = false;
 }
-	
+
 
 void
 Engine::process_events(ProcessContext& context)

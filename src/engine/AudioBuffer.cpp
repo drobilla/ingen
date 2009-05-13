@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -68,13 +68,13 @@ AudioBuffer::resize(size_t size)
 	_size = size;
 
 	Sample* const old_data = _data;
-	
+
 	const bool using_local_data = (_data == _local_data);
 
 	deallocate();
 	alloc_local_data(_size * sizeof(Sample));
 	assert(_local_data);
-	
+
 	if (using_local_data)
 		_data = _local_data;
 	else
@@ -161,7 +161,7 @@ AudioBuffer::set_block(Sample val, size_t start_offset, size_t end_offset)
 {
 	assert(end_offset >= start_offset);
 	assert(end_offset < _size);
-	
+
 	Sample* const buf = data();
 	assert(buf);
 
@@ -179,7 +179,7 @@ AudioBuffer::scale(Sample val, size_t start_sample, size_t end_sample)
 {
 	assert(end_sample >= start_sample);
 	assert(end_sample < _size);
-	
+
 	Sample* const buf = data();
 	assert(buf);
 
@@ -199,10 +199,10 @@ AudioBuffer::copy(const Buffer* src, size_t start_sample, size_t end_sample)
 	assert(end_sample >= start_sample);
 	assert(src);
 	assert(src->type() == DataType::CONTROL || DataType::AUDIO);
-	
+
 	Sample* const buf = data();
 	assert(buf);
-	
+
 	const Sample* const src_buf = ((AudioBuffer*)src)->data();
 	assert(src_buf);
 
@@ -226,14 +226,14 @@ AudioBuffer::accumulate(const AudioBuffer* const src, size_t start_sample, size_
 
 	Sample* const buf = data();
 	assert(buf);
-	
+
 	const Sample* const src_buf = src->data();
 	assert(src_buf);
 
 	const size_t to_copy = std::min(end_sample, _size - 1);
 	for (size_t i = start_sample; i <= to_copy; ++i)
 		buf[i] += src_buf[i];
-	
+
 }
 
 
@@ -249,7 +249,7 @@ AudioBuffer::join(Buffer* buf)
 		return false;
 
 	assert(abuf->size() >= _size);
-	
+
 	_joined_buf = abuf;
 	_filled_size = abuf->filled_size();
 
@@ -258,7 +258,7 @@ AudioBuffer::join(Buffer* buf)
 	return true;
 }
 
-	
+
 void
 AudioBuffer::unjoin()
 {

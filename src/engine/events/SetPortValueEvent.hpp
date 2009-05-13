@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -28,7 +28,7 @@ class PortImpl;
 
 
 /** An event to change the value of a port.
- * 
+ *
  * This event can either be queued or immediate, depending on the queued
  * parameter passed to the constructor.  It must be passed to the appropriate
  * place (ie queued event passed to the event queue and non-queued event
@@ -45,7 +45,7 @@ public:
 	                  SampleCount          timestamp,
 	                  const Raul::Path&    port_path,
 	                  const Raul::Atom&    value);
-	
+
 	SetPortValueEvent(Engine&              engine,
 	                  SharedPtr<Responder> responder,
 	                  bool                 queued,
@@ -68,9 +68,9 @@ private:
 		ILLEGAL_VOICE,
 		TYPE_MISMATCH
 	};
-	
+
 	void apply(uint32_t start, uint32_t nframes);
-	
+
 	bool             _queued;
 	bool             _omni;
 	uint32_t         _voice_num;

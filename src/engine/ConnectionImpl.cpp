@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -29,7 +29,7 @@ using namespace Shared;
 
 /** Constructor for a connection from a node's output port.
  *
- * This handles both polyphonic and monophonic nodes, transparently to the 
+ * This handles both polyphonic and monophonic nodes, transparently to the
  * user (InputPort).
  */
 ConnectionImpl::ConnectionImpl(PortImpl* src_port, PortImpl* dst_port)
@@ -64,7 +64,7 @@ ConnectionImpl::~ConnectionImpl()
 {
 	delete _local_buffer;
 }
-	
+
 
 void
 ConnectionImpl::set_mode()
@@ -90,7 +90,7 @@ ConnectionImpl::set_buffer_size(size_t size)
 
 		_local_buffer = Buffer::create(_dst_port->type(), _dst_port->buffer(0)->size());
 	}
-	
+
 	_buffer_size = size;
 }
 
@@ -137,7 +137,7 @@ ConnectionImpl::apply_poly(Raul::Maid& maid, uint32_t poly)
 {
 	_src_port->apply_poly(maid, poly);
 	set_mode();
-	
+
 	/*cerr << "CONNECTION APPLY: " << src_port()->path() << " * " << src_port()->poly()
 			<< " -> " << dst_port()->path() << " * " << dst_port()->poly()
 			<< "\t\tmust mix: " << must_mix() << ", extend: " << must_extend()
@@ -167,7 +167,7 @@ ConnectionImpl::process(ProcessContext& context)
 	/*std::cerr << src_port()->path() << " * " << src_port()->poly()
 			<< " -> " << dst_port()->path() << " * " << dst_port()->poly()
 			<< "\t\tmode: " << (int)_mode << std::endl;*/
-	
+
 	if (_mode == COPY) {
 		assert(src_port()->poly() == dst_port()->poly());
 		const size_t copy_size = std::min(src_port()->buffer_size(), dst_port()->buffer_size());
@@ -178,7 +178,7 @@ ConnectionImpl::process(ProcessContext& context)
 
 		const AudioBuffer* const src_buffer = (AudioBuffer*)src_port()->buffer(0);
 		AudioBuffer*             mix_buf    = (AudioBuffer*)_local_buffer;
-		
+
 		assert(mix_buf);
 
 		const size_t copy_size = std::min(src_buffer->size(), mix_buf->size());
@@ -189,13 +189,13 @@ ConnectionImpl::process(ProcessContext& context)
 		// Write last value of src buffer to remainder of dst buffer, if necessary
 		if (copy_size < mix_buf->size())
 			mix_buf->set_block(src_buffer->value_at(copy_size-1), copy_size, mix_buf->size()-1);
-	
+
 		// Accumulate the source's voices into local buffer starting at the second
 		// voice (buffer is already set to first voice above)
 		for (uint32_t j=1; j < src_port()->poly(); ++j) {
 			mix_buf->accumulate((AudioBuffer*)src_port()->buffer(j), 0, copy_size-1);
 		}
-		
+
 		// Find the summed value and write it to the remainder of dst buffer
 		if (copy_size < mix_buf->size()) {
 			float src_value = src_buffer->value_at(copy_size-1);
@@ -208,7 +208,7 @@ ConnectionImpl::process(ProcessContext& context)
 		// Scale the buffer down.
 		if (src_port()->poly() > 1)
 			mix_buf->scale(1.0f/(float)src_port()->poly(), 0, mix_buf->size()-1);
-	
+
 	} else if (_mode == EXTEND) {
 		assert(type() == DataType::AUDIO || type() == DataType::CONTROL);
 		assert(src_port()->poly() == 1 || src_port()->poly() == dst_port()->poly());
@@ -216,7 +216,7 @@ ConnectionImpl::process(ProcessContext& context)
 		const uint32_t poly      = dst_port()->poly();
 		const uint32_t copy_size = std::min(src_port()->buffer(0)->size(),
 		                                    dst_port()->buffer(0)->size());
-		
+
 		for (uint32_t i = 0; i < poly; ++i) {
 			uint32_t     src_voice = std::min(i, src_port()->poly() - 1);
 			AudioBuffer* src_buf   = (AudioBuffer*)src_port()->buffer(src_voice);
@@ -224,7 +224,7 @@ ConnectionImpl::process(ProcessContext& context)
 
 			// Copy src to start of dst
 			dst_buf->copy(src_buf, 0, copy_size-1);
-		
+
 			// Write last value of src buffer to remainder of dst buffer, if necessary
 			if (copy_size < dst_buf->size())
 				dst_buf->set_block(src_buf->value_at(copy_size - 1), copy_size, dst_buf->size() - 1);

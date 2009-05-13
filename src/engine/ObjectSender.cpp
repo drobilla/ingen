@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -43,7 +43,7 @@ ObjectSender::send_object(ClientInterface* client, const GraphObjectImpl* object
 		send_patch(client, patch, recursive);
 		return;
 	}
-	
+
 	const NodeImpl* node = dynamic_cast<const NodeImpl*>(object);
 	if (node) {
 		send_node(client, node, recursive);
@@ -66,12 +66,12 @@ ObjectSender::send_patch(ClientInterface* client, const PatchImpl* patch, bool r
 
 	client->new_patch(patch->path(), patch->internal_polyphony());
 	client->set_variable(patch->path(), "ingen:polyphonic", bool(patch->polyphonic()));
-	
+
 	// Send variable
 	const GraphObjectImpl::Properties& data = patch->variables();
 	for (GraphObjectImpl::Properties::const_iterator j = data.begin(); j != data.end(); ++j)
 		client->set_variable(patch->path(), (*j).first, (*j).second);
-	
+
 	client->set_variable(patch->path(), "ingen:enabled", (bool)patch->enabled());
 
 	if (recursive) {
@@ -79,7 +79,7 @@ ObjectSender::send_patch(ClientInterface* client, const PatchImpl* patch, bool r
 		// Send nodes
 		for (Raul::List<NodeImpl*>::const_iterator j = patch->nodes().begin();
 				j != patch->nodes().end(); ++j) {
-			const NodeImpl* const node = (*j); 
+			const NodeImpl* const node = (*j);
 			send_node(client, node, true, false);
 		}
 
@@ -94,7 +94,7 @@ ObjectSender::send_patch(ClientInterface* client, const PatchImpl* patch, bool r
 				j != patch->connections().end(); ++j)
 			client->connect((*j)->src_port_path(), (*j)->dst_port_path());
 	}
-	
+
 	if (bundle)
 		client->transfer_end();
 }
@@ -115,29 +115,29 @@ ObjectSender::send_node(ClientInterface* client, const NodeImpl* node, bool recu
 		cerr << "Node " << node->path() << " plugin has no URI!  Not sending." << endl;
 		return;
 	}
-	
+
 	if (bundle)
 		client->transfer_begin();
-	
+
 	client->new_node(node->path(), node->plugin()->uri());
 	client->set_variable(node->path(), "ingen:polyphonic", bool(node->polyphonic()));
-	
+
 	// Send variables
 	const GraphObjectImpl::Properties& data = node->variables();
 	for (GraphObjectImpl::Properties::const_iterator j = data.begin(); j != data.end(); ++j)
 		client->set_variable(node->path(), (*j).first, (*j).second);
-	
+
 	// Send properties
 	const GraphObjectImpl::Properties& prop = node->properties();
 	for (GraphObjectImpl::Properties::const_iterator j = prop.begin(); j != prop.end(); ++j)
 		client->set_property(node->path(), (*j).first, (*j).second);
-	
+
 	if (recursive) {
 		// Send ports
 		for (size_t j=0; j < node->num_ports(); ++j)
 			send_port(client, node->port_impl(j), false);
 	}
-	
+
 	if (bundle)
 		client->transfer_end();
 }
@@ -147,7 +147,7 @@ void
 ObjectSender::send_port(ClientInterface* client, const PortImpl* port, bool bundle)
 {
 	assert(port);
-	
+
 	if (bundle)
 		client->bundle_begin();
 
@@ -155,24 +155,24 @@ ObjectSender::send_port(ClientInterface* client, const PortImpl* port, bool bund
 	PatchImpl* graph_parent = dynamic_cast<PatchImpl*>(port->parent_node());
 	if (graph_parent && graph_parent->internal_polyphony() > 1)
 		client->set_variable(port->path(), "ingen:polyphonic", bool(port->polyphonic()));
-	
+
 	// Send variable
 	const GraphObjectImpl::Properties& data = port->variables();
 	for (GraphObjectImpl::Properties::const_iterator j = data.begin(); j != data.end(); ++j)
 		client->set_variable(port->path(), (*j).first, (*j).second);
-	
+
 	// Send properties
 	const GraphObjectImpl::Properties& prop = port->properties();
 	for (GraphObjectImpl::Properties::const_iterator j = prop.begin(); j != prop.end(); ++j)
 		client->set_property(port->path(), (*j).first, (*j).second);
-	
+
 	// Send control value
 	if (port->type() == DataType::CONTROL) {
 		const Sample value = dynamic_cast<const AudioBuffer*>(port->buffer(0))->value_at(0);
 		//cerr << port->path() << " sending default value " << default_value << endl;
 		client->set_port_value(port->path(), value);
 	}
-	
+
 	if (bundle)
 		client->bundle_end();
 }

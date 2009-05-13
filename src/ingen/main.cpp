@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -180,14 +180,14 @@ main(int argc, char** argv)
 			cerr << "Unable to load engine module." << endl;
 		}
 	}
-	
+
 	/* Load client library */
 	if (args.load_given || args.gui_given) {
 		client_module = Ingen::Shared::load_module("ingen_client");
 		if (!client_module)
 			cerr << "Unable to load client module." << endl;
 	}
-				
+
 	/* If we don't have a local engine interface (for GUI), use network */
 	if (client_module && ! engine_interface) {
 		SharedPtr<Shared::EngineInterface> (*new_remote_interface)(const std::string&) = NULL;
@@ -200,7 +200,7 @@ main(int argc, char** argv)
 			return -1;
 		}
 	}
-	
+
 	/* Activate the engine, if we have one */
 	if (engine) {
 		Ingen::JackAudioDriver* (*new_driver)(
@@ -217,9 +217,9 @@ main(int argc, char** argv)
 
 		engine->activate(args.parallelism_arg);
 	}
-            
+
 	world->engine = engine_interface;
-	
+
 	void (*gui_run)() = NULL;
 
 	/* Load GUI */
@@ -247,7 +247,7 @@ main(int argc, char** argv)
 		boost::optional<Path>   data_path = Path("/");
 		boost::optional<Path>   parent;
 		boost::optional<Symbol> symbol;
-		
+
 		if (args.path_given) {
 			const Glib::ustring path = args.path_arg;
 			if (Path::is_valid(path)) {
@@ -266,15 +266,15 @@ main(int argc, char** argv)
 		bool found = false;
 		if (!world->serialisation_module)
 			world->serialisation_module = Ingen::Shared::load_module("ingen_serialisation");
-			
+
 		Serialisation::Parser* (*new_parser)() = NULL;
 
 		if (world->serialisation_module)
 			found = world->serialisation_module->get_symbol("new_parser", (void*&)new_parser);
-		
+
 		if (world->serialisation_module && found) {
 			SharedPtr<Serialisation::Parser> parser(new_parser());
-			
+
 			// Assumption:  Containing ':' means URI, otherwise filename
 			string uri = args.load_arg;
 			if (uri.find(':') == string::npos) {
@@ -293,7 +293,7 @@ main(int argc, char** argv)
 			return -1;
 		}
 	}
-	
+
 	/* Run GUI (if applicable) */
 	if (run_gui)
 		gui_run();
@@ -319,14 +319,14 @@ main(int argc, char** argv)
 #else
 		cerr << "This build of ingen does not support scripting." << endl;
 #endif
-	
+
 	/* Listen to OSC and do our own main thing. */
     } else if (engine && !run_gui) {
 		signal(SIGINT, catch_int);
 		signal(SIGTERM, catch_int);
 		engine->main();
 	}
-		
+
 	if (engine) {
 		engine->deactivate();
 		engine.reset();

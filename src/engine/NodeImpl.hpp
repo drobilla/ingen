@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -36,10 +36,10 @@ class MessageContext;
 
 
 /** A Node (or "module") in a Patch (which is also a Node).
- * 
+ *
  * A Node is a unit with input/output ports, a process() method, and some other
  * things.
- * 
+ *
  * This is a pure abstract base class for any Node, it contains no
  * implementation details/data whatsoever.  This is the interface you need to
  * implement to add a new Node type.
@@ -69,7 +69,7 @@ public:
 	 * \return true on success.
 	 */
 	virtual bool prepare_poly(uint32_t poly) = 0;
-	
+
 	/** Apply a new (external) polyphony value.
 	 *
 	 * Audio thread.
@@ -82,13 +82,13 @@ public:
 	/** Parallelism: Reset flags for start of a new cycle.
 	 */
 	virtual void reset_input_ready() = 0;
-	
+
 	/** Parallelism: Claim this node (to wait on its input).
 	 * Only one thread will ever take this lock on a particular Node.
 	 * \return true if lock was aquired, false otherwise
 	 */
 	virtual bool process_lock() = 0;
-	
+
 	/** Parallelism: Unclaim this node (let someone else wait on its input).
 	 * Only a thread which successfully called process_lock may call this.
 	 */
@@ -98,7 +98,7 @@ public:
 	 * Only a thread which successfully called process_lock may call this.
 	 */
 	virtual void wait_for_input(size_t num_providers) = 0;
-	
+
 	/** Parallelism: Signal that input is ready.  Realtime safe.
 	 * Calling this will wake up the thread which blocked on wait_for_input
 	 * if there is one, and otherwise cause it to return true the next call.
@@ -109,7 +109,7 @@ public:
 	/** Parallelism: Return the number of providers that have signalled.
 	 */
 	virtual unsigned n_inputs_ready() const = 0;
-	
+
 	/** Run the node for one instant in the message thread.
 	 */
 	virtual void message_process(MessageContext& context, uint32_t* ins, uint32_t* outs) = 0;
@@ -127,23 +127,23 @@ public:
 
 	virtual Shared::Port* port(uint32_t index) const = 0;
 	virtual PortImpl*     port_impl(uint32_t index) const = 0;
-	
+
 	/** Used by the process order finding algorithm (ie during connections) */
 	virtual bool traversed() const  = 0;
 	virtual void traversed(bool b)  = 0;
-	
+
 	/** Nodes that are connected to this Node's inputs.
 	 * (This Node depends on them)
 	 */
 	virtual Raul::List<NodeImpl*>* providers()                         = 0;
 	virtual void                   providers(Raul::List<NodeImpl*>* l) = 0;
-	
+
 	/** Nodes are are connected to this Node's outputs.
 	 * (They depend on this Node)
 	 */
 	virtual Raul::List<NodeImpl*>* dependants()                         = 0;
 	virtual void                   dependants(Raul::List<NodeImpl*>* l) = 0;
-	
+
 	/** The Patch this Node belongs to. */
 	virtual PatchImpl* parent_patch() const = 0;
 
@@ -151,7 +151,7 @@ public:
 	 * Not the best name - not all nodes come from plugins (ie Patch)
 	 */
 	virtual PluginImpl* plugin_impl() const = 0;
-	
+
 	/** Information about the Plugin this Node is an instance of.
 	 * Not the best name - not all nodes come from plugins (ie Patch)
 	 */

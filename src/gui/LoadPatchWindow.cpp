@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -46,7 +46,7 @@ LoadPatchWindow::LoadPatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gno
 	xml->get_widget("load_patch_poly_spinbutton", _poly_spinbutton);
 	xml->get_widget("load_patch_ok_button", _ok_button);
 	xml->get_widget("load_patch_cancel_button", _cancel_button);
-	
+
 	_poly_from_current_radio->signal_toggled().connect(
 			sigc::mem_fun(this, &LoadPatchWindow::poly_from_file_selected));
 	_poly_from_file_radio->signal_toggled().connect(
@@ -57,7 +57,7 @@ LoadPatchWindow::LoadPatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gno
 			sigc::mem_fun(this, &LoadPatchWindow::ok_clicked));
 	_cancel_button->signal_clicked().connect(
 			sigc::mem_fun(this, &LoadPatchWindow::cancel_clicked));
-	
+
 	_poly_from_current_radio->set_active(true);
 
 	Gtk::FileFilter filt;
@@ -132,10 +132,10 @@ LoadPatchWindow::ok_clicked()
 	// If unset load_patch will load value
 	optional<Path>   parent;
 	optional<Symbol> symbol;
-	
+
 	if (_poly_from_user_radio->get_active())
 		_initial_data.insert(make_pair("ingen:polyphony", _poly_spinbutton->get_value_as_int()));
-	
+
 	if (_replace)
 		App::instance().engine()->clear_patch(_patch->path());
 
@@ -146,10 +146,10 @@ LoadPatchWindow::ok_clicked()
 
 	_patch.reset();
 	hide();
-	
+
 	App::instance().loader()->load_patch(true, get_uri(), Path("/"),
 			parent, symbol, _initial_data);
-}			
+}
 
 
 void

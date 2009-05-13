@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -86,7 +86,7 @@ DisconnectionEvent::pre_process()
 		_src_port = _engine.engine_store()->find_port(_src_port_path);
 		_dst_port = _engine.engine_store()->find_port(_dst_port_path);
 	}
-	
+
 	if (_src_port == NULL || _dst_port == NULL) {
 		_error = PORT_NOT_FOUND;
 		QueuedEvent::pre_process();
@@ -109,18 +109,18 @@ DisconnectionEvent::pre_process()
 			_patch = dynamic_cast<PatchImpl*>(dst_node);
 		else
 			_patch = dynamic_cast<PatchImpl*>(src_node);
-	
+
 	// Connection from a patch input to a patch output (pass through)
 	} else if (src_node == dst_node && dynamic_cast<PatchImpl*>(src_node)) {
 		_patch = dynamic_cast<PatchImpl*>(src_node);
-	
+
 	// Normal connection between nodes with the same parent
 	} else {
 		_patch = src_node->parent_patch();
 	}
 
 	assert(_patch);
-	
+
 	if (!_patch->has_connection(_src_output_port, _dst_input_port)) {
 		_error = NOT_CONNECTED;
 		QueuedEvent::pre_process();
@@ -132,7 +132,7 @@ DisconnectionEvent::pre_process()
 		QueuedEvent::pre_process();
 		return;
 	}
-	
+
 	for (Raul::List<NodeImpl*>::iterator i = dst_node->providers()->begin(); i != dst_node->providers()->end(); ++i)
 		if ((*i) == src_node) {
 			delete dst_node->providers()->erase(i);
@@ -144,12 +144,12 @@ DisconnectionEvent::pre_process()
 			delete src_node->dependants()->erase(i);
 			break;
 		}
-			
+
 	_patch_connection = _patch->remove_connection(_src_port, _dst_port);
-	
+
 	if (_patch->enabled())
 		_compiled_patch = _patch->compile();
-	
+
 	QueuedEvent::pre_process();
 }
 
@@ -162,7 +162,7 @@ DisconnectionEvent::execute(ProcessContext& context)
 	if (_error == NO_ERROR) {
 		InputPort::Connections::Node* const port_connection
 			= _dst_input_port->remove_connection(_src_output_port);
-		
+
 		if (port_connection != NULL) {
 			assert(_patch_connection);
 
@@ -177,11 +177,11 @@ DisconnectionEvent::execute(ProcessContext& context)
 					<< " -> " << _patch_connection->elem()->dst_port_path() << endl;
 			}
 			assert(port_connection->elem() == _patch_connection->elem());
-			
+
 			// Destroy list node, which will drop reference to connection itself
 			_engine.maid()->push(port_connection);
 			_engine.maid()->push(_patch_connection);
-	
+
 			if (_patch->compiled_patch() != NULL)
 				_engine.maid()->push(_patch->compiled_patch());
 			_patch->compiled_patch(_compiled_patch);

@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -62,7 +62,7 @@ Serialiser::Serialiser(Shared::World& world, SharedPtr<Shared::Store> store)
 	, _world(*world.rdf_world)
 {
 }
-	
+
 
 void
 Serialiser::to_file(const Record& record)
@@ -133,7 +133,7 @@ Serialiser::write_bundle(const Record& record)
 	write_manifest(bundle_uri, records);
 }
 
-	
+
 string
 Serialiser::to_string(SharedPtr<GraphObject>         object,
 	                  const string&                  base_uri,
@@ -141,7 +141,7 @@ Serialiser::to_string(SharedPtr<GraphObject>         object,
 {
 	start_to_string(object->path(), base_uri);
 	serialise(object);
-	
+
 	Redland::Resource base_rdf_node(_model->world(), base_uri);
 	for (GraphObject::Properties::const_iterator v = extra_rdf.begin(); v != extra_rdf.end(); ++v) {
 		if (v->first.find(":") != string::npos) {
@@ -228,7 +228,7 @@ Serialiser::instance_rdf_node(const Path& path)
 {
 	assert(_model);
 	assert(path.is_child_of(_root_path));
-	
+
 	if (path == _root_path)
 		return Redland::Resource(_model->world(), _base_uri);
 	else
@@ -242,7 +242,7 @@ Serialiser::class_rdf_node(const Path& path)
 {
 	assert(_model);
 	assert(path.is_child_of(_root_path));
-	
+
 	if (path == _root_path)
 		return Redland::Resource(_model->world(), _base_uri);
 	else
@@ -269,14 +269,14 @@ Serialiser::serialise(SharedPtr<GraphObject> object) throw (std::logic_error)
 		}
 		return;
 	}
-	
+
 	SharedPtr<Shared::Node> node = PtrCast<Shared::Node>(object);
 	if (node) {
 		const Redland::Resource plugin_id(_model->world(), node->plugin()->uri().str());
 		serialise_node(node, plugin_id, instance_rdf_node(node->path()));
 		return;
 	}
-	
+
 	SharedPtr<Shared::Port> port = PtrCast<Shared::Port>(object);
 	if (port) {
 		serialise_port(port.get(), instance_rdf_node(port->path()));
@@ -292,10 +292,10 @@ void
 Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch, const Redland::Node& patch_id)
 {
 	assert(_model);
-	
+
 	_model->add_statement(patch_id, "rdf:type",
 			Redland::Resource(_model->world(), "ingen:Patch"));
-	
+
 	_model->add_statement(patch_id, "rdf:type",
 			Redland::Resource(_model->world(), "lv2:Plugin"));
 
@@ -316,7 +316,7 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch, const Redland::Node&
 
 	for (GraphObject::const_iterator n = _store->children_begin(patch);
 			n != _store->children_end(patch); ++n) {
-		
+
 		if (n->second->graph_parent() != patch.get())
 			continue;
 
@@ -337,13 +337,13 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch, const Redland::Node&
 	}
 
 	bool root = (patch->path() == _root_path);
-	
+
 	for (uint32_t i=0; i < patch->num_ports(); ++i) {
 		Port* p = patch->port(i);
 		const Redland::Node port_id = root
 			? instance_rdf_node(p->path())
 			: class_rdf_node(p->path());
-	
+
 		// Ensure lv2:name always exists so Patch is a valid LV2 plugin
 		if (p->properties().find("lv2:name") == p->properties().end())
 			p->set_property("lv2:name", Atom(Atom::STRING, p->symbol()));
@@ -368,7 +368,7 @@ Serialiser::serialise_plugin(const Shared::Plugin& plugin)
 
 	_model->add_statement(plugin_id, "rdf:type",
 		Redland::Resource(_model->world(), plugin.type_uri()));
-} 
+}
 
 
 void
@@ -381,7 +381,7 @@ Serialiser::serialise_node(SharedPtr<Shared::Node> node,
 			class_id);
 	_model->add_statement(node_id, "lv2:symbol",
 			Redland::Literal(_model->world(), node->path().name()));
-	
+
 	for (uint32_t i=0; i < node->num_ports(); ++i) {
 		Port* p = node->port(i);
 		const Redland::Node port_id = instance_rdf_node(p->path());
@@ -403,14 +403,14 @@ Serialiser::serialise_port(const Port* port, const Redland::Node& port_id)
 	else
 		_model->add_statement(port_id, "rdf:type",
 				Redland::Resource(_model->world(), "lv2:OutputPort"));
-	
+
 	_model->add_statement(port_id, "rdf:type",
 			Redland::Resource(_model->world(), port->type().uri()));
-	
+
 	if (dynamic_cast<Patch*>(port->graph_parent()))
 		_model->add_statement(port_id, "rdf:instanceOf",
 				class_rdf_node(port->path()));
-	
+
 	if (port->is_input() && port->type() == DataType::CONTROL)
 		_model->add_statement(port_id, "ingen:value",
 				AtomRDF::atom_to_node(_model->world(), Atom(port->value())));
@@ -429,13 +429,13 @@ Serialiser::serialise_port_class(const Port* port, const Redland::Node& port_id)
 	else
 		_model->add_statement(port_id, "rdf:type",
 				Redland::Resource(_model->world(), "lv2:OutputPort"));
-	
+
 	_model->add_statement(port_id, "rdf:type",
 			Redland::Resource(_model->world(), port->type().uri()));
-	
+
 	_model->add_statement(port_id, "lv2:index",
 			AtomRDF::atom_to_node(_model->world(), Atom((int)port->index())));
-	
+
 	if (!port->get_property("lv2:default").is_valid()) {
 		if (port->is_input()) {
 			if (port->value().is_valid()) {
@@ -486,7 +486,7 @@ Serialiser::serialise_properties(Redland::Node subject, const GraphObject::Prope
 		}
 	}
 }
-	
+
 
 void
 Serialiser::serialise_variables(Redland::Node subject, const GraphObject::Properties& variables)

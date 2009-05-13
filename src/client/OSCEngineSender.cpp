@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -108,27 +108,27 @@ OSCEngineSender::load_plugins()
 
 
 void
-OSCEngineSender::activate()    
+OSCEngineSender::activate()
 {
 	send("/ingen/activate", "i", next_id(), LO_ARGS_END);
 }
 
 
 void
-OSCEngineSender::deactivate()  
+OSCEngineSender::deactivate()
 {
 	send("/ingen/deactivate", "i", next_id(), LO_ARGS_END);
 }
 
 
 void
-OSCEngineSender::quit()        
+OSCEngineSender::quit()
 {
 	send("/ingen/quit", "i", next_id(), LO_ARGS_END);
 }
 
 
-		
+
 // Object commands
 
 
@@ -142,7 +142,7 @@ OSCEngineSender::new_object(const Shared::GraphObject* object)
 		new_patch(patch->path(), patch->internal_polyphony());
 		return true;
 	}
-	
+
 	const Node* node = dynamic_cast<const Node*>(object);
 	if (node) {
 		new_node(node->path(), node->plugin()->uri());
@@ -231,7 +231,7 @@ OSCEngineSender::clear_patch(const Path& patch_path)
 		LO_ARGS_END);
 }
 
-	
+
 void
 OSCEngineSender::connect(const Path& src_port_path,
                          const Path& dst_port_path)
@@ -334,7 +334,7 @@ OSCEngineSender::set_variable(const URI&  obj_path,
 	send_message("/ingen/set_variable", m);
 }
 
-	
+
 void
 OSCEngineSender::set_property(const URI&  obj_path,
                               const URI&  predicate,
@@ -389,7 +389,7 @@ OSCEngineSender::request_variable(const URI& object_path, const URI& key)
 		LO_ARGS_END);
 }
 
-	
+
 void
 OSCEngineSender::request_property(const URI& object_path, const URI& key)
 {

@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -40,10 +40,10 @@ PortPropertiesWindow::PortPropertiesWindow(BaseObjectType* cobject, const Glib::
 	xml->get_widget("port_properties_max_spinner", _max_spinner);
 	xml->get_widget("port_properties_cancel_button", _cancel_button);
 	xml->get_widget("port_properties_ok_button", _ok_button);
-	
+
 	_cancel_button->signal_clicked().connect(sigc::mem_fun(this,
 				&PortPropertiesWindow::cancel));
-	
+
 	_ok_button->signal_clicked().connect(sigc::mem_fun(this,
 				&PortPropertiesWindow::ok));
 }
@@ -56,7 +56,7 @@ void
 PortPropertiesWindow::present(SharedPtr<PortModel> pm)
 {
 	assert(pm);
-	
+
 	for (list<sigc::connection>::iterator i = _connections.begin(); i != _connections.end(); ++i)
 		(*i).disconnect();
 
@@ -65,7 +65,7 @@ PortPropertiesWindow::present(SharedPtr<PortModel> pm)
 	_port_model = pm;
 
 	set_title(pm->path().str() + " Properties");
-	
+
 	float min = 0.0f, max = 1.0f;
 	boost::shared_ptr<NodeModel> parent = PtrCast<NodeModel>(_port_model->parent());
 	if (parent)
@@ -77,11 +77,11 @@ PortPropertiesWindow::present(SharedPtr<PortModel> pm)
 	_min_spinner->set_value(min);
 	_connections.push_back(_min_spinner->signal_value_changed().connect(
 				sigc::mem_fun(*this, &PortPropertiesWindow::min_changed)));
-	
+
 	_max_spinner->set_value(max);
 	_connections.push_back(_max_spinner->signal_value_changed().connect(
 				sigc::mem_fun(*this, &PortPropertiesWindow::max_changed)));
-	
+
 	_connections.push_back(pm->signal_variable.connect(
 			sigc::mem_fun(this, &PortPropertiesWindow::variable_change)));
 
@@ -102,7 +102,7 @@ PortPropertiesWindow::variable_change(const URI& key, const Atom& value)
 		else if (key.str() == "lv2:maximum")
 			_max_spinner->set_value(value.get_float());
 	}
-	
+
 	//_enable_signal = true;
 }
 
@@ -113,7 +113,7 @@ PortPropertiesWindow::min_changed()
 	const float val = _port_model->value().get_float();
 	float       min = _min_spinner->get_value();
 	float       max = _max_spinner->get_value();
-	
+
 	if (min > val) {
 		_min_spinner->set_value(val);
 		return; // avoid recursion
@@ -135,7 +135,7 @@ PortPropertiesWindow::max_changed()
 	const float val = _port_model->value().get_float();
 	float       min = _min_spinner->get_value();
 	float       max = _max_spinner->get_value();
-	
+
 	if (max < val) {
 		_max_spinner->set_value(val);
 		return; // avoid recursion

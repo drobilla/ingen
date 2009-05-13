@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -84,7 +84,7 @@ PatchView::set_patch(SharedPtr<PatchModel> patch)
 	for (GraphObject::Properties::const_iterator i = patch->properties().begin();
 			i != patch->properties().end(); ++i)
 		property_changed(i->first, i->second);
-	
+
 	for (GraphObject::Properties::const_iterator i = patch->variables().begin();
 			i != patch->variables().end(); ++i)
 		variable_changed(i->first, i->second);
@@ -109,13 +109,13 @@ PatchView::set_patch(SharedPtr<PatchModel> patch)
 
 	_edit_mode_but->signal_toggled().connect(sigc::mem_fun(
 			*this, &PatchView::editable_toggled));
-	
+
 	_poly_spin->signal_value_changed().connect(
 			sigc::mem_fun(*this, &PatchView::poly_changed));
 
 	_canvas->signal_item_entered.connect(
 			sigc::mem_fun(*this, &PatchView::canvas_item_entered));
-	
+
 	_canvas->signal_item_left.connect(
 			sigc::mem_fun(*this, &PatchView::canvas_item_left));
 
@@ -133,7 +133,7 @@ SharedPtr<PatchView>
 PatchView::create(SharedPtr<PatchModel> patch)
 
 {
-	
+
 const Glib::RefPtr<Gnome::Glade::Xml>& xml = GladeFactory::new_glade_reference("patch_view_box");
 	PatchView* result = NULL;
 	xml->get_widget_derived("patch_view_box", result);
@@ -173,7 +173,7 @@ PatchView::canvas_item_entered(Gnome::Canvas::Item* item)
 	NodeModule* m = dynamic_cast<NodeModule*>(item);
 	if (m)
 		signal_object_entered.emit(m->node().get());
-	
+
 	Port* p = dynamic_cast<Port*>(item);
 	if (p)
 		signal_object_entered.emit(p->model().get());
@@ -188,7 +188,7 @@ PatchView::canvas_item_left(Gnome::Canvas::Item* item)
 		signal_object_left.emit(m->node().get());
 		return;
 	}
-	
+
 	Port* p = dynamic_cast<Port*>(item);
 	if (p)
 		signal_object_left.emit(p->model().get());

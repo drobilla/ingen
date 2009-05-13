@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -36,7 +36,7 @@ namespace Ingen {
 using namespace Shared;
 
 
-PatchImpl::PatchImpl(Engine& engine, const string& path, uint32_t poly, PatchImpl* parent, SampleRate srate, size_t buffer_size, uint32_t internal_poly) 
+PatchImpl::PatchImpl(Engine& engine, const string& path, uint32_t poly, PatchImpl* parent, SampleRate srate, size_t buffer_size, uint32_t internal_poly)
 	: NodeBase(new PatchPlugin("http://example.org/FIXME", "patch", "Ingen Patch"),
 		path, poly, parent, srate, buffer_size)
 	, _engine(engine)
@@ -51,7 +51,7 @@ PatchImpl::PatchImpl(Engine& engine, const string& path, uint32_t poly, PatchImp
 PatchImpl::~PatchImpl()
 {
 	assert(!_activated);
-	
+
 	delete _compiled_patch;
 }
 
@@ -63,7 +63,7 @@ PatchImpl::activate()
 
 	for (List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		(*i)->activate();
-	
+
 	assert(_activated);
 }
 
@@ -72,9 +72,9 @@ void
 PatchImpl::deactivate()
 {
 	if (_activated) {
-	
+
 		NodeBase::deactivate();
-	
+
 		for (List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
 			if ((*i)->activated())
 				(*i)->deactivate();
@@ -96,7 +96,7 @@ PatchImpl::disable()
 		(*i)->clear_buffers();
 }
 
-	
+
 bool
 PatchImpl::prepare_internal_poly(uint32_t poly)
 {
@@ -106,7 +106,7 @@ PatchImpl::prepare_internal_poly(uint32_t poly)
 
 	for (List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		(*i)->prepare_poly(poly);
-	
+
 	for (Connections::iterator i = _connections.begin(); i != _connections.end(); ++i)
 		((ConnectionImpl*)i->get())->prepare_poly(poly);
 
@@ -125,15 +125,15 @@ PatchImpl::apply_internal_poly(Raul::Maid& maid, uint32_t poly)
 
 	for (List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		(*i)->apply_poly(maid, poly);
-	
+
 	_internal_poly = poly;
-	
+
 	return true;
 }
 
 
 /** Run the patch for the specified number of frames.
- * 
+ *
  * Calls all Nodes in (roughly, if parallel) the order _compiled_patch specifies.
  */
 void
@@ -141,9 +141,9 @@ PatchImpl::process(ProcessContext& context)
 {
 	if (!_process)
 		return;
-	
+
 	NodeBase::pre_process(context);
-	
+
 	/*if (_ports)
 		for (size_t i=0; i < _ports->size(); ++i)
 			if (_ports->at(i)->is_input() && _ports->at(i)->type() == DataType::MIDI)
@@ -182,7 +182,7 @@ PatchImpl::process_parallel(ProcessContext& context)
 		for (size_t i=0; i < n_slaves; ++i)
 			_engine.process_slaves()[i]->whip(cp, i+1, context);
 	}
-	
+
 
 	/* Process ourself until everything is done
 	 * This is analogous to ProcessSlave::_whipped(), but this is the master
@@ -220,7 +220,7 @@ PatchImpl::process_parallel(ProcessContext& context)
 
 		index = (index + 1) % cp->size();
 	}
-	
+
 	/* Tell slaves we're done in case we beat them, and pray they're
 	 * really done by the start of next cycle.
 	 * FIXME: This probably breaks (race) at extremely small nframes where
@@ -230,7 +230,7 @@ PatchImpl::process_parallel(ProcessContext& context)
 		_engine.process_slaves()[i]->finish();
 }
 
-	
+
 void
 PatchImpl::process_single(ProcessContext& context)
 {
@@ -239,14 +239,14 @@ PatchImpl::process_single(ProcessContext& context)
 	for (size_t i=0; i < cp->size(); ++i)
 		(*cp)[i].node()->process(context);
 }
-	
+
 
 void
 PatchImpl::set_buffer_size(size_t size)
 {
 	NodeBase::set_buffer_size(size);
 	assert(_buffer_size == size);
-	
+
 	CompiledPatch* const cp = _compiled_patch;
 
 	for (size_t i=0; i < cp->size(); ++i)
@@ -268,7 +268,7 @@ PatchImpl::add_node(List<NodeImpl*>::Node* ln)
 	assert(ln->elem() != NULL);
 	assert(ln->elem()->parent_patch() == this);
 	//assert(ln->elem()->polyphony() == _internal_poly);
-	
+
 	_nodes.push_back(ln);
 }
 
@@ -283,7 +283,7 @@ PatchImpl::remove_node(const string& symbol)
 	for (List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		if ((*i)->symbol() == symbol)
 			return _nodes.erase(i);
-	
+
 	return NULL;
 }
 
@@ -311,7 +311,7 @@ PatchImpl::remove_connection(const PortImpl* src_port, const PortImpl* dst_port)
 
 	return connection;
 }
-	
+
 
 bool
 PatchImpl::has_connection(const PortImpl* src_port, const PortImpl* dst_port) const
@@ -416,10 +416,10 @@ PatchImpl::build_ports_array() const
 	Raul::Array<PortImpl*>* const result = new Raul::Array<PortImpl*>(_input_ports.size() + _output_ports.size());
 
 	size_t i = 0;
-	
+
 	for (List<PortImpl*>::const_iterator p = _input_ports.begin(); p != _input_ports.end(); ++p,++i)
 		result->at(i) = *p;
-	
+
 	for (List<PortImpl*>::const_iterator p = _output_ports.begin(); p != _output_ports.end(); ++p,++i)
 		result->at(i) = *p;
 
@@ -445,24 +445,24 @@ PatchImpl::compile() const
 	//cerr << "*********** Compiling " << path() << endl;
 
 	CompiledPatch* const compiled_patch = new CompiledPatch();//_nodes.size());
-	
+
 	for (Nodes::const_iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		(*i)->traversed(false);
-		
+
 	for (Nodes::const_iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
 		NodeImpl* const node = (*i);
 		// Either a sink or connected to our output ports:
 		if ( ( ! node->traversed()) && node->dependants()->size() == 0)
 			compile_recursive(node, compiled_patch);
 	}
-	
+
 	// Traverse any nodes we didn't hit yet
 	for (Nodes::const_iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
 		NodeImpl* const node = (*i);
 		if ( ! node->traversed())
 			compile_recursive(node, compiled_patch);
 	}
-	
+
 	/*cerr << "----------------------------------------\n";
 	for (size_t i=0; i < process_order->size(); ++i) {
 		assert(process_order->at(i));

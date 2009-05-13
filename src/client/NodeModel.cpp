@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -109,7 +109,7 @@ void
 NodeModel::add_child(SharedPtr<ObjectModel> c)
 {
 	assert(c->parent().get() == this);
-	
+
 	//ObjectModel::add_child(c);
 
 	SharedPtr<PortModel> pm = PtrCast<PortModel>(c);
@@ -123,7 +123,7 @@ NodeModel::remove_child(SharedPtr<ObjectModel> c)
 {
 	assert(c->path().is_child_of(_path));
 	assert(c->parent().get() == this);
-	
+
 	//bool ret = ObjectModel::remove_child(c);
 
 	SharedPtr<PortModel> pm = PtrCast<PortModel>(c);
@@ -143,7 +143,7 @@ NodeModel::add_port(SharedPtr<PortModel> pm)
 	assert(pm->parent().get() == this);
 
 	Ports::iterator existing = find(_ports.begin(), _ports.end(), pm);
-	
+
 	// Store should have handled this by merging the two
 	assert(existing == _ports.end());
 
@@ -161,7 +161,7 @@ NodeModel::get_port(const string& port_name) const
 			return (*i);
 	return SharedPtr<PortModel>();
 }
-	
+
 
 Shared::Port*
 NodeModel::port(uint32_t index) const
@@ -175,7 +175,7 @@ void
 NodeModel::port_value_range(SharedPtr<PortModel> port, float& min, float& max) const
 {
 	assert(port->parent().get() == this);
-	
+
 #ifdef HAVE_SLV2
 	// Plugin value first
 	if (_plugin && _plugin->type() == PluginModel::LV2) {
@@ -187,7 +187,7 @@ NodeModel::port_value_range(SharedPtr<PortModel> port, float& min, float& max) c
 			_num_values = slv2_plugin_get_num_ports(_plugin->slv2_plugin());
 			_min_values = new float[_num_values];
 			_max_values = new float[_num_values];
-			slv2_plugin_get_port_ranges_float(_plugin->slv2_plugin(), 
+			slv2_plugin_get_port_ranges_float(_plugin->slv2_plugin(),
 					_min_values, _max_values, 0);
 		}
 
@@ -210,7 +210,7 @@ NodeModel::port_value_range(SharedPtr<PortModel> port, float& min, float& max) c
 		max = min + 1.0;
 }
 
-	
+
 void
 NodeModel::set(SharedPtr<ObjectModel> model)
 {

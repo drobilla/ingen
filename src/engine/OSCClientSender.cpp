@@ -1,15 +1,15 @@
 /* This file is part of Ingen.
  * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- * 
+ *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -80,7 +80,7 @@ OSCClientSender::response_ok(int32_t id)
 			<< lo_address_errstr(_address) << ")" << endl;
 	}
 }
-	
+
 
 /** \page client_osc_namespace
  * <p> \b /ingen/response - Respond to a user command
@@ -318,7 +318,7 @@ OSCClientSender::new_object(const Shared::GraphObject* object)
 		new_patch(patch->path(), patch->internal_polyphony());
 		return true;
 	}
-	
+
 	const Node* node = dynamic_cast<const Node*>(object);
 	if (node) {
 		new_node(node->path(), node->plugin()->uri());
@@ -365,7 +365,7 @@ OSCClientSender::rename(const Path& old_path, const Path& new_path)
 void
 OSCClientSender::program_add(const Path& node_path, uint32_t bank, uint32_t program, const std::string& name)
 {
-	send("/ingen/program_add", "siis", 
+	send("/ingen/program_add", "siis",
 		node_path.c_str(), bank, program, name.c_str(), LO_ARGS_END);
 }
 
@@ -373,7 +373,7 @@ OSCClientSender::program_add(const Path& node_path, uint32_t bank, uint32_t prog
 void
 OSCClientSender::program_remove(const Path& node_path, uint32_t bank, uint32_t program)
 {
-	send("/ingen/program_remove", "sii", 
+	send("/ingen/program_remove", "sii",
 		node_path.c_str(), bank, program, LO_ARGS_END);
 }
 
