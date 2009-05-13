@@ -138,8 +138,6 @@ HTTPClientReceiver::message_callback(SoupSession* session, SoupMessage* msg, voi
 	const string path = soup_message_get_uri(msg)->path;
 	if (path == Path::root_uri) {
 		me->_target->response_ok(0);
-		me->_target->enable();
-
 	
 	} else if (path == "/plugins") {
 		if (msg->response_body->data == NULL) {
@@ -147,7 +145,6 @@ HTTPClientReceiver::message_callback(SoupSession* session, SoupMessage* msg, voi
 		} else {
 			Glib::Mutex::Lock lock(me->_mutex);
 			me->_target->response_ok(0);
-			me->_target->enable();
 			me->_parser->parse_string(me->_world, me->_target.get(),
 					Glib::ustring(msg->response_body->data),
 					Glib::ustring("."));
@@ -159,7 +156,6 @@ HTTPClientReceiver::message_callback(SoupSession* session, SoupMessage* msg, voi
 		} else {
 			Glib::Mutex::Lock lock(me->_mutex);
 			me->_target->response_ok(0);
-			me->_target->enable();
 			me->_parser->parse_string(me->_world, me->_target.get(),
 					Glib::ustring(msg->response_body->data),
 					Glib::ustring("/patch/"));

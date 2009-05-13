@@ -44,15 +44,6 @@ public:
 	virtual void response_ok(int32_t id) = 0;
 	virtual void response_error(int32_t id, const std::string& msg) = 0;
 
-	virtual bool enabled() const = 0;
-	
-	virtual void enable() = 0;
-	
-	/** Signifies the client does not wish to receive any messages until
-	 * enable is called.  Useful for performance and avoiding feedback.
-	 */
-	virtual void disable() = 0;
-
 	/** Transfers are 'weak' bundles.  These are used to break a large group
 	 * of similar/related messages into larger chunks (solely for communication
 	 * efficiency).  A bunch of messages in a transfer will arrive as 1 or more
