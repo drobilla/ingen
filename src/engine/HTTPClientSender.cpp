@@ -212,20 +212,4 @@ HTTPClientSender::rename(const Raul::Path& old_path, const Raul::Path& new_path)
 }
 
 
-void
-HTTPClientSender::program_add(const Raul::Path& node_path, uint32_t bank, uint32_t program, const std::string& name)
-{
-	/*send("/ingen/program_add", "siis",
-		node_path.c_str(), bank, program, name.c_str(), LO_ARGS_END);*/
-}
-
-
-void
-HTTPClientSender::program_remove(const Raul::Path& node_path, uint32_t bank, uint32_t program)
-{
-	/*send("/ingen/program_remove", "sii",
-		node_path.c_str(), bank, program, LO_ARGS_END);*/
-}
-
-
 } // namespace Ingen

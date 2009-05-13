@@ -77,13 +77,4 @@ public:
 	                             uint32_t           voice,
 	                             uint32_t           data_size,
 	                             const void*        data) {}
-
-	virtual void program_add(const std::string& node_path,
-	                         uint32_t           bank,
-	                         uint32_t           program,
-	                         const std::string& program_name)  {}
-
-	virtual void program_remove(const std::string& node_path,
-	                            uint32_t           bank,
-	                            uint32_t           program)  {}
 };

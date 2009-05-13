@@ -121,10 +121,6 @@ public:
 	                             uint32_t          voice,
 	                             const Raul::Atom& value);
 
-	virtual void set_program(const Raul::Path& node_path,
-	                         uint32_t          bank,
-	                         uint32_t          program);
-
 	virtual void midi_learn(const Raul::Path& node_path);
 
 

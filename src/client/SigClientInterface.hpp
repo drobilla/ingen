@@ -67,8 +67,6 @@ public:
 	sigc::signal<void, Raul::Path, Raul::Atom>                      signal_port_value;
 	sigc::signal<void, Raul::Path, uint32_t, Raul::Atom>            signal_voice_value;
 	sigc::signal<void, Raul::Path>                                  signal_activity;
-	sigc::signal<void, Raul::Path, uint32_t, uint32_t, std::string> signal_program_add;
-	sigc::signal<void, Raul::Path, uint32_t, uint32_t>              signal_program_remove;
 
 	/** Fire pending signals.  Only does anything on derived classes (that may queue) */
 	virtual bool emit_signals() { return false; }
@@ -144,12 +142,6 @@ protected:
 
 	void activity(const Raul::Path& port_path)
 		{ if (_enabled) signal_activity.emit(port_path); }
-
-	void program_add(const Raul::Path& path, uint32_t bank, uint32_t program, const std::string& name)
-		{ if (_enabled) signal_program_add.emit(path, bank, program, name); }
-
-	void program_remove(const Raul::Path& path, uint32_t bank, uint32_t program)
-		{ if (_enabled) signal_program_remove.emit(path, bank, program); }
 };
 
 

@@ -247,15 +247,6 @@ QueuedEngineInterface::set_voice_value(const Path&       port_path,
 
 
 void
-QueuedEngineInterface::set_program(const Path& node_path,
-                                   uint32_t    bank,
-                                   uint32_t    program)
-{
-	std::cerr << "FIXME: set program" << std::endl;
-}
-
-
-void
 QueuedEngineInterface::midi_learn(const Path& node_path)
 {
 	push_queued(new MidiLearnEvent(_engine, _responder, now(), node_path));

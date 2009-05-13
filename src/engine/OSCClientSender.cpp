@@ -360,22 +360,4 @@ OSCClientSender::rename(const Path& old_path, const Path& new_path)
 }
 
 
-/** Sends information about a program associated with a node.
- */
-void
-OSCClientSender::program_add(const Path& node_path, uint32_t bank, uint32_t program, const std::string& name)
-{
-	send("/ingen/program_add", "siis",
-		node_path.c_str(), bank, program, name.c_str(), LO_ARGS_END);
-}
-
-
-void
-OSCClientSender::program_remove(const Path& node_path, uint32_t bank, uint32_t program)
-{
-	send("/ingen/program_remove", "sii",
-		node_path.c_str(), bank, program, LO_ARGS_END);
-}
-
-
 } // namespace Ingen

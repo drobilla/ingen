@@ -208,22 +208,6 @@ ClientBroadcaster::send_activity(const Path& path)
 }
 
 
-void
-ClientBroadcaster::send_program_add(const Path& node_path, int bank, int program, const string& name)
-{
-	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
-		(*i).second->program_add(node_path, bank, program, name);
-}
-
-
-void
-ClientBroadcaster::send_program_remove(const Path& node_path, int bank, int program)
-{
-	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
-		(*i).second->program_remove(node_path, bank, program);
-}
-
-
 /** Send an object.
  *
  * @param recursive If true send all children of object

@@ -73,8 +73,6 @@ public:
 	void send_property_change(const Raul::URI& node_path, const Raul::URI& key, const Raul::Atom& value);
 	void send_port_value(const Raul::Path& port_path, const Raul::Atom& value);
 	void send_activity(const Raul::Path& path);
-	void send_program_add(const Raul::Path& node_path, int bank, int program, const std::string& name);
-	void send_program_remove(const Raul::Path& node_path, int bank, int program);
 
 	void send_plugins_to(Shared::ClientInterface*, const NodeFactory::Plugins& plugin_list);
 

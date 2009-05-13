@@ -119,15 +119,6 @@ public:
 
 	virtual void activity(const Raul::Path& path);
 
-	virtual void program_add(const Raul::Path&  node_path,
-	                         uint32_t           bank,
-	                         uint32_t           program,
-	                         const std::string& program_name);
-
-	virtual void program_remove(const Raul::Path& node_path,
-	                            uint32_t          bank,
-	                            uint32_t          program);
-
 private:
 	Engine&     _engine;
 	std::string _url;

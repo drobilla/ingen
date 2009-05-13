@@ -299,19 +299,6 @@ OSCEngineSender::set_voice_value(const Path& port_path,
 
 
 void
-OSCEngineSender::set_program(const Path& node_path,
-                             uint32_t    bank,
-                             uint32_t    program)
-{
-	send((string("/dssi") + node_path.str() + "/program").c_str(),
-			"ii",
-			bank,
-			program,
-			LO_ARGS_END);
-}
-
-
-void
 OSCEngineSender::midi_learn(const Path& node_path)
 {
 	send("/ingen/midi_learn", "is",

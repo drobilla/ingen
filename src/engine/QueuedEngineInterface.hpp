@@ -116,10 +116,6 @@ public:
 	virtual void disconnect_all(const Raul::Path& parent_patch_path,
 	                            const Raul::Path& path);
 
-	virtual void set_program(const Raul::Path& node_path,
-	                         uint32_t          bank,
-	                         uint32_t          program);
-
 	virtual void midi_learn(const Raul::Path& node_path);
 
 	// Requests //

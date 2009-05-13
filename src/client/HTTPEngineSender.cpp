@@ -195,14 +195,6 @@ HTTPEngineSender::set_voice_value(const Path& port_path,
 
 
 void
-HTTPEngineSender::set_program(const Path& node_path,
-                              uint32_t    bank,
-                              uint32_t    program)
-{
-}
-
-
-void
 HTTPEngineSender::midi_learn(const Path& node_path)
 {
 }

@@ -59,15 +59,6 @@ public:
 	                        const Raul::Symbol& symbol) = 0;
 
 	virtual void activity(const Raul::Path& path) = 0;
-
-	virtual void program_add(const Raul::Path&  node_path,
-	                         uint32_t           bank,
-	                         uint32_t           program,
-	                         const std::string& program_name) = 0;
-
-	virtual void program_remove(const Raul::Path& node_path,
-	                            uint32_t          bank,
-	                            uint32_t          program) = 0;
 };
 
 

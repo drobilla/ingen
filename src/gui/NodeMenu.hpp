@@ -39,9 +39,6 @@ class NodeMenu : public ObjectMenu
 public:
 	NodeMenu(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml);
 
-	virtual void program_add(int bank, int program, const std::string& name) {}
-	virtual void program_remove(int bank, int program) {}
-
 	void init(SharedPtr<NodeModel> node);
 
 	bool has_control_inputs();

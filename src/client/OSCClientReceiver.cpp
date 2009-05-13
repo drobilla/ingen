@@ -156,8 +156,6 @@ OSCClientReceiver::setup_callbacks()
 	lo_server_thread_add_method(_st, "/ingen/set_port_value", "sf", set_port_value_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/set_voice_value", "sif", set_voice_value_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/activity", "s", activity_cb, this);
-	lo_server_thread_add_method(_st, "/ingen/program_add", "siis", program_add_cb, this);
-	lo_server_thread_add_method(_st, "/ingen/program_remove", "sii", program_remove_cb, this);
 }
 
 
@@ -358,33 +356,6 @@ OSCClientReceiver::_plugin_cb(const char* path, const char* types, lo_arg** argv
 {
 	assert(argc == 3 && !strcmp(types, "sss"));
 	_target->new_plugin(&argv[0]->s, &argv[1]->s, &argv[2]->s); // uri, type, symbol
-
-	return 0;
-}
-
-
-int
-OSCClientReceiver::_program_add_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
-{
-	const char* node_path  = &argv[0]->s;
-	int32_t     bank       =  argv[1]->i;
-	int32_t     program    =  argv[2]->i;
-	const char* name       = &argv[3]->s;
-
-	_target->program_add(node_path, bank, program, name);
-
-	return 0;
-}
-
-
-int
-OSCClientReceiver::_program_remove_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
-{
-	const char* node_path  = &argv[0]->s;
-	int32_t     bank       =  argv[1]->i;
-	int32_t     program    =  argv[2]->i;
-
-	_target->program_remove(node_path, bank, program);
 
 	return 0;
 }
