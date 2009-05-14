@@ -240,6 +240,8 @@ PatchCanvas::build_plugin_menu()
 	for (unsigned i=0; i < slv2_plugin_classes_size(classes); ++i) {
 		SLV2PluginClass c = slv2_plugin_classes_get_at(classes, i);
 		SLV2Value       p = slv2_plugin_class_get_parent_uri(c);
+		if (!p)
+			p = slv2_plugin_class_get_uri(lv2_plugin);
 		children.insert(make_pair(slv2_value_as_string(p), c));
 	}
 	build_plugin_class_menu(_plugin_menu, lv2_plugin, classes, children);
