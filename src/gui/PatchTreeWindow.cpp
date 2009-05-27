@@ -111,8 +111,8 @@ PatchTreeWindow::add_patch(SharedPtr<PatchModel> pm)
 		}
 	}
 
-	pm->signal_variable.connect(sigc::bind(
-			sigc::mem_fun(this, &PatchTreeWindow::patch_variable_changed),
+	pm->signal_property.connect(sigc::bind(
+			sigc::mem_fun(this, &PatchTreeWindow::patch_property_changed),
 			pm->path()));
 
 	pm->signal_destroyed.connect(sigc::bind(
@@ -197,12 +197,12 @@ PatchTreeWindow::event_patch_enabled_toggled(const Glib::ustring& path_str)
 	assert(pm);
 
 	if (_enable_signal)
-		App::instance().engine()->set_variable(pm->path(), "ingen:enabled", (bool)!pm->enabled());
+		App::instance().engine()->set_property(pm->path(), "ingen:enabled", (bool)!pm->enabled());
 }
 
 
 void
-PatchTreeWindow::patch_variable_changed(const URI& key, const Atom& value, const Path& path)
+PatchTreeWindow::patch_property_changed(const URI& key, const Atom& value, const Path& path)
 {
 	_enable_signal = false;
 	if (key.str() == "ingen:enabled" && value.type() == Atom::BOOL) {

@@ -45,7 +45,7 @@ public:
 	/** End (and send) an atomic bundle */
 	virtual void bundle_end() = 0;
 
-	virtual void put(const Raul::Path&           path,
+	virtual void put(const Raul::URI&            uri,
 	                 const Resource::Properties& properties) = 0;
 
 	virtual void move(const Raul::Path& old_path,
@@ -59,11 +59,7 @@ public:
 	virtual void disconnect(const Raul::Path& src_port_path,
 	                        const Raul::Path& dst_port_path) = 0;
 
-	virtual void set_variable(const Raul::URI&  subject_path,
-	                          const Raul::URI&  predicate,
-	                          const Raul::Atom& value) = 0;
-
-	virtual void set_property(const Raul::URI&  subject_path,
+	virtual void set_property(const Raul::URI&  subject,
 	                          const Raul::URI&  predicate,
 	                          const Raul::Atom& value) = 0;
 

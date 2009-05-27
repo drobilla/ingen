@@ -93,16 +93,12 @@ Builder::connect(SharedPtr<const GraphObject> object)
 void
 Builder::build_object(SharedPtr<const GraphObject> object)
 {
-	for (GraphObject::Properties::const_iterator i = object->variables().begin();
-			i != object->variables().end(); ++i)
-		_interface.set_variable(object->path(), i->first, i->second);
-
-	for (GraphObject::Properties::const_iterator i = object->properties().begin();
-			i != object->properties().end(); ++i) {
-		if (object->path().is_root())
-			continue;
+	typedef GraphObject::Properties::const_iterator iterator;
+	iterator i = object->meta().properties().begin();
+	for (; i != object->meta().properties().end(); ++i)
+		_interface.set_property(object->meta().uri(), i->first, i->second);
+	for (i = object->properties().begin(); i != object->properties().end(); ++i)
 		_interface.set_property(object->path(), i->first, i->second);
-	}
 }
 
 

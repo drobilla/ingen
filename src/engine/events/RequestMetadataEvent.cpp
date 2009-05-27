@@ -37,7 +37,7 @@ using namespace Shared;
 RequestMetadataEvent::RequestMetadataEvent(Engine&              engine,
 	                                       SharedPtr<Responder> responder,
 	                                       SampleCount          timestamp,
-	                                       bool                 is_property,
+	                                       bool                 is_meta,
 	                                       const URI&           subject,
 	                                       const URI&           key)
 	: QueuedEvent(engine, responder, timestamp)
@@ -46,7 +46,7 @@ RequestMetadataEvent::RequestMetadataEvent(Engine&              engine,
 	, _uri(subject)
 	, _key(key)
 	, _resource(0)
-	, _is_property(is_property)
+	, _is_meta(is_meta)
 {
 }
 
@@ -67,12 +67,17 @@ RequestMetadataEvent::pre_process()
 		}
 	}
 
-	if (_key.str() == "ingen:value")
-		_special_type = PORT_VALUE;
-	else if (!is_object || _is_property)
+	GraphObjectImpl* obj = dynamic_cast<GraphObjectImpl*>(_resource);
+	if (obj) {
+		if (_key.str() == "ingen:value")
+			_special_type = PORT_VALUE;
+		else if (_is_meta)
+			_value = obj->meta().get_property(_key);
+		else
+			_value = obj->get_property(_key);
+	} else {
 		_value = _resource->get_property(_key);
-	else
-		_value = dynamic_cast<GraphObjectImpl*>(_resource)->get_variable(_key);
+	}
 
 	QueuedEvent::pre_process();
 }
@@ -111,7 +116,7 @@ RequestMetadataEvent::post_process()
 			_responder->respond_error(msg);
 		} else {
 			_responder->respond_ok();
-			_responder->client()->set_variable(_uri, _key, _value);
+			_responder->client()->set_property(_uri, _key, _value);
 		}
 	} else {
 		_responder->respond_error("Unknown client");

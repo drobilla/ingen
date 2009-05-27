@@ -89,7 +89,7 @@ CreateNodeEvent::pre_process()
 	if (_patch && plugin) {
 
 		_node = plugin->instantiate(_path.name(), _polyphonic, _patch, _engine);
-		_node->variables().insert(_properties.begin(), _properties.end());
+		_node->properties().insert(_properties.begin(), _properties.end());
 
 		if (_node != NULL) {
 			_node->activate();

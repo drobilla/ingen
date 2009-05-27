@@ -25,6 +25,13 @@ namespace Ingen {
 namespace Shared {
 
 
+const Raul::URI
+ResourceImpl::meta_uri(const Raul::URI& base, const Raul::URI& uri)
+{
+	return string("#") + uri.chop_start("/");
+}
+
+
 void
 ResourceImpl::add_property(const Raul::URI& uri, const Raul::Atom& value)
 {

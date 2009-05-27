@@ -143,10 +143,10 @@ ClashAvoider::exists(const Raul::Path& path) const
 
 
 void
-ClashAvoider::put(const Raul::Path&                   path,
+ClashAvoider::put(const Raul::URI&                    path,
                   const Shared::Resource::Properties& properties)
 {
-	_target.put(map_path(path), properties);
+	_target.put(map_uri(path), properties);
 }
 
 
@@ -175,20 +175,11 @@ ClashAvoider::disconnect(const Raul::Path& src_port_path,
 
 
 void
-ClashAvoider::set_variable(const Raul::URI&  subject_path,
+ClashAvoider::set_property(const Raul::URI&  subject,
                            const Raul::URI&  predicate,
                            const Raul::Atom& value)
 {
-	_target.set_variable(map_uri(subject_path), predicate, value);
-}
-
-
-void
-ClashAvoider::set_property(const Raul::URI&  subject_path,
-                           const Raul::URI&  predicate,
-                           const Raul::Atom& value)
-{
-	_target.set_property(map_uri(subject_path), predicate, value);
+	_target.set_property(map_uri(subject), predicate, value);
 }
 
 

@@ -49,15 +49,17 @@ class GraphObjectImpl : virtual public Ingen::Shared::GraphObject
 public:
 	virtual ~GraphObjectImpl() {}
 
+	const Raul::URI    meta_uri() const { return _meta.uri(); }
+	const Raul::URI    uri()      const { return path(); }
+	const Raul::Symbol symbol()   const { return _name; }
+
 	bool         polyphonic() const                       { return _polyphonic; }
 	virtual bool set_polyphonic(Raul::Maid& maid, bool p) { _polyphonic = p; return true; }
 
-	GraphObject* graph_parent() const { return _parent; }
-
-	const Raul::URI uri() const { return path(); }
-
-	inline GraphObjectImpl* parent() const { return _parent; }
-	const Raul::Symbol      symbol() const { return _name; }
+	GraphObject*     graph_parent() const { return _parent; }
+	GraphObjectImpl* parent()       const { return _parent; }
+	Resource&        meta()               { return _meta; }
+	const Resource&  meta()         const { return _meta; }
 
 	virtual void process(ProcessContext& context) = 0;
 
@@ -68,18 +70,16 @@ public:
 		assert(_name.find("/") == std::string::npos);
 	}
 
-	const Raul::Atom& get_variable(const Raul::URI& key);
-	void              set_variable(const Raul::URI& key, const Raul::Atom& value);
-
-	const Properties&  variables()  const { return _variables; }
-	Properties&        variables()        { return _variables; }
+	const Raul::Atom& get_property(const Raul::URI& key) const;
+	void              add_meta_property(const Raul::URI& key, const Raul::Atom& value);
+	void              set_meta_property(const Raul::URI& key, const Raul::Atom& value);
 
 	/** The Patch this object is a child of. */
 	virtual PatchImpl* parent_patch() const;
 
 	/** Raul::Path is dynamically generated from parent to ease renaming */
 	const Raul::Path path() const {
-		if (_parent == NULL)
+		if (!_parent)
 			return Raul::Path(std::string("/").append(_name));
 		else if (_parent->path().is_root())
 			return Raul::Path(std::string("/").append(_name));
@@ -90,22 +90,12 @@ public:
 	SharedPtr<GraphObject> find_child(const std::string& name) const;
 
 protected:
-	GraphObjectImpl(GraphObjectImpl* parent, const std::string& name, bool polyphonic=false)
-		: ResourceImpl((parent ? parent->path().base() : Raul::Path::root_uri) + name)
-		, _parent(parent)
-		, _name(name)
-		, _polyphonic(polyphonic)
-	{
-		assert(parent == NULL || _name.length() > 0);
-		assert(_name.find("/") == std::string::npos);
-	}
+	GraphObjectImpl(GraphObjectImpl* parent, const std::string& name, bool polyphonic=false);
 
 	GraphObjectImpl* _parent;
 	std::string      _name;
+	ResourceImpl     _meta;
 	bool             _polyphonic;
-
-private:
-	Properties _variables;
 };
 
 

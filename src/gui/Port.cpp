@@ -69,7 +69,7 @@ Port::Port(
 		set_control_min(min);
 		set_control_max(max);
 
-		pm->signal_variable.connect(sigc::mem_fun(this, &Port::variable_changed));
+		pm->signal_property.connect(sigc::mem_fun(this, &Port::property_changed));
 		pm->signal_value_changed.connect(sigc::mem_fun(this, &Port::value_changed));
 	}
 
@@ -138,7 +138,7 @@ Port::set_control(float value, bool signal)
 
 
 void
-Port::variable_changed(const URI& key, const Atom& value)
+Port::property_changed(const URI& key, const Atom& value)
 {
 	if (value.type() == Atom::FLOAT) {
 		if ((key.str() == "lv2:minimum"))

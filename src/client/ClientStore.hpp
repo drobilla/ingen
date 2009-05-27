@@ -69,9 +69,8 @@ public:
 	// CommonInterface
 	void new_plugin(const Raul::URI& uri, const Raul::URI& type_uri, const Raul::Symbol& symbol);
 	bool new_object(const Shared::GraphObject* object);
-	void put(const Raul::Path& path, const Shared::Resource::Properties& properties);
+	void put(const Raul::URI& path, const Shared::Resource::Properties& properties);
 	void move(const Raul::Path& old_path, const Raul::Path& new_path);
-	void set_variable(const Raul::URI& subject_path, const Raul::URI& predicate, const Raul::Atom& value);
 	void set_property(const Raul::URI& subject_path, const Raul::URI& predicate, const Raul::Atom& value);
 	void set_port_value(const Raul::Path& port_path, const Raul::Atom& value);
 	void set_voice_value(const Raul::Path& port_path, uint32_t voice, const Raul::Atom& value);

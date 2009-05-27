@@ -158,7 +158,7 @@ Parser::parse_document(
 		= parse(world, target, model, document_uri, data_path, parent, symbol, data);
 
 	if (parsed_path) {
-		target->set_variable(*parsed_path, "ingen:document", Atom(document_uri.c_str()));
+		target->set_property(*parsed_path, "ingen:document", Atom(document_uri.c_str()));
 	} else {
 		cerr << "WARNING: document URI lost" << endl;
 	}
@@ -218,22 +218,20 @@ Parser::parse_update(
 
 	// Variable settings
 	query = Redland::Query(*world->rdf_world,
-		"SELECT DISTINCT ?path ?varkey ?varval WHERE {\n"
-		"?path     lv2var:variable ?variable .\n"
-		"?variable rdf:predicate   ?varkey ;\n"
-		"          rdf:value       ?varval .\n"
+		"SELECT DISTINCT ?s ?p ?o WHERE {\n"
+		"?s ?p ?o .\n"
 		"}");
 
 	results = Redland::Query::Results(query.run(*world->rdf_world, model, base_uri));
 
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
 		Glib::Mutex::Lock lock(world->rdf_world->mutex());
-		const string obj_path = (*i)["path"].to_string();
-		const string key = world->rdf_world->prefixes().qualify((*i)["varkey"].to_string());
-		const Redland::Node& val_node = (*i)["varval"];
-		const Atom a(AtomRDF::node_to_atom(val_node));
+		const string         obj_uri((*i)["s"].to_string());
+		const string         key(world->rdf_world->prefixes().qualify((*i)["p"].to_string()));
+		const Redland::Node& val_node((*i)["o"]);
+		const Atom           a(AtomRDF::node_to_atom(val_node));
 		if (key != "")
-			target->set_variable(obj_path, key, a);
+			target->set_property(obj_uri, key, a);
 	}
 
 
@@ -514,7 +512,7 @@ Parser::parse_patch(
 		Glib::Mutex::Lock lock(world->rdf_world->mutex());
 		for (Properties::iterator j = i->second.begin(); j != i->second.end(); ++j) {
 			const string key = world->rdf_world->prefixes().qualify(j->first);
-			target->set_variable(node_path, key, AtomRDF::node_to_atom(j->second));
+			target->set_property(node_path, key, AtomRDF::node_to_atom(j->second));
 		}
 	}
 
@@ -531,7 +529,7 @@ Parser::parse_patch(
 		Glib::Mutex::Lock lock(world->rdf_world->mutex());
 		for (Properties::iterator j = i->second.begin(); j != i->second.end(); ++j) {
 			const string key = world->rdf_world->prefixes().qualify(j->first);
-			target->set_variable(node_path, key, AtomRDF::node_to_atom(j->second));
+			target->set_property(node_path, key, AtomRDF::node_to_atom(j->second));
 		}
 	}
 
@@ -560,7 +558,7 @@ Parser::parse_patch(
 		if (key == "ingen:value") {
 			target->set_port_value(port_path, AtomRDF::node_to_atom((*i)["val"]));
 		} else {
-			target->set_variable(port_path, key, AtomRDF::node_to_atom((*i)["val"]));
+			target->set_property(port_path, key, AtomRDF::node_to_atom((*i)["val"]));
 		}
 	}
 
@@ -637,7 +635,7 @@ Parser::parse_patch(
 	}
 
 	parse_connections(world, target, model, subject, "/");
-	parse_variables(world, target, model, subject_node, patch_path, data);
+	parse_properties(world, target, model, subject_node, patch_path, data);
 
 
 	/* Enable */
@@ -651,7 +649,7 @@ Parser::parse_patch(
 		Glib::Mutex::Lock lock(world->rdf_world->mutex());
 		const Redland::Node& enabled_node = (*i)["enabled"];
 		if (enabled_node.is_bool() && enabled_node) {
-			target->set_variable(patch_path, "ingen:enabled", (bool)true);
+			target->set_property(patch_path, "ingen:enabled", (bool)true);
 			break;
 		} else {
 			cerr << "WARNING: Unknown type for ingen:enabled" << endl;
@@ -696,7 +694,7 @@ Parser::parse_node(
 	props.insert(make_pair("rdf:instanceOf", Raul::Atom(Raul::Atom::URI, plugin_uri)));
 	target->put(path, props);
 
-	parse_variables(world, target, model, subject, path, data);
+	parse_properties(world, target, model, subject, path, data);
 	return path;
 }
 
@@ -737,7 +735,7 @@ Parser::parse_port(
 			target->set_port_value(path, AtomRDF::node_to_atom(val_node));
 	}
 
-	parse_variables(world, target, model, subject_node, path, data);
+	parse_properties(world, target, model, subject_node, path, data);
 	return path;
 #endif
 	cerr << "PARSE PORT" << endl;
@@ -780,7 +778,7 @@ Parser::parse_connections(
 
 
 bool
-Parser::parse_variables(
+Parser::parse_properties(
 		Ingen::Shared::World*                    world,
 		Ingen::Shared::CommonInterface*          target,
 		Redland::Model&                          model,
@@ -801,14 +799,14 @@ Parser::parse_variables(
 		const string         key = world->rdf_world->prefixes().qualify(string((*i)["key"]));
 		const Redland::Node& val = (*i)["val"];
 		if (key != "")
-			target->set_variable(path, key, AtomRDF::node_to_atom(val));
+			target->set_property(path, key, AtomRDF::node_to_atom(val));
 	}
 
-	// Set passed variables last to override any loaded values
+	// Set passed properties last to override any loaded values
 	if (data)
 		for (GraphObject::Properties::const_iterator i = data.get().begin();
 				i != data.get().end(); ++i)
-			target->set_variable(path, i->first, i->second);
+			target->set_property(path, i->first, i->second);
 
 	return true;
 }

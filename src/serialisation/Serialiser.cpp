@@ -316,7 +316,7 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch, const Redland::Node&
 		cerr << "WARNING: Patch has no lv2:symbol" << endl;
 	}
 
-	serialise_properties(patch_id, patch->properties());
+	serialise_meta_properties(patch_id, patch->properties());
 
 	for (GraphObject::const_iterator n = _store->children_begin(patch);
 			n != _store->children_end(patch); ++n) {
@@ -354,7 +354,7 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch, const Redland::Node&
 			p->set_property("lv2:name", Atom(Atom::STRING, p->symbol()));
 
 		_model->add_statement(patch_id, "lv2:port", port_id);
-		serialise_port_class(p, port_id);
+		serialise_port_meta(p, port_id);
 	}
 
 	for (Shared::Patch::Connections::const_iterator c = patch->connections().begin();
@@ -394,7 +394,7 @@ Serialiser::serialise_node(SharedPtr<Shared::Node> node,
 		_model->add_statement(node_id, "lv2:port", port_id);
 	}
 
-	serialise_variables(node_id, node->variables());
+	serialise_properties(node_id, node->properties());
 }
 
 
@@ -420,13 +420,13 @@ Serialiser::serialise_port(const Port* port, const Redland::Node& port_id)
 		_model->add_statement(port_id, "ingen:value",
 				AtomRDF::atom_to_node(_model->world(), Atom(port->value())));
 
-	serialise_variables(port_id, port->variables());
+	serialise_properties(port_id, port->properties());
 }
 
 
 /** Serialise a port on a Patch */
 void
-Serialiser::serialise_port_class(const Port* port, const Redland::Node& port_id)
+Serialiser::serialise_port_meta(const Port* port, const Redland::Node& port_id)
 {
 	if (port->is_input())
 		_model->add_statement(port_id, "rdf:type",
@@ -452,7 +452,7 @@ Serialiser::serialise_port_class(const Port* port, const Redland::Node& port_id)
 		}
 	}
 
-	serialise_properties(port_id, port->properties());
+	serialise_meta_properties(port_id, port->properties());
 }
 
 
@@ -480,7 +480,9 @@ Serialiser::serialise_connection(SharedPtr<GraphObject> parent,
 
 
 void
-Serialiser::serialise_properties(Redland::Node subject, const GraphObject::Properties& properties)
+Serialiser::serialise_meta_properties(
+		Redland::Node                  subject,
+		const GraphObject::Properties& properties)
 {
 	for (GraphObject::Properties::const_iterator v = properties.begin(); v != properties.end(); ++v) {
 		if (v->first.find(":") && v->second.is_valid()) {
@@ -494,9 +496,11 @@ Serialiser::serialise_properties(Redland::Node subject, const GraphObject::Prope
 
 
 void
-Serialiser::serialise_variables(Redland::Node subject, const GraphObject::Properties& variables)
+Serialiser::serialise_properties(
+		Redland::Node                  subject,
+		const GraphObject::Properties& properties)
 {
-	for (GraphObject::Properties::const_iterator v = variables.begin(); v != variables.end(); ++v) {
+	for (GraphObject::Properties::const_iterator v = properties.begin(); v != properties.end(); ++v) {
 		if (v->first.find(":") && v->first.str() != "ingen:document") {
 			if (v->second.is_valid()) {
 				const Redland::Resource key(_model->world(), v->first.str());

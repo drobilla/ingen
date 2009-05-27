@@ -40,7 +40,7 @@ public:
 	SetMetadataEvent(Engine&              engine,
 	                 SharedPtr<Responder> responder,
 	                 SampleCount          timestamp,
-	                 bool                 property,
+	                 bool                 meta,
 	                 const Raul::URI&     subject,
 	                 const Raul::URI&     key,
 	                 const Raul::Atom&    value);
@@ -59,14 +59,14 @@ private:
 		POLYPHONIC
 	} _special_type;
 
-	bool                  _property;
-	bool                  _success;
 	Raul::URI             _subject;
 	Raul::URI             _key;
 	Raul::Atom            _value;
 	Shared::ResourceImpl* _object;
 	PatchImpl*            _patch;
 	CompiledPatch*        _compiled_patch;
+	bool                  _is_meta;
+	bool                  _success;
 };
 
 

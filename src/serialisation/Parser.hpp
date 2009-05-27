@@ -103,7 +103,7 @@ private:
 			const Raul::Path&               path,
 			boost::optional<Properties>     data=boost::optional<Properties>());
 
-	bool parse_variables(
+	bool parse_properties(
 			Ingen::Shared::World*           world,
 			Ingen::Shared::CommonInterface* target,
 			Redland::Model&                 model,

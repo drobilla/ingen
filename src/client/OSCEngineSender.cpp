@@ -133,7 +133,7 @@ OSCEngineSender::quit()
 
 
 void
-OSCEngineSender::put(const Raul::Path&                   path,
+OSCEngineSender::put(const Raul::URI&                    path,
                      const Shared::Resource::Properties& properties)
 {
 	cerr << "OSC ENGINE PUT " << path << endl;
@@ -249,27 +249,13 @@ OSCEngineSender::midi_learn(const Path& node_path)
 
 
 void
-OSCEngineSender::set_variable(const URI&  obj_path,
+OSCEngineSender::set_property(const URI&  subject,
                               const URI&  predicate,
                               const Atom& value)
 {
 	lo_message m = lo_message_new();
 	lo_message_add_int32(m, next_id());
-	lo_message_add_string(m, obj_path.c_str());
-	lo_message_add_string(m, predicate.c_str());
-	Raul::AtomLiblo::lo_message_add_atom(m, value);
-	send_message("/ingen/set_variable", m);
-}
-
-
-void
-OSCEngineSender::set_property(const URI&  obj_path,
-                              const URI&  predicate,
-                              const Atom& value)
-{
-	lo_message m = lo_message_new();
-	lo_message_add_int32(m, next_id());
-	lo_message_add_string(m, obj_path.c_str());
+	lo_message_add_string(m, subject.c_str());
 	lo_message_add_string(m, predicate.c_str());
 	Raul::AtomLiblo::lo_message_add_atom(m, value);
 	send_message("/ingen/set_property", m);

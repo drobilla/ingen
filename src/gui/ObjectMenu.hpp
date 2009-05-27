@@ -44,13 +44,12 @@ public:
 	void init(SharedPtr<ObjectModel> object);
 
 protected:
-
 	virtual void on_menu_disconnect() = 0;
 	void         on_menu_polyphonic();
 	void         on_menu_destroy();
 	void         on_menu_properties();
 
-	void variable_changed(const Raul::URI& predicate, const Raul::Atom& value);
+	void property_changed(const Raul::URI& predicate, const Raul::Atom& value);
 
 	bool                   _enable_signal;
 	SharedPtr<ObjectModel> _object;

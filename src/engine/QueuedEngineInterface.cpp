@@ -152,11 +152,15 @@ QueuedEngineInterface::bundle_end()
 
 
 void
-QueuedEngineInterface::put(const Path&                 path,
+QueuedEngineInterface::put(const URI&                  uri,
                            const Resource::Properties& properties)
 {
+	size_t hash = uri.find("#");
+	bool   meta = (hash != string::npos);
+	Path   path(meta ? (string("/") + uri.chop_start("#")) : uri.str());
+
 	typedef Resource::Properties::const_iterator iterator;
-	cerr << "ENGINE PUT " << path << " {" << endl;
+	cerr << "ENGINE PUT " << path << " (" << path << ") {" << endl;
 	for (iterator i = properties.begin(); i != properties.end(); ++i)
 		cerr << "\t" << i->first << " = " << i->second << " :: " << i->second.type() << endl;
 	cerr << "}" << endl;
@@ -255,20 +259,14 @@ QueuedEngineInterface::midi_learn(const Path& node_path)
 
 
 void
-QueuedEngineInterface::set_variable(const URI&  path,
+QueuedEngineInterface::set_property(const URI&  uri,
                                     const URI&  predicate,
                                     const Atom& value)
 {
-	push_queued(new SetMetadataEvent(_engine, _responder, now(), false, path, predicate, value));
-}
-
-
-void
-QueuedEngineInterface::set_property(const URI&  path,
-                                    const URI&  predicate,
-                                    const Atom& value)
-{
-	push_queued(new SetMetadataEvent(_engine, _responder, now(), true, path, predicate, value));
+	size_t hash = uri.find("#");
+	bool   meta = (hash != string::npos);
+	Path path = meta ? (string("/") + path.chop_start("/")) : uri.str();
+	push_queued(new SetMetadataEvent(_engine, _responder, now(), meta, path, predicate, value));
 }
 
 // Requests //

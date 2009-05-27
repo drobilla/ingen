@@ -477,7 +477,7 @@ PatchWindow::event_save_as()
 		if (confirm) {
 			const Glib::ustring uri = Glib::filename_to_uri(filename);
 			App::instance().loader()->save_patch(_patch, uri);
-			_patch->set_variable("ingen:document", Atom(uri.c_str()));
+			_patch->set_property("ingen:document", Atom(uri.c_str()));
 			_status_bar->push(
 					(boost::format("Wrote %1% to %2%") % _patch->path() % uri).str(),
 					STATUS_CONTEXT_PATCH);

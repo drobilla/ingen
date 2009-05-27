@@ -75,7 +75,7 @@ public:
 	                        const Raul::URI&    type_uri,
 	                        const Raul::Symbol& symbol);
 
-	virtual void put(const Raul::Path&                   path,
+	virtual void put(const Raul::URI&                    path,
 	                 const Shared::Resource::Properties& properties);
 
 	virtual void clear_patch(const Raul::Path& path);
@@ -91,11 +91,7 @@ public:
 	virtual void disconnect(const Raul::Path& src_port_path,
 	                        const Raul::Path& dst_port_path);
 
-	virtual void set_variable(const Raul::URI&  subject_path,
-	                          const Raul::URI&  predicate,
-	                          const Raul::Atom& value);
-
-	virtual void set_property(const Raul::URI&  subject_path,
+	virtual void set_property(const Raul::URI&  subject,
 	                          const Raul::URI&  predicate,
 	                          const Raul::Atom& value);
 

@@ -92,7 +92,7 @@ public:
 	void new_plugin(const Raul::URI& uri, const Raul::URI& type_uri, const Raul::Symbol& symbol)
 		{ push_sig(sigc::bind(new_plugin_slot, uri, type_uri, symbol)); }
 
-	void put(const Raul::Path& path, const Shared::Resource::Properties& properties)
+	void put(const Raul::URI& path, const Shared::Resource::Properties& properties)
 		{ push_sig(sigc::bind(put_slot, path, properties)); }
 
 	void connect(const Raul::Path& src_port_path, const Raul::Path& dst_port_path)
@@ -110,11 +110,8 @@ public:
 	void disconnect(const Raul::Path& src_port_path, const Raul::Path& dst_port_path)
 		{ push_sig(sigc::bind(disconnection_slot, src_port_path, dst_port_path)); }
 
-	void set_variable(const Raul::URI& path, const Raul::URI& key, const Raul::Atom& value)
-		{ push_sig(sigc::bind(variable_change_slot, path, key, value)); }
-
-	void set_property(const Raul::URI& path, const Raul::URI& key, const Raul::Atom& value)
-		{ push_sig(sigc::bind(property_change_slot, path, key, value)); }
+	void set_property(const Raul::URI& subject, const Raul::URI& key, const Raul::Atom& value)
+		{ push_sig(sigc::bind(property_change_slot, subject, key, value)); }
 
 	void set_port_value(const Raul::Path& port_path, const Raul::Atom& value)
 		{ push_sig(sigc::bind(port_value_slot, port_path, value)); }
@@ -144,7 +141,7 @@ private:
 	sigc::slot<void, std::string>                                 error_slot;
 	sigc::slot<void, Raul::URI, Raul::URI, Raul::Symbol>          new_plugin_slot;
 	sigc::slot<void, Raul::Path, Raul::URI, uint32_t, bool>       new_port_slot;
-	sigc::slot<void, Raul::Path, Shared::Resource::Properties>    put_slot;
+	sigc::slot<void, Raul::URI, Shared::Resource::Properties>     put_slot;
 	sigc::slot<void, Raul::Path, Raul::Path>                      connection_slot;
 	sigc::slot<void, Raul::Path>                                  clear_patch_slot;
 	sigc::slot<void, Raul::Path>                                  object_deleted_slot;

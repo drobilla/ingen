@@ -105,7 +105,7 @@ OSCClientSender::error(const std::string& msg)
  * PUT a set of properties to a path (see \ref methods).
  */
 void
-OSCClientSender::put(const Raul::Path&                   path,
+OSCClientSender::put(const Raul::URI&                    path,
                      const Shared::Resource::Properties& properties)
 {
 	cerr << "OSC CLIENT PUT " << path << endl;
@@ -179,25 +179,6 @@ void
 OSCClientSender::disconnect(const Path& src_port_path, const Path& dst_port_path)
 {
 	send("/ingen/disconnection", "ss", src_port_path.c_str(), dst_port_path.c_str(), LO_ARGS_END);
-}
-
-
-/** \page client_osc_namespace
- * <h2>/ingen/set_variable</h2>
- * \arg \b path (string) - Path of the object associated with variable (node, patch, or port)
- * \arg \b key (string)
- * \arg \b value (string)
- * ,
- * Notification of a variable.
- */
-void
-OSCClientSender::set_variable(const URI& path, const URI& key, const Atom& value)
-{
-	lo_message m = lo_message_new();
-	lo_message_add_string(m, path.c_str());
-	lo_message_add_string(m, key.c_str());
-	AtomLiblo::lo_message_add_atom(m, value);
-	send_message("/ingen/set_variable", m);
 }
 
 

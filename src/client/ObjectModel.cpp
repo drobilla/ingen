@@ -29,6 +29,7 @@ namespace Client {
 
 ObjectModel::ObjectModel(const Path& path)
 	: ResourceImpl(path)
+	, _meta(std::string("meta:#") + path.chop_start("/"))
 	, _path(path)
 {
 }
@@ -93,20 +94,13 @@ ObjectModel::set(SharedPtr<ObjectModel> o)
 	if (o->_parent)
 		_parent = o->_parent;
 
-	for (Properties::const_iterator v = o->properties().begin(); v != o->properties().end(); ++v) {
-		const Raul::Atom& mine = get_property(v->first);
-		if (mine.is_valid())
-			cerr << "WARNING:  " << _path << "Client/Server property mismatch: " << v->first << endl;
-		ResourceImpl::set_property(v->first, v->second);
-		signal_variable.emit(v->first, v->second);
+	for (Properties::const_iterator v = o->meta().properties().begin(); v != o->meta().properties().end(); ++v) {
+		o->meta().set_property(v->first, v->second);
+		signal_property.emit(v->first, v->second);
 	}
-
-	for (Properties::const_iterator v = o->variables().begin(); v != o->variables().end(); ++v) {
-		Properties::const_iterator mine = _variables.find(v->first);
-		if (mine != _variables.end())
-			cerr << "WARNING:  " << _path << "Client/Server variable mismatch: " << v->first << endl;
-		_variables.insert(make_pair(v->first, v->second));
-		signal_variable.emit(v->first, v->second);
+	for (Properties::const_iterator v = o->properties().begin(); v != o->properties().end(); ++v) {
+		ResourceImpl::set_property(v->first, v->second);
+		signal_property.emit(v->first, v->second);
 	}
 }
 

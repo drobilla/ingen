@@ -90,7 +90,6 @@ PatchView::set_patch(SharedPtr<PatchModel> patch)
 		property_changed(i->first, i->second);
 
 	// Connect model signals to track state
-	patch->signal_variable.connect(sigc::mem_fun(this, &PatchView::property_changed));
 	patch->signal_property.connect(sigc::mem_fun(this, &PatchView::property_changed));
 
 	// Connect widget signals to do things
@@ -201,7 +200,7 @@ PatchView::process_toggled()
 	if (!_enable_signal)
 		return;
 
-	App::instance().engine()->set_variable(_patch->path(), "ingen:enabled",
+	App::instance().engine()->set_property(_patch->path(), "ingen:enabled",
 			(bool)_process_but->get_active());
 }
 
@@ -209,7 +208,7 @@ PatchView::process_toggled()
 void
 PatchView::poly_changed()
 {
-	App::instance().engine()->set_property(_patch->path(), "ingen:polyphony",
+	App::instance().engine()->set_property(_patch->meta().uri(), "ingen:polyphony",
 			_poly_spin->get_value_as_int());
 }
 

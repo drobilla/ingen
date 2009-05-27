@@ -39,7 +39,7 @@ public:
 	RequestMetadataEvent(Engine&              engine,
 	                     SharedPtr<Responder> responder,
 	                     SampleCount          timestamp,
-	                     bool                 property,
+	                     bool                 meta,
 	                     const Raul::URI&     path,
 	                     const Raul::URI&     key);
 
@@ -58,7 +58,7 @@ private:
 	Raul::URI             _key;
 	Raul::Atom            _value;
 	Shared::ResourceImpl* _resource;
-	bool                  _is_property;
+	bool                  _is_meta;
 };
 
 

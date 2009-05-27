@@ -42,7 +42,7 @@ public:
 	                        const std::string& type_uri,
 	                        const std::string& symbol) {}
 
-	void put(const Path&                 path,
+	void put(const URI&                  path,
 	         const Resource::Properties& properties) {}
 
 	virtual void clear_patch(const std::string& path)  {}
@@ -56,7 +56,7 @@ public:
 	virtual void disconnect(const std::string& src_port_path,
 	                        const std::string& dst_port_path)  {}
 
-	virtual void set_variable(const std::string& subject_path,
+	virtual void set_property(const std::string& subject_path,
 	                          const std::string& predicate,
 	                          const Raul::Atom&  value)  {}
 

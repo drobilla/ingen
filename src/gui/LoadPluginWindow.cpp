@@ -347,10 +347,10 @@ LoadPluginWindow::add_clicked()
 			props.insert(make_pair("rdf:type",       Atom(Atom::URI, "ingen:Node")));
 			props.insert(make_pair("rdf:instanceOf", Atom(Atom::URI, plugin->uri().str())));
 			App::instance().engine()->put(path, props);
-			App::instance().engine()->set_variable(path, "ingen:polyphonic", bool(polyphonic));
+			App::instance().engine()->set_property(path, "ingen:polyphonic", bool(polyphonic));
 			for (GraphObject::Properties::const_iterator i = _initial_data.begin();
 					i != _initial_data.end(); ++i)
-				App::instance().engine()->set_variable(path, i->first, i->second);
+				App::instance().engine()->set_property(path, i->first, i->second);
 			_node_name_entry->set_text(generate_module_name(++_plugin_name_offset));
 
 			// Cascade

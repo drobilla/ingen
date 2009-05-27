@@ -97,10 +97,10 @@ private:
 	void serialise_node(SharedPtr<Shared::Node> n,
 			const Redland::Node& class_id, const Redland::Node& id);
 	void serialise_port(const Shared::Port* p, const Redland::Node& id);
-	void serialise_port_class(const Shared::Port* p, const Redland::Node& id);
+	void serialise_port_meta(const Shared::Port* p, const Redland::Node& id);
 
-	void serialise_properties(Redland::Node subject, const Properties& properties);
-	void serialise_variables(Redland::Node subject, const Properties& variables);
+	void serialise_meta_properties(Redland::Node subject, const Properties& properties);
+	void serialise_properties(Redland::Node subject, const Properties& variables);
 
 	Redland::Node instance_rdf_node(const Raul::Path& path);
 	Redland::Node class_rdf_node(const Raul::Path& path);

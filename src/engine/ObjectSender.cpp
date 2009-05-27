@@ -62,14 +62,10 @@ ObjectSender::send_patch(ClientInterface* client, const PatchImpl* patch, bool r
 	if (bundle)
 		client->transfer_begin();
 
-	client->put(patch->path(), patch->properties());
+	client->put(patch->meta_uri(), patch->meta().properties());
+	client->put(patch->path(),     patch->properties());
 
 	if (recursive) {
-		// Send variables
-		const GraphObjectImpl::Properties& data = patch->variables();
-		for (GraphObjectImpl::Properties::const_iterator j = data.begin(); j != data.end(); ++j)
-			client->set_variable(patch->path(), (*j).first, (*j).second);
-
 		// Send nodes
 		for (List<NodeImpl*>::const_iterator j = patch->nodes().begin();
 				j != patch->nodes().end(); ++j) {
@@ -113,12 +109,7 @@ ObjectSender::send_node(ClientInterface* client, const NodeImpl* node, bool recu
 	if (bundle)
 		client->transfer_begin();
 
-	client->put(node->path(), node->variables());
-
-	// Send variables
-	const GraphObjectImpl::Properties& prop = node->variables();
-	for (GraphObjectImpl::Properties::const_iterator j = prop.begin(); j != prop.end(); ++j)
-		client->set_variable(node->path(), (*j).first, (*j).second);
+	client->put(node->path(), node->properties());
 
 	if (recursive) {
 		// Send ports
@@ -139,26 +130,19 @@ ObjectSender::send_port(ClientInterface* client, const PortImpl* port, bool bund
 	if (bundle)
 		client->bundle_begin();
 
+	PatchImpl* graph_parent = dynamic_cast<PatchImpl*>(port->parent_node());
+
+	if (graph_parent)
+		client->put(port->meta_uri(), port->meta().properties());
+
 	client->put(port->path(), port->properties());
 
-	PatchImpl* graph_parent = dynamic_cast<PatchImpl*>(port->parent_node());
 	if (graph_parent && graph_parent->internal_polyphony() > 1)
-		client->set_variable(port->path(), "ingen:polyphonic", bool(port->polyphonic()));
-
-	// Send variables
-	const GraphObjectImpl::Properties& data = port->variables();
-	for (GraphObjectImpl::Properties::const_iterator j = data.begin(); j != data.end(); ++j)
-		client->set_variable(port->path(), (*j).first, (*j).second);
-
-	// Send properties
-	const GraphObjectImpl::Properties& prop = port->properties();
-	for (GraphObjectImpl::Properties::const_iterator j = prop.begin(); j != prop.end(); ++j)
-		client->set_property(port->path(), (*j).first, (*j).second);
+		client->set_property(port->meta_uri(), "ingen:polyphonic", bool(port->polyphonic()));
 
 	// Send control value
 	if (port->type() == DataType::CONTROL) {
-		const Sample value = dynamic_cast<const AudioBuffer*>(port->buffer(0))->value_at(0);
-		//cerr << port->path() << " sending default value " << default_value << endl;
+		const Sample& value = dynamic_cast<const AudioBuffer*>(port->buffer(0))->value_at(0);
 		client->set_port_value(port->path(), value);
 	}
 

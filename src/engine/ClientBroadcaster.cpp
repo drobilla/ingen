@@ -162,27 +162,15 @@ ClientBroadcaster::send_disconnection(const Path& src_port_path, const Path& dst
 }
 
 
-/** Send notification of a variable update.
- *
- * Like control changes, does not send update to client that set the variable, if applicable.
- */
-void
-ClientBroadcaster::send_variable_change(const URI& node_path, const URI& key, const Atom& value)
-{
-	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
-		(*i).second->set_variable(node_path, key, value);
-}
-
-
 /** Send notification of a property update.
  *
  * Like control changes, does not send update to client that set the property, if applicable.
  */
 void
-ClientBroadcaster::send_property_change(const URI& node_path, const URI& key, const Atom& value)
+ClientBroadcaster::send_property_change(const URI& subject, const URI& key, const Atom& value)
 {
 	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
-		(*i).second->set_property(node_path, key, value);
+		(*i).second->set_property(subject, key, value);
 }
 
 

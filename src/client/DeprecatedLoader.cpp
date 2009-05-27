@@ -297,7 +297,7 @@ DeprecatedLoader::load_patch(const Glib::ustring&    filename,
 		props.insert(make_pair("ingen:polyphony", Atom((int32_t)poly)));
 		_engine->put(path, props);
 		for (GraphObject::Properties::const_iterator i = initial_data.begin(); i != initial_data.end(); ++i)
-			_engine->set_variable(path, i->first, i->second);
+			_engine->set_property(path, i->first, i->second);
 	}
 
 	// Load nodes
@@ -352,10 +352,10 @@ DeprecatedLoader::load_patch(const Glib::ustring&    filename,
 
 	// Done above.. late enough?
 	//for (Properties::const_iterator i = data.begin(); i != data.end(); ++i)
-	//	_engine->set_variable(subject, i->first, i->second);
+	//	_engine->set_property(subject, i->first, i->second);
 
 	if (!existing)
-		_engine->set_variable(path, "ingen:enabled", (bool)true);
+		_engine->set_property(path, "ingen:enabled", (bool)true);
 
 	_load_path_translations.clear();
 
@@ -507,7 +507,7 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 			_engine->put(path, props);
 
 			for (GraphObject::Properties::const_iterator i = initial_data.begin(); i != initial_data.end(); ++i)
-				_engine->set_variable(path, i->first, i->second);
+				_engine->set_property(path, i->first, i->second);
 
 			return SharedPtr<NodeModel>();
 
@@ -530,10 +530,10 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 			props.insert(make_pair("rdf:instanceOf", Atom(Atom::URI, plugin_uri)));
 			_engine->put(path, props);
 
-			_engine->set_variable(path, "ingen:polyphonic", bool(polyphonic));
+			_engine->set_property(path, "ingen:polyphonic", bool(polyphonic));
 
 			for (GraphObject::Properties::const_iterator i = initial_data.begin(); i != initial_data.end(); ++i)
-				_engine->set_variable(path, i->first, i->second);
+				_engine->set_property(path, i->first, i->second);
 
 			return true;
 		}
@@ -544,9 +544,9 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 		props.insert(make_pair("rdf:type",       Atom(Atom::URI, "ingen:Node")));
 		props.insert(make_pair("rdf:instanceOf", Atom(Atom::URI, plugin_uri)));
 		_engine->put(path, props);
-		_engine->set_variable(path, "ingen:polyphonic", bool(polyphonic));
+		_engine->set_property(path, "ingen:polyphonic", bool(polyphonic));
 		for (GraphObject::Properties::const_iterator i = initial_data.begin(); i != initial_data.end(); ++i)
-			_engine->set_variable(path, i->first, i->second);
+			_engine->set_property(path, i->first, i->second);
 		return true;
 	}
 

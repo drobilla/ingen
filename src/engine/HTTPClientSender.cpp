@@ -50,7 +50,7 @@ HTTPClientSender::error(const std::string& msg)
 
 
 void
-HTTPClientSender::put(const Path&                         path,
+HTTPClientSender::put(const URI&                          path,
                       const Shared::Resource::Properties& properties)
 {
 	cerr << "HTTP CLIENT PUT " << path << endl;
@@ -75,7 +75,7 @@ HTTPClientSender::clear_patch(const Path& patch_path)
 void
 HTTPClientSender::connect(const Path& src_path, const Path& dst_path)
 {
-	string msg = string(
+	const string msg = string(
 			"@prefix rdf:       <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n"
 			"@prefix ingen:     <http://drobilla.net/ns/ingen#> .\n"
 			"@prefix lv2var:    <http://lv2plug.in/ns/ext/instance-var#> .\n\n<").append(
@@ -94,30 +94,15 @@ HTTPClientSender::disconnect(const Path& src_path, const Path& dst_path)
 
 
 void
-HTTPClientSender::set_variable(const URI& path, const URI& key, const Atom& value)
+HTTPClientSender::set_property(const URI& subject, const URI& key, const Atom& value)
 {
 	Redland::Node node = AtomRDF::atom_to_node(*_engine.world()->rdf_world, value);
-	string msg = string(
-			"@prefix rdf:       <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n"
-			"@prefix ingenuity: <http://drobilla.net/ns/ingenuity#> .\n"
-			"@prefix lv2var:    <http://lv2plug.in/ns/ext/instance-var#> .\n\n<").append(
-			path.str()).append("> lv2var:variable [\n"
-			"rdf:predicate ").append(key.str()).append(" ;\n"
-			"rdf:value     ").append(node.to_string()).append("\n] .\n");
-	send_chunk(msg);
-}
-
-
-void
-HTTPClientSender::set_property(const URI& path, const URI& key, const Atom& value)
-{
-	Redland::Node node = AtomRDF::atom_to_node(*_engine.world()->rdf_world, value);
-	string msg = string(
+	const string msg = string(
 			"@prefix rdf:       <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n"
 			"@prefix ingen:     <http://drobilla.net/ns/ingen#> .\n"
 			"@prefix ingenuity: <http://drobilla.net/ns/ingenuity#> .\n"
 			"@prefix lv2var:    <http://lv2plug.in/ns/ext/instance-var#> .\n\n<").append(
-			path.str()).append("> ingen:property [\n"
+			subject.str()).append("> ingen:property [\n"
 			"rdf:predicate ").append(key.str()).append(" ;\n"
 			"rdf:value     ").append(node.to_string()).append("\n] .\n");
 	send_chunk(msg);
@@ -128,7 +113,7 @@ void
 HTTPClientSender::set_port_value(const Path& port_path, const Atom& value)
 {
 	Redland::Node node = AtomRDF::atom_to_node(*_engine.world()->rdf_world, value);
-	string msg = string(
+	const string msg = string(
 			"@prefix ingen: <http://drobilla.net/ns/ingen#> .\n\n<").append(
 			port_path.str()).append("> ingen:value ").append(node.to_string()).append(" .\n");
 	send_chunk(msg);
@@ -148,7 +133,7 @@ HTTPClientSender::set_voice_value(const Path& port_path, uint32_t voice, const A
 void
 HTTPClientSender::activity(const Path& path)
 {
-	string msg = string(
+	const string msg = string(
 			"@prefix ingen: <http://drobilla.net/ns/ingen#> .\n\n<").append(
 			path.str()).append("> ingen:activity true .\n");
 	send_chunk(msg);

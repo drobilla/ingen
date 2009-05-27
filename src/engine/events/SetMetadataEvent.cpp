@@ -37,20 +37,21 @@ SetMetadataEvent::SetMetadataEvent(
 		Engine&              engine,
 		SharedPtr<Responder> responder,
 		SampleCount          timestamp,
-		bool                 property,
+		bool                 meta,
 		const URI&           subject,
 		const URI&           key,
 		const Atom&          value)
 	: QueuedEvent(engine, responder, timestamp)
 	, _error(NO_ERROR)
 	, _special_type(NONE)
-	, _property(property)
 	, _subject(subject)
 	, _key(key)
 	, _value(value)
 	, _object(NULL)
 	, _patch(NULL)
 	, _compiled_patch(NULL)
+	, _is_meta(meta)
+	, _success(false)
 {
 }
 
@@ -70,40 +71,45 @@ SetMetadataEvent::pre_process()
 	}
 
 	/*cerr << "SET " << _object->path() << (_property ? " PROP " : " VAR ")
-		<<	_key << " :: " << _value.type() << endl;*/
+	  <<	_key << " :: " << _value.type() << endl;*/
 
-	if (_property || !dynamic_cast<GraphObjectImpl*>(_object))
-		_object->set_property(_key, _value);
-	else
-		dynamic_cast<GraphObjectImpl*>(_object)->set_variable(_key, _value);
+	GraphObjectImpl* obj = dynamic_cast<GraphObjectImpl*>(_object);
+	if (obj) {
+		if (_is_meta)
+			obj->meta().set_property(_key, _value);
+		else
+			obj->set_property(_key, _value);
 
-	_patch = dynamic_cast<PatchImpl*>(_object);
+		_patch = dynamic_cast<PatchImpl*>(_object);
 
-	if (_key.str() == "ingen:broadcast") {
-		_special_type = ENABLE_BROADCAST;
-	} else if (_patch) {
-		if (!_property && _key.str() == "ingen:enabled") {
-			if (_value.type() == Atom::BOOL) {
-				_special_type = ENABLE;
-				if (_value.get_bool() && !_patch->compiled_patch())
-					_compiled_patch = _patch->compile();
-			} else {
-				_error = BAD_TYPE;
-			}
-		} else if (!_property && _key.str() == "ingen:polyphonic") {
-			if (_value.type() == Atom::BOOL) {
-				_special_type = POLYPHONIC;
-			} else {
-				_error = BAD_TYPE;
-			}
-		} else if (_property && _key.str() == "ingen:polyphony") {
-			if (_value.type() == Atom::INT) {
-				_special_type = POLYPHONY;
-				_patch->prepare_internal_poly(_value.get_int32());
-			} else {
-				_error = BAD_TYPE;
+		if (_key.str() == "ingen:broadcast") {
+			_special_type = ENABLE_BROADCAST;
+		} else if (_patch) {
+			if (_key.str() == "ingen:enabled") {
+				if (_value.type() == Atom::BOOL) {
+					_special_type = ENABLE;
+					if (_value.get_bool() && !_patch->compiled_patch())
+						_compiled_patch = _patch->compile();
+				} else {
+					_error = BAD_TYPE;
+				}
+			} else if (_key.str() == "ingen:polyphonic") {
+				if (_value.type() == Atom::BOOL) {
+					_special_type = POLYPHONIC;
+				} else {
+					_error = BAD_TYPE;
+				}
+			} else if (_key.str() == "ingen:polyphony") {
+				if (_value.type() == Atom::INT) {
+					_special_type = POLYPHONY;
+					_patch->prepare_internal_poly(_value.get_int32());
+				} else {
+					_error = BAD_TYPE;
+				}
 			}
 		}
+	} else {
+		_object->set_property(_key, _value);
 	}
 
 	QueuedEvent::pre_process();
@@ -155,10 +161,7 @@ SetMetadataEvent::post_process()
 	switch (_error) {
 	case NO_ERROR:
 		_responder->respond_ok();
-		if (_property)
-			_engine.broadcaster()->send_property_change(_subject, _key, _value);
-		else
-			_engine.broadcaster()->send_variable_change(_subject, _key, _value);
+		_engine.broadcaster()->send_property_change(_subject, _key, _value);
 		break;
 	case NOT_FOUND:
 		_responder->respond_error((boost::format(

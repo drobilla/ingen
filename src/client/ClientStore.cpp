@@ -50,7 +50,6 @@ ClientStore::ClientStore(SharedPtr<EngineInterface> engine, SharedPtr<SigClientI
 	emitter->signal_clear_patch.connect(sigc::mem_fun(this, &ClientStore::clear_patch));
 	emitter->signal_connection.connect(sigc::mem_fun(this, &ClientStore::connect));
 	emitter->signal_disconnection.connect(sigc::mem_fun(this, &ClientStore::disconnect));
-	emitter->signal_variable_change.connect(sigc::mem_fun(this, &ClientStore::set_variable));
 	emitter->signal_property_change.connect(sigc::mem_fun(this, &ClientStore::set_property));
 	emitter->signal_port_value.connect(sigc::mem_fun(this, &ClientStore::set_port_value));
 	emitter->signal_voice_value.connect(sigc::mem_fun(this, &ClientStore::set_voice_value));
@@ -87,7 +86,7 @@ ClientStore::add_object(SharedPtr<ObjectModel> object)
 				signal_new_object.emit(object);
 
 #if 0
-				resolve_variable_orphans(parent);
+				resolve_property_orphans(parent);
 				resolve_orphans(parent);
 
 				SharedPtr<PortModel> port = PtrCast<PortModel>(object);
@@ -268,10 +267,14 @@ ClientStore::new_plugin(const URI& uri, const URI& type_uri, const Symbol& symbo
 
 
 void
-ClientStore::put(const Path& path, const Resource::Properties& properties)
+ClientStore::put(const URI& uri, const Resource::Properties& properties)
 {
+	size_t hash = uri.find("#");
+	bool   meta = (hash != string::npos);
+	Path   path(meta ? (string("/") + uri.chop_start("#")) : uri.str());
+
 	typedef Resource::Properties::const_iterator iterator;
-	cerr << "CLIENT PUT " << path << " {" << endl;
+	cerr << "CLIENT PUT " << uri << " (" << path << ") {" << endl;
 	for (iterator i = properties.begin(); i != properties.end(); ++i)
 		cerr << "\t" << i->first << " = " << i->second << " :: " << i->second.type() << endl;
 	cerr << "}" << endl;
@@ -350,34 +353,23 @@ ClientStore::clear_patch(const Path& path)
 
 
 void
-ClientStore::set_variable(const URI& subject_path, const URI& predicate, const Atom& value)
-{
-	SharedPtr<Resource> subject = resource(subject_path);
-
-	if (!value.is_valid()) {
-		cerr << "ERROR: variable '" << predicate << "' is invalid" << endl;
-	} else if (subject) {
-		SharedPtr<ObjectModel> om = PtrCast<ObjectModel>(subject);
-		if (om)
-			om->set_variable(predicate, value);
-		else
-			subject->set_property(predicate, value);
-	} else {
-		//add_variable_orphan(subject_path, predicate, value);
-		cerr << "WARNING: variable '" << predicate << "' for unknown object " << subject_path << endl;
-	}
-}
-
-
-void
 ClientStore::set_property(const URI& subject_path, const URI& predicate, const Atom& value)
 {
 	SharedPtr<Resource> subject = resource(subject_path);
+
+	size_t hash = subject_path.find("#");
 	if (!value.is_valid()) {
 		cerr << "ERROR: property '" << predicate << "' is invalid" << endl;
 	} else if (subject) {
 		subject->set_property(predicate, value);
+	} else if (hash != string::npos) {
+		cerr << "META OBJECT " << subject_path << " PROPERTY " << predicate << endl;
+		Path instance_path = string("/") + subject_path.chop_start("#");
+		SharedPtr<ObjectModel> om = PtrCast<ObjectModel>(subject);
+		if (om)
+			om->meta().set_property(predicate, value);
 	} else {
+		//add_property_orphan(subject_path, predicate, value);
 		cerr << "WARNING: property '" << predicate << "' for unknown object " << subject_path << endl;
 	}
 }

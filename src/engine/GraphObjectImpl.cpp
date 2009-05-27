@@ -27,26 +27,38 @@ namespace Ingen {
 
 using namespace Shared;
 
-void
-GraphObjectImpl::set_variable(const Raul::URI& key, const Atom& value)
-{
-	// Ignore duplicate statements
-	typedef Resource::Properties::const_iterator iterator;
-	const std::pair<iterator,iterator> range = _variables.equal_range(key);
-	for (iterator i = range.first; i != range.second; ++i)
-		if (i->second == value)
-			return;
 
-	_variables.insert(make_pair(key, value));
+GraphObjectImpl::GraphObjectImpl(GraphObjectImpl* parent, const std::string& name, bool polyphonic)
+	: ResourceImpl((parent ? parent->path().base() : Raul::Path::root_uri) + name)
+	, _parent(parent)
+	, _name(name)
+	, _meta(std::string("meta:#") + path().chop_start("/"))
+	, _polyphonic(polyphonic)
+{
+	assert(parent == NULL || _name.length() > 0);
+	assert(_name.find("/") == std::string::npos);
+}
+
+
+void
+GraphObjectImpl::add_meta_property(const Raul::URI& key, const Atom& value)
+{
+	_meta.add_property(key, value);
+}
+
+
+void
+GraphObjectImpl::set_meta_property(const Raul::URI& key, const Atom& value)
+{
+	_meta.set_property(key, value);
 }
 
 
 const Atom&
-GraphObjectImpl::get_variable(const Raul::URI& key)
+GraphObjectImpl::get_property(const Raul::URI& key) const
 {
-	static const Atom null_atom;
-	Properties::iterator i = _variables.find(key);
-	return (i != _variables.end()) ? (*i).second : null_atom;
+	Resource::Properties::const_iterator i = properties().find(key);
+	return (i != properties().end()) ? i->second : _meta.get_property(key);
 }
 
 

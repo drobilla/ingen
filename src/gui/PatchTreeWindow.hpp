@@ -46,7 +46,7 @@ public:
 
 	void new_object(SharedPtr<Client::ObjectModel> object);
 
-	void patch_variable_changed(const Raul::URI& key, const Raul::Atom& value, const Raul::Path& path);
+	void patch_property_changed(const Raul::URI& key, const Raul::Atom& value, const Raul::Path& path);
 	void patch_moved(const Raul::Path& old_path, const Raul::Path& new_path);
 
 	void add_patch(SharedPtr<Client::PatchModel> pm);

@@ -48,7 +48,6 @@ PatchPortModule::PatchPortModule(boost::shared_ptr<PatchCanvas> canvas, SharedPt
 
 	set_stacked_border(model->polyphonic());
 
-	model->signal_variable.connect(sigc::mem_fun(this, &PatchPortModule::set_property));
 	model->signal_property.connect(sigc::mem_fun(this, &PatchPortModule::set_property));
 }
 
@@ -171,7 +170,7 @@ PatchPortModule::set_selected(bool b)
 	if (b != selected()) {
 		Module::set_selected(b);
 		if (App::instance().signal())
-			App::instance().engine()->set_variable(_model->path(), "ingen:selected", b);
+			App::instance().engine()->set_property(_model->path(), "ingen:selected", b);
 	}
 }
 

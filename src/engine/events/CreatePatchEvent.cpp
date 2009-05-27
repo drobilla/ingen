@@ -83,7 +83,9 @@ CreatePatchEvent::pre_process()
 		poly = _poly;
 
 	_patch = new PatchImpl(_engine, path.name(), poly, _parent, _engine.audio_driver()->sample_rate(), _engine.audio_driver()->buffer_size(), _poly);
-	_patch->properties().insert(_properties.begin(), _properties.end());
+	_patch->meta().properties().insert(_properties.begin(), _properties.end());
+	_patch->set_property("rdf:type", Atom(Atom::URI, "ingen:Node"));
+	_patch->set_property("rdf:instanceOf", Atom(Atom::URI, _patch->meta_uri().str()));
 
 	if (_parent != NULL) {
 		_parent->add_node(new PatchImpl::Nodes::Node(_patch));

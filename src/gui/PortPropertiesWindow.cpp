@@ -82,8 +82,8 @@ PortPropertiesWindow::present(SharedPtr<PortModel> pm)
 	_connections.push_back(_max_spinner->signal_value_changed().connect(
 				sigc::mem_fun(*this, &PortPropertiesWindow::max_changed)));
 
-	_connections.push_back(pm->signal_variable.connect(
-			sigc::mem_fun(this, &PortPropertiesWindow::variable_change)));
+	_connections.push_back(pm->signal_property.connect(
+			sigc::mem_fun(this, &PortPropertiesWindow::property_change)));
 
 	//_enable_signal = true;
 
@@ -92,7 +92,7 @@ PortPropertiesWindow::present(SharedPtr<PortModel> pm)
 
 
 void
-PortPropertiesWindow::variable_change(const URI& key, const Atom& value)
+PortPropertiesWindow::property_change(const URI& key, const Atom& value)
 {
 	//_enable_signal = false;
 
@@ -123,9 +123,6 @@ PortPropertiesWindow::min_changed()
 		max = min + 1.0;
 		_max_spinner->set_value(max);
 	}
-
-	//if (_enable_signal)
-	//	App::instance().engine()->set_variable(_port_model->path(), "lv2:minimum", min);
 }
 
 
@@ -145,9 +142,6 @@ PortPropertiesWindow::max_changed()
 		min = max - 1.0;
 		_min_spinner->set_value(min);
 	}
-
-	//if (_enable_signal)
-	//	App::instance().engine()->set_variable(_port_model->path(), "lv2:maximum", max);
 }
 
 
@@ -164,8 +158,8 @@ PortPropertiesWindow::ok()
 	const float min = _min_spinner->get_value();
 	const float max = _max_spinner->get_value();
 
-	App::instance().engine()->set_variable(_port_model->path(), "lv2:minimum", min);
-	App::instance().engine()->set_variable(_port_model->path(), "lv2:maximum", max);
+	App::instance().engine()->set_property(_port_model->meta().uri(), "lv2:minimum", min);
+	App::instance().engine()->set_property(_port_model->meta().uri(), "lv2:maximum", max);
 	hide();
 }
 

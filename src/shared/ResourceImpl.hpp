@@ -32,7 +32,7 @@ class ResourceImpl : virtual public Resource
 public:
 	ResourceImpl(const Raul::URI& uri) : _uri(uri) {}
 
-	virtual const Raul::URI uri() const { return _uri.str(); }
+	virtual const Raul::URI uri()  const { return _uri.str(); }
 
 	const Properties& properties() const { return _properties; }
 	Properties&       properties()       { return _properties; }
@@ -40,6 +40,9 @@ public:
 	const Raul::Atom& get_property(const Raul::URI& uri) const;
 	void              set_property(const Raul::URI& uri, const Raul::Atom& value);
 	void              add_property(const Raul::URI& uri, const Raul::Atom& value);
+	void              merge_properties(const Properties& p);
+
+	sigc::signal<void, const Raul::URI&, const Raul::Atom&> signal_property;
 
 	/** Get the ingen type from a set of Properties.
 	 * If some coherent ingen type is found, true is returned and the appropriate
@@ -51,9 +54,7 @@ public:
 			bool& node,
 			bool& port, bool& is_output, DataType& data_type);
 
-	void merge_properties(const Properties& p);
-
-	sigc::signal<void, const Raul::URI&, const Raul::Atom&> signal_property;
+	static const Raul::URI meta_uri(const Raul::URI& base, const Raul::URI& uri);
 
 private:
 	Raul::URI  _uri;

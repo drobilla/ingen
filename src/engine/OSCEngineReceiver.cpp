@@ -641,31 +641,6 @@ OSCEngineReceiver::_midi_learn_cb(const char* path, const char* types, lo_arg** 
 
 
 /** \page engine_osc_namespace
- * <h2>/ingen/set_variable</h2>
- * \arg \b response-id (integer)
- * \arg \b object-path (string) - Full path of object to associate variable with
- * \arg \b key (string) - Key (index/predicate/ID) for new variable
- * \arg \b value (string) - Value of new variable
- *
- * Set a variable, associated with a graph object.
- */
-int
-OSCEngineReceiver::_variable_set_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
-{
-	if (argc != 4 || types[0] != 'i' || types[1] != 's' || types[2] != 's')
-		return 1;
-
-	const char* object_path = &argv[1]->s;
-	const char* key         = &argv[2]->s;
-
-	Raul::Atom value = Raul::AtomLiblo::lo_arg_to_atom(types[3], argv[3]);
-
-	set_variable(object_path, key, value);
-	return 0;
-}
-
-
-/** \page engine_osc_namespace
  * <h2>/ingen/set_property</h2>
  * \arg \b response-id (integer)
  * \arg \b object-path (string) - Full path of object to associate variable with

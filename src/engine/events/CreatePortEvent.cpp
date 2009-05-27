@@ -15,10 +15,11 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "raul/Path.hpp"
 #include "raul/Array.hpp"
+#include "raul/Atom.hpp"
 #include "raul/List.hpp"
 #include "raul/Maid.hpp"
+#include "raul/Path.hpp"
 #include "Responder.hpp"
 #include "CreatePortEvent.hpp"
 #include "PatchImpl.hpp"
@@ -35,6 +36,7 @@
 #include "DuplexPort.hpp"
 
 using namespace std;
+using namespace Raul;
 
 namespace Ingen {
 
@@ -96,7 +98,8 @@ CreatePortEvent::pre_process()
 		const uint32_t old_num_ports = _patch->num_ports();
 
 		_patch_port = _patch->create_port(_path.name(), _data_type, buffer_size, _is_output);
-		_patch_port->properties().insert(_properties.begin(), _properties.end());
+		_patch_port->set_property("rdf:instanceOf", Atom(Atom::URI, _patch_port->meta_uri().str()));
+		_patch_port->meta().properties().insert(_properties.begin(), _properties.end());
 
 		if (_patch_port) {
 

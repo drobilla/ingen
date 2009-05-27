@@ -45,15 +45,15 @@ class GraphObject : public Raul::Deletable
 public:
 	typedef Raul::PathTable< SharedPtr<GraphObject> >::const_iterator const_iterator;
 
+	virtual const Resource& meta() const = 0;
+	virtual       Resource& meta()       = 0;
+
 	virtual void set_path(const Raul::Path& path) = 0;
 
 	virtual const Raul::Path   path()       const = 0;
 	virtual const Raul::Symbol symbol()     const = 0;
-	virtual const Properties&  variables()  const = 0;
-	virtual Properties&        variables()        = 0;
 	virtual bool               polyphonic() const = 0;
 
-	// FIXME: return WeakPtr, and stupid name
 	virtual GraphObject* graph_parent() const = 0;
 };
 

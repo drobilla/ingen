@@ -52,7 +52,6 @@ NodeModule::NodeModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeMode
 
 	node->signal_new_port.connect(sigc::bind(sigc::mem_fun(this, &NodeModule::add_port), true));
 	node->signal_removed_port.connect(sigc::hide_return(sigc::mem_fun(this, &NodeModule::remove_port)));
-	node->signal_variable.connect(sigc::mem_fun(this, &NodeModule::set_property));
 	node->signal_property.connect(sigc::mem_fun(this, &NodeModule::set_property));
 	node->signal_moved.connect(sigc::mem_fun(this, &NodeModule::rename));
 }
@@ -201,7 +200,7 @@ NodeModule::embed_gui(bool embed)
 			for (NodeModel::Ports::const_iterator p = _node->ports().begin();
 					p != _node->ports().end(); ++p)
 				if ((*p)->type().is_control() && (*p)->is_output())
-					App::instance().engine()->set_variable((*p)->path(), "ingen:broadcast", true);
+					App::instance().engine()->set_property((*p)->path(), "ingen:broadcast", true);
 		}
 
 	} else { // un-embed
@@ -211,7 +210,7 @@ NodeModule::embed_gui(bool embed)
 
 		for (NodeModel::Ports::const_iterator p = _node->ports().begin(); p != _node->ports().end(); ++p)
 			if ((*p)->type().is_control() && (*p)->is_output())
-				App::instance().engine()->set_variable((*p)->path(), "ingen:broadcast", false);
+				App::instance().engine()->set_property((*p)->path(), "ingen:broadcast", false);
 	}
 
 	if (embed && _embed_item) {
@@ -362,13 +361,13 @@ NodeModule::store_location()
 	const float x = static_cast<float>(property_x());
 	const float y = static_cast<float>(property_y());
 
-	const Atom& existing_x = _node->get_variable("ingenuity:canvas-x");
-	const Atom& existing_y = _node->get_variable("ingenuity:canvas-y");
+	const Atom& existing_x = _node->get_property("ingenuity:canvas-x");
+	const Atom& existing_y = _node->get_property("ingenuity:canvas-y");
 
 	if (existing_x.type() != Atom::FLOAT || existing_y.type() != Atom::FLOAT
 			|| existing_x.get_float() != x || existing_y.get_float() != y) {
-		App::instance().engine()->set_variable(_node->path(), "ingenuity:canvas-x", Atom(x));
-		App::instance().engine()->set_variable(_node->path(), "ingenuity:canvas-y", Atom(y));
+		App::instance().engine()->set_property(_node->path(), "ingenuity:canvas-x", Atom(x));
+		App::instance().engine()->set_property(_node->path(), "ingenuity:canvas-y", Atom(y));
 	}
 }
 
@@ -406,7 +405,7 @@ NodeModule::set_selected(bool b)
 	if (b != selected()) {
 		Module::set_selected(b);
 		if (App::instance().signal())
-			App::instance().engine()->set_variable(_node->path(), "ingen:selected", b);
+			App::instance().engine()->set_property(_node->path(), "ingen:selected", b);
 	}
 }
 

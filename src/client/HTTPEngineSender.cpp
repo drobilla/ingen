@@ -105,7 +105,7 @@ HTTPEngineSender::quit()
 
 
 void
-HTTPEngineSender::put(const Raul::Path&                   path,
+HTTPEngineSender::put(const Raul::URI&                    path,
 	                  const Shared::Resource::Properties& properties)
 {
 }
@@ -173,15 +173,7 @@ HTTPEngineSender::midi_learn(const Path& node_path)
 
 
 void
-HTTPEngineSender::set_variable(const URI&  path,
-                               const URI&  predicate,
-                               const Atom& value)
-{
-}
-
-
-void
-HTTPEngineSender::set_property(const URI&  path,
+HTTPEngineSender::set_property(const URI&  subject,
                                const URI&  predicate,
                                const Atom& value)
 {

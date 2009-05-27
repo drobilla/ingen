@@ -62,11 +62,13 @@ public:
 		signal_property.emit(key, value);
 	}
 
-	virtual void set_variable(const Raul::URI& key, const Raul::Atom& value) {
-		_variables.insert(make_pair(key, value));
-		signal_variable.emit(key, value);
+	virtual void set_meta_property(const Raul::URI& key, const Raul::Atom& value) {
+		_meta.set_property(key, value);
+		signal_property.emit(key, value);
 	}
 
+	Resource&              meta()             { return _meta; }
+	const Resource&        meta()       const { return _meta; }
 	const Properties&      variables()  const { return _variables; }
 	Properties&            variables()        { return _variables; }
 	const Raul::Path       path()       const { return _path; }
@@ -79,7 +81,6 @@ public:
 	// Signals
 	sigc::signal<void, SharedPtr<ObjectModel> >             signal_new_child;
 	sigc::signal<void, SharedPtr<ObjectModel> >             signal_removed_child;
-	sigc::signal<void, const Raul::URI&, const Raul::Atom&> signal_variable;
 	sigc::signal<void, const Raul::URI&, const Raul::Atom&> signal_property;
 	sigc::signal<void>                                      signal_destroyed;
 	sigc::signal<void>                                      signal_moved;
@@ -96,6 +97,7 @@ protected:
 
 	virtual void set(SharedPtr<ObjectModel> model);
 
+	ResourceImpl           _meta;
 	Raul::Path             _path;
 	SharedPtr<ObjectModel> _parent;
 

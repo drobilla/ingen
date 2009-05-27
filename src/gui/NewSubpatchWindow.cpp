@@ -100,9 +100,9 @@ NewSubpatchWindow::ok_clicked()
 	App::instance().engine()->put(path, props);
 
 	for (GraphObject::Properties::const_iterator i = _initial_data.begin(); i != _initial_data.end(); ++i)
-		App::instance().engine()->set_variable(path, i->first, i->second);
+		App::instance().engine()->set_property(path, i->first, i->second);
 
-	App::instance().engine()->set_variable(path, "ingen:enabled", (bool)true);
+	App::instance().engine()->set_property(path, "ingen:enabled", (bool)true);
 
 	hide();
 }

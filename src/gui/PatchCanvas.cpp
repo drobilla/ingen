@@ -490,27 +490,7 @@ PatchCanvas::connect(boost::shared_ptr<FlowCanvas::Connectable> src_port,
 
 	// Midi binding/learn shortcut
 	if (src->model()->type().is_event() && dst->model()->type().is_control()) {
-		cerr << "[PatchCanvas] FIXME: MIDI binding shortcut" << endl;
-#if 0
-		SharedPtr<PluginModel> pm(new PluginModel(PluginModel::Internal, "", "midi_control_in", ""));
-		SharedPtr<NodeModel> nm(new NodeModel(pm, _patch->path().base()
-			+ src->name() + "-" + dst->name(), false));
-		nm->set_variable("canvas-x", Atom((float)
-			(dst->module()->property_x() - dst->module()->width() - 20)));
-		nm->set_variable("canvas-y", Atom((float)
-			(dst->module()->property_y())));
-		App::instance().engine()->create_node_from_model(nm.get());
-		App::instance().engine()->connect(src->model()->path(), nm->path() + "/MIDI_In");
-		App::instance().engine()->connect(nm->path() + "/Out_(CR)", dst->model()->path());
-		App::instance().engine()->midi_learn(nm->path());
-
-		// Set control node range to port's user range
-
-		App::instance().engine()->set_port_value_queued(nm->path().base() + "Min",
-			dst->model()->get_variable("user-min").get_float());
-		App::instance().engine()->set_port_value_queued(nm->path().base() + "Max",
-			dst->model()->get_variable("user-max").get_float());
-#endif
+		cerr << "[PatchCanvas] TODO: MIDI binding shortcut" << endl;
 	} else {
 		App::instance().engine()->connect(src->model()->path(), dst->model()->path());
 	}
@@ -700,18 +680,18 @@ PatchCanvas::paste()
 			//cout << "Skipping root" << endl;
 			continue;
 		}
-		GraphObject::Properties::iterator x = i->second->variables().find("ingenuity:canvas-x");
-		if (x != i->second->variables().end())
+		GraphObject::Properties::iterator x = i->second->properties().find("ingenuity:canvas-x");
+		if (x != i->second->properties().end())
 			x->second = x->second.get_float() + (20.0f * _paste_count);
-		GraphObject::Properties::iterator y = i->second->variables().find("ingenuity:canvas-y");
-		if (y != i->second->variables().end())
+		GraphObject::Properties::iterator y = i->second->properties().find("ingenuity:canvas-y");
+		if (y != i->second->properties().end())
 			y->second = y->second.get_float() + (20.0f * _paste_count);
 		if (i->first.parent().is_root()) {
-			GraphObject::Properties::iterator s = i->second->variables().find("ingen:selected");
-			if (s != i->second->variables().end())
+			GraphObject::Properties::iterator s = i->second->properties().find("ingen:selected");
+			if (s != i->second->properties().end())
 				s->second = true;
 			else
-				i->second->variables().insert(make_pair("ingen:selected", true));
+				i->second->properties().insert(make_pair("ingen:selected", true));
 		}
 		builder.build(i->second);
 	}

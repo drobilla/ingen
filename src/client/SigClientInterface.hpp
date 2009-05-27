@@ -53,7 +53,7 @@ public:
 	sigc::signal<void, Raul::URI, Raul::URI, Raul::Symbol>          signal_new_plugin;
 	sigc::signal<void, Raul::Path, uint32_t>                        signal_new_patch;
 	sigc::signal<void, Raul::Path, Raul::URI, uint32_t, bool>       signal_new_port;
-	sigc::signal<void, Raul::Path, Shared::Resource::Properties>    signal_put;
+	sigc::signal<void, Raul::URI, Shared::Resource::Properties>     signal_put;
 	sigc::signal<void, Raul::Path>                                  signal_clear_patch;
 	sigc::signal<void, Raul::Path, Raul::Path>                      signal_object_moved;
 	sigc::signal<void, Raul::Path>                                  signal_object_deleted;
@@ -98,7 +98,7 @@ protected:
 	void new_plugin(const Raul::URI& uri, const Raul::URI& type_uri, const Raul::Symbol& symbol)
 		{ if (_enabled) signal_new_plugin.emit(uri, type_uri, symbol); }
 
-	void put(const Raul::Path& path, const Shared::Resource::Properties& properties)
+	void put(const Raul::URI& path, const Shared::Resource::Properties& properties)
 		{ if (_enabled) signal_put.emit(path, properties); }
 
 	void connect(const Raul::Path& src_port_path, const Raul::Path& dst_port_path)
@@ -116,11 +116,8 @@ protected:
 	void disconnect(const Raul::Path& src_port_path, const Raul::Path& dst_port_path)
 		{ if (_enabled) signal_disconnection.emit(src_port_path, dst_port_path); }
 
-	void set_variable(const Raul::URI& path, const Raul::URI& key, const Raul::Atom& value)
-		{ if (_enabled) signal_variable_change.emit(path, key, value); }
-
-	void set_property(const Raul::URI& path, const Raul::URI& key, const Raul::Atom& value)
-		{ if (_enabled) signal_property_change.emit(path, key, value); }
+	void set_property(const Raul::URI& subject, const Raul::URI& key, const Raul::Atom& value)
+		{ if (_enabled) signal_property_change.emit(subject, key, value); }
 
 	void set_port_value(const Raul::Path& port_path, const Raul::Atom& value)
 		{ if (_enabled) signal_port_value.emit(port_path, value); }

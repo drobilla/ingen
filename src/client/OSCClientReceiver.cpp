@@ -150,7 +150,6 @@ OSCClientReceiver::setup_callbacks()
 	lo_server_thread_add_method(_st, "/ingen/new_connection", "ss", connection_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/disconnection", "ss", disconnection_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/new_port", "sisi", new_port_cb, this);
-	lo_server_thread_add_method(_st, "/ingen/set_variable", NULL, set_variable_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/set_property", NULL, set_property_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/set_port_value", "sf", set_port_value_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/set_voice_value", "sif", set_voice_value_cb, this);
@@ -216,25 +215,6 @@ OSCClientReceiver::_disconnection_cb(const char* path, const char* types, lo_arg
 }
 
 
-/** Notification of a new or updated variable.
- */
-int
-OSCClientReceiver::_set_variable_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
-{
-	if (argc != 3 || types[0] != 's' || types[1] != 's')
-		return 1;
-
-	const char* obj_path  = &argv[0]->s;
-	const char* key       = &argv[1]->s;
-
-	Atom value = AtomLiblo::lo_arg_to_atom(types[2], argv[2]);
-
-	_target->set_variable(obj_path, key, value);
-
-	return 0;
-}
-
-
 /** Notification of a new or updated property.
  */
 int
@@ -243,12 +223,12 @@ OSCClientReceiver::_set_property_cb(const char* path, const char* types, lo_arg*
 	if (argc != 3 || types[0] != 's' || types[1] != 's')
 		return 1;
 
-	const char* obj_path  = &argv[0]->s;
-	const char* key       = &argv[1]->s;
+	const char* obj_uri  = &argv[0]->s;
+	const char* key      = &argv[1]->s;
 
 	Atom value = AtomLiblo::lo_arg_to_atom(types[2], argv[2]);
 
-	_target->set_property(obj_path, key, value);
+	_target->set_property(obj_uri, key, value);
 
 	return 0;
 }

@@ -57,8 +57,7 @@ public:
 	void activity();
 
 private:
-
-	void variable_changed(const Raul::URI& key, const Raul::Atom& value);
+	void property_changed(const Raul::URI& key, const Raul::Atom& value);
 
 	void moved();
 

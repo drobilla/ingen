@@ -241,11 +241,11 @@ LADSPANode::instantiate()
 
 		if (port->is_input() && port->buffer_size() == 1) {
 			if (min)
-				port->set_variable("lv2:minimum", min.get());
+				port->set_meta_property("lv2:minimum", min.get());
 			if (max)
-				port->set_variable("lv2:maximum", max.get());
+				port->set_meta_property("lv2:maximum", max.get());
 			if (default_val)
-				port->set_variable("lv2:default", default_val.get());
+				port->set_meta_property("lv2:default", default_val.get());
 		}
 	}
 
