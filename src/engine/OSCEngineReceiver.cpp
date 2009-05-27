@@ -95,7 +95,7 @@ OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t
 	lo_server_add_method(_server, "/ingen/set_polyphonic", "isF", set_polyphonic_cb, this);
 	lo_server_add_method(_server, "/ingen/put", NULL, put_cb, this);
 	lo_server_add_method(_server, "/ingen/move", "iss", move_cb, this);
-	lo_server_add_method(_server, "/ingen/del", "is", del_cb, this);
+	lo_server_add_method(_server, "/ingen/delete", "is", del_cb, this);
 	lo_server_add_method(_server, "/ingen/connect", "iss", connect_cb, this);
 	lo_server_add_method(_server, "/ingen/disconnect", "iss", disconnect_cb, this);
 	lo_server_add_method(_server, "/ingen/disconnect_all", "iss", disconnect_all_cb, this);
@@ -378,12 +378,31 @@ OSCEngineReceiver::_engine_deactivate_cb(const char* path, const char* types, lo
 
 
 /** \page engine_osc_namespace
+ * <h2>/ingen/put</h2>
+ * \arg \b response-id (integer)
+ * \arg \b path (string) - Path of object
+ * \arg \b predicate
+ * \arg \b value
+ * \arg \b ...
+ *
+ * PUT a set of properties to a path (see \ref methods).
+ */
+int
+OSCEngineReceiver::_put_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+{
+	//const char* path = &argv[1]->s;
+
+	return 0;
+}
+
+
+/** \page engine_osc_namespace
  * <h2>/ingen/move</h2>
  * \arg \b response-id (integer)
  * \arg \b old-path - Object's path
  * \arg \b new-path - Object's new path
  *
- * Move (rename) an Object.
+ * MOVE an object to a new path (see \ref methods).
  */
 int
 OSCEngineReceiver::_move_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -418,7 +437,7 @@ OSCEngineReceiver::_clear_patch_cb(const char* path, const char* types, lo_arg**
  * \arg \b response-id (integer)
  * \arg \b path (string) - Full path of the object
  *
- * Delete a graph object.
+ * DELETE an object (see \ref methods).
  */
 int
 OSCEngineReceiver::_del_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)

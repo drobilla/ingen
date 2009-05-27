@@ -155,7 +155,7 @@ OSCEngineSender::move(const Path& old_path,
 void
 OSCEngineSender::del(const Path& path)
 {
-	send("/ingen/destroy", "is",
+	send("/ingen/delete", "is",
 		next_id(),
 		path.c_str(),
 		LO_ARGS_END);

@@ -145,7 +145,7 @@ OSCClientReceiver::setup_callbacks()
 	lo_server_thread_add_method(_st, "/ingen/plugin", "sss", plugin_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/put", NULL, put_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/move", "ss", move_cb, this);
-	lo_server_thread_add_method(_st, "/ingen/delete", "s", destroyed_cb, this);
+	lo_server_thread_add_method(_st, "/ingen/delete", "s", del_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/clear_patch", "s", clear_patch_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/new_connection", "ss", connection_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/disconnection", "ss", disconnection_cb, this);
@@ -169,7 +169,7 @@ OSCClientReceiver::_error_cb(const char* path, const char* types, lo_arg** argv,
 
 
 int
-OSCClientReceiver::_destroyed_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCClientReceiver::_del_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	_target->del((const char*)&argv[0]->s);
 	return 0;
