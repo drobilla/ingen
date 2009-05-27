@@ -28,10 +28,10 @@ class PatchImpl;
 
 /** \page methods
  * <h2>MOVE</h2>
- * From WebDAV (RFC4918 S9.9).
+ * As per WebDAV (RFC4918 S9.9).
  *
- * Calling MOVE on an object removes it from its current location
- * and inserts it at a new one in a single operation.
+ * Move an object from its current location and insert it at a new location
+ * in a single operation.
  *
  * MOVE to a path with a different parent is currently not supported.
  */

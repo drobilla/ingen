@@ -38,10 +38,9 @@ class CompiledPatch;
 
 /** \page methods
  * <h2>DELETE</h2>
- * From WebDAV (RFC4918 S9.6).
+ * As per WebDAV (RFC4918 S9.6).
  *
- * Calling DELETE on an object will remove that object from the engine
- * (i.e. stop executing it) and destroy it.
+ * Remove an object from the engine and destroy it.
  *
  * \li All properties of the object are lost
  * \li All references to the object are lost (e.g. the parent's reference to
