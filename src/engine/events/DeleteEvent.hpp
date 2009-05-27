@@ -37,15 +37,22 @@ class DisconnectAllEvent;
 class CompiledPatch;
 
 
-/** An event to remove and delete a Node.
+/** Delete a graph object.
+ * WebDAV method DELETE (RFC4918 S9.6).
  *
  * \ingroup engine
  */
-class DestroyEvent : public QueuedEvent
+class DeleteEvent : public QueuedEvent
 {
 public:
-	DestroyEvent(Engine& engine, SharedPtr<Responder> responder, FrameTime timestamp, QueuedEventSource* source, const Raul::Path& path);
-	~DestroyEvent();
+	DeleteEvent(
+			Engine&              engine,
+			SharedPtr<Responder> responder,
+			FrameTime            timestamp,
+			QueuedEventSource*   source,
+			const Raul::Path&    path);
+
+	~DeleteEvent();
 
 	void pre_process();
 	void execute(ProcessContext& context);

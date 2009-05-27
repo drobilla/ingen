@@ -56,7 +56,7 @@ private:
 	void breadcrumb_clicked(BreadCrumb* crumb);
 
 	void object_destroyed(const Raul::Path& path);
-	void object_renamed(const Raul::Path& old_path, const Raul::Path& new_path);
+	void object_moved(const Raul::Path& old_path, const Raul::Path& new_path);
 
 	Raul::Path             _active_path;
 	Raul::Path             _full_path;

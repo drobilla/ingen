@@ -90,13 +90,12 @@ private:
 	LO_HANDLER(engine_activate);
 	LO_HANDLER(engine_deactivate);
 	LO_HANDLER(new_patch);
-	LO_HANDLER(rename);
-	LO_HANDLER(new_port);
 	LO_HANDLER(put);
+	LO_HANDLER(move);
+	LO_HANDLER(del);
 	LO_HANDLER(clear_patch);
 	LO_HANDLER(set_polyphony);
 	LO_HANDLER(set_polyphonic);
-	LO_HANDLER(destroy);
 	LO_HANDLER(connect);
 	LO_HANDLER(disconnect);
 	LO_HANDLER(disconnect_all);

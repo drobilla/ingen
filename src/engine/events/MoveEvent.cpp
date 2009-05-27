@@ -21,7 +21,7 @@
 #include "NodeImpl.hpp"
 #include "EngineStore.hpp"
 #include "PatchImpl.hpp"
-#include "RenameEvent.hpp"
+#include "MoveEvent.hpp"
 #include "Responder.hpp"
 #include "AudioDriver.hpp"
 #include "MidiDriver.hpp"
@@ -34,7 +34,7 @@ namespace Ingen {
 using namespace Shared;
 
 
-RenameEvent::RenameEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Path& path, const Path& new_path)
+MoveEvent::MoveEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Path& path, const Path& new_path)
 	: QueuedEvent(engine, responder, timestamp)
 	, _old_path(path)
 	, _new_path(new_path)
@@ -45,13 +45,13 @@ RenameEvent::RenameEvent(Engine& engine, SharedPtr<Responder> responder, SampleC
 }
 
 
-RenameEvent::~RenameEvent()
+MoveEvent::~MoveEvent()
 {
 }
 
 
 void
-RenameEvent::pre_process()
+MoveEvent::pre_process()
 {
 	if (!_old_path.parent().is_parent_of(_new_path)) {
 		_error = PARENT_DIFFERS;
@@ -97,7 +97,7 @@ RenameEvent::pre_process()
 
 
 void
-RenameEvent::execute(ProcessContext& context)
+MoveEvent::execute(ProcessContext& context)
 {
 	QueuedEvent::execute(context);
 
@@ -117,13 +117,13 @@ RenameEvent::execute(ProcessContext& context)
 
 
 void
-RenameEvent::post_process()
+MoveEvent::post_process()
 {
 	string msg = "Unable to rename object - ";
 
 	if (_error == NO_ERROR) {
 		_responder->respond_ok();
-		_engine.broadcaster()->send_rename(_old_path, _new_path);
+		_engine.broadcaster()->send_move(_old_path, _new_path);
 	} else {
 		if (_error == OBJECT_EXISTS)
 			msg.append("Object already exists at ").append(_new_path.str());

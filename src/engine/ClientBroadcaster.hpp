@@ -68,7 +68,7 @@ public:
 	void send_clear_patch(const Raul::Path& patch_path);
 	void send_connection(const SharedPtr<const ConnectionImpl> connection);
 	void send_disconnection(const Raul::Path& src_port_path, const Raul::Path& dst_port_path);
-	void send_rename(const Raul::Path& old_path, const Raul::Path& new_path);
+	void send_move(const Raul::Path& old_path, const Raul::Path& new_path);
 	void send_variable_change(const Raul::URI& node_path, const Raul::URI& key, const Raul::Atom& value);
 	void send_property_change(const Raul::URI& node_path, const Raul::URI& key, const Raul::Atom& value);
 	void send_port_value(const Raul::Path& port_path, const Raul::Atom& value);

@@ -48,8 +48,10 @@ public:
 	virtual void put(const Raul::Path&           path,
 	                 const Resource::Properties& properties) = 0;
 
-	virtual void rename(const Raul::Path& old_path,
-	                    const Raul::Path& new_path) = 0;
+	virtual void move(const Raul::Path& old_path,
+	                  const Raul::Path& new_path) = 0;
+
+	virtual void del(const Raul::Path& path) = 0;
 
 	virtual void connect(const Raul::Path& src_port_path,
 	                     const Raul::Path& dst_port_path) = 0;
@@ -71,8 +73,6 @@ public:
 	virtual void set_voice_value(const Raul::Path& port_path,
 	                             uint32_t          voice,
 	                             const Raul::Atom& value) = 0;
-
-	virtual void destroy(const Raul::Path& path) = 0;
 
 	virtual void clear_patch(const Raul::Path& patch_path) = 0;
 };

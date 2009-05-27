@@ -54,29 +54,29 @@ def build(bld):
 
 	obj = bld.new_task_gen('cxx', 'shlib')
 	obj.source = '''
-		events/SetPortValueEvent.cpp
-		QueuedEventSource.cpp
 		QueuedEngineInterface.cpp
+		QueuedEventSource.cpp
 		events/AllNotesOffEvent.cpp
 		events/ClearPatchEvent.cpp
 		events/ConnectionEvent.cpp
 		events/CreateNodeEvent.cpp
 		events/CreatePatchEvent.cpp
 		events/CreatePortEvent.cpp
-		events/DestroyEvent.cpp
+		events/DeleteEvent.cpp
 		events/DisconnectAllEvent.cpp
 		events/DisconnectionEvent.cpp
 		events/LoadPluginsEvent.cpp
 		events/MidiLearnEvent.cpp
+		events/MoveEvent.cpp
 		events/NoteEvent.cpp
 		events/RegisterClientEvent.cpp
-		events/RenameEvent.cpp
 		events/RequestAllObjectsEvent.cpp
 		events/RequestMetadataEvent.cpp
 		events/RequestObjectEvent.cpp
 		events/RequestPluginEvent.cpp
 		events/RequestPluginsEvent.cpp
 		events/SetMetadataEvent.cpp
+		events/SetPortValueEvent.cpp
 		events/UnregisterClientEvent.cpp
 	'''
 	obj.export_incdirs = ['.']

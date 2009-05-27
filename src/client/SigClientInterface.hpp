@@ -55,7 +55,7 @@ public:
 	sigc::signal<void, Raul::Path, Raul::URI, uint32_t, bool>       signal_new_port;
 	sigc::signal<void, Raul::Path, Shared::Resource::Properties>    signal_put;
 	sigc::signal<void, Raul::Path>                                  signal_clear_patch;
-	sigc::signal<void, Raul::Path, Raul::Path>                      signal_object_renamed;
+	sigc::signal<void, Raul::Path, Raul::Path>                      signal_object_moved;
 	sigc::signal<void, Raul::Path>                                  signal_object_destroyed;
 	sigc::signal<void, Raul::Path, Raul::Path>                      signal_connection;
 	sigc::signal<void, Raul::Path, Raul::Path>                      signal_disconnection;
@@ -104,14 +104,14 @@ protected:
 	void connect(const Raul::Path& src_port_path, const Raul::Path& dst_port_path)
 		{ if (_enabled) signal_connection.emit(src_port_path, dst_port_path); }
 
-	void destroy(const Raul::Path& path)
+	void del(const Raul::Path& path)
 		{ if (_enabled) signal_object_destroyed.emit(path); }
 
 	void clear_patch(const Raul::Path& path)
 		{ if (_enabled) signal_clear_patch.emit(path); }
 
-	void rename(const Raul::Path& old_path, const Raul::Path& new_path)
-		{ if (_enabled) signal_object_renamed.emit(old_path, new_path); }
+	void move(const Raul::Path& old_path, const Raul::Path& new_path)
+		{ if (_enabled) signal_object_moved.emit(old_path, new_path); }
 
 	void disconnect(const Raul::Path& src_port_path, const Raul::Path& dst_port_path)
 		{ if (_enabled) signal_disconnection.emit(src_port_path, dst_port_path); }

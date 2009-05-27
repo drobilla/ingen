@@ -93,10 +93,9 @@ OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t
 	lo_server_add_method(_server, "/ingen/set_polyphony", "isi", set_polyphony_cb, this);
 	lo_server_add_method(_server, "/ingen/set_polyphonic", "isT", set_polyphonic_cb, this);
 	lo_server_add_method(_server, "/ingen/set_polyphonic", "isF", set_polyphonic_cb, this);
-	lo_server_add_method(_server, "/ingen/new_port", "issi", new_port_cb, this);
-	lo_server_add_method(_server, "/ingen/put", NULL, new_port_cb, this);
-	lo_server_add_method(_server, "/ingen/destroy", "is", destroy_cb, this);
-	lo_server_add_method(_server, "/ingen/rename", "iss", rename_cb, this);
+	lo_server_add_method(_server, "/ingen/put", NULL, put_cb, this);
+	lo_server_add_method(_server, "/ingen/move", "iss", move_cb, this);
+	lo_server_add_method(_server, "/ingen/del", "is", del_cb, this);
 	lo_server_add_method(_server, "/ingen/connect", "iss", connect_cb, this);
 	lo_server_add_method(_server, "/ingen/disconnect", "iss", disconnect_cb, this);
 	lo_server_add_method(_server, "/ingen/disconnect_all", "iss", disconnect_all_cb, this);
@@ -366,18 +365,18 @@ OSCEngineReceiver::_engine_deactivate_cb(const char* path, const char* types, lo
 
 
 /** \page engine_osc_namespace
- * <p> \b /ingen/rename - Rename an Object (only Nodes, for now)
+ * <p> \b /ingen/move - Move (rename) an Object
  * \arg \b response-id (integer)
  * \arg \b old-path - Object's path
  * \arg \b new-path - Object's new path </p> \n \n
  */
 int
-OSCEngineReceiver::_rename_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCEngineReceiver::_move_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	const char* old_path = &argv[1]->s;
 	const char* new_path = &argv[2]->s;
 
-	rename(old_path, new_path);
+	move(old_path, new_path);
 	return 0;
 }
 
@@ -398,16 +397,16 @@ OSCEngineReceiver::_clear_patch_cb(const char* path, const char* types, lo_arg**
 
 
 /** \page engine_osc_namespace
- * <p> \b /ingen/destroy - Removes (destroys) a Patch or a Node
+ * <p> \b /ingen/del - Delete a graph object
  * \arg \b response-id (integer)
- * \arg \b node-path (string) - Full path of the object </p> \n \n
+ * \arg \b path (string) - Full path of the object </p> \n \n
  */
 int
-OSCEngineReceiver::_destroy_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCEngineReceiver::_del_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	const char* node_path   = &argv[1]->s;
+	const char* obj_path = &argv[1]->s;
 
-	destroy(node_path);
+	del(obj_path);
 	return 0;
 }
 

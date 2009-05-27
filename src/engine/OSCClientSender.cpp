@@ -133,7 +133,7 @@ OSCClientSender::put(const Raul::Path&                   path,
  * \arg \b path (string) - Path of object (which no longer exists) </p> \n \n
  */
 void
-OSCClientSender::destroy(const Path& path)
+OSCClientSender::del(const Path& path)
 {
 	send("/ingen/destroyed", "s", path.c_str(), LO_ARGS_END);
 }
@@ -274,14 +274,14 @@ OSCClientSender::new_plugin(const URI&    uri,
 
 
 /** \page client_osc_namespace
- * <p> \b /ingen/rename - Notification of an object's renaming
+ * <p> \b /ingen/move - Notification of an object's renaming
  * \arg \b old-path (string) - Old path of object
  * \arg \b new-path (string) - New path of object </p> \n \n
  */
 void
-OSCClientSender::rename(const Path& old_path, const Path& new_path)
+OSCClientSender::move(const Path& old_path, const Path& new_path)
 {
-	send("/ingen/rename", "ss", old_path.c_str(), new_path.c_str(), LO_ARGS_END);
+	send("/ingen/move", "ss", old_path.c_str(), new_path.c_str(), LO_ARGS_END);
 }
 
 

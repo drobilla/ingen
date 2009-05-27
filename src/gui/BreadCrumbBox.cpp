@@ -199,7 +199,7 @@ BreadCrumbBox::object_destroyed(const Path& path)
 
 
 void
-BreadCrumbBox::object_renamed(const Path& old_path, const Path& new_path)
+BreadCrumbBox::object_moved(const Path& old_path, const Path& new_path)
 {
 	for (std::list<BreadCrumb*>::iterator i = _breadcrumbs.begin(); i != _breadcrumbs.end(); ++i) {
 		if ((*i)->path() == old_path)

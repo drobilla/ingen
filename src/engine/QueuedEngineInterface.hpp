@@ -74,8 +74,8 @@ public:
 	virtual void put(const Raul::Path&                   path,
 	                 const Shared::Resource::Properties& properties);
 
-	virtual void rename(const Raul::Path& old_path,
-	                    const Raul::Path& new_path);
+	virtual void move(const Raul::Path& old_path,
+	                  const Raul::Path& new_path);
 
 	virtual void connect(const Raul::Path& src_port_path,
 	                     const Raul::Path& dst_port_path);
@@ -98,7 +98,7 @@ public:
 	                             uint32_t          voice,
 	                             const Raul::Atom& value);
 
-	virtual void destroy(const Raul::Path& path);
+	virtual void del(const Raul::Path& path);
 
 	virtual void clear_patch(const Raul::Path& patch_path);
 

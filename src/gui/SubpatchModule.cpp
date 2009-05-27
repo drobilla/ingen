@@ -87,7 +87,7 @@ SubpatchModule::show_dialog()
 void
 SubpatchModule::menu_remove()
 {
-	App::instance().engine()->destroy(_patch->path());
+	App::instance().engine()->del(_patch->path());
 }
 
 } // namespace GUI

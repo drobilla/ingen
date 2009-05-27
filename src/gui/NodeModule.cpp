@@ -54,7 +54,7 @@ NodeModule::NodeModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeMode
 	node->signal_removed_port.connect(sigc::hide_return(sigc::mem_fun(this, &NodeModule::remove_port)));
 	node->signal_variable.connect(sigc::mem_fun(this, &NodeModule::set_property));
 	node->signal_property.connect(sigc::mem_fun(this, &NodeModule::set_property));
-	node->signal_renamed.connect(sigc::mem_fun(this, &NodeModule::rename));
+	node->signal_moved.connect(sigc::mem_fun(this, &NodeModule::rename));
 }
 
 

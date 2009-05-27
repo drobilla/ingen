@@ -50,15 +50,15 @@ HTTPClientSender::error(const std::string& msg)
 
 
 void
-HTTPClientSender::put(const Raul::Path&                   path,
-                     const Shared::Resource::Properties& properties)
+HTTPClientSender::put(const Path&                         path,
+                      const Shared::Resource::Properties& properties)
 {
 	cerr << "HTTP CLIENT PUT " << path << endl;
 }
 
 
 void
-HTTPClientSender::destroy(const Raul::Path& path)
+HTTPClientSender::del(const Path& path)
 {
 	assert(!path.is_root());
 	send_chunk(string("<").append(path.str()).append("> a <http://www.w3.org/2002/07/owl#Nothing> ."));
@@ -66,14 +66,14 @@ HTTPClientSender::destroy(const Raul::Path& path)
 
 
 void
-HTTPClientSender::clear_patch(const Raul::Path& patch_path)
+HTTPClientSender::clear_patch(const Path& patch_path)
 {
 	send_chunk(string("<").append(patch_path.str()).append("> ingen:empty true ."));
 }
 
 
 void
-HTTPClientSender::connect(const Raul::Path& src_path, const Raul::Path& dst_path)
+HTTPClientSender::connect(const Path& src_path, const Path& dst_path)
 {
 	string msg = string(
 			"@prefix rdf:       <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n"
@@ -87,14 +87,14 @@ HTTPClientSender::connect(const Raul::Path& src_path, const Raul::Path& dst_path
 
 
 void
-HTTPClientSender::disconnect(const Raul::Path& src_path, const Raul::Path& dst_path)
+HTTPClientSender::disconnect(const Path& src_path, const Path& dst_path)
 {
 	//send("/ingen/disconnection", "ss", src_path.c_str(), dst_path.c_str(), LO_ARGS_END);
 }
 
 
 void
-HTTPClientSender::set_variable(const Raul::URI& path, const Raul::URI& key, const Atom& value)
+HTTPClientSender::set_variable(const URI& path, const URI& key, const Atom& value)
 {
 	Redland::Node node = AtomRDF::atom_to_node(*_engine.world()->rdf_world, value);
 	string msg = string(
@@ -109,7 +109,7 @@ HTTPClientSender::set_variable(const Raul::URI& path, const Raul::URI& key, cons
 
 
 void
-HTTPClientSender::set_property(const Raul::URI& path, const Raul::URI& key, const Atom& value)
+HTTPClientSender::set_property(const URI& path, const URI& key, const Atom& value)
 {
 	Redland::Node node = AtomRDF::atom_to_node(*_engine.world()->rdf_world, value);
 	string msg = string(
@@ -125,7 +125,7 @@ HTTPClientSender::set_property(const Raul::URI& path, const Raul::URI& key, cons
 
 
 void
-HTTPClientSender::set_port_value(const Raul::Path& port_path, const Raul::Atom& value)
+HTTPClientSender::set_port_value(const Path& port_path, const Atom& value)
 {
 	Redland::Node node = AtomRDF::atom_to_node(*_engine.world()->rdf_world, value);
 	string msg = string(
@@ -136,17 +136,17 @@ HTTPClientSender::set_port_value(const Raul::Path& port_path, const Raul::Atom& 
 
 
 void
-HTTPClientSender::set_voice_value(const Raul::Path& port_path, uint32_t voice, const Raul::Atom& value)
+HTTPClientSender::set_voice_value(const Path& port_path, uint32_t voice, const Atom& value)
 {
 	/*lo_message m = lo_message_new();
 	lo_message_add_string(m, port_path.c_str());
-	Raul::AtomLiblo::lo_message_add_atom(m, value);
+	AtomLiblo::lo_message_add_atom(m, value);
 	send_message("/ingen/set_port_value", m);*/
 }
 
 
 void
-HTTPClientSender::activity(const Raul::Path& path)
+HTTPClientSender::activity(const Path& path)
 {
 	string msg = string(
 			"@prefix ingen: <http://drobilla.net/ns/ingen#> .\n\n<").append(
@@ -174,9 +174,9 @@ HTTPClientSender::new_object(const Shared::GraphObject* object)
 
 
 void
-HTTPClientSender::new_plugin(const Raul::URI&    uri,
-                             const Raul::URI&    type_uri,
-                             const Raul::Symbol& symbol)
+HTTPClientSender::new_plugin(const URI&    uri,
+                             const URI&    type_uri,
+                             const Symbol& symbol)
 {
 	/*lo_message m = lo_message_new();
 	lo_message_add_string(m, uri.c_str());
@@ -188,7 +188,7 @@ HTTPClientSender::new_plugin(const Raul::URI&    uri,
 
 
 void
-HTTPClientSender::rename(const Raul::Path& old_path, const Raul::Path& new_path)
+HTTPClientSender::move(const Path& old_path, const Path& new_path)
 {
 	string msg = string(
 			"@prefix rdf:       <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n"

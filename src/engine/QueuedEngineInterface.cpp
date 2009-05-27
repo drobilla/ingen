@@ -184,17 +184,17 @@ QueuedEngineInterface::put(const Path&                 path,
 
 
 void
-QueuedEngineInterface::rename(const Path& old_path,
-                              const Path& new_path)
+QueuedEngineInterface::move(const Path& old_path,
+                            const Path& new_path)
 {
-	push_queued(new RenameEvent(_engine, _responder, now(), old_path, new_path));
+	push_queued(new MoveEvent(_engine, _responder, now(), old_path, new_path));
 }
 
 
 void
-QueuedEngineInterface::destroy(const Path& path)
+QueuedEngineInterface::del(const Path& path)
 {
-	push_queued(new DestroyEvent(_engine, _responder, now(), this, path));
+	push_queued(new DeleteEvent(_engine, _responder, now(), this, path));
 }
 
 

@@ -55,7 +55,7 @@ Port::Port(
 	delete _menu;
 	_menu = NULL;
 
-	pm->signal_renamed.connect(sigc::mem_fun(this, &Port::renamed));
+	pm->signal_moved.connect(sigc::mem_fun(this, &Port::moved));
 
 	if (pm->type().is_control()) {
 		set_toggled(pm->is_toggle());
@@ -97,7 +97,7 @@ Port::create_menu()
 
 
 void
-Port::renamed()
+Port::moved()
 {
 	set_name(model()->path().name());
 	module().lock()->resize();

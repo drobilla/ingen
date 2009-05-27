@@ -56,7 +56,7 @@ public:
 	, connection_slot(signal_connection.make_slot())
 	, clear_patch_slot(signal_clear_patch.make_slot())
 	, object_destroyed_slot(signal_object_destroyed.make_slot())
-	, object_renamed_slot(signal_object_renamed.make_slot())
+	, object_moved_slot(signal_object_moved.make_slot())
 	, disconnection_slot(signal_disconnection.make_slot())
 	, variable_change_slot(signal_variable_change.make_slot())
 	, property_change_slot(signal_property_change.make_slot())
@@ -98,14 +98,14 @@ public:
 	void connect(const Raul::Path& src_port_path, const Raul::Path& dst_port_path)
 		{ push_sig(sigc::bind(connection_slot, src_port_path, dst_port_path)); }
 
-	void destroy(const Raul::Path& path)
+	void del(const Raul::Path& path)
 		{ push_sig(sigc::bind(object_destroyed_slot, path)); }
 
 	void clear_patch(const Raul::Path& path)
 		{ push_sig(sigc::bind(clear_patch_slot, path)); }
 
-	void rename(const Raul::Path& old_path, const Raul::Path& new_path)
-		{ push_sig(sigc::bind(object_renamed_slot, old_path, new_path)); }
+	void move(const Raul::Path& old_path, const Raul::Path& new_path)
+		{ push_sig(sigc::bind(object_moved_slot, old_path, new_path)); }
 
 	void disconnect(const Raul::Path& src_port_path, const Raul::Path& dst_port_path)
 		{ push_sig(sigc::bind(disconnection_slot, src_port_path, dst_port_path)); }
@@ -148,7 +148,7 @@ private:
 	sigc::slot<void, Raul::Path, Raul::Path>                      connection_slot;
 	sigc::slot<void, Raul::Path>                                  clear_patch_slot;
 	sigc::slot<void, Raul::Path>                                  object_destroyed_slot;
-	sigc::slot<void, Raul::Path, Raul::Path>                      object_renamed_slot;
+	sigc::slot<void, Raul::Path, Raul::Path>                      object_moved_slot;
 	sigc::slot<void, Raul::Path, Raul::Path>                      disconnection_slot;
 	sigc::slot<void, Raul::URI, Raul::URI, Raul::Atom>            variable_change_slot;
 	sigc::slot<void, Raul::URI, Raul::URI, Raul::Atom>            property_change_slot;

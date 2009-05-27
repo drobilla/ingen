@@ -43,8 +43,8 @@ ClientStore::ClientStore(SharedPtr<EngineInterface> engine, SharedPtr<SigClientI
 	if (!emitter)
 		return;
 
-	emitter->signal_object_destroyed.connect(sigc::mem_fun(this, &ClientStore::destroy));
-	emitter->signal_object_renamed.connect(sigc::mem_fun(this, &ClientStore::rename));
+	emitter->signal_object_destroyed.connect(sigc::mem_fun(this, &ClientStore::del));
+	emitter->signal_object_moved.connect(sigc::mem_fun(this, &ClientStore::move));
 	emitter->signal_new_plugin.connect(sigc::mem_fun(this, &ClientStore::new_plugin));
 	emitter->signal_put.connect(sigc::mem_fun(this, &ClientStore::put));
 	emitter->signal_clear_patch.connect(sigc::mem_fun(this, &ClientStore::clear_patch));
@@ -205,7 +205,7 @@ ClientStore::add_plugin(SharedPtr<PluginModel> pm)
 
 
 void
-ClientStore::destroy(const Path& path)
+ClientStore::del(const Path& path)
 {
 	SharedPtr<ObjectModel> removed = remove_object(path);
 	removed.reset();
@@ -213,14 +213,14 @@ ClientStore::destroy(const Path& path)
 }
 
 void
-ClientStore::rename(const Path& old_path_str, const Path& new_path_str)
+ClientStore::move(const Path& old_path_str, const Path& new_path_str)
 {
 	Path old_path(old_path_str);
 	Path new_path(new_path_str);
 
 	iterator parent = find(old_path);
 	if (parent == end()) {
-		cerr << "[Store] Failed to find object " << old_path << " to rename." << endl;
+		cerr << "[Store] Failed to find object " << old_path << " to move." << endl;
 		return;
 	}
 

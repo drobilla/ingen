@@ -47,8 +47,8 @@ public:
 
 	virtual void clear_patch(const std::string& path)  {}
 
-	virtual void rename(const std::string& old_path,
-	                    const std::string& new_path)  {}
+	virtual void move(const std::string& old_path,
+	                  const std::string& new_path)  {}
 
 	virtual void connect(const std::string& src_port_path,
 	                     const std::string& dst_port_path)  {}

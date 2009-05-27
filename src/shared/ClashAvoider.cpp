@@ -151,10 +151,10 @@ ClashAvoider::put(const Raul::Path&                   path,
 
 
 void
-ClashAvoider::rename(const Raul::Path& old_path,
-                     const Raul::Path& new_path)
+ClashAvoider::move(const Raul::Path& old_path,
+                   const Raul::Path& new_path)
 {
-	_target.rename(map_path(old_path), map_path(new_path));
+	_target.move(map_path(old_path), map_path(new_path));
 }
 
 
@@ -210,9 +210,9 @@ ClashAvoider::set_voice_value(const Raul::Path& port_path,
 
 
 void
-ClashAvoider::destroy(const Raul::Path& path)
+ClashAvoider::del(const Raul::Path& path)
 {
-	_target.destroy(map_path(path));
+	_target.del(map_path(path));
 }
 
 

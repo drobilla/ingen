@@ -70,14 +70,14 @@ public:
 	void new_plugin(const Raul::URI& uri, const Raul::URI& type_uri, const Raul::Symbol& symbol);
 	bool new_object(const Shared::GraphObject* object);
 	void put(const Raul::Path& path, const Shared::Resource::Properties& properties);
-	void rename(const Raul::Path& old_path, const Raul::Path& new_path);
+	void move(const Raul::Path& old_path, const Raul::Path& new_path);
 	void set_variable(const Raul::URI& subject_path, const Raul::URI& predicate, const Raul::Atom& value);
 	void set_property(const Raul::URI& subject_path, const Raul::URI& predicate, const Raul::Atom& value);
 	void set_port_value(const Raul::Path& port_path, const Raul::Atom& value);
 	void set_voice_value(const Raul::Path& port_path, uint32_t voice, const Raul::Atom& value);
 	void connect(const Raul::Path& src_port_path, const Raul::Path& dst_port_path);
 	void disconnect(const Raul::Path& src_port_path, const Raul::Path& dst_port_path);
-	void destroy(const Raul::Path& path);
+	void del(const Raul::Path& path);
 
 	sigc::signal<void, SharedPtr<ObjectModel> > signal_new_object;
 	sigc::signal<void, SharedPtr<PluginModel> > signal_new_plugin;
@@ -97,7 +97,7 @@ private:
 	void bundle_end()   {}
 
 	// Slots for SigClientInterface signals
-	void object_renamed(const Raul::Path& old_path, const Raul::Path& new_path);
+	void object_moved(const Raul::Path& old_path, const Raul::Path& new_path);
 	void clear_patch(const Raul::Path& path);
 	void activity(const Raul::Path& path);
 

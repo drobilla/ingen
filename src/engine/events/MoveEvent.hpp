@@ -27,15 +27,21 @@ namespace Ingen {
 class PatchImpl;
 
 
-/** An event to change the name of an GraphObjectImpl.
+/** Move a graph object to a new path.
+ * WebDAV method MOVE (RFC4918 S9.9).
  *
  * \ingroup engine
  */
-class RenameEvent : public QueuedEvent
+class MoveEvent : public QueuedEvent
 {
 public:
-	RenameEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Raul::Path& old_path, const Raul::Path& new_path);
-	~RenameEvent();
+	MoveEvent(
+			Engine&              engine,
+			SharedPtr<Responder> responder,
+			SampleCount          timestamp,
+			const Raul::Path&    old_path,
+			const Raul::Path&    new_path);
+	~MoveEvent();
 
 	void pre_process();
 	void execute(ProcessContext& context);

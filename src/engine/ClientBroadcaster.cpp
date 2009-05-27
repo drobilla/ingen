@@ -135,7 +135,7 @@ void
 ClientBroadcaster::send_destroyed(const Path& path)
 {
 	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
-		(*i).second->destroy(path);
+		(*i).second->del(path);
 }
 
 
@@ -223,10 +223,10 @@ ClientBroadcaster::send_object(const GraphObjectImpl* p, bool recursive)
 /** Sends notification of an GraphObject's renaming
  */
 void
-ClientBroadcaster::send_rename(const Path& old_path, const Path& new_path)
+ClientBroadcaster::send_move(const Path& old_path, const Path& new_path)
 {
 	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
-		(*i).second->rename(old_path, new_path);
+		(*i).second->move(old_path, new_path);
 }
 
 

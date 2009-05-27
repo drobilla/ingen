@@ -86,7 +86,7 @@ private:
 	LO_HANDLER(new_patch);
 	LO_HANDLER(destroyed);
 	LO_HANDLER(clear_patch);
-	LO_HANDLER(rename);
+	LO_HANDLER(move);
 	LO_HANDLER(connection);
 	LO_HANDLER(disconnection);
 	LO_HANDLER(new_port);

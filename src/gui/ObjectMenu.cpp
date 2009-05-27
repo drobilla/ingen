@@ -98,7 +98,7 @@ ObjectMenu::variable_changed(const URI& predicate, const Atom& value)
 void
 ObjectMenu::on_menu_destroy()
 {
-	App::instance().engine()->destroy(_object->path());
+	App::instance().engine()->del(_object->path());
 }
 
 

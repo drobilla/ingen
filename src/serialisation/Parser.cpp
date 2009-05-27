@@ -213,7 +213,7 @@ Parser::parse_update(
 
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
 		const Redland::Node& object = (*i)["o"];
-		target->destroy(object.to_string());
+		target->del(object.to_string());
 	}
 
 	// Variable settings

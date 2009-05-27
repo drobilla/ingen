@@ -17,7 +17,7 @@
 
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
-#include "DestroyEvent.hpp"
+#include "DeleteEvent.hpp"
 #include "Responder.hpp"
 #include "Engine.hpp"
 #include "PatchImpl.hpp"
@@ -38,7 +38,7 @@ namespace Ingen {
 using namespace Shared;
 
 
-DestroyEvent::DestroyEvent(Engine& engine, SharedPtr<Responder> responder, FrameTime time, QueuedEventSource* source, const Raul::Path& path)
+DeleteEvent::DeleteEvent(Engine& engine, SharedPtr<Responder> responder, FrameTime time, QueuedEventSource* source, const Raul::Path& path)
 	: QueuedEvent(engine, responder, time, true, source)
 	, _path(path)
 	, _store_iterator(engine.engine_store()->end())
@@ -53,14 +53,14 @@ DestroyEvent::DestroyEvent(Engine& engine, SharedPtr<Responder> responder, Frame
 }
 
 
-DestroyEvent::~DestroyEvent()
+DeleteEvent::~DeleteEvent()
 {
 	delete _disconnect_event;
 }
 
 
 void
-DestroyEvent::pre_process()
+DeleteEvent::pre_process()
 {
 	_store_iterator = _engine.engine_store()->find(_path);
 
@@ -120,7 +120,7 @@ DestroyEvent::pre_process()
 
 
 void
-DestroyEvent::execute(ProcessContext& context)
+DeleteEvent::execute(ProcessContext& context)
 {
 	QueuedEvent::execute(context);
 
@@ -169,7 +169,7 @@ DestroyEvent::execute(ProcessContext& context)
 
 
 void
-DestroyEvent::post_process()
+DeleteEvent::post_process()
 {
 	if (!_node && !_port) {
 		if (_path.is_root()) {

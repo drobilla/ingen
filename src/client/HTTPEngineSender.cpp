@@ -112,14 +112,14 @@ HTTPEngineSender::put(const Raul::Path&                   path,
 
 
 void
-HTTPEngineSender::rename(const Path& old_path,
-                         const Path& new_path)
+HTTPEngineSender::move(const Path& old_path,
+                       const Path& new_path)
 {
 }
 
 
 void
-HTTPEngineSender::destroy(const Path& path)
+HTTPEngineSender::del(const Path& path)
 {
 }
 

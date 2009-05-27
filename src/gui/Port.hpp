@@ -60,7 +60,7 @@ private:
 
 	void variable_changed(const Raul::URI& key, const Raul::Atom& value);
 
-	void renamed();
+	void moved();
 
 	WeakPtr<PortModel> _port_model;
 	bool               _flipped;

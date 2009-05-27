@@ -596,11 +596,11 @@ PatchCanvas::destroy_selection()
 	for (list<boost::shared_ptr<Item> >::iterator m = _selected_items.begin(); m != _selected_items.end(); ++m) {
 		boost::shared_ptr<NodeModule> module = boost::dynamic_pointer_cast<NodeModule>(*m);
 		if (module) {
-			App::instance().engine()->destroy(module->node()->path());
+			App::instance().engine()->del(module->node()->path());
 		} else {
 			boost::shared_ptr<PatchPortModule> port_module = boost::dynamic_pointer_cast<PatchPortModule>(*m);
 			if (port_module)
-				App::instance().engine()->destroy(port_module->port()->path());
+				App::instance().engine()->del(port_module->port()->path());
 		}
 	}
 }

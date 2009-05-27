@@ -121,7 +121,7 @@ RenameWindow::ok_clicked()
 	assert(name.length() > 0);
 	assert(name.find("/") == string::npos);
 
-	App::instance().engine()->rename(_object->path(), _object->path().parent().base() + name);
+	App::instance().engine()->move(_object->path(), _object->path().parent().base() + name);
 
 	hide();
 }

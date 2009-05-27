@@ -219,7 +219,7 @@ PatchTreeWindow::patch_variable_changed(const URI& key, const Atom& value, const
 
 
 void
-PatchTreeWindow::patch_renamed(const Path& old_path, const Path& new_path)
+PatchTreeWindow::patch_moved(const Path& old_path, const Path& new_path)
 {
 	_enable_signal = false;
 

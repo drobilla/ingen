@@ -141,10 +141,10 @@ OSCEngineSender::put(const Raul::Path&                   path,
 
 
 void
-OSCEngineSender::rename(const Path& old_path,
-                        const Path& new_path)
+OSCEngineSender::move(const Path& old_path,
+                      const Path& new_path)
 {
-	send("/ingen/rename", "iss",
+	send("/ingen/move", "iss",
 		next_id(),
 		old_path.c_str(),
 		new_path.c_str(),
@@ -153,7 +153,7 @@ OSCEngineSender::rename(const Path& old_path,
 
 
 void
-OSCEngineSender::destroy(const Path& path)
+OSCEngineSender::del(const Path& path)
 {
 	send("/ingen/destroy", "is",
 		next_id(),
