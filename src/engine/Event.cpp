@@ -19,6 +19,13 @@
 #include "ThreadManager.hpp"
 #include "ProcessContext.hpp"
 
+/*! \page methods Method Documentation
+ *
+ * <p>All changes in Ingen (both engine and client) occur as a result of
+ * a small set of methods defined in terms of RDF and matching the
+ * HTTP and WebDAV standards as closely as possible.</p>
+ */
+
 namespace Ingen {
 
 

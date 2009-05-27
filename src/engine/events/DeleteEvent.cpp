@@ -88,7 +88,7 @@ DeleteEvent::pre_process()
 				// FIXME: is this called multiple times?
 				_compiled_patch = _node->parent_patch()->compile();
 #ifndef NDEBUG
-				// Be sure node is removed from process order, so it can be destroyed
+				// Be sure node is removed from process order, so it can be deleted
 				for (size_t i=0; i < _compiled_patch->size(); ++i) {
 					assert(_compiled_patch->at(i).node() != _node.get());
 					// FIXME: check providers/dependants too
@@ -187,7 +187,7 @@ DeleteEvent::post_process()
 		_engine.broadcaster()->bundle_begin();
 		if (_disconnect_event)
 			_disconnect_event->post_process();
-		_engine.broadcaster()->send_destroyed(_path);
+		_engine.broadcaster()->send_deleted(_path);
 		_engine.broadcaster()->bundle_end();
 		_engine.maid()->push(_patch_node_listnode);
 	} else if (_patch_port_listnode) {
@@ -196,7 +196,7 @@ DeleteEvent::post_process()
 		_engine.broadcaster()->bundle_begin();
 		if (_disconnect_event)
 			_disconnect_event->post_process();
-		_engine.broadcaster()->send_destroyed(_path);
+		_engine.broadcaster()->send_deleted(_path);
 		_engine.broadcaster()->bundle_end();
 		_engine.maid()->push(_patch_port_listnode);
 	} else {

@@ -43,7 +43,7 @@ ClientStore::ClientStore(SharedPtr<EngineInterface> engine, SharedPtr<SigClientI
 	if (!emitter)
 		return;
 
-	emitter->signal_object_destroyed.connect(sigc::mem_fun(this, &ClientStore::del));
+	emitter->signal_object_deleted.connect(sigc::mem_fun(this, &ClientStore::del));
 	emitter->signal_object_moved.connect(sigc::mem_fun(this, &ClientStore::move));
 	emitter->signal_new_plugin.connect(sigc::mem_fun(this, &ClientStore::new_plugin));
 	emitter->signal_put.connect(sigc::mem_fun(this, &ClientStore::put));

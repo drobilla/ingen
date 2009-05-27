@@ -132,7 +132,7 @@ ClientBroadcaster::send_plugins(const NodeFactory::Plugins& plugins)
 
 
 void
-ClientBroadcaster::send_destroyed(const Path& path)
+ClientBroadcaster::send_deleted(const Path& path)
 {
 	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
 		(*i).second->del(path);
@@ -210,6 +210,7 @@ ClientBroadcaster::send_activity(const Path& path)
 
 /** Send an object.
  *
+ * @param p         Object to send
  * @param recursive If true send all children of object
  */
 void

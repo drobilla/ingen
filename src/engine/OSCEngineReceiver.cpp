@@ -44,7 +44,7 @@ namespace Ingen {
  *
  * <p>All commands on this page are in the "control band".  If a client needs to
  * know about the state of the engine, it must listen to the "notification band".
- * See the "Client OSC Namespace Documentation" for details.</p>\n\n
+ * See the "Client OSC Namespace Documentation" for details.
  */
 
 
@@ -243,8 +243,10 @@ OSCEngineReceiver::error_cb(int num, const char* msg, const char* path)
 
 
 /** \page engine_osc_namespace
- * <p> \b /ingen/ping - Immediately sends a successful response to the given response id.
- * \arg \b response-id (integer) </p> \n \n
+ * <h2>/ingen/ping</h2>
+ * \arg \b response-id (integer)
+ *
+ * Reply to sender immediately with a successful response.
  */
 int
 OSCEngineReceiver::_ping_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -257,13 +259,13 @@ OSCEngineReceiver::_ping_cb(const char* path, const char* types, lo_arg** argv, 
 
 
 /** \page engine_osc_namespace
- * <p> \b /ingen/ping_queued - Sends response after going through the event queue.
+ * <h2>/ingen/ping_queued</h2>
  * \arg \b response-id (integer)
  *
- * \li See the documentation for /ingen/set_port_value_queued for an explanation of how
- * this differs from /ingen/ping.  This is useful to send after sending a large cluster of
- * events as a sentinel and wait on it's response, to know when the events are all
- * finished processing.</p> \n \n
+ * Reply to sender with a successful response after going through the event queue.
+ * This is useful for checking if the engine is actually active, or for sending after
+ * several events as a sentinel and wait on it's response, to know when all previous
+ * events have finished processing.
  */
 int
 OSCEngineReceiver::_ping_slow_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -274,12 +276,13 @@ OSCEngineReceiver::_ping_slow_cb(const char* path, const char* types, lo_arg** a
 
 
 /** \page engine_osc_namespace
- * <p> \b /ingen/quit - Terminates the engine.
+ * <h2>/ingen/quit</h2>
  * \arg \b response-id (integer)
  *
- * \li Note that there is NO order guarantees with this command at all.  You could
+ * Terminate the engine.
+ * Note that there are NO order guarantees with this command at all.  You could
  * send 10 messages then quit, and the quit reply could come immediately and the
- * 10 messages would never get executed. </p> \n \n
+ * 10 messages would never get executed.
  */
 int
 OSCEngineReceiver::_quit_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -288,11 +291,14 @@ OSCEngineReceiver::_quit_cb(const char* path, const char* types, lo_arg** argv, 
 	return 0;
 }
 
+
 /** \page engine_osc_namespace
- * <p> \b /ingen/register_client - Registers a new client with the engine
- * \arg \b response-id (integer) \n\n
- * \li The incoming address will be used for the new registered client.  If you
- * want to register a different specific address, use the URL version. </p> \n \n
+ * <h2>/ingen/register_client</h2>
+ * \arg \b response-id (integer)
+ *
+ * Register a new client with the engine.
+ * The incoming address will be used for the new registered client.  If you
+ * want to register a different specific address, use the URL version.
  */
 int
 OSCEngineReceiver::_register_client_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -309,8 +315,10 @@ OSCEngineReceiver::_register_client_cb(const char* path, const char* types, lo_a
 
 
 /** \page engine_osc_namespace
- * <p> \b /ingen/unregister_client - Unregisters a client
- * \arg \b response-id (integer) </p> \n \n
+ * <h2>/ingen/unregister_client</h2>
+ * \arg \b response-id (integer)
+ *
+ * Unregister a client.
  */
 int
 OSCEngineReceiver::_unregister_client_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -326,8 +334,10 @@ OSCEngineReceiver::_unregister_client_cb(const char* path, const char* types, lo
 
 
 /** \page engine_osc_namespace
- * <p> \b /ingen/load_plugins - Locates all available plugins, making them available for use.
- * \arg \b response-id (integer) </p> \n \n
+ * <h2>/ingen/load_plugins</h2>
+ * \arg \b response-id (integer)
+ *
+ * Locate all available plugins, making them available for use.
  */
 int
 OSCEngineReceiver::_load_plugins_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -338,11 +348,12 @@ OSCEngineReceiver::_load_plugins_cb(const char* path, const char* types, lo_arg*
 
 
 /** \page engine_osc_namespace
- * <p> \b /ingen/activate - Activate the engine (MIDI, audio, everything)
- * \arg \b response-id (integer) </p>
+ * <h2>/ingen/activate</h2>
+ * \arg \b response-id (integer)
  *
- * \li Note that you <b>must</b> send this message first if you want the engine to do
- * anything at all - <em>including respond to your messages!</em> \n \n
+ * Activate the engine (event processing and all drivers, e.g. audio and MIDI).
+ * Note that you <b>must</b> send this message first if you want the engine to do
+ * anything at all - <em>including respond to your messages!</em>
  */
 int
 OSCEngineReceiver::_engine_activate_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -353,8 +364,10 @@ OSCEngineReceiver::_engine_activate_cb(const char* path, const char* types, lo_a
 
 
 /** \page engine_osc_namespace
- * <p> \b /ingen/deactivate - Deactivate the engine completely.
- * \arg \b response-id (integer) </p> \n \n
+ * <h2>/ingen/deactivate</h2>
+ * \arg \b response-id (integer)
+ *
+ * Deactivate the engine.
  */
 int
 OSCEngineReceiver::_engine_deactivate_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -365,10 +378,12 @@ OSCEngineReceiver::_engine_deactivate_cb(const char* path, const char* types, lo
 
 
 /** \page engine_osc_namespace
- * <p> \b /ingen/move - Move (rename) an Object
+ * <h2>/ingen/move</h2>
  * \arg \b response-id (integer)
  * \arg \b old-path - Object's path
- * \arg \b new-path - Object's new path </p> \n \n
+ * \arg \b new-path - Object's new path
+ *
+ * Move (rename) an Object.
  */
 int
 OSCEngineReceiver::_move_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -382,9 +397,11 @@ OSCEngineReceiver::_move_cb(const char* path, const char* types, lo_arg** argv, 
 
 
 /** \page engine_osc_namespace
- * <p> \b /ingen/clear_patch - Remove all nodes from a patch
+ * <h2>/ingen/clear_patch</h2>
  * \arg \b response-id (integer)
- * \arg \b patch-path - Patch's path </p> \n \n
+ * \arg \b patch-path - Patch's path
+ *
+ * Remove all nodes from a patch.
  */
 int
 OSCEngineReceiver::_clear_patch_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -397,9 +414,11 @@ OSCEngineReceiver::_clear_patch_cb(const char* path, const char* types, lo_arg**
 
 
 /** \page engine_osc_namespace
- * <p> \b /ingen/del - Delete a graph object
+ * <h2>/ingen/del</h2>
  * \arg \b response-id (integer)
- * \arg \b path (string) - Full path of the object </p> \n \n
+ * \arg \b path (string) - Full path of the object
+ *
+ * Delete a graph object.
  */
 int
 OSCEngineReceiver::_del_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -412,10 +431,12 @@ OSCEngineReceiver::_del_cb(const char* path, const char* types, lo_arg** argv, i
 
 
 /** \page engine_osc_namespace
- * <p> \b /ingen/connect - Connects two ports (must be in the same patch)
+ * <h2>/ingen/connect</h2>
  * \arg \b response-id (integer)
  * \arg \b src-port-path (string) - Full path of source port
- * \arg \b dst-port-path (string) - Full path of destination port </p> \n \n
+ * \arg \b dst-port-path (string) - Full path of destination port
+ *
+ * Connect two ports (which must be in the same patch).
  */
 int
 OSCEngineReceiver::_connect_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -429,10 +450,12 @@ OSCEngineReceiver::_connect_cb(const char* path, const char* types, lo_arg** arg
 
 
 /** \page engine_osc_namespace
- * <p> \b /ingen/disconnect - Disconnects two ports.
+ * <h2>/ingen/disconnect</h2>
  * \arg \b response-id (integer)
  * \arg \b src-port-path (string) - Full path of source port
- * \arg \b dst-port-path (string) - Full path of destination port </p> \n \n
+ * \arg \b dst-port-path (string) - Full path of destination port
+ *
+ * Disconnect two ports.
  */
 int
 OSCEngineReceiver::_disconnect_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -446,10 +469,12 @@ OSCEngineReceiver::_disconnect_cb(const char* path, const char* types, lo_arg** 
 
 
 /** \page engine_osc_namespace
- * <p> \b /ingen/disconnect_all - Disconnect all connections to/from a node/port.
+ * <h2>/ingen/disconnect_all</h2>
  * \arg \b response-id (integer)
- * \arg \b patch-path (string) - The (parent) patch in which to disconnect object. </p> \n \n
- * \arg \b object-path (string) - Full path of object. </p> \n \n
+ * \arg \b patch-path (string) - The (parent) patch in which to disconnect object.
+ * \arg \b object-path (string) - Full path of object.
+ *
+ * Disconnect all connections to/from a node/port.
  */
 int
 OSCEngineReceiver::_disconnect_all_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -463,10 +488,12 @@ OSCEngineReceiver::_disconnect_all_cb(const char* path, const char* types, lo_ar
 
 
 /** \page engine_osc_namespace
- * <p> \b /ingen/set_port_value - Sets the value of a port for all voices (as a QueuedEvent)
+ * <h2>/ingen/set_port_value</h2>
  * \arg \b response-id (integer)
  * \arg \b port-path (string) - Name of port
- * \arg \b value (float) - Value to set port to.</p> \n \n
+ * \arg \b value (float) - Value to set port to.
+ *
+ * Set the value of a port for all voices.
  */
 int
 OSCEngineReceiver::_set_port_value_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -511,11 +538,13 @@ OSCEngineReceiver::_set_port_value_cb(const char* path, const char* types, lo_ar
 
 
 /** \page engine_osc_namespace
- * <p> \b /ingen/note_on - Triggers a note-on, just as if it came from MIDI
+ * <h2>/ingen/note_on</h2>
  * \arg \b response-id (integer)
  * \arg \b node-path (string) - Patch of Node to trigger (must be a trigger or note node)
  * \arg \b note-num (int) - MIDI style note number (0-127)
- * \arg \b velocity (int) - MIDI style velocity (0-127)</p> \n \n
+ * \arg \b velocity (int) - MIDI style velocity (0-127)
+ *
+ * Trigger a note-on, just as if it came from MIDI.
  */
 int
 OSCEngineReceiver::_note_on_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -532,10 +561,12 @@ OSCEngineReceiver::_note_on_cb(const char* path, const char* types, lo_arg** arg
 
 
 /** \page engine_osc_namespace
- * <p> \b /ingen/note_off - Triggers a note-off, just as if it came from MIDI
+ * <h2>/ingen/note_off</h2>
  * \arg \b response-id (integer)
  * \arg \b node-path (string) - Patch of Node to trigger (must be a trigger or note node)
- * \arg \b note-num (int) - MIDI style note number (0-127)</p> \n \n
+ * \arg \b note-num (int) - MIDI style note number (0-127)
+ *
+ * Trigger a note-off, just as if it came from MIDI.
  */
 int
 OSCEngineReceiver::_note_off_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -551,9 +582,11 @@ OSCEngineReceiver::_note_off_cb(const char* path, const char* types, lo_arg** ar
 
 
 /** \page engine_osc_namespace
- * <p> \b /ingen/all_notes_off - Triggers a note-off for all voices, just as if it came from MIDI
+ * <h2>/ingen/all_notes_off</h2>
  * \arg \b response-id (integer)
- * \arg \b patch-path (string) - Patch of patch to send event to </p> \n \n
+ * \arg \b patch-path (string) - Patch of patch to send event to
+ *
+ * Trigger a note-off for all voices, just as if it came from MIDI.
  */
 int
 OSCEngineReceiver::_all_notes_off_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -569,14 +602,14 @@ OSCEngineReceiver::_all_notes_off_cb(const char* path, const char* types, lo_arg
 
 
 /** \page engine_osc_namespace
- * <p> \b /ingen/midi_learn - Initiate MIDI learn for a given (MIDI Control) Node
+ * <h2>/ingen/midi_learn</h2>
  * \arg \b response-id (integer)
- * \arg \b node-path (string) - Patch of the Node that should learn the next MIDI event.
+ * \arg \b node-path (string) - Path of control node.
  *
- * \li This of course will only do anything for MIDI control nodes.  The node will learn the next MIDI
- * event that arrives at it's MIDI input port - no behind the scenes voodoo happens here.  It is planned
- * that a plugin specification supporting arbitrary OSC commands for plugins will exist one day, and this
- * method will go away completely. </p> \n \n
+ * Initiate MIDI learn for a given control node.
+ * The node will learn the next MIDI control event it receives and set
+ * its outputs accordingly.
+ * This command does nothing for objects that are not a control internal.
  */
 int
 OSCEngineReceiver::_midi_learn_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -589,11 +622,13 @@ OSCEngineReceiver::_midi_learn_cb(const char* path, const char* types, lo_arg** 
 
 
 /** \page engine_osc_namespace
- * <p> \b /ingen/set_variable - Set a variable, associated with a synth-space object (node, etc)
+ * <h2>/ingen/set_variable</h2>
  * \arg \b response-id (integer)
  * \arg \b object-path (string) - Full path of object to associate variable with
  * \arg \b key (string) - Key (index/predicate/ID) for new variable
- * \arg \b value (string) - Value of new variable </p> \n \n
+ * \arg \b value (string) - Value of new variable
+ *
+ * Set a variable, associated with a graph object.
  */
 int
 OSCEngineReceiver::_variable_set_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -612,11 +647,13 @@ OSCEngineReceiver::_variable_set_cb(const char* path, const char* types, lo_arg*
 
 
 /** \page engine_osc_namespace
- * <p> \b /ingen/set_property - Set an (RDF) property, associated with a synth-space object (node, etc)
+ * <h2>/ingen/set_property</h2>
  * \arg \b response-id (integer)
  * \arg \b object-path (string) - Full path of object to associate variable with
  * \arg \b key (string) - URI/QName for predicate of this property (e.g. "ingen:enabled")
- * \arg \b value (string) - Value of property </p> \n \n
+ * \arg \b value (string) - Value of property
+ *
+ * Set a property on a graph object.
  */
 int
 OSCEngineReceiver::_property_set_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -635,12 +672,12 @@ OSCEngineReceiver::_property_set_cb(const char* path, const char* types, lo_arg*
 
 
 /** \page engine_osc_namespace
- * <p> \b /ingen/request_variable - Requests the engine send a piece of variable, associated with a synth-space object (node, etc)
+ * <h2>/ingen/request_variable</h2>
  * \arg \b response-id (integer)
  * \arg \b object-path (string) - Full path of object variable is associated with
  * \arg \b key (string) - Key (index) for piece of variable
  *
- * \li Reply will be sent to client registered with the source address of this message.</p> \n \n
+ * Request the value of a variable on a graph object.
  */
 int
 OSCEngineReceiver::_variable_get_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -654,10 +691,11 @@ OSCEngineReceiver::_variable_get_cb(const char* path, const char* types, lo_arg*
 
 
 /** \page engine_osc_namespace
- * <p> \b /ingen/request_plugin - Requests the engine send the value of a port.
+ * <h2>/ingen/request_plugin</h2>
  * \arg \b response-id (integer)
- * \arg \b port-path (string) - Full path of port to send the value of \n\n
- * \li Reply will be sent to client registered with the source address of this message.</p>\n\n
+ * \arg \b port-path (string) - Full path of port to send the value of
+ *
+ * Request the value of a port.
  */
 int
 OSCEngineReceiver::_request_plugin_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -670,10 +708,11 @@ OSCEngineReceiver::_request_plugin_cb(const char* path, const char* types, lo_ar
 
 
 /** \page engine_osc_namespace
- * <p> \b /ingen/request_object - Requests the engine send the value of a port.
+ * <h2>/ingen/request_object</h2>
  * \arg \b response-id (integer)
  * \arg \b port-path (string) - Full path of port to send the value of \n\n
- * \li Reply will be sent to client registered with the source address of this message.</p>\n\n
+ *
+ * Request all properties of a graph object.
  */
 int
 OSCEngineReceiver::_request_object_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -686,9 +725,10 @@ OSCEngineReceiver::_request_object_cb(const char* path, const char* types, lo_ar
 
 
 /** \page engine_osc_namespace
- * <p> \b /ingen/request_plugins - Requests the engine send a list of all known plugins.
- * \arg \b response-id (integer) \n\n
- * \li Reply will be sent to client registered with the source address of this message.</p>\n\n
+ * <h2>/ingen/request_plugins</h2>
+ * \arg \b response-id (integer)
+ *
+ * Request the engine send a list of all known plugins.
  */
 int
 OSCEngineReceiver::_request_plugins_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -699,9 +739,10 @@ OSCEngineReceiver::_request_plugins_cb(const char* path, const char* types, lo_a
 
 
 /** \page engine_osc_namespace
- * <p> \b /ingen/request_all_objects - Requests the engine send information about \em all objects (patches, nodes, etc)
- * \arg \b response-id (integer)\n\n
- * \li Reply will be sent to client registered with the source address of this message.</p> \n \n
+ * <h2>/ingen/request_all_objects</h2>
+ * \arg \b response-id (integer)
+ *
+ * Requests all information about all known objects.
  */
 int
 OSCEngineReceiver::_request_all_objects_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)

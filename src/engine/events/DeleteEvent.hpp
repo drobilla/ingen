@@ -36,10 +36,19 @@ class DriverPort;
 class DisconnectAllEvent;
 class CompiledPatch;
 
-
-/** Delete a graph object.
- * WebDAV method DELETE (RFC4918 S9.6).
+/** \page methods
+ * <h2>DELETE</h2>
+ * From WebDAV (RFC4918 S9.6).
  *
+ * Calling DELETE on an object will remove that object from the engine
+ * (i.e. stop executing it) and destroy it.
+ *
+ * \li All properties of the object are lost
+ * \li All references to the object are lost (e.g. the parent's reference to
+ *     this child is lost, any connections to the object are removed, etc.)
+ */
+
+/** DELETE a graph object (see \ref methods).
  * \ingroup engine
  */
 class DeleteEvent : public QueuedEvent

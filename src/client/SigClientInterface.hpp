@@ -56,7 +56,7 @@ public:
 	sigc::signal<void, Raul::Path, Shared::Resource::Properties>    signal_put;
 	sigc::signal<void, Raul::Path>                                  signal_clear_patch;
 	sigc::signal<void, Raul::Path, Raul::Path>                      signal_object_moved;
-	sigc::signal<void, Raul::Path>                                  signal_object_destroyed;
+	sigc::signal<void, Raul::Path>                                  signal_object_deleted;
 	sigc::signal<void, Raul::Path, Raul::Path>                      signal_connection;
 	sigc::signal<void, Raul::Path, Raul::Path>                      signal_disconnection;
 	sigc::signal<void, Raul::URI, Raul::URI, Raul::Atom>            signal_variable_change;
@@ -105,7 +105,7 @@ protected:
 		{ if (_enabled) signal_connection.emit(src_port_path, dst_port_path); }
 
 	void del(const Raul::Path& path)
-		{ if (_enabled) signal_object_destroyed.emit(path); }
+		{ if (_enabled) signal_object_deleted.emit(path); }
 
 	void clear_patch(const Raul::Path& path)
 		{ if (_enabled) signal_clear_patch.emit(path); }

@@ -143,14 +143,13 @@ OSCClientReceiver::setup_callbacks()
 	lo_server_thread_add_method(_st, "/ingen/ok", "i", response_ok_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/error", "is", response_error_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/plugin", "sss", plugin_cb, this);
-	lo_server_thread_add_method(_st, "/ingen/new_patch", "si", new_patch_cb, this);
-	lo_server_thread_add_method(_st, "/ingen/destroyed", "s", destroyed_cb, this);
-	lo_server_thread_add_method(_st, "/ingen/clear_patch", "s", clear_patch_cb, this);
+	lo_server_thread_add_method(_st, "/ingen/put", NULL, put_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/move", "ss", move_cb, this);
+	lo_server_thread_add_method(_st, "/ingen/delete", "s", destroyed_cb, this);
+	lo_server_thread_add_method(_st, "/ingen/clear_patch", "s", clear_patch_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/new_connection", "ss", connection_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/disconnection", "ss", disconnection_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/new_port", "sisi", new_port_cb, this);
-	lo_server_thread_add_method(_st, "/ingen/put", NULL, new_port_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/set_variable", NULL, set_variable_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/set_property", NULL, set_property_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/set_port_value", "sf", set_port_value_cb, this);

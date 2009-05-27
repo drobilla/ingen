@@ -36,38 +36,16 @@ namespace Ingen {
 
 /*! \page client_osc_namespace Client OSC Namespace Documentation
  *
- * <p>NOTE: this comment doesn't really apply any longer.. sort of.
- * but maybe it still should.. maybe.  so it remains...</p>
- *
- * <p>These are all the messages sent from the engine to the client.
- * Communication takes place over two distinct bands: control band and
- * notification band.</p>
- * <p>The control band is where clients send commands, and receive a simple
- * response, either OK or an error.</p>
- * <p>All notifications of engine state (ie new nodes) are sent over the
- * notification band <em>which is seperate from the control band</em>.  The
- * reasoning behind this is that many clients may be connected at the same
- * time - a client may receive notifications that are not a direct consequence
- * of some message it sent.</p>
- * <p>The notification band can be thought of as a stream of events representing
- * the changing engine state.  For example, It is possible for a client to send
- * commands and receive aknowledgements, and not listen to the notification band
- * at all; or (in the near future anyway) for a client to use UDP for the control
- * band (for speed), and TCP for the notification band (for reliability and
- * order guarantees).</p>
- * \n\n
+ * <p>These are the commands the client recognizes.  All monitoring of
+ * changes in the engine happens via these commands.</p>
  */
 
 
 /** \page client_osc_namespace
- * \n
- * <h2>Control Band</h2>
- */
-
-/** \page client_osc_namespace
- * <p> \b /ingen/ok - Respond to a successful user command
+ * <h2>/ingen/ok</h2>
  * \arg \b response-id (int) - Request ID this is a response to
- * </p> \n \n
+ *
+ * Successful response to some command.
  */
 void
 OSCClientSender::response_ok(int32_t id)
@@ -83,10 +61,11 @@ OSCClientSender::response_ok(int32_t id)
 
 
 /** \page client_osc_namespace
- * <p> \b /ingen/response - Respond to a user command
+ * <h2>/ingen/error</h2>
  * \arg \b response-id (int) - Request ID this is a response to
  * \arg \b message (string) - Error message (natural language text)
- * </p> \n \n
+ *
+ * Unsuccessful response to some command.
  */
 void
 OSCClientSender::response_error(int32_t id, const std::string& msg)
@@ -102,16 +81,12 @@ OSCClientSender::response_error(int32_t id, const std::string& msg)
 
 
 /** \page client_osc_namespace
- * \n
- * <h2>Notification Band</h2>
- */
-
-
-/** \page client_osc_namespace
- * <p> \b /ingen/error - Notification that an error has occurred
- * \arg \b message (string) - Error message (natural language text) \n\n
- * \li This is for notification of errors that aren't a direct response to a
- * user command, ie "unexpected" errors.</p> \n \n
+ * <h2>/ingen/error</h2>
+ * \arg \b message (string) - Error message (natural language text)
+ *
+ * Notification that an error has occurred.
+ * This is for notification of errors that aren't a direct response to a
+ * user command, ie "unexpected" errors.
  */
 void
 OSCClientSender::error(const std::string& msg)
@@ -120,6 +95,15 @@ OSCClientSender::error(const std::string& msg)
 }
 
 
+/** \page client_osc_namespace
+ * <h2>/ingen/put</h2>
+ * \arg \b path (string) - Path of object
+ * \arg \b predicate
+ * \arg \b value
+ * \arg \b ...
+ *
+ * PUT a set of properties to a path (see \ref methods).
+ */
 void
 OSCClientSender::put(const Raul::Path&                   path,
                      const Shared::Resource::Properties& properties)
@@ -129,19 +113,39 @@ OSCClientSender::put(const Raul::Path&                   path,
 
 
 /** \page client_osc_namespace
- * <p> \b /ingen/destroyed - Notification an object has been destroyed
- * \arg \b path (string) - Path of object (which no longer exists) </p> \n \n
+ * <h2>/ingen/move</h2>
+ * \arg \b old-path (string) - Old path of object
+ * \arg \b new-path (string) - New path of object
+ *
+ * MOVE an object to a new path (see \ref methods).
+ * The new path will have the same parent as the old path.
+ */
+void
+OSCClientSender::move(const Path& old_path, const Path& new_path)
+{
+	send("/ingen/move", "ss", old_path.c_str(), new_path.c_str(), LO_ARGS_END);
+}
+
+
+
+/** \page client_osc_namespace
+ * <h2>/ingen/delete</h2>
+ * \arg \b path (string) - Path of object (which no longer exists)
+ *
+ * DELETE an object (see \ref methods).
  */
 void
 OSCClientSender::del(const Path& path)
 {
-	send("/ingen/destroyed", "s", path.c_str(), LO_ARGS_END);
+	send("/ingen/delete", "s", path.c_str(), LO_ARGS_END);
 }
 
 
 /** \page client_osc_namespace
- * <p> \b /ingen/clear_patch - Notification a patch has been cleared (all children destroyed)
- * \arg \b path (string) - Path of patch (which is now empty)</p> \n \n
+ * <h2>/ingen/clear_patch</h2>
+ * \arg \b path (string) - Path of patch (which is now empty)
+ *
+ * Notification a patch has been cleared (all children deleted).
  */
 void
 OSCClientSender::clear_patch(const Path& patch_path)
@@ -151,9 +155,11 @@ OSCClientSender::clear_patch(const Path& patch_path)
 
 
 /** \page client_osc_namespace
- * <p> \b /ingen/new_connection - Notification a new connection has been made.
+ * <h2>/ingen/new_connection</h2>
  * \arg \b src-path (string) - Path of the source port
- * \arg \b dst-path (string) - Path of the destination port</p> \n \n
+ * \arg \b dst-path (string) - Path of the destination port
+ *
+ * Notification a new connection has been made.
  */
 void
 OSCClientSender::connect(const Path& src_port_path, const Path& dst_port_path)
@@ -163,9 +169,11 @@ OSCClientSender::connect(const Path& src_port_path, const Path& dst_port_path)
 
 
 /** \page client_osc_namespace
- * <p> \b /ingen/disconnection - Notification a connection has been unmade.
+ * <h2>/ingen/disconnection</h2>
  * \arg \b src-path (string) - Path of the source port
- * \arg \b dst-path (string) - Path of the destination port</p> \n \n
+ * \arg \b dst-path (string) - Path of the destination port
+ *
+ * Notification a connection has been unmade.
  */
 void
 OSCClientSender::disconnect(const Path& src_port_path, const Path& dst_port_path)
@@ -175,10 +183,12 @@ OSCClientSender::disconnect(const Path& src_port_path, const Path& dst_port_path
 
 
 /** \page client_osc_namespace
- * <p> \b /ingen/set_variable - Notification of a variable.
+ * <h2>/ingen/set_variable</h2>
  * \arg \b path (string) - Path of the object associated with variable (node, patch, or port)
  * \arg \b key (string)
- * \arg \b value (string)</p> \n \n
+ * \arg \b value (string)
+ * ,
+ * Notification of a variable.
  */
 void
 OSCClientSender::set_variable(const URI& path, const URI& key, const Atom& value)
@@ -192,10 +202,12 @@ OSCClientSender::set_variable(const URI& path, const URI& key, const Atom& value
 
 
 /** \page client_osc_namespace
- * <p> \b /ingen/set_property - Notification of a property.
+ * <h2>/ingen/set_property</h2>
  * \arg \b path (string) - Path of the object associated with property (node, patch, or port)
  * \arg \b key (string)
- * \arg \b value (string)</p> \n \n
+ * \arg \b value (string)
+ *
+ * Notification of a property.
  */
 void
 OSCClientSender::set_property(const URI& path, const URI& key, const Atom& value)
@@ -209,9 +221,11 @@ OSCClientSender::set_property(const URI& path, const URI& key, const Atom& value
 
 
 /** \page client_osc_namespace
- * <p> \b /ingen/set_port_value - Notification the value of a port has changed
+ * <h2>/ingen/set_port_value</h2>
  * \arg \b path (string) - Path of port
- * \arg \b value (any) - New value of port </p> \n \n
+ * \arg \b value (any) - New value of port
+ *
+ * Notification the value of a port has changed.
  */
 void
 OSCClientSender::set_port_value(const Path& port_path, const Atom& value)
@@ -224,10 +238,12 @@ OSCClientSender::set_port_value(const Path& port_path, const Atom& value)
 
 
 /** \page client_osc_namespace
- * <p> \b /ingen/set_port_value - Notification the value of a port has changed
+ * <h2>/ingen/set_port_value</h2>
  * \arg \b path (string) - Path of port
  * \arg \b voice (int) - Voice which is set to this value
- * \arg \b value (any) - New value of port </p> \n \n
+ * \arg \b value (any) - New value of port
+ *
+ * Notification the value of a port has changed.
  */
 void
 OSCClientSender::set_voice_value(const Path& port_path, uint32_t voice, const Atom& value)
@@ -240,8 +256,10 @@ OSCClientSender::set_voice_value(const Path& port_path, uint32_t voice, const At
 
 
 /** \page client_osc_namespace
- * <p> \b /ingen/activity - Notification of "activity" (e.g. port message blinkenlights)
- * \arg \b path (string) - Path of object </p> \n \n
+ * <h2>/ingen/activity</h2>
+ * \arg \b path (string) - Path of object
+ *
+ * Notification of "activity" (e.g. port message blinkenlights).
  */
 void
 OSCClientSender::activity(const Path& path)
@@ -254,11 +272,13 @@ OSCClientSender::activity(const Path& path)
 
 
 /** \page client_osc_namespace
- * <p> \b /ingen/plugin - Notification of the existance of a plugin
+ * <h2>/ingen/plugin</h2>
  * \arg \b uri (string) - URI of plugin (e.g. http://example.org/filtermatic)
  * \arg \b type (string) - Type of plugin (e.g. "lv2:Plugin", "ingen:LADSPAPlugin")
  * \arg \b symbol (string) - Valid symbol for plugin (default symbol for nodes) (e.g. "adsr")
  * \arg \b name (string) - Descriptive human-readable name of plugin (e.g. "ADSR Envelope")
+ *
+ * Notification of the existence of a plugin.
  */
 void
 OSCClientSender::new_plugin(const URI&    uri,
@@ -270,18 +290,6 @@ OSCClientSender::new_plugin(const URI&    uri,
 	lo_message_add_string(m, type_uri.c_str());
 	lo_message_add_string(m, symbol.c_str());
 	send_message("/ingen/plugin", m);
-}
-
-
-/** \page client_osc_namespace
- * <p> \b /ingen/move - Notification of an object's renaming
- * \arg \b old-path (string) - Old path of object
- * \arg \b new-path (string) - New path of object </p> \n \n
- */
-void
-OSCClientSender::move(const Path& old_path, const Path& new_path)
-{
-	send("/ingen/move", "ss", old_path.c_str(), new_path.c_str(), LO_ARGS_END);
 }
 
 

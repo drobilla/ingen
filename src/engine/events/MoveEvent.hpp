@@ -26,10 +26,17 @@ namespace Ingen {
 
 class PatchImpl;
 
-
-/** Move a graph object to a new path.
- * WebDAV method MOVE (RFC4918 S9.9).
+/** \page methods
+ * <h2>MOVE</h2>
+ * From WebDAV (RFC4918 S9.9).
  *
+ * Calling MOVE on an object removes it from its current location
+ * and inserts it at a new one in a single operation.
+ *
+ * MOVE to a path with a different parent is currently not supported.
+ */
+
+/** MOVE a graph object to a new path (see \ref methods).
  * \ingroup engine
  */
 class MoveEvent : public QueuedEvent
