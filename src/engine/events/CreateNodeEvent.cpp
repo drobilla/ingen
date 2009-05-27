@@ -38,8 +38,16 @@ using namespace Raul;
 
 namespace Ingen {
 
+using namespace Shared;
 
-CreateNodeEvent::CreateNodeEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Path& path, const URI& plugin_uri, bool polyphonic)
+CreateNodeEvent::CreateNodeEvent(
+		Engine&                      engine,
+		SharedPtr<Responder>         responder,
+		SampleCount                  timestamp,
+		const Path&                  path,
+		const URI&                   plugin_uri,
+		bool                         polyphonic,
+		const Resource::Properties&  properties)
 	: QueuedEvent(engine, responder, timestamp)
 	, _path(path)
 	, _plugin_uri(plugin_uri)
@@ -48,6 +56,7 @@ CreateNodeEvent::CreateNodeEvent(Engine& engine, SharedPtr<Responder> responder,
 	, _node(NULL)
 	, _compiled_patch(NULL)
 	, _node_already_exists(false)
+	, _properties(properties)
 {
 	string uri = _plugin_uri.str();
 	if (uri.substr(0, 3) == "om:") {
@@ -80,6 +89,7 @@ CreateNodeEvent::pre_process()
 	if (_patch && plugin) {
 
 		_node = plugin->instantiate(_path.name(), _polyphonic, _patch, _engine);
+		_node->variables().insert(_properties.begin(), _properties.end());
 
 		if (_node != NULL) {
 			_node->activate();

@@ -424,7 +424,10 @@ Parser::parse_patch(
 
 	/* Create patch */
 	Path patch_path(patch_path_str);
-	target->new_patch(patch_path, patch_poly);
+	Resource::Properties props;
+	props.insert(make_pair("rdf:type",        Raul::Atom(Raul::Atom::URI, "ingen:Patch")));
+	props.insert(make_pair("ingen:polyphony", Raul::Atom(int32_t(patch_poly))));
+	target->put(patch_path, props);
 
 
 	/* Find patches in document */
@@ -521,7 +524,10 @@ Parser::parse_patch(
 		if (type_i == types.end())
 			continue;
 		const Path node_path(relative_uri(base_uri, i->first, true));
-		target->new_node(node_path, type_i->second);
+		Resource::Properties props;
+		props.insert(make_pair("rdf:type",       Raul::Atom(Raul::Atom::URI, "ingen:Node")));
+		props.insert(make_pair("rdf:instanceOf", Raul::Atom(Raul::Atom::URI, type_i->second)));
+		target->put(node_path, props);
 		Glib::Mutex::Lock lock(world->rdf_world->mutex());
 		for (Properties::iterator j = i->second.begin(); j != i->second.end(); ++j) {
 			const string key = world->rdf_world->prefixes().qualify(j->first);
@@ -572,7 +578,8 @@ Parser::parse_patch(
 		Redland::Node& port = (*i)["port"];
 		Redland::Node& type = (*i)["type"];
 		if (port.type() == Redland::Node::RESOURCE && type.type() == Redland::Node::RESOURCE) {
-			types.insert(make_pair(port.to_string(), type.to_string()));
+			types.insert(make_pair(port.to_string(),
+					world->rdf_world->prefixes().qualify(type.to_string())));
 			patch_ports.insert(make_pair(port.to_string(), Properties()));
 		}
 	}
@@ -599,16 +606,16 @@ Parser::parse_patch(
 	for (Objects::iterator i = patch_ports.begin(); i != patch_ports.end(); ++i) {
 		Glib::Mutex::Lock lock(world->rdf_world->mutex());
 		const Path port_path(relative_uri(base_uri, i->first, true));
-		Properties::iterator types_begin = i->second.find("rdf:type");
-		if (types_begin == i->second.end()) {
+		std::pair<Properties::iterator,Properties::iterator> types_range
+				= i->second.equal_range("rdf:type");
+		if (types_range.first == i->second.end()) {
 			cerr << "WARNING: Patch port has no types" << endl;
 			continue;
 		}
-		Properties::iterator types_end = i->second.upper_bound("rdf:type");
 		bool is_input  = false;
 		bool is_output = false;
 		Redland::Node* type = 0;
-		for (Properties::iterator t = types_begin; t != types_end; ++t) {
+		for (Properties::iterator t = types_range.first; t != types_range.second; ++t) {
 			if (t->second.to_string() == NS_LV2 "InputPort") {
 				is_input = true;
 			} else if (t->second.to_string() == NS_LV2 "OutputPort") {
@@ -624,11 +631,9 @@ Parser::parse_patch(
 			cerr << "ERROR: Corrupt patch port" << endl;
 			continue;
 		}
-		const string type_str = world->rdf_world->prefixes().qualify(type->to_string());
-		target->new_port(port_path, type_str, 0, is_output);
-		for (Properties::iterator j = i->second.begin(); j != i->second.end(); ++j) {
-			target->set_property(port_path, j->first, AtomRDF::node_to_atom(j->second));
-		}
+
+		cerr << "FIXME: PARSE PATCH" << endl;
+		//target->put(port_path, i->second);
 	}
 
 	parse_connections(world, target, model, subject, "/");
@@ -685,7 +690,12 @@ Parser::parse_node(
 		return boost::optional<Path>();
 	}
 
-	target->new_node(path, world->rdf_world->expand_uri(plugin_node.to_c_string()));
+	const string plugin_uri = world->rdf_world->expand_uri(plugin_node.to_c_string());
+	Resource::Properties props;
+	props.insert(make_pair("rdf:type",       Raul::Atom(Raul::Atom::URI, "ingen:Node")));
+	props.insert(make_pair("rdf:instanceOf", Raul::Atom(Raul::Atom::URI, plugin_uri)));
+	target->put(path, props);
+
 	parse_variables(world, target, model, subject, path, data);
 	return path;
 }
@@ -700,6 +710,7 @@ Parser::parse_port(
 		const Raul::Path&                        path,
 		boost::optional<GraphObject::Properties> data)
 {
+#if 0
 	const Glib::ustring subject = subject_node.to_turtle_token();
 
 	Redland::Query query(*world->rdf_world, Glib::ustring(
@@ -728,6 +739,9 @@ Parser::parse_port(
 
 	parse_variables(world, target, model, subject_node, path, data);
 	return path;
+#endif
+	cerr << "PARSE PORT" << endl;
+	return boost::optional<Path>();
 }
 
 

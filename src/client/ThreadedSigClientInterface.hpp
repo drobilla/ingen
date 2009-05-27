@@ -51,9 +51,8 @@ public:
 	, response_error_slot(signal_response_error.make_slot())
 	, error_slot(signal_error.make_slot())
 	, new_plugin_slot(signal_new_plugin.make_slot())
-	, new_patch_slot(signal_new_patch.make_slot())
-	, new_node_slot(signal_new_node.make_slot())
 	, new_port_slot(signal_new_port.make_slot())
+	, put_slot(signal_put.make_slot())
 	, connection_slot(signal_connection.make_slot())
 	, clear_patch_slot(signal_clear_patch.make_slot())
 	, object_destroyed_slot(signal_object_destroyed.make_slot())
@@ -93,16 +92,8 @@ public:
 	void new_plugin(const Raul::URI& uri, const Raul::URI& type_uri, const Raul::Symbol& symbol)
 		{ push_sig(sigc::bind(new_plugin_slot, uri, type_uri, symbol)); }
 
-	bool new_object(const Shared::GraphObject* object);
-
-	void new_patch(const Raul::Path& path, uint32_t poly)
-		{ push_sig(sigc::bind(new_patch_slot, path, poly)); }
-
-	void new_node(const Raul::Path& path, const Raul::URI& plugin_uri)
-		{ push_sig(sigc::bind(new_node_slot, path, plugin_uri)); }
-
-	void new_port(const Raul::Path& path, const Raul::URI& type, uint32_t index, bool is_output)
-		{ push_sig(sigc::bind(new_port_slot, path, type, index, is_output)); }
+	void put(const Raul::Path& path, const Shared::Resource::Properties& properties)
+		{ push_sig(sigc::bind(put_slot, path, properties)); }
 
 	void connect(const Raul::Path& src_port_path, const Raul::Path& dst_port_path)
 		{ push_sig(sigc::bind(connection_slot, src_port_path, dst_port_path)); }
@@ -152,9 +143,8 @@ private:
 	sigc::slot<void, int32_t, std::string>                        response_error_slot;
 	sigc::slot<void, std::string>                                 error_slot;
 	sigc::slot<void, Raul::URI, Raul::URI, Raul::Symbol>          new_plugin_slot;
-	sigc::slot<void, Raul::Path, uint32_t>                        new_patch_slot;
-	sigc::slot<void, Raul::Path, Raul::URI>                       new_node_slot;
 	sigc::slot<void, Raul::Path, Raul::URI, uint32_t, bool>       new_port_slot;
+	sigc::slot<void, Raul::Path, Shared::Resource::Properties>    put_slot;
 	sigc::slot<void, Raul::Path, Raul::Path>                      connection_slot;
 	sigc::slot<void, Raul::Path>                                  clear_patch_slot;
 	sigc::slot<void, Raul::Path>                                  object_destroyed_slot;

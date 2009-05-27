@@ -27,6 +27,7 @@
 #include "AudioBuffer.hpp"
 
 using namespace std;
+using namespace Raul;
 
 namespace Ingen {
 
@@ -35,9 +36,6 @@ using namespace Shared;
 void
 ObjectSender::send_object(ClientInterface* client, const GraphObjectImpl* object, bool recursive)
 {
-	if (client->new_object(object))
-		return;
-
 	const PatchImpl* patch = dynamic_cast<const PatchImpl*>(object);
 	if (patch) {
 		send_patch(client, patch, recursive);
@@ -64,20 +62,16 @@ ObjectSender::send_patch(ClientInterface* client, const PatchImpl* patch, bool r
 	if (bundle)
 		client->transfer_begin();
 
-	client->new_patch(patch->path(), patch->internal_polyphony());
-	client->set_variable(patch->path(), "ingen:polyphonic", bool(patch->polyphonic()));
-
-	// Send variable
-	const GraphObjectImpl::Properties& data = patch->variables();
-	for (GraphObjectImpl::Properties::const_iterator j = data.begin(); j != data.end(); ++j)
-		client->set_variable(patch->path(), (*j).first, (*j).second);
-
-	client->set_variable(patch->path(), "ingen:enabled", (bool)patch->enabled());
+	client->put(patch->path(), patch->properties());
 
 	if (recursive) {
+		// Send variables
+		const GraphObjectImpl::Properties& data = patch->variables();
+		for (GraphObjectImpl::Properties::const_iterator j = data.begin(); j != data.end(); ++j)
+			client->set_variable(patch->path(), (*j).first, (*j).second);
 
 		// Send nodes
-		for (Raul::List<NodeImpl*>::const_iterator j = patch->nodes().begin();
+		for (List<NodeImpl*>::const_iterator j = patch->nodes().begin();
 				j != patch->nodes().end(); ++j) {
 			const NodeImpl* const node = (*j);
 			send_node(client, node, true, false);
@@ -119,18 +113,12 @@ ObjectSender::send_node(ClientInterface* client, const NodeImpl* node, bool recu
 	if (bundle)
 		client->transfer_begin();
 
-	client->new_node(node->path(), node->plugin()->uri());
-	client->set_variable(node->path(), "ingen:polyphonic", bool(node->polyphonic()));
+	client->put(node->path(), node->variables());
 
 	// Send variables
-	const GraphObjectImpl::Properties& data = node->variables();
-	for (GraphObjectImpl::Properties::const_iterator j = data.begin(); j != data.end(); ++j)
-		client->set_variable(node->path(), (*j).first, (*j).second);
-
-	// Send properties
-	const GraphObjectImpl::Properties& prop = node->properties();
+	const GraphObjectImpl::Properties& prop = node->variables();
 	for (GraphObjectImpl::Properties::const_iterator j = prop.begin(); j != prop.end(); ++j)
-		client->set_property(node->path(), (*j).first, (*j).second);
+		client->set_variable(node->path(), (*j).first, (*j).second);
 
 	if (recursive) {
 		// Send ports
@@ -151,12 +139,13 @@ ObjectSender::send_port(ClientInterface* client, const PortImpl* port, bool bund
 	if (bundle)
 		client->bundle_begin();
 
-	client->new_port(port->path(), port->type().uri(), port->index(), port->is_output());
+	client->put(port->path(), port->properties());
+
 	PatchImpl* graph_parent = dynamic_cast<PatchImpl*>(port->parent_node());
 	if (graph_parent && graph_parent->internal_polyphony() > 1)
 		client->set_variable(port->path(), "ingen:polyphonic", bool(port->polyphonic()));
 
-	// Send variable
+	// Send variables
 	const GraphObjectImpl::Properties& data = port->variables();
 	for (GraphObjectImpl::Properties::const_iterator j = data.begin(); j != data.end(); ++j)
 		client->set_variable(port->path(), (*j).first, (*j).second);

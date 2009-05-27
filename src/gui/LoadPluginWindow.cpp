@@ -343,7 +343,10 @@ LoadPluginWindow::add_clicked()
 			dialog.run();
 		} else {
 			Path path = _patch->path().base() + Path::nameify(name);
-			App::instance().engine()->new_node(path, plugin->uri());
+			Resource::Properties props;
+			props.insert(make_pair("rdf:type",       Atom(Atom::URI, "ingen:Node")));
+			props.insert(make_pair("rdf:instanceOf", Atom(Atom::URI, plugin->uri().str())));
+			App::instance().engine()->put(path, props);
 			App::instance().engine()->set_variable(path, "ingen:polyphonic", bool(polyphonic));
 			for (GraphObject::Properties::const_iterator i = _initial_data.begin();
 					i != _initial_data.end(); ++i)
@@ -351,9 +354,9 @@ LoadPluginWindow::add_clicked()
 			_node_name_entry->set_text(generate_module_name(++_plugin_name_offset));
 
 			// Cascade
-			Atom& x = _initial_data["ingenuity:canvas-x"];
+			Atom& x = _initial_data.find("ingenuity:canvas-x")->second;
 			x = Atom(x.get_float() + 20.0f);
-			Atom& y = _initial_data["ingenuity:canvas-y"];
+			Atom& y = _initial_data.find("ingenuity:canvas-y")->second;
 			y = Atom(y.get_float() + 20.0f);
 		}
 	}
@@ -453,9 +456,9 @@ LoadPluginWindow::on_key_press_event(GdkEventKey* event)
 }
 
 void
-LoadPluginWindow::plugin_property_changed(const Raul::URI&  plugin,
-	                                      const Raul::URI&  predicate,
-	                                      const Raul::Atom& value)
+LoadPluginWindow::plugin_property_changed(const URI&  plugin,
+	                                      const URI&  predicate,
+	                                      const Atom& value)
 {
 	Rows::const_iterator i = _rows.find(plugin);
 	if (i != _rows.end() && value.type() == Atom::STRING)

@@ -32,8 +32,16 @@ using namespace Raul;
 
 namespace Ingen {
 
+using namespace Shared;
 
-CreatePatchEvent::CreatePatchEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Raul::Path& path, int poly)
+
+CreatePatchEvent::CreatePatchEvent(
+		Engine&                     engine,
+		SharedPtr<Responder>        responder,
+		SampleCount                 timestamp,
+		const Raul::Path&           path,
+		int                         poly,
+		const Resource::Properties& properties)
 	: QueuedEvent(engine, responder, timestamp)
 	, _path(path)
 	, _patch(NULL)
@@ -41,6 +49,7 @@ CreatePatchEvent::CreatePatchEvent(Engine& engine, SharedPtr<Responder> responde
 	, _compiled_patch(NULL)
 	, _poly(poly)
 	, _error(NO_ERROR)
+	, _properties(properties)
 {
 }
 
@@ -74,6 +83,7 @@ CreatePatchEvent::pre_process()
 		poly = _poly;
 
 	_patch = new PatchImpl(_engine, path.name(), poly, _parent, _engine.audio_driver()->sample_rate(), _engine.audio_driver()->buffer_size(), _poly);
+	_patch->properties().insert(_properties.begin(), _properties.end());
 
 	if (_parent != NULL) {
 		_parent->add_node(new PatchImpl::Nodes::Node(_patch));

@@ -120,45 +120,11 @@ OSCClientSender::error(const std::string& msg)
 }
 
 
-/** \page client_osc_namespace
- * <p> \b /ingen/new_node - Notification of a new node's creation.
- * \arg \b plug-uri (string) - URI of the plugin new node is an instance of
- * \arg \b path (string) - Path of the new node
- * \arg \b polyphonic (boolean) - Node is polyphonic\n\n
- * \li New nodes are sent as a bundle.  The first message in the bundle will be
- * this one (/ingen/new_node), followed by a series of /ingen/new_port commands,
- * followed by /ingen/new_node_end. </p> \n \n
- */
-void OSCClientSender::new_node(const Path& node_path,
-                               const URI&  plugin_uri)
-{
-	send("/ingen/new_node", "ss", node_path.c_str(), plugin_uri.c_str(), LO_ARGS_END);
-}
-
-
-
-/** \page client_osc_namespace
- * <p> \b /ingen/new_port - Notification of a new port's creation.
- * \arg \b path (string) - Path of new port
- * \arg \b index (integer) - Index (or sort key) of port on parent
- * \arg \b data-type (string) - Type of port (ingen:AudioPort, ingen:ControlPort, ingen:EventPort)
- * \arg \b direction ("is-output") (integer) - Direction of data flow (Input = 0, Output = 1)
- *
- * \li Note that in the event of loading a patch, this message could be
- * followed immediately by a control change, meaning the default-value is
- * not actually the current value of the port.
- * \li The minimum and maximum values are suggestions only, they are not
- * enforced in any way, and going outside them is perfectly fine.  Also note
- * that the port ranges in om_gtk are not these ones!  Those ranges are set
- * as variable.</p> \n \n
- */
 void
-OSCClientSender::new_port(const Path& path,
-                          const URI&  type,
-                          uint32_t          index,
-                          bool              is_output)
+OSCClientSender::put(const Raul::Path&                   path,
+                     const Shared::Resource::Properties& properties)
 {
-	send("/ingen/new_port", "sisi", path.c_str(), index, type.c_str(), is_output, LO_ARGS_END);
+	cerr << "OSC CLIENT PUT " << path << endl;
 }
 
 
@@ -304,47 +270,6 @@ OSCClientSender::new_plugin(const URI&    uri,
 	lo_message_add_string(m, type_uri.c_str());
 	lo_message_add_string(m, symbol.c_str());
 	send_message("/ingen/plugin", m);
-}
-
-
-bool
-OSCClientSender::new_object(const Shared::GraphObject* object)
-{
-#if 0
-	using namespace Shared;
-
-	const Patch* patch = dynamic_cast<const Patch*>(object);
-	if (patch) {
-		new_patch(patch->path(), patch->internal_polyphony());
-		return true;
-	}
-
-	const Node* node = dynamic_cast<const Node*>(object);
-	if (node) {
-		new_node(node->path(), node->plugin()->uri());
-		return true;
-	}
-
-	const Port* port = dynamic_cast<const Port*>(object);
-	if (port) {
-		new_port(port->path(), port->type().uri(), port->index(), !port->is_input());
-		return true;
-	}
-#endif
-
-	return false;
-}
-
-
-/** \page client_osc_namespace
- * <p> \b /ingen/new_patch - Notification of a new patch
- * \arg \b path (string) - Path of new patch
- * \arg \b poly (int) - Polyphony of new patch (\em not a boolean like new_node) </p> \n \n
- */
-void
-OSCClientSender::new_patch(const Path& path, uint32_t poly)
-{
-	send("/ingen/new_patch", "si", path.c_str(), poly, LO_ARGS_END);
 }
 
 

@@ -105,12 +105,6 @@ PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
 			"event_out", "Event Out", "lv2ev:EventPort", true));
 
-	// Add control menu items
-	/*_menu_add_number_control->signal_activate().connect(
-		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_control), NUMBER));
-	_menu_add_button_control->signal_activate().connect(
-		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_control), BUTTON));*/
-
 	// Connect to model signals to track state
 	_patch->signal_new_node.connect(sigc::mem_fun(this, &PatchCanvas::add_node));
 	_patch->signal_removed_node.connect(sigc::mem_fun(this, &PatchCanvas::remove_node));
@@ -673,18 +667,21 @@ PatchCanvas::paste()
 	// mkdir -p
 	string to_create = _patch->path().chop_scheme().substr(1);
 	string created = "/";
-	clipboard.new_patch("/", _patch->poly());
+	Resource::Properties props;
+	props.insert(make_pair("rdf:type",        Raul::Atom(Raul::Atom::URI, "ingen:Patch")));
+	props.insert(make_pair("ingen:polyphony", Raul::Atom(int32_t(_patch->poly()))));
+	clipboard.put("/", props);
 	size_t first_slash;
 	while (to_create != "/" && to_create != ""
 			&& (first_slash = to_create.find("/")) != string::npos) {
 		created += to_create.substr(0, first_slash);
 		assert(Path::is_valid(created));
-		clipboard.new_patch(created, _patch->poly());
+		clipboard.put(created, props);
 		to_create = to_create.substr(first_slash + 1);
 	}
 
 	if (!_patch->path().is_root())
-		clipboard.new_patch(_patch->path(), _patch->poly());
+		clipboard.put(_patch->path(), props);
 
 	boost::optional<Raul::Path>   data_path;
 	boost::optional<Raul::Path>   parent;
@@ -759,20 +756,6 @@ PatchCanvas::generate_port_name(
 	name.append(" ").append(num_buf);
 }
 
-void
-PatchCanvas::menu_add_control(ControlType type)
-{
-	// FIXME: bundleify
-
-	GraphObject::Properties data = get_initial_data();
-	float x = data["ingenuity:canvas-x"].get_float();
-	float y = data["ingenuity:canvas-y"].get_float();
-
-	cerr << "ADD CONTROL: " << (unsigned)type << " @ " << x << ", " << y << endl;
-
-	add_item(boost::shared_ptr<FlowCanvas::Item>(
-			new FlowCanvas::Ellipse(shared_from_this(), "control", x, y, 20, 20, true)));
-}
 
 void
 PatchCanvas::menu_add_port(const string& sym_base, const string& name_base,
@@ -781,13 +764,14 @@ PatchCanvas::menu_add_port(const string& sym_base, const string& name_base,
 	string sym, name;
 	generate_port_name(sym_base, sym, name_base, name);
 	const Path& path = _patch->path().base() + sym;
-	App::instance().engine()->bundle_begin();
-	App::instance().engine()->new_port(path, type, _patch->num_ports(), is_output);
-	GraphObject::Properties data = get_initial_data();
-	App::instance().engine()->set_property(path, "lv2:name", Atom(name.c_str()));
-	for (GraphObject::Properties::const_iterator i = data.begin(); i != data.end(); ++i)
-		App::instance().engine()->set_property(path, i->first, i->second);
-	App::instance().engine()->bundle_end();
+
+	Resource::Properties props = get_initial_data();
+	props.insert(make_pair("rdf:type", Atom(Atom::URI, type)));
+	props.insert(make_pair("rdf:type",
+			Atom(Atom::URI, is_output ? "lv2:OutputPort" : "lv2:InputPort")));
+	props.insert(make_pair("lv2:index", Atom(int32_t(_patch->num_ports()))));
+	props.insert(make_pair("lv2:name", Atom(name.c_str())));
+	App::instance().engine()->put(path, props);
 }
 
 
@@ -808,10 +792,10 @@ PatchCanvas::load_plugin(WeakPtr<PluginModel> weak_plugin)
 
 	const Path path = _patch->path().base() + name;
 	// FIXME: polyphony?
-	App::instance().engine()->new_node(path, plugin->uri());
-	GraphObject::Properties data = get_initial_data();
-	for (GraphObject::Properties::const_iterator i = data.begin(); i != data.end(); ++i)
-		App::instance().engine()->set_variable(path, i->first, i->second);
+	GraphObject::Properties props = get_initial_data();
+	props.insert(make_pair("rdf:type", Raul::Atom(Raul::Atom::URI, "ingen:Node")));
+	props.insert(make_pair("rdf:instanceOf", Raul::Atom(Raul::Atom::URI, plugin->uri().str())));
+	App::instance().engine()->put(path, props);
 }
 
 
@@ -832,10 +816,8 @@ GraphObject::Properties
 PatchCanvas::get_initial_data()
 {
 	GraphObject::Properties result;
-
-	result["ingenuity:canvas-x"] = Atom((float)_last_click_x);
-	result["ingenuity:canvas-y"] = Atom((float)_last_click_y);
-
+	result.insert(make_pair("ingenuity:canvas-x", Atom((float)_last_click_x)));
+	result.insert(make_pair("ingenuity:canvas-y", Atom((float)_last_click_y)));
 	return result;
 }
 

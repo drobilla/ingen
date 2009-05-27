@@ -45,11 +45,8 @@ ClientStore::ClientStore(SharedPtr<EngineInterface> engine, SharedPtr<SigClientI
 
 	emitter->signal_object_destroyed.connect(sigc::mem_fun(this, &ClientStore::destroy));
 	emitter->signal_object_renamed.connect(sigc::mem_fun(this, &ClientStore::rename));
-	emitter->signal_new_object.connect(sigc::mem_fun(this, &ClientStore::new_object));
 	emitter->signal_new_plugin.connect(sigc::mem_fun(this, &ClientStore::new_plugin));
-	emitter->signal_new_patch.connect(sigc::mem_fun(this, &ClientStore::new_patch));
-	emitter->signal_new_node.connect(sigc::mem_fun(this, &ClientStore::new_node));
-	emitter->signal_new_port.connect(sigc::mem_fun(this, &ClientStore::new_port));
+	emitter->signal_put.connect(sigc::mem_fun(this, &ClientStore::put));
 	emitter->signal_clear_patch.connect(sigc::mem_fun(this, &ClientStore::clear_patch));
 	emitter->signal_connection.connect(sigc::mem_fun(this, &ClientStore::connect));
 	emitter->signal_disconnection.connect(sigc::mem_fun(this, &ClientStore::disconnect));
@@ -78,7 +75,6 @@ ClientStore::add_object(SharedPtr<ObjectModel> object)
 	if (existing != end()) {
 		PtrCast<ObjectModel>(existing->second)->set(object);
 	} else {
-
 		if (!object->path().is_root()) {
 			SharedPtr<ObjectModel> parent = this->object(object->path().parent());
 			if (parent) {
@@ -271,65 +267,57 @@ ClientStore::new_plugin(const URI& uri, const URI& type_uri, const Symbol& symbo
 }
 
 
-bool
-ClientStore::new_object(const Shared::GraphObject* object)
-{
-	using namespace Shared;
-
-	const Patch* patch = dynamic_cast<const Patch*>(object);
-	if (patch) {
-		new_patch(patch->path(), patch->internal_polyphony());
-		return true;
-	}
-
-	const Node* node = dynamic_cast<const Node*>(object);
-	if (node) {
-		new_node(node->path(), node->plugin()->uri());
-		return true;
-	}
-
-	const Port* port = dynamic_cast<const Port*>(object);
-	if (port) {
-		new_port(port->path(), port->type().uri(), port->index(), !port->is_input());
-		return true;
-	}
-
-	return false;
-}
-
-
 void
-ClientStore::new_patch(const Path& path, uint32_t poly)
+ClientStore::put(const Path& path, const Resource::Properties& properties)
 {
-	SharedPtr<PatchModel> p(new PatchModel(path, poly));
-	add_object(p);
-}
+	typedef Resource::Properties::const_iterator iterator;
+	cerr << "CLIENT PUT " << path << " {" << endl;
+	for (iterator i = properties.begin(); i != properties.end(); ++i)
+		cerr << "\t" << i->first << " = " << i->second << " :: " << i->second.type() << endl;
+	cerr << "}" << endl;
 
+	bool is_patch, is_node, is_port, is_output;
+	DataType data_type(DataType::UNKNOWN);
+	ResourceImpl::type(properties, is_patch, is_node, is_port, is_output, data_type);
 
-void
-ClientStore::new_node(const Path& path, const URI& plugin_uri)
-{
-	SharedPtr<PluginModel> plug = plugin(plugin_uri);
-	if (!plug) {
-		SharedPtr<NodeModel> n(new NodeModel(plugin_uri, path));
-		//add_plugin_orphan(n);
-		add_object(n);
+	if (is_patch) {
+		uint32_t poly = 1;
+		iterator p = properties.find("ingen:polyphony");
+		if (p != properties.end() && p->second.is_valid() && p->second.type() == Atom::INT)
+			poly = p->second.get_int32();
+		SharedPtr<PatchModel> model(new PatchModel(path, poly));
+		model->merge_properties(properties);
+		add_object(model);
+	} else if (is_node) {
+		const Resource::Properties::const_iterator p = properties.find("rdf:instanceOf");
+		SharedPtr<PluginModel> plug;
+		if (p->second.is_valid() && p->second.type() == Atom::URI) {
+			if ((plug = plugin(p->second.get_uri()))) {
+				SharedPtr<NodeModel> n(new NodeModel(plug, path));
+				n->merge_properties(properties);
+				add_object(n);
+			} else {
+				SharedPtr<NodeModel> n(new NodeModel(p->second.get_uri(), path));
+				n->merge_properties(properties);
+				//add_plugin_orphan(n);
+				add_object(n);
+			}
+		} else {
+			cerr << "ERROR: Plugin with no type" << endl;
+		}
+	} else if (is_port) {
+		if (data_type != DataType::UNKNOWN) {
+			PortModel::Direction pdir = is_output ? PortModel::OUTPUT : PortModel::INPUT;
+			SharedPtr<PortModel> p(new PortModel(path, 0, data_type, pdir));
+			p->merge_properties(properties);
+			add_object(p);
+		} else {
+			cerr << "WARNING: Illegal port " << path << endl;
+		}
 	} else {
-		SharedPtr<NodeModel> n(new NodeModel(plug, path));
-		add_object(n);
+		cerr << "WARNING: Ignoring object " << path << " with unknown type "
+			<< is_patch << " " << is_node << " " << is_port << endl;
 	}
-}
-
-
-void
-ClientStore::new_port(const Path& path, const URI& type, uint32_t index, bool is_output)
-{
-	PortModel::Direction pdir = is_output ? PortModel::OUTPUT : PortModel::INPUT;
-
-	SharedPtr<PortModel> p(new PortModel(path, index, type, pdir));
-	add_object(p);
-	/*if (p->parent())
-		resolve_connection_orphans(p);*/
 }
 
 

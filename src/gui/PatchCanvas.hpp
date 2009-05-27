@@ -87,8 +87,6 @@ public:
 
 private:
 	enum ControlType { NUMBER, BUTTON };
-	void menu_add_control(ControlType type);
-
 	void generate_port_name(
 			const string& sym_base,  string& sym,
 			const string& name_base, string& name);

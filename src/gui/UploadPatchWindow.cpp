@@ -239,8 +239,8 @@ UploadPatchWindow::upload_clicked()
 	Glib::ustring short_name = _short_name_entry->get_text();
 
 	GraphObject::Properties extra_rdf;
-	extra_rdf["lv2:symbol"] = Atom(Atom::STRING, symbol);
-	extra_rdf["doap:name"] =  Atom(Atom::STRING, short_name);
+	extra_rdf.insert(make_pair("lv2:symbol", Atom(Atom::STRING, symbol)));
+	extra_rdf.insert(make_pair("doap:name", Atom(Atom::STRING, short_name)));
 
 	_response = 0;
 	_progress_pct = 0;

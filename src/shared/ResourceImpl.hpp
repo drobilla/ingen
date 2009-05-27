@@ -22,10 +22,10 @@
 #include <sigc++/sigc++.h>
 #include "raul/URI.hpp"
 #include "interface/Resource.hpp"
+#include "interface/DataType.hpp"
 
 namespace Ingen {
 namespace Shared {
-
 
 class ResourceImpl : virtual public Resource
 {
@@ -39,6 +39,19 @@ public:
 
 	const Raul::Atom& get_property(const Raul::URI& uri) const;
 	void              set_property(const Raul::URI& uri, const Raul::Atom& value);
+	void              add_property(const Raul::URI& uri, const Raul::Atom& value);
+
+	/** Get the ingen type from a set of Properties.
+	 * If some coherent ingen type is found, true is returned and the appropriate
+	 * output parameter set to true.  Otherwise false is returned.
+	 */
+	static bool type(
+			const Properties& properties,
+			bool& patch,
+			bool& node,
+			bool& port, bool& is_output, DataType& data_type);
+
+	void merge_properties(const Properties& p);
 
 	sigc::signal<void, const Raul::URI&, const Raul::Atom&> signal_property;
 

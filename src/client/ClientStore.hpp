@@ -69,9 +69,7 @@ public:
 	// CommonInterface
 	void new_plugin(const Raul::URI& uri, const Raul::URI& type_uri, const Raul::Symbol& symbol);
 	bool new_object(const Shared::GraphObject* object);
-	void new_patch(const Raul::Path& path, uint32_t poly);
-	void new_node(const Raul::Path& path, const Raul::URI& plugin_uri);
-	void new_port(const Raul::Path& path, const Raul::URI& type, uint32_t index, bool is_output);
+	void put(const Raul::Path& path, const Shared::Resource::Properties& properties);
 	void rename(const Raul::Path& old_path, const Raul::Path& new_path);
 	void set_variable(const Raul::URI& subject_path, const Raul::URI& predicate, const Raul::Atom& value);
 	void set_property(const Raul::URI& subject_path, const Raul::URI& predicate, const Raul::Atom& value);

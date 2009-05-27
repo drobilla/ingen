@@ -89,8 +89,8 @@ private:
 	LO_HANDLER(rename);
 	LO_HANDLER(connection);
 	LO_HANDLER(disconnection);
-	LO_HANDLER(new_node);
 	LO_HANDLER(new_port);
+	LO_HANDLER(put);
 	LO_HANDLER(set_variable);
 	LO_HANDLER(set_property);
 	LO_HANDLER(set_port_value);

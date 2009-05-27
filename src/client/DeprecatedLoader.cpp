@@ -50,20 +50,20 @@ namespace Client {
 class ControlModel
 {
 public:
-	ControlModel(const Raul::Path& port_path, float value)
+	ControlModel(const Path& port_path, float value)
 		: _port_path(port_path)
 		, _value(value)
 	{
 		assert(_port_path.find("//") == string::npos);
 	}
 
-	const Raul::Path& port_path() const          { return _port_path; }
+	const Path& port_path() const          { return _port_path; }
 	void              port_path(const string& p) { _port_path = p; }
 	float             value() const              { return _value; }
 	void              value(float v)             { _value = v; }
 
 private:
-	Raul::Path _port_path;
+	Path _port_path;
 	float      _value;
 };
 
@@ -171,9 +171,9 @@ DeprecatedLoader::add_variable(GraphObject::Properties& data, string old_key, st
 			free(locale);
 
 			if (endptr != c_val && *endptr == '\0')
-				data[key] = Atom(fval);
+				data.insert(make_pair(key, Atom(fval)));
 			else
-				data[key] = Atom(Atom::STRING, value);
+				data.insert(make_pair(key, Atom(Atom::STRING, value)));
 
 			free(c_val);
 		}
@@ -229,7 +229,7 @@ DeprecatedLoader::load_patch(const Glib::ustring&    filename,
 		poly = poly_param->second.get_int32();
 
 	if (initial_data.find("filename") == initial_data.end())
-		initial_data["filename"] = Atom(filename.c_str()); // FIXME: URL?
+		initial_data.insert(make_pair("filename", Atom(filename.c_str()))); // FIXME: URL?
 
 	xmlDocPtr doc = xmlParseFile(filename.c_str());
 
@@ -292,7 +292,10 @@ DeprecatedLoader::load_patch(const Glib::ustring&    filename,
 
 	// Create it, if we're not merging
 	if (!existing && !path.is_root()) {
-		_engine->new_patch(path, poly);
+		Resource::Properties props;
+		props.insert(make_pair("rdf:type",        Atom(Atom::URI, "ingen:Patch")));
+		props.insert(make_pair("ingen:polyphony", Atom((int32_t)poly)));
+		_engine->put(path, props);
 		for (GraphObject::Properties::const_iterator i = initial_data.begin(); i != initial_data.end(); ++i)
 			_engine->set_variable(path, i->first, i->second);
 	}
@@ -450,27 +453,37 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 	if (plugin_uri == "") {
 		bool is_port = false;
 
+		Resource::Properties props;
+		props.insert(make_pair("rdf:type",        Atom(Atom::URI, "ingen:Patch")));
+
 		if (plugin_type == "Internal") {
-			// FIXME: indices
+			is_port = true;
 			if (plugin_label == "audio_input") {
-				_engine->new_port(path, "lv2:AudioPort", 0, false);
-				is_port = true;
+				props.insert(make_pair("rdf:type", Atom(Atom::URI, "lv2:AudioPort")));
+				props.insert(make_pair("rdf:type", Atom(Atom::URI, "lv2:InputPort")));
+				_engine->put(path, props);
 			} else if (plugin_label == "audio_output") {
-				_engine->new_port(path, "lv2:AudioPort", 0, true);
-				is_port = true;
+				props.insert(make_pair("rdf:type", Atom(Atom::URI, "lv2:AudioPort")));
+				props.insert(make_pair("rdf:type", Atom(Atom::URI, "lv2:OutputPort")));
+				_engine->put(path, props);
 			} else if (plugin_label == "control_input") {
-				_engine->new_port(path, "lv2:ControlPort", 0, false);
-				is_port = true;
+				props.insert(make_pair("rdf:type", Atom(Atom::URI, "lv2:ControlPort")));
+				props.insert(make_pair("rdf:type", Atom(Atom::URI, "lv2:InputPort")));
+				_engine->put(path, props);
 			} else if (plugin_label == "control_output" ) {
-				_engine->new_port(path, "lv2:ControlPort", 0, true);
-				is_port = true;
+				props.insert(make_pair("rdf:type", Atom(Atom::URI, "lv2:ControlPort")));
+				props.insert(make_pair("rdf:type", Atom(Atom::URI, "lv2:OutputPort")));
+				_engine->put(path, props);
 			} else if (plugin_label == "midi_input") {
-				_engine->new_port(path, "lv2ev:EventPort", 0, false);
-				is_port = true;
+				props.insert(make_pair("rdf:type", Atom(Atom::URI, "lv2ev:EventPort")));
+				props.insert(make_pair("rdf:type", Atom(Atom::URI, "lv2:InputPort")));
+				_engine->put(path, props);
 			} else if (plugin_label == "midi_output" ) {
-				_engine->new_port(path, "lv2ev:EventPort", 0, true);
-				is_port = true;
+				props.insert(make_pair("rdf:type", Atom(Atom::URI, "lv2ev:EventPort")));
+				props.insert(make_pair("rdf:type", Atom(Atom::URI, "lv2:OutputPort")));
+				_engine->put(path, props);
 			} else {
+				is_port = false;
 				cerr << "WARNING: Unknown internal plugin label \"" << plugin_label << "\"" << endl;
 			}
 		}
@@ -491,6 +504,8 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 
 			path = new_path;
 
+			_engine->put(path, props);
+
 			for (GraphObject::Properties::const_iterator i = initial_data.begin(); i != initial_data.end(); ++i)
 				_engine->set_variable(path, i->first, i->second);
 
@@ -510,7 +525,10 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 			if (plugin_uri == "")
 				plugin_uri = "om:" + plugin_type + ":" + library_name + ":" + plugin_label;
 
-			_engine->new_node(path, plugin_uri);
+			Resource::Properties props;
+			props.insert(make_pair("rdf:type",       Atom(Atom::URI, "ingen:Node")));
+			props.insert(make_pair("rdf:instanceOf", Atom(Atom::URI, plugin_uri)));
+			_engine->put(path, props);
 
 			_engine->set_variable(path, "ingen:polyphonic", bool(polyphonic));
 
@@ -522,7 +540,10 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 
 	// Not deprecated
 	} else {
-		_engine->new_node(path, plugin_uri);
+		Resource::Properties props;
+		props.insert(make_pair("rdf:type",       Atom(Atom::URI, "ingen:Node")));
+		props.insert(make_pair("rdf:instanceOf", Atom(Atom::URI, plugin_uri)));
+		_engine->put(path, props);
 		_engine->set_variable(path, "ingen:polyphonic", bool(polyphonic));
 		for (GraphObject::Properties::const_iterator i = initial_data.begin(); i != initial_data.end(); ++i)
 			_engine->set_variable(path, i->first, i->second);

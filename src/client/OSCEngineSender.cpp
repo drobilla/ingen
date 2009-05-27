@@ -132,71 +132,11 @@ OSCEngineSender::quit()
 // Object commands
 
 
-bool
-OSCEngineSender::new_object(const Shared::GraphObject* object)
-{
-	using namespace Shared;
-
-	const Patch* patch = dynamic_cast<const Patch*>(object);
-	if (patch) {
-		new_patch(patch->path(), patch->internal_polyphony());
-		return true;
-	}
-
-	const Node* node = dynamic_cast<const Node*>(object);
-	if (node) {
-		new_node(node->path(), node->plugin()->uri());
-		return true;
-	}
-
-	const Port* port = dynamic_cast<const Port*>(object);
-	if (port) {
-		new_port(port->path(), port->type().uri(), port->index(), !port->is_input());
-		return true;
-	}
-
-	return false;
-}
-
-
 void
-OSCEngineSender::new_patch(const Path& path,
-                           uint32_t    poly)
+OSCEngineSender::put(const Raul::Path&                   path,
+                     const Shared::Resource::Properties& properties)
 {
-	send("/ingen/new_patch", "isi",
-		next_id(),
-		path.c_str(),
-		poly,
-		LO_ARGS_END);
-}
-
-
-void
-OSCEngineSender::new_port(const Path& path,
-                          const URI&  type,
-                          uint32_t    index,
-                          bool        is_output)
-{
-	// FIXME: use index
-	send("/ingen/new_port",  "issi",
-		next_id(),
-		path.c_str(),
-		type.c_str(),
-		(is_output ? 1 : 0),
-		LO_ARGS_END);
-}
-
-
-void
-OSCEngineSender::new_node(const Path& path,
-                          const URI&  plugin_uri)
-{
-
-	send("/ingen/new_node",  "iss",
-		next_id(),
-		path.c_str(),
-		plugin_uri.c_str(),
-		LO_ARGS_END);
+	cerr << "OSC ENGINE PUT " << path << endl;
 }
 
 

@@ -45,9 +45,6 @@ public:
 
 	Raul::URI uri() const { return "ingen:internal"; }
 
-	// Signal parameters match up directly with ClientInterface calls
-	sigc::signal<bool, const Shared::GraphObject*> signal_new_object;
-
 	sigc::signal<void, int32_t>                                     signal_response_ok;
 	sigc::signal<void, int32_t, std::string>                        signal_response_error;
 	sigc::signal<void>                                              signal_bundle_begin;
@@ -55,8 +52,8 @@ public:
 	sigc::signal<void, std::string>                                 signal_error;
 	sigc::signal<void, Raul::URI, Raul::URI, Raul::Symbol>          signal_new_plugin;
 	sigc::signal<void, Raul::Path, uint32_t>                        signal_new_patch;
-	sigc::signal<void, Raul::Path, Raul::URI>                       signal_new_node;
 	sigc::signal<void, Raul::Path, Raul::URI, uint32_t, bool>       signal_new_port;
+	sigc::signal<void, Raul::Path, Shared::Resource::Properties>    signal_put;
 	sigc::signal<void, Raul::Path>                                  signal_clear_patch;
 	sigc::signal<void, Raul::Path, Raul::Path>                      signal_object_renamed;
 	sigc::signal<void, Raul::Path>                                  signal_object_destroyed;
@@ -101,17 +98,8 @@ protected:
 	void new_plugin(const Raul::URI& uri, const Raul::URI& type_uri, const Raul::Symbol& symbol)
 		{ if (_enabled) signal_new_plugin.emit(uri, type_uri, symbol); }
 
-	bool new_object(const Shared::GraphObject* object)
-		{ if (_enabled) signal_new_object.emit(object); return false; }
-
-	void new_patch(const Raul::Path& path, uint32_t poly)
-		{ if (_enabled) signal_new_patch.emit(path, poly); }
-
-	void new_node(const Raul::Path& path, const Raul::URI& plugin_uri)
-		{ if (_enabled) signal_new_node.emit(path, plugin_uri); }
-
-	void new_port(const Raul::Path& path, const Raul::URI& type, uint32_t index, bool is_output)
-		{ if (_enabled) signal_new_port.emit(path, type, index, is_output); }
+	void put(const Raul::Path& path, const Shared::Resource::Properties& properties)
+		{ if (_enabled) signal_put.emit(path, properties); }
 
 	void connect(const Raul::Path& src_port_path, const Raul::Path& dst_port_path)
 		{ if (_enabled) signal_connection.emit(src_port_path, dst_port_path); }

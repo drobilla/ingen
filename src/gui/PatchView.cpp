@@ -87,10 +87,10 @@ PatchView::set_patch(SharedPtr<PatchModel> patch)
 
 	for (GraphObject::Properties::const_iterator i = patch->variables().begin();
 			i != patch->variables().end(); ++i)
-		variable_changed(i->first, i->second);
+		property_changed(i->first, i->second);
 
 	// Connect model signals to track state
-	patch->signal_variable.connect(sigc::mem_fun(this, &PatchView::variable_changed));
+	patch->signal_variable.connect(sigc::mem_fun(this, &PatchView::property_changed));
 	patch->signal_property.connect(sigc::mem_fun(this, &PatchView::property_changed));
 
 	// Connect widget signals to do things
@@ -230,12 +230,6 @@ PatchView::refresh_clicked()
 
 void
 PatchView::property_changed(const Raul::URI& predicate, const Raul::Atom& value)
-{
-}
-
-
-void
-PatchView::variable_changed(const Raul::URI& predicate, const Raul::Atom& value)
 {
 	_enable_signal = false;
 	if (predicate.str() == "ingen:enabled") {

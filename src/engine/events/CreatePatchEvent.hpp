@@ -19,6 +19,7 @@
 #define CREATEPATCHEVENT_H
 
 #include "QueuedEvent.hpp"
+#include "interface/Resource.hpp"
 
 namespace Ingen {
 
@@ -33,7 +34,13 @@ class CompiledPatch;
 class CreatePatchEvent : public QueuedEvent
 {
 public:
-	CreatePatchEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Raul::Path& path, int poly);
+	CreatePatchEvent(
+			Engine&                             engine,
+			SharedPtr<Responder>                responder,
+			SampleCount                         timestamp,
+			const Raul::Path&                   path,
+			int                                 poly,
+			const Shared::Resource::Properties& properties);
 
 	void pre_process();
 	void execute(ProcessContext& context);
@@ -48,6 +55,8 @@ private:
 	CompiledPatch*   _compiled_patch;
 	int              _poly;
 	ErrorType        _error;
+
+	Shared::Resource::Properties _properties;
 };
 
 

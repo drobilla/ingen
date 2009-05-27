@@ -15,11 +15,8 @@ class PythonClient(ingen.Client):
     def bundle_end(self):
         print "*** }"
 
-    def new_port(self, path, data_type, is_output):
-        print "*** Received Port:", path, data_type, is_output
-
-    def new_node(self, plugin_uri, path, polyphonic, nports):
-        print "*** Received Node:", plugin_uri, path, polyphonic, nports
+	def put(self, path, properties):
+		print "*** Received Object:", path
 
 c = PythonClient()
 c.enable()

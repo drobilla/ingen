@@ -45,18 +45,8 @@ public:
 	/** End (and send) an atomic bundle */
 	virtual void bundle_end() = 0;
 
-	virtual bool new_object(const GraphObject* object) = 0;
-
-	virtual void new_patch(const Raul::Path& path,
-	                       uint32_t          poly) = 0;
-
-	virtual void new_node(const Raul::Path& path,
-	                      const Raul::URI&  plugin_uri) = 0;
-
-	virtual void new_port(const Raul::Path& path,
-	                      const Raul::URI&  type,
-	                      uint32_t          index,
-	                      bool              is_output) = 0;
+	virtual void put(const Raul::Path&           path,
+	                 const Resource::Properties& properties) = 0;
 
 	virtual void rename(const Raul::Path& old_path,
 	                    const Raul::Path& new_path) = 0;

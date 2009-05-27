@@ -142,37 +142,11 @@ ClashAvoider::exists(const Raul::Path& path) const
 }
 
 
-bool
-ClashAvoider::new_object(const GraphObject* object)
-{
-	return false;
-}
-
-
 void
-ClashAvoider::new_patch(const Raul::Path& path,
-                        uint32_t          poly)
+ClashAvoider::put(const Raul::Path&                   path,
+                  const Shared::Resource::Properties& properties)
 {
-	if (!path.is_root())
-		_target.new_patch(map_path(path), poly);
-}
-
-
-void
-ClashAvoider::new_node(const Raul::Path& path,
-                       const Raul::URI&  plugin_uri)
-{
-	_target.new_node(map_path(path), plugin_uri);
-}
-
-
-void
-ClashAvoider::new_port(const Raul::Path& path,
-                       const Raul::URI&  type,
-                       uint32_t          index,
-                       bool              is_output)
-{
-	_target.new_port(map_path(path), type, index, is_output);
+	_target.put(map_path(path), properties);
 }
 
 

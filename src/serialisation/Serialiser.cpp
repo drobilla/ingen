@@ -56,6 +56,9 @@ namespace Ingen {
 namespace Serialisation {
 
 
+#define META_PREFIX "#"
+
+
 Serialiser::Serialiser(Shared::World& world, SharedPtr<Shared::Store> store)
 	: _root_path("/")
 	, _store(store)
@@ -247,7 +250,7 @@ Serialiser::class_rdf_node(const Path& path)
 		return Redland::Resource(_model->world(), _base_uri);
 	else
 		return Redland::Resource(_model->world(),
-				string("#") + path.substr(_root_path.base().length()));
+				string(META_PREFIX) + path.relative_to_base(_root_path).chop_start("/"));
 }
 
 
@@ -263,7 +266,8 @@ Serialiser::serialise(SharedPtr<GraphObject> object) throw (std::logic_error)
 			const Redland::Resource patch_id(_model->world(), _base_uri);
 			serialise_patch(patch, patch_id);
 		} else {
-			const Redland::Resource patch_id(_model->world(), string("#") + patch->path().substr(1));
+			const Redland::Resource patch_id(_model->world(),
+					string(META_PREFIX) + patch->path().chop_start("/"));
 			serialise_patch(patch, patch_id);
 			serialise_node(patch, patch_id, instance_rdf_node(patch->path()));
 		}
@@ -323,7 +327,8 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch, const Redland::Node&
 		SharedPtr<Shared::Patch> patch = PtrCast<Shared::Patch>(n->second);
 		SharedPtr<Shared::Node>  node  = PtrCast<Shared::Node>(n->second);
 		if (patch) {
-			const Redland::Resource class_id(_model->world(),string("#") + patch->path().substr(1));
+			const Redland::Resource class_id(_model->world(),
+					string(META_PREFIX) + patch->path().chop_start("/"));
 			const Redland::Node     node_id(instance_rdf_node(n->second->path()));
 			_model->add_statement(patch_id, "ingen:node", node_id);
 			serialise_patch(patch, class_id);

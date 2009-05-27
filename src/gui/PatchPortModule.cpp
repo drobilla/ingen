@@ -48,7 +48,7 @@ PatchPortModule::PatchPortModule(boost::shared_ptr<PatchCanvas> canvas, SharedPt
 
 	set_stacked_border(model->polyphonic());
 
-	model->signal_variable.connect(sigc::mem_fun(this, &PatchPortModule::set_variable));
+	model->signal_variable.connect(sigc::mem_fun(this, &PatchPortModule::set_property));
 	model->signal_property.connect(sigc::mem_fun(this, &PatchPortModule::set_property));
 }
 
@@ -65,7 +65,7 @@ PatchPortModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<PortMod
 
 	for (GraphObject::Properties::const_iterator m = model->variables().begin();
 			m != model->variables().end(); ++m)
-		ret->set_variable(m->first, m->second);
+		ret->set_property(m->first, m->second);
 
 	for (GraphObject::Properties::const_iterator m = model->properties().begin();
 			m != model->properties().end(); ++m)
@@ -132,24 +132,6 @@ PatchPortModule::set_name(const std::string& n)
 
 
 void
-PatchPortModule::set_variable(const URI& key, const Atom& value)
-{
-	if (value.type() == Atom::BOOL) {
-		if (key.str() == "ingen:polyphonic") {
-			set_stacked_border(value.get_bool());
-		} else if (key.str() == "ingen:selected") {
-			if (value.get_bool() != selected()) {
-				if (value.get_bool())
-					_canvas.lock()->select_item(shared_from_this());
-				else
-					_canvas.lock()->unselect_item(shared_from_this());
-			}
-		}
-	}
-}
-
-
-void
 PatchPortModule::set_property(const URI& key, const Atom& value)
 {
 	switch (value.type()) {
@@ -165,6 +147,18 @@ PatchPortModule::set_property(const URI& key, const Atom& value)
 			set_name(value.get_string());
 		} else if (key.str() == "lv2:symbol" && !_human_name_visible) {
 			set_name(value.get_string());
+		}
+	case Atom::BOOL:
+		if (key.str() == "ingen:polyphonic") {
+			set_stacked_border(value.get_bool());
+		} else if (key.str() == "ingen:selected") {
+			if (value.get_bool() != selected()) {
+				if (value.get_bool()) {
+					_canvas.lock()->select_item(shared_from_this());
+				} else {
+					_canvas.lock()->unselect_item(shared_from_this());
+				}
+			}
 		}
 	default: break;
 	}

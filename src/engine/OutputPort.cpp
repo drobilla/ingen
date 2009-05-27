@@ -16,14 +16,17 @@
  */
 
 #include <iostream>
-#include "OutputPort.hpp"
+#include "interface/Patch.hpp"
 #include "Buffer.hpp"
+#include "NodeImpl.hpp"
+#include "OutputPort.hpp"
 #include "ProcessContext.hpp"
 
 using namespace std;
 
 namespace Ingen {
 
+namespace Shared { class Patch; }
 using namespace Shared;
 
 OutputPort::OutputPort(NodeImpl*         parent,
@@ -35,6 +38,9 @@ OutputPort::OutputPort(NodeImpl*         parent,
                        size_t            buffer_size)
 	: PortImpl(parent, name, index, poly, type, value, buffer_size)
 {
+	if (!dynamic_cast<Patch*>(parent))
+		add_property("rdf:type", Raul::Atom(Raul::Atom::URI, "lv2:OutputPort"));
+
 	if (type == DataType::CONTROL)
 		_broadcast = true;
 }

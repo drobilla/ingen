@@ -105,7 +105,7 @@ ObjectModel::set(SharedPtr<ObjectModel> o)
 		Properties::const_iterator mine = _variables.find(v->first);
 		if (mine != _variables.end())
 			cerr << "WARNING:  " << _path << "Client/Server variable mismatch: " << v->first << endl;
-		_variables[v->first] = v->second;
+		_variables.insert(make_pair(v->first, v->second));
 		signal_variable.emit(v->first, v->second);
 	}
 }

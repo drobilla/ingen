@@ -25,6 +25,7 @@
 #include "common/interface/Plugin.hpp"
 
 using namespace std;
+using namespace Raul;
 
 namespace Ingen {
 namespace Shared {
@@ -41,8 +42,12 @@ Builder::build(SharedPtr<const GraphObject> object)
 {
 	SharedPtr<const Patch> patch = PtrCast<const Patch>(object);
 	if (patch) {
-		if (!object->path().is_root())
-			_interface.new_patch(object->path(), patch->internal_polyphony());
+		if (!object->path().is_root()) {
+			Resource::Properties props;
+			props.insert(make_pair("rdf:type",        Atom(Atom::URI, "ingen:Patch")));
+			props.insert(make_pair("ingen:polyphony", Atom(int32_t(patch->internal_polyphony()))));
+			_interface.put(object->path(), props);
+		}
 
 		build_object(object);
 		/*for (Patch::Connections::const_iterator i = patch->connections().begin();
@@ -54,16 +59,17 @@ Builder::build(SharedPtr<const GraphObject> object)
 
 	SharedPtr<const Node> node = PtrCast<const Node>(object);
 	if (node) {
-		Raul::Path path = node->path();
-		_interface.new_node(path, node->plugin()->uri());
+		Resource::Properties props;
+		props.insert(make_pair("rdf:type",       Atom(Atom::URI, "ingen:Node")));
+		props.insert(make_pair("rdf:instanceOf", Atom(Atom::URI, node->plugin()->uri().str())));
+		_interface.put(node->path(), props);
 		build_object(object);
 		return;
 	}
 
 	SharedPtr<const Port> port = PtrCast<const Port>(object);
 	if (port) {
-		Raul::Path path = port->path();
-		_interface.new_port(path, port->type().uri(), port->index(), !port->is_input());
+		_interface.put(port->path(), port->properties());
 		build_object(object);
 		return;
 	}

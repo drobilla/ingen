@@ -28,19 +28,20 @@
 #include "events/SendPortActivityEvent.hpp"
 
 using namespace std;
+using namespace Raul;
 
 namespace Ingen {
 
 using namespace Shared;
 
 
-PortImpl::PortImpl(NodeImpl* const   node,
-                   const string&     name,
-                   uint32_t          index,
-                   uint32_t          poly,
-                   DataType          type,
-                   const Raul::Atom& value,
-                   size_t            buffer_size)
+PortImpl::PortImpl(NodeImpl* const node,
+                   const string&   name,
+                   uint32_t        index,
+                   uint32_t        poly,
+                   DataType        type,
+                   const Atom&     value,
+                   size_t          buffer_size)
 	: GraphObjectImpl(node, name, (type == DataType::AUDIO || type == DataType::CONTROL))
 	, _index(index)
 	, _poly(poly)
@@ -50,9 +51,9 @@ PortImpl::PortImpl(NodeImpl* const   node,
 	, _fixed_buffers(false)
 	, _broadcast(false)
 	, _set_by_user(false)
-	, _last_broadcasted_value(_value.type() == Raul::Atom::FLOAT ? _value.get_float() : 0.0f) // default?
+	, _last_broadcasted_value(_value.type() == Atom::FLOAT ? _value.get_float() : 0.0f) // default?
 	, _context(Context::AUDIO)
-	, _buffers(new Raul::Array<Buffer*>(poly))
+	, _buffers(new Array<Buffer*>(poly))
 	, _prepared_buffers(NULL)
 {
 	assert(node != NULL);
@@ -65,8 +66,16 @@ PortImpl::PortImpl(NodeImpl* const   node,
 	else
 		_polyphonic = true;
 
-	if (type == DataType::EVENT)
+	if (type == DataType::AUDIO)
+		add_property("rdf:type", Atom(Atom::URI, "lv2:AudioPort"));
+
+	if (type == DataType::CONTROL)
+		add_property("rdf:type", Atom(Atom::URI, "lv2:ControlPort"));
+
+	if (type == DataType::EVENT) {
+		add_property("rdf:type", Atom(Atom::URI, "lv2ev:EventPort"));
 		_broadcast = true; // send activity blips
+	}
 
 	assert(_buffers->size() > 0);
 }
@@ -83,7 +92,7 @@ PortImpl::~PortImpl()
 
 
 bool
-PortImpl::set_polyphonic(Raul::Maid& maid, bool p)
+PortImpl::set_polyphonic(Maid& maid, bool p)
 {
 	if (_type == DataType::CONTROL || _type == DataType::AUDIO)
 		return GraphObjectImpl::set_polyphonic(maid, p);
@@ -100,7 +109,7 @@ PortImpl::prepare_poly(uint32_t poly)
 
 	/* FIXME: poly never goes down, harsh on memory.. */
 	if (poly > _poly) {
-		_prepared_buffers = new Raul::Array<Buffer*>(poly, *_buffers);
+		_prepared_buffers = new Array<Buffer*>(poly, *_buffers);
 		for (uint32_t i = _poly; i < _prepared_buffers->size(); ++i)
 			_prepared_buffers->at(i) = Buffer::create(_type, _buffer_size);
 	}
@@ -110,7 +119,7 @@ PortImpl::prepare_poly(uint32_t poly)
 
 
 bool
-PortImpl::apply_poly(Raul::Maid& maid, uint32_t poly)
+PortImpl::apply_poly(Maid& maid, uint32_t poly)
 {
 	if (!_polyphonic || !_parent->polyphonic())
 		return true;

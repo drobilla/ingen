@@ -42,15 +42,8 @@ public:
 	                        const std::string& type_uri,
 	                        const std::string& symbol) {}
 
-	virtual void new_patch(const std::string& path, uint32_t poly)  {}
-
-	virtual void new_node(const std::string& path,
-	                      const std::string& plugin_uri) {}
-
-	virtual void new_port(const std::string& path,
-	                      const std::string& type,
-	                      uint32_t           index,
-	                      bool               is_output)  {}
+	void put(const Path&                 path,
+	         const Resource::Properties& properties) {}
 
 	virtual void clear_patch(const std::string& path)  {}
 

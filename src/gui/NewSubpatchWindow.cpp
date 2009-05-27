@@ -91,10 +91,14 @@ NewSubpatchWindow::name_changed()
 void
 NewSubpatchWindow::ok_clicked()
 {
-	const Path path = _patch->path().base() + Path::nameify(_name_entry->get_text());
+	const Path     path = _patch->path().base() + Path::nameify(_name_entry->get_text());
 	const uint32_t poly = _poly_spinbutton->get_value_as_int();
 
-	App::instance().engine()->new_patch(path, poly);
+	Resource::Properties props;
+	props.insert(make_pair("rdf:type",        Atom(Atom::URI, "ingen:Patch")));
+	props.insert(make_pair("ingen:polyphony", Atom(int32_t(poly))));
+	App::instance().engine()->put(path, props);
+
 	for (GraphObject::Properties::const_iterator i = _initial_data.begin(); i != _initial_data.end(); ++i)
 		App::instance().engine()->set_variable(path, i->first, i->second);
 

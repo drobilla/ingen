@@ -23,6 +23,7 @@
 #include "Engine.hpp"
 #include "AudioDriver.hpp"
 
+using namespace std;
 using namespace Raul;
 
 namespace Ingen {
@@ -149,36 +150,36 @@ QueuedEngineInterface::bundle_end()
 
 // Object commands
 
-bool
-QueuedEngineInterface::new_object(const GraphObject* object)
-{
-	return false;
-}
-
 
 void
-QueuedEngineInterface::new_patch(const Path& path,
-                                 uint32_t    poly)
+QueuedEngineInterface::put(const Path&                 path,
+                           const Resource::Properties& properties)
 {
-	push_queued(new CreatePatchEvent(_engine, _responder, now(), path, poly));
-}
+	typedef Resource::Properties::const_iterator iterator;
+	cerr << "ENGINE PUT " << path << " {" << endl;
+	for (iterator i = properties.begin(); i != properties.end(); ++i)
+		cerr << "\t" << i->first << " = " << i->second << " :: " << i->second.type() << endl;
+	cerr << "}" << endl;
 
+	bool is_patch = false, is_node = false, is_port = false, is_output = false;
+	DataType data_type(DataType::UNKNOWN);
+	ResourceImpl::type(properties, is_patch, is_node, is_port, is_output, data_type);
 
-// FIXME: use index
-void QueuedEngineInterface::new_port(const Path& path,
-                                     const URI&  type,
-                                     uint32_t    index,
-                                     bool        direction)
-{
-	push_queued(new CreatePortEvent(_engine, _responder, now(), path, type, direction, this));
-}
-
-
-void
-QueuedEngineInterface::new_node(const Path& path,
-                                const URI&  plugin_uri)
-{
-	push_queued(new CreateNodeEvent(_engine, _responder, now(), path, plugin_uri, true));
+	if (is_patch) {
+		uint32_t poly = 1;
+		iterator p = properties.find("ingen:polyphony");
+		if (p != properties.end() && p->second.is_valid() && p->second.type() == Atom::INT)
+			poly = p->second.get_int32();
+		push_queued(new CreatePatchEvent(
+				_engine, _responder, now(), path, poly, properties));
+	} else if (is_node) {
+		const iterator p = properties.find("rdf:instanceOf");
+		push_queued(new CreateNodeEvent(
+				_engine, _responder, now(), path, p->second.get_uri(), true, properties));
+	} else if (is_port) {
+		push_queued(new CreatePortEvent(
+				_engine, _responder, now(), path, data_type.uri(), is_output, this, properties));
+	}
 }
 
 

@@ -22,12 +22,13 @@
 #include <string>
 #include <memory>
 #include "raul/SharedPtr.hpp"
-#include "types.hpp"
-#include "tuning.hpp"
-#include "interface/EngineInterface.hpp"
 #include "interface/ClientInterface.hpp"
-#include "Responder.hpp"
+#include "interface/EngineInterface.hpp"
+#include "interface/Resource.hpp"
 #include "QueuedEventSource.hpp"
+#include "Responder.hpp"
+#include "tuning.hpp"
+#include "types.hpp"
 
 namespace Ingen {
 
@@ -70,18 +71,8 @@ public:
 
 	// CommonInterface object commands
 
-	virtual bool new_object(const Shared::GraphObject* object);
-
-	virtual void new_patch(const Raul::Path& path,
-	                       uint32_t          poly);
-
-	virtual void new_node(const Raul::Path& path,
-	                      const Raul::URI&  plugin_uri);
-
-	virtual void new_port(const Raul::Path& path,
-	                      const Raul::URI&  type,
-	                      uint32_t          index,
-	                      bool              is_output);
+	virtual void put(const Raul::Path&                   path,
+	                 const Shared::Resource::Properties& properties);
 
 	virtual void rename(const Raul::Path& old_path,
 	                    const Raul::Path& new_path);

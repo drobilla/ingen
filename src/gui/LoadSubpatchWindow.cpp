@@ -166,9 +166,9 @@ LoadSubpatchWindow::ok_clicked()
 	std::list<Glib::ustring> uris = get_uris();
 	for (std::list<Glib::ustring>::iterator i = uris.begin(); i != uris.end(); ++i) {
 		// Cascade
-		Atom& x = _initial_data["ingenuity:canvas-x"];
+		Atom& x = _initial_data.find("ingenuity:canvas-x")->second;
 		x = Atom(x.get_float() + 20.0f);
-		Atom& y = _initial_data["ingenuity:canvas-y"];
+		Atom& y = _initial_data.find("ingenuity:canvas-y")->second;
 		y = Atom(y.get_float() + 20.0f);
 
 		App::instance().loader()->load_patch(false, *i, Path("/"),

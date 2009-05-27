@@ -52,7 +52,8 @@ NodeModule::NodeModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeMode
 
 	node->signal_new_port.connect(sigc::bind(sigc::mem_fun(this, &NodeModule::add_port), true));
 	node->signal_removed_port.connect(sigc::hide_return(sigc::mem_fun(this, &NodeModule::remove_port)));
-	node->signal_variable.connect(sigc::mem_fun(this, &NodeModule::set_variable));
+	node->signal_variable.connect(sigc::mem_fun(this, &NodeModule::set_property));
+	node->signal_property.connect(sigc::mem_fun(this, &NodeModule::set_property));
 	node->signal_renamed.connect(sigc::mem_fun(this, &NodeModule::rename));
 }
 
@@ -93,11 +94,13 @@ NodeModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeModel> n
 		ret = boost::shared_ptr<NodeModule>(new NodeModule(canvas, node));
 
 	for (GraphObject::Properties::const_iterator m = node->variables().begin(); m != node->variables().end(); ++m)
-		ret->set_variable(m->first, m->second);
+		ret->set_property(m->first, m->second);
 
-	for (NodeModel::Ports::const_iterator p = node->ports().begin(); p != node->ports().end(); ++p) {
+	for (GraphObject::Properties::const_iterator m = node->properties().begin(); m != node->properties().end(); ++m)
+		ret->set_property(m->first, m->second);
+
+	for (NodeModel::Ports::const_iterator p = node->ports().begin(); p != node->ports().end(); ++p)
 		ret->add_port(*p, false);
-	}
 
 	ret->set_stacked_border(node->polyphonic());
 
@@ -371,7 +374,7 @@ NodeModule::store_location()
 
 
 void
-NodeModule::set_variable(const URI& key, const Atom& value)
+NodeModule::set_property(const URI& key, const Atom& value)
 {
 	switch (value.type()) {
 	case Atom::FLOAT:

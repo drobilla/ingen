@@ -18,15 +18,33 @@
 #include "raul/Atom.hpp"
 #include "ResourceImpl.hpp"
 
+using namespace std;
+using namespace Raul;
+
 namespace Ingen {
 namespace Shared {
 
 
 void
+ResourceImpl::add_property(const Raul::URI& uri, const Raul::Atom& value)
+{
+	// Ignore duplicate statements
+	typedef Resource::Properties::const_iterator iterator;
+	const std::pair<iterator,iterator> range = _properties.equal_range(uri);
+	for (iterator i = range.first; i != range.second; ++i)
+		if (i->second == value)
+			return;
+
+	_properties.insert(make_pair(uri, value));
+	signal_property.emit(uri, value);
+}
+
+
+void
 ResourceImpl::set_property(const Raul::URI& uri, const Raul::Atom& value)
 {
-	_properties[uri] = value;
-	signal_property.emit(uri, value);
+	_properties.erase(uri);
+	_properties.insert(make_pair(uri, value));
 }
 
 
@@ -36,6 +54,74 @@ ResourceImpl::get_property(const Raul::URI& uri) const
 	static const Raul::Atom nil;
 	Properties::const_iterator i = _properties.find(uri);
 	return (i != _properties.end()) ? i->second : nil;
+}
+
+
+bool
+ResourceImpl::type(
+		const Properties& properties,
+		bool& patch,
+		bool& node,
+		bool& port, bool& is_output, DataType& data_type)
+{
+	typedef Resource::Properties::const_iterator iterator;
+	const std::pair<iterator,iterator> types_range = properties.equal_range("rdf:type");
+
+	patch = node = port = is_output = false;
+	data_type = DataType::UNKNOWN;
+	for (iterator i = types_range.first; i != types_range.second; ++i) {
+		const Atom& atom = i->second;
+		if (atom.type() == Atom::URI) {
+			if (!strncmp(atom.get_uri(), "ingen:", 6)) {
+				const char* suffix = atom.get_uri() + 6;
+				if (!strcmp(suffix, "Patch")) {
+					patch = true;
+				} else if (!strcmp(suffix, "Node")) {
+					node = true;
+				}
+			} else if (!strncmp(atom.get_uri(), "lv2:", 4)) {
+				const char* suffix = atom.get_uri() + 4;
+				port = true;
+				if (!strcmp(suffix, "InputPort")) {
+					is_output = false;
+					port = true;
+				} else if (!strcmp(suffix, "OutputPort")) {
+					is_output = true;
+					port = true;
+				} else if (!strcmp(suffix, "AudioPort")) {
+					data_type = DataType::AUDIO;
+					port = true;
+				} else if (!strcmp(suffix, "ControlPort")) {
+					data_type = DataType::CONTROL;
+					port = true;
+				}
+			} else if (!strcmp(atom.get_uri(), "lv2ev:EventPort")) {
+				data_type = DataType::EVENT;
+				port = true;
+			}
+		}
+	}
+
+	if (patch && node && !port) { // => patch
+		node = false;
+		return true;
+	} else if (port && (patch || node)) { // nonsense
+		port = false;
+		return false;
+	} else if (patch || node || port) { // recognized type
+		return true;
+	} else { // unknown
+		return false;
+	}
+}
+
+
+void
+ResourceImpl::merge_properties(const Properties& p)
+{
+	typedef Resource::Properties::const_iterator iterator;
+	for (iterator i = p.begin(); i != p.end(); ++i)
+		set_property(i->first, i->second);
 }
 
 

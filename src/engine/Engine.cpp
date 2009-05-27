@@ -190,6 +190,9 @@ Engine::activate(size_t parallelism)
 	if (!root_patch) {
 		root_patch = new PatchImpl(*this, "", 1, NULL,
 				_audio_driver->sample_rate(), _audio_driver->buffer_size(), 1);
+		root_patch->add_property("rdf:type", Raul::Atom(Raul::Atom::URI, "ingen:Patch"));
+		root_patch->add_property("rdf:type", Raul::Atom(Raul::Atom::URI, "ingen:Node"));
+		root_patch->set_property("ingen:polyphony", Raul::Atom(int32_t(1)));
 		root_patch->activate();
 		_world->store->add(root_patch);
 		root_patch->compiled_patch(root_patch->compile());

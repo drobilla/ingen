@@ -85,7 +85,6 @@ private:
 	void canvas_item_left(Gnome::Canvas::Item* item);
 
 	void property_changed(const Raul::URI& predicate, const Raul::Atom& value);
-	void variable_changed(const Raul::URI& predicate, const Raul::Atom& value);
 
 	void zoom_full();
 

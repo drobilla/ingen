@@ -149,8 +149,8 @@ OSCClientReceiver::setup_callbacks()
 	lo_server_thread_add_method(_st, "/ingen/rename", "ss", rename_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/new_connection", "ss", connection_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/disconnection", "ss", disconnection_cb, this);
-	lo_server_thread_add_method(_st, "/ingen/new_node", "ss", new_node_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/new_port", "sisi", new_port_cb, this);
+	lo_server_thread_add_method(_st, "/ingen/put", NULL, new_port_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/set_variable", NULL, set_variable_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/set_property", NULL, set_property_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/set_port_value", "sf", set_port_value_cb, this);
@@ -165,14 +165,6 @@ int
 OSCClientReceiver::_error_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	_target->error((char*)argv[0]);
-	return 0;
-}
-
-
-int
-OSCClientReceiver::_new_patch_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
-{
-	_target->new_patch(&argv[0]->s, argv[1]->i); // path, poly
 	return 0;
 }
 
@@ -220,36 +212,6 @@ OSCClientReceiver::_disconnection_cb(const char* path, const char* types, lo_arg
 	const char* dst_port_path = &argv[1]->s;
 
 	_target->disconnect(src_port_path, dst_port_path);
-
-	return 0;
-}
-
-
-/** Notification of a new node creation.
- */
-int
-OSCClientReceiver::_new_node_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
-{
-	const char*   uri        = &argv[0]->s;
-	const char*   node_path  = &argv[1]->s;
-
-	_target->new_node(uri, node_path);
-
-	return 0;
-}
-
-
-/** Notification of a new port creation.
- */
-int
-OSCClientReceiver::_new_port_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
-{
-	const char*    port_path = &argv[0]->s;
-	const uint32_t index     =  argv[1]->i;
-	const char*    type      = &argv[2]->s;
-	const bool     is_output = (argv[3]->i == 1);
-
-	_target->new_port(port_path, type, index, is_output);
 
 	return 0;
 }

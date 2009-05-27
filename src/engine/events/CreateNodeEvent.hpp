@@ -20,6 +20,7 @@
 
 #include <string>
 #include "QueuedEvent.hpp"
+#include "interface/Resource.hpp"
 
 namespace Ingen {
 
@@ -35,12 +36,14 @@ class CompiledPatch;
 class CreateNodeEvent : public QueuedEvent
 {
 public:
-	CreateNodeEvent(Engine&               engine,
-	                 SharedPtr<Responder> responder,
-	                 SampleCount          timestamp,
-	                 const Raul::Path&    node_path,
-	                 const Raul::URI&     plugin_uri,
-	                 bool                 poly);
+	CreateNodeEvent(
+			Engine&                             engine,
+			SharedPtr<Responder>                responder,
+			SampleCount                         timestamp,
+			const Raul::Path&                   node_path,
+			const Raul::URI&                    plugin_uri,
+			bool                                poly,
+			const Shared::Resource::Properties& properties);
 
 	void pre_process();
 	void execute(ProcessContext& context);
@@ -57,6 +60,8 @@ private:
 	NodeImpl*      _node;
 	CompiledPatch* _compiled_patch; ///< Patch's new process order
 	bool           _node_already_exists;
+
+	Shared::Resource::Properties _properties;
 };
 
 

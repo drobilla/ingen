@@ -43,7 +43,7 @@ PluginModel::PluginModel(const URI& uri, const URI& type_uri)
 {
 	Glib::Mutex::Lock lock(_rdf_world->mutex());
 	assert(_rdf_world);
-	set_property("rdf:type", Raul::Atom(Raul::Atom::URI, this->type_uri()));
+	add_property("rdf:type", Raul::Atom(Raul::Atom::URI, this->type_uri()));
 #ifdef HAVE_SLV2
 	SLV2Value plugin_uri = slv2_value_new_uri(_slv2_world, uri.c_str());
 	_slv2_plugin = slv2_plugins_get_by_uri(_slv2_plugins, plugin_uri);

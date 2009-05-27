@@ -62,8 +62,10 @@ public:
 		signal_property.emit(key, value);
 	}
 
-	virtual void set_variable(const Raul::URI& key, const Raul::Atom& value)
-		{ _variables[key] = value; signal_variable.emit(key, value); }
+	virtual void set_variable(const Raul::URI& key, const Raul::Atom& value) {
+		_variables.insert(make_pair(key, value));
+		signal_variable.emit(key, value);
+	}
 
 	const Properties&      variables()  const { return _variables; }
 	Properties&            variables()        { return _variables; }

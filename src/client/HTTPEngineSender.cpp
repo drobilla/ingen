@@ -102,39 +102,11 @@ HTTPEngineSender::quit()
 
 // Object commands
 
-bool
-HTTPEngineSender::new_object(const Shared::GraphObject* object)
-{
-	return false;
-}
 
 
 void
-HTTPEngineSender::new_patch(const Path& path,
-                            uint32_t    poly)
-{
-}
-
-
-void
-HTTPEngineSender::new_port(const Path& path,
-                           const URI&  type,
-                           uint32_t    index,
-                           bool        is_output)
-{
-	const string uri = _engine_url.str() + "/patch" + path.str();
-	cout << "HTTP " << uri << " NEW PORT: " << path << endl;
-	SoupMessage* msg = soup_message_new("PUT", uri.c_str());
-	string str = string("NEW PORT").append(path.str()).append(type.str());
-	soup_message_set_request(msg, "application/x-turtle",
-			SOUP_MEMORY_COPY, str.c_str(), str.length());
-	soup_session_send_message(_session, msg);
-}
-
-
-void
-HTTPEngineSender::new_node(const Path& path,
-                           const URI& plugin_uri)
+HTTPEngineSender::put(const Raul::Path&                   path,
+	                  const Shared::Resource::Properties& properties)
 {
 }
 

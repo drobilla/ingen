@@ -74,18 +74,8 @@ public:
 
 	// Object commands
 
-	virtual bool new_object(const Shared::GraphObject* object);
-
-	virtual void new_patch(const Raul::Path& path,
-	                       uint32_t          poly);
-
-	virtual void new_node(const Raul::Path& path,
-	                      const Raul::URI&  plugin_uri);
-
-	virtual void new_port(const Raul::Path& path,
-	                      const Raul::URI&  type,
-	                      uint32_t          index,
-	                      bool              is_output);
+	virtual void put(const Raul::Path&                   path,
+	                 const Shared::Resource::Properties& properties);
 
 	virtual void clear_patch(const Raul::Path& path);
 

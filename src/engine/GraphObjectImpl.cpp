@@ -30,7 +30,14 @@ using namespace Shared;
 void
 GraphObjectImpl::set_variable(const Raul::URI& key, const Atom& value)
 {
-	_variables[key] = value;
+	// Ignore duplicate statements
+	typedef Resource::Properties::const_iterator iterator;
+	const std::pair<iterator,iterator> range = _variables.equal_range(key);
+	for (iterator i = range.first; i != range.second; ++i)
+		if (i->second == value)
+			return;
+
+	_variables.insert(make_pair(key, value));
 }
 
 

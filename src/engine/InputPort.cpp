@@ -19,11 +19,12 @@
 #include <iostream>
 #include <cstdlib>
 #include <cassert>
+#include "interface/Patch.hpp"
 #include "AudioBuffer.hpp"
-#include "EventBuffer.hpp"
 #include "ConnectionImpl.hpp"
-#include "OutputPort.hpp"
+#include "EventBuffer.hpp"
 #include "NodeImpl.hpp"
+#include "OutputPort.hpp"
 #include "ProcessContext.hpp"
 #include "util.hpp"
 
@@ -31,6 +32,7 @@ using namespace std;
 
 namespace Ingen {
 
+namespace Shared { class Patch; }
 using namespace Shared;
 
 InputPort::InputPort(NodeImpl*         parent,
@@ -42,6 +44,8 @@ InputPort::InputPort(NodeImpl*         parent,
                      size_t            buffer_size)
 	: PortImpl(parent, name, index, poly, type, value, buffer_size)
 {
+	if (!dynamic_cast<Patch*>(parent))
+		add_property("rdf:type", Raul::Atom(Raul::Atom::URI, "lv2:InputPort"));
 }
 
 

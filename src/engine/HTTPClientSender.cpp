@@ -49,20 +49,11 @@ HTTPClientSender::error(const std::string& msg)
 }
 
 
-void HTTPClientSender::new_node(const Raul::Path& node_path,
-                                const Raul::URI&  plugin_uri)
-{
-	//send("/ingen/new_node", "ss", node_path.c_str(), plugin_uri.c_str(), LO_ARGS_END);
-}
-
-
 void
-HTTPClientSender::new_port(const Raul::Path& path,
-                           const Raul::URI&  type,
-                           uint32_t          index,
-                           bool              is_output)
+HTTPClientSender::put(const Raul::Path&                   path,
+                     const Shared::Resource::Properties& properties)
 {
-	//send("/ingen/new_port", "sisi", path.c_str(), index, type.c_str(), is_output, LO_ARGS_END);
+	cerr << "HTTP CLIENT PUT " << path << endl;
 }
 
 
@@ -163,6 +154,7 @@ HTTPClientSender::activity(const Raul::Path& path)
 	send_chunk(msg);
 }
 
+#if 0
 static void null_deleter(const Shared::GraphObject*) {}
 
 bool
@@ -178,6 +170,7 @@ HTTPClientSender::new_object(const Shared::GraphObject* object)
 	send_chunk(str);
 	return true;
 }
+#endif
 
 
 void
@@ -191,13 +184,6 @@ HTTPClientSender::new_plugin(const Raul::URI&    uri,
 	lo_message_add_string(m, symbol.c_str());
 	lo_message_add_string(m, name.c_str());
 	send_message("/ingen/plugin", m);*/
-}
-
-
-void
-HTTPClientSender::new_patch(const Raul::Path& path, uint32_t poly)
-{
-	//send_chunk(string("<").append(path.str()).append("> a ingen:Patch"));
 }
 
 

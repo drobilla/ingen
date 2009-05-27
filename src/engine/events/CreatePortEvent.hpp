@@ -22,8 +22,7 @@
 #include "raul/Path.hpp"
 #include "raul/Array.hpp"
 #include "interface/DataType.hpp"
-
-template <typename T> class Array;
+#include "interface/Resource.hpp"
 
 namespace Ingen {
 
@@ -39,7 +38,15 @@ class DriverPort;
 class CreatePortEvent : public QueuedEvent
 {
 public:
-	CreatePortEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Raul::Path& path, const Raul::URI& type, bool is_output, QueuedEventSource* source);
+	CreatePortEvent(
+			Engine&                             engine,
+			SharedPtr<Responder>                responder,
+			SampleCount                         timestamp,
+			const Raul::Path&                   path,
+			const Raul::URI&                    type,
+			bool                                is_output,
+			QueuedEventSource*                  source,
+			const Shared::Resource::Properties& properties);
 
 	void pre_process();
 	void execute(ProcessContext& context);
@@ -63,6 +70,8 @@ private:
 	Raul::Array<PortImpl*>* _ports_array; ///< New (external) ports array for Patch
 	DriverPort*             _driver_port; ///< Driver (eg Jack) port if this is a toplevel port
 	bool                    _succeeded;
+
+	Shared::Resource::Properties _properties;
 };
 
 

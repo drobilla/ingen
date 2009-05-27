@@ -69,7 +69,6 @@ protected:
 
 	void set_port(SharedPtr<Port> port) { _port = port; }
 
-	void set_variable(const Raul::URI& predicate, const Raul::Atom& value);
 	void set_property(const Raul::URI& predicate, const Raul::Atom& value);
 
 	SharedPtr<PortModel> _model;

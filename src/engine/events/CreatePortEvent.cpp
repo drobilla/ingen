@@ -41,13 +41,15 @@ namespace Ingen {
 using namespace Shared;
 
 
-CreatePortEvent::CreatePortEvent(Engine&              engine,
-                                 SharedPtr<Responder> responder,
-                                 SampleCount          timestamp,
-                                 const Raul::Path&    path,
-                                 const Raul::URI&     type,
-                                 bool                 is_output,
-                                 QueuedEventSource*   source)
+CreatePortEvent::CreatePortEvent(
+		Engine&                     engine,
+		SharedPtr<Responder>        responder,
+		SampleCount                 timestamp,
+		const Raul::Path&           path,
+		const Raul::URI&            type,
+		bool                        is_output,
+		QueuedEventSource*          source,
+		const Resource::Properties& properties)
 	: QueuedEvent(engine, responder, timestamp, true, source)
 	, _error(NO_ERROR)
 	, _path(path)
@@ -57,6 +59,7 @@ CreatePortEvent::CreatePortEvent(Engine&              engine,
 	, _patch(NULL)
 	, _patch_port(NULL)
 	, _driver_port(NULL)
+	, _properties(properties)
 {
 	/* This is blocking because of the two different sets of Patch ports, the array used in the
 	 * audio thread (inherited from NodeBase), and the arrays used in the pre processor thread.
@@ -93,6 +96,7 @@ CreatePortEvent::pre_process()
 		const uint32_t old_num_ports = _patch->num_ports();
 
 		_patch_port = _patch->create_port(_path.name(), _data_type, buffer_size, _is_output);
+		_patch_port->properties().insert(_properties.begin(), _properties.end());
 
 		if (_patch_port) {
 
