@@ -54,16 +54,16 @@ class ObjectModel : virtual public Ingen::Shared::GraphObject
 public:
 	virtual ~ObjectModel();
 
-	const Raul::Atom& get_property(const Raul::URI& key) const;
+	virtual const Raul::Atom& get_property(const Raul::URI& key) const;
 
-	virtual void set_property(const Raul::URI& key, const Raul::Atom& value) {
-		ResourceImpl::set_property(key, value);
+	virtual Raul::Atom& set_property(const Raul::URI& key, const Raul::Atom& value) {
 		signal_property.emit(key, value);
+		return ResourceImpl::set_property(key, value);
 	}
 
-	virtual void set_meta_property(const Raul::URI& key, const Raul::Atom& value) {
-		_meta.set_property(key, value);
+	virtual Raul::Atom& set_meta_property(const Raul::URI& key, const Raul::Atom& value) {
 		signal_property.emit(key, value);
+		return _meta.set_property(key, value);
 	}
 
 	Resource&              meta()             { return _meta; }

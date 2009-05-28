@@ -60,7 +60,7 @@ public:
 		signal_editable.emit(e);
 	} }
 
-	virtual void set_meta_property(const Raul::URI& key, const Raul::Atom& value);
+	virtual Raul::Atom& set_meta_property(const Raul::URI& key, const Raul::Atom& value);
 
 	// Signals
 	sigc::signal<void, SharedPtr<NodeModel> >       signal_new_node;

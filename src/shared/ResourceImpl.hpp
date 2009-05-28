@@ -38,7 +38,7 @@ public:
 	Properties&       properties()       { return _properties; }
 
 	const Raul::Atom& get_property(const Raul::URI& uri) const;
-	void              set_property(const Raul::URI& uri, const Raul::Atom& value);
+	Raul::Atom&       set_property(const Raul::URI& uri, const Raul::Atom& value);
 	void              add_property(const Raul::URI& uri, const Raul::Atom& value);
 	void              set_properties(const Properties& p);
 	void              add_properties(const Properties& p);
@@ -57,9 +57,12 @@ public:
 
 	static const Raul::URI meta_uri(const Raul::URI& base, const Raul::URI& uri);
 
+protected:
+	Raul::Atom& set_property(const Raul::URI& uri, const Raul::Atom& value) const;
+
 private:
-	Raul::URI  _uri;
-	Properties _properties;
+	Raul::URI          _uri;
+	mutable Properties _properties;
 };
 
 

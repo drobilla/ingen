@@ -53,12 +53,11 @@ public:
 
 	Type type() const { return _type; }
 
-	const std::string symbol();
-	const std::string name();
+	virtual const Raul::Atom& get_property(const Raul::URI& key) const;
 
-	std::string default_node_symbol();
-	std::string human_name();
-	std::string port_human_name(uint32_t index) const;
+	Raul::Symbol default_node_symbol();
+	std::string  human_name();
+	std::string  port_human_name(uint32_t index) const;
 
 #ifdef HAVE_SLV2
 	static SLV2World slv2_world()        { return _slv2_world; }
@@ -92,8 +91,6 @@ public:
 
 private:
 	const Type _type;
-
-	const std::string string_property(const std::string& name) const;
 
 #ifdef HAVE_SLV2
 	static SLV2World   _slv2_world;

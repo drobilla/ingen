@@ -17,6 +17,7 @@
 
 #include <sstream>
 #include <ctype.h>
+#include <boost/optional.hpp>
 #include "ingen-config.h"
 #include "raul/Path.hpp"
 #include "raul/Atom.hpp"
@@ -40,22 +41,34 @@ Redland::World* PluginModel::_rdf_world = NULL;
 
 PluginModel::PluginModel(const URI& uri, const URI& type_uri, const Resource::Properties& properties)
 	: ResourceImpl(uri)
-	, _type(type_from_uri(_rdf_world->prefixes().qualify(type_uri.str())))
+	, _type(type_from_uri(type_uri.str()))
 {
 	add_properties(properties);
 
 	Glib::Mutex::Lock lock(_rdf_world->mutex());
 	assert(_rdf_world);
-	add_property("rdf:type", Raul::Atom(Raul::Atom::URI, this->type_uri()));
+	add_property("rdf:type", Atom(Atom::URI, this->type_uri()));
 #ifdef HAVE_SLV2
 	SLV2Value plugin_uri = slv2_value_new_uri(_slv2_world, uri.c_str());
 	_slv2_plugin = slv2_plugins_get_by_uri(_slv2_plugins, plugin_uri);
 	slv2_value_free(plugin_uri);
 #endif
 	if (_type == Internal)
-		set_property("doap:name", Raul::Atom(uri.substr(uri.find_last_of("#") + 1).c_str()));
+		set_property("doap:name", Atom(uri.substr(uri.find_last_of("#") + 1).c_str()));
+}
 
-	if (!get_property("lv2:symbol").is_valid()) {
+
+const Atom&
+PluginModel::get_property(const URI& key) const
+{
+	static Atom nil_atom(Atom::NIL);
+	const Atom& val = ResourceImpl::get_property(key);
+	if (val.is_valid())
+		return val;
+
+	// No lv2:symbol from data or engine, invent one
+	if (key.str() == "lv2:symbol") {
+		const URI& uri = this->uri();
 		size_t last_slash = uri.find_last_of("/");
 		size_t last_hash  = uri.find_last_of("#");
 		string symbol;
@@ -78,48 +91,51 @@ PluginModel::PluginModel(const URI& uri, const URI& type_uri, const Resource::Pr
 				symbol = uri.str().substr(first_delim + 1, last_delim - first_delim - 1);
 		}
 		set_property("lv2:symbol", Atom(Atom::STRING, symbol));
+		return get_property(key);
 	}
-}
-
-
-const std::string
-PluginModel::symbol()
-{
-	const Atom& val = get_property("lv2:symbol");
-	if (val.is_valid() && val.type() == Atom::STRING)
-		return val.get_string();
 
 #ifdef HAVE_SLV2
-	SLV2Value lv2_symbol_pred = slv2_value_new_uri(_slv2_world,
-		"http://lv2plug.in/ns/lv2core#symbol");
-	SLV2Values symbols = slv2_plugin_get_value(_slv2_plugin, lv2_symbol_pred);
-	for (unsigned i = 0; i < slv2_values_size(symbols); ++i) {
-		SLV2Value val = slv2_values_get_at(symbols, 0);
-		if (slv2_value_is_string(val)) {
-			cerr << uri() << " FOUND SYMBOL: " << slv2_value_as_string(val) << endl;
-			set_property("lv2:symbol", Atom(Atom::STRING, slv2_value_as_string(val)));
-			break;
+	if (_slv2_plugin) {
+		boost::optional<Raul::Atom&> ret;
+		SLV2Value  lv2_pred = slv2_value_new_uri(_slv2_world,
+				_rdf_world->expand_uri(key.str()).c_str());
+		SLV2Values values   = slv2_plugin_get_value(_slv2_plugin, lv2_pred);
+		slv2_value_free(lv2_pred);
+		for (unsigned i = 0; i < slv2_values_size(values); ++i) {
+			SLV2Value val = slv2_values_get_at(values, 0);
+			if (slv2_value_is_uri(val)) {
+				ret = set_property(key, Atom(Atom::URI, slv2_value_as_uri(val)));
+				break;
+			} else if (slv2_value_is_string(val)) {
+				ret = set_property(key, Atom(Atom::STRING, slv2_value_as_string(val)));
+				break;
+			} else if (slv2_value_is_float(val)) {
+				ret = set_property(key, Atom(slv2_value_as_float(val)));
+				break;
+			} else if (slv2_value_is_int(val)) {
+				ret = set_property(key, Atom(slv2_value_as_int(val)));
+				break;
+			}
 		}
+		slv2_values_free(values);
+
+		if (ret)
+			return *ret;
 	}
-	slv2_values_free(symbols);
-	slv2_value_free(lv2_symbol_pred);
 #endif
 
-	return string_property("lv2:symbol");
+	return nil_atom;
 }
 
 
-const std::string
-PluginModel::name()
-{
-	return string_property("doap:name");
-}
-
-
-string
+Symbol
 PluginModel::default_node_symbol()
 {
-	return Raul::Path::nameify(symbol());
+	const Atom& name_atom = get_property("lv2:symbol");
+	if (name_atom.is_valid() && name_atom.type() == Atom::STRING)
+		return Symbol::symbolify(name_atom.get_string());
+	else
+		return "_";
 }
 
 
@@ -127,20 +143,10 @@ string
 PluginModel::human_name()
 {
 	const Atom& name_atom = get_property("doap:name");
-	if (name_atom.type() == Atom::STRING)
+	if (name_atom.is_valid() && name_atom.type() == Atom::STRING)
 		return name_atom.get_string();
-
-#ifdef HAVE_SLV2
-	if (_slv2_plugin) {
-		SLV2Value name = slv2_plugin_get_name(_slv2_plugin);
-		string ret = slv2_value_as_string(name);
-		slv2_value_free(name);
-		set_property("doap:name", Raul::Atom(Raul::Atom::STRING, ret.c_str()));
-		return ret;
-	}
-#endif
-
-	return default_node_symbol();
+	else
+		return default_node_symbol();
 }
 
 
@@ -150,9 +156,9 @@ PluginModel::port_human_name(uint32_t index) const
 #ifdef HAVE_SLV2
 	if (_slv2_plugin) {
 		Glib::Mutex::Lock lock(_rdf_world->mutex());
-		SLV2Port port = slv2_plugin_get_port_by_index(_slv2_plugin, index);
+		SLV2Port  port = slv2_plugin_get_port_by_index(_slv2_plugin, index);
 		SLV2Value name = slv2_port_get_name(_slv2_plugin, port);
-		string ret = slv2_value_as_string(name);
+		string    ret  = slv2_value_as_string(name);
 		slv2_value_free(name);
 		return ret;
 	}
@@ -226,16 +232,6 @@ PluginModel::get_lv2_icon_path(SLV2Plugin plugin)
 }
 #endif
 
-
-const string
-PluginModel::string_property(const std::string& name) const
-{
-	const Raul::Atom& atom = get_property(name);
-	if (atom.type() == Raul::Atom::STRING)
-		return atom.get_string();
-	else
-		return "";
-}
 
 } // namespace Client
 } // namespace Ingen

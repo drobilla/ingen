@@ -63,13 +63,8 @@ LoadPluginWindow::LoadPluginWindow(BaseObjectType* cobject, const Glib::RefPtr<G
 	_plugins_treeview->get_column(1)->set_sort_column(_plugins_columns._col_name);
 	_plugins_treeview->get_column(2)->set_sort_column(_plugins_columns._col_type);
 	_plugins_treeview->get_column(3)->set_sort_column(_plugins_columns._col_uri);
-	//m_plugins_treeview->get_column(3)->set_sort_column(_plugins_columns._col_library);
-	//m_plugins_treeview->get_column(4)->set_sort_column(_plugins_columns._col_label);
 	for (int i=0; i < 3; ++i)
 		_plugins_treeview->get_column(i)->set_resizable(true);
-
-	_plugins_liststore->set_default_sort_func(
-			sigc::mem_fun(this, &LoadPluginWindow::plugin_compare));
 
 	// Set up the search criteria combobox
 	_criteria_liststore = Gtk::ListStore::create(_criteria_columns);
@@ -189,28 +184,6 @@ LoadPluginWindow::on_show()
 }
 
 
-int
-LoadPluginWindow::plugin_compare(const Gtk::TreeModel::iterator& a_i,
-                                 const Gtk::TreeModel::iterator& b_i)
-{
-	SharedPtr<PluginModel> a = a_i->get_value(_plugins_columns._col_plugin_model);
-	SharedPtr<PluginModel> b = b_i->get_value(_plugins_columns._col_plugin_model);
-
-	// FIXME: haaack
-	if (!a && !b)
-		return 0;
-	else if (!a)
-		return 1;
-	else if (!b)
-		return -1;
-
-	if (a->type() == b->type())
-		return strcmp(a->name().c_str(), b->name().c_str());
-	else
-		return ((int)a->type() < (int)b->type()) ? -1 : 1;
-}
-
-
 void
 LoadPluginWindow::set_plugins(SharedPtr<const ClientStore::Plugins> m)
 {
@@ -221,8 +194,9 @@ LoadPluginWindow::set_plugins(SharedPtr<const ClientStore::Plugins> m)
 		add_plugin(i->second);
 	}
 
-	_plugins_liststore->set_sort_column(
-			Gtk::TreeSortable::DEFAULT_SORT_COLUMN_ID, Gtk::SORT_ASCENDING);
+	_plugins_liststore->set_sort_column(1,
+			//Gtk::TreeSortable::DEFAULT_SORT_COLUMN_ID,
+			Gtk::SORT_ASCENDING);
 
 	_plugins_treeview->columns_autosize();
 }
@@ -245,7 +219,9 @@ LoadPluginWindow::add_plugin(SharedPtr<PluginModel> plugin)
 	Gtk::TreeModel::Row row = *iter;
 	_rows.insert(make_pair(plugin->uri(), iter));
 
-	row[_plugins_columns._col_name] = plugin->name();
+	const Atom& name = plugin->get_property("doap:name");
+	if (name.is_valid() && name.type() == Atom::STRING)
+		row[_plugins_columns._col_name] = name.get_string();
 	if (!strcmp(plugin->type_uri(), "ingen:Internal"))
 		row[_plugins_columns._col_type] = "Internal";
 	else if (!strcmp(plugin->type_uri(), "lv2:Plugin"))
@@ -255,15 +231,11 @@ LoadPluginWindow::add_plugin(SharedPtr<PluginModel> plugin)
 	else
 		row[_plugins_columns._col_type] = plugin->type_uri();
 	row[_plugins_columns._col_uri] = plugin->uri().str();
-	row[_plugins_columns._col_label] = plugin->name();
 	row[_plugins_columns._col_plugin_model] = plugin;
 
 	plugin->signal_property.connect(sigc::bind<0>(
 			sigc::mem_fun(this, &LoadPluginWindow::plugin_property_changed),
 			plugin->uri()));
-
-	if (plugin->name() == "")
-		App::instance().engine()->request_property(plugin->uri(), "doap:name");
 }
 
 
@@ -398,10 +370,13 @@ LoadPluginWindow::filter_changed()
 			i != App::instance().store()->plugins()->end(); ++i) {
 
 		const SharedPtr<PluginModel> plugin = (*i).second;
+		const Atom& name = plugin->get_property("doap:name");
 
 		switch (criteria) {
 		case CriteriaColumns::NAME:
-			field = plugin->name(); break;
+			if (name.is_valid() && name.type() == Atom::STRING)
+				field = name.get_string();
+			break;
 		case CriteriaColumns::TYPE:
 			field = plugin->type_uri(); break;
 		case CriteriaColumns::URI:
@@ -416,9 +391,9 @@ LoadPluginWindow::filter_changed()
 			model_iter = _plugins_liststore->append();
 			model_row = *model_iter;
 
-			model_row[_plugins_columns._col_name] = plugin->name();
-			model_row[_plugins_columns._col_type] = plugin->type_uri();
-			model_row[_plugins_columns._col_uri] = plugin->uri().str();
+			model_row[_plugins_columns._col_name]         = name.is_valid() ? name.get_string() : "";
+			model_row[_plugins_columns._col_type]         = plugin->type_uri();
+			model_row[_plugins_columns._col_uri]          = plugin->uri().str();
 			model_row[_plugins_columns._col_plugin_model] = plugin;
 
 			++num_visible;
@@ -456,6 +431,7 @@ LoadPluginWindow::plugin_property_changed(const URI&  plugin,
 	                                      const URI&  predicate,
 	                                      const Atom& value)
 {
+	cerr << "PLUGIN PROPERTY " << plugin << " : " << predicate << " = " << value << endl;
 	Rows::const_iterator i = _rows.find(plugin);
 	if (i != _rows.end() && value.type() == Atom::STRING)
 		(*i->second)[_plugins_columns._col_name] = value.get_string();

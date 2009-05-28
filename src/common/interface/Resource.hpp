@@ -36,8 +36,8 @@ public:
 	virtual const Properties& properties() const = 0;
 	virtual Properties&       properties()       = 0;
 
-	virtual void set_property(const Raul::URI&  uri,
-	                          const Raul::Atom& value) = 0;
+	virtual Raul::Atom& set_property(const Raul::URI&  uri,
+	                                 const Raul::Atom& value) = 0;
 
 	virtual const Raul::Atom& get_property(const Raul::URI& uri) const = 0;
 };

@@ -52,17 +52,15 @@ public:
 	  add(_col_name);
 	  add(_col_type);
 	  add(_col_uri);
-	  add(_col_label);
 	  add(_col_plugin_model);
   }
 
   Gtk::TreeModelColumn<Glib::RefPtr<Gdk::Pixbuf> > _col_icon;
-  Gtk::TreeModelColumn<Glib::ustring> _col_name;
-  Gtk::TreeModelColumn<Glib::ustring> _col_type;
-  Gtk::TreeModelColumn<Glib::ustring> _col_uri;
+  Gtk::TreeModelColumn<Glib::ustring>              _col_name;
+  Gtk::TreeModelColumn<Glib::ustring>              _col_type;
+  Gtk::TreeModelColumn<Glib::ustring>              _col_uri;
 
   // Not displayed:
-  Gtk::TreeModelColumn<Glib::ustring>            _col_label;
   Gtk::TreeModelColumn<SharedPtr<PluginModel> > _col_plugin_model;
 };
 
@@ -118,9 +116,6 @@ private:
 	void plugin_property_changed(const Raul::URI&  plugin,
 	                             const Raul::URI&  predicate,
 	                             const Raul::Atom& value);
-
-	int plugin_compare(const Gtk::TreeModel::iterator& a,
-	                   const Gtk::TreeModel::iterator& b);
 
 	void plugin_activated(const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* col);
 	void plugin_selection_changed();

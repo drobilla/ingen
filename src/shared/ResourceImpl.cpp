@@ -47,11 +47,18 @@ ResourceImpl::add_property(const Raul::URI& uri, const Raul::Atom& value)
 }
 
 
-void
+Raul::Atom&
 ResourceImpl::set_property(const Raul::URI& uri, const Raul::Atom& value)
 {
 	_properties.erase(uri);
-	_properties.insert(make_pair(uri, value));
+	return _properties.insert(make_pair(uri, value))->second;
+}
+
+
+Raul::Atom&
+ResourceImpl::set_property(const Raul::URI& uri, const Raul::Atom& value) const
+{
+	return const_cast<ResourceImpl*>(this)->set_property(uri, value);
 }
 
 

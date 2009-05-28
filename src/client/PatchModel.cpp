@@ -169,12 +169,13 @@ PatchModel::enabled() const
 }
 
 
-void
+Raul::Atom&
 PatchModel::set_meta_property(const Raul::URI& key, const Atom& value)
 {
-	NodeModel::set_meta_property(key, value);
 	if (key.str() == "ingen:polyphony")
 		_poly = value.get_int32();
+
+	return NodeModel::set_meta_property(key, value);
 }
 
 
