@@ -15,7 +15,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "RequestObjectEvent.hpp"
+#include "GetEvent.hpp"
 #include "interface/ClientInterface.hpp"
 #include "Responder.hpp"
 #include "Engine.hpp"
@@ -32,7 +32,7 @@ using namespace Raul;
 namespace Ingen {
 
 
-RequestObjectEvent::RequestObjectEvent(
+GetEvent::GetEvent(
 		Engine&              engine,
 		SharedPtr<Responder> responder,
 		SampleCount          timestamp,
@@ -46,7 +46,7 @@ RequestObjectEvent::RequestObjectEvent(
 
 
 void
-RequestObjectEvent::pre_process()
+GetEvent::pre_process()
 {
 	if (Path::is_valid(_uri.str()))
 		_object = _engine.engine_store()->find_object(Path(_uri.str()));
@@ -58,7 +58,7 @@ RequestObjectEvent::pre_process()
 
 
 void
-RequestObjectEvent::execute(ProcessContext& context)
+GetEvent::execute(ProcessContext& context)
 {
 	QueuedEvent::execute(context);
 	assert(_time >= context.start() && _time <= context.end());
@@ -66,7 +66,7 @@ RequestObjectEvent::execute(ProcessContext& context)
 
 
 void
-RequestObjectEvent::post_process()
+GetEvent::post_process()
 {
 	if (!_object && !_plugin) {
 		_responder->respond_error("Unable to find object requested.");

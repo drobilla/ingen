@@ -65,6 +65,7 @@ def build(bld):
 		events/DeleteEvent.cpp
 		events/DisconnectAllEvent.cpp
 		events/DisconnectionEvent.cpp
+		events/GetEvent.cpp
 		events/LoadPluginsEvent.cpp
 		events/MidiLearnEvent.cpp
 		events/MoveEvent.cpp
@@ -72,7 +73,6 @@ def build(bld):
 		events/RegisterClientEvent.cpp
 		events/RequestAllObjectsEvent.cpp
 		events/RequestMetadataEvent.cpp
-		events/RequestObjectEvent.cpp
 		events/RequestPluginsEvent.cpp
 		events/SetMetadataEvent.cpp
 		events/SetPortValueEvent.cpp

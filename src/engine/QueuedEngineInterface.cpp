@@ -270,7 +270,7 @@ QueuedEngineInterface::ping()
 void
 QueuedEngineInterface::request_object(const URI& uri)
 {
-	push_queued(new RequestObjectEvent(_engine, _responder, now(), uri));
+	push_queued(new GetEvent(_engine, _responder, now(), uri));
 }
 
 

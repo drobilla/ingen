@@ -31,10 +31,10 @@ class PluginImpl;
  *
  * \ingroup engine
  */
-class RequestObjectEvent : public QueuedEvent
+class GetEvent : public QueuedEvent
 {
 public:
-	RequestObjectEvent(
+	GetEvent(
 		Engine&              engine,
 		SharedPtr<Responder> responder,
 		SampleCount          timestamp,
