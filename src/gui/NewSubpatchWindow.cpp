@@ -99,10 +99,9 @@ NewSubpatchWindow::ok_clicked()
 	props.insert(make_pair("ingen:polyphony", Atom(int32_t(poly))));
 	App::instance().engine()->put(ResourceImpl::meta_uri(Path::root_uri, path), props);
 
-	for (GraphObject::Properties::const_iterator i = _initial_data.begin(); i != _initial_data.end(); ++i)
-		App::instance().engine()->set_property(path, i->first, i->second);
-
-	App::instance().engine()->set_property(path, "ingen:enabled", (bool)true);
+	props = _initial_data;
+	props.insert(make_pair("ingen:enabled", bool(true)));
+	App::instance().engine()->put(path, props);
 
 	hide();
 }

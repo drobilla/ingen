@@ -155,11 +155,10 @@ PortPropertiesWindow::cancel()
 void
 PortPropertiesWindow::ok()
 {
-	const float min = _min_spinner->get_value();
-	const float max = _max_spinner->get_value();
-
-	App::instance().engine()->set_property(_port_model->meta().uri(), "lv2:minimum", min);
-	App::instance().engine()->set_property(_port_model->meta().uri(), "lv2:maximum", max);
+	Shared::Resource::Properties props;
+	props.insert(make_pair("lv2:minimum", float(_min_spinner->get_value())));
+	props.insert(make_pair("lv2:maximum", float(_max_spinner->get_value())));
+	App::instance().engine()->put(_port_model->meta().uri(), props);
 	hide();
 }
 
