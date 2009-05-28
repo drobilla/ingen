@@ -18,6 +18,7 @@
 #ifndef SETMETADATAEVENT_H
 #define SETMETADATAEVENT_H
 
+#include <vector>
 #include "raul/URI.hpp"
 #include "raul/Atom.hpp"
 #include "shared/ResourceImpl.hpp"
@@ -37,13 +38,22 @@ class CompiledPatch;
 class SetMetadataEvent : public QueuedEvent
 {
 public:
-	SetMetadataEvent(Engine&              engine,
-	                 SharedPtr<Responder> responder,
-	                 SampleCount          timestamp,
-	                 bool                 meta,
-	                 const Raul::URI&     subject,
-	                 const Raul::URI&     key,
-	                 const Raul::Atom&    value);
+	SetMetadataEvent(
+			Engine&              engine,
+			SharedPtr<Responder> responder,
+			SampleCount          timestamp,
+			bool                 meta,
+			const Raul::URI&     subject,
+			const Raul::URI&     key,
+			const Raul::Atom&    value);
+
+	SetMetadataEvent(
+			Engine&                             engine,
+			SharedPtr<Responder>                responder,
+			SampleCount                         timestamp,
+			bool                                meta,
+			const Raul::URI&                    subject,
+			const Shared::Resource::Properties& properties);
 
 	void pre_process();
 	void execute(ProcessContext& context);
@@ -51,22 +61,22 @@ public:
 
 private:
 	enum { NO_ERROR, NOT_FOUND, INTERNAL, BAD_TYPE } _error;
-	enum {
+	enum SpecialType {
 		NONE,
 		ENABLE,
 		ENABLE_BROADCAST,
 		POLYPHONY,
 		POLYPHONIC
-	} _special_type;
+	};
 
-	Raul::URI             _subject;
-	Raul::URI             _key;
-	Raul::Atom            _value;
-	Shared::ResourceImpl* _object;
-	PatchImpl*            _patch;
-	CompiledPatch*        _compiled_patch;
-	bool                  _is_meta;
-	bool                  _success;
+	std::vector<SpecialType>     _types;
+	Raul::URI                    _subject;
+	Shared::Resource::Properties _properties;
+	Shared::ResourceImpl*        _object;
+	PatchImpl*                   _patch;
+	CompiledPatch*               _compiled_patch;
+	bool                         _is_meta;
+	bool                         _success;
 };
 
 

@@ -104,6 +104,14 @@ ClientStore::add_object(SharedPtr<ObjectModel> object)
 
 	}
 
+	for (Resource::Properties::const_iterator i = object->meta().properties().begin();
+			i != object->meta().properties().end(); ++i)
+		object->signal_property(i->first, i->second);
+
+	for (Resource::Properties::const_iterator i = object->properties().begin();
+			i != object->properties().end(); ++i)
+		object->signal_property(i->first, i->second);
+
 	/*cout << "[Store] Added " << object->path() << " {" << endl;
 	for (iterator i = begin(); i != end(); ++i) {
 		cout << "\t" << i->first << endl;
@@ -279,6 +287,12 @@ ClientStore::put(const URI& uri, const Resource::Properties& properties)
 		cerr << "\t" << i->first << " = " << i->second << " :: " << i->second.type() << endl;
 	cerr << "}" << endl;
 
+	SharedPtr<ObjectModel> obj = PtrCast<ObjectModel>(object(path));
+	if (obj) {
+		cerr << "OBJECT EXISTS " << path << endl;
+		obj->set_properties(properties);
+	}
+
 	bool is_patch, is_node, is_port, is_output;
 	DataType data_type(DataType::UNKNOWN);
 	ResourceImpl::type(properties, is_patch, is_node, is_port, is_output, data_type);
@@ -289,7 +303,7 @@ ClientStore::put(const URI& uri, const Resource::Properties& properties)
 		if (p != properties.end() && p->second.is_valid() && p->second.type() == Atom::INT)
 			poly = p->second.get_int32();
 		SharedPtr<PatchModel> model(new PatchModel(path, poly));
-		model->merge_properties(properties);
+		model->set_properties(properties);
 		add_object(model);
 	} else if (is_node) {
 		const Resource::Properties::const_iterator p = properties.find("rdf:instanceOf");
@@ -297,11 +311,11 @@ ClientStore::put(const URI& uri, const Resource::Properties& properties)
 		if (p->second.is_valid() && p->second.type() == Atom::URI) {
 			if ((plug = plugin(p->second.get_uri()))) {
 				SharedPtr<NodeModel> n(new NodeModel(plug, path));
-				n->merge_properties(properties);
+				n->set_properties(properties);
 				add_object(n);
 			} else {
 				SharedPtr<NodeModel> n(new NodeModel(p->second.get_uri(), path));
-				n->merge_properties(properties);
+				n->set_properties(properties);
 				//add_plugin_orphan(n);
 				add_object(n);
 			}
@@ -312,7 +326,7 @@ ClientStore::put(const URI& uri, const Resource::Properties& properties)
 		if (data_type != DataType::UNKNOWN) {
 			PortModel::Direction pdir = is_output ? PortModel::OUTPUT : PortModel::INPUT;
 			SharedPtr<PortModel> p(new PortModel(path, 0, data_type, pdir));
-			p->merge_properties(properties);
+			p->set_properties(properties);
 			add_object(p);
 		} else {
 			cerr << "WARNING: Illegal port " << path << endl;

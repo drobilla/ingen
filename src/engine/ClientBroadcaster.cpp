@@ -162,6 +162,14 @@ ClientBroadcaster::send_disconnection(const Path& src_port_path, const Path& dst
 }
 
 
+void
+ClientBroadcaster::send_put(const Raul::URI& subject, const Shared::Resource::Properties& properties)
+{
+	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
+		(*i).second->put(subject, properties);
+}
+
+
 /** Send notification of a property update.
  *
  * Like control changes, does not send update to client that set the property, if applicable.

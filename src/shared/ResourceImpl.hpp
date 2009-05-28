@@ -40,7 +40,8 @@ public:
 	const Raul::Atom& get_property(const Raul::URI& uri) const;
 	void              set_property(const Raul::URI& uri, const Raul::Atom& value);
 	void              add_property(const Raul::URI& uri, const Raul::Atom& value);
-	void              merge_properties(const Properties& p);
+	void              set_properties(const Properties& p);
+	void              add_properties(const Properties& p);
 
 	sigc::signal<void, const Raul::URI&, const Raul::Atom&> signal_property;
 

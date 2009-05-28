@@ -43,10 +43,7 @@ SetMetadataEvent::SetMetadataEvent(
 		const Atom&          value)
 	: QueuedEvent(engine, responder, timestamp)
 	, _error(NO_ERROR)
-	, _special_type(NONE)
 	, _subject(subject)
-	, _key(key)
-	, _value(value)
 	, _object(NULL)
 	, _patch(NULL)
 	, _compiled_patch(NULL)
@@ -55,6 +52,27 @@ SetMetadataEvent::SetMetadataEvent(
 {
 	cerr << "SET " << subject << " : " << key << " = " << value << endl;
 	assert(value.type() != Atom::URI || strcmp(value.get_uri(), "lv2:ControlPort"));
+	_properties.insert(make_pair(key, value));
+}
+
+
+SetMetadataEvent::SetMetadataEvent(
+		Engine&                             engine,
+		SharedPtr<Responder>                responder,
+		SampleCount                         timestamp,
+		bool                                meta,
+		const URI&                          subject,
+		const Shared::Resource::Properties& properties)
+	: QueuedEvent(engine, responder, timestamp)
+	, _error(NO_ERROR)
+	, _subject(subject)
+	, _properties(properties)
+	, _object(NULL)
+	, _patch(NULL)
+	, _compiled_patch(NULL)
+	, _is_meta(meta)
+	, _success(false)
+{
 }
 
 
@@ -75,43 +93,55 @@ SetMetadataEvent::pre_process()
 	/*cerr << "SET " << _object->path() << (_property ? " PROP " : " VAR ")
 	  <<	_key << " :: " << _value.type() << endl;*/
 
-	GraphObjectImpl* obj = dynamic_cast<GraphObjectImpl*>(_object);
-	if (obj) {
-		if (_is_meta)
-			obj->meta().set_property(_key, _value);
-		else
-			obj->set_property(_key, _value);
+	_types.reserve(_properties.size());
+	typedef Shared::Resource::Properties Properties;
+	for (Properties::iterator p = _properties.begin(); p != _properties.end(); ++p) {
+		const Raul::URI&  key   = p->first;
+		const Raul::Atom& value = p->second;
+		GraphObjectImpl* obj = dynamic_cast<GraphObjectImpl*>(_object);
+		if (obj) {
+			if (_is_meta)
+				obj->meta().set_property(key, value);
+			else
+				obj->set_property(key, value);
 
-		_patch = dynamic_cast<PatchImpl*>(_object);
+			_patch = dynamic_cast<PatchImpl*>(_object);
 
-		if (_key.str() == "ingen:broadcast") {
-			_special_type = ENABLE_BROADCAST;
-		} else if (_patch) {
-			if (_key.str() == "ingen:enabled") {
-				if (_value.type() == Atom::BOOL) {
-					_special_type = ENABLE;
-					if (_value.get_bool() && !_patch->compiled_patch())
-						_compiled_patch = _patch->compile();
+			if (key.str() == "ingen:broadcast") {
+				_types.push_back(ENABLE_BROADCAST);
+			} else if (_patch) {
+				if (key.str() == "ingen:enabled") {
+					if (value.type() == Atom::BOOL) {
+						_types.push_back(ENABLE);
+						if (value.get_bool() && !_patch->compiled_patch())
+							_compiled_patch = _patch->compile();
+					} else {
+						_error = BAD_TYPE;
+					}
+				} else if (key.str() == "ingen:polyphonic") {
+					if (value.type() == Atom::BOOL) {
+						_types.push_back(POLYPHONIC);
+					} else {
+						_error = BAD_TYPE;
+					}
+				} else if (key.str() == "ingen:polyphony") {
+					if (value.type() == Atom::INT) {
+						_types.push_back(POLYPHONY);
+						_patch->prepare_internal_poly(value.get_int32());
+					} else {
+						_error = BAD_TYPE;
+					}
 				} else {
-					_error = BAD_TYPE;
+					_types.push_back(NONE);
 				}
-			} else if (_key.str() == "ingen:polyphonic") {
-				if (_value.type() == Atom::BOOL) {
-					_special_type = POLYPHONIC;
-				} else {
-					_error = BAD_TYPE;
-				}
-			} else if (_key.str() == "ingen:polyphony") {
-				if (_value.type() == Atom::INT) {
-					_special_type = POLYPHONY;
-					_patch->prepare_internal_poly(_value.get_int32());
-				} else {
-					_error = BAD_TYPE;
-				}
+				if (_error != NO_ERROR)
+					break;
 			}
+		} else {
+			_types.push_back(NONE);
 		}
-	} else {
-		_object->set_property(_key, _value);
+
+		_object->set_property(key, value);
 	}
 
 	QueuedEvent::pre_process();
@@ -124,33 +154,38 @@ SetMetadataEvent::execute(ProcessContext& context)
 	if (_error != NO_ERROR)
 		return;
 
-	PortImpl*        port   = 0;
-	GraphObjectImpl* object = 0;
-	switch (_special_type) {
-	case ENABLE_BROADCAST:
-		if ((port = dynamic_cast<PortImpl*>(_object)))
-			port->broadcast(_value.get_bool());
-		break;
-	case ENABLE:
-		if (_value.get_bool()) {
-			if (!_patch->compiled_patch())
-				_patch->compiled_patch(_compiled_patch);
-			_patch->enable();
-		} else {
-			_patch->disable();
+	typedef Shared::Resource::Properties Properties;
+	std::vector<SpecialType>::const_iterator t = _types.begin();
+	for (Properties::iterator p = _properties.begin(); p != _properties.end(); ++p, ++t) {
+		const Raul::Atom& value  = p->second;
+		PortImpl*         port   = 0;
+		GraphObjectImpl*  object = 0;
+		switch (*t) {
+			case ENABLE_BROADCAST:
+				if ((port = dynamic_cast<PortImpl*>(_object)))
+					port->broadcast(value.get_bool());
+				break;
+			case ENABLE:
+				if (value.get_bool()) {
+					if (!_patch->compiled_patch())
+						_patch->compiled_patch(_compiled_patch);
+					_patch->enable();
+				} else {
+					_patch->disable();
+				}
+				break;
+			case POLYPHONIC:
+				if ((object = dynamic_cast<GraphObjectImpl*>(_object)))
+					if (!object->set_polyphonic(*_engine.maid(), value.get_bool()))
+						_error = INTERNAL;
+				break;
+			case POLYPHONY:
+				if (!_patch->apply_internal_poly(*_engine.maid(), value.get_int32()))
+					_error = INTERNAL;
+				break;
+			default:
+				_success = true;
 		}
-		break;
-	case POLYPHONIC:
-		if ((object = dynamic_cast<GraphObjectImpl*>(_object)))
-			if (!object->set_polyphonic(*_engine.maid(), _value.get_bool()))
-				_error = INTERNAL;
-		break;
-	case POLYPHONY:
-		if (!_patch->apply_internal_poly(*_engine.maid(), _value.get_int32()))
-			_error = INTERNAL;
-		break;
-	default:
-		_success = true;
 	}
 
 	QueuedEvent::execute(context);
@@ -163,16 +198,16 @@ SetMetadataEvent::post_process()
 	switch (_error) {
 	case NO_ERROR:
 		_responder->respond_ok();
-		_engine.broadcaster()->send_property_change(_subject, _key, _value);
+		_engine.broadcaster()->send_put(_subject, _properties);
 		break;
 	case NOT_FOUND:
 		_responder->respond_error((boost::format(
-				"Unable to find object '%1%' to set '%2%'") % _subject % _key).str());
+				"Unable to find object '%1%'") % _subject).str());
 	case INTERNAL:
 		_responder->respond_error("Internal error");
 		break;
 	case BAD_TYPE:
-		_responder->respond_error((boost::format("Bad type for '%1%'") % _key).str());
+		_responder->respond_error("Bad type for predicate");
 		break;
 	}
 }

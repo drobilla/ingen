@@ -155,6 +155,7 @@ void
 QueuedEngineInterface::put(const URI&                  uri,
                            const Resource::Properties& properties)
 {
+	cerr << "PUT " << uri << endl;
 	size_t hash = uri.find("#");
 	bool   meta = (hash != string::npos);
 	Path   path(meta ? (string("/") + uri.chop_start("#")) : uri.str());
@@ -168,6 +169,8 @@ QueuedEngineInterface::put(const URI&                  uri,
 	bool is_patch = false, is_node = false, is_port = false, is_output = false;
 	DataType data_type(DataType::UNKNOWN);
 	ResourceImpl::type(properties, is_patch, is_node, is_port, is_output, data_type);
+
+	// PutEvent
 
 	if (is_patch) {
 		uint32_t poly = 1;
