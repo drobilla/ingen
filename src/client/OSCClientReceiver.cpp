@@ -36,7 +36,7 @@ OSCClientReceiver::OSCClientReceiver(int listen_port, SharedPtr<Shared::ClientIn
 	, _listen_port(listen_port)
 	, _st(NULL)
 {
-	start(true); // true = dump, false = shutup
+	start(false); // true = dump, false = shutup
 }
 
 
