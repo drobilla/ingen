@@ -706,7 +706,7 @@ Parser::parse_properties(
 		Glib::Mutex::Lock lock(world->rdf_world->mutex());
 		const string         key = world->rdf_world->qualify(string((*i)["key"]));
 		const Redland::Node& val = (*i)["val"];
-		if (key != "")
+		if (key != "" && val.type() != Redland::Node::BLANK)
 			properties.insert(make_pair(key, AtomRDF::node_to_atom(val)));
 	}
 
