@@ -32,7 +32,6 @@
 #include "interface/EngineInterface.hpp"
 #include "DeprecatedLoader.hpp"
 
-#define NS_INGEN "http://drobilla.net/ns/ingen#"
 #define NS_INTERNALS "http://drobilla.net/ns/ingen-internals#"
 
 using namespace std;

@@ -38,7 +38,7 @@ ResourceImpl::add_property(const Raul::URI& uri, const Raul::Atom& value)
 	// Ignore duplicate statements
 	typedef Resource::Properties::const_iterator iterator;
 	const std::pair<iterator,iterator> range = _properties.equal_range(uri);
-	for (iterator i = range.first; i != range.second; ++i)
+	for (iterator i = range.first; i != range.second && i != _properties.end(); ++i)
 		if (i->second == value)
 			return;
 
@@ -50,6 +50,8 @@ ResourceImpl::add_property(const Raul::URI& uri, const Raul::Atom& value)
 void
 ResourceImpl::set_property(const Raul::URI& uri, const Raul::Atom& value)
 {
+	cerr << "SET PROPERTY " << uri << " = " << value << endl;
+	assert(value.type() != Raul::Atom::URI || strcmp(value.get_uri(), "lv2:ControlPort"));
 	_properties.erase(uri);
 	_properties.insert(make_pair(uri, value));
 }
@@ -128,7 +130,7 @@ ResourceImpl::merge_properties(const Properties& p)
 {
 	typedef Resource::Properties::const_iterator iterator;
 	for (iterator i = p.begin(); i != p.end(); ++i)
-		set_property(i->first, i->second);
+		add_property(i->first, i->second);
 }
 
 

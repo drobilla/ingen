@@ -35,9 +35,6 @@ using namespace Ingen::Shared;
 namespace Ingen {
 namespace Serialisation {
 
-#define NS_INGEN "http://drobilla.net/ns/ingen#"
-#define NS_LV2   "http://lv2plug.in/ns/lv2core#"
-#define NS_LV2EV "http://lv2plug.in/ns/ext/event#"
 
 static Glib::ustring
 relative_uri(Glib::ustring base, const Glib::ustring uri, bool leading_slash)
@@ -278,13 +275,13 @@ Parser::parse(
 	Redland::Query query(*world->rdf_world, query_str);
 	Redland::Query::Results results(query.run(*world->rdf_world, model, document_uri));
 
-	const Redland::Node patch_class    (*world->rdf_world, res, NS_INGEN "Patch");
-	const Redland::Node node_class     (*world->rdf_world, res, NS_INGEN "Node");
-	const Redland::Node internal_class (*world->rdf_world, res, NS_INGEN "Internal");
-	const Redland::Node ladspa_class   (*world->rdf_world, res, NS_INGEN "LADSPAPlugin");
-	const Redland::Node in_port_class  (*world->rdf_world, res, NS_LV2   "InputPort");
-	const Redland::Node out_port_class (*world->rdf_world, res, NS_LV2   "OutputPort");
-	const Redland::Node lv2_class      (*world->rdf_world, res, NS_LV2   "Plugin");
+	const Redland::Node patch_class    (*world->rdf_world, res, "ingen:Patch");
+	const Redland::Node node_class     (*world->rdf_world, res, "ingen:Node");
+	const Redland::Node internal_class (*world->rdf_world, res, "ingen:Internal");
+	const Redland::Node ladspa_class   (*world->rdf_world, res, "ingen:LADSPAPlugin");
+	const Redland::Node in_port_class  (*world->rdf_world, res, "lv2:InputPort");
+	const Redland::Node out_port_class (*world->rdf_world, res, "lv2:OutputPort");
+	const Redland::Node lv2_class      (*world->rdf_world, res, "lv2:Plugin");
 
 	const Redland::Node subject_node = (data_path && !data_path->is_root())
 		? Redland::Node(*world->rdf_world, res, data_path->chop_start("/"))
@@ -614,9 +611,9 @@ Parser::parse_patch(
 		bool is_output = false;
 		Redland::Node* type = 0;
 		for (Properties::iterator t = types_range.first; t != types_range.second; ++t) {
-			if (t->second.to_string() == NS_LV2 "InputPort") {
+			if (t->second.to_string() == "lv2:InputPort") {
 				is_input = true;
-			} else if (t->second.to_string() == NS_LV2 "OutputPort") {
+			} else if (t->second.to_string() == "lv2:OutputPort") {
 				is_output = true;
 			} else if (!type || type->to_string() == t->second.to_string()) {
 				type = &t->second;

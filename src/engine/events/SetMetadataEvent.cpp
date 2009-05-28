@@ -53,6 +53,8 @@ SetMetadataEvent::SetMetadataEvent(
 	, _is_meta(meta)
 	, _success(false)
 {
+	cerr << "SET " << subject << " : " << key << " = " << value << endl;
+	assert(value.type() != Atom::URI || strcmp(value.get_uri(), "lv2:ControlPort"));
 }
 
 

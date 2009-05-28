@@ -32,7 +32,6 @@
 #include <iostream>
 #include "PluginImpl.hpp"
 
-#define NS_INGEN "http://drobilla.net/ns/ingen#"
 #define NS_INTERNALS "http://drobilla.net/ns/ingen-internals#"
 
 namespace Ingen {

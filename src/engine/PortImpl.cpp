@@ -66,16 +66,10 @@ PortImpl::PortImpl(NodeImpl* const node,
 	else
 		_polyphonic = true;
 
-	if (type == DataType::AUDIO)
-		add_property("rdf:type", Atom(Atom::URI, "lv2:AudioPort"));
+	add_property("rdf:type", Atom(Atom::URI, type.uri()));
 
-	if (type == DataType::CONTROL)
-		add_property("rdf:type", Atom(Atom::URI, "lv2:ControlPort"));
-
-	if (type == DataType::EVENT) {
-		add_property("rdf:type", Atom(Atom::URI, "lv2ev:EventPort"));
+	if (type == DataType::EVENT)
 		_broadcast = true; // send activity blips
-	}
 
 	assert(_buffers->size() > 0);
 }
