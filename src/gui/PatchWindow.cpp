@@ -396,14 +396,13 @@ PatchWindow::event_import_location()
 void
 PatchWindow::event_save()
 {
-	GraphObject::Properties::const_iterator doc = _patch->variables().find("ingen:document");
-	if (doc == _patch->variables().end()) {
+	const Raul::Atom& document = _patch->get_property("ingen:document");
+	if (!document.is_valid() || document.type() != Raul::Atom::URI) {
 		event_save_as();
 	} else {
-		const Glib::ustring& document_uri = doc->second.get_string();
-		App::instance().loader()->save_patch(_patch, document_uri);
+		App::instance().loader()->save_patch(_patch, document.get_uri());
 		_status_bar->push(
-				(boost::format("Wrote %1% to %2%") % _patch->path() % document_uri).str(),
+				(boost::format("Wrote %1% to %2%") % _patch->path() % document.get_uri()).str(),
 				STATUS_CONTEXT_PATCH);
 	}
 }
@@ -427,9 +426,9 @@ PatchWindow::event_save_as()
 		dialog.set_filter(filt);
 
 		// Set current folder to most sensible default
-		GraphObject::Properties::const_iterator doc = _patch->variables().find("ingen:document");
-		if (doc != _patch->variables().end())
-			dialog.set_uri(doc->second.get_string());
+		const Raul::Atom& document = _patch->get_property("ingen:document");
+		if (document.type() == Raul::Atom::URI)
+			dialog.set_uri(document.get_uri());
 		else if (App::instance().configuration()->patch_folder().length() > 0)
 			dialog.set_current_folder(App::instance().configuration()->patch_folder());
 
@@ -477,7 +476,7 @@ PatchWindow::event_save_as()
 		if (confirm) {
 			const Glib::ustring uri = Glib::filename_to_uri(filename);
 			App::instance().loader()->save_patch(_patch, uri);
-			_patch->set_property("ingen:document", Atom(uri.c_str()));
+			_patch->set_property("ingen:document", Atom(Atom::URI, uri.c_str()));
 			_status_bar->push(
 					(boost::format("Wrote %1% to %2%") % _patch->path() % uri).str(),
 					STATUS_CONTEXT_PATCH);

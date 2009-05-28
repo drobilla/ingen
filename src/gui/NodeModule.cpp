@@ -92,7 +92,7 @@ NodeModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeModel> n
 	else
 		ret = boost::shared_ptr<NodeModule>(new NodeModule(canvas, node));
 
-	for (GraphObject::Properties::const_iterator m = node->variables().begin(); m != node->variables().end(); ++m)
+	for (GraphObject::Properties::const_iterator m = node->meta().properties().begin(); m != node->meta().properties().end(); ++m)
 		ret->set_property(m->first, m->second);
 
 	for (GraphObject::Properties::const_iterator m = node->properties().begin(); m != node->properties().end(); ++m)

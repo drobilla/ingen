@@ -81,12 +81,12 @@ PatchView::set_patch(SharedPtr<PatchModel> patch)
 
 	_poly_spin->set_value(patch->poly());
 
-	for (GraphObject::Properties::const_iterator i = patch->properties().begin();
-			i != patch->properties().end(); ++i)
+	for (GraphObject::Properties::const_iterator i = patch->meta().properties().begin();
+			i != patch->meta().properties().end(); ++i)
 		property_changed(i->first, i->second);
 
-	for (GraphObject::Properties::const_iterator i = patch->variables().begin();
-			i != patch->variables().end(); ++i)
+	for (GraphObject::Properties::const_iterator i = patch->properties().begin();
+			i != patch->properties().end(); ++i)
 		property_changed(i->first, i->second);
 
 	// Connect model signals to track state

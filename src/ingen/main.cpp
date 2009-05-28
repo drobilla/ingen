@@ -114,7 +114,6 @@ main(int argc, char** argv)
 	world->rdf_world->add_prefix("ingenuity", "http://drobilla.net/ns/ingenuity#");
 	world->rdf_world->add_prefix("lv2", "http://lv2plug.in/ns/lv2core#");
 	world->rdf_world->add_prefix("lv2ev", "http://lv2plug.in/ns/ext/event#");
-	world->rdf_world->add_prefix("lv2var", "http://lv2plug.in/ns/ext/instance-var#");
 	world->rdf_world->add_prefix("lv2midi", "http://lv2plug.in/ns/ext/midi");
 	world->rdf_world->add_prefix("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
 	world->rdf_world->add_prefix("owl", "http://www.w3.org/2002/07/owl#");

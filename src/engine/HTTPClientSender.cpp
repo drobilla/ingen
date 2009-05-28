@@ -77,8 +77,7 @@ HTTPClientSender::connect(const Path& src_path, const Path& dst_path)
 {
 	const string msg = string(
 			"@prefix rdf:       <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n"
-			"@prefix ingen:     <http://drobilla.net/ns/ingen#> .\n"
-			"@prefix lv2var:    <http://lv2plug.in/ns/ext/instance-var#> .\n\n<").append(
+			"@prefix ingen:     <http://drobilla.net/ns/ingen#> .\n").append(
 			"<> ingen:connection [\n"
 			"\tingen:destination <").append(dst_path.str()).append("> ;\n"
 			"\tingen:source <").append(src_path.str()).append(">\n] .\n");
@@ -100,8 +99,7 @@ HTTPClientSender::set_property(const URI& subject, const URI& key, const Atom& v
 	const string msg = string(
 			"@prefix rdf:       <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n"
 			"@prefix ingen:     <http://drobilla.net/ns/ingen#> .\n"
-			"@prefix ingenuity: <http://drobilla.net/ns/ingenuity#> .\n"
-			"@prefix lv2var:    <http://lv2plug.in/ns/ext/instance-var#> .\n\n<").append(
+			"@prefix ingenuity: <http://drobilla.net/ns/ingenuity#> .\n").append(
 			subject.str()).append("> ingen:property [\n"
 			"rdf:predicate ").append(key.str()).append(" ;\n"
 			"rdf:value     ").append(node.to_string()).append("\n] .\n");

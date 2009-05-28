@@ -54,8 +54,7 @@ class ObjectModel : virtual public Ingen::Shared::GraphObject
 public:
 	virtual ~ObjectModel();
 
-	const Raul::Atom& get_variable(const Raul::URI& key) const;
-	Raul::Atom&       get_variable(Raul::URI& key);
+	const Raul::Atom& get_property(const Raul::URI& key) const;
 
 	virtual void set_property(const Raul::URI& key, const Raul::Atom& value) {
 		ResourceImpl::set_property(key, value);
@@ -69,8 +68,7 @@ public:
 
 	Resource&              meta()             { return _meta; }
 	const Resource&        meta()       const { return _meta; }
-	const Properties&      variables()  const { return _variables; }
-	Properties&            variables()        { return _variables; }
+	const Raul::URI        meta_uri()   const { return _meta.uri(); }
 	const Raul::Path       path()       const { return _path; }
 	const Raul::Symbol     symbol()     const { return _path.name(); }
 	SharedPtr<ObjectModel> parent()     const { return _parent; }
@@ -100,8 +98,6 @@ protected:
 	ResourceImpl           _meta;
 	Raul::Path             _path;
 	SharedPtr<ObjectModel> _parent;
-
-	Properties _variables;
 };
 
 

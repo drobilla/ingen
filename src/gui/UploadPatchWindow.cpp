@@ -79,7 +79,7 @@ UploadPatchWindow::on_show()
 	if (atom.is_valid())
 		_symbol_entry->set_text(atom.get_string());
 
-	atom = _patch->get_variable("doap:name");
+	atom = _patch->get_property("doap:name");
 	if (atom.is_valid())
 		_short_name_entry->set_text(atom.get_string());
 }

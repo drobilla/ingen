@@ -24,7 +24,7 @@ namespace Client {
 bool
 PortModel::has_hint(const std::string& qname) const
 {
-	const Raul::Atom& hint = get_variable(qname);
+	const Raul::Atom& hint = get_property(qname);
 	return (hint.is_valid() && hint.get_bool() > 0);
 }
 

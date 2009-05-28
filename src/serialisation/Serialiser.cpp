@@ -316,7 +316,7 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch, const Redland::Node&
 		cerr << "WARNING: Patch has no lv2:symbol" << endl;
 	}
 
-	serialise_meta_properties(patch_id, patch->properties());
+	serialise_properties(patch_id, patch->meta().properties());
 
 	for (GraphObject::const_iterator n = _store->children_begin(patch);
 			n != _store->children_end(patch); ++n) {
@@ -387,14 +387,14 @@ Serialiser::serialise_node(SharedPtr<Shared::Node> node,
 	_model->add_statement(node_id, "lv2:symbol",
 			Redland::Literal(_model->world(), node->path().name()));
 
+	serialise_properties(node_id, node->properties());
+
 	for (uint32_t i=0; i < node->num_ports(); ++i) {
 		Port* p = node->port(i);
 		const Redland::Node port_id = instance_rdf_node(p->path());
 		serialise_port(p, port_id);
 		_model->add_statement(node_id, "lv2:port", port_id);
 	}
-
-	serialise_properties(node_id, node->properties());
 }
 
 
@@ -452,7 +452,7 @@ Serialiser::serialise_port_meta(const Port* port, const Redland::Node& port_id)
 		}
 	}
 
-	serialise_meta_properties(port_id, port->properties());
+	serialise_properties(port_id, port->meta().properties());
 }
 
 
@@ -463,8 +463,13 @@ Serialiser::serialise_connection(SharedPtr<GraphObject> parent,
 	if (!_model)
 		throw std::logic_error("serialise_connection called without serialization in progress");
 
-	const Redland::Node src_node = class_rdf_node(connection->src_port_path());
-	const Redland::Node dst_node = class_rdf_node(connection->dst_port_path());
+	bool top = (parent->path() == _root_path);
+	const Redland::Node src_node = top
+		? instance_rdf_node(connection->src_port_path())
+		: class_rdf_node(connection->src_port_path());
+	const Redland::Node dst_node = top
+		? instance_rdf_node(connection->dst_port_path())
+		: class_rdf_node(connection->dst_port_path());
 
 	const Redland::Node connection_node = _world.blank_id();
 	_model->add_statement(connection_node, "ingen:source", src_node);
@@ -480,42 +485,24 @@ Serialiser::serialise_connection(SharedPtr<GraphObject> parent,
 
 
 void
-Serialiser::serialise_meta_properties(
-		Redland::Node                  subject,
-		const GraphObject::Properties& properties)
-{
-	for (GraphObject::Properties::const_iterator v = properties.begin(); v != properties.end(); ++v) {
-		if (v->first.find(":") && v->second.is_valid()) {
-			const Redland::Node value = AtomRDF::atom_to_node(_model->world(), v->second);
-			_model->add_statement(subject, v->first.str(), value);
-		} else {
-			cerr << "Warning: unable to serialize property \'" << v->first << "\'" << endl;
-		}
-	}
-}
-
-
-void
 Serialiser::serialise_properties(
 		Redland::Node                  subject,
 		const GraphObject::Properties& properties)
 {
 	for (GraphObject::Properties::const_iterator v = properties.begin(); v != properties.end(); ++v) {
-		if (v->first.find(":") && v->first.str() != "ingen:document") {
-			if (v->second.is_valid()) {
-				const Redland::Resource key(_model->world(), v->first.str());
-				const Redland::Node value = AtomRDF::atom_to_node(_model->world(), v->second);
-				if (value.is_valid()) {
-					_model->add_statement(subject, key, value);
-				} else {
-					cerr << "WARNING: can not serialise variable '" << v->first << "' :: "
-						<< (int)v->second.type() << endl;
-				}
+		if (v->second.is_valid()) {
+			const Redland::Resource key(_model->world(), v->first.str());
+			const Redland::Node value = AtomRDF::atom_to_node(_model->world(), v->second);
+			if (value.is_valid()) {
+				cerr << "serialise property '" << v->first << "' = " << value << " :: "
+					<< (int)v->second.type() << endl;
+				_model->add_statement(subject, key, value);
 			} else {
-				cerr << "WARNING: variable '" << v->first << "' has no value" << endl;
+				cerr << "WARNING: can not serialise variable '" << v->first << "' :: "
+					<< (int)v->second.type() << endl;
 			}
 		} else {
-			cerr << "Not serialising special variable '" << v->first << "'" << endl;
+			cerr << "WARNING: property '" << v->first << "' has no value" << endl;
 		}
 	}
 }

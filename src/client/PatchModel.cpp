@@ -164,7 +164,7 @@ PatchModel::remove_connection(const Path& src_port_path, const Path& dst_port_pa
 bool
 PatchModel::enabled() const
 {
-	const Raul::Atom& enabled = get_variable("ingen:enabled");
+	const Raul::Atom& enabled = get_property("ingen:enabled");
 	return (enabled.is_valid() && enabled.get_bool());
 }
 

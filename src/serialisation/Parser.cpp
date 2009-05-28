@@ -158,7 +158,7 @@ Parser::parse_document(
 		= parse(world, target, model, document_uri, data_path, parent, symbol, data);
 
 	if (parsed_path) {
-		target->set_property(*parsed_path, "ingen:document", Atom(document_uri.c_str()));
+		target->set_property(*parsed_path, "ingen:document", Atom(Atom::URI, document_uri.c_str()));
 	} else {
 		cerr << "WARNING: document URI lost" << endl;
 	}

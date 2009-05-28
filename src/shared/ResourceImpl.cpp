@@ -28,7 +28,7 @@ namespace Shared {
 const Raul::URI
 ResourceImpl::meta_uri(const Raul::URI& base, const Raul::URI& uri)
 {
-	return string("#") + uri.chop_start("/");
+	return string("meta:#") + uri.chop_start("/");
 }
 
 

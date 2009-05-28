@@ -40,44 +40,18 @@ ObjectModel::~ObjectModel()
 }
 
 
-/** Get a variable for this object.
- *
- * @return Metadata value with key @a key, empty string otherwise.
- */
 const Atom&
-ObjectModel::get_variable(const URI& key) const
+ObjectModel::get_property(const Raul::URI& key) const
 {
-	static const Atom null_atom;
-
-	Properties::const_iterator i = _variables.find(key);
-	if (i != _variables.end())
-		return i->second;
-	else
-		return null_atom;
-}
-
-
-/** Get a variable for this object.
- *
- * @return Metadata value with key @a key, empty string otherwise.
- */
-Atom&
-ObjectModel::get_variable(URI& key)
-{
-	static Atom null_atom;
-
-	Properties::iterator i = _variables.find(key);
-	if (i != _variables.end())
-		return i->second;
-	else
-		return null_atom;
+	Resource::Properties::const_iterator i = properties().find(key);
+	return (i != properties().end()) ? i->second : _meta.get_property(key);
 }
 
 
 bool
 ObjectModel::polyphonic() const
 {
-	const Raul::Atom& polyphonic = get_variable("ingen:polyphonic");
+	const Raul::Atom& polyphonic = get_property("ingen:polyphonic");
 	return (polyphonic.is_valid() && polyphonic.get_bool());
 }
 

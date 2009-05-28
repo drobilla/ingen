@@ -62,8 +62,8 @@ PatchPortModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<PortMod
 	ret->set_port(port);
 	ret->set_menu(port->menu());
 
-	for (GraphObject::Properties::const_iterator m = model->variables().begin();
-			m != model->variables().end(); ++m)
+	for (GraphObject::Properties::const_iterator m = model->meta().properties().begin();
+			m != model->meta().properties().end(); ++m)
 		ret->set_property(m->first, m->second);
 
 	for (GraphObject::Properties::const_iterator m = model->properties().begin();
@@ -101,8 +101,8 @@ PatchPortModule::store_location()
 
 	if (existing_x.type() != Atom::FLOAT || existing_y.type() != Atom::FLOAT
 			|| existing_x.get_float() != x || existing_y.get_float() != y) {
-		App::instance().engine()->set_property(_model->path(), "ingenuity:canvas-x", Atom(x));
-		App::instance().engine()->set_property(_model->path(), "ingenuity:canvas-y", Atom(y));
+		App::instance().engine()->set_property(_model->meta_uri(), "ingenuity:canvas-x", Atom(x));
+		App::instance().engine()->set_property(_model->meta_uri(), "ingenuity:canvas-y", Atom(y));
 	}
 }
 
