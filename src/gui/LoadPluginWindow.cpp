@@ -220,16 +220,28 @@ LoadPluginWindow::add_plugin(SharedPtr<PluginModel> plugin)
 	_rows.insert(make_pair(plugin->uri(), iter));
 
 	const Atom& name = plugin->get_property("doap:name");
-	if (name.is_valid() && name.type() == Atom::STRING)
-		row[_plugins_columns._col_name] = name.get_string();
-	if (!strcmp(plugin->type_uri(), "ingen:Internal"))
-		row[_plugins_columns._col_type] = "Internal";
-	else if (!strcmp(plugin->type_uri(), "lv2:Plugin"))
+	if (name.is_valid()) {
+		if (name.type() == Atom::STRING)
+			row[_plugins_columns._col_name] = name.get_string();
+	} else if (plugin->type() == Plugin::LADSPA) {
+		App::instance().engine()->request_property(plugin->uri(), "doap:name");
+	}
+
+	switch (plugin->type()) {
+	case Plugin::LV2:
 		row[_plugins_columns._col_type] = "LV2";
-	else if (!strcmp(plugin->type_uri(), "ingen:LADSPAPlugin"))
+		break;
+	case Plugin::LADSPA:
 		row[_plugins_columns._col_type] = "LADSPA";
-	else
-		row[_plugins_columns._col_type] = plugin->type_uri();
+		break;
+	case Plugin::Internal:
+		row[_plugins_columns._col_type] = "Internal";
+		break;
+	case Plugin::Patch:
+		row[_plugins_columns._col_type] = "Patch";
+		break;
+	}
+
 	row[_plugins_columns._col_uri] = plugin->uri().str();
 	row[_plugins_columns._col_plugin_model] = plugin;
 
@@ -426,15 +438,17 @@ LoadPluginWindow::on_key_press_event(GdkEventKey* event)
 	}
 }
 
+
 void
 LoadPluginWindow::plugin_property_changed(const URI&  plugin,
 	                                      const URI&  predicate,
 	                                      const Atom& value)
 {
-	cerr << "PLUGIN PROPERTY " << plugin << " : " << predicate << " = " << value << endl;
-	Rows::const_iterator i = _rows.find(plugin);
-	if (i != _rows.end() && value.type() == Atom::STRING)
-		(*i->second)[_plugins_columns._col_name] = value.get_string();
+	if (predicate.str() == "doap:name") {
+		Rows::const_iterator i = _rows.find(plugin);
+		if (i != _rows.end() && value.type() == Atom::STRING)
+			(*i->second)[_plugins_columns._col_name] = value.get_string();
+	}
 }
 
 

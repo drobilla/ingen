@@ -27,7 +27,7 @@ class GraphObjectImpl;
 class PluginImpl;
 
 
-/** A request from a client to send the value of a port.
+/** A request from a client to send an object.
  *
  * \ingroup engine
  */

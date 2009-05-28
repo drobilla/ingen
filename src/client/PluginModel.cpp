@@ -61,7 +61,7 @@ PluginModel::PluginModel(const URI& uri, const URI& type_uri, const Resource::Pr
 const Atom&
 PluginModel::get_property(const URI& key) const
 {
-	static Atom nil_atom(Atom::NIL);
+	static const Atom nil;
 	const Atom& val = ResourceImpl::get_property(key);
 	if (val.is_valid())
 		return val;
@@ -124,7 +124,7 @@ PluginModel::get_property(const URI& key) const
 	}
 #endif
 
-	return nil_atom;
+	return nil;
 }
 
 

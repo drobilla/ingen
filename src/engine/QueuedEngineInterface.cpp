@@ -279,8 +279,11 @@ QueuedEngineInterface::request_property(const URI& uri, const URI& key)
 {
 	size_t hash = uri.find("#");
 	bool   meta = (hash != string::npos);
-	Path path = meta ? (string("/") + path.chop_start("/")) : uri.str();
-	push_queued(new RequestMetadataEvent(_engine, _responder, now(), meta, path, key));
+	const string path_str = string("/") + uri.chop_start("/");
+	if (meta && Path::is_valid(path_str))
+		push_queued(new RequestMetadataEvent(_engine, _responder, now(), meta, path_str, key));
+	else
+		push_queued(new RequestMetadataEvent(_engine, _responder, now(), meta, uri, key));
 }
 
 

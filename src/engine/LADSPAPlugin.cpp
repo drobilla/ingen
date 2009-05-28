@@ -43,6 +43,7 @@ LADSPAPlugin::LADSPAPlugin(
 {
 	set_property("rdf:type",   Atom(Atom::URI,    "ingen:LADSPAPlugin"));
 	set_property("lv2:symbol", Atom(Atom::STRING, Symbol::symbolify(label)));
+	set_property("doap:name",  Atom(Atom::STRING, name));
 }
 
 
