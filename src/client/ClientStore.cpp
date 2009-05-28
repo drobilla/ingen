@@ -365,24 +365,26 @@ ClientStore::clear_patch(const Path& path)
 
 
 void
-ClientStore::set_property(const URI& subject_path, const URI& predicate, const Atom& value)
+ClientStore::set_property(const URI& subject_uri, const URI& predicate, const Atom& value)
 {
-	SharedPtr<Resource> subject = resource(subject_path);
+	SharedPtr<Resource> subject = resource(subject_uri);
 
-	size_t hash = subject_path.find("#");
+	size_t hash = subject_uri.find("#");
 	if (!value.is_valid()) {
 		cerr << "ERROR: property '" << predicate << "' is invalid" << endl;
 	} else if (subject) {
 		subject->set_property(predicate, value);
-	} else if (hash != string::npos) {
-		cerr << "META OBJECT " << subject_path << " PROPERTY " << predicate << endl;
-		Path instance_path = string("/") + subject_path.chop_start("#");
+	} else if (subject_uri.substr(0, 6) == "meta:#") {
+		Path instance_path = string("/") + subject_uri.substr(hash + 1);
 		SharedPtr<ObjectModel> om = PtrCast<ObjectModel>(subject);
 		if (om)
 			om->meta().set_property(predicate, value);
 	} else {
-		//add_property_orphan(subject_path, predicate, value);
-		cerr << "WARNING: property '" << predicate << "' for unknown object " << subject_path << endl;
+		SharedPtr<PluginModel> plugin = this->plugin(subject_uri);
+		if (plugin)
+			plugin->set_property(predicate, value);
+		else
+			cerr << "WARNING: property '" << predicate << "' for unknown object " << subject_uri << endl;
 	}
 }
 

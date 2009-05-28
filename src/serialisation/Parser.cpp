@@ -251,13 +251,6 @@ Parser::parse(
 
 		if (!data_path)
 			path_str = relative_uri(document_uri, subject.to_c_string(), true);
-		else if (path_str == "" || path_str[0] != '/')
-			path_str = "/" + path_str;
-
-		if (!Path::is_valid(path_str)) {
-			cerr << "WARNING: Invalid path '" << path_str << "', object skipped" << endl;
-			continue;
-		}
 
 		const bool is_plugin =    (rdf_class == ladspa_class)
 		                       || (rdf_class == lv2_class)
@@ -271,6 +264,13 @@ Parser::parse(
 		const Glib::ustring subject_uri_tok = Glib::ustring("<").append(subject).append(">");
 
 		if (is_object) {
+			if (path_str == "" || path_str[0] != '/')
+				path_str = "/" + path_str;
+
+			if (!Path::is_valid(path_str)) {
+				cerr << "WARNING: Invalid path '" << path_str << "', object skipped" << endl;
+				continue;
+			}
 
 			string path = (parent && symbol)
 					? parent->base() + *symbol
@@ -298,8 +298,8 @@ Parser::parse(
 				root_path = ret;
 
 		} else if (is_plugin) {
-			if (URI::is_valid(path_str))
-				target->set_property(path_str, "rdf:type", Atom(Atom::URI, rdf_class.to_c_string()));
+			if (URI::is_valid(subject.to_string()))
+				parse_properties(world, target, model, subject, subject.to_string());
 		}
 
 	}
@@ -690,7 +690,7 @@ Parser::parse_properties(
 		Ingen::Shared::CommonInterface*          target,
 		Redland::Model&                          model,
 		const Redland::Node&                     subject_node,
-		const Raul::Path&                        path,
+		const Raul::URI&                         uri,
 		boost::optional<GraphObject::Properties> data)
 {
 	const Glib::ustring& subject = subject_node.to_turtle_token();
@@ -710,11 +710,11 @@ Parser::parse_properties(
 			properties.insert(make_pair(key, AtomRDF::node_to_atom(val)));
 	}
 
-	target->put(path, properties);
+	target->put(uri, properties);
 
 	// Set passed properties last to override any loaded values
 	if (data)
-		target->put(path, data.get());
+		target->put(uri, data.get());
 
 	return true;
 }

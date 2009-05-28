@@ -99,7 +99,7 @@ HTTPClientReceiver::Listener::Listener(HTTPClientReceiver* receiver, const std::
 void
 HTTPClientReceiver::update(const std::string& str)
 {
-	cout << _parser->parse_update(_world, _target.get(), str, "/");
+	cout << _parser->parse_update(_world, _target.get(), str, ".");
 }
 
 void
@@ -136,6 +136,10 @@ HTTPClientReceiver::message_callback(SoupSession* session, SoupMessage* msg, voi
 {
 	HTTPClientReceiver* me = (HTTPClientReceiver*)ptr;
 	const string path = soup_message_get_uri(msg)->path;
+
+	/*cerr << "HTTP MESSAGE " << path << endl;
+	cerr << msg->response_body->data << endl;*/
+
 	if (path == Path::root_uri) {
 		me->_target->response_ok(0);
 
@@ -147,7 +151,7 @@ HTTPClientReceiver::message_callback(SoupSession* session, SoupMessage* msg, voi
 			me->_target->response_ok(0);
 			me->_parser->parse_string(me->_world, me->_target.get(),
 					Glib::ustring(msg->response_body->data),
-					Glib::ustring("."));
+					Glib::ustring(""));
 		}
 
 	} else if (path == "/patch") {

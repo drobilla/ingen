@@ -100,7 +100,7 @@ private:
 			Ingen::Shared::CommonInterface* target,
 			Redland::Model&                 model,
 			const Redland::Node&            subject,
-			const Raul::Path&               path,
+			const Raul::URI&                uri,
 			boost::optional<Properties>     data=boost::optional<Properties>());
 
 	bool parse_connections(
