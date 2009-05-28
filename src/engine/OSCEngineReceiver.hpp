@@ -89,6 +89,7 @@ private:
 	LO_HANDLER(load_plugins);
 	LO_HANDLER(engine_activate);
 	LO_HANDLER(engine_deactivate);
+	LO_HANDLER(get);
 	LO_HANDLER(put);
 	LO_HANDLER(move);
 	LO_HANDLER(del);
@@ -103,7 +104,6 @@ private:
 	LO_HANDLER(midi_learn);
 	LO_HANDLER(set_property);
 	LO_HANDLER(property_set);
-	LO_HANDLER(request_object);
 	LO_HANDLER(request_property);
 	LO_HANDLER(request_plugins);
 	LO_HANDLER(request_all_objects);

@@ -268,7 +268,7 @@ QueuedEngineInterface::ping()
 
 
 void
-QueuedEngineInterface::request_object(const URI& uri)
+QueuedEngineInterface::get(const URI& uri)
 {
 	push_queued(new GetEvent(_engine, _responder, now(), uri));
 }

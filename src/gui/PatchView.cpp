@@ -223,7 +223,7 @@ PatchView::clear_clicked()
 void
 PatchView::refresh_clicked()
 {
-	App::instance().engine()->request_object(_patch->path());
+	App::instance().engine()->get(_patch->path());
 }
 
 

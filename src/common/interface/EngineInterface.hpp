@@ -64,7 +64,7 @@ public:
 
 	virtual void ping() = 0;
 
-	virtual void request_object(const Raul::URI& uri) = 0;
+	virtual void get(const Raul::URI& uri) = 0;
 
 	virtual void request_property(const Raul::URI& uri,
 	                              const Raul::URI& key) = 0;

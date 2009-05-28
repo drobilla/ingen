@@ -108,7 +108,7 @@ public:
 	// Requests //
 
 	virtual void ping();
-	virtual void request_object(const Raul::URI& uri);
+	virtual void get(const Raul::URI& uri);
 	virtual void request_property(const Raul::URI& object_path, const Raul::URI& key);
 	virtual void request_plugins();
 	virtual void request_all_objects();

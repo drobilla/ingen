@@ -280,9 +280,9 @@ OSCEngineSender::ping()
 
 
 void
-OSCEngineSender::request_object(const URI& uri)
+OSCEngineSender::get(const URI& uri)
 {
-	send("/ingen/request_object", "is",
+	send("/ingen/get", "is",
 		next_id(),
 		uri.c_str(),
 		LO_ARGS_END);

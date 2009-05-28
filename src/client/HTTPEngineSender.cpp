@@ -190,7 +190,7 @@ HTTPEngineSender::ping()
 
 
 void
-HTTPEngineSender::request_object(const URI& uri)
+HTTPEngineSender::get(const URI& uri)
 {
 }
 

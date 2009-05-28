@@ -107,7 +107,7 @@ OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t
 
 	// Queries
 	lo_server_add_method(_server, "/ingen/request_property", "iss", request_property_cb, this);
-	lo_server_add_method(_server, "/ingen/request_object", "is", request_object_cb, this);
+	lo_server_add_method(_server, "/ingen/get", "is", get_cb, this);
 	lo_server_add_method(_server, "/ingen/request_plugins", "i", request_plugins_cb, this);
 	lo_server_add_method(_server, "/ingen/request_all_objects", "i", request_all_objects_cb, this);
 
@@ -370,6 +370,21 @@ int
 OSCEngineReceiver::_engine_deactivate_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	QueuedEngineInterface::deactivate();
+	return 0;
+}
+
+
+/** \page engine_osc_namespace
+ * <h2>/ingen/get</h2>
+ * \arg \b response-id (integer)
+ * \arg \b uri (string) - URI of object (patch, port, node, plugin) to send
+ *
+ * Request all properties of an object.
+ */
+int
+OSCEngineReceiver::_get_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+{
+	get(&argv[1]->s);
 	return 0;
 }
 
@@ -680,21 +695,6 @@ OSCEngineReceiver::_request_property_cb(const char* path, const char* types, lo_
 	const char* key         = &argv[2]->s;
 
 	request_property(object_path, key);
-	return 0;
-}
-
-
-/** \page engine_osc_namespace
- * <h2>/ingen/request_object</h2>
- * \arg \b response-id (integer)
- * \arg \b uri (string) - URI of object (patch, port, node, plugin) to send
- *
- * Request all properties of an object.
- */
-int
-OSCEngineReceiver::_request_object_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
-{
-	request_object(&argv[1]->s);
 	return 0;
 }
 
