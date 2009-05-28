@@ -275,16 +275,12 @@ QueuedEngineInterface::request_object(const URI& uri)
 
 
 void
-QueuedEngineInterface::request_variable(const URI& object_path, const URI& key)
+QueuedEngineInterface::request_property(const URI& uri, const URI& key)
 {
-	push_queued(new RequestMetadataEvent(_engine, _responder, now(), false, object_path, key));
-}
-
-
-void
-QueuedEngineInterface::request_property(const URI& object_path, const URI& key)
-{
-	push_queued(new RequestMetadataEvent(_engine, _responder, now(), true, object_path, key));
+	size_t hash = uri.find("#");
+	bool   meta = (hash != string::npos);
+	Path path = meta ? (string("/") + path.chop_start("/")) : uri.str();
+	push_queued(new RequestMetadataEvent(_engine, _responder, now(), meta, path, key));
 }
 
 

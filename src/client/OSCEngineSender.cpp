@@ -290,17 +290,6 @@ OSCEngineSender::request_object(const URI& uri)
 
 
 void
-OSCEngineSender::request_variable(const URI& object_path, const URI& key)
-{
-	send("/ingen/request_variable", "iss",
-		next_id(),
-		object_path.c_str(),
-		key.c_str(),
-		LO_ARGS_END);
-}
-
-
-void
 OSCEngineSender::request_property(const URI& object_path, const URI& key)
 {
 	send("/ingen/request_property", "iss",

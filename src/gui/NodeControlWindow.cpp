@@ -117,7 +117,7 @@ NodeControlWindow::on_show()
 	for (NodeModel::Ports::const_iterator i = _node->ports().begin();
 			i != _node->ports().end(); ++i)
 		if ((*i)->type().is_control() && (*i)->is_input())
-			App::instance().engine()->request_variable((*i)->path(), "ingen:value");
+			App::instance().engine()->request_property((*i)->path(), "ingen:value");
 
 	if (_position_stored)
 		move(_x, _y);

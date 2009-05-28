@@ -66,9 +66,6 @@ public:
 
 	virtual void request_object(const Raul::URI& uri) = 0;
 
-	virtual void request_variable(const Raul::URI& path,
-	                              const Raul::URI& key) = 0;
-
 	virtual void request_property(const Raul::URI& path,
 	                              const Raul::URI& key) = 0;
 

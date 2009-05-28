@@ -196,12 +196,6 @@ HTTPEngineSender::request_object(const URI& uri)
 
 
 void
-HTTPEngineSender::request_variable(const URI& object_path, const URI& key)
-{
-}
-
-
-void
 HTTPEngineSender::request_property(const URI& object_path, const URI& key)
 {
 }

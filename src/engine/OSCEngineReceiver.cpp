@@ -103,11 +103,10 @@ OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t
 	lo_server_add_method(_server, "/ingen/note_off", "isi", note_off_cb, this);
 	lo_server_add_method(_server, "/ingen/all_notes_off", "isi", all_notes_off_cb, this);
 	lo_server_add_method(_server, "/ingen/midi_learn", "is", midi_learn_cb, this);
-	lo_server_add_method(_server, "/ingen/set_variable", NULL, variable_set_cb, this);
-	lo_server_add_method(_server, "/ingen/set_property", NULL, property_set_cb, this);
+	lo_server_add_method(_server, "/ingen/set_property", NULL, set_property_cb, this);
 
 	// Queries
-	lo_server_add_method(_server, "/ingen/request_variable", "iss", variable_get_cb, this);
+	lo_server_add_method(_server, "/ingen/request_property", "iss", request_property_cb, this);
 	lo_server_add_method(_server, "/ingen/request_object", "is", request_object_cb, this);
 	lo_server_add_method(_server, "/ingen/request_plugins", "i", request_plugins_cb, this);
 	lo_server_add_method(_server, "/ingen/request_all_objects", "i", request_all_objects_cb, this);
@@ -644,14 +643,14 @@ OSCEngineReceiver::_midi_learn_cb(const char* path, const char* types, lo_arg** 
 /** \page engine_osc_namespace
  * <h2>/ingen/set_property</h2>
  * \arg \b response-id (integer)
- * \arg \b object-path (string) - Full path of object to associate variable with
+ * \arg \b object-path (string) - Full path of object to associate property with
  * \arg \b key (string) - URI/QName for predicate of this property (e.g. "ingen:enabled")
  * \arg \b value (string) - Value of property
  *
  * Set a property on a graph object.
  */
 int
-OSCEngineReceiver::_property_set_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCEngineReceiver::_set_property_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	if (argc != 4 || types[0] != 'i' || types[1] != 's' || types[2] != 's')
 		return 1;
@@ -667,20 +666,20 @@ OSCEngineReceiver::_property_set_cb(const char* path, const char* types, lo_arg*
 
 
 /** \page engine_osc_namespace
- * <h2>/ingen/request_variable</h2>
+ * <h2>/ingen/request_property</h2>
  * \arg \b response-id (integer)
- * \arg \b object-path (string) - Full path of object variable is associated with
- * \arg \b key (string) - Key (index) for piece of variable
+ * \arg \b uri (string) - Subject
+ * \arg \b key (string) - Predicate
  *
- * Request the value of a variable on a graph object.
+ * Request the value of a property on an object.
  */
 int
-OSCEngineReceiver::_variable_get_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCEngineReceiver::_request_property_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	const char* object_path = &argv[1]->s;
 	const char* key         = &argv[2]->s;
 
-	request_variable(object_path, key);
+	request_property(object_path, key);
 	return 0;
 }
 
