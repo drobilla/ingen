@@ -166,27 +166,7 @@ QueuedEngineInterface::put(const URI&                  uri,
 		cerr << "\t" << i->first << " = " << i->second << " :: " << i->second.type() << endl;
 	cerr << "}" << endl;
 
-	bool is_patch = false, is_node = false, is_port = false, is_output = false;
-	DataType data_type(DataType::UNKNOWN);
-	ResourceImpl::type(properties, is_patch, is_node, is_port, is_output, data_type);
-
-	// PutEvent
-
-	if (is_patch) {
-		uint32_t poly = 1;
-		iterator p = properties.find("ingen:polyphony");
-		if (p != properties.end() && p->second.is_valid() && p->second.type() == Atom::INT)
-			poly = p->second.get_int32();
-		push_queued(new CreatePatchEvent(
-				_engine, _responder, now(), path, poly, properties));
-	} else if (is_node) {
-		const iterator p = properties.find("rdf:instanceOf");
-		push_queued(new CreateNodeEvent(
-				_engine, _responder, now(), path, p->second.get_uri(), true, properties));
-	} else if (is_port) {
-		push_queued(new CreatePortEvent(
-				_engine, _responder, now(), path, data_type.uri(), is_output, this, properties));
-	}
+	push_queued(new SetMetadataEvent(_engine, _responder, now(), this, meta, path, properties));
 }
 
 
@@ -271,7 +251,7 @@ QueuedEngineInterface::set_property(const URI&  uri,
 	Path path = meta ? (string("/") + path.chop_start("/")) : uri.str();
 	Resource::Properties properties;
 	properties.insert(make_pair(predicate, value));
-	push_queued(new SetMetadataEvent(_engine, _responder, now(), meta, path, properties));
+	push_queued(new SetMetadataEvent(_engine, _responder, now(), this, meta, path, properties));
 }
 
 // Requests //

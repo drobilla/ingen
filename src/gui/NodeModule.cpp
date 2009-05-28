@@ -377,7 +377,6 @@ NodeModule::store_location()
 void
 NodeModule::set_property(const URI& key, const Atom& value)
 {
-	cerr << "SET " << key << " = " << value << " :: " << value.type() << endl;
 	switch (value.type()) {
 	case Atom::FLOAT:
 		if (key.str() == "ingenuity:canvas-x") {

@@ -71,52 +71,6 @@ relative_uri(Glib::ustring base, const Glib::ustring uri, bool leading_slash)
 }
 
 
-#if 0
-static Glib::ustring
-chop_uri_scheme(const Glib::ustring in)
-{
-	Glib::ustring out = in;
-
-	// Remove scheme
-	size_t scheme_end = out.find(":");
-	if (scheme_end != string::npos)
-		out = out.substr(scheme_end + 1);
-
-	// Chop leading double slashes
-	while (out.length() > 1 && out[0] == '/' && out[1] == '/')
-		out = out.substr(1);
-
-	return out;
-}
-
-
-static Glib::ustring
-uri_child(const Glib::ustring base, const Glib::ustring child, bool trailing_slash)
-{
-	Glib::ustring ret = (base[base.length()-1] == '/' || child[0] == '/')
-		? base + child
-		: base + '/' + child;
-
-	if (trailing_slash && (ret == "" || ret[ret.length()-1] != '/'))
-		ret = ret + "/";
-	else if (!trailing_slash && ret != "" && ret[ret.length()-1] == '/')
-		ret = ret.substr(0, ret.length()-1);
-
-	return ret;
-}
-
-
-static Glib::ustring
-dequote_uri(const Glib::ustring in)
-{
-	Glib::ustring out = in;
-	if (out[0] == '<' && out[out.length()-1] == '>')
-		out = out.substr(1, out.length()-2);
-	return out;
-}
-#endif
-
-
 static void
 normalise_uri(Glib::ustring& uri)
 {
@@ -800,8 +754,6 @@ Parser::parse_properties(
 		if (key != "")
 			properties.insert(make_pair(key, AtomRDF::node_to_atom(val)));
 	}
-
-	cout << "PROPERTIES: " << path << endl;
 
 	target->put(path, properties);
 

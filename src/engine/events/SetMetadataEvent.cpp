@@ -18,30 +18,40 @@
 #include "SetMetadataEvent.hpp"
 #include <string>
 #include <boost/format.hpp>
-#include "Responder.hpp"
-#include "Engine.hpp"
-#include "PortImpl.hpp"
+#include "interface/DataType.hpp"
 #include "ClientBroadcaster.hpp"
+#include "Engine.hpp"
+#include "EngineStore.hpp"
 #include "GraphObjectImpl.hpp"
 #include "PatchImpl.hpp"
 #include "PluginImpl.hpp"
-#include "EngineStore.hpp"
+#include "PortImpl.hpp"
+#include "Responder.hpp"
+#include "CreatePatchEvent.hpp"
+#include "CreateNodeEvent.hpp"
+#include "CreatePortEvent.hpp"
+
 
 using namespace std;
 using namespace Raul;
 
 namespace Ingen {
 
+using namespace Shared;
+typedef Shared::Resource::Properties Properties;
+
 
 SetMetadataEvent::SetMetadataEvent(
-		Engine&                             engine,
-		SharedPtr<Responder>                responder,
-		SampleCount                         timestamp,
-		bool                                meta,
-		const URI&                          subject,
-		const Shared::Resource::Properties& properties)
-	: QueuedEvent(engine, responder, timestamp)
+		Engine&               engine,
+		SharedPtr<Responder>  responder,
+		SampleCount           timestamp,
+		QueuedEventSource*    source,
+		bool                  meta,
+		const URI&            subject,
+		const Properties&     properties)
+	: QueuedEvent(engine, responder, timestamp, false, source)
 	, _error(NO_ERROR)
+	, _create_event(NULL)
 	, _subject(subject)
 	, _properties(properties)
 	, _object(NULL)
@@ -56,22 +66,52 @@ SetMetadataEvent::SetMetadataEvent(
 void
 SetMetadataEvent::pre_process()
 {
-	if (_subject.scheme() == Path::scheme && Path::is_valid(_subject.str()))
-		_object = _engine.engine_store()->find_object(Path(_subject.str()));
-	else
-		_object = _engine.node_factory()->plugin(_subject);
+	typedef Properties::const_iterator iterator;
 
-	if (_object == NULL) {
+	bool is_graph_object = (_subject.scheme() == Path::scheme && Path::is_valid(_subject.str()));
+
+	_object = is_graph_object
+			? _engine.engine_store()->find_object(Path(_subject.str()))
+			: _object = _engine.node_factory()->plugin(_subject);
+
+	if (!_object && !is_graph_object) {
 		_error = NOT_FOUND;
 		QueuedEvent::pre_process();
 		return;
 	}
 
-	/*cerr << "SET " << _object->path() << (_property ? " PROP " : " VAR ")
-	  <<	_key << " :: " << _value.type() << endl;*/
+	if (is_graph_object && !_object) {
+		Path path(_subject.str());
+		cerr << "CREATE NEW GRAPH OBJECT" << endl;
+		bool is_patch = false, is_node = false, is_port = false, is_output = false;
+		DataType data_type(DataType::UNKNOWN);
+		ResourceImpl::type(_properties, is_patch, is_node, is_port, is_output, data_type);
+		if (is_patch) {
+			uint32_t poly = 1;
+			iterator p = _properties.find("ingen:polyphony");
+			if (p != _properties.end() && p->second.is_valid() && p->second.type() == Atom::INT)
+				poly = p->second.get_int32();
+			_create_event = new CreatePatchEvent(_engine, _responder, _time,
+					path, poly, _properties);
+		} else if (is_node) {
+			const iterator p = _properties.find("rdf:instanceOf");
+			_create_event = new CreateNodeEvent(_engine, _responder, _time,
+					path, p->second.get_uri(), true, _properties);
+		} else if (is_port) {
+			_blocking = true;
+			_create_event = new CreatePortEvent(_engine, _responder, _time,
+					path, data_type.uri(), is_output, _source, _properties);
+		}
+		if (_create_event)
+			_create_event->pre_process();
+		else
+			_error = BAD_TYPE;
+		QueuedEvent::pre_process();
+		return;
+	}
 
 	_types.reserve(_properties.size());
-	typedef Shared::Resource::Properties Properties;
+
 	for (Properties::iterator p = _properties.begin(); p != _properties.end(); ++p) {
 		const Raul::URI&  key   = p->first;
 		const Raul::Atom& value = p->second;
@@ -109,6 +149,7 @@ SetMetadataEvent::pre_process()
 						_error = BAD_TYPE;
 					}
 				} else {
+					_object->set_property(key, value);
 					_types.push_back(NONE);
 				}
 				if (_error != NO_ERROR)
@@ -128,10 +169,17 @@ SetMetadataEvent::pre_process()
 void
 SetMetadataEvent::execute(ProcessContext& context)
 {
-	if (_error != NO_ERROR)
+	if (_error != NO_ERROR) {
+		QueuedEvent::execute(context);
 		return;
+	}
 
-	typedef Shared::Resource::Properties Properties;
+	if (_create_event) {
+		QueuedEvent::execute(context);
+		_create_event->execute(context);
+		return;
+	}
+
 	std::vector<SpecialType>::const_iterator t = _types.begin();
 	for (Properties::iterator p = _properties.begin(); p != _properties.end(); ++p, ++t) {
 		const Raul::Atom& value  = p->second;
@@ -176,6 +224,8 @@ SetMetadataEvent::post_process()
 	case NO_ERROR:
 		_responder->respond_ok();
 		_engine.broadcaster()->send_put(_subject, _properties);
+		if (_create_event)
+			_create_event->post_process();
 		break;
 	case NOT_FOUND:
 		_responder->respond_error((boost::format(
@@ -184,7 +234,7 @@ SetMetadataEvent::post_process()
 		_responder->respond_error("Internal error");
 		break;
 	case BAD_TYPE:
-		_responder->respond_error("Bad type for predicate");
+		_responder->respond_error("Bad type");
 		break;
 	}
 }

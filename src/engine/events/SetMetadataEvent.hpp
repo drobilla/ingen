@@ -64,6 +64,7 @@ public:
 			Engine&                             engine,
 			SharedPtr<Responder>                responder,
 			SampleCount                         timestamp,
+			QueuedEventSource*                  source,
 			bool                                meta,
 			const Raul::URI&                    subject,
 			const Shared::Resource::Properties& properties);
@@ -82,6 +83,7 @@ private:
 		POLYPHONIC
 	};
 
+	QueuedEvent*                 _create_event;
 	std::vector<SpecialType>     _types;
 	Raul::URI                    _subject;
 	Shared::Resource::Properties _properties;

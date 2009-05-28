@@ -289,8 +289,8 @@ ClientStore::put(const URI& uri, const Resource::Properties& properties)
 
 	SharedPtr<ObjectModel> obj = PtrCast<ObjectModel>(object(path));
 	if (obj) {
-		cerr << "OBJECT EXISTS " << path << endl;
 		obj->set_properties(properties);
+		return;
 	}
 
 	bool is_patch, is_node, is_port, is_output;
