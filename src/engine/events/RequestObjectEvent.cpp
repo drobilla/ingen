@@ -32,10 +32,15 @@ using namespace Raul;
 namespace Ingen {
 
 
-RequestObjectEvent::RequestObjectEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Path& path)
+RequestObjectEvent::RequestObjectEvent(
+		Engine&              engine,
+		SharedPtr<Responder> responder,
+		SampleCount          timestamp,
+		const URI&           uri)
 	: QueuedEvent(engine, responder, timestamp)
-	, _path(path)
+	, _uri(uri)
 	, _object(NULL)
+	, _plugin(NULL)
 {
 }
 
@@ -43,7 +48,10 @@ RequestObjectEvent::RequestObjectEvent(Engine& engine, SharedPtr<Responder> resp
 void
 RequestObjectEvent::pre_process()
 {
-	_object = _engine.engine_store()->find_object(_path);
+	if (Path::is_valid(_uri.str()))
+		_object = _engine.engine_store()->find_object(Path(_uri.str()));
+	else
+		_plugin = _engine.node_factory()->plugin(_uri);
 
 	QueuedEvent::pre_process();
 }
@@ -60,10 +68,14 @@ RequestObjectEvent::execute(ProcessContext& context)
 void
 RequestObjectEvent::post_process()
 {
-	if (!_object) {
+	if (!_object && !_plugin) {
 		_responder->respond_error("Unable to find object requested.");
 	} else if (_responder->client()) {
-		ObjectSender::send_object(_responder->client(), _object, true);
+		_responder->respond_ok();
+		if (_object)
+			_responder->client()->put(_uri, _object->properties());
+		else if (_plugin)
+			_responder->client()->new_plugin(_uri, _plugin->type_uri(), _plugin->symbol());
 	} else {
 		_responder->respond_error("Unable to find client to send object.");
 	}

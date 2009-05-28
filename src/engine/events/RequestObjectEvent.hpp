@@ -24,6 +24,7 @@
 namespace Ingen {
 
 class GraphObjectImpl;
+class PluginImpl;
 
 
 /** A request from a client to send the value of a port.
@@ -33,15 +34,20 @@ class GraphObjectImpl;
 class RequestObjectEvent : public QueuedEvent
 {
 public:
-	RequestObjectEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Raul::Path& port_path);
+	RequestObjectEvent(
+		Engine&              engine,
+		SharedPtr<Responder> responder,
+		SampleCount          timestamp,
+		const Raul::URI&     uri);
 
 	void pre_process();
 	void execute(ProcessContext& context);
 	void post_process();
 
 private:
-	const Raul::Path _path;
-	GraphObjectImpl* _object;
+	const Raul::URI   _uri;
+	GraphObjectImpl*  _object;
+	const PluginImpl* _plugin;
 };
 
 

@@ -280,21 +280,11 @@ OSCEngineSender::ping()
 
 
 void
-OSCEngineSender::request_plugin(const URI& uri)
-{
-	send("/ingen/request_plugin", "is",
-		next_id(),
-		uri.c_str(),
-		LO_ARGS_END);
-}
-
-
-void
-OSCEngineSender::request_object(const Path& path)
+OSCEngineSender::request_object(const URI& uri)
 {
 	send("/ingen/request_object", "is",
 		next_id(),
-		path.c_str(),
+		uri.c_str(),
 		LO_ARGS_END);
 }
 

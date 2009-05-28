@@ -190,13 +190,7 @@ HTTPEngineSender::ping()
 
 
 void
-HTTPEngineSender::request_plugin(const URI& uri)
-{
-}
-
-
-void
-HTTPEngineSender::request_object(const Path& path)
+HTTPEngineSender::request_object(const URI& uri)
 {
 }
 

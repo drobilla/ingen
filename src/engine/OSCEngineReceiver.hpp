@@ -104,7 +104,6 @@ private:
 	LO_HANDLER(variable_get);
 	LO_HANDLER(variable_set);
 	LO_HANDLER(property_set);
-	LO_HANDLER(request_plugin);
 	LO_HANDLER(request_object);
 	LO_HANDLER(request_variable);
 	LO_HANDLER(request_plugins);

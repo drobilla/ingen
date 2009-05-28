@@ -268,16 +268,9 @@ QueuedEngineInterface::ping()
 
 
 void
-QueuedEngineInterface::request_plugin(const URI& uri)
+QueuedEngineInterface::request_object(const URI& uri)
 {
-	push_queued(new RequestPluginEvent(_engine, _responder, now(), uri));
-}
-
-
-void
-QueuedEngineInterface::request_object(const Path& path)
-{
-	push_queued(new RequestObjectEvent(_engine, _responder, now(), path));
+	push_queued(new RequestObjectEvent(_engine, _responder, now(), uri));
 }
 
 

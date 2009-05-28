@@ -73,7 +73,6 @@ def build(bld):
 		events/RequestAllObjectsEvent.cpp
 		events/RequestMetadataEvent.cpp
 		events/RequestObjectEvent.cpp
-		events/RequestPluginEvent.cpp
 		events/RequestPluginsEvent.cpp
 		events/SetMetadataEvent.cpp
 		events/SetPortValueEvent.cpp
