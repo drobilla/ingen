@@ -91,11 +91,7 @@ OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t
 	lo_server_add_method(_server, "/ingen/load_plugins", "i", load_plugins_cb, this);
 	lo_server_add_method(_server, "/ingen/activate", "i", engine_activate_cb, this);
 	lo_server_add_method(_server, "/ingen/deactivate", "i", engine_deactivate_cb, this);
-	lo_server_add_method(_server, "/ingen/new_patch", "isi", new_patch_cb, this);
 	lo_server_add_method(_server, "/ingen/clear_patch", "is", clear_patch_cb, this);
-	lo_server_add_method(_server, "/ingen/set_polyphony", "isi", set_polyphony_cb, this);
-	lo_server_add_method(_server, "/ingen/set_polyphonic", "isT", set_polyphonic_cb, this);
-	lo_server_add_method(_server, "/ingen/set_polyphonic", "isF", set_polyphonic_cb, this);
 	lo_server_add_method(_server, "/ingen/put", NULL, put_cb, this);
 	lo_server_add_method(_server, "/ingen/move", "iss", move_cb, this);
 	lo_server_add_method(_server, "/ingen/delete", "is", del_cb, this);
