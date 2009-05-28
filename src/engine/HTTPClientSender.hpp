@@ -74,10 +74,6 @@ public:
 
 	//virtual bool new_object(const Shared::GraphObject* object);
 
-	virtual void new_plugin(const Raul::URI&    uri,
-	                        const Raul::URI&    type_uri,
-	                        const Raul::Symbol& symbol);
-
 	virtual void put(const Raul::URI&                    path,
 	                 const Shared::Resource::Properties& properties);
 

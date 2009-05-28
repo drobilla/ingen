@@ -259,26 +259,4 @@ OSCClientSender::activity(const Path& path)
 }
 
 
-/** \page client_osc_namespace
- * <h2>/ingen/plugin</h2>
- * \arg \b uri (string) - URI of plugin (e.g. http://example.org/filtermatic)
- * \arg \b type (string) - Type of plugin (e.g. "lv2:Plugin", "ingen:LADSPAPlugin")
- * \arg \b symbol (string) - Valid symbol for plugin (default symbol for nodes) (e.g. "adsr")
- * \arg \b name (string) - Descriptive human-readable name of plugin (e.g. "ADSR Envelope")
- *
- * Notification of the existence of a plugin.
- */
-void
-OSCClientSender::new_plugin(const URI&    uri,
-                            const URI&    type_uri,
-                            const Symbol& symbol)
-{
-	lo_message m = lo_message_new();
-	lo_message_add_string(m, uri.c_str());
-	lo_message_add_string(m, type_uri.c_str());
-	lo_message_add_string(m, symbol.c_str());
-	send_message("/ingen/plugin", m);
-}
-
-
 } // namespace Ingen

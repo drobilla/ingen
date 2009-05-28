@@ -71,10 +71,6 @@ public:
 
 	void error(const std::string& msg);
 
-	virtual void new_plugin(const Raul::URI&    uri,
-	                        const Raul::URI&    type_uri,
-	                        const Raul::Symbol& symbol);
-
 	virtual void put(const Raul::URI&                    path,
 	                 const Shared::Resource::Properties& properties);
 

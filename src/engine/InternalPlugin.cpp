@@ -25,8 +25,17 @@
 #include "AudioDriver.hpp"
 
 using namespace std;
+using namespace Raul;
 
 namespace Ingen {
+
+
+InternalPlugin::InternalPlugin(const std::string& uri, const std::string& symbol)
+	: PluginImpl(Plugin::Internal, uri)
+	, _symbol(symbol)
+{
+	set_property("rdf:type", Atom(Atom::URI, "ingen:Internal"));
+}
 
 
 NodeImpl*

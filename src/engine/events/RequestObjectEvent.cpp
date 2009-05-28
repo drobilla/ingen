@@ -75,7 +75,7 @@ RequestObjectEvent::post_process()
 		if (_object)
 			_responder->client()->put(_uri, _object->properties());
 		else if (_plugin)
-			_responder->client()->new_plugin(_uri, _plugin->type_uri(), _plugin->symbol());
+			_responder->client()->put(_uri, _plugin->properties());
 	} else {
 		_responder->respond_error("Unable to find client to send object.");
 	}

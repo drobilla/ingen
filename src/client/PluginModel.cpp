@@ -16,6 +16,7 @@
  */
 
 #include <sstream>
+#include <ctype.h>
 #include "ingen-config.h"
 #include "raul/Path.hpp"
 #include "raul/Atom.hpp"
@@ -51,11 +52,70 @@ PluginModel::PluginModel(const URI& uri, const URI& type_uri)
 #endif
 	if (_type == Internal)
 		set_property("doap:name", Raul::Atom(uri.substr(uri.find_last_of("#") + 1).c_str()));
+
+	if (!get_property("lv2:symbol").is_valid()) {
+		size_t last_slash = uri.find_last_of("/");
+		size_t last_hash  = uri.find_last_of("#");
+		string symbol;
+		if (last_slash == string::npos && last_hash == string::npos) {
+			size_t last_colon = uri.find_last_of(":");
+			if (last_colon != string::npos)
+				symbol = uri.substr(last_colon + 1);
+			else
+				symbol = uri.str();
+		} else if (last_slash == string::npos) {
+			symbol = uri.substr(last_hash + 1);
+		} else if (last_hash == string::npos) {
+			symbol = uri.substr(last_slash + 1);
+		} else {
+			size_t first_delim = std::min(last_slash, last_hash);
+			size_t last_delim  = std::max(last_slash, last_hash);
+			if (isalpha(uri.str()[last_delim + 1]))
+				symbol = uri.str().substr(last_delim + 1);
+			else
+				symbol = uri.str().substr(first_delim + 1, last_delim - first_delim - 1);
+		}
+		set_property("lv2:symbol", Atom(Atom::STRING, symbol));
+	}
+}
+
+
+const std::string
+PluginModel::symbol()
+{
+	const Atom& val = get_property("lv2:symbol");
+	if (val.is_valid() && val.type() == Atom::STRING)
+		return val.get_string();
+
+#ifdef HAVE_SLV2
+	SLV2Value lv2_symbol_pred = slv2_value_new_uri(_slv2_world,
+		"http://lv2plug.in/ns/lv2core#symbol");
+	SLV2Values symbols = slv2_plugin_get_value(_slv2_plugin, lv2_symbol_pred);
+	for (unsigned i = 0; i < slv2_values_size(symbols); ++i) {
+		SLV2Value val = slv2_values_get_at(symbols, 0);
+		if (slv2_value_is_string(val)) {
+			cerr << uri() << " FOUND SYMBOL: " << slv2_value_as_string(val) << endl;
+			set_property("lv2:symbol", Atom(Atom::STRING, slv2_value_as_string(val)));
+			break;
+		}
+	}
+	slv2_values_free(symbols);
+	slv2_value_free(lv2_symbol_pred);
+#endif
+
+	return string_property("lv2:symbol");
+}
+
+
+const std::string
+PluginModel::name()
+{
+	return string_property("doap:name");
 }
 
 
 string
-PluginModel::default_node_symbol() const
+PluginModel::default_node_symbol()
 {
 	return Raul::Path::nameify(symbol());
 }

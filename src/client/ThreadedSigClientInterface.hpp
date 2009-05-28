@@ -50,7 +50,6 @@ public:
 	, response_ok_slot(signal_response_ok.make_slot())
 	, response_error_slot(signal_response_error.make_slot())
 	, error_slot(signal_error.make_slot())
-	, new_plugin_slot(signal_new_plugin.make_slot())
 	, new_port_slot(signal_new_port.make_slot())
 	, put_slot(signal_put.make_slot())
 	, connection_slot(signal_connection.make_slot())
@@ -88,9 +87,6 @@ public:
 
 	void error(const std::string& msg)
 		{ push_sig(sigc::bind(error_slot, msg)); }
-
-	void new_plugin(const Raul::URI& uri, const Raul::URI& type_uri, const Raul::Symbol& symbol)
-		{ push_sig(sigc::bind(new_plugin_slot, uri, type_uri, symbol)); }
 
 	void put(const Raul::URI& path, const Shared::Resource::Properties& properties)
 		{ push_sig(sigc::bind(put_slot, path, properties)); }

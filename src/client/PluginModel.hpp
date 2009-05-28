@@ -50,10 +50,10 @@ public:
 
 	Type type() const { return _type; }
 
-	const std::string symbol() const { return string_property("lv2:symbol"); }
-	const std::string name()   const { return string_property("doap:name"); }
+	const std::string symbol();
+	const std::string name();
 
-	std::string default_node_symbol() const;
+	std::string default_node_symbol();
 	std::string human_name();
 	std::string port_human_name(uint32_t index) const;
 

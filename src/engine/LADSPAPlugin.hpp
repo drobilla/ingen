@@ -42,12 +42,7 @@ public:
 	             const std::string& uri,
 	             unsigned long      id,
 	             const std::string& label,
-	             const std::string& name)
-		: PluginImpl(Plugin::LADSPA, uri, library_path)
-		, _id(id)
-		, _label(label)
-		, _name(Raul::Atom::STRING, name)
-	{}
+	             const std::string& name);
 
 	NodeImpl* instantiate(const std::string& name,
 	                      bool               polyphonic,

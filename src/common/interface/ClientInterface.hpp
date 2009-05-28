@@ -54,10 +54,6 @@ public:
 
 	virtual void error(const std::string& msg) = 0;
 
-	virtual void new_plugin(const Raul::URI&    uri,
-	                        const Raul::URI&    type_uri,
-	                        const Raul::Symbol& symbol) = 0;
-
 	virtual void activity(const Raul::Path& path) = 0;
 };
 

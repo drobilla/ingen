@@ -44,11 +44,7 @@ class NodeImpl;
 class InternalPlugin : public PluginImpl
 {
 public:
-	InternalPlugin(const std::string& uri,
-	               const std::string& symbol)
-		: PluginImpl(Plugin::Internal, uri)
-		, _symbol(symbol)
-	{}
+	InternalPlugin(const std::string& uri, const std::string& symbol);
 
 	NodeImpl* instantiate(const std::string& name,
 	                      bool               polyphonic,

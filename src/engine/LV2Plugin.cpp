@@ -30,6 +30,14 @@ using namespace Raul;
 namespace Ingen {
 
 
+LV2Plugin::LV2Plugin(SharedPtr<LV2Info> lv2_info, const std::string& uri)
+	: PluginImpl(Plugin::LV2, uri)
+	, _slv2_plugin(NULL)
+	, _lv2_info(lv2_info)
+{
+	set_property("rdf:type", Atom(Atom::URI, "lv2:Plugin"));
+}
+
 const string
 LV2Plugin::symbol() const
 {

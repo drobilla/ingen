@@ -18,14 +18,32 @@
 #include <cassert>
 #include <ladspa.h>
 #include <iostream>
+#include <raul/Symbol.hpp>
 #include "LADSPAPlugin.hpp"
 #include "LADSPANode.hpp"
 #include "Engine.hpp"
 #include "AudioDriver.hpp"
 
 using namespace std;
+using namespace Raul;
 
 namespace Ingen {
+
+
+LADSPAPlugin::LADSPAPlugin(
+		const std::string& library_path,
+		const std::string& uri,
+		unsigned long      id,
+		const std::string& label,
+		const std::string& name)
+	: PluginImpl(Plugin::LADSPA, uri, library_path)
+	, _id(id)
+	, _label(label)
+	, _name(Raul::Atom::STRING, name)
+{
+	set_property("rdf:type",   Atom(Atom::URI,    "ingen:LADSPAPlugin"));
+	set_property("lv2:symbol", Atom(Atom::STRING, Symbol::symbolify(label)));
+}
 
 
 const Raul::Atom&

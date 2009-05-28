@@ -157,20 +157,6 @@ HTTPClientSender::new_object(const Shared::GraphObject* object)
 
 
 void
-HTTPClientSender::new_plugin(const URI&    uri,
-                             const URI&    type_uri,
-                             const Symbol& symbol)
-{
-	/*lo_message m = lo_message_new();
-	lo_message_add_string(m, uri.c_str());
-	lo_message_add_string(m, type_uri.c_str());
-	lo_message_add_string(m, symbol.c_str());
-	lo_message_add_string(m, name.c_str());
-	send_message("/ingen/plugin", m);*/
-}
-
-
-void
 HTTPClientSender::move(const Path& old_path, const Path& new_path)
 {
 	string msg = string(

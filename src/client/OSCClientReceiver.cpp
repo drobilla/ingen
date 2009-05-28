@@ -303,17 +303,5 @@ OSCClientReceiver::_response_error_cb(const char* path, const char* types, lo_ar
 }
 
 
-/** A plugin info response from the server, in response to an /ingen/send_plugins
- */
-int
-OSCClientReceiver::_plugin_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
-{
-	assert(argc == 3 && !strcmp(types, "sss"));
-	_target->new_plugin(&argv[0]->s, &argv[1]->s, &argv[2]->s); // uri, type, symbol
-
-	return 0;
-}
-
-
 } // namespace Client
 } // namespace Ingen

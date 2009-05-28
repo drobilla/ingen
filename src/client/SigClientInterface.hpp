@@ -50,7 +50,6 @@ public:
 	sigc::signal<void>                                              signal_bundle_begin;
 	sigc::signal<void>                                              signal_bundle_end;
 	sigc::signal<void, std::string>                                 signal_error;
-	sigc::signal<void, Raul::URI, Raul::URI, Raul::Symbol>          signal_new_plugin;
 	sigc::signal<void, Raul::Path, uint32_t>                        signal_new_patch;
 	sigc::signal<void, Raul::Path, Raul::URI, uint32_t, bool>       signal_new_port;
 	sigc::signal<void, Raul::URI, Shared::Resource::Properties>     signal_put;
@@ -94,9 +93,6 @@ protected:
 
 	void error(const std::string& msg)
 		{ if (_enabled) signal_error.emit(msg); }
-
-	void new_plugin(const Raul::URI& uri, const Raul::URI& type_uri, const Raul::Symbol& symbol)
-		{ if (_enabled) signal_new_plugin.emit(uri, type_uri, symbol); }
 
 	void put(const Raul::URI& path, const Shared::Resource::Properties& properties)
 		{ if (_enabled) signal_put.emit(path, properties); }

@@ -45,7 +45,6 @@ ClientStore::ClientStore(SharedPtr<EngineInterface> engine, SharedPtr<SigClientI
 
 	emitter->signal_object_deleted.connect(sigc::mem_fun(this, &ClientStore::del));
 	emitter->signal_object_moved.connect(sigc::mem_fun(this, &ClientStore::move));
-	emitter->signal_new_plugin.connect(sigc::mem_fun(this, &ClientStore::new_plugin));
 	emitter->signal_put.connect(sigc::mem_fun(this, &ClientStore::put));
 	emitter->signal_clear_patch.connect(sigc::mem_fun(this, &ClientStore::clear_patch));
 	emitter->signal_connection.connect(sigc::mem_fun(this, &ClientStore::connect));
@@ -264,28 +263,28 @@ ClientStore::move(const Path& old_path_str, const Path& new_path_str)
 	}*/
 }
 
-void
-ClientStore::new_plugin(const URI& uri, const URI& type_uri, const Symbol& symbol)
-{
-	SharedPtr<PluginModel> p(new PluginModel(uri, type_uri));
-	p->set_property("lv2:symbol", Atom(Atom::STRING, symbol));
-	add_plugin(p);
-	//resolve_plugin_orphans(p);
-}
-
 
 void
 ClientStore::put(const URI& uri, const Resource::Properties& properties)
 {
-	size_t hash = uri.find("#");
-	bool   meta = (hash != string::npos);
-	Path   path(meta ? (string("/") + uri.chop_start("#")) : uri.str());
-
 	typedef Resource::Properties::const_iterator iterator;
-	cerr << "CLIENT PUT " << uri << " (" << path << ") {" << endl;
+	cerr << "CLIENT PUT " << uri << " {" << endl;
 	for (iterator i = properties.begin(); i != properties.end(); ++i)
 		cerr << "\t" << i->first << " = " << i->second << " :: " << i->second.type() << endl;
 	cerr << "}" << endl;
+
+	bool is_path = Path::is_valid(uri.str());
+	bool is_meta = uri.substr(0, 8) == "meta:#";
+
+	if (!(is_path || is_meta)) {
+		const URI& type_uri = properties.find("rdf:type")->second.get_uri();
+		SharedPtr<PluginModel> p(new PluginModel(uri, type_uri));
+		p->set_properties(properties);
+		add_plugin(p);
+		return;
+	}
+
+	Path path(is_meta ? (string("/") + uri.chop_start("#")) : uri.str());
 
 	SharedPtr<ObjectModel> obj = PtrCast<ObjectModel>(object(path));
 	if (obj) {

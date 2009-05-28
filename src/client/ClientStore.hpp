@@ -67,7 +67,6 @@ public:
 	void                     set_plugins(SharedPtr<Plugins> p) { _plugins = p; }
 
 	// CommonInterface
-	void new_plugin(const Raul::URI& uri, const Raul::URI& type_uri, const Raul::Symbol& symbol);
 	bool new_object(const Shared::GraphObject* object);
 	void put(const Raul::URI& path, const Shared::Resource::Properties& properties);
 	void move(const Raul::Path& old_path, const Raul::Path& new_path);
@@ -78,8 +77,8 @@ public:
 	void disconnect(const Raul::Path& src_port_path, const Raul::Path& dst_port_path);
 	void del(const Raul::Path& path);
 
-	sigc::signal<void, SharedPtr<ObjectModel> > signal_new_object;
-	sigc::signal<void, SharedPtr<PluginModel> > signal_new_plugin;
+	sigc::signal< void, SharedPtr<ObjectModel> > signal_new_object;
+	sigc::signal< void, SharedPtr<PluginModel> > signal_new_plugin;
 
 private:
 

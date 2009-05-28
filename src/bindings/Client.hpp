@@ -38,10 +38,6 @@ public:
 
 	virtual void error(const std::string& msg)  {}
 
-	virtual void new_plugin(const std::string& uri,
-	                        const std::string& type_uri,
-	                        const std::string& symbol) {}
-
 	void put(const URI&                  path,
 	         const Resource::Properties& properties) {}
 
