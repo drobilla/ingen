@@ -488,9 +488,9 @@ Parser::parse_patch(
 		if (node.type() == Redland::Node::RESOURCE && type_i != types.end()) {
 			const string key = world->rdf_world->qualify(predicate.to_string());
 			if (patch_i != patch_nodes.end()) {
-				patch_i->second.insert(make_pair(key, object));
+				patch_i->second.insert(make_pair(key, AtomRDF::node_to_atom(object)));
 			} else if (plug_i != plugin_nodes.end()) {
-				plug_i->second.insert(make_pair(key, object));
+				plug_i->second.insert(make_pair(key, AtomRDF::node_to_atom(object)));
 			} else {
 				cerr << "WARNING: Unrecognized node: " << node.to_string() << endl;
 			}
@@ -594,7 +594,7 @@ Parser::parse_patch(
 		Objects::iterator ports_i = patch_ports.find(port_uri);
 		if (ports_i == patch_ports.end())
 			ports_i = patch_ports.insert(make_pair(port_uri, Properties())).first;
-		ports_i->second.insert(make_pair(key, (*i)["val"]));
+		ports_i->second.insert(make_pair(key, AtomRDF::node_to_atom((*i)["val"])));
 	}
 
 	for (Objects::iterator i = patch_ports.begin(); i != patch_ports.end(); ++i) {
