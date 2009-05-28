@@ -28,8 +28,14 @@ namespace Shared { class ResourceImpl; }
 
 class GraphObjectImpl;
 
+/** \page methods
+ * <h2>GET</h2>
+ * As per HTTP (RFC2616 S9.3).
+ *
+ * Get the description of a graph object.
+ */
 
-/** A request from a client for a piece of variable.
+/** GET an object (see \ref methods).
  *
  * \ingroup engine
  */
@@ -40,7 +46,7 @@ public:
 	                     SharedPtr<Responder> responder,
 	                     SampleCount          timestamp,
 	                     bool                 meta,
-	                     const Raul::URI&     path,
+	                     const Raul::URI&     subject,
 	                     const Raul::URI&     key);
 
 	void pre_process();
