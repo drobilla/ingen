@@ -17,7 +17,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <getopt.h>
+#include "getopt.h"
 
 #include "cmdline.h"
 
@@ -28,18 +28,18 @@ const char *gengetopt_args_info_usage = "Usage: ingen [OPTIONS]...";
 const char *gengetopt_args_info_description = "Ingen can be run in various configurations. The engine can\nrun as a stand-alone server controlled by OSC, or internal to\nanother process (e.g. the GUI).  The GUI can communicate with the engine\nvia either method, and many GUIs (or other things) may connect to an\nengine via OSC.\n\nExamples:\n\n  ingen -e                     - Run an engine, listen for OSC           \n  ingen -g                     - Run a GUI, connect via OSC            \n  ingen -eg                    - Run an engine and a GUI in one process\n\nThe -l (load) option can be used in all cases:\n	\n  ingen -el patch.ingen.ttl    - Run an engine and load a patch\n  ingen -gl patch.ingen.ttl    - Run a GUI and load a patch\n  ingen -egl patch.ingen.ttl   - Run an engine and a GUI and load a patch\n\nOptions:\n";
 
 const char *gengetopt_args_info_help[] = {
-  "  -h, --help              Print help and exit",
-  "  -V, --version           Print version and exit",
-  "  -C, --client-port=INT   Client OSC port",
-  "  -c, --connect=STRING    Connect to existing engine at URI  \n                            (default=`osc.udp://localhost:16180')",
-  "  -e, --engine            Run (JACK) engine  (default=off)",
-  "  -E, --engine-port=INT   Engine OSC port  (default=`16180')",
-  "  -g, --gui               Launch the GTK graphical interface  (default=off)",
-  "  -n, --jack-name=STRING  JACK client name  (default=`ingen')",
-  "  -l, --load=STRING       Load patch",
-  "  -p, --parallelism=INT   Number of concurrent process threads  (default=`1')",
-  "  -L, --path=STRING       Target path for loaded patch",
-  "  -r, --run=STRING        Run script",
+  "  -h, --help                Print help and exit",
+  "  -V, --version             Print version and exit",
+  "  -C, --client-port=INT     Client OSC port",
+  "  -c, --connect=STRING      Connect to existing engine at URI  \n                              (default=`osc.udp://localhost:16180')",
+  "  -e, --engine              Run (JACK) engine  (default=off)",
+  "  -E, --engine-port=INT     Engine listen port  (default=`16180')",
+  "  -n, --engine-name=STRING  Engine JACK client name  (default=`ingen')",
+  "  -g, --gui                 Launch the GTK graphical interface  (default=off)",
+  "  -l, --load=STRING         Load patch",
+  "  -p, --parallelism=INT     Number of concurrent process threads  (default=`1')",
+  "  -L, --path=STRING         Target path for loaded patch",
+  "  -r, --run=STRING          Run script",
     0
 };
 
@@ -71,8 +71,8 @@ void clear_given (struct gengetopt_args_info *args_info)
   args_info->connect_given = 0 ;
   args_info->engine_given = 0 ;
   args_info->engine_port_given = 0 ;
+  args_info->engine_name_given = 0 ;
   args_info->gui_given = 0 ;
-  args_info->jack_name_given = 0 ;
   args_info->load_given = 0 ;
   args_info->parallelism_given = 0 ;
   args_info->path_given = 0 ;
@@ -88,9 +88,9 @@ void clear_args (struct gengetopt_args_info *args_info)
   args_info->engine_flag = 0;
   args_info->engine_port_arg = 16180;
   args_info->engine_port_orig = NULL;
+  args_info->engine_name_arg = gengetopt_strdup ("ingen");
+  args_info->engine_name_orig = NULL;
   args_info->gui_flag = 0;
-  args_info->jack_name_arg = gengetopt_strdup ("ingen");
-  args_info->jack_name_orig = NULL;
   args_info->load_arg = NULL;
   args_info->load_orig = NULL;
   args_info->parallelism_arg = 1;
@@ -113,8 +113,8 @@ void init_args_info(struct gengetopt_args_info *args_info)
   args_info->connect_help = gengetopt_args_info_help[3] ;
   args_info->engine_help = gengetopt_args_info_help[4] ;
   args_info->engine_port_help = gengetopt_args_info_help[5] ;
-  args_info->gui_help = gengetopt_args_info_help[6] ;
-  args_info->jack_name_help = gengetopt_args_info_help[7] ;
+  args_info->engine_name_help = gengetopt_args_info_help[6] ;
+  args_info->gui_help = gengetopt_args_info_help[7] ;
   args_info->load_help = gengetopt_args_info_help[8] ;
   args_info->parallelism_help = gengetopt_args_info_help[9] ;
   args_info->path_help = gengetopt_args_info_help[10] ;
@@ -201,8 +201,8 @@ cmdline_parser_release (struct gengetopt_args_info *args_info)
   free_string_field (&(args_info->connect_arg));
   free_string_field (&(args_info->connect_orig));
   free_string_field (&(args_info->engine_port_orig));
-  free_string_field (&(args_info->jack_name_arg));
-  free_string_field (&(args_info->jack_name_orig));
+  free_string_field (&(args_info->engine_name_arg));
+  free_string_field (&(args_info->engine_name_orig));
   free_string_field (&(args_info->load_arg));
   free_string_field (&(args_info->load_orig));
   free_string_field (&(args_info->parallelism_orig));
@@ -251,10 +251,10 @@ cmdline_parser_dump(FILE *outfile, struct gengetopt_args_info *args_info)
     write_into_file(outfile, "engine", 0, 0 );
   if (args_info->engine_port_given)
     write_into_file(outfile, "engine-port", args_info->engine_port_orig, 0);
+  if (args_info->engine_name_given)
+    write_into_file(outfile, "engine-name", args_info->engine_name_orig, 0);
   if (args_info->gui_given)
     write_into_file(outfile, "gui", 0, 0 );
-  if (args_info->jack_name_given)
-    write_into_file(outfile, "jack-name", args_info->jack_name_orig, 0);
   if (args_info->load_given)
     write_into_file(outfile, "load", args_info->load_orig, 0);
   if (args_info->parallelism_given)
@@ -517,8 +517,8 @@ cmdline_parser_internal (int argc, char * const *argv, struct gengetopt_args_inf
         { "connect",	1, NULL, 'c' },
         { "engine",	0, NULL, 'e' },
         { "engine-port",	1, NULL, 'E' },
+        { "engine-name",	1, NULL, 'n' },
         { "gui",	0, NULL, 'g' },
-        { "jack-name",	1, NULL, 'n' },
         { "load",	1, NULL, 'l' },
         { "parallelism",	1, NULL, 'p' },
         { "path",	1, NULL, 'L' },
@@ -526,7 +526,7 @@ cmdline_parser_internal (int argc, char * const *argv, struct gengetopt_args_inf
         { NULL,	0, NULL, 0 }
       };
 
-      c = getopt_long (argc, argv, "hVC:c:eE:gn:l:p:L:r:", long_options, &option_index);
+      c = getopt_long (argc, argv, "hVC:c:eE:n:gl:p:L:r:", long_options, &option_index);
 
       if (c == -1) break;	/* Exit from `while (1)' loop.  */
 
@@ -576,7 +576,7 @@ cmdline_parser_internal (int argc, char * const *argv, struct gengetopt_args_inf
             goto failure;
 
           break;
-        case 'E':	/* Engine OSC port.  */
+        case 'E':	/* Engine listen port.  */
 
 
           if (update_arg( (void *)&(args_info->engine_port_arg),
@@ -588,24 +588,24 @@ cmdline_parser_internal (int argc, char * const *argv, struct gengetopt_args_inf
             goto failure;
 
           break;
+        case 'n':	/* Engine JACK client name.  */
+
+
+          if (update_arg( (void *)&(args_info->engine_name_arg),
+               &(args_info->engine_name_orig), &(args_info->engine_name_given),
+              &(local_args_info.engine_name_given), optarg, 0, "ingen", ARG_STRING,
+              check_ambiguity, override, 0, 0,
+              "engine-name", 'n',
+              additional_error))
+            goto failure;
+
+          break;
         case 'g':	/* Launch the GTK graphical interface.  */
 
 
           if (update_arg((void *)&(args_info->gui_flag), 0, &(args_info->gui_given),
               &(local_args_info.gui_given), optarg, 0, 0, ARG_FLAG,
               check_ambiguity, override, 1, 0, "gui", 'g',
-              additional_error))
-            goto failure;
-
-          break;
-        case 'n':	/* JACK client name.  */
-
-
-          if (update_arg( (void *)&(args_info->jack_name_arg),
-               &(args_info->jack_name_orig), &(args_info->jack_name_given),
-              &(local_args_info.jack_name_given), optarg, 0, "ingen", ARG_STRING,
-              check_ambiguity, override, 0, 0,
-              "jack-name", 'n',
               additional_error))
             goto failure;
 
