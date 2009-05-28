@@ -269,7 +269,9 @@ QueuedEngineInterface::set_property(const URI&  uri,
 	size_t hash = uri.find("#");
 	bool   meta = (hash != string::npos);
 	Path path = meta ? (string("/") + path.chop_start("/")) : uri.str();
-	push_queued(new SetMetadataEvent(_engine, _responder, now(), meta, path, predicate, value));
+	Resource::Properties properties;
+	properties.insert(make_pair(predicate, value));
+	push_queued(new SetMetadataEvent(_engine, _responder, now(), meta, path, properties));
 }
 
 // Requests //

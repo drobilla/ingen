@@ -34,29 +34,6 @@ namespace Ingen {
 
 
 SetMetadataEvent::SetMetadataEvent(
-		Engine&              engine,
-		SharedPtr<Responder> responder,
-		SampleCount          timestamp,
-		bool                 meta,
-		const URI&           subject,
-		const URI&           key,
-		const Atom&          value)
-	: QueuedEvent(engine, responder, timestamp)
-	, _error(NO_ERROR)
-	, _subject(subject)
-	, _object(NULL)
-	, _patch(NULL)
-	, _compiled_patch(NULL)
-	, _is_meta(meta)
-	, _success(false)
-{
-	cerr << "SET " << subject << " : " << key << " = " << value << endl;
-	assert(value.type() != Atom::URI || strcmp(value.get_uri(), "lv2:ControlPort"));
-	_properties.insert(make_pair(key, value));
-}
-
-
-SetMetadataEvent::SetMetadataEvent(
 		Engine&                             engine,
 		SharedPtr<Responder>                responder,
 		SampleCount                         timestamp,

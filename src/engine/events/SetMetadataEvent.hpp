@@ -30,23 +30,36 @@ class GraphObjectImpl;
 class PatchImpl;
 class CompiledPatch;
 
-
-/** An event to set a piece of variable for an GraphObjectImpl.
+/** \page methods
+ * <h2>POST</h2>
+ * As per HTTP (RFC2616 S9.5).
  *
+ * Append properties to a graph object.
+ *
+ * An object can have several properties with a single predicate.
+ * POST appends properties without modifying or removing existing properties.
+ */
+
+/** \page methods
+ * <h2>PUT</h2>
+ * As per HTTP (RFC2616 S9.6).
+ *
+ * Set properties of a graph object, or create an object.
+ *
+ * An object can have several properties with a single predicate.
+ * \li If the object does not yet exist, the message must contain sufficient
+ * information to create the object (e.g. known rdf:type properties, etc.)
+ * \li If the object does exist, a PUT removes all existing object properties
+ * with predicates that match any property in the message, then adds all
+ * properties from the message.
+ */
+
+/** Set properties of a graph object.
  * \ingroup engine
  */
 class SetMetadataEvent : public QueuedEvent
 {
 public:
-	SetMetadataEvent(
-			Engine&              engine,
-			SharedPtr<Responder> responder,
-			SampleCount          timestamp,
-			bool                 meta,
-			const Raul::URI&     subject,
-			const Raul::URI&     key,
-			const Raul::Atom&    value);
-
 	SetMetadataEvent(
 			Engine&                             engine,
 			SharedPtr<Responder>                responder,
