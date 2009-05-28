@@ -29,13 +29,14 @@ using namespace Raul;
 namespace Ingen {
 namespace Client {
 
+using namespace Shared;
 
 OSCClientReceiver::OSCClientReceiver(int listen_port, SharedPtr<Shared::ClientInterface> target)
 	: _target(target)
 	, _listen_port(listen_port)
 	, _st(NULL)
 {
-	start(false); // true = dump, false = shutup
+	start(true); // true = dump, false = shutup
 }
 
 
@@ -179,6 +180,18 @@ int
 OSCClientReceiver::_clear_patch_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	_target->clear_patch((const char*)&argv[0]->s);
+	return 0;
+}
+
+
+int
+OSCClientReceiver::_put_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+{
+	const char* obj_path = &argv[0]->s;
+	Resource::Properties prop;
+	for (int i = 1; i < argc-1; i += 2)
+		prop.insert(make_pair(&argv[i]->s, AtomLiblo::lo_arg_to_atom(types[i+1], argv[i+1])));
+	_target->put(obj_path, prop);
 	return 0;
 }
 

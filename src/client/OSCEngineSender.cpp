@@ -80,14 +80,13 @@ OSCEngineSender::attach(int32_t ping_id, bool block)
 
 /** Register with the engine via OSC.
  *
- * Note that this does not actually use 'key', since the engine creates
+ * Note that this does not actually use 'client', since the engine creates
  * it's own key for OSC clients (namely the incoming URL), for NAT
  * traversal.  It is a parameter to remain compatible with EngineInterface.
  */
 void
 OSCEngineSender::register_client(Shared::ClientInterface* client)
 {
-	// FIXME: use parameters.. er, somehow.
 	send("/ingen/register_client", "i", next_id(), LO_ARGS_END, LO_ARGS_END);
 }
 
@@ -136,7 +135,15 @@ void
 OSCEngineSender::put(const Raul::URI&                    path,
                      const Shared::Resource::Properties& properties)
 {
-	cerr << "OSC ENGINE PUT " << path << endl;
+	typedef Shared::Resource::Properties::const_iterator iterator;
+	lo_message m = lo_message_new();
+	lo_message_add_int32(m, next_id());
+	lo_message_add_string(m, path.c_str());
+	for (iterator i = properties.begin(); i != properties.end(); ++i) {
+		lo_message_add_string(m, i->first.c_str());
+		Raul::AtomLiblo::lo_message_add_atom(m, i->second);
+	}
+	send_message("/ingen/put", m);
 }
 
 

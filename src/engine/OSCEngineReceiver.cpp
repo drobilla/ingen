@@ -22,8 +22,8 @@
 #include <string>
 #include <lo/lo.h>
 #include "ingen-config.h"
-#include "raul/SharedPtr.hpp"
 #include "raul/AtomLiblo.hpp"
+#include "raul/SharedPtr.hpp"
 #include "interface/ClientInterface.hpp"
 #include "ClientBroadcaster.hpp"
 #include "Engine.hpp"
@@ -33,8 +33,11 @@
 #include "ThreadManager.hpp"
 
 using namespace std;
+using namespace Raul;
 
 namespace Ingen {
+
+using namespace Shared;
 
 
 /*! \page engine_osc_namespace Engine OSC Namespace Documentation
@@ -390,8 +393,11 @@ OSCEngineReceiver::_engine_deactivate_cb(const char* path, const char* types, lo
 int
 OSCEngineReceiver::_put_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	//const char* path = &argv[1]->s;
-
+	const char* obj_path = &argv[1]->s;
+	Resource::Properties prop;
+	for (int i = 2; i < argc-1; i += 2)
+		prop.insert(make_pair(&argv[i]->s, AtomLiblo::lo_arg_to_atom(types[i+1], argv[i+1])));
+	put(obj_path, prop);
 	return 0;
 }
 
