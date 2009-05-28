@@ -95,14 +95,6 @@ private:
 			const Raul::Path&               path,
 			boost::optional<Properties>     data=boost::optional<Properties>());
 
-	boost::optional<Raul::Path> parse_port(
-			Ingen::Shared::World*           world,
-			Ingen::Shared::CommonInterface* target,
-			Redland::Model&                 model,
-			const Redland::Node&            subject,
-			const Raul::Path&               path,
-			boost::optional<Properties>     data=boost::optional<Properties>());
-
 	bool parse_properties(
 			Ingen::Shared::World*           world,
 			Ingen::Shared::CommonInterface* target,

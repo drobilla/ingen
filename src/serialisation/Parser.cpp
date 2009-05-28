@@ -286,7 +286,7 @@ Parser::parse(
 			} else if (rdf_class == node_class) {
 				ret = parse_node(world, target, model, subject, path, data);
 			} else if (rdf_class == in_port_class || rdf_class == out_port_class) {
-				ret = parse_port(world, target, model, subject, path, data);
+				cerr << "PARSE PORT" << endl;
 			}
 
 			if (!ret) {
@@ -647,50 +647,6 @@ Parser::parse_node(
 
 	parse_properties(world, target, model, subject, path, data);
 	return path;
-}
-
-
-boost::optional<Path>
-Parser::parse_port(
-		Ingen::Shared::World*                    world,
-		Ingen::Shared::CommonInterface*          target,
-		Redland::Model&                          model,
-		const Redland::Node&                     subject_node,
-		const Raul::Path&                        path,
-		boost::optional<GraphObject::Properties> data)
-{
-#if 0
-	const Glib::ustring subject = subject_node.to_turtle_token();
-
-	Redland::Query query(*world->rdf_world, Glib::ustring(
-		"SELECT DISTINCT ?type ?datatype ?value WHERE {\n") +
-		subject + " a ?type ;\n"
-		"           a ?datatype .\n"
-		" FILTER (?type != ?datatype && ((?type = lv2:InputPort) || (?type = lv2:OutputPort)))\n"
-		"OPTIONAL { " + subject + " ingen:value ?value . }\n"
-		"}");
-
-	Redland::Query::Results results = query.run(*world->rdf_world, model);
-
-	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
-		Glib::Mutex::Lock lock(world->rdf_world->mutex());
-		const string         type     = world->rdf_world->qualify((*i)["type"].to_string());
-		const string         datatype = world->rdf_world->qualify((*i)["datatype"].to_string());
-		const Redland::Node& val_node = (*i)["value"];
-
-		// TODO: read index for plugin wrapper
-		bool is_output = (type == "lv2:OutputPort");
-		target->new_port(path, datatype, 0, is_output);
-
-		if (val_node.to_string() != "")
-			target->set_port_value(path, AtomRDF::node_to_atom(val_node));
-	}
-
-	parse_properties(world, target, model, subject_node, path, data);
-	return path;
-#endif
-	cerr << "PARSE PORT" << endl;
-	return boost::optional<Path>();
 }
 
 
