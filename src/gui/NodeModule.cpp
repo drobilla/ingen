@@ -366,8 +366,10 @@ NodeModule::store_location()
 
 	if (existing_x.type() != Atom::FLOAT || existing_y.type() != Atom::FLOAT
 			|| existing_x.get_float() != x || existing_y.get_float() != y) {
-		App::instance().engine()->set_property(_node->path(), "ingenuity:canvas-x", Atom(x));
-		App::instance().engine()->set_property(_node->path(), "ingenuity:canvas-y", Atom(y));
+		Shared::Resource::Properties props;
+		props.insert(make_pair("ingenuity:canvas-x", Atom(x)));
+		props.insert(make_pair("ingenuity:canvas-y", Atom(y)));
+		App::instance().engine()->put(_node->path(), props);
 	}
 }
 

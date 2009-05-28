@@ -17,6 +17,7 @@
 
 #include <cassert>
 #include <iostream>
+#include <utility>
 #include "PatchPortModule.hpp"
 #include "interface/EngineInterface.hpp"
 #include "client/PatchModel.hpp"
@@ -30,6 +31,7 @@
 #include "WindowFactory.hpp"
 #include "PortMenu.hpp"
 
+using namespace std;
 using namespace Raul;
 
 namespace Ingen {
@@ -101,8 +103,10 @@ PatchPortModule::store_location()
 
 	if (existing_x.type() != Atom::FLOAT || existing_y.type() != Atom::FLOAT
 			|| existing_x.get_float() != x || existing_y.get_float() != y) {
-		App::instance().engine()->set_property(_model->meta_uri(), "ingenuity:canvas-x", Atom(x));
-		App::instance().engine()->set_property(_model->meta_uri(), "ingenuity:canvas-y", Atom(y));
+		Shared::Resource::Properties props;
+		props.insert(make_pair("ingenuity:canvas-x", Atom(x)));
+		props.insert(make_pair("ingenuity:canvas-y", Atom(y)));
+		App::instance().engine()->put(_model->meta_uri(), props);
 	}
 }
 
