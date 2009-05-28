@@ -153,9 +153,6 @@ CreatePortEvent::execute(ProcessContext& context)
 			_engine.midi_driver()->add_port(_driver_port);
 		}
 	}
-
-	if (_source)
-		_source->unblock();
 }
 
 

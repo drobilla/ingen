@@ -30,6 +30,7 @@
 #include "CreatePatchEvent.hpp"
 #include "CreateNodeEvent.hpp"
 #include "CreatePortEvent.hpp"
+#include "QueuedEventSource.hpp"
 
 
 using namespace std;
@@ -82,7 +83,6 @@ SetMetadataEvent::pre_process()
 
 	if (is_graph_object && !_object) {
 		Path path(_subject.str());
-		cerr << "CREATE NEW GRAPH OBJECT" << endl;
 		bool is_patch = false, is_node = false, is_port = false, is_output = false;
 		DataType data_type(DataType::UNKNOWN);
 		ResourceImpl::type(_properties, is_patch, is_node, is_port, is_output, data_type);
@@ -115,7 +115,8 @@ SetMetadataEvent::pre_process()
 	for (Properties::iterator p = _properties.begin(); p != _properties.end(); ++p) {
 		const Raul::URI&  key   = p->first;
 		const Raul::Atom& value = p->second;
-		GraphObjectImpl* obj = dynamic_cast<GraphObjectImpl*>(_object);
+		GraphObjectImpl*  obj   = dynamic_cast<GraphObjectImpl*>(_object);
+		SpecialType       op    = NONE;
 		if (obj) {
 			if (_is_meta)
 				obj->meta().set_property(key, value);
@@ -125,11 +126,11 @@ SetMetadataEvent::pre_process()
 			_patch = dynamic_cast<PatchImpl*>(_object);
 
 			if (key.str() == "ingen:broadcast") {
-				_types.push_back(ENABLE_BROADCAST);
+				op = ENABLE_BROADCAST;
 			} else if (_patch) {
 				if (key.str() == "ingen:enabled") {
 					if (value.type() == Atom::BOOL) {
-						_types.push_back(ENABLE);
+						op = ENABLE;
 						if (value.get_bool() && !_patch->compiled_patch())
 							_compiled_patch = _patch->compile();
 					} else {
@@ -137,29 +138,25 @@ SetMetadataEvent::pre_process()
 					}
 				} else if (key.str() == "ingen:polyphonic") {
 					if (value.type() == Atom::BOOL) {
-						_types.push_back(POLYPHONIC);
+						op = POLYPHONIC;
 					} else {
 						_error = BAD_TYPE;
 					}
 				} else if (key.str() == "ingen:polyphony") {
 					if (value.type() == Atom::INT) {
-						_types.push_back(POLYPHONY);
+						op = POLYPHONY;
 						_patch->prepare_internal_poly(value.get_int32());
 					} else {
 						_error = BAD_TYPE;
 					}
-				} else {
-					_object->set_property(key, value);
-					_types.push_back(NONE);
 				}
-				if (_error != NO_ERROR)
-					break;
 			}
-		} else {
-			_types.push_back(NONE);
 		}
 
-		_object->set_property(key, value);
+		if (_error != NO_ERROR)
+			break;
+
+		_types.push_back(op);
 	}
 
 	QueuedEvent::pre_process();
@@ -177,6 +174,8 @@ SetMetadataEvent::execute(ProcessContext& context)
 	if (_create_event) {
 		QueuedEvent::execute(context);
 		_create_event->execute(context);
+		if (_blocking)
+			_source->unblock();
 		return;
 	}
 

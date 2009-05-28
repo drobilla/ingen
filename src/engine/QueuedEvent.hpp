@@ -60,9 +60,9 @@ protected:
 	            bool                 blocking = false,
 	            QueuedEventSource*   source = NULL)
 		: Event(engine, responder, time)
+		, _source(source)
 		, _pre_processed(false)
 		, _blocking(blocking)
-		, _source(source)
 	{
 		if (blocking)
 			assert(_source);
@@ -71,14 +71,14 @@ protected:
 	// NULL event base (for internal events only!)
 	QueuedEvent(Engine& engine)
 		: Event(engine, SharedPtr<Responder>(), 0)
+		, _source(NULL)
 		, _pre_processed(false)
 		, _blocking(false)
-		, _source(NULL)
 	{}
 
+	QueuedEventSource* _source;
 	bool               _pre_processed;
 	bool               _blocking;
-	QueuedEventSource* _source;
 };
 
 

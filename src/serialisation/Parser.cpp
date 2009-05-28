@@ -582,12 +582,11 @@ Parser::parse_patch(
 			continue;
 		}
 
-		cerr << "FIXME: PARSE PATCH" << endl;
-		//target->put(port_path, i->second);
+		target->put(port_path, i->second);
 	}
 
-	parse_connections(world, target, model, subject, "/");
 	parse_properties(world, target, model, subject_node, patch_path, data);
+	parse_connections(world, target, model, subject, "/");
 
 
 	/* Enable */
