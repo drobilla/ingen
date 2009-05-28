@@ -278,8 +278,7 @@ ClientStore::put(const URI& uri, const Resource::Properties& properties)
 
 	if (!(is_path || is_meta)) {
 		const URI& type_uri = properties.find("rdf:type")->second.get_uri();
-		SharedPtr<PluginModel> p(new PluginModel(uri, type_uri));
-		p->set_properties(properties);
+		SharedPtr<PluginModel> p(new PluginModel(uri, type_uri, properties));
 		add_plugin(p);
 		return;
 	}

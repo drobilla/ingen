@@ -38,10 +38,12 @@ SLV2Plugins PluginModel::_slv2_plugins = NULL;
 Redland::World* PluginModel::_rdf_world = NULL;
 
 
-PluginModel::PluginModel(const URI& uri, const URI& type_uri)
+PluginModel::PluginModel(const URI& uri, const URI& type_uri, const Resource::Properties& properties)
 	: ResourceImpl(uri)
 	, _type(type_from_uri(_rdf_world->prefixes().qualify(type_uri.str())))
 {
+	add_properties(properties);
+
 	Glib::Mutex::Lock lock(_rdf_world->mutex());
 	assert(_rdf_world);
 	add_property("rdf:type", Raul::Atom(Raul::Atom::URI, this->type_uri()));

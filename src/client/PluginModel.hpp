@@ -46,7 +46,10 @@ class PluginModel : public Ingen::Shared::Plugin
                   , public Ingen::Shared::ResourceImpl
 {
 public:
-	PluginModel(const Raul::URI& uri, const Raul::URI& type_uri);
+	PluginModel(
+			const Raul::URI&                    uri,
+			const Raul::URI&                    type_uri,
+			const Shared::Resource::Properties& properties);
 
 	Type type() const { return _type; }
 
