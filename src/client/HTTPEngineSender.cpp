@@ -17,7 +17,11 @@
 
 #include <iostream>
 #include <libsoup/soup.h>
+#include "raul/AtomRDF.hpp"
+#include "redlandmm/Model.hpp"
+#include "module/World.hpp"
 #include "HTTPEngineSender.hpp"
+
 
 using namespace std;
 using namespace Raul;
@@ -27,8 +31,9 @@ using namespace Shared;
 namespace Client {
 
 
-HTTPEngineSender::HTTPEngineSender(const URI& engine_url)
-	: _engine_url(engine_url)
+HTTPEngineSender::HTTPEngineSender(const World* world, const URI& engine_url)
+	: _world(*world->rdf_world)
+	, _engine_url(engine_url)
 	, _id(0)
 	, _enabled(true)
 {
@@ -103,11 +108,32 @@ HTTPEngineSender::quit()
 // Object commands
 
 
+void
+HTTPEngineSender::message_callback(SoupSession* session, SoupMessage* msg, void* ptr)
+{
+	cerr << "HTTP CALLBACK" << endl;
+}
+
 
 void
-HTTPEngineSender::put(const Raul::URI&                    path,
-	                  const Shared::Resource::Properties& properties)
+HTTPEngineSender::put(const URI&                  uri,
+	                  const Resource::Properties& properties)
 {
+	const string path     = (uri.substr(0, 6) == "path:/") ? uri.substr(6) : uri.str();
+	const string full_uri = _engine_url.str() + "/" + path;
+
+	Redland::Model model(_world);
+	for (Resource::Properties::const_iterator i = properties.begin(); i != properties.end(); ++i)
+		model.add_statement(
+				Redland::Resource(_world, path),
+				i->first.str(),
+				AtomRDF::atom_to_node(_world, i->second));
+
+	const string str = model.serialise_to_string();
+	SoupMessage* msg = soup_message_new("PUT", full_uri.c_str());
+	assert(msg);
+	soup_message_set_request(msg, "application/x-turtle", SOUP_MEMORY_COPY, str.c_str(), str.length());
+	soup_session_send_message(_session, msg);
 }
 
 

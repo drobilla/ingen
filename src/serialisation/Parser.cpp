@@ -167,7 +167,7 @@ Parser::parse_update(
 		target->del(object.to_string());
 	}
 
-	// Variable settings
+	// Properties
 	query = Redland::Query(*world->rdf_world,
 		"SELECT DISTINCT ?s ?p ?o WHERE {\n"
 		"?s ?p ?o .\n"
@@ -177,17 +177,19 @@ Parser::parse_update(
 
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
 		Glib::Mutex::Lock lock(world->rdf_world->mutex());
-		const string         obj_uri((*i)["s"].to_string());
+		string               obj_uri((*i)["s"].to_string());
 		const string         key(world->rdf_world->qualify((*i)["p"].to_string()));
 		const Redland::Node& val_node((*i)["o"]);
 		const Atom           a(AtomRDF::node_to_atom(val_node));
+		if (obj_uri.find(":") == string::npos)
+			obj_uri = "path:" + obj_uri;
 		if (key != "")
 			target->set_property(obj_uri, key, a);
 	}
 
 
 	// Connections
-	parse_connections(world, target, model, base_uri, "/");
+	//parse_connections(world, target, model, base_uri, "/");
 
 	// Port values
 	query = Redland::Query(*world->rdf_world,
@@ -286,7 +288,7 @@ Parser::parse(
 			} else if (rdf_class == node_class) {
 				ret = parse_node(world, target, model, subject, path, data);
 			} else if (rdf_class == in_port_class || rdf_class == out_port_class) {
-				cerr << "PARSE PORT" << endl;
+				parse_properties(world, target, model, subject, string("path:") + path, data);
 			}
 
 			if (!ret) {
@@ -298,8 +300,12 @@ Parser::parse(
 				root_path = ret;
 
 		} else if (is_plugin) {
-			if (URI::is_valid(subject.to_string()))
-				parse_properties(world, target, model, subject, subject.to_string());
+			string subject_str = subject.to_string();
+			if (URI::is_valid(subject_str)) {
+				if (subject == document_uri)
+					subject_str = Path::root_uri;
+				parse_properties(world, target, model, subject, subject_str);
+			}
 		}
 
 	}

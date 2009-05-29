@@ -23,8 +23,12 @@
 #include <libsoup/soup.h>
 #include "raul/Path.hpp"
 #include "interface/EngineInterface.hpp"
+#include "redlandmm/World.hpp"
 
 namespace Ingen {
+
+namespace Shared { class World; }
+
 namespace Client {
 
 
@@ -35,9 +39,10 @@ namespace Client {
  *
  * \ingroup IngenClient
  */
-class HTTPEngineSender : public Shared::EngineInterface {
+class HTTPEngineSender : public Shared::EngineInterface
+{
 public:
-	HTTPEngineSender(const Raul::URI& engine_url);
+	HTTPEngineSender(const Shared::World* world, const Raul::URI& engine_url);
 	~HTTPEngineSender();
 
 	Raul::URI uri() const { return _engine_url; }
@@ -115,7 +120,10 @@ public:
 	void request_all_objects();
 
 protected:
+	static void message_callback(SoupSession* session, SoupMessage* msg, void* ptr);
+
 	SoupSession*    _session;
+	Redland::World& _world;
 	const Raul::URI _engine_url;
 	int             _client_port;
 	int32_t         _id;

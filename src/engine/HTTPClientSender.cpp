@@ -16,6 +16,7 @@
  */
 
 #include <string>
+#include <libsoup/soup.h>
 #include "raul/Atom.hpp"
 #include "raul/AtomRDF.hpp"
 #include "serialisation/Serialiser.hpp"
@@ -28,17 +29,18 @@ using namespace Raul;
 
 namespace Ingen {
 
+using namespace Shared;
+
 void
 HTTPClientSender::response_ok(int32_t id)
 {
-	cout << "HTTP OK" << endl;
 }
 
 
 void
 HTTPClientSender::response_error(int32_t id, const std::string& msg)
 {
-	cout << "HTTP ERROR" << endl;
+	cout << "HTTP ERROR " << id << ": " << msg << endl;
 }
 
 
@@ -50,10 +52,21 @@ HTTPClientSender::error(const std::string& msg)
 
 
 void
-HTTPClientSender::put(const URI&                          path,
-                      const Shared::Resource::Properties& properties)
+HTTPClientSender::put(const URI&                  uri,
+                      const Resource::Properties& properties)
 {
-	cerr << "HTTP CLIENT PUT " << path << endl;
+	const string path     = (uri.substr(0, 6) == "path:/") ? uri.substr(6) : uri.str();
+	const string full_uri = _url + "/" + path;
+
+	Redland::Model model(*_engine.world()->rdf_world);
+	for (Resource::Properties::const_iterator i = properties.begin(); i != properties.end(); ++i)
+		model.add_statement(
+				Redland::Resource(*_engine.world()->rdf_world, path),
+				i->first.str(),
+				AtomRDF::atom_to_node(*_engine.world()->rdf_world, i->second));
+
+	const string str = model.serialise_to_string();
+	send_chunk(str);
 }
 
 
@@ -138,16 +151,16 @@ HTTPClientSender::activity(const Path& path)
 }
 
 #if 0
-static void null_deleter(const Shared::GraphObject*) {}
+static void null_deleter(const GraphObject*) {}
 
 bool
-HTTPClientSender::new_object(const Shared::GraphObject* object)
+HTTPClientSender::new_object(const GraphObject* object)
 {
 	SharedPtr<Serialisation::Serialiser> serialiser = _engine.world()->serialiser;
 	serialiser->start_to_string("/", "");
 	// FIXME: kludge
 	// FIXME: engine boost dependency?
-	boost::shared_ptr<Shared::GraphObject> obj((Shared::GraphObject*)object, null_deleter);
+	boost::shared_ptr<GraphObject> obj((GraphObject*)object, null_deleter);
 	serialiser->serialise(obj);
 	string str = serialiser->finish();
 	send_chunk(str);

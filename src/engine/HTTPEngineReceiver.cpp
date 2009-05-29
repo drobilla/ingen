@@ -153,6 +153,7 @@ HTTPEngineReceiver::message_callback(SoupServer* server, SoupMessage* msg, const
 		soup_message_set_status(msg, SOUP_STATUS_OK);
 		soup_message_set_response(msg, mime_type, SOUP_MEMORY_COPY, r.c_str(), r.length());
 		return;
+
 	} else if (path.substr(0, 6) == "/patch") {
 		path = '/' + path.substr(6);
 
@@ -167,15 +168,10 @@ HTTPEngineReceiver::message_callback(SoupServer* server, SoupMessage* msg, const
 		soup_message_set_status(msg, SOUP_STATUS_OK);
 		soup_message_set_response(msg, mime_type, SOUP_MEMORY_COPY, buf, strlen(buf));
 		return;
-
-	} else {
-		soup_message_set_status(msg, SOUP_STATUS_NOT_FOUND);
-		soup_message_set_response(msg, "text/plain", SOUP_MEMORY_STATIC,
-				"Unknown path\n\n", 14);
-		return;
 	}
 
 	if (!Path::is_valid(path)) {
+		cerr << "HTTP BAD REQUEST" << endl;
 		soup_message_set_status (msg, SOUP_STATUS_BAD_REQUEST);
 		const string& err = (boost::format("Bad path: %1%") % path).str();
 		soup_message_set_response(msg, "text/plain", SOUP_MEMORY_COPY,
@@ -223,6 +219,7 @@ HTTPEngineReceiver::message_callback(SoupServer* server, SoupMessage* msg, const
 		// Be sure object doesn't exist
 		Store::const_iterator start = store->find(path);
 		if (start != store->end()) {
+			cerr << "HTTP CONFLICT" << endl;
 			soup_message_set_status(msg, SOUP_STATUS_CONFLICT);
 			return;
 		}
@@ -230,16 +227,18 @@ HTTPEngineReceiver::message_callback(SoupServer* server, SoupMessage* msg, const
 		// Get parser
 		SharedPtr<Parser> parser = me->_engine.world()->parser;
 		if (!parser) {
+			cerr << "HTTP INTERNAL ERROR" << endl;
 			soup_message_set_status(msg, SOUP_STATUS_INTERNAL_SERVER_ERROR);
 			return;
 		}
 
-		//cout << "POST: " << msg->request_body->data << endl;
+		parser->parse_string(me->_engine.world(), me, msg->request_body->data, "");
 
 		// Load object
 		soup_message_set_status(msg, SOUP_STATUS_NOT_IMPLEMENTED);
+
 	} else if (msg->method == SOUP_METHOD_POST) {
-		//cout << "PUT: " << msg->request_body->data << endl;
+		cout << "POST" << endl;
 		soup_message_set_status(msg, SOUP_STATUS_NOT_IMPLEMENTED);
 	} else {
 		soup_message_set_status(msg, SOUP_STATUS_NOT_IMPLEMENTED);

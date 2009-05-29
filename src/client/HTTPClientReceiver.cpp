@@ -99,7 +99,7 @@ HTTPClientReceiver::Listener::Listener(HTTPClientReceiver* receiver, const std::
 void
 HTTPClientReceiver::update(const std::string& str)
 {
-	cout << _parser->parse_update(_world, _target.get(), str, ".");
+	cout << _parser->parse_update(_world, _target.get(), str, "");
 }
 
 void
@@ -180,6 +180,7 @@ HTTPClientReceiver::message_callback(SoupSession* session, SoupMessage* msg, voi
 
 	} else {
 		cerr << "UNKNOWN MESSAGE: " << path << endl;
+		me->update(msg->response_body->data);
 	}
 }
 

@@ -26,6 +26,7 @@
 #include "HTTPEngineSender.hpp"
 #endif
 
+
 using namespace std;
 
 namespace Ingen {
@@ -33,7 +34,7 @@ namespace Client {
 
 
 SharedPtr<Ingen::Shared::EngineInterface>
-new_remote_interface(const std::string& url)
+new_remote_interface(Ingen::Shared::World* world, const std::string& url)
 {
 	const string scheme = url.substr(0, url.find(":"));
 
@@ -47,7 +48,7 @@ new_remote_interface(const std::string& url)
 
 #ifdef HAVE_SOUP
 	if (scheme == "http") {
-		HTTPEngineSender* hes = new HTTPEngineSender(url);
+		HTTPEngineSender* hes = new HTTPEngineSender(world, url);
 		hes->attach(rand(), true);
 		return SharedPtr<Shared::EngineInterface>(hes);
 	}

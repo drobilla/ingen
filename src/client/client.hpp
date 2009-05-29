@@ -24,13 +24,15 @@ namespace Ingen {
 
 class Engine;
 
-namespace Shared { class EngineInterface; }
+namespace Shared { class EngineInterface; class World; }
 
 namespace Client {
 
 extern "C" {
 
-	SharedPtr<Shared::EngineInterface> new_remote_interface(const std::string& url);
+	SharedPtr<Shared::EngineInterface> new_remote_interface(
+			Shared::World* world, const std::string& url);
+
 	SharedPtr<Shared::EngineInterface> new_queued_interface(SharedPtr<Ingen::Engine> engine);
 
 }

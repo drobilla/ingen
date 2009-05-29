@@ -189,10 +189,11 @@ main(int argc, char** argv)
 
 	/* If we don't have a local engine interface (for GUI), use network */
 	if (client_module && ! engine_interface) {
-		SharedPtr<Shared::EngineInterface> (*new_remote_interface)(const std::string&) = NULL;
+		SharedPtr<Shared::EngineInterface> (*new_remote_interface)
+				(Ingen::Shared::World*, const std::string&) = NULL;
 
 		if (client_module->get_symbol("new_remote_interface", (void*&)new_remote_interface)) {
-			engine_interface = new_remote_interface(args.connect_arg);
+			engine_interface = new_remote_interface(world, args.connect_arg);
 		} else {
 			cerr << "Unable to find symbol 'new_remote_interface' in "
 					"ingen_client module, aborting." << endl;
