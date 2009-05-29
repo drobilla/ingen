@@ -31,7 +31,6 @@
 namespace Ingen {
 namespace Client {
 
-
 class HTTPClientReceiver : public boost::noncopyable, public Raul::Deletable
 {
 public:
@@ -40,6 +39,9 @@ public:
 	                   SharedPtr<Shared::ClientInterface> target);
 
 	~HTTPClientReceiver();
+
+	static void send(SoupMessage* msg);
+	static void close_session();
 
 	std::string uri() const { return _url; }
 
@@ -70,7 +72,6 @@ private:
 
 	Shared::World*                   _world;
 	const std::string                _url;
-	SoupSession*                     _session;
 	SharedPtr<Serialisation::Parser> _parser;
 };
 

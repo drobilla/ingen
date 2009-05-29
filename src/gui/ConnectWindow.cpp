@@ -31,6 +31,7 @@
 #include "engine/Driver.hpp"
 #ifdef HAVE_SOUP
 #include "client/HTTPClientReceiver.hpp"
+#include "client/HTTPEngineSender.hpp"
 #endif
 #ifdef HAVE_LIBLO
 #include "client/OSCClientReceiver.hpp"
@@ -164,29 +165,50 @@ ConnectWindow::connect(bool existing)
 
 	Ingen::Shared::World* world = App::instance().world();
 
-#ifdef HAVE_LIBLO
+#if defined(HAVE_LIBLO) || defined(HAVE_SOUP)
 	if (_mode == CONNECT_REMOTE) {
-		if (!existing) {
-			Raul::URI engine_url("http://localhost:16180");
-			if (_widgets_loaded) {
-				const std::string& url_str = _url_entry->get_text();
-				if (Raul::URI::is_valid(url_str))
-					engine_url = url_str;
-			}
-			world->engine = SharedPtr<EngineInterface>(new OSCEngineSender(engine_url));
+#ifdef HAVE_LIBLO
+		string uri = "osc.udp://localhost:16180";
+#else
+		string uri = "http://localhost:16180";
+#endif
+		if (_widgets_loaded) {
+			const std::string& user_uri = _url_entry->get_text();
+			if (Raul::URI::is_valid(user_uri))
+				uri = user_uri;
 		}
 
+		if (existing)
+			uri = world->engine->uri().str();
+
+		// Create client-side listener
 		SharedPtr<ThreadedSigClientInterface> tsci(new ThreadedSigClientInterface(1024));
 		SharedPtr<Raul::Deletable> client;
 
-		const string& uri = world->engine->uri().str();
-		const string& scheme = uri.substr(0, uri.find(":"));
+		string scheme = uri.substr(0, uri.find(":"));
+
+#ifdef HAVE_LIBLO
 		if (scheme == "osc.udp" || scheme == "osc.tcp")
-			client = SharedPtr<OSCClientReceiver>(new OSCClientReceiver(16181, tsci)); // FIXME: port
+			client = SharedPtr<OSCClientReceiver>(new OSCClientReceiver(16181, tsci));
+#endif
 #ifdef HAVE_SOUP
-		else if (scheme == "http")
+		if (scheme == "http")
 			client = SharedPtr<HTTPClientReceiver>(new HTTPClientReceiver(world, uri, tsci));
 #endif
+
+		if (!existing) {
+#ifdef HAVE_LIBLO
+			if (scheme == "osc.udp" || scheme == "osc.tcp")
+				world->engine = SharedPtr<EngineInterface>(new OSCEngineSender(uri));
+#endif
+#ifdef HAVE_SOUP
+			if (scheme == "http")
+				world->engine = SharedPtr<EngineInterface>(new HTTPEngineSender(world, uri));
+#endif
+		} else {
+			uri = world->engine->uri().str();
+			scheme = uri.substr(0, uri.find(":"));
+		}
 
 		App::instance().attach(tsci, client);
 		App::instance().register_callbacks();
@@ -220,7 +242,7 @@ ConnectWindow::connect(bool existing)
 		}
 
 	} else
-#endif
+#endif // defined(HAVE_LIBLO) || defined(HAVE_SOUP)
 	if (_mode == INTERNAL) {
 		if ( ! world->local_engine) {
 			assert(_new_engine);

@@ -30,9 +30,13 @@ using namespace std;
 using namespace Raul;
 
 namespace Ingen {
+
 using namespace Serialisation;
+
 namespace Client {
 
+static SoupSession*        client_session  = NULL;
+static HTTPClientReceiver* client_receiver = NULL;
 
 HTTPClientReceiver::HTTPClientReceiver(
 		Shared::World*                     world,
@@ -41,15 +45,17 @@ HTTPClientReceiver::HTTPClientReceiver(
 	: _target(target)
 	, _world(world)
 	, _url(url)
-	, _session(NULL)
 {
 	start(false);
+	client_receiver = this;
 }
 
 
 HTTPClientReceiver::~HTTPClientReceiver()
 {
 	stop();
+	if (client_receiver == this)
+		client_receiver = NULL;
 }
 
 
@@ -65,7 +71,7 @@ HTTPClientReceiver::Listener::Listener(HTTPClientReceiver* receiver, const std::
 	string port_str = uri.substr(uri.find_last_of(":")+1);
 	int port = atoi(port_str.c_str());
 
-	cout << "HTTP listen URI: " << uri << " port: " << port << endl;
+	cout << "Client HTTP listen: " << uri << " (port " << port << ")" << endl;
 
 	struct sockaddr_in servaddr;
 
@@ -95,6 +101,28 @@ HTTPClientReceiver::Listener::Listener(HTTPClientReceiver* receiver, const std::
 		return;
 	}
 }
+
+
+void
+HTTPClientReceiver::send(SoupMessage* msg)
+{
+	if (!client_session)
+		client_session = soup_session_sync_new();
+
+	soup_session_queue_message(client_session, msg, message_callback, client_receiver);
+}
+
+
+void
+HTTPClientReceiver::close_session()
+{
+	if (client_session) {
+		SoupSession* s = client_session;
+		client_session = NULL;
+		soup_session_abort(s);
+	}
+}
+
 
 void
 HTTPClientReceiver::update(const std::string& str)
@@ -134,11 +162,19 @@ HTTPClientReceiver::Listener::_run()
 void
 HTTPClientReceiver::message_callback(SoupSession* session, SoupMessage* msg, void* ptr)
 {
+	if (ptr == NULL)
+		return;
+
 	HTTPClientReceiver* me = (HTTPClientReceiver*)ptr;
 	const string path = soup_message_get_uri(msg)->path;
 
 	/*cerr << "HTTP MESSAGE " << path << endl;
 	cerr << msg->response_body->data << endl;*/
+
+	if (msg->response_body->data == NULL) {
+		cerr << "EMPTY CLIENT MESSAGE" << endl;
+		return;
+	}
 
 	if (path == Path::root_uri) {
 		me->_target->response_ok(0);
@@ -199,31 +235,16 @@ HTTPClientReceiver::start(bool dump)
 		}
 	}
 
-	_session = soup_session_sync_new();
-	SoupMessage* msg;
-
-	msg = soup_message_new("GET", _url.c_str());
-	soup_session_queue_message(_session, msg, message_callback, this);
-
-	msg = soup_message_new("GET", (_url + "/plugins").c_str());
-	soup_session_queue_message(_session, msg, message_callback, this);
-
-	msg = soup_message_new("GET", (_url + "/patch").c_str());
-	soup_session_queue_message(_session, msg, message_callback, this);
-
-	msg = soup_message_new("GET", (_url + "/stream").c_str());
-	soup_session_queue_message(_session, msg, message_callback, this);
+	SoupMessage* msg = soup_message_new("GET", (_url + "/stream").c_str());
+	soup_session_queue_message(client_session, msg, message_callback, this);
 }
 
 
 void
 HTTPClientReceiver::stop()
 {
-	if (_session != NULL) {
-		//unregister_client();
-		soup_session_abort(_session);
-		_session = NULL;
-	}
+	//unregister_client();
+	close_session();
 }
 
 

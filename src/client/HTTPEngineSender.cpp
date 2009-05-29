@@ -21,6 +21,7 @@
 #include "redlandmm/Model.hpp"
 #include "module/World.hpp"
 #include "HTTPEngineSender.hpp"
+#include "HTTPClientReceiver.hpp"
 
 
 using namespace std;
@@ -46,15 +47,11 @@ HTTPEngineSender::~HTTPEngineSender()
 	soup_session_abort(_session);
 }
 
-
 void
 HTTPEngineSender::attach(int32_t ping_id, bool block)
 {
-	/*SoupMessage *msg;
-	msg = soup_message_new ("GET", _engine_url.c_str());
-	int status = soup_session_send_message (_session, msg);
-	cout << "STATUS: " << status << endl;
-	cout << "RESPONSE: " << msg->response_body->data << endl;*/
+	SoupMessage* msg = soup_message_new ("GET", _engine_url.c_str());
+	HTTPClientReceiver::send(msg);
 }
 
 
@@ -70,6 +67,8 @@ HTTPEngineSender::attach(int32_t ping_id, bool block)
 void
 HTTPEngineSender::register_client(ClientInterface* client)
 {
+	/*SoupMessage* msg = soup_message_new("GET", (_engine_url.str() + "/stream").c_str());
+	HTTPClientReceiver::send(msg);*/
 }
 
 
@@ -83,6 +82,8 @@ HTTPEngineSender::unregister_client(const URI& uri)
 void
 HTTPEngineSender::load_plugins()
 {
+	SoupMessage* msg = soup_message_new("GET", (_engine_url.str() + "/plugins").c_str());
+	HTTPClientReceiver::send(msg);
 }
 
 
@@ -107,12 +108,6 @@ HTTPEngineSender::quit()
 
 // Object commands
 
-
-void
-HTTPEngineSender::message_callback(SoupSession* session, SoupMessage* msg, void* ptr)
-{
-	cerr << "HTTP CALLBACK" << endl;
-}
 
 
 void
@@ -216,30 +211,39 @@ HTTPEngineSender::set_property(const URI&  subject,
 void
 HTTPEngineSender::ping()
 {
+	SoupMessage* msg = soup_message_new("GET", "");
+	HTTPClientReceiver::send(msg);
 }
 
 
 void
 HTTPEngineSender::get(const URI& uri)
 {
+	SoupMessage* msg = soup_message_new("GET", uri.c_str());
+	HTTPClientReceiver::send(msg);
 }
 
 
 void
 HTTPEngineSender::request_property(const URI& object_path, const URI& key)
 {
+	cerr << "HTTP REQUEST PROPERTY" << endl;
 }
 
 
 void
 HTTPEngineSender::request_plugins()
 {
+	SoupMessage* msg = soup_message_new("GET", (_engine_url.str() + "/plugins").c_str());
+	HTTPClientReceiver::send(msg);
 }
 
 
 void
 HTTPEngineSender::request_all_objects()
 {
+	SoupMessage* msg = soup_message_new("GET", (_engine_url.str() + "/patch").c_str());
+	HTTPClientReceiver::send(msg);
 }
 
 

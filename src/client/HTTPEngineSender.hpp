@@ -31,6 +31,7 @@ namespace Shared { class World; }
 
 namespace Client {
 
+class HTTPClientReceiver;
 
 /* HTTP (via libsoup) interface to the engine.
  *
@@ -120,8 +121,6 @@ public:
 	void request_all_objects();
 
 protected:
-	static void message_callback(SoupSession* session, SoupMessage* msg, void* ptr);
-
 	SoupSession*    _session;
 	Redland::World& _world;
 	const Raul::URI _engine_url;
