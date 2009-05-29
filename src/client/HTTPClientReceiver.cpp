@@ -99,7 +99,7 @@ HTTPClientReceiver::Listener::Listener(HTTPClientReceiver* receiver, const std::
 void
 HTTPClientReceiver::update(const std::string& str)
 {
-	cout << _parser->parse_update(_world, _target.get(), str, "");
+	cout << _parser->parse_update(_world, _target.get(), str, _url);
 }
 
 void
@@ -150,8 +150,7 @@ HTTPClientReceiver::message_callback(SoupSession* session, SoupMessage* msg, voi
 			Glib::Mutex::Lock lock(me->_mutex);
 			me->_target->response_ok(0);
 			me->_parser->parse_string(me->_world, me->_target.get(),
-					Glib::ustring(msg->response_body->data),
-					Glib::ustring(""));
+					Glib::ustring(msg->response_body->data), me->_url);
 		}
 
 	} else if (path == "/patch") {

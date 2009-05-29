@@ -133,11 +133,11 @@ Parser::parse_string(
 
 	cout << "Parsing " << (data_path ? data_path->str() : "*") << " from string";
 	if (base_uri != "")
-		cout << "(base " << base_uri << ")";
+		cout << " (base " << base_uri << ")";
 	cout << endl;
 
 	bool ret = parse(world, target, model, base_uri, data_path, parent, symbol, data);
-	const Glib::ustring subject = Glib::ustring("<") + base_uri + Glib::ustring(">");
+	Redland::Resource subject(*world->rdf_world, base_uri);
 	parse_connections(world, target, model, subject, parent ? *parent : "/");
 
 	return ret;
@@ -182,14 +182,16 @@ Parser::parse_update(
 		const Redland::Node& val_node((*i)["o"]);
 		const Atom           a(AtomRDF::node_to_atom(val_node));
 		if (obj_uri.find(":") == string::npos)
-			obj_uri = "path:" + obj_uri;
+			obj_uri = Path(obj_uri).str();
+		obj_uri = relative_uri(base_uri, obj_uri, true);
 		if (key != "")
-			target->set_property(obj_uri, key, a);
+			target->set_property(string("path:") + obj_uri, key, a);
 	}
 
 
 	// Connections
-	//parse_connections(world, target, model, base_uri, "/");
+	Redland::Resource subject(*world->rdf_world, base_uri);
+	parse_connections(world, target, model, subject, "/");
 
 	// Port values
 	query = Redland::Query(*world->rdf_world,
@@ -592,7 +594,7 @@ Parser::parse_patch(
 	}
 
 	parse_properties(world, target, model, subject_node, patch_path, data);
-	parse_connections(world, target, model, subject, "/");
+	parse_connections(world, target, model, subject_node, "/");
 
 
 	/* Enable */
@@ -661,12 +663,12 @@ Parser::parse_connections(
 		Ingen::Shared::World*           world,
 		Ingen::Shared::CommonInterface* target,
 		Redland::Model&                 model,
-		const Glib::ustring&            subject,
+		const Redland::Node&            subject,
 		const Raul::Path&               parent)
 {
 	Redland::Query query(*world->rdf_world, Glib::ustring(
 		"SELECT DISTINCT ?src ?dst WHERE {\n")
-			+ subject + " ingen:connection  ?connection .\n"
+			+ subject.to_turtle_token() + " ingen:connection  ?connection .\n"
 			"?connection  ingen:source      ?src ;\n"
 			"             ingen:destination ?dst .\n"
 		"}");

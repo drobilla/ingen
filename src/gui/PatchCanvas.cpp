@@ -315,7 +315,7 @@ PatchCanvas::add_plugin(SharedPtr<PluginModel> p)
 	if (_internal_menu && p->type() == Plugin::Internal) {
 		_internal_menu->items().push_back(Gtk::Menu_Helpers::MenuElem(p->human_name(),
 				sigc::bind(sigc::mem_fun(this, &PatchCanvas::load_plugin), p)));
-	} else if (_plugin_menu && p->type() == Plugin::LV2) {
+	} else if (_plugin_menu && p->type() == Plugin::LV2 && p->slv2_plugin()) {
 		SLV2PluginClass pc            = slv2_plugin_get_class(p->slv2_plugin());
 		SLV2Value       class_uri     = slv2_plugin_class_get_uri(pc);
 		const char*     class_uri_str = slv2_value_as_string(class_uri);

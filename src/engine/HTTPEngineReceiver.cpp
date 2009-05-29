@@ -124,7 +124,7 @@ HTTPEngineReceiver::message_callback(SoupServer* server, SoupMessage* msg, const
 
 	SharedPtr<Serialiser> serialiser = me->_engine.world()->serialiser;
 
-	const string base_uri = "";
+	const string base_uri = "path:/";
 	const char* mime_type = "text/plain";
 
 	if (!strcmp(msg->method, SOUP_METHOD_PUT)) {
@@ -232,7 +232,7 @@ HTTPEngineReceiver::message_callback(SoupServer* server, SoupMessage* msg, const
 			return;
 		}
 
-		parser->parse_string(me->_engine.world(), me, msg->request_body->data, "");
+		parser->parse_string(me->_engine.world(), me, msg->request_body->data, base_uri);
 
 		// Load object
 		soup_message_set_status(msg, SOUP_STATUS_NOT_IMPLEMENTED);

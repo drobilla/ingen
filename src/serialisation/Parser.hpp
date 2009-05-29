@@ -107,7 +107,7 @@ private:
 			Ingen::Shared::World*           world,
 			Ingen::Shared::CommonInterface* target,
 			Redland::Model&                 model,
-			const Glib::ustring&            subject,
+			const Redland::Node&            subject,
 			const Raul::Path&               patch);
 };
 
