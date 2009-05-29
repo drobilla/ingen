@@ -136,6 +136,11 @@ void
 HTTPEngineSender::move(const Path& old_path,
                        const Path& new_path)
 {
+	SoupMessage* msg = soup_message_new(SOUP_METHOD_MOVE,
+			(_engine_url.str() + old_path.str()).c_str());
+	soup_message_headers_append(msg->request_headers, "Destination",
+			(_engine_url.str()  + new_path.str()).c_str());
+	soup_session_send_message(_session, msg);
 }
 
 
@@ -202,6 +207,9 @@ HTTPEngineSender::set_property(const URI&  subject,
                                const URI&  predicate,
                                const Atom& value)
 {
+	Resource::Properties prop;
+	prop.insert(make_pair(predicate, value));
+	put(subject, prop);
 }
 
 
