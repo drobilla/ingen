@@ -331,9 +331,11 @@ LoadPluginWindow::add_clicked()
 			props.insert(make_pair("rdf:type",         Atom(Atom::URI, "ingen:Node")));
 			props.insert(make_pair("rdf:instanceOf",   Atom(Atom::URI, plugin->uri().str())));
 			props.insert(make_pair("ingen:polyphonic", bool(polyphonic)));
+			App::instance().engine()->put(path, props);
+
 			_node_name_entry->set_text(generate_module_name(++_plugin_name_offset));
 
-			// Cascade
+			// Cascade next node
 			Atom& x = _initial_data.find("ingenuity:canvas-x")->second;
 			x = Atom(x.get_float() + 20.0f);
 			Atom& y = _initial_data.find("ingenuity:canvas-y")->second;
