@@ -268,7 +268,7 @@ WindowFactory::present_load_plugin(SharedPtr<PatchModel> patch, GraphObject::Pro
 	int width, height;
 	w->second->get_size(width, height);
 	_load_plugin_win->set_default_size(width - width / 8, height / 2);
-	_load_plugin_win->set_title(string("Load Plugin - ") + patch->path().str() + " - Ingen");
+	_load_plugin_win->set_title(string("Load Plugin - ") + patch->path().chop_scheme() + " - Ingen");
 	_load_plugin_win->present(patch, data);
 }
 
