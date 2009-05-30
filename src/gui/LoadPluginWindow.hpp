@@ -52,7 +52,7 @@ public:
 	  add(_col_name);
 	  add(_col_type);
 	  add(_col_uri);
-	  add(_col_plugin_model);
+	  add(_col_plugin);
   }
 
   Gtk::TreeModelColumn<Glib::RefPtr<Gdk::Pixbuf> > _col_icon;
@@ -61,7 +61,7 @@ public:
   Gtk::TreeModelColumn<Glib::ustring>              _col_uri;
 
   // Not displayed:
-  Gtk::TreeModelColumn<SharedPtr<PluginModel> > _col_plugin_model;
+  Gtk::TreeModelColumn<SharedPtr<PluginModel> > _col_plugin;
 };
 
 
@@ -119,7 +119,10 @@ private:
 
 	void plugin_activated(const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* col);
 	void plugin_selection_changed();
-	std::string generate_module_name(int offset = 0);
+
+	std::string generate_module_name(SharedPtr<PluginModel> plugin, int offset = 0);
+
+	void load_plugin(const Gtk::TreeModel::iterator& iter);
 
 	GraphObject::Properties _initial_data;
 

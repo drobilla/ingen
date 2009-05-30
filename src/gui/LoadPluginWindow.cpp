@@ -28,6 +28,8 @@
 #include "PatchView.hpp"
 #include "PatchCanvas.hpp"
 
+#define NAME_ENTRY_MULTI_STRING "(multiple values)"
+
 using namespace std;
 using namespace Raul;
 
@@ -99,6 +101,7 @@ LoadPluginWindow::LoadPluginWindow(BaseObjectType* cobject, const Glib::RefPtr<G
 			sigc::mem_fun(this, &LoadPluginWindow::name_changed));
 
 	_selection = _plugins_treeview->get_selection();
+	_selection->set_mode(Gtk::SELECTION_MULTIPLE);
 	_selection->signal_changed().connect(
 			sigc::mem_fun(this, &LoadPluginWindow::plugin_selection_changed));
 
@@ -121,19 +124,22 @@ LoadPluginWindow::present(SharedPtr<PatchModel> patch, GraphObject::Properties d
 void
 LoadPluginWindow::name_changed()
 {
-	string name = _node_name_entry->get_text();
-	if (!Path::is_valid_name(name)) {
-		//m_message_label->set_text("Name contains invalid characters.");
-		_add_button->property_sensitive() = false;
-	} else if (App::instance().store()->find_child(_patch, name)) {
-		//m_message_label->set_text("An object already exists with that name.");
-		_add_button->property_sensitive() = false;
-	} else if (name.length() == 0) {
-		//m_message_label->set_text("");
-		_add_button->property_sensitive() = false;
-	} else {
-		//m_message_label->set_text("");
-		_add_button->property_sensitive() = true;
+	// Toggle add button sensitivity according name legality
+	if (_selection->get_selected_rows().size() == 1) {
+		string name = _node_name_entry->get_text();
+		if (!Path::is_valid_name(name)) {
+			//m_message_label->set_text("Name contains invalid characters.");
+			_add_button->property_sensitive() = false;
+		} else if (App::instance().store()->find_child(_patch, name)) {
+			//m_message_label->set_text("An object already exists with that name.");
+			_add_button->property_sensitive() = false;
+		} else if (name.length() == 0) {
+			//m_message_label->set_text("");
+			_add_button->property_sensitive() = false;
+		} else {
+			//m_message_label->set_text("");
+			_add_button->property_sensitive() = true;
+		}
 	}
 }
 
@@ -243,7 +249,7 @@ LoadPluginWindow::add_plugin(SharedPtr<PluginModel> plugin)
 	}
 
 	row[_plugins_columns._col_uri] = plugin->uri().str();
-	row[_plugins_columns._col_plugin_model] = plugin;
+	row[_plugins_columns._col_plugin] = plugin;
 
 	plugin->signal_property.connect(sigc::bind<0>(
 			sigc::mem_fun(this, &LoadPluginWindow::plugin_property_changed),
@@ -265,16 +271,25 @@ LoadPluginWindow::plugin_activated(const Gtk::TreeModel::Path& path, Gtk::TreeVi
 void
 LoadPluginWindow::plugin_selection_changed()
 {
-	Gtk::TreeModel::iterator iter = _selection->get_selected();
-	if (iter) {
-		Gtk::TreeModel::Row row = *iter;
-		boost::shared_ptr<PluginModel> p = row.get_value(_plugins_columns._col_plugin_model);
-		_plugin_name_offset = App::instance().store()->child_name_offset(
-				_patch->path(), p->default_node_symbol());
-		_node_name_entry->set_text(generate_module_name(_plugin_name_offset));
-	} else {
+	size_t n_selected = _selection->get_selected_rows().size();
+	if (n_selected == 0) {
 		_plugin_name_offset = 0;
 		_node_name_entry->set_text("");
+	} else if (n_selected == 1) {
+		Gtk::TreeModel::iterator iter = _plugins_liststore->get_iter(
+				*_selection->get_selected_rows().begin());
+		if (iter) {
+			Gtk::TreeModel::Row row = *iter;
+			boost::shared_ptr<PluginModel> p = row.get_value(_plugins_columns._col_plugin);
+			_plugin_name_offset = App::instance().store()->child_name_offset(
+					_patch->path(), p->default_node_symbol());
+			_node_name_entry->set_text(generate_module_name(p, _plugin_name_offset));
+		} else {
+			_plugin_name_offset = 0;
+			_node_name_entry->set_text("");
+		}
+	} else {
+		_node_name_entry->set_text(NAME_ENTRY_MULTI_STRING);
 	}
 }
 
@@ -286,62 +301,60 @@ LoadPluginWindow::plugin_selection_changed()
  * sends the notification back.
  */
 string
-LoadPluginWindow::generate_module_name(int offset)
+LoadPluginWindow::generate_module_name(SharedPtr<PluginModel> plugin, int offset)
 {
-	string name = "";
+	std::stringstream ss;
+	ss << plugin->default_node_symbol();
+	if (offset != 0)
+		ss << "_" << offset + 1;
+	return ss.str();
+}
 
-	Gtk::TreeModel::iterator iter = _selection->get_selected();
 
-	if (iter) {
-		Gtk::TreeModel::Row row = *iter;
-		SharedPtr<PluginModel> plugin = row.get_value(_plugins_columns._col_plugin_model);
-		std::stringstream ss;
-		ss << plugin->default_node_symbol();
-		if (offset != 0)
-			ss << "_" << offset + 1;
-		name = ss.str();
+void
+LoadPluginWindow::load_plugin(const Gtk::TreeModel::iterator& iter)
+{
+	Gtk::TreeModel::Row    row        = *iter;
+	SharedPtr<PluginModel> plugin     = row.get_value(_plugins_columns._col_plugin);
+	bool                   polyphonic = _polyphonic_checkbutton->get_active();
+	string                 name       = _node_name_entry->get_text();
+
+	if (name == "" || name == NAME_ENTRY_MULTI_STRING)
+		name = generate_module_name(plugin, _plugin_name_offset);
+
+	if (name == "" || !Symbol::is_valid(name)) {
+		Gtk::MessageDialog dialog(*this,
+				"Unable to chose a default name for this node.  Please enter a name.",
+				false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+
+		dialog.run();
+	} else {
+		Path path = _patch->path().base() + Path::nameify(name);
+		Resource::Properties props = _initial_data;
+		props.insert(make_pair("rdf:type",         Atom(Atom::URI, "ingen:Node")));
+		props.insert(make_pair("rdf:instanceOf",   Atom(Atom::URI, plugin->uri().str())));
+		props.insert(make_pair("ingen:polyphonic", polyphonic));
+		App::instance().engine()->put(path, props);
+
+		if (_selection->get_selected_rows().size() == 1)
+			_node_name_entry->set_text(generate_module_name(plugin, _plugin_name_offset + 1));
+
+		// Cascade next node
+		Atom& x = _initial_data.find("ingenuity:canvas-x")->second;
+		x = Atom(x.get_float() + 20.0f);
+		Atom& y = _initial_data.find("ingenuity:canvas-y")->second;
+		y = Atom(y.get_float() + 20.0f);
 	}
-
-	return name;
 }
 
 
 void
 LoadPluginWindow::add_clicked()
 {
-	Gtk::TreeModel::iterator iter = _selection->get_selected();
-	bool polyphonic = _polyphonic_checkbutton->get_active();
+	_selection->selected_foreach_iter(
+			sigc::mem_fun(*this, &LoadPluginWindow::load_plugin));
 
-	if (iter) { // If anything is selected
-		Gtk::TreeModel::Row row = *iter;
-		SharedPtr<PluginModel> plugin = row.get_value(_plugins_columns._col_plugin_model);
-		string name = _node_name_entry->get_text();
-		if (name == "") {
-			name = generate_module_name();
-		}
-		if (name == "") {
-			Gtk::MessageDialog dialog(*this,
-				"Unable to chose a default name for this node.  Please enter a name.",
-				false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
-
-			dialog.run();
-		} else {
-			Path path = _patch->path().base() + Path::nameify(name);
-			Resource::Properties props = _initial_data;
-			props.insert(make_pair("rdf:type",         Atom(Atom::URI, "ingen:Node")));
-			props.insert(make_pair("rdf:instanceOf",   Atom(Atom::URI, plugin->uri().str())));
-			props.insert(make_pair("ingen:polyphonic", bool(polyphonic)));
-			App::instance().engine()->put(path, props);
-
-			_node_name_entry->set_text(generate_module_name(++_plugin_name_offset));
-
-			// Cascade next node
-			Atom& x = _initial_data.find("ingenuity:canvas-x")->second;
-			x = Atom(x.get_float() + 20.0f);
-			Atom& y = _initial_data.find("ingenuity:canvas-y")->second;
-			y = Atom(y.get_float() + 20.0f);
-		}
-	}
+	++_plugin_name_offset;
 }
 
 
@@ -405,10 +418,10 @@ LoadPluginWindow::filter_changed()
 			model_iter = _plugins_liststore->append();
 			model_row = *model_iter;
 
-			model_row[_plugins_columns._col_name]         = name.is_valid() ? name.get_string() : "";
-			model_row[_plugins_columns._col_type]         = plugin->type_uri();
-			model_row[_plugins_columns._col_uri]          = plugin->uri().str();
-			model_row[_plugins_columns._col_plugin_model] = plugin;
+			model_row[_plugins_columns._col_name]   = name.is_valid() ? name.get_string() : "";
+			model_row[_plugins_columns._col_type]   = plugin->type_uri();
+			model_row[_plugins_columns._col_uri]    = plugin->uri().str();
+			model_row[_plugins_columns._col_plugin] = plugin;
 
 			++num_visible;
 		}
