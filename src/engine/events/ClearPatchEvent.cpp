@@ -74,6 +74,10 @@ ClearPatchEvent::pre_process()
 					SharedPtr<PortImpl> port = PtrCast<PortImpl>(i->second);
 					if (port)
 						++port_count;
+
+					SharedPtr<NodeImpl> node = PtrCast<NodeImpl>(i->second);
+					if (node)
+						node->deactivate();
 				}
 
 				_driver_ports = new DriverPorts(port_count, NULL);
@@ -139,9 +143,13 @@ ClearPatchEvent::post_process()
 		assert(_patch->num_ports() == 0);
 		assert(_patch->connections().size() == 0);
 
-		// Reply
-		_responder->respond_ok();
-		_engine.broadcaster()->send_clear_patch(_patch_path);
+		// Deactivate nodes
+		for (EngineStore::Objects::iterator i = _removed_table->begin();
+				i != _removed_table->end(); ++i) {
+			SharedPtr<NodeImpl> node = PtrCast<NodeImpl>(i->second);
+			if (node)
+				node->deactivate();
+		}
 
 		// Unregister and destroy driver ports
 		if (_driver_ports) {
@@ -154,6 +162,10 @@ ClearPatchEvent::post_process()
 			}
 			delete _driver_ports;
 		}
+
+		// Reply
+		_responder->respond_ok();
+		_engine.broadcaster()->send_clear_patch(_patch_path);
 
 	} else {
 		_responder->respond_error(string("Patch ") + _patch_path.str() + " not found");

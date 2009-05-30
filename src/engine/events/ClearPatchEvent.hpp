@@ -54,7 +54,7 @@ private:
 	typedef Raul::Array<Raul::List<DriverPort*>::Node*> DriverPorts;
 	DriverPorts* _driver_ports;
 
-	SharedPtr< Raul::Table<Raul::Path, SharedPtr<Shared::GraphObject> > > _removed_table;
+	SharedPtr<EngineStore::Objects> _removed_table;
 };
 
 
