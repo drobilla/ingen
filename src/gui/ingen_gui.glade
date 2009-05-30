@@ -4,8 +4,6 @@
   <!-- interface-naming-policy toplevel-contextual -->
   <widget class="GtkWindow" id="patch_win">
     <property name="title" translatable="yes">Ingen</property>
-    <property name="default_width">640</property>
-    <property name="default_height">480</property>
     <child>
       <widget class="GtkVBox" id="patch_win_vbox">
         <property name="visible">True</property>
@@ -465,10 +463,10 @@
   </widget>
   <widget class="GtkWindow" id="load_plugin_win">
     <property name="border_width">8</property>
-    <property name="title" translatable="yes">Load Plugin</property>
+    <property name="title" translatable="yes">Load Plugin - Ingen</property>
     <property name="window_position">center-on-parent</property>
-    <property name="default_width">640</property>
-    <property name="default_height">480</property>
+    <property name="destroy_with_parent">True</property>
+    <property name="type_hint">dialog</property>
     <child>
       <widget class="GtkVBox" id="vbox9">
         <property name="visible">True</property>
@@ -662,7 +660,7 @@
   <widget class="GtkWindow" id="new_subpatch_win">
     <property name="width_request">320</property>
     <property name="border_width">8</property>
-    <property name="title" translatable="yes">Create Subpatch</property>
+    <property name="title" translatable="yes">Create Subpatch - Ingen</property>
     <property name="resizable">False</property>
     <property name="window_position">center-on-parent</property>
     <property name="type_hint">dialog</property>
@@ -825,7 +823,7 @@
     </child>
   </widget>
   <widget class="GtkFileChooserDialog" id="load_subpatch_win">
-    <property name="title" translatable="yes">Load Subpatch</property>
+    <property name="title" translatable="yes">Load Subpatch - Ingen</property>
     <property name="window_position">center-on-parent</property>
     <property name="type_hint">dialog</property>
     <child internal-child="vbox">
@@ -1073,7 +1071,7 @@
     </child>
   </widget>
   <widget class="GtkFileChooserDialog" id="load_patch_win">
-    <property name="title" translatable="yes">Load Patch</property>
+    <property name="title" translatable="yes">Load Patch - Ingen</property>
     <property name="window_position">center-on-parent</property>
     <property name="type_hint">dialog</property>
     <child internal-child="vbox">
@@ -1228,7 +1226,7 @@
     </child>
   </widget>
   <widget class="GtkWindow" id="warehouse_win">
-    <property name="title" translatable="yes">window1</property>
+    <property name="title" translatable="yes">Warehouse - Ingen</property>
     <child>
       <widget class="GtkTable" id="table8">
         <property name="visible">True</property>
@@ -2873,7 +2871,7 @@ Contributors:
   </widget>
   <widget class="GtkDialog" id="load_remote_patch_win">
     <property name="border_width">8</property>
-    <property name="title" translatable="yes">Load Remote Patch</property>
+    <property name="title" translatable="yes">Download Patch - Ingen</property>
     <property name="type_hint">dialog</property>
     <child internal-child="vbox">
       <widget class="GtkVBox" id="dialog-vbox5">
@@ -2987,7 +2985,7 @@ Contributors:
   </widget>
   <widget class="GtkDialog" id="upload_patch_win">
     <property name="border_width">8</property>
-    <property name="title" translatable="yes">Upload Patch</property>
+    <property name="title" translatable="yes">Upload Patch - Ingen</property>
     <property name="resizable">False</property>
     <property name="type_hint">dialog</property>
     <child internal-child="vbox">

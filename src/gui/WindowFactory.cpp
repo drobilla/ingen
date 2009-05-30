@@ -264,6 +264,11 @@ WindowFactory::present_load_plugin(SharedPtr<PatchModel> patch, GraphObject::Pro
 		_load_plugin_win->set_transient_for(*w->second);
 
 	_load_plugin_win->set_modal(false);
+	_load_plugin_win->set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
+	int width, height;
+	w->second->get_size(width, height);
+	_load_plugin_win->set_default_size(width - width / 8, height / 2);
+	_load_plugin_win->set_title(string("Load Plugin - ") + patch->path().str() + " - Ingen");
 	_load_plugin_win->present(patch, data);
 }
 
