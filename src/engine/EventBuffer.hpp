@@ -82,10 +82,9 @@ public:
 	}
 
 private:
-	LV2EventBuffer*            _buf;          ///< Contents (maybe belong to _joined_buf)
-	LV2EventBuffer*            _local_buf;    ///< Local contents
-	mutable LV2_Event_Iterator _iter;         ///< Iterator into _buf
-	uint32_t                   _this_nframes; ///< Current cycle nframes
+	LV2EventBuffer* _buf;          ///< Contents (maybe belong to _joined_buf)
+	LV2EventBuffer* _local_buf;    ///< Local contents
+	uint32_t        _this_nframes; ///< Current cycle nframes
 };
 
 

@@ -62,9 +62,6 @@ DuplexPort::pre_process(ProcessContext& context)
 	cerr << path() << " duplex pre: buffer: " << buffer(0) << endl;
 	cerr << path() << " duplex pre: is_output: " << _is_output << " { " << endl;*/
 
-	for (Connections::iterator c = _connections.begin(); c != _connections.end(); ++c)
-		(*c)->process(context);
-
 	if (_is_output) {
 
 		for (uint32_t i=0; i < _poly; ++i)

@@ -29,8 +29,8 @@ public:
 	LV2EventBuffer(size_t capacity);
 	~LV2EventBuffer();
 
-	inline LV2_Event_Buffer*       data()       { return _data; }
-	inline const LV2_Event_Buffer* data() const { return _data; }
+	/*inline LV2_Event_Buffer*       data()       { return _data; }
+	inline const LV2_Event_Buffer* data() const { return _data; }*/
 
 	inline void rewind() const { lv2_event_begin(&_iter, _data); }
 

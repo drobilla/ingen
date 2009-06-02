@@ -51,16 +51,10 @@ bool
 EventBuffer::join(Buffer* buf)
 {
 	EventBuffer* ebuf = dynamic_cast<EventBuffer*>(buf);
-	if (ebuf) {
-		_buf = ebuf->_local_buf;
-		_joined_buf = ebuf;
-		_iter = ebuf->_iter;
-		_iter.buf = _buf->data();
+	if (!ebuf)
 		return false;
-	} else {
-		return false;
-	}
 
+	_buf = ebuf->_local_buf;
 	_joined_buf = ebuf;
 
 	return true;
@@ -72,7 +66,6 @@ EventBuffer::unjoin()
 {
 	_joined_buf = NULL;
 	_buf = _local_buf;
-	reset(_this_nframes);
 }
 
 
