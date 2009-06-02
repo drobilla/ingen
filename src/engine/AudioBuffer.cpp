@@ -244,6 +244,7 @@ AudioBuffer::accumulate(const AudioBuffer* const src, size_t start_sample, size_
 bool
 AudioBuffer::join(Buffer* buf)
 {
+	assert(buf != this);
 	AudioBuffer* abuf = dynamic_cast<AudioBuffer*>(buf);
 	if (!abuf)
 		return false;

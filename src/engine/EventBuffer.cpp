@@ -50,6 +50,7 @@ EventBuffer::EventBuffer(size_t capacity)
 bool
 EventBuffer::join(Buffer* buf)
 {
+	assert(buf != this);
 	EventBuffer* ebuf = dynamic_cast<EventBuffer*>(buf);
 	if (!ebuf)
 		return false;
@@ -90,12 +91,12 @@ EventBuffer::copy(const Buffer* src_buf, size_t start_sample, size_t end_sample)
 	const EventBuffer* src = dynamic_cast<const EventBuffer*>(src_buf);
 	assert(src);
 	assert(_buf->capacity() >= src->_buf->capacity());
+	assert(src != this);
 	assert(src->_buf != _buf);
 
-	//clear();
 	src->rewind();
 
-	memcpy(_buf, src->_buf, src->_buf->size());
+	_buf->copy(*src->_buf);
 	_this_nframes = end_sample - start_sample;
 	assert(event_count() == src->event_count());
 }

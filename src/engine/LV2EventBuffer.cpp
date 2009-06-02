@@ -52,10 +52,12 @@ LV2EventBuffer::LV2EventBuffer(size_t capacity)
 		exit(EXIT_FAILURE);
 	}
 
+	_data->header_size = sizeof(LV2_Event_Buffer);
+	_data->data = reinterpret_cast<uint8_t*>(_data + _data->header_size);
+	_data->stamp_type = 0;
 	_data->event_count = 0;
 	_data->capacity = (uint32_t)capacity;
 	_data->size = 0;
-	_data->data = reinterpret_cast<uint8_t*>(_data + 1);
 
 	reset();
 
@@ -185,6 +187,23 @@ LV2EventBuffer::append(const LV2_Event_Buffer* buf)
 	}
 
 	return ret;
+}
+
+
+/** Clear this buffer and copy @a buf into it.
+ * The capacity of this buffer must be >= the capacity of @a buf.
+ */
+void
+LV2EventBuffer::copy(const LV2EventBuffer& buf)
+{
+	assert(buf._data->header_size == _data->header_size);
+	memcpy(_data, buf._data, _data->header_size + buf._data->size);
+
+	_iter = buf._iter;
+	_iter.buf = _data;
+
+	_latest_frames    = buf._latest_frames;
+	_latest_subframes = buf._latest_subframes;
 }
 
 

@@ -210,20 +210,14 @@ InputPort::pre_process(ProcessContext& context)
 	if ( ! _fixed_buffers) {
 		// If only one connection, try to use buffer directly (zero copy)
 		if (can_direct()) {
-			for (uint32_t i=0; i < _poly; ++i) {
-				_buffers->at(i)->join(_connections.front()->buffer(i));
-				_connections.front()->buffer(i)->prepare_read(context.start(), context.nframes());
-				_buffers->at(i)->prepare_read(context.start(), context.nframes());
-			}
 			do_mixdown = false;
+			for (uint32_t i=0; i < _poly; ++i)
+				_buffers->at(i)->join(_connections.front()->buffer(i));
 		}
 		connect_buffers();
 	} else {
 		do_mixdown = true;
 	}
-
-	for (uint32_t i=0; i < _poly; ++i)
-		buffer(i)->prepare_read(context.start(), context.nframes());
 
 	/*cerr << path() << " poly = " << _poly << ", mixdown: " << do_mixdown
 		<< ", fixed buffers: " << _fixed_buffers << ", joined: " << _buffers->at(0)->is_joined()
@@ -237,10 +231,8 @@ InputPort::pre_process(ProcessContext& context)
 					<< ", joined: " << _buffers->at(i)->is_joined() << endl;*/
 
 	if (!do_mixdown) {
-		/*#ifndef NDEBUG
 		for (uint32_t i=0; i < _poly; ++i)
-			assert(buffer(i) == _connections.front()->buffer(i));
-		#endif*/
+			buffer(i)->prepare_read(context.start(), context.nframes());
 		return;
 	}
 
@@ -266,8 +258,11 @@ InputPort::pre_process(ProcessContext& context)
 			cerr << "WARNING: MIDI mixing not implemented, only first connection used." << endl;
 
 		// Copy first connection
-		_buffers->at(0)->copy(_connections.front()->buffer(0), 0, _buffer_size-1);
+		buffer(0)->copy(_connections.front()->buffer(0), 0, _buffer_size-1);
 	}
+
+	for (uint32_t i=0; i < _poly; ++i)
+		buffer(i)->prepare_read(context.start(), context.nframes());
 }
 
 

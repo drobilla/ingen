@@ -66,6 +66,8 @@ public:
 
 	bool append(const LV2_Event_Buffer* buf);
 
+	void copy(const LV2EventBuffer& buf);
+
 private:
 	LV2_Event_Buffer*          _data;             ///< Contents
 	mutable LV2_Event_Iterator _iter;             ///< Iterator into _data
