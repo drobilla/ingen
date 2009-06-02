@@ -327,7 +327,7 @@ ClientStore::put(const URI& uri, const Resource::Properties& properties)
 			p->set_properties(properties);
 			add_object(p);
 		} else {
-			cerr << "WARNING: Port " << path << " is malformed" << endl;
+			cerr << "WARNING: Port " << path << " has no type" << endl;
 		}
 	} else {
 		cerr << "WARNING: Ignoring object " << path << " with unknown type "

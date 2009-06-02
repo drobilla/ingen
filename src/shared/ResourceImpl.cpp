@@ -86,6 +86,7 @@ ResourceImpl::type(
 	for (iterator i = types_range.first; i != types_range.second; ++i) {
 		const Atom& atom = i->second;
 		if (atom.type() == Atom::URI) {
+			cerr << "TYPE: " << atom.get_uri() << endl;
 			if (!strncmp(atom.get_uri(), "ingen:", 6)) {
 				const char* suffix = atom.get_uri() + 6;
 				if (!strcmp(suffix, "Patch")) {

@@ -650,7 +650,7 @@ PatchCanvas::paste()
 	Resource::Properties props;
 	props.insert(make_pair("rdf:type",        Raul::Atom(Raul::Atom::URI, "ingen:Patch")));
 	props.insert(make_pair("ingen:polyphony", Raul::Atom(int32_t(_patch->poly()))));
-	clipboard.put("/", props);
+	clipboard.put(Path(), props);
 	size_t first_slash;
 	while (to_create != "/" && to_create != ""
 			&& (first_slash = to_create.find("/")) != string::npos) {
@@ -672,7 +672,7 @@ PatchCanvas::paste()
 	}
 
 	ClashAvoider avoider(*App::instance().store().get(), clipboard, &clipboard);
-	parser->parse_string(App::instance().world(), &avoider, str, "", data_path,
+	parser->parse_string(App::instance().world(), &avoider, str, Path().str(), data_path,
 			parent, symbol);
 
 	for (Store::iterator i = clipboard.begin(); i != clipboard.end(); ++i) {
