@@ -29,6 +29,9 @@
 using namespace Raul;
 
 namespace Ingen {
+
+using namespace Internals;
+
 namespace Events {
 
 

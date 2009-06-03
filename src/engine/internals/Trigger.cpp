@@ -29,6 +29,7 @@
 using namespace std;
 
 namespace Ingen {
+namespace Internals {
 
 using namespace Shared;
 
@@ -149,4 +150,5 @@ TriggerNode::note_off(ProcessContext& context, uint8_t note_num, FrameTime time)
 
 
 } // namespace Ingen
+} // namespace Internals
 

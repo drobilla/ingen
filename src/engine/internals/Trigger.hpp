@@ -26,6 +26,8 @@ namespace Ingen {
 class InputPort;
 class OutputPort;
 
+namespace Internals {
+
 
 /** MIDI trigger input node.
  *
@@ -61,5 +63,6 @@ private:
 
 
 } // namespace Ingen
+} // namespace Internals
 
 #endif // MIDITRIGGERNODE_H

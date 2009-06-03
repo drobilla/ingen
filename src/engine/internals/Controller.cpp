@@ -32,6 +32,7 @@
 using namespace std;
 
 namespace Ingen {
+namespace Internals {
 
 using namespace Shared;
 
@@ -138,4 +139,5 @@ ControllerNode::control(ProcessContext& context, uint8_t control_num, uint8_t va
 
 
 } // namespace Ingen
+} // namespace Internals
 

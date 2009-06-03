@@ -46,6 +46,8 @@ using namespace std;
 
 namespace Ingen {
 
+using namespace Internals;
+
 
 NodeFactory::NodeFactory(Ingen::Shared::World* world)
 	: _world(world)

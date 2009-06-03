@@ -23,6 +23,7 @@
 #include "NodeBase.hpp"
 
 namespace Ingen {
+namespace Internals {
 
 
 /** Transport Node, brings timing information into patches.
@@ -41,5 +42,6 @@ public:
 
 
 } // namespace Ingen
+} // namespace Internals
 
 #endif // TRANSPORTNODE_H

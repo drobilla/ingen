@@ -27,6 +27,7 @@
 using namespace std;
 
 namespace Ingen {
+namespace Internals {
 
 static InternalPlugin transport_plugin(NS_INTERNALS "Transport", "transport");
 
@@ -153,4 +154,5 @@ TransportNode::process(ProcessContext& context)
 
 
 } // namespace Ingen
+} // namespace Internals
 

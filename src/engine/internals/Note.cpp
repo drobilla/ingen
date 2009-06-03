@@ -34,6 +34,7 @@
 using namespace std;
 
 namespace Ingen {
+namespace Internals {
 
 using namespace Shared;
 
@@ -389,4 +390,5 @@ NoteNode::sustain_off(ProcessContext& context, FrameTime time)
 
 
 } // namespace Ingen
+} // namespace Internals
 
