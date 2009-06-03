@@ -35,7 +35,7 @@
 #include "Configuration.hpp"
 #include "MessagesWindow.hpp"
 #include "PatchTreeWindow.hpp"
-#include "BreadCrumbBox.hpp"
+#include "BreadCrumbs.hpp"
 #include "ConnectWindow.hpp"
 #include "ThreadedLoader.hpp"
 #include "WindowFactory.hpp"

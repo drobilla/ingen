@@ -5,7 +5,7 @@ def build(bld):
 	obj = bld.new_task_gen('cxx', 'shlib')
 	obj.source = '''
 		App.cpp
-		BreadCrumbBox.cpp
+		BreadCrumbs.cpp
 		Configuration.cpp
 		ConnectWindow.cpp
 		ControlPanel.cpp

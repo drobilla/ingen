@@ -15,7 +15,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "BreadCrumbBox.hpp"
+#include "BreadCrumbs.hpp"
 #include "BreadCrumb.hpp"
 #include "App.hpp"
 #include "client/SigClientInterface.hpp"
