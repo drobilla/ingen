@@ -24,9 +24,9 @@
 #include <pthread.h>
 #include <glibmm/module.h>
 #include "raul/SharedPtr.hpp"
-#include "ingen-config.h"
-#include "module/global.hpp"
 #include "raul/URI.hpp"
+#include "module/World.hpp"
+#include "ingen-config.h"
 
 namespace Ingen {
 

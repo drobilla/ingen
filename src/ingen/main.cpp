@@ -29,7 +29,7 @@
 #include "raul/SharedPtr.hpp"
 #include "redlandmm/World.hpp"
 #include "shared/runtime_paths.hpp"
-#include "module/global.hpp"
+#include "module/ingen_module.hpp"
 #include "module/Module.hpp"
 #include "module/World.hpp"
 #include "engine/tuning.hpp"

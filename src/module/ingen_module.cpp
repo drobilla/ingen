@@ -18,7 +18,7 @@
 #include <iostream>
 #include "redlandmm/World.hpp"
 #include "shared/LV2Features.hpp"
-#include "global.hpp"
+#include "ingen_module.hpp"
 #include "World.hpp"
 
 #include "ingen-config.h"

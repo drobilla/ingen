@@ -18,13 +18,9 @@
 #ifndef INGEN_GUI_H
 #define INGEN_GUI_H
 
-#include "module/global.hpp"
-
 namespace Ingen {
 
-class Engine;
-
-namespace Shared { class EngineInterface; }
+namespace Shared { class World; }
 
 namespace GUI {
 

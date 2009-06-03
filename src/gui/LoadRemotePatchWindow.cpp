@@ -22,7 +22,6 @@
 #include "client/PatchModel.hpp"
 #include "interface/EngineInterface.hpp"
 #include "module/World.hpp"
-#include "module/global.hpp"
 #include "App.hpp"
 #include "Configuration.hpp"
 #include "LoadRemotePatchWindow.hpp"

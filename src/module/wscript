@@ -5,7 +5,7 @@ def build(bld):
 	obj = bld.new_task_gen('cxx', 'shlib')
 	obj.source = '''
 		Module.cpp
-		global.cpp
+		ingen_module.cpp
 	'''
 	obj.export_incdirs = ['.']
 	obj.includes     = ['.', '..', '../..', '../common']

@@ -23,7 +23,7 @@
 #include <set>
 #include <boost/utility.hpp>
 #include "raul/SharedPtr.hpp"
-#include "module/global.hpp"
+#include "module/World.hpp"
 #include "interface/DataType.hpp"
 #include "interface/EventType.hpp"
 

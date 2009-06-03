@@ -17,7 +17,6 @@
 
 #include <iostream>
 #include <string>
-#include "module/global.hpp"
 #include "module/World.hpp"
 #include "module/Module.hpp"
 #include "App.hpp"

@@ -16,7 +16,6 @@
  */
 
 #include "ingen-config.h"
-#include "module/global.hpp"
 #include "module/World.hpp"
 
 #include <cassert>
