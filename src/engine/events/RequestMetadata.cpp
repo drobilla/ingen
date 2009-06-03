@@ -35,7 +35,7 @@ namespace Events {
 using namespace Shared;
 
 
-RequestMetadataEvent::RequestMetadataEvent(Engine&              engine,
+RequestMetadata::RequestMetadata(Engine&              engine,
 	                                       SharedPtr<Responder> responder,
 	                                       SampleCount          timestamp,
 	                                       bool                 is_meta,
@@ -53,7 +53,7 @@ RequestMetadataEvent::RequestMetadataEvent(Engine&              engine,
 
 
 void
-RequestMetadataEvent::pre_process()
+RequestMetadata::pre_process()
 {
 	const bool is_object = (_uri.scheme() == Path::scheme && Path::is_valid(_uri.str()));
 	if (_responder->client()) {
@@ -85,7 +85,7 @@ RequestMetadataEvent::pre_process()
 
 
 void
-RequestMetadataEvent::execute(ProcessContext& context)
+RequestMetadata::execute(ProcessContext& context)
 {
 	QueuedEvent::execute(context);
 	if (_special_type == PORT_VALUE) {
@@ -101,7 +101,7 @@ RequestMetadataEvent::execute(ProcessContext& context)
 
 
 void
-RequestMetadataEvent::post_process()
+RequestMetadata::post_process()
 {
 	if (_responder->client()) {
 		if (_special_type == PORT_VALUE) {

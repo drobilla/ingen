@@ -39,7 +39,7 @@ namespace Events {
 using namespace Shared;
 
 
-DeleteEvent::DeleteEvent(Engine& engine, SharedPtr<Responder> responder, FrameTime time, QueuedEventSource* source, const Raul::Path& path)
+Delete::Delete(Engine& engine, SharedPtr<Responder> responder, FrameTime time, QueuedEventSource* source, const Raul::Path& path)
 	: QueuedEvent(engine, responder, time, true, source)
 	, _path(path)
 	, _store_iterator(engine.engine_store()->end())
@@ -54,14 +54,14 @@ DeleteEvent::DeleteEvent(Engine& engine, SharedPtr<Responder> responder, FrameTi
 }
 
 
-DeleteEvent::~DeleteEvent()
+Delete::~Delete()
 {
 	delete _disconnect_event;
 }
 
 
 void
-DeleteEvent::pre_process()
+Delete::pre_process()
 {
 	_store_iterator = _engine.engine_store()->find(_path);
 
@@ -82,7 +82,7 @@ DeleteEvent::pre_process()
 		if (_patch_node_listnode) {
 			assert(_patch_node_listnode->elem() == _node.get());
 
-			_disconnect_event = new DisconnectAllEvent(_engine, _node->parent_patch(), _node.get());
+			_disconnect_event = new DisconnectAll(_engine, _node->parent_patch(), _node.get());
 			_disconnect_event->pre_process();
 
 			if (_node->parent_patch()->enabled()) {
@@ -103,7 +103,7 @@ DeleteEvent::pre_process()
 		if (_patch_port_listnode) {
 			assert(_patch_port_listnode->elem() == _port.get());
 
-			_disconnect_event = new DisconnectAllEvent(_engine, _port->parent_patch(), _port.get());
+			_disconnect_event = new DisconnectAll(_engine, _port->parent_patch(), _port.get());
 			_disconnect_event->pre_process();
 
 			if (_port->parent_patch()->enabled()) {
@@ -121,7 +121,7 @@ DeleteEvent::pre_process()
 
 
 void
-DeleteEvent::execute(ProcessContext& context)
+Delete::execute(ProcessContext& context)
 {
 	QueuedEvent::execute(context);
 
@@ -170,7 +170,7 @@ DeleteEvent::execute(ProcessContext& context)
 
 
 void
-DeleteEvent::post_process()
+Delete::post_process()
 {
 	if (!_node && !_port) {
 		if (_path.is_root()) {

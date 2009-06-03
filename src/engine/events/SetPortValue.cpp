@@ -42,7 +42,7 @@ using namespace Shared;
 
 
 /** Omni (all voices) control setting */
-SetPortValueEvent::SetPortValueEvent(Engine&              engine,
+SetPortValue::SetPortValue(Engine&              engine,
                                      SharedPtr<Responder> responder,
                                      bool                 queued,
                                      SampleCount          timestamp,
@@ -61,7 +61,7 @@ SetPortValueEvent::SetPortValueEvent(Engine&              engine,
 
 
 /** Voice-specific control setting */
-SetPortValueEvent::SetPortValueEvent(Engine&              engine,
+SetPortValue::SetPortValue(Engine&              engine,
                                      SharedPtr<Responder> responder,
                                      bool                 queued,
                                      SampleCount          timestamp,
@@ -80,13 +80,13 @@ SetPortValueEvent::SetPortValueEvent(Engine&              engine,
 }
 
 
-SetPortValueEvent::~SetPortValueEvent()
+SetPortValue::~SetPortValue()
 {
 }
 
 
 void
-SetPortValueEvent::pre_process()
+SetPortValue::pre_process()
 {
 	if (_queued) {
 		if (_port == NULL)
@@ -107,7 +107,7 @@ SetPortValueEvent::pre_process()
 
 
 void
-SetPortValueEvent::execute(ProcessContext& context)
+SetPortValue::execute(ProcessContext& context)
 {
 	Event::execute(context);
 	assert(_time >= context.start() && _time <= context.end());
@@ -120,7 +120,7 @@ SetPortValueEvent::execute(ProcessContext& context)
 
 
 void
-SetPortValueEvent::apply(uint32_t start, uint32_t nframes)
+SetPortValue::apply(uint32_t start, uint32_t nframes)
 {
 	if (_error == NO_ERROR && !_port)
 		_port = _engine.engine_store()->find_port(_port_path);
@@ -195,7 +195,7 @@ SetPortValueEvent::apply(uint32_t start, uint32_t nframes)
 
 
 void
-SetPortValueEvent::post_process()
+SetPortValue::post_process()
 {
 	string msg;
 	std::ostringstream ss;

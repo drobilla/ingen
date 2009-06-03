@@ -47,10 +47,10 @@ namespace Events {
  *
  * \ingroup engine
  */
-class ConnectionEvent : public QueuedEvent
+class Connect : public QueuedEvent
 {
 public:
-	ConnectionEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Raul::Path& src_port_path, const Raul::Path& dst_port_path);
+	Connect(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Raul::Path& src_port_path, const Raul::Path& dst_port_path);
 
 	void pre_process();
 	void execute(ProcessContext& context);

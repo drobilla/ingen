@@ -26,7 +26,7 @@ namespace Ingen {
 namespace Events {
 
 
-RegisterClientEvent::RegisterClientEvent(Engine&                  engine,
+RegisterClient::RegisterClient(Engine&                  engine,
                                          SharedPtr<Responder>     responder,
                                          SampleCount              timestamp,
                                          const URI&               uri,
@@ -39,7 +39,7 @@ RegisterClientEvent::RegisterClientEvent(Engine&                  engine,
 
 
 void
-RegisterClientEvent::pre_process()
+RegisterClient::pre_process()
 {
 	_engine.broadcaster()->register_client(_uri, _client);
 
@@ -48,7 +48,7 @@ RegisterClientEvent::pre_process()
 
 
 void
-RegisterClientEvent::post_process()
+RegisterClient::post_process()
 {
 	_responder->respond_ok();
 }

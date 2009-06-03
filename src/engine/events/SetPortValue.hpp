@@ -38,17 +38,17 @@ namespace Events {
  *
  * \ingroup engine
  */
-class SetPortValueEvent : public QueuedEvent
+class SetPortValue : public QueuedEvent
 {
 public:
-	SetPortValueEvent(Engine&              engine,
+	SetPortValue(Engine&              engine,
 	                  SharedPtr<Responder> responder,
 	                  bool                 queued,
 	                  SampleCount          timestamp,
 	                  const Raul::Path&    port_path,
 	                  const Raul::Atom&    value);
 
-	SetPortValueEvent(Engine&              engine,
+	SetPortValue(Engine&              engine,
 	                  SharedPtr<Responder> responder,
 	                  bool                 queued,
 	                  SampleCount          timestamp,
@@ -56,7 +56,7 @@ public:
 	                  const Raul::Path&    port_path,
 	                  const Raul::Atom&    value);
 
-	~SetPortValueEvent();
+	~SetPortValue();
 
 	void pre_process();
 	void execute(ProcessContext& context);

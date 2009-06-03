@@ -32,10 +32,10 @@ namespace Events {
  *
  * \ingroup engine
  */
-class NoteEvent : public Event
+class Note : public Event
 {
 public:
-	NoteEvent(Engine&              engine,
+	Note(Engine&              engine,
 	          SharedPtr<Responder> responder,
 	          SampleCount          timestamp,
 	          NodeImpl*            node,
@@ -43,7 +43,7 @@ public:
 	          uint8_t              note_num,
 	          uint8_t              velocity);
 
-	NoteEvent(Engine&              engine,
+	Note(Engine&              engine,
 	          SharedPtr<Responder> responder,
 	          SampleCount          timestamp,
 	          const Raul::Path&    node_path,

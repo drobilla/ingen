@@ -35,7 +35,7 @@ namespace Events {
 using namespace Shared;
 
 
-MoveEvent::MoveEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Path& path, const Path& new_path)
+Move::Move(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Path& path, const Path& new_path)
 	: QueuedEvent(engine, responder, timestamp)
 	, _old_path(path)
 	, _new_path(new_path)
@@ -46,13 +46,13 @@ MoveEvent::MoveEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount
 }
 
 
-MoveEvent::~MoveEvent()
+Move::~Move()
 {
 }
 
 
 void
-MoveEvent::pre_process()
+Move::pre_process()
 {
 	if (!_old_path.parent().is_parent_of(_new_path)) {
 		_error = PARENT_DIFFERS;
@@ -98,7 +98,7 @@ MoveEvent::pre_process()
 
 
 void
-MoveEvent::execute(ProcessContext& context)
+Move::execute(ProcessContext& context)
 {
 	QueuedEvent::execute(context);
 
@@ -118,7 +118,7 @@ MoveEvent::execute(ProcessContext& context)
 
 
 void
-MoveEvent::post_process()
+Move::post_process()
 {
 	string msg = "Unable to rename object - ";
 

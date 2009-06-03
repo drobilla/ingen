@@ -42,16 +42,16 @@ namespace Events {
 /** MOVE a graph object to a new path (see \ref methods).
  * \ingroup engine
  */
-class MoveEvent : public QueuedEvent
+class Move : public QueuedEvent
 {
 public:
-	MoveEvent(
+	Move(
 			Engine&              engine,
 			SharedPtr<Responder> responder,
 			SampleCount          timestamp,
 			const Raul::Path&    old_path,
 			const Raul::Path&    new_path);
-	~MoveEvent();
+	~Move();
 
 	void pre_process();
 	void execute(ProcessContext& context);

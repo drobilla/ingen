@@ -180,13 +180,13 @@ PortImpl::broadcast_value(ProcessContext& context, bool force)
 	if (_type == DataType::CONTROL || _type == DataType::AUDIO) {
 		const Sample value = ((AudioBuffer*)buffer(0))->value_at(0);
 		if (force || value != _last_broadcasted_value) {
-			const Events::SendPortValueEvent ev(context.engine(), context.start(), this, false, 0, value);
+			const Events::SendPortValue ev(context.engine(), context.start(), this, false, 0, value);
 			context.event_sink().write(sizeof(ev), &ev);
 			_last_broadcasted_value = value;
 		}
 	} else if (_type == DataType::EVENT) {
 		if (((EventBuffer*)buffer(0))->event_count() > 0) {
-			const Events::SendPortActivityEvent ev(context.engine(), context.start(), this);
+			const Events::SendPortActivity ev(context.engine(), context.start(), this);
 			context.event_sink().write(sizeof(ev), &ev);
 		}
 	}

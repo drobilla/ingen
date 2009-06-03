@@ -37,7 +37,7 @@ class CompiledPatch;
 
 namespace Events {
 
-class DisconnectAllEvent;
+class DisconnectAll;
 
 
 /** \page methods
@@ -54,17 +54,17 @@ class DisconnectAllEvent;
 /** DELETE a graph object (see \ref methods).
  * \ingroup engine
  */
-class DeleteEvent : public QueuedEvent
+class Delete : public QueuedEvent
 {
 public:
-	DeleteEvent(
+	Delete(
 			Engine&              engine,
 			SharedPtr<Responder> responder,
 			FrameTime            timestamp,
 			QueuedEventSource*   source,
 			const Raul::Path&    path);
 
-	~DeleteEvent();
+	~Delete();
 
 	void pre_process();
 	void execute(ProcessContext& context);
@@ -80,7 +80,7 @@ private:
 	Raul::List<PortImpl*>::Node*   _patch_port_listnode;
 	Raul::Array<PortImpl*>*        _ports_array;         ///< New (external) ports for Patch
 	CompiledPatch*                 _compiled_patch;      ///< Patch's new process order
-	DisconnectAllEvent*            _disconnect_event;
+	DisconnectAll*                 _disconnect_event;
 
 	SharedPtr< Raul::Table<Raul::Path, SharedPtr<Shared::GraphObject> > > _removed_table;
 };

@@ -41,10 +41,10 @@ namespace Events {
  *
  * \ingroup engine
  */
-class RequestMetadataEvent : public QueuedEvent
+class RequestMetadata : public QueuedEvent
 {
 public:
-	RequestMetadataEvent(Engine&              engine,
+	RequestMetadata(Engine&              engine,
 	                     SharedPtr<Responder> responder,
 	                     SampleCount          timestamp,
 	                     bool                 meta,

@@ -28,7 +28,7 @@ namespace Events {
 
 
 void
-SendPortValueEvent::post_process()
+SendPortValue::post_process()
 {
 	// FIXME...
 

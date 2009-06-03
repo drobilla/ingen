@@ -41,7 +41,7 @@ namespace Ingen {
 namespace Events {
 
 
-DisconnectAllEvent::DisconnectAllEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Path& parent_path, const Path& node_path)
+DisconnectAll::DisconnectAll(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Path& parent_path, const Path& node_path)
 	: QueuedEvent(engine, responder, timestamp)
 	, _parent_path(parent_path)
 	, _path(node_path)
@@ -56,7 +56,7 @@ DisconnectAllEvent::DisconnectAllEvent(Engine& engine, SharedPtr<Responder> resp
 
 /** Internal version for use by other events.
  */
-DisconnectAllEvent::DisconnectAllEvent(Engine& engine, PatchImpl* parent, GraphObjectImpl* object)
+DisconnectAll::DisconnectAll(Engine& engine, PatchImpl* parent, GraphObjectImpl* object)
 	: QueuedEvent(engine)
 	, _parent_path(parent->path())
 	, _path(object->path())
@@ -69,15 +69,15 @@ DisconnectAllEvent::DisconnectAllEvent(Engine& engine, PatchImpl* parent, GraphO
 }
 
 
-DisconnectAllEvent::~DisconnectAllEvent()
+DisconnectAll::~DisconnectAll()
 {
-	for (Raul::List<DisconnectionEvent*>::iterator i = _disconnection_events.begin(); i != _disconnection_events.end(); ++i)
+	for (Raul::List<Disconnect*>::iterator i = _disconnect_events.begin(); i != _disconnect_events.end(); ++i)
 		delete (*i);
 }
 
 
 void
-DisconnectAllEvent::pre_process()
+DisconnectAll::pre_process()
 {
 	if (_lookup) {
 		_parent = _engine.engine_store()->find_patch(_parent_path);
@@ -115,10 +115,10 @@ DisconnectAllEvent::pre_process()
 			ConnectionImpl* c = (ConnectionImpl*)i->get();
 			if ((c->src_port()->parent_node() == _node || c->dst_port()->parent_node() == _node)
 					&& !c->pending_disconnection()) {
-				DisconnectionEvent* ev = new DisconnectionEvent(_engine,
+				Disconnect* ev = new Disconnect(_engine,
 						SharedPtr<Responder>(new Responder()), _time, c->src_port(), c->dst_port());
 				ev->pre_process();
-				_disconnection_events.push_back(new Raul::List<DisconnectionEvent*>::Node(ev));
+				_disconnect_events.push_back(new Raul::List<Disconnect*>::Node(ev));
 				c->pending_disconnection(true);
 			}
 		}
@@ -127,10 +127,10 @@ DisconnectAllEvent::pre_process()
 				i != _parent->connections().end(); ++i) {
 			ConnectionImpl* c = (ConnectionImpl*)i->get();
 			if ((c->src_port() == _port || c->dst_port() == _port) && !c->pending_disconnection()) {
-				DisconnectionEvent* ev = new DisconnectionEvent(_engine,
+				Disconnect* ev = new Disconnect(_engine,
 						SharedPtr<Responder>(new Responder()), _time, c->src_port(), c->dst_port());
 				ev->pre_process();
-				_disconnection_events.push_back(new Raul::List<DisconnectionEvent*>::Node(ev));
+				_disconnect_events.push_back(new Raul::List<Disconnect*>::Node(ev));
 				c->pending_disconnection(true);
 			}
 		}
@@ -141,25 +141,25 @@ DisconnectAllEvent::pre_process()
 
 
 void
-DisconnectAllEvent::execute(ProcessContext& context)
+DisconnectAll::execute(ProcessContext& context)
 {
 	QueuedEvent::execute(context);
 
 	if (_error == NO_ERROR) {
-		for (Raul::List<DisconnectionEvent*>::iterator i = _disconnection_events.begin(); i != _disconnection_events.end(); ++i)
+		for (Raul::List<Disconnect*>::iterator i = _disconnect_events.begin(); i != _disconnect_events.end(); ++i)
 			(*i)->execute(context);
 	}
 }
 
 
 void
-DisconnectAllEvent::post_process()
+DisconnectAll::post_process()
 {
 	if (_error == NO_ERROR) {
 		if (_responder)
 			_responder->respond_ok();
-		for (Raul::List<DisconnectionEvent*>::iterator i = _disconnection_events.begin();
-				i != _disconnection_events.end(); ++i)
+		for (Raul::List<Disconnect*>::iterator i = _disconnect_events.begin();
+				i != _disconnect_events.end(); ++i)
 			(*i)->post_process();
 	} else {
 		if (_responder) {

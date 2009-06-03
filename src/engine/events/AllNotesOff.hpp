@@ -31,11 +31,11 @@ namespace Events {
  *
  * \ingroup engine
  */
-class AllNotesOffEvent : public Event
+class AllNotesOff : public Event
 {
 public:
-	AllNotesOffEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, PatchImpl* patch);
-	AllNotesOffEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Raul::Path& patch_path);
+	AllNotesOff(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, PatchImpl* patch);
+	AllNotesOff(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Raul::Path& patch_path);
 
 	void execute(ProcessContext& context);
 	void post_process();

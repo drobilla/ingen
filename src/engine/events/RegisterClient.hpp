@@ -30,10 +30,10 @@ namespace Events {
  *
  * \ingroup engine
  */
-class RegisterClientEvent : public QueuedEvent
+class RegisterClient : public QueuedEvent
 {
 public:
-	RegisterClientEvent(Engine&                  engine,
+	RegisterClient(Engine&                  engine,
 	                    SharedPtr<Responder>     responder,
 	                    SampleCount              timestamp,
 	                    const Raul::URI&         uri,

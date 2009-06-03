@@ -37,10 +37,10 @@ namespace Events {
  *
  * \ingroup engine
  */
-class ClearPatchEvent : public QueuedEvent
+class ClearPatch : public QueuedEvent
 {
 public:
-	ClearPatchEvent(Engine& engine, SharedPtr<Responder> responder, FrameTime time, QueuedEventSource* source, const Raul::Path& patch_path);
+	ClearPatch(Engine& engine, SharedPtr<Responder> responder, FrameTime time, QueuedEventSource* source, const Raul::Path& patch_path);
 
 	void pre_process();
 	void execute(ProcessContext& context);

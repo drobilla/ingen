@@ -40,10 +40,10 @@ namespace Events {
  *
  * \ingroup engine
  */
-class SendPortActivityEvent : public Event
+class SendPortActivity : public Event
 {
 public:
-	inline SendPortActivityEvent(Engine&     engine,
+	inline SendPortActivity(Engine&     engine,
 	                             SampleCount timestamp,
 	                             PortImpl*   port)
 		: Event(engine, SharedPtr<Responder>(), timestamp)
@@ -51,7 +51,7 @@ public:
 	{
 	}
 
-	inline void operator=(const SendPortActivityEvent& ev) {
+	inline void operator=(const SendPortActivity& ev) {
 		_port = ev._port;
 	}
 

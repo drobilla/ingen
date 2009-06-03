@@ -36,7 +36,7 @@ namespace Events {
 using namespace Shared;
 
 
-CreatePatchEvent::CreatePatchEvent(
+CreatePatch::CreatePatch(
 		Engine&                     engine,
 		SharedPtr<Responder>        responder,
 		SampleCount                 timestamp,
@@ -56,7 +56,7 @@ CreatePatchEvent::CreatePatchEvent(
 
 
 void
-CreatePatchEvent::pre_process()
+CreatePatch::pre_process()
 {
 	if (_path.is_root() || _engine.engine_store()->find_object(_path) != NULL) {
 		_error = OBJECT_EXISTS;
@@ -106,7 +106,7 @@ CreatePatchEvent::pre_process()
 
 
 void
-CreatePatchEvent::execute(ProcessContext& context)
+CreatePatch::execute(ProcessContext& context)
 {
 	QueuedEvent::execute(context);
 
@@ -127,7 +127,7 @@ CreatePatchEvent::execute(ProcessContext& context)
 
 
 void
-CreatePatchEvent::post_process()
+CreatePatch::post_process()
 {
 	string msg;
 	if (_responder) {

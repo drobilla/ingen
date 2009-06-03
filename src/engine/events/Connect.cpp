@@ -40,7 +40,7 @@ namespace Events {
 using namespace Shared;
 
 
-ConnectionEvent::ConnectionEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Path& src_port_path, const Path& dst_port_path)
+Connect::Connect(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Path& src_port_path, const Path& dst_port_path)
 	: QueuedEvent(engine, responder, timestamp)
 	, _src_port_path(src_port_path)
 	, _dst_port_path(dst_port_path)
@@ -56,7 +56,7 @@ ConnectionEvent::ConnectionEvent(Engine& engine, SharedPtr<Responder> responder,
 
 
 void
-ConnectionEvent::pre_process()
+Connect::pre_process()
 {
 	if (_src_port_path.parent().parent() != _dst_port_path.parent().parent()
 			&& _src_port_path.parent() != _dst_port_path.parent().parent()
@@ -154,7 +154,7 @@ ConnectionEvent::pre_process()
 
 
 void
-ConnectionEvent::execute(ProcessContext& context)
+Connect::execute(ProcessContext& context)
 {
 	QueuedEvent::execute(context);
 
@@ -169,7 +169,7 @@ ConnectionEvent::execute(ProcessContext& context)
 
 
 void
-ConnectionEvent::post_process()
+Connect::post_process()
 {
 	std::ostringstream ss;
 	if (_error == NO_ERROR) {

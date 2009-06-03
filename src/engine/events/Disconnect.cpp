@@ -34,10 +34,12 @@ namespace Ingen {
 namespace Events {
 
 
-//// DisconnectionEvent ////
-
-
-DisconnectionEvent::DisconnectionEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Raul::Path& src_port_path, const Raul::Path& dst_port_path)
+Disconnect::Disconnect(
+		Engine&              engine,
+		SharedPtr<Responder> responder,
+		SampleCount          timestamp,
+		const Raul::Path&    src_port_path,
+		const Raul::Path&    dst_port_path)
 	: QueuedEvent(engine, responder, timestamp)
 	, _src_port_path(src_port_path)
 	, _dst_port_path(dst_port_path)
@@ -52,7 +54,12 @@ DisconnectionEvent::DisconnectionEvent(Engine& engine, SharedPtr<Responder> resp
 }
 
 
-DisconnectionEvent::DisconnectionEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, PortImpl* const src_port, PortImpl* const dst_port)
+Disconnect::Disconnect(
+		Engine&              engine,
+		SharedPtr<Responder> responder,
+		SampleCount          timestamp,
+		PortImpl* const      src_port,
+		PortImpl* const      dst_port)
 : QueuedEvent(engine, responder, timestamp),
   _src_port_path(src_port->path()),
   _dst_port_path(dst_port->path()),
@@ -73,7 +80,7 @@ DisconnectionEvent::DisconnectionEvent(Engine& engine, SharedPtr<Responder> resp
 
 
 void
-DisconnectionEvent::pre_process()
+Disconnect::pre_process()
 {
 	if (_lookup) {
 		if (_src_port_path.parent().parent() != _dst_port_path.parent().parent()
@@ -156,7 +163,7 @@ DisconnectionEvent::pre_process()
 
 
 void
-DisconnectionEvent::execute(ProcessContext& context)
+Disconnect::execute(ProcessContext& context)
 {
 	QueuedEvent::execute(context);
 
@@ -194,7 +201,7 @@ DisconnectionEvent::execute(ProcessContext& context)
 
 
 void
-DisconnectionEvent::post_process()
+Disconnect::post_process()
 {
 	if (_error == NO_ERROR) {
 		_responder->respond_ok();

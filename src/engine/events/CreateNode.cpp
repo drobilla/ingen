@@ -41,7 +41,7 @@ namespace Events {
 
 using namespace Shared;
 
-CreateNodeEvent::CreateNodeEvent(
+CreateNode::CreateNode(
 		Engine&                      engine,
 		SharedPtr<Responder>         responder,
 		SampleCount                  timestamp,
@@ -73,7 +73,7 @@ CreateNodeEvent::CreateNodeEvent(
 
 
 void
-CreateNodeEvent::pre_process()
+CreateNode::pre_process()
 {
 	if (_engine.engine_store()->find_object(_path) != NULL) {
 		_node_already_exists = true;
@@ -112,7 +112,7 @@ CreateNodeEvent::pre_process()
 
 
 void
-CreateNodeEvent::execute(ProcessContext& context)
+CreateNode::execute(ProcessContext& context)
 {
 	QueuedEvent::execute(context);
 
@@ -125,7 +125,7 @@ CreateNodeEvent::execute(ProcessContext& context)
 
 
 void
-CreateNodeEvent::post_process()
+CreateNode::post_process()
 {
 	string msg;
 	if (_node_already_exists) {

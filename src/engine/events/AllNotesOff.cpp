@@ -30,7 +30,7 @@ namespace Events {
 
 /** Note off with patch explicitly passed - triggered by MIDI.
  */
-AllNotesOffEvent::AllNotesOffEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, PatchImpl* patch)
+AllNotesOff::AllNotesOff(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, PatchImpl* patch)
 : Event(engine, responder, timestamp),
   _patch(patch)
 {
@@ -39,7 +39,7 @@ AllNotesOffEvent::AllNotesOffEvent(Engine& engine, SharedPtr<Responder> responde
 
 /** Note off event with lookup - triggered by OSC.
  */
-AllNotesOffEvent::AllNotesOffEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Path& patch_path)
+AllNotesOff::AllNotesOff(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Path& patch_path)
 : Event(engine, responder, timestamp),
   _patch_path(patch_path),
   _patch(NULL)
@@ -48,7 +48,7 @@ AllNotesOffEvent::AllNotesOffEvent(Engine& engine, SharedPtr<Responder> responde
 
 
 void
-AllNotesOffEvent::execute(ProcessContext& context)
+AllNotesOff::execute(ProcessContext& context)
 {
 	Event::execute(context);
 
@@ -62,7 +62,7 @@ AllNotesOffEvent::execute(ProcessContext& context)
 
 
 void
-AllNotesOffEvent::post_process()
+AllNotesOff::post_process()
 {
 	if (_patch != NULL)
 		_responder->respond_ok();

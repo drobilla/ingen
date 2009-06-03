@@ -36,7 +36,7 @@ namespace Events {
  *
  * Used to be triggered by MIDI.  Not used anymore.
  */
-NoteEvent::NoteEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, NodeImpl* node, bool on, uint8_t note_num, uint8_t velocity)
+Note::Note(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, NodeImpl* node, bool on, uint8_t note_num, uint8_t velocity)
 : Event(engine, responder, timestamp),
   _node(node),
   _on(on),
@@ -50,7 +50,7 @@ NoteEvent::NoteEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount
  *
  * Triggered by OSC.
  */
-NoteEvent::NoteEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Path& node_path, bool on, uint8_t note_num, uint8_t velocity)
+Note::Note(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Path& node_path, bool on, uint8_t note_num, uint8_t velocity)
 : Event(engine, responder, timestamp),
   _node(NULL),
   _node_path(node_path),
@@ -62,7 +62,7 @@ NoteEvent::NoteEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount
 
 
 void
-NoteEvent::execute(ProcessContext& context)
+Note::execute(ProcessContext& context)
 {
 	Event::execute(context);
 	assert(_time >= context.start() && _time <= context.end());
@@ -90,7 +90,7 @@ NoteEvent::execute(ProcessContext& context)
 
 
 void
-NoteEvent::post_process()
+Note::post_process()
 {
 	if (_responder) {
 		if (_node)

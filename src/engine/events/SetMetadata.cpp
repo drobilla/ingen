@@ -42,7 +42,7 @@ using namespace Shared;
 typedef Shared::Resource::Properties Properties;
 
 
-SetMetadataEvent::SetMetadataEvent(
+SetMetadata::SetMetadata(
 		Engine&               engine,
 		SharedPtr<Responder>  responder,
 		SampleCount           timestamp,
@@ -65,7 +65,7 @@ SetMetadataEvent::SetMetadataEvent(
 
 
 void
-SetMetadataEvent::pre_process()
+SetMetadata::pre_process()
 {
 	typedef Properties::const_iterator iterator;
 
@@ -91,15 +91,15 @@ SetMetadataEvent::pre_process()
 			iterator p = _properties.find("ingen:polyphony");
 			if (p != _properties.end() && p->second.is_valid() && p->second.type() == Atom::INT)
 				poly = p->second.get_int32();
-			_create_event = new CreatePatchEvent(_engine, _responder, _time,
+			_create_event = new CreatePatch(_engine, _responder, _time,
 					path, poly, _properties);
 		} else if (is_node) {
 			const iterator p = _properties.find("rdf:instanceOf");
-			_create_event = new CreateNodeEvent(_engine, _responder, _time,
+			_create_event = new CreateNode(_engine, _responder, _time,
 					path, p->second.get_uri(), true, _properties);
 		} else if (is_port) {
 			_blocking = true;
-			_create_event = new CreatePortEvent(_engine, _responder, _time,
+			_create_event = new CreatePort(_engine, _responder, _time,
 					path, data_type.uri(), is_output, _source, _properties);
 		}
 		if (_create_event)
@@ -164,7 +164,7 @@ SetMetadataEvent::pre_process()
 
 
 void
-SetMetadataEvent::execute(ProcessContext& context)
+SetMetadata::execute(ProcessContext& context)
 {
 	if (_error != NO_ERROR) {
 		QueuedEvent::execute(context);
@@ -217,7 +217,7 @@ SetMetadataEvent::execute(ProcessContext& context)
 
 
 void
-SetMetadataEvent::post_process()
+SetMetadata::post_process()
 {
 	switch (_error) {
 	case NO_ERROR:

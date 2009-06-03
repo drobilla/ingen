@@ -33,10 +33,10 @@ namespace Events {
  *
  * \ingroup engine
  */
-class GetEvent : public QueuedEvent
+class Get : public QueuedEvent
 {
 public:
-	GetEvent(
+	Get(
 		Engine&              engine,
 		SharedPtr<Responder> responder,
 		SampleCount          timestamp,

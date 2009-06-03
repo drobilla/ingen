@@ -25,7 +25,7 @@ namespace Events {
 
 
 void
-SendPortActivityEvent::post_process()
+SendPortActivity::post_process()
 {
 	_engine.broadcaster()->send_activity(_port->path());
 }

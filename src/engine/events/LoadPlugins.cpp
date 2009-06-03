@@ -26,14 +26,14 @@ namespace Ingen {
 namespace Events {
 
 
-LoadPluginsEvent::LoadPluginsEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, QueuedEventSource* source)
+LoadPlugins::LoadPlugins(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, QueuedEventSource* source)
 : QueuedEvent(engine, responder, timestamp, true, source)
 {
 	/* FIXME: Not sure why this has to be blocking, but it fixes some nasty bugs.. */
 }
 
 void
-LoadPluginsEvent::pre_process()
+LoadPlugins::pre_process()
 {
 	_engine.node_factory()->load_plugins();
 
@@ -41,7 +41,7 @@ LoadPluginsEvent::pre_process()
 }
 
 void
-LoadPluginsEvent::post_process()
+LoadPlugins::post_process()
 {
 	if (_source)
 		_source->unblock();

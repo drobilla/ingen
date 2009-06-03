@@ -25,14 +25,14 @@ namespace Ingen {
 namespace Events {
 
 
-RequestPluginsEvent::RequestPluginsEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp)
+RequestPlugins::RequestPlugins(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp)
 : QueuedEvent(engine, responder, timestamp)
 {
 }
 
 
 void
-RequestPluginsEvent::pre_process()
+RequestPlugins::pre_process()
 {
 	// Take a copy to send in the post processing thread (to avoid problems
 	// because std::map isn't thread safe)
@@ -43,7 +43,7 @@ RequestPluginsEvent::pre_process()
 
 
 void
-RequestPluginsEvent::post_process()
+RequestPlugins::post_process()
 {
 	if (_responder->client()) {
 		_engine.broadcaster()->send_plugins_to(_responder->client(), _plugins);

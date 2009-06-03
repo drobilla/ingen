@@ -39,7 +39,7 @@ namespace Events {
 using namespace Shared;
 
 
-ClearPatchEvent::ClearPatchEvent(Engine& engine, SharedPtr<Responder> responder, FrameTime time, QueuedEventSource* source, const Path& patch_path)
+ClearPatch::ClearPatch(Engine& engine, SharedPtr<Responder> responder, FrameTime time, QueuedEventSource* source, const Path& patch_path)
 	: QueuedEvent(engine, responder, time, true, source)
 	, _patch_path(patch_path)
 	, _process(false)
@@ -51,7 +51,7 @@ ClearPatchEvent::ClearPatchEvent(Engine& engine, SharedPtr<Responder> responder,
 
 
 void
-ClearPatchEvent::pre_process()
+ClearPatch::pre_process()
 {
 	EngineStore::Objects::iterator patch_iterator = _engine.engine_store()->find(_patch_path);
 
@@ -91,7 +91,7 @@ ClearPatchEvent::pre_process()
 
 
 void
-ClearPatchEvent::execute(ProcessContext& context)
+ClearPatch::execute(ProcessContext& context)
 {
 	QueuedEvent::execute(context);
 
@@ -128,7 +128,7 @@ ClearPatchEvent::execute(ProcessContext& context)
 
 
 void
-ClearPatchEvent::post_process()
+ClearPatch::post_process()
 {
 	if (_patch != NULL) {
 		delete _ports_array;

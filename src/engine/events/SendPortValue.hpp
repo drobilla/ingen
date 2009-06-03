@@ -39,15 +39,16 @@ namespace Events {
  *
  * \ingroup engine
  */
-class SendPortValueEvent : public Event
+class SendPortValue : public Event
 {
 public:
-	inline SendPortValueEvent(Engine&     engine,
-	                          SampleCount timestamp,
-	                          PortImpl*   port,
-	                          bool        omni,
-	                          uint32_t    voice_num,
-	                          Sample      value)
+	inline SendPortValue(
+			Engine&     engine,
+			SampleCount timestamp,
+			PortImpl*   port,
+			bool        omni,
+			uint32_t    voice_num,
+			Sample      value)
 		: Event(engine, SharedPtr<Responder>(), timestamp)
 		, _port(port)
 		, _omni(omni)
@@ -56,7 +57,7 @@ public:
 	{
 	}
 
-	inline void operator=(const SendPortValueEvent& ev) {
+	inline void operator=(const SendPortValue& ev) {
 		_port = ev._port;
 		_omni = ev._omni;
 		_voice_num = ev._voice_num;

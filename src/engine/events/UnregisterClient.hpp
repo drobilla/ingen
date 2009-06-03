@@ -29,10 +29,10 @@ namespace Events {
  *
  * \ingroup engine
  */
-class UnregisterClientEvent : public QueuedEvent
+class UnregisterClient : public QueuedEvent
 {
 public:
-	UnregisterClientEvent(Engine&              engine,
+	UnregisterClient(Engine&              engine,
 	                      SharedPtr<Responder> responder,
 	                      SampleCount          timestamp,
 	                      const Raul::URI&     uri);

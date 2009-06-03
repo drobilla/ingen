@@ -30,7 +30,7 @@ namespace Ingen {
 namespace Events {
 
 
-MidiLearnEvent::MidiLearnEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Raul::Path& node_path)
+MidiLearn::MidiLearn(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Raul::Path& node_path)
 	: QueuedEvent(engine, responder, timestamp)
 	, _error(NO_ERROR)
 	, _node_path(node_path)
@@ -40,7 +40,7 @@ MidiLearnEvent::MidiLearnEvent(Engine& engine, SharedPtr<Responder> responder, S
 
 
 void
-MidiLearnEvent::pre_process()
+MidiLearn::pre_process()
 {
 	_node = _engine.engine_store()->find_node(_node_path);
 
@@ -49,7 +49,7 @@ MidiLearnEvent::pre_process()
 
 
 void
-MidiLearnEvent::execute(ProcessContext& context)
+MidiLearn::execute(ProcessContext& context)
 {
 	QueuedEvent::execute(context);
 
@@ -64,7 +64,7 @@ MidiLearnEvent::execute(ProcessContext& context)
 
 
 void
-MidiLearnEvent::post_process()
+MidiLearn::post_process()
 {
 	if (_error == NO_ERROR) {
 		_responder->respond_ok();

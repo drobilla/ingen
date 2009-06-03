@@ -27,21 +27,21 @@ namespace Ingen {
 namespace Events {
 
 
-RequestAllObjectsEvent::RequestAllObjectsEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp)
+RequestAllObjects::RequestAllObjects(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp)
 : QueuedEvent(engine, responder, timestamp)
 {
 }
 
 
 void
-RequestAllObjectsEvent::pre_process()
+RequestAllObjects::pre_process()
 {
 	QueuedEvent::pre_process();
 }
 
 
 void
-RequestAllObjectsEvent::post_process()
+RequestAllObjects::post_process()
 {
 	if (_responder->client()) {
 		_responder->respond_ok();

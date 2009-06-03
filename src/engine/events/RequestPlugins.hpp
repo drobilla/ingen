@@ -32,10 +32,10 @@ namespace Events {
  *
  * \ingroup engine
  */
-class RequestPluginsEvent : public QueuedEvent
+class RequestPlugins : public QueuedEvent
 {
 public:
-	RequestPluginsEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp);
+	RequestPlugins(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp);
 
 	void pre_process();
 	void post_process();

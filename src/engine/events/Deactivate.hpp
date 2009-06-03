@@ -29,10 +29,10 @@ namespace Events {
  *
  * \ingroup engine
  */
-class DeactivateEvent : public QueuedEvent
+class Deactivate : public QueuedEvent
 {
 public:
-	DeactivateEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp)
+	Deactivate(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp)
 		: QueuedEvent(engine, responder, timestamp)
 	{}
 

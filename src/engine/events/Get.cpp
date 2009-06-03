@@ -33,7 +33,7 @@ namespace Ingen {
 namespace Events {
 
 
-GetEvent::GetEvent(
+Get::Get(
 		Engine&              engine,
 		SharedPtr<Responder> responder,
 		SampleCount          timestamp,
@@ -47,7 +47,7 @@ GetEvent::GetEvent(
 
 
 void
-GetEvent::pre_process()
+Get::pre_process()
 {
 	if (Path::is_valid(_uri.str()))
 		_object = _engine.engine_store()->find_object(Path(_uri.str()));
@@ -59,7 +59,7 @@ GetEvent::pre_process()
 
 
 void
-GetEvent::execute(ProcessContext& context)
+Get::execute(ProcessContext& context)
 {
 	QueuedEvent::execute(context);
 	assert(_time >= context.start() && _time <= context.end());
@@ -67,7 +67,7 @@ GetEvent::execute(ProcessContext& context)
 
 
 void
-GetEvent::post_process()
+Get::post_process()
 {
 	if (!_object && !_plugin) {
 		_responder->respond_error("Unable to find object requested.");

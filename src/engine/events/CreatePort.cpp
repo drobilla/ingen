@@ -44,7 +44,7 @@ namespace Events {
 using namespace Shared;
 
 
-CreatePortEvent::CreatePortEvent(
+CreatePort::CreatePort(
 		Engine&                     engine,
 		SharedPtr<Responder>        responder,
 		SampleCount                 timestamp,
@@ -80,7 +80,7 @@ CreatePortEvent::CreatePortEvent(
 
 
 void
-CreatePortEvent::pre_process()
+CreatePort::pre_process()
 {
 	if (_error == UNKNOWN_TYPE || _engine.engine_store()->find_object(_path)) {
 		QueuedEvent::pre_process();
@@ -138,7 +138,7 @@ CreatePortEvent::pre_process()
 
 
 void
-CreatePortEvent::execute(ProcessContext& context)
+CreatePort::execute(ProcessContext& context)
 {
 	QueuedEvent::execute(context);
 
@@ -158,7 +158,7 @@ CreatePortEvent::execute(ProcessContext& context)
 
 
 void
-CreatePortEvent::post_process()
+CreatePort::post_process()
 {
 	string msg;
 	switch (_error) {

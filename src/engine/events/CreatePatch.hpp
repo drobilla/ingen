@@ -33,10 +33,10 @@ namespace Events {
  *
  * \ingroup engine
  */
-class CreatePatchEvent : public QueuedEvent
+class CreatePatch : public QueuedEvent
 {
 public:
-	CreatePatchEvent(
+	CreatePatch(
 			Engine&                             engine,
 			SharedPtr<Responder>                responder,
 			SampleCount                         timestamp,

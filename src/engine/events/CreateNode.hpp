@@ -35,10 +35,10 @@ namespace Events {
  *
  * \ingroup engine
  */
-class CreateNodeEvent : public QueuedEvent
+class CreateNode : public QueuedEvent
 {
 public:
-	CreateNodeEvent(
+	CreateNode(
 			Engine&                             engine,
 			SharedPtr<Responder>                responder,
 			SampleCount                         timestamp,

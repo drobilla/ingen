@@ -28,10 +28,10 @@ namespace Events {
  *
  * \ingroup engine
  */
-class RequestAllObjectsEvent : public QueuedEvent
+class RequestAllObjects : public QueuedEvent
 {
 public:
-	RequestAllObjectsEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp);
+	RequestAllObjects(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp);
 
 	void pre_process();
 	void post_process();

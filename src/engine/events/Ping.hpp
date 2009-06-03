@@ -34,10 +34,10 @@ namespace Events {
  *
  * \ingroup engine
  */
-class PingQueuedEvent : public QueuedEvent
+class Ping : public QueuedEvent
 {
 public:
-	PingQueuedEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp)
+	Ping(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp)
 		: QueuedEvent(engine, responder, timestamp)
 	{}
 

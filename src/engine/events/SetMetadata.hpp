@@ -60,10 +60,10 @@ namespace Events {
 /** Set properties of a graph object.
  * \ingroup engine
  */
-class SetMetadataEvent : public QueuedEvent
+class SetMetadata : public QueuedEvent
 {
 public:
-	SetMetadataEvent(
+	SetMetadata(
 			Engine&                             engine,
 			SharedPtr<Responder>                responder,
 			SampleCount                         timestamp,

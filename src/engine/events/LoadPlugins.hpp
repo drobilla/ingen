@@ -28,10 +28,10 @@ namespace Events {
  *
  * \ingroup engine
  */
-class LoadPluginsEvent : public QueuedEvent
+class LoadPlugins : public QueuedEvent
 {
 public:
-	LoadPluginsEvent(Engine&              engine,
+	LoadPlugins(Engine&              engine,
 	                 SharedPtr<Responder> responder,
 	                 SampleCount          timestamp,
 	                 QueuedEventSource*   source);

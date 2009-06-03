@@ -33,19 +33,29 @@ class OutputPort;
 
 namespace Events {
 
-class DisconnectionEvent;
+class Disconnect;
 
 
 /** An event to disconnect all connections to a Node.
  *
  * \ingroup engine
  */
-class DisconnectAllEvent : public QueuedEvent
+class DisconnectAll : public QueuedEvent
 {
 public:
-	DisconnectAllEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Raul::Path& parent_path, const Raul::Path& node_path);
-	DisconnectAllEvent(Engine& engine, PatchImpl* parent, GraphObjectImpl* object);
-	~DisconnectAllEvent();
+	DisconnectAll(
+			Engine&              engine,
+			SharedPtr<Responder> responder,
+			SampleCount          timestamp,
+			const Raul::Path&    parent_path,
+			const Raul::Path&    node_path);
+
+	DisconnectAll(
+			Engine&          engine,
+			PatchImpl*       parent,
+			GraphObjectImpl* object);
+
+	~DisconnectAll();
 
 	void pre_process();
 	void execute(ProcessContext& context);
@@ -59,12 +69,12 @@ private:
 		OBJECT_NOT_FOUND,
 	};
 
-	Raul::Path                      _parent_path;
-	Raul::Path                      _path;
-	PatchImpl*                      _parent;
-	NodeImpl*                       _node;
-	PortImpl*                       _port;
-	Raul::List<DisconnectionEvent*> _disconnection_events;
+	Raul::Path              _parent_path;
+	Raul::Path              _path;
+	PatchImpl*              _parent;
+	NodeImpl*               _node;
+	PortImpl*               _port;
+	Raul::List<Disconnect*> _disconnect_events;
 
 	bool _lookup;
 	bool _disconnect_parent;

@@ -45,11 +45,22 @@ namespace Events {
  *
  * \ingroup engine
  */
-class DisconnectionEvent : public QueuedEvent
+class Disconnect : public QueuedEvent
 {
 public:
-	DisconnectionEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Raul::Path& src_port_path, const Raul::Path& dst_port_path);
-	DisconnectionEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, PortImpl* const src_port, PortImpl* const dst_port);
+	Disconnect(
+			Engine&              engine,
+			SharedPtr<Responder> responder,
+			SampleCount          timestamp,
+			const Raul::Path&    src_port_path,
+			const Raul::Path&    dst_port_path);
+
+	Disconnect(
+			Engine&              engine,
+			SharedPtr<Responder> responder,
+			SampleCount          timestamp,
+			PortImpl* const      src_port,
+			PortImpl* const      dst_port);
 
 	void pre_process();
 	void execute(ProcessContext& context);

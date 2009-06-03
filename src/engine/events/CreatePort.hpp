@@ -37,10 +37,10 @@ namespace Events {
  *
  * \ingroup engine
  */
-class CreatePortEvent : public QueuedEvent
+class CreatePort : public QueuedEvent
 {
 public:
-	CreatePortEvent(
+	CreatePort(
 			Engine&                             engine,
 			SharedPtr<Responder>                responder,
 			SampleCount                         timestamp,
