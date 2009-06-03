@@ -25,6 +25,9 @@ namespace Ingen {
 
 class Responder;
 
+namespace Events {
+
+
 /** A request from a client to send notification of all objects (ie refresh).
  *
  * \ingroup engine
@@ -43,5 +46,6 @@ private:
 
 
 } // namespace Ingen
+} // namespace Events
 
 #endif // REQUESTPLUGINSEVENT_H

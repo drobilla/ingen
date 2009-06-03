@@ -33,8 +33,12 @@ class GraphObjectImpl;
 class NodeImpl;
 class PortImpl;
 class DriverPort;
-class DisconnectAllEvent;
 class CompiledPatch;
+
+namespace Events {
+
+class DisconnectAllEvent;
+
 
 /** \page methods
  * <h2>DELETE</h2>
@@ -83,5 +87,6 @@ private:
 
 
 } // namespace Ingen
+} // namespace Events
 
 #endif // DESTROYEVENT_H

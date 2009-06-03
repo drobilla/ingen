@@ -24,6 +24,7 @@
 #include "PatchImpl.hpp"
 
 namespace Ingen {
+namespace Events {
 
 
 RequestAllObjectsEvent::RequestAllObjectsEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp)
@@ -57,4 +58,5 @@ RequestAllObjectsEvent::post_process()
 
 
 } // namespace Ingen
+} // namespace Events
 

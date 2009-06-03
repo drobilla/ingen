@@ -25,6 +25,8 @@ namespace Ingen {
 
 class NodeImpl;
 
+namespace Events {
+
 
 /** A note on event.
  *
@@ -62,5 +64,6 @@ private:
 
 
 } // namespace Ingen
+} // namespace Events
 
 #endif // NOTEEVENT_H

@@ -26,6 +26,8 @@ namespace Ingen {
 
 class PortImpl;
 
+namespace Events {
+
 
 /** A ping that travels through the pre-processed event queue before responding
  * (useful for the order guarantee).
@@ -44,5 +46,6 @@ public:
 
 
 } // namespace Ingen
+} // namespace Events
 
 #endif // PINGQUEUEDEVENT_H

@@ -24,13 +24,16 @@
 
 namespace Ingen {
 
-class DisconnectionEvent;
 class PatchImpl;
 class NodeImpl;
 class Connection;
 class PortImpl;
 class InputPort;
 class OutputPort;
+
+namespace Events {
+
+class DisconnectionEvent;
 
 
 /** An event to disconnect all connections to a Node.
@@ -71,6 +74,7 @@ private:
 
 
 } // namespace Ingen
+} // namespace Events
 
 
 #endif // DISCONNECTNODEEVENT_H

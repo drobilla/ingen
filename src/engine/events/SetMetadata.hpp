@@ -30,6 +30,9 @@ class GraphObjectImpl;
 class PatchImpl;
 class CompiledPatch;
 
+namespace Events {
+
+
 /** \page methods
  * <h2>POST</h2>
  * As per HTTP (RFC2616 S9.5).
@@ -96,5 +99,6 @@ private:
 
 
 } // namespace Ingen
+} // namespace Events
 
 #endif // SETMETADATAEVENT_H

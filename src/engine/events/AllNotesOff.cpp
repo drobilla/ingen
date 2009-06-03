@@ -25,6 +25,7 @@
 using namespace Raul;
 
 namespace Ingen {
+namespace Events {
 
 
 /** Note off with patch explicitly passed - triggered by MIDI.
@@ -69,5 +70,6 @@ AllNotesOffEvent::post_process()
 
 
 } // namespace Ingen
+} // namespace Events
 
 

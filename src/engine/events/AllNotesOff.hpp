@@ -24,6 +24,8 @@ namespace Ingen {
 
 class PatchImpl;
 
+namespace Events {
+
 
 /** A note off event for all active voices.
  *
@@ -45,5 +47,6 @@ private:
 
 
 } // namespace Ingen
+} // namespace Events
 
 #endif // ALLNOTESOFFEVENT_H

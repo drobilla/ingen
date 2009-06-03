@@ -30,6 +30,7 @@
 using namespace Raul;
 
 namespace Ingen {
+namespace Events {
 
 
 GetEvent::GetEvent(
@@ -83,4 +84,5 @@ GetEvent::post_process()
 
 
 } // namespace Ingen
+} // namespace Events
 

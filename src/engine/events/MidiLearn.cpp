@@ -27,6 +27,7 @@
 using namespace std;
 
 namespace Ingen {
+namespace Events {
 
 
 MidiLearnEvent::MidiLearnEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Raul::Path& node_path)
@@ -79,5 +80,6 @@ MidiLearnEvent::post_process()
 
 
 } // namespace Ingen
+} // namespace Events
 
 

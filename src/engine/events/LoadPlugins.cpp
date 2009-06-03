@@ -23,6 +23,7 @@
 #include "QueuedEventSource.hpp"
 
 namespace Ingen {
+namespace Events {
 
 
 LoadPluginsEvent::LoadPluginsEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, QueuedEventSource* source)
@@ -50,4 +51,5 @@ LoadPluginsEvent::post_process()
 
 
 } // namespace Ingen
+} // namespace Events
 

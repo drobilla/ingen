@@ -26,6 +26,8 @@ namespace Ingen {
 
 class PortImpl;
 
+namespace Events {
+
 
 /** An event to change the value of a port.
  *
@@ -82,5 +84,6 @@ private:
 
 
 } // namespace Ingen
+} // namespace Events
 
 #endif // SETPORTVALUEEVENT_H

@@ -34,6 +34,7 @@
 using namespace std;
 
 namespace Ingen {
+namespace Events {
 
 using namespace Shared;
 
@@ -211,3 +212,4 @@ DeleteEvent::post_process()
 
 
 } // namespace Ingen
+} // namespace Events

@@ -29,6 +29,7 @@
 using namespace Raul;
 
 namespace Ingen {
+namespace Events {
 
 
 /** Note on with Patch explicitly passed.
@@ -101,4 +102,5 @@ NoteEvent::post_process()
 
 
 } // namespace Ingen
+} // namespace Events
 

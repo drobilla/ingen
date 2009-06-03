@@ -35,7 +35,7 @@ PostProcessor::PostProcessor(Engine& engine, size_t queue_size)
     : _engine(engine)
 	, _max_time(0)
 	, _events(queue_size)
-	, _event_buffer_size(sizeof(SendPortValueEvent)) // FIXME: make generic
+	, _event_buffer_size(sizeof(Events::SendPortValueEvent)) // FIXME: make generic
 	, _event_buffer((uint8_t*)malloc(_event_buffer_size))
 {
 }

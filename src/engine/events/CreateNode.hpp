@@ -28,6 +28,8 @@ class PatchImpl;
 class NodeImpl;
 class CompiledPatch;
 
+namespace Events {
+
 
 /** An event to load a Node and insert it into a Patch.
  *
@@ -66,5 +68,6 @@ private:
 
 
 } // namespace Ingen
+} // namespace Events
 
 #endif // CREATENODEEVENT_H

@@ -25,7 +25,8 @@
 namespace Ingen {
 
 class NodeImpl;
-class ControlChangeEvent;
+
+namespace Events {
 
 
 /** A MIDI learn event (used by control node to learn controller number).
@@ -54,5 +55,6 @@ private:
 
 
 } // namespace Ingen
+} // namespace Events
 
 #endif // MIDILEARNEVENT_H

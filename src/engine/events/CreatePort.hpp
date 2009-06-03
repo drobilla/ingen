@@ -30,6 +30,8 @@ class PatchImpl;
 class PortImpl;
 class DriverPort;
 
+namespace Events {
+
 
 /** An event to add a Port to a Patch.
  *
@@ -76,5 +78,6 @@ private:
 
 
 } // namespace Ingen
+} // namespace Events
 
 #endif // CREATEPORTEVENT_H

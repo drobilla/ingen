@@ -23,6 +23,7 @@
 #include "QueuedEvent.hpp"
 
 namespace Ingen {
+namespace Events {
 
 
 /** Registers a new client with the OSC system, so it can receive updates.
@@ -48,5 +49,6 @@ private:
 
 
 } // namespace Ingen
+} // namespace Events
 
 #endif // REGISTERCLIENTEVENT_H

@@ -21,6 +21,7 @@
 #include "QueuedEvent.hpp"
 
 namespace Ingen {
+namespace Events {
 
 
 /** A request from a client to send notification of all objects (ie refresh).
@@ -38,5 +39,6 @@ public:
 
 
 } // namespace Ingen
+} // namespace Events
 
 #endif // REQUESTALLOBJECTSEVENT_H

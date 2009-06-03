@@ -22,6 +22,7 @@
 #include "Engine.hpp"
 
 namespace Ingen {
+namespace Events {
 
 
 /** Deactivates the engine.
@@ -43,5 +44,6 @@ public:
 
 
 } // namespace Ingen
+} // namespace Events
 
 #endif // DEACTIVATEEVENT_H

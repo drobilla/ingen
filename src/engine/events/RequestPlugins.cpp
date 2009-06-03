@@ -22,6 +22,7 @@
 #include "NodeFactory.hpp"
 
 namespace Ingen {
+namespace Events {
 
 
 RequestPluginsEvent::RequestPluginsEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp)
@@ -54,4 +55,5 @@ RequestPluginsEvent::post_process()
 
 
 } // namespace Ingen
+} // namespace Events
 

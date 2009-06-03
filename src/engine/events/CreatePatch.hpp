@@ -26,6 +26,8 @@ namespace Ingen {
 class PatchImpl;
 class CompiledPatch;
 
+namespace Events {
+
 
 /** Creates a new Patch.
  *
@@ -61,6 +63,7 @@ private:
 
 
 } // namespace Ingen
+} // namespace Events
 
 
 #endif // CREATEPATCHEVENT_H

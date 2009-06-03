@@ -30,6 +30,8 @@ namespace Ingen {
 class PatchImpl;
 class DriverPort;
 
+namespace Events {
+
 
 /** Delete all nodes from a patch.
  *
@@ -59,6 +61,7 @@ private:
 
 
 } // namespace Ingen
+} // namespace Events
 
 
 #endif // CLEARPATCHEVENT_H

@@ -24,6 +24,7 @@
 using namespace std;
 
 namespace Ingen {
+namespace Events {
 
 
 void
@@ -40,4 +41,5 @@ SendPortValueEvent::post_process()
 
 
 } // namespace Ingen
+} // namespace Events
 

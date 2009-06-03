@@ -24,6 +24,7 @@
 using namespace Raul;
 
 namespace Ingen {
+namespace Events {
 
 
 UnregisterClientEvent::UnregisterClientEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const URI& uri)
@@ -44,4 +45,5 @@ UnregisterClientEvent::post_process()
 
 
 } // namespace Ingen
+} // namespace Events
 

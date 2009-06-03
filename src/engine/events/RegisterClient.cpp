@@ -23,6 +23,7 @@
 using namespace Raul;
 
 namespace Ingen {
+namespace Events {
 
 
 RegisterClientEvent::RegisterClientEvent(Engine&                  engine,
@@ -54,4 +55,5 @@ RegisterClientEvent::post_process()
 
 
 } // namespace Ingen
+} // namespace Events
 

@@ -26,6 +26,9 @@ namespace Ingen {
 
 class PatchImpl;
 
+namespace Events {
+
+
 /** \page methods
  * <h2>MOVE</h2>
  * As per WebDAV (RFC4918 S9.9).
@@ -72,5 +75,6 @@ private:
 
 
 } // namespace Ingen
+} // namespace Events
 
 #endif // RENAMEEVENT_H

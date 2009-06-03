@@ -36,6 +36,7 @@ using namespace std;
 using namespace Raul;
 
 namespace Ingen {
+namespace Events {
 
 using namespace Shared;
 typedef Shared::Resource::Properties Properties;
@@ -239,4 +240,5 @@ SetMetadataEvent::post_process()
 
 
 } // namespace Ingen
+} // namespace Events
 

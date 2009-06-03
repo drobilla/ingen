@@ -25,8 +25,10 @@
 namespace Ingen {
 
 namespace Shared { class ResourceImpl; }
-
 class GraphObjectImpl;
+
+namespace Events {
+
 
 /** \page methods
  * <h2>GET</h2>
@@ -69,5 +71,6 @@ private:
 
 
 } // namespace Ingen
+} // namespace Events
 
 #endif // REQUESTMETADATAEVENT_H

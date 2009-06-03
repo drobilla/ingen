@@ -31,6 +31,7 @@
 using namespace std;
 
 namespace Ingen {
+namespace Events {
 
 
 //// DisconnectionEvent ////
@@ -209,4 +210,5 @@ DisconnectionEvent::post_process()
 
 
 } // namespace Ingen
+} // namespace Events
 

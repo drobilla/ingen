@@ -26,6 +26,8 @@ namespace Ingen {
 class GraphObjectImpl;
 class PluginImpl;
 
+namespace Events {
+
 
 /** A request from a client to send an object.
  *
@@ -52,5 +54,6 @@ private:
 
 
 } // namespace Ingen
+} // namespace Events
 
 #endif // REQUESTOBJECTEVENT_H

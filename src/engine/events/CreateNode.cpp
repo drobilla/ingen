@@ -37,6 +37,7 @@ using namespace std;
 using namespace Raul;
 
 namespace Ingen {
+namespace Events {
 
 using namespace Shared;
 
@@ -145,4 +146,5 @@ CreateNodeEvent::post_process()
 
 
 } // namespace Ingen
+} // namespace Events
 

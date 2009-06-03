@@ -34,6 +34,7 @@ using namespace std;
 using namespace Raul;
 
 namespace Ingen {
+namespace Events {
 
 using namespace Shared;
 
@@ -176,4 +177,5 @@ ClearPatchEvent::post_process()
 
 
 } // namespace Ingen
+} // namespace Events
 

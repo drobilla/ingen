@@ -36,6 +36,7 @@ using namespace std;
 using namespace Raul;
 
 namespace Ingen {
+namespace Events {
 
 using namespace Shared;
 
@@ -227,4 +228,5 @@ SetPortValueEvent::post_process()
 
 
 } // namespace Ingen
+} // namespace Events
 

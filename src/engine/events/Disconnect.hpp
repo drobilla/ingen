@@ -38,6 +38,8 @@ class InputPort;
 class OutputPort;
 class CompiledPatch;
 
+namespace Events {
+
 
 /** Make a Connection between two Ports.
  *
@@ -84,5 +86,6 @@ private:
 
 
 } // namespace Ingen
+} // namespace Events
 
 #endif // DISCONNECTIONEVENT_H
