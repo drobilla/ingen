@@ -61,8 +61,6 @@ public:
 	void               add_connection(Connections::Node* c);
 	Connections::Node* remove_connection(const OutputPort* src_port);
 
-	const Connections& connections() { return _connections; }
-
 	bool prepare_poly(uint32_t poly);
 	bool apply_poly(Raul::Maid& maid, uint32_t poly);
 

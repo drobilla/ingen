@@ -80,7 +80,7 @@ AudioBuffer::resize(size_t size)
 	else
 		_data = old_data;
 
-	set_block(0, 0, _size-1);
+	set_block(0, 0, _size - 1);
 }
 
 
@@ -98,7 +98,7 @@ AudioBuffer::allocate()
 
 	_data = _local_data;
 
-	set_block(0, 0, _size-1);
+	clear();
 }
 
 
@@ -119,7 +119,7 @@ AudioBuffer::deallocate()
 void
 AudioBuffer::clear()
 {
-	set_block(0, 0, _size-1);
+	set_block(0, 0, _size - 1);
 	_state = OK;
 	_filled_size = 0;
 }
@@ -281,7 +281,7 @@ AudioBuffer::prepare_read(FrameTime start, SampleCount nframes)
 			_state = HALF_SET_CYCLE_2;
 		break;
 	case HALF_SET_CYCLE_2:
-		set_block(_set_value, 0, _size-1);
+		set_block(_set_value, 0, _size - 1);
 		_state = OK;
 		break;
 	default:

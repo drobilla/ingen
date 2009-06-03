@@ -26,6 +26,7 @@
 #include "NodeImpl.hpp"
 #include "OutputPort.hpp"
 #include "ProcessContext.hpp"
+#include "ThreadManager.hpp"
 #include "util.hpp"
 
 using namespace std;
@@ -113,24 +114,25 @@ InputPort::apply_poly(Raul::Maid& maid, uint32_t poly)
 void
 InputPort::add_connection(Connections::Node* const c)
 {
+	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
+
+	const bool could_direct = can_direct();
+
 	_connections.push_back(c);
 
-	bool modify_buffers = !_fixed_buffers;
-
-	if (modify_buffers) {
+	if (!_fixed_buffers) {
 		if (can_direct()) {
 			// Use buffer directly to avoid copying
 			for (uint32_t i=0; i < _poly; ++i) {
 				_buffers->at(i)->join(c->elem()->buffer(i));
 			}
-		} else if (_connections.size() == 2) {
-			// Used to directly use single connection buffer, now there's two
-			// so have to use local ones again and mix down
+		} else if (could_direct) {
+			// Used to directly use single connection's buffer(s),
+			// but now there's two so use the local ones again and mix down
 			for (uint32_t i=0; i < _poly; ++i) {
 				_buffers->at(i)->unjoin();
 			}
 		}
-		PortImpl::connect_buffers();
 	}
 
 	// Automatically broadcast connected control inputs
@@ -139,17 +141,16 @@ InputPort::add_connection(Connections::Node* const c)
 }
 
 
-/** Remove a connection.  Realtime safe.
- */
+/** Remove a connection.  Realtime safe. */
 InputPort::Connections::Node*
 InputPort::remove_connection(const OutputPort* src_port)
 {
-	bool modify_buffers = !_fixed_buffers;
+	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
 
 	bool found = false;
 	Connections::Node* connection = NULL;
 	for (Connections::iterator i = _connections.begin(); i != _connections.end(); ++i) {
-		if ((*i)->src_port()->path() == src_port->path()) {
+		if ((*i)->src_port() == src_port) {
 			connection = _connections.erase(i);
 			found = true;
 		}
@@ -162,11 +163,11 @@ InputPort::remove_connection(const OutputPort* src_port)
 		if (_connections.size() == 0) {
 			for (uint32_t i=0; i < _poly; ++i) {
 				// Use a local buffer
-				if (modify_buffers)
+				if (!_fixed_buffers)
 					_buffers->at(i)->unjoin();
 				_buffers->at(i)->clear(); // Write silence
 			}
-		} else if (modify_buffers && _connections.size() == 1 && can_direct()) {
+		} else if (_connections.size() == 1 && !_fixed_buffers && can_direct()) {
 			// Share a buffer
 			for (uint32_t i=0; i < _poly; ++i) {
 				_buffers->at(i)->join(_connections.front()->buffer(i));
@@ -174,7 +175,7 @@ InputPort::remove_connection(const OutputPort* src_port)
 		}
 	}
 
-	if (modify_buffers)
+	if (!_fixed_buffers)
 		PortImpl::connect_buffers();
 
 	// Turn off broadcasting if we're not connected any more (FIXME: not quite right..)
@@ -186,7 +187,6 @@ InputPort::remove_connection(const OutputPort* src_port)
 
 
 /** Prepare buffer for access, mixing if necessary.  Realtime safe.
- *  FIXME: nframes parameter not used,
  */
 void
 InputPort::pre_process(ProcessContext& context)
@@ -196,8 +196,7 @@ InputPort::pre_process(ProcessContext& context)
 	if (_set_by_user)
 		return;
 
-	bool do_mixdown = true;
-
+	// No connections, just prepare buffers for reading by our node
 	if (_connections.size() == 0) {
 		for (uint32_t i=0; i < _poly; ++i)
 			buffer(i)->prepare_read(context.start(), context.nframes());
@@ -207,20 +206,22 @@ InputPort::pre_process(ProcessContext& context)
 	for (Connections::iterator c = _connections.begin(); c != _connections.end(); ++c)
 		(*c)->process(context);
 
-	if ( ! _fixed_buffers) {
-		// If only one connection, try to use buffer directly (zero copy)
+	if (!_fixed_buffers) {
+		// Single (matching) connection, use buffer(s) directly (zero copy)
 		if (can_direct()) {
-			do_mixdown = false;
-			for (uint32_t i=0; i < _poly; ++i)
+			for (uint32_t i=0; i < _poly; ++i) {
 				_buffers->at(i)->join(_connections.front()->buffer(i));
+				_buffers->at(i)->prepare_read(context.start(), context.nframes());
+			}
+			connect_buffers();
+			return;
 		}
+
 		connect_buffers();
-	} else {
-		do_mixdown = true;
 	}
 
-	/*cerr << path() << " poly = " << _poly << ", mixdown: " << do_mixdown
-		<< ", fixed buffers: " << _fixed_buffers << ", joined: " << _buffers->at(0)->is_joined()
+	/*cerr << path() << " poly = " << _poly << ", fixed buffers: " << _fixed_buffers
+		<< ", joined: " << _buffers->at(0)->is_joined()
 		<< " to " << _buffers->at(0)->joined_buffer() << endl;*/
 
 	/*if (type() == DataType::EVENT)
@@ -230,11 +231,7 @@ InputPort::pre_process(ProcessContext& context)
 					<< ((EventBuffer*)buffer(i))->event_count()
 					<< ", joined: " << _buffers->at(i)->is_joined() << endl;*/
 
-	if (!do_mixdown) {
-		for (uint32_t i=0; i < _poly; ++i)
-			buffer(i)->prepare_read(context.start(), context.nframes());
-		return;
-	}
+	// Mix down all incoming connection to buffers
 
 	if (_type == DataType::CONTROL || _type == DataType::AUDIO) {
 		for (uint32_t voice=0; voice < _poly; ++voice) {
