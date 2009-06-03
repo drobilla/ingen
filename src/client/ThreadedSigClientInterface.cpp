@@ -33,8 +33,6 @@ void
 ThreadedSigClientInterface::push_sig(Closure ev)
 {
 	_attached = true;
-	if (!_enabled)
-		return;
 
 	bool success = false;
 	while (!success) {

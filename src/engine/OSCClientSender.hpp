@@ -60,8 +60,6 @@ public:
 
 	Raul::URI uri() const { return lo_address_get_url(_address); }
 
-    void subscribe(Shared::EngineInterface* engine) { }
-
 	/* *** ClientInterface Implementation Below *** */
 
 	//void client_registration(const std::string& url, int client_id);

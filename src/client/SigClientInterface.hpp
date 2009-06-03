@@ -39,9 +39,7 @@ namespace Client {
 class SigClientInterface : public Ingen::Shared::ClientInterface, public sigc::trackable
 {
 public:
-	SigClientInterface() : _enabled(true) {}
-
-	bool enabled() const { return _enabled; }
+	SigClientInterface() {}
 
 	Raul::URI uri() const { return "ingen:internal"; }
 
@@ -69,60 +67,57 @@ public:
 
 protected:
 
-	bool _enabled;
-
 	// ClientInterface hooks that fire the above signals
 
-	void enable()  { _enabled = true; }
-	void disable() { _enabled = false ; }
+#define EMIT(name, ...) { signal_ ## name (__VA_ARGS__); }
 
 	void bundle_begin()
-		{ if (_enabled) signal_bundle_begin.emit(); }
+		{ EMIT(bundle_begin); }
 
 	void bundle_end()
-		{ if (_enabled) signal_bundle_end.emit(); }
+		{ EMIT(bundle_end); }
 
 	void transfer_begin() {}
 	void transfer_end()   {}
 
 	void response_ok(int32_t id)
-		{ if (_enabled) signal_response_ok.emit(id); }
+		{ EMIT(response_ok, id); }
 
 	void response_error(int32_t id, const std::string& msg)
-		{ if (_enabled) signal_response_error.emit(id, msg); }
+		{ EMIT(response_error, id, msg); }
 
 	void error(const std::string& msg)
-		{ if (_enabled) signal_error.emit(msg); }
+		{ EMIT(error, msg); }
 
 	void put(const Raul::URI& path, const Shared::Resource::Properties& properties)
-		{ if (_enabled) signal_put.emit(path, properties); }
+		{ EMIT(put, path, properties); }
 
 	void connect(const Raul::Path& src_port_path, const Raul::Path& dst_port_path)
-		{ if (_enabled) signal_connection.emit(src_port_path, dst_port_path); }
+		{ EMIT(connection, src_port_path, dst_port_path); }
 
 	void del(const Raul::Path& path)
-		{ if (_enabled) signal_object_deleted.emit(path); }
+		{ EMIT(object_deleted, path); }
 
 	void clear_patch(const Raul::Path& path)
-		{ if (_enabled) signal_clear_patch.emit(path); }
+		{ EMIT(clear_patch, path); }
 
 	void move(const Raul::Path& old_path, const Raul::Path& new_path)
-		{ if (_enabled) signal_object_moved.emit(old_path, new_path); }
+		{ EMIT(object_moved, old_path, new_path); }
 
 	void disconnect(const Raul::Path& src_port_path, const Raul::Path& dst_port_path)
-		{ if (_enabled) signal_disconnection.emit(src_port_path, dst_port_path); }
+		{ EMIT(disconnection, src_port_path, dst_port_path); }
 
 	void set_property(const Raul::URI& subject, const Raul::URI& key, const Raul::Atom& value)
-		{ if (_enabled) signal_property_change.emit(subject, key, value); }
+		{ EMIT(property_change, subject, key, value); }
 
 	void set_port_value(const Raul::Path& port_path, const Raul::Atom& value)
-		{ if (_enabled) signal_port_value.emit(port_path, value); }
+		{ EMIT(port_value, port_path, value); }
 
 	void set_voice_value(const Raul::Path& port_path, uint32_t voice, const Raul::Atom& value)
-		{ if (_enabled) signal_voice_value.emit(port_path, voice, value); }
+		{ EMIT(voice_value, port_path, voice, value); }
 
 	void activity(const Raul::Path& port_path)
-		{ if (_enabled) signal_activity.emit(port_path); }
+		{ EMIT(activity, port_path); }
 };
 
 

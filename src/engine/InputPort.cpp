@@ -65,7 +65,6 @@ InputPort::set_buffer_size(size_t size)
 
 	for (Connections::iterator c = _connections.begin(); c != _connections.end(); ++c)
 		((ConnectionImpl*)c->get())->set_buffer_size(size);
-
 }
 
 

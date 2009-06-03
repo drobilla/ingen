@@ -61,8 +61,6 @@ public:
 
 	Raul::URI uri() const { return "http://example.org/"; }
 
-    void subscribe(Shared::EngineInterface* engine) { }
-
 	/* *** ClientInterface Implementation Below *** */
 
 	//void client_registration(const std::string& url, int client_id);

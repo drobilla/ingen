@@ -474,7 +474,7 @@ ConnectWindow::gtk_callback()
 		++_connect_stage;
 
 	} else if (_connect_stage == 1) {
-		if (_attached || App::instance().client()->enabled()) {
+		if (_attached) {
 			App::instance().engine()->activate();
 			++_connect_stage;
 		} else {

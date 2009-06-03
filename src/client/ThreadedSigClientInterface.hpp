@@ -66,10 +66,6 @@ public:
 
 	virtual Raul::URI uri() const { return "ingen:internal"; }
 
-    virtual void subscribe(Shared::EngineInterface* engine) { throw; }
-
-	bool enabled() const { return _attached; }
-
 	void bundle_begin()
 		{ push_sig(bundle_begin_slot); }
 
