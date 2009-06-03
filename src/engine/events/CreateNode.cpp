@@ -20,7 +20,7 @@
 #include "raul/Path.hpp"
 #include "redlandmm/World.hpp"
 #include "module/World.hpp"
-#include "CreateNodeEvent.hpp"
+#include "CreateNode.hpp"
 #include "Responder.hpp"
 #include "PatchImpl.hpp"
 #include "NodeImpl.hpp"

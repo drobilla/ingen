@@ -15,41 +15,27 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "Responder.hpp"
-#include "RegisterClientEvent.hpp"
+#include <sstream>
+#include "events/SendPortValue.hpp"
 #include "Engine.hpp"
+#include "PortImpl.hpp"
 #include "ClientBroadcaster.hpp"
 
-using namespace Raul;
+using namespace std;
 
 namespace Ingen {
 
 
-RegisterClientEvent::RegisterClientEvent(Engine&                  engine,
-                                         SharedPtr<Responder>     responder,
-                                         SampleCount              timestamp,
-                                         const URI&               uri,
-                                         Shared::ClientInterface* client)
-	: QueuedEvent(engine, responder, timestamp)
-	, _uri(uri)
-	, _client(client)
-{
-}
-
-
 void
-RegisterClientEvent::pre_process()
+SendPortValueEvent::post_process()
 {
-	_engine.broadcaster()->register_client(_uri, _client);
+	// FIXME...
 
-	QueuedEvent::pre_process();
-}
-
-
-void
-RegisterClientEvent::post_process()
-{
-	_responder->respond_ok();
+	if (_omni) {
+		_engine.broadcaster()->send_port_value(_port->path(), _value);
+	} else {
+		_engine.broadcaster()->send_port_value(_port->path(), _value);
+	}
 }
 
 

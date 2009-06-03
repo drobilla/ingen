@@ -17,7 +17,7 @@
 
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
-#include "DeleteEvent.hpp"
+#include "Delete.hpp"
 #include "Responder.hpp"
 #include "Engine.hpp"
 #include "PatchImpl.hpp"
@@ -25,7 +25,7 @@
 #include "PluginImpl.hpp"
 #include "AudioDriver.hpp"
 #include "MidiDriver.hpp"
-#include "DisconnectAllEvent.hpp"
+#include "DisconnectAll.hpp"
 #include "ClientBroadcaster.hpp"
 #include "EngineStore.hpp"
 #include "QueuedEventSource.hpp"

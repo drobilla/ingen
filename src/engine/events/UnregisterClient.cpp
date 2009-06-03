@@ -15,44 +15,31 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "RequestAllObjectsEvent.hpp"
+#include "interface/ClientInterface.hpp"
 #include "Responder.hpp"
+#include "UnregisterClient.hpp"
 #include "Engine.hpp"
-#include "ObjectSender.hpp"
 #include "ClientBroadcaster.hpp"
-#include "EngineStore.hpp"
-#include "PatchImpl.hpp"
+
+using namespace Raul;
 
 namespace Ingen {
 
 
-RequestAllObjectsEvent::RequestAllObjectsEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp)
-: QueuedEvent(engine, responder, timestamp)
+UnregisterClientEvent::UnregisterClientEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const URI& uri)
+	: QueuedEvent(engine, responder, timestamp)
+	, _uri(uri)
 {
 }
 
 
 void
-RequestAllObjectsEvent::pre_process()
+UnregisterClientEvent::post_process()
 {
-	QueuedEvent::pre_process();
-}
-
-
-void
-RequestAllObjectsEvent::post_process()
-{
-	if (_responder->client()) {
+	if (_engine.broadcaster()->unregister_client(_uri))
 		_responder->respond_ok();
-
-		// Everything is a child of the root patch, so this sends it all
-		PatchImpl* root = _engine.engine_store()->find_patch("/");
-		if (root && _responder->client())
-			ObjectSender::send_object(_responder->client(), root, true);
-
-	} else {
-		_responder->respond_error("Unable to find client to send all objects");
-	}
+	else
+		_responder->respond_error("Unable to unregister client");
 }
 
 

@@ -24,8 +24,8 @@
 #include "AudioBuffer.hpp"
 #include "EventBuffer.hpp"
 #include "ProcessContext.hpp"
-#include "events/SendPortValueEvent.hpp"
-#include "events/SendPortActivityEvent.hpp"
+#include "events/SendPortValue.hpp"
+#include "events/SendPortActivity.hpp"
 
 using namespace std;
 using namespace Raul;

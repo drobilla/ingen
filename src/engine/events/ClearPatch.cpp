@@ -16,7 +16,7 @@
  */
 
 #include "raul/Maid.hpp"
-#include "ClearPatchEvent.hpp"
+#include "ClearPatch.hpp"
 #include "Responder.hpp"
 #include "Engine.hpp"
 #include "PatchImpl.hpp"

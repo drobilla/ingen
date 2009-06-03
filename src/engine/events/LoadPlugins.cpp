@@ -15,41 +15,37 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "RequestPluginsEvent.hpp"
+#include "LoadPlugins.hpp"
 #include "Responder.hpp"
 #include "Engine.hpp"
-#include "ClientBroadcaster.hpp"
 #include "NodeFactory.hpp"
+#include "ClientBroadcaster.hpp"
+#include "QueuedEventSource.hpp"
 
 namespace Ingen {
 
 
-RequestPluginsEvent::RequestPluginsEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp)
-: QueuedEvent(engine, responder, timestamp)
+LoadPluginsEvent::LoadPluginsEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, QueuedEventSource* source)
+: QueuedEvent(engine, responder, timestamp, true, source)
 {
+	/* FIXME: Not sure why this has to be blocking, but it fixes some nasty bugs.. */
 }
 
-
 void
-RequestPluginsEvent::pre_process()
+LoadPluginsEvent::pre_process()
 {
-	// Take a copy to send in the post processing thread (to avoid problems
-	// because std::map isn't thread safe)
-	_plugins = _engine.node_factory()->plugins();
+	_engine.node_factory()->load_plugins();
 
 	QueuedEvent::pre_process();
 }
 
-
 void
-RequestPluginsEvent::post_process()
+LoadPluginsEvent::post_process()
 {
-	if (_responder->client()) {
-		_engine.broadcaster()->send_plugins_to(_responder->client(), _plugins);
-		_responder->respond_ok();
-	} else {
-		_responder->respond_error("Unable to find client to send plugins");
-	}
+	if (_source)
+		_source->unblock();
+
+	_responder->respond_ok();
 }
 
 

@@ -15,37 +15,18 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "LoadPluginsEvent.hpp"
-#include "Responder.hpp"
+#include "events/SendPortActivity.hpp"
 #include "Engine.hpp"
-#include "NodeFactory.hpp"
+#include "PortImpl.hpp"
 #include "ClientBroadcaster.hpp"
-#include "QueuedEventSource.hpp"
 
 namespace Ingen {
 
 
-LoadPluginsEvent::LoadPluginsEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, QueuedEventSource* source)
-: QueuedEvent(engine, responder, timestamp, true, source)
-{
-	/* FIXME: Not sure why this has to be blocking, but it fixes some nasty bugs.. */
-}
-
 void
-LoadPluginsEvent::pre_process()
+SendPortActivityEvent::post_process()
 {
-	_engine.node_factory()->load_plugins();
-
-	QueuedEvent::pre_process();
-}
-
-void
-LoadPluginsEvent::post_process()
-{
-	if (_source)
-		_source->unblock();
-
-	_responder->respond_ok();
+	_engine.broadcaster()->send_activity(_port->path());
 }
 
 

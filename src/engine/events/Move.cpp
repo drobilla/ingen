@@ -16,12 +16,12 @@
  */
 
 #include "raul/Path.hpp"
+#include "events/Move.hpp"
 #include "ClientBroadcaster.hpp"
 #include "Engine.hpp"
 #include "NodeImpl.hpp"
 #include "EngineStore.hpp"
 #include "PatchImpl.hpp"
-#include "MoveEvent.hpp"
 #include "Responder.hpp"
 #include "AudioDriver.hpp"
 #include "MidiDriver.hpp"

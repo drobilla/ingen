@@ -32,8 +32,8 @@ def build(bld):
 		PostProcessor.cpp
 		ProcessSlave.cpp
 		QueuedEvent.cpp
-		events/SendPortActivityEvent.cpp
-		events/SendPortValueEvent.cpp
+		events/SendPortActivity.cpp
+		events/SendPortValue.cpp
 		ingen_engine.cpp
 	'''
 
@@ -56,27 +56,27 @@ def build(bld):
 	obj.source = '''
 		QueuedEngineInterface.cpp
 		QueuedEventSource.cpp
-		events/AllNotesOffEvent.cpp
-		events/ClearPatchEvent.cpp
-		events/ConnectionEvent.cpp
-		events/CreateNodeEvent.cpp
-		events/CreatePatchEvent.cpp
-		events/CreatePortEvent.cpp
-		events/DeleteEvent.cpp
-		events/DisconnectAllEvent.cpp
-		events/DisconnectionEvent.cpp
-		events/GetEvent.cpp
-		events/LoadPluginsEvent.cpp
-		events/MidiLearnEvent.cpp
-		events/MoveEvent.cpp
-		events/NoteEvent.cpp
-		events/RegisterClientEvent.cpp
-		events/RequestAllObjectsEvent.cpp
-		events/RequestMetadataEvent.cpp
-		events/RequestPluginsEvent.cpp
-		events/SetMetadataEvent.cpp
-		events/SetPortValueEvent.cpp
-		events/UnregisterClientEvent.cpp
+		events/AllNotesOff.cpp
+		events/ClearPatch.cpp
+		events/Connection.cpp
+		events/CreateNode.cpp
+		events/CreatePatch.cpp
+		events/CreatePort.cpp
+		events/Delete.cpp
+		events/DisconnectAll.cpp
+		events/Disconnection.cpp
+		events/Get.cpp
+		events/LoadPlugins.cpp
+		events/MidiLearn.cpp
+		events/Move.cpp
+		events/Note.cpp
+		events/RegisterClient.cpp
+		events/RequestAllObjects.cpp
+		events/RequestMetadata.cpp
+		events/RequestPlugins.cpp
+		events/SetMetadata.cpp
+		events/SetPortValue.cpp
+		events/UnregisterClient.cpp
 	'''
 	obj.export_incdirs = ['.']
 	obj.includes     = ['.', '..', '../..', '../common', '../engine']

@@ -15,23 +15,22 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "SetMetadataEvent.hpp"
 #include <string>
 #include <boost/format.hpp>
 #include "interface/DataType.hpp"
 #include "ClientBroadcaster.hpp"
+#include "CreateNode.hpp"
+#include "CreatePatch.hpp"
+#include "CreatePort.hpp"
 #include "Engine.hpp"
 #include "EngineStore.hpp"
 #include "GraphObjectImpl.hpp"
 #include "PatchImpl.hpp"
 #include "PluginImpl.hpp"
 #include "PortImpl.hpp"
-#include "Responder.hpp"
-#include "CreatePatchEvent.hpp"
-#include "CreateNodeEvent.hpp"
-#include "CreatePortEvent.hpp"
 #include "QueuedEventSource.hpp"
-
+#include "Responder.hpp"
+#include "SetMetadata.hpp"
 
 using namespace std;
 using namespace Raul;

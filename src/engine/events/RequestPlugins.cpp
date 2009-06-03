@@ -15,26 +15,40 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <sstream>
-#include "SendPortValueEvent.hpp"
+#include "RequestPlugins.hpp"
+#include "Responder.hpp"
 #include "Engine.hpp"
-#include "PortImpl.hpp"
 #include "ClientBroadcaster.hpp"
-
-using namespace std;
+#include "NodeFactory.hpp"
 
 namespace Ingen {
 
 
-void
-SendPortValueEvent::post_process()
+RequestPluginsEvent::RequestPluginsEvent(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp)
+: QueuedEvent(engine, responder, timestamp)
 {
-	// FIXME...
+}
 
-	if (_omni) {
-		_engine.broadcaster()->send_port_value(_port->path(), _value);
+
+void
+RequestPluginsEvent::pre_process()
+{
+	// Take a copy to send in the post processing thread (to avoid problems
+	// because std::map isn't thread safe)
+	_plugins = _engine.node_factory()->plugins();
+
+	QueuedEvent::pre_process();
+}
+
+
+void
+RequestPluginsEvent::post_process()
+{
+	if (_responder->client()) {
+		_engine.broadcaster()->send_plugins_to(_responder->client(), _plugins);
+		_responder->respond_ok();
 	} else {
-		_engine.broadcaster()->send_port_value(_port->path(), _value);
+		_responder->respond_error("Unable to find client to send plugins");
 	}
 }
 

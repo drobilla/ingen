@@ -15,7 +15,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "MidiLearnEvent.hpp"
+#include "events/MidiLearn.hpp"
 #include "Responder.hpp"
 #include "Engine.hpp"
 #include "EngineStore.hpp"

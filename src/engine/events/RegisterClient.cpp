@@ -15,18 +15,41 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "SendPortActivityEvent.hpp"
+#include "Responder.hpp"
+#include "events/RegisterClient.hpp"
 #include "Engine.hpp"
-#include "PortImpl.hpp"
 #include "ClientBroadcaster.hpp"
+
+using namespace Raul;
 
 namespace Ingen {
 
 
-void
-SendPortActivityEvent::post_process()
+RegisterClientEvent::RegisterClientEvent(Engine&                  engine,
+                                         SharedPtr<Responder>     responder,
+                                         SampleCount              timestamp,
+                                         const URI&               uri,
+                                         Shared::ClientInterface* client)
+	: QueuedEvent(engine, responder, timestamp)
+	, _uri(uri)
+	, _client(client)
 {
-	_engine.broadcaster()->send_activity(_port->path());
+}
+
+
+void
+RegisterClientEvent::pre_process()
+{
+	_engine.broadcaster()->register_client(_uri, _client);
+
+	QueuedEvent::pre_process();
+}
+
+
+void
+RegisterClientEvent::post_process()
+{
+	_responder->respond_ok();
 }
 
 

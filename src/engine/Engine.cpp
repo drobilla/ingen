@@ -23,7 +23,7 @@
 #include "raul/Maid.hpp"
 #include "raul/SharedPtr.hpp"
 #include "common/interface/EventType.hpp"
-#include "events/CreatePatchEvent.hpp"
+#include "events/CreatePatch.hpp"
 #include "module/World.hpp"
 #include "AudioDriver.hpp"
 #include "ClientBroadcaster.hpp"

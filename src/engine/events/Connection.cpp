@@ -20,7 +20,7 @@
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
 #include "ClientBroadcaster.hpp"
-#include "ConnectionEvent.hpp"
+#include "Connection.hpp"
 #include "ConnectionImpl.hpp"
 #include "Engine.hpp"
 #include "InputPort.hpp"

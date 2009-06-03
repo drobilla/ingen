@@ -16,7 +16,7 @@
  */
 
 #include "interface/ClientInterface.hpp"
-#include "RequestMetadataEvent.hpp"
+#include "events/RequestMetadata.hpp"
 #include "Responder.hpp"
 #include "Engine.hpp"
 #include "GraphObjectImpl.hpp"

@@ -21,7 +21,7 @@
 #include "shared/LV2Features.hpp"
 #include "module/World.hpp"
 #include "Responder.hpp"
-#include "SetPortValueEvent.hpp"
+#include "SetPortValue.hpp"
 #include "Engine.hpp"
 #include "PortImpl.hpp"
 #include "ClientBroadcaster.hpp"

@@ -17,7 +17,7 @@
 
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
-#include "CreatePatchEvent.hpp"
+#include "events/CreatePatch.hpp"
 #include "Responder.hpp"
 #include "PatchImpl.hpp"
 #include "NodeImpl.hpp"

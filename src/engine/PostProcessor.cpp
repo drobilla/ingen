@@ -19,7 +19,7 @@
 #include <iostream>
 #include <pthread.h>
 #include "raul/SRSWQueue.hpp"
-#include "events/SendPortValueEvent.hpp"
+#include "events/SendPortValue.hpp"
 #include "Event.hpp"
 #include "PostProcessor.hpp"
 #include "Engine.hpp"
