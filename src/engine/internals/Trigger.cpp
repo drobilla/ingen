@@ -17,13 +17,13 @@
 
 #include <cmath>
 #include "raul/midi_events.h"
-#include "InternalTrigger.hpp"
+#include "internals/Trigger.hpp"
 #include "AudioBuffer.hpp"
-#include "InputPort.hpp"
-#include "OutputPort.hpp"
-#include "InternalPlugin.hpp"
-#include "ProcessContext.hpp"
 #include "EventBuffer.hpp"
+#include "InputPort.hpp"
+#include "InternalPlugin.hpp"
+#include "OutputPort.hpp"
+#include "ProcessContext.hpp"
 #include "util.hpp"
 
 using namespace std;

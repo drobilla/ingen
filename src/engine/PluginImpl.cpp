@@ -17,10 +17,10 @@
 
 #include <iostream>
 #include "PluginImpl.hpp"
-#include "InternalNote.hpp"
-#include "InternalTrigger.hpp"
-#include "InternalController.hpp"
-#include "InternalTransport.hpp"
+#include "internals/Note.hpp"
+#include "internals/Trigger.hpp"
+#include "internals/Controller.hpp"
+#include "internals/Transport.hpp"
 
 using namespace std;
 

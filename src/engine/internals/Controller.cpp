@@ -17,7 +17,7 @@
 
 #include <math.h>
 #include "raul/midi_events.h"
-#include "InternalController.hpp"
+#include "internals/Controller.hpp"
 #include "PostProcessor.hpp"
 #include "events/MidiLearn.hpp"
 #include "events/SendPortValue.hpp"

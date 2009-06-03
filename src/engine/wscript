@@ -15,11 +15,7 @@ def build(bld):
 		EventSink.cpp
 		GraphObjectImpl.cpp
 		InputPort.cpp
-		InternalController.cpp
-		InternalNote.cpp
 		InternalPlugin.cpp
-		InternalTransport.cpp
-		InternalTrigger.cpp
 		LV2EventBuffer.cpp
 		MessageContext.cpp
 		NodeBase.cpp
@@ -35,6 +31,10 @@ def build(bld):
 		events/SendPortActivity.cpp
 		events/SendPortValue.cpp
 		ingen_engine.cpp
+		internals/Controller.cpp
+		internals/Note.cpp
+		internals/Transport.cpp
+		internals/Trigger.cpp
 	'''
 
 	obj = bld.new_task_gen('cxx', 'shlib')

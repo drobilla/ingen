@@ -15,16 +15,16 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "Note.hpp"
-#include "Responder.hpp"
+#include "internals/Note.hpp"
+#include "internals/Trigger.hpp"
 #include "Engine.hpp"
 #include "EngineStore.hpp"
-#include "NodeImpl.hpp"
-#include "InternalNote.hpp"
-#include "InternalTrigger.hpp"
-#include "PluginImpl.hpp"
 #include "InternalPlugin.hpp"
+#include "NodeImpl.hpp"
+#include "Note.hpp"
+#include "PluginImpl.hpp"
 #include "ProcessContext.hpp"
+#include "Responder.hpp"
 
 using namespace Raul;
 

@@ -20,12 +20,12 @@
 #include "raul/midi_events.h"
 #include <cmath>
 #include <iostream>
+#include "internals/Note.hpp"
 #include "AudioBuffer.hpp"
 #include "AudioDriver.hpp"
+#include "EventBuffer.hpp"
 #include "InputPort.hpp"
 #include "InternalPlugin.hpp"
-#include "EventBuffer.hpp"
-#include "InternalNote.hpp"
 #include "OutputPort.hpp"
 #include "PatchImpl.hpp"
 #include "ProcessContext.hpp"

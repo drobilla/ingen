@@ -19,7 +19,7 @@
 #define MIDILEARNEVENT_H
 
 #include "QueuedEvent.hpp"
-#include "InternalController.hpp"
+#include "internals/Controller.hpp"
 #include "types.hpp"
 
 namespace Ingen {

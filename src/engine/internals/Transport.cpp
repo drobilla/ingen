@@ -15,7 +15,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "InternalTransport.hpp"
+#include "internals/Transport.hpp"
 #include <jack/transport.h>
 #include "OutputPort.hpp"
 #include "InternalPlugin.hpp"
