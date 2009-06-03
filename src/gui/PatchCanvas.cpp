@@ -182,8 +182,6 @@ PatchCanvas::build_plugin_class_menu(Gtk::Menu* menu,
 	SLV2Value   class_uri     = slv2_plugin_class_get_uri(plugin_class);
 	const char* class_uri_str = slv2_value_as_string(class_uri);
 
-	_class_menus.insert(make_pair(class_uri_str, menu));
-
 	const std::pair<LV2Children::const_iterator, LV2Children::const_iterator> kids
 			= children.equal_range(class_uri_str);
 
@@ -193,16 +191,22 @@ PatchCanvas::build_plugin_class_menu(Gtk::Menu* menu,
 	// Add submenus
 	for (LV2Children::const_iterator i = kids.first; i != kids.second; ++i) {
 		SLV2PluginClass c = i->second;
-		Gtk::Menu_Helpers::MenuElem menu_elem = Gtk::Menu_Helpers::MenuElem(
-				slv2_value_as_string(slv2_plugin_class_get_label(c)));
+		const char* sub_label_str = slv2_value_as_string(slv2_plugin_class_get_label(c));
+		const char* sub_uri_str   = slv2_value_as_string(slv2_plugin_class_get_uri(c));
 
+		Gtk::Menu_Helpers::MenuElem menu_elem = Gtk::Menu_Helpers::MenuElem(sub_label_str);
 		menu->items().push_back(menu_elem);
 		Gtk::MenuItem* menu_item = &(menu->items().back());
 
 		Gtk::Menu* submenu = Gtk::manage(new Gtk::Menu());
-		size_t num_items = build_plugin_class_menu(submenu, c, classes, children);
-
 		menu_item->set_submenu(*submenu);
+
+		size_t num_child_items = build_plugin_class_menu(submenu, c, classes, children);
+
+		_class_menus.insert(make_pair(sub_uri_str, MenuRecord(menu_item, submenu)));
+		if (num_child_items == 0)
+			menu_item->hide();
+
 		++num_items;
 	}
 
@@ -323,14 +327,16 @@ PatchCanvas::add_plugin(SharedPtr<PluginModel> p)
 					PluginModel::get_lv2_icon_path(p->slv2_plugin()), 16);
 
 		pair<iterator,iterator> range = _class_menus.equal_range(class_uri_str);
-		if (range.first == _class_menus.end() || range.first->second == _plugin_menu) {
+		if (range.first == _class_menus.end() || range.first == range.second
+				|| range.first->second.menu == _plugin_menu) {
 			_classless_menu->items().push_back(Gtk::Menu_Helpers::MenuElem(p->human_name(),
 					sigc::bind(sigc::mem_fun(this, &PatchCanvas::load_plugin), p)));
-			_classless_menu->show();
+			if (!_classless_menu->is_visible())
+				_classless_menu->show();
 		} else {
 			// For each menu that represents plugin's class (possibly several)
 			for (iterator i = range.first; i != range.second ; ++i) {
-				Gtk::Menu* menu = i->second;
+				Gtk::Menu* menu = i->second.menu;
 				if (icon) {
 					Gtk::Image* image = new Gtk::Image(icon);
 					menu->items().push_back(Gtk::Menu_Helpers::ImageMenuElem(p->human_name(),
@@ -340,6 +346,8 @@ PatchCanvas::add_plugin(SharedPtr<PluginModel> p)
 					menu->items().push_back(Gtk::Menu_Helpers::MenuElem(p->human_name(),
 							sigc::bind(sigc::mem_fun(this, &PatchCanvas::load_plugin), p)));
 				}
+				if (!i->second.item->is_visible())
+					i->second.item->show();
 			}
 		}
 	}

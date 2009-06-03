@@ -136,7 +136,14 @@ private:
 	int _last_click_y;
 	int _paste_count;
 
-	typedef std::multimap<const std::string, Gtk::Menu*> ClassMenus;
+	struct MenuRecord {
+		MenuRecord(Gtk::MenuItem* i, Gtk::Menu* m) : item(i), menu(m) {}
+		Gtk::MenuItem* item;
+		Gtk::Menu*     menu;
+	};
+
+	typedef std::multimap<const std::string, MenuRecord> ClassMenus;
+
 	ClassMenus _class_menus;
 
 	bool            _human_names;
