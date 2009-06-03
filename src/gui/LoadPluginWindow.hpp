@@ -38,49 +38,6 @@ using Ingen::Client::PatchModel;
 namespace GUI {
 
 
-// Gtkmm _really_ needs to add some helper to abstract away this stupid nonsense
-
-/** Columns for the plugin list in the load plugin window.
- *
- * \ingroup GUI
- */
-class ModelColumns : public Gtk::TreeModel::ColumnRecord
-{
-public:
-  ModelColumns() {
-	  add(_col_icon);
-	  add(_col_name);
-	  add(_col_type);
-	  add(_col_uri);
-	  add(_col_plugin);
-  }
-
-  Gtk::TreeModelColumn<Glib::RefPtr<Gdk::Pixbuf> > _col_icon;
-  Gtk::TreeModelColumn<Glib::ustring>              _col_name;
-  Gtk::TreeModelColumn<Glib::ustring>              _col_type;
-  Gtk::TreeModelColumn<Glib::ustring>              _col_uri;
-
-  // Not displayed:
-  Gtk::TreeModelColumn<SharedPtr<PluginModel> > _col_plugin;
-};
-
-
-/** Column for the criteria combo box in the load plugin window.
- *
- * \ingroup GUI
- */
-class CriteriaColumns : public Gtk::TreeModel::ColumnRecord
-{
-public:
-	enum Criteria { NAME, TYPE, URI, };
-
-	CriteriaColumns() { add(_col_label); add(_col_criteria); }
-
-	Gtk::TreeModelColumn<Glib::ustring> _col_label;
-	Gtk::TreeModelColumn<Criteria>      _col_criteria;
-};
-
-
 /** 'Load Plugin' window.
  *
  * Loaded by glade as a derived object.
@@ -104,6 +61,37 @@ protected:
 	bool on_key_press_event(GdkEventKey* event);
 
 private:
+	/** Columns for the plugin list */
+	class ModelColumns : public Gtk::TreeModel::ColumnRecord {
+	public:
+	  ModelColumns() {
+		  add(_col_icon);
+		  add(_col_name);
+		  add(_col_type);
+		  add(_col_uri);
+		  add(_col_plugin);
+	  }
+
+	  Gtk::TreeModelColumn<Glib::RefPtr<Gdk::Pixbuf> > _col_icon;
+	  Gtk::TreeModelColumn<Glib::ustring>              _col_name;
+	  Gtk::TreeModelColumn<Glib::ustring>              _col_type;
+	  Gtk::TreeModelColumn<Glib::ustring>              _col_uri;
+
+	  // Not displayed:
+	  Gtk::TreeModelColumn<SharedPtr<PluginModel> > _col_plugin;
+	};
+
+	/** Column for the filter criteria combo box. */
+	class CriteriaColumns : public Gtk::TreeModel::ColumnRecord {
+	public:
+		enum Criteria { NAME, TYPE, URI, };
+
+		CriteriaColumns() { add(_col_label); add(_col_criteria); }
+
+		Gtk::TreeModelColumn<Glib::ustring> _col_label;
+		Gtk::TreeModelColumn<Criteria>      _col_criteria;
+	};
+
 	void add_clicked();
 	//void close_clicked();
 	//void ok_clicked();
