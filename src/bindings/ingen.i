@@ -1,10 +1,10 @@
 %include "stl.i"
 %module(directors="1") ingen
 %{
+#include "../common/interface/CommonInterface.hpp"
 #include "../common/interface/ClientInterface.hpp"
 #include "../common/interface/EngineInterface.hpp"
-#include "../libs/module/World.hpp"
-/*#include "../libs/module/module.h"*/
+#include "../module/World.hpp"
 #include "ingen_bindings.hpp"
 #include "Client.hpp"
 
@@ -15,12 +15,11 @@ namespace Ingen { namespace Shared {
 
 /*%ignore Ingen::Shared::EngineInterface;*/
 
+%include "../common/interface/CommonInterface.hpp"
 %include "../common/interface/ClientInterface.hpp"
 %include "../common/interface/EngineInterface.hpp"
-/*%include "../libs/module/World.hpp"
-%include "../libs/module/module.h"*/
-%include "../libs/module/World.hpp"
-//%include "../libs/module/module.h"
+%include "../module/World.hpp"
+//%include "../module/module.h"
 %include "ingen_bindings.hpp"
 
 // generate directors for all classes that have virtual methods
