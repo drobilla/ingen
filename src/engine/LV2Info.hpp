@@ -29,6 +29,7 @@
 #include "module/global.hpp"
 #include "module/World.hpp"
 #include "shared/LV2URIMap.hpp"
+#include "shared/LV2Features.hpp"
 #include "lv2ext/lv2_uri_map.h"
 #include "lv2ext/lv2_event.h"
 

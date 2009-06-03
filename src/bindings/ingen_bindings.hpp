@@ -4,7 +4,6 @@
 namespace Ingen {
 namespace Shared {
 
-
 class World;
 extern World* ingen_world;
 

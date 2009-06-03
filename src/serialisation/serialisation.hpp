@@ -18,6 +18,8 @@
 #ifndef INGEN_SERIALISATION_H
 #define INGEN_SERIALISATION_H
 
+#include <boost/shared_ptr.hpp>
+
 namespace Ingen {
 
 namespace Shared { class World; class Store; }
@@ -31,8 +33,8 @@ class Serialiser;
 extern "C" {
 
 	extern Parser*     new_parser();
-	extern Serialiser* new_serialiser(Ingen::Shared::World*    world,
-	                                  SharedPtr<Shared::Store> store);
+	extern Serialiser* new_serialiser(Ingen::Shared::World*            world,
+	                                  boost::shared_ptr<Shared::Store> store);
 
 }
 

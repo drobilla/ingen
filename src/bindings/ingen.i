@@ -1,16 +1,12 @@
 %include "stl.i"
 %module(directors="1") ingen
 %{
-#include "../common/interface/CommonInterface.hpp"
-#include "../common/interface/ClientInterface.hpp"
-#include "../common/interface/EngineInterface.hpp"
-#include "../module/World.hpp"
+#include "common/interface/CommonInterface.hpp"
+#include "common/interface/ClientInterface.hpp"
+#include "common/interface/EngineInterface.hpp"
+#include "module/World.hpp"
 #include "ingen_bindings.hpp"
 #include "Client.hpp"
-
-namespace Ingen { namespace Shared {
-    class World;
-} }
 %}
 
 /*%ignore Ingen::Shared::EngineInterface;*/
@@ -27,9 +23,6 @@ namespace Ingen { namespace Shared {
 %feature("director") Ingen::Shared::ClientInterface;
 //%feature("director") Ingen::Shared::EngineInterface;
 
-namespace Ingen { namespace Shared {
-    class World;
-} }
 typedef Ingen::Shared::World World;
 namespace Ingen { namespace Shared {
 %extend World {

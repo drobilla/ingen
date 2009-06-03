@@ -17,6 +17,7 @@
 
 #include <iostream>
 #include "redlandmm/World.hpp"
+#include "shared/LV2Features.hpp"
 #include "global.hpp"
 #include "World.hpp"
 

@@ -21,6 +21,7 @@
 #include "raul/Maid.hpp"
 #include "raul/midi_events.h"
 #include "module/World.hpp"
+#include "shared/LV2Features.hpp"
 #include "lv2ext/lv2_event_helpers.h"
 #include "shared/LV2URIMap.hpp"
 #include "JackMidiDriver.hpp"

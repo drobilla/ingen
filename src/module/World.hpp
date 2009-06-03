@@ -18,27 +18,24 @@
 #ifndef INGEN_WORLD_HPP
 #define INGEN_WORLD_HPP
 
-#include "ingen-config.h"
-
-#include <string>
+#include <boost/shared_ptr.hpp>
 #include <glibmm/module.h>
-#include "raul/SharedPtr.hpp"
-#include "shared/LV2Features.hpp"
 
-#ifdef HAVE_SLV2
-#include "slv2/slv2.h"
-#endif
+typedef struct _SLV2World* SLV2World;
 
 namespace Redland { class World; }
 
 namespace Ingen {
+
 class Engine;
 
 namespace Serialisation { class Serialiser; class Parser; }
 
 namespace Shared {
+
 class EngineInterface;
 class Store;
+class LV2Features;
 
 
 /** The "world" all Ingen modules may share.
@@ -52,20 +49,18 @@ class Store;
  * The Ingen System(TM) and whatnot.
  */
 struct World {
-#ifdef HAVE_SLV2
-	SLV2World    slv2_world;
-	LV2Features* lv2_features;
-#endif
-
 	Redland::World* rdf_world;
 
-    SharedPtr<EngineInterface>           engine;
-    SharedPtr<Engine>                    local_engine;
-    SharedPtr<Serialisation::Serialiser> serialiser;
-    SharedPtr<Serialisation::Parser>     parser;
-    SharedPtr<Store>                     store;
+    SLV2World    slv2_world;
+	LV2Features* lv2_features;
 
-	SharedPtr<Glib::Module> serialisation_module;
+    boost::shared_ptr<EngineInterface>           engine;
+    boost::shared_ptr<Engine>                    local_engine;
+    boost::shared_ptr<Serialisation::Serialiser> serialiser;
+    boost::shared_ptr<Serialisation::Parser>     parser;
+    boost::shared_ptr<Store>                     store;
+
+	boost::shared_ptr<Glib::Module> serialisation_module;
 };
 
 

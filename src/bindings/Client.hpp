@@ -1,3 +1,4 @@
+#include "interface/Resource.hpp"
 
 /** Need a stub ClientInterface without pure virtual methods
  * to allow inheritance in the script
@@ -10,60 +11,21 @@ public:
         engine->register_client(this);
     }
 
-	virtual void response_ok(int32_t id) {}
-
-	virtual void response_error(int32_t id, const std::string& msg) {}
-
-	virtual void enable()  {}
-
-	/** Signifies the client does not wish to receive any messages until
-	 * enable is called.  Useful for performance and avoiding feedback.
-	 */
-	virtual void disable()  {}
-
-	/** Bundles are a group of messages that are guaranteed to be in an
-	 * atomic unit with guaranteed order (eg a packet).  For datagram
-	 * protocols (like UDP) there is likely an upper limit on bundle size.
-	 */
-	virtual void bundle_begin()  {}
-	virtual void bundle_end()    {}
-
-	/** Transfers are 'weak' bundles.  These are used to break a large group
-	 * of similar/related messages into larger chunks (solely for communication
-	 * efficiency).  A bunch of messages in a transfer will arrive as 1 or more
-	 * bundles (so a transfer can exceed the maximum bundle (packet) size).
-	 */
-	virtual void transfer_begin()  {}
-	virtual void transfer_end()    {}
-
-	virtual void error(const std::string& msg)  {}
-
-	void put(const URI&                  path,
-	         const Resource::Properties& properties) {}
-
-	virtual void clear_patch(const std::string& path)  {}
-
-	virtual void move(const std::string& old_path,
-	                  const std::string& new_path)  {}
-
-	virtual void connect(const std::string& src_port_path,
-	                     const std::string& dst_port_path)  {}
-
-	virtual void disconnect(const std::string& src_port_path,
-	                        const std::string& dst_port_path)  {}
-
-	virtual void set_property(const std::string& subject_path,
-	                          const std::string& predicate,
-	                          const Raul::Atom&  value)  {}
-
-	virtual void set_port_value(const std::string& port_path,
-	                            const std::string& type_uri,
-	                            uint32_t           data_size,
-	                            const void*        data) {}
-
-	virtual void set_voice_value(const std::string& port_path,
-	                             const std::string& type_uri,
-	                             uint32_t           voice,
-	                             uint32_t           data_size,
-	                             const void*        data) {}
+	void bundle_begin() {}
+	void bundle_end() {}
+	void transfer_begin() {}
+	void transfer_end() {}
+	void response_ok(int32_t id) {}
+	void response_error(int32_t id, const std::string& msg) {}
+	void error(const std::string& msg) {}
+	void put(const Raul::URI& path, const Ingen::Shared::Resource::Properties& properties) {}
+	void connect(const Raul::Path& src_port_path, const Raul::Path& dst_port_path) {}
+	void del(const Raul::Path& path) {}
+	void clear_patch(const Raul::Path& path) {}
+	void move(const Raul::Path& old_path, const Raul::Path& new_path) {}
+	void disconnect(const Raul::Path& src_port_path, const Raul::Path& dst_port_path) {}
+	void set_property(const Raul::URI& subject, const Raul::URI& key, const Raul::Atom& value) {}
+	void set_port_value(const Raul::Path& port_path, const Raul::Atom& value) {}
+	void set_voice_value(const Raul::Path& port_path, uint32_t voice, const Raul::Atom& value) {}
+	void activity(const Raul::Path& port_path) {}
 };
