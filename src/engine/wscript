@@ -58,13 +58,13 @@ def build(bld):
 		QueuedEventSource.cpp
 		events/AllNotesOff.cpp
 		events/ClearPatch.cpp
-		events/Connection.cpp
+		events/Connect.cpp
 		events/CreateNode.cpp
 		events/CreatePatch.cpp
 		events/CreatePort.cpp
 		events/Delete.cpp
+		events/Disconnect.cpp
 		events/DisconnectAll.cpp
-		events/Disconnection.cpp
 		events/Get.cpp
 		events/LoadPlugins.cpp
 		events/MidiLearn.cpp

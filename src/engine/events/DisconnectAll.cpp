@@ -23,7 +23,7 @@
 #include "ClientBroadcaster.hpp"
 #include "ConnectionImpl.hpp"
 #include "events/DisconnectAll.hpp"
-#include "events/Disconnection.hpp"
+#include "events/Disconnect.hpp"
 #include "Engine.hpp"
 #include "InputPort.hpp"
 #include "NodeImpl.hpp"

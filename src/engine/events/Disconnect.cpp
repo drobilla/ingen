@@ -17,7 +17,7 @@
 
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
-#include "events/Disconnection.hpp"
+#include "events/Disconnect.hpp"
 #include "Responder.hpp"
 #include "Engine.hpp"
 #include "ConnectionImpl.hpp"
