@@ -15,10 +15,9 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "BreadCrumbs.hpp"
-#include "BreadCrumb.hpp"
-#include "App.hpp"
 #include "client/SigClientInterface.hpp"
+#include "App.hpp"
+#include "BreadCrumbs.hpp"
 
 namespace Ingen {
 namespace GUI {
@@ -26,19 +25,19 @@ namespace GUI {
 using namespace std;
 using namespace Raul;
 
-BreadCrumbBox::BreadCrumbBox()
+BreadCrumbs::BreadCrumbs()
 	: Gtk::HBox()
 	, _active_path("/")
 	, _full_path("/")
 	, _enable_signal(true)
 {
 	App::instance().client()->signal_object_deleted.connect(
-			sigc::mem_fun(this, &BreadCrumbBox::object_destroyed));
+			sigc::mem_fun(this, &BreadCrumbs::object_destroyed));
 }
 
 
 SharedPtr<PatchView>
-BreadCrumbBox::view(const Path& path)
+BreadCrumbs::view(const Path& path)
 {
 	for (std::list<BreadCrumb*>::const_iterator i = _breadcrumbs.begin(); i != _breadcrumbs.end(); ++i)
 		if ((*i)->path() == path)
@@ -54,7 +53,7 @@ BreadCrumbBox::view(const Path& path)
  * children preserved.
  */
 void
-BreadCrumbBox::build(Path path, SharedPtr<PatchView> view)
+BreadCrumbs::build(Path path, SharedPtr<PatchView> view)
 {
 	bool old_enable_signal = _enable_signal;
 	_enable_signal = false;
@@ -148,22 +147,22 @@ BreadCrumbBox::build(Path path, SharedPtr<PatchView> view)
 /** Create a new crumb, assigning it a reference to @a view if their paths
  * match, otherwise ignoring @a view.
  */
-BreadCrumb*
-BreadCrumbBox::create_crumb(const Path&           path,
-                            SharedPtr<PatchView> view)
+BreadCrumbs::BreadCrumb*
+BreadCrumbs::create_crumb(const Path&          path,
+                          SharedPtr<PatchView> view)
 {
 	BreadCrumb* but = manage(new BreadCrumb(path,
 			(view && path == view->patch()->path()) ? view : SharedPtr<PatchView>()));
 
 	but->signal_toggled().connect(sigc::bind(sigc::mem_fun(
-				this, &BreadCrumbBox::breadcrumb_clicked), but));
+				this, &BreadCrumbs::breadcrumb_clicked), but));
 
 	return but;
 }
 
 
 void
-BreadCrumbBox::breadcrumb_clicked(BreadCrumb* crumb)
+BreadCrumbs::breadcrumb_clicked(BreadCrumb* crumb)
 {
 	if (_enable_signal) {
 		_enable_signal = false;
@@ -182,7 +181,7 @@ BreadCrumbBox::breadcrumb_clicked(BreadCrumb* crumb)
 
 
 void
-BreadCrumbBox::object_destroyed(const Path& path)
+BreadCrumbs::object_destroyed(const Path& path)
 {
 	for (std::list<BreadCrumb*>::iterator i = _breadcrumbs.begin(); i != _breadcrumbs.end(); ++i) {
 		if ((*i)->path() == path) {
@@ -199,7 +198,7 @@ BreadCrumbBox::object_destroyed(const Path& path)
 
 
 void
-BreadCrumbBox::object_moved(const Path& old_path, const Path& new_path)
+BreadCrumbs::object_moved(const Path& old_path, const Path& new_path)
 {
 	for (std::list<BreadCrumb*>::iterator i = _breadcrumbs.begin(); i != _breadcrumbs.end(); ++i) {
 		if ((*i)->path() == old_path)

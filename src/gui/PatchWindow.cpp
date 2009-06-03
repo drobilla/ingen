@@ -56,7 +56,7 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 	, _position_stored(false)
 	, _x(0)
 	, _y(0)
-	, _breadcrumb_box(NULL)
+	, _breadcrumbs(NULL)
 {
 	property_visible() = false;
 
@@ -151,8 +151,8 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 	_menu_help_about->signal_activate().connect(sigc::hide_return(
 		sigc::mem_fun(App::instance(), &App::show_about)));
 
-	_breadcrumb_box = new BreadCrumbBox();
-	_breadcrumb_box->signal_patch_selected.connect(sigc::mem_fun(this, &PatchWindow::set_patch_from_path));
+	_breadcrumbs = new BreadCrumbs();
+	_breadcrumbs->signal_patch_selected.connect(sigc::mem_fun(this, &PatchWindow::set_patch_from_path));
 
 #ifndef HAVE_CURL
 	_menu_upload->hide();
@@ -168,11 +168,11 @@ PatchWindow::~PatchWindow()
 	// Prevents deletion
 	//m_patch->claim_patch_view();
 
-	delete _breadcrumb_box;
+	delete _breadcrumbs;
 }
 
 
-/** Set the patch controller from a Path (for use by eg. BreadCrumbBox)
+/** Set the patch controller from a Path (for use by eg. BreadCrumbs)
  */
 void
 PatchWindow::set_patch_from_path(const Path& path, SharedPtr<PatchView> view)
@@ -212,7 +212,7 @@ PatchWindow::set_patch(SharedPtr<PatchModel> patch, SharedPtr<PatchView> view)
 	_view  = view;
 
 	if (!_view)
-		_view = _breadcrumb_box->view(patch->path());
+		_view = _breadcrumbs->view(patch->path());
 
 	if (!_view)
 		_view = PatchView::create(patch);
@@ -227,15 +227,15 @@ PatchWindow::set_patch(SharedPtr<PatchModel> patch, SharedPtr<PatchView> view)
 	_viewport->add(*_view.get());
 
 
-	if (_breadcrumb_box->get_parent())
-		_breadcrumb_box->get_parent()->remove(*_breadcrumb_box);
+	if (_breadcrumbs->get_parent())
+		_breadcrumbs->get_parent()->remove(*_breadcrumbs);
 
 	_view->breadcrumb_container()->remove();
-	_view->breadcrumb_container()->add(*_breadcrumb_box);
+	_view->breadcrumb_container()->add(*_breadcrumbs);
 	_view->breadcrumb_container()->show();
 
-	_breadcrumb_box->build(patch->path(), _view);
-	_breadcrumb_box->show();
+	_breadcrumbs->build(patch->path(), _view);
+	_breadcrumbs->show();
 
 	_menu_view_control_window->property_sensitive() = false;
 

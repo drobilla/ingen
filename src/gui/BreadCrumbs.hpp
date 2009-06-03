@@ -24,24 +24,22 @@
 #include <libglademm.h>
 #include "raul/Path.hpp"
 #include "raul/SharedPtr.hpp"
+#include "client/PatchModel.hpp"
 #include "PatchView.hpp"
 
 namespace Ingen {
 namespace GUI {
 
-class BreadCrumb;
-
 
 /** Collection of breadcrumb buttons forming a path.
- *
  * This doubles as a cache for PatchViews.
  *
  * \ingroup GUI
  */
-class BreadCrumbBox : public Gtk::HBox
+class BreadCrumbs : public Gtk::HBox
 {
 public:
-	BreadCrumbBox();
+	BreadCrumbs();
 
 	SharedPtr<PatchView> view(const Raul::Path& path);
 
@@ -50,6 +48,53 @@ public:
 	sigc::signal<void, const Raul::Path&, SharedPtr<PatchView> > signal_patch_selected;
 
 private:
+	/** Breadcrumb button.
+	 *
+	 * Each Breadcrumb stores a reference to a PatchView for quick switching.
+	 * So, the amount of allocated PatchViews at a given time is equal to the
+	 * number of visible breadcrumbs (which is the perfect cache for GUI
+	 * responsiveness balanced with mem consumption).
+	 *
+	 * \ingroup GUI
+	 */
+	class BreadCrumb : public Gtk::ToggleButton
+	{
+	public:
+		BreadCrumb(const Raul::Path& path, SharedPtr<PatchView> view = SharedPtr<PatchView>())
+			: _path(path)
+			, _view(view)
+		{
+			assert( !view || view->patch()->path() == path);
+			set_border_width(0);
+			set_path(path);
+			show_all();
+		}
+
+		void set_view(SharedPtr<PatchView> view) {
+			assert( !view || view->patch()->path() == _path);
+			_view = view;
+		}
+
+		const Raul::Path&    path() const { return _path; }
+		SharedPtr<PatchView> view() const { return _view; }
+
+		void set_path(const Raul::Path& path) {
+			remove();
+			const std::string text = (path.is_root()) ? "/" : path.name().c_str();
+			Gtk::Label* lab = manage(new Gtk::Label(text));
+			lab->set_padding(0, 0);
+			lab->show();
+			add(*lab);
+
+			if (_view && _view->patch()->path() != path)
+				_view.reset();
+		}
+
+	private:
+		Raul::Path           _path;
+		SharedPtr<PatchView> _view;
+	};
+
 	BreadCrumb* create_crumb(const Raul::Path&    path,
                              SharedPtr<PatchView> view = SharedPtr<PatchView>());
 

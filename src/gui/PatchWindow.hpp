@@ -46,7 +46,7 @@ class NewSubpatchWindow;
 class NodeControlWindow;
 class PatchDescriptionWindow;
 class SubpatchModule;
-class BreadCrumbBox;
+class BreadCrumbs;
 class PatchView;
 
 
@@ -146,7 +146,7 @@ private:
 
 	Gtk::VBox*          _vbox;
 	Gtk::Viewport*      _viewport;
-	BreadCrumbBox*      _breadcrumb_box;
+	BreadCrumbs*        _breadcrumbs;
 	Gtk::Statusbar*     _status_bar;
 
 	sigc::connection _entered_connection;
