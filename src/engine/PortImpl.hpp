@@ -130,7 +130,6 @@ protected:
 
 	virtual void allocate_buffers();
 	virtual void connect_buffers();
-	virtual void broadcast(ProcessContext& context);
 
 	uint32_t         _index;
 	uint32_t         _poly;

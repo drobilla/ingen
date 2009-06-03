@@ -177,29 +177,28 @@ PortImpl::clear_buffers()
 void
 PortImpl::broadcast_value(ProcessContext& context, bool force)
 {
-	if (_type == DataType::CONTROL || _type == DataType::AUDIO) {
-		const Sample value = ((AudioBuffer*)buffer(0))->value_at(0);
-		if (force || value != _last_broadcasted_value) {
-			const Events::SendPortValue ev(context.engine(), context.start(), this, false, 0, value);
-			context.event_sink().write(sizeof(ev), &ev);
-			_last_broadcasted_value = value;
+	switch (_type.symbol()) {
+	case DataType::UNKNOWN:
+		break;
+	case DataType::AUDIO:
+	case DataType::CONTROL:
+		{
+			const Sample val = ((AudioBuffer*)buffer(0))->value_at(0);
+			if (force || val != _last_broadcasted_value) {
+				_last_broadcasted_value = val;
+				const Events::SendPortValue ev(context.engine(), context.start(), this, false, 0, val);
+				context.event_sink().write(sizeof(ev), &ev);
+			}
 		}
-	} else if (_type == DataType::EVENT) {
+		break;
+	case DataType::EVENT:
 		if (((EventBuffer*)buffer(0))->event_count() > 0) {
 			const Events::SendPortActivity ev(context.engine(), context.start(), this);
 			context.event_sink().write(sizeof(ev), &ev);
 		}
+		break;
 	}
 }
-
-
-void
-PortImpl::broadcast(ProcessContext& context)
-{
-	if (_broadcast)
-		broadcast_value(context);
-}
-
 
 
 } // namespace Ingen

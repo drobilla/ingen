@@ -263,14 +263,15 @@ InputPort::pre_process(ProcessContext& context)
 
 	for (uint32_t i=0; i < _poly; ++i)
 		buffer(i)->prepare_read(context.start(), context.nframes());
+
+	if (_broadcast)
+		broadcast_value(context, false);
 }
 
 
 void
 InputPort::post_process(ProcessContext& context)
 {
-	broadcast(context);
-
 	// Prepare buffers for next cycle
 	if (!can_direct())
 		for (uint32_t i=0; i < _poly; ++i)

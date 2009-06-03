@@ -52,30 +52,25 @@ DuplexPort::DuplexPort(
 }
 
 
+/** Prepare for the execution of parent patch */
 void
 DuplexPort::pre_process(ProcessContext& context)
 {
-	// <BrainHurt>
-
 	/*cerr << endl << "{ duplex pre" << endl;
 	cerr << path() << " duplex pre: fixed buffers: " << fixed_buffers() << endl;
 	cerr << path() << " duplex pre: buffer: " << buffer(0) << endl;
 	cerr << path() << " duplex pre: is_output: " << _is_output << " { " << endl;*/
 
+	// If we're a patch output, prepare buffers for write (so plugins can deliver to them)
 	if (_is_output) {
-
 		for (uint32_t i=0; i < _poly; ++i)
 			if (!_buffers->at(i)->is_joined())
 				_buffers->at(i)->prepare_write(context.start(), context.nframes());
 
+	// Otherwise, we're a patch input, do whatever a normal node's input port does
+	// (mix down inputs from an outside "patch is a node" perspective)
 	} else {
-
 		InputPort::pre_process(context);
-
-		for (uint32_t i=0; i < _poly; ++i)
-			_buffers->at(i)->prepare_read(context.start(), context.nframes());
-
-		broadcast(context);
 	}
 
 	/*if (type() == DataType::EVENT)
@@ -84,18 +79,14 @@ DuplexPort::pre_process(ProcessContext& context)
 				<< ((EventBuffer*)buffer(i))->event_count()
 				<< ", joined: " << _buffers->at(i)->is_joined()
 				<< ", is_output: " << _is_output << endl;*/
-
 	//cerr << "} duplex pre " << path() << endl;
-
-	// </BrainHurt>
 }
 
 
+/** Finalize after the execution of parent patch (deliver outputs) */
 void
 DuplexPort::post_process(ProcessContext& context)
 {
-	// <BrainHurt>
-
 	/*cerr << endl << "{ duplex post" << endl;
 	cerr << path() << " duplex post: fixed buffers: " << fixed_buffers() << endl;
 	cerr << path() << " duplex post: buffer: " << buffer(0) << endl;
@@ -107,14 +98,19 @@ DuplexPort::post_process(ProcessContext& context)
 				<< ((EventBuffer*)buffer(i))->event_count()
 				<< ", joined: " << _buffers->at(i)->is_joined() << endl;*/
 
+	// If we're a patch output
+
+
 	if (_is_output) {
-		InputPort::pre_process(context); // Mix down inputs
-		broadcast(context);
+		// Then we've been delivered to as an input (internal perspective)
+		// Mix down this input so patch output ports (external perspective) are ready
+		InputPort::pre_process(context);
+
+		if (_broadcast)
+			broadcast_value(context, false);
 	}
 
 	//cerr << "} duplex post " << path() << endl;
-
-	// </BrainHurt>
 }
 
 

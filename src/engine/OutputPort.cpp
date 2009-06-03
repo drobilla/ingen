@@ -62,7 +62,8 @@ OutputPort::post_process(ProcessContext& context)
 
 	//cerr << path() << " output post: buffer: " << buffer(0) << endl;
 
-	broadcast(context);
+	if (_broadcast)
+		broadcast_value(context, false);
 }
 
 

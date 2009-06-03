@@ -185,30 +185,30 @@ SetMetadata::execute(ProcessContext& context)
 		PortImpl*         port   = 0;
 		GraphObjectImpl*  object = 0;
 		switch (*t) {
-			case ENABLE_BROADCAST:
-				if ((port = dynamic_cast<PortImpl*>(_object)))
-					port->broadcast(value.get_bool());
-				break;
-			case ENABLE:
-				if (value.get_bool()) {
-					if (!_patch->compiled_patch())
-						_patch->compiled_patch(_compiled_patch);
-					_patch->enable();
-				} else {
-					_patch->disable();
-				}
-				break;
-			case POLYPHONIC:
-				if ((object = dynamic_cast<GraphObjectImpl*>(_object)))
-					if (!object->set_polyphonic(*_engine.maid(), value.get_bool()))
-						_error = INTERNAL;
-				break;
-			case POLYPHONY:
-				if (!_patch->apply_internal_poly(*_engine.maid(), value.get_int32()))
+		case ENABLE_BROADCAST:
+			if ((port = dynamic_cast<PortImpl*>(_object)))
+				port->broadcast(value.get_bool());
+			break;
+		case ENABLE:
+			if (value.get_bool()) {
+				if (!_patch->compiled_patch())
+					_patch->compiled_patch(_compiled_patch);
+				_patch->enable();
+			} else {
+				_patch->disable();
+			}
+			break;
+		case POLYPHONIC:
+			if ((object = dynamic_cast<GraphObjectImpl*>(_object)))
+				if (!object->set_polyphonic(*_engine.maid(), value.get_bool()))
 					_error = INTERNAL;
-				break;
-			default:
-				_success = true;
+			break;
+		case POLYPHONY:
+			if (!_patch->apply_internal_poly(*_engine.maid(), value.get_int32()))
+				_error = INTERNAL;
+			break;
+		default:
+			_success = true;
 		}
 	}
 
