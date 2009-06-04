@@ -274,12 +274,20 @@ ClientStore::put(const URI& uri, const Resource::Properties& properties)
 	cerr << "}" << endl;*/
 
 	bool is_path = Path::is_valid(uri.str());
-	bool is_meta = uri.substr(0, 8) == "meta:#";
+	bool is_meta = uri.substr(0, 6) == "meta:#";
 
 	if (!(is_path || is_meta)) {
 		const URI& type_uri = properties.find("rdf:type")->second.get_uri();
-		SharedPtr<PluginModel> p(new PluginModel(uri, type_uri, properties));
-		add_plugin(p);
+		if (Plugin::type_from_uri(type_uri.str()) != Plugin::NIL) {
+			SharedPtr<PluginModel> p(new PluginModel(uri, type_uri, properties));
+			add_plugin(p);
+			return;
+		}
+	}
+
+	string path_str = is_meta ? (string("/") + uri.chop_start("#")) : uri.str();
+	if (!Path::is_valid(path_str)) {
+		cerr << "ERROR: Bad path: " << uri.str() << " - " << path_str << endl;
 		return;
 	}
 

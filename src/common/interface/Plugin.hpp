@@ -29,7 +29,7 @@ namespace Shared {
 class Plugin : virtual public Resource
 {
 public:
-	enum Type { LV2, LADSPA, Internal, Patch };
+	enum Type { NIL, LV2, LADSPA, Internal, Patch };
 
 	virtual Type type() const = 0;
 
@@ -52,9 +52,7 @@ public:
 			return Internal;
 		else if (uri == "ingen:Patch")
 			return Patch;
-		else
-			std::cerr << "WARNING: Unknown plugin type " << uri << std::endl;
-		return Internal;
+		return NIL;
 	}
 };
 

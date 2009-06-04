@@ -246,6 +246,9 @@ LoadPluginWindow::add_plugin(SharedPtr<PluginModel> plugin)
 	case Plugin::Patch:
 		row[_plugins_columns._col_type] = "Patch";
 		break;
+	case Plugin::NIL:
+		row[_plugins_columns._col_type] = "?";
+		break;
 	}
 
 	row[_plugins_columns._col_uri] = plugin->uri().str();
