@@ -253,7 +253,7 @@ PatchWindow::set_patch(SharedPtr<PatchModel> patch, SharedPtr<PatchView> view)
 			((int)_view->canvas()->width() - width)/2,
 			((int)_view->canvas()->height() - height)/2);
 
-	set_title(_patch->path().str() + " - Ingen");
+	set_title(_patch->path().chop_scheme() + " - Ingen");
 
 	new_port_connection = patch->signal_new_port.connect(
 			sigc::mem_fun(this, &PatchWindow::patch_port_added));

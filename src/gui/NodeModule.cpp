@@ -300,6 +300,7 @@ NodeModule::popup_gui()
 			_gui_widget = Glib::wrap(c_widget);
 
 			_gui_window = new Gtk::Window();
+			_gui_window->set_title(_node->path().chop_scheme() + " UI - Ingen");
 			_gui_window->set_role("plugin_ui");
 			_gui_window->add(*_gui_widget);
 			_gui_widget->show_all();

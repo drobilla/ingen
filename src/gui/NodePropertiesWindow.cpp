@@ -49,7 +49,7 @@ NodePropertiesWindow::set_node(SharedPtr<NodeModel> node_model)
 
 	_node_model = node_model;
 
-	set_title(node_model->path().str() + " Properties");
+	set_title(node_model->path().str() + " Properties - Ingen");
 
 	_node_path_label->set_text(node_model->path().str());
 	_node_polyphonic_toggle->set_active(node_model->polyphonic());
