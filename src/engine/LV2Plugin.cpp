@@ -92,9 +92,16 @@ LV2Plugin::slv2_plugin(SLV2Plugin p)
 const std::string&
 LV2Plugin::library_path() const
 {
-	if (_library_path == "")
-		_library_path = slv2_uri_to_path(slv2_value_as_uri(
-				slv2_plugin_get_library_uri(_slv2_plugin)));
+	static const std::string empty_string;
+	if (_library_path == "") {
+		SLV2Value v = slv2_plugin_get_library_uri(_slv2_plugin);
+		if (v) {
+			_library_path = slv2_uri_to_path(slv2_value_as_uri(v));
+		} else {
+			cerr << "WARNING: Plugin " << uri() << " has no library path" << endl;
+			return empty_string;
+		}
+	}
 
 	return _library_path;
 }
