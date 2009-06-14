@@ -199,7 +199,7 @@ NodeFactory::load_ladspa_plugins()
 	char* env_ladspa_path = getenv("LADSPA_PATH");
 	string ladspa_path;
 	if (!env_ladspa_path) {
-	 	cerr << "[NodeFactory] LADSPA_PATH is empty.  Assuming /usr/lib/ladspa:/usr/local/lib/ladspa:~/.ladspa" << endl;
+		cerr << "[NodeFactory] LADSPA_PATH is empty.  Assuming /usr/lib/ladspa:/usr/local/lib/ladspa:~/.ladspa" << endl;
 		ladspa_path = string("/usr/lib/ladspa:/usr/local/lib/ladspa:").append(
 			getenv("HOME")).append("/.ladspa");
 	} else {
@@ -258,7 +258,7 @@ NodeFactory::load_ladspa_plugins()
 			for (unsigned long i=0; (descriptor = (LADSPA_Descriptor*)df.fp(i)) != NULL; ++i) {
 				char id_str[11];
 				snprintf(id_str, 11, "%lu", descriptor->UniqueID);
-				const string uri = string("ladspa:").append(id_str);
+				const string uri = string("urn:ladspa:").append(id_str);
 
 				const Plugins::const_iterator i = _plugins.find(uri);
 
