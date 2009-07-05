@@ -27,7 +27,7 @@
 #include <string>
 #include <boost/utility.hpp>
 #include "slv2/slv2.h"
-#include "common/lv2ext/lv2_uri_map.h"
+#include "uri-map.lv2/uri-map.h"
 
 namespace Ingen {
 namespace Shared {

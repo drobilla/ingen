@@ -18,8 +18,8 @@
 #ifndef LV2EVENTBUFFER_H
 #define LV2EVENTBUFFER_H
 
-#include "lv2ext/lv2_event.h"
-#include "lv2ext/lv2_event_helpers.h"
+#include "event.lv2/event.h"
+#include "event.lv2/event-helpers.h"
 
 namespace Ingen {
 

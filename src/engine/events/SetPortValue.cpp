@@ -16,7 +16,7 @@
  */
 
 #include <sstream>
-#include "lv2ext/lv2_event.h"
+#include "event.lv2/event.h"
 #include "shared/LV2URIMap.hpp"
 #include "shared/LV2Features.hpp"
 #include "module/World.hpp"

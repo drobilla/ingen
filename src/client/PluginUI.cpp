@@ -16,7 +16,7 @@
  */
 
 #include <iostream>
-#include "lv2ext/lv2_event_helpers.h"
+#include "event.lv2/event-helpers.h"
 #include "shared/LV2Features.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "PluginUI.hpp"

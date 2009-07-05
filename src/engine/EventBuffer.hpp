@@ -18,8 +18,8 @@
 #ifndef EVENTBUFFER_H
 #define EVENTBUFFER_H
 
-#include "lv2ext/lv2_event.h"
-#include "lv2ext/lv2_event_helpers.h"
+#include "event.lv2/event.h"
+#include "event.lv2/event-helpers.h"
 #include "interface/DataType.hpp"
 #include "Buffer.hpp"
 #include "LV2EventBuffer.hpp"

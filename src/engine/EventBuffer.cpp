@@ -20,8 +20,8 @@
 #include <iostream>
 #include "ingen-config.h"
 #include "EventBuffer.hpp"
-#include "lv2ext/lv2_event.h"
-#include "lv2ext/lv2_event_helpers.h"
+#include "event.lv2/event.h"
+#include "event.lv2/event-helpers.h"
 
 using namespace std;
 
