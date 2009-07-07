@@ -15,8 +15,10 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "HTTPSender.hpp"
+
 #include <cassert>
+#include <cstdio>
+#include <cstring>
 #include <iostream>
 #include <unistd.h>
 #include <stdarg.h>
@@ -24,8 +26,7 @@
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <errno.h>
-
-#include <cstring>
+#include "HTTPSender.hpp"
 
 using namespace std;
 

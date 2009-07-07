@@ -18,6 +18,7 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#include <stdint.h>
 #include <string>
 
 namespace Ingen { namespace Client { class PortModel; } }

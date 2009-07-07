@@ -18,6 +18,7 @@
 #ifndef EVENTSINK_H
 #define EVENTSINK_H
 
+#include <stdint.h>
 #include <list>
 #include <utility>
 #include "raul/RingBuffer.hpp"

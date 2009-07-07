@@ -18,6 +18,7 @@
 #ifndef INGEN_INTERFACE_PORT_HPP
 #define INGEN_INTERFACE_PORT_HPP
 
+#include <stdint.h>
 #include "GraphObject.hpp"
 #include "DataType.hpp"
 
