@@ -217,7 +217,7 @@ ConnectWindow::connect(bool existing)
 			sigc::mem_fun(this, &ConnectWindow::gtk_callback), 40);
 
 	} else if (_mode == LAUNCH_REMOTE) {
-
+#ifdef HAVE_LIBLO
 		int port = _port_spinbutton->get_value_as_int();
 		char port_str[6];
 		snprintf(port_str, 6, "%u", port);
@@ -240,6 +240,9 @@ ConnectWindow::connect(bool existing)
 		} else {
 			cerr << "Failed to launch ingen process." << endl;
 		}
+#else
+		cerr << "No OSC support" << endl;
+#endif
 
 	} else
 #endif // defined(HAVE_LIBLO) || defined(HAVE_SOUP)
