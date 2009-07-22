@@ -25,7 +25,7 @@ def set_options(opt):
 
 def configure(conf):
 	autowaf.configure(conf)
-	autowaf.check_tool(conf, 'compiler_cxx')
+	conf.check_tool('compiler_cxx')
 	autowaf.check_pkg(conf, 'glibmm-2.4', uselib_store='GLIBMM', atleast_version='2.14.0', mandatory=True)
 	autowaf.check_pkg(conf, 'gthread-2.0', uselib_store='GTHREAD', atleast_version='2.14.0', mandatory=True)
 	autowaf.check_pkg(conf, 'gtkmm-2.4', uselib_store='GTKMM', atleast_version='2.11.12', mandatory=False)
