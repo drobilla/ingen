@@ -88,9 +88,9 @@ NodeMenu::init(SharedPtr<NodeModel> node)
 #ifdef HAVE_SLV2
 	if (plugin && plugin->type() == PluginModel::LV2) {
 		SLV2Results presets = slv2_plugin_query_sparql(plugin->slv2_plugin(),
-				"PREFIX lv2p: <http://lv2plug.in/ns/dev/presets#>\n"
-				"PREFIX dc:  <http://dublincore.org/documents/dcmi-namespace/>\n"
-				"SELECT ?p ?name WHERE { <> lv2p:hasPreset ?p . ?p dc:title ?name }\n");
+				"PREFIX pset: <http://lv2plug.in/ns/dev/presets#>\n"
+				"PREFIX dc:   <http://dublincore.org/documents/dcmi-namespace/>\n"
+				"SELECT ?p ?name WHERE { <> pset:hasPreset ?p . ?p dc:title ?name }\n");
 		if (!slv2_results_finished(presets)) {
 			items().push_front(Gtk::Menu_Helpers::SeparatorElem());
 			items().push_front(Gtk::Menu_Helpers::ImageMenuElem("_Presets",
@@ -175,10 +175,10 @@ NodeMenu::on_preset_activated(const std::string uri)
 	const NodeModel* const   node   = (NodeModel*)_object.get();
 	const PluginModel* const plugin = dynamic_cast<const PluginModel*>(node->plugin());
 	const string query = string(
-			"PREFIX lv2p: <http://lv2plug.in/ns/dev/presets#>\n"
-			"PREFIX dc:  <http://dublincore.org/documents/dcmi-namespace/>\n"
+			"PREFIX pset: <http://lv2plug.in/ns/dev/presets#>\n"
+			"PREFIX dc:   <http://dublincore.org/documents/dcmi-namespace/>\n"
 			"SELECT ?sym ?val WHERE { <") + uri + "> lv2:port ?port . "
-				" ?port lv2:symbol ?sym ; lv2p:value ?val . }";
+				" ?port lv2:symbol ?sym ; pset:value ?val . }";
 	SLV2Results values = slv2_plugin_query_sparql(plugin->slv2_plugin(), query.c_str());
 	App::instance().engine()->bundle_begin();
 	for (; !slv2_results_finished(values); slv2_results_next(values)) {
@@ -187,7 +187,6 @@ NodeMenu::on_preset_activated(const std::string uri)
 		App::instance().engine()->set_port_value(
 				node->path().base() + slv2_value_as_string(sym),
 				slv2_value_as_float(val));
-
 	}
 	App::instance().engine()->bundle_end();
 	slv2_results_free(values);
