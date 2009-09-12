@@ -23,7 +23,7 @@
 
 using namespace std;
 
-/* TODO: Be sure these functions are vectorized by GCC when it's vectorizer
+/* TODO: Be sure these functions are vectorized by GCC when its vectorizer
  * stops sucking.  Probably a good idea to inline them as well */
 
 namespace Ingen {
