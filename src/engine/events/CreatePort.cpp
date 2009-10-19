@@ -99,7 +99,10 @@ CreatePort::pre_process()
 		const uint32_t old_num_ports = _patch->num_ports();
 
 		_patch_port = _patch->create_port(_path.name(), _data_type, buffer_size, _is_output);
-		_patch_port->set_property("rdf:instanceOf", Atom(Atom::URI, _patch_port->meta_uri().str()));
+		if (_patch->parent())
+			_patch_port->set_property("rdf:instanceOf",
+					Atom(Atom::URI, _patch_port->meta_uri().str()));
+
 		_patch_port->meta().properties().insert(_properties.begin(), _properties.end());
 
 		if (_patch_port) {

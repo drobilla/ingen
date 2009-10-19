@@ -355,6 +355,8 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch, const Redland::Node&
 
 		_model->add_statement(patch_id, "lv2:port", port_id);
 		serialise_port_meta(p, port_id);
+		if (root)
+			serialise_properties(port_id, p->properties());
 	}
 
 	for (Shared::Patch::Connections::const_iterator c = patch->connections().begin();
