@@ -164,7 +164,7 @@ QueuedEngineInterface::put(const URI&                  uri,
 		cerr << "\t" << i->first << " = " << i->second << " :: " << i->second.type() << endl;
 	cerr << "}" << endl;*/
 
-	push_queued(new Events::SetMetadata(_engine, _responder, now(), this, meta, subject, properties));
+	push_queued(new Events::SetMetadata(_engine, _responder, now(), this, true, meta, subject, properties));
 }
 
 
@@ -249,7 +249,7 @@ QueuedEngineInterface::set_property(const URI&  uri,
 	Path path = meta ? (string("/") + path.chop_start("/")) : uri.str();
 	Resource::Properties properties;
 	properties.insert(make_pair(predicate, value));
-	push_queued(new Events::SetMetadata(_engine, _responder, now(), this, meta, path, properties));
+	push_queued(new Events::SetMetadata(_engine, _responder, now(), this, true, meta, path, properties));
 }
 
 // Requests //

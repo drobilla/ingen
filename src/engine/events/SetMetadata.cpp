@@ -31,6 +31,7 @@
 #include "QueuedEventSource.hpp"
 #include "Responder.hpp"
 #include "SetMetadata.hpp"
+#include "SetPortValue.hpp"
 
 using namespace std;
 using namespace Raul;
@@ -47,6 +48,7 @@ SetMetadata::SetMetadata(
 		SharedPtr<Responder>  responder,
 		SampleCount           timestamp,
 		QueuedEventSource*    source,
+		bool                  replace,
 		bool                  meta,
 		const URI&            subject,
 		const Properties&     properties)
@@ -58,9 +60,17 @@ SetMetadata::SetMetadata(
 	, _object(NULL)
 	, _patch(NULL)
 	, _compiled_patch(NULL)
+	, _replace(replace)
 	, _is_meta(meta)
 	, _success(false)
 {
+}
+
+
+SetMetadata::~SetMetadata()
+{
+	for (SetEvents::iterator i = _set_events.begin(); i != _set_events.end(); ++i)
+		delete *i;
 }
 
 
@@ -112,16 +122,23 @@ SetMetadata::pre_process()
 
 	_types.reserve(_properties.size());
 
+	GraphObjectImpl* obj = dynamic_cast<GraphObjectImpl*>(_object);
+
+	// If we're replacing (i.e. this is a PUT, not a POST), first remove all properties
+	// with keys we will later set.  This must be done first so a PUT with several properties
+	// of the same predicate (e.g. rdf:type) retains the multiple values.  Only previously
+	// existing properties should be replaced
+	if (_replace)
+		for (Properties::iterator p = _properties.begin(); p != _properties.end(); ++p)
+			obj->properties().erase(p->first);
+
 	for (Properties::iterator p = _properties.begin(); p != _properties.end(); ++p) {
 		const Raul::URI&  key   = p->first;
 		const Raul::Atom& value = p->second;
-		GraphObjectImpl*  obj   = dynamic_cast<GraphObjectImpl*>(_object);
 		SpecialType       op    = NONE;
 		if (obj) {
-			if (_is_meta)
-				obj->meta().set_property(key, value);
-			else
-				obj->set_property(key, value);
+			Resource& resource = _is_meta ? obj->meta() : *obj;
+			resource.add_property(key, value);
 
 			_patch = dynamic_cast<PatchImpl*>(_object);
 
@@ -149,6 +166,15 @@ SetMetadata::pre_process()
 					} else {
 						_error = BAD_TYPE;
 					}
+				}
+			} else if (key.str() == "ingen:value") {
+				PortImpl* port = dynamic_cast<PortImpl*>(_object);
+				if (port) {
+					SetPortValue* ev = new SetPortValue(_engine, _responder, _time, port, value);
+					ev->pre_process();
+					_set_events.push_back(ev);
+				} else {
+					cerr << "WARNING: Set value for non-port " << _object->uri() << endl;
 				}
 			}
 		}
@@ -178,6 +204,9 @@ SetMetadata::execute(ProcessContext& context)
 			_source->unblock();
 		return;
 	}
+
+	for (SetEvents::iterator i = _set_events.begin(); i != _set_events.end(); ++i)
+		(*i)->execute(context);
 
 	std::vector<SpecialType>::const_iterator t = _types.begin();
 	for (Properties::iterator p = _properties.begin(); p != _properties.end(); ++p, ++t) {
@@ -219,6 +248,9 @@ SetMetadata::execute(ProcessContext& context)
 void
 SetMetadata::post_process()
 {
+	for (SetEvents::iterator i = _set_events.begin(); i != _set_events.end(); ++i)
+		(*i)->post_process();
+
 	switch (_error) {
 	case NO_ERROR:
 		_responder->respond_ok();

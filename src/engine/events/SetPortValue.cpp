@@ -20,17 +20,17 @@
 #include "shared/LV2URIMap.hpp"
 #include "shared/LV2Features.hpp"
 #include "module/World.hpp"
+#include "AudioBuffer.hpp"
+#include "ClientBroadcaster.hpp"
+#include "Engine.hpp"
+#include "EngineStore.hpp"
+#include "EventBuffer.hpp"
+#include "MessageContext.hpp"
+#include "NodeImpl.hpp"
+#include "PortImpl.hpp"
+#include "ProcessContext.hpp"
 #include "Responder.hpp"
 #include "SetPortValue.hpp"
-#include "Engine.hpp"
-#include "PortImpl.hpp"
-#include "ClientBroadcaster.hpp"
-#include "NodeImpl.hpp"
-#include "EngineStore.hpp"
-#include "AudioBuffer.hpp"
-#include "EventBuffer.hpp"
-#include "ProcessContext.hpp"
-#include "MessageContext.hpp"
 
 using namespace std;
 using namespace Raul;
@@ -53,7 +53,7 @@ SetPortValue::SetPortValue(Engine&              engine,
 	, _omni(true)
 	, _voice_num(0)
 	, _port_path(port_path)
-    , _value(value)
+	, _value(value)
 	, _port(NULL)
 	, _error(NO_ERROR)
 {
@@ -73,12 +73,28 @@ SetPortValue::SetPortValue(Engine&              engine,
 	, _omni(false)
 	, _voice_num(voice_num)
 	, _port_path(port_path)
-    , _value(value)
+	, _value(value)
 	, _port(NULL)
 	, _error(NO_ERROR)
 {
 }
 
+/** Internal */
+SetPortValue::SetPortValue(Engine&              engine,
+                           SharedPtr<Responder> responder,
+                           SampleCount          timestamp,
+                           PortImpl*            port,
+                           const Raul::Atom&    value)
+	: QueuedEvent(engine, responder, timestamp)
+	, _queued(false)
+	, _omni(true)
+	, _voice_num(0)
+	, _port_path(port->path())
+	, _value(value)
+	, _port(port)
+	, _error(NO_ERROR)
+{
+}
 
 SetPortValue::~SetPortValue()
 {

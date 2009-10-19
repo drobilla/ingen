@@ -57,6 +57,8 @@ namespace Events {
  * properties from the message.
  */
 
+class SetPortValue;
+
 /** Set properties of a graph object.
  * \ingroup engine
  */
@@ -68,9 +70,12 @@ public:
 			SharedPtr<Responder>                responder,
 			SampleCount                         timestamp,
 			QueuedEventSource*                  source,
+			bool                                replace,
 			bool                                meta,
 			const Raul::URI&                    subject,
 			const Shared::Resource::Properties& properties);
+
+	~SetMetadata();
 
 	void pre_process();
 	void execute(ProcessContext& context);
@@ -86,13 +91,17 @@ private:
 		POLYPHONIC
 	};
 
+	typedef std::vector<SetPortValue*> SetEvents;
+
 	QueuedEvent*                 _create_event;
+	SetEvents                    _set_events;
 	std::vector<SpecialType>     _types;
 	Raul::URI                    _subject;
 	Shared::Resource::Properties _properties;
 	Shared::ResourceImpl*        _object;
 	PatchImpl*                   _patch;
 	CompiledPatch*               _compiled_patch;
+	bool                         _replace;
 	bool                         _is_meta;
 	bool                         _success;
 };

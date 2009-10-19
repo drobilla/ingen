@@ -56,6 +56,12 @@ public:
 	             const Raul::Path&    port_path,
 	             const Raul::Atom&    value);
 
+	SetPortValue(Engine&              engine,
+	             SharedPtr<Responder> responder,
+	             SampleCount          timestamp,
+	             PortImpl*            port,
+	             const Raul::Atom&    value);
+
 	~SetPortValue();
 
 	void pre_process();

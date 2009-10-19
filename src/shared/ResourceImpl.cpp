@@ -137,7 +137,7 @@ ResourceImpl::set_properties(const Properties& p)
 	for (iterator i = p.begin(); i != p.end(); ++i)
 		_properties.erase(i->first);
 	for (iterator i = p.begin(); i != p.end(); ++i)
-		set_property(i->first, i->second);
+		add_property(i->first, i->second);
 }
 
 
@@ -145,8 +145,6 @@ void
 ResourceImpl::add_properties(const Properties& p)
 {
 	typedef Resource::Properties::const_iterator iterator;
-	for (iterator i = p.begin(); i != p.end(); ++i)
-		_properties.erase(i->first);
 	for (iterator i = p.begin(); i != p.end(); ++i)
 		add_property(i->first, i->second);
 }
