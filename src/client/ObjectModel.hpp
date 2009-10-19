@@ -56,15 +56,8 @@ public:
 
 	virtual const Raul::Atom& get_property(const Raul::URI& key) const;
 
-	virtual Raul::Atom& set_property(const Raul::URI& key, const Raul::Atom& value) {
-		signal_property.emit(key, value);
-		return ResourceImpl::set_property(key, value);
-	}
-
-	virtual Raul::Atom& set_meta_property(const Raul::URI& key, const Raul::Atom& value) {
-		signal_property.emit(key, value);
-		return _meta.set_property(key, value);
-	}
+	virtual Raul::Atom& set_property(const Raul::URI& key, const Raul::Atom& value);
+	virtual Raul::Atom& set_meta_property(const Raul::URI& key, const Raul::Atom& value);
 
 	Resource&              meta()             { return _meta; }
 	const Resource&        meta()       const { return _meta; }

@@ -40,6 +40,22 @@ ObjectModel::~ObjectModel()
 }
 
 
+Raul::Atom&
+ObjectModel::set_property(const Raul::URI& key, const Raul::Atom& value)
+{
+	signal_property.emit(key, value);
+	return ResourceImpl::set_property(key, value);
+}
+
+
+Raul::Atom&
+ObjectModel::set_meta_property(const Raul::URI& key, const Raul::Atom& value)
+{
+	signal_property.emit(key, value);
+	return _meta.set_property(key, value);
+}
+
+
 const Atom&
 ObjectModel::get_property(const Raul::URI& key) const
 {
