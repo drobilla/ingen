@@ -379,7 +379,7 @@ ClientStore::set_property(const URI& subject_uri, const URI& predicate, const At
 
 	size_t hash = subject_uri.find("#");
 	if (!value.is_valid()) {
-		cerr << "ERROR: property '" << predicate << "' is invalid" << endl;
+		cerr << "ERROR: Property '" << predicate << "' is invalid" << endl;
 	} else if (subject) {
 		subject->set_property(predicate, value);
 	} else if (subject_uri.substr(0, 6) == "meta:#") {
@@ -392,7 +392,7 @@ ClientStore::set_property(const URI& subject_uri, const URI& predicate, const At
 		if (plugin)
 			plugin->set_property(predicate, value);
 		else
-			cerr << "WARNING: property '" << predicate << "' for unknown object " << subject_uri << endl;
+			cerr << "WARNING: Property '" << predicate << "' for unknown object " << subject_uri << endl;
 	}
 }
 
@@ -404,7 +404,7 @@ ClientStore::set_port_value(const Path& port_path, const Atom& value)
 	if (port)
 		port->value(value);
 	else
-		cerr << "ERROR: control change for nonexistant port " << port_path << endl;
+		cerr << "ERROR: Control change for non-existent port " << port_path << endl;
 }
 
 
@@ -415,7 +415,7 @@ ClientStore::set_voice_value(const Path& port_path, uint32_t voice, const Atom& 
 	if (port)
 		port->value(voice, value);
 	else
-		cerr << "ERROR: poly control change for nonexistant port " << port_path << endl;
+		cerr << "ERROR: Polyphonic control change for non-existent port " << port_path << endl;
 }
 
 
@@ -426,7 +426,7 @@ ClientStore::activity(const Path& path)
 	if (port)
 		port->signal_activity.emit();
 	else
-		cerr << "ERROR: activity for nonexistant port " << path << endl;
+		cerr << "ERROR: Activity for non-existent port " << path << endl;
 }
 
 
@@ -502,19 +502,19 @@ ClientStore::disconnect(const Path& src_port_path, const Path& dst_port_path)
 	if (src_port)
 		src_port->disconnected_from(dst_port);
 	else
-		cerr << "WARNING: Disconnection from nonexistant src port " << src_port_path << endl;
+		cerr << "WARNING: Disconnection from non-existent src port " << src_port_path << endl;
 
 	if (dst_port)
 		dst_port->disconnected_from(dst_port);
 	else
-		cerr << "WARNING: Disconnection from nonexistant dst port " << dst_port_path << endl;
+		cerr << "WARNING: Disconnection from non-existent dst port " << dst_port_path << endl;
 
 	SharedPtr<PatchModel> patch = connection_patch(src_port_path, dst_port_path);
 
 	if (patch)
 		patch->remove_connection(src_port_path, dst_port_path);
 	else
-		cerr << "ERROR: disconnection in nonexistant patch: "
+		cerr << "ERROR: Disconnection in non-existent patch: "
 			<< src_port_path << " -> " << dst_port_path << endl;
 }
 
