@@ -43,11 +43,11 @@ using namespace Shared;
 
 /** Omni (all voices) control setting */
 SetPortValue::SetPortValue(Engine&              engine,
-                                     SharedPtr<Responder> responder,
-                                     bool                 queued,
-                                     SampleCount          timestamp,
-                                     const Raul::Path&    port_path,
-                                     const Raul::Atom&    value)
+                           SharedPtr<Responder> responder,
+                           bool                 queued,
+                           SampleCount          timestamp,
+                           const Raul::Path&    port_path,
+                           const Raul::Atom&    value)
 	: QueuedEvent(engine, responder, timestamp)
 	, _queued(queued)
 	, _omni(true)
@@ -62,12 +62,12 @@ SetPortValue::SetPortValue(Engine&              engine,
 
 /** Voice-specific control setting */
 SetPortValue::SetPortValue(Engine&              engine,
-                                     SharedPtr<Responder> responder,
-                                     bool                 queued,
-                                     SampleCount          timestamp,
-                                     uint32_t             voice_num,
-                                     const Raul::Path&    port_path,
-                                     const Raul::Atom&    value)
+                           SharedPtr<Responder> responder,
+                           bool                 queued,
+                           SampleCount          timestamp,
+                           uint32_t             voice_num,
+                           const Raul::Path&    port_path,
+                           const Raul::Atom&    value)
 	: QueuedEvent(engine, responder, timestamp)
 	, _queued(queued)
 	, _omni(false)
