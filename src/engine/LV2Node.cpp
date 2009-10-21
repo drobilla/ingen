@@ -60,8 +60,9 @@ LV2Node::LV2Node(LV2Plugin*    plugin,
 
 LV2Node::~LV2Node()
 {
-	for (uint32_t i=0; i < _polyphony; ++i)
-		slv2_instance_free((*_instances)[i]);
+	if (_instances)
+		for (uint32_t i=0; i < _polyphony; ++i)
+			slv2_instance_free((*_instances)[i]);
 
 	delete _instances;
 }

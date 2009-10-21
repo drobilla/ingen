@@ -25,6 +25,7 @@
 namespace Ingen {
 
 class PatchImpl;
+class PluginImpl;
 class NodeImpl;
 class CompiledPatch;
 
@@ -59,6 +60,7 @@ private:
 	std::string    _plugin_label;
 	bool           _polyphonic;
 	PatchImpl*     _patch;
+	PluginImpl*    _plugin;
 	NodeImpl*      _node;
 	CompiledPatch* _compiled_patch; ///< Patch's new process order
 	bool           _node_already_exists;

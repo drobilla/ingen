@@ -54,6 +54,7 @@ CreateNode::CreateNode(
 	, _plugin_uri(plugin_uri)
 	, _polyphonic(polyphonic)
 	, _patch(NULL)
+	, _plugin(NULL)
 	, _node(NULL)
 	, _compiled_patch(NULL)
 	, _node_already_exists(false)
@@ -83,16 +84,16 @@ CreateNode::pre_process()
 
 	_patch = _engine.engine_store()->find_patch(_path.parent());
 
-	PluginImpl* const plugin = (_plugin_label == "")
+	_plugin = (_plugin_label == "")
 			? _engine.node_factory()->plugin(_plugin_uri.str())
 			: _engine.node_factory()->plugin(_plugin_type, _plugin_lib, _plugin_label);
 
-	if (_patch && plugin) {
+	if (_patch && _plugin) {
 
-		_node = plugin->instantiate(_path.name(), _polyphonic, _patch, _engine);
-		_node->properties().insert(_properties.begin(), _properties.end());
+		_node = _plugin->instantiate(_path.name(), _polyphonic, _patch, _engine);
 
 		if (_node != NULL) {
+			_node->properties().insert(_properties.begin(), _properties.end());
 			_node->activate();
 
 			// This can be done here because the audio thread doesn't touch the
@@ -134,9 +135,12 @@ CreateNode::post_process()
 	} else if (_patch == NULL) {
 		msg = "Could not find patch '" + _path.parent().str() +"' to add node.";
 		_responder->respond_error(msg);
-	} else if (_node == NULL) {
+	} else if (_plugin == NULL) {
 		msg = "Unable to load node ";
 		msg += _path.str() + " (you're missing the plugin " + _plugin_uri.str() + ")";
+		_responder->respond_error(msg);
+	} else if (_node == NULL) {
+		msg = "Failed to instantiate plugin " + _plugin_uri.str();
 		_responder->respond_error(msg);
 	} else {
 		_responder->respond_ok();
