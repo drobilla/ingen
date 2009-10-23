@@ -2,7 +2,7 @@
 import autowaf
 
 def build(bld):
-	obj = bld.new_task_gen('cxx', 'program')
+	obj = bld.new_task_gen(features='cxx cc cprogram')
 	obj.target       = 'ingen'
 	obj.source       = 'main.cpp cmdline.c'
 	obj.includes     = ['..', '../..', '../common']
@@ -12,4 +12,3 @@ def build(bld):
 	autowaf.use_lib(bld, obj, 'GTHREAD GLIBMM REDLANDMM RAUL LV2CORE SLV2 INGEN LIBLO SOUP')
 
 	bld.install_files('${DATADIR}/applications', 'ingen.desktop')
-
