@@ -56,6 +56,14 @@ ObjectModel::set_meta_property(const Raul::URI& key, const Raul::Atom& value)
 }
 
 
+void
+ObjectModel::add_property(const Raul::URI& key, const Raul::Atom& value)
+{
+	ResourceImpl::add_property(key, value);
+	signal_property.emit(key, value);
+}
+
+
 const Atom&
 ObjectModel::get_property(const Raul::URI& key) const
 {

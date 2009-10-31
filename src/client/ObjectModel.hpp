@@ -54,10 +54,11 @@ class ObjectModel : virtual public Ingen::Shared::GraphObject
 public:
 	virtual ~ObjectModel();
 
-	virtual const Raul::Atom& get_property(const Raul::URI& key) const;
+	const Raul::Atom& get_property(const Raul::URI& key) const;
 
-	virtual Raul::Atom& set_property(const Raul::URI& key, const Raul::Atom& value);
-	virtual Raul::Atom& set_meta_property(const Raul::URI& key, const Raul::Atom& value);
+	Raul::Atom& set_property(const Raul::URI& key, const Raul::Atom& value);
+	void        add_property(const Raul::URI& key, const Raul::Atom& value);
+	Raul::Atom& set_meta_property(const Raul::URI& key, const Raul::Atom& value);
 
 	Resource&              meta()             { return _meta; }
 	const Resource&        meta()       const { return _meta; }
