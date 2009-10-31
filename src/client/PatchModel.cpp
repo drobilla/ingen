@@ -52,14 +52,9 @@ PatchModel::remove_child(SharedPtr<ObjectModel> o)
 	assert(o->path().is_child_of(_path));
 	assert(o->parent().get() == this);
 
-	SharedPtr<PortModel> pm = PtrCast<PortModel>(o);
-	if (pm)
-		remove_port(pm);
-
 	// Remove any connections which referred to this object,
 	// since they can't possibly exist anymore
-	for (Connections::iterator j = _connections->begin(); j != _connections->end() ; ) {
-
+	for (Connections::iterator j = _connections->begin(); j != _connections->end(); ) {
 		Connections::iterator next = j;
 		++next;
 
@@ -76,6 +71,10 @@ PatchModel::remove_child(SharedPtr<ObjectModel> o)
 		}
 		j = next;
 	}
+
+	SharedPtr<PortModel> pm = PtrCast<PortModel>(o);
+	if (pm)
+		remove_port(pm);
 
 	SharedPtr<NodeModel> nm = PtrCast<NodeModel>(o);
 	if (nm)
