@@ -163,6 +163,9 @@ CreatePort::execute(ProcessContext& context)
 void
 CreatePort::post_process()
 {
+	if (!_responder)
+		return;
+
 	string msg;
 	switch (_error) {
 	case NO_ERROR:

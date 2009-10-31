@@ -128,6 +128,9 @@ CreateNode::execute(ProcessContext& context)
 void
 CreateNode::post_process()
 {
+	if (!_responder)
+		return;
+
 	string msg;
 	if (_node_already_exists) {
 		msg = string("Could not create node - ").append(_path.str());// + " already exists.";
