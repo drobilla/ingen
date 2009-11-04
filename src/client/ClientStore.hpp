@@ -81,7 +81,6 @@ public:
 	sigc::signal< void, SharedPtr<PluginModel> > signal_new_plugin;
 
 private:
-
 	void add(Shared::GraphObject* o) { throw; }
 
 	void add_object(SharedPtr<ObjectModel> object);
@@ -99,9 +98,7 @@ private:
 	void clear_patch(const Raul::Path& path);
 	void activity(const Raul::Path& path);
 
-	bool attempt_connection(const Raul::Path& src_port_path, const Raul::Path& dst_port_path, bool add_orphan=false);
-
-	bool _handle_orphans;
+	bool attempt_connection(const Raul::Path& src_port_path, const Raul::Path& dst_port_path);
 
 	SharedPtr<Shared::EngineInterface> _engine;
 	SharedPtr<SigClientInterface>      _emitter;

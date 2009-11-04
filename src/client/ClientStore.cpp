@@ -38,8 +38,6 @@ ClientStore::ClientStore(SharedPtr<EngineInterface> engine, SharedPtr<SigClientI
 	, _emitter(emitter)
 	, _plugins(new Plugins())
 {
-	_handle_orphans = (engine && emitter);
-
 	if (!emitter)
 		return;
 
@@ -83,18 +81,6 @@ ClientStore::add_object(SharedPtr<ObjectModel> object)
 
 				(*this)[object->path()] = object;
 				signal_new_object.emit(object);
-
-#if 0
-				resolve_property_orphans(parent);
-				resolve_orphans(parent);
-
-				SharedPtr<PortModel> port = PtrCast<PortModel>(object);
-				if (port)
-					resolve_connection_orphans(port);
-#endif
-
-			} else {
-				//add_orphan(object);
 			}
 		} else {
 			(*this)[object->path()] = object;
@@ -128,7 +114,6 @@ ClientStore::remove_object(const Path& path)
 		assert((*i).second->path() == path);
 		SharedPtr<ObjectModel> result = PtrCast<ObjectModel>((*i).second);
 		assert(result);
-		//erase(i);
 		iterator descendants_end = find_descendants_end(i);
 		SharedPtr<Store::Objects> removed = yank(i, descendants_end);
 
@@ -322,7 +307,6 @@ ClientStore::put(const URI& uri, const Resource::Properties& properties)
 			} else {
 				SharedPtr<NodeModel> n(new NodeModel(p->second.get_uri(), path));
 				n->set_properties(properties);
-				//add_plugin_orphan(n);
 				add_object(n);
 			}
 		} else {
@@ -456,7 +440,7 @@ ClientStore::connection_patch(const Path& src_port_path, const Path& dst_port_pa
 
 
 bool
-ClientStore::attempt_connection(const Path& src_port_path, const Path& dst_port_path, bool add_orphan)
+ClientStore::attempt_connection(const Path& src_port_path, const Path& dst_port_path)
 {
 	SharedPtr<PortModel> src_port = PtrCast<PortModel>(object(src_port_path));
 	SharedPtr<PortModel> dst_port = PtrCast<PortModel>(object(dst_port_path));
@@ -475,8 +459,6 @@ ClientStore::attempt_connection(const Path& src_port_path, const Path& dst_port_
 
 		patch->add_connection(cm);
 		return true;
-	} else if (add_orphan) {
-		//add_connection_orphan(make_pair(src_port_path, dst_port_path));
 	}
 
 	return false;
@@ -486,7 +468,7 @@ ClientStore::attempt_connection(const Path& src_port_path, const Path& dst_port_
 void
 ClientStore::connect(const Path& src_port_path, const Path& dst_port_path)
 {
-	attempt_connection(src_port_path, dst_port_path, true);
+	attempt_connection(src_port_path, dst_port_path);
 }
 
 
