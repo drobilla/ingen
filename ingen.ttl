@@ -23,15 +23,15 @@
         doap:browse <http://dev.drobilla.net/browser/trunk/ingen> ;
         doap:location <http://svn.drobilla.net/lad/trunk/ingen>
     ] ;
-	hi:supportsExtension [
-		hi:extension <http://lv2plug.in/ns/extensions/ui> ;
-	] , [
-		hi:extension <http://lv2plug.in/ns/ext/midi> ;
-	] , [
-		hi:extension <http://lv2plug.in/ns/dev/presets> ;
-	] , [
-		hi:extension <http://lv2plug.in/ns/ext/event> ;
-	] ;
+    hi:supportsExtension [
+        hi:extension <http://lv2plug.in/ns/extensions/ui> ;
+    ] , [
+        hi:extension <http://lv2plug.in/ns/ext/midi> ;
+    ] , [
+        hi:extension <http://lv2plug.in/ns/dev/presets> ;
+    ] , [
+        hi:extension <http://lv2plug.in/ns/ext/event> ;
+    ] ;
     doap:description """
 A modular audio processing environment, where most functionality is provided
 by generic plugins.  Patching of audio, MIDI, and control data is supported.
