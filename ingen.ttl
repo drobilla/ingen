@@ -12,9 +12,10 @@
     doap:license <http://usefulinc.com/doap/licenses/gpl> ;
     doap:developer [
         a foaf:Person ;
+        foaf:name "Dave Robillard"
         foaf:homepage <http://drobilla.net/> ;
         foaf:mbox_sha1sum "253b3c58086250260bac1232d744d150274ad308" ;
-        foaf:name "Dave Robillard"
+        rdfs:seeAlso <http://drobilla.net/drobilla.rdf>
     ] ;
     doap:programming-language "C", "C++" ;
     doap:repository [
