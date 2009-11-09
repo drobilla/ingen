@@ -1,0 +1,43 @@
+@prefix doap: <http://usefulinc.com/ns/doap#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix hi:   <http://lv2plug.in/ns/dev/host-info#> .
+
+<http://drobilla.net/software/ingen> a doap:Project, hi:Host ;
+    doap:name "Ingen" ;
+    doap:shortdesc "A modular audio processing environment." ;
+    doap:homepage <http://drobilla.net/software/ingen/> ;
+    doap:bug-database <http://dev.drobilla.net/> ;
+    doap:license <http://usefulinc.com/doap/licenses/gpl> ;
+    doap:developer [
+        a foaf:Person ;
+        foaf:homepage <http://drobilla.net/> ;
+        foaf:mbox_sha1sum "253b3c58086250260bac1232d744d150274ad308" ;
+        foaf:name "Dave Robillard"
+    ] ;
+    doap:programming-language "C", "C++" ;
+    doap:repository [
+        a doap:SVNRepository ;
+        doap:browse <http://dev.drobilla.net/browser/trunk/ingen> ;
+        doap:location <http://svn.drobilla.net/lad/trunk/ingen>
+    ] ;
+	hi:supportsExtension [
+		hi:extension <http://lv2plug.in/ns/extensions/ui> ;
+	] , [
+		hi:extension <http://lv2plug.in/ns/ext/midi> ;
+	] , [
+		hi:extension <http://lv2plug.in/ns/dev/presets> ;
+	] , [
+		hi:extension <http://lv2plug.in/ns/ext/event> ;
+	] ;
+    doap:description """
+A modular audio processing environment, where most functionality is provided
+by generic plugins.  Patching of audio, MIDI, and control data is supported.
+The engine and UI are completely separated in a network transparent way, making
+it possible to run one or more GUIs on separate machines from the engine.
+
+Ingen is closely based on LV2 plugin technology; Ingen patches are RDF
+documents in Turtle in a very similar format to the RDF definition of an
+LV2 plugin.
+""" .
