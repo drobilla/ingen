@@ -18,14 +18,15 @@
 #include <iostream>
 #include "raul/Array.hpp"
 #include "raul/Maid.hpp"
-#include "PortImpl.hpp"
-#include "NodeImpl.hpp"
 #include "interface/DataType.hpp"
-#include "AudioBuffer.hpp"
-#include "EventBuffer.hpp"
-#include "ProcessContext.hpp"
 #include "events/SendPortValue.hpp"
 #include "events/SendPortActivity.hpp"
+#include "AudioBuffer.hpp"
+#include "EventBuffer.hpp"
+#include "NodeImpl.hpp"
+#include "PortImpl.hpp"
+#include "ProcessContext.hpp"
+#include "StringBuffer.hpp"
 
 using namespace std;
 using namespace Raul;
@@ -177,19 +178,13 @@ PortImpl::clear_buffers()
 void
 PortImpl::broadcast_value(ProcessContext& context, bool force)
 {
+	Raul::Atom val;
 	switch (_type.symbol()) {
 	case DataType::UNKNOWN:
 		break;
 	case DataType::AUDIO:
 	case DataType::CONTROL:
-		{
-			const Sample val = ((AudioBuffer*)buffer(0))->value_at(0);
-			if (force || val != _last_broadcasted_value) {
-				_last_broadcasted_value = val;
-				const Events::SendPortValue ev(context.engine(), context.start(), this, false, 0, val);
-				context.event_sink().write(sizeof(ev), &ev);
-			}
-		}
+		val = ((AudioBuffer*)buffer(0))->value_at(0);
 		break;
 	case DataType::EVENT:
 		if (((EventBuffer*)buffer(0))->event_count() > 0) {
@@ -197,7 +192,17 @@ PortImpl::broadcast_value(ProcessContext& context, bool force)
 			context.event_sink().write(sizeof(ev), &ev);
 		}
 		break;
+	case DataType::STRING:
+		val = Raul::Atom(((StringBuffer*)buffer(0))->data());
+		break;
 	}
+
+	if (val.type() == Atom::FLOAT && (force || val != _last_broadcasted_value)) {
+		_last_broadcasted_value = val;
+		const Events::SendPortValue ev(context.engine(), context.start(), this, false, 0, val);
+		context.event_sink().write(sizeof(ev), &ev);
+	}
+
 }
 
 

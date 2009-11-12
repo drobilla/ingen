@@ -111,22 +111,29 @@ ControlPanel::add_port(SharedPtr<PortModel> pm)
 	if (find_port(pm->path()) != NULL)
 		return;
 
-	// Add port
-	if (pm->type().is_control() && pm->is_input()) {
-		Control* control = NULL;
+	Control* control = NULL;
 
-		if (pm->is_toggle()) {
+	// Add port
+	if (pm->is_input()) {
+		if (pm->type().is_control() && pm->is_toggle()) {
 			ToggleControl* tc;
 			Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference("toggle_control");
 			xml->get_widget_derived("toggle_control", tc);
 			control = tc;
+		} else if (pm->type().is_string()) {
+			StringControl* sc;
+			Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference("string_control");
+			xml->get_widget_derived("string_control", sc);
+			control = sc;
 		} else {
 			SliderControl* sc;
 			Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference("control_strip");
 			xml->get_widget_derived("control_strip", sc);
 			control = sc;
 		}
+	}
 
+	if (control) {
 		control->init(this, pm);
 
 		if (_controls.size() > 0)
@@ -223,19 +230,20 @@ ControlPanel::disable_port(const Path& path)
 /** Callback for Controls to notify this of a change.
  */
 void
-ControlPanel::value_changed(SharedPtr<PortModel> port, float val)
+ControlPanel::value_changed_atom(SharedPtr<PortModel> port, const Raul::Atom& val)
 {
 	if (_callback_enabled) {
 		if (_all_voices_radio->get_active()) {
-			App::instance().engine()->set_port_value(port->path(), Atom(val));
+			App::instance().engine()->set_port_value(port->path(), val);
 			port->value(val);
 		} else {
 			int voice = _voice_spinbutton->get_value_as_int();
-			App::instance().engine()->set_voice_value(port->path(), voice, Atom(val));
+			App::instance().engine()->set_voice_value(port->path(), voice, val);
 			port->value(val);
 		}
 	}
 }
+
 
 void
 ControlPanel::all_voices_selected()

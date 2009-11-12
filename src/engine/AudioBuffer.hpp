@@ -56,7 +56,6 @@ public:
 	void prepare_read(FrameTime start, SampleCount nframes);
 	void prepare_write(FrameTime start, SampleCount nframes) {}
 
-	void rewind() const {}
 	void resize(size_t size);
 
 	void      filled_size(size_t size) { _filled_size = size; }
@@ -72,7 +71,6 @@ private:
 
 	Sample*      _data;        ///< Used data pointer (probably same as _local_data)
 	Sample*      _local_data;  ///< Locally allocated buffer (possibly unused if joined or set_data used)
-	size_t       _size;        ///< Allocated buffer size
 	size_t       _filled_size; ///< Usable buffer size (for MIDI ports etc)
 	State        _state;       ///< State of buffer for setting values next cycle
 	Sample       _set_value;   ///< Value set by set_value (for completing the set next cycle)

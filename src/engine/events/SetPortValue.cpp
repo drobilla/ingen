@@ -31,6 +31,7 @@
 #include "ProcessContext.hpp"
 #include "Responder.hpp"
 #include "SetPortValue.hpp"
+#include "StringBuffer.hpp"
 
 using namespace std;
 using namespace Raul;
@@ -169,21 +170,18 @@ SetPortValue::apply(uint32_t start, uint32_t nframes)
 			return;
 		}
 
-		EventBuffer* const ebuf = dynamic_cast<EventBuffer*>(buf);
-
 		const LV2Features::Feature* f = _engine.world()->lv2_features->feature(LV2_URI_MAP_URI);
 		LV2URIMap* map = (LV2URIMap*)f->controller;
 
-		// FIXME: eliminate lookups
-		// FIXME: need a proper prefix system
-		if (ebuf && _value.type() == Atom::BLOB) {
+		// TODO: eliminate lookups
+		EventBuffer* const ebuf = dynamic_cast<EventBuffer*>(buf);
+		if (ebuf) {
 			const uint32_t frames = std::max(
-					(uint32_t)(_time - start),
+					uint32_t(_time - start),
 					ebuf->latest_frames());
 
 			// Size 0 event, pass it along to the plugin as a typed but empty event
 			if (_value.data_size() == 0) {
-				cout << "BANG!" << endl;
 				const uint32_t type_id = map->uri_to_id(NULL, _value.get_blob_type());
 				ebuf->append(frames, 0, type_id, 0, NULL);
 				_port->raise_set_by_user_flag();
@@ -201,6 +199,18 @@ SetPortValue::apply(uint32_t start, uint32_t nframes)
 				return;
 			}
 		}
+
+		StringBuffer* const sbuf = dynamic_cast<StringBuffer*>(buf);
+		if (sbuf) {
+			if (_value.type() != Atom::STRING) {
+				_error = TYPE_MISMATCH;
+				return;
+			}
+			strncpy(sbuf->data(), _value.get_string(),
+					std::min(sbuf->size(), strlen(_value.get_string())));
+			return;
+		}
+
 
 		if (_value.type() == Atom::BLOB)
 			cerr << "WARNING: Unknown value blob type " << _value.get_blob_type() << endl;

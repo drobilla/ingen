@@ -43,11 +43,11 @@ using namespace Shared;
  * (It _will_ crash!)
  */
 LV2Node::LV2Node(LV2Plugin*    plugin,
-                 const string& name,
-                 bool          polyphonic,
-                 PatchImpl*    parent,
-                 SampleRate    srate,
-                 size_t        buffer_size)
+				 const string& name,
+				 bool          polyphonic,
+				 PatchImpl*    parent,
+				 SampleRate    srate,
+				 size_t        buffer_size)
 	: NodeBase(plugin, name, polyphonic, parent, srate, buffer_size)
 	, _lv2_plugin(plugin)
 	, _instances(NULL)
@@ -168,7 +168,7 @@ LV2Node::instantiate()
 				(*_instances)[i], LV2_CONTEXT_MESSAGE);
 
 		if (i == 0 && ctx_ext) {
-			cerr << "HAS CONTEXT EXTENSION" << endl;
+			cerr << _lv2_plugin->uri() << " has message context" << endl;
 			assert(!_message_funcs);
 			_message_funcs = (LV2MessageContext*)ctx_ext;
 		}
@@ -184,8 +184,16 @@ LV2Node::instantiate()
 	float* def_values = new float[num_ports];
 	slv2_plugin_get_port_ranges_float(plug, 0, 0, def_values);
 
-	SLV2Value pred = slv2_value_new_uri(info->lv2_world(),
+	SLV2Value context_pred = slv2_value_new_uri(info->lv2_world(),
 			"http://lv2plug.in/ns/dev/contexts#context");
+
+	// FIXME: Why doesn't this just use lv2:default?
+	SLV2Value default_pred = slv2_value_new_uri(info->lv2_world(),
+			"http://lv2plug.in/ns/dev/string-port#default");
+
+	// FIXME: Make this a separate extension
+	SLV2Value size_pred = slv2_value_new_uri(info->lv2_world(),
+			"http://lv2plug.in/ns/dev/string-port#requiredSpace");
 
 	for (uint32_t j=0; j < num_ports; ++j) {
 		SLV2Port id = slv2_plugin_get_port_by_index(plug, j);
@@ -196,6 +204,7 @@ LV2Node::instantiate()
 
 		port_path = path().child(port_name);
 
+		Raul::Atom val;
 		DataType data_type = DataType::UNKNOWN;
 		if (slv2_port_is_a(plug, id, info->control_class)) {
 			data_type = DataType::CONTROL;
@@ -206,6 +215,34 @@ LV2Node::instantiate()
 		} else if (slv2_port_is_a(plug, id, info->event_class)) {
 			data_type = DataType::EVENT;
 			port_buffer_size = _buffer_size;
+		} else if (slv2_port_is_a(plug, id, info->string_class)) {
+			data_type = DataType::STRING;
+			port_buffer_size = 0;
+
+			// Get default value, and its length
+			SLV2Values defaults = slv2_port_get_value(plug, id, default_pred);
+			for (uint32_t i = 0; i < slv2_values_size(defaults); ++i) {
+				SLV2Value d = slv2_values_get_at(defaults, i);
+				if (slv2_value_is_string(d)) {
+					const char*  str_val     = slv2_value_as_string(d);
+					const size_t str_val_len = strlen(str_val);
+					if (str_val_len >= port_buffer_size) {
+						val = str_val;
+						port_buffer_size = str_val_len;
+					}
+				}
+			}
+
+			// Get minimum size, if set in data
+			SLV2Values sizes = slv2_port_get_value(plug, id, size_pred);
+			for (uint32_t i = 0; i < slv2_values_size(sizes); ++i) {
+				SLV2Value d = slv2_values_get_at(sizes, i);
+				if (slv2_value_is_int(d)) {
+					size_t size_val = slv2_value_as_int(d);
+					if (size_val > port_buffer_size)
+						port_buffer_size = size_val;
+				}
+			}
 		}
 
 		enum { UNKNOWN, INPUT, OUTPUT } direction = UNKNOWN;
@@ -223,31 +260,30 @@ LV2Node::instantiate()
 			return false;
 		}
 
-		// FIXME: need nice type preserving SLV2Value -> Raul::Atom conversion
-		const float def = isnan(def_values[j]) ? 0.0f : def_values[j];
-		const Raul::Atom defatm = def;
+		if (val.type() == Atom::NIL)
+			val = isnan(def_values[j]) ? 0.0f : def_values[j];
 
 		if (direction == INPUT)
-			port = new InputPort(this, port_name, j, _polyphony, data_type, defatm, port_buffer_size);
+			port = new InputPort(this, port_name, j, _polyphony, data_type, val, port_buffer_size);
 		else
-			port = new OutputPort(this, port_name, j, _polyphony, data_type, defatm, port_buffer_size);
+			port = new OutputPort(this, port_name, j, _polyphony, data_type, val, port_buffer_size);
 
 		if (direction == INPUT && data_type == DataType::CONTROL)
-		  ((AudioBuffer*)port->buffer(0))->set_value(def, 0, 0);
+			((AudioBuffer*)port->buffer(0))->set_value(val.get_float(), 0, 0);
 
-		SLV2Values contexts = slv2_port_get_value(plug, id, pred);
+		SLV2Values contexts = slv2_port_get_value(plug, id, context_pred);
 		for (uint32_t i = 0; i < slv2_values_size(contexts); ++i) {
 			SLV2Value c = slv2_values_get_at(contexts, i);
 			const char* context = slv2_value_as_string(c);
 			if (!strcmp("http://lv2plug.in/ns/dev/contexts#MessageContext", context)) {
-				cout << "MESSAGE CONTEXT!" << endl;
+				cerr << _lv2_plugin->uri() << " port " << i << " has message context" << endl;
 				if (!_message_funcs) {
-					cerr << "Plugin " << _lv2_plugin->uri()
+					cerr << _lv2_plugin->uri()
 						<< " has a message port, but no context extension data." << endl;
 				}
 				port->set_context(Context::MESSAGE);
 			} else {
-				cout << "UNKNOWN CONTEXT: "
+				cout << _lv2_plugin->uri() << " port " << i << " has unknown context "
 					<< slv2_value_as_string(slv2_values_get_at(contexts, i))
 					<< endl;
 			}

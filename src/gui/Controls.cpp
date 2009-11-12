@@ -279,7 +279,6 @@ SliderControl::update_value_from_spinner()
 
 		_control_panel->value_changed(_port_model, value);
 
-		//m_port_model->value(value);
 		_enable_signal = true;
 	}
 }
@@ -465,6 +464,85 @@ ToggleControl::toggled()
 		float value = _checkbutton->get_active() ? 1.0f : 0.0f;
 		_control_panel->value_changed(_port_model, value);
 		//m_port_model->value(value);
+	}
+}
+
+
+// ///////////// StringControl ////////////// //
+
+
+StringControl::StringControl(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
+	: Control(cobject, xml)
+{
+	xml->get_widget("string_control_name_label", _name_label);
+	xml->get_widget("string_control_entry",      _entry);
+}
+
+
+void
+StringControl::init(ControlPanel* panel, SharedPtr<PortModel> pm)
+{
+	_enable_signal = false;
+
+	Control::init(panel, pm);
+
+	assert(_name_label);
+	assert(_entry);
+
+	set_name(pm->path().name());
+
+	_entry->signal_activate().connect(sigc::mem_fun(*this, &StringControl::activated));
+	set_value(pm->value());
+
+	_enable_signal = true;
+	show_all();
+}
+
+
+void
+StringControl::set_name(const string& name)
+{
+	string name_label = "<span weight=\"bold\">";
+	name_label += name + "</span>";
+	_name_label->set_markup(name_label);
+}
+
+
+void
+StringControl::set_value(const Atom& val)
+{
+	_enable_signal = false;
+	if (val.type() == Atom::STRING)
+		_entry->set_text(val.get_string());
+	else
+		cerr << "ERROR: Non-string value for string port" << endl;
+	_enable_signal = true;
+}
+
+
+void
+StringControl::enable()
+{
+	_entry->property_sensitive() = true;
+	_name_label->property_sensitive() = true;
+}
+
+
+void
+StringControl::disable()
+{
+	_entry->property_sensitive() = false;
+	_name_label->property_sensitive() = false;
+}
+
+
+void
+StringControl::activated()
+{
+	if (_enable_signal) {
+		const string& value = _entry->get_text();
+		cerr << "String control activated: " << value << endl;
+		_control_panel->value_changed(_port_model, value.c_str());
 	}
 }
 

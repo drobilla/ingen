@@ -496,8 +496,6 @@ Serialiser::serialise_properties(
 			const Redland::Resource key(_model->world(), v->first.str());
 			const Redland::Node value = AtomRDF::atom_to_node(_model->world(), v->second);
 			if (value.is_valid()) {
-				cerr << "serialise property '" << v->first << "' = " << value << " :: "
-					<< (int)v->second.type() << endl;
 				_model->add_statement(subject, key, value);
 			} else {
 				cerr << "WARNING: can not serialise variable '" << v->first << "' :: "

@@ -139,7 +139,7 @@ protected:
 	bool             _fixed_buffers;
 	bool             _broadcast;
 	bool             _set_by_user;
-	Sample           _last_broadcasted_value;
+	Raul::Atom       _last_broadcasted_value;
 
 	Context::ID           _context;
 	Raul::Array<Buffer*>* _buffers;

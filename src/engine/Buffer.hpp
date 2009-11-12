@@ -44,24 +44,24 @@ public:
 	/** Clear contents and reset state */
 	virtual void clear() = 0;
 
+	virtual void resize(size_t size) { _size = size; }
+
 	virtual void*       raw_data()       = 0;
 	virtual const void* raw_data() const = 0;
 
 	/** Rewind (ie reset read pointer), but leave contents unchanged */
-	virtual void rewind() const = 0;
+	virtual void rewind() const {}
+
+	virtual void copy(const Buffer* src, size_t start_sample, size_t end_sample) = 0;
 
 	virtual void prepare_read(FrameTime start, SampleCount nframes) = 0;
 	virtual void prepare_write(FrameTime start, SampleCount nframes) = 0;
 
-	bool is_joined() const { return (_joined_buf != NULL); }
+	bool    is_joined()     const { return (_joined_buf != NULL); }
 	Buffer* joined_buffer() const { return _joined_buf; }
 
 	virtual bool join(Buffer* buf) = 0;
 	virtual void unjoin() = 0;
-
-	virtual void copy(const Buffer* src, size_t start_sample, size_t end_sample) = 0;
-
-	virtual void resize(size_t size) { _size = size; }
 
 	Shared::DataType type() const { return _type; }
 	size_t           size() const { return _size; }

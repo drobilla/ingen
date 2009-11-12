@@ -31,17 +31,20 @@ class EventBuffer : public Buffer {
 public:
 	EventBuffer(size_t capacity);
 
-	void prepare_read(FrameTime start, SampleCount nframes);
-	void prepare_write(FrameTime start, SampleCount nframes);
-
 	bool join(Buffer* buf);
 	void unjoin();
+
+	void clear() { reset(_this_nframes); }
 
 	void*       raw_data()       { return _buf; }
 	const void* raw_data() const { return _buf; }
 
-	void copy(const Buffer* src, size_t start_sample, size_t end_sample);
+	void rewind() const { _buf->rewind(); }
 
+	void prepare_read(FrameTime start, SampleCount nframes);
+	void prepare_write(FrameTime start, SampleCount nframes);
+
+	void copy(const Buffer* src, size_t start_sample, size_t end_sample);
 	bool merge(const EventBuffer& a, const EventBuffer& b);
 
 	bool increment() const { return _buf->increment(); }
@@ -51,10 +54,6 @@ public:
 	inline uint32_t latest_subframes() const { return _buf->latest_subframes(); }
 	inline uint32_t this_nframes()     const { return _this_nframes; }
 	inline uint32_t event_count()      const { return _buf->event_count(); }
-
-	inline void rewind() const { _buf->rewind(); }
-
-	inline void clear() { reset(_this_nframes); }
 
 	inline void reset(SampleCount nframes) {
 		_this_nframes = nframes;

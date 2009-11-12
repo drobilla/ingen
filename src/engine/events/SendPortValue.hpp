@@ -18,6 +18,7 @@
 #ifndef SENDPORTVALUEEVENT_H
 #define SENDPORTVALUEEVENT_H
 
+#include "raul/Atom.hpp"
 #include "engine/Event.hpp"
 #include "engine/types.hpp"
 
@@ -43,12 +44,12 @@ class SendPortValue : public Event
 {
 public:
 	inline SendPortValue(
-			Engine&     engine,
-			SampleCount timestamp,
-			PortImpl*   port,
-			bool        omni,
-			uint32_t    voice_num,
-			Sample      value)
+			Engine&           engine,
+			SampleCount       timestamp,
+			PortImpl*         port,
+			bool              omni,
+			uint32_t          voice_num,
+			const Raul::Atom& value)
 		: Event(engine, SharedPtr<Responder>(), timestamp)
 		, _port(port)
 		, _omni(omni)
@@ -67,10 +68,10 @@ public:
 	void post_process();
 
 private:
-	PortImpl* _port;
-	bool      _omni;
-	uint32_t  _voice_num;
-	Sample    _value;
+	PortImpl*  _port;
+	bool       _omni;
+	uint32_t   _voice_num;
+	Raul::Atom _value;
 };
 
 

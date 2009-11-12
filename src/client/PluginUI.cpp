@@ -17,6 +17,7 @@
 
 #include <iostream>
 #include "event.lv2/event-helpers.h"
+#include "string-port.lv2/string-port.h"
 #include "shared/LV2Features.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "PluginUI.hpp"
@@ -67,7 +68,7 @@ lv2_ui_write(LV2UI_Controller controller,
 
 		ui->world()->engine->set_port_value(port->path(), Atom(*(float*)buffer));
 
-	// FIXME: slow, need to cache ID
+	// FIXME: this is slow, cache ID
 	} else if (format == map->uri_to_id(NULL, "http://lv2plug.in/ns/extensions/ui#Events")) {
 		uint32_t midi_event_type = map->uri_to_id(NULL, "http://lv2plug.in/ns/ext/midi#MidiEvent");
 		LV2_Event_Buffer* buf = (LV2_Event_Buffer*)buffer;
@@ -87,6 +88,12 @@ lv2_ui_write(LV2UI_Controller controller,
 
 			lv2_event_increment(&iter);
 		}
+
+	// FIXME: this is slow, cache ID
+	} else if (format == map->uri_to_id(NULL, "http://lv2plug.in/ns/dev/string-port#StringTransfer")) {
+		LV2_String_Data* buf = (LV2_String_Data*)buffer;
+		ui->world()->engine->set_port_value(port->path(), buf->data);
+
 	} else {
 		cerr << "WARNING: Unknown value format " << format
 			<< ", either plugin " << ui->node()->plugin()->uri() << " is broken"

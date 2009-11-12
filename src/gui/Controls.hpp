@@ -157,6 +157,31 @@ private:
 };
 
 
+/** A text entry for string controls.
+ *
+ * \ingroup GUI
+ */
+class StringControl : public Control
+{
+public:
+	StringControl(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml);
+
+	void init(ControlPanel* panel, SharedPtr<Client::PortModel> pm);
+
+	void enable();
+	void disable();
+
+private:
+	void set_name(const std::string& name);
+	void set_value(const Raul::Atom& value);
+
+	void activated();
+
+	Gtk::Label* _name_label;
+	Gtk::Entry* _entry;
+};
+
+
 } // namespace GUI
 } // namespace Ingen
 

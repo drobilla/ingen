@@ -25,6 +25,7 @@
 #include "PortImpl.hpp"
 #include "PluginImpl.hpp"
 #include "AudioBuffer.hpp"
+#include "StringBuffer.hpp"
 
 using namespace std;
 using namespace Raul;
@@ -36,11 +37,11 @@ using namespace Shared;
 
 
 RequestMetadata::RequestMetadata(Engine&              engine,
-	                                       SharedPtr<Responder> responder,
-	                                       SampleCount          timestamp,
-	                                       bool                 is_meta,
-	                                       const URI&           subject,
-	                                       const URI&           key)
+                                 SharedPtr<Responder> responder,
+                                 SampleCount          timestamp,
+                                 bool                 is_meta,
+                                 const URI&           subject,
+                                 const URI&           key)
 	: QueuedEvent(engine, responder, timestamp)
 	, _error(NO_ERROR)
 	, _special_type(NONE)
@@ -93,6 +94,8 @@ RequestMetadata::execute(ProcessContext& context)
 		if (port) {
 			if (port->type() == DataType::CONTROL || port->type() == DataType::AUDIO)
 				_value = ((AudioBuffer*)port->buffer(0))->value_at(0); // TODO: offset
+			else if (port->type() == DataType::STRING)
+				_value = (char*)((StringBuffer*)port->buffer(0))->data();
 		} else {
 			_resource = 0;
 		}

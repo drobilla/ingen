@@ -109,16 +109,17 @@ main(int argc, char** argv)
 	Ingen::Shared::World* world = Ingen::Shared::get_world();
 
 	/* Set up RDF world */
-	world->rdf_world->add_prefix("xsd", "http://www.w3.org/2001/XMLSchema#");
-	world->rdf_world->add_prefix("ingen", "http://drobilla.net/ns/ingen#");
+	world->rdf_world->add_prefix("dc",        "http://purl.org/dc/elements/1.1/");
+	world->rdf_world->add_prefix("doap",      "http://usefulinc.com/ns/doap#");
+	world->rdf_world->add_prefix("ingen",     "http://drobilla.net/ns/ingen#");
 	world->rdf_world->add_prefix("ingenuity", "http://drobilla.net/ns/ingenuity#");
-	world->rdf_world->add_prefix("lv2", "http://lv2plug.in/ns/lv2core#");
-	world->rdf_world->add_prefix("lv2ev", "http://lv2plug.in/ns/ext/event#");
-	world->rdf_world->add_prefix("lv2midi", "http://lv2plug.in/ns/ext/midi");
-	world->rdf_world->add_prefix("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
-	world->rdf_world->add_prefix("owl", "http://www.w3.org/2002/07/owl#");
-	world->rdf_world->add_prefix("doap", "http://usefulinc.com/ns/doap#");
-	world->rdf_world->add_prefix("dc", "http://purl.org/dc/elements/1.1/");
+	world->rdf_world->add_prefix("lv2",       "http://lv2plug.in/ns/lv2core#");
+	world->rdf_world->add_prefix("lv2ev",     "http://lv2plug.in/ns/ext/event#");
+	world->rdf_world->add_prefix("lv2midi",   "http://lv2plug.in/ns/ext/midi");
+	world->rdf_world->add_prefix("owl",       "http://www.w3.org/2002/07/owl#");
+	world->rdf_world->add_prefix("rdfs",      "http://www.w3.org/2000/01/rdf-schema#");
+	world->rdf_world->add_prefix("sp",        "http://lv2plug.in/ns/dev/string-port#");
+	world->rdf_world->add_prefix("xsd",       "http://www.w3.org/2001/XMLSchema#");
 
 	/* Run engine */
 	if (args.engine_flag) {
@@ -298,10 +299,10 @@ main(int argc, char** argv)
 	if (run_gui)
 		gui_run();
 
-    /* Run a script */
-    if (args.run_given) {
+	/* Run a script */
+	if (args.run_given) {
 #ifdef WITH_BINDINGS
-        bool (*run_script)(Ingen::Shared::World*, const char*) = NULL;
+		bool (*run_script)(Ingen::Shared::World*, const char*) = NULL;
 		SharedPtr<Glib::Module> bindings_module = Ingen::Shared::load_module("ingen_bindings");
 		if (bindings_module) {
 			bindings_module->make_resident();
@@ -314,14 +315,14 @@ main(int argc, char** argv)
 				cerr << "FAILED: " << Glib::Module::get_last_error() << endl;
 			}
 		} else {
-            cerr << Glib::Module::get_last_error() << endl;
+			cerr << Glib::Module::get_last_error() << endl;
 		}
 #else
 		cerr << "This build of ingen does not support scripting." << endl;
 #endif
 
 	/* Listen to OSC and do our own main thing. */
-    } else if (engine && !run_gui) {
+	} else if (engine && !run_gui) {
 		signal(SIGINT, catch_int);
 		signal(SIGTERM, catch_int);
 		engine->main();

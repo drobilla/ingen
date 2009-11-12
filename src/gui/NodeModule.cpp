@@ -144,20 +144,23 @@ NodeModule::show_human_names(bool b)
 void
 NodeModule::value_changed(uint32_t index, const Atom& value)
 {
-	float control = 0.0f;
+	if (!_plugin_ui)
+		return;
+
+	float                   float_val = 0.0f;
+	SLV2UIInstance          inst      = _plugin_ui->instance();
+	const LV2UI_Descriptor* ui_desc   = slv2_ui_instance_get_descriptor(inst);
+	LV2UI_Handle            ui        = slv2_ui_instance_get_handle(inst);
+
 	switch (value.type()) {
 	case Atom::FLOAT:
-		control = value.get_float();
-		if (_plugin_ui) {
-			SLV2UIInstance inst = _plugin_ui->instance();
-			const LV2UI_Descriptor* ui_descriptor = slv2_ui_instance_get_descriptor(inst);
-			LV2UI_Handle ui_handle = slv2_ui_instance_get_handle(inst);
-			if (ui_descriptor->port_event)
-				ui_descriptor->port_event(ui_handle, index, 4, 0, &control);
-		}
+		float_val = value.get_float();
+		if (ui_desc->port_event)
+			ui_desc->port_event(ui, index, 4, 0, &float_val);
 		break;
 	case Atom::STRING:
-		cout << "Port value type is a string? (\"" << value.get_string() << "\")" << endl;
+		if (ui_desc->port_event)
+			ui_desc->port_event(ui, index, strlen(value.get_string()), 0, value.get_string());
 		break;
 	default:
 		break;

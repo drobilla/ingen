@@ -66,7 +66,12 @@ public:
 	std::pair<int,int> ideal_size()   const { return _ideal_size; }
 
 	// Callback for Control
-	void value_changed(SharedPtr<PortModel> port_path, float val);
+	void value_changed_atom(SharedPtr<PortModel> port, const Raul::Atom& val);
+
+	template <typename T>
+	void value_changed(SharedPtr<PortModel> port, T val) {
+		this->value_changed_atom(port, Raul::Atom(val));
+	}
 
 private:
 	void all_voices_selected();

@@ -17,6 +17,7 @@
 
 #include "AudioBuffer.hpp"
 #include "EventBuffer.hpp"
+#include "StringBuffer.hpp"
 
 namespace Ingen {
 
@@ -31,6 +32,8 @@ Buffer::create(DataType type, size_t size)
 		return new AudioBuffer(size);
 	else if (type.is_event())
 		return new EventBuffer(size);
+	else if (type.is_string())
+		return new StringBuffer(size);
 	else
 		throw;
 }

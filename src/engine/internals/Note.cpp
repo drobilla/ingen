@@ -131,7 +131,8 @@ NoteNode::process(ProcessContext& context)
 	midi_in->rewind();
 
 	if (midi_in->event_count() > 0)
-	while (midi_in->get_event(&frames, &subframes, &type, &size, &buf)) {
+	for (midi_in->rewind(); midi_in->get_event(&frames, &subframes, &type, &size, &buf);
+			midi_in->increment()) {
 
 		/*cout << "EVENT TYPE " << type << " @ " << frames << "." << subframes << ": ";
 		for (uint16_t i = 0; i < size; ++i)
@@ -178,9 +179,6 @@ NoteNode::process(ProcessContext& context)
 		} else {
 			//fprintf(stderr, "Unknown (size %d) MIDI event %X\n", size, buf[0]);
 		}
-
-		if (midi_in->increment() == midi_in->this_nframes())
-			break;
 	}
 
 	NodeBase::post_process(context);
