@@ -42,6 +42,7 @@ Control::Control(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>&
 	: Gtk::VBox(cobject)
 	, _control_panel(NULL)
 	, _enable_signal(false)
+	, _name_label(NULL)
 {
 	Glib::RefPtr<Gnome::Glade::Xml> menu_xml = GladeFactory::new_glade_reference("port_control_menu");
 	menu_xml->get_widget("port_control_menu", _menu);
@@ -70,6 +71,14 @@ Control::init(ControlPanel* panel, SharedPtr<PortModel> pm)
 	assert(panel);
 
 	_control_connection = pm->signal_value_changed.connect(sigc::mem_fun(this, &Control::set_value));
+}
+
+
+void
+Control::set_name(const string& name)
+{
+	const string name_markup = string("<span weight=\"bold\">") + name + "</span>";
+	_name_label->set_markup(name_markup);
 }
 
 
@@ -209,15 +218,6 @@ SliderControl::set_range(float min, float max)
 
 	_slider->set_range(min, max);
 	//_value_spinner->set_range(min, max);
-}
-
-
-void
-SliderControl::set_name(const string& name)
-{
-	string name_label = "<span weight=\"bold\">";
-	name_label += name + "</span>";
-	_name_label->set_markup(name_label);
 }
 
 
@@ -410,15 +410,6 @@ ToggleControl::init(ControlPanel* panel, SharedPtr<PortModel> pm)
 
 
 void
-ToggleControl::set_name(const string& name)
-{
-	string name_label = "<span weight=\"bold\">";
-	name_label += name + "</span>";
-	_name_label->set_markup(name_label);
-}
-
-
-void
 ToggleControl::set_value(const Atom& val)
 {
 	bool enable = false;
@@ -496,15 +487,6 @@ StringControl::init(ControlPanel* panel, SharedPtr<PortModel> pm)
 
 	_enable_signal = true;
 	show_all();
-}
-
-
-void
-StringControl::set_name(const string& name)
-{
-	string name_label = "<span weight=\"bold\">";
-	name_label += name + "</span>";
-	_name_label->set_markup(name_label);
 }
 
 

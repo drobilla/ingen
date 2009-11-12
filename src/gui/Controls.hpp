@@ -54,6 +54,7 @@ protected:
 	virtual void set_value(const Raul::Atom& value) = 0;
 	virtual void set_range(float min, float max) {}
 
+	void set_name(const std::string& name);
 	void menu_properties();
 
 	ControlPanel*                _control_panel;
@@ -63,6 +64,7 @@ protected:
 
 	Gtk::Menu*     _menu;
 	Gtk::MenuItem* _menu_properties;
+	Gtk::Label*    _name_label;
 };
 
 
@@ -83,7 +85,6 @@ public:
 	void set_max(float val);
 
 private:
-	void set_name(const std::string& name);
 	void set_value(const Raul::Atom& value);
 	void set_range(float min, float max);
 
@@ -98,7 +99,6 @@ private:
 
 	bool _enabled;
 
-	Gtk::Label*      _name_label;
 	Gtk::SpinButton* _value_spinner;
 	Gtk::HScale*     _slider;
 };
@@ -119,14 +119,12 @@ public:
 	void disable();
 
 private:
-	void set_name(const string& name);
 	void set_value(float val);
 
 	void update_value();
 
 	bool            _enable_signal;
 	Gtk::Alignment  _alignment;
-	Gtk::Label      _name_label;
 	Gtk::SpinButton _spinner;
 };
 #endif
@@ -147,12 +145,10 @@ public:
 	void disable();
 
 private:
-	void set_name(const std::string& name);
 	void set_value(const Raul::Atom& value);
 
 	void toggled();
 
-	Gtk::Label*       _name_label;
 	Gtk::CheckButton* _checkbutton;
 };
 
@@ -172,12 +168,10 @@ public:
 	void disable();
 
 private:
-	void set_name(const std::string& name);
 	void set_value(const Raul::Atom& value);
 
 	void activated();
 
-	Gtk::Label* _name_label;
 	Gtk::Entry* _entry;
 };
 
