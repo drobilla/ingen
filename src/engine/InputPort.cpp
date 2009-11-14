@@ -188,7 +188,7 @@ InputPort::remove_connection(const OutputPort* src_port)
 /** Prepare buffer for access, mixing if necessary.  Realtime safe.
  */
 void
-InputPort::pre_process(ProcessContext& context)
+InputPort::pre_process(Context& context)
 {
 	// If value has been set (e.g. events pushed) by the user,
 	// don't do anything this cycle to avoid smashing the value
@@ -198,7 +198,7 @@ InputPort::pre_process(ProcessContext& context)
 	// No connections, just prepare buffers for reading by our node
 	if (_connections.size() == 0) {
 		for (uint32_t i=0; i < _poly; ++i)
-			buffer(i)->prepare_read(context.start(), context.nframes());
+			buffer(i)->prepare_read(context);
 		return;
 	}
 
@@ -210,7 +210,7 @@ InputPort::pre_process(ProcessContext& context)
 		if (can_direct()) {
 			for (uint32_t i=0; i < _poly; ++i) {
 				_buffers->at(i)->join(_connections.front()->buffer(i));
-				_buffers->at(i)->prepare_read(context.start(), context.nframes());
+				_buffers->at(i)->prepare_read(context);
 			}
 			connect_buffers();
 			return;
@@ -235,8 +235,7 @@ InputPort::pre_process(ProcessContext& context)
 	if (_type == DataType::CONTROL || _type == DataType::AUDIO) {
 		for (uint32_t voice=0; voice < _poly; ++voice) {
 			// Copy first connection
-			buffer(voice)->copy(
-				_connections.front()->buffer(voice), 0, _buffer_size-1);
+			buffer(voice)->copy(context, _connections.front()->buffer(voice));
 
 			// Accumulate the rest
 			if (_connections.size() > 1) {
@@ -254,11 +253,11 @@ InputPort::pre_process(ProcessContext& context)
 			cerr << "WARNING: MIDI mixing not implemented, only first connection used." << endl;
 
 		// Copy first connection
-		buffer(0)->copy(_connections.front()->buffer(0), 0, _buffer_size-1);
+		buffer(0)->copy(context, _connections.front()->buffer(0));
 	}
 
 	for (uint32_t i=0; i < _poly; ++i)
-		buffer(i)->prepare_read(context.start(), context.nframes());
+		buffer(i)->prepare_read(context);
 
 	if (_broadcast)
 		broadcast_value(context, false);
@@ -266,12 +265,12 @@ InputPort::pre_process(ProcessContext& context)
 
 
 void
-InputPort::post_process(ProcessContext& context)
+InputPort::post_process(Context& context)
 {
 	// Prepare buffers for next cycle
 	if (!can_direct())
 		for (uint32_t i=0; i < _poly; ++i)
-			buffer(i)->prepare_write(context.start(), context.nframes());
+			buffer(i)->prepare_write(context);
 
 	_set_by_user = false;
 

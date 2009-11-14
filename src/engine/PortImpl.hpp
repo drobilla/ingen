@@ -87,12 +87,13 @@ public:
 	}
 
 	/** Called once per process cycle */
-	virtual void pre_process(ProcessContext& context) = 0;
+	virtual void pre_process(Context& context) = 0;
 	virtual void process(ProcessContext& context) {};
-	virtual void post_process(ProcessContext& context) = 0;
+	virtual void post_process(Context& context) = 0;
 
 	/** Empty buffer contents completely (ie silence) */
 	virtual void clear_buffers();
+	virtual void connect_buffers();
 
 	virtual bool is_input()  const = 0;
 	virtual bool is_output() const = 0;
@@ -112,7 +113,7 @@ public:
 	void broadcast(bool b) { _broadcast = b; }
 	bool broadcast()       { return _broadcast; }
 
-	void broadcast_value(ProcessContext& context, bool force=false);
+	void broadcast_value(Context& context, bool force=false);
 
 	void raise_set_by_user_flag() { _set_by_user = true; }
 
@@ -129,7 +130,6 @@ protected:
 	         size_t             buffer_size);
 
 	virtual void allocate_buffers();
-	virtual void connect_buffers();
 
 	uint32_t         _index;
 	uint32_t         _poly;

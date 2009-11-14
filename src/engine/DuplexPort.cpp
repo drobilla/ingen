@@ -54,7 +54,7 @@ DuplexPort::DuplexPort(
 
 /** Prepare for the execution of parent patch */
 void
-DuplexPort::pre_process(ProcessContext& context)
+DuplexPort::pre_process(Context& context)
 {
 	/*cerr << endl << "{ duplex pre" << endl;
 	cerr << path() << " duplex pre: fixed buffers: " << fixed_buffers() << endl;
@@ -65,7 +65,7 @@ DuplexPort::pre_process(ProcessContext& context)
 	if (_is_output) {
 		for (uint32_t i=0; i < _poly; ++i)
 			if (!_buffers->at(i)->is_joined())
-				_buffers->at(i)->prepare_write(context.start(), context.nframes());
+				_buffers->at(i)->prepare_write(context);
 
 	// Otherwise, we're a patch input, do whatever a normal node's input port does
 	// (mix down inputs from an outside "patch is a node" perspective)
@@ -85,7 +85,7 @@ DuplexPort::pre_process(ProcessContext& context)
 
 /** Finalize after the execution of parent patch (deliver outputs) */
 void
-DuplexPort::post_process(ProcessContext& context)
+DuplexPort::post_process(Context& context)
 {
 	/*cerr << endl << "{ duplex post" << endl;
 	cerr << path() << " duplex post: fixed buffers: " << fixed_buffers() << endl;

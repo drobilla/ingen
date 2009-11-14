@@ -48,7 +48,7 @@ ControllerNode::ControllerNode(const string& path,
 {
 	_ports = new Raul::Array<PortImpl*>(6);
 
-	_midi_in_port = new InputPort(this, "input", 0, 1, DataType::EVENT, Raul::Atom(), _buffer_size);
+	_midi_in_port = new InputPort(this, "input", 0, 1, DataType::EVENTS, Raul::Atom(), _buffer_size);
 	_ports->at(0) = _midi_in_port;
 
 	_param_port = new InputPort(this, "controller", 1, 1, DataType::CONTROL, 0.0f, 1);
@@ -84,7 +84,6 @@ ControllerNode::process(ProcessContext& context)
 	uint8_t* buf = NULL;
 
 	EventBuffer* const midi_in = (EventBuffer*)_midi_in_port->buffer(0);
-	//assert(midi_in->this_nframes() == context.nframes());
 
 	midi_in->rewind();
 

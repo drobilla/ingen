@@ -77,7 +77,7 @@ private:
 		TYPE_MISMATCH
 	};
 
-	void apply(uint32_t start, uint32_t nframes);
+	void apply(Context& context);
 
 	bool             _queued;
 	bool             _omni;

@@ -68,7 +68,7 @@ private:
 	uint32_t _audio_port_color;
 	uint32_t _control_port_color;
 	uint32_t _event_port_color;
-	uint32_t _string_port_color;
+	uint32_t _object_port_color;
 };
 
 

@@ -41,7 +41,7 @@ TriggerNode::TriggerNode(const string& path, bool polyphonic, PatchImpl* parent,
 {
 	_ports = new Raul::Array<PortImpl*>(5);
 
-	_midi_in_port = new InputPort(this, "input", 0, 1, DataType::EVENT, Raul::Atom(), _buffer_size);
+	_midi_in_port = new InputPort(this, "input", 0, 1, DataType::EVENTS, Raul::Atom(), _buffer_size);
 	_ports->at(0) = _midi_in_port;
 
 	_note_port = new InputPort(this, "note", 1, 1, DataType::CONTROL, 60.0f, 1);
@@ -77,7 +77,6 @@ TriggerNode::process(ProcessContext& context)
 	uint8_t* buf = NULL;
 
 	EventBuffer* const midi_in = (EventBuffer*)_midi_in_port->buffer(0);
-	//assert(midi_in->this_nframes() == context.nframes());
 
 	midi_in->rewind();
 

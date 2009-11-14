@@ -106,7 +106,7 @@ JackMidiPort::pre_process(ProcessContext& context)
 	void*                jack_buffer = jack_port_get_buffer(_jack_port, context.nframes());
 	const jack_nframes_t event_count = jack_midi_get_event_count(jack_buffer);
 
-	patch_buf->prepare_write(context.start(), context.nframes());
+	patch_buf->prepare_write(context);
 
 	// Copy events from Jack port buffer into patch port buffer
 	for (jack_nframes_t i=0; i < event_count; ++i) {
@@ -140,7 +140,7 @@ JackMidiPort::post_process(ProcessContext& context)
 	assert(_patch_port->poly() == 1);
 	assert(patch_buf);
 
-	patch_buf->prepare_read(context.start(), context.nframes());
+	patch_buf->prepare_read(context);
 	jack_midi_clear_buffer(jack_buf);
 
 	uint32_t frames = 0;
@@ -173,8 +173,8 @@ JackMidiDriver::JackMidiDriver(Engine& engine)
 	, _is_activated(false)
 	, _is_enabled(false)
 {
-	const Shared::LV2Features::Feature* f = engine.world()->lv2_features->feature(LV2_URI_MAP_URI);
-	Shared::LV2URIMap* map = (Shared::LV2URIMap*)f->controller;
+	SharedPtr<Shared::LV2URIMap> map = PtrCast<Shared::LV2URIMap>(
+			_engine.world()->lv2_features->feature(LV2_URI_MAP_URI));
 	_midi_event_type = map->uri_to_id(NULL, "http://lv2plug.in/ns/ext/midi#MidiEvent");
 }
 

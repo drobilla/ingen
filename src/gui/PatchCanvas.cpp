@@ -496,7 +496,7 @@ PatchCanvas::connect(boost::shared_ptr<FlowCanvas::Connectable> src_port,
 		return;
 
 	// Midi binding/learn shortcut
-	if (src->model()->type().is_event() && dst->model()->type().is_control()) {
+	if (src->model()->type().is_events() && dst->model()->type().is_control()) {
 		cerr << "[PatchCanvas] TODO: MIDI binding shortcut" << endl;
 	} else {
 		App::instance().engine()->connect(src->model()->path(), dst->model()->path());

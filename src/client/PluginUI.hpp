@@ -21,6 +21,7 @@
 #include "slv2/slv2.h"
 #include "raul/SharedPtr.hpp"
 #include "module/World.hpp"
+#include "LV2Features.hpp"
 
 namespace Ingen {
 namespace Shared { class EngineInterface; }
@@ -54,6 +55,8 @@ private:
 	Ingen::Shared::World* _world;
 	SharedPtr<NodeModel>  _node;
 	SLV2UIInstance        _instance;
+
+    SharedPtr<Shared::LV2Features::FeatureArray> _features;
 };
 
 

@@ -108,7 +108,7 @@ Move::execute(ProcessContext& context)
 
 		if (port->type() == DataType::AUDIO)
 			driver_port = _engine.audio_driver()->driver_port(_new_path);
-		else if (port->type() == DataType::EVENT)
+		else if (port->type() == DataType::EVENTS)
 			driver_port = _engine.midi_driver()->driver_port(_new_path);
 
 		if (driver_port)

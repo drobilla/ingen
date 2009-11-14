@@ -18,10 +18,11 @@
 #define __STDC_LIMIT_MACROS 1
 #include <stdint.h>
 #include <iostream>
-#include "ingen-config.h"
-#include "EventBuffer.hpp"
 #include "event.lv2/event.h"
 #include "event.lv2/event-helpers.h"
+#include "ingen-config.h"
+#include "EventBuffer.hpp"
+#include "ProcessContext.hpp"
 
 using namespace std;
 
@@ -33,11 +34,11 @@ using namespace Shared;
  * \a capacity is in bytes (not number of events).
  */
 EventBuffer::EventBuffer(size_t capacity)
-	: Buffer(DataType(DataType::EVENT), capacity)
+	: Buffer(DataType(DataType::EVENTS), capacity)
 	, _local_buf(new LV2EventBuffer(capacity))
 {
 	_buf = _local_buf;
-	reset(0);
+	clear();
 
 	//cerr << "Creating MIDI Buffer " << _buf << ", capacity = " << _buf->capacity << endl;
 }
@@ -71,22 +72,21 @@ EventBuffer::unjoin()
 
 
 void
-EventBuffer::prepare_read(FrameTime start, SampleCount nframes)
+EventBuffer::prepare_read(Context& context)
 {
 	rewind();
-	_this_nframes = nframes;
 }
 
 
 void
-EventBuffer::prepare_write(FrameTime start, SampleCount nframes)
+EventBuffer::prepare_write(Context& context)
 {
-	reset(nframes);
+	clear();
 }
 
-/** FIXME: parameters ignored */
+
 void
-EventBuffer::copy(const Buffer* src_buf, size_t start_sample, size_t end_sample)
+EventBuffer::copy(Context& context, const Buffer* src_buf)
 {
 	const EventBuffer* src = dynamic_cast<const EventBuffer*>(src_buf);
 	assert(src);
@@ -97,7 +97,6 @@ EventBuffer::copy(const Buffer* src_buf, size_t start_sample, size_t end_sample)
 	src->rewind();
 
 	_buf->copy(*src->_buf);
-	_this_nframes = end_sample - start_sample;
 	assert(event_count() == src->event_count());
 }
 
@@ -114,7 +113,7 @@ EventBuffer::merge(const EventBuffer& a, const EventBuffer& b)
 	// Die if a merge isn't necessary as it's expensive
 	assert(a.size() > 0 && b.size() > 0);
 
-	reset(_this_nframes);
+	clear();
 
 	a.rewind();
 	b.rewind();

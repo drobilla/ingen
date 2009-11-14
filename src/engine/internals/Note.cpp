@@ -48,7 +48,7 @@ NoteNode::NoteNode(const string& path, bool polyphonic, PatchImpl* parent, Sampl
 {
 	_ports = new Raul::Array<PortImpl*>(5);
 
-	_midi_in_port = new InputPort(this, "input", 0, 1, DataType::EVENT, Raul::Atom(), _buffer_size);
+	_midi_in_port = new InputPort(this, "input", 0, 1, DataType::EVENTS, Raul::Atom(), _buffer_size);
 	_ports->at(0) = _midi_in_port;
 
 	_freq_port = new OutputPort(this, "frequency", 1, _polyphony, DataType::AUDIO, 440.0f, _buffer_size);
@@ -125,8 +125,6 @@ NoteNode::process(ProcessContext& context)
 	uint16_t type      = 0;
 	uint16_t size      = 0;
 	uint8_t* buf       = NULL;
-
-	//assert(midi_in->this_nframes() == context.nframes());
 
 	midi_in->rewind();
 

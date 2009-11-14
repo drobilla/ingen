@@ -47,18 +47,18 @@ OutputPort::OutputPort(NodeImpl*         parent,
 
 
 void
-OutputPort::pre_process(ProcessContext& context)
+OutputPort::pre_process(Context& context)
 {
 	for (uint32_t i=0; i < _poly; ++i)
-		buffer(i)->prepare_write(context.start(), context.nframes());
+		buffer(i)->prepare_write(context);
 }
 
 
 void
-OutputPort::post_process(ProcessContext& context)
+OutputPort::post_process(Context& context)
 {
 	for (uint32_t i=0; i < _poly; ++i)
-		buffer(i)->prepare_read(context.start(), context.nframes());
+		buffer(i)->prepare_read(context);
 
 	//cerr << path() << " output post: buffer: " << buffer(0) << endl;
 

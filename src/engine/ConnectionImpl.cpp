@@ -76,8 +76,11 @@ ConnectionImpl::set_mode()
 	else if (must_extend())
 		_mode = EXTEND;
 
-	if (_mode == MIX && type() == DataType::EVENT)
+	if (_mode == MIX && type() == DataType::EVENTS)
 		_mode = COPY;
+
+	if (type() == DataType::OBJECT)
+		_mode = DIRECT;
 }
 
 
@@ -123,10 +126,6 @@ ConnectionImpl::prepare_poly(uint32_t poly)
 {
 	_src_port->prepare_poly(poly);
 
-	/*cerr << "CONNECTION PREPARE: " << src_port()->path() << " * " << src_port()->poly()
-			<< " -> " << dst_port()->path() << " * " << dst_port()->poly()
-			<< "\t\tmust mix: " << must_mix() << " at poly " << poly << endl;*/
-
 	if (need_buffer() && !_local_buffer)
 		_local_buffer = Buffer::create(_dst_port->type(), _dst_port->buffer(0)->size());
 }
@@ -152,11 +151,8 @@ ConnectionImpl::apply_poly(Raul::Maid& maid, uint32_t poly)
 
 
 void
-ConnectionImpl::process(ProcessContext& context)
+ConnectionImpl::process(Context& context)
 {
-	// FIXME: nframes parameter not used
-	assert(_buffer_size == 1 || _buffer_size == context.nframes());
-
 	/* Thought:  A poly output port can be connected to multiple mono input
 	 * ports, which means this mix down would have to happen many times.
 	 * Adding a method to OutputPort that mixes down all it's outputs into
@@ -164,15 +160,15 @@ ConnectionImpl::process(ProcessContext& context)
 	 * would avoid having to mix multiple times.  Probably not a very common
 	 * case, but it would be faster anyway. */
 
-	/*std::cerr << src_port()->path() << " * " << src_port()->poly()
+	std::cerr << src_port()->path() << " * " << src_port()->poly()
 			<< " -> " << dst_port()->path() << " * " << dst_port()->poly()
-			<< "\t\tmode: " << (int)_mode << std::endl;*/
+			<< "\t\tmode: " << (int)_mode << std::endl;
 
 	if (_mode == COPY) {
 		assert(src_port()->poly() == dst_port()->poly());
-		const size_t copy_size = std::min(src_port()->buffer_size(), dst_port()->buffer_size());
-		for (uint32_t i=0; i < src_port()->poly(); ++i)
-			dst_port()->buffer(i)->copy(src_port()->buffer(i), 0, copy_size-1);
+		for (uint32_t i = 0; i < src_port()->poly(); ++i)
+			dst_port()->buffer(i)->copy(context, src_port()->buffer(i));
+
 	} else if (_mode == MIX) {
 		assert(type() == DataType::AUDIO || type() == DataType::CONTROL);
 
@@ -184,7 +180,7 @@ ConnectionImpl::process(ProcessContext& context)
 		const size_t copy_size = std::min(src_buffer->size(), mix_buf->size());
 
 		// Copy src buffer to start of mix buffer
-		mix_buf->copy((AudioBuffer*)src_port()->buffer(0), 0, copy_size-1);
+		mix_buf->copy(context, src_buffer);
 
 		// Write last value of src buffer to remainder of dst buffer, if necessary
 		if (copy_size < mix_buf->size())
@@ -229,9 +225,10 @@ ConnectionImpl::process(ProcessContext& context)
 			if (copy_size < dst_buf->size())
 				dst_buf->set_block(src_buf->value_at(copy_size - 1), copy_size, dst_buf->size() - 1);
 		}
+
 	} else if (_mode == DIRECT) {
 		for (uint32_t j=0; j < src_port()->poly(); ++j)
-			src_port()->buffer(j)->prepare_read(context.start(), context.nframes());
+			src_port()->buffer(j)->prepare_read(context);
 	}
 }
 

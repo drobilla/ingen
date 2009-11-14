@@ -64,8 +64,8 @@ public:
 	bool prepare_poly(uint32_t poly);
 	bool apply_poly(Raul::Maid& maid, uint32_t poly);
 
-	void pre_process(ProcessContext& context);
-	void post_process(ProcessContext& context);
+	void pre_process(Context& context);
+	void post_process(Context& context);
 
 	bool is_connected() const { return (_connections.size() > 0); }
 

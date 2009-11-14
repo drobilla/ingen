@@ -31,13 +31,16 @@
 #include "shared/LV2Features.hpp"
 #include "uri-map.lv2/uri-map.h"
 #include "event.lv2/event.h"
+#include "object.lv2/object.h"
+#include "resize-port.lv2/resize-port.h"
 
 namespace Ingen {
 
+namespace Shared { class Node; }
 
 /** Stuff that may need to be passed to an LV2 plugin (i.e. LV2 features).
  */
-class LV2Info : public Shared::LV2URIMap {
+class LV2Info {
 public:
 	LV2Info(Ingen::Shared::World* world);
 	~LV2Info();
@@ -47,15 +50,10 @@ public:
 	SLV2Value control_class;
 	SLV2Value audio_class;
 	SLV2Value event_class;
-	SLV2Value string_class;
+	SLV2Value object_port_class;
 
 	Ingen::Shared::World& world()     { return *_world; }
 	SLV2World             lv2_world() { return _world->slv2_world; }
-
-	static uint32_t event_ref(LV2_Event_Callback_Data callback_data,
-	                          LV2_Event*              event);
-
-	LV2_Feature** lv2_features() const { return _world->lv2_features->lv2_features(); }
 
 private:
 	Ingen::Shared::World* _world;

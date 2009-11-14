@@ -19,6 +19,7 @@
 #include <cassert>
 #include <iostream>
 #include <stdint.h>
+#include "object.lv2/object.h"
 #include "LV2URIMap.hpp"
 
 using namespace std;
@@ -28,7 +29,16 @@ namespace Shared {
 
 
 LV2URIMap::LV2URIMap()
-	: next_uri_id(1)
+	: uri_map()
+	, next_uri_id(1)
+	, object_class_bool(uri_to_id(NULL, LV2_OBJECT_URI "#Bool"))
+	, object_class_string(uri_to_id(NULL, LV2_OBJECT_URI "#String"))
+	, object_class_int32(uri_to_id(NULL, LV2_OBJECT_URI "#Int32"))
+	, object_class_float32(uri_to_id(NULL, LV2_OBJECT_URI "#Float32"))
+	, ui_format_events(uri_to_id(NULL, "http://lv2plug.in/ns/extensions/ui#Events"))
+	, midi_event(uri_to_id(NULL, "http://lv2plug.in/ns/ext/midi#MidiEvent"))
+	, string_transfer(uri_to_id(NULL, "http://lv2plug.in/ns/dev/string-port#StringTransfer"))
+	, object_transfer(uri_to_id(NULL, LV2_OBJECT_URI "#ObjectTransfer"))
 {
 	uri_map_feature_data.uri_to_id = &LV2URIMap::uri_map_uri_to_id;
 	uri_map_feature_data.callback_data = this;

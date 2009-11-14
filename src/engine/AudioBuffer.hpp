@@ -37,6 +37,7 @@ public:
 	void set_block(Sample val, size_t start_offset, size_t end_offset);
 	void scale(Sample val, size_t start_sample, size_t end_sample);
 	void copy(const Buffer* src, size_t start_sample, size_t end_sample);
+	void copy(Context& context, const Buffer* src);
 	void accumulate(const AudioBuffer* src, size_t start_sample, size_t end_sample);
 
 	bool join(Buffer* buf);
@@ -53,8 +54,8 @@ public:
 	inline Sample& value_at(size_t offset) const
 		{ assert(offset < _size); return data()[offset]; }
 
-	void prepare_read(FrameTime start, SampleCount nframes);
-	void prepare_write(FrameTime start, SampleCount nframes) {}
+	void prepare_read(Context& context);
+	void prepare_write(Context& context) {}
 
 	void resize(size_t size);
 

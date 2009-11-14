@@ -25,11 +25,14 @@
 
 #include <map>
 #include <string>
+#include <vector>
 #include "slv2/slv2.h"
+#include "raul/SharedPtr.hpp"
 
 namespace Ingen {
 namespace Shared {
 
+class Node;
 
 /** Stuff that may need to be passed to an LV2 plugin (i.e. LV2 features).
  */
@@ -37,25 +40,46 @@ class LV2Features {
 public:
 	LV2Features();
 
-	struct Feature {
-		Feature(LV2_Feature* f, void* c=NULL) : feature(f), controller(c) {}
-		LV2_Feature* feature;    ///< LV2 feature struct (plugin exposed)
-		void*        controller; ///< Ingen internals, not exposed to plugin
+	class Feature {
+	public:
+		virtual ~Feature() {}
+		virtual SharedPtr<LV2_Feature> feature(Node* node) = 0;
 	};
 
-	typedef std::map<std::string, Feature> Features;
+	class FeatureArray {
+	public:
+		typedef std::vector< SharedPtr<LV2_Feature> > FeatureVector;
 
-	const Feature* feature(const std::string& uri);
+		FeatureArray(FeatureVector& features)
+			: _features(features)
+		{
+			_array = (LV2_Feature**)malloc(sizeof(LV2_Feature) * (features.size() + 1));
+			_array[features.size()] = NULL;
+			for (size_t i = 0; i < features.size(); ++i)
+				_array[i] = features[i].get();
+		}
 
-	void add_feature(const std::string& uri, LV2_Feature* feature, void* controller);
+		~FeatureArray() {
+			free(_array);
+		}
 
-	LV2_Feature** lv2_features() const { return _lv2_features; }
+		LV2_Feature** array() { return _array; }
+
+	private:
+		FeatureVector _features;
+		LV2_Feature** _array;
+	};
+
+	SharedPtr<Feature> feature(const std::string& uri);
+
+	void add_feature(const std::string& uri, SharedPtr<Feature> feature);
+
+	SharedPtr<LV2Features::FeatureArray> lv2_features(Node* node) const;
 
 private:
-	Features      _features;
-	LV2_Feature** _lv2_features;
+	typedef std::map< std::string, SharedPtr<Feature> > Features;
+	Features _features;
 };
-
 
 } // namespace Shared
 } // namespace Ingen

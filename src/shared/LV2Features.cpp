@@ -16,6 +16,7 @@
  */
 
 #include <cstdlib>
+#include <cstring>
 #include "LV2Features.hpp"
 #include "LV2URIMap.hpp"
 
@@ -26,39 +27,39 @@ namespace Shared {
 
 
 LV2Features::LV2Features()
-	: _lv2_features((LV2_Feature**)malloc(sizeof(LV2_Feature*)))
+//	: _lv2_features((LV2_Feature**)malloc(sizeof(LV2_Feature*)))
 {
-	_lv2_features[0] = NULL;
+//	_lv2_features[0] = NULL;
 
-	LV2URIMap* controller = new LV2URIMap();
-	add_feature(LV2_URI_MAP_URI, controller->feature(), controller);
+	add_feature(LV2_URI_MAP_URI, SharedPtr<Feature>(new LV2URIMap()));
 }
 
 
-const LV2Features::Feature*
+SharedPtr<LV2Features::Feature>
 LV2Features::feature(const std::string& uri)
 {
 	Features::const_iterator i = _features.find(uri);
 	if (i != _features.end())
-		return &i->second;
+		return i->second;
 	else
-		return NULL;
+		return SharedPtr<Feature>();
 }
 
 
 void
-LV2Features::add_feature(const std::string& uri, LV2_Feature* feature, void* controller)
+LV2Features::add_feature(const std::string& uri, SharedPtr<Feature> feature)
 {
-#ifndef NDEBUG
-	Features::const_iterator i = _features.find(uri);
-	assert(i == _features.end());
-	assert(_lv2_features[_features.size()] == NULL);
-#endif
-	_features.insert(make_pair(uri, Feature(feature, controller)));
+	_features.insert(make_pair(uri, feature));
+}
 
-	_lv2_features = (LV2_Feature**)realloc(_lv2_features, sizeof(LV2_Feature*) * (_features.size() + 1));
-	_lv2_features[_features.size()-1] = feature;
-	_lv2_features[_features.size()] = NULL;
+
+SharedPtr<LV2Features::FeatureArray>
+LV2Features::lv2_features(Node* node) const
+{
+	FeatureArray::FeatureVector vec;
+	for (Features::const_iterator f = _features.begin(); f != _features.end(); ++f)
+		vec.push_back(f->second->feature(node));
+	return SharedPtr<FeatureArray>(new FeatureArray(vec));
 }
 
 

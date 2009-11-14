@@ -7,10 +7,11 @@ def build(bld):
 		Builder.cpp
 		ClashAvoider.cpp
 		LV2Features.cpp
+		LV2Object.cpp
 		LV2URIMap.cpp
 		ResourceImpl.cpp
-		runtime_paths.cpp
 		Store.cpp
+		runtime_paths.cpp
 	'''
 	if bld.env['HAVE_LIBLO'] == 1:
 		obj.source += ' OSCSender.cpp '

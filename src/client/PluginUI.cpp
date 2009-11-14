@@ -17,9 +17,10 @@
 
 #include <iostream>
 #include "event.lv2/event-helpers.h"
-#include "string-port.lv2/string-port.h"
+#include "object.lv2/object.h"
 #include "shared/LV2Features.hpp"
 #include "shared/LV2URIMap.hpp"
+#include "shared/LV2Object.hpp"
 #include "PluginUI.hpp"
 #include "NodeModel.hpp"
 #include "PortModel.hpp"
@@ -56,9 +57,8 @@ lv2_ui_write(LV2UI_Controller controller,
 
 	SharedPtr<PortModel> port = ui->node()->ports()[port_index];
 
-	const LV2Features::Feature* f = ui->world()->lv2_features->feature(LV2_URI_MAP_URI);
-	LV2URIMap* map = (LV2URIMap*)f->controller;
-	assert(map);
+	SharedPtr<Shared::LV2URIMap> map = PtrCast<Shared::LV2URIMap>(
+			ui->world()->lv2_features->feature(LV2_URI_MAP_URI));
 
 	// float (special case, always 0)
 	if (format == 0) {
@@ -68,16 +68,14 @@ lv2_ui_write(LV2UI_Controller controller,
 
 		ui->world()->engine->set_port_value(port->path(), Atom(*(float*)buffer));
 
-	// FIXME: this is slow, cache ID
-	} else if (format == map->uri_to_id(NULL, "http://lv2plug.in/ns/extensions/ui#Events")) {
-		uint32_t midi_event_type = map->uri_to_id(NULL, "http://lv2plug.in/ns/ext/midi#MidiEvent");
-		LV2_Event_Buffer* buf = (LV2_Event_Buffer*)buffer;
+	} else if (format == map->ui_format_events) {
+		LV2_Event_Buffer*  buf = (LV2_Event_Buffer*)buffer;
 		LV2_Event_Iterator iter;
-		uint8_t* data;
+		uint8_t*           data;
 		lv2_event_begin(&iter, buf);
 		while (lv2_event_is_valid(&iter)) {
 			LV2_Event* const ev = lv2_event_get(&iter, &data);
-			if (ev->type == midi_event_type) {
+			if (ev->type == map->midi_event) {
 				// FIXME: bundle multiple events by writing an entire buffer here
 				ui->world()->engine->set_port_value(port->path(),
 					Atom("lv2midi:MidiEvent", ev->size, data));
@@ -89,10 +87,11 @@ lv2_ui_write(LV2UI_Controller controller,
 			lv2_event_increment(&iter);
 		}
 
-	// FIXME: this is slow, cache ID
-	} else if (format == map->uri_to_id(NULL, "http://lv2plug.in/ns/dev/string-port#StringTransfer")) {
-		LV2_String_Data* buf = (LV2_String_Data*)buffer;
-		ui->world()->engine->set_port_value(port->path(), buf->data);
+	} else if (format == map->object_transfer) {
+		LV2_Object* buf = (LV2_Object*)buffer;
+		Raul::Atom val;
+		Shared::LV2Object::to_atom(ui->world(), buf, val);
+		ui->world()->engine->set_port_value(port->path(), val);
 
 	} else {
 		cerr << "WARNING: Unknown value format " << format
@@ -145,8 +144,9 @@ PluginUI::create(Ingen::Shared::World* world,
 	if (ui) {
 		cout << "Found GTK Plugin UI: " << slv2_ui_get_uri(ui) << endl;
 		ret = SharedPtr<PluginUI>(new PluginUI(world, node));
+		ret->_features = world->lv2_features->lv2_features(node.get());
 		SLV2UIInstance inst = slv2_ui_instantiate(
-				plugin, ui, lv2_ui_write, ret.get(), world->lv2_features->lv2_features());
+				plugin, ui, lv2_ui_write, ret.get(), ret->_features->array());
 
 		if (inst) {
 			ret->set_instance(inst);

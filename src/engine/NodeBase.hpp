@@ -27,6 +27,7 @@
 #include "raul/Atom.hpp"
 #include "interface/Port.hpp"
 #include "NodeImpl.hpp"
+#include "contexts.lv2/contexts.h"
 
 namespace Ingen {
 
@@ -70,11 +71,16 @@ public:
 
 	virtual void learn() {}
 
-	virtual void message_process(MessageContext& context, uint32_t* ins, uint32_t* outs) {}
+	virtual void message_run(MessageContext& context) {}
 
-	virtual void pre_process(ProcessContext& context);
+	virtual void set_port_valid(uint32_t port_index);
+
+	virtual void* valid_ports();
+	virtual void  reset_valid_ports();
+
+	virtual void pre_process(Context& context);
 	virtual void process(ProcessContext& context) = 0;
-	virtual void post_process(ProcessContext& context);
+	virtual void post_process(Context& context);
 
 	virtual void set_port_buffer(uint32_t voice, uint32_t port_num, Buffer* buf) {}
 
@@ -115,15 +121,18 @@ protected:
 	uint32_t   _polyphony;
 	SampleRate _srate;
 	size_t     _buffer_size;
-	bool       _activated;
 
-	bool                    _traversed;      ///< Flag for process order algorithm
+	void* _valid_ports; ///< Valid port flags for message context
+
 	Raul::Semaphore         _input_ready;    ///< Parallelism: input ready signal
 	Raul::AtomicInt         _process_lock;   ///< Parallelism: Waiting on inputs 'lock'
 	Raul::AtomicInt         _n_inputs_ready; ///< Parallelism: # input ready signals this cycle
 	Raul::Array<PortImpl*>* _ports;          ///< Access in audio thread only
 	Raul::List<NodeImpl*>*  _providers;      ///< Nodes connected to this one's input ports
 	Raul::List<NodeImpl*>*  _dependants;     ///< Nodes this one's output ports are connected to
+
+	bool _activated;
+	bool _traversed; ///< Flag for process order algorithm
 };
 
 

@@ -20,6 +20,7 @@ def build(bld):
 		MessageContext.cpp
 		NodeBase.cpp
 		NodeFactory.cpp
+		ObjectBuffer.cpp
 		ObjectSender.cpp
 		OutputPort.cpp
 		PatchImpl.cpp
@@ -28,7 +29,6 @@ def build(bld):
 		PostProcessor.cpp
 		ProcessSlave.cpp
 		QueuedEvent.cpp
-		StringBuffer.cpp
 		events/SendPortActivity.cpp
 		events/SendPortValue.cpp
 		ingen_engine.cpp

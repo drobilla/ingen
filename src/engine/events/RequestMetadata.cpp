@@ -17,15 +17,17 @@
 
 #include "interface/ClientInterface.hpp"
 #include "events/RequestMetadata.hpp"
-#include "Responder.hpp"
-#include "Engine.hpp"
-#include "GraphObjectImpl.hpp"
-#include "EngineStore.hpp"
-#include "ClientBroadcaster.hpp"
-#include "PortImpl.hpp"
-#include "PluginImpl.hpp"
+#include "shared/LV2Object.hpp"
 #include "AudioBuffer.hpp"
-#include "StringBuffer.hpp"
+#include "ClientBroadcaster.hpp"
+#include "Engine.hpp"
+#include "EngineStore.hpp"
+#include "GraphObjectImpl.hpp"
+#include "ObjectBuffer.hpp"
+#include "PluginImpl.hpp"
+#include "PortImpl.hpp"
+#include "ProcessContext.hpp"
+#include "Responder.hpp"
 
 using namespace std;
 using namespace Raul;
@@ -94,8 +96,9 @@ RequestMetadata::execute(ProcessContext& context)
 		if (port) {
 			if (port->type() == DataType::CONTROL || port->type() == DataType::AUDIO)
 				_value = ((AudioBuffer*)port->buffer(0))->value_at(0); // TODO: offset
-			else if (port->type() == DataType::STRING)
-				_value = (char*)((StringBuffer*)port->buffer(0))->data();
+			else if (port->type() == DataType::OBJECT)
+				LV2Object::to_atom(context.engine().world(),
+						((ObjectBuffer*)port->buffer(0))->data(), _value);
 		} else {
 			_resource = 0;
 		}

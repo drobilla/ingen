@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include "ingen-config.h"
 #include "AudioBuffer.hpp"
+#include "ProcessContext.hpp"
 
 using namespace std;
 
@@ -211,6 +212,13 @@ AudioBuffer::copy(const Buffer* src, size_t start_sample, size_t end_sample)
 }
 
 
+void
+AudioBuffer::copy(Context& context, const Buffer* src)
+{
+	copy(src, context.start(), std::min(size(), src->size()));
+}
+
+
 /** Accumulate a block of @a src into buffer.
  *
  * @a start_sample and @a end_sample define the inclusive range to be accumulated.
@@ -268,15 +276,11 @@ AudioBuffer::unjoin()
 
 
 void
-AudioBuffer::prepare_read(FrameTime start, SampleCount nframes)
+AudioBuffer::prepare_read(Context& context)
 {
-	// FIXME: nframes parameter doesn't actually work,
-	// writing starts from 0 every time
-	assert(_size == 1 || nframes == _size);
-
 	switch (_state) {
 	case HALF_SET_CYCLE_1:
-		if (start > _set_time)
+		if (context.start() > _set_time)
 			_state = HALF_SET_CYCLE_2;
 		break;
 	case HALF_SET_CYCLE_2:

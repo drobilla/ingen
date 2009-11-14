@@ -42,26 +42,22 @@ class ProcessContext : public Context
 public:
 	ProcessContext(Engine& engine)
 		: Context(engine, AUDIO)
-		, _event_sink(engine, 1024) // FIXME: size?
+		, _nframes(0)
+		, _end(0)
 	{}
 
 	void set_time_slice(SampleCount nframes, FrameTime start, FrameTime end) {
+		locate(start);
 		_nframes = nframes;
-		_start = start;
 		_end = end;
 	}
 
-	inline SampleCount       nframes()    const { return _nframes; }
-	inline FrameTime         start()      const { return _start; }
-	inline FrameTime         end()        const { return _end; }
-	inline const EventSink&  event_sink() const { return _event_sink; }
-	inline EventSink&        event_sink()       { return _event_sink; }
+	inline SampleCount nframes()const { return _nframes; }
+	inline FrameTime   end()    const { return _end; }
 
 private:
-	SampleCount _nframes;    ///< Number of actual time (Jack) frames this cycle
-	FrameTime   _start;      ///< Start frame of this cycle, timeline relative
-	FrameTime   _end;        ///< End frame of this cycle, timeline relative
-	EventSink   _event_sink; ///< Sink for events generated in the audio thread
+	SampleCount _nframes; ///< Length of this cycle in frames
+	FrameTime   _end;     ///< End frame of this cycle, timeline relative
 };
 
 

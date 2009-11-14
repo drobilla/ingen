@@ -24,7 +24,7 @@ namespace Ingen {
 
 class NodeImpl;
 
-/** Context of a message_process() call.
+/** Context of a message_run() call.
  *
  * The message context is a non-hard-realtime thread used to execute things
  * that can take too long to execute in an audio thread, and do sloppy timed

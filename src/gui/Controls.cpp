@@ -414,16 +414,16 @@ ToggleControl::set_value(const Atom& val)
 {
 	bool enable = false;
 	switch (val.type()) {
-		case Atom::FLOAT:
-			enable = (val.get_float() != 0.0f);
-			break;
-		case Atom::INT:
-			enable = (val.get_int32() != 0);
-			break;
-		case Atom::BOOL:
-			enable = (val.get_bool());
-		default:
-			cerr << "Unsupported value type for toggle control" << endl;
+	case Atom::FLOAT:
+		enable = (val.get_float() != 0.0f);
+		break;
+	case Atom::INT:
+		enable = (val.get_int32() != 0);
+		break;
+	case Atom::BOOL:
+		enable = (val.get_bool());
+	default:
+		cerr << "Unsupported value type for toggle control" << endl;
 	}
 
 	_enable_signal = false;
@@ -521,11 +521,9 @@ StringControl::disable()
 void
 StringControl::activated()
 {
-	if (_enable_signal) {
-		const string& value = _entry->get_text();
-		cerr << "String control activated: " << value << endl;
-		_control_panel->value_changed(_port_model, value.c_str());
-	}
+	if (_enable_signal)
+		_control_panel->value_changed_atom(_port_model,
+				Raul::Atom(_entry->get_text().c_str()));
 }
 
 

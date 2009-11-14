@@ -105,7 +105,7 @@ Engine::driver(DataType type, EventType event_type)
 {
 	if (type == DataType::AUDIO) {
 		return _audio_driver.get();
-	} else if (type == DataType::EVENT) {
+	} else if (type == DataType::EVENTS) {
 		if (event_type == EventType::MIDI) {
 			return _midi_driver;
 		} else if (event_type == EventType::OSC) {

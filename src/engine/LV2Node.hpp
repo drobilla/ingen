@@ -23,6 +23,7 @@
 #include "lv2_contexts.h"
 #include "types.hpp"
 #include "NodeBase.hpp"
+#include "LV2Features.hpp"
 
 namespace Ingen {
 
@@ -53,7 +54,7 @@ public:
 	void activate();
 	void deactivate();
 
-	void message_process(MessageContext& context, uint32_t* ins, uint32_t* outs);
+	void message_run(MessageContext& context);
 
 	void process(ProcessContext& context);
 
@@ -65,6 +66,8 @@ protected:
 	Raul::Array<SLV2Instance>* _prepared_instances;
 
 	LV2MessageContext* _message_funcs;
+
+	SharedPtr<Shared::LV2Features::FeatureArray> _features;
 };
 
 

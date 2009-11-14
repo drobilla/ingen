@@ -34,17 +34,17 @@ public:
 	bool join(Buffer* buf);
 	void unjoin();
 
-	void clear() { reset(_this_nframes); }
+	void clear() { _buf->reset(); }
 
 	void*       raw_data()       { return _buf; }
 	const void* raw_data() const { return _buf; }
 
 	void rewind() const { _buf->rewind(); }
 
-	void prepare_read(FrameTime start, SampleCount nframes);
-	void prepare_write(FrameTime start, SampleCount nframes);
+	void prepare_read(Context& context);
+	void prepare_write(Context& context);
 
-	void copy(const Buffer* src, size_t start_sample, size_t end_sample);
+	void copy(Context& context, const Buffer* src);
 	bool merge(const EventBuffer& a, const EventBuffer& b);
 
 	bool increment() const { return _buf->increment(); }
@@ -52,13 +52,7 @@ public:
 
 	inline uint32_t latest_frames()    const { return _buf->latest_frames(); }
 	inline uint32_t latest_subframes() const { return _buf->latest_subframes(); }
-	inline uint32_t this_nframes()     const { return _this_nframes; }
 	inline uint32_t event_count()      const { return _buf->event_count(); }
-
-	inline void reset(SampleCount nframes) {
-		_this_nframes = nframes;
-		_buf->reset();
-	}
 
 	inline bool get_event(uint32_t* frames,
 	                      uint32_t* subframes,
@@ -81,9 +75,8 @@ public:
 	}
 
 private:
-	LV2EventBuffer* _buf;          ///< Contents (maybe belong to _joined_buf)
-	LV2EventBuffer* _local_buf;    ///< Local contents
-	uint32_t        _this_nframes; ///< Current cycle nframes
+	LV2EventBuffer* _buf;       ///< Contents (maybe belong to _joined_buf)
+	LV2EventBuffer* _local_buf; ///< Local contents
 };
 
 

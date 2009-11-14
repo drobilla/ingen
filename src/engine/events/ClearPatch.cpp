@@ -117,7 +117,7 @@ ClearPatch::execute(ProcessContext& context)
 				if (port && port->type() == DataType::AUDIO) {
 					_driver_ports->push_back(
 							_engine.audio_driver()->remove_port(port->path()));
-				} else if (port && port->type() == DataType::EVENT) {
+				} else if (port && port->type() == DataType::EVENTS) {
 					_driver_ports->push_back(
 							_engine.midi_driver()->remove_port(port->path()));
 				}

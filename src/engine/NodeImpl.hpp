@@ -33,6 +33,7 @@ class PluginImpl;
 class PatchImpl;
 class PortImpl;
 class MessageContext;
+class ProcessContext;
 
 
 /** A Node (or "module") in a Patch (which is also a Node).
@@ -112,7 +113,16 @@ public:
 
 	/** Run the node for one instant in the message thread.
 	 */
-	virtual void message_process(MessageContext& context, uint32_t* ins, uint32_t* outs) = 0;
+	virtual void message_run(MessageContext& context) = 0;
+
+	/** Flag a port as valid (for message context) */
+	virtual void set_port_valid(uint32_t index) = 0;
+
+	/** Return a bit vector of which ports are valid */
+	virtual void* valid_ports() = 0;
+
+	/** Clear all bits in valid_ports() */
+	virtual void reset_valid_ports() = 0;
 
 	/** Run the node for @a nframes input/output.
 	 *

@@ -32,6 +32,7 @@ namespace Raul { class Maid; }
 namespace Ingen {
 
 class PatchImpl;
+class Context;
 class ProcessContext;
 
 

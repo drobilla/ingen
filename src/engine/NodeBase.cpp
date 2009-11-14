@@ -40,14 +40,15 @@ NodeBase::NodeBase(PluginImpl* plugin, const string& name, bool polyphonic, Patc
 	, _polyphony((polyphonic && parent) ? parent->internal_polyphony() : 1)
 	, _srate(srate)
 	, _buffer_size(buffer_size)
-	, _activated(false)
-	, _traversed(false)
+	, _valid_ports(NULL)
 	, _input_ready(1)
 	, _process_lock(0)
 	, _n_inputs_ready(0)
 	, _ports(NULL)
 	, _providers(new Raul::List<NodeImpl*>())
 	, _dependants(new Raul::List<NodeImpl*>())
+	, _activated(false)
+	, _traversed(false)
 {
 	assert(_plugin);
 	assert(_polyphony > 0);
@@ -62,6 +63,8 @@ NodeBase::~NodeBase()
 
 	delete _providers;
 	delete _dependants;
+
+	free(_valid_ports);
 }
 
 
@@ -202,27 +205,59 @@ NodeBase::signal_input_ready()
 /** Prepare to run a cycle (in the audio thread)
  */
 void
-NodeBase::pre_process(ProcessContext& context)
+NodeBase::pre_process(Context& context)
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
 
 	// Mix down any ports with multiple inputs
-	for (size_t i=0; i < num_ports(); ++i)
-		_ports->at(i)->pre_process(context);
+	for (size_t i=0; i < num_ports(); ++i) {
+		PortImpl* const port = _ports->at(i);
+		if (port->context() == Context::AUDIO)
+			port->pre_process(context);
+	}
 }
 
 
 /** Prepare to run a cycle (in the audio thread)
  */
 void
-NodeBase::post_process(ProcessContext& context)
+NodeBase::post_process(Context& context)
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
 
 	/* Write output ports */
-	if (_ports)
-		for (size_t i=0; i < _ports->size(); ++i)
+	for (size_t i=0; _ports && i < _ports->size(); ++i) {
+		PortImpl* const port = _ports->at(i);
+		if (port->context() == Context::AUDIO)
 			_ports->at(i)->post_process(context);
+	}
+}
+
+
+/** Flag a port as set (for message context)
+ */
+void
+NodeBase::set_port_valid(uint32_t port_index)
+{
+	// Allocate enough space for one bit per port
+	if (!_valid_ports)
+		_valid_ports = calloc(num_ports() / 8, 1);
+	lv2_contexts_set_port_valid(_valid_ports, port_index);
+}
+
+
+void*
+NodeBase::valid_ports()
+{
+	return _valid_ports;
+}
+
+
+void
+NodeBase::reset_valid_ports()
+{
+	if (_valid_ports)
+		memset(_valid_ports, '\0', num_ports() / 8);
 }
 
 

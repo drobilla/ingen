@@ -34,6 +34,7 @@ namespace Shared { class Connection; }
 class ConnectionImpl;
 class Engine;
 class CompiledPatch;
+class ProcessContext;
 
 
 /** A group of nodes in a graph, possibly polyphonic.

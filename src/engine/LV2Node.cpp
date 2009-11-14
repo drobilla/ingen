@@ -28,6 +28,7 @@
 #include "EventBuffer.hpp"
 #include "OutputPort.hpp"
 #include "ProcessContext.hpp"
+#include "MessageContext.hpp"
 
 using namespace std;
 using namespace Raul;
@@ -81,9 +82,8 @@ LV2Node::prepare_poly(uint32_t poly)
 	SharedPtr<LV2Info> info = _lv2_plugin->lv2_info();
 	_prepared_instances = new Raul::Array<SLV2Instance>(poly, *_instances);
 	for (uint32_t i = _polyphony; i < _prepared_instances->size(); ++i) {
-		// FIXME: features array (in NodeFactory) must be passed!
 		_prepared_instances->at(i) = slv2_plugin_instantiate(
-				_lv2_plugin->slv2_plugin(), _srate, info->lv2_features());
+				_lv2_plugin->slv2_plugin(), _srate, _features->array());
 
 		if (_prepared_instances->at(i) == NULL) {
 			cerr << "Failed to instantiate plugin!" << endl;
@@ -151,11 +151,13 @@ LV2Node::instantiate()
 	_ports     = new Raul::Array<PortImpl*>(num_ports, NULL);
 	_instances = new Raul::Array<SLV2Instance>(_polyphony, NULL);
 
+	_features = info->world().lv2_features->lv2_features(this);
+
 	uint32_t port_buffer_size = 0;
 	SLV2Value ctx_ext_uri = slv2_value_new_uri(info->lv2_world(), LV2_CONTEXT_MESSAGE);
 
 	for (uint32_t i=0; i < _polyphony; ++i) {
-		(*_instances)[i] = slv2_plugin_instantiate(plug, _srate, info->lv2_features());
+		(*_instances)[i] = slv2_plugin_instantiate(plug, _srate, _features->array());
 		if ((*_instances)[i] == NULL) {
 			cerr << "Failed to instantiate plugin!" << endl;
 			return false;
@@ -213,10 +215,10 @@ LV2Node::instantiate()
 			data_type = DataType::AUDIO;
 			port_buffer_size = _buffer_size;
 		} else if (slv2_port_is_a(plug, id, info->event_class)) {
-			data_type = DataType::EVENT;
+			data_type = DataType::EVENTS;
 			port_buffer_size = _buffer_size;
-		} else if (slv2_port_is_a(plug, id, info->string_class)) {
-			data_type = DataType::STRING;
+		} else if (slv2_port_is_a(plug, id, info->object_port_class)) {
+			data_type = DataType::OBJECT;
 			port_buffer_size = 0;
 
 			// Get default value, and its length
@@ -275,7 +277,7 @@ LV2Node::instantiate()
 		for (uint32_t i = 0; i < slv2_values_size(contexts); ++i) {
 			SLV2Value c = slv2_values_get_at(contexts, i);
 			const char* context = slv2_value_as_string(c);
-			if (!strcmp("http://lv2plug.in/ns/dev/contexts#MessageContext", context)) {
+			if (!strcmp(LV2_CONTEXT_MESSAGE, context)) {
 				cerr << _lv2_plugin->uri() << " port " << i << " has message context" << endl;
 				if (!_message_funcs) {
 					cerr << _lv2_plugin->uri()
@@ -331,13 +333,18 @@ LV2Node::deactivate()
 
 
 void
-LV2Node::message_process(MessageContext& context, uint32_t* inputs, uint32_t* outputs)
+LV2Node::message_run(MessageContext& context)
 {
-	// FIXME: voice
-	if (_message_funcs)
-		(*_message_funcs->message_run)((*_instances)[0]->lv2_handle, inputs, outputs);
+	for (size_t i = 0; i < num_ports(); ++i) {
+		PortImpl* const port = _ports->at(i);
+		if (port->context() == Context::MESSAGE)
+			port->pre_process(context);
+	}
 
-	/* MESSAGE PROCESS */
+	if (!_valid_ports)
+		_valid_ports = calloc(num_ports() / 8, 1);
+	if (_message_funcs)
+		(*_message_funcs->message_run)((*_instances)[0]->lv2_handle, _valid_ports, _valid_ports);
 }
 
 
@@ -357,15 +364,7 @@ void
 LV2Node::set_port_buffer(uint32_t voice, uint32_t port_num, Buffer* buf)
 {
 	assert(voice < _polyphony);
-
 	slv2_instance_connect_port((*_instances)[voice], port_num, buf->raw_data());
-	if ((*_ports).at(port_num)->context() == Context::MESSAGE) {
-		assert(_message_funcs);
-		assert(_message_funcs->message_connect_port);
-		(*_message_funcs->message_connect_port)((*_instances)[voice]->lv2_handle, port_num, buf->raw_data());
-	} else {
-		slv2_instance_connect_port((*_instances)[voice], port_num, buf->raw_data());
-	}
 }
 
 

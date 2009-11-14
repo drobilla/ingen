@@ -15,19 +15,46 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <iostream>
 #include "raul/Atom.hpp"
+#include "ConnectionImpl.hpp"
+#include "Engine.hpp"
 #include "MessageContext.hpp"
 #include "NodeImpl.hpp"
+#include "PatchImpl.hpp"
+#include "PortImpl.hpp"
+#include "ProcessContext.hpp"
+
+using namespace std;
 
 namespace Ingen {
 
 void
 MessageContext::run(NodeImpl* node)
 {
-	uint32_t inputs, outputs;
-	node->message_process(*this, &inputs, &outputs);
+	node->message_run(*this);
 
-	// Don't care what the plugin output, yet...
+	void*      valid_ports = node->valid_ports();
+	PatchImpl* patch       = node->parent_patch();
+
+	cout << "MESSAGE RUN " << node->path() << " {" << endl;
+	for (uint32_t i = 0; i < node->num_ports(); ++i) {
+		PortImpl* p = node->port_impl(i);
+		if (p->is_output() && p->context() == Context::MESSAGE &&
+				lv2_contexts_port_is_valid(valid_ports, i)) {
+			PatchImpl::Connections& wires = patch->connections();
+			for (PatchImpl::Connections::iterator c = wires.begin(); c != wires.end(); ++c) {
+				ConnectionImpl* ci = dynamic_cast<ConnectionImpl*>(c->get());
+				if (ci->src_port() == p) {
+					ci->dst_port()->pre_process(*_engine.message_context());
+					run(ci->dst_port()->parent_node());
+				}
+			}
+		}
+	}
+	cout << "}" << endl;
+
+	node->reset_valid_ports();
 }
 
 } // namespace Ingen

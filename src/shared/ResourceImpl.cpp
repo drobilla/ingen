@@ -110,10 +110,10 @@ ResourceImpl::type(
 					port = true;
 				}
 			} else if (!strcmp(atom.get_uri(), "lv2ev:EventPort")) {
-				data_type = DataType::EVENT;
+				data_type = DataType::EVENTS;
 				port = true;
-			} else if (!strcmp(atom.get_uri(), "sp:StringPort")) {
-				data_type = DataType::STRING;
+			} else if (!strcmp(atom.get_uri(), "obj:ObjectPort")) {
+				data_type = DataType::OBJECT;
 				port = true;
 			}
 		}

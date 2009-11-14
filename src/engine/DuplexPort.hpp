@@ -50,8 +50,8 @@ public:
 
 	virtual ~DuplexPort() {}
 
-	void pre_process(ProcessContext& context);
-	void post_process(ProcessContext& context);
+	void pre_process(Context& context);
+	void post_process(Context& context);
 
 	bool is_input()  const { return !_is_output; }
 	bool is_output() const { return _is_output; }

@@ -23,10 +23,12 @@
 #include "events/SendPortActivity.hpp"
 #include "AudioBuffer.hpp"
 #include "EventBuffer.hpp"
+#include "Engine.hpp"
+#include "LV2Object.hpp"
 #include "NodeImpl.hpp"
+#include "ObjectBuffer.hpp"
 #include "PortImpl.hpp"
 #include "ProcessContext.hpp"
-#include "StringBuffer.hpp"
 
 using namespace std;
 using namespace Raul;
@@ -69,7 +71,7 @@ PortImpl::PortImpl(NodeImpl* const node,
 
 	add_property("rdf:type", Atom(Atom::URI, type.uri()));
 
-	if (type == DataType::EVENT)
+	if (type == DataType::EVENTS)
 		_broadcast = true; // send activity blips
 
 	assert(_buffers->size() > 0);
@@ -176,7 +178,7 @@ PortImpl::clear_buffers()
 
 
 void
-PortImpl::broadcast_value(ProcessContext& context, bool force)
+PortImpl::broadcast_value(Context& context, bool force)
 {
 	Raul::Atom val;
 	switch (_type.symbol()) {
@@ -186,14 +188,14 @@ PortImpl::broadcast_value(ProcessContext& context, bool force)
 	case DataType::CONTROL:
 		val = ((AudioBuffer*)buffer(0))->value_at(0);
 		break;
-	case DataType::EVENT:
+	case DataType::EVENTS:
 		if (((EventBuffer*)buffer(0))->event_count() > 0) {
 			const Events::SendPortActivity ev(context.engine(), context.start(), this);
 			context.event_sink().write(sizeof(ev), &ev);
 		}
 		break;
-	case DataType::STRING:
-		val = Raul::Atom(((StringBuffer*)buffer(0))->data());
+	case DataType::OBJECT:
+		LV2Object::to_atom(context.engine().world(), ((ObjectBuffer*)buffer(0))->data(), val);
 		break;
 	}
 

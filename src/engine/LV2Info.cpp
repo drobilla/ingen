@@ -19,8 +19,13 @@
 #include <cassert>
 #include <iostream>
 #include <stdint.h>
+#include "object.lv2/object.h"
 #include "LV2Info.hpp"
 #include "module/World.hpp"
+#include "LV2Features.hpp"
+#include "LV2EventFeature.hpp"
+#include "LV2BlobFeature.hpp"
+#include "LV2ResizeFeature.hpp"
 
 using namespace std;
 
@@ -32,23 +37,18 @@ LV2Info::LV2Info(Ingen::Shared::World* world)
 	, control_class(slv2_value_new_uri(world->slv2_world, SLV2_PORT_CLASS_CONTROL))
 	, audio_class(slv2_value_new_uri(world->slv2_world, SLV2_PORT_CLASS_AUDIO))
 	, event_class(slv2_value_new_uri(world->slv2_world, SLV2_PORT_CLASS_EVENT))
-	, string_class(slv2_value_new_uri(world->slv2_world,
-            "http://lv2plug.in/ns/dev/string-port#StringPort"))
+	, object_port_class(slv2_value_new_uri(world->slv2_world, LV2_OBJECT_URI "#ObjectPort"))
 	, _world(world)
 {
 	assert(world);
 
-	LV2_Event_Feature* ev_data = (LV2_Event_Feature*)malloc(sizeof(LV2_Event_Feature));
-	ev_data->lv2_event_ref = &LV2Info::event_ref;
-	ev_data->lv2_event_unref = &LV2Info::event_ref;
-	ev_data->callback_data = this;
-	LV2_Feature* ev_feature = (LV2_Feature*)malloc(sizeof(LV2_Event_Feature));
-	ev_feature->URI = LV2_EVENT_URI;
-	ev_feature->data = ev_data;
-
-	world->lv2_features->add_feature(LV2_EVENT_URI, ev_feature, ev_data);
+	world->lv2_features->add_feature(LV2_EVENT_URI,
+			SharedPtr<Shared::LV2Features::Feature>(new EventFeature()));
+	world->lv2_features->add_feature(LV2_BLOB_SUPPORT_URI,
+			SharedPtr<Shared::LV2Features::Feature>(new BlobFeature()));
+	world->lv2_features->add_feature(LV2_RESIZE_PORT_URI,
+			SharedPtr<Shared::LV2Features::Feature>(new ResizeFeature()));
 }
-
 
 LV2Info::~LV2Info()
 {
@@ -57,17 +57,7 @@ LV2Info::~LV2Info()
 	slv2_value_free(control_class);
 	slv2_value_free(audio_class);
 	slv2_value_free(event_class);
-	slv2_value_free(string_class);
+	slv2_value_free(object_port_class);
 }
-
-
-uint32_t
-LV2Info::event_ref(LV2_Event_Callback_Data callback_data,
-                   LV2_Event*              event)
-{
-	return 0;
-}
-
-
 
 } // namespace Ingen

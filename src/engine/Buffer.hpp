@@ -27,6 +27,7 @@
 
 namespace Ingen {
 
+class Context;
 
 class Buffer : public boost::noncopyable, public Raul::Deletable
 {
@@ -52,10 +53,10 @@ public:
 	/** Rewind (ie reset read pointer), but leave contents unchanged */
 	virtual void rewind() const {}
 
-	virtual void copy(const Buffer* src, size_t start_sample, size_t end_sample) = 0;
+	virtual void copy(Context& context, const Buffer* src) = 0;
 
-	virtual void prepare_read(FrameTime start, SampleCount nframes) = 0;
-	virtual void prepare_write(FrameTime start, SampleCount nframes) = 0;
+	virtual void prepare_read(Context& context) {}
+	virtual void prepare_write(Context& context) {}
 
 	bool    is_joined()     const { return (_joined_buf != NULL); }
 	Buffer* joined_buffer() const { return _joined_buf; }

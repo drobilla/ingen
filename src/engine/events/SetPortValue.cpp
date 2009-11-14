@@ -19,6 +19,7 @@
 #include "event.lv2/event.h"
 #include "shared/LV2URIMap.hpp"
 #include "shared/LV2Features.hpp"
+#include "shared/LV2Object.hpp"
 #include "module/World.hpp"
 #include "AudioBuffer.hpp"
 #include "ClientBroadcaster.hpp"
@@ -27,11 +28,11 @@
 #include "EventBuffer.hpp"
 #include "MessageContext.hpp"
 #include "NodeImpl.hpp"
+#include "ObjectBuffer.hpp"
 #include "PortImpl.hpp"
 #include "ProcessContext.hpp"
 #include "Responder.hpp"
 #include "SetPortValue.hpp"
-#include "StringBuffer.hpp"
 
 using namespace std;
 using namespace Raul;
@@ -115,7 +116,8 @@ SetPortValue::pre_process()
 	// Port is a message context port, set its value and
 	// call the plugin's message run function once
 	if (_port && _port->context() == Context::MESSAGE) {
-		apply(0, 0);
+		apply(*_engine.message_context());
+		_port->parent_node()->set_port_valid(_port->index());
 		_engine.message_context()->run(_port->parent_node());
 	}
 
@@ -132,13 +134,14 @@ SetPortValue::execute(ProcessContext& context)
 	if (_port && _port->context() == Context::MESSAGE)
 		return;
 
-	apply(context.start(), context.nframes());
+	apply(context);
 }
 
 
 void
-SetPortValue::apply(uint32_t start, uint32_t nframes)
+SetPortValue::apply(Context& context)
 {
+	uint32_t start = context.start();
 	if (_error == NO_ERROR && !_port)
 		_port = _engine.engine_store()->find_port(_port_path);
 
@@ -170,15 +173,12 @@ SetPortValue::apply(uint32_t start, uint32_t nframes)
 			return;
 		}
 
-		const LV2Features::Feature* f = _engine.world()->lv2_features->feature(LV2_URI_MAP_URI);
-		LV2URIMap* map = (LV2URIMap*)f->controller;
+		SharedPtr<LV2URIMap> map = PtrCast<LV2URIMap>(
+				_engine.world()->lv2_features->feature(LV2_URI_MAP_URI));
 
-		// TODO: eliminate lookups
 		EventBuffer* const ebuf = dynamic_cast<EventBuffer*>(buf);
 		if (ebuf) {
-			const uint32_t frames = std::max(
-					uint32_t(_time - start),
-					ebuf->latest_frames());
+			const uint32_t frames = std::max(uint32_t(_time - start), ebuf->latest_frames());
 
 			// Size 0 event, pass it along to the plugin as a typed but empty event
 			if (_value.data_size() == 0) {
@@ -188,34 +188,27 @@ SetPortValue::apply(uint32_t start, uint32_t nframes)
 				return;
 
 			} else if (!strcmp(_value.get_blob_type(), "lv2midi:MidiEvent")) {
-				const uint32_t type_id = map->uri_to_id(NULL,
-						"http://lv2plug.in/ns/ext/midi#MidiEvent");
-
-				ebuf->prepare_write(start, nframes);
-				// FIXME: use OSC midi type? avoid MIDI over OSC entirely?
-				ebuf->append(frames, 0, type_id, _value.data_size(),
+				ebuf->prepare_write(context);
+				ebuf->append(frames, 0, map->midi_event, _value.data_size(),
 						(const uint8_t*)_value.get_blob());
 				_port->raise_set_by_user_flag();
 				return;
 			}
 		}
 
-		StringBuffer* const sbuf = dynamic_cast<StringBuffer*>(buf);
-		if (sbuf) {
-			if (_value.type() != Atom::STRING) {
-				_error = TYPE_MISMATCH;
+		ObjectBuffer* const obuf = dynamic_cast<ObjectBuffer*>(buf);
+		if (obuf) {
+			obuf->data()->size = obuf->size() - sizeof(LV2_Object);
+			if (LV2Object::from_atom(_engine.world(), _value, obuf->data())) {
+				cout << "Converted atom " << _value << " :: " << obuf->data()->type
+					<< " * " << obuf->data()->size << " @ " << obuf->data() << endl;
 				return;
+			} else {
+				cerr << "WARNING: Failed to convert atom to LV2 object" << endl;
 			}
-			strncpy(sbuf->data(), _value.get_string(),
-					std::min(sbuf->size(), strlen(_value.get_string())));
-			return;
 		}
 
-
-		if (_value.type() == Atom::BLOB)
-			cerr << "WARNING: Unknown value blob type " << _value.get_blob_type() << endl;
-		else
-			cerr << "WARNING: Unknown value type " << (int)_value.type() << endl;
+		cerr << "WARNING: Unknown value type " << (int)_value.type() << endl;
 	}
 }
 

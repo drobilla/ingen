@@ -18,6 +18,8 @@
 #ifndef CONTEXT_H
 #define CONTEXT_H
 
+#include "EventSink.hpp"
+
 namespace Ingen {
 
 class Engine;
@@ -33,15 +35,32 @@ public:
 	Context(Engine& engine, ID id)
 		: _id(id)
 		, _engine(engine)
+		, _event_sink(engine, 1024) // FIXME: size?
+		, _start(0)
+		, _realtime(true)
 	{}
 
 	virtual ~Context() {}
 
-	inline Engine& engine() const { return _engine; }
+	ID id() const { return _id; }
+
+	void locate(FrameTime s) { _start = s; }
+
+	inline Engine&   engine()   const { return _engine; }
+	inline FrameTime start()    const { return _start; }
+	inline bool      realtime() const { return _realtime; }
+
+	inline const EventSink&  event_sink() const { return _event_sink; }
+	inline EventSink&        event_sink()       { return _event_sink; }
 
 protected:
-	ID      _id;     ///< Fast ID for this context
-	Engine& _engine; ///< Engine we're running in
+	ID      _id;      ///< Fast ID for this context
+	Engine& _engine;  ///< Engine we're running in
+
+private:
+	EventSink _event_sink; ///< Sink for events generated in a realtime context
+	FrameTime _start;      ///< Start frame of this cycle, timeline relative
+	bool      _realtime;   ///< True iff context is hard realtime
 };
 
 

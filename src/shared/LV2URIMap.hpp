@@ -28,6 +28,7 @@
 #include <boost/utility.hpp>
 #include "slv2/slv2.h"
 #include "uri-map.lv2/uri-map.h"
+#include "LV2Features.hpp"
 
 namespace Ingen {
 namespace Shared {
@@ -35,14 +36,15 @@ namespace Shared {
 
 /** Implementation of the LV2 URI Map extension
  */
-class LV2URIMap : public boost::noncopyable {
+class LV2URIMap : public boost::noncopyable, public LV2Features::Feature {
 public:
 	LV2URIMap();
 
-	LV2_Feature* feature() { return &uri_map_feature; }
+	SharedPtr<LV2_Feature> feature(Node*) {
+		return SharedPtr<LV2_Feature>(&uri_map_feature, NullDeleter<LV2_Feature>);
+	}
 
-	uint32_t uri_to_id(const char* map,
-	                   const char* uri);
+	uint32_t uri_to_id(const char* map, const char* uri);
 
 private:
 	typedef std::map<std::string, uint32_t> URIMap;
@@ -55,6 +57,16 @@ private:
 	LV2_URI_Map_Feature uri_map_feature_data;
 	URIMap              uri_map;
 	uint32_t            next_uri_id;
+
+public:
+	const uint32_t object_class_bool;
+	const uint32_t object_class_string;
+	const uint32_t object_class_int32;
+	const uint32_t object_class_float32;
+	const uint32_t ui_format_events;
+	const uint32_t midi_event;
+	const uint32_t string_transfer;
+	const uint32_t object_transfer;
 };
 
 

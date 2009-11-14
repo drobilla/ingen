@@ -47,8 +47,8 @@ public:
 	           const Raul::Atom&  value,
 	           size_t             buffer_size);
 
-	void pre_process(ProcessContext& context);
-	void post_process(ProcessContext& context);
+	void pre_process(Context& context);
+	void post_process(Context& context);
 
 	virtual ~OutputPort() {}
 
