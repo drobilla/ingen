@@ -32,7 +32,7 @@ Buffer::create(DataType type, size_t size)
 		return new AudioBuffer(size);
 	else if (type.is_events())
 		return new EventBuffer(size);
-	else if (type.is_object())
+	else if (type.is_value())
 		return new ObjectBuffer(size);
 	else
 		throw;

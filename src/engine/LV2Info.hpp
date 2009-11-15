@@ -50,7 +50,7 @@ public:
 	SLV2Value control_class;
 	SLV2Value audio_class;
 	SLV2Value event_class;
-	SLV2Value object_port_class;
+	SLV2Value value_port_class;
 
 	Ingen::Shared::World& world()     { return *_world; }
 	SLV2World             lv2_world() { return _world->slv2_world; }

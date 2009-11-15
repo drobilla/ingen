@@ -39,6 +39,9 @@ to_atom(World* world, LV2_Object* object, Raul::Atom& atom)
 	if (object->type == map->object_class_string) {
 		atom = Raul::Atom((char*)(object + 1));
 		return true;
+	} else if (object->type == map->object_class_bool) {
+		atom = Raul::Atom((bool)(int32_t*)(object + 1));
+		return true;
 	} else if (object->type == map->object_class_int32) {
 		atom = Raul::Atom((int32_t*)(object + 1));
 		return true;

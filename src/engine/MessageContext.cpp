@@ -37,7 +37,7 @@ MessageContext::run(NodeImpl* node)
 	void*      valid_ports = node->valid_ports();
 	PatchImpl* patch       = node->parent_patch();
 
-	cout << "MESSAGE RUN " << node->path() << " {" << endl;
+	//cout << "MESSAGE RUN " << node->path() << " {" << endl;
 	for (uint32_t i = 0; i < node->num_ports(); ++i) {
 		PortImpl* p = node->port_impl(i);
 		if (p->is_output() && p->context() == Context::MESSAGE &&
@@ -52,7 +52,7 @@ MessageContext::run(NodeImpl* node)
 			}
 		}
 	}
-	cout << "}" << endl;
+	//cout << "}" << endl;
 
 	node->reset_valid_ports();
 }

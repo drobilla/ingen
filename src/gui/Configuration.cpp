@@ -94,7 +94,7 @@ Configuration::get_port_color(const PortModel* p)
 		return _event_port_color;
 	/*} else if (p->type().is_osc()) {
 		return _osc_port_color;
-	*/} else if (p->type().is_object()) {
+	*/} else if (p->type().is_value()) {
 		return _object_port_color;
 	}
 

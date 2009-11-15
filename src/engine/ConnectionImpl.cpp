@@ -79,7 +79,7 @@ ConnectionImpl::set_mode()
 	if (_mode == MIX && type() == DataType::EVENTS)
 		_mode = COPY;
 
-	if (type() == DataType::OBJECT)
+	if (type() == DataType::VALUE)
 		_mode = DIRECT;
 }
 

@@ -194,7 +194,7 @@ PortImpl::broadcast_value(Context& context, bool force)
 			context.event_sink().write(sizeof(ev), &ev);
 		}
 		break;
-	case DataType::OBJECT:
+	case DataType::VALUE:
 		LV2Object::to_atom(context.engine().world(), ((ObjectBuffer*)buffer(0))->data(), val);
 		break;
 	}

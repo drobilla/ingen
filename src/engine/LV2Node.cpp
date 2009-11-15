@@ -217,8 +217,8 @@ LV2Node::instantiate()
 		} else if (slv2_port_is_a(plug, id, info->event_class)) {
 			data_type = DataType::EVENTS;
 			port_buffer_size = _buffer_size;
-		} else if (slv2_port_is_a(plug, id, info->object_port_class)) {
-			data_type = DataType::OBJECT;
+		} else if (slv2_port_is_a(plug, id, info->value_port_class)) {
+			data_type = DataType::VALUE;
 			port_buffer_size = 0;
 
 			// Get default value, and its length

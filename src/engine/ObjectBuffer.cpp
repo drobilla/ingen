@@ -38,7 +38,7 @@ using namespace Shared;
  * \a capacity is in bytes.
  */
 ObjectBuffer::ObjectBuffer(size_t capacity)
-	: Buffer(DataType(DataType::OBJECT), capacity)
+	: Buffer(DataType(DataType::VALUE), capacity)
 {
 	capacity = std::max(capacity, (size_t)32);
 	cerr << "Creating Object Buffer " << _buf << " capacity = " << capacity << endl;

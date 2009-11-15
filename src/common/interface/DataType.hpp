@@ -43,7 +43,7 @@ public:
 		//MIDI  = 4,
 		//OSC   = 5,
 		//STRING  = 6,
-		OBJECT  = 7
+		VALUE   = 7
 	};
 
 	DataType(const Raul::URI& uri)
@@ -55,8 +55,8 @@ public:
 			_symbol = CONTROL;
 		} else if (uri.str() == type_uri(EVENTS)) {
 			_symbol = EVENTS;
-		} else if (uri.str() == type_uri(OBJECT)) {
-			_symbol = OBJECT;
+		} else if (uri.str() == type_uri(VALUE)) {
+			_symbol = VALUE;
 		}
 	}
 
@@ -75,7 +75,7 @@ public:
 	inline bool is_audio()   { return _symbol == AUDIO; }
 	inline bool is_control() { return _symbol == CONTROL; }
 	inline bool is_events()  { return _symbol == EVENTS; }
-	inline bool is_object()  { return _symbol == OBJECT; }
+	inline bool is_value()   { return _symbol == VALUE; }
 
 private:
 
@@ -87,7 +87,7 @@ private:
 		case 4:  return "lv2ev:EventPort"; // MIDI (no longer used)
 		case 5:  return "lv2ev:EventPort"; // OSC (no longer used)
 		case 6:  return "sp:StringPort"; // String Port (no longer used)
-		case 7:  return "obj:ObjectPort";
+		case 7:  return "obj:ValuePort";
 		default: return "";
 		}
 	}
