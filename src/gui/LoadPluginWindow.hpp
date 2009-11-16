@@ -94,7 +94,6 @@ private:
 	};
 
 	void add_clicked();
-	void close_clicked();
 	void filter_changed();
 	void clear_clicked();
 	void name_changed();

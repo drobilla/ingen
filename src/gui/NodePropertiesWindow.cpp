@@ -36,6 +36,10 @@ NodePropertiesWindow::NodePropertiesWindow(BaseObjectType* cobject, const Glib::
 	glade_xml->get_widget("node_properties_plugin_type_label", _plugin_type_label);
 	glade_xml->get_widget("node_properties_plugin_uri_label", _plugin_uri_label);
 	glade_xml->get_widget("node_properties_plugin_name_label", _plugin_name_label);
+	glade_xml->get_widget("node_properties_close_button", _close_button);
+
+	_close_button->signal_clicked().connect(
+			sigc::mem_fun(this, &Window::hide));
 }
 
 

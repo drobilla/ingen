@@ -52,6 +52,7 @@ private:
 	Gtk::Label*           _plugin_type_label;
 	Gtk::Label*           _plugin_uri_label;
 	Gtk::Label*           _plugin_name_label;
+	Gtk::Button*          _close_button;
 };
 
 } // namespace GUI

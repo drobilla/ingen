@@ -43,7 +43,6 @@ public:
 
 private:
 	void clear_clicked();
-	void close_clicked();
 
 	Gtk::TextView* _textview;
 	Gtk::Button*   _clear_button;

@@ -31,7 +31,7 @@ MessagesWindow::MessagesWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome
 	glade_xml->get_widget("messages_close_button", _close_button);
 
 	_clear_button->signal_clicked().connect(sigc::mem_fun(this, &MessagesWindow::clear_clicked));
-	_close_button->signal_clicked().connect(sigc::mem_fun(this, &MessagesWindow::close_clicked));
+	_close_button->signal_clicked().connect(sigc::mem_fun(this, &Window::hide));
 }
 
 
@@ -44,13 +44,6 @@ MessagesWindow::post(const string& msg)
 
 	if (!_clear_button->is_sensitive())
 		_clear_button->set_sensitive(true);
-}
-
-
-void
-MessagesWindow::close_clicked()
-{
-	hide();
 }
 
 

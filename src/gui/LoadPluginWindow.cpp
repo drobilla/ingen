@@ -84,7 +84,7 @@ LoadPluginWindow::LoadPluginWindow(BaseObjectType* cobject, const Glib::RefPtr<G
 	_add_button->signal_clicked().connect(
 			sigc::mem_fun(this, &LoadPluginWindow::add_clicked));
 	_close_button->signal_clicked().connect(
-			sigc::mem_fun(this, &LoadPluginWindow::close_clicked));
+			sigc::mem_fun(this, &Window::hide));
 	_plugins_treeview->signal_row_activated().connect(
 			sigc::mem_fun(this, &LoadPluginWindow::plugin_activated));
 	_search_entry->signal_activate().connect(
@@ -361,13 +361,6 @@ LoadPluginWindow::add_clicked()
 			sigc::mem_fun(*this, &LoadPluginWindow::load_plugin));
 
 	++_plugin_name_offset;
-}
-
-
-void
-LoadPluginWindow::close_clicked()
-{
-	hide();
 }
 
 

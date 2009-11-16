@@ -345,6 +345,8 @@ void
 WindowFactory::present_rename(SharedPtr<ObjectModel> object)
 {
 	PatchWindowMap::iterator w = _patch_windows.find(object->path());
+	if (w == _patch_windows.end())
+		w = _patch_windows.find(object->path().parent());
 
 	if (w != _patch_windows.end())
 		_rename_win->set_transient_for(*w->second);
