@@ -29,7 +29,7 @@ namespace GUI {
 
 
 NodePropertiesWindow::NodePropertiesWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml)
-: Gtk::Window(cobject)
+	: Window(cobject)
 {
 	glade_xml->get_widget("node_properties_path_label", _node_path_label);
 	glade_xml->get_widget("node_properties_polyphonic_checkbutton", _node_polyphonic_toggle);

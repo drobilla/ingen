@@ -20,6 +20,7 @@
 
 #include <gtkmm.h>
 #include <libglademm.h>
+#include "Window.hpp"
 
 namespace Raul { class Path; }
 
@@ -37,7 +38,7 @@ class PatchTreeView;
  *
  * \ingroup GUI
  */
-class PatchTreeWindow : public Gtk::Window
+class PatchTreeWindow : public Window
 {
 public:
 	PatchTreeWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& refGlade);
@@ -54,7 +55,6 @@ public:
 	void show_patch_menu(GdkEventButton* ev);
 
 protected:
-	//void event_patch_selected();
 	void event_patch_activated(const Gtk::TreeModel::Path& path, Gtk::TreeView::Column* col);
 	void event_patch_enabled_toggled(const Glib::ustring& path_str);
 

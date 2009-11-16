@@ -26,6 +26,7 @@
 #include "raul/Thread.hpp"
 #include "raul/AtomicInt.hpp"
 #include "client/PluginModel.hpp"
+#include "Window.hpp"
 
 namespace Ingen {
 
@@ -62,7 +63,7 @@ private:
  *
  * \ingroup GUI
  */
-class UploadPatchWindow : public Gtk::Dialog
+class UploadPatchWindow : public Dialog
 {
 public:
 	UploadPatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml);

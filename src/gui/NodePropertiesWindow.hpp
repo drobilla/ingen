@@ -22,6 +22,8 @@
 #include <libglademm.h>
 #include "raul/SharedPtr.hpp"
 #include "client/NodeModel.hpp"
+#include "Window.hpp"
+
 using namespace Ingen::Client;
 
 namespace Ingen {
@@ -34,7 +36,7 @@ namespace GUI {
  *
  * \ingroup GUI
  */
-class NodePropertiesWindow : public Gtk::Window
+class NodePropertiesWindow : public Window
 {
 public:
 	NodePropertiesWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& refGlade);

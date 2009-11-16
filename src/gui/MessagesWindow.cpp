@@ -24,7 +24,7 @@ using std::string;
 
 
 MessagesWindow::MessagesWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml)
-: Gtk::Window(cobject)
+	: Window(cobject)
 {
 	glade_xml->get_widget("messages_textview", _textview);
 	glade_xml->get_widget("messages_clear_button", _clear_button);

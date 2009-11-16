@@ -36,8 +36,8 @@ namespace GUI {
 
 
 LoadRemotePatchWindow::LoadRemotePatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
-: Gtk::Dialog(cobject),
-  _replace(true)
+	: Dialog(cobject)
+	, _replace(true)
 {
 	xml->get_widget("load_remote_patch_treeview", _treeview);
 	xml->get_widget("load_remote_patch_uri_entry", _uri_entry);

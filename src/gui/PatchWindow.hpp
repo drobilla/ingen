@@ -18,12 +18,11 @@
 #ifndef PATCHWINDOW_H
 #define PATCHWINDOW_H
 
-#include <string>
-#include <list>
 #include <gtkmm.h>
 #include <libglademm/xml.h>
 #include <libglademm.h>
 #include "raul/SharedPtr.hpp"
+#include "Window.hpp"
 
 namespace Raul { class Path; }
 
@@ -54,7 +53,7 @@ class PatchView;
  *
  * \ingroup GUI
  */
-class PatchWindow : public Gtk::Window
+class PatchWindow : public Window
 {
 public:
 	PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml);

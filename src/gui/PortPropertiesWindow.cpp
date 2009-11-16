@@ -33,7 +33,7 @@ namespace GUI {
 
 
 PortPropertiesWindow::PortPropertiesWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
-	: Gtk::Window(cobject)
+	: Window(cobject)
 	//, _enable_signal(false)
 {
 	xml->get_widget("port_properties_min_spinner", _min_spinner);

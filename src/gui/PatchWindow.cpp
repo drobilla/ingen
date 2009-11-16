@@ -51,7 +51,7 @@ static const int STATUS_CONTEXT_PATCH = 1;
 static const int STATUS_CONTEXT_HOVER = 2;
 
 PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
-	: Gtk::Window(cobject)
+	: Window(cobject)
 	, _enable_signal(true)
 	, _position_stored(false)
 	, _x(0)

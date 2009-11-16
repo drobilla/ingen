@@ -30,7 +30,7 @@ namespace GUI {
 
 
 NewSubpatchWindow::NewSubpatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
-: Gtk::Window(cobject)
+	: Window(cobject)
 {
 	xml->get_widget("new_subpatch_name_entry", _name_entry);
 	xml->get_widget("new_subpatch_message_label", _message_label);

@@ -41,7 +41,7 @@ namespace GUI {
 
 
 UploadPatchWindow::UploadPatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
-	: Gtk::Dialog(cobject)
+	: Dialog(cobject)
 	, _thread(NULL)
 	, _progress_pct(0)
 	, _response(0)

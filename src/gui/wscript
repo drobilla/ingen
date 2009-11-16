@@ -34,6 +34,7 @@ def build(bld):
 		RenameWindow.cpp
 		SubpatchModule.cpp
 		ThreadedLoader.cpp
+		Window.cpp
 		WindowFactory.cpp
 		gui.cpp
 	'''

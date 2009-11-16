@@ -33,7 +33,7 @@ namespace GUI {
 
 PatchTreeWindow::PatchTreeWindow(BaseObjectType*                        cobject,
                                  const Glib::RefPtr<Gnome::Glade::Xml>& xml)
-	: Gtk::Window(cobject)
+	: Window(cobject)
 	, _enable_signal(true)
 {
 	xml->get_widget_derived("patches_treeview", _patches_treeview);
@@ -56,8 +56,6 @@ PatchTreeWindow::PatchTreeWindow(BaseObjectType*                        cobject,
 
 	_patch_tree_selection = _patches_treeview->get_selection();
 
-	//m_patch_tree_selection->signal_changed().connect(
-	//	sigc::mem_fun(this, &PatchTreeWindow::event_patch_selected));
 	_patches_treeview->signal_row_activated().connect(
 		sigc::mem_fun(this, &PatchTreeWindow::event_patch_activated));
 	enabled_renderer->signal_toggled().connect(
@@ -145,18 +143,6 @@ PatchTreeWindow::find_patch(Gtk::TreeModel::Children root, const Path& path)
 	}
 	return root.end();
 }
-
-/*
-void
-PatchTreeWindow::event_patch_selected()
-{
-	Gtk::TreeModel::iterator active = _patch_tree_selection->get_selected();
-	if (active) {
-		Gtk::TreeModel::Row row = *active;
-		SharedPtr<PatchModel> pm = row[_patch_tree_columns.patch_model_col];
-	}
-}
-*/
 
 
 /** Show the context menu for the selected patch in the patches treeview.

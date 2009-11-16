@@ -22,6 +22,7 @@
 #include <gtkmm.h>
 #include "raul/SharedPtr.hpp"
 #include "interface/GraphObject.hpp"
+#include "Window.hpp"
 
 using namespace Ingen::Shared;
 

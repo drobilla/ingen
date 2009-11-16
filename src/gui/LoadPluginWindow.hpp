@@ -26,6 +26,7 @@
 #include "raul/Table.hpp"
 #include "interface/GraphObject.hpp"
 #include "client/ClientStore.hpp"
+#include "Window.hpp"
 
 using namespace Ingen::Shared;
 
@@ -44,7 +45,7 @@ namespace GUI {
  *
  * \ingroup GUI
  */
-class LoadPluginWindow : public Gtk::Window
+class LoadPluginWindow : public Window
 {
 public:
 	LoadPluginWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml);

@@ -22,6 +22,7 @@
 #include <libglademm.h>
 #include "raul/SharedPtr.hpp"
 #include "client/PortModel.hpp"
+#include "Window.hpp"
 
 namespace Ingen {
 namespace GUI {
@@ -33,7 +34,7 @@ namespace GUI {
  *
  * \ingroup GUI
  */
-class PortPropertiesWindow : public Gtk::Window
+class PortPropertiesWindow : public Window
 {
 public:
 	PortPropertiesWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& refGlade);

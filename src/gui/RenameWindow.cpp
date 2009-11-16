@@ -31,7 +31,7 @@ namespace GUI {
 
 
 RenameWindow::RenameWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml)
-: Gtk::Window(cobject)
+	: Window(cobject)
 {
 	glade_xml->get_widget("rename_name_entry", _name_entry);
 	glade_xml->get_widget("rename_message_label", _message_label);

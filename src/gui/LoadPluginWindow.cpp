@@ -37,7 +37,7 @@ namespace Ingen {
 namespace GUI {
 
 LoadPluginWindow::LoadPluginWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
-	: Gtk::Window(cobject)
+	: Window(cobject)
 	, _plugin_name_offset(0)
 	, _has_shown(false)
 	, _refresh_list(true)

@@ -22,6 +22,7 @@
 #include <gtkmm.h>
 #include "raul/SharedPtr.hpp"
 #include "interface/GraphObject.hpp"
+#include "Window.hpp"
 using namespace Ingen::Shared;
 
 namespace Ingen {
@@ -54,7 +55,7 @@ public:
  *
  * \ingroup GUI
  */
-class LoadRemotePatchWindow : public Gtk::Dialog
+class LoadRemotePatchWindow : public Dialog
 {
 public:
 	LoadRemotePatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml);

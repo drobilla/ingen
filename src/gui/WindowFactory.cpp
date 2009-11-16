@@ -15,6 +15,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <string>
 #include "ingen-config.h"
 #include "client/PatchModel.hpp"
 #include "App.hpp"
@@ -35,6 +36,8 @@
 #ifdef HAVE_CURL
 #include "UploadPatchWindow.hpp"
 #endif
+
+using namespace std;
 
 namespace Ingen {
 namespace GUI {

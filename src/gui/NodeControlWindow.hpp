@@ -18,13 +18,11 @@
 #ifndef NODECONTROLWINDOW_H
 #define NODECONTROLWINDOW_H
 
-#include <vector>
-#include <string>
 #include <gtkmm.h>
 #include <libglademm.h>
 #include <sigc++/sigc++.h>
 #include "raul/SharedPtr.hpp"
-using std::string; using std::vector;
+#include "Window.hpp"
 
 namespace Ingen { namespace Client {
 	class NodeModel;
@@ -42,7 +40,7 @@ class ControlPanel;
  *
  * \ingroup GUI
  */
-class NodeControlWindow : public Gtk::Window
+class NodeControlWindow : public Window
 {
 public:
 	NodeControlWindow(SharedPtr<NodeModel> node, uint32_t poly);

@@ -29,6 +29,7 @@
 #include <libglademm.h>
 #include "raul/SharedPtr.hpp"
 #include "client/ThreadedSigClientInterface.hpp"
+#include "Window.hpp"
 using Ingen::Client::SigClientInterface;
 
 namespace Ingen { class Engine; class QueuedEngineInterface; }
@@ -46,7 +47,7 @@ class App;
  *
  * \ingroup GUI
  */
-class ConnectWindow : public Gtk::Dialog
+class ConnectWindow : public Dialog
 {
 public:
 	ConnectWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml);

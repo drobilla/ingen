@@ -29,7 +29,7 @@ namespace GUI {
 
 
 PatchPropertiesWindow::PatchPropertiesWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml)
-: Gtk::Window(cobject)
+	: Window(cobject)
 {
 	glade_xml->get_widget("properties_name_entry", _name_entry);
 	glade_xml->get_widget("properties_author_entry", _author_entry);

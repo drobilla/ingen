@@ -73,12 +73,14 @@ public:
 
 	void present_controls(SharedPtr<NodeModel> node);
 
-	void present_load_plugin(SharedPtr<PatchModel> patch, GraphObject::Properties data=GraphObject::Properties());
-	void present_load_patch(SharedPtr<PatchModel> patch, GraphObject::Properties data=GraphObject::Properties());
-	void present_load_remote_patch(SharedPtr<PatchModel> patch, GraphObject::Properties data=GraphObject::Properties());
+	typedef GraphObject::Properties Properties;
+
+	void present_load_plugin(SharedPtr<PatchModel> patch, Properties data=Properties());
+	void present_load_patch(SharedPtr<PatchModel> patch, Properties data=Properties());
+	void present_load_remote_patch(SharedPtr<PatchModel> patch, Properties data=Properties());
 	void present_upload_patch(SharedPtr<PatchModel> patch);
-	void present_new_subpatch(SharedPtr<PatchModel> patch, GraphObject::Properties data=GraphObject::Properties());
-	void present_load_subpatch(SharedPtr<PatchModel> patch, GraphObject::Properties data=GraphObject::Properties());
+	void present_new_subpatch(SharedPtr<PatchModel> patch, Properties data=Properties());
+	void present_load_subpatch(SharedPtr<PatchModel> patch, Properties data=Properties());
 	void present_rename(SharedPtr<ObjectModel> object);
 	void present_properties(SharedPtr<ObjectModel> object);
 

@@ -21,8 +21,7 @@
 #include <string>
 #include <gtkmm.h>
 #include <libglademm/xml.h>
-using std::string;
-
+#include "Window.hpp"
 
 namespace Ingen {
 namespace GUI {
@@ -35,12 +34,12 @@ namespace GUI {
  *
  * \ingroup GUI
  */
-class MessagesWindow : public Gtk::Window
+class MessagesWindow : public Window
 {
 public:
 	MessagesWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& refGlade);
 
-	void post(const string& str);
+	void post(const std::string& str);
 
 private:
 	void clear_clicked();

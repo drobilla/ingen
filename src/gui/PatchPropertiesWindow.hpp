@@ -18,11 +18,10 @@
 #ifndef PATCHPROPERTIESWINDOW_H
 #define PATCHPROPERTIESWINDOW_H
 
-#include <string>
 #include <gtkmm.h>
 #include <libglademm/xml.h>
 #include "raul/SharedPtr.hpp"
-using std::string;
+#include "Window.hpp"
 
 namespace Ingen { namespace Client { class PatchModel; } }
 using Ingen::Client::PatchModel;
@@ -37,7 +36,7 @@ namespace GUI {
  *
  * \ingroup GUI
  */
-class PatchPropertiesWindow : public Gtk::Window
+class PatchPropertiesWindow : public Window
 {
 public:
 	PatchPropertiesWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& refGlade);

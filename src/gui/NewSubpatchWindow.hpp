@@ -22,9 +22,11 @@
 #include <gtkmm.h>
 #include "raul/SharedPtr.hpp"
 #include "interface/GraphObject.hpp"
-using namespace Ingen::Shared;
+#include "Window.hpp"
 
 namespace Ingen {
+
+using namespace Shared;
 
 namespace Client { class PatchModel; }
 using Ingen::Client::PatchModel;
@@ -38,7 +40,7 @@ namespace GUI {
  *
  * \ingroup GUI
  */
-class NewSubpatchWindow : public Gtk::Window
+class NewSubpatchWindow : public Window
 {
 public:
 	NewSubpatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml);

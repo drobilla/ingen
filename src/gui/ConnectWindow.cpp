@@ -59,7 +59,7 @@ namespace GUI {
 
 
 ConnectWindow::ConnectWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
-	: Gtk::Dialog(cobject)
+	: Dialog(cobject)
 	, _xml(xml)
 	, _mode(CONNECT_REMOTE)
 	, _ping_id(-1)

@@ -15,48 +15,23 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef RENAMEWINDOW_H
-#define RENAMEWINDOW_H
-
-#include <gtkmm.h>
-#include <libglademm.h>
-#include "raul/SharedPtr.hpp"
-#include "client/ObjectModel.hpp"
 #include "Window.hpp"
-
-using Ingen::Client::ObjectModel;
 
 namespace Ingen {
 namespace GUI {
 
 
-/** Rename window.  Handles renaming of any (Ingen) object.
- *
- * \ingroup GUI
- */
-class RenameWindow : public Window
+bool
+Window::key_press_handler(Gtk::Window* win, GdkEventKey* event)
 {
-public:
-	RenameWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& refGlade);
+	if (event->keyval == GDK_w && event->state & GDK_CONTROL_MASK) {
+		win->hide();
+		return true;
+	}
+	return false;
+}
 
-	void present(SharedPtr<ObjectModel> object);
-
-private:
-	void set_object(SharedPtr<ObjectModel> object);
-
-	void name_changed();
-	void cancel_clicked();
-	void ok_clicked();
-
-	SharedPtr<ObjectModel> _object;
-
-	Gtk::Entry*      _name_entry;
-	Gtk::Label*      _message_label;
-	Gtk::Button*     _cancel_button;
-	Gtk::Button*     _ok_button;
-};
 
 } // namespace GUI
 } // namespace Ingen
 
-#endif // RENAMEWINDOW_H
