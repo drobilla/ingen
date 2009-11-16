@@ -2861,6 +2861,20 @@ Contributors:
   <widget class="GtkMenu" id="canvas_menu">
     <property name="visible">True</property>
     <child>
+      <widget class="GtkCheckMenuItem" id="canvas_menu_edit">
+        <property name="visible">True</property>
+        <property name="tooltip" translatable="yes">Toggle edit mode</property>
+        <property name="label" translatable="yes">_Edit</property>
+        <property name="use_underline">True</property>
+        <property name="active">True</property>
+      </widget>
+    </child>
+    <child>
+      <widget class="GtkSeparatorMenuItem" id="menuitem1">
+        <property name="visible">True</property>
+      </widget>
+    </child>
+    <child>
       <widget class="GtkImageMenuItem" id="input1">
         <property name="label">_Input</property>
         <property name="visible">True</property>
@@ -2946,6 +2960,11 @@ Contributors:
         <property name="use_underline">True</property>
         <property name="use_stock">False</property>
         <signal name="activate" handler="on_canvas_menu_add_plugin_activate"/>
+      </widget>
+    </child>
+    <child>
+      <widget class="GtkSeparatorMenuItem" id="menuitem2">
+        <property name="visible">True</property>
       </widget>
     </child>
     <child>

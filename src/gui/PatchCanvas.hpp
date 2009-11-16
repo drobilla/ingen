@@ -98,6 +98,8 @@ private:
 	void menu_load_plugin();
 	void menu_new_patch();
 	void menu_load_patch();
+	void menu_edit_toggled();
+	void patch_editable_changed(bool editable);
 	void load_plugin(WeakPtr<PluginModel> plugin);
 
 	void build_menus();
@@ -146,23 +148,22 @@ private:
 
 	ClassMenus _class_menus;
 
-	bool            _human_names;
-	bool            _show_port_names;
-	Gtk::Menu*      _menu;
-	Gtk::Menu*      _internal_menu;
-	Gtk::Menu*      _classless_menu;
-	Gtk::Menu*      _plugin_menu;
-	/*Gtk::MenuItem*  _menu_add_number_control;
-	Gtk::MenuItem*  _menu_add_button_control;*/
-	Gtk::MenuItem*  _menu_add_audio_input;
-	Gtk::MenuItem*  _menu_add_audio_output;
-	Gtk::MenuItem*  _menu_add_control_input;
-	Gtk::MenuItem*  _menu_add_control_output;
-	Gtk::MenuItem*  _menu_add_event_input;
-	Gtk::MenuItem*  _menu_add_event_output;
-	Gtk::MenuItem*  _menu_load_plugin;
-	Gtk::MenuItem*  _menu_load_patch;
-	Gtk::MenuItem*  _menu_new_patch;
+	bool                _human_names;
+	bool                _show_port_names;
+	Gtk::Menu*          _menu;
+	Gtk::Menu*          _internal_menu;
+	Gtk::Menu*          _classless_menu;
+	Gtk::Menu*          _plugin_menu;
+	Gtk::MenuItem*      _menu_add_audio_input;
+	Gtk::MenuItem*      _menu_add_audio_output;
+	Gtk::MenuItem*      _menu_add_control_input;
+	Gtk::MenuItem*      _menu_add_control_output;
+	Gtk::MenuItem*      _menu_add_event_input;
+	Gtk::MenuItem*      _menu_add_event_output;
+	Gtk::MenuItem*      _menu_load_plugin;
+	Gtk::MenuItem*      _menu_load_patch;
+	Gtk::MenuItem*      _menu_new_patch;
+	Gtk::CheckMenuItem* _menu_edit;
 };
 
 

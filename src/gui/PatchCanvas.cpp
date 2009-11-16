@@ -72,8 +72,6 @@ PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 	Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference();
 	xml->get_widget("canvas_menu", _menu);
 
-	/*xml->get_widget("canvas_menu_add_number_control", _menu_add_number_control);
-	xml->get_widget("canvas_menu_add_button_control", _menu_add_button_control);*/
 	xml->get_widget("canvas_menu_add_audio_input", _menu_add_audio_input);
 	xml->get_widget("canvas_menu_add_audio_output", _menu_add_audio_output);
 	xml->get_widget("canvas_menu_add_control_input", _menu_add_control_input);
@@ -83,6 +81,7 @@ PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 	xml->get_widget("canvas_menu_load_plugin", _menu_load_plugin);
 	xml->get_widget("canvas_menu_load_patch", _menu_load_patch);
 	xml->get_widget("canvas_menu_new_patch", _menu_new_patch);
+	xml->get_widget("canvas_menu_edit", _menu_edit);
 
 	// Add port menu items
 	_menu_add_audio_input->signal_activate().connect(
@@ -118,6 +117,9 @@ PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 	_menu_load_plugin->signal_activate().connect(sigc::mem_fun(this, &PatchCanvas::menu_load_plugin));
 	_menu_load_patch->signal_activate().connect(sigc::mem_fun(this, &PatchCanvas::menu_load_patch));
 	_menu_new_patch->signal_activate().connect(sigc::mem_fun(this, &PatchCanvas::menu_new_patch));
+	_menu_edit->signal_activate().connect(sigc::mem_fun(this, &PatchCanvas::menu_edit_toggled));
+
+	_patch->signal_editable.connect(sigc::mem_fun(this, &PatchCanvas::patch_editable_changed));
 }
 
 
@@ -143,7 +145,7 @@ PatchCanvas::build_menus()
 		Gtk::MenuItem* internal_menu_item = &(_menu->items().back());
 		_internal_menu = Gtk::manage(new Gtk::Menu());
 		internal_menu_item->set_submenu(*_internal_menu);
-		_menu->reorder_child(*internal_menu_item, 2);
+		_menu->reorder_child(*internal_menu_item, 4);
 	}
 
 	// Build skeleton LV2 plugin class heirarchy for 'Plugin' menu
@@ -225,7 +227,7 @@ PatchCanvas::build_plugin_menu()
 		Gtk::MenuItem* plugin_menu_item = &(_menu->items().back());
 		_plugin_menu = Gtk::manage(new Gtk::Menu());
 		plugin_menu_item->set_submenu(*_plugin_menu);
-		_menu->reorder_child(*plugin_menu_item, 3);
+		_menu->reorder_child(*plugin_menu_item, 5);
 	}
 
 	Glib::Mutex::Lock lock(PluginModel::rdf_world()->mutex());
@@ -527,7 +529,6 @@ PatchCanvas::canvas_event(GdkEvent* event)
 	bool ret = false;
 
 	switch (event->type) {
-
 	case GDK_BUTTON_PRESS:
 		if (event->button.button == 3) {
 			_last_click_x = (int)event->button.x;
@@ -560,10 +561,7 @@ PatchCanvas::canvas_key_event(GdkEventKey* event)
 			return true;
 		case GDK_e:
 			if (event->state == 0) {
-				if (_patch->get_editable() == true)
-					_patch->set_editable(false);
-				else
-					_patch->set_editable(true);
+				_patch->set_editable(!_patch->get_editable());
 				return true;
 			} else {
 				return false;
@@ -826,6 +824,21 @@ void
 PatchCanvas::menu_new_patch()
 {
 	App::instance().window_factory()->present_new_subpatch(_patch, get_initial_data());
+}
+
+
+void
+PatchCanvas::menu_edit_toggled()
+{
+	_patch->set_editable(_menu_edit->get_active());
+}
+
+
+void
+PatchCanvas::patch_editable_changed(bool editable)
+{
+	if (_menu_edit->get_active() != editable)
+		_menu_edit->set_active(editable);
 }
 
 

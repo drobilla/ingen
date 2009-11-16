@@ -55,10 +55,12 @@ public:
 	 * not editable (control mode) you can just change controllers (performing)
 	 */
 	bool get_editable() const { return _editable; }
-	void set_editable(bool e) { if (_editable != e) {
-		_editable = e;
-		signal_editable.emit(e);
-	} }
+	void set_editable(bool e) {
+		if (_editable != e) {
+			_editable = e;
+			signal_editable.emit(e);
+		}
+	}
 
 	virtual Raul::Atom& set_meta_property(const Raul::URI& key, const Raul::Atom& value);
 
