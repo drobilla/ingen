@@ -45,10 +45,8 @@ LoadPluginWindow::LoadPluginWindow(BaseObjectType* cobject, const Glib::RefPtr<G
 	xml->get_widget("load_plugin_plugins_treeview", _plugins_treeview);
 	xml->get_widget("load_plugin_polyphonic_checkbutton", _polyphonic_checkbutton);
 	xml->get_widget("load_plugin_name_entry", _node_name_entry);
-	xml->get_widget("load_plugin_clear_button", _clear_button);
 	xml->get_widget("load_plugin_add_button", _add_button);
-	//xml->get_widget("load_plugin_close_button", _close_button);
-	//xml->get_widget("load_plugin_ok_button", _add_button);
+	xml->get_widget("load_plugin_close_button", _close_button);
 
 	xml->get_widget("load_plugin_filter_combo", _filter_combo);
 	xml->get_widget("load_plugin_search_entry", _search_entry);
@@ -83,14 +81,10 @@ LoadPluginWindow::LoadPluginWindow(BaseObjectType* cobject, const Glib::RefPtr<G
 	row[_criteria_columns._col_label] = "URI contains";
 	row[_criteria_columns._col_criteria] = CriteriaColumns::URI;
 
-	_clear_button->signal_clicked().connect(
-			sigc::mem_fun(this, &LoadPluginWindow::clear_clicked));
 	_add_button->signal_clicked().connect(
 			sigc::mem_fun(this, &LoadPluginWindow::add_clicked));
-	//m_close_button->signal_clicked().connect(
-	//		sigc::mem_fun(this, &LoadPluginWindow::close_clicked));
-	//m_add_button->signal_clicked().connect(
-	//		sigc::mem_fun(this, &LoadPluginWindow::ok_clicked));
+	_close_button->signal_clicked().connect(
+			sigc::mem_fun(this, &LoadPluginWindow::close_clicked));
 	_plugins_treeview->signal_row_activated().connect(
 			sigc::mem_fun(this, &LoadPluginWindow::plugin_activated));
 	_search_entry->signal_activate().connect(
@@ -99,6 +93,8 @@ LoadPluginWindow::LoadPluginWindow(BaseObjectType* cobject, const Glib::RefPtr<G
 			sigc::mem_fun(this, &LoadPluginWindow::filter_changed));
 	_node_name_entry->signal_changed().connect(
 			sigc::mem_fun(this, &LoadPluginWindow::name_changed));
+	_search_entry->signal_icon_release().connect(
+			sigc::mem_fun(this, &LoadPluginWindow::name_cleared));
 
 	_selection = _plugins_treeview->get_selection();
 	_selection->set_mode(Gtk::SELECTION_MULTIPLE);
@@ -141,6 +137,13 @@ LoadPluginWindow::name_changed()
 			_add_button->property_sensitive() = true;
 		}
 	}
+}
+
+
+void
+LoadPluginWindow::name_cleared(Gtk::EntryIconPosition pos, const GdkEventButton* event)
+{
+	_search_entry->set_text("");
 }
 
 
@@ -361,21 +364,12 @@ LoadPluginWindow::add_clicked()
 }
 
 
-/*
 void
 LoadPluginWindow::close_clicked()
 {
 	hide();
 }
 
-
-void
-LoadPluginWindow::ok_clicked()
-{
-	add_clicked();
-	close_clicked();
-}
-*/
 
 void
 LoadPluginWindow::filter_changed()
@@ -434,14 +428,6 @@ LoadPluginWindow::filter_changed()
 		_selection->unselect_all();
 		_selection->select(model_iter);
 	}
-}
-
-
-void
-LoadPluginWindow::clear_clicked()
-{
-	_search_entry->set_text("");
-	set_plugins(App::instance().store()->plugins());
 }
 
 

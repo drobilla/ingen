@@ -93,11 +93,11 @@ private:
 	};
 
 	void add_clicked();
-	//void close_clicked();
-	//void ok_clicked();
+	void close_clicked();
 	void filter_changed();
 	void clear_clicked();
 	void name_changed();
+	void name_cleared(Gtk::EntryIconPosition pos, const GdkEventButton* event);
 
 	void new_plugin(SharedPtr<PluginModel> plugin);
 
@@ -134,10 +134,8 @@ private:
 	Gtk::TreeView*    _plugins_treeview;
 	Gtk::CheckButton* _polyphonic_checkbutton;
 	Gtk::Entry*       _node_name_entry;
-	Gtk::Button*      _clear_button;
+	Gtk::Button*      _close_button;
 	Gtk::Button*      _add_button;
-	//Gtk::Button*      _close_button;
-	//Gtk::Button*      _ok_button;
 	Gtk::ComboBox*    _filter_combo;
 	Gtk::Entry*       _search_entry;
 };
