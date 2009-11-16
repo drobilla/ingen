@@ -29,10 +29,12 @@ namespace Ingen {
 namespace Shared { class Plugin; class Node; class Port; }
 
 class Buffer;
-class PluginImpl;
-class PatchImpl;
-class PortImpl;
+class BufferFactory;
+class Engine;
 class MessageContext;
+class PatchImpl;
+class PluginImpl;
+class PortImpl;
 class ProcessContext;
 
 
@@ -69,7 +71,7 @@ public:
 	 * Preprocessor thread, poly is actually applied by apply_poly.
 	 * \return true on success.
 	 */
-	virtual bool prepare_poly(uint32_t poly) = 0;
+	virtual bool prepare_poly(BufferFactory& bufs, uint32_t poly) = 0;
 
 	/** Apply a new (external) polyphony value.
 	 *
@@ -131,7 +133,7 @@ public:
 	 */
 	virtual void process(ProcessContext& context) = 0;
 
-	virtual void set_port_buffer(uint32_t voice, uint32_t port_num, Buffer* buf) = 0;
+	virtual void set_port_buffer(uint32_t voice, uint32_t port_num, SharedPtr<Buffer> buf) = 0;
 
 	virtual uint32_t num_ports() const = 0;
 
@@ -167,7 +169,7 @@ public:
 	 */
 	virtual const Shared::Plugin* plugin() const = 0;
 
-	virtual void set_buffer_size(size_t size) = 0;
+	virtual void set_buffer_size(BufferFactory& bufs, size_t size) = 0;
 };
 
 

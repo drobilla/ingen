@@ -50,14 +50,12 @@ JackAudioPort::JackAudioPort(JackAudioDriver* driver, DuplexPort* patch_port)
 	, Raul::List<JackAudioPort*>::Node(this)
 	, _driver(driver)
 	, _jack_port(NULL)
-	, _jack_buffer(NULL)
 {
 	assert(patch_port->poly() == 1);
 
 	create();
 
 	patch_port->buffer(0)->clear();
-	patch_port->fixed_buffers(true);
 }
 
 
@@ -93,19 +91,28 @@ JackAudioPort::destroy()
 
 
 void
-JackAudioPort::prepare_buffer(jack_nframes_t nframes)
+JackAudioPort::pre_process(jack_nframes_t nframes)
 {
+	if (!is_input())
+		return;
+
 	jack_sample_t* jack_buf  = (jack_sample_t*)jack_port_get_buffer(_jack_port, nframes);
-	AudioBuffer*   patch_buf = (AudioBuffer*)_patch_port->buffer(0);
+	AudioBuffer*   patch_buf = (AudioBuffer*)_patch_port->buffer(0).get();
 
-	//cerr << "[JACK] " << _patch_port->path() << " buffer: " << patch_buf << endl;
+	patch_buf->copy(jack_buf, 0, nframes - 1);
+}
 
-	if (jack_buf != _jack_buffer) {
-		patch_buf->set_data(jack_buf);
-		_jack_buffer = jack_buf;
-	}
 
-	assert(patch_buf->data() == jack_buf);
+void
+JackAudioPort::post_process(jack_nframes_t nframes)
+{
+	if (is_input())
+		return;
+
+	jack_sample_t* jack_buf  = (jack_sample_t*)jack_port_get_buffer(_jack_port, nframes);
+	AudioBuffer*   patch_buf = (AudioBuffer*)_patch_port->buffer(0).get();
+
+	memcpy(jack_buf, patch_buf->data(), nframes * sizeof(Sample));
 }
 
 
@@ -172,7 +179,7 @@ JackAudioDriver::attach(const std::string& server_name,
 
 	_local_client = (jack_client == NULL);
 
-	_buffer_size = jack_get_buffer_size(_client);
+	_buffer_size = jack_get_buffer_size(_client) * sizeof(Sample);
 	_sample_rate = jack_get_sample_rate(_client);
 
 	jack_on_shutdown(_client, shutdown_cb, this);
@@ -334,7 +341,7 @@ JackAudioDriver::_process_cb(jack_nframes_t nframes)
 	// FIXME: all of this time stuff is screwy
 
 	// FIXME: support nframes != buffer_size, even though that never damn well happens
-	assert(nframes == _buffer_size);
+	assert(nframes == _buffer_size / sizeof(Sample));
 
 	// Jack can elect to not call this function for a cycle, if overloaded
 	// FIXME: this doesn't make sense, and the start time isn't used anyway
@@ -360,11 +367,9 @@ JackAudioDriver::_process_cb(jack_nframes_t nframes)
 	// (Aiming for jitter-free 1 block event latency, ideally)
 	_engine.process_events(_process_context);
 
-	// Set buffers of patch ports to Jack port buffers (zero-copy processing)
-	for (Raul::List<JackAudioPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i) {
-		assert(*i);
-		(*i)->prepare_buffer(nframes);
-	}
+	// Read input
+	for (Raul::List<JackAudioPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
+		(*i)->pre_process(nframes);
 
 	if (_engine.midi_driver())
 		_engine.midi_driver()->pre_process(_process_context);
@@ -375,6 +380,10 @@ JackAudioDriver::_process_cb(jack_nframes_t nframes)
 
 	if (_engine.midi_driver())
 		_engine.midi_driver()->post_process(_process_context);
+
+	// Write output
+	for (Raul::List<JackAudioPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
+		(*i)->post_process(nframes);
 
 	_engine.post_processor()->set_end_time(_process_context.end());
 
@@ -420,8 +429,8 @@ int
 JackAudioDriver::_buffer_size_cb(jack_nframes_t nframes)
 {
 	if (_root_patch) {
-		_root_patch->set_buffer_size(nframes);
-		_buffer_size = nframes;
+		_buffer_size = nframes * sizeof(Sample);
+		_root_patch->set_buffer_size(*_engine.buffer_factory(), _buffer_size);
 	}
 	return 0;
 }

@@ -162,7 +162,7 @@ SetMetadata::pre_process()
 				} else if (key.str() == "ingen:polyphony") {
 					if (value.type() == Atom::INT) {
 						op = POLYPHONY;
-						_patch->prepare_internal_poly(value.get_int32());
+						_patch->prepare_internal_poly(*_engine.buffer_factory(), value.get_int32());
 					} else {
 						_error = BAD_TYPE;
 					}

@@ -47,6 +47,7 @@ class Driver;
 class ProcessSlave;
 class ProcessContext;
 class MessageContext;
+class BufferFactory;
 
 
 /** The main class for the Engine.
@@ -88,6 +89,7 @@ public:
 	ClientBroadcaster* broadcaster()        const { return _broadcaster; }
 	NodeFactory*       node_factory()       const { return _node_factory; }
 	MessageContext*    message_context()    const { return _message_context; }
+	BufferFactory*     buffer_factory()     const { return _buffer_factory; }
 
 	SharedPtr<EngineStore> engine_store() const;
 
@@ -120,6 +122,7 @@ private:
 	ClientBroadcaster*     _broadcaster;
 	NodeFactory*           _node_factory;
 	MessageContext*        _message_context;
+	BufferFactory*         _buffer_factory;
 
 	bool _quit_flag;
 	bool _activated;

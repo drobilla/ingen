@@ -48,7 +48,8 @@ class LV2Plugin : public PluginImpl
 public:
 	LV2Plugin(SharedPtr<LV2Info> lv2_info, const std::string& uri);
 
-	NodeImpl* instantiate(const std::string& name,
+	NodeImpl* instantiate(BufferFactory&     bufs,
+	                      const std::string& name,
 	                      bool               polyphonic,
 	                      Ingen::PatchImpl*  parent,
 	                      Engine&            engine);

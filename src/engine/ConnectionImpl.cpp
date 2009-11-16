@@ -22,6 +22,8 @@
 #include "PortImpl.hpp"
 #include "AudioBuffer.hpp"
 #include "ProcessContext.hpp"
+#include "InputPort.hpp"
+#include "BufferFactory.hpp"
 
 namespace Ingen {
 
@@ -32,12 +34,10 @@ using namespace Shared;
  * This handles both polyphonic and monophonic nodes, transparently to the
  * user (InputPort).
  */
-ConnectionImpl::ConnectionImpl(PortImpl* src_port, PortImpl* dst_port)
-	: _mode(DIRECT)
+ConnectionImpl::ConnectionImpl(BufferFactory& bufs, PortImpl* src_port, PortImpl* dst_port)
+	: _bufs(bufs)
 	, _src_port(src_port)
 	, _dst_port(dst_port)
-	, _local_buffer(NULL)
-	, _buffer_size(dst_port->buffer_size())
 	, _pending_disconnection(false)
 {
 	assert(src_port);
@@ -51,83 +51,34 @@ ConnectionImpl::ConnectionImpl(PortImpl* src_port, PortImpl* dst_port)
 	/*assert((src_port->parent_node()->poly() == dst_port->parent_node()->poly())
 		|| (src_port->parent_node()->poly() == 1 || dst_port->parent_node()->poly() == 1));*/
 
-	set_mode();
-	if (need_buffer())
-		_local_buffer = Buffer::create(dst_port->type(), _buffer_size);
-
-	/* FIXME: 1->1 connections with a destination with fixed buffers copies unecessarily */
-	//cerr << src_port->path() << " -> " << dst_port->path() << " must mix: " << _must_mix << endl;
-}
-
-
-ConnectionImpl::~ConnectionImpl()
-{
-	delete _local_buffer;
+	if (must_mix())
+		_local_buffer = bufs.get(dst_port->type(), dst_port->buffer_size());
 }
 
 
 void
-ConnectionImpl::set_mode()
+ConnectionImpl::dump() const
+{
+	cerr << _src_port->path() << " -> " << _dst_port->path()
+		<< (must_mix() ? " MIX" : " DIRECT") << endl;
+}
+
+
+void
+ConnectionImpl::set_buffer_size(BufferFactory& bufs, size_t size)
 {
 	if (must_mix())
-		_mode = MIX;
-	else if (must_copy())
-		_mode = COPY;
-	else if (must_extend())
-		_mode = EXTEND;
-
-	if (_mode == MIX && type() == DataType::EVENTS)
-		_mode = COPY;
-
-	if (type() == DataType::VALUE)
-		_mode = DIRECT;
+		_local_buffer = bufs.get(_dst_port->type(), _dst_port->buffer(0)->size());
 }
 
 
 void
-ConnectionImpl::set_buffer_size(size_t size)
+ConnectionImpl::prepare_poly(BufferFactory& bufs, uint32_t poly)
 {
-	if (_mode == MIX || _mode == EXTEND) {
-		assert(_local_buffer);
-		delete _local_buffer;
+	_src_port->prepare_poly(bufs, poly);
 
-		_local_buffer = Buffer::create(_dst_port->type(), _dst_port->buffer(0)->size());
-	}
-
-	_buffer_size = size;
-}
-
-
-bool
-ConnectionImpl::must_copy() const
-{
-	return (_dst_port->fixed_buffers() && (_src_port->poly() != _dst_port->poly()));
-}
-
-
-bool
-ConnectionImpl::must_mix() const
-{
-	return (   (_src_port->polyphonic() && !_dst_port->polyphonic())
-	        || (_src_port->parent()->polyphonic() && !_dst_port->parent()->polyphonic())
-	        || (_dst_port->fixed_buffers()) );
-}
-
-
-bool
-ConnectionImpl::must_extend() const
-{
-	return (_src_port->buffer_size() != _dst_port->buffer_size());
-}
-
-
-void
-ConnectionImpl::prepare_poly(uint32_t poly)
-{
-	_src_port->prepare_poly(poly);
-
-	if (need_buffer() && !_local_buffer)
-		_local_buffer = Buffer::create(_dst_port->type(), _dst_port->buffer(0)->size());
+	if (must_mix())
+		_local_buffer = bufs.get(_dst_port->type(), _dst_port->buffer(0)->size());
 }
 
 
@@ -135,101 +86,25 @@ void
 ConnectionImpl::apply_poly(Raul::Maid& maid, uint32_t poly)
 {
 	_src_port->apply_poly(maid, poly);
-	set_mode();
-
-	/*cerr << "CONNECTION APPLY: " << src_port()->path() << " * " << src_port()->poly()
-			<< " -> " << dst_port()->path() << " * " << dst_port()->poly()
-			<< "\t\tmust mix: " << must_mix() << ", extend: " << must_extend()
-			<< ", poly " << poly << endl;*/
 
 	// Recycle buffer if it's no longer needed
-	if (_local_buffer && !need_buffer()) {
-		maid.push(_local_buffer);
-		_local_buffer = NULL;
-	}
+	if (!must_mix() && _local_buffer)
+		_local_buffer.reset();
 }
 
 
 void
 ConnectionImpl::process(Context& context)
 {
-	/* Thought:  A poly output port can be connected to multiple mono input
-	 * ports, which means this mix down would have to happen many times.
-	 * Adding a method to OutputPort that mixes down all it's outputs into
-	 * a buffer (if it hasn't been done already this cycle) and returns that
-	 * would avoid having to mix multiple times.  Probably not a very common
-	 * case, but it would be faster anyway. */
+	if (!must_mix())
+		return;
 
-	std::cerr << src_port()->path() << " * " << src_port()->poly()
-			<< " -> " << dst_port()->path() << " * " << dst_port()->poly()
-			<< "\t\tmode: " << (int)_mode << std::endl;
+	// Copy the first voice
+	_local_buffer->copy(context, src_port()->buffer(0).get());
 
-	if (_mode == COPY) {
-		assert(src_port()->poly() == dst_port()->poly());
-		for (uint32_t i = 0; i < src_port()->poly(); ++i)
-			dst_port()->buffer(i)->copy(context, src_port()->buffer(i));
-
-	} else if (_mode == MIX) {
-		assert(type() == DataType::AUDIO || type() == DataType::CONTROL);
-
-		const AudioBuffer* const src_buffer = (AudioBuffer*)src_port()->buffer(0);
-		AudioBuffer*             mix_buf    = (AudioBuffer*)_local_buffer;
-
-		assert(mix_buf);
-
-		const size_t copy_size = std::min(src_buffer->size(), mix_buf->size());
-
-		// Copy src buffer to start of mix buffer
-		mix_buf->copy(context, src_buffer);
-
-		// Write last value of src buffer to remainder of dst buffer, if necessary
-		if (copy_size < mix_buf->size())
-			mix_buf->set_block(src_buffer->value_at(copy_size-1), copy_size, mix_buf->size()-1);
-
-		// Accumulate the source's voices into local buffer starting at the second
-		// voice (buffer is already set to first voice above)
-		for (uint32_t j=1; j < src_port()->poly(); ++j) {
-			mix_buf->accumulate((AudioBuffer*)src_port()->buffer(j), 0, copy_size-1);
-		}
-
-		// Find the summed value and write it to the remainder of dst buffer
-		if (copy_size < mix_buf->size()) {
-			float src_value = src_buffer->value_at(copy_size-1);
-			for (uint32_t j=1; j < src_port()->poly(); ++j)
-				src_value += ((AudioBuffer*)src_port()->buffer(j))->value_at(copy_size-1);
-
-			mix_buf->set_block(src_value, copy_size, mix_buf->size()-1);
-		}
-
-		// Scale the buffer down.
-		if (src_port()->poly() > 1)
-			mix_buf->scale(1.0f/(float)src_port()->poly(), 0, mix_buf->size()-1);
-
-	} else if (_mode == EXTEND) {
-		assert(type() == DataType::AUDIO || type() == DataType::CONTROL);
-		assert(src_port()->poly() == 1 || src_port()->poly() == dst_port()->poly());
-
-		const uint32_t poly      = dst_port()->poly();
-		const uint32_t copy_size = std::min(src_port()->buffer(0)->size(),
-		                                    dst_port()->buffer(0)->size());
-
-		for (uint32_t i = 0; i < poly; ++i) {
-			uint32_t     src_voice = std::min(i, src_port()->poly() - 1);
-			AudioBuffer* src_buf   = (AudioBuffer*)src_port()->buffer(src_voice);
-			AudioBuffer* dst_buf   = (AudioBuffer*)dst_port()->buffer(i);
-
-			// Copy src to start of dst
-			dst_buf->copy(src_buf, 0, copy_size-1);
-
-			// Write last value of src buffer to remainder of dst buffer, if necessary
-			if (copy_size < dst_buf->size())
-				dst_buf->set_block(src_buf->value_at(copy_size - 1), copy_size, dst_buf->size() - 1);
-		}
-
-	} else if (_mode == DIRECT) {
-		for (uint32_t j=0; j < src_port()->poly(); ++j)
-			src_port()->buffer(j)->prepare_read(context);
-	}
+	// Mix in the rest
+	for (uint32_t v = 0; v < src_port()->poly(); ++v)
+		_local_buffer->mix(context, src_port()->buffer(v).get());
 }
 
 

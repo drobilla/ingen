@@ -20,7 +20,6 @@
 #include "internals/Note.hpp"
 #include "internals/Trigger.hpp"
 #include "internals/Controller.hpp"
-#include "internals/Transport.hpp"
 
 using namespace std;
 

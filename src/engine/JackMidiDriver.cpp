@@ -100,7 +100,7 @@ JackMidiPort::pre_process(ProcessContext& context)
 
 	assert(_patch_port->poly() == 1);
 
-	EventBuffer* patch_buf = dynamic_cast<EventBuffer*>(_patch_port->buffer(0));
+	EventBuffer* patch_buf = dynamic_cast<EventBuffer*>(_patch_port->buffer(0).get());
 	assert(patch_buf);
 
 	void*                jack_buffer = jack_port_get_buffer(_jack_port, context.nframes());
@@ -134,7 +134,7 @@ JackMidiPort::post_process(ProcessContext& context)
 	if (is_input())
 		return;
 
-	EventBuffer* patch_buf = dynamic_cast<EventBuffer*>(_patch_port->buffer(0));
+	EventBuffer* patch_buf = dynamic_cast<EventBuffer*>(_patch_port->buffer(0).get());
 	void*        jack_buf  = jack_port_get_buffer(_jack_port, context.nframes());
 
 	assert(_patch_port->poly() == 1);

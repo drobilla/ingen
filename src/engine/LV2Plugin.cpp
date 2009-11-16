@@ -60,7 +60,8 @@ LV2Plugin::symbol() const
 
 
 NodeImpl*
-LV2Plugin::instantiate(const string&     name,
+LV2Plugin::instantiate(BufferFactory&    bufs,
+                       const string&     name,
                        bool              polyphonic,
                        Ingen::PatchImpl* parent,
                        Engine&           engine)
@@ -73,7 +74,7 @@ LV2Plugin::instantiate(const string&     name,
 	Glib::Mutex::Lock lock(engine.world()->rdf_world->mutex());
 	LV2Node* n = new LV2Node(this, name, polyphonic, parent, srate, buffer_size);
 
-	if ( ! n->instantiate() ) {
+	if ( ! n->instantiate(bufs) ) {
 		delete n;
 		n = NULL;
 	}

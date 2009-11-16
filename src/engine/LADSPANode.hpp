@@ -45,9 +45,9 @@ public:
 
 	~LADSPANode();
 
-	bool instantiate();
+	bool instantiate(BufferFactory& bufs);
 
-	bool prepare_poly(uint32_t poly);
+	bool prepare_poly(BufferFactory& bufs, uint32_t poly);
 	bool apply_poly(Raul::Maid& maid, uint32_t poly);
 
 	void activate();
@@ -55,7 +55,7 @@ public:
 
 	void process(ProcessContext& context);
 
-	void set_port_buffer(uint32_t voice, uint32_t port_num, Buffer* buf);
+	void set_port_buffer(uint32_t voice, uint32_t port_num, SharedPtr<Buffer> buf);
 
 protected:
 	void get_port_limits(unsigned long            port_index,

@@ -34,6 +34,7 @@ using namespace Shared;
 
 
 DuplexPort::DuplexPort(
+		BufferFactory&    bufs,
 		NodeImpl*         parent,
 		const string&     name,
 		uint32_t          index,
@@ -42,13 +43,12 @@ DuplexPort::DuplexPort(
 		const Raul::Atom& value,
 		size_t            buffer_size,
 		bool              is_output)
-	: PortImpl(parent, name, index, poly, type, value, buffer_size)
-	, InputPort(parent, name, index, poly, type, value, buffer_size)
-	, OutputPort(parent, name, index, poly, type, value, buffer_size)
+	: PortImpl(bufs, parent, name, index, poly, type, value, buffer_size)
+	, InputPort(bufs, parent, name, index, poly, type, value, buffer_size)
+	, OutputPort(bufs, parent, name, index, poly, type, value, buffer_size)
 	, _is_output(is_output)
 {
 	assert(PortImpl::_parent == parent);
-	_fixed_buffers = true;
 }
 
 
@@ -56,30 +56,17 @@ DuplexPort::DuplexPort(
 void
 DuplexPort::pre_process(Context& context)
 {
-	/*cerr << endl << "{ duplex pre" << endl;
-	cerr << path() << " duplex pre: fixed buffers: " << fixed_buffers() << endl;
-	cerr << path() << " duplex pre: buffer: " << buffer(0) << endl;
-	cerr << path() << " duplex pre: is_output: " << _is_output << " { " << endl;*/
-
-	// If we're a patch output, prepare buffers for write (so plugins can deliver to them)
+	// If we're a patch output, we're an input from the internal perspective.
+	// Prepare buffers for write (so plugins can deliver to them)
 	if (_is_output) {
-		for (uint32_t i=0; i < _poly; ++i)
-			if (!_buffers->at(i)->is_joined())
-				_buffers->at(i)->prepare_write(context);
+		for (uint32_t v = 0; v < _poly; ++v)
+			_buffers->at(v)->prepare_write(context);
 
-	// Otherwise, we're a patch input, do whatever a normal node's input port does
-	// (mix down inputs from an outside "patch is a node" perspective)
+	// If we're a patch input, were an output from the internal perspective.
+	// Do whatever a normal node's input port does to prepare input for reading.
 	} else {
 		InputPort::pre_process(context);
 	}
-
-	/*if (type() == DataType::EVENT)
-		for (uint32_t i=0; i < _poly; ++i)
-			cerr << path() << " (" << buffer(i) << ") # events: "
-				<< ((EventBuffer*)buffer(i))->event_count()
-				<< ", joined: " << _buffers->at(i)->is_joined()
-				<< ", is_output: " << _is_output << endl;*/
-	//cerr << "} duplex pre " << path() << endl;
 }
 
 
@@ -87,30 +74,14 @@ DuplexPort::pre_process(Context& context)
 void
 DuplexPort::post_process(Context& context)
 {
-	/*cerr << endl << "{ duplex post" << endl;
-	cerr << path() << " duplex post: fixed buffers: " << fixed_buffers() << endl;
-	cerr << path() << " duplex post: buffer: " << buffer(0) << endl;
-	cerr << path() << " duplex post: is_output: " << _is_output << " { " << endl;
-
-	if (type() == DataType::EVENT)
-		for (uint32_t i=0; i < _poly; ++i)
-			cerr << path() << " (" << buffer(i) << ") # events: "
-				<< ((EventBuffer*)buffer(i))->event_count()
-				<< ", joined: " << _buffers->at(i)->is_joined() << endl;*/
-
-	// If we're a patch output
-
-
+	// If we're a patch output, we're an input from the internal perspective.
+	// Mix down input delivered by plugins so output (external perspective) is ready.
 	if (_is_output) {
-		// Then we've been delivered to as an input (internal perspective)
-		// Mix down this input so patch output ports (external perspective) are ready
 		InputPort::pre_process(context);
 
 		if (_broadcast)
 			broadcast_value(context, false);
 	}
-
-	//cerr << "} duplex post " << path() << endl;
 }
 
 

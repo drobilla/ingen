@@ -18,9 +18,13 @@
 #include <iostream>
 #include <cassert>
 #include <stdlib.h>
+#include "raul/SharedPtr.hpp"
+#include "object.lv2/object.h"
 #include "ingen-config.h"
 #include "AudioBuffer.hpp"
 #include "ProcessContext.hpp"
+#include "LV2Features.hpp"
+#include "LV2URIMap.hpp"
 
 using namespace std;
 
@@ -32,85 +36,50 @@ namespace Ingen {
 using namespace Shared;
 
 
-AudioBuffer::AudioBuffer(size_t size)
-	: Buffer((size == 1) ? DataType::CONTROL : DataType::AUDIO, size)
-	, _data(NULL)
-	, _local_data(NULL)
-	, _filled_size(0)
+AudioBuffer::AudioBuffer(Shared::DataType type, size_t size)
+	: ObjectBuffer(size + sizeof(LV2_Object)
+			+ (type == DataType::AUDIO ? sizeof(LV2_Vector_Body) : 0))
+	, _port_type(type)
 	, _state(OK)
 	, _set_value(0)
 	, _set_time(0)
 {
-	assert(_size > 0);
-	allocate();
+	assert(size >= sizeof(Sample));
+	assert(this->size() > size);
 	assert(data());
-}
+	_type = type;
 
+	// Control port / Single float object
+	if (type == DataType::CONTROL) {
+		object()->type = 0;//map->float_type;
 
-void
-AudioBuffer::alloc_local_data(size_t size)
-{
-#ifdef HAVE_POSIX_MEMALIGN
-	const int ret = posix_memalign((void**)&_local_data, 16, size * sizeof(Sample));
-#else
-	_local_data = (Sample*)malloc(size * sizeof(Sample));
-	int ret = (_local_data != NULL) ? 0 : -1;
-#endif
-	if (ret != 0) {
-		cerr << "[Buffer] Failed to allocate buffer.  Aborting." << endl;
-		exit(EXIT_FAILURE);
+	// Audio port / Vector of float
+	} else {
+		assert(type == DataType::AUDIO);
+		object()->type = 0;//map->vector_type;
+		LV2_Vector_Body* body = (LV2_Vector_Body*)object()->body;
+		body->elem_count = size / sizeof(Sample);
+		body->elem_type = 0;//map->float_type;
 	}
+
+	/*cout << "Created Audio Buffer" << endl
+		<< "\tobject @ " << (void*)object() << endl
+		<< "\tbody @   " << (void*)object()->body
+		<< "\t(offset " << (char*)object()->body - (char*)object() << ")" << endl
+		<< "\tdata @   " << (void*)data()
+		<< "\t(offset " << (char*)data() - (char*)object() << ")"
+		<< endl;*/
 }
+
 
 void
 AudioBuffer::resize(size_t size)
 {
-	_size = size;
-
-	Sample* const old_data = _data;
-
-	const bool using_local_data = (_data == _local_data);
-
-	deallocate();
-	alloc_local_data(_size * sizeof(Sample));
-	assert(_local_data);
-
-	if (using_local_data)
-		_data = _local_data;
-	else
-		_data = old_data;
-
-	set_block(0, 0, _size - 1);
-}
-
-
-/** Allocate and use a locally managed buffer (data).
- */
-void
-AudioBuffer::allocate()
-{
-	assert(!_joined_buf);
-	assert(_local_data == NULL);
-	assert(_size > 0);
-
-	alloc_local_data(_size * sizeof(Sample));
-	assert(_local_data);
-
-	_data = _local_data;
-
+	if (_port_type == DataType::AUDIO) {
+		ObjectBuffer::resize(size + sizeof(LV2_Vector_Body));
+		vector()->elem_count = size / sizeof(Sample);
+	}
 	clear();
-}
-
-
-/** Free locally allocated buffer.
- */
-void
-AudioBuffer::deallocate()
-{
-	assert(!_joined_buf);
-	free(_local_data);
-	_local_data = NULL;
-	_data = NULL;
 }
 
 
@@ -119,9 +88,9 @@ AudioBuffer::deallocate()
 void
 AudioBuffer::clear()
 {
-	set_block(0, 0, _size - 1);
+	assert(nframes() != 0);
+	set_block(0, 0, nframes() - 1);
 	_state = OK;
-	_filled_size = 0;
 }
 
 
@@ -134,14 +103,15 @@ AudioBuffer::clear()
 void
 AudioBuffer::set_value(Sample val, FrameTime cycle_start, FrameTime time)
 {
-	if (_size == 1)
+	if (_port_type == DataType::CONTROL)
 		time = cycle_start;
 
-	FrameTime offset = time - cycle_start;
-	assert(offset <= _size);
+	const FrameTime offset = time - cycle_start;
+	assert(nframes() != 0);
+	assert(offset <= nframes());
 
-	if (offset < _size) {
-		set_block(val, offset, _size - 1);
+	if (offset < nframes()) {
+		set_block(val, offset, nframes() - 1);
 
 		if (offset > 0)
 			_state = HALF_SET_CYCLE_1;
@@ -160,7 +130,7 @@ void
 AudioBuffer::set_block(Sample val, size_t start_offset, size_t end_offset)
 {
 	assert(end_offset >= start_offset);
-	assert(end_offset < _size);
+	assert(end_offset < nframes());
 
 	Sample* const buf = data();
 	assert(buf);
@@ -170,52 +140,34 @@ AudioBuffer::set_block(Sample val, size_t start_offset, size_t end_offset)
 }
 
 
-/** Scale a block of buffer by @a val.
- *
- * @a start_sample and @a end_sample define the inclusive range to be set.
- */
-void
-AudioBuffer::scale(Sample val, size_t start_sample, size_t end_sample)
-{
-	assert(end_sample >= start_sample);
-	assert(end_sample < _size);
-
-	Sample* const buf = data();
-	assert(buf);
-
-	for (size_t i=start_sample; i <= end_sample; ++i)
-		buf[i] *= val;
-}
-
-
 /** Copy a block of @a src into buffer.
  *
  * @a start_sample and @a end_sample define the inclusive range to be set.
  * This function only copies the same range in one buffer to another.
  */
 void
-AudioBuffer::copy(const Buffer* src, size_t start_sample, size_t end_sample)
+AudioBuffer::copy(const Sample* src, size_t start_sample, size_t end_sample)
 {
 	assert(end_sample >= start_sample);
-	assert(src);
-	assert(src->type() == DataType::CONTROL || DataType::AUDIO);
+	assert(nframes() != 0);
 
 	Sample* const buf = data();
 	assert(buf);
 
-	const Sample* const src_buf = ((AudioBuffer*)src)->data();
-	assert(src_buf);
-
-	const size_t to_copy = std::min(end_sample, _size - 1);
-	for (size_t i = start_sample; i <= to_copy; ++i)
-		buf[i] = src_buf[i];
+	const size_t copy_end = std::min(end_sample, (size_t)nframes() - 1);
+	for (size_t i = start_sample; i <= copy_end; ++i)
+		buf[i] = src[i];
 }
 
 
 void
 AudioBuffer::copy(Context& context, const Buffer* src)
 {
-	copy(src, context.start(), std::min(size(), src->size()));
+	if (_type == src->type()) {
+		ObjectBuffer::copy(context, src);
+	} else if (_type == DataType::AUDIO && src->type() == DataType::CONTROL) {
+		set_block(((AudioBuffer*)src)->data()[0], 0, nframes());
+	}
 }
 
 
@@ -225,84 +177,47 @@ AudioBuffer::copy(Context& context, const Buffer* src)
  * This function only adds the same range in one buffer to another.
  */
 void
-AudioBuffer::accumulate(const AudioBuffer* const src, size_t start_sample, size_t end_sample)
+AudioBuffer::mix(Context& context, const Buffer* const src)
 {
-	assert(end_sample >= start_sample);
-	assert(src);
-	assert(src->type() == DataType::CONTROL || DataType::AUDIO);
+	if (src->type() != DataType::CONTROL && src->type() != DataType::AUDIO)
+		return;
 
-	Sample* const buf = data();
-	assert(buf);
+	AudioBuffer* src_abuf = (AudioBuffer*)src;
 
-	const Sample* const src_buf = src->data();
-	assert(src_buf);
+	Sample* const       buf     = data();
+	const Sample* const src_buf = src_abuf->data();
 
-	const size_t to_copy = std::min(end_sample, _size - 1);
-	for (size_t i = start_sample; i <= to_copy; ++i)
+	const size_t frames = std::min(nframes(), src_abuf->nframes());
+	assert(frames != 0);
+
+	// Mix initial portions
+	SampleCount i = 0;
+	for (; i < frames; ++i)
 		buf[i] += src_buf[i];
 
-}
-
-
-/** Use another buffer's data instead of the local one.
- *
- * This buffer will essentially be identical to @a buf after this call.
- */
-bool
-AudioBuffer::join(Buffer* buf)
-{
-	assert(buf != this);
-	AudioBuffer* abuf = dynamic_cast<AudioBuffer*>(buf);
-	if (!abuf)
-		return false;
-
-	assert(abuf->size() >= _size);
-
-	_joined_buf = abuf;
-	_filled_size = abuf->filled_size();
-
-	assert(_filled_size <= _size);
-
-	return true;
-}
-
-
-void
-AudioBuffer::unjoin()
-{
-	_joined_buf = NULL;
-	_data = _local_data;
+	// Extend/Mix the final sample of src if it is shorter
+	const Sample last = src_buf[i - 1];
+	while (i < frames)
+		buf[i++] = last;
 }
 
 
 void
 AudioBuffer::prepare_read(Context& context)
 {
+	assert(nframes() != 0);
 	switch (_state) {
 	case HALF_SET_CYCLE_1:
 		if (context.start() > _set_time)
 			_state = HALF_SET_CYCLE_2;
 		break;
 	case HALF_SET_CYCLE_2:
-		set_block(_set_value, 0, _size - 1);
+		set_block(_set_value, 0, nframes() - 1);
 		_state = OK;
 		break;
 	default:
 		break;
 	}
-}
-
-
-/** Set the buffer (data) used.
- *
- * This is only to be used by Drivers (to provide zero-copy processing).
- */
-void
-AudioBuffer::set_data(Sample* buf)
-{
-	assert(buf);
-	assert(!_joined_buf);
-	_data = buf;
 }
 
 

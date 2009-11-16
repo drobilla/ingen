@@ -41,7 +41,8 @@ public:
 		: PluginImpl(Plugin::Patch, uri)
 	{}
 
-	NodeImpl* instantiate(const std::string& name,
+	NodeImpl* instantiate(BufferFactory& bufs,
+	                      const std::string& name,
 	                      bool               polyphonic,
 	                      Ingen::PatchImpl*  parent,
 	                      Engine&            engine)

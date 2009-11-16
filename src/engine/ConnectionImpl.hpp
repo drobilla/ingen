@@ -18,17 +18,22 @@
 #ifndef CONNECTIONIMPL_H
 #define CONNECTIONIMPL_H
 
+#include <iostream>
 #include <cstdlib>
 #include <boost/utility.hpp>
 #include "raul/Deletable.hpp"
 #include "interface/DataType.hpp"
 #include "interface/Connection.hpp"
 #include "PortImpl.hpp"
+#include "PortImpl.hpp"
+
+using namespace std;
 
 namespace Ingen {
 
 class PortImpl;
 class Buffer;
+class BufferFactory;
 
 
 /** Represents a single inbound connection for an InputPort.
@@ -44,8 +49,7 @@ class Buffer;
 class ConnectionImpl : public Raul::Deletable, public Shared::Connection
 {
 public:
-	ConnectionImpl(PortImpl* src_port, PortImpl* dst_port);
-	virtual ~ConnectionImpl();
+	ConnectionImpl(BufferFactory& bufs, PortImpl* src_port, PortImpl* dst_port);
 
 	PortImpl* src_port() const { return _src_port; }
 	PortImpl* dst_port() const { return _dst_port; }
@@ -61,49 +65,35 @@ public:
 
 	/** Get the buffer for a particular voice.
 	 * A Connection is smart - it knows the destination port requesting the
-	 * buffer, and will return accordingly (ie the same buffer for every voice
-	 * in a mono->poly connection).
+	 * buffer, and will return accordingly (e.g. the same buffer for every
+	 * voice in a mono->poly connection).
 	 */
-	inline Buffer* buffer(uint32_t voice) const;
+	inline SharedPtr<Buffer> buffer(uint32_t voice) const {
+		if (must_mix()) {
+			return _local_buffer;
+		} else if ( ! _src_port->polyphonic()) {
+			return _src_port->buffer(0);
+		} else {
+			return _src_port->buffer(voice);
+		}
+	}
 
-	inline size_t buffer_size() const { return _buffer_size; }
-
-	void set_buffer_size(size_t size);
-	void prepare_poly(uint32_t poly);
+	void set_buffer_size(BufferFactory& bufs, size_t size);
+	void prepare_poly(BufferFactory& bufs, uint32_t poly);
 	void apply_poly(Raul::Maid& maid, uint32_t poly);
 
-	inline bool need_buffer() const { return must_mix(); }
-	inline bool can_direct() const { return _mode == DIRECT; }
-
-	Shared::DataType type() const { return _src_port->type(); }
+	/** Returns true if this connection must mix down voices into a local buffer */
+	inline bool must_mix() const { return _src_port->poly() > _dst_port->poly(); }
 
 protected:
-	enum { DIRECT, MIX, COPY, EXTEND } _mode;
-	void set_mode();
+	void dump() const;
 
-	bool must_copy() const;
-	bool must_mix() const;
-	bool must_extend() const;
-
-	PortImpl* const _src_port;
-	PortImpl* const _dst_port;
-	Buffer*         _local_buffer;
-	size_t          _buffer_size;
-	bool            _pending_disconnection;
+	BufferFactory&    _bufs;
+	PortImpl* const   _src_port;
+	PortImpl* const   _dst_port;
+	SharedPtr<Buffer> _local_buffer;
+	bool              _pending_disconnection;
 };
-
-
-inline Buffer*
-ConnectionImpl::buffer(uint32_t voice) const
-{
-	if (_mode == MIX) {
-		return _local_buffer;
-	} else if ( ! _src_port->polyphonic()) {
-		return _src_port->buffer(0);
-	} else {
-		return _src_port->buffer(voice);
-	}
-}
 
 
 } // namespace Ingen

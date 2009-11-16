@@ -70,9 +70,9 @@ LV2Node::~LV2Node()
 
 
 bool
-LV2Node::prepare_poly(uint32_t poly)
+LV2Node::prepare_poly(BufferFactory& bufs, uint32_t poly)
 {
-	NodeBase::prepare_poly(poly);
+	NodeBase::prepare_poly(bufs, poly);
 
 	if ( (!_polyphonic)
 			|| (_prepared_instances && poly <= _prepared_instances->size()) ) {
@@ -93,7 +93,7 @@ LV2Node::prepare_poly(uint32_t poly)
 		// Initialize the values of new ports
 		for (unsigned long j=0; j < num_ports(); ++j) {
 			PortImpl* const port = _ports->at(j);
-			Buffer *buffer = port->prepared_buffer(i);
+			Buffer* buffer = port->prepared_buffer(i).get();
 
 			// FIXME: Preserve individual voice values
 			if (port->type() == DataType::CONTROL) {
@@ -140,7 +140,7 @@ LV2Node::apply_poly(Raul::Maid& maid, uint32_t poly)
  * value is false, this object may not be used.
  */
 bool
-LV2Node::instantiate()
+LV2Node::instantiate(BufferFactory& bufs)
 {
 	SharedPtr<LV2Info> info = _lv2_plugin->lv2_info();
 	SLV2Plugin         plug = _lv2_plugin->slv2_plugin();
@@ -210,7 +210,7 @@ LV2Node::instantiate()
 		DataType data_type = DataType::UNKNOWN;
 		if (slv2_port_is_a(plug, id, info->control_class)) {
 			data_type = DataType::CONTROL;
-			port_buffer_size = 1;
+			port_buffer_size = sizeof(Sample);
 		} else if (slv2_port_is_a(plug, id, info->audio_class)) {
 			data_type = DataType::AUDIO;
 			port_buffer_size = _buffer_size;
@@ -266,12 +266,12 @@ LV2Node::instantiate()
 			val = isnan(def_values[j]) ? 0.0f : def_values[j];
 
 		if (direction == INPUT)
-			port = new InputPort(this, port_name, j, _polyphony, data_type, val, port_buffer_size);
+			port = new InputPort(bufs, this, port_name, j, _polyphony, data_type, val, port_buffer_size);
 		else
-			port = new OutputPort(this, port_name, j, _polyphony, data_type, val, port_buffer_size);
+			port = new OutputPort(bufs, this, port_name, j, _polyphony, data_type, val, port_buffer_size);
 
 		if (direction == INPUT && data_type == DataType::CONTROL)
-			((AudioBuffer*)port->buffer(0))->set_value(val.get_float(), 0, 0);
+			((AudioBuffer*)port->buffer(0).get())->set_value(val.get_float(), 0, 0);
 
 		SLV2Values contexts = slv2_port_get_value(plug, id, context_pred);
 		for (uint32_t i = 0; i < slv2_values_size(contexts); ++i) {
@@ -312,9 +312,9 @@ LV2Node::activate()
 			set_port_buffer(i, j, port->buffer(i));
 
 			if (port->type() == DataType::CONTROL) {
-				((AudioBuffer*)port->buffer(i))->set_value(port->value().get_float(), 0, 0);
+				((AudioBuffer*)port->buffer(i).get())->set_value(port->value().get_float(), 0, 0);
 			} else if (port->type() == DataType::AUDIO) {
-				((AudioBuffer*)port->buffer(i))->set_value(0.0f, 0, 0);
+				((AudioBuffer*)port->buffer(i).get())->set_value(0.0f, 0, 0);
 			}
 		}
 		slv2_instance_activate((*_instances)[i]);
@@ -361,10 +361,11 @@ LV2Node::process(ProcessContext& context)
 
 
 void
-LV2Node::set_port_buffer(uint32_t voice, uint32_t port_num, Buffer* buf)
+LV2Node::set_port_buffer(uint32_t voice, uint32_t port_num, SharedPtr<Buffer> buf)
 {
 	assert(voice < _polyphony);
-	slv2_instance_connect_port((*_instances)[voice], port_num, buf->raw_data());
+	slv2_instance_connect_port((*_instances)[voice], port_num,
+			buf->port_data(_ports->at(port_num)->type()));
 }
 
 

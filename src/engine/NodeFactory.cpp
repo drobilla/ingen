@@ -24,14 +24,14 @@
 #include "redlandmm/World.hpp"
 #include "raul/Atom.hpp"
 #include "module/World.hpp"
-#include "NodeFactory.hpp"
-#include "ThreadManager.hpp"
 #include "internals/Note.hpp"
 #include "internals/Trigger.hpp"
 #include "internals/Controller.hpp"
-#include "internals/Transport.hpp"
-#include "PatchImpl.hpp"
+#include "Engine.hpp"
 #include "InternalPlugin.hpp"
+#include "NodeFactory.hpp"
+#include "PatchImpl.hpp"
+#include "ThreadManager.hpp"
 #ifdef HAVE_LADSPA_H
 #include "LADSPANode.hpp"
 #include "LADSPAPlugin.hpp"
@@ -137,21 +137,22 @@ NodeFactory::load_plugins()
 void
 NodeFactory::load_internal_plugins()
 {
-	// This is a touch gross...
+	// FIXME: This is a touch gross...
 
-	PatchImpl* parent = new PatchImpl(*_world->local_engine, "dummy", 1, NULL, 1, 1, 1);
+	const SampleRate r = 48000;
+	const size_t     s = sizeof(Sample);
+
+	Engine& engine = *_world->local_engine;
+	PatchImpl* parent = new PatchImpl(engine, "dummy", 1, NULL, r, s, 1);
 
 	NodeImpl* n = NULL;
-	n = new NoteNode("foo", 1, parent, 1, 1);
+	n = new NoteNode(*engine.buffer_factory(), "foo", 1, parent, r, s);
 	_plugins.insert(make_pair(n->plugin_impl()->uri(), n->plugin_impl()));
 	delete n;
-	n = new TriggerNode("foo", 1, parent, 1, 1);
+	n = new TriggerNode(*engine.buffer_factory(), "foo", 1, parent, r, s);
 	_plugins.insert(make_pair(n->plugin_impl()->uri(), n->plugin_impl()));
 	delete n;
-	n = new ControllerNode("foo", 1, parent, 1, 1);
-	_plugins.insert(make_pair(n->plugin_impl()->uri(), n->plugin_impl()));
-	delete n;
-	n = new TransportNode("foo", 1, parent, 1, 1);
+	n = new ControllerNode(*engine.buffer_factory(), "foo", 1, parent, r, s);
 	_plugins.insert(make_pair(n->plugin_impl()->uri(), n->plugin_impl()));
 	delete n;
 

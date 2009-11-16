@@ -38,36 +38,37 @@ using namespace Shared;
 
 static InternalPlugin controller_plugin(NS_INTERNALS "Controller", "controller");
 
-ControllerNode::ControllerNode(const string& path,
-                               bool          polyphonic,
-                               PatchImpl*    parent,
-                               SampleRate    srate,
-                               size_t        buffer_size)
+ControllerNode::ControllerNode(BufferFactory& bufs,
+                               const string&  path,
+                               bool           polyphonic,
+                               PatchImpl*     parent,
+                               SampleRate     srate,
+                               size_t         buffer_size)
 	: NodeBase(&controller_plugin, path, false, parent, srate, buffer_size)
 	, _learning(false)
 {
 	_ports = new Raul::Array<PortImpl*>(6);
 
-	_midi_in_port = new InputPort(this, "input", 0, 1, DataType::EVENTS, Raul::Atom(), _buffer_size);
+	_midi_in_port = new InputPort(bufs, this, "input", 0, 1, DataType::EVENTS, Raul::Atom(), _buffer_size);
 	_ports->at(0) = _midi_in_port;
 
-	_param_port = new InputPort(this, "controller", 1, 1, DataType::CONTROL, 0.0f, 1);
+	_param_port = new InputPort(bufs, this, "controller", 1, 1, DataType::CONTROL, 0.0f, sizeof(Sample));
 	_param_port->set_property("lv2:minimum", 0.0f);
 	_param_port->set_property("lv2:maximum", 127.0f);
 	_param_port->set_property("lv2:integer", true);
 	_ports->at(1) = _param_port;
 
-	_log_port = new InputPort(this, "logarithmic", 2, 1, DataType::CONTROL, 0.0f, 1);
+	_log_port = new InputPort(bufs, this, "logarithmic", 2, 1, DataType::CONTROL, 0.0f, sizeof(Sample));
 	_log_port->set_property("lv2:toggled", true);
 	_ports->at(2) = _log_port;
 
-	_min_port = new InputPort(this, "minimum", 3, 1, DataType::CONTROL, 0.0f, 1);
+	_min_port = new InputPort(bufs, this, "minimum", 3, 1, DataType::CONTROL, 0.0f, sizeof(Sample));
 	_ports->at(3) = _min_port;
 
-	_max_port = new InputPort(this, "maximum", 4, 1, DataType::CONTROL, 1.0f, 1);
+	_max_port = new InputPort(bufs, this, "maximum", 4, 1, DataType::CONTROL, 1.0f, sizeof(Sample));
 	_ports->at(4) = _max_port;
 
-	_audio_port = new OutputPort(this, "ar_output", 5, 1, DataType::AUDIO, 0.0f, _buffer_size);
+	_audio_port = new OutputPort(bufs, this, "ar_output", 5, 1, DataType::AUDIO, 0.0f, _buffer_size);
 	_ports->at(5) = _audio_port;
 }
 
@@ -83,7 +84,7 @@ ControllerNode::process(ProcessContext& context)
 	uint16_t size = 0;
 	uint8_t* buf = NULL;
 
-	EventBuffer* const midi_in = (EventBuffer*)_midi_in_port->buffer(0);
+	EventBuffer* const midi_in = (EventBuffer*)_midi_in_port->buffer(0).get();
 
 	midi_in->rewind();
 
@@ -110,15 +111,15 @@ ControllerNode::control(ProcessContext& context, uint8_t control_num, uint8_t va
 
 	if (_learning) {
 		_param_port->set_value(control_num);
-		((AudioBuffer*)_param_port->buffer(0))->set_value(
+		((AudioBuffer*)_param_port->buffer(0).get())->set_value(
 				(float)control_num, context.start(), context.end());
 		_param_port->broadcast_value(context, true);
 		_learning = false;
 	}
 
-	const Sample min_port_val = ((AudioBuffer*)_min_port->buffer(0))->value_at(0);
-	const Sample max_port_val = ((AudioBuffer*)_max_port->buffer(0))->value_at(0);
-	const Sample log_port_val = ((AudioBuffer*)_log_port->buffer(0))->value_at(0);
+	const Sample min_port_val = ((AudioBuffer*)_min_port->buffer(0).get())->value_at(0);
+	const Sample max_port_val = ((AudioBuffer*)_max_port->buffer(0).get())->value_at(0);
+	const Sample log_port_val = ((AudioBuffer*)_log_port->buffer(0).get())->value_at(0);
 
 	if (log_port_val > 0.0f) {
 		// haaaaack, stupid negatives and logarithms
@@ -132,8 +133,8 @@ ControllerNode::control(ProcessContext& context, uint8_t control_num, uint8_t va
 		scaled_value = ((nval) * (max_port_val - min_port_val)) + min_port_val;
 	}
 
-	if (control_num == ((AudioBuffer*)_param_port->buffer(0))->value_at(0))
-		((AudioBuffer*)_audio_port->buffer(0))->set_value(scaled_value, context.start(), time);
+	if (control_num == ((AudioBuffer*)_param_port->buffer(0).get())->value_at(0))
+		((AudioBuffer*)_audio_port->buffer(0).get())->set_value(scaled_value, context.start(), time);
 }
 
 

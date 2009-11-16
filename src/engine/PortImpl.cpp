@@ -24,6 +24,7 @@
 #include "AudioBuffer.hpp"
 #include "EventBuffer.hpp"
 #include "Engine.hpp"
+#include "BufferFactory.hpp"
 #include "LV2Object.hpp"
 #include "NodeImpl.hpp"
 #include "ObjectBuffer.hpp"
@@ -38,7 +39,8 @@ namespace Ingen {
 using namespace Shared;
 
 
-PortImpl::PortImpl(NodeImpl* const node,
+PortImpl::PortImpl(BufferFactory&  bufs,
+                   NodeImpl* const node,
                    const string&   name,
                    uint32_t        index,
                    uint32_t        poly,
@@ -46,23 +48,27 @@ PortImpl::PortImpl(NodeImpl* const node,
                    const Atom&     value,
                    size_t          buffer_size)
 	: GraphObjectImpl(node, name, (type == DataType::AUDIO || type == DataType::CONTROL))
+	, _bufs(bufs)
 	, _index(index)
 	, _poly(poly)
 	, _buffer_size(buffer_size)
 	, _type(type)
 	, _value(value)
-	, _fixed_buffers(false)
 	, _broadcast(false)
 	, _set_by_user(false)
 	, _last_broadcasted_value(_value.type() == Atom::FLOAT ? _value.get_float() : 0.0f) // default?
 	, _context(Context::AUDIO)
-	, _buffers(new Array<Buffer*>(poly))
+	, _buffers(new Array< SharedPtr<Buffer> >(poly))
 	, _prepared_buffers(NULL)
 {
 	assert(node != NULL);
 	assert(_poly > 0);
 
-	allocate_buffers();
+	_buffers->alloc(_poly);
+	for (uint32_t v = 0; v < _poly; ++v)
+		_buffers->at(v) = bufs.get(_type, _buffer_size);
+
+	_prepared_buffers = _buffers;
 
 	if (node->parent() == NULL)
 		_polyphonic = false;
@@ -80,9 +86,8 @@ PortImpl::PortImpl(NodeImpl* const node,
 
 PortImpl::~PortImpl()
 {
-	if (!_fixed_buffers)
-		for (uint32_t i=0; i < _poly; ++i)
-			delete _buffers->at(i);
+	for (uint32_t v = 0; v < _poly; ++v)
+		_buffers->at(v).reset();
 
 	delete _buffers;
 }
@@ -99,16 +104,16 @@ PortImpl::set_polyphonic(Maid& maid, bool p)
 
 
 bool
-PortImpl::prepare_poly(uint32_t poly)
+PortImpl::prepare_poly(BufferFactory& bufs, uint32_t poly)
 {
 	if (!_polyphonic || !_parent->polyphonic())
 		return true;
 
 	/* FIXME: poly never goes down, harsh on memory.. */
 	if (poly > _poly) {
-		_prepared_buffers = new Array<Buffer*>(poly, *_buffers);
+		_prepared_buffers = new Array< SharedPtr<Buffer> >(poly, *_buffers);
 		for (uint32_t i = _poly; i < _prepared_buffers->size(); ++i)
-			_prepared_buffers->at(i) = Buffer::create(_type, _buffer_size);
+			_prepared_buffers->at(i) = bufs.get(_type, _buffer_size);
 	}
 
 	return true;
@@ -138,24 +143,12 @@ PortImpl::apply_poly(Maid& maid, uint32_t poly)
 
 
 void
-PortImpl::allocate_buffers()
-{
-	_buffers->alloc(_poly);
-
-	for (uint32_t i=0; i < _poly; ++i)
-		_buffers->at(i) = Buffer::create(_type, _buffer_size);
-
-	_prepared_buffers = _buffers;
-}
-
-
-void
-PortImpl::set_buffer_size(size_t size)
+PortImpl::set_buffer_size(BufferFactory& bufs, size_t size)
 {
 	_buffer_size = size;
 
-	for (uint32_t i=0; i < _poly; ++i)
-		_buffers->at(i)->resize(size);
+	for (uint32_t v = 0; v < _poly; ++v)
+		_buffers->at(v)->resize(size);
 
 	connect_buffers();
 }
@@ -164,16 +157,16 @@ PortImpl::set_buffer_size(size_t size)
 void
 PortImpl::connect_buffers()
 {
-	for (uint32_t i=0; i < _poly; ++i)
-		PortImpl::parent_node()->set_port_buffer(i, _index, buffer(i));
+	for (uint32_t v = 0; v < _poly; ++v)
+		PortImpl::parent_node()->set_port_buffer(v, _index, buffer(v));
 }
 
 
 void
 PortImpl::clear_buffers()
 {
-	for (uint32_t i=0; i < _poly; ++i)
-		buffer(i)->clear();
+	for (uint32_t v = 0; v < _poly; ++v)
+		buffer(v)->clear();
 }
 
 
@@ -186,16 +179,16 @@ PortImpl::broadcast_value(Context& context, bool force)
 		break;
 	case DataType::AUDIO:
 	case DataType::CONTROL:
-		val = ((AudioBuffer*)buffer(0))->value_at(0);
+		val = ((AudioBuffer*)buffer(0).get())->value_at(0);
 		break;
 	case DataType::EVENTS:
-		if (((EventBuffer*)buffer(0))->event_count() > 0) {
+		if (((EventBuffer*)buffer(0).get())->event_count() > 0) {
 			const Events::SendPortActivity ev(context.engine(), context.start(), this);
 			context.event_sink().write(sizeof(ev), &ev);
 		}
 		break;
 	case DataType::VALUE:
-		LV2Object::to_atom(context.engine().world(), ((ObjectBuffer*)buffer(0))->data(), val);
+		LV2Object::to_atom(context.engine().world(), ((ObjectBuffer*)buffer(0).get())->object(), val);
 		break;
 	}
 

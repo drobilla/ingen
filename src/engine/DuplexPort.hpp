@@ -39,7 +39,8 @@ class NodeImpl;
 class DuplexPort : public InputPort, public OutputPort
 {
 public:
-	DuplexPort(NodeImpl*          parent,
+	DuplexPort(BufferFactory&     bufs,
+	           NodeImpl*          parent,
 	           const std::string& name,
 	           uint32_t           index,
 	           uint32_t           poly,

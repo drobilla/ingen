@@ -35,39 +35,11 @@ using namespace Shared;
  */
 EventBuffer::EventBuffer(size_t capacity)
 	: Buffer(DataType(DataType::EVENTS), capacity)
-	, _local_buf(new LV2EventBuffer(capacity))
+	, _buf(new LV2EventBuffer(capacity))
 {
-	_buf = _local_buf;
 	clear();
 
-	//cerr << "Creating MIDI Buffer " << _buf << ", capacity = " << _buf->capacity << endl;
-}
-
-
-/** Use another buffer's data instead of the local one.
- *
- * This buffer will essentially be identical to @a buf after this call.
- */
-bool
-EventBuffer::join(Buffer* buf)
-{
-	assert(buf != this);
-	EventBuffer* ebuf = dynamic_cast<EventBuffer*>(buf);
-	if (!ebuf)
-		return false;
-
-	_buf = ebuf->_local_buf;
-	_joined_buf = ebuf;
-
-	return true;
-}
-
-
-void
-EventBuffer::unjoin()
-{
-	_joined_buf = NULL;
-	_buf = _local_buf;
+	//cerr << "Creating Event Buffer " << _buf << ", capacity = " << _buf->capacity << endl;
 }
 
 
@@ -98,6 +70,12 @@ EventBuffer::copy(Context& context, const Buffer* src_buf)
 
 	_buf->copy(*src->_buf);
 	assert(event_count() == src->event_count());
+}
+
+
+void
+EventBuffer::mix(Context& context, const Buffer* src)
+{
 }
 
 

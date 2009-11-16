@@ -158,11 +158,11 @@ QueuedEngineInterface::put(const URI&                  uri,
 	bool meta = uri.substr(0, 6) == "meta:#";
 	URI  subject(meta ? (string("path:/") + uri.substr(6)) : uri.str());
 
-	cerr << "ENGINE PUT " << subject << " {" << endl;
+	/*cerr << "ENGINE PUT " << subject << " {" << endl;
 	typedef Resource::Properties::const_iterator iterator;
 	for (iterator i = properties.begin(); i != properties.end(); ++i)
 		cerr << "\t" << i->first << " = " << i->second << " :: " << i->second.type() << endl;
-	cerr << "}" << endl;
+	cerr << "}" << endl;*/
 
 	push_queued(new Events::SetMetadata(_engine, _responder, now(), this, true, meta, subject, properties));
 }

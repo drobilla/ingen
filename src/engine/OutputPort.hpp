@@ -39,7 +39,8 @@ namespace Ingen {
 class OutputPort : virtual public PortImpl
 {
 public:
-	OutputPort(NodeImpl*          parent,
+	OutputPort(BufferFactory&     bufs,
+	           NodeImpl*          parent,
 	           const std::string& name,
 	           uint32_t           index,
 	           uint32_t           poly,

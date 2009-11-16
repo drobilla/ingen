@@ -36,6 +36,7 @@ namespace Ingen {
 class NodeImpl;
 class Buffer;
 class ProcessContext;
+class BufferFactory;
 
 
 /** A port on a Node.
@@ -49,8 +50,6 @@ class ProcessContext;
 class PortImpl : public GraphObjectImpl, public Ingen::Shared::Port
 {
 public:
-	virtual ~PortImpl();
-
 	/** A port's parent is always a node, so static cast should be safe */
 	NodeImpl* parent_node() const { return (NodeImpl*)_parent; }
 
@@ -60,7 +59,7 @@ public:
 	 *
 	 * Preprocessor thread, poly is actually applied by apply_poly.
 	 */
-	virtual bool prepare_poly(uint32_t poly);
+	virtual bool prepare_poly(BufferFactory& bufs, uint32_t poly);
 
 	/** Apply a new polyphony value.
 	 *
@@ -73,16 +72,10 @@ public:
 	const Raul::Atom& value() const { return _value; }
 	void              set_value(const Raul::Atom& v) { _value = v; }
 
-	inline Buffer* buffer(uint32_t voice) const {
-		Buffer* const buf = _buffers->at(voice);
-		if (buf->is_joined()) {
-			assert(buf->joined_buffer());
-			return buf->joined_buffer();
-		} else {
-			return buf;
-		}
+	inline SharedPtr<Buffer> buffer(uint32_t voice) const {
+		return _buffers->at(voice);
 	}
-	inline Buffer* prepared_buffer(uint32_t voice) const {
+	inline SharedPtr<Buffer> prepared_buffer(uint32_t voice) const {
 		return _prepared_buffers->at(voice);
 	}
 
@@ -105,10 +98,7 @@ public:
 		return (_type == Shared::DataType::CONTROL) ? 1 : _buffer_size;
 	}
 
-	virtual void set_buffer_size(size_t size);
-
-	void fixed_buffers(bool b) { _fixed_buffers = b; }
-	bool fixed_buffers()       { return _fixed_buffers; }
+	void set_buffer_size(BufferFactory& factory, size_t size);
 
 	void broadcast(bool b) { _broadcast = b; }
 	bool broadcast()       { return _broadcast; }
@@ -121,7 +111,8 @@ public:
 	void        set_context(Context::ID c) { _context = c; }
 
 protected:
-	PortImpl(NodeImpl*          node,
+	PortImpl(BufferFactory&     bufs,
+	         NodeImpl*          node,
 	         const std::string& name,
 	         uint32_t           index,
 	         uint32_t           poly,
@@ -129,23 +120,24 @@ protected:
 	         const Raul::Atom&  value,
 	         size_t             buffer_size);
 
-	virtual void allocate_buffers();
-
+	BufferFactory&   _bufs;
 	uint32_t         _index;
 	uint32_t         _poly;
 	uint32_t         _buffer_size;
 	Shared::DataType _type;
 	Raul::Atom       _value;
-	bool             _fixed_buffers;
 	bool             _broadcast;
 	bool             _set_by_user;
 	Raul::Atom       _last_broadcasted_value;
 
-	Context::ID           _context;
-	Raul::Array<Buffer*>* _buffers;
+	Context::ID                       _context;
+	Raul::Array< SharedPtr<Buffer> >* _buffers;
 
 	// Dynamic polyphony
-	Raul::Array<Buffer*>* _prepared_buffers;
+	Raul::Array< SharedPtr<Buffer> >* _prepared_buffers;
+
+	friend class Engine;
+	virtual ~PortImpl();
 };
 
 

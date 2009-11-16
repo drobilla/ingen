@@ -133,7 +133,7 @@ Connect::pre_process()
 		return;
 	}
 
-	_connection = SharedPtr<ConnectionImpl>(new ConnectionImpl(_src_port, _dst_port));
+	_connection = SharedPtr<ConnectionImpl>(new ConnectionImpl(*_engine.buffer_factory(), _src_port, _dst_port));
 	_patch_listnode = new PatchImpl::Connections::Node(_connection);
 	_port_listnode = new InputPort::Connections::Node(_connection);
 

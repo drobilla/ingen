@@ -32,6 +32,7 @@ namespace Ingen {
 class PatchImpl;
 class NodeImpl;
 class Engine;
+class BufferFactory;
 
 
 /** Implementation of a plugin (internal code, or a loaded shared library).
@@ -50,7 +51,8 @@ public:
 		, _module(NULL)
 	{}
 
-	virtual NodeImpl* instantiate(const std::string& name,
+	virtual NodeImpl* instantiate(BufferFactory&     bufs,
+	                              const std::string& name,
 	                              bool               polyphonic,
 	                              Ingen::PatchImpl*  parent,
 	                              Engine&            engine) = 0;

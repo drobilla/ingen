@@ -20,7 +20,6 @@
 #include "internals/Note.hpp"
 #include "internals/Trigger.hpp"
 #include "internals/Controller.hpp"
-#include "internals/Transport.hpp"
 #include "Engine.hpp"
 #include "AudioDriver.hpp"
 
@@ -40,7 +39,8 @@ InternalPlugin::InternalPlugin(const std::string& uri, const std::string& symbol
 
 
 NodeImpl*
-InternalPlugin::instantiate(const string&     name,
+InternalPlugin::instantiate(BufferFactory&    bufs,
+                            const string&     name,
                             bool              polyphonic,
                             Ingen::PatchImpl* parent,
                             Engine&           engine)
@@ -52,13 +52,11 @@ InternalPlugin::instantiate(const string&     name,
 
 	const string uri_str = uri().str();
 	if (uri_str == NS_INTERNALS "Note") {
-		return new NoteNode(name, polyphonic, parent, srate, buffer_size);
+		return new NoteNode(bufs, name, polyphonic, parent, srate, buffer_size);
 	} else if (uri_str == NS_INTERNALS "Trigger") {
-		return new TriggerNode(name, polyphonic, parent, srate, buffer_size);
+		return new TriggerNode(bufs, name, polyphonic, parent, srate, buffer_size);
 	} else if (uri_str == NS_INTERNALS "Controller") {
-		return new ControllerNode(name, polyphonic, parent, srate, buffer_size);
-	} else if (uri_str == NS_INTERNALS "Transport") {
-		return new TransportNode(name, polyphonic, parent, srate, buffer_size);
+		return new ControllerNode(bufs, name, polyphonic, parent, srate, buffer_size);
 	} else {
 		return NULL;
 	}

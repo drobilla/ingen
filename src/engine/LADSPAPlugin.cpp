@@ -58,7 +58,8 @@ LADSPAPlugin::get_property(const Raul::URI& uri) const
 
 
 NodeImpl*
-LADSPAPlugin::instantiate(const string&     name,
+LADSPAPlugin::instantiate(BufferFactory&    bufs,
+                          const string&     name,
                           bool              polyphonic,
                           Ingen::PatchImpl* parent,
                           Engine&           engine)
@@ -97,7 +98,7 @@ LADSPAPlugin::instantiate(const string&     name,
 	if (descriptor != NULL) {
 		n = new LADSPANode(this, name, polyphonic, parent, descriptor, srate, buffer_size);
 
-		if ( ! n->instantiate() ) {
+		if ( ! n->instantiate(bufs) ) {
 			delete n;
 			n = NULL;
 		}

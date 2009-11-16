@@ -35,30 +35,30 @@ using namespace Shared;
 
 static InternalPlugin trigger_plugin(NS_INTERNALS "Trigger", "trigger");
 
-TriggerNode::TriggerNode(const string& path, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size)
+TriggerNode::TriggerNode(BufferFactory& bufs, const string& path, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size)
 	: NodeBase(&trigger_plugin, path, false, parent, srate, buffer_size)
 	, _learning(false)
 {
 	_ports = new Raul::Array<PortImpl*>(5);
 
-	_midi_in_port = new InputPort(this, "input", 0, 1, DataType::EVENTS, Raul::Atom(), _buffer_size);
+	_midi_in_port = new InputPort(bufs, this, "input", 0, 1, DataType::EVENTS, Raul::Atom(), _buffer_size);
 	_ports->at(0) = _midi_in_port;
 
-	_note_port = new InputPort(this, "note", 1, 1, DataType::CONTROL, 60.0f, 1);
+	_note_port = new InputPort(bufs, this, "note", 1, 1, DataType::CONTROL, 60.0f, sizeof(Sample));
 	_note_port->set_property("lv2:minimum", 0.0f);
 	_note_port->set_property("lv2:maximum", 127.0f);
 	_note_port->set_property("lv2:integer", true);
 	_ports->at(1) = _note_port;
 
-	_gate_port = new OutputPort(this, "gate", 2, 1, DataType::AUDIO, 0.0f, _buffer_size);
+	_gate_port = new OutputPort(bufs, this, "gate", 2, 1, DataType::AUDIO, 0.0f, _buffer_size);
 	_gate_port->set_property("lv2:toggled", true);
 	_ports->at(2) = _gate_port;
 
-	_trig_port = new OutputPort(this, "trigger", 3, 1, DataType::AUDIO, 0.0f, _buffer_size);
+	_trig_port = new OutputPort(bufs, this, "trigger", 3, 1, DataType::AUDIO, 0.0f, _buffer_size);
 	_trig_port->set_property("lv2:toggled", true);
 	_ports->at(3) = _trig_port;
 
-	_vel_port = new OutputPort(this, "velocity", 4, 1, DataType::AUDIO, 0.0f, _buffer_size);
+	_vel_port = new OutputPort(bufs, this, "velocity", 4, 1, DataType::AUDIO, 0.0f, _buffer_size);
 	_vel_port->set_property("lv2:minimum", 0.0f);
 	_vel_port->set_property("lv2:maximum", 1.0f);
 	_ports->at(4) = _vel_port;
@@ -76,7 +76,7 @@ TriggerNode::process(ProcessContext& context)
 	uint16_t size = 0;
 	uint8_t* buf = NULL;
 
-	EventBuffer* const midi_in = (EventBuffer*)_midi_in_port->buffer(0);
+	EventBuffer* const midi_in = (EventBuffer*)_midi_in_port->buffer(0).get();
 
 	midi_in->rewind();
 
@@ -97,7 +97,7 @@ TriggerNode::process(ProcessContext& context)
 			case MIDI_CMD_CONTROL:
 				if (buf[1] == MIDI_CTL_ALL_NOTES_OFF
 						|| buf[1] == MIDI_CTL_ALL_SOUNDS_OFF)
-					((AudioBuffer*)_gate_port->buffer(0))->set_value(0.0f, context.start(), time);
+					((AudioBuffer*)_gate_port->buffer(0).get())->set_value(0.0f, context.start(), time);
 			default:
 				break;
 			}
@@ -118,7 +118,7 @@ TriggerNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity
 
 	if (_learning) {
 		_note_port->set_value(note_num);
-		((AudioBuffer*)_note_port->buffer(0))->set_value(
+		((AudioBuffer*)_note_port->buffer(0).get())->set_value(
 				(float)note_num, context.start(), context.end());
 		_note_port->broadcast_value(context, true);
 		_learning = false;
@@ -126,13 +126,13 @@ TriggerNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity
 
 	/*cerr << "[TriggerNode] " << path() << " Note " << (int)note_num << " on @ " << time << endl;*/
 
-	Sample filter_note = ((AudioBuffer*)_note_port->buffer(0))->value_at(0);
+	Sample filter_note = ((AudioBuffer*)_note_port->buffer(0).get())->value_at(0);
 	if (filter_note >= 0.0 && filter_note < 127.0 && (note_num == (uint8_t)filter_note)) {
-		((AudioBuffer*)_gate_port->buffer(0))->set_value(1.0f, context.start(), time);
-		((AudioBuffer*)_trig_port->buffer(0))->set_value(1.0f, context.start(), time);
-		((AudioBuffer*)_trig_port->buffer(0))->set_value(0.0f, context.start(), time + 1);
-		((AudioBuffer*)_vel_port->buffer(0))->set_value(velocity / 127.0f, context.start(), time);
-		assert(((AudioBuffer*)_trig_port->buffer(0))->data()[time - context.start()] == 1.0f);
+		((AudioBuffer*)_gate_port->buffer(0).get())->set_value(1.0f, context.start(), time);
+		((AudioBuffer*)_trig_port->buffer(0).get())->set_value(1.0f, context.start(), time);
+		((AudioBuffer*)_trig_port->buffer(0).get())->set_value(0.0f, context.start(), time + 1);
+		((AudioBuffer*)_vel_port->buffer(0).get())->set_value(velocity / 127.0f, context.start(), time);
+		assert(((AudioBuffer*)_trig_port->buffer(0).get())->data()[time - context.start()] == 1.0f);
 	}
 }
 
@@ -143,8 +143,8 @@ TriggerNode::note_off(ProcessContext& context, uint8_t note_num, FrameTime time)
 	assert(time >= context.start() && time <= context.end());
 	assert(time - context.start() < _buffer_size);
 
-	if (note_num == lrintf(((AudioBuffer*)_note_port->buffer(0))->value_at(0)))
-		((AudioBuffer*)_gate_port->buffer(0))->set_value(0.0f, context.start(), time);
+	if (note_num == lrintf(((AudioBuffer*)_note_port->buffer(0).get())->value_at(0)))
+		((AudioBuffer*)_gate_port->buffer(0).get())->set_value(0.0f, context.start(), time);
 }
 
 

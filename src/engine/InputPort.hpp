@@ -46,7 +46,8 @@ class NodeImpl;
 class InputPort : virtual public PortImpl
 {
 public:
-	InputPort(NodeImpl*          parent,
+	InputPort(BufferFactory&     bufs,
+	          NodeImpl*          parent,
 	          const std::string& name,
 	          uint32_t           index,
 	          uint32_t           poly,
@@ -61,20 +62,20 @@ public:
 	void               add_connection(Connections::Node* c);
 	Connections::Node* remove_connection(const OutputPort* src_port);
 
-	bool prepare_poly(uint32_t poly);
+	void set_buffer_size(BufferFactory& bufs, size_t size);
+	bool prepare_poly(BufferFactory& bufs, uint32_t poly);
 	bool apply_poly(Raul::Maid& maid, uint32_t poly);
 
 	void pre_process(Context& context);
 	void post_process(Context& context);
 
-	bool is_connected() const { return (_connections.size() > 0); }
+	size_t num_connections() const { return _connections.size(); }
 
 	bool is_input()  const { return true; }
 	bool is_output() const { return false; }
 
-	virtual void set_buffer_size(size_t size);
-
 protected:
+	void connect_buffers();
 	bool can_direct() const;
 
 	Connections _connections;

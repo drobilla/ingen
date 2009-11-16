@@ -62,9 +62,9 @@ LADSPANode::~LADSPANode()
 
 
 bool
-LADSPANode::prepare_poly(uint32_t poly)
+LADSPANode::prepare_poly(BufferFactory& bufs, uint32_t poly)
 {
-	NodeBase::prepare_poly(poly);
+	NodeBase::prepare_poly(bufs, poly);
 
 	if ( (!_polyphonic)
 			|| (_prepared_instances && poly <= _prepared_instances->size()) ) {
@@ -82,7 +82,7 @@ LADSPANode::prepare_poly(uint32_t poly)
 		// Initialize the values of new ports
 		for (unsigned long j=0; j < num_ports(); ++j) {
 			PortImpl* const port = _ports->at(j);
-			Buffer *buffer = port->prepared_buffer(i);
+			Buffer* buffer = port->prepared_buffer(i).get();
 
 			// FIXME: Preserve individual voice values
 			if (port->type() == DataType::CONTROL) {
@@ -142,7 +142,7 @@ nameify_if_invalid(const string& name)
  * value is false, this object may not be used.
  */
 bool
-LADSPANode::instantiate()
+LADSPANode::instantiate(BufferFactory& bufs)
 {
 	if (!_ports)
 		_ports = new Raul::Array<PortImpl*>(_descriptor->PortCount);
@@ -193,11 +193,11 @@ LADSPANode::instantiate()
 		Path port_path(path().child(port_name));
 
 		DataType type = DataType::AUDIO;
-		port_buffer_size = _buffer_size;
+		port_buffer_size = _buffer_size * sizeof(Sample);
 
 		if (LADSPA_IS_PORT_CONTROL(_descriptor->PortDescriptors[j])) {
 			type = DataType::CONTROL;
-			port_buffer_size = 1;
+			port_buffer_size = sizeof(Sample);
 		} else {
 			assert(LADSPA_IS_PORT_AUDIO(_descriptor->PortDescriptors[j]));
 		}
@@ -210,10 +210,10 @@ LADSPANode::instantiate()
 		const float value = default_val ? default_val.get() : 0.0f;
 
 		if (LADSPA_IS_PORT_INPUT(_descriptor->PortDescriptors[j])) {
-			port = new InputPort(this, port_name, j, _polyphony, type, value, port_buffer_size);
+			port = new InputPort(bufs, this, port_name, j, _polyphony, type, value, port_buffer_size);
 			_ports->at(j) = port;
 		} else if (LADSPA_IS_PORT_OUTPUT(_descriptor->PortDescriptors[j])) {
-			port = new OutputPort(this, port_name, j, _polyphony, type, value, port_buffer_size);
+			port = new OutputPort(bufs, this, port_name, j, _polyphony, type, value, port_buffer_size);
 			_ports->at(j) = port;
 		}
 
@@ -236,7 +236,7 @@ LADSPANode::instantiate()
 		// Set initial/default value
 		if (port->buffer_size() == 1) {
 			for (uint32_t i=0; i < _polyphony; ++i)
-				((AudioBuffer*)port->buffer(i))->set_value(value, 0, 0);
+				((AudioBuffer*)port->buffer(i).get())->set_value(value, 0, 0);
 		}
 
 		if (port->is_input() && port->buffer_size() == 1) {
@@ -265,9 +265,9 @@ LADSPANode::activate()
 			set_port_buffer(i, j, port->buffer(i));
 
 			if (port->type() == DataType::CONTROL) {
-				((AudioBuffer*)port->buffer(i))->set_value(port->value().get_float(), 0, 0);
+				((AudioBuffer*)port->buffer(i).get())->set_value(port->value().get_float(), 0, 0);
 			} else if (port->type() == DataType::AUDIO) {
-				((AudioBuffer*)port->buffer(i))->set_value(0.0f, 0, 0);
+				((AudioBuffer*)port->buffer(i).get())->set_value(0.0f, 0, 0);
 			}
 		}
 		if (_descriptor->activate != NULL)
@@ -300,16 +300,11 @@ LADSPANode::process(ProcessContext& context)
 
 
 void
-LADSPANode::set_port_buffer(uint32_t voice, uint32_t port_num, Buffer* buf)
+LADSPANode::set_port_buffer(uint32_t voice, uint32_t port_num, SharedPtr<Buffer> buf)
 {
 	assert(voice < _polyphony);
-
-	AudioBuffer* audio_buffer = dynamic_cast<AudioBuffer*>(buf);
-	assert(audio_buffer);
-
-	if (port_num < _descriptor->PortCount)
-		_descriptor->connect_port((*_instances)[voice], port_num,
-			audio_buffer->data());
+	_descriptor->connect_port((*_instances)[voice], port_num,
+			(LADSPA_Data*)buf->port_data(_ports->at(port_num)->type()));
 }
 
 

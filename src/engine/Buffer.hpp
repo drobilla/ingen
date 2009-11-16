@@ -22,12 +22,14 @@
 #include <cassert>
 #include <boost/utility.hpp>
 #include "raul/Deletable.hpp"
+#include "raul/SharedPtr.hpp"
 #include "types.hpp"
 #include "interface/DataType.hpp"
 
 namespace Ingen {
 
 class Context;
+class Engine;
 
 class Buffer : public boost::noncopyable, public Raul::Deletable
 {
@@ -35,34 +37,24 @@ public:
 	Buffer(Shared::DataType type, size_t size)
 		: _type(type)
 		, _size(size)
-		, _joined_buf(NULL)
 	{}
-
-	virtual ~Buffer() {}
-
-	static Buffer* create(Shared::DataType type, size_t size);
 
 	/** Clear contents and reset state */
 	virtual void clear() = 0;
 
 	virtual void resize(size_t size) { _size = size; }
 
-	virtual void*       raw_data()       = 0;
-	virtual const void* raw_data() const = 0;
+	virtual void*       port_data(Shared::DataType port_type) = 0;
+	virtual const void* port_data(Shared::DataType port_type) const = 0;
 
 	/** Rewind (ie reset read pointer), but leave contents unchanged */
 	virtual void rewind() const {}
 
 	virtual void copy(Context& context, const Buffer* src) = 0;
+	virtual void mix(Context& context, const Buffer* src) = 0;
 
 	virtual void prepare_read(Context& context) {}
 	virtual void prepare_write(Context& context) {}
-
-	bool    is_joined()     const { return (_joined_buf != NULL); }
-	Buffer* joined_buffer() const { return _joined_buf; }
-
-	virtual bool join(Buffer* buf) = 0;
-	virtual void unjoin() = 0;
 
 	Shared::DataType type() const { return _type; }
 	size_t           size() const { return _size; }
@@ -70,7 +62,13 @@ public:
 protected:
 	Shared::DataType _type;
 	size_t           _size;
-	Buffer*          _joined_buf;
+	bool             _local;
+
+	friend class BufferFactory;
+	virtual ~Buffer() {}
+
+private:
+	Buffer* _next; ///< Intrusive linked list for BufferFactory
 };
 
 

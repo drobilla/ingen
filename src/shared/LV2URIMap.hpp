@@ -63,6 +63,7 @@ public:
 	const uint32_t object_class_string;
 	const uint32_t object_class_int32;
 	const uint32_t object_class_float32;
+	const uint32_t object_class_vector;
 	const uint32_t ui_format_events;
 	const uint32_t midi_event;
 	const uint32_t string_transfer;

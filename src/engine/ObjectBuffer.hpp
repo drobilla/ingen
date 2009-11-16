@@ -33,22 +33,19 @@ public:
 
 	void clear();
 
-	void*       raw_data()       { return (void*)_buf; }
-	const void* raw_data() const { return (void*)_buf; }
-
-	LV2_Object*       data()       { return _buf; }
-	const LV2_Object* data() const { return _buf; }
-
-	bool join(Buffer* buf);
-	void unjoin();
+	void*       port_data(Shared::DataType port_type);
+	const void* port_data(Shared::DataType port_type) const;
 
 	void copy(Context& context, const Buffer* src);
+	void mix(Context& context, const Buffer* src) {}
 
 	void resize(size_t size);
 
+	LV2_Object*       object()       { return _buf; }
+	const LV2_Object* object() const { return _buf; }
+
 private:
-	LV2_Object* _buf;       ///< Contents (_local_buf or belongs to _joined_buf)
-	LV2_Object* _local_buf; ///< Local contents
+	LV2_Object* _buf; ///< Contents
 };
 
 

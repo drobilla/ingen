@@ -4,7 +4,7 @@ import autowaf
 def build(bld):
 	core_source = '''
 		AudioBuffer.cpp
-		Buffer.cpp
+		BufferFactory.cpp
 		ClientBroadcaster.cpp
 		ConnectionImpl.cpp
 		DuplexPort.cpp
@@ -34,7 +34,6 @@ def build(bld):
 		ingen_engine.cpp
 		internals/Controller.cpp
 		internals/Note.cpp
-		internals/Transport.cpp
 		internals/Trigger.cpp
 	'''
 

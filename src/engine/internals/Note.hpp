@@ -39,10 +39,10 @@ namespace Internals {
 class NoteNode : public NodeBase
 {
 public:
-	NoteNode(const std::string& path, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size);
+	NoteNode(BufferFactory& bufs, const std::string& path, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size);
 	~NoteNode();
 
-	bool prepare_poly(uint32_t poly);
+	bool prepare_poly(BufferFactory& bufs, uint32_t poly);
 	bool apply_poly(Raul::Maid& maid, uint32_t poly);
 
 	void process(ProcessContext& context);

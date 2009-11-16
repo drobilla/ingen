@@ -60,7 +60,7 @@ public:
 	virtual void deactivate();
 	bool activated() { return _activated; }
 
-	virtual bool prepare_poly(uint32_t poly);
+	virtual bool prepare_poly(BufferFactory& bufs, uint32_t poly);
 	virtual bool apply_poly(Raul::Maid& maid, uint32_t poly);
 
 	virtual void     reset_input_ready();
@@ -82,9 +82,9 @@ public:
 	virtual void process(ProcessContext& context) = 0;
 	virtual void post_process(Context& context);
 
-	virtual void set_port_buffer(uint32_t voice, uint32_t port_num, Buffer* buf) {}
+	virtual void set_port_buffer(uint32_t voice, uint32_t port_num, SharedPtr<Buffer> buf) {}
 
-	virtual void set_buffer_size(size_t size);
+	virtual void set_buffer_size(BufferFactory& bufs, size_t size);
 
 	SampleRate sample_rate() const { return _srate; }
 	size_t     buffer_size() const { return _buffer_size; }

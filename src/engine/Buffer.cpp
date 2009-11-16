@@ -15,6 +15,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <algorithm>
 #include "AudioBuffer.hpp"
 #include "EventBuffer.hpp"
 #include "ObjectBuffer.hpp"
@@ -23,17 +24,20 @@ namespace Ingen {
 
 using namespace Shared;
 
+class Engine;
+
 Buffer*
-Buffer::create(DataType type, size_t size)
+Buffer::create(Engine& engine, Shared::DataType type, size_t size)
 {
 	if (type.is_control())
-		return new AudioBuffer(1);
+		return new AudioBuffer(type, size);
 	else if (type.is_audio())
-		return new AudioBuffer(size);
+		return new AudioBuffer(type, size);
 	else if (type.is_events())
 		return new EventBuffer(size);
 	else if (type.is_value())
-		return new ObjectBuffer(size);
+		return new ObjectBuffer(std::max(size,
+					sizeof(LV2_Object) + sizeof(void*)));
 	else
 		throw;
 }

@@ -55,14 +55,14 @@ public:
 
 	void set_name(const std::string& name) { jack_port_set_name(_jack_port, name.c_str()); };
 
-	void prepare_buffer(jack_nframes_t nframes);
+	void pre_process(jack_nframes_t nframes);
+	void post_process(jack_nframes_t nframes);
 
 	jack_port_t*  jack_port() const  { return _jack_port; }
 
 private:
 	JackAudioDriver* _driver;
 	jack_port_t*     _jack_port;
-	jack_sample_t*   _jack_buffer; ///< Cached for output ports
 };
 
 

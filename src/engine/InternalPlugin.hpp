@@ -37,6 +37,7 @@
 namespace Ingen {
 
 class NodeImpl;
+class BufferFactory;
 
 
 /** Implementation of an Internal plugin.
@@ -46,7 +47,8 @@ class InternalPlugin : public PluginImpl
 public:
 	InternalPlugin(const std::string& uri, const std::string& symbol);
 
-	NodeImpl* instantiate(const std::string& name,
+	NodeImpl* instantiate(BufferFactory&     bufs,
+	                      const std::string& name,
 	                      bool               polyphonic,
 	                      Ingen::PatchImpl*  parent,
 	                      Engine&            engine);

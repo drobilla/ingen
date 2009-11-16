@@ -25,7 +25,12 @@
 #include "common/interface/EventType.hpp"
 #include "events/CreatePatch.hpp"
 #include "module/World.hpp"
+#include "shared/LV2Features.hpp"
+#include "shared/LV2URIMap.hpp"
+#include "shared/Store.hpp"
+#include "uri-map.lv2/uri-map.h"
 #include "AudioDriver.hpp"
+#include "BufferFactory.hpp"
 #include "ClientBroadcaster.hpp"
 #include "Engine.hpp"
 #include "EngineStore.hpp"
@@ -41,7 +46,6 @@
 #include "ProcessSlave.hpp"
 #include "QueuedEventSource.hpp"
 #include "ThreadManager.hpp"
-#include "shared/Store.hpp"
 #include "tuning.hpp"
 
 using namespace std;
@@ -60,6 +64,8 @@ Engine::Engine(Ingen::Shared::World* world)
 	, _broadcaster(new ClientBroadcaster())
 	, _node_factory(new NodeFactory(world))
 	, _message_context(new MessageContext(*this))
+	, _buffer_factory(new BufferFactory(*this, PtrCast<LV2URIMap>(
+			world->lv2_features->feature(LV2_URI_MAP_URI))))
 	, _quit_flag(false)
 	, _activated(false)
 {

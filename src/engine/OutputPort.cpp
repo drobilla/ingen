@@ -29,14 +29,15 @@ namespace Ingen {
 namespace Shared { class Patch; }
 using namespace Shared;
 
-OutputPort::OutputPort(NodeImpl*         parent,
+OutputPort::OutputPort(BufferFactory&    bufs,
+                       NodeImpl*         parent,
                        const string&     name,
                        uint32_t          index,
                        uint32_t          poly,
                        DataType          type,
                        const Raul::Atom& value,
                        size_t            buffer_size)
-	: PortImpl(parent, name, index, poly, type, value, buffer_size)
+	: PortImpl(bufs, parent, name, index, poly, type, value, buffer_size)
 {
 	if (!dynamic_cast<Patch*>(parent))
 		add_property("rdf:type", Raul::Atom(Raul::Atom::URI, "lv2:OutputPort"));
@@ -49,16 +50,17 @@ OutputPort::OutputPort(NodeImpl*         parent,
 void
 OutputPort::pre_process(Context& context)
 {
-	for (uint32_t i=0; i < _poly; ++i)
-		buffer(i)->prepare_write(context);
+	connect_buffers();
+	for (uint32_t v = 0; v < _poly; ++v)
+		buffer(v)->prepare_write(context);
 }
 
 
 void
 OutputPort::post_process(Context& context)
 {
-	for (uint32_t i=0; i < _poly; ++i)
-		buffer(i)->prepare_read(context);
+	for (uint32_t v = 0; v < _poly; ++v)
+		buffer(v)->prepare_read(context);
 
 	//cerr << path() << " output post: buffer: " << buffer(0) << endl;
 

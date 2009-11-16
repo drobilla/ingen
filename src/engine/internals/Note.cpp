@@ -40,7 +40,7 @@ using namespace Shared;
 
 static InternalPlugin note_plugin(NS_INTERNALS "Note", "note");
 
-NoteNode::NoteNode(const string& path, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size)
+NoteNode::NoteNode(BufferFactory& bufs, const string& path, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size)
 	: NodeBase(&note_plugin, path, polyphonic, parent, srate, buffer_size)
 	, _voices(new Raul::Array<Voice>(_polyphony))
 	, _prepared_voices(NULL)
@@ -48,22 +48,22 @@ NoteNode::NoteNode(const string& path, bool polyphonic, PatchImpl* parent, Sampl
 {
 	_ports = new Raul::Array<PortImpl*>(5);
 
-	_midi_in_port = new InputPort(this, "input", 0, 1, DataType::EVENTS, Raul::Atom(), _buffer_size);
+	_midi_in_port = new InputPort(bufs, this, "input", 0, 1, DataType::EVENTS, Raul::Atom(), _buffer_size);
 	_ports->at(0) = _midi_in_port;
 
-	_freq_port = new OutputPort(this, "frequency", 1, _polyphony, DataType::AUDIO, 440.0f, _buffer_size);
+	_freq_port = new OutputPort(bufs, this, "frequency", 1, _polyphony, DataType::AUDIO, 440.0f, _buffer_size);
 	_ports->at(1) = _freq_port;
 
-	_vel_port = new OutputPort(this, "velocity", 2, _polyphony, DataType::AUDIO, 0.0f, _buffer_size);
+	_vel_port = new OutputPort(bufs, this, "velocity", 2, _polyphony, DataType::AUDIO, 0.0f, _buffer_size);
 	_vel_port->set_property("lv2:minimum", 0.0f);
 	_vel_port->set_property("lv2:maximum", 1.0f);
 	_ports->at(2) = _vel_port;
 
-	_gate_port = new OutputPort(this, "gate", 3, _polyphony, DataType::AUDIO, 0.0f, _buffer_size);
+	_gate_port = new OutputPort(bufs, this, "gate", 3, _polyphony, DataType::AUDIO, 0.0f, _buffer_size);
 	_gate_port->set_property("lv2:toggled", true);
 	_ports->at(3) = _gate_port;
 
-	_trig_port = new OutputPort(this, "trigger", 4, _polyphony, DataType::AUDIO, 0.0f, _buffer_size);
+	_trig_port = new OutputPort(bufs, this, "trigger", 4, _polyphony, DataType::AUDIO, 0.0f, _buffer_size);
 	_trig_port->set_property("lv2:toggled", true);
 	_ports->at(4) = _trig_port;
 }
@@ -76,12 +76,12 @@ NoteNode::~NoteNode()
 
 
 bool
-NoteNode::prepare_poly(uint32_t poly)
+NoteNode::prepare_poly(BufferFactory& bufs, uint32_t poly)
 {
 	if (!_polyphonic)
 		return true;
 
-	NodeBase::prepare_poly(poly);
+	NodeBase::prepare_poly(bufs, poly);
 
 	if (_prepared_voices && poly <= _prepared_voices->size())
 		return true;
@@ -117,7 +117,7 @@ NoteNode::apply_poly(Raul::Maid& maid, uint32_t poly)
 void
 NoteNode::process(ProcessContext& context)
 {
-	EventBuffer* const midi_in = (EventBuffer*)_midi_in_port->buffer(0);
+	EventBuffer* const midi_in = (EventBuffer*)_midi_in_port->buffer(0).get();
 	NodeBase::pre_process(context);
 
 	uint32_t frames    = 0;
@@ -248,13 +248,18 @@ NoteNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity, F
 	assert(_keys[voice->note].state == Key::Key::ON_ASSIGNED);
 	assert(_keys[voice->note].voice == voice_num);
 
-	((AudioBuffer*)_freq_port->buffer(voice_num))->set_value(note_to_freq(note_num), context.start(), time);
-	((AudioBuffer*)_vel_port->buffer(voice_num))->set_value(velocity/127.0, context.start(), time);
-	((AudioBuffer*)_gate_port->buffer(voice_num))->set_value(1.0f, context.start(), time);
+	((AudioBuffer*)_freq_port->buffer(voice_num).get())->set_value(
+			note_to_freq(note_num), context.start(), time);
+	((AudioBuffer*)_vel_port->buffer(voice_num).get())->set_value(
+			velocity/127.0, context.start(), time);
+	((AudioBuffer*)_gate_port->buffer(voice_num).get())->set_value(
+			1.0f, context.start(), time);
 
 	// trigger (one sample)
-	((AudioBuffer*)_trig_port->buffer(voice_num))->set_value(1.0f, context.start(), time);
-	((AudioBuffer*)_trig_port->buffer(voice_num))->set_value(0.0f, context.start(), time + 1);
+	((AudioBuffer*)_trig_port->buffer(voice_num).get())->set_value(
+			1.0f, context.start(), time);
+	((AudioBuffer*)_trig_port->buffer(voice_num).get())->set_value(
+			0.0f, context.start(), time + 1);
 
 	assert(key->state == Key::Key::ON_ASSIGNED);
 	assert(voice->state == Voice::Voice::ACTIVE);
@@ -321,7 +326,7 @@ NoteNode::free_voice(ProcessContext& context, uint32_t voice, FrameTime time)
 		assert(replace_key->state == Key::ON_UNASSIGNED);
 
 		// Change the freq but leave the gate high and don't retrigger
-		((AudioBuffer*)_freq_port->buffer(voice))->set_value(note_to_freq(replace_key_num), context.start(), time);
+		((AudioBuffer*)_freq_port->buffer(voice).get())->set_value(note_to_freq(replace_key_num), context.start(), time);
 
 		replace_key->state = Key::ON_ASSIGNED;
 		replace_key->voice = voice;
@@ -331,7 +336,7 @@ NoteNode::free_voice(ProcessContext& context, uint32_t voice, FrameTime time)
 	} else {
 		// No new note for voice, deactivate (set gate low)
 		//cerr << "[NoteNode] Note off. Key " << (int)note_num << ", Voice " << voice << " Killed" << endl;
-		((AudioBuffer*)_gate_port->buffer(voice))->set_value(0.0f, context.start(), time);
+		((AudioBuffer*)_gate_port->buffer(voice).get())->set_value(0.0f, context.start(), time);
 		(*_voices)[voice].state = Voice::FREE;
 	}
 }
@@ -348,7 +353,7 @@ NoteNode::all_notes_off(ProcessContext& context, FrameTime time)
 	// FIXME: set all keys to Key::OFF?
 
 	for (uint32_t i = 0; i < _polyphony; ++i) {
-		((AudioBuffer*)_gate_port->buffer(i))->set_value(0.0f, context.start(), time);
+		((AudioBuffer*)_gate_port->buffer(i).get())->set_value(0.0f, context.start(), time);
 		(*_voices)[i].state = Voice::FREE;
 	}
 }

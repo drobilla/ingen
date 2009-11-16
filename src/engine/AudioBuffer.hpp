@@ -18,64 +18,74 @@
 #ifndef AUDIOBUFFER_H
 #define AUDIOBUFFER_H
 
+#include <iostream>
 #include <cstddef>
 #include <cassert>
 #include <boost/utility.hpp>
 #include "types.hpp"
-#include "Buffer.hpp"
+#include "ObjectBuffer.hpp"
+
+using namespace std;
 
 namespace Ingen {
 
 
-class AudioBuffer : public Buffer
+class AudioBuffer : public ObjectBuffer
 {
 public:
-	AudioBuffer(size_t capacity);
+	AudioBuffer(Shared::DataType type, size_t capacity);
 
 	void clear();
+
 	void set_value(Sample val, FrameTime cycle_start, FrameTime time);
 	void set_block(Sample val, size_t start_offset, size_t end_offset);
-	void scale(Sample val, size_t start_sample, size_t end_sample);
-	void copy(const Buffer* src, size_t start_sample, size_t end_sample);
+	void copy(const Sample* src, size_t start_sample, size_t end_sample);
 	void copy(Context& context, const Buffer* src);
-	void accumulate(const AudioBuffer* src, size_t start_sample, size_t end_sample);
+	void mix(Context& context, const Buffer* src);
 
-	bool join(Buffer* buf);
-	void unjoin();
+	inline Sample* data() const {
+		switch (_port_type.symbol()) {
+		case Shared::DataType::CONTROL:
+			return (Sample*)object()->body;
+		case Shared::DataType::AUDIO:
+			return (Sample*)(object()->body + sizeof(LV2_Vector_Body));
+		default:
+			return NULL;
+		}
+	}
 
-	/** For driver use only!! */
-	void set_data(Sample* data);
-
-	inline const void* raw_data() const { return _data; }
-	inline void*       raw_data()       { return _data; }
-
-	inline Sample* data() const { return _data; }
+	inline SampleCount nframes() const {
+		SampleCount ret = 0;
+		switch (_port_type.symbol()) {
+		case Shared::DataType::CONTROL:
+			ret = 1;
+			break;
+		case Shared::DataType::AUDIO:
+			ret = (_size - sizeof(LV2_Object) - sizeof(LV2_Vector_Body)) / sizeof(Sample);
+			break;
+		default:
+			ret = 0;
+		}
+		return ret;
+	}
 
 	inline Sample& value_at(size_t offset) const
-		{ assert(offset < _size); return data()[offset]; }
+		{ assert(offset < nframes()); return data()[offset]; }
 
 	void prepare_read(Context& context);
 	void prepare_write(Context& context) {}
 
 	void resize(size_t size);
 
-	void      filled_size(size_t size) { _filled_size = size; }
-	size_t    filled_size() const { return _filled_size; }
-	size_t    size()        const { return _size; }
-
 private:
 	enum State { OK, HALF_SET_CYCLE_1, HALF_SET_CYCLE_2 };
 
-	void alloc_local_data(size_t size);
-	void allocate();
-	void deallocate();
+	LV2_Vector_Body* vector() { return(LV2_Vector_Body*)object()->body; }
 
-	Sample*      _data;        ///< Used data pointer (probably same as _local_data)
-	Sample*      _local_data;  ///< Locally allocated buffer (possibly unused if joined or set_data used)
-	size_t       _filled_size; ///< Usable buffer size (for MIDI ports etc)
-	State        _state;       ///< State of buffer for setting values next cycle
-	Sample       _set_value;   ///< Value set by set_value (for completing the set next cycle)
-	FrameTime    _set_time;    ///< Time _set_value was set (to reset next cycle)
+	Shared::DataType _port_type; ///< Type of port this buffer is for
+	State            _state;     ///< State of buffer for setting values next cycle
+	Sample           _set_value; ///< Value set by set_value (for completing the set next cycle)
+	FrameTime        _set_time;  ///< Time _set_value was set (to reset next cycle)
 };
 
 

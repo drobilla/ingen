@@ -102,7 +102,7 @@ NodeBase::deactivate()
 
 
 bool
-NodeBase::prepare_poly(uint32_t poly)
+NodeBase::prepare_poly(BufferFactory& bufs, uint32_t poly)
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
 
@@ -111,7 +111,7 @@ NodeBase::prepare_poly(uint32_t poly)
 
 	if (_ports)
 		for (size_t i=0; i < _ports->size(); ++i)
-			_ports->at(i)->prepare_poly(poly);
+			_ports->at(i)->prepare_poly(bufs, poly);
 
 	return true;
 }
@@ -139,7 +139,7 @@ NodeBase::apply_poly(Raul::Maid& maid, uint32_t poly)
 
 
 void
-NodeBase::set_buffer_size(size_t size)
+NodeBase::set_buffer_size(BufferFactory& bufs, size_t size)
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
 
@@ -147,7 +147,7 @@ NodeBase::set_buffer_size(size_t size)
 
 	if (_ports)
 		for (size_t i=0; i < _ports->size(); ++i)
-			_ports->at(i)->set_buffer_size(size);
+			_ports->at(i)->set_buffer_size(bufs, size);
 }
 
 
@@ -209,8 +209,8 @@ NodeBase::pre_process(Context& context)
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
 
-	// Mix down any ports with multiple inputs
-	for (size_t i=0; i < num_ports(); ++i) {
+	// Mix down input ports
+	for (uint32_t i = 0; i < num_ports(); ++i) {
 		PortImpl* const port = _ports->at(i);
 		if (port->context() == Context::AUDIO)
 			port->pre_process(context);
@@ -225,8 +225,8 @@ NodeBase::post_process(Context& context)
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
 
-	/* Write output ports */
-	for (size_t i=0; _ports && i < _ports->size(); ++i) {
+	// Write output ports
+	for (size_t i = 0; _ports && i < _ports->size(); ++i) {
 		PortImpl* const port = _ports->at(i);
 		if (port->context() == Context::AUDIO)
 			_ports->at(i)->post_process(context);

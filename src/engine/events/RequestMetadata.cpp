@@ -95,10 +95,10 @@ RequestMetadata::execute(ProcessContext& context)
 		PortImpl* port = dynamic_cast<PortImpl*>(_resource);
 		if (port) {
 			if (port->type() == DataType::CONTROL || port->type() == DataType::AUDIO)
-				_value = ((AudioBuffer*)port->buffer(0))->value_at(0); // TODO: offset
+				_value = ((AudioBuffer*)port->buffer(0).get())->value_at(0); // TODO: offset
 			else if (port->type() == DataType::VALUE)
 				LV2Object::to_atom(context.engine().world(),
-						((ObjectBuffer*)port->buffer(0))->data(), _value);
+						((ObjectBuffer*)port->buffer(0).get())->object(), _value);
 		} else {
 			_resource = 0;
 		}

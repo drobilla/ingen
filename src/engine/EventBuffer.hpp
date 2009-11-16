@@ -31,13 +31,10 @@ class EventBuffer : public Buffer {
 public:
 	EventBuffer(size_t capacity);
 
-	bool join(Buffer* buf);
-	void unjoin();
-
 	void clear() { _buf->reset(); }
 
-	void*       raw_data()       { return _buf; }
-	const void* raw_data() const { return _buf; }
+	void*       port_data(Shared::DataType port_type)       { return _buf; }
+	const void* port_data(Shared::DataType port_type) const { return _buf; }
 
 	void rewind() const { _buf->rewind(); }
 
@@ -45,6 +42,7 @@ public:
 	void prepare_write(Context& context);
 
 	void copy(Context& context, const Buffer* src);
+	void mix(Context& contect, const Buffer* src);
 	bool merge(const EventBuffer& a, const EventBuffer& b);
 
 	bool increment() const { return _buf->increment(); }
@@ -75,8 +73,7 @@ public:
 	}
 
 private:
-	LV2EventBuffer* _buf;       ///< Contents (maybe belong to _joined_buf)
-	LV2EventBuffer* _local_buf; ///< Local contents
+	LV2EventBuffer* _buf; ///< Contents
 };
 
 

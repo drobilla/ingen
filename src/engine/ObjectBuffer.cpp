@@ -34,53 +34,38 @@ namespace Ingen {
 using namespace Shared;
 
 
-/** Allocate a new string buffer.
- * \a capacity is in bytes.
+/** Allocate a new object buffer.
+ * \a capacity is in bytes, including LV2_Object header
  */
 ObjectBuffer::ObjectBuffer(size_t capacity)
 	: Buffer(DataType(DataType::VALUE), capacity)
 {
-	capacity = std::max(capacity, (size_t)32);
-	cerr << "Creating Object Buffer " << _buf << " capacity = " << capacity << endl;
-	_local_buf = (LV2_Object*)malloc(sizeof(LV2_Object) + capacity);
-	_buf = _local_buf;
-	clear();
+	//cerr << "Creating Object Buffer capacity = " << capacity << endl;
+	assert(capacity >= sizeof(LV2_Object));
+
+#ifdef HAVE_POSIX_MEMALIGN
+	const int ret = posix_memalign((void**)&_buf, 16, capacity);
+#else
+	_buf = (LV2_Object*)malloc(capacity);
+	const int ret = (_buf != NULL) ? 0 : -1;
+#endif
+
+	if (ret != 0) {
+		cerr << "Failed to allocate buffer.  Aborting." << endl;
+		exit(EXIT_FAILURE);
+	}
+
+	object()->type = 0;
+	object()->size = capacity;
 }
 
 
 void
 ObjectBuffer::clear()
 {
-	// nil
+	// null
 	_buf->type = 0;
 	_buf->size = 0;
-}
-
-
-/** Use another buffer's data instead of the local one.
- *
- * This buffer will essentially be identical to @a buf after this call.
- */
-bool
-ObjectBuffer::join(Buffer* buf)
-{
-	assert(buf != this);
-	ObjectBuffer* sbuf = dynamic_cast<ObjectBuffer*>(buf);
-	if (!sbuf)
-		return false;
-
-	_buf = sbuf->_local_buf;
-	_joined_buf = sbuf;
-
-	return true;
-}
-
-
-void
-ObjectBuffer::unjoin()
-{
-	_joined_buf = NULL;
-	_buf = _local_buf;
 }
 
 
@@ -91,27 +76,51 @@ ObjectBuffer::copy(Context& context, const Buffer* src_buf)
 	if (!src || src == this || src->_buf == _buf)
 		return;
 
-	// Copy if src is a POD object only, that fits
-	if (src->_buf->type != 0 && src->_buf->size <= size())
-		memcpy(_buf, src->_buf, sizeof(LV2_Object) + src->_buf->size);
+	// Copy only if src is a POD object that fits
+	if (src->_buf->type != 0 && src_buf->size() <= size())
+		memcpy(_buf, src->_buf, sizeof(LV2_Object) + src_buf->size());
 }
 
 
 void
 ObjectBuffer::resize(size_t size)
 {
-	const bool     using_local_data = (_buf == _local_buf);
-	const uint32_t contents_size    = sizeof(LV2_Object) + _buf->size;
+	const uint32_t contents_size = sizeof(LV2_Object) + _buf->size;
 
-	_local_buf = (LV2_Object*)realloc(_buf, sizeof(LV2_Object) + size);
-	_size      = size;
+	_buf  = (LV2_Object*)realloc(_buf, sizeof(LV2_Object) + size);
+	_size = size;
 
 	// If we shrunk and chopped the current contents, clear corrupt data
 	if (size < contents_size)
 		clear();
+}
 
-	if (using_local_data)
-		_buf = _local_buf;
+
+void*
+ObjectBuffer::port_data(DataType port_type)
+{
+	switch (port_type.symbol()) {
+	case DataType::CONTROL:
+		return object()->body;
+	case DataType::AUDIO:
+		return ((LV2_Vector_Body*)object()->body)->elems;
+	default:
+		return _buf;
+	}
+}
+
+
+const void*
+ObjectBuffer::port_data(DataType port_type) const
+{
+	switch (port_type.symbol()) {
+	case DataType::CONTROL:
+		return _buf + sizeof(LV2_Object);
+	case DataType::AUDIO:
+		return _buf + sizeof(LV2_Object) + sizeof(LV2_Vector_Body);
+	default:
+		return _buf;
+	}
 }
 
 

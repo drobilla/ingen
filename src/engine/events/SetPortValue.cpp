@@ -151,7 +151,7 @@ SetPortValue::apply(Context& context)
 	/*} else if (_port->buffer(0)->capacity() < _data_size) {
 		_error = NO_SPACE;*/
 	} else {
-		Buffer* const buf = _port->buffer(0);
+		Buffer* const buf = _port->buffer(0).get();
 		AudioBuffer* const abuf = dynamic_cast<AudioBuffer*>(buf);
 		if (abuf) {
 			if (_value.type() != Atom::FLOAT) {
@@ -160,12 +160,12 @@ SetPortValue::apply(Context& context)
 			}
 
 			if (_omni) {
-				for (uint32_t i=0; i < _port->poly(); ++i)
-					((AudioBuffer*)_port->buffer(i))->set_value(
+				for (uint32_t v = 0; v < _port->poly(); ++v)
+					((AudioBuffer*)_port->buffer(v).get())->set_value(
 							_value.get_float(), start, _time);
 			} else {
 				if (_voice_num < _port->poly())
-					((AudioBuffer*)_port->buffer(_voice_num))->set_value(
+					((AudioBuffer*)_port->buffer(_voice_num).get())->set_value(
 							_value.get_float(), start, _time);
 				else
 					_error = ILLEGAL_VOICE;
@@ -198,10 +198,10 @@ SetPortValue::apply(Context& context)
 
 		ObjectBuffer* const obuf = dynamic_cast<ObjectBuffer*>(buf);
 		if (obuf) {
-			obuf->data()->size = obuf->size() - sizeof(LV2_Object);
-			if (LV2Object::from_atom(_engine.world(), _value, obuf->data())) {
-				cout << "Converted atom " << _value << " :: " << obuf->data()->type
-					<< " * " << obuf->data()->size << " @ " << obuf->data() << endl;
+			obuf->object()->size = obuf->size() - sizeof(LV2_Object);
+			if (LV2Object::from_atom(_engine.world(), _value, obuf->object())) {
+				cout << "Converted atom " << _value << " :: " << obuf->object()->type
+					<< " * " << obuf->object()->size << " @ " << obuf->object() << endl;
 				return;
 			} else {
 				cerr << "WARNING: Failed to convert atom to LV2 object" << endl;

@@ -98,17 +98,17 @@ PatchImpl::disable()
 
 
 bool
-PatchImpl::prepare_internal_poly(uint32_t poly)
+PatchImpl::prepare_internal_poly(BufferFactory& bufs, uint32_t poly)
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
 
 	/* TODO: ports?  internal/external poly? */
 
 	for (List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
-		(*i)->prepare_poly(poly);
+		(*i)->prepare_poly(bufs, poly);
 
 	for (Connections::iterator i = _connections.begin(); i != _connections.end(); ++i)
-		((ConnectionImpl*)i->get())->prepare_poly(poly);
+		((ConnectionImpl*)i->get())->prepare_poly(bufs, poly);
 
 	/* FIXME: Deal with failure */
 
@@ -242,15 +242,15 @@ PatchImpl::process_single(ProcessContext& context)
 
 
 void
-PatchImpl::set_buffer_size(size_t size)
+PatchImpl::set_buffer_size(BufferFactory& bufs, size_t size)
 {
-	NodeBase::set_buffer_size(size);
+	NodeBase::set_buffer_size(bufs, size);
 	assert(_buffer_size == size);
 
 	CompiledPatch* const cp = _compiled_patch;
 
 	for (size_t i=0; i < cp->size(); ++i)
-		(*cp)[i].node()->set_buffer_size(size);
+		(*cp)[i].node()->set_buffer_size(bufs, size);
 }
 
 
@@ -342,7 +342,7 @@ PatchImpl::num_ports() const
 /** Create a port.  Not realtime safe.
  */
 PortImpl*
-PatchImpl::create_port(const string& name, DataType type, size_t buffer_size, bool is_output)
+PatchImpl::create_port(BufferFactory& bufs, const string& name, DataType type, size_t buffer_size, bool is_output)
 {
 	if (type == DataType::UNKNOWN) {
 		cerr << "[PatchImpl::create_port] Unknown port type " << type.uri() << endl;
@@ -351,7 +351,7 @@ PatchImpl::create_port(const string& name, DataType type, size_t buffer_size, bo
 
 	assert( !(type == DataType::UNKNOWN) );
 
-	return new DuplexPort(this, name, num_ports(), _polyphony, type, Raul::Atom(), buffer_size, is_output);
+	return new DuplexPort(bufs, this, name, num_ports(), _polyphony, type, Raul::Atom(), buffer_size, is_output);
 }
 
 
