@@ -21,7 +21,7 @@
 #include "raul/Path.hpp"
 #include "Driver.hpp"
 #include "types.hpp"
-#include "interface/DataType.hpp"
+#include "interface/PortType.hpp"
 
 namespace Raul { class Path; }
 
@@ -40,7 +40,7 @@ class ProcessContext;
 class AudioDriver : public Driver
 {
 public:
-	AudioDriver() : Driver(Shared::DataType::AUDIO) {}
+	AudioDriver() : Driver(Shared::PortType::AUDIO) {}
 
 	virtual void       set_root_patch(PatchImpl* patch) = 0;
 	virtual PatchImpl* root_patch()                     = 0;

@@ -36,9 +36,9 @@ namespace Ingen {
 using namespace Shared;
 
 
-AudioBuffer::AudioBuffer(Shared::DataType type, size_t size)
+AudioBuffer::AudioBuffer(Shared::PortType type, size_t size)
 	: ObjectBuffer(size + sizeof(LV2_Object)
-			+ (type == DataType::AUDIO ? sizeof(LV2_Vector_Body) : 0))
+			+ (type == PortType::AUDIO ? sizeof(LV2_Vector_Body) : 0))
 	, _port_type(type)
 	, _state(OK)
 	, _set_value(0)
@@ -50,12 +50,12 @@ AudioBuffer::AudioBuffer(Shared::DataType type, size_t size)
 	_type = type;
 
 	// Control port / Single float object
-	if (type == DataType::CONTROL) {
+	if (type == PortType::CONTROL) {
 		object()->type = 0;//map->float_type;
 
 	// Audio port / Vector of float
 	} else {
-		assert(type == DataType::AUDIO);
+		assert(type == PortType::AUDIO);
 		object()->type = 0;//map->vector_type;
 		LV2_Vector_Body* body = (LV2_Vector_Body*)object()->body;
 		body->elem_count = size / sizeof(Sample);
@@ -75,7 +75,7 @@ AudioBuffer::AudioBuffer(Shared::DataType type, size_t size)
 void
 AudioBuffer::resize(size_t size)
 {
-	if (_port_type == DataType::AUDIO) {
+	if (_port_type == PortType::AUDIO) {
 		ObjectBuffer::resize(size + sizeof(LV2_Vector_Body));
 		vector()->elem_count = size / sizeof(Sample);
 	}
@@ -103,7 +103,7 @@ AudioBuffer::clear()
 void
 AudioBuffer::set_value(Sample val, FrameTime cycle_start, FrameTime time)
 {
-	if (_port_type == DataType::CONTROL)
+	if (_port_type == PortType::CONTROL)
 		time = cycle_start;
 
 	const FrameTime offset = time - cycle_start;
@@ -165,7 +165,7 @@ AudioBuffer::copy(Context& context, const Buffer* src)
 {
 	if (_type == src->type()) {
 		ObjectBuffer::copy(context, src);
-	} else if (_type == DataType::AUDIO && src->type() == DataType::CONTROL) {
+	} else if (_type == PortType::AUDIO && src->type() == PortType::CONTROL) {
 		set_block(((AudioBuffer*)src)->data()[0], 0, nframes());
 	}
 }
@@ -179,7 +179,7 @@ AudioBuffer::copy(Context& context, const Buffer* src)
 void
 AudioBuffer::mix(Context& context, const Buffer* const src)
 {
-	if (src->type() != DataType::CONTROL && src->type() != DataType::AUDIO)
+	if (src->type() != PortType::CONTROL && src->type() != PortType::AUDIO)
 		return;
 
 	AudioBuffer* src_abuf = (AudioBuffer*)src;

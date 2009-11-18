@@ -45,8 +45,8 @@ ConnectionImpl::ConnectionImpl(BufferFactory& bufs, PortImpl* src_port, PortImpl
 	assert(src_port != dst_port);
 	assert(src_port->path() != dst_port->path());
 	assert(src_port->type() == dst_port->type()
-			|| ( (src_port->type() == DataType::CONTROL || src_port->type() == DataType::AUDIO)
-				&& (dst_port->type() == DataType::CONTROL || dst_port->type() == DataType::AUDIO) ));
+			|| ( (src_port->type() == PortType::CONTROL || src_port->type() == PortType::AUDIO)
+				&& (dst_port->type() == PortType::CONTROL || dst_port->type() == PortType::AUDIO) ));
 
 	/*assert((src_port->parent_node()->poly() == dst_port->parent_node()->poly())
 		|| (src_port->parent_node()->poly() == 1 || dst_port->parent_node()->poly() == 1));*/

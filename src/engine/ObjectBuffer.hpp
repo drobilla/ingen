@@ -20,7 +20,7 @@
 
 #include "raul/Atom.hpp"
 #include "object.lv2/object.h"
-#include "interface/DataType.hpp"
+#include "interface/PortType.hpp"
 #include "Buffer.hpp"
 
 namespace Ingen {
@@ -33,8 +33,8 @@ public:
 
 	void clear();
 
-	void*       port_data(Shared::DataType port_type);
-	const void* port_data(Shared::DataType port_type) const;
+	void*       port_data(Shared::PortType port_type);
+	const void* port_data(Shared::PortType port_type) const;
 
 	void copy(Context& context, const Buffer* src);
 	void mix(Context& context, const Buffer* src) {}

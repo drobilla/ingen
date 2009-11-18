@@ -76,13 +76,13 @@ ResourceImpl::type(
 		const Properties& properties,
 		bool& patch,
 		bool& node,
-		bool& port, bool& is_output, DataType& data_type)
+		bool& port, bool& is_output, PortType& data_type)
 {
 	typedef Resource::Properties::const_iterator iterator;
 	const std::pair<iterator,iterator> types_range = properties.equal_range("rdf:type");
 
 	patch = node = port = is_output = false;
-	data_type = DataType::UNKNOWN;
+	data_type = PortType::UNKNOWN;
 	for (iterator i = types_range.first; i != types_range.second; ++i) {
 		const Atom& atom = i->second;
 		if (atom.type() == Atom::URI) {
@@ -103,17 +103,17 @@ ResourceImpl::type(
 					is_output = true;
 					port = true;
 				} else if (!strcmp(suffix, "AudioPort")) {
-					data_type = DataType::AUDIO;
+					data_type = PortType::AUDIO;
 					port = true;
 				} else if (!strcmp(suffix, "ControlPort")) {
-					data_type = DataType::CONTROL;
+					data_type = PortType::CONTROL;
 					port = true;
 				}
 			} else if (!strcmp(atom.get_uri(), "lv2ev:EventPort")) {
-				data_type = DataType::EVENTS;
+				data_type = PortType::EVENTS;
 				port = true;
 			} else if (!strcmp(atom.get_uri(), "obj:ValuePort")) {
-				data_type = DataType::VALUE;
+				data_type = PortType::VALUE;
 				port = true;
 			}
 		}

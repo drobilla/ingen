@@ -27,7 +27,7 @@ using namespace Shared;
 class Engine;
 
 Buffer*
-Buffer::create(Engine& engine, Shared::DataType type, size_t size)
+Buffer::create(Engine& engine, Shared::PortType type, size_t size)
 {
 	if (type.is_control())
 		return new AudioBuffer(type, size);

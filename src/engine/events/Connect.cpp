@@ -76,8 +76,8 @@ Connect::pre_process()
 	}
 
 	if ( ! (_src_port->type() == _dst_port->type()
-			|| ( (_src_port->type() == DataType::CONTROL || _src_port->type() == DataType::AUDIO)
-				&& (_dst_port->type() == DataType::CONTROL || _dst_port->type() == DataType::AUDIO) ))) {
+			|| ( (_src_port->type() == PortType::CONTROL || _src_port->type() == PortType::AUDIO)
+				&& (_dst_port->type() == PortType::CONTROL || _dst_port->type() == PortType::AUDIO) ))) {
 		_error = TYPE_MISMATCH;
 		QueuedEvent::pre_process();
 		return;

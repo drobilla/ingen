@@ -85,9 +85,9 @@ LADSPANode::prepare_poly(BufferFactory& bufs, uint32_t poly)
 			Buffer* buffer = port->prepared_buffer(i).get();
 
 			// FIXME: Preserve individual voice values
-			if (port->type() == DataType::CONTROL) {
+			if (port->type() == PortType::CONTROL) {
 				((AudioBuffer*)buffer)->set_value(port->value().get_float(), 0, 0);
-			} else if (port->type() == DataType::AUDIO) {
+			} else if (port->type() == PortType::AUDIO) {
 				((AudioBuffer*)buffer)->set_value(0.0f, 0, 0);
 			}
 		}
@@ -192,11 +192,11 @@ LADSPANode::instantiate(BufferFactory& bufs)
 
 		Path port_path(path().child(port_name));
 
-		DataType type = DataType::AUDIO;
+		PortType type = PortType::AUDIO;
 		port_buffer_size = _buffer_size * sizeof(Sample);
 
 		if (LADSPA_IS_PORT_CONTROL(_descriptor->PortDescriptors[j])) {
-			type = DataType::CONTROL;
+			type = PortType::CONTROL;
 			port_buffer_size = sizeof(Sample);
 		} else {
 			assert(LADSPA_IS_PORT_AUDIO(_descriptor->PortDescriptors[j]));
@@ -264,9 +264,9 @@ LADSPANode::activate()
 
 			set_port_buffer(i, j, port->buffer(i));
 
-			if (port->type() == DataType::CONTROL) {
+			if (port->type() == PortType::CONTROL) {
 				((AudioBuffer*)port->buffer(i).get())->set_value(port->value().get_float(), 0, 0);
-			} else if (port->type() == DataType::AUDIO) {
+			} else if (port->type() == PortType::AUDIO) {
 				((AudioBuffer*)port->buffer(i).get())->set_value(0.0f, 0, 0);
 			}
 		}

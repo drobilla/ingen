@@ -96,9 +96,9 @@ LV2Node::prepare_poly(BufferFactory& bufs, uint32_t poly)
 			Buffer* buffer = port->prepared_buffer(i).get();
 
 			// FIXME: Preserve individual voice values
-			if (port->type() == DataType::CONTROL) {
+			if (port->type() == PortType::CONTROL) {
 				((AudioBuffer*)buffer)->set_value(port->value().get_float(), 0, 0);
-			} else if (port->type() == DataType::AUDIO) {
+			} else if (port->type() == PortType::AUDIO) {
 				((AudioBuffer*)buffer)->set_value(0.0f, 0, 0);
 			}
 		}
@@ -207,18 +207,18 @@ LV2Node::instantiate(BufferFactory& bufs)
 		port_path = path().child(port_name);
 
 		Raul::Atom val;
-		DataType data_type = DataType::UNKNOWN;
+		PortType data_type = PortType::UNKNOWN;
 		if (slv2_port_is_a(plug, id, info->control_class)) {
-			data_type = DataType::CONTROL;
+			data_type = PortType::CONTROL;
 			port_buffer_size = sizeof(Sample);
 		} else if (slv2_port_is_a(plug, id, info->audio_class)) {
-			data_type = DataType::AUDIO;
+			data_type = PortType::AUDIO;
 			port_buffer_size = _buffer_size;
 		} else if (slv2_port_is_a(plug, id, info->event_class)) {
-			data_type = DataType::EVENTS;
+			data_type = PortType::EVENTS;
 			port_buffer_size = _buffer_size;
 		} else if (slv2_port_is_a(plug, id, info->value_port_class)) {
-			data_type = DataType::VALUE;
+			data_type = PortType::VALUE;
 			port_buffer_size = 0;
 
 			// Get default value, and its length
@@ -254,7 +254,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 			direction = OUTPUT;
 		}
 
-		if (data_type == DataType::UNKNOWN || direction == UNKNOWN) {
+		if (data_type == PortType::UNKNOWN || direction == UNKNOWN) {
 			delete _ports;
 			_ports = NULL;
 			delete _instances;
@@ -270,7 +270,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 		else
 			port = new OutputPort(bufs, this, port_name, j, _polyphony, data_type, val, port_buffer_size);
 
-		if (direction == INPUT && data_type == DataType::CONTROL)
+		if (direction == INPUT && data_type == PortType::CONTROL)
 			((AudioBuffer*)port->buffer(0).get())->set_value(val.get_float(), 0, 0);
 
 		SLV2Values contexts = slv2_port_get_value(plug, id, context_pred);
@@ -311,9 +311,9 @@ LV2Node::activate()
 
 			set_port_buffer(i, j, port->buffer(i));
 
-			if (port->type() == DataType::CONTROL) {
+			if (port->type() == PortType::CONTROL) {
 				((AudioBuffer*)port->buffer(i).get())->set_value(port->value().get_float(), 0, 0);
-			} else if (port->type() == DataType::AUDIO) {
+			} else if (port->type() == PortType::AUDIO) {
 				((AudioBuffer*)port->buffer(i).get())->set_value(0.0f, 0, 0);
 			}
 		}

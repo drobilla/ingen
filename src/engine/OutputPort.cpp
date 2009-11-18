@@ -34,7 +34,7 @@ OutputPort::OutputPort(BufferFactory&    bufs,
                        const string&     name,
                        uint32_t          index,
                        uint32_t          poly,
-                       DataType          type,
+                       PortType          type,
                        const Raul::Atom& value,
                        size_t            buffer_size)
 	: PortImpl(bufs, parent, name, index, poly, type, value, buffer_size)
@@ -42,7 +42,7 @@ OutputPort::OutputPort(BufferFactory&    bufs,
 	if (!dynamic_cast<Patch*>(parent))
 		add_property("rdf:type", Raul::Atom(Raul::Atom::URI, "lv2:OutputPort"));
 
-	if (type == DataType::CONTROL)
+	if (type == PortType::CONTROL)
 		_broadcast = true;
 }
 

@@ -36,7 +36,7 @@ class AudioDriver;
 class MidiDriver : public Driver
 {
 public:
-	MidiDriver() : Driver(Shared::DataType::EVENTS) {}
+	MidiDriver() : Driver(Shared::PortType::EVENTS) {}
 
 	virtual void attach(AudioDriver& master) {}
 

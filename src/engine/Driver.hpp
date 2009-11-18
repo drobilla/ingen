@@ -21,7 +21,7 @@
 #include <string>
 #include <boost/utility.hpp>
 #include "raul/Deletable.hpp"
-#include "interface/DataType.hpp"
+#include "interface/PortType.hpp"
 #include "DuplexPort.hpp"
 
 namespace Raul { class Path; }
@@ -71,7 +71,7 @@ protected:
 class Driver : boost::noncopyable
 {
 public:
-	Driver(Shared::DataType type)
+	Driver(Shared::PortType type)
 		: _type(type)
 	{}
 
@@ -95,7 +95,7 @@ public:
 	virtual Raul::List<DriverPort*>::Node* remove_port(const Raul::Path& path) = 0;
 
 protected:
-	Shared::DataType _type;
+	Shared::PortType _type;
 };
 
 

@@ -22,7 +22,7 @@
 #include <cstdlib>
 #include <boost/utility.hpp>
 #include "raul/Deletable.hpp"
-#include "interface/DataType.hpp"
+#include "interface/PortType.hpp"
 #include "interface/Connection.hpp"
 #include "PortImpl.hpp"
 #include "PortImpl.hpp"

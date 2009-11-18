@@ -23,7 +23,7 @@
 #include "PortImpl.hpp"
 #include "ConnectionImpl.hpp"
 #include "NodeFactory.hpp"
-#include "interface/DataType.hpp"
+#include "interface/PortType.hpp"
 #include "AudioBuffer.hpp"
 
 using namespace std;
@@ -141,7 +141,7 @@ ObjectSender::send_port(ClientInterface* client, const PortImpl* port, bool bund
 		client->set_property(port->meta_uri(), "ingen:polyphonic", bool(port->polyphonic()));
 
 	// Send control value
-	if (port->type() == DataType::CONTROL) {
+	if (port->type() == PortType::CONTROL) {
 		const Sample& value = PtrCast<const AudioBuffer>(port->buffer(0))->value_at(0);
 		client->set_port_value(port->path(), value);
 	}

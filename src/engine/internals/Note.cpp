@@ -48,22 +48,22 @@ NoteNode::NoteNode(BufferFactory& bufs, const string& path, bool polyphonic, Pat
 {
 	_ports = new Raul::Array<PortImpl*>(5);
 
-	_midi_in_port = new InputPort(bufs, this, "input", 0, 1, DataType::EVENTS, Raul::Atom(), _buffer_size);
+	_midi_in_port = new InputPort(bufs, this, "input", 0, 1, PortType::EVENTS, Raul::Atom(), _buffer_size);
 	_ports->at(0) = _midi_in_port;
 
-	_freq_port = new OutputPort(bufs, this, "frequency", 1, _polyphony, DataType::AUDIO, 440.0f, _buffer_size);
+	_freq_port = new OutputPort(bufs, this, "frequency", 1, _polyphony, PortType::AUDIO, 440.0f, _buffer_size);
 	_ports->at(1) = _freq_port;
 
-	_vel_port = new OutputPort(bufs, this, "velocity", 2, _polyphony, DataType::AUDIO, 0.0f, _buffer_size);
+	_vel_port = new OutputPort(bufs, this, "velocity", 2, _polyphony, PortType::AUDIO, 0.0f, _buffer_size);
 	_vel_port->set_property("lv2:minimum", 0.0f);
 	_vel_port->set_property("lv2:maximum", 1.0f);
 	_ports->at(2) = _vel_port;
 
-	_gate_port = new OutputPort(bufs, this, "gate", 3, _polyphony, DataType::AUDIO, 0.0f, _buffer_size);
+	_gate_port = new OutputPort(bufs, this, "gate", 3, _polyphony, PortType::AUDIO, 0.0f, _buffer_size);
 	_gate_port->set_property("lv2:toggled", true);
 	_ports->at(3) = _gate_port;
 
-	_trig_port = new OutputPort(bufs, this, "trigger", 4, _polyphony, DataType::AUDIO, 0.0f, _buffer_size);
+	_trig_port = new OutputPort(bufs, this, "trigger", 4, _polyphony, PortType::AUDIO, 0.0f, _buffer_size);
 	_trig_port->set_property("lv2:toggled", true);
 	_ports->at(4) = _trig_port;
 }

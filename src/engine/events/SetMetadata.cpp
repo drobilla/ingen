@@ -17,7 +17,7 @@
 
 #include <string>
 #include <boost/format.hpp>
-#include "interface/DataType.hpp"
+#include "interface/PortType.hpp"
 #include "ClientBroadcaster.hpp"
 #include "CreateNode.hpp"
 #include "CreatePatch.hpp"
@@ -94,7 +94,7 @@ SetMetadata::pre_process()
 	if (is_graph_object && !_object) {
 		Path path(_subject.str());
 		bool is_patch = false, is_node = false, is_port = false, is_output = false;
-		DataType data_type(DataType::UNKNOWN);
+		PortType data_type(PortType::UNKNOWN);
 		ResourceImpl::type(_properties, is_patch, is_node, is_port, is_output, data_type);
 		if (is_patch) {
 			uint32_t poly = 1;

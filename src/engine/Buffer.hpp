@@ -24,7 +24,7 @@
 #include "raul/Deletable.hpp"
 #include "raul/SharedPtr.hpp"
 #include "types.hpp"
-#include "interface/DataType.hpp"
+#include "interface/PortType.hpp"
 
 namespace Ingen {
 
@@ -34,7 +34,7 @@ class Engine;
 class Buffer : public boost::noncopyable, public Raul::Deletable
 {
 public:
-	Buffer(Shared::DataType type, size_t size)
+	Buffer(Shared::PortType type, size_t size)
 		: _type(type)
 		, _size(size)
 	{}
@@ -44,8 +44,8 @@ public:
 
 	virtual void resize(size_t size) { _size = size; }
 
-	virtual void*       port_data(Shared::DataType port_type) = 0;
-	virtual const void* port_data(Shared::DataType port_type) const = 0;
+	virtual void*       port_data(Shared::PortType port_type) = 0;
+	virtual const void* port_data(Shared::PortType port_type) const = 0;
 
 	/** Rewind (ie reset read pointer), but leave contents unchanged */
 	virtual void rewind() const {}
@@ -56,11 +56,11 @@ public:
 	virtual void prepare_read(Context& context) {}
 	virtual void prepare_write(Context& context) {}
 
-	Shared::DataType type() const { return _type; }
+	Shared::PortType type() const { return _type; }
 	size_t           size() const { return _size; }
 
 protected:
-	Shared::DataType _type;
+	Shared::PortType _type;
 	size_t           _size;
 	bool             _local;
 

@@ -19,7 +19,7 @@
 #define BUFFER_FACTORY_H
 
 #include <map>
-#include "interface/DataType.hpp"
+#include "interface/PortType.hpp"
 #include "glibmm/thread.h"
 #include "raul/RingBuffer.hpp"
 #include "raul/AtomicPtr.hpp"
@@ -36,20 +36,20 @@ class BufferFactory {
 public:
 	BufferFactory(Engine& engine, SharedPtr<Shared::LV2URIMap> map);
 
-	SharedPtr<Buffer> get(Shared::DataType type, size_t size=0);
+	SharedPtr<Buffer> get(Shared::PortType type, size_t size=0);
 
 private:
 	friend class BufferDeleter;
 	void recycle(Buffer* buf);
 
-	SharedPtr<Buffer> create(Shared::DataType type, size_t size=0);
+	SharedPtr<Buffer> create(Shared::PortType type, size_t size=0);
 
-	inline Raul::AtomicPtr<Buffer>& free_list(Shared::DataType type) {
+	inline Raul::AtomicPtr<Buffer>& free_list(Shared::PortType type) {
 		switch (type.symbol()) {
-		case DataType::AUDIO:   return _free_audio;
-		case DataType::CONTROL: return _free_control;
-		case DataType::EVENTS:  return _free_event;
-		case DataType::VALUE:   return _free_object;
+		case PortType::AUDIO:   return _free_audio;
+		case PortType::CONTROL: return _free_control;
+		case PortType::EVENTS:  return _free_event;
+		case PortType::VALUE:   return _free_object;
 		default: throw;
 		}
 	}

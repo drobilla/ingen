@@ -271,7 +271,7 @@ ConnectWindow::connect(bool existing)
 			bool found = _engine_jack_module->get_symbol(
 					"new_jack_audio_driver", (void*&)(new_driver));
 			if (found) {
-				world->local_engine->set_driver(DataType::AUDIO,
+				world->local_engine->set_driver(PortType::AUDIO,
 						SharedPtr<Driver>(new_driver(*world->local_engine, "default", "", 0)));
 			}
 		}

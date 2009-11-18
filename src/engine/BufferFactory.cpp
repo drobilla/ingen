@@ -46,7 +46,7 @@ struct BufferDeleter {
 
 
 SharedPtr<Buffer>
-BufferFactory::get(Shared::DataType type, size_t size)
+BufferFactory::get(Shared::PortType type, size_t size)
 {
 	Raul::AtomicPtr<Buffer>& head_ptr = free_list(type);
 	Buffer* try_head;
@@ -73,7 +73,7 @@ BufferFactory::get(Shared::DataType type, size_t size)
 
 
 SharedPtr<Buffer>
-BufferFactory::create(Shared::DataType type, size_t size)
+BufferFactory::create(Shared::PortType type, size_t size)
 {
 	assert(ThreadManager::current_thread_id() != THREAD_PROCESS);
 

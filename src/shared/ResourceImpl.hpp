@@ -22,7 +22,7 @@
 #include <sigc++/sigc++.h>
 #include "raul/URI.hpp"
 #include "interface/Resource.hpp"
-#include "interface/DataType.hpp"
+#include "interface/PortType.hpp"
 
 namespace Ingen {
 namespace Shared {
@@ -53,7 +53,7 @@ public:
 			const Properties& properties,
 			bool& patch,
 			bool& node,
-			bool& port, bool& is_output, DataType& data_type);
+			bool& port, bool& is_output, PortType& data_type);
 
 	static const Raul::URI meta_uri(const Raul::URI& base, const Raul::URI& uri);
 

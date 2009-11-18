@@ -21,7 +21,7 @@
 #include "QueuedEvent.hpp"
 #include "raul/Path.hpp"
 #include "raul/Array.hpp"
-#include "interface/DataType.hpp"
+#include "interface/PortType.hpp"
 #include "interface/Resource.hpp"
 
 namespace Ingen {
@@ -66,7 +66,7 @@ private:
 	Raul::Path              _path;
 	Raul::URI               _type;
 	bool                    _is_output;
-	Shared::DataType        _data_type;
+	Shared::PortType        _data_type;
 	PatchImpl*              _patch;
 	PortImpl*               _patch_port;
 	Raul::Array<PortImpl*>* _ports_array; ///< New (external) ports array for Patch

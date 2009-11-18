@@ -146,7 +146,7 @@ PatchImpl::process(ProcessContext& context)
 
 	/*if (_ports)
 		for (size_t i=0; i < _ports->size(); ++i)
-			if (_ports->at(i)->is_input() && _ports->at(i)->type() == DataType::MIDI)
+			if (_ports->at(i)->is_input() && _ports->at(i)->type() == PortType::MIDI)
 				cerr << _ports->at(i)->path() << " "
 					<< _ports->at(i)->buffer(0) << " # events: "
 					<< ((MidiBuffer*)_ports->at(i)->buffer(0))->event_count() << endl;*/
@@ -342,14 +342,14 @@ PatchImpl::num_ports() const
 /** Create a port.  Not realtime safe.
  */
 PortImpl*
-PatchImpl::create_port(BufferFactory& bufs, const string& name, DataType type, size_t buffer_size, bool is_output)
+PatchImpl::create_port(BufferFactory& bufs, const string& name, PortType type, size_t buffer_size, bool is_output)
 {
-	if (type == DataType::UNKNOWN) {
+	if (type == PortType::UNKNOWN) {
 		cerr << "[PatchImpl::create_port] Unknown port type " << type.uri() << endl;
 		return NULL;
 	}
 
-	assert( !(type == DataType::UNKNOWN) );
+	assert( !(type == PortType::UNKNOWN) );
 
 	return new DuplexPort(bufs, this, name, num_ports(), _polyphony, type, Raul::Atom(), buffer_size, is_output);
 }

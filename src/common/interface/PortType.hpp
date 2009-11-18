@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef DATATYPE_H
-#define DATATYPE_H
+#ifndef PORTTYPE_H
+#define PORTTYPE_H
 
 #include <raul/URI.hpp>
 
@@ -24,15 +24,13 @@ namespace Ingen {
 namespace Shared {
 
 
-/** A data type that can be stored in a Port.
+/** The type of a port.
  *
- * This type refers to the type of the entire buffer, mirroring LV2,
- * e.g. :AudioPort and :ControlPort both are really 32-bit floating point,
- * but they are different port types.
- *
- * FIXME: Event/MIDI/OSC kludges.
+ * This type refers to the type of the port itself (not necessarily the type
+ * of its contents).  Ports with different types can contain the same type of
+ * data, but may e.g. have different access semantics.
  */
-class DataType {
+class PortType {
 public:
 
 	enum Symbol {
@@ -40,13 +38,10 @@ public:
 		AUDIO   = 1,
 		CONTROL = 2,
 		EVENTS  = 3,
-		//MIDI  = 4,
-		//OSC   = 5,
-		//STRING  = 6,
-		VALUE   = 7
+		VALUE   = 7,
 	};
 
-	DataType(const Raul::URI& uri)
+	PortType(const Raul::URI& uri)
 		: _symbol(UNKNOWN)
 	{
 		if (uri.str() == type_uri(AUDIO)) {
@@ -60,7 +55,7 @@ public:
 		}
 	}
 
-	DataType(Symbol symbol)
+	PortType(Symbol symbol)
 		: _symbol(symbol)
 	{}
 
@@ -69,8 +64,8 @@ public:
 
 	inline bool operator==(const Symbol& symbol) const { return (_symbol == symbol); }
 	inline bool operator!=(const Symbol& symbol) const { return (_symbol != symbol); }
-	inline bool operator==(const DataType& type) const { return (_symbol == type._symbol); }
-	inline bool operator!=(const DataType& type) const { return (_symbol != type._symbol); }
+	inline bool operator==(const PortType& type) const { return (_symbol == type._symbol); }
+	inline bool operator!=(const PortType& type) const { return (_symbol != type._symbol); }
 
 	inline bool is_audio()   { return _symbol == AUDIO; }
 	inline bool is_control() { return _symbol == CONTROL; }
@@ -99,4 +94,4 @@ private:
 } // namespace Shared
 } // namespace Ingen
 
-#endif // DATATYPE_H
+#endif // PORTTYPE_H

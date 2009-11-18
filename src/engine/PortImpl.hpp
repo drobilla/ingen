@@ -25,7 +25,7 @@
 #include "interface/Port.hpp"
 #include "types.hpp"
 #include "GraphObjectImpl.hpp"
-#include "interface/DataType.hpp"
+#include "interface/PortType.hpp"
 #include "Buffer.hpp"
 #include "Context.hpp"
 
@@ -93,9 +93,9 @@ public:
 
 	uint32_t         index()       const { return _index; }
 	uint32_t         poly()        const { return _poly; }
-	Shared::DataType type()        const { return _type; }
+	Shared::PortType type()        const { return _type; }
 	size_t           buffer_size() const {
-		return (_type == Shared::DataType::CONTROL) ? 1 : _buffer_size;
+		return (_type == Shared::PortType::CONTROL) ? 1 : _buffer_size;
 	}
 
 	void set_buffer_size(BufferFactory& factory, size_t size);
@@ -116,7 +116,7 @@ protected:
 	         const std::string& name,
 	         uint32_t           index,
 	         uint32_t           poly,
-	         Shared::DataType   type,
+	         Shared::PortType   type,
 	         const Raul::Atom&  value,
 	         size_t             buffer_size);
 
@@ -124,7 +124,7 @@ protected:
 	uint32_t         _index;
 	uint32_t         _poly;
 	uint32_t         _buffer_size;
-	Shared::DataType _type;
+	Shared::PortType _type;
 	Raul::Atom       _value;
 	bool             _broadcast;
 	bool             _set_by_user;

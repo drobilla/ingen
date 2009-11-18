@@ -418,7 +418,7 @@ Serialiser::serialise_port(const Port* port, const Redland::Node& port_id)
 		_model->add_statement(port_id, "rdf:instanceOf",
 				class_rdf_node(port->path()));
 
-	if (port->is_input() && port->type() == DataType::CONTROL)
+	if (port->is_input() && port->type() == PortType::CONTROL)
 		_model->add_statement(port_id, "ingen:value",
 				AtomRDF::atom_to_node(_model->world(), Atom(port->value())));
 
@@ -448,7 +448,7 @@ Serialiser::serialise_port_meta(const Port* port, const Redland::Node& port_id)
 			if (port->value().is_valid()) {
 				_model->add_statement(port_id, "lv2:default",
 						AtomRDF::atom_to_node(_model->world(), Atom(port->value())));
-			} else if (port->type() == DataType::CONTROL) {
+			} else if (port->type() == PortType::CONTROL) {
 				cerr << "WARNING: Port " << port->path() << " has no lv2:default" << endl;
 			}
 		}

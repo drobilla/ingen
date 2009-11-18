@@ -125,7 +125,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	plugin->world->local_engine = plugin->engine;
 
 	// FIXME: fixed buffer size
-	plugin->engine->set_driver(DataType::AUDIO,
+	plugin->engine->set_driver(PortType::AUDIO,
 			SharedPtr<Driver>(new IngenLV2Driver(*plugin->engine, rate, 4096)));
 
 	return (LV2_Handle)plugin;

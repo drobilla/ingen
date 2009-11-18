@@ -21,7 +21,7 @@
 #include <cstdlib>
 #include <string>
 #include "raul/List.hpp"
-#include "interface/DataType.hpp"
+#include "interface/PortType.hpp"
 #include "interface/Patch.hpp"
 #include "NodeBase.hpp"
 #include "PluginImpl.hpp"
@@ -96,7 +96,7 @@ public:
 
 	uint32_t num_ports() const;
 
-	PortImpl* create_port(BufferFactory& bufs, const std::string& name, Shared::DataType type, size_t buffer_size, bool is_output);
+	PortImpl* create_port(BufferFactory& bufs, const std::string& name, Shared::PortType type, size_t buffer_size, bool is_output);
 	void add_input(Raul::List<PortImpl*>::Node* port)  { _input_ports.push_back(port); } ///< Preprocesser thread
 	void add_output(Raul::List<PortImpl*>::Node* port) { _output_ports.push_back(port); } ///< Preprocessor thread
 	Raul::List<PortImpl*>::Node* remove_port(const std::string& name);

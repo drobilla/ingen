@@ -38,7 +38,7 @@ using namespace Shared;
  * \a capacity is in bytes, including LV2_Object header
  */
 ObjectBuffer::ObjectBuffer(size_t capacity)
-	: Buffer(DataType(DataType::VALUE), capacity)
+	: Buffer(PortType(PortType::VALUE), capacity)
 {
 	//cerr << "Creating Object Buffer capacity = " << capacity << endl;
 	assert(capacity >= sizeof(LV2_Object));
@@ -97,12 +97,12 @@ ObjectBuffer::resize(size_t size)
 
 
 void*
-ObjectBuffer::port_data(DataType port_type)
+ObjectBuffer::port_data(PortType port_type)
 {
 	switch (port_type.symbol()) {
-	case DataType::CONTROL:
+	case PortType::CONTROL:
 		return object()->body;
-	case DataType::AUDIO:
+	case PortType::AUDIO:
 		return ((LV2_Vector_Body*)object()->body)->elems;
 	default:
 		return _buf;
@@ -111,12 +111,12 @@ ObjectBuffer::port_data(DataType port_type)
 
 
 const void*
-ObjectBuffer::port_data(DataType port_type) const
+ObjectBuffer::port_data(PortType port_type) const
 {
 	switch (port_type.symbol()) {
-	case DataType::CONTROL:
+	case PortType::CONTROL:
 		return _buf + sizeof(LV2_Object);
-	case DataType::AUDIO:
+	case PortType::AUDIO:
 		return _buf + sizeof(LV2_Object) + sizeof(LV2_Vector_Body);
 	default:
 		return _buf;

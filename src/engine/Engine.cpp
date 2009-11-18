@@ -107,11 +107,11 @@ Engine::engine_store() const
 
 
 Driver*
-Engine::driver(DataType type, EventType event_type)
+Engine::driver(PortType type, EventType event_type)
 {
-	if (type == DataType::AUDIO) {
+	if (type == PortType::AUDIO) {
 		return _audio_driver.get();
-	} else if (type == DataType::EVENTS) {
+	} else if (type == PortType::EVENTS) {
 		if (event_type == EventType::MIDI) {
 			return _midi_driver;
 		} else if (event_type == EventType::OSC) {
@@ -124,9 +124,9 @@ Engine::driver(DataType type, EventType event_type)
 
 
 void
-Engine::set_driver(DataType type, SharedPtr<Driver> driver)
+Engine::set_driver(PortType type, SharedPtr<Driver> driver)
 {
-	if (type == DataType::AUDIO) {
+	if (type == PortType::AUDIO) {
 		_audio_driver = PtrCast<AudioDriver>(driver);
 	} else {
 		cerr << "WARNING: Unable to set driver for type " << type.uri() << endl;

@@ -33,7 +33,7 @@ namespace Ingen {
 class AudioBuffer : public ObjectBuffer
 {
 public:
-	AudioBuffer(Shared::DataType type, size_t capacity);
+	AudioBuffer(Shared::PortType type, size_t capacity);
 
 	void clear();
 
@@ -45,9 +45,9 @@ public:
 
 	inline Sample* data() const {
 		switch (_port_type.symbol()) {
-		case Shared::DataType::CONTROL:
+		case Shared::PortType::CONTROL:
 			return (Sample*)object()->body;
-		case Shared::DataType::AUDIO:
+		case Shared::PortType::AUDIO:
 			return (Sample*)(object()->body + sizeof(LV2_Vector_Body));
 		default:
 			return NULL;
@@ -57,10 +57,10 @@ public:
 	inline SampleCount nframes() const {
 		SampleCount ret = 0;
 		switch (_port_type.symbol()) {
-		case Shared::DataType::CONTROL:
+		case Shared::PortType::CONTROL:
 			ret = 1;
 			break;
-		case Shared::DataType::AUDIO:
+		case Shared::PortType::AUDIO:
 			ret = (_size - sizeof(LV2_Object) - sizeof(LV2_Vector_Body)) / sizeof(Sample);
 			break;
 		default:
@@ -82,7 +82,7 @@ private:
 
 	LV2_Vector_Body* vector() { return(LV2_Vector_Body*)object()->body; }
 
-	Shared::DataType _port_type; ///< Type of port this buffer is for
+	Shared::PortType _port_type; ///< Type of port this buffer is for
 	State            _state;     ///< State of buffer for setting values next cycle
 	Sample           _set_value; ///< Value set by set_value (for completing the set next cycle)
 	FrameTime        _set_time;  ///< Time _set_value was set (to reset next cycle)

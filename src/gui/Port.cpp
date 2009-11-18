@@ -125,9 +125,9 @@ void
 Port::set_control(float value, bool signal)
 {
 	if (signal) {
-		if (model()->type() == DataType::CONTROL) {
+		if (model()->type() == PortType::CONTROL) {
 			App::instance().engine()->set_port_value(model()->path(), Atom(value));
-		} else if (model()->type() == DataType::EVENTS) {
+		} else if (model()->type() == PortType::EVENTS) {
 			App::instance().engine()->set_port_value(model()->path(),
 					Atom("<http://example.org/ev#BangEvent>", 0, NULL));
 		}

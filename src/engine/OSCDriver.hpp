@@ -32,7 +32,7 @@ namespace Ingen {
 class OSCDriver : public Driver
 {
 public:
-	OSCDriver() : Driver(Shared::DataType::EVENTS) {}
+	OSCDriver() : Driver(Shared::PortType::EVENTS) {}
 
 	/** Prepare events (however neccessary) for the specified block (realtime safe) */
 	virtual void prepare_block(const SampleCount block_start, const SampleCount block_end) = 0;

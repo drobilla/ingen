@@ -153,9 +153,9 @@ Delete::execute(ProcessContext& context)
 		_port->parent_patch()->external_ports(_ports_array);
 
 		if ( ! _port->parent_patch()->parent()) {
-			if (_port->type() == DataType::AUDIO)
+			if (_port->type() == PortType::AUDIO)
 				_driver_port = _engine.audio_driver()->remove_port(_port->path());
-			else if (_port->type() == DataType::EVENTS)
+			else if (_port->type() == PortType::EVENTS)
 				_driver_port = _engine.midi_driver()->remove_port(_port->path());
 
 			// Apparently this needs to be called in post_process??

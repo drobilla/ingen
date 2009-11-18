@@ -44,7 +44,7 @@ public:
 	           const std::string& name,
 	           uint32_t           index,
 	           uint32_t           poly,
-	           Shared::DataType   type,
+	           Shared::PortType   type,
 	           const Raul::Atom&  value,
 	           size_t             buffer_size,
 	           bool               is_output);

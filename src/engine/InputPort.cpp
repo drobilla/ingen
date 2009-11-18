@@ -42,7 +42,7 @@ InputPort::InputPort(BufferFactory&    bufs,
                      const string&     name,
                      uint32_t          index,
                      uint32_t          poly,
-                     DataType          type,
+                     PortType          type,
                      const Raul::Atom& value,
                      size_t            buffer_size)
 	: PortImpl(bufs, parent, name, index, poly, type, value, buffer_size)
@@ -58,8 +58,8 @@ InputPort::can_direct() const
 	return _connections.size() == 1
 		&& _connections.front()->src_port()->poly() == poly()
 		&& (_connections.front()->src_port()->type() == type()
-			|| (_connections.front()->src_port()->type() == DataType::AUDIO
-				&& type() == DataType::CONTROL));
+			|| (_connections.front()->src_port()->type() == PortType::AUDIO
+				&& type() == PortType::CONTROL));
 }
 
 
@@ -145,7 +145,7 @@ InputPort::add_connection(Connections::Node* const c)
 	connect_buffers();
 
 	// Automatically broadcast connected control inputs
-	if (_type == DataType::CONTROL)
+	if (_type == PortType::CONTROL)
 		_broadcast = true;
 }
 
@@ -173,7 +173,7 @@ InputPort::remove_connection(const OutputPort* src_port)
 			buffer(v)->clear();
 
 	// Turn off broadcasting if we're no longer connected
-	if (_type == DataType::CONTROL && _connections.size() == 0)
+	if (_type == PortType::CONTROL && _connections.size() == 0)
 		_broadcast = false;
 
 	return connection;

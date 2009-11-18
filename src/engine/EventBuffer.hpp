@@ -20,7 +20,7 @@
 
 #include "event.lv2/event.h"
 #include "event.lv2/event-helpers.h"
-#include "interface/DataType.hpp"
+#include "interface/PortType.hpp"
 #include "Buffer.hpp"
 #include "LV2EventBuffer.hpp"
 
@@ -33,8 +33,8 @@ public:
 
 	void clear() { _buf->reset(); }
 
-	void*       port_data(Shared::DataType port_type)       { return _buf; }
-	const void* port_data(Shared::DataType port_type) const { return _buf; }
+	void*       port_data(Shared::PortType port_type)       { return _buf; }
+	const void* port_data(Shared::PortType port_type) const { return _buf; }
 
 	void rewind() const { _buf->rewind(); }
 

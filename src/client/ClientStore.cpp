@@ -285,7 +285,7 @@ ClientStore::put(const URI& uri, const Resource::Properties& properties)
 	}
 
 	bool is_patch, is_node, is_port, is_output;
-	DataType data_type(DataType::UNKNOWN);
+	PortType data_type(PortType::UNKNOWN);
 	ResourceImpl::type(properties, is_patch, is_node, is_port, is_output, data_type);
 
 	if (is_patch) {
@@ -313,7 +313,7 @@ ClientStore::put(const URI& uri, const Resource::Properties& properties)
 			cerr << "ERROR: Plugin with no type" << endl;
 		}
 	} else if (is_port) {
-		if (data_type != DataType::UNKNOWN) {
+		if (data_type != PortType::UNKNOWN) {
 			PortModel::Direction pdir = is_output ? PortModel::OUTPUT : PortModel::INPUT;
 			SharedPtr<PortModel> p(new PortModel(path, 0, data_type, pdir));
 			p->set_properties(properties);

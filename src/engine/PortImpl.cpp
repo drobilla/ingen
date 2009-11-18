@@ -18,7 +18,7 @@
 #include <iostream>
 #include "raul/Array.hpp"
 #include "raul/Maid.hpp"
-#include "interface/DataType.hpp"
+#include "interface/PortType.hpp"
 #include "events/SendPortValue.hpp"
 #include "events/SendPortActivity.hpp"
 #include "AudioBuffer.hpp"
@@ -44,10 +44,10 @@ PortImpl::PortImpl(BufferFactory&  bufs,
                    const string&   name,
                    uint32_t        index,
                    uint32_t        poly,
-                   DataType        type,
+                   PortType        type,
                    const Atom&     value,
                    size_t          buffer_size)
-	: GraphObjectImpl(node, name, (type == DataType::AUDIO || type == DataType::CONTROL))
+	: GraphObjectImpl(node, name, (type == PortType::AUDIO || type == PortType::CONTROL))
 	, _bufs(bufs)
 	, _index(index)
 	, _poly(poly)
@@ -77,7 +77,7 @@ PortImpl::PortImpl(BufferFactory&  bufs,
 
 	add_property("rdf:type", Atom(Atom::URI, type.uri()));
 
-	if (type == DataType::EVENTS)
+	if (type == PortType::EVENTS)
 		_broadcast = true; // send activity blips
 
 	assert(_buffers->size() > 0);
@@ -96,7 +96,7 @@ PortImpl::~PortImpl()
 bool
 PortImpl::set_polyphonic(Maid& maid, bool p)
 {
-	if (_type == DataType::CONTROL || _type == DataType::AUDIO)
+	if (_type == PortType::CONTROL || _type == PortType::AUDIO)
 		return GraphObjectImpl::set_polyphonic(maid, p);
 	else
 		return (!p);
@@ -175,19 +175,19 @@ PortImpl::broadcast_value(Context& context, bool force)
 {
 	Raul::Atom val;
 	switch (_type.symbol()) {
-	case DataType::UNKNOWN:
+	case PortType::UNKNOWN:
 		break;
-	case DataType::AUDIO:
-	case DataType::CONTROL:
+	case PortType::AUDIO:
+	case PortType::CONTROL:
 		val = ((AudioBuffer*)buffer(0).get())->value_at(0);
 		break;
-	case DataType::EVENTS:
+	case PortType::EVENTS:
 		if (((EventBuffer*)buffer(0).get())->event_count() > 0) {
 			const Events::SendPortActivity ev(context.engine(), context.start(), this);
 			context.event_sink().write(sizeof(ev), &ev);
 		}
 		break;
-	case DataType::VALUE:
+	case PortType::VALUE:
 		LV2Object::to_atom(context.engine().world(), ((ObjectBuffer*)buffer(0).get())->object(), val);
 		break;
 	}

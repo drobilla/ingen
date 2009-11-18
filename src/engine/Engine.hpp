@@ -24,7 +24,7 @@
 #include <boost/utility.hpp>
 #include "raul/SharedPtr.hpp"
 #include "module/World.hpp"
-#include "interface/DataType.hpp"
+#include "interface/PortType.hpp"
 #include "interface/EventType.hpp"
 
 template<typename T> class Queue;
@@ -94,10 +94,10 @@ public:
 	SharedPtr<EngineStore> engine_store() const;
 
 	/** Return the active driver for the given type */
-	Driver* driver(Shared::DataType type, Shared::EventType event_type);
+	Driver* driver(Shared::PortType type, Shared::EventType event_type);
 
 	/** Set the driver for the given data type (replacing the old) */
-	virtual void set_driver(Shared::DataType type, SharedPtr<Driver> driver);
+	virtual void set_driver(Shared::PortType type, SharedPtr<Driver> driver);
 	virtual void set_midi_driver(MidiDriver* driver);
 
 	virtual void add_event_source(SharedPtr<EventSource> source);

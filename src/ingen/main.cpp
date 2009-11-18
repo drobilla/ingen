@@ -210,7 +210,7 @@ main(int argc, char** argv)
 				const std::string client_name,
 				void*             jack_client) = NULL;
 		if (engine_jack_module->get_symbol("new_jack_audio_driver", (void*&)new_driver)) {
-			engine->set_driver(DataType::AUDIO, SharedPtr<Driver>(new_driver(
+			engine->set_driver(PortType::AUDIO, SharedPtr<Driver>(new_driver(
 					*engine, "default", args.engine_name_arg, NULL)));
 		} else {
 			cerr << Glib::Module::get_last_error() << endl;

@@ -114,10 +114,10 @@ ClearPatch::execute(ProcessContext& context)
 			for (EngineStore::Objects::iterator i = _removed_table->begin();
 					i != _removed_table->end(); ++i) {
 				SharedPtr<PortImpl> port = PtrCast<PortImpl>(i->second);
-				if (port && port->type() == DataType::AUDIO) {
+				if (port && port->type() == PortType::AUDIO) {
 					_driver_ports->push_back(
 							_engine.audio_driver()->remove_port(port->path()));
-				} else if (port && port->type() == DataType::EVENTS) {
+				} else if (port && port->type() == PortType::EVENTS) {
 					_driver_ports->push_back(
 							_engine.midi_driver()->remove_port(port->path()));
 				}

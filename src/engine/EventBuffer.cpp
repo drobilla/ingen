@@ -34,7 +34,7 @@ using namespace Shared;
  * \a capacity is in bytes (not number of events).
  */
 EventBuffer::EventBuffer(size_t capacity)
-	: Buffer(DataType(DataType::EVENTS), capacity)
+	: Buffer(PortType(PortType::EVENTS), capacity)
 	, _buf(new LV2EventBuffer(capacity))
 {
 	clear();

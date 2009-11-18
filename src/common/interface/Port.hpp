@@ -20,7 +20,7 @@
 
 #include <stdint.h>
 #include "GraphObject.hpp"
-#include "DataType.hpp"
+#include "PortType.hpp"
 
 namespace Raul { class Atom; }
 
@@ -39,7 +39,7 @@ class Port : public virtual GraphObject
 public:
 	virtual uint32_t          index()    const = 0;
 	virtual bool              is_input() const = 0;
-	virtual Shared::DataType  type()     const = 0;
+	virtual Shared::PortType  type()     const = 0;
 	virtual const Raul::Atom& value()    const = 0;
 };
 
