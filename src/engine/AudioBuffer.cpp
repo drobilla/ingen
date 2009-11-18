@@ -39,7 +39,6 @@ using namespace Shared;
 AudioBuffer::AudioBuffer(Shared::PortType type, size_t size)
 	: ObjectBuffer(size + sizeof(LV2_Object)
 			+ (type == PortType::AUDIO ? sizeof(LV2_Vector_Body) : 0))
-	, _port_type(type)
 	, _state(OK)
 	, _set_value(0)
 	, _set_time(0)
@@ -75,7 +74,7 @@ AudioBuffer::AudioBuffer(Shared::PortType type, size_t size)
 void
 AudioBuffer::resize(size_t size)
 {
-	if (_port_type == PortType::AUDIO) {
+	if (_type == PortType::AUDIO) {
 		ObjectBuffer::resize(size + sizeof(LV2_Vector_Body));
 		vector()->elem_count = size / sizeof(Sample);
 	}
@@ -103,7 +102,7 @@ AudioBuffer::clear()
 void
 AudioBuffer::set_value(Sample val, FrameTime cycle_start, FrameTime time)
 {
-	if (_port_type == PortType::CONTROL)
+	if (is_control())
 		time = cycle_start;
 
 	const FrameTime offset = time - cycle_start;
@@ -163,10 +162,19 @@ AudioBuffer::copy(const Sample* src, size_t start_sample, size_t end_sample)
 void
 AudioBuffer::copy(Context& context, const Buffer* src)
 {
-	if (_type == src->type()) {
+	const AudioBuffer* src_abuf = dynamic_cast<const AudioBuffer*>(src);
+	if (!src_abuf) {
+		clear();
+		return;
+	}
+
+	// Control => Control or Audio => Audio
+	if (src_abuf->is_control() == is_control()) {
 		ObjectBuffer::copy(context, src);
-	} else if (_type == PortType::AUDIO && src->type() == PortType::CONTROL) {
-		set_block(((AudioBuffer*)src)->data()[0], 0, nframes());
+
+	// Control => Audio or Audio => Control
+	} else {
+		set_block(src_abuf->data()[0], 0, nframes());
 	}
 }
 
@@ -179,10 +187,9 @@ AudioBuffer::copy(Context& context, const Buffer* src)
 void
 AudioBuffer::mix(Context& context, const Buffer* const src)
 {
-	if (src->type() != PortType::CONTROL && src->type() != PortType::AUDIO)
+	const AudioBuffer* src_abuf = dynamic_cast<const AudioBuffer*>(src);
+	if (!src_abuf)
 		return;
-
-	AudioBuffer* src_abuf = (AudioBuffer*)src;
 
 	Sample* const       buf     = data();
 	const Sample* const src_buf = src_abuf->data();

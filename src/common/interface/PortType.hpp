@@ -79,9 +79,6 @@ private:
 		case 1:  return "lv2:AudioPort";
 		case 2:  return "lv2:ControlPort";
 		case 3:  return "lv2ev:EventPort";
-		case 4:  return "lv2ev:EventPort"; // MIDI (no longer used)
-		case 5:  return "lv2ev:EventPort"; // OSC (no longer used)
-		case 6:  return "sp:StringPort"; // String Port (no longer used)
 		case 7:  return "obj:ValuePort";
 		default: return "";
 		}

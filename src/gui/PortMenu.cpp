@@ -48,7 +48,7 @@ PortMenu::init(SharedPtr<PortModel> port, bool patch_port)
 		_destroy_menuitem->hide();
 	}
 
-	if (port->type() == PortType::EVENTS || port->type() == PortType::VALUE)
+	if (port->type() == PortType::EVENTS)
 		_polyphonic_menuitem->hide();
 
 	_enable_signal = true;

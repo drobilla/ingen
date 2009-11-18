@@ -43,30 +43,18 @@ public:
 	void copy(Context& context, const Buffer* src);
 	void mix(Context& context, const Buffer* src);
 
+	bool is_control() const { return _type.symbol() == Shared::PortType::CONTROL; }
+
 	inline Sample* data() const {
-		switch (_port_type.symbol()) {
-		case Shared::PortType::CONTROL:
-			return (Sample*)object()->body;
-		case Shared::PortType::AUDIO:
-			return (Sample*)(object()->body + sizeof(LV2_Vector_Body));
-		default:
-			return NULL;
-		}
+		return (is_control())
+				? (Sample*)object()->body
+				: (Sample*)(object()->body + sizeof(LV2_Vector_Body));
 	}
 
 	inline SampleCount nframes() const {
-		SampleCount ret = 0;
-		switch (_port_type.symbol()) {
-		case Shared::PortType::CONTROL:
-			ret = 1;
-			break;
-		case Shared::PortType::AUDIO:
-			ret = (_size - sizeof(LV2_Object) - sizeof(LV2_Vector_Body)) / sizeof(Sample);
-			break;
-		default:
-			ret = 0;
-		}
-		return ret;
+		return (is_control())
+				? 1
+				: (_size - sizeof(LV2_Object) - sizeof(LV2_Vector_Body)) / sizeof(Sample);
 	}
 
 	inline Sample& value_at(size_t offset) const
@@ -82,7 +70,6 @@ private:
 
 	LV2_Vector_Body* vector() { return(LV2_Vector_Body*)object()->body; }
 
-	Shared::PortType _port_type; ///< Type of port this buffer is for
 	State            _state;     ///< State of buffer for setting values next cycle
 	Sample           _set_value; ///< Value set by set_value (for completing the set next cycle)
 	FrameTime        _set_time;  ///< Time _set_value was set (to reset next cycle)
