@@ -23,6 +23,7 @@
 #include "NodeImpl.hpp"
 #include "PatchImpl.hpp"
 #include "PortImpl.hpp"
+#include "PortImpl.hpp"
 #include "ProcessContext.hpp"
 #include "ThreadManager.hpp"
 
@@ -32,20 +33,20 @@ namespace Ingen {
 
 
 void
-MessageContext::run(NodeImpl* node, FrameTime time)
+MessageContext::run(PortImpl* port, FrameTime time)
 {
 	if (ThreadManager::current_thread_id() == THREAD_PRE_PROCESS) {
-		assert(node);
+		assert(port);
 		Glib::Mutex::Lock lock(_mutex);
-		_non_rt_request = Request(time, node);
+		_non_rt_request = Request(time, port);
 		_sem.post();
 		_cond.wait(_mutex);
 	} else if (ThreadManager::current_thread_id() == THREAD_PROCESS) {
-		Request r(time, node);
+		Request r(time, port);
 		_requests.write(sizeof(Request), &r);
 		// signal() will be called at the end of this process cycle
 	} else if (ThreadManager::current_thread_id() == THREAD_MESSAGE) {
-		cout << "Message context recursion at " << node->path() << endl;
+		cout << "Message context recursion at " << port->path() << endl;
 	} else {
 		cout << "[MessageContext] ERROR: Run requested from unknown thread" << endl;
 	}
@@ -64,7 +65,7 @@ MessageContext::_run()
 		{
 			Glib::Mutex::Lock lock(_mutex);
 			const Request req = _non_rt_request;
-			if (req.node) {
+			if (req.port) {
 				_queue.insert(req);
 				_end_time = std::max(_end_time, req.time);
 				_cond.broadcast(); // Notify caller we got the message
@@ -74,7 +75,7 @@ MessageContext::_run()
 		// Enqueue (and thereby sort) requests from audio thread
 		while (has_requests()) {
 			_requests.full_read(sizeof(Request), &req);
-			if (req.node) {
+			if (req.port) {
 				_queue.insert(req);
 			} else {
 				_end_time = req.time;
@@ -103,7 +104,7 @@ MessageContext::_run()
 void
 MessageContext::execute(const Request& req)
 {
-	NodeImpl* node = req.node;
+	NodeImpl* node = req.port->parent_node();
 	node->message_run(*this);
 
 	void*      valid_ports = node->valid_ports();
@@ -116,8 +117,8 @@ MessageContext::execute(const Request& req)
 			PatchImpl::Connections& wires = patch->connections();
 			for (PatchImpl::Connections::iterator c = wires.begin(); c != wires.end(); ++c) {
 				ConnectionImpl* ci = dynamic_cast<ConnectionImpl*>(c->get());
-				if (ci->src_port() == p) {
-					_queue.insert(Request(req.time, ci->dst_port()->parent_node()));
+				if (ci->src_port() == p && ci->dst_port()->context() == Context::MESSAGE) {
+					_queue.insert(Request(req.time, ci->dst_port()));
 				}
 			}
 		}

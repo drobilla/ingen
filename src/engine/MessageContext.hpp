@@ -31,7 +31,7 @@
 
 namespace Ingen {
 
-class NodeImpl;
+class PortImpl;
 
 /** Context of a message_run() call.
  *
@@ -55,16 +55,16 @@ public:
 		Thread::set_context(THREAD_MESSAGE);
 	}
 
-	/** Request a run starting at node.
+	/** Schedule a port value change at a certain time.
 	 * Safe to call from either process thread or pre-process thread.
 	 */
-	void run(NodeImpl* node, FrameTime time);
+	void run(PortImpl* port, FrameTime time);
 
 protected:
 	struct Request {
-		Request(FrameTime t=0, NodeImpl* n=0) : time(t), node(n) {}
+		Request(FrameTime t=0, PortImpl* p=0) : time(t), port(p) {}
 		FrameTime time;
-		NodeImpl* node;
+		PortImpl* port;
 	};
 
 public:
@@ -87,7 +87,7 @@ protected:
 	/** Thread run method (wait for and execute requests from process thread */
 	void _run();
 
-	/** Actually execute and propagate from node */
+	/** Execute a request (possibly enqueueing more requests) */
 	void execute(const Request& req);
 
 	Raul::Semaphore           _sem;
