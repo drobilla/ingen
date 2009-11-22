@@ -374,7 +374,7 @@ JackAudioDriver::_process_cb(jack_nframes_t nframes)
 
 	// Signal message context to run if necessary
 	if (_engine.message_context()->has_requests())
-		_engine.message_context()->signal();
+		_engine.message_context()->signal(_process_context);
 
 	if (_engine.midi_driver())
 		_engine.midi_driver()->post_process(_process_context);

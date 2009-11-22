@@ -64,6 +64,10 @@ public:
 		return _buf->get_object();
 	}
 
+	LV2_Event* get_event() const {
+		return _buf->get_event();
+	}
+
 	inline bool append(uint32_t       frames,
 	                   uint32_t       subframes,
 	                   uint16_t       type,

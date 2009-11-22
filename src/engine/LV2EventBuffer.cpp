@@ -134,6 +134,19 @@ LV2EventBuffer::get_object() const
 }
 
 
+/** Get the event currently pointed to, or NULL if invalid.
+ */
+LV2_Event*
+LV2EventBuffer::get_event() const
+{
+	if (lv2_event_is_valid(&_iter)) {
+		uint8_t* data;
+		return lv2_event_get(&_iter, &data);
+	}
+	return NULL;
+}
+
+
 /** Append an event to the buffer.
  *
  * \a timestamp must be >= the latest event in the buffer.

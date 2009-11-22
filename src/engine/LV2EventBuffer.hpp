@@ -60,6 +60,7 @@ public:
 	               uint8_t** data) const;
 
 	LV2_Object* get_object() const;
+	LV2_Event*  get_event() const;
 
 	bool append(uint32_t       frames,
 	            uint32_t       subframes,

@@ -146,7 +146,8 @@ ConnectionImpl::queue(Context& context)
 	}
 
 	while (src_buf->is_valid()) {
-		LV2_Object* obj = src_buf->get_object();
+		LV2_Event*  ev  = src_buf->get_event();
+		LV2_Object* obj = LV2_OBJECT_FROM_EVENT(ev);
 		/*cout << _src_port->path() << " -> " << _dst_port->path()
 			<< " QUEUE OBJECT TYPE " << obj->type << ":";
 		for (size_t i = 0; i < obj->size; ++i)
@@ -156,7 +157,8 @@ ConnectionImpl::queue(Context& context)
 		_queue->write(sizeof(LV2_Object) + obj->size, obj);
 		src_buf->increment();
 
-		context.engine().message_context()->run(_dst_port->parent_node());
+		context.engine().message_context()->run(_dst_port->parent_node(),
+				context.start() + ev->frames);
 	}
 }
 

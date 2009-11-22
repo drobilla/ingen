@@ -22,6 +22,7 @@
 #include "shared/LV2Object.hpp"
 #include "module/World.hpp"
 #include "AudioBuffer.hpp"
+#include "AudioDriver.hpp"
 #include "ClientBroadcaster.hpp"
 #include "Engine.hpp"
 #include "EngineStore.hpp"
@@ -118,7 +119,8 @@ SetPortValue::pre_process()
 	if (_port && _port->context() == Context::MESSAGE) {
 		apply(*_engine.message_context());
 		_port->parent_node()->set_port_valid(_port->index());
-		_engine.message_context()->run(_port->parent_node());
+		_engine.message_context()->run(_port->parent_node(),
+				_engine.audio_driver()->frame_time() + _engine.audio_driver()->buffer_size());
 	}
 
 	QueuedEvent::pre_process();

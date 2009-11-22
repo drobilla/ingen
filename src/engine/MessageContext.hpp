@@ -18,12 +18,14 @@
 #ifndef MESSAGECONTEXT_H
 #define MESSAGECONTEXT_H
 
+#include <set>
 #include <glibmm/thread.h>
 #include "raul/Thread.hpp"
 #include "raul/Semaphore.hpp"
 #include "raul/AtomicPtr.hpp"
 #include "object.lv2/object.h"
 #include "Context.hpp"
+#include "ProcessContext.hpp"
 #include "ThreadManager.hpp"
 #include "tuning.hpp"
 
@@ -48,19 +50,37 @@ public:
 		, Raul::Thread("message-context")
 		, _sem(0)
 		, _requests(message_context_queue_size)
+		, _end_time(0)
 	{
 		Thread::set_context(THREAD_MESSAGE);
 	}
 
 	/** Request a run starting at node.
-	 *
 	 * Safe to call from either process thread or pre-process thread.
 	 */
-	void run(NodeImpl* node);
+	void run(NodeImpl* node, FrameTime time);
 
-	inline void signal() { _sem.post(); }
+protected:
+	struct Request {
+		Request(FrameTime t=0, NodeImpl* n=0) : time(t), node(n) {}
+		FrameTime time;
+		NodeImpl* node;
+	};
+
+public:
+	/** Signal the end of a cycle that has produced messages.
+	 * AUDIO THREAD ONLY.
+	 */
+	inline void signal(ProcessContext& context) {
+		assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
+		const Request cycle_end_request(context.end(), NULL);
+		_requests.write(sizeof(Request), &cycle_end_request);
+		_sem.post();
+	}
+
+	/** Return true iff requests are pending.  Safe from any thread. */
 	inline bool has_requests() const {
-		return _requests.read_space() >= sizeof(NodeImpl*) || _request.get();
+		return _requests.read_space() >= sizeof(Request);
 	}
 
 protected:
@@ -68,13 +88,23 @@ protected:
 	void _run();
 
 	/** Actually execute and propagate from node */
-	void run_node(NodeImpl* node);
+	void execute(const Request& req);
 
-	Raul::Semaphore             _sem;
-	Raul::RingBuffer<NodeImpl*> _requests;
-	Glib::Mutex                 _mutex;
-	Glib::Cond                  _cond;
-	Raul::AtomicPtr<NodeImpl>   _request;
+	Raul::Semaphore           _sem;
+	Raul::RingBuffer<Request> _requests;
+	Glib::Mutex               _mutex;
+	Glib::Cond                _cond;
+	Request                   _non_rt_request;
+
+	struct RequestEarlier {
+		bool operator()(const Request& r1, const Request& r2) {
+			return r1.time < r2.time;
+		}
+	};
+
+	typedef std::set<Request, RequestEarlier> Queue;
+	Queue     _queue;
+	FrameTime _end_time;
 };
 
 

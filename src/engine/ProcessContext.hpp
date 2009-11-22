@@ -52,8 +52,8 @@ public:
 		_end = end;
 	}
 
-	inline SampleCount nframes()const { return _nframes; }
-	inline FrameTime   end()    const { return _end; }
+	inline SampleCount nframes() const { return _nframes; }
+	inline FrameTime   end()     const { return _end; }
 
 private:
 	SampleCount _nframes; ///< Length of this cycle in frames
