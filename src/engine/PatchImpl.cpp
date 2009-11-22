@@ -144,19 +144,22 @@ PatchImpl::process(ProcessContext& context)
 
 	NodeBase::pre_process(context);
 
-	/*if (_ports)
-		for (size_t i=0; i < _ports->size(); ++i)
-			if (_ports->at(i)->is_input() && _ports->at(i)->type() == PortType::MIDI)
-				cerr << _ports->at(i)->path() << " "
-					<< _ports->at(i)->buffer(0) << " # events: "
-					<< ((MidiBuffer*)_ports->at(i)->buffer(0))->event_count() << endl;*/
-
-	/* Run */
+	// Run all nodes
 	if (_compiled_patch && _compiled_patch->size() > 0) {
-		if (_engine.process_slaves().size() > 0)
+		if (_engine.process_slaves().size() > 0) {
 			process_parallel(context);
-		else
+		} else {
 			process_single(context);
+		}
+	}
+
+	// Queue any cross-context connections
+	for (Connections::iterator i = _connections.begin(); i != _connections.end(); ++i) {
+		ConnectionImpl* const c = (ConnectionImpl*)i->get();
+		if (c->src_port()->context() == Context::AUDIO &&
+				c->dst_port()->context() == Context::MESSAGE) {
+			c->queue(context);
+		}
 	}
 
 	NodeBase::post_process(context);

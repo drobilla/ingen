@@ -18,7 +18,14 @@
 #ifndef MESSAGECONTEXT_H
 #define MESSAGECONTEXT_H
 
+#include <glibmm/thread.h>
+#include "raul/Thread.hpp"
+#include "raul/Semaphore.hpp"
+#include "raul/AtomicPtr.hpp"
+#include "object.lv2/object.h"
 #include "Context.hpp"
+#include "ThreadManager.hpp"
+#include "tuning.hpp"
 
 namespace Ingen {
 
@@ -33,14 +40,41 @@ class NodeImpl;
  *
  * \ingroup engine
  */
-class MessageContext : public Context
+class MessageContext : public Context, public Raul::Thread
 {
 public:
 	MessageContext(Engine& engine)
 		: Context(engine, MESSAGE)
-	{}
+		, Raul::Thread("message-context")
+		, _sem(0)
+		, _requests(message_context_queue_size)
+	{
+		Thread::set_context(THREAD_MESSAGE);
+	}
 
+	/** Request a run starting at node.
+	 *
+	 * Safe to call from either process thread or pre-process thread.
+	 */
 	void run(NodeImpl* node);
+
+	inline void signal() { _sem.post(); }
+	inline bool has_requests() const {
+		return _requests.read_space() >= sizeof(NodeImpl*) || _request.get();
+	}
+
+protected:
+	/** Thread run method (wait for and execute requests from process thread */
+	void _run();
+
+	/** Actually execute and propagate from node */
+	void run_node(NodeImpl* node);
+
+	Raul::Semaphore             _sem;
+	Raul::RingBuffer<NodeImpl*> _requests;
+	Glib::Mutex                 _mutex;
+	Glib::Cond                  _cond;
+	Raul::AtomicPtr<NodeImpl>   _request;
 };
 
 

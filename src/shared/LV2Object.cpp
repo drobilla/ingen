@@ -75,16 +75,17 @@ from_atom(World* world, const Raul::Atom& atom, LV2_Object* object)
 		break;
 	case Raul::Atom::STRING:
 		object->type = map->object_class_string;
-		object->size = std::min(object->size, (uint32_t)strlen(atom.get_string()) + 1);
+		object->size = std::min((uint16_t)object->size, (uint16_t)(strlen(atom.get_string()) + 1));
 		str = ((char*)(object + 1));
 		str[object->size - 1] = '\0';
 		strncpy(str, atom.get_string(), object->size);
 		break;
 	case Raul::Atom::BLOB:
-		object->type = map->object_class_string;
-		*(uint32_t*)(object + 1) = map->uri_to_id(NULL, atom.get_blob_type());
+		cerr << "TODO: Blob support" << endl;
+		/*object->type = map->object_class_string;
+		*(uint16_t*)(object + 1) = map->uri_to_id(NULL, atom.get_blob_type());
 		memcpy(((char*)(object + 1) + sizeof(uint32_t)), atom.get_blob(),
-				std::min(atom.data_size(), (size_t)object->size));
+				std::min(atom.data_size(), (size_t)object->size));*/
 	default:
 		cerr << "Unsupported value type for toggle control" << endl;
 		return false;

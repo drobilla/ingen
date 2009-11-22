@@ -22,10 +22,12 @@
 #include <string>
 #include "flowcanvas/Connection.hpp"
 #include "raul/SharedPtr.hpp"
-#include "client/ConnectionModel.hpp"
-using Ingen::Client::ConnectionModel;
 
 namespace Ingen {
+
+namespace Client { class ConnectionModel; }
+using Client::ConnectionModel;
+
 namespace GUI {
 
 
@@ -40,12 +42,7 @@ public:
 	           boost::shared_ptr<ConnectionModel>         model,
 	           boost::shared_ptr<FlowCanvas::Connectable> src,
 	           boost::shared_ptr<FlowCanvas::Connectable> dst,
-	           uint32_t                                   color)
-	: FlowCanvas::Connection(canvas, src, dst, color)
-	, _connection_model(model)
-	{}
-
-	virtual ~Connection() {}
+	           uint32_t                                   color);
 
 	SharedPtr<ConnectionModel> model() const { return _connection_model; }
 

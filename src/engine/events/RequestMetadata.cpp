@@ -96,7 +96,7 @@ RequestMetadata::execute(ProcessContext& context)
 		if (port) {
 			if (port->type() == PortType::CONTROL || port->type() == PortType::AUDIO)
 				_value = ((AudioBuffer*)port->buffer(0).get())->value_at(0); // TODO: offset
-			else if (port->type() == PortType::VALUE)
+			else if (port->type() == PortType::VALUE || port->type() == PortType::MESSAGE)
 				LV2Object::to_atom(context.engine().world(),
 						((ObjectBuffer*)port->buffer(0).get())->object(), _value);
 		} else {

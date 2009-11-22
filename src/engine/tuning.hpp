@@ -29,6 +29,7 @@ static const size_t event_queue_size           = 1024;
 static const size_t pre_processor_queue_size   = 1024;
 static const size_t post_processor_queue_size  = 1024;
 static const size_t maid_queue_size            = 1024;
+static const size_t message_context_queue_size = 1024;
 
 //static const timespec main_rate     = { 0, 500000000 }; // 1/2 second
 static const timespec main_rate       = { 0, 125000000 }; // 1/8 second

@@ -21,21 +21,22 @@
 #include <iostream>
 #include <cstdlib>
 #include "raul/List.hpp"
+#include "AudioBuffer.hpp"
+#include "DuplexPort.hpp"
 #include "Engine.hpp"
-#include "util.hpp"
 #include "Event.hpp"
-#include "ThreadManager.hpp"
-#include "QueuedEvent.hpp"
 #include "EventSource.hpp"
-#include "PostProcessor.hpp"
+#include "EventSource.hpp"
+#include "JackMidiDriver.hpp"
+#include "MessageContext.hpp"
+#include "MidiDriver.hpp"
 #include "PatchImpl.hpp"
 #include "PortImpl.hpp"
-#include "MidiDriver.hpp"
-#include "DuplexPort.hpp"
-#include "EventSource.hpp"
-#include "AudioBuffer.hpp"
+#include "PostProcessor.hpp"
 #include "ProcessSlave.hpp"
-#include "JackMidiDriver.hpp"
+#include "QueuedEvent.hpp"
+#include "ThreadManager.hpp"
+#include "util.hpp"
 
 using namespace std;
 using namespace Raul;
@@ -343,16 +344,9 @@ JackAudioDriver::_process_cb(jack_nframes_t nframes)
 	// FIXME: support nframes != buffer_size, even though that never damn well happens
 	assert(nframes == _buffer_size / sizeof(Sample));
 
-	// Jack can elect to not call this function for a cycle, if overloaded
-	// FIXME: this doesn't make sense, and the start time isn't used anyway
+	// Note that Jack can not call this function for a cycle, if overloaded
 	const jack_nframes_t start_of_current_cycle = jack_last_frame_time(_client);
-
-	const jack_nframes_t end_of_current_cycle = start_of_current_cycle + nframes;
-#ifndef NDEBUG
-	// FIXME: support changing cycle length
-	const jack_nframes_t start_of_last_cycle = start_of_current_cycle - nframes;
-	assert(start_of_current_cycle - start_of_last_cycle == nframes);
-#endif
+	const jack_nframes_t end_of_current_cycle   = start_of_current_cycle + nframes;
 
 	_transport_state = jack_transport_query(_client, &_position);
 
@@ -377,6 +371,10 @@ JackAudioDriver::_process_cb(jack_nframes_t nframes)
 	// Run root patch
 	if (_root_patch)
 		_root_patch->process(_process_context);
+
+	// Signal message context to run if necessary
+	if (_engine.message_context()->has_requests())
+		_engine.message_context()->signal();
 
 	if (_engine.midi_driver())
 		_engine.midi_driver()->post_process(_process_context);

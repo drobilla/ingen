@@ -49,7 +49,8 @@ private:
 		case PortType::AUDIO:   return _free_audio;
 		case PortType::CONTROL: return _free_control;
 		case PortType::EVENTS:  return _free_event;
-		case PortType::VALUE:   return _free_object;
+		case PortType::VALUE:
+		case PortType::MESSAGE: return _free_object;
 		default: throw;
 		}
 	}

@@ -56,10 +56,14 @@ public:
 	void value_changed(const Raul::Atom& value);
 	void activity();
 
+	ArtVpathDash* dash();
+
 private:
 	void property_changed(const Raul::URI& key, const Raul::Atom& value);
 
 	void moved();
+
+	static ArtVpathDash* _dash;
 
 	WeakPtr<PortModel> _port_model;
 	bool               _flipped;

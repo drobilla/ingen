@@ -115,6 +115,9 @@ ResourceImpl::type(
 			} else if (!strcmp(atom.get_uri(), "obj:ValuePort")) {
 				data_type = PortType::VALUE;
 				port = true;
+			} else if (!strcmp(atom.get_uri(), "obj:MessagePort")) {
+				data_type = PortType::MESSAGE;
+				port = true;
 			}
 		}
 	}

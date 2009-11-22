@@ -38,6 +38,7 @@ LV2Info::LV2Info(Ingen::Shared::World* world)
 	, audio_class(slv2_value_new_uri(world->slv2_world, SLV2_PORT_CLASS_AUDIO))
 	, event_class(slv2_value_new_uri(world->slv2_world, SLV2_PORT_CLASS_EVENT))
 	, value_port_class(slv2_value_new_uri(world->slv2_world, LV2_OBJECT_URI "#ValuePort"))
+	, message_port_class(slv2_value_new_uri(world->slv2_world, LV2_OBJECT_URI "#MessagePort"))
 	, _world(world)
 {
 	assert(world);
@@ -58,6 +59,7 @@ LV2Info::~LV2Info()
 	slv2_value_free(audio_class);
 	slv2_value_free(event_class);
 	slv2_value_free(value_port_class);
+	slv2_value_free(message_port_class);
 }
 
 } // namespace Ingen

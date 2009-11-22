@@ -39,6 +39,7 @@ public:
 		CONTROL = 2,
 		EVENTS  = 3,
 		VALUE   = 7,
+		MESSAGE = 8,
 	};
 
 	PortType(const Raul::URI& uri)
@@ -52,6 +53,8 @@ public:
 			_symbol = EVENTS;
 		} else if (uri.str() == type_uri(VALUE)) {
 			_symbol = VALUE;
+		} else if (uri.str() == type_uri(MESSAGE)) {
+			_symbol = MESSAGE;
 		}
 	}
 
@@ -71,6 +74,7 @@ public:
 	inline bool is_control() { return _symbol == CONTROL; }
 	inline bool is_events()  { return _symbol == EVENTS; }
 	inline bool is_value()   { return _symbol == VALUE; }
+	inline bool is_message() { return _symbol == MESSAGE; }
 
 private:
 
@@ -80,6 +84,7 @@ private:
 		case 2:  return "lv2:ControlPort";
 		case 3:  return "lv2ev:EventPort";
 		case 7:  return "obj:ValuePort";
+		case 8:  return "obj:MessagePort";
 		default: return "";
 		}
 	}

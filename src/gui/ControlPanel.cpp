@@ -120,7 +120,7 @@ ControlPanel::add_port(SharedPtr<PortModel> pm)
 			Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference("toggle_control");
 			xml->get_widget_derived("toggle_control", tc);
 			control = tc;
-		} else if (pm->type().is_value()) {
+		} else if (pm->type().is_value() || pm->type().is_message()) {
 			StringControl* sc;
 			Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference("string_control");
 			xml->get_widget_derived("string_control", sc);

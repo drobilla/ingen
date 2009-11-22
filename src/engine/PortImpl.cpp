@@ -18,6 +18,7 @@
 #include <iostream>
 #include "raul/Array.hpp"
 #include "raul/Maid.hpp"
+#include "contexts.lv2/contexts.h"
 #include "interface/PortType.hpp"
 #include "events/SendPortValue.hpp"
 #include "events/SendPortActivity.hpp"
@@ -75,7 +76,8 @@ PortImpl::PortImpl(BufferFactory&  bufs,
 	else
 		_polyphonic = true;
 
-	add_property("rdf:type", Atom(Atom::URI, type.uri()));
+	add_property("rdf:type",    Atom(Atom::URI, type.uri()));
+	set_context(_context);
 
 	if (type == PortType::EVENTS)
 		_broadcast = true; // send activity blips
@@ -188,6 +190,7 @@ PortImpl::broadcast_value(Context& context, bool force)
 		}
 		break;
 	case PortType::VALUE:
+	case PortType::MESSAGE:
 		LV2Object::to_atom(context.engine().world(), ((ObjectBuffer*)buffer(0).get())->object(), val);
 		break;
 	}
@@ -198,6 +201,21 @@ PortImpl::broadcast_value(Context& context, bool force)
 		context.event_sink().write(sizeof(ev), &ev);
 	}
 
+}
+
+
+void
+PortImpl::set_context(Context::ID c)
+{
+	_context = c;
+	switch (c) {
+	case Context::AUDIO:
+		set_property("ctx:context", Atom(Atom::URI, "ctx:AudioContext"));
+		break;
+	case Context::MESSAGE:
+		set_property("ctx:context", Atom(Atom::URI, "ctx:MessageContext"));
+		break;
+	}
 }
 
 

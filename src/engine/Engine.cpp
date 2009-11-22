@@ -185,6 +185,8 @@ Engine::activate(size_t parallelism)
 {
 	assert(_audio_driver);
 
+	_message_context->Thread::start();
+
 	if (!_midi_driver)
 		_midi_driver = new DummyMidiDriver();
 

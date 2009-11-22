@@ -20,16 +20,16 @@
 
 #include <stdint.h>
 #include <string>
+#include "raul/SharedPtr.hpp"
 
 namespace Ingen { namespace Client { class PortModel; } }
 using Ingen::Client::PortModel;
 using std::string;
 
-struct Coord { double x; double y; };
-
 namespace Ingen {
 namespace GUI {
 
+class Port;
 
 /** Singleton state manager for the entire app.
  *
@@ -52,7 +52,7 @@ public:
 	const string& patch_folder()                    { return _patch_folder; }
 	void          set_patch_folder(const string& f) { _patch_folder = f; }
 
-	uint32_t get_port_color(const PortModel* pi);
+	uint32_t get_port_color(const PortModel* p);
 
 	enum NameStyle { PATH, HUMAN, NONE };
 
@@ -68,7 +68,7 @@ private:
 	uint32_t _audio_port_color;
 	uint32_t _control_port_color;
 	uint32_t _event_port_color;
-	uint32_t _object_port_color;
+	uint32_t _value_port_color;
 };
 
 

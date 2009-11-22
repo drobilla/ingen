@@ -108,7 +108,7 @@ public:
 	void raise_set_by_user_flag() { _set_by_user = true; }
 
 	Context::ID context() const            { return _context; }
-	void        set_context(Context::ID c) { _context = c; }
+	void        set_context(Context::ID c);
 
 protected:
 	PortImpl(BufferFactory&     bufs,

@@ -20,6 +20,7 @@
 
 #include "event.lv2/event.h"
 #include "event.lv2/event-helpers.h"
+#include "object.lv2/object.h"
 
 namespace Ingen {
 
@@ -57,6 +58,8 @@ public:
 	               uint16_t* type,
 	               uint16_t* size,
 	               uint8_t** data) const;
+
+	LV2_Object* get_object() const;
 
 	bool append(uint32_t       frames,
 	            uint32_t       subframes,

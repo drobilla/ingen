@@ -18,12 +18,15 @@
 #include <algorithm>
 #include "raul/Maid.hpp"
 #include "util.hpp"
-#include "ConnectionImpl.hpp"
-#include "PortImpl.hpp"
 #include "AudioBuffer.hpp"
-#include "ProcessContext.hpp"
-#include "InputPort.hpp"
 #include "BufferFactory.hpp"
+#include "ConnectionImpl.hpp"
+#include "Engine.hpp"
+#include "EventBuffer.hpp"
+#include "InputPort.hpp"
+#include "MessageContext.hpp"
+#include "PortImpl.hpp"
+#include "ProcessContext.hpp"
 
 namespace Ingen {
 
@@ -35,7 +38,8 @@ using namespace Shared;
  * user (InputPort).
  */
 ConnectionImpl::ConnectionImpl(BufferFactory& bufs, PortImpl* src_port, PortImpl* dst_port)
-	: _bufs(bufs)
+	: _queue(NULL)
+	, _bufs(bufs)
 	, _src_port(src_port)
 	, _dst_port(dst_port)
 	, _pending_disconnection(false)
@@ -44,15 +48,14 @@ ConnectionImpl::ConnectionImpl(BufferFactory& bufs, PortImpl* src_port, PortImpl
 	assert(dst_port);
 	assert(src_port != dst_port);
 	assert(src_port->path() != dst_port->path());
-	assert(src_port->type() == dst_port->type()
-			|| ( (src_port->type() == PortType::CONTROL || src_port->type() == PortType::AUDIO)
-				&& (dst_port->type() == PortType::CONTROL || dst_port->type() == PortType::AUDIO) ));
 
-	/*assert((src_port->parent_node()->poly() == dst_port->parent_node()->poly())
-		|| (src_port->parent_node()->poly() == 1 || dst_port->parent_node()->poly() == 1));*/
-
-	if (must_mix())
+	if (must_mix() || must_queue())
 		_local_buffer = bufs.get(dst_port->type(), dst_port->buffer_size());
+
+	if (must_queue())
+		_queue = new Raul::RingBuffer<LV2_Object>(src_port->buffer_size() * 2);
+
+	dump();
 }
 
 
@@ -60,7 +63,8 @@ void
 ConnectionImpl::dump() const
 {
 	cerr << _src_port->path() << " -> " << _dst_port->path()
-		<< (must_mix() ? " MIX" : " DIRECT") << endl;
+		<< (must_mix()   ? " (MIX) " : " (DIRECT) ")
+		<< (must_queue() ? " (QUEUE)" : " (NOQUEUE)") << endl;
 }
 
 
@@ -96,6 +100,27 @@ ConnectionImpl::apply_poly(Raul::Maid& maid, uint32_t poly)
 void
 ConnectionImpl::process(Context& context)
 {
+	if (must_queue()) {
+		SharedPtr<EventBuffer> src_buf = PtrCast<EventBuffer>(_src_port->buffer(0));
+		if (!src_buf) {
+			cerr << "ERROR: Queued connection but source is not an EventBuffer" << endl;
+			return;
+		}
+
+		SharedPtr<ObjectBuffer> local_buf = PtrCast<ObjectBuffer>(_local_buffer);
+		if (!local_buf) {
+			cerr << "ERROR: Queued connection but source is not an EventBuffer" << endl;
+			return;
+		}
+
+		if (_queue->read_space()) {
+			LV2_Object obj;
+			_queue->full_peek(sizeof(LV2_Object), &obj);
+			_queue->full_read(sizeof(LV2_Object) + obj.size, local_buf->object());
+		}
+		return;
+	}
+
 	if (!must_mix())
 		return;
 
@@ -105,6 +130,34 @@ ConnectionImpl::process(Context& context)
 	// Mix in the rest
 	for (uint32_t v = 0; v < src_port()->poly(); ++v)
 		_local_buffer->mix(context, src_port()->buffer(v).get());
+}
+
+
+void
+ConnectionImpl::queue(Context& context)
+{
+	if (!must_queue())
+		return;
+
+	SharedPtr<EventBuffer> src_buf = PtrCast<EventBuffer>(_src_port->buffer(0));
+	if (!src_buf) {
+		cerr << "ERROR: Queued connection but source is not an EventBuffer" << endl;
+		return;
+	}
+
+	while (src_buf->is_valid()) {
+		LV2_Object* obj = src_buf->get_object();
+		/*cout << _src_port->path() << " -> " << _dst_port->path()
+			<< " QUEUE OBJECT TYPE " << obj->type << ":";
+		for (size_t i = 0; i < obj->size; ++i)
+			cout << " " << std::hex << (int)obj->body[i];
+		cout << endl;*/
+
+		_queue->write(sizeof(LV2_Object) + obj->size, obj);
+		src_buf->increment();
+
+		context.engine().message_context()->run(_dst_port->parent_node());
+	}
 }
 
 

@@ -35,6 +35,7 @@ namespace Ingen {
 using namespace Shared;
 namespace GUI {
 
+ArtVpathDash* Port::_dash;
 
 /** @a flip Make an input port appear as an output port, and vice versa.
  */
@@ -54,6 +55,10 @@ Port::Port(
 
 	delete _menu;
 	_menu = NULL;
+
+	ArtVpathDash* dash = this->dash();
+	_rect->property_dash() = dash;
+	set_border_width(dash ? 2.0 : 0.0);
 
 	pm->signal_moved.connect(sigc::mem_fun(this, &Port::moved));
 
@@ -148,7 +153,35 @@ Port::property_changed(const URI& key, const Atom& value)
 	} else if (value.type() == Atom::BOOL) {
 		if ((key.str() == "lv2:toggled"))
 			set_toggled(value.get_bool());
+	} else if (value.type() == Atom::URI) {
+		ArtVpathDash* dash = this->dash();
+		_rect->property_dash() = dash;
+		set_border_width(dash ? 2.0 : 0.0);
 	}
+}
+
+
+ArtVpathDash*
+Port::dash()
+{
+	SharedPtr<PortModel> pm = _port_model.lock();
+	if (!pm)
+		return NULL;
+
+	const Raul::Atom& context = pm->get_property("ctx:context");
+	if (!context.is_valid() || context.type() != Atom::URI
+			|| !strcmp(context.get_uri(), "ctx:AudioContext"))
+		return NULL;
+
+	if (!_dash) {
+		_dash = new ArtVpathDash();
+		_dash->n_dash = 2;
+		_dash->dash = art_new(double, 2);
+		_dash->dash[0] = 4;
+		_dash->dash[1] = 4;
+	}
+
+	return _dash;
 }
 
 

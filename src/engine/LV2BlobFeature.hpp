@@ -39,10 +39,10 @@ struct BlobFeature : public Shared::LV2Features::Feature {
 	                     LV2_Reference*        reference,
 	                     LV2_Blob_Destroy      destroy_func,
 	                     uint32_t              type,
-	                     uint32_t              size) {}
+	                     size_t                size) {}
 
 	static LV2_Blob* reference_get(LV2_Blob_Support_Data data,
-	                               LV2_Reference*    ref) { return 0; }
+	                               LV2_Reference*        ref) { return 0; }
 
 	static void reference_copy(LV2_Blob_Support_Data data,
 	                           LV2_Reference*        dst,

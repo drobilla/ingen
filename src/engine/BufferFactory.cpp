@@ -97,7 +97,7 @@ BufferFactory::create(Shared::PortType type, size_t size)
 		if (size == 0)
 			size = _engine.audio_driver()->buffer_size() * 4; // FIXME
 		buffer = new EventBuffer(size);
-	} else if (type.is_value()) {
+	} else if (type.is_value() || type.is_message()) {
 		if (size == 0)
 			size = 32; // FIXME
 		buffer = new ObjectBuffer(std::max(size, sizeof(LV2_Object) + sizeof(void*)));

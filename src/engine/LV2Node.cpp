@@ -189,13 +189,14 @@ LV2Node::instantiate(BufferFactory& bufs)
 	SLV2Value context_pred = slv2_value_new_uri(info->lv2_world(),
 			"http://lv2plug.in/ns/dev/contexts#context");
 
-	// FIXME: Why doesn't this just use lv2:default?
 	SLV2Value default_pred = slv2_value_new_uri(info->lv2_world(),
-			"http://lv2plug.in/ns/dev/string-port#default");
+			"http://lv2plug.in/ns/lv2core#default");
 
-	// FIXME: Make this a separate extension
-	SLV2Value size_pred = slv2_value_new_uri(info->lv2_world(),
-			"http://lv2plug.in/ns/dev/string-port#requiredSpace");
+	SLV2Value min_size_pred = slv2_value_new_uri(info->lv2_world(),
+			"http://lv2plug.in/ns/dev/resize-port#minimumSize");
+
+	//SLV2Value as_large_as_pred = slv2_value_new_uri(info->lv2_world(),
+	//		"http://lv2plug.in/ns/dev/resize-port#asLargeAs");
 
 	for (uint32_t j=0; j < num_ports; ++j) {
 		SLV2Port id = slv2_plugin_get_port_by_index(plug, j);
@@ -219,6 +220,11 @@ LV2Node::instantiate(BufferFactory& bufs)
 			port_buffer_size = _buffer_size;
 		} else if (slv2_port_is_a(plug, id, info->value_port_class)) {
 			data_type = PortType::VALUE;
+		} else if (slv2_port_is_a(plug, id, info->message_port_class)) {
+			data_type = PortType::MESSAGE;
+		}
+
+		if (data_type == PortType::VALUE || data_type == PortType::MESSAGE) {
 			port_buffer_size = 0;
 
 			// Get default value, and its length
@@ -236,7 +242,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 			}
 
 			// Get minimum size, if set in data
-			SLV2Values sizes = slv2_port_get_value(plug, id, size_pred);
+			SLV2Values sizes = slv2_port_get_value(plug, id, min_size_pred);
 			for (uint32_t i = 0; i < slv2_values_size(sizes); ++i) {
 				SLV2Value d = slv2_values_get_at(sizes, i);
 				if (slv2_value_is_int(d)) {

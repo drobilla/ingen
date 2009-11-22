@@ -24,6 +24,7 @@
 #include "raul/Deletable.hpp"
 #include "interface/PortType.hpp"
 #include "interface/Connection.hpp"
+#include "object.lv2/object.h"
 #include "PortImpl.hpp"
 #include "PortImpl.hpp"
 
@@ -62,6 +63,7 @@ public:
 	void pending_disconnection(bool b) { _pending_disconnection = b; }
 
 	void process(Context& context);
+	void queue(Context& context);
 
 	/** Get the buffer for a particular voice.
 	 * A Connection is smart - it knows the destination port requesting the
@@ -69,7 +71,7 @@ public:
 	 * voice in a mono->poly connection).
 	 */
 	inline SharedPtr<Buffer> buffer(uint32_t voice) const {
-		if (must_mix()) {
+		if (must_mix() || must_queue()) {
 			return _local_buffer;
 		} else if ( ! _src_port->polyphonic()) {
 			return _src_port->buffer(0);
@@ -85,8 +87,13 @@ public:
 	/** Returns true if this connection must mix down voices into a local buffer */
 	inline bool must_mix() const { return _src_port->poly() > _dst_port->poly(); }
 
+	/** Returns true if this connection crosses contexts and must buffer */
+	inline bool must_queue() const { return _src_port->context() != _dst_port->context(); }
+
 protected:
 	void dump() const;
+
+	Raul::RingBuffer<LV2_Object>* _queue;
 
 	BufferFactory&    _bufs;
 	PortImpl* const   _src_port;

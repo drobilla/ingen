@@ -75,9 +75,21 @@ Connect::pre_process()
 		return;
 	}
 
-	if ( ! (_src_port->type() == _dst_port->type()
-			|| ( (_src_port->type() == PortType::CONTROL || _src_port->type() == PortType::AUDIO)
-				&& (_dst_port->type() == PortType::CONTROL || _dst_port->type() == PortType::AUDIO) ))) {
+	const PortType src_type = _src_port->type();
+	const PortType dst_type = _dst_port->type();
+
+	if (	!(
+			// Equal types
+			(src_type == dst_type)
+
+			|| // or Control=>Audio or Audio=>Control
+			((src_type == PortType::CONTROL || src_type == PortType::AUDIO)
+				&& (dst_type == PortType::CONTROL || dst_type == PortType::AUDIO))
+
+			|| // or Events=>Message or Message=>Events
+			((src_type == PortType::EVENTS || src_type == PortType::MESSAGE)
+				&& (dst_type == PortType::EVENTS || dst_type == PortType::MESSAGE))
+			)) {
 		_error = TYPE_MISMATCH;
 		QueuedEvent::pre_process();
 		return;

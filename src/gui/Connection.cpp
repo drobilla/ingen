@@ -15,32 +15,29 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <algorithm>
-#include "AudioBuffer.hpp"
-#include "EventBuffer.hpp"
-#include "ObjectBuffer.hpp"
+#include <iostream>
+#include "client/ConnectionModel.hpp"
+#include "Connection.hpp"
+#include "Port.hpp"
+
+using namespace std;
 
 namespace Ingen {
+namespace GUI {
 
-using namespace Shared;
-
-class Engine;
-
-Buffer*
-Buffer::create(Engine& engine, Shared::PortType type, size_t size)
+Connection::Connection(boost::shared_ptr<FlowCanvas::Canvas>      canvas,
+                       boost::shared_ptr<ConnectionModel>         model,
+                       boost::shared_ptr<FlowCanvas::Connectable> src,
+                       boost::shared_ptr<FlowCanvas::Connectable> dst,
+                       uint32_t                                   color)
+	: FlowCanvas::Connection(canvas, src, dst, color)
+	, _connection_model(model)
 {
-	if (type.is_control())
-		return new AudioBuffer(type, size);
-	else if (type.is_audio())
-		return new AudioBuffer(type, size);
-	else if (type.is_events())
-		return new EventBuffer(size);
-	else if (type.is_value() || type.is_message())
-		return new ObjectBuffer(std::max(size,
-					sizeof(LV2_Object) + sizeof(void*)));
-	else
-		throw;
+	boost::shared_ptr<Port> src_port = boost::dynamic_pointer_cast<Port>(src);
+	if (src_port)
+		_bpath.property_dash() = src_port->dash();
 }
 
 
-} // namespace Ingen
+}   // namespace GUI
+}   // namespace Ingen

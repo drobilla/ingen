@@ -24,7 +24,9 @@
 #include "client/PortModel.hpp"
 #include "client/PluginModel.hpp"
 #include "serialisation/Parser.hpp"
+#include "flowcanvas/Port.hpp"
 #include "App.hpp"
+#include "Port.hpp"
 
 using namespace std;
 
@@ -41,7 +43,7 @@ Configuration::Configuration()
 	, _control_port_color(0x4A8A0EC0)
 	, _event_port_color(  0x960909C0)
 //	, _osc_port_color(    0x5C3566C0)
-	, _object_port_color( 0x5C3566C0)
+	, _value_port_color(  0x4A4A4AC0)
 {
 }
 
@@ -95,7 +97,9 @@ Configuration::get_port_color(const PortModel* p)
 	/*} else if (p->type().is_osc()) {
 		return _osc_port_color;
 	*/} else if (p->type().is_value()) {
-		return _object_port_color;
+		return _value_port_color;
+	} else if (p->type().is_message()) {
+		return _event_port_color;
 	}
 
 	cerr << "[Configuration] Unknown port type " << p->type().uri()
