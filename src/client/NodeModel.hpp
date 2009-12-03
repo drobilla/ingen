@@ -21,6 +21,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <string>
+#include <vector>
 #include <sigc++/sigc++.h>
 #include "raul/SharedPtr.hpp"
 #include "interface/Node.hpp"

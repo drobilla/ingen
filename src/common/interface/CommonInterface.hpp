@@ -45,8 +45,8 @@ public:
 	/** End (and send) an atomic bundle */
 	virtual void bundle_end() = 0;
 
-	virtual void put(const Raul::URI&                           uri,
-	                 const Ingen::Shared::Resource::Properties& properties) = 0;
+	virtual void put(const Raul::URI&            uri,
+	                 const Resource::Properties& properties) = 0;
 
 	virtual void move(const Raul::Path& old_path,
 	                  const Raul::Path& new_path) = 0;

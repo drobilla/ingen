@@ -318,7 +318,7 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch, const Redland::Node&
 
 	serialise_properties(patch_id, patch->meta().properties());
 
-	for (GraphObject::const_iterator n = _store->children_begin(patch);
+	for (Store::const_iterator n = _store->children_begin(patch);
 			n != _store->children_end(patch); ++n) {
 
 		if (n->second->graph_parent() != patch.get())

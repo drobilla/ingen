@@ -24,6 +24,7 @@
 #include <cassert>
 #include "raul/Deletable.hpp"
 #include "raul/Path.hpp"
+#include "raul/SharedPtr.hpp"
 #include "interface/GraphObject.hpp"
 #include "shared/ResourceImpl.hpp"
 

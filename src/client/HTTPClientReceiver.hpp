@@ -24,6 +24,7 @@
 #include <glibmm/thread.h>
 #include "redlandmm/World.hpp"
 #include "raul/Deletable.hpp"
+#include "raul/SharedPtr.hpp"
 #include "raul/Thread.hpp"
 #include "interface/ClientInterface.hpp"
 #include "serialisation/Parser.hpp"

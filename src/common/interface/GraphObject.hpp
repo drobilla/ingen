@@ -18,13 +18,9 @@
 #ifndef GRAPHOBJECT_H
 #define GRAPHOBJECT_H
 
-#include <string>
-#include <map>
 #include "raul/Deletable.hpp"
-#include "raul/PathTable.hpp"
+#include "raul/Path.hpp"
 #include "raul/Symbol.hpp"
-#include "raul/SharedPtr.hpp"
-#include "raul/WeakPtr.hpp"
 #include "interface/Resource.hpp"
 
 namespace Raul { class Atom; }
@@ -43,8 +39,6 @@ class GraphObject : public Raul::Deletable
                   , public virtual Resource
 {
 public:
-	typedef Raul::PathTable< SharedPtr<GraphObject> >::const_iterator const_iterator;
-
 	virtual const Resource& meta() const = 0;
 	virtual       Resource& meta()       = 0;
 
