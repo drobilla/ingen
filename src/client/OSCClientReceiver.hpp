@@ -21,8 +21,9 @@
 #include <cstdlib>
 #include <boost/utility.hpp>
 #include <lo/lo.h>
-#include "interface/ClientInterface.hpp"
 #include "raul/Deletable.hpp"
+#include "raul/SharedPtr.hpp"
+#include "interface/ClientInterface.hpp"
 
 namespace Ingen {
 namespace Client {
