@@ -97,7 +97,9 @@ private:
 	void filter_changed();
 	void clear_clicked();
 	void name_changed();
+#ifdef HAVE_NEW_GTKMM
 	void name_cleared(Gtk::EntryIconPosition pos, const GdkEventButton* event);
+#endif
 
 	void new_plugin(SharedPtr<PluginModel> plugin);
 

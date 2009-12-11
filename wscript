@@ -29,6 +29,7 @@ def configure(conf):
 	autowaf.check_pkg(conf, 'glibmm-2.4', uselib_store='GLIBMM', atleast_version='2.14.0', mandatory=True)
 	autowaf.check_pkg(conf, 'gthread-2.0', uselib_store='GTHREAD', atleast_version='2.14.0', mandatory=True)
 	autowaf.check_pkg(conf, 'gtkmm-2.4', uselib_store='GTKMM', atleast_version='2.11.12', mandatory=False)
+	autowaf.check_pkg(conf, 'gtkmm-2.4', uselib_store='NEW_GTKMM', atleast_version='2.14.0', mandatory=False)
 	autowaf.check_pkg(conf, 'jack', uselib_store='JACK', atleast_version='0.109.0', mandatory=True)
 	autowaf.check_pkg(conf, 'slv2', uselib_store='SLV2', atleast_version='0.6.0', mandatory=True)
 	autowaf.check_pkg(conf, 'raul', uselib_store='RAUL', atleast_version='0.5.1', mandatory=True)

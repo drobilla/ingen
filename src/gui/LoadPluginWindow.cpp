@@ -93,8 +93,11 @@ LoadPluginWindow::LoadPluginWindow(BaseObjectType* cobject, const Glib::RefPtr<G
 			sigc::mem_fun(this, &LoadPluginWindow::filter_changed));
 	_node_name_entry->signal_changed().connect(
 			sigc::mem_fun(this, &LoadPluginWindow::name_changed));
+
+#ifdef HAVE_NEW_GTKMM
 	_search_entry->signal_icon_release().connect(
 			sigc::mem_fun(this, &LoadPluginWindow::name_cleared));
+#endif
 
 	_selection = _plugins_treeview->get_selection();
 	_selection->set_mode(Gtk::SELECTION_MULTIPLE);
@@ -140,11 +143,13 @@ LoadPluginWindow::name_changed()
 }
 
 
+#ifdef HAVE_NEW_GTKMM
 void
 LoadPluginWindow::name_cleared(Gtk::EntryIconPosition pos, const GdkEventButton* event)
 {
 	_search_entry->set_text("");
 }
+#endif // HAVE_NEW_GTKMM
 
 
 /** Sets the patch controller for this window and initializes everything.
