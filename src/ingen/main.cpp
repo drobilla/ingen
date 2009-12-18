@@ -19,11 +19,9 @@
 #include <iostream>
 #include <string>
 #include <signal.h>
-#include <dlfcn.h>
 #include <boost/optional.hpp>
 #include <glibmm/convert.h>
 #include <glibmm/miscutils.h>
-#include <glibmm/spawn.h>
 #include <glibmm/thread.h>
 #include "raul/Path.hpp"
 #include "raul/SharedPtr.hpp"
@@ -37,24 +35,21 @@
 #include "engine/JackAudioDriver.hpp"
 #include "serialisation/Parser.hpp"
 #include "cmdline.h"
-
 #ifdef HAVE_LIBLO
 #include "engine/OSCEngineReceiver.hpp"
 #endif
 #ifdef HAVE_SOUP
 #include "engine/HTTPEngineReceiver.hpp"
 #endif
-
 #ifdef WITH_BINDINGS
 #include "bindings/ingen_bindings.hpp"
 #endif
 
 using namespace std;
-using namespace Ingen;
-using namespace Ingen::Shared;
 using namespace Raul;
+using namespace Ingen;
 
-SharedPtr<Engine> engine;
+SharedPtr<Ingen::Engine> engine;
 
 void
 catch_int(int)
@@ -69,15 +64,15 @@ catch_int(int)
 int
 main(int argc, char** argv)
 {
-	/* Parse command line options */
+	// Parse command line options
 	gengetopt_args_info args;
 	if (cmdline_parser (argc, argv, &args) != 0)
 		return 1;
 
 	if (argc <= 1) {
 		cmdline_parser_print_help();
-		cerr << endl << "*** Ingen requires at least one command line parameter" << endl;
-		cerr << "*** Just want a graphical application?  Try 'ingen -eg'" << endl;
+		cerr << endl << "*** Ingen requires at least one command line parameter"  << endl;
+		cerr <<         "*** Just want a graphical application?  Try 'ingen -eg'" << endl;
 		return 1;
 	} else if (args.connect_given && args.engine_flag) {
 		cerr << "\n*** Nonsense arguments, can't both run a local engine "
@@ -86,7 +81,7 @@ main(int argc, char** argv)
 		return 1;
 	}
 
-	/* Set bundle path from executable location so resources/modules can be found */
+	// Set bundle path from executable location so resources/modules can be found
 	Shared::set_bundle_path_from_code((void*)&main);
 
 	SharedPtr<Glib::Module> engine_module;
@@ -107,7 +102,7 @@ main(int argc, char** argv)
 
 	Ingen::Shared::World* world = Ingen::Shared::get_world();
 
-	/* Set up RDF world */
+	// Set up RDF namespaces
 	world->rdf_world->add_prefix("dc",        "http://purl.org/dc/elements/1.1/");
 	world->rdf_world->add_prefix("doap",      "http://usefulinc.com/ns/doap#");
 	world->rdf_world->add_prefix("ingen",     "http://drobilla.net/ns/ingen#");
@@ -120,12 +115,10 @@ main(int argc, char** argv)
 	world->rdf_world->add_prefix("sp",        "http://lv2plug.in/ns/dev/string-port#");
 	world->rdf_world->add_prefix("xsd",       "http://www.w3.org/2001/XMLSchema#");
 
-	/* Run engine */
+	// Run engine
 	if (args.engine_flag) {
-		engine_module = Ingen::Shared::load_module("ingen_engine");
-		engine_http_module = Ingen::Shared::load_module("ingen_engine_http");
-		engine_osc_module = Ingen::Shared::load_module("ingen_engine_osc");
-		engine_jack_module = Ingen::Shared::load_module("ingen_engine_jack");
+		engine_module        = Ingen::Shared::load_module("ingen_engine");
+		engine_jack_module   = Ingen::Shared::load_module("ingen_engine_jack");
 		engine_queued_module = Ingen::Shared::load_module("ingen_engine_queued");
 
 		if (!engine_queued_module) {
@@ -139,7 +132,8 @@ main(int argc, char** argv)
 			if (engine_module->get_symbol("new_engine", (void*&)new_engine)) {
 				engine = SharedPtr<Engine>(new_engine(world));
 				world->local_engine = engine;
-				/* Load queued (direct in-process) engine interface */
+
+				// Load queued (direct in-process) engine interface
 				if (args.gui_given && engine_queued_module) {
 					Ingen::QueuedEngineInterface* (*new_interface)(Ingen::Engine& engine);
 					if (engine_queued_module->get_symbol("new_queued_interface", (void*&)new_interface)) {
@@ -148,25 +142,27 @@ main(int argc, char** argv)
 						engine_interface = interface;
 						world->engine = engine_interface;
 					}
+
+				// Load network engine interfaces
 				} else {
 					#ifdef HAVE_LIBLO
-					if (engine_osc_module) {
+					if ((engine_osc_module = Ingen::Shared::load_module("ingen_engine_osc"))) {
 						Ingen::OSCEngineReceiver* (*new_receiver)(
 								Ingen::Engine& engine, size_t queue_size, uint16_t port);
 						if (engine_osc_module->get_symbol("new_osc_receiver", (void*&)new_receiver)) {
 							static const size_t queue_size = 1024; // FIXME
-							SharedPtr<EventSource> source(new_receiver(*engine,
-										queue_size, args.engine_port_arg));
-							world->local_engine->add_event_source(source);
+							SharedPtr<EventSource> receiver(new_receiver(
+										*engine, queue_size, args.engine_port_arg));
+							world->local_engine->add_event_source(receiver);
 						}
 					}
 					#endif
 					#ifdef HAVE_SOUP
-					if (engine_http_module) {
-						// FIXE: leak
-						Ingen::HTTPEngineReceiver* (*new_receiver)(Ingen::Engine& engine, uint16_t port);
+					if ((engine_http_module = Ingen::Shared::load_module("ingen_engine_http"))) {
+						Ingen::HTTPEngineReceiver* (*new_receiver)(
+								Ingen::Engine& engine, uint16_t port);
 						if (engine_http_module->get_symbol("new_http_receiver", (void*&)new_receiver)) {
-							boost::shared_ptr<HTTPEngineReceiver> receiver(new_receiver(
+							SharedPtr<EventSource> receiver(new_receiver(
 									*world->local_engine, args.engine_port_arg));
 							world->local_engine->add_event_source(receiver);
 						}
@@ -181,14 +177,14 @@ main(int argc, char** argv)
 		}
 	}
 
-	/* Load client library */
+	// Load client library
 	if (args.load_given || args.gui_given) {
 		client_module = Ingen::Shared::load_module("ingen_client");
 		if (!client_module)
 			cerr << "Unable to load client module." << endl;
 	}
 
-	/* If we don't have a local engine interface (for GUI), use network */
+	// If we don't have a local engine interface (for GUI), use network
 	if (client_module && ! engine_interface) {
 		SharedPtr<Shared::EngineInterface> (*new_remote_interface)
 				(Ingen::Shared::World*, const std::string&) = NULL;
@@ -202,7 +198,7 @@ main(int argc, char** argv)
 		}
 	}
 
-	/* Activate the engine, if we have one */
+	// Activate the engine, if we have one
 	if (engine) {
 		Ingen::JackAudioDriver* (*new_driver)(
 				Ingen::Engine&    engine,
@@ -210,7 +206,7 @@ main(int argc, char** argv)
 				const std::string client_name,
 				void*             jack_client) = NULL;
 		if (engine_jack_module->get_symbol("new_jack_audio_driver", (void*&)new_driver)) {
-			engine->set_driver(PortType::AUDIO, SharedPtr<Driver>(new_driver(
+			engine->set_driver(Shared::PortType::AUDIO, SharedPtr<Driver>(new_driver(
 					*engine, "default", args.engine_name_arg, NULL)));
 		} else {
 			cerr << Glib::Module::get_last_error() << endl;
@@ -223,7 +219,7 @@ main(int argc, char** argv)
 
 	void (*gui_run)() = NULL;
 
-	/* Load GUI */
+	// Load GUI
 	bool run_gui = false;
 	if (args.gui_given) {
 		gui_module = Ingen::Shared::load_module("ingen_gui");
@@ -243,7 +239,7 @@ main(int argc, char** argv)
 		}
 	}
 
-	/* Load a patch */
+	// Load a patch
 	if (args.load_given && engine_interface) {
 		boost::optional<Path>   data_path = Path("/");
 		boost::optional<Path>   parent;
@@ -295,11 +291,11 @@ main(int argc, char** argv)
 		}
 	}
 
-	/* Run GUI (if applicable) */
+	// Run GUI (if applicable)
 	if (run_gui)
 		gui_run();
 
-	/* Run a script */
+	// Run a script
 	if (args.run_given) {
 #ifdef WITH_BINDINGS
 		bool (*run_script)(Ingen::Shared::World*, const char*) = NULL;
@@ -321,13 +317,14 @@ main(int argc, char** argv)
 		cerr << "This build of ingen does not support scripting." << endl;
 #endif
 
-	/* Listen to OSC and do our own main thing. */
+	// Listen to OSC and run main loop
 	} else if (engine && !run_gui) {
 		signal(SIGINT, catch_int);
 		signal(SIGTERM, catch_int);
-		engine->main();
+		engine->main(); // Block here
 	}
 
+	// Shut down
 	if (engine) {
 		engine->deactivate();
 		engine.reset();
