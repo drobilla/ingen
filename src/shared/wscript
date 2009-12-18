@@ -2,6 +2,9 @@
 import autowaf
 
 def build(bld):
+	# Headers
+	bld.install_files('${INCLUDEDIR}/ingen/shared', '*.hpp')
+
 	obj = bld.new_task_gen('cxx', 'shlib')
 	obj.source = '''
 		Builder.cpp

@@ -2,6 +2,9 @@
 import autowaf
 
 def build(bld):
+	# Headers
+	bld.install_files('${INCLUDEDIR}/ingen/engine', '*.hpp')
+
 	core_source = '''
 		AudioBuffer.cpp
 		BufferFactory.cpp

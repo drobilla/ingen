@@ -32,7 +32,6 @@
 #include "module/ingen_module.hpp"
 #include "module/Module.hpp"
 #include "module/World.hpp"
-#include "engine/tuning.hpp"
 #include "engine/Engine.hpp"
 #include "engine/QueuedEngineInterface.hpp"
 #include "engine/JackAudioDriver.hpp"
@@ -155,8 +154,9 @@ main(int argc, char** argv)
 						Ingen::OSCEngineReceiver* (*new_receiver)(
 								Ingen::Engine& engine, size_t queue_size, uint16_t port);
 						if (engine_osc_module->get_symbol("new_osc_receiver", (void*&)new_receiver)) {
+							static const size_t queue_size = 1024; // FIXME
 							SharedPtr<EventSource> source(new_receiver(*engine,
-										pre_processor_queue_size, args.engine_port_arg));
+										queue_size, args.engine_port_arg));
 							world->local_engine->add_event_source(source);
 						}
 					}

@@ -80,6 +80,9 @@ def build(bld):
 	opts           = Options.options
 	opts.datadir   = opts.datadir   or bld.env['PREFIX'] + 'share'
 	opts.moduledir = opts.moduledir or bld.env['PREFIX'] + 'lib/ingen'
+	
+	# Headers
+	bld.install_files('${INCLUDEDIR}/ingen/interface', 'src/common/interface/*.hpp')
 
 	# Modules
 	bld.add_subdirs('src/engine')
