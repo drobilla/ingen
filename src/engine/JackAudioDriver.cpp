@@ -205,7 +205,8 @@ JackAudioDriver::activate()
 	}
 
 	if (!_client)
-		attach("", "ingen", NULL);
+		attach(_engine.world()->conf->option("jack-server").get_string(),
+				_engine.world()->conf->option("jack-client").get_string(), NULL);
 
 	jack_set_process_callback(_client, process_cb, this);
 
@@ -435,19 +436,3 @@ JackAudioDriver::_buffer_size_cb(jack_nframes_t nframes)
 
 
 } // namespace Ingen
-
-extern "C" {
-
-Ingen::JackAudioDriver*
-new_jack_audio_driver(
-		Ingen::Engine&    engine,
-		const std::string server_name,
-		const std::string client_name,
-		void*             jack_client)
-{
-	Ingen::JackAudioDriver* driver = new Ingen::JackAudioDriver(engine);
-	driver->attach(server_name, client_name, jack_client);
-	return driver;
-}
-
-}

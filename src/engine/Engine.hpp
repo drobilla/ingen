@@ -34,20 +34,21 @@ namespace Raul { class Maid; }
 namespace Ingen {
 
 class AudioDriver;
-class MidiDriver;
-class OSCDriver;
-class NodeFactory;
-class ClientBroadcaster;
-class EngineStore;
-class EventSource;
-class PostProcessor;
-class Event;
-class QueuedEvent;
-class Driver;
-class ProcessSlave;
-class ProcessContext;
-class MessageContext;
 class BufferFactory;
+class ClientBroadcaster;
+class Driver;
+class EngineStore;
+class Event;
+class EventSource;
+class MessageContext;
+class MidiDriver;
+class NodeFactory;
+class OSCDriver;
+class PostProcessor;
+class ProcessContext;
+class ProcessSlave;
+class QueuedEngineInterface;
+class QueuedEvent;
 
 
 /** The main class for the Engine.
@@ -74,22 +75,22 @@ public:
 	 * Note that it will take some time. */
 	virtual void quit() { _quit_flag = true; }
 
-	virtual bool activate(size_t parallelism);
+	virtual bool activate();
 	virtual void deactivate();
 
 	void process_events(ProcessContext& context);
 
 	virtual bool activated() { return _activated; }
 
-	Raul::Maid*        maid()               const { return _maid; }
-	AudioDriver*       audio_driver()       const { return _audio_driver.get(); }
-	MidiDriver*        midi_driver()        const { return _midi_driver; }
-	OSCDriver*         osc_driver()         const { return _osc_driver; }
-	PostProcessor*     post_processor()     const { return _post_processor; }
-	ClientBroadcaster* broadcaster()        const { return _broadcaster; }
-	NodeFactory*       node_factory()       const { return _node_factory; }
-	MessageContext*    message_context()    const { return _message_context; }
-	BufferFactory*     buffer_factory()     const { return _buffer_factory; }
+	Raul::Maid*        maid()            const { return _maid; }
+	AudioDriver*       audio_driver()    const { return _audio_driver.get(); }
+	MidiDriver*        midi_driver()     const { return _midi_driver; }
+	OSCDriver*         osc_driver()      const { return _osc_driver; }
+	PostProcessor*     post_processor()  const { return _post_processor; }
+	ClientBroadcaster* broadcaster()     const { return _broadcaster; }
+	NodeFactory*       node_factory()    const { return _node_factory; }
+	MessageContext*    message_context() const { return _message_context; }
+	BufferFactory*     buffer_factory()  const { return _buffer_factory; }
 
 	SharedPtr<EngineStore> engine_store() const;
 
@@ -101,6 +102,8 @@ public:
 	virtual void set_midi_driver(MidiDriver* driver);
 
 	virtual void add_event_source(SharedPtr<EventSource> source);
+
+	Ingen::QueuedEngineInterface* new_local_interface();
 
 	Ingen::Shared::World* world() { return _world; }
 

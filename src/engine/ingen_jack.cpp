@@ -15,31 +15,34 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef INGEN_CLIENT_H
-#define INGEN_CLIENT_H
+#include <iostream>
+#include "module/Module.hpp"
+#include "module/World.hpp"
+#include "JackAudioDriver.hpp"
+#include "Engine.hpp"
 
-#include "raul/SharedPtr.hpp"
+using namespace std;
+using namespace Ingen;
 
-namespace Ingen {
+struct IngenJackModule : public Ingen::Shared::Module {
+	void load(Ingen::Shared::World* world) {
+		Ingen::JackAudioDriver* driver = new Ingen::JackAudioDriver(*world->local_engine.get());
+		driver->attach(world->conf->option("jack-server").get_string(),
+				world->conf->option("jack-client").get_string(), NULL);
+		world->local_engine->set_driver(Shared::PortType::AUDIO, SharedPtr<Driver>(driver));
+	}
+};
 
-class Engine;
-
-namespace Shared { class EngineInterface; class World; }
-
-namespace Client {
+static IngenJackModule* module = NULL;
 
 extern "C" {
 
-	SharedPtr<Shared::EngineInterface> new_remote_interface(
-			Shared::World* world, const std::string& url);
+Ingen::Shared::Module*
+ingen_module_load() {
+	if (!module)
+		module = new IngenJackModule();
 
-	SharedPtr<Shared::EngineInterface> new_queued_interface(SharedPtr<Ingen::Engine> engine);
-
+	return module;
 }
 
-
-} // namespace Client
-} // namespace Ingen
-
-#endif // INGEN_CLIENT_H
-
+} // extern "C"

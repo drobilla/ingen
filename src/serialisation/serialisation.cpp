@@ -16,31 +16,33 @@
  */
 
 #include "raul/Atom.hpp"
+#include "module/Module.hpp"
 #include "module/World.hpp"
-#include "serialisation.hpp"
 #include "Parser.hpp"
 #include "Serialiser.hpp"
 
-namespace Ingen {
-namespace Serialisation {
+using namespace Ingen;
 
+struct IngenModule : public Shared::Module {
+	void load(Shared::World* world) {
+		world->parser = SharedPtr<Serialisation::Parser>(
+				new Serialisation::Parser());
+		world->serialiser = SharedPtr<Serialisation::Serialiser>(
+				new Serialisation::Serialiser(*world, world->store));
+	}
+};
 
-Ingen::Serialisation::Parser*
-new_parser()
-{
-	return new Parser();
+static IngenModule* module = NULL;
+
+extern "C" {
+
+Shared::Module*
+ingen_module_load() {
+	if (!module)
+		module = new IngenModule();
+
+	return module;
 }
 
-
-Ingen::Serialisation::Serialiser*
-new_serialiser(Ingen::Shared::World* world, SharedPtr<Shared::Store> store)
-{
-	assert(world->rdf_world);
-	return new Serialiser(*world, store);
-}
-
-
-
-} // namespace Serialisation
-} // namespace Ingen
+} // extern "C"
 

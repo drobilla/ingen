@@ -55,13 +55,6 @@ private:
 	SoupServer*    _server;
 };
 
-
 } // namespace Ingen
-
-extern "C" {
-	/// Module interface
-	extern Ingen::HTTPEngineReceiver* new_http_receiver(
-			Ingen::Engine& engine, uint16_t port);
-}
 
 #endif // HTTPENGINERECEIVER_H

@@ -22,13 +22,13 @@
 #include "raul/Deletable.hpp"
 #include "raul/Maid.hpp"
 #include "raul/SharedPtr.hpp"
+#include "uri-map.lv2/uri-map.h"
 #include "common/interface/EventType.hpp"
 #include "events/CreatePatch.hpp"
 #include "module/World.hpp"
 #include "shared/LV2Features.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "shared/Store.hpp"
-#include "uri-map.lv2/uri-map.h"
 #include "AudioDriver.hpp"
 #include "BufferFactory.hpp"
 #include "ClientBroadcaster.hpp"
@@ -44,6 +44,7 @@
 #include "PostProcessor.hpp"
 #include "ProcessContext.hpp"
 #include "ProcessSlave.hpp"
+#include "QueuedEngineInterface.hpp"
 #include "QueuedEventSource.hpp"
 #include "ThreadManager.hpp"
 #include "tuning.hpp"
@@ -91,7 +92,6 @@ Engine::~Engine()
 	delete _node_factory;
 	delete _osc_driver;
 	delete _post_processor;
-	//delete _lash_driver;
 
 	delete _maid;
 
@@ -166,6 +166,13 @@ Engine::main_iteration()
 }
 
 
+Ingen::QueuedEngineInterface*
+Engine::new_local_interface()
+{
+	return new Ingen::QueuedEngineInterface(*this, Ingen::event_queue_size);
+}
+
+
 void
 Engine::add_event_source(SharedPtr<EventSource> source)
 {
@@ -181,11 +188,13 @@ Engine::set_midi_driver(MidiDriver* driver)
 
 
 bool
-Engine::activate(size_t parallelism)
+Engine::activate()
 {
 	assert(_audio_driver);
 
 	_message_context->Thread::start();
+
+	uint32_t parallelism = _world->conf->option("parallelism").get_int32();
 
 	if (!_midi_driver)
 		_midi_driver = new DummyMidiDriver();

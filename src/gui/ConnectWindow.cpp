@@ -24,6 +24,7 @@
 #include "raul/Process.hpp"
 #include "ingen-config.h"
 #include "interface/EngineInterface.hpp"
+#include "module/Module.hpp"
 #include "module/World.hpp"
 #include "engine/tuning.hpp"
 #include "engine/Engine.hpp"
@@ -40,7 +41,6 @@
 #include "client/ClientStore.hpp"
 #include "client/PatchModel.hpp"
 #include "client/ThreadedSigClientInterface.hpp"
-#include "module/Module.hpp"
 #include "App.hpp"
 #include "WindowFactory.hpp"
 #include "ConnectWindow.hpp"
@@ -55,9 +55,6 @@ namespace Ingen {
 namespace GUI {
 
 
-// ConnectWindow
-
-
 ConnectWindow::ConnectWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 	: Dialog(cobject)
 	, _xml(xml)
@@ -67,7 +64,6 @@ ConnectWindow::ConnectWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::
 	, _finished_connecting(false)
 	, _widgets_loaded(false)
 	, _connect_stage(0)
-	, _new_engine(NULL)
 {
 }
 
@@ -112,7 +108,7 @@ ConnectWindow::set_connected_to(SharedPtr<Shared::EngineInterface> engine)
 		_connect_button->set_sensitive(true);
 		_disconnect_button->set_sensitive(false);
 
-		if (_new_engine)
+		if (App::instance().world()->local_engine)
 			_internal_radio->set_sensitive(true);
 		else
 			_internal_radio->set_sensitive(false);
@@ -181,6 +177,8 @@ ConnectWindow::connect(bool existing)
 		if (existing)
 			uri = world->engine->uri().str();
 
+		cout << "CONNECT EXISTING " << existing << " URI " << uri << endl;
+
 		// Create client-side listener
 		SharedPtr<ThreadedSigClientInterface> tsci(new ThreadedSigClientInterface(1024));
 		SharedPtr<Raul::Deletable> client;
@@ -247,36 +245,15 @@ ConnectWindow::connect(bool existing)
 	} else
 #endif // defined(HAVE_LIBLO) || defined(HAVE_SOUP)
 	if (_mode == INTERNAL) {
-		if ( ! world->local_engine) {
-			assert(_new_engine);
-			world->local_engine = SharedPtr<Engine>(_new_engine(world));
-		}
-
-		if ( ! world->engine) {
-			SharedPtr<QueuedEngineInterface> interface(
-				   new QueuedEngineInterface(*world->local_engine, Ingen::event_queue_size));
-			world->engine = interface;
-			world->local_engine->add_event_source(interface);
-		}
+		if (!world->local_engine)
+			world->load("ingen_engine");
 
 		SharedPtr<SigClientInterface> client(new SigClientInterface());
 
-		Ingen::Driver* (*new_driver)(
-				Ingen::Engine&    engine,
-				const std::string server_name,
-				const std::string client_name,
-				void*             jack_client) = NULL;
+		if (!world->local_engine->audio_driver())
+			world->load("ingen_jack");
 
-		if (!world->local_engine->audio_driver()) {
-			bool found = _engine_jack_module->get_symbol(
-					"new_jack_audio_driver", (void*&)(new_driver));
-			if (found) {
-				world->local_engine->set_driver(PortType::AUDIO,
-						SharedPtr<Driver>(new_driver(*world->local_engine, "default", "", 0)));
-			}
-		}
-
-		world->local_engine->activate(1); // FIXME: parallelism
+		world->local_engine->activate();
 
 		App::instance().attach(client);
 		App::instance().register_callbacks();
@@ -365,17 +342,6 @@ ConnectWindow::load_widgets()
 	_progress_bar->set_pulse_step(0.01);
 	_widgets_loaded = true;
 
-	_engine_module = Ingen::Shared::load_module("ingen_engine");
-	if (!_engine_module)
-		cerr << "Unable to load ingen_engine module, internal engine unavailable." << endl;
-	bool found = _engine_module->get_symbol("new_engine", (void*&)_new_engine);
-	if (!found) {
-		cerr << "Unable to find module entry point, internal engine unavailable." << endl;
-		_engine_module.reset();
-	}
-
-	_engine_jack_module = Ingen::Shared::load_module("ingen_engine_jack");
-
     server_toggled();
 }
 
@@ -454,14 +420,8 @@ ConnectWindow::gtk_callback()
 		}
 	}
 
-	/* Connecting to engine */
 	if (_connect_stage == 0) {
-
 		_attached = false;
-
-		assert(App::instance().engine());
-		assert(App::instance().client());
-
 		App::instance().client()->signal_response_ok.connect(
 				sigc::mem_fun(this, &ConnectWindow::on_response));
 

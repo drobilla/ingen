@@ -15,36 +15,30 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <iostream>
 #include "redlandmm/World.hpp"
 #include "shared/LV2Features.hpp"
 #include "ingen_module.hpp"
 #include "World.hpp"
-
 #include "ingen-config.h"
 #ifdef HAVE_SLV2
 #include "slv2/slv2.h"
 #endif
 
-using namespace std;
+extern "C" {
 
-namespace Ingen {
-namespace Shared {
+static Ingen::Shared::World* world = NULL;
 
-static World* world = NULL;
-
-
-World*
-get_world()
+Ingen::Shared::World*
+ingen_get_world()
 {
-    static World* world = NULL;
+    static Ingen::Shared::World* world = NULL;
 
 	if (!world) {
-		world = new World();
+		world = new Ingen::Shared::World();
         world->rdf_world = new Redland::World();
 #ifdef HAVE_SLV2
 		world->slv2_world = slv2_world_new_using_rdf_world(world->rdf_world->world());
-		world->lv2_features = new LV2Features();
+		world->lv2_features = new Ingen::Shared::LV2Features();
 		slv2_world_load_all(world->slv2_world);
 #endif
 		world->engine.reset();
@@ -54,11 +48,11 @@ get_world()
 	return world;
 }
 
-
 void
-destroy_world()
+ingen_destroy_world()
 {
 	if (world) {
+		world->unload_all();
 #ifdef HAVE_SLV2
 		slv2_world_free(world->slv2_world);
 		delete world->lv2_features;
@@ -69,7 +63,4 @@ destroy_world()
 	}
 }
 
-
-} // namesace Shared
-} // namespace Ingen
-
+} // extern "C"

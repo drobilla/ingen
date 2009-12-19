@@ -15,29 +15,27 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "gui.hpp"
-#include "ConnectWindow.hpp"
+#include "module/Module.hpp"
 #include "App.hpp"
-#include "Configuration.hpp"
 
-namespace Ingen {
-namespace GUI {
+struct IngenGUIModule : public Ingen::Shared::Module {
+	void load(Ingen::Shared::World* world) {
+		Ingen::GUI::App::init(world);
+		Ingen::GUI::App::run();
+	}
+};
 
+static IngenGUIModule* module = NULL;
 
-void
-init(int argc, char** argv, Ingen::Shared::World* world)
-{
-	App::init(argc, argv, world);
+extern "C" {
+
+Ingen::Shared::Module*
+ingen_module_load() {
+	if (!module)
+		module = new IngenGUIModule();
+
+	return module;
 }
 
-
-void
-run()
-{
-	App::run();
-}
-
-
-} // namespace GUI
-} // namespace Ingen
+} // extern "C"
 

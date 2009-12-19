@@ -306,7 +306,7 @@ PatchCanvas::show_port_names(bool b)
 {
 	_show_port_names = b;
 	for (ItemList::iterator i = _items.begin(); i != _items.end(); ++i) {
-		boost::shared_ptr<Module> m = boost::dynamic_pointer_cast<Module>(*i);
+		boost::shared_ptr<FlowCanvas::Module> m = boost::dynamic_pointer_cast<FlowCanvas::Module>(*i);
 		if (m)
 			m->set_show_port_labels(b);
 	}

@@ -15,26 +15,36 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef INGEN_GUI_H
-#define INGEN_GUI_H
+#include <iostream>
+#include "module/Module.hpp"
+#include "module/World.hpp"
+#include "OSCEngineReceiver.hpp"
+#include "Engine.hpp"
+#include "tuning.hpp"
 
-namespace Ingen {
+using namespace std;
+using namespace Ingen;
 
-namespace Shared { class World; }
+struct IngenOSCModule : public Ingen::Shared::Module {
+	void load(Ingen::Shared::World* world) {
+		cout << "FIXME: OSC port" << endl;
+		uint16_t port = 16180;
+		SharedPtr<OSCEngineReceiver> interface(
+				new Ingen::OSCEngineReceiver(*world->local_engine.get(), event_queue_size, port));
+		world->local_engine->add_event_source(interface);
+	}
+};
 
-namespace GUI {
-
+static IngenOSCModule* module = NULL;
 
 extern "C" {
 
-	void init(int argc, char** argv, Ingen::Shared::World* world);
-	void run();
+Ingen::Shared::Module*
+ingen_module_load() {
+	if (!module)
+		module = new IngenOSCModule();
 
+	return module;
 }
 
-
-} // namesace GUI
-} // namespace Ingen
-
-#endif // INGEN_GUI_H
-
+} // extern "C"

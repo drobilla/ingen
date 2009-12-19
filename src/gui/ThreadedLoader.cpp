@@ -19,6 +19,7 @@
 #include <string>
 #include "module/World.hpp"
 #include "module/Module.hpp"
+#include "module/ingen_module.hpp"
 #include "App.hpp"
 #include "ThreadedLoader.hpp"
 #include "client/PatchModel.hpp"
@@ -46,24 +47,12 @@ ThreadedLoader::ThreadedLoader(SharedPtr<EngineInterface> engine)
 SharedPtr<Parser>
 ThreadedLoader::parser()
 {
-	if (_parser)
-		return _parser;
+	Ingen::Shared::World* world = ingen_get_world();
 
-	World* world = App::instance().world();
-	if (!world->serialisation_module)
-		world->serialisation_module = Ingen::Shared::load_module("ingen_serialisation");
+	if (!world->parser)
+		world->load("ingen_serialisation");
 
-	if (world->serialisation_module) {
-		Parser* (*new_parser)() = NULL;
-
-		bool found = App::instance().world()->serialisation_module->get_symbol(
-				"new_parser", (void*&)new_parser);
-
-		if (found)
-			_parser = SharedPtr<Parser>(new_parser());
-	}
-
-	return _parser;
+	return world->parser;
 }
 
 
@@ -90,6 +79,8 @@ ThreadedLoader::load_patch(bool                             merge,
 {
 	_mutex.lock();
 
+	Ingen::Shared::World* world = ingen_get_world();
+
 	Glib::ustring engine_base = "";
 	if (engine_parent) {
 		if (merge)
@@ -110,7 +101,7 @@ ThreadedLoader::load_patch(bool                             merge,
 				false)));
 	} else {
 		_events.push_back(sigc::hide_return(sigc::bind(
-				sigc::mem_fun(_parser.get(), &Ingen::Serialisation::Parser::parse_document),
+				sigc::mem_fun(world->parser.get(), &Ingen::Serialisation::Parser::parse_document),
 				App::instance().world(),
 				App::instance().world()->engine.get(),
 				document_uri,

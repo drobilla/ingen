@@ -18,29 +18,23 @@
 #include "ingen-config.h"
 #include <iostream>
 #include <string>
+#include <stdlib.h>
 #include <signal.h>
 #include <boost/optional.hpp>
 #include <glibmm/convert.h>
 #include <glibmm/miscutils.h>
 #include <glibmm/thread.h>
+#include "raul/Configuration.hpp"
 #include "raul/Path.hpp"
 #include "raul/SharedPtr.hpp"
 #include "redlandmm/World.hpp"
+#include "interface/EngineInterface.hpp"
 #include "shared/runtime_paths.hpp"
 #include "module/ingen_module.hpp"
 #include "module/Module.hpp"
 #include "module/World.hpp"
 #include "engine/Engine.hpp"
-#include "engine/QueuedEngineInterface.hpp"
-#include "engine/JackAudioDriver.hpp"
 #include "serialisation/Parser.hpp"
-#include "cmdline.h"
-#ifdef HAVE_LIBLO
-#include "engine/OSCEngineReceiver.hpp"
-#endif
-#ifdef HAVE_SOUP
-#include "engine/HTTPEngineReceiver.hpp"
-#endif
 #ifdef WITH_BINDINGS
 #include "bindings/ingen_bindings.hpp"
 #endif
@@ -52,46 +46,67 @@ using namespace Ingen;
 SharedPtr<Ingen::Engine> engine;
 
 void
-catch_int(int)
+ingen_interrupt(int)
 {
-	signal(SIGINT, catch_int);
-	signal(SIGTERM, catch_int);
-
-	cout << "[Main] Ingen interrupted." << endl;
+	cout << "ingen: Interrupted" << endl;
 	engine->quit();
+}
+
+void
+ingen_abort(const char* msg)
+{
+	cerr << "ingen: Error: " << msg << endl;
+	ingen_destroy_world();
+	exit(1);
 }
 
 int
 main(int argc, char** argv)
 {
-	// Parse command line options
-	gengetopt_args_info args;
-	if (cmdline_parser (argc, argv, &args) != 0)
-		return 1;
+	Raul::Configuration conf("A realtime modular audio processor.",
+	"Ingen is a flexible modular system that be used in various ways.\n"
+	"The engine can run as a stand-alone server controlled via a network protocol\n"
+	"(e.g. OSC), or internal to another process (e.g. the GUI).  The GUI, or other\n"
+	"clients, can communicate with the engine via any supported protocol, or host the\n"
+	"engine in the same process.  Many clients can connect to an engine at once.\n\n"
+	"Examples:\n"
+	"  ingen -e                     # Run an engine, listen for OSC\n"
+	"  ingen -g                     # Run a GUI, connect via OSC\n"
+	"  ingen -eg                    # Run an engine and a GUI in one process\n"
+	"  ingen -egl patch.ingen.ttl   # Run an engine and a GUI and load a patch");
 
+	conf.add("client-port", 'C', "Client OSC port", Atom::INT, Atom())
+		.add("connect",     'c', "Connect to engine URI", Atom::STRING, "osc.udp://localhost:16180")
+		.add("engine",      'e', "Run (JACK) engine", Atom::BOOL, false)
+		.add("engine-port", 'E', "Engine listen port", Atom::INT,  16180)
+		.add("gui",         'g', "Launch the GTK graphical interface", Atom::BOOL, false)
+		.add("help",        'h', "Print this help message", Atom::BOOL, false)
+		.add("jack-client", 'n', "JACK client name", Atom::STRING, "ingen")
+		.add("jack-server", 's', "JACK server name", Atom::STRING, "default")
+		.add("load",        'l', "Load patch", Atom::STRING, Atom())
+		.add("parallelism", 'p', "Number of concurrent process threads", Atom::INT, 1)
+		.add("path",        'L', "Target path for loaded patch", Atom::STRING, Atom())
+		.add("run",         'r', "Run script", Atom::STRING, Atom());
+
+	// Parse command line options
+	try {
+		conf.parse(argc, argv);
+	} catch (std::exception& e) {
+		cout << "ingen: " << e.what() << endl;
+		return EXIT_FAILURE;
+	}
+
+	// Verify option sanity
 	if (argc <= 1) {
-		cmdline_parser_print_help();
-		cerr << endl << "*** Ingen requires at least one command line parameter"  << endl;
-		cerr <<         "*** Just want a graphical application?  Try 'ingen -eg'" << endl;
-		return 1;
-	} else if (args.connect_given && args.engine_flag) {
-		cerr << "\n*** Nonsense arguments, can't both run a local engine "
-				<< "and connect to a remote one." << endl
-				<< "*** Run separate instances if that is what you want" << endl;
-		return 1;
+		conf.print_usage("ingen", cout);
+		return EXIT_FAILURE;
+	} else if (conf.option("help").get_bool()) {
+		conf.print_usage("ingen", cout);
+		return EXIT_SUCCESS;
 	}
 
 	// Set bundle path from executable location so resources/modules can be found
 	Shared::set_bundle_path_from_code((void*)&main);
-
-	SharedPtr<Glib::Module> engine_module;
-	SharedPtr<Glib::Module> engine_http_module;
-	SharedPtr<Glib::Module> engine_osc_module;
-	SharedPtr<Glib::Module> engine_queued_module;
-	SharedPtr<Glib::Module> engine_jack_module;
-	SharedPtr<Glib::Module> client_module;
-	SharedPtr<Glib::Module> gui_module;
-	SharedPtr<Glib::Module> bindings_module;
 
 	SharedPtr<Shared::EngineInterface> engine_interface;
 
@@ -100,7 +115,11 @@ main(int argc, char** argv)
 	g_type_init();
 #endif
 
-	Ingen::Shared::World* world = Ingen::Shared::get_world();
+	Ingen::Shared::World* world = ingen_get_world();
+
+	world->argc = argc;
+	world->argv = argv;
+	world->conf = &conf;
 
 	// Set up RDF namespaces
 	world->rdf_world->add_prefix("dc",        "http://purl.org/dc/elements/1.1/");
@@ -116,211 +135,113 @@ main(int argc, char** argv)
 	world->rdf_world->add_prefix("xsd",       "http://www.w3.org/2001/XMLSchema#");
 
 	// Run engine
-	if (args.engine_flag) {
-		engine_module        = Ingen::Shared::load_module("ingen_engine");
-		engine_jack_module   = Ingen::Shared::load_module("ingen_engine_jack");
-		engine_queued_module = Ingen::Shared::load_module("ingen_engine_queued");
+	if (conf.option("engine").get_bool()) {
+		if (!world->load("ingen_engine"))
+			ingen_abort("Unable to load engine module");
 
-		if (!engine_queued_module) {
-			cerr << "ERROR: Unable to load (queued) engine interface module" << endl;
-			Ingen::Shared::destroy_world();
-			return 1;
-		}
+		if (!world->local_engine)
+			ingen_abort("Unable to create engine");
 
-		if (engine_module) {
-			Engine* (*new_engine)(Ingen::Shared::World* world) = NULL;
-			if (engine_module->get_symbol("new_engine", (void*&)new_engine)) {
-				engine = SharedPtr<Engine>(new_engine(world));
-				world->local_engine = engine;
+		engine = world->local_engine;
+		engine_interface = world->engine;
 
-				// Load queued (direct in-process) engine interface
-				if (args.gui_given && engine_queued_module) {
-					Ingen::QueuedEngineInterface* (*new_interface)(Ingen::Engine& engine);
-					if (engine_queued_module->get_symbol("new_queued_interface", (void*&)new_interface)) {
-						SharedPtr<QueuedEngineInterface> interface(new_interface(*engine));
-						world->local_engine->add_event_source(interface);
-						engine_interface = interface;
-						world->engine = engine_interface;
-					}
-
-				// Load network engine interfaces
-				} else {
-					#ifdef HAVE_LIBLO
-					if ((engine_osc_module = Ingen::Shared::load_module("ingen_engine_osc"))) {
-						Ingen::OSCEngineReceiver* (*new_receiver)(
-								Ingen::Engine& engine, size_t queue_size, uint16_t port);
-						if (engine_osc_module->get_symbol("new_osc_receiver", (void*&)new_receiver)) {
-							static const size_t queue_size = 1024; // FIXME
-							SharedPtr<EventSource> receiver(new_receiver(
-										*engine, queue_size, args.engine_port_arg));
-							world->local_engine->add_event_source(receiver);
-						}
-					}
-					#endif
-					#ifdef HAVE_SOUP
-					if ((engine_http_module = Ingen::Shared::load_module("ingen_engine_http"))) {
-						Ingen::HTTPEngineReceiver* (*new_receiver)(
-								Ingen::Engine& engine, uint16_t port);
-						if (engine_http_module->get_symbol("new_http_receiver", (void*&)new_receiver)) {
-							SharedPtr<EventSource> receiver(new_receiver(
-									*world->local_engine, args.engine_port_arg));
-							world->local_engine->add_event_source(receiver);
-						}
-					}
-					#endif
-				}
-			} else {
-				engine_module.reset();
-			}
-		} else {
-			cerr << "Unable to load engine module." << endl;
+		// Not loading a GUI, load network engine interfaces
+		if (!conf.option("gui").get_bool()) {
+			#ifdef HAVE_LIBLO
+			if (!world->load("ingen_osc"))
+				ingen_abort("Unable to load OSC module");
+			#endif
+			#ifdef HAVE_SOUP
+			if (!world->load("ingen_http"))
+				ingen_abort("Unable to load HTTP module");
+			#endif
 		}
 	}
 
-	// Load client library
-	if (args.load_given || args.gui_given) {
-		client_module = Ingen::Shared::load_module("ingen_client");
-		if (!client_module)
-			cerr << "Unable to load client module." << endl;
-	}
+	// Load client library (required for patch loading and/or GUI)
+	if (conf.option("load").is_valid() || conf.option("gui").get_bool())
+		if (!world->load("ingen_client"))
+			ingen_abort("Unable to load client module");
 
 	// If we don't have a local engine interface (for GUI), use network
-	if (client_module && ! engine_interface) {
-		SharedPtr<Shared::EngineInterface> (*new_remote_interface)
-				(Ingen::Shared::World*, const std::string&) = NULL;
-
-		if (client_module->get_symbol("new_remote_interface", (void*&)new_remote_interface)) {
-			engine_interface = new_remote_interface(world, args.connect_arg);
-		} else {
-			cerr << "Unable to find symbol 'new_remote_interface' in "
-					"ingen_client module, aborting." << endl;
-			return -1;
-		}
+	if (!engine_interface) {
+		const char* const uri = conf.option("connect").get_string();
+		if (!(engine_interface = world->interface(uri)))
+			ingen_abort((string("Unable to create interface to `") + uri + "'").c_str());
 	}
 
 	// Activate the engine, if we have one
 	if (engine) {
-		Ingen::JackAudioDriver* (*new_driver)(
-				Ingen::Engine&    engine,
-				const std::string server_name,
-				const std::string client_name,
-				void*             jack_client) = NULL;
-		if (engine_jack_module->get_symbol("new_jack_audio_driver", (void*&)new_driver)) {
-			engine->set_driver(Shared::PortType::AUDIO, SharedPtr<Driver>(new_driver(
-					*engine, "default", args.engine_name_arg, NULL)));
-		} else {
-			cerr << Glib::Module::get_last_error() << endl;
-		}
+		if (!world->load("ingen_jack"))
+			ingen_abort("Unable to load jack module");
 
-		engine->activate(args.parallelism_arg);
+		engine->activate();
 	}
 
 	world->engine = engine_interface;
 
-	void (*gui_run)() = NULL;
-
-	// Load GUI
-	bool run_gui = false;
-	if (args.gui_given) {
-		gui_module = Ingen::Shared::load_module("ingen_gui");
-		if (gui_module) {
-			void (*init)(int, char**, Ingen::Shared::World*);
-
-			bool found = gui_module->get_symbol("init", (void*&)init);
-			found = found && gui_module->get_symbol("run", (void*&)gui_run);
-			if (found) {
-				run_gui = true;
-				init(argc, argv, world);
-			} else {
-				cerr << "Unable to find hooks in GUI module, GUI not loaded." << endl;
-			}
-		} else {
-			cerr << "Unable to load GUI module." << endl;
-		}
-	}
-
 	// Load a patch
-	if (args.load_given && engine_interface) {
+	if (conf.option("load").is_valid() && engine_interface) {
 		boost::optional<Path>   data_path = Path("/");
 		boost::optional<Path>   parent;
 		boost::optional<Symbol> symbol;
+		const Raul::Atom&       path_option = conf.option("path");
 
-		if (args.path_given) {
-			const Glib::ustring path = args.path_arg;
-			if (Path::is_valid(path)) {
-				const Path p(path);
+		if (path_option.is_valid()) {
+			if (Path::is_valid(path_option.get_string())) {
+				const Path p(path_option.get_string());
 				if (!p.is_root()) {
 					parent = p.parent();
-					const string s = p.name();
-					if (Symbol::is_valid(s))
-						symbol = s;
+					symbol = p.name();
 				}
 			} else {
-				cerr << "Invalid path given: '" << path << endl;
+				cerr << "Invalid path given: '" << path_option << endl;
 			}
 		}
 
-		bool found = false;
-		if (!world->serialisation_module)
-			world->serialisation_module = Ingen::Shared::load_module("ingen_serialisation");
+		if (!world->load("ingen_serialisation"))
+			ingen_abort("Unable to load serialisation module");
 
-		Serialisation::Parser* (*new_parser)() = NULL;
-
-		if (world->serialisation_module)
-			found = world->serialisation_module->get_symbol("new_parser", (void*&)new_parser);
-
-		if (world->serialisation_module && found) {
-			SharedPtr<Serialisation::Parser> parser(new_parser());
-
+		if (world->parser) {
 			// Assumption:  Containing ':' means URI, otherwise filename
-			string uri = args.load_arg;
+			string uri = conf.option("load").get_string();
 			if (uri.find(':') == string::npos) {
-				if (Glib::path_is_absolute(args.load_arg))
-					uri = Glib::filename_to_uri(args.load_arg);
+				if (Glib::path_is_absolute(uri))
+					uri = Glib::filename_to_uri(uri);
 				else
 					uri = Glib::filename_to_uri(Glib::build_filename(
-						Glib::get_current_dir(), args.load_arg));
+						Glib::get_current_dir(), uri));
 			}
 
 			engine_interface->load_plugins();
-			parser->parse_document(world, engine_interface.get(), uri, data_path, parent, symbol);
+			world->parser->parse_document(
+					world, engine_interface.get(), uri, data_path, parent, symbol);
 
 		} else {
-			cerr << "Unable to load serialisation module, aborting." << endl;
-			return -1;
+			ingen_abort("Unable to create parser");
 		}
 	}
 
-	// Run GUI (if applicable)
-	if (run_gui)
-		gui_run();
+	// Load GUI
+	if (conf.option("gui").get_bool())
+		if (!world->load("ingen_gui"))
+			ingen_abort("Unable to load GUI module");
 
 	// Run a script
-	if (args.run_given) {
+	if (conf.option("run").is_valid()) {
 #ifdef WITH_BINDINGS
-		bool (*run_script)(Ingen::Shared::World*, const char*) = NULL;
-		SharedPtr<Glib::Module> bindings_module = Ingen::Shared::load_module("ingen_bindings");
-		if (bindings_module) {
-			bindings_module->make_resident();
+		if (!world->load("ingen_bindings"))
+			ingen_abort("Unable to load bindings module");
 
-			bool found = bindings_module->get_symbol("run", (void*&)(run_script));
-			if (found) {
-				setenv("PYTHONPATH", "../../bindings", 1);
-				run_script(world, args.run_arg);
-			} else {
-				cerr << "FAILED: " << Glib::Module::get_last_error() << endl;
-			}
-		} else {
-			cerr << Glib::Module::get_last_error() << endl;
-		}
+		world->run("application/x-python", conf.option("run").get_string());
 #else
 		cerr << "This build of ingen does not support scripting." << endl;
 #endif
 
 	// Listen to OSC and run main loop
-	} else if (engine && !run_gui) {
-		signal(SIGINT, catch_int);
-		signal(SIGTERM, catch_int);
+	} else if (engine && !conf.option("gui").get_bool()) {
+		signal(SIGINT, ingen_interrupt);
+		signal(SIGTERM, ingen_interrupt);
 		engine->main(); // Block here
 	}
 
@@ -330,13 +251,7 @@ main(int argc, char** argv)
 		engine.reset();
 	}
 
-	engine_interface.reset();
-	client_module.reset();
-	world->serialisation_module.reset();
-	gui_module.reset();
-	engine_module.reset();
-
-	Ingen::Shared::destroy_world();
+	ingen_destroy_world();
 
 	return 0;
 }

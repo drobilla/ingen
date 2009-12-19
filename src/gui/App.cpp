@@ -30,7 +30,6 @@
 #include "module/World.hpp"
 #include "engine/Engine.hpp"
 #include "interface/EngineInterface.hpp"
-#include "serialisation/serialisation.hpp"
 #include "client/ObjectModel.hpp"
 #include "client/PatchModel.hpp"
 #include "client/ClientStore.hpp"
@@ -102,10 +101,10 @@ App::~App()
 }
 
 void
-App::init(int argc, char** argv, Ingen::Shared::World* world)
+App::init(Ingen::Shared::World* world)
 {
 	Gnome::Canvas::init();
-	_main = new Gtk::Main(argc, argv);
+	_main = new Gtk::Main(world->argc, world->argv);
 
 	if (!_instance)
 		_instance = new App(world);
@@ -121,19 +120,19 @@ App::init(int argc, char** argv, Ingen::Shared::World* world)
 
 	// Set style for embedded node GUIs
 	const string rc_style =
-	  "style \"ingen_embedded_node_gui_style\" {"
-	  " bg[NORMAL] = \"#212222\""
-	  " bg[ACTIVE] = \"#505050\""
-	  " bg[PRELIGHT] = \"#525454\""
-	  " bg[SELECTED] = \"#99A0A0\""
-	  " bg[INSENSITIVE] = \"#F03030\""
-	  " fg[NORMAL] = \"#FFFFFF\""
-	  " fg[ACTIVE] = \"#FFFFFF\""
-	  " fg[PRELIGHT] = \"#FFFFFF\""
-	  " fg[SELECTED] = \"#FFFFFF\""
-	  " fg[INSENSITIVE] = \"#FFFFFF\""
-	  "}\n"
-	  "widget \"*ingen_embedded_node_gui_container*\" style \"ingen_embedded_node_gui_style\"\n";
+		"style \"ingen_embedded_node_gui_style\" {\n"
+		"bg[NORMAL]      = \"#212222\"\n"
+		"bg[ACTIVE]      = \"#505050\"\n"
+		"bg[PRELIGHT]    = \"#525454\"\n"
+		"bg[SELECTED]    = \"#99A0A0\"\n"
+		"bg[INSENSITIVE] = \"#F03030\"\n"
+		"fg[NORMAL]      = \"#FFFFFF\"\n"
+		"fg[ACTIVE]      = \"#FFFFFF\"\n"
+		"fg[PRELIGHT]    = \"#FFFFFF\"\n"
+		"fg[SELECTED]    = \"#FFFFFF\"\n"
+		"fg[INSENSITIVE] = \"#FFFFFF\"\n"
+		"}\n"
+		"widget \"*ingen_embedded_node_gui_container*\" style \"ingen_embedded_node_gui_style\"\n";
 
 	Gtk::RC::parse_string(rc_style);
 
@@ -168,7 +167,7 @@ App::attach(SharedPtr<SigClientInterface> client,
 
 	_client = client;
 	_handle = handle;
-	_store = SharedPtr<ClientStore>(new ClientStore(_world->engine, client));
+	_store  = SharedPtr<ClientStore>(new ClientStore(_world->engine, client));
 	_loader = SharedPtr<ThreadedLoader>(new ThreadedLoader(_world->engine));
 
 	_patch_tree_window->init(*_store);
@@ -197,17 +196,10 @@ App::detach()
 const SharedPtr<Serialiser>&
 App::serialiser()
 {
-	if (!_serialiser) {
-		if (!_world->serialisation_module)
-			_world->serialisation_module = Ingen::Shared::load_module("ingen_serialisation");
+	if (!_world->serialiser)
+		_world->load("ingen_serialisation");
 
-		if (_world->serialisation_module)
-			_serialiser = SharedPtr<Serialiser>(Ingen::Serialisation::new_serialiser(_world, _store));
-
-		if (!_serialiser)
-			cerr << "WARNING: Failed to load ingen_serialisation module, save disabled." << endl;
-	}
-	return _serialiser;
+	return _world->serialiser;
 }
 
 

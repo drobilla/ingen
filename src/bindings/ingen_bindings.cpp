@@ -4,15 +4,6 @@
 #include "engine/Engine.hpp"
 #include "module/World.hpp"
 
-using namespace std;
-
-namespace Ingen {
-namespace Shared {
-
-Ingen::Shared::World* ingen_world = NULL;
-
-extern "C" {
-
 bool
 run(Ingen::Shared::World* world, const char* filename)
 {
@@ -20,17 +11,35 @@ run(Ingen::Shared::World* world, const char* filename)
 
     FILE* fd = fopen(filename, "r");
     if (fd) {
-        cerr << "EXECUTING " << filename << endl;
+        cerr << "Executing script " << filename << endl;
         Py_Initialize();
         PyRun_SimpleFile(fd, filename);
         Py_Finalize();
         return true;
     } else {
-        cerr << "UNABLE TO OPEN FILE " << filename << endl;
+        cerr << "Unable to open script " << filename << endl;
         return false;
     }
 }
 
+struct IngenBindingsModule : public Ingen::Shared::Module {
+	void load(Ingen::Shared::World* world) {
+		world->script_runners.insert(make_pair("application/x-python", &run));
+		//lib->make_resident();
+	}
+};
+
+static IngenBindingsModule* module = NULL;
+
+extern "C" {
+
+Ingen::Shared::Module*
+ingen_module_load() {
+	if (!module)
+		module = new IngenBindingsModule();
+
+	return module;
+}
 
 void
 script_iteration(Ingen::Shared::World* world)
@@ -39,8 +48,4 @@ script_iteration(Ingen::Shared::World* world)
         world->local_engine->main_iteration();
 }
 
-
-}
-
-} // namespace Shared
-} // namespace Ingen
+} // extern "C"

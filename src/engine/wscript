@@ -31,9 +31,32 @@ def build(bld):
 		PortImpl.cpp
 		PostProcessor.cpp
 		ProcessSlave.cpp
+		QueuedEngineInterface.cpp
 		QueuedEvent.cpp
+		QueuedEventSource.cpp
+		events/AllNotesOff.cpp
+		events/ClearPatch.cpp
+		events/Connect.cpp
+		events/CreateNode.cpp
+		events/CreatePatch.cpp
+		events/CreatePort.cpp
+		events/Delete.cpp
+		events/Disconnect.cpp
+		events/DisconnectAll.cpp
+		events/Get.cpp
+		events/LoadPlugins.cpp
+		events/MidiLearn.cpp
+		events/Move.cpp
+		events/Note.cpp
+		events/RegisterClient.cpp
+		events/RequestAllObjects.cpp
+		events/RequestMetadata.cpp
+		events/RequestPlugins.cpp
 		events/SendPortActivity.cpp
 		events/SendPortValue.cpp
+		events/SetMetadata.cpp
+		events/SetPortValue.cpp
+		events/UnregisterClient.cpp
 		ingen_engine.cpp
 		internals/Controller.cpp
 		internals/Note.cpp
@@ -55,39 +78,6 @@ def build(bld):
 	core_libs = 'GLIBMM GTHREAD LV2CORE SLV2 RAUL REDLANDMM'
 	autowaf.use_lib(bld, obj, core_libs)
 
-	obj = bld.new_task_gen('cxx', 'shlib')
-	obj.source = '''
-		QueuedEngineInterface.cpp
-		QueuedEventSource.cpp
-		events/AllNotesOff.cpp
-		events/ClearPatch.cpp
-		events/Connect.cpp
-		events/CreateNode.cpp
-		events/CreatePatch.cpp
-		events/CreatePort.cpp
-		events/Delete.cpp
-		events/Disconnect.cpp
-		events/DisconnectAll.cpp
-		events/Get.cpp
-		events/LoadPlugins.cpp
-		events/MidiLearn.cpp
-		events/Move.cpp
-		events/Note.cpp
-		events/RegisterClient.cpp
-		events/RequestAllObjects.cpp
-		events/RequestMetadata.cpp
-		events/RequestPlugins.cpp
-		events/SetMetadata.cpp
-		events/SetPortValue.cpp
-		events/UnregisterClient.cpp
-	'''
-	obj.export_incdirs = ['.']
-	obj.includes     = ['.', '..', '../..', '../common', '../engine']
-	obj.name         = 'libingen_engine_queued'
-	obj.target       = 'ingen_engine_queued'
-	obj.install_path = '${LIBDIR}/ingen'
-	autowaf.use_lib(bld, obj, core_libs)
-
 	if bld.env['HAVE_SOUP'] == 1:
 		obj = bld.new_task_gen('cxx', 'shlib')
 		obj.source = '''
@@ -95,10 +85,11 @@ def build(bld):
 			QueuedEngineInterface.cpp
 			HTTPClientSender.cpp
 			HTTPEngineReceiver.cpp
+			ingen_http.cpp
 		'''
 		obj.includes     = ['.', '..', '../..', '../common', '../engine']
-		obj.name         = 'libingen_engine_http'
-		obj.target       = 'ingen_engine_http'
+		obj.name         = 'libingen__http'
+		obj.target       = 'ingen_http'
 		obj.install_path = '${LIBDIR}/ingen'
 		autowaf.use_lib(bld, obj, core_libs + ' SOUP')
 
@@ -109,21 +100,22 @@ def build(bld):
 			QueuedEngineInterface.cpp
 			OSCClientSender.cpp
 			OSCEngineReceiver.cpp
+			ingen_osc.cpp
 		'''
 		obj.export_incdirs = ['.']
 		obj.includes     = ['.', '..', '../..', '../common', '../engine']
-		obj.name         = 'libingen_engine_osc'
-		obj.target       = 'ingen_engine_osc'
+		obj.name         = 'libingen_osc'
+		obj.target       = 'ingen_osc'
 		obj.install_path = '${LIBDIR}/ingen'
 		autowaf.use_lib(bld, obj, core_libs + ' LIBLO')
 
 	if bld.env['HAVE_JACK'] == 1:
 		obj = bld.new_task_gen('cxx', 'shlib')
-		obj.source = 'JackAudioDriver.cpp JackMidiDriver.cpp'
+		obj.source = 'JackAudioDriver.cpp JackMidiDriver.cpp ingen_jack.cpp'
 		obj.export_incdirs = ['.']
 		obj.includes     = ['.', '..', '../..', '../common', '../engine']
-		obj.name         = 'libingen_engine_jack'
-		obj.target       = 'ingen_engine_jack'
+		obj.name         = 'libingen_jack'
+		obj.target       = 'ingen_jack'
 		obj.install_path = '${LIBDIR}/ingen'
 		autowaf.use_lib(bld, obj, core_libs + ' JACK')
 

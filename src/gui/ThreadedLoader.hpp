@@ -78,7 +78,6 @@ private:
 	void _whipped();
 
 	SharedPtr<EngineInterface> _engine;
-	SharedPtr<Parser>          _parser;
 
 	DeprecatedLoader _deprecated_loader;
 	Glib::Mutex      _mutex;

@@ -47,7 +47,7 @@ class MessageContext : public Context, public Raul::Thread
 public:
 	MessageContext(Engine& engine)
 		: Context(engine, MESSAGE)
-		, Raul::Thread("message-context")
+		, Raul::Thread("MessageContext")
 		, _sem(0)
 		, _requests(message_context_queue_size)
 		, _end_time(0)

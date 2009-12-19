@@ -98,7 +98,7 @@ ingen_cleanup(LV2_Handle instance)
 {
 	IngenPlugin* plugin = (IngenPlugin*)instance;
 	plugin->engine.reset();
-	Ingen::Shared::destroy_world();
+	ingen_destroy_world();
 	free(instance);
 }
 
@@ -120,7 +120,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 
 	Shared::bundle_path = bundle_path;
 
-	plugin->world = Ingen::Shared::get_world();
+	plugin->world = ingen_get_world();
 	plugin->engine = SharedPtr<Engine>(new Engine(plugin->world));
 	plugin->world->local_engine = plugin->engine;
 

@@ -15,39 +15,35 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <cstdio>
-#include <string>
-#include "raul/Process.hpp"
-#include "ingen_engine.hpp"
+#include "module/Module.hpp"
 #include "Engine.hpp"
-#include "tuning.hpp"
+#include "QueuedEngineInterface.hpp"
 #include "util.hpp"
+#include "tuning.hpp"
 
-namespace Ingen {
+using namespace Ingen;
 
-Engine*
-new_engine(Ingen::Shared::World* world)
-{
-	set_denormal_flags();
-	return new Engine(world);
-}
-
-
-bool
-launch_osc_engine(int port)
-{
-	char port_str[6];
-	snprintf(port_str, 6, "%u", port);
-	const std::string cmd = std::string("ingen -e --engine-port=").append(port_str);
-
-	if (Raul::Process::launch(cmd)) {
-		return true;
-	} else {
-		std::cerr << "Failed to launch engine process." << std::endl;
-		return false;
+struct IngenEngineModule : public Ingen::Shared::Module {
+	void load(Ingen::Shared::World* world) {
+		set_denormal_flags();
+		world->local_engine = SharedPtr<Engine>(new Engine(world));
+		SharedPtr<QueuedEngineInterface> interface(
+				new Ingen::QueuedEngineInterface(*world->local_engine, event_queue_size));
+		world->engine = interface;
+		world->local_engine->add_event_source(interface);
 	}
+};
+
+static IngenEngineModule* module = NULL;
+
+extern "C" {
+
+Ingen::Shared::Module*
+ingen_module_load() {
+	if (!module)
+		module = new IngenEngineModule();
+
+	return module;
 }
 
-
-} // namespace Ingen
-
+} // extern "C"

@@ -15,28 +15,35 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef INGEN_ENGINE_H
-#define INGEN_ENGINE_H
+#include <iostream>
+#include "module/Module.hpp"
+#include "module/World.hpp"
+#include "HTTPEngineReceiver.hpp"
+#include "Engine.hpp"
+#include "tuning.hpp"
 
-namespace Ingen {
+using namespace std;
+using namespace Ingen;
 
-namespace Shared { class World; }
+struct IngenHTTPModule : public Ingen::Shared::Module {
+	void load(Ingen::Shared::World* world) {
+		SharedPtr<HTTPEngineReceiver> interface(
+				new Ingen::HTTPEngineReceiver(*world->local_engine.get(),
+						world->conf->option("engine-port").get_int32()));
+		world->local_engine->add_event_source(interface);
+	}
+};
 
-class Engine;
+static IngenHTTPModule* module = NULL;
 
 extern "C" {
 
-	/** Create a new engine in this process */
-	Engine* new_engine(Ingen::Shared::World* world);
+Ingen::Shared::Module*
+ingen_module_load() {
+	if (!module)
+		module = new IngenHTTPModule();
 
-	/** Launch an OSC engine as a completely separate process
-	 * \return true if successful
-	 */
-	bool launch_osc_engine(int port);
+	return module;
 }
 
-
-} // namespace Ingen
-
-#endif // INGEN_ENGINE_H
-
+} // extern "C"

@@ -15,21 +15,18 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <string>
-#include <sstream>
 #include <iostream>
 #include <glibmm/module.h>
 #include <glibmm/miscutils.h>
 #include <glibmm/fileutils.h>
 #include "ingen-config.h"
-#include "raul/SharedPtr.hpp"
 #include "shared/runtime_paths.hpp"
+#include "World.hpp"
 
 using namespace std;
 
 namespace Ingen {
 namespace Shared {
-
 
 /** Load a dynamic module from the default path.
  *
@@ -39,7 +36,7 @@ namespace Shared {
  *
  * \param name The base name of the module, e.g. "ingen_serialisation"
  */
-SharedPtr<Glib::Module>
+static SharedPtr<Glib::Module>
 load_module(const string& name)
 {
 	Glib::Module* module = NULL;
@@ -85,7 +82,65 @@ load_module(const string& name)
 	}
 }
 
+/** Load an Ingen module.
+ * @return true on success, false on failure
+ */
+bool
+World::load(const char* name)
+{
+	SharedPtr<Glib::Module> lib = load_module(name);
+	Ingen::Shared::Module* (*module_load)() = NULL;
+	if (lib->get_symbol("ingen_module_load", (void*&)module_load)) {
+		Module* module = module_load();
+		module->library = lib;
+		module->load(this);
+		modules.insert(make_pair(string(name), module));
+		return true;
+	} else {
+		cerr << "Failed to load module " << name << endl;
+		return false;
+	}
+}
+
+
+/** Unload all loaded Ingen modules.
+ */
+void
+World::unload_all()
+{
+	modules.clear();
+}
+
+
+/** Get an interface for a remote engine at @a url
+ */
+SharedPtr<Ingen::Shared::EngineInterface>
+World::interface(const std::string& url)
+{
+	const string scheme = url.substr(0, url.find(":"));
+	const InterfaceFactories::const_iterator i = interface_factories.find(scheme);
+	if (i == interface_factories.end()) {
+		cerr << "WARNING: Unknown URI scheme `'" << scheme << "'" << endl;
+		return SharedPtr<Ingen::Shared::EngineInterface>();
+	}
+
+	return i->second(this, url);
+}
+
+
+/** Run a script of type @a mime_type at filename @a filename */
+bool
+World::run(const std::string& mime_type, const std::string& filename)
+{
+	const ScriptRunners::const_iterator i = script_runners.find(mime_type);
+	if (i == script_runners.end()) {
+		cerr << "WARNING: Unknown script MIME type `'" << mime_type << "'" << endl;
+		return false;
+	}
+
+	return i->second(this, filename.c_str());
+}
+
 
 } // namespace Shared
 } // namespace Ingen
-

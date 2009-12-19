@@ -127,7 +127,7 @@ HTTPClientReceiver::close_session()
 void
 HTTPClientReceiver::update(const std::string& str)
 {
-	cout << _parser->parse_update(_world, _target.get(), str, _url);
+	cout << _world->parser->parse_update(_world, _target.get(), str, _url);
 }
 
 void
@@ -185,7 +185,7 @@ HTTPClientReceiver::message_callback(SoupSession* session, SoupMessage* msg, voi
 		} else {
 			Glib::Mutex::Lock lock(me->_mutex);
 			me->_target->response_ok(0);
-			me->_parser->parse_string(me->_world, me->_target.get(),
+			me->_world->parser->parse_string(me->_world, me->_target.get(),
 					Glib::ustring(msg->response_body->data), me->_url);
 		}
 
@@ -195,7 +195,7 @@ HTTPClientReceiver::message_callback(SoupSession* session, SoupMessage* msg, voi
 		} else {
 			Glib::Mutex::Lock lock(me->_mutex);
 			me->_target->response_ok(0);
-			me->_parser->parse_string(me->_world, me->_target.get(),
+			me->_world->parser->parse_string(me->_world, me->_target.get(),
 					Glib::ustring(msg->response_body->data),
 					Glib::ustring("/patch/"));
 		}
@@ -224,16 +224,9 @@ void
 HTTPClientReceiver::start(bool dump)
 {
 	Glib::Mutex::Lock lock(_world->rdf_world->mutex());
-	if (!_parser) {
-		if (!_world->serialisation_module)
-			_world->serialisation_module = Ingen::Shared::load_module("ingen_serialisation");
 
-		if (_world->serialisation_module) {
-			Parser* (*new_parser)() = NULL;
-			if (_world->serialisation_module->get_symbol("new_parser", (void*&)new_parser))
-				_parser = SharedPtr<Parser>(new_parser());
-		}
-	}
+	if (!_world->parser)
+		_world->load("ingen_serialisation");
 
 	SoupMessage* msg = soup_message_new("GET", (_url + "/stream").c_str());
 	soup_session_queue_message(client_session, msg, message_callback, this);

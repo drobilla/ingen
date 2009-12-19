@@ -109,7 +109,7 @@ QueuedEngineInterface::activate()
 	static bool in_activate = false;
 	if (!in_activate) {
 		in_activate = true;
-		_engine.activate(1);
+		_engine.activate();
 	}
 	QueuedEventSource::activate_source();
 	push_queued(new Events::Ping(_engine, _responder, now()));

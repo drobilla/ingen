@@ -15,19 +15,17 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef INGEN_GLOBAL_H
-#define INGEN_GLOBAL_H
+#ifndef INGEN_LIB_MODULE_HPP
+#define INGEN_LIB_MODULE_HPP
 
-namespace Ingen {
-namespace Shared {
+namespace Ingen { namespace Shared { class World; } }
 
-class World;
+extern "C" {
 
-World* get_world();
-void   destroy_world();
+Ingen::Shared::World* ingen_get_world();
+void                  ingen_destroy_world();
 
-} // namesace Shared
-} // namespace Ingen
+} // extern "C"
 
-#endif // INGEN_GLOBAL_H
+#endif // INGEN_LIB_MODULE_HPP
 

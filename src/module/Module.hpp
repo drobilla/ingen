@@ -15,6 +15,9 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#ifndef INGEN_MODULE_HPP
+#define INGEN_MODULE_HPP
+
 #include <string>
 #include <glibmm/module.h>
 #include "raul/SharedPtr.hpp"
@@ -22,14 +25,20 @@
 namespace Ingen {
 namespace Shared {
 
+class World;
 
-/** Load a dynamic module from the default path.
+/** A dynamically loaded Ingen module.
  *
- * \param name The base name of the module, e.g. "ingen_serialisation"
+ * All components of Ingen reside in one of these.
  */
-SharedPtr<Glib::Module> load_module(const std::string& name);
+struct Module {
+	virtual void load(Ingen::Shared::World* world) = 0;
+
+	SharedPtr<Glib::Module> library;
+};
 
 
 } // namespace Shared
 } // namespace Ingen
 
+#endif //INGEN_MODULE_HPP

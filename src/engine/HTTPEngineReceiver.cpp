@@ -25,7 +25,6 @@
 #include "interface/ClientInterface.hpp"
 #include "module/Module.hpp"
 #include "serialisation/Parser.hpp"
-#include "serialisation/serialisation.hpp"
 #include "serialisation/Serialiser.hpp"
 #include "ClientBroadcaster.hpp"
 #include "Engine.hpp"
@@ -55,20 +54,8 @@ HTTPEngineReceiver::HTTPEngineReceiver(Engine& engine, uint16_t port)
 	cout << "Started HTTP server on port " << soup_server_get_port(_server) << endl;
 	Thread::set_name("HTTP Receiver");
 
-	if (!engine.world()->serialisation_module)
-		engine.world()->serialisation_module = Ingen::Shared::load_module("ingen_serialisation");
-
-	if (engine.world()->serialisation_module) {
-		if (!engine.world()->serialiser)
-			engine.world()->serialiser = SharedPtr<Serialiser>(
-					Ingen::Serialisation::new_serialiser(engine.world(), engine.engine_store()));
-
-		if (!engine.world()->parser)
-			engine.world()->parser = SharedPtr<Parser>(
-					Ingen::Serialisation::new_parser());
-	} else {
-		cerr << "WARNING: Failed to load ingen_serialisation module, HTTP disabled." << endl;
-	}
+	if (!engine.world()->parser || !engine.world()->serialiser)
+		engine.world()->load("ingen_serialisation");
 
 	Thread::set_name("HTTP Receiver");
 }
@@ -241,15 +228,4 @@ HTTPEngineReceiver::ReceiveThread::_run()
 }
 
 } // namespace Ingen
-
-
-extern "C" {
-
-Ingen::HTTPEngineReceiver*
-new_http_receiver(Ingen::Engine& engine, uint16_t port)
-{
-	return new Ingen::HTTPEngineReceiver(engine, port);
-}
-
-} // extern "C"
 

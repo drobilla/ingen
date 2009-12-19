@@ -111,7 +111,7 @@ public:
 
 	static inline App& instance() { assert(_instance); return *_instance; }
 
-	static void init(int argc, char** argv, Ingen::Shared::World* world);
+	static void init(Ingen::Shared::World* world);
 	static void run();
 
 	Ingen::Shared::World* world() { return _world; }
@@ -145,7 +145,6 @@ protected:
 	SharedPtr<Client::SigClientInterface> _client;
 	SharedPtr<Raul::Deletable>            _handle;
 	SharedPtr<Client::ClientStore>        _store;
-	SharedPtr<Serialisation::Serialiser>  _serialiser;
 	SharedPtr<ThreadedLoader>             _loader;
 
 	Configuration*    _configuration;

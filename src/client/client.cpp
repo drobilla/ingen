@@ -16,9 +16,9 @@
  */
 
 #include "ingen-config.h"
-
-#include <iostream>
-#include "client.hpp"
+#include "raul/SharedPtr.hpp"
+#include "module/Module.hpp"
+#include "module/World.hpp"
 #ifdef HAVE_LIBLO
 #include "OSCEngineSender.hpp"
 #endif
@@ -26,39 +26,47 @@
 #include "HTTPEngineSender.hpp"
 #endif
 
-
-using namespace std;
-
-namespace Ingen {
-namespace Client {
-
-
-SharedPtr<Ingen::Shared::EngineInterface>
-new_remote_interface(Ingen::Shared::World* world, const std::string& url)
-{
-	const string scheme = url.substr(0, url.find(":"));
+using namespace Ingen;
 
 #ifdef HAVE_LIBLO
-	if (scheme == "osc.udp" || scheme == "osc.tcp") {
-		OSCEngineSender* oes = OSCEngineSender::create(url);
-		oes->attach(rand(), true);
-		return SharedPtr<Shared::EngineInterface>(oes);
-	}
+SharedPtr<Ingen::Shared::EngineInterface>
+new_osc_interface(Ingen::Shared::World* world, const std::string& url)
+{
+	Client::OSCEngineSender* oes = Client::OSCEngineSender::create(url);
+	oes->attach(rand(), true);
+	return SharedPtr<Shared::EngineInterface>(oes);
+}
 #endif
 
 #ifdef HAVE_SOUP
-	if (scheme == "http") {
-		HTTPEngineSender* hes = new HTTPEngineSender(world, url);
-		hes->attach(rand(), true);
-		return SharedPtr<Shared::EngineInterface>(hes);
-	}
+SharedPtr<Ingen::Shared::EngineInterface>
+new_http_interface(Ingen::Shared::World* world, const std::string& url)
+{
+	Client::HTTPEngineSender* hes = new Client::HTTPEngineSender(world, url);
+	hes->attach(rand(), true);
+	return SharedPtr<Shared::EngineInterface>(hes);
+}
 #endif
 
-	cerr << "WARNING: Unknown URI scheme '" << scheme << "'" << endl;
-	return SharedPtr<Shared::EngineInterface>();
+struct IngenClientModule : public Ingen::Shared::Module {
+	void load(Ingen::Shared::World* world) {
+		world->interface_factories.insert(make_pair("osc.udp", &new_osc_interface));
+		world->interface_factories.insert(make_pair("osc.tcp", &new_osc_interface));
+		world->interface_factories.insert(make_pair("http",    &new_http_interface));
+	}
+};
+
+static IngenClientModule* module = NULL;
+
+extern "C" {
+
+Ingen::Shared::Module*
+ingen_module_load() {
+	if (!module)
+		module = new IngenClientModule();
+
+	return module;
 }
 
-
-} // namespace Client
-} // namespace Ingen
+} // extern "C"
 
