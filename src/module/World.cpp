@@ -141,6 +141,13 @@ World::run(const std::string& mime_type, const std::string& filename)
 	return i->second(this, filename.c_str());
 }
 
+void
+World::add_interface_factory(const std::string& scheme, InterfaceFactory factory)
+{
+	interface_factories.insert(make_pair(scheme, factory));
+}
+
+
 
 } // namespace Shared
 } // namespace Ingen

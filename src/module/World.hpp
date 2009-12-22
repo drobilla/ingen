@@ -44,13 +44,12 @@ class LV2Features;
 
 /** The "world" all Ingen modules may share.
  *
- * This is required for shared access to things like Redland, so locking can
- * take place centrally and the engine/gui using the same library won't
- * explode horribly.
+ * All loaded components of Ingen, as well as things requiring shared access
+ * and/or locking (e.g. Redland, SLV2).
  *
- * Hopefully at some point in the future it can allow some fun things like
- * scripting bindings that play with all loaded components of
- * The Ingen System(TM) and whatnot.
+ * Ingen modules are shared libraries which modify the World when loaded
+ * using World::load, e.g. loading the "ingen_serialisation" module will
+ * set World::serialiser and World::parser to valid objects.
  */
 struct World {
 	World() : conf(0) {}
@@ -58,6 +57,10 @@ struct World {
 	bool load(const char* name);
 	void unload_all();
 
+	typedef SharedPtr<Ingen::Shared::EngineInterface> (*InterfaceFactory)(
+			World* world, const std::string& engine_url);
+
+	void add_interface_factory(const std::string& scheme, InterfaceFactory factory);
 	SharedPtr<Ingen::Shared::EngineInterface> interface(const std::string& engine_url);
 
 	bool run(const std::string& mime_type, const std::string& filename);
@@ -80,8 +83,6 @@ private:
 	typedef std::map< const std::string, boost::shared_ptr<Module> > Modules;
 	Modules modules;
 
-	typedef SharedPtr<Ingen::Shared::EngineInterface> (*InterfaceFactory)(
-			World* world, const std::string& url);
 	typedef std::map<const std::string, InterfaceFactory> InterfaceFactories;
 	InterfaceFactories interface_factories;
 

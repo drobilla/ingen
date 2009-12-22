@@ -50,9 +50,9 @@ new_http_interface(Ingen::Shared::World* world, const std::string& url)
 
 struct IngenClientModule : public Ingen::Shared::Module {
 	void load(Ingen::Shared::World* world) {
-		world->interface_factories.insert(make_pair("osc.udp", &new_osc_interface));
-		world->interface_factories.insert(make_pair("osc.tcp", &new_osc_interface));
-		world->interface_factories.insert(make_pair("http",    &new_http_interface));
+		world->add_interface_factory("osc.udp", &new_osc_interface);
+		world->add_interface_factory("osc.tcp", &new_osc_interface);
+		world->add_interface_factory("http",    &new_http_interface);
 	}
 };
 

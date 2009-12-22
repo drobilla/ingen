@@ -26,7 +26,6 @@
 #include <sys/time.h>
 #include "raul/Path.hpp"
 #include "flowcanvas/Connection.hpp"
-#include "module/Module.hpp"
 #include "module/World.hpp"
 #include "engine/Engine.hpp"
 #include "interface/EngineInterface.hpp"

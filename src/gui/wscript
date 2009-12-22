@@ -40,7 +40,7 @@ def build(bld):
 		ThreadedLoader.cpp
 		Window.cpp
 		WindowFactory.cpp
-		gui.cpp
+		ingen_gui.cpp
 	'''
 
 	if bld.env['HAVE_CURL'] != 0:
