@@ -50,9 +50,13 @@ new_http_interface(Ingen::Shared::World* world, const std::string& url)
 
 struct IngenClientModule : public Ingen::Shared::Module {
 	void load(Ingen::Shared::World* world) {
+#ifdef HAVE_LIBLO
 		world->add_interface_factory("osc.udp", &new_osc_interface);
 		world->add_interface_factory("osc.tcp", &new_osc_interface);
+#endif
+#ifdef HAVE_SOUP
 		world->add_interface_factory("http",    &new_http_interface);
+#endif
 	}
 };
 
