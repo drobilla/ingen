@@ -115,7 +115,7 @@ SetMetadata::pre_process()
 		if (_create_event)
 			_create_event->pre_process();
 		else
-			_error = BAD_TYPE;
+			_error = BAD_OBJECT_TYPE;
 		QueuedEvent::pre_process();
 		return;
 	}
@@ -151,20 +151,20 @@ SetMetadata::pre_process()
 						if (value.get_bool() && !_patch->compiled_patch())
 							_compiled_patch = _patch->compile();
 					} else {
-						_error = BAD_TYPE;
+						_error = BAD_VALUE_TYPE;
 					}
 				} else if (key.str() == "ingen:polyphonic") {
 					if (value.type() == Atom::BOOL) {
 						op = POLYPHONIC;
 					} else {
-						_error = BAD_TYPE;
+						_error = BAD_VALUE_TYPE;
 					}
 				} else if (key.str() == "ingen:polyphony") {
 					if (value.type() == Atom::INT) {
 						op = POLYPHONY;
 						_patch->prepare_internal_poly(*_engine.buffer_factory(), value.get_int32());
 					} else {
-						_error = BAD_TYPE;
+						_error = BAD_VALUE_TYPE;
 					}
 				}
 			} else if (key.str() == "ingen:value") {
@@ -179,8 +179,10 @@ SetMetadata::pre_process()
 			}
 		}
 
-		if (_error != NO_ERROR)
+		if (_error != NO_ERROR) {
+			_error_predicate += key.str();
 			break;
+		}
 
 		_types.push_back(op);
 	}
@@ -264,8 +266,14 @@ SetMetadata::post_process()
 	case INTERNAL:
 		_responder->respond_error("Internal error");
 		break;
-	case BAD_TYPE:
-		_responder->respond_error("Bad type");
+	case BAD_OBJECT_TYPE:
+		_responder->respond_error((boost::format(
+				"Bad type for object '%1%'") % _subject).str());
+		break;
+	case BAD_VALUE_TYPE:
+		_responder->respond_error((boost::format(
+				"Bad metadata value type for subject '%1%' predicate '%2%")
+					% _subject % _error_predicate).str());
 		break;
 	}
 }

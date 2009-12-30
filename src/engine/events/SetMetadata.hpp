@@ -82,7 +82,13 @@ public:
 	void post_process();
 
 private:
-	enum { NO_ERROR, NOT_FOUND, INTERNAL, BAD_TYPE } _error;
+	enum { NO_ERROR,
+		NOT_FOUND,
+		INTERNAL,
+		BAD_OBJECT_TYPE,
+		BAD_VALUE_TYPE
+	} _error;
+
 	enum SpecialType {
 		NONE,
 		ENABLE,
@@ -101,6 +107,7 @@ private:
 	Shared::ResourceImpl*        _object;
 	PatchImpl*                   _patch;
 	CompiledPatch*               _compiled_patch;
+	std::string                  _error_predicate;
 	bool                         _replace;
 	bool                         _is_meta;
 	bool                         _success;
