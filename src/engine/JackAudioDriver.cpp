@@ -70,7 +70,8 @@ void
 JackAudioPort::create()
 {
 	_jack_port = jack_port_register(_driver->jack_client(),
-		_patch_port->path().chop_start("/").c_str(), JACK_DEFAULT_AUDIO_TYPE,
+		ingen_jack_port_name(_patch_port->path()).c_str(),
+		JACK_DEFAULT_AUDIO_TYPE,
 		(_patch_port->is_input()) ? JackPortIsInput : JackPortIsOutput,
 		0);
 
@@ -88,6 +89,13 @@ JackAudioPort::destroy()
 	if (jack_port_unregister(_driver->jack_client(), _jack_port))
 		cerr << "[JackMidiPort] ERROR: Unable to unregister port" << endl;
 	_jack_port = NULL;
+}
+
+
+void
+JackAudioPort::move(const Raul::Path& path)
+{
+	jack_port_set_name(_jack_port, ingen_jack_port_name(path).c_str());
 }
 
 

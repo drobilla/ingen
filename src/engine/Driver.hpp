@@ -44,7 +44,7 @@ public:
 	virtual ~DriverPort() {}
 
 	/** Set the name of the system port */
-	virtual void set_name(const std::string& name) = 0;
+	virtual void move(const Raul::Path& path) = 0;
 
 	virtual void create()  = 0;
 	virtual void destroy() = 0;

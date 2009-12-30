@@ -19,6 +19,7 @@
 #define UTIL_HPP
 
 #include "ingen-config.h"
+#include "raul/Path.hpp"
 #include <iostream>
 #include <cstdlib>
 
@@ -71,6 +72,12 @@ set_denormal_flags()
 	}
 #endif
 #endif
+}
+
+static inline std::string
+ingen_jack_port_name(const Raul::Path& path)
+{
+	return path.chop_start("/");
 }
 
 } // namespace Ingen

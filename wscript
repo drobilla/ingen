@@ -25,6 +25,7 @@ def set_options(opt):
 
 def configure(conf):
 	autowaf.configure(conf)
+	autowaf.display_header('Ingen Configuration')
 	conf.check_tool('compiler_cxx')
 	autowaf.check_pkg(conf, 'glibmm-2.4', uselib_store='GLIBMM', atleast_version='2.14.0', mandatory=True)
 	autowaf.check_pkg(conf, 'gthread-2.0', uselib_store='GTHREAD', atleast_version='2.14.0', mandatory=True)
@@ -67,7 +68,6 @@ def configure(conf):
 	conf.write_config_header('ingen-config.h')
 
 	autowaf.print_summary(conf)
-	autowaf.display_header('Ingen Configuration')
 	autowaf.display_msg(conf, "Jack", str(conf.env['HAVE_JACK'] == 1))
 	autowaf.display_msg(conf, "OSC", str(conf.env['HAVE_LIBLO'] == 1))
 	autowaf.display_msg(conf, "HTTP", str(conf.env['HAVE_SOUP'] == 1))

@@ -112,7 +112,7 @@ Move::execute(ProcessContext& context)
 			driver_port = _engine.midi_driver()->driver_port(_new_path);
 
 		if (driver_port)
-			driver_port->set_name(_new_path.str());
+			driver_port->move(_new_path);
 	}
 }
 

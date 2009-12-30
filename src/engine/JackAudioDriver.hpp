@@ -53,7 +53,7 @@ public:
 	void create();
 	void destroy();
 
-	void set_name(const std::string& name) { jack_port_set_name(_jack_port, name.c_str()); };
+	void move(const Raul::Path& path);
 
 	void pre_process(jack_nframes_t nframes);
 	void post_process(jack_nframes_t nframes);

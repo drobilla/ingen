@@ -33,6 +33,7 @@
 #include "ProcessContext.hpp"
 #include "Engine.hpp"
 #include "jack_compat.h"
+#include "util.hpp"
 
 using namespace std;
 using namespace Raul;
@@ -66,7 +67,8 @@ void
 JackMidiPort::create()
 {
 	_jack_port = jack_port_register(_driver->jack_client(),
-		_patch_port->path().chop_start("/").c_str(), JACK_DEFAULT_MIDI_TYPE,
+		ingen_jack_port_name(_patch_port->path()).c_str(),
+		JACK_DEFAULT_MIDI_TYPE,
 		(_patch_port->is_input()) ? JackPortIsInput : JackPortIsOutput,
 		0);
 
@@ -85,6 +87,13 @@ JackMidiPort::destroy()
 		cerr << "[JackMidiPort] ERROR: Unable to unregister port" << endl;
 
 	_jack_port = NULL;
+}
+
+
+void
+JackMidiPort::move(const Raul::Path& path)
+{
+	jack_port_set_name(_jack_port, ingen_jack_port_name(path).c_str());
 }
 
 
