@@ -97,7 +97,7 @@ NewSubpatchWindow::ok_clicked()
 	Resource::Properties props;
 	props.insert(make_pair("rdf:type",        Atom(Atom::URI, "ingen:Patch")));
 	props.insert(make_pair("ingen:polyphony", Atom(int32_t(poly))));
-	App::instance().engine()->put(ResourceImpl::meta_uri(Path::root_uri, path), props);
+	App::instance().engine()->put(ResourceImpl::meta_uri(path), props);
 
 	props = _initial_data;
 	props.insert(make_pair("ingen:enabled", bool(true)));
