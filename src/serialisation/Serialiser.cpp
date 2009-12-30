@@ -321,18 +321,18 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch, const Redland::Node&
 	for (Store::const_iterator n = _store->children_begin(patch);
 			n != _store->children_end(patch); ++n) {
 
-		if (n->second->graph_parent() != patch.get())
+		if (n->first.parent() != patch->path())
 			continue;
 
-		SharedPtr<Shared::Patch> patch = PtrCast<Shared::Patch>(n->second);
+		SharedPtr<Shared::Patch> subpatch = PtrCast<Shared::Patch>(n->second);
 		SharedPtr<Shared::Node>  node  = PtrCast<Shared::Node>(n->second);
-		if (patch) {
+		if (subpatch) {
 			const Redland::Resource class_id(_model->world(),
-					string(META_PREFIX) + patch->path().chop_start("/"));
+					string(META_PREFIX) + subpatch->path().chop_start("/"));
 			const Redland::Node     node_id(instance_rdf_node(n->second->path()));
 			_model->add_statement(patch_id, "ingen:node", node_id);
-			serialise_patch(patch, class_id);
-			serialise_node(patch, class_id, node_id);
+			serialise_patch(subpatch, class_id);
+			serialise_node(subpatch, class_id, node_id);
 		} else if (node) {
 			const Redland::Resource class_id(_model->world(), node->plugin()->uri().str());
 			const Redland::Node     node_id(instance_rdf_node(n->second->path()));
