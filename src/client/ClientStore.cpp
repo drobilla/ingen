@@ -253,10 +253,10 @@ void
 ClientStore::put(const URI& uri, const Resource::Properties& properties)
 {
 	typedef Resource::Properties::const_iterator iterator;
-	cerr << "CLIENT PUT " << uri << " {" << endl;
+	/*cerr << "CLIENT PUT " << uri << " {" << endl;
 	for (iterator i = properties.begin(); i != properties.end(); ++i)
 		cerr << "\t" << i->first << " = " << i->second << " :: " << i->second.type() << endl;
-	cerr << "}" << endl;
+	cerr << "}" << endl;*/
 
 	bool is_path = Path::is_valid(uri.str());
 	bool is_meta = ResourceImpl::is_meta_uri(uri);
