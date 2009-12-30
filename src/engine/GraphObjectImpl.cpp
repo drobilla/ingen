@@ -32,7 +32,7 @@ GraphObjectImpl::GraphObjectImpl(GraphObjectImpl* parent, const std::string& nam
 	: ResourceImpl((parent ? parent->path().base() : Raul::Path::root_uri) + name)
 	, _parent(parent)
 	, _name(name)
-	, _meta(std::string("meta:#") + path().chop_start("/"))
+	, _meta(ResourceImpl::meta_uri(uri()))
 	, _polyphonic(polyphonic)
 {
 	assert(parent == NULL || _name.length() > 0);

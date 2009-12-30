@@ -44,13 +44,15 @@ public:
 private:
 	void set_object(SharedPtr<ObjectModel> object);
 
-	void name_changed();
+	void symbol_changed();
+	void label_changed();
 	void cancel_clicked();
 	void ok_clicked();
 
 	SharedPtr<ObjectModel> _object;
 
-	Gtk::Entry*      _name_entry;
+	Gtk::Entry*      _symbol_entry;
+	Gtk::Entry*      _label_entry;
 	Gtk::Label*      _message_label;
 	Gtk::Button*     _cancel_button;
 	Gtk::Button*     _ok_button;

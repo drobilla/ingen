@@ -32,6 +32,7 @@ class ResourceImpl : virtual public Resource
 public:
 	ResourceImpl(const Raul::URI& uri) : _uri(uri) {}
 
+	virtual void            set_uri(const Raul::URI& uri) { _uri = uri; }
 	virtual const Raul::URI uri()  const { return _uri.str(); }
 
 	const Properties& properties() const { return _properties; }
@@ -55,7 +56,8 @@ public:
 			bool& node,
 			bool& port, bool& is_output, PortType& data_type);
 
-	static const Raul::URI meta_uri(const Raul::URI& base, const Raul::URI& uri);
+	static bool            is_meta_uri(const Raul::URI& uri);
+	static const Raul::URI meta_uri(const Raul::URI& uri);
 
 protected:
 	Raul::Atom& set_property(const Raul::URI& uri, const Raul::Atom& value) const;

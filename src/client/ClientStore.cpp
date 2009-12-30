@@ -253,13 +253,13 @@ void
 ClientStore::put(const URI& uri, const Resource::Properties& properties)
 {
 	typedef Resource::Properties::const_iterator iterator;
-	/*cerr << "CLIENT PUT " << uri << " {" << endl;
+	cerr << "CLIENT PUT " << uri << " {" << endl;
 	for (iterator i = properties.begin(); i != properties.end(); ++i)
 		cerr << "\t" << i->first << " = " << i->second << " :: " << i->second.type() << endl;
-	cerr << "}" << endl;*/
+	cerr << "}" << endl;
 
 	bool is_path = Path::is_valid(uri.str());
-	bool is_meta = uri.substr(0, 6) == "meta:#";
+	bool is_meta = ResourceImpl::is_meta_uri(uri);
 
 	if (!(is_path || is_meta)) {
 		const URI& type_uri = properties.find("rdf:type")->second.get_uri();
@@ -366,7 +366,7 @@ ClientStore::set_property(const URI& subject_uri, const URI& predicate, const At
 		cerr << "ERROR: Property '" << predicate << "' is invalid" << endl;
 	} else if (subject) {
 		subject->set_property(predicate, value);
-	} else if (subject_uri.substr(0, 6) == "meta:#") {
+	} else if (ResourceImpl::is_meta_uri(subject_uri)) {
 		Path instance_path = string("/") + subject_uri.substr(hash + 1);
 		SharedPtr<ObjectModel> om = PtrCast<ObjectModel>(subject);
 		if (om)

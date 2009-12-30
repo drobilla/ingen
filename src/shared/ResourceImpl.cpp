@@ -25,8 +25,15 @@ namespace Ingen {
 namespace Shared {
 
 
+bool
+ResourceImpl::is_meta_uri(const Raul::URI& uri)
+{
+	return uri.substr(0, 6) == "meta:#";
+}
+
+
 const Raul::URI
-ResourceImpl::meta_uri(const Raul::URI& base, const Raul::URI& uri)
+ResourceImpl::meta_uri(const Raul::URI& uri)
 {
 	return string("meta:#") + uri.chop_start("/");
 }

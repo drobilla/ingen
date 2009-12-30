@@ -82,8 +82,8 @@ protected:
 
 	ObjectModel(const Raul::Path& path);
 
-	virtual void set_path(const Raul::Path& p) { _path = p; signal_moved.emit(); }
-	virtual void set_parent(SharedPtr<ObjectModel> p) { assert(p); _parent = p; }
+	virtual void set_path(const Raul::Path& p);
+	virtual void set_parent(SharedPtr<ObjectModel> p);
 	virtual void add_child(SharedPtr<ObjectModel> c) {}
 	virtual bool remove_child(SharedPtr<ObjectModel> c) { return true; }
 

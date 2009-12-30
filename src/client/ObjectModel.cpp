@@ -29,7 +29,7 @@ namespace Client {
 
 ObjectModel::ObjectModel(const Path& path)
 	: ResourceImpl(path)
-	, _meta(std::string("meta:#") + path.chop_start("/"))
+	, _meta(ResourceImpl::meta_uri(path))
 	, _path(path)
 {
 }
@@ -100,6 +100,23 @@ ObjectModel::set(SharedPtr<ObjectModel> o)
 		ResourceImpl::set_property(v->first, v->second);
 		signal_property.emit(v->first, v->second);
 	}
+}
+
+
+void
+ObjectModel::set_path(const Raul::Path& p)
+{
+	_path = p;
+	_meta.set_uri(ResourceImpl::meta_uri(_path));
+	signal_moved.emit();
+}
+
+
+void
+ObjectModel::set_parent(SharedPtr<ObjectModel> p)
+{
+	assert(p);
+	_parent = p;
 }
 
 
