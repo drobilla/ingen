@@ -90,7 +90,7 @@ World::load(const char* name)
 {
 	SharedPtr<Glib::Module> lib = load_module(name);
 	Ingen::Shared::Module* (*module_load)() = NULL;
-	if (lib->get_symbol("ingen_module_load", (void*&)module_load)) {
+	if (lib && lib->get_symbol("ingen_module_load", (void*&)module_load)) {
 		Module* module = module_load();
 		module->library = lib;
 		module->load(this);
