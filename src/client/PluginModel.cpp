@@ -128,6 +128,26 @@ PluginModel::get_property(const URI& key) const
 }
 
 
+void
+PluginModel::set(SharedPtr<PluginModel> p)
+{
+	_type      = p->_type;
+	_icon_path = p->_icon_path;
+
+#ifdef HAVE_SLV2
+	if (p->_slv2_plugin)
+		_slv2_plugin = p->_slv2_plugin;
+#endif
+
+	for (Properties::const_iterator v = p->properties().begin(); v != p->properties().end(); ++v) {
+		ResourceImpl::set_property(v->first, v->second);
+		signal_property.emit(v->first, v->second);
+	}
+
+	signal_changed.emit();
+}
+
+
 Symbol
 PluginModel::default_node_symbol()
 {

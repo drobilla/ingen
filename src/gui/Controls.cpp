@@ -70,6 +70,7 @@ Control::init(ControlPanel* panel, SharedPtr<PortModel> pm)
 	assert(_port_model);
 	assert(panel);
 
+	_control_connection.disconnect();
 	_control_connection = pm->signal_value_changed.connect(sigc::mem_fun(this, &Control::set_value));
 }
 
@@ -174,13 +175,13 @@ SliderControl::clicked(GdkEventButton* ev)
 void
 SliderControl::set_value(const Atom& atom)
 {
-	float val = atom.get_float();
-
-	if (_port_model->is_integer())
-		val = lrintf(val);
-
-	_enable_signal = false;
 	if (_enabled) {
+		_enable_signal = false;
+		float val = atom.get_float();
+
+		if (_port_model->is_integer())
+			val = lrintf(val);
+
 		if (_slider->get_value() != val) {
 			const Gtk::Adjustment* range = _slider->get_adjustment();
 			const float lower = range->get_lower();
@@ -189,10 +190,12 @@ SliderControl::set_value(const Atom& atom)
 				set_range(min(lower, val), max(lower, val));
 			_slider->set_value(val);
 		}
+
 		if (_value_spinner->get_value() != val)
 			_value_spinner->set_value(val);
+
+		_enable_signal = true;
 	}
-	_enable_signal = true;
 }
 
 
@@ -290,92 +293,14 @@ SliderControl::update_value_from_spinner()
 bool
 SliderControl::slider_pressed(GdkEvent* ev)
 {
-	//cerr << "Pressed: " << ev->type << endl;
 	if (ev->type == GDK_BUTTON_PRESS) {
 		_enabled = false;
-		//GtkClientInterface::instance()->set_ignore_port(_port_model->path());
 	} else if (ev->type == GDK_BUTTON_RELEASE) {
 		_enabled = true;
-		//GtkClientInterface::instance()->clear_ignore_port();
 	}
 
 	return false;
 }
-
-
-// ///////////// IntegerControl ////////////// //
-
-#if 0
-IntegerControl::IntegerControl(ControlPanel* panel, SharedPtr<PortModel> pm)
-: Control(panel, pm),
-  _enable_signal(false),
-  _alignment(0.5, 0.5, 0.0, 0.0),
-  _name_label(pm->path().name()),
-  _spinner(1.0, 0)
-{
-	set_name(pm->path().name());
-
-	_spinner.set_range(-99999, 99999);
-	_spinner.set_value(_port_model->value());
-	_spinner.signal_value_changed().connect(
-		sigc::mem_fun(*this, &IntegerControl::update_value));
-	_spinner.set_increments(1, 10);
-
-	_alignment.add(_spinner);
-	pack_start(_name_label);
-	pack_start(_alignment);
-
-	_enable_signal = true;
-
-	show_all();
-}
-
-
-void
-IntegerControl::set_name(const string& name)
-{
-	string name_label = "<span weight=\"bold\">";
-	name_label += name + "</span>";
-	_name_label->set_markup(name_label);
-}
-
-
-void
-IntegerControl::set_value(float val)
-{
-	//cerr << "[IntegerControl] Setting value to " << val << endl;
-	_enable_signal = false;
-	_spinner.set_value(val);
-	_enable_signal = true;
-}
-
-
-void
-IntegerControl::enable()
-{
-	_spinner.property_sensitive() = true;
-	_name_label->property_sensitive() = true;
-}
-
-
-void
-IntegerControl::disable()
-{
-	_spinner.property_sensitive() = false;
-	_name_label->property_sensitive() = false;
-}
-
-
-void
-IntegerControl::update_value()
-{
-	if (_enable_signal) {
-		float value = _spinner.get_value();
-		_control_panel->value_changed(_port_model, value);
-		//m_port_model->value(value);
-	}
-}
-#endif
 
 
 // ///////////// ToggleControl ////////////// //

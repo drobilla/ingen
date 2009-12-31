@@ -57,6 +57,7 @@ public:
 
 	const Raul::URI&      plugin_uri() const { return _plugin_uri; }
 	const Shared::Plugin* plugin()     const { return _plugin.get(); }
+	Shared::Plugin*       plugin()           { return _plugin.get(); }
 	uint32_t              num_ports()  const { return _ports.size(); }
 	const Ports&          ports()      const { return _ports; }
 

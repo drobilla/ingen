@@ -21,6 +21,7 @@
 #include <gtkmm.h>
 #include <libglademm/xml.h>
 #include <libglademm.h>
+#include "raul/Atom.hpp"
 #include "raul/SharedPtr.hpp"
 #include "Window.hpp"
 
@@ -66,6 +67,8 @@ public:
 
 	Gtk::MenuItem* menu_view_control_window() { return _menu_view_control_window; }
 
+	void show_port_status(PortModel* model, const Raul::Atom& value);
+
 protected:
 	void on_show();
 	void on_hide();
@@ -73,9 +76,9 @@ protected:
 	bool on_key_release_event(GdkEventKey* event);
 
 private:
-
 	void patch_port_added(SharedPtr<PortModel> port);
 	void patch_port_removed(SharedPtr<PortModel> port);
+	void show_status(ObjectModel* model);
 	void object_entered(ObjectModel* model);
 	void object_left(ObjectModel* model);
 	void editable_changed(bool editable);

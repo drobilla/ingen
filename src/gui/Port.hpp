@@ -51,6 +51,7 @@ public:
 	SharedPtr<PortModel> model() const { return _port_model.lock(); }
 
 	void create_menu();
+	void update_metadata();
 
 	virtual void set_control(float value, bool signal);
 	void value_changed(const Raul::Atom& value);
@@ -61,11 +62,13 @@ public:
 private:
 	void property_changed(const Raul::URI& key, const Raul::Atom& value);
 
+	bool on_event(GdkEvent* ev);
 	void moved();
 
 	static ArtVpathDash* _dash;
 
 	WeakPtr<PortModel> _port_model;
+	bool               _pressed;
 	bool               _flipped;
 };
 

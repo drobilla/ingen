@@ -18,6 +18,7 @@
 #include "PatchWindow.hpp"
 #include <iostream>
 #include <cassert>
+#include <sstream>
 #include <fstream>
 #include <boost/format.hpp>
 #include "raul/AtomRDF.hpp"
@@ -300,38 +301,55 @@ PatchWindow::patch_port_removed(SharedPtr<PortModel> port)
 
 
 void
+PatchWindow::show_status(ObjectModel* model)
+{
+	std::stringstream msg;
+	msg << model->path().chop_scheme();
+
+	PortModel* port = 0;
+	NodeModel* node = 0;
+
+	if ((port = dynamic_cast<PortModel*>(model))) {
+		show_port_status(port, port->value());
+
+	} else if ((node = dynamic_cast<NodeModel*>(model))) {
+		PluginModel* plugin = dynamic_cast<PluginModel*>(node->plugin());
+		if (plugin)
+			msg << ((boost::format(" (%1%)") % plugin->human_name()).str());
+		_status_bar->push(msg.str(), STATUS_CONTEXT_HOVER);
+	}
+}
+
+
+void
+PatchWindow::show_port_status(PortModel* port, const Raul::Atom& value)
+{
+	std::stringstream msg;
+	msg << port->path().chop_scheme();
+
+	NodeModel* parent = dynamic_cast<NodeModel*>(port->parent().get());
+	if (parent) {
+		const PluginModel* plugin = dynamic_cast<const PluginModel*>(parent->plugin());
+		if (plugin) {
+			const string& human_name = plugin->port_human_name(port->index());
+			if (human_name != "")
+				msg << " (" << human_name << ")";
+		}
+	}
+
+	if (value.is_valid()) {
+		msg << " = " << value;
+	}
+
+	_status_bar->pop(STATUS_CONTEXT_HOVER);
+	_status_bar->push(msg.str(), STATUS_CONTEXT_HOVER);
+}
+
+
+void
 PatchWindow::object_entered(ObjectModel* model)
 {
-	string msg = model->path().str();
-	NodeModel* node = dynamic_cast<NodeModel*>(model);
-	if (node) {
-		PluginModel* plugin = (PluginModel*)node->plugin();
-		if (plugin)
-			msg.append((boost::format(" (%1%)") % plugin->human_name()).str());
-	}
-
-	PortModel* port = dynamic_cast<PortModel*>(model);
-	if (port) {
-		NodeModel* parent = dynamic_cast<NodeModel*>(port->parent().get());
-		if (parent) {
-			const PluginModel* plugin = dynamic_cast<const PluginModel*>(parent->plugin());
-
-			if (plugin) {
-				const string human_name = plugin->port_human_name(port->index());
-				if (human_name != "")
-					msg.append((boost::format(" (%1%)") % human_name).str());
-			}
-		}
-
-		const Atom& value = port->value();
-		if (value.is_valid()) {
-			const Redland::Node node = AtomRDF::atom_to_node(
-					*App::instance().world()->rdf_world, value);
-			msg.append(" = ").append(node.to_string());
-		}
-	}
-
-	_status_bar->push(msg, STATUS_CONTEXT_HOVER);
+	show_status(model);
 }
 
 

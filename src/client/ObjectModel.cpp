@@ -83,7 +83,7 @@ ObjectModel::polyphonic() const
 /** Merge the data of @a model with self, as much as possible.
  *
  * This will merge the two models, but with any conflict take the value in
- * @a model as correct.  The paths of the two models MUST be equal.
+ * @a o as correct.  The paths of the two models MUST be equal.
  */
 void
 ObjectModel::set(SharedPtr<ObjectModel> o)

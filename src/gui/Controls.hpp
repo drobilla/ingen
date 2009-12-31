@@ -104,32 +104,6 @@ private:
 };
 
 
-#if 0
-
-/** A spinbutton for integer controls.
- *
- * \ingroup GUI
- */
-class IntegerControl : public Control
-{
-public:
-	IntegerControl(ControlPanel* panel, SharedPtr<PortModel> pm);
-
-	void enable();
-	void disable();
-
-private:
-	void set_value(float val);
-
-	void update_value();
-
-	bool            _enable_signal;
-	Gtk::Alignment  _alignment;
-	Gtk::SpinButton _spinner;
-};
-#endif
-
-
 /** A radio button for toggle controls.
  *
  * \ingroup GUI

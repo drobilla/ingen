@@ -116,6 +116,9 @@ WindowFactory::num_open_patch_windows()
 PatchWindow*
 WindowFactory::patch_window(SharedPtr<PatchModel> patch)
 {
+	if (!patch)
+		return NULL;
+
 	PatchWindowMap::iterator w = _patch_windows.find(patch->path());
 
 	return (w == _patch_windows.end()) ? NULL : w->second;

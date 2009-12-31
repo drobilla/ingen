@@ -32,9 +32,9 @@ class LoadPlugins : public QueuedEvent
 {
 public:
 	LoadPlugins(Engine&              engine,
-	                 SharedPtr<Responder> responder,
-	                 SampleCount          timestamp,
-	                 QueuedEventSource*   source);
+	            SharedPtr<Responder> responder,
+	            SampleCount          timestamp,
+	            QueuedEventSource*   source);
 
 	void pre_process();
 	void post_process();

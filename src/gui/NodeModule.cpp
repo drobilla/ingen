@@ -21,6 +21,7 @@
 #include "interface/EngineInterface.hpp"
 #include "client/PatchModel.hpp"
 #include "client/NodeModel.hpp"
+#include "client/PluginModel.hpp"
 #include "client/PluginUI.hpp"
 #include "App.hpp"
 #include "GladeFactory.hpp"
@@ -54,6 +55,9 @@ NodeModule::NodeModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeMode
 	node->signal_removed_port.connect(sigc::hide_return(sigc::mem_fun(this, &NodeModule::remove_port)));
 	node->signal_property.connect(sigc::mem_fun(this, &NodeModule::set_property));
 	node->signal_moved.connect(sigc::mem_fun(this, &NodeModule::rename));
+	PluginModel* plugin = dynamic_cast<PluginModel*>(node->plugin());
+	if (plugin)
+		plugin->signal_changed.connect(sigc::mem_fun(this, &NodeModule::plugin_changed));
 }
 
 
@@ -169,6 +173,14 @@ NodeModule::value_changed(uint32_t index, const Atom& value)
 
 
 void
+NodeModule::plugin_changed()
+{
+	for (PortVector::iterator p = ports().begin(); p != ports().end(); ++p)
+		PtrCast<Ingen::GUI::Port>(*p)->update_metadata();
+}
+
+
+void
 NodeModule::embed_gui(bool embed)
 {
 	if (embed) {
@@ -217,7 +229,7 @@ NodeModule::embed_gui(bool embed)
 	}
 
 	if (embed && _embed_item) {
-		initialise_gui_values();
+		set_control_values();
 		set_base_color(0x212222FF);
 	} else {
 		set_default_base_color();
@@ -307,7 +319,7 @@ NodeModule::popup_gui()
 			_gui_window->set_role("plugin_ui");
 			_gui_window->add(*_gui_widget);
 			_gui_widget->show_all();
-			initialise_gui_values();
+			set_control_values();
 
 			_gui_window->signal_unmap().connect(
 					sigc::mem_fun(this, &NodeModule::on_gui_window_close));
@@ -334,7 +346,7 @@ NodeModule::on_gui_window_close()
 
 
 void
-NodeModule::initialise_gui_values()
+NodeModule::set_control_values()
 {
 	uint32_t index=0;
 	for (NodeModel::Ports::const_iterator p = _node->ports().begin(); p != _node->ports().end(); ++p) {

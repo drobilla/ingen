@@ -420,7 +420,7 @@ Serialiser::serialise_port(const Port* port, const Redland::Node& port_id)
 
 	if (port->is_input() && port->type() == PortType::CONTROL)
 		_model->add_statement(port_id, "ingen:value",
-				AtomRDF::atom_to_node(_model->world(), Atom(port->value())));
+				AtomRDF::atom_to_node(_model->world(), port->value()));
 
 	serialise_properties(port_id, port->properties());
 }

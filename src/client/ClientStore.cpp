@@ -184,11 +184,13 @@ ClientStore::resource(const URI& uri)
 void
 ClientStore::add_plugin(SharedPtr<PluginModel> pm)
 {
-	// FIXME: dupes?  merge, like with objects?
-
-	(*_plugins)[pm->uri()] = pm;
-	signal_new_plugin(pm);
-	//cerr << "Plugin: " << pm->uri() << ", # plugins: " << _plugins->size() << endl;
+	SharedPtr<PluginModel> existing = this->plugin(pm->uri());
+	if (existing) {
+		existing->set(pm);
+	} else {
+		_plugins->insert(make_pair(pm->uri(), pm));
+		signal_new_plugin(pm);
+	}
 }
 
 
@@ -300,15 +302,16 @@ ClientStore::put(const URI& uri, const Resource::Properties& properties)
 		const Resource::Properties::const_iterator p = properties.find("rdf:instanceOf");
 		SharedPtr<PluginModel> plug;
 		if (p->second.is_valid() && p->second.type() == Atom::URI) {
-			if ((plug = plugin(p->second.get_uri()))) {
-				SharedPtr<NodeModel> n(new NodeModel(plug, path));
-				n->set_properties(properties);
-				add_object(n);
-			} else {
-				SharedPtr<NodeModel> n(new NodeModel(p->second.get_uri(), path));
-				n->set_properties(properties);
-				add_object(n);
+			if (!(plug = plugin(p->second.get_uri()))) {
+				cout << "WARNING: Unable to find plugin " << p->second.get_uri() << endl;
+				plug = SharedPtr<PluginModel>(
+						new PluginModel(p->second.get_uri(), "ingen:nil", Resource::Properties()));
+				add_plugin(plug);
 			}
+
+			SharedPtr<NodeModel> n(new NodeModel(plug, path));
+			n->set_properties(properties);
+			add_object(n);
 		} else {
 			cerr << "ERROR: Plugin with no type" << endl;
 		}

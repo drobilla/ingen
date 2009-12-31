@@ -89,8 +89,15 @@ public:
 
 	static Redland::World* rdf_world() { return _rdf_world; }
 
+	// Signals
+	sigc::signal<void> signal_changed;
+
+protected:
+	friend class ClientStore;
+	void set(SharedPtr<PluginModel> p);
+
 private:
-	const Type _type;
+	Type _type;
 
 #ifdef HAVE_SLV2
 	static SLV2World   _slv2_world;

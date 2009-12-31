@@ -82,7 +82,8 @@ protected:
 	void add_port(SharedPtr<PortModel> port, bool resize=true);
 
 	void value_changed(uint32_t index, const Raul::Atom& value);
-	void initialise_gui_values();
+	void plugin_changed();
+	void set_control_values();
 
 	void create_menu();
 

@@ -123,6 +123,11 @@ SetPortValue::pre_process()
 				_engine.audio_driver()->frame_time() + _engine.audio_driver()->buffer_size());
 	}
 
+	if (_port) {
+		_port->set_value(_value);
+		_port->set_property("ingen:value", _value);
+	}
+
 	QueuedEvent::pre_process();
 }
 

@@ -27,9 +27,8 @@ namespace Events {
 
 
 LoadPlugins::LoadPlugins(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, QueuedEventSource* source)
-: QueuedEvent(engine, responder, timestamp, true, source)
+	: QueuedEvent(engine, responder, timestamp, true, source)
 {
-	/* FIXME: Not sure why this has to be blocking, but it fixes some nasty bugs.. */
 }
 
 void
