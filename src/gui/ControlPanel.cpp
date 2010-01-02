@@ -115,20 +115,25 @@ ControlPanel::add_port(SharedPtr<PortModel> pm)
 
 	// Add port
 	if (pm->is_input()) {
-		if (pm->type().is_control() && pm->is_toggle()) {
-			ToggleControl* tc;
-			Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference("toggle_control");
-			xml->get_widget_derived("toggle_control", tc);
-			control = tc;
+		if (pm->type().is_control()) {
+			if (pm->is_toggle()) {
+				ToggleControl* tc;
+				Glib::RefPtr<Gnome::Glade::Xml> xml
+						= GladeFactory::new_glade_reference("toggle_control");
+				xml->get_widget_derived("toggle_control", tc);
+				control = tc;
+			} else {
+				SliderControl* sc;
+				Glib::RefPtr<Gnome::Glade::Xml> xml
+						= GladeFactory::new_glade_reference("control_strip");
+				xml->get_widget_derived("control_strip", sc);
+				control = sc;
+			}
 		} else if (pm->type().is_value() || pm->type().is_message()) {
 			StringControl* sc;
-			Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference("string_control");
+			Glib::RefPtr<Gnome::Glade::Xml> xml
+					= GladeFactory::new_glade_reference("string_control");
 			xml->get_widget_derived("string_control", sc);
-			control = sc;
-		} else {
-			SliderControl* sc;
-			Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference("control_strip");
-			xml->get_widget_derived("control_strip", sc);
 			control = sc;
 		}
 	}
