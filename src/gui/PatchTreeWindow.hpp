@@ -47,18 +47,22 @@ public:
 
 	void new_object(SharedPtr<Client::ObjectModel> object);
 
-	void patch_property_changed(const Raul::URI& key, const Raul::Atom& value, const Raul::Path& path);
-	void patch_moved(const Raul::Path& old_path, const Raul::Path& new_path);
+	void patch_property_changed(const Raul::URI& key, const Raul::Atom& value,
+			SharedPtr<Client::PatchModel> pm);
+
+	void patch_moved(SharedPtr<Client::PatchModel> patch);
 
 	void add_patch(SharedPtr<Client::PatchModel> pm);
-	void remove_patch(const Raul::Path& path);
+	void remove_patch(SharedPtr<Client::PatchModel> pm);
 	void show_patch_menu(GdkEventButton* ev);
 
 protected:
 	void event_patch_activated(const Gtk::TreeModel::Path& path, Gtk::TreeView::Column* col);
 	void event_patch_enabled_toggled(const Glib::ustring& path_str);
 
-	Gtk::TreeModel::iterator find_patch(Gtk::TreeModel::Children root, const Raul::Path& path);
+	Gtk::TreeModel::iterator find_patch(
+			Gtk::TreeModel::Children       root,
+			SharedPtr<Client::ObjectModel> patch);
 
 	PatchTreeView* _patches_treeview;
 

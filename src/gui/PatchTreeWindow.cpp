@@ -92,18 +92,18 @@ PatchTreeWindow::add_patch(SharedPtr<PatchModel> pm)
 		} else {
 			row[_patch_tree_columns.name_col] = pm->path().name();
 		}
-		row[_patch_tree_columns.enabled_col] = false;
+		row[_patch_tree_columns.enabled_col] = pm->enabled();
 		row[_patch_tree_columns.patch_model_col] = pm;
 		_patches_treeview->expand_row(_patch_treestore->get_path(iter), true);
 	} else {
 		Gtk::TreeModel::Children children = _patch_treestore->children();
-		Gtk::TreeModel::iterator c = find_patch(children, pm->parent()->path());
+		Gtk::TreeModel::iterator c = find_patch(children, pm->parent());
 
 		if (c != children.end()) {
 			Gtk::TreeModel::iterator iter = _patch_treestore->append(c->children());
 			Gtk::TreeModel::Row row = *iter;
 			row[_patch_tree_columns.name_col] = pm->path().name();
-			row[_patch_tree_columns.enabled_col] = false;
+			row[_patch_tree_columns.enabled_col] = pm->enabled();
 			row[_patch_tree_columns.patch_model_col] = pm;
 			_patches_treeview->expand_row(_patch_treestore->get_path(iter), true);
 		}
@@ -111,32 +111,38 @@ PatchTreeWindow::add_patch(SharedPtr<PatchModel> pm)
 
 	pm->signal_property.connect(sigc::bind(
 			sigc::mem_fun(this, &PatchTreeWindow::patch_property_changed),
-			pm->path()));
+			pm));
+
+	pm->signal_moved.connect(sigc::bind(
+		sigc::mem_fun(this, &PatchTreeWindow::patch_moved),
+		pm));
 
 	pm->signal_destroyed.connect(sigc::bind(
 		sigc::mem_fun(this, &PatchTreeWindow::remove_patch),
-		pm->path()));
+		pm));
 }
 
 
 void
-PatchTreeWindow::remove_patch(const Path& path)
+PatchTreeWindow::remove_patch(SharedPtr<PatchModel> pm)
 {
-	Gtk::TreeModel::iterator i = find_patch(_patch_treestore->children(), path);
+	Gtk::TreeModel::iterator i = find_patch(_patch_treestore->children(), pm);
 	if (i != _patch_treestore->children().end())
 		_patch_treestore->erase(i);
 }
 
 
 Gtk::TreeModel::iterator
-PatchTreeWindow::find_patch(Gtk::TreeModel::Children root, const Path& path)
+PatchTreeWindow::find_patch(
+		Gtk::TreeModel::Children       root,
+		SharedPtr<Client::ObjectModel> patch)
 {
 	for (Gtk::TreeModel::iterator c = root.begin(); c != root.end(); ++c) {
 		SharedPtr<PatchModel> pm = (*c)[_patch_tree_columns.patch_model_col];
-		if (pm->path() == path) {
+		if (patch == pm) {
 			return c;
 		} else if ((*c)->children().size() > 0) {
-			Gtk::TreeModel::iterator ret = find_patch(c->children(), path);
+			Gtk::TreeModel::iterator ret = find_patch(c->children(), patch);
 			if (ret != c->children().end())
 				return ret;
 		}
@@ -188,16 +194,17 @@ PatchTreeWindow::event_patch_enabled_toggled(const Glib::ustring& path_str)
 
 
 void
-PatchTreeWindow::patch_property_changed(const URI& key, const Atom& value, const Path& path)
+PatchTreeWindow::patch_property_changed(const URI& key, const Atom& value,
+		SharedPtr<PatchModel> patch)
 {
 	_enable_signal = false;
 	if (key.str() == "ingen:enabled" && value.type() == Atom::BOOL) {
-		Gtk::TreeModel::iterator i = find_patch(_patch_treestore->children(), path);
+		Gtk::TreeModel::iterator i = find_patch(_patch_treestore->children(), patch);
 		if (i != _patch_treestore->children().end()) {
 			Gtk::TreeModel::Row row = *i;
 			row[_patch_tree_columns.enabled_col] = value.get_bool();
 		} else {
-			cerr << "[PatchTreeWindow] Unable to find patch " << path << endl;
+			cerr << "[PatchTreeWindow] Unable to find patch " << patch->path() << endl;
 		}
 	}
 	_enable_signal = true;
@@ -205,18 +212,18 @@ PatchTreeWindow::patch_property_changed(const URI& key, const Atom& value, const
 
 
 void
-PatchTreeWindow::patch_moved(const Path& old_path, const Path& new_path)
+PatchTreeWindow::patch_moved(SharedPtr<PatchModel> patch)
 {
 	_enable_signal = false;
 
 	Gtk::TreeModel::iterator i
-		= find_patch(_patch_treestore->children(), old_path);
+		= find_patch(_patch_treestore->children(), patch);
 
 	if (i != _patch_treestore->children().end()) {
 		Gtk::TreeModel::Row row = *i;
-		row[_patch_tree_columns.name_col] = new_path.name();
+		row[_patch_tree_columns.name_col] = patch->path().name();
 	} else {
-		cerr << "[PatchTreeWindow] Unable to find patch " << old_path << endl;
+		cerr << "[PatchTreeWindow] Unable to find patch " << patch->path() << endl;
 	}
 
 	_enable_signal = true;
