@@ -149,19 +149,6 @@ OSCClientSender::del(const Path& path)
 
 
 /** \page client_osc_namespace
- * <h2>/ingen/clear_patch</h2>
- * \arg \b path (string) - Path of patch (which is now empty)
- *
- * Notification a patch has been cleared (all children deleted).
- */
-void
-OSCClientSender::clear_patch(const Path& patch_path)
-{
-	send("/ingen/clear_patch", "s", patch_path.c_str(), LO_ARGS_END);
-}
-
-
-/** \page client_osc_namespace
  * <h2>/ingen/new_connection</h2>
  * \arg \b src-path (string) - Path of the source port
  * \arg \b dst-path (string) - Path of the destination port

@@ -136,9 +136,6 @@ LoadPatchWindow::ok_clicked()
 	if (_poly_from_user_radio->get_active())
 		_initial_data.insert(make_pair("ingen:polyphony", _poly_spinbutton->get_value_as_int()));
 
-	if (_replace)
-		App::instance().engine()->clear_patch(_patch->path());
-
 	if (!_patch->path().is_root()) {
 		parent = _patch->path().parent();
 		symbol = _patch->symbol();

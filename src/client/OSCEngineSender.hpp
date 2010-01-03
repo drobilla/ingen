@@ -80,8 +80,6 @@ public:
 	virtual void put(const Raul::URI&                    path,
 	                 const Shared::Resource::Properties& properties);
 
-	virtual void clear_patch(const Raul::Path& path);
-
 	virtual void del(const Raul::Path& path);
 
 	virtual void move(const Raul::Path& old_path,

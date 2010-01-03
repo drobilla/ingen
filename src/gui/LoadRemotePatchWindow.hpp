@@ -62,9 +62,6 @@ public:
 
 	void set_patch(SharedPtr<PatchModel> patch);
 
-	void set_replace() { _replace = true; }
-	void set_merge()   { _replace = false; }
-
 	void present(SharedPtr<PatchModel> patch, GraphObject::Properties data);
 
 private:
@@ -77,7 +74,6 @@ private:
 	GraphObject::Properties _initial_data;
 
 	SharedPtr<PatchModel> _patch;
-	bool                  _replace;
 
 	Glib::RefPtr<Gtk::TreeSelection> _selection;
 	Glib::RefPtr<Gtk::ListStore>     _liststore;

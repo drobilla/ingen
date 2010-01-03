@@ -96,7 +96,6 @@ private:
 	Gtk::Toolbar*           _toolbar;
 	Gtk::ToggleToolButton*  _process_but;
 	Gtk::SpinButton*        _poly_spin;
-	Gtk::ToolButton*        _clear_but;
 	Gtk::ToolButton*        _refresh_but;
 	Gtk::ToolButton*        _save_but;
 	Gtk::ToolButton*        _zoom_normal_but;

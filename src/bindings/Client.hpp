@@ -21,7 +21,6 @@ public:
 	void put(const Raul::URI& path, const Ingen::Shared::Resource::Properties& properties) {}
 	void connect(const Raul::Path& src_port_path, const Raul::Path& dst_port_path) {}
 	void del(const Raul::Path& path) {}
-	void clear_patch(const Raul::Path& path) {}
 	void move(const Raul::Path& old_path, const Raul::Path& new_path) {}
 	void disconnect(const Raul::Path& src_port_path, const Raul::Path& dst_port_path) {}
 	void set_property(const Raul::URI& subject, const Raul::URI& key, const Raul::Atom& value) {}

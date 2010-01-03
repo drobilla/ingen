@@ -96,8 +96,6 @@ public:
 
 	virtual void del(const Raul::Path& path);
 
-	virtual void clear_patch(const Raul::Path& patch_path);
-
 	// EngineInterface object commands
 
 	virtual void disconnect_all(const Raul::Path& parent_patch_path,

@@ -69,8 +69,6 @@ public:
 	virtual void set_voice_value(const Raul::Path& port_path,
 	                             uint32_t          voice,
 	                             const Raul::Atom& value) = 0;
-
-	virtual void clear_patch(const Raul::Path& patch_path) = 0;
 };
 
 

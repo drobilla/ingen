@@ -184,13 +184,6 @@ QueuedEngineInterface::del(const Path& path)
 
 
 void
-QueuedEngineInterface::clear_patch(const Path& patch_path)
-{
-	push_queued(new Events::ClearPatch(_engine, _responder, now(), this, patch_path));
-}
-
-
-void
 QueuedEngineInterface::connect(const Path& src_port_path,
                                const Path& dst_port_path)
 {

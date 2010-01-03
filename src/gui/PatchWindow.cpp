@@ -89,7 +89,6 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 	xml->get_widget("patch_show_port_names_menuitem", _menu_show_port_names);
 	xml->get_widget("patch_status_bar_menuitem", _menu_show_status_bar);
 	xml->get_widget("patch_arrange_menuitem", _menu_arrange);
-	xml->get_widget("patch_clear_menuitem", _menu_clear);
 	xml->get_widget("patch_view_messages_window_menuitem", _menu_view_messages_window);
 	xml->get_widget("patch_view_patch_tree_window_menuitem", _menu_view_patch_tree_window);
 	xml->get_widget("patch_help_about_menuitem", _menu_help_about);
@@ -142,8 +141,6 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 		sigc::mem_fun(this, &PatchWindow::event_show_controls));
 	_menu_view_patch_properties->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_show_properties));
-	_menu_clear->signal_activate().connect(
-		sigc::mem_fun(this, &PatchWindow::event_clear));
 	_menu_view_messages_window->signal_activate().connect(
 		sigc::mem_fun<void>(App::instance().messages_dialog(), &MessagesWindow::present));
 	_menu_view_patch_tree_window->signal_activate().connect(
@@ -685,13 +682,6 @@ PatchWindow::event_quit()
 	default:
 		break;
 	}
-}
-
-
-void
-PatchWindow::event_clear()
-{
-	App::instance().engine()->clear_patch(_patch->path());
 }
 
 

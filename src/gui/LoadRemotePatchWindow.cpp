@@ -37,7 +37,6 @@ namespace GUI {
 
 LoadRemotePatchWindow::LoadRemotePatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 	: Dialog(cobject)
-	, _replace(true)
 {
 	xml->get_widget("load_remote_patch_treeview", _treeview);
 	xml->get_widget("load_remote_patch_uri_entry", _uri_entry);
@@ -136,9 +135,6 @@ LoadRemotePatchWindow::open_clicked()
 	// If unset load_patch will load values
 	optional<Path>   parent;
 	optional<Symbol> symbol;
-
-	if (_replace)
-		App::instance().engine()->clear_patch(_patch->path());
 
 	if (!_patch->path().is_root())
 		parent = _patch->path().parent();

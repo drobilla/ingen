@@ -226,16 +226,6 @@
                       </widget>
                     </child>
                     <child>
-                      <widget class="GtkImageMenuItem" id="patch_clear_menuitem">
-                        <property name="label">gtk-clear</property>
-                        <property name="visible">True</property>
-                        <property name="tooltip" translatable="yes">Remove all objects from patch</property>
-                        <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
-                        <signal name="activate" handler="on_patch_clear_menuitem_activate"/>
-                      </widget>
-                    </child>
-                    <child>
                       <widget class="GtkSeparatorMenuItem" id="menuitem2">
                         <property name="visible">True</property>
                       </widget>
@@ -1512,18 +1502,6 @@
                       </packing>
                     </child>
                     <child>
-                      <widget class="GtkToolButton" id="patch_view_clear_but">
-                        <property name="visible">True</property>
-                        <property name="tooltip" translatable="yes">Clear patch contents</property>
-                        <property name="use_underline">True</property>
-                        <property name="stock_id">gtk-clear</property>
-                      </widget>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="homogeneous">True</property>
-                      </packing>
-                    </child>
-                    <child>
                       <widget class="GtkSeparatorToolItem" id="separatortoolitem22">
                         <property name="visible">True</property>
                       </widget>
@@ -2178,7 +2156,7 @@
               </packing>
             </child>
             <child>
-              <widget class="GtkLabel" id="label95">
+              <widget class="GtkLabel" id="label1">
                 <property name="visible">True</property>
                 <property name="label" translatable="yes">Label: </property>
               </widget>

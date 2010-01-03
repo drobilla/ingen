@@ -96,7 +96,6 @@ private:
 	void event_select_all();
 	void event_close();
 	void event_quit();
-	void event_clear();
 	void event_fullscreen_toggled();
 	void event_status_bar_toggled();
 	void event_human_names_toggled();
@@ -137,7 +136,6 @@ private:
 	Gtk::CheckMenuItem* _menu_show_port_names;
 	Gtk::CheckMenuItem* _menu_show_status_bar;
 	Gtk::MenuItem*      _menu_fullscreen;
-	Gtk::MenuItem*      _menu_clear;
 	Gtk::MenuItem*      _menu_arrange;
 	Gtk::MenuItem*      _menu_view_engine_window;
 	Gtk::MenuItem*      _menu_view_control_window;

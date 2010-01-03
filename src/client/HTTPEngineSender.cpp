@@ -155,12 +155,6 @@ HTTPEngineSender::del(const Path& uri)
 
 
 void
-HTTPEngineSender::clear_patch(const Path& patch_path)
-{
-}
-
-
-void
 HTTPEngineSender::connect(const Path& src_port_path,
                           const Path& dst_port_path)
 {

@@ -86,7 +86,6 @@ private:
 	LO_HANDLER(plugin_list_end);
 	LO_HANDLER(new_patch);
 	LO_HANDLER(del);
-	LO_HANDLER(clear_patch);
 	LO_HANDLER(move);
 	LO_HANDLER(connection);
 	LO_HANDLER(disconnection);

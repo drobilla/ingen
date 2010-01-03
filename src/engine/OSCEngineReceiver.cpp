@@ -91,7 +91,6 @@ OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t
 	lo_server_add_method(_server, "/ingen/load_plugins", "i", load_plugins_cb, this);
 	lo_server_add_method(_server, "/ingen/activate", "i", engine_activate_cb, this);
 	lo_server_add_method(_server, "/ingen/deactivate", "i", engine_deactivate_cb, this);
-	lo_server_add_method(_server, "/ingen/clear_patch", "is", clear_patch_cb, this);
 	lo_server_add_method(_server, "/ingen/put", NULL, put_cb, this);
 	lo_server_add_method(_server, "/ingen/move", "iss", move_cb, this);
 	lo_server_add_method(_server, "/ingen/delete", "is", del_cb, this);
@@ -426,23 +425,6 @@ OSCEngineReceiver::_move_cb(const char* path, const char* types, lo_arg** argv, 
 	const char* new_path = &argv[2]->s;
 
 	move(old_path, new_path);
-	return 0;
-}
-
-
-/** \page engine_osc_namespace
- * <h2>/ingen/clear_patch</h2>
- * \arg \b response-id (integer)
- * \arg \b patch-path - Patch's path
- *
- * Remove all nodes from a patch.
- */
-int
-OSCEngineReceiver::_clear_patch_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
-{
-	const char* patch_path = &argv[1]->s;
-
-	clear_patch(patch_path);
 	return 0;
 }
 

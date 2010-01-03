@@ -170,16 +170,6 @@ OSCEngineSender::del(const Path& path)
 
 
 void
-OSCEngineSender::clear_patch(const Path& patch_path)
-{
-	send("/ingen/clear_patch", "is",
-		next_id(),
-		patch_path.c_str(),
-		LO_ARGS_END);
-}
-
-
-void
 OSCEngineSender::connect(const Path& src_port_path,
                          const Path& dst_port_path)
 {

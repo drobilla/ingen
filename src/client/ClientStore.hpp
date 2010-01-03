@@ -95,7 +95,6 @@ private:
 
 	// Slots for SigClientInterface signals
 	void object_moved(const Raul::Path& old_path, const Raul::Path& new_path);
-	void clear_patch(const Raul::Path& path);
 	void activity(const Raul::Path& path);
 
 	bool attempt_connection(const Raul::Path& src_port_path, const Raul::Path& dst_port_path);

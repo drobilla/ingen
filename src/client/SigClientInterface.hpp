@@ -51,7 +51,6 @@ public:
 	sigc::signal<void, Raul::Path, uint32_t>                        signal_new_patch;
 	sigc::signal<void, Raul::Path, Raul::URI, uint32_t, bool>       signal_new_port;
 	sigc::signal<void, Raul::URI, Shared::Resource::Properties>     signal_put;
-	sigc::signal<void, Raul::Path>                                  signal_clear_patch;
 	sigc::signal<void, Raul::Path, Raul::Path>                      signal_object_moved;
 	sigc::signal<void, Raul::Path>                                  signal_object_deleted;
 	sigc::signal<void, Raul::Path, Raul::Path>                      signal_connection;
@@ -97,9 +96,6 @@ protected:
 
 	void del(const Raul::Path& path)
 		{ EMIT(object_deleted, path); }
-
-	void clear_patch(const Raul::Path& path)
-		{ EMIT(clear_patch, path); }
 
 	void move(const Raul::Path& old_path, const Raul::Path& new_path)
 		{ EMIT(object_moved, old_path, new_path); }

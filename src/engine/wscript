@@ -35,7 +35,6 @@ def build(bld):
 		QueuedEvent.cpp
 		QueuedEventSource.cpp
 		events/AllNotesOff.cpp
-		events/ClearPatch.cpp
 		events/Connect.cpp
 		events/CreateNode.cpp
 		events/CreatePatch.cpp

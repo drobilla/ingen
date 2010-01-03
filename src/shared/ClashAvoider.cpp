@@ -208,12 +208,5 @@ ClashAvoider::del(const Raul::Path& path)
 }
 
 
-void
-ClashAvoider::clear_patch(const Raul::Path& path)
-{
-	_target.clear_patch(map_path(path));
-}
-
-
 } // namespace Shared
 } // namespace Ingen

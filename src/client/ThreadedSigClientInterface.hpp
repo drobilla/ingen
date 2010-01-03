@@ -53,7 +53,6 @@ public:
 	, new_port_slot(signal_new_port.make_slot())
 	, put_slot(signal_put.make_slot())
 	, connection_slot(signal_connection.make_slot())
-	, clear_patch_slot(signal_clear_patch.make_slot())
 	, object_deleted_slot(signal_object_deleted.make_slot())
 	, object_moved_slot(signal_object_moved.make_slot())
 	, disconnection_slot(signal_disconnection.make_slot())
@@ -92,9 +91,6 @@ public:
 
 	void del(const Raul::Path& path)
 		{ push_sig(sigc::bind(object_deleted_slot, path)); }
-
-	void clear_patch(const Raul::Path& path)
-		{ push_sig(sigc::bind(clear_patch_slot, path)); }
 
 	void move(const Raul::Path& old_path, const Raul::Path& new_path)
 		{ push_sig(sigc::bind(object_moved_slot, old_path, new_path)); }
@@ -135,7 +131,6 @@ private:
 	sigc::slot<void, Raul::Path, Raul::URI, uint32_t, bool>       new_port_slot;
 	sigc::slot<void, Raul::URI, Shared::Resource::Properties>     put_slot;
 	sigc::slot<void, Raul::Path, Raul::Path>                      connection_slot;
-	sigc::slot<void, Raul::Path>                                  clear_patch_slot;
 	sigc::slot<void, Raul::Path>                                  object_deleted_slot;
 	sigc::slot<void, Raul::Path, Raul::Path>                      object_moved_slot;
 	sigc::slot<void, Raul::Path, Raul::Path>                      disconnection_slot;

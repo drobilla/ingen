@@ -49,7 +49,6 @@ PatchView::PatchView(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::X
 	xml->get_widget("patch_view_toolbar", _toolbar);
 	xml->get_widget("patch_view_process_but", _process_but);
 	xml->get_widget("patch_view_poly_spin", _poly_spin);
-	xml->get_widget("patch_view_clear_but", _clear_but);
 	xml->get_widget("patch_view_refresh_but", _refresh_but);
 	xml->get_widget("patch_view_save_but", _save_but);
 	xml->get_widget("patch_view_zoom_full_but", _zoom_full_but);
@@ -94,7 +93,6 @@ PatchView::set_patch(SharedPtr<PatchModel> patch)
 
 	// Connect widget signals to do things
 	_process_but->signal_toggled().connect(sigc::mem_fun(this, &PatchView::process_toggled));
-	_clear_but->signal_clicked().connect(sigc::mem_fun(this, &PatchView::clear_clicked));
 	_refresh_but->signal_clicked().connect(sigc::mem_fun(this, &PatchView::refresh_clicked));
 
 	_zoom_normal_but->signal_clicked().connect(sigc::bind(sigc::mem_fun(
@@ -210,13 +208,6 @@ PatchView::poly_changed()
 {
 	App::instance().engine()->set_property(_patch->meta().uri(), "ingen:polyphony",
 			_poly_spin->get_value_as_int());
-}
-
-
-void
-PatchView::clear_clicked()
-{
-	App::instance().engine()->clear_patch(_patch->path());
 }
 
 

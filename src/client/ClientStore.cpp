@@ -44,7 +44,6 @@ ClientStore::ClientStore(SharedPtr<EngineInterface> engine, SharedPtr<SigClientI
 	emitter->signal_object_deleted.connect(sigc::mem_fun(this, &ClientStore::del));
 	emitter->signal_object_moved.connect(sigc::mem_fun(this, &ClientStore::move));
 	emitter->signal_put.connect(sigc::mem_fun(this, &ClientStore::put));
-	emitter->signal_clear_patch.connect(sigc::mem_fun(this, &ClientStore::clear_patch));
 	emitter->signal_connection.connect(sigc::mem_fun(this, &ClientStore::connect));
 	emitter->signal_disconnection.connect(sigc::mem_fun(this, &ClientStore::disconnect));
 	emitter->signal_property_change.connect(sigc::mem_fun(this, &ClientStore::set_property));
@@ -327,34 +326,6 @@ ClientStore::put(const URI& uri, const Resource::Properties& properties)
 	} else {
 		cerr << "WARNING: Ignoring object " << path << " with unknown type "
 			<< is_patch << " " << is_node << " " << is_port << endl;
-	}
-}
-
-
-void
-ClientStore::clear_patch(const Path& path)
-{
-	iterator i = find(path);
-	if (i != end()) {
-		assert((*i).second->path() == path);
-		SharedPtr<PatchModel> patch = PtrCast<PatchModel>(i->second);
-
-		iterator first_descendant = i;
-		++first_descendant;
-		iterator descendants_end = find_descendants_end(i);
-		SharedPtr< Table<Path, SharedPtr<Shared::GraphObject> > > removed
-				= yank(first_descendant, descendants_end);
-
-		for (iterator i = removed->begin(); i != removed->end(); ++i) {
-			SharedPtr<ObjectModel> model = PtrCast<ObjectModel>(i->second);
-			assert(model);
-			model->signal_destroyed.emit();
-			if (model->parent() == patch)
-				patch->remove_child(model);
-		}
-
-	} else {
-		cerr << "[Store] Unable to find patch " << path << " to clear." << endl;
 	}
 }
 

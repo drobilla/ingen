@@ -79,13 +79,6 @@ HTTPClientSender::del(const Path& path)
 
 
 void
-HTTPClientSender::clear_patch(const Path& patch_path)
-{
-	send_chunk(string("<").append(patch_path.str()).append("> ingen:empty true ."));
-}
-
-
-void
 HTTPClientSender::connect(const Path& src_path, const Path& dst_path)
 {
 	const string msg = string(

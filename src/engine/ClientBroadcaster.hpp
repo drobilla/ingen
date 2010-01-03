@@ -65,7 +65,6 @@ public:
 	void send_plugins(const NodeFactory::Plugins& plugin_list);
 	void send_object(const GraphObjectImpl* p, bool recursive);
 	void send_deleted(const Raul::Path& path);
-	void send_clear_patch(const Raul::Path& patch_path);
 	void send_connection(const SharedPtr<const ConnectionImpl> connection);
 	void send_disconnection(const Raul::Path& src_port_path, const Raul::Path& dst_port_path);
 	void send_move(const Raul::Path& old_path, const Raul::Path& new_path);

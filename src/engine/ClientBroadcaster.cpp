@@ -140,13 +140,6 @@ ClientBroadcaster::send_deleted(const Path& path)
 
 
 void
-ClientBroadcaster::send_clear_patch(const Path& patch_path)
-{
-	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
-		(*i).second->clear_patch(patch_path);
-}
-
-void
 ClientBroadcaster::send_connection(const SharedPtr<const ConnectionImpl> c)
 {
 	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)

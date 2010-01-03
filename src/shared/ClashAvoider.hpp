@@ -73,8 +73,6 @@ public:
 
 	virtual void del(const Raul::Path& path);
 
-	virtual void clear_patch(const Raul::Path& patch_path);
-
 private:
 	const Raul::URI  map_uri(const Raul::URI& in);
 	const Raul::Path map_path(const Raul::Path& in);

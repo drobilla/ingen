@@ -301,8 +301,6 @@ WindowFactory::present_load_remote_patch(SharedPtr<PatchModel> patch, GraphObjec
 	if (w != _patch_windows.end())
 		_load_remote_patch_win->set_transient_for(*w->second);
 
-	_load_remote_patch_win->set_merge(); // Import is the only choice
-
 	_load_remote_patch_win->present(patch, data);
 }
 
