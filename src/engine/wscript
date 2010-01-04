@@ -19,7 +19,6 @@ def build(bld):
 		GraphObjectImpl.cpp
 		InputPort.cpp
 		InternalPlugin.cpp
-		LV2EventBuffer.cpp
 		MessageContext.cpp
 		NodeBase.cpp
 		NodeFactory.cpp

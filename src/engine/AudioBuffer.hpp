@@ -41,7 +41,7 @@ public:
 	void set_block(Sample val, size_t start_offset, size_t end_offset);
 	void copy(const Sample* src, size_t start_sample, size_t end_sample);
 	void copy(Context& context, const Buffer* src);
-	void mix(Context& context, const Buffer* src);
+	void accumulate(Context& context, const AudioBuffer* src);
 
 	bool is_control() const { return _type.symbol() == Shared::PortType::CONTROL; }
 

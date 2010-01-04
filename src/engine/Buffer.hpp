@@ -51,7 +51,6 @@ public:
 	virtual void rewind() const {}
 
 	virtual void copy(Context& context, const Buffer* src) = 0;
-	virtual void mix(Context& context, const Buffer* src) = 0;
 
 	virtual void prepare_read(Context& context) {}
 	virtual void prepare_write(Context& context) {}

@@ -21,13 +21,14 @@
 #include <cassert>
 #include "interface/Patch.hpp"
 #include "AudioBuffer.hpp"
+#include "BufferFactory.hpp"
 #include "ConnectionImpl.hpp"
 #include "EventBuffer.hpp"
 #include "NodeImpl.hpp"
 #include "OutputPort.hpp"
 #include "ProcessContext.hpp"
 #include "ThreadManager.hpp"
-#include "BufferFactory.hpp"
+#include "mix.hpp"
 #include "util.hpp"
 
 using namespace std;
@@ -198,13 +199,15 @@ InputPort::pre_process(Context& context)
 	// Multiple connections, mix them all into our local buffers
 	if (_connections.size() > 1) {
 		for (uint32_t v = 0; v < _poly; ++v) {
-			// Copy first connection
-			buffer(v)->copy(context, _connections.front()->buffer(v).get());
+			const uint32_t        num_srcs = _connections.size();
+			Connections::iterator c        = _connections.begin();
+			Buffer* srcs[num_srcs];
+			for (uint32_t i = 0; c != _connections.end(); ++c) {
+				assert(i < num_srcs);
+				srcs[i++] = (*c)->buffer(v).get();
+			}
 
-			// Mix in the rest
-			Connections::iterator c = _connections.begin();
-			for (++c; c != _connections.end(); ++c)
-				buffer(v)->mix(context, (*c)->buffer(v).get());
+			mix(context, buffer(v).get(), srcs, num_srcs);
 		}
 	}
 

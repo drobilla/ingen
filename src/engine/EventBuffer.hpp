@@ -20,9 +20,9 @@
 
 #include "event.lv2/event.h"
 #include "event.lv2/event-helpers.h"
+#include "object.lv2/object.h"
 #include "interface/PortType.hpp"
 #include "Buffer.hpp"
-#include "LV2EventBuffer.hpp"
 
 namespace Ingen {
 
@@ -30,58 +30,59 @@ namespace Ingen {
 class EventBuffer : public Buffer {
 public:
 	EventBuffer(size_t capacity);
+	~EventBuffer();
 
-	void clear() { _buf->reset(); }
+	void*       port_data(Shared::PortType port_type)       { return _data; }
+	const void* port_data(Shared::PortType port_type) const { return _data; }
 
-	void*       port_data(Shared::PortType port_type)       { return _buf; }
-	const void* port_data(Shared::PortType port_type) const { return _buf; }
+	inline void rewind() const { lv2_event_begin(&_iter, _data); }
 
-	void rewind() const { _buf->rewind(); }
+	inline void clear() {
+		_latest_frames = 0;
+		_latest_subframes = 0;
+		_data->event_count = 0;
+		_data->size = 0;
+		rewind();
+	}
 
 	void prepare_read(Context& context);
 	void prepare_write(Context& context);
 
 	void copy(Context& context, const Buffer* src);
-	void mix(Context& contect, const Buffer* src);
-	bool merge(const EventBuffer& a, const EventBuffer& b);
+	//void mix(Context& contect, const Buffer* src);
+	//bool merge(const EventBuffer& a, const EventBuffer& b);
 
-	bool increment() const { return _buf->increment(); }
-	bool is_valid()  const { return _buf->is_valid(); }
+	inline size_t   event_count()      const { return _data->event_count; }
+	inline uint32_t capacity()         const { return _data->capacity; }
+	//inline uint32_t size()             const { return _data->size; }
+	inline uint32_t latest_frames()    const { return _latest_frames; }
+	inline uint32_t latest_subframes() const { return _latest_subframes; }
 
-	inline uint32_t latest_frames()    const { return _buf->latest_frames(); }
-	inline uint32_t latest_subframes() const { return _buf->latest_subframes(); }
-	inline uint32_t event_count()      const { return _buf->event_count(); }
+	bool increment() const;
+	bool is_valid()  const;
 
-	inline bool get_event(uint32_t* frames,
-	                      uint32_t* subframes,
-	                      uint16_t* type,
-	                      uint16_t* size,
-	                      uint8_t** data) const {
-		return _buf->get_event(frames, subframes, type, size, data);
-	}
+	bool get_event(uint32_t* frames,
+	               uint32_t* subframes,
+	               uint16_t* type,
+	               uint16_t* size,
+	               uint8_t** data) const;
 
-	LV2_Object* get_object() const {
-		return _buf->get_object();
-	}
+	LV2_Object* get_object() const;
+	LV2_Event*  get_event() const;
 
-	LV2_Event* get_event() const {
-		return _buf->get_event();
-	}
+	bool append(uint32_t       frames,
+	            uint32_t       subframes,
+	            uint16_t       type,
+	            uint16_t       size,
+	            const uint8_t* data);
 
-	inline bool append(uint32_t       frames,
-	                   uint32_t       subframes,
-	                   uint16_t       type,
-	                   uint16_t       size,
-	                   const uint8_t* data) {
-		return _buf->append(frames, subframes, type, size, data);
-	}
-
-	inline bool append(const LV2_Event_Buffer* buf) {
-		return _buf->append(buf);
-	}
+	bool append(const EventBuffer* buf);
 
 private:
-	LV2EventBuffer* _buf; ///< Contents
+	LV2_Event_Buffer*          _data;             ///< Contents
+	mutable LV2_Event_Iterator _iter;             ///< Iterator into _data
+	uint32_t                   _latest_frames;    ///< Latest time of all events (frames)
+	uint32_t                   _latest_subframes; ///< Latest time of all events (subframes)
 };
 
 

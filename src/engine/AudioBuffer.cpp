@@ -185,16 +185,12 @@ AudioBuffer::copy(Context& context, const Buffer* src)
  * This function only adds the same range in one buffer to another.
  */
 void
-AudioBuffer::mix(Context& context, const Buffer* const src)
+AudioBuffer::accumulate(Context& context, const AudioBuffer* const src)
 {
-	const AudioBuffer* src_abuf = dynamic_cast<const AudioBuffer*>(src);
-	if (!src_abuf)
-		return;
-
 	Sample* const       buf     = data();
-	const Sample* const src_buf = src_abuf->data();
+	const Sample* const src_buf = src->data();
 
-	const size_t frames = std::min(nframes(), src_abuf->nframes());
+	const size_t frames = std::min(nframes(), src->nframes());
 	assert(frames != 0);
 
 	// Mix initial portions
@@ -204,8 +200,8 @@ AudioBuffer::mix(Context& context, const Buffer* const src)
 
 	// Extend/Mix the final sample of src if it is shorter
 	const Sample last = src_buf[i - 1];
-	while (i < frames)
-		buf[i++] = last;
+	while (i < nframes())
+		buf[i++] += last;
 }
 
 

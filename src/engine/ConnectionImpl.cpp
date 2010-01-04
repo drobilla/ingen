@@ -17,7 +17,6 @@
 
 #include <algorithm>
 #include "raul/Maid.hpp"
-#include "util.hpp"
 #include "AudioBuffer.hpp"
 #include "BufferFactory.hpp"
 #include "ConnectionImpl.hpp"
@@ -27,6 +26,8 @@
 #include "MessageContext.hpp"
 #include "PortImpl.hpp"
 #include "ProcessContext.hpp"
+#include "mix.hpp"
+#include "util.hpp"
 
 namespace Ingen {
 
@@ -51,6 +52,7 @@ ConnectionImpl::ConnectionImpl(BufferFactory& bufs, PortImpl* src_port, PortImpl
 
 	if (must_mix() || must_queue())
 		_local_buffer = bufs.get(dst_port->type(), dst_port->buffer_size());
+
 
 	if (must_queue())
 		_queue = new Raul::RingBuffer<LV2_Object>(src_port->buffer_size() * 2);
@@ -118,18 +120,15 @@ ConnectionImpl::process(Context& context)
 			_queue->full_peek(sizeof(LV2_Object), &obj);
 			_queue->full_read(sizeof(LV2_Object) + obj.size, local_buf->object());
 		}
-		return;
+
+	} else if (must_mix()) {
+		const uint32_t num_srcs = src_port()->poly();
+		Buffer* srcs[num_srcs];
+		for (uint32_t v = 0; v < num_srcs; ++v)
+			srcs[v] = src_port()->buffer(v).get();
+
+		mix(context, _local_buffer.get(), srcs, num_srcs);
 	}
-
-	if (!must_mix())
-		return;
-
-	// Copy the first voice
-	_local_buffer->copy(context, src_port()->buffer(0).get());
-
-	// Mix in the rest
-	for (uint32_t v = 0; v < src_port()->poly(); ++v)
-		_local_buffer->mix(context, src_port()->buffer(v).get());
 }
 
 
