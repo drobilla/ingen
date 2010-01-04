@@ -76,8 +76,6 @@ public:
 	            uint16_t       size,
 	            const uint8_t* data);
 
-	bool append(const EventBuffer* buf);
-
 private:
 	LV2_Event_Buffer*          _data;             ///< Contents
 	mutable LV2_Event_Iterator _iter;             ///< Iterator into _data

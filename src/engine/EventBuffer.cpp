@@ -221,44 +221,4 @@ EventBuffer::append(uint32_t       frames,
 }
 
 
-/** Append a buffer of events to the buffer.
- *
- * \a timestamp must be >= the latest event in the buffer.
- *
- * \return true on success
- */
-bool
-EventBuffer::append(const EventBuffer* buf)
-{
-	cerr << "FIXME: EventBuffer append" << endl;
-#if 0
-	uint8_t** data = NULL;
-	bool      ret  = true;
-
-	LV2_Event_Iterator iter;
-	for (lv2_event_begin(&iter, _data); lv2_event_is_valid(&iter); lv2_event_increment(&iter)) {
-		LV2_Event* ev = lv2_event_get(&iter, data);
-
-#ifndef NDEBUG
-		assert((ev->frames > _latest_frames)
-				|| (ev->frames == _latest_frames
-					&& ev->subframes >= _latest_subframes));
-#endif
-
-		if (!(ret = append(ev->frames, ev->subframes, ev->type, ev->size, *data))) {
-			cerr << "ERROR: Failed to write event." << endl;
-			break;
-		}
-
-		_latest_frames = ev->frames;
-		_latest_subframes = ev->subframes;
-	}
-
-	return ret;
-#endif
-	return false;
-}
-
-
 } // namespace Ingen
-
