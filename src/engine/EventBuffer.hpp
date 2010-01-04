@@ -49,12 +49,9 @@ public:
 	void prepare_write(Context& context);
 
 	void copy(Context& context, const Buffer* src);
-	//void mix(Context& contect, const Buffer* src);
-	//bool merge(const EventBuffer& a, const EventBuffer& b);
 
 	inline size_t   event_count()      const { return _data->event_count; }
 	inline uint32_t capacity()         const { return _data->capacity; }
-	//inline uint32_t size()             const { return _data->size; }
 	inline uint32_t latest_frames()    const { return _latest_frames; }
 	inline uint32_t latest_subframes() const { return _latest_subframes; }
 
