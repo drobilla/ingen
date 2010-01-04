@@ -32,7 +32,7 @@ namespace LV2Object {
 
 
 bool
-to_atom(World* world, LV2_Object* object, Raul::Atom& atom)
+to_atom(World* world, const LV2_Object* object, Raul::Atom& atom)
 {
 	SharedPtr<LV2URIMap> map = PtrCast<LV2URIMap>(world->lv2_features->feature(LV2_URI_MAP_URI));
 
