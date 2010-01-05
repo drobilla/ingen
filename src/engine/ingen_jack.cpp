@@ -29,7 +29,7 @@ struct IngenJackModule : public Ingen::Shared::Module {
 		Ingen::JackAudioDriver* driver = new Ingen::JackAudioDriver(*world->local_engine.get());
 		driver->attach(world->conf->option("jack-server").get_string(),
 				world->conf->option("jack-client").get_string(), NULL);
-		world->local_engine->set_driver(Shared::PortType::AUDIO, SharedPtr<Driver>(driver));
+		world->local_engine->set_driver(SharedPtr<Driver>(driver));
 	}
 };
 

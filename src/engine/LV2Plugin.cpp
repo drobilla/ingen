@@ -22,7 +22,7 @@
 #include "LV2Node.hpp"
 #include "NodeImpl.hpp"
 #include "Engine.hpp"
-#include "AudioDriver.hpp"
+#include "Driver.hpp"
 
 using namespace std;
 using namespace Raul;
@@ -66,8 +66,8 @@ LV2Plugin::instantiate(BufferFactory&    bufs,
                        Ingen::PatchImpl* parent,
                        Engine&           engine)
 {
-	SampleCount srate       = engine.audio_driver()->sample_rate();
-	SampleCount buffer_size = engine.audio_driver()->buffer_size();
+	SampleCount srate       = engine.driver()->sample_rate();
+	SampleCount buffer_size = engine.driver()->buffer_size();
 
 	load(); // FIXME: unload at some point
 

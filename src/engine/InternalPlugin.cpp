@@ -21,7 +21,7 @@
 #include "internals/Trigger.hpp"
 #include "internals/Controller.hpp"
 #include "Engine.hpp"
-#include "AudioDriver.hpp"
+#include "Driver.hpp"
 
 using namespace std;
 using namespace Raul;
@@ -47,8 +47,8 @@ InternalPlugin::instantiate(BufferFactory&    bufs,
 {
 	assert(_type == Internal);
 
-	SampleCount srate       = engine.audio_driver()->sample_rate();
-	SampleCount buffer_size = engine.audio_driver()->buffer_size();
+	SampleCount srate       = engine.driver()->sample_rate();
+	SampleCount buffer_size = engine.driver()->buffer_size();
 
 	const string uri_str = uri().str();
 	if (uri_str == NS_INTERNALS "Note") {

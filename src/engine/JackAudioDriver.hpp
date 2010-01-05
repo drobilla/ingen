@@ -24,7 +24,7 @@
 #include "raul/List.hpp"
 #include "raul/Semaphore.hpp"
 #include "raul/Thread.hpp"
-#include "AudioDriver.hpp"
+#include "Driver.hpp"
 #include "Buffer.hpp"
 #include "ProcessContext.hpp"
 
@@ -55,8 +55,8 @@ public:
 
 	void move(const Raul::Path& path);
 
-	void pre_process(jack_nframes_t nframes);
-	void post_process(jack_nframes_t nframes);
+	void pre_process(ProcessContext& context);
+	void post_process(ProcessContext& context);
 
 	jack_port_t*  jack_port() const  { return _jack_port; }
 
@@ -67,7 +67,7 @@ private:
 
 
 
-/** The Jack AudioDriver.
+/** The Jack Driver.
  *
  * The process callback here drives the entire audio thread by "pulling"
  * events from queues, processing them, running the patches, and passing
@@ -75,11 +75,13 @@ private:
  *
  * \ingroup engine
  */
-class JackAudioDriver : public AudioDriver
+class JackAudioDriver : public Driver
 {
 public:
 	JackAudioDriver(Engine& engine);
 	~JackAudioDriver();
+
+	bool supports(Shared::PortType port_type, Shared::EventType event_type);
 
 	bool attach(const std::string& server_name,
 	            const std::string& client_name,
@@ -122,15 +124,24 @@ public:
 private:
 	friend class JackAudioPort;
 
-	// These are the static versions of the callbacks, they call
-	// the non-static ones below
-	inline static void thread_init_cb(void* const jack_driver);
-	inline static void shutdown_cb(void* const jack_driver);
-	inline static int  process_cb(jack_nframes_t nframes, void* const jack_driver);
-	inline static int  buffer_size_cb(jack_nframes_t nframes, void* const jack_driver);
-	inline static int  sample_rate_cb(jack_nframes_t nframes, void* const jack_driver);
+	// Static JACK callbacks which call the non-static callbacks (methods)
+	inline static void thread_init_cb(void* const jack_driver) {
+		return ((JackAudioDriver*)jack_driver)->_thread_init_cb();
+	}
+	inline static void shutdown_cb(void* const jack_driver) {
+		return ((JackAudioDriver*)jack_driver)->_shutdown_cb();
+	}
+	inline static int process_cb(jack_nframes_t nframes, void* const jack_driver) {
+		return ((JackAudioDriver*)jack_driver)->_process_cb(nframes);
+	}
+	inline static int buffer_size_cb(jack_nframes_t nframes, void* const jack_driver) {
+		return ((JackAudioDriver*)jack_driver)->_buffer_size_cb(nframes);
+	}
+	inline static int sample_rate_cb(jack_nframes_t nframes, void* const jack_driver) {
+		return ((JackAudioDriver*)jack_driver)->_sample_rate_cb(nframes);
+	}
 
-	// Non static callbacks
+	// Non static callbacks (methods)
 	void _thread_init_cb();
 	void _shutdown_cb();
 	int  _process_cb(jack_nframes_t nframes);
@@ -144,6 +155,7 @@ private:
 	jack_client_t*         _client;
 	jack_nframes_t         _buffer_size;
 	jack_nframes_t         _sample_rate;
+	uint32_t               _midi_event_type;
 	bool                   _is_activated;
 	bool                   _local_client; ///< Whether _client should be closed on destruction
 	jack_position_t        _position;
@@ -154,39 +166,6 @@ private:
 
 	PatchImpl* _root_patch;
 };
-
-
-inline int JackAudioDriver::process_cb(jack_nframes_t nframes, void* jack_driver)
-{
-	assert(jack_driver);
-	return ((JackAudioDriver*)jack_driver)->_process_cb(nframes);
-}
-
-inline void JackAudioDriver::thread_init_cb(void* jack_driver)
-{
-	assert(jack_driver);
-	return ((JackAudioDriver*)jack_driver)->_thread_init_cb();
-}
-
-inline void JackAudioDriver::shutdown_cb(void* jack_driver)
-{
-	assert(jack_driver);
-	return ((JackAudioDriver*)jack_driver)->_shutdown_cb();
-}
-
-
-inline int JackAudioDriver::buffer_size_cb(jack_nframes_t nframes, void* jack_driver)
-{
-	assert(jack_driver);
-	return ((JackAudioDriver*)jack_driver)->_buffer_size_cb(nframes);
-}
-
-
-inline int JackAudioDriver::sample_rate_cb(jack_nframes_t nframes, void* jack_driver)
-{
-	assert(jack_driver);
-	return ((JackAudioDriver*)jack_driver)->_sample_rate_cb(nframes);
-}
 
 
 } // namespace Ingen

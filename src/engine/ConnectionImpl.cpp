@@ -58,7 +58,7 @@ ConnectionImpl::ConnectionImpl(BufferFactory& bufs, PortImpl* src_port, PortImpl
 	if (must_queue())
 		_queue = new Raul::RingBuffer<LV2_Object>(src_port->buffer_size() * 2);
 
-	dump();
+	//dump();
 }
 
 

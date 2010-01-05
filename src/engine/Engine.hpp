@@ -33,7 +33,7 @@ namespace Raul { class Maid; }
 
 namespace Ingen {
 
-class AudioDriver;
+class Driver;
 class BufferFactory;
 class ClientBroadcaster;
 class Driver;
@@ -41,9 +41,7 @@ class EngineStore;
 class Event;
 class EventSource;
 class MessageContext;
-class MidiDriver;
 class NodeFactory;
-class OSCDriver;
 class PostProcessor;
 class ProcessContext;
 class ProcessSlave;
@@ -83,9 +81,7 @@ public:
 	virtual bool activated() { return _activated; }
 
 	Raul::Maid*        maid()            const { return _maid; }
-	AudioDriver*       audio_driver()    const { return _audio_driver.get(); }
-	MidiDriver*        midi_driver()     const { return _midi_driver; }
-	OSCDriver*         osc_driver()      const { return _osc_driver; }
+	Driver*            driver()          const { return _driver.get(); }
 	PostProcessor*     post_processor()  const { return _post_processor; }
 	ClientBroadcaster* broadcaster()     const { return _broadcaster; }
 	NodeFactory*       node_factory()    const { return _node_factory; }
@@ -94,12 +90,7 @@ public:
 
 	SharedPtr<EngineStore> engine_store() const;
 
-	/** Return the active driver for the given type */
-	Driver* driver(Shared::PortType type, Shared::EventType event_type);
-
-	/** Set the driver for the given data type (replacing the old) */
-	virtual void set_driver(Shared::PortType type, SharedPtr<Driver> driver);
-	virtual void set_midi_driver(MidiDriver* driver);
+	virtual void set_driver(SharedPtr<Driver> driver) { _driver = driver; }
 
 	virtual void add_event_source(SharedPtr<EventSource> source);
 
@@ -117,9 +108,8 @@ private:
 
 	ProcessSlaves          _process_slaves;
 	Ingen::Shared::World*  _world;
-	SharedPtr<AudioDriver> _audio_driver;
-	MidiDriver*            _midi_driver;
-	OSCDriver*             _osc_driver;
+	SharedPtr<Driver>      _driver;
+	SharedPtr<Driver>      _midi_driver;
 	Raul::Maid*            _maid;
 	PostProcessor*         _post_processor;
 	ClientBroadcaster*     _broadcaster;

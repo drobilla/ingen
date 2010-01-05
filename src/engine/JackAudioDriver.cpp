@@ -15,27 +15,29 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "JackAudioDriver.hpp"
-#include "ingen-config.h"
-#include "tuning.hpp"
 #include <iostream>
 #include <cstdlib>
+#include <jack/midiport.h>
 #include "raul/List.hpp"
+#include "shared/LV2Features.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "AudioBuffer.hpp"
 #include "DuplexPort.hpp"
 #include "Engine.hpp"
 #include "Event.hpp"
+#include "EventBuffer.hpp"
 #include "EventSource.hpp"
 #include "EventSource.hpp"
-#include "JackMidiDriver.hpp"
+#include "JackAudioDriver.hpp"
 #include "MessageContext.hpp"
-#include "MidiDriver.hpp"
 #include "PatchImpl.hpp"
 #include "PortImpl.hpp"
 #include "PostProcessor.hpp"
 #include "ProcessSlave.hpp"
 #include "QueuedEvent.hpp"
 #include "ThreadManager.hpp"
+#include "ingen-config.h"
+#include "tuning.hpp"
 #include "util.hpp"
 
 using namespace std;
@@ -69,11 +71,14 @@ JackAudioPort::~JackAudioPort()
 void
 JackAudioPort::create()
 {
-	_jack_port = jack_port_register(_driver->jack_client(),
-		ingen_jack_port_name(_patch_port->path()).c_str(),
-		JACK_DEFAULT_AUDIO_TYPE,
-		(_patch_port->is_input()) ? JackPortIsInput : JackPortIsOutput,
-		0);
+	_jack_port = jack_port_register(
+			_driver->jack_client(),
+			ingen_jack_port_name(_patch_port->path()).c_str(),
+			(_patch_port->type() == PortType::AUDIO)
+				? JACK_DEFAULT_AUDIO_TYPE : JACK_DEFAULT_MIDI_TYPE,
+			(_patch_port->is_input())
+				? JackPortIsInput : JackPortIsOutput,
+			0);
 
 	if (_jack_port == NULL) {
 		cerr << "[JackAudioPort] ERROR: Failed to register port " << _patch_port->path() << endl;
@@ -100,28 +105,72 @@ JackAudioPort::move(const Raul::Path& path)
 
 
 void
-JackAudioPort::pre_process(jack_nframes_t nframes)
+JackAudioPort::pre_process(ProcessContext& context)
 {
 	if (!is_input())
 		return;
 
-	jack_sample_t* jack_buf  = (jack_sample_t*)jack_port_get_buffer(_jack_port, nframes);
-	AudioBuffer*   patch_buf = (AudioBuffer*)_patch_port->buffer(0).get();
+	const SampleCount nframes = context.nframes();
 
-	patch_buf->copy(jack_buf, 0, nframes - 1);
+	if (_patch_port->type() == PortType::AUDIO) {
+		jack_sample_t* jack_buf  = (jack_sample_t*)jack_port_get_buffer(_jack_port, nframes);
+		AudioBuffer*   patch_buf = (AudioBuffer*)_patch_port->buffer(0).get();
+
+		patch_buf->copy(jack_buf, 0, nframes - 1);
+
+	} else if (_patch_port->type() == PortType::EVENTS) {
+		void*          jack_buf  = jack_port_get_buffer(_jack_port, nframes);
+		EventBuffer*   patch_buf = (EventBuffer*)_patch_port->buffer(0).get();
+
+		const jack_nframes_t event_count = jack_midi_get_event_count(jack_buf);
+
+		patch_buf->prepare_write(context);
+
+		// Copy events from Jack port buffer into patch port buffer
+		for (jack_nframes_t i = 0; i < event_count; ++i) {
+			jack_midi_event_t ev;
+			jack_midi_event_get(&ev, jack_buf, i);
+
+			if (!patch_buf->append(ev.time, 0, _driver->_midi_event_type, ev.size, ev.buffer))
+				cerr << "WARNING: Failed to write MIDI to port buffer, event(s) lost!" << endl;
+		}
+	}
 }
 
 
 void
-JackAudioPort::post_process(jack_nframes_t nframes)
+JackAudioPort::post_process(ProcessContext& context)
 {
 	if (is_input())
 		return;
 
-	jack_sample_t* jack_buf  = (jack_sample_t*)jack_port_get_buffer(_jack_port, nframes);
-	AudioBuffer*   patch_buf = (AudioBuffer*)_patch_port->buffer(0).get();
+	const SampleCount nframes = context.nframes();
 
-	memcpy(jack_buf, patch_buf->data(), nframes * sizeof(Sample));
+	if (_patch_port->type() == PortType::AUDIO) {
+		jack_sample_t* jack_buf  = (jack_sample_t*)jack_port_get_buffer(_jack_port, nframes);
+		AudioBuffer*   patch_buf = (AudioBuffer*)_patch_port->buffer(0).get();
+
+		memcpy(jack_buf, patch_buf->data(), nframes * sizeof(Sample));
+
+	} else if (_patch_port->type() == PortType::EVENTS) {
+		void*        jack_buf  = jack_port_get_buffer(_jack_port, context.nframes());
+		EventBuffer* patch_buf = (EventBuffer*)_patch_port->buffer(0).get();
+
+		patch_buf->prepare_read(context);
+		jack_midi_clear_buffer(jack_buf);
+
+		uint32_t frames    = 0;
+		uint32_t subframes = 0;
+		uint16_t type      = 0;
+		uint16_t size      = 0;
+		uint8_t* data      = NULL;
+
+		// Copy events from Jack port buffer into patch port buffer
+		for (patch_buf->rewind(); patch_buf->is_valid(); patch_buf->increment()) {
+			patch_buf->get_event(&frames, &subframes, &type, &size, &data);
+			jack_midi_event_write(jack_buf, frames, data, size);
+		}
+	}
 }
 
 
@@ -140,6 +189,9 @@ JackAudioDriver::JackAudioDriver(Engine& engine)
 	, _process_context(engine)
 	, _root_patch(NULL)
 {
+	SharedPtr<Shared::LV2URIMap> map = PtrCast<Shared::LV2URIMap>(
+			_engine.world()->lv2_features->feature(LV2_URI_MAP_URI));
+	_midi_event_type = map->uri_to_id(NULL, "http://lv2plug.in/ns/ext/midi#MidiEvent");
 }
 
 
@@ -149,6 +201,14 @@ JackAudioDriver::~JackAudioDriver()
 
 	if (_local_client)
 		jack_client_close(_client);
+}
+
+
+bool
+JackAudioDriver::supports(Shared::PortType port_type, Shared::EventType event_type)
+{
+	return (port_type == PortType::AUDIO
+			|| (port_type == PortType::EVENTS && event_type == EventType::MIDI));
 }
 
 
@@ -226,12 +286,6 @@ JackAudioDriver::activate()
 	} else {
 		cout << "[JackAudioDriver] Activated Jack client." << endl;
 	}
-
-	if (!_engine.midi_driver() || dynamic_cast<DummyMidiDriver*>(_engine.midi_driver())) {
-		JackMidiDriver* midi_driver = new JackMidiDriver(_engine);
-		midi_driver->attach(*this);
-		_engine.set_midi_driver(midi_driver);
-	}
 }
 
 
@@ -242,13 +296,17 @@ JackAudioDriver::deactivate()
 		_flag = 1;
 		_is_activated = false;
 		_sem.wait();
+
 		for (Raul::List<JackAudioPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
 			(*i)->destroy();
+
 		jack_deactivate(_client);
+
 		if (_local_client) {
 			jack_client_close(_client);
 			_client = NULL;
 		}
+
 		_jack_thread->stop();
 		cout << "[JackAudioDriver] Deactivated Jack client." << endl;
 	}
@@ -372,10 +430,7 @@ JackAudioDriver::_process_cb(jack_nframes_t nframes)
 
 	// Read input
 	for (Raul::List<JackAudioPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
-		(*i)->pre_process(nframes);
-
-	if (_engine.midi_driver())
-		_engine.midi_driver()->pre_process(_process_context);
+		(*i)->pre_process(_process_context);
 
 	// Run root patch
 	if (_root_patch)
@@ -385,12 +440,9 @@ JackAudioDriver::_process_cb(jack_nframes_t nframes)
 	if (_engine.message_context()->has_requests())
 		_engine.message_context()->signal(_process_context);
 
-	if (_engine.midi_driver())
-		_engine.midi_driver()->post_process(_process_context);
-
 	// Write output
 	for (Raul::List<JackAudioPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
-		(*i)->post_process(nframes);
+		(*i)->post_process(_process_context);
 
 	_engine.post_processor()->set_end_time(_process_context.end());
 

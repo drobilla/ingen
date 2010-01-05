@@ -30,9 +30,7 @@
 #include "EngineStore.hpp"
 #include "ClientBroadcaster.hpp"
 #include "PortImpl.hpp"
-#include "AudioDriver.hpp"
-#include "MidiDriver.hpp"
-#include "OSCDriver.hpp"
+#include "Driver.hpp"
 #include "DuplexPort.hpp"
 
 using namespace std;
@@ -94,7 +92,7 @@ CreatePort::pre_process()
 
 		size_t buffer_size = 1;
 		if (_type.str() != "ingen:Float")
-			buffer_size = _engine.audio_driver()->buffer_size();
+			buffer_size = _engine.driver()->buffer_size();
 
 		const uint32_t old_num_ports = _patch->num_ports();
 
@@ -120,15 +118,9 @@ CreatePort::pre_process()
 			_ports_array->at(_patch->num_ports()-1) = _patch_port;
 			_engine.engine_store()->add(_patch_port);
 
-			if (!_patch->parent()) {
-				if (_type.str() == "lv2:AudioPort") {
-					_driver_port = _engine.audio_driver()->create_port(
-							dynamic_cast<DuplexPort*>(_patch_port));
-				} else if (_type.str() == "lv2ev:EventPort") {
-					_driver_port = _engine.midi_driver()->create_port(
-							dynamic_cast<DuplexPort*>(_patch_port));
-				}
-			}
+			if (!_patch->parent())
+				_driver_port = _engine.driver()->create_port(
+						dynamic_cast<DuplexPort*>(_patch_port));
 
 			assert(_ports_array->size() == _patch->num_ports());
 
@@ -151,11 +143,7 @@ CreatePort::execute(ProcessContext& context)
 	}
 
 	if (_driver_port) {
-		if (_type.str() == "lv2:AudioPort") {
-			_engine.audio_driver()->add_port(_driver_port);
-		} else if (_type.str() == "lv2ev:EventPort") {
-			_engine.midi_driver()->add_port(_driver_port);
-		}
+		_engine.driver()->add_port(_driver_port);
 	}
 }
 

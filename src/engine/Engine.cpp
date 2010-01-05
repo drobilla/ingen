@@ -29,16 +29,14 @@
 #include "shared/LV2Features.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "shared/Store.hpp"
-#include "AudioDriver.hpp"
+#include "Driver.hpp"
 #include "BufferFactory.hpp"
 #include "ClientBroadcaster.hpp"
 #include "Engine.hpp"
 #include "EngineStore.hpp"
 #include "Event.hpp"
 #include "MessageContext.hpp"
-#include "MidiDriver.hpp"
 #include "NodeFactory.hpp"
-#include "OSCDriver.hpp"
 #include "PatchImpl.hpp"
 #include "PostProcessor.hpp"
 #include "PostProcessor.hpp"
@@ -58,8 +56,6 @@ using namespace Shared;
 
 Engine::Engine(Ingen::Shared::World* world)
 	: _world(world)
-	, _midi_driver(NULL)
-	, _osc_driver(NULL)
 	, _maid(new Raul::Maid(maid_queue_size))
 	, _post_processor(new PostProcessor(*this, post_processor_queue_size))
 	, _broadcaster(new ClientBroadcaster())
@@ -90,7 +86,6 @@ Engine::~Engine()
 
 	delete _broadcaster;
 	delete _node_factory;
-	delete _osc_driver;
 	delete _post_processor;
 
 	delete _maid;
@@ -103,34 +98,6 @@ SharedPtr<EngineStore>
 Engine::engine_store() const
 {
 	 return PtrCast<EngineStore>(_world->store);
-}
-
-
-Driver*
-Engine::driver(PortType type, EventType event_type)
-{
-	if (type == PortType::AUDIO) {
-		return _audio_driver.get();
-	} else if (type == PortType::EVENTS) {
-		if (event_type == EventType::MIDI) {
-			return _midi_driver;
-		} else if (event_type == EventType::OSC) {
-			return _osc_driver;
-		}
-	}
-
-	return NULL;
-}
-
-
-void
-Engine::set_driver(PortType type, SharedPtr<Driver> driver)
-{
-	if (type == PortType::AUDIO) {
-		_audio_driver = PtrCast<AudioDriver>(driver);
-	} else {
-		cerr << "WARNING: Unable to set driver for type " << type.uri() << endl;
-	}
 }
 
 
@@ -180,49 +147,38 @@ Engine::add_event_source(SharedPtr<EventSource> source)
 }
 
 
-void
-Engine::set_midi_driver(MidiDriver* driver)
-{
-	_midi_driver = driver;
-}
-
-
 bool
 Engine::activate()
 {
-	assert(_audio_driver);
+	assert(_driver);
 
 	_message_context->Thread::start();
 
 	uint32_t parallelism = _world->conf->option("parallelism").get_int32();
 
-	if (!_midi_driver)
-		_midi_driver = new DummyMidiDriver();
-
 	for (EventSources::iterator i = _event_sources.begin(); i != _event_sources.end(); ++i)
 		(*i)->activate_source();
 
 	// Create root patch
-	PatchImpl* root_patch = _audio_driver->root_patch();
+	PatchImpl* root_patch = _driver->root_patch();
 	if (!root_patch) {
 		root_patch = new PatchImpl(*this, "", 1, NULL,
-				_audio_driver->sample_rate(), _audio_driver->buffer_size(), 1);
+				_driver->sample_rate(), _driver->buffer_size(), 1);
 		root_patch->meta().set_property("rdf:type", Raul::Atom(Raul::Atom::URI, "ingen:Patch"));
 		root_patch->meta().set_property("ingen:polyphony", Raul::Atom(int32_t(1)));
 		root_patch->set_property("rdf:type", Raul::Atom(Raul::Atom::URI, "ingen:Node"));
 		root_patch->activate();
 		_world->store->add(root_patch);
 		root_patch->compiled_patch(root_patch->compile());
-		_audio_driver->set_root_patch(root_patch);
+		_driver->set_root_patch(root_patch);
 	}
 
-	_audio_driver->activate();
-	_midi_driver->attach(*_audio_driver.get());
+	_driver->activate();
 
 	_process_slaves.clear();
 	_process_slaves.reserve(parallelism);
 	for (size_t i=0; i < parallelism - 1; ++i)
-		_process_slaves.push_back(new ProcessSlave(*this, _audio_driver->is_realtime()));
+		_process_slaves.push_back(new ProcessSlave(*this, _driver->is_realtime()));
 
 	root_patch->enable();
 
@@ -251,9 +207,9 @@ Engine::deactivate()
 	if (_midi_driver)
 		_midi_driver->deactivate();
 
-	_audio_driver->deactivate();
+	_driver->deactivate();
 
-	_audio_driver->root_patch()->deactivate();
+	_driver->root_patch()->deactivate();
 
 	/*for (size_t i=0; i < _process_slaves.size(); ++i) {
 		delete _process_slaves[i];
@@ -264,7 +220,7 @@ Engine::deactivate()
 	// Finalize any lingering events (unlikely)
 	//_post_processor->process();
 
-	//_audio_driver.reset();
+	//_driver.reset();
 	//_event_sources.clear();
 
 	_activated = false;

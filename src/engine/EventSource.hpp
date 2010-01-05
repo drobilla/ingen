@@ -28,7 +28,7 @@ class ProcessContext;
 
 /** Source for events to run in the audio thread.
  *
- * The AudioDriver gets events from an EventSource in the process callback
+ * The Driver gets events from an EventSource in the process callback
  * (realtime audio thread) and executes them, then they are sent to the
  * PostProcessor and finalised (post-processing thread).
  *

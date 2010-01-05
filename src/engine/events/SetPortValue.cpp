@@ -22,7 +22,7 @@
 #include "shared/LV2Object.hpp"
 #include "module/World.hpp"
 #include "AudioBuffer.hpp"
-#include "AudioDriver.hpp"
+#include "Driver.hpp"
 #include "ClientBroadcaster.hpp"
 #include "Engine.hpp"
 #include "EngineStore.hpp"
@@ -120,7 +120,7 @@ SetPortValue::pre_process()
 		apply(*_engine.message_context());
 		_port->parent_node()->set_port_valid(_port->index());
 		_engine.message_context()->run(_port,
-				_engine.audio_driver()->frame_time() + _engine.audio_driver()->buffer_size());
+				_engine.driver()->frame_time() + _engine.driver()->buffer_size());
 	}
 
 	if (_port) {

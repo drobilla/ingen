@@ -22,7 +22,7 @@
 #include <iostream>
 #include "internals/Note.hpp"
 #include "AudioBuffer.hpp"
-#include "AudioDriver.hpp"
+#include "Driver.hpp"
 #include "EventBuffer.hpp"
 #include "InputPort.hpp"
 #include "InternalPlugin.hpp"

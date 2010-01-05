@@ -23,8 +23,7 @@
 #include "PatchImpl.hpp"
 #include "NodeBase.hpp"
 #include "PluginImpl.hpp"
-#include "AudioDriver.hpp"
-#include "MidiDriver.hpp"
+#include "Driver.hpp"
 #include "DisconnectAll.hpp"
 #include "ClientBroadcaster.hpp"
 #include "EngineStore.hpp"
@@ -153,10 +152,7 @@ Delete::execute(ProcessContext& context)
 		_port->parent_patch()->external_ports(_ports_array);
 
 		if ( ! _port->parent_patch()->parent()) {
-			if (_port->type() == PortType::AUDIO)
-				_driver_port = _engine.audio_driver()->remove_port(_port->path());
-			else if (_port->type() == PortType::EVENTS)
-				_driver_port = _engine.midi_driver()->remove_port(_port->path());
+			_driver_port = _engine.driver()->remove_port(_port->path());
 
 			// Apparently this needs to be called in post_process??
 			//if (_driver_port)

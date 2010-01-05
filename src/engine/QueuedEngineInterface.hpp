@@ -38,7 +38,7 @@ class Engine;
 /** A queued (preprocessed) event source / interface.
  *
  * This is the bridge between the EngineInterface presented to the client, and
- * the EventSource that needs to be presented to the AudioDriver.
+ * the EventSource that needs to be presented to the Driver.
  *
  * Responses occur through the event mechanism (which notified clients in
  * event post_process methods) and are related to an event by an integer ID.

@@ -22,7 +22,7 @@
 #include "LADSPAPlugin.hpp"
 #include "LADSPANode.hpp"
 #include "Engine.hpp"
-#include "AudioDriver.hpp"
+#include "Driver.hpp"
 
 using namespace std;
 using namespace Raul;
@@ -66,8 +66,8 @@ LADSPAPlugin::instantiate(BufferFactory&    bufs,
 {
 	assert(_id != 0);
 
-	SampleCount srate       = engine.audio_driver()->sample_rate();
-	SampleCount buffer_size = engine.audio_driver()->buffer_size();
+	SampleCount srate       = engine.driver()->sample_rate();
+	SampleCount buffer_size = engine.driver()->buffer_size();
 
 	union {
 		void*                      dp;

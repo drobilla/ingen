@@ -21,7 +21,7 @@
 #include "QueuedEventSource.hpp"
 #include "events.hpp"
 #include "Engine.hpp"
-#include "AudioDriver.hpp"
+#include "Driver.hpp"
 
 using namespace std;
 using namespace Raul;
@@ -44,8 +44,8 @@ QueuedEngineInterface::now() const
 {
 	// Exactly one cycle latency (some could run ASAP if we get lucky, but not always, and a slight
 	// constant latency is far better than jittery lower (average) latency
-	if (_engine.audio_driver())
-		return _engine.audio_driver()->frame_time() + _engine.audio_driver()->buffer_size();
+	if (_engine.driver())
+		return _engine.driver()->frame_time() + _engine.driver()->buffer_size();
 	else
 		return 0;
 }

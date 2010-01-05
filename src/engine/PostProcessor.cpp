@@ -23,7 +23,7 @@
 #include "Event.hpp"
 #include "PostProcessor.hpp"
 #include "Engine.hpp"
-#include "AudioDriver.hpp"
+#include "Driver.hpp"
 #include "ProcessContext.hpp"
 
 using namespace std;
@@ -56,7 +56,7 @@ PostProcessor::process()
 
 	/* Process audio thread generated events */
 	while (true) {
-		AudioDriver* driver = _engine.audio_driver();
+		Driver* driver = _engine.driver();
 		if (driver && driver->context().event_sink().read(_event_buffer_size, _event_buffer)) {
 			if (((Event*)_event_buffer)->time() > end_time) {
 				cerr << "WARNING: Lost event with time "

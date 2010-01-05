@@ -24,7 +24,7 @@
 #include "PluginImpl.hpp"
 #include "Engine.hpp"
 #include "ClientBroadcaster.hpp"
-#include "AudioDriver.hpp"
+#include "Driver.hpp"
 #include "EngineStore.hpp"
 
 using namespace std;
@@ -83,7 +83,8 @@ CreatePatch::pre_process()
 	if (_parent != NULL && _poly > 1 && _poly == static_cast<int>(_parent->internal_polyphony()))
 		poly = _poly;
 
-	_patch = new PatchImpl(_engine, path.name(), poly, _parent, _engine.audio_driver()->sample_rate(), _engine.audio_driver()->buffer_size(), _poly);
+	_patch = new PatchImpl(_engine, path.name(), poly, _parent,
+			_engine.driver()->sample_rate(), _engine.driver()->buffer_size(), _poly);
 	_patch->meta().properties().insert(_properties.begin(), _properties.end());
 	_patch->meta().set_property("rdf:type", Atom(Atom::URI, "ingen:Patch"));
 	_patch->set_property("rdf:type", Atom(Atom::URI, "ingen:Node"));
@@ -114,7 +115,7 @@ CreatePatch::execute(ProcessContext& context)
 		if (_parent == NULL) {
 			assert(_path.is_root());
 			assert(_patch->parent_patch() == NULL);
-			_engine.audio_driver()->set_root_patch(_patch);
+			_engine.driver()->set_root_patch(_patch);
 		} else {
 			assert(_parent != NULL);
 			assert(!_path.is_root());

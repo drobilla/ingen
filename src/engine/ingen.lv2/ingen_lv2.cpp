@@ -136,7 +136,7 @@ static void
 ingen_run(LV2_Handle instance, uint32_t sample_count)
 {
 	IngenPlugin* plugin = (IngenPlugin*)instance;
-	((IngenLV2Driver*)plugin->engine->audio_driver())->run(sample_count);
+	((IngenLV2Driver*)plugin->engine->driver())->run(sample_count);
 }
 
 

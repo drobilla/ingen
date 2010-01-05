@@ -250,7 +250,7 @@ ConnectWindow::connect(bool existing)
 
 		SharedPtr<SigClientInterface> client(new SigClientInterface());
 
-		if (!world->local_engine->audio_driver())
+		if (!world->local_engine->driver())
 			world->load("ingen_jack");
 
 		world->local_engine->activate();

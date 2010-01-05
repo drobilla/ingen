@@ -22,6 +22,7 @@
 #include <boost/utility.hpp>
 #include "raul/Deletable.hpp"
 #include "interface/PortType.hpp"
+#include "interface/EventType.hpp"
 #include "DuplexPort.hpp"
 
 namespace Raul { class Path; }
@@ -29,6 +30,7 @@ namespace Raul { class Path; }
 namespace Ingen {
 
 class DuplexPort;
+class ProcessContext;
 
 
 /** Representation of a "system" (eg outside Ingen) port.
@@ -43,17 +45,19 @@ class DriverPort : boost::noncopyable, public Raul::Deletable {
 public:
 	virtual ~DriverPort() {}
 
-	/** Set the name of the system port */
+	/** Set the name of the system port according to new path */
 	virtual void move(const Raul::Path& path) = 0;
 
+	/** Create system port */
 	virtual void create()  = 0;
+
+	/** Destroy system port */
 	virtual void destroy() = 0;
 
 	bool        is_input()   const { return _patch_port->is_input(); }
 	DuplexPort* patch_port() const { return _patch_port; }
 
 protected:
-	/** is_input from the perspective outside of ingen */
 	DriverPort(DuplexPort* port) : _patch_port(port) {}
 
 	DuplexPort* _patch_port;
@@ -68,34 +72,51 @@ protected:
  *
  * \ingroup engine
  */
-class Driver : boost::noncopyable
-{
+class Driver : boost::noncopyable {
 public:
-	Driver(Shared::PortType type)
-		: _type(type)
-	{}
-
 	virtual ~Driver() {}
 
+	/** Activate driver (begin processing graph and events). */
 	virtual void activate()   = 0;
+
+	/** Deactivate driver (stop processing graph and events). */
 	virtual void deactivate() = 0;
 
+	/** Return true iff driver is activated (processing graph and events). */
 	virtual bool is_activated() const = 0;
 
 	/** Create a port ready to be inserted with add_input (non realtime).
-	 *
-	 * May return NULL if the Driver can not drive the port for some reason.
+	 * May return NULL if the Driver can not create the port for some reason.
 	 */
 	virtual DriverPort* create_port(DuplexPort* patch_port) = 0;
 
+	/** Return the DriverPort for a particular path, iff one exists. */
 	virtual DriverPort* driver_port(const Raul::Path& path) = 0;
 
+	/** Add a system visible port (e.g. a port on the root patch). */
 	virtual void add_port(DriverPort* port) = 0;
 
+	/** Remove a system visible port. */
 	virtual Raul::List<DriverPort*>::Node* remove_port(const Raul::Path& path) = 0;
 
-protected:
-	Shared::PortType _type;
+	/** Return true iff this driver supports the given type of I/O */
+	virtual bool supports(Shared::PortType port_type, Shared::EventType event_type) = 0;
+
+	virtual void       set_root_patch(PatchImpl* patch) = 0;
+	virtual PatchImpl* root_patch()                     = 0;
+
+	/** Return the buffer size in frames (i.e. the maximum length of a process cycle) */
+	virtual SampleCount buffer_size() const = 0;
+
+	/** Return the sample rate in Hz */
+	virtual SampleCount sample_rate() const = 0;
+
+	/** Return the current frame time (running counter) */
+	virtual SampleCount frame_time()  const = 0;
+
+	virtual bool is_realtime() const = 0;
+
+	virtual ProcessContext& context() = 0;
 };
 
 

@@ -23,8 +23,7 @@
 #include "EngineStore.hpp"
 #include "PatchImpl.hpp"
 #include "Responder.hpp"
-#include "AudioDriver.hpp"
-#include "MidiDriver.hpp"
+#include "Driver.hpp"
 
 using namespace std;
 using namespace Raul;
@@ -104,13 +103,7 @@ Move::execute(ProcessContext& context)
 
 	SharedPtr<PortImpl> port = PtrCast<PortImpl>(_store_iterator->second);
 	if (port && port->parent()->parent() == NULL) {
-		DriverPort* driver_port = NULL;
-
-		if (port->type() == PortType::AUDIO)
-			driver_port = _engine.audio_driver()->driver_port(_new_path);
-		else if (port->type() == PortType::EVENTS)
-			driver_port = _engine.midi_driver()->driver_port(_new_path);
-
+		DriverPort* driver_port = _engine.driver()->driver_port(_new_path);
 		if (driver_port)
 			driver_port->move(_new_path);
 	}
