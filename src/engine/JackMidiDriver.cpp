@@ -32,7 +32,6 @@
 #include "DuplexPort.hpp"
 #include "ProcessContext.hpp"
 #include "Engine.hpp"
-#include "jack_compat.h"
 #include "util.hpp"
 
 using namespace std;
