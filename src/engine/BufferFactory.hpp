@@ -36,7 +36,7 @@ class BufferFactory {
 public:
 	BufferFactory(Engine& engine, SharedPtr<Shared::LV2URIMap> map);
 
-	SharedPtr<Buffer> get(Shared::PortType type, size_t size=0);
+	SharedPtr<Buffer> get(Shared::PortType type, size_t size=0, bool force_create=false);
 
 private:
 	friend class BufferDeleter;

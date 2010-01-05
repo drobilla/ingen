@@ -51,7 +51,7 @@ ConnectionImpl::ConnectionImpl(BufferFactory& bufs, PortImpl* src_port, PortImpl
 	assert(src_port->path() != dst_port->path());
 
 	if (must_mix() || must_queue())
-		_local_buffer = bufs.get(dst_port->type(), dst_port->buffer_size());
+		_local_buffer = bufs.get(dst_port->type(), dst_port->buffer_size(), true);
 
 
 	if (must_queue())

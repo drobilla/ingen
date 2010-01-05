@@ -46,17 +46,20 @@ struct BufferDeleter {
 
 
 SharedPtr<Buffer>
-BufferFactory::get(Shared::PortType type, size_t size)
+BufferFactory::get(Shared::PortType type, size_t size, bool force_create)
 {
 	Raul::AtomicPtr<Buffer>& head_ptr = free_list(type);
-	Buffer* try_head;
-	Buffer* next;
-	do {
-		try_head = head_ptr.get();
-		if (!try_head)
-			break;
-		next = try_head->_next;
-	} while (!head_ptr.compare_and_exchange(try_head, next));
+	Buffer* try_head = NULL;
+
+	if (!force_create) {
+		Buffer* next;
+		do {
+			try_head = head_ptr.get();
+			if (!try_head)
+				break;
+			next = try_head->_next;
+		} while (!head_ptr.compare_and_exchange(try_head, next));
+	}
 
 	if (!try_head) {
 		if (ThreadManager::current_thread_id() != THREAD_PROCESS) {

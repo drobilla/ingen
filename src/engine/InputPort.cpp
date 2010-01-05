@@ -124,7 +124,7 @@ InputPort::connect_buffers()
 	// Use local buffers
 	} else {
 		for (uint32_t v = 0; v < _poly; ++v)
-			_buffers->at(v) = _bufs.get(type()); // Use local buffer
+			_buffers->at(v) = _bufs.get(_type, _buffer_size); // Use local buffer
 	}
 
 	// Connect node to buffers
