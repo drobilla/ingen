@@ -21,13 +21,14 @@
 #include "types.hpp"
 #include <string>
 #include <cstdlib>
-#include "raul/Semaphore.hpp"
-#include "raul/AtomicInt.hpp"
 #include "raul/Array.hpp"
 #include "raul/Atom.hpp"
+#include "raul/AtomicInt.hpp"
+#include "raul/IntrusivePtr.hpp"
+#include "raul/Semaphore.hpp"
+#include "contexts.lv2/contexts.h"
 #include "interface/Port.hpp"
 #include "NodeImpl.hpp"
-#include "contexts.lv2/contexts.h"
 
 namespace Ingen {
 
@@ -82,7 +83,7 @@ public:
 	virtual void process(ProcessContext& context) = 0;
 	virtual void post_process(Context& context);
 
-	virtual void set_port_buffer(uint32_t voice, uint32_t port_num, SharedPtr<Buffer> buf) {}
+	virtual void set_port_buffer(uint32_t voice, uint32_t port_num, IntrusivePtr<Buffer> buf) {}
 
 	virtual void set_buffer_size(BufferFactory& bufs, size_t size);
 

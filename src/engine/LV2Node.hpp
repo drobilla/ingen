@@ -20,6 +20,7 @@
 
 #include <string>
 #include "slv2/slv2.h"
+#include "raul/IntrusivePtr.hpp"
 #include "contexts.lv2/contexts.h"
 #include "types.hpp"
 #include "NodeBase.hpp"
@@ -58,7 +59,7 @@ public:
 
 	void process(ProcessContext& context);
 
-	void set_port_buffer(uint32_t voice, uint32_t port_num, SharedPtr<Buffer> buf);
+	void set_port_buffer(uint32_t voice, uint32_t port_num, IntrusivePtr<Buffer> buf);
 
 protected:
 	LV2Plugin*                 _lv2_plugin;

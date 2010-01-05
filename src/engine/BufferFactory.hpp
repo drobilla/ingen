@@ -19,6 +19,7 @@
 #define BUFFER_FACTORY_H
 
 #include <map>
+#include <boost/intrusive_ptr.hpp>
 #include "interface/PortType.hpp"
 #include "glibmm/thread.h"
 #include "raul/RingBuffer.hpp"
@@ -29,6 +30,7 @@ namespace Ingen {
 using namespace Shared;
 
 class Engine;
+class Buffer;
 
 namespace Shared { class LV2URIMap; }
 
@@ -36,13 +38,16 @@ class BufferFactory {
 public:
 	BufferFactory(Engine& engine, SharedPtr<Shared::LV2URIMap> map);
 
-	SharedPtr<Buffer> get(Shared::PortType type, size_t size=0, bool force_create=false);
+	typedef boost::intrusive_ptr<Buffer> Ref;
+
+	Ref get(Shared::PortType type, size_t size=0, bool force_create=false);
 
 private:
 	friend class BufferDeleter;
+	friend class Buffer;
 	void recycle(Buffer* buf);
 
-	SharedPtr<Buffer> create(Shared::PortType type, size_t size=0);
+	Ref create(Shared::PortType type, size_t size=0);
 
 	inline Raul::AtomicPtr<Buffer>& free_list(Shared::PortType type) {
 		switch (type.symbol()) {

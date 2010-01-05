@@ -29,7 +29,7 @@ namespace Ingen {
 
 class EventBuffer : public Buffer {
 public:
-	EventBuffer(size_t capacity);
+	EventBuffer(BufferFactory& factory, size_t capacity);
 	~EventBuffer();
 
 	void*       port_data(Shared::PortType port_type)       { return _data; }

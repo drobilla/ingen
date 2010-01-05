@@ -36,8 +36,8 @@ namespace Ingen {
 using namespace Shared;
 
 
-AudioBuffer::AudioBuffer(Shared::PortType type, size_t size)
-	: ObjectBuffer(size + sizeof(LV2_Object)
+AudioBuffer::AudioBuffer(BufferFactory& factory, Shared::PortType type, size_t size)
+	: ObjectBuffer(factory, size + sizeof(LV2_Object)
 			+ (type == PortType::AUDIO ? sizeof(LV2_Vector_Body) : 0))
 	, _state(OK)
 	, _set_value(0)

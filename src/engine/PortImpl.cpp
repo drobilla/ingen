@@ -59,7 +59,7 @@ PortImpl::PortImpl(BufferFactory&  bufs,
 	, _set_by_user(false)
 	, _last_broadcasted_value(_value.type() == Atom::FLOAT ? _value.get_float() : 0.0f) // default?
 	, _context(Context::AUDIO)
-	, _buffers(new Array< SharedPtr<Buffer> >(poly))
+	, _buffers(new Array<BufferFactory::Ref>(poly))
 	, _prepared_buffers(NULL)
 {
 	assert(node != NULL);
@@ -113,7 +113,7 @@ PortImpl::prepare_poly(BufferFactory& bufs, uint32_t poly)
 
 	/* FIXME: poly never goes down, harsh on memory.. */
 	if (poly > _poly) {
-		_prepared_buffers = new Array< SharedPtr<Buffer> >(poly, *_buffers);
+		_prepared_buffers = new Array<BufferFactory::Ref>(poly, *_buffers);
 		for (uint32_t i = _poly; i < _prepared_buffers->size(); ++i)
 			_prepared_buffers->at(i) = bufs.get(_type, _buffer_size);
 	}

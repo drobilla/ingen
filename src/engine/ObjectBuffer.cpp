@@ -37,8 +37,8 @@ using namespace Shared;
 /** Allocate a new object buffer.
  * \a capacity is in bytes, including LV2_Object header
  */
-ObjectBuffer::ObjectBuffer(size_t capacity)
-	: Buffer(PortType(PortType::VALUE), capacity)
+ObjectBuffer::ObjectBuffer(BufferFactory& factory, size_t capacity)
+	: Buffer(factory, PortType(PortType::VALUE), capacity)
 {
 	//cerr << "Creating Object Buffer capacity = " << capacity << endl;
 	assert(capacity >= sizeof(LV2_Object));

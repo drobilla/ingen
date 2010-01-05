@@ -300,7 +300,7 @@ LADSPANode::process(ProcessContext& context)
 
 
 void
-LADSPANode::set_port_buffer(uint32_t voice, uint32_t port_num, SharedPtr<Buffer> buf)
+LADSPANode::set_port_buffer(uint32_t voice, uint32_t port_num, BufferFactory::Ref buf)
 {
 	assert(voice < _polyphony);
 	_descriptor->connect_port((*_instances)[voice], port_num,

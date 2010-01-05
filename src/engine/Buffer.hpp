@@ -15,28 +15,33 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef BUFFER_H
-#define BUFFER_H
+#ifndef BUFFER_HPP
+#define BUFFER_HPP
 
 #include <cstddef>
 #include <cassert>
 #include <boost/utility.hpp>
+#include <boost/intrusive_ptr.hpp>
 #include "raul/Deletable.hpp"
 #include "raul/SharedPtr.hpp"
-#include "types.hpp"
 #include "interface/PortType.hpp"
+#include "types.hpp"
+#include "BufferFactory.hpp"
 
 namespace Ingen {
 
 class Context;
 class Engine;
+class BufferFactory;
 
 class Buffer : public boost::noncopyable, public Raul::Deletable
 {
 public:
-	Buffer(Shared::PortType type, size_t size)
-		: _type(type)
+	Buffer(BufferFactory& factory, Shared::PortType type, size_t size)
+		: _factory(factory)
+		, _type(type)
 		, _size(size)
+		, _refs(0)
 	{}
 
 	/** Clear contents and reset state */
@@ -58,7 +63,16 @@ public:
 	Shared::PortType type() const { return _type; }
 	size_t           size() const { return _size; }
 
+	inline void ref() { ++_refs; }
+
+	inline void deref() {
+		assert(_refs > 0);
+		if ((--_refs) == 0)
+			_factory.recycle(this);
+	}
+
 protected:
+	BufferFactory&   _factory;
 	Shared::PortType _type;
 	size_t           _size;
 
@@ -67,9 +81,16 @@ protected:
 
 private:
 	Buffer* _next; ///< Intrusive linked list for BufferFactory
+	size_t  _refs; ///< Intrusive reference count for intrusive_ptr
 };
-
 
 } // namespace Ingen
 
-#endif // BUFFER_H
+
+namespace boost {
+	inline void intrusive_ptr_add_ref(Ingen::Buffer* b) { b->ref(); }
+	inline void intrusive_ptr_release(Ingen::Buffer* b) { b->deref(); }
+}
+
+
+#endif // BUFFER_HPP

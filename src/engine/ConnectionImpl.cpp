@@ -17,6 +17,7 @@
 
 #include <algorithm>
 #include "raul/Maid.hpp"
+#include "raul/IntrusivePtr.hpp"
 #include "AudioBuffer.hpp"
 #include "BufferFactory.hpp"
 #include "ConnectionImpl.hpp"
@@ -103,13 +104,13 @@ void
 ConnectionImpl::process(Context& context)
 {
 	if (must_queue()) {
-		SharedPtr<EventBuffer> src_buf = PtrCast<EventBuffer>(_src_port->buffer(0));
+		IntrusivePtr<EventBuffer> src_buf = PtrCast<EventBuffer>(_src_port->buffer(0));
 		if (!src_buf) {
 			cerr << "ERROR: Queued connection but source is not an EventBuffer" << endl;
 			return;
 		}
 
-		SharedPtr<ObjectBuffer> local_buf = PtrCast<ObjectBuffer>(_local_buffer);
+		IntrusivePtr<ObjectBuffer> local_buf = PtrCast<ObjectBuffer>(_local_buffer);
 		if (!local_buf) {
 			cerr << "ERROR: Queued connection but source is not an EventBuffer" << endl;
 			return;
@@ -138,7 +139,7 @@ ConnectionImpl::queue(Context& context)
 	if (!must_queue())
 		return;
 
-	SharedPtr<EventBuffer> src_buf = PtrCast<EventBuffer>(_src_port->buffer(0));
+	IntrusivePtr<EventBuffer> src_buf = PtrCast<EventBuffer>(_src_port->buffer(0));
 	if (!src_buf) {
 		cerr << "ERROR: Queued connection but source is not an EventBuffer" << endl;
 		return;

@@ -367,7 +367,7 @@ LV2Node::process(ProcessContext& context)
 
 
 void
-LV2Node::set_port_buffer(uint32_t voice, uint32_t port_num, SharedPtr<Buffer> buf)
+LV2Node::set_port_buffer(uint32_t voice, uint32_t port_num, BufferFactory::Ref buf)
 {
 	assert(voice < _polyphony);
 	slv2_instance_connect_port((*_instances)[voice], port_num,

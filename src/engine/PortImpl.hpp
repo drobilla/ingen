@@ -72,10 +72,10 @@ public:
 	const Raul::Atom& value() const { return _value; }
 	void              set_value(const Raul::Atom& v) { _value = v; }
 
-	inline SharedPtr<Buffer> buffer(uint32_t voice) const {
+	inline BufferFactory::Ref buffer(uint32_t voice) const {
 		return _buffers->at(voice);
 	}
-	inline SharedPtr<Buffer> prepared_buffer(uint32_t voice) const {
+	inline BufferFactory::Ref prepared_buffer(uint32_t voice) const {
 		return _prepared_buffers->at(voice);
 	}
 
@@ -130,11 +130,11 @@ protected:
 	bool             _set_by_user;
 	Raul::Atom       _last_broadcasted_value;
 
-	Context::ID                       _context;
-	Raul::Array< SharedPtr<Buffer> >* _buffers;
+	Context::ID                      _context;
+	Raul::Array<BufferFactory::Ref>* _buffers;
 
 	// Dynamic polyphony
-	Raul::Array< SharedPtr<Buffer> >* _prepared_buffers;
+	Raul::Array<BufferFactory::Ref>* _prepared_buffers;
 
 	friend class Engine;
 	virtual ~PortImpl();

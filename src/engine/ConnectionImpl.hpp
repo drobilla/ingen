@@ -70,7 +70,7 @@ public:
 	 * buffer, and will return accordingly (e.g. the same buffer for every
 	 * voice in a mono->poly connection).
 	 */
-	inline SharedPtr<Buffer> buffer(uint32_t voice) const {
+	inline BufferFactory::Ref buffer(uint32_t voice) const {
 		if (must_mix() || must_queue()) {
 			return _local_buffer;
 		} else if ( ! _src_port->polyphonic()) {
@@ -95,11 +95,11 @@ protected:
 
 	Raul::RingBuffer<LV2_Object>* _queue;
 
-	BufferFactory&    _bufs;
-	PortImpl* const   _src_port;
-	PortImpl* const   _dst_port;
-	SharedPtr<Buffer> _local_buffer;
-	bool              _pending_disconnection;
+	BufferFactory&     _bufs;
+	PortImpl* const    _src_port;
+	PortImpl* const    _dst_port;
+	BufferFactory::Ref _local_buffer;
+	bool               _pending_disconnection;
 };
 
 

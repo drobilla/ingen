@@ -29,7 +29,7 @@ class Context;
 
 class ObjectBuffer : public Buffer {
 public:
-	ObjectBuffer(size_t capacity);
+	ObjectBuffer(BufferFactory& factory, size_t capacity);
 
 	void clear();
 

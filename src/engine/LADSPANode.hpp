@@ -21,6 +21,7 @@
 #include <string>
 #include <ladspa.h>
 #include <boost/optional.hpp>
+#include "raul/IntrusivePtr.hpp"
 #include "types.hpp"
 #include "NodeBase.hpp"
 #include "PluginImpl.hpp"
@@ -55,7 +56,7 @@ public:
 
 	void process(ProcessContext& context);
 
-	void set_port_buffer(uint32_t voice, uint32_t port_num, SharedPtr<Buffer> buf);
+	void set_port_buffer(uint32_t voice, uint32_t port_num, IntrusivePtr<Buffer> buf);
 
 protected:
 	void get_port_limits(unsigned long            port_index,

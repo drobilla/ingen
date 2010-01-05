@@ -33,7 +33,7 @@ namespace Ingen {
 class AudioBuffer : public ObjectBuffer
 {
 public:
-	AudioBuffer(Shared::PortType type, size_t capacity);
+	AudioBuffer(BufferFactory& factory, Shared::PortType type, size_t capacity);
 
 	void clear();
 

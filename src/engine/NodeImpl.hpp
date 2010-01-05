@@ -19,6 +19,7 @@
 #define NODEIMPL_H
 
 #include <string>
+#include "raul/IntrusivePtr.hpp"
 #include "interface/Node.hpp"
 #include "GraphObjectImpl.hpp"
 
@@ -133,7 +134,7 @@ public:
 	 */
 	virtual void process(ProcessContext& context) = 0;
 
-	virtual void set_port_buffer(uint32_t voice, uint32_t port_num, SharedPtr<Buffer> buf) = 0;
+	virtual void set_port_buffer(uint32_t voice, uint32_t port_num, IntrusivePtr<Buffer> buf) = 0;
 
 	virtual uint32_t num_ports() const = 0;
 
