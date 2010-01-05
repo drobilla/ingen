@@ -61,7 +61,6 @@ public:
 protected:
 	Shared::PortType _type;
 	size_t           _size;
-	bool             _local;
 
 	friend class BufferFactory;
 	virtual ~Buffer() {}
