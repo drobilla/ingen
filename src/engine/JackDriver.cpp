@@ -28,7 +28,7 @@
 #include "EventBuffer.hpp"
 #include "EventSource.hpp"
 #include "EventSource.hpp"
-#include "JackAudioDriver.hpp"
+#include "JackDriver.hpp"
 #include "MessageContext.hpp"
 #include "PatchImpl.hpp"
 #include "PortImpl.hpp"

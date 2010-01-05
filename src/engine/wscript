@@ -109,7 +109,7 @@ def build(bld):
 
 	if bld.env['HAVE_JACK'] == 1:
 		obj = bld.new_task_gen('cxx', 'shlib')
-		obj.source = 'JackAudioDriver.cpp ingen_jack.cpp'
+		obj.source = 'JackDriver.cpp ingen_jack.cpp'
 		obj.export_incdirs = ['.']
 		obj.includes     = ['.', '..', '../..', '../common', '../engine']
 		obj.name         = 'libingen_jack'

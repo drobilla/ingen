@@ -18,7 +18,7 @@
 #include <iostream>
 #include "module/Module.hpp"
 #include "module/World.hpp"
-#include "JackAudioDriver.hpp"
+#include "JackDriver.hpp"
 #include "Engine.hpp"
 
 using namespace std;
