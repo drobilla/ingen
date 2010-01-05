@@ -46,11 +46,11 @@ using namespace Raul;
 namespace Ingen {
 
 
-//// JackAudioPort ////
+//// JackPort ////
 
-JackAudioPort::JackAudioPort(JackAudioDriver* driver, DuplexPort* patch_port)
+JackPort::JackPort(JackDriver* driver, DuplexPort* patch_port)
 	: DriverPort(patch_port)
-	, Raul::List<JackAudioPort*>::Node(this)
+	, Raul::List<JackPort*>::Node(this)
 	, _driver(driver)
 	, _jack_port(NULL)
 {
@@ -62,14 +62,14 @@ JackAudioPort::JackAudioPort(JackAudioDriver* driver, DuplexPort* patch_port)
 }
 
 
-JackAudioPort::~JackAudioPort()
+JackPort::~JackPort()
 {
 	assert(_jack_port == NULL);
 }
 
 
 void
-JackAudioPort::create()
+JackPort::create()
 {
 	_jack_port = jack_port_register(
 			_driver->jack_client(),
@@ -81,14 +81,14 @@ JackAudioPort::create()
 			0);
 
 	if (_jack_port == NULL) {
-		cerr << "[JackAudioPort] ERROR: Failed to register port " << _patch_port->path() << endl;
-		throw JackAudioDriver::PortRegistrationFailedException();
+		cerr << "[JackPort] ERROR: Failed to register port " << _patch_port->path() << endl;
+		throw JackDriver::PortRegistrationFailedException();
 	}
 }
 
 
 void
-JackAudioPort::destroy()
+JackPort::destroy()
 {
 	assert(_jack_port);
 	if (jack_port_unregister(_driver->jack_client(), _jack_port))
@@ -98,14 +98,14 @@ JackAudioPort::destroy()
 
 
 void
-JackAudioPort::move(const Raul::Path& path)
+JackPort::move(const Raul::Path& path)
 {
 	jack_port_set_name(_jack_port, ingen_jack_port_name(path).c_str());
 }
 
 
 void
-JackAudioPort::pre_process(ProcessContext& context)
+JackPort::pre_process(ProcessContext& context)
 {
 	if (!is_input())
 		return;
@@ -139,7 +139,7 @@ JackAudioPort::pre_process(ProcessContext& context)
 
 
 void
-JackAudioPort::post_process(ProcessContext& context)
+JackPort::post_process(ProcessContext& context)
 {
 	if (is_input())
 		return;
@@ -174,9 +174,9 @@ JackAudioPort::post_process(ProcessContext& context)
 }
 
 
-//// JackAudioDriver ////
+//// JackDriver ////
 
-JackAudioDriver::JackAudioDriver(Engine& engine)
+JackDriver::JackDriver(Engine& engine)
 	: _engine(engine)
 	, _jack_thread(NULL)
 	, _sem(0)
@@ -195,7 +195,7 @@ JackAudioDriver::JackAudioDriver(Engine& engine)
 }
 
 
-JackAudioDriver::~JackAudioDriver()
+JackDriver::~JackDriver()
 {
 	deactivate();
 
@@ -205,7 +205,7 @@ JackAudioDriver::~JackAudioDriver()
 
 
 bool
-JackAudioDriver::supports(Shared::PortType port_type, Shared::EventType event_type)
+JackDriver::supports(Shared::PortType port_type, Shared::EventType event_type)
 {
 	return (port_type == PortType::AUDIO
 			|| (port_type == PortType::EVENTS && event_type == EventType::MIDI));
@@ -213,7 +213,7 @@ JackAudioDriver::supports(Shared::PortType port_type, Shared::EventType event_ty
 
 
 bool
-JackAudioDriver::attach(const std::string& server_name,
+JackDriver::attach(const std::string& server_name,
                         const std::string& client_name,
                         void*              jack_client)
 {
@@ -224,7 +224,7 @@ JackAudioDriver::attach(const std::string& server_name,
 			_client = jack_client_open(client_name.c_str(),
 					JackServerName, NULL, server_name.c_str());
 			if (_client)
-				cerr << "[JackAudioDriver] Connected to JACK server '" <<
+				cerr << "[JackDriver] Connected to JACK server '" <<
 					server_name << "'" << endl;
 		}
 
@@ -234,12 +234,12 @@ JackAudioDriver::attach(const std::string& server_name,
 			_client = jack_client_open(client_name.c_str(), JackNullOption, NULL);
 
 			if (_client)
-				cerr << "[JackAudioDriver] Connected to default JACK server." << endl;
+				cerr << "[JackDriver] Connected to default JACK server." << endl;
 		}
 
 		// Still failed
 		if (!_client) {
-			cerr << "[JackAudioDriver] Unable to connect to Jack.  Exiting." << endl;
+			cerr << "[JackDriver] Unable to connect to Jack.  Exiting." << endl;
 			return false;
 		}
 	} else {
@@ -257,7 +257,7 @@ JackAudioDriver::attach(const std::string& server_name,
 	jack_set_sample_rate_callback(_client, sample_rate_cb, this);
 	jack_set_buffer_size_callback(_client, buffer_size_cb, this);
 
-	for (Raul::List<JackAudioPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
+	for (Raul::List<JackPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
 		(*i)->create();
 
 	return true;
@@ -265,10 +265,10 @@ JackAudioDriver::attach(const std::string& server_name,
 
 
 void
-JackAudioDriver::activate()
+JackDriver::activate()
 {
 	if (_is_activated) {
-		cerr << "[JackAudioDriver] Jack driver already activated." << endl;
+		cerr << "[JackDriver] Jack driver already activated." << endl;
 		return;
 	}
 
@@ -281,23 +281,23 @@ JackAudioDriver::activate()
 	_is_activated = true;
 
 	if (jack_activate(_client)) {
-		cerr << "[JackAudioDriver] Could not activate Jack client, aborting." << endl;
+		cerr << "[JackDriver] Could not activate Jack client, aborting." << endl;
 		exit(EXIT_FAILURE);
 	} else {
-		cout << "[JackAudioDriver] Activated Jack client." << endl;
+		cout << "[JackDriver] Activated Jack client." << endl;
 	}
 }
 
 
 void
-JackAudioDriver::deactivate()
+JackDriver::deactivate()
 {
 	if (_is_activated) {
 		_flag = 1;
 		_is_activated = false;
 		_sem.wait();
 
-		for (Raul::List<JackAudioPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
+		for (Raul::List<JackPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
 			(*i)->destroy();
 
 		jack_deactivate(_client);
@@ -308,7 +308,7 @@ JackAudioDriver::deactivate()
 		}
 
 		_jack_thread->stop();
-		cout << "[JackAudioDriver] Deactivated Jack client." << endl;
+		cout << "[JackDriver] Deactivated Jack client." << endl;
 	}
 }
 
@@ -321,11 +321,11 @@ JackAudioDriver::deactivate()
  * See create_port() and remove_port().
  */
 void
-JackAudioDriver::add_port(DriverPort* port)
+JackDriver::add_port(DriverPort* port)
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
-	assert(dynamic_cast<JackAudioPort*>(port));
-	_ports.push_back((JackAudioPort*)port);
+	assert(dynamic_cast<JackPort*>(port));
+	_ports.push_back((JackPort*)port);
 }
 
 
@@ -338,23 +338,23 @@ JackAudioDriver::add_port(DriverPort* port)
  * It is the callers responsibility to delete the returned port.
  */
 Raul::List<DriverPort*>::Node*
-JackAudioDriver::remove_port(const Path& path)
+JackDriver::remove_port(const Path& path)
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
 
-	for (Raul::List<JackAudioPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
+	for (Raul::List<JackPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
 		if ((*i)->patch_port()->path() == path)
 			return (Raul::List<DriverPort*>::Node*)(_ports.erase(i));
 
-	cerr << "[JackAudioDriver::remove_port] WARNING: Unable to find port " << path << endl;
+	cerr << "[JackDriver::remove_port] WARNING: Unable to find port " << path << endl;
 	return NULL;
 }
 
 
 DriverPort*
-JackAudioDriver::port(const Path& path)
+JackDriver::port(const Path& path)
 {
-	for (Raul::List<JackAudioPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
+	for (Raul::List<JackPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
 		if ((*i)->patch_port()->path() == path)
 			return (*i);
 
@@ -363,11 +363,11 @@ JackAudioDriver::port(const Path& path)
 
 
 DriverPort*
-JackAudioDriver::create_port(DuplexPort* patch_port)
+JackDriver::create_port(DuplexPort* patch_port)
 {
 	try {
 		if (patch_port->buffer_size() == _buffer_size)
-			return new JackAudioPort(this, patch_port);
+			return new JackPort(this, patch_port);
 		else
 			return NULL;
 	} catch (...) {
@@ -377,11 +377,11 @@ JackAudioDriver::create_port(DuplexPort* patch_port)
 
 
 DriverPort*
-JackAudioDriver::driver_port(const Path& path)
+JackDriver::driver_port(const Path& path)
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
 
-	for (Raul::List<JackAudioPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
+	for (Raul::List<JackPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
 		if ((*i)->patch_port()->path() == path)
 			return (*i);
 
@@ -398,7 +398,7 @@ JackAudioDriver::driver_port(const Path& path)
  * \callgraph
  */
 int
-JackAudioDriver::_process_cb(jack_nframes_t nframes)
+JackDriver::_process_cb(jack_nframes_t nframes)
 {
 	if (nframes == 0 || ! _is_activated) {
 		if (_flag == 1)
@@ -429,7 +429,7 @@ JackAudioDriver::_process_cb(jack_nframes_t nframes)
 	_engine.process_events(_process_context);
 
 	// Read input
-	for (Raul::List<JackAudioPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
+	for (Raul::List<JackPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
 		(*i)->pre_process(_process_context);
 
 	// Run root patch
@@ -441,7 +441,7 @@ JackAudioDriver::_process_cb(jack_nframes_t nframes)
 		_engine.message_context()->signal(_process_context);
 
 	// Write output
-	for (Raul::List<JackAudioPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
+	for (Raul::List<JackPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
 		(*i)->post_process(_process_context);
 
 	_engine.post_processor()->set_end_time(_process_context.end());
@@ -451,7 +451,7 @@ JackAudioDriver::_process_cb(jack_nframes_t nframes)
 
 
 void
-JackAudioDriver::_thread_init_cb()
+JackDriver::_thread_init_cb()
 {
 	// Initialize thread specific data
 	_jack_thread = Thread::create_for_this_thread("Jack");
@@ -460,10 +460,11 @@ JackAudioDriver::_thread_init_cb()
 	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
 }
 
+
 void
-JackAudioDriver::_shutdown_cb()
+JackDriver::_shutdown_cb()
 {
-	cout << "[JackAudioDriver] Jack shutdown.  Exiting." << endl;
+	cout << "[JackDriver] Jack shutdown.  Exiting." << endl;
 	_is_activated = false;
 	delete _jack_thread;
 	_jack_thread = NULL;
@@ -472,10 +473,10 @@ JackAudioDriver::_shutdown_cb()
 
 
 int
-JackAudioDriver::_sample_rate_cb(jack_nframes_t nframes)
+JackDriver::_sample_rate_cb(jack_nframes_t nframes)
 {
 	if (_is_activated) {
-		cerr << "[JackAudioDriver] On-the-fly sample rate changing not supported (yet).  Aborting." << endl;
+		cerr << "[JackDriver] On-the-fly sample rate changing not supported (yet).  Aborting." << endl;
 		exit(EXIT_FAILURE);
 	} else {
 		_sample_rate = nframes;
@@ -485,7 +486,7 @@ JackAudioDriver::_sample_rate_cb(jack_nframes_t nframes)
 
 
 int
-JackAudioDriver::_buffer_size_cb(jack_nframes_t nframes)
+JackDriver::_buffer_size_cb(jack_nframes_t nframes)
 {
 	if (_root_patch) {
 		_buffer_size = nframes * sizeof(Sample);

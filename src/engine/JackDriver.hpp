@@ -36,19 +36,19 @@ class Engine;
 class PatchImpl;
 class PortImpl;
 class DuplexPort;
-class JackAudioDriver;
+class JackDriver;
 typedef jack_default_audio_sample_t jack_sample_t;
 
 
-/** Used internally by JackAudioDriver to represent a Jack port.
+/** Used internally by JackDriver to represent a Jack port.
  *
  * A Jack port always has a one-to-one association with a Patch port.
  */
-class JackAudioPort : public DriverPort, public Raul::List<JackAudioPort*>::Node
+class JackPort : public DriverPort, public Raul::List<JackPort*>::Node
 {
 public:
-	JackAudioPort(JackAudioDriver* driver, DuplexPort* patch_port);
-	~JackAudioPort();
+	JackPort(JackDriver* driver, DuplexPort* patch_port);
+	~JackPort();
 
 	void create();
 	void destroy();
@@ -61,7 +61,7 @@ public:
 	jack_port_t*  jack_port() const  { return _jack_port; }
 
 private:
-	JackAudioDriver* _driver;
+	JackDriver* _driver;
 	jack_port_t*     _jack_port;
 };
 
@@ -75,11 +75,11 @@ private:
  *
  * \ingroup engine
  */
-class JackAudioDriver : public Driver
+class JackDriver : public Driver
 {
 public:
-	JackAudioDriver(Engine& engine);
-	~JackAudioDriver();
+	JackDriver(Engine& engine);
+	~JackDriver();
 
 	bool supports(Shared::PortType port_type, Shared::EventType event_type);
 
@@ -122,23 +122,23 @@ public:
 	class PortRegistrationFailedException : public std::exception {};
 
 private:
-	friend class JackAudioPort;
+	friend class JackPort;
 
 	// Static JACK callbacks which call the non-static callbacks (methods)
 	inline static void thread_init_cb(void* const jack_driver) {
-		return ((JackAudioDriver*)jack_driver)->_thread_init_cb();
+		return ((JackDriver*)jack_driver)->_thread_init_cb();
 	}
 	inline static void shutdown_cb(void* const jack_driver) {
-		return ((JackAudioDriver*)jack_driver)->_shutdown_cb();
+		return ((JackDriver*)jack_driver)->_shutdown_cb();
 	}
 	inline static int process_cb(jack_nframes_t nframes, void* const jack_driver) {
-		return ((JackAudioDriver*)jack_driver)->_process_cb(nframes);
+		return ((JackDriver*)jack_driver)->_process_cb(nframes);
 	}
 	inline static int buffer_size_cb(jack_nframes_t nframes, void* const jack_driver) {
-		return ((JackAudioDriver*)jack_driver)->_buffer_size_cb(nframes);
+		return ((JackDriver*)jack_driver)->_buffer_size_cb(nframes);
 	}
 	inline static int sample_rate_cb(jack_nframes_t nframes, void* const jack_driver) {
-		return ((JackAudioDriver*)jack_driver)->_sample_rate_cb(nframes);
+		return ((JackDriver*)jack_driver)->_sample_rate_cb(nframes);
 	}
 
 	// Non static callbacks (methods)
@@ -160,11 +160,9 @@ private:
 	bool                   _local_client; ///< Whether _client should be closed on destruction
 	jack_position_t        _position;
 	jack_transport_state_t _transport_state;
-
-	Raul::List<JackAudioPort*> _ports;
-	ProcessContext             _process_context;
-
-	PatchImpl* _root_patch;
+	Raul::List<JackPort*>  _ports;
+	ProcessContext         _process_context;
+	PatchImpl*             _root_patch;
 };
 
 
