@@ -43,6 +43,8 @@
 using namespace std;
 using namespace Raul;
 
+typedef jack_default_audio_sample_t jack_sample_t;
+
 namespace Ingen {
 
 

@@ -37,7 +37,6 @@ class PatchImpl;
 class PortImpl;
 class DuplexPort;
 class JackDriver;
-typedef jack_default_audio_sample_t jack_sample_t;
 
 
 /** Used internally by JackDriver to represent a Jack port.

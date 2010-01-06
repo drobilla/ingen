@@ -112,7 +112,7 @@ ConnectionImpl::process(Context& context)
 
 		IntrusivePtr<ObjectBuffer> local_buf = PtrCast<ObjectBuffer>(_local_buffer);
 		if (!local_buf) {
-			cerr << "ERROR: Queued connection but source is not an EventBuffer" << endl;
+			cerr << "ERROR: Queued connection but local buffer is not an ObjectBuffer" << endl;
 			return;
 		}
 
