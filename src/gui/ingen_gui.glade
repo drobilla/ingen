@@ -1726,19 +1726,11 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="GtkScrolledWindow" id="scrolledwindow1">
+                  <widget class="GtkEntry" id="string_control_entry">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="hscrollbar_policy">automatic</property>
-                    <property name="vscrollbar_policy">automatic</property>
-                    <child>
-                      <widget class="GtkEntry" id="string_control_entry">
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="invisible_char">&#x25CF;</property>
-                        <property name="caps_lock_warning">False</property>
-                      </widget>
-                    </child>
+                    <property name="invisible_char">&#x25CF;</property>
+                    <property name="caps_lock_warning">False</property>
                   </widget>
                   <packing>
                     <property name="position">1</property>
