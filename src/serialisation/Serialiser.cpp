@@ -21,7 +21,6 @@
 #include <cstdlib> // atof
 #include <cstring>
 #include <fstream>
-#include <iostream>
 #include <locale.h>
 #include <stdexcept>
 #include <string>
@@ -30,6 +29,7 @@
 #include <glib.h>
 #include <glib/gstdio.h>
 #include <glibmm/convert.h>
+#include "raul/log.hpp"
 #include "raul/Atom.hpp"
 #include "raul/AtomRDF.hpp"
 #include "raul/Path.hpp"
@@ -45,6 +45,8 @@
 #include "interface/Port.hpp"
 #include "interface/Connection.hpp"
 #include "Serialiser.hpp"
+
+#define LOG(s) s << "[Serialiser] "
 
 using namespace std;
 using namespace Raul;
@@ -151,7 +153,7 @@ Serialiser::to_string(SharedPtr<GraphObject>         object,
 			_model->add_statement(base_rdf_node, v->first.str(),
 					AtomRDF::atom_to_node(_model->world(), v->second));
 		} else {
-			cerr << "Warning: not serialising extra RDF with key '" << v->first << "'" << endl;
+			LOG(warn) << "Not serialising extra RDF with key '" << v->first << "'" << endl;
 		}
 	}
 
@@ -287,7 +289,7 @@ Serialiser::serialise(SharedPtr<GraphObject> object) throw (std::logic_error)
 		return;
 	}
 
-	cerr << "[Serialiser] WARNING: Unsupported object type, "
+	LOG(warn) << "Unsupported object type, "
 		<< object->path() << " not serialised." << endl;
 }
 
@@ -313,7 +315,7 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch, const Redland::Node&
 		_model->add_statement(patch_id, "lv2:symbol",
 				Redland::Literal(_model->world(), patch->path().name()));
 	} else {
-		cerr << "WARNING: Patch has no lv2:symbol" << endl;
+		LOG(warn) << "Patch has no lv2:symbol" << endl;
 	}
 
 	serialise_properties(patch_id, patch->meta().properties());
@@ -449,7 +451,7 @@ Serialiser::serialise_port_meta(const Port* port, const Redland::Node& port_id)
 				_model->add_statement(port_id, "lv2:default",
 						AtomRDF::atom_to_node(_model->world(), Atom(port->value())));
 			} else if (port->type() == PortType::CONTROL) {
-				cerr << "WARNING: Port " << port->path() << " has no lv2:default" << endl;
+				LOG(warn) << "Port " << port->path() << " has no lv2:default" << endl;
 			}
 		}
 	}
@@ -498,11 +500,11 @@ Serialiser::serialise_properties(
 			if (value.is_valid()) {
 				_model->add_statement(subject, key, value);
 			} else {
-				cerr << "WARNING: can not serialise variable '" << v->first << "' :: "
+				LOG(warn) << "Can not serialise variable '" << v->first << "' :: "
 					<< (int)v->second.type() << endl;
 			}
 		} else {
-			cerr << "WARNING: property '" << v->first << "' has no value" << endl;
+			LOG(warn) << "Property '" << v->first << "' has no value" << endl;
 		}
 	}
 }

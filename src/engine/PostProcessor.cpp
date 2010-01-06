@@ -16,8 +16,8 @@
  */
 
 #include <cassert>
-#include <iostream>
 #include <pthread.h>
+#include "raul/log.hpp"
 #include "raul/SRSWQueue.hpp"
 #include "events/SendPortValue.hpp"
 #include "Event.hpp"
@@ -27,6 +27,7 @@
 #include "ProcessContext.hpp"
 
 using namespace std;
+using namespace Raul;
 
 namespace Ingen {
 
@@ -59,7 +60,7 @@ PostProcessor::process()
 		Driver* driver = _engine.driver();
 		if (driver && driver->context().event_sink().read(_event_buffer_size, _event_buffer)) {
 			if (((Event*)_event_buffer)->time() > end_time) {
-				cerr << "WARNING: Lost event with time "
+				warn << "Lost event with time "
 					<< ((Event*)_event_buffer)->time() << " > " << end_time << endl;
 				break;
 			}

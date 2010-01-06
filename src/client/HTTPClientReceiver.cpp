@@ -18,13 +18,15 @@
 #include <list>
 #include <cassert>
 #include <cstring>
-#include <iostream>
 #include <sstream>
 #include <sys/socket.h>
 #include <errno.h>
+#include "raul/log.hpp"
 #include "raul/Atom.hpp"
 #include "module/Module.hpp"
 #include "HTTPClientReceiver.hpp"
+
+#define LOG(s) s << "[HTTPClientReceiver] "
 
 using namespace std;
 using namespace Raul;
@@ -71,7 +73,7 @@ HTTPClientReceiver::Listener::Listener(HTTPClientReceiver* receiver, const std::
 	string port_str = uri.substr(uri.find_last_of(":")+1);
 	int port = atoi(port_str.c_str());
 
-	cout << "Client HTTP listen: " << uri << " (port " << port << ")" << endl;
+	LOG(info) << "Client HTTP listen: " << uri << " (port " << port << ")" << endl;
 
 	struct sockaddr_in servaddr;
 
@@ -82,21 +84,21 @@ HTTPClientReceiver::Listener::Listener(HTTPClientReceiver* receiver, const std::
 
 	// Create listen socket
 	if ((_sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-		cerr << "Error creating listening socket: %s" << strerror(errno) << endl;
+		LOG(error) << "Error creating listening socket: %s" << strerror(errno) << endl;
 		_sock = -1;
 		return;
 	}
 
 	// Set remote address (FIXME: always localhost)
 	if (inet_aton("127.0.0.1", &servaddr.sin_addr) <= 0) {
-		cerr << "Invalid remote IP address" << endl;
+		LOG(error) << "Invalid remote IP address" << endl;
 		_sock = -1;
 		return;
 	}
 
 	// Connect to server
 	if (connect(_sock, (struct sockaddr*)&servaddr, sizeof(servaddr)) < 0) {
-		cerr << "Error calling connect: " << strerror(errno) << endl;
+		LOG(error) << "Error calling connect: " << strerror(errno) << endl;
 		_sock = -1;
 		return;
 	}
@@ -127,7 +129,7 @@ HTTPClientReceiver::close_session()
 void
 HTTPClientReceiver::update(const std::string& str)
 {
-	cout << _world->parser->parse_update(_world, _target.get(), str, _url);
+	LOG(info) << _world->parser->parse_update(_world, _target.get(), str, _url);
 }
 
 void
@@ -155,7 +157,7 @@ HTTPClientReceiver::Listener::_run()
 		}
 	}
 
-	cout << "HTTP listener finished" << endl;
+	LOG(info) << "HTTP listener finished" << endl;
 }
 
 
@@ -168,11 +170,11 @@ HTTPClientReceiver::message_callback(SoupSession* session, SoupMessage* msg, voi
 	HTTPClientReceiver* me = (HTTPClientReceiver*)ptr;
 	const string path = soup_message_get_uri(msg)->path;
 
-	/*cerr << "HTTP MESSAGE " << path << endl;
-	cerr << msg->response_body->data << endl;*/
+	/*LOG(debug) << path << endl
+			<< msg->response_body->data << endl;*/
 
 	if (msg->response_body->data == NULL) {
-		cerr << "EMPTY CLIENT MESSAGE" << endl;
+		LOG(error) << "Empty client message" << endl;
 		return;
 	}
 
@@ -181,7 +183,7 @@ HTTPClientReceiver::message_callback(SoupSession* session, SoupMessage* msg, voi
 
 	} else if (path == "/plugins") {
 		if (msg->response_body->data == NULL) {
-			cout << "ERROR: Empty response" << endl;
+			LOG(error) << "Empty response" << endl;
 		} else {
 			Glib::Mutex::Lock lock(me->_mutex);
 			me->_target->response_ok(0);
@@ -191,7 +193,7 @@ HTTPClientReceiver::message_callback(SoupSession* session, SoupMessage* msg, voi
 
 	} else if (path == "/patch") {
 		if (msg->response_body->data == NULL) {
-			cout << "ERROR: Empty response" << endl;
+			LOG(error) << "Empty response" << endl;
 		} else {
 			Glib::Mutex::Lock lock(me->_mutex);
 			me->_target->response_ok(0);
@@ -202,19 +204,19 @@ HTTPClientReceiver::message_callback(SoupSession* session, SoupMessage* msg, voi
 
 	} else if (path == "/stream") {
 		if (msg->response_body->data == NULL) {
-			cout << "ERROR: Empty response" << endl;
+			LOG(error) << "Empty response" << endl;
 		} else {
 			Glib::Mutex::Lock lock(me->_mutex);
 			string uri = string(soup_uri_to_string(soup_message_get_uri(msg), false));
 			uri = uri.substr(0, uri.find_last_of(":"));
 			uri += string(":") + msg->response_body->data;
-			cout << "Stream URI: " << uri << endl;
+			LOG(info) << "Stream URI: " << uri << endl;
 			me->_listener = boost::shared_ptr<Listener>(new Listener(me, uri));
 			me->_listener->start();
 		}
 
 	} else {
-		cerr << "UNKNOWN MESSAGE: " << path << endl;
+		LOG(error) << "Unknown message: " << path << endl;
 		me->update(msg->response_body->data);
 	}
 }

@@ -22,6 +22,8 @@ def set_options(opt):
 			help="Ingen module install directory [Default: PREFIX/lib/ingen]")
 	opt.add_option('--no-liblo', action='store_true', default=False, dest='no_liblo',
 			help="Do not build OSC via liblo support, even if liblo exists")
+	opt.add_option('--log-debug', action='store_true', default=False, dest='log_debug',
+			help="Print debugging output")
 
 def configure(conf):
 	autowaf.configure(conf)
@@ -64,6 +66,9 @@ def configure(conf):
 				conf.env['DATADIR'], 'ingen'))
 		conf.define('INGEN_MODULE_DIR', os.path.join(
 				conf.env['LIBDIR'], 'ingen'))
+	
+	if Options.options.log_debug:
+		conf.define('LOG_DEBUG', 1)
 
 	conf.write_config_header('ingen-config.h')
 

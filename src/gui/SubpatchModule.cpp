@@ -17,7 +17,6 @@
 
 #include "SubpatchModule.hpp"
 #include <cassert>
-#include <iostream>
 #include "interface/EngineInterface.hpp"
 #include "client/PatchModel.hpp"
 #include "App.hpp"
@@ -56,7 +55,6 @@ SubpatchModule::on_double_click(GdkEventButton* event)
 }
 
 
-
 /** Browse to this patch in current (parent's) window
  * (unless an existing window is displaying it)
  */
@@ -72,15 +70,6 @@ SubpatchModule::browse_to_patch()
 		: NULL );
 
 	App::instance().window_factory()->present_patch(_patch, preferred);
-}
-
-
-
-void
-SubpatchModule::show_dialog()
-{
-	std::cerr << "FIXME: dialog" << std::endl;
-	//m_patch->show_control_window();
 }
 
 

@@ -19,7 +19,6 @@
 #define OBJECTMODEL_H
 
 #include <cstdlib>
-#include <iostream>
 #include <algorithm>
 #include <cassert>
 #include <boost/utility.hpp>

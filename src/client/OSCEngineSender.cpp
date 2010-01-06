@@ -15,13 +15,15 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <iostream>
+#include "raul/log.hpp"
 #include "raul/AtomLiblo.hpp"
 #include "raul/Path.hpp"
 #include "OSCEngineSender.hpp"
 #include "common/interface/Patch.hpp"
 #include "common/interface/Port.hpp"
 #include "common/interface/Plugin.hpp"
+
+#define LOG(s) s << "[OSCEngineSender] "
 
 using namespace std;
 using namespace Raul;
@@ -65,11 +67,11 @@ OSCEngineSender::attach(int32_t ping_id, bool block)
 		_address = lo_address_new_from_url(_engine_url.c_str());
 
 	if (_address == NULL) {
-		cerr << "Aborting: Unable to connect to " << _engine_url << endl;
+		LOG(error) << "Unable to connect to " << _engine_url << endl;
 		exit(EXIT_FAILURE);
 	}
 
-	cout << "[OSCEngineSender] Attempting to contact engine at " << _engine_url << " ..." << endl;
+	LOG(info) << "Attempting to contact engine at " << _engine_url << " ..." << endl;
 
 	_id = ping_id;
 	this->ping();

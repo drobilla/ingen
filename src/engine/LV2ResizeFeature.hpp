@@ -18,12 +18,13 @@
 #ifndef LV2_RESIZE_FEATURE_H
 #define LV2_RESIZE_FEATURE_H
 
-#include <iostream>
+#include "raul/log.hpp"
 #include "shared/LV2Features.hpp"
 #include "NodeImpl.hpp"
 #include "PortImpl.hpp"
 
 using namespace std;
+using namespace Raul;
 
 namespace Ingen {
 
@@ -34,7 +35,7 @@ struct ResizeFeature : public Shared::LV2Features::Feature {
 		NodeImpl* node = (NodeImpl*)data;
 		PortImpl* port = node->port_impl(index);
 		if (port->context() == Context::MESSAGE) {
-			cout << "Resizing " << port->path() << " to " << size << " bytes" << endl;
+			info << "Resizing " << port->path() << " to " << size << " bytes" << endl;
 			port->buffer(0)->resize(size);
 			port->connect_buffers();
 			return true;

@@ -15,7 +15,6 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <iostream>
 #include "module/Module.hpp"
 #include "module/World.hpp"
 #include "OSCEngineReceiver.hpp"
@@ -27,10 +26,10 @@ using namespace Ingen;
 
 struct IngenOSCModule : public Ingen::Shared::Module {
 	void load(Ingen::Shared::World* world) {
-		cout << "FIXME: OSC port" << endl;
-		uint16_t port = 16180;
 		SharedPtr<OSCEngineReceiver> interface(
-				new Ingen::OSCEngineReceiver(*world->local_engine.get(), event_queue_size, port));
+				new Ingen::OSCEngineReceiver(*world->local_engine.get(),
+					event_queue_size,
+					world->conf->option("engine-port").get_int32()));
 		world->local_engine->add_event_source(interface);
 	}
 };

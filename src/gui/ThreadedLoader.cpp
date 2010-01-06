@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <iostream>
 #include <string>
+#include "raul/log.hpp"
 #include "module/World.hpp"
 #include "module/Module.hpp"
 #include "module/ingen_module.hpp"
@@ -40,7 +40,7 @@ ThreadedLoader::ThreadedLoader(SharedPtr<EngineInterface> engine)
 	if (parser())
 		start();
 	else
-		cerr << "WARNING: Failed to load ingen_serialisation module, load disabled." << endl;
+		warn << "Failed to load ingen_serialisation module, load disabled." << endl;
 }
 
 

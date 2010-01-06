@@ -15,6 +15,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include "raul/log.hpp"
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
 #include "events/Disconnect.hpp"
@@ -29,6 +30,7 @@
 #include "EngineStore.hpp"
 
 using namespace std;
+using namespace Raul;
 
 namespace Ingen {
 namespace Events {
@@ -175,8 +177,8 @@ Disconnect::execute(ProcessContext& context)
 			assert(_patch_connection);
 
 			if (port_connection->elem() != _patch_connection->elem()) {
-				cerr << "ERROR: Corrupt connections:" << endl;
-				cerr << "\t" << port_connection->elem() << ": "
+				error << "Corrupt connections:" << endl
+					<< "\t" << port_connection->elem() << ": "
 					<< port_connection->elem()->src_port_path()
 					<< " -> " << port_connection->elem()->dst_port_path() << endl
 					<< "!=" << endl
@@ -207,10 +209,8 @@ Disconnect::post_process()
 		_responder->respond_ok();
 		_engine.broadcaster()->send_disconnection(_src_port->path(), _dst_port->path());
 	} else {
-		// FIXME: better error messages
 		string msg = "Unable to disconnect ";
 		msg.append(_src_port_path.str() + " -> " + _dst_port_path.str());
-		cerr << "DISCONNECTION ERROR " << (unsigned)_error << endl;
 		_responder->respond_error(msg);
 	}
 }

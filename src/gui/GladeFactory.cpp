@@ -16,12 +16,13 @@
  */
 
 #include "GladeFactory.hpp"
-#include <iostream>
 #include <fstream>
+#include "raul/log.hpp"
 #include "ingen-config.h"
 #include "shared/runtime_paths.hpp"
 
 using namespace std;
+using namespace Raul;
 
 namespace Ingen {
 namespace GUI {
@@ -41,12 +42,12 @@ GladeFactory::find_glade_file()
 
 	ifstream fs(glade_filename.c_str());
 	if (fs.fail()) {
-		cerr << "Unable to find ingen_gui.glade in " << INGEN_DATA_DIR << endl;
+		error << "[GladeFactory] Unable to find ingen_gui.glade in " << INGEN_DATA_DIR << endl;
 		throw;
 	}
 
 	fs.close();
-	cerr << "[GladeFactory] Loading widgets from " << glade_filename.c_str() << endl;
+	info << "[GladeFactory] Loading widgets from " << glade_filename.c_str() << endl;
 }
 
 
@@ -62,7 +63,7 @@ GladeFactory::new_glade_reference(const string& toplevel_widget)
 		else
 			return Gnome::Glade::Xml::create(glade_filename, toplevel_widget.c_str());
 	} catch (const Gnome::Glade::XmlError& ex) {
-		cerr << ex.what() << endl;
+		error << "[GladeFactory] " << ex.what() << endl;
 		throw ex;
 	}
 }

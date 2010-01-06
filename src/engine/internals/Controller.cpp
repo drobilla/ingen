@@ -138,6 +138,6 @@ ControllerNode::control(ProcessContext& context, uint8_t control_num, uint8_t va
 }
 
 
-} // namespace Ingen
 } // namespace Internals
+} // namespace Ingen
 

@@ -15,9 +15,9 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <iostream>
 #include <cassert>
 #include <stdlib.h>
+#include "raul/log.hpp"
 #include "raul/SharedPtr.hpp"
 #include "object.lv2/object.h"
 #include "ingen-config.h"
@@ -27,6 +27,7 @@
 #include "LV2URIMap.hpp"
 
 using namespace std;
+using namespace Raul;
 
 /* TODO: Be sure these functions are vectorized by GCC when its vectorizer
  * stops sucking.  Probably a good idea to inline them as well */
@@ -60,8 +61,7 @@ AudioBuffer::AudioBuffer(BufferFactory& factory, Shared::PortType type, size_t s
 		body->elem_count = size / sizeof(Sample);
 		body->elem_type = 0;//map->float_type;
 	}
-
-	/*cout << "Created Audio Buffer" << endl
+	/*debug << "Created Audio Buffer" << endl
 		<< "\tobject @ " << (void*)object() << endl
 		<< "\tbody @   " << (void*)object()->body
 		<< "\t(offset " << (char*)object()->body - (char*)object() << ")" << endl

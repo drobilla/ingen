@@ -18,9 +18,9 @@
 #include "Configuration.hpp"
 #include <cstdlib>
 #include <cassert>
-#include <iostream>
 #include <fstream>
 #include <map>
+#include "raul/log.hpp"
 #include "client/PortModel.hpp"
 #include "client/PluginModel.hpp"
 #include "serialisation/Parser.hpp"
@@ -29,6 +29,7 @@
 #include "Port.hpp"
 
 using namespace std;
+using namespace Raul;
 
 namespace Ingen {
 namespace GUI {
@@ -102,7 +103,7 @@ Configuration::get_port_color(const PortModel* p)
 		return _event_port_color;
 	}
 
-	cerr << "[Configuration] Unknown port type " << p->type().uri()
+	error << "[Configuration] Unknown port type " << p->type().uri()
 		<< ", port will appear black." << endl;
 
 	return 0x000000FF;

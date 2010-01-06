@@ -15,7 +15,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <iostream>
+#include "raul/log.hpp"
 #include "event.lv2/event-helpers.h"
 #include "object.lv2/object.h"
 #include "shared/LV2Features.hpp"
@@ -40,8 +40,7 @@ lv2_ui_write(LV2UI_Controller controller,
              uint32_t         format,
              const void*      buffer)
 {
-	/*
-	cerr << "lv2_ui_write (format " << format << "):" << endl;
+	/*fprintf(stderr, "lv2_ui_write (format %u):\n", format);
 	fprintf(stderr, "RAW:\n");
 	for (uint32_t i=0; i < buffer_size; ++i) {
 		unsigned char byte = ((unsigned char*)buffer)[i];
@@ -50,8 +49,7 @@ lv2_ui_write(LV2UI_Controller controller,
 		else
 			fprintf(stderr, "%2X ", ((unsigned char*)buffer)[i]);
 	}
-	fprintf(stderr, "\n");
-	*/
+	fprintf(stderr, "\n");*/
 
 	PluginUI* ui = (PluginUI*)controller;
 
@@ -80,7 +78,7 @@ lv2_ui_write(LV2UI_Controller controller,
 				ui->world()->engine->set_port_value(port->path(),
 					Atom("lv2midi:MidiEvent", ev->size, data));
 			} else {
-				cerr << "WARNING: Unable to send event type " << ev->type <<
+				warn << "Unable to send event type " << ev->type <<
 					" over OSC, ignoring event" << endl;
 			}
 
@@ -94,7 +92,7 @@ lv2_ui_write(LV2UI_Controller controller,
 		ui->world()->engine->set_port_value(port->path(), val);
 
 	} else {
-		cerr << "WARNING: Unknown value format " << format
+		warn << "Unknown value format " << format
 			<< ", either plugin " << ui->node()->plugin()->uri() << " is broken"
 			<< " or this is an Ingen bug" << endl;
 	}
@@ -142,7 +140,7 @@ PluginUI::create(Ingen::Shared::World* world,
 	}
 
 	if (ui) {
-		cout << "Found GTK Plugin UI: " << slv2_ui_get_uri(ui) << endl;
+		info << "Found GTK Plugin UI: " << slv2_ui_get_uri(ui) << endl;
 		ret = SharedPtr<PluginUI>(new PluginUI(world, node));
 		ret->_features = world->lv2_features->lv2_features(node.get());
 		SLV2UIInstance inst = slv2_ui_instantiate(
@@ -151,7 +149,7 @@ PluginUI::create(Ingen::Shared::World* world,
 		if (inst) {
 			ret->set_instance(inst);
 		} else {
-			cerr << "ERROR: Failed to instantiate Plugin UI" << endl;
+			error << "Failed to instantiate Plugin UI" << endl;
 			ret = SharedPtr<PluginUI>();
 		}
 	}

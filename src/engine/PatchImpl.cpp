@@ -17,7 +17,7 @@
 
 #include <cassert>
 #include <cmath>
-#include <iostream>
+#include "raul/log.hpp"
 #include "ThreadManager.hpp"
 #include "NodeImpl.hpp"
 #include "PatchImpl.hpp"
@@ -310,7 +310,7 @@ PatchImpl::remove_connection(const PortImpl* src_port, const PortImpl* dst_port)
 	}
 
 	if ( ! found)
-		cerr << "WARNING: [PatchImpl::remove_connection] Connection not found" << endl;
+		error << "[PatchImpl::remove_connection] Connection not found" << endl;
 
 	return connection;
 }
@@ -348,7 +348,7 @@ PortImpl*
 PatchImpl::create_port(BufferFactory& bufs, const string& name, PortType type, size_t buffer_size, bool is_output)
 {
 	if (type == PortType::UNKNOWN) {
-		cerr << "[PatchImpl::create_port] Unknown port type " << type.uri() << endl;
+		error << "[PatchImpl::create_port] Unknown port type " << type.uri() << endl;
 		return NULL;
 	}
 
@@ -388,7 +388,7 @@ PatchImpl::remove_port(const string& symbol)
 	}
 
 	if ( ! found)
-		cerr << "WARNING: [PatchImpl::remove_port] Port not found!" << endl;
+		error << "[PatchImpl::remove_port] Port not found!" << endl;
 
 	return ret;
 }
@@ -445,8 +445,6 @@ PatchImpl::compile() const
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
 
-	//cerr << "*********** Compiling " << path() << endl;
-
 	CompiledPatch* const compiled_patch = new CompiledPatch();//_nodes.size());
 
 	for (Nodes::const_iterator i = _nodes.begin(); i != _nodes.end(); ++i)
@@ -466,12 +464,14 @@ PatchImpl::compile() const
 			compile_recursive(node, compiled_patch);
 	}
 
-	/*cerr << "----------------------------------------\n";
+#ifdef LOG_DEBUG
+	debug << path() << " compiled {" << endl;
 	for (size_t i=0; i < process_order->size(); ++i) {
 		assert(process_order->at(i));
-		cerr << process_order->at(i)->path() << endl;
+		debug << "    " << process_order->at(i)->path() << endl;
 	}
-	cerr << "----------------------------------------\n";*/
+	debug << "}" << endl;
+#endif
 
 	assert(compiled_patch->size() == _nodes.size());
 

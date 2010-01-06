@@ -20,7 +20,6 @@
 
 #include <vector>
 #include <string>
-#include <iostream>
 #include <utility> // for pair<>
 #include <sigc++/sigc++.h>
 #include <gtkmm.h>

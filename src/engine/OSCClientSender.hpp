@@ -20,7 +20,6 @@
 
 #include <cassert>
 #include <string>
-#include <iostream>
 #include <lo/lo.h>
 #include <pthread.h>
 #include "interface/ClientInterface.hpp"

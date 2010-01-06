@@ -15,14 +15,13 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <iostream>
 #include <libsoup/soup.h>
+#include "raul/log.hpp"
 #include "raul/AtomRDF.hpp"
 #include "redlandmm/Model.hpp"
 #include "module/World.hpp"
 #include "HTTPEngineSender.hpp"
 #include "HTTPClientReceiver.hpp"
-
 
 using namespace std;
 using namespace Raul;
@@ -229,7 +228,7 @@ HTTPEngineSender::get(const URI& uri)
 void
 HTTPEngineSender::request_property(const URI& object_path, const URI& key)
 {
-	cerr << "HTTP REQUEST PROPERTY" << endl;
+	warn << "TODO: HTTP request property" << endl;
 }
 
 

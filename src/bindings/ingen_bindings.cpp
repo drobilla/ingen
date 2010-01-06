@@ -1,5 +1,5 @@
-#include <iostream>
 #include "python2.4/Python.h"
+#include "raul/log.hpp"
 #include "ingen_bindings.hpp"
 #include "engine/Engine.hpp"
 #include "module/World.hpp"
@@ -7,25 +7,24 @@
 bool
 run(Ingen::Shared::World* world, const char* filename)
 {
-    ingen_world = world;
+	ingen_world = world;
 
-    FILE* fd = fopen(filename, "r");
-    if (fd) {
-        cerr << "Executing script " << filename << endl;
-        Py_Initialize();
-        PyRun_SimpleFile(fd, filename);
-        Py_Finalize();
-        return true;
-    } else {
-        cerr << "Unable to open script " << filename << endl;
-        return false;
-    }
+	FILE* fd = fopen(filename, "r");
+	if (fd) {
+		info << "Executing script " << filename << endl;
+		Py_Initialize();
+		PyRun_SimpleFile(fd, filename);
+		Py_Finalize();
+		return true;
+	} else {
+		error << "Unable to open script " << filename << endl;
+		return false;
+	}
 }
 
 struct IngenBindingsModule : public Ingen::Shared::Module {
 	void load(Ingen::Shared::World* world) {
 		world->script_runners.insert(make_pair("application/x-python", &run));
-		//lib->make_resident();
 	}
 };
 
@@ -44,8 +43,8 @@ ingen_module_load() {
 void
 script_iteration(Ingen::Shared::World* world)
 {
-    if (world->local_engine)
-        world->local_engine->main_iteration();
+	if (world->local_engine)
+		world->local_engine->main_iteration();
 }
 
 } // extern "C"

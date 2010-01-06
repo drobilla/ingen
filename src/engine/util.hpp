@@ -18,10 +18,10 @@
 #ifndef UTIL_HPP
 #define UTIL_HPP
 
-#include "ingen-config.h"
-#include "raul/Path.hpp"
-#include <iostream>
 #include <cstdlib>
+#include "raul/log.hpp"
+#include "raul/Path.hpp"
+#include "ingen-config.h"
 
 #include <fenv.h>
 #ifdef __SSE__
@@ -63,11 +63,11 @@ set_denormal_flags()
 		}
 		if (d1 & 1<<26) { /* bit 26, SSE2 support */
 			_mm_setcsr(_mm_getcsr() | 0x8040); // set DAZ and FZ bits of MXCSR
-			//cerr << "Set SSE denormal fix flag." << endl;
+			Raul::info << "Set SSE denormal fix flag" << endl;
 		}
 	} else {
-		std::cerr << "This code has been built with SSE support, but your processor does"
-			<< " not support the SSE instruction set." << std::endl << "Exiting." << std::endl;
+		Raul::warn << "This code has been built with SSE support, but your processor does"
+			<< " not support the SSE instruction set, exiting." << std::endl;
 		exit(EXIT_FAILURE);
 	}
 #endif

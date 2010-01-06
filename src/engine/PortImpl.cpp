@@ -15,7 +15,6 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <iostream>
 #include "raul/Array.hpp"
 #include "raul/Maid.hpp"
 #include "contexts.lv2/contexts.h"

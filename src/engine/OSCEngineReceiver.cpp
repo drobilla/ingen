@@ -17,11 +17,11 @@
 
 //#define ENABLE_AVAHI 1
 
-#include <iostream>
 #include <cstdlib>
 #include <string>
 #include <lo/lo.h>
 #include "ingen-config.h"
+#include "raul/log.hpp"
 #include "raul/AtomLiblo.hpp"
 #include "raul/SharedPtr.hpp"
 #include "interface/ClientInterface.hpp"
@@ -31,6 +31,8 @@
 #include "OSCEngineReceiver.hpp"
 #include "QueuedEventSource.hpp"
 #include "ThreadManager.hpp"
+
+#define LOG(s) s << "[OSCEngineReceiver] "
 
 using namespace std;
 using namespace Raul;
@@ -66,11 +68,11 @@ OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t
 #endif
 
 	if (_server == NULL) {
-		cerr << "[OSC] Could not start OSC server.  Aborting." << endl;
+		LOG(error) << "Could not start OSC server.  Aborting." << endl;
 		exit(EXIT_FAILURE);
 	} else {
 		char* lo_url = lo_server_get_url(_server);
-		cout << "[OSC] Started OSC server at " << lo_url << endl;
+		LOG(info) << "Started OSC server at " << lo_url << endl;
 		free(lo_url);
 	}
 
@@ -163,12 +165,6 @@ OSCEngineReceiver::ReceiveThread::_run()
 	 * they all get executed in the same cycle */
 
 	while (true) {
-		assert(_receiver._server);
-		/*if ( ! _server) {
-			cout << "[OSCEngineReceiver] Server is NULL, exiting" << endl;
-			break;
-		}*/
-
 		// Wait on a message and enqueue it
 		lo_server_recv(_receiver._server);
 
@@ -234,7 +230,7 @@ OSCEngineReceiver::set_response_address_cb(const char* path, const char* types, 
 void
 OSCEngineReceiver::error_cb(int num, const char* msg, const char* path)
 {
-	cerr << "liblo server error " << num << " in path \"" << "\" - " << msg << endl;
+	error << "liblo server error " << num << " in path \"" << "\" - " << msg << endl;
 }
 
 
@@ -249,7 +245,7 @@ OSCEngineReceiver::_ping_cb(const char* path, const char* types, lo_arg** argv, 
 {
 	const lo_address addr = lo_message_get_source(msg);
 	if (lo_send(addr, "/ingen/ok", "i", argv[0]->i) < 0)
-		cerr << "WARNING: Unable to send response: " << lo_address_errstr(addr) << endl;
+		warn << "Unable to send response (" << lo_address_errstr(addr) << ")" << endl;
 	return 0;
 }
 
@@ -570,7 +566,7 @@ OSCEngineReceiver::_note_on_cb(const char* path, const char* types, lo_arg** arg
 	const uint8_t note_num    =  argv[2]->i;
 	const uint8_t velocity    =  argv[3]->i;
 	*/
-	cerr << "FIXME: OSC note on\n";
+	warn << "TODO: OSC note on" << endl;
 	//note_on(node_path, note_num, velocity);
 	return 0;
 }
@@ -591,7 +587,7 @@ OSCEngineReceiver::_note_off_cb(const char* path, const char* types, lo_arg** ar
 	const char* patch_path  = &argv[1]->s;
 	const uint8_t note_num    =  argv[2]->i;
 	*/
-	cerr << "FIXME: OSC note off\n";
+	warn << "TODO: OSC note off" << endl;
 	//note_off(patch_path, note_num);
 	return 0;
 }
@@ -611,7 +607,7 @@ OSCEngineReceiver::_all_notes_off_cb(const char* path, const char* types, lo_arg
 
 	const char* patch_path  = &argv[1]->s;
 	*/
-	cerr << "FIXME: OSC all notes off\n";
+	warn << "TODO: OSC all notes off" << endl;
 	//all_notes_off(patch_path);
 	return 0;
 }
@@ -734,7 +730,7 @@ OSCEngineReceiver::unknown_cb(const char* path, const char* types, lo_arg** argv
 	const lo_address addr = lo_message_get_source(msg);
 	char* const      url  = lo_address_get_url(addr);
 
-	cerr << "Unknown command " << path << " (" << types << "), sending error.\n";
+	warn << "Unknown OSC command " << path << " (" << types << ")" << endl;
 
 	string error_msg = "Unknown command: ";
 	error_msg.append(path).append(" ").append(types);

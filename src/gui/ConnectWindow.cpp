@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <sys/time.h>
 #include <sys/resource.h>
+#include "raul/log.hpp"
 #include "raul/Process.hpp"
 #include "ingen-config.h"
 #include "interface/EngineInterface.hpp"
@@ -48,6 +49,7 @@
 using Ingen::QueuedEngineInterface;
 using namespace Ingen::Client;
 using namespace std;
+using namespace Raul;
 
 namespace Raul { class Deletable; }
 
@@ -177,8 +179,6 @@ ConnectWindow::connect(bool existing)
 		if (existing)
 			uri = world->engine->uri().str();
 
-		cout << "CONNECT EXISTING " << existing << " URI " << uri << endl;
-
 		// Create client-side listener
 		SharedPtr<ThreadedSigClientInterface> tsci(new ThreadedSigClientInterface(1024));
 		SharedPtr<Raul::Deletable> client;
@@ -236,10 +236,10 @@ ConnectWindow::connect(bool existing)
 					sigc::mem_fun(this, &ConnectWindow::gtk_callback), 40);
 
 		} else {
-			cerr << "Failed to launch ingen process." << endl;
+			error << "Failed to launch ingen process." << endl;
 		}
 #else
-		cerr << "No OSC support" << endl;
+		error << "No OSC support" << endl;
 #endif
 
 	} else

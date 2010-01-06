@@ -15,13 +15,15 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "OSCClientReceiver.hpp"
-#include "raul/AtomLiblo.hpp"
 #include <list>
 #include <cassert>
 #include <cstring>
-#include <iostream>
 #include <sstream>
+#include "raul/log.hpp"
+#include "raul/AtomLiblo.hpp"
+#include "OSCClientReceiver.hpp"
+
+#define LOG(s) s << "[OSCClientReceiver] "
 
 using namespace std;
 using namespace Raul;
@@ -66,10 +68,10 @@ OSCClientReceiver::start(bool dump_osc)
 	}
 
 	if (_st == NULL) {
-		cerr << "[OSCClientReceiver] Could not start OSC listener.  Aborting." << endl;
+		LOG(error) << "Could not start OSC listener.  Aborting." << endl;
 		exit(EXIT_FAILURE);
 	} else {
-		cout << "[OSCClientReceiver] Started OSC listener on port " << lo_server_thread_get_port(_st) << endl;
+		LOG(info) << "Started OSC listener on port " << lo_server_thread_get_port(_st) << endl;
 	}
 
 	// Print all incoming messages
@@ -121,7 +123,7 @@ OSCClientReceiver::generic_cb(const char* path, const char* types, lo_arg** argv
 void
 OSCClientReceiver::lo_error_cb(int num, const char* msg, const char* path)
 {
-	cerr << "Got error from server: " << msg << endl;
+	LOG(error) << "Got error from server: " << msg << endl;
 }
 
 
@@ -132,7 +134,7 @@ OSCClientReceiver::unknown_cb(const char* path, const char* types, lo_arg** argv
 	std::string msg = "Received unknown OSC message: ";
 	msg += path;
 
-	cerr << msg << endl;
+	LOG(error) << msg << endl;
 
 	return 0;
 }

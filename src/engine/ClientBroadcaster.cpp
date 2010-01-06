@@ -16,8 +16,8 @@
  */
 
 #include <cassert>
-#include <iostream>
 #include <unistd.h>
+#include "raul/log.hpp"
 #include "interface/ClientInterface.hpp"
 #include "ClientBroadcaster.hpp"
 #include "PluginImpl.hpp"
@@ -25,6 +25,8 @@
 #include "EngineStore.hpp"
 #include "ObjectSender.hpp"
 #include "util.hpp"
+
+#define LOG(s) s << "[ClientBroadcaster] "
 
 using namespace std;
 using namespace Raul;
@@ -42,9 +44,9 @@ ClientBroadcaster::register_client(const URI& uri, ClientInterface* client)
 
 	if (i == _clients.end()) {
 		_clients[uri] = client;
-		cout << "[ClientBroadcaster] Registered client: " << uri << endl;
+		LOG(info) << "Registered client: " << uri << endl;
 	} else {
-		cout << "[ClientBroadcaster] Client already registered: " << uri << endl;
+		LOG(warn) << "Client already registered: " << uri << endl;
 	}
 }
 
@@ -59,9 +61,9 @@ ClientBroadcaster::unregister_client(const URI& uri)
 	size_t erased = _clients.erase(uri);
 
 	if (erased > 0)
-		cout << "Unregistered client: " << uri << endl;
+		LOG(info) << "Unregistered client: " << uri << endl;
 	else
-		cout << "Failed to find client to unregister: " << uri << endl;
+		LOG(warn) << "Failed to find client to unregister: " << uri << endl;
 
 	return (erased > 0);
 }

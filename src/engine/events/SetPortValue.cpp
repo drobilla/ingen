@@ -16,6 +16,7 @@
  */
 
 #include <sstream>
+#include "raul/log.hpp"
 #include "event.lv2/event.h"
 #include "shared/LV2URIMap.hpp"
 #include "shared/LV2Features.hpp"
@@ -207,15 +208,15 @@ SetPortValue::apply(Context& context)
 		if (obuf) {
 			obuf->object()->size = obuf->size() - sizeof(LV2_Object);
 			if (LV2Object::from_atom(_engine.world(), _value, obuf->object())) {
-				cout << "Converted atom " << _value << " :: " << obuf->object()->type
+				debug << "Converted atom " << _value << " :: " << obuf->object()->type
 					<< " * " << obuf->object()->size << " @ " << obuf->object() << endl;
 				return;
 			} else {
-				cerr << "WARNING: Failed to convert atom to LV2 object" << endl;
+				warn << "Failed to convert atom to LV2 object" << endl;
 			}
 		}
 
-		cerr << "WARNING: Unknown value type " << (int)_value.type() << endl;
+		warn << "Unknown value type " << (int)_value.type() << endl;
 	}
 }
 
@@ -232,7 +233,9 @@ SetPortValue::post_process()
 		_engine.broadcaster()->send_port_value(_port_path, _value);
 		break;
 	case TYPE_MISMATCH:
-		_responder->respond_error("type mismatch");
+		ss << "Illegal value type " << _value.type()
+			<< " for port " << _port_path << endl;
+		_responder->respond_error(ss.str());
 		break;
 	case ILLEGAL_VOICE:
 		ss << "Illegal voice number " << _voice_num;

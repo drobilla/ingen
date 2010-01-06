@@ -99,7 +99,7 @@ LV2Plugin::library_path() const
 		if (v) {
 			_library_path = slv2_uri_to_path(slv2_value_as_uri(v));
 		} else {
-			cerr << "WARNING: Plugin " << uri() << " has no library path" << endl;
+			warn << uri() << " has no library path" << endl;
 			return empty_string;
 		}
 	}

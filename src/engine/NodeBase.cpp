@@ -17,7 +17,6 @@
 
 #include "NodeBase.hpp"
 #include <cassert>
-#include <iostream>
 #include <stdint.h>
 #include "raul/List.hpp"
 #include "raul/Array.hpp"
@@ -154,7 +153,6 @@ NodeBase::set_buffer_size(BufferFactory& bufs, size_t size)
 void
 NodeBase::reset_input_ready()
 {
-	//cout << path() << " RESET" << endl;
 	_n_inputs_ready = 0;
 	_process_lock = 0;
 	_input_ready.reset(0);
@@ -181,14 +179,8 @@ NodeBase::wait_for_input(size_t num_providers)
 	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
 	assert(_process_lock.get() == 1);
 
-	while ((unsigned)_n_inputs_ready.get() < num_providers) {
-		//cout << path() << " WAITING " << _n_inputs_ready.get() << endl;
+	while ((unsigned)_n_inputs_ready.get() < num_providers)
 		_input_ready.wait();
-		//cout << path() << " CAUGHT SIGNAL" << endl;
-		//++_n_inputs_ready;
-	}
-
-	//cout << path() << " READY" << endl;
 }
 
 
@@ -196,7 +188,6 @@ void
 NodeBase::signal_input_ready()
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
-	//cout << path() << " SIGNAL" << endl;
 	++_n_inputs_ready;
 	_input_ready.post();
 }

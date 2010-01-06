@@ -15,9 +15,9 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <iostream>
 #include <cstdlib>
 #include <jack/midiport.h>
+#include "raul/log.hpp"
 #include "raul/List.hpp"
 #include "shared/LV2Features.hpp"
 #include "shared/LV2URIMap.hpp"
@@ -39,6 +39,8 @@
 #include "ingen-config.h"
 #include "tuning.hpp"
 #include "util.hpp"
+
+#define LOG(s) s << "[JackDriver] "
 
 using namespace std;
 using namespace Raul;
@@ -83,7 +85,7 @@ JackPort::create()
 			0);
 
 	if (_jack_port == NULL) {
-		cerr << "[JackPort] ERROR: Failed to register port " << _patch_port->path() << endl;
+		error << "[JackPort] Failed to register port " << _patch_port->path() << endl;
 		throw JackDriver::PortRegistrationFailedException();
 	}
 }
@@ -94,7 +96,7 @@ JackPort::destroy()
 {
 	assert(_jack_port);
 	if (jack_port_unregister(_driver->jack_client(), _jack_port))
-		cerr << "[JackMidiPort] ERROR: Unable to unregister port" << endl;
+		error << "[JackPort] Unable to unregister port" << endl;
 	_jack_port = NULL;
 }
 
@@ -134,7 +136,7 @@ JackPort::pre_process(ProcessContext& context)
 			jack_midi_event_get(&ev, jack_buf, i);
 
 			if (!patch_buf->append(ev.time, 0, _driver->_midi_event_type, ev.size, ev.buffer))
-				cerr << "WARNING: Failed to write MIDI to port buffer, event(s) lost!" << endl;
+				LOG(warn) << "Failed to write MIDI to port buffer, event(s) lost!" << endl;
 		}
 	}
 }
@@ -226,8 +228,7 @@ JackDriver::attach(const std::string& server_name,
 			_client = jack_client_open(client_name.c_str(),
 					JackServerName, NULL, server_name.c_str());
 			if (_client)
-				cerr << "[JackDriver] Connected to JACK server '" <<
-					server_name << "'" << endl;
+				LOG(info) << "Connected to JACK server '" << server_name << "'" << endl;
 		}
 
 		// Either server name not specified, or supplied server name does not exist
@@ -236,12 +237,12 @@ JackDriver::attach(const std::string& server_name,
 			_client = jack_client_open(client_name.c_str(), JackNullOption, NULL);
 
 			if (_client)
-				cerr << "[JackDriver] Connected to default JACK server." << endl;
+				LOG(info) << "Connected to default JACK server." << endl;
 		}
 
 		// Still failed
 		if (!_client) {
-			cerr << "[JackDriver] Unable to connect to Jack.  Exiting." << endl;
+			LOG(error) << "Unable to connect to Jack.  Exiting." << endl;
 			return false;
 		}
 	} else {
@@ -270,7 +271,7 @@ void
 JackDriver::activate()
 {
 	if (_is_activated) {
-		cerr << "[JackDriver] Jack driver already activated." << endl;
+		LOG(warn) << "Jack driver already activated." << endl;
 		return;
 	}
 
@@ -283,10 +284,10 @@ JackDriver::activate()
 	_is_activated = true;
 
 	if (jack_activate(_client)) {
-		cerr << "[JackDriver] Could not activate Jack client, aborting." << endl;
+		LOG(error) << "Could not activate Jack client, aborting." << endl;
 		exit(EXIT_FAILURE);
 	} else {
-		cout << "[JackDriver] Activated Jack client." << endl;
+		LOG(info) << "Activated Jack client." << endl;
 	}
 }
 
@@ -310,7 +311,7 @@ JackDriver::deactivate()
 		}
 
 		_jack_thread->stop();
-		cout << "[JackDriver] Deactivated Jack client." << endl;
+		LOG(info) << "Deactivated Jack client." << endl;
 	}
 }
 
@@ -348,7 +349,7 @@ JackDriver::remove_port(const Path& path)
 		if ((*i)->patch_port()->path() == path)
 			return (Raul::List<DriverPort*>::Node*)(_ports.erase(i));
 
-	cerr << "[JackDriver::remove_port] WARNING: Unable to find port " << path << endl;
+	LOG(warn) << "Unable to find port " << path << endl;
 	return NULL;
 }
 
@@ -466,7 +467,7 @@ JackDriver::_thread_init_cb()
 void
 JackDriver::_shutdown_cb()
 {
-	cout << "[JackDriver] Jack shutdown.  Exiting." << endl;
+	LOG(info) << "Jack shutdown.  Exiting." << endl;
 	_is_activated = false;
 	delete _jack_thread;
 	_jack_thread = NULL;
@@ -478,7 +479,7 @@ int
 JackDriver::_sample_rate_cb(jack_nframes_t nframes)
 {
 	if (_is_activated) {
-		cerr << "[JackDriver] On-the-fly sample rate changing not supported (yet).  Aborting." << endl;
+		LOG(error) << "On-the-fly sample rate changing not supported (yet).  Aborting." << endl;
 		exit(EXIT_FAILURE);
 	} else {
 		_sample_rate = nframes;

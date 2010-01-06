@@ -29,7 +29,6 @@
 #include <boost/utility.hpp>
 #include <dlfcn.h>
 #include <string>
-#include <iostream>
 #include "slv2/slv2.h"
 #include "raul/SharedPtr.hpp"
 #include "PluginImpl.hpp"

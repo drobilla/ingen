@@ -19,7 +19,6 @@
 #define PLUGINMODEL_H
 
 #include "ingen-config.h"
-#include <iostream>
 #include "raul/SharedPtr.hpp"
 #include "redlandmm/World.hpp"
 #ifdef HAVE_SLV2

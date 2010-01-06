@@ -15,11 +15,11 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <cmath>
+#include "raul/log.hpp"
 #include "raul/Array.hpp"
 #include "raul/Maid.hpp"
 #include "raul/midi_events.h"
-#include <cmath>
-#include <iostream>
 #include "internals/Note.hpp"
 #include "AudioBuffer.hpp"
 #include "Driver.hpp"
@@ -30,6 +30,9 @@
 #include "PatchImpl.hpp"
 #include "ProcessContext.hpp"
 #include "util.hpp"
+#include "ingen-config.h"
+
+#define LOG(s) s << "[NoteNode] "
 
 using namespace std;
 
@@ -132,10 +135,12 @@ NoteNode::process(ProcessContext& context)
 	for (midi_in->rewind(); midi_in->get_event(&frames, &subframes, &type, &size, &buf);
 			midi_in->increment()) {
 
-		/*cout << "EVENT TYPE " << type << " @ " << frames << "." << subframes << ": ";
+#ifdef LOG_DEBUG
+		LOG(debug) << "EVENT TYPE " << type << " @ " << frames << "." << subframes << ": ";
 		for (uint16_t i = 0; i < size; ++i)
-			cout << (int)((char)buf[i]) << " ";
-		cout << endl;*/
+			debug << (int)((char)buf[i]) << " ";
+		debug << endl;
+#endif
 
 		const FrameTime time = context.start() + (FrameTime)frames;
 
@@ -166,7 +171,7 @@ NoteNode::process(ProcessContext& context)
 					// ?
 					break;
 				default:
-					//cerr << "Ignored controller " << buf[1] << endl;
+					//warn << "Ignored controller " << buf[1] << endl;
 					break;
 				}
 				break;
@@ -195,7 +200,9 @@ NoteNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity, F
 	uint32_t voice_num = 0;
 
 	if (key->state != Key::OFF) {
-		//cerr << "[NoteNode] Double midi note received" << endl;
+#ifdef LOG_DEBUG
+		LOG(debug) << "Double midi note received" << endl;
+#endif
 		return;
 	}
 
@@ -224,15 +231,19 @@ NoteNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity, F
 	assert(voice != NULL);
 	assert(voice == &(*_voices)[voice_num]);
 
-	/*cerr << "[NoteNode] Note " << (int)note_num << " on @ " << time
-		<< ". Voice " << voice_num << " / " << _polyphony << endl;*/
+#ifdef LOG_DEBUG
+	LOG(debug) << "Note " << (int)note_num << " on @ " << time
+		<< ". Voice " << voice_num << " / " << _polyphony << endl;
+#endif
 
 	// Update stolen key, if applicable
 	if (voice->state == Voice::Voice::ACTIVE) {
 		assert(_keys[voice->note].state == Key::ON_ASSIGNED);
 		assert(_keys[voice->note].voice == voice_num);
 		_keys[voice->note].state = Key::Key::ON_UNASSIGNED;
-		//cerr << "[NoteNode] Stole voice " << voice_num << endl;
+#ifdef LOG_DEBUG
+		LOG(debug) << "Stole voice " << voice_num << endl;
+#endif
 	}
 
 	// Store key information for later reallocation on note off
@@ -276,7 +287,9 @@ NoteNode::note_off(ProcessContext& context, uint8_t note_num, FrameTime time)
 
 	Key* key = &_keys[note_num];
 
-	//cerr << "[NoteNode] Note " << (int)note_num << " off @ " << time << endl;
+#ifdef LOG_DEBUG
+	debug << "Note " << (int)note_num << " off @ " << time << endl;
+#endif
 
 	if (key->state == Key::ON_ASSIGNED) {
 		// Assigned key, turn off voice and key
@@ -284,16 +297,20 @@ NoteNode::note_off(ProcessContext& context, uint8_t note_num, FrameTime time)
 			assert((*_voices)[key->voice].note == note_num);
 
 			if ( ! _sustain) {
-				//cerr << "... free voice " << key->voice << endl;
+#ifdef LOG_DEBUG
+				debug << "Free voice " << key->voice << endl;
+#endif
 				free_voice(context, key->voice, time);
 			} else {
-				//cerr << "... hold voice " << key->voice << endl;
+#ifdef LOG_DEBUG
+				debug << "Hold voice " << key->voice << endl;
+#endif
 				(*_voices)[key->voice].state = Voice::HOLDING;
 			}
 
 		} else {
-#ifndef NDEBUG
-			cerr << "WARNING: Assigned key, but voice not active" << endl;
+#ifdef LOG_DEBUG
+			debug << "WARNING: Assigned key, but voice not active" << endl;
 #endif
 		}
 	}
@@ -335,7 +352,9 @@ NoteNode::free_voice(ProcessContext& context, uint32_t voice, FrameTime time)
 		(*_voices)[voice].state = Voice::ACTIVE;
 	} else {
 		// No new note for voice, deactivate (set gate low)
-		//cerr << "[NoteNode] Note off. Key " << (int)note_num << ", Voice " << voice << " Killed" << endl;
+#ifdef LOG_DEBUG
+		LOG(debug) << "Note off: key " << (int)note_num << " voice " << voice << endl;
+#endif
 		((AudioBuffer*)_gate_port->buffer(voice).get())->set_value(0.0f, context.start(), time);
 		(*_voices)[voice].state = Voice::FREE;
 	}
@@ -348,7 +367,9 @@ NoteNode::all_notes_off(ProcessContext& context, FrameTime time)
 	assert(time >= context.start() && time <= context.end());
 	assert(time - context.start() < _buffer_size);
 
-	//cerr << "All notes off @ " << offset << endl;
+#ifdef LOG_DEBUG
+	LOG(debug) << "All notes off @ " << offset << endl;
+#endif
 
 	// FIXME: set all keys to Key::OFF?
 
@@ -390,6 +411,6 @@ NoteNode::sustain_off(ProcessContext& context, FrameTime time)
 }
 
 
-} // namespace Ingen
 } // namespace Internals
+} // namespace Ingen
 

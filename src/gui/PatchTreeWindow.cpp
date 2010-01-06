@@ -15,6 +15,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include "raul/log.hpp"
 #include "raul/Path.hpp"
 #include "interface/EngineInterface.hpp"
 #include "client/ClientStore.hpp"
@@ -23,6 +24,8 @@
 #include "PatchTreeWindow.hpp"
 #include "SubpatchModule.hpp"
 #include "WindowFactory.hpp"
+
+#define LOG(s) s << "[PatchTreeWindow] "
 
 using namespace std;
 using namespace Raul;
@@ -161,8 +164,7 @@ PatchTreeWindow::show_patch_menu(GdkEventButton* ev)
 		Gtk::TreeModel::Row row = *active;
 		SharedPtr<PatchModel> pm = row[_patch_tree_columns.patch_model_col];
 		if (pm)
-			cerr << "FIXME: patch menu\n";
-			//pm->show_menu(ev);
+			warn << "TODO: patch menu from tree window" << endl;
 	}
 }
 
@@ -204,7 +206,7 @@ PatchTreeWindow::patch_property_changed(const URI& key, const Atom& value,
 			Gtk::TreeModel::Row row = *i;
 			row[_patch_tree_columns.enabled_col] = value.get_bool();
 		} else {
-			cerr << "[PatchTreeWindow] Unable to find patch " << patch->path() << endl;
+			LOG(error) << "Unable to find patch " << patch->path() << endl;
 		}
 	}
 	_enable_signal = true;
@@ -223,7 +225,7 @@ PatchTreeWindow::patch_moved(SharedPtr<PatchModel> patch)
 		Gtk::TreeModel::Row row = *i;
 		row[_patch_tree_columns.name_col] = patch->path().name();
 	} else {
-		cerr << "[PatchTreeWindow] Unable to find patch " << patch->path() << endl;
+		LOG(error) << "Unable to find patch " << patch->path() << endl;
 	}
 
 	_enable_signal = true;

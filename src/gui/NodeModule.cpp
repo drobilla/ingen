@@ -17,6 +17,7 @@
 
 #include <cassert>
 #include "ingen-config.h"
+#include "raul/log.hpp"
 #include "raul/Atom.hpp"
 #include "interface/EngineInterface.hpp"
 #include "client/PatchModel.hpp"
@@ -186,7 +187,7 @@ NodeModule::embed_gui(bool embed)
 	if (embed) {
 
 		if (_gui_window) {
-			cerr << "LV2 GUI already popped up, cannot embed" << endl;
+			warn << "LV2 GUI already popped up, cannot embed" << endl;
 			return;
 		}
 
@@ -206,7 +207,7 @@ NodeModule::embed_gui(bool embed)
 			container->add(*_gui_widget);
 			FlowCanvas::Module::embed(container);
 		} else {
-			cerr << "ERROR: Failed to create LV2 UI" << endl;
+			error << "Failed to create LV2 UI" << endl;
 		}
 
 		if (_gui_widget) {
@@ -290,7 +291,7 @@ NodeModule::remove_port(SharedPtr<PortModel> model)
 		Module::remove_port(p);
 		p.reset();
 	} else {
-		cerr << "WARNING: Failed to find port on module: " << model->path() << endl;
+		warn << "Failed to find port on module " << model->path() << endl;
 	}
 }
 
@@ -301,7 +302,7 @@ NodeModule::popup_gui()
 #ifdef HAVE_SLV2
 	if (_node->plugin() && _node->plugin()->type() == PluginModel::LV2) {
 		if (_plugin_ui) {
-			cerr << "LV2 GUI already embedded, cannot pop up" << endl;
+			warn << "LV2 GUI already embedded, cannot pop up" << endl;
 			return false;
 		}
 
@@ -327,7 +328,7 @@ NodeModule::popup_gui()
 
 			return true;
 		} else {
-			cerr << "No LV2 GUI" << endl;
+			warn << "No LV2 GUI for " << _node->path() << endl;
 		}
 	}
 #endif

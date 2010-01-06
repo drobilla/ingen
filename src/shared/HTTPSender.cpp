@@ -15,20 +15,20 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-
 #include <cassert>
 #include <cstdio>
 #include <cstring>
-#include <iostream>
 #include <unistd.h>
 #include <stdarg.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <errno.h>
+#include "raul/log.hpp"
 #include "HTTPSender.hpp"
 
 using namespace std;
+using namespace Raul;
 
 namespace Ingen {
 namespace Shared {
@@ -51,32 +51,32 @@ HTTPSender::HTTPSender()
 
 	// Create listen socket
 	if ((_listen_sock = socket(AF_INET, SOCK_STREAM, 0)) < 0 ) {
-		fprintf(stderr, "Error creating listening socket (%s)\n", strerror(errno));
+		error << "Error creating listening socket (" << strerror(errno) << ")" << endl;
 		exit(EXIT_FAILURE);
 	}
 
 	// Bind our socket addresss to the listening socket
 	if (bind(_listen_sock, (struct sockaddr*)&addr, sizeof(addr)) < 0) {
-		fprintf(stderr, "Error calling bind (%s)\n", strerror(errno));
+		error << "Error calling bind (%s)\n" << strerror(errno) << ")" << endl;
 		_listen_sock = -1;
 	}
 
 	// Find port number
 	socklen_t length = sizeof(addr);
 	if (getsockname(_listen_sock, (struct sockaddr*)&addr, &length) == -1) {
-		fprintf(stderr, "Error calling getsockname (%s)\n", strerror(errno));
+		error << "Error calling getsockname (" << strerror(errno) << ")" << endl;
 		_listen_sock = -1;
 		return;
 	}
 
 	if (listen(_listen_sock, 1) < 0 ) {
-		cerr << "Error calling listen: %s" << strerror(errno) << endl;
+		error << "Error calling listen (" << strerror(errno) << ")" << endl;
 		_listen_sock = -1;
 		return;
 	}
 
 	_listen_port = ntohs(addr.sin_port);
-	cout << "Opening event stream on TCP port " << _listen_port << endl;
+	info << "Opening event stream on TCP port " << _listen_port << endl;
 	start();
 }
 
@@ -94,13 +94,13 @@ void
 HTTPSender::_run()
 {
 	if (_listen_sock == -1) {
-		cerr << "Unable to open socket, exiting sender thread" << endl;
+		error << "Unable to open socket, exiting sender thread" << endl;
 		return;
 	}
 
 	// Accept connection
 	if ((_client_sock = accept(_listen_sock, NULL, NULL) ) < 0) {
-		cerr << "Error calling accept: " << strerror(errno) << endl;
+		error << "Error calling accept: " << strerror(errno) << endl;
 		return;
 	}
 

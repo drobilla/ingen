@@ -70,10 +70,8 @@ CreatePort::CreatePort(
 	 * TODO: fix this using RCU?
 	 */
 
-	if (_data_type == PortType::UNKNOWN) {
-		cerr << "[CreatePortEvent] Unknown port type " << type << endl;
+	if (_data_type == PortType::UNKNOWN)
 		_error = UNKNOWN_TYPE;
-	}
 }
 
 

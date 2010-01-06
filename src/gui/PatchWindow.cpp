@@ -16,7 +16,6 @@
  */
 
 #include "PatchWindow.hpp"
-#include <iostream>
 #include <cassert>
 #include <sstream>
 #include <fstream>

@@ -16,7 +16,7 @@
  */
 
 #include <algorithm>
-#include <iostream>
+#include "raul/log.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "AudioBuffer.hpp"
 #include "EventBuffer.hpp"
@@ -25,6 +25,8 @@
 #include "Engine.hpp"
 #include "Driver.hpp"
 #include "ThreadManager.hpp"
+
+using namespace Raul;
 
 namespace Ingen {
 
@@ -65,7 +67,7 @@ BufferFactory::get(Shared::PortType type, size_t size, bool force_create)
 		if (ThreadManager::current_thread_id() != THREAD_PROCESS) {
 			return create(type, size);
 		} else {
-			cerr << "ERROR: Failed to obtain buffer" << endl;
+			error << "Failed to obtain buffer" << endl;
 			return Ref();
 		}
 	}
@@ -105,7 +107,7 @@ BufferFactory::create(Shared::PortType type, size_t size)
 			size = 32; // FIXME
 		buffer = new ObjectBuffer(*this, std::max(size, sizeof(LV2_Object) + sizeof(void*)));
 	} else {
-		cout << "ERROR: Failed to create buffer of unknown type" << endl;
+		error << "Failed to create buffer of unknown type" << endl;
 		return Ref();
 	}
 

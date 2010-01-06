@@ -16,6 +16,7 @@
  */
 
 #include <sstream>
+#include "raul/log.hpp"
 #include "raul/PathTable.hpp"
 #include "raul/TableImpl.hpp"
 #include "common/interface/Node.hpp"
@@ -33,7 +34,7 @@ void
 Store::add(GraphObject* o)
 {
 	if (find(o->path()) != end()) {
-		cerr << "[Store] ERROR: Attempt to add duplicate object " << o->path() << endl;
+		error << "[Store] Attempt to add duplicate object " << o->path() << endl;
 		return;
 	}
 

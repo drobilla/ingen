@@ -17,6 +17,7 @@
 
 #include <string>
 #include <boost/format.hpp>
+#include "raul/log.hpp"
 #include "interface/PortType.hpp"
 #include "ClientBroadcaster.hpp"
 #include "CreateNode.hpp"
@@ -174,7 +175,7 @@ SetMetadata::pre_process()
 					ev->pre_process();
 					_set_events.push_back(ev);
 				} else {
-					cerr << "WARNING: Set value for non-port " << _object->uri() << endl;
+					warn << "Set value for non-port " << _object->uri() << endl;
 				}
 			}
 		}

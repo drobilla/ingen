@@ -19,9 +19,9 @@
 #define PORTMODEL_H
 
 #include <cstdlib>
-#include <iostream>
 #include <string>
 #include <sigc++/sigc++.h>
+#include "raul/log.hpp"
 #include "raul/SharedPtr.hpp"
 #include "interface/Port.hpp"
 #include "ObjectModel.hpp"
@@ -87,7 +87,7 @@ private:
 		, _connections(0)
 	{
 		if (_type == Shared::PortType::UNKNOWN)
-			std::cerr << "[PortModel] Warning: Unknown port type" << std::endl;
+			Raul::warn << "[PortModel] Unknown port type" << std::endl;
 	}
 
 	void add_child(SharedPtr<ObjectModel> c)    { throw; }

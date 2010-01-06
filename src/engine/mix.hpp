@@ -18,10 +18,12 @@
 #ifndef MIX_HPP
 #define MIX_HPP
 
-#include <iostream>
+#include "raul/log.hpp"
 #include "interface/PortType.hpp"
 #include "Buffer.hpp"
 #include "Context.hpp"
+
+using namespace Raul;
 
 namespace Ingen {
 
@@ -74,7 +76,7 @@ mix(Context& context, Buffer* dst, const Buffer*const* srcs, uint32_t num_srcs)
 		break;
 
 	default:
-		std::cerr << "ERROR: Mix of unsupported buffer types" << std::endl;
+		error << "Mix of unsupported buffer types" << std::endl;
 		return;
 	}
 }

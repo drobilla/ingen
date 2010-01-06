@@ -16,6 +16,7 @@
  */
 
 #include <cmath>
+#include "raul/log.hpp"
 #include "raul/midi_events.h"
 #include "internals/Trigger.hpp"
 #include "AudioBuffer.hpp"
@@ -26,7 +27,10 @@
 #include "ProcessContext.hpp"
 #include "util.hpp"
 
+#define LOG(s) s << "[TriggerNode] "
+
 using namespace std;
+using namespace Raul;
 
 namespace Ingen {
 namespace Internals {
@@ -124,7 +128,9 @@ TriggerNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity
 		_learning = false;
 	}
 
-	/*cerr << "[TriggerNode] " << path() << " Note " << (int)note_num << " on @ " << time << endl;*/
+#ifdef LOG_DEBUG
+	LOG(debug) << path() << " note " << (int)note_num << " on @ " << time << endl;
+#endif
 
 	Sample filter_note = ((AudioBuffer*)_note_port->buffer(0).get())->value_at(0);
 	if (filter_note >= 0.0 && filter_note < 127.0 && (note_num == (uint8_t)filter_note)) {
@@ -148,6 +154,5 @@ TriggerNode::note_off(ProcessContext& context, uint8_t note_num, FrameTime time)
 }
 
 
-} // namespace Ingen
 } // namespace Internals
-
+} // namespace Ingen

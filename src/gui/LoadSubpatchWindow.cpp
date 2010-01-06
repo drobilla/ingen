@@ -157,7 +157,6 @@ LoadSubpatchWindow::ok_clicked()
 	}
 
 	if (_poly_from_user_radio->get_active()) {
-		cerr << "Overriding poly: " << _poly_spinbutton->get_value_as_int() << endl;
 		_initial_data.insert(make_pair("ingen:polyphony", (int)_poly_spinbutton->get_value_as_int()));
 	} else if (_poly_from_parent_radio->get_active()) {
 		_initial_data.insert(make_pair("ingen:polyphony", (int)_patch->poly()));

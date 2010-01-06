@@ -16,8 +16,8 @@
  */
 
 #include <cassert>
-#include <iostream>
 #include <unistd.h>
+#include "raul/log.hpp"
 #include "raul/AtomLiblo.hpp"
 #include "interface/ClientInterface.hpp"
 #include "EngineStore.hpp"
@@ -54,7 +54,7 @@ OSCClientSender::response_ok(int32_t id)
 		return;
 
 	if (lo_send(_address, "/ingen/ok", "i", id) < 0) {
-		cerr << "Unable to send ok " << id << "! ("
+		Raul::error << "Unable to send OK " << id << "! ("
 			<< lo_address_errstr(_address) << ")" << endl;
 	}
 }
@@ -74,7 +74,7 @@ OSCClientSender::response_error(int32_t id, const std::string& msg)
 		return;
 
 	if (lo_send(_address, "/ingen/error", "is", id, msg.c_str()) < 0) {
-		cerr << "Unable to send error " << id << "! ("
+		Raul::error << "Unable to send error " << id << "! ("
 			<< lo_address_errstr(_address) << ")" << endl;
 	}
 }

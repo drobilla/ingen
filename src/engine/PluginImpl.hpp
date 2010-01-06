@@ -23,7 +23,6 @@
 #include <boost/utility.hpp>
 #include <dlfcn.h>
 #include <string>
-#include <iostream>
 #include "interface/Plugin.hpp"
 #include "shared/ResourceImpl.hpp"
 

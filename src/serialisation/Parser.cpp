@@ -15,10 +15,10 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <iostream>
 #include <set>
 #include <locale.h>
 #include <glibmm/ustring.h>
+#include "raul/log.hpp"
 #include "redlandmm/Model.hpp"
 #include "redlandmm/Node.hpp"
 #include "redlandmm/Query.hpp"
@@ -27,6 +27,8 @@
 #include "raul/AtomRDF.hpp"
 #include "interface/EngineInterface.hpp"
 #include "Parser.hpp"
+
+#define LOG(s) s << "[Parser] "
 
 using namespace std;
 using namespace Raul;
@@ -97,13 +99,13 @@ Parser::parse_document(
 
 	Redland::Model model(*world->rdf_world, document_uri, document_uri);
 
-	cout << "[Parser] Parsing document " << document_uri << endl;
+	LOG(info) << "Parsing document " << document_uri << endl;
 	if (data_path)
-		cout << "[Parser] Document path: " << *data_path << endl;
+		LOG(info) << "Document path: " << *data_path << endl;
 	if (parent)
-		cout << "[Parser] Parent: " << *parent << endl;
+		LOG(info) << "Parent: " << *parent << endl;
 	if (symbol)
-		cout << "[Parser] Symbol: " << *symbol << endl;
+		LOG(info) << "Symbol: " << *symbol << endl;
 
 	boost::optional<Path> parsed_path
 		= parse(world, target, model, document_uri, data_path, parent, symbol, data);
@@ -111,7 +113,7 @@ Parser::parse_document(
 	if (parsed_path) {
 		target->set_property(*parsed_path, "ingen:document", Atom(Atom::URI, document_uri.c_str()));
 	} else {
-		cerr << "WARNING: document URI lost" << endl;
+		LOG(warn) << "Document URI lost" << endl;
 	}
 
 	return parsed_path;
@@ -131,10 +133,10 @@ Parser::parse_string(
 {
 	Redland::Model model(*world->rdf_world, str.c_str(), str.length(), base_uri);
 
-	cout << "Parsing " << (data_path ? data_path->str() : "*") << " from string";
+	LOG(info) << "Parsing " << (data_path ? data_path->str() : "*") << " from string";
 	if (base_uri != "")
-		cout << " (base " << base_uri << ")";
-	cout << endl;
+		LOG(info) << " (base " << base_uri << ")";
+	LOG(info) << endl;
 
 	bool ret = parse(world, target, model, base_uri, data_path, parent, symbol, data);
 	Redland::Resource subject(*world->rdf_world, base_uri);
@@ -272,7 +274,7 @@ Parser::parse(
 				path_str = "/" + path_str;
 
 			if (!Path::is_valid(path_str)) {
-				cerr << "WARNING: Invalid path '" << path_str << "', object skipped" << endl;
+				LOG(warn) << "Invalid path '" << path_str << "', object skipped" << endl;
 				continue;
 			}
 
@@ -281,7 +283,7 @@ Parser::parse(
 					: (parent ? parent->base() : "/") + path_str.substr(path_str.find("/")+1);
 
 			if (!Path::is_valid(path)) {
-				cerr << "WARNING: Invalid path '" << path << "' transformed to /" << endl;
+				LOG(warn) << "Invalid path '" << path << "' transformed to /" << endl;
 				path = "/";
 			}
 
@@ -294,7 +296,7 @@ Parser::parse(
 			}
 
 			if (!ret) {
-				cerr << "Failed to parse object " << path << endl;
+				LOG(error) << "Failed to parse object " << path << endl;
 				return boost::optional<Path>();
 			}
 
@@ -339,8 +341,6 @@ Parser::parse_patch(
 
 	const Glib::ustring subject = subject_node.to_turtle_token();
 
-	//cout << "**** Parse patch " << subject << endl;
-
 	/* Load polyphony from file if necessary */
 	if (patch_poly == 0) {
 		Redland::Query query(*world->rdf_world, Glib::ustring(
@@ -352,7 +352,7 @@ Parser::parse_patch(
 			if (poly_node.is_int())
 				patch_poly = poly_node.to_int();
 			else
-				cerr << "WARNING: Patch has non-integer polyphony, assuming 1" << endl;
+				LOG(warn) << "Patch has non-integer polyphony, assuming 1" << endl;
 		}
 	}
 
@@ -374,7 +374,7 @@ Parser::parse_patch(
 
 	string patch_path_str = relative_uri(base_uri, subject_node.to_string(), true);
 	if (!Path::is_valid(patch_path_str)) {
-		cerr << "ERROR: Patch has invalid path: " << patch_path_str << endl;
+		LOG(error) << "Patch has invalid path: " << patch_path_str << endl;
 		return boost::optional<Raul::Path>();
 	}
 
@@ -454,7 +454,7 @@ Parser::parse_patch(
 			} else if (plug_i != plugin_nodes.end()) {
 				plug_i->second.insert(make_pair(key, AtomRDF::node_to_atom(object)));
 			} else {
-				cerr << "WARNING: Unrecognized node: " << node.to_string() << endl;
+				LOG(warn) << "Unrecognized node: " << node.to_string() << endl;
 			}
 		}
 	}
@@ -501,7 +501,7 @@ Parser::parse_patch(
 		const string node_uri = (*i)["node"].to_string();
 		const string port_uri = (*i)["port"].to_string();
 		if (port_uri.length() <= node_uri.length()) {
-			cerr << "WARNING: Port on " << node_uri << " has bad URI: " << port_uri << endl;
+			LOG(warn) << "Port on " << node_uri << " has bad URI: " << port_uri << endl;
 			continue;
 		}
 
@@ -565,7 +565,7 @@ Parser::parse_patch(
 		std::pair<Properties::iterator,Properties::iterator> types_range
 				= i->second.equal_range("rdf:type");
 		if (types_range.first == i->second.end()) {
-			cerr << "WARNING: Patch port has no types" << endl;
+			LOG(warn) << "Patch port has no types" << endl;
 			continue;
 		}
 		bool is_input  = false;
@@ -581,12 +581,12 @@ Parser::parse_patch(
 			} else if (!type) {
 				type = &t->second;
 			} else {
-				cerr << "ERROR: Port has several data types" << endl;
+				LOG(error) << "Port has several data types" << endl;
 				continue;
 			}
 		}
 		if ((is_input && is_output) || !type) {
-			cerr << "ERROR: Corrupt patch port" << endl;
+			LOG(error) << "Corrupt patch port" << endl;
 			continue;
 		}
 
@@ -611,7 +611,7 @@ Parser::parse_patch(
 			target->set_property(patch_path, "ingen:enabled", (bool)true);
 			break;
 		} else {
-			cerr << "WARNING: Unknown type for ingen:enabled" << endl;
+			LOG(warn) << "Unknown type for ingen:enabled" << endl;
 		}
 	}
 
@@ -637,13 +637,13 @@ Parser::parse_node(
 	Redland::Query::Results results = query.run(*world->rdf_world, model);
 
 	if (results.size() == 0) {
-		cerr << "[Parser] ERROR: Node missing mandatory rdf:instanceOf property" << endl;
+		LOG(error) << "Node missing mandatory rdf:instanceOf property" << endl;
 		return boost::optional<Path>();
 	}
 
 	const Redland::Node& plugin_node = (*results.begin())["plug"];
 	if (plugin_node.type() != Redland::Node::RESOURCE) {
-		cerr << "[Parser] ERROR: node's rdf:instanceOf property is not a resource" << endl;
+		LOG(error) << "Node's rdf:instanceOf property is not a resource" << endl;
 		return boost::optional<Path>();
 	}
 
@@ -683,7 +683,7 @@ Parser::parse_connections(
 		if (Path::is_valid(src_path) && Path::is_valid(dst_path)) {
 			target->connect(src_path, dst_path);
 		} else {
-			cerr << "ERROR: Invalid path in connection "
+			LOG(error) << "Invalid path in connection "
 				<< src_path << " => " <<  dst_path << endl;
 		}
 	}

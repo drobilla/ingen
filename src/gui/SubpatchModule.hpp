@@ -53,7 +53,6 @@ public:
 
 	void on_double_click(GdkEventButton* ev);
 
-	void show_dialog();
 	void browse_to_patch();
 	void menu_remove();
 

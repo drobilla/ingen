@@ -17,7 +17,7 @@
 
 #define __STDC_LIMIT_MACROS 1
 #include <stdint.h>
-#include <iostream>
+#include "raul/log.hpp"
 #include "event.lv2/event.h"
 #include "event.lv2/event-helpers.h"
 #include "ingen-config.h"
@@ -25,6 +25,7 @@
 #include "ProcessContext.hpp"
 
 using namespace std;
+using namespace Raul;
 
 namespace Ingen {
 
@@ -39,7 +40,7 @@ EventBuffer::EventBuffer(BufferFactory& factory, size_t capacity)
 	, _latest_subframes(0)
 {
 	if (capacity > UINT32_MAX) {
-		cerr << "Event buffer size " << capacity << " too large, aborting." << endl;
+		error << "Event buffer size " << capacity << " too large, aborting." << endl;
 		throw std::bad_alloc();
 	}
 
@@ -51,7 +52,7 @@ EventBuffer::EventBuffer(BufferFactory& factory, size_t capacity)
 #endif
 
 	if (ret != 0) {
-		cerr << "Failed to allocate event buffer.  Aborting." << endl;
+		error << "Failed to allocate event buffer.  Aborting." << endl;
 		exit(EXIT_FAILURE);
 	}
 
@@ -207,11 +208,11 @@ EventBuffer::append(uint32_t       frames,
 	}
 #endif
 
-	/*cout << "Appending event type " << type << ", size " << size
+	/*debug << "Appending event type " << type << ", size " << size
 		<< " @ " << frames << "." << subframes << endl;*/
 
 	if (!lv2_event_write(&_iter, frames, subframes, type, size, data)) {
-		cerr << "ERROR: Failed to write event." << endl;
+		error << "Failed to write event." << endl;
 		return false;
 	} else {
 		_latest_frames = frames;

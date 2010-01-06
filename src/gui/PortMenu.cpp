@@ -15,7 +15,6 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <iostream>
 #include <gtkmm.h>
 #include "raul/SharedPtr.hpp"
 #include "interface/EngineInterface.hpp"

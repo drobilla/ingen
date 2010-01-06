@@ -15,7 +15,6 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <iostream>
 #include "interface/Patch.hpp"
 #include "Buffer.hpp"
 #include "NodeImpl.hpp"
@@ -61,8 +60,6 @@ OutputPort::post_process(Context& context)
 {
 	for (uint32_t v = 0; v < _poly; ++v)
 		buffer(v)->prepare_read(context);
-
-	//cerr << path() << " output post: buffer: " << buffer(0) << endl;
 
 	if (_broadcast)
 		broadcast_value(context, false);

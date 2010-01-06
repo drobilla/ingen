@@ -58,7 +58,6 @@ class PatchView : public Gtk::Box
 {
 public:
 	PatchView(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml);
-	~PatchView();
 
 	SharedPtr<PatchCanvas> canvas()               const { return _canvas; }
 	SharedPtr<PatchModel>  patch()                const { return _patch; }

@@ -19,7 +19,7 @@
 #include <string.h>
 #include <stdint.h>
 #include <algorithm>
-#include <iostream>
+#include "raul/log.hpp"
 #include "uri-map.lv2/uri-map.h"
 #include "ingen-config.h"
 #include "shared/LV2Features.hpp"
@@ -28,6 +28,7 @@
 #include "Engine.hpp"
 
 using namespace std;
+using namespace Raul;
 
 namespace Ingen {
 
@@ -40,7 +41,6 @@ using namespace Shared;
 ObjectBuffer::ObjectBuffer(BufferFactory& factory, size_t capacity)
 	: Buffer(factory, PortType(PortType::VALUE), capacity)
 {
-	//cerr << "Creating Object Buffer capacity = " << capacity << endl;
 	assert(capacity >= sizeof(LV2_Object));
 
 #ifdef HAVE_POSIX_MEMALIGN
@@ -51,7 +51,7 @@ ObjectBuffer::ObjectBuffer(BufferFactory& factory, size_t capacity)
 #endif
 
 	if (ret != 0) {
-		cerr << "Failed to allocate buffer.  Aborting." << endl;
+		error << "Failed to allocate object buffer.  Aborting." << endl;
 		exit(EXIT_FAILURE);
 	}
 

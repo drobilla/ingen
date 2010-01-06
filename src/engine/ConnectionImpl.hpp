@@ -18,7 +18,6 @@
 #ifndef CONNECTIONIMPL_H
 #define CONNECTIONIMPL_H
 
-#include <iostream>
 #include <cstdlib>
 #include <boost/utility.hpp>
 #include "raul/Deletable.hpp"

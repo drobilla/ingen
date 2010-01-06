@@ -15,14 +15,15 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "ingen-config.h"
 #include <cstdlib>
 #include <pthread.h>
 #include <dirent.h>
 #include <float.h>
 #include <cmath>
 #include "redlandmm/World.hpp"
+#include "raul/log.hpp"
 #include "raul/Atom.hpp"
+#include "ingen-config.h"
 #include "module/World.hpp"
 #include "internals/Note.hpp"
 #include "internals/Trigger.hpp"
@@ -43,6 +44,7 @@
 #endif
 
 using namespace std;
+using namespace Raul;
 
 namespace Ingen {
 
@@ -96,7 +98,7 @@ NodeFactory::plugin(const string& type, const string& lib, const string& label)
 	}
 #endif
 
-	cerr << "ERROR: Failed to find " << type << " plugin " << lib << " / " << label << endl;
+	error << "Failed to find " << type << " plugin " << lib << " / " << label << endl;
 
 	return NULL;
 }
@@ -129,8 +131,6 @@ NodeFactory::load_plugins()
 	}
 
 	_world->rdf_world->mutex().unlock();
-
-	//cerr << "[NodeFactory] # Plugins: " << _plugins.size() << endl;
 }
 
 
@@ -168,8 +168,6 @@ NodeFactory::load_lv2_plugins()
 {
 	SLV2Plugins plugins = slv2_world_get_all_plugins(_world->slv2_world);
 
-	//cerr << "[NodeFactory] Found " << slv2_plugins_size(plugins) << " LV2 plugins:" << endl;
-
 	for (unsigned i=0; i < slv2_plugins_size(plugins); ++i) {
 
 		SLV2Plugin lv2_plug = slv2_plugins_get_at(plugins, i);
@@ -200,9 +198,9 @@ NodeFactory::load_ladspa_plugins()
 	char* env_ladspa_path = getenv("LADSPA_PATH");
 	string ladspa_path;
 	if (!env_ladspa_path) {
-		cerr << "[NodeFactory] LADSPA_PATH is empty.  Assuming /usr/lib/ladspa:/usr/local/lib/ladspa:~/.ladspa" << endl;
+		info << "Using default LADSPA_PATH=/usr/lib/ladspa:/usr/local/lib/ladspa:~/.ladspa" << endl;
 		ladspa_path = string("/usr/lib/ladspa:/usr/local/lib/ladspa:").append(
-			getenv("HOME")).append("/.ladspa");
+				getenv("HOME")).append("/.ladspa");
 	} else {
 		ladspa_path = env_ladspa_path;
 	}
@@ -216,10 +214,8 @@ NodeFactory::load_ladspa_plugins()
 			ladspa_path = "";
 
 		DIR* pdir = opendir(dir.c_str());
-		if (pdir == NULL) {
-			//cerr << "[NodeFactory] Unreadable directory in LADSPA_PATH: " << dir.c_str() << endl;
+		if (pdir == NULL)
 			continue;
-		}
 
 		struct dirent* pfile;
 		while ((pfile = readdir(pdir))) {
@@ -238,10 +234,8 @@ NodeFactory::load_ladspa_plugins()
 			const string lib_path = dir +"/"+ pfile->d_name;
 
 			// Ignore stupid libtool files.  Kludge alert.
-			if (lib_path.substr(lib_path.length()-3) == ".la") {
-				//cerr << "WARNING: Skipping stupid libtool file " << pfile->d_name << endl;
+			if (lib_path.substr(lib_path.length()-3) == ".la")
 				continue;
-			}
 
 			Glib::Module* plugin_library = new Glib::Module(lib_path, Glib::MODULE_BIND_LOCAL);
 			if (!plugin_library || !(*plugin_library))
@@ -249,9 +243,7 @@ NodeFactory::load_ladspa_plugins()
 
 			bool found = plugin_library->get_symbol("ladspa_descriptor", df.dp);
 			if (!found || !df.dp) {
-				cerr << "WARNING: Non-LADSPA library found in LADSPA path: " <<
-					lib_path << endl;
-				// Not a LADSPA plugin library
+				warn << "Non-LADSPA library " << lib_path << " found in LADSPA path" << endl;
 				delete plugin_library;
 				continue;
 			}
@@ -272,7 +264,7 @@ NodeFactory::load_ladspa_plugins()
 					_plugins.insert(make_pair(uri, plugin));
 
 				} else {
-					cerr << "Warning: Duplicate " << uri
+					warn << "Duplicate " << uri
 					     << " - Using " << i->second->library_path()
 					     << " over " << lib_path << endl;
 				}

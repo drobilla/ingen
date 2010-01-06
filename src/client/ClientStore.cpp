@@ -15,6 +15,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include "raul/log.hpp"
 #include "raul/PathTable.hpp"
 #include "ClientStore.hpp"
 #include "ObjectModel.hpp"
@@ -24,6 +25,8 @@
 #include "PluginModel.hpp"
 #include "PatchModel.hpp"
 #include "SigClientInterface.hpp"
+
+#define LOG(s) s << "[ClientStore] "
 
 using namespace std;
 using namespace Raul;
@@ -96,11 +99,11 @@ ClientStore::add_object(SharedPtr<ObjectModel> object)
 			i != object->properties().end(); ++i)
 		object->signal_property(i->first, i->second);
 
-	/*cout << "[Store] Added " << object->path() << " {" << endl;
+	LOG(debug) << "Added " << object->path() << " {" << endl;
 	for (iterator i = begin(); i != end(); ++i) {
-		cout << "\t" << i->first << endl;
+		LOG(debug) << "\t" << i->first << endl;
 	}
-	cout << "}" << endl;*/
+	LOG(debug) << "}" << endl;
 }
 
 
@@ -116,11 +119,11 @@ ClientStore::remove_object(const Path& path)
 		iterator descendants_end = find_descendants_end(i);
 		SharedPtr<Store::Objects> removed = yank(i, descendants_end);
 
-		/*cout << "[Store] Removing " << i->first << " {" << endl;
-		for (iterator i = removed.begin(); i != removed.end(); ++i) {
-			cout << "\t" << i->first << endl;
+		LOG(debug) << "[ClientStore] Removing " << i->first << " {" << endl;
+		for (iterator i = removed->begin(); i != removed->end(); ++i) {
+			LOG(debug) << "\t" << i->first << endl;
 		}
-		cout << "}" << endl;*/
+		LOG(debug) << "}" << endl;
 
 		if (result)
 			result->signal_destroyed.emit();
@@ -201,7 +204,7 @@ ClientStore::del(const Path& path)
 {
 	SharedPtr<ObjectModel> removed = remove_object(path);
 	removed.reset();
-	//cerr << "[ClientStore] removed object " << path << ", count: " << removed.use_count();
+	debug << "[ClientStore] removed object " << path << ", count: " << removed.use_count();
 }
 
 void
@@ -212,7 +215,7 @@ ClientStore::move(const Path& old_path_str, const Path& new_path_str)
 
 	iterator parent = find(old_path);
 	if (parent == end()) {
-		cerr << "[Store] Failed to find object " << old_path << " to move." << endl;
+		LOG(error) << "Failed to find object " << old_path << " to move." << endl;
 		return;
 	}
 
@@ -233,20 +236,12 @@ ClientStore::move(const Path& old_path_str, const Path& new_path_str)
 		else
 			child_new_path = new_path.base() + child_old_path.substr(old_path.length()+1);
 
-		cerr << "[Store] Renamed " << child_old_path << " -> " << child_new_path << endl;
+		LOG(info) << "Renamed " << child_old_path << " -> " << child_new_path << endl;
 		PtrCast<ObjectModel>(i->second)->set_path(child_new_path);
 		i->first = child_new_path;
 	}
 
 	cram(*removed.get());
-
-	//cerr << "[Store] Table:" << endl;
-	//for (size_t i=0; i < removed.size(); ++i) {
-	//	cerr << removed[i].first << "\t\t: " << removed[i].second << endl;
-	//}
-	/*for (iterator i = begin(); i != end(); ++i) {
-		cerr << i->first << "\t\t: " << i->second << endl;
-	}*/
 }
 
 
@@ -254,10 +249,10 @@ void
 ClientStore::put(const URI& uri, const Resource::Properties& properties)
 {
 	typedef Resource::Properties::const_iterator iterator;
-	/*cerr << "CLIENT PUT " << uri << " {" << endl;
+	LOG(debug) << "PUT " << uri << " {" << endl;
 	for (iterator i = properties.begin(); i != properties.end(); ++i)
-		cerr << "\t" << i->first << " = " << i->second << " :: " << i->second.type() << endl;
-	cerr << "}" << endl;*/
+		LOG(debug) << "    " << i->first << " = " << i->second << " :: " << i->second.type() << endl;
+	LOG(debug) << "}" << endl;
 
 	bool is_path = Path::is_valid(uri.str());
 	bool is_meta = ResourceImpl::is_meta_uri(uri);
@@ -273,7 +268,7 @@ ClientStore::put(const URI& uri, const Resource::Properties& properties)
 
 	string path_str = is_meta ? (string("/") + uri.chop_start("#")) : uri.str();
 	if (!Path::is_valid(path_str)) {
-		cerr << "ERROR: Bad path: " << uri.str() << " - " << path_str << endl;
+		LOG(error) << "Bad path: " << uri.str() << " - " << path_str << endl;
 		return;
 	}
 
@@ -302,7 +297,7 @@ ClientStore::put(const URI& uri, const Resource::Properties& properties)
 		SharedPtr<PluginModel> plug;
 		if (p->second.is_valid() && p->second.type() == Atom::URI) {
 			if (!(plug = plugin(p->second.get_uri()))) {
-				cout << "WARNING: Unable to find plugin " << p->second.get_uri() << endl;
+				LOG(warn) << "Unable to find plugin " << p->second.get_uri() << endl;
 				plug = SharedPtr<PluginModel>(
 						new PluginModel(p->second.get_uri(), "ingen:nil", Resource::Properties()));
 				add_plugin(plug);
@@ -312,7 +307,7 @@ ClientStore::put(const URI& uri, const Resource::Properties& properties)
 			n->set_properties(properties);
 			add_object(n);
 		} else {
-			cerr << "ERROR: Plugin with no type" << endl;
+			LOG(error) << "Plugin with no type" << endl;
 		}
 	} else if (is_port) {
 		if (data_type != PortType::UNKNOWN) {
@@ -321,10 +316,10 @@ ClientStore::put(const URI& uri, const Resource::Properties& properties)
 			p->set_properties(properties);
 			add_object(p);
 		} else {
-			cerr << "WARNING: Port " << path << " has no type" << endl;
+			LOG(warn) << "Port " << path << " has no type" << endl;
 		}
 	} else {
-		cerr << "WARNING: Ignoring object " << path << " with unknown type "
+		LOG(warn) << "Ignoring object " << path << " with unknown type "
 			<< is_patch << " " << is_node << " " << is_port << endl;
 	}
 }
@@ -337,7 +332,7 @@ ClientStore::set_property(const URI& subject_uri, const URI& predicate, const At
 
 	size_t hash = subject_uri.find("#");
 	if (!value.is_valid()) {
-		cerr << "ERROR: Property '" << predicate << "' is invalid" << endl;
+		LOG(error) << "Property '" << predicate << "' is invalid" << endl;
 	} else if (subject) {
 		subject->set_property(predicate, value);
 	} else if (ResourceImpl::is_meta_uri(subject_uri)) {
@@ -350,7 +345,7 @@ ClientStore::set_property(const URI& subject_uri, const URI& predicate, const At
 		if (plugin)
 			plugin->set_property(predicate, value);
 		else
-			cerr << "WARNING: Property '" << predicate << "' for unknown object " << subject_uri << endl;
+			LOG(warn) << "Property '" << predicate << "' for unknown object " << subject_uri << endl;
 	}
 }
 
@@ -362,7 +357,7 @@ ClientStore::set_port_value(const Path& port_path, const Atom& value)
 	if (port)
 		port->value(value);
 	else
-		cerr << "ERROR: Control change for non-existent port " << port_path << endl;
+		LOG(error) << "Control change for non-existent port " << port_path << endl;
 }
 
 
@@ -373,7 +368,7 @@ ClientStore::set_voice_value(const Path& port_path, uint32_t voice, const Atom& 
 	if (port)
 		port->value(voice, value);
 	else
-		cerr << "ERROR: Polyphonic control change for non-existent port " << port_path << endl;
+		LOG(error) << "Polyphonic control change for non-existent port " << port_path << endl;
 }
 
 
@@ -384,7 +379,7 @@ ClientStore::activity(const Path& path)
 	if (port)
 		port->signal_activity.emit();
 	else
-		cerr << "ERROR: Activity for non-existent port " << path << endl;
+		LOG(error) << "Activity for non-existent port " << path << endl;
 }
 
 
@@ -406,7 +401,7 @@ ClientStore::connection_patch(const Path& src_port_path, const Path& dst_port_pa
 		patch = PtrCast<PatchModel>(this->object(src_port_path.parent().parent()));
 
 	if (!patch)
-		cerr << "ERROR: Unable to find connection patch " << src_port_path
+		LOG(error) << "Unable to find connection patch " << src_port_path
 			<< " -> " << dst_port_path << endl;
 
 	return patch;
@@ -458,19 +453,19 @@ ClientStore::disconnect(const Path& src_port_path, const Path& dst_port_path)
 	if (src_port)
 		src_port->disconnected_from(dst_port);
 	else
-		cerr << "WARNING: Disconnection from non-existent src port " << src_port_path << endl;
+		LOG(warn) << "Disconnection from non-existent src port " << src_port_path << endl;
 
 	if (dst_port)
 		dst_port->disconnected_from(dst_port);
 	else
-		cerr << "WARNING: Disconnection from non-existent dst port " << dst_port_path << endl;
+		LOG(warn) << "Disconnection from non-existent dst port " << dst_port_path << endl;
 
 	SharedPtr<PatchModel> patch = connection_patch(src_port_path, dst_port_path);
 
 	if (patch)
 		patch->remove_connection(src_port_path, dst_port_path);
 	else
-		cerr << "ERROR: Disconnection in non-existent patch: "
+		LOG(error) << "Disconnection in non-existent patch: "
 			<< src_port_path << " -> " << dst_port_path << endl;
 }
 

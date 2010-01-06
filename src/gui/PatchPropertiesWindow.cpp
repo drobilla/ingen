@@ -16,7 +16,6 @@
  */
 
 #include <string>
-#include <iostream>
 #include "client/PatchModel.hpp"
 #include "PatchPropertiesWindow.hpp"
 #include "App.hpp"

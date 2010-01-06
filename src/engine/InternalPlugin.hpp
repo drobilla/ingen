@@ -29,7 +29,6 @@
 #include <boost/utility.hpp>
 #include <dlfcn.h>
 #include <string>
-#include <iostream>
 #include "PluginImpl.hpp"
 
 #define NS_INTERNALS "http://drobilla.net/ns/ingen-internals#"

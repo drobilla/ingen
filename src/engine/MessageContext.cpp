@@ -15,7 +15,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <iostream>
+#include "raul/log.hpp"
 #include "raul/Atom.hpp"
 #include "ConnectionImpl.hpp"
 #include "Engine.hpp"
@@ -28,6 +28,7 @@
 #include "ThreadManager.hpp"
 
 using namespace std;
+using namespace Raul;
 
 namespace Ingen {
 
@@ -46,9 +47,9 @@ MessageContext::run(PortImpl* port, FrameTime time)
 		_requests.write(sizeof(Request), &r);
 		// signal() will be called at the end of this process cycle
 	} else if (ThreadManager::current_thread_id() == THREAD_MESSAGE) {
-		cout << "Message context recursion at " << port->path() << endl;
+		warn << "Message context recursion at " << port->path() << endl;
 	} else {
-		cout << "[MessageContext] ERROR: Run requested from unknown thread" << endl;
+		error << "Run requested from unknown thread" << endl;
 	}
 }
 

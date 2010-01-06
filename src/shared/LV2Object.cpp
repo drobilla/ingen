@@ -15,7 +15,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <iostream>
+#include "raul/log.hpp"
 #include "raul/Atom.hpp"
 #include "module/World.hpp"
 #include "uri-map.lv2/uri-map.h"
@@ -25,6 +25,7 @@
 #include "LV2URIMap.hpp"
 
 using namespace std;
+using namespace Raul;
 
 namespace Ingen {
 namespace Shared {
@@ -81,13 +82,13 @@ from_atom(World* world, const Raul::Atom& atom, LV2_Object* object)
 		strncpy(str, atom.get_string(), object->size);
 		break;
 	case Raul::Atom::BLOB:
-		cerr << "TODO: Blob support" << endl;
+		error << "TODO: Blob support" << endl;
 		/*object->type = map->object_class_string;
 		*(uint16_t*)(object + 1) = map->uri_to_id(NULL, atom.get_blob_type());
 		memcpy(((char*)(object + 1) + sizeof(uint32_t)), atom.get_blob(),
 				std::min(atom.data_size(), (size_t)object->size));*/
 	default:
-		cerr << "Unsupported value type for toggle control" << endl;
+		error << "Unsupported value type for toggle control" << endl;
 		return false;
 	}
 	return true;

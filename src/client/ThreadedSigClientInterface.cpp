@@ -15,13 +15,14 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <iostream>
+#include "raul/log.hpp"
 #include "common/interface/Patch.hpp"
 #include "common/interface/Plugin.hpp"
 #include "common/interface/Port.hpp"
 #include "ThreadedSigClientInterface.hpp"
 
 using namespace std;
+using namespace Raul;
 
 namespace Ingen {
 namespace Client {
@@ -38,11 +39,11 @@ ThreadedSigClientInterface::push_sig(Closure ev)
 	while (!success) {
 		success = _sigs.push(ev);
 		if (!success) {
-			cerr << "WARNING: Client event queue full.  Waiting..." << endl;
+			warn << "Client event queue full.  Waiting..." << endl;
 			_mutex.lock();
 			_cond.wait(_mutex);
 			_mutex.unlock();
-			cerr << "Queue drained, continuing" << endl;
+			warn << "Queue drained, continuing" << endl;
 		}
 	}
 }

@@ -20,7 +20,6 @@
 
 #include <cassert>
 #include <string>
-#include <iostream>
 #include <pthread.h>
 #include "raul/Thread.hpp"
 #include "interface/ClientInterface.hpp"

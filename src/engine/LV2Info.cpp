@@ -17,7 +17,6 @@
 
 #define __STDC_LIMIT_MACROS 1
 #include <cassert>
-#include <iostream>
 #include <stdint.h>
 #include "object.lv2/object.h"
 #include "LV2Info.hpp"

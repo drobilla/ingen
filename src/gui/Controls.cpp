@@ -16,8 +16,8 @@
  */
 
 #include <cmath>
-#include <iostream>
 #include <algorithm>
+#include "raul/log.hpp"
 #include "interface/EngineInterface.hpp"
 #include "client/PluginModel.hpp"
 #include "client/NodeModel.hpp"
@@ -347,8 +347,9 @@ ToggleControl::set_value(const Atom& val)
 		break;
 	case Atom::BOOL:
 		enable = (val.get_bool());
+		break;
 	default:
-		cerr << "Unsupported value type for toggle control" << endl;
+		error << "Unsupported value type for toggle control" << endl;
 	}
 
 	_enable_signal = false;
@@ -422,7 +423,7 @@ StringControl::set_value(const Atom& val)
 	if (val.type() == Atom::STRING)
 		_entry->set_text(val.get_string());
 	else
-		cerr << "ERROR: Non-string value for string port" << endl;
+		error << "Non-string value for string port" << endl;
 	_enable_signal = true;
 }
 

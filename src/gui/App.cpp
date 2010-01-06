@@ -24,6 +24,7 @@
 #include <gtk/gtkwindow.h>
 #include <time.h>
 #include <sys/time.h>
+#include "raul/log.hpp"
 #include "raul/Path.hpp"
 #include "flowcanvas/Connection.hpp"
 #include "module/World.hpp"
@@ -51,6 +52,7 @@
 #endif
 
 using namespace std;
+using namespace Raul;
 using namespace Ingen::Client;
 
 namespace Raul { class Deletable; }
@@ -150,7 +152,7 @@ App::run()
 {
 	assert(_main);
 	_main->run();
-	cout << "Gtk exiting." << endl;
+	info << "GUI exiting" << endl;
 }
 
 
@@ -272,82 +274,7 @@ App::animate()
 }
 
 
-
 /******** Event Handlers ************/
-
-
-#if 0
-App::event_load_session()
-{
-	Gtk::FileChooserDialog* dialog
-		= new Gtk::FileChooserDialog(*_main_window, "Load Session", Gtk::FILE_CHOOSER_ACTION_OPEN);
-
-	dialog->add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
-	dialog->add_button(Gtk::Stock::OPEN, Gtk::RESPONSE_OK);
-	int result = dialog->run();
-	string filename = dialog->get_filename();
-	delete dialog;
-
-	cout << result << endl;
-
-	assert(result == Gtk::RESPONSE_OK || result == Gtk::RESPONSE_CANCEL || result == Gtk::RESPONSE_NONE);
-
-	if (result == Gtk::RESPONSE_OK)
-		//configuration->load_session(filename);
-		_controller->load_session(filename);
-}
-
-
-void
-App::event_save_session_as()
-{
-	Gtk::FileChooserDialog dialog(*_main_window, "Save Session", Gtk::FILE_CHOOSER_ACTION_SAVE);
-
-	/*
-	Gtk::VBox* box = dialog.get_vbox();
-	Gtk::Label warning("Warning:  Recursively saving will overwrite any subpatch files \
-		without confirmation.");
-	box->pack_start(warning, false, false, 2);
-	Gtk::CheckButton recursive_checkbutton("Recursively save all subpatches");
-	box->pack_start(recursive_checkbutton, false, false, 0);
-	recursive_checkbutton.show();
-	*/
-	dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
-	dialog.add_button(Gtk::Stock::SAVE, Gtk::RESPONSE_OK);
-
-	int result = dialog.run();
-	//bool recursive = recursive_checkbutton.get_active();
-
-	assert(result == Gtk::RESPONSE_OK || result == Gtk::RESPONSE_CANCEL || result == Gtk::RESPONSE_NONE);
-
-	if (result == Gtk::RESPONSE_OK) {
-		string filename = dialog.get_filename();
-		if (filename.length() < 11 || filename.substr(filename.length()-10) != ".omsession")
-			filename += ".omsession";
-
-		bool confirm = false;
-		std::fstream fin;
-		fin.open(filename.c_str(), std::ios::in);
-		if (fin.is_open()) {  // File exists
-			string msg = "File already exists!  Are you sure you want to overwrite ";
-			msg += filename + "?";
-			Gtk::MessageDialog confir_dialog(*_main_window,
-				msg, false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO, true);
-			if (confir_dialog.run() == Gtk::RESPONSE_YES)
-				confirm = true;
-			else
-				confirm = false;
-		} else {  // File doesn't exist
-			confirm = true;
-		}
-		fin.close();
-
-		if (confirm) {
-			_controller->save_session(filename);
-		}
-	}
-}
-#endif
 
 
 void
@@ -418,9 +345,8 @@ App::icon_from_path(const string& path, int size)
 		_icons.insert(make_pair(make_pair(path, size), buf.operator->()));
 		buf->add_destroy_notify_callback(new pair<string, int>(path, size),
 				&App::icon_destroyed);
-		//cerr << "Loaded icon " << path << " with size " << size << endl;
 	} catch (Glib::Error e) {
-		cerr << "Error loading icon: " << e.what() << endl;
+		warn << "Error loading icon: " << e.what() << endl;
 	}
 	return buf;
 }
@@ -430,7 +356,6 @@ void*
 App::icon_destroyed(void* data)
 {
 	pair<string, int>* p = static_cast<pair<string, int>*>(data);
-	//cerr << "Destroyed icon " << p->first << " with size " << p->second << endl;
 	Icons::iterator iter = instance()._icons.find(*p);
 	if (iter != instance()._icons.end())
 		instance()._icons.erase(iter);

@@ -15,13 +15,15 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <iostream>
+#include "raul/log.hpp"
 #include "QueuedEngineInterface.hpp"
 #include "tuning.hpp"
 #include "QueuedEventSource.hpp"
 #include "events.hpp"
 #include "Engine.hpp"
 #include "Driver.hpp"
+
+#define LOG(s) s << "[QueuedEngineInterface] "
 
 using namespace std;
 using namespace Raul;
@@ -158,11 +160,11 @@ QueuedEngineInterface::put(const URI&                  uri,
 	bool meta = ResourceImpl::is_meta_uri(uri);
 	URI  subject(meta ? (string("path:/") + uri.substr(6)) : uri.str());
 
-	/*cerr << "ENGINE PUT " << subject << " {" << endl;
+	LOG(debug) << "PUT " << subject << " {" << endl;
 	typedef Resource::Properties::const_iterator iterator;
 	for (iterator i = properties.begin(); i != properties.end(); ++i)
-		cerr << "\t" << i->first << " = " << i->second << " :: " << i->second.type() << endl;
-	cerr << "}" << endl;*/
+		LOG(debug) << "    " << i->first << " = " << i->second << " :: " << i->second.type() << endl;
+	LOG(debug) << "}" << endl;
 
 	push_queued(new Events::SetMetadata(_engine, _responder, now(), this, true, meta, subject, properties));
 }

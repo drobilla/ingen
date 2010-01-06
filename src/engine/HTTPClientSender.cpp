@@ -17,6 +17,7 @@
 
 #include <string>
 #include <libsoup/soup.h>
+#include "raul/log.hpp"
 #include "raul/Atom.hpp"
 #include "raul/AtomRDF.hpp"
 #include "serialisation/Serialiser.hpp"
@@ -40,7 +41,7 @@ HTTPClientSender::response_ok(int32_t id)
 void
 HTTPClientSender::response_error(int32_t id, const std::string& msg)
 {
-	cout << "HTTP ERROR " << id << ": " << msg << endl;
+	warn << "HTTP Error " << id << " (" << msg << ")" << endl;
 }
 
 

@@ -17,8 +17,8 @@
 
 #include <cassert>
 #include <sys/mman.h>
-#include <iostream>
 #include <unistd.h>
+#include "raul/log.hpp"
 #include "raul/Deletable.hpp"
 #include "raul/Maid.hpp"
 #include "raul/SharedPtr.hpp"
@@ -48,6 +48,7 @@
 #include "tuning.hpp"
 
 using namespace std;
+using namespace Raul;
 
 namespace Ingen {
 
@@ -111,7 +112,7 @@ Engine::main()
 		nanosleep(&main_rate, NULL);
 		main_iteration();
 	}
-	cout << "[Main] Done main loop." << endl;
+	info << "Finished main loop" << endl;
 
 	deactivate();
 

@@ -15,7 +15,6 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <iostream>
 #include <fstream>
 #include <vector>
 #include <algorithm>
@@ -28,9 +27,12 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 #include <libxml/xpath.h>
+#include "raul/log.hpp"
 #include "raul/Path.hpp"
 #include "interface/EngineInterface.hpp"
 #include "DeprecatedLoader.hpp"
+
+#define LOG(s) s << "[DeprecatedLoader] "
 
 #define NS_INTERNALS "http://drobilla.net/ns/ingen-internals#"
 
@@ -211,7 +213,7 @@ DeprecatedLoader::load_patch(const Glib::ustring&    filename,
                              GraphObject::Properties  initial_data,
                              bool                    existing)
 {
-	cerr << "[DeprecatedLoader] Loading patch " << filename << " under "
+	LOG(info) << "Loading patch " << filename << " under "
 		<< parent_path << " / " << name << endl;
 
 	Path path("/");
@@ -233,20 +235,20 @@ DeprecatedLoader::load_patch(const Glib::ustring&    filename,
 	xmlDocPtr doc = xmlParseFile(filename.c_str());
 
 	if (!doc) {
-		cerr << "Unable to parse patch file." << endl;
+		LOG(error) << "Unable to parse patch file." << endl;
 		return "";
 	}
 
 	xmlNodePtr cur = xmlDocGetRootElement(doc);
 
 	if (!cur) {
-		cerr << "Empty document." << endl;
+		LOG(error) << "Empty document." << endl;
 		xmlFreeDoc(doc);
 		return "";
 	}
 
 	if (xmlStrcmp(cur->name, (const xmlChar*) "patch")) {
-		cerr << "File is not an Ingen patch file (root node != <patch>)" << endl;
+		LOG(error) << "File is not an Om patch file (root node != <patch>)" << endl;
 		xmlFreeDoc(doc);
 		return "";
 	}
@@ -340,7 +342,7 @@ DeprecatedLoader::load_patch(const Glib::ustring&    filename,
 					_engine->set_port_value(translate_load_path(i->port_path().str()), Atom(value));
 				}
 			} else {
-				cerr << "WARNING: Unknown preset: \"" << pm->name() << endl;
+				LOG(warn) << "Unknown preset: \"" << pm->name() << endl;
 			}
 		}
 		cur = cur->next;
@@ -443,8 +445,8 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 	}
 
 	if (path == "") {
-		cerr << "[DeprecatedLoader] Malformed patch file (node tag has empty children)" << endl;
-		cerr << "[DeprecatedLoader] Node ignored." << endl;
+		LOG(error) << "Malformed patch file (node tag has empty children)" << endl;
+		LOG(error) << "Node ignored." << endl;
 		return false;
 	}
 
@@ -483,7 +485,7 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 				_engine->put(path, props);
 			} else {
 				is_port = false;
-				cerr << "WARNING: Unknown internal plugin label \"" << plugin_label << "\"" << endl;
+				LOG(warn) << "Unknown internal plugin label \"" << plugin_label << "\"" << endl;
 			}
 		}
 
@@ -492,7 +494,7 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 			const string new_path = (Path::is_valid(old_path) ? old_path : Path::pathify(old_path));
 
 			if (!Path::is_valid(old_path))
-				cerr << "WARNING: Translating invalid port path \"" << old_path << "\" => \""
+				LOG(warn) << "Translating invalid port path \"" << old_path << "\" => \""
 					<< new_path << "\"" << endl;
 
 			// Set up translations (for connections etc) to alias both the old
@@ -584,7 +586,7 @@ DeprecatedLoader::load_subpatch(const string& base_filename, const Path& parent,
 		cur = cur->next;
 	}
 
-	cout << "[DeprecatedLoader] Loading subpatch " << filename << " under " << parent << endl;
+	LOG(info) << "Loading subpatch " << filename << " under " << parent << endl;
 	// load_patch sets the passed variable last, so values stored in the parent
 	// will override values stored in the child patch file
 	load_patch(filename, false, parent, Symbol(nameify_if_invalid(name)), initial_data, false);
@@ -623,8 +625,8 @@ DeprecatedLoader::load_connection(const Path& parent, xmlDocPtr doc, const xmlNo
 	}
 
 	if (source_node == "" || source_port == "" || dest_node == "" || dest_port == "") {
-		cerr << "ERROR: Malformed patch file (connection tag has empty children)" << endl;
-		cerr << "ERROR: Connection ignored." << endl;
+		LOG(error) << "Malformed patch file (connection tag has empty children)" << endl;
+		LOG(error) << "Connection ignored." << endl;
 		return false;
 	}
 
@@ -689,8 +691,7 @@ DeprecatedLoader::load_preset(const Path& parent, xmlDocPtr doc, const xmlNodePt
 			if (port_name == "") {
 				string msg = "Unable to parse control in patch file ( node = ";
 				msg.append(node_name).append(", port = ").append(port_name).append(")");
-				cerr << "ERROR: " << msg << endl;
-				//m_client_hooks->error(msg);
+				LOG(error) << msg << endl;
 			} else {
 				// FIXME: temporary compatibility, remove any slashes from port name
 				// remove this soon once patches have migrated
@@ -706,7 +707,7 @@ DeprecatedLoader::load_preset(const Path& parent, xmlDocPtr doc, const xmlNodePt
 		cur = cur->next;
 	}
 	if (pm->name() == "") {
-		cerr << "Preset in patch file has no name." << endl;
+		LOG(error) << "Preset in patch file has no name." << endl;
 		//m_client_hooks->error("Preset in patch file has no name.");
 		pm->name("Unnamed");
 	}

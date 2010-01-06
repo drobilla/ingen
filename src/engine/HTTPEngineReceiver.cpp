@@ -15,11 +15,11 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <iostream>
 #include <cstdlib>
 #include <cstdio>
 #include <string>
 #include <boost/format.hpp>
+#include "raul/log.hpp"
 #include "raul/Atom.hpp"
 #include "raul/SharedPtr.hpp"
 #include "interface/ClientInterface.hpp"
@@ -51,7 +51,7 @@ HTTPEngineReceiver::HTTPEngineReceiver(Engine& engine, uint16_t port)
 
 	soup_server_add_handler(_server, NULL, message_callback, this, NULL);
 
-	cout << "Started HTTP server on port " << soup_server_get_port(_server) << endl;
+	info << "Started HTTP server on port " << soup_server_get_port(_server) << endl;
 	Thread::set_name("HTTP Receiver");
 
 	if (!engine.world()->parser || !engine.world()->serialiser)
@@ -157,7 +157,7 @@ HTTPEngineReceiver::message_callback(SoupServer* server, SoupMessage* msg, const
 	}
 
 	if (!Path::is_valid(path)) {
-		cerr << "HTTP BAD PATH: " << path << endl;
+		error << "Bad HTTP path: " << path << endl;
 		soup_message_set_status (msg, SOUP_STATUS_BAD_REQUEST);
 		const string& err = (boost::format("Bad path: %1%") % path).str();
 		soup_message_set_response(msg, "text/plain", SOUP_MEMORY_COPY,

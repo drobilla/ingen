@@ -24,6 +24,7 @@
 #include <glibmm/convert.h>
 #include <glibmm/miscutils.h>
 #include <glibmm/thread.h>
+#include "raul/log.hpp"
 #include "raul/Configuration.hpp"
 #include "raul/Path.hpp"
 #include "raul/SharedPtr.hpp"

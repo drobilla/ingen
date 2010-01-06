@@ -15,12 +15,10 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "ingen-config.h"
-#include "module/World.hpp"
-
 #include <cassert>
 #include <map>
 #include <string>
+#include "raul/log.hpp"
 #include "flowcanvas/Canvas.hpp"
 #include "flowcanvas/Ellipse.hpp"
 #include "interface/EngineInterface.hpp"
@@ -31,6 +29,7 @@
 #include "client/PatchModel.hpp"
 #include "client/NodeModel.hpp"
 #include "client/ClientStore.hpp"
+#include "module/World.hpp"
 #include "App.hpp"
 #include "PatchCanvas.hpp"
 #include "PatchWindow.hpp"
@@ -45,6 +44,9 @@
 #include "GladeFactory.hpp"
 #include "WindowFactory.hpp"
 #include "ThreadedLoader.hpp"
+#include "ingen-config.h"
+
+#define LOG(s) s << "[PatchCanvas] "
 
 using Ingen::Client::ClientStore;
 using Ingen::Serialisation::Serialiser;
@@ -413,7 +415,7 @@ PatchCanvas::remove_port(SharedPtr<PortModel> pm)
 	if (i != _views.end()) {
 		bool ret = remove_item(i->second);
 		if (!ret)
-			cerr << "WARNING: Failed to remove port item: " << pm->path() << endl;
+			warn << "Failed to remove port item " << pm->path() << endl;
 		i->second.reset();
 		_views.erase(i);
 
@@ -464,7 +466,7 @@ PatchCanvas::connection(SharedPtr<ConnectionModel> cm)
 		add_connection(boost::shared_ptr<GUI::Connection>(new GUI::Connection(shared_from_this(),
 				cm, src, dst, src->color() + 0x22222200)));
 	} else {
-		cerr << "[PatchCanvas] ERROR: Unable to find ports to connect "
+		LOG(error) << "Unable to find ports to connect "
 			<< cm->src_port_path() << " -> " << cm->dst_port_path() << endl;
 	}
 }
@@ -479,7 +481,7 @@ PatchCanvas::disconnection(SharedPtr<ConnectionModel> cm)
 	if (src && dst)
 		remove_connection(src, dst);
 	else
-		cerr << "[PatchCanvas] ERROR: Unable to find ports to disconnect "
+		LOG(error) << "Unable to find ports to disconnect "
 			<< cm->src_port_path() << " -> " << cm->dst_port_path() << endl;
 }
 
@@ -499,7 +501,7 @@ PatchCanvas::connect(boost::shared_ptr<FlowCanvas::Connectable> src_port,
 
 	// Midi binding/learn shortcut
 	if (src->model()->type().is_events() && dst->model()->type().is_control()) {
-		cerr << "[PatchCanvas] TODO: MIDI binding shortcut" << endl;
+		LOG(error) << "TODO: MIDI binding shortcut" << endl;
 	} else {
 		App::instance().engine()->connect(src->model()->path(), dst->model()->path());
 	}
@@ -638,7 +640,7 @@ PatchCanvas::paste()
 	Glib::ustring str = Gtk::Clipboard::get()->wait_for_text();
 	SharedPtr<Parser> parser = App::instance().loader()->parser();
 	if (!parser) {
-		cerr << "Unable to load parser, paste unavailable" << endl;
+		LOG(error) << "Unable to load parser, paste unavailable" << endl;
 		return;
 	}
 
@@ -681,10 +683,8 @@ PatchCanvas::paste()
 			parent, symbol);
 
 	for (Store::iterator i = clipboard.begin(); i != clipboard.end(); ++i) {
-		if (_patch->path().is_root() && i->first.is_root()) {
-			//cout << "Skipping root" << endl;
+		if (_patch->path().is_root() && i->first.is_root())
 			continue;
-		}
 		GraphObject::Properties::iterator x = i->second->properties().find("ingenuity:canvas-x");
 		if (x != i->second->properties().end())
 			x->second = x->second.get_float() + (20.0f * _paste_count);
@@ -708,13 +708,6 @@ PatchCanvas::paste()
 			i != root->connections().end(); ++i) {
 		App::instance().engine()->connect((*i)->src_port_path(), (*i)->dst_port_path());
 	}
-
-	// Orphan connections (just in case...)
-	/*for (ClientStore::ConnectionRecords::const_iterator i = clipboard.connection_records().begin();
-			i != clipboard.connection_records().end(); ++i) {
-		cout << "WARNING: Orphan connection paste: " << i->first << " -> " << i->second << endl;
-		App::instance().engine()->connect(i->first, i->second);
-	}*/
 }
 
 

@@ -17,7 +17,6 @@
 
 #include <cassert>
 #include <ladspa.h>
-#include <iostream>
 #include <raul/Symbol.hpp>
 #include "LADSPAPlugin.hpp"
 #include "LADSPANode.hpp"
@@ -83,7 +82,7 @@ LADSPAPlugin::instantiate(BufferFactory&    bufs,
 	assert(*_module);
 
 	if (!_module->get_symbol("ladspa_descriptor", df.dp)) {
-		cerr << "Looks like this isn't a LADSPA plugin." << endl;
+		warn << _library_path << " is not a LADSPA plugin library" << endl;
 		return NULL;
 	}
 
@@ -104,7 +103,7 @@ LADSPAPlugin::instantiate(BufferFactory&    bufs,
 		}
 
 	} else {
-		cerr << "Could not find plugin \"" << _id << "\" in " << _library_path << endl;
+		error << "Could not find plugin \"" << _id << "\" in " << _library_path << endl;
 	}
 
 	return n;

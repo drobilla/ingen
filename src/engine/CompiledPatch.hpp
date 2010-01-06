@@ -18,7 +18,6 @@
 #ifndef COMPILED_PATCH_HPP
 #define COMPILED_PATCH_HPP
 
-#include <iostream>
 #include <vector>
 #include "raul/List.hpp"
 #include "raul/Deletable.hpp"

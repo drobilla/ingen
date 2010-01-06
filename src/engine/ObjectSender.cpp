@@ -102,7 +102,7 @@ ObjectSender::send_node(ClientInterface* client, const NodeImpl* node, bool recu
 	}
 
 	if (plugin->uri().length() == 0) {
-		cerr << "Node " << node->path() << " plugin has no URI!  Not sending." << endl;
+		error << "Node " << node->path() << "'s plugin has no URI!  Not sending." << endl;
 		return;
 	}
 

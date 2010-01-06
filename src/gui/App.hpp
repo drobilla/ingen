@@ -22,7 +22,6 @@
 #include <string>
 #include <map>
 #include <utility>
-#include <iostream>
 #include <libgnomecanvasmm.h>
 #include <gtkmm.h>
 #include <libglademm.h>

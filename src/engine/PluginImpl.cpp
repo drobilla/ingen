@@ -15,13 +15,14 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <iostream>
+#include "raul/log.hpp"
 #include "PluginImpl.hpp"
 #include "internals/Note.hpp"
 #include "internals/Trigger.hpp"
 #include "internals/Controller.hpp"
 
 using namespace std;
+using namespace Raul;
 
 namespace Ingen {
 
@@ -30,7 +31,7 @@ void
 PluginImpl::load()
 {
 	if (!_module) {
-		//cerr << "Loading " << _library_path << " library" << endl;
+		debug << "Loading plugin library " << _library_path << endl;
 		_module = new Glib::Module(_library_path, Glib::MODULE_BIND_LOCAL);
 		if (!(*_module))
 			delete _module;
@@ -42,7 +43,7 @@ void
 PluginImpl::unload()
 {
 	if (_module) {
-		//cerr << "Unloading " << _library_path << endl;
+		debug << "Unloading plugin library " << _library_path << endl;
 		delete _module;
 		_module = NULL;
 	}

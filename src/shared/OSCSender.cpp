@@ -15,13 +15,14 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "OSCSender.hpp"
 #include <cassert>
-#include <iostream>
 #include <unistd.h>
 #include <stdarg.h>
+#include "raul/log.hpp"
+#include "OSCSender.hpp"
 
 using namespace std;
+using namespace Raul;
 
 namespace Ingen {
 namespace Shared {
@@ -109,7 +110,7 @@ OSCSender::send_message(const char* path, lo_message msg)
 	if (_transfer) {
 		if (lo_bundle_length(_transfer) + lo_message_length(msg, path) > MAX_BUNDLE_SIZE) {
 			if (_send_state == SendingBundle)
-				cerr << "WARNING: Maximum bundle size reached, bundle split" << endl;
+				warn << "Maximum bundle size reached, bundle split" << endl;
 			lo_send_bundle(_address, _transfer);
 			lo_timetag t;
 			lo_timetag_now(&t);

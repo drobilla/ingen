@@ -15,9 +15,9 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <iostream>
 #include <cassert>
 #include <fstream>
+#include "raul/log.hpp"
 #include "interface/EngineInterface.hpp"
 #include "client/PatchModel.hpp"
 #include "App.hpp"
@@ -67,8 +67,6 @@ void
 PatchView::set_patch(SharedPtr<PatchModel> patch)
 {
 	assert(!_canvas); // FIXME: remove
-
-	//cerr << "Creating view for " << patch->path() << endl;
 
 	assert(_breadcrumb_container); // ensure created
 
@@ -120,18 +118,10 @@ PatchView::set_patch(SharedPtr<PatchModel> patch)
 }
 
 
-PatchView::~PatchView()
-{
-	//cerr << "Destroying view for " << _patch->path() << endl;
-}
-
-
 SharedPtr<PatchView>
 PatchView::create(SharedPtr<PatchModel> patch)
-
 {
-
-const Glib::RefPtr<Gnome::Glade::Xml>& xml = GladeFactory::new_glade_reference("patch_view_box");
+	const Glib::RefPtr<Gnome::Glade::Xml>& xml = GladeFactory::new_glade_reference("patch_view_box");
 	PatchView* result = NULL;
 	xml->get_widget_derived("patch_view_box", result);
 	assert(result);
@@ -226,7 +216,7 @@ PatchView::property_changed(const Raul::URI& predicate, const Raul::Atom& value)
 	   if (value.type() == Atom::BOOL)
 		   _process_but->set_active(value.get_bool());
 	   else
-		   cerr << "WARNING: Bad type for ingen:enabled variable: " << value.type() << endl;
+		   warn << "Bad type for ingen:enabled variable: " << value.type() << endl;
 	}
 	_enable_signal = true;
 }

@@ -18,7 +18,6 @@
 #ifndef AUDIOBUFFER_H
 #define AUDIOBUFFER_H
 
-#include <iostream>
 #include <cstddef>
 #include <cassert>
 #include <boost/utility.hpp>

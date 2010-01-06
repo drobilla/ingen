@@ -17,12 +17,13 @@
 
 #define __STDC_LIMIT_MACROS 1
 #include <cassert>
-#include <iostream>
 #include <stdint.h>
+#include "raul/log.hpp"
 #include "object.lv2/object.h"
 #include "LV2URIMap.hpp"
 
 using namespace std;
+using namespace Raul;
 
 namespace Ingen {
 namespace Shared {
@@ -74,8 +75,8 @@ LV2URIMap::uri_map_uri_to_id(LV2_URI_Map_Callback_Data callback_data,
 		me->uri_map.insert(make_pair(string(uri), ret));
 	}
 
-	/*cout << "URI MAP (" << (map ? (void*)map : NULL)
-		<< "): " << uri << " -> " << ret << endl;*/
+	debug << "URI MAP (" << (map ? (void*)map : NULL)
+		<< "): " << uri << " -> " << ret << endl;
 
 	assert(ret <= UINT16_MAX);
 	return ret;

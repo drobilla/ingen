@@ -15,15 +15,18 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <iostream>
 #include <glibmm/module.h>
 #include <glibmm/miscutils.h>
 #include <glibmm/fileutils.h>
+#include "raul/log.hpp"
 #include "ingen-config.h"
 #include "shared/runtime_paths.hpp"
 #include "World.hpp"
 
+#define LOG(s) s << "[Module] "
+
 using namespace std;
+using namespace Raul;
 
 namespace Ingen {
 namespace Shared {
@@ -52,11 +55,11 @@ load_module(const string& name)
 			if (Glib::file_test(filename, Glib::FILE_TEST_EXISTS)) {
 				module = new Glib::Module(filename, Glib::MODULE_BIND_LAZY);
 				if (*module) {
-					cerr << "[Module] Loaded \"" <<  name << "\" from " << filename << endl;
+					LOG(info) << "Loaded \"" <<  name << "\" from " << filename << endl;
 					return SharedPtr<Glib::Module>(module);
 				} else {
 					delete module;
-					cerr << Glib::Module::get_last_error() << endl;
+					error << Glib::Module::get_last_error() << endl;
 				}
 			}
 		}
@@ -68,16 +71,16 @@ load_module(const string& name)
             Glib::MODULE_BIND_LAZY);
 
 	if (*module) {
-		cerr << "[Module] Loaded \"" <<  name << "\" from " << INGEN_MODULE_DIR << endl;
+		LOG(info) << "Loaded \"" <<  name << "\" from " << INGEN_MODULE_DIR << endl;
 		return SharedPtr<Glib::Module>(module);
 	} else if (!module_path_found) {
-		cerr << "[Module] Unable to find " << name
+		LOG(error) << "Unable to find " << name
 			<< " (" << Glib::Module::get_last_error() << ")" << endl;
 		return SharedPtr<Glib::Module>();
 	} else {
-		cerr << "[Module] Unable to load " << name << " from " << module_path
+		LOG(error) << "Unable to load " << name << " from " << module_path
 			<< " (" << Glib::Module::get_last_error() << ")" << endl;
-		cerr << "Is Ingen installed?  Use ./ingen.dev to run from the source tree." << endl;
+		LOG(error) << "Is Ingen installed?" << endl;
 		return SharedPtr<Glib::Module>();
 	}
 }
@@ -97,7 +100,7 @@ World::load(const char* name)
 		modules.insert(make_pair(string(name), module));
 		return true;
 	} else {
-		cerr << "Failed to load module " << name << endl;
+		LOG(error) << "Failed to load module " << name << endl;
 		return false;
 	}
 }
@@ -120,7 +123,7 @@ World::interface(const std::string& url)
 	const string scheme = url.substr(0, url.find(":"));
 	const InterfaceFactories::const_iterator i = interface_factories.find(scheme);
 	if (i == interface_factories.end()) {
-		cerr << "WARNING: Unknown URI scheme `'" << scheme << "'" << endl;
+		warn << "Unknown URI scheme `'" << scheme << "'" << endl;
 		return SharedPtr<Ingen::Shared::EngineInterface>();
 	}
 
@@ -134,7 +137,7 @@ World::run(const std::string& mime_type, const std::string& filename)
 {
 	const ScriptRunners::const_iterator i = script_runners.find(mime_type);
 	if (i == script_runners.end()) {
-		cerr << "WARNING: Unknown script MIME type `'" << mime_type << "'" << endl;
+		warn << "Unknown script MIME type `'" << mime_type << "'" << endl;
 		return false;
 	}
 

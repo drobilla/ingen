@@ -15,11 +15,11 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <iostream>
 #include <cassert>
 #include <float.h>
 #include <stdint.h>
 #include <cmath>
+#include "raul/log.hpp"
 #include "raul/Maid.hpp"
 #include "AudioBuffer.hpp"
 #include "InputPort.hpp"
@@ -86,7 +86,7 @@ LV2Node::prepare_poly(BufferFactory& bufs, uint32_t poly)
 				_lv2_plugin->slv2_plugin(), _srate, _features->array());
 
 		if (_prepared_instances->at(i) == NULL) {
-			cerr << "Failed to instantiate plugin!" << endl;
+			error << "Failed to instantiate plugin" << endl;
 			return false;
 		}
 
@@ -159,7 +159,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 	for (uint32_t i=0; i < _polyphony; ++i) {
 		(*_instances)[i] = slv2_plugin_instantiate(plug, _srate, _features->array());
 		if ((*_instances)[i] == NULL) {
-			cerr << "Failed to instantiate plugin!" << endl;
+			error << "Failed to instantiate plugin" << endl;
 			return false;
 		}
 
@@ -170,7 +170,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 				(*_instances)[i], LV2_CONTEXT_MESSAGE);
 
 		if (i == 0 && ctx_ext) {
-			cerr << _lv2_plugin->uri() << " has message context" << endl;
+			Raul::info << _lv2_plugin->uri() << " has message context" << endl;
 			assert(!_message_funcs);
 			_message_funcs = (LV2MessageContext*)ctx_ext;
 		}
@@ -284,14 +284,14 @@ LV2Node::instantiate(BufferFactory& bufs)
 			SLV2Value c = slv2_values_get_at(contexts, i);
 			const char* context = slv2_value_as_string(c);
 			if (!strcmp(LV2_CONTEXT_MESSAGE, context)) {
-				cerr << _lv2_plugin->uri() << " port " << i << " has message context" << endl;
+				Raul::info << _lv2_plugin->uri() << " port " << i << " has message context" << endl;
 				if (!_message_funcs) {
-					cerr << _lv2_plugin->uri()
-						<< " has a message port, but no context extension data." << endl;
+					warn << _lv2_plugin->uri()
+							<< " has a message port, but no context extension data." << endl;
 				}
 				port->set_context(Context::MESSAGE);
 			} else {
-				cout << _lv2_plugin->uri() << " port " << i << " has unknown context "
+				warn << _lv2_plugin->uri() << " port " << i << " has unknown context "
 					<< slv2_value_as_string(slv2_values_get_at(contexts, i))
 					<< endl;
 			}

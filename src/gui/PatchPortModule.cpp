@@ -16,7 +16,6 @@
  */
 
 #include <cassert>
-#include <iostream>
 #include <utility>
 #include "PatchPortModule.hpp"
 #include "interface/EngineInterface.hpp"

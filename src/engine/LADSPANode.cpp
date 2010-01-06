@@ -15,13 +15,13 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <iostream>
 #include <cassert>
 #include <cmath>
 #include <map>
 #include <stdint.h>
-#include "raul/Maid.hpp"
 #include <boost/optional.hpp>
+#include "raul/log.hpp"
+#include "raul/Maid.hpp"
 #include "LADSPANode.hpp"
 #include "AudioBuffer.hpp"
 #include "InputPort.hpp"
@@ -75,7 +75,7 @@ LADSPANode::prepare_poly(BufferFactory& bufs, uint32_t poly)
 	for (uint32_t i = _polyphony; i < _prepared_instances->size(); ++i) {
 		_prepared_instances->at(i) = _descriptor->instantiate(_descriptor, _srate);
 		if (_prepared_instances->at(i) == NULL) {
-			cerr << "Failed to instantiate plugin!" << endl;
+			error << "Failed to instantiate plugin" << endl;
 			return false;
 		}
 
@@ -154,7 +154,7 @@ LADSPANode::instantiate(BufferFactory& bufs)
 	for (uint32_t i=0; i < _polyphony; ++i) {
 		(*_instances)[i] = _descriptor->instantiate(_descriptor, _srate);
 		if ((*_instances)[i] == NULL) {
-			cerr << "Failed to instantiate plugin!" << endl;
+			error << "Failed to instantiate plugin" << endl;
 			return false;
 		}
 	}
@@ -222,13 +222,13 @@ LADSPANode::instantiate(BufferFactory& bufs)
 
 		// Work around broke-ass crackhead plugins
 		if (default_val && default_val.get() < min.get()) {
-			cerr << "WARNING: Broken LADSPA " << _descriptor->UniqueID
+			warn << "Broken LADSPA " << _descriptor->UniqueID
 					<< ": Port default < minimum.  Minimum adjusted." << endl;
 			min = default_val;
 		}
 
 		if (default_val && default_val.get() > max.get()) {
-			cerr << "WARNING: Broken LADSPA " << _descriptor->UniqueID
+			warn << "Broken LADSPA " << _descriptor->UniqueID
 					<< ": Maximum adjusted." << endl;
 			max = default_val;
 		}

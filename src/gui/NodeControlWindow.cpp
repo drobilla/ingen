@@ -15,7 +15,6 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <iostream>
 #include <cmath>
 #include "interface/EngineInterface.hpp"
 #include "client/NodeModel.hpp"
@@ -94,18 +93,13 @@ void
 NodeControlWindow::resize()
 {
 	pair<int,int> controls_size = _control_panel->ideal_size();
-	/*int width = 400;
-	int height = controls_size.second
-		+ ((_node->polyphonic()) ? 4 : 40);*/
-	int width = controls_size.first;
+	int width  = controls_size.first;
 	int height = controls_size.second;
 
 	if (height > property_screen().get_value()->get_height() - 64)
 		height = property_screen().get_value()->get_height() - 64;
 	if (width > property_screen().get_value()->get_width() - 64)
 		width = property_screen().get_value()->get_width() - 64;
-
-	//cerr << "Resizing to: " << width << " x " << height << endl;
 
 	Gtk::Window::resize(width, height);
 }

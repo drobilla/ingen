@@ -16,7 +16,6 @@
  */
 
 #include <sys/mman.h>
-#include <iostream>
 #include "QueuedEventSource.hpp"
 #include "QueuedEvent.hpp"
 #include "PostProcessor.hpp"

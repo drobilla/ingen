@@ -16,7 +16,7 @@
  */
 
 #include <cassert>
-#include <iostream>
+#include "raul/log.hpp"
 #include "interface/EngineInterface.hpp"
 #include "flowcanvas/Module.hpp"
 #include "client/PatchModel.hpp"
@@ -131,7 +131,7 @@ Port::value_changed(const Atom& value)
 	else if (value.type() == Atom::FLOAT)
 		FlowCanvas::Port::set_control(value.get_float());
 	else
-		cerr << "WARNING: Unknown port value type " << (unsigned)value.type() << endl;
+		warn << "Unknown port value type " << (unsigned)value.type() << endl;
 }
 
 

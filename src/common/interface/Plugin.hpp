@@ -19,7 +19,6 @@
 #define PLUGIN_H
 
 #include <string>
-#include <iostream>
 #include "interface/Resource.hpp"
 
 namespace Ingen {

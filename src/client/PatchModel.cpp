@@ -16,7 +16,7 @@
  */
 
 #include <cassert>
-#include <iostream>
+#include "raul/log.hpp"
 #include "PatchModel.hpp"
 #include "NodeModel.hpp"
 #include "ConnectionModel.hpp"
@@ -155,7 +155,7 @@ PatchModel::remove_connection(const Path& src_port_path, const Path& dst_port_pa
 		}
 	}
 
-	cerr << "[PatchModel::remove_connection] WARNING: Failed to find connection " <<
+	warn << "[PatchModel::remove_connection] Failed to find connection " <<
 		src_port_path << " -> " << dst_port_path << endl;
 }
 

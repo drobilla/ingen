@@ -17,6 +17,7 @@
 
 #include <utility>
 #include <vector>
+#include "raul/log.hpp"
 #include "raul/List.hpp"
 #include "raul/PathTable.hpp"
 #include "raul/TableImpl.hpp"
@@ -25,6 +26,8 @@
 #include "NodeImpl.hpp"
 #include "PortImpl.hpp"
 #include "ThreadManager.hpp"
+
+#define LOG(s) s << "[EngineStore] "
 
 using namespace std;
 using namespace Raul;
@@ -88,14 +91,7 @@ void
 EngineStore::add(const Objects& table)
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
-
-	//cerr << "[EngineStore] Adding " << o[0].second->path() << endl;
 	cram(table);
-
-	/*cerr << "[EngineStore] Adding Table:" << endl;
-	for (const_iterator i = table.begin(); i != table.end(); ++i) {
-		cerr << i->first << " = " << i->second->path() << endl;
-	}*/
 }
 
 
@@ -123,17 +119,12 @@ EngineStore::remove(iterator object)
 
 	if (object != end()) {
 		iterator descendants_end = find_descendants_end(object);
-		//cout << "[EngineStore] Removing " << object->first << " {" << endl;
 		SharedPtr<Objects> removed = yank(object, descendants_end);
-		/*for (iterator i = removed->begin(); i != removed->end(); ++i) {
-			cout << "\t" << i->first << endl;
-		}
-		cout << "}" << endl;*/
 
 		return removed;
 
 	} else {
-		cerr << "[EngineStore] WARNING: Removing " << object->first << " failed." << endl;
+		LOG(warn) << "Removing " << object->first << " failed." << endl;
 		return SharedPtr<EngineStore>();
 	}
 }
@@ -167,7 +158,7 @@ EngineStore::remove_children(iterator object)
 			return yank(first_child, descendants_end);
 		}
 	} else {
-		cerr << "[EngineStore] WARNING: Removing children of " << object->first << " failed." << endl;
+		LOG(warn) << "Removing children of " << object->first << " failed." << endl;
 		return SharedPtr<EngineStore::Objects>();
 	}
 

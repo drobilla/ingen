@@ -16,7 +16,6 @@
  */
 
 #include "InputPort.hpp"
-#include <iostream>
 #include <cstdlib>
 #include <cassert>
 #include "interface/Patch.hpp"
@@ -163,7 +162,7 @@ InputPort::remove_connection(const OutputPort* src_port)
 			connection = _connections.erase(i);
 
 	if ( ! connection) {
-		cerr << "ERROR:  [InputPort::remove_connection] Connection not found!" << endl;
+		error << "[InputPort::remove_connection] Connection not found!" << endl;
 		return NULL;
 	}
 

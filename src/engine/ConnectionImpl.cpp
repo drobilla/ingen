@@ -16,6 +16,7 @@
  */
 
 #include <algorithm>
+#include "raul/log.hpp"
 #include "raul/Maid.hpp"
 #include "raul/IntrusivePtr.hpp"
 #include "AudioBuffer.hpp"
@@ -65,7 +66,7 @@ ConnectionImpl::ConnectionImpl(BufferFactory& bufs, PortImpl* src_port, PortImpl
 void
 ConnectionImpl::dump() const
 {
-	cerr << _src_port->path() << " -> " << _dst_port->path()
+	debug << _src_port->path() << " -> " << _dst_port->path()
 		<< (must_mix()   ? " (MIX) " : " (DIRECT) ")
 		<< (must_queue() ? " (QUEUE)" : " (NOQUEUE)") << endl;
 }
@@ -106,13 +107,13 @@ ConnectionImpl::process(Context& context)
 	if (must_queue()) {
 		IntrusivePtr<EventBuffer> src_buf = PtrCast<EventBuffer>(_src_port->buffer(0));
 		if (!src_buf) {
-			cerr << "ERROR: Queued connection but source is not an EventBuffer" << endl;
+			error << "Queued connection but source is not an EventBuffer" << endl;
 			return;
 		}
 
 		IntrusivePtr<ObjectBuffer> local_buf = PtrCast<ObjectBuffer>(_local_buffer);
 		if (!local_buf) {
-			cerr << "ERROR: Queued connection but local buffer is not an ObjectBuffer" << endl;
+			error << "Queued connection but local buffer is not an ObjectBuffer" << endl;
 			return;
 		}
 
@@ -141,18 +142,18 @@ ConnectionImpl::queue(Context& context)
 
 	IntrusivePtr<EventBuffer> src_buf = PtrCast<EventBuffer>(_src_port->buffer(0));
 	if (!src_buf) {
-		cerr << "ERROR: Queued connection but source is not an EventBuffer" << endl;
+		error << "Queued connection but source is not an EventBuffer" << endl;
 		return;
 	}
 
 	while (src_buf->is_valid()) {
 		LV2_Event*  ev  = src_buf->get_event();
 		LV2_Object* obj = LV2_OBJECT_FROM_EVENT(ev);
-		/*cout << _src_port->path() << " -> " << _dst_port->path()
+		/*debug << _src_port->path() << " -> " << _dst_port->path()
 			<< " QUEUE OBJECT TYPE " << obj->type << ":";
 		for (size_t i = 0; i < obj->size; ++i)
-			cout << " " << std::hex << (int)obj->body[i];
-		cout << endl;*/
+			debug << " " << std::hex << (int)obj->body[i];
+		debug << endl;*/
 
 		_queue->write(sizeof(LV2_Object) + obj->size, obj);
 		src_buf->increment();

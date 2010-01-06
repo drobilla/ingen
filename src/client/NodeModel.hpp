@@ -19,7 +19,6 @@
 #define NODEMODEL_H
 
 #include <cstdlib>
-#include <iostream>
 #include <string>
 #include <vector>
 #include <sigc++/sigc++.h>

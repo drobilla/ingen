@@ -78,12 +78,9 @@ ControlPanel::init(SharedPtr<NodeModel> node, uint32_t poly)
 	node->signal_property.connect(
 			sigc::mem_fun(this, &ControlPanel::variable_changed));
 
-	if (node->parent()) {
+	if (node->parent())
 		node->signal_property.connect(
 			sigc::mem_fun(this, &ControlPanel::parent_property_changed));
-	} else {
-		cerr << "[ControlPanel] No parent, polyphonic controls disabled" << endl;
-	}
 
 	_callback_enabled = true;
 }
@@ -160,9 +157,6 @@ ControlPanel::add_port(SharedPtr<PortModel> pm)
 	_voice_control_box->size_request(voice_size);
 	_ideal_size.first += voice_size.width;
 	_ideal_size.second += voice_size.height;
-
-	//cerr << "Setting ideal size to " << _ideal_size.first
-	//	<< " x " << _ideal_size.second << endl;
 }
 
 
@@ -183,54 +177,6 @@ ControlPanel::remove_port(const Path& path)
 	}
 }
 
-
-/** Rename the control for the given port.
- */
-/*
-void
-ControlPanel::rename_port(const Path& old_path, const Path& new_path)
-{
-	for (vector<Control*>::iterator cg = _controls.begin(); cg != _controls.end(); ++cg) {
-		if ((*cg)->port_model()->path() == old_path) {
-			(*cg)->set_name(new_path.name());
-			return;
-		}
-	}
-}
-*/
-
-#if 0
-/** Enable the control for the given port.
- *
- * Used when all connections to port are un-made.
- */
-void
-ControlPanel::enable_port(const Path& path)
-{
-	for (vector<Control*>::iterator i = _controls.begin(); i != _controls.end(); ++i) {
-		if ((*i)->port_model()->path() == path) {
-			(*i)->enable();
-			return;
-		}
-	}
-}
-
-
-/** Disable the control for the given port.
- *
- * Used when port is connected.
- */
-void
-ControlPanel::disable_port(const Path& path)
-{
-	for (vector<Control*>::iterator i = _controls.begin(); i != _controls.end(); ++i) {
-		if ((*i)->port_model()->path() == path) {
-			(*i)->disable();
-			return;
-		}
-	}
-}
-#endif
 
 /** Callback for Controls to notify this of a change.
  */
