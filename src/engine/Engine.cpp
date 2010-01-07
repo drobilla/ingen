@@ -200,29 +200,8 @@ Engine::deactivate()
 	for (EventSources::iterator i = _event_sources.begin(); i != _event_sources.end(); ++i)
 		(*i)->deactivate_source();
 
-	/*for (Tree<GraphObject*>::iterator i = _engine_store->objects().begin();
-			i != _engine_store->objects().end(); ++i)
-		if ((*i)->as_node() != NULL && (*i)->as_node()->parent() == NULL)
-			(*i)->as_node()->deactivate();*/
-
-	if (_midi_driver)
-		_midi_driver->deactivate();
-
 	_driver->deactivate();
-
 	_driver->root_patch()->deactivate();
-
-	/*for (size_t i=0; i < _process_slaves.size(); ++i) {
-		delete _process_slaves[i];
-	}*/
-
-	//_process_slaves.clear();
-
-	// Finalize any lingering events (unlikely)
-	//_post_processor->process();
-
-	//_driver.reset();
-	//_event_sources.clear();
 
 	_activated = false;
 }
