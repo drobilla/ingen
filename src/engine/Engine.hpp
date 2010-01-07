@@ -109,7 +109,6 @@ private:
 	ProcessSlaves          _process_slaves;
 	Ingen::Shared::World*  _world;
 	SharedPtr<Driver>      _driver;
-	SharedPtr<Driver>      _midi_driver;
 	Raul::Maid*            _maid;
 	PostProcessor*         _post_processor;
 	ClientBroadcaster*     _broadcaster;

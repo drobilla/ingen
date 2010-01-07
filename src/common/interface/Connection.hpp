@@ -31,6 +31,7 @@ namespace Shared {
 class Connection
 {
 public:
+	virtual ~Connection() {}
 	virtual const Raul::Path src_port_path() const = 0;
 	virtual const Raul::Path dst_port_path() const = 0;
 };

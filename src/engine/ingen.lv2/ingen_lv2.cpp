@@ -106,7 +106,6 @@ ingen_cleanup(LV2_Handle instance)
 static void
 ingen_connect_port(LV2_Handle instance, uint32_t port, void* data)
 {
-	//IngenPlugin* plugin = (IngenPlugin*)instance;
 }
 
 

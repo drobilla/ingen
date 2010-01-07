@@ -30,6 +30,7 @@ namespace Shared {
 class Resource
 {
 public:
+	virtual ~Resource() {}
 	typedef std::multimap<Raul::URI, Raul::Atom> Properties;
 
 	virtual const Raul::URI   uri()        const = 0;

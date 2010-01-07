@@ -32,6 +32,7 @@ class World;
  * All components of Ingen reside in one of these.
  */
 struct Module {
+	virtual ~Module() {}
 	virtual void load(Ingen::Shared::World* world) = 0;
 
 	SharedPtr<Glib::Module> library;
@@ -41,4 +42,4 @@ struct Module {
 } // namespace Shared
 } // namespace Ingen
 
-#endif //INGEN_MODULE_HPP
+#endif // INGEN_MODULE_HPP
