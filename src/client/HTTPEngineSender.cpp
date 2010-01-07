@@ -23,6 +23,8 @@
 #include "HTTPEngineSender.hpp"
 #include "HTTPClientReceiver.hpp"
 
+#define LOG(s) s << "[HTTPEngineSender] "
+
 using namespace std;
 using namespace Raul;
 
@@ -49,6 +51,7 @@ HTTPEngineSender::~HTTPEngineSender()
 void
 HTTPEngineSender::attach(int32_t ping_id, bool block)
 {
+	LOG(debug) << "Attaching to " << _engine_url << endl;
 	SoupMessage* msg = soup_message_new ("GET", _engine_url.c_str());
 	HTTPClientReceiver::send(msg);
 }
@@ -212,14 +215,15 @@ HTTPEngineSender::set_property(const URI&  subject,
 void
 HTTPEngineSender::ping()
 {
-	SoupMessage* msg = soup_message_new("GET", "");
-	HTTPClientReceiver::send(msg);
+	LOG(debug) << "Ping " << _engine_url << endl;
+	get(_engine_url);
 }
 
 
 void
 HTTPEngineSender::get(const URI& uri)
 {
+	LOG(debug) << "Get " << _engine_url << endl;
 	SoupMessage* msg = soup_message_new("GET", uri.c_str());
 	HTTPClientReceiver::send(msg);
 }
@@ -228,7 +232,7 @@ HTTPEngineSender::get(const URI& uri)
 void
 HTTPEngineSender::request_property(const URI& object_path, const URI& key)
 {
-	warn << "TODO: HTTP request property" << endl;
+	LOG(warn) << "TODO: request property" << endl;
 }
 
 

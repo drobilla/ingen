@@ -105,20 +105,13 @@ OSCClientReceiver::stop()
 int
 OSCClientReceiver::generic_cb(const char* path, const char* types, lo_arg** argv, int argc, void* data, void* user_data)
 {
-	printf("[OSCMsg] %s (%s)\t", path, types);
+	printf("[OSCClientReceiver] %s (%s)\t", path, types);
 
 	for (int i=0; i < argc; ++i) {
 		lo_arg_pp(lo_type(types[i]), argv[i]);
 		printf("\t");
     }
     printf("\n");
-
-	/*for (int i=0; i < argc; ++i) {
-		printf("         '%c'  ", types[i]);
-		lo_arg_pp(lo_type(types[i]), argv[i]);
-		printf("\n");
-    }
-    printf("\n");*/
 
 	return 1;  // not handled
 }

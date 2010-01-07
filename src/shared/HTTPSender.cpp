@@ -40,7 +40,7 @@ HTTPSender::HTTPSender()
 	, _client_sock(-1)
 	, _send_state(Immediate)
 {
-	Thread::set_name("HTTP Sender");
+	Thread::set_name("HTTPSender");
 
 	struct sockaddr_in addr;
 

@@ -115,7 +115,7 @@ OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t
 
 	lo_server_add_method(_server, NULL, NULL, unknown_cb, NULL);
 
-	Thread::set_name("OSC Receiver");
+	Thread::set_name("OSCEngineReceiver");
 }
 
 
@@ -140,7 +140,7 @@ void
 OSCEngineReceiver::activate_source()
 {
 	EventSource::activate_source();
-	_receive_thread->set_name("OSC Receiver");
+	_receive_thread->set_name("OSCEngineReceiver Listener");
 	_receive_thread->start();
 	_receive_thread->set_scheduling(SCHED_FIFO, 5); // Jack default appears to be 10
 }
@@ -713,7 +713,7 @@ OSCEngineReceiver::_request_all_objects_cb(const char* path, const char* types, 
 int
 OSCEngineReceiver::generic_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg, void* user_data)
 {
-	printf("[OSCMsg] %s (%s)\t", path, types);
+	printf("[OSCEngineReceiver] %s (%s)\t", path, types);
 
 	for (int i=0; i < argc; ++i) {
 		lo_arg_pp(lo_type(types[i]), argv[i]);

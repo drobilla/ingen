@@ -61,16 +61,11 @@ HTTPClientReceiver::~HTTPClientReceiver()
 }
 
 
-HTTPClientReceiver::Listener::~Listener()
-{
-	close(_sock);
-}
-
 HTTPClientReceiver::Listener::Listener(HTTPClientReceiver* receiver, const std::string uri)
 	: _uri(uri)
 	, _receiver(receiver)
 {
-	string port_str = uri.substr(uri.find_last_of(":")+1);
+	const string port_str = uri.substr(uri.find_last_of(":")+1);
 	int port = atoi(port_str.c_str());
 
 	LOG(info) << "Client HTTP listen: " << uri << " (port " << port << ")" << endl;
@@ -105,12 +100,20 @@ HTTPClientReceiver::Listener::Listener(HTTPClientReceiver* receiver, const std::
 }
 
 
+HTTPClientReceiver::Listener::~Listener()
+{
+	close(_sock);
+}
+
 void
 HTTPClientReceiver::send(SoupMessage* msg)
 {
-	if (!client_session)
+	if (!client_session) {
+		LOG(debug) << "Starting session" << endl;
 		client_session = soup_session_sync_new();
+	}
 
+	assert(SOUP_IS_MESSAGE(msg));
 	soup_session_queue_message(client_session, msg, message_callback, client_receiver);
 }
 
@@ -231,6 +234,7 @@ HTTPClientReceiver::start(bool dump)
 		_world->load("ingen_serialisation");
 
 	SoupMessage* msg = soup_message_new("GET", (_url + "/stream").c_str());
+	assert(SOUP_IS_MESSAGE(msg));
 	soup_session_queue_message(client_session, msg, message_callback, this);
 }
 

@@ -73,6 +73,7 @@ private:
 
 	Shared::World*    _world;
 	const std::string _url;
+	bool              _quit_flag;
 };
 
 
