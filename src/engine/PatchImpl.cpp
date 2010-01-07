@@ -465,19 +465,7 @@ PatchImpl::compile() const
 			compile_recursive(node, compiled_patch);
 	}
 
-#ifdef LOG_DEBUG
-	debug << path() << " compiled {" << endl;
-	for (size_t i=0; i < compiled_patch->size(); ++i)
-		debug << "    " << compiled_patch->at(i).node()->path() << endl;
-	debug << "}" << endl;
-#endif
-
 	assert(compiled_patch->size() == _nodes.size());
-
-#ifndef NDEBUG
-	for (size_t i=0; i < compiled_patch->size(); ++i)
-		assert(compiled_patch->at(i).node());
-#endif
 
 	return compiled_patch;
 }
