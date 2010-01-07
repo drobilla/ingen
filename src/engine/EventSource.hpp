@@ -42,8 +42,8 @@ public:
 	EventSource(size_t queue_size);
 	~EventSource();
 
-	void activate_source()   { Slave::start(); }
-	void deactivate_source() { Slave::stop(); }
+	virtual void activate_source()   { Slave::start(); }
+	virtual void deactivate_source() { Slave::stop(); }
 
 	void process(PostProcessor& dest, ProcessContext& context);
 
