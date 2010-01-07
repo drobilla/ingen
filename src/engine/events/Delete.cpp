@@ -184,7 +184,7 @@ Delete::post_process()
 		_engine.broadcaster()->bundle_begin();
 		if (_disconnect_event)
 			_disconnect_event->post_process();
-		_engine.broadcaster()->send_deleted(_path);
+		_engine.broadcaster()->del(_path);
 		_engine.broadcaster()->bundle_end();
 		_engine.maid()->push(_patch_node_listnode);
 	} else if (_patch_port_listnode) {
@@ -193,7 +193,7 @@ Delete::post_process()
 		_engine.broadcaster()->bundle_begin();
 		if (_disconnect_event)
 			_disconnect_event->post_process();
-		_engine.broadcaster()->send_deleted(_path);
+		_engine.broadcaster()->del(_path);
 		_engine.broadcaster()->bundle_end();
 		_engine.maid()->push(_patch_port_listnode);
 	} else {

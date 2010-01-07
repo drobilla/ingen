@@ -230,7 +230,10 @@ SetPortValue::post_process()
 	case NO_ERROR:
 		assert(_port != NULL);
 		_responder->respond_ok();
-		_engine.broadcaster()->send_port_value(_port_path, _value);
+		if (_omni)
+			_engine.broadcaster()->set_port_value(_port_path, _value);
+		else
+			_engine.broadcaster()->set_voice_value(_port_path, _voice_num, _value);
 		break;
 	case TYPE_MISMATCH:
 		ss << "Illegal value type " << _value.type()

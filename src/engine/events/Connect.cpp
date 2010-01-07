@@ -186,7 +186,7 @@ Connect::post_process()
 	std::ostringstream ss;
 	if (_error == NO_ERROR) {
 		_responder->respond_ok();
-		_engine.broadcaster()->send_connection(_connection);
+		_engine.broadcaster()->connect(_src_port_path, _dst_port_path);
 		return;
 	}
 

@@ -207,7 +207,7 @@ Disconnect::post_process()
 {
 	if (_error == NO_ERROR) {
 		_responder->respond_ok();
-		_engine.broadcaster()->send_disconnection(_src_port->path(), _dst_port->path());
+		_engine.broadcaster()->disconnect(_src_port->path(), _dst_port->path());
 	} else {
 		string msg = "Unable to disconnect ";
 		msg.append(_src_port_path.str() + " -> " + _dst_port_path.str());

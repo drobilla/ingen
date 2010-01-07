@@ -257,7 +257,7 @@ SetMetadata::post_process()
 	switch (_error) {
 	case NO_ERROR:
 		_responder->respond_ok();
-		_engine.broadcaster()->send_put(_subject, _properties);
+		_engine.broadcaster()->put(_subject, _properties);
 		if (_create_event)
 			_create_event->post_process();
 		break;

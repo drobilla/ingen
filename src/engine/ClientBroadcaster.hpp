@@ -38,15 +38,12 @@ class ConnectionImpl;
 
 /** Broadcaster for all clients.
  *
- * This sends messages to all client simultaneously through the opaque
- * ClientInterface.  The clients may be OSC driver, in process, theoretically
- * anything that implements ClientInterface.
- *
- * This also serves as the database of all registered clients.
+ * This is a ClientInterface that forwards all messages to all registered
+ * clients (for updating all clients on state changes in the engine).
  *
  * \ingroup engine
  */
-class ClientBroadcaster
+class ClientBroadcaster : public Shared::ClientInterface
 {
 public:
 	void register_client(const Raul::URI& uri, Shared::ClientInterface* client);
@@ -54,24 +51,54 @@ public:
 
 	Shared::ClientInterface* client(const Raul::URI& uri);
 
+	void send_plugins(const NodeFactory::Plugins& plugin_list);
+	void send_plugins_to(Shared::ClientInterface*, const NodeFactory::Plugins& plugin_list);
+
+	void send_object(const GraphObjectImpl* p, bool recursive);
+
+	// CommonInterface
+
 	void bundle_begin();
 	void bundle_end();
 
-	// Error that isn't the direct result of a request
-	void send_error(const std::string& msg);
+	void put(const Raul::URI&                    uri,
+	         const Shared::Resource::Properties& properties);
 
-	void send_plugins(const NodeFactory::Plugins& plugin_list);
-	void send_object(const GraphObjectImpl* p, bool recursive);
-	void send_deleted(const Raul::Path& path);
-	void send_connection(const SharedPtr<const ConnectionImpl> connection);
-	void send_disconnection(const Raul::Path& src_port_path, const Raul::Path& dst_port_path);
-	void send_move(const Raul::Path& old_path, const Raul::Path& new_path);
-	void send_put(const Raul::URI& subject, const Shared::Resource::Properties& properties);
-	void send_property_change(const Raul::URI& subject, const Raul::URI& key, const Raul::Atom& value);
-	void send_port_value(const Raul::Path& port_path, const Raul::Atom& value);
-	void send_activity(const Raul::Path& path);
+	void move(const Raul::Path& old_path,
+	          const Raul::Path& new_path);
 
-	void send_plugins_to(Shared::ClientInterface*, const NodeFactory::Plugins& plugin_list);
+	void del(const Raul::Path& path);
+
+	void connect(const Raul::Path& src_port_path,
+	             const Raul::Path& dst_port_path);
+
+	void disconnect(const Raul::Path& src_port_path,
+	                const Raul::Path& dst_port_path);
+
+	void set_property(const Raul::URI&  subject,
+	                  const Raul::URI&  predicate,
+	                  const Raul::Atom& value);
+
+	void set_port_value(const Raul::Path& port_path,
+	                    const Raul::Atom& value);
+
+	void set_voice_value(const Raul::Path& port_path,
+	                     uint32_t          voice,
+	                     const Raul::Atom& value);
+
+	// ClientInterface
+
+	Raul::URI uri() const { return "ingen:broadcaster"; } ///< N/A
+
+	void response_ok(int32_t id) {} ///< N/A
+	void response_error(int32_t id, const std::string& msg) {} ///< N/A
+
+	void transfer_begin();
+	void transfer_end();
+
+	void error(const std::string& msg);
+
+	void activity(const Raul::Path& path);
 
 private:
 	typedef std::map<Raul::URI, Shared::ClientInterface*> Clients;

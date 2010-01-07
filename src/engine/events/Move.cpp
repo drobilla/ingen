@@ -117,7 +117,7 @@ Move::post_process()
 
 	if (_error == NO_ERROR) {
 		_responder->respond_ok();
-		_engine.broadcaster()->send_move(_old_path, _new_path);
+		_engine.broadcaster()->move(_old_path, _new_path);
 	} else {
 		if (_error == OBJECT_EXISTS)
 			msg.append("Object already exists at ").append(_new_path.str());
