@@ -56,35 +56,57 @@ public:
 
 	void send_object(const GraphObjectImpl* p, bool recursive);
 
+#define BROADCAST(msg, ...) \
+	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i) \
+		(*i).second->msg(__VA_ARGS__)
+
+
 	// CommonInterface
 
-	void bundle_begin();
-	void bundle_end();
+	void bundle_begin() { BROADCAST(bundle_begin); }
+	void bundle_end()   { BROADCAST(bundle_end); }
 
 	void put(const Raul::URI&                    uri,
-	         const Shared::Resource::Properties& properties);
+	         const Shared::Resource::Properties& properties) {
+		BROADCAST(put, uri, properties);
+	}
 
 	void move(const Raul::Path& old_path,
-	          const Raul::Path& new_path);
+	          const Raul::Path& new_path) {
+		BROADCAST(move, old_path, new_path);
+	}
 
-	void del(const Raul::Path& path);
+	void del(const Raul::Path& path) {
+		BROADCAST(del, path);
+	}
 
 	void connect(const Raul::Path& src_port_path,
-	             const Raul::Path& dst_port_path);
+	             const Raul::Path& dst_port_path) {
+		BROADCAST(connect, src_port_path, dst_port_path);
+	}
 
 	void disconnect(const Raul::Path& src_port_path,
-	                const Raul::Path& dst_port_path);
+	                const Raul::Path& dst_port_path) {
+		BROADCAST(disconnect, src_port_path, dst_port_path);
+	}
 
 	void set_property(const Raul::URI&  subject,
 	                  const Raul::URI&  predicate,
-	                  const Raul::Atom& value);
+	                  const Raul::Atom& value) {
+		BROADCAST(set_property, subject, predicate, value);
+	}
 
 	void set_port_value(const Raul::Path& port_path,
-	                    const Raul::Atom& value);
+	                    const Raul::Atom& value) {
+		BROADCAST(set_port_value, port_path, value);
+	}
 
 	void set_voice_value(const Raul::Path& port_path,
 	                     uint32_t          voice,
-	                     const Raul::Atom& value);
+	                     const Raul::Atom& value) {
+		BROADCAST(set_voice_value, port_path, voice, value);
+	}
+
 
 	// ClientInterface
 
@@ -93,12 +115,10 @@ public:
 	void response_ok(int32_t id) {} ///< N/A
 	void response_error(int32_t id, const std::string& msg) {} ///< N/A
 
-	void transfer_begin();
-	void transfer_end();
-
-	void error(const std::string& msg);
-
-	void activity(const Raul::Path& path);
+	void transfer_begin()                 { BROADCAST(transfer_begin); }
+	void transfer_end()                   { BROADCAST(transfer_end); }
+	void error(const std::string& msg)    { BROADCAST(error, msg); }
+	void activity(const Raul::Path& path) { BROADCAST(activity, path); }
 
 private:
 	typedef std::map<Raul::URI, Shared::ClientInterface*> Clients;

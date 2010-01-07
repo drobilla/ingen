@@ -89,42 +89,10 @@ ClientBroadcaster::client(const URI& uri)
 
 
 void
-ClientBroadcaster::bundle_begin()
+ClientBroadcaster::send_plugins(const NodeFactory::Plugins& plugins)
 {
-	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
-		(*i).second->bundle_begin();
-}
-
-
-void
-ClientBroadcaster::bundle_end()
-{
-	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
-		(*i).second->bundle_end();
-}
-
-
-void
-ClientBroadcaster::transfer_begin()
-{
-	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
-		(*i).second->transfer_begin();
-}
-
-
-void
-ClientBroadcaster::transfer_end()
-{
-	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
-		(*i).second->transfer_end();
-}
-
-
-void
-ClientBroadcaster::error(const string& msg)
-{
-	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
-		(*i).second->error(msg);
+	for (Clients::const_iterator c = _clients.begin(); c != _clients.end(); ++c)
+		send_plugins_to((*c).second, plugins);
 }
 
 
@@ -142,108 +110,16 @@ ClientBroadcaster::send_plugins_to(ClientInterface* client, const NodeFactory::P
 }
 
 
-void
-ClientBroadcaster::send_plugins(const NodeFactory::Plugins& plugins)
-{
-	for (Clients::const_iterator c = _clients.begin(); c != _clients.end(); ++c)
-		send_plugins_to((*c).second, plugins);
-}
-
-
-void
-ClientBroadcaster::del(const Path& path)
-{
-	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
-		(*i).second->del(path);
-}
-
-
-void
-ClientBroadcaster::connect(const Path& src_port_path, const Path& dst_port_path)
-{
-	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
-		(*i).second->connect(src_port_path, dst_port_path);
-}
-
-
-void
-ClientBroadcaster::disconnect(const Path& src_port_path, const Path& dst_port_path)
-{
-	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
-		(*i).second->disconnect(src_port_path, dst_port_path);
-}
-
-
-void
-ClientBroadcaster::put(const Raul::URI& subject, const Shared::Resource::Properties& properties)
-{
-	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
-		(*i).second->put(subject, properties);
-}
-
-
-/** Send notification of a property update.
+/** Send an object to all clients.
  *
- * Like control changes, does not send update to client that set the property, if applicable.
- */
-void
-ClientBroadcaster::set_property(const URI& subject, const URI& key, const Atom& value)
-{
-	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
-		(*i).second->set_property(subject, key, value);
-}
-
-
-/** Send notification of a control change.
- *
- * If responder is specified, the notification will not be send to the address of
- * that responder (to avoid sending redundant information back to clients and
- * forcing clients to ignore things to avoid feedback loops etc).
- */
-void
-ClientBroadcaster::set_port_value(const Path& port_path, const Raul::Atom& value)
-{
-	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
-		(*i).second->set_port_value(port_path, value);
-}
-
-
-void
-ClientBroadcaster::set_voice_value(const Path& port_path, uint32_t voice, const Raul::Atom& value)
-{
-	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
-		(*i).second->set_voice_value(port_path, voice, value);
-}
-
-
-void
-ClientBroadcaster::activity(const Path& path)
-{
-	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
-		(*i).second->activity(path);
-}
-
-
-/** Send an object.
- *
- * @param p         Object to send
+ * @param o         Object to send
  * @param recursive If true send all children of object
  */
 void
-ClientBroadcaster::send_object(const GraphObjectImpl* p, bool recursive)
+ClientBroadcaster::send_object(const GraphObjectImpl* o, bool recursive)
 {
 	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
-		ObjectSender::send_object((*i).second, p, recursive);
-}
-
-
-/** Sends notification of an GraphObject's renaming
- */
-void
-ClientBroadcaster::move(const Path& old_path, const Path& new_path)
-{
-	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
-		(*i).second->move(old_path, new_path);
+		ObjectSender::send_object((*i).second, o, recursive);
 }
 
 

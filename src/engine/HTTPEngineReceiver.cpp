@@ -34,6 +34,8 @@
 #include "EventSource.hpp"
 #include "ThreadManager.hpp"
 
+#define LOG(s) s << "[HTTPEngineReceiver] "
+
 using namespace std;
 using namespace Raul;
 
@@ -51,7 +53,7 @@ HTTPEngineReceiver::HTTPEngineReceiver(Engine& engine, uint16_t port)
 
 	soup_server_add_handler(_server, NULL, message_callback, this, NULL);
 
-	info << "Started HTTP server on port " << soup_server_get_port(_server) << endl;
+	LOG(info) << "Started HTTP server on port " << soup_server_get_port(_server) << endl;
 	Thread::set_name("HTTP Receiver");
 
 	if (!engine.world()->parser || !engine.world()->serialiser)
@@ -157,7 +159,7 @@ HTTPEngineReceiver::message_callback(SoupServer* server, SoupMessage* msg, const
 	}
 
 	if (!Path::is_valid(path)) {
-		error << "Bad HTTP path: " << path << endl;
+		LOG(error) << "Bad HTTP path: " << path << endl;
 		soup_message_set_status (msg, SOUP_STATUS_BAD_REQUEST);
 		const string& err = (boost::format("Bad path: %1%") % path).str();
 		soup_message_set_response(msg, "text/plain", SOUP_MEMORY_COPY,
