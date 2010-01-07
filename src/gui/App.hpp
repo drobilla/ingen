@@ -84,7 +84,7 @@ public:
 	bool gtk_main_iteration();
 
 	void show_about();
-	void quit();
+	bool quit(Gtk::Window& dialog_parent);
 
 	void port_activity(Port* port);
 	void activity_port_destroyed(Port* port);

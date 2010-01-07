@@ -644,43 +644,7 @@ PatchWindow::event_close()
 void
 PatchWindow::event_quit()
 {
-	Gtk::Widget* kill_img = Gtk::manage(
-			new Gtk::Image(Gtk::Stock::CLOSE, Gtk::ICON_SIZE_BUTTON));
-
-	Gtk::Widget* close_img = Gtk::manage(
-			new Gtk::Image(Gtk::Stock::QUIT, Gtk::ICON_SIZE_BUTTON));
-
-	const char* msg = (App::instance().world()->local_engine)
-		? "This will kill the engine as well.\nAre you sure you want to quit?"
-		: "Would you like to quit just the GUI,\nor kill the engine as well?";
-
-	Gtk::MessageDialog d(*this, msg,
-			true, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE, true);
-
-	d.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
-
-	if (!App::instance().world()->local_engine) {
-		Gtk::Button* b = d.add_button(Gtk::Stock::REMOVE, 2);
-		b->set_label("_Kill Engine");
-		b->set_image(*kill_img);
-	}
-
-	Gtk::Button* b = d.add_button(Gtk::Stock::QUIT, 1);
-	b->set_label("_Quit");
-	b->set_image(*close_img);
-	b->grab_default();
-
-	switch (d.run()) {
-	case 1:
-		App::instance().quit();
-		break;
-	case 2:
-		App::instance().engine()->quit();
-		App::instance().quit();
-		break;
-	default:
-		break;
-	}
+	App::instance().quit(*this);
 }
 
 

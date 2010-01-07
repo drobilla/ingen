@@ -143,7 +143,8 @@ App::init(Ingen::Shared::World* world)
 	// (otherwise with 'ingen -egl' we'll get a bunch of notifications about load immediately
 	// before even knowing about the root patch or plugins)
 	while (!App::instance().connect_window()->attached())
-		_main->iteration();
+		if (_main->iteration())
+			break;
 }
 
 
@@ -314,10 +315,29 @@ App::show_about()
 }
 
 
-void
-App::quit()
+/** Prompt (if necessary) and quit application (if confirmed).
+ * @return true iff the application quit.
+ */
+bool
+App::quit(Gtk::Window& dialog_parent)
 {
-	Gtk::Main::quit();
+	bool quit = true;
+	if (App::instance().world()->local_engine) {
+		Gtk::MessageDialog d(dialog_parent,
+			"The engine is running in this process.  Quitting will terminate Ingen."
+			"\n\n" "Are you sure you want to quit?",
+			true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_NONE, true);
+		d.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
+		d.add_button(Gtk::Stock::QUIT, Gtk::RESPONSE_CLOSE);
+		quit = (d.run() == Gtk::RESPONSE_CLOSE);
+	}
+
+	if (quit)
+		Gtk::Main::quit();
+
+	//App::instance().engine()->quit();
+
+	return quit;
 }
 
 

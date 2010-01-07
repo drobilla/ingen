@@ -189,20 +189,8 @@ WindowFactory::new_patch_window(SharedPtr<PatchModel> patch, SharedPtr<PatchView
 bool
 WindowFactory::remove_patch_window(PatchWindow* win, GdkEventAny* ignored)
 {
-	if (_patch_windows.size() <= 1) {
-		Gtk::MessageDialog d(*win,
-			"Closing the only open patch window will exit the GUI\n"
-			"(If the engine is remote it will remain running)\n\n"
-			"Are you sure you want to quit?",
-			true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_NONE, true);
-			d.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
-			d.add_button(Gtk::Stock::QUIT, Gtk::RESPONSE_CLOSE);
-		int ret = d.run();
-		if (ret == Gtk::RESPONSE_CLOSE)
-			App::instance().quit();
-		else
-			return true;
-	}
+	if (_patch_windows.size() <= 1)
+		return App::instance().quit(*win);
 
 	PatchWindowMap::iterator w = _patch_windows.find(win->patch()->path());
 

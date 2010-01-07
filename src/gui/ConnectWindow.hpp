@@ -56,7 +56,8 @@ public:
 	void start(Ingen::Shared::World* world);
 	void on_response(int32_t id) { _attached = true; }
 
-	bool attached() const { return _finished_connecting; }
+	bool attached()  const { return _finished_connecting; }
+	bool quit_flag() const { return _quit_flag; }
 
 private:
 	enum Mode { CONNECT_REMOTE, LAUNCH_REMOTE, INTERNAL };
@@ -69,7 +70,7 @@ private:
 	void connect(bool existing);
 	void activate();
 	void deactivate();
-	void quit();
+	void quit_clicked();
 	void on_show();
 	void on_hide();
 
@@ -77,6 +78,7 @@ private:
 	void set_connecting_widget_states();
 
 	bool gtk_callback();
+	void quit();
 
 	const Glib::RefPtr<Gnome::Glade::Xml> _xml;
 
@@ -86,6 +88,7 @@ private:
 	bool    _finished_connecting;
 	bool    _widgets_loaded;
 	int     _connect_stage;
+	bool    _quit_flag;
 
 	Gtk::Image*        _icon;
 	Gtk::ProgressBar*  _progress_bar;

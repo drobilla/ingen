@@ -66,6 +66,7 @@ ConnectWindow::ConnectWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::
 	, _finished_connecting(false)
 	, _widgets_loaded(false)
 	, _connect_stage(0)
+	, _quit_flag(false)
 {
 }
 
@@ -337,7 +338,7 @@ ConnectWindow::load_widgets()
 	_disconnect_button->signal_clicked().connect(sigc::mem_fun(this, &ConnectWindow::disconnect));
 	_connect_button->signal_clicked().connect(sigc::bind(
 			sigc::mem_fun(this, &ConnectWindow::connect), false));
-	_quit_button->signal_clicked().connect(sigc::mem_fun(this, &ConnectWindow::quit));
+	_quit_button->signal_clicked().connect(sigc::mem_fun(this, &ConnectWindow::quit_clicked));
 
 	_progress_bar->set_pulse_step(0.01);
 	_widgets_loaded = true;
@@ -351,24 +352,15 @@ ConnectWindow::on_hide()
 {
 	Gtk::Dialog::on_hide();
 	if (!_attached)
-		Gtk::Main::quit();
+		quit();
 }
 
 
 void
-ConnectWindow::quit()
+ConnectWindow::quit_clicked()
 {
-	if (_attached) {
-		Gtk::MessageDialog d(*this, "This will exit the GUI, but the engine will "
-			"remain running (if it is remote).\n\nAre you sure you want to quit?",
-			true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_NONE, true);
-			d.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
-			d.add_button(Gtk::Stock::QUIT, Gtk::RESPONSE_CLOSE);
-		if (d.run() == Gtk::RESPONSE_CLOSE)
-			Gtk::Main::quit();
-	} else {
-		Gtk::Main::quit();
-	}
+	if (App::instance().quit(*this))
+		_quit_flag = true;
 }
 
 
@@ -403,6 +395,9 @@ bool
 ConnectWindow::gtk_callback()
 {
 	/* If I call this a "state machine" it's not ugly code any more */
+
+	if (_quit_flag)
+		return false; // deregister this callback
 
 	// Timing stuff for repeated attach attempts
 	timeval now;
@@ -492,6 +487,14 @@ ConnectWindow::gtk_callback()
 	} else {
 		return true;
 	}
+}
+
+
+void
+ConnectWindow::quit()
+{
+	_quit_flag = true;
+	Gtk::Main::quit();
 }
 
 
