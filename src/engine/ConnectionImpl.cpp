@@ -97,7 +97,8 @@ ConnectionImpl::apply_poly(Raul::Maid& maid, uint32_t poly)
 
 	// Recycle buffer if it's no longer needed
 	if (!must_mix() && _local_buffer)
-		_local_buffer.reset();
+		_local_buffer.reset(NULL);
+		//_local_buffer.reset(); // old boost is missing this
 }
 
 

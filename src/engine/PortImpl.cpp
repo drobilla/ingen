@@ -88,7 +88,8 @@ PortImpl::PortImpl(BufferFactory&  bufs,
 PortImpl::~PortImpl()
 {
 	for (uint32_t v = 0; v < _poly; ++v)
-		_buffers->at(v).reset();
+		_buffers->at(v).reset(NULL); // old boost is missing this
+		//_buffers->at(v).reset(); // old boost is missing this
 
 	delete _buffers;
 }
