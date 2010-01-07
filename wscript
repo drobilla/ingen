@@ -20,8 +20,10 @@ def set_options(opt):
 			help="Ingen data install directory [Default: PREFIX/share/ingen]")
 	opt.add_option('--module-dir', type='string', dest='moduledir',
 			help="Ingen module install directory [Default: PREFIX/lib/ingen]")
-	opt.add_option('--no-liblo', action='store_true', default=False, dest='no_liblo',
+	opt.add_option('--no-osc', action='store_true', default=False, dest='no_osc',
 			help="Do not build OSC via liblo support, even if liblo exists")
+	opt.add_option('--no-http', action='store_true', default=False, dest='no_http',
+			help="Do not build HTTP via libsoup support, even if libsoup exists")
 	opt.add_option('--log-debug', action='store_true', default=False, dest='log_debug',
 			help="Print debugging output")
 
@@ -39,9 +41,10 @@ def configure(conf):
 	autowaf.check_pkg(conf, 'flowcanvas', uselib_store='FLOWCANVAS', atleast_version='0.5.1', mandatory=False)
 	autowaf.check_pkg(conf, 'libxml-2.0', uselib_store='XML2', atleast_version='2.6.0', mandatory=False)
 	autowaf.check_pkg(conf, 'libglademm-2.4', uselib_store='GLADEMM', atleast_version='2.6.0', mandatory=False)
-	autowaf.check_pkg(conf, 'libsoup-2.4', uselib_store='SOUP', atleast_version='2.4.0', mandatory=False)
+	if not Options.options.no_http:
+		autowaf.check_pkg(conf, 'libsoup-2.4', uselib_store='SOUP', atleast_version='2.4.0', mandatory=False)
 	autowaf.check_header(conf, 'ladspa.h', 'HAVE_LADSPA_H', mandatory=False)
-	if not Options.options.no_liblo:
+	if not Options.options.no_osc:
 		autowaf.check_pkg(conf, 'liblo', uselib_store='LIBLO', atleast_version='0.25', mandatory=False)
 	autowaf.check_pkg(conf, 'redlandmm', uselib_store='REDLANDMM', atleast_version='0.0.0', mandatory=False)
 
