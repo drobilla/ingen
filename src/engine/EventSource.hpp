@@ -40,7 +40,7 @@ class EventSource : protected Raul::Slave
 {
 public:
 	EventSource(size_t queue_size);
-	~EventSource();
+	virtual ~EventSource();
 
 	virtual void activate_source()   { Slave::start(); }
 	virtual void deactivate_source() { Slave::stop(); }
