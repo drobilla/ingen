@@ -57,11 +57,11 @@ public:
 	void pre_process(ProcessContext& context);
 	void post_process(ProcessContext& context);
 
-	jack_port_t*  jack_port() const  { return _jack_port; }
+	jack_port_t* jack_port() const { return _jack_port; }
 
 private:
-	JackDriver* _driver;
-	jack_port_t*     _jack_port;
+	JackDriver*  _driver;
+	jack_port_t* _jack_port;
 };
 
 

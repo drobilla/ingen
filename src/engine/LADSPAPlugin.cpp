@@ -103,7 +103,7 @@ LADSPAPlugin::instantiate(BufferFactory&    bufs,
 		}
 
 	} else {
-		error << "Could not find plugin \"" << _id << "\" in " << _library_path << endl;
+		error << "Could not find plugin `" << _id << "' in " << _library_path << endl;
 	}
 
 	return n;

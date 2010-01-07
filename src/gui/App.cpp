@@ -152,7 +152,7 @@ App::run()
 {
 	assert(_main);
 	_main->run();
-	info << "GUI exiting" << endl;
+	info << "[GUI] Exiting" << endl;
 }
 
 

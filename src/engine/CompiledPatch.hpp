@@ -68,8 +68,6 @@ private:
 struct CompiledPatch : public std::vector<CompiledNode>
                      , public Raul::Deletable
                      , public boost::noncopyable {
-	/*CompiledPatch() : std::vector<CompiledNode>() {}
-	CompiledPatch(size_t reserve) : std::vector<CompiledNode>(reserve) {}*/
 };
 
 

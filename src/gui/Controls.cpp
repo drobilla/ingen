@@ -423,7 +423,7 @@ StringControl::set_value(const Atom& val)
 	if (val.type() == Atom::STRING)
 		_entry->set_text(val.get_string());
 	else
-		error << "Non-string value for string port" << endl;
+		error << "Non-string value for string port " << _port_model->path() << endl;
 	_enable_signal = true;
 }
 

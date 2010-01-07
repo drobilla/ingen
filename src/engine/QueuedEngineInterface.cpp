@@ -295,15 +295,3 @@ QueuedEngineInterface::request_all_objects()
 
 
 } // namespace Ingen
-
-
-extern "C" {
-
-Ingen::QueuedEngineInterface*
-new_queued_interface(Ingen::Engine& engine)
-{
-	return new Ingen::QueuedEngineInterface(engine, Ingen::event_queue_size);
-}
-
-} // extern "C"
-

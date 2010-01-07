@@ -64,7 +64,7 @@ protected:
 	                     boost::optional<Sample>& lower_bound,
 	                     boost::optional<Sample>& upper_bound);
 
-	const LADSPA_Descriptor* _descriptor;
+	const LADSPA_Descriptor*    _descriptor;
 	Raul::Array<LADSPA_Handle>* _instances;
 	Raul::Array<LADSPA_Handle>* _prepared_instances;
 };

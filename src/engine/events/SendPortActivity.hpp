@@ -44,8 +44,8 @@ class SendPortActivity : public Event
 {
 public:
 	inline SendPortActivity(Engine&     engine,
-	                             SampleCount timestamp,
-	                             PortImpl*   port)
+	                        SampleCount timestamp,
+	                        PortImpl*   port)
 		: Event(engine, SharedPtr<Responder>(), timestamp)
 		, _port(port)
 	{

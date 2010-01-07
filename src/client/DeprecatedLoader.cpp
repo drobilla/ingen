@@ -342,7 +342,7 @@ DeprecatedLoader::load_patch(const Glib::ustring&    filename,
 					_engine->set_port_value(translate_load_path(i->port_path().str()), Atom(value));
 				}
 			} else {
-				LOG(warn) << "Unknown preset: \"" << pm->name() << endl;
+				LOG(warn) << "Unknown preset `" << pm->name() << "'" << endl;
 			}
 		}
 		cur = cur->next;
@@ -485,7 +485,7 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 				_engine->put(path, props);
 			} else {
 				is_port = false;
-				LOG(warn) << "Unknown internal plugin label \"" << plugin_label << "\"" << endl;
+				LOG(warn) << "Unknown internal plugin label `" << plugin_label << "'" << endl;
 			}
 		}
 
@@ -494,8 +494,8 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 			const string new_path = (Path::is_valid(old_path) ? old_path : Path::pathify(old_path));
 
 			if (!Path::is_valid(old_path))
-				LOG(warn) << "Translating invalid port path \"" << old_path << "\" => \""
-					<< new_path << "\"" << endl;
+				LOG(warn) << "Translating invalid port path `" << old_path << "' => `"
+					<< new_path << "'" << endl;
 
 			// Set up translations (for connections etc) to alias both the old
 			// module path and the old module/port path to the new port path

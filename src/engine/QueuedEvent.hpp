@@ -42,13 +42,12 @@ class QueuedEventSource;
 class QueuedEvent : public Event
 {
 public:
-	/** Process this event into a realtime-suitable event.
-	 */
+	/** Process this event into a realtime-suitable event. */
 	virtual void pre_process();
 
 	virtual void execute(ProcessContext& context);
 
-	/** If this event blocks the prepare phase of other slow events */
+	/** True iff this event blocks the prepare phase of other events. */
 	bool is_blocking() { return _blocking; }
 
 	bool is_prepared() { return _pre_processed; }

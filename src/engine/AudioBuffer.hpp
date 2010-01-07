@@ -69,9 +69,9 @@ private:
 
 	LV2_Vector_Body* vector() { return(LV2_Vector_Body*)object()->body; }
 
-	State            _state;     ///< State of buffer for setting values next cycle
-	Sample           _set_value; ///< Value set by set_value (for completing the set next cycle)
-	FrameTime        _set_time;  ///< Time _set_value was set (to reset next cycle)
+	State     _state;     ///< State of buffer for setting values next cycle
+	Sample    _set_value; ///< Value set by set_value (for completing the set next cycle)
+	FrameTime _set_time;  ///< Time _set_value was set (to reset next cycle)
 };
 
 

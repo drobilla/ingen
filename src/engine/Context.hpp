@@ -19,6 +19,7 @@
 #define CONTEXT_H
 
 #include "EventSink.hpp"
+#include "tuning.hpp"
 
 namespace Ingen {
 
@@ -35,7 +36,7 @@ public:
 	Context(Engine& engine, ID id)
 		: _id(id)
 		, _engine(engine)
-		, _event_sink(engine, 1024) // FIXME: size?
+		, _event_sink(engine, event_queue_size)
 		, _start(0)
 		, _realtime(true)
 	{}

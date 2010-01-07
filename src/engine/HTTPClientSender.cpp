@@ -48,7 +48,7 @@ HTTPClientSender::response_error(int32_t id, const std::string& msg)
 void
 HTTPClientSender::error(const std::string& msg)
 {
-	//send("/ingen/error", "s", msg.c_str(), LO_ARGS_END);
+	warn << "HTTP send error " << msg << endl;
 }
 
 
@@ -128,10 +128,7 @@ HTTPClientSender::set_port_value(const Path& port_path, const Atom& value)
 void
 HTTPClientSender::set_voice_value(const Path& port_path, uint32_t voice, const Atom& value)
 {
-	/*lo_message m = lo_message_new();
-	lo_message_add_string(m, port_path.c_str());
-	AtomLiblo::lo_message_add_atom(m, value);
-	send_message("/ingen/set_port_value", m);*/
+	warn << "TODO: HTTP set voice value" << endl;
 }
 
 
@@ -143,24 +140,6 @@ HTTPClientSender::activity(const Path& path)
 			path.str()).append("> ingen:activity true .\n");
 	send_chunk(msg);
 }
-
-#if 0
-static void null_deleter(const GraphObject*) {}
-
-bool
-HTTPClientSender::new_object(const GraphObject* object)
-{
-	SharedPtr<Serialisation::Serialiser> serialiser = _engine.world()->serialiser;
-	serialiser->start_to_string("/", "");
-	// FIXME: kludge
-	// FIXME: engine boost dependency?
-	boost::shared_ptr<GraphObject> obj((GraphObject*)object, null_deleter);
-	serialiser->serialise(obj);
-	string str = serialiser->finish();
-	send_chunk(str);
-	return true;
-}
-#endif
 
 
 void

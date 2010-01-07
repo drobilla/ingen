@@ -61,8 +61,6 @@ public:
 
 	/* *** ClientInterface Implementation Below *** */
 
-	//void client_registration(const std::string& url, int client_id);
-
 	void response_ok(int32_t id);
 	void response_error(int32_t id, const std::string& msg);
 

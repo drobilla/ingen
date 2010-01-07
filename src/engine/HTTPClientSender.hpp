@@ -61,14 +61,10 @@ public:
 
 	/* *** ClientInterface Implementation Below *** */
 
-	//void client_registration(const std::string& url, int client_id);
-
 	void response_ok(int32_t id);
 	void response_error(int32_t id, const std::string& msg);
 
 	void error(const std::string& msg);
-
-	//virtual bool new_object(const Shared::GraphObject* object);
 
 	virtual void put(const Raul::URI&                    path,
 	                 const Shared::Resource::Properties& properties);

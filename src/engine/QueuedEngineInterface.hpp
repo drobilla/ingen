@@ -103,8 +103,7 @@ public:
 
 	virtual void midi_learn(const Raul::Path& node_path);
 
-	// Requests //
-
+	// Requests
 	virtual void ping();
 	virtual void get(const Raul::URI& uri);
 	virtual void request_property(const Raul::URI& object_path, const Raul::URI& key);
@@ -112,7 +111,6 @@ public:
 	virtual void request_all_objects();
 
 protected:
-
 	virtual void disable_responses();
 
 	SharedPtr<Responder> _responder; ///< NULL if responding disabled
@@ -126,9 +124,4 @@ private:
 
 } // namespace Ingen
 
-extern "C" {
-	extern Ingen::QueuedEngineInterface* new_queued_interface(Ingen::Engine& engine);
-}
-
 #endif // QUEUEDENGINEINTERFACE_H
-

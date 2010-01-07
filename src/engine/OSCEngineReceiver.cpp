@@ -230,7 +230,7 @@ OSCEngineReceiver::set_response_address_cb(const char* path, const char* types, 
 void
 OSCEngineReceiver::error_cb(int num, const char* msg, const char* path)
 {
-	error << "liblo server error " << num << " in path \"" << "\" - " << msg << endl;
+	error << "liblo server error " << num << " for path `" << path << "' (" << msg << ")" << endl;
 }
 
 

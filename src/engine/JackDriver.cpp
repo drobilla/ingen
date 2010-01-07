@@ -228,7 +228,7 @@ JackDriver::attach(const std::string& server_name,
 			_client = jack_client_open(client_name.c_str(),
 					JackServerName, NULL, server_name.c_str());
 			if (_client)
-				LOG(info) << "Connected to JACK server '" << server_name << "'" << endl;
+				LOG(info) << "Connected to JACK server `" << server_name << "'" << endl;
 		}
 
 		// Either server name not specified, or supplied server name does not exist
@@ -237,12 +237,12 @@ JackDriver::attach(const std::string& server_name,
 			_client = jack_client_open(client_name.c_str(), JackNullOption, NULL);
 
 			if (_client)
-				LOG(info) << "Connected to default JACK server." << endl;
+				LOG(info) << "Connected to default JACK server" << endl;
 		}
 
 		// Still failed
 		if (!_client) {
-			LOG(error) << "Unable to connect to Jack.  Exiting." << endl;
+			LOG(error) << "Unable to connect to Jack" << endl;
 			return false;
 		}
 	} else {
@@ -311,7 +311,7 @@ JackDriver::deactivate()
 		}
 
 		_jack_thread->stop();
-		LOG(info) << "Deactivated Jack client." << endl;
+		LOG(info) << "Deactivated Jack client" << endl;
 	}
 }
 
@@ -393,7 +393,6 @@ JackDriver::driver_port(const Path& path)
 
 
 /**** Jack Callbacks ****/
-
 
 
 /** Jack process callback, drives entire audio thread.

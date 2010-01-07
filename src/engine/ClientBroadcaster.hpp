@@ -54,8 +54,6 @@ public:
 
 	Shared::ClientInterface* client(const Raul::URI& uri);
 
-	//void send_client_registration(const string& url, int client_id);
-
 	void bundle_begin();
 	void bundle_end();
 
@@ -79,7 +77,6 @@ private:
 	typedef std::map<Raul::URI, Shared::ClientInterface*> Clients;
 	Clients _clients;
 };
-
 
 
 } // namespace Ingen
