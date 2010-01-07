@@ -69,7 +69,7 @@ public:
 			Engine&                             engine,
 			SharedPtr<Responder>                responder,
 			SampleCount                         timestamp,
-			QueuedEventSource*                  source,
+			EventSource*                        source,
 			bool                                replace,
 			bool                                meta,
 			const Raul::URI&                    subject,

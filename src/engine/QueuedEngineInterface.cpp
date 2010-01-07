@@ -18,7 +18,7 @@
 #include "raul/log.hpp"
 #include "QueuedEngineInterface.hpp"
 #include "tuning.hpp"
-#include "QueuedEventSource.hpp"
+#include "EventSource.hpp"
 #include "events.hpp"
 #include "Engine.hpp"
 #include "Driver.hpp"
@@ -33,7 +33,7 @@ namespace Ingen {
 using namespace Shared;
 
 QueuedEngineInterface::QueuedEngineInterface(Engine& engine, size_t queue_size)
-	: QueuedEventSource(queue_size)
+	: EventSource(queue_size)
 	, _responder(new Responder(NULL, 0))
 	, _engine(engine)
 	, _in_bundle(false)
@@ -113,7 +113,7 @@ QueuedEngineInterface::activate()
 		in_activate = true;
 		_engine.activate();
 	}
-	QueuedEventSource::activate_source();
+	EventSource::activate_source();
 	push_queued(new Events::Ping(_engine, _responder, now()));
 	in_activate = false;
 }

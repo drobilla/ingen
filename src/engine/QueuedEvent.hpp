@@ -22,7 +22,7 @@
 
 namespace Ingen {
 
-class QueuedEventSource;
+class EventSource;
 
 
 /** An Event with a not-time-critical preprocessing stage.
@@ -57,7 +57,7 @@ protected:
 	            SharedPtr<Responder> responder,
 	            FrameTime            time,
 	            bool                 blocking = false,
-	            QueuedEventSource*   source = NULL)
+	            EventSource*         source = NULL)
 		: Event(engine, responder, time)
 		, _source(source)
 		, _pre_processed(false)
@@ -75,7 +75,7 @@ protected:
 		, _blocking(false)
 	{}
 
-	QueuedEventSource* _source;
+	EventSource* _source;
 	bool               _pre_processed;
 	bool               _blocking;
 };

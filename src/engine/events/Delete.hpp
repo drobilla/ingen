@@ -61,7 +61,7 @@ public:
 			Engine&              engine,
 			SharedPtr<Responder> responder,
 			FrameTime            timestamp,
-			QueuedEventSource*   source,
+			EventSource*         source,
 			const Raul::Path&    path);
 
 	~Delete();

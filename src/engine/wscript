@@ -16,6 +16,7 @@ def build(bld):
 		Event.cpp
 		EventBuffer.cpp
 		EventSink.cpp
+		EventSource.cpp
 		GraphObjectImpl.cpp
 		InputPort.cpp
 		InternalPlugin.cpp
@@ -32,7 +33,6 @@ def build(bld):
 		ProcessSlave.cpp
 		QueuedEngineInterface.cpp
 		QueuedEvent.cpp
-		QueuedEventSource.cpp
 		events/AllNotesOff.cpp
 		events/Connect.cpp
 		events/CreateNode.cpp
@@ -79,7 +79,7 @@ def build(bld):
 	if bld.env['HAVE_SOUP'] == 1:
 		obj = bld.new_task_gen('cxx', 'shlib')
 		obj.source = '''
-			QueuedEventSource.cpp
+			EventSource.cpp
 			QueuedEngineInterface.cpp
 			HTTPClientSender.cpp
 			HTTPEngineReceiver.cpp
@@ -94,7 +94,7 @@ def build(bld):
 	if bld.env['HAVE_LIBLO'] == 1:
 		obj = bld.new_task_gen('cxx', 'shlib')
 		obj.source = '''
-			QueuedEventSource.cpp
+			EventSource.cpp
 			QueuedEngineInterface.cpp
 			OSCClientSender.cpp
 			OSCEngineReceiver.cpp

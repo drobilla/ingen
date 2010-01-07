@@ -43,7 +43,7 @@
 #include "ProcessContext.hpp"
 #include "ProcessSlave.hpp"
 #include "QueuedEngineInterface.hpp"
-#include "QueuedEventSource.hpp"
+#include "EventSource.hpp"
 #include "ThreadManager.hpp"
 #include "tuning.hpp"
 

@@ -34,7 +34,7 @@ public:
 	LoadPlugins(Engine&              engine,
 	            SharedPtr<Responder> responder,
 	            SampleCount          timestamp,
-	            QueuedEventSource*   source);
+	            EventSource*         source);
 
 	void pre_process();
 	void post_process();

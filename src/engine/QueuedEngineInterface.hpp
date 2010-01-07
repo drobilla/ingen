@@ -25,7 +25,7 @@
 #include "interface/ClientInterface.hpp"
 #include "interface/EngineInterface.hpp"
 #include "interface/Resource.hpp"
-#include "QueuedEventSource.hpp"
+#include "EventSource.hpp"
 #include "Responder.hpp"
 #include "tuning.hpp"
 #include "types.hpp"
@@ -45,7 +45,7 @@ class Engine;
  * If you do not register a responder, you have no way of knowing if your calls
  * are successful.
  */
-class QueuedEngineInterface : public QueuedEventSource, public Shared::EngineInterface
+class QueuedEngineInterface : public EventSource, public Shared::EngineInterface
 {
 public:
 	QueuedEngineInterface(Engine& engine, size_t queue_size);

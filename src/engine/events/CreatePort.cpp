@@ -26,7 +26,7 @@
 #include "PluginImpl.hpp"
 #include "Engine.hpp"
 #include "PatchImpl.hpp"
-#include "QueuedEventSource.hpp"
+#include "EventSource.hpp"
 #include "EngineStore.hpp"
 #include "ClientBroadcaster.hpp"
 #include "PortImpl.hpp"
@@ -49,7 +49,7 @@ CreatePort::CreatePort(
 		const Raul::Path&           path,
 		const Raul::URI&            type,
 		bool                        is_output,
-		QueuedEventSource*          source,
+		EventSource*                source,
 		const Resource::Properties& properties)
 	: QueuedEvent(engine, responder, timestamp, true, source)
 	, _error(NO_ERROR)

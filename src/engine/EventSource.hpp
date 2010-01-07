@@ -15,8 +15,12 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef EVENTSOURCE_H
-#define EVENTSOURCE_H
+#ifndef INGEN_EVENT_SOURCE_HPP
+#define INGEN_EVENT_SOURCE_HPP
+
+#include "raul/Semaphore.hpp"
+#include "raul/Slave.hpp"
+#include "raul/List.hpp"
 
 namespace Ingen {
 
@@ -31,26 +35,40 @@ class ProcessContext;
  * The Driver gets events from an EventSource in the process callback
  * (realtime audio thread) and executes them, then they are sent to the
  * PostProcessor and finalised (post-processing thread).
- *
- * There are two distinct classes of events - "queued" and "stamped".  Queued
- * events are events that require non-realtime pre-processing before being
- * executed in the process thread.  Stamped events are timestamped realtime
- * events that require no pre-processing and can be executed immediately
- * (with sample accuracy).
  */
-class EventSource
+class EventSource : protected Raul::Slave
 {
 public:
-	virtual ~EventSource() {}
+	EventSource(size_t queue_size);
+	~EventSource();
 
-	virtual void activate_source()   = 0;
-	virtual void deactivate_source() = 0;
+	void activate_source()   { Slave::start(); }
+	void deactivate_source() { Slave::stop(); }
 
-	virtual void process(PostProcessor& dest, ProcessContext& context) = 0;
+	void process(PostProcessor& dest, ProcessContext& context);
+
+	/** Signal that a blocking event is finished.
+	 *
+	 * This MUST be called by blocking events in their post_process() method
+	 * to resume pre-processing of events.
+	 */
+	inline void unblock() { _blocking_semaphore.post(); }
+
+protected:
+	void push_queued(QueuedEvent* const ev);
+
+	inline bool unprepared_events() { return (_prepared_back.get() != NULL); }
+
+	virtual void _whipped(); ///< Prepare 1 event
+
+private:
+	Raul::List<Event*>                        _events;
+	Raul::AtomicPtr<Raul::List<Event*>::Node> _prepared_back;
+	Raul::Semaphore                           _blocking_semaphore;
 };
 
 
 } // namespace Ingen
 
-#endif // EVENTSOURCE_H
+#endif // INGEN_EVENT_SOURCE_HPP
 

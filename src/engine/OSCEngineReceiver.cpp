@@ -29,7 +29,7 @@
 #include "Engine.hpp"
 #include "OSCClientSender.hpp"
 #include "OSCEngineReceiver.hpp"
-#include "QueuedEventSource.hpp"
+#include "EventSource.hpp"
 #include "ThreadManager.hpp"
 
 #define LOG(s) s << "[OSCEngineReceiver] "
@@ -138,7 +138,7 @@ OSCEngineReceiver::~OSCEngineReceiver()
 void
 OSCEngineReceiver::activate_source()
 {
-	QueuedEventSource::activate_source();
+	EventSource::activate_source();
 	_receive_thread->set_name("OSC Receiver");
 	_receive_thread->start();
 	_receive_thread->set_scheduling(SCHED_FIFO, 5); // Jack default appears to be 10
@@ -149,7 +149,7 @@ void
 OSCEngineReceiver::deactivate_source()
 {
 	_receive_thread->stop();
-	QueuedEventSource::deactivate_source();
+	EventSource::deactivate_source();
 }
 
 

@@ -20,13 +20,13 @@
 #include "Engine.hpp"
 #include "NodeFactory.hpp"
 #include "ClientBroadcaster.hpp"
-#include "QueuedEventSource.hpp"
+#include "EventSource.hpp"
 
 namespace Ingen {
 namespace Events {
 
 
-LoadPlugins::LoadPlugins(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, QueuedEventSource* source)
+LoadPlugins::LoadPlugins(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, EventSource* source)
 	: QueuedEvent(engine, responder, timestamp, true, source)
 {
 }

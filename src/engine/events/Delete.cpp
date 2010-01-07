@@ -27,7 +27,7 @@
 #include "DisconnectAll.hpp"
 #include "ClientBroadcaster.hpp"
 #include "EngineStore.hpp"
-#include "QueuedEventSource.hpp"
+#include "EventSource.hpp"
 #include "PortImpl.hpp"
 
 using namespace std;
@@ -38,7 +38,7 @@ namespace Events {
 using namespace Shared;
 
 
-Delete::Delete(Engine& engine, SharedPtr<Responder> responder, FrameTime time, QueuedEventSource* source, const Raul::Path& path)
+Delete::Delete(Engine& engine, SharedPtr<Responder> responder, FrameTime time, EventSource* source, const Raul::Path& path)
 	: QueuedEvent(engine, responder, time, true, source)
 	, _path(path)
 	, _store_iterator(engine.engine_store()->end())

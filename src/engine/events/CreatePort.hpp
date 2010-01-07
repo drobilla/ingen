@@ -47,7 +47,7 @@ public:
 			const Raul::Path&                   path,
 			const Raul::URI&                    type,
 			bool                                is_output,
-			QueuedEventSource*                  source,
+			EventSource*                        source,
 			const Shared::Resource::Properties& properties);
 
 	void pre_process();

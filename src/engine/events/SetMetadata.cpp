@@ -29,7 +29,7 @@
 #include "PatchImpl.hpp"
 #include "PluginImpl.hpp"
 #include "PortImpl.hpp"
-#include "QueuedEventSource.hpp"
+#include "EventSource.hpp"
 #include "Responder.hpp"
 #include "SetMetadata.hpp"
 #include "SetPortValue.hpp"
@@ -48,7 +48,7 @@ SetMetadata::SetMetadata(
 		Engine&               engine,
 		SharedPtr<Responder>  responder,
 		SampleCount           timestamp,
-		QueuedEventSource*    source,
+		EventSource*          source,
 		bool                  replace,
 		bool                  meta,
 		const URI&            subject,

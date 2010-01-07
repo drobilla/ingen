@@ -31,7 +31,7 @@
 #include "EngineStore.hpp"
 #include "HTTPClientSender.hpp"
 #include "HTTPEngineReceiver.hpp"
-#include "QueuedEventSource.hpp"
+#include "EventSource.hpp"
 #include "ThreadManager.hpp"
 
 using namespace std;
@@ -78,7 +78,7 @@ HTTPEngineReceiver::~HTTPEngineReceiver()
 void
 HTTPEngineReceiver::activate_source()
 {
-	QueuedEventSource::activate_source();
+	EventSource::activate_source();
 	_receive_thread->set_name("HTTP Receiver");
 	_receive_thread->start();
 }
@@ -88,7 +88,7 @@ void
 HTTPEngineReceiver::deactivate_source()
 {
 	_receive_thread->stop();
-	QueuedEventSource::deactivate_source();
+	EventSource::deactivate_source();
 }
 
 

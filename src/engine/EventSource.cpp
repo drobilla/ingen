@@ -16,7 +16,7 @@
  */
 
 #include <sys/mman.h>
-#include "QueuedEventSource.hpp"
+#include "EventSource.hpp"
 #include "QueuedEvent.hpp"
 #include "PostProcessor.hpp"
 #include "ThreadManager.hpp"
@@ -27,16 +27,16 @@ using namespace std;
 namespace Ingen {
 
 
-QueuedEventSource::QueuedEventSource(size_t queue_size)
+EventSource::EventSource(size_t queue_size)
 	: _blocking_semaphore(0)
 {
 	Thread::set_context(THREAD_PRE_PROCESS);
 	assert(context() == THREAD_PRE_PROCESS);
-	set_name("QueuedEventSource");
+	set_name("EventSource");
 }
 
 
-QueuedEventSource::~QueuedEventSource()
+EventSource::~EventSource()
 {
 	Thread::stop();
 }
@@ -45,7 +45,7 @@ QueuedEventSource::~QueuedEventSource()
 /** Push an unprepared event onto the queue.
  */
 void
-QueuedEventSource::push_queued(QueuedEvent* const ev)
+EventSource::push_queued(QueuedEvent* const ev)
 {
 	assert(!ev->is_prepared());
 	Raul::List<Event*>::Node* node = new Raul::List<Event*>::Node(ev);
@@ -62,7 +62,7 @@ QueuedEventSource::push_queued(QueuedEvent* const ev)
  * Executed events will be pushed to @a dest.
  */
 void
-QueuedEventSource::process(PostProcessor& dest, ProcessContext& context)
+EventSource::process(PostProcessor& dest, ProcessContext& context)
 {
 	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
 
@@ -96,12 +96,9 @@ QueuedEventSource::process(PostProcessor& dest, ProcessContext& context)
 }
 
 
-// Private //
-
-
 /** Pre-process a single event */
 void
-QueuedEventSource::_whipped()
+EventSource::_whipped()
 {
 	Raul::List<Event*>::Node* pb = _prepared_back.get();
 	if (!pb)
