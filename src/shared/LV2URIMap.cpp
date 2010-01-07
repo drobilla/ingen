@@ -75,8 +75,10 @@ LV2URIMap::uri_map_uri_to_id(LV2_URI_Map_Callback_Data callback_data,
 		me->uri_map.insert(make_pair(string(uri), ret));
 	}
 
-	debug << "URI MAP (" << (map ? (void*)map : NULL)
-		<< "): " << uri << " -> " << ret << endl;
+	debug << "[LV2URIMap] ";
+	if (map)
+		debug << map << " : ";
+	debug << uri << " => " << ret << endl;
 
 	assert(ret <= UINT16_MAX);
 	return ret;
