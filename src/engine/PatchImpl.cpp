@@ -27,6 +27,7 @@
 #include "DuplexPort.hpp"
 #include "Engine.hpp"
 #include "ProcessSlave.hpp"
+#include "ingen-config.h"
 
 using namespace std;
 using namespace Raul;
@@ -466,10 +467,8 @@ PatchImpl::compile() const
 
 #ifdef LOG_DEBUG
 	debug << path() << " compiled {" << endl;
-	for (size_t i=0; i < process_order->size(); ++i) {
-		assert(process_order->at(i));
-		debug << "    " << process_order->at(i)->path() << endl;
-	}
+	for (size_t i=0; i < compiled_patch->size(); ++i)
+		debug << "    " << compiled_patch->at(i).node()->path() << endl;
 	debug << "}" << endl;
 #endif
 

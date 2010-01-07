@@ -20,6 +20,7 @@
 #include <stdarg.h>
 #include "raul/log.hpp"
 #include "OSCSender.hpp"
+#include "ingen-config.h"
 
 using namespace std;
 using namespace Raul;
@@ -81,6 +82,10 @@ OSCSender::send(const char *path, const char *types, ...)
 {
 	if (!_enabled)
 		return 0;
+
+#ifdef LOG_DEBUG
+	info << "[OSCSender] " << path << " (" << types << ")" << endl;
+#endif
 
 	va_list args;
 	va_start(args, types);

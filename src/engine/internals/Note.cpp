@@ -35,6 +35,7 @@
 #define LOG(s) s << "[NoteNode] "
 
 using namespace std;
+using namespace Raul;
 
 namespace Ingen {
 namespace Internals {
@@ -353,7 +354,7 @@ NoteNode::free_voice(ProcessContext& context, uint32_t voice, FrameTime time)
 	} else {
 		// No new note for voice, deactivate (set gate low)
 #ifdef LOG_DEBUG
-		LOG(debug) << "Note off: key " << (int)note_num << " voice " << voice << endl;
+		LOG(debug) << "Note off: key " << (*_voices)[voice].note << " voice " << voice << endl;
 #endif
 		((AudioBuffer*)_gate_port->buffer(voice).get())->set_value(0.0f, context.start(), time);
 		(*_voices)[voice].state = Voice::FREE;
@@ -368,7 +369,7 @@ NoteNode::all_notes_off(ProcessContext& context, FrameTime time)
 	assert(time - context.start() < _buffer_size);
 
 #ifdef LOG_DEBUG
-	LOG(debug) << "All notes off @ " << offset << endl;
+	LOG(debug) << "All notes off @ " << time << endl;
 #endif
 
 	// FIXME: set all keys to Key::OFF?

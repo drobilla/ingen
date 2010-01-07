@@ -76,8 +76,9 @@ OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t
 		free(lo_url);
 	}
 
-	// For debugging, print all incoming OSC messages
-	//lo_server_add_method(_server, NULL, NULL, generic_cb, NULL);
+#ifdef LOG_DEBUG
+	lo_server_add_method(_server, NULL, NULL, generic_cb, NULL);
+#endif
 
 	// Set response address for this message.
 	// It's important this is first and returns nonzero.
