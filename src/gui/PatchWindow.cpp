@@ -244,12 +244,6 @@ PatchWindow::set_patch(SharedPtr<PatchModel> patch, SharedPtr<PatchView> view)
 		}
 	}
 
-	int width, height;
-	get_size(width, height);
-	_view->canvas()->scroll_to(
-			((int)_view->canvas()->width() - width)/2,
-			((int)_view->canvas()->height() - height)/2);
-
 	set_title(_patch->path().chop_scheme() + " - Ingen");
 
 	new_port_connection = patch->signal_new_port.connect(
@@ -260,6 +254,8 @@ PatchWindow::set_patch(SharedPtr<PatchModel> patch, SharedPtr<PatchView> view)
 			sigc::mem_fun(this, &PatchWindow::editable_changed));
 
 	show_all();
+
+	_view->canvas()->scroll_to_center();
 
 	_view->signal_object_entered.connect(sigc::mem_fun(this, &PatchWindow::object_entered));
 	_view->signal_object_left.connect(sigc::mem_fun(this, &PatchWindow::object_left));
