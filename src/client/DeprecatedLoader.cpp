@@ -152,9 +152,9 @@ DeprecatedLoader::add_variable(GraphObject::Properties& data, string old_key, st
 {
 	string key = "";
 	if (old_key == "module-x")
-		key = "ingenuity:canvas-x";
+		key = "ingen-ui:canvas-x";
 	else if (old_key == "module-y")
-		key = "ingenuity:canvas-y";
+		key = "ingen-ui:canvas-y";
 
 	if (key != "") {
 		// FIXME: should this overwrite existing values?

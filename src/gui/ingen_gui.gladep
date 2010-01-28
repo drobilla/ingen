@@ -2,8 +2,8 @@
 <!DOCTYPE glade-project SYSTEM "http://glade.gnome.org/glade-project-2.0.dtd">
 
 <glade-project>
-  <name>Ingenuity</name>
-  <program_name>ingenuity</program_name>
+  <name>Ingen</name>
+  <program_name>ingen</program_name>
   <language>C++</language>
   <gnome_support>FALSE</gnome_support>
 </glade-project>

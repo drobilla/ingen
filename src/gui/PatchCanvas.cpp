@@ -685,10 +685,10 @@ PatchCanvas::paste()
 	for (Store::iterator i = clipboard.begin(); i != clipboard.end(); ++i) {
 		if (_patch->path().is_root() && i->first.is_root())
 			continue;
-		GraphObject::Properties::iterator x = i->second->properties().find("ingenuity:canvas-x");
+		GraphObject::Properties::iterator x = i->second->properties().find("ingen-ui:canvas-x");
 		if (x != i->second->properties().end())
 			x->second = x->second.get_float() + (20.0f * _paste_count);
-		GraphObject::Properties::iterator y = i->second->properties().find("ingenuity:canvas-y");
+		GraphObject::Properties::iterator y = i->second->properties().find("ingen-ui:canvas-y");
 		if (y != i->second->properties().end())
 			y->second = y->second.get_float() + (20.0f * _paste_count);
 		if (i->first.parent().is_root()) {
@@ -794,8 +794,8 @@ GraphObject::Properties
 PatchCanvas::get_initial_data()
 {
 	GraphObject::Properties result;
-	result.insert(make_pair("ingenuity:canvas-x", Atom((float)_last_click_x)));
-	result.insert(make_pair("ingenuity:canvas-y", Atom((float)_last_click_y)));
+	result.insert(make_pair("ingen-ui:canvas-x", Atom((float)_last_click_x)));
+	result.insert(make_pair("ingen-ui:canvas-y", Atom((float)_last_click_y)));
 	return result;
 }
 
