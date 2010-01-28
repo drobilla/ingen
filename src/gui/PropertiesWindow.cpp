@@ -251,7 +251,6 @@ PropertiesWindow::value_edited(const Raul::URI& predicate)
 		record.value = Atom(Atom::URI, widget->get_text());
 	}
 
-	cout << "VALUE EDITED " << predicate << " = " << record.value << endl;
 	return;
 
 bad_type:
