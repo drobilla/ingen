@@ -448,6 +448,8 @@ Parser::parse_patch(
 		Objects::iterator plug_i    = plugin_nodes.find(node.to_string());
 		Types::iterator   type_i    = types.find(node.to_string());
 		if (node.type() == Redland::Node::RESOURCE && type_i != types.end()) {
+			if (skip_property(predicate))
+				continue;
 			const string key = world->rdf_world->qualify(predicate.to_string());
 			if (patch_i != patch_nodes.end()) {
 				patch_i->second.insert(make_pair(key, AtomRDF::node_to_atom(object)));
@@ -714,6 +716,8 @@ Parser::parse_properties(
 		Glib::Mutex::Lock lock(world->rdf_world->mutex());
 		const string         key = world->rdf_world->qualify(string((*i)["key"]));
 		const Redland::Node& val = (*i)["val"];
+		if (skip_property((*i)["key"]))
+			continue;
 		if (key != "" && val.type() != Redland::Node::BLANK)
 			properties.insert(make_pair(key, AtomRDF::node_to_atom(val)));
 	}
@@ -725,6 +729,14 @@ Parser::parse_properties(
 		target->put(uri, data.get());
 
 	return true;
+}
+
+
+bool
+Parser::skip_property(const Redland::Node& predicate)
+{
+	return (predicate.to_string() == "http://drobilla.net/ns/ingen#node"
+			|| predicate.to_string() == "http://lv2plug.in/ns/lv2core#port");
 }
 
 

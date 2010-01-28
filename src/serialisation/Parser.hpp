@@ -109,6 +109,8 @@ private:
 			Redland::Model&                 model,
 			const Redland::Node&            subject,
 			const Raul::Path&               patch);
+
+	bool skip_property(const Redland::Node& predicate);
 };
 
 
