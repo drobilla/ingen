@@ -49,7 +49,7 @@ Control::Control(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>&
 	menu_xml->get_widget("port_control_menu_properties", _menu_properties);
 
 	_menu_properties->signal_activate().connect(
-			sigc::mem_fun(this, &SliderControl::menu_properties));
+			sigc::mem_fun(this, &Control::menu_properties));
 }
 
 
@@ -150,7 +150,6 @@ SliderControl::init(ControlPanel* panel, SharedPtr<PortModel> pm)
 	pm->signal_property.connect(sigc::mem_fun(this, &SliderControl::port_property_change));
 
 	_slider->set_range(std::min(min, pm->value().get_float()), std::max(max, pm->value().get_float()));
-	//_value_spinner->set_range(min, max);
 
 	set_value(pm->value());
 
@@ -220,7 +219,6 @@ SliderControl::set_range(float min, float max)
 		max = min + 1.0;
 
 	_slider->set_range(min, max);
-	//_value_spinner->set_range(min, max);
 }
 
 
@@ -228,8 +226,6 @@ void
 SliderControl::enable()
 {
 	_slider->property_sensitive() = true;
-	//_min_spinner->property_sensitive() = true;
-	//_max_spinner->property_sensitive() = true;
 	_value_spinner->property_sensitive() = true;
 	_name_label->property_sensitive() = true;
 }
@@ -239,8 +235,6 @@ void
 SliderControl::disable()
 {
 	_slider->property_sensitive() = false;
-	//_min_spinner->property_sensitive() = false;
-	//_max_spinner->property_sensitive() = false;
 	_value_spinner->property_sensitive() = false;
 	_name_label->property_sensitive() = false;
 }
@@ -380,7 +374,6 @@ ToggleControl::toggled()
 	if (_enable_signal) {
 		float value = _checkbutton->get_active() ? 1.0f : 0.0f;
 		_control_panel->value_changed(_port_model, value);
-		//m_port_model->value(value);
 	}
 }
 
