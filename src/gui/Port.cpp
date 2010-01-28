@@ -103,7 +103,6 @@ Port::update_metadata()
 }
 
 
-
 void
 Port::create_menu()
 {

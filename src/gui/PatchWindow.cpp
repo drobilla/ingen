@@ -31,7 +31,6 @@
 #include "LoadPatchWindow.hpp"
 #include "LoadSubpatchWindow.hpp"
 #include "NodeControlWindow.hpp"
-#include "PatchPropertiesWindow.hpp"
 #include "Configuration.hpp"
 #include "MessagesWindow.hpp"
 #include "PatchTreeWindow.hpp"

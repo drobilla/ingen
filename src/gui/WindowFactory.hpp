@@ -42,11 +42,9 @@ class LoadRemotePatchWindow;
 class LoadSubpatchWindow;
 class NewSubpatchWindow;
 class NodeControlWindow;
-class NodePropertiesWindow;
-class PatchPropertiesWindow;
+class PropertiesWindow;
 class PatchView;
 class PatchWindow;
-class PortPropertiesWindow;
 class RenameWindow;
 class UploadPatchWindow;
 
@@ -107,9 +105,7 @@ private:
 	UploadPatchWindow*     _upload_patch_win;
 	NewSubpatchWindow*     _new_subpatch_win;
 	LoadSubpatchWindow*    _load_subpatch_win;
-	PatchPropertiesWindow* _patch_properties_win;
-	NodePropertiesWindow*  _node_properties_win;
-	PortPropertiesWindow*  _port_properties_win;
+	PropertiesWindow*      _properties_win;
 	RenameWindow*          _rename_win;
 };
 

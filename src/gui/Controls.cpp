@@ -22,11 +22,11 @@
 #include "client/PluginModel.hpp"
 #include "client/NodeModel.hpp"
 #include "client/PortModel.hpp"
-#include "Controls.hpp"
-#include "ControlPanel.hpp"
-#include "PortPropertiesWindow.hpp"
-#include "GladeFactory.hpp"
 #include "App.hpp"
+#include "ControlPanel.hpp"
+#include "Controls.hpp"
+#include "GladeFactory.hpp"
+#include "PortPropertiesWindow.hpp"
 
 using namespace std;
 using namespace Raul;
@@ -49,7 +49,7 @@ Control::Control(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>&
 	menu_xml->get_widget("port_control_menu_properties", _menu_properties);
 
 	_menu_properties->signal_activate().connect(
-		sigc::mem_fun(this, &SliderControl::menu_properties));
+			sigc::mem_fun(this, &SliderControl::menu_properties));
 }
 
 

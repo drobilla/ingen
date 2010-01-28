@@ -26,11 +26,9 @@
 #include "LoadSubpatchWindow.hpp"
 #include "NewSubpatchWindow.hpp"
 #include "NodeControlWindow.hpp"
-#include "NodePropertiesWindow.hpp"
-#include "PatchPropertiesWindow.hpp"
+#include "PropertiesWindow.hpp"
 #include "PatchView.hpp"
 #include "PatchWindow.hpp"
-#include "PortPropertiesWindow.hpp"
 #include "RenameWindow.hpp"
 #include "WindowFactory.hpp"
 #ifdef HAVE_CURL
@@ -50,9 +48,7 @@ WindowFactory::WindowFactory()
 	, _upload_patch_win(NULL)
 	, _new_subpatch_win(NULL)
 	, _load_subpatch_win(NULL)
-	, _patch_properties_win(NULL)
-	, _node_properties_win(NULL)
-	, _port_properties_win(NULL)
+	, _properties_win(NULL)
 {
 	Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference();
 
@@ -61,9 +57,7 @@ WindowFactory::WindowFactory()
 	xml->get_widget_derived("load_remote_patch_win", _load_remote_patch_win);
 	xml->get_widget_derived("new_subpatch_win", _new_subpatch_win);
 	xml->get_widget_derived("load_subpatch_win", _load_subpatch_win);
-	xml->get_widget_derived("patch_properties_win", _patch_properties_win);
-	xml->get_widget_derived("node_properties_win", _node_properties_win);
-	xml->get_widget_derived("port_properties_win", _port_properties_win);
+	xml->get_widget_derived("properties_win", _properties_win);
 	xml->get_widget_derived("rename_win", _rename_win);
 
 #ifdef HAVE_CURL
@@ -347,35 +341,16 @@ WindowFactory::present_rename(SharedPtr<ObjectModel> object)
 void
 WindowFactory::present_properties(SharedPtr<ObjectModel> object)
 {
-	SharedPtr<PatchModel> patch = PtrCast<PatchModel>(object);
-	if (patch) {
-		PatchWindowMap::iterator w = _patch_windows.find(patch->path());
-		if (w != _patch_windows.end())
-			_patch_properties_win->set_transient_for(*w->second);
+	PatchWindowMap::iterator w = _patch_windows.find(object->path());
+	if (w == _patch_windows.end())
+		w = _patch_windows.find(object->path().parent());
+	if (w == _patch_windows.end())
+		w = _patch_windows.find(object->path().parent().parent());
 
-		_patch_properties_win->present(patch);
-		return;
-	}
+	if (w != _patch_windows.end())
+		_properties_win->set_transient_for(*w->second);
 
-	SharedPtr<NodeModel> node = PtrCast<NodeModel>(object);
-	if (node) {
-		PatchWindowMap::iterator w = _patch_windows.find(node->path().parent());
-		if (w != _patch_windows.end())
-			_node_properties_win->set_transient_for(*w->second);
-
-		_node_properties_win->present(node);
-		return;
-	}
-
-	SharedPtr<PortModel> port = PtrCast<PortModel>(object);
-	if (port) {
-		PatchWindowMap::iterator w = _patch_windows.find(port->path().parent().parent());
-		if (w != _patch_windows.end())
-			_patch_properties_win->set_transient_for(*w->second);
-
-		_port_properties_win->present(port);
-		return;
-	}
+	_properties_win->present(object);
 }
 
 

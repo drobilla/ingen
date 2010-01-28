@@ -27,7 +27,6 @@
 #include "NewSubpatchWindow.hpp"
 #include "LoadSubpatchWindow.hpp"
 #include "NodeControlWindow.hpp"
-#include "PatchPropertiesWindow.hpp"
 #include "PatchTreeWindow.hpp"
 #include "GladeFactory.hpp"
 

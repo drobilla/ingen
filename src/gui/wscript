@@ -24,17 +24,16 @@ def build(bld):
 		NodeControlWindow.cpp
 		NodeMenu.cpp
 		NodeModule.cpp
-		NodePropertiesWindow.cpp
 		ObjectMenu.cpp
 		PatchCanvas.cpp
 		PatchPortModule.cpp
-		PatchPropertiesWindow.cpp
 		PatchTreeWindow.cpp
 		PatchView.cpp
 		PatchWindow.cpp
 		Port.cpp
 		PortMenu.cpp
 		PortPropertiesWindow.cpp
+		PropertiesWindow.cpp
 		RenameWindow.cpp
 		SubpatchModule.cpp
 		ThreadedLoader.cpp
