@@ -45,8 +45,8 @@ public:
 
 	virtual void init(ControlPanel* panel, SharedPtr<Client::PortModel> pm);
 
-	virtual void enable()  = 0;
-	virtual void disable() = 0;
+	void enable();
+	void disable();
 
 	inline const SharedPtr<Client::PortModel> port_model() const { return _port_model; }
 
@@ -77,9 +77,6 @@ class SliderControl : public Control
 public:
 	SliderControl(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml);
 	void init(ControlPanel* panel, SharedPtr<Client::PortModel> pm);
-
-	void enable();
-	void disable();
 
 	void set_min(float val);
 	void set_max(float val);
@@ -115,12 +112,8 @@ public:
 
 	void init(ControlPanel* panel, SharedPtr<Client::PortModel> pm);
 
-	void enable();
-	void disable();
-
 private:
 	void set_value(const Raul::Atom& value);
-
 	void toggled();
 
 	Gtk::CheckButton* _checkbutton;
@@ -138,12 +131,8 @@ public:
 
 	void init(ControlPanel* panel, SharedPtr<Client::PortModel> pm);
 
-	void enable();
-	void disable();
-
 private:
 	void set_value(const Raul::Atom& value);
-
 	void activated();
 
 	Gtk::Entry* _entry;

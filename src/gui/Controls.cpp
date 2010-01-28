@@ -76,6 +76,24 @@ Control::init(ControlPanel* panel, SharedPtr<PortModel> pm)
 
 
 void
+Control::enable()
+{
+	for (Gtk::Box_Helpers::BoxList::const_iterator i = children().begin();
+			i != children().end(); ++i)
+		i->get_widget()->set_sensitive(true);
+}
+
+
+void
+Control::disable()
+{
+	for (Gtk::Box_Helpers::BoxList::const_iterator i = children().begin();
+			i != children().end(); ++i)
+		i->get_widget()->set_sensitive(false);
+}
+
+
+void
 Control::set_name(const string& name)
 {
 	const string name_markup = string("<span weight=\"bold\">") + name + "</span>";
@@ -223,24 +241,6 @@ SliderControl::set_range(float min, float max)
 
 
 void
-SliderControl::enable()
-{
-	_slider->property_sensitive() = true;
-	_value_spinner->property_sensitive() = true;
-	_name_label->property_sensitive() = true;
-}
-
-
-void
-SliderControl::disable()
-{
-	_slider->property_sensitive() = false;
-	_value_spinner->property_sensitive() = false;
-	_name_label->property_sensitive() = false;
-}
-
-
-void
 SliderControl::update_value_from_slider()
 {
 	if (_enable_signal) {
@@ -353,22 +353,6 @@ ToggleControl::set_value(const Atom& val)
 
 
 void
-ToggleControl::enable()
-{
-	_checkbutton->property_sensitive() = true;
-	_name_label->property_sensitive() = true;
-}
-
-
-void
-ToggleControl::disable()
-{
-	_checkbutton->property_sensitive() = false;
-	_name_label->property_sensitive() = false;
-}
-
-
-void
 ToggleControl::toggled()
 {
 	if (_enable_signal) {
@@ -418,22 +402,6 @@ StringControl::set_value(const Atom& val)
 	else
 		error << "Non-string value for string port " << _port_model->path() << endl;
 	_enable_signal = true;
-}
-
-
-void
-StringControl::enable()
-{
-	_entry->property_sensitive() = true;
-	_name_label->property_sensitive() = true;
-}
-
-
-void
-StringControl::disable()
-{
-	_entry->property_sensitive() = false;
-	_name_label->property_sensitive() = false;
 }
 
 
