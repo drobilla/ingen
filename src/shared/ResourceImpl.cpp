@@ -63,10 +63,10 @@ ResourceImpl::set_property(const Raul::URI& uri, const Raul::Atom& value)
 
 
 bool
-ResourceImpl::has_property(const Raul::URI& uri, const Raul::Atom& value)
+ResourceImpl::has_property(const Raul::URI& uri, const Raul::Atom& value) const
 {
 	Properties::const_iterator i = _properties.find(uri);
-	for (; i->first == uri; ++i) {
+	for (; (i != _properties.end()) && (i->first == uri); ++i) {
 		if (i->second == value) {
 			return true;
 		}

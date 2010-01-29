@@ -60,6 +60,7 @@ public:
 	uint32_t              num_ports()  const { return _ports.size(); }
 	const Ports&          ports()      const { return _ports; }
 
+	void default_port_value_range(SharedPtr<PortModel> port, float& min, float& max) const;
 	void port_value_range(SharedPtr<PortModel> port, float& min, float& max) const;
 
 	// Signals

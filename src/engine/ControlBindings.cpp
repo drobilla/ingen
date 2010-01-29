@@ -75,8 +75,7 @@ ControlBindings::remove(const Raul::Path& path)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 
-	SharedPtr<Bindings> old_bindings = _bindings;
-
+	SharedPtr<Bindings> old_bindings(_bindings);
 	SharedPtr<Bindings> copy(new Bindings(*_bindings.get()));
 
 	for (Bindings::iterator i = copy->begin(); i != copy->end();) {

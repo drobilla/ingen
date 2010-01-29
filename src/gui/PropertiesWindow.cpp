@@ -99,18 +99,12 @@ PropertiesWindow::set_object(SharedPtr<ObjectModel> model)
 		align->add(*combo);
 		_table->attach(*align, 1, 2, n_rows, n_rows + 1, Gtk::FILL|Gtk::SHRINK, Gtk::SHRINK);
 
-		Record record;
-		record.value = value;
-		record.type_widget = combo;
-
 		// Column 2: Value
 		align = manage(new Gtk::Alignment(0.0, 0.5, 1.0, 0.0));
 		Gtk::Widget* value_widget = create_value_widget(i->first, value);
 		align->add(*value_widget);
 		_table->attach(*align, 2, 3, n_rows, n_rows + 1, Gtk::FILL|Gtk::EXPAND, Gtk::SHRINK);
-		record.value_widget = align;
-		record.row = n_rows;
-		_records.insert(make_pair(i->first, record));
+		_records.insert(make_pair(i->first, Record(value, combo, align, n_rows)));
 	}
 
 	_table->show_all();

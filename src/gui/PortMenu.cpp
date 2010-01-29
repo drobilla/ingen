@@ -32,6 +32,10 @@ PortMenu::PortMenu(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml
 	: ObjectMenu(cobject, xml)
 	, _patch_port(NULL)
 {
+	xml->get_widget("port_menu", _port_menu);
+	xml->get_widget("port_set_min_menuitem", _set_min_menuitem);
+	xml->get_widget("port_set_max_menuitem", _set_max_menuitem);
+	xml->get_widget("port_reset_range_menuitem", _reset_range_menuitem);
 }
 
 
@@ -40,6 +44,15 @@ PortMenu::init(SharedPtr<PortModel> port, bool patch_port)
 {
 	ObjectMenu::init(port);
 	_patch_port = patch_port;
+
+	_set_min_menuitem->signal_activate().connect(sigc::mem_fun(this,
+			&PortMenu::on_menu_set_min));
+
+	_set_max_menuitem->signal_activate().connect(sigc::mem_fun(this,
+			&PortMenu::on_menu_set_max));
+
+	_reset_range_menuitem->signal_activate().connect(sigc::mem_fun(this,
+			&PortMenu::on_menu_reset_range));
 
 	if ( ! PtrCast<PatchModel>(port->parent()) ) {
 		_polyphonic_menuitem->set_sensitive(false);
@@ -50,8 +63,20 @@ PortMenu::init(SharedPtr<PortModel> port, bool patch_port)
 	if (port->type() == PortType::EVENTS)
 		_polyphonic_menuitem->hide();
 
-	if (port->type() == PortType::CONTROL)
+	if (port->type() == PortType::CONTROL) {
 		_learn_menuitem->show();
+
+		items().push_front(Gtk::Menu_Helpers::SeparatorElem());
+
+		_port_menu->remove(*_reset_range_menuitem);
+		insert(*_reset_range_menuitem, 0);
+
+		_port_menu->remove(*_set_max_menuitem);
+		insert(*_set_max_menuitem, 0);
+
+		_port_menu->remove(*_set_min_menuitem);
+		insert(*_set_min_menuitem, 0);
+	}
 
 	_enable_signal = true;
 }
@@ -67,6 +92,44 @@ PortMenu::on_menu_disconnect()
 		App::instance().engine()->disconnect_all(
 				_object->parent()->path().parent(), _object->path());
 	}
+}
+
+
+void
+PortMenu::on_menu_set_min()
+{
+	SharedPtr<PortModel> model = PtrCast<PortModel>(_object);
+	const Raul::Atom& value = model->get_property("ingen:value");
+	std::cout << model->path() << " SET MIN " << value << std::endl;
+	if (value.is_valid())
+		App::instance().engine()->set_property(_object->path(), "lv2:minimum", value);
+}
+
+
+void
+PortMenu::on_menu_set_max()
+{
+	SharedPtr<PortModel> model = PtrCast<PortModel>(_object);
+	const Raul::Atom& value = model->get_property("ingen:value");
+	if (value.is_valid())
+		App::instance().engine()->set_property(_object->path(), "lv2:maximum", value);
+}
+
+
+void
+PortMenu::on_menu_reset_range()
+{
+	SharedPtr<PortModel> model  = PtrCast<PortModel>(_object);
+	SharedPtr<NodeModel> parent = PtrCast<NodeModel>(_object->parent());
+
+	float min, max;
+	parent->default_port_value_range(model, min, max);
+
+	if (!isnan(min))
+		App::instance().engine()->set_property(_object->path(), "lv2:minimum", min);
+
+	if (!isnan(max))
+		App::instance().engine()->set_property(_object->path(), "lv2:maximum", max);
 }
 
 

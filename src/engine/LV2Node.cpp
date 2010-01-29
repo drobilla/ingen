@@ -280,8 +280,14 @@ LV2Node::instantiate(BufferFactory& bufs)
 
 		if (direction == INPUT && data_type == PortType::CONTROL) {
 			((AudioBuffer*)port->buffer(0).get())->set_value(val.get_float(), 0, 0);
-			port->set_property("lv2:minimum", min_values[j]);
-			port->set_property("lv2:maximum", max_values[j]);
+			if (!isnan(min_values[j])) {
+				port->meta().set_property("lv2:minimum", min_values[j]);
+				port->set_property("lv2:minimum", min_values[j]);
+			}
+			if (!isnan(max_values[j])) {
+				port->meta().set_property("lv2:maximum", max_values[j]);
+				port->set_property("lv2:maximum", max_values[j]);
+			}
 		}
 
 		SLV2Values contexts = slv2_port_get_value(plug, id, context_pred);

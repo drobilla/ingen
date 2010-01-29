@@ -49,6 +49,12 @@ InputPort::InputPort(BufferFactory&    bufs,
 {
 	if (!dynamic_cast<Patch*>(parent))
 		add_property("rdf:type", Raul::Atom(Raul::Atom::URI, "lv2:InputPort"));
+
+	// Set default control range
+	if (type == PortType::CONTROL) {
+		set_property("lv2:minimum", 0.0f);
+		set_property("lv2:maximum", 1.0f);
+	}
 }
 
 

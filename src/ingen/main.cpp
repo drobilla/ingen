@@ -123,17 +123,17 @@ main(int argc, char** argv)
 	world->conf = &conf;
 
 	// Set up RDF namespaces
-	world->rdf_world->add_prefix("dc",       "http://purl.org/dc/elements/1.1/");
-	world->rdf_world->add_prefix("doap",     "http://usefulinc.com/ns/doap#");
-	world->rdf_world->add_prefix("ingen",    "http://drobilla.net/ns/ingen#");
-	world->rdf_world->add_prefix("ingen-ui", "http://drobilla.net/ns/ingenuity#");
-	world->rdf_world->add_prefix("lv2",      "http://lv2plug.in/ns/lv2core#");
-	world->rdf_world->add_prefix("lv2ev",    "http://lv2plug.in/ns/ext/event#");
-	world->rdf_world->add_prefix("lv2midi",  "http://lv2plug.in/ns/ext/midi#");
-	world->rdf_world->add_prefix("owl",      "http://www.w3.org/2002/07/owl#");
-	world->rdf_world->add_prefix("rdfs",     "http://www.w3.org/2000/01/rdf-schema#");
-	world->rdf_world->add_prefix("sp",       "http://lv2plug.in/ns/dev/string-port#");
-	world->rdf_world->add_prefix("xsd",      "http://www.w3.org/2001/XMLSchema#");
+	world->rdf_world->add_prefix("dc",      "http://purl.org/dc/elements/1.1/");
+	world->rdf_world->add_prefix("doap",    "http://usefulinc.com/ns/doap#");
+	world->rdf_world->add_prefix("ingen",   "http://drobilla.net/ns/ingen#");
+	world->rdf_world->add_prefix("ingenui", "http://drobilla.net/ns/ingenuity#");
+	world->rdf_world->add_prefix("lv2",     "http://lv2plug.in/ns/lv2core#");
+	world->rdf_world->add_prefix("lv2ev",   "http://lv2plug.in/ns/ext/event#");
+	world->rdf_world->add_prefix("lv2midi", "http://lv2plug.in/ns/ext/midi#");
+	world->rdf_world->add_prefix("owl",     "http://www.w3.org/2002/07/owl#");
+	world->rdf_world->add_prefix("rdfs",    "http://www.w3.org/2000/01/rdf-schema#");
+	world->rdf_world->add_prefix("sp",      "http://lv2plug.in/ns/dev/string-port#");
+	world->rdf_world->add_prefix("xsd",     "http://www.w3.org/2001/XMLSchema#");
 
 	// Run engine
 	if (conf.option("engine").get_bool()) {

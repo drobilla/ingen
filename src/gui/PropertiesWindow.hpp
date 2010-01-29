@@ -47,6 +47,9 @@ public:
 private:
 	/** Record of a property (row in the table) */
 	struct Record {
+		Record(const Raul::Atom& v, Gtk::ComboBox* tw, Gtk::Alignment* vw, int r)
+			: value(v), type_widget(tw), value_widget(vw), row(r)
+		{}
 		Raul::Atom      value;
 		Gtk::ComboBox*  type_widget;
 		Gtk::Alignment* value_widget;

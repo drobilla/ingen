@@ -350,9 +350,9 @@ LoadPluginWindow::load_plugin(const Gtk::TreeModel::iterator& iter)
 			_node_name_entry->set_text(generate_module_name(plugin, _plugin_name_offset + 1));
 
 		// Cascade next node
-		Atom& x = _initial_data.find("ingen-ui:canvas-x")->second;
+		Atom& x = _initial_data.find("ingenui:canvas-x")->second;
 		x = Atom(x.get_float() + 20.0f);
-		Atom& y = _initial_data.find("ingen-ui:canvas-y")->second;
+		Atom& y = _initial_data.find("ingenui:canvas-y")->second;
 		y = Atom(y.get_float() + 20.0f);
 	}
 }

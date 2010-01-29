@@ -100,7 +100,10 @@ private:
 	void serialise_port_meta(const Shared::Port* p, const Redland::Node& id);
 
 	void serialise_meta_properties(Redland::Node subject, const Properties& properties);
-	void serialise_properties(Redland::Node subject, const Properties& variables);
+	void serialise_properties(
+			Redland::Node           subject,
+			const Shared::Resource* meta,
+			const Properties&       properties);
 
 	Redland::Node instance_rdf_node(const Raul::Path& path);
 	Redland::Node class_rdf_node(const Raul::Path& path);

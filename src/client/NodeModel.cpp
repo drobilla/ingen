@@ -170,12 +170,14 @@ NodeModel::port(uint32_t index) const
 
 
 void
-NodeModel::port_value_range(SharedPtr<PortModel> port, float& min, float& max) const
+NodeModel::default_port_value_range(SharedPtr<PortModel> port, float& min, float& max) const
 {
-	assert(port->parent().get() == this);
+	// Default control values
+	min = 0.0;
+	max = 1.0;
 
+	// Get range from client-side LV2 data
 #ifdef HAVE_SLV2
-	// Plugin value first
 	if (_plugin && _plugin->type() == PluginModel::LV2) {
 
 		if (!_min_values) {
@@ -195,6 +197,17 @@ NodeModel::port_value_range(SharedPtr<PortModel> port, float& min, float& max) c
 			max = _max_values[port->index()];
 	}
 #endif
+
+	// TODO: LADSPA support
+}
+
+
+void
+NodeModel::port_value_range(SharedPtr<PortModel> port, float& min, float& max) const
+{
+	assert(port->parent().get() == this);
+
+	default_port_value_range(port, min, max);
 
 	// Possibly overriden
 	const Atom& min_atom = port->get_property("lv2:minimum");

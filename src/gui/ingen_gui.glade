@@ -3262,4 +3262,30 @@ Thank you for contributing.</property>
       </widget>
     </child>
   </widget>
+  <widget class="GtkMenu" id="port_menu">
+    <property name="visible">True</property>
+    <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+    <child>
+      <widget class="GtkMenuItem" id="port_set_min_menuitem">
+        <property name="visible">True</property>
+        <property name="label" translatable="yes">Set m_inimum to current value</property>
+        <property name="use_underline">True</property>
+      </widget>
+    </child>
+    <child>
+      <widget class="GtkMenuItem" id="port_set_max_menuitem">
+        <property name="visible">True</property>
+        <property name="label" translatable="yes">Set m_aximum to current value</property>
+        <property name="use_underline">True</property>
+      </widget>
+    </child>
+    <child>
+      <widget class="GtkMenuItem" id="port_reset_range_menuitem">
+        <property name="visible">True</property>
+        <property name="tooltip" translatable="yes">Reset range to plugin defaults</property>
+        <property name="label" translatable="yes">R_eset Range</property>
+        <property name="use_underline">True</property>
+      </widget>
+    </child>
+  </widget>
 </glade-interface>

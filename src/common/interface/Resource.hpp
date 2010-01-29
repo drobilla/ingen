@@ -45,7 +45,7 @@ public:
 
 	virtual const Raul::Atom& get_property(const Raul::URI& uri) const = 0;
 
-	virtual bool has_property(const Raul::URI& uri, const Raul::Atom& value) = 0;
+	virtual bool has_property(const Raul::URI& uri, const Raul::Atom& value) const = 0;
 };
 
 

@@ -43,8 +43,16 @@ public:
 
 private:
 	void on_menu_disconnect();
+	void on_menu_set_min();
+	void on_menu_set_max();
+	void on_menu_reset_range();
 
 	bool _patch_port;
+
+	Gtk::Menu*     _port_menu;
+	Gtk::MenuItem* _set_min_menuitem;
+	Gtk::MenuItem* _set_max_menuitem;
+	Gtk::MenuItem* _reset_range_menuitem;
 };
 
 

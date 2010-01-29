@@ -379,14 +379,14 @@ NodeModule::store_location()
 	const float x = static_cast<float>(property_x());
 	const float y = static_cast<float>(property_y());
 
-	const Atom& existing_x = _node->get_property("ingen-ui:canvas-x");
-	const Atom& existing_y = _node->get_property("ingen-ui:canvas-y");
+	const Atom& existing_x = _node->get_property("ingenui:canvas-x");
+	const Atom& existing_y = _node->get_property("ingenui:canvas-y");
 
 	if (existing_x.type() != Atom::FLOAT || existing_y.type() != Atom::FLOAT
 			|| existing_x.get_float() != x || existing_y.get_float() != y) {
 		Shared::Resource::Properties props;
-		props.insert(make_pair("ingen-ui:canvas-x", Atom(x)));
-		props.insert(make_pair("ingen-ui:canvas-y", Atom(y)));
+		props.insert(make_pair("ingenui:canvas-x", Atom(x)));
+		props.insert(make_pair("ingenui:canvas-y", Atom(y)));
 		App::instance().engine()->put(_node->path(), props);
 	}
 }
@@ -397,9 +397,9 @@ NodeModule::set_property(const URI& key, const Atom& value)
 {
 	switch (value.type()) {
 	case Atom::FLOAT:
-		if (key.str() == "ingen-ui:canvas-x") {
+		if (key.str() == "ingenui:canvas-x") {
 			move_to(value.get_float(), property_y());
-		} else if (key.str() == "ingen-ui:canvas-y") {
+		} else if (key.str() == "ingenui:canvas-y") {
 			move_to(property_x(), value.get_float());
 		}
 		break;
