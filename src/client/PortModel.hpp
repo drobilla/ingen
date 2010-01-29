@@ -26,6 +26,9 @@
 #include "interface/Port.hpp"
 #include "ObjectModel.hpp"
 
+#include <stdio.h>
+
+
 namespace Raul { class Path; }
 
 namespace Ingen {

@@ -33,9 +33,10 @@ namespace Raul { class Maid; }
 
 namespace Ingen {
 
-class Driver;
 class BufferFactory;
 class ClientBroadcaster;
+class ControlBindings;
+class Driver;
 class Driver;
 class EngineStore;
 class Event;
@@ -80,13 +81,14 @@ public:
 
 	virtual bool activated() { return _activated; }
 
-	Raul::Maid*        maid()            const { return _maid; }
-	Driver*            driver()          const { return _driver.get(); }
-	PostProcessor*     post_processor()  const { return _post_processor; }
-	ClientBroadcaster* broadcaster()     const { return _broadcaster; }
-	NodeFactory*       node_factory()    const { return _node_factory; }
-	MessageContext*    message_context() const { return _message_context; }
-	BufferFactory*     buffer_factory()  const { return _buffer_factory; }
+	BufferFactory*     buffer_factory()   const { return _buffer_factory; }
+	ClientBroadcaster* broadcaster()      const { return _broadcaster; }
+	ControlBindings*   control_bindings() const { return _control_bindings; }
+	Driver*            driver()           const { return _driver.get(); }
+	MessageContext*    message_context()  const { return _message_context; }
+	NodeFactory*       node_factory()     const { return _node_factory; }
+	PostProcessor*     post_processor()   const { return _post_processor; }
+	Raul::Maid*        maid()             const { return _maid; }
 
 	SharedPtr<EngineStore> engine_store() const;
 
@@ -106,15 +108,16 @@ private:
 	typedef std::set< SharedPtr<EventSource> > EventSources;
 	EventSources _event_sources;
 
-	ProcessSlaves          _process_slaves;
-	Ingen::Shared::World*  _world;
-	SharedPtr<Driver>      _driver;
-	Raul::Maid*            _maid;
-	PostProcessor*         _post_processor;
-	ClientBroadcaster*     _broadcaster;
-	NodeFactory*           _node_factory;
-	MessageContext*        _message_context;
-	BufferFactory*         _buffer_factory;
+	ProcessSlaves         _process_slaves;
+	Ingen::Shared::World* _world;
+	SharedPtr<Driver>     _driver;
+	Raul::Maid*           _maid;
+	PostProcessor*        _post_processor;
+	ClientBroadcaster*    _broadcaster;
+	NodeFactory*          _node_factory;
+	MessageContext*       _message_context;
+	BufferFactory*        _buffer_factory;
+	ControlBindings*      _control_bindings;
 
 	bool _quit_flag;
 	bool _activated;

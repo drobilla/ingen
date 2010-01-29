@@ -32,7 +32,6 @@ namespace Shared {
  */
 class PortType {
 public:
-
 	enum Symbol {
 		UNKNOWN = 0,
 		AUDIO   = 1,

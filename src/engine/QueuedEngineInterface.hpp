@@ -101,7 +101,7 @@ public:
 	virtual void disconnect_all(const Raul::Path& parent_patch_path,
 	                            const Raul::Path& path);
 
-	virtual void midi_learn(const Raul::Path& node_path);
+	virtual void learn(const Raul::Path& path);
 
 	// Requests
 	virtual void ping();

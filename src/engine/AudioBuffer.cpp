@@ -24,7 +24,6 @@
 #include "AudioBuffer.hpp"
 #include "ProcessContext.hpp"
 #include "LV2Features.hpp"
-#include "LV2URIMap.hpp"
 
 using namespace std;
 using namespace Raul;

@@ -15,9 +15,11 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include "Driver.hpp"
+#include "Engine.hpp"
 #include "Event.hpp"
-#include "ThreadManager.hpp"
 #include "ProcessContext.hpp"
+#include "ThreadManager.hpp"
 
 /*! \page methods Method Documentation
  *
@@ -32,7 +34,7 @@ namespace Ingen {
 void
 Event::execute(ProcessContext& context)
 {
-	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
+	ThreadManager::assert_thread(THREAD_PROCESS);
 	assert(!_executed);
 	assert(_time <= context.end());
 
@@ -47,7 +49,7 @@ Event::execute(ProcessContext& context)
 void
 Event::post_process()
 {
-	assert(ThreadManager::current_thread_id() != THREAD_PROCESS);
+	ThreadManager::assert_not_thread(THREAD_PROCESS);
 }
 
 

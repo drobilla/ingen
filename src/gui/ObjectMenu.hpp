@@ -44,6 +44,7 @@ public:
 	void init(SharedPtr<ObjectModel> object);
 
 protected:
+	void         on_menu_learn();
 	virtual void on_menu_disconnect() = 0;
 	void         on_menu_polyphonic();
 	void         on_menu_destroy();
@@ -53,6 +54,7 @@ protected:
 
 	bool                   _enable_signal;
 	SharedPtr<ObjectModel> _object;
+	Gtk::MenuItem*         _learn_menuitem;
 	Gtk::CheckMenuItem*    _polyphonic_menuitem;
 	Gtk::MenuItem*         _disconnect_menuitem;
 	Gtk::MenuItem*         _rename_menuitem;

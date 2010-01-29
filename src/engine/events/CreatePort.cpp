@@ -143,6 +143,9 @@ CreatePort::execute(ProcessContext& context)
 	if (_driver_port) {
 		_engine.driver()->add_port(_driver_port);
 	}
+
+	if (_source)
+		_source->unblock();
 }
 
 

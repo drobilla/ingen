@@ -238,11 +238,11 @@ OSCEngineSender::set_voice_value(const Path& port_path,
 
 
 void
-OSCEngineSender::midi_learn(const Path& node_path)
+OSCEngineSender::learn(const Path& path)
 {
-	send("/ingen/midi_learn", "is",
+	send("/ingen/learn", "is",
 		next_id(),
-		node_path.c_str(),
+		path.c_str(),
 		LO_ARGS_END);
 }
 

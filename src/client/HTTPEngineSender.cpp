@@ -193,7 +193,7 @@ HTTPEngineSender::set_voice_value(const Path& port_path,
 
 
 void
-HTTPEngineSender::midi_learn(const Path& node_path)
+HTTPEngineSender::learn(const Path& path)
 {
 }
 

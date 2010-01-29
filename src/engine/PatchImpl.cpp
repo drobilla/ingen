@@ -89,7 +89,7 @@ PatchImpl::deactivate()
 void
 PatchImpl::disable()
 {
-	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
+	ThreadManager::assert_thread(THREAD_PROCESS);
 
 	_process = false;
 
@@ -101,7 +101,7 @@ PatchImpl::disable()
 bool
 PatchImpl::prepare_internal_poly(BufferFactory& bufs, uint32_t poly)
 {
-	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
+	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 
 	/* TODO: ports?  internal/external poly? */
 
@@ -120,7 +120,7 @@ PatchImpl::prepare_internal_poly(BufferFactory& bufs, uint32_t poly)
 bool
 PatchImpl::apply_internal_poly(Raul::Maid& maid, uint32_t poly)
 {
-	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
+	ThreadManager::assert_thread(THREAD_PROCESS);
 
 	/* TODO: ports?  internal/external poly? */
 
@@ -267,7 +267,7 @@ PatchImpl::set_buffer_size(BufferFactory& bufs, size_t size)
 void
 PatchImpl::add_node(List<NodeImpl*>::Node* ln)
 {
-	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
+	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 	assert(ln != NULL);
 	assert(ln->elem() != NULL);
 	assert(ln->elem()->parent_patch() == this);
@@ -283,7 +283,7 @@ PatchImpl::add_node(List<NodeImpl*>::Node* ln)
 PatchImpl::Nodes::Node*
 PatchImpl::remove_node(const string& symbol)
 {
-	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
+	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 	for (List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		if ((*i)->symbol() == symbol)
 			return _nodes.erase(i);
@@ -298,7 +298,7 @@ PatchImpl::remove_node(const string& symbol)
 PatchImpl::Connections::Node*
 PatchImpl::remove_connection(const PortImpl* src_port, const PortImpl* dst_port)
 {
-	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
+	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 	bool found = false;
 	Connections::Node* connection = NULL;
 	for (Connections::iterator i = _connections.begin(); i != _connections.end(); ++i) {
@@ -369,7 +369,7 @@ PatchImpl::create_port(BufferFactory& bufs, const string& name, PortType type, s
 List<PortImpl*>::Node*
 PatchImpl::remove_port(const string& symbol)
 {
-	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
+	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 
 	bool found = false;
 	List<PortImpl*>::Node* ret = NULL;
@@ -405,7 +405,7 @@ PatchImpl::remove_port(const string& symbol)
 void
 PatchImpl::clear_ports()
 {
-	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
+	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 
 	_input_ports.clear();
 	_output_ports.clear();
@@ -415,7 +415,7 @@ PatchImpl::clear_ports()
 Raul::Array<PortImpl*>*
 PatchImpl::build_ports_array() const
 {
-	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
+	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 
 	Raul::Array<PortImpl*>* const result = new Raul::Array<PortImpl*>(_input_ports.size() + _output_ports.size());
 
@@ -444,7 +444,7 @@ PatchImpl::build_ports_array() const
 CompiledPatch*
 PatchImpl::compile() const
 {
-	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
+	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 
 	CompiledPatch* const compiled_patch = new CompiledPatch();//_nodes.size());
 

@@ -22,6 +22,7 @@
 #include "shared/LV2Features.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "AudioBuffer.hpp"
+#include "ControlBindings.hpp"
 #include "DuplexPort.hpp"
 #include "Engine.hpp"
 #include "Event.hpp"
@@ -326,7 +327,7 @@ JackDriver::deactivate()
 void
 JackDriver::add_port(DriverPort* port)
 {
-	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
+	ThreadManager::assert_thread(THREAD_PROCESS);
 	assert(dynamic_cast<JackPort*>(port));
 	_ports.push_back((JackPort*)port);
 }
@@ -343,7 +344,7 @@ JackDriver::add_port(DriverPort* port)
 Raul::List<DriverPort*>::Node*
 JackDriver::remove_port(const Path& path)
 {
-	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
+	ThreadManager::assert_thread(THREAD_PROCESS);
 
 	for (Raul::List<JackPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
 		if ((*i)->patch_port()->path() == path)
@@ -382,7 +383,7 @@ JackDriver::create_port(DuplexPort* patch_port)
 DriverPort*
 JackDriver::driver_port(const Path& path)
 {
-	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
+	ThreadManager::assert_thread(THREAD_PROCESS);
 
 	for (Raul::List<JackPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
 		if ((*i)->patch_port()->path() == path)
@@ -434,6 +435,10 @@ JackDriver::_process_cb(jack_nframes_t nframes)
 	for (Raul::List<JackPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
 		(*i)->pre_process(_process_context);
 
+	// Process control bindings
+	_engine.control_bindings()->process(_process_context,
+			PtrCast<EventBuffer>(_root_patch->port_impl(0)->buffer(0)).get());
+
 	// Run root patch
 	if (_root_patch)
 		_root_patch->process(_process_context);
@@ -459,7 +464,7 @@ JackDriver::_thread_init_cb()
 	_jack_thread = Thread::create_for_this_thread("Jack");
 	assert(&Thread::get() == _jack_thread);
 	_jack_thread->set_context(THREAD_PROCESS);
-	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
+	ThreadManager::assert_thread(THREAD_PROCESS);
 }
 
 

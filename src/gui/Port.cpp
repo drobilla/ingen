@@ -139,10 +139,12 @@ Port::on_event(GdkEvent* ev)
 {
 	switch (ev->type) {
 	case GDK_BUTTON_PRESS:
-		_pressed = true;
+		if (ev->button.button == 1)
+			_pressed = true;
 		break;
 	case GDK_BUTTON_RELEASE:
-		_pressed = false;
+		if (ev->button.button == 1)
+			_pressed = false;
 	default:
 		break;
 	}

@@ -37,6 +37,7 @@ ObjectMenu::ObjectMenu(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade:
 	, _destroy_menuitem(NULL)
 	, _properties_menuitem(NULL)
 {
+	xml->get_widget("object_learn_menuitem", _learn_menuitem);
 	xml->get_widget("object_polyphonic_menuitem", _polyphonic_menuitem);
 	xml->get_widget("object_disconnect_menuitem", _disconnect_menuitem);
 	xml->get_widget("object_rename_menuitem", _rename_menuitem);
@@ -57,6 +58,9 @@ ObjectMenu::init(SharedPtr<ObjectModel> object)
 
 	_polyphonic_menuitem->set_active(object->polyphonic());
 
+	_learn_menuitem->signal_activate().connect(
+			sigc::mem_fun(this, &ObjectMenu::on_menu_learn));
+
 	_disconnect_menuitem->signal_activate().connect(
 			sigc::mem_fun(this, &ObjectMenu::on_menu_disconnect));
 
@@ -72,7 +76,16 @@ ObjectMenu::init(SharedPtr<ObjectModel> object)
 
 	object->signal_property.connect(sigc::mem_fun(this, &ObjectMenu::property_changed));
 
+	_learn_menuitem->hide();
+
 	_enable_signal = true;
+}
+
+
+void
+ObjectMenu::on_menu_learn()
+{
+	App::instance().engine()->learn(_object->path());
 }
 
 

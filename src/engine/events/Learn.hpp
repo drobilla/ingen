@@ -33,10 +33,10 @@ namespace Events {
  *
  * \ingroup engine
  */
-class MidiLearn : public QueuedEvent
+class Learn : public QueuedEvent
 {
 public:
-	MidiLearn(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Raul::Path& node_path);
+	Learn(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Raul::Path& path);
 
 	void pre_process();
 	void execute(ProcessContext& context);
@@ -49,8 +49,9 @@ private:
 	};
 
 	ErrorType        _error;
-	const Raul::Path _node_path;
-	NodeImpl*        _node;
+	const Raul::Path _path;
+	GraphObjectImpl* _object;
+	bool             _done;
 };
 
 

@@ -19,7 +19,7 @@
 #include "raul/midi_events.h"
 #include "internals/Controller.hpp"
 #include "PostProcessor.hpp"
-#include "events/MidiLearn.hpp"
+#include "events/Learn.hpp"
 #include "events/SendPortValue.hpp"
 #include "InputPort.hpp"
 #include "OutputPort.hpp"
@@ -78,11 +78,11 @@ ControllerNode::process(ProcessContext& context)
 {
 	NodeBase::pre_process(context);
 
-	uint32_t frames = 0;
+	uint32_t frames    = 0;
 	uint32_t subframes = 0;
-	uint16_t type = 0;
-	uint16_t size = 0;
-	uint8_t* buf = NULL;
+	uint16_t type      = 0;
+	uint16_t size      = 0;
+	uint8_t* buf       = NULL;
 
 	EventBuffer* const midi_in = (EventBuffer*)_midi_in_port->buffer(0).get();
 

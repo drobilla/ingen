@@ -55,7 +55,6 @@ public:
 	void post_process();
 
 private:
-
 	enum ErrorType {
 		NO_ERROR,
 		UNKNOWN_TYPE,

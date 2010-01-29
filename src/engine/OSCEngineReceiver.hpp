@@ -100,7 +100,7 @@ private:
 	LO_HANDLER(note_on);
 	LO_HANDLER(note_off);
 	LO_HANDLER(all_notes_off);
-	LO_HANDLER(midi_learn);
+	LO_HANDLER(learn);
 	LO_HANDLER(set_property);
 	LO_HANDLER(property_set);
 	LO_HANDLER(request_property);

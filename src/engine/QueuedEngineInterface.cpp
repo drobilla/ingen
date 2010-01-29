@@ -228,9 +228,9 @@ QueuedEngineInterface::set_voice_value(const Path&       port_path,
 
 
 void
-QueuedEngineInterface::midi_learn(const Path& node_path)
+QueuedEngineInterface::learn(const Path& path)
 {
-	push_queued(new Events::MidiLearn(_engine, _responder, now(), node_path));
+	push_queued(new Events::Learn(_engine, _responder, now(), path));
 }
 
 

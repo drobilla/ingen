@@ -203,7 +203,7 @@ SetMetadata::execute(ProcessContext& context)
 	if (_create_event) {
 		QueuedEvent::execute(context);
 		_create_event->execute(context);
-		if (_blocking)
+		if (_blocking && _source)
 			_source->unblock();
 		return;
 	}

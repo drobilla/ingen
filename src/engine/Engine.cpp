@@ -25,16 +25,19 @@
 #include "uri-map.lv2/uri-map.h"
 #include "common/interface/EventType.hpp"
 #include "events/CreatePatch.hpp"
+#include "events/CreatePort.hpp"
 #include "module/World.hpp"
 #include "shared/LV2Features.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "shared/Store.hpp"
-#include "Driver.hpp"
 #include "BufferFactory.hpp"
 #include "ClientBroadcaster.hpp"
+#include "ControlBindings.hpp"
+#include "Driver.hpp"
 #include "Engine.hpp"
 #include "EngineStore.hpp"
 #include "Event.hpp"
+#include "EventSource.hpp"
 #include "MessageContext.hpp"
 #include "NodeFactory.hpp"
 #include "PatchImpl.hpp"
@@ -43,7 +46,6 @@
 #include "ProcessContext.hpp"
 #include "ProcessSlave.hpp"
 #include "QueuedEngineInterface.hpp"
-#include "EventSource.hpp"
 #include "ThreadManager.hpp"
 #include "tuning.hpp"
 
@@ -54,6 +56,7 @@ namespace Ingen {
 
 using namespace Shared;
 
+bool ThreadManager::single_threaded = true;
 
 Engine::Engine(Ingen::Shared::World* world)
 	: _world(world)
@@ -63,6 +66,8 @@ Engine::Engine(Ingen::Shared::World* world)
 	, _node_factory(new NodeFactory(world))
 	, _message_context(new MessageContext(*this))
 	, _buffer_factory(new BufferFactory(*this, PtrCast<LV2URIMap>(
+			world->lv2_features->feature(LV2_URI_MAP_URI))))
+	, _control_bindings(new ControlBindings(*this, PtrCast<LV2URIMap>(
 			world->lv2_features->feature(LV2_URI_MAP_URI))))
 	, _quit_flag(false)
 	, _activated(false)
@@ -172,6 +177,17 @@ Engine::activate()
 		_world->store->add(root_patch);
 		root_patch->compiled_patch(root_patch->compile());
 		_driver->set_root_patch(root_patch);
+
+		// Add control port
+		Shared::Resource::Properties properties;
+		properties.insert(make_pair("lv2:name", "Control"));
+		Events::CreatePort* ev = new Events::CreatePort(*this, SharedPtr<Responder>(), 0,
+				"/ingen_control", "lv2ev:EventPort", false, NULL, properties);
+		ev->pre_process();
+		ProcessContext context(*this);
+		ev->execute(context);
+		ev->post_process();
+		delete ev;
 	}
 
 	_driver->activate();
@@ -183,9 +199,8 @@ Engine::activate()
 
 	root_patch->enable();
 
-	//_post_processor->start();
-
 	_activated = true;
+	ThreadManager::single_threaded = false;
 
 	return true;
 }
@@ -204,6 +219,7 @@ Engine::deactivate()
 	_driver->root_patch()->deactivate();
 
 	_activated = false;
+	ThreadManager::single_threaded = true;
 }
 
 

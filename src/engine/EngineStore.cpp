@@ -80,7 +80,7 @@ EngineStore::find_object(const Path& path)
 void
 EngineStore::add(Shared::GraphObject* obj)
 {
-	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
+	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 	Store::add(obj);
 }
 
@@ -90,7 +90,7 @@ EngineStore::add(Shared::GraphObject* obj)
 void
 EngineStore::add(const Objects& table)
 {
-	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
+	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 	cram(table);
 }
 
@@ -115,7 +115,7 @@ EngineStore::remove(const Path& path)
 SharedPtr<EngineStore::Objects>
 EngineStore::remove(iterator object)
 {
-	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
+	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 
 	if (object != end()) {
 		iterator descendants_end = find_descendants_end(object);

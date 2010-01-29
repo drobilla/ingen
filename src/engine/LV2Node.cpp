@@ -183,8 +183,10 @@ LV2Node::instantiate(BufferFactory& bufs)
 
 	PortImpl* port = NULL;
 
+	float* min_values = new float[num_ports];
+	float* max_values = new float[num_ports];
 	float* def_values = new float[num_ports];
-	slv2_plugin_get_port_ranges_float(plug, 0, 0, def_values);
+	slv2_plugin_get_port_ranges_float(plug, min_values, max_values, def_values);
 
 	SLV2Value context_pred = slv2_value_new_uri(info->lv2_world(),
 			"http://lv2plug.in/ns/dev/contexts#context");
@@ -198,7 +200,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 	//SLV2Value as_large_as_pred = slv2_value_new_uri(info->lv2_world(),
 	//		"http://lv2plug.in/ns/dev/resize-port#asLargeAs");
 
-	for (uint32_t j=0; j < num_ports; ++j) {
+	for (uint32_t j = 0; j < num_ports; ++j) {
 		SLV2Port id = slv2_plugin_get_port_by_index(plug, j);
 
 		// LV2 port symbols are guaranteed to be unique, valid C identifiers
@@ -276,8 +278,11 @@ LV2Node::instantiate(BufferFactory& bufs)
 		else
 			port = new OutputPort(bufs, this, port_name, j, _polyphony, data_type, val, port_buffer_size);
 
-		if (direction == INPUT && data_type == PortType::CONTROL)
+		if (direction == INPUT && data_type == PortType::CONTROL) {
 			((AudioBuffer*)port->buffer(0).get())->set_value(val.get_float(), 0, 0);
+			port->set_property("lv2:minimum", min_values[j]);
+			port->set_property("lv2:maximum", max_values[j]);
+		}
 
 		SLV2Values contexts = slv2_port_get_value(plug, id, context_pred);
 		for (uint32_t i = 0; i < slv2_values_size(contexts); ++i) {

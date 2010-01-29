@@ -18,6 +18,7 @@
 #ifndef THREADMANAGER_H
 #define THREADMANAGER_H
 
+#include <cassert>
 #include "raul/Thread.hpp"
 
 namespace Ingen {
@@ -36,6 +37,19 @@ public:
 	inline static ThreadID current_thread_id() {
 		return (ThreadID)Raul::Thread::get().context();
 	}
+
+	inline static void assert_thread(ThreadID id) {
+		assert(single_threaded || current_thread_id() == id);
+	}
+
+	inline static void assert_not_thread(ThreadID id) {
+		assert(single_threaded || current_thread_id() != id);
+	}
+
+	/** Set to true during initialisation so ensure_thread doesn't fail.
+	 * Defined in Engine.cpp
+	 */
+	static bool single_threaded;
 };
 
 

@@ -107,7 +107,7 @@ NodeFactory::plugin(const string& type, const string& lib, const string& label)
 void
 NodeFactory::load_plugins()
 {
-	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
+	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 
 	_world->rdf_world->mutex().lock();
 

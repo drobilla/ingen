@@ -64,7 +64,7 @@ EventSource::push_queued(QueuedEvent* const ev)
 void
 EventSource::process(PostProcessor& dest, ProcessContext& context)
 {
-	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
+	ThreadManager::assert_thread(THREAD_PROCESS);
 
 	if (_events.empty())
 		return;

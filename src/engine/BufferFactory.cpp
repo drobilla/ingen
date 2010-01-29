@@ -80,7 +80,7 @@ BufferFactory::get(Shared::PortType type, size_t size, bool force_create)
 BufferFactory::Ref
 BufferFactory::create(Shared::PortType type, size_t size)
 {
-	assert(ThreadManager::current_thread_id() != THREAD_PROCESS);
+	ThreadManager::assert_not_thread(THREAD_PROCESS);
 
 	Buffer* buffer = NULL;
 

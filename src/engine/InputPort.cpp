@@ -139,7 +139,7 @@ InputPort::connect_buffers()
 void
 InputPort::add_connection(Connections::Node* const c)
 {
-	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
+	ThreadManager::assert_thread(THREAD_PROCESS);
 
 	_connections.push_back(c);
 	connect_buffers();
@@ -154,7 +154,7 @@ InputPort::add_connection(Connections::Node* const c)
 InputPort::Connections::Node*
 InputPort::remove_connection(const OutputPort* src_port)
 {
-	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
+	ThreadManager::assert_thread(THREAD_PROCESS);
 
 	Connections::Node* connection = NULL;
 	for (Connections::iterator i = _connections.begin(); i != _connections.end(); ++i)

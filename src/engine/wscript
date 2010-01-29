@@ -10,6 +10,7 @@ def build(bld):
 		BufferFactory.cpp
 		ClientBroadcaster.cpp
 		ConnectionImpl.cpp
+		ControlBindings.cpp
 		DuplexPort.cpp
 		Engine.cpp
 		EngineStore.cpp
@@ -42,8 +43,8 @@ def build(bld):
 		events/Disconnect.cpp
 		events/DisconnectAll.cpp
 		events/Get.cpp
+		events/Learn.cpp
 		events/LoadPlugins.cpp
-		events/MidiLearn.cpp
 		events/Move.cpp
 		events/Note.cpp
 		events/RegisterClient.cpp

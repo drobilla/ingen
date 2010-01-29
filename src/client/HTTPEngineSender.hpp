@@ -108,7 +108,7 @@ public:
 	                             uint32_t          voice,
 	                             const Raul::Atom& value);
 
-	virtual void midi_learn(const Raul::Path& node_path);
+	virtual void learn(const Raul::Path& path);
 
 
 	// Requests //

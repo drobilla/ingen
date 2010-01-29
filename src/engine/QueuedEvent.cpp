@@ -25,7 +25,7 @@ namespace Ingen {
 void
 QueuedEvent::pre_process()
 {
-	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
+	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 	assert(_pre_processed == false);
 	_pre_processed = true;
 }

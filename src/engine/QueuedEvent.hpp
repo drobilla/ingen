@@ -62,10 +62,7 @@ protected:
 		, _source(source)
 		, _pre_processed(false)
 		, _blocking(blocking)
-	{
-		if (blocking)
-			assert(_source);
-	}
+	{}
 
 	// NULL event base (for internal events only!)
 	QueuedEvent(Engine& engine)
@@ -76,8 +73,8 @@ protected:
 	{}
 
 	EventSource* _source;
-	bool               _pre_processed;
-	bool               _blocking;
+	bool         _pre_processed;
+	bool         _blocking;
 };
 
 

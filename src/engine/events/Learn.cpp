@@ -15,14 +15,16 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "events/MidiLearn.hpp"
-#include "Responder.hpp"
+#include "events/Learn.hpp"
+#include "ClientBroadcaster.hpp"
+#include "ControlBindings.hpp"
 #include "Engine.hpp"
 #include "EngineStore.hpp"
 #include "NodeImpl.hpp"
-#include "internals/Controller.hpp"
-#include "ClientBroadcaster.hpp"
 #include "PluginImpl.hpp"
+#include "PortImpl.hpp"
+#include "Responder.hpp"
+#include "internals/Controller.hpp"
 
 using namespace std;
 
@@ -30,50 +32,62 @@ namespace Ingen {
 namespace Events {
 
 
-MidiLearn::MidiLearn(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Raul::Path& node_path)
+Learn::Learn(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Raul::Path& path)
 	: QueuedEvent(engine, responder, timestamp)
 	, _error(NO_ERROR)
-	, _node_path(node_path)
-	, _node(NULL)
+	, _path(path)
+	, _object(NULL)
+	, _done(false)
 {
 }
 
 
 void
-MidiLearn::pre_process()
+Learn::pre_process()
 {
-	_node = _engine.engine_store()->find_node(_node_path);
+	_object = _engine.engine_store()->find_object(_path);
+
+	PortImpl* port = dynamic_cast<PortImpl*>(_object);
+	if (port) {
+		_done = true;
+		if (port->type() == Shared::PortType::CONTROL)
+			_engine.control_bindings()->learn(port);
+	}
 
 	QueuedEvent::pre_process();
 }
 
 
 void
-MidiLearn::execute(ProcessContext& context)
+Learn::execute(ProcessContext& context)
 {
 	QueuedEvent::execute(context);
 
-	if (_node != NULL) {
-	   if (_node->plugin_impl()->type() == Shared::Plugin::Internal) {
-		   ((NodeBase*)_node)->learn();
-	   } else {
-		   _error = INVALID_NODE_TYPE;
-	   }
+	if (_done || !_object)
+		return;
+
+	NodeImpl* node = dynamic_cast<NodeImpl*>(_object);
+	if (node) {
+		if (node->plugin_impl()->type() == Shared::Plugin::Internal) {
+			((NodeBase*)_object)->learn();
+		} else {
+			_error = INVALID_NODE_TYPE;
+		}
 	}
 }
 
 
 void
-MidiLearn::post_process()
+Learn::post_process()
 {
 	if (_error == NO_ERROR) {
 		_responder->respond_ok();
-	} else if (_node == NULL) {
+	} else if (_object == NULL) {
 		string msg = "Did not find node '";
-		msg.append(_node_path.str()).append("' for MIDI learn.");
+		msg.append(_path.str()).append("' for learn.");
 		_responder->respond_error(msg);
 	} else {
-		const string msg = string("Node '") + _node_path.str() + "' is not capable of MIDI learn.";
+		const string msg = string("Object '") + _path.str() + "' is not capable of learning.";
 		_responder->respond_error(msg);
 	}
 }

@@ -2924,6 +2924,7 @@ Thank you for contributing.</property>
       <widget class="GtkImageMenuItem" id="port_control_menu_properties">
         <property name="label">gtk-properties</property>
         <property name="visible">True</property>
+        <property name="use_underline">True</property>
         <property name="use_stock">True</property>
         <signal name="activate" handler="on_port_control_menu_properties_activate"/>
       </widget>
@@ -3064,6 +3065,13 @@ Thank you for contributing.</property>
       </widget>
     </child>
     <child>
+      <widget class="GtkMenuItem" id="object_learn_menuitem">
+        <property name="visible">True</property>
+        <property name="label" translatable="yes">_Learn</property>
+        <property name="use_underline">True</property>
+      </widget>
+    </child>
+    <child>
       <widget class="GtkImageMenuItem" id="object_disconnect_menuitem">
         <property name="label">Dis_connect</property>
         <property name="visible">True</property>
@@ -3112,16 +3120,6 @@ Thank you for contributing.</property>
   <widget class="GtkMenu" id="node_menu">
     <property name="visible">True</property>
     <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-    <child>
-      <widget class="GtkImageMenuItem" id="node_learn_menuitem">
-        <property name="label">_Learn</property>
-        <property name="visible">True</property>
-        <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-        <property name="tooltip" translatable="yes">Learn from the next received event</property>
-        <property name="use_underline">True</property>
-        <property name="use_stock">False</property>
-      </widget>
-    </child>
     <child>
       <widget class="GtkImageMenuItem" id="node_controls_menuitem">
         <property name="label">Con_trols...</property>

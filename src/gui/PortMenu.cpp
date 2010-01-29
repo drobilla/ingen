@@ -50,6 +50,9 @@ PortMenu::init(SharedPtr<PortModel> port, bool patch_port)
 	if (port->type() == PortType::EVENTS)
 		_polyphonic_menuitem->hide();
 
+	if (port->type() == PortType::CONTROL)
+		_learn_menuitem->show();
+
 	_enable_signal = true;
 }
 

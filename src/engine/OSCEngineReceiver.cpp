@@ -104,7 +104,7 @@ OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t
 	lo_server_add_method(_server, "/ingen/note_on", "isii", note_on_cb, this);
 	lo_server_add_method(_server, "/ingen/note_off", "isi", note_off_cb, this);
 	lo_server_add_method(_server, "/ingen/all_notes_off", "isi", all_notes_off_cb, this);
-	lo_server_add_method(_server, "/ingen/midi_learn", "is", midi_learn_cb, this);
+	lo_server_add_method(_server, "/ingen/learn", "is", learn_cb, this);
 	lo_server_add_method(_server, "/ingen/set_property", NULL, set_property_cb, this);
 
 	// Queries
@@ -615,7 +615,7 @@ OSCEngineReceiver::_all_notes_off_cb(const char* path, const char* types, lo_arg
 
 
 /** \page engine_osc_namespace
- * <h2>/ingen/midi_learn</h2>
+ * <h2>/ingen/learn</h2>
  * \arg \b response-id (integer)
  * \arg \b node-path (string) - Path of control node.
  *
@@ -625,11 +625,11 @@ OSCEngineReceiver::_all_notes_off_cb(const char* path, const char* types, lo_arg
  * This command does nothing for objects that are not a control internal.
  */
 int
-OSCEngineReceiver::_midi_learn_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCEngineReceiver::_learn_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	const char* patch_path  = &argv[1]->s;
+	const char* object_path = &argv[1]->s;
 
-	midi_learn(patch_path);
+	learn(object_path);
 	return 0;
 }
 

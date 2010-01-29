@@ -58,7 +58,7 @@ public:
 	virtual void disconnect_all(const Raul::Path& parent_patch_path,
 	                            const Raul::Path& path) = 0;
 
-	virtual void midi_learn(const Raul::Path& node_path) = 0;
+	virtual void learn(const Raul::Path& path) = 0;
 
 	// Requests
 

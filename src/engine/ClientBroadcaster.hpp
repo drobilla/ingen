@@ -26,6 +26,9 @@
 #include "interface/ClientInterface.hpp"
 #include "NodeFactory.hpp"
 
+#include <iostream>
+using namespace std;
+
 namespace Ingen {
 
 class GraphObjectImpl;

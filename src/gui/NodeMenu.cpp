@@ -37,13 +37,11 @@ NodeMenu::NodeMenu(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml
 {
 	Gtk::Menu* node_menu = NULL;
 	xml->get_widget("node_menu", node_menu);
-	xml->get_widget("node_learn_menuitem", _learn_menuitem);
 	xml->get_widget("node_controls_menuitem", _controls_menuitem);
 	xml->get_widget("node_popup_gui_menuitem", _popup_gui_menuitem);
 	xml->get_widget("node_embed_gui_menuitem", _embed_gui_menuitem);
 	xml->get_widget("node_randomize_menuitem", _randomize_menuitem);
 
-	node_menu->remove(*_learn_menuitem);
 	node_menu->remove(*_controls_menuitem);
 	node_menu->remove(*_popup_gui_menuitem);
 	node_menu->remove(*_embed_gui_menuitem);
@@ -54,7 +52,6 @@ NodeMenu::NodeMenu(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml
 	insert(*_controls_menuitem, 0);
 	insert(*_popup_gui_menuitem, 0);
 	insert(*_embed_gui_menuitem, 0);
-	insert(*_learn_menuitem, 0);
 }
 
 
@@ -150,13 +147,6 @@ NodeMenu::on_menu_randomize()
 	}
 
 	App::instance().engine()->bundle_end();
-}
-
-
-void
-NodeMenu::on_menu_learn()
-{
-	App::instance().engine()->midi_learn(_object->path());
 }
 
 

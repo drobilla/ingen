@@ -84,7 +84,7 @@ NodeBase::plugin() const
 void
 NodeBase::activate()
 {
-	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
+	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 	assert(!_activated);
 	_activated = true;
 }
@@ -94,7 +94,7 @@ void
 NodeBase::deactivate()
 {
 	// FIXME: Not true witn monolithic GUI/engine
-	//assert(ThreadManager::current_thread_id() == THREAD_POST_PROCESS);
+	//ThreadManager::assert_thread(THREAD_POST_PROCESS);
 	assert(_activated);
 	_activated = false;
 }
@@ -103,7 +103,7 @@ NodeBase::deactivate()
 bool
 NodeBase::prepare_poly(BufferFactory& bufs, uint32_t poly)
 {
-	assert(ThreadManager::current_thread_id() == THREAD_PRE_PROCESS);
+	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 
 	if (!_polyphonic)
 		return true;
@@ -119,7 +119,7 @@ NodeBase::prepare_poly(BufferFactory& bufs, uint32_t poly)
 bool
 NodeBase::apply_poly(Raul::Maid& maid, uint32_t poly)
 {
-	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
+	ThreadManager::assert_thread(THREAD_PROCESS);
 
 	if (!_polyphonic)
 		return true;
@@ -140,7 +140,7 @@ NodeBase::apply_poly(Raul::Maid& maid, uint32_t poly)
 void
 NodeBase::set_buffer_size(BufferFactory& bufs, size_t size)
 {
-	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
+	ThreadManager::assert_thread(THREAD_PROCESS);
 
 	_buffer_size = size;
 
@@ -176,7 +176,7 @@ NodeBase::process_unlock()
 void
 NodeBase::wait_for_input(size_t num_providers)
 {
-	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
+	ThreadManager::assert_thread(THREAD_PROCESS);
 	assert(_process_lock.get() == 1);
 
 	while ((unsigned)_n_inputs_ready.get() < num_providers)
@@ -187,7 +187,7 @@ NodeBase::wait_for_input(size_t num_providers)
 void
 NodeBase::signal_input_ready()
 {
-	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
+	ThreadManager::assert_thread(THREAD_PROCESS);
 	++_n_inputs_ready;
 	_input_ready.post();
 }
@@ -198,7 +198,7 @@ NodeBase::signal_input_ready()
 void
 NodeBase::pre_process(Context& context)
 {
-	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
+	ThreadManager::assert_thread(THREAD_PROCESS);
 
 	// Mix down input ports
 	for (uint32_t i = 0; i < num_ports(); ++i) {
@@ -214,7 +214,7 @@ NodeBase::pre_process(Context& context)
 void
 NodeBase::post_process(Context& context)
 {
-	assert(ThreadManager::current_thread_id() == THREAD_PROCESS);
+	ThreadManager::assert_thread(THREAD_PROCESS);
 
 	// Write output ports
 	for (size_t i = 0; _ports && i < _ports->size(); ++i) {
