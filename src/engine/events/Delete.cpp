@@ -17,18 +17,19 @@
 
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
-#include "Delete.hpp"
-#include "Responder.hpp"
-#include "Engine.hpp"
-#include "PatchImpl.hpp"
-#include "NodeBase.hpp"
-#include "PluginImpl.hpp"
-#include "Driver.hpp"
-#include "DisconnectAll.hpp"
 #include "ClientBroadcaster.hpp"
+#include "ControlBindings.hpp"
+#include "Delete.hpp"
+#include "DisconnectAll.hpp"
+#include "Driver.hpp"
+#include "Engine.hpp"
 #include "EngineStore.hpp"
 #include "EventSource.hpp"
+#include "NodeBase.hpp"
+#include "PatchImpl.hpp"
+#include "PluginImpl.hpp"
 #include "PortImpl.hpp"
+#include "Responder.hpp"
 
 using namespace std;
 
@@ -62,6 +63,8 @@ Delete::~Delete()
 void
 Delete::pre_process()
 {
+	_removed_bindings = _engine.control_bindings()->remove(_path);
+
 	_store_iterator = _engine.engine_store()->find(_path);
 
 	if (_store_iterator != _engine.engine_store()->end())  {
@@ -75,7 +78,7 @@ Delete::pre_process()
 		_removed_table = _engine.engine_store()->remove(_store_iterator);
 	}
 
-	if (_node != NULL && !_path.is_root()) {
+	if (_node && !_path.is_root()) {
 		assert(_node->parent_patch());
 		_patch_node_listnode = _node->parent_patch()->remove_node(_path.name());
 		if (_patch_node_listnode) {
@@ -153,10 +156,6 @@ Delete::execute(ProcessContext& context)
 
 		if ( ! _port->parent_patch()->parent()) {
 			_driver_port = _engine.driver()->remove_port(_port->path());
-
-			// Apparently this needs to be called in post_process??
-			//if (_driver_port)
-			//	_driver_port->elem()->unregister();
 		}
 	}
 
@@ -168,6 +167,8 @@ Delete::execute(ProcessContext& context)
 void
 Delete::post_process()
 {
+	_removed_bindings.reset();
+
 	if (!_node && !_port) {
 		if (_path.is_root()) {
 			_responder->respond_error("You can not destroy the root patch (/)");

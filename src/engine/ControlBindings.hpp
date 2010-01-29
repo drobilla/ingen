@@ -15,12 +15,13 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef CONTROL_BINDIGNS_HPP
+#ifndef CONTROL_BINDINGS_HPP
 #define CONTROL_BINDINGS_HPP
 
 #include <stdint.h>
 #include <map>
 #include "raul/SharedPtr.hpp"
+#include "raul/Path.hpp"
 #include "shared/LV2URIMap.hpp"
 
 namespace Ingen {
@@ -32,14 +33,23 @@ class PortImpl;
 
 class ControlBindings {
 public:
+	typedef std::map<int8_t, PortImpl*> Bindings;
+
 	ControlBindings(Engine& engine, SharedPtr<Shared::LV2URIMap> map)
 		: _engine(engine)
 		, _map(map)
 		, _learn_port(NULL)
+		, _bindings(new Bindings())
 	{}
 
 	void learn(PortImpl* port);
 	void process(ProcessContext& context, EventBuffer* buffer);
+
+	/** Remove all bindings for @a path or children of @a path.
+	 * The caller must safely drop the returned reference in the
+	 * post-processing thread after at least one process thread has run.
+	 */
+	SharedPtr<Bindings> remove(const Raul::Path& path);
 
 private:
 	Engine&                      _engine;
@@ -49,8 +59,7 @@ private:
 	void set_port_value(ProcessContext& context, PortImpl* port, int8_t cc_value);
 	void bind(ProcessContext& context, int8_t cc_num);
 
-	typedef std::map<int8_t, PortImpl*> Bindings;
-	Bindings _bindings;
+	SharedPtr<Bindings> _bindings;
 };
 
 } // namespace Ingen

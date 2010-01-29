@@ -60,13 +60,37 @@ ControlBindings::set_port_value(ProcessContext& context, PortImpl* port, int8_t 
 void
 ControlBindings::bind(ProcessContext& context, int8_t cc_num)
 {
-	_bindings.insert(make_pair(cc_num, _learn_port));
+	_bindings->insert(make_pair(cc_num, _learn_port));
 
 	const Events::SendBinding ev(context.engine(), context.start(), _learn_port,
 			MessageType(MessageType::MIDI_CC, cc_num));
 	context.event_sink().write(sizeof(ev), &ev);
 
 	_learn_port = NULL;
+}
+
+
+SharedPtr<ControlBindings::Bindings>
+ControlBindings::remove(const Raul::Path& path)
+{
+	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
+
+	SharedPtr<Bindings> old_bindings = _bindings;
+
+	SharedPtr<Bindings> copy(new Bindings(*_bindings.get()));
+
+	for (Bindings::iterator i = copy->begin(); i != copy->end();) {
+		Bindings::iterator next = i;
+		++next;
+
+		if (i->second->path() == path || i->second->path().is_child_of(path))
+			copy->erase(i);
+
+		i = next;
+	}
+
+	_bindings = copy;
+	return old_bindings;
 }
 
 
@@ -78,6 +102,8 @@ ControlBindings::process(ProcessContext& context, EventBuffer* buffer)
 	uint16_t type      = 0;
 	uint16_t size      = 0;
 	uint8_t* buf       = NULL;
+
+	SharedPtr<Bindings> bindings = _bindings;
 
 	if (_learn_port) {
 		buffer->rewind();
@@ -91,14 +117,14 @@ ControlBindings::process(ProcessContext& context, EventBuffer* buffer)
 		}
 	}
 
-	if (!_bindings.empty()) {
+	if (!bindings->empty()) {
 		buffer->rewind();
 		while (buffer->get_event(&frames, &subframes, &type, &size, &buf)) {
 			if (type == _map->midi_event && (buf[0] & 0xF0) == MIDI_CMD_CONTROL) {
 				const int8_t controller = static_cast<const int8_t>(buf[1]);
 				const int8_t value      = static_cast<const int8_t>(buf[2]);
-				Bindings::const_iterator i = _bindings.find(controller);
-				if (i != _bindings.end()) {
+				Bindings::const_iterator i = bindings->find(controller);
+				if (i != bindings->end()) {
 					set_port_value(context, i->second, value);
 				}
 			}

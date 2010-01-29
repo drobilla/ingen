@@ -21,6 +21,7 @@
 #include "QueuedEvent.hpp"
 #include "EngineStore.hpp"
 #include "PatchImpl.hpp"
+#include "ControlBindings.hpp"
 
 namespace Raul {
 	template<typename T> class Array;
@@ -81,6 +82,8 @@ private:
 	Raul::Array<PortImpl*>*        _ports_array;         ///< New (external) ports for Patch
 	CompiledPatch*                 _compiled_patch;      ///< Patch's new process order
 	DisconnectAll*                 _disconnect_event;
+
+	SharedPtr<ControlBindings::Bindings> _removed_bindings;
 
 	SharedPtr< Raul::Table<Raul::Path, SharedPtr<Shared::GraphObject> > > _removed_table;
 };
