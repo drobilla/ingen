@@ -27,4 +27,5 @@ public:
 	void set_port_value(const Raul::Path& port_path, const Raul::Atom& value) {}
 	void set_voice_value(const Raul::Path& port_path, uint32_t voice, const Raul::Atom& value) {}
 	void activity(const Raul::Path& port_path) {}
+	void binding(const Raul::Path& path, const MessageType& type) {}
 };

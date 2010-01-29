@@ -24,6 +24,7 @@
 #include <glibmm/thread.h>
 #include "raul/Atom.hpp"
 #include "interface/ClientInterface.hpp"
+#include "interface/MessageType.hpp"
 #include "SigClientInterface.hpp"
 #include "raul/SRSWQueue.hpp"
 
@@ -60,6 +61,7 @@ public:
 	, property_change_slot(signal_property_change.make_slot())
 	, port_value_slot(signal_port_value.make_slot())
 	, activity_slot(signal_activity.make_slot())
+	, binding_slot(signal_binding.make_slot())
 	{
 	}
 
@@ -110,6 +112,9 @@ public:
 	void activity(const Raul::Path& port_path)
 		{ push_sig(sigc::bind(activity_slot, port_path)); }
 
+	void binding(const Raul::Path& path, const Shared::MessageType& type)
+		{ push_sig(sigc::bind(binding_slot, path, type)); }
+
 	/** Process all queued events - Called from GTK thread to emit signals. */
 	bool emit_signals();
 
@@ -139,6 +144,7 @@ private:
 	sigc::slot<void, Raul::Path, Raul::Atom>                      port_value_slot;
 	sigc::slot<void, Raul::Path, uint32_t, Raul::Atom>            voice_value_slot;
 	sigc::slot<void, Raul::Path>                                  activity_slot;
+	sigc::slot<void, Raul::Path, Shared::MessageType>             binding_slot;
 };
 
 

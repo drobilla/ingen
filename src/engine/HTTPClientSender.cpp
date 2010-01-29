@@ -143,6 +143,13 @@ HTTPClientSender::activity(const Path& path)
 
 
 void
+HTTPClientSender::binding(const Path& path, const MessageType& type)
+{
+	warn << "TODO: HTTP binding" << endl;
+}
+
+
+void
 HTTPClientSender::move(const Path& old_path, const Path& new_path)
 {
 	string msg = string(

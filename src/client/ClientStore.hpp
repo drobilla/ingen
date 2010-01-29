@@ -33,7 +33,7 @@ namespace Raul { class Atom; }
 
 namespace Ingen {
 
-namespace Shared { class GraphObject; }
+namespace Shared { class GraphObject; class MessageType; }
 
 namespace Client {
 
@@ -96,6 +96,7 @@ private:
 	// Slots for SigClientInterface signals
 	void object_moved(const Raul::Path& old_path, const Raul::Path& new_path);
 	void activity(const Raul::Path& path);
+	void binding(const Raul::Path& path, const Shared::MessageType& type);
 
 	bool attempt_connection(const Raul::Path& src_port_path, const Raul::Path& dst_port_path);
 

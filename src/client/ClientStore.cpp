@@ -17,6 +17,7 @@
 
 #include "raul/log.hpp"
 #include "raul/PathTable.hpp"
+#include "interface/MessageType.hpp"
 #include "ClientStore.hpp"
 #include "ObjectModel.hpp"
 #include "PatchModel.hpp"
@@ -53,6 +54,7 @@ ClientStore::ClientStore(SharedPtr<EngineInterface> engine, SharedPtr<SigClientI
 	emitter->signal_port_value.connect(sigc::mem_fun(this, &ClientStore::set_port_value));
 	emitter->signal_voice_value.connect(sigc::mem_fun(this, &ClientStore::set_voice_value));
 	emitter->signal_activity.connect(sigc::mem_fun(this, &ClientStore::activity));
+	emitter->signal_binding.connect(sigc::mem_fun(this, &ClientStore::binding));
 }
 
 
@@ -380,6 +382,13 @@ ClientStore::activity(const Path& path)
 		port->signal_activity.emit();
 	else
 		LOG(error) << "Activity for non-existent port " << path << endl;
+}
+
+
+void
+ClientStore::binding(const Path& path, const Shared::MessageType& type)
+{
+	LOG(info) << "Bind " << path << " : " << type << endl;
 }
 
 

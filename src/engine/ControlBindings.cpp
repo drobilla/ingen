@@ -18,6 +18,7 @@
 #include "raul/log.hpp"
 #include "raul/midi_events.h"
 #include "events/SendPortValue.hpp"
+#include "events/SendBinding.hpp"
 #include "ControlBindings.hpp"
 #include "EventBuffer.hpp"
 #include "PortImpl.hpp"
@@ -41,17 +42,31 @@ ControlBindings::learn(PortImpl* port)
 
 
 void
-ControlBindings::set_port_value(ProcessContext& context, PortImpl* port, int8_t value)
+ControlBindings::set_port_value(ProcessContext& context, PortImpl* port, int8_t cc_value)
 {
+	// TODO: cache these to avoid the lookup
 	float min = port->get_property("lv2:minimum").get_float();
 	float max = port->get_property("lv2:maximum").get_float();
 
-	Raul::Atom scaled_value(static_cast<float>(((float)value / 127.0) * (max - min) + min));
-	port->set_value(scaled_value);
+	Raul::Atom value(static_cast<float>(((float)cc_value / 127.0) * (max - min) + min));
+	port->set_value(value);
 
 	const Events::SendPortValue ev(context.engine(), context.start(), port, true, 0,
-			scaled_value.get_float());
+			value.get_float());
 	context.event_sink().write(sizeof(ev), &ev);
+}
+
+
+void
+ControlBindings::bind(ProcessContext& context, int8_t cc_num)
+{
+	_bindings.insert(make_pair(cc_num, _learn_port));
+
+	const Events::SendBinding ev(context.engine(), context.start(), _learn_port,
+			MessageType(MessageType::MIDI_CC, cc_num));
+	context.event_sink().write(sizeof(ev), &ev);
+
+	_learn_port = NULL;
 }
 
 
@@ -69,8 +84,7 @@ ControlBindings::process(ProcessContext& context, EventBuffer* buffer)
 		while (buffer->get_event(&frames, &subframes, &type, &size, &buf)) {
 			if (type == _map->midi_event && (buf[0] & 0xF0) == MIDI_CMD_CONTROL) {
 				const int8_t controller = static_cast<const int8_t>(buf[1]);
-				_bindings.insert(make_pair(controller, _learn_port));
-				_learn_port = NULL;
+				bind(context, controller);
 				break;
 			}
 			buffer->increment();

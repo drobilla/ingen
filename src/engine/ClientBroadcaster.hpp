@@ -123,6 +123,10 @@ public:
 	void error(const std::string& msg)    { BROADCAST(error, msg); }
 	void activity(const Raul::Path& path) { BROADCAST(activity, path); }
 
+	void binding(const Raul::Path& path, const Shared::MessageType& type) {
+		BROADCAST(binding, path, type);
+	}
+
 private:
 	typedef std::map<Raul::URI, Shared::ClientInterface*> Clients;
 	Clients _clients;

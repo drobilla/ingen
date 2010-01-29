@@ -60,6 +60,7 @@ public:
 	sigc::signal<void, Raul::Path, Raul::Atom>                      signal_port_value;
 	sigc::signal<void, Raul::Path, uint32_t, Raul::Atom>            signal_voice_value;
 	sigc::signal<void, Raul::Path>                                  signal_activity;
+	sigc::signal<void, Raul::Path, Shared::MessageType>             signal_binding;
 
 	/** Fire pending signals.  Only does anything on derived classes (that may queue) */
 	virtual bool emit_signals() { return false; }
@@ -114,6 +115,9 @@ protected:
 
 	void activity(const Raul::Path& port_path)
 		{ EMIT(activity, port_path); }
+
+	void binding(const Raul::Path& path, const Shared::MessageType& type)
+		{ EMIT(binding, path, type); }
 };
 
 

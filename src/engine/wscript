@@ -51,6 +51,7 @@ def build(bld):
 		events/RequestAllObjects.cpp
 		events/RequestMetadata.cpp
 		events/RequestPlugins.cpp
+		events/SendBinding.cpp
 		events/SendPortActivity.cpp
 		events/SendPortValue.cpp
 		events/SetMetadata.cpp

@@ -93,6 +93,8 @@ public:
 
 	virtual void activity(const Raul::Path& path);
 
+	virtual void binding(const Raul::Path& path, const Shared::MessageType& type);
+
 private:
 	Engine&     _engine;
 	std::string _url;

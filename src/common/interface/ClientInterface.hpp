@@ -28,6 +28,7 @@ namespace Raul { class Path; class URI; }
 namespace Ingen {
 namespace Shared {
 
+class MessageType;
 
 /** The (only) interface the engine uses to communicate with clients.
  * Purely virtual (except for the destructor).
@@ -55,6 +56,8 @@ public:
 	virtual void error(const std::string& msg) = 0;
 
 	virtual void activity(const Raul::Path& path) = 0;
+
+	virtual void binding(const Raul::Path& path, const MessageType& type) = 0;
 };
 
 

@@ -46,7 +46,8 @@ private:
 	SharedPtr<Shared::LV2URIMap> _map;
 	PortImpl*                    _learn_port;
 
-	void set_port_value(ProcessContext& context, PortImpl* port, int8_t value);
+	void set_port_value(ProcessContext& context, PortImpl* port, int8_t cc_value);
+	void bind(ProcessContext& context, int8_t cc_num);
 
 	typedef std::map<int8_t, PortImpl*> Bindings;
 	Bindings _bindings;
