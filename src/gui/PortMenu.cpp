@@ -99,7 +99,7 @@ void
 PortMenu::on_menu_set_min()
 {
 	SharedPtr<PortModel> model = PtrCast<PortModel>(_object);
-	const Raul::Atom& value = model->get_property("ingen:value");
+	const Raul::Atom&    value = model->get_property("ingen:value");
 	std::cout << model->path() << " SET MIN " << value << std::endl;
 	if (value.is_valid())
 		App::instance().engine()->set_property(_object->path(), "lv2:minimum", value);
@@ -110,7 +110,7 @@ void
 PortMenu::on_menu_set_max()
 {
 	SharedPtr<PortModel> model = PtrCast<PortModel>(_object);
-	const Raul::Atom& value = model->get_property("ingen:value");
+	const Raul::Atom&    value = model->get_property("ingen:value");
 	if (value.is_valid())
 		App::instance().engine()->set_property(_object->path(), "lv2:maximum", value);
 }
