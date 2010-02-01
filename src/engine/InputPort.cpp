@@ -163,9 +163,15 @@ InputPort::remove_connection(const OutputPort* src_port)
 	ThreadManager::assert_thread(THREAD_PROCESS);
 
 	Connections::Node* connection = NULL;
-	for (Connections::iterator i = _connections.begin(); i != _connections.end(); ++i)
+	for (Connections::iterator i = _connections.begin(); i != _connections.end();) {
+		Connections::iterator next = i;
+		++next;
+
 		if ((*i)->src_port() == src_port)
 			connection = _connections.erase(i);
+
+		i = next;
+	}
 
 	if ( ! connection) {
 		error << "[InputPort::remove_connection] Connection not found!" << endl;

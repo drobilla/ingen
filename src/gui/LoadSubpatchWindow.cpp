@@ -70,8 +70,10 @@ LoadSubpatchWindow::LoadSubpatchWindow(BaseObjectType* cobject, const Glib::RefP
 	// Add global examples directory to "shortcut folders" (bookmarks)
 	const string examples_dir = Shared::data_file_path("patches");
 	DIR* d = opendir(examples_dir.c_str());
-	if (d != NULL)
+	if (d != NULL) {
 		add_shortcut_folder(examples_dir);
+		closedir(d);
+	}
 }
 
 

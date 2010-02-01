@@ -377,6 +377,7 @@ PatchImpl::remove_port(const string& symbol)
 		if ((*i)->symbol() == symbol) {
 			ret = _input_ports.erase(i);
 			found = true;
+			break;
 		}
 	}
 
@@ -385,6 +386,7 @@ PatchImpl::remove_port(const string& symbol)
 		if ((*i)->symbol() == symbol) {
 			ret = _output_ports.erase(i);
 			found = true;
+			break;
 		}
 	}
 
