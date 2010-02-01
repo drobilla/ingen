@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef CONTROL_BINDINGS_HPP
-#define CONTROL_BINDINGS_HPP
+#ifndef INGEN_ENGINE_CONTROLBINDINGS_HPP
+#define INGEN_ENGINE_CONTROLBINDINGS_HPP
 
 #include <stdint.h>
 #include <map>
@@ -64,4 +64,4 @@ private:
 
 } // namespace Ingen
 
-#endif // CONTROL_BINDINGS_HPP
+#endif // INGEN_ENGINE_CONTROLBINDINGS_HPP

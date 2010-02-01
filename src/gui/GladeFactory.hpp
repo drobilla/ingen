@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef GLADEFACTORY_H
-#define GLADEFACTORY_H
+#ifndef INGEN_GUI_GLADEFACTORY_HPP
+#define INGEN_GUI_GLADEFACTORY_HPP
 
 #include <string>
 #include <libglademm/xml.h>
@@ -44,4 +44,4 @@ private:
 } // namespace GUI
 } // namespace Ingen
 
-#endif // GLADEFACTORY_H
+#endif // INGEN_GUI_GLADEFACTORY_HPP

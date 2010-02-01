@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef REGISTERCLIENTEVENT_H
-#define REGISTERCLIENTEVENT_H
+#ifndef INGEN_EVENTS_REGISTERCLIENT_HPP
+#define INGEN_EVENTS_REGISTERCLIENT_HPP
 
 #include "raul/URI.hpp"
 #include "interface/ClientInterface.hpp"
@@ -51,4 +51,4 @@ private:
 } // namespace Ingen
 } // namespace Events
 
-#endif // REGISTERCLIENTEVENT_H
+#endif // INGEN_EVENTS_REGISTERCLIENT_HPP

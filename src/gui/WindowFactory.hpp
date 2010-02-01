@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef WINDOW_FACTORY_H
-#define WINDOW_FACTORY_H
+#ifndef INGEN_GUI_WINDOWFACTORY_HPP
+#define INGEN_GUI_WINDOWFACTORY_HPP
 
 #include <map>
 #include <gtkmm.h>
@@ -113,4 +113,4 @@ private:
 } // namespace GUI
 } // namespace Ingen
 
-#endif // WINDOW_FACTORY_H
+#endif // INGEN_GUI_WINDOWFACTORY_HPP

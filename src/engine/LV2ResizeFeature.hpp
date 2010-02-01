@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef LV2_RESIZE_FEATURE_H
-#define LV2_RESIZE_FEATURE_H
+#ifndef INGEN_ENGINE_LV2RESIZEFEATURE_HPP
+#define INGEN_ENGINE_LV2RESIZEFEATURE_HPP
 
 #include "raul/log.hpp"
 #include "shared/LV2Features.hpp"
@@ -66,4 +66,4 @@ struct ResizeFeature : public Shared::LV2Features::Feature {
 
 } // namespace Ingen
 
-#endif // LV2_RESIZE_FEATURE_H
+#endif // INGEN_ENGINE_LV2RESIZEFEATURE_HPP

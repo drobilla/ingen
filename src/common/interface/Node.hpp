@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef NODE_H
-#define NODE_H
+#ifndef INGEN_INTERFACE_NODE_HPP
+#define INGEN_INTERFACE_NODE_HPP
 
 #include <stdint.h>
 #include "GraphObject.hpp"
@@ -49,4 +49,4 @@ public:
 } // namespace Shared
 } // namespace Ingen
 
-#endif // NODE_H
+#endif // INGEN_INTERFACE_NODE_HPP

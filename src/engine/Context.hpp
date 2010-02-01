@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef CONTEXT_H
-#define CONTEXT_H
+#ifndef INGEN_ENGINE_CONTEXT_HPP
+#define INGEN_ENGINE_CONTEXT_HPP
 
 #include "EventSink.hpp"
 #include "tuning.hpp"
@@ -67,5 +67,5 @@ private:
 
 } // namespace Ingen
 
-#endif // CONTEXT_H
+#endif // INGEN_ENGINE_CONTEXT_HPP
 

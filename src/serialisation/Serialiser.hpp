@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef SERIALISER_H
-#define SERIALISER_H
+#ifndef INGEN_SERIALISATION_SERIALISER_HPP
+#define INGEN_SERIALISATION_SERIALISER_HPP
 
 #include <map>
 #include <utility>
@@ -125,4 +125,4 @@ private:
 } // namespace Serialisation
 } // namespace Ingen
 
-#endif // SERIALISER_H
+#endif // INGEN_SERIALISATION_SERIALISER_HPP

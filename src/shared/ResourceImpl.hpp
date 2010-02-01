@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef RESOURCEIMPL_HPP
-#define RESOURCEIMPL_HPP
+#ifndef INGEN_SHARED_RESOURCEIMPL_HPP
+#define INGEN_SHARED_RESOURCEIMPL_HPP
 
 #include <map>
 #include <sigc++/sigc++.h>
@@ -72,5 +72,5 @@ private:
 } // namespace Shared
 } // namespace Ingen
 
-#endif // RESOURCEIMPL_HPP
+#endif // INGEN_SHARED_RESOURCEIMPL_HPP
 

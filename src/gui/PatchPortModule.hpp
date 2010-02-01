@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef PATCHPORTMODULE_H
-#define PATCHPORTMODULE_H
+#ifndef INGEN_GUI_PATCHPORTMODULE_HPP
+#define INGEN_GUI_PATCHPORTMODULE_HPP
 
 #include <string>
 #include <boost/enable_shared_from_this.hpp>
@@ -81,4 +81,4 @@ protected:
 } // namespace GUI
 } // namespace Ingen
 
-#endif // PATCHPORTMODULE_H
+#endif // INGEN_GUI_PATCHPORTMODULE_HPP

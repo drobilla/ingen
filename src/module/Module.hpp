@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef INGEN_MODULE_HPP
-#define INGEN_MODULE_HPP
+#ifndef INGEN_MODULE_MODULE_HPP
+#define INGEN_MODULE_MODULE_HPP
 
 #include <string>
 #include <glibmm/module.h>
@@ -42,4 +42,4 @@ struct Module {
 } // namespace Shared
 } // namespace Ingen
 
-#endif // INGEN_MODULE_HPP
+#endif // INGEN_MODULE_MODULE_HPP

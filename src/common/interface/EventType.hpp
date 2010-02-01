@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef EVENTTYPE_H
-#define EVENTTYPE_H
+#ifndef INGEN_INTERFACE_EVENTTYPE_HPP
+#define INGEN_INTERFACE_EVENTTYPE_HPP
 
 namespace Ingen {
 namespace Shared {
@@ -74,4 +74,4 @@ private:
 } // namespace Shared
 } // namespace Ingen
 
-#endif // EVENTTYPE_H
+#endif // INGEN_INTERFACE_EVENTTYPE_HPP

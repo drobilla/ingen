@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef NODEMENU_H
-#define NODEMENU_H
+#ifndef INGEN_GUI_NODEMENU_HPP
+#define INGEN_GUI_NODEMENU_HPP
 
 #include <string>
 #include <gtkmm.h>
@@ -66,4 +66,4 @@ protected:
 } // namespace GUI
 } // namespace Ingen
 
-#endif // NODEMENU_H
+#endif // INGEN_GUI_NODEMENU_HPP

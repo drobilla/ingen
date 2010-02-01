@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef PORTIMPL_H
-#define PORTIMPL_H
+#ifndef INGEN_ENGINE_PORTIMPL_HPP
+#define INGEN_ENGINE_PORTIMPL_HPP
 
 #include <cstdlib>
 #include <string>
@@ -143,4 +143,4 @@ protected:
 
 } // namespace Ingen
 
-#endif // PORTIMPL_H
+#endif // INGEN_ENGINE_PORTIMPL_HPP

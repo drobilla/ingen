@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef CLIENTINTERFACE_H
-#define CLIENTINTERFACE_H
+#ifndef INGEN_INTERFACE_CLIENTINTERFACE_HPP
+#define INGEN_INTERFACE_CLIENTINTERFACE_HPP
 
 #include <stdio.h>
 #include <string>

@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef PLUGINIMPL_H
-#define PLUGINIMPL_H
+#ifndef INGEN_ENGINE_PLUGINIMPL_HPP
+#define INGEN_ENGINE_PLUGINIMPL_HPP
 
 #include <cstdlib>
 #include <glibmm/module.h>
@@ -77,5 +77,5 @@ protected:
 
 } // namespace Ingen
 
-#endif // PLUGINIMPL_H
+#endif // INGEN_ENGINE_PLUGINIMPL_HPP
 

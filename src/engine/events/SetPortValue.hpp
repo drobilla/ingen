@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef SETPORTVALUEEVENT_H
-#define SETPORTVALUEEVENT_H
+#ifndef INGEN_EVENTS_SETPORTVALUE_HPP
+#define INGEN_EVENTS_SETPORTVALUE_HPP
 
 #include "raul/Atom.hpp"
 #include "QueuedEvent.hpp"
@@ -92,4 +92,4 @@ private:
 } // namespace Ingen
 } // namespace Events
 
-#endif // SETPORTVALUEEVENT_H
+#endif // INGEN_EVENTS_SETPORTVALUE_HPP

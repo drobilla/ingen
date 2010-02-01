@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef DRIVER_H
-#define DRIVER_H
+#ifndef INGEN_ENGINE_DRIVER_HPP
+#define INGEN_ENGINE_DRIVER_HPP
 
 #include <string>
 #include <boost/utility.hpp>
@@ -122,4 +122,4 @@ public:
 
 } // namespace Ingen
 
-#endif // DRIVER_H
+#endif // INGEN_ENGINE_DRIVER_HPP

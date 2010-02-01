@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef MIDINOTENODE_H
-#define MIDINOTENODE_H
+#ifndef INGEN_INTERNALS_NOTE_HPP
+#define INGEN_INTERNALS_NOTE_HPP
 
 #include <string>
 #include "types.hpp"
@@ -88,4 +88,4 @@ private:
 } // namespace Ingen
 } // namespace Internals
 
-#endif // MIDINOTENODE_H
+#endif // INGEN_INTERNALS_NOTE_HPP

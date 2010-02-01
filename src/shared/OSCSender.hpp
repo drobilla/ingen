@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef OSCSENDER_H
-#define OSCSENDER_H
+#ifndef INGEN_SHARED_OSCSENDER_HPP
+#define INGEN_SHARED_OSCSENDER_HPP
 
 #include <inttypes.h>
 #include <lo/lo.h>
@@ -55,5 +55,5 @@ protected:
 } // namespace Shared
 } // namespace Ingen
 
-#endif // OSCSENDER_H
+#endif // INGEN_SHARED_OSCSENDER_HPP
 

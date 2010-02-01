@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef REQUESTMETADATAEVENT_H
-#define REQUESTMETADATAEVENT_H
+#ifndef INGEN_EVENTS_REQUESTMETADATA_HPP
+#define INGEN_EVENTS_REQUESTMETADATA_HPP
 
 #include "QueuedEvent.hpp"
 #include "raul/Atom.hpp"
@@ -73,4 +73,4 @@ private:
 } // namespace Ingen
 } // namespace Events
 
-#endif // REQUESTMETADATAEVENT_H
+#endif // INGEN_EVENTS_REQUESTMETADATA_HPP

@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef EVENT_H
-#define EVENT_H
+#ifndef INGEN_ENGINE_EVENT_HPP
+#define INGEN_ENGINE_EVENT_HPP
 
 #include <cassert>
 #include "raul/SharedPtr.hpp"
@@ -73,4 +73,4 @@ protected:
 
 } // namespace Ingen
 
-#endif // EVENT_H
+#endif // INGEN_ENGINE_EVENT_HPP

@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef MESSAGE_TYPE_HPP
-#define MESSAGE_TYPE_HPP
+#ifndef INGEN_INTERFACE_MESSAGETYPE_HPP
+#define INGEN_INTERFACE_MESSAGETYPE_HPP
 
 #include <cassert>
 #include <iostream>
@@ -117,4 +117,4 @@ static inline std::ostream& operator<<(std::ostream& os, const Ingen::Shared::Me
 	return os;
 }
 
-#endif // MESSAGE_TYPE_HPP
+#endif // INGEN_INTERFACE_MESSAGETYPE_HPP

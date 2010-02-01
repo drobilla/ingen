@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef PATCHWINDOW_H
-#define PATCHWINDOW_H
+#ifndef INGEN_GUI_PATCHWINDOW_HPP
+#define INGEN_GUI_PATCHWINDOW_HPP
 
 #include <gtkmm.h>
 #include <libglademm/xml.h>
@@ -160,4 +160,4 @@ private:
 } // namespace GUI
 } // namespace Ingen
 
-#endif // PATCHWINDOW_H
+#endif // INGEN_GUI_PATCHWINDOW_HPP

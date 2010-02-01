@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef NODEMODEL_H
-#define NODEMODEL_H
+#ifndef INGEN_CLIENT_NODEMODEL_HPP
+#define INGEN_CLIENT_NODEMODEL_HPP
 
 #include <cstdlib>
 #include <string>
@@ -99,4 +99,4 @@ private:
 } // namespace Client
 } // namespace Ingen
 
-#endif // NODEMODEL_H
+#endif // INGEN_CLIENT_NODEMODEL_HPP

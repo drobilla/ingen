@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef PORTMODEL_H
-#define PORTMODEL_H
+#ifndef INGEN_CLIENT_PORTMODEL_HPP
+#define INGEN_CLIENT_PORTMODEL_HPP
 
 #include <cstdlib>
 #include <string>
@@ -112,4 +112,4 @@ private:
 } // namespace Client
 } // namespace Ingen
 
-#endif // PORTMODEL_H
+#endif // INGEN_CLIENT_PORTMODEL_HPP

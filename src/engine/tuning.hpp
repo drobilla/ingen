@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef TUNING_H
-#define TUNING_H
+#ifndef INGEN_ENGINE_TUNING_HPP
+#define INGEN_ENGINE_TUNING_HPP
 
 #include <stddef.h>
 #include <time.h>
@@ -37,4 +37,4 @@ static const timespec main_rate       = { 0, 125000000 }; // 1/8 second
 
 } // namespace Ingen
 
-#endif // TUNING_H
+#endif // INGEN_ENGINE_TUNING_HPP

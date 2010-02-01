@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef HTTPSENDER_H
-#define HTTPSENDER_H
+#ifndef INGEN_SHARED_HTTPSENDER_HPP
+#define INGEN_SHARED_HTTPSENDER_HPP
 
 #include <stdint.h>
 #include <string>
@@ -62,5 +62,5 @@ protected:
 } // namespace Shared
 } // namespace Ingen
 
-#endif // HTTPSENDER_H
+#endif // INGEN_SHARED_HTTPSENDER_HPP
 

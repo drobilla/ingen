@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef PATCHVIEW_H
-#define PATCHVIEW_H
+#ifndef INGEN_GUI_PATCHVIEW_HPP
+#define INGEN_GUI_PATCHVIEW_HPP
 
 #include <string>
 #include <gtkmm.h>
@@ -109,4 +109,4 @@ private:
 } // namespace GUI
 } // namespace Ingen
 
-#endif // PATCHVIEW_H
+#endif // INGEN_GUI_PATCHVIEW_HPP

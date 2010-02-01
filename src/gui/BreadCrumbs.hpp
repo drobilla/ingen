@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef BREADCRUMBBOX_H
-#define BREADCRUMBBOX_H
+#ifndef INGEN_GUI_BREADCRUMBS_HPP
+#define INGEN_GUI_BREADCRUMBS_HPP
 
 #include <list>
 #include <gtkmm.h>
@@ -112,4 +112,4 @@ private:
 } // namespace GUI
 } // namespace Ingen
 
-#endif // BREADCRUMBBOX_H
+#endif // INGEN_GUI_BREADCRUMBS_HPP

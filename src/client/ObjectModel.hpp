@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef OBJECTMODEL_H
-#define OBJECTMODEL_H
+#ifndef INGEN_CLIENT_OBJECTMODEL_HPP
+#define INGEN_CLIENT_OBJECTMODEL_HPP
 
 #include <cstdlib>
 #include <algorithm>
@@ -97,4 +97,4 @@ protected:
 } // namespace Client
 } // namespace Ingen
 
-#endif // OBJECTMODEL_H
+#endif // INGEN_CLIENT_OBJECTMODEL_HPP

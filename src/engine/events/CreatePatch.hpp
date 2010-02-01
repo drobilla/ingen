@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef CREATEPATCHEVENT_H
-#define CREATEPATCHEVENT_H
+#ifndef INGEN_EVENTS_CREATEPATCH_HPP
+#define INGEN_EVENTS_CREATEPATCH_HPP
 
 #include "QueuedEvent.hpp"
 #include "interface/Resource.hpp"
@@ -66,4 +66,4 @@ private:
 } // namespace Events
 
 
-#endif // CREATEPATCHEVENT_H
+#endif // INGEN_EVENTS_CREATEPATCH_HPP

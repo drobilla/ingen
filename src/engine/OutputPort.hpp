@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef OUTPUTPORT_H
-#define OUTPUTPORT_H
+#ifndef INGEN_ENGINE_OUTPUTPORT_HPP
+#define INGEN_ENGINE_OUTPUTPORT_HPP
 
 #include <string>
 #include <cstdlib>
@@ -60,4 +60,4 @@ public:
 
 } // namespace Ingen
 
-#endif // OUTPUTPORT_H
+#endif // INGEN_ENGINE_OUTPUTPORT_HPP

@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef PROPERTIES_WINDOW_HPP
-#define PROPERTIES_WINDOW_HPP
+#ifndef INGEN_GUI_PROPERTIES_WINDOW_HPP
+#define INGEN_GUI_PROPERTIES_WINDOW_HPP
 
 #include <gtkmm.h>
 #include <libglademm.h>
@@ -96,4 +96,4 @@ private:
 } // namespace GUI
 } // namespace Ingen
 
-#endif // PROPERTIES_WINDOW_HPP
+#endif // INGEN_GUI_PROPERTIES_WINDOW_HPP

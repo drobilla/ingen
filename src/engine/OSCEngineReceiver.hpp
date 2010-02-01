@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef OSCENGINERECEIVER_H
-#define OSCENGINERECEIVER_H
+#ifndef INGEN_ENGINE_OSCENGINERECEIVER_HPP
+#define INGEN_ENGINE_OSCENGINERECEIVER_HPP
 
 #include <stdint.h>
 #include <lo/lo.h>
@@ -113,4 +113,4 @@ private:
 
 } // namespace Ingen
 
-#endif // OSCENGINERECEIVER_H
+#endif // INGEN_ENGINE_OSCENGINERECEIVER_HPP

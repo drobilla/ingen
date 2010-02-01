@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef AUDIODRIVER_H
-#define AUDIODRIVER_H
+#ifndef INGEN_ENGINE_AUDIODRIVER_HPP
+#define INGEN_ENGINE_AUDIODRIVER_HPP
 
 #include "raul/Path.hpp"
 #include "Driver.hpp"
@@ -61,4 +61,4 @@ public:
 
 } // namespace Ingen
 
-#endif // AUDIODRIVER_H
+#endif // INGEN_ENGINE_AUDIODRIVER_HPP

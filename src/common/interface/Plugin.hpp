@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef PLUGIN_H
-#define PLUGIN_H
+#ifndef INGEN_INTERFACE_PLUGIN_HPP
+#define INGEN_INTERFACE_PLUGIN_HPP
 
 #include <string>
 #include "interface/Resource.hpp"
@@ -59,4 +59,4 @@ public:
 } // namespace Shared
 } // namespace Ingen
 
-#endif // PLUGIN_H
+#endif // INGEN_INTERFACE_PLUGIN_HPP

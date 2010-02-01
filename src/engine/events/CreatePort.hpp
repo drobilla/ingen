@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef CREATEPORTEVENT_H
-#define CREATEPORTEVENT_H
+#ifndef INGEN_EVENTS_CREATEPORT_HPP
+#define INGEN_EVENTS_CREATEPORT_HPP
 
 #include "QueuedEvent.hpp"
 #include "raul/Path.hpp"
@@ -79,4 +79,4 @@ private:
 } // namespace Ingen
 } // namespace Events
 
-#endif // CREATEPORTEVENT_H
+#endif // INGEN_EVENTS_CREATEPORT_HPP

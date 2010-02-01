@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef LV2URIMAP_HPP
-#define LV2URIMAP_HPP
+#ifndef INGEN_SHARED_LV2URIMAP_HPP
+#define INGEN_SHARED_LV2URIMAP_HPP
 
 #include "ingen-config.h"
 #ifndef HAVE_SLV2
@@ -74,4 +74,4 @@ public:
 } // namespace Shared
 } // namespace Ingen
 
-#endif // LV2URIMAP_HPP
+#endif // INGEN_SHARED_LV2URIMAP_HPP

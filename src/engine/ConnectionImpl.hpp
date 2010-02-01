@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef CONNECTIONIMPL_H
-#define CONNECTIONIMPL_H
+#ifndef INGEN_ENGINE_CONNECTIONIMPL_HPP
+#define INGEN_ENGINE_CONNECTIONIMPL_HPP
 
 #include <cstdlib>
 #include <boost/utility.hpp>
@@ -104,4 +104,4 @@ protected:
 
 } // namespace Ingen
 
-#endif // CONNECTIONIMPL_H
+#endif // INGEN_ENGINE_CONNECTIONIMPL_HPP

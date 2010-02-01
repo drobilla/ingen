@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef LV2FEATURES_HPP
-#define LV2FEATURES_HPP
+#ifndef INGEN_SHARED_LV2FEATURES_HPP
+#define INGEN_SHARED_LV2FEATURES_HPP
 
 #include "ingen-config.h"
 #ifndef HAVE_SLV2
@@ -84,4 +84,4 @@ private:
 } // namespace Shared
 } // namespace Ingen
 
-#endif // LV2FEATURES_HPP
+#endif // INGEN_SHARED_LV2FEATURES_HPP

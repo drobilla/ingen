@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef MIDICONTROLNODE_H
-#define MIDICONTROLNODE_H
+#ifndef INGEN_INTERNALS_CONTROLLER_HPP
+#define INGEN_INTERNALS_CONTROLLER_HPP
 
 #include <string>
 #include "NodeBase.hpp"
@@ -62,4 +62,4 @@ private:
 } // namespace Ingen
 } // namespace Internals
 
-#endif // MIDICONTROLNODE_H
+#endif // INGEN_INTERNALS_CONTROLLER_HPP

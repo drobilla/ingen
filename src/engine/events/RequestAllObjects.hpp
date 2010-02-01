@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef REQUESTALLOBJECTSEVENT_H
-#define REQUESTALLOBJECTSEVENT_H
+#ifndef INGEN_EVENTS_REQUESTALLOBJECTS_HPP
+#define INGEN_EVENTS_REQUESTALLOBJECTS_HPP
 
 #include "QueuedEvent.hpp"
 
@@ -41,4 +41,4 @@ public:
 } // namespace Ingen
 } // namespace Events
 
-#endif // REQUESTALLOBJECTSEVENT_H
+#endif // INGEN_EVENTS_REQUESTALLOBJECTS_HPP

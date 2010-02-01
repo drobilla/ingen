@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef INGEN_LIB_MODULE_HPP
-#define INGEN_LIB_MODULE_HPP
+#ifndef INGEN_MODULE_HPP
+#define INGEN_MODULE_HPP
 
 namespace Ingen { namespace Shared { class World; } }
 
@@ -27,5 +27,5 @@ void                  ingen_destroy_world();
 
 } // extern "C"
 
-#endif // INGEN_LIB_MODULE_HPP
+#endif // INGEN_MODULE_HPP
 

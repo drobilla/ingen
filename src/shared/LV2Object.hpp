@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef LV2_OBJECT_HPP
-#define LV2_OBJECT_HPP
+#ifndef INGEN_SHARED_LV2OBJECT_HPP
+#define INGEN_SHARED_LV2OBJECT_HPP
 
 namespace Raul { class Atom; }
 typedef struct _LV2_Object LV2_Object;
@@ -36,4 +36,4 @@ namespace LV2Object {
 } // namespace Shared
 } // namespace Ingen
 
-#endif // LV2_OBJECT_HPP
+#endif // INGEN_SHARED_LV2OBJECT_HPP

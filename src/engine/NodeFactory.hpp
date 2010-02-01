@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef NODEFACTORY_H
-#define NODEFACTORY_H
+#ifndef INGEN_ENGINE_NODEFACTORY_HPP
+#define INGEN_ENGINE_NODEFACTORY_HPP
 
 #include <list>
 #include <map>
@@ -88,4 +88,4 @@ private:
 
 } // namespace Ingen
 
-#endif // NODEFACTORY_H
+#endif // INGEN_ENGINE_NODEFACTORY_HPP

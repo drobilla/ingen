@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef EVENTBUFFER_H
-#define EVENTBUFFER_H
+#ifndef INGEN_ENGINE_EVENTBUFFER_HPP
+#define INGEN_ENGINE_EVENTBUFFER_HPP
 
 #include "event.lv2/event.h"
 #include "event.lv2/event-helpers.h"
@@ -83,4 +83,4 @@ private:
 
 } // namespace Ingen
 
-#endif // EVENTBUFFER_H
+#endif // INGEN_ENGINE_EVENTBUFFER_HPP

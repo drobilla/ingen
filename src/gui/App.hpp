@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef INGEN_APP_HPP
-#define INGEN_APP_HPP
+#ifndef INGEN_GUI_APP_HPP
+#define INGEN_GUI_APP_HPP
 
 #include <cassert>
 #include <string>
@@ -166,5 +166,5 @@ protected:
 } // namespace GUI
 } // namespace Ingen
 
-#endif // INGEN_APP_HPP
+#endif // INGEN_GUI_APP_HPP
 

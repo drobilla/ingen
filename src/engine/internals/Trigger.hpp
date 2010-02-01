@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef MIDITRIGGERNODE_H
-#define MIDITRIGGERNODE_H
+#ifndef INGEN_INTERNALS_TRIGGER_HPP
+#define INGEN_INTERNALS_TRIGGER_HPP
 
 #include <string>
 #include "NodeBase.hpp"
@@ -65,4 +65,4 @@ private:
 } // namespace Ingen
 } // namespace Internals
 
-#endif // MIDITRIGGERNODE_H
+#endif // INGEN_INTERNALS_TRIGGER_HPP

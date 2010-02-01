@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef PATCHIMPL_H
-#define PATCHIMPL_H
+#ifndef INGEN_ENGINE_PATCHIMPL_HPP
+#define INGEN_ENGINE_PATCHIMPL_HPP
 
 #include <cstdlib>
 #include <string>
@@ -160,4 +160,4 @@ PatchImpl::compile_recursive(NodeImpl* n, CompiledPatch* output) const
 
 } // namespace Ingen
 
-#endif // PATCHIMPL_H
+#endif // INGEN_ENGINE_PATCHIMPL_HPP

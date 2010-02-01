@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef GUI_CONNECTION_H
-#define GUI_CONNECTION_H
+#ifndef INGEN_GUI_CONNECTION_HPP
+#define INGEN_GUI_CONNECTION_HPP
 
 #include <cassert>
 #include <string>
@@ -54,4 +54,4 @@ private:
 } // namespace GUI
 } // namespace Ingen
 
-#endif // GUI_CONNECTION_H
+#endif // INGEN_GUI_CONNECTION_HPP

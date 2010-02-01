@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef CONFIG_H
-#define CONFIG_H
+#ifndef INGEN_GUI_CONFIGURATION_HPP
+#define INGEN_GUI_CONFIGURATION_HPP
 
 #include <stdint.h>
 #include <string>
@@ -75,6 +75,6 @@ private:
 } // namespace GUI
 } // namespace Ingen
 
-#endif // CONFIG_H
+#endif // INGEN_GUI_CONFIGURATION_HPP
 
 

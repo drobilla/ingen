@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef NEWSUBPATCHWINDOW_H
-#define NEWSUBPATCHWINDOW_H
+#ifndef INGEN_GUI_NEWSUBPATCHWINDOW_HPP
+#define INGEN_GUI_NEWSUBPATCHWINDOW_HPP
 
 #include <libglademm/xml.h>
 #include <gtkmm.h>
@@ -68,4 +68,4 @@ private:
 } // namespace GUI
 } // namespace Ingen
 
-#endif // NEWSUBPATCHWINDOW_H
+#endif // INGEN_GUI_NEWSUBPATCHWINDOW_HPP

@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef CONNECTION_H
-#define CONNECTION_H
+#ifndef INGEN_INTERFACE_CONNECTION_HPP
+#define INGEN_INTERFACE_CONNECTION_HPP
 
 #include "raul/Path.hpp"
 
@@ -40,4 +40,4 @@ public:
 } // namespace Shared
 } // namespace Ingen
 
-#endif // CONNECTION_H
+#endif // INGEN_INTERFACE_CONNECTION_HPP

@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef CREATENODEEVENT_H
-#define CREATENODEEVENT_H
+#ifndef INGEN_EVENTS_CREATENODE_HPP
+#define INGEN_EVENTS_CREATENODE_HPP
 
 #include <string>
 #include "QueuedEvent.hpp"
@@ -72,4 +72,4 @@ private:
 } // namespace Ingen
 } // namespace Events
 
-#endif // CREATENODEEVENT_H
+#endif // INGEN_EVENTS_CREATENODE_HPP

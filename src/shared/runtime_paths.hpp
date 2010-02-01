@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef INGEN_RUNTIME_PATHS_HPP
-#define INGEN_RUNTIME_PATHS_HPP
+#ifndef INGEN_SHARED_RUNTIME_PATHS_HPP
+#define INGEN_SHARED_RUNTIME_PATHS_HPP
 
 #ifndef _GNU_SOURCE
 	#define _GNU_SOURCE
@@ -35,4 +35,4 @@ std::string module_path(const std::string& name);
 } // namespace Ingen
 } // namespace Shared
 
-#endif // INGEN_RUNTIME_PATHS_HPP
+#endif // INGEN_SHARED_RUNTIME_PATHS_HPP

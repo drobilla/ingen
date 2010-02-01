@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef LV2_BLOB_FEATURE_H
-#define LV2_BLOB_FEATURE_H
+#ifndef INGEN_ENGINE_LV2BLOBFEATURE_HPP
+#define INGEN_ENGINE_LV2BLOBFEATURE_HPP
 
 #include "shared/LV2Features.hpp"
 
@@ -61,4 +61,4 @@ private:
 
 } // namespace Ingen
 
-#endif // LV2_BLOB_FEATURE_H
+#endif // INGEN_ENGINE_LV2BLOBFEATURE_HPP

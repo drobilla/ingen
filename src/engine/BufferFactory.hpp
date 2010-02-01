@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef BUFFER_FACTORY_H
-#define BUFFER_FACTORY_H
+#ifndef INGEN_ENGINE_BUFFERFACTORY_HPP
+#define INGEN_ENGINE_BUFFERFACTORY_HPP
 
 #include <map>
 #include <boost/intrusive_ptr.hpp>
@@ -72,4 +72,4 @@ private:
 
 } // namespace Ingen
 
-#endif // BUFFER_FACTORY_H
+#endif // INGEN_ENGINE_BUFFERFACTORY_HPP

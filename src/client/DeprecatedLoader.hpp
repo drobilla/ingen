@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef PATCHLIBRARIAN_H
-#define PATCHLIBRARIAN_H
+#ifndef INGEN_CLIENT_DEPRECATEDLOADER_HPP
+#define INGEN_CLIENT_DEPRECATEDLOADER_HPP
 
 #include <map>
 #include <utility>
@@ -83,4 +83,4 @@ private:
 } // namespace Client
 } // namespace Ingen
 
-#endif // PATCHLIBRARIAN_H
+#endif // INGEN_CLIENT_DEPRECATEDLOADER_HPP

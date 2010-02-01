@@ -15,9 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-
-#ifndef SUBPATCHMODULE_H
-#define SUBPATCHMODULE_H
+#ifndef INGEN_GUI_SUBPATCHMODULE_HPP
+#define INGEN_GUI_SUBPATCHMODULE_HPP
 
 #include <string>
 #include <libgnomecanvasmm.h>
@@ -66,4 +65,4 @@ protected:
 } // namespace GUI
 } // namespace Ingen
 
-#endif // SUBPATCHMODULE_H
+#endif // INGEN_GUI_SUBPATCHMODULE_HPP

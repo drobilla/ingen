@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef CONNECT_WINDOW_H
-#define CONNECT_WINDOW_H
+#ifndef INGEN_GUI_CONNECTWINDOW_HPP
+#define INGEN_GUI_CONNECTWINDOW_HPP
 
 #include "ingen-config.h"
 
@@ -109,4 +109,4 @@ private:
 } // namespace GUI
 } // namespace Ingen
 
-#endif // CONNECT_WINDOW_H
+#endif // INGEN_GUI_CONNECTWINDOW_HPP

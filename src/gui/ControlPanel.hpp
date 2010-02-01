@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef CONTROLPANEL_H
-#define CONTROLPANEL_H
+#ifndef INGEN_GUI_CONTROLPANEL_HPP
+#define INGEN_GUI_CONTROLPANEL_HPP
 
 #include <vector>
 #include <string>
@@ -95,4 +95,4 @@ private:
 } // namespace GUI
 } // namespace Ingen
 
-#endif // CONTROLPANEL_H
+#endif // INGEN_GUI_CONTROLPANEL_HPP

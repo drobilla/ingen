@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef SENDBINDINGEVENT_H
-#define SENDBINDINGEVENT_H
+#ifndef INGEN_EVENTS_SENDBINDING_HPP
+#define INGEN_EVENTS_SENDBINDING_HPP
 
 #include "raul/Atom.hpp"
 #include "interface/MessageType.hpp"
@@ -65,4 +65,4 @@ private:
 } // namespace Ingen
 } // namespace Events
 
-#endif // SENDBINDINGEVENT_H
+#endif // INGEN_EVENTS_SENDBINDING_HPP

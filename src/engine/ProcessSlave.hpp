@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef PROCESS_SLAVE_HPP
-#define PROCESS_SLAVE_HPP
+#ifndef INGEN_ENGINE_PROCESSSLAVE_HPP
+#define INGEN_ENGINE_PROCESSSLAVE_HPP
 
 #include <sstream>
 #include "raul/Slave.hpp"
@@ -93,5 +93,5 @@ private:
 
 } // namespace Ingen
 
-#endif // PROCESS_SLAVE_HPP
+#endif // INGEN_ENGINE_PROCESSSLAVE_HPP
 

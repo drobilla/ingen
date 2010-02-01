@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef CLIENT_STORE_HPP
-#define CLIENT_STORE_HPP
+#ifndef INGEN_CLIENT_CLIENTSTORE_HPP
+#define INGEN_CLIENT_CLIENTSTORE_HPP
 
 #include <cassert>
 #include <string>
@@ -110,4 +110,4 @@ private:
 } // namespace Client
 } // namespace Ingen
 
-#endif // CLIENT_STORE_HPP
+#endif // INGEN_CLIENT_CLIENTSTORE_HPP

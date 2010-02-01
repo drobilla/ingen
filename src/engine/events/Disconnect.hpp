@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef DISCONNECTIONEVENT_H
-#define DISCONNECTIONEVENT_H
+#ifndef INGEN_EVENTS_DISCONNECT_HPP
+#define INGEN_EVENTS_DISCONNECT_HPP
 
 #include "raul/Path.hpp"
 #include "QueuedEvent.hpp"
@@ -99,4 +99,4 @@ private:
 } // namespace Ingen
 } // namespace Events
 
-#endif // DISCONNECTIONEVENT_H
+#endif // INGEN_EVENTS_DISCONNECT_HPP

@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef BUFFER_HPP
-#define BUFFER_HPP
+#ifndef INGEN_ENGINE_BUFFER_HPP
+#define INGEN_ENGINE_BUFFER_HPP
 
 #include <cstddef>
 #include <cassert>
@@ -93,4 +93,4 @@ namespace boost {
 }
 
 
-#endif // BUFFER_HPP
+#endif // INGEN_ENGINE_BUFFER_HPP

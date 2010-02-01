@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef COMPILED_PATCH_HPP
-#define COMPILED_PATCH_HPP
+#ifndef INGEN_ENGINE_COMPILEDPATCH_HPP
+#define INGEN_ENGINE_COMPILEDPATCH_HPP
 
 #include <vector>
 #include "raul/List.hpp"
@@ -73,4 +73,4 @@ struct CompiledPatch : public std::vector<CompiledNode>
 
 } // namespace Ingen
 
-#endif // COMPILED_PATCH_HPP
+#endif // INGEN_ENGINE_COMPILEDPATCH_HPP

@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef SIGCLIENTINTERFACE_H
-#define SIGCLIENTINTERFACE_H
+#ifndef INGEN_CLIENT_SIGCLIENTINTERFACE_HPP
+#define INGEN_CLIENT_SIGCLIENTINTERFACE_HPP
 
 #include <inttypes.h>
 #include <sigc++/sigc++.h>

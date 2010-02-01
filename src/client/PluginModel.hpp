@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef PLUGINMODEL_H
-#define PLUGINMODEL_H
+#ifndef INGEN_CLIENT_PLUGINMODEL_HPP
+#define INGEN_CLIENT_PLUGINMODEL_HPP
 
 #include "ingen-config.h"
 #include "raul/SharedPtr.hpp"
@@ -113,5 +113,5 @@ private:
 } // namespace Client
 } // namespace Ingen
 
-#endif // PLUGINMODEL_H
+#endif // INGEN_CLIENT_PLUGINMODEL_HPP
 

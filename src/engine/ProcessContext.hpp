@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef PROCESSCONTEXT_H
-#define PROCESSCONTEXT_H
+#ifndef INGEN_ENGINE_PROCESSCONTEXT_HPP
+#define INGEN_ENGINE_PROCESSCONTEXT_HPP
 
 #include "types.hpp"
 #include "EventSink.hpp"
@@ -64,5 +64,5 @@ private:
 
 } // namespace Ingen
 
-#endif // PROCESSCONTEXT_H
+#endif // INGEN_ENGINE_PROCESSCONTEXT_HPP
 

@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef CLIENTBROADCASTER_H
-#define CLIENTBROADCASTER_H
+#ifndef INGEN_ENGINE_CLIENTBROADCASTER_HPP
+#define INGEN_ENGINE_CLIENTBROADCASTER_HPP
 
 #include <string>
 #include <list>
@@ -135,5 +135,5 @@ private:
 
 } // namespace Ingen
 
-#endif // CLIENTBROADCASTER_H
+#endif // INGEN_ENGINE_CLIENTBROADCASTER_HPP
 

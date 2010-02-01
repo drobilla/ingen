@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef DUPLEXPORT_H
-#define DUPLEXPORT_H
+#ifndef INGEN_ENGINE_DUPLEXPORT_HPP
+#define INGEN_ENGINE_DUPLEXPORT_HPP
 
 #include <string>
 #include "Buffer.hpp"
@@ -64,4 +64,4 @@ protected:
 
 } // namespace Ingen
 
-#endif // DUPLEXPORT_H
+#endif // INGEN_ENGINE_DUPLEXPORT_HPP

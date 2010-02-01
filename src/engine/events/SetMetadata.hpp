@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef SETMETADATAEVENT_H
-#define SETMETADATAEVENT_H
+#ifndef INGEN_EVENTS_SETMETADATA_HPP
+#define INGEN_EVENTS_SETMETADATA_HPP
 
 #include <vector>
 #include "raul/URI.hpp"
@@ -117,4 +117,4 @@ private:
 } // namespace Ingen
 } // namespace Events
 
-#endif // SETMETADATAEVENT_H
+#endif // INGEN_EVENTS_SETMETADATA_HPP

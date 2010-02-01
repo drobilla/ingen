@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef PATCH_H
-#define PATCH_H
+#ifndef INGEN_INTERFACE_PATCH_HPP
+#define INGEN_INTERFACE_PATCH_HPP
 
 #include "raul/SharedPtr.hpp"
 #include "raul/List.hpp"
@@ -47,4 +47,4 @@ public:
 } // namespace Shared
 } // namespace Ingen
 
-#endif // PATCH_H
+#endif // INGEN_INTERFACE_PATCH_HPP

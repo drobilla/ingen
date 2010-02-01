@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef PLUGINUI_H
-#define PLUGINUI_H
+#ifndef INGEN_CLIENT_PLUGINUI_HPP
+#define INGEN_CLIENT_PLUGINUI_HPP
 
 #include "slv2/slv2.h"
 #include "raul/SharedPtr.hpp"
@@ -63,6 +63,6 @@ private:
 } // namespace Client
 } // namespace Ingen
 
-#endif // PLUGINUI_H
+#endif // INGEN_CLIENT_PLUGINUI_HPP
 
 

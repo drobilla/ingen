@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef GRAPHOBJECTIMPL_H
-#define GRAPHOBJECTIMPL_H
+#ifndef INGEN_ENGINE_GRAPHOBJECTIMPL_HPP
+#define INGEN_ENGINE_GRAPHOBJECTIMPL_HPP
 
 #include <string>
 #include <map>
@@ -103,4 +103,4 @@ protected:
 
 } // namespace Ingen
 
-#endif // GRAPHOBJECTIMPL_H
+#endif // INGEN_ENGINE_GRAPHOBJECTIMPL_HPP

@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef OSCENGINESENDER_H
-#define OSCENGINESENDER_H
+#ifndef INGEN_CLIENT_OSCENGINESENDER_HPP
+#define INGEN_CLIENT_OSCENGINESENDER_HPP
 
 #include <inttypes.h>
 #include <string>
@@ -125,5 +125,5 @@ protected:
 } // namespace Client
 } // namespace Ingen
 
-#endif // OSCENGINESENDER_H
+#endif // INGEN_CLIENT_OSCENGINESENDER_HPP
 

@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef UTIL_HPP
-#define UTIL_HPP
+#ifndef INGEN_ENGINE_UTIL_HPP
+#define INGEN_ENGINE_UTIL_HPP
 
 #include <cstdlib>
 #include "raul/log.hpp"
@@ -82,4 +82,4 @@ ingen_jack_port_name(const Raul::Path& path)
 
 } // namespace Ingen
 
-#endif // UTIL_HPP
+#endif // INGEN_ENGINE_UTIL_HPP

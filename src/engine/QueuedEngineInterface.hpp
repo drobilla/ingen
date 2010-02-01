@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef QUEUEDENGINEINTERFACE_H
-#define QUEUEDENGINEINTERFACE_H
+#ifndef INGEN_ENGINE_QUEUEDENGINEINTERFACE_HPP
+#define INGEN_ENGINE_QUEUEDENGINEINTERFACE_HPP
 
 #include <inttypes.h>
 #include <string>
@@ -124,4 +124,4 @@ private:
 
 } // namespace Ingen
 
-#endif // QUEUEDENGINEINTERFACE_H
+#endif // INGEN_ENGINE_QUEUEDENGINEINTERFACE_HPP

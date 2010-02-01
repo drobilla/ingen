@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef GRAPHOBJECT_H
-#define GRAPHOBJECT_H
+#ifndef INGEN_INTERFACE_GRAPHOBJECT_HPP
+#define INGEN_INTERFACE_GRAPHOBJECT_HPP
 
 #include "raul/Deletable.hpp"
 #include "raul/Path.hpp"
@@ -55,4 +55,4 @@ public:
 } // namespace Shared
 } // namespace Ingen
 
-#endif // GRAPHOBJECT_H
+#endif // INGEN_INTERFACE_GRAPHOBJECT_HPP

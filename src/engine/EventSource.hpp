@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef INGEN_EVENT_SOURCE_HPP
-#define INGEN_EVENT_SOURCE_HPP
+#ifndef INGEN_ENGINE_EVENTSOURCE_HPP
+#define INGEN_ENGINE_EVENTSOURCE_HPP
 
 #include "raul/Semaphore.hpp"
 #include "raul/Slave.hpp"
@@ -70,5 +70,5 @@ private:
 
 } // namespace Ingen
 
-#endif // INGEN_EVENT_SOURCE_HPP
+#endif // INGEN_ENGINE_EVENTSOURCE_HPP
 

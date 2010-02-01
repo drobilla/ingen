@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef JACKAUDIODRIVER_H
-#define JACKAUDIODRIVER_H
+#ifndef INGEN_ENGINE_JACKAUDIODRIVER_HPP
+#define INGEN_ENGINE_JACKAUDIODRIVER_HPP
 
 #include <jack/jack.h>
 #include <jack/transport.h>
@@ -167,4 +167,4 @@ private:
 
 } // namespace Ingen
 
-#endif // JACKAUDIODRIVER_H
+#endif // INGEN_ENGINE_JACKAUDIODRIVER_HPP

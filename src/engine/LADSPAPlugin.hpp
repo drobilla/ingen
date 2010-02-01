@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef LADSPAPLUGIN_H
-#define LADSPAPLUGIN_H
+#ifndef INGEN_ENGINE_LADSPAPLUGIN_HPP
+#define INGEN_ENGINE_LADSPAPLUGIN_HPP
 
 #include <cstdlib>
 #include <glibmm/module.h>
@@ -69,5 +69,5 @@ private:
 
 } // namespace Ingen
 
-#endif // LADSPAPLUGIN_H
+#endif // INGEN_ENGINE_LADSPAPLUGIN_HPP
 

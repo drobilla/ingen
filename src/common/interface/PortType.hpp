@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef PORTTYPE_H
-#define PORTTYPE_H
+#ifndef INGEN_INTERFACE_PORTTYPE_HPP
+#define INGEN_INTERFACE_PORTTYPE_HPP
 
 #include <raul/URI.hpp>
 
@@ -95,4 +95,4 @@ private:
 } // namespace Shared
 } // namespace Ingen
 
-#endif // PORTTYPE_H
+#endif // INGEN_INTERFACE_PORTTYPE_HPP

@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef OSCCLIENTSENDER_H
-#define OSCCLIENTSENDER_H
+#ifndef INGEN_ENGINE_OSCCLIENTSENDER_HPP
+#define INGEN_ENGINE_OSCCLIENTSENDER_HPP
 
 #include <cassert>
 #include <string>
@@ -102,5 +102,5 @@ private:
 
 } // namespace Ingen
 
-#endif // OSCCLIENTSENDER_H
+#endif // INGEN_ENGINE_OSCCLIENTSENDER_HPP
 

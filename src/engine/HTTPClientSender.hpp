@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef HTTPCLIENTSENDER_H
-#define HTTPCLIENTSENDER_H
+#ifndef INGEN_ENGINE_HTTPCLIENTSENDER_HPP
+#define INGEN_ENGINE_HTTPCLIENTSENDER_HPP
 
 #include <cassert>
 #include <string>
@@ -104,5 +104,5 @@ private:
 
 } // namespace Ingen
 
-#endif // HTTPCLIENTSENDER_H
+#endif // INGEN_ENGINE_HTTPCLIENTSENDER_HPP
 

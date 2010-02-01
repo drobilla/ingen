@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef LOADPLUGINSEVENT_H
-#define LOADPLUGINSEVENT_H
+#ifndef INGEN_EVENTS_LOADPLUGINS_HPP
+#define INGEN_EVENTS_LOADPLUGINS_HPP
 
 #include "QueuedEvent.hpp"
 
@@ -44,4 +44,4 @@ public:
 } // namespace Ingen
 } // namespace Events
 
-#endif // LOADPLUGINSEVENT_H
+#endif // INGEN_EVENTS_LOADPLUGINS_HPP

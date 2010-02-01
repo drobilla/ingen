@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef MIDILEARNEVENT_H
-#define MIDILEARNEVENT_H
+#ifndef INGEN_EVENTS_LEARN_HPP
+#define INGEN_EVENTS_LEARN_HPP
 
 #include "QueuedEvent.hpp"
 #include "internals/Controller.hpp"
@@ -58,4 +58,4 @@ private:
 } // namespace Ingen
 } // namespace Events
 
-#endif // MIDILEARNEVENT_H
+#endif // INGEN_EVENTS_LEARN_HPP

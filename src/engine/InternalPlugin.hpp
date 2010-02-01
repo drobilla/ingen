@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef INTERNALPLUGIN_H
-#define INTERNALPLUGIN_H
+#ifndef INGEN_ENGINE_INTERNALPLUGIN_HPP
+#define INGEN_ENGINE_INTERNALPLUGIN_HPP
 
 #include "ingen-config.h"
 
@@ -61,5 +61,5 @@ private:
 
 } // namespace Ingen
 
-#endif // INTERNALPLUGIN_H
+#endif // INGEN_ENGINE_INTERNALPLUGIN_HPP
 

@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef ALLNOTESOFFEVENT_H
-#define ALLNOTESOFFEVENT_H
+#ifndef INGEN_EVENTS_ALLNOTESOFF_HPP
+#define INGEN_EVENTS_ALLNOTESOFF_HPP
 
 #include "Event.hpp"
 
@@ -49,4 +49,4 @@ private:
 } // namespace Ingen
 } // namespace Events
 
-#endif // ALLNOTESOFFEVENT_H
+#endif // INGEN_EVENTS_ALLNOTESOFF_HPP

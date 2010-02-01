@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef NODECONTROLWINDOW_H
-#define NODECONTROLWINDOW_H
+#ifndef INGEN_GUI_NODECONTROLWINDOW_HPP
+#define INGEN_GUI_NODECONTROLWINDOW_HPP
 
 #include <gtkmm.h>
 #include <libglademm.h>
@@ -71,4 +71,4 @@ private:
 } // namespace GUI
 } // namespace Ingen
 
-#endif // NODECONTROLWINDOW_H
+#endif // INGEN_GUI_NODECONTROLWINDOW_HPP

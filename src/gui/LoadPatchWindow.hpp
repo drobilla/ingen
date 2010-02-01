@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef LOADPATCHWINDOW_H
-#define LOADPATCHWINDOW_H
+#ifndef INGEN_GUI_LOADPATCHWINDOW_HPP
+#define INGEN_GUI_LOADPATCHWINDOW_HPP
 
 #include <libglademm/xml.h>
 #include <gtkmm.h>
@@ -83,4 +83,4 @@ private:
 } // namespace GUI
 } // namespace Ingen
 
-#endif // LOADPATCHWINDOW_H
+#endif // INGEN_GUI_LOADPATCHWINDOW_HPP

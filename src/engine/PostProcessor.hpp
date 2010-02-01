@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef POSTPROCESSOR_H
-#define POSTPROCESSOR_H
+#ifndef INGEN_ENGINE_POSTPROCESSOR_HPP
+#define INGEN_ENGINE_POSTPROCESSOR_HPP
 
 #include <pthread.h>
 #include "raul/SRSWQueue.hpp"
@@ -64,4 +64,4 @@ private:
 
 } // namespace Ingen
 
-#endif // POSTPROCESSOR_H
+#endif // INGEN_ENGINE_POSTPROCESSOR_HPP

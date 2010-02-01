@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef OSCCLIENTRECEIVER_H
-#define OSCCLIENTRECEIVER_H
+#ifndef INGEN_CLIENT_OSCCLIENTRECEIVER_HPP
+#define INGEN_CLIENT_OSCCLIENTRECEIVER_HPP
 
 #include <cstdlib>
 #include <boost/utility.hpp>
@@ -101,4 +101,4 @@ private:
 } // namespace Client
 } // namespace Ingen
 
-#endif // OSCCLIENTRECEIVER_H
+#endif // INGEN_CLIENT_OSCCLIENTRECEIVER_HPP

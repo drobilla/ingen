@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef PATCHCANVAS_H
-#define PATCHCANVAS_H
+#ifndef INGEN_GUI_PATCHCANVAS_HPP
+#define INGEN_GUI_PATCHCANVAS_HPP
 
 #include <string>
 #include <map>
@@ -170,4 +170,4 @@ private:
 } // namespace GUI
 } // namespace Ingen
 
-#endif // PATCHCANVAS_H
+#endif // INGEN_GUI_PATCHCANVAS_HPP

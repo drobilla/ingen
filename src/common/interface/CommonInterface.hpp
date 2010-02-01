@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef COMMONINTERFACE_H
-#define COMMONINTERFACE_H
+#ifndef INGEN_INTERFACE_COMMONINTERFACE_HPP
+#define INGEN_INTERFACE_COMMONINTERFACE_HPP
 
 #include <inttypes.h>
 #include <string>
@@ -75,5 +75,5 @@ public:
 } // namespace Shared
 } // namespace Ingen
 
-#endif // COMMONINTERFACE_H
+#endif // INGEN_INTERFACE_COMMONINTERFACE_HPP
 

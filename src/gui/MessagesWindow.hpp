@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef MESSAGESWINDOW_H
-#define MESSAGESWINDOW_H
+#ifndef INGEN_GUI_MESSAGESWINDOW_HPP
+#define INGEN_GUI_MESSAGESWINDOW_HPP
 
 #include <string>
 #include <gtkmm.h>
@@ -53,4 +53,4 @@ private:
 } // namespace GUI
 } // namespace Ingen
 
-#endif // MESSAGESWINDOW_H
+#endif // INGEN_GUI_MESSAGESWINDOW_HPP

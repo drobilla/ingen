@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef RESPONDER_H
-#define RESPONDER_H
+#ifndef INGEN_ENGINE_RESPONDER_HPP
+#define INGEN_ENGINE_RESPONDER_HPP
 
 #include <inttypes.h>
 #include <string>
@@ -66,5 +66,5 @@ private:
 
 } // namespace Ingen
 
-#endif // RESPONDER_H
+#endif // INGEN_ENGINE_RESPONDER_HPP
 

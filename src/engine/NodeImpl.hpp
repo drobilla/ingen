@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef NODEIMPL_H
-#define NODEIMPL_H
+#ifndef INGEN_ENGINE_NODEIMPL_HPP
+#define INGEN_ENGINE_NODEIMPL_HPP
 
 #include <string>
 #include "raul/IntrusivePtr.hpp"
@@ -176,4 +176,4 @@ public:
 
 } // namespace Ingen
 
-#endif // NODEIMPL_H
+#endif // INGEN_ENGINE_NODEIMPL_HPP

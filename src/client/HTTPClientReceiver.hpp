@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef HTTPCLIENTRECEIVER_H
-#define HTTPCLIENTRECEIVER_H
+#ifndef INGEN_CLIENT_HTTPCLIENTRECEIVER_HPP
+#define INGEN_CLIENT_HTTPCLIENTRECEIVER_HPP
 
 #include <cstdlib>
 #include <boost/utility.hpp>
@@ -80,4 +80,4 @@ private:
 } // namespace Client
 } // namespace Ingen
 
-#endif // HTTPCLIENTRECEIVER_H
+#endif // INGEN_CLIENT_HTTPCLIENTRECEIVER_HPP

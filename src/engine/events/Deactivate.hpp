@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef DEACTIVATEEVENT_H
-#define DEACTIVATEEVENT_H
+#ifndef INGEN_EVENTS_DEACTIVATE_HPP
+#define INGEN_EVENTS_DEACTIVATE_HPP
 
 #include "QueuedEvent.hpp"
 #include "Engine.hpp"
@@ -46,4 +46,4 @@ public:
 } // namespace Ingen
 } // namespace Events
 
-#endif // DEACTIVATEEVENT_H
+#endif // INGEN_EVENTS_DEACTIVATE_HPP

@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef AUDIOBUFFER_H
-#define AUDIOBUFFER_H
+#ifndef INGEN_ENGINE_AUDIOBUFFER_HPP
+#define INGEN_ENGINE_AUDIOBUFFER_HPP
 
 #include <cstddef>
 #include <cassert>
@@ -77,4 +77,4 @@ private:
 
 } // namespace Ingen
 
-#endif // AUDIOBUFFER_H
+#endif // INGEN_ENGINE_AUDIOBUFFER_HPP

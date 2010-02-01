@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef LADSPANODE_H
-#define LADSPANODE_H
+#ifndef INGEN_ENGINE_LADSPANODE_HPP
+#define INGEN_ENGINE_LADSPANODE_HPP
 
 #include <string>
 #include <ladspa.h>
@@ -72,4 +72,4 @@ protected:
 
 } // namespace Ingen
 
-#endif // LADSPANODE_H
+#endif // INGEN_ENGINE_LADSPANODE_HPP

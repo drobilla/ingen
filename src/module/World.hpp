@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef INGEN_WORLD_HPP
-#define INGEN_WORLD_HPP
+#ifndef INGEN_MODULE_WORLD_HPP
+#define INGEN_MODULE_WORLD_HPP
 
 #include <map>
 #include <string>
@@ -95,5 +95,5 @@ private:
 } // namespace Shared
 } // namespace Ingen
 
-#endif // INGEN_WORLD_HPP
+#endif // INGEN_MODULE_WORLD_HPP
 

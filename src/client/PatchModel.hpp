@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef PATCHMODEL_H
-#define PATCHMODEL_H
+#ifndef INGEN_CLIENT_PATCHMODEL_HPP
+#define INGEN_CLIENT_PATCHMODEL_HPP
 
 #include <cassert>
 #include <sigc++/sigc++.h>
@@ -98,4 +98,4 @@ private:
 } // namespace Client
 } // namespace Ingen
 
-#endif // PATCHMODEL_H
+#endif // INGEN_CLIENT_PATCHMODEL_HPP

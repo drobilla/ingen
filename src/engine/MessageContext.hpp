@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef MESSAGECONTEXT_H
-#define MESSAGECONTEXT_H
+#ifndef INGEN_ENGINE_MESSAGECONTEXT_HPP
+#define INGEN_ENGINE_MESSAGECONTEXT_HPP
 
 #include <set>
 #include <glibmm/thread.h>
@@ -110,5 +110,5 @@ protected:
 
 } // namespace Ingen
 
-#endif // MESSAGECONTEXT_H
+#endif // INGEN_ENGINE_MESSAGECONTEXT_HPP
 

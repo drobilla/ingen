@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef CONTROLGROUPS_H
-#define CONTROLGROUPS_H
+#ifndef INGEN_GUI_CONTROLS_HPP
+#define INGEN_GUI_CONTROLS_HPP
 
 #include <cassert>
 #include <gtkmm.h>
@@ -142,4 +142,4 @@ private:
 } // namespace GUI
 } // namespace Ingen
 
-#endif // CONTROLGROUPS_H
+#endif // INGEN_GUI_CONTROLS_HPP

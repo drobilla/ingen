@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef PATCHPLUGIN_H
-#define PATCHPLUGIN_H
+#ifndef INGEN_ENGINE_PATCHPLUGIN_HPP
+#define INGEN_ENGINE_PATCHPLUGIN_HPP
 
 #include "ingen-config.h"
 
@@ -61,5 +61,5 @@ private:
 
 } // namespace Ingen
 
-#endif // PATCHPLUGIN_H
+#endif // INGEN_ENGINE_PATCHPLUGIN_HPP
 

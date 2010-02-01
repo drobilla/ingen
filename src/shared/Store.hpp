@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef COMMON_STORE_H
-#define COMMON_STORE_H
+#ifndef INGEN_SHARED_STORE_HPP
+#define INGEN_SHARED_STORE_HPP
 
 #include <string>
 #include <glibmm/thread.h>
@@ -55,4 +55,4 @@ private:
 } // namespace Shared
 } // namespace Ingen
 
-#endif // COMMON_STORE_H
+#endif // INGEN_SHARED_STORE_HPP

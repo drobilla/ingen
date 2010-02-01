@@ -14,8 +14,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef NODEMODULE_H
-#define NODEMODULE_H
+#ifndef INGEN_GUI_NODEMODULE_HPP
+#define INGEN_GUI_NODEMODULE_HPP
 
 #include <string>
 #include <libgnomecanvasmm.h>
@@ -98,4 +98,4 @@ protected:
 } // namespace GUI
 } // namespace Ingen
 
-#endif // NODEMODULE_H
+#endif // INGEN_GUI_NODEMODULE_HPP

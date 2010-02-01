@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef LV2NODE_H
-#define LV2NODE_H
+#ifndef INGEN_ENGINE_LV2NODE_HPP
+#define INGEN_ENGINE_LV2NODE_HPP
 
 #include <string>
 #include "slv2/slv2.h"
@@ -74,5 +74,5 @@ protected:
 
 } // namespace Ingen
 
-#endif // LV2NODE_H
+#endif // INGEN_ENGINE_LV2NODE_HPP
 

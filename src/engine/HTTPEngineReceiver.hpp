@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef HTTPENGINERECEIVER_H
-#define HTTPENGINERECEIVER_H
+#ifndef INGEN_ENGINE_HTTPENGINERECEIVER_HPP
+#define INGEN_ENGINE_HTTPENGINERECEIVER_HPP
 
 #include <string>
 #include <stdint.h>
@@ -57,4 +57,4 @@ private:
 
 } // namespace Ingen
 
-#endif // HTTPENGINERECEIVER_H
+#endif // INGEN_ENGINE_HTTPENGINERECEIVER_HPP

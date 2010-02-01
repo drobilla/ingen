@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef BUILDER_H
-#define BUILDER_H
+#ifndef INGEN_SHARED_BUILDER_HPP
+#define INGEN_SHARED_BUILDER_HPP
 
 #include "raul/SharedPtr.hpp"
 
@@ -52,5 +52,5 @@ private:
 } // namespace Shared
 } // namespace Ingen
 
-#endif // BUILDER_H
+#endif // INGEN_SHARED_BUILDER_HPP
 

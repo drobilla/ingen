@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef RESOURCE_HPP
-#define RESOURCE_HPP
+#ifndef INGEN_INTERFACE_RESOURCE_HPP
+#define INGEN_INTERFACE_RESOURCE_HPP
 
 #include <string>
 #include <map>
@@ -52,5 +52,5 @@ public:
 } // namespace Shared
 } // namespace Ingen
 
-#endif // RESOURCE_HPP
+#endif // INGEN_INTERFACE_RESOURCE_HPP
 

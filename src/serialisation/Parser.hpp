@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef LOADER_H
-#define LOADER_H
+#ifndef INGEN_SERIALISATION_LOADER_HPP
+#define INGEN_SERIALISATION_LOADER_HPP
 
 #include <string>
 #include <glibmm/ustring.h>
@@ -117,4 +117,4 @@ private:
 } // namespace Serialisation
 } // namespace Ingen
 
-#endif // LOADER_H
+#endif // INGEN_SERIALISATION_LOADER_HPP

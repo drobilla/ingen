@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef THREADMANAGER_H
-#define THREADMANAGER_H
+#ifndef INGEN_ENGINE_THREADMANAGER_HPP
+#define INGEN_ENGINE_THREADMANAGER_HPP
 
 #include <cassert>
 #include "raul/Thread.hpp"
@@ -55,4 +55,4 @@ public:
 
 } // namespace Ingen
 
-#endif // THREADMANAGER_H
+#endif // INGEN_ENGINE_THREADMANAGER_HPP

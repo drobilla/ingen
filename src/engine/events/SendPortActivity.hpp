@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef SENDPORTACTIVITYEVENT_H
-#define SENDPORTACTIVITYEVENT_H
+#ifndef INGEN_EVENTS_SENDPORTACTIVITY_HPP
+#define INGEN_EVENTS_SENDPORTACTIVITY_HPP
 
 #include "Event.hpp"
 #include "types.hpp"
@@ -65,4 +65,4 @@ private:
 } // namespace Ingen
 } // namespace Events
 
-#endif // SENDPORTACTIVITYEVENT_H
+#endif // INGEN_EVENTS_SENDPORTACTIVITY_HPP

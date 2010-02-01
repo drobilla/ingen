@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef CONNECTIONMODEL_H
-#define CONNECTIONMODEL_H
+#ifndef INGEN_CLIENT_CONNECTIONMODEL_HPP
+#define INGEN_CLIENT_CONNECTIONMODEL_HPP
 
 #include <cassert>
 #include <string>
@@ -73,4 +73,4 @@ private:
 } // namespace Client
 } // namespace Ingen
 
-#endif // CONNECTIONMODEL_H
+#endif // INGEN_CLIENT_CONNECTIONMODEL_HPP

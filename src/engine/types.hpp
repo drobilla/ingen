@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef TYPES_HPP
-#define TYPES_HPP
+#ifndef INGEN_ENGINE_TYPES_HPP
+#define INGEN_ENGINE_TYPES_HPP
 
 #include <stdint.h>
 #include <cstddef>
@@ -26,4 +26,4 @@ typedef uint32_t SampleCount;
 typedef uint32_t SampleRate;
 typedef uint32_t FrameTime;
 
-#endif // TYPES_HPP
+#endif // INGEN_ENGINE_TYPES_HPP

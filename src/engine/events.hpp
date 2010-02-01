@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef EVENTS_H
-#define EVENTS_H
+#ifndef INGEN_ENGINE_EVENTS_HPP
+#define INGEN_ENGINE_EVENTS_HPP
 
 #include "ingen-config.h"
 
@@ -43,5 +43,5 @@
 #include "events/SetPortValue.hpp"
 #include "events/UnregisterClient.hpp"
 
-#endif // EVENTS_H
+#endif // INGEN_ENGINE_EVENTS_HPP
 

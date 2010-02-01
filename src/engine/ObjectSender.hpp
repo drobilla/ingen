@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef OBJECTSENDER_H
-#define OBJECTSENDER_H
+#ifndef INGEN_ENGINE_OBJECTSENDER_HPP
+#define INGEN_ENGINE_OBJECTSENDER_HPP
 
 #include <list>
 
@@ -56,5 +56,5 @@ private:
 
 } // namespace Ingen
 
-#endif // OBJECTSENDER_H
+#endif // INGEN_ENGINE_OBJECTSENDER_HPP
 

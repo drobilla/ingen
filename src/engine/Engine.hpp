@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef ENGINE_H
-#define ENGINE_H
+#ifndef INGEN_ENGINE_ENGINE_HPP
+#define INGEN_ENGINE_ENGINE_HPP
 
 #include <cassert>
 #include <vector>
@@ -126,4 +126,4 @@ private:
 
 } // namespace Ingen
 
-#endif // ENGINE_H
+#endif // INGEN_ENGINE_ENGINE_HPP

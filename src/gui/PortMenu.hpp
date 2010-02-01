@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef PORTMENU_H
-#define PORTMENU_H
+#ifndef INGEN_GUI_PORTMENU_HPP
+#define INGEN_GUI_PORTMENU_HPP
 
 #include <string>
 #include <gtkmm.h>
@@ -59,4 +59,4 @@ private:
 } // namespace GUI
 } // namespace Ingen
 
-#endif // PORTMENU_H
+#endif // INGEN_GUI_PORTMENU_HPP

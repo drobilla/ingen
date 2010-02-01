@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef LOADPLUGINWINDOW_H
-#define LOADPLUGINWINDOW_H
+#ifndef INGEN_GUI_LOADPLUGINWINDOW_HPP
+#define INGEN_GUI_LOADPLUGINWINDOW_HPP
 
 #include <map>
 #include <libglademm/xml.h>
@@ -146,4 +146,4 @@ private:
 } // namespace GUI
 } // namespace Ingen
 
-#endif // LOADPLUGINWINDOW_H
+#endif // INGEN_GUI_LOADPLUGINWINDOW_HPP

@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef PINGQUEUEDEVENT_H
-#define PINGQUEUEDEVENT_H
+#ifndef INGEN_EVENTS_PING_HPP
+#define INGEN_EVENTS_PING_HPP
 
 #include "QueuedEvent.hpp"
 #include "types.hpp"
@@ -48,4 +48,4 @@ public:
 } // namespace Ingen
 } // namespace Events
 
-#endif // PINGQUEUEDEVENT_H
+#endif // INGEN_EVENTS_PING_HPP

@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef MIX_HPP
-#define MIX_HPP
+#ifndef INGEN_ENGINE_MIX_HPP
+#define INGEN_ENGINE_MIX_HPP
 
 #include "raul/log.hpp"
 #include "interface/PortType.hpp"
@@ -83,4 +83,4 @@ mix(Context& context, Buffer* dst, const Buffer*const* srcs, uint32_t num_srcs)
 
 } // namespace Ingen
 
-#endif // MIX_HPP
+#endif // INGEN_ENGINE_MIX_HPP

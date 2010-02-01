@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef OBJECTMENU_H
-#define OBJECTMENU_H
+#ifndef INGEN_GUI_OBJECTMENU_HPP
+#define INGEN_GUI_OBJECTMENU_HPP
 
 #include <string>
 #include <gtkmm.h>
@@ -66,4 +66,4 @@ protected:
 } // namespace GUI
 } // namespace Ingen
 
-#endif // OBJECTMENU_H
+#endif // INGEN_GUI_OBJECTMENU_HPP
