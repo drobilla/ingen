@@ -18,6 +18,7 @@
 #define __STDC_LIMIT_MACROS 1
 #include <cassert>
 #include <stdint.h>
+#include <glib.h>
 #include "raul/log.hpp"
 #include "object.lv2/object.h"
 #include "LV2URIMap.hpp"
@@ -30,9 +31,7 @@ namespace Shared {
 
 
 LV2URIMap::LV2URIMap()
-	: uri_map()
-	, next_uri_id(1)
-	, object_class_bool(uri_to_id(NULL, LV2_OBJECT_URI "#Bool"))
+	: object_class_bool(uri_to_id(NULL, LV2_OBJECT_URI "#Bool"))
 	, object_class_string(uri_to_id(NULL, LV2_OBJECT_URI "#String"))
 	, object_class_int32(uri_to_id(NULL, LV2_OBJECT_URI "#Int32"))
 	, object_class_float32(uri_to_id(NULL, LV2_OBJECT_URI "#Float32"))
@@ -53,7 +52,12 @@ uint32_t
 LV2URIMap::uri_to_id(const char* map,
                      const char* uri)
 {
-	return uri_map_uri_to_id(this, map, uri);
+	const uint32_t ret = static_cast<uint32_t>(g_quark_from_string(uri));
+	debug << "[LV2URIMap] ";
+	if (map)
+		debug << map << " : ";
+	debug << uri << " => " << ret << endl;
+	return ret;
 }
 
 
@@ -62,26 +66,8 @@ LV2URIMap::uri_map_uri_to_id(LV2_URI_Map_Callback_Data callback_data,
                              const char*               map,
                              const char*               uri)
 {
-	// TODO: map ignored, < UINT16_MAX assumed
-
 	LV2URIMap* me = (LV2URIMap*)callback_data;
-	uint32_t ret = 0;
-
-	URIMap::iterator i = me->uri_map.find(uri);
-	if (i != me->uri_map.end()) {
-		ret = i->second;
-	} else {
-		ret = me->next_uri_id++;
-		me->uri_map.insert(make_pair(string(uri), ret));
-	}
-
-	debug << "[LV2URIMap] ";
-	if (map)
-		debug << map << " : ";
-	debug << uri << " => " << ret << endl;
-
-	assert(ret <= UINT16_MAX);
-	return ret;
+	return me->uri_to_id(map, uri);
 }
 
 

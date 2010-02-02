@@ -47,16 +47,12 @@ public:
 	uint32_t uri_to_id(const char* map, const char* uri);
 
 private:
-	typedef std::map<std::string, uint32_t> URIMap;
-
 	static uint32_t uri_map_uri_to_id(LV2_URI_Map_Callback_Data callback_data,
 	                                  const char*               map,
 	                                  const char*               uri);
 
 	LV2_Feature         uri_map_feature;
 	LV2_URI_Map_Feature uri_map_feature_data;
-	URIMap              uri_map;
-	uint32_t            next_uri_id;
 
 public:
 	const uint32_t object_class_bool;
